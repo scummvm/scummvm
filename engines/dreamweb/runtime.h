@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/debug.h"
 #include "common/hashmap.h"
 
 namespace dreamgen {
@@ -51,32 +52,37 @@ typedef RegisterPart<0xff, 0> LowPartOfRegister;
 typedef RegisterPart<0xff00, 8> HighPartOfRegister;
 
 class WordRef {
-	Common::Array<uint8>	&_data;
-	unsigned				_index;
-	uint16					_value;
+	uint8		*_data;
+	unsigned	_index;
+	uint16		_value;
 
 public:
-	inline WordRef(Common::Array<uint8> &data, unsigned index) : _data(data), _index(index) {
+	inline WordRef(Common::Array<uint8> &data, unsigned index) : _data(data.begin() + index), _index(index) {
 		assert(index + 1 < data.size());
-		_value = _data[index] | (_data[index + 1] << 8);
+		_value = _data[0] | (_data[1] << 8);
+		debug(1, "word ref %d -> 0x%04x", _index, _value);
 	}
-	
+
 	inline WordRef& operator=(const WordRef &ref) {
 		_value = ref._value;
 		return *this;
 	}
-	
+
 	inline WordRef& operator=(uint16 v) {
 		_value = v;
 		return *this;
 	}
-	
+
 	inline operator uint16&() {
 		return _value;
 	}
+
 	inline ~WordRef() {
-		_data[_index] = _value & 0xff;
-		_data[_index + 1] = _value >> 8;
+		debug(1, "writing %d -> 0x%04x", _index, _value);
+		_data[0] = _value & 0xff;
+		_data[1] = _value >> 8;
+		_value = _data[0] | (_data[1] << 8);
+		debug(1, "word ref result %d -> 0x%04x", _index, _value);
 	}
 };
 
@@ -189,13 +195,13 @@ public:
 		ds.reset(kDefaultDataSegment);
 		es.reset(kDefaultDataSegment);
 	}
-	
+
 	SegmentRef getSegment(uint16 value) {
 		SegmentMap::iterator i = _segments.find(value);
 		assert(i != _segments.end());
 		return SegmentRef(this, value, &i->_value);
 	}
-	
+
 	SegmentRef allocateSegment(uint size) {
 		unsigned id = kDefaultDataSegment + _segments.size();
 		assert(!_segments.contains(id));
@@ -203,39 +209,45 @@ public:
 		seg.data.resize(size);
 		return SegmentRef(this, id, &seg);
 	}
-	
+
 	inline void _cmp(uint8 a, uint8 b) {
 		uint8 x = a;
 		_sub(x, b);
 	}
+
 	inline void _cmp(uint16 a, uint16 b) {
 		uint16 x = a;
 		_sub(x, b);
 	}
+
 	inline void _test(uint8 a, uint8 b) {
 		uint8 x = a;
 		_and(x, b);
 	}
+
 	inline void _test(uint16 a, uint16 b) {
 		uint16 x = a;
 		_and(x, b);
 	}
-	
+
 	inline void _add(uint8 &dst, uint8 src) {
 		flags._c = dst + src < dst;
 		dst += src;
 		flags.update(dst);
 	}
+
 	inline void _add(uint16 &dst, uint16 src) {
 		flags._c = dst + src < dst;
 		dst += src;
 		flags.update(dst);
 	}
+
 	inline void _sub(uint8 &dst, uint8 src) {
 		flags._c = dst < src;
 		dst -= src;
 		flags.update(dst);
 	}
+
 	inline void _sub(uint16 &dst, uint16 src) {
 		flags._c = dst < src;
 		dst -= src;
@@ -247,16 +259,19 @@ public:
 		flags._c = false;
 		flags.update(dst);
 	}
+
 	inline void _and(uint16 &dst, uint16 src) {
 		dst &= src;
 		flags._c = false;
 		flags.update(dst);
 	}
+
 	inline void _or(uint8 &dst, uint8 src) {
 		dst |= src;
 		flags._c = false;
 		flags.update(dst);
 	}
+
 	inline void _or(uint16 &dst, uint16 src) {
 		dst |= src;
 		flags._c = false;
@@ -268,6 +283,7 @@ public:
 		flags._c = false;
 		flags.update(dst);
 	}
+
 	inline void _xor(uint16 &dst, uint16 src) {
 		dst ^= src;
 		flags._c = false;
@@ -278,6 +294,7 @@ public:
 	inline void _shr(uint16 &dst, uint8 src) {}
 	inline void _shl(uint8 &dst, uint8 src) {}
 	inline void _shl(uint16 &dst, uint8 src) {}
+
 	inline void _mul(uint8 src) {
 		unsigned r = unsigned(al) * src;
 		ax = (uint16)r;
@@ -287,6 +304,7 @@ public:
 		flags._o = s != flags._s;
 		flags._s = s;
 	}
+
 	inline void _mul(uint16 src) {
 		unsigned r = unsigned(ax) * src; //assuming here that we have at least 32 bits
 		dx = (r >> 16) & 0xffff;
@@ -297,11 +315,13 @@ public:
 		flags._o = s != flags._s;
 		flags._s = s;
 	}
+
 	inline void _neg(uint8 &src) {
 		src = ~src;
 		flags._c = false;
 		flags.update(src);
 	}
+
 	inline void _neg(uint16 &src) {
 		src = ~src;
 		flags._c = false;
@@ -311,26 +331,31 @@ public:
 	inline void _movsb() {
 		es.byte(di++) = ds.byte(si++);
 	}
+
 	inline void _movsw() {
 		es.word(di) = ds.word(si);
 		di += 2;
 		si += 2;
 	}
+
 	inline void _lodsb() {
 		al = ds.byte(si++);
 	}
+
 	inline void _lodsw() {
 		ax = ds.word(si);
 		si += 2;
 	}
+
 	inline void _stosb() {
 		es.byte(di++) = al;
 	}
+
 	inline void _stosw() {
 		es.word(di) = ax;
 		di += 2;
 	}
-	
+
 	inline void _xchg(uint16 &a, uint16 &b) {
 		uint16 x = a;
 		a = b;
@@ -347,6 +372,7 @@ public:
 	inline void push(uint16 v) {
 		stack.push_back(v);
 	}
+
 	inline uint16 pop() {
 		uint16 v = stack.back();
 		stack.pop_back();
