@@ -191,7 +191,12 @@ void openfilenocheck(Context &context) {
 }
 
 void openfile(Context &context) {
-	::error("openfile");
+	uint16 name_ptr = context.dx;
+	Common::String name;
+	uint8 c;
+	while((c = context.data.byte(name_ptr++)) != 0)
+		name += (char)c;
+	debug(1, "opening file: %s", name.c_str());
 }
 
 void createfile(Context &context) {
@@ -357,7 +362,7 @@ void dosreturn(Context &context) {
 }
 
 void set16colpalette(Context &context) {
-	::error("set16colpalette");
+	warning("set16colpalette: STUB");
 }
 
 void mode640x480(Context &context) {
@@ -365,7 +370,7 @@ void mode640x480(Context &context) {
 }
 
 void showgroup(Context &context) {
-	::error("showgroup");
+	warning("vsync: STUB");
 }
 
 void fadedos(Context &context) {
@@ -377,7 +382,8 @@ void doshake(Context &context) {
 }
 
 void vsync(Context &context) {
-	::error("vsync");
+	//engine()->waitForVSync();
+	warning("vsync: STUB");
 }
 
 void setmode(Context &context) {
