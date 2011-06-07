@@ -239,17 +239,10 @@ void Actor::saveState(SaveGame *savedState) const {
 		// Cannot use g_grim->getCurrScene() here because an actor can have walk planes
 		// from other scenes. It happens e.g. when Membrillo calls Velasco to tell him
 		// Naranja is dead.
-		if (_setName != "") {
-			Scene *s = g_grim->findScene(_setName);
-			for (SectorListType::iterator j = shadow.planeList.begin(); j != shadow.planeList.end(); ++j) {
-				Sector *sec = *j;
-				for (int k = 0; k < s->getSectorCount(); ++k) {
-					if (*s->getSectorBase(k) == *sec) {
-						savedState->writeLEUint32(k);
-						break;
-					}
-				}
-			}
+		for (SectorListType::iterator j = shadow.planeList.begin(); j != shadow.planeList.end(); ++j) {
+			Plane &p = *j;
+			savedState->writeString(p.setName);
+			savedState->writeString(p.sector->getName());
 		}
 
 		savedState->writeLESint32(shadow.shadowMaskSize);
@@ -394,14 +387,15 @@ bool Actor::restoreState(SaveGame *savedState) {
 		shadow.pos = savedState->readVector3d();
 
 		size = savedState->readLESint32();
-		if (_setName != "") {
-			Scene *scene = g_grim->findScene(_setName);
-			shadow.planeList.clear();
-			for (int j = 0; j < size; ++j) {
-				int32 id = savedState->readLEUint32();
-				Sector *s = new Sector(*scene->getSectorBase(id));
-				shadow.planeList.push_back(s);
+		shadow.planeList.clear();
+		Scene *scene = NULL;
+		for (int j = 0; j < size; ++j) {
+			Common::String setName = savedState->readString();
+			Common::String secName = savedState->readString();
+			if (!scene || scene->getName() != setName) {
+				scene = g_grim->findScene(setName);
 			}
+			addShadowPlane(secName.c_str(), scene, i);
 		}
 
 		shadow.shadowMaskSize = savedState->readLESint32();
@@ -1293,23 +1287,28 @@ void Actor::setShadowPlane(const char *n) {
 	_shadowArray[_activeShadowSlot].name = n;
 }
 
-void Actor::addShadowPlane(const char *n) {
-	assert(_activeShadowSlot != -1);
+void Actor::addShadowPlane(const char *n, Scene *scene, int shadowId) {
+	assert(shadowId != -1);
 
-	int numSectors = g_grim->getCurrScene()->getSectorCount();
+	int numSectors = scene->getSectorCount();
 
 	for (int i = 0; i < numSectors; i++) {
 		// Create a copy so we are sure it will not be deleted by the Scene destructor
 		// behind our back. This is important when Membrillo phones Velasco to tell him
 		// Naranja is dead, because the scene changes back and forth few times and so
 		// the scenes' sectors are deleted while they are still keeped by the actors.
-		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
+		Sector *sector = scene->getSectorBase(i);
 		if (strmatch(sector->getName(), n)) {
-			_shadowArray[_activeShadowSlot].planeList.push_back(new Sector(*sector));
+			Plane p = { scene->getName(), new Sector(*sector) };
+			_shadowArray[shadowId].planeList.push_back(p);
 			g_grim->flagRefreshShadowMask(true);
 			return;
 		}
 	}
+}
+
+void Actor::addShadowPlane(const char *n) {
+	addShadowPlane(n, g_grim->getCurrScene(), _activeShadowSlot);
 }
 
 void Actor::setActiveShadow(int shadowId) {
@@ -1342,7 +1341,7 @@ void Actor::clearShadowPlanes() {
 	for (int i = 0; i < 5; i++) {
 		Shadow *shadow = &_shadowArray[i];
 		while (!shadow->planeList.empty()) {
-			delete shadow->planeList.back();
+			delete shadow->planeList.back().sector;
 			shadow->planeList.pop_back();
 		}
 		delete[] shadow->shadowMask;

@@ -323,7 +323,7 @@ void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float scale, float yaw, f
 			_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
 			_currentShadowArray->shadowMaskSize = _screenWidth * _screenHeight;
 		}
-		Sector *shadowSector = _currentShadowArray->planeList.front();
+		Sector *shadowSector = _currentShadowArray->planeList.front().sector;
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
@@ -375,7 +375,7 @@ void GfxOpenGL::drawShadowPlanes() {
 	glDisable(GL_TEXTURE);
 	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
-		Sector *shadowSector = *i;
+		Sector *shadowSector = i->sector;
 		glBegin(GL_POLYGON);
 		for (int k = 0; k < shadowSector->getNumVertices(); k++) {
 			glVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());

@@ -369,7 +369,7 @@ void GfxTinyGL::startActorDraw(Graphics::Vector3d pos, float scale, float yaw, f
 		tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
 		tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
 		SectorListType::iterator i = _currentShadowArray->planeList.begin();
-		Sector *shadowSector = *i;
+		Sector *shadowSector = i->sector;
 		tglShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
@@ -416,7 +416,7 @@ void GfxTinyGL::drawShadowPlanes() {
 	tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
 	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
-		Sector *shadowSector = *i;
+		Sector *shadowSector = i->sector;
 		tglBegin(TGL_POLYGON);
 		for (int k = 0; k < shadowSector->getNumVertices(); k++) {
 			tglVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());

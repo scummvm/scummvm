@@ -34,8 +34,14 @@ class Costume;
 class LipSync;
 class Font;
 class Color;
+class Scene;
 
-typedef Common::List<Sector *> SectorListType;
+struct Plane {
+	Common::String setName;
+	Sector *sector;
+};
+
+typedef Common::List<Plane> SectorListType;
 
 extern int g_winX1, g_winY1, g_winX2, g_winY2;
 
@@ -178,6 +184,7 @@ private:
 
 	void costumeMarkerCallback(Footstep step);
 	void updateWalk();
+	void addShadowPlane(const char *n, Scene *scene, int shadowId);
 
 	Common::String _name;
 	Common::String _setName;    // The actual current set
