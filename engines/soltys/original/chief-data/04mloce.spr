@@ -1,0 +1,28 @@
+name=Chief
+type=auto
+
+
+phase=00s0            .0 stoi
+phase=00sw0           .1 ob
+phase=00w0            .2 rut
+phase=04mloce1        .3
+phase=04mloce2        .4
+phase=04mloce3        .5
+phase=04mloce4        .6
+
+
+Seq= 0  0  0  0   8    .0 park
+
+
+Seq= 1 -1  0  0  16    .1 go!
+Seq= 2 -1  0  0  16    .2
+Seq= 3 -1 -8  0   8    .3
+Seq= 4 -1  0  0   8    .4
+Seq= 5 -1  0  0   8    .5 break!
+Seq= 6 -1  0  0  16    .6
+Seq= 5 -1  0  0   8    .7
+Seq= 4 -1  0  0   8    .8
+Seq= 3 -1  0  0   8    .9
+Seq= 2 -1  8  0  16    .10
+Seq= 1  0  0  0  16    .11
+

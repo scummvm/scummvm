@@ -1,0 +1,2229 @@
+#include	<general.h>
+#include	<boot.h>
+#include	"ident.h"
+#include	"sound.h"
+#include	"startup.h"
+#include	"config.h"
+#include	"vga13h.h"
+#include	"snail.h"
+#include	"text.h"
+#include	"game.h"
+#include	"mouse.h"
+#include	"keybd.h"
+#include	"cfile.h"
+#include	"vol.h"
+#include	"talk.h"
+#include	"vmenu.h"
+#include	"gettext.h"
+#include	"mixer.h"
+#include	"cge.h"
+#include	<alloc.h>
+#include	<conio.h>
+#include	<stdio.h>
+#include	<stdlib.h>
+#include	<string.h>
+#include	<dos.h>
+#include	<dir.h>
+#include	<fcntl.h>
+#include	<bios.h>
+#include	<io.h>
+
+#define		STACK_SIZ	(K(2))
+#define		SVGCHKSUM	(1956+Now+OldLev+Game+Music+DemoText)
+
+#ifdef	DEMO
+ #ifdef DEBUG
+  #define	SVG0NAME	("{{INIT}}" SVG_EXT)
+ #else
+  #define	SVG0NAME	(ProgName(SVG_EXT))
+ #endif
+#else
+  #define	SVG0NAME	("{{INIT}}" SVG_EXT)
+#endif
+
+#ifdef	DEBUG
+  #define	SVG0FILE	CFILE
+#else
+  #define	SVG0FILE	INI_FILE
+#endif
+
+extern	word	_stklen = (STACK_SIZ * 2);
+
+// 0.75 - 17II95  - full sound support
+// 0.76 - 18II95  - small MiniEMS in DEMO,
+//		    unhide CavLight in SNLEVEL
+//		    keyclick suppress in startup
+//		    keyclick on key service in: SYSTEM, GET_TEXT
+// 1.01 - 17VII95 - default savegame with sound ON
+//		    coditionals EVA for 2-month evaluation version
+
+	char	Copr[] = "Common Game Engine "
+					  #ifdef EVA
+					    "ú"
+					  #else
+					   #ifdef CD
+					    "ù"
+					   #else
+					    " "
+					   #endif
+					  #endif
+					     "  version 1.05 ["
+						       #if sizeof(INI_FILE) == sizeof(VFILE)
+							"I"
+						       #else
+							"i"
+						       #endif
+						       #if sizeof(PIC_FILE) == sizeof(VFILE)
+							"B"
+						       #else
+							"b"
+						       #endif
+								"]\n"
+			 "Copyright (c) 1994 by Janusz B. Wi$niewski";
+
+static	char		UsrFnam[13] = "\0É±%^þúÈ¼´ ÇÉ";
+static	int		OldLev		= 0;
+static	int		DemoText	= DEMO_TEXT;
+
+//--------------------------------------------------------------------------
+
+	Boolean		JBW		= FALSE;
+	DAC far *	SysPal		= farnew(DAC, PAL_CNT);
+
+//-------------------------------------------------------------------------
+	SPRITE		PocLight	= LI;
+	SPRITE *	Pocket[POCKET_NX]={ NULL, NULL, NULL, NULL,
+					    NULL, NULL, NULL, NULL, };
+	int		PocPtr		=  0;
+//-------------------------------------------------------------------------
+//extern	SPRITE *	PocLight;
+//extern	SPRITE *	Pocket[];
+//extern	int		PocPtr;
+//-------------------------------------------------------------------------
+
+	MOUSE		Mouse;
+static	SPRITE *	Sprite		= NULL;
+static	SPRITE *	MiniCave	= NULL;
+static	SPRITE *	Shadow		= NULL;
+
+static	VGA		Vga		= M13H;
+static	EMS *		Mini		= MiniEmm.Alloc((word)MINI_EMM_SIZE);
+static	BMP_PTR *	MiniShpList	= NULL;
+static	BMP_PTR		MiniShp[]	= { NULL, NULL };
+static	KEYBOARD	Keyboard;
+static	Boolean		Finis		= FALSE;
+static	int		Startup		= 1;
+static	int		OffUseCount	= atoi(Text[OFF_USE_COUNT]);
+	word *		intStackPtr	= FALSE;
+
+
+	HXY		HeroXY[CAVE_MAX] = {{0,0}};
+	BAR		Barriers[1+CAVE_MAX] = { { 0xFF, 0xFF } };
+
+
+extern	int		FindPocket (SPRITE *);
+
+extern	DAC		StdPal[58];
+
+#ifdef	DEBUG
+static	SPRITE		HorzLine	= HL;
+#endif
+
+
+
+void	FeedSnail	(SPRITE * spr, SNLIST snq); // defined in SNAIL
+
+//--------------------------------------------------------------------------
+
+
+
+
+byte	CLUSTER::Map[MAP_ZCNT][MAP_XCNT];
+
+
+
+byte & CLUSTER::Cell (void)
+{
+  return Map[B][A];
+}
+
+
+
+
+
+
+
+
+Boolean CLUSTER::Protected (void)
+{
+  if (A == Barriers[Now].Vert || B == Barriers[Now].Horz) return TRUE;
+
+  _DX = (MAP_ZCNT << 8) + MAP_XCNT;
+  _BX = (word) this;
+
+  asm	mov	ax,1
+  asm	mov	cl,[bx].(COUPLE)A
+  asm	mov	ch,[bx].(COUPLE)B
+  asm	test	cx,0x8080		// (A < 0) || (B < 0)
+  asm	jnz	xit
+
+  asm	cmp	cl,dl
+  asm	jge	xit
+  asm	cmp	ch,dh
+  asm	jge	xit
+
+//  if (A < 0 || A >= MAP_XCNT || B < 0 || B >= MAP_ZCNT) return TRUE;
+
+  asm	mov	al,dl
+  asm	mul	ch
+  asm	xor	ch,ch
+  asm	add	ax,cx
+  asm	mov	bx,ax
+  _BX += (word) Map;
+  //asm	add	bx,offset CLUSTER::Map
+  asm	mov	al,[bx]
+  asm	and	ax,0xFF
+  asm	jz	xit
+  asm	mov	ax,1
+
+//  return Map[B][A] != 0;
+
+  xit: return _AX;
+}
+
+
+
+
+
+CLUSTER XZ (int x, int y)
+{
+  if (y < MAP_TOP) y = MAP_TOP;
+  if (y > MAP_TOP + MAP_HIG - MAP_ZGRID) y = MAP_TOP + MAP_HIG - MAP_ZGRID;
+  return CLUSTER(x / MAP_XGRID, (y-MAP_TOP) / MAP_ZGRID);
+}
+
+
+
+
+CLUSTER XZ (COUPLE xy)
+{
+  signed char x, y;
+  xy.Split(x, y);
+  return XZ(x, y);
+}
+
+
+
+
+
+
+
+//--------------------------------------------------------------------------
+
+
+	int	pocref[POCKET_NX];
+	byte	volume[2];
+	struct	SAVTAB { void * Ptr; int Len; byte Flg; } SavTab[] =
+		    {{ &Now,           sizeof(Now),          1 },
+		     { &OldLev,        sizeof(OldLev),       1 },
+		     { &DemoText,      sizeof(DemoText),     1 },
+		     { &Game,          sizeof(Game),         1 },
+		     { &Game,          sizeof(Game),         1 }, // spare 1
+		     { &Game,          sizeof(Game),         1 }, // spare 2
+		     { &Game,          sizeof(Game),         1 }, // spare 3
+		     { &Game,          sizeof(Game),         1 }, // spare 4
+		     { &VGA::Mono,     sizeof(VGA::Mono),    0 },
+		     { &Music,         sizeof(Music),        1 },
+		     { volume,         sizeof(volume),       1 },
+
+		     { Flag,           sizeof(Flag),         1 },
+		     { HeroXY,         sizeof(HeroXY),       1 },
+		     { Barriers,       sizeof(Barriers),     1 },
+		     { pocref,         sizeof(pocref),       1 },
+		     { NULL,           0,                    0 } };
+
+
+
+
+
+static void LoadGame (XFILE& file, Boolean tiny = FALSE)
+{
+  SAVTAB * st;
+  SPRITE * spr;
+  int i;
+
+  for (st = SavTab; st->Ptr; st ++)
+    {
+      if (file.Error) VGA::Exit("Bad SVG");
+      file.Read((byte far *) ((tiny || st->Flg) ? st->Ptr : &i), st->Len);
+    }
+
+  file.Read((byte far *) &i, sizeof(i));
+  if (i != SVGCHKSUM) VGA::Exit(BADSVG_TEXT);
+  if (STARTUP::Core < CORE_HIG) Music = FALSE;
+  if (STARTUP::SoundOk == 1 && STARTUP::Mode == 0)
+    {
+      SNDDrvInfo.VOL2.D = volume[0];
+      SNDDrvInfo.VOL2.M = volume[1];
+      SNDSetVolume();
+    }
+
+  if (! tiny) // load sprites & pocket
+    {
+      while (! file.Error)
+	{
+	  SPRITE S(NULL);
+	  word n = file.Read((byte far *) &S, sizeof(S));
+
+	  if (n != sizeof(S)) break;
+	  S.Prev = S.Next = NULL;
+	  spr = (stricmp(S.File+2, "MUCHA") == 0) ? new FLY(NULL)
+						  : new SPRITE(NULL);
+	  if (spr == NULL) VGA::Exit("No core");
+	  *spr = S;
+	  VGA::SpareQ.Append(spr);
+	}
+
+      for (i = 0; i < POCKET_NX; i ++)
+	{
+	  register int r = pocref[i];
+	  Pocket[i] = (r < 0) ? NULL : VGA::SpareQ.Locate(r);
+	}
+    }
+}
+
+
+
+
+static void SaveSound (void)
+{
+  CFILE cfg(UsrPath(ProgName(CFG_EXT)), WRI);
+  if (! cfg.Error) cfg.Write(&SNDDrvInfo,sizeof(SNDDrvInfo)-sizeof(SNDDrvInfo.VOL2));
+}
+
+
+
+
+
+
+static void SaveGame (XFILE& file)
+{
+  SAVTAB * st;
+  SPRITE * spr;
+  int i;
+
+  for (i = 0; i < POCKET_NX; i ++)
+    {
+      register SPRITE * s = Pocket[i];
+      pocref[i] = (s) ? s->Ref : -1;
+    }
+
+  volume[0] = SNDDrvInfo.VOL2.D;
+  volume[1] = SNDDrvInfo.VOL2.M;
+
+  for (st = SavTab; st->Ptr; st ++)
+    {
+      if (file.Error) VGA::Exit("Bad SVG");
+      file.Write((byte far *) st->Ptr, st->Len);
+    }
+
+  file.Write((byte far *) &(i = SVGCHKSUM), sizeof(i));
+
+  for (spr = VGA::SpareQ.First(); spr; spr = spr->Next)
+    if (spr->Ref >= 1000)
+      if (!file.Error) file.Write((byte far *)spr, sizeof(*spr));
+}
+
+
+
+
+
+
+
+static void HeroCover (int cvr)
+{
+  SNPOST(SNCOVER, 1, cvr, NULL);
+}
+
+
+
+
+static void Trouble (int seq, int txt)
+{
+  Hero->Park();
+  SNPOST(SNWAIT, -1, -1, Hero);
+  SNPOST(SNSEQ, -1, seq, Hero);
+  SNPOST(SNSOUND, -1, 2, Hero);
+  SNPOST(SNWAIT, -1, -1, Hero);
+  SNPOST(SNSAY,  1, txt, Hero);
+}
+
+
+
+static void OffUse (void)
+{
+  Trouble(OFF_USE, OFF_USE_TEXT+random(OffUseCount));
+}
+
+
+
+
+static void TooFar (void)
+{
+  Trouble(TOO_FAR, TOO_FAR_TEXT);
+}
+
+
+
+
+static void NoWay (void)
+{
+  Trouble(NO_WAY, NO_WAY_TEXT);
+}
+
+
+
+
+
+static void LoadHeroXY (void)
+{
+  INI_FILE cf(ProgName(".HXY"));
+  memset(HeroXY, 0, sizeof(HeroXY));
+  if (! cf.Error) cf.CFREAD(&HeroXY);
+}
+
+
+
+
+
+static void LoadMapping (void)
+{
+  if (Now <= CAVE_MAX)
+    {
+      INI_FILE cf(ProgName(".TAB"));
+      if (! cf.Error)
+	{
+	  memset(CLUSTER::Map, 0, sizeof(CLUSTER::Map));
+	  cf.Seek((Now - 1) * sizeof(CLUSTER::Map));
+	  cf.Read((byte far *) CLUSTER::Map, sizeof(CLUSTER::Map));
+	}
+    }
+}
+
+
+
+
+
+
+//--------------------------------------------------------------------------
+
+CLUSTER	Trace[MAX_FIND_LEVEL];
+int	FindLevel;
+
+
+
+
+
+
+
+
+WALK::WALK (BMP_PTR * shpl)
+: SPRITE(shpl), Dir(NO_DIR), TracePtr(-1)
+{
+}
+
+
+
+
+
+void WALK::Tick (void)
+{
+  if (Flags.Hide) return;
+
+  Here = XZ(X+W/2, Y+H);
+
+  if (Dir != NO_DIR)
+    {
+      SPRITE * spr;
+      SYSTEM::FunTouch();
+      for (spr = VGA::ShowQ.First(); spr; spr = spr->Next)
+	{
+	  if (Distance(spr) < 2)
+	    {
+	      if (! spr->Flags.Near)
+		{
+		  FeedSnail(spr, NEAR);
+		  spr->Flags.Near = TRUE;
+		}
+	    }
+	  else spr->Flags.Near = FALSE;
+	}
+    }
+
+  if (Flags.Hold || TracePtr < 0) Park();
+  else
+    {
+      if (Here == Trace[TracePtr])
+	{
+	  if (-- TracePtr < 0) Park();
+	}
+      else
+	{
+	  signed char dx, dz;
+	  (Trace[TracePtr] - Here).Split(dx, dz);
+	  DIR d = (dx) ? ((dx > 0) ? EE : WW) : ((dz > 0) ? SS : NN);
+	  Turn(d);
+	}
+    }
+  Step();
+  if ((Dir == WW && X <= 0)           ||
+      (Dir == EE && X + W >= SCR_WID) ||
+      (Dir == SS && Y + W >= WORLD_HIG-2)) Park();
+  else
+    {
+      signed char x;			// dummy var
+      Here.Split(x, Z);			// take current Z position
+      SNPOST_(SNZTRIM, -1, 0, this);	// update Hero's pos in show queue
+    }
+}
+
+
+
+
+
+
+int WALK::Distance (SPRITE * spr)
+{
+  int dx, dz;
+  dx = spr->X - (X+W-WALKSIDE);
+  if (dx < 0) dx = (X+WALKSIDE) - (spr->X+spr->W);
+  if (dx < 0) dx = 0;
+  dx /= MAP_XGRID;
+  dz = spr->Z - Z;
+  if (dz < 0) dz = - dz;
+  dx = dx * dx + dz * dz;
+  for (dz = 1; dz * dz < dx; dz ++) ;
+  return dz-1;
+}
+
+
+
+
+
+
+
+
+
+
+void WALK::Turn (DIR d)
+{
+  DIR dir = (Dir == NO_DIR) ? SS : Dir;
+  if (d != Dir)
+    {
+      Step((d == dir) ? (1 + dir + dir) : (9 + 4 * dir + d));
+      Dir = d;
+    }
+}
+
+
+
+
+
+void WALK::Park (void)
+{
+  if (Time == 0) ++ Time;
+  if (Dir != NO_DIR)
+    {
+      Step(9 + 4 * Dir + Dir);
+      Dir = NO_DIR;
+      TracePtr = -1;
+    }
+}
+
+
+
+
+
+
+
+void WALK::FindWay (CLUSTER c)
+{
+  Boolean Find1Way(void);
+  extern word Target;
+
+  if (c != Here)
+    {
+      for (FindLevel = 1; FindLevel <= MAX_FIND_LEVEL; FindLevel ++)
+	{
+	  signed char x, z;
+	  Here.Split(x, z);
+	  Target = (z << 8) | x;
+	  c.Split(x, z);
+	  _CX = (z << 8) | x;
+	  if (Find1Way()) break;
+	}
+      TracePtr = (FindLevel > MAX_FIND_LEVEL) ? -1 : (FindLevel - 1);
+      if (TracePtr < 0) NoWay();
+      Time = 1;
+    }
+}
+
+
+
+
+
+
+void WALK::FindWay (SPRITE * spr)
+{
+  if (spr && spr != this)
+    {
+      int x = spr->X, z = spr->Z;
+      if (spr->Flags.East) x += spr->W + W/2 - WALKSIDE;
+      else x -= W/2 - WALKSIDE;
+      FindWay(CLUSTER((x/MAP_XGRID),
+		      ((z < MAP_ZCNT-MAX_DISTANCE) ? (z+1)
+						   : (z-1))));
+    }
+}
+
+
+
+
+
+
+Boolean WALK::Lower (SPRITE * spr)
+{
+  return (spr->Y > Y + (H * 3) / 5);
+}
+
+
+
+
+
+
+void WALK::Reach (SPRITE * spr, int mode)
+{
+  if (spr)
+    {
+      Hero->FindWay(spr);
+      if (mode < 0)
+	{
+	  mode = spr->Flags.East;
+	  if (Lower(spr)) mode += 2;
+	}
+    }
+  // note: insert SNAIL commands in reverse order
+  SNINSERT(SNPAUSE, -1, 64, NULL);
+  SNINSERT(SNSEQ, -1, TSEQ + mode, this);
+  if (spr)
+    {
+      SNINSERT(SNWAIT,  -1, -1, Hero); /////--------$$$$$$$
+      //SNINSERT(SNWALK, -1, -1, spr);
+    }
+  // sequence is not finished,
+  // now it is just at sprite appear (disappear) point
+}
+
+
+
+
+
+
+//--------------------------------------------------------------------------
+
+
+
+#ifdef DEBUG
+
+
+class SQUARE : public SPRITE
+{
+public:
+  SQUARE (void);
+  void Touch (word mask, int x, int y);
+};
+
+
+
+
+
+
+SQUARE::SQUARE (void)
+: SPRITE(MB)
+{
+  Flags.Kill = TRUE;
+  Flags.BDel = FALSE;
+}
+
+
+
+
+
+
+
+
+void SQUARE::Touch (word mask, int x, int y)
+{
+  SPRITE::Touch(mask, x, y);
+  if (mask & L_UP)
+    {
+      XZ(X+x, Y+y).Cell() = 0;
+      SNPOST_(SNKILL, -1, 0, this);
+    }
+}
+
+
+
+
+
+
+static void SetMapBrick (int x, int z)
+{
+   SQUARE * s = new SQUARE;
+   if (s)
+     {
+       static char n[] = "00:00";
+       s->Goto(x * MAP_XGRID, MAP_TOP + z * MAP_ZGRID);
+       wtom(x, n+0, 10, 2);
+       wtom(z, n+3, 10, 2);
+       CLUSTER::Map[z][x] = 1;
+       s->SetName(n);
+       VGA::ShowQ.Insert(s, VGA::ShowQ.First());
+     }
+}
+
+
+#endif
+
+
+
+//--------------------------------------------------------------------------
+
+void 	dummy		(void) { }
+void	SwitchMapping	(void);
+void	SwitchColorMode	(void);
+void	StartCountDown	(void);
+Debug( void SwitchDebug	(void); )
+void	SwitchMusic	(void);
+void	KillSprite	(void);
+void	PushSprite	(void);
+void	PullSprite	(void);
+void	BackPaint	(void);
+void	NextStep	(void);
+void	SaveMapping	(void);
+
+
+	WALK *		Hero		= NULL;
+static	INFO_LINE	InfoLine	= INFO_W;
+
+static	HEART		Heart;
+
+static	SPRITE		CavLight	= PR;
+
+
+
+
+
+static void KeyClick (void)
+{
+  SNPOST_(SNSOUND, -1, 5, NULL);
+}
+
+
+
+static void ResetQSwitch (void)
+{
+  SNPOST_(SNSEQ, 123,  0, NULL);
+  KeyClick();
+}
+
+
+
+
+static void Quit (void)
+{
+  static CHOICE QuitMenu[]={ { NULL, StartCountDown },
+			     { NULL, ResetQSwitch   },
+			     { NULL, dummy          } };
+
+  if (Snail.Idle() && ! Hero->Flags.Hide)
+    {
+      if (VMENU::Addr)
+	{
+	  SNPOST_(SNKILL, -1, 0, VMENU::Addr);
+	  ResetQSwitch();
+	}
+      else
+	{
+	  QuitMenu[0].Text = Text[QUIT_TEXT];
+	  QuitMenu[1].Text = Text[NOQUIT_TEXT];
+	  (new VMENU(QuitMenu, -1, -1))->SetName(Text[QUIT_TITLE]);
+	  SNPOST_(SNSEQ, 123, 1, NULL);
+	  KeyClick();
+	}
+    }
+}
+
+
+
+
+static void AltCtrlDel (void)
+{
+  #if 0
+  //def DEBUG
+  if (KEYBOARD::Key[LSHIFT] || KEYBOARD::Key[RSHIFT])
+    {
+      PostFlag = 0x1234;
+      POST();
+    }
+  else
+  #endif
+  SNPOST_(SNSAY,  -1, A_C_D_TEXT, Hero);
+}
+
+
+
+
+static void MiniStep (int stp)
+{
+  if (stp < 0) MiniCave->Flags.Hide = TRUE;
+  else
+    {
+      &*Mini;
+      *MiniShp[0] = *MiniShpList[stp];
+      if (Fx.Current) &*(Fx.Current->EAddr());
+      MiniCave->Flags.Hide = FALSE;
+    }
+}
+
+
+
+
+
+static void PostMiniStep (int stp)
+{
+  static int recent = -2;
+  if (MiniCave && stp != recent) SNPOST_(SNEXEC, -1, recent = stp, (void *) MiniStep);
+}
+
+
+
+//--------------------------------------------------------------------------
+
+
+
+int		SYSTEM::FunDel	= HEROFUN0;
+
+
+
+
+void SYSTEM::SetPal (void)
+{
+  int i;
+  DAC far * p = SysPal + 256-ArrayCount(StdPal);
+  for (i = 0; i < ArrayCount(StdPal); i ++)
+    {
+      p[i].R = StdPal[i].R >> 2;
+      p[i].G = StdPal[i].G >> 2;
+      p[i].B = StdPal[i].B >> 2;
+    }
+}
+
+
+
+
+
+void SYSTEM::FunTouch (void)
+{
+  word n = (PAIN) ? HEROFUN1 : HEROFUN0;
+  if (Talk == NULL || n > FunDel) FunDel = n;
+}
+
+
+
+
+
+
+static void ShowBak (int ref)
+{
+  SPRITE * spr = VGA::SpareQ.Locate(ref);
+  if (spr)
+    {
+      BITMAP::Pal = SysPal;
+      spr->Expand();
+      BITMAP::Pal = NULL;
+      spr->Show(2);
+      VGA::CopyPage(1, 2);
+      SYSTEM::SetPal();
+      spr->Contract();
+    }
+}
+
+
+
+
+
+
+static void CaveUp (void)
+{
+  int BakRef = 1000 * Now;
+  if (Music) LoadMIDI(Now);
+  ShowBak(BakRef);
+  LoadMapping();
+  Text.Preload(BakRef, BakRef+1000);
+  SPRITE * spr = VGA::SpareQ.First();
+  while (spr)
+    {
+      SPRITE * n = spr->Next;
+      if (spr->Cave == Now || spr->Cave == 0)
+	if (spr->Ref != BakRef)
+	  {
+	    if (spr->Flags.Back) spr->BackShow();
+	    else ExpandSprite(spr);
+	  }
+      spr = n;
+    }
+  if (SNDDrvInfo.DDEV)
+    {
+      Sound.Stop();
+      Fx.Clear();
+      Fx.Preload(0);
+      Fx.Preload(BakRef);
+    }
+
+  if (Hero)
+    {
+      Hero->Goto(HeroXY[Now-1].X, HeroXY[Now-1].Y);
+      // following 2 lines trims Hero's Z position!
+      Hero->Tick();
+      Hero->Time = 1;
+      Hero->Flags.Hide = FALSE;
+    }
+
+  if (! Dark) Vga.Sunset();
+  VGA::CopyPage(0, 1);
+  SelectPocket(-1);
+  if (Hero) VGA::ShowQ.Insert(VGA::ShowQ.Remove(Hero));
+  if (Shadow)
+    {
+      VGA::ShowQ.Remove(Shadow);
+      Shadow->MakeXlat(Glass(SysPal, 204, 204, 204));
+      VGA::ShowQ.Insert(Shadow, Hero);
+      Shadow->Z = Hero->Z;
+    }
+  FeedSnail(VGA::ShowQ.Locate(BakRef+999), TAKE);
+  Vga.Show();
+  Vga.CopyPage(1, 0);
+  Vga.Show();
+  Vga.Sunrise(SysPal);
+  Dark = FALSE;
+  if (! Startup) Mouse.On();
+  HEART::Enable = TRUE;
+}
+
+
+
+
+
+static void CaveDown (void)
+{
+  SPRITE * spr;
+  Debug( if (! HorzLine.Flags.Hide) SwitchMapping(); )
+
+  for (spr = VGA::ShowQ.First(); spr; )
+    {
+      SPRITE * n = spr->Next;
+      if (spr->Ref >= 1000 /*&& spr->Cave*/)
+	{
+	  if (spr->Ref % 1000 == 999) FeedSnail(spr, TAKE);
+	  VGA::SpareQ.Append(VGA::ShowQ.Remove(spr));
+	}
+      spr = n;
+    }
+  Text.Clear(1000);
+}
+
+
+
+
+
+static void XCave (void)
+{
+  CaveDown();
+  CaveUp();
+}
+
+
+
+
+static void QGame (void)
+{
+  CaveDown();
+  OldLev = Lev;
+  SaveSound();
+  SaveGame(CFILE(UsrPath(UsrFnam), WRI, RCrypt));
+  Vga.Sunset();
+  Finis = TRUE;
+}
+
+
+
+
+void SwitchCave (int cav)
+{
+  if (cav != Now)
+    {
+      HEART::Enable = FALSE;
+      if (cav < 0)
+	{
+	  SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
+	  SNPOST(SNEXEC,  -1, 0, (void *) QGame); // switch cave
+	}
+      else
+	{
+	  Now = cav;
+	  Mouse.Off();
+	  if (Hero)
+	    {
+	      Hero->Park();
+	      Hero->Step(0);
+	      #ifndef DEMO
+	      ///// protection: auto-destruction on! ----------------------
+	      VGA::SpareQ.Show = STARTUP::Summa * (cav <= CAVE_MAX);
+	      /////--------------------------------------------------------
+	      #endif
+	    }
+	  CavLight.Goto(CAVE_X + ((Now-1) % CAVE_NX) * CAVE_DX + CAVE_SX,
+			CAVE_Y + ((Now-1) / CAVE_NX) * CAVE_DY + CAVE_SY);
+	  KillText();
+	  if (! Startup) KeyClick();
+	  SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
+	  SNPOST(SNEXEC,   0, 0, (void *) XCave); // switch cave
+	}
+    }
+}
+
+
+
+
+
+
+void SYSTEM::Touch (word mask, int x, int y)
+{
+  static int pp = 0;
+  void SwitchCave (int cav);
+  int cav = 0;
+
+  FunTouch();
+
+  if (mask & KEYB)
+    {
+      int pp0;
+      KeyClick();
+      KillText();
+      if (Startup == 1)
+	{
+	  SNPOST(SNCLEAR, -1, 0, NULL);
+	  return;
+	}
+      pp0 = pp;
+      switch (x)
+	{
+	  case Del          : if (KEYBOARD::Key[ALT] &&
+				  KEYBOARD::Key[CTRL]) AltCtrlDel();
+			      Debug ( else KillSprite(); )
+			      break;
+	  case 'F'          : if (KEYBOARD::Key[ALT])
+				{
+				  SPRITE * m = VGA::ShowQ.Locate(17001);
+				  if (m)
+				    {
+				      m->Step(1);
+				      m->Time = 216; // 3s
+				    }
+				}
+			      break;
+
+	  #ifdef DEBUG
+	  case PgUp         : PushSprite(); break;
+	  case PgDn         : PullSprite(); break;
+	  case '+'          : NextStep(); break;
+	  case '`'          : if (KEYBOARD::Key[ALT]) SaveMapping(); else SwitchMapping(); break;
+	  case F1           : SwitchDebug(); break;
+	  case F3           : Hero->Step(TSEQ + 4); break;
+	  case F4           : Hero->Step(TSEQ + 5); break;
+	  case F5           : Hero->Step(TSEQ + 0); break;
+	  case F6           : Hero->Step(TSEQ + 1); break;
+	  case F7           : Hero->Step(TSEQ + 2); break;
+	  case F8           : Hero->Step(TSEQ + 3); break;
+	  case F9           : SYSTEM::FunDel = 1; break;
+	  case 'X'          : if (KEYBOARD::Key[ALT]) Finis = TRUE; break;
+	  case '0'          :
+	  case '1'          :
+	  case '2'          :
+	  case '3'          :
+	  case '4'          : if (KEYBOARD::Key[ALT]) { SNPOST(SNLEVEL, -1, x - '0', NULL); break; }
+	  case '5'          :
+	  case '6'          :
+	  case '7'          :
+	  case '8'          :
+	  case '9'          : if (Sprite) Sprite->Step(x - '0'); break;
+	  #else
+	  case '1'          :
+	  case '2'          :
+	  case '3'          :
+	  case '4'          :
+	  case '5'          :
+	  case '6'          :
+	  case '7'          :
+	  case '8'          : SelectPocket(x - '1'); break;
+	  #endif
+
+	  case F10          : if (Snail.Idle() && ! Hero->Flags.Hide)
+				StartCountDown();
+			      break;
+	  case 'J'          : if (pp == 0) ++ pp; break;
+	  case 'B'          : if (pp == 1) ++ pp; break;
+	  case 'W'          : if (pp == 2) JBW = !JBW; break;
+	}
+      if (pp == pp0) pp = 0;
+    }
+  else
+    {
+      if (Startup) return;
+      InfoLine.Update(NULL);
+      if (y >= WORLD_HIG)
+	{
+	  if (x < BUTTON_X)		// select cave?
+	    {
+	      if (y >= CAVE_Y && y < CAVE_Y + CAVE_NY * CAVE_DY &&
+		  x >= CAVE_X && x < CAVE_X + CAVE_NX * CAVE_DX && ! Game)
+		{
+		  cav = ((y-CAVE_Y) / CAVE_DY) * CAVE_NX + (x-CAVE_X) / CAVE_DX + 1;
+		  if (cav > MaxCave) cav = 0;
+		}
+	      else
+		{
+		  cav = 0;
+		}
+	    }
+	  else if (mask & L_UP)
+	    {
+	      if (y >= POCKET_Y && y < POCKET_Y + POCKET_NY * POCKET_DY &&
+		  x >= POCKET_X && x < POCKET_X + POCKET_NX * POCKET_DX)
+		{
+		  int n = ((y-POCKET_Y) / POCKET_DY) * POCKET_NX + (x-POCKET_X) / POCKET_DX;
+		  SelectPocket(n);
+		}
+	    }
+	}
+
+      PostMiniStep(cav-1);
+
+      if (mask & L_UP)
+	{
+	  if (cav && Snail.Idle() && Hero->TracePtr < 0)
+	    {
+	      SwitchCave(cav);
+	    }
+	  #ifdef  DEBUG
+	  if (! HorzLine.Flags.Hide)
+	    {
+	      if (y >= MAP_TOP && y < MAP_TOP+MAP_HIG)
+		{
+		  signed char x1, z1;
+		  XZ(x, y).Split(x1, z1);
+		  CLUSTER::Map[z1][x1] = 1;
+		  SetMapBrick(x1, z1);
+		}
+	    }
+	  else
+	  #endif
+	    {
+	      if (! Talk && Snail.Idle() && Hero
+		  && y >= MAP_TOP && y < MAP_TOP+MAP_HIG && ! Game)
+		{
+		  Hero->FindWay(XZ(x, y));
+		}
+	    }
+	}
+    }
+}
+
+
+
+
+
+
+
+void SYSTEM::Tick (void)
+{
+  if (! Startup) if (-- FunDel == 0)
+    {
+      KillText();
+      if (Snail.Idle())
+	{
+	  if (PAIN) HeroCover(9);
+	  else if (STARTUP::Core >= CORE_MID)
+	    {
+	      int n = random(100);
+	      if (n > 96) HeroCover(6+(Hero->X+Hero->W/2 < SCR_WID/2));
+	      else
+		{
+		  if (n > 90) HeroCover(5);
+		  else
+		    {
+		      if (n > 60) HeroCover(4);
+		      else  HeroCover(3);
+		    }
+		}
+	    }
+	}
+      FunTouch();
+    }
+  Time = SYSTIMERATE;
+}
+
+
+
+
+
+
+
+
+
+
+//--------------------------------------------------------------------------
+
+
+
+/*
+static void SpkOpen (void)
+{
+  asm	in	al,0x61
+  asm	or	al,0x03
+  asm	out	0x61,al
+  asm	mov	al,0x90
+  asm	out	0x43,al
+}
+
+
+
+
+
+static void SpkClose (void)
+{
+  asm	in	al,0x61
+  asm	and	al,0xFC
+  asm	out	0x61,al
+}
+
+*/
+
+
+
+static void SwitchColorMode (void)
+{
+  SNPOST_(SNSEQ, 121, VGA::Mono = ! VGA::Mono, NULL);
+  KeyClick();
+  VGA::SetColors(SysPal, 64);
+}
+
+
+
+static void SwitchMusic (void)
+{
+  if (KEYBOARD::Key[ALT])
+    {
+      if (VMENU::Addr) SNPOST_(SNKILL, -1, 0, VMENU::Addr);
+      else
+	{
+	  SNPOST_(SNSEQ, 122, (Music = FALSE), NULL);
+	  SNPOST(SNEXEC, -1, 0, (void *) SelectSound);
+	}
+    }
+  else
+    {
+      if (STARTUP::Core < CORE_HIG) SNPOST(SNINF, -1, NOMUSIC_TEXT, NULL);
+      else
+	{
+	  SNPOST_(SNSEQ, 122, (Music = ! Music), NULL);
+	  KeyClick();
+	}
+    }
+  if (Music) LoadMIDI(Now);
+  else KillMIDI();
+}
+
+
+
+
+
+static void StartCountDown (void)
+{
+  //SNPOST(SNSEQ, 123, 0, NULL);
+  SwitchCave(-1);
+}
+
+
+
+
+#ifndef	DEMO
+static void TakeName (void)
+{
+  if (GET_TEXT::Ptr) SNPOST_(SNKILL, -1, 0, GET_TEXT::Ptr);
+  else
+    {
+      GET_TEXT * tn = new GET_TEXT(Text[GETNAME_PROMPT], UsrFnam, 8, KeyClick);
+      if (tn)
+	{
+	  tn->SetName(Text[GETNAME_TITLE]);
+	  tn->Center();
+	  tn->Goto(tn->X, tn->Y - 10);
+	  tn->Z = 126;
+	  VGA::ShowQ.Insert(tn);
+	}
+    }
+}
+#endif
+
+
+
+
+
+#ifdef  DEBUG
+
+
+static void SwitchMapping (void)
+{
+  if (HorzLine.Flags.Hide)
+    {
+      int i;
+      for (i = 0; i < MAP_ZCNT; i ++)
+	{
+	  int j;
+	  for (j = 0; j < MAP_XCNT; j ++)
+	    {
+	      if (CLUSTER::Map[i][j])
+		SetMapBrick(j, i);
+	    }
+	}
+    }
+  else
+    {
+      SPRITE * s;
+      for (s = VGA::ShowQ.First(); s; s = s->Next)
+	if (s->W == MAP_XGRID && s->H == MAP_ZGRID)
+	  SNPOST_(SNKILL, -1, 0, s);
+    }
+  HorzLine.Flags.Hide = ! HorzLine.Flags.Hide;
+}
+
+
+
+
+
+static void KillSprite (void)
+{
+  Sprite->Flags.Kill = TRUE;
+  Sprite->Flags.BDel = TRUE;
+  SNPOST_(SNKILL, -1, 0, Sprite);
+  Sprite = NULL;
+}
+
+
+
+
+
+static void PushSprite (void)
+{
+  SPRITE * spr = Sprite->Prev;
+  if (spr)
+    {
+      VGA::ShowQ.Insert(VGA::ShowQ.Remove(Sprite), spr);
+      while (Sprite->Z > Sprite->Next->Z) -- Sprite->Z;
+    }
+  else SNPOST_(SNSOUND, -1, 2, NULL);
+}
+
+
+
+
+
+static void PullSprite (void)
+{
+  Boolean ok = FALSE;
+  SPRITE * spr = Sprite->Next;
+  if (spr)
+    {
+      spr = spr->Next;
+      if (spr)
+	{
+	  ok = (! spr->Flags.Slav);
+	}
+    }
+  if (ok)
+    {
+      VGA::ShowQ.Insert(VGA::ShowQ.Remove(Sprite), spr);
+      if (Sprite->Prev)
+	while (Sprite->Z < Sprite->Prev->Z) ++ Sprite->Z;
+    }
+  else SNPOST_(SNSOUND, -1, 2, NULL);
+}
+
+
+
+
+
+
+static void NextStep (void)
+{
+  SNPOST_(SNSTEP, 0, 0, Sprite);
+}
+
+
+
+
+
+
+
+
+
+static void SaveMapping (void)
+{
+  {
+    IOHAND cf(ProgName(".TAB"), UPD);
+    if (! cf.Error)
+      {
+	cf.Seek((Now-1) * sizeof(CLUSTER::Map));
+	cf.Write((byte far *) CLUSTER::Map, sizeof(CLUSTER::Map));
+      }
+  }
+  {
+    IOHAND cf(ProgName(".HXY"), WRI);
+    if (! cf.Error)
+      {
+	HeroXY[Now-1].X = Hero->X;
+	HeroXY[Now-1].Y = Hero->Y;
+	cf.Write((byte far *) HeroXY, sizeof(HeroXY));
+      }
+  }
+}
+
+#endif
+
+
+
+//--------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+#ifdef	DEBUG
+
+
+
+			 //              1111111111222222222233333333 334444444444555555555566666666667777777777
+			 //    01234567890123456789012345678901234567 890123456789012345678901234567890123456789
+static	char	DebugText[] = " N=00000 F=000000 X=000 Y=000 FPS=0000\0S=00:00 000:000:000 000:000 00  ";
+
+#define	NFRE	(DebugText +  3)
+#define	FFRE	(DebugText + 11)
+#define	ABSX	(DebugText + 20)
+#define	ABSY	(DebugText + 26)
+#define	FRPS	(DebugText + 34)
+#define	XSPR	(DebugText + 38)
+#define	SP_N	(DebugText + 41)
+#define	SP_S	(DebugText + 44)
+
+#define	SP_X	(DebugText + 47)
+#define	SP_Y	(DebugText + 51)
+#define	SP_Z	(DebugText + 55)
+#define	SP_W	(DebugText + 59)
+#define	SP_H	(DebugText + 63)
+#define	SP_F	(DebugText + 67)
+#define SP__    (DebugText + 70)
+
+INFO_LINE	DebugLine(SCR_WID);
+
+static void SayDebug (void)
+{
+  if (! DebugLine.Flags.Hide)
+    {
+      static long t = -1L;
+      long t1 = Timer();
+
+      if (t1 - t >= 18)
+	{
+	  static dword old = 0L;
+	  dword now = Vga.FrmCnt;
+	  dwtom(now - old, FRPS, 10, 4);
+	  old = now;
+	  t = t1;
+	}
+
+      dwtom(Mouse.X, ABSX, 10, 3);
+      dwtom(Mouse.Y, ABSY, 10, 3);
+      dwtom(coreleft(), NFRE, 10, 5);
+      dwtom(farcoreleft(), FFRE, 10, 6);
+
+      // sprite queue size
+      word n = 0;
+      SPRITE * spr;
+      for (spr = VGA::ShowQ.First(); spr; spr = spr->Next)
+	{
+	  ++ n;
+	  if (spr == Sprite)
+	    {
+	      *XSPR = ' ';
+	      dwtom(n, SP_N, 10, 2);
+	      dwtom(Sprite->X, SP_X, 10, 3);
+	      dwtom(Sprite->Y, SP_Y, 10, 3);
+	      dwtom(Sprite->Z, SP_Z, 10, 3);
+	      dwtom(Sprite->W, SP_W, 10, 3);
+	      dwtom(Sprite->H, SP_H, 10, 3);
+	      dwtom(*(word *) (&Sprite->Flags), SP_F, 16, 2);
+	    }
+	}
+      dwtom(n, SP_S, 10, 2);
+      *SP__ = (heapcheck() < 0) ? '!' : ' ';
+      DebugLine.Update(DebugText);
+    }
+}
+
+
+
+
+
+static void SwitchDebug (void)
+{
+  DebugLine.Flags.Hide = ! DebugLine.Flags.Hide;
+}
+
+
+
+#endif
+
+
+
+
+
+
+static void OptionTouch (int opt, word mask)
+{
+  switch (opt)
+    {
+      case 1 : if (mask & L_UP) SwitchColorMode(); break;
+      case 2 : if (mask & L_UP) SwitchMusic();
+	       else
+		 if (mask & R_UP)
+		   if (! MIXER::Appear)
+		     {
+		       MIXER::Appear = TRUE;
+		       new MIXER(BUTTON_X, BUTTON_Y);
+		     }
+	       break;
+      case 3 : if (mask & L_UP) Quit(); break;
+    }
+}
+
+
+
+
+
+#pragma argsused
+void SPRITE::Touch (word mask, int x, int y)
+{
+  SYSTEM::FunTouch();
+  if ((mask & ATTN) == 0)
+    {
+      InfoLine.Update(Name());
+      if (mask & (R_DN | L_DN)) Sprite = this; // DEBUG mode only?
+      if (Ref/10 == 12)
+	{
+	  OptionTouch(Ref % 10, mask);
+	  return;
+	}
+      if (Flags.Syst) return;		// cannot access system sprites
+      if (Game) if (mask & L_UP) { mask &= ~L_UP; mask |= R_UP; }
+      if ((mask & R_UP) && Snail.Idle())
+	{
+	  SPRITE * ps = (PocLight.SeqPtr) ? Pocket[PocPtr] : NULL;
+	  if (ps)
+	    {
+	      if (Flags.Kept || Hero->Distance(this) < MAX_DISTANCE)
+		{
+		  if (Works(ps))
+		    {
+		      FeedSnail(ps, TAKE);
+		    }
+		  else OffUse();
+		  SelectPocket(-1);
+		}
+	      else TooFar();
+	    }
+	  else
+	    {
+	      if (Flags.Kept) mask |= L_UP;
+	      else
+		{
+		  if (Hero->Distance(this) < MAX_DISTANCE)
+		    {///
+		      if (Flags.Port)
+			{
+			  if (FindPocket(NULL) < 0) PocFul();
+			  else
+			    {
+			      SNPOST(SNREACH, -1, -1, this);
+			      SNPOST(SNKEEP, -1, -1, this);
+			      Flags.Port = FALSE;
+			    }
+			}
+		      else
+			{
+			  if (TakePtr != NO_PTR)
+			    {
+			      if (SnList(TAKE)[TakePtr].Com == SNNEXT) OffUse();
+			      else FeedSnail(this, TAKE);
+			    }
+			  else OffUse();
+			}
+		    }///
+		  else TooFar();
+		}
+	    }
+	}
+      if ((mask & L_UP) && Snail.Idle())
+	{
+	  if (Flags.Kept)
+	    {
+	      int n;
+	      for (n = 0; n < POCKET_NX; n ++)
+		{
+		  if (Pocket[n] == this)
+		    {
+		      SelectPocket(n);
+		      break;
+		    }
+		}
+	    }
+	  else  SNPOST(SNWALK, -1, -1, this); // Hero->FindWay(this);
+	}
+    }
+}
+
+
+
+
+
+
+
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+
+
+
+
+
+static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int row = 0, int pos = 0)
+{
+  static char * Comd[] = { "Name", "Type", "Phase", "East",
+			   "Left", "Right", "Top", "Bottom",
+			   "Seq", "Near", "Take",
+			   "Portable", "Transparent",
+			   NULL };
+  static char * Type[] = { "DEAD", "AUTO", "WALK", "NEWTON", "LISSAJOUS",
+			   "FLY", NULL };
+  char line[LINE_MAX];
+
+  int shpcnt = 0;
+  int type = 0; // DEAD
+  Boolean east = FALSE;
+  Boolean port = FALSE;
+  Boolean tran = FALSE;
+  int i, lcnt = 0;
+  word len;
+
+  MergeExt(line, fname, SPR_EXT);
+  if (INI_FILE::Exist(line))		// sprite description file exist
+    {
+      INI_FILE sprf(line);
+      if (sprf.Error)
+	{
+	  VGA::Exit("Bad SPR", line);
+	}
+
+      while ((len = sprf.Read(line)) != 0)
+	{
+	  ++ lcnt;
+	  if (len && line[len-1] == '\n') line[-- len] = '\0';
+	  if (len == 0 || *line == '.') continue;
+
+	  if ((i = TakeEnum(Comd, strtok(line, " =\t"))) < 0)
+	    {
+	      VGA::Exit(NumStr("Bad line ######", lcnt), fname);
+	    }
+
+	  switch (i)
+	    {
+	      case  0 : // Name - will be taken in Expand routine
+			break;
+	      case  1 : // Type
+			if ((type = TakeEnum(Type, strtok(NULL, " \t,;/"))) < 0)
+			  VGA::Exit(NumStr("Bad line ######", lcnt), fname);
+			break;
+	      case  2 : // Phase
+			++ shpcnt;
+			break;
+	      case  3 : // East
+			east = (atoi(strtok(NULL, " \t,;/")) != 0);
+			break;
+	      case 11 : // Portable
+			port = (atoi(strtok(NULL, " \t,;/")) != 0);
+			break;
+	      case 12 : // Transparent
+			tran = (atoi(strtok(NULL, " \t,;/")) != 0);
+			break;
+	    }
+	}
+      if (! shpcnt)
+	{
+	  VGA::Exit("No shapes", fname);
+	}
+    }
+  else	// no sprite description: mono-shaped sprite with only .BMP file
+    {
+      ++ shpcnt;
+    }
+
+  // make sprite of choosen type
+  switch (type)
+    {
+      case 1 : // AUTO
+	       Sprite = new SPRITE(NULL);
+	       if (Sprite)
+		 {
+		   Sprite->Goto(col, row);
+		   //Sprite->Time = 1;//-----------$$$$$$$$$$$$$$$$
+		 }
+	       break;
+      case 2 : // WALK
+	       WALK * w = new WALK(NULL);
+	       if (w && ref == 1)
+		 {
+		   w->Goto(col, row);
+		   if (Hero)
+		     {
+		       VGA::Exit("2nd HERO", fname);
+		     }
+		   Hero = w;
+		 }
+	       Sprite = w;
+	       break;
+	       /*
+      case 3 : // NEWTON
+	       NEWTON * n = new NEWTON(NULL);
+	       if (n)
+		 {
+		   n->Ay = (bottom-n->H);
+		   n->By = 90;
+		   n->Cy = 3;
+		   n->Bx = 99;
+		   n->Cx = 3;
+		   n->Goto(col, row);
+		 }
+	       Sprite = n;
+	       break;
+	       */
+      case 4 : // LISSAJOUS
+	       VGA::Exit("Bad type", fname);
+	       /*
+	       LISSAJOUS * l = new LISSAJOUS(NULL);
+	       if (l)
+		 {
+		   l->Ax = SCR_WID/2;
+		   l->Ay = SCR_HIG/2;
+		   l->Bx = 7;
+		   l->By = 13;
+		   l->Cx = 300;
+		   l->Cy = 500;
+		   * (long *) &l->Dx = 0; // movex * cnt
+		   l->Goto(col, row);
+		 }
+	       Sprite = l;
+	       */
+	       break;
+      case 5 : // FLY
+	       FLY * f = new FLY(NULL);
+	       Sprite = f;
+	       //////Sprite->Time = 1;//-----------$$$$$$$$$$$$$$
+	       break;
+      default: // DEAD
+	       Sprite = new SPRITE(NULL);
+	       if (Sprite) Sprite->Goto(col, row);
+	       break;
+    }
+  if (Sprite)
+    {
+      Sprite->Ref = ref;
+      Sprite->Cave = cav;
+      Sprite->Z = pos;
+      Sprite->Flags.East = east;
+      Sprite->Flags.Port = port;
+      Sprite->Flags.Tran = tran;
+      Sprite->Flags.Kill = TRUE;
+      Sprite->Flags.BDel = TRUE;
+      fnsplit(fname, NULL, NULL, Sprite->File, NULL);
+      Sprite->ShpCnt = shpcnt;
+      VGA::SpareQ.Append(Sprite);
+    }
+}
+
+
+
+
+
+
+static void LoadScript (const char *fname)
+{
+  char line[LINE_MAX];
+  char * SpN;
+  int SpI, SpA, SpX, SpY, SpZ;
+  Boolean BkG = FALSE;
+  INI_FILE scrf(fname);
+  int lcnt = 0;
+  Boolean ok = TRUE;
+
+  if (scrf.Error) return;
+
+  while (scrf.Read(line) != 0)
+    {
+      char *p;
+
+      ++ lcnt;
+      if (*line == 0 || *line == '\n' || *line == '.') continue;
+
+      ok = FALSE;	// not OK if break
+      // sprite ident number
+      if ((p = strtok(line, " \t\n")) == NULL) break;
+      SpI = atoi(p);
+      // sprite file name
+      if ((SpN = strtok(NULL, " ,;/\t\n")) == NULL) break;
+      // sprite cave
+      if ((p = strtok(NULL, " ,;/\t\n")) == NULL) break;
+      SpA = atoi(p);
+      // sprite column
+      if ((p = strtok(NULL, " ,;/\t\n")) == NULL) break;
+      SpX = atoi(p);
+      // sprite row
+      if ((p = strtok(NULL, " ,;/\t\n")) == NULL) break;
+      SpY = atoi(p);
+      // sprite Z pos
+      if ((p = strtok(NULL, " ,;/\t\n")) == NULL) break;
+      SpZ = atoi(p);
+      // sprite life
+      if ((p = strtok(NULL, " ,;/\t\n")) == NULL) break;
+      BkG = atoi(p) == 0;
+
+      ok = TRUE;	// no break: OK
+
+      Sprite = NULL;
+      LoadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
+      if (Sprite && BkG) Sprite->Flags.Back = TRUE;
+    }
+  if (! ok)
+    {
+      VGA::Exit(NumStr("Bad INI line ######", lcnt), fname);
+    }
+}
+
+
+
+
+static void MainLoop (void)
+{
+#if 0
+//def DEBUG
+  static VgaRegBlk Mode[] = {
+
+		    { 0x04, VGASEQ, 0x08, 0x04 },	// memory mode
+
+		    { 0x03, VGAGRA, 0xFF, 0x00 },	// data rotate = 0
+		    { 0x05, VGAGRA, 0x03, 0x00 },	// R/W mode = 0
+		    { 0x06, VGAGRA, 0x02, 0x00 },	// misc
+
+		    { 0x14, VGACRT, 0x40, 0x00 },	// underline
+		    { 0x13, VGACRT, 0xFF, 0x28 },	// screen width
+		    { 0x17, VGACRT, 0xFF, 0xC3 },	// mode control
+
+		    { 0x11, VGACRT, 0x80, 0x00 },	// vert retrace end
+		    { 0x09, VGACRT, 0xEF, 0x01 },	// max scan line
+
+		    { 0x30, VGAATR, 0x00, 0x20 },	// 256 color mode
+
+//		    { 0x12, VGACRT, 0xFF, 0x6E },	// vert display end
+//		    { 0x15, VGACRT, 0xFF, 0x7F },	// start vb
+//		    { 0x10, VGACRT, 0xFF, 0x94 },	// start vr
+
+		    { 0x00                     } };
+
+  Vga.Setup(Mode);
+#endif
+
+  Debug( SayDebug(); )
+
+  #ifdef DEMO
+    #define TIM ((182L*6L) * 5L)
+    static dword tc = 0;
+    if (TimerCount - tc >= TIM && Talk == NULL && Snail.Idle())
+      {
+	if (Text[DemoText])
+	  {
+	    SNPOST(SNSOUND,  -1, 4, NULL); // drumla
+	    SNPOST(SNINF,  -1, DemoText, NULL);
+	    SNPOST(SNLABEL, -1, -1, NULL);
+	    if (Text[++ DemoText] == NULL) DemoText = DEMO_TEXT + 1;
+	  }
+	tc = TimerCount;
+      }
+    #undef TIM
+  #endif
+
+  Vga.Show();
+  Snail_.RunCom();
+  Snail.RunCom();
+}
+
+
+
+
+
+void LoadUser (void)
+{
+  // set scene
+  if (STARTUP::Mode == 0) // user .SVG file found
+    {
+      LoadGame(CFILE(UsrPath(UsrFnam), REA, RCrypt));
+    }
+  else
+    {
+      if (STARTUP::Mode == 1) LoadGame(SVG0FILE(SVG0NAME));
+      else
+	{
+	  LoadScript(ProgName(INI_EXT));
+	  Music = TRUE;
+	  SaveGame(CFILE(SVG0NAME, WRI));
+	  VGA::Exit("Ok", SVG0NAME);
+	}
+    }
+  LoadScript(ProgName(IN0_EXT));
+}
+
+
+
+
+
+static void RunGame (void)
+{
+  Text.Clear();
+  Text.Preload(100, 1000);
+  LoadHeroXY();
+
+  CavLight.Flags.Tran = TRUE;
+  VGA::ShowQ.Append(&CavLight);
+  CavLight.Flags.Hide = TRUE;
+
+  static SEQ PocSeq[] = { { 0, 0, 0, 0, 20 },
+			  { 1, 2, 0, 0,  4 },
+			  { 2, 3, 0, 0,  4 },
+			  { 3, 4, 0, 0, 16 },
+			  { 2, 5, 0, 0,  4 },
+			  { 1, 6, 0, 0,  4 },
+			  { 0, 1, 0, 0, 16 },
+			};
+  PocLight.SetSeq(PocSeq);
+  PocLight.Flags.Tran = TRUE;
+  PocLight.Time = 1;
+  PocLight.Z = 120;
+  VGA::ShowQ.Append(&PocLight);
+  SelectPocket(-1);
+
+  VGA::ShowQ.Append(&Mouse);
+
+//    ___________
+      LoadUser();
+//    ~~~~~~~~~~~
+
+  if ((Sprite = VGA::SpareQ.Locate(121)) != NULL)
+    SNPOST_(SNSEQ, -1, VGA::Mono, Sprite);
+  if ((Sprite = VGA::SpareQ.Locate(122)) != NULL) Sprite->Step(Music);
+    SNPOST_(SNSEQ, -1, Music, Sprite);
+  if (! Music) KillMIDI();
+
+  if (Mini && INI_FILE::Exist("MINI.SPR"))
+    {
+      byte far * ptr = (byte far *) &*Mini;
+      if (ptr != NULL)
+	{
+	  LoadSprite("MINI", -1, 0, MINI_X, MINI_Y);
+	  ExpandSprite(MiniCave = Sprite);	// NULL is ok
+	  if (MiniCave)
+	    {
+	      MiniCave->Flags.Hide = TRUE;
+	      MiniCave->MoveShapes(ptr);
+	      MiniShp[0] = new BITMAP(*MiniCave->Shp());
+	      MiniShpList = MiniCave->SetShapeList(MiniShp);
+	      PostMiniStep(-1);
+	    }
+	}
+    }
+
+  if (Hero)
+    {
+      ExpandSprite(Hero);
+      Hero->Goto(HeroXY[Now-1].X, HeroXY[Now-1].Y);
+      if (INI_FILE::Exist("00SHADOW.SPR"))
+	{
+	  LoadSprite("00SHADOW", -1, 0, Hero->X + 14, Hero->Y + 51);
+	  if ((Shadow = Sprite) != NULL)
+	    {
+	      Shadow->Ref = 2;
+	      Shadow->Flags.Tran = TRUE;
+	      Hero->Flags.Shad = TRUE;
+	      VGA::ShowQ.Insert(VGA::SpareQ.Remove(Shadow), Hero);
+	    }
+	}
+    }
+
+  InfoLine.Goto(INFO_X, INFO_Y);
+  InfoLine.Flags.Tran = TRUE;
+  InfoLine.Update(NULL);
+  VGA::ShowQ.Insert(&InfoLine);
+
+  #ifdef DEBUG
+    DebugLine.Z = 126;
+    VGA::ShowQ.Insert(&DebugLine);
+
+    HorzLine.Y = MAP_TOP - (MAP_TOP > 0);
+    HorzLine.Z = 126;
+    VGA::ShowQ.Insert(&HorzLine);
+  #endif
+
+  Mouse.Busy = VGA::SpareQ.Locate(BUSY_REF);
+  if (Mouse.Busy) ExpandSprite(Mouse.Busy);
+
+  Startup = 0;
+
+  SNPOST(SNLEVEL, -1, OldLev, &CavLight);
+  CavLight.Goto(CAVE_X + ((Now-1) % CAVE_NX) * CAVE_DX + CAVE_SX,
+		CAVE_Y + ((Now-1) / CAVE_NX) * CAVE_DY + CAVE_SY);
+  CaveUp();
+
+  KEYBOARD::SetClient(Sys);
+  // main loop
+  while (! Finis)
+    {
+      if (FINIS) SNPOST(SNEXEC,  -1, 0, (void *) QGame);
+      MainLoop();
+    }
+
+  KEYBOARD::SetClient(NULL);
+  HEART::Enable = FALSE;
+  SNPOST(SNCLEAR, -1, 0, NULL);
+  SNPOST_(SNCLEAR, -1, 0, NULL);
+  Mouse.Off();
+  VGA::ShowQ.Clear();
+  VGA::SpareQ.Clear();
+  Hero = NULL;
+  Shadow = NULL;
+}
+
+
+
+
+void Movie (const char * ext)
+{
+  const char * fn = ProgName(ext);
+  if (INI_FILE::Exist(fn))
+    {
+      LoadScript(fn);
+      ExpandSprite(VGA::SpareQ.Locate(999));
+      FeedSnail(VGA::ShowQ.Locate(999), TAKE);
+      VGA::ShowQ.Append(&Mouse);
+      HEART::Enable = TRUE;
+      KEYBOARD::SetClient(Sys);
+      while (! Snail.Idle())
+	{
+	  MainLoop();
+	}
+      KEYBOARD::SetClient(NULL);
+      HEART::Enable = FALSE;
+      SNPOST(SNCLEAR, -1, 0, NULL);
+      SNPOST_(SNCLEAR, -1, 0, NULL);
+      VGA::ShowQ.Clear();
+      VGA::SpareQ.Clear();
+    }
+}
+
+
+
+
+
+
+Boolean ShowTitle (const char * name)
+{
+  BITMAP::Pal = SysPal;
+  BMP_PTR LB[] =  { new BITMAP(name), NULL };
+  BITMAP::Pal = NULL;
+  Boolean usr_ok = FALSE;
+
+  SPRITE D(LB);
+  D.Flags.Kill = TRUE;
+  D.Flags.BDel = TRUE;
+  D.Center();
+  D.Show(2);
+
+  if (STARTUP::Mode == 2)
+    {
+      Inf(SVG0NAME);
+      Talk->Show(2);
+    }
+
+  Vga.Sunset();
+  VGA::CopyPage(1, 2);
+  VGA::CopyPage(0, 1);
+  SelectPocket(-1);
+  Vga.Sunrise(SysPal);
+
+  if (STARTUP::Mode < 2 && ! STARTUP::SoundOk)
+    {
+      VGA::CopyPage(1, 2);
+      VGA::CopyPage(0, 1);
+      VGA::ShowQ.Append(&Mouse);
+      HEART::Enable = TRUE;
+      Mouse.On();
+      for (SelectSound(); ! Snail.Idle() || VMENU::Addr; ) MainLoop();
+      Mouse.Off();
+      HEART::Enable = FALSE;
+      VGA::ShowQ.Clear();
+      VGA::CopyPage(0, 2);
+      STARTUP::SoundOk = 2;
+      if (Music) LoadMIDI(0);
+    }
+
+  if (STARTUP::Mode < 2)
+    {
+      #ifdef	DEMO
+      strcpy(UsrFnam, ProgName(SVG_EXT));
+      usr_ok = TRUE;
+      #else
+      //-----------------------------------------
+      #ifndef EVA
+	#ifdef CD
+	  STARTUP::Summa |= (0xC0 + (DriveCD(0) << 6)) & 0xFF;
+	#else
+	  Boot * b = ReadBoot(getdisk());
+	  dword sn = (b->XSign == 0x29) ? b->Serial : b->lTotSecs;
+	  free(b);
+	  sn -= ((IDENT *)Copr)->disk;
+	  STARTUP::Summa |= Lo(sn) | Hi(sn);
+	#endif
+      #endif
+      //-----------------------------------------
+      Movie("X00"); // paylist
+      VGA::CopyPage(1, 2);
+      VGA::CopyPage(0, 1);
+      VGA::ShowQ.Append(&Mouse);
+      //Mouse.On();
+      HEART::Enable = TRUE;
+      for (TakeName(); GET_TEXT::Ptr; ) MainLoop();
+      HEART::Enable = FALSE;
+      if (KEYBOARD::Last() == Enter && *UsrFnam) usr_ok = TRUE;
+      if (usr_ok) strcat(UsrFnam, SVG_EXT);
+      //Mouse.Off();
+      VGA::ShowQ.Clear();
+      VGA::CopyPage(0, 2);
+      #endif
+      if (usr_ok && STARTUP::Mode == 0)
+	{
+	  const char *n = UsrPath(UsrFnam);
+	  if (CFILE::Exist(n))
+	    {
+	      LoadGame(CFILE(n, REA, RCrypt), TRUE); // only system vars
+	      VGA::SetColors(SysPal, 64);
+	      Vga.Update();
+	      if (FINIS)
+		{
+		  ++ STARTUP::Mode;
+		  FINIS = FALSE;
+		}
+	    }
+	  else ++ STARTUP::Mode;
+	}
+    }
+
+  if (STARTUP::Mode < 2) Movie("X01"); // wink
+
+  VGA::CopyPage(0, 2);
+
+  #ifdef DEMO
+    return TRUE;
+  #else
+    return (STARTUP::Mode == 2 || usr_ok);
+  #endif
+}
+
+
+
+
+/*
+#ifdef DEBUG
+void StkDump (void)
+{
+  CFILE f("!STACK.DMP", BFW);
+  f.Write((byte far *) (intStackPtr-STACK_SIZ/2), STACK_SIZ*2);
+}
+#endif
+*/
+
+
+
+
+void main (void)
+{
+  word intStack[STACK_SIZ/2];
+  intStackPtr = intStack;
+
+  //Debug( memset((void *) (-K(2)), 0, K(1)); )
+  //Debug( memset((void *) (-K(4)), 0, K(1)); )
+  memset(Barriers, 0xFF, sizeof(Barriers));
+
+  if (! Mouse.Exist) VGA::Exit(NO_MOUSE_TEXT);
+  if (! SVG0FILE::Exist(SVG0NAME)) STARTUP::Mode = 2;
+
+  Debug( DebugLine.Flags.Hide = TRUE; )
+  Debug( HorzLine.Flags.Hide = TRUE; )
+
+  srand((word) Timer());
+  Sys = new SYSTEM;
+
+  if (Music && STARTUP::SoundOk) LoadMIDI(0);
+  if (STARTUP::Mode < 2) Movie(LGO_EXT);
+  if (ShowTitle("WELCOME"))
+    {
+      #ifndef	DEMO
+      if (STARTUP::Mode == 1) Movie("X02"); // intro
+      #endif
+      RunGame();
+      Startup = 2;
+      if (FINIS) Movie("X03");
+    }
+  else Vga.Sunset();
+  VGA::Exit(EXIT_OK_TEXT+FINIS);
+}

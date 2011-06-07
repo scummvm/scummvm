@@ -1,0 +1,55 @@
+Comparing files CGE.CPP and CGE.OLD
+***** CGE.CPP
+
+#define         STACK_SIZ       (K(2))
+***** CGE.OLD
+
+//#define               JAREK           1
+
+#define         STACK_SIZ       (K(2))
+*****
+
+***** CGE.CPP
+
+#ifdef  DEMO
+***** CGE.OLD
+
+#ifdef JAREK
+  #define       SVG0NAME        "CGE.SV0"
+  #define       SVG0FILE        CFILE
+#else
+#ifdef  DEMO
+*****
+
+***** CGE.CPP
+#endif
+
+***** CGE.OLD
+#endif
+#endif
+
+*****
+
+***** CGE.CPP
+
+        char    Copr[] = "Common Game Engine    version 1.00 ["
+                                                       #if sizeof(INI_FILE) == sizeof(VFILE)
+***** CGE.OLD
+
+        char    Copr[] = "Common Game Engine    version 0.92 ["
+                                                       #if sizeof(INI_FILE) == sizeof(VFILE)
+*****
+
+***** CGE.CPP
+  if (Music && STARTUP::SoundOk) LoadMIDI(0);
+  if (STARTUP::Mode < 2) Movie(LGO_EXT);
+  if (ShowTitle("WELCOME"))
+***** CGE.OLD
+  if (Music && STARTUP::SoundOk) LoadMIDI(0);
+  #ifndef JAREK
+  if (STARTUP::Mode < 2) Movie(LGO_EXT);
+  #endif
+  if (ShowTitle("WELCOME"))
+*****
+
+

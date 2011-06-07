@@ -1,0 +1,10 @@
+type=AUTO
+name=Doc
+East=1
+
+phase=06drfrr0
+
+Seq= 0 -2 0  0  10
+Seq= 0 -1 2  0   5
+Seq= 0  1 2 -1   5
+

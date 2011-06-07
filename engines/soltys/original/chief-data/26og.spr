@@ -1,0 +1,15 @@
+type=auto
+phase=26og1
+phase=26og2
+phase=26og3
+phase=26og4
+phase=26og5
+phase=26og6
+
+Seq= 0  -1   0   0   15
+Seq= 1  -1   0   0   15
+Seq= 2  -1   0   0   15
+Seq= 3  -1   0   0   15
+Seq= 4  -1   0   0   15
+Seq= 5   0   0   0   15
+

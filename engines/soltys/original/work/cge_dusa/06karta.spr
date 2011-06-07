@@ -1,0 +1,21 @@
+name=7 of diamonds
+type=dead
+East=1
+phase=06karta
+
+Portable=1
+
+Take= REACH,6001,    0
+Take= SWAP, 4103, 4203     ulepszenie §ar¢wy
+Take= NEXT, 5010,    8     ulepszenie drutu
+Take= SEND,   -1,   -1     bye!
+Take= SAY,  6011, 6101     thanx
+Take= NEXT    -1    -1
+
+.6.
+Take= REACH,6001,    0
+Take= SWAP, 4103, 4303     ulepszenie §ar¢wy
+Take= SEND,   -1,   -1     bye!
+Take= SAY,  6011, 6101     thanx
+Take= NEXT    -1     0
+

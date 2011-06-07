@@ -1,0 +1,82 @@
+name=The postman
+type=auto
+
+phase=11listo0    0
+phase=11listo1    1
+phase=11listo2    2
+phase=11listo3    3
+phase=11lisobr    4
+phase=11listo4    5
+phase=11listo5    6
+phase=11liswl0    7
+phase=11liswl1    8
+phase=11liswl2    9
+phase=11liswl3    10
+phase=11likop0    11
+phase=11likop1    12
+phase=11lisie1    13
+phase=11lisie2    14
+
+Seq= 0  3  0  0  72  hopsa
+Seq= 0 11  0  0  25  gada
+Seq= 4 23  0  0  20  w’azi/z’azi/gotowy
+
+.3 hopsa
+Seq= 1 -1  0  0  20
+Seq= 0 -1  0 -1  10
+Seq= 2 -1  0 -4  10
+Seq= 3 -1  0 -2   7
+Seq= 3 -1  0  2   7
+Seq= 2 -1  0  4  10
+Seq= 0 -1  0  1  10  ...9
+Seq= 1  0  0  0  20
+
+.11 gada
+Seq= 4 -1  0  0  12
+Seq= 5 -1  0  0  24
+Seq= 6 -1  0  0  16
+Seq= 5 -1  0  0  12
+Seq= 6 -1  0  0  16
+Seq= 5 -1  0  0  16
+Seq= 6 -1  0  0  12
+Seq= 5 -1  0  0  24
+Seq=11 -1  0  0  16
+Seq=12 -1  0  0  16
+Seq= 5 -1  0  0  16
+Seq=12 -2  0  0  16
+
+.23 w’azi
+Seq= 7 -1  3   -6 20
+Seq= 8 -1  3   -6 20
+Seq= 9 -1  0   -6 20
+Seq=10 -1  0   -6 20
+Seq= 7 -1  0   -6 20
+Seq= 8 -1  0   -6 20
+
+Seq= 7 -1  0    0 20
+
+. grzebie
+
+Seq=13 -1  0    0 20
+Seq=14 -1  0    0 20
+Seq=13 -1  0    0 20
+Seq=14 -1  0    0 20
+Seq=13 -1  0    0 20
+Seq=14 -1  0    0 20
+Seq=13 -1  0    0 20
+
+. z’azi
+
+Seq= 8 -1  0    6 20
+Seq= 7 -1  0    6 20
+Seq=10 -1  0    6 20
+Seq= 9 -1  0    6 20
+Seq= 8 -1 -3    6 20
+Seq= 7  1 -3    6 20
+
+
+Near= RMNEAR -1     0
+Near= WAIT   -1     0
+Near= SEQ    -1     1
+Near= SAY    -1 11001
+

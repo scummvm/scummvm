@@ -1,9 +1,0 @@
-name=table
-type=dead
-phase=06stoli1
-
-Seq= 0  0  0  0  10  park
-Seq= 0 -1  0  0   5  move
-Seq= 0 -1  2  0   5
-Seq= 0  2  2 -1   5
-

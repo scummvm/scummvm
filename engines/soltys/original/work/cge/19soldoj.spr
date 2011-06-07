@@ -1,0 +1,29 @@
+name=so’tys
+type=auto
+east=1
+
+phase=00s0      0   stoi
+phase=00sw0     0   stoi
+phase=00w0      0   stoi
+phase=00bnw1    1   wyciaga reke
+phase=19doi1    2   doi
+phase=19doi2    3
+
+Seq= 0  0   0   0  16
+
+Seq= 1 -1   0   0  16
+Seq= 2 -1   0   0  16
+Seq= 3 -1   0   0  16
+Seq= 4 -1   0   0  24
+Seq= 5 -1   0   0  24
+Seq= 4 -1   0   0  24
+Seq= 5 -1   0   0  24
+Seq= 4 -1   0   0  24
+Seq= 5 -1   0   0  24
+Seq= 4 -1   0   0  24
+Seq= 5 -1   0   0  24
+Seq= 4 -1   0   0  24
+Seq= 3 -1   0   0  16
+Seq= 2 -1   0   0  16
+Seq= 1  0   0   0  16
+

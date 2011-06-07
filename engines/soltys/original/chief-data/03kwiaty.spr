@@ -1,0 +1,24 @@
+type=AUTO
+name=A bunch
+east=1
+phase=03kwiat0
+phase=03kwiat1
+phase=03kwiat2
+phase=03kwiat3
+phase=03kwiat4
+
+Seq= 0 0   0   0   5		0
+
+Seq= 0 2   0   0   5		0
+Seq= 1 3  17   0   5		1
+Seq= 2 4   2  22   5		2
+Seq= 3 5   0  22   5		3
+Seq= 4 6   0   4   5		4
+Seq= 4 6   0   0   5		4
+
+
+Take= RMTAKE -1    0
+Take= REACH  -1   -1
+Take= SEQ    -1    1
+Take= SOUND  -1 3006  brzd‘k!
+

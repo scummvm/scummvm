@@ -1,0 +1,15 @@
+name=She Who Stalks Behind the Rows
+type=auto
+
+phase=12babie0
+phase=12babie1
+phase=12babie2
+phase=12babie3
+
+Seq= 0  1  0  0 105
+Seq= 1  2  0  0 105
+Seq= 2  3  0  0 105
+Seq= 3  4  0  0 150
+Seq= 2  5  0  0 105
+Seq= 1  0  0  0 105
+

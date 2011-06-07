@@ -1,0 +1,26 @@
+type=auto
+name=Otto the Firefighter
+
+phase=06stra00
+phase=06stra01
+phase=06stra02
+phase=06stra03
+phase=06stra04
+phase=06stra05
+
+
+Seq=  0  2  0  0 165            0
+Seq=  0 -1  0  0 110            1
+Seq=  1 -1  0  0  15            2
+Seq=  2 -1  0  0  10            3
+Seq=  3 -1  0  0  15            4
+Seq=  2 -1  0  0   5            5
+Seq=  4 -1  0  0   5            6
+Seq=  5  1  0  0  10            7
+
+
+Take= REACH   -1     -1
+Take= SOUND   -1   6001
+Take= SAY      1   6103
+Take= SAY     -1   6104
+

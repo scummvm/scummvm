@@ -1,0 +1,13 @@
+name=decha
+type=auto
+phase=05decha1
+phase=05decha2
+phase=05decha3
+phase=05decha4
+
+seq=  0  1  0  0  100
+seq=  1  2  0  0  10
+seq=  2  3  0  0  10
+seq=  3  4  0  0  10
+seq=  2  5  0  0  10
+seq=  1  0  0  0  10

@@ -1,0 +1,12 @@
+type=DEAD
+
+Transparent=1
+
+phase=0001p
+phase=0019p
+phase=0021p
+
+Seq= 0  0  0  0  0
+Seq= 1  1  0  0  0
+Seq= 2  2  0  0  0
+

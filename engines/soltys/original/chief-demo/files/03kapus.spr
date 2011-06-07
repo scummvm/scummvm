@@ -1,0 +1,10 @@
+Type=DEAD
+Name=heap of cabbage
+
+Phase=03kapus
+
+Take= REACH    -1    -1
+Take= SEQ    3001     1  baba gada
+Take= SAY    3001  3115
+
+

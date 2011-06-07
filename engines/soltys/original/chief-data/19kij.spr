@@ -1,0 +1,16 @@
+name=A handle
+type=dead
+phase=19kij0
+phase=19kijmin
+
+
+Take= TNEXT   19010     1  unlock drzwi
+Take= REACH      -1    -1
+Take= KEEP       -1     1
+Take= NEXT       -1    -1
+
+Take= REACH   19008    -1  do wide’
+Take= SOUND   19008 19005  myk!
+Take= SWAP    19008 19108  naprawione
+Take= SEND       -1    -1  kij won
+

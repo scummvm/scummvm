@@ -1,0 +1,7 @@
+Type=DEAD
+
+Phase=dummy
+
+Take= SEND   -1    -1
+Take= CAVE   -1    26
+

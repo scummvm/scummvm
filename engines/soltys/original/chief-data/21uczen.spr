@@ -1,0 +1,17 @@
+name=Jed the Hooky-player
+type=auto
+east=1
+phase=21uczen0
+phase=21uczen1
+phase=21uczen2
+phase=21uczen3  po b¢jce
+
+Seq= 0  1   0   0 150
+Seq= 1  2   0   0  25
+Seq= 2  0   0   0  35
+
+
+Take= REACH   -1    -1
+Take= SAY      1 21018
+Take= SAY     -1 21019
+

@@ -1,0 +1,23 @@
+name=lampa nocna
+type=auto
+east=1
+
+phase=24lampa0
+phase=24lampa1
+
+Seq= 0  0  0  0  5
+Seq= 1  2  0  0  5
+Seq= 0  3  0  0  5
+Seq= 1  4  0  0 15
+Seq= 0  1  0  0  5
+
+Take=REACH -1 -1
+Take=SOUND -1 24007
+Take=SEQ   -1  1
+Take=NEXT  -1 -1
+
+Take=REACH -1 -1
+Take=SOUND -1 24007
+Take=SEQ   -1  0
+Take=NEXT  -1  0
+

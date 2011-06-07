@@ -1,0 +1,37 @@
+name=babcia Jadzia
+type=auto
+
+phase=22baba0
+phase=22baba1
+phase=22baba2
+phase=22baba3
+phase=22baba4
+
+
+Seq= 0  1   0   0 150
+Seq= 1  2   0   0  10
+Seq= 2  3   0   0  10
+Seq= 1  4   0   0  10
+Seq= 2  5   0   0  10
+Seq= 1  6   0   0  10
+Seq= 2  7   0   0  10
+Seq= 1  8   0   0  10
+Seq= 0  9   0   0  10
+Seq= 3 10   0   0  10
+Seq= 4 11   0   0  10
+Seq= 3 12   0   0  10
+Seq= 4 13   0   0  10
+Seq= 3 14   0   0  10
+Seq= 4  0   0   0  10
+
+Near= NEXT    -1     -2  locked (TNEXT from 21zdjec)
+
+Near= RMNEAR  -1      0
+Near= SOUND   -1  22002  hehe!
+Near= SAY     -1  22002
+Near= REACH   -1     -1
+Near= SOUND   -1      3  szu!
+Near= SEND 22008     22
+Near= KEEP 22008     -1
+Near= SAY      1  22004
+

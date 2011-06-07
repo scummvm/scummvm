@@ -1,0 +1,35 @@
+name=necklace
+type=auto
+phase=08koral0
+phase=08koral1
+phase=08koral2
+
+Seq= 0  0   0   0  12  wisz†
+Seq= 0  3   0   1  16  lec†
+Seq= 2 -2   0   0  12  zdobi†
+
+Seq= 0 -1   0   2   6
+Seq= 0 -1   0   4   6
+Seq= 0 -1   0   8   6
+Seq= 0 -1   0  16   6
+Seq= 0 -1   0  32   6
+Seq= 0 -1   0  51   6
+Seq= 1 -2   0   0  10  le§†
+
+
+Take= NEXT        -1      -2  locked
+
+Take= REACH    18001      -1  daj cygance
+Take= RMTAKE      -1       0  pasywne
+Take= HIDE        -1       1  korale znik
+Take= GIVE        -1       2  naszyjne
+Take= SETX        -1     176
+Take= SETY        -1      65
+Take= SETZ        -1       9
+Take= HIDE        -1       0  pojaw
+
+Take= RMNEAR   18001       0  koniec §al¢w
+Take= SEND     18009      18  lubczyk
+Take= SEQ      18001       1  gada
+Take= SAY      18001   18002  tekst
+

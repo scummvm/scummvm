@@ -1,0 +1,20 @@
+name=Sausage
+type=DEAD
+phase=03kielb3
+
+
+Take=REACH,     -1,     -1
+Take=SEQ,     3001,      3  baba bije
+Take=SOUND      -1    3004  dup!
+Take=NEXT       -1      -3  loop
+
+.4.
+Take=REACH    4010       2  do psa
+Take=SEND       -1      -1  kie’b. won
+Take=SEND     4015       4  dawaj kie’b
+Take=SEQ      4010       1  jedz psem
+Take=SOUND    4010    4005  dobry!
+Take=RMNEAR   4010       0  szczekanie won
+...Take=NAME     4010    4401  dobry pies
+Take=SETVB       4      -1  bariera won
+

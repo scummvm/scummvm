@@ -1,0 +1,39 @@
+name=Chief
+type=auto
+east=1
+
+phase=00s0         0
+phase=00sw0        1
+phase=00w0         2
+phase=00bww1       3  siega
+phase=00bww2       4  zbiera kosci
+phase=20solgr1     5  potrzasa dol
+phase=20solgr2     6  j.w.  gora
+phase=20solgr3     7  rzuca kosci
+phase=20solgr4     8  schyla sie
+phase=20solgrx     9  zbiera kosci
+
+Seq= 0  0   0   0  15
+
+Seq= 1 -1   0   0  15
+Seq= 2 -1   0   0  15
+Seq= 3 -1   0   0  15
+Seq= 4 -1   0   0  15
+Seq= 8 -1   0   0  15  5
+Seq= 9 -1 -14   0  15
+Seq= 8 -1  14   0  15
+Seq= 5 -1   0   0  15
+Seq= 6 -1   0   0  15
+Seq= 5 -1   0   0  15
+Seq= 6 -1   0   0  15
+Seq= 5 -1   0   0  15
+Seq= 6 -1   0   0  15
+Seq= 5 -1   0   0  15
+Seq= 8 -1   0   0  15  15
+Seq= 7 -1 -14   0  25
+Seq= 8 -1  14   0  15
+Seq= 4 -1   0   0  15
+Seq= 3 -1   0   0  15
+Seq= 2 -1   0   0  15
+Seq= 1  0   0   0  15
+

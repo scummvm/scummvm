@@ -1,0 +1,22 @@
+type=AUTO
+name=Chief
+east=1
+
+phase=00w0
+phase=00bww1
+phase=00bww2
+phase=00bww3
+phase=00bww4
+phase=00bww5
+
+Seq=  0 -2   0  0 10
+Seq=  2 -1  -9  0 10
+Seq=  3 -1   0  0 10
+Seq=  4 -1   0  0 10
+Seq=  5 -1   0  0 10
+Seq=  4 -1   0  0 10
+Seq=  3 -1   0  0 10
+Seq=  2 -1   0  0 10
+Seq=  1 -1   0  0 10
+Seq=  0  0   9  0 10
+

@@ -1,0 +1,18 @@
+name=A tennis net
+type=dead
+phase=11siatk0
+phase=11siatk2
+phase=dummy
+East=1
+
+
+Seq= 0  0  0  0  0
+Seq= 1  1  0  0  0
+Seq= 2  2  0  0  0
+
+
+Take= REACH,   -1  -1
+Take= SEQ      -1   2  ukryj
+Take= KEEP, 11105   1  poka§ mini
+Take= RMTAKE   -1   0
+

@@ -1,6 +1,0 @@
-name=dog house
-type=DEAD
-phase=01buda
-
-Take=SAY, -1, 1040
-

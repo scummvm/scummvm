@@ -1,0 +1,27 @@
+name=Chief
+type=auto
+
+phase=21zdj0       0  rece opuscone w prawej zdjecie en face
+phase=21zdjgl1     1  podnosi reke ze zdjeciem en face
+phase=21zdjgl2     2  podnosi j.w.
+phase=21zdjgl3     3
+phase=00sw0        4  obrot
+phase=22zdj1       5  stoi bok reka ze zjeciem w gorze
+phase=22zdj2       6  kuca
+phase=22zdj3       7  kucnal, zabija swinie
+phase=00s0         8
+
+Seq= 8  0   0   0  15
+
+Seq= 0 -1   0   0  15
+Seq= 1 -1   0   0  15
+Seq= 2 -1   0   0  15
+Seq= 3 -1   0   0  55
+Seq= 4 -1   0   0  10
+Seq= 5 -1   0   0  15
+Seq= 6 -1   0   0  15
+Seq= 7 -1   0   0 144
+Seq= 6 -1   0   0  15
+Seq= 5 -1   0   0  15
+Seq= 4  0   0   0  15
+

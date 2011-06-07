@@ -1,0 +1,22 @@
+type=AUTO
+name=Chief
+east=1
+
+phase=00s0         .0
+phase=15oplut0     .1  en face opluty
+phase=15oplut1     .2  patrzy w bok j.w.
+phase=15oplu2a     .3  podnosi reke
+phase=15oplu3a     .4  sciera
+phase=15oplu4a     .5  opuszcza reke czysty
+phase=15oplut5     .6  patrzy w bok j.w.
+
+Seq= 0  0  0  0  15		0 park
+
+Seq= 1 -1  0  0  35		1
+Seq= 2 -1  0  0  25		2
+Seq= 3 -1  0  0  10		3
+Seq= 4 -1  0  0  10		4
+Seq= 5 -1  0  0  10		5
+Seq= 6  0  0  0  15		6
+
+

@@ -1,0 +1,11 @@
+name=chusta cyga¤ska
+type=dead
+east=1
+
+phase=18chust2
+
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1 18005  gada
+Take= SAY       1 18006  gada
+

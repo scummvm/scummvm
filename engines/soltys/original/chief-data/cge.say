@@ -1,0 +1,368 @@
+   10=ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   11= ÚÄ¿ÚÄ¿¿ ÚÂ¿¿ ÚÚÄ¿   an adventure game
+   12= ÀÄ¿³ ³ÃÙ ³ ÀÂÙÀÄ¿  Copyright (c) 1995
+   13= ÄÄÙÀÄÙÀÄÙÁ  Á ÄÄÙ     L.K. AVALON
+   14=ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   40=See you next time!
+   41=Congratulations!  That's all for now.  Until next time...
+   50=Please enter your name:
+
+   51=Set Type of Sound Card and/or External MIDI Synthesizer
+   52=Set Port Address for Sound Card
+   53=Set IRQ Number for Sound Card
+   54=Set DMA Channel for Sound Card
+   55=Set Port Number for General MIDI
+   56=Sound Card Configuration
+
+   60=No Sound Card
+   61=Sound Blaster
+   62=SoundBlaster + General MIDI
+   63=Gravis UltraSound
+   64=Gravis UltraSound + General MIDI
+   65 General MIDI only
+   66=Automatic configuration
+
+   90=You will need VGA Card to run the program!
+   91=You will need 80286 Processor or newer to run the program!
+   92=Invalid DOS!  You will need 3.30 Version or higher!
+   93=Insufficient RAM!  You will need 600KB or more!
+   94=This computer is too slow!
+   95=Mouse necessary to run the program!
+   96=Invalid parameter!
+
+   98=Insufficient RAM!|Cannot Play Back!
+   99=Invalid File Structure of Game Status!
+
+  101=Information
+  102=A balloon
+  105=Volume Control
+
+  200=Do you want to quit?
+  201=O.K.  I have enough of the game!
+  202=Whoops!  A mistake!  I shall continue!
+
+  300=DEMO
+
+  600=20
+  601=I don't think this is a very good idea!
+  602=Oouch!  You'd better use your wits!
+  603=Woosh!  Something wicked has come over you!
+  604=Nope.  You can't go that way!
+  605=If you can't work it out, 'haps somebody else will give you a hand.
+  606=So you can't do anything more...
+  607=Hope you'll gain by the experience.
+  608=I'm uneasy.  Dunno what to say.
+  609=Well, you dunno what to do.  Cheer up!  I dunno either.
+  610=You know what? You'd better have a rest.|Get a sleep or something else...
+  611=Haven't been proposed such a funny stuff for ages!
+  612=So what am I supposed to do?
+  613=Perhaps you could make profits of that.  It's good for nothing to me!
+  614=How about trying from the other side?
+  615=Haven't you got anything better to do, have you?
+  616=O.K.  Take my post then!.|You'll see it's not a piece of cake.
+  617=Oh, I would never dare try!
+  618=Huh, I'm dumb they say.  Whossat Mr.Trigger?
+  619=What if it goes from bad to worse?
+  620=I wouldn't try it again!
+
+  671=I ain't going there!
+
+  681=Can't do anything from that range!
+
+  691=And where do you want me to stick it, Mr.Wise Guy?
+
+  777=What manners!  What behavior!  You bumpkin!|Know where you could stick your fingers into?
+
+ 1001=Why you're sitting on the fence?
+ 1002=Roofs are poor in self-defense!
+ 1003=Are you the Frog Prince?
+ 1004=Hit the road, you kink!|Are you tired of your wife?|Hey folks!  The lunatic is on the grass!
+ 1005=And don't come back without Leon, you bungler!
+ 1006=Actually I ain't a suicide!|Will be back with Leon at any cost.
+ 1007=Thanks.  I ain't hungry.
+ 1008=Won't be appropriate as a buttonhole.
+ 1009=After all I haven't got a suit.
+ 1011=Oouch!  Let me go or I'll pluck out your mustache!
+ 1012=Oouch!  Let me go or I'll scratch out your eyes!
+ 1015=Everybody knows that taste, huh?
+ 1016=A drop of honey would serve your stomach.
+ 1017=Anyhow ye folks like it!
+ 1018=Yum-yum!  It's delicious!
+ 1040=What?  You've never seen a kennel?
+ 1050=Gurgle-gurgle!  Splash!
+ 1060=Arrrgh!  Bow-wow-wow!
+
+ 2001=There at last!  Where've you been so long?|Take this card, Chief!|The chaps lost it here yesterday.
+ 2002=Sss-screech!|Sss-screech!|Sss-screech!
+ 2003=You may take it for a while|but give it back in a minute.  I need it!
+ 2004=Hey Mr.Chauffeur!
+ 2005=Don't fiddle-faddle!  Can't you see a man at work?
+ 2006=What use does this bus stop have while the bus has got spoiled!
+ 2007=Who stuck all these matchsticks here?
+ 2008=Where am I to find such a big striking surface?
+
+ 3001=Thah thum, th thomtheth whth thah mouth.  Eh phehs anh phehs!
+ 3002=Dear chum, do something with that mouse.  It peeps and peeps!
+ 3003=And have some sausage in reward!
+ 3004=Never!  The late hubbie of that widow tried it recently.
+ 3005=An onion a day keeps your oomph away, they say.
+ 3006=Hands off the widow's mite or I'll bite!
+ 3007=Feel fine, won't go!
+ 3008=Look at that imperialistic gadget!|And them misleading ads of theirs!
+ 3009=Meow-meow!
+ 3014=Squeak-squeak!
+ 3015=           ÿ
+ 3021=Oouch!  Frosty!|Could freeze your hands!
+
+ 4001=Hrrr-hrrr!
+ 4002=Bow-wow-wow!  Arrrgh!
+ 4003=Can't use it without a doolley-whoopus!
+ 4004=Would be suitable for a boat...
+ 4005=The heck with the boat!  I haven't got an oar!
+ 4006=Would be suitable for an oar...
+ 4007=The heck with the oar!  I haven't got a boat!
+ 4008=Them loonies!  Have drunk all the stuff.
+ 4009=Sleeping like a log...
+ 4010=Hey you!  Have you popped in at my shed by chance, have you?
+ 4011=Would like to have some tea...
+ 4012=The kettle's somewhat cold...
+
+ 5001=Remember when u-uncle was looking for|some u-underground parties, and dug the square?
+ 5002=Where's that smoke from?  Fire!|Ooh, it's you.  What is it?
+ 5003=Your own fire is pleasant on a nice and windless day.
+ 5004=Whassat?  The graphics professional must be very inventive!
+ 5005=It doesn't make a sense....
+ 5006=Looks like for making wind...
+
+ 6001=A bullet for the master, a bulllet for the dame.
+ 6002=The queen of hearts, she made some tarts.
+ 6003=All hearts off deck!
+ 6004=The knave of hearts, he stole the tarts!
+ 6005=Diamonds are the punter's best friends.
+ 6006=All clubs to pubs!
+
+ 6007=Play that Spade again, Sam!
+ 6008=Who invades..?
+ 6009=...the ace of spades!
+ 6010=A ten in time can spare you the dime.
+ 6011=Lucky in cards...
+ 6012=...in love he retards!
+
+ 6013=Hit the queen!  The king will begin!
+ 6014=Beware ye folks!  No table talks!
+ 6015=Hardly a ten can please all men.
+ 6016=He who plays spades will need no blades.
+ 6017=Diamonds are forever.  It's all now or never!
+ 6018=Spades in trips will get you grips!
+
+ 6101=Thanks Chief!  This one card was missing.
+ 6102=Oouch!
+ 6103=Sorry!
+ 6104=Don't you disturb, fellow!  Can't you see men at play?|If you've got something for us, leave it on the table.
+ 6105=Oh, no!  It's too difficult!|Can't do it without help!
+ 6106=It's been padlocked.
+ 6107=It's been locked.
+
+ 6201=Haul your bottom, you rag!
+ 6202=What a cool bulb!
+ 6203=Where do you think we are to screw it in, huh?
+ 6204=Why not?  We can boost the nob, can't we?
+ 6205=Isn't this your card by accident?
+
+ 7001=The reverend vicar keeps the wine under lock and key...|Haven't you a little something, say a sip or two?
+ 7002=What an excellent liquor!  That's what I've longed for.|Looking for the vicar?  He's been working at the vestry.
+ 7003=What a foul pee!  Who do you think I am, Chief!|It's good just for the panhandler from the ruined manor-house.
+
+ 8001=I've got a merciless toothache!
+ 8002=More light!  Let's have a look...
+ 8003=There!  Feeling relief now!  Thanks very much!
+ 8004=You're welcome!  And beware of the horse!|It is awfully upset|especially when a fly gets on its rear.
+ 8005=Nope.  I ain't that dumb to get some bruises from Willow Fortune.
+ 8006=I'm shrewd and crafty!
+
+ 9001=Achoo!  O.K.  Stop it please!  I had a dream|the devil was tickling me with his tail.
+ 9002=Hey old man!  Take away that rooster!|It's blocking my way!
+ 9003=You take it if you can.  Bad 'cause hungry.|Feed it and it gives way.
+ 9004=What can I get for that beast?  Everything around's been eaten up.
+ 9005=Pick up some colorado beetles on the red|beet plantation. Use that bucket.
+ 9006=Heck!  I won't touch that stuff.
+ 9007=Won't run after it all day long!
+ 9008=The right food is in fashion these days, they say.
+ 9010=Mmmh-zzzh!
+ 9011=Shoo, shoo!  Away!
+ 9012=Cackle-cackle!
+ 9101=Q-q!  Q-q!
+ 9201=Live poultry fodder.
+
+10001=Who's the heck kicking up a row?|Hit the road or I'll spank your mug!  I mean it!
+10002=And you don't scoff, Joe!  You'd better go picking up the beetles.
+10003=May I help you?  I'd love to pick up colorado beetles.
+10004=Well then!  See that bush near Grandpa Have-It?|That's our plantation.
+10005=Providing it hasn't been eaten up yet.
+10011=Sure!
+10015=Don't like that red stuff!
+
+11001=The trees grow fast these days!|Last week I could reach the top...
+11002=I've got a letter here.  Someone's forgotten to put in the address.|You know the folks so take it and be helpful.
+11003=What a monster!  Apparently it doesn't like me.
+11004=Seems to be quite deserted!
+11005=The bees have gone!
+11006=Perhaps they didn't pay the rent?
+11007=Gaggle-gaggle!
+
+12001=The cuckoo's been broken and started to smell.
+12002=Hope this brand-new cuckoo will do!| Have something in return.
+12003=You must get a thing-a-ma-jig first!
+12004=Leave that stuff!  It's not mine.  I borrowed it from Hilda.
+12005=Much travelling teaches you how to see.
+
+13001=Mmmh, mh mmh.  Mh mmmhmmh mh|mmh mmh mmmhmmh mmmh mh mmh mmmmmh.
+13002=Well, my son.  So deliver it|and I'm getting back to the picket.
+13003=God bless you, my son.  See you at the wedding.
+13005=Sorry, father, for that confusion at the wedding.|What about trying again this Sunday?
+13006=Sorry, but I didn't get that.
+13007=Mmmh-mmh!
+13008=Do you think I'm a stamp-collector or what?
+13009=What a low voice!  I didn't understand a word.
+13010=Good gracious!
+13011=God forbid!
+
+14001=Anything on Knott shot?
+14002=Hot shot?
+14003=Knott shot! In a duel with Shott.
+14004=Not.
+14005=Not?
+14006=Not!
+14007=Any other latest editions?
+14008=They haven't dropped yet.
+14009=Anything on Shott?
+14010=Not!
+14011=Three point fifty.
+14012=Here.
+14013=And your change.
+14014=Thanks.
+14015=Twelve point seventy.
+14016=You're welcome.
+14021=What is it?  Can't you read plain English?
+14022=Get lost or even you'll get a punch!
+14023=I prefer safe sex.
+
+15001=Where are the pics?
+15002=What pics?
+15003=Look here.  The application's O.K.  But there are no photos.
+15004=What application?
+15005=It's your daughter's. She wants a passport.|Er... no photos, no passport.
+15006=I'm terribly busy.  Would you come another day?
+15007=007, are you there?
+
+16001=Howdy, Chief!
+16002=Howdy, Hilda!  How are you getting on?
+16003=I'm bored stiff...  How about playing er... strip-seat?
+16004=Why not?
+16005=The fellow's always hungry.
+16006=O.K.  Will have a great fun!
+16007=So off we go!  Turn round and let your trunks away!
+16008=Guess who hit you?
+16009=Huh!  I win!  Take it off, sister!
+16010=Sit down at the table.
+16011=Er...  I'd better stand up.
+16012=Wanna play again?
+16021=I hate that sour taste!
+
+17001=Ooh!  What a stinkbomb!  Can't pass it by!
+17002=Is that you, Chief?  Quick!  Fetch me a fresh newspaper.
+17003=The paper's great. But why is it that cold?
+17004=We were reveling all night with Photographer.| Were it not for milk, I'd be lying like him.
+17005=He's got the devil in his eyes!
+17006=I won't peep at the bottom!
+
+18001=Chief, my dearie!  Haven't you seen my coral necklace?
+18002=Yes, it's my necklace!  What could I do in return?|See this herb?  It's a lovage, the best way|to light your fire.  A few drops of a love potion will do!
+18003=I'm not of the kind you thought me!
+18004=Meoow-meoow!
+18005=Well, it turns me on|dressing up as a lady...
+18006=But I'm ashamed a bit!
+
+19001=Moo-moo-moo!
+19002=Must be out of order.
+19003=Won't set my hand to that!
+19004=Milk's so cheap, why buy a cow?
+19005=Try and fill the basket now!
+19006=A good cow, an evil calf.
+19007=Load the basket and a half!
+19008=The cow knows what her tail's worth.
+19009=Pack the basket now and forth!
+
+20001=Ooh, wouldn't you play "Eighteen" for money?
+20002=But alas, the vicar took the dice away.
+20003=I win!  I win!
+20004=Lucky you!  Take the change, you don't need the bucks.
+20005=Congratulations!  The bucks are yours, you don't need the change.
+20006=Look!  The goat has eaten up my winnings!
+20007=Er... everybody may say so!
+20010=O.K.  You roll the bones, Chief!
+20011=It's my turn now!
+20012=Now it's me!
+20021=Ssh!  Chief, you dummy clown!|Can't you see the dice've been ALTed?
+20022=What?  Can't you get it?|Keep the ALT key pressed when rolling!
+
+21001=A spur in the head and make for bed!
+21002=S-show s-some res-s-pect...
+21003=Oh, give it up and leave me alone!
+21004=Why, why?  Stop beating me!
+21005=As a certain judge used to say:|"Never mix your liquor."
+21006=I s-swear!  I'll n-never have a d-drop again.
+21007=What Leon's photo?|I've got only a negative.
+21008=Peggy Sue will love it!
+21011=There's no the face!
+21012=Damn!  But I can't lift the camera.
+21013=O.K.  This one seems right.
+21014=I a-always do m-my best.
+21015=Hands off you blockhead!|I've been waiting for the Little Prince!
+21016=Gosh!  They said this guy would never reach that far!|Let somebody call in the designer to finish the game.
+21017=No time like the present!
+21018=Why aren't you at school?
+21019=It's useless to go to school.  You're educated|and so what?  Where's your son-in-law?
+21020=School's out today as our head's been missing somewhere.
+21021=The spirit is willing...
+21022=Stop pinching me, father!  R U 2..?
+
+22001=What a fine herb!  Will make a fine potion.|And do away with that swine in the meantime.
+22002=You got over Arnold very well.|And your potion's ready.  Keep this vial.
+22003=Oink-oink-oink!
+22004=Thanks!
+22005=Hey grannie!  You didn't tell me|he likes that well-sharpened hardware!
+22006=You should have done it!
+22007=Well, my fair lady.  Can you distill a gulp from that weed?
+
+23001=Nothing!  It's been padlocked!
+
+24001=Beat it!  You old twerp!
+24002=Howdy, my loved father-in-law!
+24003=Well, follow me my dearie!|The folks are waiting at the church.
+24004=A gulp of wine and winds are mine, they say.
+24005=Damn the sweets!  Moonshine is it!
+
+25001=Righto!  But don't shut out the monitor!
+25002=Well, my little flower princess!|The years go by and it's time to marry you off.
+25003=The decission is difficult,|to choose the right one from among so many...
+25004=To tell you the truth there weren't any!
+25005=So we both have chosen you a hubbie!|Look at this photo.  That's him.  What you say?
+
+26001=Do you daughter take Leon to husband?
+26002=Er... yeah, I do.
+26003=Do you Leon take Chief's daughter to wife?
+26004=Er... aah!
+26005=Er... eeh!
+26006=Er... ooh!
+26007=Is there anybody to check the fuse?
+
+26011=What a lark!  F-fuc...
+26012=...f-fact!  Leon has beat a hasty retreat!
+26013=O.K.  So may I go now?
+
+26020=Leoon!  Wait!  I'm coming with you!
+
+28001=It's your fault!|Why didn't you stop him?
+28002=You must find him and bring back!  Get moving right now!
+

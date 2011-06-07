@@ -1,0 +1,13 @@
+name=
+type=dead
+east=1
+phase=dummy
+
+Near= SOUND  11004  11002  g‘!
+Near= SEQ        1      0
+Near= RELX       1     -8
+Near= WALK     133    142
+Near= SAY    11004  11007  g‘
+Near= WAIT       1     -1
+Near= SAY        1  11003
+

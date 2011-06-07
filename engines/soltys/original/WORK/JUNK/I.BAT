@@ -1,1 +1,0 @@
-@ed cge.ini

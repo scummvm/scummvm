@@ -1,0 +1,31 @@
+name=A pair of gloves
+type=dead
+phase=14reka
+
+Take= REACH      -1       -1
+Take= KEEP       -1       -1
+Take= WAIT        1       -1
+Take= WALK    14004       -1  podejd¦ do sprzed
+Take= SEQ     14004        1
+Take= SAY     14004    14011
+Take= REACH   14004       -1
+Take= SOUND   14004    14002  moneta
+Take= SAY         1    14012
+Take= SEQ     14004        1
+Take= SOUND   14004    14003  reszta
+Take= SAY     14004    14013
+Take= REACH   14004       -1
+Take= SOUND       1        3
+Take= SAY         1    14014
+Take= SEQ     14004        1
+Take= SAY     14004    14016
+Take= SEND    14999       14  przywo’aj auto-switch
+Take= NEXT       -1       -1
+
+
+Take= REACH    3011       -1  do drzwi
+Take= SOUND    3011     3008  skrzyp!
+Take= SEND       -1       -1  r‘kawiczki won
+Take= SEQ      3011        1  otw¢rz
+Take= TNEXT    3011        9  lock door opened
+

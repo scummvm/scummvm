@@ -1,0 +1,44 @@
+name=palenisko
+type=auto
+east=1
+
+phase=08ogien0  pali
+phase=08ogien1
+phase=08ogien2
+phase=08ogien3
+phase=08ogien4
+phase=08ogien5  i skrzy
+phase=08ogien6
+phase=08ogien7
+
+Seq= 0 -1  0  0 15
+Seq= 1 -1  0  0 10
+Seq= 2 -1  0  0 10
+Seq= 3 -1  0  0 10
+Seq= 4 -1  0  0 10
+Seq= 0 -1  0  0 10
+Seq= 1 -1  0  0 10
+Seq= 2 -1  0  0 10
+Seq= 3 -1  0  0 10
+Seq= 4 -1  0  0 10
+Seq= 2 -1  0  0 10
+Seq= 3 -1  0  0 10
+Seq= 4 -1  0  0 10
+Seq= 2 -1  0  0 10
+Seq= 3 -1  0  0 10
+Seq= 4 -1  0  0 10
+Seq= 5 -1  0  0  5
+Seq= 6 -1  0  0  5
+Seq= 7 -1  0  0  5
+Seq= 2 -1  0  0 10
+Seq= 3 -1  0  0 10
+Seq= 4 -1  0  0 10
+Seq= 0 -1  0  0 10
+Seq= 1 -1  0  0 10
+Seq= 2 -1  0  0 10
+Seq= 3 -1  0  0 10
+Seq= 4 -1  0  0 10
+Seq= 5 -1  0  0  5
+Seq= 6 -1  0  0  5
+Seq= 7  0  0  0  5
+

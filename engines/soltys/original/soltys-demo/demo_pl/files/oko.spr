@@ -1,0 +1,18 @@
+type=auto
+phase=oko0
+phase=oko1
+phase=oko2
+phase=oko3
+
+Seq= 0 -2  0  0  10  .0 park
+
+Seq= 0 -1  0  0  70
+Seq= 1 -1  0  0   8
+Seq= 2 -1  0  0   6
+Seq= 3 -1  0  0  35
+Seq= 2 -1  0  0   6
+Seq= 1  0  0  0   8
+
+Take= SEQ    -1,  1
+Take= WAIT   -1, -1
+

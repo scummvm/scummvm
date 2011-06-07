@@ -1,0 +1,25 @@
+Type=DEAD
+Name=
+East=0
+
+Phase=dummy
+
+Near= COVER     1   7101
+Near= SEQ    7101      1    do it!
+Near= SOUND  7101   7001    upadek!
+Near= WAIT   7101     -1    till end
+Near= SEQ       1      0    park
+Near= UNCOVER   1   7101
+Near= NEXT     -1     -3    (unlock from 04kask)
+
+.7
+Near= COVER       1  7201
+Near= SEQ      7201     1    kask w’¢§!
+Near= SEND     4002,   -1    kask won
+Near= WALK     7001    -1    do kožcielnego
+Near= WAIT     7201    -1    czekaj na stop
+Near= UNCOVER     1  7201    spocznij!
+Near= PAUSE      -1   111    czekaj do furtki
+Near= SEQ,     7005,    1    otwiera furtk‘
+Near= SEND      -1     -1    switch won
+

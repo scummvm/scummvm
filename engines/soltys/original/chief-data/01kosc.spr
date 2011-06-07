@@ -1,0 +1,15 @@
+name=A bone
+type=DEAD
+phase=01kosc
+
+Portable=1
+
+Take= LABEL, 1119   0
+Take= REACH, 1119, -1
+Take= SEQ,   1117, 16
+Take= RMNEAR 1117,  0
+Take= SETVB,   1,  -1
+Take= SEND,   -1,  -1
+Take= LEVEL,  -1,   1
+Take= SOUND   -1 1006 oklaski!
+

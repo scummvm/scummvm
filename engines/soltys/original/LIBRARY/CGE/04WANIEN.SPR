@@ -1,8 +1,0 @@
-name=wanienka murarska
-type=dead
-phase=04wanien
-
-Take= SAY   1 4004
-Take= NEXT -1   -1
-
-Take= SAY   1 4005

@@ -1,0 +1,27 @@
+type=AUTO
+name=A door
+phase=06drzwi0
+phase=06drzwi1
+phase=06drzwi2
+phase=06drzwi3
+phase=06drzwi4
+phase=06drzwi5
+
+Seq= 0 0 0 0 5		0 park
+Seq= 1 3 0 0 5		1 open
+Seq= 4 7 0 0 5		2 close
+
+Seq= 2 4 0 0 5		3
+Seq= 3 5 0 0 5		4
+Seq= 4 6 0 0 5		5
+Seq= 5 6 0 0 5		6
+
+Seq= 3 8 0 0 5		7
+Seq= 2 9 0 0 5		8
+Seq= 1 0 0 0 5		9
+
+
+Take= REACH  -1    -1
+Take= SOUND  -1  6001  drap!
+Take= SAY     1  6106  zamk
+

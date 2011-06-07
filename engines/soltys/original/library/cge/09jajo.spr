@@ -1,0 +1,26 @@
+name=nakrapiane jajo
+type=auto
+east=0
+
+phase=09jajo0
+phase=09jajo1
+phase=09jajo2
+phase=09jajo3
+phase=09jajo4
+
+Seq= 0  0  0  0  5
+Seq= 1 -1  0  0 10
+Seq= 2 -1  0  0 10
+Seq= 3 -1  0  0 10   3
+Seq= 4 -2  0  0 10
+
+Take=RMTAKE  -1    0
+Take=REACH   -1   -1
+Take=SOUND   -1 9006  stuk!
+Take=SEQ,    -1,   1
+Take=WAIT    -1    3
+Take=SEND  9007    9  dawaç qq
+Take=SOUND 9007 9007  qq!
+Take=SAY   9007 9101  qka
+
+

@@ -1,0 +1,14 @@
+type=AUTO
+name=empty bottle
+phase=01flach0
+
+Seq= 0 0 0 0  5		0
+
+Portable=1
+
+Take= LABEL 1118   0
+Take= REACH 1218  -1
+Take= SEND  1218  -1
+Take= SEND    -1  -1
+Take= SEND  1205   1
+

@@ -1,0 +1,65 @@
+type=AUTO
+name=baba
+
+phase=03baba00
+phase=03baba01
+phase=03baba02
+phase=03baba03
+phase=03baba04
+phase=03baba05
+phase=03bazla1		6
+phase=03bazla2		7
+phase=03bazla3		8
+phase=03bazla4		9
+
+
+Seq= 0  0   0   0  5		0	park
+Seq= 1  4   0   0 10		1	speak bz
+Seq= 1 10   0   0 10		2	speak zz
+Seq= 6 18 -22 -14  5		3	hit
+
+.4 speak bz
+Seq= 2 -1   0   0 16
+Seq= 3 -1   0   0 16
+Seq= 1 -1   0   0 16
+Seq= 3 -1   0   0 16
+Seq= 2 -1   0   0 16
+Seq= 3  0   0   0 16
+
+.10 spek zz
+Seq= 4 -1   0   0 16
+Seq= 5 -1   0   0 16
+Seq= 4 -1   0   0 16
+Seq= 2 -1   0   0 16
+Seq= 4 -1   0   0 16
+Seq= 5 -1   0   0 16
+Seq= 4 -1   0   0 16
+Seq= 1  0   0   0 16
+
+.18 hit
+Seq= 7 -1   0   0  6
+Seq= 8 -1   0   0  6
+Seq= 9 -1   0   0  6
+Seq= 8 -1   0   0  6
+Seq= 9 -1   0   0  6
+Seq= 8 -1   0   0  6
+Seq= 7 -1   0   0  6
+Seq= 6 -1   0   0  6
+Seq= 0  0  22  14  6
+
+Near= SEQ   3018    1
+Near= SOUND 3018 3001
+Near= SAY   3018 3014
+Near= SEQ     -1    1
+Near= SAY     -1 3001
+Near= NEXT    -1    0
+
+.6.                     from szcze:
+Near= SEQ   3018    1
+Near= SOUND 3018 3001
+Near= SAY   3018 3014
+Near= SEQ     -1    2
+Near= SAY     -1 3002
+Near= NEXT    -1    5
+
+

@@ -1,0 +1,8 @@
+name=A kennel
+type=DEAD
+phase=01buda
+
+Take= REACH    -1    -1
+Take= SOUND    -1  1007 puk puk
+Take= SAY      -1  1040
+
