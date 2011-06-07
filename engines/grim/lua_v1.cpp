@@ -755,6 +755,10 @@ void L1_UnShrinkBoxes() {
 // 	g_grim->getCurrScene()->shrinkBoxes(0);
 }
 
+/* Given a position and a size this function calculates and pushes
+ * the nearest point to that which will be valid if the boxes are
+ * shrunk by the amount specified.
+ */
 void L1_GetShrinkPos() {
 	lua_Object xObj = lua_getparam(1);
 	lua_Object yObj = lua_getparam(2);
