@@ -1,0 +1,36 @@
+type=AUTO
+name=so’tys
+
+phase=00s0      . 0 stoi en face
+phase=00se0     . 1 obrot
+phase=00e0      . 2 stoi bok
+phase=00wyp1    . 3 chwieje
+phase=00wyp2    . 4
+phase=00wyp3    . 5 w powietrzu
+phase=00wyp4    . 6 lezy
+phase=00wyp5    . 7 podnosi sie
+phase=00bne04   . 8 wstaje
+phase=00bne05   . 9
+phase=00bne06   . 10
+phase=00bne07   . 11
+phase=00bne08   . 12
+phase=00bne09   . 13
+
+Seq=  0  0    0   0  10		0     park
+
+Seq=  1  2    0   0  15		1
+Seq=  2  3    0   0  15		2
+Seq=  3  4    0   0  15		3
+Seq=  4  5    0   0  15		4
+Seq=  5  6   -4   0  15		5
+Seq=  6  7   -4   0  30		6
+Seq=  7  8    0   0  20		7
+Seq=  8  9    0   0  10		8
+Seq=  9 10    0   0  10		9
+Seq= 10 11    0   0  10		10
+Seq= 11 12    0   0  10		11
+Seq= 12 13    0   0  10		12
+Seq= 13 14    0   0  10		13
+Seq=  2 15    0   0  15        . 14
+Seq=  1  0    0   0  15        . 15
+

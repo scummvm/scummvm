@@ -1,0 +1,11 @@
+name=A colorado beetle
+type=dead
+east=1
+phase=dummy
+phase=09stonka
+
+
+Take= REACH  -1        1
+Take= SOUND  -1     9002
+Take= SAY     1     9006
+

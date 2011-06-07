@@ -1,0 +1,12 @@
+name=
+type=dead
+east=1
+phase=dummy
+
+Near= COVER     1  19101
+Near= SEQ   19101      1
+Near= SOUND 19101  19003  upadek!
+Near= WAIT  19101     -1  stoi
+Near= SEQ       1      0  park
+Near= UNCOVER   1  19101
+

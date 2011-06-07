@@ -1,0 +1,11 @@
+name=A spade
+type=dead
+East=1
+
+phase=04lopata
+
+Take= SAY   1 4006
+Take= NEXT -1   -1
+
+Take= SAY   1 4007
+

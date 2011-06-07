@@ -1,0 +1,17 @@
+Type=DEAD
+Name=koûç do gry
+
+Phase=20gam1
+Phase=20gam2
+Phase=20gam3
+Phase=20gam4
+Phase=20gam5
+Phase=20gam6
+
+Seq= 0 -2  0  0  0
+Seq= 1 -2  0  0  0
+Seq= 2 -2  0  0  0
+Seq= 3 -2  0  0  0
+Seq= 4 -2  0  0  0
+Seq= 5 -2  0  0  0
+

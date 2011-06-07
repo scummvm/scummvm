@@ -1,0 +1,11 @@
+name=The string of the starter
+type=dead
+phase=05sznur
+
+
+Take= REACH   -1    -1    chyç to!
+Take= COUNT   -1    18
+Take= SOUND   -1  5002    tur-tur-tur
+Take= SEQ   5017     1    smiglo +
+Take= TNEXT 5016     4    bëdzie o wietrze
+

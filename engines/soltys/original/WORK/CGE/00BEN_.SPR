@@ -1,0 +1,34 @@
+type=dead
+name=wiatr
+
+phase=dummy
+phase=00b01_
+phase=00b02_
+phase=00b03_
+phase=00b04_
+phase=00b05_
+phase=00b06_
+phase=00b07_
+phase=00b08_
+phase=00b09_
+phase=00b10_
+phase=00b11_
+phase=00b12_
+phase=00b13_
+
+Seq= 0 -2   0  0  12
+Seq= 1 -1   0  0   6
+Seq= 2 -1   0  0   6
+Seq= 3 -1   0  0   6
+Seq= 4 -1  -1  0   6
+Seq= 5 -1  -1  0   6
+Seq= 6 -1  -1  0   6
+Seq= 7 -1  -1  0   6
+Seq= 8 -1  -1  0   6
+Seq= 9 -1  -1  0   6
+Seq=10 -1  -2  0   6
+Seq=11 -1  -2  0   6
+Seq=12 -1  -2  0   6
+Seq=13  0  -2  0   6
+
+

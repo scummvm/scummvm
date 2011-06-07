@@ -1,0 +1,17 @@
+name=siatka do gry w pi’k‘
+type=dead
+
+phase=dummy
+phase=11siamin
+
+Take= REACH  11004    -1  wi‘¦ g‘ž
+Take= SEND      -1    -1  mini won
+Take= SOUND  11004 11003
+Take= SETX   11005   193
+Take= SETY   11005   116
+Take= SETZ   11005    17
+Take= SEQ    11005     1  wi‘zy
+Take= SEQ    11004     1  g‘ž nie macha
+Take= SEND   11011    -1  i nie straszy
+Take= RMTAKE    -1     0
+

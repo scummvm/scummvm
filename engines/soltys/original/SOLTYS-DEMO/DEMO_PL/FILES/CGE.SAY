@@ -1,0 +1,125 @@
+   10=ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   11=               ÚÄ¿ÚÄ¿¿ ÚÂ¿¿ ÚÚÄ¿
+   12= zwiastun gry  ÀÄ¿³ ³ÃÙ ³ ÀÂÙÀÄ¿
+   13=               ÄÄÙÀÄÙÀÄÙÁ  Á ÄÄÙ
+   14= Copyright (c)  1995 L.K. AVALON
+   15=ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   16=   ul. Targowa 1/1010, RZESZ0W
+   17=   tel. (017) 62-74-71 w. 275
+   18=ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   40=Do zobaczenia!
+   50=Podaj swoje imi‘:
+
+   51=wyb¢r typu posiadanej karty d¦wi‘kowej i ew. osobnego instrumentu MIDI
+   52=wyb¢r adresu portu dla karty d¦wi‘kowej
+   53=wyb¢r numeru przerwania IRQ dla karty d¦wi‘kowej
+   54=wyb¢r numeru kana’u DMA dla karty d¦wi‘kowej
+   55=wyb¢r numeru portu dla instrumentu General MIDI
+   56=konfiguracja karty d¦wi‘kowej
+
+   60=Brak karty d¦wi‘kowej
+   61=Sound Blaster
+   62=SoundBlaster + General MIDI
+   63=Gravis UltraSound
+   64=Gravis UltraSound + General MIDI
+   65=Tylko General MIDI
+   66=Automatyczna konfiguracja
+
+   90=Do uruchomienia tego programu potrzebna jest karta VGA!
+   91=Do uruchomienia tego programu potrzeba procesora co najmniej 80286!
+   92=Ten DOS jest niedobry - potrzeba wersji nie starszej od 3.30!
+   93=Niedostatek RAM-u - potrzeba co najmniej 550 KB!
+   94=Ten komputer jest zbyt wolny!
+   95=Do uruchomienia tego programu konieczna jest mysz!
+   96=Niepoprawny parametr!
+
+   99=Niepoprawna struktura pliku stanu gry!
+
+  101=informacja
+  102=dymek
+
+  200=weryfikacja zamiaru zako¤czenia
+  201=Dosy ju§ mam tej gry!
+  202=To pomy’ka, gram dalej
+
+  300=To jest zwiastun gry przygodowej "SOœTYS".|    Fabu’a pe’nej gry jest zupe’nie inna,|  cho ma podobny wygl†d i spos¢b obs’ugi.
+  301=W’anie up’yn‘’o kolejne kilka minut Twego §ycia!|Nie marnuj go wi‘cej! Biegnij kupi gr‘ "SOœTYS".
+  302=Ten "zwiastun" jest ca’kowicie gratis (FREEWARE)!|Mo§esz go powiela i rozdawa bez ogranicze¤,|ale TYLKO w oryginalnej postaci, bez §adnych zmian.
+  303=Pe’na gra "SOœTYS" oferuje odpowiednio wi‘cej|wysokoprocentowej rozrywki, a dodatkowa porcja|humoru zawarta jest w 32-stronicowej ksi†§ce!
+  304="SOœTYS" jest gr†, kt¢ra niepr‘dko si‘ nudzi!|10 Mb obraz¢w i d¦wi‘k¢w na pi‘ciu dyskietkach!|Do kompletu do’†czono kaset‘ z muzyk† - gratis!
+  305=Wraz z tytu’owym "SOœTYSEM" zwied¦ W†chock/Pora§/¡yki,|czyli legendarn† ju§ miejscowo, opisywan† w setkach|popularnych dowcip¢w. Rozpoznaj znane §arty i postacie!
+  306=Kupuj†c gr‘ "SOœTYS" u legalnego dystrybutora popierasz|rozw¢j dobrego polskiego oprogramowania, przyczyniasz si‘|do powstania nast‘pnych, lepszych i ciekawszych gier!
+  307=Proces instalacji gry "SOœTYS" zosta’ zautomatyzowany,|a szczeg¢’owa instrukcja obs’ugi pomo§e nawet laikom|w wi‘kszoci typowych, jak r¢wnie§ nietypowych sytuacji.
+  308=Dobrej zabawy §yczy wszystkim ekipa "SOœTYSA": Daniel|Kleczy¤ski, Miros’aw Liminowicz, Wojciech Mciwujewski,|œukasz Pisarek, Jaros’aw Syrylak, Janusz B. Winiewski.
+
+  600=10
+  601=Nie wydaje mi si‘, §eby to by’ dobry pomys’!
+  602=Eee... Wysil lepiej swoj† mak¢wk‘!
+  603=A c¢§ ci to do g’owy strzeli’o!
+  604=Nie, nie, t† metod† do niczego nie dojdziemy!
+  605=Je§eli nie dajesz sobie rady, to mo§e kto da ci rad‘...
+  606=To ju§ nie sta ci‘ na nic wi‘cej?
+  607=I co, tym sposobem chcesz co uzyska?
+  608=Jestem za§enowany. Nie wiem, co powiedzie.
+  609=Nie wiesz, co zrobi? Pociesz si‘, §e ja te§ nie wiem.
+  610=Wiesz co? Mo§e odpocznij troch‘. Przepij si‘, albo co...
+
+  615=Dawno ju§ nie proponowano mi czego r¢wnie g’upiego!
+
+  671=A w’anie §e tam nie p¢jd‘!
+  681=Z tej odleg’oci nie da si‘ nic zrobi!
+  691=A gdzie mam sobie to wetkn†, m†dralo?
+
+  777=A c¢§ to za maniery, ty jaki prostaku jeden!|Wiesz gdzie sobie mo§esz wsadzi te trzy palce?
+
+ 1001=Do czorta! Znowu si‘ zaci‘’y.
+ 1002=Brudne to, s‘kate, nijak w r‘kach nosi!
+ 1003=Spodziewasz si‘ czego wi‘cej? Nagrody? Nic z tego!| Tu nic si‘ tak prosto nie ko¤czy. Takie jest ¡YCIE.
+ 1004=Nie b‘d‘ niszczy’ mienia pocztowego...
+ 1005=...bez wyra¦nej potrzeby!
+
+ 2001=Nie masz tam czego dla kozy?|Ona zaraz zdechnie z g’odu!
+ 2002=Czy "zaraz" to jest taka du§a bakteria?
+ 2003=Ta kapusta b‘dzie dobra?
+ 2004=Fuj, nadgni’a z jednej strony. A jak mierdzi!
+ 2005=Wasza koza te§ niezgorzej pachnie!
+ 2006=A niech tam, w sumie to lepsze od tej tekturki,|com j† na czarn† godzin‘ trzyma’. We¦cie se j†!
+ 2010=Zostawcie w spokoju tego konia!
+ 2011=A co to? ˜winia si‘ wam spodoba’a?
+ 2012=Dajcie spok¢j kozie, ona i bez tego ledwie §yje!
+
+ 2101=œo Jezu! Paaaaj††††k!!!
+
+ 3001=Czy jest dla mnie jaka poczta?
+ 3002=Przecie§ nie jestem listonoszem.
+ 3003=Ale czy jest dla mnie jaka poczta??
+ 3004=Macie tu t‘ POCZT...
+ 3005=O tak, b‘dzie doskona’a na go’‘bnik!
+ 3006=Potrzymajcie mi na chwil‘ ten rubokr‘t...
+ 3007=A gdzie§ecie z tym rubokr‘tem ’azi’?
+ 3008=We¦cie se ten kartonik, mnie si‘ on na nic nie przyda.
+
+ 3101=Czy tu mieci si‘ firma "AVALON"?
+ 3102=Panie, jaki awal†? Kup pan kapust‘!
+ 3103=Te psubraty zrobi’y o mnie gr‘, b‘d‘ ich skar§y’...
+ 3104=Czycie zg’upia’? Kogo skar§y? Tu nikogo nie ma.|W zesz’ym tygodniu ostatnie meble zlicytowali.
+ 3105=To co ja mam teraz zrobi...
+ 3106=Kup pan kapust‘!
+ 3107=Nic z tego, nie mam ani grosza...
+ 3108=A co macie? Mo§e by co do palenia.
+ 3109=Palenie mo§e by przyczyn† wielu gro¦nych chor¢b.
+ 3110=W piecu, g’uptasie, w piecu!
+
+ 3111=Macie tu szczapy na opa’.
+ 3112=To maj† by szczapy? Takie brudne, s‘kate...
+ 3113=To co, mam je zabra z powrotem?
+ 3114=No dobra, mam tu tak† jedn†,|nadpsut†. We¦cie se j†.
+ 3115=Ludzie, ratuuunku! Ten padalec chce mi WSZYSTK kapust‘ zabra!!
+ 3116=Precz od mojej kapusty, ty parszywy kryptokomuchu!
+
+ 3201=Hau! Hau! Hau!
+ 3202=Nie¦le uchwycone podobie¤stwo, nieprawda§?
+ 3203=Nieee, w ch’opcach raczej nie gustuj‘.
+ 3204=¡ony ci ma’o, stary zbere¦niku?|Precz! Czep si‘ raczej Tego PSA!
+
+

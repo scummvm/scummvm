@@ -1,0 +1,67 @@
+name=kožcielny
+type=auto
+east=1
+
+phase=07kosc00
+phase=07kosc01
+phase=07kosc02
+phase=07kosc03
+phase=07kosc04
+phase=07kosc05
+
+phase=07kosc06
+phase=07kosc07
+phase=07kosc08
+phase=07kosc09
+phase=07kosc10
+phase=07kosc11
+
+
+Seq=  5  5  0  0  16   rzuca
+Seq=  7 -2  0  0  10   stoi
+Seq=  4 11  0  0  10   obraca
+Seq=  7 12  0  0  24   gada
+Seq=  9 17  0  0  36   pije
+
+.5 rzut
+Seq=  0 -1  0  0  20
+Seq=  1 -1  0  0  10
+Seq=  2 -1  0  0  10
+Seq=  3 -1  0  0  10
+Seq=  4 -1  0  0  10
+Seq=  5  0  0  0  24
+
+.11 obr¢t
+Seq=  6  1  0  0  10
+
+.12 gadka
+Seq=  8 -1  0  0  24
+Seq=  7 -1  0  0  24
+Seq=  8 -1  0  0  24
+Seq=  7 -1  0  0  24
+Seq=  8  1  0  0  24
+
+.17. picie
+Seq= 10 -1  0  0  16
+Seq= 11 -1  0  0  72
+Seq= 10 -1  0  0  24
+Seq= 11 -1  0  0  48
+Seq= 10  1  0  0  16
+
+
+Near= WAIT     -1     9    bez ceg’y
+Near= SEND   7006    -1    ceg’a won
+Near= SEQ      -1     2    obr¢t
+Near= SETZ     -1    11    by’ "obni§ony"
+Near= WAIT     -1     1    czekaj a§ stanie
+Near= SEQ    7002     1    dzwon stop
+Near= SEND   7999    -1    auto won
+Near= SOUND  7002    -1    sza!
+
+.8.
+Near= TNEXT  1205     0    flacha kožcielnego
+Near= SEQ      -1     3    gada
+Near= SAY      -1  7001    gada co gada
+Near= NEXT     -1     8    potem inaczej
+
+

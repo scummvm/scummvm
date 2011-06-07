@@ -1,0 +1,34 @@
+name=Chief
+type=auto
+
+phase=00w0         0
+phase=00bww1       1  siega
+phase=00bww2       2
+phase=00bww3       3
+phase=00bww4       4
+phase=03marz1      5  cofa sie
+phase=03marz2a     6  kuli sie
+phase=03marz3      7  kuli sie przesuniecie
+phase=00sw0        8
+phase=00s0         9
+east=1
+
+Seq= 9  0   0   0  15
+
+Seq= 8 -1   0   0  15
+Seq= 1 -1   0   0  15
+Seq= 2 -1   0   0  15
+Seq= 3 -1   0   0  15
+Seq= 4 -1   0   0  15
+Seq= 5 -1   0   0  15
+Seq= 6 -1   0   0   5
+Seq= 7 -1   0   0   5
+Seq= 6 -1   0   0   5
+Seq= 7 -1   0   0   5
+Seq= 6 -1   0   0   5
+Seq= 7 -1   0   0   5
+Seq= 5 -1   0   0  15
+Seq= 1 -1   0   0  15
+Seq= 8  0   0   0  15
+
+

@@ -1,0 +1,30 @@
+name=A jackdaw
+east=1
+type=AUTO
+phase=00ptok1
+phase=00ptok2
+phase=00ptok3
+phase=00ptok4
+phase=00ptok5
+
+Seq= 0, 1, 0, 0, 400
+Seq= 1, 2, 0, 0, 5
+Seq= 2, 3, 0, 0, 5
+Seq= 1, 4, 0, 0, 5
+Seq= 0, 5, 0, 0, 5
+Seq= 3, 6, 0, 0, 5
+Seq= 4, 7, 0, 0, 5
+Seq= 0, 8, 0, 0, 5
+Seq= 1, 0, 0, 0, 5
+
+Near= RMNEAR  -1     0
+Near= WALK    -1    -1
+Near= WAIT     1    -1
+Near= SAY      1  1001
+Near= SOUND   -1  1008  mowa ptasia
+Near= SAY     -1  1002
+
+Take= REACH   -1    -1
+Take= SOUND   -1  1008  ptasia mowa
+Take= SAY     -1  1012
+

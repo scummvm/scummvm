@@ -1,0 +1,368 @@
+   10=ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+   11= ⁄ƒø⁄ƒøø ⁄¬øø ⁄⁄ƒø    gra przygodowa
+   12= ¿ƒø≥ ≥√Ÿ ≥ ¿¬Ÿ¿ƒø  Copyright (c) 1995
+   13= ƒƒŸ¿ƒŸ¿ƒŸ¡  ¡ ƒƒŸ     L.K. AVALON
+   14=ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+   40=Do zobaczenia!
+   41=Gratulacje! To wszystko w tej grze. Do zobaczenia w kolejnej...
+   50=Podaj swoje imië:
+
+   51=wyb¢r typu posiadanej karty d¶wiëkowej i ew. osobnego instrumentu MIDI
+   52=wyb¢r adresu portu dla karty d¶wiëkowej
+   53=wyb¢r numeru przerwania IRQ dla karty d¶wiëkowej
+   54=wyb¢r numeru kanaíu DMA dla karty d¶wiëkowej
+   55=wyb¢r numeru portu dla instrumentu General MIDI
+   56=konfiguracja karty d¶wiëkowej
+
+   60=Brak karty d¶wiëkowej
+   61=Sound Blaster
+   62=SoundBlaster + General MIDI
+   63=Gravis UltraSound
+   64=Gravis UltraSound + General MIDI
+   65=Tylko General MIDI
+   66=Automatyczna konfiguracja
+
+   90=Do uruchomienia tego programu potrzebna jest karta VGA!
+   91=Do uruchomienia tego programu potrzeba procesora co najmniej 80286!
+   92=Ten DOS jest niedobry - potrzeba wersji nie starszej od 3.30!
+   93=Niedostatek RAM-u - potrzeba co najmniej 600 KB!
+   94=Ten komputer jest zbyt wolny!
+   95=Do uruchomienia tego programu konieczna jest mysz!
+   96=Niepoprawny parametr!
+
+   98=Z powodu niedostatecznej iloûci pamiëci|odtwarzanie muzyki zostaío zablokowane.
+   99=Niepoprawna struktura pliku stanu gry!
+
+  101=informacja
+  102=dymek
+  105=regulacja gíoûnoûci d¶wiëk¢w
+
+  200=weryfikacja zamiaru zako§czenia
+  201=Dosyç juß mam tej gry!
+  202=To pomyíka, gram dalej
+
+  300=DEMO
+
+  600=20
+  601=Nie wydaje mi sië, ßeby to byí dobry pomysí!
+  602=Eee... Wysil lepiej swojÜ mak¢wkë!
+  603=A c¢ß ci to do gíowy strzeliío!
+  604=Nie, nie, tÜ metodÜ do niczego nie dojdziemy!
+  605=Jeßeli nie dajesz sobie rady, to moße ktoû da ci radë...
+  606=To juß nie staç cië na nic wiëcej?
+  607=I co, tym sposobem chcesz coû uzyskaç?
+  608=Jestem zaßenowany. Nie wiem, co powiedzieç.
+  609=Nie wiesz, co zrobiç? Pociesz sië, ße ja teß nie wiem.
+  610=Wiesz co? Moße odpocznij trochë. Przeûpij sië, albo co...
+  611=Dawno juß nie proponowano mi czegoû r¢wnie gíupiego!
+  612=I co ja mam z tym zrobiç?
+  613=Moße Tobie by sië to przydaío, bo mnie na nic.
+  614=A moße by tak z drugiej strony?
+  615=Nie masz nic lepszego do roboty?
+  616=Zamie§ sië ze mnÜ miejscami.|Zobaczysz, ße to nie takie proste.
+  617=Ja tego nawet nie ûmiaíem pr¢bowaç.
+  618=A powiadajÜ, ße to ja jestem najgíupszy...
+  619=A jak z tego wyjdzie co zíego?
+  620=Ja bym tego nie pr¢bowaí...
+
+  671=A wíaûnie ße tam nie p¢jdë!
+
+  681=Z tej odlegíoûci nie da sië nic zrobiç!
+
+  691=A gdzie mam sobie to wetknÜç, mÜdralo?
+
+  777=A c¢ß to za maniery, ty jakiû prostaku jeden!|Wiesz gdzie sobie moßesz wsadziç te trzy palce?
+
+ 1001=Czemuû siadí na píocie, ptaszku?
+ 1002=Bo za ûlisko jest na daszku.
+ 1003=Czy to ty jesteû zaczarowanÜ ksiëßniczkÜ?
+ 1004=Odwal sië, ty sodomito jeden!|ßona ci sië znudziía chamie, co?|Ludzieee!! Zboczeniec mnie napadí!
+ 1005=I bez Leona sië mi tu nie pokazuj, íamago.
+ 1006=Eee, nie jestem samob¢jcÜ!|Bez Leona za nic nie wr¢cë.
+ 1007=Dziëkujë, nie jestem gíodny.
+ 1008=Eee tam, do butonierki sië nie nadajÜ...
+ 1009=A zresztÜ nie mam butonierki!
+ 1011=Auuu! Puûç mnie, bo ci wÜsy wyskubië!!
+ 1012=Auuu! Puûç mnie, bo ci oczy wydrapië!!
+ 1015=Kaßdemu smakuje, nie?
+ 1016=Moßna by kapkë miodziku dodaç...
+ 1017=Ale i tak kaßdemu smakuje.
+ 1018=Mniam, mniam... Dobre!
+ 1040=Co, budy nie widziaí?!
+ 1050=bul, bul... plusk!
+ 1060=wrrrrr... hau! hau!
+
+ 2001=No, nareszcie! Co tak díugo?|We¶cie soítysie të kartë!|Wczoraj jÜ chíopy w aucie zostawili.
+ 2002=sssssssz... pk!|sssssssz... pk!|sssssssz... pk!
+ 2003=Moßecie jÜ wziÜç na chwilë,|ale zaraz oddajcie, bo potrzebna!
+ 2004=Ej, panie szofer...
+ 2005=Nie zawracajcie mi rzyci! Nie widzicie, ßem zajëty?
+ 2006=A co mi z przystanku, skoro autobus zepsuty!
+ 2007=Kto tu te zapaíki powtykaí?
+ 2008=A skÜd do tego wezmë takÜ dußÜ pocierkë?
+
+ 3001=Chfpcsz chfsz ssz s ch mfszs, fs sfchszmsz pchszfs!
+ 3002=Zr¢bcie kumie coû z tÜ myszÜ, bo strasznie piszczy!
+ 3003=A we¶cie se za to kieíbasy!
+ 3004=Przenigdy! Poprzednio skosztowaí ich mÜß tej wdowy...
+ 3005=PowiadajÜ, ße od cebuli sië kuli.
+ 3006=Wara od wdowiego grosza, bo ugryzë!
+ 3007=A mnie tu dobrze, nigdzie nie p¢jdë!
+ 3008=Tfu, imperialistyczny wynalazek!|I do tego ta kryptoreklama...
+ 3009=Miaaaí!
+ 3014=„... „... „...
+ 3015=           ˇ
+ 3021=Brrr... Ale oszroonioona!|Moßna soobie íaapy odmrooziç.
+
+ 4001=Chrrrrrr... chrrrrrr...
+ 4002=hau! hau! wrrrrr...
+ 4003=Bez wygwancera nie da sië tego ußyç!
+ 4004=Dobra byíaby na í¢dkë...
+ 4005=A na czorta mi í¢dka, skoro nie mam wiosía?
+ 4006=Dobra byíaby na wiosío...
+ 4007=A na czorta mi wiosío, skoro nie mam í¢dki?
+ 4008=A to íobuzy! Wszystko wypili.
+ 4009=Twardo ûpi!
+ 4010=Ej ty, Nie zaglÜdaíeû przypadkiem do mojej szopy?
+ 4011=Napiíby sië herbatki...
+ 4012=Czajniczek coû zimniutki...
+
+ 5001=A pamiëtasz jak wu-wujo szukaí organizacji|podziemnych i ca-caíy rynek rozko-kopaí?...
+ 5002=Co to za dym? Pali sië?|A, to ty. Masz coû?
+ 5003=Miío sië pali w taki piëkny, bezwietrzny dzie§...
+ 5004=A c¢ß to takiego? Ten grafik to jakiû wynalazca!
+ 5005=Do niczego sensownego sië to nie nadaje...
+ 5006=Chyba tylko do robienia wiatru!
+
+ 6001=As! Bierze raz!
+ 6002=Dama chodzi sama!
+ 6003=Kiery na spacery!
+ 6004=Walet pierdzi w szalet!
+ 6005=Dzwonki ze skarbonki!
+ 6006=Bierz krajca za jajca!
+
+ 6007=Wino... Wino? Piki!
+ 6008=Bierz go pikiem!
+ 6009=P¢jdzie z krzykiem!
+ 6010=Ciach! DychÜ w dach!
+ 6011=Kto gra w karty...
+ 6012=Gíos ma zdarty!
+
+ 6013=Kíad¶ damë pod kr¢la!
+ 6014=Ze stolika gra pomyka!
+ 6015=Ledwie dycha!
+ 6016=Gra w piki daje wyniki!
+ 6017=Kto gra w karo, umrze zaro!
+ 6018=Cztery piki, skurczybyki!
+
+ 6101=Dziëki, soítysie, wíaûnie tej nam brakowaío
+ 6102=Aaaaaaaaaaaaaaauuuuu!
+ 6103=Przepraszam...
+ 6104=Nie przeszkadzaj koleû! Nie widzisz, ße gramy?|Jeßeli masz coû dla nas, to poí¢ß na stole.
+ 6105=No nieee, to za trudne!|Bez pomocy nie dam rady.
+ 6106=Zamkniëte na kí¢dkë.
+ 6107=Zamkniëta na klucz.
+
+ 6201=CiÜg sië, flaku!
+ 6202=Ale fajna ßar¢wa!
+ 6203=Co, mamy se to do zadka wkrëciç?
+ 6204=Czemu nie? Moßemy mu pom¢c, panowie, co?
+ 6205=Czy to przypadkiem nie wasza karta?
+
+ 7001=KsiÜdz dobrodziej trzyma wino pod kluczem...|Nie macie tam odrobinë czegoû, choç íyczek?
+ 7002=Wyborny trunek! Tego mi brakowaío.|Szukacie ksiëdza? W zakrystii siedzi.
+ 7003=Co za ûmierdzÜcy samogon! Za kogo wy mnie macie, soítysie?|To dobre w sam raz dla dziada, co w ruinach dworku siedzi.
+
+ 8001=Aleß mnie ten zÜb boli niemiíosiernie!
+ 8002=Pokaßcie go tu do ûwiatía. Zobaczymy...
+ 8003=Ach, co za ulga! Dziëki serdeczne.
+ 8004=Nie ma za co. A uwaßajcie na konia!|Strasznie nerwowy, a juß szczeg¢lnie,|kiedy go jaka mucha ugryzie.
+ 8005=Eee, ja nie gíupi, ßeby od Zdzicha Fortuny kíonicÜ oberwaç!.
+ 8006=Ja jestem kuty na cztery nogi!
+
+ 9001=Apsik! No dobra, dosyç, przesta§cie; ûniío mi sië,|ße mnie sam diabeí ogonem íechce...
+ 9002=Dziadku, we¶cie tego koguta!|StanÜí na drodze i nie puszcza.
+ 9003=Sami se go bierzcie. Gíodny to zíy.|Dajcie mu ßreç, to puûci.
+ 9004=Co mam mu daç, skoro wszystko tu obßarte?
+ 9005=Dajcie mu stonki z plantacji burak¢w.|We¶cie se to wiadro.
+ 9006=Tfu! W rëkach tego paskudztwa nosiç nie bëdë.
+ 9007=Nie bëdë go ganiaí po caíej íÜce!
+ 9008=Ponoç w tym roku modna jest zdrowa ßywnoûç...
+ 9010=Mmm-zzz!
+ 9011=Psik! Sio! Precz!
+ 9012=Ko-ko-ko-ko!
+ 9101=Q-q! Q-q!
+ 9201=ßywa karma dla drobiu
+
+10001=Kto mi tu, k...., raban robi?|Poszedí won, bo dam w ryj, jakem Burak!
+10002=A ty, J¢zek nie dogaduj, ino leç pozbieraç stonkë!
+10003=To moße ja pomogë? Uwielbiam zbieraç stonkë.
+10004=No dobra, tam koío dziadka Imka,|ten krzak kartofli to nasza plantacja.
+10005=Jeßeli go jeszcze stonka nie zeßaría.
+10011=Mowa!
+10015=Nie lubië CZERWONYCH!
+
+11001=Aleß te drzewa szybko rosnÜ!|Jeszcze w zeszíym tygodniu dosiëgaíem...
+11002=Mam tu taki list... Ktoû zapomniaí adres podaç.|Wy znacie tu ludzi, we¶cie go, moße znajdziecie...
+11003=Co za potw¢r! Chyba mnie nie lubi.
+11004=WyglÜda na caíkiem pusty.
+11005=Po pszczoíach ani ûladu!
+11006=Moße nie píaciíy czynszu?
+11007=Gë, gë, gë!
+
+12001=Kukuíka mi sië popsuía. Czujecie jak ûmierdzi?
+12002=Chyba bëdzie pasowaç. Kukuíka jak nowa!|Co chcecie za to? Wybierzcie sobie coû.
+12003=Trzeba najpierw zdobyç cwancykator!
+12004=Zostaw, to nie m¢j - poßyczyíem go ze ZWIASTUNA!
+12005=Baba z wozu, a ja nigdzie nie jadë!
+
+13001=Mm mmmmmm, mmmm. mmm mm mmmm mmm,|mm mmmmm mmmmm mmmmmm mm mmmmmmm.
+13002=No dobrze, synu. Daj co masz daç,|bo zaraz muszë wracaç na pikietë.
+13003=B¢g zapíaç, synu. Do zobaczenia na ûlubie.
+13005=Ojcze, gíupio wyszío z tym ûlubem mojej c¢rki, nie?|Moglibyûmy spr¢bowaç jeszcze raz, w të niedzielë?
+13006=Przepraszam, ale nie bardzo zrozumiaíem...
+13007=Mmm-mm!
+13008=A co to ja, synu, filatelista jestem, czy jak?
+13009=Co za niski gíos... Nic nie zrozumiaíem.
+13010=Boße uchowaj!
+13011=Bro§ Boße!
+
+14001=Jest "NIE"?
+14002="NIE"?
+14003="NIE"!
+14004=Nie.
+14005=Nie?
+14006=Nie!
+14007=A jakaû inna ûwießa gazeta?
+14008=Nie dowie¶li.
+14009=Dowie¶li "NIE"?
+14010=Nie!!
+14011=Trzy piëçdziesiÜt.
+14012=Proszë.
+14013=Macie tu resztë.
+14014=Dziëkujë.
+14015=Dwanaûcie siedemdziesiÜt.
+14016=Nie ma za co.
+14021=No co? Po polsku czytaç nie umiesz?!
+14022=Spadaj, bo jeszcze i ty oberwiesz!
+14023=Wolë seks bezpieczny!
+
+15001=Gdzie sÜ te zdjëcia?
+15002=Jakie zdjëcia?
+15003=O tu, podanie jest, a zdjëç nie ma!
+15004=Jakie podanie?
+15005=Waszej c¢rki, o dow¢d osobisty... bez zdjëç niewaßne.
+15006=Okropnie dußo mam roboty... przyjd¶cie innym razem.
+15007=07 zgíoû sië!
+
+16001=Witaj, soítysie!
+16002=Czeûç Hela! Co porabiasz?
+16003=Nudy na pudy... Zagramy w strip-dupniaka?
+16004=Czemu nie?
+16005=Ten goûç nigdy nie ma doûç!
+16006=Dobrze, bëdzie pyszna zabawa!
+16007=No dalej, odwr¢ç sië i gacie w d¢í!
+16008=Zgaduj, kto cië uderzyí?
+16009=Ha! Wygraíem! Rozdziewaj sië, Hela!
+16010=UsiÜd¶ sobie przy stoliku.
+16011=Eee... chyba raczej postojë.
+16012=Chcesz zagraç jeszcze?
+16021=Nie znoszë kwaûnego!
+
+17001=Co za smr¢¢¢d... Nie przejdë!
+17002=Czy to wy, soítysie? Przynieûcie mi szybko ûwießÜ gazetë.
+17003=Pierwszorzëdna gazeta. Tylko czemu taka zimna?
+17004=Oj, tëgoûmy popili wczoraj z fotografem!|Gdyby nie mleko, tobym teraz leßaí, jak on.
+17005=Ale OCZYtany facet!
+17006=Ja mu TAM zaglÜdaí nie bëdë!
+
+18001=Dobry soítysie, nie widziaíeû gdzieû moich korali?
+18002=To moje korale! O, dobry soítysie, jakße Ci sië odwdziëczë?|Widzisz to ziele w mym rëku? To lubczyk, najlepszy spos¢b,|by wzbudziç miíowanie. Wystarczy odrobina wywaru... i juß!
+18003=Nie jestem taka, za jakÜ mnie uwaßasz, panie.
+18004=Miaaaí!
+18005=No taaak, bardzo mnie rajcuje|przebieranie w damskie íaszki...
+18006=Ale sië trochë wstydzë!
+
+19001=Muuuuuuuuuu!
+19002=WyglÜda na popsuty.
+19003=Ja do tego rëki nie przyíoßë!
+19004=Koszyk¢wka teraz w modzie...
+19005=Ale krowa mnie ubodzie!
+19006=Modna teraz koszyk¢wka...
+19007=Ale mnie ubodzie kr¢wka!
+19008=Koszyk¢wka teraz modna...
+19009=Lecz ta krowa bardzo bodna!
+
+20001=Oj, zagraíoby sië w "3 sz¢stki" na pieniÜdze, co?
+20002=Niestety, ksiÜdz dobrodziej zabraí nam koûci...
+20003=Wygraaaaíem!!
+20004=Co za fart! We¶cie ten bilon, po co wam dolary
+20005=Gratulacje! Macie tu dolary, po co wam bilon
+20006=Koza mi zjadía caíÜ wygranÜ!
+20007=Eeee, Kaßdy tak moße powiedzieç!
+20010=No to zagrywajcie, soítysie...
+20011=Teraz moja kolej!
+20012=Teraz ja!
+20021=Pst! Soítysie, ty ßaíosny bía¶nie!|Nie widzisz, ße to sÜ altowane koûci?
+20022=Co jest? Po polsku nie rozumiesz?|Trzymaj klawisz [Alt], kiedy rzucasz!
+
+21001=Po BORYGO nikt nie zygo...
+21002=Szszszanujeszszsz mnmnmnië?
+21003=A dajcieß mi ûwiëty spok¢j!
+21004=Za co?! Nie bijta mnieeeee...
+21005=A m¢wiía mi znajoma praczka:|"nie mieszaj biaíego z kolorowym"
+21006=P-p-rzysiëgam, juß nigdy, ani k-k-ropelki....
+21007=Jakie zdjëcie Leona?|Mam tu tylko negatyw.
+21008=Zuzanna lubi je tylko jesieniÜ.
+21011=A gdzie gíowa?
+21012=Toß psiakrew aparatu nie pod¶wignë!
+21013=O! To dobre wyszío.
+21014=Zawsze mi dobre wychodzÜ.
+21015=Precz z íapami, ty gíupi chamie!|Czekam tu na Maíego Ksiëcia.
+21016=Tam, do licha! A m¢wiliûcie, ße ta oferma nigdy tu nie dojdzie...|Niech ktoû zaraz zadzwoni po programistë, ßeby dorobií zako§czenie!
+21017=Jeszcze mi do ziemi niespieszno!
+21018=A ty czemu nie jesteû w szkole?
+21019=Na co mi ta caía szkoía? Tyßeû wujek szkoíy|poko§czyí i co, pomogío? Gdzie masz ziëcia?
+21020=My dzisiaj lekcji nie mamy, bo nauczycielkë gdzieû wciëío!
+21021=Chciaíaby dusza do raju...
+21022=Co mnie ojciec szczypiesz? Ty teß??
+
+22001=Zacne ziele. Bëdzie doskonaíy wywar.|A wy w tym czasie zabijcie të ûwinië.
+22002=Nie¶leûcie sobie z tÜ ûwiniÜ poradzili!|A i nap¢j juß gotowy. Macie tu flaszeczkë.
+22003=Oui, oui...
+22004=Dzëkujë.
+22005=Nic nie m¢wiliûcie, babciu,|ße ona tak lubi ostre rzeczy!
+22006=Mieliûcie jÜ zabiç, a nie karmiç!
+22007=Dobra kobieto, czy z tego chwastu da sië coû upëdziç?
+
+23001=Nic z tego! Zamkniëta na kí¢dkë.
+
+24001=Spadaj, stary pierdzielu!!
+24002=Witaj, kochany teûciu!
+24003=No, chod¶ ze mnÜ m¢j kochaneczku,|tam juß wszyscy w koûciele czekajÜ!
+24004=Jak se íykne wina, to mnie zaro wzdyma.
+24005=Do rzyci z tymi síodyczami! Samogon - to dobre...
+
+25001=Dobra, tylko mi nie zasíaniaj monitora!
+25002=No c¢ß, m¢j maíy kwiatuszku...|Latka lecÜ, pora ci za mÜß iûç!
+25003=Wiem, ße to trudna decyzja - wybraç|spoûr¢d tak wielu kandydat¢w...
+25004=Prawdë m¢wiÜc nie byío ani jednego!
+25005=Wiëc wsp¢lnie z matkÜ wybraliûmy ci mëßa.|Popatrz, oto jego fotografia. Co ty na to?
+
+26001=Czy ty, c¢rko, chcesz tego oto Leona za mëßa?
+26002=No tak.
+26003=A czy ty, Leonie, chcesz të oto c¢rkë soítysa za ßonë?
+26004=Aaaa...
+26005=Eeee...
+26006=Yyyy...
+26007=Czy ktoû m¢gíby sprawdziç bezpieczniki??
+
+26011=Ale heca! Leon spie...
+26012=spie-sznie sië oddalií
+26013=To co, mogë juß iûç?
+
+26020=Leeeeoooon! Zaczekaj, idë z tobÜ!
+
+28001=To wszystko twoja wina!|Czemuû go nie zatrzymaí?
+28002=Masz go odnale¶ç i przyprowadziç! No ruszaj!
+

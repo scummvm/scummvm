@@ -1,0 +1,8 @@
+name=obraz Farmera van Left
+type=dead
+phase=13obraz
+
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1 13010  gada
+

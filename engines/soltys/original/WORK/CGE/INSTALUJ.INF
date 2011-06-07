@@ -1,0 +1,23 @@
+Program=SOLTYS
+DosScreen=0
+BigView=1
+
+Title1=                   зд©зд©© зб©© ззд©
+Title2=   Instalacja gry  юд©Ё Ёцы Ё юбыюд©
+Title3=                   ддыюдыюдыа  а дды
+Title4=ддддддддддддддддддддддддддддддддддддддд
+Title5=    Copyright (c) 1995 L.K. AVALON
+*ShowTitle
+
+Name=C:\AVALON\SOLTYS
+*GetDrive
+Space=500
+*CheckSpace
+*ChangeDir
+
+Program=SOLTYS
+
+Name=CGE.EXE
+*Copy
+
+*RestoreDir

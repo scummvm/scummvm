@@ -1,0 +1,34 @@
+name=mail box
+type=dead
+phase=11poczta
+
+Take= SOUND      1     2  m-m
+Take= SAY        1  1004
+Take= SAY        1  1005
+Take= NEXT      -1    -3
+
+.4.
+Take= REACH     -1    -1
+Take= KEEP      -1    -1
+Take= NNEXT  10002     9 ... 10jozek
+Take= NEXT      -1    -1
+
+Take= REACH  10002    -1
+Take= SOUND     -1  3004  dup!
+Take= RMTAKE    -1     0  martwa poczta
+Take= RMNEAR 10002    0
+Take= HIDE      -1     1
+Take= GIVE      -1    -1
+Take= SETX      -1   263
+Take= SETY      -1    91
+Take= SETZ      -1    12
+Take= HIDE      -1     0
+
+Take= SAY        1  3004
+Take= SEQ    10002     1
+Take= SAY    10002  3005
+Take= SEQ    10002     1
+Take= SAY    10002  3006
+Take= REACH  10002    -1
+Take= KEEP    3005    -1
+

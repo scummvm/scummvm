@@ -1,0 +1,30 @@
+type=AUTO
+name=primus with teapot
+East=0
+
+phase=04masz0
+phase=04masz1
+phase=04masz2
+phase=04masz3
+phase=04masz4
+phase=04masz5
+phase=04masz6
+
+Seq=  0  0  0 0  5		0
+Seq=  1  2  0 0  5		1
+Seq=  2  3  0 0 15		2
+Seq=  3  4  0 0 15		3
+Seq=  1  5  0 0 10		4
+Seq=  2  6  0 0 15		5
+Seq=  3  7  0 0 15		6
+Seq=  1  8  0 0 10		7
+Seq=  2  9  0 0 15		8
+Seq=  3 10  0 0 15		9
+Seq=  4 11  0 0 15		10
+Seq=  5 12  0 0 15		11
+Seq=  6 10  0 0 15		12
+
+
+Near= NEXT     -1     -2
+Near= TNEXT 11202      8
+

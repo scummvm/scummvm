@@ -1,0 +1,97 @@
+Program=SOLTYS
+
+*HideText
+Text1=be patient, just working...
+*ShowText
+
+Name=README.1ST
+*CopyP
+
+Name=CGE.EXE
+*Open
+Name=SOLTYS.001
+*Copy
+...*Expand
+*Close
+
+Name=VOL.CAT
+*Open
+Name=SOLTYS.002
+*Expand
+*Close
+
+Name=VOL.DAT
+*Open
+Name=SOLTYS.003
+*Expand
+*HideText
+Text1=Please insert the SOLTYS #2 disk
+*ShowText
+*GetAnyKey
+
+*HideText
+Text1=be patient, just working...
+*ShowText
+
+Name=SOLTYS.004
+*Expand
+
+*HideText
+Text1=Please insert the SOLTYS #3 disk
+*ShowText
+*GetAnyKey
+
+*HideText
+Text1=be patient, just working...
+*ShowText
+
+Name=SOLTYS.005
+*Expand
+
+*HideText
+Text1=Please insert the SOLTYS #4 disk
+*ShowText
+*GetAnyKey
+
+*HideText
+Text1=be patient, just working...
+*ShowText
+
+Name=SOLTYS.006
+*Expand
+
+*HideText
+Text1=Please insert the SOLTYS #5 disk
+*ShowText
+*GetAnyKey
+
+vHideText
+Text1=be patient, just working...
+*ShowText
+
+Name=SOLTYS.007
+*Expand
+*Close
+
+
+Program=CGE %1 %2 %3 %4 %5 %6 %7 %8 %9
+Name=SOLTYS.BAT
+*MakeBatch
+
+Name=README.1ST
+*View
+
+
+*HideText
+Text1=Installation complete. Type at DOS prompt:
+Text2=
+Text3=   SOLTYS [Enter]
+*ShowText
+*GetAnyKey
+
+*HideText
+*HideTitle
+
+Name=INSTALL.CHN
+*Erase
+

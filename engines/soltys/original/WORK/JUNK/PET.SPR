@@ -1,0 +1,11 @@
+name=pet
+type=walk
+phase=pet1
+phase=pet2
+phase=pet3
+phase=pet4
+phase=pet5
+phase=pet6
+delay=16
+move=0
+ 

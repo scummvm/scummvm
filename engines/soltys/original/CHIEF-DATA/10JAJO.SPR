@@ -1,0 +1,19 @@
+type=auto
+name=An egg
+
+phase=10jajo0
+phase=10jajo1
+phase=10jajo2
+phase=10jajo3
+phase=10jajo4
+phase=dummy
+
+Seq= 5  0   0    0    1
+Seq= 0  2 -40   18    8
+Seq= 0  3  20   -9    8
+Seq= 0  4  20   -9    8
+Seq= 1  5   0    0   16
+Seq= 2  6   0    0   16
+Seq= 3  7   0    0   16
+Seq= 4  7   0    0   16
+

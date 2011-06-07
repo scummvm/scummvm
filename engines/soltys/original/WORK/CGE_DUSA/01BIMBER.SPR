@@ -1,0 +1,16 @@
+type=AUTO
+name=moonshine factory
+East=1
+
+phase=01bimbe0
+phase=01bimbe1
+phase=01bimbe2
+phase=01bimbe3
+
+Seq=  0  1  0 0 15		0
+Seq=  1  2  0 0 15		1
+Seq=  2  3  0 0 15		2
+Seq=  3  0  0 0 15		3
+
+Near= SAY  -1  1050
+

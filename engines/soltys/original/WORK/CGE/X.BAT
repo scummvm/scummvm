@@ -1,0 +1,1 @@
+@td386 -l pack d:\!!soltys\*.*

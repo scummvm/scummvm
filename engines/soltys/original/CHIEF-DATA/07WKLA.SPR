@@ -1,0 +1,23 @@
+name=Chief
+type=auto
+
+phase=00e0             .0 bok
+phase=07wkla1          .1
+phase=07wkla2          .2
+phase=07wkla3          .3
+phase=00bwe04          .4
+phase=00bwe03          .5
+phase=00bwe02          .6
+phase=00bwe01          .7
+
+Seq= 0 -2  0  0  15    .0 park
+Seq= 1 -1  0  0  15    .1 wklada kask
+
+Seq= 2 -1  0  0  15    .2
+Seq= 3 -1  0  0  15    .3
+Seq= 4 -1  0  0  15    .4 kask na glowie opusca reke
+Seq= 5 -1  0  0  15    .5
+Seq= 6 -1  0  0  15    .6
+Seq= 7  0  0  0  15    .7
+
+

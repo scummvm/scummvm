@@ -1,0 +1,29 @@
+name=soltys
+type=auto
+
+phase=00s0         0
+phase=00se0        1
+phase=00e0         2
+phase=23szta1      3
+phase=23szta2      4
+phase=23szta3      5
+phase=23szta4      6
+
+Seq= 0  0  0   0  10
+
+Seq= 1 -1  0   0  15
+Seq= 2 -1  0   0  15
+Seq= 3 -1  0 -23  15
+Seq= 4 -1  0   0  15
+Seq= 5 -1  0   0  15
+Seq= 6 -1  0   0  15
+Seq= 5 -1  0   0  15
+Seq= 6 -1  0   0  15
+Seq= 5 -1  0   0  15
+Seq= 6 -1  0   0  15
+Seq= 5 -1  0   0  15
+Seq= 4 -1  0   0  15
+Seq= 3 -1  0   0  15
+Seq= 2 -1  0  23  15
+Seq= 1  0  0   0  15
+

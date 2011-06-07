@@ -1,0 +1,10 @@
+type=DEAD
+name=entry into 21st century
+.east=1
+
+phase=21drzwi0
+
+
+Take= REACH    -1    -1
+Take= SOUND    -1  3003
+

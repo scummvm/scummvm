@@ -1,0 +1,53 @@
+type=dead
+phase=26cora0        .0
+phase=26cora1        .1 gapi sie w bok
+phase=26cora2        .2
+phase=26cora3        .3 otwiera gebe
+phase=26cora4        .4 gapi sie w prawo
+phase=26cora5        .5
+phase=26cora6        .6
+phase=26codra1       .7 drapie sie
+phase=26codra2       .8
+phase=26codra3       .9
+
+Seq= 0 -2  0  0   15
+Seq= 0 20  0  0   15  .gada
+Seq= 7 28  0  0   15  .dupa
+Seq= 1  4  0  0   15  .glowa
+
+.4.
+Seq= 4 -1  0  0   15
+Seq= 5 -1  0  0   15
+Seq= 6 -1  0  0   45
+Seq= 5 -1  0  0   15
+Seq= 4 -1  0  0   15
+Seq= 0 -1  0  0   25
+Seq= 1 -1  0  0   15
+Seq= 2 -1  0  0   45
+Seq= 1 -1  0  0   15
+Seq= 0 -1  0  0   15
+Seq= 4 -1  0  0   15
+Seq= 5 -1  0  0   15
+Seq= 6 -1  0  0   15
+Seq= 5 -1  0  0   15
+Seq= 4 -1  0  0   15
+Seq= 0 -1  0  0   15  >>>
+
+.20
+Seq= 1 -1  0  0   15
+Seq= 2 -1  0  0   15
+Seq= 3 -1  0  0   25
+Seq= 2 -1  0  0   25
+Seq= 3 -1  0  0   25
+Seq= 2 -1  0  0   25
+Seq= 1 -1  0  0   15
+Seq= 0  0  0  0   75
+
+.28.drapania
+Seq= 8 -1  0  0   25
+Seq= 9 -1  0  0   35
+Seq= 8 -1  0  0   25
+Seq= 9 -1  0  0   35
+Seq= 7  0  0  0   15
+
+

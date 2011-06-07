@@ -1,0 +1,37 @@
+type=AUTO
+name=ma’a fabryczka
+East=1
+
+phase=01bimbe0
+phase=01bimbe1
+phase=01bimbe2
+phase=01bimbe3
+
+Seq=  0 -1  0 0 15
+Seq=  1 -1  0 0 15
+Seq=  2 -1  0 0 15
+Seq=  3  0  0 0 15
+
+Near= SOUND    -1  1002 bul!
+Near= SAY      -1  1050
+
+Take= REACH    -1    -1
+Take= SOUND    -1  1002
+Take= SAY       1  1015
+Take= NEXT     -1    -1
+
+Take= REACH    -1    -1
+Take= SOUND    -1  1002
+Take= SAY       1  1016
+Take= NEXT     -1    -1
+
+Take= REACH    -1    -1
+Take= SOUND    -1  1002
+Take= SAY       1  1017
+Take= NEXT     -1    -1
+
+Take= REACH    -1    -1
+Take= SOUND    -1  1002
+Take= SAY       1  1018
+Take= NEXT     -1     0
+

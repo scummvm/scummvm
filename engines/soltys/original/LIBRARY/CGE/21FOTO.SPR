@@ -1,0 +1,73 @@
+name=fotograf
+type=auto
+east=1
+
+phase=21foto0    0 wisi
+phase=21foto1    1
+phase=21foto2    2
+phase=21foto3    3
+phase=21fotos0   4 wstaje
+phase=21fotos1   5
+phase=21fots2a   6 fleszuje
+phase=21fots3a   7
+phase=21fots4a   8 b’yszczy
+phase=21fotzdj   9 daje fotografie
+phase=21fotzg   10 gada
+phase=21fotpij  11 pije
+phase=21fotpix  12 pije
+
+Seq=  0  4   0   0 144  park
+Seq= 11  7   0   0  12  pstryk
+Seq=  5 17   0   0   8  klap
+Seq= 10 19   0   0  16  gada
+
+. 4 park
+Seq= 1 -1   0   0  16
+Seq= 2 -1   0   0  16
+Seq= 3  0   0   0  16
+
+. 7 pstryk
+Seq=12 -1   0   0  12
+Seq=11 -1   0   0  12
+Seq=12 -1   0   0  12
+Seq= 4 -1 -12 -15  12  10: stoi
+Seq= 5 -1   0   0  36
+Seq= 6 -1   0   0  36
+Seq= 7 -1   0   0  24
+Seq= 8 -1   0   0   8  14: flash
+Seq= 7 -1   0   0  24
+Seq= 9 -2   0   0  16
+
+.17 klap
+Seq= 4 -1   0   0  12
+Seq= 0  0  12  15  12
+
+.19. gad
+Seq=  9  -1   0   0  10
+Seq= 10  -1   0   0  20
+Seq=  9  -1   0   0  16
+Seq= 10  -1   0   0  12
+Seq=  9  -1   0   0  24
+Seq= 10  16   0   0  16
+
+.0. from 21zdjec
+Take= SAY   -1  21001
+Take= NEXT  -1     -1
+Take= SAY   -1  21002
+Take= NEXT  -1     -1
+Take= SAY   -1  21003
+Take= NEXT  -1     -1
+Take= SAY   -1  21004
+Take= NEXT  -1     -1
+Take= SAY   -1  21005
+Take= NEXT  -1     -1
+Take= SAY   -1  21006
+Take= NEXT  -1     -1
+Take= SAY   -1  21007
+Take= NEXT  -1     -1
+Take= SAY   -1  21008
+Take= NEXT  -1      0
+
+.16. (from mleko)
+Take= NEXT  -1     -2
+

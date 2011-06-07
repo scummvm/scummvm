@@ -1,0 +1,23 @@
+type=auto
+name=Otto the Firefighter
+
+phase=06strar0
+phase=06strar1
+phase=06strar2
+phase=06strar3
+phase=06strar4
+phase=06strar5
+phase=06strar6
+phase=06strar7
+phase=06strar8
+
+Seq=  0 -2  0  0  10
+Seq=  1 -1  2  0   5
+Seq=  2 -1  2 -1   5
+Seq=  3 -1  2  0   5
+Seq=  4 -1  2 -1   5
+Seq=  5 -1  2  0   5
+Seq=  6 -1  2 -1   5
+Seq=  7 -1  2  0   5
+Seq=  8  1  2 -1   5
+

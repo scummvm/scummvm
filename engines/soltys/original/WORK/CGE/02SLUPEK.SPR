@@ -1,0 +1,9 @@
+name=s’upek
+type=dead
+east=1
+phase=02slupek.bmp
+
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1  2008  gada
+

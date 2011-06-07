@@ -1,0 +1,44 @@
+type=auto
+name=kolumna
+east=1
+
+phase=05kol00
+phase=05kol01
+phase=05kol02
+phase=05kol03
+phase=05kol04
+phase=05kol05
+phase=05kol06
+phase=05kol07
+phase=05kol08
+phase=05kol09
+phase=05kol10
+phase=05kol11
+phase=05kol12
+phase=05kol13
+phase=05kol14
+
+Seq= 0 -2  0  0  6        park
+
+Seq= 1 -1  0  0 12        fall
+Seq= 2 -1  0  0 12
+Seq= 3 -1  0  0 10
+Seq= 4 -1  0  0  8
+Seq= 5 -1  0  0  6
+Seq= 6 -1  0  0  6
+Seq= 7 -1  0  0  6
+Seq= 8 -1  0  0  6
+Seq= 9 -1  0  0  6
+Seq=10 -1  0  0  6
+Seq=11 -1  0  0  6
+Seq=12 -1  0  0  6
+Seq=13 -1  0  0  6
+Seq=14 -2  0  0  6
+
+
+Take= RMTAKE -1    0
+Take= REACH  -1   -1
+Take= SEQ    -1    1
+Take= WAIT   -1    9
+Take= SOUND  -1 5006
+

@@ -1,0 +1,39 @@
+type=AUTO
+name=so’tys
+
+phase=01leci1   . 0 leci
+phase=01leci2   . 1
+phase=01leci3   . 2
+phase=01wyp6    . 3 wstaje
+phase=01wyp7    . 4
+phase=01wyp8    . 5
+phase=00e0      . 6 stoi profil
+phase=00se0     . 7 obrot
+phase=00s0      . 8 en face
+phase=00nici    . 9 nici
+
+Seq=  6 -2    0   0  10   park
+
+Seq=  0 -1   10  -2   6   wypad
+Seq=  1 -1   10  -2   6
+Seq=  0 -1   10  -2   6
+Seq=  1 -1   10   0   6
+Seq=  0 -1   10   0   6
+Seq=  1 -1   10   0   6
+Seq=  0 -1   10   0   6
+Seq=  1 -1   10   0   6
+Seq=  2 -1   10   2   6
+Seq=  3 -1   10   4   6
+Seq=  2 -1   10   6   6
+Seq=  1 -1   10   2   6
+Seq=  2 -1    0   0  10
+Seq=  3 -1    0   0  10
+Seq=  4 -1    0   0  10
+Seq=  5 -1    0   0  10
+Seq=  6 -1    0   0  10
+Seq=  7 -1    0   0  10
+Seq=  8 -1    0   0  10
+Seq=  9 -1    0   0 144
+Seq=  8 -2    0   0  10
+
+

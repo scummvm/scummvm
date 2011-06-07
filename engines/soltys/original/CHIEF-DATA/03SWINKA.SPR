@@ -1,0 +1,9 @@
+name=Frozen assets
+type=dead
+east=1
+phase=03swink1
+
+Take= REACH -1    -1
+Take= SOUND -1     1  drap
+Take= SAY   -1  3006
+

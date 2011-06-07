@@ -1,0 +1,60 @@
+name=so’tys
+type=auto
+
+
+phase=00s0            .0 stoi
+phase=00bwe01         .1 bierze
+phase=00bwe02         .2
+phase=00bwe03         .3
+phase=03je01          .4 podnosi  chleb
+phase=03je02          .5 otwiera gebe
+phase=03je03          .6 j.w. szeroko
+phase=03je04          .7 gryzie
+phase=03je05          .8 j.w. oczy
+phase=03je06          .9 wypuszcza ch. drze sie
+phase=03je07          .10 j.w.
+phase=03je08          .11 reka na gebie
+phase=03je09          .12 reka j.w. kuca
+phase=03je10          .13 j.w.
+phase=03je11          .14 j.w.
+phase=03je12          .15 stoi, obrot se0 reka j.w.
+phase=03je13          .16 stoi en face    reka j.w.
+phase=03je14          .17 stoi j.w. opuszcza reke spuchniety
+phase=03je15          .18 stoi j.w. reka w dole b.spuchniety
+phase=03je16          .19 stoi j.w. opuszcza reke nie spuchniety
+
+phase=00se0           .20 ob rut
+phase=00e0            .21 bok
+
+Seq= 0  0  0  0   5    .0 park
+
+Seq=20 -1  0  0  15    .1   ob
+Seq=21 -1  0  0  15    .2   rut
+Seq= 1 -1  0  0  15    .3   bierze
+Seq= 2 -1  0  0  15    .4   bierze
+Seq= 3 -1  0  0  15    .5   bierze
+Seq= 4 -1  0  0  15    .6   podnosi chleb
+Seq= 5 -1  0  0  25    .7
+Seq= 6 -1  0  0  35    .8
+Seq= 7 -1  0  0  25    .9   gryzie
+Seq= 8 -1  0  0  25    .10
+Seq= 9 -1  0  0  15    .11  drze
+Seq=10 -1  0  0  15    .12
+Seq=11 -1  0  0  15    .13  boleje stoi
+Seq=12 -1  0  0  15    .14  kuca
+Seq=13 -1  0  0  16    .15
+Seq=14 -1  0  0  24    .16
+Seq=13 -1  0  0  16    .17
+Seq=14 -1  0  0  24    .18
+Seq=13 -1  0  0  16    .19
+Seq=12 -1  0  0  16    .20
+Seq=11 -1  0  0  16    .21   stoi
+Seq=15 -1  0  0  16    .22   obrot
+Seq=16 -1  0  0  24    .23   en face  reka na gebie
+Seq=17 -1  0  0  16    .24   en face  opuszcza spuch
+Seq=18 -1  0  0  56    .25   en face  spuch
+Seq=17 -1  0  0  16    .26   en face  podnosi
+Seq=16 -1  0  0  72    .31   en face  reka an gebie
+Seq=19  0  0  0  16    .32   en face  opuszcza nie spuch
+
+

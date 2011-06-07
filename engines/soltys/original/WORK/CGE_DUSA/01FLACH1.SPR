@@ -1,0 +1,43 @@
+type=AUTO
+name=full bottle
+East=1
+
+phase=01flach1
+.phase=01flach2
+phase=01flach3
+.phase=01flach4
+phase=01flach5
+.phase=01flach6
+phase=01flach7
+.phase=01flach8
+
+Seq= 0 -1 0 0 72		0
+Seq= 1 -1 0 0 72		1
+Seq= 2 -1 0 0 72		2
+Seq= 3 -2 0 0 72		3
+
+.Seq= 4 -1 0 0 72		4
+.Seq= 5 -1 0 0 72		5
+.Seq= 6 -1 0 0 72		6
+.Seq= 7 -2 0 0 72		7
+
+
+Portable=1
+
+
+Take= REACH 7001   -1     kožcielnemu
+Take= SEQ   7001    3     gada
+Take= SAY   7001 7003     bimber nie
+Take= NEXT    -1   -3     i znowu
+
+.4.
+Take= LABEL 5002    0     dziadowi
+Take= REACH 5002   -1     da flaszk‘
+Take= SEND    -1   -1     flaszka won
+Take= SEQ   5002    1     picie
+Take= WAIT  5002    0     do konca
+Take= SAY   5002 5001     powie
+Take= SEND  5010    5     drut
+Take= SEQ   5015    1     decha buju
+Take= SEND  5002   -1     dziad won!
+

@@ -1,0 +1,66 @@
+Program=SOLTYS
+*Wait
+Title1=   зд©зд©© зб©© ззд©    not for sale
+Title2=   юд©Ё Ёцы Ё юбыюд©    DEMO version
+Title3=   ддыюдыюдыа  а дды    installation
+Title4=ддддддддддддддддддддддддддддддддддддддд
+Title5=    Copyright (c) 1994 L.K. AVALON
+*ShowTitle
+*Wait
+
+Name=C:\SOLTYS
+*GetDrive
+Space=0
+*CheckSpace
+
+*MakeDir
+
+Program=SOLTYS
+
+DosScreen=0
+
+*HideText
+Text1=     installation in progress...
+Text2=
+Text3=             CALL NOW!
+Text4=
+Text5=     AVALON Computer Laboratory
+Text6=Targowa 1/1010, 35064 Rzesz╒w, POLAND
+Text7=   tel/fax +48-(0)17 627471 / 275
+*ShowText
+
+Name=SOLTYS.EXE
+*Open
+Name=SOLTYS.001
+*Expand
+*Close
+
+Name=SOLTYS.SVG
+*Open
+Name=SOLTYS.002
+*Expand
+*Close
+
+Name=VOL.CAT
+*Open
+Name=SOLTYS.003
+*Expand
+*Close
+
+Name=VOL.DAT
+*Open
+Name=SOLTYS.004
+*Expand
+*Close
+
+*HideText
+Text1=Installation complete. Enter following at DOS prompt:
+Text2=
+Text3=   SOLTYS
+Text4=
+Text5=then press [Enter]
+*ShowText
+*GetAnyKey
+*HideText
+*HideTitle
+

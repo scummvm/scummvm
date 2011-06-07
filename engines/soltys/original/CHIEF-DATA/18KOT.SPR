@@ -1,0 +1,23 @@
+name=Tom Cat
+type=auto
+
+phase=18kot0
+phase=18kot01
+phase=18kot02
+phase=18kot03
+phase=18kot04
+phase=18kot_0
+
+Seq= 0  0   0   0  6
+Seq= 0  2   0   0  6
+Seq= 5  3   0  30  6
+Seq= 1  4  -5   0  4
+Seq= 2  5  -5   0  4
+Seq= 3  6  -5   0  4
+Seq= 4  3  -5   0  4
+
+
+Take=REACH   -1    -1
+Take=SOUND   -1 18002  miao!
+Take=SAY     -1 18004  -//-
+

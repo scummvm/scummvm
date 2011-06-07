@@ -1,0 +1,26 @@
+name=A labour champion
+type=auto
+east=1
+phase=04robol0
+phase=04robol1
+phase=04robol2
+
+Seq=  0  1  0  0 130
+Seq=  1  2  0  0  65
+Seq=  2  3  0  0  80
+Seq=  1  0  0  0  40
+
+Near= SOUND  -1 4006 chrap!
+Near= SAY    -1 4001
+
+
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1  4009  gada
+Take= NEXT     -1    -1  stop
+
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1  4010  gada
+Take= NEXT     -1     0  stop
+
