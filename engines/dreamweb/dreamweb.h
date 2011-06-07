@@ -78,6 +78,7 @@ public:
 	uint8 randomNumber() { return _rnd.getRandomNumber(255); }
 
 	void openFile(const Common::String &name);
+	void readFromFile(uint8 *dst, unsigned size);
 
 private:
 	const DreamWebGameDescription *_gameDescription;

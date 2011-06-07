@@ -141,6 +141,12 @@ void DreamWebEngine::openFile(const Common::String &name) {
 		error("cannot open file %s", name.c_str());
 }
 
+void DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
+	//if (!_file.isOpen())
+	//	error("file was not opened");
+	_file.read(dst, size);
+}
+
 
 } // End of namespace DreamWeb
 
@@ -184,7 +190,11 @@ void setkeyboardint(Context &context) {
 }
 
 void readfromfile(Context &context) {
-	::error("readfromfile");
+	uint16 dst_offset = context.dx;
+	uint16 size = context.bx;
+	debug(1, "readfromfile(ds:%u, %u)", dst_offset, size);
+	engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
+	context.flags._c = false; //fixme: add return args
 }
 
 void closefile(Context &context) {
@@ -206,6 +216,7 @@ void openfile(Context &context) {
 	while((c = context.cs.byte(name_ptr++)) != 0)
 		name += (char)c;
 	debug(1, "opening file: %s", name.c_str());
+	engine()->openFile(name);
 	context.cs.word(kHandle) = 1; //only one handle
 	context.flags._c = false;
 }

@@ -98,6 +98,11 @@ struct Segment {
 	inline WordRef word(unsigned index) {
 		return WordRef(data, index);
 	}
+
+	inline uint8* ptr(unsigned index, unsigned size) {
+		assert(index + size <= data.size());
+		return data.begin() + index;
+	}
 };
 
 class Context;
@@ -136,6 +141,11 @@ public:
 	inline void assign(const uint8 *b, const uint8 *e) {
 		assert(_segment != 0);
 		_segment->assign(b, e);
+	}
+	
+	inline uint8* ptr(unsigned index, unsigned size) {
+		assert(_segment != 0);
+		return _segment->ptr(index, size);
 	}
 };
 
