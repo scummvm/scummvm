@@ -81,6 +81,7 @@ public:
 	void readFromFile(uint8 *dst, unsigned size);
 	void closeFile();
 
+	Common::Point mousePos() const { return _mouse; }
 private:
 	const DreamWebGameDescription *_gameDescription;
 	Common::RandomSource _rnd;

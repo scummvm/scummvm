@@ -236,7 +236,17 @@ void dontloadseg(Context &context) {
 }
 
 void mousecall(Context &context) {
-	::error("mousecall");
+	Common::Point pos = engine()->mousePos();
+	if (pos.x > 298)
+		pos.x = 298;
+	if (pos.x < 15)
+		pos.x = 15;
+	if (pos.y < 15)
+		pos.y = 15;
+	if (pos.y > 184)
+		pos.y = 184;
+	context.cx = pos.x;
+	context.dx = pos.y;
 }
 
 void setmouse(Context &context) {
