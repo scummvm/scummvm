@@ -413,7 +413,7 @@ void mode640x480(Context &context) {
 }
 
 void showgroup(Context &context) {
-	warning("vsync: STUB");
+	warning("showgroup: STUB");
 }
 
 void fadedos(Context &context) {
@@ -426,7 +426,7 @@ void doshake(Context &context) {
 
 void vsync(Context &context) {
 	//engine()->waitForVSync();
-	warning("vsync: STUB");
+	//warning("vsync: STUB"); //fixme: loop
 }
 
 void setmode(Context &context) {

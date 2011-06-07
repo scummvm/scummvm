@@ -245,14 +245,16 @@ public:
 	}
 
 	inline void _add(uint8 &dst, uint8 src) {
-		flags._c = (unsigned(dst) + src) >= 0x100;
-		dst += src;
+		unsigned r = (unsigned)dst + src;
+		flags._c = r >= 0x100;
+		dst = r;
 		flags.update(dst);
 	}
 
 	inline void _add(uint16 &dst, uint16 src) {
-		flags._c = (unsigned(dst) + src) >= 0x10000;
-		dst += src;
+		unsigned r = (unsigned)dst + src;
+		flags._c = r >= 0x10000;
+		dst = r;
 		flags.update(dst);
 	}
 
@@ -304,10 +306,38 @@ public:
 		flags.update(dst);
 	}
 
-	inline void _shr(uint8 &dst, uint8 src) {}
-	inline void _shr(uint16 &dst, uint8 src) {}
-	inline void _shl(uint8 &dst, uint8 src) {}
-	inline void _shl(uint16 &dst, uint8 src) {}
+	inline void _shr(uint8 &dst, uint8 src) {
+		if (src > 0 && src < 32) {
+			dst >>= (src - 1);
+			flags._c = dst & 1;
+			dst >>= 1;
+		}
+		flags.update(dst);
+	}
+	inline void _shr(uint16 &dst, uint8 src) {
+		if (src > 0 && src < 32) {
+			dst >>= (src - 1);
+			flags._c = dst & 1;
+			dst >>= 1;
+		}
+		flags.update(dst);
+	}
+	inline void _shl(uint8 &dst, uint8 src) {
+		if (src > 0 && src < 32) {
+			dst <<= (src - 1);
+			flags._c = dst & 0x80;
+			dst <<= 1;
+		}
+		flags.update(dst);
+	}
+	inline void _shl(uint16 &dst, uint8 src) {
+		if (src > 0 && src < 32) {
+			dst <<= (src - 1);
+			flags._c = dst & 0x8000;
+			dst <<= 1;
+		}
+		flags.update(dst);
+	}
 
 	inline void _mul(uint8 src) {
 		unsigned r = unsigned(al) * src;
