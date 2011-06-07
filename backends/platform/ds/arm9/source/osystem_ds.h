@@ -29,7 +29,6 @@
 #include "nds.h"
 #include "gbampsave.h"
 #include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
 #include "audio/mixer_intern.h"
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
@@ -46,7 +45,6 @@ protected:
 
 	GBAMPSaveFileManager mpSaveManager;
 	Audio::MixerImpl *_mixer;
-	DefaultTimerManager *_timer;
 	Graphics::Surface _framebuffer;
 	bool _frameBufferExists;
 	bool _graphicsEnable;
@@ -159,7 +157,6 @@ public:
 	virtual Audio::Mixer *getMixer() { return _mixer; }
 	Audio::MixerImpl *getMixerImpl() { return _mixer; }
 
-	virtual Common::TimerManager *getTimerManager() { return _timer; }
 	static int timerHandler(int t);
 
 
