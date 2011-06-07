@@ -111,6 +111,7 @@ add_engine saga2 "SAGA 2 games" no
 add_engine sci "SCI" yes "sci32"
 add_engine sci32 "SCI32 games" no
 add_engine sky "Beneath a Steel Sky" yes
+add_engine soltys "Soltys" no
 add_engine sword1 "Broken Sword" yes
 add_engine sword2 "Broken Sword II" yes
 add_engine sword25 "Broken Sword 2.5" no
