@@ -946,6 +946,7 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
+	glDepthMask(GL_TRUE);
 }
 
 void GfxOpenGL::destroyTextObject(TextObject *text) {
