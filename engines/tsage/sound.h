@@ -91,6 +91,10 @@ public:
 	virtual void setProgram(int channel, int program) {}
 	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
 	virtual void setPitchBlend(int channel, int pitchBlend) {}
+	virtual void proc32(int voiceNum, int program, ...) {} // TODO: Determine params
+	virtual void proc38(int voiceNum) {}
+	virtual void proc40(int voiceNum) {}
+	virtual void proc42(int voiceNum, ...) {} // TODO: Determine params
 	virtual void updateVoice(int voiceNum) {}
 };
 
@@ -329,10 +333,16 @@ public:
 	void _soRemoteReceive();
 	void _soServiceTrackType0(int trackIndex, const byte *channelData);
 	void _soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceType mode, int v0);
-
-	void _soServiceTrackType1(int trackIndex, const byte *channelData);
+	void _soProc32(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0);
+	void _soProc42(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0);
+	void _soProc38(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int cmd, int value);
+	void _soProc40(VoiceTypeStruct *vtStruct, int channelNum);
 	void _soDoTrackCommand(int channelNum, int command, int value);
 	bool _soDoUpdateTracks(int command, int value);
+	void _soSetTrackPos(int trackIndex, int trackPos, int cueValue);
+
+	void _soServiceTrackType1(int trackIndex, const byte *channelData);
+	int _soFindSound(VoiceTypeStruct *vtStruct, int channelNum);
 };
 
 class ASound: public EventHandler {
