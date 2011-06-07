@@ -196,8 +196,8 @@ void setkeyboardint(Context &context) {
 
 void readfromfile(Context &context) {
 	uint16 dst_offset = context.dx;
-	uint16 size = context.bx;
-	debug(1, "readfromfile(ds:%u, %u)", dst_offset, size);
+	uint16 size = context.cx;
+	debug(1, "readfromfile(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
 	engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
 	context.flags._c = false; //fixme: add return args
 }
