@@ -11,15 +11,6 @@ namespace dreamgen {
 //fixme: name clash
 #undef random
 
-struct LowPartOfRegister {
-	enum { Mask = 0xff };
-	enum { Shift = 0 };
-};
-struct HighPartOfRegister {
-	enum { Mask = 0xff00 };
-	enum { Shift = 8 };
-};
-
 struct Register {
 	uint16 _value;
 	inline Register(): _value() {}
@@ -33,13 +24,12 @@ struct Register {
 	}
 };
 
-template<typename P>
+template<int Mask, int Shift>
 struct RegisterPart {
-	typedef P 		PartTraits;
 	Register		&_reg;
 	uint8			_value;
 
-	inline RegisterPart(Register &reg) : _reg(reg), _value(reg._value >> PartTraits::Shift) {}
+	inline RegisterPart(Register &reg) : _reg(reg), _value(reg._value >> Shift) {}
 
 	inline operator uint8&() {
 		return _value;
@@ -53,9 +43,11 @@ struct RegisterPart {
 		return *this;
 	}
 	inline ~RegisterPart() {
-		_reg._value = (_reg._value & ~PartTraits::Mask) | (_value << PartTraits::Shift);
+		_reg._value = (_reg._value & Mask) | (_value << Shift);
 	}
 };
+typedef RegisterPart<0xff, 0> LowPartOfRegister;
+typedef RegisterPart<0xff00, 8> HighPartOfRegister;
 
 class WordRef {
 	Common::Array<uint8>	&_data;
@@ -189,14 +181,14 @@ public:
 	enum { kDefaultDataSegment = 0x1000 };
 	
 	Register ax, dx, bx, cx, si, di;
-	RegisterPart<LowPartOfRegister> al;
-	RegisterPart<HighPartOfRegister> ah;
-	RegisterPart<LowPartOfRegister> bl;
-	RegisterPart<HighPartOfRegister> bh;
-	RegisterPart<LowPartOfRegister> cl;
-	RegisterPart<HighPartOfRegister> ch;
-	RegisterPart<LowPartOfRegister> dl;
-	RegisterPart<HighPartOfRegister> dh;
+	LowPartOfRegister	al;
+	HighPartOfRegister	ah;
+	LowPartOfRegister	bl;
+	HighPartOfRegister	bh;
+	LowPartOfRegister	cl;
+	HighPartOfRegister	ch;
+	LowPartOfRegister	dl;
+	HighPartOfRegister	dh;
 	
 	SegmentRef cs, ds, es;
 	Flags flags;
