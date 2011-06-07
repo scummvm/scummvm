@@ -178,7 +178,6 @@ Common::Rect * MicroTileArray::getRectangles(int *num_rects, int min_x, int min_
 			rects[n_rects].right = x1 + 1;
 			rects[n_rects].bottom = y1 + 1;
 			n_rects++;
-			fflush(stdout);
 
 			#else
 
