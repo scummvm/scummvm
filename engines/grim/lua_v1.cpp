@@ -607,7 +607,8 @@ void L1_GetSectorOppositeEdge() {
 	for (int i = 0; i < numSectors; i++) {
 		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
 		if (strmatch(sector->getName(), name)) {
-			assert(sector->getNumVertices() == 4);
+			if (sector->getNumVertices() != 4)
+				warning("GetSectorOppositeEdge(): cheat box with %d (!= 4) edges!", sector->getNumVertices());
 			Graphics::Vector3d* vertices = sector->getVertices();
 			Sector::ExitInfo e;
 
