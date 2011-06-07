@@ -1,0 +1,10 @@
+type=DEAD
+name=An empty beer bottle
+East=1
+
+phase=04butsto
+phase=04butroz
+
+Take= REACH  -1   -1
+Take= SAY     1 4008
+

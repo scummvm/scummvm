@@ -1,0 +1,73 @@
+name=bufetowa
+type=auto
+
+phase=16but0    . 0  spoko
+phase=16but1    . 1  usmiech
+phase=16but2    . 2  dziobek
+phase=16but3    . 3  kreci glowa
+phase=16but4    . 4  glowa w dol, dziobek
+phase=16fikb1   . 5  fika
+phase=16fikb2   . 6
+phase=16fart0   . 7  bez but¢w
+
+Seq= 0 -2  0  0 55    stoi
+Seq= 0  8  0  0 55    gada
+Seq= 1  5  0  0 25    przeczy
+Seq= 2  7  0  0 15    potakuje
+Seq= 5 15  0  0 15    zdejmuje
+
+.5 przeczy
+Seq= 3 -1  0  0 15
+Seq= 1  0  0  0 25
+
+.7 potakuje
+Seq= 4  0  0  0 45
+
+.8 gada
+Seq= 1 -1  0  0 15
+Seq= 0 -1  0  0 15
+Seq= 2 -1  0  0 15
+Seq= 0 -1  0  0 55
+Seq= 1 -1  0  0 15
+Seq= 0 -1  0  0 15
+Seq= 2  0  0  0 15
+
+.15 zdejmuje
+Seq= 5 -1  0  0 15
+Seq= 6 -1  0  0 15
+Seq= 7 -2  0  0 15
+
+Near= SEQ       -1      1
+Near= SAY       -1  16001  witaj
+Near= SAY        1  16002  co porab
+Near= SEQ       -1      1
+Near= SAY       -1  16003  zagrasz?
+Near= SAY        1  16004  czemu nie
+
+Near= SEQ    16003      1  on
+Near= SETXY  16003  18778  (218+58*320)
+Near= SETZ   16003     12
+Near= SAY    16003  16005
+
+Near= SEQ    16004      1  ona
+Near= SETXY  16004  20360  (200+63*320)
+Near= SETZ   16004     12
+Near= SAY    16004  16006
+
+Near= SEQ       -1      1
+Near= SAY       -1  16007
+Near= WALK     198    136
+
+Near= RTNEXT    -1      1  unlock buf
+Near= RTNEXT 16003      1  unlock pan
+Near= RTNEXT 16004      1  unlock pani
+Near= GAME      -1      1
+Near= NEXT      -1     -2  lock near
+
+.....................................
+
+Take= NEXT      -1     -2  locked
+Take= GAME      -1      1
+
+
+

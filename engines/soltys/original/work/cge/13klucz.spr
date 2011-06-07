@@ -1,0 +1,22 @@
+name=kluczyk
+type=dead
+phase=13klucz
+
+east=1
+
+Take= REACH,    -1    -1
+Take= KEEP,     -1    -1
+Take= SEND    3020    -1  wyprali kota
+Take= SEQ    18012     2  fazy...
+Take= SEQ    18013     4  ...fal
+Take= LEVEL     -1     3
+Take= SOUND     -1 13005  oklaski!
+Take= NEXT      -1    -1
+
+Take= REACH  23008    -1  furtka
+Take= SOUND  23008 23004  skrzyp!
+Take= SEND      -1    -1  klucz won!
+Take= SEQ    23008     1  otw¢rz
+Take= SETVB     23    -1  odblok
+Take= RTNEXT 23011     1  unlock 23 sztach
+

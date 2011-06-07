@@ -1,0 +1,36 @@
+type=AUTO
+name=A Capitol goose
+
+phase=11ges0
+phase=11ges1
+phase=11ges2
+phase=11ges3
+phase=11ges4
+phase=11ges5
+phase=11ges6
+phase=11ges7
+
+
+Seq= 0  3  0 0 10    grozi
+Seq= 0 -1  0 0 10    spoko
+Seq= 1  1  0 0 99
+
+Seq= 1 -1  0 0 10    wyciaga
+Seq= 2 -1  0 0 10    podnosi skrz f1
+Seq= 3 -1  0 0 10                 f2
+Seq= 2 -1  0 0 10
+Seq= 1 -1  0 0 10
+Seq= 4 -1  0 0 10    gl.nizej    f1
+Seq= 5 -1  0 0 10    gl.j.nizej  f2
+Seq= 6 -1  0 0 10    szyja zgieta tyl f1
+Seq= 7 -1  0 0 10    szyja zgieta przod f2
+Seq= 6 -1  0 0 10
+Seq= 7 -1  0 0 10
+Seq= 6 -1  0 0 10
+Seq= 7 -1  0 0 10
+Seq= 6 -1  0 0 10
+Seq= 5 -1  0 0 10
+Seq= 4 -1  0 0 10
+Seq= 3 -1  0 0 10
+Seq= 1  0  0 0 10
+

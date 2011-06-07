@@ -1,9 +1,0 @@
-name=patefon
-type=dead
-east=0
-phase=02patefo.bmp
-
-Take= REACH -1    -1
-Take= SOUND -1  2003
-Take= SAY   -1  2002
-

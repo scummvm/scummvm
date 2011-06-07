@@ -1,0 +1,13 @@
+type=AUTO
+name=dymek
+phase=05dym0     .0
+phase=05dym1     .1
+phase=05dym2     .2
+phase=05dym3     .3
+
+Seq= 0  1   0    0   25     .0
+Seq= 1  2   0    0   25     .1
+Seq= 2  3   0    0   25     .2
+Seq= 3  0   0    0   25     .3
+
+

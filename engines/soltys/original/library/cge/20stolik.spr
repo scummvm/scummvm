@@ -1,0 +1,8 @@
+name=stolik
+type=dead
+phase=20stolik
+East=1
+
+Near= SAY   20001 20001
+Near= SAY   20002 20002
+

@@ -1,0 +1,31 @@
+name=A lass
+type=auto
+
+phase=16pani0         0 gra
+phase=16pani1         1 jw
+phase=16panid0        2 wprost
+phase=16panid1        3 jw usmiech
+phase=16panid2        4 w lewo
+phase=16panid3        5 w prawo
+phase=16panid4        6 w dol
+
+Seq= 0  4  0  0  90    gra
+Seq= 2 -2  0  0  15    stoi
+Seq= 3  7  0  0  25    przeczy
+Seq= 6  1  0  0  40    potakuje
+
+.4 gra
+Seq= 1 -1  0  0  10
+Seq= 0 -1  0  0   5
+Seq= 1  0  0  0   5
+
+.7 przeczy
+Seq= 4 -1  0  0  20
+Seq= 3 -1  0  0  10
+Seq= 5 -1  0  0  20
+Seq= 3  1  0  0  25
+
+
+Take= NEXT      -1     -2  locked
+Take= GAME      -1      1
+

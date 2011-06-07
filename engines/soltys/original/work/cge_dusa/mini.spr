@@ -1,0 +1,23 @@
+name=
+type=DEAD
+
+Transparent=1
+
+phase=0001p
+phase=0002p
+phase=0003p
+phase=0004p
+phase=0005p
+phase=0006p
+phase=0007p
+phase=0008p
+
+Seq= 0  0  0  0  0
+Seq= 1  1  0  0  0
+Seq= 2  2  0  0  0
+Seq= 3  3  0  0  0
+Seq= 4  4  0  0  0
+Seq= 5  5  0  0  0
+Seq= 6  6  0  0  0
+Seq= 7  7  0  0  0
+

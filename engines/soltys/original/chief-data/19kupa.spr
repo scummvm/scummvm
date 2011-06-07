@@ -1,0 +1,11 @@
+name=Boom-boom
+type=dead
+east=1
+
+phase=19kupa
+phase=19apuk
+
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1 19003  gada
+

@@ -1,8 +1,0 @@
-name=A four-pronged stinger
-type=dead
-phase=19wid0
-
-Take= REACH     -1      2
-Take= SOUND     -1  19004  drumla
-Take= SAY        1  19002  popsuty
-

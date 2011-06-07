@@ -1,0 +1,35 @@
+Program=SOLTYS
+DosScreen=0
+BigView=1
+*Wait
+
+Title1=                   зд©зд©© зб©© ззд©
+Title2=   Installation of юд©Ё Ёцы Ё юбыюд©
+Title3=                   ддыюдыюдыа  а дды
+Title4=ддддддддддддддддддддддддддддддддддддддд
+Title5=    Copyright (c) 1995 L.K. AVALON
+*ShowTitle
+*Wait
+
+Text1=Please enter the full path of the new directory to install this game.
+Text2=You may confirm this default path with [Enter] or edit it if you wish.
+Text3=Note that the drive letter followed by a colon are always required.
+Text4=Example:
+Text5=                     Z:\GAMES\AVALON\SOLTYS
+Text6=To change only drive letter - press [Del] once and then new letter.
+*ShowText
+
+
+Name=C:\AVALON\SOLTYS
+*GetDir
+Space=10000
+*CheckSpace
+
+*MakeDir
+
+Program=SOLTYS
+
+Name=INSTALL.CHN
+*Copy
+*Chain
+

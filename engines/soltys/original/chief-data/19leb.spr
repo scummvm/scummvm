@@ -1,0 +1,40 @@
+type=AUTO
+name=A cow
+
+phase=19kro00
+phase=19kro01
+phase=19kro02
+phase=19kro03
+phase=19kro04
+phase=19kro05
+phase=19kro06
+phase=19kro07
+phase=19kro08
+phase=19kro09
+phase=19kro10
+
+Seq= 0  1 0 0  30
+Seq= 1  2 0 0  10
+Seq= 2  3 0 0  10
+Seq= 3  4 0 0  10
+Seq= 4  5 0 0  10
+Seq= 3  6 0 0  10
+Seq= 2  7 0 0  10
+Seq= 1  8 0 0  10
+Seq= 0  9 0 0  10
+Seq= 5 10 0 0  10
+Seq= 6 11 0 0  10
+Seq= 7 12 0 0  10
+Seq= 8 13 0 0  10
+Seq= 9 14 0 0  10
+Seq=10 15 0 0  10
+Seq= 9 16 0 0  10
+Seq=10 17 0 0  10
+Seq= 9 18 0 0  10
+Seq=10 19 0 0  10
+Seq= 9 20 0 0  10
+Seq= 8 21 0 0  10
+Seq= 7 22 0 0  10
+Seq= 6 23 0 0  10
+Seq= 5  0 0 0  10
+

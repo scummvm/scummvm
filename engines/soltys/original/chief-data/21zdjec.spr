@@ -1,0 +1,64 @@
+Type=DEAD
+Name=A photo of the beloved daughter
+East=1
+
+Phase= 21zdjec0
+Phase= 21zdjec1
+Phase= 21zdjec2
+
+Seq= 0  -2  0  0  0
+Seq= 1  -2  0  0  0
+Seq= 2  -2  0  0  0
+
+Take= REACH      -1        1  bierz
+Take= SOUND      -1        3  szu!
+Take= SEND       -1       -1  zdj‘cie won
+Take= WAIT        1       -1  sta¤
+Take= COVER       1    21101  szo’tys
+Take= SEQ     21101        1  poka§ I
+Take= WAIT    21101       -1  sko¤czy’
+Take= UNCOVER     1    21101  SDS
+Take= SAY         1    21011  gg
+Take= SEQ     21005        3  gada
+Take= SAY     21050    21012  pnp
+Take= SEQ     21005        2  pada
+Take= SOUND   21005        4  pad!
+Take= TNEXT   21005        0  gadaj†cy...
+Take= TNEXT   19111        0  ba¤ka zn¢w czynna
+Take= NEXT       -1       -3  end loop
+
+.16. from 20bilon
+Take= REACH      -1        1  bierz
+Take= SOUND      -1        3  szu!
+Take= HIDE       -1        1  schowaj
+Take= KEEP       -1        2  w karman
+Take= WAIT        1       -1  sta¤
+Take= COVER       1    21101  szo’tys
+Take= SEQ     21101        2  poka§ II
+Take= WAIT    21101       -1  sko¤czy’
+Take= HIDE       -1        0  le§y w kieszeni
+Take= UNCOVER     1    21101  SDS
+Take= SAY         1    21013  dw
+Take= SEQ     21005        3  gada
+Take= SAY     21050    21014  zdw
+Take= SEQ     21005        2  pada
+Take= SOUND   21005        4  pad!
+Take= SEND    19111       -1  banka won
+Take= TNEXT   21005        0  gadaj†cy...
+Take= NEXT       -1       -1  secret weapon!
+
+Take= RMNEAR  22005        0
+Take= WALK      156      114  do žwini
+Take= WAIT        1       -1  stoi
+Take= COVER       1    22101  mordys
+Take= SEQ     22101        1  pokazuj
+Take= SOUND   22005    22001  mord!
+Take= SEND       -1       -1  zdj‘cie won
+Take= WAIT    22101        7
+Take= SEQ     22005        1  žwinia pada
+Take= SETZ    22005       10  do nowej pozycji
+Take= WAIT    22101       -1
+Take= UNCOVER     1    22101
+Take= RNNEXT  22001        1  unlock 21baba
+Take= RMTAKE  18003        0  nieczynna
+

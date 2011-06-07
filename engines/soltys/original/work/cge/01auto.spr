@@ -1,0 +1,33 @@
+phase=dummy
+
+Take= COVER     1  1201  wypadys
+Take= PAUSE    -1   144  2 sekundy nic
+Take= SEQ    1101     1  otwiera
+Take= SOUND  1101  1001  skrzyp!
+Take= PAUSE  1101    10  troszk‘ otwarte
+Take= SEQ    1201     1  leci
+Take= SOUND  1201  1003  ziuuu-bum!
+Take= WAIT   1201    12
+Take= SOUND  1201  1009  bum!
+Take= WAIT   1201    -1  stoi?
+Take= UNCOVER   1  1201  SDS
+Take= SEQ    1101     2  zamyka
+Take= SOUND  1101  1001  skrzyp!
+Take= SEND     -1    -1  auto-switch won
+Take= SAY    1101  1005  §ona zza drzwi
+Take= SETX0     1   118  nowa...
+Take= SETY0     1    80  pozycja so’tysa
+
+
+.  bariery  .
+.  ~~~~~~~  .
+Take= SETVB     1    27
+Take= SETVB     2    18
+Take= SETHB     2    11
+Take= SETVB     4     7
+Take= SETVB     6    25
+Take= SETVB    13    17
+Take= SETVB    14    21
+Take= SETHB    22    11
+Take= SETVB    23     5
+

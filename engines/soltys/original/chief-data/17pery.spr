@@ -1,0 +1,56 @@
+name=A periscope
+type=auto
+east=1
+
+phase=17pery0  .0.lewo
+phase=17pery1  .1.prosto
+phase=17pery2  .2.prawo
+phase=17pery3  .3.zanurzenie
+phase=17pery4  .4.....
+phase=17pery5  .5....
+phase=17pery6  .6...
+phase=17pery7  .7..
+phase=17pery8  .8.
+phase=dummy    .9
+phase=17peryl  .10.lewo max
+phase=17peryp  .11.prawo max
+
+Seq= 1  2   0  0   10  scan
+Seq= 0 17   0  0   10  dive
+
+.2.
+Seq= 2 -1   0  0   10     .prawo
+Seq=11 -1   0  0   20     .prawo max
+Seq= 2 -1   0  0   10     .prawo
+Seq= 1 -1   0  0   10     .prosto
+Seq= 0 -1   0  0   10     .lewo
+Seq=10 -1   0  0   20     .lewo max
+Seq= 0 -1   0  0   10     .lewo
+Seq= 1 -1   0  0   10     .prosto
+Seq= 2 -1   0  0   10     .prawo
+Seq=11 -1   0  0   20     .prawo max
+Seq= 2 -1   0  0  360     .prawo
+Seq= 1 -1   0  0   10     .prosto
+Seq= 0 -1   0  0   10     .lewo
+Seq=10 -1   0  0   20     .lewo max
+Seq= 0  0   0  0   10     .lewo
+
+.17.
+Seq= 3 -1   0  0   10
+Seq= 4 -1   0  0   10
+Seq= 5 -1   0  0   10
+Seq= 6 -1   0  0   10
+Seq= 7 -1   0  0   15
+Seq= 8 -1   0  0   20
+Seq= 9 -1   1  0 4320  1 min
+Seq= 8 -1   0  0   20
+Seq= 7 -1   0  0   20
+Seq= 6 -1   0  0   20
+Seq= 5 -1   0  0   20
+Seq= 4 -1   0  0   20
+Seq= 3  0   0  0   20
+
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1 17006  gada
+

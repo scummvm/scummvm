@@ -1,0 +1,25 @@
+name=si¢demka karo
+type=dead
+East=1
+phase=06karta
+
+Portable=1
+
+Take= REACH 6001     0
+Take= SOUND    1  6002     szur!
+Take= SWAP  4103  4203     ulepszenie §ar¢wy
+Take= TNEXT 5010    12     ulepszenie drutu
+Take= SAY      1  6205     wasza?
+Take= SEND    -1    -1     bye!
+Take= SAY   6011  6101     thanx
+Take= NEXT    -1    -2     halt
+
+.8. (z 05drut)
+Take= REACH 6001     0
+Take= SOUND    1  6002     szur!
+Take= SWAP  4103  4303     ulepszenie §ar¢wy
+Take= SEND    -1    -1     bye!
+Take= SAY      1  6205     wasza?
+Take= SAY   6011  6101     thanx
+Take= NEXT    -1    -2     halt
+

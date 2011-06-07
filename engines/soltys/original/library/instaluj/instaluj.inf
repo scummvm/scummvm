@@ -1,0 +1,32 @@
+DirWarn=0
+Program=******
+*SaveDir
+
+Name=?:\DOWOL
+*GetDir
+
+*MakeDir
+Program=*****
+
+Name=instaluj.pag
+*Open
+Name=instaluj.pak
+*Expand
+*Close
+
+Text1=Instalacja *****  zako§czyía  sië  poprawnie.
+Text2=OdtÜd moßna  wywoíywaç je spod DOS-u rozkazem
+Text3=   *****
+Text4=lecz  jeszcze  lepiej  umieûciç  to polecenie
+Text5=jako  ostatniÜ linijkë  w pliku  AUTOEXEC.BAT
+Text6=Naleßy teß  wykonaç  ponowny  start komputera
+Text7=przy pomocy  Alt+Ctrl+Del, aby zmiany w pliku
+Text8=AUTOEXEC.BAT  przyniosíy  spodziewany skutek.
+Text9=
+Text10=
+
+*ShowText
+*GetAnyKey
+*HideText
+*HideTitle
+*RestoreDir

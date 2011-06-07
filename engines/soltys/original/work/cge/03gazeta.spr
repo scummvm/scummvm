@@ -1,0 +1,29 @@
+name=gazeta
+type=dead
+phase=03gazet2
+east=1
+
+
+Take= REACH      -1    -1  chwyta
+Take= KEEP       -1    -1  w kiesze¤
+Take= RTNEXT   3011     1  unlock 03 drzwi (closeable)
+Take= NEXT       -1    -1  na razie tyle
+
+Take= RMNEAR  17017     0  oczom - nie
+Take= REACH   17017    -1  si‘g
+Take= SOUND   17017     4  szelest!
+Take= SEND       -1    -1  gw won
+Take= SEND    17016    17  dawaj dziad
+Take= PAUSE      -1    72  1s
+Take= SOUND   17016 17005  drze!
+Take= PAUSE      -1   144  2s
+Take= SAY     17017 17003  dobra gw
+Take= SOUND   17016 17006  sp’uk!
+Take= PAUSE   17016    72  1s
+Take= SEQ     17014     1  drzwi o
+Take= SEND    17017    -1  oczy won
+Take= WAIT    17014    -1  otwarte
+
+Take= SEQ     17016     1
+Take= SAY     17016 17004
+

@@ -1,0 +1,10 @@
+name=puzzle board
+type=auto
+phase=puctab
+
+Take= NEXT   -1   -3
+Take= NEXT   -1   -3
+Take= NEXT   -1   -3
+
+Take= INF    -1 1003
+

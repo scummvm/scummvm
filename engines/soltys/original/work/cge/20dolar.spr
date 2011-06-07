@@ -1,0 +1,14 @@
+name=dolary
+type=DEAD
+phase=20dolar
+East=1
+
+Take= SEND    20006    -1  bilon won
+Take= REACH      -1     1
+Take= SEQ     20003     1  koza je je je
+Take= WAIT    20003     1
+Take= SOUND   20003 20005  chrum!
+Take= SEND       -1    -1
+Take= SAY         1 20006
+Take= SAY     20002 20007
+

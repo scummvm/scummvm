@@ -1,0 +1,27 @@
+name=
+type=auto
+transparent=1
+
+phase=06piw000
+phase=06piw220
+phase=dummy
+
+Seq= 0 -2  0  0  6    dark
+Seq= 1  4  0  0  3    spark
+Seq= 2 -2  0  0  6    light
+Seq= 2  5  0  0  6    blink
+
+.4 spark
+Seq= 0  1  0  0  8
+
+.5 blink
+Seq= 0 -1  0  0  8
+Seq= 2 -1  0  0  8
+Seq= 0 -1  0  0  8
+Seq= 2 -1  0  0  8
+Seq= 0 -1  0  0  8
+Seq= 2 -1  0  0 12
+Seq= 0 -1  0  0  8
+Seq= 2 -1  0  0 24
+Seq= 0  2  0  0  8    goto solid light
+

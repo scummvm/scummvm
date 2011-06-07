@@ -1,0 +1,9 @@
+name=opuszczona pasieka
+type=dead
+phase=11ul2
+
+
+Take= REACH    -1    -1
+Take= SOUND    -1 11001  pukanie
+Take= SAY       1 11005
+

@@ -1,0 +1,19 @@
+name=element uk’adanki
+type=dead
+phase=puc2
+
+Portable=1
+
+Take= REACH   1001    -1
+Take= RMTAKE    -1     0  martwy pucel
+Take= TRANS     -1     1  na wylot
+Take= HIDE      -1     1
+Take= GIVE      -1    -1
+Take= SETX      -1   193
+Take= SETY      -1    62
+Take= SETZ      -1     5
+Take= HIDE      -1     0
+Take= SOUND     -1  1002  oklaski
+
+Take= RTNEXT  1001     1
+

@@ -1,0 +1,31 @@
+name=A letter with no address
+type=dead
+phase=11kopert
+
+.0.
+Take=REACH      -1     0
+Take=KEEP       -1    -1
+Take=SETREF     -1 11202
+Take=NEXT       -1    -1
+
+.4. (from 13ksied)
+Take=REACH   13001    -1  ksi‘dzu
+Take=SOUND      -1 13004  szu!
+Take=SEQ     13001     1  gada
+Take=SAY     13001 13008  filatelista?
+Take=NEXT       -1    -3  loop
+
+.9. (from 04denko & 04masz)
+Take=WALK     4104    -1  do wrzajnika
+Take=WAIT        1    -1  stoi
+Take=RMTAKE     -1     0  zmartwienie
+Take=COVER       1  4402  partys
+Take=HIDE       -1     1  kopert w garžci
+Take=SEQ      4402     1  odklej
+Take=WAIT     4402    -1  stoi
+Take=UNCOVER     1  4402  SDS
+Take=SWAP       -1 11102  czysta koperta
+Take=RMNEAR  13001     0  ksi‘dzu
+Take=RMNEAR   4104     0  wrzajnikowi
+
+

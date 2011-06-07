@@ -1,0 +1,29 @@
+type=AUTO
+name=Number Eight
+
+phase=06numer0
+phase=06numer1
+
+Seq= 0  0 0 0 5		0 park
+Seq= 1  3 0 0 5		1 open
+Seq= 1  0 0 0 5		2 close
+
+Seq= 0  4 0 0 2		3
+Seq= 1  5 0 0 2		4
+Seq= 0  6 0 0 5		5
+Seq= 1  7 0 0 5		6
+Seq= 0  8 0 0 2		7
+Seq= 1  9 0 0 5		8
+Seq= 0 10 0 0 5		9
+Seq= 1 10 0 0 5
+
+Take= REACH   -1   -1
+Take= SOUND   -1 6004
+Take= SEQ   6008    1
+Take= NEXT    -1   -1
+
+Take= REACH   -1   -1
+Take= SOUND   -1 6004
+Take= SEQ   6008    2
+Take= NEXT    -1    0
+

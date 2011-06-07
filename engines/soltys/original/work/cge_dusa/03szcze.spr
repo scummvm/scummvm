@@ -1,0 +1,32 @@
+name=denture
+type=auto
+east=1
+phase=03szcze1
+phase=03szcze2
+
+seq=   0  1  0  0  15
+seq=   1  0  0  0   5
+
+Portable=1
+
+Take= NNEXT  3001    5    lepsza baba
+Take= REACH  3001   -1    si‘gnij
+Take= SEND     -1   -1    szcz‘ka won
+Take= RTNEXT 2001   20    nowa oliwa
+Take= SEQ    3018    1    mysz
+Take= SOUND  3018 3001    pi!
+Take= SAY    3018 3014    pi
+Take= SEQ    3001    2    gada z‘bata
+Take= SAY    3001 3002    gada
+Take= NEXT     -1   -3    loop
+
+.10 (goto from 02olej)
+Take= CLEAR  3001    0    babie
+Take= REACH  3001   -1    si‘gnij
+Take= SEND     -1   -1    szcz‘ka won
+Take= TNEXT  3004    3    kielb. ok
+Take= PORT   3004    1    kielb. bralna
+Take= SEQ    3001    2    gada z‘bata
+Take= SAY    3001 3003    bierz kie’bas‘
+
+

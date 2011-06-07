@@ -1,0 +1,25 @@
+type=dead
+name=oprawa §ar¢wki
+
+phase=06opraw1
+phase=06opraw2
+
+
+Take= SEQ   6009    1
+Take= SOUND 6009 6005  bzzz!
+Take= SETZ    -1    5
+Take= PAUSE   -1   72
+Take= SEQ   6009    0
+Take= SOUND    1 6006  auuu!
+Take= SAY      1 6102
+
+Take= HIDE     1    1
+Take= SETX     1  167
+Take= SETY     1   46
+Take= SETZ     1    7
+Take= HIDE     1    0
+
+Near= TNEXT 4103    0
+Near= TNEXT 4303    0
+
+

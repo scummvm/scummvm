@@ -1,0 +1,38 @@
+type=auto
+east=1
+
+phase=26leon0 .stoi
+phase=26leon1 .noga
+phase=26leon2 .j.w.
+phase=26leon3 .podnosi reke
+phase=26leon4 .drapanie
+phase=26leon5 .j.w.
+
+Seq= 0 -2  0  0  10
+Seq= 1  3  0  0  15  noganie
+Seq= 3 10  0  0  15  drapanie
+.3noganie.
+Seq= 2 -1  0  0  25
+Seq= 1 -1  0  0  15
+Seq= 2 -1  0  0  25
+Seq= 1 -1  0  0  15
+Seq= 2 -1  0  0  25
+Seq= 1 -1  0  0  15
+Seq= 0  0  0  0  15
+.10drapanie.
+Seq= 4 -1  0  0  25
+Seq= 5 10  0  0  25
+Seq= 4 -1  0  0  25
+Seq= 5 -1  0  0  25
+Seq= 4 -1  0  0  25
+Seq= 5 -1  0  0  25
+Seq= 4 -1  0  0  25
+Seq= 5 -1  0  0  25
+Seq= 4 -1  0  0  25
+Seq= 5 -1  0  0  25
+Seq= 4 -1  0  0  25
+Seq= 5 -1  0  0  25
+Seq= 4 -1  0  0  25
+Seq= 5 -1  0  0  25
+Seq= 3  0  0  0  25
+

@@ -1,0 +1,19 @@
+type=dead
+name=A cuckoo
+phase=09kuku0
+phase=09kuku1
+
+Portable=1
+
+Take= REACH  12001    -1   reper
+Take= SOUND  12001     4   ne!
+Take= SEND      -1    -1   qq won
+Take= WAIT       1    -1   stoi?
+Take= SEQ    12001     1
+Take= SEQ    12005     2   zegar z qq
+Take= SOUND  12005 12003   qq!
+Take= SAY    12001 12002
+Take= SEQ    12001     0
+Take= RMNEAR 12001     0
+Take= TNEXT  12009     1  drabina
+

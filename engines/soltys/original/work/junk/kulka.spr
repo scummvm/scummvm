@@ -1,0 +1,5 @@
+name=czerwona kulka
+type=NEWTON
+phase=RedOrb
+delay=1
+bottom=160

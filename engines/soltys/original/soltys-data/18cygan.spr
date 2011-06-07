@@ -1,0 +1,26 @@
+name=cyganka
+type=auto
+
+phase=18cygax0
+phase=18cygax1
+phase=18cygax2
+
+Seq= 0  0  0  0  5
+
+Seq= 1  2  0  0 15
+Seq= 0  3  0  0 15
+Seq= 1  4  0  0 15
+Seq= 0  5  0  0 15
+Seq= 1  6  0  0 15
+Seq= 0  7  0  0 15
+Seq= 1  8  0  0 15
+Seq= 2  0  0  0 35
+
+Near= SEQ      -1      1
+Near= SAY      -1  18001
+
+Take= REACH    -1     -1
+Take= SOUND    -1  18005
+Take= SEQ      -1      1
+Take= SAY      -1  18003
+

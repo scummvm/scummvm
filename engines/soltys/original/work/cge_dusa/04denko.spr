@@ -1,0 +1,21 @@
+type=DEAD
+name=bottle bottom
+East=1
+Phase=04dno1
+
+Portable=1
+
+Take=WALK    4004     -1   maszynka
+Take=WAIT       1     -1   stoi
+Take=COVER      1   4401   podpalacz
+Take=SEND      -1     -1   disappear
+Take=SEQ     4401      1   pal
+Take=WAIT    4401      5   pali
+Take=SEQ     4004      1   fire
+Take=SOUND   4004   4002   ogie¤!
+Take=WAIT    4401     -1   stoi
+Take=SETREF  4004   4104   nowy ref# maszynki
+Take=RNNEXT  4104      1   lepsza maszynka do koperty
+Take=TNEXT  11202      8   koperta dla maszynki
+Take=UNCOVER    1   4401   SDS
+

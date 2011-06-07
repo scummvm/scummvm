@@ -1,0 +1,89 @@
+type=dead
+name=A fox coat
+east=1
+
+phase=10futlis
+phase=10lismin
+
+
+. przed wiadrem
+
+Take= REACH,   -1  -1
+Take= KEEP,    -1   1
+Take= NEXT,    -1  -1
+
+.+r3
+
+Take= WALK  10009  -1  podejd¶
+Take= WAIT      1  -1  stoi
+Take= COVER     1 10101 straszak
+Take= HIDE     -1   1  schowaj
+Take= SEQ   10101   1
+Take= PAUSE    -1  40  na oko
+Take= SEQ,  10009,  1  strasz kure
+Take= SOUND 10009 10002  koko!
+Take= WAIT  10101  -1  postraszyí
+Take= UNCOVER   1 10101 SDS
+Take= HIDE     -1   0  wraca
+Take= WAIT  10009, 13  czekaj na pure
+Take= SOUND 10006, 10006  dup!
+Take= SEND  10006, 10  dawaç jajo
+Take= SEQ   10006,  1  lot jaja
+Take= WAIT  10006,  3  czekaj
+Take= SOUND 10006  10008  jajo sië rozbija
+Take= WAIT  10006,  5  czekaj
+Take= SEND  10106, 10  dawaç jajecznice
+Take= SEQ   10006,  0  wyíÜcz jajo
+Take= SEND  10006, -1  jajo won
+Take= NEXT     -1  -3
+
+.+r3+r22=r25 po wiadrze
+
+Take= REACH,   -1  -1
+Take= KEEP,    -1   1
+Take= NEXT,    -1  -1
+
+Take= WALK  10009  -1  podejd¶
+Take= WAIT      1  -1  stoi
+Take= COVER     1 10101 straszak
+Take= HIDE     -1   1  schowaj
+Take= SEQ   10101   1
+Take= PAUSE    -1  40  na oko
+Take= SEQ,  10009,  1  strasz kure
+Take= SOUND 10009  10002  koko!
+Take= WAIT  10101  -1  postraszyí
+Take= UNCOVER   1 10101 SDS
+Take= HIDE     -1   0  wraca
+Take= WAIT  10009, 13  czekaj na pure
+Take= SOUND 10006, 10006  dup!
+Take= SEND  10006, 10  dawaç jajo
+Take= SEQ   10006,  1  lot jaja
+Take= WAIT  10006,  3  doleciaío
+Take= SOUND  9005 10007  íomot!
+Take= SEQ   10006,  0  wyíÜcz jajo
+Take= SEND  10006, -1  jajo won
+Take= SEND     -1  -1  futro won
+Take= PORT   9005   1  znowu bralne
+Take= RTNEXT 9005   1  nowa twarz wiadra
+
+Take= PAUSE    -1  72  sekundkë...
+Take= SEQ   10004   1  odrzwi
+Take= WAIT  10004   4
+Take= SEND  10002  10  dawaj Jozka
+Take= SEND  10003  10  dawaj Stefana
+Take= SEQ   10002   1
+Take= SEQ   10003   1
+
+Take= SAY   10003 10001
+Take= SAY   10002 10011
+Take= SAY   10003 10002
+Take= SAY       1 10003
+Take= SAY   10003 10004
+Take= SAY   10002 10005
+
+Take= SEND  10002  -1  Jozek won
+Take= SEND  10003  -1  Stefan won
+Take= SEQ   10004   2  zdrzwi
+Take= SOUND 10004 10003 trzask!
+Take= SEQ    9008   1  dawaj stonke
+

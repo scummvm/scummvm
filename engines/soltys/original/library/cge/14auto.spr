@@ -1,0 +1,9 @@
+Name=
+Type=DEAD
+Phase=dummy
+
+Take=SEND   14006    -1  biustonosz won
+Take=SEND      -1    -1  auto-switch won
+Take=SEND   14004    -1  kioskarka won
+Take=SEND   14005    14  wywieszka
+

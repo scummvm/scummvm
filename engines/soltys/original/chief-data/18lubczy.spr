@@ -1,0 +1,15 @@
+name=A lovage
+type=dead
+east=0
+phase=18lubcz1
+
+Portable=1
+
+Take= REACH    22001     -1  Jadze
+Take= SOUND    22001      4  ne!
+Take= SEND        -1     -1  won
+Take= SAY          1  22007  pyta
+Take= SOUND    22001  22002  hehe!
+Take= SAY      22001  22001
+Take= SETHB       22     -1  odblok
+

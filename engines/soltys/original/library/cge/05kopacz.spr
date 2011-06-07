@@ -1,0 +1,16 @@
+name=zepsuta maszyna
+type=dead
+phase=05kopacz
+
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1  5004  gada
+Take= NEXT     -1    -3  stop
+
+.4. from 05sznur
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1  5005  gada
+Take= SAY       1  5006  gada
+Take= NEXT     -1    -3  stop
+

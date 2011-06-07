@@ -1,1 +1,0 @@
-@archive jbw_sol -r -x*.lib

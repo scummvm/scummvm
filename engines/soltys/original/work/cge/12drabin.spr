@@ -1,0 +1,11 @@
+name=bok wozu
+type=dead
+phase=12drabi0
+East=1
+
+Take= NEXT     -1    -2  locked
+
+Take= REACH    -1    -1  chyç
+Take= SEND     -1    -1  won
+Take= KEEP  12109     1  we¶, pokaz mini
+

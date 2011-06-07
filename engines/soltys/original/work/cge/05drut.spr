@@ -1,0 +1,33 @@
+name=kawa’ek drutu
+type=dead
+phase=05drut
+
+
+Portable=1
+
+Take= REACH,6015,   -1  k’¢dka
+Take= RMTAKE 6015    0  martwa
+Take= SEQ,  6015,    1
+Take= SEQ,  6007,    1  drzwi
+Take= SETZ, 6007,   16
+Take= SOUND 6001  6008  skrzyp!
+Take= TNEXT,6013,    8  ulepsz kart‘
+Take= SETVB,   6,   -1  bariera won
+Take= SEND,   -1,   -1
+Take= RMTAKE,6008,   0  martwy numer
+Take= RMTAKE 6007    0  martwe drzwi
+Take= NEXT    -1    -2  halt
+
+.12. (z 06karta)
+Take= REACH 6015    -1  k’¢dka
+Take= RMTAKE 6015    0  martwa
+Take= SEQ,  6015,    1
+Take= SEQ,  6007,    1  drzwi
+Take= SETZ, 6007,   16
+Take= SOUND 6001  6008  skrzyp!
+Take= SWAP, 4203, 4303  ulepsz §ar¢wk‘
+Take= SETVB,   6,   -1  bariera won
+Take= SEND,   -1,   -1
+Take= RMTAKE,6008,   0  martwy numer
+Take= RMTAKE 6007    0  martwe drzwi
+

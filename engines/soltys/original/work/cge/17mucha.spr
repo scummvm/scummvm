@@ -1,0 +1,39 @@
+name=mucha
+type=FLY
+
+phase=17fly0
+phase=17fly1
+
+Seq= 0 1 0 0 3
+Seq= 1 0 0 0 3
+
+
+Take=  REACH      -1  -1
+Take=  KEEP       -1  -1
+Take=  TNEXT   17001  15
+Take=  TNEXT   17002  15
+Take=  TNEXT   17003  15
+Take=  TNEXT   17004  15
+Take=  TNEXT   17005  15
+Take=  TNEXT   17006  15
+Take=  TNEXT   17007  15
+Take=  TNEXT   17008  15
+Take=  TNEXT   17009  15
+Take=  TNEXT   17010  15
+Take=  TNEXT   17011  15
+Take=  TNEXT   17012  15
+Take=  TNEXT      -1  16
+Take=  NEXT       -1  -2
+
+. 16 ugryziony ko¤ .
+Take= LABEL     8001   8
+Take= REACH     8040  -1  switch
+Take= SEND        -1  -1
+Take= SEQ       8001   1  ko¤ wierzg
+Take= SOUND     8001 8004  dup!-ziu!-dup!
+Take= WAIT      8001   2
+Take= SEQ       8012   1  drzewo dryg
+Take= SEQ       8010   1  koral spad
+Take= PORT      8010   1  portable
+Take= RTNEXT    8010   1  usable (unlock)
+

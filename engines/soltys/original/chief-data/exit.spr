@@ -1,0 +1,5 @@
+Type=DEAD
+Name=EXIT TO DOS
+Phase=exit0
+Phase=exit1
+
