@@ -138,8 +138,6 @@ public:
 
 	virtual void quit();
 
-	virtual Common::SaveFileManager *getSavefileManager();
-
 	void addEvent(const Common::Event& e);
 	bool isEventQueueEmpty() const { return queuePos == 0; }
 

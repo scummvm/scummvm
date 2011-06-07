@@ -107,6 +107,10 @@ void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_medium_quality", true);
 
+	if (DS::isGBAMPAvailable()) {
+		_savefileManager = &mpSaveManager;
+	}
+
 	_timerManager = new DefaultTimerManager();
     DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
 
@@ -745,14 +749,6 @@ void OSystem_DS::quit() {
 	asm("swi 0x26\n");
 	swiSoftReset();*/
 }
-
-Common::SaveFileManager *OSystem_DS::getSavefileManager() {
-	if (DS::isGBAMPAvailable()) {
-		return &mpSaveManager;
-	}
-	return NULL;
-}
-
 
 Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
 
