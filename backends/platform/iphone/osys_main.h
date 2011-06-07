@@ -108,7 +108,6 @@ protected:
 	bool _fullScreenIsDirty;
 	bool _fullScreenOverlayIsDirty;
 	int _screenChangeCount;
-	FilesystemFactory *_fsFactory;
 
 public:
 
@@ -171,7 +170,6 @@ public:
  	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	virtual void quit();
 
-	FilesystemFactory *getFilesystemFactory() { return _fsFactory; }
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual void getTimeAndDate(TimeDate &t) const;
 

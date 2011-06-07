@@ -72,7 +72,6 @@ OSystem_IPHONE::OSystem_IPHONE() :
 OSystem_IPHONE::~OSystem_IPHONE() {
 	AudioQueueDispose(s_AudioQueue.queue, true);
 
-	delete _fsFactory;
 	delete _mixer;
 	delete _offscreen;
 	delete _fullscreen;
