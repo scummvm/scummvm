@@ -147,6 +147,10 @@ void DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
 	_file.read(dst, size);
 }
 
+void DreamWebEngine::closeFile() {
+	_file.close();
+}
+
 
 } // End of namespace DreamWeb
 
@@ -198,7 +202,7 @@ void readfromfile(Context &context) {
 }
 
 void closefile(Context &context) {
-	::error("closefile");
+	engine()->closeFile();
 }
 
 void openforsave(Context &context) {

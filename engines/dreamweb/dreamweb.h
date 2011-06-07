@@ -79,6 +79,7 @@ public:
 
 	void openFile(const Common::String &name);
 	void readFromFile(uint8 *dst, unsigned size);
+	void closeFile();
 
 private:
 	const DreamWebGameDescription *_gameDescription;
