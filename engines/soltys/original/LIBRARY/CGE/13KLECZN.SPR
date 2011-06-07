@@ -1,0 +1,39 @@
+name=kl‘cznik
+type=auto
+phase=13klecz2
+East=1
+
+Seq=  0 -2  0  0  10   park
+Seq=  0 -1  0  1   2   move
+
+Seq=  0 -1  0  1   4   move
+Seq=  0 -1  1  1   6
+Seq=  0 -1  0  1   8
+Seq=  0 -1  1  1  10
+Seq=  0 -1  0  1  12
+Seq=  0  0  0  1  14
+
+
+Take= NEXT       -1    -2  zablokowany
+
+Take= RMTAKE     -1     0  tylko 1 raz!
+Take= REACH      -1     1  machnij
+Take= SEQ        -1     1  sunie
+Take= SOUND      -1 13002  szur!
+Take= SETZ       -1    15  bli§ej
+Take= WAIT       -1    -1  a§ dojedzie
+
+Take= WALK      181   142  do kleku
+Take= WAIT        1    -1  a§ podejdzie
+Take= COVER       1 13201  kl‘czys
+Take= SEQ     13201     1  kl‘k!
+Take= WAIT    13201    -1  a§ kl‘knie
+Take= SAY     13201 13006  ož lubie
+Take= SEQ     13001     1  gad
+Take= SAY     13001 13002  ga-daj
+Take= SEQ     13201     2  st¢j!
+Take= WAIT    13201    -1  a§ wstanie
+Take= UNCOVER     1 13201  stary dobry so’tys
+Take= SETZ       -1    16  jeszcze bli§ej
+Take= SETVB      13    -1  blokada won
+

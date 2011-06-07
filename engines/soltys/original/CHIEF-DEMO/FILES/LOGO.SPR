@@ -1,0 +1,8 @@
+Type=DEAD
+Phase=dummy
+
+Take=SEND   -1   -1
+Take=SEND 1000    0
+Take=LIGHT  -1    1
+Take=PAUSE  -1  720
+Take=LABEL  -1    0

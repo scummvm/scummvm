@@ -1,0 +1,27 @@
+name=barber
+type=auto
+
+phase=06fryzr0
+phase=06frypi1
+phase=06frypi2
+phase=06frypi3
+phase=06frypi4
+
+
+Seq= 0  1 0 0 220
+Seq= 1  2 0 0  60
+Seq= 2  3 0 0  20
+Seq= 3  4 0 0  20
+Seq= 4  5 0 0  80
+Seq= 3  6 0 0  20
+Seq= 2  7 0 0  20
+Seq= 1  8 0 0 120
+Seq= 2  9 0 0  20
+Seq  3 10 0 0  20
+Seq= 4 11 0 0  80
+Seq= 3 12 0 0  20
+Seq= 2 13 0 0  20
+Seq= 1 14 0 0  30
+Seq= 8  0 0 0  30
+
+

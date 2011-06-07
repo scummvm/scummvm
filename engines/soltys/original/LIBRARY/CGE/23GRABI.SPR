@@ -1,0 +1,20 @@
+name=grabie
+type=auto
+
+phase=23grabi0
+phase=23grabi1
+phase=23grabi2
+phase=23grabi3
+
+Seq= 0 -2   0   0  10  park H
+Seq= 2 -2   0   0  10  park V
+Seq= 1 -1   0   0  5   bicie
+
+.4.
+Seq= 2 -1   0 -48  5
+Seq= 3 -1   0   0  5
+Seq= 2 -1   0   0  5
+Seq= 1  0   0  48  5
+
+Take= WALK     -1     -1
+

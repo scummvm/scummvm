@@ -1,0 +1,35 @@
+name=Old Andy
+type=auto
+east=1
+
+phase=20gracz0
+phase=20gracz1
+phase=20gracz2
+phase=20gracz3
+phase=20gracz4
+phase=20gracz5
+phase=20gracz6
+
+Seq= 0  2   0   0 150  czeka
+Seq= 1  9   0   0  24  rzuca
+
+.2.
+Seq= 1  2   0   0  15
+Seq= 2  3   0   0  15
+Seq= 1  4   0   0  15
+Seq= 0  5   0   0 150
+Seq= 1  6   0   0  15
+Seq= 2  7   0   0  15
+Seq= 1  0   0   0  15
+
+.9.
+Seq= 3 10   0   0  20
+Seq= 4 11   0   0  15
+Seq= 5 12   0   0  15
+Seq= 4 13   0   0  15
+Seq= 5 14   0   0  15
+Seq= 4 15   0   0  15
+Seq= 5 16   0   0  15
+Seq= 6 17   0   0  25
+Seq= 3  0   0   0  35
+

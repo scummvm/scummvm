@@ -1,0 +1,1038 @@
+
+---------- 00BNE.SPR
+name=soítys
+
+---------- 00BWN.SPR
+name=soítys
+
+---------- 00BWS.SPR
+name=soítys
+
+---------- 00BWW.SPR
+name=soítys
+
+---------- 00DRAP.SPR
+Name=soítys
+
+---------- 00HERO.SPR
+name=soítys
+
+---------- 00LEJ.SPR
+Name=soítys
+
+---------- 00MALWY.SPR
+name=malwy
+
+---------- 00MALWY1.SPR
+name=malwy
+
+---------- 00PATRZ.SPR
+Name=soítys
+
+---------- 00PTOK.SPR
+name=kawka
+
+---------- 00RUMIAN.SPR
+name=rumianek
+
+---------- 00SHADOW.SPR
+name=
+
+---------- 00SLIMA.SPR
+name=ûlimak
+
+---------- 00TRAWA.SPR
+name=trawa
+
+---------- 00TRAWA1.SPR
+name=trawa
+
+---------- 00TRAWA2.SPR
+name=trawa
+
+---------- 00TRAWA3.SPR
+name=trawa
+
+---------- 01BIMBER.SPR
+name=maía fabryczka
+
+---------- 01BRZWI.SPR
+name=drzwi szopy
+
+---------- 01BUDA.SPR
+name=psia buda
+
+---------- 01DRZWI.SPR
+name=drzwi
+
+---------- 01FLACH0.SPR
+name=pusta flaszka
+
+---------- 01FLACH1.SPR
+name=peína flaszka
+
+---------- 01KOSC.SPR
+name=koûç
+
+---------- 01LANCU.SPR
+name=ía§cuch
+
+---------- 01MICHA.SPR
+name=miska
+
+---------- 01SWITCH.SPR
+Name=
+
+---------- 01WYPADA.SPR
+name=soítys
+
+---------- 01ZABA.SPR
+name=ßaba
+
+---------- 02DROGA.SPR
+name=szosa asfaltowa
+
+---------- 02DROGA_.SPR
+name=szosa asfaltowa
+
+---------- 02KORBA.SPR
+name=korba
+
+---------- 02OLEJ.SPR
+name=oliwiarka
+
+---------- 02PATEFO.SPR
+name=patefon
+
+---------- 02PKS.SPR
+name=przystanek
+
+---------- 02REJEST.SPR
+name=rejestracja
+
+---------- 02SLUPE2.SPR
+name=síupek
+
+---------- 02SLUPEK.SPR
+name=síupek
+
+---------- 02SZOFER.SPR
+name=szofer
+
+---------- 02TABL.SPR
+name=tablica
+
+---------- 03BABA.SPR
+name=baba
+
+---------- 03CEBULA.SPR
+name=cebula
+
+---------- 03CHLEB.SPR
+name=chleb
+
+---------- 03COCA.SPR
+name=zawiera kofeinë
+
+---------- 03DRZWI.SPR
+name=drzwi lod¢wki
+
+---------- 03GAZETA.SPR
+name=gazeta
+
+---------- 03GRZYB1.SPR
+name=grzyby
+
+---------- 03GRZYB2.SPR
+name=grzyby
+
+---------- 03JE.SPR
+name=soítys
+
+---------- 03KIELB.SPR
+name=kieíbasa
+
+---------- 03KOT.SPR
+name=persil
+
+---------- 03KWIATY.SPR
+name=bukiet
+
+---------- 03MARZ.SPR
+name=soítys
+
+---------- 03MYSZ.SPR
+name=mysz
+
+---------- 03OLIANI.SPR
+name=soítys
+
+---------- 03PIN.SPR
+name=Aptenodytes Forsteri
+
+---------- 03SWINKA.SPR
+name=zamroßona got¢wka
+
+---------- 03SZCZE.SPR
+name=sztuczna szczëka
+
+---------- 04BUT.SPR
+name=butelka po piwie
+
+---------- 04CEGLA1.SPR
+name=cegía
+
+---------- 04CEGLA2.SPR
+name=cegía
+
+---------- 04CWANCY.SPR
+name=cwancykator
+
+---------- 04DENKO.SPR
+name=denko butelki
+
+---------- 04KASK.SPR
+name=kask
+
+---------- 04KIEL.SPR
+name=kielnia
+
+---------- 04LOPATA.SPR
+name=íopata
+
+---------- 04MASZ.SPR
+name=maszynka z czajnikiem
+
+---------- 04MLOCE.SPR
+name=soítys
+
+---------- 04MLOT.SPR
+name=míot
+
+---------- 04ODKLEJ.SPR
+name=soítys
+
+---------- 04PIES.SPR
+name=zíy pies
+
+---------- 04ROBOL.SPR
+name=przodownik pracy
+
+---------- 04WANIEN.SPR
+name=wanienka murarska
+
+---------- 04WASSER.SPR
+name=wasserwaga
+
+---------- 04ZAPAL.SPR
+name=soítys
+
+---------- 04ZAROW1.SPR
+name=ßar¢wka 60W
+
+---------- 04ZAROW2.SPR
+name=ßar¢wka 60W
+
+---------- 04ZAROW3.SPR
+name=ßar¢wka 60W
+
+---------- 05CHASZ1.SPR
+name=chaszcze
+
+---------- 05CHASZ2.SPR
+name=chaszcze
+
+---------- 05CHASZ3.SPR
+name=chaszcze
+
+---------- 05DECHA.SPR
+name=dechy
+
+---------- 05DRUT.SPR
+name=kawaíek drutu
+
+---------- 05DRZEWO.SPR
+name=drzewo
+
+---------- 05DYM.SPR
+name=dymek
+
+---------- 05DZIAD.SPR
+name=dziad
+
+---------- 05KAMDUZ.SPR
+name=kamienie
+
+---------- 05KAMIEN.SPR
+name=kamie§
+
+---------- 05KOL.SPR
+name=kolumna
+
+---------- 05KOLUMN.SPR
+name=kolumna
+
+---------- 05KOPACZ.SPR
+name=zepsuta maszyna
+
+---------- 05PALI.SPR
+name=soítys
+
+---------- 05PP.SPR
+name=papierosy
+
+---------- 05SMIGLO.SPR
+name=ûmigío
+
+---------- 05SZNUR.SPR
+name=sznurek rozrusznika
+
+---------- 06BARIE1.SPR
+name=bariera
+
+---------- 06BARIE2.SPR
+name=bariera
+
+---------- 06BUT.SPR
+name=wino
+
+---------- 06DRFRAN.SPR
+name=felczer
+
+---------- 06DRZWI.SPR
+name=drzwi
+
+---------- 06FRYPIJ.SPR
+name=fryzjer
+
+---------- 06FRYZJE.SPR
+name=fryzjer
+
+---------- 06KAMIEN.SPR
+name=kamienie
+
+---------- 06KARTA.SPR
+name=si¢demka karo
+
+---------- 06KLODKA.SPR
+name=kí¢dka
+
+---------- 06NUMER.SPR
+name=numer osiem
+
+---------- 06OPRAWA.SPR
+name=oprawa ßar¢wki
+
+---------- 06PIWNI2.SPR
+name=
+
+---------- 06STOLIK.SPR
+name=stolik
+
+---------- 06STRAPI.SPR
+name=straßak
+
+---------- 06STRAZ.SPR
+name=straßak
+
+---------- 06SWITCH.SPR
+Name=
+
+---------- 06ZIEMIA.SPR
+name=ziemia z wykopu
+
+---------- 07CEGLA.SPR
+name=cegla
+
+---------- 07CEGLY.SPR
+name=cegíy
+
+---------- 07DZWON.SPR
+name=dzwon
+
+---------- 07FILAR.SPR
+name=filar
+
+---------- 07FURTKA.SPR
+name=furtka
+
+---------- 07KOSCIE.SPR
+name=koûcielny
+
+---------- 07MUR.SPR
+name=mur
+
+---------- 07SWITCH.SPR
+Name=
+
+---------- 07WKLA.SPR
+name=soítys
+
+---------- 07WYP.SPR
+name=soítys
+
+---------- 08DRUCH.SPR
+name=
+
+---------- 08KOLO.SPR
+name=koío po naprawie
+
+---------- 08KON.SPR
+name=ko§
+
+---------- 08KORALE.SPR
+name=korale
+
+---------- 08KOWAL.SPR
+name=kowal
+
+---------- 08OGIEN.SPR
+name=palenisko
+
+---------- 08POD.SPR
+name=podkowa
+
+---------- 08PODKOW.SPR
+name=podkownik
+
+---------- 08RWA.SPR
+name=soítys
+
+---------- 08SLUP1.SPR
+name=síup
+
+---------- 08SLUP2.SPR
+name=síup
+
+---------- 08SROKA.SPR
+name=sroka
+
+---------- 08SWITCH.SPR
+Name=
+
+---------- 09DRZWI.SPR
+name=drzwi
+
+---------- 09IMEK.SPR
+name=dziadek Imek
+
+---------- 09JAJO.SPR
+name=nakrapiane jajo
+
+---------- 09KARMA.SPR
+name=ßywa karma dla drobiu
+
+---------- 09KOGUT.SPR
+name=kogut
+
+---------- 09KRZAK.SPR
+name=krzak
+
+---------- 09KUKU.SPR
+name=kukuíka
+
+---------- 09LASKO.SPR
+name=soítys
+
+---------- 09PIORO.SPR
+name=pi¢rko
+
+---------- 09STONKA.SPR
+name=stonka
+
+---------- 09SWITCH.SPR
+name=
+
+---------- 09WIADRO.SPR
+name=wiadro
+
+---------- 10DRZEWO.SPR
+name=drzewo
+
+---------- 10DRZWI.SPR
+name=drzwi
+
+---------- 10JAJO.SPR
+name=jajo
+
+---------- 10JAJOOO.SPR
+name=rozbite jajo
+
+---------- 10JOZEK.SPR
+name=J¢zek Burak
+
+---------- 10KLOCEK.SPR
+name=klocek
+
+---------- 10KOLEK.SPR
+name=koíek
+
+---------- 10KROL.SPR
+name=futro z kr¢li
+
+---------- 10KURA.SPR
+name=kura nioska
+
+---------- 10LIS.SPR
+name=futro z lisa
+
+---------- 10STEFAN.SPR
+name=Stefan Burak
+
+---------- 10STRASZ.SPR
+name=soítys
+
+---------- 10STUDN.SPR
+name=gíëboka studzienka
+
+---------- 10SZOPA.SPR
+name=drzwi szopy
+
+---------- 10WOZEK.SPR
+name=w¢zek
+
+---------- 11DRABI.SPR
+name=drabina
+
+---------- 11GES.SPR
+name=gëû kapitoli§ska
+
+---------- 11KOPER1.SPR
+name=koperta
+
+---------- 11KOPERT.SPR
+name=list bez adresu
+
+---------- 11LISTON.SPR
+name=listonosz
+
+---------- 11POCZTA.SPR
+name=skrzynka na listy
+
+---------- 11SIAMIN.SPR
+name=siatka do gry w piíkë
+
+---------- 11SIATKA.SPR
+name=siatka do gry w piíkë
+
+---------- 12BABIE.SPR
+name=babie lato
+
+---------- 12BRATEK.SPR
+name=bratek
+
+---------- 12DRABIN.SPR
+name=bok wozu
+
+---------- 12DRAMIN.SPR
+name=drabina
+
+---------- 12KOLO1.SPR
+name=w¢z
+
+---------- 12KOLO2.SPR
+name=w¢z
+
+---------- 12KON.SPR
+name=ko§ na diecie cud
+
+---------- 12REPER.SPR
+name=dziadek Reperek
+
+---------- 12SRUBO.SPR
+name=ûrubokrët
+
+---------- 12WOZ.SPR
+name=w¢z
+
+---------- 12ZEGAR.SPR
+name=zepsuty zegar
+
+---------- 13BIURKO.SPR
+name=biurko
+
+---------- 13CHOR.SPR
+name=chorÜgiew
+
+---------- 13DRZWI.SPR
+name=drzwiczki
+
+---------- 13FOTEL.SPR
+name=fotel
+
+---------- 13KLECZN.SPR
+name=klëcznik
+
+---------- 13KLEKA.SPR
+name=pokorny
+
+---------- 13KLUCZ.SPR
+name=kluczyk
+
+---------- 13KRZESL.SPR
+name=krzesío
+
+---------- 13KRZYZ.SPR
+name=krzyß
+
+---------- 13KSIED.SPR
+name=ksiÜdz proboszcz
+
+---------- 13OBRAZ.SPR
+name=obraz Farmera van Left
+
+---------- 13SIADA.SPR
+name=siadacz
+
+---------- 13WYJSC.SPR
+Name=
+
+---------- 13ZYRAND.SPR
+name=ßyrandol
+
+---------- 14AMORE.SPR
+name=naprawdë, jaki jesteû, nie wie nikt
+
+---------- 14BIUST.SPR
+name=biusthalter
+
+---------- 14CHLAP.SPR
+name=nerwosol
+
+---------- 14HIP.SPR
+name=Hipolit
+
+---------- 14KAPL.SPR
+name=kapliczka
+
+---------- 14KIR.SPR
+name=Jakub
+
+---------- 14NIECZY.SPR
+name=wywieszka
+
+---------- 14REKA.SPR
+name=para rëkawiczek
+
+---------- 14SPRZE.SPR
+name=sprzedawczyni
+
+---------- 15CHORO1.SPR
+name=chorÜgiewka
+
+---------- 15CHORO2.SPR
+name=chorÜgiewka
+
+---------- 15CHORO3.SPR
+name=chorÜgiewka
+
+---------- 15CHORO4.SPR
+name=chorÜgiewka
+
+---------- 15DRZWI.SPR
+name=szafa z aktami
+
+---------- 15GABLO.SPR
+name=gablota
+
+---------- 15MILI.SPR
+name=naczelnik policji
+
+---------- 15NERWO.SPR
+name=nerwosol
+
+---------- 15OKNO.SPR
+Name=
+
+---------- 15OPLUT.SPR
+name=soítys
+
+---------- 15ORZEL.SPR
+name=godío pa§stwowe
+
+---------- 15PAPIER.SPR
+name=akta a aktami
+
+---------- 15PLUJ.SPR
+name=gluta
+
+---------- 15PUDELK.SPR
+name=dobrze zatemperowane oí¢wki
+
+---------- 15TELEFO.SPR
+name=997
+
+---------- 15WIEZI.SPR
+name=uczciwy inaczej
+
+---------- 15ZAKUP.SPR
+name=zakup kontrolowany
+
+---------- 16BILL.SPR
+name=bilard w ûrodë, bilard w sobotë
+
+---------- 16BUFET.SPR
+name=bufetowa
+
+---------- 16CYTR.SPR
+name=obrana cytryna
+
+---------- 16DUPNIA.SPR
+name=soítys
+
+---------- 16KRZES1.SPR
+name=krzesío
+
+---------- 16LADA.SPR
+name=
+
+---------- 16LAMPA.SPR
+name=lampa
+
+---------- 16MAPA.SPR
+name=gazetka ûcienna
+
+---------- 16PAN.SPR
+name=chíopak
+
+---------- 16PANI.SPR
+name=dziewczyna
+
+---------- 16PESTKI.SPR
+name=suche pestki czereûni dookoía
+
+---------- 16PIKIE.SPR
+name=pikieta
+
+---------- 16PLASK.SPR
+name=plask
+
+---------- 16SERW.SPR
+name=serwetki
+
+---------- 16STOL.SPR
+name=dëbowy blat
+
+---------- 17DRZEWO.SPR
+name=drzewo
+
+---------- 17DRZWI.SPR
+name=wychodek
+
+---------- 17DZIAD.SPR
+name=dziadek
+
+---------- 17MRUG.SPR
+name=oczy
+
+---------- 17MUCHA.SPR
+name=mucha
+
+---------- 17NOS.SPR
+name=soítys
+
+---------- 17PERY.SPR
+name=chyba peryskop
+
+---------- 17SRACZ.SPR
+name=wychodek
+
+---------- 17SWITCH.SPR
+name=
+
+---------- 18CHASZ.SPR
+name=chaszcz
+
+---------- 18CHUST1.SPR
+name=chusta cyga§ska
+
+---------- 18CHUST2.SPR
+name=chusta cyga§ska
+
+---------- 18CYGAN.SPR
+name=cyganka
+
+---------- 18FALA.SPR
+name=fala
+
+---------- 18GACIE.SPR
+name=gacie cyga§skie
+
+---------- 18KOT.SPR
+name=persil
+
+---------- 18LUBCZY.SPR
+name=lubczyk
+
+---------- 18PIEN.SPR
+name=pie§
+
+---------- 18SIEK.SPR
+name=siekiera
+
+---------- 18SPINA1.SPR
+name=spinacz
+
+---------- 18SPINA2.SPR
+name=spinacz
+
+---------- 19BANKA.SPR
+name=ba§ka
+
+---------- 19BANKA1.SPR
+name=mleko
+
+---------- 19DOJKI.SPR
+name=dojki
+
+---------- 19DRZWI.SPR
+name=drzwiczki
+
+---------- 19KIJ.SPR
+name=kij
+
+---------- 19KOSZ.SPR
+name=kosz
+
+---------- 19KUPA.SPR
+name=kupa
+
+---------- 19LEB.SPR
+name=krowa
+
+---------- 19OGON.SPR
+name=ogon
+
+---------- 19SLOMA.SPR
+name=síoma
+
+---------- 19SLUP.SPR
+name=síup
+
+---------- 19SOLDOJ.SPR
+name=soítys
+
+---------- 19SOLWID.SPR
+name=soítys
+
+---------- 19SWITCH.SPR
+name=
+
+---------- 19WID1.SPR
+name=widíy
+
+---------- 19WYP.SPR
+name=wypadek
+
+---------- 20BILON.SPR
+name=monety
+
+---------- 20DOLAR.SPR
+name=dolary
+
+---------- 20GAM.SPR
+Name=koûç do gry
+
+---------- 20GRACZ.SPR
+name=Jakub
+
+---------- 20KAMERA.SPR
+name=tv-video-stereo-canal-sat-pentium
+
+---------- 20KOJAK.SPR
+name=Klemens
+
+---------- 20KOSCI.SPR
+name=koûci do gry
+
+---------- 20KOZA.SPR
+name=koza
+
+---------- 20PASTA.SPR
+name=pasta do zëb¢w
+
+---------- 20PLOT.SPR
+name=píot
+
+---------- 20SOLGRA.SPR
+name=soítys
+
+---------- 20STOLIK.SPR
+name=stolik
+
+---------- 21AVALON.SPR
+name=wydawca tej gry
+
+---------- 21BIURO.SPR
+name=biuro
+
+---------- 21BOJKA.SPR
+name=miëkka ziemia
+
+---------- 21CORA.SPR
+name=c¢rka soítysa
+
+---------- 21DRZWI.SPR
+name=drzwi w XXI wiek
+
+---------- 21FOTO.SPR
+name=fotograf
+
+---------- 21JUNIOR.SPR
+name=junior
+
+---------- 21KAMERA.SPR
+name=aparat fotograficzny
+
+---------- 21LAMPA.SPR
+name=lampa
+
+---------- 21ROSE.SPR
+name=r¢ßa
+
+---------- 21SOLZDJ.SPR
+name=soítys
+
+---------- 21SWITCH.SPR
+name=
+
+---------- 21TALK.SPR
+name=
+
+---------- 21UCZEN.SPR
+name=wagarowicz
+
+---------- 21ZASLO.SPR
+name=czarna szmata
+
+---------- 21ZDJEC.SPR
+Name=zdjëcie c¢reczki
+
+---------- 22BABA.SPR
+name=babcia Jadzia
+
+---------- 22DRZEWO.SPR
+name=drzewo
+
+---------- 22KOCIOL.SPR
+name=zestaw piknikowy
+
+---------- 22KONARY.SPR
+name=powalone drzewo
+
+---------- 22KORYTO.SPR
+name=koryto
+
+---------- 22OGIEN.SPR
+name=ogie§
+
+---------- 22SIEK.SPR
+name=soítys
+
+---------- 22SOLZDJ.SPR
+name=soítys
+
+---------- 22SWINIA.SPR
+name=ûwinia
+
+---------- 22WYWAR.SPR
+name=wywar z lubczyka
+
+---------- 23DRZEWO.SPR
+name=pie§ drzewa
+
+---------- 23FURTKA.SPR
+name=furtka
+
+---------- 23GALAZ.SPR
+name=gaíÜ¶
+
+---------- 23GODLO.SPR
+name=godío
+
+---------- 23GRABI.SPR
+name=grabie
+
+---------- 23GRAMIN.SPR
+name=grabie
+
+---------- 23PLOT1.SPR
+name=píot
+
+---------- 23PLOT2.SPR
+name=píot
+
+---------- 23PLOT3.SPR
+name=píot
+
+---------- 23PNIAKI.SPR
+name=nie byío nas, byí las
+
+---------- 23PO.SPR
+name=soltys
+
+---------- 23PODU.SPR
+name=poducha
+
+---------- 23SZKOLA.SPR
+name=tabliczka
+
+---------- 23SZTA.SPR
+name=soltys
+
+---------- 23SZTACH.SPR
+name=obluzowana sztacheta
+
+---------- 23WCHO.SPR
+name=íazik
+
+---------- 23WYP.SPR
+name=soítys
+
+---------- 24DONICA.SPR
+name=donica
+
+---------- 24DRZWI.SPR
+name=drzwi szafy
+
+---------- 24KWINA.SPR
+name=wino z porzeczek 
+
+---------- 24KWODKI.SPR
+name=likier bananowy
+
+---------- 24LAMPA.SPR
+name=lampa nocna
+
+---------- 24LEON.SPR
+name=Leon
+
+---------- 24NAUCZ.SPR
+name=Konopielka
+
+---------- 24OBRAZ.SPR
+name=pejzaß
+
+---------- 24STOLIK.SPR
+name=stolik
+
+---------- 24SZUFLA.SPR
+name=baíagan
+
+---------- 00BOLI.SPR
+name=soítys
+
+---------- EXIT.SPR
+
+---------- KWIATEK.SPR
+name=kwiatek
+
+---------- MINI.SPR
+name=
+
+---------- MONO.SPR
+
+---------- SOUND.SPR
+
+---------- 19WID0.SPR
+name=czterozÜb

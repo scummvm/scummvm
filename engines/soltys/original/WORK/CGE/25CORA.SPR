@@ -1,0 +1,23 @@
+Type=auto
+East=1
+
+phase=25cora00
+phase=25cora01
+phase=25cora02
+phase=25cora03
+phase=25cora04
+
+Seq= 0 -1  0  0  15
+Seq= 1 -1  0  0  15
+Seq= 2 -1  0  0  15
+Seq= 3 -1  0  0  25
+Seq= 2 -1  0  0  15
+Seq= 0 -1  0  0  15
+Seq= 4 -1  0  0  35
+Seq= 0 -1  0  0  15
+Seq= 2 -1  0  0  15
+Seq= 0 -1  0  0  15
+Seq= 2 -1  0  0  15
+Seq= 0 -1  0  0  15
+Seq= 2  0  0  0  15
+

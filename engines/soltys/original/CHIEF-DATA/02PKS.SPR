@@ -1,0 +1,10 @@
+name=A bus stop
+type=dead
+phase=02pks.bmp
+
+
+Take= REACH  -1   -1
+Take= SOUND  -1    4  drumla
+Take= SAY     1 2006
+
+

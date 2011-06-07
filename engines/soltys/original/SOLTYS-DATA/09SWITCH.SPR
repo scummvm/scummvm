@@ -1,0 +1,11 @@
+name=
+type=dead
+east=1
+phase=dummy
+
+
+Near= RELX       1      8
+Near= WALK    9003     -1  do Imka!
+Near= SOUND   9001   9001  koko!
+Near= SAY     9001   9012  koko
+

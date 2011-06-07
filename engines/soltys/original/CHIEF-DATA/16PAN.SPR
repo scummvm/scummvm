@@ -1,0 +1,27 @@
+name=A lad
+type=auto
+
+phase=16pan0        .0 przy bilardzie
+phase=16pan1        .1 j.w.
+phase=16pand0       .2 dupniak wprost
+phase=16pand1       .3 j.w. + usmiech
+phase=16pand2a      .4 w bok + usmiech
+phase=16pand3       .5 glowa w dol, och jaki smutny ze zawinil
+
+Seq= 0  4  0  0 595      kibic
+Seq= 2 -2  0  0  15      stoi
+Seq= 3  5  0  0  30      przeczy
+Seq= 5  1  0  0  50      potakuje
+
+.4 kibic
+Seq= 1  0  0  0  30
+
+.5 przeczy
+Seq= 4 -1  0  0  15
+Seq= 3 -1  0  0  15
+Seq= 4  1  0  0  15
+
+
+Take= NEXT      -1     -2  locked
+Take= GAME      -1      1
+

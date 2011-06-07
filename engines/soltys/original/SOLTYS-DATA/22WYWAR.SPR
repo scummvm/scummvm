@@ -1,0 +1,19 @@
+name=wywar z lubczyka
+type=dead
+phase=22wywar
+
+Take= LABEL  24008     0  Leonowi
+Take= RMNEAR 24009     0  Konop nieczynna
+Take= REACH  24008    -1  si‘g
+Take= SOUND  24008 24005  chlup!
+Take= SEND   24011    -1  serca won
+Take= SEND      -1    -1  wywar won
+Take= WAIT       1    -1  stoi?
+Take= RMTAKE 24008     0
+Take= SEQ    24008     1
+Take= SEQ    24009     1
+Take= SAY    24008 24002  lubi
+Take= SOUND      1 24006  hehe!
+Take= SAY        1 24003  wracaj!
+Take= FLAG       3     1  End-Of-Game!
+

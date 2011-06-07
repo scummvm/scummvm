@@ -1,0 +1,9 @@
+name=buraki
+type=dead
+East=1
+phase=10buraki
+
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1 10015  gada
+

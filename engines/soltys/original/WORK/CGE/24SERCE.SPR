@@ -1,0 +1,27 @@
+name=
+type=auto
+
+phase=dummy
+phase=24serce1
+phase=24serce2
+phase=24serce3
+phase=24serce4
+phase=24serce5
+phase=24serce6
+phase=24serce7
+phase=24serce8
+
+Seq= 0  -1   0   0  288   .park
+Seq= 0  -1   0   0   15   .serce rožcie
+
+Seq= 1  -1   0   0   15
+Seq= 2  -1   0   0   15
+Seq= 3  -1   0   0   15
+Seq= 4  -1   0   0   15
+Seq= 5  -1   0   0   15
+Seq= 4  -1   0   0   15
+Seq= 6  -1   0   0   15
+Seq= 7  -1   0   0   15
+Seq= 8   0   0   0   15
+
+

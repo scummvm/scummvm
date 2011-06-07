@@ -1,0 +1,21 @@
+type=AUTO
+name=horse
+phase=08kon0
+phase=08kon01
+phase=08kon02
+
+East=1
+
+Seq= 0 -1 0 0 480       0  stoi
+Seq= 1 -1 0 0  16       14
+Seq= 2 -1 0 0  24       15
+Seq= 1  0 0 0  16       16
+
+
+Near= SOUND   -1  2002
+
+Take= REACH   -1      -1
+Take= SEQ  17016       1
+Take= SAY  17016    2010
+
+

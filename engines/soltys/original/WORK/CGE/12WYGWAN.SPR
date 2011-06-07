@@ -1,0 +1,9 @@
+name=wygwancer
+type=dead
+phase=12wygwan
+
+Take= REACH   -1    -1
+Take= SOUND   -1 12007
+Take= WAIT     1    -1
+Take= SAY      1 12003
+

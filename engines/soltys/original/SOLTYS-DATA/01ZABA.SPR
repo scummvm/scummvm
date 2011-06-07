@@ -1,0 +1,56 @@
+type=AUTO
+name=§aba
+
+phase=01zaba0
+phase=01zaba0a
+phase=01zaba0b
+phase=01zaba1
+phase=01zaba2
+phase=01zaba3
+
+Seq= 0  1   0  0  120
+Seq= 1  2   0  0  5
+Seq= 2  3   0  0  20
+Seq= 1  4   0  0  5
+Seq= 0  5   0  0  240
+Seq= 3  6  -2  0  1
+Seq= 4  7  -2  0  1
+Seq= 5  8  -2  0  1
+Seq= 5  9  -2 -2  1
+Seq= 5 10  -2 -2  1
+Seq= 5 11  -2  2  1
+Seq= 5 12  -2  2  1
+Seq= 4 13   0  0  1
+Seq= 3 14   0  0  1
+
+Seq= 0 15   0  0  120
+Seq= 1 16   0  0  5
+Seq= 2 17   0  0  20
+Seq= 1 18   0  0  5
+Seq= 0 19   0  0  240
+Seq= 3 20  -2  0  1
+Seq= 4 21  -2  0  1
+Seq= 5 22  -2  0  1
+Seq= 5 23  -2 -2  1
+Seq= 5 24  -2 -2  1
+Seq= 5 25  -2  2  1
+Seq= 5 26  -2  2  1
+Seq= 4 27   0  0  1
+Seq= 3 28   0  0  1
+
+Seq= 0 29   0  0  120
+Seq= 1 30   0  0  5
+Seq= 2 31   0  0  20
+Seq= 1 32   0  0  5
+Seq= 0 28   0  0  240
+
+Near=RMNEAR  -1     0
+Near=WALK    -1    -1
+Near=SAY      1  1003
+Near=SOUND   -1  1005 kum!
+Near=SAY     -1  1004
+
+Take=REACH   -1,   -1
+Take=SOUND   -1, 1005
+Take=SAY     -1, 1011
+

@@ -1,0 +1,32 @@
+name=
+type=dead
+
+phase=dummy
+
+Near= COVER      1  23101
+Near= SEQ        1      0  park
+Near= SEQ    23004      2  taniec grabi
+Near= WAIT   23004      4  ’up
+Near= SOUND  23004  23001  !
+Near= SEQ,   23101      1  padaj
+Near= WAIT   23004     -1  zabrzmia’y?
+Near= SOUND  23101  23002  upad!
+Near= WALK     148    152  won!
+Near= WAIT   23101     -1  koniec?
+Near= UNCOVER    1  23101  SDS
+Near= NEXT      -1     -3
+
+.12. from 23podu
+Near= COVER      1  23401
+Near= SEND   23003     -1  poduszka precz
+Near= SEQ,   23401      1  tarcza
+Near= WAIT   23401      3
+Near= SEQ    23004      2  taniec grabi
+Near= WAIT   23004      4  ’up
+Near= SEND      -1     -1  pokonane
+Near= HIDE   23004      1
+Near= KEEP   23012      1  mini
+Near= WAIT   23401     -1  koniec?
+Near= SEQ        1      0  park
+Near= UNCOVER    1  23401  SDS
+

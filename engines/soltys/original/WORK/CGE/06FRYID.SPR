@@ -1,0 +1,33 @@
+type=AUTO
+name=fryzjer
+East=1
+
+phase=06fryzr0   idzie
+phase=06fryzr1
+phase=06fryzr2
+phase=06fryzr3
+phase=06fryzr4
+phase=06fryzr5
+phase=06fryzr6
+phase=06fryzr7
+phase=06fryzr8
+
+Seq= 0 -2 0  0  10  park
+Seq= 1 -1 2  0   5  idzie
+Seq= 2 -1 2 -1   5
+Seq= 3 -1 2  0   5
+Seq= 4 -1 2 -1   5
+Seq= 5 -1 2  0   5
+Seq= 6 -1 2 -1   5
+Seq= 7 -1 2  0   5
+Seq= 8  1 2 -1   5
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+@playmidi %1 -video

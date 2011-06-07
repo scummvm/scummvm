@@ -1,0 +1,10 @@
+name=§ar¢wka 60W
+type=dead
+phase=04zarowa
+
+Portable=1
+
+Take= REACH  6001     0
+Take= SOUND  6001     4     daje!
+Take= SAY    6011  6203
+

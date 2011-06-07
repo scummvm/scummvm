@@ -1,0 +1,28 @@
+Type=DEAD
+Name=g’¢wka kapusty
+
+Phase=03kapu
+
+Take= REACH     -1    -1
+Take= SEQ     3001     1  baba gada
+Take= SAY     3001  3116
+Take= NEXT      -1    -3
+
+.4.
+Take= REACH     -1    -1
+Take= KEEP      -1    -1
+Take= NNEXT  17016     4  dziad retoryczny
+Take= NEXT      -1    -1
+
+Take= REACH  17016    -1  dziadu
+Take= SEND      -1    -1
+Take= SAY        1  2003
+Take= SEQ    17016     1
+Take= SAY    17016  2004
+Take= SAY        1  2005
+Take= SEQ    17016     1
+Take= SAY    17016  2006
+Take= RMNEAR 17016     0  ucisz dziada
+Take= SEND    2002     2  pucel
+
+

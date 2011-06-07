@@ -1,0 +1,115 @@
+   10=ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   11=               ÚÄ¿ÚÄ¿¿ ÚÂ¿¿ ÚÚÄ¿
+   12= DEMO version  ÀÄ¿³ ³ÃÙ ³ ÀÂÙÀÄ¿
+   13=               ÄÄÙÀÄÙÀÄÙÁ  Á ÄÄÙ
+   14= Copyright (c)  1995 L.K. AVALON
+   15=ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   16= Targowa 1/1010, Rzeszow, POLAND
+   17= tel/fax +48-(0)17 627471 / 275
+   18=ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   40=See you later!
+   50=Enter your name:
+
+   51=selection of sound card type and/or distinct MIDI device
+   52=selection of port address for sound card
+   53=selection of IRQ number for sound card
+   54=selection of DMA channel for sound card
+   55=selection of portu address for General MIDI
+   56=sound card configuration
+
+   60=No sound card (quiet)
+   61=Sound Blaster
+   62=SoundBlaster + General MIDI
+   63=Gravis UltraSound
+   64=Gravis UltraSound + General MIDI
+   65=General MIDI
+   66=Express configuration
+
+   90=You need VGA board to launch this game!
+   91=You need 80286 CPU or better!
+   92=You need DOS 3.30 or newer!
+   93=You need 550 KB of free RAM or more!
+   94=Your machine is too slow!
+   95=You need the mouse!
+   96=Invalid parameter!
+
+   98=You have not enough RAM to play music!
+   99=Savegame file corrupted!
+
+  101=information
+  102=caption
+  105=volume of music & sound
+
+  200=confirmation
+  201=I've got enough of this game!
+  202=Oops! I wish to continue...
+
+  300=Note that it is only DEMO, not the complete game.|You can't finish your mission in this piece of world.
+
+  600=10
+  601=I don't think it's a good idea!
+  602=Can't you afford any more?
+  603=That's it? That's the best you can do?
+  604=Don't you know what to do? Cheer up. I don't know myself.
+  605=Do you want to obtain something in this way?
+  606=Aaaa... Better beat your brain.
+  607=I'm confused. I don't know what to say.
+  608=What a crazy idea you've got!
+  609=I haven't been offered such a silly thing for a long time.
+  610=Maybe you should rest a little. Go to bed or something..
+
+  671=I won't go there at all!
+  681=Nothing can be done from this distance.
+  691=Where am I supposed to stick it, smart pants?
+  777=Take off your three dirty fingers!
+
+ 1001=Damn it! The door is stuck again.
+ 1002=It is dirty, it is knotty, how to hold it?
+ 1003=Do you expect something more? A price? No way!| Nothing will come out of it. C'est la vie...
+ 1004=I won't distruct the post office belonging...
+ 1005=...without any reason!
+
+ 2001=Haven't you got food for my goat? It is famishing!
+ 2002=I haven't goat foot for your God.
+ 2003=Will this cabbage be good?
+ 2004=Fie! It's spoiled! What a bad smell!
+ 2005=Your goat smells bad as well!
+ 2006=Never mind. It's better then this pasteboard,| I have kept it for bad times. Take it away!
+ 2010=Leave the horse alone!
+ 2011=What's this? Do you want to pick up my pig?
+ 2012=Leave the goat alone. It is half-dead!
+
+ 2101=Oh gosh! Spideeeer!!!
+
+ 3001=Have you mail for me?
+ 3002=I'm not a postman.
+ 3003=But have you mail for me?
+ 3004=This is your mail...
+ 3005=Oh. It will be a good pigeon house!
+ 3006=Hold this screwdriver for a moment for me...
+ 3007=Where have you been with this screwdriver?
+ 3008=Take this pasteboard, it's no use for me.
+
+ 3101=Is a firm "AVALON" here?
+ 3102=What a film of alone, mister? Buy cabbage!
+ 3103=These scoundrels have made a game about me. I will sue them...
+ 3104=You fool. Who will you sue? Nobody is here.|A week ago last piece of furniture was sold.
+ 3105=Oh, so what am I to do now?
+ 3106=Buy cabbage!
+ 3107=I can't. I have got no money at all.
+ 3108=But what have you got? I need something to boil soup.
+ 3109=Isn't your cabbage good for it?
+ 3110=I want to heat a stove, silly!
+
+ 3111=Take this wood.
+ 3112=Is this firewood? So dirty, so knotty...
+ 3113=So what. Am I to take it with me?
+ 3114=O.K. I have one here,|slightly spoiled. Take it.
+ 3115=Help, help! This bastard wants to take all my cabbages along!!
+ 3116=Away with you, you dirty cowboy!
+
+ 3201=Bow! Wow! Wow!
+ 3202=These similarities are remarkable, aren't they?
+ 3203=Noo, I don't like guys at all.
+ 3204=Isn't your wife good enough for you, you bastard?|Take your business into your hands better!
+

@@ -1,0 +1,51 @@
+name=Chief
+type=auto
+
+
+phase=00s0              .0 stoi
+phase=00se0             .1 obrot
+phase=00e0              .2 bok
+phase=05pali01          .3 wyciaga papierosa
+phase=05pali02          .4
+phase=05pali03          .5
+phase=05pali04          .6
+phase=05pali05          .7
+phase=05pali06          .8 pociera
+phase=05pali07          .9
+phase=05pali08          .10 zapala
+phase=05pali09          .11
+phase=05pali10          .12 opuszcza reke
+phase=05pali11          .13 szlug gora
+phase=05pali12          .14 szlug dol
+
+
+Seq= 0  0  0  0   5    .0 park
+
+Seq= 1  2  0  0  15    .1
+Seq= 2  3  0  0  15    .2
+Seq= 3  4  0  0  15    .3 wyciaga papierosa
+Seq= 4  5  0  0  15    .4
+Seq= 5  6  0  0  15    .5
+Seq= 6  7  0  0  15    .6
+Seq= 7  8  0  0  15    .7
+Seq= 8  9  0  0  10    .8   pociera
+Seq= 9 10  0  0   5    .9
+Seq= 8 11  0  0   5    .10
+Seq=10 12  0  0  25    .11  zapala
+Seq=11 13  0  0  25    .12
+Seq=10 14  0  0   5    .13
+Seq=11 15  0  0   5    .14
+Seq=10 16  0  0  15    .15
+Seq=11 17  0  0  15    .16
+Seq=10 18  0  0  20    .17
+Seq=12 19  0  0  25    .18  opuszcza
+Seq=13 20  0  0  75    .19  pali
+Seq=14 21  0  0  75    .20
+Seq=13 22  0  0  75    .21
+Seq=14 23  0  0  75    .22
+Seq=13 24  0  0  75    .23
+Seq=14 25  0  0  75    .24
+Seq= 2 26  0  0  10    .25
+Seq= 1  0  0  0  10    .26
+
+

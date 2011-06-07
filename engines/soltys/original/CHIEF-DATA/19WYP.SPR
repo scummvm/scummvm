@@ -1,0 +1,30 @@
+type=AUTO
+name=Chief
+phase=00w0      . 0 stoi
+phase=19wyp1    . 1 chwieje
+phase=19wyp2    . 2
+phase=19wyp3    . 3 w powietrzu
+phase=19wyp4    . 4 lezy
+phase=19wyp5    . 5 podnosi sie
+phase=00bnw4    . 6 wstaje
+phase=00bnw5    . 7
+phase=00bnw6    . 8
+phase=00bnw7    . 9
+phase=00bnw8    . 10
+phase=00bnw9    . 11
+
+Seq=  0  0    0   0  10		0     park
+
+Seq=  1 -1    2   0  15		1
+Seq=  2 -1    8   0  15		2
+Seq=  3 -1    4   0  15		3
+Seq=  4 -1    4   0  30		4
+Seq=  5 -1    0   0  20		5
+Seq=  6 -1    0   0  10		6
+Seq=  7 -1    0   0  10		7
+Seq=  8 -1    0   0  10		8
+Seq=  9 -1    0   0  10		9
+Seq= 10 -1    0   0  10		10
+Seq= 11  0    0   0  10		11
+
+

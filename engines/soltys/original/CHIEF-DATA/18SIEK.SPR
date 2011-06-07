@@ -1,0 +1,24 @@
+name=Careful with that X!
+type=dead
+east=1
+
+phase=18siek
+
+Take= REACH      -1       1
+Take= KEEP       -1      -1
+Take= NEXT       -1      -1
+
+Take= WALK    22005      -1  žwinia
+Take= WAIT        1      -1  stoi
+Take= COVER       1   22201  Lechu
+Take= SEQ     22005       2  zjadaj
+Take= SEND       -1      -1  siekiera won
+Take= SEQ     22201       1  bij!
+Take= WAIT    22201       4  uderzy’?
+Take= SOUND   22005   22005  chrum!
+Take= WAIT    22201      -1  a§ sko¤czy
+Take= UNCOVER     1   22201  SDS
+Take= SAY         1   22005
+Take= SOUND   22001   22002  hehe!
+Take= SAY     22001   22006  Jadzia
+

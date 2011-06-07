@@ -1,0 +1,8 @@
+name=firewood
+type=dead
+phase=17deski
+
+Take=REACH  -1   -1
+Take=SOUND  -1 1003
+Take=SAY     1 1002
+

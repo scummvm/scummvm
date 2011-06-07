@@ -1,0 +1,32 @@
+type=AUTO
+name=A door of the shed
+east=1
+
+phase=10szopa0
+phase=10szopa1
+phase=10szopa2
+phase=10szopa3
+
+Seq= 0 0 0 0 5		0 park
+Seq= 1 3 0 0 5		1 open
+Seq= 3 5 0 0 5		2 close
+
+Seq= 2 4 0 0 5		3
+Seq= 3 4 0 0 5		4
+
+Seq= 2 6 0 0 5		5
+Seq= 1 0 0 0 5		6
+
+
+Take= NEXT    -1 -2  locked
+
+Take= REACH   -1 -1
+Take= SEQ     -1  1
+Take= SOUND   -1  10009
+Take= NEXT    -1 -1
+
+Take= REACH   -1 -1
+Take= SEQ     -1  2
+Take= SOUND   -1  10009
+Take= NEXT    -1  1
+

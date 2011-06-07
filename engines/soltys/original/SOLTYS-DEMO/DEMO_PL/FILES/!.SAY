@@ -1,0 +1,136 @@
+   40=Do zobaczenia!
+   50=Podaj swoje imië:
+
+   51=wyb¢r typu posiadanej karty d¶wiëkowej i ew. osobnego instrumentu MIDI
+   52=wyb¢r adresu portu dla karty d¶wiëkowej
+   53=wyb¢r numeru przerwania IRQ dla karty d¶wiëkowej
+   54=wyb¢r numeru kanaíu DMA dla karty d¶wiëkowej
+   55=wyb¢r numeru portu dla instrumentu General MIDI
+   56=konfiguracja karty d¶wiëkowej
+
+   60=Brak karty d¶wiëkowej
+   61=Sound Blaster
+   62=SoundBlaster + General MIDI
+   63=Gravis UltraSound
+   64=Gravis UltraSound + General MIDI
+   65=Tylko General MIDI
+   66=Automatyczna konfiguracja
+
+   90=Do uruchomienia tego programu potrzebna jest karta VGA!
+   91=Do uruchomienia tego programu potrzeba procesora co najmniej 80286!
+   92=Ten DOS jest niedobry - potrzeba wersji nie starszej od 3.30!
+   93=Niedostatek RAM-u - potrzeba co najmniej 550 KB!
+   94=Ten komputer jest zbyt wolny!
+   95=Do uruchomienia tego programu konieczna jest mysz!
+   96=Niepoprawny parametr!
+
+   99=Niepoprawna struktura pliku stanu gry!
+
+  101=informacja
+  102=dymek
+
+  200=weryfikacja zamiaru zako§czenia
+  201=Dosyç juß mam tej gry!
+  202=To pomyíka, gram dalej
+
+  300=To jest zwiastun gry przygodowej "SOúTYS".
+	|    Fabuía peínej gry jest zupeínie inna,
+	|  choç ma podobny wyglÜd i spos¢b obsíugi.
+  301=Wíaûnie upíynëío kolejne kilka minut Twego ßycia!
+	|Nie marnuj go wiëcej! Biegnij kupiç grë "SOúTYS".
+  302=Ten "zwiastun" jest caíkowicie gratis (FREEWARE)!
+	|Moßesz go powielaç i rozdawaç bez ogranicze§,
+	|ale TYLKO w oryginalnej postaci, bez ßadnych zmian.
+  303=Peína gra "SOúTYS" oferuje odpowiednio wiëcej
+	|wysokoprocentowej rozrywki, a dodatkowa porcja|
+	humoru zawarta jest w 32-stronicowej ksiÜßce!
+  304="SOúTYS" jest grÜ, kt¢ra nieprëdko sië nudzi!
+	|10 Mb obraz¢w i d¶wiëk¢w na piëciu dyskietkach!
+	|Do kompletu doíÜczono kasetë z muzykÜ - gratis!
+  305=Wraz z tytuíowym "SOúTYSEM" zwied¶ WÜchock/Poraß/°yki,
+	|czyli legendarnÜ juß miejscowoûç, opisywanÜ w setkach
+	|popularnych dowcip¢w. Rozpoznaj znane ßarty i postacie!
+  306=KupujÜc grë "SOúTYS" u legalnego dystrybutora popierasz
+	|rozw¢j dobrego polskiego oprogramowania, przyczyniasz sië
+	|do powstania nastëpnych, lepszych i ciekawszych gier!
+  307=Proces instalacji gry "SOúTYS" zostaí zautomatyzowany,
+	|a szczeg¢íowa instrukcja obsíugi pomoße nawet laikom
+	|w wiëkszoûci typowych, jak r¢wnieß nietypowych sytuacji.
+  308=Dobrej zabawy ßyczy wszystkim ekipa "SOúTYSA": Daniel
+	|Kleczy§ski, Mirosíaw Liminowicz, Wojciech Mûciwujewski,
+	|úukasz Pisarek, Jarosíaw Syrylak, Janusz B. Wiûniewski.
+
+  601=Nie wydaje mi sië, ßeby to byí dobry pomysí!
+  602=Eee... Wysil lepiej swojÜ mak¢wkë!
+  603=A c¢ß ci to do gíowy strzeliío!
+  604=Nie, nie, tÜ metodÜ do niczego nie dojdziemy!
+  605=Jeßeli nie dajesz sobie rady, to moße ktoû da ci radë...
+  606=To juß nie staç cië na nic wiëcej?
+  607=I co, tym sposobem chcesz coû uzyskaç?
+  608=Jestem zaßenowany. Nie wiem, co powiedzieç.
+  609=Nie wiesz, co zrobiç? Pociesz sië, ße ja teß nie wiem.
+  610=Wiesz co? Moße odpocznij trochë. Przeûpij sië, albo co...
+
+  615=Dawno juß nie proponowano mi czegoû r¢wnie gíupiego!
+  621=A wíaûnie ße tam nie p¢jdë!
+  631=Z tej odlegíoûci nie da sië nic zrobiç!
+  641=A gdzie mam sobie to wetknÜç, mÜdralo?
+  777=A c¢ß to za maniery, ty jakiû prostaku jeden!
+	|Wiesz gdzie sobie moßesz wsadziç te trzy palce?
+
+ 1001=Do czorta! Znowu sië zaciëíy.
+ 1002=Brudne to, sëkate, nijak w rëkach nosiç!
+ 1003=Spodziewasz sië czegoû wiëcej? Nagrody? Nic z tego!
+	| Tu nic sië tak prosto nie ko§czy. Takie jest °YCIE.
+ 1004=Nie bëdë niszczyí mienia pocztowego...
+ 1005=...bez wyra¶nej potrzeby!
+
+ 2001=Nie masz tam czego dla kozy?
+	|Ona zaraz zdechnie z gíodu!
+ 2002=Czy "zaraz" to jest taka dußa bakteria?
+ 2003=Ta kapusta bëdzie dobra?
+ 2004=Fuj, nadgniía z jednej strony. A jak ûmierdzi!
+ 2005=Wasza koza teß niezgorzej pachnie!
+ 2006=A niech tam, w sumie to lepsze od tej tekturki,
+	|com jÜ na czarnÜ godzinë trzymaí. We¶cie se jÜ!
+ 2010=Zostawcie w spokoju tego konia!
+ 2011=A co to? òwinia sië wam spodobaía?
+ 2012=Dajcie spok¢j kozie, ona i bez tego ledwie ßyje!
+
+ 2101=úo Jezu! PaaaajÜÜÜÜk!!!
+
+ 3001=Czy jest dla mnie jakaû poczta?
+ 3002=Przecieß nie jestem listonoszem.
+ 3003=Ale czy jest dla mnie jakaû poczta??
+ 3004=Macie tu të POCZTê...
+ 3005=O tak, bëdzie doskonaía na goíëbnik!
+ 3006=Potrzymajcie mi na chwilë ten ûrubokrët...
+ 3007=A gdzießeûcie z tym ûrubokrëtem íazií?
+ 3008=We¶cie se ten kartonik, mnie sië on na nic nie przyda.
+
+ 3101=Czy tu mieûci sië firma "AVALON"?
+ 3102=Panie, jaki awalÜ? Kup pan kapustë!
+ 3103=Te psubraty zrobiíy o mnie grë, bëdë ich skarßyí...
+ 3104=Czyûcie zgíupiaí? Kogo skarßyç? Tu nikogo nie ma.
+	|W zeszíym tygodniu ostatnie meble zlicytowali.
+ 3105=To co ja mam teraz zrobiç...
+ 3106=Kup pan kapustë!
+ 3107=Nic z tego, nie mam ani grosza...
+ 3108=A co macie? Moße byç coû do palenia.
+ 3109=Palenie moße byç przyczynÜ wielu gro¶nych chor¢b.
+ 3110=W piecu, gíuptasie, w piecu!
+
+ 3111=Macie tu szczapy na opaí.
+ 3112=To majÜ byç szczapy? Takie brudne, sëkate...
+ 3113=To co, mam je zabraç z powrotem?
+ 3114=No dobra, mam tu takÜ jednÜ,
+	|nadpsutÜ. We¶cie se jÜ.
+ 3115=Ludzie, ratuuunku! Ten padalec chce mi WSZYSTKè kapustë zabraç!!
+ 3116=Precz od mojej kapusty, ty parszywy kryptokomuchu!
+
+ 3201=Hau! Hau! Hau!
+ 3202=Nie¶le uchwycone podobie§stwo, nieprawdaß?
+ 3203=Nieee, w chíopcach raczej nie gustujë.
+ 3204=°ony ci maío, stary zbere¶niku?
+	|Precz! Czep sië raczej Tego PSA!
+

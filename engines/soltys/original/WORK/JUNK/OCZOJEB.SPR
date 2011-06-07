@@ -1,0 +1,18 @@
+type=AUTO
+name=oczojebny detal
+
+phase=oczojeb0
+phase=oczojeb1
+phase=oczojeb2
+phase=oczojeb3
+phase=oczojeb4
+phase=oczojeb5
+
+
+Seq= 0  1  0  0  2
+Seq= 1  2  0  0  2
+Seq= 2  3  0  0  2
+Seq= 3  4  0  0  2
+Seq= 4  5  0  0  2
+Seq= 5  0  0  0  2
+

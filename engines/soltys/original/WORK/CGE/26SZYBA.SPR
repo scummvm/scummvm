@@ -1,0 +1,12 @@
+type=auto
+
+phase=26szyba1
+phase=26szyba2
+phase=26szyba3
+
+Seq= 0   -2   0    0    15
+
+Seq= 1   -1   0    9    15
+Seq= 2   -1   0   17    15
+Seq= 2   -2   0    0    15
+

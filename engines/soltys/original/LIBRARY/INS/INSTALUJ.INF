@@ -1,0 +1,51 @@
+Program=SOLTYS
+DosScreen=0
+BigView=1
+*Wait
+
+Title1=                   ÚÄ¿ÚÄ¿¿ ÚÂ¿¿ ÚÚÄ¿
+Title2=   Instalacja gry  ÀÄ¿³ ³ÃÙ ³ ÀÂÙÀÄ¿
+Title3=                   ÄÄÙÀÄÙÀÄÙÁ  Á ÄÄÙ
+Title4=ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+Title5=    Copyright (c) 1995 L.K. AVALON
+*ShowTitle
+*Wait
+
+------------------------------------------------------------
+Name=Standard polskich liter
+Text1=†‘’¤¢¦§•œ¥£˜ ¡ - Mazovia
+Text2=¥†©ˆä¢˜«¾¤¨ãà—½ - Latin2
+Text3= ›‚Ÿ¤¢‡¨‘€œ¥“˜’ - Microvex
+Text4=‘’“”•–˜—€‚ƒ„…†ˆ‡ - Cyfromat
+Text5=‰Š‹Œ‘€‚ƒ„…†ˆ‡ - DHN
+Text6= ¡¢£¤¥¦¨§€‚ƒ„…†ˆ‡ - CSK
+Text7=acelnoszzACELNOSZZ - *brak*
+*Menu
+*Polskie
+------------------------------------------------------------
+
+Text1=Podaj pe’n† cie§k‘ dost‘pu do katalogu, w kt¢rym zostanie zainstalowana
+Text2=ca’a gra "SOœTYS". Je§eli takiego katalogu nie by’o dot†d na Twym dysku,
+Text3=to zostanie  on  utworzony.  Jeli odpowiada Ci propozycja  instalatora,
+Text4=widniej†ca  w powy§szym  okienku,  wystarczy nacisn†  klawisz  [Enter].
+Text5=W przeciwnym wypadku  mo§esz wpisa inn†  nazw‘, pami‘taj†c, §e MUSI si‘
+Text6=obowi†zkowo  zaczyna od litery  oznaczaj†cej dysk i nast‘puj†cego zaraz
+Text7=po niej dwukropka, np.
+Text8=                        F:\AVALON\SOLTYS
+Text9=Jeli chcesz zmieni tylko dysk, nacinij [Del], potem stosown†  liter‘.
+*ShowText
+
+
+Name=C:\AVALON\SOLTYS
+*GetDir
+Space=10000
+*CheckSpace
+
+*MakeDir
+
+Program=SOLTYS
+
+Name=INSTALUJ.CHN
+*Copy
+*Chain
+

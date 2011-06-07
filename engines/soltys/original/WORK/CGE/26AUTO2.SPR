@@ -1,0 +1,81 @@
+Type=DEAD
+
+Phase=dummy
+
+Take= SEND     -1    -1
+Take= PAUSE    -1   144  2s
+
+Take= SEQ   26030     2  cora
+Take= WAIT  26030    -1  a§ sko¤czy
+
+Take= SEQ   26010     1  baba
+Take= SEQ   26040     1  soltys
+Take= WAIT  26040    -1  a§ sko¤czy
+
+Take= SEQ   26050     1  ksiadz gada
+Take= SAY   26050 26001  czy?
+Take= PAUSE    -1   720  10s
+
+Take= SEQ   26010     1  baba
+.Take= WAIT  26010    -1  a§ sko¤czy
+
+Take= SEQ   26030     1  cora gada
+Take= SAY   26030 26002  tak!
+Take= PAUSE    -1   216  3s
+
+Take= SEQ   26020     1  leon
+Take= WAIT  26020    -1  a§ sko¤czy
+
+Take= SEQ   26050     1  ksiadz gada
+Take= SAY   26050 26003  czy?
+Take= PAUSE    -1   720  10s
+
+Take= SEQ   26040     1  soltys
+
+Take= SEQ   26020     2  leon
+Take= SAY   26020 26004  eee...
+Take= PAUSE    -1   216  3s
+Take= PAUSE    -1    24  1/3s
+Take= SAY   26020 26005  eee...
+Take= PAUSE    -1   216  3s
+Take= PAUSE    -1    24  1/3s
+Take= SAY   26020 26006  eee...
+Take= PAUSE    -1   216  3s
+Take= SEND  26100    26  ciemno
+Take= SOUND 26020 26002  tup tup tup!
+Take= PAUSE    -1   144  2s
+Take= SOUND 26090 26001  brzd‘k!
+Take= SAY   26050 26007  korki...
+Take= PAUSE    -1   216  3s
+
+Take= SEND  26020    -1  Leon won!
+Take= SEQ   26090     1  dziura
+
+Take= HIDE  26100     1  nie ciemno
+Take= HIDE  26100     0  ciemno
+Take= HIDE  26100     1  nie ciemno
+Take= HIDE  26100     0  ciemno
+Take= HIDE  26100     1  nie ciemno
+Take= HIDE  26100     0  ciemno
+Take= HIDE  26100     1  nie ciemno
+Take= HIDE  26100     0  ciemno
+Take= SEND  26100    -1  ciemno won
+Take= PAUSE    -1    72  1/2s
+
+Take= SEQ   26070     1  to sziba
+Take= SOUND 26070 26003  (okruch)
+
+Take= SEQ   26050     2  ksiadz gapi
+
+Take= SEQ   26010     2  baba
+Take= SEQ   26040     2  soltys
+Take= WAIT  26040    -1  zastyg’?
+
+
+
+Take= Say   26040 26020  gada
+Take= PAUSE    -1   720  10s
+Take= LABEL    -1     0
+
+
+

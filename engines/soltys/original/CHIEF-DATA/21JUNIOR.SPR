@@ -1,0 +1,40 @@
+name=Zeke the Fox
+type=auto
+east=0
+
+phase=21junio0
+phase=21junio1
+phase=21junio2
+phase=21junio3
+phase=21junio4
+phase=21junio5     po bojce (nieaktual)
+phase=21junio6     podrzuca moneta po bojce
+phase=21junio7     j.w.
+phase=21juniox     2ga faza
+
+
+
+Seq= 0   5   0   0 150  .przed bojka
+Seq= 6  -1   0   0  15  .po bojce
+
+.2.
+Seq= 8  -1   0   0  15
+Seq= 7  -1   0   0  15
+Seq= 8   1   0   0  15
+
+.5.
+Seq= 1 -1   0   0  15
+Seq= 0 -1   0   0  10
+Seq= 1 -1   0   0  15
+Seq= 0 -1   0   0  10
+Seq= 1 -1   0   0  15
+Seq= 0 -1   0   0 150
+Seq= 2 -1   0   0  15
+Seq= 3 -1   0   0  15
+Seq= 4  0   0   0  15
+
+
+Take= REACH,  -1,   -1
+Take= SAY      1 21018
+Take= SAY     -1 21020
+

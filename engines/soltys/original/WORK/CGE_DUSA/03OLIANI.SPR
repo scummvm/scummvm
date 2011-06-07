@@ -1,0 +1,24 @@
+type=AUTO
+name=so’tys
+
+phase=00s0
+phase=00se0
+phase=00e0
+phase=03olia1
+phase=03olia2
+phase=03olia3
+
+Seq=  0 -2  0 0 10
+Seq=  1 -1  0 0 20
+Seq=  2 -1  0 0 20
+Seq=  3 -1  0 0 20
+Seq=  4 -1  0 0 20
+Seq=  5 -1  0 0 20
+Seq=  4 -1  0 0 20
+Seq=  5 -1  0 0 20
+Seq=  4 -1  0 0 20
+Seq=  3 -1  0 0 20
+Seq=  2 -1  0 0 20
+Seq=  1  0  0 0 20
+
+

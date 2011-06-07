@@ -1,0 +1,22 @@
+wav:	play !.!
+dbf:	qb !
+asm:	tasm /t /iC:\asm /zi /la /ml /w2 !
+c:	cc !.!
+prj:	bc /re: !.!
+asm:	tasm /zi /ml /w2 !
+obj:	tlink ! /c /t /l /m
+mak:	make -f!
+map:	tdmap !
+tds:	td !
+arj:	arcview !.!
+zip:	arcview !.!
+bak:	del *.bak
+sym:	del *.sym
+lst:	del *.lst
+mod:	mp /1 !
+mid:	XDEMO !.!
+lzw:	lzw !.!
+nnz:	readnnz !.!
+nwz:	readnwz !.!
+???:	edt !.!
+

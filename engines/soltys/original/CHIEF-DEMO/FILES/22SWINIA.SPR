@@ -1,0 +1,21 @@
+name=pig
+type=auto
+east=1
+phase=22swin00 §yje
+phase=22swin01 §yje
+
+Seq= 0  3   0   0 150  normal
+Seq= 1 -1   0   0  16
+Seq= 0 -1   0   0  10
+Seq= 1 -1   0   0  48
+Seq= 0 -1   0   0  56
+Seq= 1  0   0   0  16
+
+
+Near= SOUND   -1    2001
+
+Take= REACH   -1      -1
+Take= SEQ  17016       1
+Take= SAY  17016    2011
+
+

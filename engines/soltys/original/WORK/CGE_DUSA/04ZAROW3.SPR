@@ -1,0 +1,30 @@
+name=60W light bulb
+type=dead
+phase=04zarowa
+
+Portable=1
+
+Take= REACH, 6001,    0
+Take= NNEXT, 6041,   10     nowy switch
+
+Take= SEND     -1    -1
+Take= RMNEAR 6001     0     stolik sza!
+Take= SAY    6011, 6204     pomo§emy!
+
+Take= SWAP   6002, 6102     stra§ak id†cy
+Take= SWAP   6003, 6103     fryzjer id†cy
+Take= SWAP   6011, 6111     doktor id†cy
+
+Take= SEQ,   6001,    1     marsz stolika
+Take= SEQ,   6102,    1     marsz strazaka
+Take= SEQ,   6103,    1     marsz fryzjera
+Take= SEQ,   6111,    1     marsz doktora
+
+Take= PAUSE    -1,  280
+Take= SEND   6102    -1     stra§ won
+Take= PAUSE    -1    20
+Take= SEND   6111    -1     doktor won
+Take= SEND   6001    -1     stolik won
+Take= PAUSE    -1    52
+Take= SEND   6103    -1     fryzjer won
+

@@ -1,0 +1,9 @@
+name=chor†giew
+type=dead
+phase=13chor
+
+Take= REACH    -1    -1  si‘g
+Take= SOUND    -1     1  drap
+Take= SAY       1 13011  gada
+
+

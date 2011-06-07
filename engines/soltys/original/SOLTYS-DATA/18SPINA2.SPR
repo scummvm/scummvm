@@ -1,0 +1,26 @@
+name=spinacz
+type=dead
+phase=18spin2
+East=1
+
+Take= REACH     -1    -1
+Take= KEEP      -1    -1  bierz
+Take= RMTAKE 18008     0  zabij brata!
+Take= SEQ    18004     1  kot leci
+Take= SOUND  18004 18002  miao!
+Take= PAUSE     -1   100  do žciany
+Take= SEND   18004    -1  kot won
+Take= SEND    3020     3  powr¢t kota marnotrawnego
+Take= NEXT      -1    -1
+
+Take= LABEL      1    17
+Take= COVER      1 17101  spinoza
+Take= SEND      -1    -1  spin won
+Take= SEQ    17101     2  za’¢§
+Take= WAIT   17101    10  zak’ada
+Take= SOUND  17101 17001  <click>
+Take= WAIT   17101    -1  za’o§y’
+Take= UNCOVER    1 17101  SDS
+Take= NNEXT  17040     9  switch bzyka
+Take= WALK   17014    -1  przejd¦
+

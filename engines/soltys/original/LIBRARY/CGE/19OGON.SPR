@@ -1,0 +1,65 @@
+type=AUTO
+name=ogon
+east=1
+
+phase=19o00
+phase=19o01
+phase=19o02
+phase=19o03
+phase=19o04
+phase=19o05
+phase=19o06
+phase=19o07
+phase=19o08
+phase=19o09
+phase=19o10
+phase=19o11
+phase=19o12
+
+Seq= 0  1 0 0 195
+Seq= 1  2 0 0   5
+Seq= 2  3 0 0   5
+Seq= 3  4 0 0   5
+Seq= 4  5 0 0   5
+Seq= 5  6 0 0  15
+Seq= 6  7 0 0  15
+Seq= 5  8 0 0  15
+Seq= 4  9 0 0   5
+Seq= 3 10 0 0   5
+Seq= 2 11 0 0   5
+Seq= 1 12 0 0   5
+Seq= 0 13 0 0   5
+Seq= 7 14 0 0   5
+Seq= 8 15 0 0   5
+Seq= 9 16 0 0   5
+Seq=10 17 0 0   5
+Seq=11 18 0 0  15
+Seq=12 19 0 0  15
+Seq=11 20 0 0  15
+Seq=10 21 0 0   5
+Seq= 9 22 0 0   5
+Seq= 8 23 0 0   5
+Seq= 7  0 0 0   5
+
+Take= REACH      -1      -1  cap
+Take= SOUND   19002   19001  mu!
+Take= SAY     19002   19001  muuu
+Take= NEXT       -1      -3  loop (TNEXT from 19banka)
+
+Take= WALK       -1      -1  podejd¶
+Take= WAIT        1      -1  stoi
+Take= COVER       1   19301  wajchowy
+Take= SEQ     19301       1  d¢j
+Take= WAIT    19301       1  zíapaí
+Take= HIDE    19001       1  schowaj ogon
+Take= WAIT    19301       5  juß skrzypieç?
+Take= SOUND      -1   19002  skrzyp, skrzyp!
+Take= SEQ     19014       1  dojki kapaç
+Take= WAIT    19301      13  puszcza
+Take= HIDE    19001       0  powr¢t ogona
+Take= WAIT    19301      -1  koniec?
+Take= UNCOVER     1   19301  SDS
+Take= SEQ     19014       0  dojki stop
+Take= SWAP    19011   19111  "mleko"...
+Take= NEXT       -1       0  pompa off
+

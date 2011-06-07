@@ -1,0 +1,26 @@
+name=zepsuty zegar
+type=auto
+East=1
+
+phase=12zegar0
+phase=12zegar1
+phase=12zegar2
+phase=12zegar3  z QQ
+
+Seq= 0  0   0   0   5
+Seq= 1  3   0   0   5
+Seq= 3  5   0   0  32
+
+.3.
+Seq= 2 -1   0   0  10
+Seq= 1 -2   0   0   5
+
+.5.
+Seq= 0 -1   0   0  32
+Seq= 3 -1   0   0  32
+Seq= 0 -1   0   0  32
+Seq= 3 -1   0   0  32
+Seq= 0 -1   0   0  32
+Seq= 3 -1   0   0  32
+Seq= 0  5   0   0 720
+
