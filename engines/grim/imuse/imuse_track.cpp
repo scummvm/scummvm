@@ -394,6 +394,20 @@ Track *Imuse::moveToFadeOutTrack(Track *track, int fadeDelay) {
 		return NULL;
 	}
 
+	// Clamp fade time to remaining time in the current region
+	if (track->curRegion != -1) {
+		int remainingLen = _sound->getRegionLength(track->soundDesc, track->curRegion) - track->regionOffset;
+		int remainingTime = (remainingLen * 60) / track->feedSize;
+		if (fadeDelay > remainingTime) {
+			fadeDelay = remainingTime;
+		}
+	}
+
+	if (fadeDelay <= 0) {
+		flushTrack(track);
+		return NULL;
+	}
+
 	assert(track->trackId < MAX_IMUSE_TRACKS);
 	fadeTrack = _track[track->trackId + MAX_IMUSE_TRACKS];
 
@@ -411,15 +425,6 @@ Track *Imuse::moveToFadeOutTrack(Track *track, int fadeDelay) {
 
 	// Mark as used for now so the track won't be reused again this frame
 	track->used = true;
-
-	// Clamp fade time to remaining time in the current region
-	if (fadeTrack->curRegion != -1) {
-		int remainingLen = _sound->getRegionLength(fadeTrack->soundDesc, fadeTrack->curRegion) - fadeTrack->regionOffset;
-		int remainingTime = (remainingLen * 60) / fadeTrack->feedSize;
-		if (fadeDelay > remainingTime) {
-			fadeDelay = remainingTime;
-		}
-	}
 
 	// Set the volume fading parameters to indicate a fade out
 	fadeTrack->volFadeDelay = fadeDelay;
