@@ -191,6 +191,8 @@ void L1_UnLockSet();
 void L1_MakeCurrentSet();
 void L1_MakeCurrentSetup();
 void L1_GetCurrentSetup();
+void L1_ShrinkBoxes();
+void L1_UnShrinkBoxes();
 void L1_GetShrinkPos();
 void L1_ImStartSound();
 void L1_ImStopSound();

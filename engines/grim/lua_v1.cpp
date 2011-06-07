@@ -732,6 +732,29 @@ void L1_GetCurrentSetup() {
 	lua_pushnumber(scene->getSetup());
 }
 
+/* This function makes the walkplane sectors littler by the
+ * given size. This is used when manny is holding some big
+ * thing, like his scythe, that is likely to clip with the
+ * things around him. The sectors are still connected, but they
+ * have a margin which prevents manny to go too close to the
+ * sectors edges.
+ */
+void L1_ShrinkBoxes() {
+	lua_Object sizeObj = lua_getparam(1);
+
+	if (lua_isnumber(sizeObj)) {
+		float size = lua_getnumber(sizeObj);
+// 		g_grim->getCurrScene()->shrinkBoxes(size);
+
+		warning("ShrinkBoxes() not implemented");
+	}
+}
+
+void L1_UnShrinkBoxes() {
+	warning("UnShrinkBoxes() not implemented");
+// 	g_grim->getCurrScene()->shrinkBoxes(0);
+}
+
 void L1_GetShrinkPos() {
 	lua_Object xObj = lua_getparam(1);
 	lua_Object yObj = lua_getparam(2);
@@ -1263,8 +1286,6 @@ static void stubWarning(const char *funcName) {
 #define STUB_FUNC(name) void name() { stubWarning(#name); }
 STUB_FUNC(L1_SetActorInvClipNode)
 STUB_FUNC(L1_NukeResources)
-STUB_FUNC(L1_UnShrinkBoxes)
-STUB_FUNC(L1_ShrinkBoxes)
 STUB_FUNC(L1_ResetTextures)
 STUB_FUNC(L1_AttachToResources)
 STUB_FUNC(L1_DetachFromResources)
