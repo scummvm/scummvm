@@ -137,7 +137,7 @@ void GFXtests::HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, in
 	float f, p, q, t;
 
 	if (s == 0) {
-		r = g = b = v * 255;
+		rComp = gComp = bComp = (int)(v * 255);
 		return;
 	}
 
@@ -969,6 +969,7 @@ TestExitStatus GFXtests::paletteRotation() {
 	byte palette[256 * 3] = {0};
 
 	int r, g, b;
+	r = g = b = 0;
 	int colIndx;
 
 	for (int i = 0; i < 256; i++) {
