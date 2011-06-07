@@ -32,8 +32,6 @@
 #include "common/rect.h"
 #include "common/events.h"
 #include "backends/base-backend.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
@@ -130,9 +128,7 @@ private:
 	void showOptionsDialog();
 
 protected:
-	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
-	DefaultTimerManager *_timer;
 
 public:
 	enum {
@@ -211,9 +207,7 @@ public:
 
 	virtual void setWindowCaption(const char *caption);
 
-	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
-	virtual Common::TimerManager *getTimerManager();
 	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void getTimeAndDate(TimeDate &t) const;
 
