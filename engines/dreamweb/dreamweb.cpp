@@ -327,19 +327,20 @@ void interupttest(Context &context) {
 }
 
 void disablesoundint(Context &context) {
-	::error("disablesoundint");
+	warning("disablesoundint: STUB");
 }
 
 void enablesoundint(Context &context) {
-	::error("enablesoundint");
+	warning("enablesoundint: STUB");
 }
 
 void checksoundint(Context &context) {
-	::error("checksoundint");
+	context.data.byte(kTestresult) = 1;
+	warning("checksoundint: STUB");
 }
 
 void setsoundoff(Context &context) {
-	::error("setsoundoff");
+	warning("setsoundoff: STUB");
 }
 
 
@@ -348,7 +349,10 @@ void loadsecondsample(Context &context) {
 }
 
 void loadsample(Context &context) {
-	::error("loadsample");
+	warning("loadsample: STUB");
+	openfile(context);
+	closefile(context);
+	//readheader(context); //add exports to tasm recompiler
 }
 
 void loadspeech(Context &context) {
@@ -356,7 +360,8 @@ void loadspeech(Context &context) {
 }
 
 void scanfornames(Context &context) {
-	::error("scanfornames");
+	warning("scanfornames: STUB");
+	context.ch = 0;
 }
 
 void saveseg(Context &context) {
