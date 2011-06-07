@@ -143,8 +143,8 @@ void DreamWebEngine::openFile(const Common::String &name) {
 }
 
 void DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
-	//if (!_file.isOpen())
-	//	error("file was not opened");
+	if (!_file.isOpen())
+		error("file was not opened (read before open)");
 	_file.read(dst, size);
 }
 
@@ -204,6 +204,7 @@ void readfromfile(Context &context) {
 
 void closefile(Context &context) {
 	engine()->closeFile();
+	context.data.byte(kHandle) = 0;
 }
 
 void openforsave(Context &context) {
