@@ -52,7 +52,7 @@ namespace %s {
 		
 		g = self.context.get_global(name)
 		if isinstance(g, op.const):
-			value = self.expand(g.value)
+			value = self.expand_equ(g.value)
 		elif isinstance(g, proc.proc):
 			if self.indirection != -1:
 				raise Exception("invalid proc label usage")
@@ -100,6 +100,19 @@ namespace %s {
 				pass
 
 		return 0
+
+	def expand_equ_cb(self, match):
+		name = match.group(0).lower()
+		g = self.context.get_global(name)
+		if isinstance(g, op.const):
+			return g.value
+		return str(g.offset)
+
+	def expand_equ(self, expr):
+		n = 1
+		while n > 0:
+			expr, n = re.subn(r'\b[a-zA-Z_][a-zA-Z0-9_]+\b', self.expand_equ_cb, expr)
+		return expr
 
 	def expand(self, expr, def_size = 0):
 		#print "EXPAND \"%s\"" %expr

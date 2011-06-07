@@ -16519,7 +16519,7 @@ static void makeheader(Context & context) {
 	context.di = 5952;
 	context.ax = 17;
 	storeit(context);
-	context.ax = 68-context.data.byte(1);
+	context.ax = 68-1;
 	storeit(context);
 	context.ax = 0+2080+30000+(16*114)+((114+2)*2)+18000;
 	storeit(context);
@@ -16527,7 +16527,7 @@ static void makeheader(Context & context) {
 	storeit(context);
 	context.ax = 48;
 	storeit(context);
-	context.ax = 991-context.data.byte(537);
+	context.ax = 991-537;
 	storeit(context);
 	return;
 }
@@ -17313,7 +17313,7 @@ static void allocatebuffers(Context & context) {
 	allocatemem(context);
 	context.data.word(418) = context.ax;
 	trysoundalloc(context);
-	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-context.data.byte(537)+68-context.data.byte(1)/16;
+	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-537+68-1/16;
 	allocatemem(context);
 	context.data.word(412) = context.ax;
 	trysoundalloc(context);
@@ -17340,7 +17340,7 @@ static void allocatebuffers(Context & context) {
 
 static void clearbuffers(Context & context) {
 	context.es = context.data.word(412);
-	context.cx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-context.data.byte(537)+68-context.data.byte(1)/2;
+	context.cx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-537+68-1/2;
 	context.ax = 0;
 	context.di = 0;
 	while(--context.cx) 	context._stosw();
@@ -17353,13 +17353,13 @@ static void clearbuffers(Context & context) {
 	context.di = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64);
 	context.ds = context.cs;
 	context.si = 537;
-	context.cx = 991-context.data.byte(537);
+	context.cx = 991-537;
 	while(--context.cx) 	context._movsb();
  	context.es = context.data.word(412);
-	context.di = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-context.data.byte(537);
+	context.di = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-537;
 	context.ds = context.cs;
 	context.si = 1;
-	context.cx = 68-context.data.byte(1);
+	context.cx = 68-1;
 	while(--context.cx) 	context._movsb();
  	clearchanges(context);
 	return;
@@ -17375,13 +17375,13 @@ static void clearchanges(Context & context) {
 	context.si = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64);
 	context.es = context.cs;
 	context.di = 537;
-	context.cx = 991-context.data.byte(537);
+	context.cx = 991-537;
 	while(--context.cx) 	context._movsb();
  	context.ds = context.data.word(412);
-	context.si = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-context.data.byte(537);
+	context.si = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-537;
 	context.es = context.cs;
 	context.di = 1;
-	context.cx = 68-context.data.byte(1);
+	context.cx = 68-1;
 	while(--context.cx) 	context._movsb();
  	context.data.byte(10) = 0;
 	context.data.word(12) = 0;
@@ -20605,7 +20605,7 @@ static void getroomdata(Context & context) {
 static void readheader(Context & context) {
 	context.ds = context.cs;
 	context.dx = 5881;
-	context.cx = 5958-context.data.byte(5881);
+	context.cx = 5958-5881;
 	readfromfile(context);
 	context.es = context.cs;
 	context.di = 5952;
