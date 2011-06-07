@@ -389,7 +389,7 @@ void OSystem_WINCE3::initBackend() {
 	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
 	// We work around this by using the SetTimer function, since we only use
 	// one timer in scummvm (for the time being)
-	_timer = _int_timer = new DefaultTimerManager();
+	_int_timer = new DefaultTimerManager();
 	//_timerID = NULL;  // OSystem_SDL will call removetimer with this, it's ok
 	SDL_SetTimer(10, &timer_handler_wrapper);
 

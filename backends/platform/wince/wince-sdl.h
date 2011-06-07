@@ -73,7 +73,6 @@ public:
 protected:
 	void initSDL();
 	Audio::MixerImpl *_mixer;
-	DefaultTimerManager *_timer;
 	FilesystemFactory *_fsFactory;
 
 private:
