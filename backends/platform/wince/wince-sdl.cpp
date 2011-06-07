@@ -450,12 +450,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 }
 
 OSystem_WINCE3::~OSystem_WINCE3() {
-	delete _fsFactory;
 	delete _mixer;
-}
-
-FilesystemFactory *OSystem_WINCE3::getFilesystemFactory() {
-	return _fsFactory;
 }
 
 void OSystem_WINCE3::swap_sound_master() {

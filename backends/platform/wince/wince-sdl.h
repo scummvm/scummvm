@@ -58,7 +58,6 @@ public:
 	void getTimeAndDate(TimeDate &t) const;
 
 	virtual Common::String getDefaultConfigFileName();
-	virtual FilesystemFactory *getFilesystemFactory();
 
 	void swap_sound_master();
 
@@ -73,7 +72,6 @@ public:
 protected:
 	void initSDL();
 	Audio::MixerImpl *_mixer;
-	FilesystemFactory *_fsFactory;
 
 private:
 	void check_mappings();
