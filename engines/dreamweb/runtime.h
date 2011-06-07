@@ -182,7 +182,7 @@ class Context {
 	SegmentMap _segments;
 	
 public:
-	enum { kDefaultDataSegment = 0x1000 };
+	enum { kDefaultDataSegment = 0x1000, kVideoSegment = 0xa000 };
 	
 	Register ax, dx, bx, cx, si, di;
 	LowPartOfRegister	al;
@@ -194,16 +194,20 @@ public:
 	LowPartOfRegister	dl;
 	HighPartOfRegister	dh;
 	
-	SegmentRef cs, ds, es, data;
+	SegmentRef cs, ds, es, data, video;
 	//data == fake segment register always pointing to data segment
 	Flags flags;
 
-	inline Context(): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), cs(this), ds(this), es(this), data(this) {
+	inline Context(): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), 
+		cs(this), ds(this), es(this), data(this), video(this) {
 		_segments[kDefaultDataSegment] = Segment();
+		_segments[kVideoSegment].data.resize(0x10000);
+		
 		cs.reset(kDefaultDataSegment);
 		ds.reset(kDefaultDataSegment);
 		es.reset(kDefaultDataSegment);
 		data.reset(kDefaultDataSegment);
+		video.reset(kVideoSegment);
 	}
 
 	SegmentRef getSegment(uint16 value) {
