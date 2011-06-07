@@ -222,8 +222,9 @@ class parser:
 					self.set_global(cmd0, op.const(self.fix_dollar(v)))
 				elif cmd1 == 'db' or cmd1 == 'dw' or cmd1 == 'dd':
 					binary_width = {'b': 1, 'w': 2, 'd': 4}[cmd1[1]]
+					offset = len(self.binary_data)
 					self.binary_data += self.compact_data(binary_width, lex.parse_args(" ".join(cmd[2:])))
-					self.set_global(cmd0.lower(), op.var(binary_width, len(self.binary_data)))
+					self.set_global(cmd0.lower(), op.var(binary_width, offset))
 					continue
 				elif cmd1 == 'proc':
 					name = cmd0.lower()

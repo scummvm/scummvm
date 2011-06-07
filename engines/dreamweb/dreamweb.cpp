@@ -137,8 +137,9 @@ void DreamWebEngine::openFile(const Common::String &name) {
 	if (_file.isOpen()) {
 		_file.close();
 	}
-	if (!_file.open(name))
+	if (!_file.open(name)) {
 		error("cannot open file %s", name.c_str());
+	}
 }
 
 void DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
@@ -418,7 +419,7 @@ void vsync(Context &context) {
 }
 
 void setmode(Context &context) {
-	::error("setmode");
+	warning("setmode (vga): STUB");
 }
 
 void readoneblock(Context &context) {
