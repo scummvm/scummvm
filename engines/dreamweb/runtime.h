@@ -120,11 +120,6 @@ public:
 		return _segment->byte(index);
 	}
 
-	inline uint16 word(unsigned index) const {
-		assert(_segment != 0);
-		return _segment->word(index);
-	}
-	
 	inline operator uint16() const {
 		return _value;
 	}
