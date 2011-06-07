@@ -43,7 +43,7 @@ struct RegisterPart {
 		return *this;
 	}
 	inline ~RegisterPart() {
-		_reg._value = (_reg._value & Mask) | (_value << Shift);
+		_reg._value = (_reg._value & ~Mask) | (_value << Shift);
 	}
 };
 
@@ -56,7 +56,6 @@ class WordRef {
 	uint16					_value;
 
 public:
-
 	inline WordRef(Common::Array<uint8> &data, unsigned index) : _data(data), _index(index) {
 		assert(index + 1 < data.size());
 		_value = _data[index] | (_data[index + 1] << 8);
@@ -72,9 +71,6 @@ public:
 		return *this;
 	}
 	
-	inline operator uint16() const {
-		return _value;
-	}
 	inline operator uint16&() {
 		return _value;
 	}
@@ -96,11 +92,6 @@ struct Segment {
 		return data[index];
 	}
 	
-	inline uint16 word(unsigned index) const {
-		assert(index + 1 < data.size());
-		return data[index] | (data[index + 1] << 8);
-	}
-
 	inline WordRef word(unsigned index) {
 		return WordRef(data, index);
 	}
