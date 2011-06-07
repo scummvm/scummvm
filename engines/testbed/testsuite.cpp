@@ -113,7 +113,7 @@ bool Testsuite::handleInteractiveInput(const Common::String &textToDisplay, cons
 	return prompt.runModal() == result ? true : false;
 }
 
-void Testsuite::displayMessage(const Common::String &textToDisplay, const char *defaultButton, const char *altButton) {
+void Testsuite::displayMessage(const Common::String &textToDisplay, const char *defaultButton) {
 	GUI::MessageDialog prompt(textToDisplay, defaultButton);
 	prompt.runModal();
 }
@@ -214,10 +214,11 @@ uint Testsuite::parseEvents() {
 					return kSkipNext;
 				}
 				break;
+
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RTL:
 				return kEngineQuit;
-				break;
+
 			default:
 				break;
 			}

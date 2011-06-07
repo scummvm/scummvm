@@ -167,7 +167,7 @@ TestExitStatus FStests::testWriteFile() {
 		 return kTestPassed;
 	}
 
-	 return kTestFailed;
+	return kTestFailed;
 }
 
 
@@ -189,7 +189,7 @@ FSTestSuite::FSTestSuite() {
 }
 
 void FSTestSuite::enable(bool flag) {
-	Testsuite::enable(ConfParams.isGameDataFound() & flag);
+	Testsuite::enable(ConfParams.isGameDataFound() ? flag : false);
 }
 
 } // End of namespace Testbed

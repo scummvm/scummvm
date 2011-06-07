@@ -40,7 +40,7 @@ namespace MiscTests {
 // Miscellaneous tests include testing datetime, timers and mutexes
 
 // Helper functions for Misc tests
-Common::String getHumanReadableFormat(TimeDate &td);
+Common::String getHumanReadableFormat(const TimeDate &td);
 void timerCallback(void *arg);
 void criticalSection(void *arg);
 
