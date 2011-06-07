@@ -29,7 +29,7 @@ struct RegisterPart {
 	Register		&_reg;
 	uint8			_value;
 
-	inline RegisterPart(Register &reg) : _reg(reg), _value(reg._value >> Shift) {}
+	explicit inline RegisterPart(Register &reg) : _reg(reg), _value(reg._value >> Shift) {}
 
 	inline operator uint8&() {
 		return _value;
@@ -46,6 +46,7 @@ struct RegisterPart {
 		_reg._value = (_reg._value & Mask) | (_value << Shift);
 	}
 };
+
 typedef RegisterPart<0xff, 0> LowPartOfRegister;
 typedef RegisterPart<0xff00, 8> HighPartOfRegister;
 
@@ -60,14 +61,17 @@ public:
 		assert(index + 1 < data.size());
 		_value = _data[index] | (_data[index + 1] << 8);
 	}
+	
 	inline WordRef& operator=(const WordRef &ref) {
 		_value = ref._value;
 		return *this;
 	}
+	
 	inline WordRef& operator=(uint16 v) {
 		_value = v;
 		return *this;
 	}
+	
 	inline operator uint16() const {
 		return _value;
 	}
@@ -158,7 +162,7 @@ struct Flags {
 	inline bool l() const { return !_z && _s != _o; }
 	inline bool le() const { return _z || _s != _o; }
 	
-	inline void update_sign(uint8 v) {
+	inline void update(uint8 v) {
 		bool new_s = v & 0x80;
 		_o = new_s != _s;
 		_s = new_s;
