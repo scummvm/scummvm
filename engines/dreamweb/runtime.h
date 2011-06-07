@@ -245,13 +245,13 @@ public:
 	}
 
 	inline void _add(uint8 &dst, uint8 src) {
-		flags._c = dst + src < dst;
+		flags._c = (unsigned(dst) + src) >= 0x100;
 		dst += src;
 		flags.update(dst);
 	}
 
 	inline void _add(uint16 &dst, uint16 src) {
-		flags._c = dst + src < dst;
+		flags._c = (unsigned(dst) + src) >= 0x10000;
 		dst += src;
 		flags.update(dst);
 	}
