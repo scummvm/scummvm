@@ -544,7 +544,7 @@ void L1_IsActorInSector() {
 	int numSectors = g_grim->getCurrScene()->getSectorCount();
 	for (int i = 0; i < numSectors; i++) {
 		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
-		if (strmatch(sector->getName(), name)) {
+		if (strstr(sector->getName(), name)) {
 			if (sector->isPointInSector(actor->getPos())) {
 				lua_pushnumber(sector->getSectorId());
 				lua_pushstring(sector->getName());
@@ -576,7 +576,7 @@ void L1_IsPointInSector() {
 	int numSectors = g_grim->getCurrScene()->getSectorCount();
 	for (int i = 0; i < numSectors; i++) {
 		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
-		if (strmatch(sector->getName(), name)) {
+		if (strstr(sector->getName(), name)) {
 			if (sector->isPointInSector(pos)) {
 				lua_pushnumber(sector->getSectorId());
 				lua_pushstring(sector->getName());
