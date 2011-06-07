@@ -109,10 +109,6 @@ void OSystem::fatalError() {
 	exit(1);
 }
 
-Common::TimerManager *OSystem::getTimerManager() {
-	return _timerManager;
-}
-
 Common::SaveFileManager *OSystem::getSavefileManager() {
 	assert(_savefileManager);
 	return _savefileManager;
