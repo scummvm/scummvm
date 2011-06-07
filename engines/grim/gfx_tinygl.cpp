@@ -709,6 +709,8 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 	const Common::String *lines = text->getLines();
 	const Font *font = text->getFont();
 	const Color *fgColor = text->getFGColor();
+	TextObjectData *userData = new TextObjectData[numLines];
+	text->setUserData(userData);
 	for (int j = 0; j < numLines; j++) {
 		const Common::String &currentLine = lines[j];
 
@@ -761,13 +763,13 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 			}
 		}
 
-		TextObjectData *userData = new TextObjectData;
-		userData->width = width;
-		userData->height = height;
-		userData->data = (byte *)texData;
-		userData->x = text->getLineX(j);
-		userData->y = text->getLineY(j);
-		text->setUserData(userData);
+
+		userData[j].width = width;
+		userData[j].height = height;
+		userData[j].data = (byte *)texData;
+		userData[j].x = text->getLineX(j);
+		userData[j].y = text->getLineY(j);
+
 
 		delete[] _textBitmap;
 	}
@@ -776,7 +778,10 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 void GfxTinyGL::drawTextObject(TextObject *text) {
 	TextObjectData *userData = (TextObjectData *)text->getUserData();
 	if (userData) {
-		TinyGLBlit((byte *)_zb->pbuf, userData->data, userData->x, userData->y, userData->width, userData->height, true);
+		int numLines = text->getNumLines();
+		for (int i = 0; i < numLines; ++i) {
+			TinyGLBlit((byte *)_zb->pbuf, userData[i].data, userData[i].x, userData[i].y, userData[i].width, userData[i].height, true);
+		}
 	}
 
 }
@@ -784,8 +789,11 @@ void GfxTinyGL::drawTextObject(TextObject *text) {
 void GfxTinyGL::destroyTextObject(TextObject *text) {
 	TextObjectData *userData = (TextObjectData *)text->getUserData();
 	if (userData) {
-		delete[] userData->data;
-		delete userData;
+		int numLines = text->getNumLines();
+		for (int i = 0; i < numLines; ++i) {
+			delete[] userData[i].data;
+		}
+		delete[] userData;
 	}
 }
 

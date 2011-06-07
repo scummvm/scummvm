@@ -101,6 +101,8 @@ public:
 	void draw();
 	void update();
 
+	void destroy();
+
 	void saveState(SaveGame *state) const;
 	bool restoreState(SaveGame *state);
 
