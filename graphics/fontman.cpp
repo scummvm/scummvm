@@ -117,11 +117,13 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 			if (font)
 				return font;
 		}
+#ifdef USE_TRANSLATION
 		// Accept any other font that has the charset in its name
 		for (Common::HashMap<Common::String, const Font *>::const_iterator it = _fontMap.begin() ; it != _fontMap.end() ; ++it) {
 			if (it->_key.contains(TransMan.getCurrentCharset()))
 				return it->_value;
 		}
+#endif
 		// Fallback: return a non localized kGUIFont.
 		// Maybe we should return a null pointer instead?
 		return g_sysfont;
