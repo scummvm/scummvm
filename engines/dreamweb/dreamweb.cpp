@@ -454,7 +454,8 @@ void set16colpalette(Context &context) {
 }
 
 void mode640x480(Context &context) {
-	::error("mode640x480");
+	// Video mode 12h: 640x480 pixels, 16 colors, I believe
+	initGraphics(640, 480, true);
 }
 
 void showgroup(Context &context) {
