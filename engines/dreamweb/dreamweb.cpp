@@ -297,10 +297,15 @@ void setmouse(Context &context) {
 }
 
 void gettime(Context &context) {
-	warning("gettime: stub: 10:10:00");
-	context.ch = 10;
-	context.cl = 10;
-	context.dh = 0;
+	TimeDate t;
+	g_system->getTimeAndDate(t);
+	debug(1, "\tgettime: %02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
+	context.ch = t.tm_hour;
+	context.cl = t.tm_min;
+	context.dh = t.tm_sec;
+	context.ds.byte(5) = context.dh;
+	context.ds.byte(6) = context.cl;
+	context.ds.byte(7) = context.ch;
 }
 
 void allocatemem(Context &context) {
