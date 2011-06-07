@@ -155,7 +155,6 @@ OSystem_N64::OSystem_N64() {
 
 OSystem_N64::~OSystem_N64() {
 	delete _mixer;
-	delete _fsFactory;
 }
 
 void OSystem_N64::initBackend() {
@@ -869,10 +868,6 @@ void OSystem_N64::getTimeAndDate(TimeDate &t) const {
 	t.tm_year = 110;
 
 	return;
-}
-
-FilesystemFactory *OSystem_N64::getFilesystemFactory() {
-	return _fsFactory;
 }
 
 void OSystem_N64::setTimerCallback(TimerProc callback, int interval) {

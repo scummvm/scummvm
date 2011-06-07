@@ -74,7 +74,6 @@ enum GraphicModeID {
 class OSystem_N64 : public BaseBackend, public PaletteManager {
 protected:
 	Audio::MixerImpl *_mixer;
-	FilesystemFactory *_fsFactory;
 
 	struct display_context * _dc; // Display context for N64 on screen buffer switching
 
@@ -200,7 +199,6 @@ public:
 	virtual Audio::Mixer *getMixer();
 	virtual void getTimeAndDate(TimeDate &t) const;
 	virtual void setTimerCallback(TimerProc callback, int interval);
-	FilesystemFactory *getFilesystemFactory();
 
 	void rebuildOffscreenGameBuffer(void);
 	void rebuildOffscreenMouseBuffer(void);
