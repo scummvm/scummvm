@@ -414,6 +414,7 @@ void mode640x480(Context &context) {
 
 void showgroup(Context &context) {
 	warning("showgroup: STUB");
+	context.cx = 0;
 }
 
 void fadedos(Context &context) {
