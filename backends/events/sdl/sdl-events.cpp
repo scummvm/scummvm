@@ -240,6 +240,11 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return true;
 
 	case SDL_VIDEORESIZE:
+		// Very bad things happen with our widgets reflow & size calculations when we resize too small
+		// Here, we limit the minimum size to the game/launcher resolution
+		ev.resize.w = MAX((int)g_system->getWidth(),  ev.resize.w);
+		ev.resize.h = MAX((int)g_system->getHeight(), ev.resize.h);
+
 		// HACK: Send a fake event, handled by OpenGLSdlGraphicsManager
 		event.type = (Common::EventType)OSystem_SDL::kSdlEventResize;
 		event.mouse.x = ev.resize.w;
