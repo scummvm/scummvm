@@ -37,17 +37,21 @@ TextObjectCommon::TextObjectCommon() :
 }
 
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
-		Object(), TextObjectCommon(), _created(false), _numberLines(1),
-		_textBitmap(NULL),_bitmapWidthPtr(NULL), _textObjectHandle(NULL) {
+		Object(), TextObjectCommon(), _numberLines(1),
+		_maxLineWidth(0), _lines(0), _userData(0), _created(false) {
 	memset(_textID, 0, sizeof(_textID));
 	_blastDraw = blastDraw;
 	_isSpeech = isSpeech;
 }
 
 TextObject::TextObject() :
-	Object(), TextObjectCommon(), _textObjectHandle(NULL),
-	_bitmapWidthPtr(NULL) {
+	Object(), TextObjectCommon() {
 
+}
+
+TextObject::~TextObject() {
+	delete[] _lines;
+	g_driver->destroyTextObject(this);
 }
 
 void TextObject::setText(const char *text) {
@@ -60,10 +64,7 @@ void TextObject::setText(const char *text) {
 		strncpy(_textID, text, sizeof(_textID));
 		_textID[sizeof(_textID) - 1] = 0;
 	}
-}
-
-TextObject::~TextObject() {
-	destroyBitmap();
+	setupText();
 }
 
 void TextObject::saveState(SaveGame *state) const {
@@ -89,8 +90,6 @@ void TextObject::saveState(SaveGame *state) const {
 }
 
 bool TextObject::restoreState(SaveGame *state) {
-	destroyBitmap();
-
 	_fgColor = g_grim->getColor(state->readLEUint32());
 
 	_x            = state->readLESint32();
@@ -111,15 +110,6 @@ bool TextObject::restoreState(SaveGame *state) {
 
 	state->read(_textID, 256);
 
-	_textBitmap = NULL;
-	_textObjectHandle = NULL;
-	_bitmapWidthPtr = NULL;
-
-	if (_created) {
-		_created = false;
-		createBitmap();
-	}
-
 	return true;
 }
 
@@ -133,16 +123,7 @@ void TextObject::setDefaults(TextObjectDefaults *defaults) {
 }
 
 int TextObject::getBitmapWidth() {
-	if (!_bitmapWidthPtr)
-		return 0;
-
-	int width = 0;
-
-	for (int i = 0; i < _numberLines; i++) {
-		if (_bitmapWidthPtr[i] > width)
-			width = _bitmapWidthPtr[i];
-	}
-	return width;
+	return _maxLineWidth;
 }
 
 int TextObject::getBitmapHeight() {
@@ -158,23 +139,24 @@ int TextObject::getTextCharPosition(int pos) {
 	return width;
 }
 
-void TextObject::createBitmap() {
-	if (_created)
-		destroyBitmap();
-
+void TextObject::setupText() {
 	Common::String msg = parseMsgText(_textID, NULL);
 	Common::String message;
-	const char *c = msg.c_str();
 
 	// remove spaces (NULL_TEXT) from the end of the string,
 	// while this helps make the string unique it screws up
 	// text justification
-	for (int i = (int)msg.size() - 1; c[i] == TEXT_NULL; i--)
-		msg.deleteLastChar();
-
 	// remove char of id 13 from the end of the string,
-	for (int i = (int)msg.size() - 1; c[i] == 13; i--)
+	int pos = msg.size() - 1;
+	while (pos >= 0 && (msg[pos] == ' ' || msg[pos] == 13)) {
 		msg.deleteLastChar();
+		pos = msg.size() - 1;
+	}
+	if (msg.size() == 0) {
+		_disabled = true;
+		return;
+	}
+
 
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
@@ -207,7 +189,7 @@ void TextObject::createBitmap() {
 	_numberLines = 1;
 	int lineWidth = 0;
 	int maxLineWidth = 0;
-	for (int i = 0; i < (int)msg.size(); i++) {
+	for (uint i = 0; i < msg.size(); i++) {
 		lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
 		if (lineWidth > maxWidth) {
 			if (message.contains(' ')) {
@@ -254,8 +236,7 @@ void TextObject::createBitmap() {
 		}
 	}
 
-	_textObjectHandle = (GfxBase::TextObjectHandle **)malloc(sizeof(long) * _numberLines);
-	_bitmapWidthPtr = new int[_numberLines];
+	_lines = new Common::String[_numberLines];
 
 	for (int j = 0; j < _numberLines; j++) {
 		int nextLinePos, cutLen;
@@ -268,122 +249,65 @@ void TextObject::createBitmap() {
 			cutLen = nextLinePos;
 		}
 		Common::String currentLine(message.c_str(), message.c_str() + nextLinePos);
-
-		_bitmapWidthPtr[j] = 0;
-		for (unsigned int i = 0; i < currentLine.size(); ++i) {
-			_bitmapWidthPtr[j] += MAX(_font->getCharWidth(currentLine[i]), _font->getCharDataWidth(currentLine[i]));
-		}
-
-		_textBitmap = new uint8[_font->getHeight() * (_bitmapWidthPtr[j] + 1)];
-		memset(_textBitmap, 0, _font->getHeight() * (_bitmapWidthPtr[j] + 1));
-
-		// Fill bitmap
-		int startOffset = 0;
-		for (unsigned int d = 0; d < currentLine.size(); d++) {
-			int ch = currentLine[d];
-			int8 startingLine = _font->getCharStartingLine(ch) + _font->getBaseOffsetY();
-			int32 charDataWidth = _font->getCharDataWidth(ch);
-			int32 charWidth = _font->getCharWidth(ch);
-			int8 startingCol = _font->getCharStartingCol(ch);
-			for (int line = 0; line < _font->getCharDataHeight(ch); line++) {
-				int offset = startOffset + ((_bitmapWidthPtr[j] + 1) * (line + startingLine));
-				for (int r = 0; r < charDataWidth; r++) {
-					const byte pixel = *(_font->getCharData(ch) + r + (charDataWidth * line));
-					byte *dst = _textBitmap + offset + startingCol + r;
-					if (*dst == 0 && pixel != 0)
-						_textBitmap[offset + startingCol + r] = pixel;
-				}
-				if (line + startingLine >= _font->getHeight())
-					break;
-			}
-			startOffset += charWidth;
-		}
-
-		_textObjectHandle[j] = g_driver->createTextBitmap(_textBitmap, _bitmapWidthPtr[j] + 1, _font->getHeight(), *_fgColor);
-		delete[] _textBitmap;
+		_lines[j] = currentLine;
+		int width = _font->getStringLength(currentLine);
+		if (width > _maxLineWidth)
+			_maxLineWidth = width;
 		for (int count = 0; count < cutLen; count++)
 			message.deleteChar(0);
 	}
-	_created = true;
 	_elapsedTime = 0;
 }
 
-void TextObject::subBaseOffsetY() {
-	if (_font)
-		_y -= _font->getBaseOffsetY();
-	else
-		_y -= 5;
+int TextObject::getLineX(int line) {
+	int x = _x;
+	if (_justify == CENTER)
+		x = _x - (_font->getStringLength(_lines[line]) / 2);
+	else if (_justify == RJUSTIFY)
+		x = _x - getBitmapWidth();
+
+	if (x < 0)
+		x = 0;
+	return x;
 }
 
-int TextObject::getBaseOffsetY() {
-	if (_font)
-		return _font->getBaseOffsetY();
-	else
-		return 5;
-}
+int TextObject::getLineY(int line) {
+	int y = _y;
+	if (_blastDraw)
+		y = _y + 5;
+	else {
+		if (_font->getHeight() == 21) // talk_font,verb_font
+			y = _y - 6;
+		else if (_font->getHeight() == 26) // special_font
+			y = _y - 12;
+		else if (_font->getHeight() == 13) // computer_font
+			y = _y - 6;
+		else if (_font->getHeight() == 19) // pt_font
+			y = _y - 9;
+		else
+			y = _y;
+	}
+	if (y < 0)
+		y = 0;
+	y += _font->getHeight()*line;
 
-void TextObject::destroyBitmap() {
-	_created = false;
-	if (_textObjectHandle) {
-		for (int i = 0; i < _numberLines; i++) {
-			g_driver->destroyTextBitmap(_textObjectHandle[i]);
-			delete _textObjectHandle[i];
-		}
-		free(_textObjectHandle);
-		_textObjectHandle = NULL;
-	}
-	if (_bitmapWidthPtr) {
-		delete[] _bitmapWidthPtr;
-		_bitmapWidthPtr = NULL;
-	}
+	return y;
 }
 
 void TextObject::draw() {
-	int height = 0;
-
-	if (!_created || _disabled)
+	if (_disabled)
 		return;
-	// render multi-line (wrapped) text
-	for (int i = 0; i < _numberLines; i++) {
-		int y;
 
-		if (_blastDraw)
-			y = _y + 5;
-		else {
-			if (_font->getHeight() == 21) // talk_font,verb_font
-				y = _y - 6;
-			else if (_font->getHeight() == 26) // special_font
-				y = _y - 12;
-			else if (_font->getHeight() == 13) // computer_font
-				y = _y - 6;
-			else if (_font->getHeight() == 19) // pt_font
-				y = _y - 9;
-			else
-				y = _y;
-		}
-
-		if (y < 0)
-			y = 0;
-
-		if (_justify == LJUSTIFY || _justify == NONE)
-			g_driver->drawTextBitmap(_x, height + y, _textObjectHandle[i]);
-		else if (_justify == CENTER) {
-			int x = _x - (_bitmapWidthPtr[i] / 2);
-			if (x < 0)
-				x = 0;
-
-			g_driver->drawTextBitmap(x, height + y, _textObjectHandle[i]);
-		} else if (_justify == RJUSTIFY) {
-			int x = (_x - getBitmapWidth());
-			if (x < 0)
-				x = 0;
-
-			g_driver->drawTextBitmap(x, height + y, _textObjectHandle[i]);
-		} else if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("TextObject::draw: Unknown justification code (%d)", _justify);
-
-		height += _font->getHeight();
+	if (!_created) {
+		g_driver->createTextObject(this);
+		_created = true;
 	}
+
+	if ((_justify > 3 || _justify < 0) && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
+		warning("TextObject::draw: Unknown justification code (%d)", _justify);
+
+	g_driver->drawTextObject(this);
+
 }
 
 void TextObject::update() {

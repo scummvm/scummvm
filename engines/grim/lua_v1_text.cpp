@@ -79,8 +79,6 @@ void L1_ChangeTextObject() {
 				lua_getstring(paramObj);
 
 			}
-			textObject->destroyBitmap();
-			textObject->createBitmap();
 
 			lua_pushnumber(textObject->getBitmapWidth());
 			lua_pushnumber(textObject->getBitmapHeight());
@@ -121,8 +119,6 @@ void L1_MakeTextObject() {
 		setTextObjectParams(textObject, tableObj);
 
 	textObject->setText(text.c_str());
-	if (!(g_grim->getGameFlags() & ADGF_DEMO))
-		textObject->createBitmap();
 	g_grim->registerTextObject(textObject);
 
 	lua_pushusertag(textObject->getId(), MKTAG('T', 'E', 'X', 'T'));
@@ -168,7 +164,8 @@ void L1_BlastText() {
 	}
 
 	const char *line = lua_getstring(textObj);
-	Common::String text = line;
+	if (!line || line[0] == 0)
+		return;
 
 	TextObject *textObject = new TextObject(true);
 	textObject->setDefaults(&g_grim->_blastTextDefaults);
@@ -176,8 +173,7 @@ void L1_BlastText() {
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
 
-	textObject->setText(text.c_str());
-	textObject->createBitmap();
+	textObject->setText(line);
 	textObject->draw();
 	delete textObject;
 }

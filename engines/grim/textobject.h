@@ -75,24 +75,27 @@ class TextObjectDefaults : public TextObjectCommon {
 
 };
 
-#define TEXT_NULL   ' '
-
 class TextObject : public Object, public TextObjectCommon {
 public:
 	TextObject(bool blastDraw, bool isSpeech = false);
 	TextObject();
 	~TextObject();
-	void createBitmap();
-	void destroyBitmap();
+
 	void setDefaults(TextObjectDefaults *defaults);
 	void setText(const char *text);
-
-	void subBaseOffsetY();
-	int getBaseOffsetY();
 
 	int getBitmapWidth();
 	int getBitmapHeight();
 	int getTextCharPosition(int pos);
+
+	int getLineX(int line);
+	int getLineY(int line);
+
+	void *getUserData() { return _userData; }
+	void setUserData(void *data) { _userData = data; }
+
+	const Common::String *getLines() { return _lines; }
+	int getNumLines() { return _numberLines; }
 
 	const char *getName() const { return _textID; }
 	void draw();
@@ -110,16 +113,15 @@ public:
 
 protected:
 	bool _created;
+	void setupText();
 	int _numberLines;
 	bool _blastDraw;
 	bool _isSpeech;
 	char _textID[256];
-	uint8 *_textBitmap;
-	int *_bitmapWidthPtr;
-	GfxBase::TextObjectHandle **_textObjectHandle;
 	int _elapsedTime;
-
-	friend class GrimEngine;
+	int _maxLineWidth;
+	Common::String *_lines;
+	void *_userData;
 };
 
 } // end of namespace Grim

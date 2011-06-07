@@ -769,6 +769,188 @@ void GfxOpenGL::destroyBitmap(BitmapData *bitmap) {
 	}
 }
 
+struct FontUserData
+{
+	int size;
+	GLuint texture;
+};
+
+void GfxOpenGL::createFont(Font *font) {
+	const byte *bitmapData = font->getFontData();
+	uint dataSize = font->getDataSize();
+
+	uint8 bpp = 4;
+	uint8 charsWide = 16;
+	uint8 charsHigh = 16;
+
+	byte *texDataPtr = new byte[dataSize * bpp];
+	byte *data = texDataPtr;
+
+	for (uint i = 0; i < dataSize; i++, texDataPtr += bpp, bitmapData++) {
+		byte pixel = *bitmapData;
+		if (pixel == 0x00) {
+			texDataPtr[0] = 0;
+			texDataPtr[1] = 0;
+			texDataPtr[2] = 0;
+			texDataPtr[3] = 0;
+		} else if (pixel == 0x80) {
+			texDataPtr[0] = 0;
+			texDataPtr[1] = 0;
+			texDataPtr[2] = 0;
+			texDataPtr[3] = 255;
+		} else if (pixel == 0xFF) {
+			texDataPtr[0] = 255;
+			texDataPtr[1] = 255;
+			texDataPtr[2] = 255;
+			texDataPtr[3] = 255;
+		}
+	}
+	int size = 0;
+	for (int i = 0; i < 256; ++i) {
+		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int m = MAX(width, height);
+		if (m > size)
+			size = m;
+	}
+	assert(size < 64);
+	if (size < 8)
+		size = 8;
+	if (size < 16)
+		size = 16;
+	else if (size < 32)
+		size = 32;
+	else if (size < 64)
+		size = 64;
+
+	uint arraySize = size * size * bpp * charsWide * charsHigh;
+	byte *temp = new byte[arraySize];
+	if (!temp)
+		error("Could not allocate %d bytes", arraySize);
+
+	memset(temp, 0, arraySize);
+
+	FontUserData *userData = new FontUserData;
+	font->setUserData(userData);
+	userData->texture = 0;
+	userData->size = size;
+
+	GLuint *texture = &(userData->texture);
+	glGenTextures(1, texture);
+
+	for (int i = 0, row = 0; i < 256; ++i) {
+		int width = font->getCharDataWidth(i), height = font->getCharDataHeight(i);
+		int32 d = font->getCharOffset(i);
+		for (int x = 0; x < height; ++x) {
+			// a is the offset to get to the correct row.
+			// b is the offset to get to the correct line in the character.
+			// c is the offset of the character from the start of the row.
+			uint a = row * size * size * bpp * charsHigh;
+			uint b = x * size * charsWide * bpp;
+			uint c = 0;
+			if (i != 0)
+				c = ((i - 1) % 16) * size * bpp;
+
+			uint pos = a + b + c;
+			uint pos2 = d * bpp + x * width * bpp;
+			assert(pos + width * bpp <= arraySize);
+			assert(pos2 + width * bpp <= dataSize * bpp);
+			memcpy(temp + pos, data + pos2, width * bpp);
+		}
+		if (i != 0 && i % charsWide == 0)
+			++row;
+
+	}
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size * charsWide, size * charsHigh, 0, GL_RGBA, GL_UNSIGNED_BYTE, temp);
+
+	delete[] data;
+	delete[] temp;
+}
+
+void GfxOpenGL::destroyFont(Font *font) {
+	FontUserData *data = (FontUserData *)font->getUserData();
+	if (data) {
+		glDeleteTextures(1, &(data->texture));
+		delete data;
+	}
+}
+
+void GfxOpenGL::createTextObject(TextObject *text) {
+}
+
+void GfxOpenGL::drawTextObject(TextObject *text) {
+	if (!text)
+		return;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glDepthMask(GL_FALSE);
+
+	const Color *color = text->getFGColor();
+	Font *font = text->getFont();
+
+	glColor3f(color->getRed()/255.f, color->getGreen()/255.f, color->getBlue()/255.f);
+	FontUserData *userData = (FontUserData *)font->getUserData();
+	if (!userData)
+		error("Could not get font userdata");
+	int size = userData->size;
+	GLuint texture = userData->texture;
+	int y, x;
+	const Common::String *lines = text->getLines();
+	int numLines = text->getNumLines();
+	for (int j = 0; j < numLines; ++j) {
+		const Common::String &line = lines[j];
+		x = text->getLineX(j);
+		y = text->getLineY(j);
+		for (uint i = 0; i < line.size(); ++i) {
+			uint8 character = line[i];
+			int w = y + font->getCharStartingLine(character) + font->getBaseOffsetY();
+			int z = x + font->getCharStartingCol(character);
+
+			glBindTexture(GL_TEXTURE_2D, texture);
+			float width = 1 / 16.f;
+			float cx = ((character-1) % 16) / 16.0f;
+			float cy = ((character-1) / 16) / 16.0f;
+			glBegin(GL_QUADS);
+			glTexCoord2f(cx, cy);
+			glVertex2i(z, w);
+			glTexCoord2f(cx + width, cy);
+			glVertex2i(z + size, w);
+			glTexCoord2f(cx + width, cy + width);
+			glVertex2i(z + size, w + size);
+			glTexCoord2f(cx, cy + width);
+			glVertex2i(z, w + size);
+			glEnd();
+			x += font->getCharWidth(character);
+		}
+	}
+
+	glColor3f(1, 1, 1);
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+}
+
+void GfxOpenGL::destroyTextObject(TextObject *text) {
+}
+
 void GfxOpenGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
 	material->_textures = new GLuint[material->_numImages];
 	glGenTextures(material->_numImages, (GLuint *)material->_textures);
@@ -969,127 +1151,6 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
-}
-
-GfxBase::TextObjectHandle *GfxOpenGL::createTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
-	TextObjectHandle *handle = new TextObjectHandle;
-	handle->width = width;
-	handle->height = height;
-	handle->bitmapData = NULL;
-	handle->surface = NULL;
-
-	// create texture
-	handle->numTex = ((width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
-		((height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
-	handle->texIds = (GLuint *)new GLuint[handle->numTex];
-	glGenTextures(handle->numTex, (GLuint *)handle->texIds);
-
-	// Convert data to 32-bit RGBA format
-	byte *texData = new byte[4 * width * height];
-	byte *texDataPtr = texData;
-	uint8 *bitmapData = data;
-	uint8 r = fgColor.getRed();
-	uint8 g = fgColor.getGreen();
-	uint8 b = fgColor.getBlue();
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
-
-	for (int i = 0; i < width * height; i++, texDataPtr += 4, bitmapData++) {
-		byte pixel = *bitmapData;
-		if (pixel == 0x00) {
-			texDataPtr[0] = 0;
-			texDataPtr[1] = 0;
-			texDataPtr[2] = 0;
-			texDataPtr[3] = 0;
-		} else if (pixel == 0x80) {
-			texDataPtr[0] = 0;
-			texDataPtr[1] = 0;
-			texDataPtr[2] = 0;
-			texDataPtr[3] = 255;
-		} else if (pixel == 0xFF) {
-			texDataPtr[0] = r;
-			texDataPtr[1] = g;
-			texDataPtr[2] = b;
-			texDataPtr[3] = 255;
-		}
-	}
-
-	for (int i = 0; i < handle->numTex; i++) {
-		glBindTexture(GL_TEXTURE_2D, ((GLuint *)handle->texIds)[i]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	}
-
-	int curTexIdx = 0;
-	for (int y = 0; y < height; y += BITMAP_TEXTURE_SIZE) {
-		for (int x = 0; x < width; x += BITMAP_TEXTURE_SIZE) {
-			int t_width = (x + BITMAP_TEXTURE_SIZE >= width) ? (width - x) : BITMAP_TEXTURE_SIZE;
-			int t_height = (y + BITMAP_TEXTURE_SIZE >= height) ? (height - y) : BITMAP_TEXTURE_SIZE;
-			glBindTexture(GL_TEXTURE_2D, ((GLuint *)handle->texIds)[curTexIdx]);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGBA, GL_UNSIGNED_BYTE, texData + (y * 4 * width) + (4 * x));
-			curTexIdx++;
-		}
-	}
-
-	delete[] texData;
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	return handle;
-}
-
-void GfxOpenGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glMatrixMode(GL_TEXTURE);
-	glLoadIdentity();
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDisable(GL_LIGHTING);
-	glEnable(GL_TEXTURE_2D);
-
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
-	glEnable(GL_SCISSOR_TEST);
-	glScissor(x, 480 - (y + handle->height), handle->width, handle->height);
-	int curTexIdx = 0;
-	for (int t_y = 0; t_y < handle->height; t_y += BITMAP_TEXTURE_SIZE) {
-		for (int t_x = 0; t_x < handle->width; t_x += BITMAP_TEXTURE_SIZE) {
-			GLuint *textures = (GLuint *)handle->texIds;
-			glBindTexture(GL_TEXTURE_2D, textures[curTexIdx]);
-			glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f);
-			glVertex2i(t_x + x, t_y + y);
-			glTexCoord2f(1.0f, 0.0f);
-			glVertex2i(t_x + x + BITMAP_TEXTURE_SIZE, y + t_y);
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex2i(t_x + x + BITMAP_TEXTURE_SIZE, y + t_y + BITMAP_TEXTURE_SIZE);
-			glTexCoord2f(0.0f, 1.0f);
-			glVertex2i(t_x + x, t_y + y + BITMAP_TEXTURE_SIZE);
-			glEnd();
-			curTexIdx++;
-		}
-	}
-
-	glDisable(GL_SCISSOR_TEST);
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
-}
-
-void GfxOpenGL::destroyTextBitmap(TextObjectHandle *handle) {
-	GLuint *textures = (GLuint *)handle->texIds;
-	if (textures) {
-		glDeleteTextures(handle->numTex, textures);
-		delete[] textures;
-	}
 }
 
 Bitmap *GfxOpenGL::getScreenshot(int w, int h) {

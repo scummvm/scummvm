@@ -31,7 +31,8 @@
 
 namespace Grim {
 
-Font::Font(const Common::String &filename, const char *data, int len) : Object() {
+Font::Font(const Common::String &filename, const char *data, int len) :
+		Object(), _userData(0) {
 	_filename = filename;
 	_numChars = READ_LE_UINT32(data);
 	_dataSize = READ_LE_UINT32(data + 4);
@@ -78,6 +79,8 @@ Font::Font(const Common::String &filename, const char *data, int len) : Object()
 		error("Could not load font %s. Out of memory", _filename.c_str());
 
 	memcpy(_fontData, data, _dataSize);
+
+	g_driver->createFont(this);
 }
 
 Font::Font() :
@@ -93,9 +96,10 @@ Font::~Font() {
 
 		g_resourceloader->uncacheFont(this);
 	}
+	g_driver->destroyFont(this);
 }
 
-uint16 Font::getCharIndex(unsigned char c) {
+uint16 Font::getCharIndex(unsigned char c) const {
 	uint16 c2 = uint16(c);
 
 	// In order to ensure the correct character codes for
@@ -124,6 +128,14 @@ uint16 Font::getCharIndex(unsigned char c) {
 	// the first character in the font so that something
 	// gets loaded to prevent the game from crashing
 	return 0;
+}
+
+int Font::getStringLength(const Common::String &text) const {
+	int result = 0;
+	for (uint32 i = 0; i < text.size(); ++i) {
+		result += MAX(getCharDataWidth(text[i]), getCharWidth(text[i]));
+	}
+	return result;
 }
 
 // Hardcoded default font for GUI, etc

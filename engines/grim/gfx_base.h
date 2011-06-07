@@ -32,26 +32,18 @@ struct Shadow;
 class SaveGame;
 class BitmapData;
 class PrimitiveObject;
+class Font;
+class TextObject;
 
 enum colorFormat {
 	BM_RGB565 = 1,    // Grim Fandango
 	BM_RGB1555 = 2,   // EMI-PS2
 	BM_RGBA = 3      // EMI-PC
 };
-	
 class GfxBase {
 public:
 	GfxBase() { ; }
 	virtual ~GfxBase() { ; }
-
-	struct TextObjectHandle {
-		uint16 *bitmapData;
-		void *surface;
-		int numTex;
-		void *texIds;
-		int width;
-		int height;
-	};
 
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 
@@ -93,6 +85,13 @@ public:
 	virtual void drawBitmap(const Bitmap *bitmap) = 0;
 	virtual void destroyBitmap(BitmapData *bitmap) = 0;
 
+	virtual void createFont(Font *font) = 0;
+	virtual void destroyFont(Font *font) = 0;
+
+	virtual void createTextObject(TextObject *text) = 0;
+	virtual void drawTextObject(TextObject *text) = 0;
+	virtual void destroyTextObject(TextObject *text) = 0;
+
 	virtual Bitmap *getScreenshot(int w, int h) = 0;
 	virtual void storeDisplay() = 0;
 	virtual void copyStoredToDisplay() = 0;
@@ -101,9 +100,6 @@ public:
 
 	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) = 0;
 	virtual void loadEmergFont() = 0;
-	virtual TextObjectHandle *createTextBitmap(uint8 *bitmap, int width, int height, const Color &fgColor) = 0;
-	virtual void drawTextBitmap(int x, int y, TextObjectHandle *handle) = 0;
-	virtual void destroyTextBitmap(TextObjectHandle *handle) = 0;
 
 	virtual void drawRectangle(PrimitiveObject *primitive) = 0;
 	virtual void drawLine(PrimitiveObject *primitive) = 0;

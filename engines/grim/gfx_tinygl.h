@@ -77,6 +77,13 @@ public:
 	void drawBitmap(const Bitmap *bitmap);
 	void destroyBitmap(BitmapData *bitmap);
 
+	void createFont(Font *font);
+	void destroyFont(Font *font);
+
+	void drawTextObject(TextObject *text);
+	void createTextObject(TextObject *text);
+	void destroyTextObject(TextObject *text);
+
 	void dimScreen();
 	void dimRegion(int x, int y, int w, int h, float level);
 
@@ -86,9 +93,6 @@ public:
 
 	void drawEmergString(int x, int y, const char *text, const Color &fgColor);
 	void loadEmergFont();
-	TextObjectHandle *createTextBitmap(uint8 *bitmap, int width, int height, const Color &fgColor);
-	void drawTextBitmap(int x, int y, TextObjectHandle *handle);
-	void destroyTextBitmap(TextObjectHandle *handle);
 
 	void drawRectangle(PrimitiveObject *primitive);
 	void drawLine(PrimitiveObject *primitive);
