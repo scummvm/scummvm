@@ -79,7 +79,7 @@ public:
 	uint8 randomNumber() { return _rnd.getRandomNumber(255); }
 
 	void openFile(const Common::String &name);
-	void readFromFile(uint8 *dst, unsigned size);
+	uint32 readFromFile(uint8 *dst, unsigned size);
 	void closeFile();
 
 	void mouseCall(); //fill mouse pos and button state

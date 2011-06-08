@@ -170,11 +170,11 @@ void DreamWebEngine::openFile(const Common::String &name) {
 	}
 }
 
-void DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
+uint32 DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
 	processEvents();
 	if (!_file.isOpen())
 		error("file was not opened (read before open)");
-	_file.read(dst, size);
+	return _file.read(dst, size);
 }
 
 void DreamWebEngine::closeFile() {
@@ -248,7 +248,7 @@ void readfromfile(Context &context) {
 	uint16 dst_offset = context.dx;
 	uint16 size = context.cx;
 	debug(1, "readfromfile(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
-	engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
+	context.ax = engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
 	context.flags._c = false; //fixme: add return args
 }
 
@@ -459,8 +459,17 @@ void mode640x480(Context &context) {
 }
 
 void showgroup(Context &context) {
-	warning("showgroup: STUB");
-	context.cx = 0;
+	debug(1, "setting palette entries %u, %u colors, ds: %04x", (uint8)context.al, (uint16)context.cx, (uint16)context.ds);
+	unsigned idx = context.al;
+	while(context.cx--) {
+		context._lodsb();
+		unsigned r = context.al;
+		context._lodsb();
+		unsigned g = context.al;
+		context._lodsb();
+		unsigned b = context.al;
+		debug(1, "%u -> %u,%u,%u", idx, r, g, b);
+	}
 }
 
 void fadedos(Context &context) {
@@ -484,7 +493,7 @@ void readoneblock(Context &context) {
 }
 
 void showpcx(Context &context) {
-	::error("showpcx");
+	warning("showpcx");
 }
 
 } /*namespace dreamgen */
