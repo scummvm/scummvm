@@ -32,8 +32,6 @@ public:
 
 	virtual void displayMessageOnOSD(const char *msg);
 	virtual void fillScreen(uint32 col);
-
-	virtual void resetGraphicsScale();
 };
 
 

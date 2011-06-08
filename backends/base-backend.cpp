@@ -51,6 +51,3 @@ void BaseBackend::fillScreen(uint32 col) {
 		memset(screen->pixels, col, screen->h * screen->pitch);
 	unlockScreen();
 }
-
-void BaseBackend::resetGraphicsScale() {
-}

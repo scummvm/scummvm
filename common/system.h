@@ -456,7 +456,7 @@ public:
 	 * reset the scale to x1 so the screen will not be too big when starting
 	 * the game.
 	 */
-	virtual void resetGraphicsScale() = 0;
+	virtual void resetGraphicsScale() {}
 
 #ifdef USE_RGB_COLOR
 	/**
