@@ -26,6 +26,11 @@ DEFINES += -DENABLE_AGOS2
 endif
 endif
 
+ifdef ENABLE_CGE
+DEFINES += -DENABLE_CGE=$(ENABLE_CGE)
+MODULES += engines/cge
+endif
+
 ifdef ENABLE_CINE
 DEFINES += -DENABLE_CINE=$(ENABLE_CINE)
 MODULES += engines/cine
@@ -146,11 +151,6 @@ endif
 ifdef ENABLE_SKY
 DEFINES += -DENABLE_SKY=$(ENABLE_SKY)
 MODULES += engines/sky
-endif
-
-ifdef ENABLE_SOLTYS
-DEFINES += -DENABLE_SOLTYS=$(ENABLE_SOLTYS)
-MODULES += engines/soltys
 endif
 
 ifdef ENABLE_SWORD1

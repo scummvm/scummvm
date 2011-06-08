@@ -26,14 +26,14 @@
 #include "common/system.h"
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
-#include "Soltys/Soltys.h"
+#include "cge/cge.h"
 
-static const PlainGameDescriptor SoltysGames[] = {
+static const PlainGameDescriptor CGEGames[] = {
 	{ "soltys", "Soltys" },
 	{ 0, 0 }
 };
 
-namespace Soltys {
+namespace CGE {
 
 using Common::GUIO_NONE;
 
@@ -83,23 +83,23 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 	{ 0, { 0 } }
 };
 
-} // End of namespace Soltys
+} // End of namespace CGE
 
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Soltys::gameDescriptions,
+	(const byte *)CGE::gameDescriptions,
 	// Size of that superset structure
 	sizeof(ADGameDescription),
 	// Number of bytes to compute MD5 sum for
 	5000,
 	// List of all engine targets
-	SoltysGames,
+	CGEGames,
 	// Structure for autoupgrading obsolete targets
 	0,
 	// Name of single gameid (optional)
 	"Soltys",
 	// List of files for file-based fallback detection (optional)
-	Soltys::fileBasedFallback,
+	CGE::fileBasedFallback,
 	// Flags
 	0,
 	// Additional GUI options (for every game}
@@ -110,12 +110,12 @@ static const ADParams detectionParams = {
 	NULL
 };
 
-class SoltysMetaEngine : public AdvancedMetaEngine {
+class CGEMetaEngine : public AdvancedMetaEngine {
 public:
-	SoltysMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	CGEMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Soltys";
+		return "CGE";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -130,7 +130,7 @@ public:
 	virtual void removeSaveState(const char *target, int slot) const;
 };
 
-bool SoltysMetaEngine::hasFeature(MetaEngineFeature f) const {
+bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsLoadingDuringStartup) ||
@@ -140,14 +140,14 @@ bool SoltysMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportCreationDate);
 }
 
-void SoltysMetaEngine::removeSaveState(const char *target, int slot) const {
+void CGEMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int SoltysMetaEngine::getMaximumSaveSlot() const { return 99; }
+int CGEMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-SaveStateList SoltysMetaEngine::listSaves(const char *target) const {
+SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
@@ -166,7 +166,7 @@ SaveStateList SoltysMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
 			if (file) {
 				int32 version = file->readSint32BE();
-				if (version != SOLTYS_SAVEGAME_VERSION) {
+				if (version != CGE_SAVEGAME_VERSION) {
 					delete file;
 					continue;
 				}
@@ -190,14 +190,14 @@ SaveStateList SoltysMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor SoltysMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 
 	if (file) {
 
 		int32 version = file->readSint32BE();
-		if (version != SOLTYS_SAVEGAME_VERSION) {
+		if (version != CGE_SAVEGAME_VERSION) {
 			delete file;
 			return SaveStateDescriptor();
 		}
@@ -241,15 +241,15 @@ SaveStateDescriptor SoltysMetaEngine::querySaveMetaInfos(const char *target, int
 	return SaveStateDescriptor();
 }
 
-bool SoltysMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
-		*engine = new Soltys::SoltysEngine(syst, desc);
+		*engine = new CGE::CGEEngine(syst, desc);
 	}
 	return desc != 0;
 }
 
-#if PLUGIN_ENABLED_DYNAMIC(Soltys)
-	REGISTER_PLUGIN_DYNAMIC(SOLTYS, PLUGIN_TYPE_ENGINE, SoltysMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(CGE)
+	REGISTER_PLUGIN_DYNAMIC(CGE, PLUGIN_TYPE_ENGINE, CGEMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SOLTYS, PLUGIN_TYPE_ENGINE, SoltysMetaEngine);
+	REGISTER_PLUGIN_STATIC(CGE, PLUGIN_TYPE_ENGINE, CGEMetaEngine);
 #endif

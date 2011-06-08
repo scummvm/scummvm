@@ -32,37 +32,37 @@
  
 #include "engines/util.h"
  
-#include "soltys/soltys.h"
+#include "cge/cge.h"
  
-namespace Soltys {
+namespace CGE {
  
-SoltysEngine::SoltysEngine(OSystem *syst, const ADGameDescription *gameDescription)
+CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
  : Engine(syst), _gameDescription(gameDescription) {
  
-	DebugMan.addDebugChannel(kSoltysDebug, "general", "Soltys general debug channel");
- 	_console = new SoltysConsole(this);
+	DebugMan.addDebugChannel(kCGEDebug, "general", "CGE general debug channel");
+ 	_console = new CGEConsole(this);
 
-	debug("SoltysEngine::SoltysEngine");
+	debug("CGEEngine::CGEEngine");
 }
  
-SoltysEngine::~SoltysEngine() {
-	debug("SoltysEngine::~SoltysEngine");
+CGEEngine::~CGEEngine() {
+	debug("CGEEngine::~CGEEngine");
  
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 }
  
-Common::Error SoltysEngine::run() {
+Common::Error CGEEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);
  
  	// Create debugger console. It requires GFX to be initialized
-	_console = new SoltysConsole(this);
+	_console = new CGEConsole(this);
  
 	// Additional setup.
-	debug("SoltysEngine::init");
+	debug("CGEEngine::init");
  
 	return Common::kNoError;
 }
  
-} // End of namespace Soltys
+} // End of namespace CGE
