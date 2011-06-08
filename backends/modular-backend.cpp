@@ -24,15 +24,10 @@
 
 #include "backends/modular-backend.h"
 
-#include "backends/fs/fs-factory.h"
 #include "backends/graphics/graphics.h"
 #include "backends/mutex/mutex.h"
 
 #include "audio/mixer.h"
-#include "common/events.h"
-#include "common/timer.h"
-#include "common/savefile.h"
-#include "gui/message.h"
 #include "graphics/pixelformat.h"
 
 ModularBackend::ModularBackend()

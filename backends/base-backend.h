@@ -24,7 +24,7 @@
 #define BACKENDS_BASE_BACKEND_H
 
 #include "common/system.h"
-#include "backends/events/default/default-events.h"
+#include "common/events.h"
 
 class BaseBackend : public OSystem, Common::EventSource {
 public:
