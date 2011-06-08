@@ -268,38 +268,38 @@ public:
 
 	inline void _and(uint8 &dst, uint8 src) {
 		dst &= src;
-		flags._c = false;
 		flags.update(dst);
+		flags._c = flags._o = false;
 	}
 
 	inline void _and(uint16 &dst, uint16 src) {
 		dst &= src;
-		flags._c = false;
 		flags.update(dst);
+		flags._c = flags._o = false;
 	}
 
 	inline void _or(uint8 &dst, uint8 src) {
 		dst |= src;
-		flags._c = false;
 		flags.update(dst);
+		flags._c = flags._o = false;
 	}
 
 	inline void _or(uint16 &dst, uint16 src) {
 		dst |= src;
-		flags._c = false;
 		flags.update(dst);
+		flags._c = flags._o = false;
 	}
 
 	inline void _xor(uint8 &dst, uint8 src) {
 		dst ^= src;
-		flags._c = false;
 		flags.update(dst);
+		flags._c = flags._o = false;
 	}
 
 	inline void _xor(uint16 &dst, uint16 src) {
 		dst ^= src;
-		flags._c = false;
 		flags.update(dst);
+		flags._c = flags._o = false;
 	}
 
 	inline void _shr(uint8 &dst, uint8 src) {
@@ -372,8 +372,8 @@ public:
 
 	inline void _neg(uint8 &src) {
 		src = ~src;
-		flags._c = false;
 		flags.update(src);
+		flags._c = flags._o = false;
 	}
 
 	inline void _neg(uint16 &src) {
