@@ -43,6 +43,8 @@ void BaseBackend::initBackend() {
 	if (!_eventManager)
 		_eventManager = new DefaultEventManager(this);
 #endif
+
+	OSystem::initBackend();
 }
 
 void BaseBackend::fillScreen(uint32 col) {
