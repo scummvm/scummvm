@@ -249,7 +249,7 @@ void readfromfile(Context &context) {
 	uint16 size = context.cx;
 	debug(1, "readfromfile(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
 	context.ax = engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
-	context.flags._c = false; //fixme: add return args
+	context.flags._c = false;
 }
 
 void closefile(Context &context) {
@@ -426,7 +426,15 @@ void saveseg(Context &context) {
 }
 
 void loadseg(Context &context) {
-	::error("loadseg");
+	uint16 dst_offset = context.dx;
+	uint16 size = context.ax;
+
+	context.ax = context.es.word(context.di);
+	context.di += 2;
+
+	debug(1, "readfromfile(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
+	context.ax = engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
+	context.flags._c = false;
 }
 
 void loadposition(Context &context) {
