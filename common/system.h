@@ -118,8 +118,9 @@ protected:
 	//@{
 
 	/**
-	 * If no value is provided for this slot, then OSystem::initBackend()
-	 * will populate it with a DefaultAudioCDManager instance.
+	 * No default value is provided for _audiocdManager by OSystem.
+	 * However, BaseBackend::initBackend() does set a default value
+	 * if none has been set before.
 	 *
 	 * @note _audiocdManager is deleted by the OSystem destructor.
 	 */
