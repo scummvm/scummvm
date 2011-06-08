@@ -79,7 +79,7 @@ protected:
 	uint32 _sectionPtr;
 	byte *_sectionBuffer;
 
-	static const int _allocAmmount = 1024;
+	static const int _allocAmmount = 1048576;
 };
 
 } // end of namespace Grim

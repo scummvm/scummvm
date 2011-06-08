@@ -37,7 +37,7 @@ int SaveGame::SAVEGAME_VERSION = 16;
 
 // Constructor. Should create/open a saved game
 SaveGame::SaveGame(const Common::String &filename, bool saving) :
-		_saving(saving), _currentSection(0) {
+		_saving(saving), _currentSection(0), _sectionBuffer(0) {
 	if (_saving) {
 		_outSaveFile = g_system->getSavefileManager()->openForSaving(filename);
 		if (!_outSaveFile) {
@@ -68,6 +68,7 @@ SaveGame::~SaveGame() {
 		_outSaveFile->finalize();
 		if (_outSaveFile->err())
 			warning("SaveGame::~SaveGame() Can't write file. (Disk full?)");
+		free(_sectionBuffer);
 		delete _outSaveFile;
 	} else {
 		delete _inSaveFile;
@@ -85,7 +86,6 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 		error("Tried to begin a new save game section with ending old section");
 	_currentSection = sectionTag;
 	_sectionSize = 0;
-	_sectionAlloc = _allocAmmount;
 	if (!_saving) {
 		uint32 tag = 0;
 
@@ -101,7 +101,10 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 		_inSaveFile->read(_sectionBuffer, _sectionSize);
 
 	} else {
-		_sectionBuffer = (byte *)malloc(_sectionAlloc);
+		if (!_sectionBuffer) {
+			_sectionAlloc = _allocAmmount;
+			_sectionBuffer = (byte *)malloc(_sectionAlloc);
+		}
 	}
 	_sectionPtr = 0;
 	return _sectionSize;
@@ -115,8 +118,6 @@ void SaveGame::endSection() {
 		_outSaveFile->writeUint32BE(_sectionSize);
 		_outSaveFile->write(_sectionBuffer, _sectionSize);
 	}
-	free(_sectionBuffer);
-	_sectionBuffer = NULL;
 	_currentSection = 0;
 }
 
