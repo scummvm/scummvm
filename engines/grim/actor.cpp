@@ -145,7 +145,8 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeFloat(_reflectionAngle);
 	savedState->writeLESint32(_visible);
 	savedState->writeLESint32(_lookingMode),
-	savedState->writeLESint32((int32)_scale);
+	savedState->writeFloat(_scale);
+	savedState->writeFloat(_timeScale);
 
 	savedState->writeString(_talkSoundName);
 
@@ -290,7 +291,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_reflectionAngle    = savedState->readFloat();
 	_visible            = savedState->readLESint32();
 	_lookingMode        = savedState->readLESint32();
-	_scale              = savedState->readLESint32();
+	_scale              = savedState->readFloat();
+	_timeScale          = savedState->readFloat();
 
 	_talkSoundName 		= savedState->readString();
 
