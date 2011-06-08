@@ -185,24 +185,19 @@ public:
   void setWindowCaption(const char *caption);
 
   // Modulatized backend
-  Common::SaveFileManager *getSavefileManager() { return _savefile; }
   Audio::Mixer *getMixer() { return _mixer; }
-  Common::TimerManager *getTimerManager() { return _timer; }
 
   // Extra SoftKbd support
   void mouseToSoftKbd(int x, int y, int &rx, int &ry) const;
 
   // Filesystem
-  FilesystemFactory *getFilesystemFactory() { return this; }
   AbstractFSNode *makeRootFileNode() const;
   AbstractFSNode *makeCurrentDirectoryFileNode() const;
   AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 
  private:
 
-  Common::SaveFileManager *_savefile;
   Audio::MixerImpl *_mixer;
-  DefaultTimerManager *_timer;
   SoftKeyboard _softkbd;
 
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;

@@ -34,6 +34,8 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "backends/fs/wii/wii-fs-factory.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
 
 #include "osystem.h"
 #include "options.h"
@@ -96,20 +98,12 @@ OSystem_Wii::OSystem_Wii() :
 	_padSensitivity(16),
 	_padAcceleration(4),
 
-	_savefile(NULL),
-	_mixer(NULL),
-	_timer(NULL) {
+	_mixer(NULL) {
 }
 
 OSystem_Wii::~OSystem_Wii() {
-	delete _savefile;
-	_savefile = NULL;
-
 	delete _mixer;
 	_mixer = NULL;
-
-	delete _timer;
-	_timer = NULL;
 }
 
 void OSystem_Wii::initBackend() {
@@ -143,8 +137,8 @@ void OSystem_Wii::initBackend() {
 	if (!getcwd(buf, MAXPATHLEN))
 		strcpy(buf, "/");
 
-	_savefile = new DefaultSaveFileManager(buf);
-	_timer = new DefaultTimerManager();
+	_savefileManager = new DefaultSaveFileManager(buf);
+	_timerManager = new DefaultTimerManager();
 
 	initGfx();
 	initSfx();
@@ -261,19 +255,9 @@ void OSystem_Wii::setWindowCaption(const char *caption) {
 	printf("window caption: %s\n", caption);
 }
 
-Common::SaveFileManager *OSystem_Wii::getSavefileManager() {
-	assert(_savefile);
-	return _savefile;
-}
-
 Audio::Mixer *OSystem_Wii::getMixer() {
 	assert(_mixer);
 	return _mixer;
-}
-
-Common::TimerManager *OSystem_Wii::getTimerManager() {
-	assert(_timer);
-	return _timer;
 }
 
 FilesystemFactory *OSystem_Wii::getFilesystemFactory() {

@@ -24,8 +24,6 @@
 #define BACKENDS_MODULAR_BACKEND_H
 
 #include "common/system.h"
-#include "common/timer.h"
-#include "common/savefile.h"
 
 class GraphicsManager;
 class MutexManager;
@@ -110,7 +108,6 @@ public:
 	/** @name Events and Time */
 	//@{
 	
-	virtual Common::TimerManager *getTimerManager();
 	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
 
 	//@}
@@ -135,8 +132,6 @@ public:
 	/** @name Miscellaneous */
 	//@{
 
-	virtual Common::SaveFileManager *getSavefileManager();
-	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void quit();
 	virtual void displayMessageOnOSD(const char *msg);
 
@@ -146,9 +141,6 @@ protected:
 	/** @name Managers variables */
 	//@{
 
-	FilesystemFactory *_fsFactory;
-	Common::SaveFileManager *_savefileManager;
-	Common::TimerManager *_timerManager;
 	MutexManager *_mutexManager;
 	GraphicsManager *_graphicsManager;
 	Audio::Mixer *_mixer;
