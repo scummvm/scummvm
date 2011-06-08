@@ -20,15 +20,15 @@
  *
  */
 
-#include "soltys/console.h"
-#include "soltys/soltys.h"
+#include "cge/console.h"
+#include "cge/cge.h"
 
-namespace Soltys {
+namespace CGE {
 
-SoltysConsole::SoltysConsole(SoltysEngine *vm) : GUI::Debugger(), _vm(vm) {
+CGEConsole::CGEConsole(CGEEngine *vm) : GUI::Debugger(), _vm(vm) {
 }
 
-SoltysConsole::~SoltysConsole() {
+CGEConsole::~CGEConsole() {
 }
 
-} // End of namespace Soltys
+} // End of namespace CGE

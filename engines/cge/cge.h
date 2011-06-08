@@ -20,31 +20,31 @@
 *
 */
 
-#ifndef SOLTYS_H
-#define SOLTYS_H
+#ifndef CGE_H
+#define CGE_H
  
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "graphics/surface.h"
 #include "engines/advancedDetector.h"
-#include "soltys/console.h"
+#include "cge/console.h"
 
-#define SOLTYS_SAVEGAME_VERSION 1
+#define CGE_SAVEGAME_VERSION 1
 
-namespace Soltys {
+namespace CGE {
  
 class Console;
  
 // our engine debug channels
 enum {
-	kSoltysDebug = 1 << 0
+	kCGEDebug = 1 << 0
 };
  
-class SoltysEngine : public Engine {
+class CGEEngine : public Engine {
 public:
-	SoltysEngine(OSystem *syst, const ADGameDescription *gameDescription);
-	~SoltysEngine();
+	CGEEngine(OSystem *syst, const ADGameDescription *gameDescription);
+	~CGEEngine();
 
 	const ADGameDescription *_gameDescription;
 
@@ -52,16 +52,16 @@ public:
 	GUI::Debugger *getDebugger() { return _console; }
  
 private:
-	SoltysConsole *_console;
+	CGEConsole *_console;
 };
  
 // Example console class
 class Console : public GUI::Debugger {
 public:
-	Console(SoltysEngine *vm) {}
+	Console(CGEEngine *vm) {}
 	virtual ~Console(void) {}
 };
  
-} // End of namespace Soltys
+} // End of namespace CGE
  
 #endif

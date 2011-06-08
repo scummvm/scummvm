@@ -1,15 +1,15 @@
-MODULE := engines/soltys
+MODULE := engines/cge
  
 MODULE_OBJS := \
+	cge.o \
 	console.o \
-	detection.o \
-	soltys.o
- 
+	detection.o
+
 MODULE_DIRS += \
-	engines/soltys
+	engines/cge
  
 # This module can be built as a plugin
-ifeq ($(ENABLE_SOLTYS), DYNAMIC_PLUGIN)
+ifeq ($(ENABLE_CGE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
  

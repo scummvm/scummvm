@@ -20,24 +20,24 @@
  *
  */
 
-#ifndef SOLTYS_CONSOLE_H
-#define SOLTYS_CONSOLE_H
+#ifndef CGE_CONSOLE_H
+#define CGE_CONSOLE_H
 
 #include "gui/debugger.h"
 
-namespace Soltys {
+namespace CGE {
 
-class SoltysEngine;
+class CGEEngine;
 
-class SoltysConsole : public GUI::Debugger {
+class CGEConsole : public GUI::Debugger {
 public:
-	SoltysConsole(SoltysEngine *vm);
-	virtual ~SoltysConsole(void);
+	CGEConsole(CGEEngine *vm);
+	virtual ~CGEConsole(void);
 
 private:
-	SoltysEngine *_vm;
+	CGEEngine *_vm;
 };
 
-} // End of namespace Soltys
+} // End of namespace CGE
 
 #endif
