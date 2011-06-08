@@ -32,6 +32,7 @@ namespace Grim {
 class TextSplitter {
 public:
 	TextSplitter(const char *data, int len);
+	~TextSplitter();
 
 	char *nextLine() {
 		processLine();
@@ -55,26 +56,12 @@ public:
 	// scanf); if not all fields are read (according to the field_count
 	// argument), bail out with an error.  Advance to the next line.
 	void scanString(const char *fmt, int field_count, ...);
-	class TextLines {
-	public:
-		TextLines() {};
-		~TextLines() { delete[] _lineData; }
-		void setData(char *data, int length);
-		char *getData() { return _lineData; }
-
-	protected:
-		char *_lineData;
-		int _lineLength;
-
-		friend class TextSplitter;
-	};
-
-	~TextSplitter() { delete[] _lines; }
 
 private:
+	char *_stringData;
 	char *_currLine;
 	int _numLines, _lineIndex;
-	TextLines *_lines;
+	char **_lines;
 
 	void processLine();
 };
