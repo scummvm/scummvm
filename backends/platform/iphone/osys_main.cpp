@@ -53,7 +53,7 @@ SoundProc OSystem_IPHONE::s_soundCallback = NULL;
 void *OSystem_IPHONE::s_soundParam = NULL;
 
 OSystem_IPHONE::OSystem_IPHONE() :
-	_savefile(NULL), _mixer(NULL), _timer(NULL), _offscreen(NULL),
+	_mixer(NULL), _offscreen(NULL),
 	_overlayVisible(false), _fullscreen(NULL),
 	_mouseHeight(0), _mouseWidth(0), _mouseBuf(NULL), _lastMouseTap(0), _queuedEventTime(0),
 	_secondaryTapped(false), _lastSecondaryTap(0),
@@ -72,10 +72,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 OSystem_IPHONE::~OSystem_IPHONE() {
 	AudioQueueDispose(s_AudioQueue.queue, true);
 
-	delete _fsFactory;
-	delete _savefile;
 	delete _mixer;
-	delete _timer;
 	delete _offscreen;
 	delete _fullscreen;
 }
@@ -88,12 +85,12 @@ int OSystem_IPHONE::timerHandler(int t) {
 
 void OSystem_IPHONE::initBackend() {
 #ifdef IPHONE_OFFICIAL
-	_savefile = new DefaultSaveFileManager(iPhone_getDocumentsDir());
+	_savefileManager = new DefaultSaveFileManager(iPhone_getDocumentsDir());
 #else
-	_savefile = new DefaultSaveFileManager(SCUMMVM_SAVE_PATH);
+	_savefileManager = new DefaultSaveFileManager(SCUMMVM_SAVE_PATH);
 #endif
 
-	_timer = new DefaultTimerManager();
+	_timerManager = new DefaultTimerManager();
 
 	gettimeofday(&_startTime, NULL);
 
@@ -210,19 +207,9 @@ void OSystem_IPHONE::getTimeAndDate(TimeDate &td) const {
 	td.tm_year = t.tm_year;
 }
 
-Common::SaveFileManager *OSystem_IPHONE::getSavefileManager() {
-	assert(_savefile);
-	return _savefile;
-}
-
 Audio::Mixer *OSystem_IPHONE::getMixer() {
 	assert(_mixer);
 	return _mixer;
-}
-
-Common::TimerManager *OSystem_IPHONE::getTimerManager() {
-	assert(_timer);
-	return _timer;
 }
 
 OSystem *OSystem_IPHONE_create() {

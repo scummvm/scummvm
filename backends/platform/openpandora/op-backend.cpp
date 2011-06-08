@@ -177,26 +177,6 @@ void OSystem_OP::initBackend() {
 	_inited = true;
 }
 
-
-
-	// enable joystick
-//	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
-//		printf("Using joystick: %s\n", SDL_JoystickName(0));
-//		_joystick = SDL_JoystickOpen(joystick_num);
-//	}
-//
-//	setupMixer();
-
-	// Note: We could implement a custom SDLTimerManager by using
-	// SDL_AddTimer. That might yield better timer resolution, but it would
-	// also change the semantics of a timer: Right now, ScummVM timers
-	// *never* run in parallel, due to the way they are implemented. If we
-	// switched to SDL_AddTimer, each timer might run in a separate thread.
-	// However, not all our code is prepared for that, so we can't just
-	// switch. Still, it's a potential future change to keep in mind.
-//	_timer = new DefaultTimerManager();
-//	_timerID = SDL_AddTimer(10, &timer_handler, _timer);
-
 void OSystem_OP::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {

@@ -89,9 +89,9 @@ void OSystem_PSP::initBackend() {
 	_imageViewer.setInputHandler(&_inputHandler);
 	_imageViewer.setDisplayManager(&_displayManager);
 
-	_savefile = new PSPSaveFileManager;
+	_savefileManager = new PSPSaveFileManager;
 
-	_timer = new DefaultTimerManager();
+	_timerManager = new DefaultTimerManager();
 
 	PSP_DEBUG_PRINT("calling keyboard.load()\n");
 	_keyboard.load();	// Load virtual keyboard files into memory

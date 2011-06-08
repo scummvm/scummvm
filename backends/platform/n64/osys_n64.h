@@ -27,8 +27,6 @@
 #include "common/config-manager.h"
 
 #include "backends/base-backend.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
 
 #include "base/main.h"
 
@@ -75,10 +73,7 @@ enum GraphicModeID {
 
 class OSystem_N64 : public BaseBackend, public PaletteManager {
 protected:
-	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
-	Common::TimerManager *_timer;
-	FilesystemFactory *_fsFactory;
 
 	struct display_context * _dc; // Display context for N64 on screen buffer switching
 
@@ -201,12 +196,9 @@ public:
 
 	virtual void quit();
 
-	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
 	virtual void getTimeAndDate(TimeDate &t) const;
-	virtual Common::TimerManager *getTimerManager();
 	virtual void setTimerCallback(TimerProc callback, int interval);
-	FilesystemFactory *getFilesystemFactory();
 
 	void rebuildOffscreenGameBuffer(void);
 	void rebuildOffscreenMouseBuffer(void);
