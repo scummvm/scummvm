@@ -95,6 +95,12 @@ OSystem_DS::OSystem_DS()
 
 OSystem_DS::~OSystem_DS() {
 	delete _mixer;
+	_mixer = 0;
+
+	// If _savefileManager is not 0, then it points to the OSystem_DS
+	// member variable mpSaveManager. Hence we set _savefileManager to
+	// 0, to prevent the OSystem destructor from trying to delete it.
+	_savefileManager = 0;
 }
 
 int OSystem_DS::timerHandler(int t) {
