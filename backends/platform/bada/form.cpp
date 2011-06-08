@@ -82,11 +82,22 @@ result BadaAppForm::Construct() {
 }
 
 BadaAppForm::~BadaAppForm() {
+  logEntered();
+
   if (pThread) {
+    pThread->Stop();
     delete pThread;
+    pThread = null;
   }
+
   if (eventQueueLock) {
     delete eventQueueLock;
+    eventQueueLock = null;
+  }
+
+  if (g_system) {
+    delete (BadaSystem*) g_system;
+    g_system = null;
   }
 }
 

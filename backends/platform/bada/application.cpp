@@ -53,9 +53,7 @@ bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {
 
 bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry, 
                                    bool forcedTermination) {
-  if (g_engine) {
-    g_engine->quitGame();
-  }
+  logEntered();
 	return true;
 }
 

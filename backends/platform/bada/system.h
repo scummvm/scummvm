@@ -89,8 +89,8 @@ class BadaSystem : public ModularBackend,
   Common::WriteStream* createConfigWriteStream();
   
   BadaAppForm* appForm;
-  long long epoch;
   AudioThread* audioThread;
+  long long epoch;
 };
 
 #endif
