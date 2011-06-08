@@ -432,7 +432,7 @@ void loadseg(Context &context) {
 	context.ax = context.es.word(context.di);
 	context.di += 2;
 
-	debug(1, "readfromfile(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
+	debug(1, "loadseg(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
 	context.ax = engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
 	context.flags._c = false;
 }
