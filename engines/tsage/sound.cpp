@@ -669,6 +669,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 		}
 	}
 //TODO: Lots of this method
+
 	// Post-processing
 	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
 		VoiceTypeStruct *vs = sfManager()._voiceTypeStructPtrs[voiceIndex];
@@ -677,6 +678,118 @@ void SoundManager::_sfRethinkVoiceTypes() {
 
 		if (vs->_voiceType == VOICETYPE_0) {
 			// Type 0
+			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
+				VoiceStructEntryType0 &vse = vs->_entries[idx]._type0;
+				SoundDriver *driver = vs->_entries[idx]._driver;
+				assert(driver);
+
+				if (vse._field12) {
+					int total = 0;
+					vse._sound = vse._sound2;
+					if (vse._sound3 != vse._sound)
+						++total;
+
+					vse._channelNum = vse._channelNum2;
+					if (vse._channelNum3 != vse._channelNum)
+						++total;
+
+					vse._field9 = vse._field11;
+					vse._fieldA = 1;
+					vse._sound2 = NULL;
+
+					if (total) {
+						driver->proc24(vse._channelNum, idx, vse._sound, 123, 0);
+						driver->proc24(vse._channelNum, idx, vse._sound, 1, vse._sound->_chModulation[vse._channelNum]);
+						driver->proc24(vse._channelNum, idx, vse._sound, 7, 
+							vse._sound->_chVolume[vse._channelNum] * vse._sound->_volume / 127);
+						driver->proc24(vse._channelNum, idx, vse._sound, 10, vse._sound->_chPan[vse._channelNum]);
+						driver->proc24(vse._channelNum, idx, vse._sound, 64, vse._sound->_chDamper[vse._channelNum]);
+
+						driver->setProgram(vse._channelNum, vse._sound->_chProgram[vse._channelNum]);
+						driver->setPitchBlend(vse._channelNum, vse._sound->_chPitchBlend[vse._channelNum]);
+
+						vse._sound3 = NULL;
+					}
+				} else {
+					vse._sound = NULL;
+					vse._channelNum = 0;
+					vse._field9 = 0;
+					vse._fieldA = 0;
+				}
+			}
+
+			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
+				VoiceStructEntryType0 &vse = vs->_entries[idx]._type0;
+				Sound *sound = vse._sound2;
+				int channelNum = vse._channelNum2;
+
+				if (!sound)
+					continue;
+
+				for (uint entryIndex = 0; entryIndex < vs->_entries.size(); ++entryIndex) {
+					if ((vs->_entries[entryIndex]._type0._sound3 != sound) ||
+						(vs->_entries[entryIndex]._type0._channelNum3 != channelNum)) {
+						// Found match
+						vs->_entries[entryIndex]._type0._sound = sound;
+						vs->_entries[entryIndex]._type0._channelNum = channelNum;
+						vs->_entries[entryIndex]._type0._field9 = vse._field11;
+						vs->_entries[entryIndex]._type0._fieldA = 0;
+						vse._sound2 = NULL;
+						break;
+					}
+				}
+			}
+
+			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
+				VoiceStructEntryType0 &vse = vs->_entries[idx]._type0;
+				Sound *sound = vse._sound2;
+				if (!sound)
+					continue;
+
+				int voiceNum = 0, foundIndex = -1;
+				for (uint entryIndex = 0; entryIndex < vs->_entries.size(); ++entryIndex) {
+					if ((vs->_entries[entryIndex]._field1) && !vs->_entries[entryIndex]._type0._sound) {
+						int tempVoice = vs->_entries[entryIndex]._voiceNum;
+
+						if (voiceNum <= tempVoice) {
+							voiceNum = tempVoice;
+							foundIndex = entryIndex;
+						}
+					}
+				}
+				assert(foundIndex != -1);
+
+				VoiceStructEntryType0 &vseFound = vs->_entries[foundIndex]._type0;
+
+				vseFound._sound = vse._sound2;
+				vseFound._channelNum = vse._channelNum2;
+				vseFound._field9 = vse._field11;
+				vseFound._fieldA = 0;
+
+				SoundDriver *driver = vs->_entries[foundIndex]._driver;
+				assert(driver);
+
+				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound, 123, 0);
+				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound,
+					1, vseFound._sound->_chModulation[vseFound._channelNum]);
+				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound,
+					7, vseFound._sound->_chVolume[vseFound._channelNum] * vseFound._sound->_volume / 127);
+				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound, 
+					10, vseFound._sound->_chPan[vseFound._channelNum]);
+				driver->setProgram(vseFound._channelNum, vseFound._sound->_chProgram[vseFound._channelNum]);
+				driver->setPitchBlend(vseFound._channelNum, vseFound._sound->_chPitchBlend[vseFound._channelNum]);
+			}
+
+			// Final loop
+			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
+				VoiceStructEntryType0 &vse = vs->_entries[idx]._type0;
+
+				if (!vse._sound && (vse._sound3)) {
+					SoundDriver *driver = vs->_entries[idx]._driver;
+					assert(driver);
+					driver->proc24(vs->_entries[idx]._voiceNum, voiceIndex, vse._sound3, 123, 0);
+				}
+			}
 
 		} else {
 			// Type 1
@@ -863,7 +976,7 @@ void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 			if (vs->_voiceType == VOICETYPE_0) {
 				if (!vse._type0._sound) {
 					int vol = sound->_volume * sound->_chVolume[vse._type0._channelNum] / 127;
-					driver->setVolume0(voiceIndex, vse._voiceNum, 7, vol);
+					driver->proc24(voiceIndex, vse._voiceNum, sound, 7, vol);
 				}
 			} else {
 				if (!vse._type1._sound) {
@@ -1419,7 +1532,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 						_soProc38(vtStruct, channelNum, chVoiceType, cmdVal, v);
 					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->setVolume0(voiceNum, chVoiceType, cmdVal, b);
+						driver->proc24(voiceNum, chVoiceType, this, cmdVal, b);
 					}
 				}
 			}
@@ -1450,7 +1563,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 						_soProc38(vtStruct, channelNum, chVoiceType, cmd, value);
 					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->setVolume0(voiceNum, chVoiceType, cmd, value);
+						driver->proc24(voiceNum, chVoiceType, this, cmd, value);
 					}
 				}
 			} else if (_soDoUpdateTracks(cmd, value)) {

@@ -87,7 +87,7 @@ public:
 	virtual void proc18(int al, VoiceType voiceType) {}
 	virtual void proc20(int al, VoiceType voiceType) {}
 	virtual void proc22(int al, VoiceType voiceType, int v3) {}
-	virtual void setVolume0(int channel, int v2, int v3, int volume) {}
+	virtual void proc24(int channel, int voiceIndex, Sound *sound, int v1, int v2) {}
 	virtual void setProgram(int channel, int program) {}
 	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
 	virtual void setPitchBlend(int channel, int pitchBlend) {}
@@ -107,9 +107,7 @@ struct VoiceStructEntryType0 {
 	int _channelNum2;
 	int _field11;
 	int _field12;
-	int _field13;
 	Sound *_sound3;
-	int _field16;
 	int _channelNum3;
 	int _field19;
 	int _field1A;
