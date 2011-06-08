@@ -225,23 +225,19 @@ public:
 	}
 
 	inline void _cmp(uint8 a, uint8 b) {
-		uint8 x = a;
-		_sub(x, b);
+		_sub(a, b);
 	}
 
 	inline void _cmp(uint16 a, uint16 b) {
-		uint16 x = a;
-		_sub(x, b);
+		_sub(a, b);
 	}
 
 	inline void _test(uint8 a, uint8 b) {
-		uint8 x = a;
-		_and(x, b);
+		_and(a, b);
 	}
 
 	inline void _test(uint16 a, uint16 b) {
-		uint16 x = a;
-		_and(x, b);
+		_and(a, b);
 	}
 
 	inline void _add(uint8 &dst, uint8 src) {
@@ -307,36 +303,50 @@ public:
 	}
 
 	inline void _shr(uint8 &dst, uint8 src) {
-		if (src > 0 && src < 32) {
+		src &= 0x1f;
+		if (src > 0) {
 			dst >>= (src - 1);
 			flags._c = dst & 1;
 			dst >>= 1;
 		}
 		flags.update(dst);
+		if (src == 1)
+			flags._o = dst & 0x80;
 	}
+
 	inline void _shr(uint16 &dst, uint8 src) {
-		if (src > 0 && src < 32) {
+		src &= 0x1f;
+		if (src > 0) {
 			dst >>= (src - 1);
 			flags._c = dst & 1;
 			dst >>= 1;
 		}
 		flags.update(dst);
+		if (src == 1)
+			flags._o = dst & 0x8000;
 	}
+
 	inline void _shl(uint8 &dst, uint8 src) {
-		if (src > 0 && src < 32) {
+		src &= 0x1f;
+		if (src > 0) {
 			dst <<= (src - 1);
 			flags._c = dst & 0x80;
 			dst <<= 1;
 		}
 		flags.update(dst);
+		if (src == 1)
+			flags._o = ((dst & 0x80) != 0) == flags._c;
 	}
 	inline void _shl(uint16 &dst, uint8 src) {
-		if (src > 0 && src < 32) {
+		src &= 0x1f;
+		if (src > 0) {
 			dst <<= (src - 1);
 			flags._c = dst & 0x8000;
 			dst <<= 1;
 		}
 		flags.update(dst);
+		if (src == 1)
+			flags._o = ((dst & 0x8000) != 0) == flags._c;
 	}
 
 	inline void _mul(uint8 src) {
