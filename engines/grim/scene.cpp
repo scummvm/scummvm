@@ -265,6 +265,7 @@ void Scene::saveState(SaveGame *savedState) const {
 
 		//name
 		savedState->writeString(l._name);
+		savedState->writeLEBool(l._enabled);
 
 		//type
 		savedState->writeString(l._type);
@@ -341,6 +342,7 @@ bool Scene::restoreState(SaveGame *savedState) {
 		Light &l = _lights[i];
 
 		l._name = savedState->readString();
+		l._enabled = savedState->readLEBool();
 		l._type = savedState->readString();
 
 		l._pos           = savedState->readVector3d();
