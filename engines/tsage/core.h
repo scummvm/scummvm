@@ -230,7 +230,7 @@ protected:
 	int findClosestRegion(Common::Point &pt, const Common::List<int> &indexList);
 	int checkMover(Common::Point &srcPos, const Common::Point &destPos);
 	void checkMovement2(const Common::Point &pt1, const Common::Point &pt2, int numSteps, Common::Point &ptOut);
-	int proc1(int *routeList, int srcRegion, int destRegion, int &v);
+	int calculateRestOfRoute(int *routeList, int srcRegion, int destRegion, bool &foundRoute);
 
 	static Common::Point *findLinePoint(RouteEnds *routeEnds, Common::Point *objPos, int length, Common::Point *outPos);
 	static int findDistance(const Common::Point &pt1, const Common::Point &pt2);

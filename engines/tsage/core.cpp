@@ -521,9 +521,10 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 			break;
 		}
 
-		int var6;
-		proc1(routeRegions, srcRegion, destRegion, var6);
+		bool tempVar; // This is used only as internal state for the function.
+		calculateRestOfRoute(routeRegions, srcRegion, destRegion, tempVar);
 
+		// Empty route?
 		if (!routeRegions[0]) {
 			regionIndexes.push_back(destRegion);
 			continue;
@@ -539,6 +540,7 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 		int endIndex = 0;
 		int idx = 1;
 
+		// Find the indexes for each entry in the found route.
 		do {
 			int breakEntry = routeRegions[idx];
 			int breakEntry2 = routeRegions[idx + 1];
@@ -771,9 +773,10 @@ void PlayerMover::checkMovement2(const Common::Point &srcPos, const Common::Poin
 	_sceneObject->_mover = this;
 }
 
-int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
+int PlayerMover::calculateRestOfRoute(int *routeList, int srcRegion, int destRegion, bool &foundRoute) {
+	// Make a copy of the provided route. The first entry is the size.
 	int tempList[REGION_LIST_SIZE + 1];
-	v = 0;
+	foundRoute = false;
 	for (int idx = 0; idx <= *routeList; ++idx)
 		tempList[idx] = routeList[idx];
 
@@ -791,24 +794,28 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 	WalkRegion &srcWalkRegion = _globals->_walkRegions[srcRegion];
 	int distance;
 	if (!routeList[0]) {
-		// No route
+		// The route is empty (new route).
 		distance = 0;
 	} else {
+		// Find the distance from the last region in the route.
 		WalkRegion &region = _globals->_walkRegions[routeList[*routeList]];
 		distance = findDistance(srcWalkRegion._pt, region._pt);
 	}
 
+	// Add the srcRegion to the end of the route.
 	tempList[++*tempList] = srcRegion;
-	int newIndex = *tempList;
+	int ourListSize = *tempList;
 
 	if (srcRegion == destRegion) {
-		v = 1;
-		for (int idx = newIndex; idx <= *tempList; ++idx) {
+		// We made a route to the destination; copy that route and return.
+		foundRoute = true;
+		for (int idx = ourListSize; idx <= *tempList; ++idx) {
 			routeList[idx] = tempList[idx];
 			++*routeList;
 		}
 		return distance;
 	} else {
+		// Find the first connected region leading to our destination.
 		int foundIndex = 0;
 		int idx = 0;
 		int currDest;
@@ -821,27 +828,32 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 			++idx;
 		}
 
-		int resultOffset = 31990;
-		while (((currDest = _globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + foundIndex]) != 0) && (v == 0)) {
-			int newDistance = proc1(tempList, currDest, destRegion, v);
+		// Check every connected region until we find a route to the destination (or we have no more to check).
+		int bestDistance = 31990;
+		while (((currDest = _globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + foundIndex]) != 0) && (!foundRoute)) {
+			int newDistance = calculateRestOfRoute(tempList, currDest, destRegion, foundRoute);
 
-			if ((newDistance <= resultOffset) || v) {
-				routeList[0] = newIndex - 1;
+			if ((newDistance <= bestDistance) || foundRoute) {
+				// We found a shorter possible route, or one leading to the destination.
 
-				for (int i = newIndex; i <= tempList[0]; ++i) {
+				// Overwrite the route with this new one.
+				routeList[0] = ourListSize - 1;
+
+				for (int i = ourListSize; i <= tempList[0]; ++i) {
 					routeList[i] = tempList[i];
 					++routeList[0];
 				}
 
-				resultOffset = newDistance;
+				bestDistance = newDistance;
 			}
 
-			tempList[0] = newIndex;
+			// Truncate our local list to the size it was before the call.
+			tempList[0] = ourListSize;
 			++foundIndex;
 		}
 
-		v = 0;
-		return resultOffset + distance;
+		foundRoute = false;
+		return bestDistance + distance;
 	}
 }
 
