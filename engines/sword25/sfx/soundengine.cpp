@@ -37,6 +37,7 @@
 #include "audio/decoders/vorbis.h"
 
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace Sword25 {
 
@@ -65,8 +66,6 @@ SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
 }
 
 bool SoundEngine::init(uint sampleRate, uint channels) {
-	warning("STUB: SoundEngine::init(%d, %d)", sampleRate, channels);
-
 	return true;
 }
 
@@ -74,12 +73,44 @@ void SoundEngine::update() {
 }
 
 void SoundEngine::setVolume(float volume, SOUND_TYPES type) {
-	warning("STUB: SoundEngine::setVolume(%f, %d)", volume, type);
+	int val = 255 * volume;
+
+	switch (type) {
+	case SoundEngine::MUSIC:
+		ConfMan.setInt("music_volume", val);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, val);
+		break;
+	case SoundEngine::SPEECH:
+		ConfMan.setInt("speech_volume", val);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, val);
+		break;
+	case SoundEngine::SFX:
+		ConfMan.setInt("sfx_volume", val);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, val);
+		break;
+	default:
+		error("Unknown SOUND_TYPE");
+	}
 }
 
 float SoundEngine::getVolume(SOUND_TYPES type) {
-	warning("STUB: SoundEngine::getVolume(%d)", type);
-	return 0;
+	int val = 0;
+
+	switch (type) {
+	case SoundEngine::MUSIC:
+		val = ConfMan.getInt("music_volume");
+		break;
+	case SoundEngine::SPEECH:
+		val = ConfMan.getInt("speech_volume");
+		break;
+	case SoundEngine::SFX:
+		val = ConfMan.getInt("sfx_volume");
+		break;
+	default:
+		error("Unknown SOUND_TYPE");
+	}
+
+	return (float)val / 255.0;
 }
 
 void SoundEngine::pauseAll() {
