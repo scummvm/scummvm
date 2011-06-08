@@ -153,14 +153,14 @@ struct Flags {
 	bool _z, _c, _s, _o;
 	inline Flags(): _z(true), _c(false), _s(false), _o(false) {}
 
-	inline bool z() const { return _z; }
-	inline bool c() const { return _c; }
-	inline bool s() const { return _s; }
+	inline bool z() const	{ return _z; }
+	inline bool c() const	{ return _c; }
+	inline bool s() const	{ return _s; }
 	//complex flags:
-	inline bool g() const { return !_z && _s == _o; }
-	inline bool ge() const { return _z || _s == _o; }
-	inline bool l() const { return !_z && _s != _o; }
-	inline bool le() const { return _z || _s != _o; }
+	inline bool g() const	{ return !_z && _s == _o; }
+	inline bool ge() const	{ return _s == _o; }
+	inline bool l() const	{ return _s != _o; }
+	inline bool le() const	{ return _z || _s != _o; }
 	
 	inline void update(uint8 v) {
 		bool new_s = v & 0x80;
@@ -378,8 +378,8 @@ public:
 
 	inline void _neg(uint16 &src) {
 		src = ~src;
-		flags._c = false;
 		flags.update(src);
+		flags._c = flags._o = false;
 	}
 
 	inline void _movsb() {
