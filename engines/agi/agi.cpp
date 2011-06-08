@@ -131,46 +131,65 @@ void AgiEngine::processEvents() {
 			switch (key = event.kbd.keycode) {
 			case Common::KEYCODE_LEFT:
 			case Common::KEYCODE_KP4:
-				if (_allowSynthetic || !event.synthetic)
+				if (_predictiveDialogRunning && key == Common::KEYCODE_KP4)
+					key = event.kbd.ascii;
+				else if (_allowSynthetic || !event.synthetic)
 					key = KEY_LEFT;
 				break;
 			case Common::KEYCODE_RIGHT:
 			case Common::KEYCODE_KP6:
-				if (_allowSynthetic || !event.synthetic)
+				if (_predictiveDialogRunning && key == Common::KEYCODE_KP6)
+					key = event.kbd.ascii;
+				else if (_allowSynthetic || !event.synthetic)
 					key = KEY_RIGHT;
 				break;
 			case Common::KEYCODE_UP:
 			case Common::KEYCODE_KP8:
-				if (_allowSynthetic || !event.synthetic)
+				if (_predictiveDialogRunning && key == Common::KEYCODE_KP8)
+					key = event.kbd.ascii;
+				else if (_allowSynthetic || !event.synthetic)
 					key = KEY_UP;
 				break;
 			case Common::KEYCODE_DOWN:
 			case Common::KEYCODE_KP2:
-				if (_allowSynthetic || !event.synthetic)
+				if (_predictiveDialogRunning && key == Common::KEYCODE_KP2)
+					key = event.kbd.ascii;
+				else if (_allowSynthetic || !event.synthetic)
 					key = KEY_DOWN;
 				break;
 			case Common::KEYCODE_PAGEUP:
 			case Common::KEYCODE_KP9:
-				if (_allowSynthetic || !event.synthetic)
+				if (_predictiveDialogRunning && key == Common::KEYCODE_KP9)
+					key = event.kbd.ascii;
+				else if (_allowSynthetic || !event.synthetic)
 					key = KEY_UP_RIGHT;
 				break;
 			case Common::KEYCODE_PAGEDOWN:
 			case Common::KEYCODE_KP3:
-				if (_allowSynthetic || !event.synthetic)
+				if (_predictiveDialogRunning && key == Common::KEYCODE_KP3)
+					key = event.kbd.ascii;
+				else if (_allowSynthetic || !event.synthetic)
 					key = KEY_DOWN_RIGHT;
 				break;
 			case Common::KEYCODE_HOME:
 			case Common::KEYCODE_KP7:
-				if (_allowSynthetic || !event.synthetic)
+				if (_predictiveDialogRunning && key == Common::KEYCODE_KP7)
+					key = event.kbd.ascii;
+				else if (_allowSynthetic || !event.synthetic)
 					key = KEY_UP_LEFT;
 				break;
 			case Common::KEYCODE_END:
 			case Common::KEYCODE_KP1:
-				if (_allowSynthetic || !event.synthetic)
+				if (_predictiveDialogRunning && key == Common::KEYCODE_KP1)
+					key = event.kbd.ascii;
+				else if (_allowSynthetic || !event.synthetic)
 					key = KEY_DOWN_LEFT;
 				break;
 			case Common::KEYCODE_KP5:
-				key = KEY_STATIONARY;
+				if (_predictiveDialogRunning)
+					key = event.kbd.ascii;
+				else 
+					key = KEY_STATIONARY;
 				break;
 			case Common::KEYCODE_PLUS:
 				key = '+';
