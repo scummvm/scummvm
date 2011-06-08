@@ -28,7 +28,9 @@ AudioThread::AudioThread() :
   timer(0),
   audioOut(0),
   head(0),
-  tail(0) {
+  tail(0),
+  ready(0),
+  interval(TIMER_INTERVAL) {
 }
 
 Audio::MixerImpl* AudioThread::Construct(OSystem* system) {
@@ -86,12 +88,13 @@ bool AudioThread::OnStart(void) {
     return false;
   }
 
-  if (IsFailed(timer->Start(TIMER_INTERVAL))) {
+  if (IsFailed(timer->Start(interval))) {
     AppLog("failed to start audio timer");
     return false;
   }
 
   mixer->setReady(true);
+  audioOut->SetVolume(99);
   audioOut->Start();
   return true;
 }
@@ -101,16 +104,10 @@ void AudioThread::OnStop(void) {
 
   if (audioOut) {
     audioOut->Stop();
-    audioOut->Unprepare();
   }
   if (timer) {
     timer->Cancel();
   }
-}
-
-void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut& src) {
-  consumeAudio();
-  produceAudio(1);
 }
 
 void AudioThread::OnAudioOutErrorOccurred(Osp::Media::AudioOut& src, result r) {
@@ -125,32 +122,37 @@ void AudioThread::OnAudioOutReleased(Osp::Media::AudioOut& src) {
   logEntered();
 }
 
-void AudioThread::OnTimerExpired(Timer& timer) {
-  produceAudio(BUFFER_FILL_SIZE);
-  timer.Start(TIMER_INTERVAL);
-}
-
-void AudioThread::consumeAudio() {
-  if (head != tail) {
+void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut& src) {
+  if (ready > 0) {
     audioOut->WriteBuffer(audioBuffer[tail]);
     tail = (tail + 1 == NUM_AUDIO_BUFFERS ? 0 : tail + 1);
+    ready--;
+  }
+  else {
+    // audio buffer empty: decrease timer inverval
+    interval -= TIMER_INCREMENT;
   }
 }
 
-void AudioThread::produceAudio(int fillSize) {
-  int len = (head < tail ? head + (NUM_AUDIO_BUFFERS - tail) : head - tail);
-
-  if (len < NUM_AUDIO_BUFFERS) {
+void AudioThread::OnTimerExpired(Timer& timer) {
+  if (ready < NUM_AUDIO_BUFFERS) {
     uint len = audioBuffer[head].GetCapacity();
     int samples = mixer->mixCallback((byte *) audioBuffer[head].GetPointer(), len);
     if (samples) {
       head = (head + 1 == NUM_AUDIO_BUFFERS ? 0 : head + 1);
+      ready++;
     }
   }
-
-  if (len >= fillSize) {
-    consumeAudio();
+  else {
+    // audio buffer full: increase timer inverval
+    interval += TIMER_INCREMENT;
   }
+
+  if (ready == NUM_AUDIO_BUFFERS) {
+    OnAudioOutBufferEndReached(*audioOut);
+  }
+  
+  timer.Start(interval);
 }
 
 //

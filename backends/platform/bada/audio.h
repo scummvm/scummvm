@@ -39,9 +39,9 @@ using namespace Osp::Base::Runtime;
 using namespace Osp::Media;
 using namespace Osp::Io;
 
+#define TIMER_INTERVAL    80
+#define TIMER_INCREMENT   5
 #define NUM_AUDIO_BUFFERS 4
-#define BUFFER_FILL_SIZE  2
-#define TIMER_INTERVAL    100
 
 class AudioThread: public Osp::Media::IAudioOutEventListener,
                    public Osp::Base::Runtime::ITimerEventListener, 
@@ -54,21 +54,18 @@ public:
 
   bool OnStart(void);
   void OnStop(void);
-  void OnAudioOutBufferEndReached(Osp::Media::AudioOut& src);
   void OnAudioOutErrorOccurred(Osp::Media::AudioOut& src, result r);
   void OnAudioOutInterrupted(Osp::Media::AudioOut& src);
   void OnAudioOutReleased(Osp::Media::AudioOut& src);
+  void OnAudioOutBufferEndReached(Osp::Media::AudioOut& src);
   void OnTimerExpired(Timer& timer);
   
  private:
-  void consumeAudio();
-  void produceAudio(int fillSize);
-
   Audio::MixerImpl* mixer;
   Osp::Base::Runtime::Timer* timer;
 	Osp::Media::AudioOut* audioOut;
 	Osp::Base::ByteBuffer audioBuffer[NUM_AUDIO_BUFFERS];
-  int head, tail;
+  int head, tail, ready, interval;
 };
 
 #endif

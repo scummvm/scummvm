@@ -133,7 +133,9 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 // BadaSystem
 //
 BadaSystem::BadaSystem(BadaAppForm* appForm) : 
-  appForm(appForm) {
+  appForm(appForm),
+  audioThread(0), 
+  epoch(0) {
 }
 
 result BadaSystem::Construct(void) {
