@@ -32,12 +32,14 @@
 #include "common/iff_container.h"
 #include "common/system.h"
 #include "common/timer.h"
+#include "common/util.h"
 
 #include "engines/util.h"
 
 #include "audio/mixer.h"
 
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 
 #include "dreamweb/dreamweb.h"
 #include "dreamweb/dreamgen.h"
@@ -84,6 +86,15 @@ void DreamWebEngine::setVSyncInterrupt(bool flag) {
 
 void DreamWebEngine::waitForVSync() {
 	processEvents();
+	Graphics::Surface *s = _system->lockScreen();
+	if (!s)
+		error("lockScreen failed");
+	for(int y = 0; y < 200; ++y) {
+		uint8 *scanline = (uint8*)s->getBasePtr(0, y);
+		uint8 *src = _context.video.ptr(y * 320, 320);
+		memcpy(scanline, src, 320);
+	}
+	_system->unlockScreen();
 /*
 	while (!_vSyncInterrupt) {
 		_system->delayMillis(10);
@@ -130,7 +141,7 @@ void DreamWebEngine::processEvents() {
 			}
 			break;
 		default:
-			debug(0, "skipped event type %d", event.type);
+			break;
 		}
 	}
 }
@@ -187,6 +198,10 @@ void DreamWebEngine::mouseCall() {
 	_context.bx = _mouseState;
 }
 
+void DreamWebEngine::setGraphicsMode() {
+	initGraphics(320, 200, false);
+}
+
 
 } // End of namespace DreamWeb
 
@@ -198,11 +213,11 @@ static inline DreamWeb::DreamWebEngine *engine() {
 }
 
 void seecommandtail(Context &context) {
-	context.ds.word(kSoundbaseadd) = 0x220;
-	context.ds.byte(kSoundint) = 5;
-	context.ds.byte(kSounddmachannel) = 1;
-	context.ds.byte(kBrightness) = 1;
-	context.ds.word(kHowmuchalloc) = 0x9360;
+	context.data.word(kSoundbaseadd) = 0x220;
+	context.data.byte(kSoundint) = 5;
+	context.data.byte(kSounddmachannel) = 1;
+	context.data.byte(kBrightness) = 1;
+	context.data.word(kHowmuchalloc) = 0x9360;
 }
 
 void randomnumber(Context &context) {
@@ -275,8 +290,8 @@ void mousecall(Context &context) {
 }
 
 void setmouse(Context &context) {
-	context.ds.word(kOldpointerx) = 0xffff;
-	warning("setmouse: fixme: add range setting");
+	context.data.word(kOldpointerx) = 0xffff;
+	//warning("setmouse: fixme: add range setting");
 	//set vertical range to 15-184
 	//set horizontal range to 15-298*2
 }
@@ -455,7 +470,7 @@ void vsync(Context &context) {
 }
 
 void setmode(Context &context) {
-	warning("setmode (vga): STUB");
+	engine()->setGraphicsMode();
 }
 
 void readoneblock(Context &context) {
