@@ -34,7 +34,7 @@
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
 
-class OSystem_DS : public BaseBackend, public PaletteManager {
+class OSystem_DS : public EventsBaseBackend, public PaletteManager {
 protected:
 
 	int eventNum;

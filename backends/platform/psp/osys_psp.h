@@ -42,7 +42,7 @@
 #include "backends/timer/psp/timer.h"
 #include "backends/platform/psp/thread.h"
 
-class OSystem_PSP : public BaseBackend, public PaletteManager {
+class OSystem_PSP : public EventsBaseBackend, public PaletteManager {
 private:
 
 	Audio::MixerImpl *_mixer;

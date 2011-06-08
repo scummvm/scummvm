@@ -389,7 +389,7 @@ void OSystem_Android::initBackend() {
 
 	JNI::setReadyForEvents(true);
 
-	BaseBackend::initBackend();
+	EventsBaseBackend::initBackend();
 }
 
 void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {

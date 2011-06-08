@@ -70,7 +70,7 @@ class DCCDManager : public DefaultAudioCDManager {
   void updateCD();
 };
 
-class OSystem_Dreamcast : private DCHardware, public BaseBackend, public PaletteManager, public FilesystemFactory
+class OSystem_Dreamcast : private DCHardware, public EventsBaseBackend, public PaletteManager, public FilesystemFactory
 #ifdef DYNAMIC_MODULES
   , public FilePluginProvider
 #endif

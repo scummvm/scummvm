@@ -29,6 +29,11 @@
 #include "backends/events/default/default-events.h"
 #endif
 
+#ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
+#include "backends/audiocd/default/default-audiocd.h"
+#endif
+
+
 #include "gui/message.h"
 
 void BaseBackend::displayMessageOnOSD(const char *msg) {
@@ -41,7 +46,13 @@ void BaseBackend::initBackend() {
 	// Init Event manager
 #ifndef DISABLE_DEFAULT_EVENT_MANAGER
 	if (!_eventManager)
-		_eventManager = new DefaultEventManager(this);
+		_eventManager = new DefaultEventManager(getDefaultEventSource());
+#endif
+
+	// Init audio CD manager
+#ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
+	if (!_audiocdManager)
+		_audiocdManager = new DefaultAudioCDManager();
 #endif
 
 	OSystem::initBackend();

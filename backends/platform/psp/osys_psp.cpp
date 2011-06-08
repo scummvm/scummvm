@@ -100,7 +100,7 @@ void OSystem_PSP::initBackend() {
 
 	setupMixer();
 
-	BaseBackend::initBackend();
+	EventsBaseBackend::initBackend();
 }
 
 // Let's us know an engine
@@ -422,7 +422,7 @@ void OSystem_PSP::quit() {
 }
 
 void OSystem_PSP::logMessage(LogMessageType::Type type, const char *message) {
-	BaseBackend::logMessage(type, message);
+	EventsBaseBackend::logMessage(type, message);
 
 	if (type == LogMessageType::kError)
 		PspDebugTrace(false, "%s", message);	// write to file

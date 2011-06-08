@@ -44,7 +44,7 @@ namespace Audio {
 class MixerImpl;
 };
 
-class OSystem_PS2 : public BaseBackend, public PaletteManager {
+class OSystem_PS2 : public EventsBaseBackend, public PaletteManager {
 public:
 	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);

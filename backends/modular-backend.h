@@ -23,7 +23,7 @@
 #ifndef BACKENDS_MODULAR_BACKEND_H
 #define BACKENDS_MODULAR_BACKEND_H
 
-#include "common/system.h"
+#include "backends/base-backend.h"
 
 class GraphicsManager;
 class MutexManager;
@@ -44,7 +44,7 @@ class MutexManager;
  * And, it should also initialize all the managers variables
  * declared in this class, or override their related functions.
  */
-class ModularBackend : public OSystem {
+class ModularBackend : public BaseBackend {
 public:
 	ModularBackend();
 	virtual ~ModularBackend();

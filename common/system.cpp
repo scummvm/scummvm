@@ -66,12 +66,6 @@ OSystem::~OSystem() {
 }
 
 void OSystem::initBackend() {
-	// Init audio CD manager
-#ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
-	if (!_audiocdManager)
-		_audiocdManager = new DefaultAudioCDManager();
-#endif
-
 	// Verify all managers has been set
 	if (!_audiocdManager)
 		error("Backend failed to instantiate audio CD manager");

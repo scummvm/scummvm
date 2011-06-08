@@ -71,7 +71,7 @@ enum GraphicModeID {
 	OVERS_MPAL_340X240
 };
 
-class OSystem_N64 : public BaseBackend, public PaletteManager {
+class OSystem_N64 : public EventsBaseBackend, public PaletteManager {
 protected:
 	Audio::MixerImpl *_mixer;
 

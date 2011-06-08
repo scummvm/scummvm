@@ -103,7 +103,7 @@ protected:
 };
 #endif
 
-class OSystem_Android : public BaseBackend, public PaletteManager {
+class OSystem_Android : public EventsBaseBackend, public PaletteManager {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;
