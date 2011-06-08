@@ -190,7 +190,7 @@ bool AgiEngine::predictiveDialog() {
 
 	bool needRefresh = true;
 
-	for (;;) {
+	while (!shouldQuit()) {
 		if (needRefresh) {
 			for (int i = 0; buttons[i]; i++) {
 				int color1 = colors[i * 2];
