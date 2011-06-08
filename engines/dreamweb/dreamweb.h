@@ -33,6 +33,7 @@
 #include "common/scummsys.h"
 
 #include "engines/engine.h"
+#include "dreamweb/dreamgen.h"
 #include "dreamweb/console.h"
 
 namespace Graphics {
@@ -81,13 +82,18 @@ public:
 	void readFromFile(uint8 *dst, unsigned size);
 	void closeFile();
 
-	Common::Point mousePos() const { return _mouse; }
+	void mouseCall(); //fill mouse pos and button state
+	void processEvents();
+
 private:
-	const DreamWebGameDescription *_gameDescription;
-	Common::RandomSource _rnd;
-	Common::Point _mouse;
+	const DreamWebGameDescription	*_gameDescription;
+	Common::RandomSource			_rnd;
+	Common::Point					_mouse;
+	unsigned						_mouseState;
 	
 	Common::File _file;
+	
+	dreamgen::Context _context;
 };
 
 } // End of namespace DreamWeb

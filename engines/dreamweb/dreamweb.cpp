@@ -83,57 +83,74 @@ void DreamWebEngine::setVSyncInterrupt(bool flag) {
 }
 
 void DreamWebEngine::waitForVSync() {
+	processEvents();
+/*
 	while (!_vSyncInterrupt) {
 		_system->delayMillis(10);
 	}
 	setVSyncInterrupt(false);
+*/
 	// doshake
 	// dofade
 }
 
-Common::Error DreamWebEngine::run() {
-	_console = new DreamWebConsole(this);
-	
-	dreamgen::Context context;
-	dreamgen::__start(context);
-
+void DreamWebEngine::processEvents() {
 	Common::EventManager *event_manager = _system->getEventManager();
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 60, this);
-
-	do {
-		uint32 frame_time = _system->getMillis();
-		Common::Event event;
-		while (event_manager->pollEvent(event)) {
-			switch(event.type) {
-			case Common::EVENT_RTL:
-				return Common::kNoError;
-			case Common::EVENT_MOUSEMOVE:
-				_mouse = event.mouse;
-				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_d:
-					if (event.kbd.flags & Common::KBD_CTRL) {
-						_console->attach();
-						_console->onFrame();
-					}
-					break;
-				default:
-					break;
+	Common::Event event;
+	while (event_manager->pollEvent(event)) {
+		switch(event.type) {
+		case Common::EVENT_RTL:
+			warning("quit requested");
+			return;
+		case Common::EVENT_LBUTTONDOWN:
+			_mouseState |= 1;
+			break;
+		case Common::EVENT_LBUTTONUP:
+			_mouseState &= ~1;
+			break;
+		case Common::EVENT_RBUTTONDOWN:
+			_mouseState |= 2;
+			break;
+		case Common::EVENT_RBUTTONUP:
+			_mouseState &= ~2;
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			_mouse = event.mouse;
+			break;
+		case Common::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_d:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					_console->attach();
+					_console->onFrame();
 				}
 				break;
 			default:
-				debug(0, "skipped event type %d", event.type);
+				break;
 			}
+			break;
+		default:
+			debug(0, "skipped event type %d", event.type);
 		}
-	} while (!shouldQuit());
+	}
+}
 
+
+Common::Error DreamWebEngine::run() {
+	_mouseState = 0;
+	_console = new DreamWebConsole(this);
+
+	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 60, this);
+
+	dreamgen::__start(_context);
+	
 	getTimerManager()->removeTimerProc(vSyncInterrupt);
 
 	return Common::kNoError;
 }
 
 void DreamWebEngine::openFile(const Common::String &name) {
+	processEvents();
 	if (_file.isOpen()) {
 		_file.close();
 	}
@@ -143,13 +160,31 @@ void DreamWebEngine::openFile(const Common::String &name) {
 }
 
 void DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
+	processEvents();
 	if (!_file.isOpen())
 		error("file was not opened (read before open)");
 	_file.read(dst, size);
 }
 
 void DreamWebEngine::closeFile() {
+	processEvents();
 	_file.close();
+}
+
+void DreamWebEngine::mouseCall() {
+	processEvents();
+	Common::Point pos = _mouse;
+	if (pos.x > 298)
+		pos.x = 298;
+	if (pos.x < 15)
+		pos.x = 15;
+	if (pos.y < 15)
+		pos.y = 15;
+	if (pos.y > 184)
+		pos.y = 184;
+	_context.cx = pos.x;
+	_context.dx = pos.y;
+	_context.bx = _mouseState;
 }
 
 
@@ -236,17 +271,7 @@ void dontloadseg(Context &context) {
 }
 
 void mousecall(Context &context) {
-	Common::Point pos = engine()->mousePos();
-	if (pos.x > 298)
-		pos.x = 298;
-	if (pos.x < 15)
-		pos.x = 15;
-	if (pos.y < 15)
-		pos.y = 15;
-	if (pos.y > 184)
-		pos.y = 184;
-	context.cx = pos.x;
-	context.dx = pos.y;
+	engine()->mouseCall();
 }
 
 void setmouse(Context &context) {
@@ -426,8 +451,7 @@ void doshake(Context &context) {
 }
 
 void vsync(Context &context) {
-	//engine()->waitForVSync();
-	//warning("vsync: STUB"); //fixme: loop
+	engine()->waitForVSync();
 }
 
 void setmode(Context &context) {
