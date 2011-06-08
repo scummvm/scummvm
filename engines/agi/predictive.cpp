@@ -573,8 +573,10 @@ bool AgiEngine::matchWord() {
 			hi = line - 1;
 		else if (cmpVal < 0)
 			lo = line + 1;
-		else
+		else {
 			hi = line;
+			break;
+		}
 	}
 
 	_currentWord.clear();
