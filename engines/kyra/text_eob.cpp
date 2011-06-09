@@ -125,7 +125,7 @@ void TextDisplayer_Eob::displayText(char *str, ...) {
 
 		if (!_tempString2 && c == '%') {
 			if (a == 'd') {
-				snprintf(_scriptParaString, 11, "%d", va_arg(args, int));
+				strcpy(_scriptParaString, Common::String::format("%d", va_arg(args, int)).c_str());
 				_tempString2 = _scriptParaString;
 			} else if (a == 's') {
 				_tempString2 = va_arg(args, char *);
@@ -471,8 +471,7 @@ void TextDisplayer_Eob::printMessage(const char *str, int textColor, ...) {
 
 	displayText(_dialogueBuffer);
 
-	//if (textColor != -1)
-		_textDimData[screen()->curDimIndex()].color1 = tc;
+	_textDimData[screen()->curDimIndex()].color1 = tc;
 
 	if (!screen()->_curPage)
 		screen()->updateScreen();

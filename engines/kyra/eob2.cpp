@@ -208,10 +208,7 @@ void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterInde
 }
 
 void DarkMoonEngine::loadMonsterDecoration(const char *file, int16 monsterIndex) {
-	char filename[13];
-	snprintf(filename, 13, "%s.dcr", file);
-
-	Common::SeekableReadStream *s = _res->createReadStream(filename);
+	Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.dcr", file));
 	if (!s)
 		return;
 

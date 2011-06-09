@@ -918,16 +918,15 @@ void CharacterGenerator::printStats(int index, int mode) {
 
 	_screen->printShadedText(_chargenStrings1[2], 248, 64, 15, 0);
 
-	char str[22];
-	snprintf(str, 22,  _chargenStrings1[3], _vm->getCharStrength(c->strengthCur, c->strengthExtCur), c->intelligenceCur, c->wisdomCur, c->dexterityCur, c->constitutionCur, c->charismaCur);
-	_screen->printShadedText(str, 192, 64, 15, 0);
+	Common::String str = Common::String::format(_chargenStrings1[3], _vm->getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), c->intelligenceCur, c->wisdomCur, c->dexterityCur, c->constitutionCur, c->charismaCur);
+	_screen->printShadedText(str.c_str(), 192, 64, 15, 0);
 
-	snprintf(str, 22, _chargenStrings1[4], c->armorClass, c->hitPointsMax);
-	_screen->printShadedText(str, 280, 64, 15, 0);
+	str = Common::String::format(_chargenStrings1[4], c->armorClass, c->hitPointsMax);
+	_screen->printShadedText(str.c_str(), 280, 64, 15, 0);
 
 	const char *lvlStr = c->level[2] ? _chargenStrings1[7] : (c->level[1] ? _chargenStrings1[6] : _chargenStrings1[5]);
-	snprintf(str, 22, lvlStr, c->level[0], c->level[1], c->level[2]);
-	_screen->printShadedText(str, 280, 80, 15, 0);
+	str = Common::String::format(lvlStr, c->level[0], c->level[1], c->level[2]);
+	_screen->printShadedText(str.c_str(), 280, 80, 15, 0);
 
 	switch (mode) {
 	case 1:
@@ -998,14 +997,10 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 	printStats(_activeBox, 3);
 	_vm->removeInputTop();
 
-	char statStr[6];
-	if (index)
-		snprintf(statStr, 6, "%d", *s1);
-	else
-		snprintf(statStr, 6, "%s", _vm->getCharStrength(*s1, *s2));
+	Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
 
 	_screen->copyRegion(b->x - 112, b->y - 64, b->x + 32, b->y, 40, b->height, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->printShadedText(statStr, b->x + 32, b->y, 6, 0);
+	_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, 6, 0);
 	_screen->updateScreen();
 
 	EobCharacter *c = &_characters[_activeBox];
@@ -1081,13 +1076,10 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 		if (index == 6)
 			_characters[_activeBox].hitPointsMax = v1;
 
-		if (index)
-			snprintf(statStr, 6, "%d", *s1);
-		else
-			snprintf(statStr, 6, "%s", _vm->getCharStrength(*s1, *s2));
+		statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
 
 		_screen->copyRegion(b->x - 112, b->y - 64, b->x + 32, b->y, 40, b->height, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->printShadedText(statStr, b->x + 32, b->y, 6, 0);
+		_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, 6, 0);
 		_screen->updateScreen();
 
 		if (index == 4) {
@@ -1097,9 +1089,9 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			c->hitPointsMax = c->hitPointsCur = CLIP<int16>(c->hitPointsCur, _chargenMinStats[6], _chargenMaxStats[6]);
 
 			if (c->hitPointsCur != oldVal) {
-				snprintf(statStr, 6, "%d", c->hitPointsCur);
+				statStr = Common::String::format("%d", c->hitPointsCur);
 				_screen->copyRegion(120, 72, 264, 136, 40, 8, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->printShadedText(statStr, 264, 136, 15, 0);
+				_screen->printShadedText(statStr.c_str(), 264, 136, 15, 0);
 				_screen->updateScreen();
 			}
 
@@ -1108,19 +1100,16 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			c->armorClass = _vm->getDexterityArmorClassModifier(v1) + 10;
 
 			if (c->armorClass != oldVal) {
-				snprintf(statStr, 6, "%d", c->armorClass);
+				statStr = Common::String::format("%d", c->armorClass);
 				_screen->copyRegion(120, 64, 264, 128, 40, 8, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->printShadedText(statStr, 264, 128, 15, 0);
+				_screen->printShadedText(statStr.c_str(), 264, 128, 15, 0);
 				_screen->updateScreen();
 			}
 		}
 
 		if (loop = false) {
-			if (index)
-				snprintf(statStr, 6, "%d", *s1);
-			else
-				snprintf(statStr, 6, "%s", _vm->getCharStrength(*s1, *s2));
-			_screen->printText(statStr, b->x + 32, b->y, 15, 0);
+			statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
+			_screen->printText(statStr.c_str(), b->x + 32, b->y, 15, 0);
 			_screen->updateScreen();
 		}
 	}

@@ -303,7 +303,7 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 
 		switch (para) {
 		case 'a':
-			snprintf(dst, 7, "%d", _scriptTextParameter);
+			strcpy(dst, Common::String::format("%d", _scriptTextParameter).c_str());
 			dst += strlen(dst);
 			break;
 
@@ -321,7 +321,7 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 		case 'd':
 		case 'u':
 		case 'x':
-			snprintf(dst, 7, "%d", script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]);
+			strcpy(dst, Common::String::format("%d", script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]).c_str());
 			dst += strlen(dst);
 			break;
 
