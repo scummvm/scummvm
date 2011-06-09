@@ -182,9 +182,9 @@ static const ADParams detectionParams = {
 	sizeof(Lure::LureGameDescription),
 	// Number of bytes to compute MD5 sum for
 	1024,
-	// List of all engine targets
+	// List of all engine gameid
 	lureGames,
-	// Structure for autoupgrading obsolete targets
+	// Structure for autoupgrading obsolete gameids
 	0,
 	// Name of single gameid (optional)
 	"lure",

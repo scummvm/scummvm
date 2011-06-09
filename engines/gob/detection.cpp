@@ -93,9 +93,9 @@ static const ADParams detectionParams = {
 	sizeof(Gob::GOBGameDescription),
 	// Number of bytes to compute MD5 sum for
 	5000,
-	// List of all engine targets
+	// List of all engine gameid
 	gobGames,
-	// Structure for autoupgrading obsolete targets
+	// Structure for autoupgrading obsolete gameids
 	obsoleteGameIDsTable,
 	// Name of single gameid (optional)
 	"gob",

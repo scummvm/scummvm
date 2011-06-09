@@ -165,9 +165,9 @@ static const ADParams detectionParams = {
 	sizeof(Mohawk::MohawkGameDescription),
 	// Number of bytes to compute MD5 sum for
 	5000,
-	// List of all engine targets
+	// List of all engine gameid
 	mohawkGames,
-	// Structure for autoupgrading obsolete targets
+	// Structure for autoupgrading obsolete gameids
 	0,
 	// Name of single gameid (optional)
 	"mohawk",

@@ -54,9 +54,9 @@ static const ADParams detectionParams = {
 	sizeof(KYRAGameDescription),
 	// Number of bytes to compute MD5 sum for
 	1024 * 1024,
-	// List of all engine targets
+	// List of all engine gameid
 	gameList,
-	// Structure for autoupgrading obsolete targets
+	// Structure for autoupgrading obsolete gameids
 	0,
 	// Name of single gameid (optional)
 	0,

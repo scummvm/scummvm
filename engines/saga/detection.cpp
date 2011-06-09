@@ -108,9 +108,9 @@ static const ADParams detectionParams = {
 	sizeof(Saga::SAGAGameDescription),
 	// Number of bytes to compute MD5 sum for
 	5000,
-	// List of all engine targets
+	// List of all engine gameid
 	sagaGames,
-	// Structure for autoupgrading obsolete targets
+	// Structure for autoupgrading obsolete gameids
 	obsoleteGameIDsTable,
 	// Name of single gameid (optional)
 	"saga",

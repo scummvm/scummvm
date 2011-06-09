@@ -391,9 +391,9 @@ static const ADParams detectionParams = {
 	sizeof(M4::M4GameDescription),
 	// Number of bytes to compute MD5 sum for
 	5000,
-	// List of all engine targets
+	// List of all engine gameid
 	m4Games,
-	// Structure for autoupgrading obsolete targets
+	// Structure for autoupgrading obsolete gameids
 	0,
 	// Name of single gameid (optional)
 	"m4",

@@ -133,9 +133,9 @@ static const ADParams detectionParams = {
 	sizeof(ADGameDescription),
 	// Number of bytes to compute MD5 sum for
 	4096,
-	// List of all engine targets
+	// List of all engine gameid
 	toucheGames,
-	// Structure for autoupgrading obsolete targets
+	// Structure for autoupgrading obsolete gameids
 	0,
 	// Name of single gameid (optional)
 	"touche",

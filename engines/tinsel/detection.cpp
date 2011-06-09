@@ -63,7 +63,7 @@ uint16 TinselEngine::getVersion() const {
 	return _gameDescription->version;
 }
 
-}
+} // End of namespace Tinsel
 
 static const PlainGameDescriptor tinselGames[] = {
 	{"tinsel", "Tinsel engine game"},
@@ -81,9 +81,9 @@ static const ADParams detectionParams = {
 	sizeof(Tinsel::TinselGameDescription),
 	// Number of bytes to compute MD5 sum for
 	5000,
-	// List of all engine targets
+	// List of all engine gameid
 	tinselGames,
-	// Structure for autoupgrading obsolete targets
+	// Structure for autoupgrading obsolete gameids
 	0,
 	// Name of single gameid (optional)
 	"tinsel",
