@@ -470,15 +470,14 @@ void mode640x480(Context &context) {
 
 void showgroup(Context &context) {
 	debug(1, "setting palette entries %u, %u colors, ds: %04x", (uint8)context.al, (uint16)context.cx, (uint16)context.ds);
-	unsigned idx = context.al;
-	while(context.cx--) {
+	for(unsigned idx = context.al; context.cx--; ++idx) {
 		context._lodsb();
 		unsigned r = context.al;
 		context._lodsb();
 		unsigned g = context.al;
 		context._lodsb();
 		unsigned b = context.al;
-		debug(1, "%u -> %u,%u,%u", idx, r, g, b);
+		//debug(1, "%u -> (%u,%u,%u)", idx, r, g, b);
 	}
 }
 
