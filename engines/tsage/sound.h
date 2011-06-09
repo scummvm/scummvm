@@ -120,13 +120,13 @@ struct VoiceStructEntryType1 {
 	int _field6;
 	Sound *_sound;
 	int _channelNum;
-	int _fieldD;
+	int _priority;
 	Sound *_sound2;
 	int _channelNum2;
-	int _field13;
+	int _priority2;
 	Sound *_sound3;
 	int _channelNum3;
-	int _field19;
+	int _priority3;
 };
 
 struct VoiceStructEntry {
@@ -142,7 +142,7 @@ class VoiceTypeStruct {
 public:
 	VoiceType _voiceType;
 	int _field1;
-	int _field2;
+	int _numVoices;
 	int _field3;
 
 	Common::Array<VoiceStructEntry> _entries;
@@ -237,6 +237,7 @@ public:
 	static void _sfSoundServer();
 	static void _sfProcessFading();
 	static void _sfUpdateVoiceStructs();
+	static void _sfUpdateVoiceStructs2();
 };
 
 class Sound: public EventHandler {
