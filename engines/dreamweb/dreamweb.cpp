@@ -203,11 +203,9 @@ void DreamWebEngine::setGraphicsMode() {
 }
 
 void DreamWebEngine::fadeDos() {
-	static const int startpal = 0+(228*13)+32+60+(32*32)+(11*10*3); //fixme: add equ to enum too
-	
 	PaletteManager *palette = _system->getPaletteManager();
 	_context.ds = _context.es = _context.data.word(dreamgen::kBuffers);
-	uint8 *dst = _context.es.ptr(startpal, 768);
+	uint8 *dst = _context.es.ptr(dreamgen::kStartpal, 768);
 	palette->grabPalette(dst, 0, 64);
 	for(int fade = 0; fade < 64; ++fade) {
 		for(int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
