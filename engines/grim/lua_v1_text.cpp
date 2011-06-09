@@ -75,6 +75,7 @@ void L1_ChangeTextObject() {
 				if (!lua_istable(paramObj))
 					break;
 				setTextObjectParams(textObject, paramObj);
+				textObject->destroy();
 			} else {
 				line = lua_getstring(paramObj);
 				textObject->setText(line);

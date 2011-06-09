@@ -143,6 +143,13 @@ int TextObject::getTextCharPosition(int pos) {
 	return width;
 }
 
+void TextObject::destroy() {
+	if (_created) {
+		g_driver->destroyTextObject(this);
+		_created = false;
+	}
+}
+
 void TextObject::setupText() {
 	Common::String msg = parseMsgText(_textID, NULL);
 	Common::String message;
