@@ -434,6 +434,7 @@ public:
 	}
 
 	inline uint16 pop() {
+		assert(!stack.empty());
 		uint16 v = stack.back();
 		stack.pop_back();
 		return v;
