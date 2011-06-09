@@ -40,7 +40,7 @@ class Console;
 enum {
 	kCGEDebug = 1 << 0
 };
- 
+
 class CGEEngine : public Engine {
 public:
 	CGEEngine(OSystem *syst, const ADGameDescription *gameDescription);

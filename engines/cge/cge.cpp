@@ -33,6 +33,7 @@
 #include "engines/util.h"
  
 #include "cge/cge.h"
+#include "cge/cge_main.h"
  
 namespace CGE {
  
@@ -61,7 +62,9 @@ Common::Error CGEEngine::run() {
  
 	// Additional setup.
 	debug("CGEEngine::init");
- 
+	
+	cge_main();
+	
 	return Common::kNoError;
 }
  
