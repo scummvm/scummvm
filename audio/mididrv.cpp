@@ -219,8 +219,6 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		}
 	}
 
-	reslt = 0;
-
 	// If the selected driver did not match the flags setting,
 	// we try to determine a suitable and "optimal" music driver.
 	const MusicPlugin::List p = MusicMan.getPlugins();
@@ -268,7 +266,6 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 							GUI::MessageDialog dialog(warningMsg);
 							dialog.runModal();
 						}
-						hdl = 0;
 					}
 				}
 
@@ -283,9 +280,6 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 								hdl = d->getHandle();
 								if (checkDevice(hdl))
 									return hdl;
-								else
-									// No warning here, since the user hasn't expressly requested anything.
-									hdl = 0;
 							}
 						}
 					}
@@ -301,9 +295,6 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 								hdl = d->getHandle();
 								if (checkDevice(hdl))
 									return hdl;
-								else
-									// No warning here, since the user hasn't expressly requested anything.
-									hdl = 0;
 							}
 						}
 					}
@@ -357,15 +348,12 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 					hdl = d->getHandle();
 					if (checkDevice(hdl))
 						return hdl;
-					else
-						// No warning here, since the user hasn't expressly requested anything.
-						hdl = 0;
 				}
 			}
 		}
 	}
 
-	return reslt;
+	return 0;
 }
 
 MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
