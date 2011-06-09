@@ -85,6 +85,7 @@ public:
 	void mouseCall(); //fill mouse pos and button state
 	void processEvents();
 	void setGraphicsMode();
+	void fadeDos();
 
 private:
 	const DreamWebGameDescription	*_gameDescription;
