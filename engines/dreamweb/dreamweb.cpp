@@ -426,11 +426,11 @@ void saveseg(Context &context) {
 }
 
 void loadseg(Context &context) {
-	uint16 dst_offset = context.dx;
-	uint16 size = context.ax;
-
 	context.ax = context.es.word(context.di);
 	context.di += 2;
+
+	uint16 dst_offset = context.dx;
+	uint16 size = context.ax;
 
 	debug(1, "loadseg(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
 	context.ax = engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
