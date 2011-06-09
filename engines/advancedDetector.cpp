@@ -456,16 +456,14 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 			// file and as one with resource fork.
 
 			if (g->flags & ADGF_MACRESFORK) {
-				Common::MacResManager *macResMan = new Common::MacResManager();
+				Common::MacResManager macResMan;
 
-				if (macResMan->open(parent, fname)) {
-					tmp.md5 = macResMan->computeResForkMD5AsString(params.md5Bytes);
-					tmp.size = macResMan->getResForkDataSize();
+				if (macResMan.open(parent, fname)) {
+					tmp.md5 = macResMan.computeResForkMD5AsString(params.md5Bytes);
+					tmp.size = macResMan.getResForkDataSize();
 					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
 					filesSizeMD5[fname] = tmp;
 				}
-
-				delete macResMan;
 			} else {
 				if (allFiles.contains(fname)) {
 					debug(3, "+ %s", fname.c_str());
