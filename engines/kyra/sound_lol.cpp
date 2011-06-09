@@ -50,36 +50,34 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	_lastSpeaker = speaker;
 	_nextSpeechId = _nextSpeaker = -1;
 
-	char pattern1[8];
-	char pattern2[5];
-	char file1[13];
-	char file2[13];
-	char file3[13];
-	file3[0] = 0;
+	Common::String pattern1;
+	Common::String file1;
+	Common::String file2;
+	Common::String file3;
 
 	SpeechList newSpeechList;
 
-	snprintf(pattern2, sizeof(pattern2), "%02d", id & 0x4000 ? 0 : _curTlkFile);
+	Common::String pattern2 = Common::String::format("%02d", id & 0x4000 ? 0 : _curTlkFile);
 
 	if (id & 0x4000) {
-		snprintf(pattern1, sizeof(pattern1), "%03X", id & 0x3fff);
+		pattern1 = Common::String::format("%03X", id & 0x3fff);
 	} else if (id < 1000) {
-		snprintf(pattern1, sizeof(pattern1), "%03d", id);
+		pattern1 = Common::String::format("%03d", id);
 	} else {
-		snprintf(file3, sizeof(file3), "@%04d%c.%s", id - 1000, (char)speaker, pattern2);
-		if (_sound->isVoicePresent(file3))
-			newSpeechList.push_back(_sound->getVoiceStream(file3));
+		file3 = Common::String::format("@%04d%c.%s", id - 1000, (char)speaker, pattern2.c_str());
+		if (_sound->isVoicePresent(file3.c_str()))
+			newSpeechList.push_back(_sound->getVoiceStream(file3.c_str()));
 	}
 
-	if (!file3[0]) {
+	if (file3.empty()) {
 		for (char i = 0; ; i++) {
 			char symbol = '0' + i;
-			snprintf(file1, sizeof(file1), "%s%c%c.%s", pattern1, (char)speaker, symbol, pattern2);
-			snprintf(file2, sizeof(file2), "%s%c%c.%s", pattern1, '_', symbol, pattern2);
-			if (_sound->isVoicePresent(file1))
-				newSpeechList.push_back(_sound->getVoiceStream(file1));
-			else if (_sound->isVoicePresent(file2))
-				newSpeechList.push_back(_sound->getVoiceStream(file2));
+			file1 = Common::String::format("%s%c%c.%s", pattern1.c_str(), (char)speaker, symbol, pattern2.c_str());
+			file2 = Common::String::format("%s%c%c.%s", pattern1.c_str(), '_', symbol, pattern2.c_str());
+			if (_sound->isVoicePresent(file1.c_str()))
+				newSpeechList.push_back(_sound->getVoiceStream(file1.c_str()));
+			else if (_sound->isVoicePresent(file2.c_str()))
+				newSpeechList.push_back(_sound->getVoiceStream(file2.c_str()));
 			else
 				break;
 		}
@@ -260,9 +258,7 @@ void LoLEngine::snd_loadSoundFile(int track) {
 			int t = (track - 250) * 3;
 			if (_curMusicFileIndex != _musicTrackMap[t] || _curMusicFileExt != (char)_musicTrackMap[t + 1]) {
 				snd_stopMusic();
-				char filename[13];
-				snprintf(filename, sizeof(filename), "LORE%02d%c", _musicTrackMap[t], (char)_musicTrackMap[t + 1]);
-				_sound->loadSoundFile(filename);
+				_sound->loadSoundFile(Common::String::format("LORE%02d%c", _musicTrackMap[t], (char)_musicTrackMap[t + 1]));
 				_curMusicFileIndex = _musicTrackMap[t];
 				_curMusicFileExt = (char)_musicTrackMap[t + 1];
 			} else {

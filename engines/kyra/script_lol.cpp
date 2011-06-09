@@ -1136,9 +1136,8 @@ int LoLEngine::olol_loadTimScript(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadTimScript(%p) (%d, %s)", (const void *)script, stackPos(0), stackPosString(1));
 	if (_activeTim[stackPos(0)])
 		return 1;
-	char file[13];
-	snprintf(file, sizeof(file), "%s.TIM", stackPosString(1));
-	_activeTim[stackPos(0)] = _tim->load(file, &_timIngameOpcodes);
+	Common::String file = Common::String::format("%s.TIM", stackPosString(1));
+	_activeTim[stackPos(0)] = _tim->load(file.c_str(), &_timIngameOpcodes);
 	return 1;
 }
 
@@ -1185,10 +1184,9 @@ int LoLEngine::olol_giveItemToMonster(EMCState *script) {
 
 int LoLEngine::olol_loadLangFile(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLangFile(%p) (%s)", (const void *)script, stackPosString(0));
-	char filename[13];
-	snprintf(filename, sizeof(filename), "%s.%s", stackPosString(0), _languageExt[_lang]);
+	Common::String filename = Common::String::format("%s.%s", stackPosString(0), _languageExt[_lang]);
 	delete[] _levelLangFile;
-	_levelLangFile = _res->fileData(filename, 0);
+	_levelLangFile = _res->fileData(filename.c_str(), 0);
 	return 1;
 }
 
