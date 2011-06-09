@@ -63,7 +63,7 @@ namespace %s {
 			if size == 0:
 				raise Exception("invalid var '%s' size %u" %(name, size))
 			if self.indirection == 0:
-				value = "context.data.%s(%d)" %("byte" if size == 1 else "word", g.offset)
+				value = "context.data.%s(k%s)" %("byte" if size == 1 else "word", name.capitalize())
 			elif self.indirection == -1:
 				value = "%s" %g.offset
 				self.indirection = 0
