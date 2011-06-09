@@ -433,7 +433,7 @@ namespace %s {
 			
 			self.proc_addr.append((name, self.proc.offset))
 			self.body = str()
-			self.body += "static void %s(Context & context) {\n" %name;
+			self.body += "void %s(Context & context) {\n" %name;
 			self.proc.optimize()
 			self.unbounded = []
 			self.proc.visit(self, skip)
@@ -502,9 +502,11 @@ namespace %s {
 			self.__proc(name)
 		self.write_stubs("_stubs.cpp", self.failed)
 		done, failed = len(self.proc_done), len(self.failed)
+
 		for f in self.forwards:
 			if f not in self.failed:
-				self.fd.write("static void %s(Context &context);\n" %f)
+				self.fd.write("void %s(Context &context);\n" %f)
+
 		self.fd.write("\n")
 		self.fd.write("\n".join(self.translated))
 		self.fd.write("\n\n")
