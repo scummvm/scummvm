@@ -2816,6 +2816,9 @@ int GUI_LoL::clickedOptionsMenu(Button *button) {
 		_vm->_landsFile = _vm->resource()->fileData(filename.c_str(), 0);
 		_newMenu = _lastMenu;
 		} break;
+	default:
+		// TODO: Is there anything we should do if we hit this case?
+		break;
 	}
 
 	return 1;
