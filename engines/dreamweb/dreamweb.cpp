@@ -463,6 +463,8 @@ void set16colpalette(Context &context) {
 
 void mode640x480(Context &context) {
 	// Video mode 12h: 640x480 pixels, 16 colors, I believe
+	context.al = 0x12 + 128;
+	context.ah = 0;
 	initGraphics(640, 480, true);
 }
 
