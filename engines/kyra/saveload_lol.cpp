@@ -195,7 +195,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		_lvlTempData[i]->flags = new uint16[1024];
 		LolMonsterInPlay *lm = new LolMonsterInPlay[30];
 		 _lvlTempData[i]->monsters = lm;
-		FlyingObject *lf = new FlyingObject[8];
+		FlyingObject *lf = new FlyingObject[_numFlyingObjects];
 		_lvlTempData[i]->flyingObjects = lf;
 		LevelTempData *l = _lvlTempData[i];
 
@@ -236,7 +236,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 			in.read(m->equipmentShapes, 4);
 		}
 
-		for (int ii = 0; ii < 8; ii++) {
+		for (int ii = 0; ii < _numFlyingObjects; ii++) {
 			FlyingObject *m = &lf[ii];
 			m->enable = in.readByte();
 			m->objectType = in.readByte();
@@ -420,7 +420,7 @@ Common::Error LoLEngine::saveGameStateIntern(int slot, const char *saveName, con
 			out->write(m->equipmentShapes, 4);
 		}
 
-		for (int ii = 0; ii < 8; ii++) {
+		for (int ii = 0; ii < _numFlyingObjects; ii++) {
 			FlyingObject *m = &lf[ii];
 			out->writeByte(m->enable);
 			out->writeByte(m->objectType);
@@ -489,12 +489,6 @@ void *LoLEngine::generateMonsterTempData(LevelTempData *tmp) {
 	return m;
 }
 
-void *LoLEngine::generateFlyingObjectTempData(LevelTempData *tmp) {
-	FlyingObject *f = new FlyingObject[8];
-	memcpy(f, _flyingObjects,  sizeof(FlyingObject) * 8);
-	return f;
-}
-
 void LoLEngine::restoreTempDataAdjustMonsterStrength(int index) {
 	if (_lvlTempData[index]->monsterDifficulty == _monsterDifficulty)
 		return;
@@ -525,17 +519,8 @@ void LoLEngine::restoreMonsterTempData(LevelTempData *tmp) {
 	}
 }
 
-void LoLEngine::restoreFlyingObjectTempData(LevelTempData *tmp) {
-	memcpy(_flyingObjects, tmp->flyingObjects, sizeof(FlyingObject) * 8);
-}
-
 void LoLEngine::releaseMonsterTempData(LevelTempData *tmp) {
 	LolMonsterInPlay *p = (LolMonsterInPlay*)tmp->monsters;
-	delete[] p;
-}
-
-void LoLEngine::releaseFlyingObjectTempData(LevelTempData *tmp) {
-	FlyingObject *p = (FlyingObject*)tmp->flyingObjects;
 	delete[] p;
 }
 

@@ -63,6 +63,22 @@ struct LevelTempData {
 	uint8 monsterDifficulty;
 };
 
+struct EobFlyingObject {
+	uint8 enable;
+	uint8 objectType;
+	int16 attackerId;
+	Item item;	
+	uint16 curBlock;
+	uint16 u2;
+	uint8 u1;
+	uint8 direction;
+	uint8 distance;
+	int8 callBackIndex;
+	uint8 curPos;
+	uint8 flags;
+	uint8 unused;
+};
+
 class LolEobBaseEngine : public KyraEngine_v1 {
 friend class TextDisplayer_Eob;
 public:
@@ -289,13 +305,16 @@ protected:
 	void restoreBlockTempData(int levelIndex);
 	void releaseTempData();
 	virtual void *generateMonsterTempData(LevelTempData *tmp) = 0;
-	virtual void *generateFlyingObjectTempData(LevelTempData *tmp) = 0;
 	virtual void restoreMonsterTempData(LevelTempData *tmp) = 0;
-	virtual void restoreFlyingObjectTempData(LevelTempData *tmp) = 0;
 	virtual void releaseMonsterTempData(LevelTempData *tmp) = 0;
-	virtual void releaseFlyingObjectTempData(LevelTempData *tmp) = 0;
+	void restoreFlyingObjectTempData(LevelTempData *tmp);
+	void *generateFlyingObjectTempData(LevelTempData *tmp);
+	void releaseFlyingObjectTempData(LevelTempData *tmp);
 
 	LevelTempData *_lvlTempData[29];
+	const int _numFlyingObjects;
+	uint32 _flyingObjectStructSize;
+	void *_flyingObjectsPtr;
 
 	// sound
 	virtual bool snd_processEnvironmentalSoundEffect(int soundId, int block);

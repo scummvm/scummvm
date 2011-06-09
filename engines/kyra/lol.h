@@ -1299,12 +1299,9 @@ private:
 	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 
 	void *generateMonsterTempData(LevelTempData *tmp);
-	void *generateFlyingObjectTempData(LevelTempData *tmp);
 	void restoreBlockTempData(int levelIndex);
 	void restoreMonsterTempData(LevelTempData *tmp);
-	void restoreFlyingObjectTempData(LevelTempData *tmp);
 	void releaseMonsterTempData(LevelTempData *tmp);
-	void releaseFlyingObjectTempData(LevelTempData *tmp);
 
 	Graphics::Surface *generateSaveThumbnail() const;
 };

@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-LolEobBaseEngine::LolEobBaseEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags) {
+LolEobBaseEngine::LolEobBaseEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags), _numFlyingObjects(_flags.gameID == GI_LOL ? 8 : 10) {
 	_txt = 0;
 	_mouseClick = 0;
 	_preserveEvents = _buttonListChanged = false;
@@ -75,6 +75,9 @@ LolEobBaseEngine::LolEobBaseEngine(OSystem *system, const GameFlags &flags) : Ky
 	_updateFlags = _clickedSpecialFlag = 0;
 	_sceneDefaultUpdate = 0;
 	_sceneUpdateRequired = false;
+	
+	_flyingObjectsPtr = 0;
+	_flyingObjectStructSize = sizeof(EobFlyingObject);
 
 	_clickedShapeXOffs = _clickedShapeYOffs = 0;
 

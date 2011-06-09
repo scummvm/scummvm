@@ -228,22 +228,6 @@ struct ScriptTimer {
 	uint32 next;
 };
 
-struct EobFlyingObject {
-	uint8 enable;
-	uint8 objectType;
-	int16 attackerId;
-	Item item;
-	uint16 curBlock;
-	uint16 u2;
-	uint8 u1;
-	uint8 direction;
-	uint8 distance;
-	int8 callBackIndex;
-	uint8 curPos;
-	uint8 flags;
-	uint8 unused;
-};
-
 class EobInfProcessor;
 
 class EobCoreEngine : public LolEobBaseEngine {
@@ -770,11 +754,8 @@ protected:
 	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 
 	void *generateMonsterTempData(LevelTempData *tmp);
-	void *generateFlyingObjectTempData(LevelTempData *tmp);
 	void restoreMonsterTempData(LevelTempData *tmp);
-	void restoreFlyingObjectTempData(LevelTempData *tmp);
 	void releaseMonsterTempData(LevelTempData *tmp);
-	void releaseFlyingObjectTempData(LevelTempData *tmp);
 
 	int _saveLoadMode;
 
