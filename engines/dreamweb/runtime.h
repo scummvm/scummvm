@@ -405,15 +405,17 @@ public:
 	}
 
 	inline void _neg(uint8 &src) {
+		flags._c = src != 0;
 		src = ~src;
 		flags.update(src);
-		flags._c = flags._o = false;
+		flags._o = false;
 	}
 
 	inline void _neg(uint16 &src) {
+		flags._c = src != 0;
 		src = ~src;
 		flags.update(src);
-		flags._c = flags._o = false;
+		flags._o = false;
 	}
 
 	inline void _movsb() {
