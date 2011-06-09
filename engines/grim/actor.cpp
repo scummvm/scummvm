@@ -253,9 +253,7 @@ void Actor::saveState(SaveGame *savedState) const {
 		}
 
 		savedState->writeLESint32(shadow.shadowMaskSize);
-		for (int j = 0; j < shadow.shadowMaskSize; ++j) {
-			savedState->writeByte(shadow.shadowMask[j]);
-		}
+		savedState->write(shadow.shadowMask, shadow.shadowMaskSize);
 		savedState->writeLESint32(shadow.active);
 		savedState->writeLESint32(shadow.dontNegate);
 	}
@@ -410,9 +408,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 		delete[] shadow.shadowMask;
 		if (shadow.shadowMaskSize > 0) {
 			shadow.shadowMask = new byte[shadow.shadowMaskSize];
-			for (int j = 0; j < shadow.shadowMaskSize; ++j) {
-				shadow.shadowMask[j] = savedState->readByte();
-			}
+			savedState->read(shadow.shadowMask, shadow.shadowMaskSize);
 		} else {
 			shadow.shadowMask = NULL;
 		}
