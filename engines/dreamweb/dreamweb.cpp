@@ -498,11 +498,108 @@ void setmode(Context &context) {
 }
 
 void readoneblock(Context &context) {
-	::error("readoneblock");
+	context.ds = context.data.word(kWorkspace);
+	context.cx = 30000;
+	context.dx = 0;
+	readfromfile(context);
+}
+
+// TODO: This is already defined in dreamgen.cpp, so expose it should be
+//       exposed from there. Once that's done, remove this copy!
+
+static void readabyte(Context & context) {
+	context._cmp(context.si, 30000);
+	if (!context.flags.z()) goto notendblock;
+	context.push(context.bx);
+	context.push(context.es);
+	context.push(context.di);
+	context.push(context.ds);
+	context.push(context.si);
+	readoneblock(context);
+	context.si = context.pop();
+	context.ds = context.pop();
+	context.di = context.pop();
+	context.es = context.pop();
+	context.bx = context.pop();
+	context.si = 0;
+notendblock:
+	context._lodsb();
 }
 
 void showpcx(Context &context) {
-	warning("showpcx");
+	openfile(context);
+	context.ds = context.data.word(kWorkspace);
+	context.cx = 128;
+	context.dx = 0;
+	readfromfile(context);
+
+	context.ds = context.data.word(kWorkspace);
+	context.si = 16;
+	context.cx = 48;
+	context.es = context.data.word(kBuffers);
+	context.di = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768;
+pcxpal:
+	context.push(context.cx);
+	readabyte(context);
+	context._shr(context.al, 1);
+	context._shr(context.al, 1);
+	context._stosb();
+	context.cx = context.pop();
+	if (--context.cx) goto pcxpal;
+	context.cx = 768 - 48;
+	context.ax = 0x0ffff;
+	while (--context.cx) context._stosw();
+
+	readoneblock(context);
+	context.si = 0;
+	context.di = 0;
+	context.cx = 480;
+convertpcx:
+	context.push(context.cx);
+	context.push(context.di);
+	context.ds = context.data.word(kWorkspace);
+	context.es = context.data.word(kBuffers);
+	context.di = 0+(228*13)+32+60;
+	context.bx = 0;
+sameline:
+	readabyte(context);
+	context.ah = context.al;
+	context._and(context.ah, 0xc0);
+	context._cmp(context.ah, 0xc0);
+	if (!context.flags.z()) goto normal;
+	context.cl = context.al;
+	context._and(context.cl, 0x3f);
+	context.ch = 0;
+	context.push(context.cx);
+	readabyte(context);
+	context.cx = context.pop();
+	context._add(context.bx, context.cx);
+	if (--context.cx) context._stosb();
+	context._cmp(context.bx, 4 * 80);
+	if (!context.flags.z()) goto sameline;
+	goto endline;
+normal:
+	context._stosb();
+	context._add(context.bx, 1);
+	context._cmp(context.bx, 4 * 80);
+	if (!context.flags.z()) goto sameline;
+
+endline:
+	context.di = context.pop();
+	context.push(context.si);
+	context.dx = 0xa000;
+	context.es = context.dx;
+	context.si = 0+(228*13)+32+60;
+	context.ds = context.data.word(kBuffers);
+
+	// TODO: There's a bunch of code here which I assume draws data to the
+	//       screen or something like that.
+
+	context.si = context.pop();
+	context.cx = context.pop();
+	if (--context.cx) goto convertpcx;
+
+	closefile(context);
 }
 
 } /*namespace dreamgen */
