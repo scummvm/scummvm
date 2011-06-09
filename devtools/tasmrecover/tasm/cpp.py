@@ -564,6 +564,7 @@ namespace %s {
 		self.proc_addr.sort(cmp = lambda x, y: x[1] - y[1])
 		for name,addr in self.proc_addr:
 			self.fd.write("\t\tcase 0x%04x: %s(context); break;\n" %(addr, name))
+		self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16)context.ax);")
 		self.fd.write("\n\t}\n}\n\n} /*namespace*/\n")
 
 		self.fd.close()

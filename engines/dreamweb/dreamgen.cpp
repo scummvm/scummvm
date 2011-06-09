@@ -22131,7 +22131,7 @@ void __dispatch_call(Context &context, unsigned addr) {
 		case 0xcbac: walkandexamine(context); break;
 		case 0xcbb0: doload(context); break;
 		case 0xcbb4: generalerror(context); break;
-
+		default: ::error("invalid call to %04x dispatched", (uint16)context.ax);
 	}
 }
 
