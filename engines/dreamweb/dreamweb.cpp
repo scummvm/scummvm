@@ -504,27 +504,7 @@ void readoneblock(Context &context) {
 	readfromfile(context);
 }
 
-// TODO: This is already defined in dreamgen.cpp, so expose it should be
-//       exposed from there. Once that's done, remove this copy!
-
-static void readabyte(Context & context) {
-	context._cmp(context.si, 30000);
-	if (!context.flags.z()) goto notendblock;
-	context.push(context.bx);
-	context.push(context.es);
-	context.push(context.di);
-	context.push(context.ds);
-	context.push(context.si);
-	readoneblock(context);
-	context.si = context.pop();
-	context.ds = context.pop();
-	context.di = context.pop();
-	context.es = context.pop();
-	context.bx = context.pop();
-	context.si = 0;
-notendblock:
-	context._lodsb();
-}
+void readabyte(Context & context);
 
 void showpcx(Context &context) {
 	openfile(context);
