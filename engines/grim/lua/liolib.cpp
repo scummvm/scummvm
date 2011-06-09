@@ -11,6 +11,10 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fread
 #define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
 #define FORBIDDEN_SYMBOL_EXCEPTION_fseek
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdin
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "common/savefile.h"
 #include "common/fs.h"

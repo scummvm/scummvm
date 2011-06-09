@@ -20,6 +20,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/system.h"
 
 #ifdef USE_MT32EMU
 
@@ -62,7 +63,7 @@ protected:
 	void generateSamples(int16 *buf, int len);
 
 public:
-	bool _initialising;
+	bool _initializing;
 
 	MidiDriver_MT32(Audio::Mixer *mixer);
 	virtual ~MidiDriver_MT32();
@@ -218,7 +219,7 @@ static MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Em
 }
 
 static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
-	if (((MidiDriver_MT32 *)userData)->_initialising) {
+	if (((MidiDriver_MT32 *)userData)->_initializing) {
 		char buf[512];
 
 		vsnprintf(buf, 512, fmt, list);
@@ -242,7 +243,7 @@ static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *rep
 		error("Failed to load MT32_PCM.ROM");
 		break;
 	case MT32Emu::ReportType_progressInit:
-		if (((MidiDriver_MT32 *)userData)->_initialising) {
+		if (((MidiDriver_MT32 *)userData)->_initializing) {
 			drawProgress(*((const float *)reportData));
 			return eatSystemEvents();
 		}
@@ -286,7 +287,7 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 	// at rates other than 32KHz, thus we produce data at 32KHz and
 	// rely on Mixer to convert.
 	_outputRate = 32000; //_mixer->getOutputRate();
-	_initialising = false;
+	_initializing = false;
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
@@ -329,11 +330,11 @@ int MidiDriver_MT32::open() {
 		//g_system->setPalette(dummy_palette, 0, 3);
 	}
 
-	_initialising = true;
-	drawMessage(-1, _s("Initialising MT-32 Emulator"));
+	_initializing = true;
+	drawMessage(-1, _s("Initializing MT-32 Emulator"));
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
-	_initialising = false;
+	_initializing = false;
 
 	// TODO implement in Residual
 /*	if (screenFormat.bytesPerPixel > 1)
@@ -553,6 +554,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
+	bool checkDevice(MidiDriver::DeviceHandle) const;
 	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
@@ -560,6 +562,16 @@ MusicDevices MT32EmuMusicPlugin::getDevices() const {
 	MusicDevices devices;
 	devices.push_back(MusicDevice(this, "", MT_MT32));
 	return devices;
+}
+
+bool MT32EmuMusicPlugin::checkDevice(MidiDriver::DeviceHandle) const {
+	if (!((Common::File::exists("MT32_CONTROL.ROM") && Common::File::exists("MT32_PCM.ROM")) ||
+		(Common::File::exists("CM32L_CONTROL.ROM") && Common::File::exists("CM32L_PCM.ROM")))) {
+			warning("The MT-32 emulator requires one of the two following file sets (not bundled with ScummVM):\n Either 'MT32_CONTROL.ROM' and 'MT32_PCM.ROM' or 'CM32L_CONTROL.ROM' and 'CM32L_PCM.ROM'");
+			return false;
+	}
+	
+	return true;	
 }
 
 Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {

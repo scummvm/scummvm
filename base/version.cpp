@@ -112,5 +112,9 @@ const char *gResidualFeatures = ""
 #ifdef USE_THEORADEC
 	"Theora "
 #endif
+
+#ifdef USE_FAAD
+	"AAC "
+#endif
 	;
 

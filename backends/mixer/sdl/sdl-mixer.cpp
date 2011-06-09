@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #if defined(SDL_BACKEND)
 
 #include "backends/mixer/sdl/sdl-mixer.h"

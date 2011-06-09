@@ -19,9 +19,11 @@ base/main.cpp
 common/error.cpp
 common/util.cpp
 
+engines/advancedDetector.cpp
 engines/dialogs.cpp
 
 audio/fmopl.cpp
+audio/mididrv.cpp
 audio/musicplugin.cpp
 audio/null.h
 audio/null.cpp
@@ -30,7 +32,6 @@ audio/softsynth/appleiigs.cpp
 audio/softsynth/sid.cpp
 audio/softsynth/mt32.cpp
 audio/softsynth/pcspk.cpp
-audio/softsynth/ym2612.cpp
 
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp

@@ -26,6 +26,7 @@
 #ifdef USE_OPENGL
 #include <SDL_opengl.h>
 #endif
+#undef ARRAYSIZE
 
 #include "backends/graphics/graphics.h"
 #include "graphics/pixelformat.h"

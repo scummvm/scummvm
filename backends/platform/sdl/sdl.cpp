@@ -20,7 +20,7 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -160,6 +160,8 @@ void OSystem_SDL::initBackend() {
 	setupIcon();
 
 	_inited = true;
+
+	ModularBackend::initBackend();
 }
 
 void OSystem_SDL::initSDL() {
@@ -196,20 +198,6 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 	}
 #endif
 
-}
-
-Common::String OSystem_SDL::getDefaultConfigFileName() {
-	return "residual.ini";
-}
-
-Common::SeekableReadStream *OSystem_SDL::createConfigReadStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_SDL::createConfigWriteStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createWriteStream();
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {

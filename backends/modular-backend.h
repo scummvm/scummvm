@@ -24,8 +24,6 @@
 #define BACKENDS_MODULAR_BACKEND_H
 
 #include "common/system.h"
-#include "common/timer.h"
-#include "common/savefile.h"
 
 class GraphicsManager;
 class MutexManager;
@@ -39,8 +37,6 @@ class MutexManager;
  * A backend derivated from this class, will need to implement
  * these functions on its own:
  *   OSystem::pollEvent()
- *   OSystem::createConfigReadStream()
- *   OSystem::createConfigWriteStream()
  *   OSystem::getMillis()
  *   OSystem::delayMillis()
  *   OSystem::getTimeAndDate()
@@ -91,8 +87,6 @@ public:
 	/** @name Events and Time */
 	//@{
 	
-	virtual Common::TimerManager *getTimerManager();
-	virtual Common::EventManager *getEventManager();
 	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
 
 	//@}
@@ -114,20 +108,10 @@ public:
 
 	//@}
 
-	/** @name Audio CD */
-	//@{
-
-	virtual AudioCDManager *getAudioCDManager();
-
-	//@}
-
 	/** @name Miscellaneous */
 	//@{
 
-	virtual Common::SaveFileManager *getSavefileManager();
-	virtual FilesystemFactory *getFilesystemFactory();
-	virtual void quit() { exit(0); }
-	virtual void setWindowCaption(const char *caption) {}
+	virtual void quit();
 	virtual void displayMessageOnOSD(const char *msg);
 
 	//@}
@@ -136,14 +120,9 @@ protected:
 	/** @name Managers variables */
 	//@{
 
-	FilesystemFactory *_fsFactory;
-	Common::EventManager *_eventManager;
-	Common::SaveFileManager *_savefileManager;
-	Common::TimerManager *_timerManager;
 	MutexManager *_mutexManager;
 	GraphicsManager *_graphicsManager;
 	Audio::Mixer *_mixer;
-	AudioCDManager *_audiocdManager;
 
 	//@}
 };

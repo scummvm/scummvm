@@ -29,7 +29,7 @@
 
 namespace GUI {
 
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 class ConsoleDialog;
 #endif
 
@@ -69,7 +69,7 @@ protected:
 	typedef Common::Functor2<int, const char **, bool> Debuglet;
 
 	/**
-	 * Convenience macro that makes it either to register a method
+	 * Convenience macro that makes it easier to register a method
 	 * of a debugger subclass as a command.
 	 * Usage example:
 	 *   DCmd_Register("COMMAND", WRAP_METHOD(MyDebugger, MyCmd));
@@ -144,7 +144,7 @@ private:
 	 */
 	bool _firstTime;
 
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	GUI::ConsoleDialog *_debuggerDialog;
 #endif
 
@@ -190,11 +190,12 @@ private:
 protected:
 	bool Cmd_Exit(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
+	bool Cmd_OpenLog(int argc, const char **argv);
 	bool Cmd_DebugFlagsList(int argc, const char **argv);
 	bool Cmd_DebugFlagEnable(int argc, const char **argv);
 	bool Cmd_DebugFlagDisable(int argc, const char **argv);
 
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 private:
 	static bool debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon);
 	static bool debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, Common::String &completion, void *refCon);

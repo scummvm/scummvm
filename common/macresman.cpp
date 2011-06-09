@@ -32,7 +32,6 @@
 
 #ifdef MACOSX
 #include "common/config-manager.h"
-#include "backends/fs/stdiostream.h"
 #endif
 
 namespace Common {
@@ -108,7 +107,7 @@ bool MacResManager::open(String filename) {
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
 	String fullPath = ConfMan.get("path") + "/" + filename + "/..namedfork/rsrc";
-	SeekableReadStream *macResForkRawStream = StdioStream::makeFromPath(fullPath, false);
+	SeekableReadStream *macResForkRawStream = FSNode(fullPath).createReadStream();;
 
 	if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 		_baseFileName = filename;
@@ -168,7 +167,7 @@ bool MacResManager::open(FSNode path, String filename) {
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
 	String fullPath = path.getPath() + "/" + filename + "/..namedfork/rsrc";
-	SeekableReadStream *macResForkRawStream = StdioStream::makeFromPath(fullPath, false);
+	SeekableReadStream *macResForkRawStream = FSNode(fullPath).createReadStream();
 
 	if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 		_baseFileName = filename;

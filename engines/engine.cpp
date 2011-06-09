@@ -310,7 +310,7 @@ bool Engine::canLoadGameStateCurrently() {
 	return false;
 }
 
-Common::Error Engine::saveGameState(int slot, const char *desc) {
+Common::Error Engine::saveGameState(int slot, const Common::String &desc) {
 	// Do nothing by default
 	return Common::kNoError;
 }

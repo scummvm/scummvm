@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <tchar.h>
+#undef ARRAYSIZE
 
 /**
  * Implementation of the ScummVM file system API based on Windows API.

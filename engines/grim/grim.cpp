@@ -30,6 +30,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_getwd
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_unlink
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdin
 
 #if defined(WIN32)
 #include <windows.h>

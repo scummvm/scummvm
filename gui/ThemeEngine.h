@@ -539,7 +539,6 @@ protected:
 	const Graphics::Font *loadFontFromArchive(const Common::String &filename);
 	const Graphics::Font *loadCachedFontFromArchive(const Common::String &filename);
 	Common::String genCacheFilename(const Common::String &filename) const;
-	Common::String genLocalizedFontFilename(const Common::String &filename) const;
 
 	/**
 	 * Actual Dirty Screen handling function.

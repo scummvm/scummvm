@@ -857,6 +857,7 @@ void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *ins
 		// Allocate memory for the new instruments
 		if (!_customInstruments[note]) {
 			_customInstruments[note] = new AdLibInstrument;
+			memset(_customInstruments[note], 0, sizeof(AdLibInstrument));
 		}
 
 		// Save the new instrument data

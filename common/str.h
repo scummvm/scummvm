@@ -38,7 +38,7 @@ namespace Common {
  * a certain length do we allocate a buffer on the heap.
  *
  * The presence of \0 characters in the string will cause undefined
- * behaviour in some operations.
+ * behavior in some operations.
  */
 class String {
 protected:
@@ -377,5 +377,8 @@ size_t strlcat(char *dst, const char *src, size_t size);
 
 
 } // End of namespace Common
+
+extern int scumm_stricmp(const char *s1, const char *s2);
+extern int scumm_strnicmp(const char *s1, const char *s2, uint n);
 
 #endif

@@ -22,6 +22,8 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_fgetc
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdin
 
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"

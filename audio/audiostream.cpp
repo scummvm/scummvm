@@ -48,7 +48,7 @@ struct StreamFileFormat {
 };
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
-	/* decoderName,  fileExt, openStreamFuntion */
+	/* decoderName,  fileExt, openStreamFunction */
 #ifdef USE_FLAC
 	{ "FLAC",         ".flac", makeFLACStream },
 	{ "FLAC",         ".fla",  makeFLACStream },

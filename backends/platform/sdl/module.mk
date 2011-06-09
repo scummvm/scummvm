@@ -5,7 +5,7 @@ MODULE_OBJS := \
 	main.o \
 	sdl.o
 
-ifdef UNIX
+ifdef POSIX
 MODULE_OBJS += \
 	posix/posix-main.o \
 	posix/posix.o

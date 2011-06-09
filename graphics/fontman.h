@@ -36,7 +36,7 @@ class Font;
 class FontManager : public Common::Singleton<FontManager> {
 public:
 	enum FontUsage {
-		kOSDFont = 0,
+		kLocalizedFont = 0,
 		kConsoleFont = 1,
 		kGUIFont = 2,
 		kBigGUIFont = 3
@@ -57,14 +57,14 @@ public:
 	 * @param font	the font object
 	 * @return true on success, false on failure
 	 */
-	bool assignFontToName(const Common::String &name, const Font *font) { _fontMap[name] = font; return true; }
+	bool assignFontToName(const Common::String &name, const Font *font);
 
 	/**
 	 * Removes binding from name to font
 	 *
 	 * @param name	name which should be removed
 	 */
-	void removeFontName(const Common::String &name) { _fontMap.erase(name); }
+	void removeFontName(const Common::String &name);
 
 	/**
 	 * Retrieve a font object based on what it is supposed
@@ -75,8 +75,26 @@ public:
 	 */
 	const Font *getFontByUsage(FontUsage usage) const;
 
+	/**
+	 * Get the localized font for the current TranslationManager charset from the
+	 * non localized font name
+	 *
+	 * @param filename the non-localized font file name.
+	 * @return The localized font file name.
+	 */
+	Common::String genLocalizedFontFilename(const Common::String &filename) const;
+
 	//const Font *getFontBySize(int size???) const;
 
+protected:
+	/**
+	 * Get the name of the localized font for the given usage. There is no garanty that
+	 * the font exists. If the usage is kLocalizedFont it returns an empty string.
+	 *
+	 * @param usage	a FontUsage enum value indicating what the font will be used for.
+	 * @return the name of a localized font or an empty string if no suitable font was found.
+	 */
+	Common::String getLocalizedFontNameByUsage(FontUsage usage) const;
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;

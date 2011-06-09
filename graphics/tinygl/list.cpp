@@ -1,6 +1,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_fputc
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 
 #include "graphics/tinygl/zgl.h"
 

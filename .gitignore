@@ -23,12 +23,23 @@ lib*.a
 /.project
 /.cproject
 /.settings
+/Icon.*
 
 /build
 /dists/codeblocks/*.cbp
 /dists/codeblocks/*.depend
 /dists/codeblocks/*.layout
-/dists/codeblocks/scummvm*
+/dists/codeblocks/residual*
+
+#Ignore XCode user data and build files
+xcuserdata
+project.xcworkspace
+/dists/iphone/build
+/dists/iphone/residual.xcodeproj
+/dists/iphone/create_project
+/dists/macosx/build
+/dists/macosx/residual.xcodeproj
+/dists/macosx/create_project
 
 /dists/msvc*/[Dd]ebug*/
 /dists/msvc*/[Rr]elease*/

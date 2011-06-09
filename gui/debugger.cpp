@@ -29,7 +29,7 @@
 #include "engines/engine.h"
 
 #include "gui/debugger.h"
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	#include "gui/console.h"
 #elif defined(USE_READLINE)
 	#include <readline/readline.h>
@@ -44,7 +44,7 @@ Debugger::Debugger() {
 	_isActive = false;
 	_errStr = NULL;
 	_firstTime = true;
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	_debuggerDialog = new GUI::ConsoleDialog(1.0f, 0.67f);
 	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
 	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
@@ -59,6 +59,7 @@ Debugger::Debugger() {
 	DCmd_Register("quit",				WRAP_METHOD(Debugger, Cmd_Exit));
 
 	DCmd_Register("help",				WRAP_METHOD(Debugger, Cmd_Help));
+	DCmd_Register("openlog",			WRAP_METHOD(Debugger, Cmd_OpenLog));
 
 	DCmd_Register("debugflag_list",		WRAP_METHOD(Debugger, Cmd_DebugFlagsList));
 	DCmd_Register("debugflag_enable",	WRAP_METHOD(Debugger, Cmd_DebugFlagEnable));
@@ -66,7 +67,7 @@ Debugger::Debugger() {
 }
 
 Debugger::~Debugger() {
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	delete _debuggerDialog;
 #endif
 }
@@ -78,7 +79,7 @@ int Debugger::DebugPrintf(const char *format, ...) {
 
 	va_start(argptr, format);
 	int count;
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	count = _debuggerDialog->vprintFormat(1, format, argptr);
 #else
 	count = ::vprintf(format, argptr);
@@ -125,7 +126,7 @@ void Debugger::onFrame() {
 	}
 }
 
-#if defined(USE_TEXT_CONSOLE) && defined(USE_READLINE)
+#if defined(USE_TEXT_CONSOLE_FOR_DEBUGGER) && defined(USE_READLINE)
 namespace {
 Debugger *g_readline_debugger;
 
@@ -140,7 +141,7 @@ void Debugger::enter() {
 	// TODO: Having three I/O methods #ifdef-ed in this file is not the
 	// cleanest approach to this...
 
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	if (_firstTime) {
 		DebugPrintf("Debugger started, type 'exit' to return to the game.\n");
 		DebugPrintf("Type 'help' to see a little list of commands and variables.\n");
@@ -363,7 +364,7 @@ bool Debugger::tabComplete(const char *input, Common::String &completion) const 
 	return true;
 }
 
-#if defined(USE_TEXT_CONSOLE) && defined(USE_READLINE)
+#if defined(USE_TEXT_CONSOLE_FOR_DEBUGGER) && defined(USE_READLINE)
 char *Debugger::readlineComplete(const char *input, int state) {
 	static CommandsMap::const_iterator iter;
 
@@ -417,7 +418,7 @@ bool Debugger::Cmd_Exit(int argc, const char **argv) {
 // Print a list of all registered commands (and variables, if any),
 // nicely word-wrapped.
 bool Debugger::Cmd_Help(int argc, const char **argv) {
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	const int charsPerLine = _debuggerDialog->getCharsPerLine();
 #elif defined(USE_READLINE)
 	int charsPerLine, rows;
@@ -475,6 +476,15 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::Cmd_OpenLog(int argc, const char **argv) {
+	if (g_system->hasFeature(OSystem::kFeatureDisplayLogFile))
+		g_system->displayLogFile();
+	else
+		DebugPrintf("Opening the log file not supported on this system\n");
+	return true;
+}
+
+
 bool Debugger::Cmd_DebugFlagsList(int argc, const char **argv) {
 	const Common::DebugManager::DebugChannelList &debugLevels = DebugMan.listDebugChannels();
 
@@ -520,7 +530,7 @@ bool Debugger::Cmd_DebugFlagDisable(int argc, const char **argv) {
 }
 
 // Console handler
-#ifndef USE_TEXT_CONSOLE
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 bool Debugger::debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon) {
 	Debugger *debugger = (Debugger *)refCon;
 

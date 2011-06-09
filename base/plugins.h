@@ -80,7 +80,7 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 	(ENABLE_##ID && !PLUGIN_ENABLED_DYNAMIC(ID))
 
 #define PLUGIN_ENABLED_DYNAMIC(ID) \
-	(ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN) && DYNAMIC_MODULES)
+	(ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN) && defined(DYNAMIC_MODULES))
 
 // see comments in backends/plugins/elf/elf-provider.cpp
 #if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
@@ -92,7 +92,7 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
 #ifdef USE_ELF_LOADER
 #define PLUGIN_DYNAMIC_BUILD_DATE \
-	PLUGIN_EXPORT const char *PLUGIN_getBuildDate() { return gResidualPluginBuildDate; }
+	PLUGIN_EXPORT const char *PLUGIN_getBuildDate() { return gScummVMPluginBuildDate; }
 #else
 #define PLUGIN_DYNAMIC_BUILD_DATE
 #endif

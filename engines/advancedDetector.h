@@ -101,11 +101,6 @@ struct ADFileBasedFallback {
 
 enum ADFlags {
 	/**
-	 * Generate/augment preferred target with information on the language (if
-	 * not equal to english) and platform (if not equal to PC).
-	 */
-	kADFlagDontAugmentPreferredTarget = (1 << 0),
-	/**
 	 * Warn user about new variant if his version was detected with fallback
 	 */
 	kADFlagPrintWarningOnFileBasedFallback = (1 << 1),
