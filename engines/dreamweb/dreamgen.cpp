@@ -6220,18 +6220,18 @@ afterslow:
 	context._add(context.bx, 10);
 	goto printloopslow6;
 finishslow:
-	context.cx = context.pop();
-	context.si = context.pop();
 	context.es = context.pop();
+	context.si = context.pop();
+	context.cx = context.pop();
 	context.dx = context.pop();
 	context.di = context.pop();
 	context.bx = context.pop();
 	context.al = 0;
 	return;
 finishslow2:
-	context.cx = context.pop();
-	context.si = context.pop();
 	context.es = context.pop();
+	context.si = context.pop();
+	context.cx = context.pop();
 	context.dx = context.pop();
 	context.di = context.pop();
 	context.bx = context.pop();
