@@ -303,9 +303,9 @@ void gettime(Context &context) {
 	context.ch = t.tm_hour;
 	context.cl = t.tm_min;
 	context.dh = t.tm_sec;
-	context.ds.byte(5) = context.dh;
-	context.ds.byte(6) = context.cl;
-	context.ds.byte(7) = context.ch;
+	context.data.byte(kSecondcount) = context.dh;
+	context.data.byte(kMinutecount) = context.cl;
+	context.data.byte(kHourcount) = context.ch;
 }
 
 void allocatemem(Context &context) {
