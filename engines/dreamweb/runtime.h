@@ -6,6 +6,8 @@
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/hashmap.h"
+#include "common/list.h"
+#include "common/ptr.h"
 
 namespace dreamgen {
 
@@ -111,15 +113,17 @@ struct Segment {
 	}
 };
 
+typedef Common::SharedPtr<Segment> SegmentPtr;
+
 class Context;
 
 class SegmentRef {
-	Context			*_context;
-	uint16			_value;
-	Segment			*_segment;
+	Context		*_context;
+	uint16		_value;
+	SegmentPtr	_segment;
 
 public:
-	SegmentRef(Context *ctx, uint16 value = 0, Segment *segment = 0): _context(ctx), _value(value), _segment(segment) {
+	SegmentRef(Context *ctx, uint16 value = 0, SegmentPtr segment = SegmentPtr()): _context(ctx), _value(value), _segment(segment) {
 	}
 
 	inline void reset(uint16 value);
@@ -188,8 +192,11 @@ struct Flags {
 };
 
 class Context {
-	typedef Common::HashMap<uint16, Segment> SegmentMap;
+	typedef Common::HashMap<uint16, SegmentPtr> SegmentMap;
 	SegmentMap _segments;
+
+	typedef Common::List<uint16> FreeSegmentList;
+	FreeSegmentList _freeSegments;
 	
 public:
 	enum { kDefaultDataSegment = 0x1000, kVideoSegment = 0xa000 };
@@ -210,8 +217,9 @@ public:
 
 	inline Context(): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), 
 		cs(this), ds(this), es(this), data(this), video(this) {
-		_segments[kDefaultDataSegment] = Segment();
-		_segments[kVideoSegment].data.resize(0x10000);
+		_segments[kDefaultDataSegment] = SegmentPtr(new Segment());
+		_segments[kVideoSegment] = SegmentPtr(new Segment());
+		_segments[kVideoSegment]->data.resize(0x10000);
 		
 		cs.reset(kDefaultDataSegment);
 		ds.reset(kDefaultDataSegment);
@@ -223,15 +231,29 @@ public:
 	SegmentRef getSegment(uint16 value) {
 		SegmentMap::iterator i = _segments.find(value);
 		assert(i != _segments.end());
-		return SegmentRef(this, value, &i->_value);
+		return SegmentRef(this, value, i->_value);
 	}
 
 	SegmentRef allocateSegment(uint size) {
-		unsigned id = kDefaultDataSegment + _segments.size();
+		unsigned id;
+		if (_freeSegments.empty())
+			id = kDefaultDataSegment + _segments.size();
+		else {
+			id = _freeSegments.front();
+			_freeSegments.pop_front();
+		}
 		assert(!_segments.contains(id));
-		Segment &seg = _segments[id];
-		seg.data.resize(size);
-		return SegmentRef(this, id, &seg);
+		SegmentPtr seg(new Segment());
+		seg->data.resize(size);
+		_segments[id] = seg;
+		return SegmentRef(this, id, seg);
+	}
+
+	void deallocateSegment(uint16 id) {
+		SegmentMap::iterator i = _segments.find(id);
+		assert(i != _segments.end());
+		_segments.erase(i);
+		_freeSegments.push_back(id);
 	}
 
 	inline void _cmp(uint8 a, uint8 b) {

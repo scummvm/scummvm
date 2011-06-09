@@ -318,7 +318,8 @@ void allocatemem(Context &context) {
 }
 
 void deallocatemem(Context &context) {
-	::error("deallocatemem");
+	debug(1, "deallocating segment %04x", (uint16)context.es);
+	context.deallocateSegment(context.es);
 }
 
 void removeemm(Context &context) {
@@ -400,16 +401,18 @@ void setsoundoff(Context &context) {
 	warning("setsoundoff: STUB");
 }
 
-
-void loadsecondsample(Context &context) {
-	::error("loadsecondsample");
-}
+void readheader(Context &context);
 
 void loadsample(Context &context) {
 	warning("loadsample: STUB");
 	openfile(context);
 	closefile(context);
-	//readheader(context); //add exports to tasm recompiler
+}
+
+void loadsecondsample(Context &context) {
+	warning("loadsecondsample: STUB");
+	openfile(context);
+	closefile(context);
 }
 
 void loadspeech(Context &context) {
