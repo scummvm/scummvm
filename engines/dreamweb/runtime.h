@@ -13,7 +13,10 @@ namespace dreamgen {
 #undef random
 
 struct Register {
-	uint16 _value;
+	union {
+		uint16 _value;
+		uint8 _part[2];
+	};
 	inline Register(): _value() {}
 	inline Register& operator=(uint16 v) { _value = v; return *this; }
 	inline operator uint16&() { return _value; }
@@ -21,35 +24,38 @@ struct Register {
 		if (_value & 0x80)
 			_value |= 0xff00;
 		else
-			_value &= 0xff;
+			_value &= 0x7f;
 	}
 };
 
-template<int Mask, int Shift>
+template<int kIndex> //from low to high
 struct RegisterPart {
-	Register		&_reg;
-	uint8			_value;
+	uint8			&_value;
 
-	explicit inline RegisterPart(Register &reg) : _reg(reg), _value(reg._value >> Shift) {}
+	explicit inline RegisterPart(Register &reg) : _value(reg._part[kIndex]) {}
 
 	inline operator uint8&() {
 		return _value;
 	}
+
 	inline RegisterPart& operator=(const RegisterPart& o) {
 		_value = o._value;
 		return *this;
 	}
+
 	inline RegisterPart& operator=(uint8 v) {
 		_value = v;
 		return *this;
 	}
-	inline ~RegisterPart() {
-		_reg._value = (_reg._value & ~Mask) | (_value << Shift);
-	}
 };
 
-typedef RegisterPart<0xff, 0> LowPartOfRegister;
-typedef RegisterPart<0xff00, 8> HighPartOfRegister;
+#ifdef SCUMM_LITTLE_ENDIAN
+	typedef RegisterPart<0> LowPartOfRegister;
+	typedef RegisterPart<1> HighPartOfRegister;
+#else
+	typedef RegisterPart<1> LowPartOfRegister;
+	typedef RegisterPart<0> HighPartOfRegister;
+#endif
 
 class WordRef {
 	uint8		*_data;
