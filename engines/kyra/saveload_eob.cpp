@@ -127,6 +127,23 @@ void LolEobBaseEngine::releaseTempData() {
 	}
 }
 
+void *LolEobBaseEngine::generateFlyingObjectTempData(LevelTempData *tmp) {
+	assert(_flyingObjectStructSize == sizeof(EobFlyingObject));
+	EobFlyingObject *f = new EobFlyingObject[_numFlyingObjects];
+	memcpy(f, _flyingObjectsPtr,  sizeof(EobFlyingObject) * _numFlyingObjects);
+	return f;
+}
+
+void LolEobBaseEngine::restoreFlyingObjectTempData(LevelTempData *tmp) {
+	assert(_flyingObjectStructSize == sizeof(EobFlyingObject));
+	memcpy(_flyingObjectsPtr, tmp->flyingObjects, sizeof(EobFlyingObject) * _numFlyingObjects);
+}
+
+void LolEobBaseEngine::releaseFlyingObjectTempData(LevelTempData *tmp) {
+	EobFlyingObject *p = (EobFlyingObject*)tmp->flyingObjects;
+	delete[] p;
+}
+
 #ifdef ENABLE_EOB
 
 Common::Error EobCoreEngine::loadGameState(int slot) {
@@ -269,7 +286,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		_lvlTempData[i]->flags = new uint16[1024];
 		EobMonsterInPlay *lm = new EobMonsterInPlay[30];
 		 _lvlTempData[i]->monsters = lm;
-		EobFlyingObject *lf = new EobFlyingObject[10];
+		EobFlyingObject *lf = new EobFlyingObject[_numFlyingObjects];
 		_lvlTempData[i]->flyingObjects = lf;
 		LevelTempData *l = _lvlTempData[i];
 
@@ -305,7 +322,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 			m->sub = in.readByte();
 		}
 
-		for (int ii = 0; ii < 10; ii++) {
+		for (int ii = 0; ii < _numFlyingObjects; ii++) {
 			EobFlyingObject *m = &lf[ii];
 			m->enable = in.readByte();
 			m->objectType = in.readByte();
@@ -481,7 +498,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 			out->writeByte(m->sub);
 		}
 
-		for (int ii = 0; ii < 10; ii++) {
+		for (int ii = 0; ii < _numFlyingObjects; ii++) {
 			EobFlyingObject *m = &lf[ii];
 			out->writeByte(m->enable);
 			out->writeByte(m->objectType);
@@ -519,27 +536,13 @@ void *EobCoreEngine::generateMonsterTempData(LevelTempData *tmp) {
 	return m;
 }
 
-void *EobCoreEngine::generateFlyingObjectTempData(LevelTempData *tmp) {
-	EobFlyingObject *f = new EobFlyingObject[10];
-	memcpy(f, _flyingObjects,  sizeof(EobFlyingObject) * 10);
-	return f;
-}
-
 void EobCoreEngine::restoreMonsterTempData(LevelTempData *tmp) {
 	memcpy(_monsters, tmp->monsters, sizeof(EobMonsterInPlay) * 30);
-}
-
-void EobCoreEngine::restoreFlyingObjectTempData(LevelTempData *tmp) {
-	memcpy(_flyingObjects, tmp->flyingObjects, sizeof(EobFlyingObject) * 10);
 }
 
 void EobCoreEngine::releaseMonsterTempData(LevelTempData *tmp) {
 	EobMonsterInPlay *p = (EobMonsterInPlay*)tmp->monsters;
 	delete[] p;
-}
-
-void EobCoreEngine::releaseFlyingObjectTempData(LevelTempData *tmp) {
-
 }
 
 #endif // ENABLE_EOB

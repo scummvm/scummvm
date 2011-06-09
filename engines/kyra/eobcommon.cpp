@@ -297,8 +297,9 @@ Common::Error EobCoreEngine::init() {
 		memset(_itemNames[i], 0, 35);
 	}
 
-	_flyingObjects = new EobFlyingObject[10];
-	memset(_flyingObjects, 0, 10 * sizeof(EobFlyingObject));
+	_flyingObjects = new EobFlyingObject[_numFlyingObjects];
+	_flyingObjectsPtr = _flyingObjects;
+	memset(_flyingObjects, 0, _numFlyingObjects * sizeof(EobFlyingObject));
 
 	_spellAnimBuffer = new uint8[4096];
 	memset(_spellAnimBuffer, 0, 4096);

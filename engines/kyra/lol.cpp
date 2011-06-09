@@ -417,8 +417,10 @@ Common::Error LoLEngine::init() {
 	_tempBuffer5120 = new uint8[5120];
 	memset(_tempBuffer5120, 0, 5120);
 
-	_flyingObjects = new FlyingObject[8];
-	memset(_flyingObjects, 0, 8 * sizeof(FlyingObject));
+	_flyingObjects = new FlyingObject[_numFlyingObjects];
+	_flyingObjectsPtr = _flyingObjects;
+	_flyingObjectStructSize = sizeof(FlyingObject);
+	memset(_flyingObjects, 0, _numFlyingObjects * sizeof(FlyingObject));
 
 	memset(_globalScriptVars, 0, sizeof(_globalScriptVars));
 
