@@ -146,15 +146,13 @@ void Screen_Eob::loadEobBitmap(const char *file, int tempPage, int destPage) {
 }
 
 void Screen_Eob::loadEobCpsFileToPage(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage) {
-	char tmp[13];
-	sprintf(tmp, "%s.CPS", file);
-
+	Common::String tmp = Common::String::format("%s.CPS", file);
 	Common::SeekableReadStream *s = _vm->resource()->createReadStream(tmp);
 	bool loadAlternative = false;
 	if (s) {
 		// This additional check is necessary since some localized versions of EOB II seem to contain invalid (size zero) cps files
 		if (s->size())
-			loadBitmap(tmp, tempPage, destPage, 0);
+			loadBitmap(tmp.c_str(), tempPage, destPage, 0);
 		else
 			loadAlternative = true;
 
@@ -164,7 +162,7 @@ void Screen_Eob::loadEobCpsFileToPage(const char *file, const uint8 *ditheringDa
 	}
 
 	if (loadAlternative) {
-		tmp[0] = 'X';
+		tmp.setChar('X', 0);
 		s = _vm->resource()->createReadStream(tmp);
 		if (!s)
 			error("Screen_Eob::loadEobCpsFileToPage(): CPS file loading failed.");

@@ -345,7 +345,7 @@ protected:
 	int getClassAndConstHitpointsModifier(int cclass, int constitution);
 	int getClassHpIncreaseType(int cclass, int levelIndex);
 	int getModifiedHpLimits(int hpModifier, int constModifier, int level, bool mode);
-	const char *getCharStrength(int str, int strExt);
+	Common::String getCharStrength(int str, int strExt);
 	int testCharacter(int index, int flags);
 	int getNextValidCharIndex(int curCharIndex, int searchStep);
 
@@ -374,7 +374,7 @@ protected:
 	void setWeaponSlotStatus(int charIndex, int mode, int slot);
 
 	EobCharacter *_characters;
-	char _strenghtStr[6];
+	Common::String _strenghtStr;
 	int _castScrollSlot;
 	int _exchangeCharacterId;
 
@@ -525,7 +525,7 @@ protected:
 
 	// Level
 	void loadLevel(int level, int func);
-	const char *initLevelData(int func);
+	Common::String initLevelData(int func);
 	void addLevelItems();
 	void loadVcnData(const char *file, const char */*nextFile*/);
 	void loadBlockProperties(const char *mazFile);
@@ -562,7 +562,7 @@ protected:
 	SpriteDecoration *_doorSwitches;
 
 	int8 _currentSub;
-	char _curGfxFile[13];
+	Common::String _curGfxFile;
 
 	uint32 _drawSceneTimer;
 	uint32 _flashShapeTimer;

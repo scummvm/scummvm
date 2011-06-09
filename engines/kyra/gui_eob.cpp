@@ -188,8 +188,6 @@ void EobCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		txtCol2 = 6;
 	}
 
-	char tmpStr[10];
-
 	if (_currentControlMode == 0) {
 		int x2 = charPortraitPosX[index & 1];
 		int y2 = charPortraitPosY[index >> 1];
@@ -214,8 +212,8 @@ void EobCoreEngine::gui_drawCharPortraitWithStats(int index) {
 
 		if (c->damageTaken > 0) {
 			_screen->drawShape(2, _redSplatShape, x2 + 13, y2 + 30, 0);
-			sprintf(tmpStr, "%d", c->damageTaken);
-			_screen->printText(tmpStr, x2 + 34 - (strlen(tmpStr) * 3), y2 + 42, 15, 0);
+			Common::String tmpStr = Common::String::format("%d", c->damageTaken);
+			_screen->printText(tmpStr.c_str(), x2 + 34 - tmpStr.size() * 3, y2 + 42, 15, 0);
 		}
 
 		_screen->setCurPage(cp);
@@ -272,19 +270,13 @@ void EobCoreEngine::gui_drawCharPortraitWithStats(int index) {
 			_screen->printText(_characterGuiStringsIn[2], 239, 138, 12, _color6);
 			_screen->printText(_characterGuiStringsIn[3], 278, 138, 12, _color6);
 
-			_screen->printText(getCharStrength(c->strengthCur, c->strengthExtCur), 275, 82, 15, _color6);
-			sprintf(tmpStr, "%d", c->intelligenceCur);
-			_screen->printText(tmpStr, 275, 89, 15, _color6);
-			sprintf(tmpStr, "%d", c->wisdomCur);
-			_screen->printText(tmpStr, 275, 96, 15, _color6);
-			sprintf(tmpStr, "%d", c->dexterityCur);
-			_screen->printText(tmpStr, 275, 103, 15, _color6);
-			sprintf(tmpStr, "%d", c->constitutionCur);
-			_screen->printText(tmpStr, 275, 110, 15, _color6);
-			sprintf(tmpStr, "%d", c->charismaCur);
-			_screen->printText(tmpStr, 275, 117, 15, _color6);
-			sprintf(tmpStr, "%d", c->armorClass);
-			_screen->printText(tmpStr, 275, 124, 15, _color6);
+			_screen->printText(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), 275, 82, 15, _color6);
+			_screen->printText(Common::String::format("%d", c->intelligenceCur).c_str(), 275, 89, 15, _color6);
+			_screen->printText(Common::String::format("%d", c->wisdomCur).c_str(), 275, 96, 15, _color6);
+			_screen->printText(Common::String::format("%d", c->dexterityCur).c_str(), 275, 103, 15, _color6);
+			_screen->printText(Common::String::format("%d", c->constitutionCur).c_str(), 275, 110, 15, _color6);
+			_screen->printText(Common::String::format("%d", c->charismaCur).c_str(), 275, 117, 15, _color6);
+			_screen->printText(Common::String::format("%d", c->armorClass).c_str(), 275, 124, 15, _color6);
 
 			for (int i = 0; i < 3; i++) {
 				int t = getClassHpIncreaseType(c->cClass, i);
@@ -292,10 +284,10 @@ void EobCoreEngine::gui_drawCharPortraitWithStats(int index) {
 					continue;
 
 				_screen->printText(_chargenClassStrings[t + 15], 180, 145 + 7 * i, 12, _color6);
-				sprintf(tmpStr, "%d", c->experience[i]);
-				_screen->printText(tmpStr, 251 - strlen(tmpStr) * 3, 145 + 7 * i, 15, _color6);
-				sprintf(tmpStr, "%d", c->level[i]);
-				_screen->printText(tmpStr, 286 - strlen(tmpStr) * 3, 145 + 7 * i, 15, _color6);
+				Common::String tmpStr = Common::String::format("%d", c->experience[i]);
+				_screen->printText(tmpStr.c_str(), 251 - tmpStr.size() * 3, 145 + 7 * i, 15, _color6);
+				tmpStr = Common::String::format("%d", c->level[i]);
+				_screen->printText(tmpStr.c_str(), 286 - tmpStr.size() * 3, 145 + 7 * i, 15, _color6);
 			}
 		}
 
@@ -397,10 +389,9 @@ void EobCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {
 }
 
 void EobCoreEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
-	char tmpStr[6];
-	char tmpStr2[6];
-	tmpStr2[0] = 0;
-
+	Common::String tmpStr;
+	Common::String tmpStr2;
+	
 	if (status > -3 || status == -5)
 		_screen->drawShape(_screen->_curPage, _greenSplatShape, x - 1, y, 0);
 	else
@@ -408,32 +399,32 @@ void EobCoreEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
 
 	switch (status + 5) {
 		case 0:
-			strcpy(tmpStr, _characterGuiStringsWp[2]);
+			tmpStr = _characterGuiStringsWp[2];
 			break;
 		case 1:
-			strcpy(tmpStr, _characterGuiStringsWr[2]);
-			strcpy(tmpStr2, _characterGuiStringsWr[3]);
+			tmpStr = _characterGuiStringsWr[2];
+			tmpStr2 = _characterGuiStringsWr[3];
 			break;
 		case 2:
-			strcpy(tmpStr, _characterGuiStringsWr[0]);
-			strcpy(tmpStr2, _characterGuiStringsWr[1]);
+			tmpStr = _characterGuiStringsWr[0];
+			tmpStr2 = _characterGuiStringsWr[1];
 			break;
 		case 3:
-			strcpy(tmpStr, _characterGuiStringsWp[1]);
+			tmpStr = _characterGuiStringsWp[1];
 			break;
 		case 4:
-			strcpy(tmpStr, _characterGuiStringsWp[0]);
+			tmpStr = _characterGuiStringsWp[0];
 			break;
 		default:
-			snprintf(tmpStr, 6, "%d", status);
+			tmpStr = Common::String::format("%d", status);
 			break;
 	}
 
-	if (tmpStr2[0]) {
-		_screen->printText(tmpStr, x + (16 - strlen(tmpStr) * 3), y + 2, 15, 0);
-		_screen->printText(tmpStr2, x + (16 - strlen(tmpStr) * 3), y + 9, 15, 0);
+	if (!tmpStr2.empty()) {
+		_screen->printText(tmpStr.c_str(), x + (16 - tmpStr.size() * 3), y + 2, 15, 0);
+		_screen->printText(tmpStr2.c_str(), x + (16 - tmpStr.size() * 3), y + 9, 15, 0);
 	} else {
-		_screen->printText(tmpStr, x + (16 - strlen(tmpStr) * 3), y + 5, 15, 0);
+		_screen->printText(tmpStr.c_str(), x + (16 - tmpStr.size() * 3), y + 5, 15, 0);
 	}
 }
 
@@ -479,15 +470,14 @@ void EobCoreEngine::gui_drawHitpoints(int index) {
 		gui_drawHorizontalBarGraph(x, y, w, h, bgCur, bgMax, barColor[col], _color5);
 
 	} else {
-		char tmpString[12];
-		snprintf(tmpString, 12, _characterGuiStringsHp[1], c->hitPointsCur, c->hitPointsMax);
+		Common::String tmpString = Common::String::format(_characterGuiStringsHp[1], c->hitPointsCur, c->hitPointsMax);
 
 		if (!_currentControlMode) {
 			x -= 13;
 			y -= 1;
 		}
 
-		_screen->printText(tmpString, x, y, 12, _bkgColor_1);
+		_screen->printText(tmpString.c_str(), x, y, 12, _bkgColor_1);
 	}
 }
 
@@ -596,9 +586,8 @@ void EobCoreEngine::gui_drawInventoryItem(int slot, int special, int pageNum) {
 			_screen->fillRect(227, 65, 238, 69, 12);
 			int cnt = countQueuedItems(_characters[_updateCharNum].inventory[slot], -1, -1, 1, 1);
 			x = cnt >= 10 ? 227 : 233;
-			char str[3];
-			snprintf(str, 3, "%d", cnt);
-			_screen->printText(str, x, 65, 15, 0);
+			Common::String str = Common::String::format("%d", cnt);
+			_screen->printText(str.c_str(), x, 65, 15, 0);
 		}
 	}
 
@@ -653,9 +642,7 @@ void EobCoreEngine::gui_drawSpellbook() {
 			_screen->printText(_magicStrings7[i], i * 21 + 73, 123, 12, 0);
 		} else {
 			gui_drawBox(i * 18 + 68, 121, 18, 9, col1, col2, col3);
-			char val[3];
-			sprintf(val, "%d", i + 1);
-			_screen->printText(val, i * 18 + 75, 123, 12, 0);
+			_screen->printText(Common::String::format("%d", i + 1).c_str(), i * 18 + 75, 123, 12, 0);
 		}
 	}
 

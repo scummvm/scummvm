@@ -621,28 +621,23 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 	_currentLevel = level;
 	_currentSub = sub;
 
-	char file[13];
-	snprintf(file, 13, "LEVEL%d.INF", level);
-
-	Common::SeekableReadStream *s = _res->createReadStream(file);
-	if (!s) {
-		snprintf(file, 13, "LEVEL%d.DRO", level);
-		s = _res->createReadStream(file);
-	}
-
-	if (!s) {
-		snprintf(file, 13, "LEVEL%d.ELO", level);
-		s = _res->createReadStream(file);
+	Common::String file;
+	Common::SeekableReadStream *s = 0;
+	static const char *suffix[] = { "INF", "DRO", "ELO", 0 };
+	
+	for (const char *const *sf = suffix; *sf && !s; sf++) {
+		file = Common::String::format("LEVEL%d.%s", level, *sf);
+		s = _res->createReadStream(file.c_str());
 	}
 
 	if (!s)
-		error("Failed loading level file LEVEL%d.INF/DRO/ELO", level);
+		error("Failed to load level file LEVEL%d.INF/DRO/ELO", level);
 
 	if (s->readUint16LE() + 2 == s->size()) {
 		if (s->readUint16LE() == 4) {
 			delete s;
 			s = 0;
-			_screen->loadBitmap(file, 5, 5, 0);
+			_screen->loadBitmap(file.c_str(), 5, 5, 0);
 		}
 	}
 
@@ -652,7 +647,7 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 		delete s;
 	}
 
-	const char *gfxFile = initLevelData(sub);
+	Common::String gfxFile = initLevelData(sub);
 
 	const uint8 *data = _screen->getCPagePtr(5);
 	const uint8 *pos = data + READ_LE_UINT16(data);
@@ -694,7 +689,7 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 		pos += 2;
 	}
 
-	loadVcnData(gfxFile, 0);
+	loadVcnData(gfxFile.c_str(), 0);
 	_screen->loadEobCpsFileToPage("INVENT", 0, 5, 3, 2);
 
 	enableSysTimer(2);
@@ -703,13 +698,12 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 	_screen->setCurPage(0);
 }
 
-const char *EobCoreEngine::initLevelData(int sub){
+Common::String EobCoreEngine::initLevelData(int sub){
 	const uint8 *data = _screen->getCPagePtr(5) + 2;
 	const uint8 *pos = data;
 
 	int slen = (_flags.gameID == GI_EOB1) ? 12 : 13;
 
-	char tmpStr[13];
 	_sound->playTrack(0);
 
 	for (int i = 0; i < sub; i++)
@@ -723,8 +717,7 @@ const char *EobCoreEngine::initLevelData(int sub){
 		loadBlockProperties((const char*)pos);
 		pos += slen;
 
-		snprintf(tmpStr, slen, "%s.VMP", (const char*) pos);
-		Common::SeekableReadStream *s = _res->createReadStream(tmpStr);
+		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.VMP", (const char*)pos).c_str());
 		uint16 size = s->readUint16LE();
 		delete[] _vmpPtr;
 		_vmpPtr = new uint16[size];
@@ -732,12 +725,12 @@ const char *EobCoreEngine::initLevelData(int sub){
 			_vmpPtr[i] = s->readUint16LE();
 		delete s;
 
-		snprintf(tmpStr, 13, "%s.PAL", (const char*) pos);
-		strcpy(_curGfxFile, (const char*) pos);
+		Common::String tmpStr = Common::String::format("%s.PAL", (const char*) pos);
+		_curGfxFile = (const char*) pos;
 		pos += slen;
 
 		if (*pos++ != 0xff && _flags.gameID == GI_EOB2) {
-			snprintf(tmpStr, 13, "%s.PAL", (const char*) pos);
+			tmpStr = Common::String::format("%s.PAL", (const char*) pos);
 			pos += 13;
 		}
 
@@ -749,7 +742,7 @@ const char *EobCoreEngine::initLevelData(int sub){
 			_screen->setShapeFadeMode(1, false);
 		} ////////////////////
 		else
-			_screen->loadPalette(tmpStr, _screen->getPalette(0));
+			_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(0));
 		////////////////////7
 
 		Palette backupPal(256);
@@ -856,10 +849,8 @@ void EobCoreEngine::addLevelItems() {
 void EobCoreEngine::loadVcnData(const char *file, const char*/*nextFile*/) {
 	if (file)
 		strcpy(_lastBlockDataFile, file);
-
-	char fname[13];
-	snprintf(fname, sizeof(fname), "%s.VCN", _lastBlockDataFile);
-	_screen->loadBitmap(fname, 3, 3, 0);
+	
+	_screen->loadBitmap(Common::String::format("%s.VCN", _lastBlockDataFile).c_str(), 3, 3, 0);
 	const uint8 *v = _screen->getCPagePtr(2);
 	uint32 tlen = READ_LE_UINT16(v) << 5;
 	v += 2;

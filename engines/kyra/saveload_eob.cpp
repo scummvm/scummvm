@@ -47,16 +47,13 @@ void LolEobBaseEngine::generateTempData() {
 	_lvlTempData[l]->wallsXorData = new uint8[4096];
 	_lvlTempData[l]->flags = new uint16[1024];
 
-	char filename[13];
 	const uint8 *p = 0;
 	const uint8 *p2 = 0;
 	if (_flags.gameID == GI_LOL) {
-		snprintf(filename, sizeof(filename), "LEVEL%d.CMZ", _currentLevel);
-		screen()->loadBitmap(filename, 15, 15, 0);
+		screen()->loadBitmap(Common::String::format("LEVEL%d.CMZ", _currentLevel).c_str(), 15, 15, 0);
 		p = screen()->getCPagePtr(14);
 	} else {
-		snprintf(filename, sizeof(filename), "LEVEL%d.MAZ", _currentLevel);
-		p2 = p = _res->fileData(filename, 0);
+		p2 = p = _res->fileData(Common::String::format("LEVEL%d.MAZ", _currentLevel).c_str(), 0);
 	}
 
 	uint16 len = READ_LE_UINT16(p + 4);
@@ -82,16 +79,13 @@ void LolEobBaseEngine::generateTempData() {
 
 void LolEobBaseEngine::restoreBlockTempData(int levelIndex) {
 	int l = levelIndex - 1;
-	char filename[13];
 	const uint8 *p = 0;
 	const uint8 *p2 = 0;
 	if (_flags.gameID == GI_LOL) {
-		snprintf(filename, sizeof(filename), "LEVEL%d.CMZ", levelIndex);
-		screen()->loadBitmap(filename, 3, 3, 0);
+		screen()->loadBitmap(Common::String::format("LEVEL%d.CMZ", levelIndex).c_str(), 3, 3, 0);
 		p = screen()->getCPagePtr(2);
 	} else {
-		snprintf(filename, sizeof(filename), "LEVEL%d.MAZ", levelIndex);
-		p2 = p = _res->fileData(filename, 0);
+		p2 = p = _res->fileData(Common::String::format("LEVEL%d.MAZ", levelIndex).c_str(), 0);
 	}
 
 	uint16 len = READ_LE_UINT16(p + 4);

@@ -319,7 +319,7 @@ void EobCoreEngine::printFullItemName(Item item) {
 	const char *tstr3 = 0;
 	int e = 0;
 
-	char tmpString[61];
+	Common::String tmpString;
 
 	if ((itm->flags & 0x40) && !strlen(nameId)) {
 		switch (f) {
@@ -328,11 +328,11 @@ void EobCoreEngine::printFullItemName(Item item) {
 			case 2:
 			case 3:
 				if (v == 0)
-					strcpy(tmpString, nameUnid);
+					tmpString = nameUnid;
 				else if (v < 0)
-					sprintf(tmpString, _itemExtraStrings[3], v, nameUnid);
+					tmpString = Common::String::format(_itemExtraStrings[3], v, nameUnid);
 				else
-					sprintf(tmpString, _itemExtraStrings[4], v, nameUnid);
+					tmpString = Common::String::format(_itemExtraStrings[4], v, nameUnid);
 				break;
 
 			case 9:
@@ -370,30 +370,30 @@ void EobCoreEngine::printFullItemName(Item item) {
 				break;
 
 			default:
-				strcpy(tmpString, nameUnid);
+				tmpString = nameUnid;
 				break;
 		}
 	
 
 		if (tstr3) {
 			if (!tstr2) {
-				sprintf(tmpString, _itemExtraStrings[_flags.lang == Common::EN_ANY ? 10 : 11], tstr3);
+				tmpString = Common::String::format(_itemExtraStrings[_flags.lang == Common::EN_ANY ? 10 : 11], tstr3);
 			} else {
 				if (e == 1) {
 					if (tstr2 == _itemExtraStrings[12])
-						sprintf(tmpString, _itemExtraStrings[_flags.lang == Common::EN_ANY ? 11 : 14], tstr2, tstr3);
+						tmpString = Common::String::format(_itemExtraStrings[_flags.lang == Common::EN_ANY ? 11 : 14], tstr2, tstr3);
 					else
-						sprintf(tmpString, _itemExtraStrings[_flags.gameID == GI_EOB1 ? 10 : (_flags.lang == Common::EN_ANY ? 11 : 13)], tstr2, tstr3);
+						tmpString = Common::String::format(_itemExtraStrings[_flags.gameID == GI_EOB1 ? 10 : (_flags.lang == Common::EN_ANY ? 11 : 13)], tstr2, tstr3);
 				} else {
-					sprintf(tmpString, _itemExtraStrings[_flags.gameID == GI_EOB1 ? 10 : (_flags.lang == Common::EN_ANY ? 11 : 15)], tstr2, tstr3);
+					tmpString = Common::String::format(_itemExtraStrings[_flags.gameID == GI_EOB1 ? 10 : (_flags.lang == Common::EN_ANY ? 11 : 15)], tstr2, tstr3);
 				}
 			}
 		}
 	} else {
-		strcpy(tmpString, (itm->flags & 0x40) ? nameId : nameUnid);
+		tmpString = (itm->flags & 0x40) ? nameId : nameUnid;
 	}
 
-	_txt->printMessage(tmpString);
+	_txt->printMessage(tmpString.c_str());
 }
 
 void EobCoreEngine::identifyQueuedItems(Item itemQueue) {

@@ -706,13 +706,13 @@ int EobCoreEngine::getModifiedHpLimits(int hpModifier, int constModifier, int le
 	return res;
 }
 
-const char *EobCoreEngine::getCharStrength(int str, int strExt) {
+Common::String EobCoreEngine::getCharStrength(int str, int strExt) {
 	if (strExt) {
 		if (strExt == 100)
 			strExt = 0;
-		snprintf(_strenghtStr, 6, "%d/%02d", str, strExt);
+		_strenghtStr = Common::String::format("%d/%02d", str, strExt);
 	} else {
-		snprintf(_strenghtStr, 6, "%d", str);
+		_strenghtStr = Common::String::format("%d", str);
 	}
 
 	return _strenghtStr;
@@ -979,9 +979,8 @@ int EobCoreEngine::npcJoinDialogue(int npcIndex, int queryJoinTextId, int confir
 	int r = runDialogue(-1, 0, _yesNoStrings[0], _yesNoStrings[1]) - 1;
 	if (r == 0) {
 		if (confirmJoinTextId == -1) {
-			char tmp[35];
-			snprintf(tmp, 35, _npcJoinStrings[0], _npcPreset[npcIndex].name);
-			_txt->printDialogueText(tmp, true);
+			Common::String tmp = Common::String::format(_npcJoinStrings[0], _npcPreset[npcIndex].name);
+			_txt->printDialogueText(tmp.c_str(), true);
 		} else {
 			_txt->printDialogueText(confirmJoinTextId, _okStrings[0]);
 		}
