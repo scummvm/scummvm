@@ -113,7 +113,8 @@ namespace %s {
 		n = 1
 		while n > 0:
 			expr, n = re.subn(r'\b[a-zA-Z_][a-zA-Z0-9_]+\b', self.expand_equ_cb, expr)
-		return expr
+		expr = re.sub(r'\b([0-9][a-fA-F0-9]*)h', '0x\\1', expr)
+		return "(%s)" %expr
 
 	def expand(self, expr, def_size = 0):
 		#print "EXPAND \"%s\"" %expr
@@ -545,10 +546,12 @@ namespace %s {
 		for k, v in self.context.get_globals().items():
 			if isinstance(v, op.var):
 				offsets.append((k.capitalize(), v.offset))
+			elif isinstance(v, op.const):
+				offsets.append((k.capitalize(), self.expand_equ(v.value))) #fixme: try to save all constants here
 		
 		offsets = sorted(offsets, key=lambda t: t[1])
 		for o in offsets:
-			offsets_decl += "\tconst static uint16 k%s = %d;\n" %o
+			offsets_decl += "\tconst static uint16 k%s = %s;\n" %o
 		offsets_decl += "\n"
 		self.hd.write(offsets_decl);
 
