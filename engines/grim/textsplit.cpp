@@ -58,15 +58,15 @@ int residual_vsscanf(const char *str, int field_count, const char *format, va_li
 }
 
 TextSplitter::TextSplitter(const char *data, int len) {
-	char *line, *tmpData;
+	char *line;
 	int i;
 
-	tmpData = new char[len + 1];
-	memcpy(tmpData, data, len);
-	tmpData[len] = '\0';
+	_stringData = new char[len + 1];
+	memcpy(_stringData, data, len);
+	_stringData[len] = '\0';
 	// Find out how many lines of text there are
 	_numLines = _lineIndex = 0;
-	line = (char *)tmpData;
+	line = (char *)_stringData;
 	while (line) {
 		line = strchr(line, '\n');
 		if (line) {
@@ -75,17 +75,22 @@ TextSplitter::TextSplitter(const char *data, int len) {
 		}
 	}
 	// Allocate an array of the lines
-	_lines = new TextLines[_numLines];
-	line = (char *)tmpData;
+	_lines = new char *[_numLines];
+	line = (char *)_stringData;
 	for (i = 0; i < _numLines;i++) {
 		char *lastLine = line;
 		line = strchr(lastLine, '\n');
-		_lines[i].setData(lastLine, line - lastLine);
+		*line = '\0';
+		_lines[i] = lastLine;
 		line++;
 	}
-	delete[] tmpData;
 	_currLine = NULL;
 	processLine();
+}
+
+TextSplitter::~TextSplitter() {
+	delete _stringData;
+	delete[] _lines;
 }
 
 bool TextSplitter::checkString(const char *needle) {
@@ -130,7 +135,7 @@ void TextSplitter::processLine() {
 	if (isEof())
 		return;
 
-	_currLine = _lines[_lineIndex++].getData();
+	_currLine = _lines[_lineIndex++];
 
 	// Cut off comments
 	char *comment_start = strchr(_currLine, '#');
@@ -151,14 +156,6 @@ void TextSplitter::processLine() {
 	if (!isEof())
 		for (char *s = _currLine; *s != '\0'; s++)
 			*s = tolower(*s);
-}
-
-void TextSplitter::TextLines::setData(char *data, int length) {
-	_lineLength = length;
-
-	_lineData = new char[_lineLength];
-	memcpy(_lineData, data, _lineLength);
-	_lineData[_lineLength - 1] = 0;
 }
 
 } // end of namespace Grim
