@@ -168,7 +168,7 @@ struct Flags {
 	}
 
 	inline void update_o(uint8 v, uint8 old) {
-		_o = (old & 0x80) == (v & 0x80);
+		_o = (old & 0x80) != (v & 0x80);
 	}
 
 	inline void update(uint16 v) {
