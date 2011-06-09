@@ -53,6 +53,7 @@ namespace %s {
 		g = self.context.get_global(name)
 		if isinstance(g, op.const):
 			value = self.expand_equ(g.value)
+			print "equ: %s -> %s" %(name, value)
 		elif isinstance(g, proc.proc):
 			if self.indirection != -1:
 				raise Exception("invalid proc label usage")
