@@ -421,9 +421,8 @@ public:
 	}
 
 	inline void _movsw() {
-		es.word(di) = ds.word(si);
-		di += 2;
-		si += 2;
+		_movsb();
+		_movsb();
 	}
 
 	inline void _lodsb() {
