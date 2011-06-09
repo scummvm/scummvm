@@ -481,7 +481,7 @@ void intro3text(Context &context);
 void intro1text(Context &context);
 
 void alleybarksound(Context & context) {
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._sub(context.ax, 1);
 	context._cmp(context.ax, 0);
 	if (!context.flags.z()) goto nobark;
@@ -493,7 +493,7 @@ void alleybarksound(Context & context) {
 	context.bx = context.pop();
 	context.ax = 1000;
 nobark:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 	return;
 }
 
@@ -517,35 +517,35 @@ void receptionist(Context & context) {
 	context._cmp(context.data.byte(51), 1);
 	if (!context.flags.z()) goto notsetcard;
 	context._add(context.data.byte(51), 1);
-	context.ds.byte(context.bx+7) = 1;
-	context.ds.word(context.bx+3) = 64;
+	context.es.byte(context.bx+7) = 1;
+	context.es.word(context.bx+3) = 64;
 notsetcard:
-	context._cmp(context.ds.word(context.bx+3), 58);
+	context._cmp(context.es.word(context.bx+3), 58);
 	if (!context.flags.z()) goto notdes1;
 	randomnumber(context);
 	context._cmp(context.al, 30);
 	if (context.flags.c()) goto notdes2;
-	context.ds.word(context.bx+3) = 55;
+	context.es.word(context.bx+3) = 55;
 	goto gotrecep;
 notdes1:
-	context._cmp(context.ds.word(context.bx+3), 60);
+	context._cmp(context.es.word(context.bx+3), 60);
 	if (!context.flags.z()) goto notdes2;
 	randomnumber(context);
 	context._cmp(context.al, 240);
 	if (context.flags.c()) goto gotrecep;
-	context.ds.word(context.bx+3) = 53;
+	context.es.word(context.bx+3) = 53;
 	goto gotrecep;
 notdes2:
-	context._cmp(context.ds.word(context.bx+3), 88);
+	context._cmp(context.es.word(context.bx+3), 88);
 	if (!context.flags.z()) goto notendcard;
-	context.ds.word(context.bx+3) = 53;
+	context.es.word(context.bx+3) = 53;
 	goto gotrecep;
 notendcard:
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 gotrecep:
 	showgamereel(context);
 	addtopeoplelist(context);
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 128);
 	if (context.flags.z()) goto nottalkedrecep;
 	context.data.byte(50) = 1;
@@ -556,7 +556,7 @@ nottalkedrecep:
 void smokebloke(Context & context) {
 	context._cmp(context.data.byte(40), 0);
 	if (!context.flags.z()) goto notspokento;
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 128);
 	if (context.flags.z()) goto notspokento;
 	context.push(context.es);
@@ -568,20 +568,20 @@ void smokebloke(Context & context) {
 notspokento:
 	checkspeed(context);
 	if (!context.flags.z()) goto gotsmokeb;
-	context._cmp(context.ds.word(context.bx+3), 100);
+	context._cmp(context.es.word(context.bx+3), 100);
 	if (!context.flags.z()) goto notsmokeb1;
 	randomnumber(context);
 	context._cmp(context.al, 30);
 	if (context.flags.c()) goto notsmokeb2;
-	context.ds.word(context.bx+3) = 96;
+	context.es.word(context.bx+3) = 96;
 	goto gotsmokeb;
 notsmokeb1:
-	context._cmp(context.ds.word(context.bx+3), 117);
+	context._cmp(context.es.word(context.bx+3), 117);
 	if (!context.flags.z()) goto notsmokeb2;
-	context.ds.word(context.bx+3) = 96;
+	context.es.word(context.bx+3) = 96;
 	goto gotsmokeb;
 notsmokeb2:
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 gotsmokeb:
 	showgamereel(context);
 	addtopeoplelist(context);
@@ -591,7 +591,7 @@ gotsmokeb:
 void attendant(Context & context) {
 	showgamereel(context);
 	addtopeoplelist(context);
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 128);
 	if (context.flags.z()) goto nottalked;
 	context.data.byte(47) = 1;
@@ -600,9 +600,9 @@ nottalked:
 }
 
 void manasleep(Context & context) {
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 127);
-	context.ds.byte(context.bx+7) = context.al;
+	context.es.byte(context.bx+7) = context.al;
 	showgamereel(context);
 	addtopeoplelist(context);
 	return;
@@ -658,22 +658,22 @@ void louischair(Context & context) {
 	if (context.flags.z()) goto notlouis2;
 	checkspeed(context);
 	if (!context.flags.z()) goto notlouisanim;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 191);
 	if (context.flags.z()) goto restartlouis;
 	context._cmp(context.ax, 185);
 	if (context.flags.z()) goto randomlouis;
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 	goto notlouisanim;
 randomlouis:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 	randomnumber(context);
 	context._cmp(context.al, 245);
 	if (!context.flags.c()) goto notlouisanim;
 restartlouis:
 	context.ax = 182;
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 notlouisanim:
 	showgamereel(context);
 	addtopeoplelist(context);
@@ -682,9 +682,9 @@ notlouis2:
 }
 
 void manasleep2(Context & context) {
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 127);
-	context.ds.byte(context.bx+7) = context.al;
+	context.es.byte(context.bx+7) = context.al;
 	showgamereel(context);
 	addtopeoplelist(context);
 	return;
@@ -705,18 +705,18 @@ void tattooman(Context & context) {
 void drinker(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto gotdrinker;
-	context._add(context.ds.word(context.bx+3), 1);
-	context._cmp(context.ds.word(context.bx+3), 115);
+	context._add(context.es.word(context.bx+3), 1);
+	context._cmp(context.es.word(context.bx+3), 115);
 	if (!context.flags.z()) goto notdrinker1;
-	context.ds.word(context.bx+3) = 105;
+	context.es.word(context.bx+3) = 105;
 	goto gotdrinker;
 notdrinker1:
-	context._cmp(context.ds.word(context.bx+3), 106);
+	context._cmp(context.es.word(context.bx+3), 106);
 	if (!context.flags.z()) goto gotdrinker;
 	randomnumber(context);
 	context._cmp(context.al, 3);
 	if (context.flags.c()) goto gotdrinker;
-	context.ds.word(context.bx+3) = 105;
+	context.es.word(context.bx+3) = 105;
 gotdrinker:
 	showgamereel(context);
 	addtopeoplelist(context);
@@ -726,25 +726,25 @@ gotdrinker:
 void bartender(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto gotsmoket;
-	context._cmp(context.ds.word(context.bx+3), 86);
+	context._cmp(context.es.word(context.bx+3), 86);
 	if (!context.flags.z()) goto notsmoket1;
 	randomnumber(context);
 	context._cmp(context.al, 18);
 	if (context.flags.c()) goto notsmoket2;
-	context.ds.word(context.bx+3) = 81;
+	context.es.word(context.bx+3) = 81;
 	goto gotsmoket;
 notsmoket1:
-	context._cmp(context.ds.word(context.bx+3), 103);
+	context._cmp(context.es.word(context.bx+3), 103);
 	if (!context.flags.z()) goto notsmoket2;
-	context.ds.word(context.bx+3) = 81;
+	context.es.word(context.bx+3) = 81;
 	goto gotsmoket;
 notsmoket2:
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 gotsmoket:
 	showgamereel(context);
 	context._cmp(context.data.byte(45), 1);
 	if (!context.flags.z()) goto notgotgun;
-	context.ds.byte(context.bx+7) = 9;
+	context.es.byte(context.bx+7) = 9;
 notgotgun:
 	addtopeoplelist(context);
 	return;
@@ -765,25 +765,25 @@ void barwoman(Context & context) {
 void interviewer(Context & context) {
 	context._cmp(context.data.word(21), 68);
 	if (!context.flags.z()) goto notgeneralstart;
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 notgeneralstart:
-	context._cmp(context.ds.word(context.bx+3), 250);
+	context._cmp(context.es.word(context.bx+3), 250);
 	if (context.flags.z()) goto talking;
 	checkspeed(context);
 	if (!context.flags.z()) goto talking;
-	context._cmp(context.ds.word(context.bx+3), 259);
+	context._cmp(context.es.word(context.bx+3), 259);
 	if (context.flags.z()) goto talking;
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 talking:
 	showgamereel(context);
 	return;
 }
 
 void soldier1(Context & context) {
-	context._cmp(context.ds.word(context.bx+3), 0);
+	context._cmp(context.es.word(context.bx+3), 0);
 	if (context.flags.z()) goto soldierwait;
 	context.data.word(19) = 10;
-	context._cmp(context.ds.word(context.bx+3), 30);
+	context._cmp(context.es.word(context.bx+3), 30);
 	if (!context.flags.z()) goto notaftersshot;
 	context._add(context.data.byte(63), 1);
 	context._cmp(context.data.byte(63), 40);
@@ -793,7 +793,7 @@ void soldier1(Context & context) {
 notaftersshot:
 	checkspeed(context);
 	if (!context.flags.z()) goto gotsoldframe;
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 	goto gotsoldframe;
 soldierwait:
 	context._cmp(context.data.byte(64), 1);
@@ -803,7 +803,7 @@ soldierwait:
 	if (!context.flags.z()) goto gotsoldframe;
 	context._cmp(context.data.byte(132), 4);
 	if (!context.flags.z()) goto gotsoldframe;
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 	context.data.byte(64) = -1;
 	context.data.byte(63) = 0;
 gotsoldframe:
@@ -813,14 +813,14 @@ gotsoldframe:
 }
 
 void rockstar(Context & context) {
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 303);
 	if (context.flags.z()) goto rockcombatend;
 	context._cmp(context.ax, 118);
 	if (context.flags.z()) goto rockcombatend;
 	checkspeed(context);
 	if (!context.flags.z()) goto rockspeed;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 118);
 	if (!context.flags.z()) goto notbeforedead;
@@ -842,10 +842,10 @@ notgunonrock:
 	context.data.byte(63) = 0;
 	context.ax = 79;
 gotrockframe:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 rockspeed:
 	showgamereel(context);
-	context._cmp(context.ds.word(context.bx+3), 78);
+	context._cmp(context.es.word(context.bx+3), 78);
 	if (!context.flags.z()) goto notalkrock;
 	addtopeoplelist(context);
 	context.data.byte(233) = 2;
@@ -855,7 +855,7 @@ notalkrock:
 	context.data.word(19) = 2;
 	context.data.byte(233) = 0;
 	context.al = context.data.byte(148);
-	context.ds.byte(context.bx+2) = context.al;
+	context.es.byte(context.bx+2) = context.al;
 	return;
 rockcombatend:
 	context.data.byte(187) = 45;
@@ -864,12 +864,12 @@ rockcombatend:
 }
 
 void helicopter(Context & context) {
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 203);
 	if (context.flags.z()) goto heliwon;
 	checkspeed(context);
 	if (!context.flags.z()) goto helispeed;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 53);
 	if (!context.flags.z()) goto notbeforehdead;
@@ -897,13 +897,13 @@ notgunonheli:
 	context.data.byte(63) = 0;
 	context.ax = 9;
 gotheliframe:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 helispeed:
 	showgamereel(context);
 	context.al = context.data.byte(147);
-	context.ds.byte(context.bx+1) = context.al;
+	context.es.byte(context.bx+1) = context.al;
 helicombatend:
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 9);
 	if (!context.flags.c()) goto notwaitingheli;
 	context._cmp(context.data.byte(63), 7);
@@ -921,7 +921,7 @@ heliwon:
 }
 
 void mugger(Context & context) {
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 138);
 	if (context.flags.z()) goto endmugger1;
 	context._cmp(context.ax, 176);
@@ -932,11 +932,11 @@ void mugger(Context & context) {
 havesetwatch:
 	checkspeed(context);
 	if (!context.flags.z()) goto notmugger;
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 notmugger:
 	showgamereel(context);
 	context.al = context.data.byte(147);
-	context.ds.byte(context.bx+1) = context.al;
+	context.es.byte(context.bx+1) = context.al;
 	return;
 endmugger1:
 	context.push(context.es);
@@ -957,7 +957,7 @@ endmugger1:
 	context.es = context.pop();
 	context.push(context.es);
 	context.push(context.bx);
-	context.ds.word(context.bx+3) = 140;
+	context.es.word(context.bx+3) = 140;
 	context.data.byte(474) = 2;
 	context.data.byte(476) = 2;
 	findxyfrompath(context);
@@ -1002,7 +1002,7 @@ void aide(Context & context) {
 void businessman(Context & context) {
 	context.data.byte(233) = 0;
 	context.data.word(19) = 2;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 2);
 	if (!context.flags.z()) goto notfirstbiz;
 	context.push(context.ax);
@@ -1024,7 +1024,7 @@ notfirstbiz:
 	if (context.flags.z()) goto buscombatend;
 	checkspeed(context);
 	if (!context.flags.z()) goto busspeed;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 48);
 	if (!context.flags.z()) goto notbeforedeadb;
@@ -1069,12 +1069,12 @@ buscombatwon:
 	context.ax = 92;
 	goto gotbusframe;
 gotbusframe:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 busspeed:
 	showgamereel(context);
 	context.al = context.data.byte(148);
-	context.ds.byte(context.bx+2) = context.al;
-	context.ax = context.ds.word(context.bx+3);
+	context.es.byte(context.bx+2) = context.al;
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 14);
 	if (!context.flags.z()) goto buscombatend;
 	context.data.word(19) = 0;
@@ -1089,7 +1089,7 @@ buscombatwonend:
 }
 
 void poolguard(Context & context) {
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 214);
 	if (context.flags.z()) goto combatover2;
 	context._cmp(context.ax, 258);
@@ -1103,7 +1103,7 @@ void poolguard(Context & context) {
 notfirstpool:
 	checkspeed(context);
 	if (!context.flags.z()) goto guardspeed;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 122);
 	if (!context.flags.z()) goto notendguard1;
@@ -1136,10 +1136,10 @@ notgunonpool:
 	context.data.byte(63) = 0;
 	context.ax = 220;
 gotguardframe:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 guardspeed:
 	showgamereel(context);
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 121);
 	if (context.flags.z()) goto iswaitingpool;
 	context._cmp(context.ax, 146);
@@ -1173,16 +1173,16 @@ doneover2:
 }
 
 void security(Context & context) {
-	context._cmp(context.ds.word(context.bx+3), 32);
+	context._cmp(context.es.word(context.bx+3), 32);
 	if (context.flags.z()) goto securwait;
-	context._cmp(context.ds.word(context.bx+3), 69);
+	context._cmp(context.es.word(context.bx+3), 69);
 	if (!context.flags.z()) goto notaftersec;
 	return;
 notaftersec:
 	context.data.word(19) = 10;
 	checkspeed(context);
 	if (!context.flags.z()) goto gotsecurframe;
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 	goto gotsecurframe;
 securwait:
 	context._cmp(context.data.byte(64), 1);
@@ -1193,7 +1193,7 @@ securwait:
 	context._cmp(context.data.byte(132), 0);
 	if (!context.flags.z()) goto gotsecurframe;
 	context.data.byte(64) = -1;
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 gotsecurframe:
 	showgamereel(context);
 	addtopeoplelist(context);
@@ -1201,13 +1201,13 @@ gotsecurframe:
 }
 
 void heavy(Context & context) {
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 127);
-	context.ds.byte(context.bx+7) = context.al;
-	context._cmp(context.ds.word(context.bx+3), 43);
+	context.es.byte(context.bx+7) = context.al;
+	context._cmp(context.es.word(context.bx+3), 43);
 	if (context.flags.z()) goto heavywait;
 	context.data.word(19) = 10;
-	context._cmp(context.ds.word(context.bx+3), 70);
+	context._cmp(context.es.word(context.bx+3), 70);
 	if (!context.flags.z()) goto notafterhshot;
 	context._add(context.data.byte(63), 1);
 	context._cmp(context.data.byte(63), 80);
@@ -1217,7 +1217,7 @@ void heavy(Context & context) {
 notafterhshot:
 	checkspeed(context);
 	if (!context.flags.z()) goto gotheavyframe;
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 	goto gotheavyframe;
 heavywait:
 	context._cmp(context.data.byte(64), 1);
@@ -1227,7 +1227,7 @@ heavywait:
 	context._cmp(context.data.byte(132), 4);
 	if (!context.flags.z()) goto gotheavyframe;
 	context.data.byte(64) = -1;
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 	context.data.byte(63) = 0;
 gotheavyframe:
 	showgamereel(context);
@@ -1238,7 +1238,7 @@ gotheavyframe:
 void bossman(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto notboss;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 4);
 	if (context.flags.z()) goto firstdes;
@@ -1248,7 +1248,7 @@ void bossman(Context & context) {
 	if (!context.flags.z()) goto gotallboss;
 	context.ax = 0;
 	context._add(context.data.byte(45), 1);
-	context.ds.byte(context.bx+7) = 10;
+	context.es.byte(context.bx+7) = 10;
 	goto gotallboss;
 firstdes:
 	context._cmp(context.data.byte(45), 1);
@@ -1266,11 +1266,11 @@ secdes:
 	if (context.flags.z()) goto gotallboss;
 	context.ax = 0;
 gotallboss:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 notboss:
 	showgamereel(context);
 	addtopeoplelist(context);
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 128);
 	if (context.flags.z()) goto nottalkedboss;
 	context.data.byte(49) = 1;
@@ -1287,10 +1287,10 @@ gameragain:
 	context._cmp(context.al, 5);
 	if (!context.flags.c()) goto gameragain;
 	context._add(context.al, 20);
-	context._cmp(context.al, context.ds.byte(context.bx+3));
+	context._cmp(context.al, context.es.byte(context.bx+3));
 	if (context.flags.z()) goto gameragain;
 	context.ah = 0;
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 gamerfin:
 	showgamereel(context);
 	addtopeoplelist(context);
@@ -1322,12 +1322,12 @@ void keeper(Context & context) {
 	context._cmp(context.data.word(21), 190);
 	if (context.flags.c()) goto waiting;
 	context._add(context.data.byte(53), 1);
-	context.ah = context.ds.byte(context.bx+7);
+	context.ah = context.es.byte(context.bx+7);
 	context._and(context.ah, 127);
 	context._cmp(context.ah, context.data.byte(65));
 	if (context.flags.z()) goto notdiff;
 	context.al = context.data.byte(65);
-	context.ds.byte(context.bx+7) = context.al;
+	context.es.byte(context.bx+7) = context.al;
 notdiff:
 	return;
 notwaiting:
@@ -1340,13 +1340,13 @@ waiting:
 void candles1(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto candle1;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 44);
 	if (!context.flags.z()) goto notendcandle1;
 	context.ax = 39;
 notendcandle1:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 candle1:
 	showgamereel(context);
 	return;
@@ -1355,13 +1355,13 @@ candle1:
 void smallcandle(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto smallcandlef;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 37);
 	if (!context.flags.z()) goto notendsmallcandle;
 	context.ax = 25;
 notendsmallcandle:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 smallcandlef:
 	showgamereel(context);
 	return;
@@ -1370,13 +1370,13 @@ smallcandlef:
 void intromagic1(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto introm1fin;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 145);
 	if (!context.flags.z()) goto gotintrom1;
 	context.ax = 121;
 gotintrom1:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 	context._cmp(context.ax, 121);
 	if (!context.flags.z()) goto introm1fin;
 	context._add(context.data.byte(138), 1);
@@ -1397,13 +1397,13 @@ introm1fin:
 void candles(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto candlesfin;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 167);
 	if (!context.flags.z()) goto gotcandles;
 	context.ax = 162;
 gotcandles:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 candlesfin:
 	showgamereel(context);
 	return;
@@ -1412,13 +1412,13 @@ candlesfin:
 void candles2(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto candles2fin;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 238);
 	if (!context.flags.z()) goto gotcandles2;
 	context.ax = 233;
 gotcandles2:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 candles2fin:
 	showgamereel(context);
 	return;
@@ -1427,7 +1427,7 @@ candles2fin:
 void gates(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto gatesfin;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 116);
 	if (!context.flags.z()) goto notbang;
@@ -1442,14 +1442,14 @@ void gates(Context & context) {
 notbang:
 	context._cmp(context.ax, 110);
 	if (context.flags.c()) goto slowgates;
-	context.ds.byte(context.bx+5) = 2;
+	context.es.byte(context.bx+5) = 2;
 slowgates:
 	context._cmp(context.ax, 120);
 	if (!context.flags.z()) goto gotgates;
 	context.data.byte(102) = 1;
 	context.ax = 119;
 gotgates:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 	context.push(context.es);
 	context.push(context.bx);
 	intro3text(context);
@@ -1463,13 +1463,13 @@ gatesfin:
 void intromagic2(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto introm2fin;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 216);
 	if (!context.flags.z()) goto gotintrom2;
 	context.ax = 192;
 gotintrom2:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 introm2fin:
 	showgamereel(context);
 	return;
@@ -1478,24 +1478,24 @@ introm2fin:
 void intromagic3(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto introm3fin;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 218);
 	if (!context.flags.z()) goto gotintrom3;
 	context.data.byte(102) = 1;
 gotintrom3:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 introm3fin:
 	showgamereel(context);
 	context.al = context.data.byte(147);
-	context.ds.byte(context.bx+1) = context.al;
+	context.es.byte(context.bx+1) = context.al;
 	return;
 }
 
 void intromonks1(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto intromonk1fin;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 80);
 	if (!context.flags.z()) goto notendmonk1;
@@ -1510,7 +1510,7 @@ notendmonk1:
 	context.data.byte(185) = 1;
 	context.ax = 51;
 gotintromonk1:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 	context._cmp(context.ax, 5);
 	if (context.flags.z()) goto waitstep;
 	context._cmp(context.ax, 15);
@@ -1528,18 +1528,18 @@ waitstep:
 	intro2text(context);
 	context.bx = context.pop();
 	context.es = context.pop();
-	context.ds.byte(context.bx+6) = -20;
+	context.es.byte(context.bx+6) = -20;
 intromonk1fin:
 	showgamereel(context);
 	context.al = context.data.byte(148);
-	context.ds.byte(context.bx+2) = context.al;
+	context.es.byte(context.bx+2) = context.al;
 	return;
 }
 
 void intromonks2(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto intromonk2fin;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 87);
 	if (!context.flags.z()) goto nottalk1;
@@ -1582,7 +1582,7 @@ notendmonk2:
 	if (!context.flags.z()) goto gotintromonk2;
 	context.ax = 140;
 gotintromonk2:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 intromonk2fin:
 	showgamereel(context);
 	return;
@@ -1779,7 +1779,7 @@ gotintro3text:
 void monkandryan(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto notmonkryan;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 83);
 	if (!context.flags.z()) goto gotmonkryan;
@@ -1795,7 +1795,7 @@ void monkandryan(Context & context) {
 	context.data.byte(102) = 1;
 	return;
 gotmonkryan:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 notmonkryan:
 	showgamereel(context);
 	return;
@@ -1804,7 +1804,7 @@ notmonkryan:
 void endgameseq(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto notendseq;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 51);
 	if (!context.flags.z()) goto gotendseq;
@@ -1818,7 +1818,7 @@ void endgameseq(Context & context) {
 	context.es = context.pop();
 	context.ax = 50;
 gotendseq:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 	context._cmp(context.ax, 134);
 	if (!context.flags.z()) goto notfadedown;
 	context.push(context.es);
@@ -1848,11 +1848,11 @@ notfadeend:
 notendseq:
 	showgamereel(context);
 	context.al = context.data.byte(148);
-	context.ds.byte(context.bx+2) = context.al;
-	context.ax = context.ds.word(context.bx+3);
+	context.es.byte(context.bx+2) = context.al;
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 145);
 	if (!context.flags.z()) goto notendcreds;
-	context.ds.word(context.bx+3) = 146;
+	context.es.word(context.bx+3) = 146;
 	rollendcredits(context);
 notendcreds:
 	return;
@@ -1874,7 +1874,7 @@ void rollendcredits(Context & context) {
 	multiget(context);
 	context.es = context.data.word(464);
 	context.si = 3*2;
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context.si = context.ax;
 	context._add(context.si, 66*2);
 	context.cx = 254;
@@ -1930,7 +1930,7 @@ onelot:
 	if (--context.cx) goto endcredits2;
 	context.cx = context.pop();
 looknext:
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context._add(context.si, 1);
 	context._cmp(context.al, ':');
 	if (context.flags.z()) goto gotnext;
@@ -1947,13 +1947,13 @@ gotnext:
 }
 
 void priest(Context & context) {
-	context._cmp(context.ds.word(context.bx+3), 8);
+	context._cmp(context.es.word(context.bx+3), 8);
 	if (context.flags.z()) goto priestspoken;
 	context.data.byte(233) = 0;
 	context.data.word(19) = 2;
 	checkspeed(context);
 	if (!context.flags.z()) goto priestwait;
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 	context.push(context.es);
 	context.push(context.bx);
 	priesttext(context);
@@ -1966,13 +1966,13 @@ priestspoken:
 }
 
 void madmanstelly(Context & context) {
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 307);
 	if (!context.flags.z()) goto notendtelly;
 	context.ax = 300;
 notendtelly:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 	showgamereel(context);
 	return;
 }
@@ -1981,7 +1981,7 @@ void madman(Context & context) {
 	context.data.word(19) = 2;
 	checkspeed(context);
 	if (!context.flags.z()) goto nomadspeed;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 364);
 	if (!context.flags.c()) goto ryansded;
 	context._cmp(context.ax, 10);
@@ -2023,11 +2023,11 @@ notfirstmad:
 killryan:
 	context.ax = 310;
 nomadspeak:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 nomadspeed:
 	showgamereel(context);
 	context.al = context.data.byte(147);
-	context.ds.byte(context.bx+1) = context.al;
+	context.es.byte(context.bx+1) = context.al;
 	madmode(context);
 	return;
 madmanspoken:
@@ -2080,14 +2080,14 @@ iswatchmad:
 }
 
 void priesttext(Context & context) {
-	context._cmp(context.ds.word(context.bx+3), 2);
+	context._cmp(context.es.word(context.bx+3), 2);
 	if (context.flags.c()) goto nopriesttext;
-	context._cmp(context.ds.word(context.bx+3), 7);
+	context._cmp(context.es.word(context.bx+3), 7);
 	if (!context.flags.c()) goto nopriesttext;
-	context.al = context.ds.byte(context.bx+3);
+	context.al = context.es.byte(context.bx+3);
 	context._and(context.al, 1);
 	if (!context.flags.z()) goto nopriesttext;
-	context.al = context.ds.byte(context.bx+3);
+	context.al = context.es.byte(context.bx+3);
 	context._shr(context.al, 1);
 	context._add(context.al, 50);
 	context.bl = 72;
@@ -2253,9 +2253,9 @@ oktalk:
 void drunk(Context & context) {
 	context._cmp(context.data.byte(41), 0);
 	if (!context.flags.z()) goto trampgone;
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 127);
-	context.ds.byte(context.bx+7) = context.al;
+	context.es.byte(context.bx+7) = context.al;
 	showgamereel(context);
 	addtopeoplelist(context);
 trampgone:
@@ -2266,7 +2266,7 @@ void advisor(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto noadvisor;
 	goto noadvisor;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 123);
 	if (!context.flags.z()) goto notendadvis;
@@ -2283,7 +2283,7 @@ notendadvis:
 	if (context.flags.c()) goto gotadvframe;
 	context.ax = 106;
 gotadvframe:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 noadvisor:
 	showgamereel(context);
 	addtopeoplelist(context);
@@ -2293,7 +2293,7 @@ noadvisor:
 void copper(Context & context) {
 	checkspeed(context);
 	if (!context.flags.z()) goto nocopper;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._add(context.ax, 1);
 	context._cmp(context.ax, 94);
 	if (!context.flags.z()) goto notendcopper;
@@ -2313,7 +2313,7 @@ mightwait:
 	if (context.flags.c()) goto gotcopframe;
 	context._sub(context.ax, 1);
 gotcopframe:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 nocopper:
 	showgamereel(context);
 	addtopeoplelist(context);
@@ -2323,29 +2323,29 @@ nocopper:
 void sparky(Context & context) {
 	context._cmp(context.data.word(14), 0);
 	if (context.flags.z()) goto animsparky;
-	context.ds.byte(context.bx+7) = 3;
+	context.es.byte(context.bx+7) = 3;
 	goto animsparky;
 animsparky:
 	checkspeed(context);
 	if (!context.flags.z()) goto finishsparky;
-	context._cmp(context.ds.word(context.bx+3), 34);
+	context._cmp(context.es.word(context.bx+3), 34);
 	if (!context.flags.z()) goto notsparky1;
 	randomnumber(context);
 	context._cmp(context.al, 30);
 	if (context.flags.c()) goto dosparky;
-	context.ds.word(context.bx+3) = 27;
+	context.es.word(context.bx+3) = 27;
 	goto finishsparky;
 notsparky1:
-	context._cmp(context.ds.word(context.bx+3), 48);
+	context._cmp(context.es.word(context.bx+3), 48);
 	if (!context.flags.z()) goto dosparky;
-	context.ds.word(context.bx+3) = 27;
+	context.es.word(context.bx+3) = 27;
 	goto finishsparky;
 dosparky:
-	context._add(context.ds.word(context.bx+3), 1);
+	context._add(context.es.word(context.bx+3), 1);
 finishsparky:
 	showgamereel(context);
 	addtopeoplelist(context);
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 128);
 	if (context.flags.z()) goto nottalkedsparky;
 	context.data.byte(48) = 1;
@@ -2355,7 +2355,7 @@ nottalkedsparky:
 
 void train(Context & context) {
 	return;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 21);
 	if (!context.flags.c()) goto notrainyet;
 	context._add(context.ax, 1);
@@ -2370,7 +2370,7 @@ notrainyet:
 	if (!context.flags.z()) goto notrainatall;
 	context.ax = 5;
 gottrainframe:
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 	showgamereel(context);
 notrainatall:
 	return;
@@ -2380,14 +2380,14 @@ void addtopeoplelist(Context & context) {
 	context.push(context.es);
 	context.push(context.bx);
 	context.push(context.bx);
-	context.cl = context.ds.byte(context.bx+7);
-	context.ax = context.ds.word(context.bx+3);
+	context.cl = context.es.byte(context.bx+7);
+	context.ax = context.es.word(context.bx+3);
 	context.bx = context.data.word(16);
 	context.es = context.data.word(410);
-	context.ds.word(context.bx) = context.ax;
+	context.es.word(context.bx) = context.ax;
 	context.ax = context.pop();
-	context.ds.word(context.bx+2) = context.ax;
-	context.ds.byte(context.bx+4) = context.cl;
+	context.es.word(context.bx+2) = context.ax;
+	context.es.byte(context.bx+4) = context.cl;
 	context.bx = context.pop();
 	context.es = context.pop();
 	context._add(context.data.word(16), 5);
@@ -2395,7 +2395,7 @@ void addtopeoplelist(Context & context) {
 }
 
 void showgamereel(Context & context) {
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 512);
 	if (!context.flags.c()) goto noshow;
 	context.data.word(237) = context.ax;
@@ -2405,7 +2405,7 @@ void showgamereel(Context & context) {
 	context.bx = context.pop();
 	context.es = context.pop();
 	context.ax = context.data.word(237);
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 noshow:
 	return;
 }
@@ -2413,12 +2413,12 @@ noshow:
 void checkspeed(Context & context) {
 	context._cmp(context.data.byte(64), -1);
 	if (!context.flags.z()) goto forcenext;
-	context._add(context.ds.byte(context.bx+6), 1);
-	context.al = context.ds.byte(context.bx+6);
-	context._cmp(context.al, context.ds.byte(context.bx+5));
+	context._add(context.es.byte(context.bx+6), 1);
+	context.al = context.es.byte(context.bx+6);
+	context._cmp(context.al, context.es.byte(context.bx+5));
 	if (!context.flags.z()) goto notspeed;
 	context.al = 0;
-	context.ds.byte(context.bx+6) = context.al;
+	context.es.byte(context.bx+6) = context.al;
 	context._cmp(context.al, context.al);
 notspeed:
 	return;
@@ -2440,18 +2440,18 @@ void makesprite(Context & context) {
 	context.es = context.data.word(410);
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768;
 _tmp17:
-	context._cmp(context.ds.byte(context.bx+15), 255);
+	context._cmp(context.es.byte(context.bx+15), 255);
 	if (context.flags.z()) goto _tmp17a;
 	context._add(context.bx, 32);
 	goto _tmp17;
 _tmp17a:
-	context.ds.word(context.bx) = context.cx;
-	context.ds.word(context.bx+10) = context.si;
-	context.ds.word(context.bx+6) = context.dx;
-	context.ds.word(context.bx+8) = context.di;
-	context.ds.word(context.bx+2) = 0x0ffff;
-	context.ds.byte(context.bx+15) = 0;
-	context.ds.byte(context.bx+18) = 0;
+	context.es.word(context.bx) = context.cx;
+	context.es.word(context.bx+10) = context.si;
+	context.es.word(context.bx+6) = context.dx;
+	context.es.word(context.bx+8) = context.di;
+	context.es.word(context.bx+2) = 0x0ffff;
+	context.es.byte(context.bx+15) = 0;
+	context.es.byte(context.bx+18) = 0;
 	return;
 }
 
@@ -2467,20 +2467,20 @@ void spriteupdate(Context & context) {
 	context.es = context.data.word(410);
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768;
 	context.al = context.data.byte(62);
-	context.ds.byte(context.bx+31) = context.al;
+	context.es.byte(context.bx+31) = context.al;
 	context.es = context.data.word(410);
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768;
 	context.cx = 16;
 _tmp18:
 	context.push(context.cx);
 	context.push(context.bx);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._cmp(context.ax, 0x0ffff);
 	if (context.flags.z()) goto _tmp18a;
 	context.push(context.es);
 	context.push(context.ds);
-	context.cx = context.ds.word(context.bx+2);
-	context.ds.word(context.bx+24) = context.cx;
+	context.cx = context.es.word(context.bx+2);
+	context.es.word(context.bx+24) = context.cx;
 	__dispatch_call(context, context.ax);
 	context.ds = context.pop();
 	context.es = context.pop();
@@ -2506,13 +2506,13 @@ priorityloop:
 prtspriteloop:
 	context.push(context.cx);
 	context.push(context.bx);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._cmp(context.ax, 0x0ffff);
 	if (context.flags.z()) goto skipsprite;
 	context.al = context.data.byte(181);
-	context._cmp(context.al, context.ds.byte(context.bx+23));
+	context._cmp(context.al, context.es.byte(context.bx+23));
 	if (!context.flags.z()) goto skipsprite;
-	context._cmp(context.ds.byte(context.bx+31), 1);
+	context._cmp(context.es.byte(context.bx+31), 1);
 	if (context.flags.z()) goto skipsprite;
 	printasprite(context);
 skipsprite:
@@ -2531,8 +2531,8 @@ void printasprite(Context & context) {
 	context.push(context.es);
 	context.push(context.bx);
 	context.si = context.bx;
-	context.ds = context.ds.word(context.si+6);
-	context.al = context.ds.byte(context.si+11);
+	context.ds = context.es.word(context.si+6);
+	context.al = context.es.byte(context.si+11);
 	context.ah = 0;
 	context._cmp(context.al, 220);
 	if (context.flags.c()) goto notnegative1;
@@ -2540,7 +2540,7 @@ void printasprite(Context & context) {
 notnegative1:
 	context.bx = context.ax;
 	context._add(context.bx, context.data.word(117));
-	context.al = context.ds.byte(context.si+10);
+	context.al = context.es.byte(context.si+10);
 	context.ah = 0;
 	context._cmp(context.al, 220);
 	if (context.flags.c()) goto notnegative2;
@@ -2548,9 +2548,9 @@ notnegative1:
 notnegative2:
 	context.di = context.ax;
 	context._add(context.di, context.data.word(115));
-	context.al = context.ds.byte(context.si+15);
+	context.al = context.es.byte(context.si+15);
 	context.ah = 0;
-	context._cmp(context.ds.byte(context.si+30), 0);
+	context._cmp(context.es.byte(context.si+30), 0);
 	if (context.flags.z()) goto steadyframe;
 	context.ah = 8;
 steadyframe:
@@ -2625,9 +2625,9 @@ void initman(Context & context) {
 	context.dx = context.data.word(412);
 	context.di = 0;
 	makesprite(context);
-	context.ds.byte(context.bx+23) = 4;
-	context.ds.byte(context.bx+22) = 0;
-	context.ds.byte(context.bx+29) = 0;
+	context.es.byte(context.bx+23) = 4;
+	context.es.byte(context.bx+22) = 0;
+	context.es.byte(context.bx+29) = 0;
 	return;
 }
 
@@ -2637,16 +2637,16 @@ void mainman(Context & context) {
 	context.data.byte(186) = 0;
 	context.al = context.data.byte(150);
 	context.ah = context.data.byte(151);
-	context.ds.word(context.bx+10) = context.ax;
-	context.ds.byte(context.bx+29) = 0;
+	context.es.word(context.bx+10) = context.ax;
+	context.es.byte(context.bx+29) = 0;
 	goto executewalk;
 notinnewroom:
-	context._sub(context.ds.byte(context.bx+22), 1);
-	context._cmp(context.ds.byte(context.bx+22), -1);
+	context._sub(context.es.byte(context.bx+22), 1);
+	context._cmp(context.es.byte(context.bx+22), -1);
 	if (context.flags.z()) goto executewalk;
 	return;
 executewalk:
-	context.ds.byte(context.bx+22) = 0;
+	context.es.byte(context.bx+22) = 0;
 	context.al = context.data.byte(134);
 	context._cmp(context.al, context.data.byte(132));
 	if (context.flags.z()) goto facingok;
@@ -2666,23 +2666,23 @@ alreadyturned:
 	context.data.byte(135) = 0;
 	context._cmp(context.data.byte(491), 254);
 	if (!context.flags.z()) goto walkman;
-	context.ds.byte(context.bx+29) = 0;
+	context.es.byte(context.bx+29) = 0;
 	goto notwalk;
 walkman:
-	context.al = context.ds.byte(context.bx+29);
+	context.al = context.es.byte(context.bx+29);
 	context._add(context.al, 1);
 	context._cmp(context.al, 11);
 	if (!context.flags.z()) goto notanimend1;
 	context.al = 1;
 notanimend1:
-	context.ds.byte(context.bx+29) = context.al;
+	context.es.byte(context.bx+29) = context.al;
 	walking(context);
 	context._cmp(context.data.byte(491), 254);
 	if (context.flags.z()) goto afterwalk;
 	context.al = context.data.byte(132);
 	context._and(context.al, 1);
 	if (context.flags.z()) goto isdouble;
-	context.al = context.ds.byte(context.bx+29);
+	context.al = context.es.byte(context.bx+29);
 	context._cmp(context.al, 2);
 	if (context.flags.z()) goto afterwalk;
 	context._cmp(context.al, 7);
@@ -2705,10 +2705,10 @@ notwalk:
 	context.ah = 0;
 	context.di = 1105;
 	context._add(context.di, context.ax);
-	context.al = context.ds.byte(context.di);
-	context._add(context.al, context.ds.byte(context.bx+29));
-	context.ds.byte(context.bx+15) = context.al;
-	context.ax = context.ds.word(context.bx+10);
+	context.al = context.cs.byte(context.di);
+	context._add(context.al, context.es.byte(context.bx+29));
+	context.es.byte(context.bx+15) = context.al;
+	context.ax = context.es.word(context.bx+10);
 	context.data.byte(150) = context.al;
 	context.data.byte(151) = context.ah;
 	return;
@@ -2736,7 +2736,7 @@ incdir:
 	context._add(context.al, 1);
 	context._and(context.al, 7);
 	context.data.byte(132) = context.al;
-	context.ds.byte(context.bx+29) = 0;
+	context.es.byte(context.bx+29) = 0;
 	return;
 decdir:
 	context.data.byte(135) = -1;
@@ -2744,7 +2744,7 @@ decdir:
 	context._sub(context.al, 1);
 	context._and(context.al, 7);
 	context.data.byte(132) = context.al;
-	context.ds.byte(context.bx+29) = 0;
+	context.es.byte(context.bx+29) = 0;
 	return;
 }
 
@@ -2772,11 +2772,11 @@ continuewalk:
 	context.es = context.dx;
 	context.bx = 7944;
 	context._add(context.bx, context.ax);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context.bx = context.pop();
 	context.es = context.pop();
 stillline:
-	context.ds.word(context.bx+10) = context.ax;
+	context.es.word(context.bx+10) = context.ax;
 	return;
 endofline:
 	context.data.byte(491) = 254;
@@ -2807,7 +2807,7 @@ void facerightway(Context & context) {
 	context._add(context.ax, context.ax);
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context.data.byte(134) = context.al;
 	context.data.byte(133) = context.al;
 	context.bx = context.pop();
@@ -2914,7 +2914,7 @@ void adjustdown(Context & context) {
 	context.al = context.data.byte(153);
 	context.cl = 16;
 	context._mul(context.cl);
-	context.ds.byte(context.bx+11) = context.al;
+	context.es.byte(context.bx+11) = context.al;
 	context.data.byte(185) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
@@ -2928,7 +2928,7 @@ void adjustup(Context & context) {
 	context.al = context.data.byte(153);
 	context.cl = 16;
 	context._mul(context.cl);
-	context.ds.byte(context.bx+11) = context.al;
+	context.es.byte(context.bx+11) = context.al;
 	context.data.byte(185) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
@@ -2943,7 +2943,7 @@ void adjustleft(Context & context) {
 	context.al = context.data.byte(153);
 	context.cl = 16;
 	context._mul(context.cl);
-	context.ds.byte(context.bx+10) = context.al;
+	context.es.byte(context.bx+10) = context.al;
 	context.data.byte(185) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
@@ -2958,7 +2958,7 @@ void adjustright(Context & context) {
 	context.cl = 16;
 	context._mul(context.cl);
 	context._sub(context.al, 2);
-	context.ds.byte(context.bx+10) = context.al;
+	context.es.byte(context.bx+10) = context.al;
 	context.data.byte(185) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
@@ -2985,7 +2985,7 @@ void reminders(Context & context) {
 	findexobject(context);
 	context._cmp(context.al, 114);
 	if (context.flags.z()) goto forgotone;
-	context.ax = context.ds.word(context.bx+2);
+	context.ax = context.es.word(context.bx+2);
 	context._cmp(context.al, 4);
 	if (!context.flags.z()) goto forgotone;
 	context._cmp(context.ah, 255);
@@ -3018,18 +3018,18 @@ void initrain(Context & context) {
 	context.di = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30);
 	context.bx = 1113;
 checkmorerain:
-	context.al = context.ds.byte(context.bx);
+	context.al = context.cs.byte(context.bx);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto finishinitrain;
 	context._cmp(context.al, context.data.byte(183));
 	if (!context.flags.z()) goto checkrain;
-	context.al = context.ds.byte(context.bx+1);
+	context.al = context.cs.byte(context.bx+1);
 	context._cmp(context.al, context.data.byte(147));
 	if (!context.flags.z()) goto checkrain;
-	context.al = context.ds.byte(context.bx+2);
+	context.al = context.cs.byte(context.bx+2);
 	context._cmp(context.al, context.data.byte(148));
 	if (!context.flags.z()) goto checkrain;
-	context.al = context.ds.byte(context.bx+3);
+	context.al = context.cs.byte(context.bx+3);
 	context.data.byte(131) = context.al;
 	goto dorain;
 checkrain:
@@ -3085,7 +3085,7 @@ lookforlinestart:
 	if (!context.flags.c()) goto endofthisline;
 	goto lookforlinestart;
 foundlinestart:
-	context.ds.word(context.di) = context.cx;
+	context.es.word(context.di) = context.cx;
 	context.bh = 1;
 lookforlineend:
 	getblockofpixel(context);
@@ -3101,15 +3101,15 @@ lookforlineend:
 	goto lookforlineend;
 foundlineend:
 	context.push(context.cx);
-	context.ds.byte(context.di+2) = context.bh;
+	context.es.byte(context.di+2) = context.bh;
 	randomnumber(context);
-	context.ds.byte(context.di+3) = context.al;
+	context.es.byte(context.di+3) = context.al;
 	randomnumber(context);
-	context.ds.byte(context.di+4) = context.al;
+	context.es.byte(context.di+4) = context.al;
 	randomnumber(context);
 	context._and(context.al, 3);
 	context._add(context.al, 4);
-	context.ds.byte(context.di+5) = context.al;
+	context.es.byte(context.di+5) = context.al;
 	context._add(context.di, 6);
 	context.cx = context.pop();
 	context._cmp(context.cl, 0);
@@ -3152,32 +3152,32 @@ void showrain(Context & context) {
 	context._add(context.si, 2080);
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30);
 	context.es = context.data.word(410);
-	context._cmp(context.ds.byte(context.bx), 255);
+	context._cmp(context.es.byte(context.bx), 255);
 	if (context.flags.z()) goto nothunder;
 morerain:
 	context.es = context.data.word(410);
-	context._cmp(context.ds.byte(context.bx), 255);
+	context._cmp(context.es.byte(context.bx), 255);
 	if (context.flags.z()) goto finishrain;
-	context.al = context.ds.byte(context.bx+1);
+	context.al = context.es.byte(context.bx+1);
 	context.ah = 0;
 	context._add(context.ax, context.data.word(117));
 	context._add(context.ax, context.data.word(125));
 	context.cx = 320;
 	context._mul(context.cx);
-	context.cl = context.ds.byte(context.bx);
+	context.cl = context.es.byte(context.bx);
 	context.ch = 0;
 	context._add(context.ax, context.cx);
 	context._add(context.ax, context.data.word(115));
 	context._add(context.ax, context.data.word(123));
 	context.di = context.ax;
-	context.cl = context.ds.byte(context.bx+2);
+	context.cl = context.es.byte(context.bx+2);
 	context.ch = 0;
-	context.ax = context.ds.word(context.bx+3);
-	context.dl = context.ds.byte(context.bx+5);
+	context.ax = context.es.word(context.bx+3);
+	context.dl = context.es.byte(context.bx+5);
 	context.dh = 0;
 	context._sub(context.ax, context.dx);
 	context._and(context.ax, 511);
-	context.ds.word(context.bx+3) = context.ax;
+	context.es.word(context.bx+3) = context.ax;
 	context._add(context.bx, 6);
 	context.push(context.si);
 	context._add(context.si, context.ax);
@@ -3223,16 +3223,16 @@ nothunder:
 
 void backobject(Context & context) {
 	context.ds = context.data.word(426);
-	context.di = context.ds.word(context.bx+20);
-	context.al = context.ds.byte(context.bx+18);
+	context.di = context.es.word(context.bx+20);
+	context.al = context.es.byte(context.bx+18);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto _tmp48z;
 	context._sub(context.al, 1);
-	context.ds.byte(context.bx+18) = context.al;
+	context.es.byte(context.bx+18) = context.al;
 	goto finishback;
 _tmp48z:
 	context.al = context.ds.byte(context.di+7);
-	context.ds.byte(context.bx+18) = context.al;
+	context.es.byte(context.bx+18) = context.al;
 	context.al = context.ds.byte(context.di+8);
 	context._cmp(context.al, 6);
 	if (!context.flags.z()) goto notwidedoor;
@@ -3277,7 +3277,7 @@ void liftsprite(Context & context) {
 	if (context.flags.z()) goto liftopen;
 	context._cmp(context.al, 3);
 	if (context.flags.z()) goto openlift;
-	context.al = context.ds.byte(context.bx+19);
+	context.al = context.es.byte(context.bx+19);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto finishclose;
 	context._sub(context.al, 1);
@@ -3292,7 +3292,7 @@ finishclose:
 	context.data.byte(34) = 0;
 	return;
 openlift:
-	context.al = context.ds.byte(context.bx+19);
+	context.al = context.es.byte(context.bx+19);
 	context._cmp(context.al, 12);
 	if (context.flags.z()) goto endoflist;
 	context._add(context.al, 1);
@@ -3303,13 +3303,13 @@ openlift:
 	liftnoise(context);
 	context.ax = context.pop();
 pokelift:
-	context.ds.byte(context.bx+19) = context.al;
+	context.es.byte(context.bx+19) = context.al;
 	context.ah = 0;
 	context.push(context.di);
 	context._add(context.di, context.ax);
 	context.al = context.ds.byte(context.di+18);
 	context.di = context.pop();
-	context.ds.byte(context.bx+15) = context.al;
+	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
 	return;
 endoflist:
@@ -3370,31 +3370,31 @@ void random(Context & context) {
 	context._add(context.di, context.ax);
 	context.al = context.ds.byte(context.di);
 	context.di = context.pop();
-	context.ds.byte(context.bx+15) = context.al;
+	context.es.byte(context.bx+15) = context.al;
 	return;
 }
 
 void steady(Context & context) {
 	context.al = context.ds.byte(context.di+18);
 	context.ds.byte(context.di+17) = context.al;
-	context.ds.byte(context.bx+15) = context.al;
+	context.es.byte(context.bx+15) = context.al;
 	return;
 }
 
 void constant(Context & context) {
-	context._add(context.ds.byte(context.bx+19), 1);
-	context.cl = context.ds.byte(context.bx+19);
+	context._add(context.es.byte(context.bx+19), 1);
+	context.cl = context.es.byte(context.bx+19);
 	context.ch = 0;
 	context._add(context.di, context.cx);
 	context._cmp(context.ds.byte(context.di+18), 255);
 	if (!context.flags.z()) goto gotconst;
 	context._sub(context.di, context.cx);
 	context.cx = 0;
-	context.ds.byte(context.bx+19) = context.cl;
+	context.es.byte(context.bx+19) = context.cl;
 gotconst:
 	context.al = context.ds.byte(context.di+18);
 	context._sub(context.di, context.cx);
-	context.ds.byte(context.bx+15) = context.al;
+	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
 	return;
 }
@@ -3420,8 +3420,8 @@ void widedoor(Context & context) {
 void dodoor(Context & context) {
 	context.al = context.data.byte(150);
 	context.ah = context.data.byte(151);
-	context.cl = context.ds.byte(context.bx+10);
-	context.ch = context.ds.byte(context.bx+11);
+	context.cl = context.es.byte(context.bx+10);
+	context.ch = context.es.byte(context.bx+11);
 	context._cmp(context.al, context.cl);
 	if (!context.flags.c()) goto rtofdoor;
 	context._sub(context.al, context.cl);
@@ -3444,7 +3444,7 @@ botofdoor:
 	context._cmp(context.ah, context.data.byte(195));
 	if (!context.flags.c()) goto shutdoor;
 opendoor:
-	context.cl = context.ds.byte(context.bx+19);
+	context.cl = context.es.byte(context.bx+19);
 	context._cmp(context.data.byte(60), 1);
 	if (!context.flags.z()) goto notthrough;
 	context._cmp(context.cl, 0);
@@ -3470,15 +3470,15 @@ notdoorsound2:
 	context._sub(context.di, 1);
 	context._sub(context.cl, 1);
 atlast1:
-	context.ds.byte(context.bx+19) = context.cl;
+	context.es.byte(context.bx+19) = context.cl;
 	context.al = context.ds.byte(context.di+18);
 	context.di = context.pop();
-	context.ds.byte(context.bx+15) = context.al;
+	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
 	context.data.byte(60) = 1;
 	return;
 shutdoor:
-	context.cl = context.ds.byte(context.bx+19);
+	context.cl = context.es.byte(context.bx+19);
 	context._cmp(context.cl, 5);
 	if (!context.flags.z()) goto notdoorsound1;
 	context.al = 1;
@@ -3491,14 +3491,14 @@ notdoorsound1:
 	context._cmp(context.cl, 0);
 	if (context.flags.z()) goto atlast2;
 	context._sub(context.cl, 1);
-	context.ds.byte(context.bx+19) = context.cl;
+	context.es.byte(context.bx+19) = context.cl;
 atlast2:
 	context.ch = 0;
 	context.push(context.di);
 	context._add(context.di, context.cx);
 	context.al = context.ds.byte(context.di+18);
 	context.di = context.pop();
-	context.ds.byte(context.bx+15) = context.al;
+	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
 	context._cmp(context.cl, 5);
 	if (!context.flags.z()) goto notnearly;
@@ -3510,8 +3510,8 @@ notnearly:
 void lockeddoorway(Context & context) {
 	context.al = context.data.byte(150);
 	context.ah = context.data.byte(151);
-	context.cl = context.ds.byte(context.bx+10);
-	context.ch = context.ds.byte(context.bx+11);
+	context.cl = context.es.byte(context.bx+10);
+	context.ch = context.es.byte(context.bx+11);
 	context._cmp(context.al, context.cl);
 	if (!context.flags.c()) goto rtofdoor2;
 	context._sub(context.al, context.cl);
@@ -3539,7 +3539,7 @@ opendoor2:
 	context._cmp(context.data.byte(36), 1);
 	if (context.flags.z()) goto shutdoor;
 mustbeopen:
-	context.cl = context.ds.byte(context.bx+19);
+	context.cl = context.es.byte(context.bx+19);
 	context._cmp(context.cl, 1);
 	if (!context.flags.z()) goto notdoorsound4;
 	context.al = 0;
@@ -3554,7 +3554,7 @@ notdoorsound4:
 	context.bx = context.pop();
 	context.es = context.pop();
 noturnonyet:
-	context.cl = context.ds.byte(context.bx+19);
+	context.cl = context.es.byte(context.bx+19);
 	context._cmp(context.data.byte(60), 1);
 	if (!context.flags.z()) goto notthrough2;
 	context._cmp(context.cl, 0);
@@ -3571,10 +3571,10 @@ notthrough2:
 	context._sub(context.di, 1);
 	context._sub(context.cl, 1);
 atlast3:
-	context.ds.byte(context.bx+19) = context.cl;
+	context.es.byte(context.bx+19) = context.cl;
 	context.al = context.ds.byte(context.di+18);
 	context.di = context.pop();
-	context.ds.byte(context.bx+15) = context.al;
+	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
 	context._cmp(context.cl, 5);
 	if (!context.flags.z()) goto justshutting;
@@ -3582,7 +3582,7 @@ atlast3:
 justshutting:
 	return;
 shutdoor2:
-	context.cl = context.ds.byte(context.bx+19);
+	context.cl = context.es.byte(context.bx+19);
 	context._cmp(context.cl, 5);
 	if (!context.flags.z()) goto notdoorsound3;
 	context.al = 1;
@@ -3591,7 +3591,7 @@ notdoorsound3:
 	context._cmp(context.cl, 0);
 	if (context.flags.z()) goto atlast4;
 	context._sub(context.cl, 1);
-	context.ds.byte(context.bx+19) = context.cl;
+	context.es.byte(context.bx+19) = context.cl;
 atlast4:
 	context.ch = 0;
 	context.data.byte(60) = 0;
@@ -3599,7 +3599,7 @@ atlast4:
 	context._add(context.di, context.cx);
 	context.al = context.ds.byte(context.di+18);
 	context.di = context.pop();
-	context.ds.byte(context.bx+15) = context.al;
+	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
 	context._cmp(context.cl, 0);
 	if (!context.flags.z()) goto notlocky;
@@ -3614,7 +3614,7 @@ notlocky:
 	return;
 /*continuing to unbounded code: shutdoor from dodoor:60-87*/
 shutdoor:
-	context.cl = context.ds.byte(context.bx+19);
+	context.cl = context.es.byte(context.bx+19);
 	context._cmp(context.cl, 5);
 	if (!context.flags.z()) goto notdoorsound1;
 	context.al = 1;
@@ -3627,14 +3627,14 @@ notdoorsound1:
 	context._cmp(context.cl, 0);
 	if (context.flags.z()) goto atlast2;
 	context._sub(context.cl, 1);
-	context.ds.byte(context.bx+19) = context.cl;
+	context.es.byte(context.bx+19) = context.cl;
 atlast2:
 	context.ch = 0;
 	context.push(context.di);
 	context._add(context.di, context.cx);
 	context.al = context.ds.byte(context.di+18);
 	context.di = context.pop();
-	context.ds.byte(context.bx+15) = context.al;
+	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
 	context._cmp(context.cl, 5);
 	if (!context.flags.z()) goto notnearly;
@@ -3656,18 +3656,18 @@ void updatepeople(Context & context) {
 	context.bx = 534;
 	context.di = 991;
 updateloop:
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto endupdate;
 	context._cmp(context.al, context.data.byte(183));
 	if (!context.flags.z()) goto notinthisroom;
-	context.cx = context.ds.word(context.bx+1);
+	context.cx = context.es.word(context.bx+1);
 	context._cmp(context.cl, context.data.byte(147));
 	if (!context.flags.z()) goto notinthisroom;
 	context._cmp(context.ch, context.data.byte(148));
 	if (!context.flags.z()) goto notinthisroom;
 	context.push(context.di);
-	context.ax = context.ds.word(context.di);
+	context.ax = context.cs.word(context.di);
 	__dispatch_call(context, context.ax);
 	context.di = context.pop();
 notinthisroom:
@@ -3708,7 +3708,7 @@ void plotreel(Context & context) {
 retryreel:
 	context.push(context.es);
 	context.push(context.si);
-	context.ax = context.ds.word(context.si+2);
+	context.ax = context.es.word(context.si+2);
 	context._cmp(context.al, 220);
 	if (context.flags.c()) goto normalreel;
 	context._cmp(context.al, 255);
@@ -3725,7 +3725,7 @@ plotloop:
 	context.push(context.cx);
 	context.push(context.es);
 	context.push(context.si);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._cmp(context.ax, 0x0ffff);
 	if (context.flags.z()) goto notplot;
 	showreelframe(context);
@@ -3746,18 +3746,18 @@ void soundonreels(Context & context) {
 	context._add(context.bl, context.bl);
 	context._xor(context.bh, context.bh);
 	context._add(context.bx, 1214);
-	context.si = context.ds.word(context.bx);
+	context.si = context.cs.word(context.bx);
 reelsoundloop:
-	context.al = context.ds.byte(context.si);
+	context.al = context.cs.byte(context.si);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto endreelsound;
-	context.ax = context.ds.word(context.si+1);
+	context.ax = context.cs.word(context.si+1);
 	context._cmp(context.ax, context.data.word(237));
 	if (!context.flags.z()) goto skipreelsound;
 	context._cmp(context.ax, context.data.word(349));
 	if (context.flags.z()) goto skipreelsound;
 	context.data.word(349) = context.ax;
-	context.al = context.ds.byte(context.si);
+	context.al = context.cs.byte(context.si);
 	context._cmp(context.al, 64);
 	if (context.flags.c()) { playchannel1(context); return; };
 	context._cmp(context.al, 128);
@@ -3889,14 +3889,14 @@ void getreelstart(Context & context) {
 }
 
 void showreelframe(Context & context) {
-	context.al = context.ds.byte(context.si+2);
+	context.al = context.es.byte(context.si+2);
 	context.ah = 0;
 	context.di = context.ax;
 	context._add(context.di, context.data.word(115));
-	context.al = context.ds.byte(context.si+3);
+	context.al = context.es.byte(context.si+3);
 	context.bx = context.ax;
 	context._add(context.bx, context.data.word(117));
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context.data.word(158) = context.ax;
 	findsource(context);
 	context.ax = context.data.word(158);
@@ -3925,13 +3925,13 @@ void dumpeverything(Context & context) {
 	context.es = context.data.word(410);
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40);
 dumpevery1:
-	context.ax = context.ds.word(context.bx);
-	context.cx = context.ds.word(context.bx+2);
+	context.ax = context.es.word(context.bx);
+	context.cx = context.es.word(context.bx+2);
 	context._cmp(context.ax, 0x0ffff);
 	if (context.flags.z()) goto finishevery1;
-	context._cmp(context.ax, context.ds.word(context.bx+(40*5)));
+	context._cmp(context.ax, context.es.word(context.bx+(40*5)));
 	if (!context.flags.z()) goto notskip1;
-	context._cmp(context.cx, context.ds.word(context.bx+(40*5)+2));
+	context._cmp(context.cx, context.es.word(context.bx+(40*5)+2));
 	if (context.flags.z()) goto skip1;
 notskip1:
 	context.push(context.bx);
@@ -3953,8 +3953,8 @@ skip1:
 finishevery1:
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(40*5);
 dumpevery2:
-	context.ax = context.ds.word(context.bx);
-	context.cx = context.ds.word(context.bx+2);
+	context.ax = context.es.word(context.bx);
+	context.cx = context.es.word(context.bx+2);
 	context._cmp(context.ax, 0x0ffff);
 	if (context.flags.z()) goto finishevery2;
 	context.push(context.bx);
@@ -4142,15 +4142,15 @@ void dumpmap(Context & context) {
 
 void pixelcheckset(Context & context) {
 	context.push(context.ax);
-	context._sub(context.al, context.ds.byte(context.bx));
-	context._sub(context.ah, context.ds.byte(context.bx+1));
+	context._sub(context.al, context.es.byte(context.bx));
+	context._sub(context.ah, context.es.byte(context.bx+1));
 	context.push(context.es);
 	context.push(context.bx);
 	context.push(context.cx);
 	context.push(context.ax);
-	context.al = context.ds.byte(context.bx+4);
+	context.al = context.es.byte(context.bx+4);
 	getsetad(context);
-	context.al = context.ds.byte(context.bx+17);
+	context.al = context.es.byte(context.bx+17);
 	context.es = context.data.word(442);
 	context.bx = 0;
 	context.ah = 0;
@@ -4161,16 +4161,16 @@ void pixelcheckset(Context & context) {
 	context.push(context.ax);
 	context.al = context.ah;
 	context.ah = 0;
-	context.cl = context.ds.byte(context.bx);
+	context.cl = context.es.byte(context.bx);
 	context.ch = 0;
 	context._mul(context.cx);
 	context.cx = context.pop();
 	context.ch = 0;
 	context._add(context.ax, context.cx);
-	context._add(context.ax, context.ds.word(context.bx+2));
+	context._add(context.ax, context.es.word(context.bx+2));
 	context.bx = context.ax;
 	context._add(context.bx, 0+2080);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context.dl = context.al;
 	context.cx = context.pop();
 	context.bx = context.pop();
@@ -4303,7 +4303,7 @@ zoomloop2:
 	context._lodsb();
 	context.ah = context.al;
 	context._stosw();
-	context.ds.word(context.di+320-2) = context.ax;
+	context.es.word(context.di+320-2) = context.ax;
 	if (--context.cx) goto zoomloop2;
 	context._add(context.si, 320-23);
 	context._add(context.di, 320-46+320);
@@ -5036,7 +5036,7 @@ bhloop2:
 	context.ch = 0;
 	context.ah = 255;
 bhloop1:
-	context._cmp(context.ds.byte(context.di), context.ah);
+	context._cmp(context.es.byte(context.di), context.ah);
 	if (!context.flags.z()) goto nofill;
 	context._movsb();
  	if (--context.cx) goto bhloop1;
@@ -5084,7 +5084,7 @@ frameloopfx3:
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto backtootherfx;
 backtosolidfx:
-	context.ds.byte(context.di) = context.al;
+	context.es.byte(context.di) = context.al;
 	context._sub(context.di, 1);
 	if (--context.cx) goto frameloopfx3;
 	context.cx = context.pop();
@@ -5129,16 +5129,16 @@ void transferinv(Context & context) {
 	context._add(context.si, context.ds.word(context.bx+2));
 	context.dx = context.ds.word(context.bx+4);
 	context.bx = context.pop();
-	context.ds.byte(context.bx+0) = context.al;
-	context.ds.byte(context.bx+1) = context.cl;
-	context.ds.word(context.bx+4) = context.dx;
+	context.es.byte(context.bx+0) = context.al;
+	context.es.byte(context.bx+1) = context.cl;
+	context.es.word(context.bx+4) = context.dx;
 	context._mul(context.cx);
 	context.cx = context.ax;
 	context.push(context.cx);
 	while(--context.cx) 	context._movsb();
  	context.cx = context.pop();
 	context.ax = context.pop();
-	context.ds.word(context.bx+2) = context.ax;
+	context.es.word(context.bx+2) = context.ax;
 	context._add(context.data.word(10), context.cx);
 	return;
 }
@@ -5176,16 +5176,16 @@ void transfermap(Context & context) {
 	context._add(context.si, context.ds.word(context.bx+2));
 	context.dx = context.ds.word(context.bx+4);
 	context.bx = context.pop();
-	context.ds.byte(context.bx+0) = context.al;
-	context.ds.byte(context.bx+1) = context.cl;
-	context.ds.word(context.bx+4) = context.dx;
+	context.es.byte(context.bx+0) = context.al;
+	context.es.byte(context.bx+1) = context.cl;
+	context.es.word(context.bx+4) = context.dx;
 	context._mul(context.cx);
 	context.cx = context.ax;
 	context.push(context.cx);
 	while(--context.cx) 	context._movsb();
  	context.cx = context.pop();
 	context.ax = context.pop();
-	context.ds.word(context.bx+2) = context.ax;
+	context.es.word(context.bx+2) = context.ax;
 	context._add(context.data.word(10), context.cx);
 	return;
 }
@@ -5294,9 +5294,9 @@ void fadescreendownhalf(Context & context) {
 	context.es = context.data.word(410);
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768;
 halfend:
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context._shr(context.al, 1);
-	context.ds.byte(context.bx) = context.al;
+	context.es.byte(context.bx) = context.al;
 	context._add(context.bx, 1);
 	if (--context.cx) goto halfend;
 	context.ds = context.data.word(410);
@@ -5428,7 +5428,7 @@ void rollem(Context & context) {
 	multiget(context);
 	context.es = context.data.word(464);
 	context.si = 49*2;
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context.si = context.ax;
 	context._add(context.si, 66*2);
 	context.cx = 80;
@@ -5486,7 +5486,7 @@ onelot2:
 	if (--context.cx) goto endcredits22;
 	context.cx = context.pop();
 looknext2:
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context._add(context.si, 1);
 	context._cmp(context.al, ':');
 	if (context.flags.z()) goto gotnext2;
@@ -5515,19 +5515,19 @@ void fadecalculation(Context & context) {
 	context.di = 0+(228*13)+32+60+(32*32)+(11*10*3)+768;
 	context.cx = 768;
 fadecolloop:
-	context.al = context.ds.byte(context.si);
-	context.ah = context.ds.byte(context.di);
+	context.al = context.es.byte(context.si);
+	context.ah = context.es.byte(context.di);
 	context._cmp(context.al, context.ah);
 	if (context.flags.z()) goto gotthere;
 	if (context.flags.c()) goto lesscolour;
-	context._sub(context.ds.byte(context.si), 1);
+	context._sub(context.es.byte(context.si), 1);
 	goto gotthere;
 lesscolour:
 	context._cmp(context.bl, context.ah);
 	if (context.flags.z()) goto withit;
 	if (!context.flags.c()) goto gotthere;
 withit:
-	context._add(context.ds.byte(context.si), 1);
+	context._add(context.es.byte(context.si), 1);
 gotthere:
 	context._add(context.si, 1);
 	context._add(context.di, 1);
@@ -5547,17 +5547,17 @@ void greyscalesum(Context & context) {
 greysumloop1:
 	context.push(context.cx);
 	context.bx = 0;
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context.ah = 0;
 	context.cx = 20;
 	context._mul(context.cx);
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.si+1);
+	context.al = context.es.byte(context.si+1);
 	context.ah = 0;
 	context.cx = 59;
 	context._mul(context.cx);
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.si+2);
+	context.al = context.es.byte(context.si+2);
 	context.ah = 0;
 	context.cx = 11;
 	context._mul(context.cx);
@@ -5804,7 +5804,7 @@ nextmonkspeak:
 	context.si = context.ax;
 	context._add(context.si, context.si);
 	context.es = context.data.word(464);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._add(context.ax, 66*2);
 	context.si = context.ax;
 nextbit:
@@ -6159,7 +6159,7 @@ printloopslow5:
 	context.push(context.cx);
 	context.push(context.si);
 	context.push(context.es);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context.push(context.bx);
 	context.push(context.cx);
 	context.push(context.es);
@@ -6172,7 +6172,7 @@ printloopslow5:
 	context.es = context.pop();
 	context.cx = context.pop();
 	context.bx = context.pop();
-	context.ax = context.ds.word(context.si+1);
+	context.ax = context.es.word(context.si+1);
 	context._add(context.si, 1);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto finishslow;
@@ -6286,7 +6286,7 @@ printloop6:
 	getnumber(context);
 	context.ch = 0;
 printloop5:
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._add(context.si, 1);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto finishdirct;
@@ -6326,7 +6326,7 @@ printloop8:
 	getnumber(context);
 	context.ch = 0;
 printloop7:
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context._add(context.si, 1);
 	context._cmp(context.al, ':');
 	if (context.flags.z()) goto finishmon2;
@@ -6338,7 +6338,7 @@ printloop7:
 	if (context.flags.z()) goto finishmon;
 	context._cmp(context.al, '%');
 	if (!context.flags.z()) goto nottrigger;
-	context.ah = context.ds.byte(context.si);
+	context.ah = context.es.byte(context.si);
 	context._add(context.si, 1);
 	context._add(context.si, 1);
 	goto finishmon;
@@ -6497,7 +6497,7 @@ notcent2:
 void getnextword(Context & context) {
 	context.bx = 0;
 getloop:
-	context.ax = context.ds.word(context.di);
+	context.ax = context.es.word(context.di);
 	context._add(context.di, 1);
 	context._add(context.bh, 1);
 	context._cmp(context.al, ':');
@@ -6611,7 +6611,7 @@ ryanloop1:
 	context.push(context.cx);
 	context.push(context.di);
 	context.push(context.bx);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._add(context.si, 2);
 	context.push(context.si);
 	context.push(context.es);
@@ -6652,7 +6652,7 @@ openloop1:
 	context.push(context.cx);
 	context.push(context.di);
 	context.push(context.bx);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._add(context.si, 2);
 	context.push(context.si);
 	context.push(context.es);
@@ -6828,18 +6828,18 @@ finishfill:
 }
 
 void isitworn(Context & context) {
-	context.al = context.ds.byte(context.bx+12);
+	context.al = context.es.byte(context.bx+12);
 	context._cmp(context.al, 'W'-'A');
 	if (!context.flags.z()) goto notworn;
-	context.al = context.ds.byte(context.bx+13);
+	context.al = context.es.byte(context.bx+13);
 	context._cmp(context.al, 'E'-'A');
 notworn:
 	return;
 }
 
 void makeworn(Context & context) {
-	context.ds.byte(context.bx+12) = 'W'-'A';
-	context.ds.byte(context.bx+13) = 'E'-'A';
+	context.es.byte(context.bx+12) = 'W'-'A';
+	context.es.byte(context.bx+13) = 'E'-'A';
 	return;
 }
 
@@ -7030,7 +7030,7 @@ void openob(Context & context) {
 	context._mul(context.cx);
 	context._add(context.ax, 80);
 	context.bx = 2588;
-	context.ds.word(context.bx) = context.ax;
+	context.cs.word(context.bx) = context.ax;
 	return;
 }
 
@@ -7208,14 +7208,14 @@ describe:
 	context.ah = 0;
 	context._add(context.ax, context.ax);
 	context._add(context.si, context.ax);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._add(context.ax, context.cx);
 	context.si = context.ax;
 	context.bx = context.ax;
 tryagain:
 	context.push(context.si);
 	findnextcolon(context);
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context.cx = context.si;
 	context.si = context.pop();
 	context._cmp(context.data.byte(101), 1);
@@ -7236,9 +7236,9 @@ void searchforsame(Context & context) {
 	context.si = context.cx;
 searchagain:
 	context._add(context.si, 1);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 search:
-	context._cmp(context.ds.byte(context.si), context.al);
+	context._cmp(context.es.byte(context.si), context.al);
 	if (context.flags.z()) goto gotstartletter;
 	context._add(context.cx, 1);
 	context._add(context.si, 1);
@@ -7253,8 +7253,8 @@ gotstartletter:
 keepchecking:
 	context._add(context.si, 1);
 	context._add(context.bx, 1);
-	context.al = context.ds.byte(context.bx);
-	context.ah = context.ds.byte(context.si);
+	context.al = context.es.byte(context.bx);
+	context.ah = context.es.byte(context.si);
 	context._cmp(context.al, ':');
 	if (context.flags.z()) goto foundmatch;
 	context._cmp(context.al, 0);
@@ -7272,7 +7272,7 @@ foundmatch:
 
 void findnextcolon(Context & context) {
 isntcolon:
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context._add(context.si, 1);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto endofcolon;
@@ -7398,7 +7398,7 @@ void setpickup(Context & context) {
 	context._cmp(context.data.byte(101), 3);
 	if (context.flags.z()) goto cantpick;
 	getanyad(context);
-	context.al = context.ds.byte(context.bx+2);
+	context.al = context.es.byte(context.bx+2);
 	context._cmp(context.al, 4);
 	if (!context.flags.z()) goto canpick;
 cantpick:
@@ -7437,8 +7437,8 @@ dosetpick:
 	context.data.byte(88) = context.al;
 	context.data.byte(101) = 4;
 	geteitherad(context);
-	context.ds.byte(context.bx+2) = 20;
-	context.ds.byte(context.bx+3) = 255;
+	context.es.byte(context.bx+2) = 20;
+	context.es.byte(context.bx+3) = 255;
 	openinv(context);
 	worktoscreenm(context);
 	return;
@@ -7477,7 +7477,7 @@ doexinv:
 
 void reexfrominv(Context & context) {
 	findinvpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context.data.byte(99) = context.ah;
 	context.data.byte(98) = context.al;
 	context.data.byte(107) = 1;
@@ -7488,7 +7488,7 @@ void reexfrominv(Context & context) {
 void reexfromopen(Context & context) {
 	return;
 	findopenpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context.data.byte(99) = context.ah;
 	context.data.byte(98) = context.al;
 	context.data.byte(107) = 1;
@@ -7522,12 +7522,12 @@ doswap1:
 	context.al = context.data.byte(88);
 	context.push(context.ax);
 	findinvpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context.data.byte(88) = context.al;
 	context.data.byte(101) = context.ah;
 	geteitherad(context);
-	context.ds.byte(context.bx+2) = 20;
-	context.ds.byte(context.bx+3) = 255;
+	context.es.byte(context.bx+2) = 20;
+	context.es.byte(context.bx+3) = 255;
 	context.bl = context.data.byte(88);
 	context.bh = context.data.byte(101);
 	context.ax = context.pop();
@@ -7538,10 +7538,10 @@ doswap1:
 	delpointer(context);
 	context.al = context.data.byte(88);
 	geteitherad(context);
-	context.ds.byte(context.bx+2) = 4;
-	context.ds.byte(context.bx+3) = 255;
+	context.es.byte(context.bx+2) = 4;
+	context.es.byte(context.bx+3) = 255;
 	context.al = context.data.byte(106);
-	context.ds.byte(context.bx+4) = context.al;
+	context.es.byte(context.bx+4) = context.al;
 	context.ax = context.pop();
 	context.data.byte(101) = context.ah;
 	context.data.byte(88) = context.al;
@@ -7600,22 +7600,22 @@ sizeok2:
 	context.al = context.data.byte(88);
 	context.push(context.ax);
 	findopenpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context.data.byte(88) = context.al;
 	context.data.byte(101) = context.ah;
 	context._cmp(context.ah, 4);
 	if (!context.flags.z()) goto makeswapex;
 	geteitherad(context);
-	context.ds.byte(context.bx+2) = 20;
-	context.ds.byte(context.bx+3) = 255;
+	context.es.byte(context.bx+2) = 20;
+	context.es.byte(context.bx+3) = 255;
 	goto actuallyswap;
 makeswapex:
 	transfertoex(context);
 	context.data.byte(88) = context.al;
 	context.data.byte(101) = 4;
 	geteitherad(context);
-	context.ds.byte(context.bx+2) = 20;
-	context.ds.byte(context.bx+3) = 255;
+	context.es.byte(context.bx+2) = 20;
+	context.es.byte(context.bx+3) = 255;
 actuallyswap:
 	context.bl = context.data.byte(88);
 	context.bh = context.data.byte(101);
@@ -7626,13 +7626,13 @@ actuallyswap:
 	findopenpos(context);
 	geteitherad(context);
 	context.al = context.data.byte(110);
-	context.ds.byte(context.bx+2) = context.al;
+	context.es.byte(context.bx+2) = context.al;
 	context.al = context.data.byte(109);
-	context.ds.byte(context.bx+3) = context.al;
+	context.es.byte(context.bx+3) = context.al;
 	context.al = context.data.byte(106);
-	context.ds.byte(context.bx+4) = context.al;
+	context.es.byte(context.bx+4) = context.al;
 	context.al = context.data.byte(183);
-	context.ds.byte(context.bx+5) = context.al;
+	context.es.byte(context.bx+5) = context.al;
 	context.ax = context.pop();
 	context.data.byte(101) = context.ah;
 	context.data.byte(88) = context.al;
@@ -7654,7 +7654,7 @@ void intoinv(Context & context) {
 	return;
 notout:
 	findinvpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto canplace1;
 	swapwithinv(context);
@@ -7684,10 +7684,10 @@ doplace:
 	delpointer(context);
 	context.al = context.data.byte(88);
 	getexad(context);
-	context.ds.byte(context.bx+2) = 4;
-	context.ds.byte(context.bx+3) = 255;
+	context.es.byte(context.bx+2) = 4;
+	context.es.byte(context.bx+3) = 255;
 	context.al = context.data.byte(106);
-	context.ds.byte(context.bx+4) = context.al;
+	context.es.byte(context.bx+4) = context.al;
 	context.data.byte(105) = 0;
 	fillryan(context);
 	readmouse(context);
@@ -7714,7 +7714,7 @@ takenloop:
 	context._add(context.bx, context.bx);
 	context._add(context.bx, context.bx);
 	context._add(context.bx, context.bx);
-	context.ds.byte(context.bx+2) = 254;
+	context.es.byte(context.bx+2) = 254;
 notinhere:
 	context._add(context.si, 16);
 	if (--context.cx) goto takenloop;
@@ -7723,7 +7723,7 @@ notinhere:
 
 void outofinv(Context & context) {
 	findinvpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._cmp(context.al, 255);
 	if (!context.flags.z()) goto canpick2;
 	blank(context);
@@ -7757,12 +7757,12 @@ dograb:
 	delpointer(context);
 	context.data.byte(105) = 1;
 	findinvpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context.data.byte(88) = context.al;
 	context.data.byte(101) = context.ah;
 	getexad(context);
-	context.ds.byte(context.bx+2) = 20;
-	context.ds.byte(context.bx+3) = 255;
+	context.es.byte(context.bx+2) = 20;
+	context.es.byte(context.bx+3) = 255;
 	fillryan(context);
 	readmouse(context);
 	showpointer(context);
@@ -7810,17 +7810,17 @@ void getanyad(Context & context) {
 	if (context.flags.z()) goto isfree;
 	context.al = context.data.byte(98);
 	getsetad(context);
-	context.ax = context.ds.word(context.bx+4);
+	context.ax = context.es.word(context.bx+4);
 	return;
 isfree:
 	context.al = context.data.byte(98);
 	getfreead(context);
-	context.ax = context.ds.word(context.bx+7);
+	context.ax = context.es.word(context.bx+7);
 	return;
 isex:
 	context.al = context.data.byte(98);
 	getexad(context);
-	context.ax = context.ds.word(context.bx+7);
+	context.ax = context.es.word(context.bx+7);
 	return;
 }
 
@@ -7846,17 +7846,17 @@ void getopenedsize(Context & context) {
 	if (context.flags.z()) goto isfree2;
 	context.al = context.data.byte(109);
 	getsetad(context);
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	return;
 isfree2:
 	context.al = context.data.byte(109);
 	getfreead(context);
-	context.ax = context.ds.word(context.bx+7);
+	context.ax = context.es.word(context.bx+7);
 	return;
 isex2:
 	context.al = context.data.byte(109);
 	getexad(context);
-	context.ax = context.ds.word(context.bx+7);
+	context.ax = context.es.word(context.bx+7);
 	return;
 }
 
@@ -7977,7 +7977,7 @@ notinlift:
 	context.data.byte(101) = 4;
 	context.al = context.data.byte(88);
 	getexad(context);
-	context.ds.byte(context.bx+2) = 0;
+	context.es.byte(context.bx+2) = 0;
 	context.al = context.data.byte(150);
 	context._add(context.al, 4);
 	context.cl = 4;
@@ -7988,19 +7988,19 @@ notinlift:
 	context.cl = 4;
 	context._shr(context.ah, context.cl);
 	context._add(context.ah, context.data.byte(148));
-	context.ds.byte(context.bx+3) = context.al;
-	context.ds.byte(context.bx+5) = context.ah;
+	context.es.byte(context.bx+3) = context.al;
+	context.es.byte(context.bx+5) = context.ah;
 	context.al = context.data.byte(150);
 	context._add(context.al, 4);
 	context._and(context.al, 15);
 	context.ah = context.data.byte(151);
 	context._add(context.ah, 8);
 	context._and(context.ah, 15);
-	context.ds.byte(context.bx+4) = context.al;
-	context.ds.byte(context.bx+6) = context.ah;
+	context.es.byte(context.bx+4) = context.al;
+	context.es.byte(context.bx+6) = context.ah;
 	context.data.byte(105) = 0;
 	context.al = context.data.byte(183);
-	context.ds.byte(context.bx) = context.al;
+	context.es.byte(context.bx) = context.al;
 	return;
 }
 
@@ -8125,7 +8125,7 @@ void useopened(Context & context) {
 	return;
 notout2:
 	findopenpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto canplace3;
 	swapwithopen(context);
@@ -8183,13 +8183,13 @@ sizeok1:
 	context.al = context.data.byte(88);
 	geteitherad(context);
 	context.al = context.data.byte(110);
-	context.ds.byte(context.bx+2) = context.al;
+	context.es.byte(context.bx+2) = context.al;
 	context.al = context.data.byte(109);
-	context.ds.byte(context.bx+3) = context.al;
+	context.es.byte(context.bx+3) = context.al;
 	context.al = context.data.byte(106);
-	context.ds.byte(context.bx+4) = context.al;
+	context.es.byte(context.bx+4) = context.al;
 	context.al = context.data.byte(183);
-	context.ds.byte(context.bx+5) = context.al;
+	context.es.byte(context.bx+5) = context.al;
 	fillopen(context);
 	undertextline(context);
 	readmouse(context);
@@ -8275,7 +8275,7 @@ void checkobjectsize(Context & context) {
 	context.push(context.ax);
 	context.al = context.data.byte(88);
 	geteitherad(context);
-	context.al = context.ds.byte(context.bx+9);
+	context.al = context.es.byte(context.bx+9);
 	context.cx = context.pop();
 	context._cmp(context.al, 255);
 	if (!context.flags.z()) goto notunsized;
@@ -8315,7 +8315,7 @@ void outofopen(Context & context) {
 	context._cmp(context.data.byte(109), 255);
 	if (context.flags.z()) goto cantuseopen;
 	findopenpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._cmp(context.al, 255);
 	if (!context.flags.z()) goto canpick4;
 cantuseopen:
@@ -8347,22 +8347,22 @@ dogrb:
 	delpointer(context);
 	context.data.byte(105) = 1;
 	findopenpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context.data.byte(88) = context.al;
 	context.data.byte(101) = context.ah;
 	context._cmp(context.ah, 4);
 	if (!context.flags.z()) goto makeintoex;
 	geteitherad(context);
-	context.ds.byte(context.bx+2) = 20;
-	context.ds.byte(context.bx+3) = 255;
+	context.es.byte(context.bx+2) = 20;
+	context.es.byte(context.bx+3) = 255;
 	goto actuallyout;
 makeintoex:
 	transfertoex(context);
 	context.data.byte(88) = context.al;
 	context.data.byte(101) = 4;
 	geteitherad(context);
-	context.ds.byte(context.bx+2) = 20;
-	context.ds.byte(context.bx+3) = 255;
+	context.es.byte(context.bx+2) = 20;
+	context.es.byte(context.bx+3) = 255;
 actuallyout:
 	fillopen(context);
 	undertextline(context);
@@ -8390,14 +8390,14 @@ void transfertoex(Context & context) {
 	while(--context.cx) 	context._movsw();
  	context.di = context.pop();
 	context.al = context.data.byte(183);
-	context.ds.byte(context.di) = context.al;
-	context.ds.byte(context.di+11) = context.al;
+	context.es.byte(context.di) = context.al;
+	context.es.byte(context.di+11) = context.al;
 	context.al = context.data.byte(88);
-	context.ds.byte(context.di+1) = context.al;
-	context.ds.byte(context.di+2) = 4;
-	context.ds.byte(context.di+3) = 255;
+	context.es.byte(context.di+1) = context.al;
+	context.es.byte(context.di+2) = 4;
+	context.es.byte(context.di+3) = 255;
 	context.al = context.data.byte(106);
-	context.ds.byte(context.di+4) = context.al;
+	context.es.byte(context.di+4) = context.al;
 	context.al = context.data.byte(88);
 	context.data.byte(89) = context.al;
 	transfermap(context);
@@ -8431,9 +8431,9 @@ pickupcontloop:
 	context.push(context.bx);
 	context.push(context.dx);
 	context.push(context.ax);
-	context._cmp(context.ds.byte(context.bx+2), context.ah);
+	context._cmp(context.es.byte(context.bx+2), context.ah);
 	if (!context.flags.z()) goto notinsidethis;
-	context._cmp(context.ds.byte(context.bx+3), context.al);
+	context._cmp(context.es.byte(context.bx+3), context.al);
 	if (!context.flags.z()) goto notinsidethis;
 	context.data.byte(89) = context.cl;
 	transfercontoex(context);
@@ -8466,12 +8466,12 @@ void transfercontoex(Context & context) {
  	context.di = context.pop();
 	context.dx = context.pop();
 	context.al = context.data.byte(183);
-	context.ds.byte(context.di) = context.al;
-	context.ds.byte(context.di+11) = context.al;
+	context.es.byte(context.di) = context.al;
+	context.es.byte(context.di+11) = context.al;
 	context.al = context.data.byte(89);
-	context.ds.byte(context.di+1) = context.al;
-	context.ds.byte(context.di+3) = context.dl;
-	context.ds.byte(context.di+2) = 4;
+	context.es.byte(context.di+1) = context.al;
+	context.es.byte(context.di+3) = context.dl;
+	context.es.byte(context.di+2) = 4;
 	transfermap(context);
 	transferinv(context);
 	transfertext(context);
@@ -8489,7 +8489,7 @@ void transfertext(Context & context) {
 	context.bx = 0+2080+30000+(16*114);
 	context._add(context.bx, context.ax);
 	context.di = context.data.word(12);
-	context.ds.word(context.bx) = context.di;
+	context.es.word(context.bx) = context.di;
 	context._add(context.di, 0+2080+30000+(16*114)+((114+2)*2));
 	context.al = context.data.byte(89);
 	context.ah = 0;
@@ -8514,7 +8514,7 @@ void getexpos(Context & context) {
 	context.al = 0;
 	context.di = 0+2080+30000;
 tryanotherex:
-	context._cmp(context.ds.byte(context.di+2), 255);
+	context._cmp(context.es.byte(context.di+2), 255);
 	if (context.flags.z()) goto foundnewex;
 	context._add(context.di, 16);
 	context._add(context.al, 1);
@@ -8532,9 +8532,9 @@ void purgealocation(Context & context) {
 	context.bx = context.pop();
 	context.cx = 0;
 purgeloc:
-	context._cmp(context.bl, context.ds.byte(context.di+0));
+	context._cmp(context.bl, context.es.byte(context.di+0));
 	if (!context.flags.z()) goto dontpurge;
-	context._cmp(context.ds.byte(context.di+2), 0);
+	context._cmp(context.es.byte(context.di+2), 0);
 	if (!context.flags.z()) goto dontpurge;
 	context.push(context.di);
 	context.push(context.es);
@@ -8578,15 +8578,15 @@ void purgeanitem(Context & context) {
 	context.bl = context.data.byte(183);
 	context.cx = 0;
 lookforpurge:
-	context.al = context.ds.byte(context.di+2);
+	context.al = context.es.byte(context.di+2);
 	context._cmp(context.al, 0);
 	if (!context.flags.z()) goto cantpurge;
-	context._cmp(context.ds.byte(context.di+12), 2);
+	context._cmp(context.es.byte(context.di+12), 2);
 	if (context.flags.z()) goto iscup;
-	context._cmp(context.ds.byte(context.di+12), 255);
+	context._cmp(context.es.byte(context.di+12), 255);
 	if (!context.flags.z()) goto cantpurge;
 iscup:
-	context._cmp(context.ds.byte(context.di+11), context.bl);
+	context._cmp(context.es.byte(context.di+11), context.bl);
 	if (context.flags.z()) goto cantpurge;
 	deleteexobject(context);
 	return;
@@ -8599,10 +8599,10 @@ cantpurge:
 	context.bl = context.data.byte(183);
 	context.cx = 0;
 lookforpurge2:
-	context.al = context.ds.byte(context.di+2);
+	context.al = context.es.byte(context.di+2);
 	context._cmp(context.al, 0);
 	if (!context.flags.z()) goto cantpurge2;
-	context._cmp(context.ds.byte(context.di+12), 255);
+	context._cmp(context.es.byte(context.di+12), 255);
 	if (!context.flags.z()) goto cantpurge2;
 	deleteexobject(context);
 	return;
@@ -8641,7 +8641,7 @@ void deleteexobject(Context & context) {
 	context.di = 0+2080+30000;
 	context.cx = 0;
 deleteconts:
-	context._cmp(context.ds.word(context.di+2), context.bx);
+	context._cmp(context.es.word(context.di+2), context.bx);
 	if (!context.flags.z()) goto notinsideex;
 	context.push(context.bx);
 	context.push(context.cx);
@@ -8665,16 +8665,16 @@ void deleteexframe(Context & context) {
 	context._add(context.di, context.ax);
 	context._add(context.ax, context.ax);
 	context._add(context.di, context.ax);
-	context.al = context.ds.byte(context.di);
+	context.al = context.es.byte(context.di);
 	context.ah = 0;
-	context.cl = context.ds.byte(context.di+1);
+	context.cl = context.es.byte(context.di+1);
 	context.ch = 0;
 	context._mul(context.cx);
-	context.si = context.ds.word(context.di+2);
+	context.si = context.es.word(context.di+2);
 	context.push(context.si);
 	context._add(context.si, 0+2080);
 	context.cx = 30000;
-	context._sub(context.cx, context.ds.word(context.di+2));
+	context._sub(context.cx, context.es.word(context.di+2));
 	context.di = context.si;
 	context._add(context.si, context.ax);
 	context.push(context.ax);
@@ -8686,12 +8686,12 @@ void deleteexframe(Context & context) {
 	context.cx = 114*3;
 	context.di = 0;
 shuffleadsdown:
-	context.ax = context.ds.word(context.di+2);
+	context.ax = context.es.word(context.di+2);
 	context._cmp(context.ax, context.si);
 	if (context.flags.c()) goto beforethisone;
 	context._sub(context.ax, context.bx);
 beforethisone:
-	context.ds.word(context.di+2) = context.ax;
+	context.es.word(context.di+2) = context.ax;
 	context._add(context.di, 6);
 	if (--context.cx) goto shuffleadsdown;
 	return;
@@ -8702,14 +8702,14 @@ void deleteextext(Context & context) {
 	context.ah = 0;
 	context._add(context.ax, context.ax);
 	context._add(context.di, context.ax);
-	context.ax = context.ds.word(context.di);
+	context.ax = context.es.word(context.di);
 	context.si = context.ax;
 	context.di = context.ax;
 	context._add(context.si, 0+2080+30000+(16*114)+((114+2)*2));
 	context._add(context.di, 0+2080+30000+(16*114)+((114+2)*2));
 	context.ax = 0;
 findlenextext:
-	context.cl = context.ds.byte(context.si);
+	context.cl = context.es.byte(context.si);
 	context._add(context.ax, 1);
 	context._add(context.si, 1);
 	context._cmp(context.cl, 0);
@@ -8727,12 +8727,12 @@ findlenextext:
 	context.cx = 114;
 	context.di = 0+2080+30000+(16*114);
 shuffletextads:
-	context.ax = context.ds.word(context.di);
+	context.ax = context.es.word(context.di);
 	context._cmp(context.ax, context.si);
 	if (context.flags.c()) goto beforethistext;
 	context._sub(context.ax, context.bx);
 beforethistext:
-	context.ds.word(context.di) = context.ax;
+	context.es.word(context.di) = context.ax;
 	context._add(context.di, 2);
 	if (--context.cx) goto shuffletextads;
 	return;
@@ -8875,7 +8875,7 @@ finishdim4:
 void addalong(Context & context) {
 	context.ah = 11;
 addloop:
-	context._cmp(context.ds.byte(context.bx), 0);
+	context._cmp(context.es.byte(context.bx), 0);
 	if (!context.flags.z()) goto gotalong;
 	context._add(context.bx, 3);
 	context._sub(context.ah, 1);
@@ -8890,7 +8890,7 @@ gotalong:
 void addlength(Context & context) {
 	context.ah = 10;
 addloop2:
-	context._cmp(context.ds.byte(context.bx), 0);
+	context._cmp(context.es.byte(context.bx), 0);
 	if (!context.flags.z()) goto gotlength;
 	context._add(context.bx, 3*11);
 	context._sub(context.ah, 1);
@@ -8948,7 +8948,7 @@ void eraseoldobs(Context & context) {
 oberase:
 	context.push(context.cx);
 	context.push(context.bx);
-	context.ax = context.ds.word(context.bx+20);
+	context.ax = context.es.word(context.bx+20);
 	context._cmp(context.ax, 0x0ffff);
 	if (context.flags.z()) goto notthisob;
 	context.di = context.bx;
@@ -8992,7 +8992,7 @@ showobsloop:
 	context.si = context.pop();
 	context._cmp(context.ch, 0);
 	if (context.flags.z()) goto blankframe;
-	context.al = context.ds.byte(context.si+18);
+	context.al = context.es.byte(context.si+18);
 	context.ah = 0;
 	context.data.word(158) = context.ax;
 	context._cmp(context.al, 255);
@@ -9003,13 +9003,13 @@ showobsloop:
 	finalframe(context);
 	context.si = context.pop();
 	context.es = context.pop();
-	context.al = context.ds.byte(context.si+18);
-	context.ds.byte(context.si+17) = context.al;
-	context._cmp(context.ds.byte(context.si+8), 0);
+	context.al = context.es.byte(context.si+18);
+	context.es.byte(context.si+17) = context.al;
+	context._cmp(context.es.byte(context.si+8), 0);
 	if (!context.flags.z()) goto animating;
-	context._cmp(context.ds.byte(context.si+5), 5);
+	context._cmp(context.es.byte(context.si+5), 5);
 	if (context.flags.z()) goto animating;
-	context._cmp(context.ds.byte(context.si+5), 6);
+	context._cmp(context.es.byte(context.si+5), 6);
 	if (context.flags.z()) goto animating;
 	context.ax = context.data.word(158);
 	context.ah = 0;
@@ -9024,14 +9024,14 @@ drawnsetob:
 	context.es = context.data.word(410);
 	context.al = context.data.byte(178);
 	context.ah = context.data.byte(179);
-	context.ds.word(context.si) = context.ax;
+	context.es.word(context.si) = context.ax;
 	context.cx = context.ax;
 	context.ax = context.data.word(174);
 	context._add(context.al, context.cl);
 	context._add(context.ah, context.ch);
-	context.ds.word(context.si+2) = context.ax;
+	context.es.word(context.si+2) = context.ax;
 	context.al = context.data.byte(180);
-	context.ds.byte(context.si+4) = context.al;
+	context.es.byte(context.si+4) = context.al;
 	context._add(context.si, 5);
 	context.data.word(16) = context.si;
 blankframe:
@@ -9049,8 +9049,8 @@ finishedsetobs:
 void makebackob(Context & context) {
 	context._cmp(context.data.byte(61), 0);
 	if (context.flags.z()) goto nomake;
-	context.al = context.ds.byte(context.si+5);
-	context.ah = context.ds.byte(context.si+8);
+	context.al = context.es.byte(context.si+5);
+	context.ah = context.es.byte(context.si+8);
 	context.push(context.si);
 	context.push(context.ax);
 	context.push(context.si);
@@ -9063,17 +9063,17 @@ void makebackob(Context & context) {
 	context.di = 0;
 	makesprite(context);
 	context.ax = context.pop();
-	context.ds.word(context.bx+20) = context.ax;
+	context.es.word(context.bx+20) = context.ax;
 	context.ax = context.pop();
 	context._cmp(context.al, 255);
 	if (!context.flags.z()) goto usedpriority;
 	context.al = 0;
 usedpriority:
-	context.ds.byte(context.bx+23) = context.al;
-	context.ds.byte(context.bx+30) = context.ah;
-	context.ds.byte(context.bx+16) = 0;
-	context.ds.byte(context.bx+18) = 0;
-	context.ds.byte(context.bx+19) = 0;
+	context.es.byte(context.bx+23) = context.al;
+	context.es.byte(context.bx+30) = context.ah;
+	context.es.byte(context.bx+16) = 0;
+	context.es.byte(context.bx+18) = 0;
+	context.es.byte(context.bx+19) = 0;
 	context.si = context.pop();
 nomake:
 	return;
@@ -9132,17 +9132,17 @@ loop127:
 	context.es = context.data.word(410);
 	context.al = context.data.byte(178);
 	context.ah = context.data.byte(179);
-	context.ds.word(context.si) = context.ax;
+	context.es.word(context.si) = context.ax;
 	context.cx = context.ax;
 	context.ax = context.data.word(174);
 	context._add(context.al, context.cl);
 	context._add(context.ah, context.ch);
-	context.ds.word(context.si+2) = context.ax;
+	context.es.word(context.si+2) = context.ax;
 	context.ax = context.pop();
 	context.cx = context.pop();
 	context.push(context.cx);
 	context.push(context.ax);
-	context.ds.byte(context.si+4) = context.cl;
+	context.es.byte(context.si+4) = context.cl;
 	context._add(context.si, 5);
 	context.data.word(16) = context.si;
 over138:
@@ -9181,9 +9181,9 @@ exloop:
 	context.es = context.data.word(396);
 	context.push(context.si);
 	context.ch = 0;
-	context._cmp(context.ds.byte(context.si), 255);
+	context._cmp(context.es.byte(context.si), 255);
 	if (context.flags.z()) goto notinroom;
-	context.al = context.ds.byte(context.si-2);
+	context.al = context.es.byte(context.si-2);
 	context._cmp(context.al, context.data.byte(183));
 	if (!context.flags.z()) goto notinroom;
 	getmapad(context);
@@ -9216,17 +9216,17 @@ notinroom:
 	context.es = context.data.word(410);
 	context.al = context.data.byte(178);
 	context.ah = context.data.byte(179);
-	context.ds.word(context.si) = context.ax;
+	context.es.word(context.si) = context.ax;
 	context.cx = context.ax;
 	context.ax = context.data.word(174);
 	context._add(context.al, context.cl);
 	context._add(context.ah, context.ch);
-	context.ds.word(context.si+2) = context.ax;
+	context.es.word(context.si+2) = context.ax;
 	context.ax = context.pop();
 	context.cx = context.pop();
 	context.push(context.cx);
 	context.push(context.ax);
-	context.ds.byte(context.si+4) = context.cl;
+	context.es.byte(context.si+4) = context.cl;
 	context._add(context.si, 5);
 	context.data.word(16) = context.si;
 blankex:
@@ -9316,11 +9316,11 @@ over146:
 }
 
 void getxad(Context & context) {
-	context.cl = context.ds.byte(context.si);
+	context.cl = context.es.byte(context.si);
 	context._add(context.si, 1);
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context._add(context.si, 1);
-	context.ah = context.ds.byte(context.si);
+	context.ah = context.es.byte(context.si);
 	context._add(context.si, 1);
 	context._cmp(context.cl, 0);
 	if (!context.flags.z()) goto over148;
@@ -9340,9 +9340,9 @@ over148:
 }
 
 void getyad(Context & context) {
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context._add(context.si, 1);
-	context.ah = context.ds.byte(context.si);
+	context.ah = context.es.byte(context.si);
 	context._add(context.si, 1);
 	context._sub(context.al, context.data.byte(148));
 	if (context.flags.c()) goto over147;
@@ -9413,7 +9413,7 @@ void dolook(Context & context) {
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(434);
 	context._add(context.bx, 0);
-	context.si = context.ds.word(context.bx);
+	context.si = context.es.word(context.bx);
 	context._add(context.si, 0+(38*2));
 	findnextcolon(context);
 	context.di = 66;
@@ -9510,9 +9510,9 @@ finishtalk:
 	context.es = context.cs;
 	context._cmp(context.data.byte(245), 4);
 	if (context.flags.c()) goto notnexttalk;
-	context.al = context.ds.byte(context.bx+7);
+	context.al = context.es.byte(context.bx+7);
 	context._or(context.al, 128);
-	context.ds.byte(context.bx+7) = context.al;
+	context.es.byte(context.bx+7) = context.al;
 notnexttalk:
 	redrawmainscrn(context);
 	worktoscreenm(context);
@@ -9546,7 +9546,7 @@ void getpersframe(Context & context) {
 	context.bx = context.ax;
 	context.es = context.data.word(446);
 	context._add(context.bx, 0);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	return;
 }
 
@@ -9581,7 +9581,7 @@ void getpersontext(Context & context) {
 	context.es = context.data.word(446);
 	context._add(context.si, 0+24);
 	context.cx = 0+24+(1026*2);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._add(context.ax, context.cx);
 	context.si = context.ax;
 	return;
@@ -9634,10 +9634,10 @@ watchtalk:
 	context.es = context.data.word(446);
 	context._add(context.si, 0+24);
 	context.cx = 0+24+(1026*2);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._add(context.ax, context.cx);
 	context.si = context.ax;
-	context._cmp(context.ds.byte(context.si), 0);
+	context._cmp(context.es.byte(context.si), 0);
 	if (context.flags.z()) goto endwatchtalk;
 	context.push(context.es);
 	context.push(context.si);
@@ -9674,14 +9674,14 @@ watchtalk:
 	context.es = context.data.word(446);
 	context._add(context.si, 0+24);
 	context.cx = 0+24+(1026*2);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._add(context.ax, context.cx);
 	context.si = context.ax;
-	context._cmp(context.ds.byte(context.si), 0);
+	context._cmp(context.es.byte(context.si), 0);
 	if (context.flags.z()) goto endwatchtalk;
-	context._cmp(context.ds.byte(context.si), ':');
+	context._cmp(context.es.byte(context.si), ':');
 	if (context.flags.z()) goto skiptalk;
-	context._cmp(context.ds.byte(context.si), 32);
+	context._cmp(context.es.byte(context.si), 32);
 	if (context.flags.z()) goto skiptalk;
 	context.push(context.es);
 	context.push(context.si);
@@ -9919,7 +9919,7 @@ alreadyinfo:
 	context.bh = 0;
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(454);
-	context.si = context.ds.word(context.bx);
+	context.si = context.es.word(context.bx);
 	context._add(context.si, 66*2);
 	findnextcolon(context);
 	context.di = 63;
@@ -9964,7 +9964,7 @@ void putundercentre(Context & context) {
 
 void locationpic(Context & context) {
 	getdestinfo(context);
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context.push(context.es);
 	context.push(context.si);
 	context.di = 0;
@@ -9997,7 +9997,7 @@ notinthisone:
 	context.bh = 0;
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(454);
-	context.si = context.ds.word(context.bx);
+	context.si = context.es.word(context.bx);
 	context._add(context.si, 66*2);
 	context.di = 50;
 	context.bx = 20;
@@ -10016,7 +10016,7 @@ void getdestinfo(Context & context) {
 	context.es = context.dx;
 	context.si = 7782;
 	context._add(context.si, context.ax);
-	context.cl = context.ds.byte(context.si);
+	context.cl = context.es.byte(context.si);
 	context.ax = context.pop();
 	context.push(context.cx);
 	context.dx = context.ds;
@@ -10150,7 +10150,7 @@ void getlocation(Context & context) {
 	context.dx = context.ds;
 	context.es = context.dx;
 	context._add(context.bx, 7782);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	return;
 }
 
@@ -10160,7 +10160,7 @@ void setlocation(Context & context) {
 	context.dx = context.ds;
 	context.es = context.dx;
 	context._add(context.bx, 7782);
-	context.ds.byte(context.bx) = 1;
+	context.es.byte(context.bx) = 1;
 	return;
 }
 
@@ -10207,7 +10207,7 @@ clearedlocations:
 	context.dx = context.ds;
 	context.es = context.dx;
 	context._add(context.bx, 7782);
-	context.ds.byte(context.bx) = 0;
+	context.es.byte(context.bx) = 0;
 	return;
 }
 
@@ -10241,11 +10241,11 @@ void usemon(Context & context) {
 	while(--context.cx) 	context._stosb();
 	context.es = context.cs;
 	context.di = 2807;
-	context.ds.byte(context.di) = 1;
+	context.es.byte(context.di) = 1;
 	context._add(context.di, 26);
 	context.cx = 3;
 keyloop:
-	context.ds.byte(context.di) = 0;
+	context.es.byte(context.di) = 0;
 	context._add(context.di, 26);
 	if (--context.cx) goto keyloop;
 	createpanel(context);
@@ -10358,7 +10358,7 @@ void loadpersonal(Context & context) {
 foundpersonal:
 	openfile(context);
 	readheader(context);
-	context.bx = context.ds.word(context.di);
+	context.bx = context.es.word(context.di);
 	context.push(context.bx);
 	context.cl = 4;
 	context._shr(context.bx, context.cl);
@@ -10387,7 +10387,7 @@ void loadnews(Context & context) {
 foundnews:
 	openfile(context);
 	readheader(context);
-	context.bx = context.ds.word(context.di);
+	context.bx = context.es.word(context.di);
 	context.push(context.bx);
 	context.cl = 4;
 	context._shr(context.bx, context.cl);
@@ -10419,7 +10419,7 @@ void loadcart(Context & context) {
 gotcart:
 	openfile(context);
 	readheader(context);
-	context.bx = context.ds.word(context.di);
+	context.bx = context.es.word(context.di);
 	context.push(context.bx);
 	context.cl = 4;
 	context._shr(context.bx, context.cl);
@@ -10443,7 +10443,7 @@ void lookininterface(Context & context) {
 	checkinside(context);
 	context._cmp(context.cl, 114);
 	if (context.flags.z()) goto emptyinterface;
-	context.al = context.ds.byte(context.bx+15);
+	context.al = context.es.byte(context.bx+15);
 	context._add(context.al, 1);
 	return;
 emptyinterface:
@@ -10641,7 +10641,7 @@ notleadingspace:
 	context.si = context.data.word(314);
 	context._add(context.si, context.si);
 	context._add(context.si, 7816);
-	context.ds.byte(context.si) = context.al;
+	context.es.byte(context.si) = context.al;
 	context._cmp(context.al, 'Z'+1);
 	if (!context.flags.c()) goto waitkey;
 	context.push(context.ax);
@@ -10668,7 +10668,7 @@ notleadingspace:
 	printchar(context);
 	context.si = context.pop();
 	context.es = context.pop();
-	context.ds.byte(context.si+1) = context.cl;
+	context.es.byte(context.si+1) = context.cl;
 	context.ch = 0;
 	context._add(context.data.word(316), context.cx);
 	context._add(context.data.word(314), 1);
@@ -10692,8 +10692,8 @@ void delchar(Context & context) {
 	context._add(context.si, context.si);
 	context.es = context.cs;
 	context._add(context.si, 7816);
-	context.ds.byte(context.si) = 0;
-	context.al = context.ds.byte(context.si+1);
+	context.es.byte(context.si) = 0;
+	context.al = context.es.byte(context.si+1);
 	context.ah = 0;
 	context._sub(context.data.word(316), context.ax);
 	context._sub(context.data.word(310), context.ax);
@@ -10732,7 +10732,7 @@ comloop:
 comloop2:
 	context.al = context.ds.byte(context.si);
 	context._add(context.si, 2);
-	context.ah = context.ds.byte(context.bx);
+	context.ah = context.es.byte(context.bx);
 	context._add(context.bx, 1);
 	context._cmp(context.ah, 32);
 	if (context.flags.z()) goto foundcom;
@@ -10798,7 +10798,7 @@ void dircom(Context & context) {
 	context.cx = 30;
 	randomaccess(context);
 	parser(context);
-	context._cmp(context.ds.byte(context.di+1), 0);
+	context._cmp(context.es.byte(context.di+1), 0);
 	if (context.flags.z()) goto dirroot;
 	dirfile(context);
 	return;
@@ -10829,7 +10829,7 @@ dirroot:
 void searchforfiles(Context & context) {
 	context.bx = 66*2;
 directloop1:
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context._add(context.bx, 1);
 	context._cmp(context.al, '*');
 	if (context.flags.z()) goto endofdir;
@@ -10858,7 +10858,7 @@ signonloop2:
 	context._cmp(context.al, 32);
 	if (context.flags.z()) goto foundsign;
 	makecaps(context);
-	context.ah = context.ds.byte(context.di);
+	context.ah = context.es.byte(context.di);
 	context._add(context.di, 1);
 	context._cmp(context.al, context.ah);
 	if (!context.flags.z()) goto nomatch;
@@ -10878,7 +10878,7 @@ foundsign:
 	context.cx = context.pop();
 	context.bx = context.si;
 	context.es = context.ds;
-	context._cmp(context.ds.byte(context.bx), 0);
+	context._cmp(context.es.byte(context.bx), 0);
 	if (context.flags.z()) goto notyetassigned;
 	context.al = 17;
 	monmessage(context);
@@ -10907,7 +10907,7 @@ notyetassigned:
 	context.si = 7816;
 checkpass:
 	context._lodsw();
-	context.ah = context.ds.byte(context.bx);
+	context.ah = context.es.byte(context.bx);
 	context._add(context.bx, 1);
 	context._cmp(context.ah, 32);
 	if (context.flags.z()) goto passpassed;
@@ -10932,7 +10932,7 @@ passpassed:
 	scrollmonitor(context);
 	context.bx = context.pop();
 	context.es = context.pop();
-	context.ds.byte(context.bx) = 1;
+	context.es.byte(context.bx) = 1;
 	return;
 }
 
@@ -10948,7 +10948,7 @@ void showkeys(Context & context) {
 keysloop:
 	context.push(context.cx);
 	context.push(context.bx);
-	context._cmp(context.ds.byte(context.bx), 0);
+	context._cmp(context.es.byte(context.bx), 0);
 	if (context.flags.z()) goto notheld;
 	context._add(context.bx, 14);
 	monprint(context);
@@ -10965,7 +10965,7 @@ void read(Context & context) {
 	context.cx = 40;
 	randomaccess(context);
 	parser(context);
-	context._cmp(context.ds.byte(context.di+1), 0);
+	context._cmp(context.es.byte(context.di+1), 0);
 	if (!context.flags.z()) goto okcom;
 	neterror(context);
 	return;
@@ -11023,7 +11023,7 @@ findtopictext:
 	context.es = context.pop();
 moretopic:
 	monprint(context);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context._cmp(context.al, 34);
 	if (context.flags.z()) goto endoftopic;
 	context._cmp(context.al, '=');
@@ -11045,7 +11045,7 @@ endoftopic:
 
 void dirfile(Context & context) {
 	context.al = 34;
-	context.ds.byte(context.di) = context.al;
+	context.es.byte(context.di) = context.al;
 	context.push(context.es);
 	context.push(context.di);
 	context.ds = context.data.word(464);
@@ -11099,7 +11099,7 @@ keyok2:
 	context.bx = context.pop();
 	context.es = context.pop();
 directloop2:
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context._add(context.bx, 1);
 	context._cmp(context.al, 34);
 	if (context.flags.z()) goto endofdir2;
@@ -11116,11 +11116,11 @@ endofdir2:
 
 void getkeyandlogo(Context & context) {
 	context._add(context.bx, 1);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context._sub(context.al, 48);
 	context.data.byte(270) = context.al;
 	context._add(context.bx, 2);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context._sub(context.al, 48);
 	context.data.byte(275) = context.al;
 	context._add(context.bx, 1);
@@ -11133,7 +11133,7 @@ void getkeyandlogo(Context & context) {
 	context.es = context.cs;
 	context.bx = 2807;
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context._cmp(context.al, 1);
 	if (context.flags.z()) goto keyok;
 	context.push(context.bx);
@@ -11159,7 +11159,7 @@ keyok:
 }
 
 void searchforstring(Context & context) {
-	context.dl = context.ds.byte(context.di);
+	context.dl = context.es.byte(context.di);
 	context.cx = context.di;
 restartlook:
 	context.di = context.cx;
@@ -11175,7 +11175,7 @@ keeplooking:
 	context._cmp(context.al, 34);
 	if (context.flags.z()) goto notfound;
 nofindingtopic:
-	context.ah = context.ds.byte(context.di);
+	context.ah = context.es.byte(context.di);
 	context._cmp(context.al, context.dl);
 	if (!context.flags.z()) goto notbracket;
 	context._add(context.dh, 1);
@@ -11306,7 +11306,7 @@ void showcurrentfile(Context & context) {
 	context.bx = 37;
 	context.si = 2892+1;
 curfileloop:
-	context.al = context.ds.byte(context.si);
+	context.al = context.cs.byte(context.si);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto finishfile;
 	context._add(context.si, 1);
@@ -11327,7 +11327,7 @@ void monmessage(Context & context) {
 	context.cl = context.al;
 	context.ch = 0;
 monmessageloop:
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context._add(context.bx, 1);
 	context._cmp(context.al, '+');
 	if (!context.flags.z()) goto monmessageloop;
@@ -11515,19 +11515,19 @@ checkuselist:
 	context.push(context.si);
 	context._lodsb();
 	context._sub(context.al, 'A');
-	context._cmp(context.al, context.ds.byte(context.bx+12));
+	context._cmp(context.al, context.es.byte(context.bx+12));
 	if (!context.flags.z()) goto failed;
 	context._lodsb();
 	context._sub(context.al, 'A');
-	context._cmp(context.al, context.ds.byte(context.bx+13));
+	context._cmp(context.al, context.es.byte(context.bx+13));
 	if (!context.flags.z()) goto failed;
 	context._lodsb();
 	context._sub(context.al, 'A');
-	context._cmp(context.al, context.ds.byte(context.bx+14));
+	context._cmp(context.al, context.es.byte(context.bx+14));
 	if (!context.flags.z()) goto failed;
 	context._lodsb();
 	context._sub(context.al, 'A');
-	context._cmp(context.al, context.ds.byte(context.bx+15));
+	context._cmp(context.al, context.es.byte(context.bx+15));
 	if (!context.flags.z()) goto failed;
 	context._lodsw();
 	context.si = context.pop();
@@ -11546,7 +11546,7 @@ failed:
 	findnextcolon(context);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto cantuse2;
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto cantuse2;
 	usetext(context);
@@ -11611,7 +11611,7 @@ tapwith:
 fillcupfromtap:
 	context.al = context.data.byte(94);
 	getexad(context);
-	context.ds.byte(context.bx+15) = 'F'-'A';
+	context.es.byte(context.bx+15) = 'F'-'A';
 	context.al = 8;
 	playchannel1(context);
 	context.cx = 300;
@@ -11671,7 +11671,7 @@ void opentomb(Context & context) {
 
 void usetrainer(Context & context) {
 	getanyad(context);
-	context._cmp(context.ds.byte(context.bx+2), 4);
+	context._cmp(context.es.byte(context.bx+2), 4);
 	if (!context.flags.z()) goto notheldtrainer;
 	context._add(context.data.byte(1), 1);
 	makeworn(context);
@@ -11736,7 +11736,7 @@ fillcup:
 	putbackobstuff(context);
 	context.al = context.data.byte(94);
 	getexad(context);
-	context.ds.byte(context.bx+15) = 'F'-'A';
+	context.es.byte(context.bx+15) = 'F'-'A';
 	return;
 alreadyfull:
 	context.cx = 300;
@@ -11802,7 +11802,7 @@ isrightkey:
 void chewy(Context & context) {
 	showfirstuse(context);
 	getanyad(context);
-	context.ds.byte(context.bx+2) = 255;
+	context.es.byte(context.bx+2) = 255;
 	context.data.byte(102) = 1;
 	return;
 }
@@ -12002,7 +12002,7 @@ slabwith:
 nextslab:
 	context.al = context.data.byte(94);
 	getexad(context);
-	context.ds.byte(context.bx+2) = 0;
+	context.es.byte(context.bx+2) = 0;
 	context.al = context.data.byte(98);
 	context.push(context.ax);
 	removesetobject(context);
@@ -12049,7 +12049,7 @@ cartwith:
 nextcart:
 	context.al = context.data.byte(94);
 	getexad(context);
-	context.ds.byte(context.bx+2) = 0;
+	context.es.byte(context.bx+2) = 0;
 	context.al = context.data.byte(98);
 	context.push(context.ax);
 	removesetobject(context);
@@ -12150,7 +12150,7 @@ destoryopenbox:
 	showpuztext(context);
 	context.al = context.data.byte(94);
 	getexad(context);
-	context.ds.byte(context.bx+15) = 'E'-'A';
+	context.es.byte(context.bx+15) = 'E'-'A';
 	context.data.word(19) = 140;
 	context.data.word(21) = 105;
 	context.data.word(23) = 181;
@@ -12253,7 +12253,7 @@ righthand:
 	removesetobject(context);
 	context.al = context.data.byte(94);
 	getexad(context);
-	context.ds.byte(context.bx+2) = 255;
+	context.es.byte(context.bx+2) = 255;
 	context.data.byte(46) = 1;
 	context.data.byte(102) = 1;
 	return;
@@ -12349,7 +12349,7 @@ void openlouis(Context & context) {
 
 void nextcolon(Context & context) {
 lookcolon:
-	context.al = context.ds.byte(context.si);
+	context.al = context.es.byte(context.si);
 	context._add(context.si, 1);
 	context._cmp(context.al, ':');
 	if (!context.flags.z()) goto lookcolon;
@@ -12456,13 +12456,13 @@ void isitright(Context & context) {
 	context.bx = context.ds;
 	context.es = context.bx;
 	context.bx = 8344;
-	context._cmp(context.ds.byte(context.bx+0), context.al);
+	context._cmp(context.es.byte(context.bx+0), context.al);
 	if (!context.flags.z()) goto notright;
-	context._cmp(context.ds.byte(context.bx+1), context.ah);
+	context._cmp(context.es.byte(context.bx+1), context.ah);
 	if (!context.flags.z()) goto notright;
-	context._cmp(context.ds.byte(context.bx+2), context.cl);
+	context._cmp(context.es.byte(context.bx+2), context.cl);
 	if (!context.flags.z()) goto notright;
-	context._cmp(context.ds.byte(context.bx+3), context.ch);
+	context._cmp(context.es.byte(context.bx+3), context.ch);
 notright:
 	return;
 }
@@ -12664,7 +12664,7 @@ cigarette:
 	showpuztext(context);
 	context.al = context.data.byte(94);
 	getexad(context);
-	context.ds.byte(context.bx+2) = 255;
+	context.es.byte(context.bx+2) = 255;
 	context.data.byte(102) = 1;
 	return;
 }
@@ -12938,7 +12938,7 @@ numberpoke0:
 	context._sub(context.ax, 10000);
 	if (!context.flags.c()) goto numberpoke0;
 	context._add(context.ax, 10000);
-	context.ds.byte(context.bx) = context.cl;
+	context.cs.byte(context.bx) = context.cl;
 	context._add(context.bx, 1);
 	context.cl = 48-1;
 numberpoke1:
@@ -12946,7 +12946,7 @@ numberpoke1:
 	context._sub(context.ax, 1000);
 	if (!context.flags.c()) goto numberpoke1;
 	context._add(context.ax, 1000);
-	context.ds.byte(context.bx) = context.cl;
+	context.cs.byte(context.bx) = context.cl;
 	context._add(context.bx, 1);
 	context.cl = 48-1;
 numberpoke2:
@@ -12954,7 +12954,7 @@ numberpoke2:
 	context._sub(context.ax, 100);
 	if (!context.flags.c()) goto numberpoke2;
 	context._add(context.ax, 100);
-	context.ds.byte(context.bx) = context.cl;
+	context.cs.byte(context.bx) = context.cl;
 	context._add(context.bx, 1);
 	context.cl = 48-1;
 numberpoke3:
@@ -12962,10 +12962,10 @@ numberpoke3:
 	context._sub(context.ax, 10);
 	if (!context.flags.c()) goto numberpoke3;
 	context._add(context.ax, 10);
-	context.ds.byte(context.bx) = context.cl;
+	context.cs.byte(context.bx) = context.cl;
 	context.bx = 3390;
 	context._add(context.al, 48);
-	context.ds.byte(context.bx) = context.al;
+	context.cs.byte(context.bx) = context.al;
 	return;
 }
 
@@ -13118,7 +13118,7 @@ void usehandle(Context & context) {
 	context.cl = 'T';
 	context.ch = 'W';
 	findsetobject(context);
-	context.al = context.ds.byte(context.bx+58);
+	context.al = context.es.byte(context.bx+58);
 	context._cmp(context.al, 255);
 	if (!context.flags.z()) goto havecutwire;
 	context.cx = 300;
@@ -13291,13 +13291,13 @@ stereook2:
 	putbackobstuff(context);
 	getanyad(context);
 	context.al = 255;
-	context.ds.byte(context.bx+10) = context.al;
+	context.es.byte(context.bx+10) = context.al;
 	return;
 cdinside:
 	getanyad(context);
-	context.al = context.ds.byte(context.bx+10);
+	context.al = context.es.byte(context.bx+10);
 	context._xor(context.al, 1);
-	context.ds.byte(context.bx+10) = context.al;
+	context.es.byte(context.bx+10) = context.al;
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto stereoon;
 	context.al = 7;
@@ -13435,7 +13435,7 @@ void withwhat(Context & context) {
 
 void selectob(Context & context) {
 	findinvpos(context);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._cmp(context.al, 255);
 	if (!context.flags.z()) goto canselectob;
 	blank(context);
@@ -13478,9 +13478,9 @@ void compare(Context & context) {
 	getanyaddir(context);
 	context.dx = context.pop();
 	context.cx = context.pop();
-	context._cmp(context.ds.word(context.bx+12), context.cx);
+	context._cmp(context.es.word(context.bx+12), context.cx);
 	if (!context.flags.z()) goto comparefin;
-	context._cmp(context.ds.word(context.bx+14), context.dx);
+	context._cmp(context.es.word(context.bx+14), context.dx);
 comparefin:
 	return;
 }
@@ -13494,13 +13494,13 @@ void findsetobject(Context & context) {
 	context.bx = 0;
 	context.dl = 0;
 findsetloop:
-	context._cmp(context.al, context.ds.byte(context.bx+12));
+	context._cmp(context.al, context.es.byte(context.bx+12));
 	if (!context.flags.z()) goto nofind;
-	context._cmp(context.ah, context.ds.byte(context.bx+13));
+	context._cmp(context.ah, context.es.byte(context.bx+13));
 	if (!context.flags.z()) goto nofind;
-	context._cmp(context.cl, context.ds.byte(context.bx+14));
+	context._cmp(context.cl, context.es.byte(context.bx+14));
 	if (!context.flags.z()) goto nofind;
-	context._cmp(context.ch, context.ds.byte(context.bx+15));
+	context._cmp(context.ch, context.es.byte(context.bx+15));
 	if (!context.flags.z()) goto nofind;
 	context.al = context.dl;
 	return;
@@ -13522,13 +13522,13 @@ void findexobject(Context & context) {
 	context.bx = 0+2080+30000;
 	context.dl = 0;
 findexloop:
-	context._cmp(context.al, context.ds.byte(context.bx+12));
+	context._cmp(context.al, context.es.byte(context.bx+12));
 	if (!context.flags.z()) goto nofindex;
-	context._cmp(context.ah, context.ds.byte(context.bx+13));
+	context._cmp(context.ah, context.es.byte(context.bx+13));
 	if (!context.flags.z()) goto nofindex;
-	context._cmp(context.cl, context.ds.byte(context.bx+14));
+	context._cmp(context.cl, context.es.byte(context.bx+14));
 	if (!context.flags.z()) goto nofindex;
-	context._cmp(context.ch, context.ds.byte(context.bx+15));
+	context._cmp(context.ch, context.es.byte(context.bx+15));
 	if (!context.flags.z()) goto nofindex;
 	context.al = context.dl;
 	return;
@@ -13550,15 +13550,15 @@ void isryanholding(Context & context) {
 	context.bx = 0+2080+30000;
 	context.dl = 0;
 searchinv:
-	context._cmp(context.ds.byte(context.bx+2), 4);
+	context._cmp(context.es.byte(context.bx+2), 4);
 	if (!context.flags.z()) goto nofindininv;
-	context._cmp(context.al, context.ds.byte(context.bx+12));
+	context._cmp(context.al, context.es.byte(context.bx+12));
 	if (!context.flags.z()) goto nofindininv;
-	context._cmp(context.ah, context.ds.byte(context.bx+13));
+	context._cmp(context.ah, context.es.byte(context.bx+13));
 	if (!context.flags.z()) goto nofindininv;
-	context._cmp(context.cl, context.ds.byte(context.bx+14));
+	context._cmp(context.cl, context.es.byte(context.bx+14));
 	if (!context.flags.z()) goto nofindininv;
-	context._cmp(context.ch, context.ds.byte(context.bx+15));
+	context._cmp(context.ch, context.es.byte(context.bx+15));
 	if (!context.flags.z()) goto nofindininv;
 	context.al = context.dl;
 	context._cmp(context.al, 114);
@@ -13578,9 +13578,9 @@ void checkinside(Context & context) {
 	context.bx = 0+2080+30000;
 	context.cl = 0;
 insideloop:
-	context._cmp(context.al, context.ds.byte(context.bx+3));
+	context._cmp(context.al, context.es.byte(context.bx+3));
 	if (!context.flags.z()) goto notfoundinside;
-	context._cmp(context.ah, context.ds.byte(context.bx+2));
+	context._cmp(context.ah, context.es.byte(context.bx+2));
 	if (!context.flags.z()) goto notfoundinside;
 	return;
 notfoundinside:
@@ -13656,7 +13656,7 @@ void findpuztext(Context & context) {
 	context.si = context.ax;
 	context._add(context.si, context.si);
 	context.es = context.data.word(452);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._add(context.ax, 66*2);
 	context.si = context.ax;
 	return;
@@ -13669,7 +13669,7 @@ void placesetobject(Context & context) {
 	context.ch = 0;
 	findormake(context);
 	getsetad(context);
-	context.ds.byte(context.bx+58) = 0;
+	context.es.byte(context.bx+58) = 0;
 	context.bx = context.pop();
 	context.es = context.pop();
 	return;
@@ -13682,7 +13682,7 @@ void removesetobject(Context & context) {
 	context.ch = 0;
 	findormake(context);
 	getsetad(context);
-	context.ds.byte(context.bx+58) = 255;
+	context.es.byte(context.bx+58) = 255;
 	context.bx = context.pop();
 	context.es = context.pop();
 	return;
@@ -13692,7 +13692,7 @@ void issetobonmap(Context & context) {
 	context.push(context.es);
 	context.push(context.bx);
 	getsetad(context);
-	context.al = context.ds.byte(context.bx+58);
+	context.al = context.es.byte(context.bx+58);
 	context.bx = context.pop();
 	context.es = context.pop();
 	context._cmp(context.al, 0);
@@ -13706,7 +13706,7 @@ void placefreeobject(Context & context) {
 	context.ch = 1;
 	findormake(context);
 	getfreead(context);
-	context.ds.byte(context.bx+2) = 0;
+	context.es.byte(context.bx+2) = 0;
 	context.bx = context.pop();
 	context.es = context.pop();
 	return;
@@ -13716,7 +13716,7 @@ void removefreeobject(Context & context) {
 	context.push(context.es);
 	context.push(context.bx);
 	getfreead(context);
-	context.ds.byte(context.bx+2) = 255;
+	context.es.byte(context.bx+2) = 255;
 	context.bx = context.pop();
 	context.es = context.pop();
 	return;
@@ -13728,22 +13728,22 @@ void findormake(Context & context) {
 	context.es = context.data.word(410);
 	context.ah = context.data.byte(183);
 changeloop:
-	context._cmp(context.ds.byte(context.bx), 255);
+	context._cmp(context.es.byte(context.bx), 255);
 	if (context.flags.z()) goto haventfound;
-	context._cmp(context.ax, context.ds.word(context.bx));
+	context._cmp(context.ax, context.es.word(context.bx));
 	if (!context.flags.z()) goto nofoundchange;
-	context._cmp(context.ch, context.ds.byte(context.bx+3));
+	context._cmp(context.ch, context.es.byte(context.bx+3));
 	if (context.flags.z()) goto foundchange;
 nofoundchange:
 	context._add(context.bx, 4);
 	goto changeloop;
 foundchange:
 	context.ax = context.pop();
-	context.ds.byte(context.bx+2) = context.cl;
+	context.es.byte(context.bx+2) = context.cl;
 	return;
 haventfound:
-	context.ds.word(context.bx) = context.ax;
-	context.ds.word(context.bx+2) = context.cx;
+	context.es.word(context.bx) = context.ax;
+	context.es.word(context.bx+2) = context.cx;
 	context.ax = context.pop();
 	return;
 }
@@ -13762,10 +13762,10 @@ void setallchanges(Context & context) {
 	context.es = context.data.word(410);
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80);
 setallloop:
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto endsetloop;
-	context.cx = context.ds.word(context.bx+2);
+	context.cx = context.es.word(context.bx+2);
 	context._add(context.bx, 4);
 	context._cmp(context.ah, context.data.byte(183));
 	if (!context.flags.z()) goto setallloop;
@@ -13801,22 +13801,22 @@ path:
 	context._add(context.bx, 0);
 	context.es = context.data.word(448);
 	context.cx = context.pop();
-	context.ds.byte(context.bx+6) = context.cl;
+	context.es.byte(context.bx+6) = context.cl;
 nopath:
 	return;
 object:
 	context.push(context.cx);
 	getsetad(context);
 	context.cx = context.pop();
-	context.ds.byte(context.bx+58) = context.cl;
+	context.es.byte(context.bx+58) = context.cl;
 	return;
 freeobject:
 	context.push(context.cx);
 	getfreead(context);
 	context.cx = context.pop();
-	context._cmp(context.ds.byte(context.bx+2), 255);
+	context._cmp(context.es.byte(context.bx+2), 255);
 	if (!context.flags.z()) goto beenpickedup;
-	context.ds.byte(context.bx+2) = context.cl;
+	context.es.byte(context.bx+2) = context.cl;
 beenpickedup:
 	return;
 }
@@ -13949,7 +13949,7 @@ void setuptimeduse(Context & context) {
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(452);
 	context.cx = 66*2;
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._add(context.ax, context.cx);
 	context.bx = context.ax;
 	context.data.word(330) = context.es;
@@ -13971,7 +13971,7 @@ void setuptimedtemp(Context & context) {
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(464);
 	context.cx = 66*2;
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._add(context.ax, context.cx);
 	context.bx = context.ax;
 	context.data.word(330) = context.es;
@@ -14509,7 +14509,7 @@ not10:
 	context.dx = context.ds;
 	context.es = context.dx;
 	context._add(context.bx, 8344);
-	context.ds.byte(context.bx) = context.al;
+	context.es.byte(context.bx) = context.al;
 	context._add(context.data.word(278), 1);
 nomorekeys:
 	return;
@@ -15115,7 +15115,7 @@ leftpageloop:
 	context.bh = 0;
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(464);
-	context.si = context.ds.word(context.bx);
+	context.si = context.es.word(context.bx);
 	context._add(context.si, 66*2);
 	context.di = 2;
 	context.bx = 48;
@@ -15144,10 +15144,10 @@ flipfolder:
 	context.push(context.si);
 	context.cx = 65;
 flipfolderline:
-	context.al = context.ds.byte(context.di);
-	context.ah = context.ds.byte(context.si);
-	context.ds.byte(context.di) = context.ah;
-	context.ds.byte(context.si) = context.al;
+	context.al = context.es.byte(context.di);
+	context.ah = context.es.byte(context.si);
+	context.es.byte(context.di) = context.ah;
+	context.es.byte(context.si) = context.al;
 	context._sub(context.si, 1);
 	context._add(context.di, 1);
 	if (--context.cx) goto flipfolderline;
@@ -15194,7 +15194,7 @@ rightpageloop:
 	context.bh = 0;
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(464);
-	context.si = context.ds.word(context.bx);
+	context.si = context.es.word(context.bx);
 	context._add(context.si, 66*2);
 	context.di = 152;
 	context.bx = 48;
@@ -15797,7 +15797,7 @@ void findtext1(Context & context) {
 	context.si = context.ax;
 	context._add(context.si, context.si);
 	context.es = context.data.word(464);
-	context.ax = context.ds.word(context.si);
+	context.ax = context.es.word(context.si);
 	context._add(context.ax, 66*2);
 	context.si = context.ax;
 	return;
@@ -16168,19 +16168,19 @@ alreadyactsave:
 	context.cx = 16;
 	while(--context.cx) 	context._movsw();
  	context.al = context.data.byte(530);
-	context.ds.byte(context.bx+13) = context.al;
+	context.es.byte(context.bx+13) = context.al;
 	context.al = context.data.byte(147);
-	context.ds.byte(context.bx+15) = context.al;
+	context.es.byte(context.bx+15) = context.al;
 	context.al = context.data.byte(148);
-	context.ds.byte(context.bx+16) = context.al;
+	context.es.byte(context.bx+16) = context.al;
 	context.al = context.data.byte(34);
-	context.ds.byte(context.bx+20) = context.al;
+	context.es.byte(context.bx+20) = context.al;
 	context.al = context.data.byte(474);
-	context.ds.byte(context.bx+21) = context.al;
+	context.es.byte(context.bx+21) = context.al;
 	context.al = context.data.byte(132);
-	context.ds.byte(context.bx+22) = context.al;
+	context.es.byte(context.bx+22) = context.al;
 	context.al = 255;
-	context.ds.byte(context.bx+27) = context.al;
+	context.es.byte(context.bx+27) = context.al;
 	saveposition(context);
 	getridoftemp(context);
 	restoreall(context);
@@ -16250,8 +16250,8 @@ notret:
 	if (context.flags.z()) goto nokeypress;
 	getnamepos(context);
 	context._sub(context.data.byte(341), 1);
-	context.ds.byte(context.bx) = 0;
-	context.ds.byte(context.bx+1) = 1;
+	context.es.byte(context.bx) = 0;
+	context.es.byte(context.bx+1) = 1;
 	goto afterkey;
 nodel2:
 spacepress:
@@ -16260,9 +16260,9 @@ spacepress:
 	getnamepos(context);
 	context._add(context.data.byte(341), 1);
 	context.al = context.data.byte(141);
-	context.ds.byte(context.bx+1) = context.al;
-	context.ds.byte(context.bx+2) = 0;
-	context.ds.byte(context.bx+3) = 1;
+	context.es.byte(context.bx+1) = context.al;
+	context.es.byte(context.bx+2) = 0;
+	context.es.byte(context.bx+3) = 1;
 	goto afterkey;
 nokeypress:
 	return;
@@ -16451,21 +16451,21 @@ shownameloop:
 zerostill:
 	context._sub(context.si, 1);
 	context._sub(context.cl, 1);
-	context._cmp(context.ds.byte(context.si), 1);
+	context._cmp(context.es.byte(context.si), 1);
 	if (!context.flags.z()) goto foundcharacter;
 	goto zerostill;
 foundcharacter:
 	context.data.byte(341) = context.cl;
-	context.ds.byte(context.si) = '/';
-	context.ds.byte(context.si+1) = 0;
+	context.es.byte(context.si) = '/';
+	context.es.byte(context.si+1) = 0;
 	context.push(context.si);
 	context.si = context.dx;
 	context.dl = 200;
 	context.ah = 0;
 	printdirect(context);
 	context.si = context.pop();
-	context.ds.byte(context.si) = 0;
-	context.ds.byte(context.si+1) = 1;
+	context.es.byte(context.si) = 0;
+	context.es.byte(context.si+1) = 1;
 	goto afterprintname;
 loadmode:
 	context.al = 0;
@@ -16688,17 +16688,17 @@ noloadold:
 void createname(Context & context) {
 	context.push(context.ax);
 	context.di = 4932;
-	context.ds.byte(context.di+0) = context.dl;
-	context.ds.byte(context.di+3) = context.cl;
+	context.cs.byte(context.di+0) = context.dl;
+	context.cs.byte(context.di+3) = context.cl;
 	context.al = context.dh;
 	context.ah = '0'-1;
 findten:
 	context._add(context.ah, 1);
 	context._sub(context.al, 10);
 	if (!context.flags.c()) goto findten;
-	context.ds.byte(context.di+1) = context.ah;
+	context.cs.byte(context.di+1) = context.ah;
 	context._add(context.al, 10+'0');
-	context.ds.byte(context.di+2) = context.al;
+	context.cs.byte(context.di+2) = context.al;
 	context.ax = context.pop();
 	context.cl = '0'-1;
 thousandsc:
@@ -16706,23 +16706,23 @@ thousandsc:
 	context._sub(context.ax, 1000);
 	if (!context.flags.c()) goto thousandsc;
 	context._add(context.ax, 1000);
-	context.ds.byte(context.di+4) = context.cl;
+	context.cs.byte(context.di+4) = context.cl;
 	context.cl = '0'-1;
 hundredsc:
 	context._add(context.cl, 1);
 	context._sub(context.ax, 100);
 	if (!context.flags.c()) goto hundredsc;
 	context._add(context.ax, 100);
-	context.ds.byte(context.di+5) = context.cl;
+	context.cs.byte(context.di+5) = context.cl;
 	context.cl = '0'-1;
 tensc:
 	context._add(context.cl, 1);
 	context._sub(context.ax, 10);
 	if (!context.flags.c()) goto tensc;
 	context._add(context.ax, 10);
-	context.ds.byte(context.di+6) = context.cl;
+	context.cs.byte(context.di+6) = context.cl;
 	context._add(context.al, '0');
-	context.ds.byte(context.di+7) = context.al;
+	context.cs.byte(context.di+7) = context.al;
 	return;
 }
 
@@ -16780,12 +16780,12 @@ notsecondbank:
 	context.bx = context.ax;
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context.ah = 0;
 	context.data.word(500) = context.ax;
-	context.ax = context.ds.word(context.bx+1);
+	context.ax = context.es.word(context.bx+1);
 	context.data.word(502) = context.ax;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context.data.word(504) = context.ax;
 	context._cmp(context.data.byte(507), 0);
 	if (context.flags.z()) goto nosetloop;
@@ -16829,12 +16829,12 @@ notsecondbank1:
 	context.bx = context.ax;
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context.ah = 0;
 	context.data.word(515) = context.ax;
-	context.ax = context.ds.word(context.bx+1);
+	context.ax = context.es.word(context.bx+1);
 	context.data.word(517) = context.ax;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.es.word(context.bx+3);
 	context.data.word(519) = context.ax;
 	context.si = context.pop();
 	context.di = context.pop();
@@ -16950,9 +16950,9 @@ lowvolumetran:
 volloop:
 	context._lodsw();
 	context.bl = context.al;
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context.bl = context.ah;
-	context.ah = context.ds.byte(context.bx);
+	context.ah = context.es.byte(context.bx);
 	context._stosw();
 	if (--context.cx) goto volloop;
 	return;
@@ -17007,7 +17007,7 @@ lowvolumemix:
 	context.bh = context.data.byte(385);
 	context._add(context.bh, 63);
 	context.bl = context.al;
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context.bx = context.pop();
 	context.ah = context.ds.byte(context.bx);
 	context._add(context.bx, 1);
@@ -17455,7 +17455,7 @@ void clearrest(Context & context) {
 
 void parseblaster(Context & context) {
 lookattail:
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto endtail;
 	context._cmp(context.al, 13);
@@ -17484,20 +17484,20 @@ lookattail:
 	if (--context.cx) goto lookattail;
 	return;
 issoundint:
-	context.al = context.ds.byte(context.bx+1);
+	context.al = context.es.byte(context.bx+1);
 	context._sub(context.al, '0');
 	context.data.byte(377) = context.al;
 	context._add(context.bx, 1);
 	goto lookattail;
 isdma:
-	context.al = context.ds.byte(context.bx+1);
+	context.al = context.es.byte(context.bx+1);
 	context._sub(context.al, '0');
 	context.data.byte(378) = context.al;
 	context._add(context.bx, 1);
 	goto lookattail;
 isbaseadd:
 	context.push(context.cx);
-	context.al = context.ds.byte(context.bx+2);
+	context.al = context.es.byte(context.bx+2);
 	context._sub(context.al, '0');
 	context.ah = 0;
 	context.cl = 4;
@@ -17812,11 +17812,11 @@ void showbyte(Context & context) {
 	context._shr(context.dl, 1);
 	context._shr(context.dl, 1);
 	onedigit(context);
-	context.ds.byte(context.di) = context.dl;
+	context.es.byte(context.di) = context.dl;
 	context.dl = context.al;
 	context._and(context.dl, 15);
 	onedigit(context);
-	context.ds.byte(context.di+1) = context.dl;
+	context.es.byte(context.di+1) = context.dl;
 	context._add(context.di, 3);
 	return;
 }
@@ -17854,7 +17854,7 @@ word1:
 	if (!context.flags.c()) goto word1;
 	context._add(context.ax, context.bx);
 	convnum(context);
-	context.ds.byte(context.di) = context.cl;
+	context.cs.byte(context.di) = context.cl;
 	context.bx = 1000;
 	context.cl = 47;
 word2:
@@ -17863,7 +17863,7 @@ word2:
 	if (!context.flags.c()) goto word2;
 	context._add(context.ax, context.bx);
 	convnum(context);
-	context.ds.byte(context.di+1) = context.cl;
+	context.cs.byte(context.di+1) = context.cl;
 	context.bx = 100;
 	context.cl = 47;
 word3:
@@ -17872,7 +17872,7 @@ word3:
 	if (!context.flags.c()) goto word3;
 	context._add(context.ax, context.bx);
 	convnum(context);
-	context.ds.byte(context.di+2) = context.cl;
+	context.cs.byte(context.di+2) = context.cl;
 	context.bx = 10;
 	context.cl = 47;
 word4:
@@ -17881,11 +17881,11 @@ word4:
 	if (!context.flags.c()) goto word4;
 	context._add(context.ax, context.bx);
 	convnum(context);
-	context.ds.byte(context.di+3) = context.cl;
+	context.cs.byte(context.di+3) = context.cl;
 	context._add(context.al, 48);
 	context.cl = context.al;
 	convnum(context);
-	context.ds.byte(context.di+4) = context.cl;
+	context.cs.byte(context.di+4) = context.cl;
 	return;
 }
 
@@ -18015,22 +18015,22 @@ norun:
 
 void checkcoords(Context & context) {
 loop048:
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.cs.word(context.bx);
 	context._cmp(context.ax, 0x0ffff);
 	if (context.flags.z()) goto nonefound;
 	context.push(context.bx);
 	context._cmp(context.data.word(196), context.ax);
 	if (context.flags.l()) goto over045;
-	context.ax = context.ds.word(context.bx+2);
+	context.ax = context.cs.word(context.bx+2);
 	context._cmp(context.data.word(196), context.ax);
 	if (!context.flags.ge()) goto over045;
-	context.ax = context.ds.word(context.bx+4);
+	context.ax = context.cs.word(context.bx+4);
 	context._cmp(context.data.word(198), context.ax);
 	if (context.flags.l()) goto over045;
-	context.ax = context.ds.word(context.bx+6);
+	context.ax = context.cs.word(context.bx+6);
 	context._cmp(context.data.word(198), context.ax);
 	if (!context.flags.ge()) goto over045;
-	context.ax = context.ds.word(context.bx+8);
+	context.ax = context.cs.word(context.bx+8);
 	__dispatch_call(context, context.ax);
 finished:
 	context.ax = context.pop();
@@ -18104,28 +18104,28 @@ void checkifperson(Context & context) {
 	context.cx = 12;
 identifyreel:
 	context.push(context.cx);
-	context._cmp(context.ds.byte(context.bx+4), 255);
+	context._cmp(context.es.byte(context.bx+4), 255);
 	if (context.flags.z()) goto notareelid;
 	context.push(context.es);
 	context.push(context.bx);
 	context.push(context.ax);
-	context.ax = context.ds.word(context.bx+0);
+	context.ax = context.es.word(context.bx+0);
 	context.data.word(237) = context.ax;
 	getreelstart(context);
-	context._cmp(context.ds.word(context.si+2), 0x0ffff);
+	context._cmp(context.es.word(context.si+2), 0x0ffff);
 	if (!context.flags.z()) goto notblankpers;
 	context._add(context.si, 5);
 notblankpers:
-	context.cx = context.ds.word(context.si+2);
-	context.ax = context.ds.word(context.si+0);
+	context.cx = context.es.word(context.si+2);
+	context.ax = context.es.word(context.si+0);
 	context.push(context.cx);
 	getreelframeax(context);
 	context.cx = context.pop();
-	context._add(context.cl, context.ds.byte(context.bx+4));
-	context._add(context.ch, context.ds.byte(context.bx+5));
+	context._add(context.cl, context.es.byte(context.bx+4));
+	context._add(context.ch, context.es.byte(context.bx+5));
 	context.dx = context.cx;
-	context._add(context.dl, context.ds.byte(context.bx+0));
-	context._add(context.dh, context.ds.byte(context.bx+1));
+	context._add(context.dl, context.es.byte(context.bx+0));
+	context._add(context.dh, context.es.byte(context.bx+1));
 	context.ax = context.pop();
 	context.bx = context.pop();
 	context.es = context.pop();
@@ -18138,9 +18138,9 @@ notblankpers:
 	context._cmp(context.ah, context.dh);
 	if (!context.flags.c()) goto notareelid;
 	context.cx = context.pop();
-	context.ax = context.ds.word(context.bx+2);
+	context.ax = context.es.word(context.bx+2);
 	context.data.word(247) = context.ax;
-	context.al = context.ds.byte(context.bx+4);
+	context.al = context.es.byte(context.bx+4);
 	context.ah = 5;
 	obname(context);
 	context.al = 0;
@@ -18159,21 +18159,21 @@ void checkifset(Context & context) {
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(127*5);
 	context.cx = 127;
 identifyset:
-	context._cmp(context.ds.byte(context.bx+4), 255);
+	context._cmp(context.es.byte(context.bx+4), 255);
 	if (context.flags.z()) goto notasetid;
-	context._cmp(context.al, context.ds.byte(context.bx));
+	context._cmp(context.al, context.es.byte(context.bx));
 	if (context.flags.c()) goto notasetid;
-	context._cmp(context.al, context.ds.byte(context.bx+2));
+	context._cmp(context.al, context.es.byte(context.bx+2));
 	if (!context.flags.c()) goto notasetid;
-	context._cmp(context.ah, context.ds.byte(context.bx+1));
+	context._cmp(context.ah, context.es.byte(context.bx+1));
 	if (context.flags.c()) goto notasetid;
-	context._cmp(context.ah, context.ds.byte(context.bx+3));
+	context._cmp(context.ah, context.es.byte(context.bx+3));
 	if (!context.flags.c()) goto notasetid;
 	pixelcheckset(context);
 	if (context.flags.z()) goto notasetid;
 	isitdescribed(context);
 	if (context.flags.z()) goto notasetid;
-	context.al = context.ds.byte(context.bx+4);
+	context.al = context.es.byte(context.bx+4);
 	context.ah = 1;
 	obname(context);
 	context.al = 0;
@@ -18192,17 +18192,17 @@ void checkifex(Context & context) {
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(99*5);
 	context.cx = 99;
 identifyex:
-	context._cmp(context.ds.byte(context.bx+4), 255);
+	context._cmp(context.es.byte(context.bx+4), 255);
 	if (context.flags.z()) goto notanexid;
-	context._cmp(context.al, context.ds.byte(context.bx));
+	context._cmp(context.al, context.es.byte(context.bx));
 	if (context.flags.c()) goto notanexid;
-	context._cmp(context.al, context.ds.byte(context.bx+2));
+	context._cmp(context.al, context.es.byte(context.bx+2));
 	if (!context.flags.c()) goto notanexid;
-	context._cmp(context.ah, context.ds.byte(context.bx+1));
+	context._cmp(context.ah, context.es.byte(context.bx+1));
 	if (context.flags.c()) goto notanexid;
-	context._cmp(context.ah, context.ds.byte(context.bx+3));
+	context._cmp(context.ah, context.es.byte(context.bx+3));
 	if (!context.flags.c()) goto notanexid;
-	context.al = context.ds.byte(context.bx+4);
+	context.al = context.es.byte(context.bx+4);
 	context.ah = 4;
 	obname(context);
 	context.al = 1;
@@ -18221,17 +18221,17 @@ void checkiffree(Context & context) {
 	context.bx = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(79*5);
 	context.cx = 79;
 identifyfree:
-	context._cmp(context.ds.byte(context.bx+4), 255);
+	context._cmp(context.es.byte(context.bx+4), 255);
 	if (context.flags.z()) goto notafreeid;
-	context._cmp(context.al, context.ds.byte(context.bx));
+	context._cmp(context.al, context.es.byte(context.bx));
 	if (context.flags.c()) goto notafreeid;
-	context._cmp(context.al, context.ds.byte(context.bx+2));
+	context._cmp(context.al, context.es.byte(context.bx+2));
 	if (!context.flags.c()) goto notafreeid;
-	context._cmp(context.ah, context.ds.byte(context.bx+1));
+	context._cmp(context.ah, context.es.byte(context.bx+1));
 	if (context.flags.c()) goto notafreeid;
-	context._cmp(context.ah, context.ds.byte(context.bx+3));
+	context._cmp(context.ah, context.es.byte(context.bx+3));
 	if (!context.flags.c()) goto notafreeid;
-	context.al = context.ds.byte(context.bx+4);
+	context.al = context.es.byte(context.bx+4);
 	context.ah = 2;
 	obname(context);
 	context.al = 0;
@@ -18250,16 +18250,16 @@ void isitdescribed(Context & context) {
 	context.push(context.cx);
 	context.push(context.es);
 	context.push(context.bx);
-	context.al = context.ds.byte(context.bx+4);
+	context.al = context.es.byte(context.bx+4);
 	context.ah = 0;
 	context._add(context.ax, context.ax);
 	context.bx = context.ax;
 	context.es = context.data.word(438);
 	context._add(context.bx, 0);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._add(context.ax, 0+(130*2));
 	context.bx = context.ax;
-	context.dl = context.ds.byte(context.bx);
+	context.dl = context.es.byte(context.bx);
 	context.bx = context.pop();
 	context.es = context.pop();
 	context.cx = context.pop();
@@ -18280,17 +18280,17 @@ void findpathofpoint(Context & context) {
 	context.cx = context.pop();
 	context.dl = 0;
 pathloop:
-	context.al = context.ds.byte(context.bx+6);
+	context.al = context.es.byte(context.bx+6);
 	context._cmp(context.al, 255);
 	if (!context.flags.z()) goto flunkedit;
-	context.ax = context.ds.word(context.bx+2);
+	context.ax = context.es.word(context.bx+2);
 	context._cmp(context.ax, 0x0ffff);
 	if (context.flags.z()) goto flunkedit;
 	context._cmp(context.cl, context.al);
 	if (context.flags.c()) goto flunkedit;
 	context._cmp(context.ch, context.ah);
 	if (context.flags.c()) goto flunkedit;
-	context.ax = context.ds.word(context.bx+4);
+	context.ax = context.es.word(context.bx+4);
 	context._cmp(context.cl, context.al);
 	if (!context.flags.c()) goto flunkedit;
 	context._cmp(context.ch, context.ah);
@@ -18318,14 +18318,14 @@ void findfirstpath(Context & context) {
 	context.cx = context.pop();
 	context.dl = 0;
 fpathloop:
-	context.ax = context.ds.word(context.bx+2);
+	context.ax = context.es.word(context.bx+2);
 	context._cmp(context.ax, 0x0ffff);
 	if (context.flags.z()) goto nofirst;
 	context._cmp(context.cl, context.al);
 	if (context.flags.c()) goto nofirst;
 	context._cmp(context.ch, context.ah);
 	if (context.flags.c()) goto nofirst;
-	context.ax = context.ds.word(context.bx+4);
+	context.ax = context.es.word(context.bx+4);
 	context._cmp(context.cl, context.al);
 	if (!context.flags.c()) goto nofirst;
 	context._cmp(context.ch, context.ah);
@@ -18339,7 +18339,7 @@ nofirst:
 	context.al = 0;
 	return;
 gotfirst:
-	context.al = context.ds.byte(context.bx+6);
+	context.al = context.es.byte(context.bx+6);
 	return;
 }
 
@@ -18361,7 +18361,7 @@ void turnpathon(Context & context) {
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
 	context.al = 255;
-	context.ds.byte(context.bx+6) = context.al;
+	context.es.byte(context.bx+6) = context.al;
 nopathon:
 	return;
 }
@@ -18384,7 +18384,7 @@ void turnpathoff(Context & context) {
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
 	context.al = 0;
-	context.ds.byte(context.bx+6) = context.al;
+	context.es.byte(context.bx+6) = context.al;
 nopathoff:
 	return;
 }
@@ -18411,7 +18411,7 @@ void turnanypathon(Context & context) {
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
 	context.al = 255;
-	context.ds.byte(context.bx+6) = context.al;
+	context.es.byte(context.bx+6) = context.al;
 	return;
 }
 
@@ -18437,7 +18437,7 @@ void turnanypathoff(Context & context) {
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
 	context.al = 0;
-	context.ds.byte(context.bx+6) = context.al;
+	context.es.byte(context.bx+6) = context.al;
 	return;
 }
 
@@ -18450,7 +18450,7 @@ void checkifpathison(Context & context) {
 	context._add(context.ax, context.ax);
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.bx+6);
+	context.al = context.es.byte(context.bx+6);
 	context._cmp(context.al, 255);
 	return;
 }
@@ -18498,15 +18498,15 @@ void atmospheres(Context & context) {
 	context.ch = context.data.byte(148);
 	context.bx = 5073;
 nextatmos:
-	context.al = context.ds.byte(context.bx);
+	context.al = context.cs.byte(context.bx);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto nomoreatmos;
 	context._cmp(context.al, context.data.byte(183));
 	if (!context.flags.z()) goto wrongatmos;
-	context.ax = context.ds.word(context.bx+1);
+	context.ax = context.cs.word(context.bx+1);
 	context._cmp(context.ax, context.cx);
 	if (!context.flags.z()) goto wrongatmos;
-	context.ax = context.ds.word(context.bx+3);
+	context.ax = context.cs.word(context.bx+3);
 	context._cmp(context.al, context.data.byte(506));
 	if (context.flags.z()) goto playingalready;
 	context._cmp(context.data.byte(8), 45);
@@ -18726,7 +18726,7 @@ void commandwithob(Context & context) {
 	context._add(context.ax, context.ax);
 	context.bx = context.ax;
 	context.es = context.data.word(450);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._add(context.ax, 66*2);
 	context.si = context.ax;
 	context.di = context.data.word(77);
@@ -18777,7 +18777,7 @@ void commandonly(Context & context) {
 	context._add(context.ax, context.ax);
 	context.bx = context.ax;
 	context.es = context.data.word(450);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._add(context.ax, 66*2);
 	context.si = context.ax;
 	context.di = context.data.word(77);
@@ -18798,7 +18798,7 @@ void printmessage(Context & context) {
 	context._add(context.ax, context.ax);
 	context.bx = context.ax;
 	context.es = context.data.word(450);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._add(context.ax, 66*2);
 	context.si = context.ax;
 	context.di = context.pop();
@@ -18819,7 +18819,7 @@ void printmessage2(Context & context) {
 	context._add(context.ax, context.ax);
 	context.bx = context.ax;
 	context.es = context.data.word(450);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._add(context.ax, 66*2);
 	context.si = context.ax;
 	context.ax = context.pop();
@@ -18928,11 +18928,11 @@ notsamealready:
 	context._add(context.ax, context.ax);
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context.ah = 0;
 	context._sub(context.ax, 12);
 	context.data.word(478) = context.ax;
-	context.al = context.ds.byte(context.bx+1);
+	context.al = context.es.byte(context.bx+1);
 	context.ah = 0;
 	context._sub(context.ax, 12);
 	context.data.word(480) = context.ax;
@@ -18943,11 +18943,11 @@ notsamealready:
 	context._add(context.ax, context.ax);
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.es.byte(context.bx);
 	context.ah = 0;
 	context._sub(context.ax, 12);
 	context.data.word(482) = context.ax;
-	context.al = context.ds.byte(context.bx+1);
+	context.al = context.es.byte(context.bx+1);
 	context.ah = 0;
 	context._sub(context.ax, 12);
 	context.data.word(484) = context.ax;
@@ -18974,25 +18974,25 @@ void checkdest(Context & context) {
 	context.cl = 24;
 	context.ch = context.data.byte(477);
 checkdestloop:
-	context.dh = context.ds.byte(context.bx);
+	context.dh = context.es.byte(context.bx);
 	context._and(context.dh, 0xf0);
-	context.dl = context.ds.byte(context.bx);
+	context.dl = context.es.byte(context.bx);
 	context._and(context.dl, 0xf);
 	context._cmp(context.ax, context.dx);
 	if (!context.flags.z()) goto nextcheck;
-	context.al = context.ds.byte(context.bx+1);
+	context.al = context.es.byte(context.bx+1);
 	context._and(context.al, 15);
 	context.data.byte(477) = context.al;
 	context.bx = context.pop();
 	return;
 nextcheck:
-	context.dl = context.ds.byte(context.bx);
+	context.dl = context.es.byte(context.bx);
 	context._and(context.dl, 0xf0);
 	context._shr(context.dl, 1);
 	context._shr(context.dl, 1);
 	context._shr(context.dl, 1);
 	context._shr(context.dl, 1);
-	context.dh = context.ds.byte(context.bx);
+	context.dh = context.es.byte(context.bx);
 	context._and(context.dh, 0xf);
 	context._shl(context.dh, 1);
 	context._shl(context.dh, 1);
@@ -19000,7 +19000,7 @@ nextcheck:
 	context._shl(context.dh, 1);
 	context._cmp(context.ax, context.dx);
 	if (!context.flags.z()) goto nextcheck2;
-	context.ch = context.ds.byte(context.bx+1);
+	context.ch = context.es.byte(context.bx+1);
 	context._and(context.ch, 15);
 nextcheck2:
 	context._add(context.bx, 2);
@@ -19430,7 +19430,7 @@ notover32:
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(434);
 	context._add(context.bx, 0);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._add(context.ax, 0+(38*2));
 	context.si = context.ax;
 	context.data.word(75) = 7;
@@ -19549,7 +19549,7 @@ nomorethan6:
 	context.ah = 0;
 	context.bx = 5691;
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.cs.byte(context.bx);
 	context.ds = context.data.word(406);
 	context.di = 44;
 	context.bx = 32;
@@ -19973,7 +19973,7 @@ finflashmouse:
 	context.ah = 0;
 	context.bx = 5698;
 	context._add(context.bx, context.ax);
-	context.al = context.ds.byte(context.bx);
+	context.al = context.cs.byte(context.bx);
 	context.data.byte(230) = context.al;
 	return;
 combathand:
@@ -20064,7 +20064,7 @@ void readkey(Context & context) {
 	context.data.word(394) = context.bx;
 	context.di = 5715;
 	context._add(context.di, context.bx);
-	context.al = context.ds.byte(context.di);
+	context.al = context.cs.byte(context.di);
 	context.data.byte(141) = context.al;
 	return;
 nokey:
@@ -20077,7 +20077,7 @@ void convertkey(Context & context) {
 	context.ah = 0;
 	context.di = 5731;
 	context._add(context.di, context.ax);
-	context.al = context.ds.byte(context.di);
+	context.al = context.cs.byte(context.di);
 	return;
 }
 
@@ -20158,7 +20158,7 @@ void loadtempcharset(Context & context) {
 void standardload(Context & context) {
 	openfile(context);
 	readheader(context);
-	context.bx = context.ds.word(context.di);
+	context.bx = context.es.word(context.di);
 	context.push(context.bx);
 	context.cl = 4;
 	context._shr(context.bx, context.cl);
@@ -20211,7 +20211,7 @@ void loadroomssample(Context & context) {
 	twodigitnum(context);
 	context.di = 1896;
 	context._xchg(context.al, context.ah);
-	context.ds.word(context.di+10) = context.ax;
+	context.cs.word(context.di+10) = context.ax;
 	context.dx = context.di;
 	loadsecondsample(context);
 loadedalready:
@@ -20395,31 +20395,31 @@ blimey:
 
 void startloading(Context & context) {
 	context.data.byte(63) = 0;
-	context.al = context.ds.byte(context.bx+13);
+	context.al = context.cs.byte(context.bx+13);
 	context.data.byte(530) = context.al;
-	context.al = context.ds.byte(context.bx+15);
+	context.al = context.cs.byte(context.bx+15);
 	context.data.byte(147) = context.al;
-	context.al = context.ds.byte(context.bx+16);
+	context.al = context.cs.byte(context.bx+16);
 	context.data.byte(148) = context.al;
-	context.al = context.ds.byte(context.bx+20);
+	context.al = context.cs.byte(context.bx+20);
 	context.data.byte(34) = context.al;
-	context.al = context.ds.byte(context.bx+21);
+	context.al = context.cs.byte(context.bx+21);
 	context.data.byte(474) = context.al;
 	context.data.byte(477) = context.al;
 	context.data.byte(476) = context.al;
-	context.al = context.ds.byte(context.bx+22);
+	context.al = context.cs.byte(context.bx+22);
 	context.data.byte(132) = context.al;
 	context.data.byte(134) = context.al;
-	context.al = context.ds.byte(context.bx+23);
+	context.al = context.cs.byte(context.bx+23);
 	context.data.byte(38) = context.al;
-	context.al = context.ds.byte(context.bx+24);
+	context.al = context.cs.byte(context.bx+24);
 	context.data.byte(35) = context.al;
-	context.al = context.ds.byte(context.bx+25);
+	context.al = context.cs.byte(context.bx+25);
 	context.data.byte(37) = context.al;
 	context.data.byte(64) = -1;
-	context.al = context.ds.byte(context.bx+27);
+	context.al = context.cs.byte(context.bx+27);
 	context.push(context.ax);
-	context.al = context.ds.byte(context.bx+31);
+	context.al = context.cs.byte(context.bx+31);
 	context.ah = context.data.byte(183);
 	context.data.byte(183) = context.al;
 	context.dx = context.bx;
@@ -20556,7 +20556,7 @@ lookx2:
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
 	context.al = 0;
-	context.ds.byte(context.bx+6) = context.al;
+	context.es.byte(context.bx+6) = context.al;
 	return;
 }
 
@@ -20568,7 +20568,7 @@ void findxyfrompath(Context & context) {
 	context._add(context.ax, context.ax);
 	context._add(context.ax, context.ax);
 	context._add(context.bx, context.ax);
-	context.ax = context.ds.word(context.bx);
+	context.ax = context.es.word(context.bx);
 	context._sub(context.al, 12);
 	context._sub(context.ah, 12);
 	context.data.byte(150) = context.al;
@@ -20615,7 +20615,7 @@ void readheader(Context & context) {
 void allocateload(Context & context) {
 	context.push(context.es);
 	context.push(context.di);
-	context.bx = context.ds.word(context.di);
+	context.bx = context.es.word(context.di);
 	context.cl = 4;
 	context._shr(context.bx, context.cl);
 	allocatemem(context);

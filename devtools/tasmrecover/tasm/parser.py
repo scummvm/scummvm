@@ -101,6 +101,7 @@ class parser:
 		return text
 	
 	def fix_dollar(self, v):
+		print("$ = %d" %len(self.binary_data))
 		return re.sub(r'\$', "%d" %len(self.binary_data), v)
 
 	def parse_int(self, v):
@@ -198,6 +199,7 @@ class parser:
 
 			if cmd0 == 'db' or cmd0 == 'dw' or cmd0 == 'dd':
 				arg = " ".join(cmd[1:])
+				print "%d: %s" %(len(self.binary_data), line) #fixme: COPYPASTE
 				binary_width = {'b': 1, 'w': 2, 'd': 4}[cmd0[1]]
 				self.binary_data += self.compact_data(binary_width, lex.parse_args(arg))
 				continue
@@ -221,6 +223,7 @@ class parser:
 					v = cmd[2]
 					self.set_global(cmd0, op.const(self.fix_dollar(v)))
 				elif cmd1 == 'db' or cmd1 == 'dw' or cmd1 == 'dd':
+					print "%d: %s" %(len(self.binary_data), line)
 					binary_width = {'b': 1, 'w': 2, 'd': 4}[cmd1[1]]
 					offset = len(self.binary_data)
 					self.binary_data += self.compact_data(binary_width, lex.parse_args(" ".join(cmd[2:])))

@@ -146,9 +146,11 @@ namespace %s {
 
 		m = re.match(r'(\w{2,2}):(.*)$', expr)
 		if m is not None:
-			seg = m.group(1)
+			seg_prefix = m.group(1)
 			expr = m.group(2).strip()
-			print "SEGMENT %s, remains: %s" %(seg, expr)
+			print "SEGMENT %s, remains: %s" %(seg_prefix, expr)
+		else:
+			seg_prefix = "ds"
 
 		m = re.match(r'(([abcd][xhl])|si|di|bp|sp)([\+-].*)?$', expr)
 		if m is not None:
@@ -174,9 +176,9 @@ namespace %s {
 		
 		if indirection == 1:
 			if size == 1:
-				expr = "context.ds.byte(%s)" %expr
+				expr = "context.%s.byte(%s)" %(seg_prefix, expr)
 			elif size == 2:
-				expr = "context.ds.word(%s)" %expr
+				expr = "context.%s.word(%s)" %(seg_prefix, expr)
 			else:
 				expr = "@invalid size 0"
 		elif indirection == 0:
