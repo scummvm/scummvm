@@ -71,12 +71,6 @@ struct ToneChan {
 	int feedback;						/* noise feedback mask */
 };
 
-struct Tone {
-	int freqCount;
-	int atten;
-	GenType type;
-};
-
 class SoundGenPCJr : public SoundGen, public Audio::AudioStream {
 public:
 	SoundGenPCJr(AgiEngine *vm, Audio::Mixer *pMixer);
@@ -102,10 +96,12 @@ public:
 	}
 
 private:
-	int getNextNote(int ch, Tone *tone);
-	int getNextNote_v2(int ch, Tone *tone);
-	int getNextNote_v1(int ch, Tone *tone);
+	int getNextNote(int ch);
+	int getNextNote_v2(int ch);
+	int getNextNote_v1(int ch);
 	int volumeCalc(SndGenChan *chan);
+
+	void writeData(uint8 val);
 
 	int chanGen(int chan, int16 *stream, int len);
 
