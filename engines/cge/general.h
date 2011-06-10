@@ -1,3 +1,30 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This code is based on original Soltys source code
+ * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
+ */
+
 #ifndef		__GENERAL__
 #define		__GENERAL__
 
@@ -24,7 +51,7 @@ typedef	struct	{
 		  byte R, G, B;
 		} DAC;
 
-typedef	word	CRYPT	(void far * buf, word siz, word seed);
+typedef	word	CRYPT	(void *buf, word siz, word seed);
 
 
 
@@ -206,7 +233,7 @@ CRYPT		XCrypt;
 CRYPT		RXCrypt;
 CRYPT		RCrypt;
 
-MEM_TYPE	MemType		(void far * mem);
+MEM_TYPE	MemType		(void *mem);
 unsigned	FastRand	(void);
 unsigned	FastRand	(unsigned s);
 CPU		Cpu		(void);
@@ -220,7 +247,7 @@ void		StdLog		(const char *msg, const char *nam = NULL);
 void		StdLog		(const char *msg, word w);
 void		StdLog		(const char *msg, dword d);
 int		TakeEnum	(const char ** tab, const char * txt);
-word		ChkSum		(void far * m, word n);
+word		ChkSum		(void *m, word n);
 long		Timer		(void);
 long		TimerLimit	(word t);
 Boolean		TimerLimitGone	(long t);
@@ -233,8 +260,8 @@ int 		DriveRemote	(unsigned drv);
 int 		DriveCD		(unsigned drv);
 Boolean		IsVga		(void);
 
-EC void		_fqsort		(void far *base, word nelem, word width,
-				int (*fcmp)(const void far *, const void far *));
+EC void		_fqsort		(void *base, word nelem, word width,
+				int (*fcmp)(const void*, const void*));
 
 
 
