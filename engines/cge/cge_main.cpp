@@ -285,10 +285,10 @@ static void LoadGame (XFILE& file, Boolean tiny = FALSE)
   for (st = SavTab; st->Ptr; st ++)
     {
       if (file.Error) VGA::Exit("Bad SVG");
-      file.Read((byte far *) ((tiny || st->Flg) ? st->Ptr : &i), st->Len);
+      file.Read((byte *) ((tiny || st->Flg) ? st->Ptr : &i), st->Len);
     }
 
-  file.Read((byte far *) &i, sizeof(i));
+  file.Read((byte *) &i, sizeof(i));
   if (i != SVGCHKSUM) VGA::Exit(BADSVG_TEXT);
   if (STARTUP::Core < CORE_HIG) Music = FALSE;
   if (STARTUP::SoundOk == 1 && STARTUP::Mode == 0)
@@ -303,7 +303,7 @@ static void LoadGame (XFILE& file, Boolean tiny = FALSE)
       while (! file.Error)
 	{
 	  SPRITE S(NULL);
-	  word n = file.Read((byte far *) &S, sizeof(S));
+	  word n = file.Read((byte *) &S, sizeof(S));
 
 	  if (n != sizeof(S)) break;
 	  S.Prev = S.Next = NULL;
@@ -354,14 +354,14 @@ static void SaveGame (XFILE& file)
   for (st = SavTab; st->Ptr; st ++)
     {
       if (file.Error) VGA::Exit("Bad SVG");
-      file.Write((byte far *) st->Ptr, st->Len);
+      file.Write((byte *) st->Ptr, st->Len);
     }
 
-  file.Write((byte far *) &(i = SVGCHKSUM), sizeof(i));
+  file.Write((byte *) &(i = SVGCHKSUM), sizeof(i));
 
   for (spr = VGA::SpareQ.First(); spr; spr = spr->Next)
     if (spr->Ref >= 1000)
-      if (!file.Error) file.Write((byte far *)spr, sizeof(*spr));
+      if (!file.Error) file.Write((byte *)spr, sizeof(*spr));
 }
 
 
@@ -435,7 +435,7 @@ static void LoadMapping (void)
 	{
 	  memset(CLUSTER::Map, 0, sizeof(CLUSTER::Map));
 	  cf.Seek((Now - 1) * sizeof(CLUSTER::Map));
-	  cf.Read((byte far *) CLUSTER::Map, sizeof(CLUSTER::Map));
+	  cf.Read((byte *) CLUSTER::Map, sizeof(CLUSTER::Map));
 	}
     }
 }
@@ -850,7 +850,7 @@ int		SYSTEM::FunDel	= HEROFUN0;
 void SYSTEM::SetPal (void)
 {
   int i;
-  DAC far * p = SysPal + 256-ArrayCount(StdPal);
+  DAC * p = SysPal + 256-ArrayCount(StdPal);
   for (i = 0; i < ArrayCount(StdPal); i ++)
     {
       p[i].R = StdPal[i].R >> 2;
@@ -1426,7 +1426,7 @@ static void SaveMapping (void)
     if (! cf.Error)
       {
 	cf.Seek((Now-1) * sizeof(CLUSTER::Map));
-	cf.Write((byte far *) CLUSTER::Map, sizeof(CLUSTER::Map));
+	cf.Write((byte *) CLUSTER::Map, sizeof(CLUSTER::Map));
       }
   }
   {
@@ -1435,7 +1435,7 @@ static void SaveMapping (void)
       {
 	HeroXY[Now-1].X = Hero->X;
 	HeroXY[Now-1].Y = Hero->Y;
-	cf.Write((byte far *) HeroXY, sizeof(HeroXY));
+	cf.Write((byte *) HeroXY, sizeof(HeroXY));
       }
   }
 }
@@ -1998,7 +1998,7 @@ static void RunGame (void)
 
   if (Mini && INI_FILE::Exist("MINI.SPR"))
     {
-      byte far * ptr = (byte far *) &*Mini;
+      byte * ptr = (byte *) &*Mini;
       if (ptr != NULL)
 	{
 	  LoadSprite("MINI", -1, 0, MINI_X, MINI_Y);
@@ -2217,7 +2217,7 @@ Boolean ShowTitle (const char * name)
 void StkDump (void)
 {
   CFILE f("!STACK.DMP", BFW);
-  f.Write((byte far *) (intStackPtr-STACK_SIZ/2), STACK_SIZ*2);
+  f.Write((byte *) (intStackPtr-STACK_SIZ/2), STACK_SIZ*2);
 }
 #endif
 */

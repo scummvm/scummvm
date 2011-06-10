@@ -51,7 +51,7 @@ struct	EVENT	{ word Msk;
 		};
 extern	EVENT	Evt[EVT_MAX];
 extern	word	EvtHead, EvtTail;
-typedef	void	(far MOUSE_FUN)		(void);
+typedef	void	(MOUSE_FUN)		(void);
 
 
 

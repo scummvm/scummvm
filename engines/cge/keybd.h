@@ -41,7 +41,7 @@
 
 class KEYBOARD
 {
-  static void interrupt (far * OldKeyboard) (...);
+  static void interrupt (* OldKeyboard) (...);
   static void interrupt NewKeyboard (...);
   static word Code[0x60];
   static word Current;

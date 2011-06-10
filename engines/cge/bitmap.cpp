@@ -48,7 +48,7 @@
 
 
 
-DAC far *	BITMAP::Pal = NULL;
+DAC *	BITMAP::Pal = NULL;
 
 
 
@@ -97,7 +97,7 @@ BITMAP::BITMAP (const char * fname, Boolean rem)
 
 
 
-BITMAP::BITMAP (word w, word h, byte far * map)
+BITMAP::BITMAP (word w, word h, byte * map)
 : W(w), H(h), M(map), V(NULL)
 {
   if (map) Code();
@@ -147,15 +147,15 @@ BITMAP::BITMAP (const BITMAP& bmp)
 : W(bmp.W), H(bmp.H),
   M(NULL), V(NULL)
 {
-  byte far * v0 = bmp.V;
+  byte * v0 = bmp.V;
   if (v0)
     {
       word vsiz = FP_OFF(bmp.B) - FP_OFF(v0);
       word siz = vsiz + H * sizeof(HideDesc);
-      byte far * v1 = farnew(byte, siz);
+      byte * v1 = farnew(byte, siz);
       if (v1 == NULL) DROP("No core", NULL);
       _fmemcpy(v1, v0, siz);
-      B = (HideDesc far *) ((V = v1) + vsiz);
+      B = (HideDesc *) ((V = v1) + vsiz);
     }
 }
 
@@ -180,7 +180,7 @@ BITMAP::~BITMAP (void)
 
 BITMAP& BITMAP::operator = (const BITMAP& bmp)
 {
-  byte far * v0 = bmp.V;
+  byte * v0 = bmp.V;
   W = bmp.W;
   H = bmp.H;
   M = NULL;
@@ -190,10 +190,10 @@ BITMAP& BITMAP::operator = (const BITMAP& bmp)
     {
       word vsiz = FP_OFF(bmp.B) - FP_OFF(v0);
       word siz = vsiz + H * sizeof(HideDesc);
-      byte far * v1 = farnew(byte, siz);
+      byte * v1 = farnew(byte, siz);
       if (v1 == NULL) DROP("No core", NULL);
       _fmemcpy(v1, v0, siz);
-      B = (HideDesc far *) ((V = v1) + vsiz);
+      B = (HideDesc *) ((V = v1) + vsiz);
     }
   return *this;
 }
@@ -202,7 +202,7 @@ BITMAP& BITMAP::operator = (const BITMAP& bmp)
 
 
 
-word BITMAP::MoveVmap (byte far * buf)
+word BITMAP::MoveVmap (byte * buf)
 {
   if (V)
     {
@@ -210,7 +210,7 @@ word BITMAP::MoveVmap (byte far * buf)
       word siz = vsiz + H * sizeof(HideDesc);
       _fmemcpy(buf, V, siz);
       if (MemType(V) == FAR_MEM) farfree(V);
-      B = (HideDesc far *) ((V = buf) + vsiz);
+      B = (HideDesc *) ((V = buf) + vsiz);
       return siz;
     }
   return 0;
@@ -240,8 +240,8 @@ BMP_PTR BITMAP::Code (void)
 
       while (TRUE) // at most 2 times: for (V == NULL) & for allocated block;
 	{
-	  byte far * im = V+2;
-	  word far * cp = (word far *) V;
+	  byte * im = V+2;
+	  word * cp = (word *) V;
 	  int bpl;
 
 	  if (V) // 2nd pass - fill the hide table
@@ -254,7 +254,7 @@ BMP_PTR BITMAP::Code (void)
 	    }
 	  for (bpl = 0; bpl < 4; bpl ++) // once per each bitplane
 	    {
-	      byte far * bm = M;
+	      byte * bm = M;
 	      Boolean skip = (bm[bpl] == TRANS);
 	      word j;
 
@@ -277,7 +277,7 @@ BMP_PTR BITMAP::Code (void)
 			    {
 			      *cp = cnt;  // store block description word
 			    }
-			  cp = (word far *) im;
+			  cp = (word *) im;
 			  im += 2;
 			  skip = (pix == TRANS);
 			  cnt = 0;
@@ -304,7 +304,7 @@ BMP_PTR BITMAP::Code (void)
 			    {
 			      *cp = cnt;
 			    }
-			  cp = (word far *) im;
+			  cp = (word *) im;
 			  im += 2;
 			  skip = TRUE;
 			  cnt = (SCR_WID - j + 3) / 4;
@@ -318,11 +318,11 @@ BMP_PTR BITMAP::Code (void)
 		    {
 		      *cp = cnt;
 		    }
-		  cp = (word far *) im;
+		  cp = (word *) im;
 		  im += 2;
 		}
 	      if (V) *cp = EOI;
-	      cp = (word far *) im;
+	      cp = (word *) im;
 	      im += 2;
 	    }
 	  if (V) break;
@@ -332,7 +332,7 @@ BMP_PTR BITMAP::Code (void)
 	    {
 	      DROP("No core", NULL);
 	    }
-	  B = (HideDesc far *) (V + sizV);
+	  B = (HideDesc *) (V + sizV);
 	}
       cnt = 0;
       for (i = 0; i < H; i ++)
@@ -362,7 +362,7 @@ BMP_PTR BITMAP::Code (void)
 
 Boolean BITMAP::SolidAt (int x, int y)
 {
-  byte far * m;
+  byte * m;
   word r, n, n0;
 
   if (x >= W || y >= H) return FALSE;
@@ -375,7 +375,7 @@ Boolean BITMAP::SolidAt (int x, int y)
     {
       word w, t;
 
-      w = * (word far *) m;
+      w = * (word *) m;
       m += 2;
       t = w & 0xC000;
       w &= 0x3FFF;
@@ -393,7 +393,7 @@ Boolean BITMAP::SolidAt (int x, int y)
     {
       word w, t;
 
-      w = * (word far *) m;
+      w = * (word *) m;
       m += 2;
       t = w & 0xC000;
       w &= 0x3FFF;
@@ -419,12 +419,12 @@ Boolean BITMAP::SolidAt (int x, int y)
 Boolean BITMAP::VBMSave (XFILE * f)
 {
   word p = (Pal != NULL),
-       n = ((word) (((byte far *)B) - V)) + H * sizeof(HideDesc);
-  if (f->Error == 0) f->Write((byte far *)&p, sizeof(p));
-  if (f->Error == 0) f->Write((byte far *)&n, sizeof(n));
-  if (f->Error == 0) f->Write((byte far *)&W, sizeof(W));
-  if (f->Error == 0) f->Write((byte far *)&H, sizeof(H));
-  if (f->Error == 0) if (p) f->Write((byte far *)Pal, 256 * sizeof(DAC));
+       n = ((word) (((byte *)B) - V)) + H * sizeof(HideDesc);
+  if (f->Error == 0) f->Write((byte *)&p, sizeof(p));
+  if (f->Error == 0) f->Write((byte *)&n, sizeof(n));
+  if (f->Error == 0) f->Write((byte *)&W, sizeof(W));
+  if (f->Error == 0) f->Write((byte *)&H, sizeof(H));
+  if (f->Error == 0) if (p) f->Write((byte *)Pal, 256 * sizeof(DAC));
   if (f->Error == 0) f->Write(V, n);
   return (f->Error == 0);
 }
@@ -436,21 +436,21 @@ Boolean BITMAP::VBMSave (XFILE * f)
 Boolean BITMAP::VBMLoad (XFILE * f)
 {
   word p, n;
-  if (f->Error == 0) f->Read((byte far *)&p, sizeof(p));
-  if (f->Error == 0) f->Read((byte far *)&n, sizeof(n));
-  if (f->Error == 0) f->Read((byte far *)&W, sizeof(W));
-  if (f->Error == 0) f->Read((byte far *)&H, sizeof(H));
+  if (f->Error == 0) f->Read((byte *)&p, sizeof(p));
+  if (f->Error == 0) f->Read((byte *)&n, sizeof(n));
+  if (f->Error == 0) f->Read((byte *)&W, sizeof(W));
+  if (f->Error == 0) f->Read((byte *)&H, sizeof(H));
   if (f->Error == 0)
     {
       if (p)
 	{
-	  if (Pal) f->Read((byte far *)Pal, 256 * sizeof(DAC));
+	  if (Pal) f->Read((byte *)Pal, 256 * sizeof(DAC));
 	  else f->Seek(f->Mark() + 256 * sizeof(DAC));
 	}
     }
   if ((V = farnew(byte, n)) == NULL) return FALSE;
   if (f->Error == 0) f->Read(V, n);
-  B = (HideDesc far *) (V + n - H * sizeof(HideDesc));
+  B = (HideDesc *) (V + n - H * sizeof(HideDesc));
   return (f->Error == 0);
 }
 

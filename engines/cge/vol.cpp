@@ -61,7 +61,7 @@ VFILE::VFILE (const char * name, IOMODE mode)
   if (mode == REA)
     {
       if (Dat.File.Error || Cat.Error) DROP("Bad volume data", NULL);
-      BT_KEYPACK far * kp = Cat.Find(name);
+      BT_KEYPACK * kp = Cat.Find(name);
       if (_fstricmp(kp->Key, name) != 0) Error = ENOFILE;
       EndMark = (BufMark = BegMark = kp->Mark) + kp->Size;
     }

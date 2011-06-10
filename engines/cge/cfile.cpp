@@ -114,7 +114,7 @@ void IOBUF::WriteBuff (void)
 
 
 
-word IOBUF::Read (void far * buf, word len)
+word IOBUF::Read (void *buf, word len)
 {
   word total = 0;
   while (len)
@@ -125,7 +125,7 @@ word IOBUF::Read (void far * buf, word len)
 	{
 	  if (len < n) n = len;
 	  _fmemcpy(buf, Buff+Ptr, n);
-	  (byte far *) buf += n;
+	  (byte *) buf += n;
 	  len -= n;
 	  total += n;
 	  Ptr += n;
@@ -140,21 +140,21 @@ word IOBUF::Read (void far * buf, word len)
 
 
 
-word IOBUF::Read (byte far * buf)
+word IOBUF::Read (byte * buf)
 {
   word total = 0;
 
   while (total < LINE_MAX-2)
     {
       if (Ptr >= Lim) ReadBuff();
-      byte far * p = Buff + Ptr;
+      byte * p = Buff + Ptr;
       word n = Lim - Ptr;
       if (n)
 	{
 	  if (total + n >= LINE_MAX-2) n = LINE_MAX-2 - total;
-	  byte far * eol = (byte far *) _fmemchr(p, '\r', n);
+	  byte * eol = (byte *) _fmemchr(p, '\r', n);
 	  if (eol) n = (word) (eol - p);
-	  byte far * eof = (byte far *) _fmemchr(p, '\32', n);
+	  byte * eof = (byte *) _fmemchr(p, '\32', n);
 	  if (eof) // end-of-file
 	    {
 	      n = (word) (eof - p);
@@ -187,7 +187,7 @@ word IOBUF::Read (byte far * buf)
 
 
 
-word IOBUF::Write (void far * buf, word len)
+word IOBUF::Write (void * buf, word len)
 {
   word tot = 0;
   while (len)
@@ -199,7 +199,7 @@ word IOBUF::Write (void far * buf, word len)
 	  _fmemcpy(Buff+Lim, buf, n);
 	  Lim += n;
 	  len -= n;
-	  (byte far *) buf += n;
+	  (byte *) buf += n;
 	  tot += n;
 	}
       else WriteBuff();
@@ -212,12 +212,12 @@ word IOBUF::Write (void far * buf, word len)
 
 
 
-word IOBUF::Write (byte far * buf)
+word IOBUF::Write (byte * buf)
 {
   word len = 0;
   if (buf)
     {
-      len = _fstrlen((const char far *) buf);
+      len = _fstrlen((const char *) buf);
       if (len) if (buf[len-1] == '\n') -- len;
       len = Write(buf, len);
       if (len)
@@ -273,7 +273,7 @@ void IOBUF::Write (byte b)
 
 
 
-CFILE::CFILE (const char near * name, IOMODE mode, CRYPT * crpt)
+CFILE::CFILE (const char * name, IOMODE mode, CRYPT * crpt)
 : IOBUF(name, mode, crpt)
 {
 }
