@@ -36,12 +36,12 @@
   #include	"cge/drop.h"
 #endif
 
-
 #include	<alloc.h>
 #include	<dos.h>
 #include	<dir.h>
 #include	<mem.h>
 
+namespace CGE {
 
 //--------------------------------------------------------------------------
 
@@ -455,6 +455,4 @@ bool BITMAP::VBMLoad (XFILE * f)
 }
 
 
-
-
-
+} // End of namespace CGE

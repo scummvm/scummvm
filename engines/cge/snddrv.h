@@ -37,6 +37,8 @@
 #ifndef __SNDDRV__
 #define __SNDDRV__
 
+namespace CGE {
+
 // ******************************************************
 // *  Constants                                         *
 // ******************************************************
@@ -127,5 +129,7 @@ EC void SNDMIDIStop    (void);
 // Play MIDI File (to be called while interrupting)
 // WARNING: Uses ALL registers!
 EC void SNDMIDIPlay    (void);
+
+// End of namespace CGE
 
 #endif

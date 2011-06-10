@@ -31,6 +31,7 @@
 #include	"cge/wav.h"
 #include	"cge/snddrv.h"
 
+namespace CGE {
 
 #define		BAD_SND_TEXT	97
 #define		BAD_MIDI_TEXT	98
@@ -83,6 +84,7 @@ extern	FX	Fx;
 void		LoadMIDI	(int ref);
 void		KillMIDI	(void);
 
+} // End of namespace CGE
 
 #endif
 

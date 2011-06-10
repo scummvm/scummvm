@@ -34,7 +34,6 @@
 #else
   #include	<stdio.h>
   #include	<stdlib.h>
-  #define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
 #endif
 
 #include	"cge/text.h"
@@ -42,6 +41,12 @@
 #include	"cge/vol.h"
 #include	<alloc.h>
 
+
+namespace CGE {
+
+#ifndef	DROP_H
+  #define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
+#endif
 
 	bool		Music		= true;
 	FX		Fx		= 16;	// must precede SOUND!!
@@ -318,3 +323,4 @@ EC void * Patch (int pat)
   return p;
 }
 
+} // End of namespace CGE

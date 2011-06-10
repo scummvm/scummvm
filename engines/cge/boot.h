@@ -30,6 +30,8 @@
 
 #include	"cge/jbw.h"
 
+namespace CGE {
+
 #define		BOOTSECT_SIZ	512
 #define		BOOTHEAD_SIZ	62
 #define		BOOTCODE_SIZ	BOOTSECT_SIZ-BOOTHEAD_SIZ
@@ -72,5 +74,6 @@ EC	Boot *		ReadBoot	(int drive);
 EC	uint8		CheckBoot	(Boot * boot);
 EC	bool		WriteBoot	(int drive, Boot * boot);
 
+// End of namespace CGE
 
 #endif

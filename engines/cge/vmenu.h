@@ -30,16 +30,13 @@
 
 #include	"cge/talk.h"
 
+namespace CGE {
+
 #define		MB_VM		1
 #define		MB_HM		3
 
 
-
 typedef	struct	{ char * Text; void (* Proc)(void); } CHOICE;
-
-
-
-
 
 
 class MENU_BAR : public TALK
@@ -47,11 +44,6 @@ class MENU_BAR : public TALK
 public:
   MENU_BAR (uint16 w);
 };
-
-
-
-
-
 
 
 class VMENU : public TALK
@@ -67,6 +59,6 @@ public:
   void Touch (uint16 mask, int x, int y);
 };
 
-
+} // End of namespace CGE
 
 #endif

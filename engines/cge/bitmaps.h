@@ -30,6 +30,8 @@
 
 #include	"cge/vga13h.h"
 
+namespace CGE {
+
 #ifdef DEBUG
  extern	BITMAP *	MB[];
  extern	BITMAP *	HL[];
@@ -40,6 +42,6 @@ extern	BITMAP *	PR[];
 extern	BITMAP *	SP[];
 extern	BITMAP *	LI[];
 
+} // End of namespace CGE
 
 #endif
-

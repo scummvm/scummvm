@@ -31,6 +31,8 @@
 
 #include	"cge/general.h"
 
+namespace CGE {
+
 #define		GAME_ID		45
 #define		CDINI_FNAME	46
 
@@ -75,5 +77,6 @@ extern	EMM	MiniEmm;
 
 const char *UsrPath (const char *nam);
 
+} // End of namespace CGE
 
 #endif

@@ -31,6 +31,7 @@
 #include	"cge/vga13h.h"
 #include	"cge/bitmaps.h"
 
+namespace CGE {
 
 
 #define		PAN_HIG		40
@@ -62,6 +63,6 @@ public:
 
 
 
-
+} // End of namespace CGE
 
 #endif

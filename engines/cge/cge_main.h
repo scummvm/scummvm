@@ -204,5 +204,6 @@ extern	WALK *		Hero;
 	void ContractSprite	(SPRITE * spr);
 	void cge_main(void);
 
-} // End of CGE
+} // End of namespace CGE
+
 #endif

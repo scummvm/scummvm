@@ -55,6 +55,8 @@
 #include	<bios.h>
 #include	<io.h>
 
+namespace CGE {
+
 #define		STACK_SIZ	(K(2))
 #define		SVGCHKSUM	(1956+Now+OldLev+Game+Music+DemoText)
 
@@ -2257,3 +2259,5 @@ void cge_main (void)
   else Vga.Sunset();
   VGA::Exit(EXIT_OK_TEXT+FINIS);
 }
+
+} // End of namespace CGE

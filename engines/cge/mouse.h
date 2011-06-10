@@ -31,8 +31,9 @@
 #include	"cge/game.h"
 #include	"cge/talk.h"
 
-#define		EVT_MAX		256
+namespace CGE {
 
+#define		EVT_MAX		256
 #define		ROLL		0x01
 #define		L_DN		0x02
 #define		L_UP		0x04
@@ -80,6 +81,6 @@ public:
 };
 
 
-
+} // End of namespace CGE
 
 #endif

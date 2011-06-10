@@ -25,7 +25,7 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include	<cfile.h>
+#include	"cge/cfile.h"
 #include	<dos.h>
 #include	<fcntl.h>
 #include	<string.h>
@@ -36,11 +36,13 @@
 #else
   #include	<stdio.h>
   #include	<stdlib.h>
-  #define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
 #endif
 
+namespace CGE {
 
-
+#ifndef	DROP_H
+  #define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
+#endif
 
 IOBUF::IOBUF (IOMODE mode, CRYPT * crpt)
 : IOHAND(mode, crpt),
@@ -357,3 +359,5 @@ void CFILE::Append (CFILE& f)
 	}
     }
 }
+
+} // End of namespace CGE

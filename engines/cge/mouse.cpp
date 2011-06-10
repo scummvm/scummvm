@@ -29,7 +29,7 @@
 #include	"cge/text.h"
 #include	<dos.h>
 
-
+namespace CGE {
 
 	EVENT		Evt[EVT_MAX];
 
@@ -228,7 +228,4 @@ void MOUSE::Tick (void)
       Hold->Goto(X-hx, Y-hy);
 }
 
-
-
-//--------------------------------------------------------------------------
-
+} // End of namespace CGE

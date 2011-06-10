@@ -31,6 +31,8 @@
 #include	"cge/general.h"
 #include	<string.h>
 
+namespace CGE {
+
 #define		WAVE_FORMAT_PCM		0x0001
 #define		IBM_FORMAT_MULAW	0x0101
 #define		IBM_FORMAT_ALAW		0x0102
@@ -132,5 +134,7 @@ extern	CKID	DATA;
 
 DATACK *	LoadWave	(XFILE * file, EMM * emm = NULL);
 
+
+// End of namespace CGE
 
 #endif
