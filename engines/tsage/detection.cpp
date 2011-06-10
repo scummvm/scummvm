@@ -73,10 +73,19 @@ enum {
 class TSageMetaEngine : public AdvancedMetaEngine {
 public:
 	TSageMetaEngine() : AdvancedMetaEngine(tSage::gameDescriptions, sizeof(tSage::tSageGameDescription), tSageGameTitles) {
-		params.md5Bytes = 0;	// FIXME ????
+		// FIXME: Using 0 for md5Bytes means that the whole file will checked.
+		// this is usually a bad idea, as it can cause terribly slowdowns
+		// (remember, the MD5 is recomputed whenever the game starts, and also
+		// for many, many files when doing a "Mass Add" from the launcher. Even
+		// if the files you currently use for detection are all just a few
+		// kilobytes, you should still set a value here, just in case in the
+		// future you'll end up detecting with somewhat bigger files.
+		// I recommend using the default of 5000 here; if this is not possible,
+		// try a value like 10000 or 1024*1024, but be prepared to here from
+		// some suffering users ;)
+		params.md5Bytes = 0;
 		params.singleid = "tsage";
 		params.guioptions = Common::GUIO_NOSPEECH;
-		params.depth = 0;	// FIXME ????
 	}
 
 	virtual const char *getName() const {
