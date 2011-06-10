@@ -49,7 +49,7 @@
 #define		IsAlNum(c)	(IsAlpha(c) || IsDigit(c))
 #define		IsHxDig(c)	(IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
 
-#define		farnew(t,n)	((t far *) farmalloc(sizeof(t) * (n)))
+#define		farnew(t,n)	((t *) farmalloc(sizeof(t) * (n)))
 #define		ArrayCount(a)	(sizeof(a)/sizeof((a)[0]))
 #define		MAX_TIMER	0x1800B0L
 
@@ -138,11 +138,11 @@ struct	KeyStatStruct
 #define		CGA_Cursor	0x0607
 #define		OFF_Cursor	0x2000
 
-#define		TimerCount	(* ((volatile long far *) ((void _seg *) 0x40 + (void near *) 0x6C)))
-#define		KeyStat		(* ((volatile struct KeyStatStruct far *) ((void _seg *) 0x40 + (void near *) 0x17)))
-#define		BreakFlag	(* ((volatile byte far *) ((void _seg *) 0x40 + (void near *) 0x71)))
-#define		PostFlag	(* ((volatile word far *) ((void _seg *) 0x40 + (void near *) 0x72)))
-#define		POST		((void far (*)(void)) ((void _seg *) 0xF000 + (void near *) 0xFFF0))
+#define		TimerCount	(* ((volatile long *) ((void _seg *) 0x40 + (void *) 0x6C)))
+#define		KeyStat		(* ((volatile struct KeyStatStruct *) ((void _seg *) 0x40 + (void *) 0x17)))
+#define		BreakFlag	(* ((volatile byte *) ((void _seg *) 0x40 + (void *) 0x71)))
+#define		PostFlag	(* ((volatile word *) ((void _seg *) 0x40 + (void *) 0x72)))
+#define		POST		((void (*)(void)) ((void _seg *) 0xF000 + (void *) 0xFFF0))
 #define		SLIF		if (KeyStat.ScrollLock)
 
 #define		FOR(i,n)	for(i=0;i<(n);i++)

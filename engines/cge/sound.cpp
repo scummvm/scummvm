@@ -90,7 +90,7 @@ void SOUND::Play (DATACK * wav, int pan, int cnt)
   if (wav)
     {
       Stop();
-      smpinf.saddr = (char far *) &*(wav->EAddr());
+      smpinf.saddr = (char *) &*(wav->EAddr());
       smpinf.slen = (word)wav->Size();
       smpinf.span = pan;
       smpinf.sflag = cnt;
@@ -246,7 +246,7 @@ DATACK * FX::operator [] (int ref)
 //-------------------------------------------------------------------------
 
 
-static	byte far *	midi	= NULL;
+static	byte *	midi	= NULL;
 
 
 
@@ -275,7 +275,7 @@ void LoadMIDI (int ref)
       if (mid.Error == 0)
 	{
 	  word siz = (word) mid.Size();
-	  midi = new far byte[siz];
+	  midi = new byte[siz];
 	  if (midi)
 	    {
 	      mid.Read(midi, siz);
@@ -294,9 +294,9 @@ void LoadMIDI (int ref)
 
 
 
-EC void far * Patch (int pat)
+EC void * Patch (int pat)
 {
-  void far * p = NULL;
+  void * p = NULL;
   static char fn[] = "PATCH000.SND";
 
   wtom(pat, fn+5, 10, 3);
@@ -304,7 +304,7 @@ EC void far * Patch (int pat)
   if (! snd.Error)
     {
       word siz = (word) snd.Size();
-      p = (byte far *) farmalloc(siz);
+      p = (byte *) farmalloc(siz);
       if (p)
 	{
 	  snd.Read(p, siz);

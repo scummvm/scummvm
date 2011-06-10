@@ -55,9 +55,9 @@ class DAT
   friend VFILE;
   static VOLBASE File;
 public:
-  static Boolean Append (byte far * buf, word len);
+  static Boolean Append (byte * buf, word len);
   static Boolean Write (CFILE& f);
-  static Boolean Read (long org, word len, byte far * buf);
+  static Boolean Read (long org, word len, byte * buf);
 };
 
 

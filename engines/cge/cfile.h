@@ -38,7 +38,7 @@
   #define	IOBUF_SIZE	K(2)
 #endif
 
-#define		CFREAD(x)	Read((byte far *)(x),sizeof(*(x)))
+#define		CFREAD(x)	Read((byte *)(x),sizeof(*(x)))
 
 
 
@@ -46,7 +46,7 @@
 class IOBUF : public IOHAND
 {
 protected:
-  byte far * Buff;
+  byte * Buff;
   word Ptr, Lim;
   long BufMark;
   word Seed;
@@ -57,11 +57,11 @@ public:
   IOBUF (IOMODE mode, CRYPT * crpt = NULL);
   IOBUF (const char * name, IOMODE mode, CRYPT * crpt = NULL);
   virtual ~IOBUF (void);
-  word Read (void far * buf, word len);
-  word Read (char far * buf);
+  word Read (void * buf, word len);
+  word Read (char * buf);
   int Read (void);
-  word Write (void far * buf, word len);
-  word Write (byte far * buf);
+  word Write (void * buf, word len);
+  word Write (byte * buf);
   void Write (byte b);
 };
 
@@ -71,7 +71,7 @@ class CFILE : public IOBUF
 {
 public:
   static word MaxLineLen;
-  CFILE (const char near * name, IOMODE mode = REA, CRYPT * crpt = NULL);
+  CFILE (const char * name, IOMODE mode = REA, CRYPT * crpt = NULL);
   virtual ~CFILE (void);
   void Flush (void);
   long Mark (void);

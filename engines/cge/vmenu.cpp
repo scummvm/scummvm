@@ -48,7 +48,7 @@
 MENU_BAR::MENU_BAR (word w)
 {
   int h = FONT_HIG + 2 * MB_VM, i = (w += 2 * MB_HM) * h;
-  byte far * p = farnew(byte, i), far * p1, far * p2;
+  byte * p = farnew(byte, i), * p1, * p2;
 
   _fmemset(p+w, TRANS, i-2*w);
   _fmemset(p, MB_LT, w);

@@ -55,9 +55,9 @@ public:
 //  static byte Wid[256];
 //  static word Pos[256];
 //  static byte Map[256*8];
-  byte far * Wid;
-  word far * Pos;
-  byte far * Map;
+  byte * Wid;
+  word * Pos;
+  byte * Map;
   FONT (const char * name);
   ~FONT (void);
   word Width (const char * text);

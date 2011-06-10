@@ -180,7 +180,7 @@ void TALK::Update (const char * tx)
   word hmarg = (Mode) ? TEXT_HM : 0;
   word mw, mh, ln = vmarg;
   const char * p;
-  byte far * m;
+  byte * m;
 
   if (! TS[0])
     {
@@ -210,10 +210,10 @@ void TALK::Update (const char * tx)
       else
 	{
 	  int cw = Font.Wid[*tx], i;
-	  char far * f = Font.Map + Font.Pos[*tx];
+	  char * f = Font.Map + Font.Pos[*tx];
 	  for (i = 0; i < cw; i ++)
 	    {
-	      char far * p = m;
+	      char * p = m;
 	      word n;
 	      register word b = * (f ++);
 	      for (n = 0; n < FONT_HIG; n ++)
@@ -236,7 +236,7 @@ void TALK::Update (const char * tx)
 
 BITMAP * TALK::Box (word w, word h)
 {
-  byte far * b, far * p, far * q;
+  byte * b, * p, * q;
   word n, r = (Mode == ROUND) ? TEXT_RD : 0;
   int i;
 
@@ -287,7 +287,7 @@ void TALK::PutLine (int line, const char * text)
 // Note: (TS[0].W % 4) have to be 0
 {
   word w = TS[0]->W, h = TS[0]->H;
-  byte far * v = TS[0]->V, far * p;
+  byte * v = TS[0]->V, * p;
   word dsiz = w >> 2;		// data size (1 plane line size)
   word lsiz = 2 + dsiz + 2;	// word for line header, word for gap
   word psiz = h * lsiz;		// - last gap, but + plane trailer
@@ -307,14 +307,14 @@ void TALK::PutLine (int line, const char * text)
   // paint text line
   if (text)
     {
-      byte far * q;
+      byte * q;
       p = v + 2 + TEXT_HM/4 + (TEXT_HM%4)*psiz;
       q = v + size;
 
       while (* text)
 	{
 	  word cw = Font.Wid[*text], i;
-	  byte far * fp = Font.Map + Font.Pos[*text];
+	  byte * fp = Font.Map + Font.Pos[*text];
 
 	  for (i = 0; i < cw; i ++)
 	    {
@@ -361,7 +361,7 @@ void INFO_LINE::Update (const char * tx)
   if (tx != OldTxt)
     {
       word w = TS[0]->W, h = TS[0]->H;
-      byte * v = (byte near *) TS[0]->V;
+      byte * v = (byte *) TS[0]->V;
       word dsiz = w >> 2;		// data size (1 plane line size)
       word lsiz = 2 + dsiz + 2;		// word for line header, word for gap
       word psiz = h * lsiz;		// - last gape, but + plane trailer
@@ -381,7 +381,7 @@ void INFO_LINE::Update (const char * tx)
 	  while (* tx)
 	    {
 	      word cw = Font.Wid[*tx], i;
-	      byte far * fp = Font.Map + Font.Pos[*tx];
+	      byte * fp = Font.Map + Font.Pos[*tx];
 
 	      for (i = 0; i < cw; i ++)
 		{

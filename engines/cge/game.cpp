@@ -34,7 +34,7 @@
 
 
 
-byte * Glass (DAC far * pal, byte r, byte g, byte b)
+byte * Glass (DAC * pal, byte r, byte g, byte b)
 {
   byte * x = new byte[256];
   if (x)
@@ -54,7 +54,7 @@ byte * Glass (DAC far * pal, byte r, byte g, byte b)
 
 
 
-byte * Mark (DAC far * pal)
+byte * Mark (DAC * pal)
 {
   #define f(c) (c ^ 63)
   byte * x = new byte[256];

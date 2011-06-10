@@ -110,7 +110,7 @@ class DATACK : public CKHEA
   Boolean e;
   union
     {
-      byte far * Buf;
+      byte * Buf;
       EMS * EBuf;
     };
 public:
@@ -118,7 +118,7 @@ public:
   DATACK (CKHEA& hea, EMM * emm);
   DATACK (int first, int last);
   ~DATACK (void);
-  inline byte far * Addr (void) { return Buf; }
+  inline byte * Addr (void) { return Buf; }
   inline EMS * EAddr (void) { return EBuf; }
 };
 

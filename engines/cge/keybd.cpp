@@ -45,7 +45,7 @@ word  KEYBOARD::Code[0x60] = { 0,Esc,'1','2','3','4','5','6','7','8','9','0',
 			       0*0x54,0*0x55,0*0x56,F11,F12,0*0x59,0*0x5A,
 			       0*0x5B,0*0x5C,0*0x5D,0*0x5E,0*0x5F
 			     };
-void interrupt	(far * KEYBOARD::OldKeyboard) (...);
+void interrupt	(* KEYBOARD::OldKeyboard) (...);
 
 
 
