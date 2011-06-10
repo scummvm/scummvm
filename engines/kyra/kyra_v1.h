@@ -99,7 +99,7 @@ class KyraMetaEngine;
  * - The Legend of Kyrandia (fully supported, except for Macintosh port, which lacks sound)
  * - (The) Hand of Fate (fully supported)
  * - Malcolm's Revenge (fully supported)
- * - Lands of Lore: The Throne of Chaos (completable, still work in progress)
+ * - Lands of Lore: The Throne of Chaos (fully supported)
  */
 namespace Kyra {
 

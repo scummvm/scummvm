@@ -47,6 +47,7 @@ namespace {
 #define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, true, false, Kyra::GI_KYRA3)
 
 #define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, false, Kyra::GI_LOL)
+#define LOL_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, Kyra::GI_LOL)
 #define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_LOL)
 #define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, true, true, false, false, Kyra::GI_LOL)
@@ -1054,6 +1055,58 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_CD_FLAGS
+	},
+
+	// Italian fan translation
+		{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
+				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
+				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
+				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
 
 	{
