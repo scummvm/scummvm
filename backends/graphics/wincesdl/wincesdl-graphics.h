@@ -56,6 +56,8 @@ public:
 	void unloadGFXMode();
 	bool hotswapGFXMode();
 
+	void update_game_settings();
+
 	// Overloaded from SDL backend (toolbar handling)
 	void drawMouse();
 	// Overloaded from SDL backend (new scaler handling)
@@ -88,7 +90,8 @@ public:
 	void swap_zoom_up();
 	void swap_zoom_down();
 	void swap_mouse_visibility();
-
+	void swap_freeLook();
+	bool getFreeLookState();
 
 //#ifdef WIN32_PLATFORM_WFSP
 	void move_cursor_up();
@@ -96,7 +99,6 @@ public:
 	void move_cursor_left();
 	void move_cursor_right();
 
-	void retrieve_mouse_location(int &x, int &y);
 	void switch_zone();
 
 	void add_right_click(bool pushed);
@@ -105,6 +107,11 @@ public:
 	void initZones();
 	void smartphone_rotate_display();
 //#endif
+
+	bool hasPocketPCResolution();
+	bool hasDesktopResolution();
+	bool hasSquareQVGAResolution();
+	bool hasWideResolution() const;
 
 	bool _panelInitialized; // only initialize the toolbar once
 	bool _noDoubleTapRMB;   // disable double tap -> rmb click
@@ -121,11 +128,6 @@ public:
 	int _scaleFactorYd;     // scaler Y /
 
 	bool _hasfocus;         // scummvm has the top window
-
-	bool hasPocketPCResolution();
-	bool hasDesktopResolution();
-	bool hasSquareQVGAResolution();
-	bool hasWideResolution() const;
 
 	MousePos _mouseCurState;
 
@@ -158,8 +160,8 @@ protected:
 
 private:
 	bool update_scalers();
-	void update_game_settings();
 	void drawToolbarMouse(SDL_Surface *surf, bool draw);
+	void retrieve_mouse_location(int &x, int &y);
 
 	void create_toolbar();
 	bool _panelVisible;         // panel visibility
@@ -186,6 +188,7 @@ private:
 	uint16 _mouseBackupDim;
 
 	bool _forceHideMouse;       // force invisible mouse cursor
+	bool _freeLook;             // freeLook mode (do not send mouse button events)
 
 	// Smartphone specific variables
 	void loadDeviceConfigurationElement(Common::String element, int &value, int defaultValue);

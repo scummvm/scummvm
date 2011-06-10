@@ -199,15 +199,15 @@ CEActionsSmartphone::~CEActionsSmartphone() {
 bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 	static bool keydialogrunning = false, quitdialog = false;
 
+	_graphicsMan = ((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager());
+
 	if (!pushed) {
 		switch (action) {
 		case SMARTPHONE_ACTION_RIGHTCLICK:
-			//_CESystem->add_right_click(false);
-			((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->add_right_click(false);
+			_graphicsMan->add_right_click(false);
 			return true;
 		case SMARTPHONE_ACTION_LEFTCLICK:
-			//_CESystem->add_left_click(false);
-			((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->add_left_click(false);
+			_graphicsMan->add_left_click(false);
 			return true;
 		case SMARTPHONE_ACTION_SAVE:
 		case SMARTPHONE_ACTION_SKIP:
@@ -234,32 +234,25 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 		EventsBuffer::simulateKey(&_key_action[action], true);
 		return true;
 	case SMARTPHONE_ACTION_RIGHTCLICK:
-		//_CESystem->add_right_click(true);
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->add_right_click(true);
+		_graphicsMan->add_right_click(true);
 		return true;
 	case SMARTPHONE_ACTION_LEFTCLICK:
-		//_CESystem->add_left_click(true);
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->add_left_click(true);
+		_graphicsMan->add_left_click(true);
 		return true;
 	case SMARTPHONE_ACTION_UP:
-		//_CESystem->move_cursor_up();
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->move_cursor_up();
+		_graphicsMan->move_cursor_up();
 		return true;
 	case SMARTPHONE_ACTION_DOWN:
-		//_CESystem->move_cursor_down();
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->move_cursor_down();
+		_graphicsMan->move_cursor_down();
 		return true;
 	case SMARTPHONE_ACTION_LEFT:
-		//_CESystem->move_cursor_left();
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->move_cursor_left();
+		_graphicsMan->move_cursor_left();
 		return true;
 	case SMARTPHONE_ACTION_RIGHT:
-		//_CESystem->move_cursor_right();
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->move_cursor_right();
+		_graphicsMan->move_cursor_right();
 		return true;
 	case SMARTPHONE_ACTION_ZONE:
-		//_CESystem->switch_zone();
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->switch_zone();
+		_graphicsMan->switch_zone();
 		return true;
 	case SMARTPHONE_ACTION_BINDKEYS:
 		if (!keydialogrunning) {
@@ -271,12 +264,10 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 		}
 		return true;
 	case SMARTPHONE_ACTION_KEYBOARD:
-		//_CESystem->swap_smartphone_keyboard();
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->swap_smartphone_keyboard();
+		_graphicsMan->swap_smartphone_keyboard();
 		return true;
 	case SMARTPHONE_ACTION_ROTATE:
-		//_CESystem->smartphone_rotate_display();
-		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->smartphone_rotate_display();
+		_graphicsMan->smartphone_rotate_display();
 		return true;
 	case SMARTPHONE_ACTION_QUIT:
 		if (!quitdialog) {

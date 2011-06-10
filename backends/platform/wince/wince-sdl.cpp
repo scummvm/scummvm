@@ -466,7 +466,7 @@ void OSystem_WINCE3::swap_sound_master() {
 void OSystem_WINCE3::engineInit() {
 	check_mappings(); // called here to initialize virtual keys handling
 
-	//update_game_settings();
+	((WINCESdlGraphicsManager *)_graphicsManager)->update_game_settings();
 	// finalize mixer init
 	_mixerManager->init();
 }
