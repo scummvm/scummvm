@@ -58,23 +58,23 @@ struct DRVINFO
 {
   DEV_TYPE            DDEV;              // digi device
   DEV_TYPE            MDEV;              // midi device
-  WORD                DBASE;             // digi base port
-  WORD                DDMA;              // digi dma no
-  WORD                DIRQ;              // digi irq no
-  WORD                MBASE;             // midi base port
+  uint16                DBASE;             // digi base port
+  uint16                DDMA;              // digi dma no
+  uint16                DIRQ;              // digi irq no
+  uint16                MBASE;             // midi base port
   union
     {
       struct
 	{
-	  WORD        DR : 4;
-	  WORD        DL : 4;
-	  WORD        MR : 4;
-	  WORD        ML : 4;
+	  uint16        DR : 4;
+	  uint16        DL : 4;
+	  uint16        MR : 4;
+	  uint16        ML : 4;
 	} VOL4;
       struct
 	{
-	  BYTE        D;                 // digi volume
-	  BYTE        M;                 // midi volume
+	  uint8        D;                 // digi volume
+	  uint8        M;                 // midi volume
 	} VOL2;
     };
 };
@@ -82,9 +82,9 @@ struct DRVINFO
 // sample info
 struct SMPINFO
 {
-  BYTE *          saddr;             // address
-  WORD                slen;              // length
-  WORD                span;              // left/right pan (0-15)
+  uint8 *          saddr;             // address
+  uint16                slen;              // length
+  uint16                span;              // left/right pan (0-15)
   int                 sflag;             // flag
 };
 
@@ -95,10 +95,10 @@ struct SMPINFO
 extern  DRVINFO      SNDDrvInfo;
 
 // midi player flag (1 means we are playing)
-extern  WORD         MIDIPlayFlag;
+extern  uint16         MIDIPlayFlag;
 
 // midi song end flag (1 means we have crossed end mark)
-extern  WORD         MIDIEndFlag;
+extern  uint16         MIDIEndFlag;
 
 // ******************************************************
 // *  Driver Code                                       *
@@ -119,7 +119,7 @@ EC void SNDDigiStart   (SMPINFO *PSmpInfo);
 EC void SNDDigiStop    (SMPINFO *PSmpInfo);
 
 // Start MIDI File
-EC void SNDMIDIStart   (BYTE *MIDFile);
+EC void SNDMIDIStart   (uint8 *MIDFile);
 
 // Stop MIDI File
 EC void SNDMIDIStop    (void);

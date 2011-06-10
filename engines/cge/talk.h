@@ -52,15 +52,15 @@ class	FONT
   char Path[MAXPATH];
   void Load (void);
 public:
-//  static byte Wid[256];
-//  static word Pos[256];
-//  static byte Map[256*8];
-  byte * Wid;
-  word * Pos;
-  byte * Map;
+//  static uint8 Wid[256];
+//  static uint16 Pos[256];
+//  static uint8 Map[256*8];
+  uint8 * Wid;
+  uint16 * Pos;
+  uint8 * Map;
   FONT (const char * name);
   ~FONT (void);
-  word Width (const char * text);
+  uint16 Width (const char * text);
   void Save (void);
 };
 
@@ -77,7 +77,7 @@ class TALK : public SPRITE
 protected:
   TBOX_STYLE Mode;
   BITMAP * TS[2];
-  BITMAP * Box(word w, word h);
+  BITMAP * Box(uint16 w, uint16 h);
 public:
   static FONT Font;
   TALK (const char * tx, TBOX_STYLE mode = PURE);
@@ -98,7 +98,7 @@ class INFO_LINE : public TALK
 {
   const char * OldTxt;
 public:
-  INFO_LINE (word wid);
+  INFO_LINE (uint16 wid);
   void Update (const char * tx);
 };
 

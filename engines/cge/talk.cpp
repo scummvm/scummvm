@@ -43,9 +43,9 @@
 
 
 
-//byte	FONT::Wid[WID_SIZ];
-//word	FONT::Pos[POS_SIZ];
-//byte	FONT::Map[MAP_SIZ];
+//uint8	FONT::Wid[WID_SIZ];
+//uint16	FONT::Pos[POS_SIZ];
+//uint8	FONT::Map[MAP_SIZ];
 
 
 
@@ -55,9 +55,9 @@
 
 FONT::FONT (const char * name)
 {
-  Map = farnew(byte, MAP_SIZ);
-  Pos = farnew(word, POS_SIZ);
-  Wid = farnew(byte, WID_SIZ);
+  Map = farnew(uint8, MAP_SIZ);
+  Pos = farnew(uint16, POS_SIZ);
+  Wid = farnew(uint8, WID_SIZ);
   if (Map == NULL || Pos == NULL || Wid == NULL) DROP("No core", NULL);
   MergeExt(Path, name, FONT_EXT);
   Load();
@@ -84,7 +84,7 @@ void FONT::Load (void)
       f.Read(Wid, WID_SIZ);
       if (! f.Error)
 	{
-	  word i, p = 0;
+	  uint16 i, p = 0;
 	  for (i = 0; i < POS_SIZ; i ++)
 	    {
 	      Pos[i] = p;
@@ -99,9 +99,9 @@ void FONT::Load (void)
 
 
 
-word FONT::Width (const char * text)
+uint16 FONT::Width (const char * text)
 {
-  word w = 0;
+  uint16 w = 0;
   if (text) while (* text) w += Wid[*(text ++)];
   return w;
 }
@@ -160,7 +160,7 @@ TALK::TALK (void)
 /*
 TALK::~TALK (void)
 {
-  word i;
+  uint16 i;
   for (i = 0; i < ShpCnt; i ++)
     {
       if (FP_SEG(ShpList[i]) != _DS) // small model: always false
@@ -176,15 +176,15 @@ TALK::~TALK (void)
 
 void TALK::Update (const char * tx)
 {
-  word vmarg = (Mode) ? TEXT_VM : 0;
-  word hmarg = (Mode) ? TEXT_HM : 0;
-  word mw, mh, ln = vmarg;
+  uint16 vmarg = (Mode) ? TEXT_VM : 0;
+  uint16 hmarg = (Mode) ? TEXT_HM : 0;
+  uint16 mw, mh, ln = vmarg;
   const char * p;
-  byte * m;
+  uint8 * m;
 
   if (! TS[0])
     {
-      word k = 2 * hmarg;
+      uint16 k = 2 * hmarg;
       mh = 2 * vmarg + FONT_HIG;
       mw = 0;
       for (p = tx; *p; p ++)
@@ -214,8 +214,8 @@ void TALK::Update (const char * tx)
 	  for (i = 0; i < cw; i ++)
 	    {
 	      char * p = m;
-	      word n;
-	      register word b = * (f ++);
+	      uint16 n;
+	      register uint16 b = * (f ++);
 	      for (n = 0; n < FONT_HIG; n ++)
 		{
 		  if (b & 1) * p = TEXT_FG;
@@ -234,15 +234,15 @@ void TALK::Update (const char * tx)
 
 
 
-BITMAP * TALK::Box (word w, word h)
+BITMAP * TALK::Box (uint16 w, uint16 h)
 {
-  byte * b, * p, * q;
-  word n, r = (Mode == ROUND) ? TEXT_RD : 0;
+  uint8 * b, * p, * q;
+  uint16 n, r = (Mode == ROUND) ? TEXT_RD : 0;
   int i;
 
   if (w < 8) w = 8;
   if (h < 8) h = 8;
-  b = farnew(byte, n = w * h);
+  b = farnew(uint8, n = w * h);
   if (! b) VGA::Exit("No core");
   _fmemset(b, TEXT_BG, n);
 
@@ -286,13 +286,13 @@ BITMAP * TALK::Box (word w, word h)
 void TALK::PutLine (int line, const char * text)
 // Note: (TS[0].W % 4) have to be 0
 {
-  word w = TS[0]->W, h = TS[0]->H;
-  byte * v = TS[0]->V, * p;
-  word dsiz = w >> 2;		// data size (1 plane line size)
-  word lsiz = 2 + dsiz + 2;	// word for line header, word for gap
-  word psiz = h * lsiz;		// - last gap, but + plane trailer
-  word size = 4 * psiz;		// whole map size
-  word rsiz = FONT_HIG * lsiz;	// length of whole text row map
+  uint16 w = TS[0]->W, h = TS[0]->H;
+  uint8 * v = TS[0]->V, * p;
+  uint16 dsiz = w >> 2;		// data size (1 plane line size)
+  uint16 lsiz = 2 + dsiz + 2;	// uint16 for line header, uint16 for gap
+  uint16 psiz = h * lsiz;		// - last gap, but + plane trailer
+  uint16 size = 4 * psiz;		// whole map size
+  uint16 rsiz = FONT_HIG * lsiz;	// length of whole text row map
 
   // set desired line pointer
   v += (TEXT_VM + (FONT_HIG + TEXT_LS) * line) * lsiz;
@@ -307,19 +307,19 @@ void TALK::PutLine (int line, const char * text)
   // paint text line
   if (text)
     {
-      byte * q;
+      uint8 * q;
       p = v + 2 + TEXT_HM/4 + (TEXT_HM%4)*psiz;
       q = v + size;
 
       while (* text)
 	{
-	  word cw = Font.Wid[*text], i;
-	  byte * fp = Font.Map + Font.Pos[*text];
+	  uint16 cw = Font.Wid[*text], i;
+	  uint8 * fp = Font.Map + Font.Pos[*text];
 
 	  for (i = 0; i < cw; i ++)
 	    {
-	      register word b = fp[i];
-	      word n;
+	      register uint16 b = fp[i];
+	      uint16 n;
 	      for (n = 0; n < FONT_HIG; n ++)
 		{
 		  if (b & 1) *p = TEXT_FG;
@@ -344,7 +344,7 @@ void TALK::PutLine (int line, const char * text)
 
 
 
-INFO_LINE::INFO_LINE (word w)
+INFO_LINE::INFO_LINE (uint16 w)
 : OldTxt(NULL)
 {
   TS[0] = new BITMAP(w, FONT_HIG, TEXT_BG);
@@ -360,33 +360,33 @@ void INFO_LINE::Update (const char * tx)
 {
   if (tx != OldTxt)
     {
-      word w = TS[0]->W, h = TS[0]->H;
-      byte * v = (byte *) TS[0]->V;
-      word dsiz = w >> 2;		// data size (1 plane line size)
-      word lsiz = 2 + dsiz + 2;		// word for line header, word for gap
-      word psiz = h * lsiz;		// - last gape, but + plane trailer
-      word size = 4 * psiz;		// whole map size
+      uint16 w = TS[0]->W, h = TS[0]->H;
+      uint8 * v = (uint8 *) TS[0]->V;
+      uint16 dsiz = w >> 2;		// data size (1 plane line size)
+      uint16 lsiz = 2 + dsiz + 2;		// uint16 for line header, uint16 for gap
+      uint16 psiz = h * lsiz;		// - last gape, but + plane trailer
+      uint16 size = 4 * psiz;		// whole map size
 
       // claer whole rectangle
       memset(v+2, TEXT_BG, dsiz);	// data bytes
       memcpy(v + lsiz, v, psiz - lsiz);	// tricky replicate lines
-      * (word *) (v + psiz - 2) = EOI;	// plane trailer word
+      * (uint16 *) (v + psiz - 2) = EOI;	// plane trailer uint16
       memcpy(v + psiz, v, 3 * psiz);	// tricky replicate planes
 
       // paint text line
       if (tx)
 	{
-	  byte * p = v + 2, * q = p + size;
+	  uint8 * p = v + 2, * q = p + size;
 
 	  while (* tx)
 	    {
-	      word cw = Font.Wid[*tx], i;
-	      byte * fp = Font.Map + Font.Pos[*tx];
+	      uint16 cw = Font.Wid[*tx], i;
+	      uint8 * fp = Font.Map + Font.Pos[*tx];
 
 	      for (i = 0; i < cw; i ++)
 		{
-		  register word b = fp[i];
-		  word n;
+		  register uint16 b = fp[i];
+		  uint16 n;
 		  for (n = 0; n < FONT_HIG; n ++)
 		    {
 		      if (b & 1) *p = TEXT_FG;

@@ -34,17 +34,17 @@
 
 
 
-byte * Glass (DAC * pal, byte r, byte g, byte b)
+uint8 * Glass (DAC * pal, uint8 r, uint8 g, uint8 b)
 {
-  byte * x = new byte[256];
+  uint8 * x = new uint8[256];
   if (x)
     {
-      word i;
+      uint16 i;
       for (i = 0; i < 256; i ++)
 	{
-	  x[i] = Closest(pal, MkDAC(((word)(pal[i].R) * r) / 255,
-				    ((word)(pal[i].G) * g) / 255,
-				    ((word)(pal[i].B) * b) / 255));
+	  x[i] = Closest(pal, MkDAC(((uint16)(pal[i].R) * r) / 255,
+				    ((uint16)(pal[i].G) * g) / 255,
+				    ((uint16)(pal[i].B) * b) / 255));
 	}
     }
   return x;
@@ -54,13 +54,13 @@ byte * Glass (DAC * pal, byte r, byte g, byte b)
 
 
 
-byte * Mark (DAC * pal)
+uint8 * Mark (DAC * pal)
 {
   #define f(c) (c ^ 63)
-  byte * x = new byte[256];
+  uint8 * x = new uint8[256];
   if (x)
     {
-      word i;
+      uint16 i;
       for (i = 0; i < 256; i ++)
 	{
 	  x[i] = Closest(pal, MkDAC(f(pal[i].R),

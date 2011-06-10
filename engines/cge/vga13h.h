@@ -70,7 +70,7 @@
 #endif
 
 #define		NO_SEQ		(-1)
-#define		NO_PTR		((byte)-1)
+#define		NO_PTR		((uint8)-1)
 
 #define		SPR_EXT		".SPR"
 
@@ -79,9 +79,9 @@
 
 
 
-typedef	struct	{ word r : 2; word R : 6;
-		  word g : 2; word G : 6;
-		  word b : 2; word B : 6;
+typedef	struct	{ uint16 r : 2; uint16 R : 6;
+		  uint16 g : 2; uint16 G : 6;
+		  uint16 b : 2; uint16 B : 6;
 		} RGB;
 
 typedef	union	{
@@ -89,9 +89,9 @@ typedef	union	{
 		  RGB rgb;
 		} TRGB;
 
-typedef	struct	{ byte idx, adr; byte clr, set; } VgaRegBlk;
+typedef	struct	{ uint8 idx, adr; uint8 clr, set; } VgaRegBlk;
 
-typedef	struct	{ byte Now, Next; signed char Dx, Dy; int Dly; } SEQ;
+typedef	struct	{ uint8 Now, Next; signed char Dx, Dy; int Dly; } SEQ;
 
 extern	SEQ	Seq1[];
 extern	SEQ	Seq2[];
@@ -127,9 +127,9 @@ class HEART : public ENGINE
   friend ENGINE;
 public:
   static bool Enable;
-  static word * XTimer;
-  static void SetXTimer (word * ptr);
-  static void SetXTimer (word * ptr, word time);
+  static uint16 * XTimer;
+  static void SetXTimer (uint16 * ptr);
+  static void SetXTimer (uint16 * ptr, uint16 time);
   HEART (void);
 };
 
@@ -166,28 +166,28 @@ protected:
 public:
   int Ref;
   signed char Cave;
-  struct FLAGS { word Hide : 1;		// general visibility switch
-		 word Near : 1;		// Near action lock
-		 word Drag : 1;		// sprite is moveable
-		 word Hold : 1;		// sprite is held with mouse
-		 word ____ : 1;		// intrrupt driven animation
-		 word Slav : 1;		// slave object
-		 word Syst : 1;		// system object
-		 word Kill : 1;		// dispose memory after remove
-		 word Xlat : 1;		// 2nd way display: xlat table
-		 word Port : 1;		// portable
-		 word Kept : 1;		// kept in pocket
-		 word East : 1;		// talk to east (in opposite to west)
-		 word Shad : 1;		// shadow
-		 word Back : 1;		// 'send to background' request
-		 word BDel : 1;		// delete bitmaps in ~SPRITE
-		 word Tran : 1;		// transparent (untouchable)
+  struct FLAGS { uint16 Hide : 1;		// general visibility switch
+		 uint16 Near : 1;		// Near action lock
+		 uint16 Drag : 1;		// sprite is moveable
+		 uint16 Hold : 1;		// sprite is held with mouse
+		 uint16 ____ : 1;		// intrrupt driven animation
+		 uint16 Slav : 1;		// slave object
+		 uint16 Syst : 1;		// system object
+		 uint16 Kill : 1;		// dispose memory after remove
+		 uint16 Xlat : 1;		// 2nd way display: xlat table
+		 uint16 Port : 1;		// portable
+		 uint16 Kept : 1;		// kept in pocket
+		 uint16 East : 1;		// talk to east (in opposite to west)
+		 uint16 Shad : 1;		// shadow
+		 uint16 Back : 1;		// 'send to background' request
+		 uint16 BDel : 1;		// delete bitmaps in ~SPRITE
+		 uint16 Tran : 1;		// transparent (untouchable)
 	       } Flags;
   int X, Y;
   signed char Z;
-  word W, H;
-  word Time;
-  byte NearPtr, TakePtr;
+  uint16 W, H;
+  uint16 Time;
+  uint8 NearPtr, TakePtr;
   int SeqPtr;
   int ShpCnt;
   char File[MAXFILE];
@@ -199,7 +199,7 @@ public:
   virtual ~SPRITE (void);
   BMP_PTR Shp (void);
   BMP_PTR * SetShapeList (BMP_PTR * shp);
-  void MoveShapes (byte * buf);
+  void MoveShapes (uint8 * buf);
   SPRITE * Expand (void);
   SPRITE * Contract (void);
   SPRITE * BackShow (bool fast = false);
@@ -210,13 +210,13 @@ public:
   void Show (void);
   void Hide (void);
   BMP_PTR Ghost (void);
-  void Show (word pg);
-  void MakeXlat (byte * x);
+  void Show (uint16 pg);
+  void MakeXlat (uint8 * x);
   void KillXlat (void);
   void Step (int nr = -1);
   SEQ * SetSeq (SEQ * seq);
   SNAIL::COM * SnList(SNLIST type);
-  virtual void Touch (word mask, int x, int y);
+  virtual void Touch (uint16 mask, int x, int y);
   virtual void Tick (void);
 };
 
@@ -250,9 +250,9 @@ public:
 
 class VGA
 {
-  static word OldMode;
-  static word * OldScreen;
-  static word StatAdr;
+  static uint16 OldMode;
+  static uint16 * OldScreen;
+  static uint16 StatAdr;
   static bool SetPal;
   static DAC * OldColors, * NewColors;
   static int SetMode (int mode);
@@ -263,19 +263,19 @@ class VGA
   static void SetStatAdr (void);
   static void WaitVR (bool on = true);
 public:
-  dword FrmCnt;
+  uint32 FrmCnt;
   static QUEUE ShowQ, SpareQ;
   static int Mono;
-  static byte * Page[4];
+  static uint8 * Page[4];
   VGA (int mode = M13H);
   ~VGA (void);
   void Setup (VgaRegBlk * vrb);
   static void GetColors (DAC * tab);
   static void SetColors (DAC * tab, int lum);
-  static void Clear (byte color = 0);
+  static void Clear (uint8 color = 0);
   static void Exit (const char * txt = NULL, const char * name = NULL);
   static void Exit (int tref, const char * name = NULL);
-  static void CopyPage (word d, word s = 3);
+  static void CopyPage (uint16 d, uint16 s = 3);
   static void Sunrise (DAC * tab);
   static void Sunset (void);
   void Show (void);
@@ -284,24 +284,24 @@ public:
 
 
 
-DAC		MkDAC		(byte r, byte g, byte b);
-RGB		MkRGB		(byte r, byte g, byte b);
+DAC		MkDAC		(uint8 r, uint8 g, uint8 b);
+RGB		MkRGB		(uint8 r, uint8 g, uint8 b);
 
 
 
 
 template <class CBLK>
-byte Closest (CBLK * pal, CBLK x)
+uint8 Closest (CBLK * pal, CBLK x)
 {
-  #define f(col,lum) ((((word)(col))<<8)/lum)
-  word i, dif = 0xFFFF, found;
-  word L = x.R + x.G + x.B; if (! L) ++ L;
-  word R = f(x.R, L), G = f(x.G, L), B = f(x.B, L);
+  #define f(col,lum) ((((uint16)(col))<<8)/lum)
+  uint16 i, dif = 0xFFFF, found;
+  uint16 L = x.R + x.G + x.B; if (! L) ++ L;
+  uint16 R = f(x.R, L), G = f(x.G, L), B = f(x.B, L);
   for (i = 0; i < 256; i ++)
     {
-      word l = pal[i].R + pal[i].G + pal[i].B; if (! l) ++ l;
+      uint16 l = pal[i].R + pal[i].G + pal[i].B; if (! l) ++ l;
       int  r = f(pal[i].R, l), g = f(pal[i].G, l), b = f(pal[i].B, l);
-      word D = ((r > R) ? (r - R) : (R - r)) +
+      uint16 D = ((r > R) ? (r - R) : (R - r)) +
 	       ((g > G) ? (g - G) : (G - g)) +
 	       ((b > B) ? (b - B) : (B - b)) +
 	       ((l > L) ? (l - L) : (L - l)) * 10 ;
@@ -325,8 +325,8 @@ byte Closest (CBLK * pal, CBLK x)
 
 		char *		NumStr		(char * str, int num);
 		void		Video		(void);
-		word *	SaveScreen	(void);
-		void		RestoreScreen	(word * &sav);
+		uint16 *	SaveScreen	(void);
+		void		RestoreScreen	(uint16 * &sav);
 		SPRITE *	SpriteAt	(int x, int y);
 		SPRITE *	Locate		(int ref);
 

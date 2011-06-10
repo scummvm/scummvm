@@ -45,10 +45,10 @@
 
 
 
-MENU_BAR::MENU_BAR (word w)
+MENU_BAR::MENU_BAR (uint16 w)
 {
   int h = FONT_HIG + 2 * MB_VM, i = (w += 2 * MB_HM) * h;
-  byte * p = farnew(byte, i), * p1, * p2;
+  uint8 * p = farnew(uint8, i), * p1, * p2;
 
   _fmemset(p+w, TRANS, i-2*w);
   _fmemset(p, MB_LT, w);
@@ -88,7 +88,7 @@ char * VMGather (CHOICE * list)
       len += strlen(cp->Text);
       ++ h;
     }
-  vmgt = new byte[len+h];
+  vmgt = new uint8[len+h];
   if (vmgt)
     {
       *vmgt = '\0';
@@ -141,7 +141,7 @@ VMENU::~VMENU (void)
 
 
 
-void VMENU::Touch (word mask, int x, int y)
+void VMENU::Touch (uint16 mask, int x, int y)
 {
 #define h (FONT_HIG+TEXT_LS)
   int n = 0;

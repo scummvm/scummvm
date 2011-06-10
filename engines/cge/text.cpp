@@ -225,7 +225,7 @@ void Say (const char * txt, SPRITE * spr)
       int x = (east) ? (spr->X+spr->W-2) : (spr->X+2);
       int y = spr->Y+2;
       SPRITE * spike = new SPRITE(SP);
-      word sw = spike->W;
+      uint16 sw = spike->W;
 
       if (east)
 	{

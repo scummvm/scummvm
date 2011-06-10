@@ -49,7 +49,7 @@ public:
   static bool Appear;
   MIXER (int x, int y);
   ~MIXER (void);
-  void Touch (word mask, int x, int y);
+  void Touch (uint16 mask, int x, int y);
   void Tick (void);
 };
 

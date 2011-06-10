@@ -51,19 +51,12 @@
 #define		ArrayCount(a)	(sizeof(a)/sizeof((a)[0]))
 #define		MAX_TIMER	0x1800B0L
 
-typedef	unsigned char	BYTE;
-typedef	unsigned int	WORD;
-typedef	unsigned long	DWORD;
-
-typedef unsigned char	byte;
-typedef unsigned int	word;
-typedef unsigned long	dword;
 typedef	void (_loadds MouseFunType)(void);
 
 #define		Lo(d)		(((int *) &d)[0])
 #define		Hi(d)		(((int *) &d)[1])
-#define		LoWord(d)	((word) Lo(d))
-#define		HiWord(d)	((word) Hi(d))
+#define		LoWord(d)	((uint16) Lo(d))
+#define		HiWord(d)	((uint16) Hi(d))
 #define		K(n)		(1024*(n))
 #define		MASK(n)		((1<<n)-1)
 
@@ -137,8 +130,8 @@ struct	KeyStatStruct
 
 #define		TimerCount	(* ((volatile long *) ((void _seg *) 0x40 + (void *) 0x6C)))
 #define		KeyStat		(* ((volatile struct KeyStatStruct *) ((void _seg *) 0x40 + (void *) 0x17)))
-#define		BreakFlag	(* ((volatile byte *) ((void _seg *) 0x40 + (void *) 0x71)))
-#define		PostFlag	(* ((volatile word *) ((void _seg *) 0x40 + (void *) 0x72)))
+#define		BreakFlag	(* ((volatile uint8 *) ((void _seg *) 0x40 + (void *) 0x71)))
+#define		PostFlag	(* ((volatile uint16 *) ((void _seg *) 0x40 + (void *) 0x72)))
 #define		POST		((void (*)(void)) ((void _seg *) 0xF000 + (void *) 0xFFF0))
 #define		SLIF		if (KeyStat.ScrollLock)
 
@@ -166,8 +159,8 @@ struct	KeyStatStruct
 #endif
 
 
-extern	word	_stklen;
-extern	word	_heaplen;
+extern	uint16	_stklen;
+extern	uint16	_heaplen;
 
 
 #endif

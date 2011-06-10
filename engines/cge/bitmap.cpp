@@ -97,7 +97,7 @@ BITMAP::BITMAP (const char * fname, bool rem)
 
 
 
-BITMAP::BITMAP (word w, word h, byte * map)
+BITMAP::BITMAP (uint16 w, uint16 h, uint8 * map)
 : W(w), H(h), M(map), V(NULL)
 {
   if (map) Code();
@@ -110,23 +110,23 @@ BITMAP::BITMAP (word w, word h, byte * map)
 // immediately as VGA video chunks, in near memory as fast as possible,
 // especially for text line real time display
 
-BITMAP::BITMAP (word w, word h, byte fill)
-: W((w + 3) & ~3),		// only full dwords allowed!
+BITMAP::BITMAP (uint16 w, uint16 h, uint8 fill)
+: W((w + 3) & ~3),		// only full uint32 allowed!
   H(h),
   M(NULL)
 {
-  word dsiz = W >> 2;		// data size (1 plane line size)
-  word lsiz = 2 + dsiz + 2;	// word for line header, word for gap
-  word psiz = H * lsiz;		// - last gape, but + plane trailer
-  byte * v = new byte[4 * psiz	// the same for 4 planes
+  uint16 dsiz = W >> 2;		// data size (1 plane line size)
+  uint16 lsiz = 2 + dsiz + 2;	// uint16 for line header, uint16 for gap
+  uint16 psiz = H * lsiz;		// - last gape, but + plane trailer
+  uint8 * v = new uint8[4 * psiz	// the same for 4 planes
 	+ H * sizeof(*B)];	// + room for wash table
   if (v == NULL) DROP("No core", NULL);
 
-  * (word *) v = CPY | dsiz;		// data chunk hader
+  * (uint16 *) v = CPY | dsiz;		// data chunk hader
   memset(v+2, fill, dsiz);		// data bytes
-  * (word *) (v + lsiz - 2) = SKP | ((SCR_WID / 4) - dsiz); // gap
+  * (uint16 *) (v + lsiz - 2) = SKP | ((SCR_WID / 4) - dsiz); // gap
   memcpy(v + lsiz, v, psiz - lsiz);	// tricky replicate lines
-  * (word *) (v + psiz - 2) = EOI;	// plane trailer word
+  * (uint16 *) (v + psiz - 2) = EOI;	// plane trailer uint16
   memcpy(v + psiz, v, 3 * psiz);	// tricky replicate planes
   HideDesc * b = (HideDesc *) (v + 4 * psiz);
   b->skip = (SCR_WID - W) >> 2;
@@ -147,12 +147,12 @@ BITMAP::BITMAP (const BITMAP& bmp)
 : W(bmp.W), H(bmp.H),
   M(NULL), V(NULL)
 {
-  byte * v0 = bmp.V;
+  uint8 * v0 = bmp.V;
   if (v0)
     {
-      word vsiz = FP_OFF(bmp.B) - FP_OFF(v0);
-      word siz = vsiz + H * sizeof(HideDesc);
-      byte * v1 = farnew(byte, siz);
+      uint16 vsiz = FP_OFF(bmp.B) - FP_OFF(v0);
+      uint16 siz = vsiz + H * sizeof(HideDesc);
+      uint8 * v1 = farnew(uint8, siz);
       if (v1 == NULL) DROP("No core", NULL);
       _fmemcpy(v1, v0, siz);
       B = (HideDesc *) ((V = v1) + vsiz);
@@ -171,7 +171,7 @@ BITMAP::~BITMAP (void)
     }
   switch (MemType(V))
     {
-      case NEAR_MEM : delete[] (byte *) V; break;
+      case NEAR_MEM : delete[] (uint8 *) V; break;
       case FAR_MEM  : farfree(V); break;
     }
 }
@@ -180,7 +180,7 @@ BITMAP::~BITMAP (void)
 
 BITMAP& BITMAP::operator = (const BITMAP& bmp)
 {
-  byte * v0 = bmp.V;
+  uint8 * v0 = bmp.V;
   W = bmp.W;
   H = bmp.H;
   M = NULL;
@@ -188,9 +188,9 @@ BITMAP& BITMAP::operator = (const BITMAP& bmp)
   if (v0 == NULL) V = NULL;
   else
     {
-      word vsiz = FP_OFF(bmp.B) - FP_OFF(v0);
-      word siz = vsiz + H * sizeof(HideDesc);
-      byte * v1 = farnew(byte, siz);
+      uint16 vsiz = FP_OFF(bmp.B) - FP_OFF(v0);
+      uint16 siz = vsiz + H * sizeof(HideDesc);
+      uint8 * v1 = farnew(uint8, siz);
       if (v1 == NULL) DROP("No core", NULL);
       _fmemcpy(v1, v0, siz);
       B = (HideDesc *) ((V = v1) + vsiz);
@@ -202,12 +202,12 @@ BITMAP& BITMAP::operator = (const BITMAP& bmp)
 
 
 
-word BITMAP::MoveVmap (byte * buf)
+uint16 BITMAP::MoveVmap (uint8 * buf)
 {
   if (V)
     {
-      word vsiz = FP_OFF(B) - FP_OFF(V);
-      word siz = vsiz + H * sizeof(HideDesc);
+      uint16 vsiz = FP_OFF(B) - FP_OFF(V);
+      uint16 siz = vsiz + H * sizeof(HideDesc);
       _fmemcpy(buf, V, siz);
       if (MemType(V) == FAR_MEM) farfree(V);
       B = (HideDesc *) ((V = buf) + vsiz);
@@ -226,13 +226,13 @@ BMP_PTR BITMAP::Code (void)
 {
   if (M)
     {
-      word i, cnt;
+      uint16 i, cnt;
 
       if (V) // old X-map exists, so remove it
 	{
 	  switch (MemType(V))
 	    {
-	      case NEAR_MEM : delete[] (byte *) V; break;
+	      case NEAR_MEM : delete[] (uint8 *) V; break;
 	      case FAR_MEM  : farfree(V); break;
 	    }
 	  V = NULL;
@@ -240,8 +240,8 @@ BMP_PTR BITMAP::Code (void)
 
       while (true) // at most 2 times: for (V == NULL) & for allocated block;
 	{
-	  byte * im = V+2;
-	  word * cp = (word *) V;
+	  uint8 * im = V+2;
+	  uint16 * cp = (uint16 *) V;
 	  int bpl;
 
 	  if (V) // 2nd pass - fill the hide table
@@ -254,14 +254,14 @@ BMP_PTR BITMAP::Code (void)
 	    }
 	  for (bpl = 0; bpl < 4; bpl ++) // once per each bitplane
 	    {
-	      byte * bm = M;
+	      uint8 * bm = M;
 	      bool skip = (bm[bpl] == TRANS);
-	      word j;
+	      uint16 j;
 
 	      cnt = 0;
 	      for (i = 0; i < H; i ++) // once per each line
 		{
-		  byte pix;
+		  uint8 pix;
 		  for (j = bpl; j < W; j += 4)
 		    {
 		      pix = bm[j];
@@ -275,9 +275,9 @@ BMP_PTR BITMAP::Code (void)
 			  cnt |= (skip) ? SKP : CPY;
 			  if (V)
 			    {
-			      *cp = cnt;  // store block description word
+			      *cp = cnt;  // store block description uint16
 			    }
-			  cp = (word *) im;
+			  cp = (uint16 *) im;
 			  im += 2;
 			  skip = (pix == TRANS);
 			  cnt = 0;
@@ -304,7 +304,7 @@ BMP_PTR BITMAP::Code (void)
 			    {
 			      *cp = cnt;
 			    }
-			  cp = (word *) im;
+			  cp = (uint16 *) im;
 			  im += 2;
 			  skip = true;
 			  cnt = (SCR_WID - j + 3) / 4;
@@ -318,16 +318,16 @@ BMP_PTR BITMAP::Code (void)
 		    {
 		      *cp = cnt;
 		    }
-		  cp = (word *) im;
+		  cp = (uint16 *) im;
 		  im += 2;
 		}
 	      if (V) *cp = EOI;
-	      cp = (word *) im;
+	      cp = (uint16 *) im;
 	      im += 2;
 	    }
 	  if (V) break;
-	  word sizV = (word) (im - 2 - V);
-	  V = farnew(byte, sizV + H * sizeof(*B));
+	  uint16 sizV = (uint16) (im - 2 - V);
+	  V = farnew(uint8, sizV + H * sizeof(*B));
 	  if (! V)
 	    {
 	      DROP("No core", NULL);
@@ -344,8 +344,8 @@ BMP_PTR BITMAP::Code (void)
 	    }
 	  else
 	    {
-	      word s = B[i].skip & ~3;
-	      word h = (B[i].hide + 3) & ~3;
+	      uint16 s = B[i].skip & ~3;
+	      uint16 h = (B[i].hide + 3) & ~3;
 	      B[i].skip = (cnt + s) >> 2;
 	      B[i].hide = (h - s) >> 2;
 	      cnt = SCR_WID - h;
@@ -362,8 +362,8 @@ BMP_PTR BITMAP::Code (void)
 
 bool BITMAP::SolidAt (int x, int y)
 {
-  byte * m;
-  word r, n, n0;
+  uint8 * m;
+  uint16 r, n, n0;
 
   if (x >= W || y >= H) return false;
 
@@ -373,9 +373,9 @@ bool BITMAP::SolidAt (int x, int y)
 
   while (r)
     {
-      word w, t;
+      uint16 w, t;
 
-      w = * (word *) m;
+      w = * (uint16 *) m;
       m += 2;
       t = w & 0xC000;
       w &= 0x3FFF;
@@ -391,9 +391,9 @@ bool BITMAP::SolidAt (int x, int y)
 
   while (true)
     {
-      word w, t;
+      uint16 w, t;
 
-      w = * (word *) m;
+      w = * (uint16 *) m;
       m += 2;
       t = w & 0xC000;
       w &= 0x3FFF;
@@ -418,13 +418,13 @@ bool BITMAP::SolidAt (int x, int y)
 
 bool BITMAP::VBMSave (XFILE * f)
 {
-  word p = (Pal != NULL),
-       n = ((word) (((byte *)B) - V)) + H * sizeof(HideDesc);
-  if (f->Error == 0) f->Write((byte *)&p, sizeof(p));
-  if (f->Error == 0) f->Write((byte *)&n, sizeof(n));
-  if (f->Error == 0) f->Write((byte *)&W, sizeof(W));
-  if (f->Error == 0) f->Write((byte *)&H, sizeof(H));
-  if (f->Error == 0) if (p) f->Write((byte *)Pal, 256 * sizeof(DAC));
+  uint16 p = (Pal != NULL),
+       n = ((uint16) (((uint8 *)B) - V)) + H * sizeof(HideDesc);
+  if (f->Error == 0) f->Write((uint8 *)&p, sizeof(p));
+  if (f->Error == 0) f->Write((uint8 *)&n, sizeof(n));
+  if (f->Error == 0) f->Write((uint8 *)&W, sizeof(W));
+  if (f->Error == 0) f->Write((uint8 *)&H, sizeof(H));
+  if (f->Error == 0) if (p) f->Write((uint8 *)Pal, 256 * sizeof(DAC));
   if (f->Error == 0) f->Write(V, n);
   return (f->Error == 0);
 }
@@ -435,20 +435,20 @@ bool BITMAP::VBMSave (XFILE * f)
 
 bool BITMAP::VBMLoad (XFILE * f)
 {
-  word p, n;
-  if (f->Error == 0) f->Read((byte *)&p, sizeof(p));
-  if (f->Error == 0) f->Read((byte *)&n, sizeof(n));
-  if (f->Error == 0) f->Read((byte *)&W, sizeof(W));
-  if (f->Error == 0) f->Read((byte *)&H, sizeof(H));
+  uint16 p, n;
+  if (f->Error == 0) f->Read((uint8 *)&p, sizeof(p));
+  if (f->Error == 0) f->Read((uint8 *)&n, sizeof(n));
+  if (f->Error == 0) f->Read((uint8 *)&W, sizeof(W));
+  if (f->Error == 0) f->Read((uint8 *)&H, sizeof(H));
   if (f->Error == 0)
     {
       if (p)
 	{
-	  if (Pal) f->Read((byte *)Pal, 256 * sizeof(DAC));
+	  if (Pal) f->Read((uint8 *)Pal, 256 * sizeof(DAC));
 	  else f->Seek(f->Mark() + 256 * sizeof(DAC));
 	}
     }
-  if ((V = farnew(byte, n)) == NULL) return false;
+  if ((V = farnew(uint8, n)) == NULL) return false;
   if (f->Error == 0) f->Read(V, n);
   B = (HideDesc *) (V + n - H * sizeof(HideDesc));
   return (f->Error == 0);
