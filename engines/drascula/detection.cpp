@@ -266,34 +266,12 @@ static const DrasculaGameDescription gameDescriptions[] = {
 
 } // End of namespace Drascula
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Drascula::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Drascula::DrasculaGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine gameid
-	drasculaGames,
-	// Structure for autoupgrading obsolete gameids
-	0,
-	// Name of single gameid (optional)
-	"drascula",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOMIDI | Common::GUIO_NOLAUNCHLOAD,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
-	DrasculaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	DrasculaMetaEngine() : AdvancedMetaEngine(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
+		params.singleid = "drascula";
+		params.guioptions = Common::GUIO_NOMIDI | Common::GUIO_NOLAUNCHLOAD;
+	}
 
 	virtual const char *getName() const {
 		return "Drascula";
