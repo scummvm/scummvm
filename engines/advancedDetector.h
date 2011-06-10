@@ -148,7 +148,7 @@ struct ADParams {
 	 * A list of all gameids (and their corresponding descriptions) supported
 	 * by this engine.
 	 */
-	const PlainGameDescriptor *list;
+	const PlainGameDescriptor *gameDescriptors;
 
 	/**
 	 * Structure for autoupgrading obsolete targets (optional).
@@ -224,9 +224,11 @@ GameDescriptor findGameID(
  * A MetaEngine implementation based around the advanced detector code.
  */
 class AdvancedMetaEngine : public MetaEngine {
-	const ADParams &params;
+protected:
+	ADParams params;
 public:
 	AdvancedMetaEngine(const ADParams &dp) : params(dp) {}
+	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameDescriptors);
 
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;

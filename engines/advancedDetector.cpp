@@ -62,7 +62,7 @@ static GameList gameIDList(const ADParams &params) {
 	if (params.singleid != NULL) {
 		GameList gl;
 
-		const PlainGameDescriptor *g = params.list;
+		const PlainGameDescriptor *g = params.gameDescriptors;
 		while (g->gameid) {
 			if (0 == scumm_stricmp(params.singleid, g->gameid)) {
 				gl.push_back(GameDescriptor(g->gameid, g->description));
@@ -74,7 +74,7 @@ static GameList gameIDList(const ADParams &params) {
 		error("Engine %s doesn't have its singleid specified in ids list", params.singleid);
 	}
 
-	return GameList(params.list);
+	return GameList(params.gameDescriptors);
 }
 
 static void upgradeTargetIfNecessary(const ADParams &params) {
@@ -109,11 +109,11 @@ namespace AdvancedDetector {
 
 GameDescriptor findGameID(
 	const char *gameid,
-	const PlainGameDescriptor *list,
+	const PlainGameDescriptor *gameDescriptors,
 	const ADObsoleteGameID *obsoleteList
 	) {
-	// First search the list of supported game IDs for a match.
-	const PlainGameDescriptor *g = findPlainGameDescriptor(gameid, list);
+	// First search the list of supported gameids for a match.
+	const PlainGameDescriptor *g = findPlainGameDescriptor(gameid, gameDescriptors);
 	if (g)
 		return GameDescriptor(*g);
 
@@ -123,7 +123,7 @@ GameDescriptor findGameID(
 		const ADObsoleteGameID *o = obsoleteList;
 		while (o->from) {
 			if (0 == scumm_stricmp(gameid, o->from)) {
-				g = findPlainGameDescriptor(o->to, list);
+				g = findPlainGameDescriptor(o->to, gameDescriptors);
 				if (g && g->description)
 					return GameDescriptor(gameid, "Obsolete game ID (" + Common::String(g->description) + ")");
 				else
@@ -244,14 +244,14 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 		// Use fallback detector if there were no matches by other means
 		const ADGameDescription *fallbackDesc = fallbackDetect(fslist);
 		if (fallbackDesc != 0) {
-			GameDescriptor desc(toGameDescriptor(*fallbackDesc, params.list));
+			GameDescriptor desc(toGameDescriptor(*fallbackDesc, params.gameDescriptors));
 			updateGameDescriptor(desc, fallbackDesc, params);
 			detectedGames.push_back(desc);
 		}
 	} else {
 		// Otherwise use the found matches
 		for (uint i = 0; i < matches.size(); i++) {
-			GameDescriptor desc(toGameDescriptor(*matches[i], params.list));
+			GameDescriptor desc(toGameDescriptor(*matches[i], params.gameDescriptors));
 			updateGameDescriptor(desc, matches[i], params);
 			detectedGames.push_back(desc);
 		}
@@ -344,7 +344,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	Common::updateGameGUIOptions(agdDesc->guioptions | params.guioptions, lang);
 
 
-	debug(2, "Running %s", toGameDescriptor(*agdDesc, params.list).description().c_str());
+	debug(2, "Running %s", toGameDescriptor(*agdDesc, params.gameDescriptors).description().c_str());
 	if (!createInstance(syst, engine, agdDesc))
 		return Common::kNoGameDataFoundError;
 	else
@@ -645,5 +645,19 @@ GameList AdvancedMetaEngine::getSupportedGames() const {
 	return gameIDList(params);
 }
 GameDescriptor AdvancedMetaEngine::findGame(const char *gameid) const {
-	return AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList);
+	return AdvancedDetector::findGameID(gameid, params.gameDescriptors, params.obsoleteList);
+}
+
+AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameDescriptors) {
+	params.descs = (const byte *)descs;
+	params.descItemSize = descItemSize;
+	params.md5Bytes = 5000;
+	params.gameDescriptors = gameDescriptors;
+	params.obsoleteList = NULL;
+	params.singleid = NULL;
+	params.fileBasedFallback = NULL;
+	params.flags = 0;
+	params.guioptions = Common::GUIO_NONE;
+	params.depth = 1;
+	params.directoryGlobs = NULL;
 }
