@@ -48,7 +48,7 @@ IOBUF::IOBUF (IOMODE mode, CRYPT * crpt)
   Ptr(0),
   Lim(0)
 {
-  Buff = farnew(byte, IOBUF_SIZE);
+  Buff = farnew(uint8, IOBUF_SIZE);
   if (Buff == NULL) DROP("No core for I/O", NULL);
 }
 
@@ -66,7 +66,7 @@ IOBUF::IOBUF (const char * name, IOMODE mode, CRYPT * crpt)
   Ptr(0),
   Lim(0)
 {
-  Buff = farnew(byte, IOBUF_SIZE);
+  Buff = farnew(uint8, IOBUF_SIZE);
   if (Buff == NULL) DROP("No core for I/O", name);
 }
 
@@ -114,18 +114,18 @@ void IOBUF::WriteBuff (void)
 
 
 
-word IOBUF::Read (void *buf, word len)
+uint16 IOBUF::Read (void *buf, uint16 len)
 {
-  word total = 0;
+  uint16 total = 0;
   while (len)
     {
       if (Ptr >= Lim) ReadBuff();
-      word n = Lim - Ptr;
+      uint16 n = Lim - Ptr;
       if (n)
 	{
 	  if (len < n) n = len;
 	  _fmemcpy(buf, Buff+Ptr, n);
-	  (byte *) buf += n;
+	  (uint8 *) buf += n;
 	  len -= n;
 	  total += n;
 	  Ptr += n;
@@ -140,25 +140,25 @@ word IOBUF::Read (void *buf, word len)
 
 
 
-word IOBUF::Read (byte * buf)
+uint16 IOBUF::Read (uint8 * buf)
 {
-  word total = 0;
+  uint16 total = 0;
 
   while (total < LINE_MAX-2)
     {
       if (Ptr >= Lim) ReadBuff();
-      byte * p = Buff + Ptr;
-      word n = Lim - Ptr;
+      uint8 * p = Buff + Ptr;
+      uint16 n = Lim - Ptr;
       if (n)
 	{
 	  if (total + n >= LINE_MAX-2) n = LINE_MAX-2 - total;
-	  byte * eol = (byte *) _fmemchr(p, '\r', n);
-	  if (eol) n = (word) (eol - p);
-	  byte * eof = (byte *) _fmemchr(p, '\32', n);
+	  uint8 * eol = (uint8 *) _fmemchr(p, '\r', n);
+	  if (eol) n = (uint16) (eol - p);
+	  uint8 * eof = (uint8 *) _fmemchr(p, '\32', n);
 	  if (eof) // end-of-file
 	    {
-	      n = (word) (eof - p);
-	      Ptr = (word) (eof - Buff);
+	      n = (uint16) (eof - p);
+	      Ptr = (uint16) (eof - Buff);
 	    }
 	  if (n) _fmemcpy(buf, p, n);
 	  buf += n;
@@ -187,19 +187,19 @@ word IOBUF::Read (byte * buf)
 
 
 
-word IOBUF::Write (void * buf, word len)
+uint16 IOBUF::Write (void * buf, uint16 len)
 {
-  word tot = 0;
+  uint16 tot = 0;
   while (len)
     {
-      word n = IOBUF_SIZE - Lim;
+      uint16 n = IOBUF_SIZE - Lim;
       if (n > len) n = len;
       if (n)
 	{
 	  _fmemcpy(Buff+Lim, buf, n);
 	  Lim += n;
 	  len -= n;
-	  (byte *) buf += n;
+	  (uint8 *) buf += n;
 	  tot += n;
 	}
       else WriteBuff();
@@ -212,9 +212,9 @@ word IOBUF::Write (void * buf, word len)
 
 
 
-word IOBUF::Write (byte * buf)
+uint16 IOBUF::Write (uint8 * buf)
 {
-  word len = 0;
+  uint16 len = 0;
   if (buf)
     {
       len = _fstrlen((const char *) buf);
@@ -223,7 +223,7 @@ word IOBUF::Write (byte * buf)
       if (len)
 	{
 	  static char EOL[] = "\r\n";
-	  word n = Write(EOL, sizeof(EOL)-1);
+	  uint16 n = Write(EOL, sizeof(EOL)-1);
 	  len += n;
 	}
     }
@@ -250,7 +250,7 @@ int IOBUF::Read (void)
 
 
 
-void IOBUF::Write (byte b)
+void IOBUF::Write (uint8 b)
 {
   if (Lim >= IOBUF_SIZE)
     {
@@ -264,7 +264,7 @@ void IOBUF::Write (byte b)
 
 
 
-	word	CFILE::MaxLineLen	= LINE_MAX;
+	uint16	CFILE::MaxLineLen	= LINE_MAX;
 
 
 
@@ -321,7 +321,7 @@ long CFILE::Seek (long pos)
 {
   if (pos >= BufMark && pos < BufMark + Lim)
     {
-      ((Mode == REA) ? Ptr : Lim) = (word) (pos - BufMark);
+      ((Mode == REA) ? Ptr : Lim) = (uint16) (pos - BufMark);
       return pos;
     }
   else

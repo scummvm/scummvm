@@ -86,7 +86,7 @@ void GET_TEXT::Tick (void)
 
 
 
-void GET_TEXT::Touch (word mask, int x, int y)
+void GET_TEXT::Touch (uint16 mask, int x, int y)
 {
   static char ogon[] = "èïêú•£ò†°";
   static char bezo[] = "ACELNOSXZ";

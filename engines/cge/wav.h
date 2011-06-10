@@ -39,17 +39,17 @@
 
 
 typedef char FOURCC[4];				// Four-character code
-typedef dword CKSIZE;				// 32-bit unsigned size
+typedef uint32 CKSIZE;				// 32-bit unsigned size
 
 
 class CKID // Chunk type identifier
 {
-  union { FOURCC Tx; dword Id; };
+  union { FOURCC Tx; uint32 Id; };
 protected:
   static XFILE * ckFile;
 public:
   CKID (FOURCC t) { memcpy(Tx, t, sizeof(Tx)); }
-  CKID (dword d) { Id = d; }
+  CKID (uint32 d) { Id = d; }
   CKID (XFILE * xf) { (ckFile = xf)->Read(Tx, sizeof(Tx)); }
   bool operator !=(CKID& X) { return Id != X.Id; }
   bool operator ==(CKID& X) { return Id == X.Id; }
@@ -78,27 +78,27 @@ class FMTCK : public CKHEA
 {
   struct WAV
   {
-    word  wFormatTag;         // Format category
-    word  wChannels;          // Number of channels
-    dword dwSamplesPerSec;    // Sampling rate
-    dword dwAvgBytesPerSec;   // For buffer estimation
-    word  wBlockAlign;        // Data block size
+    uint16  wFormatTag;         // Format category
+    uint16  wChannels;          // Number of channels
+    uint32 dwSamplesPerSec;    // Sampling rate
+    uint32 dwAvgBytesPerSec;   // For buffer estimation
+    uint16  wBlockAlign;        // Data block size
   } Wav;
 
   union
   {
     struct PCM
     {
-      word wBitsPerSample;      // Sample size
+      uint16 wBitsPerSample;      // Sample size
     } Pcm;
   };
 public:
   FMTCK (CKHEA& hea);
-  inline  word Channels (void) { return Wav.wChannels; }
-  inline dword SmplRate (void) { return Wav.dwSamplesPerSec; }
-  inline dword ByteRate (void) { return Wav.dwAvgBytesPerSec; }
-  inline  word BlckSize (void) { return Wav.wBlockAlign; }
-  inline  word SmplSize (void) { return Pcm.wBitsPerSample; }
+  inline  uint16 Channels (void) { return Wav.wChannels; }
+  inline uint32 SmplRate (void) { return Wav.dwSamplesPerSec; }
+  inline uint32 ByteRate (void) { return Wav.dwAvgBytesPerSec; }
+  inline  uint16 BlckSize (void) { return Wav.wBlockAlign; }
+  inline  uint16 SmplSize (void) { return Pcm.wBitsPerSample; }
 };
 
 
@@ -110,7 +110,7 @@ class DATACK : public CKHEA
   bool e;
   union
     {
-      byte * Buf;
+      uint8 * Buf;
       EMS * EBuf;
     };
 public:
@@ -118,7 +118,7 @@ public:
   DATACK (CKHEA& hea, EMM * emm);
   DATACK (int first, int last);
   ~DATACK (void);
-  inline byte * Addr (void) { return Buf; }
+  inline uint8 * Addr (void) { return Buf; }
   inline EMS * EAddr (void) { return EBuf; }
 };
 

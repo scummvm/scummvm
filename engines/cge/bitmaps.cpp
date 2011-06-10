@@ -36,7 +36,7 @@
 #define	G	GRAY,
 #define	D	DGRAY,
 
-static	byte	MCDesign0[]= { W W W W W W _
+static	uint8	MCDesign0[]= { W W W W W W _
 			       W W W W W o _
 			       W W W W o _ _
 			       W W W W W _ _
@@ -46,11 +46,11 @@ static	byte	MCDesign0[]= { W W W W W W _
 			       _ _ _ _ _ o o };
 
 
-static	byte	MCDesign1[]= { _ };
+static	uint8	MCDesign1[]= { _ };
 
 
 
-static	byte	SLDesign[] = { G G G G G G G G G _ _ _ _ _ _
+static	uint8	SLDesign[] = { G G G G G G G G G _ _ _ _ _ _
 			       L G G G G G G G G D _ _ _ _ _
 			       _ L G G G G G G G D _ _ _ _ _
 			       _ _ L G G G G G G G D _ _ _ _
@@ -68,7 +68,7 @@ static	byte	SLDesign[] = { G G G G G G G G G _ _ _ _ _ _
 			       _ _ _ _ _ _ _ _ _ _ _ _ _ _ D
 			     };
 
-static	byte	SRDesign[] = { _ _ _ _ _ _ G G G G G G G G G
+static	uint8	SRDesign[] = { _ _ _ _ _ _ G G G G G G G G G
 			       _ _ _ _ _ L G G G G G G G G D
 			       _ _ _ _ _ L G G G G G G G D _
 			       _ _ _ _ L G G G G G G G D _ _
@@ -86,7 +86,7 @@ static	byte	SRDesign[] = { _ _ _ _ _ _ G G G G G G G G G
 			       D _ _ _ _ _ _ _ _ _ _ _ _ _ _
 			     };
 
-static	byte	MapBrick[] = { L L L L L L L G
+static	uint8	MapBrick[] = { L L L L L L L G
 			       L G G G G G G D
 			       L G G G G G G D
 			       G D D D D D D D
@@ -110,7 +110,7 @@ static	byte	MapBrick[] = { L L L L L L L G
 #define	D	219,
 #define	E	231,
 
-static	byte	PRDesign[] = { A E E E C C D A B
+static	uint8	PRDesign[] = { A E E E C C D A B
 			       C _ _ _ _ _ _ D A
 			       C _ _ _ _ _ _ D A
 			       C _ _ _ _ _ _ D A
@@ -131,7 +131,7 @@ static	byte	PRDesign[] = { A E E E C C D A B
 #define	E	231,
 #define	F	237,
 
-static	byte	PRDesign[] = { D D D D D D D D _
+static	uint8	PRDesign[] = { D D D D D D D D _
 			       D D D D D D D D _
 			       D _ _ _ _ _ _ _ _
 			       D _ _ _ _ _ _ _ _
@@ -159,7 +159,7 @@ static	byte	PRDesign[] = { D D D D D D D D _
 #define	A _ x _ x _ x _ x
 #define	B A A A A A A A A
 
-static	byte	HLDesign[] = { B B B B B };
+static	uint8	HLDesign[] = { B B B B B };
 
 #undef	_
 #undef	x
@@ -178,7 +178,7 @@ static	byte	HLDesign[] = { B B B B B };
 #define	D  226,
 #define	E  255,
 
-static	byte	LIDesign[][9] = { { A A A
+static	uint8	LIDesign[][9] = { { A A A
 				    A B A
 				    A A A },
 
@@ -206,7 +206,7 @@ static	byte	LIDesign[][9] = { { A A A
 #define	G	  0,
 //226,
 
-static	byte	MEDesign[][9] = { { R R R R R R R R R }, // 0
+static	uint8	MEDesign[][9] = { { R R R R R R R R R }, // 0
 				  { R R R R R R R R G }, // 1
 				  { R R R R R R R G G }, // 2
 				  { R R R R R R G G G }, // 3

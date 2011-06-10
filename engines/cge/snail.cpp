@@ -394,7 +394,7 @@ void FeedSnail (SPRITE * spr, SNLIST snq)
 {
   if (spr) if (spr->Active())
     {
-      byte ptr = (snq == TAKE) ? spr->TakePtr : spr->NearPtr;
+      uint8 ptr = (snq == TAKE) ? spr->TakePtr : spr->NearPtr;
 
       if (ptr != NO_PTR)
 	{
@@ -425,7 +425,7 @@ void FeedSnail (SPRITE * spr, SNLIST snq)
 		  SPRITE * s = (c->Ref < 0) ? spr : Locate(c->Ref);
 		  if (s)
 		    {
-		      byte * idx = (snq == TAKE) ? &s->TakePtr : &s->NearPtr;
+		      uint8 * idx = (snq == TAKE) ? &s->TakePtr : &s->NearPtr;
 		      if (*idx != NO_PTR)
 			{
 			  int v;
@@ -818,7 +818,7 @@ void SNSetY0 (int cav, int y0)
 
 
 
-void SNSetXY (SPRITE * spr, word xy)
+void SNSetXY (SPRITE * spr, uint16 xy)
 {
   if (spr)
     {
@@ -1130,7 +1130,7 @@ static void SNLight (bool in)
 
 static void SNBarrier (int cav, int bar, bool horz)
 {
-  ((byte *) (Barriers + ((cav > 0) ? cav : Now)))[horz] = bar;
+  ((uint8 *) (Barriers + ((cav > 0) ? cav : Now)))[horz] = bar;
 }
 
 
@@ -1178,7 +1178,7 @@ void SNAIL::RunCom (void)
   if (! Busy)
     {
       Busy = true;
-      byte tmphea = Head;
+      uint8 tmphea = Head;
       while (Tail != tmphea)
 	{
 	  COM * snc = &SNList[Tail];

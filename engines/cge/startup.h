@@ -64,7 +64,7 @@ public:
   static int Mode;
   static int Core;
   static int SoundOk;
-  static word Summa;
+  static uint16 Summa;
   STARTUP (void);
 };
 

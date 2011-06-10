@@ -33,11 +33,11 @@
 
 	EVENT		Evt[EVT_MAX];
 
-	word		EvtHead = 0, EvtTail = 0;
+	uint16		EvtHead = 0, EvtTail = 0;
 //--------------------------------------------------------------------------
 
 MOUSE_FUN *	MOUSE::OldMouseFun	= NULL;
-word		MOUSE::OldMouseMask	= 0;
+uint16		MOUSE::OldMouseMask	= 0;
 
 
 
@@ -151,7 +151,7 @@ void MOUSE::ClrEvt (SPRITE * spr)
 {
   if (spr)
     {
-      word e;
+      uint16 e;
       for (e = EvtTail; e != EvtHead; e = (e + 1) % EVT_MAX)
 	if (Evt[e].Ptr == spr) Evt[e].Msk = 0;
     }

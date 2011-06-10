@@ -44,8 +44,8 @@
 extern		SPRITE *	Sys;
 
 int		Sinus		(long x);
-byte *		Glass		(DAC * pal, byte r, byte g, byte b);
-byte *		Mark		(DAC * pal);
+uint8 *		Glass		(DAC * pal, uint8 r, uint8 g, uint8 b);
+uint8 *		Mark		(DAC * pal);
 
 
 

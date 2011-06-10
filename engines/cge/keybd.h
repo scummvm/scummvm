@@ -43,12 +43,12 @@ class KEYBOARD
 {
   static void interrupt (* OldKeyboard) (...);
   static void interrupt NewKeyboard (...);
-  static word Code[0x60];
-  static word Current;
+  static uint16 Code[0x60];
+  static uint16 Current;
   static SPRITE * Client;
 public:
-  static byte Key[0x60];
-  static word Last (void) { _AX = Current; Current = 0; return _AX; }
+  static uint8 Key[0x60];
+  static uint16 Last (void) { _AX = Current; Current = 0; return _AX; }
   static SPRITE * SetClient (SPRITE * spr);
   KEYBOARD (void);
   ~KEYBOARD (void);

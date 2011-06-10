@@ -148,7 +148,7 @@ public:
   static void SetPal (void);
   static void FunTouch (void);
   SYSTEM (void) : SPRITE(NULL) { SetPal(); Tick(); }
-  void Touch (word mask, int x, int y);
+  void Touch (uint16 mask, int x, int y);
   void Tick (void);
 };
 
@@ -163,8 +163,8 @@ public:
 class CLUSTER : public COUPLE
 {
 public:
-  static byte Map[MAP_ZCNT][MAP_XCNT];
-  byte &Cell (void);
+  static uint8 Map[MAP_ZCNT][MAP_XCNT];
+  uint8 &Cell (void);
   CLUSTER (void) : COUPLE () { }
   CLUSTER (int a, int b) : COUPLE (a, b) { }
   bool Protected (void);

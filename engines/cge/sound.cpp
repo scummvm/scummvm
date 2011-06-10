@@ -91,7 +91,7 @@ void SOUND::Play (DATACK * wav, int pan, int cnt)
     {
       Stop();
       smpinf.saddr = (char *) &*(wav->EAddr());
-      smpinf.slen = (word)wav->Size();
+      smpinf.slen = (uint16)wav->Size();
       smpinf.span = pan;
       smpinf.sflag = cnt;
       SNDDigiStart(&smpinf);
@@ -246,7 +246,7 @@ DATACK * FX::operator [] (int ref)
 //-------------------------------------------------------------------------
 
 
-static	byte *	midi	= NULL;
+static	uint8 *	midi	= NULL;
 
 
 
@@ -274,8 +274,8 @@ void LoadMIDI (int ref)
       INI_FILE mid = fn;
       if (mid.Error == 0)
 	{
-	  word siz = (word) mid.Size();
-	  midi = new byte[siz];
+	  uint16 siz = (uint16) mid.Size();
+	  midi = new uint8[siz];
 	  if (midi)
 	    {
 	      mid.Read(midi, siz);
@@ -303,8 +303,8 @@ EC void * Patch (int pat)
   INI_FILE snd = fn;
   if (! snd.Error)
     {
-      word siz = (word) snd.Size();
-      p = (byte *) farmalloc(siz);
+      uint16 siz = (uint16) snd.Size();
+      p = (uint8 *) farmalloc(siz);
       if (p)
 	{
 	  snd.Read(p, siz);

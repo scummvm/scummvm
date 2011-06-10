@@ -46,14 +46,14 @@
 
 
 
-typedef	struct	{ byte Horz, Vert; } BAR;
+typedef	struct	{ uint8 Horz, Vert; } BAR;
 
 
 
 struct SCB
 {
-  byte *	Ptr;
-  word		Siz;
+  uint8 *	Ptr;
+  uint16		Siz;
   SCB *		Nxt;
 };
 
@@ -82,9 +82,9 @@ enum	SNLIST	{ NEAR, TAKE };
 class SNAIL
 {
   struct COM { SNCOM Com; int Ref; int Val; void * Ptr; } * SNList;
-  byte Head, Tail;
+  uint8 Head, Tail;
   bool Turbo, Busy, TextDelay;
-  word Pause;
+  uint16 Pause;
 public:
   static char * ComTxt[];
   bool TalkEnable;

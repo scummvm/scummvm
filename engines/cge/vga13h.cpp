@@ -113,7 +113,7 @@ char * NumStr (char * str, int num)
 
 static void Video (void)
 {
-  static word SP_S;
+  static uint16 SP_S;
 
   asm	push	bx
   asm	push	bp
@@ -136,9 +136,9 @@ static void Video (void)
 
 
 
-word * SaveScreen (void)
+uint16 * SaveScreen (void)
 {
-  word cxy, cur, siz, * scr = NULL, * sav;
+  uint16 cxy, cur, siz, * scr = NULL, * sav;
 
   // horizontal size of text mode screen
   asm	mov	ah,0x0F		// get current video mode
@@ -179,7 +179,7 @@ word * SaveScreen (void)
   _AH = 0x03; Video();		// get cursor
   cxy = _DX;
 
-  sav = farnew(word, siz+3);	// +3 extra words for size and cursor
+  sav = farnew(uint16, siz+3);	// +3 extra uint16s for size and cursor
   if (sav)
     {
       sav[0] = siz;
@@ -194,9 +194,9 @@ word * SaveScreen (void)
 
 
 
-void RestoreScreen (word * &sav)
+void RestoreScreen (uint16 * &sav)
 {
-  word * scr = NULL;
+  uint16 * scr = NULL;
 
   asm	mov	ax,0x40		// system data segment
   asm	mov	es,ax
@@ -228,7 +228,7 @@ void RestoreScreen (word * &sav)
 
 
 
-DAC MkDAC (byte r, byte g, byte b)
+DAC MkDAC (uint8 r, uint8 g, uint8 b)
 {
   static DAC x;
   x.R = r;
@@ -240,7 +240,7 @@ DAC MkDAC (byte r, byte g, byte b)
 
 
 
-RGB MkRGB (byte r, byte g, byte b)
+RGB MkRGB (uint8 r, uint8 g, uint8 b)
 {
   static TRGB x;
   x.dac.R = r;
@@ -268,7 +268,7 @@ SPRITE * Locate (int ref)
 
 
 bool		HEART::Enable = false;
-word *		HEART::XTimer = NULL;
+uint16 *		HEART::XTimer = NULL;
 
 
 
@@ -283,16 +283,16 @@ HEART::HEART (void)
 extern "C" void TimerProc (void)
 {
   static SPRITE * spr;
-  static byte run = 0;
+  static uint8 run = 0;
 
-  // decrement external timer word
+  // decrement external timer uint16
   if (HEART::XTimer)
     if (*HEART::XTimer) -- *HEART::XTimer;
     else HEART::XTimer = NULL;
 
   if (! run && HEART::Enable)		// check overrun flag
     {
-      static word oldSP, oldSS;
+      static uint16 oldSP, oldSS;
 
       ++ run;			// disable 2nd call until current lasts
       asm	mov	ax,ds
@@ -319,7 +319,7 @@ extern "C" void TimerProc (void)
 void interrupt ENGINE::NewTimer (...)
 {
   static SPRITE * spr;
-  static byte run = 0, cntr1 = TMR_RATE1, cntr2 = TMR_RATE2;
+  static uint8 run = 0, cntr1 = TMR_RATE1, cntr2 = TMR_RATE2;
 
   ___1152_Hz___:
 
@@ -350,14 +350,14 @@ void interrupt ENGINE::NewTimer (...)
 
   my_int: //------72Hz-------//
 
-  // decrement external timer word
+  // decrement external timer uint16
   if (HEART::XTimer)
     if (*HEART::XTimer) -- *HEART::XTimer;
     else HEART::XTimer = NULL;
 
   if (! run && HEART::Enable)	// check overrun flag
     {
-      static word oldSP, oldSS;
+      static uint16 oldSP, oldSS;
 
       ++ run;			// disable 2nd call until current lasts
       asm	mov	ax,ds
@@ -383,7 +383,7 @@ void interrupt ENGINE::NewTimer (...)
 
 
 
-void HEART::SetXTimer (word * ptr)
+void HEART::SetXTimer (uint16 * ptr)
 {
   if (XTimer && ptr != XTimer) *XTimer = 0;
   XTimer = ptr;
@@ -392,7 +392,7 @@ void HEART::SetXTimer (word * ptr)
 
 
 
-void HEART::SetXTimer (word * ptr, word time)
+void HEART::SetXTimer (uint16 * ptr, uint16 time)
 {
   SetXTimer(ptr);
   *ptr = time;
@@ -415,7 +415,7 @@ SPRITE::SPRITE (BMP_PTR * shp)
   Ext(NULL), Ref(-1), Cave(0)
 {
   memset(File, 0, sizeof(File));
-  *((word *)&Flags) = 0;
+  *((uint16 *)&Flags) = 0;
   SetShapeList(shp);
 }
 
@@ -486,7 +486,7 @@ BMP_PTR * SPRITE::SetShapeList (BMP_PTR * shp)
 
 
 
-void SPRITE::MoveShapes (byte * buf)
+void SPRITE::MoveShapes (uint8 * buf)
 {
   BMP_PTR * p;
   for (p = Ext->ShpList; *p; p ++)
@@ -779,7 +779,7 @@ void SPRITE::Tick (void)
 
 
 
-void SPRITE::MakeXlat (byte * x)
+void SPRITE::MakeXlat (uint8 * x)
 {
   if (Ext)
     {
@@ -800,11 +800,11 @@ void SPRITE::KillXlat (void)
   if (Flags.Xlat && Ext)
     {
       BMP_PTR * b;
-      byte * m = (*Ext->ShpList)->M;
+      uint8 * m = (*Ext->ShpList)->M;
 
       switch (MemType(m))
 	{
-	  case NEAR_MEM : delete[] (byte *) m; break;
+	  case NEAR_MEM : delete[] (uint8 *) m; break;
 	  case FAR_MEM  : farfree(m); break;
 	}
       for (b = Ext->ShpList; *b; b ++) (*b)->M = NULL;
@@ -883,9 +883,9 @@ void SPRITE::Show (void)
 
 
 
-void SPRITE::Show (word pg)
+void SPRITE::Show (uint16 pg)
 {
-  byte * a = VGA::Page[1];
+  uint8 * a = VGA::Page[1];
   VGA::Page[1] = VGA::Page[pg & 3];
   Shp()->Show(X, Y);
   VGA::Page[1] = a;
@@ -912,13 +912,13 @@ BMP_PTR SPRITE::Ghost (void)
   register SPREXT * e = Ext;
   if (e->b1)
     {
-      BMP_PTR bmp = new BITMAP(0, 0, (byte *)NULL);
+      BMP_PTR bmp = new BITMAP(0, 0, (uint8 *)NULL);
       if (bmp == NULL) VGA::Exit("No core");
       bmp->W = e->b1->W;
       bmp->H = e->b1->H;
       if ((bmp->B = farnew(HideDesc, bmp->H)) == NULL) VGA::Exit("No Core");
-      bmp->V = (byte *) _fmemcpy(bmp->B, e->b1->B, sizeof(HideDesc) * bmp->H);
-      bmp->M = (byte *) MK_FP(e->y1, e->x1);
+      bmp->V = (uint8 *) _fmemcpy(bmp->B, e->b1->B, sizeof(HideDesc) * bmp->H);
+      bmp->M = (uint8 *) MK_FP(e->y1, e->x1);
       return bmp;
     }
   return NULL;
@@ -1083,9 +1083,9 @@ SPRITE * QUEUE::Locate (int ref)
 
 
 
-word		VGA::StatAdr = VGAST1_;
-word		VGA::OldMode = 0;
-word *	VGA::OldScreen = NULL;
+uint16		VGA::StatAdr = VGAST1_;
+uint16		VGA::OldMode = 0;
+uint16 *	VGA::OldScreen = NULL;
 const char *	VGA::Msg = NULL;
 const char *	VGA::Nam = NULL;
 DAC *	VGA::OldColors = NULL;
@@ -1093,10 +1093,10 @@ DAC *	VGA::NewColors = NULL;
 bool		VGA::SetPal = false;
 int		VGA::Mono = 0;
 QUEUE		VGA::ShowQ = true, VGA::SpareQ = false;
-byte *	VGA::Page[4] = { (byte *) MK_FP(SCR_SEG, 0x0000),
-				 (byte *) MK_FP(SCR_SEG, 0x4000),
-				 (byte *) MK_FP(SCR_SEG, 0x8000),
-				 (byte *) MK_FP(SCR_SEG, 0xC000) };
+uint8 *	VGA::Page[4] = { (uint8 *) MK_FP(SCR_SEG, 0x0000),
+				 (uint8 *) MK_FP(SCR_SEG, 0x4000),
+				 (uint8 *) MK_FP(SCR_SEG, 0x8000),
+				 (uint8 *) MK_FP(SCR_SEG, 0xC000) };
 
 
 
@@ -1453,7 +1453,7 @@ void VGA::UpdateColors (void)
 
 void VGA::Update (void)
 {
-  byte * p = Page[1];
+  uint8 * p = Page[1];
   Page[1] = Page[0];
   Page[0] = p;
 
@@ -1481,9 +1481,9 @@ void VGA::Update (void)
 
 
 
-void VGA::Clear (byte color)
+void VGA::Clear (uint8 color)
 {
-  byte * a = (byte *) MK_FP(SCR_SEG, 0);
+  uint8 * a = (uint8 *) MK_FP(SCR_SEG, 0);
 
   asm	mov	dx,VGASEQ_
   asm	mov	ax,0x0F02	// map mask register - enable all planes
@@ -1502,9 +1502,9 @@ void VGA::Clear (byte color)
 
 
 
-void VGA::CopyPage (word d, word s)
+void VGA::CopyPage (uint16 d, uint16 s)
 {
-  byte * S = Page[s & 3], * D = Page[d & 3];
+  uint8 * S = Page[s & 3], * D = Page[d & 3];
 
   asm	mov	dx,VGAGRA_
   asm	mov	al,0x05		// R/W mode
@@ -1571,11 +1571,11 @@ void VGA::Exit (int tref, const char * name)
 
 void BITMAP::XShow (int x, int y)
 {
-  byte rmsk = x % 4,
+  uint8 rmsk = x % 4,
        mask = 1 << rmsk,
        * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
-  byte * m = (char *) M;
-  byte  * v = V;
+  uint8 * m = (char *) M;
+  uint8  * v = V;
 
 	asm	push	bx
 	asm	push	si
@@ -1657,9 +1657,9 @@ void BITMAP::XShow (int x, int y)
 
 void BITMAP::Show (int x, int y)
 {
-  byte mask = 1 << (x & 3),
+  uint8 mask = 1 << (x & 3),
        * scr = VGA::Page[1] + y * (SCR_WID >> 2) + (x >> 2);
-  byte * v = V;
+  uint8 * v = V;
 
 	asm	push	ds		// preserve DS
 
@@ -1728,11 +1728,11 @@ void BITMAP::Show (int x, int y)
 
 void BITMAP::Hide (int x, int y)
 {
-  byte * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
-  word d = FP_OFF(VGA::Page[2]) - FP_OFF(VGA::Page[1]);
+  uint8 * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
+  uint16 d = FP_OFF(VGA::Page[2]) - FP_OFF(VGA::Page[1]);
   HideDesc * b = B;
-  word extra = ((x & 3) != 0);
-  word h = H;
+  uint16 extra = ((x & 3) != 0);
+  uint16 h = H;
 
 //	asm	push	bx
 	asm	push	si

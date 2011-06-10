@@ -31,9 +31,9 @@
 
 
 SPRITE * KEYBOARD::Client = NULL;
-byte  KEYBOARD::Key[0x60] = { 0 };
-word  KEYBOARD::Current = 0;
-word  KEYBOARD::Code[0x60] = { 0,Esc,'1','2','3','4','5','6','7','8','9','0',
+uint8  KEYBOARD::Key[0x60] = { 0 };
+uint16  KEYBOARD::Current = 0;
+uint16  KEYBOARD::Code[0x60] = { 0,Esc,'1','2','3','4','5','6','7','8','9','0',
 			       '-','+',BSp,Tab,'Q','W','E','R','T','Y','U',
 			       'I','O','P','[',']',Enter,0/*Ctrl*/,'A','S',
 			       'D','F','G','H','J','K','L',';','\'','`',
@@ -81,7 +81,7 @@ SPRITE * KEYBOARD::SetClient (SPRITE * spr)
 void interrupt KEYBOARD::NewKeyboard (...)
 {
   // table address
-  _SI = (word) Key;
+  _SI = (uint16) Key;
 
   // take keyboard code
   asm	in	al,60h
@@ -107,14 +107,14 @@ void interrupt KEYBOARD::NewKeyboard (...)
   asm	jz	xit		// released: exit
 
   // pressed: lock ASCII code
-  _SI = (word) Code;
-  asm	add	bx,bx		// word size
+  _SI = (uint16) Code;
+  asm	add	bx,bx		// uint16 size
   asm	mov	ax,[si+bx]
   asm	or	ax,ax
   asm	jz	xit		// zero means NO KEY
   Current = _AX;
 
-  _SI = (word) Client;
+  _SI = (uint16) Client;
   asm	or	si,si
   asm	jz	xit				// if (Client) ...
 //--- fill current event entry with mask, key code and sprite
