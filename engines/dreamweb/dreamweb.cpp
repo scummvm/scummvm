@@ -95,6 +95,7 @@ void DreamWebEngine::waitForVSync() {
 		memcpy(scanline, src, 320);
 	}
 	_system->unlockScreen();
+	_system->updateScreen();
 /*
 	while (!_vSyncInterrupt) {
 		_system->delayMillis(10);
@@ -199,10 +200,12 @@ void DreamWebEngine::mouseCall() {
 }
 
 void DreamWebEngine::setGraphicsMode() {
+	processEvents();
 	initGraphics(320, 200, false);
 }
 
 void DreamWebEngine::fadeDos() {
+	//processEvents will be called from vsync
 	PaletteManager *palette = _system->getPaletteManager();
 	_context.ds = _context.es = _context.data.word(dreamgen::kBuffers);
 	uint8 *dst = _context.es.ptr(dreamgen::kStartpal, 768);
@@ -218,6 +221,7 @@ void DreamWebEngine::fadeDos() {
 	}
 }
 void DreamWebEngine::setPalette() {
+	processEvents();
 	PaletteManager *palette = _system->getPaletteManager();
 	unsigned n = (uint16)_context.cx;
 	uint8 *colors = _context.ds.ptr(_context.si, n * 3);
