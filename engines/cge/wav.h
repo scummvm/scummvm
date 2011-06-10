@@ -51,8 +51,8 @@ public:
   CKID (FOURCC t) { memcpy(Tx, t, sizeof(Tx)); }
   CKID (dword d) { Id = d; }
   CKID (XFILE * xf) { (ckFile = xf)->Read(Tx, sizeof(Tx)); }
-  Boolean operator !=(CKID& X) { return Id != X.Id; }
-  Boolean operator ==(CKID& X) { return Id == X.Id; }
+  bool operator !=(CKID& X) { return Id != X.Id; }
+  bool operator ==(CKID& X) { return Id == X.Id; }
   const char * Name (void);
 };
 
@@ -107,7 +107,7 @@ public:
 
 class DATACK : public CKHEA
 {
-  Boolean e;
+  bool e;
   union
     {
       byte * Buf;

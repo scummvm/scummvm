@@ -195,7 +195,7 @@ void MOUSE::Tick (void)
 	      Hold = e.Ptr;
 	      if (Hold)
 		{
-		  Hold->Flags.Hold = TRUE;
+		  Hold->Flags.Hold = true;
 		  #ifndef DEBUG
 		  if (Hold->Flags.Drag)
 		  #endif
@@ -210,7 +210,7 @@ void MOUSE::Tick (void)
 	    {
 	      if (Hold)
 		{
-		  Hold->Flags.Hold = FALSE;
+		  Hold->Flags.Hold = false;
 		  Hold = NULL;
 		}
 	    }

@@ -29,7 +29,7 @@
 #include	"cge/text.h"
 #include	"cge/snail.h"
 #include	"cge/mouse.h"
-#include	<snddrv.h>
+#include	"cge/snddrv.h"
 #include	<string.h>
 #include	<alloc.h>
 
@@ -38,7 +38,7 @@
 
 extern	MOUSE		Mouse;
 
-	Boolean		MIXER::Appear	= FALSE;
+	bool		MIXER::Appear	= false;
 
 
 
@@ -46,14 +46,14 @@ MIXER::MIXER (int x, int y)
 : SPRITE(NULL), Fall(MIX_FALL)
 {
   int i;
-  Appear = TRUE;
+  Appear = true;
   mb[0] = new BITMAP("VOLUME");
   mb[1] = NULL;
   SetShapeList(mb);
   SetName(Text[MIX_NAME]);
-  Flags.Syst = TRUE;
-  Flags.Kill = TRUE;
-  Flags.BDel = TRUE;
+  Flags.Syst = true;
+  Flags.Kill = true;
+  Flags.BDel = true;
   Goto(x, y);
   Z = MIX_Z;
 
@@ -74,13 +74,13 @@ MIXER::MIXER (int x, int y)
       register SPRITE * spr = new SPRITE(lb);
       spr->SetSeq(ls);
       spr->Goto(x+2+12*i, y+8);
-      spr->Flags.Tran = TRUE;
-      spr->Flags.Kill = TRUE;
-      spr->Flags.BDel = FALSE;
+      spr->Flags.Tran = true;
+      spr->Flags.Kill = true;
+      spr->Flags.BDel = false;
       spr->Z = MIX_Z;
       Led[i] = spr;
     }
-  Led[ArrayCount(Led)-1]->Flags.BDel = TRUE;
+  Led[ArrayCount(Led)-1]->Flags.BDel = true;
 
   VGA::ShowQ.Insert(this);
   for (i = 0; i < ArrayCount(Led); i ++) VGA::ShowQ.Insert(Led[i]);
@@ -101,7 +101,7 @@ MIXER::MIXER (int x, int y)
 
 MIXER::~MIXER (void)
 {
-  Appear = FALSE;
+  Appear = false;
 }
 
 

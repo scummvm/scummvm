@@ -43,7 +43,7 @@
 #include	<alloc.h>
 
 
-	Boolean		Music		= TRUE;
+	bool		Music		= true;
 	FX		Fx		= 16;	// must precede SOUND!!
 	SOUND		Sound;
 

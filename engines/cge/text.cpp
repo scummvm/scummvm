@@ -221,7 +221,7 @@ void Say (const char * txt, SPRITE * spr)
   Talk = new TALK(txt, ROUND);
   if (Talk)
     {
-      Boolean east = spr->Flags.East;
+      bool east = spr->Flags.East;
       int x = (east) ? (spr->X+spr->W-2) : (spr->X+2);
       int y = spr->Y+2;
       SPRITE * spike = new SPRITE(SP);
@@ -229,17 +229,17 @@ void Say (const char * txt, SPRITE * spr)
 
       if (east)
 	{
-	  if (x + sw + TEXT_RD + 5 >= SCR_WID) east = FALSE;
+	  if (x + sw + TEXT_RD + 5 >= SCR_WID) east = false;
 	}
       else
 	{
-	  if (x <= 5 + TEXT_RD + sw) east = TRUE;
+	  if (x <= 5 + TEXT_RD + sw) east = true;
 	}
       x = (east) ? (spr->X+spr->W-2) : (spr->X+2-sw);
       if (spr->Ref == 1) x += (east) ? -10 : 10; // Hero
 
-      Talk->Flags.Kill = TRUE;
-      Talk->Flags.BDel = TRUE;
+      Talk->Flags.Kill = true;
+      Talk->Flags.BDel = true;
       Talk->SetName(Text[SAY_NAME]);
       Talk->Goto(x - (Talk->W - sw) / 2 - 3 + 6 * east, y - spike->H - Talk->H+1);
       Talk->Z = 125;
@@ -247,8 +247,8 @@ void Say (const char * txt, SPRITE * spr)
 
       spike->Goto(x, Talk->Y + Talk->H - 1);
       spike->Z = 126;
-      spike->Flags.Slav = TRUE;
-      spike->Flags.Kill = TRUE;
+      spike->Flags.Slav = true;
+      spike->Flags.Kill = true;
       spike->SetName(Text[SAY_NAME]);
       spike->Step(east);
       spike->Ref = SAY_REF;
@@ -270,8 +270,8 @@ void Inf (const char * txt)
   Talk = new TALK(txt, RECT);
   if (Talk)
     {
-      Talk->Flags.Kill = TRUE;
-      Talk->Flags.BDel = TRUE;
+      Talk->Flags.Kill = true;
+      Talk->Flags.BDel = true;
       Talk->SetName(Text[INF_NAME]);
       Talk->Center();
       Talk->Goto(Talk->X, Talk->Y - 20);

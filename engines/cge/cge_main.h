@@ -167,7 +167,7 @@ public:
   byte &Cell (void);
   CLUSTER (void) : COUPLE () { }
   CLUSTER (int a, int b) : COUPLE (a, b) { }
-  Boolean Protected (void);
+  bool Protected (void);
 };
 
 
@@ -186,7 +186,7 @@ public:
   int Distance (SPRITE * spr);
   void Turn (DIR d);
   void Park (void);
-  Boolean Lower (SPRITE * spr);
+  bool Lower (SPRITE * spr);
   void Reach (SPRITE * spr, int mode = -1);
 };
 

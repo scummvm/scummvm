@@ -53,7 +53,7 @@ DAC *	BITMAP::Pal = NULL;
 
 
 #pragma argsused
-BITMAP::BITMAP (const char * fname, Boolean rem)
+BITMAP::BITMAP (const char * fname, bool rem)
 : M(NULL), V(NULL)
 {
   char pat[MAXPATH];
@@ -238,7 +238,7 @@ BMP_PTR BITMAP::Code (void)
 	  V = NULL;
 	}
 
-      while (TRUE) // at most 2 times: for (V == NULL) & for allocated block;
+      while (true) // at most 2 times: for (V == NULL) & for allocated block;
 	{
 	  byte * im = V+2;
 	  word * cp = (word *) V;
@@ -255,7 +255,7 @@ BMP_PTR BITMAP::Code (void)
 	  for (bpl = 0; bpl < 4; bpl ++) // once per each bitplane
 	    {
 	      byte * bm = M;
-	      Boolean skip = (bm[bpl] == TRANS);
+	      bool skip = (bm[bpl] == TRANS);
 	      word j;
 
 	      cnt = 0;
@@ -306,7 +306,7 @@ BMP_PTR BITMAP::Code (void)
 			    }
 			  cp = (word *) im;
 			  im += 2;
-			  skip = TRUE;
+			  skip = true;
 			  cnt = (SCR_WID - j + 3) / 4;
 			}
 		    }
@@ -360,12 +360,12 @@ BMP_PTR BITMAP::Code (void)
 
 
 
-Boolean BITMAP::SolidAt (int x, int y)
+bool BITMAP::SolidAt (int x, int y)
 {
   byte * m;
   word r, n, n0;
 
-  if (x >= W || y >= H) return FALSE;
+  if (x >= W || y >= H) return false;
 
   m = V;
   r = x % 4;
@@ -389,7 +389,7 @@ Boolean BITMAP::SolidAt (int x, int y)
       m += w;
     }
 
-  while (TRUE)
+  while (true)
     {
       word w, t;
 
@@ -398,14 +398,14 @@ Boolean BITMAP::SolidAt (int x, int y)
       t = w & 0xC000;
       w &= 0x3FFF;
 
-      if (n > n0) return FALSE;
+      if (n > n0) return false;
       n += w;
       switch (t)
 	{
-	  case EOI : return FALSE;
+	  case EOI : return false;
 	  case SKP : w = 0; break;
 	  case REP :
-	  case CPY : if (n-w <= n0 && n > n0) return TRUE; break;
+	  case CPY : if (n-w <= n0 && n > n0) return true; break;
 	}
       m += (t == REP) ? 1 : w;
     }
@@ -416,7 +416,7 @@ Boolean BITMAP::SolidAt (int x, int y)
 
 
 
-Boolean BITMAP::VBMSave (XFILE * f)
+bool BITMAP::VBMSave (XFILE * f)
 {
   word p = (Pal != NULL),
        n = ((word) (((byte *)B) - V)) + H * sizeof(HideDesc);
@@ -433,7 +433,7 @@ Boolean BITMAP::VBMSave (XFILE * f)
 
 
 
-Boolean BITMAP::VBMLoad (XFILE * f)
+bool BITMAP::VBMLoad (XFILE * f)
 {
   word p, n;
   if (f->Error == 0) f->Read((byte *)&p, sizeof(p));
@@ -448,7 +448,7 @@ Boolean BITMAP::VBMLoad (XFILE * f)
 	  else f->Seek(f->Mark() + 256 * sizeof(DAC));
 	}
     }
-  if ((V = farnew(byte, n)) == NULL) return FALSE;
+  if ((V = farnew(byte, n)) == NULL) return false;
   if (f->Error == 0) f->Read(V, n);
   B = (HideDesc *) (V + n - H * sizeof(HideDesc));
   return (f->Error == 0);

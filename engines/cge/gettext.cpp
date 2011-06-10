@@ -47,8 +47,8 @@ GET_TEXT::GET_TEXT (const char * info, char * text, int size, void (*click)(void
   Mode = RECT;
   TS[0] = Box((i + 3) & ~3, 2 * TEXT_VM + 2 * FONT_HIG + TEXT_LS);
   SetShapeList(TS);
-  Flags.BDel = TRUE;
-  Flags.Kill = TRUE;
+  Flags.BDel = true;
+  Flags.Kill = true;
   memcpy(Buff, text, Len);
   Buff[Len] = ' ';
   Buff[Len+1] = '\0';

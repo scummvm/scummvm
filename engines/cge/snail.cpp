@@ -44,13 +44,13 @@
 	int		MaxCave		=  0;
 
 	SCB		Scb		= { NULL, 0, NULL };
-	Boolean		Flag[4];
-	Boolean		Dark 		= FALSE;
-	Boolean		Game		= FALSE;
+	bool		Flag[4];
+	bool		Dark 		= false;
+	bool		Game		= false;
 	int		Now		=  1;
 	int		Lev		= -1;
-	SNAIL		Snail		= FALSE;
-	SNAIL		Snail_		= TRUE;
+	SNAIL		Snail		= false;
+	SNAIL		Snail_		= true;
 
 extern	SPRITE		PocLight;
 
@@ -176,7 +176,7 @@ static void SNGame (SPRITE * spr, int num)
 	  if (! Game)
 	    {
 	      SNPOST(SNSAY, buref, 16008, NULL); // zgadnij!
-	      Game = TRUE;
+	      Game = true;
 	    }
 	  #undef STEPS
 	  #undef DRESSED
@@ -186,7 +186,7 @@ static void SNGame (SPRITE * spr, int num)
 	{
 	  static SPRITE * k = NULL, * k1, * k2, * k3;
 	  static int count = 0;
-	  Boolean hit;
+	  bool hit;
 
 	  if (k == NULL)
 	    {
@@ -199,7 +199,7 @@ static void SNGame (SPRITE * spr, int num)
 	  if (! Game) // init
 	    {
 	      SNPOST(SNGAME, 20002, 2, NULL);
-	      Game = TRUE;
+	      Game = true;
 	    }
 	  else // cont
 	    {
@@ -233,7 +233,7 @@ static void SNGame (SPRITE * spr, int num)
 		      SNPOST(SNSEND, 20010,    20, NULL); // papier
 		      SNPOST(SNSOUND,20010, 20003, NULL); // papier!
 		      SNPOST(SNSAY,  20001, 20005, NULL);
-		      Game = FALSE;
+		      Game = false;
 		      return;
 		    }
 		  else k3->Step(random(5));
@@ -414,11 +414,11 @@ void FeedSnail (SPRITE * spr, SNLIST snq)
 		  if (p->Ptr) break;
 		}
 	    }
-	  while (TRUE)
+	  while (true)
 	    {
 	      if (c->Com == SNTALK)
 		{
-		  if ((Snail.TalkEnable = (c->Val != 0)) == FALSE) KillText();
+		  if ((Snail.TalkEnable = (c->Val != 0)) == false) KillText();
 		}
 	      if (c->Com == SNNEXT)
 		{
@@ -487,9 +487,9 @@ char *		SNAIL::ComTxt[] = { "LABEL", "PAUSE", "WAIT", "LEVEL",
 
 
 
-SNAIL::SNAIL (Boolean turbo)
-: Turbo(turbo), Busy(FALSE), TextDelay(FALSE),
-  Pause(0), TalkEnable(TRUE),
+SNAIL::SNAIL (bool turbo)
+: Turbo(turbo), Busy(false), TextDelay(false),
+  Pause(0), TalkEnable(true),
   Head(0), Tail(0), SNList(farnew(COM, 256))
 {
 }
@@ -604,9 +604,9 @@ static void SNZTrim (SPRITE * spr)
 {
   if (spr) if (spr->Active())
     {
-      Boolean en = HEART::Enable;
+      bool en = HEART::Enable;
       SPRITE * s;
-      HEART::Enable = FALSE;
+      HEART::Enable = false;
       s = (spr->Flags.Shad) ? spr->Prev : NULL;
       VGA::ShowQ.Insert(VGA::ShowQ.Remove(spr));
       if (s)
@@ -681,8 +681,8 @@ void SNSend (SPRITE * spr, int val)
   if (spr)
     {
       int was = spr->Cave;
-      Boolean was1 = (was == 0 || was == Now);
-      Boolean val1 = (val == 0 || val == Now);
+      bool was1 = (was == 0 || was == Now);
+      bool val1 = (val == 0 || val == Now);
       spr->Cave = val;
       if (val1 != was1)
 	{
@@ -695,12 +695,12 @@ void SNSend (SPRITE * spr, int val)
 		}
 	      Hide1(spr);
 	      ContractSprite(spr);
-	      spr->Flags.Slav = FALSE;
+	      spr->Flags.Slav = false;
 	    }
 	  else
 	    {
 	      if (spr->Ref % 1000 == 0) BITMAP::Pal = SysPal;
-	      if (spr->Flags.Back) spr->BackShow(TRUE);
+	      if (spr->Flags.Back) spr->BackShow(true);
 	      else ExpandSprite(spr);
 	      BITMAP::Pal = NULL;
 	    }
@@ -719,8 +719,8 @@ void SNSwap (SPRITE * spr, int xref)
     {
       int was = spr->Cave;
       int xwas = xspr->Cave;
-      Boolean was1 = (was == 0 || was == Now);
-      Boolean xwas1 = (xwas == 0 || xwas == Now);
+      bool was1 = (was == 0 || was == Now);
+      bool xwas1 = (xwas == 0 || xwas == Now);
 
       Swap(spr->Cave, xspr->Cave);
       Swap(spr->X, xspr->X);
@@ -730,8 +730,8 @@ void SNSwap (SPRITE * spr, int xref)
 	{
 	  int n = FindPocket(spr);
 	  if (n >= 0) Pocket[n] = xspr;
-	  xspr->Flags.Kept = TRUE;
-	  xspr->Flags.Port = FALSE;
+	  xspr->Flags.Kept = true;
+	  xspr->Flags.Port = false;
 	}
       if (xwas1 != was1)
 	{
@@ -760,15 +760,15 @@ void SNCover (SPRITE * spr, int xref)
   SPRITE * xspr = Locate(xref);
   if (spr && xspr)
     {
-      spr->Flags.Hide = TRUE;
+      spr->Flags.Hide = true;
       xspr->Z = spr->Z;
       xspr->Cave = spr->Cave;
       xspr->Goto(spr->X, spr->Y);
       ExpandSprite(xspr);
-      if ((xspr->Flags.Shad = spr->Flags.Shad) == TRUE)
+      if ((xspr->Flags.Shad = spr->Flags.Shad) == true)
 	{
 	  VGA::ShowQ.Insert(VGA::ShowQ.Remove(spr->Prev), xspr);
-	  spr->Flags.Shad = FALSE;
+	  spr->Flags.Shad = false;
 	}
       FeedSnail(xspr, NEAR);
     }
@@ -782,13 +782,13 @@ void SNUncover (SPRITE * spr, SPRITE * xspr)
 {
   if (spr && xspr)
     {
-      spr->Flags.Hide = FALSE;
+      spr->Flags.Hide = false;
       spr->Cave = xspr->Cave;
       spr->Goto(xspr->X, xspr->Y);
-      if ((spr->Flags.Shad = xspr->Flags.Shad) == TRUE)
+      if ((spr->Flags.Shad = xspr->Flags.Shad) == true)
 	{
 	  VGA::ShowQ.Insert(VGA::ShowQ.Remove(xspr->Prev), spr);
-	  xspr->Flags.Shad = FALSE;
+	  xspr->Flags.Shad = false;
 	}
       spr->Z = xspr->Z;
       SNSend(xspr, -1);
@@ -913,7 +913,7 @@ void SNSlave (SPRITE * spr, int ref)
       if (spr->Active())
 	{
 	  SNSend(slv, spr->Cave);
-	  slv->Flags.Slav = TRUE;
+	  slv->Flags.Slav = true;
 	  slv->Z = spr->Z;
 	  VGA::ShowQ.Insert(VGA::ShowQ.Remove(slv), spr->Next);
 	}
@@ -997,7 +997,7 @@ void SNKeep (SPRITE * spr, int stp)
       SNSound(spr, 3, 1);
       Pocket[PocPtr] = spr;
       spr->Cave = 0;
-      spr->Flags.Kept = TRUE;
+      spr->Flags.Kept = true;
       spr->Goto(POCKET_X + POCKET_DX*PocPtr + POCKET_DX/2 - spr->W/2,
 		POCKET_Y + POCKET_DY/2 - spr->H/2);
       if (stp >= 0) spr->Step(stp);
@@ -1019,7 +1019,7 @@ void SNGive (SPRITE * spr, int stp)
 	{
 	  Pocket[p] = NULL;
 	  spr->Cave = Now;
-	  spr->Flags.Kept = FALSE;
+	  spr->Flags.Kept = false;
 	  if (stp >= 0) spr->Step(stp);
 	}
     }
@@ -1034,7 +1034,7 @@ static void SNBackPt (SPRITE * spr, int stp)
   if (spr)
     {
       if (stp >= 0) spr->Step(stp);
-      spr->BackShow(TRUE);
+      spr->BackShow(true);
     }
 }
 
@@ -1056,12 +1056,12 @@ static void SNLevel (SPRITE * spr, int lev)
       spr = VGA::SpareQ.Locate(100+Lev);
       if (spr)
 	{
-	  spr->BackShow(TRUE);
+	  spr->BackShow(true);
 	  spr->Cave = 0;
 	}
     }
   MaxCave = maxcav[Lev];
-  if (spr) spr->Flags.Hide = FALSE;
+  if (spr) spr->Flags.Hide = false;
 }
 
 
@@ -1069,7 +1069,7 @@ static void SNLevel (SPRITE * spr, int lev)
 
 
 
-static void SNFlag (int fn, Boolean v)
+static void SNFlag (int fn, bool v)
 {
   Flag[fn] = v;
 }
@@ -1090,7 +1090,7 @@ static void SNSetRef (SPRITE * spr, int nr)
 
 
 
-void SNFlash (Boolean on)
+void SNFlash (bool on)
 {
   if (on)
     {
@@ -1110,14 +1110,14 @@ void SNFlash (Boolean on)
 	}
     }
   else VGA::SetColors(SysPal, 64);
-  Dark = FALSE;
+  Dark = false;
 }
 
 
 
 
 
-static void SNLight (Boolean in)
+static void SNLight (bool in)
 {
   if (in) VGA::Sunrise(SysPal);
   else    VGA::Sunset();
@@ -1128,7 +1128,7 @@ static void SNLight (Boolean in)
 
 
 
-static void SNBarrier (int cav, int bar, Boolean horz)
+static void SNBarrier (int cav, int bar, bool horz)
 {
   ((byte *) (Barriers + ((cav > 0) ? cav : Now)))[horz] = bar;
 }
@@ -1160,7 +1160,7 @@ static void SNReach (SPRITE * spr, int mode)
 
 
 
-static void SNMouse (Boolean on)
+static void SNMouse (bool on)
 {
   if (on)    Mouse.On();
   else       Mouse.Off();
@@ -1177,7 +1177,7 @@ void SNAIL::RunCom (void)
   extern void SwitchCave(int);
   if (! Busy)
     {
-      Busy = TRUE;
+      Busy = true;
       byte tmphea = Head;
       while (Tail != tmphea)
 	{
@@ -1191,7 +1191,7 @@ void SNAIL::RunCom (void)
 		  if (TextDelay)
 		    {
 		      KillText();
-		      TextDelay = FALSE;
+		      TextDelay = false;
 		    }
 		}
 	      if (Talk && snc->Com != SNPAUSE) break;
@@ -1203,7 +1203,7 @@ void SNAIL::RunCom (void)
 	    {
 	      case SNLABEL    : break;
 	      case SNPAUSE    : HEART::SetXTimer(&Pause, snc->Val);
-				if (Talk) TextDelay = TRUE; break;
+				if (Talk) TextDelay = true; break;
 	      case SNWAIT     : if (sprel)
 				  {
 				    if (sprel->SeqTest(snc->Val) &&
@@ -1277,8 +1277,8 @@ void SNAIL::RunCom (void)
 	      case SNBACKPT   : SNBackPt(sprel, snc->Val); break;
 	      case SNFLASH    : SNFlash(snc->Val != 0); break;
 	      case SNLIGHT    : SNLight(snc->Val != 0); break;
-	      case SNSETHB    : SNBarrier(snc->Ref, snc->Val, TRUE); break;
-	      case SNSETVB    : SNBarrier(snc->Ref, snc->Val, FALSE); break;
+	      case SNSETHB    : SNBarrier(snc->Ref, snc->Val, true); break;
+	      case SNSETVB    : SNBarrier(snc->Ref, snc->Val, false); break;
 	      case SNWALK     : SNWalk(sprel, snc->Ref, snc->Val); break;
 	      case SNREACH    : SNReach(sprel, snc->Val); break;
 	      case SNSOUND    : SNSound(sprel, snc->Val, count); count = 1; break;
@@ -1293,7 +1293,7 @@ void SNAIL::RunCom (void)
 	  if (! Turbo) break;
 	}
       xit:
-      Busy = FALSE;
+      Busy = false;
     }
 }
 
@@ -1301,7 +1301,7 @@ void SNAIL::RunCom (void)
 
 
 
-Boolean SNAIL::Idle (void)
+bool SNAIL::Idle (void)
 {
   return (Head == Tail);
 }
