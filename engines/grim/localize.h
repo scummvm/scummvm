@@ -40,6 +40,7 @@ public:
 	};
 
 private:
+	char *_data;
 
 	Common::Array<LocaleEntry> _entries;
 };
