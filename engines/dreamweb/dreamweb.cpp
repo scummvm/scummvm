@@ -138,6 +138,7 @@ void DreamWebEngine::processEvents() {
 				}
 				break;
 			default:
+				keyPressed(event.kbd.ascii);
 				break;
 			}
 			break;
@@ -183,6 +184,19 @@ void DreamWebEngine::closeFile() {
 	_file.close();
 }
 
+void DreamWebEngine::keyPressed(uint16 ascii) {
+	debug(1, "key pressed = %04x", ascii);
+	uint8* keybuf = _context.data.ptr(5715, 16); //fixme: some hardcoded offsets are not added as consts
+	uint16 in = (_context.data.word(dreamgen::kBufferin) + 1) % 0x0f;
+	uint16 out = _context.data.word(dreamgen::kBufferout);
+	if (in == out) {
+		warning("keyboard buffer is full");
+		return;
+	}
+	_context.data.word(dreamgen::kBufferin) = in;
+	keybuf[in] = ascii;
+}
+
 void DreamWebEngine::mouseCall() {
 	processEvents();
 	Common::Point pos = _mouse;
@@ -215,8 +229,10 @@ void DreamWebEngine::fadeDos() {
 			if (dst[c]) {
 				--dst[c];
 			}
+			dst[c] = c / 3;
 		}
-		palette->setPalette(dst, 0, 64);
+		//Common::hexdump(dst, 64 * 3);
+		//palette->setPalette(dst, 0, 64);
 		waitForVSync();
 	}
 }
@@ -225,7 +241,8 @@ void DreamWebEngine::setPalette() {
 	PaletteManager *palette = _system->getPaletteManager();
 	unsigned n = (uint16)_context.cx;
 	uint8 *colors = _context.ds.ptr(_context.si, n * 3);
-	palette->setPalette(colors, _context.al, n);
+	//Common::hexdump(colors, n * 3);
+	//palette->setPalette(colors, _context.al, n);
 	_context.si += n * 3;
 	_context.cx = 0;
 }
@@ -318,7 +335,7 @@ void quickquit2(Context &context) {
 }
 
 void keyboardread(Context &context) {
-	::error("keyboardread");
+	::error("keyboardread"); //this keyboard int handler, must never be called
 }
 
 void resetkeyboard(Context &context) {

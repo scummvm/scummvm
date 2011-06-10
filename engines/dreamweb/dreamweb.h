@@ -89,6 +89,9 @@ public:
 	void fadeDos();
 
 private:
+
+	void keyPressed(uint16 ascii);
+
 	const DreamWebGameDescription	*_gameDescription;
 	Common::RandomSource			_rnd;
 	Common::Point					_mouse;
