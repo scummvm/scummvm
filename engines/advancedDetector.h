@@ -71,6 +71,11 @@ struct ADGameDescription {
 };
 
 /**
+ * A list of pointers to ADGameDescription structs (or subclasses thereof).
+ */
+typedef Common::Array<const ADGameDescription*> ADGameDescList;
+
+/**
  * End marker for a table of ADGameDescription structs. Use this to
  * terminate a list to be passed to the AdvancedDetector API.
  */
@@ -214,7 +219,7 @@ namespace AdvancedDetector {
  */
 GameDescriptor findGameID(
 	const char *gameid,
-	const PlainGameDescriptor *list,
+	const PlainGameDescriptor *gameDescriptors,
 	const ADObsoleteGameID *obsoleteList = 0
 	);
 
@@ -230,12 +235,20 @@ public:
 	AdvancedMetaEngine(const ADParams &dp) : params(dp) {}
 	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameDescriptors);
 
+	/**
+	 * Returns list of targets supported by the engine.
+	 * Distinguishes engines with single ID
+	 */
 	virtual GameList getSupportedGames() const;
+
 	virtual GameDescriptor findGame(const char *gameid) const;
+
 	virtual GameList detectGames(const Common::FSList &fslist) const;
+
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
-	// To be provided by subclasses
+protected:
+	// To be implemented by subclasses
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
 
 	/**
@@ -248,7 +261,38 @@ public:
 	}
 
 protected:
-	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc);
+	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+
+	/**
+	 * Detect games in specified directory.
+	 * Parameters language and platform are used to pass on values
+	 * specified by the user. I.e. this is used to restrict search scope.
+	 *
+	 * @param fslist	FSList to scan or NULL for scanning all specified
+	 *					default directories.
+	 * @param language	restrict results to specified language only
+	 * @param platform	restrict results to specified platform only
+	 * @return	list of ADGameDescription (or subclass) pointers corresponding to matched games
+	 */
+	ADGameDescList detectGame(const Common::FSList &fslist, Common::Language language, Common::Platform platform, const Common::String &extra) const;
+
+	/**
+	 * Check for each ADFileBasedFallback record whether all files listed
+	 * in it are present. If multiple pass this test, we pick the one with
+	 * the maximal number of matching files. In case of a tie, the entry
+	 * coming first in the list is chosen.
+	 */
+	ADGameDescList detectGameFilebased(const FileMap &allFiles) const;
+
+	void upgradeTargetIfNecessary() const;
+
+	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;
+
+	/**
+	 * Compose a hashmap of all files in fslist.
+	 * Includes nifty stuff like removing trailing dots and ignoring case.
+	 */
+	void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, int depth) const;
 };
 
 #endif
