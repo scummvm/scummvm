@@ -49,9 +49,6 @@ void switchryanon(Context &context);
 void drawflags(Context &context);
 void getdimension(Context &context);
 void getflagunderp(Context &context);
-void multidump(Context &context);
-void multiput(Context &context);
-void multiget(Context &context);
 void dumpblink(Context &context);
 void showblink(Context &context);
 void showframe(Context &context);
@@ -429,7 +426,6 @@ void rollendcredits2(Context &context);
 void clearstartpal(Context &context);
 void fadecalculation(Context &context);
 void frameoutfx(Context &context);
-void frameoutnm(Context &context);
 void frameoutbh(Context &context);
 void frameoutv(Context &context);
 void putunderzoom(Context &context);
@@ -4357,142 +4353,6 @@ deloneloop:
 	return;
 }
 
-void multiget(Context & context) {
-	context.ax = context.bx;
-	context.bx = (320);
-	context._mul(context.bx);
-	context._add(context.di, context.ax);
-	context.es = context.data.word(kWorkspace);
-	context.es = context.ds;
-	context.ds = context.es;
-	context._xchg(context.di, context.si);
-	context.al = context.cl;
-	context.ah = 0;
-	context.dx = (320);
-	context._sub(context.dx, context.ax);
-	context.al = context.cl;
-	context._and(context.al, 1);
-	if (!context.flags.z()) goto oddwidth2;
-	context.bl = context.cl;
-	context.bh = 0;
-	context.ax = 1819;
-	context._shr(context.bx, 1);
-	context._sub(context.ax, context.bx);
-	context.cl = context.ch;
-	context.ch = 0;
-multiloop3:
-	__dispatch_call(context, context.ax);
-	context._add(context.si, context.dx);
-	if (--context.cx) goto multiloop3;
-	return;
-oddwidth2:
-	context.bl = context.cl;
-	context.bh = 0;
-	context._shr(context.bx, 1);
-	context.ax = 1819;
-	context._sub(context.ax, context.bx);
-	context.cl = context.ch;
-	context.ch = 0;
-multiloop4:
-	__dispatch_call(context, context.ax);
-	context._movsb();
- 	context._add(context.si, context.dx);
-	if (--context.cx) goto multiloop4;
-	return;
-}
-
-void multiput(Context & context) {
-	context.ax = context.bx;
-	context.bx = (320);
-	context._mul(context.bx);
-	context._add(context.di, context.ax);
-	context.es = context.data.word(kWorkspace);
-	context.al = context.cl;
-	context.ah = 0;
-	context.dx = (320);
-	context._sub(context.dx, context.ax);
-	context.al = context.cl;
-	context._and(context.al, 1);
-	if (!context.flags.z()) goto oddwidth3;
-	context.bl = context.cl;
-	context.bh = 0;
-	context._shr(context.bx, 1);
-	context.ax = 1819;
-	context._sub(context.ax, context.bx);
-	context.cl = context.ch;
-	context.ch = 0;
-multiloop5:
-	__dispatch_call(context, context.ax);
-	context._add(context.di, context.dx);
-	if (--context.cx) goto multiloop5;
-	return;
-oddwidth3:
-	context.bl = context.cl;
-	context.bh = 0;
-	context._shr(context.bx, 1);
-	context.ax = 1819;
-	context._sub(context.ax, context.bx);
-	context.cl = context.ch;
-	context.ch = 0;
-multiloop6:
-	__dispatch_call(context, context.ax);
-	context._movsb();
- 	context._add(context.di, context.dx);
-	if (--context.cx) goto multiloop6;
-	return;
-}
-
-void multidump(Context & context) {
-	context.dx = 0x0a000;
-	context.es = context.dx;
-	context.ds = context.data.word(kWorkspace);
-	context.ax = context.bx;
-	context.bx = (320);
-	context._mul(context.bx);
-	context._add(context.di, context.ax);
-	context.dx = (320);
-	context.si = context.di;
-	context.al = context.cl;
-	context._and(context.al, 1);
-	if (!context.flags.z()) goto oddwidth;
-	context.bl = context.cl;
-	context.bh = 0;
-	context._shr(context.bx, 1);
-	context.ax = 1819;
-	context._sub(context.ax, context.bx);
-	context.bl = context.cl;
-	context.bh = 0;
-	context._neg(context.bx);
-	context._add(context.bx, context.dx);
-	context.cl = context.ch;
-	context.ch = 0;
-multiloop1:
-	__dispatch_call(context, context.ax);
-	context._add(context.di, context.bx);
-	context._add(context.si, context.bx);
-	if (--context.cx) goto multiloop1;
-	return;
-oddwidth:
-	context.bl = context.cl;
-	context.bh = 0;
-	context._shr(context.bx, 1);
-	context.ax = 1819;
-	context._sub(context.ax, context.bx);
-	context.bl = context.cl;
-	context.bh = 0;
-	context._neg(context.bx);
-	context._add(context.bx, (320));
-	context.cl = context.ch;
-	context.ch = 0;
-multiloop2:
-	__dispatch_call(context, context.ax);
-	context._movsb();
- 	context._add(context.di, context.bx);
-	context._add(context.si, context.bx);
-	if (--context.cx) goto multiloop2;
-	return;
-}
-
 void width160(Context & context) {
 	context._movsw();
  	context._movsw();
@@ -4975,48 +4835,6 @@ backtosolid:
 	context._add(context.di, context.dx);
 	context._sub(context.ch, 1);
 	if (!context.flags.z()) goto frameloop1;
-	return;
-}
-
-void frameoutnm(Context & context) {
-	context.push(context.dx);
-	context.ax = context.bx;
-	context.bx = context.dx;
-	context._mul(context.bx);
-	context._add(context.di, context.ax);
-	context.dx = context.pop();
-	context.push(context.cx);
-	context.ch = 0;
-	context._sub(context.dx, context.cx);
-	context.cx = context.pop();
-	context.al = context.cl;
-	context._and(context.al, 1);
-	if (!context.flags.z()) goto oddwidthframe;
-	context.bl = context.cl;
-	context.bh = 0;
-	context.ax = 1819;
-	context._shr(context.bx, 1);
-	context._sub(context.ax, context.bx);
-	context.cl = context.ch;
-	context.ch = 0;
-nmloop1:
-	__dispatch_call(context, context.ax);
-	context._add(context.di, context.dx);
-	if (--context.cx) goto nmloop1;
-	return;
-oddwidthframe:
-	context.bl = context.cl;
-	context.bh = 0;
-	context._shr(context.bx, 1);
-	context.ax = 1819;
-	context._sub(context.ax, context.bx);
-	context.cl = context.ch;
-	context.ch = 0;
-nmloop2:
-	__dispatch_call(context, context.ax);
-	context._movsb();
- 	context._add(context.di, context.dx);
-	if (--context.cx) goto nmloop2;
 	return;
 }
 
@@ -21517,14 +21335,10 @@ void __dispatch_call(Context &context, unsigned addr) {
 		case 0xc20c: doshake(context); break;
 		case 0xc210: zoom(context); break;
 		case 0xc214: delthisone(context); break;
-		case 0xc218: multiget(context); break;
-		case 0xc21c: multiput(context); break;
-		case 0xc220: multidump(context); break;
 		case 0xc224: width160(context); break;
 		case 0xc228: doblocks(context); break;
 		case 0xc22c: showframe(context); break;
 		case 0xc230: frameoutv(context); break;
-		case 0xc234: frameoutnm(context); break;
 		case 0xc238: frameoutbh(context); break;
 		case 0xc23c: frameoutfx(context); break;
 		case 0xc240: transferinv(context); break;

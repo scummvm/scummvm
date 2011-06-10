@@ -227,6 +227,22 @@ static inline DreamWeb::DreamWebEngine *engine() {
 	return DreamWeb::DreamWebEngine::instance();
 }
 
+void multiget(Context &context) {
+	::error("multiget");
+}
+
+void multiput(Context &context) {
+	::error("multiput");
+}
+
+void multidump(Context &context) {
+	::error("multidump");
+}
+
+void frameoutnm(Context &context) {
+	::error("frameoutnm");
+}
+
 void seecommandtail(Context &context) {
 	context.data.word(kSoundbaseadd) = 0x220;
 	context.data.byte(kSoundint) = 5;

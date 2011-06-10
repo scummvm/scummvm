@@ -7,5 +7,5 @@ p = parser()
 p.strip_path = 3
 context = p.parse('dreamweb/dreamweb.asm')
 p.link()
-generator = cpp(context, "dreamgen", blacklist = ['randomnumber', 'quickquit', 'quickquit2', 'seecommandtail'])
+generator = cpp(context, "dreamgen", blacklist = ['randomnumber', 'quickquit', 'quickquit2', 'seecommandtail', 'multiget', 'multiput', 'multidump', 'frameoutnm'])
 generator.generate('dreamweb') #start routine

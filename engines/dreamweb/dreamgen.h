@@ -12,6 +12,10 @@ namespace dreamgen {
 	void quickquit(Context &context);
 	void quickquit2(Context &context);
 	void seecommandtail(Context &context);
+	void multiget(Context &context);
+	void multiput(Context &context);
+	void multidump(Context &context);
+	void frameoutnm(Context &context);
 	void keyboardread(Context &context);
 	void resetkeyboard(Context &context);
 	void setkeyboardint(Context &context);
