@@ -652,7 +652,7 @@ sameline:
 	readabyte(context);
 	context.cx = context.pop();
 	context._add(context.bx, context.cx);
-	if (--context.cx) context._stosb();
+	while (--context.cx) context._stosb();
 	context._cmp(context.bx, 4 * 80);
 	if (!context.flags.z()) goto sameline;
 	goto endline;
