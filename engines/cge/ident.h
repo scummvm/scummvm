@@ -28,6 +28,7 @@
 #ifndef	__IDENT__
 #define	__IDENT__
 
+namespace CGE {
 
 struct IDENT
   {
@@ -37,5 +38,6 @@ struct IDENT
     unsigned char	cork;
   };
 
+} // End of namespace CGE
 
 #endif

@@ -41,6 +41,8 @@
 #include	<bios.h>
 #include	<io.h>
 
+namespace CGE {
+
 #ifdef DEBUG
 #define		REPORT
 #endif
@@ -1790,13 +1792,4 @@ void BITMAP::Hide (int x, int y)
 //	asm	pop	bx
 }
 
-
-
-
-
-
-
-//--------------------------------------------------------------------------
-
-
-
+} // End of namespace CGE

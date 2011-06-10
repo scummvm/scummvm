@@ -31,15 +31,11 @@
 #include	"cge/general.h"
 #include	"cge/talk.h"
 
+namespace CGE {
 
 #define		GTMAX		24
 #define		GTBLINK		 6
 #define		GTTIME		 6
-
-
-
-
-
 
 
 class GET_TEXT : public TALK
@@ -57,6 +53,6 @@ public:
   void Tick (void);
 };
 
-
+} // End of namespace CGE
 
 #endif

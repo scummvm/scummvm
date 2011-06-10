@@ -31,6 +31,7 @@
 #include	"cge/general.h"
 #include	<io.h>
 
+namespace CGE {
 
 #define		LINE_MAX	512
 
@@ -79,5 +80,6 @@ public:
   void Append (CFILE& f);
 };
 
+} // End of namespace CGE
 
 #endif

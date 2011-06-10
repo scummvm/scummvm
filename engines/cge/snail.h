@@ -30,6 +30,8 @@
 
 #include	"cge/jbw.h"
 
+namespace CGE {
+
 #define		POCKET_X	174
 #define		POCKET_Y	176
 #define		POCKET_DX	18
@@ -97,16 +99,8 @@ public:
 };
 
 
-
-
-
 void	SelectPocket	(int n);
 void	PocFul		(void);
-
-
-
-
-
 
 
 extern	SCB		Scb;
@@ -121,5 +115,7 @@ extern	int		MaxCave;
 extern	int		PocPtr;
 extern	BAR		Barriers[];
 extern	struct HXY { int X; int Y; } HeroXY[];
+
+} // End of namespace CGE
 
 #endif

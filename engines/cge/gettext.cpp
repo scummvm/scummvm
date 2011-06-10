@@ -30,9 +30,7 @@
 #include	"cge/mouse.h"
 #include	<string.h>
 
-
-
-
+namespace CGE {
 
 GET_TEXT *	GET_TEXT::Ptr	= NULL;
 
@@ -135,3 +133,5 @@ void GET_TEXT::Touch (uint16 mask, int x, int y)
     }
   else SPRITE::Touch(mask, x, y);
 }
+
+} // End of namespace CGE

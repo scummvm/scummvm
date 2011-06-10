@@ -37,7 +37,7 @@
 #include	<stdio.h>
 #include	<dos.h>
 
-
+namespace CGE {
 
 	TEXT		Text = ProgName();
 	TALK *		Talk = NULL;
@@ -311,8 +311,4 @@ void KillText (void)
     }
 }
 
-
-
-
-
-//-------------------------------------------------------------------------
+} // End of namespace CGE

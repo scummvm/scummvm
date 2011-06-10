@@ -29,6 +29,7 @@
 #include	"cge/mouse.h"
 #include	<dos.h>
 
+namespace CGE {
 
 SPRITE * KEYBOARD::Client = NULL;
 uint8  KEYBOARD::Key[0x60] = { 0 };
@@ -139,3 +140,5 @@ void interrupt KEYBOARD::NewKeyboard (...)
   asm	mov	al,20h		// send End-Of-Interrupt
   asm	out	20h,al		// to the 8259 IC
 }
+
+} // End of namespace CGE

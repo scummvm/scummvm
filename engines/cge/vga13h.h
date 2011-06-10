@@ -34,6 +34,7 @@
 #include	"cge/bitmap.h"
 #include	"cge/snail.h"
 
+namespace CGE {
 
 #define		TMR_RATE1	16
 #define		TMR_RATE2	4
@@ -332,6 +333,6 @@ uint8 Closest (CBLK * pal, CBLK x)
 
 extern		bool		SpeedTest;
 
+} // End if namespace CGE
 
 #endif
-

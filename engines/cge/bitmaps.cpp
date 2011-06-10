@@ -222,6 +222,8 @@ static	uint8	MEDesign[][9] = { { R R R R R R R R R }, // 0
 #undef	G
 */
 
+namespace CGE {
+
 #ifdef DEBUG
 	BMP_PTR		MB[] = { new BITMAP("BRICK"), NULL };
 	BMP_PTR		HL[] = { new BITMAP("HLINE"), NULL };
@@ -239,3 +241,5 @@ static	uint8	MEDesign[][9] = { { R R R R R R R R R }, // 0
 				 new BITMAP("LITE2"),
 				 new BITMAP("LITE3"),
 				 NULL };
+
+} // End of namespace CGE
