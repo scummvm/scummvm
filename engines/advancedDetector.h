@@ -246,6 +246,9 @@ public:
 	virtual const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const {
 		return 0;
 	}
+
+protected:
+	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc);
 };
 
 #endif

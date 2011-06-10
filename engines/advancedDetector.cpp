@@ -189,7 +189,7 @@ static Common::String generatePreferredTarget(const Common::String &id, const AD
 	return res;
 }
 
-static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc, const ADParams &params) {
+static void AdvancedMetaEngine::updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) {
 	if (params.singleid != NULL) {
 		desc["preferredtarget"] = desc["gameid"];
 		desc["gameid"] = params.singleid;
