@@ -73,7 +73,7 @@ void SoundEngine::update() {
 }
 
 void SoundEngine::setVolume(float volume, SOUND_TYPES type) {
-	int val = 255 * volume;
+	int val = (int)(255 * volume);
 
 	switch (type) {
 	case SoundEngine::MUSIC:
