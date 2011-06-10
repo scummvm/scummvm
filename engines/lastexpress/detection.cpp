@@ -21,6 +21,7 @@
  */
 
 #include "lastexpress/lastexpress.h"
+#include "engines/advancedDetector.h"
 
 namespace LastExpress {
 
@@ -200,6 +201,10 @@ bool LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const
 		*engine = new LastExpressEngine(syst, (const ADGameDescription *)gd);
 	}
 	return gd != 0;
+}
+
+bool LastExpressEngine::isDemo() const {
+	return (bool)(_gameDescription->flags & ADGF_DEMO);
 }
 
 } // End of namespace LastExpress
