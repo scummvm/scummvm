@@ -35,10 +35,13 @@
   #include	"cge/drop.h"
 #else
   #include	<stdio.h>
-  #define	DROP(m,n)	{ printf("%s [%s]\n", (m), (n)); _exit(1); }
 #endif
 
+namespace CGE {
 
+#ifndef	DROP_H
+  #define	DROP(m,n)	{ printf("%s [%s]\n", (m), (n)); _exit(1); }
+#endif
 
 
 #ifdef VOL_UPD
@@ -104,3 +107,5 @@ void VFILE::ReadBuff (void)
   Lim = Dat.File.Read(Buff, (uint16) n);
   Ptr = 0;
 }
+
+} // End of namespace CGE

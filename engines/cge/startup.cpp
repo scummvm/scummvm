@@ -41,6 +41,8 @@
   #include	<stdlib.h>
 #endif
 
+namespace CGE {
+
 extern	char	Copr[];
 
 #define	id	(*(IDENT*)Copr)
@@ -189,7 +191,4 @@ const char *UsrPath (const char *nam)
   return buf;
 }
 
-
-
-
-
+} // End of namespace CGE

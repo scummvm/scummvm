@@ -31,6 +31,7 @@
 #include	"cge/jbw.h"
 #include	"cge/vga13h.h"
 
+namespace CGE {
 
 #define		KEYBD_INT	9
 #define		LSHIFT		42
@@ -54,5 +55,6 @@ public:
   ~KEYBOARD (void);
 };
 
+} // End of namespace CGE
 
 #endif

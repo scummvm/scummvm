@@ -30,6 +30,8 @@
 
 #include	"cge/vga13h.h"
 
+namespace CGE {
+
 #define		MIX_MAX		16	// count of Leds
 #define		MIX_Z		64	// mixer Z position
 #define		MIX_DELAY	12 	// 6/s
@@ -53,6 +55,6 @@ public:
   void Tick (void);
 };
 
-
+} // End of namespace CGE
 
 #endif

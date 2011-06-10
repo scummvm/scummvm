@@ -31,7 +31,7 @@
 #include	"cge/vga13h.h"
 #include	<dir.h>
 
-
+namespace CGE {
 
 #define		TEXT_FG		DARK	// foreground color
 #define		TEXT_BG		GRAY	// background color
@@ -103,6 +103,6 @@ public:
 };
 
 
-
+} // End of namespace CGE
 
 #endif

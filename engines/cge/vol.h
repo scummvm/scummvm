@@ -33,6 +33,8 @@
 #include	"cge/btfile.h"
 #include	"cge/cfile.h"
 
+namespace CGE {
+
 #define		CAT_NAME	"VOL.CAT"
 #define		DAT_NAME	"VOL.DAT"
 
@@ -86,6 +88,6 @@ public:
 };
 
 
-
+} // End of namespace CGE
 
 #endif

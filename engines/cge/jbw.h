@@ -28,6 +28,8 @@
 #ifndef __JBW__
 #define __JBW__
 
+namespace CGE {
+
 #define		BEL		 7
 #define		BS		 8
 #define		HT		 9
@@ -162,5 +164,6 @@ struct	KeyStatStruct
 extern	uint16	_stklen;
 extern	uint16	_heaplen;
 
+} // End of namespace CGE
 
 #endif

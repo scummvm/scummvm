@@ -31,6 +31,7 @@
 #include	<dos.h>
 
 
+namespace CGE {
 
 
 
@@ -116,3 +117,4 @@ void FLY::Tick (void)
 
 //--------------------------------------------------------------------------
 
+} // End of namespace CGE

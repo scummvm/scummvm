@@ -30,6 +30,8 @@
 
 #include	"cge/general.h"
 
+namespace CGE {
+
 #define		EOI		0x0000
 #define		SKP		0x4000
 #define		REP		0x8000
@@ -82,6 +84,6 @@ public:
 typedef	BITMAP *	BMP_PTR;
 
 
-
+} // End of namespace CGE
 
 #endif

@@ -28,8 +28,12 @@
 #ifndef		__GENERAL__
 #define		__GENERAL__
 
+#include "common/system.h"
+
 #include	"cge\jbw.h"
 #include	<io.h>
+
+namespace CGE {
 
 #define		SEED		0xA5
 
@@ -264,5 +268,6 @@ EC void		_fqsort		(void *base, uint16 nelem, uint16 width,
 				int (*fcmp)(const void*, const void*));
 
 
+} // End of namespace CGE
 
 #endif

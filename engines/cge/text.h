@@ -32,8 +32,7 @@
 #include	"cge/jbw.h"
 #include	<dir.h>
 
-
-
+namespace CGE {
 
 #ifndef		SYSTXT_MAX
   #define	SYSTXT_MAX	1000
@@ -82,6 +81,6 @@ void		SayTime		(SPRITE * spr);
 void		Inf		(const char * txt);
 void		KillText	(void);
 
-
+} // End of namespace CGE
 
 #endif

@@ -33,8 +33,7 @@
 #include	<string.h>
 #include	<alloc.h>
 
-//--------------------------------------------------------------------------
-
+namespace CGE {
 
 extern	MOUSE		Mouse;
 
@@ -154,3 +153,5 @@ void MIXER::Update (void)
   Led[1]->Step(SNDDrvInfo.VOL4.DL);
   SNPOST_(SNEXEC, -1, 0, SNDSetVolume);
 }
+
+} // End of namespace CGE

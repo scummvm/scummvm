@@ -38,8 +38,9 @@
 #include	<mem.h>
 #include	<stdio.h>
 #include	<stdlib.h>
-
 #include	"cge/keybd.h"
+
+namespace CGE {
 
 	int		MaxCave		=  0;
 
@@ -1305,3 +1306,5 @@ bool SNAIL::Idle (void)
 {
   return (Head == Tail);
 }
+
+} // End of namespace CGE

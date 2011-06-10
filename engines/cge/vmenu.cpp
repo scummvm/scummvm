@@ -30,8 +30,9 @@
 #include	<string.h>
 #include	<alloc.h>
 
-//--------------------------------------------------------------------------
+namespace CGE {
 
+//--------------------------------------------------------------------------
 
 #define		RELIEF		1
 #if	RELIEF
@@ -172,5 +173,4 @@ void VMENU::Touch (uint16 mask, int x, int y)
 #undef h
 }
 
-
-
+} // End of namespace CGE

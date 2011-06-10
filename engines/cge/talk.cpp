@@ -34,6 +34,8 @@
 #include	<alloc.h>
 #include	<mem.h>
 
+namespace CGE {
+
 #define		WID_SIZ		256
 #define		POS_SIZ		256
 #define		MAP_SIZ		(256*8)
@@ -401,3 +403,5 @@ void INFO_LINE::Update (const char * tx)
       OldTxt = tx;
     }
 }
+
+} // End of namespace CGE
