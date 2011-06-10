@@ -183,7 +183,7 @@ int32 opcodeType1()	{
 			return 0;
 		}
 		case 2: {
-			assert (ptr);
+			ASSUME_NON_NULL(ptr);
 			*(ptr + var_A + offset) = var;
 			return 0;
 		}

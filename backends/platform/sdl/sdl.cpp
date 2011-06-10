@@ -368,7 +368,7 @@ void OSystem_SDL::setupIcon() {
 
 	if (sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes) != 4) {
 		warning("Wrong format of scummvm_icon[0] (%s)", scummvm_icon[0]);
-		
+
 		return;
 	}
 	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {
@@ -384,6 +384,7 @@ void OSystem_SDL::setupIcon() {
 	for (i = 0; i < ncols; i++) {
 		unsigned char code;
 		char color[32];
+		memset(color, 0, sizeof(color));
 		unsigned int col;
 		if (sscanf(scummvm_icon[1 + i], "%c c %s", &code, color) != 2) {
 			warning("Wrong format of scummvm_icon[%d] (%s)", 1 + i, scummvm_icon[1 + i]);
@@ -443,12 +444,12 @@ void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
 }
 
 Audio::Mixer *OSystem_SDL::getMixer() {
-	assert(_mixerManager);
+	ASSUME_NON_NULL(_mixerManager);
 	return _mixerManager->getMixer();
 }
 
 SdlMixerManager *OSystem_SDL::getMixerManager() {
-	assert(_mixerManager);
+	ASSUME_NON_NULL(_mixerManager);
 	return _mixerManager;
 }
 

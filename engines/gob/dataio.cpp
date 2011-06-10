@@ -259,7 +259,7 @@ int32 DataIO::fileSize(const Common::String &name) {
 
 		// Sanity checks
 		assert(file->size >= 4);
-		assert(file->archive);
+		ASSUME_NON_NULL(file->archive);
 		assert(file->archive->file.isOpen());
 
 		// Read the full, unpacked size

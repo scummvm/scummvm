@@ -1130,7 +1130,8 @@ static void FreeSceneHopper() {
 static void FirstScene(int first) {
 	int	i;
 
-	assert(numScenes && pHopper);
+	ASSUME_NON_NULL(numScenes);
+	ASSUME_NON_NULL(pHopper);
 
 	if (bRemember) {
 		assert(first == 0);
@@ -4164,7 +4165,7 @@ extern void InventoryProcess(CORO_PARAM, const void *) {
 		}
 
 		if (g_buttonEffect.bButAnim) {
-			assert(g_buttonEffect.box);
+			ASSUME_NON_NULL(g_buttonEffect.box);
 			if (g_buttonEffect.press) {
 				if (g_buttonEffect.box->boxType == AAGBUT || g_buttonEffect.box->boxType == ARSGBUT)
 					CORO_INVOKE_1(ButtonPress, g_buttonEffect.box);
@@ -5542,7 +5543,7 @@ extern void RegisterIcons(void *cptr, int num) {
 		MEM_NODE *node = MemoryAllocFixed(numObjects * sizeof(INV_OBJECT));
 		assert(node);
 		invObjects = (INV_OBJECT *)MemoryDeref(node);
-		assert(invObjects);
+		ASSUME_NON_NULL(invObjects);
 		byte *srcP = (byte *)cptr;
 		INV_OBJECT *destP = (INV_OBJECT *)invObjects;
 

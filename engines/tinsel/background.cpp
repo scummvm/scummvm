@@ -83,7 +83,7 @@ void PlayfieldSetPos(int which, int newXpos, int newYpos) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
-	assert(pCurBgnd != NULL);
+	ASSUME_NON_NULL(pCurBgnd);
 
 	// make sure the playfield number is in range
 	assert(which >= 0 && which < pCurBgnd->numPlayfields);
@@ -110,7 +110,7 @@ void PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
-	assert(pCurBgnd != NULL);
+	ASSUME_NON_NULL(pCurBgnd);
 
 	// make sure the playfield number is in range
 	assert(which >= 0 && which < pCurBgnd->numPlayfields);
@@ -132,7 +132,7 @@ int PlayfieldGetCenterX(int which) {
 	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background
-	assert(pCurBgnd != NULL);
+	ASSUME_NON_NULL(pCurBgnd);
 
 	// make sure the playfield number is in range
 	assert(which >= 0 && which < pCurBgnd->numPlayfields);
@@ -153,7 +153,7 @@ OBJECT **GetPlayfieldList(int which) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
-	assert(pCurBgnd != NULL);
+	ASSUME_NON_NULL(pCurBgnd);
 
 	// make sure the playfield number is in range
 	assert(which >= 0 && which < pCurBgnd->numPlayfields);

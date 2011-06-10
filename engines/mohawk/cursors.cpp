@@ -87,7 +87,7 @@ void CursorManager::setCursor(uint16 id) {
 }
 
 void CursorManager::setMacCursor(Common::SeekableReadStream *stream) {
-	assert(stream);
+	ASSUME_NON_NULL(stream);
 
 	Graphics::MacCursor *macCursor = new Graphics::MacCursor();
 

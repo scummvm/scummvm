@@ -153,9 +153,9 @@ void Player_V3A::stopSound(int nr) {
 }
 
 void Player_V3A::startSound(int nr) {
-	assert(_vm);
+	ASSUME_NON_NULL(_vm);
 	byte *data = _vm->getResourceAddress(rtSound, nr);
-	assert(data);
+	ASSUME_NON_NULL(data);
 
 	if ((_vm->_game.id != GID_INDY3) && (_vm->_game.id != GID_LOOM))
 		error("player_v3a - unknown game");

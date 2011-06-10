@@ -454,7 +454,7 @@ void KyraEngine_LoK::seq_poisonDeathNow(int now) {
 		seq_poisonDeathNowAnim();
 		_deathHandler = 3;
 	} else {
-		assert(_thePoison);
+		ASSUME_NON_NULL(_thePoison);
 		characterSays(7002, _thePoison[2], 0, -2);
 		characterSays(7004, _thePoison[3], 0, -2);
 	}
@@ -825,7 +825,7 @@ void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 	static const uint8 flaskTable2[] = { 0x47, 0x49, 0x4B, 0x4D };
 
 	if (item >= 60 && item <= 77) {
-		assert(_flaskFull);
+		ASSUME_NON_NULL(_flaskFull);
 		characterSays(8006, _flaskFull[0], 0, -2);
 	} else if (item == 78) {
 		assert(type >= 0 && type < ARRAYSIZE(flaskTable1));
@@ -1243,13 +1243,13 @@ void KyraEngine_LoK::seq_playCredits() {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);
 		buffer = new uint8[sizeTmp];
-		assert(buffer);
+		ASSUME_NON_NULL(buffer);
 		memcpy(buffer, bufferTmp, sizeTmp);
 		size = sizeTmp;
 		_staticres->unloadId(k1CreditsStrings);
 	} else {
 		buffer = _res->fileData("CREDITS.TXT", &size);
-		assert(buffer);
+		ASSUME_NON_NULL(buffer);
 	}
 
 	uint8 *nextString = buffer;

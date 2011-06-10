@@ -1995,7 +1995,7 @@ void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim
 	assert(dim1start == dim1end);
 	checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
-	assert(ah);
+	ASSUME_NON_NULL(ah);
 
 	const int num = dim2end - dim2start + 1;	// number of rows to sort
 	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1;	// length of a row = number of columns in it

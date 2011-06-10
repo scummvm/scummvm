@@ -1245,7 +1245,7 @@ int KyraEngine_LoK::o1_drinkPotionAnimation(EMCState *script) {
 int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_makeAmuletAppear(%p) ()", (const void *)script);
 	Movie *amulet = createWSAMovie();
-	assert(amulet);
+	ASSUME_NON_NULL(amulet);
 	amulet->open("AMULET.WSA", 1, 0);
 
 	if (amulet->opened()) {

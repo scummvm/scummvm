@@ -383,7 +383,7 @@ void SaveLoad_v3::ScreenshotHandler::File::buildScreenshotIndex(byte *buffer) co
 SaveLoad_v3::ScreenshotHandler::ScreenshotHandler(GobEngine *vm,
 		GameHandler *gameHandler, ScreenshotType sShotType) : TempSpriteHandler(vm) {
 
-	assert(gameHandler);
+	ASSUME_NON_NULL(gameHandler);
 
 	_gameHandler = gameHandler;
 	_sShotType   = sShotType;

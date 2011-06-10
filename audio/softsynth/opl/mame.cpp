@@ -260,7 +260,7 @@ static int feedback2;		/* connect for SLOT 2 */
 /* --------------------- rebuild tables ------------------- */
 
 #define SC_KSL(mydb) ((uint) (mydb / (EG_STEP / 2)))
-#define SC_SL(db) (int)(db * ((3 / EG_STEP) * (1 << ENV_BITS))) + EG_DST
+#define SC_SL(db) (int)(db * ((3 / EG_STEP) * (((unsigned long long)1) << ENV_BITS))) + EG_DST
 
 void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM) {
 	int i;
@@ -646,8 +646,8 @@ static void init_timetables(FM_OPL *OPL, int ARRATE, int DRRATE) {
 		rate = OPL->freqbase;						/* frequency rate */
 		if (i < 60)
 			rate *= 1.0 + (i & 3) * 0.25;		/* b0-1 : x1 , x1.25 , x1.5 , x1.75 */
-		rate *= 1 << ((i >> 2) - 1);						/* b2-5 : shift bit */
-		rate *= (double)(EG_ENT << ENV_BITS);
+		rate *= ((unsigned long long)1) << ((i >> 2) - 1);						/* b2-5 : shift bit */
+		rate *= (double)(((unsigned long long)EG_ENT) << ENV_BITS);
 		OPL->AR_TABLE[i] = (int)(rate / ARRATE);
 		OPL->DR_TABLE[i] = (int)(rate / DRRATE);
 	}
@@ -725,6 +725,8 @@ static int OPLOpenTable(void) {
 
 
 	ENV_CURVE = (int *)malloc(sizeof(int) * (2*EG_ENT+1));
+	if (!ENV_CURVE)
+		error("[OPLOpenTable] Cannot allocate memory");
 
 	/* envelope counter -> envelope output table */
 	for (i=0; i < EG_ENT; i++) {

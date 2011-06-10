@@ -276,7 +276,7 @@ void SaveLoad_Inca2::ScreenshotHandler::File::buildScreenshotIndex(byte *buffer)
 SaveLoad_Inca2::ScreenshotHandler::ScreenshotHandler(GobEngine *vm,
 		GameHandler *gameHandler) : TempSpriteHandler(vm) {
 
-	assert(gameHandler);
+	ASSUME_NON_NULL(gameHandler);
 
 	_gameHandler = gameHandler;
 

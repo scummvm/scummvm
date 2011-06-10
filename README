@@ -411,7 +411,7 @@ in the previous paragraph.
 3.3) Maniac Mansion NES notes:
 ---- -------------------------
 Supported versions are English GB (E), French (F), German (G), Italian (I),
-Swedish (SW) and English US (U). ScummVM requires just the PRG section 
+Swedish (SW) and English US (U). ScummVM requires just the PRG section
 to run and not the whole ROM.
 
 In order to get the game working, you will have to strip out the first
@@ -2029,7 +2029,7 @@ King's Quest VI Windows adds the following non-standard keywords:
                                 ones. If false, the DOS cursors are used in the
                                 Windows version, upscaled to match the rest of
                                 the upscaled graphics
-    
+
 Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 
     music_mute         bool     If true, music is muted

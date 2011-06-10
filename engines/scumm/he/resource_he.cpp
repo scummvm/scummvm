@@ -93,7 +93,8 @@ void ResExtractor::setCursor(int id) {
 		debug(7, "Found cursor %d in cache slot %lu", id, (long)(cc - _cursorCache));
 	} else {
 		cc = getCachedCursorSlot();
-		assert(cc && !cc->valid);
+		ASSUME_NON_NULL(cc);
+		assert(!cc->valid);
 
 		if (!extractResource(id, cc))
 			error("Could not extract cursor %d", id);
@@ -166,7 +167,7 @@ bool MacResExtractor::extractResource(int id, CachedCursor *cc) {
 	}
 
 	Common::SeekableReadStream *dataStream = _resMgr->getResource('crsr', id + 1000);
-	
+
 	if (!dataStream)
 		return false;
 

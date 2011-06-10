@@ -61,7 +61,7 @@ Text::Text(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPt
 		// Temporarily set fields prior to unpersisting actual values
 		_modulationColor(0xffffffff),
 		_autoWrap(false),
-		_autoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {	
+		_autoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
 
 	// Unpersist the fields
 	_initSuccess = unpersist(reader);
@@ -217,7 +217,7 @@ FontResource *Text::lockFontResource() {
 
 void Text::updateFormat() {
 	FontResource *fontPtr = lockFontResource();
-	assert(fontPtr);
+	ASSUME_NON_NULL(fontPtr);
 
 	updateMetrics(*fontPtr);
 

@@ -616,7 +616,7 @@ public:
 
 protected:
 	virtual const char *getCypher() const;
-	
+
 	void promptAction(act *action);
 };
 

@@ -1004,7 +1004,7 @@ protected:
 	// Screen rendering
 	byte *_compositeBuf;
 	byte *_herculesBuf;
-	
+
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
@@ -1148,7 +1148,7 @@ protected:
 	void restoreCharsetBg();
 	void clearCharsetMask();
 	void clearTextSurface();
-	
+
 	virtual void initCharset(int charset);
 
 	virtual void printString(int m, const byte *msg);
@@ -1348,10 +1348,10 @@ protected:
 
 	Common::Rect _cyclRects[16];
 	int _numCyclRects;
-	
+
 	Common::Rect _curStringRect;
 
-	byte _townsOverrideShadowColor;	
+	byte _townsOverrideShadowColor;
 	byte _textPalette[48];
 	byte _townsClearLayerFlag;
 	byte _townsActiveLayerFlags;

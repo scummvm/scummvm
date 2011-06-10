@@ -159,7 +159,8 @@ void Sound::playMidi(uint16 id) {
 		return;
 	}
 
-	assert(_midiDriver && _midiParser);
+	ASSUME_NON_NULL(_midiDriver);
+	ASSUME_NON_NULL(_midiParser);
 
 	_midiParser->unloadMusic();
 	if (_midiData)

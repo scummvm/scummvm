@@ -672,7 +672,7 @@ void Player_NES::stopSound(int nr) {
 
 void Player_NES::startSound(int nr) {
 	byte *data = _vm->getResourceAddress(rtSound, nr) + 2;
-	assert(data);
+	ASSUME_NON_NULL(data);
 
 	int soundType = data[1];
 	int chan = data[0];

@@ -175,7 +175,7 @@ void QueenMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	assert(engine);
+	ASSUME_NON_NULL(engine);
 	*engine = new Queen::QueenEngine(syst);
 	return Common::kNoError;
 }

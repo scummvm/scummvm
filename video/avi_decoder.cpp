@@ -79,7 +79,7 @@ AviDecoder::~AviDecoder() {
 }
 
 void AviDecoder::runHandle(uint32 tag) {
-	assert (_fileStream);
+	ASSUME_NON_NULL(_fileStream);
 	if (_fileStream->eos())
 		return;
 
@@ -413,7 +413,7 @@ Codec *AviDecoder::createCodec() {
 }
 
 Graphics::PixelFormat AviDecoder::getPixelFormat() const {
-	assert(_videoCodec);
+	ASSUME_NON_NULL(_videoCodec);
 	return _videoCodec->getPixelFormat();
 }
 

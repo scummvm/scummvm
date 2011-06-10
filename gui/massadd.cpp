@@ -201,7 +201,7 @@ void MassAddDialog::handleTickle() {
 				for (StringArray::const_iterator iter = targets.begin(); iter != targets.end(); ++iter) {
 					// If the gameid, platform and language match -> skip it
 					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
-					assert(dom);
+					ASSUME_NON_NULL(dom);
 
 					if ((*dom)["gameid"] == result["gameid"] &&
 					    (*dom)["platform"] == result["platform"] &&

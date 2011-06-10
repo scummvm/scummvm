@@ -23,6 +23,17 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
+// Use this macro instead of assert() when checking a single pointer for NULL.
+//
+// On platforms that support it, this will be used to annotate a pointer
+// as non-NULL for code analysis (Visual Studio only currently).
+//
+// Example:
+// assert(ptr != NULL && value > 0);  // INCORRECT
+//
+// ASSUME_NON_NULL(ptr);  // CORRECT
+// assert(value > 0);
+#define ASSUME_NON_NULL(ptr) assert(ptr != NULL)
 
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300
 	#define NONSTANDARD_PORT
@@ -41,6 +52,14 @@
 
 		#ifdef _MSC_VER
 
+		#ifdef ASSUME_NON_NULL
+		#undef ASSUME_NON_NULL
+		#endif
+
+		// Annotate pointer as non-NULL
+		// This silences warnings after an assert check when running an analysis build
+		#define ASSUME_NON_NULL(ptr) { assert(ptr != NULL); __analysis_assume(ptr); }
+
 		// FIXME: The placement of the workaround functions for MSVC below
 		// require us to include stdio.h and stdarg.h for MSVC here. This
 		// is not exactly nice...
@@ -48,7 +67,7 @@
 		#include <stdio.h>
 		#include <stdarg.h>
 
-		// MSVC's vsnprintf is either non-existant (2003) or bugged since it
+		// MSVC's vsnprintf is either non-existent (2003) or bugged since it
 		// does not always include a terminating NULL (2005+). To work around
 		// that we fix up the _vsnprintf included. Note that the return value
 		// will still not match C99's specs!

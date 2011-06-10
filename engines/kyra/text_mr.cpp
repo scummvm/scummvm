@@ -646,7 +646,7 @@ void KyraEngine_MR::updateDlgBuffer() {
 }
 
 void KyraEngine_MR::loadDlgHeader(int &vocHighBase, int &vocHighIndex, int &index1, int &index2) {
-	assert(_cnvFile);
+	ASSUME_NON_NULL(_cnvFile);
 	vocHighIndex = _cnvFile->readSint16LE();
 	vocHighBase = _cnvFile->readSint16LE();
 	index1 = _cnvFile->readSint16LE();

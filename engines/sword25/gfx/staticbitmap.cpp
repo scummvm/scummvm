@@ -84,7 +84,7 @@ StaticBitmap::~StaticBitmap() {
 bool StaticBitmap::doRender() {
 	// Bitmap holen
 	Resource *resourcePtr = Kernel::getInstance()->getResourceManager()->requestResource(_resourceFilename);
-	assert(resourcePtr);
+	ASSUME_NON_NULL(resourcePtr);
 	assert(resourcePtr->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *bitmapResourcePtr = static_cast<BitmapResource *>(resourcePtr);
 

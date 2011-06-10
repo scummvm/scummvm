@@ -51,7 +51,7 @@ struct EngineState;
  *      19 - exportsAreWide
  *      18 - SCI32 arrays/strings
  *      17 - sound
- * 
+ *
  */
 
 enum {

@@ -1,5 +1,5 @@
 MODULE := engines/draci
- 
+
 MODULE_OBJS := \
 	animation.o \
 	barchive.o \
@@ -17,11 +17,11 @@ MODULE_OBJS := \
 	sprite.o \
 	surface.o \
 	walking.o
- 
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_DRACI), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
- 
-# Include common rules 
+
+# Include common rules
 include $(srcdir)/rules.mk

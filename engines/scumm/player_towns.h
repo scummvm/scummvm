@@ -47,8 +47,8 @@ public:
 	virtual void restoreAfterLoad();
 
 	// version 1 specific
-	virtual int getCurrentCdaSound() { return 0; } 
-	virtual int getCurrentCdaVolume() { return 0; } 
+	virtual int getCurrentCdaSound() { return 0; }
+	virtual int getCurrentCdaVolume() { return 0; }
 	virtual void setVolumeCD(int left, int right) {}
 	virtual void setSoundVolume(int sound, int left, int right) {}
 	virtual void setSoundNote(int sound, int note) {}
@@ -92,8 +92,8 @@ public:
 	void stopAllSounds();
 
 	int getSoundStatus(int sound) const;
-	int getCurrentCdaSound() { return _cdaCurrentSound; } 
-	int getCurrentCdaVolume() { return (_cdaVolLeft + _cdaVolRight + 1) >> 1; } 
+	int getCurrentCdaSound() { return _cdaCurrentSound; }
+	int getCurrentCdaVolume() { return (_cdaVolLeft + _cdaVolRight + 1) >> 1; }
 
 	int32 doCommand(int numargs, int args[]);
 
@@ -124,7 +124,7 @@ private:
 
 	uint8 _cdaVolLeft;
 	uint8 _cdaVolRight;
-	
+
 	uint8 _eupCurrentSound;
 	uint8 _eupLooping;
 	uint8 _eupVolLeft;
@@ -170,7 +170,7 @@ private:
 	SoundOvrParameters *_soundOverride;
 
 	uint8 *_sblData;
-	
+
 	IMuse *_imuse;
 	const bool _imuseDispose;
 };

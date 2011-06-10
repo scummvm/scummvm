@@ -49,7 +49,7 @@ namespace Hugo {
 MidiPlayer::MidiPlayer() {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
+	ASSUME_NON_NULL(_driver);
 	_paused = false;
 
 
@@ -127,7 +127,7 @@ SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 	curPriority = 0;
 	pcspkrTimer = 0;
 	pcspkrOctave = 3;
-	pcspkrNoteDuration = 2;	
+	pcspkrNoteDuration = 2;
 }
 
 SoundHandler::~SoundHandler() {
@@ -290,7 +290,7 @@ void SoundHandler::pcspkr_player() {
 	} else if (pcspkrTimer >= 0) {                  // Note still going
 		return;
 	}
-	
+
 	// Time to play next note
 	do {
 		cmd_note = true;

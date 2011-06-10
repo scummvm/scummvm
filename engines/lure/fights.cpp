@@ -363,7 +363,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 
 			if (fighter.fwweapon != 0) {
 				Hotspot *weaponHotspot = res.getActiveHotspot(fighter.fwweapon);
-				assert(weaponHotspot);
+				ASSUME_NON_NULL(weaponHotspot);
 
 				uint16 newFrameNumber = getWord(moveOffset + 4);
 				int16 xChange = (int16)getWord(moveOffset + 6);

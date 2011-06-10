@@ -194,7 +194,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	// Wait a bit here, so that the CPU isn't maxed out when the game
 	// is waiting for user input (e.g. when showing text boxes) - bug
 	// #3037874. Make sure that we're not delaying while the game is
-	// benchmarking, as that will affect the final benchmarked result - 
+	// benchmarking, as that will affect the final benchmarked result -
 	// check bugs #3058865 and #3127824
 	if (s->_gameIsBenchmarking) {
 		// Game is benchmarking, don't add a delay

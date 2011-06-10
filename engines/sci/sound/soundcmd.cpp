@@ -117,6 +117,8 @@ reg_t SoundCommandParser::kDoSoundPlay(int argc, reg_t *argv, reg_t acc) {
 }
 
 void SoundCommandParser::processPlaySound(reg_t obj) {
+	ASSUME_NON_NULL(g_sci);
+
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		warning("kDoSound(play): Slot not found (%04x:%04x)", PRINT_REG(obj));
@@ -606,6 +608,8 @@ reg_t SoundCommandParser::kDoSoundSetVolume(int argc, reg_t *argv, reg_t acc) {
 }
 
 reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) {
+	ASSUME_NON_NULL(g_sci);
+
 	reg_t obj = argv[0];
 	int16 value = argv[1].toSint16();
 
@@ -746,7 +750,7 @@ void SoundCommandParser::pauseAll(bool pause) {
 }
 
 MusicType SoundCommandParser::getMusicType() const {
-	assert(_music);
+	ASSUME_NON_NULL(_music);
 	return _music->soundGetMusicType();
 }
 

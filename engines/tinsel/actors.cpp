@@ -1108,7 +1108,7 @@ void restoreMovement(int ano) {
 	// Get moving actor involved
 	pActor = GetMover(ano);
 
-	assert(pActor); // not a moving actor
+	ASSUME_NON_NULL(pActor); // not a moving actor
 
 	if (pActor->objX == actorInfo[ano - 1].x && pActor->objY == actorInfo[ano - 1].y)
 		return;

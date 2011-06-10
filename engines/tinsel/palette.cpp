@@ -625,7 +625,7 @@ void DimPartPalette(SCNHANDLE hDimPal, int startColor, int length, int brightnes
 	int iColor;
 
 	pPalQ = FindPalette(hDimPal);
-	assert(pPalQ);
+	ASSUME_NON_NULL(pPalQ);
 
 	// get pointer to dim palette
 	pDimPal = (PALETTE *)LockMem(hDimPal);

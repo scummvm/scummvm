@@ -115,7 +115,7 @@ public:
 
 class SpriteAsset : public BaseAsset {
 public:
-	SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, 
+	SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name,
 		bool asStream = false, int flags = 0);
 	SpriteAsset(MadsM4Engine *vm, const char *name);
 	~SpriteAsset();
@@ -151,7 +151,7 @@ protected:
 	Common::Array<uint32> _frameOffsets;
 	Common::Array<SpriteAssetFrame> _frames;
 	uint32 _frameStartOffset;
-	
+
 	// MADS sprite set fields
 	uint8 _mode;
 	bool _isBackground;

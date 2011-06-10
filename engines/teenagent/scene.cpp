@@ -576,7 +576,7 @@ void Scene::paletteEffect(byte step) {
 	byte *src = res->dseg.ptr(0x6609);
 	byte *dst = palette + 3 * 0xf2;
 	for(byte i = 0; i < 0xd; ++i) {
-		for(byte c = 0; c < 3; ++c, ++src) 
+		for(byte c = 0; c < 3; ++c, ++src)
 			*dst++ = *src > step? *src - step: 0;
 	}
 }
@@ -812,9 +812,9 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			_system->unlockScreen();
 			continue;
 		}
-		//removed mark == null. In final scene of chapter 2 mark rendered above table. 
-		//if it'd cause any bugs, add hack here. (_id != 23 && mark == NULL) 
-		if (on_enabled && 
+		//removed mark == null. In final scene of chapter 2 mark rendered above table.
+		//if it'd cause any bugs, add hack here. (_id != 23 && mark == NULL)
+		if (on_enabled &&
 			debug_features.feature[DebugFeatures::kShowOn]) {
 			on.render(surface, actor_animation_position);
 		}

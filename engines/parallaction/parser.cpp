@@ -247,7 +247,7 @@ void Parser::popTables() {
 }
 
 void Parser::parseStatement() {
-	assert(_currentOpcodes != 0);
+	ASSUME_NON_NULL(_currentOpcodes);
 
 	_lookup = _currentStatements->lookup(_tokens[0]);
 

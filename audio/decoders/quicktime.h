@@ -45,7 +45,7 @@ namespace Common {
 namespace Audio {
 
 class SeekableAudioStream;
-	
+
 /**
  * Try to load a QuickTime sound file from the given file name and create a SeekableAudioStream
  * from that data.

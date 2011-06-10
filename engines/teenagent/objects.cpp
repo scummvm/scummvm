@@ -69,7 +69,7 @@ void Object::load(byte * src) {
 }
 
 void Object::save() const {
-	assert(_base != NULL);
+	ASSUME_NON_NULL(_base);
 
 	rect.save();
 	actor_rect.save();
@@ -163,7 +163,7 @@ void Walkbox::load(byte *src) {
 }
 
 void Walkbox::save() const {
-	assert(_base != NULL);
+	ASSUME_NON_NULL(_base);
 	_base[0] = type;
 	_base[1] = orientation;
 	rect.save();

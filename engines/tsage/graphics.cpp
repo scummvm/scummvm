@@ -278,7 +278,7 @@ Graphics::Surface GfxSurface::lockSurface() {
 		src = _screenSurfaceP;
 	} else
 		src = _customSurface;
-	assert(src);
+	ASSUME_NON_NULL(src);
 
 	// Setup the returned surface either as one pointing to the same pixels as the source, or
 	// as a subset of the source one based on the currently set bounds
@@ -1338,7 +1338,8 @@ void GfxFont::getStringBounds(const char *s, Rect &bounds, int maxWidth) {
  * @ch Character to display
  */
 int GfxFont::writeChar(const char ch) {
-	assert((_fontData != NULL) && ((uint8)ch < _numChars));
+	ASSUME_NON_NULL(_fontData);
+	assert((uint8)ch < _numChars);
 	uint32 charOffset = READ_LE_UINT32(_fontData + 12 + (uint8)ch * 4);
 	int charWidth = _fontData[charOffset] & 0x1f;
 	int charHeight = (READ_LE_UINT16(_fontData + charOffset) >> 5) & 0x3f;

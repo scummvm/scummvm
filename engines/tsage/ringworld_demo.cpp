@@ -30,7 +30,7 @@ namespace tSage {
 void RingworldDemoGame::start() {
 	// Start the demo's single scene
 	_globals->_sceneManager.changeScene(1);
-	
+
 	_globals->_events.setCursor(CURSOR_NONE);
 }
 
@@ -108,12 +108,12 @@ void RingworldDemoScene::signal() {
 	_actor4.postInit();
 	_actor5.postInit();
 	_actor6.postInit();
-	
+
 	setAction(&_sequenceManager, this, 22, &_actor1, &_actor2, &_actor3, &_actor4, &_actor5, &_actor6, NULL);
 }
 
 void RingworldDemoScene::process(Event &event) {
-	
+
 }
 
 } // End of namespace tSage

@@ -255,7 +255,7 @@ public:
 };
 
 Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
-	assert(_offsets);
+	ASSUME_NON_NULL(_offsets);
 	_file->seek(_offsets[sound], SEEK_SET);
 	return Audio::makeVOCStream(_file, _flags);
 }

@@ -342,14 +342,14 @@ do { \
 		_topNibble = true; \
 	} \
 } while (0)
-		
+
 
 int DK3_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 
 	assert((numSamples % 4) == 0);
 
-	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {	
+	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
 		if ((_stream->pos() % _blockAlign) == 0) {
 			_stream->readUint16LE(); // Unknown
 			uint16 rate = _stream->readUint16LE(); // Copy of rate

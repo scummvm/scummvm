@@ -272,7 +272,7 @@ static BaseScummFile *openDiskImage(const Common::FSNode &node, const GameFilena
 		GameSettings gs;
 		memset(&gs, 0, sizeof(GameSettings));
 		gs.gameid = gfp->gameid;
-		gs.id = (Common::String(gfp->gameid) == "maniac" ? GID_MANIAC : GID_ZAK); 
+		gs.id = (Common::String(gfp->gameid) == "maniac" ? GID_MANIAC : GID_ZAK);
 		gs.platform = gfp->platform;
 
 		// determine second disk file name
@@ -454,7 +454,7 @@ static void composeFileHashMap(const Common::FSList &fslist, DescMap &fileMD5Map
 					matched = true;
 					break;
 				}
-					
+
 			if (!matched)
 				continue;
 
@@ -516,7 +516,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		if (d.md5.empty()) {
 			Common::SeekableReadStream *tmp = 0;
 			bool isDiskImg = (file.hasSuffix(".d64") || file.hasSuffix(".dsk") || file.hasSuffix(".prg"));
-			
+
 			if (isDiskImg) {
 				tmp = openDiskImage(d.node, gfp);
 
@@ -923,7 +923,7 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 	for (Common::List<DetectorResult>::iterator
 	          x = results.begin(); x != results.end(); ++x) {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
-		assert(g);
+		ASSUME_NON_NULL(g);
 		GameDescriptor dg(x->game.gameid, g->description, x->language, x->game.platform);
 
 		// Append additional information, if set, to the description.
@@ -969,7 +969,7 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
  */
 Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(syst);
-	assert(engine);
+	ASSUME_NON_NULL(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
 
 	// We start by checking whether the specified game ID is obsolete.

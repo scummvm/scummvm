@@ -68,12 +68,12 @@ MohawkSurface::~MohawkSurface() {
 }
 
 void MohawkSurface::convertToTrueColor() {
-	assert(_surface);
+	ASSUME_NON_NULL(_surface);
 
 	if (_surface->format.bytesPerPixel > 1)
 		return;
 
-	assert(_palette);
+	ASSUME_NON_NULL(_palette);
 
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 	Graphics::Surface *surface = new Graphics::Surface();

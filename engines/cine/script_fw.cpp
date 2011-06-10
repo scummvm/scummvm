@@ -421,7 +421,7 @@ RawScript &RawScript::operator=(const RawScript &src) {
  * computeScriptStackSub replacement
  */
 int RawScript::getNextLabel(const FWScriptInfo &info, int offset) const {
-	assert(_data);
+	ASSUME_NON_NULL(_data);
 	int pos = offset;
 
 	assert(pos >= 0);
@@ -473,7 +473,7 @@ int RawScript::getNextLabel(const FWScriptInfo &info, int offset) const {
  * computeScriptStack replacement
  */
 void RawScript::computeLabels(const FWScriptInfo &info) {
-	assert(_data);
+	ASSUME_NON_NULL(_data);
 	int pos = 0;
 	int i;
 
@@ -501,7 +501,7 @@ void RawScript::computeLabels(const FWScriptInfo &info) {
 uint16 RawScript::getLabel(const FWScriptInfo &info, byte index, uint16 offset)
 	const {
 
-	assert(_data);
+	ASSUME_NON_NULL(_data);
 	int pos = offset;
 
 	while ((pos = getNextLabel(info, pos)) >= 0) {
@@ -543,7 +543,8 @@ const ScriptVars &RawScript::labels() const {
  * @return Byte from bytecode
  */
 byte RawScript::getByte(unsigned int pos) const {
-	assert(_data && pos < _size);
+	ASSUME_NON_NULL(_data);
+	assert(pos < _size);
 
 	return _data[pos];
 }

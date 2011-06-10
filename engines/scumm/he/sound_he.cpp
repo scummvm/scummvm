@@ -770,7 +770,7 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	if (ConfMan.getBool("speech_mute"))
 		return;
 
-	assert(_sfxFile);
+	ASSUME_NON_NULL(_sfxFile);
 	if (!_sfxFile->isOpen()) {
 		// This happens in the Pajama Sam's Lost & Found demo, on the
 		// main menu screen, so don't make it a fatal error.

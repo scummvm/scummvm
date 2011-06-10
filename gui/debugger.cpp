@@ -201,7 +201,7 @@ void Debugger::enter() {
 bool Debugger::handleCommand(int argc, const char **argv, bool &result) {
 	if (_cmds.contains(argv[0])) {
 		Debuglet *debuglet = _cmds[argv[0]].get();
-		assert(debuglet);
+		ASSUME_NON_NULL(debuglet);
 		result = (*debuglet)(argc, argv);
 		return true;
 	}

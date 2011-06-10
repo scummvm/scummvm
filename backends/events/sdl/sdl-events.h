@@ -32,7 +32,7 @@
  * The SDL event source.
  */
 class SdlEventSource : public Common::EventSource {
-public: 
+public:
 	SdlEventSource();
 	virtual ~SdlEventSource();
 
@@ -69,7 +69,7 @@ protected:
 
 	/** Scroll lock state - since SDL doesn't track it */
 	bool _scrollLock;
-	
+
 	/** Joystick */
 	SDL_Joystick *_joystick;
 

@@ -1110,7 +1110,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// Make sure that we have enough points
 	if (pointList.maxSize < size * POLY_POINT_SIZE) {
 		warning("convert_polygon: Not enough memory allocated for polygon points. "
-				"Expected %d, got %d. Skipping polygon", 
+				"Expected %d, got %d. Skipping polygon",
 				size * POLY_POINT_SIZE, pointList.maxSize);
 		return NULL;
 	}
@@ -1150,7 +1150,7 @@ static void change_polygons_opt_0(PathfindingState *s) {
 	PolygonList::iterator it = s->polygons.begin();
 	while (it != s->polygons.end()) {
 		Polygon *polygon = *it;
-		assert(polygon);
+		ASSUME_NON_NULL(polygon);
 
 		if (polygon->type == POLY_TOTAL_ACCESS) {
 			delete polygon;
@@ -1202,7 +1202,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		change_polygons_opt_0(pf_s);
 
 	Common::Point *new_start = fixup_start_point(pf_s, start);
-	
+
 	if (!new_start) {
 		warning("AvoidPath: Couldn't fixup start position for pathfinding");
 		delete pf_s;
@@ -1210,7 +1210,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	}
 
 	Common::Point *new_end = fixup_end_point(pf_s, end);
-	
+
 	if (!new_end) {
 		warning("AvoidPath: Couldn't fixup end position for pathfinding");
 		delete new_start;
@@ -1367,7 +1367,7 @@ static reg_t allocateOutputArray(SegManager *segMan, int size) {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		SciArray<reg_t> *array = segMan->allocateArray(&addr);
-		assert(array);
+		ASSUME_NON_NULL(array);
 		array->setType(0);
 		array->setSize(size * 2);
 		return addr;

@@ -517,8 +517,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 			y -= textHeight;
 		} else
 			pos = stringLength;
-		padding = (lettersPerRow - pos) % 2 ?
-			(lettersPerRow - pos) / 2 + 1 : (lettersPerRow - pos) / 2;
+		padding = ((lettersPerRow - pos) % 2) ? (lettersPerRow - pos) / 2 + 1 : (lettersPerRow - pos) / 2;
 		while (padding--)
 			*convertedString2++ = ' ';
 		stringLength -= pos;
@@ -621,7 +620,7 @@ void AGOSEngine_PuzzlePack::printInfoText(const char *itemText) {
 					itemName = " Gem: ";
 			}
 			break;
-			
+
 		case 82:
 			if (_variableArray[flag]) {
 				if (_variableArray[flag] == 201 || _variableArray[flag] == 211)

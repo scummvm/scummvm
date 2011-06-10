@@ -150,8 +150,8 @@ public:
 		return *this;
 	}
 
-	ReferenceType operator*() const { assert(_pointer); return *_pointer; }
-	PointerType operator->() const { assert(_pointer); return _pointer; }
+	ReferenceType operator*() const { ASSUME_NON_NULL(_pointer); return *_pointer; }
+	PointerType operator->() const { ASSUME_NON_NULL(_pointer); return _pointer; }
 
 	/**
 	 * Returns the plain pointer value. Be sure you know what you
@@ -240,7 +240,7 @@ public:
 	operator bool() const { return _pointer != 0; }
 
 	~ScopedPtr() {
-		delete _pointer;		
+		delete _pointer;
 	}
 
 	/**

@@ -65,7 +65,7 @@ Saver::~Saver() {
 void Serializer::syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion,
 		Common::Serializer::Version maxVersion) {
 	int idx = 0;
-	assert(ptr);
+	ASSUME_NON_NULL(ptr);
 
 	if (isSaving()) {
 		// Get the object index for the given pointer and write it out

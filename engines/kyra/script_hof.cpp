@@ -1389,7 +1389,7 @@ int KyraEngine_HoF::o2_demoFinale(EMCState *script) {
 
 	int tmpSize;
 	const char *const *strings = _staticres->loadStrings(k2IngameTlkDemoStrings, tmpSize);
-	assert(strings);
+	ASSUME_NON_NULL(strings);
 
 	_screen->clearPage(0);
 	_screen->loadPalette("THANKS.COL", _screen->getPalette(0));

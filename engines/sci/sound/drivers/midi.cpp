@@ -878,7 +878,7 @@ void MidiPlayer_Midi::resetMt32() {
 }
 
 int MidiPlayer_Midi::open(ResourceManager *resMan) {
-	assert(resMan != NULL);
+	ASSUME_NON_NULL(resMan);
 
 	int retval = _driver->open();
 	if (retval != 0) {

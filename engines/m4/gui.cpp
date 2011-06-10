@@ -370,7 +370,7 @@ void MenuHorizSlider::onRefresh() {
 	// Get the thumb sprite for the slider
 	SpriteAsset &sprites = *parent()->sprites();
 	M4Sprite *sprite = sprites[OM_SLIDER_BTN_NORMAL + _sliderState];
-	assert(sprite);
+	ASSUME_NON_NULL(sprite);
 
 	// Fill in the area to the left of the thumbnail
 	if (_thumbX > 2) {
@@ -773,7 +773,7 @@ void MenuMessage::onRefresh() {
 			sprites[SL_LOAD_LABEL];
 		break;
 	}
-	assert(sprite);
+	ASSUME_NON_NULL(sprite);
 
 	// Draw the sprite
 	if (_transparent) {

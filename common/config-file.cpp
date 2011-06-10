@@ -38,7 +38,7 @@ namespace Common {
  */
 bool ConfigFile::isValidName(const Common::String &name) {
 	const char *p = name.c_str();
-	while (*p && (isalnum(*p) || *p == '-' || *p == '_' || *p == '.'))
+	while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_' || *p == '.'))
 		p++;
 	return *p == 0;
 }
@@ -62,11 +62,11 @@ bool ConfigFile::loadFromFile(const String &filename) {
 }
 
 bool ConfigFile::loadFromSaveFile(const char *filename) {
-	assert(g_system);
+	ASSUME_NON_NULL(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SeekableReadStream *loadFile;
 
-	assert(saveFileMan);
+	ASSUME_NON_NULL(saveFileMan);
 	if (!(loadFile = saveFileMan->openForLoading(filename)))
 		return false;
 
@@ -116,7 +116,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			// is, verify that it only consists of alphanumerics,
 			// periods, dashes and underscores). Mohawk Living Books games
 			// can have periods in their section names.
-			while (*p && (isalnum(*p) || *p == '-' || *p == '_' || *p == '.'))
+			while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_' || *p == '.'))
 				p++;
 
 			if (*p == '\0')
@@ -139,7 +139,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 
 			// Skip leading whitespaces
 			const char *t = line.c_str();
-			while (isspace(*t))
+			while (isspace(static_cast<unsigned char>(*t)))
 				t++;
 
 			// Skip empty lines / lines with only whitespace
@@ -190,11 +190,11 @@ bool ConfigFile::saveToFile(const String &filename) {
 }
 
 bool ConfigFile::saveToSaveFile(const char *filename) {
-	assert(g_system);
+	ASSUME_NON_NULL(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	WriteStream *saveFile;
 
-	assert(saveFileMan);
+	ASSUME_NON_NULL(saveFileMan);
 	if (!(saveFile = saveFileMan->openForSaving(filename)))
 		return false;
 

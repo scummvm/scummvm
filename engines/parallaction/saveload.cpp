@@ -263,7 +263,8 @@ void SaveLoad_ns::setPartComplete(const char *part) {
 }
 
 void SaveLoad_ns::getGamePartProgress(bool *complete, int size) {
-	assert(complete && size >= 3);
+	ASSUME_NON_NULL(complete);
+	assert(size >= 3);
 
 	Common::InSaveFile *inFile = getInSaveFile(SPECIAL_SAVESLOT);
 	Common::String s = inFile->readLine();
@@ -343,7 +344,8 @@ void SaveLoad_br::doSaveGame(uint16 slot, const char* name) {
 }
 
 void SaveLoad_br::getGamePartProgress(bool *complete, int size) {
-	assert(complete && size >= 3);
+	ASSUME_NON_NULL(complete);
+	assert(size >= 3);
 
 	// TODO: implement progress loading
 

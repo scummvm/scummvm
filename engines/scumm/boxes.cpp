@@ -224,7 +224,7 @@ byte ScummEngine::getBoxFlags(int box) {
 
 void ScummEngine::setBoxScale(int box, int scale) {
 	Box *ptr = getBoxBaseAddr(box);
-	assert(ptr);
+	ASSUME_NON_NULL(ptr);
 	if (_game.version == 8)
 		ptr->v8.scale = TO_LE_32(scale);
 	else if (_game.version <= 2)
@@ -235,7 +235,7 @@ void ScummEngine::setBoxScale(int box, int scale) {
 
 void ScummEngine::setBoxScaleSlot(int box, int slot) {
 	Box *ptr = getBoxBaseAddr(box);
-	assert(ptr);
+	ASSUME_NON_NULL(ptr);
 	ptr->v8.scaleSlot = TO_LE_32(slot);
 }
 
@@ -574,7 +574,7 @@ bool ScummEngine::checkXYInBoxBounds(int boxnum, int x, int y) {
 BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 	BoxCoords tmp, *box = &tmp;
 	Box *bp = getBoxBaseAddr(boxnum);
-	assert(bp);
+	ASSUME_NON_NULL(bp);
 
 	if (_game.version == 8) {
 		box->ul.x = (short)FROM_LE_32(bp->v8.ulx);
@@ -686,7 +686,7 @@ int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16& outX, int16& ou
 
 byte *ScummEngine::getBoxMatrixBaseAddr() {
 	byte *ptr = getResourceAddress(rtMatrix, 1);
-	assert(ptr);
+	ASSUME_NON_NULL(ptr);
 	if (*ptr == 0xFF)
 		ptr++;
 	return ptr;

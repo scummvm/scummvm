@@ -162,7 +162,7 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 
 	// get the stuff copied to process when it was created
 	_ctx->pInit = (const TP_INIT *)param;
-	assert(_ctx->pInit);
+	ASSUME_NON_NULL(_ctx->pInit);
 	assert(_ctx->pInit->hTinselCode);		// Must have some code to run
 
 	_ctx->pic = InitInterpretContext(GS_SCENE,
@@ -231,7 +231,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 
 	// Find scene structure
 	ss = GetSceneStruc(FindChunk(scene, CHUNK_SCENE));
-	assert(ss != NULL);
+	ASSUME_NON_NULL(ss);
 
 	if (TinselV2) {
 		// Music stuff

@@ -464,7 +464,7 @@ void MidiPlayer_Fb01::sendBanks(const byte *data, int size) {
 }
 
 int MidiPlayer_Fb01::open(ResourceManager *resMan) {
-	assert(resMan != NULL);
+	ASSUME_NON_NULL(resMan);
 
 	int retval = _driver->open();
 	if (retval != 0) {

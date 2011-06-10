@@ -36,7 +36,7 @@
 
 namespace M4 {
 
-Scene::Scene(MadsM4Engine *vm, SceneResources *res): View(vm, Common::Rect(0, 0, vm->_screen->width(), 
+Scene::Scene(MadsM4Engine *vm, SceneResources *res): View(vm, Common::Rect(0, 0, vm->_screen->width(),
 			vm->_screen->height())), _sceneResources(res) {
 	_screenType = VIEWID_SCENE;
 
@@ -142,7 +142,7 @@ void Scene::showCodes() {
 		// Show the walk areas for the M4 engine in black and white
 		const byte *srcP = (const byte *)_walkSurface->getBasePtr(0, 0);
 		byte *destP = _backgroundSurface->getBasePtr(0, 0);
-		
+
 		for (int i = 0; i < _walkSurface->width() * _walkSurface->height(); i++)
 			destP[i] = (srcP[i] & 0x10) ? 0xFF : 0;
 
@@ -154,7 +154,7 @@ void Scene::showCodes() {
 		_vm->_palette->setPalette(colors, 0, 256);
 	} else {
 		// MADS handling
-		
+
 		// copy the walk data to the background, in whatever current palette is active
 		_walkSurface->copyTo(_backgroundSurface);
 

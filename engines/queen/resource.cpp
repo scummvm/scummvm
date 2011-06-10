@@ -102,7 +102,7 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size) {
 	debug(7, "Resource::loadFile('%s')", filename);
 	ResourceEntry *re = resourceEntry(filename);
-	assert(re != NULL);
+	ASSUME_NON_NULL(re);
 	uint32 sz = re->size - skipBytes;
 	if (size != NULL) {
 		*size = sz;
@@ -116,7 +116,7 @@ uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size) 
 void Resource::loadTextFile(const char *filename, Common::StringArray &stringList) {
 	debug(7, "Resource::loadTextFile('%s')", filename);
 	ResourceEntry *re = resourceEntry(filename);
-	assert(re != NULL);
+	ASSUME_NON_NULL(re);
 	seekResourceFile(re->bundle, re->offset);
 	Common::SeekableSubReadStream stream(&_resourceFile, re->offset, re->offset + re->size);
 	while (true) {
@@ -234,7 +234,7 @@ void Resource::checkJASVersion() {
 		return;
 	}
 	ResourceEntry *re = resourceEntry("QUEEN.JAS");
-	assert(re != NULL);
+	ASSUME_NON_NULL(re);
 	uint32 offset = re->offset;
 	if (isDemo())
 		offset += JAS_VERSION_OFFSET_DEMO;

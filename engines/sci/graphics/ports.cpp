@@ -721,7 +721,7 @@ void GfxPorts::printWindowList(Console *con) {
 		if ((*it)->isWindow()) {
 			Window *wnd = ((Window *)*it);
 			con->DebugPrintf("%d: '%s' at %d, %d, (%d, %d, %d, %d), drawn: %d, style: %d\n",
-					wnd->id, wnd->title.c_str(), wnd->left, wnd->top, 
+					wnd->id, wnd->title.c_str(), wnd->left, wnd->top,
 					wnd->rect.left, wnd->rect.top, wnd->rect.right, wnd->rect.bottom,
 					wnd->bDrawn, wnd->wndStyle);
 		}

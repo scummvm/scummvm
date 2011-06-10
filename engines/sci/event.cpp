@@ -261,7 +261,7 @@ SciEvent EventManager::getScummVMEvent() {
 		else if ((modifiers & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
 			input.character += 96; // 0x01 -> 'a'
 	}
-	
+
 	// If no actual key was pressed (e.g. if only a modifier key was pressed),
 	// ignore the event
 	if (!input.character)
@@ -277,7 +277,7 @@ void EventManager::updateScreen() {
 	if (g_system->getMillis() - s->_screenUpdateTime >= 1000 / 60) {
 		g_system->updateScreen();
 		s->_screenUpdateTime = g_system->getMillis();
-		// Throttle the checking of shouldQuit() to 60fps as well, since 
+		// Throttle the checking of shouldQuit() to 60fps as well, since
 		// Engine::shouldQuit() invokes 2 virtual functions
 		// (EventManager::shouldQuit() and EventManager::shouldRTL()),
 		// which is very expensive to invoke constantly without any

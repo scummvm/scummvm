@@ -53,14 +53,14 @@ namespace Sci {
 // Taken from http://anthonylarme.tripod.com/phantas/phintgtp.html
 //
 // (...) What we needed was a way of playing video, but have it blend into
-// normal room art instead of occupying its own rectangular area. Room art 
-// consists of a background pic overlaid with various animating cels 
-// (traditional lingo: sprites). The cels each have a priority that determines 
-// who is on top and who is behind in the drawing order. Cels are read from 
-// *.v56 files (another proprietary format). A Robot is video frames with 
-// transparent background including priority and x,y information. Thus, it is 
+// normal room art instead of occupying its own rectangular area. Room art
+// consists of a background pic overlaid with various animating cels
+// (traditional lingo: sprites). The cels each have a priority that determines
+// who is on top and who is behind in the drawing order. Cels are read from
+// *.v56 files (another proprietary format). A Robot is video frames with
+// transparent background including priority and x,y information. Thus, it is
 // like a cel, except it comes from an RBT - not a v56. Because it blends into
-// our graphics engine, it looks just like a part of the room. A RBT can move 
+// our graphics engine, it looks just like a part of the room. A RBT can move
 // around the screen and go behind other objects. (...)
 
 #ifdef ENABLE_SCI32
@@ -105,7 +105,7 @@ bool RobotDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_surface = new Graphics::Surface();
 
 	readHeaderChunk();
-	
+
 	// There are several versions of robot files, ranging from 3 to 6.
 	// v3: no known examples
 	// v4: PQ:SWAT demo
@@ -223,7 +223,7 @@ void RobotDecoder::calculateVideoDimensions() {
 	// This is an O(n) operation, as each frame has a different size.
 	// We need to know the actual frame size to have a constant video size.
 	uint32 pos = _fileStream->pos();
-	
+
 	for (uint32 curFrame = 0; curFrame < _header.frameCount; curFrame++) {
 		_fileStream->skip(4);
 		uint16 frameWidth = _fileStream->readUint16();
@@ -327,8 +327,8 @@ const Graphics::Surface *RobotDecoder::decodeNextFrame() {
 	// FIXME: For some reason, there are audio hiccups/gaps
 	if (_header.hasSound) {
 		_fileStream->skip(8);	// header
-		_audioStream->queueBuffer(g_sci->_audio->getDecodedRobotAudioFrame(_fileStream, audioChunkSize - 8), 
-									(audioChunkSize - 8) * 2, DisposeAfterUse::NO, 
+		_audioStream->queueBuffer(g_sci->_audio->getDecodedRobotAudioFrame(_fileStream, audioChunkSize - 8),
+									(audioChunkSize - 8) * 2, DisposeAfterUse::NO,
 									Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 	} else {
 		_fileStream->skip(audioChunkSize);
@@ -359,7 +359,7 @@ void RobotDecoder::close() {
 	}
 
 	reset();
-}	
+}
 
 #endif
 

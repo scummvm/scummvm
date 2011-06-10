@@ -71,7 +71,7 @@ public:
 	    @brief Gibt die Breite des Bitmaps zurück.
 	*/
 	int getWidth() const {
-		assert(_pImage);
+		ASSUME_NON_NULL(_pImage);
 		return _pImage->getWidth();
 	}
 
@@ -79,7 +79,7 @@ public:
 	    @brief Gibt die Höhe des Bitmaps zurück.
 	*/
 	int getHeight() const {
-		assert(_pImage);
+		ASSUME_NON_NULL(_pImage);
 		return _pImage->getHeight();
 	}
 
@@ -124,7 +124,7 @@ public:
 	          Common::Rect *pSrcPartRect = NULL,
 	          uint color = BS_ARGB(255, 255, 255, 255),
 	          int width = -1, int height = -1) {
-		assert(_pImage);
+		ASSUME_NON_NULL(_pImage);
 		return _pImage->blit(posX, posY, flipping, pSrcPartRect, color, width, height);
 	}
 
@@ -142,7 +142,7 @@ public:
 	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	*/
 	bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0)) {
-		assert(_pImage);
+		ASSUME_NON_NULL(_pImage);
 		return _pImage->fill(pFillRect, color);
 	}
 
@@ -166,7 +166,7 @@ public:
 	    @return Gibt false zurück, falls ein Blit-Aufruf mit diesem Objekt als Ziel nicht gestattet ist.
 	*/
 	bool isBlitTarget() {
-		assert(_pImage);
+		ASSUME_NON_NULL(_pImage);
 		return _pImage->isBlitTarget();
 	}
 
@@ -174,7 +174,7 @@ public:
 	    @brief Gibt true zurück, falls das BS_Image bei einem Aufruf von Blit() skaliert dargestellt werden kann.
 	*/
 	bool isScalingAllowed() {
-		assert(_pImage);
+		ASSUME_NON_NULL(_pImage);
 		return _pImage->isScalingAllowed();
 	}
 
@@ -182,7 +182,7 @@ public:
 	    @brief Gibt true zurück, wenn das BS_Image mit einem Aufruf von Fill() gefüllt werden kann.
 	*/
 	bool isFillingAllowed() {
-		assert(_pImage);
+		ASSUME_NON_NULL(_pImage);
 		return _pImage->isFillingAllowed();
 	}
 
@@ -190,7 +190,7 @@ public:
 	    @brief Gibt true zurück, wenn das BS_Image bei einem Aufruf von Blit() mit einem Alphawert dargestellt werden kann.
 	*/
 	bool isAlphaAllowed() {
-		assert(_pImage);
+		ASSUME_NON_NULL(_pImage);
 		return _pImage->isAlphaAllowed();
 	}
 
@@ -198,7 +198,7 @@ public:
 	    @brief Gibt true zurück, wenn das BS_Image bei einem Aufruf von Blit() mit Farbmodulation dargestellt werden kann.
 	*/
 	bool isColorModulationAllowed() {
-		assert(_pImage);
+		ASSUME_NON_NULL(_pImage);
 		return _pImage->isColorModulationAllowed();
 	}
 

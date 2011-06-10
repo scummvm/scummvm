@@ -256,7 +256,7 @@ void Wiz::fillWizFlood(const WizParameters *params) {
 			}
 			if (imageRect.contains(px, py)) {
 				uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
-				assert(wizd);
+				ASSUME_NON_NULL(wizd);
 
 				FloodFillState *ffs = new FloodFillState;
 				ffs->fillLineTableCount = h * 2;

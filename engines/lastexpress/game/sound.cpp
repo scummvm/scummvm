@@ -367,8 +367,10 @@ bool SoundManager::setupCache(SoundEntry *entry) {
 		if (entry->field_4C <= size)
 			return false;
 
-		if (cacheEntry)
-			setInCache(cacheEntry);
+		if (!cacheEntry)
+			error("[SoundManager::setupCache] Cannot find an available cache entry");
+
+		setInCache(cacheEntry);
 
 		// TODO: Wait until the cache entry is ready to be removed
 		while (!(cacheEntry->status.status1 & 1))

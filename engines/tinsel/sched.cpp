@@ -211,7 +211,7 @@ void Scheduler::schedule() {
  * Reschedules all the processes to run again this query
  */
 void Scheduler::rescheduleAll() {
-	assert(pCurrent);
+	ASSUME_NON_NULL(pCurrent);
 
 	// Unlink current process
 	pCurrent->pPrevious->pNext = pCurrent->pNext;
@@ -319,7 +319,7 @@ PROCESS *Scheduler::createProcess(int pid, CORO_ADDR coroAddr, const void *pPara
 	pProc = pFreeProcesses;
 
 	// trap no free process
-	assert(pProc != NULL); // Out of processes
+	ASSUME_NON_NULL(pProc); // Out of processes
 
 #ifdef DEBUG
 	// one more process in use

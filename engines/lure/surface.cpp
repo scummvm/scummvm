@@ -779,7 +779,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 		res.getHotspot(destCharacterId);
 	HotspotData *itemHotspot = (activeItemId == 0) ? NULL :
 		res.getHotspot(activeItemId);
-	assert(talkingChar);
+	ASSUME_NON_NULL(talkingChar);
 
 	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
 

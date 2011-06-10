@@ -1283,7 +1283,7 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 		}
 	}
 
-	assert(sf != NULL);
+	ASSUME_NON_NULL(sf);
 	sf->setColor(color);
 
 	// flags:

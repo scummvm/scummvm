@@ -140,7 +140,7 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 }
 
 Graphics::DrawStep *ThemeParser::newDrawStep() {
-	assert(_defaultStepGlobal);
+	ASSUME_NON_NULL(_defaultStepGlobal);
 	Graphics::DrawStep *step = 0; //new DrawStep;
 
 	if (_defaultStepLocal) {

@@ -744,7 +744,7 @@ void ScummEngine_v60he::o60_closeFile() {
 			_hOutFileTable[slot] = 0;
 		}
 
-		delete _hInFileTable[slot];		
+		delete _hInFileTable[slot];
 		_hInFileTable[slot] = 0;
 	}
 }
@@ -898,7 +898,7 @@ void ScummEngine_v60he::o60_seekFilePos() {
 	if (slot == -1)
 		return;
 
-	assert(_hInFileTable[slot]);
+	ASSUME_NON_NULL(_hInFileTable[slot]);
 	switch (mode) {
 	case 1:
 		_hInFileTable[slot]->seek(offset, SEEK_SET);
@@ -922,7 +922,7 @@ void ScummEngine_v60he::o60_readFilePos() {
 		return;
 	}
 
-	assert(_hInFileTable[slot]);
+	ASSUME_NON_NULL(_hInFileTable[slot]);
 	push(_hInFileTable[slot]->pos());
 }
 

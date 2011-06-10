@@ -1324,7 +1324,7 @@ void Player_SID::initSID() {
 
 void Player_SID::startSound(int nr) {
 	byte *data = _vm->getResourceAddress(rtSound, nr);
-	assert(data);
+	ASSUME_NON_NULL(data);
 
 	// WORKAROUND:
 	// sound[4] contains either a song prio or a music channel usage byte.

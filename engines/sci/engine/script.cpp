@@ -124,7 +124,7 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 
 void Script::load(ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, _nr), 0);
-	assert(script != 0);
+	ASSUME_NON_NULL(script);
 
 	uint extraLocalsWorkaround = 0;
 	if (g_sci->getGameId() == GID_FANMADE && _nr == 1 && script->size == 11140) {
@@ -160,7 +160,7 @@ void Script::load(ResourceManager *resMan) {
 	_numExports = 0;
 	_synonyms = 0;
 	_numSynonyms = 0;
-	
+
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		_exportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS);
 		if (_exportTable) {

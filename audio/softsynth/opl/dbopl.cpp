@@ -375,6 +375,13 @@ INLINE Bit32s Operator::RateForward( Bit32u add ) {
 	return ret;
 }
 
+// MSVC is complaining potential comparison of a constant with another constant
+// We disable this warning for the affected section of code
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 6326)
+#endif
+
 template< Operator::State yes>
 Bits Operator::TemplateVolume(  ) {
 	Bit32s vol = volume;
@@ -425,6 +432,10 @@ Bits Operator::TemplateVolume(  ) {
 	volume = vol;
 	return vol;
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 static const VolumeHandler VolumeHandlerTable[5] = {
 	&Operator::TemplateVolume< Operator::OFF >,
@@ -838,6 +849,13 @@ INLINE void Channel::GeneratePercussion( Chip* chip, Bit32s* output ) {
 	}
 }
 
+// MSVC is complaining potential comparison of a constant with another constant
+// We disable this warning for the affected section of code
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 6326)
+#endif
+
 template<SynthMode mode>
 Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 	switch( mode ) {
@@ -1013,6 +1031,10 @@ Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 	}
 	return 0;
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 /*
 	Chip
@@ -1279,16 +1301,16 @@ void Chip::Setup( Bit32u rate ) {
 	for ( Bit8u i = 0; i < 76; i++ ) {
 		Bit8u index, shift;
 		EnvelopeSelect( i, index, shift );
-		linearRates[i] = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH + ENV_EXTRA - shift - 3 )));
+		linearRates[i] = (Bit32u)( scale * (((unsigned long long)EnvelopeIncreaseTable[ index ]) << ( RATE_SH + ENV_EXTRA - shift - 3 )));
 	}
 	//Generate the best matching attack rate
 	for ( Bit8u i = 0; i < 62; i++ ) {
 		Bit8u index, shift;
 		EnvelopeSelect( i, index, shift );
 		//Original amount of samples the attack would take
-		Bit32s original = (Bit32u)( (AttackSamplesTable[ index ] << shift) / scale);
+		Bit32s original = (Bit32u)( (((unsigned long long)AttackSamplesTable[ index ]) << shift) / scale);
 
-		Bit32s guessAdd = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH - shift - 3 )));
+		Bit32s guessAdd = (Bit32u)( scale * (((unsigned long long)EnvelopeIncreaseTable[ index ]) << ( RATE_SH - shift - 3 )));
 		Bit32s bestAdd = guessAdd;
 		Bit32u bestDiff = 1 << 30;
 		for( Bit32u passes = 0; passes < 16; passes ++ ) {

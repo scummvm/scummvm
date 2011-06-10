@@ -742,7 +742,8 @@ void LoadBasicChunks() {
 	if (TinselV2) {
 		// Global processes
 		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_NUM_PROCESSES);
-		assert(cptr && (*cptr < 100));
+		ASSUME_NON_NULL(cptr);
+		assert(*cptr < 100);
 		int num = *cptr;
 		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_PROCESSES);
 		assert(!num || cptr);

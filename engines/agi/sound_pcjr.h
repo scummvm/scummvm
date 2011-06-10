@@ -45,9 +45,9 @@ struct SndGenChan {
 	uint16 dissolveCount;
 	byte attenuation;
 	byte attenuationCopy;
-	
+
 	GenType genType;
-	
+
 	// for the sample mixer
 	int freqCount;
 };

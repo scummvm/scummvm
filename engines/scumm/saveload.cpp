@@ -1316,10 +1316,10 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			MKEND()
 		};
 
-		s->saveLoadArrayOf(_textPalette, 48, sizeof(_textPalette[0]), sleUint8);		
+		s->saveLoadArrayOf(_textPalette, 48, sizeof(_textPalette[0]), sleUint8);
 		s->saveLoadArrayOf(_cyclRects, 10, sizeof(_cyclRects[0]), townsFields);
 		s->saveLoadArrayOf(&_curStringRect, 1, sizeof(_curStringRect), townsFields);
-		s->saveLoadArrayOf(_townsCharsetColorMap, 16, sizeof(_townsCharsetColorMap[0]), sleUint8);		
+		s->saveLoadArrayOf(_townsCharsetColorMap, 16, sizeof(_townsCharsetColorMap[0]), sleUint8);
 		s->saveLoadEntries(this, townsExtraEntries);
 	}
 #endif

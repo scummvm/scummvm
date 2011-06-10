@@ -94,7 +94,7 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 
 LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse)
     : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops), _completeIterations(0) {
-	assert(stream);
+	ASSUME_NON_NULL(stream);
 
 	if (!stream->rewind()) {
 		// TODO: Properly indicate error

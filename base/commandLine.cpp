@@ -265,14 +265,16 @@ void registerDefaults() {
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION(shortCmd, longCmd) \
 	char *endptr = 0; \
-	strtol(option, &endptr, 0); \
-	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
+	ASSUME_NON_NULL(option); \
+	long int retval = strtol(option, &endptr, 0); \
+	if (endptr == NULL || *endptr != 0 || retval == 0 || retval == LONG_MAX || retval == LONG_MIN || errno == ERANGE) \
+		usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".
 #define DO_OPTION_BOOL(shortCmd, longCmd) \
 	if (isLongCmd ? (!strcmp(s+2, longCmd) || !strcmp(s+2, "no-"longCmd)) : (tolower(s[1]) == shortCmd)) { \
-		bool boolValue = (islower(s[1]) != 0); \
+		bool boolValue = (islower(static_cast<unsigned char>(s[1])) != 0); \
 		s += 2; \
 		if (isLongCmd) { \
 			boolValue = !strcmp(s, longCmd); \
@@ -317,6 +319,8 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 	// Iterate over all command line arguments and parse them into our string map.
 	for (int i = 1; i < argc; ++i) {
+		ASSUME_NON_NULL(argv);
+
 		s = argv[i];
 		s2 = (i < argc-1) ? argv[i+1] : 0;
 

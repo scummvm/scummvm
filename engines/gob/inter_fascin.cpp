@@ -174,7 +174,7 @@ void Inter_Fascination::oFascin_assign(OpFuncParams &params) {
 
 		case TYPE_VAR_INT32_AS_INT16:
 		case TYPE_ARRAY_INT16:
-			WRITE_VARO_UINT16(dest + i * 2, _vm->_game->_script->getResultInt()); 
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_game->_script->getResultInt());
 			break;
 
 		case TYPE_VAR_INT32:

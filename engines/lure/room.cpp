@@ -750,7 +750,7 @@ bool Room::checkInTalkDialog() {
 
 	if (talkerId != PLAYER_ID) {
 		HotspotData *charHotspot = res.getHotspot(talkerId);
-		assert(charHotspot);
+		ASSUME_NON_NULL(charHotspot);
 		if (charHotspot->talkDestCharacterId != PLAYER_ID)
 			return false;
 	}

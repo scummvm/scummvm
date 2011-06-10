@@ -441,7 +441,7 @@ SciVersion GameFeatures::detectMessageFunctionType() {
 	}
 
 	Resource *res = g_sci->getResMan()->findResource(*resources->begin(), false);
-	assert(res);
+	ASSUME_NON_NULL(res);
 	delete resources;
 
 	// Only v2 Message resources use the kGetMessage kernel function.

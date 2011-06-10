@@ -300,7 +300,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 			readCluIndex(cluFileNum, file);
 		}
 
-		assert(_resFiles[cluFileNum].entryTab);
+		ASSUME_NON_NULL(_resFiles[cluFileNum].entryTab);
 
 		uint32 pos = _resFiles[cluFileNum].entryTab[actual_res * 2 + 0];
 		uint32 len = _resFiles[cluFileNum].entryTab[actual_res * 2 + 1];
@@ -465,7 +465,7 @@ Common::File *ResourceManager::openCluFile(uint16 fileNum) {
 void ResourceManager::readCluIndex(uint16 fileNum, Common::File *file) {
 	// we didn't read from this file before, get its index table
 	assert(_resFiles[fileNum].entryTab == NULL);
-	assert(file);
+	ASSUME_NON_NULL(file);
 
 	// 1st DWORD of a cluster is an offset to the look-up table
 	uint32 table_offset = file->readUint32LE();

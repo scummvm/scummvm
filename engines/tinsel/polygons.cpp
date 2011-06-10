@@ -364,7 +364,7 @@ bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
 
 	CHECK_HP_OR(hp, "Out of range polygon handle (1)");
 	pp = Polys[hp];
-	assert(pp != NULL); // Testing whether in a NULL polygon
+	ASSUME_NON_NULL(pp); // Testing whether in a NULL polygon
 
 	// Shift cursor for relative polygons
 	if (TinselV2) {
@@ -1059,7 +1059,8 @@ int GetBrightness(HPOLYGON hPath, int y) {
  */
 void getNpathNode(HPOLYGON hNpath, int node, int *px, int *py) {
 	CHECK_HP(hNpath, "Out of range polygon handle (15)");
-	assert(Polys[hNpath] != NULL && Polys[hNpath]->polyType == PATH && Polys[hNpath]->subtype == NODE); // must be given a node path!
+	ASSUME_NON_NULL(Polys[hNpath]);
+	assert(Polys[hNpath]->polyType == PATH && Polys[hNpath]->subtype == NODE); // must be given a node path!
 
 	Poly ptp(LockMem(pHandle), Polys[hNpath]->pIndex);	// This polygon
 
@@ -1120,7 +1121,7 @@ REEL GetPolyReelType(HPOLYGON hp) {
 
 int32 GetPolyZfactor(HPOLYGON hp) {
 	CHECK_HP(hp, "Out of range polygon handle (21)");
-	assert(Polys[hp] != NULL);
+	ASSUME_NON_NULL(Polys[hp]);
 
 	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
 
@@ -1129,7 +1130,7 @@ int32 GetPolyZfactor(HPOLYGON hp) {
 
 int numNodes(HPOLYGON hp) {
 	CHECK_HP(hp, "Out of range polygon handle (22)");
-	assert(Polys[hp] != NULL);
+	ASSUME_NON_NULL(Polys[hp]);
 
 	Poly ptp(LockMem(pHandle), Polys[hp]->pIndex);
 
@@ -1750,7 +1751,7 @@ static void KillDeadPolygons() {
 
 	for (i = 0; i < MAX_POLY; i++) {
 		if (volatileStuff[i].bDead) {
-			assert(Polys[i]);
+			ASSUME_NON_NULL(Polys[i]);
 
 			switch (Polys[i]->polyType) {
 			case BLOCK:

@@ -71,7 +71,7 @@ protected:
 public:
 
 	GZipReadStream(Common::SeekableReadStream *w) : _wrapped(w) {
-		assert(w != 0);
+		ASSUME_NON_NULL(w);
 
 		_stream.zalloc = Z_NULL;
 		_stream.zfree = Z_NULL;

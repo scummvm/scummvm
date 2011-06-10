@@ -40,7 +40,7 @@ Player_V4A::Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer)
 	  _initState(0),
 	  _signal(0) {
 
-	assert(scumm);
+	ASSUME_NON_NULL(scumm);
 	assert(mixer);
 	assert(_vm->_game.id == GID_MONKEY_VGA);
 	_tfmxMusic.setSignalPtr(&_signal, 1);
@@ -119,7 +119,7 @@ void Player_V4A::startSound(int nr) {
 	};
 
 	const byte *ptr = _vm->getResourceAddress(rtSound, nr);
-	assert(ptr);
+	ASSUME_NON_NULL(ptr);
 
 	const int val = ptr[9];
 	if (val < 0 || val >= ARRAYSIZE(monkeyCommands)) {

@@ -314,7 +314,7 @@ void EMCInterpreter::op_subSP(EMCState *script) {
 void EMCInterpreter::op_sysCall(EMCState *script) {
 	const uint8 id = _parameter;
 
-	assert(script->dataPtr->sysFuncs);
+	ASSUME_NON_NULL(script->dataPtr->sysFuncs);
 	assert(id < script->dataPtr->sysFuncs->size());
 
 	if ((*script->dataPtr->sysFuncs)[id] && ((*script->dataPtr->sysFuncs)[id])->isValid()) {

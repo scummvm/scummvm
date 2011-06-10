@@ -313,7 +313,7 @@ const char *MADSResourceManager::getResourceFilename(const char *resourceName) {
 /**
  * Forms a resource name based on the passed specifiers
  */
-const char *MADSResourceManager::getResourceName(char asciiCh, int prefix, ExtensionType extType, 
+const char *MADSResourceManager::getResourceName(char asciiCh, int prefix, ExtensionType extType,
 												 const char *suffix, int index) {
 	static char resourceName[100];
 

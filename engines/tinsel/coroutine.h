@@ -93,7 +93,7 @@ class CoroContextHolder {
 	CoroContext &_ctx;
 public:
 	CoroContextHolder(CoroContext &ctx) : _ctx(ctx) {
-		assert(ctx);
+		ASSUME_NON_NULL(ctx);
 		assert(ctx->_sleep >= 0);
 		ctx->_sleep = 0;
 	}

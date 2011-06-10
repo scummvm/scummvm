@@ -382,7 +382,7 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
+	ASSUME_NON_NULL(_driver);
 
 	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
 
@@ -684,7 +684,7 @@ MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
+	ASSUME_NON_NULL(_driver);
 
 	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
 
@@ -801,17 +801,17 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 	19468 ambient  (but not 69, amb b.  odd)
 	19470 puzzle
 	19471
-	19473 
+	19473
 	19475 coffins or blood pump
 	19476 blood pump or coffins
 	19493
 	19499 chapel
 	19509 downstair ambient
 	19510 bedroom 'skip 3 and 5' puzzle (should loop from partway?)
-	19514 
+	19514
 	19515 bathroom drain teeth
 	*/
-	if ((fileref >= 19462 && fileref <= 19468) || 
+	if ((fileref >= 19462 && fileref <= 19468) ||
 		fileref == 19470 || fileref == 19471 ||
 		fileref == 19473 || fileref == 19475 ||
 		fileref == 19476 || fileref == 19493 ||
@@ -849,7 +849,7 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 	updateVolume();
 
 	// Play!
-	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handle, audStream); 
+	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handle, audStream);
 	return true;
 }
 

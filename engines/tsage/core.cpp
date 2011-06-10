@@ -729,6 +729,7 @@ int PlayerMover::checkMover(Common::Point &srcPos, const Common::Point &destPos)
 
 	NpcMover *mover = new NpcMover();
 	_sceneObject->addMover(mover, &destPos, NULL);
+	ASSUME_NON_NULL(_sceneObject->_mover);
 
 	// Handle automatic movement of the player until a walkable region is reached,
 	// or the end point of the movement is

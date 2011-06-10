@@ -66,13 +66,13 @@ void SdlMixerManager::init() {
 		warning("Could not open audio device: %s", SDL_GetError());
 
 		_mixer = new Audio::MixerImpl(g_system, desired.freq);
-		assert(_mixer); 
+		assert(_mixer);
 		_mixer->setReady(false);
 	} else {
 		debug(1, "Output sample rate: %d Hz", _obtainedRate.freq);
 
 		_mixer = new Audio::MixerImpl(g_system, _obtainedRate.freq);
-		assert(_mixer); 
+		assert(_mixer);
 		_mixer->setReady(true);
 
 		startAudio();
@@ -114,13 +114,13 @@ void SdlMixerManager::startAudio() {
 }
 
 void SdlMixerManager::callbackHandler(byte *samples, int len) {
-	assert(_mixer);
+	ASSUME_NON_NULL(_mixer);
 	_mixer->mixCallback(samples, len);
 }
 
 void SdlMixerManager::sdlCallback(void *this_, byte *samples, int len) {
 	SdlMixerManager *manager = (SdlMixerManager *)this_;
-	assert(manager);
+	ASSUME_NON_NULL(manager);
 
 	manager->callbackHandler(samples, len);
 }

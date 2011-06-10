@@ -255,7 +255,7 @@ void FileManager::readImage(const int objNum, object_t *objPtr) {
 				}
 			}
 		}
-		assert(seqPtr);
+		ASSUME_NON_NULL(seqPtr);
 		seqPtr->nextSeqPtr = objPtr->seqList[j].seqPtr; // loop linked list to head
 	}
 

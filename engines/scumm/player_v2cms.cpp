@@ -241,7 +241,7 @@ void Player_V2CMS::startSound(int nr) {
 	Common::StackLock lock(_mutex);
 
 	byte *data = _vm->getResourceAddress(rtSound, nr);
-	assert(data);
+	ASSUME_NON_NULL(data);
 
 	if (data[6] == 0x80) {
 		loadMidiData(data, nr);

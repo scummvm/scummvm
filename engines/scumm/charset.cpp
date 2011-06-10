@@ -1067,7 +1067,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		Graphics::Surface backSurface;
 		if ((ignoreCharsetMask || !vs->hasTwoBuffers)
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-			&& (_vm->_game.platform != Common::kPlatformFMTowns) 
+			&& (_vm->_game.platform != Common::kPlatformFMTowns)
 #endif
 			) {
 			dstSurface = *vs;
@@ -1391,25 +1391,25 @@ void CharsetRendererNut::setCurID(int32 id) {
 }
 
 int CharsetRendererNut::getCharHeight(byte chr) {
-	assert(_current);
+	ASSUME_NON_NULL(_current);
 	return _current->getCharHeight(chr);
 }
 
 int CharsetRendererNut::getCharWidth(uint16 chr) {
-	assert(_current);
+	ASSUME_NON_NULL(_current);
 	return _current->getCharWidth(chr);
 }
 
 int CharsetRendererNut::getFontHeight() {
 	// FIXME / TODO: how to implement this properly???
-	assert(_current);
+	ASSUME_NON_NULL(_current);
 	return _current->getCharHeight('|');
 }
 
 void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 	Common::Rect shadow;
 
-	assert(_current);
+	ASSUME_NON_NULL(_current);
 	if (chr == '@')
 		return;
 

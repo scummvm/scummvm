@@ -280,7 +280,7 @@ void EventsClass::hideCursor() {
 	setCursor(CURSOR_NONE);
 }
 
-bool EventsClass::isCursorVisible() const { 
+bool EventsClass::isCursorVisible() const {
 	return !_globals->getFlag(122);
 }
 

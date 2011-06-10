@@ -164,7 +164,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 }
 
 Common::Error SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	assert(engine);
+	ASSUME_NON_NULL(engine);
 	*engine = new Sky::SkyEngine(syst);
 	return Common::kNoError;
 }
@@ -206,7 +206,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		// Extract the extension
 		Common::String ext = file->c_str() + file->size() - 3;
 		ext.toUppercase();
-		if (isdigit(ext[0]) && isdigit(ext[1]) && isdigit(ext[2])){
+		if (isdigit(static_cast<unsigned char>(ext[0])) && isdigit(static_cast<unsigned char>(ext[1])) && isdigit(static_cast<unsigned char>(ext[2]))){
 			int slotNum = atoi(ext.c_str());
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {

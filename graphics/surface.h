@@ -189,7 +189,7 @@ struct Surface {
 
 /**
  * A deleter for Surface objects which can be used with SharedPtr.
- * 
+ *
  * This deleter assures Surface::free is called on deletion.
  */
 struct SharedPtrSurfaceDeleter {

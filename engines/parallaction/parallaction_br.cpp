@@ -374,7 +374,7 @@ void Parallaction_br::parseLocation(const char *filename) {
 	// parse the text file
 	LocationParserOutput_br out;
 	_locationParser->parse(script, &out);
-	assert(out._info);
+	ASSUME_NON_NULL(out._info);
 	delete script;
 
 	bool visited = getLocationFlags() & kFlagsVisited;

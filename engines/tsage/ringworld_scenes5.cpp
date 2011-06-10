@@ -1394,7 +1394,7 @@ void Scene4025::Action2::signal() {
 				scene->_pegPtr2 = scene->_holePtr->_pegPtr;
 			}
 
-			assert(scene->_pegPtr);
+			ASSUME_NON_NULL(scene->_pegPtr);
 			scene->_pegPtr->setPosition(scene->_holePtr->_newPosition);
 			scene->_pegPtr->setStrip(1);
 			scene->_pegPtr->show();
@@ -1921,7 +1921,7 @@ void Scene4045::postInit(SceneObjectList *OwnerList) {
 			_miranda.setStrip(3);
 			_miranda.setFrame(2);
 			_miranda.changeZoom(-1);
-			
+
 			_miranda.setPosition(Common::Point(66, 209));
 			_globals->_sceneItems.push_back(&_miranda);
 		}
@@ -4268,7 +4268,7 @@ void Scene4301::Action1::signal() {
 		_actionIndex = 2;
 		break;
 	case 10:
-		// Puzzle: Wrong code 
+		// Puzzle: Wrong code
 		_globals->_events.setCursor(CURSOR_NONE);
 		scene->_soundHandler.startSound(337);
 		if (scene->_hotspot3._flags & OBJFLAG_HIDE)

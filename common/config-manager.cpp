@@ -31,7 +31,7 @@ DECLARE_SINGLETON(Common::ConfigManager);
 
 static bool isValidDomainName(const Common::String &domName) {
 	const char *p = domName.c_str();
-	while (*p && (isalnum(*p) || *p == '-' || *p == '_'))
+	while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_'))
 		p++;
 	return *p == 0;
 }
@@ -76,7 +76,7 @@ void ConfigManager::copyFrom(ConfigManager &source) {
 
 void ConfigManager::loadDefaultConfigFile() {
 	// Open the default config file
-	assert(g_system);
+	ASSUME_NON_NULL(g_system);
 	SeekableReadStream *stream = g_system->createConfigReadStream();
 	_filename.clear();  // clear the filename to indicate that we are using the default config file
 
@@ -187,7 +187,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			// Get the domain name, and check whether it's valid (that
 			// is, verify that it only consists of alphanumerics,
 			// dashes and underscores).
-			while (*p && (isalnum(*p) || *p == '-' || *p == '_'))
+			while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_'))
 				p++;
 
 			if (*p == '\0')
@@ -205,7 +205,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 
 			// Skip leading whitespaces
 			const char *t = line.c_str();
-			while (isspace(*t))
+			while (isspace(static_cast<unsigned char>(*t)))
 				t++;
 
 			// Skip empty lines / lines with only whitespace
@@ -248,7 +248,7 @@ void ConfigManager::flushToDisk() {
 
 	if (_filename.empty()) {
 		// Write to the default config file
-		assert(g_system);
+		ASSUME_NON_NULL(g_system);
 		stream = g_system->createConfigWriteStream();
 		if (!stream)    // If writing to the config file is not possible, do nothing
 			return;

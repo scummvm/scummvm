@@ -252,7 +252,7 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 		uint32 size = resLength(id);
 		_memMan->alloc(memHandle, size);
 		Common::File *clusFile = resFile(id);
-		assert(clusFile);
+		ASSUME_NON_NULL(clusFile);
 		clusFile->seek(resOffset(id));
 		clusFile->read(memHandle->data, size);
 		if (clusFile->err() || clusFile->eos()) {
@@ -320,7 +320,7 @@ Common::File *ResMan::resFile(uint32 id) {
 			guiFatalError(msg);
 		}
 		while (_openClus > MAX_OPEN_CLUS) {
-			assert(_openCluStart);
+			ASSUME_NON_NULL(_openCluStart);
 			Clu *closeClu = _openCluStart;
 			_openCluStart = _openCluStart->nextOpen;
 
