@@ -101,34 +101,12 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 
 #include "saga/detection_tables.h"
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Saga::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Saga::SAGAGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine gameid
-	sagaGames,
-	// Structure for autoupgrading obsolete gameids
-	obsoleteGameIDsTable,
-	// Name of single gameid (optional)
-	"saga",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class SagaMetaEngine : public AdvancedMetaEngine {
 public:
-	SagaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	SagaMetaEngine() : AdvancedMetaEngine(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
+		params.obsoleteList = obsoleteGameIDsTable;
+		params.singleid = "saga";
+	}
 
 	virtual const char *getName() const {
 		return "SAGA ["
