@@ -67,7 +67,7 @@ class MOUSE : public SPRITE
   //void SetFun (void);
   //void ResetFun (void);
 public:
-  Boolean Exist;
+  bool Exist;
   int Buttons;
   SPRITE * Busy;
   //SPRITE * Touched;

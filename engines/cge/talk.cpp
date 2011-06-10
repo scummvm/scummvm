@@ -138,7 +138,7 @@ TALK::TALK (const char * tx, TBOX_STYLE mode)
 : SPRITE(NULL), Mode(mode)
 {
   TS[0] = TS[1] = NULL;
-  Flags.Syst = TRUE;
+  Flags.Syst = true;
   Update(tx);
 }
 
@@ -150,7 +150,7 @@ TALK::TALK (void)
 : SPRITE(NULL), Mode(PURE)
 {
   TS[0] = TS[1] = NULL;
-  Flags.Syst = TRUE;
+  Flags.Syst = true;
 }
 
 
@@ -163,7 +163,7 @@ TALK::~TALK (void)
   word i;
   for (i = 0; i < ShpCnt; i ++)
     {
-      if (FP_SEG(ShpList[i]) != _DS) // small model: always FALSE
+      if (FP_SEG(ShpList[i]) != _DS) // small model: always false
 	{
 	  delete ShpList[i];
 	  ShpList[i] = NULL;

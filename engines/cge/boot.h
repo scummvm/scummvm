@@ -70,7 +70,7 @@ typedef struct {
 
 EC	Boot *		ReadBoot	(int drive);
 EC	byte		CheckBoot	(Boot * boot);
-EC	Boolean		WriteBoot	(int drive, Boot * boot);
+EC	bool		WriteBoot	(int drive, Boot * boot);
 
 
 #endif

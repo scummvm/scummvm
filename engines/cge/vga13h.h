@@ -126,7 +126,7 @@ class HEART : public ENGINE
 {
   friend ENGINE;
 public:
-  static Boolean Enable;
+  static bool Enable;
   static word * XTimer;
   static void SetXTimer (word * ptr);
   static void SetXTimer (word * ptr, word time);
@@ -192,9 +192,9 @@ public:
   int ShpCnt;
   char File[MAXFILE];
   SPRITE * Prev, * Next;
-  Boolean Works (SPRITE * spr);
-  Boolean SeqTest (int n);
-  inline Boolean Active (void) { return Ext != NULL; }
+  bool Works (SPRITE * spr);
+  bool SeqTest (int n);
+  inline bool Active (void) { return Ext != NULL; }
   SPRITE (BMP_PTR * shp);
   virtual ~SPRITE (void);
   BMP_PTR Shp (void);
@@ -202,7 +202,7 @@ public:
   void MoveShapes (byte * buf);
   SPRITE * Expand (void);
   SPRITE * Contract (void);
-  SPRITE * BackShow (Boolean fast = FALSE);
+  SPRITE * BackShow (bool fast = false);
   void SetName(char * n);
   inline char * Name(void) { return (Ext) ? Ext->Name : NULL; }
   void Goto (int x, int y);
@@ -229,8 +229,8 @@ class QUEUE
 {
   SPRITE * Head, * Tail;
 public:
-  Boolean Show;
-  QUEUE (Boolean show = FALSE);
+  bool Show;
+  QUEUE (bool show = false);
   ~QUEUE (void);
   void Append (SPRITE * spr);
   void Insert (SPRITE * spr, SPRITE * nxt);
@@ -253,7 +253,7 @@ class VGA
   static word OldMode;
   static word * OldScreen;
   static word StatAdr;
-  static Boolean SetPal;
+  static bool SetPal;
   static DAC * OldColors, * NewColors;
   static int SetMode (int mode);
   static void UpdateColors (void);
@@ -261,7 +261,7 @@ class VGA
   static const char * Msg;
   static const char * Nam;
   static void SetStatAdr (void);
-  static void WaitVR (Boolean on = TRUE);
+  static void WaitVR (bool on = true);
 public:
   dword FrmCnt;
   static QUEUE ShowQ, SpareQ;
@@ -330,7 +330,7 @@ byte Closest (CBLK * pal, CBLK x)
 		SPRITE *	SpriteAt	(int x, int y);
 		SPRITE *	Locate		(int ref);
 
-extern		Boolean		SpeedTest;
+extern		bool		SpeedTest;
 
 
 #endif

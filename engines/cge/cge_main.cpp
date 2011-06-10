@@ -117,7 +117,7 @@ static	int		DemoText	= DEMO_TEXT;
 
 //--------------------------------------------------------------------------
 
-	Boolean		JBW		= FALSE;
+	bool		JBW		= false;
 	DAC *SysPal		= farnew(DAC, PAL_CNT);
 
 //-------------------------------------------------------------------------
@@ -141,10 +141,10 @@ static	EMS *		Mini		= MiniEmm.Alloc((word)MINI_EMM_SIZE);
 static	BMP_PTR *	MiniShpList	= NULL;
 static	BMP_PTR		MiniShp[]	= { NULL, NULL };
 static	KEYBOARD	Keyboard;
-static	Boolean		Finis		= FALSE;
+static	bool		Finis		= false;
 static	int		Startup		= 1;
 static	int		OffUseCount	= atoi(Text[OFF_USE_COUNT]);
-	word *		intStackPtr	= FALSE;
+	word *intStackPtr	= false;
 
 
 	HXY		HeroXY[CAVE_MAX] = {{0,0}};
@@ -184,9 +184,9 @@ byte & CLUSTER::Cell (void)
 
 
 
-Boolean CLUSTER::Protected (void)
+bool CLUSTER::Protected (void)
 {
-  if (A == Barriers[Now].Vert || B == Barriers[Now].Horz) return TRUE;
+  if (A == Barriers[Now].Vert || B == Barriers[Now].Horz) return true;
 
   _DX = (MAP_ZCNT << 8) + MAP_XCNT;
   _BX = (word) this;
@@ -202,7 +202,7 @@ Boolean CLUSTER::Protected (void)
   asm	cmp	ch,dh
   asm	jge	xit
 
-//  if (A < 0 || A >= MAP_XCNT || B < 0 || B >= MAP_ZCNT) return TRUE;
+//  if (A < 0 || A >= MAP_XCNT || B < 0 || B >= MAP_ZCNT) return true;
 
   asm	mov	al,dl
   asm	mul	ch
@@ -276,7 +276,7 @@ CLUSTER XZ (COUPLE xy)
 
 
 
-static void LoadGame (XFILE& file, Boolean tiny = FALSE)
+static void LoadGame (XFILE& file, bool tiny = false)
 {
   SAVTAB * st;
   SPRITE * spr;
@@ -290,7 +290,7 @@ static void LoadGame (XFILE& file, Boolean tiny = FALSE)
 
   file.Read((byte *) &i, sizeof(i));
   if (i != SVGCHKSUM) VGA::Exit(BADSVG_TEXT);
-  if (STARTUP::Core < CORE_HIG) Music = FALSE;
+  if (STARTUP::Core < CORE_HIG) Music = false;
   if (STARTUP::SoundOk == 1 && STARTUP::Mode == 0)
     {
       SNDDrvInfo.VOL2.D = volume[0];
@@ -483,10 +483,10 @@ void WALK::Tick (void)
 	      if (! spr->Flags.Near)
 		{
 		  FeedSnail(spr, NEAR);
-		  spr->Flags.Near = TRUE;
+		  spr->Flags.Near = true;
 		}
 	    }
-	  else spr->Flags.Near = FALSE;
+	  else spr->Flags.Near = false;
 	}
     }
 
@@ -578,7 +578,7 @@ void WALK::Park (void)
 
 void WALK::FindWay (CLUSTER c)
 {
-  Boolean Find1Way(void);
+  bool Find1Way(void);
   extern word Target;
 
   if (c != Here)
@@ -621,7 +621,7 @@ void WALK::FindWay (SPRITE * spr)
 
 
 
-Boolean WALK::Lower (SPRITE * spr)
+bool WALK::Lower (SPRITE * spr)
 {
   return (spr->Y > Y + (H * 3) / 5);
 }
@@ -681,8 +681,8 @@ public:
 SQUARE::SQUARE (void)
 : SPRITE(MB)
 {
-  Flags.Kill = TRUE;
-  Flags.BDel = FALSE;
+  Flags.Kill = true;
+  Flags.BDel = false;
 }
 
 
@@ -816,13 +816,13 @@ static void AltCtrlDel (void)
 
 static void MiniStep (int stp)
 {
-  if (stp < 0) MiniCave->Flags.Hide = TRUE;
+  if (stp < 0) MiniCave->Flags.Hide = true;
   else
     {
       &*Mini;
       *MiniShp[0] = *MiniShpList[stp];
       if (Fx.Current) &*(Fx.Current->EAddr());
-      MiniCave->Flags.Hide = FALSE;
+      MiniCave->Flags.Hide = false;
     }
 }
 
@@ -927,7 +927,7 @@ static void CaveUp (void)
       // following 2 lines trims Hero's Z position!
       Hero->Tick();
       Hero->Time = 1;
-      Hero->Flags.Hide = FALSE;
+      Hero->Flags.Hide = false;
     }
 
   if (! Dark) Vga.Sunset();
@@ -946,9 +946,9 @@ static void CaveUp (void)
   Vga.CopyPage(1, 0);
   Vga.Show();
   Vga.Sunrise(SysPal);
-  Dark = FALSE;
+  Dark = false;
   if (! Startup) Mouse.On();
-  HEART::Enable = TRUE;
+  HEART::Enable = true;
 }
 
 
@@ -993,7 +993,7 @@ static void QGame (void)
   SaveSound();
   SaveGame(CFILE(UsrPath(UsrFnam), WRI, RCrypt));
   Vga.Sunset();
-  Finis = TRUE;
+  Finis = true;
 }
 
 
@@ -1003,7 +1003,7 @@ void SwitchCave (int cav)
 {
   if (cav != Now)
     {
-      HEART::Enable = FALSE;
+      HEART::Enable = false;
       if (cav < 0)
 	{
 	  SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
@@ -1087,7 +1087,7 @@ void SYSTEM::Touch (word mask, int x, int y)
 	  case F7           : Hero->Step(TSEQ + 2); break;
 	  case F8           : Hero->Step(TSEQ + 3); break;
 	  case F9           : SYSTEM::FunDel = 1; break;
-	  case 'X'          : if (KEYBOARD::Key[ALT]) Finis = TRUE; break;
+	  case 'X'          : if (KEYBOARD::Key[ALT]) Finis = true; break;
 	  case '0'          :
 	  case '1'          :
 	  case '2'          :
@@ -1268,7 +1268,7 @@ static void SwitchMusic (void)
       if (VMENU::Addr) SNPOST_(SNKILL, -1, 0, VMENU::Addr);
       else
 	{
-	  SNPOST_(SNSEQ, 122, (Music = FALSE), NULL);
+	  SNPOST_(SNSEQ, 122, (Music = false), NULL);
 	  SNPOST(SNEXEC, -1, 0, (void *) SelectSound);
 	}
     }
@@ -1355,8 +1355,8 @@ static void SwitchMapping (void)
 
 static void KillSprite (void)
 {
-  Sprite->Flags.Kill = TRUE;
-  Sprite->Flags.BDel = TRUE;
+  Sprite->Flags.Kill = true;
+  Sprite->Flags.BDel = true;
   SNPOST_(SNKILL, -1, 0, Sprite);
   Sprite = NULL;
 }
@@ -1382,7 +1382,7 @@ static void PushSprite (void)
 
 static void PullSprite (void)
 {
-  Boolean ok = FALSE;
+  bool ok = false;
   SPRITE * spr = Sprite->Next;
   if (spr)
     {
@@ -1554,7 +1554,7 @@ static void OptionTouch (int opt, word mask)
 		 if (mask & R_UP)
 		   if (! MIXER::Appear)
 		     {
-		       MIXER::Appear = TRUE;
+		       MIXER::Appear = true;
 		       new MIXER(BUTTON_X, BUTTON_Y);
 		     }
 	       break;
@@ -1611,7 +1611,7 @@ void SPRITE::Touch (word mask, int x, int y)
 			    {
 			      SNPOST(SNREACH, -1, -1, this);
 			      SNPOST(SNKEEP, -1, -1, this);
-			      Flags.Port = FALSE;
+			      Flags.Port = false;
 			    }
 			}
 		      else
@@ -1674,9 +1674,9 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 
   int shpcnt = 0;
   int type = 0; // DEAD
-  Boolean east = FALSE;
-  Boolean port = FALSE;
-  Boolean tran = FALSE;
+  bool east = false;
+  bool port = false;
+  bool tran = false;
   int i, lcnt = 0;
   word len;
 
@@ -1807,8 +1807,8 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
       Sprite->Flags.East = east;
       Sprite->Flags.Port = port;
       Sprite->Flags.Tran = tran;
-      Sprite->Flags.Kill = TRUE;
-      Sprite->Flags.BDel = TRUE;
+      Sprite->Flags.Kill = true;
+      Sprite->Flags.BDel = true;
       fnsplit(fname, NULL, NULL, Sprite->File, NULL);
       Sprite->ShpCnt = shpcnt;
       VGA::SpareQ.Append(Sprite);
@@ -1825,10 +1825,10 @@ static void LoadScript (const char *fname)
   char line[LINE_MAX];
   char * SpN;
   int SpI, SpA, SpX, SpY, SpZ;
-  Boolean BkG = FALSE;
+  bool BkG = false;
   INI_FILE scrf(fname);
   int lcnt = 0;
-  Boolean ok = TRUE;
+  bool ok = true;
 
   if (scrf.Error) return;
 
@@ -1839,7 +1839,7 @@ static void LoadScript (const char *fname)
       ++ lcnt;
       if (*line == 0 || *line == '\n' || *line == '.') continue;
 
-      ok = FALSE;	// not OK if break
+      ok = false;	// not OK if break
       // sprite ident number
       if ((p = strtok(line, " \t\n")) == NULL) break;
       SpI = atoi(p);
@@ -1861,11 +1861,11 @@ static void LoadScript (const char *fname)
       if ((p = strtok(NULL, " ,;/\t\n")) == NULL) break;
       BkG = atoi(p) == 0;
 
-      ok = TRUE;	// no break: OK
+      ok = true;	// no break: OK
 
       Sprite = NULL;
       LoadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
-      if (Sprite && BkG) Sprite->Flags.Back = TRUE;
+      if (Sprite && BkG) Sprite->Flags.Back = true;
     }
   if (! ok)
     {
@@ -1947,7 +1947,7 @@ void LoadUser (void)
       else
 	{
 	  LoadScript(ProgName(INI_EXT));
-	  Music = TRUE;
+	  Music = true;
 	  SaveGame(CFILE(SVG0NAME, WRI));
 	  VGA::Exit("Ok", SVG0NAME);
 	}
@@ -1965,9 +1965,9 @@ static void RunGame (void)
   Text.Preload(100, 1000);
   LoadHeroXY();
 
-  CavLight.Flags.Tran = TRUE;
+  CavLight.Flags.Tran = true;
   VGA::ShowQ.Append(&CavLight);
-  CavLight.Flags.Hide = TRUE;
+  CavLight.Flags.Hide = true;
 
   static SEQ PocSeq[] = { { 0, 0, 0, 0, 20 },
 			  { 1, 2, 0, 0,  4 },
@@ -1978,7 +1978,7 @@ static void RunGame (void)
 			  { 0, 1, 0, 0, 16 },
 			};
   PocLight.SetSeq(PocSeq);
-  PocLight.Flags.Tran = TRUE;
+  PocLight.Flags.Tran = true;
   PocLight.Time = 1;
   PocLight.Z = 120;
   VGA::ShowQ.Append(&PocLight);
@@ -2005,7 +2005,7 @@ static void RunGame (void)
 	  ExpandSprite(MiniCave = Sprite);	// NULL is ok
 	  if (MiniCave)
 	    {
-	      MiniCave->Flags.Hide = TRUE;
+	      MiniCave->Flags.Hide = true;
 	      MiniCave->MoveShapes(ptr);
 	      MiniShp[0] = new BITMAP(*MiniCave->Shp());
 	      MiniShpList = MiniCave->SetShapeList(MiniShp);
@@ -2024,15 +2024,15 @@ static void RunGame (void)
 	  if ((Shadow = Sprite) != NULL)
 	    {
 	      Shadow->Ref = 2;
-	      Shadow->Flags.Tran = TRUE;
-	      Hero->Flags.Shad = TRUE;
+	      Shadow->Flags.Tran = true;
+	      Hero->Flags.Shad = true;
 	      VGA::ShowQ.Insert(VGA::SpareQ.Remove(Shadow), Hero);
 	    }
 	}
     }
 
   InfoLine.Goto(INFO_X, INFO_Y);
-  InfoLine.Flags.Tran = TRUE;
+  InfoLine.Flags.Tran = true;
   InfoLine.Update(NULL);
   VGA::ShowQ.Insert(&InfoLine);
 
@@ -2064,7 +2064,7 @@ static void RunGame (void)
     }
 
   KEYBOARD::SetClient(NULL);
-  HEART::Enable = FALSE;
+  HEART::Enable = false;
   SNPOST(SNCLEAR, -1, 0, NULL);
   SNPOST_(SNCLEAR, -1, 0, NULL);
   Mouse.Off();
@@ -2086,14 +2086,14 @@ void Movie (const char * ext)
       ExpandSprite(VGA::SpareQ.Locate(999));
       FeedSnail(VGA::ShowQ.Locate(999), TAKE);
       VGA::ShowQ.Append(&Mouse);
-      HEART::Enable = TRUE;
+      HEART::Enable = true;
       KEYBOARD::SetClient(Sys);
       while (! Snail.Idle())
 	{
 	  MainLoop();
 	}
       KEYBOARD::SetClient(NULL);
-      HEART::Enable = FALSE;
+      HEART::Enable = false;
       SNPOST(SNCLEAR, -1, 0, NULL);
       SNPOST_(SNCLEAR, -1, 0, NULL);
       VGA::ShowQ.Clear();
@@ -2106,16 +2106,16 @@ void Movie (const char * ext)
 
 
 
-Boolean ShowTitle (const char * name)
+bool ShowTitle (const char * name)
 {
   BITMAP::Pal = SysPal;
   BMP_PTR LB[] =  { new BITMAP(name), NULL };
   BITMAP::Pal = NULL;
-  Boolean usr_ok = FALSE;
+  bool usr_ok = false;
 
   SPRITE D(LB);
-  D.Flags.Kill = TRUE;
-  D.Flags.BDel = TRUE;
+  D.Flags.Kill = true;
+  D.Flags.BDel = true;
   D.Center();
   D.Show(2);
 
@@ -2136,11 +2136,11 @@ Boolean ShowTitle (const char * name)
       VGA::CopyPage(1, 2);
       VGA::CopyPage(0, 1);
       VGA::ShowQ.Append(&Mouse);
-      HEART::Enable = TRUE;
+      HEART::Enable = true;
       Mouse.On();
       for (SelectSound(); ! Snail.Idle() || VMENU::Addr; ) MainLoop();
       Mouse.Off();
-      HEART::Enable = FALSE;
+      HEART::Enable = false;
       VGA::ShowQ.Clear();
       VGA::CopyPage(0, 2);
       STARTUP::SoundOk = 2;
@@ -2151,7 +2151,7 @@ Boolean ShowTitle (const char * name)
     {
       #ifdef	DEMO
       strcpy(UsrFnam, ProgName(SVG_EXT));
-      usr_ok = TRUE;
+      usr_ok = true;
       #else
       //-----------------------------------------
       #ifndef EVA
@@ -2171,10 +2171,10 @@ Boolean ShowTitle (const char * name)
       VGA::CopyPage(0, 1);
       VGA::ShowQ.Append(&Mouse);
       //Mouse.On();
-      HEART::Enable = TRUE;
+      HEART::Enable = true;
       for (TakeName(); GET_TEXT::Ptr; ) MainLoop();
-      HEART::Enable = FALSE;
-      if (KEYBOARD::Last() == Enter && *UsrFnam) usr_ok = TRUE;
+      HEART::Enable = false;
+      if (KEYBOARD::Last() == Enter && *UsrFnam) usr_ok = true;
       if (usr_ok) strcat(UsrFnam, SVG_EXT);
       //Mouse.Off();
       VGA::ShowQ.Clear();
@@ -2185,13 +2185,13 @@ Boolean ShowTitle (const char * name)
 	  const char *n = UsrPath(UsrFnam);
 	  if (CFILE::Exist(n))
 	    {
-	      LoadGame(CFILE(n, REA, RCrypt), TRUE); // only system vars
+	      LoadGame(CFILE(n, REA, RCrypt), true); // only system vars
 	      VGA::SetColors(SysPal, 64);
 	      Vga.Update();
 	      if (FINIS)
 		{
 		  ++ STARTUP::Mode;
-		  FINIS = FALSE;
+		  FINIS = false;
 		}
 	    }
 	  else ++ STARTUP::Mode;
@@ -2203,7 +2203,7 @@ Boolean ShowTitle (const char * name)
   VGA::CopyPage(0, 2);
 
   #ifdef DEMO
-    return TRUE;
+    return true;
   #else
     return (STARTUP::Mode == 2 || usr_ok);
   #endif
@@ -2237,8 +2237,8 @@ void cge_main (void)
   if (! Mouse.Exist) VGA::Exit(NO_MOUSE_TEXT);
   if (! SVG0FILE::Exist(SVG0NAME)) STARTUP::Mode = 2;
 
-  Debug( DebugLine.Flags.Hide = TRUE; )
-  Debug( HorzLine.Flags.Hide = TRUE; )
+  Debug( DebugLine.Flags.Hide = true; )
+  Debug( HorzLine.Flags.Hide = true; )
 
   srand((word) Timer());
   Sys = new SYSTEM;

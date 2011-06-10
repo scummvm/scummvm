@@ -83,17 +83,17 @@ class SNAIL
 {
   struct COM { SNCOM Com; int Ref; int Val; void * Ptr; } * SNList;
   byte Head, Tail;
-  Boolean Turbo, Busy, TextDelay;
+  bool Turbo, Busy, TextDelay;
   word Pause;
 public:
   static char * ComTxt[];
-  Boolean TalkEnable;
-  SNAIL (Boolean turbo = FALSE);
+  bool TalkEnable;
+  SNAIL (bool turbo = false);
   ~SNAIL (void);
   void RunCom (void);
   void AddCom (SNCOM com, int ref = 0, int val = 0, void * ptr = NULL);
   void InsCom (SNCOM com, int ref = 0, int val = 0, void * ptr = NULL);
-  Boolean Idle (void);
+  bool Idle (void);
 };
 
 
@@ -110,9 +110,9 @@ void	PocFul		(void);
 
 
 extern	SCB		Scb;
-extern	Boolean		Flag[4];
-extern	Boolean		Game;
-extern	Boolean		Dark;
+extern	bool		Flag[4];
+extern	bool		Game;
+extern	bool		Dark;
 extern	SNAIL		Snail;
 extern	SNAIL		Snail_;
 extern	int		Now;

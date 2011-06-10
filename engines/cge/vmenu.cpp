@@ -64,10 +64,10 @@ MENU_BAR::MENU_BAR (word w)
     }
   TS[0] = new BITMAP(w, h, p);
   SetShapeList(TS);
-  Flags.Slav = TRUE;
-  Flags.Tran = TRUE;
-  Flags.Kill = TRUE;
-  Flags.BDel = TRUE;
+  Flags.Slav = true;
+  Flags.Tran = true;
+  Flags.Kill = true;
+  Flags.BDel = true;
 }
 
 
@@ -120,8 +120,8 @@ VMENU::VMENU (CHOICE * list, int x, int y)
   delete[] vmgt;
   Items = 0;
   for (cp = list; cp->Text; cp ++) ++ Items;
-  Flags.BDel = TRUE;
-  Flags.Kill = TRUE;
+  Flags.BDel = true;
+  Flags.Kill = true;
   if (x < 0 || y < 0) Center();
   else Goto(x - W / 2, y - (TEXT_VM + FONT_HIG / 2));
   VGA::ShowQ.Insert(this, VGA::ShowQ.Last());
@@ -145,7 +145,7 @@ void VMENU::Touch (word mask, int x, int y)
 {
 #define h (FONT_HIG+TEXT_LS)
   int n = 0;
-  Boolean ok = FALSE;
+  bool ok = false;
 
   if (Items)
     {

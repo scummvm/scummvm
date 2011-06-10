@@ -36,10 +36,8 @@
 #define		CR		13
 
 #define		NULL		0
-#define		TRUE		(1==1)
-#define		FALSE		(!TRUE)
-#define		OFF		FALSE
-#define		ON		TRUE
+#define		OFF		false
+#define		ON		true
 
 #define		IsWhite(c)	((c) == ' ' || (c) == '\t' || (c) == '\n')
 #define		IsUpper(c)	((c) >= 'A' && (c) <= 'Z')
@@ -57,7 +55,6 @@ typedef	unsigned char	BYTE;
 typedef	unsigned int	WORD;
 typedef	unsigned long	DWORD;
 
-typedef	int		Boolean;
 typedef unsigned char	byte;
 typedef unsigned int	word;
 typedef unsigned long	dword;

@@ -67,7 +67,7 @@ void quit_now (int ref)
 
 
 
-Boolean STARTUP::get_parms (void)
+bool STARTUP::get_parms (void)
 {
   int i = _argc;
   while (i > 1)
@@ -89,7 +89,7 @@ Boolean STARTUP::get_parms (void)
 	  case 8 : SNDDrvInfo.DIRQ = p; break;
 	  case 9 : SNDDrvInfo.MBASE = p;
 		   SNDDrvInfo.MDEV = DEV_GM; break;
-	  default: return FALSE;
+	  default: return false;
 	}
       if (n >= 2) SoundOk = 2;
     }
@@ -112,7 +112,7 @@ Boolean STARTUP::get_parms (void)
     #endif
   #endif
   if (SNDDrvInfo.MDEV != DEV_GM) SNDDrvInfo.MDEV = SNDDrvInfo.DDEV;
-  return TRUE;
+  return true;
 }
 
 
@@ -132,7 +132,7 @@ STARTUP::STARTUP (void)
   if (Core < CORE_HIG)
     {
       SNDDrvInfo.MDEV = DEV_QUIET;
-      Music = FALSE;
+      Music = false;
     }
   #endif
   if (! get_parms()) quit_now(BAD_ARG_TEXT);
@@ -160,7 +160,7 @@ const char *UsrPath (const char *nam)
   #if defined(CD)
   if (DriveCD(0))
     {
-      Boolean ok = FALSE;
+      bool ok = false;
       CFILE ini = Text[CDINI_FNAME];
       if (!ini.Error)
 	{
@@ -170,7 +170,7 @@ const char *UsrPath (const char *nam)
 	    {
 	      int j = strlen(buf);
 	      if (j) if (buf[--j] == '\n') buf[j] = '\0';
-	      if (memicmp(buf, key, i) == 0) ok = TRUE;
+	      if (memicmp(buf, key, i) == 0) ok = true;
 	    }
 	  if (ok)
 	    {
@@ -179,7 +179,7 @@ const char *UsrPath (const char *nam)
 	      if (*(p-1) != '\\') *(p++) = '\\';
 	      strcpy(p, "NUL");
 	      if (_dos_open(buf, 0, &i) == 0) _dos_close(i);
-	      else ok = FALSE;
+	      else ok = false;
 	    }
 	}
       if (!ok) quit_now(BADCD_TEXT);

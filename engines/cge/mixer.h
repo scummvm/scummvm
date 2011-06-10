@@ -46,7 +46,7 @@ class MIXER : public SPRITE
   int Fall;
   void Update (void);
 public:
-  static Boolean Appear;
+  static bool Appear;
   MIXER (int x, int y);
   ~MIXER (void);
   void Touch (word mask, int x, int y);

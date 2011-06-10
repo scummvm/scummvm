@@ -59,7 +59,7 @@
 
 class STARTUP
 {
-  static Boolean get_parms (void);
+  static bool get_parms (void);
 public:
   static int Mode;
   static int Core;

@@ -55,13 +55,13 @@ typedef	struct	{ word skip; word hide; } HideDesc;
 
 class BITMAP
 {
-  Boolean BMPLoad (XFILE * f);
-  Boolean VBMLoad (XFILE * f);
+  bool BMPLoad (XFILE * f);
+  bool VBMLoad (XFILE * f);
 public:
   static DAC * Pal;
   word W, H;
   byte * M, * V; HideDesc * B;
-  BITMAP (const char * fname, Boolean rem = TRUE);
+  BITMAP (const char * fname, bool rem = true);
   BITMAP (word w, word h, byte * map);
   BITMAP (word w, word h, byte fill);
   BITMAP (const BITMAP& bmp);
@@ -72,8 +72,8 @@ public:
   void Hide (int x, int y);
   void Show (int x, int y);
   void XShow (int x, int y);
-  Boolean SolidAt (int x, int y);
-  Boolean VBMSave (XFILE * f);
+  bool SolidAt (int x, int y);
+  bool VBMSave (XFILE * f);
   word MoveVmap (byte * buf);
 };
 

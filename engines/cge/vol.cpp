@@ -83,7 +83,7 @@ VFILE::~VFILE (void)
 
 
 
-Boolean VFILE::Exist (const char * name)
+bool VFILE::Exist (const char * name)
 {
   return _fstricmp(Cat.Find(name)->Key, name) == 0;
 }
