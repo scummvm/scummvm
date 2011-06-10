@@ -101,15 +101,15 @@ public:
 struct VoiceStructEntryType0 {
 	Sound *_sound;
 	int _channelNum;
-	int _field9;
+	int _priority;
 	int _fieldA;
 	Sound *_sound2;
 	int _channelNum2;
-	int _field11;
+	int _priority2;
 	int _field12;
 	Sound *_sound3;
 	int _channelNum3;
-	int _field19;
+	int _priority3;
 	int _field1A;
 	int _field1B;
 };
