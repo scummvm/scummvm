@@ -295,7 +295,7 @@ void multidump(Context &context) {
 	//debug(1, "multidump %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
 	unsigned pitch = (uint16)context.data.word(kScreenwidth);
 	unsigned offset = (uint16)context.di + (uint16)context.bx * pitch;
-	for(unsigned y = 0; y < h; ++y, offset += pitch * y) {
+	for(unsigned y = 0; y < h; ++y, offset += pitch) {
 		uint8 *src_p = context.ds.ptr(offset, w);
 		uint8 *dst_p = context.es.ptr(offset, w);
 		memcpy(dst_p, src_p, w);
