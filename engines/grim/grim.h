@@ -261,7 +261,7 @@ private:
 	unsigned int _frameTimeCollection;
 	int _prevSmushFrame;
 	unsigned int _frameCounter;
-	unsigned int _timeAccum;
+	unsigned int _lastFrameTime;
 	unsigned _speedLimitMs;
 	bool _showFps;
 	bool _softRenderer;
