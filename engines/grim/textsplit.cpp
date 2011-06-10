@@ -89,7 +89,7 @@ TextSplitter::TextSplitter(const char *data, int len) {
 }
 
 TextSplitter::~TextSplitter() {
-	delete _stringData;
+	delete[] _stringData;
 	delete[] _lines;
 }
 
