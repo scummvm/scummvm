@@ -38,6 +38,8 @@ Sector::Sector(const Sector &other) {
 Sector::~Sector() {
 	if (_vertices)
 		delete[] _vertices;
+	if (_origVertices)
+		delete[] _origVertices;
 }
 
 void Sector::saveState(SaveGame *savedState) const {
@@ -54,6 +56,15 @@ void Sector::saveState(SaveGame *savedState) const {
 	}
 
 	savedState->writeVector3d(_normal);
+
+	// Enable on next save format change.
+	/*savedState->writeFloat(_shrinkRadius);
+	savedState->writeLESint32(_invalid);
+	if (_shrinkRadius != 0.f && !_invalid) {
+		for (int i = 0; i < _numVertices + 1; ++i) {
+			savedState->writeVector3d(_origVertices[i]);
+		}
+	}*/
 }
 
 bool Sector::restoreState(SaveGame *savedState) {
@@ -72,6 +83,17 @@ bool Sector::restoreState(SaveGame *savedState) {
 
 	_normal = savedState->readVector3d();
 
+	// Enable on next save format change.
+	/*_shrinkRadius = savedState->readFloat();
+	_invalid = savedState->readLESint32();
+	if (_shrinkRadius != 0.f && !_invalid) {
+		_origVertices = new Graphics::Vector3d[_numVertices + 1];
+		for (int i = 0; i < _numVertices + 1; ++i) {
+			_origVertices[i] = savedState->readVector3d();
+		}
+	} else {
+		_origVertices = NULL;
+	}*/
 	return true;
 }
 
@@ -155,11 +177,91 @@ void Sector::loadBinary(Common::MemoryReadStream *ms) {
 	ms->seek(skip * 4, SEEK_CUR);
 
 	ms->read(&_height, 4);
-
 }
 
 void Sector::setVisible(bool vis) {
 	_visible = vis;
+}
+
+void Sector::shrink(float radius) {
+	if ((getType() & WalkType) == 0 || _shrinkRadius == radius)
+		return;
+
+	_shrinkRadius = radius;
+	if (!_origVertices) {
+		_origVertices = _vertices;
+		_vertices = new Graphics::Vector3d[_numVertices + 1];
+	}
+
+	// Move each vertex inwards by the given amount.
+	for (int j = 0; j < _numVertices; j++) {
+		Graphics::Vector3d shrinkDir;
+
+		for (int k = 0; k < g_grim->getCurrScene()->getSectorCount(); k++) {
+			Sector *other = g_grim->getCurrScene()->getSectorBase(k);
+			if ((other->getType() & WalkType) == 0)
+				continue;
+
+			for (int l = 0; l < other->_numVertices; l++) {
+				Graphics::Vector3d* otherVerts = other->_vertices;
+				if (other->_origVertices)
+					otherVerts = other->_origVertices;
+				if ((otherVerts[l] - _origVertices[j]).magnitude() < 0.01f) {
+					Graphics::Vector3d e1 = otherVerts[l + 1] - otherVerts[l];
+					Graphics::Vector3d e2;
+					if (l - 1 >= 0)
+						e2 = otherVerts[l] - otherVerts[l - 1];
+					else
+						e2 = otherVerts[l] - otherVerts[other->_numVertices - 1];
+					e1.normalize();
+					e2.normalize();
+					Graphics::Vector3d bisector = (e1 - e2);
+					bisector.normalize();
+					shrinkDir += bisector;
+				}
+			}
+		}
+
+		if (shrinkDir.magnitude() > 0.1f) {
+			shrinkDir.normalize();
+			_vertices[j] = _origVertices[j] + shrinkDir * radius;
+		} else {
+			_vertices[j] = _origVertices[j];
+		}
+	}
+
+	_vertices[_numVertices] = _vertices[0];
+
+	// Make sure the sector is still convex.
+	for (int j = 0; j < _numVertices; j++) {
+		Graphics::Vector3d e1 = _vertices[j + 1] - _vertices[j];
+		Graphics::Vector3d e2;
+		if (j - 1 >= 0)
+			e2 = _vertices[j] - _vertices[j - 1];
+		else
+			e2 = _vertices[j] - _vertices[_numVertices - 1];
+
+		if (e1.x() * e2.y() > e1.y() * e2.x()) {
+			// Not convex, so mark the sector invalid.
+			_invalid = true;
+			delete[] _vertices;
+			_vertices = _origVertices;
+			_origVertices = NULL;
+			break;
+		}
+	}
+}
+
+void Sector::unshrink() {
+	if (_shrinkRadius != 0.f) {
+		_shrinkRadius = 0.f;
+		_invalid = false;
+		if (_origVertices) {
+			delete[] _vertices;
+			_vertices = _origVertices;
+			_origVertices = NULL;
+		}
+	}
 }
 
 bool Sector::isPointInSector(const Graphics::Vector3d &point) const {
@@ -375,8 +477,18 @@ Sector &Sector::operator=(const Sector &other) {
 	for (int i = 0; i < _numVertices + 1; ++i) {
 		_vertices[i] = other._vertices[i];
 	}
+	if (other._origVertices) {
+		_origVertices = new Graphics::Vector3d[_numVertices + 1];
+		for (int i = 0; i < _numVertices + 1; ++i) {
+			_origVertices[i] = other._origVertices[i];
+		}
+	} else {
+		_origVertices = NULL;
+	}
 	_height = other._height;
 	_normal = other._normal;
+	_shrinkRadius = other._shrinkRadius;
+	_invalid = other._invalid;
 
 	return *this;
 }

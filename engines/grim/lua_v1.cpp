@@ -744,15 +744,12 @@ void L1_ShrinkBoxes() {
 
 	if (lua_isnumber(sizeObj)) {
 		float size = lua_getnumber(sizeObj);
-// 		g_grim->getCurrScene()->shrinkBoxes(size);
-
-		warning("ShrinkBoxes() not implemented");
+		g_grim->getCurrScene()->shrinkBoxes(size);
 	}
 }
 
 void L1_UnShrinkBoxes() {
-	warning("UnShrinkBoxes() not implemented");
-// 	g_grim->getCurrScene()->shrinkBoxes(0);
+	g_grim->getCurrScene()->unshrinkBoxes();
 }
 
 /* Given a position and a size this function calculates and pushes
@@ -775,12 +772,21 @@ void L1_GetShrinkPos() {
 	Graphics::Vector3d pos;
 	pos.set(x, y, z);
 
+	Sector* sector;
+	g_grim->getCurrScene()->shrinkBoxes(r);
+	g_grim->getCurrScene()->findClosestSector(pos, &sector, &pos);
+	g_grim->getCurrScene()->unshrinkBoxes();
+
 	// TODO
 	//UnShrinkBoxes();
 	// lua_pusnumber 1, 2, 3 or lua_pushnil
-	lua_pushnumber(x);
-	lua_pushnumber(y);
-	lua_pushnumber(z);
+	if (sector) {
+		lua_pushnumber(pos.x());
+		lua_pushnumber(pos.y());
+		lua_pushnumber(pos.z());
+	} else {
+		lua_pushnil();
+	}
 
 	warning("Stub function GetShrinkPos(%g,%g,%g,%g) called", x, y, z, r);
 }

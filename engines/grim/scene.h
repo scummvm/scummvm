@@ -89,6 +89,8 @@ public:
 
 	Sector *findPointSector(const Graphics::Vector3d &p, Sector::SectorType type);
 	void findClosestSector(const Graphics::Vector3d &p, Sector **sect, Graphics::Vector3d *closestPt);
+	void shrinkBoxes(float radius);
+	void unshrinkBoxes();
 
 	void addObjectState(ObjectState *s) {
 		_states.push_back(s);

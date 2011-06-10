@@ -48,7 +48,7 @@ public:
 		HotType = 0x8000
 	};
 
-	Sector() : _vertices(NULL) {}
+	Sector() : _vertices(NULL), _origVertices(NULL), _invalid(false), _shrinkRadius(0.f) {}
 	Sector(const Sector &other);
 	virtual ~Sector();
 
@@ -58,11 +58,13 @@ public:
 	void load(TextSplitter &ts);
 	void loadBinary(Common::MemoryReadStream *ms);
 	void setVisible(bool visible);
+	void shrink(float radius);
+	void unshrink();
 
 	const char *getName() const { return _name.c_str(); }
 	int getSectorId() const { return _id; }
 	SectorType getType() const { return _type; } // FIXME: Implement type de-masking
-	bool isVisible() const { return _visible; }
+	bool isVisible() const { return _visible && !_invalid; }
 	bool isPointInSector(const Graphics::Vector3d &point) const;
 	Common::List<Graphics::Line3d> getBridgesTo(Sector *sector) const;
 
@@ -93,8 +95,11 @@ private:
 	Common::String _name;
 	SectorType _type;
 	bool _visible;
+	bool _invalid;
 	Graphics::Vector3d *_vertices;
+	Graphics::Vector3d *_origVertices;
 	float _height;
+	float _shrinkRadius;
 
 	Graphics::Vector3d _normal;
 };

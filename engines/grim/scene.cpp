@@ -562,6 +562,20 @@ void Scene::findClosestSector(const Graphics::Vector3d &p, Sector **sect, Graphi
 		*closestPoint = resultPt;
 }
 
+void Scene::shrinkBoxes(float radius) {
+	for (int i = 0; i < _numSectors; i++) {
+		Sector *sector = _sectors[i];
+		sector->shrink(radius);
+	}
+}
+
+void Scene::unshrinkBoxes() {
+	for (int i = 0; i < _numSectors; i++) {
+		Sector *sector = _sectors[i];
+		sector->unshrink();
+	}
+}
+
 ObjectState *Scene::findState(const char *filename) {
 	// Check the different state objects for the bitmap
 	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
