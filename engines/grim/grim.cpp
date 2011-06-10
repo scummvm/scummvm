@@ -1012,11 +1012,12 @@ void GrimEngine::doFlip() {
 
 	if (_showFps && _doFlip && _mode != ENGINE_MODE_DRAW) {
 		_frameCounter++;
-		_timeAccum += _frameTime;
-		if (_timeAccum > 500) {
-			sprintf(_fps, "%7.2f", (double)(_frameCounter * 1000) / (double)_timeAccum );
+		unsigned int currentTime = g_system->getMillis();
+		unsigned int delta = currentTime - _lastFrameTime;
+		if (delta > 500) {
+			sprintf(_fps, "%7.2f", (double)(_frameCounter * 1000) / (double)delta );
 			_frameCounter = 0;
-			_timeAccum = 0;
+			_lastFrameTime = currentTime;
 		}
 	}
 }
@@ -1026,7 +1027,7 @@ void GrimEngine::mainLoop() {
 	_frameTime = 0;
 	_frameStart = g_system->getMillis();
 	_frameCounter = 0;
-	_timeAccum = 0;
+	_lastFrameTime = 0;
 	_frameTimeCollection = 0;
 	_prevSmushFrame = 0;
 	_refreshShadowMask = false;
