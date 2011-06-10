@@ -82,7 +82,7 @@ struct DRVINFO
 // sample info
 struct SMPINFO
 {
-  BYTE far *          saddr;             // address
+  BYTE *          saddr;             // address
   WORD                slen;              // length
   WORD                span;              // left/right pan (0-15)
   int                 sflag;             // flag
@@ -119,7 +119,7 @@ EC void SNDDigiStart   (SMPINFO *PSmpInfo);
 EC void SNDDigiStop    (SMPINFO *PSmpInfo);
 
 // Start MIDI File
-EC void SNDMIDIStart   (BYTE far *MIDFile);
+EC void SNDMIDIStart   (BYTE *MIDFile);
 
 // Stop MIDI File
 EC void SNDMIDIStop    (void);

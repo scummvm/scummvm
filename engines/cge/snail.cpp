@@ -63,7 +63,7 @@ extern	SPRITE *	Pocket[];
 extern	int		PocPtr;
 //-------------------------------------------------------------------------
 
-extern	DAC far *	SysPal;
+extern	DAC *	SysPal;
 extern	MOUSE		Mouse;
 
 
@@ -512,7 +512,7 @@ SNAIL::~SNAIL (void)
 void SNAIL::AddCom (SNCOM com, int ref, int val, void * ptr)
 {
   _disable();
-  COM far * snc = &SNList[Head ++];
+  COM * snc = &SNList[Head ++];
   snc->Com = com;
   snc->Ref = ref;
   snc->Val = val;
@@ -531,7 +531,7 @@ void SNAIL::AddCom (SNCOM com, int ref, int val, void * ptr)
 
 void SNAIL::InsCom (SNCOM com, int ref, int val, void * ptr)
 {
-  COM far * snc;
+  COM * snc;
 
   _disable();
   if (Busy)
@@ -1094,7 +1094,7 @@ void SNFlash (Boolean on)
 {
   if (on)
     {
-      DAC far * pal = farnew(DAC, PAL_CNT);
+      DAC * pal = farnew(DAC, PAL_CNT);
       if (pal)
 	{
 	  int i;
@@ -1181,7 +1181,7 @@ void SNAIL::RunCom (void)
       byte tmphea = Head;
       while (Tail != tmphea)
 	{
-	  COM far * snc = &SNList[Tail];
+	  COM * snc = &SNList[Tail];
 
 	  if (! Turbo) // only for the slower one
 	    {

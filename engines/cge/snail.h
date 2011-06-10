@@ -52,7 +52,7 @@ typedef	struct	{ byte Horz, Vert; } BAR;
 
 struct SCB
 {
-  byte far *	Ptr;
+  byte *	Ptr;
   word		Siz;
   SCB *		Nxt;
 };
@@ -81,7 +81,7 @@ enum	SNLIST	{ NEAR, TAKE };
 
 class SNAIL
 {
-  struct COM { SNCOM Com; int Ref; int Val; void * Ptr; } far * SNList;
+  struct COM { SNCOM Com; int Ref; int Val; void * Ptr; } * SNList;
   byte Head, Tail;
   Boolean Turbo, Busy, TextDelay;
   word Pause;

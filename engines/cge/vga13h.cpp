@@ -136,9 +136,9 @@ static void Video (void)
 
 
 
-word far * SaveScreen (void)
+word * SaveScreen (void)
 {
-  word cxy, cur, siz, far * scr = NULL, far * sav;
+  word cxy, cur, siz, * scr = NULL, * sav;
 
   // horizontal size of text mode screen
   asm	mov	ah,0x0F		// get current video mode
@@ -194,9 +194,9 @@ word far * SaveScreen (void)
 
 
 
-void RestoreScreen (word far * &sav)
+void RestoreScreen (word * &sav)
 {
-  word far * scr = NULL;
+  word * scr = NULL;
 
   asm	mov	ax,0x40		// system data segment
   asm	mov	es,ax
@@ -486,7 +486,7 @@ BMP_PTR * SPRITE::SetShapeList (BMP_PTR * shp)
 
 
 
-void SPRITE::MoveShapes (byte far * buf)
+void SPRITE::MoveShapes (byte * buf)
 {
   BMP_PTR * p;
   for (p = Ext->ShpList; *p; p ++)
@@ -779,7 +779,7 @@ void SPRITE::Tick (void)
 
 
 
-void SPRITE::MakeXlat (byte far * x)
+void SPRITE::MakeXlat (byte * x)
 {
   if (Ext)
     {
@@ -800,7 +800,7 @@ void SPRITE::KillXlat (void)
   if (Flags.Xlat && Ext)
     {
       BMP_PTR * b;
-      byte far * m = (*Ext->ShpList)->M;
+      byte * m = (*Ext->ShpList)->M;
 
       switch (MemType(m))
 	{
@@ -885,7 +885,7 @@ void SPRITE::Show (void)
 
 void SPRITE::Show (word pg)
 {
-  byte far * a = VGA::Page[1];
+  byte * a = VGA::Page[1];
   VGA::Page[1] = VGA::Page[pg & 3];
   Shp()->Show(X, Y);
   VGA::Page[1] = a;
@@ -912,13 +912,13 @@ BMP_PTR SPRITE::Ghost (void)
   register SPREXT * e = Ext;
   if (e->b1)
     {
-      BMP_PTR bmp = new BITMAP(0, 0, (byte far *)NULL);
+      BMP_PTR bmp = new BITMAP(0, 0, (byte *)NULL);
       if (bmp == NULL) VGA::Exit("No core");
       bmp->W = e->b1->W;
       bmp->H = e->b1->H;
       if ((bmp->B = farnew(HideDesc, bmp->H)) == NULL) VGA::Exit("No Core");
-      bmp->V = (byte far *) _fmemcpy(bmp->B, e->b1->B, sizeof(HideDesc) * bmp->H);
-      bmp->M = (byte far *) MK_FP(e->y1, e->x1);
+      bmp->V = (byte *) _fmemcpy(bmp->B, e->b1->B, sizeof(HideDesc) * bmp->H);
+      bmp->M = (byte *) MK_FP(e->y1, e->x1);
       return bmp;
     }
   return NULL;
@@ -1085,18 +1085,18 @@ SPRITE * QUEUE::Locate (int ref)
 
 word		VGA::StatAdr = VGAST1_;
 word		VGA::OldMode = 0;
-word far *	VGA::OldScreen = NULL;
+word *	VGA::OldScreen = NULL;
 const char *	VGA::Msg = NULL;
 const char *	VGA::Nam = NULL;
-DAC far *	VGA::OldColors = NULL;
-DAC far *	VGA::NewColors = NULL;
+DAC *	VGA::OldColors = NULL;
+DAC *	VGA::NewColors = NULL;
 Boolean		VGA::SetPal = FALSE;
 int		VGA::Mono = 0;
 QUEUE		VGA::ShowQ = TRUE, VGA::SpareQ = FALSE;
-byte far *	VGA::Page[4] = { (byte far *) MK_FP(SCR_SEG, 0x0000),
-				 (byte far *) MK_FP(SCR_SEG, 0x4000),
-				 (byte far *) MK_FP(SCR_SEG, 0x8000),
-				 (byte far *) MK_FP(SCR_SEG, 0xC000) };
+byte *	VGA::Page[4] = { (byte *) MK_FP(SCR_SEG, 0x0000),
+				 (byte *) MK_FP(SCR_SEG, 0x4000),
+				 (byte *) MK_FP(SCR_SEG, 0x8000),
+				 (byte *) MK_FP(SCR_SEG, 0xC000) };
 
 
 
@@ -1280,7 +1280,7 @@ int VGA::SetMode (int mode)
 
 
 
-void VGA::GetColors (DAC far * tab)
+void VGA::GetColors (DAC * tab)
 {
   asm	cld
   asm	les	di,tab		// color table
@@ -1303,9 +1303,9 @@ void VGA::GetColors (DAC far * tab)
 
 
 
-void VGA::SetColors (DAC far * tab, int lum)
+void VGA::SetColors (DAC * tab, int lum)
 {
-  DAC far * des = NewColors;
+  DAC * des = NewColors;
   asm	push	ds
 
   asm	les	di,des
@@ -1367,7 +1367,7 @@ void VGA::SetColors (void)
 
 
 
-void VGA::Sunrise (DAC far * tab)
+void VGA::Sunrise (DAC * tab)
 {
   int i;
   for (i = 0; i <= 64; i += FADE_STEP)
@@ -1420,7 +1420,7 @@ void VGA::Show (void)
 
 void VGA::UpdateColors (void)
 {
-  DAC far * tab = NewColors;
+  DAC * tab = NewColors;
 
   asm	push	ds
   asm	cld
@@ -1453,7 +1453,7 @@ void VGA::UpdateColors (void)
 
 void VGA::Update (void)
 {
-  byte far * p = Page[1];
+  byte * p = Page[1];
   Page[1] = Page[0];
   Page[0] = p;
 
@@ -1483,7 +1483,7 @@ void VGA::Update (void)
 
 void VGA::Clear (byte color)
 {
-  byte far * a = (byte far *) MK_FP(SCR_SEG, 0);
+  byte * a = (byte *) MK_FP(SCR_SEG, 0);
 
   asm	mov	dx,VGASEQ_
   asm	mov	ax,0x0F02	// map mask register - enable all planes
@@ -1504,7 +1504,7 @@ void VGA::Clear (byte color)
 
 void VGA::CopyPage (word d, word s)
 {
-  byte far * S = Page[s & 3], far * D = Page[d & 3];
+  byte * S = Page[s & 3], * D = Page[d & 3];
 
   asm	mov	dx,VGAGRA_
   asm	mov	al,0x05		// R/W mode
@@ -1573,9 +1573,9 @@ void BITMAP::XShow (int x, int y)
 {
   byte rmsk = x % 4,
        mask = 1 << rmsk,
-       far * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
-  byte near * m = (char *) M;
-  byte far  * v = V;
+       * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
+  byte * m = (char *) M;
+  byte  * v = V;
 
 	asm	push	bx
 	asm	push	si
@@ -1658,8 +1658,8 @@ void BITMAP::XShow (int x, int y)
 void BITMAP::Show (int x, int y)
 {
   byte mask = 1 << (x & 3),
-       far * scr = VGA::Page[1] + y * (SCR_WID >> 2) + (x >> 2);
-  byte far * v = V;
+       * scr = VGA::Page[1] + y * (SCR_WID >> 2) + (x >> 2);
+  byte * v = V;
 
 	asm	push	ds		// preserve DS
 
@@ -1728,9 +1728,9 @@ void BITMAP::Show (int x, int y)
 
 void BITMAP::Hide (int x, int y)
 {
-  byte far * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
+  byte * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
   word d = FP_OFF(VGA::Page[2]) - FP_OFF(VGA::Page[1]);
-  HideDesc far * b = B;
+  HideDesc * b = B;
   word extra = ((x & 3) != 0);
   word h = H;
 

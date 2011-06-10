@@ -38,7 +38,7 @@
 #define		SCR_WID		((word)SCR_WID_)
 #define		SCR_HIG		((word)SCR_HIG_)
 #define		SCR_SEG		0xA000
-#define		SCR_ADR		((byte far *) MK_FP(SCR_SEG, 0))
+#define		SCR_ADR		((byte *) MK_FP(SCR_SEG, 0))
 
 
 
@@ -83,7 +83,7 @@ public:
 class ENGINE
 {
 protected:
-  static void interrupt (far * OldTimer) (...);
+  static void interrupt (* OldTimer) (...);
   static void interrupt NewTimer (...);
 public:
   ENGINE (word tdiv);
@@ -128,7 +128,7 @@ class EMS
   EMS * Nxt;
 public:
   EMS (void);
-  void far * operator & () const;
+  void * operator & () const;
   word Size (void);
 };
 
@@ -184,8 +184,8 @@ public:
   word Error;
   XFILE (void) : Mode(REA), Error(0) { }
   XFILE (IOMODE mode) : Mode(mode), Error(0) { }
-  virtual word Read (void far * buf, word len) = 0;
-  virtual word Write (void far * buf, word len) = 0;
+  virtual word Read (void * buf, word len) = 0;
+  virtual word Write (void * buf, word len) = 0;
   virtual long Mark (void) = 0;
   virtual long Size (void) = 0;
   virtual long Seek (long pos) = 0;
@@ -198,7 +198,7 @@ public:
 template <class T>
 inline word XRead (XFILE * xf, T * t)
 {
-  return xf->Read((byte far *) t, sizeof(*t));
+  return xf->Read((byte *) t, sizeof(*t));
 };
 
 
@@ -212,12 +212,12 @@ protected:
   word Seed;
   CRYPT * Crypt;
 public:
-  IOHAND (const char near * name, IOMODE mode = REA, CRYPT crypt = NULL);
+  IOHAND (const char * name, IOMODE mode = REA, CRYPT crypt = NULL);
   IOHAND (IOMODE mode = REA, CRYPT * crpt = NULL);
   virtual ~IOHAND (void);
   static Boolean Exist (const char * name);
-  word Read (void far * buf, word len);
-  word Write (void far * buf, word len);
+  word Read (void * buf, word len);
+  word Write (void * buf, word len);
   long Mark (void);
   long Size (void);
   long Seek (long pos);

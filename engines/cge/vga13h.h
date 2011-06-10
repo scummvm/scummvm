@@ -199,7 +199,7 @@ public:
   virtual ~SPRITE (void);
   BMP_PTR Shp (void);
   BMP_PTR * SetShapeList (BMP_PTR * shp);
-  void MoveShapes (byte far * buf);
+  void MoveShapes (byte * buf);
   SPRITE * Expand (void);
   SPRITE * Contract (void);
   SPRITE * BackShow (Boolean fast = FALSE);
@@ -211,7 +211,7 @@ public:
   void Hide (void);
   BMP_PTR Ghost (void);
   void Show (word pg);
-  void MakeXlat (byte far * x);
+  void MakeXlat (byte * x);
   void KillXlat (void);
   void Step (int nr = -1);
   SEQ * SetSeq (SEQ * seq);
@@ -251,10 +251,10 @@ public:
 class VGA
 {
   static word OldMode;
-  static word far * OldScreen;
+  static word * OldScreen;
   static word StatAdr;
   static Boolean SetPal;
-  static DAC far * OldColors, far * NewColors;
+  static DAC * OldColors, * NewColors;
   static int SetMode (int mode);
   static void UpdateColors (void);
   static void SetColors (void);
@@ -266,17 +266,17 @@ public:
   dword FrmCnt;
   static QUEUE ShowQ, SpareQ;
   static int Mono;
-  static byte far * Page[4];
+  static byte * Page[4];
   VGA (int mode = M13H);
   ~VGA (void);
   void Setup (VgaRegBlk * vrb);
-  static void GetColors (DAC far * tab);
-  static void SetColors (DAC far * tab, int lum);
+  static void GetColors (DAC * tab);
+  static void SetColors (DAC * tab, int lum);
   static void Clear (byte color = 0);
   static void Exit (const char * txt = NULL, const char * name = NULL);
   static void Exit (int tref, const char * name = NULL);
   static void CopyPage (word d, word s = 3);
-  static void Sunrise (DAC far * tab);
+  static void Sunrise (DAC * tab);
   static void Sunset (void);
   void Show (void);
   void Update (void);
@@ -291,7 +291,7 @@ RGB		MkRGB		(byte r, byte g, byte b);
 
 
 template <class CBLK>
-byte Closest (CBLK far * pal, CBLK x)
+byte Closest (CBLK * pal, CBLK x)
 {
   #define f(col,lum) ((((word)(col))<<8)/lum)
   word i, dif = 0xFFFF, found;
@@ -325,8 +325,8 @@ byte Closest (CBLK far * pal, CBLK x)
 
 		char *		NumStr		(char * str, int num);
 		void		Video		(void);
-		word far *	SaveScreen	(void);
-		void		RestoreScreen	(word far * &sav);
+		word *	SaveScreen	(void);
+		void		RestoreScreen	(word * &sav);
 		SPRITE *	SpriteAt	(int x, int y);
 		SPRITE *	Locate		(int ref);
 

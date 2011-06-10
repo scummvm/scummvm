@@ -58,11 +58,11 @@ class BITMAP
   Boolean BMPLoad (XFILE * f);
   Boolean VBMLoad (XFILE * f);
 public:
-  static DAC far * Pal;
+  static DAC * Pal;
   word W, H;
-  byte far * M, far * V; HideDesc far * B;
+  byte * M, * V; HideDesc * B;
   BITMAP (const char * fname, Boolean rem = TRUE);
-  BITMAP (word w, word h, byte far * map);
+  BITMAP (word w, word h, byte * map);
   BITMAP (word w, word h, byte fill);
   BITMAP (const BITMAP& bmp);
   ~BITMAP (void);
@@ -74,7 +74,7 @@ public:
   void XShow (int x, int y);
   Boolean SolidAt (int x, int y);
   Boolean VBMSave (XFILE * f);
-  word MoveVmap (byte far * buf);
+  word MoveVmap (byte * buf);
 };
 
 
