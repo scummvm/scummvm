@@ -138,7 +138,8 @@ void DreamWebEngine::processEvents() {
 				}
 				break;
 			default:
-				keyPressed(event.kbd.ascii);
+				if (event.kbd.ascii)
+					keyPressed(event.kbd.ascii);
 				break;
 			}
 			break;
@@ -229,20 +230,22 @@ void DreamWebEngine::fadeDos() {
 			if (dst[c]) {
 				--dst[c];
 			}
-			dst[c] = c / 3;
 		}
 		//Common::hexdump(dst, 64 * 3);
 		//palette->setPalette(dst, 0, 64);
-		waitForVSync();
+		//waitForVSync();
 	}
 }
 void DreamWebEngine::setPalette() {
+	uint8 colors[768];
 	processEvents();
 	PaletteManager *palette = _system->getPaletteManager();
 	unsigned n = (uint16)_context.cx;
-	uint8 *colors = _context.ds.ptr(_context.si, n * 3);
+	uint8 *src = _context.ds.ptr(_context.si, n * 3);
+	for(int i = 0; i < n * 3; ++i)
+		colors[i] = src[i] * 3;
 	//Common::hexdump(colors, n * 3);
-	//palette->setPalette(colors, _context.al, n);
+	palette->setPalette(colors, _context.al, n);
 	_context.si += n * 3;
 	_context.cx = 0;
 }
@@ -267,7 +270,7 @@ void multiget(Context &context) {
 	for(unsigned y = 0; y < h; ++y) {
 		uint8 *src_p = context.ds.ptr(src + pitch * y, w);
 		uint8 *dst_p = context.es.ptr(dst + w * y, w);
-		memcpy(src_p, dst_p, w);
+		memcpy(dst_p, src_p, w);
 	}
 }
 
@@ -281,7 +284,7 @@ void multiput(Context &context) {
 	for(unsigned y = 0; y < h; ++y) {
 		uint8 *src_p = context.ds.ptr(src + w * y, w);
 		uint8 *dst_p = context.es.ptr(dst + pitch * y, w);
-		memcpy(src_p, dst_p, w);
+		memcpy(dst_p, src_p, w);
 	}
 }
 
@@ -295,7 +298,7 @@ void multidump(Context &context) {
 	for(unsigned y = 0; y < h; ++y, offset += pitch * y) {
 		uint8 *src_p = context.ds.ptr(offset, w);
 		uint8 *dst_p = context.es.ptr(offset, w);
-		memcpy(src_p, dst_p, w);
+		memcpy(dst_p, src_p, w);
 	}
 }
 
@@ -308,7 +311,7 @@ void frameoutnm(Context &context) {
 	for(unsigned y = 0; y < h; ++y) {
 		uint8 *src_p = context.ds.ptr(src + w * y, w);
 		uint8 *dst_p = context.es.ptr(dst + pitch * y, w);
-		memcpy(src_p, dst_p, w);
+		memcpy(dst_p, src_p, w);
 	}
 }
 
