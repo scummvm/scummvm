@@ -228,15 +228,46 @@ static inline DreamWeb::DreamWebEngine *engine() {
 }
 
 void multiget(Context &context) {
-	::error("multiget");
+	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
+	unsigned pitch = (uint16)context.data.word(kScreenwidth);
+	unsigned src = (uint16)context.di + (uint16)context.bx * pitch;
+	unsigned dst = (uint16)context.si;
+	context.es = context.ds;
+	context.ds = context.data.word(kWorkspace);
+	//debug(1, "multiget %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
+	for(unsigned y = 0; y < h; ++y) {
+		uint8 *src_p = context.ds.ptr(src + pitch * y, w);
+		uint8 *dst_p = context.es.ptr(dst + w * y, w);
+		memcpy(src_p, dst_p, w);
+	}
 }
 
 void multiput(Context &context) {
-	::error("multiput");
+	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
+	unsigned pitch = (uint16)context.data.word(kScreenwidth);
+	unsigned src = (uint16)context.si;
+	unsigned dst = (uint16)context.di + (uint16)context.bx * pitch;
+	context.es = context.data.word(kWorkspace);
+	//debug(1, "multiput %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
+	for(unsigned y = 0; y < h; ++y) {
+		uint8 *src_p = context.ds.ptr(src + w * y, w);
+		uint8 *dst_p = context.es.ptr(dst + pitch * y, w);
+		memcpy(src_p, dst_p, w);
+	}
 }
 
 void multidump(Context &context) {
-	::error("multidump");
+	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
+	context.es = 0xa000;
+	context.ds = context.data.word(kWorkspace);
+	//debug(1, "multidump %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
+	unsigned pitch = (uint16)context.data.word(kScreenwidth);
+	unsigned offset = (uint16)context.di + (uint16)context.bx * pitch;
+	for(unsigned y = 0; y < h; ++y, offset += pitch * y) {
+		uint8 *src_p = context.ds.ptr(offset, w);
+		uint8 *dst_p = context.es.ptr(offset, w);
+		memcpy(src_p, dst_p, w);
+	}
 }
 
 void frameoutnm(Context &context) {
