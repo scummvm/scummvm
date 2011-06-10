@@ -107,12 +107,12 @@ MIXER::~MIXER (void)
 
 
 #pragma argsused
-void MIXER::Touch (word mask, int x, int y)
+void MIXER::Touch (uint16 mask, int x, int y)
 {
   SPRITE::Touch(mask, x, y);
   if (mask & L_UP)
     {
-      byte * vol = (&SNDDrvInfo.VOL2.D) + (x < W/2);
+      uint8 * vol = (&SNDDrvInfo.VOL2.D) + (x < W/2);
       if (y < MIX_BHIG) { if (*vol < 0xFF) *vol += 0x11; }
       else if (y >= H-MIX_BHIG) { if (*vol > 0x00) *vol -= 0x11; }
       Update();

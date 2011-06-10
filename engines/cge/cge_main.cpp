@@ -74,7 +74,7 @@
   #define	SVG0FILE	INI_FILE
 #endif
 
-extern	word	_stklen = (STACK_SIZ * 2);
+extern	uint16	_stklen = (STACK_SIZ * 2);
 
 // 0.75 - 17II95  - full sound support
 // 0.76 - 18II95  - small MiniEMS in DEMO,
@@ -137,14 +137,14 @@ static	SPRITE *	MiniCave	= NULL;
 static	SPRITE *	Shadow		= NULL;
 
 static	VGA		Vga		= M13H;
-static	EMS *		Mini		= MiniEmm.Alloc((word)MINI_EMM_SIZE);
+static	EMS *		Mini		= MiniEmm.Alloc((uint16)MINI_EMM_SIZE);
 static	BMP_PTR *	MiniShpList	= NULL;
 static	BMP_PTR		MiniShp[]	= { NULL, NULL };
 static	KEYBOARD	Keyboard;
 static	bool		Finis		= false;
 static	int		Startup		= 1;
 static	int		OffUseCount	= atoi(Text[OFF_USE_COUNT]);
-	word *intStackPtr	= false;
+	uint16 *intStackPtr	= false;
 
 
 	HXY		HeroXY[CAVE_MAX] = {{0,0}};
@@ -168,11 +168,11 @@ void	FeedSnail	(SPRITE * spr, SNLIST snq); // defined in SNAIL
 
 
 
-byte	CLUSTER::Map[MAP_ZCNT][MAP_XCNT];
+uint8	CLUSTER::Map[MAP_ZCNT][MAP_XCNT];
 
 
 
-byte & CLUSTER::Cell (void)
+uint8 & CLUSTER::Cell (void)
 {
   return Map[B][A];
 }
@@ -189,7 +189,7 @@ bool CLUSTER::Protected (void)
   if (A == Barriers[Now].Vert || B == Barriers[Now].Horz) return true;
 
   _DX = (MAP_ZCNT << 8) + MAP_XCNT;
-  _BX = (word) this;
+  _BX = (uint16) this;
 
   asm	mov	ax,1
   asm	mov	cl,[bx].(COUPLE)A
@@ -209,7 +209,7 @@ bool CLUSTER::Protected (void)
   asm	xor	ch,ch
   asm	add	ax,cx
   asm	mov	bx,ax
-  _BX += (word) Map;
+  _BX += (uint16) Map;
   //asm	add	bx,offset CLUSTER::Map
   asm	mov	al,[bx]
   asm	and	ax,0xFF
@@ -252,8 +252,8 @@ CLUSTER XZ (COUPLE xy)
 
 
 	int	pocref[POCKET_NX];
-	byte	volume[2];
-	struct	SAVTAB { void * Ptr; int Len; byte Flg; } SavTab[] =
+	uint8	volume[2];
+	struct	SAVTAB { void * Ptr; int Len; uint8 Flg; } SavTab[] =
 		    {{ &Now,           sizeof(Now),          1 },
 		     { &OldLev,        sizeof(OldLev),       1 },
 		     { &DemoText,      sizeof(DemoText),     1 },
@@ -285,10 +285,10 @@ static void LoadGame (XFILE& file, bool tiny = false)
   for (st = SavTab; st->Ptr; st ++)
     {
       if (file.Error) VGA::Exit("Bad SVG");
-      file.Read((byte *) ((tiny || st->Flg) ? st->Ptr : &i), st->Len);
+      file.Read((uint8 *) ((tiny || st->Flg) ? st->Ptr : &i), st->Len);
     }
 
-  file.Read((byte *) &i, sizeof(i));
+  file.Read((uint8 *) &i, sizeof(i));
   if (i != SVGCHKSUM) VGA::Exit(BADSVG_TEXT);
   if (STARTUP::Core < CORE_HIG) Music = false;
   if (STARTUP::SoundOk == 1 && STARTUP::Mode == 0)
@@ -303,7 +303,7 @@ static void LoadGame (XFILE& file, bool tiny = false)
       while (! file.Error)
 	{
 	  SPRITE S(NULL);
-	  word n = file.Read((byte *) &S, sizeof(S));
+	  uint16 n = file.Read((uint8 *) &S, sizeof(S));
 
 	  if (n != sizeof(S)) break;
 	  S.Prev = S.Next = NULL;
@@ -354,14 +354,14 @@ static void SaveGame (XFILE& file)
   for (st = SavTab; st->Ptr; st ++)
     {
       if (file.Error) VGA::Exit("Bad SVG");
-      file.Write((byte *) st->Ptr, st->Len);
+      file.Write((uint8 *) st->Ptr, st->Len);
     }
 
-  file.Write((byte *) &(i = SVGCHKSUM), sizeof(i));
+  file.Write((uint8 *) &(i = SVGCHKSUM), sizeof(i));
 
   for (spr = VGA::SpareQ.First(); spr; spr = spr->Next)
     if (spr->Ref >= 1000)
-      if (!file.Error) file.Write((byte *)spr, sizeof(*spr));
+      if (!file.Error) file.Write((uint8 *)spr, sizeof(*spr));
 }
 
 
@@ -435,7 +435,7 @@ static void LoadMapping (void)
 	{
 	  memset(CLUSTER::Map, 0, sizeof(CLUSTER::Map));
 	  cf.Seek((Now - 1) * sizeof(CLUSTER::Map));
-	  cf.Read((byte *) CLUSTER::Map, sizeof(CLUSTER::Map));
+	  cf.Read((uint8 *) CLUSTER::Map, sizeof(CLUSTER::Map));
 	}
     }
 }
@@ -579,7 +579,7 @@ void WALK::Park (void)
 void WALK::FindWay (CLUSTER c)
 {
   bool Find1Way(void);
-  extern word Target;
+  extern uint16 Target;
 
   if (c != Here)
     {
@@ -670,7 +670,7 @@ class SQUARE : public SPRITE
 {
 public:
   SQUARE (void);
-  void Touch (word mask, int x, int y);
+  void Touch (uint16 mask, int x, int y);
 };
 
 
@@ -692,7 +692,7 @@ SQUARE::SQUARE (void)
 
 
 
-void SQUARE::Touch (word mask, int x, int y)
+void SQUARE::Touch (uint16 mask, int x, int y)
 {
   SPRITE::Touch(mask, x, y);
   if (mask & L_UP)
@@ -865,7 +865,7 @@ void SYSTEM::SetPal (void)
 
 void SYSTEM::FunTouch (void)
 {
-  word n = (PAIN) ? HEROFUN1 : HEROFUN0;
+  uint16 n = (PAIN) ? HEROFUN1 : HEROFUN0;
   if (Talk == NULL || n > FunDel) FunDel = n;
 }
 
@@ -1038,7 +1038,7 @@ void SwitchCave (int cav)
 
 
 
-void SYSTEM::Touch (word mask, int x, int y)
+void SYSTEM::Touch (uint16 mask, int x, int y)
 {
   static int pp = 0;
   void SwitchCave (int cav);
@@ -1426,7 +1426,7 @@ static void SaveMapping (void)
     if (! cf.Error)
       {
 	cf.Seek((Now-1) * sizeof(CLUSTER::Map));
-	cf.Write((byte *) CLUSTER::Map, sizeof(CLUSTER::Map));
+	cf.Write((uint8 *) CLUSTER::Map, sizeof(CLUSTER::Map));
       }
   }
   {
@@ -1435,7 +1435,7 @@ static void SaveMapping (void)
       {
 	HeroXY[Now-1].X = Hero->X;
 	HeroXY[Now-1].Y = Hero->Y;
-	cf.Write((byte *) HeroXY, sizeof(HeroXY));
+	cf.Write((uint8 *) HeroXY, sizeof(HeroXY));
       }
   }
 }
@@ -1490,8 +1490,8 @@ static void SayDebug (void)
 
       if (t1 - t >= 18)
 	{
-	  static dword old = 0L;
-	  dword now = Vga.FrmCnt;
+	  static uint32 old = 0L;
+	  uint32 now = Vga.FrmCnt;
 	  dwtom(now - old, FRPS, 10, 4);
 	  old = now;
 	  t = t1;
@@ -1503,7 +1503,7 @@ static void SayDebug (void)
       dwtom(farcoreleft(), FFRE, 10, 6);
 
       // sprite queue size
-      word n = 0;
+      uint16 n = 0;
       SPRITE * spr;
       for (spr = VGA::ShowQ.First(); spr; spr = spr->Next)
 	{
@@ -1517,7 +1517,7 @@ static void SayDebug (void)
 	      dwtom(Sprite->Z, SP_Z, 10, 3);
 	      dwtom(Sprite->W, SP_W, 10, 3);
 	      dwtom(Sprite->H, SP_H, 10, 3);
-	      dwtom(*(word *) (&Sprite->Flags), SP_F, 16, 2);
+	      dwtom(*(uint16 *) (&Sprite->Flags), SP_F, 16, 2);
 	    }
 	}
       dwtom(n, SP_S, 10, 2);
@@ -1544,7 +1544,7 @@ static void SwitchDebug (void)
 
 
 
-static void OptionTouch (int opt, word mask)
+static void OptionTouch (int opt, uint16 mask)
 {
   switch (opt)
     {
@@ -1567,7 +1567,7 @@ static void OptionTouch (int opt, word mask)
 
 
 #pragma argsused
-void SPRITE::Touch (word mask, int x, int y)
+void SPRITE::Touch (uint16 mask, int x, int y)
 {
   SYSTEM::FunTouch();
   if ((mask & ATTN) == 0)
@@ -1678,7 +1678,7 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
   bool port = false;
   bool tran = false;
   int i, lcnt = 0;
-  word len;
+  uint16 len;
 
   MergeExt(line, fname, SPR_EXT);
   if (INI_FILE::Exist(line))		// sprite description file exist
@@ -1910,7 +1910,7 @@ static void MainLoop (void)
 
   #ifdef DEMO
     #define TIM ((182L*6L) * 5L)
-    static dword tc = 0;
+    static uint32 tc = 0;
     if (TimerCount - tc >= TIM && Talk == NULL && Snail.Idle())
       {
 	if (Text[DemoText])
@@ -1998,7 +1998,7 @@ static void RunGame (void)
 
   if (Mini && INI_FILE::Exist("MINI.SPR"))
     {
-      byte * ptr = (byte *) &*Mini;
+      uint8 * ptr = (uint8 *) &*Mini;
       if (ptr != NULL)
 	{
 	  LoadSprite("MINI", -1, 0, MINI_X, MINI_Y);
@@ -2159,7 +2159,7 @@ bool ShowTitle (const char * name)
 	  STARTUP::Summa |= (0xC0 + (DriveCD(0) << 6)) & 0xFF;
 	#else
 	  Boot * b = ReadBoot(getdisk());
-	  dword sn = (b->XSign == 0x29) ? b->Serial : b->lTotSecs;
+	  uint32 sn = (b->XSign == 0x29) ? b->Serial : b->lTotSecs;
 	  free(b);
 	  sn -= ((IDENT *)Copr)->disk;
 	  STARTUP::Summa |= Lo(sn) | Hi(sn);
@@ -2217,7 +2217,7 @@ bool ShowTitle (const char * name)
 void StkDump (void)
 {
   CFILE f("!STACK.DMP", BFW);
-  f.Write((byte *) (intStackPtr-STACK_SIZ/2), STACK_SIZ*2);
+  f.Write((uint8 *) (intStackPtr-STACK_SIZ/2), STACK_SIZ*2);
 }
 #endif
 */
@@ -2227,7 +2227,7 @@ void StkDump (void)
 
 void cge_main (void)
 {
-  word intStack[STACK_SIZ/2];
+  uint16 intStack[STACK_SIZ/2];
   intStackPtr = intStack;
 
   //Debug( memset((void *) (-K(2)), 0, K(1)); )
@@ -2240,7 +2240,7 @@ void cge_main (void)
   Debug( DebugLine.Flags.Hide = true; )
   Debug( HorzLine.Flags.Hide = true; )
 
-  srand((word) Timer());
+  srand((uint16) Timer());
   Sys = new SYSTEM;
 
   if (Music && STARTUP::SoundOk) LoadMIDI(0);

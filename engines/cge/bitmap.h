@@ -38,17 +38,17 @@
 #define		TRANS		0xFE
 
 
-typedef	struct	{ word b : 2;
-		  word B : 6;
-		  word g : 2;
-		  word G : 6;
-		  word r : 2;
-		  word R : 6;
-		  word Z : 8;
+typedef	struct	{ uint16 b : 2;
+		  uint16 B : 6;
+		  uint16 g : 2;
+		  uint16 G : 6;
+		  uint16 r : 2;
+		  uint16 R : 6;
+		  uint16 Z : 8;
 		} BGR4;
 
 
-typedef	struct	{ word skip; word hide; } HideDesc;
+typedef	struct	{ uint16 skip; uint16 hide; } HideDesc;
 
 
 
@@ -59,11 +59,11 @@ class BITMAP
   bool VBMLoad (XFILE * f);
 public:
   static DAC * Pal;
-  word W, H;
-  byte * M, * V; HideDesc * B;
+  uint16 W, H;
+  uint8 * M, * V; HideDesc * B;
   BITMAP (const char * fname, bool rem = true);
-  BITMAP (word w, word h, byte * map);
-  BITMAP (word w, word h, byte fill);
+  BITMAP (uint16 w, uint16 h, uint8 * map);
+  BITMAP (uint16 w, uint16 h, uint8 fill);
   BITMAP (const BITMAP& bmp);
   ~BITMAP (void);
   BITMAP * FlipH (void);
@@ -74,7 +74,7 @@ public:
   void XShow (int x, int y);
   bool SolidAt (int x, int y);
   bool VBMSave (XFILE * f);
-  word MoveVmap (byte * buf);
+  uint16 MoveVmap (uint8 * buf);
 };
 
 

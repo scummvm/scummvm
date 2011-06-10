@@ -54,7 +54,7 @@ static	STARTUP	StartUp;
 	int	STARTUP::Mode = 0;
 	int	STARTUP::Core;
 	int	STARTUP::SoundOk = 0;
-	word	STARTUP::Summa;
+	uint16	STARTUP::Summa;
 
 
 
@@ -75,7 +75,7 @@ bool STARTUP::get_parms (void)
       static char *PrmTab[] = { "NEW", "MK0SVG", "QUIET", "SB", "GUS", "MIDI",
 				"P", "D", "I", "M" };
       int n = TakeEnum(PrmTab, strtok(_argv[--i], " =:("));
-      word p = xtow(strtok(NULL, " h,)"));
+      uint16 p = xtow(strtok(NULL, " h,)"));
       switch (n)
 	{
 	  case 0 : if (Mode != 2) Mode = 1; break;
@@ -99,7 +99,7 @@ bool STARTUP::get_parms (void)
   #else
     #ifdef EVA
       {
-	union { dosdate_t d; dword n; } today;
+	union { dosdate_t d; uint32 n; } today;
 	_dos_getdate(&today.d);
 	id.disk += (id.disk < today.n);
       }
@@ -120,7 +120,7 @@ bool STARTUP::get_parms (void)
 
 STARTUP::STARTUP (void)
 {
-  dword m = farcoreleft() >> 10;
+  uint32 m = farcoreleft() >> 10;
   if (m < 0x7FFF) Core = (int) m; else Core = 0x7FFF;
 
   if (! IsVga()) quit_now(NOT_VGA_TEXT);

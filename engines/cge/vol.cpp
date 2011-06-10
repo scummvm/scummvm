@@ -101,6 +101,6 @@ void VFILE::ReadBuff (void)
   BufMark = Dat.File.Mark();
   long n = EndMark - BufMark;
   if (n > IOBUF_SIZE) n = IOBUF_SIZE;
-  Lim = Dat.File.Read(Buff, (word) n);
+  Lim = Dat.File.Read(Buff, (uint16) n);
   Ptr = 0;
 }

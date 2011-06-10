@@ -45,12 +45,12 @@
 
 extern	TALK *	Talk;
 
-struct	EVENT	{ word Msk;
-		  word X, Y;
+struct	EVENT	{ uint16 Msk;
+		  uint16 X, Y;
 		  SPRITE * Ptr;
 		};
 extern	EVENT	Evt[EVT_MAX];
-extern	word	EvtHead, EvtTail;
+extern	uint16	EvtHead, EvtTail;
 typedef	void	(MOUSE_FUN)		(void);
 
 
@@ -61,7 +61,7 @@ class MOUSE : public SPRITE
 {
   static MOUSE_FUN * OldMouseFun;
   static MOUSE_FUN NewMouseFun;
-  static word OldMouseMask;
+  static uint16 OldMouseMask;
   SPRITE * Hold;
   int hx, hy;
   //void SetFun (void);

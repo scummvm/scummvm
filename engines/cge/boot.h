@@ -40,36 +40,36 @@
 #endif
 
 typedef struct {
-		 byte	Jmp[3];			// NEAR jump machine code
+		 uint8	Jmp[3];			// NEAR jump machine code
 		 char	OEM_ID[8];		// OEM name and version
-		 word	SectSize;		// bytes per sector
-		 byte	ClustSize;		// sectors per cluster
-		 word	ResSecs;		// sectors before 1st FAT
-		 byte	FatCnt;			// number of FATs
-		 word	RootSize;		// root directory entries
-		 word	TotSecs;		// total sectors on disk
-		 byte	Media;			// media descriptor byte
-		 word	FatSize;		// sectors per FAT
-		 word	TrkSecs;		// sectors per track
-		 word	HeadCnt;		// number of sufraces
-		 word	HidnSecs;		// special hidden sectors
-		 word	_;			//  (unknown: reserved?)
-		 dword	lTotSecs;		// total number of sectors
-		 word	DriveNum;		// physical drive number
-		 byte	XSign;			// extended boot signature
-		 dword	Serial;			// volume serial number
+		 uint16	SectSize;		// bytes per sector
+		 uint8	ClustSize;		// sectors per cluster
+		 uint16	ResSecs;		// sectors before 1st FAT
+		 uint8	FatCnt;			// number of FATs
+		 uint16	RootSize;		// root directory entries
+		 uint16	TotSecs;		// total sectors on disk
+		 uint8	Media;			// media descriptor byte
+		 uint16	FatSize;		// sectors per FAT
+		 uint16	TrkSecs;		// sectors per track
+		 uint16	HeadCnt;		// number of sufraces
+		 uint16	HidnSecs;		// special hidden sectors
+		 uint16	_;			//  (unknown: reserved?)
+		 uint32	lTotSecs;		// total number of sectors
+		 uint16	DriveNum;		// physical drive number
+		 uint8	XSign;			// extended boot signature
+		 uint32	Serial;			// volume serial number
 		 char	Label[11];		// volume label
 		 char	FileSysID[8];		// file system ID
 		 char	Code[BOOTCODE_SIZ-8];	// 8 = length of following
-		 dword	Secret;			// long secret number
-		 byte	BootCheck;		// boot sector checksum
-		 byte	BootFlags;		// secret flags
-		 word	BootSig;		// boot signature 0xAA55
+		 uint32	Secret;			// long secret number
+		 uint8	BootCheck;		// boot sector checksum
+		 uint8	BootFlags;		// secret flags
+		 uint16	BootSig;		// boot signature 0xAA55
 		} Boot;
 
 
 EC	Boot *		ReadBoot	(int drive);
-EC	byte		CheckBoot	(Boot * boot);
+EC	uint8		CheckBoot	(Boot * boot);
 EC	bool		WriteBoot	(int drive, Boot * boot);
 
 

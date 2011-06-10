@@ -45,7 +45,7 @@ typedef	struct	{ char * Text; void (* Proc)(void); } CHOICE;
 class MENU_BAR : public TALK
 {
 public:
-  MENU_BAR (word w);
+  MENU_BAR (uint16 w);
 };
 
 
@@ -56,7 +56,7 @@ public:
 
 class VMENU : public TALK
 {
-  word Items;
+  uint16 Items;
   CHOICE * Menu;
 public:
   static VMENU * Addr;
@@ -64,7 +64,7 @@ public:
   MENU_BAR * Bar;
   VMENU (CHOICE * list, int x, int y);
   ~VMENU (void);
-  void Touch (word mask, int x, int y);
+  void Touch (uint16 mask, int x, int y);
 };
 
 
