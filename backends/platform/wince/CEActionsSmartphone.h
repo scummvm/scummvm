@@ -31,6 +31,7 @@
 #include "common/str.h"
 #include "gui/Key.h"
 #include "gui/Actions.h"
+#include "backends/graphics/wincesdl/wincesdl-graphics.h"
 
 #define SMARTPHONE_ACTION_VERSION 5
 
@@ -71,6 +72,7 @@ public:
 	~CEActionsSmartphone();
 private:
 	CEActionsSmartphone();
+	WINCESdlGraphicsManager *_graphicsMan;
 	bool _right_click_needed;
 	OSystem_WINCE3 *_CESystem;
 };
