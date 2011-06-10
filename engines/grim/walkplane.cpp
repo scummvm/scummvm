@@ -57,14 +57,13 @@ void Sector::saveState(SaveGame *savedState) const {
 
 	savedState->writeVector3d(_normal);
 
-	// Enable on next save format change.
-	/*savedState->writeFloat(_shrinkRadius);
+	savedState->writeFloat(_shrinkRadius);
 	savedState->writeLESint32(_invalid);
 	if (_shrinkRadius != 0.f && !_invalid) {
 		for (int i = 0; i < _numVertices + 1; ++i) {
 			savedState->writeVector3d(_origVertices[i]);
 		}
-	}*/
+	}
 }
 
 bool Sector::restoreState(SaveGame *savedState) {
@@ -83,8 +82,7 @@ bool Sector::restoreState(SaveGame *savedState) {
 
 	_normal = savedState->readVector3d();
 
-	// Enable on next save format change.
-	/*_shrinkRadius = savedState->readFloat();
+	_shrinkRadius = savedState->readFloat();
 	_invalid = savedState->readLESint32();
 	if (_shrinkRadius != 0.f && !_invalid) {
 		_origVertices = new Graphics::Vector3d[_numVertices + 1];
@@ -93,7 +91,8 @@ bool Sector::restoreState(SaveGame *savedState) {
 		}
 	} else {
 		_origVertices = NULL;
-	}*/
+	}
+
 	return true;
 }
 
