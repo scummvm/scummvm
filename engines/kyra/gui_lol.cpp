@@ -2806,15 +2806,18 @@ int GUI_LoL::clickedOptionsMenu(Button *button) {
 	case 0xfff3:
 		_vm->_configVoice ^= 3;
 		break;
-	case 0x4072:
-		char filename[13];
-		snprintf(filename, sizeof(filename), "LEVEL%02d.%s", _vm->_currentLevel, _vm->_languageExt[_vm->_lang]);
+	case 0x4072: {
+		Common::String filename;
+		filename = Common::String::format("LEVEL%02d.%s", _vm->_currentLevel, _vm->_languageExt[_vm->_lang]);
 		delete[] _vm->_levelLangFile;
-		_vm->_levelLangFile = _vm->resource()->fileData(filename, 0);
-		snprintf(filename, sizeof(filename), "LANDS.%s", _vm->_languageExt[_vm->_lang]);
+		_vm->_levelLangFile = _vm->resource()->fileData(filename.c_str(), 0);
+		filename = Common::String::format("LANDS.%s", _vm->_languageExt[_vm->_lang]);
 		delete[] _vm->_landsFile;
-		_vm->_landsFile = _vm->resource()->fileData(filename, 0);
+		_vm->_landsFile = _vm->resource()->fileData(filename.c_str(), 0);
 		_newMenu = _lastMenu;
+		} break;
+	default:
+		// TODO: Is there anything we should do if we hit this case?
 		break;
 	}
 

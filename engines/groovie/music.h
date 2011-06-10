@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/mutex.h"
 #include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 class MidiParser;
 
@@ -58,6 +59,11 @@ private:
 	uint8 _prevCDtrack;
 
 	uint16 _backgroundDelay;
+
+	// T7G iOS credits mp3 stream
+	void playCreditsIOS();
+	void stopCreditsIOS();
+	Audio::SoundHandle _handleCreditsIOS;
 
 	// Volume fading
 	uint32 _fadingStartTime;
@@ -155,6 +161,20 @@ protected:
 
 private:
 	Common::SeekableReadStream *decompressMidi(Common::SeekableReadStream *stream);
+};
+
+class MusicPlayerIOS : public MusicPlayer {
+public:
+	MusicPlayerIOS(GroovieEngine *vm);
+	~MusicPlayerIOS();
+
+protected:
+	void updateVolume();
+	bool load(uint32 fileref, bool loop);
+	void unload();
+
+private:
+	Audio::SoundHandle _handle;
 };
 
 } // End of Groovie namespace

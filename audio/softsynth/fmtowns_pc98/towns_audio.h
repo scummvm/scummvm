@@ -35,7 +35,7 @@ public:
 
 class TownsAudioInterface {
 public:
-	TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver);
+	TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
 	~TownsAudioInterface();
 
 	bool init();
@@ -47,13 +47,6 @@ public:
 	// Defines the channels used as sound effect channels for the purpose of ScummVM GUI volume control.
 	// The first 6 bits are the 6 fm channels. The next 8 bits are pcm channels.
 	void setSoundEffectChanMask(int mask);
-
-	// These methods should not be needed in standard situations, since the mutex
-	// is handled internally. However, they may be required to avoid lockup situations
-	// if the code using this class has a mutex of its own (example for a lockup
-	// situation: imuse.cpp, line 78).
-	void lockInternal();
-	void unlockInternal();
 
 private:
 	TownsAudioInterfaceInternal *_intf;

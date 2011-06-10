@@ -98,11 +98,7 @@ public:
 	uint32 getFrameNumber() const { return _frameNumber; }
 	void delay(int numFrames);
 
-	virtual void listenerSynchronize(Serializer &s) {
-		s.syncAsUint32LE(_frameNumber);
-		s.syncAsUint32LE(_prevDelayFrame);
-		// TODO: Synchronize unknown stuff
-	}
+	virtual void listenerSynchronize(Serializer &s);
 };
 
 } // End of namespace tSage

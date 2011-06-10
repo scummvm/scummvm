@@ -30,6 +30,8 @@
 #include "pakfs_save_manager.h"
 #include "framfs_save_manager.h"
 #include "backends/fs/n64/n64-fs-factory.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
 
 typedef unsigned long long uint64;
 
@@ -137,9 +139,7 @@ OSystem_N64::OSystem_N64() {
 	_mouseMaxX = _overlayWidth;
 	_mouseMaxY = _overlayHeight;
 
-	_savefile = 0;
 	_mixer = 0;
-	_timer = 0;
 
 	_dirtyOffscreen = false;
 
@@ -154,10 +154,7 @@ OSystem_N64::OSystem_N64() {
 }
 
 OSystem_N64::~OSystem_N64() {
-	delete _savefile;
 	delete _mixer;
-	delete _timer;
-	delete _fsFactory;
 }
 
 void OSystem_N64::initBackend() {
@@ -170,7 +167,7 @@ void OSystem_N64::initBackend() {
 
 	if (FRAM_Detect()) { // Use FlashRAM
 		initFramFS();
-		_savefile = new FRAMSaveManager();
+		_savefileManager = new FRAMSaveManager();
 	} else { // Use PakFS
 		// Init Controller Pak
 		initPakFs();
@@ -185,28 +182,36 @@ void OSystem_N64::initBackend() {
 			}
 		}
 
-		_savefile = new PAKSaveManager();
+		_savefileManager = new PAKSaveManager();
 	}
 
-	_timer = new DefaultTimerManager();
+	_timerManager = new DefaultTimerManager();
 
 	setTimerCallback(&timer_handler, 10);
 
 	setupMixer();
 
-	OSystem::initBackend();
-
+	EventsBaseBackend::initBackend();
 }
 
 bool OSystem_N64::hasFeature(Feature f) {
-	return (f == kFeatureCursorHasPalette);
+	return (f == kFeatureCursorPalette);
 }
 
 void OSystem_N64::setFeatureState(Feature f, bool enable) {
-	return;
+	if (f == kFeatureCursorPalette) {
+		_cursorPaletteDisabled = !enable;
+
+		// Rebuild cursor hicolor buffer
+		rebuildOffscreenMouseBuffer();
+
+		_dirtyOffscreen = true;
+	}
 }
 
 bool OSystem_N64::getFeatureState(Feature f) {
+	if (f == kFeatureCursorPalette)
+		return !_cursorPaletteDisabled;
 	return false;
 }
 
@@ -430,15 +435,6 @@ void OSystem_N64::setCursorPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_cursorPaletteDisabled = false;
-
-	// Rebuild cursor hicolor buffer
-	rebuildOffscreenMouseBuffer();
-
-	_dirtyOffscreen = true;
-}
-
-void OSystem_N64::disableCursorPalette(bool disable) {
-	_cursorPaletteDisabled = disable;
 
 	// Rebuild cursor hicolor buffer
 	rebuildOffscreenMouseBuffer();
@@ -852,19 +848,9 @@ void OSystem_N64::quit() {
 	return;
 }
 
-Common::SaveFileManager *OSystem_N64::getSavefileManager() {
-	assert(_savefile);
-	return _savefile;
-}
-
 Audio::Mixer *OSystem_N64::getMixer() {
 	assert(_mixer);
 	return _mixer;
-}
-
-Common::TimerManager *OSystem_N64::getTimerManager() {
-	assert(_timer);
-	return _timer;
 }
 
 void OSystem_N64::getTimeAndDate(TimeDate &t) const {
@@ -882,10 +868,6 @@ void OSystem_N64::getTimeAndDate(TimeDate &t) const {
 	t.tm_year = 110;
 
 	return;
-}
-
-FilesystemFactory *OSystem_N64::getFilesystemFactory() {
-	return _fsFactory;
 }
 
 void OSystem_N64::setTimerCallback(TimerProc callback, int interval) {

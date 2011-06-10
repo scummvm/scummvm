@@ -20,11 +20,13 @@
  *
  */
 
+#include "common/scummsys.h"
+
+#if defined(SAMSUNGTV)
+
 #include "backends/platform/samsungtv/samsungtv.h"
 #include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
 #include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
-
-#if defined(SAMSUNGTV)
 
 SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource)
 	: SdlGraphicsManager(sdlEventSource) {
@@ -33,7 +35,7 @@ SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEven
 bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
-		(f == OSystem::kFeatureCursorHasPalette);
+		(f == OSystem::kFeatureCursorPalette);
 }
 
 void SamsungTVSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {

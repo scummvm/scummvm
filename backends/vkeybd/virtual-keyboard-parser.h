@@ -23,9 +23,10 @@
 #ifndef COMMON_VIRTUAL_KEYBOARD_PARSER_H
 #define COMMON_VIRTUAL_KEYBOARD_PARSER_H
 
+#include "common/scummsys.h"
+
 #ifdef ENABLE_VKEYBD
 
-#include "common/scummsys.h"
 #include "common/xmlparser.h"
 #include "backends/vkeybd/virtual-keyboard.h"
 

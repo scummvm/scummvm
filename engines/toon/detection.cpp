@@ -28,7 +28,7 @@
 #include "graphics/thumbnail.h"
 #include "toon/toon.h"
 
-static const PlainGameDescriptor ToonGames[] = {
+static const PlainGameDescriptor toonGames[] = {
 	{ "toon", "Toonstruck" },
 	{ 0, 0 }
 };
@@ -117,35 +117,14 @@ static const char * const directoryGlobs[] = {
 	0
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Toon::gameDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	ToonGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"toon",
-	// List of files for file-based fallback detection (optional)
-	Toon::fileBasedFallback,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	3,
-	// List of directory globs
-	directoryGlobs
-};
-
 class ToonMetaEngine : public AdvancedMetaEngine {
 public:
-	ToonMetaEngine() : AdvancedMetaEngine(detectionParams) {}
-
+	ToonMetaEngine() : AdvancedMetaEngine(Toon::gameDescriptions, sizeof(ADGameDescription), toonGames) {
+		params.singleid = "toon";
+		params.fileBasedFallback = Toon::fileBasedFallback;
+		params.depth = 3;
+		params.directoryGlobs = directoryGlobs;
+	}
 	virtual const char *getName() const {
 		return "Toon";
 	}

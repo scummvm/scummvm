@@ -62,7 +62,7 @@ public:
 	int16 getVectorItem(int16 index);
 	void setVectorItem(int16 index, int16 value);
 
-	void dump(const char *filename);
+	void dump(const Common::String &filename);
 
 protected:
 	bool _freeData;

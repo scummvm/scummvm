@@ -833,8 +833,9 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 };
 
 MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _channels(0), _out(0),
-	_chanState(0), _operatorLevelTable(0), _tickCounter1(0), _tickCounter2(0), _rand(1), _allocCurPos(0), _isOpen(false) {
-	_intf = new TownsAudioInterface(mixer, this);
+	_baseTempo(10080), _chanState(0), _operatorLevelTable(0), _tickCounter(0), _rand(1), _allocCurPos(0), _isOpen(false) {
+	// We set exteral mutex handling to true to avoid lockups in SCUMM which has its own mutex.
+	_intf = new TownsAudioInterface(mixer, this, true);
 
 	_channels = new TownsMidiInputChannel*[32];
 	for (int i = 0; i < 32; i++)
@@ -956,7 +957,7 @@ void MidiDriver_TOWNS::setTimerCallback(void *timer_param, Common::TimerManager:
 }
 
 uint32 MidiDriver_TOWNS::getBaseTempo() {
-	return 10080;
+	return _baseTempo;
 }
 
 MidiChannel *MidiDriver_TOWNS::allocateChannel() {
@@ -984,12 +985,6 @@ void MidiDriver_TOWNS::timerCallback(int timerId) {
 	case 1:
 		updateParser();
 		updateOutputChannels();
-
-		/*_tickCounter1 += 10000;
-		while (_tickCounter1 >= 4167) {
-			_tickCounter1 -= 4167;
-			unkUpdate();
-		}*/
 		break;
 	default:
 		break;
@@ -1002,9 +997,9 @@ void MidiDriver_TOWNS::updateParser() {
 }
 
 void MidiDriver_TOWNS::updateOutputChannels() {
-	_tickCounter2 += 10000;
-	while (_tickCounter2 >= 16667) {
-		_tickCounter2 -= 16667;
+	_tickCounter += _baseTempo;
+	while (_tickCounter >= 16667) {
+		_tickCounter -= 16667;
 		for (int i = 0; i < 6; i++) {
 			if (_out[i]->update())
 				return;

@@ -169,7 +169,7 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 	Common::Error loadGameState(int slot);
 #if 0
-	Common::Error saveGameState(int slot, const char *desc);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 #endif
 	bool canLoadGameStateCurrently();
 #if 0

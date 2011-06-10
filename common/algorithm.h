@@ -236,8 +236,10 @@ void sort(T first, T last) {
 
 // MSVC is complaining about the minus operator being applied to an unsigned type
 // We disable this warning for the affected section of code
+#if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable: 4146)
+#endif
 
 /**
  * Euclid's algorithm to compute the greatest common divisor.
@@ -261,7 +263,9 @@ T gcd(T a, T b) {
 	return b;
 }
 
+#if defined(_MSC_VER)
 #pragma warning(pop)
+#endif
 
 } // End of namespace Common
 #endif

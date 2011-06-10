@@ -304,6 +304,43 @@ void GfxSurface::unlockSurface() {
 	}
 }
 
+void GfxSurface::synchronize(Serializer &s) {
+	assert(!_lockSurfaceCtr);
+	assert(!_screenSurface);
+
+	s.syncAsByte(_disableUpdates);
+	_bounds.synchronize(s);
+	s.syncAsSint16LE(_centroid.x);
+	s.syncAsSint16LE(_centroid.y);
+	s.syncAsSint16LE(_transColor);
+
+	if (s.isSaving()) {
+		// Save contents of the surface
+		if (_customSurface) {
+			s.syncAsSint16LE(_customSurface->w);
+			s.syncAsSint16LE(_customSurface->h);
+			s.syncBytes((byte *)_customSurface->pixels, _customSurface->w * _customSurface->h);
+		} else {
+			int zero = 0;
+			s.syncAsSint16LE(zero);
+			s.syncAsSint16LE(zero);
+		}
+	} else {
+		int w, h;
+		s.syncAsSint16LE(w);
+		s.syncAsSint16LE(h);
+
+		if ((w == 0) || (h == 0)) {
+			if (_customSurface)
+				delete _customSurface;
+			_customSurface = NULL;
+		} else {
+			create(w, h);
+			s.syncBytes((byte *)_customSurface->pixels, w * h);
+		}
+	}
+}
+
 /**
  * Fills a specified rectangle on the surface with the specified color
  *
@@ -589,6 +626,9 @@ void GfxElement::setDefaults() {
 	_fontNumber = _globals->_gfxFontNumber;
 	_colors = _globals->_gfxColors;
 	_fontColors = _globals->_fontColors;
+	_unkColor1 = _globals->_unkColor1;
+	_unkColor2 = _globals->_unkColor2;
+	_unkColor3 = _globals->_unkColor3;
 }
 
 /**
@@ -602,7 +642,7 @@ void GfxElement::highlight() {
 	// Scan through the contents of the element, switching any occurances of the foreground
 	// color with the background color and vice versa
 	Rect tempRect(_bounds);
-	tempRect.collapse(2, 2);
+	tempRect.collapse(_globals->_gfxEdgeAdjust - 1, _globals->_gfxEdgeAdjust - 1);
 
 	for (int yp = tempRect.top; yp < tempRect.bottom; ++yp) {
 		byte *lineP = (byte *)surface.getBasePtr(tempRect.left, yp);
@@ -634,7 +674,7 @@ void GfxElement::drawFrame() {
 	}
 
 	Rect tempRect = _bounds;
-	tempRect.collapse(3, 3);
+	tempRect.collapse(_globals->_gfxEdgeAdjust, _globals->_gfxEdgeAdjust);
 	tempRect.collapse(-1, -1);
 	gfxManager.fillRect(tempRect, _colors.background);
 
@@ -783,7 +823,10 @@ void GfxMessage::draw() {
 	// Set the font and color
 	gfxManager.setFillFlag(false);
 	gfxManager._font.setFontNumber(_fontNumber);
-	gfxManager._font._colors.foreground = this->_colors.foreground;
+
+	gfxManager._font._colors.foreground = this->_unkColor1;
+	gfxManager._font._colors2.background = this->_unkColor2;
+	gfxManager._font._colors2.foreground = this->_unkColor3;
 
 	// Display the text
 	gfxManager._font.writeLines(_message.c_str(), _bounds, _textAlign);
@@ -803,8 +846,10 @@ void GfxButton::setDefaults() {
 	gfxManager._font.getStringBounds(_message.c_str(), tempRect, 240);
 	tempRect.right = ((tempRect.right + 15) / 16) * 16;
 
-	// Set the button bounds to a reduced area
-	tempRect.collapse(-3, -3);
+	// Set the button bounds 
+	tempRect.collapse(-_globals->_gfxEdgeAdjust, -_globals->_gfxEdgeAdjust);
+	if (_vm->getFeatures() & GF_CD)
+		--tempRect.top;
 	tempRect.moveTo(_bounds.left, _bounds.top);
 	_bounds = tempRect;
 }
@@ -820,11 +865,17 @@ void GfxButton::draw() {
 
 	// Set the font and color
 	gfxManager._font.setFontNumber(_fontNumber);
-	gfxManager._font._colors.foreground = this->_colors.foreground;
+
+	// 
+	gfxManager._font._colors.foreground = this->_unkColor1;
+	gfxManager._font._colors2.background = this->_unkColor2;
+	gfxManager._font._colors2.foreground = this->_unkColor3;
 
 	// Display the button's text
 	Rect tempRect(_bounds);
-	tempRect.collapse(3, 3);
+	tempRect.collapse(_globals->_gfxEdgeAdjust, _globals->_gfxEdgeAdjust);
+	if (_vm->getFeatures() & GF_CD)
+		++tempRect.top;
 	gfxManager._font.writeLines(_message.c_str(), tempRect, ALIGN_CENTER);
 
 	gfxManager.unlockSurface();
@@ -885,7 +936,7 @@ void GfxDialog::setDefaults() {
 
 	// Set the dialog boundaries
 	_gfxManager._bounds = tempRect;
-	tempRect.collapse(-6, -6);
+	tempRect.collapse(-_globals->_gfxEdgeAdjust * 2, -_globals->_gfxEdgeAdjust * 2);
 	_bounds = tempRect;
 }
 
@@ -915,7 +966,7 @@ void GfxDialog::draw() {
 	drawFrame();
 
 	// Reset the dialog's graphics manager to only draw within the dialog boundaries
-	tempRect.translate(6, 6);
+	tempRect.translate(_globals->_gfxEdgeAdjust * 2, _globals->_gfxEdgeAdjust * 2);
 	_gfxManager._bounds = tempRect;
 
 	// Draw each element in the dialog in order
@@ -952,7 +1003,7 @@ void GfxDialog::addElements(GfxElement *ge, ...) {
 }
 
 void GfxDialog::setTopLeft(int xp, int yp) {
-	_bounds.moveTo(xp - 6, yp - 6);
+	_bounds.moveTo(xp - _globals->_gfxEdgeAdjust * 2, yp - _globals->_gfxEdgeAdjust * 2);
 }
 
 void GfxDialog::setCenter(int xp, int yp) {

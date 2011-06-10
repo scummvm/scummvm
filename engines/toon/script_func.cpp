@@ -312,13 +312,13 @@ int32 ScriptFunc::sys_Cmd_Flip_Screens(EMCState *state) {
 
 int32 ScriptFunc::sys_Cmd_Play_Flic(EMCState *state) {
 
-	char name[256];
+	Common::String name;
 
 	// workaround for the video of the beginning
 	if (strstr(GetText(0, state), "209"))
-		sprintf(name, "%s", GetText(0, state));
+		name = GetText(0, state);
 	else
-		strcpy(name, _vm->createRoomFilename(GetText(0, state)).c_str());
+		name = _vm->createRoomFilename(GetText(0, state));
 
 	int32 stopMusic = stackPos(2);
 	_vm->getMoviePlayer()->play(name, stopMusic);

@@ -278,7 +278,7 @@ public:
 	Action15 _action15;
 	Action16 _action16;
 	Action17 _action17;
-	int _field1800;
+	int _sitFl;
 	SceneArea _area1, _area2, _area3, _area4;
 
 	Scene2100();

@@ -28,59 +28,9 @@
 #include "common/textconsole.h"
 #include "backends/audiocd/audiocd.h"
 
-
-class TownsAudio_PcmChannel {
-friend class TownsAudioInterfaceInternal;
-public:
-	TownsAudio_PcmChannel();
-	~TownsAudio_PcmChannel();
-
-private:
-	void loadExtData(uint8 *buffer, uint32 size);
-	void setupLoop(uint32 start, uint32 len);
-	void clear();
-
-	void envAttack();
-	void envDecay();
-	void envSustain();
-	void envRelease();
-
-	uint8 *curInstrument;
-	uint8 note;
-	uint8 velo;
-
-	int8 *data;
-	int8 *dataEnd;
-
-	int8 *loopEnd;
-	uint32 loopLen;
-
-	uint16 stepNote;
-	uint16 stepPitch;
-	uint16 step;
-
-	uint8 panLeft;
-	uint8 panRight;
-
-	uint32 pos;
-
-	uint8 envTotalLevel;
-	uint8 envAttackRate;
-	uint8 envDecayRate;
-	uint8 envSustainLevel;
-	uint8 envSustainRate;
-	uint8 envReleaseRate;
-
-	int16 envStep;
-	int16 envCurrentLevel;
-
-	EnvelopeState envState;
-
-	int8 *extData;
-};
-
 class TownsAudio_WaveTable {
 friend class TownsAudioInterfaceInternal;
+friend class TownsAudio_PcmChannel;
 public:
 	TownsAudio_WaveTable();
 	~TownsAudio_WaveTable();
@@ -101,14 +51,94 @@ private:
 	int8 *data;
 };
 
+class TownsAudio_PcmChannel {
+public:
+	TownsAudio_PcmChannel();
+	~TownsAudio_PcmChannel();
+
+	void clear();
+
+	void loadData(TownsAudio_WaveTable *w);
+	void loadData(uint8 *buffer, uint32 size);
+
+	int initInstrument(uint8 &note, TownsAudio_WaveTable *&tables, int numTables);
+	void keyOn(uint8 note, uint8 velo, TownsAudio_WaveTable *w);
+	void keyOff();
+
+	void updateEnvelopeGenerator();
+
+	void setInstrument(uint8 *instr);	
+	void setLevel(uint8 lvl);
+	void setPitch(uint32 pt);
+	void setBalance(uint8 blc);
+
+	void updateOutput();
+	int32 currentSampleLeft();
+	int32 currentSampleRight();
+
+	bool _keyPressed;
+	bool _reserved;
+	bool _activeKey;
+	bool _activeEffect;
+	bool _activeOutput;
+
+private:
+	void setupLoop(uint32 loopStart, uint32 len);
+	void setNote(uint8 note, TownsAudio_WaveTable *w, bool stepLimit = false);
+	void setVelo(uint8 velo);
+
+	void envAttack();
+	void envDecay();
+	void envSustain();
+	void envRelease();
+
+	uint8 *_curInstrument;
+
+	uint8 _note;
+
+	uint8 _velo;
+	uint8 _level;
+	uint8 _tl;
+
+	uint8 _panLeft;
+	uint8 _panRight;
+
+	int8 *_data;
+	int8 *_dataEnd;
+
+	int8 *_loopEnd;
+	uint32 _loopLen;
+
+	uint16 _stepNote;
+	uint16 _stepPitch;
+	uint16 _step;
+
+	uint32 _pos;
+
+	uint8 _envTotalLevel;
+	uint8 _envAttackRate;
+	uint8 _envDecayRate;
+	uint8 _envSustainLevel;
+	uint8 _envSustainRate;
+	uint8 _envReleaseRate;
+	int16 _envStep;
+	int16 _envCurrentLevel;
+
+	EnvelopeState _envState;
+
+	int8 *_extData;
+
+	static const uint16 _pcmPhase1[];
+	static const uint16 _pcmPhase2[];
+};
+
 class TownsAudioInterfaceInternal : public TownsPC98_FmSynth {
 public:
-	TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver);
+	TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
 	~TownsAudioInterfaceInternal();
 
-	static TownsAudioInterfaceInternal *addNewRef(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver);
-	static void releaseRef();
-	bool checkPluginDriver(TownsAudioInterfacePluginDriver *driver);
+	static TownsAudioInterfaceInternal *addNewRef(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
+	static void releaseRef(TownsAudioInterface *owner);
 
 	bool init();
 
@@ -122,6 +152,9 @@ public:
 	void setSoundEffectChanMask(int mask);
 
 private:
+	bool assignPluginDriver(TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
+	void removePluginDriver(TownsAudioInterface *owner);
+
 	void nextTickEx(int32 *buffer, uint32 bufferSize);
 
 	void timerCallbackA();
@@ -200,18 +233,8 @@ private:
 	int pcmLoadInstrument(int instrId, const uint8 *data);
 	int pcmSetPitch(int chan, int pitch);
 	int pcmSetLevel(int chan, int lvl);
-	void pcmUpdateEnvelopeGenerator(int chan);
 
 	TownsAudio_PcmChannel *_pcmChan;
-	uint8 _pcmChanOut;
-	uint8 _pcmChanReserved;
-	uint8 _pcmChanKeyPressed;
-	uint8 _pcmChanEffectPlaying;
-	uint8 _pcmChanKeyPlaying;
-
-	uint8 _pcmChanNote[8];
-	uint8 _pcmChanVelo[8];
-	uint8 _pcmChanLevel[8];
 
 	uint8 _numReservedChannels;
 	uint8 *_pcmInstruments;
@@ -219,8 +242,6 @@ private:
 	TownsAudio_WaveTable *_waveTables;
 	uint8 _numWaveTables;
 	uint32 _waveTablesTotalDataSize;
-
-	void pcmCalcPhaseStep(TownsAudio_PcmChannel *p, TownsAudio_WaveTable *w);
 
 	void updateOutputVolume();
 	void updateOutputVolumeInternal();
@@ -239,6 +260,7 @@ private:
 	int _pcmSfxChanMask;
 
 	TownsAudioInterfacePluginDriver *_drv;
+	void *_drvOwner;
 	bool _ready;
 
 	static TownsAudioInterfaceInternal *_refInstance;
@@ -248,16 +270,14 @@ private:
 	static const uint16 _frequency[];
 	static const uint8 _carrier[];
 	static const uint8 _fmDefaultInstrument[];
-	static const uint16 _pcmPhase1[];
-	static const uint16 _pcmPhase2[];
 };
 
-TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) : TownsPC98_FmSynth(mixer, kTypeTowns),
+TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling) : 
+	TownsPC98_FmSynth(mixer, kTypeTowns, externalMutexHandling),
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
-	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
+	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver), _drvOwner(owner),
 	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
-	_outputVolumeFlags(0), _pcmChanOut(0), _pcmChanReserved(0), _pcmChanKeyPressed(0),
-	_pcmChanEffectPlaying(0), _pcmChanKeyPlaying(0), _fmChanPlaying(0), 
+	_outputVolumeFlags(0), _fmChanPlaying(0), 
 	_numReservedChannels(0), _numWaveTables(0), _updateOutputVol(false), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterfaceInternal::intf_##x
@@ -373,9 +393,6 @@ TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, To
 	memset(_fmSaveReg, 0, sizeof(_fmSaveReg));
 	memset(_fmChanNote, 0, sizeof(_fmChanNote));
 	memset(_fmChanPitch, 0, sizeof(_fmChanPitch));
-	memset(_pcmChanNote, 0, sizeof(_pcmChanNote));	
-	memset(_pcmChanVelo, 0, sizeof(_pcmChanVelo));
-	memset(_pcmChanLevel, 0, sizeof(_pcmChanLevel));
 	memset(_outputLevel, 0, sizeof(_outputLevel));
 	memset(_outputMute, 0, sizeof(_outputMute));
 
@@ -387,6 +404,8 @@ TownsAudioInterfaceInternal::~TownsAudioInterfaceInternal() {
 	_ready = false;
 	deinit();
 
+	Common::StackLock lock(_mutex);
+
 	delete[] _fmSaveReg[0];
 	delete[] _fmSaveReg[1];
 	delete[] _fmInstruments;
@@ -395,42 +414,31 @@ TownsAudioInterfaceInternal::~TownsAudioInterfaceInternal() {
 	delete[] _pcmChan;
 }
 
-TownsAudioInterfaceInternal *TownsAudioInterfaceInternal::addNewRef(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) {
+TownsAudioInterfaceInternal *TownsAudioInterfaceInternal::addNewRef(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling) {
 	_refCount++;
 	if (_refCount == 1 && _refInstance == 0)
-		_refInstance = new TownsAudioInterfaceInternal(mixer, driver);
+		_refInstance = new TownsAudioInterfaceInternal(mixer, owner, driver, externalMutexHandling);
 	else if (_refCount < 2 || _refInstance == 0)
 		error("TownsAudioInterfaceInternal::addNewRef(): Internal reference management failure");
-	else if (!_refInstance->checkPluginDriver(driver))
+	else if (!_refInstance->assignPluginDriver(owner, driver, externalMutexHandling))
 		error("TownsAudioInterfaceInternal::addNewRef(): Plugin driver conflict");
 
 	return _refInstance;
 }
 
-void TownsAudioInterfaceInternal::releaseRef() {
+void TownsAudioInterfaceInternal::releaseRef(TownsAudioInterface *owner) {
 	if (!_refCount)
 		return;
 
 	_refCount--;
 	
-	if (!_refCount) {
+	if (_refCount) {
+		if (_refInstance)
+			_refInstance->removePluginDriver(owner);
+	} else {
 		delete _refInstance;
 		_refInstance = 0;
 	}
-}
-
-bool TownsAudioInterfaceInternal::checkPluginDriver(TownsAudioInterfacePluginDriver *driver) {
-	if (_refCount <= 1)
-		return true;
-
-	if (_drv) {
-		if (driver && driver != _drv)
-			return false;
-	} else {
-		_drv = driver;
-	}
-
-	return true;
 }
 
 bool TownsAudioInterfaceInternal::init() {
@@ -499,6 +507,30 @@ void TownsAudioInterfaceInternal::setSoundEffectChanMask(int mask) {
 	setVolumeChannelMasks(~mask, mask);
 }
 
+bool TownsAudioInterfaceInternal::assignPluginDriver(TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling) {
+	if (_refCount <= 1)
+		return true;
+
+	if (_drv) {
+		if (driver && driver != _drv)
+			return false;
+	} else {
+		Common::StackLock lock(_mutex);
+		_drv = driver;
+		_drvOwner = owner;
+		_externalMutex = externalMutexHandling;
+	}
+
+	return true;
+}
+
+void TownsAudioInterfaceInternal::removePluginDriver(TownsAudioInterface *owner) {
+	if (_drvOwner == owner) {
+		Common::StackLock lock(_mutex);
+		_drv = 0;
+	}
+}
+
 void TownsAudioInterfaceInternal::nextTickEx(int32 *buffer, uint32 bufferSize) {
 	if (!_ready)
 		return;
@@ -511,40 +543,30 @@ void TownsAudioInterfaceInternal::nextTickEx(int32 *buffer, uint32 bufferSize) {
 		while (_timer > 0x514767) {
 			_timer -= 0x514767;
 
-			for (int ii = 0; ii < 8; ii++) {
-				if ((_pcmChanKeyPlaying & _chanFlags[ii]) || (_pcmChanEffectPlaying & _chanFlags[ii])) {
-					TownsAudio_PcmChannel *s = &_pcmChan[ii];
-					s->pos += s->step;
-
-					if (&s->data[s->pos >> 11] >= s->loopEnd) {
-						if (s->loopLen) {
-							s->pos -= s->loopLen;
-						} else {
-							s->pos = 0;
-							_pcmChanEffectPlaying &= ~_chanFlags[ii];
-							_pcmChanKeyPlaying &= ~_chanFlags[ii];
-						}
-					}
-				}
-			}
+			for (int ii = 0; ii < 8; ii++)
+				_pcmChan[ii].updateOutput();
 		}
 
 		int32 finOutL = 0;
 		int32 finOutR = 0;
 
 		for (int ii = 0; ii < 8; ii++) {
-			if (_pcmChanOut & _chanFlags[ii]) {
-				int32 o = _pcmChan[ii].data[_pcmChan[ii].pos >> 11] * _pcmChan[ii].velo;
-				if ((1 << ii) & (~_pcmSfxChanMask))
-					o = (o * _musicVolume) / Audio::Mixer::kMaxMixerVolume;
-				if ((1 << ii) & _pcmSfxChanMask)
-					o = (o * _sfxVolume) / Audio::Mixer::kMaxMixerVolume;
-				if (_pcmChan[ii].panLeft)
-					finOutL += ((o * _pcmChan[ii].panLeft) >> 3);
-				if (_pcmChan[ii].panRight)
-					finOutR += ((o * _pcmChan[ii].panRight) >> 3);
-				if (!((_pcmChanKeyPlaying & _chanFlags[ii]) || (_pcmChanEffectPlaying & _chanFlags[ii])))
-					_pcmChanOut &= ~_chanFlags[ii];
+			if (_pcmChan[ii]._activeOutput) {
+				int32 oL = _pcmChan[ii].currentSampleLeft();
+				int32 oR = _pcmChan[ii].currentSampleRight();
+				if ((1 << ii) & (~_pcmSfxChanMask)) {
+					oL = (oR * _musicVolume) / Audio::Mixer::kMaxMixerVolume;
+					oR = (oR * _musicVolume) / Audio::Mixer::kMaxMixerVolume;
+				}
+				if ((1 << ii) & _pcmSfxChanMask) {
+					oL = (oL * _sfxVolume) / Audio::Mixer::kMaxMixerVolume;
+					oR = (oR * _sfxVolume) / Audio::Mixer::kMaxMixerVolume;
+				}
+				finOutL += oL;
+				finOutR += oR;
+				
+				if (!(_pcmChan[ii]._activeKey || _pcmChan[ii]._activeEffect))
+					_pcmChan[ii]._activeOutput = false;
 			}
 		}
 
@@ -731,22 +753,19 @@ int TownsAudioInterfaceInternal::intf_reserveEffectChannels(va_list &args) {
 
 	if (numChan < _numReservedChannels) {
 		int c = 8 - _numReservedChannels;
-		for (int i = numChan; i; i--) {
-			uint8 f = ~_chanFlags[c--];
-			_pcmChanEffectPlaying &= f;
-		}
+		for (int i = numChan; i; i--)
+			_pcmChan[c--]._activeEffect = false;
 	} else {
 		int c = 7 - _numReservedChannels;
 		for (int i = numChan - _numReservedChannels; i; i--) {
-			uint8 f = ~_chanFlags[c--];
-			_pcmChanKeyPressed &= f;
-			_pcmChanKeyPlaying &= f;
+			_pcmChan[c]._keyPressed = false;
+			_pcmChan[c--]._activeKey = false;
 		}
 	}
 
-	static const uint8 reserveChanFlags[] = { 0x00, 0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE, 0xFF };
 	_numReservedChannels = numChan;
-	_pcmChanReserved = reserveChanFlags[_numReservedChannels];
+	for (int i = 0; i < 8; i++)
+		_pcmChan[i]._reserved = i >= (8 - _numReservedChannels) ? true : false;
 
 	return 0;
 }
@@ -819,10 +838,10 @@ int TownsAudioInterfaceInternal::intf_pcmPlayEffect(va_list &args) {
 
 	chan -= 0x40;
 
-	if (!(_pcmChanReserved & _chanFlags[chan]))
+	if (!_pcmChan[chan]._reserved)
 		return 7;
 
-	if ((_pcmChanEffectPlaying & _chanFlags[chan]))
+	if (_pcmChan[chan]._activeEffect)
 		return 2;
 
 	TownsAudio_WaveTable w;
@@ -836,21 +855,8 @@ int TownsAudioInterfaceInternal::intf_pcmPlayEffect(va_list &args) {
 
 	TownsAudio_PcmChannel *p = &_pcmChan[chan];
 
-	_pcmChanNote[chan] = note;
-	_pcmChanVelo[chan] = velo;
-
-	p->note = note;
-	p->velo = velo << 1;
-
-	p->loadExtData(data + 32, w.size);
-	p->setupLoop(w.loopStart, w.loopLen);
-
-	pcmCalcPhaseStep(p, &w);
-	if (p->step > 2048)
-		p->step = 2048;
-
-	_pcmChanEffectPlaying |= _chanFlags[chan];
-	_pcmChanOut |= _chanFlags[chan];
+	p->loadData(data + 32, w.size);
+	p->keyOn(note, velo, &w);
 
 	return 0;
 }
@@ -866,7 +872,7 @@ int TownsAudioInterfaceInternal::intf_pcmEffectPlaying(va_list &args) {
 	if (chan < 0x40 || chan > 0x47)
 		return 1;
 	chan -= 0x40;
-	return (_pcmChanEffectPlaying & _chanFlags[chan]) ? 1 : 0;
+	return _pcmChan[chan]._activeEffect ? 1 : 0;
 }
 
 int TownsAudioInterfaceInternal::intf_fmKeyOn(va_list &args) {
@@ -1025,7 +1031,7 @@ int TownsAudioInterfaceInternal::intf_getOutputMute (va_list &args) {
 
 int TownsAudioInterfaceInternal::intf_pcmUpdateEnvelopeGenerator(va_list &args) {
 	for (int i = 0; i < 8; i++)
-		pcmUpdateEnvelopeGenerator(i);
+		_pcmChan[i].updateEnvelopeGenerator();
 	return 0;
 }
 
@@ -1356,13 +1362,7 @@ void TownsAudioInterfaceInternal::bufferedWriteReg(uint8 part, uint8 regAddress,
 }
 
 void TownsAudioInterfaceInternal::pcmReset() {
-	_pcmChanOut = 0;
-	_pcmChanReserved = _pcmChanKeyPressed = _pcmChanEffectPlaying = _pcmChanKeyPlaying = 0;
 	_numReservedChannels = 0;
-
-	memset(_pcmChanNote, 0, 8);
-	memset(_pcmChanVelo, 0, 8);
-	memset(_pcmChanLevel, 0, 8);
 
 	for (int i = 0; i < 8; i++)
 		_pcmChan[i].clear();
@@ -1391,65 +1391,19 @@ int TownsAudioInterfaceInternal::pcmKeyOn(int chan, int note, int velo) {
 		return 3;
 
 	chan -= 0x40;
+	uint8 noteT = note;
+	TownsAudio_PcmChannel *p = &_pcmChan[chan];
 
-	if ((_pcmChanReserved & _chanFlags[chan]) || (_pcmChanKeyPressed & _chanFlags[chan]))
+	if (p->_reserved || p->_keyPressed)
 		return 2;
 
-	_pcmChanNote[chan] = note;
-	_pcmChanVelo[chan] = velo;
+	TownsAudio_WaveTable *w = _waveTables;
+	int res = p->initInstrument(noteT, w, _numWaveTables);
+	if (res)
+		return res;
 
-	TownsAudio_PcmChannel *p = &_pcmChan[chan];
-	p->note = note;
-
-	uint8 *instr = _pcmChan[chan].curInstrument;
-	int i = 0;
-	for (; i < 8; i++) {
-		if (note <= instr[16 + 2 * i])
-			break;
-	}
-
-	if (i == 8)
-		return 8;
-
-	int il = i << 3;
-	p->note += instr[il + 70];
-
-	p->envTotalLevel = instr[il + 64];
-	p->envAttackRate = instr[il + 65];
-	p->envDecayRate = instr[il + 66];
-	p->envSustainLevel = instr[il + 67];
-	p->envSustainRate = instr[il + 68];
-	p->envReleaseRate = instr[il + 69];
-	p->envStep = 0;
-
-	int32 id = (int32)READ_LE_UINT32(&instr[i * 4 + 32]);
-
-	for (i = 0; i < _numWaveTables; i++) {
-		if (id == _waveTables[i].id)
-			break;
-	}
-
-	if (i == _numWaveTables)
-		return 9;
-
-	TownsAudio_WaveTable *w = &_waveTables[i];
-
-	p->data = w->data;
-	p->dataEnd = w->data + w->size;
-	p->setupLoop(w->loopStart, w->loopLen);
-
-	pcmCalcPhaseStep(p, w);
-
-	uint32 lvl = _pcmChanLevel[chan] * _pcmChanVelo[chan];
-	p->envTotalLevel = ((p->envTotalLevel * lvl) >> 14) & 0xff;
-	p->envSustainLevel = ((p->envSustainLevel * lvl) >> 14) & 0xff;
-
-	p->envAttack();
-	p->velo = (p->envCurrentLevel >> 8) << 1;
-
-	_pcmChanKeyPressed |= _chanFlags[chan];
-	_pcmChanKeyPlaying |= _chanFlags[chan];
-	_pcmChanOut |= _chanFlags[chan];
+	p->loadData(w);
+	p->keyOn(noteT, velo, w);
 
 	return 0;
 }
@@ -1459,8 +1413,7 @@ int TownsAudioInterfaceInternal::pcmKeyOff(int chan) {
 		return 1;
 
 	chan -= 0x40;
-	_pcmChanKeyPressed &= ~_chanFlags[chan];
-	_pcmChan[chan].envRelease();
+	_pcmChan[chan].keyOff();
 	return 0;
 }
 
@@ -1469,11 +1422,7 @@ int TownsAudioInterfaceInternal::pcmChanOff(int chan) {
 		return 1;
 
 	chan -= 0x40;
-
-	_pcmChanKeyPressed &= ~_chanFlags[chan];
-	_pcmChanEffectPlaying &= ~_chanFlags[chan];
-	_pcmChanKeyPlaying &= ~_chanFlags[chan];
-	_pcmChanOut &= ~_chanFlags[chan];
+	_pcmChan[chan]._keyPressed = _pcmChan[chan]._activeEffect = _pcmChan[chan]._activeKey = _pcmChan[chan]._activeOutput = false;
 
 	return 0;
 }
@@ -1495,8 +1444,7 @@ int TownsAudioInterfaceInternal::pcmSetPanPos(int chan, int mode) {
 		blc = ((119 + mode) ^ (mode << 4)) & 0xff;
 	}
 
-	_pcmChan[chan].panLeft = blc & 0x0f;
-	_pcmChan[chan].panRight = blc >> 4;
+	_pcmChan[chan].setBalance(blc);
 
 	return 0;
 }
@@ -1507,7 +1455,8 @@ int TownsAudioInterfaceInternal::pcmSetInstrument(int chan, int instrId) {
 	if (instrId > 31)
 		return 3;
 	chan -= 0x40;
-	_pcmChan[chan].curInstrument = &_pcmInstruments[instrId * 128];
+	_pcmChan[chan].setInstrument(&_pcmInstruments[instrId * 128]);
+
 	return 0;
 }
 
@@ -1536,15 +1485,7 @@ int TownsAudioInterfaceInternal::pcmSetPitch(int chan, int pitch) {
 	else if (pitch > 0)
 		pts = (((pitch + 0x2001) << 16) / 0x2000) >> 2;
 
-	p->stepPitch = pts & 0xffff;
-	p->step = (p->stepNote * p->stepPitch) >> 14;
-
-//	if (_pcmChanUnkFlag & _chanFlags[chan])
-//		 unk[chan] = (((p->step * 1000) << 11) / 98) / 20833;
-
-	/*else*/
-	if ((_pcmChanEffectPlaying & _chanFlags[chan]) && (p->step > 2048))
-		p->step = 2048;
+	p->setPitch(pts);
 
 	return 0;
 }
@@ -1557,96 +1498,9 @@ int TownsAudioInterfaceInternal::pcmSetLevel(int chan, int lvl) {
 		return 3;
 
 	chan -= 0x40;
-	TownsAudio_PcmChannel *p = &_pcmChan[chan];
-
-	if (_pcmChanReserved & _chanFlags[chan]) {
-		_pcmChanVelo[chan] = lvl;
-		p->velo = lvl << 1;
-	} else {
-		int32 t = p->envStep * lvl;
-		if (_pcmChanLevel[chan])
-			t /= _pcmChanLevel[chan];
-		p->envStep = t;
-		t = p->envCurrentLevel * lvl;
-		if (_pcmChanLevel[chan])
-			t /= _pcmChanLevel[chan];
-		p->envCurrentLevel = t;
-		_pcmChanLevel[chan] = lvl;
-		p->velo = p->envCurrentLevel >> 8;
-	}
+	_pcmChan[chan].setLevel(lvl);
 
 	return 0;
-}
-
-void TownsAudioInterfaceInternal::pcmUpdateEnvelopeGenerator(int chan) {
-	TownsAudio_PcmChannel *p = &_pcmChan[chan];
-	if (!p->envCurrentLevel) {
-		_pcmChanKeyPlaying &= ~_chanFlags[chan];
-		p->envState = kEnvReady;
-	}
-
-	if (!(_pcmChanKeyPlaying & _chanFlags[chan]))
-		return;
-
-	switch (p->envState) {
-	case kEnvAttacking:
-		if (((p->envCurrentLevel + p->envStep) >> 8) > p->envTotalLevel) {
-			p->envDecay();
-			return;
-		} else {
-			p->envCurrentLevel += p->envStep;
-		}
-		break;
-
-	case kEnvDecaying:
-		if (((p->envCurrentLevel - p->envStep) >> 8) < p->envSustainLevel) {
-			p->envSustain();
-			return;
-		} else {
-			p->envCurrentLevel -= p->envStep;
-		}
-		break;
-
-	case kEnvSustaining:
-	case kEnvReleasing:
-		p->envCurrentLevel -= p->envStep;
-		if (p->envCurrentLevel <= 0)
-			p->envCurrentLevel = 0;
-		break;
-
-	default:
-		break;
-	}
-	p->velo = (p->envCurrentLevel >> 8) << 1;
-}
-
-void TownsAudioInterfaceInternal::pcmCalcPhaseStep(TownsAudio_PcmChannel *p, TownsAudio_WaveTable *w) {
-	int8 diff = p->note - w->baseNote;
-	uint16 r = w->rate + w->rateOffs;
-	uint16 bl = 0;
-	uint32 s = 0;
-
-	if (diff < 0) {
-		diff *= -1;
-		bl = diff % 12;
-		diff /= 12;
-		s = (r >> diff);
-		if (bl)
-			s = (s * _pcmPhase2[bl]) >> 16;
-
-	} else if (diff > 0) {
-		bl = diff % 12;
-		diff /= 12;
-		s = (r << diff);
-		if (bl)
-			s += ((s * _pcmPhase1[bl]) >> 16);
-
-	} else {
-		s = r;
-	}
-
-	p->stepNote = s & 0xffff;
-	p->step = (s * p->stepPitch) >> 14;
 }
 
 void TownsAudioInterfaceInternal::updateOutputVolume() {
@@ -1669,7 +1523,6 @@ void TownsAudioInterfaceInternal::updateOutputVolumeInternal() {
 	int volume = (int)(((float)(maxVol * 255) / 63.0f));
 	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] * (_outputMute[13] ^ 1) - _outputLevel[12] * (_outputMute[12] ^ 1)) * 127) / (float)maxVol) : 0;
 
-	Common::StackLock lock(_mutex);
 	g_system->getAudioCDManager()->setVolume(volume);
 	g_system->getAudioCDManager()->setBalance(balance);
 
@@ -1699,16 +1552,8 @@ const uint8 TownsAudioInterfaceInternal::_fmDefaultInstrument[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-const uint16 TownsAudioInterfaceInternal::_pcmPhase1[] =  {
-	0x879B, 0x0F37, 0x1F58, 0x306E, 0x4288, 0x55B6, 0x6A08, 0x7F8F, 0x965E, 0xAE88, 0xC882, 0xE341
-};
-
-const uint16 TownsAudioInterfaceInternal::_pcmPhase2[] =  {
-	0xFEFE, 0xF1A0, 0xE411, 0xD744, 0xCB2F, 0xBFC7, 0xB504, 0xAAE2, 0xA144, 0x9827, 0x8FAC
-};
-
 TownsAudio_PcmChannel::TownsAudio_PcmChannel() {
-	extData = 0;
+	_extData = 0;
 	clear();
 }
 
@@ -1716,96 +1561,312 @@ TownsAudio_PcmChannel::~TownsAudio_PcmChannel() {
 	clear();
 }
 
-void TownsAudio_PcmChannel::loadExtData(uint8 *buffer, uint32 size) {
-	delete[] extData;
-	extData = new int8[size];
+void TownsAudio_PcmChannel::clear() {
+	_curInstrument = 0;
+	_note = _tl = _level = _velo = 0;
+
+	_data = 0;
+	_dataEnd = 0;
+	_loopLen = 0;
+
+	_pos = 0;
+	_loopEnd = 0;
+
+	_step = 0;
+	_stepNote = 0x4000;
+	_stepPitch = 0x4000;
+
+	_panLeft = _panRight = 7;
+
+	_envTotalLevel = _envAttackRate = _envDecayRate = _envSustainLevel = _envSustainRate = _envReleaseRate = 0;
+	_envStep = _envCurrentLevel = 0;
+
+	_envState = kEnvReady;	
+
+	_activeKey = _activeEffect = _activeOutput = _keyPressed = _reserved = false;
+
+	delete[] _extData;
+	_extData = 0;
+}
+
+void TownsAudio_PcmChannel::loadData(TownsAudio_WaveTable *w) {
+	_data = w->data;
+	_dataEnd = w->data + w->size;
+}
+
+void TownsAudio_PcmChannel::loadData(uint8 *buffer, uint32 size) {
+	delete[] _extData;
+	_extData = new int8[size];
 	int8 *src = (int8 *)buffer;
-	int8 *dst = extData;
+	int8 *dst = _extData;
 	for (uint32 i = 0; i < size; i++)
 		*dst++ = *src & 0x80 ? (*src++ & 0x7f) : -*src++;
 
-	data = extData;
-	dataEnd = extData + size;
-	pos = 0;
+	_data = _extData;
+	_dataEnd = _extData + size;
+	_pos = 0;
 }
 
-void TownsAudio_PcmChannel::setupLoop(uint32 start, uint32 len) {
-	loopLen = len << 11;
-	loopEnd = loopLen ? &data[(start + loopLen) >> 11] : dataEnd;
-	pos = start;
+int TownsAudio_PcmChannel::initInstrument(uint8 &note, TownsAudio_WaveTable *&tables, int numTables) {
+	int i = 0;
+	for (; i < 8; i++) {
+		if (note <= _curInstrument[16 + 2 * i])
+			break;
+	}
+
+	if (i == 8)
+		return 8;
+
+	uint8 *d = &_curInstrument[(i << 3) + 64];
+	_envTotalLevel = d[0];
+	_envAttackRate = d[1];
+	_envDecayRate = d[2];
+	_envSustainLevel = d[3];
+	_envSustainRate = d[4];
+	_envReleaseRate = d[5];
+	_envStep = 0;
+	note += d[6];
+
+	int32 id = (int32)READ_LE_UINT32(&_curInstrument[i * 4 + 32]);
+
+	for (i = 0; i < numTables; i++) {
+		if (id == tables[i].id)
+			break;
+	}
+
+	if (i == numTables)
+		return 9;
+
+	tables = &tables[i];
+	return 0;
 }
 
-void TownsAudio_PcmChannel::clear() {
-	curInstrument = 0;
-	note = 0;
-	velo = 0;
+void TownsAudio_PcmChannel::keyOn(uint8 note, uint8 velo, TownsAudio_WaveTable *w) {
+	setupLoop(w->loopStart, w->loopLen);
+	setNote(note, w, _reserved);
+	setVelo(velo);
 
-	data = 0;
-	dataEnd = 0;
-	loopLen = 0;
+	if (_reserved)
+		_activeEffect = true;
+	else
+		_keyPressed = _activeKey = true;
+	
+	_activeOutput = true;
+}
 
-	pos = 0;
-	loopEnd = 0;
+void TownsAudio_PcmChannel::keyOff() {
+	_keyPressed = false;
+	envRelease();
+}
 
-	step = 0;
-	stepNote = 0x4000;
-	stepPitch = 0x4000;
+void TownsAudio_PcmChannel::updateEnvelopeGenerator() {
+	if (!_envCurrentLevel) {
+		_activeKey = false;
+		_envState = kEnvReady;
+	}
 
-	panLeft = panRight = 7;
+	if (!_activeKey)
+		return;
 
-	envTotalLevel = envAttackRate = envDecayRate = envSustainLevel = envSustainRate = envReleaseRate = 0;
-	envStep = envCurrentLevel = 0;
+	switch (_envState) {
+	case kEnvAttacking:
+		if (((_envCurrentLevel + _envStep) >> 8) > _envTotalLevel) {
+			envDecay();
+			return;
+		} else {
+			_envCurrentLevel += _envStep;
+		}
+		break;
 
-	envState = kEnvReady;
+	case kEnvDecaying:
+		if (((_envCurrentLevel - _envStep) >> 8) < _envSustainLevel) {
+			envSustain();
+			return;
+		} else {
+			_envCurrentLevel -= _envStep;
+		}
+		break;
 
-	delete[] extData;
-	extData = 0;
+	case kEnvSustaining:
+	case kEnvReleasing:
+		_envCurrentLevel -= _envStep;
+		if (_envCurrentLevel <= 0)
+			_envCurrentLevel = 0;
+		break;
+
+	default:
+		break;
+	}
+	_tl = (_envCurrentLevel >> 8) << 1;
+}
+
+void TownsAudio_PcmChannel::setInstrument(uint8 *instr) {
+	_curInstrument = instr;
+}
+
+void TownsAudio_PcmChannel::setLevel(uint8 lvl) {
+	if (_reserved) {
+		_velo = lvl;
+		_tl = lvl << 1;
+	} else {
+		int32 t = _envStep * lvl;
+		if (_level)
+			t /= _level;
+		_envStep = t;
+		t = _envCurrentLevel * lvl;
+		if (_level)
+			t /= _level;
+		_envCurrentLevel = t;
+		_level = lvl;
+		_tl = _envCurrentLevel >> 8;
+	}
+}
+
+void TownsAudio_PcmChannel::setPitch(uint32 pt) {
+	_stepPitch = pt & 0xffff;
+	_step = (_stepNote * _stepPitch) >> 14;
+
+//	if (_pcmChanUnkFlag & _chanFlags[chan])
+//		 unk[chan] = (((p->step * 1000) << 11) / 98) / 20833;
+
+	/*else*/
+	if (_activeEffect && (_step > 2048))
+		_step = 2048;
+}
+
+void TownsAudio_PcmChannel::setBalance(uint8 blc) {
+	_panLeft = blc & 0x0f;
+	_panRight = blc >> 4;
+}
+
+void TownsAudio_PcmChannel::updateOutput() {
+	if (_activeKey || _activeEffect) {
+		_pos += _step;
+		
+		if (&_data[_pos >> 11] >= _loopEnd) {
+			if (_loopLen) {
+				_pos -= _loopLen;
+			} else {
+				_pos = 0;
+				_activeKey = _activeEffect = false;
+			}
+		}
+	}
+}
+
+int32 TownsAudio_PcmChannel::currentSampleLeft() {
+	return (_activeOutput && _panLeft) ? (((_data[_pos >> 11] * _tl) * _panLeft) >> 3) : 0;
+}
+
+int32 TownsAudio_PcmChannel::currentSampleRight() {
+	return (_activeOutput && _panRight) ? (((_data[_pos >> 11] * _tl) * _panRight) >> 3) : 0;
+}
+
+void TownsAudio_PcmChannel::setupLoop(uint32 loopStart, uint32 len) {
+	_loopLen = len << 11;
+	_loopEnd = _loopLen ? &_data[(loopStart + _loopLen) >> 11] : _dataEnd;
+	_pos = loopStart;
+}
+
+void TownsAudio_PcmChannel::setNote(uint8 note, TownsAudio_WaveTable *w, bool stepLimit) {
+	_note = note;
+	int8 diff = _note - w->baseNote;
+	uint16 r = w->rate + w->rateOffs;
+	uint16 bl = 0;
+	uint32 s = 0;
+
+	if (diff < 0) {
+		diff *= -1;
+		bl = diff % 12;
+		diff /= 12;
+		s = (r >> diff);
+		if (bl)
+			s = (s * _pcmPhase2[bl]) >> 16;
+
+	} else if (diff > 0) {
+		bl = diff % 12;
+		diff /= 12;
+		s = (r << diff);
+		if (bl)
+			s += ((s * _pcmPhase1[bl]) >> 16);
+
+	} else {
+		s = r;
+	}
+
+	_stepNote = s & 0xffff;
+	_step = (s * _stepPitch) >> 14;
+
+	if (stepLimit && _step > 2048)
+		_step = 2048;
+}
+
+void TownsAudio_PcmChannel::setVelo(uint8 velo) {
+	if (_reserved) {
+		_velo = velo;
+		_tl = velo << 1;
+	} else {
+		_velo = velo;
+		uint32 lvl = _level * _velo;
+		_envTotalLevel = ((_envTotalLevel * lvl) >> 14) & 0xff;
+		_envSustainLevel = ((_envSustainLevel * lvl) >> 14) & 0xff;
+		envAttack();
+		_tl = (_envCurrentLevel >> 8) << 1;		
+	}
 }
 
 void TownsAudio_PcmChannel::envAttack() {
-	envState = kEnvAttacking;
-	int16 t = envTotalLevel << 8;
-	if (envAttackRate == 127) {
-		envStep = 0;
-	} else if (envAttackRate) {
-		envStep = t / envAttackRate;
-		envCurrentLevel = 1;
+	_envState = kEnvAttacking;
+	int16 t = _envTotalLevel << 8;
+	if (_envAttackRate == 127) {
+		_envCurrentLevel = _envStep = 0;
+	} else if (_envAttackRate) {
+		_envStep = t / _envAttackRate;
+		_envCurrentLevel = 1;
 	} else {
-		envCurrentLevel = t;
+		_envCurrentLevel = t;
 		envDecay();
 	}
 }
 
 void TownsAudio_PcmChannel::envDecay() {
-	envState = kEnvDecaying;
-	int16 t = envTotalLevel - envSustainLevel;
-	if (t < 0 || envDecayRate == 127) {
-		envStep = 0;
-	} else if (envDecayRate) {
-		envStep = (t << 8) / envDecayRate;
+	_envState = kEnvDecaying;
+	int16 t = _envTotalLevel - _envSustainLevel;
+	if (t < 0 || _envDecayRate == 127) {
+		_envStep = 0;
+	} else if (_envDecayRate) {
+		_envStep = (t << 8) / _envDecayRate;
 	} else {
-		envCurrentLevel = envSustainLevel << 8;
+		_envCurrentLevel = _envSustainLevel << 8;
 		envSustain();
 	}
 }
 
 void TownsAudio_PcmChannel::envSustain() {
-	envState = kEnvSustaining;
-	if (envSustainLevel && envSustainRate)
-		envStep = (envSustainRate == 127) ? 0 : (envCurrentLevel / envSustainRate) >> 1;
+	_envState = kEnvSustaining;
+	if (_envSustainLevel && _envSustainRate)
+		_envStep = (_envSustainRate == 127) ? 0 : (_envCurrentLevel / _envSustainRate) >> 1;
 	else
-		envStep = envCurrentLevel = 1;
+		_envStep = _envCurrentLevel = 1;
 }
 
 void TownsAudio_PcmChannel::envRelease() {
-	envState = kEnvReleasing;
-	if (envReleaseRate == 127)
-		envStep = 0;
-	else if (envReleaseRate)
-		envStep = envCurrentLevel / envReleaseRate;
+	_envState = kEnvReleasing;
+	if (_envReleaseRate == 127)
+		_envStep = 0;
+	else if (_envReleaseRate)
+		_envStep = _envCurrentLevel / _envReleaseRate;
 	else
-		envStep = envCurrentLevel = 1;
+		_envStep = _envCurrentLevel = 1;
 }
+
+const uint16 TownsAudio_PcmChannel::_pcmPhase1[] =  {
+	0x879B, 0x0F37, 0x1F58, 0x306E, 0x4288, 0x55B6, 0x6A08, 0x7F8F, 0x965E, 0xAE88, 0xC882, 0xE341
+};
+
+const uint16 TownsAudio_PcmChannel::_pcmPhase2[] =  {
+	0xFEFE, 0xF1A0, 0xE411, 0xD744, 0xCB2F, 0xBFC7, 0xB504, 0xAAE2, 0xA144, 0x9827, 0x8FAC
+};
 
 TownsAudio_WaveTable::TownsAudio_WaveTable() {
 	data = 0;
@@ -1854,12 +1915,12 @@ void TownsAudio_WaveTable::clear() {
 	data = 0;
 }
 
-TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) {
-	_intf = TownsAudioInterfaceInternal::addNewRef(mixer, driver);
+TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling) {
+	_intf = TownsAudioInterfaceInternal::addNewRef(mixer, this, driver, externalMutexHandling);
 }
 
 TownsAudioInterface::~TownsAudioInterface() {
-	TownsAudioInterfaceInternal::releaseRef();
+	TownsAudioInterfaceInternal::releaseRef(this);
 	_intf = 0;
 }
 
@@ -1887,12 +1948,4 @@ void TownsAudioInterface::setSoundEffectVolume(int volume) {
 
 void TownsAudioInterface::setSoundEffectChanMask(int mask) {
 	_intf->setSoundEffectChanMask(mask);
-}
-
-void TownsAudioInterface::lockInternal() {
-	_intf->mutexLock();
-}
-
-void TownsAudioInterface::unlockInternal() {
-	_intf->mutexUnlock();
 }

@@ -22,11 +22,13 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
+#include "common/scummsys.h"
+
+#if defined(SAMSUNGTV)
+
 #include "backends/platform/samsungtv/samsungtv.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
-
-#if defined(SAMSUNGTV)
 
 #include <unistd.h>
 

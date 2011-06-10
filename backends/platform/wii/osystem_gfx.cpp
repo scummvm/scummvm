@@ -394,15 +394,6 @@ void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {
 	_cursorPaletteDirty = true;
 }
 
-void OSystem_Wii::disableCursorPalette(bool disable) {
-	_cursorPaletteDisabled = disable;
-
-	if (_texMouse.palette && disable) {
-		memcpy(_texMouse.palette, _cursorPalette, 256 * 2);
-		_cursorPaletteDirty = true;
-	}
-}
-
 void OSystem_Wii::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 									int w, int h) {
 	assert(x >= 0 && x < _gameWidth);

@@ -126,10 +126,13 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		ws = _testbedConfMan->getConfigWriteStream();
 		_testbedConfMan->writeTestbedConfigToStream(ws);
 		delete ws;
-	default:
-		GUI::Dialog::handleCommand(sender, cmd, data);
+		break;
 
+	default:
+		break;
 	}
+
+	GUI::Dialog::handleCommand(sender, cmd, data);
 }
 
 void TestbedInteractionDialog::addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding) {
@@ -150,7 +153,7 @@ void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String na
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, Common::Array<Common::String> &strArray, GUI::ListWidget::ColorList *colors, uint yPadding) {
+void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, const Common::Array<Common::String> &strArray, GUI::ListWidget::ColorList *colors, uint yPadding) {
 	_yOffset += yPadding;
 	GUI::ListWidget *list = new GUI::ListWidget(this, x, y, w, h);
 	list->setEditable(false);
@@ -159,7 +162,7 @@ void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, Common::A
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd) {
+void TestbedInteractionDialog::addButtonXY(uint x, uint /* y */, uint w, uint h, const Common::String name, uint32 cmd) {
 	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name, 0, cmd));
 }
 
@@ -174,7 +177,6 @@ void TestbedConfigManager::initDefaultConfiguration() {
 }
 
 void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
-	Common::String wStr;
 	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i < _testsuiteList.end(); i++) {
 		_configFileInterface.setKey("this", (*i)->getName(), boolToString((*i)->isEnabled()));
 		const Common::Array<Test *> &testList = (*i)->getTestList();
@@ -186,13 +188,13 @@ void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
 	ws->flush();
 }
 
-Common::SeekableReadStream *TestbedConfigManager::getConfigReadStream() {
+Common::SeekableReadStream *TestbedConfigManager::getConfigReadStream() const {
 	// Look for config file using SearchMan
 	Common::SeekableReadStream *rs = SearchMan.createReadStreamForMember(_configFileName);
 	return rs;
 }
 
-Common::WriteStream *TestbedConfigManager::getConfigWriteStream() {
+Common::WriteStream *TestbedConfigManager::getConfigWriteStream() const {
 	// Look for config file in game-path
 	const Common::String &path = ConfMan.get("path");
 	Common::WriteStream *ws;

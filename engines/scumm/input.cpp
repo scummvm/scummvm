@@ -117,7 +117,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 			if (_saveLoadSlot == 0)
 				_saveLoadSlot = 10;
 
-			sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
+			_saveLoadDescription = Common::String::format("Quicksave %d", _saveLoadSlot);
 			_saveLoadFlag = (event.kbd.hasFlags(Common::KBD_ALT)) ? 1 : 2;
 			_saveTemporaryState = false;
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {

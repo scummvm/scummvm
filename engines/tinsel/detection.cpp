@@ -63,7 +63,7 @@ uint16 TinselEngine::getVersion() const {
 	return _gameDescription->version;
 }
 
-}
+} // End of namespace Tinsel
 
 static const PlainGameDescriptor tinselGames[] = {
 	{"tinsel", "Tinsel engine game"},
@@ -74,34 +74,11 @@ static const PlainGameDescriptor tinselGames[] = {
 
 #include "tinsel/detection_tables.h"
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Tinsel::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Tinsel::TinselGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	tinselGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"tinsel",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class TinselMetaEngine : public AdvancedMetaEngine {
 public:
-	TinselMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	TinselMetaEngine() : AdvancedMetaEngine(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
+		params.singleid = "tinsel";
+	}
 
 	virtual const char *getName() const {
 		return "Tinsel";
@@ -265,7 +242,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 
 				if (testFile.open(allFiles[fname])) {
 					tmp.size = (int32)testFile.size();
-					tmp.md5 = computeStreamMD5AsString(testFile, detectionParams.md5Bytes);
+					tmp.md5 = computeStreamMD5AsString(testFile, params.md5Bytes);
 				} else {
 					tmp.size = -1;
 				}
@@ -285,7 +262,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 
 		bool fileMissing = false;
 
-		if ((detectionParams.flags & kADFlagUseExtraAsHint) && !extra.empty() && g->desc.extra != extra)
+		if ((params.flags & kADFlagUseExtraAsHint) && !extra.empty() && g->desc.extra != extra)
 			continue;
 
 		bool allFilesPresent = true;
@@ -410,7 +387,7 @@ Common::Error TinselEngine::loadGameState(int slot) {
 }
 
 #if 0
-Common::Error TinselEngine::saveGameState(int slot, const char *desc) {
+Common::Error TinselEngine::saveGameState(int slot, const Common::String &desc) {
 	Common::String saveName = _vm->getSavegameFilename((int16)(slot + 1));
 	char saveDesc[SG_DESC_LEN];
 	Common::strlcpy(saveDesc, desc, SG_DESC_LEN);

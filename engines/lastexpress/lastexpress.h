@@ -29,10 +29,11 @@
 #include "common/random.h"
 #include "common/timer.h"
 
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
 #include "graphics/pixelformat.h"
+
+struct ADGameDescription;
 
 /**
  * This is the namespace of the LastExpress engine.
@@ -71,7 +72,6 @@ class LastExpressEngine : public Engine {
 protected:
 	// Engine APIs
 	Common::Error run();
-	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual Debugger *getDebugger() { return _debugger; }
 
@@ -102,7 +102,7 @@ public:
 	void restoreEventHandlers();
 	void setEventHandlers(EventHandler::EventFunction *eventMouse, EventHandler::EventFunction *eventTick);
 
-	bool isDemo() const { return (bool)(_gameDescription->flags & ADGF_DEMO); }
+	bool isDemo() const;
 
 	// Frame Counter
 	uint32 getFrameCounter() { return _frameCounter; }

@@ -807,7 +807,7 @@ public:
 	virtual ~AgiEngine();
 
 	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const char *desc);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 
 private:
 	uint32 _lastTick;

@@ -31,6 +31,7 @@
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
+#include "audio/audiostream.h"
 #include "audio/midiparser.h"
 
 namespace Groovie {
@@ -92,6 +93,7 @@ void MusicPlayer::playCD(uint8 track) {
 	} else if ((track == 98) && (_prevCDtrack == 3)) {
 		// Track 98 is used as a hack to stop the credits song
 		g_system->getAudioCDManager()->stop();
+		stopCreditsIOS();
 		return;
 	}
 
@@ -124,6 +126,8 @@ void MusicPlayer::playCD(uint8 track) {
 				playSong((19 << 10) | 36); // XMI.GJD, file 36
 		} else if (track == 3) {
 			// TODO: Credits MIDI fallback
+			if (_vm->getPlatform() == Common::kPlatformIOS)
+				playCreditsIOS();
 		}
 	}
 }
@@ -224,6 +228,20 @@ void MusicPlayer::unload() {
 	_isPlaying = false;
 }
 
+void MusicPlayer::playCreditsIOS() {
+	Audio::AudioStream *stream = Audio::SeekableAudioStream::openStreamFile("7th_Guest_Dolls_from_Hell_OC_ReMix");
+
+	if (!stream) {
+		warning("Could not find '7th_Guest_Dolls_from_Hell_OC_ReMix' audio file");
+		return;
+	}
+
+	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handleCreditsIOS, stream);
+}
+
+void MusicPlayer::stopCreditsIOS() {
+	_vm->_system->getMixer()->stopHandle(_handleCreditsIOS);
+}
 
 // MusicPlayerMidi
 
@@ -745,6 +763,94 @@ Common::SeekableReadStream *MusicPlayerMac::decompressMidi(Common::SeekableReadS
 
 	// Return the output buffer wrapped in a MemoryReadStream
 	return new Common::MemoryReadStream(output, size, DisposeAfterUse::YES);
+}
+
+MusicPlayerIOS::MusicPlayerIOS(GroovieEngine *vm) : MusicPlayer(vm) {
+	vm->getTimerManager()->installTimerProc(&onTimer, 50 * 1000, this);
+}
+
+MusicPlayerIOS::~MusicPlayerIOS() {
+	_vm->getTimerManager()->removeTimerProc(&onTimer);
+}
+
+void MusicPlayerIOS::updateVolume() {
+	// Just set the mixer volume for the music sound type
+	_vm->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _userVolume * _gameVolume / 100);
+}
+
+void MusicPlayerIOS::unload() {
+	MusicPlayer::unload();
+
+	_vm->_system->getMixer()->stopHandle(_handle);
+}
+
+bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
+	// Find correct filename
+	ResInfo info;
+	_vm->_resMan->getResInfo(fileref, info);
+	uint len = info.filename.size();
+	if (len < 4)
+		return false;	// This shouldn't actually occur
+	/*
+	19462 door
+	19463 ??
+	19464 ??
+	19465 puzzle?
+	19466 cake
+	19467 maze
+	19468 ambient  (but not 69, amb b.  odd)
+	19470 puzzle
+	19471
+	19473 
+	19475 coffins or blood pump
+	19476 blood pump or coffins
+	19493
+	19499 chapel
+	19509 downstair ambient
+	19510 bedroom 'skip 3 and 5' puzzle (should loop from partway?)
+	19514 
+	19515 bathroom drain teeth
+	*/
+	if ((fileref >= 19462 && fileref <= 19468) || 
+		fileref == 19470 || fileref == 19471 ||
+		fileref == 19473 || fileref == 19475 ||
+		fileref == 19476 || fileref == 19493 ||
+		fileref == 19499 || fileref == 19509 ||
+		fileref == 19510 || fileref == 19514 ||
+		fileref == 19515)
+		loop = true; // XMIs for these refs self-loop
+
+	// iOS port provides alternative intro sequence music
+	if (info.filename == "gu39.xmi") {
+		info.filename = "intro";
+	} else if (info.filename == "gu32.xmi") {
+		info.filename = "foyer";
+	} else {
+		// Remove the extension
+		info.filename.deleteLastChar();
+		info.filename.deleteLastChar();
+		info.filename.deleteLastChar();
+		info.filename.deleteLastChar();
+	}
+
+	// Create the audio stream
+	Audio::AudioStream *audStream = Audio::SeekableAudioStream::openStreamFile(info.filename);
+
+	if (!audStream) {
+		warning("Could not play audio file '%s'", info.filename.c_str());
+		return false;
+	}
+
+	// Loop if requested
+	if (loop)
+		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
+
+	// MIDI player handles volume reset on load, IOS player doesn't - force update here
+	updateVolume();
+
+	// Play!
+	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handle, audStream); 
+	return true;
 }
 
 } // End of Groovie namespace

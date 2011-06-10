@@ -42,12 +42,10 @@
 #include "backends/timer/psp/timer.h"
 #include "backends/platform/psp/thread.h"
 
-class OSystem_PSP : public BaseBackend, public PaletteManager {
+class OSystem_PSP : public EventsBaseBackend, public PaletteManager {
 private:
 
-	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
-	Common::TimerManager *_timer;
 	bool _pendingUpdate;  			// save an update we couldn't perform
 	uint32 _pendingUpdateCounter;	// prevent checking for pending update too often, in a cheap way
 
@@ -63,7 +61,7 @@ private:
 	ImageViewer _imageViewer;
 
 public:
-	OSystem_PSP() : _savefile(0), _mixer(0), _timer(0), _pendingUpdate(false), _pendingUpdateCounter(0) {}
+	OSystem_PSP() : _mixer(0), _pendingUpdate(false), _pendingUpdateCounter(0) {}
 	~OSystem_PSP();
 
 	static OSystem *instance();
@@ -99,7 +97,6 @@ protected:
 	void grabPalette(byte *colors, uint start, uint num);
 public:
 	void setCursorPalette(const byte *colors, uint start, uint num);
-	void disableCursorPalette(bool disable);
 
 	// Screen related
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
@@ -134,7 +131,6 @@ public:
 	// Timer
 	typedef int (*TimerProc)(int interval);
 	void setTimerCallback(TimerProc callback, int interval);
-	Common::TimerManager *getTimerManager() { return _timer; }
 
 	// Mutex
 	MutexRef createMutex(void);
@@ -148,7 +144,6 @@ public:
 	Audio::Mixer *getMixer() { return _mixer; }
 
 	// Misc
-	Common::SaveFileManager *getSavefileManager() { return _savefile; }
 	FilesystemFactory *getFilesystemFactory() { return &PSPFilesystemFactory::instance(); }
 	void getTimeAndDate(TimeDate &t) const;
 	virtual void engineDone();
@@ -157,9 +152,7 @@ public:
 
 	void logMessage(LogMessageType::Type type, const char *message);
 
-	Common::SeekableReadStream *createConfigReadStream();
-	Common::WriteStream *createConfigWriteStream();
-
+	virtual Common::String getDefaultConfigFileName();
 };
 
 #endif /* OSYS_PSP_H */

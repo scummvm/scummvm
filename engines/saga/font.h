@@ -117,7 +117,11 @@ struct FontCharEntry {
 struct FontStyle {
 	FontHeader header;
 	FontCharEntry fontCharEntry[256];
+#ifndef __DS__
 	ByteArray font;
+#else
+	byte* font;
+#endif
 };
 
 struct FontData {

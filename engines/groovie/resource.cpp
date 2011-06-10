@@ -169,10 +169,12 @@ bool ResMan_t7g::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 		error("Groovie::Resource: Invalid resource number: 0x%04X (%s)", resNum, rlFileName.c_str());
 	}
 
-	// Read the resource name (just for debugging purposes)
-	char resname[12];
+	// Read the resource name
+	char resname[13];
 	rlFile->read(resname, 12);
+	resname[12] = 0;
 	debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource name: %12s", resname);
+	resInfo.filename = resname;
 
 	// Read the resource information
 	resInfo.offset = rlFile->readUint32LE();
@@ -238,7 +240,7 @@ uint32 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
 		// Test whether it's the resource we're searching
 		Common::String resname(readname, 18);
 		if (resname.hasPrefix(name.c_str())) {
-			debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource %12s matches %s", readname, name.c_str());
+			debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource %18s matches %s", readname, name.c_str());
 			found = true;
 		}
 	}
@@ -277,10 +279,12 @@ bool ResMan_v2::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	resInfo.size = rlFile.readUint32LE();
 	resInfo.gjd = rlFile.readUint16LE();
 
-	// Read the resource name (just for debugging purposes)
-	char resname[12];
-	rlFile.read(resname, 12);
-	debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource name: %12s", resname);
+	// Read the resource name
+	char resname[19];
+	resname[18] = 0;
+	rlFile.read(resname, 18);
+	debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource name: %18s", resname);
+	resInfo.filename = resname;
 
 	// 6 padding bytes? (it looks like they're always 0)
 

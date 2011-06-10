@@ -851,7 +851,7 @@ void TownsPC98_FmSynthPercussionSource::advanceInput(RhtChannel *ins) {
 }
 #endif // DISABLE_PC98_RHYTHM_CHANNEL
 
-TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
+TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type, bool externalMutexHandling) :
 	_mixer(mixer),
 	_chanInternal(0), _ssg(0),
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
@@ -861,7 +861,8 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 	_hasPercussion(type == kType86 ? true : false),
 	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),
 	 _rtt(type == kTypeTowns ? 0x514767 : 0x5B8D80), _baserate(55125.0f / (float)mixer->getOutputRate()),
-	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255), _regProtectionFlag(false), _ready(false) {
+	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255),
+	_regProtectionFlag(false), _externalMutex(externalMutexHandling), _ready(false) {
 
 	memset(&_timers[0], 0, sizeof(ChipTimer));
 	memset(&_timers[1], 0, sizeof(ChipTimer));
@@ -873,6 +874,8 @@ TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
 TownsPC98_FmSynth::~TownsPC98_FmSynth() {
 	if (_ready)
 		deinit();
+
+	Common::StackLock lock(_mutex);
 
 	delete _ssg;
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
@@ -1147,7 +1150,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 
 	bool locked = false;
 	if (_ready) {
-		mutexLock();
+		_mutex.lock();
 		locked = true;
 	}
 
@@ -1157,7 +1160,19 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 		for (int i = 0; i < 2; i++) {
 			if (_timers[i].enabled && _timers[i].cb) {
 				if (!_timers[i].smpTillCb) {
+					
+					if (locked && _externalMutex) {
+						_mutex.unlock();
+						locked = false;
+					}
+					
 					(this->*_timers[i].cb)();
+
+					if (!locked && _externalMutex) {
+						_mutex.lock();
+						locked = true;
+					}
+
 					_timers[i].smpTillCb = _timers[i].smpPerCb;
 
 					_timers[i].smpTillCbRem += _timers[i].smpPerCbRem;
@@ -1201,7 +1216,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 	}
 
 	if (locked)
-		mutexUnlock();
+		_mutex.unlock();
 
 	delete[] tmpStart;
 
@@ -1220,19 +1235,15 @@ int TownsPC98_FmSynth::getRate() const {
 	return _mixer->getOutputRate();
 }
 
-void TownsPC98_FmSynth::mutexLock() {
-	_mutex.lock();
-}
-
-void TownsPC98_FmSynth::mutexUnlock() {
-	_mutex.unlock();
-}
-
 void TownsPC98_FmSynth::deinit() {
 	_ready = false;
 	_mixer->stopHandle(_soundHandle);
 	Common::StackLock lock(_mutex);
 	_timers[0].cb = _timers[1].cb = &TownsPC98_FmSynth::idleTimerCallback;
+}
+
+void TownsPC98_FmSynth::toggleRegProtection(bool prot) {
+	_regProtectionFlag = prot;
 }
 
 uint8 TownsPC98_FmSynth::readSSGStatus() {

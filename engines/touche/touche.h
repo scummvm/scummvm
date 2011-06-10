@@ -513,7 +513,7 @@ protected:
 
 	void saveGameStateData(Common::WriteStream *stream);
 	void loadGameStateData(Common::ReadStream *stream);
-	virtual Common::Error saveGameState(int num, const char *description);
+	virtual Common::Error saveGameState(int num, const Common::String &description);
 	virtual Common::Error loadGameState(int num);
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();

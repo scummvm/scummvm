@@ -24,44 +24,25 @@
 
 #include "backends/modular-backend.h"
 
-#include "backends/fs/fs-factory.h"
-#include "backends/audiocd/audiocd.h"
 #include "backends/graphics/graphics.h"
 #include "backends/mutex/mutex.h"
 
 #include "audio/mixer.h"
-#include "common/events.h"
-#include "gui/message.h"
 #include "graphics/pixelformat.h"
 
 ModularBackend::ModularBackend()
 	:
-	_fsFactory(0),
-	_eventManager(0),
-	_savefileManager(0),
-	_timerManager(0),
 	_mutexManager(0),
 	_graphicsManager(0),
-	_mixer(0),
-	_audiocdManager(0) {
+	_mixer(0) {
 
 }
 
 ModularBackend::~ModularBackend() {
-	delete _fsFactory;
-	_fsFactory = 0;
 	delete _graphicsManager;
 	_graphicsManager = 0;
-	delete _eventManager;
-	_eventManager = 0;
 	delete _mixer;
 	_mixer = 0;
-	delete _audiocdManager;
-	_audiocdManager = 0;
-	delete _savefileManager;
-	_savefileManager = 0;
-	delete _timerManager;
-	_timerManager = 0;
 	delete _mutexManager;
 	_mutexManager = 0;
 }
@@ -222,20 +203,6 @@ void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) 
 	_graphicsManager->setCursorPalette(colors, start, num);
 }
 
-void ModularBackend::disableCursorPalette(bool disable) {
-	_graphicsManager->disableCursorPalette(disable);
-}
-
-Common::TimerManager *ModularBackend::getTimerManager() {
-	assert(_timerManager);
-	return _timerManager;
-}
-
-Common::EventManager *ModularBackend::getEventManager() {
-	assert(_eventManager);
-	return _eventManager;
-}
-
 OSystem::MutexRef ModularBackend::createMutex() {
 	assert(_mutexManager);
 	return _mutexManager->createMutex();
@@ -261,23 +228,8 @@ Audio::Mixer *ModularBackend::getMixer() {
 	return (Audio::Mixer *)_mixer;
 }
 
-AudioCDManager *ModularBackend::getAudioCDManager() {
-	assert(_audiocdManager);
-	return _audiocdManager;
-}
-
 void ModularBackend::displayMessageOnOSD(const char *msg) {
 	_graphicsManager->displayMessageOnOSD(msg);
-}
-
-Common::SaveFileManager *ModularBackend::getSavefileManager() {
-	assert(_savefileManager);
-	return _savefileManager;
-}
-
-FilesystemFactory *ModularBackend::getFilesystemFactory() {
-	assert(_fsFactory);
-	return _fsFactory;
 }
 
 void ModularBackend::quit() {

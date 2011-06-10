@@ -561,7 +561,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 	if (file == "default") {
 		_texts[textId]->_fontPtr = _font;
 	} else {
-		Common::String localized = genLocalizedFontFilename(file);
+		Common::String localized = FontMan.genLocalizedFontFilename(file);
 		// Try built-in fonts
 		_texts[textId]->_fontPtr = FontMan.getFontByName(localized);
 
@@ -1271,7 +1271,7 @@ void ThemeEngine::openDialog(bool doBuffer, ShadingStyle style) {
 }
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, int scale) {
-	if (!_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+	if (!_system->hasFeature(OSystem::kFeatureCursorPalette))
 		return true;
 
 	// Try to locate the specified file among all loaded bitmaps
@@ -1466,32 +1466,6 @@ Common::String ThemeEngine::genCacheFilename(const Common::String &filename) con
 	}
 
 	return Common::String();
-}
-
-Common::String ThemeEngine::genLocalizedFontFilename(const Common::String &filename) const {
-#ifndef USE_TRANSLATION
-	return filename;
-#else
-	// We will transform the font filename in the following way:
-	//   name.bdf
-	//  will become:
-	//   name-charset.bdf
-	// Note that name should not contain any dot here!
-
-	// In the first step we look for the dot. In case there is none we will
-	// return the normal filename.
-	Common::String::const_iterator dot = Common::find(filename.begin(), filename.end(), '.');
-	if (dot == filename.end())
-		return filename;
-
-	// Put the translated font filename string back together.
-	Common::String result(filename.begin(), dot);
-	result += '-';
-	result += TransMan.getCurrentCharset();
-	result += dot;
-
-	return result;
-#endif
 }
 
 

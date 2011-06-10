@@ -79,37 +79,14 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 	AD_TABLE_END_MARKER,
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)teenAgentGameDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	teenAgentGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"teenagent",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
+enum {
+	MAX_SAVES = 20
 };
-
-#define MAX_SAVES 20
-
 
 class TeenAgentMetaEngine : public AdvancedMetaEngine {
 public:
-	TeenAgentMetaEngine() : AdvancedMetaEngine(detectionParams) {
+	TeenAgentMetaEngine() : AdvancedMetaEngine(teenAgentGameDescriptions, sizeof(ADGameDescription), teenAgentGames) {
+		params.singleid = "teenagent";
 	}
 
 	virtual const char *getName() const {

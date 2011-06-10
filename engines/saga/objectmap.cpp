@@ -191,7 +191,7 @@ void ObjectMap::clear() {
 #ifdef SAGA_DEBUG
 void ObjectMap::draw(const Point& testPoint, int color, int color2) {
 	int hitZoneIndex;
-	char txtBuf[32];
+	Common::String txtBuf;
 	Point pickPoint;
 	Point textPoint;
 	Location pickLocation;
@@ -210,10 +210,10 @@ void ObjectMap::draw(const Point& testPoint, int color, int color2) {
 	}
 
 	if (hitZoneIndex != -1) {
-		snprintf(txtBuf, sizeof(txtBuf), "hitZone %d", hitZoneIndex);
+		txtBuf = Common::String::format("hitZone %d", hitZoneIndex);
 		textPoint.x = 2;
 		textPoint.y = 2;
-		_vm->_font->textDraw(kKnownFontSmall, txtBuf, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
+		_vm->_font->textDraw(kKnownFontSmall, txtBuf.c_str(), textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 }
 #endif

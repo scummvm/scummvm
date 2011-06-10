@@ -103,7 +103,7 @@ protected:
 };
 #endif
 
-class OSystem_Android : public BaseBackend, public PaletteManager {
+class OSystem_Android : public EventsBaseBackend, public PaletteManager {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;
@@ -152,10 +152,7 @@ private:
 	bool _enable_zoning;
 	bool _virtkeybd_on;
 
-	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
-	Common::TimerManager *_timer;
-	FilesystemFactory *_fsFactory;
 	timeval _startTime;
 
 	Common::String getSystemProperty(const char *name) const;
@@ -237,6 +234,7 @@ private:
 	void clipMouse(Common::Point &p);
 	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true);
 	void updateEventScale();
+	void disableCursorPalette();
 
 protected:
 	// PaletteManager API
@@ -272,7 +270,6 @@ public:
 								int cursorTargetScale,
 								const Graphics::PixelFormat *format);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-	virtual void disableCursorPalette(bool disable);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();
@@ -289,11 +286,8 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 	virtual void showVirtualKeyboard(bool enable);
 
-	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
 	virtual void getTimeAndDate(TimeDate &t) const;
-	virtual Common::TimerManager *getTimerManager();
-	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
 											int priority = 0);

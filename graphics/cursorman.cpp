@@ -86,7 +86,7 @@ void CursorManager::popAllCursors() {
 		delete cur;
 	}
 
-	if (g_system->hasFeature(OSystem::kFeatureCursorHasPalette)) {
+	if (g_system->hasFeature(OSystem::kFeatureCursorPalette)) {
 		while (!_cursorPaletteStack.empty()) {
 			Palette *pal = _cursorPaletteStack.pop();
 			delete pal;
@@ -141,11 +141,11 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 }
 
 bool CursorManager::supportsCursorPalettes() {
-	return g_system->hasFeature(OSystem::kFeatureCursorHasPalette);
+	return g_system->hasFeature(OSystem::kFeatureCursorPalette);
 }
 
 void CursorManager::disableCursorPalette(bool disable) {
-	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+	if (!g_system->hasFeature(OSystem::kFeatureCursorPalette))
 		return;
 
 	if (_cursorPaletteStack.empty())
@@ -154,11 +154,11 @@ void CursorManager::disableCursorPalette(bool disable) {
 	Palette *pal = _cursorPaletteStack.top();
 	pal->_disabled = disable;
 
-	g_system->disableCursorPalette(disable);
+	g_system->setFeatureState(OSystem::kFeatureCursorPalette, !disable);
 }
 
 void CursorManager::pushCursorPalette(const byte *colors, uint start, uint num) {
-	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+	if (!g_system->hasFeature(OSystem::kFeatureCursorPalette))
 		return;
 
 	Palette *pal = new Palette(colors, start, num);
@@ -167,11 +167,11 @@ void CursorManager::pushCursorPalette(const byte *colors, uint start, uint num) 
 	if (num)
 		g_system->setCursorPalette(colors, start, num);
 	else
-		g_system->disableCursorPalette(true);
+		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
 }
 
 void CursorManager::popCursorPalette() {
-	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+	if (!g_system->hasFeature(OSystem::kFeatureCursorPalette))
 		return;
 
 	if (_cursorPaletteStack.empty())
@@ -181,7 +181,7 @@ void CursorManager::popCursorPalette() {
 	delete pal;
 
 	if (_cursorPaletteStack.empty()) {
-		g_system->disableCursorPalette(true);
+		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
 		return;
 	}
 
@@ -190,11 +190,11 @@ void CursorManager::popCursorPalette() {
 	if (pal->_num && !pal->_disabled)
 		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
 	else
-		g_system->disableCursorPalette(true);
+		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
 }
 
 void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint num) {
-	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+	if (!g_system->hasFeature(OSystem::kFeatureCursorPalette))
 		return;
 
 	if (_cursorPaletteStack.empty()) {
@@ -219,7 +219,7 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 		memcpy(pal->_data, colors, size);
 		g_system->setCursorPalette(pal->_data, pal->_start, pal->_num);
 	} else {
-		g_system->disableCursorPalette(true);
+		g_system->setFeatureState(OSystem::kFeatureCursorPalette, false);
 	}
 }
 

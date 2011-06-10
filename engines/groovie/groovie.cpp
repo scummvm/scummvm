@@ -54,6 +54,15 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "media");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "system");
 
+	_modeSpeed = kGroovieSpeedNormal;
+	if (ConfMan.hasKey("t7g_speed")) {
+		Common::String speed = ConfMan.get("t7g_speed");
+		if (speed.equals("im_an_ios"))
+			_modeSpeed = kGroovieSpeediOS;
+		else if (speed.equals("tweaked"))
+			_modeSpeed = kGroovieSpeedTweaked;
+	}
+
 	// Initialize the custom debug levels
 	DebugMan.addDebugChannel(kGroovieDebugAll, "All", "Debug everything");
 	DebugMan.addDebugChannel(kGroovieDebugVideo, "Video", "Debug video and audio playback");
@@ -141,10 +150,20 @@ Common::Error GroovieEngine::run() {
 	}
 
 	// Create the music player
-	if (getPlatform() == Common::kPlatformMacintosh)
+	switch (getPlatform()) {
+	case Common::kPlatformMacintosh:
+		// TODO: The 11th Hour Mac uses QuickTime MIDI files
+		// Right now, since the XMIDI are present and it is still detected as
+		// the DOS version, we don't have to do anything here.
 		_musicPlayer = new MusicPlayerMac(this);
-	else
+		break;
+	case Common::kPlatformIOS:
+		_musicPlayer = new MusicPlayerIOS(this);
+		break;
+	default:
 		_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
+		break;
+	}
 
 	// Load volume levels
 	syncSoundSettings();
@@ -207,17 +226,19 @@ Common::Error GroovieEngine::run() {
 		_script->directGameLoad(slot);
 	}
 
-	// Check that the game files and the audio tracks aren't together run from
-	// the same cd
-	checkCD();
-
 	// Game timer counter
 	uint16 tmr = 0;
 
-	// Initialize the CD
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->getAudioCDManager()->openCD(cd_num);
+	// Check that the game files and the audio tracks aren't together run from
+	// the same cd
+	if (getPlatform() != Common::kPlatformIOS) {
+		checkCD();
+
+		// Initialize the CD
+		int cd_num = ConfMan.getInt("cdrom");
+		if (cd_num >= 0)
+			_system->getAudioCDManager()->openCD(cd_num);
+	}
 
 	while (!shouldQuit()) {
 		// Give the debugger a chance to act
@@ -313,11 +334,6 @@ bool GroovieEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime);
-}
-
-void GroovieEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
-	//snprintf(buf_output, buf_output_size, "%s%s\n", _script.getContext().c_str(), buf_input);
-	snprintf(buf_output, buf_output_size, "%s", buf_input);
 }
 
 void GroovieEngine::syncSoundSettings() {

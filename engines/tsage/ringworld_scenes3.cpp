@@ -488,11 +488,11 @@ void Scene2100::Action1::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		_globals->_player.disableControl();
-		if (!scene->_field1800)
+		if (!scene->_sitFl)
 			setDelay(1);
 		else {
 			setAction(&scene->_sequenceManager, this, 2102, &_globals->_player, NULL);
-			scene->_field1800 = 0;
+			scene->_sitFl = 0;
 		}
 		break;
 	case 1: {
@@ -631,7 +631,7 @@ void Scene2100::Action4::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		_globals->_player.disableControl();
-		if (!scene->_field1800)
+		if (!scene->_sitFl)
 			setDelay(1);
 		else
 			setAction(&scene->_sequenceManager, this, 2102, &_globals->_player, NULL);
@@ -655,6 +655,7 @@ void Scene2100::Action4::signal() {
 }
 
 void Scene2100::Action5::signal() {
+	// Quinn enters the cokpit after Seeker decided to enter the cave alone
 	Scene2100 *scene = (Scene2100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1409,13 +1410,14 @@ void Scene2100::Hotspot10::doAction(int action) {
 		SceneItem::display2(2100, 13);
 		break;
 	case CURSOR_USE:
-		if (scene->_field1800) {
+		if (scene->_sitFl) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 2102;
 			scene->setAction(&scene->_sequenceManager, scene, 2102, &_globals->_player, NULL);
 		} else if (_globals->getFlag(13)) {
 			SceneItem::display2(2100, 28);
 		} else {
+			_globals->_player.disableControl();
 			scene->_sceneMode = 2101;
 			scene->setAction(&scene->_sequenceManager, scene, 2101, &_globals->_player, NULL);
 		}
@@ -1473,24 +1475,23 @@ void Scene2100::Object2::doAction(int action) {
 	case CURSOR_TALK:
 		if (_globals->getFlag(72)) {
 			_globals->_player.disableControl();
-			if (!_globals->getFlag(52))
+			if (!_globals->getFlag(52)) {
+				scene->_sceneMode = 2111;
 				scene->setAction(&scene->_sequenceManager, scene, 2111, NULL);
-			else {
+			} else {
 				scene->_sceneMode = _globals->getFlag(53) ? 2112 : 2110;
 				scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, NULL);
 			}
-		} else {
-			if (_globals->getFlag(14))
+		} else if (_globals->getFlag(13)) {
+				SceneItem::display2(2100, 31);
+		} else if (_globals->getFlag(14)) {
 				SceneItem::display2(2100, 32);
-			else {
+		} else {
 				_globals->setFlag(14);
 				_globals->_player.disableControl();
 				scene->_sceneMode = 2108;
 				scene->setAction(&scene->_sequenceManager, scene, 2109, NULL);
-			}
 		}
-
-		scene->setAction(&scene->_action4);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -1499,18 +1500,19 @@ void Scene2100::Object2::doAction(int action) {
 }
 
 void Scene2100::Object3::doAction(int action) {
+	// Miranda
 	Scene2100 *scene = (Scene2100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_LOOK:
-		if (!_globals->getFlag(59))
+		if (_globals->getFlag(59))
 			SceneItem::display2(2100, 34);
 		else
 			error("***I have no response.");
 		break;
 
 	case CURSOR_TALK:
-		if (!_globals->getFlag(59)) {
+		if (_globals->getFlag(59)) {
 			_globals->_player.disableControl();
 			scene->_sceneMode = 2108;
 			scene->setAction(&scene->_sequenceManager, scene, 2108, NULL);
@@ -1536,6 +1538,14 @@ Scene2100::Scene2100() :
 		_hotspot12(0, CURSOR_LOOK, 2100, 24, CURSOR_USE, 2100, 25, LIST_END),
 		_hotspot13(0, CURSOR_LOOK, 2100, 17, LIST_END),
 		_hotspot15(0, CURSOR_LOOK, 2100, 22, CURSOR_USE, 2100, 23, LIST_END) {
+	_area1.setup(2153, 2, 1, 2100);
+	_area1._pt = Common::Point(200, 31);
+	_area2.setup(2153, 3, 1, 2150);
+	_area2._pt = Common::Point(200, 50);
+	_area3.setup(2153, 4, 1, 2320);
+	_area3._pt = Common::Point(200, 75);
+	_area4.setup(2153, 1, 1, OBJECT_TRANSLATOR);
+	_area4._pt = Common::Point(237, 77);
 }
 
 void Scene2100::postInit(SceneObjectList *OwnerList) {
@@ -1662,15 +1672,6 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		&_hotspot13, &_hotspot12, &_hotspot8, &_object1, &_hotspot2, &_hotspot3, &_hotspot4, &_hotspot5,
 		&_hotspot6, &_hotspot7, &_hotspot1, NULL);
 
-	_area1.setup(2153, 2, 1, 2100);
-	_area1._pt = Common::Point(200, 31);
-	_area2.setup(2153, 3, 1, 2150);
-	_area2._pt = Common::Point(200, 50);
-	_area3.setup(2153, 4, 1, 2320);
-	_area3._pt = Common::Point(200, 75);
-	_area4.setup(2153, 1, 1, OBJECT_TRANSLATOR);
-	_area4._pt = Common::Point(237, 77);
-
 	_globals->_player.postInit();
 	if (_globals->getFlag(13)) {
 		_globals->_player.setVisage(2170);
@@ -1685,7 +1686,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 	_globals->_player._moveDiff.x = 4;
 	_globals->_player.changeZoom(-1);
 	_globals->_player.disableControl();
-	_field1800 = 0;
+	_sitFl = 0;
 
 	switch (_globals->_sceneManager._previousScene) {
 	case 2120:
@@ -1750,6 +1751,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 			setAction(&_action14);
 		} else {
 			_globals->_player.disableControl();
+			_globals->_player.fixPriority(1);
 			_globals->_player.setPosition(Common::Point(157, 56));
 			_sceneMode = 2104;
 
@@ -1820,7 +1822,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.fixPriority(152);
 		_globals->_player.setStrip(2);
 
-		_field1800 = 1;
+		_sitFl = 1;
 
 		_object4.postInit();
 		_object4.setVisage(2102);
@@ -1854,7 +1856,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 			_globals->_player.fixPriority(152);
 			_globals->_player.setStrip(2);
 
-			_field1800 = 1;
+			_sitFl = 1;
 			setAction(&_action16);
 		}
 		break;
@@ -1928,12 +1930,12 @@ void Scene2100::stripCallback(int v) {
 void Scene2100::signal() {
 	switch (_sceneMode) {
 	case 2101:
-		_field1800 = 1;
+		_sitFl = 1;
 		_globals->_player._uiEnabled = true;
 		_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 2102:
-		_field1800 = 0;
+		_sitFl = 0;
 		_globals->_player.enableControl();
 		break;
 	case 2103:
@@ -1960,7 +1962,7 @@ void Scene2100::signal() {
 void Scene2100::synchronize(Serializer &s) {
 	Scene::synchronize(s);
 	if (s.getVersion() >= 3)
-		s.syncAsSint16LE(_field1800);		
+		s.syncAsSint16LE(_sitFl);		
 }
 
 /*--------------------------------------------------------------------------
@@ -2481,6 +2483,15 @@ Scene2150::Scene2150() :
 		_hotspot11(0, CURSOR_LOOK, 2150, 12, LIST_END) {
 	_rect1 = Rect(260, 70, 270, 77);
 	_rect2 = Rect(222, 142, 252, 150);
+	_area1.setup(2153, 2, 1, 2100);
+	_area1._pt = Common::Point(200, 31);
+	_area2.setup(2153, 3, 1, 2150);
+	_area2._pt = Common::Point(200, 50);
+	_area3.setup(2153, 4, 1, 2320);
+	_area3._pt = Common::Point(200, 75);
+	_area4.setup(2153, 1, 1, 10);
+	_area4._pt = Common::Point(237, 77);
+
 }
 
 void Scene2150::postInit(SceneObjectList *OwnerList) {
@@ -2494,7 +2505,7 @@ void Scene2150::postInit(SceneObjectList *OwnerList) {
 	_hotspot7.setVisage(2152);
 	_hotspot7._frame = 1;
 	_hotspot7._strip = 2;
-	_hotspot7.animate(ANIM_MODE_8, NULL);
+	_hotspot7.animate(ANIM_MODE_8, 0, NULL);
 	_hotspot7.setPosition(Common::Point(122, 62));
 	_hotspot7.changeZoom(100);
 	_hotspot7.fixPriority(76);
@@ -2545,15 +2556,6 @@ void Scene2150::postInit(SceneObjectList *OwnerList) {
 
 	_globals->_sceneItems.addItems(&_hotspot1, &_hotspot2, &_hotspot3, &_hotspot4, &_hotspot5,
 		&_hotspot6, &_hotspot7, &_hotspot10, &_hotspot9, &_hotspot11, &_hotspot8, NULL);
-
-	_area1.setup(2153, 2, 1, 2100);
-	_area1._pt = Common::Point(200, 31);
-	_area2.setup(2153, 3, 1, 2150);
-	_area2._pt = Common::Point(200, 50);
-	_area3.setup(2153, 4, 1, 2320);
-	_area3._pt = Common::Point(200, 75);
-	_area4.setup(2153, 1, 1, 10);
-	_area4._pt = Common::Point(237, 77);
 
 	switch (_globals->_sceneManager._previousScene) {
 	case 2120:
@@ -4373,6 +4375,7 @@ void Scene2280::synchronize(Serializer &s) {
  *--------------------------------------------------------------------------*/
 
 void Scene2300::Action1::signal() {
+	// Quinn and Seeker
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -4443,6 +4446,7 @@ void Scene2300::Action1::signal() {
 		break;
 	case 8:
 		_globals->_game->endGame(2300, 0);
+		remove();
 		break;
 	case 9:
 		if (scene->_hotspot5._mover)
@@ -4515,6 +4519,7 @@ void Scene2300::Action1::signal() {
 }
 
 void Scene2300::Action2::signal() {
+	// Miranda tearing cables
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -4581,6 +4586,7 @@ void Scene2300::Action2::signal() {
 }
 
 void Scene2300::Action3::signal() {
+	// Stunned Miranda
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -4633,6 +4639,7 @@ void Scene2300::Action3::signal() {
 }
 
 void Scene2300::Action4::signal() {
+	// Ennemies coming
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -4671,6 +4678,7 @@ void Scene2300::Action4::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene2300::Hotspot5::doAction(int action) {
+	// Ennemies
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -4693,6 +4701,7 @@ void Scene2300::Hotspot5::doAction(int action) {
 }
 
 void Scene2300::Hotspot7::doAction(int action) {
+	// Miranda
 	Scene2300 *scene = (Scene2300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -5770,6 +5779,14 @@ Scene2320::Scene2320() :
 		_hotspot4(0, CURSOR_LOOK, 2320, 14, LIST_END),
 		_hotspot13(0, CURSOR_LOOK, 2320, 12, LIST_END)
 {
+	_area1.setup(2153, 2, 1, 2100);
+	_area1._pt = Common::Point(200, 31);
+	_area2.setup(2153, 3, 1, 2150);
+	_area2._pt = Common::Point(200, 50);
+	_area3.setup(2153, 4, 1, 2320);
+	_area3._pt = Common::Point(200, 75);
+	_area4.setup(2153, 1, 1, 10);
+	_area4._pt = Common::Point(237, 77);
 }
 
 void Scene2320::postInit(SceneObjectList *OwnerList) {
@@ -5821,15 +5838,6 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 
 		_globals->_sceneItems.push_back(&_hotspot8);
 	}
-
-	_area1.setup(2153, 2, 1, 2100);
-	_area1._pt = Common::Point(200, 31);
-	_area2.setup(2153, 3, 1, 2150);
-	_area2._pt = Common::Point(200, 50);
-	_area3.setup(2153, 4, 1, 2320);
-	_area3._pt = Common::Point(200, 75);
-	_area4.setup(2153, 1, 1, 10);
-	_area4._pt = Common::Point(237, 77);
 
 	if (_globals->getFlag(43)) {
 		_hotspot11.postInit();
@@ -5906,7 +5914,7 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 
 		_globals->_player.disableControl();
 		_globals->_player.animate(ANIM_MODE_NONE, NULL);
-		_globals->_player.setObjectWrapper(new SceneObjectWrapper());
+		_globals->_player.setObjectWrapper(NULL);
 		_globals->_player.setVisage(2347);
 		_globals->_player.setStrip(2);
 		_globals->_player.setFrame(5);

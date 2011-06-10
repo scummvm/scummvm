@@ -525,34 +525,11 @@ static MadeGameDescription g_fallbackDesc = {
 
 } // End of namespace Made
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Made::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Made::MadeGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	madeGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"made",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class MadeMetaEngine : public AdvancedMetaEngine {
 public:
-	MadeMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	MadeMetaEngine() : AdvancedMetaEngine(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames) {
+		params.singleid = "made";
+	}
 
 	virtual const char *getName() const {
 		return "MADE";

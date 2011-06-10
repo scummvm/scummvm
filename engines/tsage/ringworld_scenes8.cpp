@@ -48,6 +48,7 @@ void SceneObject7700::synchronize(Serializer &s) {
  *--------------------------------------------------------------------------*/
 
 void Scene7000::Action1::signal() {
+	// Quinn walks from the lander to the seaside (action6) then discuss with Skeenar
 	Scene7000 *scene = (Scene7000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -125,6 +126,7 @@ void Scene7000::Action3::dispatch() {
 /*--------------------------------------------------------------------------*/
 
 void Scene7000::Action3::signal() {
+	// Lander is landing
 	Scene7000 *scene = (Scene7000 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -260,6 +262,7 @@ void Scene7000::Action5::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene7000::Action6::signal() {
+	// Quinn walks from the lander to the seaside
 	switch (_actionIndex++) {
 	case 0:
 		_globals->_player.disableControl();
@@ -361,6 +364,7 @@ void Scene7000::Hotspot1::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 void Scene7000::Object1::doAction(int action) {
+	// Skeenar
 	Scene7000 *scene = (Scene7000 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -439,10 +443,10 @@ void Scene7000::Object1::doAction(int action) {
 			scene->_sceneMode = 7005;
 			scene->setAction(&scene->_sequenceManager, scene, 7013, NULL);
 		} else if (_globals->getFlag(13)) {
-			_globals->_sceneManager._sceneNumber = 7002;
+			scene->_sceneMode = 7002;
 			scene->setAction(&scene->_sequenceManager, scene, 7014, NULL);
 		} else {
-			_globals->_sceneManager._sceneNumber = 7002;
+			scene->_sceneMode = 7002;
 			scene->setAction(&scene->_sequenceManager, scene, 7002, NULL);
 		}
 		break;

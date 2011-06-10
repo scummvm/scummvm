@@ -23,6 +23,8 @@ lib*.a
 /.project
 /.cproject
 /.settings
+/.autotools
+/Icon.*
 
 /build
 
@@ -71,9 +73,15 @@ lib*.a
 /dists/codeblocks/*.layout
 /dists/codeblocks/scummvm*
 
+#Ignore XCode user data and build files
+xcuserdata
+project.xcworkspace
 /dists/iphone/build
-/dists/iphone/scummvm.xcodeproj/*.mode1v3
-/dists/iphone/scummvm.xcodeproj/*.pbxuser
+/dists/iphone/scummvm.xcodeproj
+/dists/iphone/create_project
+/dists/macosx/build
+/dists/macosx/scummvm.xcodeproj
+/dists/macosx/create_project
 
 /dists/msvc*/[Dd]ebug*/
 /dists/msvc*/[Rr]elease*/

@@ -284,6 +284,19 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(Common::normalizePath("foo/./bar", '/'), "foo/bar");
 		TS_ASSERT_EQUALS(Common::normalizePath("foo//./bar//", '/'), "foo/bar");
 		TS_ASSERT_EQUALS(Common::normalizePath("foo//.bar//", '/'), "foo/.bar");
+
+		TS_ASSERT_EQUALS(Common::normalizePath("..", '/'), "..");
+		TS_ASSERT_EQUALS(Common::normalizePath("../", '/'), "..");
+		TS_ASSERT_EQUALS(Common::normalizePath("/..", '/'), "/..");
+		TS_ASSERT_EQUALS(Common::normalizePath("../bar", '/'), "../bar");
+		TS_ASSERT_EQUALS(Common::normalizePath("foo//../", '/'), "");
+		TS_ASSERT_EQUALS(Common::normalizePath("foo/../bar", '/'), "bar");
+		TS_ASSERT_EQUALS(Common::normalizePath("foo//../bar//", '/'), "bar");
+		TS_ASSERT_EQUALS(Common::normalizePath("foo//..bar//", '/'), "foo/..bar");
+
+		TS_ASSERT_EQUALS(Common::normalizePath("foo/../../bar//", '/'), "../bar");
+		TS_ASSERT_EQUALS(Common::normalizePath("../foo/../bar", '/'), "../bar");
+		TS_ASSERT_EQUALS(Common::normalizePath("../../foo/bar/", '/'), "../../foo/bar");
 	}
 
 	void test_matchString() {

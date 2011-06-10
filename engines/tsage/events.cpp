@@ -304,4 +304,14 @@ void EventsClass::delay(int numFrames) {
 	_priorFrameTime = g_system->getMillis();
 }
 
+void EventsClass::listenerSynchronize(Serializer &s) {
+	s.syncAsUint32LE(_frameNumber);
+	s.syncAsUint32LE(_prevDelayFrame);
+	
+	if (s.getVersion() >= 5) {
+		s.syncAsSint16LE(_currentCursor);
+		s.syncAsSint16LE(_lastCursor);
+	}
+}
+
 } // end of namespace tSage

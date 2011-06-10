@@ -699,7 +699,6 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag
 }
 
 void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
-	char filename[12];
 	int values[5];
 
 	if (getEntityData(entity)->car != getEntityData(kEntityPlayer)->car)
@@ -821,12 +820,8 @@ void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
 		break;
 	}
 
-	if (_action) {
-		sprintf((char *)&filename, "LIB%03d.SND", _action);
-
-		if (flag)
-			playSoundWithSubtitles((char*)&filename, flag, kEntityPlayer, a3);
-	}
+	if (_action && flag)
+		playSoundWithSubtitles(Common::String::format("LIB%03d.SND", _action), flag, kEntityPlayer, a3);
 }
 
 void SoundManager::playSteam(CityIndex index) {
@@ -846,7 +841,6 @@ void SoundManager::playSteam(CityIndex index) {
 
 void SoundManager::playFightSound(byte action, byte a4) {
 	int _action = (int)action;
-	char filename[12];
 	int values[5];
 
 	switch (action) {
@@ -885,10 +879,8 @@ void SoundManager::playFightSound(byte action, byte a4) {
 		break;
 	}
 
-	if (_action) {
-		sprintf((char *)&filename, "LIB%03d.SND", _action);
-		playSound(kEntityTrain, (char*)&filename, kFlagDefault, a4);
-	}
+	if (_action)
+		playSound(kEntityTrain, Common::String::format("LIB%03d.SND", _action), kFlagDefault, a4);
 }
 
 void SoundManager::playDialog(EntityIndex entity, EntityIndex entityDialog, FlagType flag, byte a4) {

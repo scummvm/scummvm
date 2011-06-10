@@ -565,7 +565,7 @@ protected:
 
 	template <class S> void saveOrLoadGameStateData(S &s);
 	virtual Common::Error loadGameState(int num);
-	virtual Common::Error saveGameState(int num, const char *description);
+	virtual Common::Error saveGameState(int num, const Common::String &description);
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
 

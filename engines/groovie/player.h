@@ -45,15 +45,21 @@ protected:
 	virtual uint16 loadInternal() = 0;
 	virtual bool playFrameInternal() = 0;
 
+	void setOverrideSpeed(bool isOverride);
+	bool getOverrideSpeed() const { return _overrideSpeed; }
+
 	GroovieEngine *_vm;
 	OSystem *_syst;
 	Common::SeekableReadStream *_file;
 	uint16 _flags;
 	Audio::QueuingAudioStream *_audioStream;
-
+	
+	
 private:
 	// Synchronization stuff
 	bool _begunPlaying;
+	bool _overrideSpeed;
+	uint16 _fps;
 	uint16 _millisBetweenFrames;
 	uint32 _lastFrameTime;
 

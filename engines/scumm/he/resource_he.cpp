@@ -171,7 +171,7 @@ bool MacResExtractor::extractResource(int id, CachedCursor *cc) {
 		return false;
 
 	// If we don't have a cursor palette, force monochrome cursors
-	bool forceMonochrome = !_vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette);
+	bool forceMonochrome = !_vm->_system->hasFeature(OSystem::kFeatureCursorPalette);
 
 	Graphics::MacCursor *macCursor = new Graphics::MacCursor();
 

@@ -74,6 +74,9 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 Console::Console(SciEngine *engine) : GUI::Debugger(),
 	_engine(engine), _debugState(engine->_debugState) {
 
+	assert(_engine);
+	assert(_engine->_gamestate);
+
 	// Variables
 	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
 	DVar_Register("gc_interval",		&engine->_gamestate->scriptGCInterval, DVAR_INT, 0);
@@ -3359,20 +3362,22 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 
 bool Console::cmdQuit(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("%s game - exit gracefully\n", argv[0]);
-		DebugPrintf("%s now - exit ungracefully\n", argv[0]);
-		return true;
 	}
 
-	if (!scumm_stricmp(argv[1], "game")) {
+	if (argc == 2 && !scumm_stricmp(argv[1], "now")) {
+		// Quit ungracefully
+		g_system->quit();
+	} else if (argc == 1 || (argc == 2 && !scumm_stricmp(argv[1], "game"))) {
+
 		// Quit gracefully
 		_engine->_gamestate->abortScriptProcessing = kAbortQuitGame; // Terminate VM
 		_debugState.seeking = kDebugSeekNothing;
 		_debugState.runningStep = 0;
 
-	} else if (!scumm_stricmp(argv[1], "now")) {
-		// Quit ungracefully
-		g_system->quit();
+	} else {
+		DebugPrintf("%s [game] - exit gracefully\n", argv[0]);
+		DebugPrintf("%s now - exit ungracefully\n", argv[0]);
+		return true;
 	}
 
 	return Cmd_Exit(0, 0);

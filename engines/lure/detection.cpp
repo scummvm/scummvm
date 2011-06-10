@@ -175,34 +175,14 @@ static const LureGameDescription gameDescriptions[] = {
 
 } // End of namespace Lure
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Lure::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Lure::LureGameDescription),
-	// Number of bytes to compute MD5 sum for
-	1024,
-	// List of all engine targets
-	lureGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"lure",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	kADFlagUseExtraAsHint,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOSPEECH,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class LureMetaEngine : public AdvancedMetaEngine {
 public:
-	LureMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
+		params.md5Bytes = 1024;
+		params.singleid = "lure";
+		params.flags = kADFlagUseExtraAsHint;
+		params.guioptions = Common::GUIO_NOSPEECH;
+	}
 
 	virtual const char *getName() const {
 		return "Lure";
@@ -271,11 +251,8 @@ SaveStateList LureMetaEngine::listSaves(const char *target) const {
 int LureMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void LureMetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".%03d", slot);
-
 	Common::String filename = target;
-	filename += extension;
+	filename += Common::String::format(".%03d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }

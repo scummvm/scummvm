@@ -30,6 +30,8 @@
 
 #include "backends/platform/sdl/sdl.h"
 
+#include "common/translation.h"
+
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button using the keymapper.
 #define JOY_DEADZONE 2200
@@ -268,11 +270,11 @@ bool GP2XSdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event
 		if (BUTTON_STATE_L == true) {
 			GPH::ToggleTapMode();
 			if (GPH::tapmodeLevel == TAPMODE_LEFT) {
-				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Left Click");
+				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Left Click"));
 			} else if (GPH::tapmodeLevel == TAPMODE_RIGHT) {
-				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Right Click");
+				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Right Click"));
 			} else if (GPH::tapmodeLevel == TAPMODE_HOVER) {
-				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Hover (No Click)");
+				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Hover (No Click)"));
  			}
 		} else {
 			event.kbd.keycode = Common::KEYCODE_SPACE;
@@ -292,18 +294,18 @@ bool GP2XSdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event
 	case BUTTON_VOLUP:
 		GP2X_HW::mixerMoveVolume(2);
 		if (GP2X_HW::volumeLevel == 100) {
-			g_system->displayMessageOnOSD("Maximum Volume");
+			g_system->displayMessageOnOSD(_("Maximum Volume"));
 		} else {
-			g_system->displayMessageOnOSD("Increasing Volume");
+			g_system->displayMessageOnOSD(_("Increasing Volume"));
 		}
 		break;
 
 	case BUTTON_VOLDOWN:
 		GP2X_HW::mixerMoveVolume(1);
 		if (GP2X_HW::volumeLevel == 0) {
-			g_system->displayMessageOnOSD("Minimal Volume");
+			g_system->displayMessageOnOSD(_("Minimal Volume"));
 		} else {
-			g_system->displayMessageOnOSD("Decreasing Volume");
+			g_system->displayMessageOnOSD(_("Decreasing Volume"));
 		}
 		break;
 	case BUTTON_HOLD:
@@ -312,11 +314,11 @@ bool GP2XSdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event
 	case BUTTON_HELP2:
 		GPH::ToggleTapMode();
 		if (GPH::tapmodeLevel == TAPMODE_LEFT) {
-			g_system->displayMessageOnOSD("Touchscreen 'Tap Mode': Left Click");
+			g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Left Click"));
 		} else if (GPH::tapmodeLevel == TAPMODE_RIGHT) {
-			g_system->displayMessageOnOSD("Touchscreen 'Tap Mode': Right Click");
+			g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Right Click"));
 		} else if (GPH::tapmodeLevel == TAPMODE_HOVER) {
-			g_system->displayMessageOnOSD("Touchscreen 'Tap Mode': Hover (No Click)");
+			g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Hover (No Click)"));
 		}
 		break;
 	}

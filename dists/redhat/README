@@ -8,9 +8,9 @@ adapt the below instructions where necessary.
 
 1) Collect sources:
 
-Place scummvm-%{version}.tar.bz2, libmad-0.15.1b.tar.bz2 and
-mpeg2dec-0.4.0b.tar.bz2 in /usr/src/redhat/SOURCES .
-If you have different versions of mpeg2dec or libmad, put the correct version
+Place scummvm-%{version}.tar.bz2 and libmad-0.15.1b.tar.bz2 
+in /usr/src/redhat/SOURCES .
+If you have a different version of libmad, put the correct version
 numbers in the .spec file.
 
 Place scummvm.spec in /usr/src/redhat/SPECS .
@@ -28,8 +28,7 @@ the source RPM in /usr/src/redhat/SRPMS
 
 
 
-Note: libmad and mpeg2dec are statically linked into the scummvm binary
-because Fedora does not carry libmad and mpeg2dec packages, so I did not
+Note: libmad is statically linked into the scummvm binary
+because Fedora does not carry a libmad package, so I did not
 want to make the scummvm package depend on them.
-You can get libmad from http://www.underbit.com/products/mad/
-and mpeg2dec from http://libmpeg2.sourceforge.net/ .
+You can get libmad from http://www.underbit.com/products/mad/ .

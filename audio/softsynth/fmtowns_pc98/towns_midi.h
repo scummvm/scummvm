@@ -69,14 +69,15 @@ private:
 
 	TownsAudioInterface *_intf;
 
-	uint32 _tickCounter1;
-	uint32 _tickCounter2;
+	uint32 _tickCounter;
 	uint8 _allocCurPos;
 	uint8 _rand;
 	
 	bool _isOpen;
 
 	uint8 *_operatorLevelTable;
+	
+	const uint16 _baseTempo;
 };
 
 #endif

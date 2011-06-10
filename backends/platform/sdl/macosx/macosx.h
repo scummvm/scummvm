@@ -29,6 +29,10 @@ class OSystem_MacOSX : public OSystem_POSIX {
 public:
 	OSystem_MacOSX();
 
+	virtual bool hasFeature(Feature f);
+
+	virtual bool displayLogFile();
+
 	virtual void initBackend();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual void setupIcon();

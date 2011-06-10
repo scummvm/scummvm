@@ -1154,7 +1154,7 @@ void Script::showVerb(int statusColor) {
 	const char *verbName;
 	const char *object1Name;
 	const char *object2Name;
-	char statusString[STATUS_TEXT_LEN];
+	Common::String statusString;
 
 	if (_leftButtonVerb == getVerbType(kVerbNone)) {
 		_vm->_interface->setStatusText("");
@@ -1174,8 +1174,8 @@ void Script::showVerb(int statusColor) {
 	object1Name = _vm->getObjectName(_currentObject[0]);
 
 	if (!_secondObjectNeeded) {
-		snprintf(statusString, STATUS_TEXT_LEN, "%s %s", verbName, object1Name);
-		_vm->_interface->setStatusText(statusString, statusColor);
+		statusString = Common::String::format("%s %s", verbName, object1Name);
+		_vm->_interface->setStatusText(statusString.c_str(), statusColor);
 		return;
 	}
 
@@ -1187,15 +1187,15 @@ void Script::showVerb(int statusColor) {
 	}
 
 	if (_leftButtonVerb == getVerbType(kVerbGive)) {
-		snprintf(statusString, STATUS_TEXT_LEN, _vm->getTextString(kTextGiveTo), object1Name, object2Name);
-		_vm->_interface->setStatusText(statusString, statusColor);
+		statusString = Common::String::format(_vm->getTextString(kTextGiveTo), object1Name, object2Name);
+		_vm->_interface->setStatusText(statusString.c_str(), statusColor);
 	} else {
 		if (_leftButtonVerb == getVerbType(kVerbUse)) {
-			snprintf(statusString, STATUS_TEXT_LEN, _vm->getTextString(kTextUseWidth), object1Name, object2Name);
-			_vm->_interface->setStatusText(statusString, statusColor);
+			statusString = Common::String::format(_vm->getTextString(kTextUseWidth), object1Name, object2Name);
+			_vm->_interface->setStatusText(statusString.c_str(), statusColor);
 		} else {
-			snprintf(statusString, STATUS_TEXT_LEN, "%s %s", verbName, object1Name);
-			_vm->_interface->setStatusText(statusString, statusColor);
+			statusString = Common::String::format("%s %s", verbName, object1Name);
+			_vm->_interface->setStatusText(statusString.c_str(), statusColor);
 		}
 	}
 }

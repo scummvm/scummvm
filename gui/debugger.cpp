@@ -59,6 +59,7 @@ Debugger::Debugger() {
 	DCmd_Register("quit",				WRAP_METHOD(Debugger, Cmd_Exit));
 
 	DCmd_Register("help",				WRAP_METHOD(Debugger, Cmd_Help));
+	DCmd_Register("openlog",			WRAP_METHOD(Debugger, Cmd_OpenLog));
 
 	DCmd_Register("debugflag_list",		WRAP_METHOD(Debugger, Cmd_DebugFlagsList));
 	DCmd_Register("debugflag_enable",	WRAP_METHOD(Debugger, Cmd_DebugFlagEnable));
@@ -474,6 +475,15 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 
 	return true;
 }
+
+bool Debugger::Cmd_OpenLog(int argc, const char **argv) {
+	if (g_system->hasFeature(OSystem::kFeatureDisplayLogFile))
+		g_system->displayLogFile();
+	else
+		DebugPrintf("Opening the log file not supported on this system\n");
+	return true;
+}
+
 
 bool Debugger::Cmd_DebugFlagsList(int argc, const char **argv) {
 	const Common::DebugManager::DebugChannelList &debugLevels = DebugMan.listDebugChannels();

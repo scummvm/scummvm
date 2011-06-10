@@ -108,9 +108,9 @@ public:
 	 * Test whether cursor palettes are supported.
 	 *
 	 * This is just an convenience wrapper for checking for
-	 * OSystem::kFeatureCursorHasPalette to be supported by OSystem.
+	 * OSystem::kFeatureCursorPalette to be supported by OSystem.
 	 *
-	 * @see OSystem::kFeatureCursorHasPalette
+	 * @see OSystem::kFeatureCursorPalette
 	 * @see OSystem::hasFeature
 	 */
 	bool supportsCursorPalettes();

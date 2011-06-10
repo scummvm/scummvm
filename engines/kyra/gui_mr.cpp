@@ -717,25 +717,25 @@ void KyraEngine_MR::showAlbum() {
 }
 
 void KyraEngine_MR::loadAlbumPage() {
-	char filename[16];
+	Common::String filename;
 	int num = _album.curPage / 2;
 
 	if (num == 0) {
-		strcpy(filename, "ALBUM0.CPS");
+		filename = "ALBUM0.CPS";
 	} else if (num >= 1 && num <= 6) {
 		--num;
 		num %= 2;
-		snprintf(filename, 16, "ALBUM%d.CPS", num+1);
+		filename = Common::String::format("ALBUM%d.CPS", num+1);
 	} else {
-		strcpy(filename, "ALBUM3.CPS");
+		filename = "ALBUM3.CPS";
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 4, Screen::CR_NO_P_CHECK);
-	_screen->loadBitmap(filename, 3, 3, 0);
+	_screen->loadBitmap(filename.c_str(), 3, 3, 0);
 }
 
 void KyraEngine_MR::loadAlbumPageWSA() {
-	char filename[16];
+	Common::String filename;
 
 	_album.leftPage.curFrame = 0;
 	_album.leftPage.maxFrame = 0;
@@ -746,14 +746,14 @@ void KyraEngine_MR::loadAlbumPageWSA() {
 	_album.rightPage.wsa->close();
 
 	if (_album.curPage) {
-		snprintf(filename, 16, "PAGE%x.WSA", _album.curPage);
-		_album.leftPage.wsa->open(filename, 1, 0);
+		filename = Common::String::format("PAGE%x.WSA", _album.curPage);
+		_album.leftPage.wsa->open(filename.c_str(), 1, 0);
 		_album.leftPage.maxFrame = _album.leftPage.wsa->frames()-1;
 	}
 
 	if (_album.curPage != 14) {
-		snprintf(filename, 16, "PAGE%x.WSA", _album.curPage+1);
-		_album.rightPage.wsa->open(filename, 1, 0);
+		filename = Common::String::format("PAGE%x.WSA", _album.curPage+1);
+		_album.rightPage.wsa->open(filename.c_str(), 1, 0);
 		_album.rightPage.maxFrame = _album.leftPage.wsa->frames()-1;
 	}
 }

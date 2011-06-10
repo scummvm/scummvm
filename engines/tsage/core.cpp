@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "tsage/tsage.h"
@@ -520,24 +521,30 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 			break;
 		}
 
-		int var6;
-		proc1(routeRegions, srcRegion, destRegion, var6);
+		bool tempVar; // This is used only as internal state for the function.
+		calculateRestOfRoute(routeRegions, srcRegion, destRegion, tempVar);
 
+		// Empty route?
 		if (!routeRegions[0]) {
 			regionIndexes.push_back(destRegion);
 			continue;
 		}
 
-		_globals->_walkRegions._field18[0]._pt1 = srcPos;
-		_globals->_walkRegions._field18[0]._pt2 = srcPos;
-		_globals->_walkRegions._field18[1]._pt1 = destPos;
-		_globals->_walkRegions._field18[1]._pt2 = destPos;
+		// field 0 holds the start, and field 1 holds the destination
+		WRField18 &currSrcField = _globals->_walkRegions._field18[0];
+		WRField18 &currDestField = _globals->_walkRegions._field18[1];
+
+		currSrcField._pt1 = srcPos;
+		currSrcField._pt2 = srcPos;
+		currDestField._pt1 = destPos;
+		currDestField._pt2 = destPos;
 
 		int tempList[REGION_LIST_SIZE];
 		tempList[0] = 0;
 		int endIndex = 0;
 		int idx = 1;
 
+		// Find the indexes for each entry in the found route.
 		do {
 			int breakEntry = routeRegions[idx];
 			int breakEntry2 = routeRegions[idx + 1];
@@ -555,49 +562,52 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 
 		tempList[idx] = 1;
 		for (int listIndex = 1; listIndex <= endIndex; ++listIndex) {
-			int var10 = tempList[listIndex];
-			int var12 = tempList[listIndex + 1];
+			int thisIdx = tempList[listIndex];
+			int nextIdx = tempList[listIndex + 1];
 
-			if (sub_F8E5(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[var12]._pt1,
-					_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[var10]._pt2) &&
-				sub_F8E5(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[var12]._pt2,
-					_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[var10]._pt2))
+			WRField18 &thisField = _globals->_walkRegions._field18[thisIdx];
+			WRField18 &nextField = _globals->_walkRegions._field18[nextIdx];
+
+			if (sub_F8E5_calculatePoint(currSrcField._pt1, nextField._pt1,
+					thisField._pt1, thisField._pt2) &&
+				sub_F8E5_calculatePoint(currSrcField._pt1, nextField._pt2,
+					thisField._pt1, thisField._pt2))
 				continue;
 
 			Common::Point tempPt;
-			if (sub_F8E5(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[1]._pt1,
-					_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[var10]._pt2, &tempPt)) {
+			if (sub_F8E5_calculatePoint(currSrcField._pt1, currDestField._pt1,
+					thisField._pt1, thisField._pt2, &tempPt)) {
 				// Add point to the route list
-				_globals->_walkRegions._field18[0]._pt1 = tempPt;
+				currSrcField._pt1 = tempPt;
 				*routeList++ = tempPt;
 			} else {
-				int v16 =
-					(findDistance(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[var10]._pt1) << 1) +
-					(findDistance(_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[1]._pt1) << 1) +
-					findDistance(_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[var12]._pt1) +
-					findDistance(_globals->_walkRegions._field18[var10]._pt1, _globals->_walkRegions._field18[var12]._pt2);
+				int dist1 =
+					(findDistance(currSrcField._pt1, thisField._pt1) << 1) +
+					(findDistance(thisField._pt1, currDestField._pt1) << 1) +
+					findDistance(thisField._pt1, nextField._pt1) +
+					findDistance(thisField._pt1, nextField._pt2);
 
-				int v1A =
-					(findDistance(_globals->_walkRegions._field18[0]._pt1, _globals->_walkRegions._field18[var10]._pt2) << 1) +
-					(findDistance(_globals->_walkRegions._field18[var10]._pt2, _globals->_walkRegions._field18[1]._pt2) << 1) +
-					findDistance(_globals->_walkRegions._field18[var10]._pt2, _globals->_walkRegions._field18[var12]._pt1) +
-					findDistance(_globals->_walkRegions._field18[var10]._pt2, _globals->_walkRegions._field18[var12]._pt2);
+				int dist2 =
+					(findDistance(currSrcField._pt1, thisField._pt2) << 1) +
+					(findDistance(thisField._pt2, currDestField._pt2) << 1) +
+					findDistance(thisField._pt2, nextField._pt1) +
+					findDistance(thisField._pt2, nextField._pt2);
 
-				if (v16 < v1A) {
-					checkMovement2(_globals->_walkRegions._field18[var10]._pt1,
-						_globals->_walkRegions._field18[var10]._pt2, 1, objPos);
+				// Do 1 step of movement, storing the new position in objPos.
+				if (dist1 < dist2) {
+					doStepsOfNpcMovement(thisField._pt1, thisField._pt2, 1, objPos);
 				} else {
-					checkMovement2(_globals->_walkRegions._field18[var10]._pt2,
-						_globals->_walkRegions._field18[var10]._pt1, 1, objPos);
+					doStepsOfNpcMovement(thisField._pt2, thisField._pt1, 1, objPos);
 				}
 
-				_globals->_walkRegions._field18[0]._pt1 = objPos;
+				// Update the current position.
+				currSrcField._pt1 = objPos;
 				*routeList++ = objPos;
 			}
 		}
 
 		// Add in the route entry
-		*routeList++ = _globals->_walkRegions._field18[1]._pt1;
+		*routeList++ = currDestField._pt1;
 	}
 
 	// Mark the end of the path
@@ -745,7 +755,7 @@ int PlayerMover::checkMover(Common::Point &srcPos, const Common::Point &destPos)
 	return regionIndex;
 }
 
-void PlayerMover::checkMovement2(const Common::Point &srcPos, const Common::Point &destPos, int numSteps, Common::Point &ptOut) {
+void PlayerMover::doStepsOfNpcMovement(const Common::Point &srcPos, const Common::Point &destPos, int numSteps, Common::Point &ptOut) {
 	Common::Point objPos = _sceneObject->_position;
 	_sceneObject->_position = srcPos;
 	uint32 regionBitList = _sceneObject->_regionBitList;
@@ -770,9 +780,10 @@ void PlayerMover::checkMovement2(const Common::Point &srcPos, const Common::Poin
 	_sceneObject->_mover = this;
 }
 
-int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
+int PlayerMover::calculateRestOfRoute(int *routeList, int srcRegion, int destRegion, bool &foundRoute) {
+	// Make a copy of the provided route. The first entry is the size.
 	int tempList[REGION_LIST_SIZE + 1];
-	v = 0;
+	foundRoute = false;
 	for (int idx = 0; idx <= *routeList; ++idx)
 		tempList[idx] = routeList[idx];
 
@@ -790,24 +801,28 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 	WalkRegion &srcWalkRegion = _globals->_walkRegions[srcRegion];
 	int distance;
 	if (!routeList[0]) {
-		// No route
+		// The route is empty (new route).
 		distance = 0;
 	} else {
+		// Find the distance from the last region in the route.
 		WalkRegion &region = _globals->_walkRegions[routeList[*routeList]];
 		distance = findDistance(srcWalkRegion._pt, region._pt);
 	}
 
+	// Add the srcRegion to the end of the route.
 	tempList[++*tempList] = srcRegion;
-	int newIndex = *tempList;
+	int ourListSize = *tempList;
 
 	if (srcRegion == destRegion) {
-		v = 1;
-		for (int idx = newIndex; idx <= *tempList; ++idx) {
+		// We made a route to the destination; copy that route and return.
+		foundRoute = true;
+		for (int idx = ourListSize; idx <= *tempList; ++idx) {
 			routeList[idx] = tempList[idx];
 			++*routeList;
 		}
 		return distance;
 	} else {
+		// Find the first connected region leading to our destination.
 		int foundIndex = 0;
 		int idx = 0;
 		int currDest;
@@ -820,27 +835,32 @@ int PlayerMover::proc1(int *routeList, int srcRegion, int destRegion, int &v) {
 			++idx;
 		}
 
-		int resultOffset = 31990;
-		while (((currDest = _globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + foundIndex]) != 0) && (v == 0)) {
-			int newDistance = proc1(tempList, currDest, destRegion, v);
+		// Check every connected region until we find a route to the destination (or we have no more to check).
+		int bestDistance = 31990;
+		while (((currDest = _globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + foundIndex]) != 0) && (!foundRoute)) {
+			int newDistance = calculateRestOfRoute(tempList, currDest, destRegion, foundRoute);
 
-			if ((newDistance <= resultOffset) || v) {
-				routeList[0] = newIndex - 1;
+			if ((newDistance <= bestDistance) || foundRoute) {
+				// We found a shorter possible route, or one leading to the destination.
 
-				for (int i = newIndex; i <= tempList[0]; ++i) {
+				// Overwrite the route with this new one.
+				routeList[0] = ourListSize - 1;
+
+				for (int i = ourListSize; i <= tempList[0]; ++i) {
 					routeList[i] = tempList[i];
 					++routeList[0];
 				}
 
-				resultOffset = newDistance;
+				bestDistance = newDistance;
 			}
 
-			tempList[0] = newIndex;
+			// Truncate our local list to the size it was before the call.
+			tempList[0] = ourListSize;
 			++foundIndex;
 		}
 
-		v = 0;
-		return resultOffset + distance;
+		foundRoute = false;
+		return bestDistance + distance;
 	}
 }
 
@@ -854,71 +874,62 @@ int PlayerMover::findDistance(const Common::Point &pt1, const Common::Point &pt2
 	return (int)sqrt(xx + yy);
 }
 
-bool PlayerMover::sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
+bool PlayerMover::sub_F8E5_calculatePoint(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
 						  const Common::Point &pt4, Common::Point *ptOut) {
-	double diff1 = pt2.x - pt1.x;
-	double diff2 = pt2.y - pt1.y;
-	double diff3 = pt4.x - pt3.x;
-	double diff4 = pt4.y - pt3.y;
-	double var10 = 0.0, var8 = 0.0;
-	double var18 = 0.0, var20 = 0.0;
+	double diffX1 = pt2.x - pt1.x;
+	double diffY1 = pt2.y - pt1.y;
+	double diffX2 = pt4.x - pt3.x;
+	double diffY2 = pt4.y - pt3.y;
+	double ratio1 = 0.0, ratio2 = 0.0;
+	double adjustedY1 = 0.0, adjustedY2 = 0.0;
 
-	if (diff1 != 0.0) {
-		var8 = diff2 / diff1;
-		var18 = pt1.y - (pt1.x * var8);
+	// Calculate the ratios between the X and Y points.
+	if (diffX1 != 0.0) {
+		ratio1 = diffY1 / diffX1;
+		adjustedY1 = pt1.y - (pt1.x * ratio1);
 	}
-	if (diff3 != 0.0) {
-		var10 = diff4 / diff3;
-		var20 = pt3.y - (pt3.x * var10);
+	if (diffX2 != 0.0) {
+		ratio2 = diffY2 / diffX2;
+		adjustedY2 = pt3.y - (pt3.x * ratio2);
 	}
 
-	if (var8 == var10)
+	if (ratio1 == ratio2)
 		return false;
 
-	double var48, var50;
-	if (diff1 == 0) {
-		if (diff3 == 0)
+	double xPos, yPos;
+	if (diffX1 == 0) {
+		if (diffX2 == 0)
 			return false;
 
-		var48 = pt1.x;
-		var50 = var10 * var48 + var20;
+		xPos = pt1.x;
+		yPos = ratio2 * xPos + adjustedY2;
 	} else {
-		var48 = (diff3 == 0) ? pt3.x : (var20 - var18) / (var8 - var10);
-		var50 = var8 * var48 + var18;
+		xPos = (diffX2 == 0) ? pt3.x : (adjustedY2 - adjustedY1) / (ratio1 - ratio2);
+		yPos = ratio1 * xPos + adjustedY1;
 	}
 
-	bool var52 = false, var56 = false, var54 = false, var58 = false;
-	Common::Point tempPt((int)(var48 + 0.5), (int)(var50 + 0.5));
+	// This is our candidate point, which we must check for validity.
+	Common::Point tempPt((int)(xPos + 0.5), (int)(yPos + 0.5));
 
-	if ((tempPt.x >= pt3.x) && (tempPt.x <= pt4.x))
-		var56 = true;
-	else if ((tempPt.x >= pt4.x) && (tempPt.x <= pt3.x))
-		var56 = true;
-	if (var56) {
-		if ((tempPt.y >= pt3.y) && (tempPt.y <= pt4.y))
-			var58 = true;
-		else if ((tempPt.y >= pt4.y) && (tempPt.y <= pt3.y))
-			var58 = true;
-	}
+	// Is tempPt inside the second bounds?
+	if (!((tempPt.x >= pt3.x) && (tempPt.x <= pt4.x)))
+		if (!((tempPt.x >= pt4.x) && (tempPt.x <= pt3.x)))
+			return false;
+	if (!((tempPt.y >= pt3.y) && (tempPt.y <= pt4.y)))
+		if (!((tempPt.y >= pt4.y) && (tempPt.y <= pt3.y)))
+			return false;
 
-	if ((tempPt.x >= pt1.x) && (tempPt.x <= pt2.x))
-		var52 = true;
-	else if ((tempPt.x >= pt2.x) && (tempPt.x <= pt1.x))
-		var52 = true;
-	if (var52) {
-		if ((tempPt.y >= pt1.y) && (tempPt.y <= pt2.y))
-			var54 = true;
-		else if ((tempPt.y >= pt2.y) && (tempPt.y <= pt1.y))
-			var54 = true;
-	}
+	// Is tempPt inside the first bounds?
+	if (!((tempPt.x >= pt1.x) && (tempPt.x <= pt2.x)))
+		if (!((tempPt.x >= pt2.x) && (tempPt.x <= pt1.x)))
+			return false;
+	if (!((tempPt.y >= pt1.y) && (tempPt.y <= pt2.y)))
+		if (!((tempPt.y >= pt2.y) && (tempPt.y <= pt1.y)))
+			return false;
 
-	if (var52 && var54 && var56 && var58) {
-		if (ptOut)
-			*ptOut = tempPt;
-		return true;
-	}
-
-	return false;
+	if (ptOut)
+		*ptOut = tempPt;
+	return true;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1352,6 +1363,8 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 void ScenePalette::synchronize(Serializer &s) {
 	if (s.getVersion() >= 2)
 		SavedObject::synchronize(s);
+	if (s.getVersion() >= 5)
+		_listeners.synchronize(s);
 
 	s.syncBytes(_palette, 256 * 3);
 	s.syncAsSint32LE(_colors.foreground);
@@ -1687,6 +1700,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_flags |= OBJFLAG_PANES;
 
 	_frameChange = 0;
+	_visage = 0;
 }
 
 SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {
@@ -2562,6 +2576,9 @@ void SceneText::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_color2);
 	s.syncAsSint16LE(_color3);
 	SYNC_ENUM(_textMode, TextAlign);
+
+	if (s.getVersion() >= 5)
+		_textSurface.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------*/

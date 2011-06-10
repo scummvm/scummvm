@@ -297,8 +297,6 @@ bool SoundTowns::loadInstruments() {
 	if (!twm)
 		return false;
 
-	Common::StackLock lock(_mutex);
-
 	Screen::decodeFrame4(twm, _musicTrackData, 50570);
 	for (int i = 0; i < 128; i++)
 		_driver->loadInstrument(0, i, &_musicTrackData[i * 48 + 8]);
@@ -322,8 +320,6 @@ bool SoundTowns::loadInstruments() {
 }
 
 void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
-	Common::StackLock lock(_mutex);
-
 	uint8 *twm = _vm->resource()->fileData("twmusic.pak", 0);
 	Screen::decodeFrame4(twm + 19312 + offset, _musicTrackData, 50570);
 	delete[] twm;

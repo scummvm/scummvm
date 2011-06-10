@@ -379,10 +379,17 @@ void OSystem_WINCE3::initBackend() {
 
 	((WINCESdlEventSource *)_eventSource)->init((WINCESdlGraphicsManager *)_graphicsManager);
 
+
+	// FIXME: This timer manager is *not accesible* from the outside.
+	// Instead the timer manager setup by OSystem_SDL is visible on the outside.
+	// Since the WinCE backend actually seems to work, my guess is that
+	// SDL_AddTimer works after all and the following code is redundant.
+	// However it may be, this must be resolved one way or another.
+
 	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
 	// We work around this by using the SetTimer function, since we only use
 	// one timer in scummvm (for the time being)
-	_timer = _int_timer = new DefaultTimerManager();
+	_int_timer = new DefaultTimerManager();
 	//_timerID = NULL;  // OSystem_SDL will call removetimer with this, it's ok
 	SDL_SetTimer(10, &timer_handler_wrapper);
 
@@ -443,12 +450,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 }
 
 OSystem_WINCE3::~OSystem_WINCE3() {
-	delete _fsFactory;
 	delete _mixer;
-}
-
-FilesystemFactory *OSystem_WINCE3::getFilesystemFactory() {
-	return _fsFactory;
 }
 
 void OSystem_WINCE3::swap_sound_master() {

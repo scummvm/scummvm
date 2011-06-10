@@ -101,34 +101,12 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 
 #include "saga/detection_tables.h"
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Saga::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Saga::SAGAGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	sagaGames,
-	// Structure for autoupgrading obsolete targets
-	obsoleteGameIDsTable,
-	// Name of single gameid (optional)
-	"saga",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class SagaMetaEngine : public AdvancedMetaEngine {
 public:
-	SagaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	SagaMetaEngine() : AdvancedMetaEngine(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
+		params.obsoleteList = obsoleteGameIDsTable;
+		params.singleid = "saga";
+	}
 
 	virtual const char *getName() const {
 		return "SAGA ["
@@ -223,11 +201,8 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 int SagaMetaEngine::getMaximumSaveSlot() const { return MAX_SAVES - 1; }
 
 void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".s%02d", slot);
-
 	Common::String filename = target;
-	filename += extension;
+	filename += Common::String::format(".s%02d", slot);;
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
@@ -363,8 +338,8 @@ Common::Error SagaEngine::loadGameState(int slot) {
 	return Common::kNoError;	// TODO: return success/failure
 }
 
-Common::Error SagaEngine::saveGameState(int slot, const char *desc) {
-	save(calcSaveFileName((uint)slot), desc);
+Common::Error SagaEngine::saveGameState(int slot, const Common::String &desc) {
+	save(calcSaveFileName((uint)slot), desc.c_str());
 	return Common::kNoError;	// TODO: return success/failure
 }
 

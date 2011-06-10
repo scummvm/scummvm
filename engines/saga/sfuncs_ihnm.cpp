@@ -389,11 +389,10 @@ void Script::sfSetSpeechBox(SCRIPTFUNC_PARAMS) {
 
 void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
-	char buf[50];
 
-	snprintf(buf, 50, "Reached breakpoint %d", param);
+	Common::String buf = Common::String::format("Reached breakpoint %d", param);
 
-	_vm->_interface->setStatusText(buf);
+	_vm->_interface->setStatusText(buf.c_str());
 }
 
 void Script::sfWaitFramesEsc(SCRIPTFUNC_PARAMS) {

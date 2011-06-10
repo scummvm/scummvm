@@ -1334,8 +1334,12 @@ void RingworldGame::start() {
 	RING_INVENTORY._scanner._sceneNumber = 1;
 	RING_INVENTORY._ring._sceneNumber = 1;
 
-	// Switch to the title screen
-	_globals->_sceneManager.setNewScene(1000);
+
+	if (ConfMan.hasKey("save_slot"))
+		_globals->_sceneHandler._loadGameSlot = ConfMan.getInt("save_slot");
+	else
+		// Switch to the title screen
+		_globals->_sceneManager.setNewScene(1000);
 
 	_globals->_events.showCursor();
 }
@@ -1409,7 +1413,10 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 		// Savegames exist, so prompt for Restore/Restart
 		bool breakFlag;
 		do {
-			if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0 || _vm->shouldQuit()) {
+			if (_vm->shouldQuit()) {
+				breakFlag = true;
+			} else if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0) {
+				restart();
 				breakFlag = true;
 			} else {
 				handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);

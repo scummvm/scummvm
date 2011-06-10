@@ -32,6 +32,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
+#include <shellapi.h>
 
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/fs/windows/windows-fs-factory.h"
@@ -87,6 +88,49 @@ void OSystem_Win32::init() {
 	OSystem_SDL::init();
 }
 
+
+bool OSystem_Win32::hasFeature(Feature f) {
+	if (f == kFeatureDisplayLogFile)
+		return true;
+
+	return OSystem_SDL::hasFeature(f);
+}
+
+bool OSystem_Win32::displayLogFile() {
+	if (_logFilePath.empty())
+		return false;
+
+	// Try opening the log file with the default text editor
+	// log files should be registered as "txtfile" by default and thus open in the default text editor
+	HINSTANCE shellExec = ShellExecute(NULL, NULL, _logFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	if ((intptr_t)shellExec > 32)
+		return true;
+
+	// ShellExecute with the default verb failed, try the "Open with..." dialog
+	PROCESS_INFORMATION processInformation;
+	STARTUPINFO startupInfo;
+	memset(&processInformation, 0, sizeof(processInformation));
+	memset(&startupInfo, 0, sizeof(startupInfo));
+	startupInfo.cb = sizeof(startupInfo);
+
+	char cmdLine[MAX_PATH * 2];  // CreateProcess may change the contents of cmdLine
+	sprintf(cmdLine, "rundll32 shell32.dll,OpenAs_RunDLL %s", _logFilePath.c_str());
+	BOOL result = CreateProcess(NULL,
+	                            cmdLine,
+	                            NULL,
+	                            NULL,
+	                            FALSE,
+	                            NORMAL_PRIORITY_CLASS,
+	                            NULL,
+	                            NULL,
+	                            &startupInfo,
+	                            &processInformation);
+	if (result)
+		return true;
+
+	return false;
+}
+
 Common::String OSystem_Win32::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 
@@ -136,6 +180,10 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 }
 
 Common::WriteStream *OSystem_Win32::createLogFile() {
+	// Start out by resetting _logFilePath, so that in case
+	// of a failure, we know that no log file is open.
+	_logFilePath.clear();
+
 	char logFile[MAXPATHLEN];
 
 	OSVERSIONINFO win32OsVersion;
@@ -163,7 +211,11 @@ Common::WriteStream *OSystem_Win32::createLogFile() {
 		strcat(logFile, "\\scummvm.log");
 
 		Common::FSNode file(logFile);
-		return file.createWriteStream();
+		Common::WriteStream *stream = file.createWriteStream();
+		if (stream)
+			_logFilePath= logFile;
+
+		return stream;
 	} else {
 		return 0;
 	}

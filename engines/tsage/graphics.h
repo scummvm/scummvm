@@ -91,6 +91,7 @@ public:
 	void setScreenSurface();
 	Graphics::Surface lockSurface();
 	void unlockSurface();
+	void synchronize(Serializer &s);
 	void create(int width, int height);
 	void setBounds(const Rect &bounds) { _bounds = bounds; }
 	const Rect &getBounds() const { return _bounds; }
@@ -176,6 +177,7 @@ public:
 	uint16 _fontNumber;
 	GfxColors _colors;
 	GfxColors _fontColors;
+	byte _unkColor1, _unkColor2, _unkColor3;
 	uint16 _keycode;
 public:
 	GfxElement();

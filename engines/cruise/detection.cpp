@@ -217,34 +217,12 @@ static const CRUISEGameDescription gameDescriptions[] = {
 
 }
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Cruise::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Cruise::CRUISEGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	cruiseGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"cruise",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class CruiseMetaEngine : public AdvancedMetaEngine {
 public:
-	CruiseMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	CruiseMetaEngine() : AdvancedMetaEngine(Cruise::gameDescriptions, sizeof(Cruise::CRUISEGameDescription), cruiseGames) {
+		params.singleid = "cruise";
+		params.guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
+	}
 
 	virtual const char *getName() const {
 		return "CruisE";

@@ -29,13 +29,12 @@
 #include "nds.h"
 #include "gbampsave.h"
 #include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
 #include "audio/mixer_intern.h"
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
 
-class OSystem_DS : public BaseBackend, public PaletteManager {
+class OSystem_DS : public EventsBaseBackend, public PaletteManager {
 protected:
 
 	int eventNum;
@@ -46,7 +45,6 @@ protected:
 
 	GBAMPSaveFileManager mpSaveManager;
 	Audio::MixerImpl *_mixer;
-	DefaultTimerManager *_timer;
 	Graphics::Surface _framebuffer;
 	bool _frameBufferExists;
 	bool _graphicsEnable;
@@ -140,8 +138,6 @@ public:
 
 	virtual void quit();
 
-	virtual Common::SaveFileManager *getSavefileManager();
-
 	void addEvent(const Common::Event& e);
 	bool isEventQueueEmpty() const { return queuePos == 0; }
 
@@ -159,7 +155,6 @@ public:
 	virtual Audio::Mixer *getMixer() { return _mixer; }
 	Audio::MixerImpl *getMixerImpl() { return _mixer; }
 
-	virtual Common::TimerManager *getTimerManager() { return _timer; }
 	static int timerHandler(int t);
 
 
@@ -172,14 +167,13 @@ public:
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
-	virtual void disableCursorPalette(bool dis) { _disableCursorPalette = dis; refreshCursor(); }
-
-	FilesystemFactory *getFilesystemFactory();
+	virtual FilesystemFactory *getFilesystemFactory();
 
 	void refreshCursor();
 
-	Common::WriteStream *createConfigWriteStream();
-	Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::String getDefaultConfigFileName();
+
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 	u16 applyGamma(u16 color);
 	void setGammaValue(int gamma) { _gammaValue = gamma; }

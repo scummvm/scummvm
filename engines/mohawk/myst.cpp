@@ -1168,7 +1168,7 @@ Common::Error MohawkEngine_Myst::loadGameState(int slot) {
 	return Common::kUnknownError;
 }
 
-Common::Error MohawkEngine_Myst::saveGameState(int slot, const char *desc) {
+Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &desc) {
 	Common::StringArray saveList = _gameState->generateSaveGameList();
 
 	if ((uint)slot < saveList.size())

@@ -37,6 +37,8 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/error.h"
+#include "common/fs.h"
 
 #include "engines/util.h"
 
@@ -312,10 +314,6 @@ void LastExpressEngine::setEventHandlers(EventHandler::EventFunction *mouse, Eve
 ///////////////////////////////////////////////////////////////////////////////////
 bool LastExpressEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsRTL);
-}
-
-void LastExpressEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
-	snprintf(buf_output, (uint)buf_output_size, "%s", buf_input);
 }
 
 } // End of namespace LastExpress

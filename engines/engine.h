@@ -196,7 +196,7 @@ public:
 	 * @param desc	a description for the savestate, entered by the user
 	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error saveGameState(int slot, const char *desc);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	/**
 	 * Indicates whether a game state can be saved.

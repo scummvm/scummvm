@@ -67,18 +67,17 @@ void LoLEngine::loadLevel(int index) {
 	loadLevelWallData(index, true);
 	_loadLevelFlag = 1;
 
-	char filename[13];
-	snprintf(filename, sizeof(filename), "LEVEL%d.INI", index);
+	Common::String filename = Common::String::format("LEVEL%d.INI", index);
 
 	int f = _hasTempDataFlags & (1 << (index - 1));
 
-	runInitScript(filename, f ? 0 : 1);
+	runInitScript(filename.c_str(), f ? 0 : 1);
 
 	if (f)
 		restoreBlockTempData(index);
 
-	snprintf(filename, sizeof(filename), "LEVEL%d.INF", index);
-	runInfScript(filename);
+	filename = Common::String::format("LEVEL%d.INF", index);
+	runInfScript(filename.c_str());
 
 	addLevelItems();
 	deleteMonstersFromBlock(_currentBlock);
@@ -142,11 +141,10 @@ void LoLEngine::assignBlockObject(LevelBlockProperty *l, uint16 item) {
 }
 
 void LoLEngine::loadLevelWallData(int index, bool mapShapes) {
-	char filename[13];
-	snprintf(filename, sizeof(filename), "LEVEL%d.WLL", index);
+	Common::String filename = Common::String::format("LEVEL%d.WLL", index);
 
 	uint32 size;
-	uint8 *file = _res->fileData(filename, &size);
+	uint8 *file = _res->fileData(filename.c_str(), &size);
 
 	uint16 c = READ_LE_UINT16(file);
 	loadLevelShpDat(_levelShpList[c], _levelDatList[c], false);
@@ -241,10 +239,9 @@ void LoLEngine::restoreBlockTempData(int index) {
 	memcpy(_monsters, _lvlTempData[l]->monsters, sizeof(MonsterInPlay) * 30);
 	memcpy(_flyingObjects, _lvlTempData[l]->flyingObjects, sizeof(FlyingObject) * 8);
 
-	char filename[13];
-	snprintf(filename, sizeof(filename), "LEVEL%d.CMZ", index);
+	Common::String filename = Common::String::format("LEVEL%d.CMZ", index);
 
-	_screen->loadBitmap(filename, 3, 3, 0);
+	_screen->loadBitmap(filename.c_str(), 3, 3, 0);
 	const uint8 *p = _screen->getCPagePtr(2);
 	uint16 len = READ_LE_UINT16(p + 4);
 	p += 6;
@@ -366,13 +363,13 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 			_lastSpecialColor = 0x44;
 	}
 
-	char fname[13];
+	Common::String fname;
 	const uint8 *v = 0;
 	int tlen = 0;
 
 	if (_flags.use16ColorMode) {
-		snprintf(fname, sizeof(fname), "%s.VCF", _lastBlockDataFile);
-		_screen->loadBitmap(fname, 3, 3, 0);
+		fname = Common::String::format("%s.VCF", _lastBlockDataFile);
+		_screen->loadBitmap(fname.c_str(), 3, 3, 0);
 		v = _screen->getCPagePtr(2);
 		tlen = READ_LE_UINT16(v) << 5;
 		v += 2;
@@ -383,8 +380,8 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		memcpy(_vcfBlocks, v, tlen);
 	}
 
-	snprintf(fname, sizeof(fname), "%s.VCN", _lastBlockDataFile);
-	_screen->loadBitmap(fname, 3, 3, 0);
+	fname = Common::String::format("%s.VCN", _lastBlockDataFile);
+	_screen->loadBitmap(fname.c_str(), 3, 3, 0);
 	v = _screen->getCPagePtr(2);
 	tlen = READ_LE_UINT16(v);
 	v += 2;
@@ -434,8 +431,8 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	memcpy(_vcnBlocks, v, vcnLen);
 	v += vcnLen;
 
-	snprintf(fname, sizeof(fname), "%s.VMP", _lastBlockDataFile);
-	_screen->loadBitmap(fname, 3, 3, 0);
+	fname = Common::String::format("%s.VMP", _lastBlockDataFile);
+	_screen->loadBitmap(fname.c_str(), 3, 3, 0);
 	v = _screen->getCPagePtr(2);
 
 	if (vmpLen == -1)
@@ -503,9 +500,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	generateBrightnessPalette(_screen->getPalette(0), _screen->getPalette(1), _brightness, _lampEffect);
 
 	if (_flags.isTalkie) {
-		char tname[13];
-		snprintf(tname, sizeof(tname), "LEVEL%.02d.TLC", _currentLevel);
-		Common::SeekableReadStream *s = _res->createReadStream(tname);
+		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("LEVEL%.02d.TLC", _currentLevel));
 		s->read(_transparencyTable1, 256);
 		s->read(_transparencyTable2, 5120);
 		delete s;
@@ -1375,9 +1370,8 @@ void LoLEngine::processGasExplosion(int soundId) {
 
 	if (dist) {
 		WSAMovie_v2 *mov = new WSAMovie_v2(this);
-		char file[13];
-		snprintf(file, 13, "gasexp%0d.wsa", dist);
-		mov->open(file, 1, 0);
+		Common::String file = Common::String::format("gasexp%0d.wsa", dist);
+		mov->open(file.c_str(), 1, 0);
 		if (!mov->opened())
 			error("Gas: Unable to load gasexp.wsa");
 

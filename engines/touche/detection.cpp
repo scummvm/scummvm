@@ -126,35 +126,16 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Touche::gameDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	4096,
-	// List of all engine targets
-	toucheGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"touche",
-	// List of files for file-based fallback detection (optional)
-	Touche::fileBasedFallback,
-	// Flags
-	kADFlagPrintWarningOnFileBasedFallback,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	2,
-	// List of directory globs
-	directoryGlobs
-};
-
 class ToucheMetaEngine : public AdvancedMetaEngine {
 public:
-	ToucheMetaEngine() : AdvancedMetaEngine(detectionParams) {}
-
+	ToucheMetaEngine() : AdvancedMetaEngine(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
+		params.md5Bytes = 4096;
+		params.singleid = "touche";
+		params.fileBasedFallback = Touche::fileBasedFallback;
+		params.flags = kADFlagPrintWarningOnFileBasedFallback;
+		params.depth = 2;
+		params.directoryGlobs = directoryGlobs;
+	}
 	virtual const char *getName() const {
 		return "Touche";
 	}

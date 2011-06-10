@@ -31,7 +31,7 @@
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
 
-
+#ifndef DISABLE_MASS_ADD
 namespace GUI {
 
 /*
@@ -234,23 +234,23 @@ void MassAddDialog::handleTickle() {
 
 
 	// Update the dialog
-	char buf[256];
+	Common::String buf;
 
 	if (_scanStack.empty()) {
 		// Enable the OK button
 		_okButton->setEnabled(true);
 
-		snprintf(buf, sizeof(buf), "%s", _("Scan complete!"));
+		buf = _("Scan complete!");
 		_dirProgressText->setLabel(buf);
 
-		snprintf(buf, sizeof(buf), _("Discovered %d new games, ignored %d previously added games."), _games.size(), _oldGamesCount);
+		buf = Common::String::format(_("Discovered %d new games, ignored %d previously added games."), _games.size(), _oldGamesCount);
 		_gameProgressText->setLabel(buf);
 
 	} else {
-		snprintf(buf, sizeof(buf), _("Scanned %d directories ..."), _dirsScanned);
+		buf = Common::String::format(_("Scanned %d directories ..."), _dirsScanned);
 		_dirProgressText->setLabel(buf);
 
-		snprintf(buf, sizeof(buf), _("Discovered %d new games, ignored %d previously added games ..."), _games.size(), _oldGamesCount);
+		buf = Common::String::format(_("Discovered %d new games, ignored %d previously added games ..."), _games.size(), _oldGamesCount);
 		_gameProgressText->setLabel(buf);
 	}
 
@@ -264,3 +264,4 @@ void MassAddDialog::handleTickle() {
 
 } // End of namespace GUI
 
+#endif // DISABLE_MASS_ADD

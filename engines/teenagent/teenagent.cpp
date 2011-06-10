@@ -240,7 +240,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
+Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &desc) {
 	debug(0, "saving to slot %d", slot);
 	Common::ScopedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(Common::String::format("teenagent.%02d", slot)));
 	if (!out)
@@ -253,7 +253,7 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	res->dseg.set_word(0x64B1, pos.y);
 
 	assert(res->dseg.size() >= 0x6478 + 0x777a);
-	strncpy((char *)res->dseg.ptr(0x6478), desc, 0x16);
+	strncpy((char *)res->dseg.ptr(0x6478), desc.c_str(), 0x16);
 	out->write(res->dseg.ptr(0x6478), 0x777a);
 	if (!Graphics::saveThumbnail(*out))
 		warning("saveThumbnail failed");

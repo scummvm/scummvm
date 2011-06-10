@@ -527,7 +527,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"harryhh",
 			"",
 			AD_ENTRY1("HHHB.LB", "267bb6e3c8f237ca98b02c07b9c4013f"),
-			Common::EN_ANY,
+			Common::EN_GRB,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
@@ -565,6 +565,54 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("HHHD.LB", "85c0a816efeb679739158789befb2be8"),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"harryhh",
+			"",
+			AD_ENTRY1("EnglishBO", "b63a7b67834de0cd4cdbf02cf40d8547"),
+			Common::EN_GRB,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"harryhh",
+			"",
+			AD_ENTRY1("GermanBO", "eb740102c1c8379c2c610cba14484ccb"),
+			Common::DE_DEU,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"harryhh",
+			"",
+			AD_ENTRY1("FrenchBO", "2118de914ab9eaec482c245c06145071"),
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
@@ -866,6 +914,54 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"TORTOISE.EXE"
 	},
 
+	// From afholman in bug#3309308
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("TORTB.LB", "83f6bfcf30c445d13e81e0faed9aa27b"),
+			Common::EN_GRB,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("TORTD.LB", "21761e7de4e5f12298f43fa17c00f3e1"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("TORTF.LB", "9693043df217ffc0667a1f45f2849aa7"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
 	{
 		{
 			"tortoise",
@@ -932,6 +1028,38 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"arthur",
 			"",
 			AD_ENTRY1("PAGES.512", "1550a361454ec452fe7d2328aac2003c"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_LB_10,
+		"ARTHUR.EXE"
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"arthur",
+			"",
+			AD_ENTRY1("BookOutline", "133750de1ceb9e7351599d79f99fee4d"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_LB_10,
+		"Arthur's Teacher Trouble"
+	},
+
+	// From darthbo in bug#3301791
+	{
+		{
+			"arthur",
+			"",
+			AD_ENTRY1("PAGES.512", "cd995d20d0d7b4642476fd76044b4e5b"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -1145,6 +1273,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"RUFF.EXE"
 	},
 
+	// From aluff in bug#3307785
+	{
+		{
+			"ruff",
+			"",
+			AD_ENTRY1("BookOutline", "f625d4056c750b9aad6f94dd854f5abe"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"Living Books Player"
+	},
+
 	{
 		{
 			"ruff",
@@ -1188,6 +1332,38 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
+		"Living Books Player"
+	},
+
+	// From aluff in bug#3309981
+	{
+		{
+			"newkid",
+			"",
+			AD_ENTRY1("NEWKID.512", "5135f24afa138ecdf5b52d955e9a9189"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"NEWKID.EXE"
+	},
+
+	// From aluff in bug#3309981
+	{
+		{
+			"newkid",
+			"",
+			AD_ENTRY1("BookOutline", "6aa7c4720b922f4164584956be5ba9e5"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
 		"Living Books Player"
 	},
 
@@ -1299,6 +1475,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"BIRTHDAY.EXE"
 	},
 
+	// From aluff in bug#3309936
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("BookOutline", "d631242b004720ecc615e4f855825860"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"Living Books Player"
+	},
+
 	{
 		{
 			"arthurbday",
@@ -1373,6 +1565,102 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		0,
 		"Little Monster at School"
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"lilmonster",
+			"",
+			AD_ENTRY1("lmasb.lb", "18a4e82f2c5cc30f7a2f9bd95e8c1364"),
+			Common::EN_GRB,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"lilmonster",
+			"",
+			AD_ENTRY1("lmasd.lb", "422b94c0e663305869cb2d2f1109a0bc"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"lilmonster",
+			"",
+			AD_ENTRY1("lmasf.lb", "8c22e79c97a86827d56b4c596066dcea"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"lilmonster",
+			"",
+			AD_ENTRY1("EnglishBO", "7aa2a1694255000b72ff0cc179f8059f"),
+			Common::EN_GRB,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"lilmonster",
+			"",
+			AD_ENTRY1("GermanBO", "ff7ac4b1b4f2ded71ff3650f383fea48"),
+			Common::DE_DEU,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"lilmonster",
+			"",
+			AD_ENTRY1("FrenchBO", "d13e5eae0f68cecc91a0dcfcceec7061"),
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
 	},
 
 	// From Scarlatti in bug #3275626
@@ -1686,6 +1974,38 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// From aluff in bug#3306722
+	{
+		{
+			"stellaluna",
+			"",
+			AD_ENTRY1("STELLA.LB", "ca8562a79f63485680e21191f5865fd7"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From aluff in bug#3306722
+	{
+		{
+			"stellaluna",
+			"",
+			AD_ENTRY1("BookOutline", "7e931a455ac88557e04ca682579cd5a5"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
 	// Sheila Rae the Brave 1.0
 	// From pacifist
 	{
@@ -1695,6 +2015,118 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("SHEILA.LB", "c28a60f615a46384d9a8941fc5c89d63"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From aluff in bug#3309934
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1("BookOutline", "961f0cf4de2fbaa1da8ce0011822cd38"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1("SRAEB.LB", "4835612022c2ae1944bde453d3202803"),
+			Common::EN_GRB,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1("SRAED.LB", "3f21183534d324cf3bb8464f9217712c"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1("SRAEF.LB", "96b00fc4b44c0e881c674d4bae5aa79a"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1("EnglishBO", "6d3ad5724f1729a1d96d812668770c2e"),
+			Common::EN_GRB,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1("GermanBO", "af1dc5a8bc8da58310d17b72b657fc1f"),
+			Common::DE_DEU,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// From afholman in bug#3309308
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1("FrenchBO", "62eefcb8424a5f9ba7db5af6f0421e58"),
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},

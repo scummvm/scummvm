@@ -886,9 +886,7 @@ TinselEngine::~TinselEngine() {
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
-	char filename[256];
-	snprintf(filename, 256, "%s.%03d", getTargetName().c_str(), saveNum);
-	return filename;
+	return Common::String::format("%s.%03d", getTargetName().c_str(), saveNum);
 }
 
 Common::Error TinselEngine::run() {

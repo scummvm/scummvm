@@ -23,19 +23,19 @@
 // Based off ffmpeg's QDM2 decoder
 
 #include "common/scummsys.h"
-#include "video/codecs/qdm2.h"
+#include "audio/decoders/qdm2.h"
 
-#ifdef VIDEO_CODECS_QDM2_H
+#ifdef AUDIO_QDM2_H
 
 #include "audio/audiostream.h"
-#include "video/codecs/qdm2data.h"
+#include "audio/decoders/qdm2data.h"
 
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-namespace Video {
+namespace Audio {
 
 enum {
 	SOFTCLIP_THRESHOLD = 27600,
@@ -150,7 +150,7 @@ struct RDFTContext {
 	FFTContext fft;
 };
 
-class QDM2Stream : public Audio::AudioStream {
+class QDM2Stream : public AudioStream {
 public:
 	QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData);
 	~QDM2Stream();
@@ -3270,10 +3270,10 @@ int QDM2Stream::readBuffer(int16 *buffer, const int numSamples) {
 	return decodedSamples;
 }
 
-Audio::AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData) {
+AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData) {
 	return new QDM2Stream(stream, extraData);
 }
 
-} // End of namespace Video
+} // End of namespace Audio
 
 #endif

@@ -69,7 +69,7 @@ protected:
 	typedef Common::Functor2<int, const char **, bool> Debuglet;
 
 	/**
-	 * Convenience macro that makes it either to register a method
+	 * Convenience macro that makes it easier to register a method
 	 * of a debugger subclass as a command.
 	 * Usage example:
 	 *   DCmd_Register("COMMAND", WRAP_METHOD(MyDebugger, MyCmd));
@@ -190,6 +190,7 @@ private:
 protected:
 	bool Cmd_Exit(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
+	bool Cmd_OpenLog(int argc, const char **argv);
 	bool Cmd_DebugFlagsList(int argc, const char **argv);
 	bool Cmd_DebugFlagEnable(int argc, const char **argv);
 	bool Cmd_DebugFlagDisable(int argc, const char **argv);

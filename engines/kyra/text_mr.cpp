@@ -625,24 +625,20 @@ void KyraEngine_MR::malcolmSceneStartupChat() {
 }
 
 void KyraEngine_MR::updateDlgBuffer() {
-	char dlgFile[16];
-	char cnvFile[16];
-
 	if (_cnvFile)
 		_cnvFile->seek(0, SEEK_SET);
 
 	if (_curDlgIndex == _mainCharacter.dlgIndex && _curDlgChapter == _currentChapter && _curDlgLang == _lang)
 		return;
 
-	snprintf(dlgFile, 16, "CH%.02d-S%.02d.", _currentChapter, _mainCharacter.dlgIndex);
-	appendLanguage(dlgFile, _lang, 16);
-	snprintf(cnvFile, 16, "CH%.02d-S%.02d.CNV", _currentChapter, _mainCharacter.dlgIndex);
+	Common::String dlgFile = Common::String::format("CH%.02d-S%.02d.%s", _currentChapter, _mainCharacter.dlgIndex, _languageExtension[_lang]);
+	Common::String cnvFile = Common::String::format("CH%.02d-S%.02d.CNV", _currentChapter, _mainCharacter.dlgIndex);
 
 	delete _cnvFile;
 	delete _dlgBuffer;
 
-	_res->exists(cnvFile, true);
-	_res->exists(dlgFile, true);
+	_res->exists(cnvFile.c_str(), true);
+	_res->exists(dlgFile.c_str(), true);
 	_cnvFile = _res->createReadStream(cnvFile);
 	_dlgBuffer = _res->createReadStream(dlgFile);
 	assert(_cnvFile);

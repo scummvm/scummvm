@@ -85,7 +85,7 @@ MoviePlayer::~MoviePlayer() {
  */
 bool MoviePlayer::load(uint32 id) {
 	Common::File f;
-	char filename[20];
+	Common::String filename;
 
 	if (_decoderType == kVideoDecoderDXA)
 		_bgSoundStream = Audio::SeekableAudioStream::openStreamFile(sequenceList[id]);
@@ -93,7 +93,7 @@ bool MoviePlayer::load(uint32 id) {
 		_bgSoundStream = NULL;
 
 	if (SwordEngine::_systemVars.showText) {
-		sprintf(filename, "%s.txt", sequenceList[id]);
+		filename = Common::String::format("%s.txt", sequenceList[id]);
 		if (f.open(filename)) {
 			Common::String line;
 			int lineNo = 0;
@@ -117,12 +117,12 @@ bool MoviePlayer::load(uint32 id) {
 					ptr++;
 
 				if (startFrame > endFrame) {
-					warning("%s:%d: startFrame (%d) > endFrame (%d)", filename, lineNo, startFrame, endFrame);
+					warning("%s:%d: startFrame (%d) > endFrame (%d)", filename.c_str(), lineNo, startFrame, endFrame);
 					continue;
 				}
 
 				if (startFrame <= lastEnd) {
-					warning("%s:%d startFrame (%d) <= lastEnd (%d)", filename, lineNo, startFrame, lastEnd);
+					warning("%s:%d startFrame (%d) <= lastEnd (%d)", filename.c_str(), lineNo, startFrame, lastEnd);
 					continue;
 				}
 
@@ -135,14 +135,14 @@ bool MoviePlayer::load(uint32 id) {
 
 	switch (_decoderType) {
 	case kVideoDecoderDXA:
-		snprintf(filename, sizeof(filename), "%s.dxa", sequenceList[id]);
+		filename = Common::String::format("%s.dxa", sequenceList[id]);
 		break;
 	case kVideoDecoderSMK:
-		snprintf(filename, sizeof(filename), "%s.smk", sequenceList[id]);
+		filename = Common::String::format("%s.smk", sequenceList[id]);
 		break;
 	}
 
-	return _decoder->loadFile(filename);
+	return _decoder->loadFile(filename.c_str());
 }
 
 void MoviePlayer::play() {
@@ -323,18 +323,18 @@ uint32 DXADecoderWithSound::getElapsedTime() const {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system) {
-	char filename[20];
+	Common::String filename;
 	char buf[60];
 	Audio::SoundHandle *bgSoundHandle = new Audio::SoundHandle;
 
-	snprintf(filename, sizeof(filename), "%s.smk", sequenceList[id]);
+	filename = Common::String::format("%s.smk", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
 		Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder(snd);
 		return new MoviePlayer(vm, textMan, snd, system, bgSoundHandle, smkDecoder, kVideoDecoderSMK);
 	}
 
-	snprintf(filename, sizeof(filename), "%s.dxa", sequenceList[id]);
+	filename = Common::String::format("%s.dxa", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
 #ifdef USE_ZLIB
@@ -348,7 +348,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::M
 	}
 
 	// Old MPEG2 cutscenes
-	snprintf(filename, sizeof(filename), "%s.mp2", sequenceList[id]);
+	filename = Common::String::format("%s.mp2", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
 		GUI::MessageDialog dialog("MPEG2 cutscenes are no longer supported", "OK");

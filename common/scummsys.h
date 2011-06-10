@@ -40,10 +40,42 @@
 	#if defined(WIN32)
 
 		#ifdef _MSC_VER
-		// vsnprintf is already defined in Visual Studio 2008
-		#if (_MSC_VER < 1500)
-			#define vsnprintf _vsnprintf
-		#endif
+
+		// FIXME: The placement of the workaround functions for MSVC below
+		// require us to include stdio.h and stdarg.h for MSVC here. This
+		// is not exactly nice...
+		// We should think of a better way of doing this.
+		#include <stdio.h>
+		#include <stdarg.h>
+
+		// MSVC's vsnprintf is either non-existant (2003) or bugged since it
+		// does not always include a terminating NULL (2005+). To work around
+		// that we fix up the _vsnprintf included. Note that the return value
+		// will still not match C99's specs!
+		inline int vsnprintf_msvc(char *str, size_t size, const char *format, va_list args) {
+			// We do not pass size - 1 here, to ensure we would get the same
+			// return value as when we would use _vsnprintf directly, since
+			// for example Common::String::format relies on this.
+			int retValue = _vsnprintf(str, size, format, args);
+			str[size - 1] = 0;
+			return retValue;
+		}
+
+		#define vsnprintf vsnprintf_msvc
+
+		// Visual Studio does not include snprintf in its standard C library.
+		// Instead it includes a function called _snprintf with somewhat
+		// similar semantics. The minor difference is that the return value in
+		// case the formatted string exceeds the buffer size is different.
+		// A much more dangerous one is that _snprintf does not always include
+		// a terminating null (Whoops!). Instead we map to our fixed vsnprintf.
+		inline int snprintf(char *str, size_t size, const char *format, ...) {
+			va_list args;
+			va_start(args, format);
+			int len = vsnprintf(str, size, format, args);
+			va_end(args);
+			return len;
+		}
 		#endif
 
 		#if !defined(_WIN32_WCE)
@@ -136,88 +168,50 @@
 //
 #define SCUMMVM_USE_PRAGMA_PACK
 
+//
+// Determine the host endianess and whether memory alignment is required.
+//
+#if !defined(HAVE_CONFIG_H)
 
-#if defined(HAVE_CONFIG_H)
-	// All settings should have been set in config.h
+	#if defined(__DC__) || \
+		  defined(__DS__) || \
+		  defined(__GP32__) || \
+		  defined(IPHONE) || \
+		  defined(__PLAYSTATION2__) || \
+		  defined(__PSP__) || \
+		  defined(__SYMBIAN32__)
 
-#elif defined(__SYMBIAN32__)
+		#define SCUMM_LITTLE_ENDIAN
+		#define SCUMM_NEED_ALIGNMENT
 
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
+	#elif defined(_WIN32_WCE) || defined(_MSC_VER) || defined(__MINGW32__)
 
-#elif defined(_WIN32_WCE)
+		#define SCUMM_LITTLE_ENDIAN
 
-	#define SCUMM_LITTLE_ENDIAN
+	#elif defined(__amigaos4__) || defined(__N64__) || defined(__WII__)
 
-#elif defined(_MSC_VER)
+		#define SCUMM_BIG_ENDIAN
+		#define SCUMM_NEED_ALIGNMENT
 
-	#define SCUMM_LITTLE_ENDIAN
+	#elif defined(SDL_BACKEND)
+		// On SDL based ports, we try to use SDL_BYTEORDER to determine the
+		// endianess. We explicitly do this as the *last* thing we try, so that
+		// platform specific settings have precedence.
+		#include <SDL_endian.h>
 
-#elif defined(__MINGW32__)
+		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+		#define SCUMM_LITTLE_ENDIAN
+		#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
+		#define SCUMM_BIG_ENDIAN
+		#else
+		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
+		#endif
 
-	#define SCUMM_LITTLE_ENDIAN
-
-#elif defined(SDL_BACKEND)
-	/* need this for the SDL_BYTEORDER define */
-	#include <SDL_byteorder.h>
-
-	#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-	#define SCUMM_LITTLE_ENDIAN
-	#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
-	#define SCUMM_BIG_ENDIAN
 	#else
-	#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
+
+		#error No system type defined, host endianess unknown.
+
 	#endif
-
-#elif defined(__DC__)
-
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__GP32__)
-
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__PLAYSTATION2__)
-
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__N64__)
-
-	#define SCUMM_BIG_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
-#elif defined(__PSP__)
-
-	#define	SCUMM_LITTLE_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-#elif defined(__amigaos4__)
-
-	#define	SCUMM_BIG_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-#elif defined(__DS__)
-
-	#define SCUMM_NEED_ALIGNMENT
-	#define SCUMM_LITTLE_ENDIAN
-
-#elif defined(__WII__)
-
-	#define	SCUMM_BIG_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-#elif defined(IPHONE)
-
-	#define	SCUMM_LITTLE_ENDIAN
-	#define	SCUMM_NEED_ALIGNMENT
-
-
-#else
-	#error No system type defined
-
 #endif
 
 
@@ -225,17 +219,7 @@
 // Some more system specific settings.
 // TODO/FIXME: All of these should be moved to backend specific files (such as portdefs.h)
 //
-#if defined(__SYMBIAN32__)
-
-	#define SMALL_SCREEN_DEVICE
-
-#elif defined(_WIN32_WCE)
-
-	#if _WIN32_WCE < 300
-	#define SMALL_SCREEN_DEVICE
-	#endif
-
-#elif defined(DINGUX)
+#if defined(DINGUX)
 
 	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
 	// "toupper" when pressing keyboard function keys.
@@ -294,7 +278,7 @@
 	#if defined(_MSC_VER)
 		#define NORETURN_PRE __declspec(noreturn)
 	#else
-		#define	NORETURN_PRE
+		#define NORETURN_PRE
 	#endif
 #endif
 
@@ -302,7 +286,7 @@
 	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
 		#define NORETURN_POST __attribute__((__noreturn__))
 	#else
-		#define	NORETURN_POST
+		#define NORETURN_POST
 	#endif
 #endif
 
@@ -320,96 +304,25 @@
 
 
 //
-// Typedef our system types
+// Typedef our system types unless they have already been defined by config.h,
+// or SCUMMVM_DONT_DEFINE_TYPES is set.
 //
-#if !defined(HAVE_CONFIG_H)
-
-	#if defined(__SYMBIAN32__)
-
-		// Enable Symbians own datatypes
-		// This is done for two reasons
-		// a) uint is already defined by Symbians libc component
-		// b) Symbian is using its "own" datatyping, and the Scummvm port
-		//    should follow this to ensure the best compability possible.
-		typedef unsigned char byte;
-
-		typedef unsigned char uint8;
-		typedef signed char int8;
-
-		typedef unsigned short int uint16;
-		typedef signed short int int16;
-
-		typedef unsigned long int uint32;
-		typedef signed long int int32;
-
-	#elif defined(__GP32__)
-
-		// Override typenames. uint is already defined by system header files.
-		typedef unsigned char byte;
-
-		typedef unsigned char uint8;
-		typedef signed char int8;
-
-		typedef unsigned short int uint16;
-		typedef signed short int int16;
-
-		typedef unsigned long int uint32;
-		typedef signed long int int32;
-
-	#elif defined(__N64__)
-
-		typedef unsigned char byte;
-
-		typedef unsigned char uint8;
-		typedef signed char int8;
-
-		typedef unsigned short int uint16;
-		typedef signed short int int16;
-
-		typedef unsigned int uint32;
-		typedef signed int int32;
-
-	#elif defined(__DS__)
-
-		// Do nothing, the SDK defines all types we need in nds/ndstypes.h,
-		// which we include in our portsdef.h
-
-	#else
-
-		typedef unsigned char byte;
-		typedef unsigned char uint8;
-		typedef signed char int8;
-		typedef unsigned short uint16;
-		typedef signed short int16;
-		typedef unsigned int uint32;
-		typedef signed int int32;
-		typedef unsigned int uint;
-
-	#endif
-
-#endif
-
-//
-// Define scumm_stricmp and scumm_strnicmp
-//
-extern int scumm_stricmp(const char *s1, const char *s2);
-extern int scumm_strnicmp(const char *s1, const char *s2, uint n);
-#if defined(_WIN32_WCE) || defined(_MSC_VER)
-	// FIXME: Why is this necessary?
-	#define snprintf _snprintf
+#if !defined(HAVE_CONFIG_H) && !defined(SCUMMVM_DONT_DEFINE_TYPES)
+	typedef unsigned char byte;
+	typedef unsigned char uint8;
+	typedef signed char int8;
+	typedef unsigned short uint16;
+	typedef signed short int16;
+	typedef unsigned int uint32;
+	typedef signed int int32;
+	typedef unsigned int uint;
 #endif
 
 
 //
 // Overlay color type (FIXME: shouldn't be declared here)
 //
-#if defined(NEWGUI_256)
-	// 256 color only on PalmOS
-	typedef byte OverlayColor;
-#else
-	// 15/16 bit color mode everywhere else...
-	typedef uint16 OverlayColor;
-#endif
+typedef uint16 OverlayColor;
 
 #include "common/forbidden.h"
 

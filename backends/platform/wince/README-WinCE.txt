@@ -1,5 +1,5 @@
 ScummVM Windows CE FAQ
-Last updated: 2011-05-25
+Last updated: 2011-05-27
 Release version: 1.3.0
 ------------------------------------------------------------------------
 
@@ -7,8 +7,32 @@ New in this version
 -------------------
 
 1.3.0:
-This is the first official Windows CE release since 1.1.1, there are no other
-port specific changes.
+This is the first official Windows CE release since 1.1.1.
+
+The following new engines are now included (changes since last WinCE release):
+ - Draci Engine (Dragon History)
+ - Hugo Engine (Hugo Trilogy)
+ - Mohawk Engine (Myst, Riven, Living Book games & Where in Time is Carmen
+   Sandiego?)
+ - SCI Engine (Sierra SCI games, see main README for a list of supported games)
+ - Toon Engine (Toonstruck)
+
+Also, there are now 4 binaries in this distribution, a single executable
+which contains all engines (for devices with enough memory) and 3 smaller
+binaries which contain only some of the engines. The following lists all
+executables and the engines they contain:
+
+scummvm.exe:
+ - all supported engines
+scummvm1.exe:
+ - scumm, agi, cruise, draci, lure, queen, sky, sword1, tinsel, touche
+scummvm2.exe:
+ - agos, cine, drascula, gob, groovie, kyra, made, parallaction, saga,
+   teenagent, tucker
+scummvm3.exe:
+ - hugo, mohawk, sci, sword2, toon
+
+There are no other port specific changes.
 
 1.2.1:
 (Note: No official 1.2.1 release)
@@ -265,7 +289,7 @@ How do I play a game on a Smartphone device ?
 
 On non-stylus devices, the mouse cursor is emulated via a set of keys.
 The cursor will move faster if you keep the key down. You can tweak this
-behavior in the configuration file described below.
+behaviour in the configuration file described below.
 
 Here is
 the list of available actions for Smartphones:
@@ -369,7 +393,7 @@ You can tweak these parameters to customize how the cursor is handled.
  *  repeatTrigger         int       Number of milliseconds a key must be held to
                                     consider being repeated.
  *  repeatX               int       Number of key repeat events before changing
-                                    horizontal cursor behavior.
+                                    horizontal cursor behaviour.
  *  stepX1                int       Horizontal cursor offset value when the key
                                     is not repeated.
  *  stepX2                int       Horizontal cursor offset value when the key
