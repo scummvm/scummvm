@@ -217,6 +217,14 @@ void DreamWebEngine::fadeDos() {
 		waitForVSync();
 	}
 }
+void DreamWebEngine::setPalette() {
+	PaletteManager *palette = _system->getPaletteManager();
+	unsigned n = (uint16)_context.cx;
+	uint8 *colors = _context.ds.ptr(_context.si, n * 3);
+	palette->setPalette(colors, _context.al, n);
+	_context.si += n * 3;
+	_context.cx = 0;
+}
 
 } // End of namespace DreamWeb
 
@@ -271,7 +279,16 @@ void multidump(Context &context) {
 }
 
 void frameoutnm(Context &context) {
-	::error("frameoutnm");
+	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
+	unsigned pitch = (uint16)context.dx;
+	unsigned src = (uint16)context.si;
+	unsigned dst = (uint16)context.di + (uint16)context.bx * pitch;
+	//debug(1, "framenm %ux%u[pitch: %u] -> segment: %04x->%04x", w, h, pitch, (uint16)context.ds, (uint16)context.es);
+	for(unsigned y = 0; y < h; ++y) {
+		uint8 *src_p = context.ds.ptr(src + w * y, w);
+		uint8 *dst_p = context.es.ptr(dst + pitch * y, w);
+		memcpy(src_p, dst_p, w);
+	}
 }
 
 void seecommandtail(Context &context) {
@@ -534,16 +551,7 @@ void mode640x480(Context &context) {
 }
 
 void showgroup(Context &context) {
-	debug(1, "setting palette entries %u, %u colors, ds: %04x", (uint8)context.al, (uint16)context.cx, (uint16)context.ds);
-	for(unsigned idx = context.al; context.cx--; ++idx) {
-		context._lodsb();
-		unsigned r = context.al;
-		context._lodsb();
-		unsigned g = context.al;
-		context._lodsb();
-		unsigned b = context.al;
-		//debug(1, "%u -> (%u,%u,%u)", idx, r, g, b);
-	}
+	engine()->setPalette();
 }
 
 void fadedos(Context &context) {
