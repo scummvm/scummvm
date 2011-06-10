@@ -23,7 +23,6 @@
 #ifndef TSAGE_H
 #define TSAGE_H
 
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "common/rect.h"
 #include "audio/mixer.h"
