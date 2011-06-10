@@ -75,7 +75,7 @@ public:
 
 
 
-extern	Boolean	Music;
+extern	bool	Music;
 extern	SOUND	Sound;
 extern	FX	Fx;
 

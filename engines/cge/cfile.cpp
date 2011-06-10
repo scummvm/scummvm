@@ -349,7 +349,7 @@ void CFILE::Append (CFILE& f)
   Seek(Size());
   if (f.Error == 0)
     {
-      while (TRUE)
+      while (true)
 	{
 	  if ((Lim = f.IOHAND::Read(Buff, IOBUF_SIZE)) == IOBUF_SIZE) WriteBuff();
 	  else break;

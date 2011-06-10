@@ -55,9 +55,9 @@ class DAT
   friend VFILE;
   static VOLBASE File;
 public:
-  static Boolean Append (byte * buf, word len);
-  static Boolean Write (CFILE& f);
-  static Boolean Read (long org, word len, byte * buf);
+  static bool Append (byte * buf, word len);
+  static bool Write (CFILE& f);
+  static bool Read (long org, word len, byte * buf);
 };
 
 
@@ -78,7 +78,7 @@ class	VFILE : public IOBUF
 public:
   VFILE (const char * name, IOMODE mode = REA);
   ~VFILE (void);
-  static Boolean Exist (const char * name);
+  static bool Exist (const char * name);
   static const char * Next (void);
   long Mark (void) { return (BufMark+Ptr) - BegMark; }
   long Size (void) { return EndMark - BegMark; }

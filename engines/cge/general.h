@@ -70,8 +70,8 @@ public:
   void operator += (COUPLE c) { A += c.A; B += c.B; }
   COUPLE operator - (COUPLE c) { return COUPLE(A-c.A, B-c.B); }
   void operator -= (COUPLE c) { A -= c.A; B -= c.B; }
-  Boolean operator == (COUPLE c) { return ((A - c.A) | (B - c.B)) == 0; }
-  Boolean operator != (COUPLE c) { return ! (operator == (c)); }
+  bool operator == (COUPLE c) { return ((A - c.A) | (B - c.B)) == 0; }
+  bool operator != (COUPLE c) { return ! (operator == (c)); }
   void Split (signed char& a, signed char& b) { a = A; b = B; }
 };
 
@@ -103,7 +103,7 @@ class EMS;
 class EMM
 {
   friend EMS;
-  Boolean Test (void);
+  bool Test (void);
   long Top, Lim;
   EMS * List;
   int Han;
@@ -215,7 +215,7 @@ public:
   IOHAND (const char * name, IOMODE mode = REA, CRYPT crypt = NULL);
   IOHAND (IOMODE mode = REA, CRYPT * crpt = NULL);
   virtual ~IOHAND (void);
-  static Boolean Exist (const char * name);
+  static bool Exist (const char * name);
   word Read (void * buf, word len);
   word Write (void * buf, word len);
   long Mark (void);
@@ -250,7 +250,7 @@ int		TakeEnum	(const char ** tab, const char * txt);
 word		ChkSum		(void *m, word n);
 long		Timer		(void);
 long		TimerLimit	(word t);
-Boolean		TimerLimitGone	(long t);
+bool		TimerLimitGone	(long t);
 char *		MergeExt	(char * buf, const char * nam, const char * ext);
 char *		ForceExt	(char * buf, const char * nam, const char * ext);
 inline const char * ProgPath	(void);
@@ -258,7 +258,7 @@ const char *	ProgName	(const char * ext = NULL);
 int		DriveFixed	(unsigned drv);
 int 		DriveRemote	(unsigned drv);
 int 		DriveCD		(unsigned drv);
-Boolean		IsVga		(void);
+bool		IsVga		(void);
 
 EC void		_fqsort		(void *base, word nelem, word width,
 				int (*fcmp)(const void*, const void*));

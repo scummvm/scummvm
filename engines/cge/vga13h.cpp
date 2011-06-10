@@ -85,7 +85,7 @@ static	VgaRegBlk VideoMode[] = {
 		    { 0x00                     } };
 
 
-	Boolean		SpeedTest	= FALSE;
+	bool		SpeedTest	= false;
 	SEQ		Seq1[] = { { 0, 0, 0, 0, 0 } };
 	SEQ		Seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
 	SPRITE *	Sys		= NULL;
@@ -267,7 +267,7 @@ SPRITE * Locate (int ref)
 //--------------------------------------------------------------------------
 
 
-Boolean		HEART::Enable = FALSE;
+bool		HEART::Enable = false;
 word *		HEART::XTimer = NULL;
 
 
@@ -499,7 +499,7 @@ void SPRITE::MoveShapes (byte * buf)
 
 
 
-Boolean SPRITE::Works (SPRITE * spr)
+bool SPRITE::Works (SPRITE * spr)
 {
   if (spr) if (spr->Ext)
     {
@@ -509,10 +509,10 @@ Boolean SPRITE::Works (SPRITE * spr)
 	  c += spr->TakePtr;
 	  if (c->Ref == Ref)
 	    if (c->Com != SNLABEL || (c->Val == 0 || c->Val == Now))
-	      return TRUE;
+	      return true;
 	}
     }
-  return FALSE;
+  return false;
 }
 
 
@@ -535,11 +535,11 @@ SEQ * SPRITE::SetSeq (SEQ * seq)
 
 
 
-Boolean SPRITE::SeqTest (int n)
+bool SPRITE::SeqTest (int n)
 {
   if (n >= 0) return (SeqPtr == n);
   if (Ext) return (Ext->Seq[SeqPtr].Next == SeqPtr);
-  return TRUE;
+  return true;
 }
 
 
@@ -584,8 +584,8 @@ SPRITE * SPRITE::Expand (void)
 {
   if (! Ext)
     {
-      Boolean enbl = HEART::Enable;
-      HEART::Enable = FALSE;
+      bool enbl = HEART::Enable;
+      HEART::Enable = false;
       if ((Ext = new SPREXT) == NULL) DROP("No core", NULL);
       if (*File)
 	{
@@ -732,7 +732,7 @@ SPRITE * SPRITE::Contract (void)
 
 
 
-SPRITE * SPRITE::BackShow (Boolean fast)
+SPRITE * SPRITE::BackShow (bool fast)
 {
   Expand();
   Show(2);
@@ -787,7 +787,7 @@ void SPRITE::MakeXlat (byte * x)
 
       if (Flags.Xlat) KillXlat();
       for (b = Ext->ShpList; *b; b ++) (*b)->M = x;
-      Flags.Xlat = TRUE;
+      Flags.Xlat = true;
     }
 }
 
@@ -808,7 +808,7 @@ void SPRITE::KillXlat (void)
 	  case FAR_MEM  : farfree(m); break;
 	}
       for (b = Ext->ShpList; *b; b ++) (*b)->M = NULL;
-      Flags.Xlat = FALSE;
+      Flags.Xlat = false;
     }
 }
 
@@ -953,7 +953,7 @@ SPRITE * SpriteAt (int x, int y)
 
 
 
-QUEUE::QUEUE (Boolean show)
+QUEUE::QUEUE (bool show)
 : Head(NULL), Tail(NULL), Show(show)
 {
 }
@@ -1090,9 +1090,9 @@ const char *	VGA::Msg = NULL;
 const char *	VGA::Nam = NULL;
 DAC *	VGA::OldColors = NULL;
 DAC *	VGA::NewColors = NULL;
-Boolean		VGA::SetPal = FALSE;
+bool		VGA::SetPal = false;
 int		VGA::Mono = 0;
-QUEUE		VGA::ShowQ = TRUE, VGA::SpareQ = FALSE;
+QUEUE		VGA::ShowQ = true, VGA::SpareQ = false;
 byte *	VGA::Page[4] = { (byte *) MK_FP(SCR_SEG, 0x0000),
 				 (byte *) MK_FP(SCR_SEG, 0x4000),
 				 (byte *) MK_FP(SCR_SEG, 0x8000),
@@ -1105,7 +1105,7 @@ VGA::VGA (int mode)
 : FrmCnt(0)
 {
   extern const char Copr[];
-  Boolean std = TRUE;
+  bool std = true;
   int i;
   for (i = 10; i < 20; i ++)
     {
@@ -1114,7 +1114,7 @@ VGA::VGA (int mode)
 	{
 	  puts(txt);
 	  #ifndef DEBUG
-	  std = FALSE;
+	  std = false;
 	  #endif
 	}
     }
@@ -1187,7 +1187,7 @@ void VGA::SetStatAdr (void)
 
 
 #pragma argsused
-void VGA::WaitVR (Boolean on)
+void VGA::WaitVR (bool on)
 {
   _DX = StatAdr;
   _AH = (on) ? 0x00 : 0x08;
@@ -1348,7 +1348,7 @@ void VGA::SetColors (DAC * tab, int lum)
       asm	cmp	di,cx
       asm	jb	mono
     }
-  SetPal = TRUE;
+  SetPal = true;
 }
 
 
@@ -1470,7 +1470,7 @@ void VGA::Update (void)
   if (SetPal)
     {
       UpdateColors();
-      SetPal = FALSE;
+      SetPal = false;
     }
 }
 
