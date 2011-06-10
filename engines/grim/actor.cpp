@@ -397,7 +397,11 @@ bool Actor::restoreState(SaveGame *savedState) {
 			if (!scene || scene->getName() != setName) {
 				scene = g_grim->findScene(setName);
 			}
-			addShadowPlane(secName.c_str(), scene, i);
+			if (scene) {
+				addShadowPlane(secName.c_str(), scene, i);
+			} else {
+				warning("%s: No scene \"%s\" found, cannot restore shadow on sector \"%s\"", getName().c_str(), setName.c_str(), secName.c_str());
+			}
 		}
 
 		shadow.shadowMaskSize = savedState->readLESint32();
