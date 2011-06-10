@@ -28,6 +28,7 @@
 #include "common/savefile.h"
 #include "common/memstream.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
