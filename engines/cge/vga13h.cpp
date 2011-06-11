@@ -585,7 +585,8 @@ void SPRITE::SetName (char * n)
       if (n)
 	{
 	  if ((Ext->Name = new char[strlen(n)+1]) != NULL) strcpy(Ext->Name, n);
-	  else VGA::Exit("No core", n);
+	  else 
+		  error("No core [%s]", n);
 	}
     }
 }
@@ -624,9 +625,7 @@ SPRITE * SPRITE::Expand (void)
 	    {
 	      INI_FILE sprf(fname);
 	      if (! OK(sprf))
-		{
-		  VGA::Exit("Bad SPR", fname);
-		}
+			  error("Bad SPR [%s]", fname);
 
 	      while ((len = sprf.Read((uint8*)line)) != 0)
 		{
@@ -649,7 +648,7 @@ SPRITE * SPRITE::Expand (void)
 				  {
 			       seq = (SEQ *) realloc(seq, (seqcnt + 1) * sizeof(*seq));
 			       if (seq == NULL)
-				 VGA::Exit("No core", fname);
+				 error("No core [%s]", fname);
 			       SEQ * s = &seq[seqcnt ++];
 			       s->Now  = atoi(strtok(NULL, " \t,;/"));
 			       if (s->Now > maxnow) maxnow = s->Now;
@@ -670,12 +669,13 @@ SPRITE * SPRITE::Expand (void)
 			       if (NearPtr != NO_PTR)
 				 {
 				   nea = (SNAIL::COM *) realloc(nea, (neacnt + 1) * sizeof(*nea));
-				   if (nea == NULL) VGA::Exit("No core", fname);
+				   if (nea == NULL)
+					   error("No core [%s]", fname);
 				   else
 				     {
 				       SNAIL::COM * c = &nea[neacnt ++];
 				       if ((c->Com = (SNCOM) TakeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
-					 VGA::Exit(NumStr("Bad NEAR in ######", lcnt), fname);
+					 error("%s [%s]", NumStr("Bad NEAR in ######", lcnt), fname);
 				       c->Ref = atoi(strtok(NULL, " \t,;/"));
 				       c->Val = atoi(strtok(NULL, " \t,;/"));
 				       c->Ptr = NULL;
@@ -688,12 +688,13 @@ SPRITE * SPRITE::Expand (void)
 			       if (TakePtr != NO_PTR)
 				 {
 				   tak = (SNAIL::COM *) realloc(tak, (takcnt + 1) * sizeof(*tak));
-				   if (tak == NULL) VGA::Exit("No core", fname);
+				   if (tak == NULL)
+					   error("No core [%s]", fname);
 				   else
 				     {
 				       SNAIL::COM * c = &tak[takcnt ++];
 				       if ((c->Com = (SNCOM) TakeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
-					 VGA::Exit(NumStr("Bad NEAR in ######", lcnt), fname);
+					 error("%s [%s]", NumStr("Bad NEAR in ######", lcnt), fname);
 				       c->Ref = atoi(strtok(NULL, " \t,;/"));
 				       c->Val = atoi(strtok(NULL, " \t,;/"));
 				       c->Ptr = NULL;
@@ -711,8 +712,10 @@ SPRITE * SPRITE::Expand (void)
 	  shplist[shpcnt] = NULL;
 	  if (seq)
 	    {
-	      if (maxnow >= shpcnt) VGA::Exit("Bad PHASE in SEQ", fname);
-	      if (maxnxt >= seqcnt) VGA::Exit("Bad JUMP in SEQ", fname);
+	      if (maxnow >= shpcnt)
+			  error("Bad PHASE in SEQ [%s]", fname);
+	      if (maxnxt >= seqcnt)
+			  error("Bad JUMP in SEQ [%s]", fname);
 	      SetSeq(seq);
 	    }
 	  else SetSeq((ShpCnt == 1) ? Seq1 : Seq2);
@@ -938,10 +941,12 @@ BMP_PTR SPRITE::Ghost (void)
   if (e->b1)
     {
       BMP_PTR bmp = new BITMAP(0, 0, (uint8 *)NULL);
-      if (bmp == NULL) VGA::Exit("No core");
+      if (bmp == NULL)
+		  error("No core");
       bmp->W = e->b1->W;
       bmp->H = e->b1->H;
-      if ((bmp->B = farnew(HideDesc, bmp->H)) == NULL) VGA::Exit("No Core");
+      if ((bmp->B = farnew(HideDesc, bmp->H)) == NULL)
+		  error("No Core");
       bmp->V = (uint8 *) memcpy(bmp->B, e->b1->B, sizeof(HideDesc) * bmp->H);
       // TODO offset correctly in the surface using y1 pitch and x1 and not via offset segment
 	  //bmp->M = (uint8 *) MK_FP(e->y1, e->x1);
@@ -1589,42 +1594,7 @@ void VGA::CopyPage (uint16 d, uint16 s)
   */
 }
 
-
-
-
-
-
-
-void VGA::Exit (const char * txt, const char * name)
-{
-	// TODO Properly exit
-	/*
-  Msg = txt;
-  Nam = name;
- 
-	#ifdef REPORT
-    wtom(coreleft(), Report + NREP, 10, 5);
-    dwtom(farcoreleft(), Report + FREP, 10, 6);
-  #endif
-  exit(0);
-  */
-}
-
-
-
-
-void VGA::Exit (int tref, const char * name)
-{
-  Exit(Text[tref], name);
-}
-
-
-
-
 //--------------------------------------------------------------------------
-
-
-
 
 void BITMAP::XShow (int x, int y)
 {

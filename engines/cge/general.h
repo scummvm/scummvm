@@ -49,7 +49,7 @@ namespace CGE {
 
 
 
-enum	CPU		{ _8086, _80186, _80286, _80386, _80486 };
+//enum	CPU		{ _8086, _80186, _80286, _80386, _80486 };
 enum	MEM_TYPE	{ BAD_MEM, EMS_MEM, NEAR_MEM, FAR_MEM };
 enum	ALLOC_MODE	{ FIRST_FIT, BEST_FIT, LAST_FIT };
 enum	IOMODE		{ REA, WRI, UPD };
@@ -244,7 +244,7 @@ CRYPT		RCrypt;
 MEM_TYPE	MemType		(void *mem);
 unsigned	FastRand	(void);
 unsigned	FastRand	(unsigned s);
-CPU		Cpu		(void);
+//CPU		Cpu		(void);
 ALLOC_MODE	SetAllocMode	(ALLOC_MODE am);
 uint16		atow		(const char * a);
 uint16		xtow		(const char * x);
