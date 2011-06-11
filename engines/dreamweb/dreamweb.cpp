@@ -271,6 +271,12 @@ void DreamWebEngine::setPalette(const uint8 *data, uint start, uint count) {
 
 
 void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int h) {
+	if (y + h > 200)
+		h = 200 - y;
+	if (x + w > 320)
+		w = 320 - x;
+	if (h <= 0 || w <= 0)
+		return;
 	_system->copyRectToScreen(src, pitch, x, y, w, h);
 }
 
@@ -318,8 +324,6 @@ void multiput(Context &context) {
 void multidump(Context &context) {
 	context.ds = context.data.word(kWorkspace);
 	int w = (uint8)context.cl, h = (uint8)context.ch;
-	if (w == 0 || h == 0)
-		return;
 	int x = (int16)context.di, y = (int16)context.bx;
 	unsigned offset = x + y * kScreenwidth;
 	//debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)context.ds, x, y, offset);
