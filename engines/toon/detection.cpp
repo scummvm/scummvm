@@ -120,10 +120,10 @@ static const char * const directoryGlobs[] = {
 class ToonMetaEngine : public AdvancedMetaEngine {
 public:
 	ToonMetaEngine() : AdvancedMetaEngine(Toon::gameDescriptions, sizeof(ADGameDescription), toonGames) {
-		params.singleid = "toon";
-		params.fileBasedFallback = Toon::fileBasedFallback;
-		params.depth = 3;
-		params.directoryGlobs = directoryGlobs;
+		_singleid = "toon";
+		_fileBasedFallback = Toon::fileBasedFallback;
+		_maxScanDepth = 3;
+		_directoryGlobs = directoryGlobs;
 	}
 	virtual const char *getName() const {
 		return "Toon";

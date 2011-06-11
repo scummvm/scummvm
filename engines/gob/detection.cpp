@@ -89,10 +89,10 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 class GobMetaEngine : public AdvancedMetaEngine {
 public:
 	GobMetaEngine() : AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
-		params.obsoleteList = obsoleteGameIDsTable;
-		params.singleid = "gob";
-		params.fileBasedFallback = Gob::fileBased;
-		params.guioptions = Common::GUIO_NOLAUNCHLOAD;
+		_obsoleteList = obsoleteGameIDsTable;
+		_singleid = "gob";
+		_fileBasedFallback = Gob::fileBased;
+		_guioptions = Common::GUIO_NOLAUNCHLOAD;
 	}
 
 	virtual const char *getName() const {

@@ -118,97 +118,6 @@ enum ADFlags {
 	kADFlagUseExtraAsHint = (1 << 2)
 };
 
-/**
- * A structure containing all parameters for the AdvancedDetector.
- * Typically, an engine will have a single instance of this which is
- * used by its AdvancedMetaEngine subclass as a parameter to the
- * primary AdvancedMetaEngine constructor.
- */
-struct ADParams {
-	/**
-	 * Pointer to an array of objects which are either ADGameDescription
-	 * or superset structures (i.e. start with an ADGameDescription member.
-	 * The list is terminated by an entry with a gameid equal to 0
-	 * (see AD_TABLE_END_MARKER).
-	 */
-	const byte *descs;
-
-	/**
-	 * The size of a single entry of the above descs array. Always
-	 * must be >= sizeof(ADGameDescription).
-	 */
-	uint descItemSize;
-
-	/**
-	 * The number of bytes to compute MD5 sum for. The AdvancedDetector
-	 * is primarily based on computing and matching MD5 checksums of files.
-	 * Since doing that for large files can be slow, it can be restricted
-	 * to a subset of all files.
-	 * Typically this will be set to something between 5 and 50 kilobyte,
-	 * but arbitrary non-zero values are possible.
-	 */
-	uint md5Bytes;
-
-	/**
-	 * A list of all gameids (and their corresponding descriptions) supported
-	 * by this engine.
-	 */
-	const PlainGameDescriptor *gameDescriptors;
-
-	/**
-	 * Structure for autoupgrading obsolete targets (optional).
-	 *
-	 * @todo Properly explain this.
-	 */
-	const ADObsoleteGameID *obsoleteList;
-
-	/**
-	 * Name of single gameid (optional).
-	 *
-	 * @todo Properly explain this -- what does it do?
-	 */
-	const char *singleid;
-
-	/**
-	 * List of files for file-based fallback detection (optional).
-	 * This is used if the regular MD5 based detection failed to
-	 * detect anything.
-	 * As usual this list is terminated by an all-zero entry.
-	 *
-	 * @todo Properly explain this
-	 */
-	const ADFileBasedFallback *fileBasedFallback;
-
-	/**
-	 * A bitmask of flags which can be used to configure the behavior
-	 * of the AdvancedDetector. Refer to ADFlags for a list of flags
-	 * that can be ORed together and passed here.
-	 */
-	uint32 flags;
-
-	/**
-	 * A bitmask of game GUI options which will be added to each
-	 * entry in addition to per-game options. Refer to GameGUIOption
-	 * enum for the list.
-	 */
-	uint32 guioptions;
-
-	/**
-	 * Maximum depth of directories to look up
-	 * If set to 0, the depth is 1 level
-	 */
-	uint32 depth;
-
-	/**
-	 * Case-insensitive list of directory globs which could be used for
-	 * going deeper int directory structure.
-	 * @see String::matchString() method for format description.
-	 *
-	 * @note Last item must be 0
-	 */
-	const char * const *directoryGlobs;
-};
-
 
 namespace AdvancedDetector {
 
@@ -219,7 +128,7 @@ namespace AdvancedDetector {
  */
 GameDescriptor findGameID(
 	const char *gameid,
-	const PlainGameDescriptor *gameDescriptors,
+	const PlainGameDescriptor *gameids,
 	const ADObsoleteGameID *obsoleteList = 0
 	);
 
@@ -230,10 +139,91 @@ GameDescriptor findGameID(
  */
 class AdvancedMetaEngine : public MetaEngine {
 protected:
-	ADParams params;
+	/**
+	 * Pointer to an array of objects which are either ADGameDescription
+	 * or superset structures (i.e. start with an ADGameDescription member.
+	 * The list is terminated by an entry with a gameid equal to 0
+	 * (see AD_TABLE_END_MARKER).
+	 */
+	const byte *_gameDescriptors;
+
+	/**
+	 * The size of a single entry of the above descs array. Always
+	 * must be >= sizeof(ADGameDescription).
+	 */
+	uint _descItemSize;
+
+	/**
+	 * The number of bytes to compute MD5 sum for. The AdvancedDetector
+	 * is primarily based on computing and matching MD5 checksums of files.
+	 * Since doing that for large files can be slow, it can be restricted
+	 * to a subset of all files.
+	 * Typically this will be set to something between 5 and 50 kilobyte,
+	 * but arbitrary non-zero values are possible.
+	 */
+	uint _md5Bytes;
+
+	/**
+	 * A list of all gameids (and their corresponding descriptions) supported
+	 * by this engine.
+	 */
+	const PlainGameDescriptor *_gameids;
+
+	/**
+	 * Structure for autoupgrading obsolete targets (optional).
+	 *
+	 * @todo Properly explain this.
+	 */
+	const ADObsoleteGameID *_obsoleteList;
+
+	/**
+	 * Name of single gameid (optional).
+	 *
+	 * @todo Properly explain this -- what does it do?
+	 */
+	const char *_singleid;
+
+	/**
+	 * List of files for file-based fallback detection (optional).
+	 * This is used if the regular MD5 based detection failed to
+	 * detect anything.
+	 * As usual this list is terminated by an all-zero entry.
+	 *
+	 * @todo Properly explain this
+	 */
+	const ADFileBasedFallback *_fileBasedFallback;
+
+	/**
+	 * A bitmask of flags which can be used to configure the behavior
+	 * of the AdvancedDetector. Refer to ADFlags for a list of flags
+	 * that can be ORed together and passed here.
+	 */
+	uint32 _flags;
+
+	/**
+	 * A bitmask of game GUI options which will be added to each
+	 * entry in addition to per-game options. Refer to GameGUIOption
+	 * enum for the list.
+	 */
+	uint32 _guioptions;
+
+	/**
+	 * Maximum depth of directories to look up.
+	 * If set to 0, the depth is 1 level
+	 */
+	uint32 _maxScanDepth;
+
+	/**
+	 * Case-insensitive list of directory globs which could be used for
+	 * going deeper into the directory structure.
+	 * @see String::matchString() method for format description.
+	 *
+	 * @note Last item must be 0
+	 */
+	const char * const *_directoryGlobs;
+
 public:
-	AdvancedMetaEngine(const ADParams &dp) : params(dp) {}
-	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameDescriptors);
+	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids);
 
 	/**
 	 * Returns list of targets supported by the engine.

@@ -115,8 +115,8 @@ static const ADGameDescription tuckerDemoGameDescription = {
 class TuckerMetaEngine : public AdvancedMetaEngine {
 public:
 	TuckerMetaEngine() : AdvancedMetaEngine(tuckerGameDescriptions, sizeof(ADGameDescription), tuckerGames) {
-		params.md5Bytes = 512;
-		params.singleid = "tucker";
+		_md5Bytes = 512;
+		_singleid = "tucker";
 	}
 
 	virtual const char *getName() const {

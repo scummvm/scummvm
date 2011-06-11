@@ -161,10 +161,10 @@ static const char *directoryGlobs[] = {
 class MohawkMetaEngine : public AdvancedMetaEngine {
 public:
 	MohawkMetaEngine() : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames) {
-		params.singleid = "mohawk";
-		params.fileBasedFallback = Mohawk::fileBased;
-		params.depth = 2;
-		params.directoryGlobs = directoryGlobs;
+		_singleid = "mohawk";
+		_fileBasedFallback = Mohawk::fileBased;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 	virtual const char *getName() const {
 		return "Mohawk";

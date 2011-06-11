@@ -205,9 +205,9 @@ static const GroovieGameDescription gameDescriptions[] = {
 class GroovieMetaEngine : public AdvancedMetaEngine {
 public:
 	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames) {
-		params.singleid = "groovie";
-		params.flags = kADFlagUseExtraAsHint;
-		params.guioptions = Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX;
+		_singleid = "groovie";
+		_flags = kADFlagUseExtraAsHint;
+		_guioptions = Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX;
 	}
 
 	const char *getName() const {

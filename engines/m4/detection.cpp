@@ -387,10 +387,10 @@ static const char *directoryGlobs[] = {
 class M4MetaEngine : public AdvancedMetaEngine {
 public:
 	M4MetaEngine() : AdvancedMetaEngine(M4::gameDescriptions, sizeof(M4::M4GameDescription), m4Games) {
-		params.singleid = "m4";
-		params.guioptions = Common::GUIO_NOMIDI;
-		params.depth = 2;
-		params.directoryGlobs = directoryGlobs;
+		_singleid = "m4";
+		_guioptions = Common::GUIO_NOMIDI;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	virtual const char *getName() const {

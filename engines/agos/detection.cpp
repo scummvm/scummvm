@@ -92,10 +92,10 @@ using namespace AGOS;
 class AgosMetaEngine : public AdvancedMetaEngine {
 public:
 	AgosMetaEngine() : AdvancedMetaEngine(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
-		params.obsoleteList = obsoleteGameIDsTable;
-		params.guioptions = Common::GUIO_NOLAUNCHLOAD;
-		params.depth = 2;
-		params.directoryGlobs = directoryGlobs;
+		_obsoleteList = obsoleteGameIDsTable;
+		_guioptions = Common::GUIO_NOLAUNCHLOAD;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	virtual const char *getName() const {

@@ -77,7 +77,7 @@ static const PlainGameDescriptor tinselGames[] = {
 class TinselMetaEngine : public AdvancedMetaEngine {
 public:
 	TinselMetaEngine() : AdvancedMetaEngine(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
-		params.singleid = "tinsel";
+		_singleid = "tinsel";
 	}
 
 	virtual const char *getName() const {
@@ -242,7 +242,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 
 				if (testFile.open(allFiles[fname])) {
 					tmp.size = (int32)testFile.size();
-					tmp.md5 = computeStreamMD5AsString(testFile, params.md5Bytes);
+					tmp.md5 = computeStreamMD5AsString(testFile, _md5Bytes);
 				} else {
 					tmp.size = -1;
 				}
@@ -262,11 +262,6 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 
 		bool fileMissing = false;
 
-		if ((params.flags & kADFlagUseExtraAsHint) && !extra.empty() && g->desc.extra != extra)
-			continue;
-
-		bool allFilesPresent = true;
-
 		// Try to match all files for this game
 		for (fileDesc = g->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
 			// Get the next filename, stripping off any '1' suffix character
@@ -284,7 +279,6 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 
 			if (!filesSizeMD5.contains(tstr)) {
 				fileMissing = true;
-				allFilesPresent = false;
 				break;
 			}
 

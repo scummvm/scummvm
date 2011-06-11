@@ -220,8 +220,8 @@ static const CRUISEGameDescription gameDescriptions[] = {
 class CruiseMetaEngine : public AdvancedMetaEngine {
 public:
 	CruiseMetaEngine() : AdvancedMetaEngine(Cruise::gameDescriptions, sizeof(Cruise::CRUISEGameDescription), cruiseGames) {
-		params.singleid = "cruise";
-		params.guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
+		_singleid = "cruise";
+		_guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
 	}
 
 	virtual const char *getName() const {

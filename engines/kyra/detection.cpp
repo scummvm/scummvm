@@ -52,9 +52,9 @@ const char * const directoryGlobs[] = {
 class KyraMetaEngine : public AdvancedMetaEngine {
 public:
 	KyraMetaEngine() : AdvancedMetaEngine(adGameDescs, sizeof(KYRAGameDescription), gameList) {
-		params.md5Bytes = 1024 * 1024;
-		params.depth = 2;
-		params.directoryGlobs = directoryGlobs;
+		_md5Bytes = 1024 * 1024;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 	const char *getName() const {
 		return "Kyra";

@@ -104,8 +104,8 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 class SagaMetaEngine : public AdvancedMetaEngine {
 public:
 	SagaMetaEngine() : AdvancedMetaEngine(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
-		params.obsoleteList = obsoleteGameIDsTable;
-		params.singleid = "saga";
+		_obsoleteList = obsoleteGameIDsTable;
+		_singleid = "saga";
 	}
 
 	virtual const char *getName() const {

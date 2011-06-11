@@ -129,12 +129,12 @@ static const char *directoryGlobs[] = {
 class ToucheMetaEngine : public AdvancedMetaEngine {
 public:
 	ToucheMetaEngine() : AdvancedMetaEngine(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
-		params.md5Bytes = 4096;
-		params.singleid = "touche";
-		params.fileBasedFallback = Touche::fileBasedFallback;
-		params.flags = kADFlagPrintWarningOnFileBasedFallback;
-		params.depth = 2;
-		params.directoryGlobs = directoryGlobs;
+		_md5Bytes = 4096;
+		_singleid = "touche";
+		_fileBasedFallback = Touche::fileBasedFallback;
+		_flags = kADFlagPrintWarningOnFileBasedFallback;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 	virtual const char *getName() const {
 		return "Touche";

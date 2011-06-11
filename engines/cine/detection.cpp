@@ -63,9 +63,9 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
 	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
-		params.obsoleteList = obsoleteGameIDsTable;
-		params.singleid = "cine";
-		params.guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
+		_obsoleteList = obsoleteGameIDsTable;
+		_singleid = "cine";
+		_guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
 	}
 
 	virtual const char *getName() const {
