@@ -177,17 +177,17 @@ struct Flags {
 		_z = v == 0;
 	}
 
-	inline void update_o(uint8 v, uint8 old) {
-		_o = (old & 0x80) != (v & 0x80);
-	}
-
 	inline void update(uint16 v) {
 		_s = v & 0x8000;
 		_z = v == 0;
 	}
 
+	inline void update_o(uint8 v, uint8 old) {
+		_o = (old & 0x80) != (v & 0x80);
+	}
+
 	inline void update_o(uint16 v, uint16 old) {
-		_o = (old & 0x8000) == (v & 0x8000);
+		_o = (old & 0x8000) != (v & 0x8000);
 	}
 };
 
