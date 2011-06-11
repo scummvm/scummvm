@@ -130,16 +130,16 @@ static reg_t read_var(EngineState *s, int type, int index) {
 				if (solution.type == WORKAROUND_NONE) {
 #ifdef RELEASE_BUILD
 					// If we are running an official ScummVM release -> fake 0 in unknown cases
-					warning("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
-					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
-					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
+					warning("Uninitialized read for temp %d from method %s::%s (room %d, script %d, localCall %x)", 
+					index, originReply.objectName.c_str(), originReply.methodName.c_str(), s->currentRoomNumber(),
+					originReply.scriptNr, originReply.localCallOffset);
 
 					s->variables[type][index] = NULL_REG;
 					break;
 #else
-					error("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
-					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
-					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
+					error("Uninitialized read for temp %d from method %s::%s (room %d, script %d, localCall %x)", 
+					index, originReply.objectName.c_str(), originReply.methodName.c_str(), s->currentRoomNumber(),
+					originReply.scriptNr, originReply.localCallOffset);
 #endif
 				}
 				assert(solution.type == WORKAROUND_FAKE);
@@ -366,9 +366,9 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		switch (solution.type) {
 		case WORKAROUND_NONE:
 			kernel->signatureDebug(kernelCall.signature, argc, argv);
-			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, room %d, localCall 0x%x)", 
+			error("[VM] k%s[%x]: signature mismatch via method %s::%s (room %d, script %d, localCall 0x%x)", 
 				kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), 
-				originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
+				s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
 			break;
 		case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
 			return;
@@ -418,13 +418,13 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 				int callNameLen = strlen(kernelCall.name);
 				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
 					const char *subCallName = kernelSubCall.name + callNameLen;
-					error("[VM] k%s(%s): signature mismatch via method %s::%s (script %d, room %d, localCall %x)", 
+					error("[VM] k%s(%s): signature mismatch via method %s::%s (room %d, script %d, localCall %x)", 
 						kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), 
-						originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
+						s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
 				}
-				error("[VM] k%s: signature mismatch via method %s::%s (script %d, room %d, localCall %x)", 
+				error("[VM] k%s: signature mismatch via method %s::%s (room %d, script %d, localCall %x)", 
 					kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), 
-					originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
+					s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
 				break;
 			}
 			case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
