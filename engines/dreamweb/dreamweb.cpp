@@ -689,6 +689,7 @@ endline:
 	context.di = context.pop();
 	context.cx = context.pop();
 
+	assert((uint16)context.cx <= 480);
 	uint8 *dst = (uint8 *)s->getBasePtr(0, 480 - (uint16)context.cx);
 	memset(dst, 0, 640);
 
