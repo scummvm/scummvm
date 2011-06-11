@@ -36,10 +36,11 @@
   #include	"cge/drop.h"
 #endif
 
-#include	<alloc.h>
+//#include	<alloc.h>
+//#include	<dir.h>
+//#include	<mem.h>
 #include	<dos.h>
-#include	<dir.h>
-#include	<mem.h>
+#include "common/system.h"
 
 namespace CGE {
 
