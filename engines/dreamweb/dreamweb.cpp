@@ -612,7 +612,6 @@ void readabyte(Context & context);
 
 void showpcx(Context &context) {
 	Graphics::Surface *s = g_system->lockScreen();
-	int y = 0;
 
 	openfile(context);
 	context.ds = context.data.word(kWorkspace);
@@ -688,11 +687,9 @@ normal:
 
 endline:
 	context.di = context.pop();
-	context.push(context.si);
-	context.si = 0+(228*13)+32+60;
-	context.ds = context.data.word(kBuffers);
+	context.cx = context.pop();
 
-	uint8 *dst = (uint8 *)s->getBasePtr(0, y);
+	uint8 *dst = (uint8 *)s->getBasePtr(0, 480 - (uint16)context.cx);
 	memset(dst, 0, 640);
 
 	for (int i = 0; i < 320; i++) {
@@ -705,16 +702,13 @@ endline:
 		}
 	}
 
-	context.si = context.pop();
-	context.cx = context.pop();
-
-	y++;
-
 	if (--context.cx) goto convertpcx;
 
 	closefile(context);
 
 	g_system->unlockScreen();
+
+	// TODO: This is probably not the right place to do this
 	g_system->updateScreen();
 }
 
