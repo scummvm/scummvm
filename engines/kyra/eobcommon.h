@@ -435,6 +435,13 @@ protected:
 	const int8 *_flightObjShpMap;
 	const int8 *_flightObjSclIndex;
 
+	const uint8 *_flightObjAnimTiles;
+	const uint8 *_flightObjAnimIndex;
+	const uint8 *_flightObjAnimDim;
+	const uint8 *_flightObjAnimTbl1;
+	const uint8 *_flightObjAnimTbl2;
+	const uint8 *_flightObjAnimTbl3;
+
 	// Monsters
 	void loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex);
 	void releaseMonsterShapes(int first, int num);

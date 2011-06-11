@@ -322,6 +322,13 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseMagicStrings6, kTypeStringList, true },
 	{ kEobBaseMagicStrings7, kTypeStringList, true },
 	{ kEobBaseMagicStrings8, kTypeStringList, true },
+	
+	{ kEobBaseFlightObjAnimTiles, kTypeRawData, false },
+	{ kEobBaseFlightObjAnimIndex, kTypeRawData, false },
+	{ kEobBaseFlightObjAnimDim, kTypeRawData, false },
+	{ kEobBaseFlightObjAnimTbl1, kTypeRawData, false },
+	{ kEobBaseFlightObjAnimTbl2, kTypeRawData, false },
+	{ kEobBaseFlightObjAnimTbl3, kTypeRawData, false },
 
 	{ kEobBaseSparkDefSteps, kTypeRawData, false },
 	{ kEobBaseSparkDefSubSteps, kTypeRawData, false },
@@ -1412,6 +1419,18 @@ const char *getIdString(const int id) {
 		return "kEobBaseMagicStrings7";
 	case kEobBaseMagicStrings8:
 		return "kEobBaseMagicStrings8";
+	case kEobBaseFlightObjAnimTiles:
+		return "kEobBaseFlightObjAnimTiles";
+	case kEobBaseFlightObjAnimIndex:
+		return "kEobBaseFlightObjAnimIndex";
+	case kEobBaseFlightObjAnimDim:
+		return "kEobBaseFlightObjAnimDim";
+	case kEobBaseFlightObjAnimTbl1:
+		return "kEobBaseFlightObjAnimTbl1";
+	case kEobBaseFlightObjAnimTbl2:
+		return "kEobBaseFlightObjAnimTbl2";
+	case kEobBaseFlightObjAnimTbl3:
+		return "kEobBaseFlightObjAnimTbl3";
 	case kEobBaseSparkDefSteps:
 		return "kEobBaseSparkDefSteps";
 	case kEobBaseSparkDefSubSteps:

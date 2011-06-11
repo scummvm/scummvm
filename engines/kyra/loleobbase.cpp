@@ -36,6 +36,7 @@ LolEobBaseEngine::LolEobBaseEngine(OSystem *system, const GameFlags &flags) : Ky
 
 	_sceneXoffset = 0;
 	_sceneShpDim = 5;
+	
 	_activeButtons = 0;
 
 	_currentLevel = 0;
@@ -150,6 +151,8 @@ LolEobBaseEngine::~LolEobBaseEngine() {
 }
 
 Common::Error LolEobBaseEngine::init() {
+	gui_resetButtonList();
+
 	_levelDecorationProperties = new LevelDecorationProperty[100];
 	memset(_levelDecorationProperties, 0, 100 * sizeof(LevelDecorationProperty));
 	_levelDecorationShapes = new uint8*[400];

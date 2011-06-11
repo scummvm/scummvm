@@ -323,6 +323,13 @@ enum kExtractID {
 	kEobBaseMagicStrings7,
 	kEobBaseMagicStrings8,
 
+	kEobBaseFlightObjAnimTiles,
+	kEobBaseFlightObjAnimIndex,
+	kEobBaseFlightObjAnimDim,
+	kEobBaseFlightObjAnimTbl1,
+	kEobBaseFlightObjAnimTbl2,
+	kEobBaseFlightObjAnimTbl3,
+
 	kEobBaseSparkDefSteps,
 	kEobBaseSparkDefSubSteps,
 	kEobBaseSparkDefShift,

@@ -246,8 +246,6 @@ Common::Error EobCoreEngine::init() {
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
 
-	_activeButtons = 0;
-
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	if (!_staticres->init())
