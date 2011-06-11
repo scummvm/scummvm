@@ -1568,6 +1568,36 @@ void AgiEngine::cmd_shake_screen(uint8 *p) {
 }
 
 void AgiEngine::setupOpcodes() {
+	AgiCondCommand condTmp[] = {
+		&AgiEngine::cond_end,				// 00
+		&AgiEngine::cond_equal,				// 01
+		&AgiEngine::cond_equalv,			// 02
+		&AgiEngine::cond_less,				// 03
+		&AgiEngine::cond_lessv,				// 04
+		&AgiEngine::cond_greater,			// 05
+		&AgiEngine::cond_greaterv,			// 06
+		&AgiEngine::cond_isset,				// 07
+		&AgiEngine::cond_issetv,			// 08
+		&AgiEngine::cond_has,				// 09
+		&AgiEngine::cond_obj_in_room,		// 0A
+		&AgiEngine::cond_posn,				// 0B
+		&AgiEngine::cond_controller,		// 0C
+		&AgiEngine::cond_have_key,			// 0D
+		&AgiEngine::cond_said,				// 0E
+		&AgiEngine::cond_compare_strings,	// 0F
+		&AgiEngine::cond_obj_in_box,		// 10
+		&AgiEngine::cond_center_posn,		// 11
+		&AgiEngine::cond_right_posn,		// 12
+		&AgiEngine::cond_unknown_13			// 13
+	};
+	for (int i = 0; i < 256; ++i)
+		_agiCondCommands[i] = &AgiEngine::cond_unknown;
+	for (int i = 0; i < ARRAYSIZE(condTmp); ++i)
+		_agiCondCommands[i] = condTmp[i];
+	_agiCondCommands[0xFF] = &AgiEngine::cond_end;
+	_agiCondCommands[0xFD] = &AgiEngine::cond_not;
+	_agiCondCommands[0xFC] = &AgiEngine::cond_or;
+
 	AgiCommand tmp[] = {
 		NULL,			// 0x00
 		&AgiEngine::cmd_increment,

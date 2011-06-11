@@ -26,8 +26,8 @@
 
 namespace Agi {
 
-#define ip (_game.logics[lognum].cIP)
-#define code (_game.logics[lognum].data)
+#define ip (_curLogic->cIP)
+#define code (_curLogic->data)
 
 #define testEqual(v1, v2)		(getvar(v1) == (v2))
 #define testLess(v1, v2)		(getvar(v1) < (v2))
@@ -35,6 +35,150 @@ namespace Agi {
 #define testIsSet(flag)		(getflag(flag))
 #define testHas(obj)			(objectGetLocation(obj) == EGO_OWNED)
 #define testObjInRoom(obj, v)	(objectGetLocation(obj) == getvar(v))
+
+int AgiEngine::cond_end(uint8 *p) {
+	_endTest = true;
+	return true;
+}
+
+int AgiEngine::cond_equal(uint8 *p) {
+	if (p[0] == 11)
+		_timerHack++;
+	ip += 2;
+	return testEqual(p[0], p[1]);
+}
+
+int AgiEngine::cond_equalv(uint8 *p) {
+	if (p[0] == 11 || p[1] == 11)
+		_timerHack++;
+	ip += 2;
+	return testEqual(p[0], getvar(p[1]));
+}
+
+int AgiEngine::cond_less(uint8 *p) {
+	if (p[0] == 11)
+		_timerHack++;
+	ip += 2;
+	return testLess(p[0], p[1]);
+}
+
+int AgiEngine::cond_lessv(uint8 *p) {
+	if (p[0] == 11 || p[1] == 11)
+		_timerHack++;
+	ip += 2;
+	return testLess(p[0], getvar(p[1]));
+}
+
+int AgiEngine::cond_greater(uint8 *p) {
+	if (p[0] == 11)
+		_timerHack++;
+	ip += 2;
+	return testGreater(p[0], p[1]);
+}
+
+int AgiEngine::cond_greaterv(uint8 *p) {
+	if (p[0] == 11 || p[1] == 11)
+		_timerHack++;
+	ip += 2;
+	return testGreater(p[0], getvar(p[1]));
+}
+
+int AgiEngine::cond_isset(uint8 *p) {
+	ip += 1;
+	return testIsSet(p[0]);
+}
+
+int AgiEngine::cond_issetv(uint8 *p) {
+	ip += 1;
+	return testIsSet(getvar(p[1]));
+}
+
+int AgiEngine::cond_has(uint8 *p) {
+	ip += 1;
+	return testHas(p[0]);
+}
+
+int AgiEngine::cond_obj_in_room(uint8 *p) {
+	ip += 2;
+	return testObjInRoom(p[0], p[1]);
+}
+
+int AgiEngine::cond_posn(uint8 *p) {
+	ip += 5;
+	return testPosn(p[0], p[1], p[2], p[3], p[4]);
+}
+
+int AgiEngine::cond_controller(uint8 *p) {
+	ip += 1;
+	return testController(p[0]);
+}
+
+int AgiEngine::cond_have_key(uint8 *p) {
+	return testKeypressed();
+}
+
+int AgiEngine::cond_said(uint8 *p) {
+	int ec = testSaid(p[0], p + 1);
+	ip += p[0] * 2;	// skip num_words * 2
+	ip++;	// skip num_words opcode
+	return ec;
+}
+
+int AgiEngine::cond_compare_strings(uint8 *p) {
+	debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", _game.strings[p[0]], _game.strings[p[1]]);
+	ip += 2;
+	return testCompareStrings(p[0], p[1]);
+}
+
+int AgiEngine::cond_obj_in_box(uint8 *p) {
+	ip += 5;
+	return testObjInBox(p[0], p[1], p[2], p[3], p[4]);
+}
+
+int AgiEngine::cond_center_posn(uint8 *p) {
+	ip += 5;
+	return testObjCenter(p[0], p[1], p[2], p[3], p[4]);
+}
+
+int AgiEngine::cond_right_posn(uint8 *p) {
+	ip += 5;
+	return testObjRight(p[0], p[1], p[2], p[3], p[4]);
+}
+
+int AgiEngine::cond_unknown_13(uint8 *p) {
+	// My current theory is that this command checks whether the ego is currently moving
+	// and that that movement has been caused using the mouse and not using the keyboard.
+	// I base this theory on the game's behavior on an Amiga emulator, not on disassembly.
+	// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
+	// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
+	// TODO: Check this command's implementation using disassembly just to be sure.
+	int ec = _game.viewTable[0].flags & ADJ_EGO_XY;
+	debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", ec ? "true" : "false");
+	return ec;
+}
+
+int AgiEngine::cond_unknown(uint8 *p) {
+	_endTest = true;
+	return false;
+}
+
+int AgiEngine::cond_not(uint8 *p) {
+	_notTest = !_notTest;
+	return false;
+}
+
+int AgiEngine::cond_or(uint8 *p) {
+	int ec = true;
+	// if or_test is ON and we hit 0xFC, end of OR, then
+	// or is STILL false so break.
+	if (_orTest) {
+		ec = false;
+		_retval = false;
+		_endTest = true;
+	}
+	_orTest = true;
+	return ec;
+}
 
 uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 	char ms1[MAX_STRINGLEN];
@@ -203,15 +347,15 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 
 int AgiEngine::testIfCode(int lognum) {
 	int ec = true;
-	int retval = true;
+	_retval = true;
 	uint8 op = 0;
-	uint8 notTest = false;
-	uint8 orTest = false;
+	_notTest = false;
+	_orTest = false;
 	uint16 lastIp = ip;
 	uint8 p[16] = { 0 };
-	bool end_test = false;
+	_endTest = false;
 
-	while (retval && !(shouldQuit() || _restartGame) && !end_test) {
+	while (_retval && !(shouldQuit() || _restartGame) && !_endTest) {
 		if (_debug.enabled && (_debug.logic0 || lognum))
 			debugConsole(lognum, lTEST_MODE, NULL);
 
@@ -219,127 +363,22 @@ int AgiEngine::testIfCode(int lognum) {
 		op = *(code + ip++);
 		memmove(p, (code + ip), 16);
 
-		switch (op) {
-		case 0xFF:	// END IF, TEST true
-			end_test = true;
-			break;
-		case 0xFD:
-			notTest = !notTest;
-			continue;
-		case 0xFC:	// OR
-			// if or_test is ON and we hit 0xFC, end of OR, then
-			// or is STILL false so break.
-			if (orTest) {
-				ec = false;
-				retval = false;
-				end_test = true;
-			}
-
-			orTest = true;
+		ec = (this->*_agiCondCommands[op])(p);
+		if (op == 0xFD || op == 0xFC)
 			continue;
 
-		case 0x00:
-			// return true?
-			end_test = true;
-			break;
-		case 0x01:
-			ec = testEqual(p[0], p[1]);
-			if (p[0] == 11)
-				_timerHack++;
-			break;
-		case 0x02:
-			ec = testEqual(p[0], getvar(p[1]));
-			if (p[0] == 11 || p[1] == 11)
-				_timerHack++;
-			break;
-		case 0x03:
-			ec = testLess(p[0], p[1]);
-			if (p[0] == 11)
-				_timerHack++;
-			break;
-		case 0x04:
-			ec = testLess(p[0], getvar(p[1]));
-			if (p[0] == 11 || p[1] == 11)
-				_timerHack++;
-			break;
-		case 0x05:
-			ec = testGreater(p[0], p[1]);
-			if (p[0] == 11)
-				_timerHack++;
-			break;
-		case 0x06:
-			ec = testGreater(p[0], getvar(p[1]));
-			if (p[0] == 11 || p[1] == 11)
-				_timerHack++;
-			break;
-		case 0x07:
-			ec = testIsSet(p[0]);
-			break;
-		case 0x08:
-			ec = testIsSet(getvar(p[0]));
-			break;
-		case 0x09:
-			ec = testHas(p[0]);
-			break;
-		case 0x0A:
-			ec = testObjInRoom(p[0], p[1]);
-			break;
-		case 0x0B:
-			ec = testPosn(p[0], p[1], p[2], p[3], p[4]);
-			break;
-		case 0x0C:
-			ec = testController(p[0]);
-			break;
-		case 0x0D:
-			ec = testKeypressed();
-			break;
-		case 0x0E:
-			ec = testSaid(p[0], (uint8 *) code + (ip + 1));
-			ip = lastIp;
-			ip++;	// skip opcode
-			ip += p[0] * 2;	// skip num_words * 2
-			ip++;	// skip num_words opcode
-			break;
-		case 0x0F:
-			debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", _game.strings[p[0]], _game.strings[p[1]]);
-			ec = testCompareStrings(p[0], p[1]);
-			break;
-		case 0x10:
-			ec = testObjInBox(p[0], p[1], p[2], p[3], p[4]);
-			break;
-		case 0x11:
-			ec = testObjCenter(p[0], p[1], p[2], p[3], p[4]);
-			break;
-		case 0x12:
-			ec = testObjRight(p[0], p[1], p[2], p[3], p[4]);
-			break;
-		case 0x13: // Unknown test command 19
-			// My current theory is that this command checks whether the ego is currently moving
-			// and that that movement has been caused using the mouse and not using the keyboard.
-			// I base this theory on the game's behavior on an Amiga emulator, not on disassembly.
-			// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
-			// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
-			// TODO: Check this command's implementation using disassembly just to be sure.
-			ec = _game.viewTable[0].flags & ADJ_EGO_XY;
-			debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", ec ? "true" : "false");
-			break;
-		default:
-			ec = false;
-			end_test = true;
-		}
-
-		if (!end_test) {
-			if (op <= 0x12)
-				ip += logicNamesTest[op].numArgs;
+		if (!_endTest) {
+//			if (op <= 0x12)
+//				ip += logicNamesTest[op].numArgs;
 
 			// exchange ec value
-			if (notTest)
+			if (_notTest)
 				ec = !ec;
 
 			// not is only enabled for 1 test command
-			notTest = false;
+			_notTest = false;
 
-			if (orTest && ec) {
+			if (_orTest && ec) {
 				// a true inside an OR statement passes
 				// ENTIRE statement scan for end of OR
 
@@ -374,16 +413,16 @@ int AgiEngine::testIfCode(int lognum) {
 				}
 				ip++;
 
-				orTest = false;
-				retval = true;
+				_orTest = false;
+				_retval = true;
 			} else {
-				retval = orTest ? retval || ec : retval && ec;
+				_retval = _orTest ? _retval || ec : _retval && ec;
 			}
 		}
 	}
 
 	// if false, scan for end of IP?
-	if (retval)
+	if (_retval)
 		ip += 2;
 	else {
 		ip = lastIp;
@@ -403,9 +442,9 @@ int AgiEngine::testIfCode(int lognum) {
 	}
 
 	if (_debug.enabled && (_debug.logic0 || lognum))
-		debugConsole(lognum, 0xFF, retval ? "=true" : "=false");
+		debugConsole(lognum, 0xFF, _retval ? "=true" : "=false");
 
-	return retval;
+	return _retval;
 }
 
 } // End of namespace Agi

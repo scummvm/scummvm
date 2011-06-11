@@ -1086,9 +1086,15 @@ public:
 
 private:
 	typedef void (AgiEngine::*AgiCommand)(uint8 *);
+	typedef int (AgiEngine::*AgiCondCommand)(uint8 *);
 
 	AgiCommand _agiCommands[183];
+	AgiCondCommand _agiCondCommands[256];
 	AgiLogic *_curLogic;
+	int _endTest;
+	int _orTest;
+	int _notTest;
+	int _retval;
 	int _timerHack;			// Workaround for timer loop in MH1 logic 153
 
 	void setupOpcodes();
@@ -1275,6 +1281,30 @@ private:
 	void cmd_mouse_posn(uint8 *p);
 	void cmd_release_key(uint8 *p);
 	void cmd_adj_ego_move_to_x_y(uint8 *p);
+
+	int cond_end(uint8 *p);
+	int cond_equal(uint8 *p);
+	int cond_equalv(uint8 *p);
+	int cond_less(uint8 *p);
+	int cond_lessv(uint8 *p);
+	int cond_greater(uint8 *p);
+	int cond_greaterv(uint8 *p);
+	int cond_isset(uint8 *p);
+	int cond_issetv(uint8 *p);
+	int cond_has(uint8 *p);
+	int cond_obj_in_room(uint8 *p);
+	int cond_posn(uint8 *p);
+	int cond_controller(uint8 *p);
+	int cond_have_key(uint8 *p);
+	int cond_said(uint8 *p);
+	int cond_compare_strings(uint8 *p);
+	int cond_obj_in_box(uint8 *p);
+	int cond_center_posn(uint8 *p);
+	int cond_right_posn(uint8 *p);
+	int cond_unknown_13(uint8 *p);
+	int cond_unknown(uint8 *p);
+	int cond_not(uint8 *p);
+	int cond_or(uint8 *p);
 };
 
 } // End of namespace Agi
