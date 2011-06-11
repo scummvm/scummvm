@@ -312,7 +312,7 @@ void multidump(Context &context) {
 		return;
 	int x = (int16)context.di, y = (int16)context.bx;
 	unsigned offset = x + y * kScreenwidth;
-	debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)context.ds, x, y, offset);
+	//debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)context.ds, x, y, offset);
 	engine()->blit(context.ds.ptr(offset, w * h), kScreenwidth, x, y, w, h);
 }
 
