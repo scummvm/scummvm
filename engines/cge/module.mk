@@ -3,9 +3,11 @@ MODULE := engines/cge
 MODULE_OBJS := \
 	bitmap.o \
 	bitmaps.o \
+	btfile.o \
 	cfile.o \
 	cge.o \
 	cge_main.o \
+	config.o \
 	console.o \
 	detection.o \
 	game.o \

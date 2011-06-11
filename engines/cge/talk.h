@@ -29,7 +29,7 @@
 #define		__TALK__
 
 #include	"cge/vga13h.h"
-#include	<dir.h>
+//#include	<dir.h>
 
 namespace CGE {
 
