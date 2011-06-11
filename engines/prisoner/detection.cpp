@@ -199,34 +199,11 @@ static PrisonerGameDescription g_fallbackDesc = {
 
 } // End of namespace Prisoner
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Prisoner::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Prisoner::PrisonerGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	prisonerGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"prisoner",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class PrisonerMetaEngine : public AdvancedMetaEngine {
 public:
-	PrisonerMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	PrisonerMetaEngine() : AdvancedMetaEngine(Prisoner::gameDescriptions, sizeof(Prisoner::PrisonerGameDescription), prisonerGames) {
+		params.singleid = "prisoner";
+	}
 
 	virtual const char *getName() const {
 		return "Prisoner Engine";
