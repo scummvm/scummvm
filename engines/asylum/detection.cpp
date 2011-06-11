@@ -134,7 +134,7 @@ public:
 	AsylumMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "Asylum Engine";
+		return "Asylum";
 	}
 
 	virtual const char *getOriginalCopyright() const {
