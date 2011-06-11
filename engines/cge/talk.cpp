@@ -245,7 +245,8 @@ BITMAP * TALK::Box (uint16 w, uint16 h)
   if (w < 8) w = 8;
   if (h < 8) h = 8;
   b = farnew(uint8, n = w * h);
-  if (! b) VGA::Exit("No core");
+  if (! b)
+	  error("No core");
   memset(b, TEXT_BG, n);
 
   if (Mode)
