@@ -347,11 +347,12 @@ void frameoutnm(Context &context) {
 	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
 	unsigned pitch = (uint16)context.dx;
 	unsigned src = (uint16)context.si;
-	unsigned dst = (uint16)context.di + (uint16)context.bx * pitch;
-	//debug(1, "framenm %ux%u[pitch: %u] -> segment: %04x->%04x", w, h, pitch, (uint16)context.ds, (uint16)context.es);
-	for(unsigned y = 0; y < h; ++y) {
-		uint8 *src_p = context.ds.ptr(src + w * y, w);
-		uint8 *dst_p = context.es.ptr(dst + pitch * y, w);
+	int x = (uint16)context.di, y = (uint16)context.bx;
+	unsigned dst = x + y * pitch;
+	//debug(1, "framenm %ux%u[pitch: %u]-> %d,%d, segment: %04x->%04x", w, h, pitch, x, y, (uint16)context.ds, (uint16)context.es);
+	for(unsigned l = 0; l < h; ++l) {
+		uint8 *src_p = context.ds.ptr(src + w * l, w);
+		uint8 *dst_p = context.es.ptr(dst + pitch * l, w);
 		memcpy(dst_p, src_p, w);
 	}
 }
