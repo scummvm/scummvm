@@ -44,6 +44,11 @@
 #include "dreamweb/dreamweb.h"
 #include "dreamweb/dreamgen.h"
 
+namespace dreamgen {
+	void doshake(dreamgen::Context &context);
+	void dofade(dreamgen::Context &context);
+}
+
 namespace DreamWeb {
 
 DreamWebEngine *DreamWebEngine::_instance;
@@ -92,8 +97,9 @@ void DreamWebEngine::waitForVSync() {
 	}
 	setVSyncInterrupt(false);
 
-	// doshake
-	// dofade
+	dreamgen::doshake(_context);
+	dreamgen::dofade(_context);
+	_system->updateScreen();
 }
 
 void DreamWebEngine::processEvents() {
@@ -212,6 +218,7 @@ void DreamWebEngine::setGraphicsMode() {
 }
 
 void DreamWebEngine::fadeDos() {
+	return; //fixme later
 	waitForVSync();
 	//processEvents will be called from vsync
 	_context.ds = _context.es = _context.data.word(dreamgen::kBuffers);
@@ -603,7 +610,7 @@ void fadedos(Context &context) {
 }
 
 void doshake(Context &context) {
-	warning("doshake: STUB");
+	//warning("doshake: STUB");
 }
 
 void vsync(Context &context) {
@@ -611,6 +618,7 @@ void vsync(Context &context) {
 }
 
 void setmode(Context &context) {
+	vsync(context);
 	engine()->setGraphicsMode();
 }
 
@@ -637,7 +645,7 @@ void showpcx(Context &context) {
 	context.cx = 48;
 	context.es = context.data.word(kBuffers);
 	context.di = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768;
-	uint8 *pal = context.es.ptr(context.di, 768);
+
 pcxpal:
 	context.push(context.cx);
 	readabyte(context);
@@ -649,18 +657,6 @@ pcxpal:
 	context.cx = 768 - 48;
 	context.ax = 0x0ffff;
 	while (context.cx--) context._stosw();
-
-	// TODO: I think this is wrong. I mean, it's the right palette but I
-	//       don't think this is the place to set it in the backend.
-
-	byte pal16[48];
-	for (int i = 0; i < 48; i++) {
-		pal16[i] = 4 * pal[i];
-	}
-
-	PaletteManager *palette = g_system->getPaletteManager();
-	palette->setPalette(pal16, 0, 256);
-
 	readoneblock(context);
 	context.si = 0;
 	context.di = 0;
