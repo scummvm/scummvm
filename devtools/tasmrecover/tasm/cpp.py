@@ -393,7 +393,7 @@ namespace %s {
 		self.body += p
 
 	def _rep(self):
-		self.body += "\twhile(--context.cx) ";
+		self.body += "\twhile(context.cx--) ";
 
 	def _lodsb(self):
 		self.body += "\tcontext._lodsb();\n";

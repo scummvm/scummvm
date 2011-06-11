@@ -2428,7 +2428,7 @@ void clearsprites(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
 	context.al = 255;
 	context.cx = (32)*16;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	return;
 }
 
@@ -2455,7 +2455,7 @@ void delsprite(Context & context) {
 	context.di = context.bx;
 	context.cx = (32);
 	context.al = 255;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	return;
 }
 
@@ -3646,7 +3646,7 @@ void updatepeople(Context & context) {
 	context.data.word(kListpos) = context.di;
 	context.cx = 12*5;
 	context.al = 255;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context._add(context.data.word(kMaintimer), 1);
 	context.es = context.cs;
 	context.bx = 534;
@@ -4040,7 +4040,7 @@ void cls(Context & context) {
 	context.di = 0;
 	context.cx = 0x7fff;
 	context.ax = 0;
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	return;
 }
 
@@ -4344,7 +4344,7 @@ void delthisone(Context & context) {
 deloneloop:
 	context.push(context.cx);
 	context.ch = 0;
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.cx = context.pop();
 	context._add(context.di, context.ax);
 	context._add(context.si, context.dx);
@@ -4953,7 +4953,7 @@ void transferinv(Context & context) {
 	context._mul(context.cx);
 	context.cx = context.ax;
 	context.push(context.cx);
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.cx = context.pop();
 	context.ax = context.pop();
 	context.es.word(context.bx+2) = context.ax;
@@ -5000,7 +5000,7 @@ void transfermap(Context & context) {
 	context._mul(context.cx);
 	context.cx = context.ax;
 	context.push(context.cx);
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.cx = context.pop();
 	context.ax = context.pop();
 	context.es.word(context.bx+2) = context.ax;
@@ -5036,7 +5036,7 @@ void clearendpal(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
 	context.cx = 768;
 	context.al = 0;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	return;
 }
 
@@ -5062,7 +5062,7 @@ void fadetowhite(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
 	context.cx = 768;
 	context.al = 63;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
 	context.al = 0;
 	context._stosb();
@@ -5081,7 +5081,7 @@ void fadefromwhite(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
 	context.cx = 768;
 	context.al = 63;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
 	context.al = 0;
 	context._stosb();
@@ -5122,11 +5122,11 @@ halfend:
 	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3))+(56*3);
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(56*3);
 	context.cx = 3*5;
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3))+(77*3);
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(77*3);
 	context.cx = 3*2;
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.data.byte(kFadedirection) = 1;
 	context.data.byte(kFadecount) = 31;
 	context.data.byte(kColourpos) = 0;
@@ -5418,7 +5418,7 @@ void paltostartpal(Context & context) {
 	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
-	while(--context.cx) 	context._movsw();
+	while(context.cx--) 	context._movsw();
  	return;
 }
 
@@ -5428,7 +5428,7 @@ void endpaltostart(Context & context) {
 	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
-	while(--context.cx) 	context._movsw();
+	while(context.cx--) 	context._movsw();
  	return;
 }
 
@@ -5438,7 +5438,7 @@ void startpaltoend(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
 	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
-	while(--context.cx) 	context._movsw();
+	while(context.cx--) 	context._movsw();
  	return;
 }
 
@@ -5448,7 +5448,7 @@ void paltoendpal(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
 	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
 	context.cx = 768/2;
-	while(--context.cx) 	context._movsw();
+	while(context.cx--) 	context._movsw();
  	return;
 }
 
@@ -5458,7 +5458,7 @@ void allpalette(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
 	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
 	context.cx = 768/2;
-	while(--context.cx) 	context._movsw();
+	while(context.cx--) 	context._movsw();
  	dumpcurrent(context);
 	return;
 }
@@ -5484,7 +5484,7 @@ void fadedownmon(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(231*3);
 	context.cx = 3*8;
 	context.ax = 0;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(246*3);
 	context._stosb();
 	context._stosw();
@@ -5504,7 +5504,7 @@ void fadeupmon(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(231*3);
 	context.cx = 3*8;
 	context.ax = 0;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(246*3);
 	context._stosb();
 	context._stosw();
@@ -5524,7 +5524,7 @@ void fadeupmonfirst(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(231*3);
 	context.cx = 3*8;
 	context.ax = 0;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(246*3);
 	context._stosb();
 	context._stosw();
@@ -5547,7 +5547,7 @@ void fadeupyellows(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(231*3);
 	context.cx = 3*8;
 	context.ax = 0;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(246*3);
 	context._stosb();
 	context._stosw();
@@ -5566,7 +5566,7 @@ void initialmoncols(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(230*3);
 	context.cx = 3*9;
 	context.ax = 0;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(246*3);
 	context._stosb();
 	context._stosw();
@@ -6495,7 +6495,7 @@ void findallryan(Context & context) {
 	context.push(context.di);
 	context.cx = 30;
 	context.ax = 0x0ffff;
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	context.di = context.pop();
 	context.cl = 4;
 	context.ds = context.data.word(kExtras);
@@ -6527,7 +6527,7 @@ void findallopen(Context & context) {
 	context.push(context.di);
 	context.cx = 16;
 	context.ax = 0x0ffff;
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	context.di = context.pop();
 	context.cl = context.data.byte(kOpenedob);
 	context.dl = context.data.byte(kOpenedtype);
@@ -8205,7 +8205,7 @@ void transfertoex(Context & context) {
 	context.ds = context.data.word(kFreedat);
 	context.si = context.ax;
 	context.cx = 8;
-	while(--context.cx) 	context._movsw();
+	while(context.cx--) 	context._movsw();
  	context.di = context.pop();
 	context.al = context.data.byte(kReallocation);
 	context.es.byte(context.di) = context.al;
@@ -8280,7 +8280,7 @@ void transfercontoex(Context & context) {
 	context.ds = context.pop();
 	context.push(context.di);
 	context.cx = 8;
-	while(--context.cx) 	context._movsw();
+	while(context.cx--) 	context._movsw();
  	context.di = context.pop();
 	context.dx = context.pop();
 	context.al = context.data.byte(kReallocation);
@@ -8439,7 +8439,7 @@ void deleteexobject(Context & context) {
 	context.push(context.cx);
 	context.al = 255;
 	context.cx = 16;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.ax = context.pop();
 	context.cl = context.al;
 	context._add(context.al, context.al);
@@ -8497,7 +8497,7 @@ void deleteexframe(Context & context) {
 	context._add(context.si, context.ax);
 	context.push(context.ax);
 	context.ds = context.es;
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.bx = context.pop();
 	context._sub(context.data.word(kExframepos), context.bx);
 	context.si = context.pop();
@@ -8538,7 +8538,7 @@ findlenextext:
 	context.push(context.bx);
 	context.push(context.ax);
 	context._sub(context.cx, context.bx);
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.bx = context.pop();
 	context._sub(context.data.word(kExtextpos), context.bx);
 	context.si = context.pop();
@@ -8772,7 +8772,7 @@ oberase:
 	context.di = context.bx;
 	context.al = 255;
 	context.cx = (32);
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 notthisob:
 	context.bx = context.pop();
 	context.cx = context.pop();
@@ -8789,7 +8789,7 @@ void showallobs(Context & context) {
 	context.di = context.bx;
 	context.cx = 128*5;
 	context.al = 255;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.es = context.data.word(kSetframes);
 	context.data.word(kFrsegment) = context.es;
 	context.ax = (0);
@@ -8904,7 +8904,7 @@ void showallfree(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
 	context.cx = 80*5;
 	context.al = 255;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.es = context.data.word(kFreeframes);
 	context.data.word(kFrsegment) = context.es;
 	context.ax = (0);
@@ -8983,7 +8983,7 @@ void showallex(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
 	context.cx = 100*5;
 	context.al = 255;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.es = context.data.word(kExtras);
 	context.data.word(kFrsegment) = context.es;
 	context.ax = (0);
@@ -10051,12 +10051,12 @@ void usemon(Context & context) {
 	context.di = 2892+1;
 	context.cx = 12;
 	context.al = 32;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.es = context.cs;
 	context.di = 2883+1;
 	context.cx = 12;
 	context.al = 32;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.es = context.cs;
 	context.di = 2807;
 	context.es.byte(context.di) = 1;
@@ -10412,7 +10412,7 @@ void input(Context & context) {
 	context.di = 7816;
 	context.cx = 64;
 	context.al = 0;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.data.word(kCurpos) = 0;
 	context.al = '>';
 	context.di = context.data.word(kMonadx);
@@ -10629,7 +10629,7 @@ dirroot:
 	context.di = 2892;
 	context._add(context.di, 1);
 	context.cx = 12;
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	monitorlogo(context);
 	scrollmonitor(context);
 	context.al = 9;
@@ -10909,7 +10909,7 @@ keyok2:
 	context.es = context.cs;
 	context.di = 2892+1;
 	context.cx = 12;
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	monitorlogo(context);
 	scrollmonitor(context);
 	context.al = 10;
@@ -11019,7 +11019,7 @@ void parser(Context & context) {
 	context.di = 2883;
 	context.cx = 13;
 	context.al = 0;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.di = 2883;
 	context.al = '=';
 	context._stosb();
@@ -15984,7 +15984,7 @@ alreadyactsave:
 	context.bx = context.di;
 	context.es = context.cs;
 	context.cx = 16;
-	while(--context.cx) 	context._movsw();
+	while(context.cx--) 	context._movsw();
  	context.al = context.data.byte(kRoomssample);
 	context.es.byte(context.bx+13) = context.al;
 	context.al = context.data.byte(kMapx);
@@ -16317,7 +16317,7 @@ void namestoold(Context & context) {
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	context.es = context.data.word(kBuffers);
 	context.cx = 17*4;
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	return;
 }
 
@@ -16327,7 +16327,7 @@ void oldtonames(Context & context) {
 	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	context.ds = context.data.word(kBuffers);
 	context.cx = 17*4;
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	return;
 }
 
@@ -16566,7 +16566,7 @@ void trysoundalloc(Context & context) {
 	context.di = 0;
 	context.cx = 16384/2;
 	context.ax = 0x7f7f;
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	context.data.byte(kNeedsoundbuff) = 1;
 	return;
 soundfail:
@@ -16695,7 +16695,7 @@ notch0only:
 	context.di = context.data.word(kSoundbufferwrite);
 	context.cx = 1024;
 	context.ax = 0x7f7f;
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	context._and(context.di, 16384-1);
 	context.data.word(kSoundbufferwrite) = context.di;
 	return;
@@ -16758,7 +16758,7 @@ void channel0tran(Context & context) {
 	context._cmp(context.data.byte(kVolume), 0);
 	if (!context.flags.z()) goto lowvolumetran;
 	context.cx = 1024;
-	while(--context.cx) 	context._movsw();
+	while(context.cx--) 	context._movsw();
  	return;
 lowvolumetran:
 	context.cx = 1024;
@@ -17161,24 +17161,24 @@ void clearbuffers(Context & context) {
 	context.cx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-534+68-0)/2;
 	context.ax = 0;
 	context.di = 0;
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	context.es = context.data.word(kExtras);
 	context.cx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/2;
 	context.ax = 0x0ffff;
 	context.di = 0;
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64));
 	context.ds = context.cs;
 	context.si = 534;
 	context.cx = (991-534);
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.es = context.data.word(kBuffers);
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-534);
 	context.ds = context.cs;
 	context.si = 0;
 	context.cx = (68-0);
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	clearchanges(context);
 	return;
 }
@@ -17188,19 +17188,19 @@ void clearchanges(Context & context) {
 	context.cx = (250)*2;
 	context.ax = 0x0ffff;
 	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64));
 	context.es = context.cs;
 	context.di = 534;
 	context.cx = (991-534);
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.ds = context.data.word(kBuffers);
 	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-534);
 	context.es = context.cs;
 	context.di = 0;
 	context.cx = (68-0);
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.data.byte(kExpos) = 0;
 	context.data.word(kExframepos) = 0;
 	context.data.word(kExtextpos) = 0;
@@ -17208,7 +17208,7 @@ void clearchanges(Context & context) {
 	context.cx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/2;
 	context.ax = 0x0ffff;
 	context.di = 0;
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	context.es = context.cs;
 	context.di = 7782;
 	context.al = 1;
@@ -17220,7 +17220,7 @@ void clearchanges(Context & context) {
 	context._stosb();
 	context.ax = 0;
 	context.cx = 6;
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	return;
 }
 
@@ -17249,7 +17249,7 @@ void clearrest(Context & context) {
 	context.cx = (66*60)/2;
 	context.ax = 0;
 	context.di = (0);
-	while(--context.cx) 	context._stosw();
+	while(context.cx--) 	context._stosw();
 	context.es = context.data.word(kBackdrop);
 	deallocatemem(context);
 	context.es = context.data.word(kSetframes);
@@ -19052,7 +19052,7 @@ finishmakename:
 	context._stosb();
 	return;
 	context.al = 255;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	return;
 }
 
@@ -20201,7 +20201,7 @@ blimey:
 	context.push(context.cx);
 	context.push(context.si);
 	context.cx = (66);
-	while(--context.cx) 	context._movsb();
+	while(context.cx--) 	context._movsb();
  	context.si = context.pop();
 	context.cx = context.pop();
 	context._add(context.si, 132);
@@ -20450,7 +20450,7 @@ void fillspace(Context & context) {
 	context.push(context.bx);
 	context.di = context.dx;
 	context.es = context.ds;
-	while(--context.cx) 	context._stosb();
+	while(context.cx--) 	context._stosb();
 	context.bx = context.pop();
 	context.di = context.pop();
 	context.dx = context.pop();
