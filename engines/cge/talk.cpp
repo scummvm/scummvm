@@ -60,7 +60,8 @@ FONT::FONT (const char * name)
   Map = farnew(uint8, MAP_SIZ);
   Pos = farnew(uint16, POS_SIZ);
   Wid = farnew(uint8, WID_SIZ);
-  if (Map == NULL || Pos == NULL || Wid == NULL) DROP("No core", NULL);
+  if (Map == NULL || Pos == NULL || Wid == NULL) 
+  	error("No core");
   MergeExt(Path, name, FONT_EXT);
   Load();
 }
@@ -180,7 +181,7 @@ void TALK::Update (const char * tx)
 {
   uint16 vmarg = (Mode) ? TEXT_VM : 0;
   uint16 hmarg = (Mode) ? TEXT_HM : 0;
-  uint16 mw, mh, ln = vmarg;
+  uint16 mw = 0, mh, ln = vmarg;
   const char * p;
   uint8 * m;
 
@@ -188,7 +189,6 @@ void TALK::Update (const char * tx)
     {
       uint16 k = 2 * hmarg;
       mh = 2 * vmarg + FONT_HIG;
-      mw = 0;
       for (p = tx; *p; p ++)
 	{
 	  if (*p == '|' || *p == '\n')

@@ -600,7 +600,8 @@ SPRITE * SPRITE::Expand (void)
     {
       bool enbl = HEART::Enable;
       HEART::Enable = false;
-      if ((Ext = new SPREXT) == NULL) DROP("No core", NULL);
+      if ((Ext = new SPREXT) == NULL) 
+      	error("No core");
       if (*File)
 	{
 	  static const char * Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };

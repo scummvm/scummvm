@@ -29,23 +29,9 @@
 #include	<dos.h>
 #include	<fcntl.h>
 #include	<string.h>
-//#include	<alloc.h>
 #include "common/system.h"
 
-#ifdef	DROP_H
-  #include	"cge/drop.h"
-#else
-  #include	<stdio.h>
-  #include	<stdlib.h>
-#endif
-
 namespace CGE {
-
-#ifndef	DROP_H
-  //TODO Replace by scummvm printf
-#define DROP(m,n) {}
-	//#define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
-#endif
 
 IOBUF::IOBUF (IOMODE mode, CRYPT * crpt)
 : IOHAND(mode, crpt),
@@ -54,7 +40,8 @@ IOBUF::IOBUF (IOMODE mode, CRYPT * crpt)
   Lim(0)
 {
   Buff = farnew(uint8, IOBUF_SIZE);
-  if (Buff == NULL) DROP("No core for I/O", NULL);
+  if (Buff == NULL)
+  	error("No core for I/O");
 }
 
 
@@ -72,7 +59,8 @@ IOBUF::IOBUF (const char * name, IOMODE mode, CRYPT * crpt)
   Lim(0)
 {
   Buff = farnew(uint8, IOBUF_SIZE);
-  if (Buff == NULL) DROP("No core for I/O", name);
+  if (Buff == NULL) 
+  	error("No core for I/O [%s]", name);
 }
 
 
