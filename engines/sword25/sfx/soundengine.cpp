@@ -126,11 +126,15 @@ void SoundEngine::resumeAll() {
 }
 
 void SoundEngine::pauseLayer(uint layer) {
-	warning("STUB: SoundEngine::pauseLayer(%d)", layer);
+	// Not used in the game
+
+	warning("SoundEngine::pauseLayer(%d)", layer);
 }
 
 void SoundEngine::resumeLayer(uint layer) {
-	warning("STUB: SoundEngine::resumeLayer(%d)", layer);
+	// Not used in the game
+
+	warning("SoundEngine::resumeLayer(%d)", layer);
 }
 
 SndHandle *SoundEngine::getHandle(uint *id) {
@@ -238,7 +242,9 @@ void SoundEngine::stopSound(uint handle) {
 }
 
 bool SoundEngine::isSoundPaused(uint handle) {
-	warning("STUB: SoundEngine::isSoundPaused(%d)", handle);
+	// Not used in the game
+
+	warning("SoundEngine::isSoundPaused(%d)", handle);
 
 	return false;
 }
@@ -252,20 +258,18 @@ bool SoundEngine::isSoundPlaying(uint handle) {
 }
 
 float SoundEngine::getSoundVolume(uint handle) {
-	warning("STUB: SoundEngine::getSoundVolume(%d)", handle);
+	debugC(1, kDebugSound, "SoundEngine::getSoundVolume(%d)", handle);
 
-	return 0;
+	return (float)_mixer->getChannelVolume(_handles[handle].handle) / 255.0;
 }
 
 float SoundEngine::getSoundPanning(uint handle) {
-	warning("STUB: SoundEngine::getSoundPanning(%d)", handle);
+	debugC(1, kDebugSound, "SoundEngine::getSoundPanning(%d)", handle);
 
-	return 0;
+	return (float)_mixer->getChannelBalance(_handles[handle].handle) / 127.0;
 }
 
 Resource *SoundEngine::loadResource(const Common::String &fileName) {
-	warning("STUB: SoundEngine::loadResource(%s)", fileName.c_str());
-
 	return new SoundResource(fileName);
 }
 
