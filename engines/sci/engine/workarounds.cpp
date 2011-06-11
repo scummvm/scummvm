@@ -37,6 +37,7 @@ namespace Sci {
 const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_CAMELOT,         92,   92,  0,     "endingCartoon2", "changeState", 0x20d,    0, { WORKAROUND_FAKE,   0 } }, // op_lai: during the ending, sub gets called with no parameters, uses parameter 1 which is theGrail in this case - bug #3044734
 	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",      0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // op_or: when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
+	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",      0xce0,    0, { WORKAROUND_FAKE,   0 } }, // Same as above, for the Spanish version - bug #3313962
 	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",      -1,    0, { WORKAROUND_FAKE,   0 } }, // op_mul: The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #3038913
 	{ GID_ICEMAN,         199,  977,  0,            "Grooper", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // op_add: While dancing with the girl
 	{ GID_MOTHERGOOSE256,  -1,  999,  0,              "Event", "new",            -1,    0, { WORKAROUND_FAKE,   0 } }, // op_and: constantly during the game (SCI1 version)
