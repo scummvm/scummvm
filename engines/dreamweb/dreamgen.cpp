@@ -10,7 +10,6 @@ void readsetdata(Context &context);
 void loadpalfromiff(Context &context);
 void titles(Context &context);
 void credits(Context &context);
-void cls(Context &context);
 void decide(Context &context);
 void clearchanges(Context &context);
 void loadroom(Context &context);
@@ -60,7 +59,6 @@ void animpointer(Context &context);
 void showpointer(Context &context);
 void dumppointer(Context &context);
 void commandonly(Context &context);
-void worktoscreen(Context &context);
 void showtime(Context &context);
 void showwatch(Context &context);
 void printmessage(Context &context);
@@ -279,7 +277,6 @@ void modifychar(Context &context);
 void printchar(Context &context);
 void showcurrentfile(Context &context);
 void printlogo(Context &context);
-void printundermon(Context &context);
 void randomaccess(Context &context);
 void locklighton(Context &context);
 void locklightoff(Context &context);
@@ -430,7 +427,6 @@ void frameoutbh(Context &context);
 void frameoutv(Context &context);
 void putunderzoom(Context &context);
 void crosshair(Context &context);
-void width160(Context &context);
 void maptopanel(Context &context);
 void movemap(Context &context);
 void dealwithspecial(Context &context);
@@ -4031,71 +4027,6 @@ palloop:
 nought:
 	context._stosb();
 	if (--context.cx) goto palloop;
-	return;
-}
-
-void cls(Context & context) {
-	context.ax = 0x0a000;
-	context.es = context.ax;
-	context.di = 0;
-	context.cx = 0x7fff;
-	context.ax = 0;
-	while(context.cx--) 	context._stosw();
-	return;
-}
-
-void printundermon(Context & context) {
-	context.si = ((320)*43)+76;
-	context.di = context.si;
-	context.es = context.data.word(kWorkspace);
-	context._add(context.si, 8*(320));
-	context.dx = 0x0a000;
-	context.ds = context.dx;
-	context.cx = 104;
-scrollmonloop1:
-	context.push(context.cx);
-	context.push(context.di);
-	context.push(context.si);
-	context.cx = 170;
-scrollmonloop2:
-	context._lodsb();
-	context._cmp(context.al, 231);
-	if (!context.flags.c()) goto dontplace;
-placeit:
-	context._stosb();
-	if (--context.cx) goto scrollmonloop2;
-	goto finmonscroll;
-dontplace:
-	context._add(context.di, 1);
-	if (--context.cx) goto scrollmonloop2;
-finmonscroll:
-	context.si = context.pop();
-	context.di = context.pop();
-	context.cx = context.pop();
-	context._add(context.si, (320));
-	context._add(context.di, (320));
-	if (--context.cx) goto scrollmonloop1;
-	return;
-}
-
-void worktoscreen(Context & context) {
-	vsync(context);
-	context.si = 0;
-	context.di = 0;
-	context.cx = 25;
-	context.ds = context.data.word(kWorkspace);
-	context.dx = 0x0a000;
-	context.es = context.dx;
-dumpallloop:
-	width160(context);
-	width160(context);
-	width160(context);
-	width160(context);
-	width160(context);
-	width160(context);
-	width160(context);
-	width160(context);
-	if (--context.cx) goto dumpallloop;
 	return;
 }
 
@@ -21321,9 +21252,6 @@ void __dispatch_call(Context &context, unsigned addr) {
 		case 0xc1d4: readoneblock(context); break;
 		case 0xc1d8: loadpalfromiff(context); break;
 		case 0xc1dc: setmode(context); break;
-		case 0xc1e0: cls(context); break;
-		case 0xc1e4: printundermon(context); break;
-		case 0xc1e8: worktoscreen(context); break;
 		case 0xc1ec: paneltomap(context); break;
 		case 0xc1f0: maptopanel(context); break;
 		case 0xc1f4: dumpmap(context); break;

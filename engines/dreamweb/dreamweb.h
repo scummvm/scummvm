@@ -87,6 +87,8 @@ public:
 	void setGraphicsMode();
 	void setPalette();
 	void fadeDos();
+	void blit(uint8 *src, int pitch, int x, int y, int w, int h);
+	void cls();
 
 private:
 

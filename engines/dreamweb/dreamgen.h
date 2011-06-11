@@ -16,6 +16,9 @@ namespace dreamgen {
 	void multiput(Context &context);
 	void multidump(Context &context);
 	void frameoutnm(Context &context);
+	void cls(Context &context);
+	void printundermon(Context &context);
+	void worktoscreen(Context &context);
 	void keyboardread(Context &context);
 	void resetkeyboard(Context &context);
 	void setkeyboardint(Context &context);

@@ -86,16 +86,6 @@ void DreamWebEngine::setVSyncInterrupt(bool flag) {
 
 void DreamWebEngine::waitForVSync() {
 	processEvents();
-	Graphics::Surface *s = _system->lockScreen();
-	if (!s)
-		error("lockScreen failed");
-	for(int y = 0; y < 200; ++y) {
-		uint8 *scanline = (uint8*)s->getBasePtr(0, y);
-		uint8 *src = _context.video.ptr(y * 320, 320);
-		memcpy(scanline, src, 320);
-	}
-	_system->unlockScreen();
-	_system->updateScreen();
 /*
 	while (!_vSyncInterrupt) {
 		_system->delayMillis(10);
@@ -220,6 +210,7 @@ void DreamWebEngine::setGraphicsMode() {
 }
 
 void DreamWebEngine::fadeDos() {
+	waitForVSync();
 	//processEvents will be called from vsync
 	PaletteManager *palette = _system->getPaletteManager();
 	_context.ds = _context.es = _context.data.word(dreamgen::kBuffers);
@@ -231,9 +222,8 @@ void DreamWebEngine::fadeDos() {
 				--dst[c];
 			}
 		}
-		//Common::hexdump(dst, 64 * 3);
-		//palette->setPalette(dst, 0, 64);
-		//waitForVSync();
+		palette->setPalette(dst, 0, 64);
+		waitForVSync();
 	}
 }
 void DreamWebEngine::setPalette() {
@@ -242,13 +232,22 @@ void DreamWebEngine::setPalette() {
 	PaletteManager *palette = _system->getPaletteManager();
 	unsigned n = (uint16)_context.cx;
 	uint8 *src = _context.ds.ptr(_context.si, n * 3);
-	for(int i = 0; i < n * 3; ++i)
+	for(unsigned i = 0; i < n * 3; ++i)
 		colors[i] = src[i] * 3;
 	//Common::hexdump(colors, n * 3);
 	palette->setPalette(colors, _context.al, n);
 	_context.si += n * 3;
 	_context.cx = 0;
 }
+
+void DreamWebEngine::blit(uint8 *src, int pitch, int x, int y, int w, int h) {
+	_system->copyRectToScreen(src, pitch, x, y, w, h);
+}
+
+void DreamWebEngine::cls() {
+	_system->fillScreen(0);
+}
+
 
 } // End of namespace DreamWeb
 
@@ -289,17 +288,25 @@ void multiput(Context &context) {
 }
 
 void multidump(Context &context) {
-	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
-	context.es = 0xa000;
-	context.ds = context.data.word(kWorkspace);
+	int w = (uint8)context.cl, h = (uint8)context.ch;
+	int x = (int16)context.di, y = (int16)context.bx;
+	int pitch = (uint16)context.data.word(kScreenwidth);
+	unsigned offset = x + y * pitch;
 	//debug(1, "multidump %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
-	unsigned pitch = (uint16)context.data.word(kScreenwidth);
-	unsigned offset = (uint16)context.di + (uint16)context.bx * pitch;
-	for(unsigned y = 0; y < h; ++y, offset += pitch) {
-		uint8 *src_p = context.ds.ptr(offset, w);
-		uint8 *dst_p = context.es.ptr(offset, w);
-		memcpy(dst_p, src_p, w);
-	}
+	engine()->blit(context.ds.ptr(offset, w * h), pitch, x, y, w, h);
+}
+
+void worktoscreen(Context &context) {
+	context.ds = context.data.word(kWorkspace);
+	engine()->blit(context.ds.ptr(0, 320 * 200), 320, 0, 0, 320, 200);
+}
+
+void printundermon(Context &context) {
+	warning("printundermon: STUB");
+}
+
+void cls(Context &context) {
+	engine()->cls();
 }
 
 void frameoutnm(Context &context) {
@@ -579,12 +586,11 @@ void showgroup(Context &context) {
 }
 
 void fadedos(Context &context) {
-	vsync(context);
 	engine()->fadeDos();
 }
 
 void doshake(Context &context) {
-	::error("doshake");
+	warning("doshake: STUB");
 }
 
 void vsync(Context &context) {
@@ -683,8 +689,6 @@ normal:
 endline:
 	context.di = context.pop();
 	context.push(context.si);
-	context.dx = 0xa000;
-	context.es = context.dx;
 	context.si = 0+(228*13)+32+60;
 	context.ds = context.data.word(kBuffers);
 
