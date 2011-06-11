@@ -82,8 +82,8 @@ static void SNGame (SPRITE * spr, int num)
 	  #define STAGES 8
 	  #define DRESSED 3
 	  static SPRITE * dup[3] = { NULL, NULL, NULL };
-	  int buref;
-	  int Stage;
+	  int buref = 0;
+	  int Stage = 0;
 
 	  for (dup[0] = VGA::ShowQ.First(); dup[0]; dup[0] = dup[0]->Next)
 	    {

@@ -33,17 +33,6 @@
   #include	"cge/vol.h"
 #endif
 
-
-#ifndef	DROP_H
-// TODO  replace printf by scummvm equivalent
-#define DROP(m,n) {}
-//#define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
-#endif
-
-
-//#include	<alloc.h>
-//#include	<dir.h>
-//#include	<mem.h>
 #include	<dos.h>
 #include "cge/cfile.h"
 #include "common/system.h"
@@ -73,7 +62,7 @@ BITMAP::BITMAP (const char * fname, bool rem)
       PIC_FILE file(pat);
       if (file.Error == 0)
 	if (! VBMLoad(&file))
-	  DROP("Bad VBM", fname);
+	  error("Bad VBM [%s]", fname);
     }
   else
   #endif
@@ -92,10 +81,11 @@ BITMAP::BITMAP (const char * fname, bool rem)
 		  M = NULL;
 		}
 	    }
-	  else DROP("Bad BMP", fname);
+	  else 
+	  	error("Bad BMP [%s]", fname);
 	}
       #else
-      DROP("Bad VBM", fname);
+      error("Bad VBM [%s]", fname);
       #endif
     }
 }
@@ -127,7 +117,8 @@ BITMAP::BITMAP (uint16 w, uint16 h, uint8 fill)
   uint16 psiz = H * lsiz;		// - last gape, but + plane trailer
   uint8 * v = new uint8[4 * psiz	// the same for 4 planes
 	+ H * sizeof(*B)];	// + room for wash table
-  if (v == NULL) DROP("No core", NULL);
+  if (v == NULL) 
+  	error("No core");
 
   * (uint16 *) v = CPY | dsiz;		// data chunk hader
   memset(v+2, fill, dsiz);		// data bytes
@@ -160,7 +151,8 @@ BITMAP::BITMAP (const BITMAP& bmp)
 	uint16 vsiz = (uint8*)(bmp.B) - (uint8*)(v0);
       uint16 siz = vsiz + H * sizeof(HideDesc);
       uint8 * v1 = farnew(uint8, siz);
-      if (v1 == NULL) DROP("No core", NULL);
+      if (v1 == NULL) 
+      	error("No core");
       memcpy(v1, v0, siz);
       B = (HideDesc *) ((V = v1) + vsiz);
     }
@@ -198,7 +190,8 @@ BITMAP& BITMAP::operator = (const BITMAP& bmp)
       uint16 vsiz = (uint8*)bmp.B - (uint8*)v0;
       uint16 siz = vsiz + H * sizeof(HideDesc);
       uint8 * v1 = farnew(uint8, siz);
-      if (v1 == NULL) DROP("No core", NULL);
+      if (v1 == NULL) 
+      	error("No core");
       memcpy(v1, v0, siz);
       B = (HideDesc *) ((V = v1) + vsiz);
     }
@@ -337,7 +330,7 @@ BMP_PTR BITMAP::Code (void)
 	  V = farnew(uint8, sizV + H * sizeof(*B));
 	  if (! V)
 	    {
-	      DROP("No core", NULL);
+	      error("No core");
 	    }
 	  B = (HideDesc *) (V + sizV);
 	}
@@ -442,7 +435,7 @@ bool BITMAP::VBMSave (XFILE * f)
 
 bool BITMAP::VBMLoad (XFILE * f)
 {
-  uint16 p, n;
+  uint16 p = 0, n = 0;
   if (f->Error == 0) f->Read((uint8 *)&p, sizeof(p));
   if (f->Error == 0) f->Read((uint8 *)&n, sizeof(n));
   if (f->Error == 0) f->Read((uint8 *)&W, sizeof(W));

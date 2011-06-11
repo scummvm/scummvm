@@ -36,8 +36,6 @@ namespace CGE {
 #define INI_FILE VFILE
 #define PIC_FILE VFILE
 #define BMP_MODE 0
-#define DROP {}  // TODO error handling 
-#define	DROP_H
 
 #define		BEL		 7
 #define		BS		 8
