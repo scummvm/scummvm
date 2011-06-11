@@ -86,12 +86,12 @@ void DreamWebEngine::setVSyncInterrupt(bool flag) {
 
 void DreamWebEngine::waitForVSync() {
 	processEvents();
-/*
+
 	while (!_vSyncInterrupt) {
 		_system->delayMillis(10);
 	}
 	setVSyncInterrupt(false);
-*/
+
 	// doshake
 	// dofade
 }
@@ -144,7 +144,8 @@ Common::Error DreamWebEngine::run() {
 	_mouseState = 0;
 	_console = new DreamWebConsole(this);
 
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 60, this);
+	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this);
+	//http://martin.hinner.info/vga/timing.html
 
 	dreamgen::__start(_context);
 	
@@ -226,6 +227,7 @@ void DreamWebEngine::fadeDos() {
 		waitForVSync();
 	}
 }
+
 void DreamWebEngine::setPalette() {
 	uint8 colors[768];
 	processEvents();
@@ -286,7 +288,10 @@ void multiput(Context &context) {
 }
 
 void multidump(Context &context) {
+	context.ds = context.data.word(kWorkspace);
 	int w = (uint8)context.cl, h = (uint8)context.ch;
+	if (w == 0 || h == 0)
+		return;
 	int x = (int16)context.di, y = (int16)context.bx;
 	unsigned offset = x + y * kScreenwidth;
 	debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)context.ds, x, y, offset);
