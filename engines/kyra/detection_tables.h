@@ -54,6 +54,9 @@ namespace {
 #define LOL_DEMO_FLAGS FLAGS(true, true, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
+#define EOB_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_EOB1)
+#define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_EOB2)
+
 const KYRAGameDescription adGameDescs[] = {
 	/* disable these targets until they get supported
 	{
@@ -1058,7 +1061,7 @@ const KYRAGameDescription adGameDescs[] = {
 	},
 
 	// Italian fan translation
-		{
+	{
 		{
 			"lol",
 			"CD",
@@ -1098,6 +1101,57 @@ const KYRAGameDescription adGameDescs[] = {
 			"CD",
 			{
 				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
+				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
+				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
+				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
+	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
 				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
 				{ 0, 0, 0, 0 }
 			},
@@ -1275,6 +1329,72 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_KYRA2_DEMO_FLAGS
 	},
 #endif // ENABLE_LOL
+#ifdef ENABLE_EOB
+
+	{
+		{
+			"eob",
+			0,
+			{
+				{ "EOBDATA2.PAK", 0, "feaf0345086b3a1d931352f4b0ad8feb", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIPCSPK
+		},
+		EOB_FLAGS
+	},
+
+	{
+		{
+			"eob",
+			0,
+			{
+				{ "SHINDIA.CPS", 0, "383b0c7ba0903eae5d04cad28ce90aaf", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIPCSPK
+		},
+		EOB_FLAGS
+	},
+
+	{
+		{
+			"eob2",
+			0,
+			{
+				{ "LEVEL15.INF", 0, "10f19eab75c73d0476dc58bcf70fff7a", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIPCSPK
+		},
+		EOB2_FLAGS
+	},
+
+	{
+		{
+			"eob2",
+			0,
+			{
+				{ "LEVEL15.INF", 0, "ce54243ad1ca4447f521340428da2c91", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIPCSPK
+		},
+		EOB2_FLAGS
+	},
+#endif // ENABLE_EOB
 
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0) }
 };
@@ -1286,6 +1406,10 @@ const PlainGameDescriptor gameList[] = {
 #ifdef ENABLE_LOL
 	{ "lol", "Lands of Lore: The Throne of Chaos" },
 #endif // ENABLE_LOL
+#ifdef ENABLE_EOB
+	{ "eob", "Eye of the Beholder" },
+	{ "eob2", "Eye of the Beholder II: The Legend of Darkmoon" },
+#endif // ENABLE_EOB
 	{ 0, 0 }
 };
 
