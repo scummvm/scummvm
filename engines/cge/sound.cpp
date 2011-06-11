@@ -29,24 +29,12 @@
 #include	"cge/startup.h"
 #include	"cge/sound.h"
 
-#ifdef	DROP_H
-  #include	"cge/drop.h"
-#else
-  #include	<stdio.h>
-  #include	<stdlib.h>
-#endif
-
 #include	"cge/text.h"
 #include	"cge/cfile.h"
 #include	"cge/vol.h"
-//#include	<alloc.h>
 
 
 namespace CGE {
-
-#ifndef	DROP_H
-  #define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
-#endif
 
 	bool		Music		= true;
 	FX		Fx		= 16;	// must precede SOUND!!

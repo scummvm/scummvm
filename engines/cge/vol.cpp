@@ -26,28 +26,13 @@
  */
 
 #include	"cge/vol.h"
-//#include	<alloc.h>
 #include "common/system.h"
 #include "common/str.h"
 #include	<stdlib.h>
 #include	<string.h>
 #include	<errno.h>
 
-#ifdef	DROP_H
-  #include	"cge/drop.h"
-#else
-  #include	<stdio.h>
-#endif
-
 namespace CGE {
-
-#ifndef	DROP_H
-	// TODO Replace printf by scummvm equivalent
-
-	#define	DROP(m,n)	{ }
-	//#define	DROP(m,n)	{ printf("%s [%s]\n", (m), (n)); _exit(1); }
-#endif
-
 
 #ifdef VOL_UPD
 BTFILE		VFILE::Cat(CAT_NAME, UPD, CRP);
@@ -68,7 +53,8 @@ VFILE::VFILE (const char * name, IOMODE mode)
 {
   if (mode == REA)
     {
-      if (Dat.File.Error || Cat.Error) DROP("Bad volume data", NULL);
+      if (Dat.File.Error || Cat.Error) 
+      	error("Bad volume data");
       BT_KEYPACK * kp = Cat.Find(name);
       if (scumm_stricmp(kp->Key, name) != 0) Error = 1;
       EndMark = (BufMark = BegMark = kp->Mark) + kp->Size;

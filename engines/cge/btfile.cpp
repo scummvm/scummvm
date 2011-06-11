@@ -31,22 +31,7 @@
 #include "common/str.h"
 #include	<string.h>
 
-
-
-#ifdef	DROP_H
-  #include	"cge/drop.h"
-#else
-  #include	<stdio.h>
-  #include	<stdlib.h>
-#endif
-
 namespace CGE {
-
-#ifndef	DROP_H
-	// TODO  replace printf by scummvm equivalent
-#define DROP(m,n)  
-	//#define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
-#endif
 
 #ifndef	BT_SIZE
   #define	BT_SIZE		K(1)
@@ -70,7 +55,8 @@ BTFILE::BTFILE (const char * name, IOMODE mode, CRYPT * crpt)
       Buff[i].PgNo = BT_NONE;
       Buff[i].Indx = -1;
       Buff[i].Updt = FALSE;
-      if (Buff[i].Page == NULL) DROP("No core", NULL);
+      if (Buff[i].Page == NULL) 
+      	error("No core");
     }
 }
 
