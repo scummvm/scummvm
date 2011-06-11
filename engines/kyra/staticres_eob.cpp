@@ -459,6 +459,13 @@ void EobCoreEngine::initStaticResource() {
 	_magicStrings7 = _staticres->loadStrings(kEobBaseMagicStrings7, temp);
 	_magicStrings8 = _staticres->loadStrings(kEobBaseMagicStrings8, temp);
 
+	_flightObjAnimTiles = _staticres->loadRawData(kEobBaseFlightObjAnimTiles, temp);
+	_flightObjAnimIndex = _staticres->loadRawData(kEobBaseFlightObjAnimIndex, temp);
+	_flightObjAnimDim = _staticres->loadRawData(kEobBaseFlightObjAnimDim, temp);
+	_flightObjAnimTbl1 = _staticres->loadRawData(kEobBaseFlightObjAnimTbl1, temp);
+	_flightObjAnimTbl2 = _staticres->loadRawData(kEobBaseFlightObjAnimTbl2, temp);
+	_flightObjAnimTbl3 = _staticres->loadRawData(kEobBaseFlightObjAnimTbl3, temp);
+
 	_sparkEffectDefSteps = _staticres->loadRawData(kEobBaseSparkDefSteps, temp);
 	_sparkEffectDefSubSteps = _staticres->loadRawData(kEobBaseSparkDefSubSteps, temp);
 	_sparkEffectDefShift = _staticres->loadRawData(kEobBaseSparkDefShift, temp);

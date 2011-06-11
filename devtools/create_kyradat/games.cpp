@@ -1108,6 +1108,12 @@ const int eob1FloppyNeed[] = {
 	kEobBaseMagicStrings7,
 	kEobBaseMagicStrings8,
 
+	kEobBaseFlightObjAnimIndex,
+	kEobBaseFlightObjAnimDim,
+	kEobBaseFlightObjAnimTbl1,
+	kEobBaseFlightObjAnimTbl2,
+	kEobBaseFlightObjAnimTbl3,
+
 	kEobBaseSparkDefSteps,
 	kEobBaseSparkDefSubSteps,
 	kEobBaseSparkDefShift,
@@ -1261,6 +1267,13 @@ const int eob2FloppyNeed[] = {
 	kEobBaseMagicStrings6,
 	kEobBaseMagicStrings7,
 	kEobBaseMagicStrings8,
+
+	kEobBaseFlightObjAnimTiles,
+	kEobBaseFlightObjAnimIndex,
+	kEobBaseFlightObjAnimDim,
+	kEobBaseFlightObjAnimTbl1,
+	kEobBaseFlightObjAnimTbl2,
+	kEobBaseFlightObjAnimTbl3,
 
 	kEobBaseSparkDefSteps,
 	kEobBaseSparkDefSubSteps,
