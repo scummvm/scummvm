@@ -167,10 +167,10 @@ struct Flags {
 	inline bool c() const	{ return _c; }
 	inline bool s() const	{ return _s; }
 	//complex flags:
-	inline bool g() const	{ return !_z && _s == _o; }
-	inline bool ge() const	{ return _s == _o; }
-	inline bool l() const	{ return _s != _o; }
-	inline bool le() const	{ return _z || _s != _o; }
+	inline bool g() const	{ return !_z && _o; }
+	inline bool ge() const	{ return _o; }
+	inline bool l() const	{ return !_o; }
+	inline bool le() const	{ return _z || !_o; }
 	
 	inline void update(uint8 v) {
 		_s = v & 0x80;
