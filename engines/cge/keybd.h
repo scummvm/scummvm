@@ -42,14 +42,14 @@ namespace CGE {
 
 class KEYBOARD
 {
-  static void interrupt (* OldKeyboard) (...);
-  static void interrupt NewKeyboard (...);
+public:
+  static void (* OldKeyboard) (...);
+  static void NewKeyboard (...);
   static uint16 Code[0x60];
   static uint16 Current;
   static SPRITE * Client;
-public:
   static uint8 Key[0x60];
-  static uint16 Last (void) { _AX = Current; Current = 0; return _AX; }
+  static uint16 Last (void) { uint16 cur = Current; Current = 0; return cur; }
   static SPRITE * SetClient (SPRITE * spr);
   KEYBOARD (void);
   ~KEYBOARD (void);

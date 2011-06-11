@@ -28,6 +28,7 @@
 #include	"cge/vol.h"
 //#include	<alloc.h>
 #include "common/system.h"
+#include "common/str.h"
 #include	<stdlib.h>
 #include	<string.h>
 #include	<errno.h>
@@ -41,7 +42,10 @@
 namespace CGE {
 
 #ifndef	DROP_H
-  #define	DROP(m,n)	{ printf("%s [%s]\n", (m), (n)); _exit(1); }
+	// TODO Replace printf by scummvm equivalent
+
+	#define	DROP(m,n)	{ }
+	//#define	DROP(m,n)	{ printf("%s [%s]\n", (m), (n)); _exit(1); }
 #endif
 
 
@@ -66,7 +70,7 @@ VFILE::VFILE (const char * name, IOMODE mode)
     {
       if (Dat.File.Error || Cat.Error) DROP("Bad volume data", NULL);
       BT_KEYPACK * kp = Cat.Find(name);
-      if (_fstricmp(kp->Key, name) != 0) Error = ENOFILE;
+      if (scumm_stricmp(kp->Key, name) != 0) Error = 1;
       EndMark = (BufMark = BegMark = kp->Mark) + kp->Size;
     }
   #ifdef VOL_UPD
@@ -89,7 +93,7 @@ VFILE::~VFILE (void)
 
 bool VFILE::Exist (const char * name)
 {
-  return _fstricmp(Cat.Find(name)->Key, name) == 0;
+  return scumm_stricmp(Cat.Find(name)->Key, name) == 0;
 }
 
 

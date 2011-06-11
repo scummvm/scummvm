@@ -83,12 +83,12 @@ enum	SNLIST	{ NEAR, TAKE };
 
 class SNAIL
 {
+public:
   struct COM { SNCOM Com; int Ref; int Val; void * Ptr; } * SNList;
   uint8 Head, Tail;
   bool Turbo, Busy, TextDelay;
   uint16 Pause;
-public:
-  static char * ComTxt[];
+  static const char * ComTxt[];
   bool TalkEnable;
   SNAIL (bool turbo = false);
   ~SNAIL (void);

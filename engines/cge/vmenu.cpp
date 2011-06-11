@@ -28,7 +28,7 @@
 #include	"cge/vmenu.h"
 #include	"cge/mouse.h"
 #include	<string.h>
-#include	<alloc.h>
+//#include	<alloc.h>
 
 namespace CGE {
 
@@ -51,9 +51,9 @@ MENU_BAR::MENU_BAR (uint16 w)
   int h = FONT_HIG + 2 * MB_VM, i = (w += 2 * MB_HM) * h;
   uint8 * p = farnew(uint8, i), * p1, * p2;
 
-  _fmemset(p+w, TRANS, i-2*w);
-  _fmemset(p, MB_LT, w);
-  _fmemset(p+i-w, MB_RB, w);
+  memset(p+w, TRANS, i-2*w);
+  memset(p, MB_LT, w);
+  memset(p+i-w, MB_RB, w);
   p1 = p;
   p2 = p+i-1;
   for (i = 0; i < h; i ++)
@@ -89,7 +89,7 @@ char * VMGather (CHOICE * list)
       len += strlen(cp->Text);
       ++ h;
     }
-  vmgt = new uint8[len+h];
+  vmgt = new char[len+h];
   if (vmgt)
     {
       *vmgt = '\0';

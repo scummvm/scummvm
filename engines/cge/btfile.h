@@ -42,7 +42,7 @@ namespace CGE {
 
 struct BT_KEYPACK
 {
-  uint8 Key[BT_KEYLEN];
+  char Key[BT_KEYLEN];
   uint32 Mark;
   uint16 Size;
 };
@@ -89,7 +89,7 @@ class BTFILE : public IOHAND
 public:
   BTFILE (const char * name, IOMODE mode = REA, CRYPT * crpt = NULL);
   virtual ~BTFILE (void);
-  BT_KEYPACK * Find(const byte * key);
+  BT_KEYPACK * Find(const char * key);
   BT_KEYPACK * Next(void);
   void Make(BT_KEYPACK * keypack, uint16 count);
 };

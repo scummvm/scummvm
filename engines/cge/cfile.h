@@ -59,7 +59,7 @@ public:
   IOBUF (const char * name, IOMODE mode, CRYPT * crpt = NULL);
   virtual ~IOBUF (void);
   uint16 Read (void * buf, uint16 len);
-  uint16 Read (char * buf);
+  uint16 Read (uint8 * buf);
   int Read (void);
   uint16 Write (void * buf, uint16 len);
   uint16 Write (uint8 * buf);

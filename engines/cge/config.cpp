@@ -59,17 +59,17 @@ namespace CGE {
 #define		DETECT		0xFFFF
 
 
-void		NONE		(void);
-void		SB		(void);
-void		SBM		(void);
-void		GUS		(void);
-void		GUSM		(void);
-void		MIDI		(void);
-void		AUTO		(void);
-void		SetPortD	(void);
-void		SetPortM	(void);
-void		SetIRQ		(void);
-void		SetDMA		(void);
+static void		NONE		(void);
+static void		SB		(void);
+static void		SBM		(void);
+static void		GUS		(void);
+static void		GUSM		(void);
+static void		MIDI		(void);
+static void		AUTO		(void);
+static void		SetPortD	(void);
+static void		SetPortM	(void);
+static void		SetIRQ		(void);
+static void		SetDMA		(void);
 
 
 static int DevName[] = { NONE_TEXT, SB_TEXT, SBM_TEXT,
@@ -208,7 +208,8 @@ static void Select (CHOICE * cho, int hlp)
 {
   Cho = cho;
   Hlp = hlp;
-  SNPOST(SNEXEC, -1, 0, (void *) SNSelect);
+  //TODO Change the SNPOST message send to a special way to send function pointer
+  //SNPOST(SNEXEC, -1, 0, (void *)&SNSelect);
 }
 
 

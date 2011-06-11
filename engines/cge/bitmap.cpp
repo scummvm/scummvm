@@ -27,19 +27,25 @@
 
 #include	"cge/bitmap.h"
 #include	"cge/cfile.h"
+#include	"cge/jbw.h"
 
 #ifdef	VOL
   #include	"cge/vol.h"
 #endif
 
-#ifdef	DROP_H
-  #include	"cge/drop.h"
+
+#ifndef	DROP_H
+// TODO  replace printf by scummvm equivalent
+#define DROP(m,n) {}
+//#define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
 #endif
+
 
 //#include	<alloc.h>
 //#include	<dir.h>
 //#include	<mem.h>
 #include	<dos.h>
+#include "cge/cfile.h"
 #include "common/system.h"
 
 namespace CGE {
@@ -51,7 +57,7 @@ namespace CGE {
 
 DAC *	BITMAP::Pal = NULL;
 
-
+#define MAXPATH  128
 
 #pragma argsused
 BITMAP::BITMAP (const char * fname, bool rem)
@@ -82,7 +88,7 @@ BITMAP::BITMAP (const char * fname, bool rem)
 	      Code();
 	      if (rem)
 		{
-		  farfree(M);
+		  free(M);
 		  M = NULL;
 		}
 	    }
@@ -151,11 +157,11 @@ BITMAP::BITMAP (const BITMAP& bmp)
   uint8 * v0 = bmp.V;
   if (v0)
     {
-      uint16 vsiz = FP_OFF(bmp.B) - FP_OFF(v0);
+	uint16 vsiz = (uint8*)(bmp.B) - (uint8*)(v0);
       uint16 siz = vsiz + H * sizeof(HideDesc);
       uint8 * v1 = farnew(uint8, siz);
       if (v1 == NULL) DROP("No core", NULL);
-      _fmemcpy(v1, v0, siz);
+      memcpy(v1, v0, siz);
       B = (HideDesc *) ((V = v1) + vsiz);
     }
 }
@@ -168,12 +174,12 @@ BITMAP::~BITMAP (void)
 {
   switch (MemType(M))
     {
-      case FAR_MEM  : farfree(M); break;
+      case FAR_MEM  : free(M); break;
     }
   switch (MemType(V))
     {
       case NEAR_MEM : delete[] (uint8 *) V; break;
-      case FAR_MEM  : farfree(V); break;
+      case FAR_MEM  : free(V); break;
     }
 }
 
@@ -185,15 +191,15 @@ BITMAP& BITMAP::operator = (const BITMAP& bmp)
   W = bmp.W;
   H = bmp.H;
   M = NULL;
-  if (MemType(V) == FAR_MEM) farfree(V);
+  if (MemType(V) == FAR_MEM) free(V);
   if (v0 == NULL) V = NULL;
   else
     {
-      uint16 vsiz = FP_OFF(bmp.B) - FP_OFF(v0);
+      uint16 vsiz = (uint8*)bmp.B - (uint8*)v0;
       uint16 siz = vsiz + H * sizeof(HideDesc);
       uint8 * v1 = farnew(uint8, siz);
       if (v1 == NULL) DROP("No core", NULL);
-      _fmemcpy(v1, v0, siz);
+      memcpy(v1, v0, siz);
       B = (HideDesc *) ((V = v1) + vsiz);
     }
   return *this;
@@ -207,10 +213,10 @@ uint16 BITMAP::MoveVmap (uint8 * buf)
 {
   if (V)
     {
-      uint16 vsiz = FP_OFF(B) - FP_OFF(V);
+      uint16 vsiz = (uint8*)B - (uint8*)V;
       uint16 siz = vsiz + H * sizeof(HideDesc);
-      _fmemcpy(buf, V, siz);
-      if (MemType(V) == FAR_MEM) farfree(V);
+      memcpy(buf, V, siz);
+      if (MemType(V) == FAR_MEM) free(V);
       B = (HideDesc *) ((V = buf) + vsiz);
       return siz;
     }
@@ -234,7 +240,7 @@ BMP_PTR BITMAP::Code (void)
 	  switch (MemType(V))
 	    {
 	      case NEAR_MEM : delete[] (uint8 *) V; break;
-	      case FAR_MEM  : farfree(V); break;
+	      case FAR_MEM  : free(V); break;
 	    }
 	  V = NULL;
 	}

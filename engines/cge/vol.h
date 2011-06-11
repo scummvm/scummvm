@@ -54,7 +54,7 @@ namespace CGE {
 
 class DAT
 {
-  friend VFILE;
+  friend class VFILE;
   static VOLBASE File;
 public:
   static bool Append (uint8 * buf, uint16 len);

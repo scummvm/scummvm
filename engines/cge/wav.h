@@ -135,6 +135,7 @@ extern	CKID	DATA;
 DATACK *	LoadWave	(XFILE * file, EMM * emm = NULL);
 
 
-// End of namespace CGE
+} // End of namespace CGE
+
 
 #endif

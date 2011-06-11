@@ -31,8 +31,8 @@
 #include	"cge/game.h"
 #include	"cge/mouse.h"
 #include	<dos.h>
-#include	<alloc.h>
-#include	<mem.h>
+//#include	<alloc.h>
+//#include	<mem.h>
 
 namespace CGE {
 
@@ -70,9 +70,9 @@ FONT::FONT (const char * name)
 
 FONT::~FONT (void)
 {
-  farfree(Map);
-  farfree(Pos);
-  farfree(Wid);
+  free(Map);
+  free(Pos);
+  free(Wid);
 }
 
 
@@ -212,10 +212,10 @@ void TALK::Update (const char * tx)
       else
 	{
 	  int cw = Font.Wid[*tx], i;
-	  char * f = Font.Map + Font.Pos[*tx];
+	  uint8 * f = Font.Map + Font.Pos[*tx];
 	  for (i = 0; i < cw; i ++)
 	    {
-	      char * p = m;
+	      uint8 * p = m;
 	      uint16 n;
 	      register uint16 b = * (f ++);
 	      for (n = 0; n < FONT_HIG; n ++)
@@ -246,13 +246,13 @@ BITMAP * TALK::Box (uint16 w, uint16 h)
   if (h < 8) h = 8;
   b = farnew(uint8, n = w * h);
   if (! b) VGA::Exit("No core");
-  _fmemset(b, TEXT_BG, n);
+  memset(b, TEXT_BG, n);
 
   if (Mode)
     {
       p = b; q = b + n - w;
-      _fmemset(p, LGRAY, w);
-      _fmemset(q, DGRAY, w);
+      memset(p, LGRAY, w);
+      memset(q, DGRAY, w);
       while (p < q)
 	{
 	  p += w;
@@ -301,10 +301,10 @@ void TALK::PutLine (int line, const char * text)
 
   // clear whole rectangle
   p = v;				// assume blanked line above text
-  _fmemcpy(p, p-lsiz, rsiz); p += psiz;	// tricky replicate lines for plane 0
-  _fmemcpy(p, p-lsiz, rsiz); p += psiz;	// same for plane 1
-  _fmemcpy(p, p-lsiz, rsiz); p += psiz;	// same for plane 2
-  _fmemcpy(p, p-lsiz, rsiz);		// same for plane 3
+  memcpy(p, p-lsiz, rsiz); p += psiz;	// tricky replicate lines for plane 0
+  memcpy(p, p-lsiz, rsiz); p += psiz;	// same for plane 1
+  memcpy(p, p-lsiz, rsiz); p += psiz;	// same for plane 2
+  memcpy(p, p-lsiz, rsiz);		// same for plane 3
 
   // paint text line
   if (text)

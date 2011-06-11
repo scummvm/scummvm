@@ -74,6 +74,6 @@ EC	Boot *		ReadBoot	(int drive);
 EC	uint8		CheckBoot	(Boot * boot);
 EC	bool		WriteBoot	(int drive, Boot * boot);
 
-// End of namespace CGE
+} // End of namespace CGE
 
 #endif

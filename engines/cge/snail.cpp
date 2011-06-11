@@ -34,8 +34,8 @@
 #include	"cge/mouse.h"
 #include	"cge/cge_main.h"
 #include	<dos.h>
-#include	<alloc.h>
-#include	<mem.h>
+//#include	<alloc.h>
+//#include	<mem.h>
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	"cge/keybd.h"
@@ -102,12 +102,12 @@ static void SNGame (SPRITE * spr, int num)
 
 	  if (Game) // continue game
 	    {
-	      int i = random(3), hand = (dup[0]->ShpCnt == 6);
+	      int i = new_random(3), hand = (dup[0]->ShpCnt == 6);
 	      ++ Stage;
 	      if (hand && Stage > DRESSED) ++ hand;
 	      if (
 		  Debug( i >= 0 || )
-		  dup[i] == spr && random(3) == 0)
+		  dup[i] == spr && new_random(3) == 0)
 		{
 		  SNPOST(SNSEQ, -1, 3, dup[0]); // yes
 		  SNPOST(SNSEQ, -1, 3, dup[1]); // yes
@@ -204,9 +204,9 @@ static void SNGame (SPRITE * spr, int num)
 	    }
 	  else // cont
 	    {
-	      k1->Step(random(6));
-	      k2->Step(random(6));
-	      k3->Step(random(6));
+	      k1->Step(new_random(6));
+	      k2->Step(new_random(6));
+	      k3->Step(new_random(6));
 	      ///--------------------
 	      if (spr->Ref == 1 && KEYBOARD::Key[ALT])
 		{
@@ -237,7 +237,7 @@ static void SNGame (SPRITE * spr, int num)
 		      Game = false;
 		      return;
 		    }
-		  else k3->Step(random(5));
+		  else k3->Step(new_random(5));
 		}
 	      if (count < 100)
 		{
@@ -383,7 +383,8 @@ void Hide1 (SPRITE * spr)
 
 void SNGhost (BITMAP * bmp)
 {
-  bmp->Hide(FP_OFF(bmp->M), FP_SEG(bmp->M));
+  // TODO : Get x and y from M but not using segment / offset 
+  //bmp->Hide(FP_OFF(bmp->M), FP_SEG(bmp->M));
   bmp->M = NULL;
   delete bmp;
 }
@@ -470,7 +471,7 @@ void FeedSnail (SPRITE * spr, SNLIST snq)
 
 //--------------------------------------------------------------------------
 
-char *		SNAIL::ComTxt[] = { "LABEL", "PAUSE", "WAIT", "LEVEL",
+const char *		SNAIL::ComTxt[] = { "LABEL", "PAUSE", "WAIT", "LEVEL",
 				    "HIDE", "SAY", "INF", "TIME",
 				    "CAVE", "KILL", "RSEQ",
 				    "SEQ", "SEND", "SWAP", "KEEP", "GIVE",
@@ -502,7 +503,7 @@ SNAIL::SNAIL (bool turbo)
 
 SNAIL::~SNAIL (void)
 {
-  if (SNList) farfree(SNList);
+  if (SNList) free(SNList);
 }
 
 
@@ -766,7 +767,7 @@ void SNCover (SPRITE * spr, int xref)
       xspr->Cave = spr->Cave;
       xspr->Goto(spr->X, spr->Y);
       ExpandSprite(xspr);
-      if ((xspr->Flags.Shad = spr->Flags.Shad) == true)
+      if ((xspr->Flags.Shad = spr->Flags.Shad) == TRUE)
 	{
 	  VGA::ShowQ.Insert(VGA::ShowQ.Remove(spr->Prev), xspr);
 	  spr->Flags.Shad = false;
@@ -786,7 +787,7 @@ void SNUncover (SPRITE * spr, SPRITE * xspr)
       spr->Flags.Hide = false;
       spr->Cave = xspr->Cave;
       spr->Goto(xspr->X, xspr->Y);
-      if ((spr->Flags.Shad = xspr->Flags.Shad) == true)
+      if ((spr->Flags.Shad = xspr->Flags.Shad) == TRUE)
 	{
 	  VGA::ShowQ.Insert(VGA::ShowQ.Remove(xspr->Prev), spr);
 	  xspr->Flags.Shad = false;
@@ -1099,7 +1100,7 @@ void SNFlash (bool on)
       if (pal)
 	{
 	  int i;
-	  _fmemcpy(pal, SysPal, PAL_SIZ);
+	  memcpy(pal, SysPal, PAL_SIZ);
 	  for (i = 0; i < PAL_CNT; i ++)
 	    {
 	      register int c;
@@ -1285,7 +1286,8 @@ void SNAIL::RunCom (void)
 	      case SNSOUND    : SNSound(sprel, snc->Val, count); count = 1; break;
 	      case SNCOUNT    : count = snc->Val; break;
 
-	      case SNEXEC     : ((void(*)(int)) (snc->Ptr))(snc->Val); break;
+		  // TODO: Handle correctly the execution of function pointer coming from Message send SNPOST
+	      //case SNEXEC     : ((void(*)(int)) (snc->Ptr))(snc->Val); break;
 	      case SNSTEP     : sprel->Step(); break;
 	      case SNZTRIM    : SNZTrim(sprel); break;
 	      case SNGHOST    : SNGhost((BITMAP *) snc->Ptr); break;

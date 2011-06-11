@@ -29,6 +29,7 @@
 #define	__CGE__
 
 #include	"cge\wav.h"
+#include	"cge\vga13h.h"
 
 namespace CGE {
 

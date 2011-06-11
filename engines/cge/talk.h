@@ -29,6 +29,8 @@
 #define		__TALK__
 
 #include	"cge/vga13h.h"
+#include	"cge/general.h"
+#include	"cge/jbw.h"
 //#include	<dir.h>
 
 namespace CGE {
@@ -45,7 +47,7 @@ namespace CGE {
 
 
 
-
+#define MAXPATH  128
 
 class	FONT
 {
