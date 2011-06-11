@@ -99,11 +99,12 @@ void DreamWebEngine::waitForVSync() {
 void DreamWebEngine::processEvents() {
 	Common::EventManager *event_manager = _system->getEventManager();
 	Common::Event event;
+	if (event_manager->shouldQuit()) {
+		warning("Engine should quit gracefully (but doesn't yet)");
+		g_system->quit();
+	}
 	while (event_manager->pollEvent(event)) {
 		switch(event.type) {
-		case Common::EVENT_RTL:
-			warning("quit requested");
-			return;
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseState |= 1;
 			break;
