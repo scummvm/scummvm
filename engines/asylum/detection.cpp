@@ -106,32 +106,15 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 
 } // End of namespace Asylum
 
-static const ADParams detectionParams = {
-	(const byte *)Asylum::gameDescriptions,
-	sizeof(ADGameDescription),
-	// number of md5 bytes
-	0,
-	// List of all engine targets
-	asylumGames,
-	// no obsolete targets data
-	0,
-	// Name of single gameid (optional)
-	"asylum",
-	// file-based detection data to enable not yet known versions to start
-	Asylum::fileBasedFallback,
-	// Flags
-	kADFlagPrintWarningOnFileBasedFallback,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class AsylumMetaEngine : public AdvancedMetaEngine {
 public:
-	AsylumMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	AsylumMetaEngine() : AdvancedMetaEngine(Asylum::gameDescriptions, sizeof(ADGameDescription), asylumGames) {
+		params.singleid = "asylum";
+		params.md5Bytes = 0;
+		params.guioptions = Common::GUIO_NONE;
+		params.fileBasedFallback = Asylum::fileBasedFallback;
+		params.flags = kADFlagPrintWarningOnFileBasedFallback;
+	}
 
 	virtual const char *getName() const {
 		return "Asylum";
