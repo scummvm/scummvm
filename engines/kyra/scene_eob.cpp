@@ -627,7 +627,7 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 	
 	for (const char *const *sf = suffix; *sf && !s; sf++) {
 		file = Common::String::format("LEVEL%d.%s", level, *sf);
-		s = _res->createReadStream(file.c_str());
+		s = _res->createReadStream(file);
 	}
 
 	if (!s)
@@ -717,7 +717,7 @@ Common::String EobCoreEngine::initLevelData(int sub){
 		loadBlockProperties((const char*)pos);
 		pos += slen;
 
-		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.VMP", (const char*)pos).c_str());
+		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.VMP", (const char*)pos));
 		uint16 size = s->readUint16LE();
 		delete[] _vmpPtr;
 		_vmpPtr = new uint16[size];
