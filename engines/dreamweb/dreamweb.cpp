@@ -260,14 +260,13 @@ static inline DreamWeb::DreamWebEngine *engine() {
 
 void multiget(Context &context) {
 	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
-	unsigned pitch = (uint16)context.data.word(kScreenwidth);
-	unsigned src = (uint16)context.di + (uint16)context.bx * pitch;
+	unsigned src = (uint16)context.di + (uint16)context.bx * kScreenwidth;
 	unsigned dst = (uint16)context.si;
 	context.es = context.ds;
 	context.ds = context.data.word(kWorkspace);
 	//debug(1, "multiget %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
 	for(unsigned y = 0; y < h; ++y) {
-		uint8 *src_p = context.ds.ptr(src + pitch * y, w);
+		uint8 *src_p = context.ds.ptr(src + kScreenwidth * y, w);
 		uint8 *dst_p = context.es.ptr(dst + w * y, w);
 		memcpy(dst_p, src_p, w);
 	}
@@ -275,14 +274,13 @@ void multiget(Context &context) {
 
 void multiput(Context &context) {
 	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
-	unsigned pitch = (uint16)context.data.word(kScreenwidth);
 	unsigned src = (uint16)context.si;
-	unsigned dst = (uint16)context.di + (uint16)context.bx * pitch;
+	unsigned dst = (uint16)context.di + (uint16)context.bx * kScreenwidth;
 	context.es = context.data.word(kWorkspace);
 	//debug(1, "multiput %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
 	for(unsigned y = 0; y < h; ++y) {
 		uint8 *src_p = context.ds.ptr(src + w * y, w);
-		uint8 *dst_p = context.es.ptr(dst + pitch * y, w);
+		uint8 *dst_p = context.es.ptr(dst + kScreenwidth * y, w);
 		memcpy(dst_p, src_p, w);
 	}
 }
@@ -290,10 +288,9 @@ void multiput(Context &context) {
 void multidump(Context &context) {
 	int w = (uint8)context.cl, h = (uint8)context.ch;
 	int x = (int16)context.di, y = (int16)context.bx;
-	int pitch = (uint16)context.data.word(kScreenwidth);
-	unsigned offset = x + y * pitch;
-	//debug(1, "multidump %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
-	engine()->blit(context.ds.ptr(offset, w * h), pitch, x, y, w, h);
+	unsigned offset = x + y * kScreenwidth;
+	debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)context.ds, x, y, offset);
+	engine()->blit(context.ds.ptr(offset, w * h), kScreenwidth, x, y, w, h);
 }
 
 void worktoscreen(Context &context) {
