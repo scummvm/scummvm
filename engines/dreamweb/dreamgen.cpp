@@ -5622,12 +5622,19 @@ void biblequote(Context & context) {
 	fadescreenups(context);
 	context.cx = 80;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto biblequotearly;
 	context.cx = 560;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto biblequotearly;
 	fadescreendowns(context);
 	context.cx = 200;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto biblequotearly;
 	cancelch0(context);
+biblequotearly:
 	return;
 }
 
@@ -5639,10 +5646,7 @@ hangonloope:
 	context._cmp(context.data.byte(kLasthardkey), 1);
 	if (context.flags.z()) goto hangonearly;
 	if (--context.cx) goto hangonloope;
-	return;
 hangonearly:
-	context.ax = context.pop();
-	context.ax = context.pop();
 	return;
 }
 
@@ -5662,21 +5666,30 @@ void intro(Context & context) {
 	playchannel0(context);
 	fadescreenups(context);
 	runintroseq(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto introearly;
 	clearbeforeload(context);
 	context.data.byte(kNewlocation) = 52;
 	loadintroroom(context);
 	runintroseq(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto introearly;
 	clearbeforeload(context);
 	context.data.byte(kNewlocation) = 53;
 	loadintroroom(context);
 	runintroseq(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto introearly;
 	clearbeforeload(context);
 	allpalette(context);
 	context.data.byte(kNewlocation) = 54;
 	loadintroroom(context);
 	runintroseq(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto introearly;
 	getridoftemptext(context);
 	clearbeforeload(context);
+introearly:
 	return;
 }
 
@@ -5707,8 +5720,6 @@ moreintroseq:
 	if (!context.flags.z()) goto moreintroseq;
 	return;
 earlyendrun:
-	context.ax = context.pop();
-	context.ax = context.pop();
 	getridoftemptext(context);
 	clearbeforeload(context);
 	return;
@@ -5769,12 +5780,18 @@ void realcredits(Context & context) {
 	playchannel0(context);
 	context.cx = 2;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	allpalette(context);
 	context.cx = 80;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	fadescreendowns(context);
 	context.cx = 256;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	context.dx = 2403;
 	showpcx(context);
 	context.al = 12;
@@ -5782,12 +5799,18 @@ void realcredits(Context & context) {
 	playchannel0(context);
 	context.cx = 2;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	allpalette(context);
 	context.cx = 80;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	fadescreendowns(context);
 	context.cx = 256;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	context.dx = 2416;
 	showpcx(context);
 	context.al = 12;
@@ -5795,12 +5818,18 @@ void realcredits(Context & context) {
 	playchannel0(context);
 	context.cx = 2;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	allpalette(context);
 	context.cx = 80;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	fadescreendowns(context);
 	context.cx = 256;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	context.dx = 2429;
 	showpcx(context);
 	context.al = 12;
@@ -5808,12 +5837,18 @@ void realcredits(Context & context) {
 	playchannel0(context);
 	context.cx = 2;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	allpalette(context);
 	context.cx = 80;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	fadescreendowns(context);
 	context.cx = 256;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	context.dx = 2442;
 	showpcx(context);
 	context.al = 12;
@@ -5821,25 +5856,36 @@ void realcredits(Context & context) {
 	playchannel0(context);
 	context.cx = 2;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	allpalette(context);
 	context.cx = 80;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	fadescreendowns(context);
 	context.cx = 256;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	context.dx = 2455;
 	showpcx(context);
 	fadescreenups(context);
 	context.cx = 60;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	context.al = 13;
 	context.ah = 0;
 	playchannel0(context);
 	context.cx = 350;
 	hangone(context);
+	context._cmp(context.data.byte(kLasthardkey), 1);
+	if (context.flags.z()) goto realcreditsearly;
 	fadescreendowns(context);
 	context.cx = 256;
 	hangone(context);
+realcreditsearly:
 	return;
 }
 
