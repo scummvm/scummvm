@@ -140,34 +140,11 @@ static const ToltecsGameDescription gameDescriptions[] = {
 
 } // End of namespace Toltecs
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Toltecs::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Toltecs::ToltecsGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	toltecsGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"toltecs",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class ToltecsMetaEngine : public AdvancedMetaEngine {
 public:
-	ToltecsMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	ToltecsMetaEngine() : AdvancedMetaEngine(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames) {
+		params.singleid = "toltecs";
+	}
 
 	virtual const char *getName() const {
 		return "Toltecs Engine";
