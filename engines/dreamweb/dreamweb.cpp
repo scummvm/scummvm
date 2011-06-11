@@ -213,36 +213,46 @@ void DreamWebEngine::setGraphicsMode() {
 void DreamWebEngine::fadeDos() {
 	waitForVSync();
 	//processEvents will be called from vsync
-	PaletteManager *palette = _system->getPaletteManager();
 	_context.ds = _context.es = _context.data.word(dreamgen::kBuffers);
 	uint8 *dst = _context.es.ptr(dreamgen::kStartpal, 768);
-	palette->grabPalette(dst, 0, 64);
+	getPalette(dst, 0, 64);
 	for(int fade = 0; fade < 64; ++fade) {
 		for(int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
 			if (dst[c]) {
 				--dst[c];
 			}
 		}
-		palette->setPalette(dst, 0, 64);
+		setPalette(dst, 0, 64);
 		waitForVSync();
 	}
 }
 
 void DreamWebEngine::setPalette() {
-	uint8 colors[768];
 	processEvents();
-	PaletteManager *palette = _system->getPaletteManager();
 	unsigned n = (uint16)_context.cx;
 	uint8 *src = _context.ds.ptr(_context.si, n * 3);
-	for(unsigned i = 0; i < n * 3; ++i)
-		colors[i] = src[i] * 3;
-	//Common::hexdump(colors, n * 3);
-	palette->setPalette(colors, _context.al, n);
+	setPalette(src, _context.al, n);
 	_context.si += n * 3;
 	_context.cx = 0;
 }
 
-void DreamWebEngine::blit(uint8 *src, int pitch, int x, int y, int w, int h) {
+void DreamWebEngine::getPalette(uint8 *data, uint start, uint count) {
+	_system->getPaletteManager()->grabPalette(data, start, count);
+	while(count--)
+		*data++ >>= 2;
+}
+
+void DreamWebEngine::setPalette(const uint8 *data, uint start, uint count) {
+	assert(start + count <= 256);
+	uint8 fixed[768];
+	for(uint i = 0; i < count * 3; ++i) {
+		fixed[i] = data[i] << 2;
+	}
+	_system->getPaletteManager()->setPalette(fixed, start, count);
+}
+
+
+void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int h) {
 	_system->copyRectToScreen(src, pitch, x, y, w, h);
 }
 
