@@ -498,9 +498,8 @@ void L1_SayLine() {
 				}
 				paramObj = lua_getparam(paramId++);
 			}
-			if (!msg.empty()) {
-				actor->sayLine(msg.c_str(), msgId, background); //background, vol, pan, x, y
-			}
+
+			actor->sayLine(msg.c_str(), msgId, background); //background, vol, pan, x, y
 		}
 	}
 }
