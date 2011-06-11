@@ -605,6 +605,9 @@ void readoneblock(Context &context) {
 void readabyte(Context & context);
 
 void showpcx(Context &context) {
+	Graphics::Surface *s = g_system->lockScreen();
+	int y = 0;
+
 	openfile(context);
 	context.ds = context.data.word(kWorkspace);
 	context.cx = 128;
@@ -616,6 +619,7 @@ void showpcx(Context &context) {
 	context.cx = 48;
 	context.es = context.data.word(kBuffers);
 	context.di = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768;
+	uint8 *pal = context.es.ptr(context.di, 768);
 pcxpal:
 	context.push(context.cx);
 	readabyte(context);
@@ -626,7 +630,18 @@ pcxpal:
 	if (--context.cx) goto pcxpal;
 	context.cx = 768 - 48;
 	context.ax = 0x0ffff;
-	while (--context.cx) context._stosw();
+	while (context.cx--) context._stosw();
+
+	// TODO: I think this is wrong. I mean, it's the right palette but I
+	//       don't think this is the place to set it in the backend.
+
+	byte pal16[48];
+	for (int i = 0; i < 48; i++) {
+		pal16[i] = 4 * pal[i];
+	}
+
+	PaletteManager *palette = g_system->getPaletteManager();
+	palette->setPalette(pal16, 0, 256);
 
 	readoneblock(context);
 	context.si = 0;
@@ -639,6 +654,9 @@ convertpcx:
 	context.es = context.data.word(kBuffers);
 	context.di = 0+(228*13)+32+60;
 	context.bx = 0;
+
+	uint8 *src = context.es.ptr(context.di, 320);
+
 sameline:
 	readabyte(context);
 	context.ah = context.al;
@@ -652,7 +670,7 @@ sameline:
 	readabyte(context);
 	context.cx = context.pop();
 	context._add(context.bx, context.cx);
-	while (--context.cx) context._stosb();
+	while (context.cx--) context._stosb();
 	context._cmp(context.bx, 4 * 80);
 	if (!context.flags.z()) goto sameline;
 	goto endline;
@@ -670,14 +688,30 @@ endline:
 	context.si = 0+(228*13)+32+60;
 	context.ds = context.data.word(kBuffers);
 
-	// TODO: There's a bunch of code here which I assume draws data to the
-	//       screen or something like that.
+	uint8 *dst = (uint8 *)s->getBasePtr(0, y);
+	memset(dst, 0, 640);
+
+	for (int i = 0; i < 320; i++) {
+		int plane = i / 80;
+		int pos = i % 80;
+
+		for (int j = 0; j < 8; j++) {
+			byte bit = (src[i] >> (7 - j)) & 1;
+			dst[8 * pos + j] |= (bit << plane);
+		}
+	}
 
 	context.si = context.pop();
 	context.cx = context.pop();
+
+	y++;
+
 	if (--context.cx) goto convertpcx;
 
 	closefile(context);
+
+	g_system->unlockScreen();
+	g_system->updateScreen();
 }
 
 } /*namespace dreamgen */
