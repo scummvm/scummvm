@@ -274,8 +274,6 @@ public:
   static void GetColors (DAC * tab);
   static void SetColors (DAC * tab, int lum);
   static void Clear (uint8 color = 0);
-  static void Exit (const char * txt = NULL, const char * name = NULL);
-  static void Exit (int tref, const char * name = NULL);
   static void CopyPage (uint16 d, uint16 s = 3);
   static void Sunrise (DAC * tab);
   static void Sunset (void);

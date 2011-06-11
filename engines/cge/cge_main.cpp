@@ -44,15 +44,12 @@
 #include	"cge/gettext.h"
 #include	"cge/mixer.h"
 #include	"cge/cge_main.h"
-//#include	<alloc.h>
 #include	<conio.h>
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
 #include	<dos.h>
-//#include	<dir.h>
 #include	<fcntl.h>
-//#include	<bios.h>
 #include	<io.h>
 
 #include "common/str.h"
@@ -191,7 +188,7 @@ uint8 & CLUSTER::Cell (void)
 bool CLUSTER::Protected (void)
 {
   if (A == Barriers[Now].Vert || B == Barriers[Now].Horz) return true;
-  // TODO AsM
+  warning("STUB: CLUSTER::Protected()");
   /*
   _DX = (MAP_ZCNT << 8) + MAP_XCNT;
   _BX = (uint16) this;
@@ -291,12 +288,14 @@ static void LoadGame (XFILE& file, bool tiny = false)
 
   for (st = SavTab; st->Ptr; st ++)
     {
-      if (file.Error) VGA::Exit("Bad SVG");
+      if (file.Error)
+		  error("Bad SVG");
       file.Read((uint8 *) ((tiny || st->Flg) ? st->Ptr : &i), st->Len);
     }
 
   file.Read((uint8 *) &i, sizeof(i));
-  if (i != SVGCHKSUM) VGA::Exit(BADSVG_TEXT);
+  if (i != SVGCHKSUM)
+	  error(Text[BADSVG_TEXT]);
   if (STARTUP::Core < CORE_HIG) Music = false;
   if (STARTUP::SoundOk == 1 && STARTUP::Mode == 0)
     {
@@ -316,7 +315,8 @@ static void LoadGame (XFILE& file, bool tiny = false)
 	  S.Prev = S.Next = NULL;
 	  spr = (scumm_stricmp(S.File+2, "MUCHA") == 0) ? new FLY(NULL)
 						  : new SPRITE(NULL);
-	  if (spr == NULL) VGA::Exit("No core");
+	  if (spr == NULL)
+		  error("No core");
 	  *spr = S;
 	  VGA::SpareQ.Append(spr);
 	}
@@ -360,7 +360,8 @@ static void SaveGame (XFILE& file)
 
   for (st = SavTab; st->Ptr; st ++)
     {
-      if (file.Error) VGA::Exit("Bad SVG");
+      if (file.Error)
+		  error("Bad SVG");
       file.Write((uint8 *) st->Ptr, st->Len);
     }
 
@@ -585,7 +586,7 @@ void WALK::Park (void)
 
 void WALK::FindWay (CLUSTER c)
 {
-	// TODO : Find1Way in ASM 
+	warning("STUB: Find1Way");
 /*
   bool Find1Way(void);
   extern uint16 Target;
@@ -845,6 +846,7 @@ static void PostMiniStep (int stp)
   static int recent = -2;
   //TODO Change the SNPOST message send to a special way to send function pointer
   //if (MiniCave && stp != recent) SNPOST_(SNEXEC, -1, recent = stp, (void *)&MiniStep);
+  warning("STUB: PostMiniStep()");
 }
 
 
@@ -1021,6 +1023,7 @@ void SwitchCave (int cav)
 	  SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
 	  //TODO Change the SNPOST message send to a special way to send function pointer
 	  //SNPOST(SNEXEC,  -1, 0, (void *)&QGame); // switch cave
+	  warning("SwitchCave() - SNPOST");
 	}
       else
 	{
@@ -1043,6 +1046,7 @@ void SwitchCave (int cav)
 	  SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
 	  //TODO Change the SNPOST message send to a special way to send function pointer
 	  //SNPOST(SNEXEC,   0, 0, (void *)&XCave); // switch cave
+	  warning("SwitchCave() - SNPOST");
 	}
     }
 }
@@ -1285,6 +1289,7 @@ static void SwitchMusic (void)
 	  SNPOST_(SNSEQ, 122, (Music = false), NULL);
 	  //TODO Change the SNPOST message send to a special way to send function pointer
 	  // SNPOST(SNEXEC, -1, 0, (void *)&SelectSound);
+	  warning("SwitchMusic() - SNPOST");
 	}
     }
   else
@@ -1699,9 +1704,8 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
   if (INI_FILE::Exist(line))		// sprite description file exist
     {
       INI_FILE sprf(line);
-      if (sprf.Error)
-	{
-	  VGA::Exit("Bad SPR", line);
+      if (sprf.Error) {
+	  error("Bad SPR [%s]", line);
 	}
 
     while ((len = sprf.Read((uint8*)line)) != 0)
@@ -1710,9 +1714,8 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 	  if (len && line[len-1] == '\n') line[-- len] = '\0';
 	  if (len == 0 || *line == '.') continue;
 
-	  if ((i = TakeEnum(Comd, strtok(line, " =\t"))) < 0)
-	    {
-	      VGA::Exit(NumStr("Bad line ######", lcnt), fname);
+	  if ((i = TakeEnum(Comd, strtok(line, " =\t"))) < 0) {
+	      error("%s [%s]", NumStr("Bad line ######", lcnt), fname);
 	    }
 
 	  switch (i)
@@ -1721,7 +1724,7 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 			break;
 	      case  1 : // Type
 			if ((type = TakeEnum(Type, strtok(NULL, " \t,;/"))) < 0)
-			  VGA::Exit(NumStr("Bad line ######", lcnt), fname);
+			  error("%s [%s]", NumStr("Bad line ######", lcnt), fname);
 			break;
 	      case  2 : // Phase
 			++ shpcnt;
@@ -1738,9 +1741,7 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 	    }
 	}
       if (! shpcnt)
-	{
-	  VGA::Exit("No shapes", fname);
-	}
+		error("No shapes [%s]", fname);
     }
   else	// no sprite description: mono-shaped sprite with only .BMP file
     {
@@ -1767,9 +1768,7 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 		 {
 		   w->Goto(col, row);
 		   if (Hero)
-		     {
-		       VGA::Exit("2nd HERO", fname);
-		     }
+		       error("2nd HERO [%s]", fname);
 		   Hero = w;
 		 }
 	       Sprite = w;
@@ -1792,7 +1791,7 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 	       */
       case 4 : // LISSAJOUS
 		  {
-	       VGA::Exit("Bad type", fname);
+	       error("Bad type [%s]", fname);
 	       /*
 	       LISSAJOUS * l = new LISSAJOUS(NULL);
 	       if (l)
@@ -1895,9 +1894,7 @@ static void LoadScript (const char *fname)
       if (Sprite && BkG) Sprite->Flags.Back = true;
     }
   if (! ok)
-    {
-      VGA::Exit(NumStr("Bad INI line ######", lcnt), fname);
-    }
+      error("%s [%s]", NumStr("Bad INI line ######", lcnt), fname);
 }
 
 
@@ -1982,7 +1979,7 @@ void LoadUser (void)
 	  Music = true;
 	  CFILE file = CFILE(SVG0NAME, WRI);
 	  SaveGame(file);
-	  VGA::Exit("Ok", SVG0NAME);
+	  error("Ok [%s]", SVG0NAME);
 	}
     }
   LoadScript(ProgName(IN0_EXT));
@@ -2270,7 +2267,8 @@ void cge_main (void)
   //Debug( memset((void *) (-K(4)), 0, K(1)); )
   memset(Barriers, 0xFF, sizeof(Barriers));
 
-  if (! Mouse.Exist) VGA::Exit(NO_MOUSE_TEXT);
+  if (! Mouse.Exist)
+	  error("%s", Text[NO_MOUSE_TEXT]);
   if (! SVG0FILE::Exist(SVG0NAME)) STARTUP::Mode = 2;
 
   Debug( DebugLine.Flags.Hide = true; )
@@ -2291,7 +2289,7 @@ void cge_main (void)
       if (FINIS) Movie("X03");
     }
   else Vga.Sunset();
-  VGA::Exit(EXIT_OK_TEXT+FINIS);
+  error("%s", Text[EXIT_OK_TEXT+FINIS]);
 }
 
 } // End of namespace CGE

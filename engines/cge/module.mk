@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	snail.o \
 	sound.o \
 	startup.o \
+	stdpal.o \
 	talk.o \
 	text.o \
 	vga13h.o \
