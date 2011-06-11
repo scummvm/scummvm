@@ -888,34 +888,36 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 		_sayLineText = 0;
 	}
 
-	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
-	if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly || background)
-		return;
+	if (msg[0] != 0) {
+		GrimEngine::SpeechMode m = g_grim->getSpeechMode();
+		if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly || background)
+			return;
 
-	TextObject *textObject = new TextObject(false, true);
-	textObject->setDefaults(&g_grim->_sayLineDefaults);
-	textObject->setFGColor(_talkColor);
-	if (g_grim->getMode() == ENGINE_MODE_SMUSH)
-		g_grim->killTextObjects();
-	if (m == GrimEngine::TextOnly || g_grim->getMode() == ENGINE_MODE_SMUSH) {
-		textObject->setDuration(500 + strlen(msg) * 15 * (11 - g_grim->getTextSpeed()));
-	}
-	if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
-		textObject->setX(640 / 2);
-		textObject->setY(456);
-	} else {
-		if (_winX1 == 1000 || _winX2 == -1000 || _winY2 == -1000) {
-			textObject->setX(640 / 2);
-			textObject->setY(463);
-		} else {
-			textObject->setX((_winX1 + _winX2) / 2);
-			textObject->setY(_winY1);
+		TextObject *textObject = new TextObject(false, true);
+		textObject->setDefaults(&g_grim->_sayLineDefaults);
+		textObject->setFGColor(_talkColor);
+		if (g_grim->getMode() == ENGINE_MODE_SMUSH)
+			g_grim->killTextObjects();
+		if (m == GrimEngine::TextOnly || g_grim->getMode() == ENGINE_MODE_SMUSH) {
+			textObject->setDuration(500 + strlen(msg) * 15 * (11 - g_grim->getTextSpeed()));
 		}
+		if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
+			textObject->setX(640 / 2);
+			textObject->setY(456);
+		} else {
+			if (_winX1 == 1000 || _winX2 == -1000 || _winY2 == -1000) {
+				textObject->setX(640 / 2);
+				textObject->setY(463);
+			} else {
+				textObject->setX((_winX1 + _winX2) / 2);
+				textObject->setY(_winY1);
+			}
+		}
+		textObject->setText(msg);
+		g_grim->registerTextObject(textObject);
+		if (g_grim->getMode() != ENGINE_MODE_SMUSH)
+			_sayLineText = textObject->getId();
 	}
-	textObject->setText(msg);
-	g_grim->registerTextObject(textObject);
-	if (g_grim->getMode() != ENGINE_MODE_SMUSH)
-		_sayLineText = textObject->getId();
 }
 
 bool Actor::isTalking() {
