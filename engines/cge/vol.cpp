@@ -26,7 +26,8 @@
  */
 
 #include	"cge/vol.h"
-#include	<alloc.h>
+//#include	<alloc.h>
+#include "common/system.h"
 #include	<stdlib.h>
 #include	<string.h>
 #include	<errno.h>

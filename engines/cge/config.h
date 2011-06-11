@@ -25,68 +25,12 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__VOL__
-#define		__VOL__
-
-
-//#include	<dir.h>
-#include	"cge/btfile.h"
-#include	"cge/cfile.h"
+#ifndef	__CONFIG__
+#define	__CONFIG__
 
 namespace CGE {
 
-#define		CAT_NAME	"VOL.CAT"
-#define		DAT_NAME	"VOL.DAT"
-
-#ifndef	CRP
-  #define	CRP		XCrypt
-#endif
-
-#define		XMASK		0xA5
-
-#ifdef	VOL_UPD
-#define		VOLBASE		IOHAND
-#else
-#define		VOLBASE		CFILE
-#endif
-
-
-
-class DAT
-{
-  friend VFILE;
-  static VOLBASE File;
-public:
-  static bool Append (uint8 * buf, uint16 len);
-  static bool Write (CFILE& f);
-  static bool Read (long org, uint16 len, uint8 * buf);
-};
-
-
-
-
-
-
-
-class	VFILE : public IOBUF
-{
-  static DAT Dat;
-  static BTFILE Cat;
-  static VFILE * Recent;
-  long BegMark, EndMark;
-  void ReadBuff (void);
-  void WriteBuff (void) { }
-  void Make(const char * fspec);
-public:
-  VFILE (const char * name, IOMODE mode = REA);
-  ~VFILE (void);
-  static bool Exist (const char * name);
-  static const char * Next (void);
-  long Mark (void) { return (BufMark+Ptr) - BegMark; }
-  long Size (void) { return EndMark - BegMark; }
-  long Seek (long pos) { Recent = NULL; Lim = 0; return (BufMark = BegMark+pos); }
-};
-
+void		SelectSound		(void);
 
 } // End of namespace CGE
 

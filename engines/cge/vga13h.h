@@ -30,7 +30,7 @@
 
 #include	"cge/general.h"
 #include	<stddef.h>
-#include	<dir.h>
+//#include	<dir.h>
 #include	"cge/bitmap.h"
 #include	"cge/snail.h"
 

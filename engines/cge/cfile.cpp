@@ -29,7 +29,8 @@
 #include	<dos.h>
 #include	<fcntl.h>
 #include	<string.h>
-#include	<alloc.h>
+//#include	<alloc.h>
+#include "common/system.h"
 
 #ifdef	DROP_H
   #include	"cge/drop.h"
