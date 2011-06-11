@@ -91,8 +91,8 @@ int	FLY::L = 20,
 FLY::FLY (BITMAP ** shpl)
 : SPRITE(shpl), Tx(0), Ty(0)
 {
-  Step(random(2));
-  Goto(L+random(R-L-W), T+random(B-T-H));
+  Step(new_random(2));
+  Goto(L+new_random(R-L-W), T+new_random(B-T-H));
 }
 
 
@@ -103,10 +103,10 @@ void FLY::Tick (void)
   Step();
   if (! Flags.Kept)
     {
-      if (random(10) < 1)
+      if (new_random(10) < 1)
 	{
-	  Tx = random(3) - 1;
-	  Ty = random(3) - 1;
+	  Tx = new_random(3) - 1;
+	  Ty = new_random(3) - 1;
 	}
       if (X + Tx < L || X + Tx + W > R) Tx = -Tx;
       if (Y + Ty < T || Y + Ty + H > B) Ty = -Ty;

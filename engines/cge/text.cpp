@@ -50,11 +50,10 @@ TEXT::TEXT (const char * fname, int size)
 {
   Cache = new HAN[size];
   MergeExt(FileName, fname, SAY_EXT);
-  if (! INI_FILE::Exist(FileName))
-    {
-      fputs("No talk\n", stderr);
-      _exit(1);
-    }
+  if (! INI_FILE::Exist(FileName)) {
+      error("No talk\n");
+  }
+
   for (Size = 0; Size < size; Size ++)
     {
       Cache[Size].Ref = 0;
@@ -124,7 +123,7 @@ void TEXT::Preload (int from, int upto)
       char line[LINE_MAX+1];
       int n;
 
-      while ((n = tf.Read(line)) != 0)
+      while ((n = tf.Read((uint8*)line)) != 0)
 	{
 	  char * s;
 	  int ref;
@@ -168,7 +167,7 @@ char * TEXT::Load (int idx, int ref)
       char line[LINE_MAX+1];
       int n;
 
-      while ((n = tf.Read(line)) != 0)
+      while ((n = tf.Read((uint8*)line)) != 0)
 	{
 	  char * s;
 
@@ -289,12 +288,15 @@ void Inf (const char * txt)
 
 void SayTime (SPRITE * spr)
 {
+//TODO Get Time
+/*
   static char t[] = "00:00";
   struct time ti;
   gettime(&ti);
   wtom(ti.ti_hour, t+0, 10, 2);
   wtom(ti.ti_min,  t+3, 10, 2);
   Say((*t == '0') ? (t+1) : t, spr);
+  */
 }
 
 

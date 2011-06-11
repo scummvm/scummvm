@@ -30,15 +30,15 @@
 #include	"cge/bitmap.h"
 #include	"cge/vol.h"
 #include	"cge/text.h"
-#include	<alloc.h>
+//#include	<alloc.h>
 #include	<conio.h>
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
 #include	<dos.h>
-#include	<dir.h>
+//#include	<dir.h>
 #include	<fcntl.h>
-#include	<bios.h>
+//#include	<bios.h>
 #include	<io.h>
 
 namespace CGE {
@@ -112,10 +112,12 @@ char * NumStr (char * str, int num)
 
 
 
-
+// TODO Video ASM
+/*
 static void Video (void)
 {
   static uint16 SP_S;
+
 
   asm	push	bx
   asm	push	bp
@@ -131,8 +133,9 @@ static void Video (void)
   asm	pop	si
   asm	pop	bp
   asm	pop	bx
-}
 
+}
+  */
 
 
 
@@ -140,6 +143,7 @@ static void Video (void)
 
 uint16 * SaveScreen (void)
 {
+	  /* TODO ASM
   uint16 cxy, cur, siz, * scr = NULL, * sav;
 
   // horizontal size of text mode screen
@@ -187,9 +191,11 @@ uint16 * SaveScreen (void)
       sav[0] = siz;
       sav[1] = cur;
       sav[2] = cxy;
-      _fmemcpy(sav+3, scr, siz * 2);
+      memcpy(sav+3, scr, siz * 2);
     }
   return sav;
+  */
+	return 0;
 }
 
 
@@ -198,6 +204,8 @@ uint16 * SaveScreen (void)
 
 void RestoreScreen (uint16 * &sav)
 {
+	// TODO RestoreScreen ASM
+	/*
   uint16 * scr = NULL;
 
   asm	mov	ax,0x40		// system data segment
@@ -209,7 +217,7 @@ void RestoreScreen (uint16 * &sav)
   sto:				// store screen address
   asm	mov	word ptr scr+2,ax
 
-  _fmemcpy(scr, sav+3, sav[0] * 2);
+  memcpy(scr, sav+3, sav[0] * 2);
 
   _AH = 0x0F; Video();		// active page
 
@@ -221,8 +229,9 @@ void RestoreScreen (uint16 * &sav)
   _DX = sav[2];
   _AH = 0x02; Video();		// set cursor
 
-  farfree(sav);
+  free(sav);
   sav = NULL;
+  */
 }
 
 
@@ -318,11 +327,12 @@ extern "C" void TimerProc (void)
 */
 
 
-void interrupt ENGINE::NewTimer (...)
+void  ENGINE::NewTimer (...)
 {
   static SPRITE * spr;
   static uint8 run = 0, cntr1 = TMR_RATE1, cntr2 = TMR_RATE2;
-
+  // TODO Timer ASM
+  /*
   ___1152_Hz___:
 
   SNDMIDIPlay();
@@ -379,6 +389,8 @@ void interrupt ENGINE::NewTimer (...)
       asm	mov	sp,oldSP
       -- run;
     }
+
+	*/
 }
 
 
@@ -591,7 +603,7 @@ SPRITE * SPRITE::Expand (void)
       if ((Ext = new SPREXT) == NULL) DROP("No core", NULL);
       if (*File)
 	{
-	  static char * Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
+	  static const char * Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
 	  char line[LINE_MAX], fname[MAXPATH];
 	  BMP_PTR * shplist = new BMP_PTR [ShpCnt+1];
 	  SEQ * seq = NULL;
@@ -615,7 +627,7 @@ SPRITE * SPRITE::Expand (void)
 		  VGA::Exit("Bad SPR", fname);
 		}
 
-	      while ((len = sprf.Read(line)) != 0)
+	      while ((len = sprf.Read((uint8*)line)) != 0)
 		{
 		  ++ lcnt;
 		  if (len && line[len-1] == '\n') line[-- len] = '\0';
@@ -624,11 +636,16 @@ SPRITE * SPRITE::Expand (void)
 		  switch (TakeEnum(Comd, strtok(line, " =\t")))
 		    {
 		      case 0 : // Name
+				  {
 			       SetName(strtok(NULL, "")); break;
+				  }
 		      case 1 : // Phase
+				  {
 			       shplist[shpcnt ++] = new BITMAP(strtok(NULL, " \t,;/"));
 			       break;
+				  }
 		      case 2 : // Seq
+				  {
 			       seq = (SEQ *) realloc(seq, (seqcnt + 1) * sizeof(*seq));
 			       if (seq == NULL)
 				 VGA::Exit("No core", fname);
@@ -646,7 +663,9 @@ SPRITE * SPRITE::Expand (void)
 			       s->Dy   = atoi(strtok(NULL, " \t,;/"));
 			       s->Dly  = atoi(strtok(NULL, " \t,;/"));
 			       break;
+				  }
 		      case 3 : // Near
+				  {
 			       if (NearPtr != NO_PTR)
 				 {
 				   nea = (SNAIL::COM *) realloc(nea, (neacnt + 1) * sizeof(*nea));
@@ -661,8 +680,10 @@ SPRITE * SPRITE::Expand (void)
 				       c->Ptr = NULL;
 				     }
 				 }
+				  }
 			       break;
 		      case 4 : // Take
+				  {
 			       if (TakePtr != NO_PTR)
 				 {
 				   tak = (SNAIL::COM *) realloc(tak, (takcnt + 1) * sizeof(*tak));
@@ -678,6 +699,7 @@ SPRITE * SPRITE::Expand (void)
 				     }
 				 }
 			       break;
+				  }
 		    }
 		}
 	    }
@@ -693,10 +715,10 @@ SPRITE * SPRITE::Expand (void)
 	      SetSeq(seq);
 	    }
 	  else SetSeq((ShpCnt == 1) ? Seq1 : Seq2);
-	  disable();
+	  //disable();  // disable interupt
 
 	  SetShapeList(shplist);
-	  enable();
+	  //enable();  // enable interupt
 	  if (nea) nea[neacnt-1].Ptr = Ext->Near = nea; else NearPtr = NO_PTR;
 	  if (tak) tak[takcnt-1].Ptr = Ext->Take = tak; else TakePtr = NO_PTR;
 	}
@@ -807,7 +829,7 @@ void SPRITE::KillXlat (void)
       switch (MemType(m))
 	{
 	  case NEAR_MEM : delete[] (uint8 *) m; break;
-	  case FAR_MEM  : farfree(m); break;
+	  case FAR_MEM  : free(m); break;
 	}
       for (b = Ext->ShpList; *b; b ++) (*b)->M = NULL;
       Flags.Xlat = false;
@@ -863,7 +885,7 @@ void SPRITE::Center (void)
 void SPRITE::Show (void)
 {
   register SPREXT * e;
-  asm	cli		// critic section...
+ // asm	cli		// critic section...
   e = Ext;
   e->x0 = e->x1;
   e->y0 = e->y1;
@@ -871,7 +893,7 @@ void SPRITE::Show (void)
   e->x1 = X;
   e->y1 = Y;
   e->b1 = Shp();
-  asm	sti		// ...done!
+//  asm	sti		// ...done!
   if (! Flags.Hide)
     {
       if (Flags.Xlat) e->b1->XShow(e->x1, e->y1);
@@ -919,8 +941,9 @@ BMP_PTR SPRITE::Ghost (void)
       bmp->W = e->b1->W;
       bmp->H = e->b1->H;
       if ((bmp->B = farnew(HideDesc, bmp->H)) == NULL) VGA::Exit("No Core");
-      bmp->V = (uint8 *) _fmemcpy(bmp->B, e->b1->B, sizeof(HideDesc) * bmp->H);
-      bmp->M = (uint8 *) MK_FP(e->y1, e->x1);
+      bmp->V = (uint8 *) memcpy(bmp->B, e->b1->B, sizeof(HideDesc) * bmp->H);
+      // TODO offset correctly in the surface using y1 pitch and x1 and not via offset segment
+	  //bmp->M = (uint8 *) MK_FP(e->y1, e->x1);
       return bmp;
     }
   return NULL;
@@ -1095,11 +1118,16 @@ DAC *	VGA::NewColors = NULL;
 bool		VGA::SetPal = false;
 int		VGA::Mono = 0;
 QUEUE		VGA::ShowQ = true, VGA::SpareQ = false;
+
+// TODO: Was direct mapping to VGA buffers.. need to create scummvm surfaces for that
+uint8 *	VGA::Page[4] = { 0, 0, 0, 0 };
+
+/*
 uint8 *	VGA::Page[4] = { (uint8 *) MK_FP(SCR_SEG, 0x0000),
 				 (uint8 *) MK_FP(SCR_SEG, 0x4000),
 				 (uint8 *) MK_FP(SCR_SEG, 0x8000),
 				 (uint8 *) MK_FP(SCR_SEG, 0xC000) };
-
+*/
 
 
 
@@ -1114,13 +1142,16 @@ VGA::VGA (int mode)
       char * txt = Text[i];
       if (txt)
 	{
-	  puts(txt);
-	  #ifndef DEBUG
+//	  puts(txt);
+	  warning(txt);
+	#ifndef DEBUG
 	  std = false;
 	  #endif
 	}
     }
-  if (std) puts(Copr);
+  if (std) 
+//	  puts(Copr);
+		warning(Copr);
   SetStatAdr();
   if (StatAdr != VGAST1_) ++ Mono;
   if (IsVga())
@@ -1146,33 +1177,27 @@ VGA::~VGA (void)
   Mono = 0;
   if (IsVga())
     {
+	  Common::String buffer = "";
       Clear();
       SetMode(OldMode);
       SetColors();
       RestoreScreen(OldScreen);
       Sunrise(OldColors);
-      if (OldColors) farfree(OldColors);
-      if (NewColors) farfree(NewColors);
-      if (Msg) fputs(Msg, stderr);
+      if (OldColors) free(OldColors);
+      if (NewColors) free(NewColors);
+      if (Msg)
+		  buffer = Common::String(Msg);
       if (Nam)
-	{
-	  fputs(" [", stderr);
-	  fputs(Nam, stderr);
-	  fputc(']', stderr);
-	}
-      if (Msg || Nam) fputc('\n', stderr);
-      #ifdef REPORT
-      fputs(Report, stderr);
-      #endif
+		buffer = buffer + " [" + Nam + "]";
+
+	  warning(buffer.c_str());
     }
 }
 
 
-
-
-
 void VGA::SetStatAdr (void)
 {
+	/* TODO SetStatADR ASM
   asm	mov	dx,VGAMIr_
   asm	in	al,dx
   asm	test	al,1		// CGA addressing mode flag
@@ -1181,6 +1206,7 @@ void VGA::SetStatAdr (void)
   asm	xor	al,0x60		// MDA addressing
   set_mode_adr:
   StatAdr = _AX;
+  */
 }
 
 
@@ -1191,6 +1217,8 @@ void VGA::SetStatAdr (void)
 #pragma argsused
 void VGA::WaitVR (bool on)
 {
+	// TODO Wait vertical retrace  ASM
+/*
   _DX = StatAdr;
   _AH = (on) ? 0x00 : 0x08;
 
@@ -1203,6 +1231,7 @@ void VGA::WaitVR (bool on)
   asm	jnz	wait
   asm	xor	ah,0x08
   asm	loop	wait
+  */
 }
 
 
@@ -1212,6 +1241,7 @@ void VGA::WaitVR (bool on)
 
 void VGA::Setup (VgaRegBlk * vrb)
 {
+/* TODO VGA setup
   WaitVR();			// *--LOOK!--* resets VGAATR logic
   asm	cld
   asm	mov	si, vrb		// take address of parameter table
@@ -1248,6 +1278,7 @@ void VGA::Setup (VgaRegBlk * vrb)
   asm	jmp	write		// continue standard routine
 
   xit:
+  */
 }
 
 
@@ -1257,6 +1288,8 @@ void VGA::Setup (VgaRegBlk * vrb)
 
 int VGA::SetMode (int mode)
 {
+	/* TODO VGA Set Mode
+	
   Clear();
   // get current mode
   asm	mov	ah,0x0F
@@ -1275,6 +1308,8 @@ int VGA::SetMode (int mode)
   // return previous mode
   asm	pop	ax
   return _AX;
+  */
+	return 0;
 }
 
 
@@ -1284,6 +1319,7 @@ int VGA::SetMode (int mode)
 
 void VGA::GetColors (DAC * tab)
 {
+	/* TODO GetColors ASM
   asm	cld
   asm	les	di,tab		// color table
   asm	mov	dx,0x3C7	// PEL address read mode register
@@ -1300,6 +1336,8 @@ void VGA::GetColors (DAC * tab)
   sto:
   asm	stosb			// store 1 color
   asm	loop	gc		// next one?
+
+  */
 }
 
 
@@ -1307,6 +1345,9 @@ void VGA::GetColors (DAC * tab)
 
 void VGA::SetColors (DAC * tab, int lum)
 {
+
+	/* TODO SetColors 
+
   DAC * des = NewColors;
   asm	push	ds
 
@@ -1350,6 +1391,7 @@ void VGA::SetColors (DAC * tab, int lum)
       asm	cmp	di,cx
       asm	jb	mono
     }
+	*/
   SetPal = true;
 }
 
@@ -1360,7 +1402,7 @@ void VGA::SetColors (DAC * tab, int lum)
 
 void VGA::SetColors (void)
 {
-  _fmemset(NewColors, 0, PAL_SIZ);
+  memset(NewColors, 0, PAL_SIZ);
   UpdateColors();
 }
 
@@ -1422,6 +1464,7 @@ void VGA::Show (void)
 
 void VGA::UpdateColors (void)
 {
+	/* TODO UpdateColors ASM
   DAC * tab = NewColors;
 
   asm	push	ds
@@ -1445,6 +1488,7 @@ void VGA::UpdateColors (void)
 
 
   asm	pop	ds
+  */
 }
 
 
@@ -1455,6 +1499,8 @@ void VGA::UpdateColors (void)
 
 void VGA::Update (void)
 {
+	// TODO VGA Update
+	/*
   uint8 * p = Page[1];
   Page[1] = Page[0];
   Page[0] = p;
@@ -1466,7 +1512,7 @@ void VGA::Update (void)
   asm	dec	al
   asm	mov	ah,byte ptr p+1
   asm	out	dx,ax
-
+*/
   if (! SpeedTest) WaitVR();
 
   if (SetPal)
@@ -1485,6 +1531,7 @@ void VGA::Update (void)
 
 void VGA::Clear (uint8 color)
 {
+	/* TODO Clear ASM
   uint8 * a = (uint8 *) MK_FP(SCR_SEG, 0);
 
   asm	mov	dx,VGASEQ_
@@ -1497,6 +1544,7 @@ void VGA::Clear (uint8 color)
   asm	mov	al,color
   asm	rep stosb
   asm	stosb
+  */
 }
 
 
@@ -1506,6 +1554,7 @@ void VGA::Clear (uint8 color)
 
 void VGA::CopyPage (uint16 d, uint16 s)
 {
+	/* TODO CopyPage
   uint8 * S = Page[s & 3], * D = Page[d & 3];
 
   asm	mov	dx,VGAGRA_
@@ -1536,6 +1585,7 @@ void VGA::CopyPage (uint16 d, uint16 s)
   asm	pop	dx
   asm	pop	ax
   asm	out	dx,al		// end of copy mode
+  */
 }
 
 
@@ -1546,13 +1596,17 @@ void VGA::CopyPage (uint16 d, uint16 s)
 
 void VGA::Exit (const char * txt, const char * name)
 {
+	// TODO Properly exit
+	/*
   Msg = txt;
   Nam = name;
-  #ifdef REPORT
+ 
+	#ifdef REPORT
     wtom(coreleft(), Report + NREP, 10, 5);
     dwtom(farcoreleft(), Report + FREP, 10, 6);
   #endif
   exit(0);
+  */
 }
 
 
@@ -1573,6 +1627,8 @@ void VGA::Exit (int tref, const char * name)
 
 void BITMAP::XShow (int x, int y)
 {
+	// TODO XShow ASM
+	/*
   uint8 rmsk = x % 4,
        mask = 1 << rmsk,
        * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
@@ -1650,6 +1706,8 @@ void BITMAP::XShow (int x, int y)
 	asm	pop	ds
 	asm	pop	si
 	asm	pop	bx
+
+	*/
 }
 
 
@@ -1659,6 +1717,9 @@ void BITMAP::XShow (int x, int y)
 
 void BITMAP::Show (int x, int y)
 {
+
+	// TODO Show ASM
+	/*
   uint8 mask = 1 << (x & 3),
        * scr = VGA::Page[1] + y * (SCR_WID >> 2) + (x >> 2);
   uint8 * v = V;
@@ -1722,6 +1783,7 @@ void BITMAP::Show (int x, int y)
 	asm	cmp	ah,mask
 	asm	jne	plane
 	asm	pop	ds
+	*/
 }
 
 
@@ -1730,6 +1792,8 @@ void BITMAP::Show (int x, int y)
 
 void BITMAP::Hide (int x, int y)
 {
+	// TODO Bitmap Hide ASM
+	/*
   uint8 * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
   uint16 d = FP_OFF(VGA::Page[2]) - FP_OFF(VGA::Page[1]);
   HideDesc * b = B;
@@ -1790,6 +1854,7 @@ void BITMAP::Hide (int x, int y)
 	asm	pop	ds
 	asm	pop	si
 //	asm	pop	bx
+*/
 }
 
 } // End of namespace CGE

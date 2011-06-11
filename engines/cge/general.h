@@ -29,6 +29,9 @@
 #define		__GENERAL__
 
 #include "common/system.h"
+#include "common/random.h"
+#include "common/textconsole.h"
+#include "common/str.h"
 
 #include	"cge\jbw.h"
 #include	<io.h>
@@ -57,8 +60,9 @@ typedef	struct	{
 
 typedef	uint16	CRYPT	(void *buf, uint16 siz, uint16 seed);
 
+extern Common::RandomSource randSrc;
 
-
+#define new_random(a)  (randSrc.getRandomNumber(a))
 
 
 
@@ -87,8 +91,8 @@ public:
 class ENGINE
 {
 protected:
-  static void interrupt (* OldTimer) (...);
-  static void interrupt NewTimer (...);
+  static void (* OldTimer) (...);
+  static void NewTimer (...);
 public:
   ENGINE (uint16 tdiv);
   ~ENGINE (void);
@@ -111,7 +115,7 @@ class EMM
   long Top, Lim;
   EMS * List;
   int Han;
-  static void _seg * Frame;
+  static void * Frame;
 public:
   EMM::EMM (long size = 0);
   EMM::~EMM (void);
@@ -225,8 +229,8 @@ public:
   long Mark (void);
   long Size (void);
   long Seek (long pos);
-  ftime Time (void);
-  void SetTime (ftime t);
+  //timeb  Time (void);
+ // void SetTime (timeb  t);
 };
 
 

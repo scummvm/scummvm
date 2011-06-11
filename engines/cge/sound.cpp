@@ -39,7 +39,7 @@
 #include	"cge/text.h"
 #include	"cge/cfile.h"
 #include	"cge/vol.h"
-#include	<alloc.h>
+//#include	<alloc.h>
 
 
 namespace CGE {
@@ -95,7 +95,7 @@ void SOUND::Play (DATACK * wav, int pan, int cnt)
   if (wav)
     {
       Stop();
-      smpinf.saddr = (char *) &*(wav->EAddr());
+      smpinf.saddr = (uint8 *) &*(wav->EAddr());
       smpinf.slen = (uint16)wav->Size();
       smpinf.span = pan;
       smpinf.sflag = cnt;
@@ -196,7 +196,8 @@ void FX::Preload (int ref0)
     {
       static char fname[] = "FX00000.WAV";
       wtom(ref, fname+2, 10, 5);
-      DATACK * wav = LoadWave(&INI_FILE(fname), &Emm);
+	  INI_FILE file = INI_FILE(fname);
+      DATACK * wav = LoadWave(&file, &Emm);
       if (wav)
 	{
 	  HAN * p = &Cache[Find(0)];
@@ -216,7 +217,8 @@ DATACK * FX::Load (int idx, int ref)
   static char fname[] = "FX00000.WAV";
   wtom(ref, fname+2, 10, 5);
 
-  DATACK * wav = LoadWave(&INI_FILE(fname), &Emm);
+  INI_FILE file = INI_FILE(fname);
+  DATACK * wav = LoadWave(&file, &Emm);
   if (wav)
     {
       HAN * p = &Cache[idx];
@@ -309,13 +311,13 @@ EC void * Patch (int pat)
   if (! snd.Error)
     {
       uint16 siz = (uint16) snd.Size();
-      p = (uint8 *) farmalloc(siz);
+      p = (uint8 *) malloc(siz);
       if (p)
 	{
 	  snd.Read(p, siz);
 	  if (snd.Error)
 	    {
-	      farfree(p);
+	      free(p);
 	      p = NULL;
 	    }
 	}

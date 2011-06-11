@@ -44,16 +44,18 @@
 #include	"cge/gettext.h"
 #include	"cge/mixer.h"
 #include	"cge/cge_main.h"
-#include	<alloc.h>
+//#include	<alloc.h>
 #include	<conio.h>
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
 #include	<dos.h>
-#include	<dir.h>
+//#include	<dir.h>
 #include	<fcntl.h>
-#include	<bios.h>
+//#include	<bios.h>
 #include	<io.h>
+
+#include "common/str.h"
 
 namespace CGE {
 
@@ -189,7 +191,8 @@ uint8 & CLUSTER::Cell (void)
 bool CLUSTER::Protected (void)
 {
   if (A == Barriers[Now].Vert || B == Barriers[Now].Horz) return true;
-
+  // TODO AsM
+  /*
   _DX = (MAP_ZCNT << 8) + MAP_XCNT;
   _BX = (uint16) this;
 
@@ -221,6 +224,8 @@ bool CLUSTER::Protected (void)
 //  return Map[B][A] != 0;
 
   xit: return _AX;
+  */
+  return TRUE;
 }
 
 
@@ -309,7 +314,7 @@ static void LoadGame (XFILE& file, bool tiny = false)
 
 	  if (n != sizeof(S)) break;
 	  S.Prev = S.Next = NULL;
-	  spr = (stricmp(S.File+2, "MUCHA") == 0) ? new FLY(NULL)
+	  spr = (scumm_stricmp(S.File+2, "MUCHA") == 0) ? new FLY(NULL)
 						  : new SPRITE(NULL);
 	  if (spr == NULL) VGA::Exit("No core");
 	  *spr = S;
@@ -394,7 +399,7 @@ static void Trouble (int seq, int txt)
 
 static void OffUse (void)
 {
-  Trouble(OFF_USE, OFF_USE_TEXT+random(OffUseCount));
+  Trouble(OFF_USE, OFF_USE_TEXT+new_random(OffUseCount));
 }
 
 
@@ -580,6 +585,8 @@ void WALK::Park (void)
 
 void WALK::FindWay (CLUSTER c)
 {
+	// TODO : Find1Way in ASM 
+/*
   bool Find1Way(void);
   extern uint16 Target;
 
@@ -598,6 +605,7 @@ void WALK::FindWay (CLUSTER c)
       if (TracePtr < 0) NoWay();
       Time = 1;
     }
+*/
 }
 
 
@@ -732,17 +740,17 @@ static void SetMapBrick (int x, int z)
 //--------------------------------------------------------------------------
 
 void 	dummy		(void) { }
-void	SwitchMapping	(void);
-void	SwitchColorMode	(void);
-void	StartCountDown	(void);
-Debug( void SwitchDebug	(void); )
-void	SwitchMusic	(void);
-void	KillSprite	(void);
-void	PushSprite	(void);
-void	PullSprite	(void);
-void	BackPaint	(void);
-void	NextStep	(void);
-void	SaveMapping	(void);
+static void	SwitchMapping	(void);
+static void	SwitchColorMode	(void);
+static void	StartCountDown	(void);
+Debug(static void SwitchDebug	(void); )
+static void	SwitchMusic	(void);
+static void	KillSprite	(void);
+static void	PushSprite	(void);
+static void	PullSprite	(void);
+static void	BackPaint	(void);
+static void	NextStep	(void);
+static void	SaveMapping	(void);
 
 
 	WALK *		Hero		= NULL;
@@ -835,7 +843,8 @@ static void MiniStep (int stp)
 static void PostMiniStep (int stp)
 {
   static int recent = -2;
-  if (MiniCave && stp != recent) SNPOST_(SNEXEC, -1, recent = stp, (void *) MiniStep);
+  //TODO Change the SNPOST message send to a special way to send function pointer
+  //if (MiniCave && stp != recent) SNPOST_(SNEXEC, -1, recent = stp, (void *)&MiniStep);
 }
 
 
@@ -993,7 +1002,8 @@ static void QGame (void)
   CaveDown();
   OldLev = Lev;
   SaveSound();
-  SaveGame(CFILE(UsrPath(UsrFnam), WRI, RCrypt));
+  CFILE file = CFILE(UsrPath(UsrFnam), WRI, RCrypt);
+  SaveGame(file);
   Vga.Sunset();
   Finis = true;
 }
@@ -1009,7 +1019,8 @@ void SwitchCave (int cav)
       if (cav < 0)
 	{
 	  SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
-	  SNPOST(SNEXEC,  -1, 0, (void *) QGame); // switch cave
+	  //TODO Change the SNPOST message send to a special way to send function pointer
+	  //SNPOST(SNEXEC,  -1, 0, (void *)&QGame); // switch cave
 	}
       else
 	{
@@ -1030,7 +1041,8 @@ void SwitchCave (int cav)
 	  KillText();
 	  if (! Startup) KeyClick();
 	  SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
-	  SNPOST(SNEXEC,   0, 0, (void *) XCave); // switch cave
+	  //TODO Change the SNPOST message send to a special way to send function pointer
+	  //SNPOST(SNEXEC,   0, 0, (void *)&XCave); // switch cave
 	}
     }
 }
@@ -1198,7 +1210,7 @@ void SYSTEM::Tick (void)
 	  if (PAIN) HeroCover(9);
 	  else if (STARTUP::Core >= CORE_MID)
 	    {
-	      int n = random(100);
+	      int n = new_random(100);
 	      if (n > 96) HeroCover(6+(Hero->X+Hero->W/2 < SCR_WID/2));
 	      else
 		{
@@ -1271,7 +1283,8 @@ static void SwitchMusic (void)
       else
 	{
 	  SNPOST_(SNSEQ, 122, (Music = false), NULL);
-	  SNPOST(SNEXEC, -1, 0, (void *) SelectSound);
+	  //TODO Change the SNPOST message send to a special way to send function pointer
+	  // SNPOST(SNEXEC, -1, 0, (void *)&SelectSound);
 	}
     }
   else
@@ -1665,12 +1678,12 @@ void SPRITE::Touch (uint16 mask, int x, int y)
 
 static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int row = 0, int pos = 0)
 {
-  static char * Comd[] = { "Name", "Type", "Phase", "East",
+  static const char * Comd[] = { "Name", "Type", "Phase", "East",
 			   "Left", "Right", "Top", "Bottom",
 			   "Seq", "Near", "Take",
 			   "Portable", "Transparent",
 			   NULL };
-  static char * Type[] = { "DEAD", "AUTO", "WALK", "NEWTON", "LISSAJOUS",
+  static const char * Type[] = { "DEAD", "AUTO", "WALK", "NEWTON", "LISSAJOUS",
 			   "FLY", NULL };
   char line[LINE_MAX];
 
@@ -1691,7 +1704,7 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 	  VGA::Exit("Bad SPR", line);
 	}
 
-      while ((len = sprf.Read(line)) != 0)
+    while ((len = sprf.Read((uint8*)line)) != 0)
 	{
 	  ++ lcnt;
 	  if (len && line[len-1] == '\n') line[-- len] = '\0';
@@ -1738,6 +1751,7 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
   switch (type)
     {
       case 1 : // AUTO
+		  {
 	       Sprite = new SPRITE(NULL);
 	       if (Sprite)
 		 {
@@ -1745,7 +1759,9 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 		   //Sprite->Time = 1;//-----------$$$$$$$$$$$$$$$$
 		 }
 	       break;
+		  }
       case 2 : // WALK
+		  {
 	       WALK * w = new WALK(NULL);
 	       if (w && ref == 1)
 		 {
@@ -1758,6 +1774,7 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 		 }
 	       Sprite = w;
 	       break;
+		  }
 	       /*
       case 3 : // NEWTON
 	       NEWTON * n = new NEWTON(NULL);
@@ -1774,6 +1791,7 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 	       break;
 	       */
       case 4 : // LISSAJOUS
+		  {
 	       VGA::Exit("Bad type", fname);
 	       /*
 	       LISSAJOUS * l = new LISSAJOUS(NULL);
@@ -1791,15 +1809,20 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
 	       Sprite = l;
 	       */
 	       break;
+		  }
       case 5 : // FLY
+		  {
 	       FLY * f = new FLY(NULL);
 	       Sprite = f;
 	       //////Sprite->Time = 1;//-----------$$$$$$$$$$$$$$
 	       break;
+		  }
       default: // DEAD
+		  {
 	       Sprite = new SPRITE(NULL);
 	       if (Sprite) Sprite->Goto(col, row);
 	       break;
+		  }
     }
   if (Sprite)
     {
@@ -1811,8 +1834,10 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
       Sprite->Flags.Tran = tran;
       Sprite->Flags.Kill = true;
       Sprite->Flags.BDel = true;
-      fnsplit(fname, NULL, NULL, Sprite->File, NULL);
-      Sprite->ShpCnt = shpcnt;
+      // TODO : Get Filename from entire path
+	  //fnsplit(fname, NULL, NULL, Sprite->File, NULL);
+      
+	  Sprite->ShpCnt = shpcnt;
       VGA::SpareQ.Append(Sprite);
     }
 }
@@ -1834,7 +1859,7 @@ static void LoadScript (const char *fname)
 
   if (scrf.Error) return;
 
-  while (scrf.Read(line) != 0)
+  while (scrf.Read((uint8*)line) != 0)
     {
       char *p;
 
@@ -1941,16 +1966,22 @@ void LoadUser (void)
   // set scene
   if (STARTUP::Mode == 0) // user .SVG file found
     {
-      LoadGame(CFILE(UsrPath(UsrFnam), REA, RCrypt));
+	  CFILE cfile = CFILE(UsrPath(UsrFnam), REA, RCrypt);
+      LoadGame(cfile);
     }
   else
     {
-      if (STARTUP::Mode == 1) LoadGame(SVG0FILE(SVG0NAME));
+      if (STARTUP::Mode == 1)
+	  {
+		  SVG0FILE file = SVG0FILE(SVG0NAME);
+		  LoadGame(file);
+	  }
       else
 	{
 	  LoadScript(ProgName(INI_EXT));
 	  Music = true;
-	  SaveGame(CFILE(SVG0NAME, WRI));
+	  CFILE file = CFILE(SVG0NAME, WRI);
+	  SaveGame(file);
 	  VGA::Exit("Ok", SVG0NAME);
 	}
     }
@@ -2061,7 +2092,8 @@ static void RunGame (void)
   // main loop
   while (! Finis)
     {
-      if (FINIS) SNPOST(SNEXEC,  -1, 0, (void *) QGame);
+	//TODO Change the SNPOST message send to a special way to send function pointer
+     // if (FINIS) SNPOST(SNEXEC,  -1, 0, (void *)&QGame);
       MainLoop();
     }
 
@@ -2160,7 +2192,8 @@ bool ShowTitle (const char * name)
 	#ifdef CD
 	  STARTUP::Summa |= (0xC0 + (DriveCD(0) << 6)) & 0xFF;
 	#else
-	  Boot * b = ReadBoot(getdisk());
+	 // TODO : do good boot...
+	 Boot * b = ReadBoot(0); //getdisk());
 	  uint32 sn = (b->XSign == 0x29) ? b->Serial : b->lTotSecs;
 	  free(b);
 	  sn -= ((IDENT *)Copr)->disk;
@@ -2187,7 +2220,8 @@ bool ShowTitle (const char * name)
 	  const char *n = UsrPath(UsrFnam);
 	  if (CFILE::Exist(n))
 	    {
-	      LoadGame(CFILE(n, REA, RCrypt), true); // only system vars
+		  CFILE file = CFILE(n, REA, RCrypt);
+	      LoadGame(file, true); // only system vars
 	      VGA::SetColors(SysPal, 64);
 	      Vga.Update();
 	      if (FINIS)
@@ -2242,7 +2276,7 @@ void cge_main (void)
   Debug( DebugLine.Flags.Hide = true; )
   Debug( HorzLine.Flags.Hide = true; )
 
-  srand((uint16) Timer());
+  //srand((uint16) Timer());
   Sys = new SYSTEM;
 
   if (Music && STARTUP::SoundOk) LoadMIDI(0);

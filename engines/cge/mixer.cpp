@@ -31,7 +31,7 @@
 #include	"cge/mouse.h"
 #include	"cge/snddrv.h"
 #include	<string.h>
-#include	<alloc.h>
+//#include	<alloc.h>
 
 namespace CGE {
 
@@ -151,7 +151,9 @@ void MIXER::Update (void)
 {
   Led[0]->Step(SNDDrvInfo.VOL4.ML);
   Led[1]->Step(SNDDrvInfo.VOL4.DL);
-  SNPOST_(SNEXEC, -1, 0, SNDSetVolume);
+
+  //TODO Change the SNPOST message send to a special way to send function pointer
+  //SNPOST_(SNEXEC, -1, 0, (void*)&SNDSetVolume);
 }
 
 } // End of namespace CGE

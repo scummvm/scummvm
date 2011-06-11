@@ -28,6 +28,7 @@
 #include	"cge/btfile.h"
 //#include	<alloc.h>
 #include "common/system.h"
+#include "common/str.h"
 #include	<string.h>
 
 
@@ -42,7 +43,9 @@
 namespace CGE {
 
 #ifndef	DROP_H
-  #define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
+	// TODO  replace printf by scummvm equivalent
+#define DROP(m,n)  
+	//#define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
 #endif
 
 #ifndef	BT_SIZE
@@ -126,7 +129,7 @@ BT_PAGE * BTFILE::GetPage (int lev, uint16 pgn)
 	{
 	  Buff[lev].Page->Hea.Count = 0;
 	  Buff[lev].Page->Hea.Down = BT_NONE;
-	  _fmemset(Buff[lev].Page->Data, '\0', sizeof(Buff[lev].Page->Data));
+	  memset(Buff[lev].Page->Data, '\0', sizeof(Buff[lev].Page->Data));
 	  Buff[lev].Updt = TRUE;
 	}
       Buff[lev].Indx = -1;
@@ -138,7 +141,7 @@ BT_PAGE * BTFILE::GetPage (int lev, uint16 pgn)
 
 
 
-BT_KEYPACK * BTFILE::Find (const uint8 * key)
+BT_KEYPACK * BTFILE::Find (const char * key)
 {
   int lev = 0;
   uint16 nxt = BT_ROOT;
@@ -150,7 +153,7 @@ BT_KEYPACK * BTFILE::Find (const uint8 * key)
 	{
 	  int i;
 	  for (i = 0; i < pg->Hea.Count; i ++)
-	    if (_fmemicmp(key, pg->Inn[i].Key, BT_KEYLEN) < 0)
+	    if (memicmp(key, pg->Inn[i].Key, BT_KEYLEN) < 0)
 	      break;
 	  nxt = (i) ? pg->Inn[i-1].Down : pg->Hea.Down;
 	  Buff[lev].Indx = i-1;
@@ -160,7 +163,7 @@ BT_KEYPACK * BTFILE::Find (const uint8 * key)
 	{
 	  int i;
 	  for (i = 0; i < pg->Hea.Count-1; i ++)
-	    if (_fstricmp(key, pg->Lea[i].Key) <= 0)
+	    if (scumm_stricmp((const char*)key, (const char*)pg->Lea[i].Key) <= 0)
 	      break;
 	  Buff[lev].Indx = i;
 	  return &pg->Lea[i];
@@ -174,7 +177,7 @@ BT_KEYPACK * BTFILE::Find (const uint8 * key)
 
 int keycomp (const void * k1, const void * k2)
 {
-  return _fmemicmp(k1, k2, BT_KEYLEN);
+  return memicmp(k1, k2, BT_KEYLEN);
 }
 
 
@@ -196,7 +199,7 @@ void BTFILE::Make(BT_KEYPACK * keypack, uint16 count)
 	{
 	  PutPage(1, TRUE);		// save filled page
 	  Leaf = GetPage(1, ++n);	// take empty page
-	  _fmemcpy(Root->Inn[Root->Hea.Count].Key, keypack->Key, BT_KEYLEN);
+	  memcpy(Root->Inn[Root->Hea.Count].Key, keypack->Key, BT_KEYLEN);
 	  Root->Inn[Root->Hea.Count ++].Down = n;
 	  Buff[0].Updt = TRUE;
 	}

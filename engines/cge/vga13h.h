@@ -325,7 +325,7 @@ uint8 Closest (CBLK * pal, CBLK x)
 
 
 		char *		NumStr		(char * str, int num);
-		void		Video		(void);
+		//static void		Video		(void);
 		uint16 *	SaveScreen	(void);
 		void		RestoreScreen	(uint16 * &sav);
 		SPRITE *	SpriteAt	(int x, int y);

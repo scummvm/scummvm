@@ -37,7 +37,7 @@ GET_TEXT *	GET_TEXT::Ptr	= NULL;
 
 
 GET_TEXT::GET_TEXT (const char * info, char * text, int size, void (*click)(void))
-: Text(text), Size(min(size, GTMAX)), Len(min(Size, strlen(text))),
+: Text(text), Size(min<int>(size, GTMAX)), Len(min<int>(Size, strlen(text))),
   Cntr(GTBLINK), Click(click), OldKeybClient(KEYBOARD::SetClient(this))
 {
   int i = 2 * TEXT_HM + Font.Width(info);
