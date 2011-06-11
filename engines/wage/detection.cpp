@@ -40,7 +40,7 @@ const char *WageEngine::getGameFile() const {
 
 }
 
-static const PlainGameDescriptor cineGames[] = {
+static const PlainGameDescriptor wageGames[] = {
 	{"afm", "Another Fine Mess"},
 	{"wage", "World Adventure Game Engine game"},
 	{0, 0}
@@ -66,38 +66,12 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Wage
 
-static const char *directoryGlobs[] = {
-        0
-};
-
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Wage::gameDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	cineGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"wage",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI,
-        // Maximum directory depth
-        0,
-        // List of directory globs
-        directoryGlobs
-};
-
 class WageMetaEngine : public AdvancedMetaEngine {
 public:
-	WageMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	WageMetaEngine() : AdvancedMetaEngine(Wage::gameDescriptions, sizeof(ADGameDescription), wageGames) {
+		params.singleid = "wage";
+		params.guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
+	}
 
 	virtual const char *getName() const {
 		return "World Adventure Game Engine";
