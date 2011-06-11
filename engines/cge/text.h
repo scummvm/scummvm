@@ -30,7 +30,7 @@
 
 #include	"cge/talk.h"
 #include	"cge/jbw.h"
-#include	<dir.h>
+//#include	<dir.h>
 
 namespace CGE {
 

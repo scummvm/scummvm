@@ -34,7 +34,7 @@
 #include	<stdio.h>
 #include	<process.h>
 #include	<dos.h>
-#include	<alloc.h>
+//#include	<alloc.h>
 #include	<string.h>
 
 #ifdef	DEBUG
@@ -60,17 +60,16 @@ static	STARTUP	StartUp;
 
 
 
-void quit_now (int ref)
-{
-  fputs(Text[ref], stderr);
-  fputc('\n', stderr);
-  _exit(1);
+void quit_now(int ref){
+  error("%d\n", Text[ref]);
 }
 
 
 
 bool STARTUP::get_parms (void)
 {
+	// TODO do params
+	/*
   int i = _argc;
   while (i > 1)
     {
@@ -114,6 +113,7 @@ bool STARTUP::get_parms (void)
     #endif
   #endif
   if (SNDDrvInfo.MDEV != DEV_GM) SNDDrvInfo.MDEV = SNDDrvInfo.DDEV;
+  */
   return true;
 }
 
@@ -122,6 +122,8 @@ bool STARTUP::get_parms (void)
 
 STARTUP::STARTUP (void)
 {
+	//TOdO startup in scummvm
+	/*
   uint32 m = farcoreleft() >> 10;
   if (m < 0x7FFF) Core = (int) m; else Core = 0x7FFF;
 
@@ -149,6 +151,7 @@ STARTUP::STARTUP (void)
 	  if (! cfg.Error) STARTUP::SoundOk = 1;
 	}
     }
+	*/
 }
 
 

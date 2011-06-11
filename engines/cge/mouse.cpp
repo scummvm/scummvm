@@ -53,6 +53,7 @@ MOUSE::MOUSE (BITMAP ** shpl)
   static SEQ ms[] = { { 0,0,0,0,1 }, { 1,1,0,0,1 } };
   SetSeq(ms);
 
+  /* TODO Mouse handling
   // Mouse reset
   _AX = 0x0000; // soft & hard reset (0x0021 soft reset does not work)
   __int__(0x33);
@@ -62,6 +63,7 @@ MOUSE::MOUSE (BITMAP ** shpl)
   Goto(SCR_WID/2, SCR_HIG/2);
   Z = 127;
   Step(1);
+  */
 }
 
 
@@ -86,6 +88,8 @@ MOUSE::~MOUSE (void)
 
 void MOUSE::On (void)
 {
+	// TODO Mouse
+/* 
   if (SeqPtr && Exist)
     {
       _CX = X + X;	// horizontal position
@@ -117,6 +121,7 @@ void MOUSE::On (void)
       Step(0);
       if (Busy) Busy->Step(0);
     }
+*/
 }
 
 
@@ -126,6 +131,8 @@ void MOUSE::On (void)
 
 void MOUSE::Off (void)
 {
+//TODO MOuse ASM
+	/*
   if (SeqPtr == 0)
     {
       if (Exist)
@@ -140,6 +147,7 @@ void MOUSE::Off (void)
       Step(1);
       if (Busy) Busy->Step(1);
     }
+	*/
 }
 
 

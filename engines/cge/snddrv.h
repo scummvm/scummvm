@@ -130,6 +130,7 @@ EC void SNDMIDIStop    (void);
 // WARNING: Uses ALL registers!
 EC void SNDMIDIPlay    (void);
 
-// End of namespace CGE
+} // End of namespace CGE
+
 
 #endif

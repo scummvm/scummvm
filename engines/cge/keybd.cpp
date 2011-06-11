@@ -46,15 +46,17 @@ uint16  KEYBOARD::Code[0x60] = { 0,Esc,'1','2','3','4','5','6','7','8','9','0',
 			       0*0x54,0*0x55,0*0x56,F11,F12,0*0x59,0*0x5A,
 			       0*0x5B,0*0x5C,0*0x5D,0*0x5E,0*0x5F
 			     };
-void interrupt	(* KEYBOARD::OldKeyboard) (...);
+void (* KEYBOARD::OldKeyboard) (...);
 
 
 
 KEYBOARD::KEYBOARD (void)
 {
   // steal keyboard interrupt
+  /* TODO replace totally by scummvm handling
   OldKeyboard = getvect(KEYBD_INT);
   setvect(KEYBD_INT, NewKeyboard);
+  */
 }
 
 
@@ -63,7 +65,9 @@ KEYBOARD::KEYBOARD (void)
 KEYBOARD::~KEYBOARD (void)
 {
   // bring back keyboard interrupt
-  setvect(KEYBD_INT, OldKeyboard);
+  /* TODO replace totally by scummvm handling
+	setvect(KEYBD_INT, OldKeyboard);
+  */
 }
 
 
@@ -79,9 +83,11 @@ SPRITE * KEYBOARD::SetClient (SPRITE * spr)
 
 
 
-void interrupt KEYBOARD::NewKeyboard (...)
+void KEYBOARD::NewKeyboard (...)
 {
   // table address
+	// TODO keyboard ASM
+	/*
   _SI = (uint16) Key;
 
   // take keyboard code
@@ -139,6 +145,7 @@ void interrupt KEYBOARD::NewKeyboard (...)
   asm	out	61h,al		// write it back
   asm	mov	al,20h		// send End-Of-Interrupt
   asm	out	20h,al		// to the 8259 IC
+  */
 }
 
 } // End of namespace CGE

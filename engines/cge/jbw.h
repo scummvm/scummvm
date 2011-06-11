@@ -28,7 +28,16 @@
 #ifndef __JBW__
 #define __JBW__
 
+#include "common/scummsys.h"
+
 namespace CGE {
+
+#define VOL
+#define INI_FILE VFILE
+#define PIC_FILE VFILE
+#define BMP_MODE 0
+#define DROP {}  // TODO error handling 
+#define	DROP_H
 
 #define		BEL		 7
 #define		BS		 8
@@ -36,6 +45,11 @@ namespace CGE {
 #define		LF		10
 #define		FF		12
 #define		CR		13
+
+#define		TRUE	1
+#define		FALSE	0
+
+#define		MAXFILE 128
 
 #define		NULL		0
 #define		OFF		false
@@ -49,11 +63,11 @@ namespace CGE {
 #define		IsAlNum(c)	(IsAlpha(c) || IsDigit(c))
 #define		IsHxDig(c)	(IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
 
-#define		farnew(t,n)	((t *) farmalloc(sizeof(t) * (n)))
+#define		farnew(t,n)	((t *) malloc(sizeof(t) * (n)))
 #define		ArrayCount(a)	(sizeof(a)/sizeof((a)[0]))
 #define		MAX_TIMER	0x1800B0L
 
-typedef	void (_loadds MouseFunType)(void);
+typedef	void (MouseFunType)(void);
 
 #define		Lo(d)		(((int *) &d)[0])
 #define		Hi(d)		(((int *) &d)[1])

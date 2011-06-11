@@ -42,7 +42,9 @@
 namespace CGE {
 
 #ifndef	DROP_H
-  #define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
+  //TODO Replace by scummvm printf
+#define DROP(m,n) {}
+	//#define	DROP(m,n)	{ printf("%s [%s]\n", m, n); _exit(1); }
 #endif
 
 IOBUF::IOBUF (IOMODE mode, CRYPT * crpt)
@@ -84,7 +86,7 @@ IOBUF::IOBUF (const char * name, IOMODE mode, CRYPT * crpt)
 IOBUF::~IOBUF (void)
 {
   if (Mode > REA) WriteBuff();
-  if (Buff) farfree(Buff);
+  if (Buff) free(Buff);
 }
 
 
@@ -127,8 +129,8 @@ uint16 IOBUF::Read (void *buf, uint16 len)
       if (n)
 	{
 	  if (len < n) n = len;
-	  _fmemcpy(buf, Buff+Ptr, n);
-	  (uint8 *) buf += n;
+	  memcpy(buf, Buff+Ptr, n);
+	  buf = (uint8 *)buf + n;
 	  len -= n;
 	  total += n;
 	  Ptr += n;
@@ -155,15 +157,15 @@ uint16 IOBUF::Read (uint8 * buf)
       if (n)
 	{
 	  if (total + n >= LINE_MAX-2) n = LINE_MAX-2 - total;
-	  uint8 * eol = (uint8 *) _fmemchr(p, '\r', n);
+	  uint8 * eol = (uint8 *) memchr(p, '\r', n);
 	  if (eol) n = (uint16) (eol - p);
-	  uint8 * eof = (uint8 *) _fmemchr(p, '\32', n);
+	  uint8 * eof = (uint8 *) memchr(p, '\32', n);
 	  if (eof) // end-of-file
 	    {
 	      n = (uint16) (eof - p);
 	      Ptr = (uint16) (eof - Buff);
 	    }
-	  if (n) _fmemcpy(buf, p, n);
+	  if (n) memcpy(buf, p, n);
 	  buf += n;
 	  total += n;
 	  if (eof) break;
@@ -199,10 +201,10 @@ uint16 IOBUF::Write (void * buf, uint16 len)
       if (n > len) n = len;
       if (n)
 	{
-	  _fmemcpy(Buff+Lim, buf, n);
+	  memcpy(Buff+Lim, buf, n);
 	  Lim += n;
 	  len -= n;
-	  (uint8 *) buf += n;
+	  buf = (uint8 *)buf + n;
 	  tot += n;
 	}
       else WriteBuff();
@@ -220,7 +222,7 @@ uint16 IOBUF::Write (uint8 * buf)
   uint16 len = 0;
   if (buf)
     {
-      len = _fstrlen((const char *) buf);
+      len = strlen((const char *) buf);
       if (len) if (buf[len-1] == '\n') -- len;
       len = Write(buf, len);
       if (len)
@@ -302,9 +304,13 @@ void CFILE::Flush (void)
 {
   if (Mode > REA) WriteBuff();
   else Lim = 0;
+
+  // TODO replace by scummvm files.
+  /*
   _BX = Handle;
   _AH = 0x68;		// Flush buffer
   asm	int	0x21
+  */
 }
 
 
