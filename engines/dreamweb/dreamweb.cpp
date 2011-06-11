@@ -135,6 +135,16 @@ void DreamWebEngine::processEvents() {
 				}
 				break;
 			default:
+				// As far as I can see, the only keys checked
+				// for in 'lasthardkey' are 1 (ESC) and 57
+				// (space) so add special cases for them and
+				// treat everything else as 0.
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					_context.data.byte(dreamgen::kLasthardkey) = 1;
+				else if (event.kbd.keycode == Common::KEYCODE_SPACE)
+					_context.data.byte(dreamgen::kLasthardkey) = 57;
+				else
+					_context.data.byte(dreamgen::kLasthardkey) = 0;
 				if (event.kbd.ascii)
 					keyPressed(event.kbd.ascii);
 				break;
