@@ -379,7 +379,8 @@ int AgiEngine::testIfCode(int lognum) {
 			_testVal &= ec;
 	}
 
-	// if false, scan for end of IP?
+	// Execute the following IF block if the condition is true, otherwise
+	// skip the block.
 	if (_testVal)
 		ip += 2;
 	else
