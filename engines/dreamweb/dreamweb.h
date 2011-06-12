@@ -91,8 +91,11 @@ public:
 	void getPalette(uint8 *data, uint start, uint count);
 	void setPalette(const uint8 *data, uint start, uint count);
 	
-	void openSaveFile(const Common::String &name);
+	void openSaveFileForWriting(const Common::String &name);
 	uint writeToSaveFile(const uint8 *data, uint size);
+
+	bool openSaveFileForReading(const Common::String &name);
+	uint readFromSaveFile(uint8 *data, uint size);
 
 private:
 
@@ -104,7 +107,8 @@ private:
 	unsigned						_mouseState;
 	
 	Common::File _file;
-	Common::OutSaveFile *_saveFile;
+	Common::OutSaveFile *_outSaveFile;
+	Common::InSaveFile *_inSaveFile;
 	
 	dreamgen::Context _context;
 };

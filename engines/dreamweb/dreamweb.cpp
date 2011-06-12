@@ -65,6 +65,8 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	_instance = this;
+	_outSaveFile = 0;
+	_inSaveFile = 0;
 }
 
 DreamWebEngine::~DreamWebEngine() {
@@ -188,30 +190,50 @@ uint32 DreamWebEngine::skipBytes(uint32 bytes) {
 
 uint32 DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
 	processEvents();
-	if (!_file.isOpen())
-		error("file was not opened (read before open)");
-	return _file.read(dst, size);
+	if (_file.isOpen())
+		return _file.read(dst, size);
+	if (_inSaveFile)
+		return _inSaveFile->read(dst, size);
+	error("file was not opened (read before open)");
 }
 
 void DreamWebEngine::closeFile() {
 	processEvents();
 	if (_file.isOpen())
 		_file.close();
-	delete _saveFile;
-	_saveFile = 0;
+	delete _inSaveFile;
+	_inSaveFile = 0;
+	delete _outSaveFile;
+	_outSaveFile = 0;
 }
 
-void DreamWebEngine::openSaveFile(const Common::String &name) {
+void DreamWebEngine::openSaveFileForWriting(const Common::String &name) {
 	processEvents();
-	_saveFile = _system->getSavefileManager()->openForSaving(name);
+	delete _outSaveFile;
+	_outSaveFile = _system->getSavefileManager()->openForSaving(name);
+}
+
+bool DreamWebEngine::openSaveFileForReading(const Common::String &name) {
+	processEvents();
+	delete _inSaveFile;
+	_inSaveFile = _system->getSavefileManager()->openForLoading(name);
+	return _inSaveFile != 0;
 }
 
 uint DreamWebEngine::writeToSaveFile(const uint8 *data, uint size) {
 	processEvents();
-	if (!_saveFile)
-		error("save file was not opened");
-	return _saveFile->write(data, size);
+	if (!_outSaveFile)
+		error("save file was not opened for writing");
+	return _outSaveFile->write(data, size);
 }
+
+uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
+	processEvents();
+	if (!_inSaveFile)
+		error("save file was not opened for reading");
+	return _inSaveFile->read(data, size);
+}
+
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
 	debug(1, "key pressed = %04x", ascii);
@@ -424,11 +446,14 @@ void closefile(Context &context) {
 void openforsave(Context &context) {
 	const char *name = (const char *)context.ds.ptr(context.dx, 13);
 	debug(1, "openforsave(%s)", name);
-	engine()->openSaveFile(name);
+	engine()->openSaveFileForWriting(name);
 }
 
 void openfilenocheck(Context &context) {
-	::error("openfilenocheck");
+	const char *name = (const char *)context.ds.ptr(context.dx, 13);
+	debug(1, "checksavefile(%s)", name);
+	bool ok = engine()->openSaveFileForReading(name);
+	context.flags._c = !ok;
 }
 
 void openfile(Context &context) {
@@ -598,10 +623,11 @@ void saveseg(Context &context) {
 }
 
 void savefilewrite(Context &context) {
-	engine()->writeToSaveFile(context.ds.ptr(context.dx, context.cx), context.cx);
+	context.ax = engine()->writeToSaveFile(context.ds.ptr(context.dx, context.cx), context.cx);
 }
 
 void savefileread(Context &context) {
+	context.ax = engine()->readFromSaveFile(context.ds.ptr(context.dx, context.cx), context.cx);
 }
 
 void loadseg(Context &context) {
