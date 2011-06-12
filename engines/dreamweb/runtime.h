@@ -174,12 +174,12 @@ struct Flags {
 	inline bool l() const	{ return _o; }
 	inline bool le() const	{ return _o || _z; }
 	
-	inline void update(uint8 v) {
+	inline void update_zs(uint8 v) {
 		_s = v & 0x80;
 		_z = v == 0;
 	}
 
-	inline void update(uint16 v) {
+	inline void update_zs(uint16 v) {
 		_s = v & 0x8000;
 		_z = v == 0;
 	}
@@ -277,7 +277,7 @@ public:
 		flags.update_o((uint8)r, dst);
 		flags._c = r >= 0x100;
 		dst = r;
-		flags.update(dst);
+		flags.update_zs(dst);
 	}
 
 	inline void _add(uint16 &dst, uint16 src) {
@@ -285,56 +285,56 @@ public:
 		flags.update_o((uint16)r, dst);
 		flags._c = r >= 0x10000;
 		dst = r;
-		flags.update(dst);
+		flags.update_zs(dst);
 	}
 
 	inline void _sub(uint8 &dst, uint8 src) {
 		flags.update_o(uint8(dst - src), dst);
 		flags._c = dst < src;
 		dst -= src;
-		flags.update(dst);
+		flags.update_zs(dst);
 	}
 
 	inline void _sub(uint16 &dst, uint16 src) {
 		flags.update_o(uint16(dst - src), dst);
 		flags._c = dst < src;
 		dst -= src;
-		flags.update(dst);
+		flags.update_zs(dst);
 	}
 
 	inline void _and(uint8 &dst, uint8 src) {
 		dst &= src;
-		flags.update(dst);
+		flags.update_zs(dst);
 		flags._c = flags._o = false;
 	}
 
 	inline void _and(uint16 &dst, uint16 src) {
 		dst &= src;
-		flags.update(dst);
+		flags.update_zs(dst);
 		flags._c = flags._o = false;
 	}
 
 	inline void _or(uint8 &dst, uint8 src) {
 		dst |= src;
-		flags.update(dst);
+		flags.update_zs(dst);
 		flags._c = flags._o = false;
 	}
 
 	inline void _or(uint16 &dst, uint16 src) {
 		dst |= src;
-		flags.update(dst);
+		flags.update_zs(dst);
 		flags._c = flags._o = false;
 	}
 
 	inline void _xor(uint8 &dst, uint8 src) {
 		dst ^= src;
-		flags.update(dst);
+		flags.update_zs(dst);
 		flags._c = flags._o = false;
 	}
 
 	inline void _xor(uint16 &dst, uint16 src) {
 		dst ^= src;
-		flags.update(dst);
+		flags.update_zs(dst);
 		flags._c = flags._o = false;
 	}
 
@@ -344,8 +344,8 @@ public:
 			dst >>= (src - 1);
 			flags._c = dst & 1;
 			dst >>= 1;
+			flags.update_zs(dst);
 		}
-		flags.update(dst);
 		if (src == 1)
 			flags._o = dst & 0x80;
 	}
@@ -356,8 +356,8 @@ public:
 			dst >>= (src - 1);
 			flags._c = dst & 1;
 			dst >>= 1;
+			flags.update_zs(dst);
 		}
-		flags.update(dst);
 		if (src == 1)
 			flags._o = dst & 0x8000;
 	}
@@ -368,8 +368,8 @@ public:
 			dst <<= (src - 1);
 			flags._c = dst & 0x80;
 			dst <<= 1;
+			flags.update_zs(dst);
 		}
-		flags.update(dst);
 		if (src == 1)
 			flags._o = ((dst & 0x80) != 0) == flags._c;
 	}
@@ -379,8 +379,8 @@ public:
 			dst <<= (src - 1);
 			flags._c = dst & 0x8000;
 			dst <<= 1;
+			flags.update_zs(dst);
 		}
-		flags.update(dst);
 		if (src == 1)
 			flags._o = ((dst & 0x8000) != 0) == flags._c;
 	}
@@ -407,14 +407,14 @@ public:
 	inline void _neg(uint8 &src) {
 		flags._c = src != 0;
 		src = ~src;
-		flags.update(src);
+		flags.update_zs(src);
 		flags._o = false;
 	}
 
 	inline void _neg(uint16 &src) {
 		flags._c = src != 0;
 		src = ~src;
-		flags.update(src);
+		flags.update_zs(src);
 		flags._o = false;
 	}
 
