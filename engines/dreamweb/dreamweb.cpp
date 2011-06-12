@@ -62,6 +62,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_vSyncInterrupt = false;
 
 	_console = 0;
+	_mouseState = 0;
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	_outSaveFile = 0;
@@ -673,7 +674,6 @@ alreadydos:
 }
 
 void set16colpalette(Context &context) {
-	warning("set16colpalette: STUB");
 }
 
 void mode640x480(Context &context) {
