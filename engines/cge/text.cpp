@@ -288,7 +288,6 @@ void Inf (const char * txt)
 
 void SayTime (SPRITE * spr)
 {
-//TODO Get Time
 /*
   static char t[] = "00:00";
   struct time ti;
@@ -297,6 +296,7 @@ void SayTime (SPRITE * spr)
   wtom(ti.ti_min,  t+3, 10, 2);
   Say((*t == '0') ? (t+1) : t, spr);
   */
+  warning("STUB: SayTime");
 }
 
 

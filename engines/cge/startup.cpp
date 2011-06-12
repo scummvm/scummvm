@@ -66,10 +66,9 @@ void quit_now(int ref){
 
 
 
-bool STARTUP::get_parms (void)
+bool STARTUP::get_parms(void)
 {
-	// TODO do params
-	/*
+/*
   int i = _argc;
   while (i > 1)
     {
@@ -114,16 +113,16 @@ bool STARTUP::get_parms (void)
   #endif
   if (SNDDrvInfo.MDEV != DEV_GM) SNDDrvInfo.MDEV = SNDDrvInfo.DDEV;
   */
+  warning("STUB: STARTUP::get_parms");
   return true;
 }
 
 
 
 
-STARTUP::STARTUP (void)
+STARTUP::STARTUP(void)
 {
-	//TOdO startup in scummvm
-	/*
+/*
   uint32 m = farcoreleft() >> 10;
   if (m < 0x7FFF) Core = (int) m; else Core = 0x7FFF;
 
@@ -152,6 +151,7 @@ STARTUP::STARTUP (void)
 	}
     }
 	*/
+	warning("STUB: STARTUP::STARTUP");
 }
 
 

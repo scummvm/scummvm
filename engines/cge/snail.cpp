@@ -387,6 +387,7 @@ void SNGhost (BITMAP * bmp)
   //bmp->Hide(FP_OFF(bmp->M), FP_SEG(bmp->M));
   bmp->M = NULL;
   delete bmp;
+  warning("STUB: SNGhost");
 }
 
 
@@ -1288,6 +1289,7 @@ void SNAIL::RunCom (void)
 
 		  // TODO: Handle correctly the execution of function pointer coming from Message send SNPOST
 	      //case SNEXEC     : ((void(*)(int)) (snc->Ptr))(snc->Val); break;
+	      case SNEXEC     : warning("STUB: SNEXEC code");
 	      case SNSTEP     : sprel->Step(); break;
 	      case SNZTRIM    : SNZTrim(sprel); break;
 	      case SNGHOST    : SNGhost((BITMAP *) snc->Ptr); break;

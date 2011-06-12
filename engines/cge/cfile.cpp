@@ -293,12 +293,12 @@ void CFILE::Flush (void)
   if (Mode > REA) WriteBuff();
   else Lim = 0;
 
-  // TODO replace by scummvm files.
   /*
   _BX = Handle;
   _AH = 0x68;		// Flush buffer
   asm	int	0x21
   */
+  warning("FIXME: CFILE::Flush");
 }
 
 
