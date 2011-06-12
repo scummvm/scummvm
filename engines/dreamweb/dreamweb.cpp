@@ -115,6 +115,7 @@ void DreamWebEngine::processEvents() {
 	}
 	Common::Event event;
 	while (event_manager->pollEvent(event)) {
+		bool keyHandled = false;
 		switch(event.type) {
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
@@ -122,9 +123,14 @@ void DreamWebEngine::processEvents() {
 				if (event.kbd.flags & Common::KBD_CTRL) {
 					_console->attach();
 					_console->onFrame();
+					keyHandled = true;
 				}
 				break;
 			default:
+				break;
+			}
+
+			if (!keyHandled) {
 				// As far as I can see, the only keys checked
 				// for in 'lasthardkey' are 1 (ESC) and 57
 				// (space) so add special cases for them and
@@ -137,8 +143,8 @@ void DreamWebEngine::processEvents() {
 					_context.data.byte(dreamgen::kLasthardkey) = 0;
 				if (event.kbd.ascii)
 					keyPressed(event.kbd.ascii);
-				break;
 			}
+
 			break;
 		default:
 			break;
