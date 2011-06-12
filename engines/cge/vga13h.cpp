@@ -30,15 +30,12 @@
 #include	"cge/bitmap.h"
 #include	"cge/vol.h"
 #include	"cge/text.h"
-//#include	<alloc.h>
 #include	<conio.h>
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
 #include	<dos.h>
-//#include	<dir.h>
 #include	<fcntl.h>
-//#include	<bios.h>
 #include	<io.h>
 
 namespace CGE {
@@ -143,7 +140,7 @@ static void Video (void)
 
 uint16 * SaveScreen (void)
 {
-	  /* TODO ASM
+/*
   uint16 cxy, cur, siz, * scr = NULL, * sav;
 
   // horizontal size of text mode screen
@@ -195,17 +192,14 @@ uint16 * SaveScreen (void)
     }
   return sav;
   */
+	warning("STUB: SaveScreen");
 	return 0;
 }
 
 
-
-
-
 void RestoreScreen (uint16 * &sav)
 {
-	// TODO RestoreScreen ASM
-	/*
+/*
   uint16 * scr = NULL;
 
   asm	mov	ax,0x40		// system data segment
@@ -232,11 +226,8 @@ void RestoreScreen (uint16 * &sav)
   free(sav);
   sav = NULL;
   */
+	warning("STUB: RestoreScreen");
 }
-
-
-
-
 
 
 DAC MkDAC (uint8 r, uint8 g, uint8 b)
@@ -249,8 +240,6 @@ DAC MkDAC (uint8 r, uint8 g, uint8 b)
 }
 
 
-
-
 RGB MkRGB (uint8 r, uint8 g, uint8 b)
 {
   static TRGB x;
@@ -261,10 +250,6 @@ RGB MkRGB (uint8 r, uint8 g, uint8 b)
 }
 
 
-
-
-
-
 SPRITE * Locate (int ref)
 {
   SPRITE * spr = VGA::ShowQ.Locate(ref);
@@ -272,16 +257,8 @@ SPRITE * Locate (int ref)
 }
 
 
-
-
-
-//--------------------------------------------------------------------------
-
-
 bool		HEART::Enable = false;
 uint16 *		HEART::XTimer = NULL;
-
-
 
 
 HEART::HEART (void)
@@ -327,11 +304,10 @@ extern "C" void TimerProc (void)
 */
 
 
-void  ENGINE::NewTimer (...)
+void ENGINE::NewTimer(...)
 {
   static SPRITE * spr;
   static uint8 run = 0, cntr1 = TMR_RATE1, cntr2 = TMR_RATE2;
-  // TODO Timer ASM
   /*
   ___1152_Hz___:
 
@@ -391,10 +367,8 @@ void  ENGINE::NewTimer (...)
     }
 
 	*/
+	warning("STUB: ENGINE::NewTimer");
 }
-
-
-
 
 
 void HEART::SetXTimer (uint16 * ptr)
@@ -404,23 +378,11 @@ void HEART::SetXTimer (uint16 * ptr)
 }
 
 
-
-
 void HEART::SetXTimer (uint16 * ptr, uint16 time)
 {
   SetXTimer(ptr);
   *ptr = time;
 }
-
-
-
-
-//--------------------------------------------------------------------------
-
-
-
-
-
 
 
 SPRITE::SPRITE (BMP_PTR * shp)
@@ -434,16 +396,10 @@ SPRITE::SPRITE (BMP_PTR * shp)
 }
 
 
-
-
-
-
 SPRITE::~SPRITE (void)
 {
   Contract();
 }
-
-
 
 
 BMP_PTR SPRITE::Shp (void)
@@ -459,16 +415,13 @@ BMP_PTR SPRITE::Shp (void)
 	    //sprintf(s, "Seq=%p ShpCnt=%d SeqPtr=%d Now=%d Next=%d",
 	    //	    Seq, ShpCnt, SeqPtr, Seq[SeqPtr].Now, Seq[SeqPtr].Next);
 	    //VGA::Exit(s, File);
-	    VGA::Exit("Invalid PHASE in SPRITE::Shp()", File);
+	    error("Invalid PHASE in SPRITE::Shp() %s", File);
 	  }
       #endif
       return e->ShpList[i];
     }
   return NULL;
 }
-
-
-
 
 
 BMP_PTR * SPRITE::SetShapeList (BMP_PTR * shp)
@@ -497,9 +450,6 @@ BMP_PTR * SPRITE::SetShapeList (BMP_PTR * shp)
 }
 
 
-
-
-
 void SPRITE::MoveShapes (uint8 * buf)
 {
   BMP_PTR * p;
@@ -508,9 +458,6 @@ void SPRITE::MoveShapes (uint8 * buf)
       buf += (*p)->MoveVmap(buf);
     }
 }
-
-
-
 
 
 bool SPRITE::Works (SPRITE * spr)
@@ -530,9 +477,6 @@ bool SPRITE::Works (SPRITE * spr)
 }
 
 
-
-
-
 SEQ * SPRITE::SetSeq (SEQ * seq)
 {
   Expand();
@@ -545,10 +489,6 @@ SEQ * SPRITE::SetSeq (SEQ * seq)
 }
 
 
-
-
-
-
 bool SPRITE::SeqTest (int n)
 {
   if (n >= 0) return (SeqPtr == n);
@@ -557,20 +497,12 @@ bool SPRITE::SeqTest (int n)
 }
 
 
-
-
-
-
 SNAIL::COM * SPRITE::SnList (SNLIST type)
 {
   register SPREXT * e = Ext;
   if (e) return (type == NEAR) ? e->Near : e->Take;
   return NULL;
 }
-
-
-
-
 
 
 void SPRITE::SetName (char * n)
@@ -590,9 +522,6 @@ void SPRITE::SetName (char * n)
 	}
     }
 }
-
-
-
 
 
 SPRITE * SPRITE::Expand (void)
@@ -732,8 +661,6 @@ SPRITE * SPRITE::Expand (void)
 }
 
 
-
-
 SPRITE * SPRITE::Contract (void)
 {
   register SPREXT * e = Ext;
@@ -756,10 +683,6 @@ SPRITE * SPRITE::Contract (void)
 }
 
 
-
-
-
-
 SPRITE * SPRITE::BackShow (bool fast)
 {
   Expand();
@@ -769,12 +692,6 @@ SPRITE * SPRITE::BackShow (bool fast)
   Contract();
   return this;
 }
-
-
-
-
-
-
 
 
 void SPRITE::Step (int nr)
@@ -794,17 +711,10 @@ void SPRITE::Step (int nr)
 }
 
 
-
-
-
-
 void SPRITE::Tick (void)
 {
   Step();
 }
-
-
-
 
 
 void SPRITE::MakeXlat (uint8 * x)
@@ -818,9 +728,6 @@ void SPRITE::MakeXlat (uint8 * x)
       Flags.Xlat = true;
     }
 }
-
-
-
 
 
 void SPRITE::KillXlat (void)
@@ -839,9 +746,6 @@ void SPRITE::KillXlat (void)
       Flags.Xlat = false;
     }
 }
-
-
-
 
 
 void SPRITE::Goto (int x, int y)
@@ -864,26 +768,10 @@ void SPRITE::Goto (int x, int y)
 }
 
 
-
-
-
-
-
-
-
-
-
-
 void SPRITE::Center (void)
 {
   Goto((SCR_WID - W) / 2, (SCR_HIG - H) / 2);
 }
-
-
-
-
-
-
 
 
 void SPRITE::Show (void)
@@ -906,11 +794,6 @@ void SPRITE::Show (void)
 }
 
 
-
-
-
-
-
 void SPRITE::Show (uint16 pg)
 {
   uint8 * a = VGA::Page[1];
@@ -920,19 +803,11 @@ void SPRITE::Show (uint16 pg)
 }
 
 
-
-
-
-
-
-
 void SPRITE::Hide (void)
 {
   register SPREXT * e = Ext;
   if (e->b0) e->b0->Hide(e->x0, e->y0);
 }
-
-
 
 
 BMP_PTR SPRITE::Ghost (void)
@@ -956,10 +831,6 @@ BMP_PTR SPRITE::Ghost (void)
 }
 
 
-
-
-
-
 SPRITE * SpriteAt (int x, int y)
 {
   SPRITE * spr = NULL, * tail = VGA::ShowQ.Last();
@@ -974,30 +845,16 @@ SPRITE * SpriteAt (int x, int y)
 }
 
 
-
-
-
-//--------------------------------------------------------------------------
-
-
-
-
-
-
 QUEUE::QUEUE (bool show)
 : Head(NULL), Tail(NULL), Show(show)
 {
 }
 
 
-
-
 QUEUE::~QUEUE (void)
 {
   Clear();
 }
-
-
 
 
 void QUEUE::Clear (void)
@@ -1008,8 +865,6 @@ void QUEUE::Clear (void)
       if (s->Flags.Kill) delete s;
     }
 }
-
-
 
 
 void QUEUE::ForAll (void (*fun)(SPRITE *))
@@ -1024,9 +879,6 @@ void QUEUE::ForAll (void (*fun)(SPRITE *))
 }
 
 
-
-
-
 void QUEUE::Append (SPRITE * spr)
 {
   if (Tail)
@@ -1039,9 +891,6 @@ void QUEUE::Append (SPRITE * spr)
   if (Show) spr->Expand();
   else spr->Contract();
 }
-
-
-
 
 
 void QUEUE::Insert (SPRITE * spr, SPRITE * nxt)
@@ -1064,9 +913,6 @@ void QUEUE::Insert (SPRITE * spr, SPRITE * nxt)
 }
 
 
-
-
-
 void QUEUE::Insert (SPRITE * spr)
 {
   SPRITE * s;
@@ -1078,9 +924,6 @@ void QUEUE::Insert (SPRITE * spr)
   if (Show) spr->Expand();
   else spr->Contract();
 }
-
-
-
 
 
 SPRITE * QUEUE::Remove (SPRITE * spr)
@@ -1095,23 +938,12 @@ SPRITE * QUEUE::Remove (SPRITE * spr)
 }
 
 
-
-
-
 SPRITE * QUEUE::Locate (int ref)
 {
   SPRITE * spr;
   for (spr = Head; spr; spr = spr->Next) if (spr->Ref == ref) return spr;
   return NULL;
 }
-
-
-
-
-
-//--------------------------------------------------------------------------
-
-
 
 
 uint16		VGA::StatAdr = VGAST1_;
@@ -1177,9 +1009,6 @@ VGA::VGA (int mode)
 }
 
 
-
-
-
 VGA::~VGA (void)
 {
   Mono = 0;
@@ -1205,7 +1034,7 @@ VGA::~VGA (void)
 
 void VGA::SetStatAdr (void)
 {
-	/* TODO SetStatADR ASM
+	/*
   asm	mov	dx,VGAMIr_
   asm	in	al,dx
   asm	test	al,1		// CGA addressing mode flag
@@ -1215,17 +1044,13 @@ void VGA::SetStatAdr (void)
   set_mode_adr:
   StatAdr = _AX;
   */
+	warning("STUB: VGA::SetStatADR");
 }
-
-
-
-
 
 
 #pragma argsused
 void VGA::WaitVR (bool on)
 {
-	// TODO Wait vertical retrace  ASM
 /*
   _DX = StatAdr;
   _AH = (on) ? 0x00 : 0x08;
@@ -1240,16 +1065,13 @@ void VGA::WaitVR (bool on)
   asm	xor	ah,0x08
   asm	loop	wait
   */
+	warning("STUB: VGA::WaitVR");
 }
-
-
-
-
 
 
 void VGA::Setup (VgaRegBlk * vrb)
 {
-/* TODO VGA setup
+/*
   WaitVR();			// *--LOOK!--* resets VGAATR logic
   asm	cld
   asm	mov	si, vrb		// take address of parameter table
@@ -1287,17 +1109,13 @@ void VGA::Setup (VgaRegBlk * vrb)
 
   xit:
   */
+	warning("STUB: VGA::Setup");
 }
 
 
-
-
-
-
-int VGA::SetMode (int mode)
+int VGA::SetMode(int mode)
 {
-	/* TODO VGA Set Mode
-	
+/*
   Clear();
   // get current mode
   asm	mov	ah,0x0F
@@ -1317,17 +1135,14 @@ int VGA::SetMode (int mode)
   asm	pop	ax
   return _AX;
   */
+  warning("STUB: VGA::SetMode");
 	return 0;
 }
 
 
-
-
-
-
-void VGA::GetColors (DAC * tab)
+void VGA::GetColors(DAC * tab)
 {
-	/* TODO GetColors ASM
+/*
   asm	cld
   asm	les	di,tab		// color table
   asm	mov	dx,0x3C7	// PEL address read mode register
@@ -1344,18 +1159,14 @@ void VGA::GetColors (DAC * tab)
   sto:
   asm	stosb			// store 1 color
   asm	loop	gc		// next one?
-
   */
+	warning("STUB: VGA::GetColors");
 }
 
 
-
-
-void VGA::SetColors (DAC * tab, int lum)
+void VGA::SetColors(DAC * tab, int lum)
 {
-
-	/* TODO SetColors 
-
+/* 
   DAC * des = NewColors;
   asm	push	ds
 
@@ -1401,11 +1212,8 @@ void VGA::SetColors (DAC * tab, int lum)
     }
 	*/
   SetPal = true;
+  warning("STUB: VGA::SetColors");
 }
-
-
-
-
 
 
 void VGA::SetColors (void)
@@ -1413,10 +1221,6 @@ void VGA::SetColors (void)
   memset(NewColors, 0, PAL_SIZ);
   UpdateColors();
 }
-
-
-
-
 
 
 void VGA::Sunrise (DAC * tab)
@@ -1429,10 +1233,6 @@ void VGA::Sunrise (DAC * tab)
       UpdateColors();
     }
 }
-
-
-
-
 
 
 void VGA::Sunset (void)
@@ -1449,13 +1249,6 @@ void VGA::Sunset (void)
 }
 
 
-
-
-
-
-
-
-
 void VGA::Show (void)
 {
   SPRITE * spr = ShowQ.First();
@@ -1468,11 +1261,9 @@ void VGA::Show (void)
 }
 
 
-
-
-void VGA::UpdateColors (void)
+void VGA::UpdateColors(void)
 {
-	/* TODO UpdateColors ASM
+/*
   DAC * tab = NewColors;
 
   asm	push	ds
@@ -1497,18 +1288,13 @@ void VGA::UpdateColors (void)
 
   asm	pop	ds
   */
+  warning("STUB: VGA::UpdateColors");
 }
 
 
-
-
-
-
-
-void VGA::Update (void)
+void VGA::Update(void)
 {
-	// TODO VGA Update
-	/*
+/*
   uint8 * p = Page[1];
   Page[1] = Page[0];
   Page[0] = p;
@@ -1528,18 +1314,13 @@ void VGA::Update (void)
       UpdateColors();
       SetPal = false;
     }
+  warning("STUB: VGA::Update");
 }
 
 
-
-
-
-
-
-
-void VGA::Clear (uint8 color)
+void VGA::Clear(uint8 color)
 {
-	/* TODO Clear ASM
+/*
   uint8 * a = (uint8 *) MK_FP(SCR_SEG, 0);
 
   asm	mov	dx,VGASEQ_
@@ -1553,16 +1334,13 @@ void VGA::Clear (uint8 color)
   asm	rep stosb
   asm	stosb
   */
+  warning("STUB: VGA::Clear");
 }
 
 
-
-
-
-
-void VGA::CopyPage (uint16 d, uint16 s)
+void VGA::CopyPage(uint16 d, uint16 s)
 {
-	/* TODO CopyPage
+/*
   uint8 * S = Page[s & 3], * D = Page[d & 3];
 
   asm	mov	dx,VGAGRA_
@@ -1594,14 +1372,14 @@ void VGA::CopyPage (uint16 d, uint16 s)
   asm	pop	ax
   asm	out	dx,al		// end of copy mode
   */
+  warning("STUB: VGA::CopyPage");
 }
 
 //--------------------------------------------------------------------------
 
-void BITMAP::XShow (int x, int y)
+void BITMAP::XShow(int x, int y)
 {
-	// TODO XShow ASM
-	/*
+/*
   uint8 rmsk = x % 4,
        mask = 1 << rmsk,
        * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
@@ -1616,8 +1394,6 @@ void BITMAP::XShow (int x, int y)
 	asm	les	di,scr
 	asm	lds	si,v
 	asm	mov	bx,m
-
-
 
 	asm	mov	al,0x02		// map mask register
 	asm	mov	ah,mask
@@ -1679,19 +1455,13 @@ void BITMAP::XShow (int x, int y)
 	asm	pop	ds
 	asm	pop	si
 	asm	pop	bx
-
 	*/
+	warning("STUB: BITMAP::XShow");
 }
 
 
-
-
-
-
-void BITMAP::Show (int x, int y)
+void BITMAP::Show(int x, int y)
 {
-
-	// TODO Show ASM
 	/*
   uint8 mask = 1 << (x & 3),
        * scr = VGA::Page[1] + y * (SCR_WID >> 2) + (x >> 2);
@@ -1757,16 +1527,13 @@ void BITMAP::Show (int x, int y)
 	asm	jne	plane
 	asm	pop	ds
 	*/
+	warning("STUB: BITMAP::Show");
 }
 
 
-
-
-
-void BITMAP::Hide (int x, int y)
+void BITMAP::Hide(int x, int y)
 {
-	// TODO Bitmap Hide ASM
-	/*
+/*
   uint8 * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
   uint16 d = FP_OFF(VGA::Page[2]) - FP_OFF(VGA::Page[1]);
   HideDesc * b = B;
@@ -1828,6 +1595,7 @@ void BITMAP::Hide (int x, int y)
 	asm	pop	si
 //	asm	pop	bx
 */
+	warning("STUB: BITMAP::Hide");
 }
 
 } // End of namespace CGE

@@ -57,6 +57,7 @@ KEYBOARD::KEYBOARD (void)
   OldKeyboard = getvect(KEYBD_INT);
   setvect(KEYBD_INT, NewKeyboard);
   */
+  warning("STUB: KEYBOARD::KEYBOARD");
 }
 
 
@@ -68,6 +69,7 @@ KEYBOARD::~KEYBOARD (void)
   /* TODO replace totally by scummvm handling
 	setvect(KEYBD_INT, OldKeyboard);
   */
+  warning("STUB: KEYBOARD::~KEYBOARD");
 }
 
 
@@ -86,7 +88,6 @@ SPRITE * KEYBOARD::SetClient (SPRITE * spr)
 void KEYBOARD::NewKeyboard (...)
 {
   // table address
-	// TODO keyboard ASM
 	/*
   _SI = (uint16) Key;
 
@@ -146,6 +147,7 @@ void KEYBOARD::NewKeyboard (...)
   asm	mov	al,20h		// send End-Of-Interrupt
   asm	out	20h,al		// to the 8259 IC
   */
+  warning("STUB: KEYBOARD::NewKeyboard");
 }
 
 } // End of namespace CGE
