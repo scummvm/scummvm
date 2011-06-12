@@ -303,17 +303,17 @@ namespace %s {
 	def _shl(self, dst, src):
 		self.body += "\tcontext._shl(%s, %s);\n" %self.parse2(dst, src)
 
-	def _sar(self, dst, src):
-		self.body += "\tcontext._sar(%s%s);\n" %self.parse2(dst, src)
+	#def _sar(self, dst, src):
+	#	self.body += "\tcontext._sar(%s%s);\n" %self.parse2(dst, src)
 
-	def _sal(self, dst, src):
-		self.body += "\tcontext._sal(%s, %s);\n" %self.parse2(dst, src)
+	#def _sal(self, dst, src):
+	#	self.body += "\tcontext._sal(%s, %s);\n" %self.parse2(dst, src)
 
-	def _rcl(self, dst, src):
-		self.body += "\tcontext._rcl(%s, %s);\n" %self.parse2(dst, src)
+	#def _rcl(self, dst, src):
+	#	self.body += "\tcontext._rcl(%s, %s);\n" %self.parse2(dst, src)
 
-	def _rcr(self, dst, src):
-		self.body += "\tcontext._rcr(%s, %s);\n" %self.parse2(dst, src)
+	#def _rcr(self, dst, src):
+	#	self.body += "\tcontext._rcr(%s, %s);\n" %self.parse2(dst, src)
 
 	def _mul(self, src):
 		src = self.expand(src)
@@ -325,11 +325,11 @@ namespace %s {
 
 	def _inc(self, dst):
 		dst = self.expand(dst)
-		self.body += "\tcontext._add(%s, 1);\n" %(dst)
+		self.body += "\tcontext._inc(%s);\n" %(dst)
 
 	def _dec(self, dst):
 		dst = self.expand(dst)
-		self.body += "\tcontext._sub(%s, 1);\n" %(dst)
+		self.body += "\tcontext._dec(%s);\n" %(dst)
 
 	def _cmp(self, a, b):
 		self.body += "\tcontext._cmp(%s, %s);\n" %self.parse2(a, b)

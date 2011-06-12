@@ -302,6 +302,30 @@ public:
 		flags.update_zs(dst);
 	}
 
+	inline void _inc(uint8 &dst) {
+		flags.update_o((uint8)(dst + 1), dst);
+		++dst;
+		flags.update_zs(dst);
+	}
+
+	inline void _inc(uint16 &dst) {
+		flags.update_o((uint16)(dst + 1), dst);
+		++dst;
+		flags.update_zs(dst);
+	}
+
+	inline void _dec(uint8 &dst) {
+		flags.update_o(uint8(dst - 1), dst);
+		--dst;
+		flags.update_zs(dst);
+	}
+
+	inline void _dec(uint16 &dst) {
+		flags.update_o(uint16(dst - 1), dst);
+		--dst;
+		flags.update_zs(dst);
+	}
+
 	inline void _and(uint8 &dst, uint8 src) {
 		dst &= src;
 		flags.update_zs(dst);
