@@ -17818,13 +17818,13 @@ loop048:
 	if (context.flags.l()) goto over045;
 	context.ax = context.cs.word(context.bx+2);
 	context._cmp(context.data.word(kMousex), context.ax);
-	if (!context.flags.ge()) goto over045;
+	if (!context.flags.l()) goto over045;
 	context.ax = context.cs.word(context.bx+4);
 	context._cmp(context.data.word(kMousey), context.ax);
 	if (context.flags.l()) goto over045;
 	context.ax = context.cs.word(context.bx+6);
 	context._cmp(context.data.word(kMousey), context.ax);
-	if (!context.flags.ge()) goto over045;
+	if (!context.flags.l()) goto over045;
 	context.ax = context.cs.word(context.bx+8);
 	__dispatch_call(context, context.ax);
 finished:
@@ -18859,7 +18859,7 @@ vertline:
 	context.bx = context.data.word(kLineendy);
 	context.cx = context.bx;
 	context._sub(context.cx, context.ax);
-	if (!context.flags.ge()) goto line31;
+	if (!context.flags.l()) goto line31;
 	context._neg(context.cx);
 	context.ax = context.bx;
 	context.data.byte(kLinedirection) = 1;

@@ -166,11 +166,9 @@ struct Flags {
 	inline bool z() const	{ return _z; }
 	inline bool c() const	{ return _c; }
 	inline bool s() const	{ return _s; }
-	//complex flags:
-	inline bool g() const	{ return !_z && _o; }
-	inline bool ge() const	{ return _o; }
-	inline bool l() const	{ return !_o; }
-	inline bool le() const	{ return _z || !_o; }
+
+	inline bool l() const	{ return _o; }
+	inline bool le() const	{ return _o || _z; }
 	
 	inline void update(uint8 v) {
 		_s = v & 0x80;
@@ -270,7 +268,7 @@ public:
 
 	inline void _add(uint8 &dst, uint8 src) {
 		unsigned r = (unsigned)dst + src;
-		flags.update_o(r, dst);
+		flags.update_o((uint8)r, dst);
 		flags._c = r >= 0x100;
 		dst = r;
 		flags.update(dst);
@@ -278,21 +276,21 @@ public:
 
 	inline void _add(uint16 &dst, uint16 src) {
 		unsigned r = (unsigned)dst + src;
-		flags.update_o(r, dst);
+		flags.update_o((uint16)r, dst);
 		flags._c = r >= 0x10000;
 		dst = r;
 		flags.update(dst);
 	}
 
 	inline void _sub(uint8 &dst, uint8 src) {
-		flags.update_o(dst - src, dst);
+		flags.update_o(uint8(dst - src), dst);
 		flags._c = dst < src;
 		dst -= src;
 		flags.update(dst);
 	}
 
 	inline void _sub(uint16 &dst, uint16 src) {
-		flags.update_o(dst - src, dst);
+		flags.update_o(uint16(dst - src), dst);
 		flags._c = dst < src;
 		dst -= src;
 		flags.update(dst);
@@ -383,21 +381,21 @@ public:
 
 	inline void _mul(uint8 src) {
 		unsigned r = unsigned(al) * src;
-		flags.update_o(r, al);
 		ax = (uint16)r;
 		flags._c = r >= 0x10000;
 		flags._z = r == 0;
 		flags._s = r & 0x8000;
+		flags._o = ah != 0;
 	}
 
 	inline void _mul(uint16 src) {
 		unsigned r = unsigned(ax) * src; //assuming here that we have at least 32 bits
-		flags.update_o(r, ax);
 		dx = (r >> 16) & 0xffff;
 		ax = r & 0xffff;
-		flags._c = false;//fixme
+		flags._c = false;
 		flags._z = r == 0;
 		flags._s = r & 0x80000000;
+		flags._o = dx != 0;
 	}
 
 	inline void _neg(uint8 &src) {

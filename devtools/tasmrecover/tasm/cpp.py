@@ -353,13 +353,13 @@ namespace %s {
 		self.body += "\tif (context.flags.l()) %s;\n" %(self.jump_to_label(label)) 
 
 	def _jg(self, label):
-		self.body += "\tif (!context.flags.g()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!context.flags.le()) %s;\n" %(self.jump_to_label(label)) 
 
 	def _jle(self, label):
 		self.body += "\tif (context.flags.le()) %s;\n" %(self.jump_to_label(label)) 
 
 	def _jge(self, label):
-		self.body += "\tif (!context.flags.ge()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!context.flags.l()) %s;\n" %(self.jump_to_label(label)) 
 
 	def _jc(self, label):
 		self.body += "\tif (context.flags.c()) %s;\n" %(self.jump_to_label(label)) 
