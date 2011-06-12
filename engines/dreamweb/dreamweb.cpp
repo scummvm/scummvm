@@ -739,94 +739,78 @@ void readoneblock(Context &context) {
 void readabyte(Context & context);
 
 void showpcx(Context &context) {
+	uint16 name_ptr = context.dx;
+	Common::String name;
+	uint8 c;
+	while((c = context.cs.byte(name_ptr++)) != 0)
+		name += (char)c;
+
+	Common::File pcxFile;
+
+	if (!pcxFile.open(name)) {
+		warning("showpcx: Could not open '%s'", name.c_str());
+		return;
+	}
+
+	uint8 *maingamepal;
+	int i, j;
+
+	// Read the 16-color palette into the 'maingamepal' buffer. Note that
+	// the color components have to be adjusted from 8 to 6 bits.
+
+	pcxFile.seek(16, SEEK_SET);
+	context.es = context.data.word(kBuffers);
+	maingamepal = context.es.ptr(5946, 768);
+	pcxFile.read(maingamepal, 48);
+
+	memset(maingamepal + 48, 0xff, 720);
+	for (i = 0; i < 48; i++) {
+		maingamepal[i] >>= 2;
+	}
+
+	// Decode the image data.
+
 	Graphics::Surface *s = g_system->lockScreen();
+	Common::Rect rect(640, 480);
 
-	openfile(context);
-	context.ds = context.data.word(kWorkspace);
-	context.cx = 128;
-	context.dx = 0;
-	readfromfile(context);
+	s->fillRect(rect, 0);
+	pcxFile.seek(128, SEEK_SET);
 
-	context.ds = context.data.word(kWorkspace);
-	context.si = 16;
-	context.cx = 48;
-	context.es = context.data.word(kBuffers);
-	context.di = 0+(228*13)+32+60+(32*32)+(11*10*3)+768+768;
+	for (int y = 0; y < 480; y++) {
+		byte *dst = (byte *)s->getBasePtr(0, y);
+		int decoded = 0;
 
-pcxpal:
-	context.push(context.cx);
-	readabyte(context);
-	context._shr(context.al, 1);
-	context._shr(context.al, 1);
-	context._stosb();
-	context.cx = context.pop();
-	if (--context.cx) goto pcxpal;
-	context.cx = 768 - 48;
-	context.ax = 0x0ffff;
-	while (context.cx--) context._stosw();
-	readoneblock(context);
-	context.si = 0;
-	context.di = 0;
-	context.cx = 480;
-convertpcx:
-	context.push(context.cx);
-	context.push(context.di);
-	context.ds = context.data.word(kWorkspace);
-	context.es = context.data.word(kBuffers);
-	context.di = 0+(228*13)+32+60;
-	context.bx = 0;
+		while (decoded < 320) {
+			byte col = pcxFile.readByte();
+			byte len;
 
-	uint8 *src = context.es.ptr(context.di, 320);
+			if ((col & 0xc0) == 0xc0) {
+				len = col & 0x3f;
+				col = pcxFile.readByte();
+			} else {
+				len = 1;
+			}
 
-sameline:
-	readabyte(context);
-	context.ah = context.al;
-	context._and(context.ah, 0xc0);
-	context._cmp(context.ah, 0xc0);
-	if (!context.flags.z()) goto normal;
-	context.cl = context.al;
-	context._and(context.cl, 0x3f);
-	context.ch = 0;
-	context.push(context.cx);
-	readabyte(context);
-	context.cx = context.pop();
-	context._add(context.bx, context.cx);
-	while (context.cx--) context._stosb();
-	context._cmp(context.bx, 4 * 80);
-	if (!context.flags.z()) goto sameline;
-	goto endline;
-normal:
-	context._stosb();
-	context._add(context.bx, 1);
-	context._cmp(context.bx, 4 * 80);
-	if (!context.flags.z()) goto sameline;
+			// The image uses 16 colors and is stored as four bit
+			// planes, one for each bit of the color, least
+			// significant bit plane first.
 
-endline:
-	context.di = context.pop();
-	context.cx = context.pop();
+			for (i = 0; i < len; i++) {
+				int plane = decoded / 80;
+				int pos = decoded % 80;
 
-	assert((uint16)context.cx <= 480);
-	uint8 *dst = (uint8 *)s->getBasePtr(0, 480 - (uint16)context.cx);
-	memset(dst, 0, 640);
+				for (j = 0; j < 8; j++) {
+					byte bit = (col >> (7 - j)) & 1;
+					dst[8 * pos + j] |= (bit << plane);
+				}
 
-	for (int i = 0; i < 320; i++) {
-		int plane = i / 80;
-		int pos = i % 80;
-
-		for (int j = 0; j < 8; j++) {
-			byte bit = (src[i] >> (7 - j)) & 1;
-			dst[8 * pos + j] |= (bit << plane);
+				decoded++;
+			}
 		}
 	}
 
-	if (--context.cx) goto convertpcx;
-
-	closefile(context);
-
 	g_system->unlockScreen();
-
-	// TODO: This is probably not the right place to do this
-	g_system->updateScreen();
+	pcxFile.close();
 }
 
 } /*namespace dreamgen */
