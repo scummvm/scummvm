@@ -297,7 +297,6 @@ int SoundGenPCJr::getNextNote_v2(int ch) {
 }
 
 int SoundGenPCJr::getNextNote_v1(int ch) {
-	static int channels = 4;
 	static int duration = 0;
 
 	byte *data = _v1data;
@@ -310,19 +309,12 @@ int SoundGenPCJr::getNextNote_v1(int ch) {
 		return -1;
 	}
 	
-	// Get previously fetched data if possible
-	if (channels > 0) {
-		channels--;
-		return 0;
-	}
-	channels = 4;
-
-	// In the V1 player the default duration for a row is 2 ticks
+	// In the V1 player the default duration for a row is 3 ticks
 	if (duration > 0) {
 		duration--;
 		return 0;
 	}
-	duration = 2 * CHAN_MAX;
+	duration = 3 * CHAN_MAX;
 
 	// Otherwise fetch a row of data for all channels
 	while (*data) {
