@@ -1832,8 +1832,8 @@ static void LoadSprite (const char *fname, int ref, int cav, int col = 0, int ro
       Sprite->Flags.Tran = tran;
       Sprite->Flags.Kill = true;
       Sprite->Flags.BDel = true;
-      // TODO : Get Filename from entire path
 	  //fnsplit(fname, NULL, NULL, Sprite->File, NULL);
+	    warning("LoadSprite: use of fnsplit");
       
 	  Sprite->ShpCnt = shpcnt;
       VGA::SpareQ.Append(Sprite);
@@ -2090,6 +2090,7 @@ static void RunGame (void)
     {
 	//TODO Change the SNPOST message send to a special way to send function pointer
      // if (FINIS) SNPOST(SNEXEC,  -1, 0, (void *)&QGame);
+     warning("RunGame: problematic use of SNPOST");
       MainLoop();
     }
 
@@ -2188,8 +2189,9 @@ bool ShowTitle (const char * name)
 	#ifdef CD
 	  STARTUP::Summa |= (0xC0 + (DriveCD(0) << 6)) & 0xFF;
 	#else
-	 // TODO : do good boot...
-	 Boot * b = ReadBoot(0); //getdisk());
+//	  Boot * b = ReadBoot(getdisk());
+		warning("ShowTitle: FIXME ReadBoot");
+		Boot * b = ReadBoot(0);
 	  uint32 sn = (b->XSign == 0x29) ? b->Serial : b->lTotSecs;
 	  free(b);
 	  sn -= ((IDENT *)Copr)->disk;

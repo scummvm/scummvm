@@ -210,6 +210,7 @@ static void Select (CHOICE * cho, int hlp)
   Hlp = hlp;
   //TODO Change the SNPOST message send to a special way to send function pointer
   //SNPOST(SNEXEC, -1, 0, (void *)&SNSelect);
+  warning("STUB: Select");
 }
 
 

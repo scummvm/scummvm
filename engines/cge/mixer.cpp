@@ -154,6 +154,7 @@ void MIXER::Update (void)
 
   //TODO Change the SNPOST message send to a special way to send function pointer
   //SNPOST_(SNEXEC, -1, 0, (void*)&SNDSetVolume);
+  warning("FIXME: MIXER::Update");
 }
 
 } // End of namespace CGE
