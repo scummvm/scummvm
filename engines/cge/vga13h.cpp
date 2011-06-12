@@ -1137,10 +1137,11 @@ uint8 *	VGA::Page[4] = { (uint8 *) MK_FP(SCR_SEG, 0x0000),
 
 
 
+//extern const char Copr[];
+
 VGA::VGA (int mode)
 : FrmCnt(0)
 {
-  extern const char Copr[];
   bool std = true;
   int i;
   for (i = 10; i < 20; i ++)
@@ -1155,9 +1156,10 @@ VGA::VGA (int mode)
 	  #endif
 	}
     }
-  if (std) 
-//	  puts(Copr);
-		warning(Copr);
+//  if (std) 
+//		warning(Copr);
+  warning("TODO: Fix Copr");
+
   SetStatAdr();
   if (StatAdr != VGAST1_) ++ Mono;
   if (IsVga())

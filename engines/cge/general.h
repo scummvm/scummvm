@@ -64,8 +64,6 @@ extern Common::RandomSource randSrc;
 
 #define new_random(a)  (randSrc.getRandomNumber(a))
 
-
-
 class COUPLE
 {
 protected:
@@ -238,39 +236,32 @@ public:
 
 
 CRYPT		XCrypt;
-CRYPT		RXCrypt;
 CRYPT		RCrypt;
 
 MEM_TYPE	MemType		(void *mem);
-unsigned	FastRand	(void);
-unsigned	FastRand	(unsigned s);
-//CPU		Cpu		(void);
-ALLOC_MODE	SetAllocMode	(ALLOC_MODE am);
 uint16		atow		(const char * a);
 uint16		xtow		(const char * x);
 char *		wtom		(uint16 val, char * str, int radix, int len);
 char *		dwtom		(uint32 val, char * str, int radix, int len);
-char *		DateTimeString	(void);
-void		StdLog		(const char *msg, const char *nam = NULL);
-void		StdLog		(const char *msg, uint16 w);
-void		StdLog		(const char *msg, uint32 d);
 int		TakeEnum	(const char ** tab, const char * txt);
 uint16		ChkSum		(void *m, uint16 n);
 long		Timer		(void);
-long		TimerLimit	(uint16 t);
-bool		TimerLimitGone	(long t);
 char *		MergeExt	(char * buf, const char * nam, const char * ext);
 char *		ForceExt	(char * buf, const char * nam, const char * ext);
-inline const char * ProgPath	(void);
-const char *	ProgName	(const char * ext = NULL);
-int		DriveFixed	(unsigned drv);
-int 		DriveRemote	(unsigned drv);
 int 		DriveCD		(unsigned drv);
 bool		IsVga		(void);
 
-EC void		_fqsort		(void *base, uint16 nelem, uint16 width,
-				int (*fcmp)(const void*, const void*));
 
+// MISSING FUNCTIONS
+EC void		_fqsort		(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void*, const void*));
+const char *ProgName	(const char *ext = NULL);
+char *MergeExt (char *buf, const char *nam, const char *ext);
+char *ForceExt (char *buf, const char *nam, const char *ext);
+unsigned FastRand (void);
+unsigned FastRand (unsigned s);
+uint16 RCrypt (void * buf, uint16 siz, uint16 seed);
+uint16 atow (const char *a);
+uint16 xtow (const char *x);
 
 } // End of namespace CGE
 
