@@ -10,7 +10,9 @@ MODULE_OBJS := \
 	config.o \
 	console.o \
 	detection.o \
+	ems.o \
 	game.o \
+	general.o \
 	gettext.o \
 	keybd.o \
 	mixer.o \
@@ -18,7 +20,6 @@ MODULE_OBJS := \
 	snail.o \
 	sound.o \
 	startup.o \
-	stdpal.o \
 	talk.o \
 	text.o \
 	vga13h.o \

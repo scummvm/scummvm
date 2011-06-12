@@ -297,8 +297,7 @@ static void LoadGame (XFILE& file, bool tiny = false)
   if (i != SVGCHKSUM)
 	  error(Text[BADSVG_TEXT]);
   if (STARTUP::Core < CORE_HIG) Music = false;
-  if (STARTUP::SoundOk == 1 && STARTUP::Mode == 0)
-    {
+  if (STARTUP::SoundOk == 1 && STARTUP::Mode == 0) {
       SNDDrvInfo.VOL2.D = volume[0];
       SNDDrvInfo.VOL2.M = volume[1];
       SNDSetVolume();
