@@ -2954,7 +2954,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 						uint16 argc2 = opparams[1];
 
 						if (kFuncNum == kernelFuncNum) {
-							DebugPrintf("Called from script %d, object %s, method %s(%d) with %d parameters\n", 
+							DebugPrintf("Called from script %d, object %s, method %s(%d) with %d bytes for arguments\n", 
 								itr->getNumber(), objName, 
 								_engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, argc2);
 						}
@@ -2971,7 +2971,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 					// Check for end of function/script
 					if (offset >= script->getBufSize())
 						break;
-					if (opcode == op_ret)// && offset >= maxJmpOffset)
+					if (opcode == op_ret && offset >= maxJmpOffset)
 						break;
 				}	// while (true)
 			}	// for (uint16 i = 0; i < obj->getMethodCount(); i++)
