@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/random.h"
 #include "common/rect.h"
+#include "common/savefile.h"
 #include "common/scummsys.h"
 
 #include "engines/engine.h"
@@ -89,6 +90,9 @@ public:
 	
 	void getPalette(uint8 *data, uint start, uint count);
 	void setPalette(const uint8 *data, uint start, uint count);
+	
+	void openSaveFile(const Common::String &name);
+	uint writeToSaveFile(const uint8 *data, uint size);
 
 private:
 
@@ -100,6 +104,7 @@ private:
 	unsigned						_mouseState;
 	
 	Common::File _file;
+	Common::OutSaveFile *_saveFile;
 	
 	dreamgen::Context _context;
 };

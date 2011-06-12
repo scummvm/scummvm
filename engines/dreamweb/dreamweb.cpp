@@ -29,7 +29,6 @@
 #include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/func.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/timer.h"
 #include "common/util.h"
@@ -196,7 +195,22 @@ uint32 DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
 
 void DreamWebEngine::closeFile() {
 	processEvents();
-	_file.close();
+	if (_file.isOpen())
+		_file.close();
+	delete _saveFile;
+	_saveFile = 0;
+}
+
+void DreamWebEngine::openSaveFile(const Common::String &name) {
+	processEvents();
+	_saveFile = _system->getSavefileManager()->openForSaving(name);
+}
+
+uint DreamWebEngine::writeToSaveFile(const uint8 *data, uint size) {
+	processEvents();
+	if (!_saveFile)
+		error("save file was not opened");
+	return _saveFile->write(data, size);
 }
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
@@ -408,7 +422,9 @@ void closefile(Context &context) {
 }
 
 void openforsave(Context &context) {
-	::error("openforsave");
+	const char *name = (const char *)context.ds.ptr(context.dx, 13);
+	debug(1, "openforsave(%s)", name);
+	engine()->openSaveFile(name);
 }
 
 void openfilenocheck(Context &context) {
@@ -581,10 +597,13 @@ void scanfornames(Context &context) {
 }
 
 void saveseg(Context &context) {
-	::error("saveseg");
+	context.cx = context.es.word(context.di);
+	context._add(context.di, 2);
+	savefilewrite(context);
 }
 
 void savefilewrite(Context &context) {
+	engine()->writeToSaveFile(context.ds.ptr(context.dx, context.cx), context.cx);
 }
 
 void savefileread(Context &context) {
