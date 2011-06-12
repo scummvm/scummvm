@@ -193,6 +193,8 @@ void GfxTransitions::doit(Common::Rect picRect) {
 		// TODO: this is a workaround for lsl6 not showing menubar when playing
 		//  There is some new code in the sierra sci in ShowPic that seems to do
 		//  something similar to this
+		//  FIXME: Having this code here also causes bug #3051136 in
+		//  the SCI1.1 version of Mother Goose.
 		_screen->copyToScreen();
 		g_system->updateScreen();
 	}
