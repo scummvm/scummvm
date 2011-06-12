@@ -128,6 +128,12 @@ void DreamWebEngine::processEvents() {
 		case Common::EVENT_RBUTTONUP:
 			_mouseState &= ~2;
 			break;
+		case Common::EVENT_MBUTTONDOWN:
+			_mouseState |= 4;
+			break;
+		case Common::EVENT_MBUTTONUP:
+			_mouseState &= ~4;
+			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mouse = event.mouse;
 			break;
