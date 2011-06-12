@@ -4770,6 +4770,8 @@ void showframe(Context & context) {
 	context._add(context.si, context.cx);
 	context._cmp(context.ds.word(context.si), 0);
 	if (!context.flags.z()) goto notblankshow;
+	context.ax = context.pop();
+	context.dx = context.pop();
 	context.cx = 0;
 	{assert(stack_depth == context.stack.size()); return; }
 notblankshow:
