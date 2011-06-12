@@ -769,7 +769,7 @@ void showpcx(Context &context) {
 
 	pcxFile.seek(16, SEEK_SET);
 	context.es = context.data.word(kBuffers);
-	maingamepal = context.es.ptr(5946, 768);
+	maingamepal = context.es.ptr(4782, 768);
 	pcxFile.read(maingamepal, 48);
 
 	memset(maingamepal + 48, 0xff, 720);
