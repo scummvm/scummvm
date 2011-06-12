@@ -276,7 +276,6 @@ void isryanholding(Context &context);
 void nothelderror(Context &context);
 void triggermessage(Context &context);
 void monprint(Context &context);
-void modifychar(Context &context);
 void printchar(Context &context);
 void showcurrentfile(Context &context);
 void printlogo(Context &context);
@@ -2424,7 +2423,7 @@ forcenext:
 
 void clearsprites(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 	context.al = 255;
 	context.cx = (32)*16;
 	while(context.cx--) 	context._stosb();
@@ -2433,7 +2432,7 @@ void clearsprites(Context & context) {
 
 void makesprite(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 _tmp17:
 	context._cmp(context.es.byte(context.bx+15), 255);
 	if (context.flags.z()) goto _tmp17a;
@@ -2460,11 +2459,11 @@ void delsprite(Context & context) {
 
 void spriteupdate(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 	context.al = context.data.byte(kRyanon);
 	context.es.byte(context.bx+31) = context.al;
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 	context.cx = 16;
 _tmp18:
 	context.push(context.cx);
@@ -2496,7 +2495,7 @@ void printsprites(Context & context) {
 priorityloop:
 	context.push(context.cx);
 	context.data.byte(kPriority) = context.cl;
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 	context.cx = 16;
 prtspriteloop:
 	context.push(context.cx);
@@ -2585,7 +2584,7 @@ void checkone(Context & context) {
 	context._mul(context.cx);
 	context.si = context.ax;
 	context.ds = context.data.word(kBuffers);
-	context._add(context.si, (0+(228*13)+32+60+(32*32)));
+	context._add(context.si, (0+(180*10)+32+60+(32*32)));
 	context._lodsw();
 	context.cx = context.ax;
 	context._lodsb();
@@ -3010,7 +3009,7 @@ notinedenslift:
 
 void initrain(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24));
 	context.bx = 1113;
 checkmorerain:
 	context.al = context.cs.byte(context.bx);
@@ -3145,7 +3144,7 @@ void showrain(Context & context) {
 	context.ax = context.ds.word(context.si+2);
 	context.si = context.ax;
 	context._add(context.si, 2080);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30));
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24));
 	context.es = context.data.word(kBuffers);
 	context._cmp(context.es.byte(context.bx), 255);
 	if (context.flags.z()) goto nothunder;
@@ -3641,7 +3640,7 @@ notnearly:
 
 void updatepeople(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
 	context.data.word(kListpos) = context.di;
 	context.cx = 12*5;
 	context.al = 255;
@@ -3783,10 +3782,6 @@ void reconstruct(Context & context) {
 	drawfloor(context);
 	spriteupdate(context);
 	printsprites(context);
-	context._cmp(context.data.byte(kReallocation), 20);
-	if (!context.flags.z()) goto notfudge;
-	undertextline(context);
-notfudge:
 	context.data.byte(kHavedoneobs) = 0;
 noneedtorecon:
 	return;
@@ -3918,7 +3913,7 @@ bigroom:
 
 void dumpeverything(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40));
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40));
 dumpevery1:
 	context.ax = context.es.word(context.bx);
 	context.cx = context.es.word(context.bx+2);
@@ -3946,7 +3941,7 @@ skip1:
 	context._add(context.bx, 5);
 	goto dumpevery1;
 finishevery1:
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40))+(40*5);
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40))+(40*5);
 dumpevery2:
 	context.ax = context.es.word(context.bx);
 	context.cx = context.es.word(context.bx+2);
@@ -4007,7 +4002,7 @@ void loadpalfromiff(Context & context) {
 	readfromfile(context);
 	closefile(context);
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
 	context.ds = context.data.word(kMapstore);
 	context.si = 0x30;
 	context.cx = 768;
@@ -4950,7 +4945,7 @@ void dofade(Context & context) {
 	context.al = context.data.byte(kColourpos);
 	context.ah = 0;
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context._add(context.si, context.ax);
 	context._add(context.si, context.ax);
 	context._add(context.si, context.ax);
@@ -4967,7 +4962,7 @@ finishfade:
 
 void clearendpal(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	context.cx = 768;
 	context.al = 0;
 	while(context.cx--) 	context._stosb();
@@ -4993,11 +4988,11 @@ void fadescreenup(Context & context) {
 
 void fadetowhite(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	context.cx = 768;
 	context.al = 63;
 	while(context.cx--) 	context._stosb();
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	context.al = 0;
 	context._stosb();
 	context._stosb();
@@ -5012,11 +5007,11 @@ void fadetowhite(Context & context) {
 
 void fadefromwhite(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768;
 	context.al = 63;
 	while(context.cx--) 	context._stosb();
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.al = 0;
 	context._stosb();
 	context._stosb();
@@ -5044,7 +5039,7 @@ void fadescreendownhalf(Context & context) {
 	paltoendpal(context);
 	context.cx = 768;
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 halfend:
 	context.al = context.es.byte(context.bx);
 	context._shr(context.al, 1);
@@ -5053,12 +5048,12 @@ halfend:
 	if (--context.cx) goto halfend;
 	context.ds = context.data.word(kBuffers);
 	context.es = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3))+(56*3);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(56*3);
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(56*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(56*3);
 	context.cx = 3*5;
 	while(context.cx--) 	context._movsb();
- 	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3))+(77*3);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(77*3);
+ 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(77*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(77*3);
 	context.cx = 3*2;
 	while(context.cx--) 	context._movsb();
  	context.data.byte(kFadedirection) = 1;
@@ -5100,7 +5095,7 @@ void fadescreendowns(Context & context) {
 
 void clearstartpal(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 256;
 wholeloop1:
 	context.ax = 0;
@@ -5263,8 +5258,8 @@ void fadecalculation(Context & context) {
 	if (context.flags.z()) goto nomorefading;
 	context.bl = context.data.byte(kFadecount);
 	context.es = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3));
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	context.cx = 768;
 fadecolloop:
 	context.al = context.es.byte(context.si);
@@ -5293,8 +5288,8 @@ nomorefading:
 
 void greyscalesum(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	context.cx = 256;
 greysumloop1:
 	context.push(context.cx);
@@ -5349,8 +5344,8 @@ noaddb:
 void paltostartpal(Context & context) {
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
  	return;
@@ -5359,8 +5354,8 @@ void paltostartpal(Context & context) {
 void endpaltostart(Context & context) {
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
  	return;
@@ -5369,8 +5364,8 @@ void endpaltostart(Context & context) {
 void startpaltoend(Context & context) {
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
  	return;
@@ -5379,8 +5374,8 @@ void startpaltoend(Context & context) {
 void paltoendpal(Context & context) {
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
  	return;
@@ -5389,8 +5384,8 @@ void paltoendpal(Context & context) {
 void allpalette(Context & context) {
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3));
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
  	dumpcurrent(context);
@@ -5398,7 +5393,7 @@ void allpalette(Context & context) {
 }
 
 void dumpcurrent(Context & context) {
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.ds = context.data.word(kBuffers);
 	vsync(context);
 	context.al = 0;
@@ -5415,11 +5410,11 @@ void fadedownmon(Context & context) {
 	paltostartpal(context);
 	paltoendpal(context);
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(231*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(231*3);
 	context.cx = 3*8;
 	context.ax = 0;
 	while(context.cx--) 	context._stosb();
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(246*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(246*3);
 	context._stosb();
 	context._stosw();
 	context.data.byte(kFadedirection) = 1;
@@ -5435,11 +5430,11 @@ void fadeupmon(Context & context) {
 	paltostartpal(context);
 	paltoendpal(context);
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(231*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(231*3);
 	context.cx = 3*8;
 	context.ax = 0;
 	while(context.cx--) 	context._stosb();
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(246*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
 	context._stosb();
 	context._stosw();
 	context.data.byte(kFadedirection) = 1;
@@ -5455,11 +5450,11 @@ void fadeupmonfirst(Context & context) {
 	paltostartpal(context);
 	paltoendpal(context);
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(231*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(231*3);
 	context.cx = 3*8;
 	context.ax = 0;
 	while(context.cx--) 	context._stosb();
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(246*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
 	context._stosb();
 	context._stosw();
 	context.data.byte(kFadedirection) = 1;
@@ -5478,11 +5473,11 @@ void fadeupmonfirst(Context & context) {
 void fadeupyellows(Context & context) {
 	paltoendpal(context);
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(231*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(231*3);
 	context.cx = 3*8;
 	context.ax = 0;
 	while(context.cx--) 	context._stosb();
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(246*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(246*3);
 	context._stosb();
 	context._stosw();
 	context.data.byte(kFadedirection) = 1;
@@ -5497,15 +5492,15 @@ void fadeupyellows(Context & context) {
 void initialmoncols(Context & context) {
 	paltostartpal(context);
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(230*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(230*3);
 	context.cx = 3*9;
 	context.ax = 0;
 	while(context.cx--) 	context._stosb();
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3))+(246*3);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
 	context._stosb();
 	context._stosw();
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3))+(230*3);
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(230*3);
 	context.al = 230;
 	context.cx = 18;
 	showgroup(context);
@@ -5898,7 +5893,6 @@ void printchar(Context & context) {
 	context.push(context.si);
 	context.push(context.bx);
 	context.push(context.di);
-	context._sub(context.bx, 3);
 	context.push(context.ax);
 	context._sub(context.al, 32);
 	context.ah = 0;
@@ -5963,7 +5957,6 @@ printloopslow5:
 	context.push(context.es);
 	context.push(context.si);
 	context.push(context.ds);
-	modifychar(context);
 	printboth(context);
 	context.ds = context.pop();
 	context.si = context.pop();
@@ -5984,7 +5977,6 @@ printloopslow5:
 	context.push(context.cx);
 	context.push(context.es);
 	context.push(context.si);
-	modifychar(context);
 	context.data.word(kCharshift) = 91;
 	printboth(context);
 	context.data.word(kCharshift) = 0;
@@ -6092,7 +6084,6 @@ printloop5:
 	if (context.flags.z()) goto finishdirct;
 	context.push(context.cx);
 	context.push(context.es);
-	modifychar(context);
 	printchar(context);
 	context.data.word(kLastxpos) = context.di;
 	context.es = context.pop();
@@ -6143,7 +6134,6 @@ printloop7:
 nottrigger:
 	context.push(context.cx);
 	context.push(context.es);
-	modifychar(context);
 	printchar(context);
 	context.data.word(kCurslocx) = context.di;
 	context.data.word(kCurslocy) = context.bx;
@@ -6304,7 +6294,6 @@ getloop:
 	if (context.flags.z()) goto endall;
 	context._cmp(context.al, 32);
 	if (context.flags.z()) goto endword;
-	modifychar(context);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto getloop;
 	context.push(context.ax);
@@ -6330,68 +6319,11 @@ endall:
 	return;
 }
 
-void modifychar(Context & context) {
-	context._cmp(context.al, 128);
-	if (context.flags.c()) goto nomod;
-	context._cmp(context.al, 160);
-	if (!context.flags.z()) goto not160;
-	context.al = 'Z'+1;
-	return;
-not160:
-	context._cmp(context.al, 130);
-	if (!context.flags.z()) goto not130;
-	context.al = 'Z'+2;
-	return;
-not130:
-	context._cmp(context.al, 161);
-	if (!context.flags.z()) goto not161;
-	context.al = 'Z'+3;
-	return;
-not161:
-	context._cmp(context.al, 162);
-	if (!context.flags.z()) goto not162;
-	context.al = 'Z'+4;
-	return;
-not162:
-	context._cmp(context.al, 163);
-	if (!context.flags.z()) goto not163;
-	context.al = 'Z'+5;
-	return;
-not163:
-	context._cmp(context.al, 164);
-	if (!context.flags.z()) goto not164;
-	context.al = 'Z'+6;
-	return;
-not164:
-	context._cmp(context.al, 165);
-	if (!context.flags.z()) goto not165;
-	context.al = ','-1;
-	return;
-not165:
-	context._cmp(context.al, 168);
-	if (!context.flags.z()) goto not168;
-	context.al = 'A'-1;
-	return;
-not168:
-	context._cmp(context.al, 173);
-	if (!context.flags.z()) goto not173;
-	context.al = 'A'-4;
-	return;
-not173:
-	context._cmp(context.al, 129);
-	if (!context.flags.z()) goto not129;
-	context.al = 'A'-5;
-not129:
-	return;
-nomod:
-	return;
-}
-
 void fillryan(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32);
+	context.di = (0+(180*10)+32);
 	findallryan(context);
-	context.si = (0+(228*13)+32);
+	context.si = (0+(180*10)+32);
 	context.al = context.data.byte(kRyanpage);
 	context.ah = 0;
 	context.cx = 20;
@@ -6440,9 +6372,9 @@ lessthanapage:
 	context.al = 1;
 	context.push(context.ax);
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13));
+	context.di = (0+(180*10));
 	findallopen(context);
-	context.si = (0+(228*13));
+	context.si = (0+(180*10));
 	context.di = (80);
 	context.bx = (58)+96;
 	context.cx = context.pop();
@@ -6899,10 +6831,6 @@ void describeob(Context & context) {
 	getobtextstart(context);
 	context.di = 33;
 	context.bx = 92;
-	context._cmp(context.data.byte(kObjecttype), 1);
-	if (!context.flags.z()) goto notsetd;
-	context.bx = 82;
-notsetd:
 	context.dl = 241;
 	context.ah = 16;
 	context.data.word(kCharshift) = 91+91;
@@ -6910,10 +6838,6 @@ notsetd:
 	context.data.word(kCharshift) = 0;
 	context.di = 36;
 	context.bx = 104;
-	context._cmp(context.data.byte(kObjecttype), 1);
-	if (!context.flags.z()) goto notsetd2;
-	context.bx = 94;
-notsetd2:
 	context.dl = 241;
 	context.ah = 0;
 	printdirect(context);
@@ -7691,7 +7615,7 @@ findinv2:
 	context.data.byte(kLastinvpos) = context.al;
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(kBuffers);
-	context._add(context.bx, (0+(228*13)+32));
+	context._add(context.bx, (0+(180*10)+32));
 	return;
 }
 
@@ -7707,7 +7631,7 @@ findopenp1:
 	context.data.byte(kLastinvpos) = context.al;
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(kBuffers);
-	context._add(context.bx, (0+(228*13)));
+	context._add(context.bx, (0+(180*10)));
 	return;
 }
 
@@ -8592,7 +8516,7 @@ void calcmapad(Context & context) {
 
 void getdimension(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32));
+	context.bx = (0+(180*10)+32+60+(32*32));
 	context.ch = 0;
 dimloop1:
 	addalong(context);
@@ -8601,7 +8525,7 @@ dimloop1:
 	context._inc(context.ch);
 	goto dimloop1;
 finishdim1:
-	context.bx = (0+(228*13)+32+60+(32*32));
+	context.bx = (0+(180*10)+32+60+(32*32));
 	context.cl = 0;
 dimloop2:
 	context.push(context.bx);
@@ -8613,7 +8537,7 @@ dimloop2:
 	context._add(context.bx, 3);
 	goto dimloop2;
 finishdim2:
-	context.bx = (0+(228*13)+32+60+(32*32))+(11*3*9);
+	context.bx = (0+(180*10)+32+60+(32*32))+(11*3*9);
 	context.dh = 10;
 dimloop3:
 	context.push(context.bx);
@@ -8625,7 +8549,7 @@ dimloop3:
 	context._sub(context.bx, 11*3);
 	goto dimloop3;
 finishdim3:
-	context.bx = (0+(228*13)+32+60+(32*32))+(3*10);
+	context.bx = (0+(180*10)+32+60+(32*32))+(3*10);
 	context.dl = 11;
 dimloop4:
 	context.push(context.bx);
@@ -8702,7 +8626,7 @@ gotlength:
 
 void drawflags(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32));
+	context.di = (0+(180*10)+32+60+(32*32));
 	context.al = context.data.byte(kMapy);
 	context.ah = 0;
 	context.cx = (66);
@@ -8741,7 +8665,7 @@ void eraseoldobs(Context & context) {
 	context._cmp(context.data.byte(kNewobs), 0);
 	if (context.flags.z()) goto donterase;
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 	context.cx = 16;
 oberase:
 	context.push(context.cx);
@@ -8764,7 +8688,7 @@ donterase:
 
 void showallobs(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32));
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32));
 	context.data.word(kListpos) = context.bx;
 	context.di = context.bx;
 	context.cx = 128*5;
@@ -8879,9 +8803,9 @@ nomake:
 
 void showallfree(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
 	context.data.word(kListpos) = context.bx;
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
 	context.cx = 80*5;
 	context.al = 255;
 	while(context.cx--) 	context._stosb();
@@ -8958,9 +8882,9 @@ finfree:
 
 void showallex(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
 	context.data.word(kListpos) = context.bx;
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
 	context.cx = 100*5;
 	context.al = 255;
 	while(context.cx--) 	context._stosb();
@@ -9708,11 +9632,6 @@ alreadyinfo:
 	context.di = 60;
 	context.bx = 72+55;
 	showframe(context);
-	context.al = 4;
-	context.ah = 0;
-	context.di = 60;
-	context.bx = 72+55+21;
-	showframe(context);
 	context.bx = context.pop();
 	context.bh = 0;
 	context._add(context.bx, context.bx);
@@ -9721,7 +9640,7 @@ alreadyinfo:
 	context._add(context.si, (66*2));
 	findnextcolon(context);
 	context.di = 63;
-	context.bx = 84+4;
+	context.bx = 84;
 	context.dl = 191;
 	context.al = 0;
 	context.ah = 0;
@@ -11109,7 +11028,6 @@ curfileloop:
 	if (context.flags.z()) goto finishfile;
 	context._inc(context.si);
 	context.push(context.si);
-	modifychar(context);
 	context.ds = context.data.word(kTempcharset);
 	context.ah = 0;
 	printchar(context);
@@ -11205,8 +11123,6 @@ void printcurs(Context & context) {
 	context.bx = context.data.word(kCurslocy);
 	context.cl = 6;
 	context.ch = 8;
-	context._sub(context.bx, 3);
-	context.ch = 11;
 	context.ds = context.data.word(kBuffers);
 	context.si = (0);
 	context.push(context.di);
@@ -11230,7 +11146,7 @@ flashcurs:
 	context.bx = context.pop();
 	context._sub(context.di, 6);
 	context.cl = 12;
-	context.ch = 11;
+	context.ch = 8;
 	multidump(context);
 	context.es = context.pop();
 	context.bx = context.pop();
@@ -11252,8 +11168,6 @@ void delcurs(Context & context) {
 	context.bx = context.data.word(kCurslocy);
 	context.cl = 6;
 	context.ch = 8;
-	context._sub(context.bx, 3);
-	context.ch = 11;
 	context.push(context.di);
 	context.push(context.bx);
 	context.push(context.cx);
@@ -12633,7 +12547,7 @@ void usecashcard(Context & context) {
 	showexit(context);
 	showman(context);
 	context.di = 114;
-	context.bx = 120-3;
+	context.bx = 120;
 	context.ds = context.data.word(kTempgraphics);
 	context.al = 39;
 	context.ah = 0;
@@ -13521,7 +13435,7 @@ void removefreeobject(Context & context) {
 }
 
 void findormake(Context & context) {
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
 	context.push(context.ax);
 	context.es = context.data.word(kBuffers);
 	context.ah = context.data.byte(kReallocation);
@@ -13558,7 +13472,7 @@ void switchryanoff(Context & context) {
 
 void setallchanges(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
 setallloop:
 	context.ax = context.es.word(context.bx);
 	context._cmp(context.al, 255);
@@ -13686,32 +13600,30 @@ notinlouiss:
 
 void getundertimed(Context & context) {
 	context.al = context.data.byte(kTimedy);
-	context._sub(context.al, 3);
 	context.ah = 0;
 	context.bx = context.ax;
 	context.al = context.data.byte(kTimedx);
 	context.ah = 0;
 	context.di = context.ax;
-	context.ch = (30);
+	context.ch = (24);
 	context.cl = 240;
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiget(context);
 	return;
 }
 
 void putundertimed(Context & context) {
 	context.al = context.data.byte(kTimedy);
-	context._sub(context.al, 3);
 	context.ah = 0;
 	context.bx = context.ax;
 	context.al = context.data.byte(kTimedx);
 	context.ah = 0;
 	context.di = context.ax;
-	context.ch = (30);
+	context.ch = (24);
 	context.cl = 240;
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiput(context);
 	return;
 }
@@ -13720,14 +13632,13 @@ void dumptimedtext(Context & context) {
 	context._cmp(context.data.byte(kNeedtodumptimed), 1);
 	if (!context.flags.z()) goto nodumptimed;
 	context.al = context.data.byte(kTimedy);
-	context._sub(context.al, 3);
 	context.ah = 0;
 	context.bx = context.ax;
 	context.al = context.data.byte(kTimedx);
 	context.ah = 0;
 	context.di = context.ax;
 	context.cl = 240;
-	context.ch = (30);
+	context.ch = (24);
 	multidump(context);
 	context.data.byte(kNeedtodumptimed) = 0;
 nodumptimed:
@@ -14584,7 +14495,7 @@ void getundermenu(Context & context) {
 	context.cl = 48;
 	context.ch = 48;
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiget(context);
 	return;
 }
@@ -14595,7 +14506,7 @@ void putundermenu(Context & context) {
 	context.cl = 48;
 	context.ch = 48;
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiput(context);
 	return;
 }
@@ -16294,7 +16205,7 @@ afterprintname:
 void namestoold(Context & context) {
 	context.ds = context.cs;
 	context.si = 8350;
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	context.es = context.data.word(kBuffers);
 	context.cx = 17*4;
 	while(context.cx--) 	context._movsb();
@@ -16304,7 +16215,7 @@ void namestoold(Context & context) {
 void oldtonames(Context & context) {
 	context.es = context.cs;
 	context.di = 8350;
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	context.ds = context.data.word(kBuffers);
 	context.cx = 17*4;
 	while(context.cx--) 	context._movsb();
@@ -16347,7 +16258,7 @@ void saveposition(Context & context) {
 	context.dx = (0);
 	saveseg(context);
 	context.ds = context.data.word(kBuffers);
-	context.dx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
+	context.dx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
 	saveseg(context);
 	context.dx = context.data;
 	context.ds = context.dx;
@@ -16397,7 +16308,7 @@ void loadposition(Context & context) {
 	context.dx = (0);
 	loadseg(context);
 	context.ds = context.data.word(kBuffers);
-	context.dx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
+	context.dx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
 	loadseg(context);
 	context.dx = context.data;
 	context.ds = context.dx;
@@ -17258,7 +17169,7 @@ void allocatebuffers(Context & context) {
 	allocatemem(context);
 	context.data.word(kMapdata) = context.ax;
 	trysoundalloc(context);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-534+68-0)/16;
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534+68-0)/16;
 	allocatemem(context);
 	context.data.word(kBuffers) = context.ax;
 	trysoundalloc(context);
@@ -17285,7 +17196,7 @@ void allocatebuffers(Context & context) {
 
 void clearbuffers(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.cx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-534+68-0)/2;
+	context.cx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534+68-0)/2;
 	context.ax = 0;
 	context.di = 0;
 	while(context.cx--) 	context._stosw();
@@ -17295,13 +17206,13 @@ void clearbuffers(Context & context) {
 	context.di = 0;
 	while(context.cx--) 	context._stosw();
 	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64));
 	context.ds = context.cs;
 	context.si = 534;
 	context.cx = (991-534);
 	while(context.cx--) 	context._movsb();
  	context.es = context.data.word(kBuffers);
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-534);
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534);
 	context.ds = context.cs;
 	context.si = 0;
 	context.cx = (68-0);
@@ -17314,16 +17225,16 @@ void clearchanges(Context & context) {
 	context.es = context.data.word(kBuffers);
 	context.cx = (250)*2;
 	context.ax = 0x0ffff;
-	context.di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
+	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
 	while(context.cx--) 	context._stosw();
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64));
 	context.es = context.cs;
 	context.di = 534;
 	context.cx = (991-534);
 	while(context.cx--) 	context._movsb();
  	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-534);
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534);
 	context.es = context.cs;
 	context.di = 0;
 	context.cx = (68-0);
@@ -18045,7 +17956,7 @@ nothingund:
 
 void checkifperson(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
 	context.cx = 12;
 identifyreel:
 	context.push(context.cx);
@@ -18101,7 +18012,7 @@ notareelid:
 
 void checkifset(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32))+(127*5);
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32))+(127*5);
 	context.cx = 127;
 identifyset:
 	context._cmp(context.es.byte(context.bx+4), 255);
@@ -18134,7 +18045,7 @@ notasetid:
 
 void checkifex(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5))+(99*5);
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5))+(99*5);
 	context.cx = 99;
 identifyex:
 	context._cmp(context.es.byte(context.bx+4), 255);
@@ -18163,7 +18074,7 @@ notanexid:
 
 void checkiffree(Context & context) {
 	context.es = context.data.word(kBuffers);
-	context.bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5))+(79*5);
+	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5))+(79*5);
 	context.cx = 79;
 identifyfree:
 	context._cmp(context.es.byte(context.bx+4), 255);
@@ -19625,7 +19536,7 @@ void getunderzoom(Context & context) {
 	context.di = (8)+5;
 	context.bx = (132)+4;
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	context.cl = 46;
 	context.ch = 40;
 	multiget(context);
@@ -19648,7 +19559,7 @@ void putunderzoom(Context & context) {
 	context.di = (8)+5;
 	context.bx = (132)+4;
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
+	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	context.cl = 46;
 	context.ch = 40;
 	multiput(context);
@@ -19710,7 +19621,7 @@ notsmally:
 	context.data.byte(kPointerys) = context.ch;
 	context.push(context.ds);
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60);
+	context.si = (0+(180*10)+32+60);
 	multiget(context);
 	context.ds = context.pop();
 	context.di = context.pop();
@@ -19770,7 +19681,7 @@ notsmally2:
 	context._sub(context.data.word(kOldpointery), context.ax);
 	context._sub(context.bx, context.ax);
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60);
+	context.si = (0+(180*10)+32+60);
 	multiget(context);
 	context.ds = context.pop();
 	context.di = context.pop();
@@ -19799,7 +19710,7 @@ void delpointer(Context & context) {
 	context.ch = context.data.byte(kPointerys);
 	context.data.byte(kDelys) = context.ch;
 	context.ds = context.data.word(kBuffers);
-	context.si = (0+(228*13)+32+60);
+	context.si = (0+(180*10)+32+60);
 	context.di = context.data.word(kDelherex);
 	context.bx = context.data.word(kDelherey);
 	multiput(context);
@@ -19831,11 +19742,10 @@ notboth:
 void undertextline(Context & context) {
 	context.di = context.data.word(kTextaddressx);
 	context.bx = context.data.word(kTextaddressy);
-	context._sub(context.bx, 3);
 	context.ds = context.data.word(kBuffers);
 	context.si = (0);
-	context.cl = (228);
-	context.ch = (13);
+	context.cl = (180);
+	context.ch = (10);
 	multiget(context);
 	return;
 }
@@ -19843,11 +19753,10 @@ void undertextline(Context & context) {
 void deltextline(Context & context) {
 	context.di = context.data.word(kTextaddressx);
 	context.bx = context.data.word(kTextaddressy);
-	context._sub(context.bx, 3);
 	context.ds = context.data.word(kBuffers);
 	context.si = (0);
-	context.cl = (228);
-	context.ch = (13);
+	context.cl = (180);
+	context.ch = (10);
 	multiput(context);
 	return;
 }
@@ -19858,9 +19767,8 @@ void dumptextline(Context & context) {
 	context.data.byte(kNewtextline) = 0;
 	context.di = context.data.word(kTextaddressx);
 	context.bx = context.data.word(kTextaddressy);
-	context._sub(context.bx, 3);
-	context.cl = (228);
-	context.ch = (13);
+	context.cl = (180);
+	context.ch = (10);
 	multidump(context);
 nodumptextline:
 	return;
@@ -20926,24 +20834,24 @@ void __start(Context &context) {
 		0x45, 0x42, 0x2e, 0x49, 0x30, 0x35, 0x00, 0x44, 0x52, 0x45, 0x41, 0x4d, 0x57, 0x45, 0x42, 0x2e, 
 		0x49, 0x30, 0x36, 0x00, 0x44, 0x52, 0x45, 0x41, 0x4d, 0x57, 0x45, 0x42, 0x2e, 0x49, 0x30, 0x37, 
 		0x00, 0x44, 0x52, 0x45, 0x41, 0x4d, 0x57, 0x45, 0x42, 0x2e, 0x50, 0x41, 0x4c, 0x00, 0x11, 0x01, 
-		0x40, 0x01, 0x9d, 0x00, 0xc6, 0x00, 0x48, 0xc3, 0x04, 0x01, 0x2c, 0x01, 0x00, 0x00, 0x2c, 0x00, 
-		0x84, 0xc5, 0xd2, 0x00, 0xfe, 0x00, 0x00, 0x00, 0x2c, 0x00, 0xe0, 0xc3, 0x90, 0x00, 0xb0, 0x00, 
-		0x40, 0x00, 0x60, 0x00, 0x84, 0xc3, 0x00, 0x00, 0x32, 0x00, 0x32, 0x00, 0xc8, 0x00, 0x88, 0xc3, 
-		0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa4, 0xca, 0xff, 0xff, 0x11, 0x01, 0x40, 0x01, 
-		0x9d, 0x00, 0xc6, 0x00, 0x48, 0xc3, 0xff, 0x00, 0x26, 0x01, 0x00, 0x00, 0x18, 0x00, 0xcc, 0xc3, 
-		0xf7, 0x00, 0x2d, 0x01, 0x28, 0x00, 0x38, 0x00, 0x4c, 0xc3, 0x50, 0x00, 0x00, 0x01, 0x9e, 0x00, 
-		0xca, 0x00, 0xe4, 0xc3, 0x50, 0x00, 0x2c, 0x01, 0x3a, 0x00, 0x92, 0x00, 0x9c, 0xc3, 0x00, 0x00, 
-		0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa4, 0xca, 0xff, 0xff, 0x11, 0x01, 0x40, 0x01, 0x9d, 0x00, 
-		0xc6, 0x00, 0x48, 0xc3, 0xf7, 0x00, 0x2d, 0x01, 0x28, 0x00, 0x38, 0x00, 0x4c, 0xc3, 0x50, 0x00, 
-		0x2c, 0x01, 0x3a, 0x00, 0x92, 0x00, 0xc0, 0xc6, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 
-		0xa4, 0xca, 0xff, 0xff, 0x11, 0x01, 0x40, 0x01, 0x9d, 0x00, 0xc6, 0x00, 0x80, 0xc4, 0xf0, 0x00, 
-		0x22, 0x01, 0x02, 0x00, 0x2c, 0x00, 0x98, 0xc4, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 
-		0xa4, 0xca, 0xff, 0xff, 0x11, 0x01, 0x40, 0x01, 0x9d, 0x00, 0xc6, 0x00, 0x80, 0xc4, 0x00, 0x00, 
-		0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa4, 0xca, 0xff, 0xff, 0xee, 0x00, 0x02, 0x01, 0x04, 0x00, 
-		0x2c, 0x00, 0xcc, 0xc4, 0x68, 0x00, 0x7c, 0x00, 0x04, 0x00, 0x2c, 0x00, 0xd0, 0xc4, 0x18, 0x01, 
-		0x34, 0x01, 0x04, 0x00, 0x2c, 0x00, 0xb4, 0xc4, 0x68, 0x00, 0xd8, 0x00, 0x8a, 0x00, 0xc0, 0x00, 
-		0xd4, 0xc4, 0x11, 0x01, 0x40, 0x01, 0x9d, 0x00, 0xc6, 0x00, 0x80, 0xc4, 0x00, 0x00, 0x40, 0x01, 
-		0x00, 0x00, 0xc8, 0x00, 0xa4, 0xca, 0xff, 0xff, 0x45, 0x58, 0x49, 0x54, 0x20, 0x48, 0x45, 0x4c, 
+		0x40, 0x01, 0x9d, 0x00, 0xc6, 0x00, 0x44, 0xc3, 0x04, 0x01, 0x2c, 0x01, 0x00, 0x00, 0x2c, 0x00, 
+		0x80, 0xc5, 0xd2, 0x00, 0xfe, 0x00, 0x00, 0x00, 0x2c, 0x00, 0xdc, 0xc3, 0x90, 0x00, 0xb0, 0x00, 
+		0x40, 0x00, 0x60, 0x00, 0x80, 0xc3, 0x00, 0x00, 0x32, 0x00, 0x32, 0x00, 0xc8, 0x00, 0x84, 0xc3, 
+		0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa0, 0xca, 0xff, 0xff, 0x11, 0x01, 0x40, 0x01, 
+		0x9d, 0x00, 0xc6, 0x00, 0x44, 0xc3, 0xff, 0x00, 0x26, 0x01, 0x00, 0x00, 0x18, 0x00, 0xc8, 0xc3, 
+		0xf7, 0x00, 0x2d, 0x01, 0x28, 0x00, 0x38, 0x00, 0x48, 0xc3, 0x50, 0x00, 0x00, 0x01, 0x9e, 0x00, 
+		0xca, 0x00, 0xe0, 0xc3, 0x50, 0x00, 0x2c, 0x01, 0x3a, 0x00, 0x92, 0x00, 0x98, 0xc3, 0x00, 0x00, 
+		0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa0, 0xca, 0xff, 0xff, 0x11, 0x01, 0x40, 0x01, 0x9d, 0x00, 
+		0xc6, 0x00, 0x44, 0xc3, 0xf7, 0x00, 0x2d, 0x01, 0x28, 0x00, 0x38, 0x00, 0x48, 0xc3, 0x50, 0x00, 
+		0x2c, 0x01, 0x3a, 0x00, 0x92, 0x00, 0xbc, 0xc6, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 
+		0xa0, 0xca, 0xff, 0xff, 0x11, 0x01, 0x40, 0x01, 0x9d, 0x00, 0xc6, 0x00, 0x7c, 0xc4, 0xf0, 0x00, 
+		0x22, 0x01, 0x02, 0x00, 0x2c, 0x00, 0x94, 0xc4, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 
+		0xa0, 0xca, 0xff, 0xff, 0x11, 0x01, 0x40, 0x01, 0x9d, 0x00, 0xc6, 0x00, 0x7c, 0xc4, 0x00, 0x00, 
+		0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa0, 0xca, 0xff, 0xff, 0xee, 0x00, 0x02, 0x01, 0x04, 0x00, 
+		0x2c, 0x00, 0xc8, 0xc4, 0x68, 0x00, 0x7c, 0x00, 0x04, 0x00, 0x2c, 0x00, 0xcc, 0xc4, 0x18, 0x01, 
+		0x34, 0x01, 0x04, 0x00, 0x2c, 0x00, 0xb0, 0xc4, 0x68, 0x00, 0xd8, 0x00, 0x8a, 0x00, 0xc0, 0x00, 
+		0xd0, 0xc4, 0x11, 0x01, 0x40, 0x01, 0x9d, 0x00, 0xc6, 0x00, 0x7c, 0xc4, 0x00, 0x00, 0x40, 0x01, 
+		0x00, 0x00, 0xc8, 0x00, 0xa0, 0xca, 0xff, 0xff, 0x45, 0x58, 0x49, 0x54, 0x20, 0x48, 0x45, 0x4c, 
 		0x50, 0x20, 0x4c, 0x49, 0x53, 0x54, 0x20, 0x52, 0x45, 0x41, 0x44, 0x20, 0x4c, 0x4f, 0x47, 0x4f, 
 		0x4e, 0x20, 0x4b, 0x45, 0x59, 0x53, 0x20, 0x01, 0x00, 0x50, 0x55, 0x42, 0x4c, 0x49, 0x43, 0x20, 
 		0x50, 0x55, 0x42, 0x4c, 0x49, 0x43, 0x20, 0x00, 0x00, 0x00, 0x42, 0x4c, 0x41, 0x43, 0x4b, 0x44, 
@@ -20951,67 +20859,67 @@ void __start(Context &context) {
 		0x4e, 0x44, 0x52, 0x49, 0x58, 0x20, 0x4c, 0x4f, 0x55, 0x49, 0x53, 0x20, 0x00, 0x00, 0x00, 0x53, 
 		0x45, 0x50, 0x54, 0x49, 0x4d, 0x55, 0x53, 0x20, 0x42, 0x45, 0x43, 0x4b, 0x45, 0x54, 0x54, 0x20, 
 		0x00, 0xff, 0xff, 0x20, 0x00, 0x22, 0x52, 0x4f, 0x4f, 0x54, 0x20, 0x00, 0x22, 0x20, 0x00, 0x4e, 
-		0x45, 0x54, 0x57, 0xec, 0xc4, 0x45, 0x4c, 0x56, 0x41, 0x90, 0xc6, 0x45, 0x4c, 0x56, 0x42, 0xa0, 
-		0xc6, 0x45, 0x4c, 0x56, 0x43, 0x98, 0xc6, 0x45, 0x4c, 0x56, 0x45, 0x9c, 0xc6, 0x45, 0x4c, 0x56, 
-		0x46, 0xa4, 0xc6, 0x43, 0x47, 0x41, 0x54, 0x34, 0xc7, 0x52, 0x45, 0x4d, 0x4f, 0xac, 0xc6, 0x42, 
-		0x55, 0x54, 0x41, 0x40, 0xc7, 0x43, 0x42, 0x4f, 0x58, 0x48, 0xc7, 0x4c, 0x49, 0x54, 0x45, 0x60, 
-		0xc6, 0x50, 0x4c, 0x41, 0x54, 0x44, 0xc7, 0x4c, 0x49, 0x46, 0x54, 0x80, 0xc6, 0x57, 0x49, 0x52, 
-		0x45, 0x88, 0xc6, 0x48, 0x4e, 0x44, 0x4c, 0x8c, 0xc6, 0x48, 0x41, 0x43, 0x48, 0x84, 0xc6, 0x44, 
-		0x4f, 0x4f, 0x52, 0xb8, 0xc6, 0x43, 0x53, 0x48, 0x52, 0x74, 0xc6, 0x47, 0x55, 0x4e, 0x41, 0x38, 
-		0xc7, 0x43, 0x52, 0x41, 0x41, 0x68, 0xc6, 0x43, 0x52, 0x42, 0x42, 0x6c, 0xc6, 0x43, 0x52, 0x43, 
-		0x43, 0x70, 0xc6, 0x53, 0x45, 0x41, 0x54, 0xfc, 0xc5, 0x4d, 0x45, 0x4e, 0x55, 0x9c, 0xc7, 0x43, 
-		0x4f, 0x4f, 0x4b, 0xb0, 0xc6, 0x45, 0x4c, 0x43, 0x41, 0x50, 0xc6, 0x45, 0x44, 0x43, 0x41, 0x54, 
-		0xc6, 0x44, 0x44, 0x43, 0x41, 0x58, 0xc6, 0x41, 0x4c, 0x54, 0x52, 0x08, 0xc6, 0x4c, 0x4f, 0x4b, 
-		0x41, 0x40, 0xc6, 0x4c, 0x4f, 0x4b, 0x42, 0x44, 0xc6, 0x45, 0x4e, 0x54, 0x41, 0x14, 0xc6, 0x45, 
-		0x4e, 0x54, 0x42, 0x28, 0xc6, 0x45, 0x4e, 0x54, 0x45, 0x2c, 0xc6, 0x45, 0x4e, 0x54, 0x43, 0x1c, 
-		0xc6, 0x45, 0x4e, 0x54, 0x44, 0x30, 0xc6, 0x45, 0x4e, 0x54, 0x48, 0x34, 0xc6, 0x57, 0x57, 0x41, 
-		0x54, 0xf4, 0xc5, 0x50, 0x4f, 0x4f, 0x4c, 0x5c, 0xc6, 0x57, 0x53, 0x48, 0x44, 0xf8, 0xc5, 0x47, 
-		0x52, 0x41, 0x46, 0x48, 0xc6, 0x54, 0x52, 0x41, 0x50, 0x4c, 0xc6, 0x43, 0x44, 0x50, 0x45, 0x2c, 
-		0xc7, 0x44, 0x4c, 0x4f, 0x4b, 0x0c, 0xc6, 0x48, 0x4f, 0x4c, 0x45, 0x04, 0xc6, 0x44, 0x52, 0x59, 
-		0x52, 0x10, 0xc6, 0x48, 0x4f, 0x4c, 0x59, 0x00, 0xc6, 0x57, 0x41, 0x4c, 0x4c, 0x30, 0xc7, 0x42, 
-		0x4f, 0x4f, 0x4b, 0x0c, 0xc8, 0x41, 0x58, 0x45, 0x44, 0xb4, 0xc6, 0x53, 0x48, 0x4c, 0x44, 0x3c, 
-		0xc7, 0x42, 0x43, 0x4e, 0x59, 0xec, 0xc5, 0x4c, 0x49, 0x44, 0x43, 0xe8, 0xc5, 0x4c, 0x49, 0x44, 
-		0x55, 0xe4, 0xc5, 0x4c, 0x49, 0x44, 0x4f, 0xf0, 0xc5, 0x50, 0x49, 0x50, 0x45, 0xac, 0xc5, 0x42, 
-		0x41, 0x4c, 0x43, 0x24, 0xc6, 0x57, 0x49, 0x4e, 0x44, 0x20, 0xc6, 0x50, 0x41, 0x50, 0x52, 0xb8, 
-		0xc7, 0x55, 0x57, 0x54, 0x41, 0xa4, 0xc5, 0x55, 0x57, 0x54, 0x42, 0xa4, 0xc5, 0x53, 0x54, 0x41, 
-		0x54, 0xdc, 0xc7, 0x54, 0x4c, 0x49, 0x44, 0xa0, 0xc5, 0x53, 0x4c, 0x41, 0x42, 0xdc, 0xc5, 0x43, 
-		0x41, 0x52, 0x54, 0xe0, 0xc5, 0x46, 0x43, 0x41, 0x52, 0xb0, 0xc5, 0x53, 0x4c, 0x42, 0x41, 0xc4, 
-		0xc5, 0x53, 0x4c, 0x42, 0x42, 0xc8, 0xc5, 0x53, 0x4c, 0x42, 0x43, 0xd0, 0xc5, 0x53, 0x4c, 0x42, 
-		0x44, 0xcc, 0xc5, 0x53, 0x4c, 0x42, 0x45, 0xd4, 0xc5, 0x53, 0x4c, 0x42, 0x46, 0xd8, 0xc5, 0x50, 
-		0x4c, 0x49, 0x4e, 0xb4, 0xc5, 0x4c, 0x41, 0x44, 0x44, 0xbc, 0xc5, 0x4c, 0x41, 0x44, 0x42, 0xc0, 
-		0xc5, 0x47, 0x55, 0x4d, 0x41, 0xb8, 0xc5, 0x53, 0x51, 0x45, 0x45, 0x8c, 0xc5, 0x54, 0x41, 0x50, 
-		0x50, 0x90, 0xc5, 0x47, 0x55, 0x49, 0x54, 0x94, 0xc5, 0x43, 0x4f, 0x4e, 0x54, 0x98, 0xc5, 0x42, 
-		0x45, 0x4c, 0x4c, 0x9c, 0xc5, 0x8c, 0x8c, 0x8c, 0x8c, 0x30, 0x30, 0x30, 0x30, 0x00, 0x30, 0x30, 
-		0x00, 0x9d, 0x00, 0xb2, 0x00, 0x51, 0x00, 0x5e, 0x00, 0x5c, 0xc7, 0xb3, 0x00, 0xc8, 0x00, 0x51, 
-		0x00, 0x5e, 0x00, 0x60, 0xc7, 0xc9, 0x00, 0xde, 0x00, 0x51, 0x00, 0x5e, 0x00, 0x64, 0xc7, 0x9d, 
-		0x00, 0xb2, 0x00, 0x5f, 0x00, 0x70, 0x00, 0x68, 0xc7, 0xb3, 0x00, 0xc8, 0x00, 0x5f, 0x00, 0x70, 
-		0x00, 0x6c, 0xc7, 0xc9, 0x00, 0xde, 0x00, 0x5f, 0x00, 0x70, 0x00, 0x70, 0xc7, 0x9d, 0x00, 0xb2, 
-		0x00, 0x71, 0x00, 0x82, 0x00, 0x74, 0xc7, 0xb3, 0x00, 0xc8, 0x00, 0x71, 0x00, 0x82, 0x00, 0x78, 
-		0xc7, 0xc9, 0x00, 0xde, 0x00, 0x71, 0x00, 0x82, 0x00, 0x7c, 0xc7, 0x9d, 0x00, 0xb2, 0x00, 0x83, 
-		0x00, 0x91, 0x00, 0x80, 0xc7, 0xb3, 0x00, 0xde, 0x00, 0x83, 0x00, 0x91, 0x00, 0x84, 0xc7, 0xdc, 
-		0x00, 0xea, 0x00, 0x98, 0x00, 0xa6, 0x00, 0x54, 0xc7, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 
-		0x00, 0xa4, 0xca, 0xff, 0xff, 0xae, 0x00, 0xbc, 0x00, 0x84, 0x00, 0x94, 0x00, 0x54, 0xc7, 0x00, 
-		0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa4, 0xca, 0xff, 0xff, 0x18, 0x01, 0x40, 0x01, 0xa0, 
-		0x00, 0xc8, 0x00, 0x54, 0xc7, 0x8f, 0x00, 0x2c, 0x01, 0x06, 0x00, 0xc2, 0x00, 0xbc, 0xc7, 0x00, 
-		0x00, 0x8f, 0x00, 0x06, 0x00, 0xc2, 0x00, 0xc4, 0xc7, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 
-		0x00, 0xa4, 0xca, 0xff, 0xff, 0x68, 0x00, 0x80, 0x00, 0x3a, 0x00, 0x48, 0x00, 0xe0, 0xc7, 0x40, 
-		0x00, 0x74, 0x00, 0x4c, 0x00, 0x6a, 0x00, 0xe4, 0xc7, 0x74, 0x00, 0xa8, 0x00, 0x4c, 0x00, 0x6a, 
-		0x00, 0xe8, 0xc7, 0x40, 0x00, 0x74, 0x00, 0x6a, 0x00, 0x88, 0x00, 0xec, 0xc7, 0x74, 0x00, 0xa8, 
-		0x00, 0x6a, 0x00, 0x88, 0x00, 0xf0, 0xc7, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa4, 
-		0xca, 0xff, 0xff, 0xba, 0x00, 0xca, 0x00, 0x9d, 0x00, 0xad, 0x00, 0x20, 0xc8, 0xf3, 0x00, 0x03, 
-		0x01, 0x83, 0x00, 0x93, 0x00, 0x1c, 0xc8, 0x0c, 0x01, 0x1c, 0x01, 0xa8, 0x00, 0xb8, 0x00, 0x54, 
-		0xc7, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa4, 0xca, 0xff, 0xff, 0x77, 0x00, 0xae, 
-		0x00, 0x52, 0x00, 0x80, 0x00, 0x38, 0xc8, 0x46, 0x00, 0x89, 0x00, 0x3e, 0x00, 0x6f, 0x00, 0x84, 
-		0xc8, 0xbc, 0x00, 0xfa, 0x00, 0x44, 0x00, 0x98, 0x00, 0x50, 0xc8, 0x00, 0x00, 0x40, 0x01, 0x00, 
-		0x00, 0xc8, 0x00, 0xa4, 0xca, 0xff, 0xff, 0xec, 0x00, 0xfc, 0x00, 0x70, 0x00, 0x80, 0x00, 0x4c, 
-		0xc8, 0xbc, 0x00, 0xfa, 0x00, 0x40, 0x00, 0x98, 0x00, 0x5c, 0xc8, 0x3e, 0x00, 0x98, 0x00, 0x38, 
-		0x00, 0x85, 0x00, 0x78, 0xc8, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa4, 0xca, 0xff, 
-		0xff, 0x77, 0x00, 0xae, 0x00, 0x52, 0x00, 0x80, 0x00, 0x48, 0xc8, 0x46, 0x00, 0x8b, 0x00, 0x3e, 
-		0x00, 0x6f, 0x00, 0x54, 0xc8, 0xec, 0x00, 0xfc, 0x00, 0x70, 0x00, 0x80, 0x00, 0x4c, 0xc8, 0x00, 
-		0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa4, 0xca, 0xff, 0xff, 0xec, 0x00, 0xfc, 0x00, 0x70, 
-		0x00, 0x80, 0x00, 0x4c, 0xc8, 0xbc, 0x00, 0xfa, 0x00, 0x40, 0x00, 0x98, 0x00, 0x58, 0xc8, 0x3e, 
-		0x00, 0x98, 0x00, 0x38, 0x00, 0x85, 0x00, 0x78, 0xc8, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 
-		0x00, 0xa4, 0xca, 0xff, 0xff, 0x0d, 0x0a, 0x0d, 0x0a, 0x44, 0x72, 0x65, 0x61, 0x6d, 0x77, 0x65, 
+		0x45, 0x54, 0x57, 0xe8, 0xc4, 0x45, 0x4c, 0x56, 0x41, 0x8c, 0xc6, 0x45, 0x4c, 0x56, 0x42, 0x9c, 
+		0xc6, 0x45, 0x4c, 0x56, 0x43, 0x94, 0xc6, 0x45, 0x4c, 0x56, 0x45, 0x98, 0xc6, 0x45, 0x4c, 0x56, 
+		0x46, 0xa0, 0xc6, 0x43, 0x47, 0x41, 0x54, 0x30, 0xc7, 0x52, 0x45, 0x4d, 0x4f, 0xa8, 0xc6, 0x42, 
+		0x55, 0x54, 0x41, 0x3c, 0xc7, 0x43, 0x42, 0x4f, 0x58, 0x44, 0xc7, 0x4c, 0x49, 0x54, 0x45, 0x5c, 
+		0xc6, 0x50, 0x4c, 0x41, 0x54, 0x40, 0xc7, 0x4c, 0x49, 0x46, 0x54, 0x7c, 0xc6, 0x57, 0x49, 0x52, 
+		0x45, 0x84, 0xc6, 0x48, 0x4e, 0x44, 0x4c, 0x88, 0xc6, 0x48, 0x41, 0x43, 0x48, 0x80, 0xc6, 0x44, 
+		0x4f, 0x4f, 0x52, 0xb4, 0xc6, 0x43, 0x53, 0x48, 0x52, 0x70, 0xc6, 0x47, 0x55, 0x4e, 0x41, 0x34, 
+		0xc7, 0x43, 0x52, 0x41, 0x41, 0x64, 0xc6, 0x43, 0x52, 0x42, 0x42, 0x68, 0xc6, 0x43, 0x52, 0x43, 
+		0x43, 0x6c, 0xc6, 0x53, 0x45, 0x41, 0x54, 0xf8, 0xc5, 0x4d, 0x45, 0x4e, 0x55, 0x98, 0xc7, 0x43, 
+		0x4f, 0x4f, 0x4b, 0xac, 0xc6, 0x45, 0x4c, 0x43, 0x41, 0x4c, 0xc6, 0x45, 0x44, 0x43, 0x41, 0x50, 
+		0xc6, 0x44, 0x44, 0x43, 0x41, 0x54, 0xc6, 0x41, 0x4c, 0x54, 0x52, 0x04, 0xc6, 0x4c, 0x4f, 0x4b, 
+		0x41, 0x3c, 0xc6, 0x4c, 0x4f, 0x4b, 0x42, 0x40, 0xc6, 0x45, 0x4e, 0x54, 0x41, 0x10, 0xc6, 0x45, 
+		0x4e, 0x54, 0x42, 0x24, 0xc6, 0x45, 0x4e, 0x54, 0x45, 0x28, 0xc6, 0x45, 0x4e, 0x54, 0x43, 0x18, 
+		0xc6, 0x45, 0x4e, 0x54, 0x44, 0x2c, 0xc6, 0x45, 0x4e, 0x54, 0x48, 0x30, 0xc6, 0x57, 0x57, 0x41, 
+		0x54, 0xf0, 0xc5, 0x50, 0x4f, 0x4f, 0x4c, 0x58, 0xc6, 0x57, 0x53, 0x48, 0x44, 0xf4, 0xc5, 0x47, 
+		0x52, 0x41, 0x46, 0x44, 0xc6, 0x54, 0x52, 0x41, 0x50, 0x48, 0xc6, 0x43, 0x44, 0x50, 0x45, 0x28, 
+		0xc7, 0x44, 0x4c, 0x4f, 0x4b, 0x08, 0xc6, 0x48, 0x4f, 0x4c, 0x45, 0x00, 0xc6, 0x44, 0x52, 0x59, 
+		0x52, 0x0c, 0xc6, 0x48, 0x4f, 0x4c, 0x59, 0xfc, 0xc5, 0x57, 0x41, 0x4c, 0x4c, 0x2c, 0xc7, 0x42, 
+		0x4f, 0x4f, 0x4b, 0x08, 0xc8, 0x41, 0x58, 0x45, 0x44, 0xb0, 0xc6, 0x53, 0x48, 0x4c, 0x44, 0x38, 
+		0xc7, 0x42, 0x43, 0x4e, 0x59, 0xe8, 0xc5, 0x4c, 0x49, 0x44, 0x43, 0xe4, 0xc5, 0x4c, 0x49, 0x44, 
+		0x55, 0xe0, 0xc5, 0x4c, 0x49, 0x44, 0x4f, 0xec, 0xc5, 0x50, 0x49, 0x50, 0x45, 0xa8, 0xc5, 0x42, 
+		0x41, 0x4c, 0x43, 0x20, 0xc6, 0x57, 0x49, 0x4e, 0x44, 0x1c, 0xc6, 0x50, 0x41, 0x50, 0x52, 0xb4, 
+		0xc7, 0x55, 0x57, 0x54, 0x41, 0xa0, 0xc5, 0x55, 0x57, 0x54, 0x42, 0xa0, 0xc5, 0x53, 0x54, 0x41, 
+		0x54, 0xd8, 0xc7, 0x54, 0x4c, 0x49, 0x44, 0x9c, 0xc5, 0x53, 0x4c, 0x41, 0x42, 0xd8, 0xc5, 0x43, 
+		0x41, 0x52, 0x54, 0xdc, 0xc5, 0x46, 0x43, 0x41, 0x52, 0xac, 0xc5, 0x53, 0x4c, 0x42, 0x41, 0xc0, 
+		0xc5, 0x53, 0x4c, 0x42, 0x42, 0xc4, 0xc5, 0x53, 0x4c, 0x42, 0x43, 0xcc, 0xc5, 0x53, 0x4c, 0x42, 
+		0x44, 0xc8, 0xc5, 0x53, 0x4c, 0x42, 0x45, 0xd0, 0xc5, 0x53, 0x4c, 0x42, 0x46, 0xd4, 0xc5, 0x50, 
+		0x4c, 0x49, 0x4e, 0xb0, 0xc5, 0x4c, 0x41, 0x44, 0x44, 0xb8, 0xc5, 0x4c, 0x41, 0x44, 0x42, 0xbc, 
+		0xc5, 0x47, 0x55, 0x4d, 0x41, 0xb4, 0xc5, 0x53, 0x51, 0x45, 0x45, 0x88, 0xc5, 0x54, 0x41, 0x50, 
+		0x50, 0x8c, 0xc5, 0x47, 0x55, 0x49, 0x54, 0x90, 0xc5, 0x43, 0x4f, 0x4e, 0x54, 0x94, 0xc5, 0x42, 
+		0x45, 0x4c, 0x4c, 0x98, 0xc5, 0x8c, 0x8c, 0x8c, 0x8c, 0x30, 0x30, 0x30, 0x30, 0x00, 0x30, 0x30, 
+		0x00, 0x9d, 0x00, 0xb2, 0x00, 0x51, 0x00, 0x5e, 0x00, 0x58, 0xc7, 0xb3, 0x00, 0xc8, 0x00, 0x51, 
+		0x00, 0x5e, 0x00, 0x5c, 0xc7, 0xc9, 0x00, 0xde, 0x00, 0x51, 0x00, 0x5e, 0x00, 0x60, 0xc7, 0x9d, 
+		0x00, 0xb2, 0x00, 0x5f, 0x00, 0x70, 0x00, 0x64, 0xc7, 0xb3, 0x00, 0xc8, 0x00, 0x5f, 0x00, 0x70, 
+		0x00, 0x68, 0xc7, 0xc9, 0x00, 0xde, 0x00, 0x5f, 0x00, 0x70, 0x00, 0x6c, 0xc7, 0x9d, 0x00, 0xb2, 
+		0x00, 0x71, 0x00, 0x82, 0x00, 0x70, 0xc7, 0xb3, 0x00, 0xc8, 0x00, 0x71, 0x00, 0x82, 0x00, 0x74, 
+		0xc7, 0xc9, 0x00, 0xde, 0x00, 0x71, 0x00, 0x82, 0x00, 0x78, 0xc7, 0x9d, 0x00, 0xb2, 0x00, 0x83, 
+		0x00, 0x91, 0x00, 0x7c, 0xc7, 0xb3, 0x00, 0xde, 0x00, 0x83, 0x00, 0x91, 0x00, 0x80, 0xc7, 0xdc, 
+		0x00, 0xea, 0x00, 0x98, 0x00, 0xa6, 0x00, 0x50, 0xc7, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 
+		0x00, 0xa0, 0xca, 0xff, 0xff, 0xae, 0x00, 0xbc, 0x00, 0x84, 0x00, 0x94, 0x00, 0x50, 0xc7, 0x00, 
+		0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa0, 0xca, 0xff, 0xff, 0x18, 0x01, 0x40, 0x01, 0xa0, 
+		0x00, 0xc8, 0x00, 0x50, 0xc7, 0x8f, 0x00, 0x2c, 0x01, 0x06, 0x00, 0xc2, 0x00, 0xb8, 0xc7, 0x00, 
+		0x00, 0x8f, 0x00, 0x06, 0x00, 0xc2, 0x00, 0xc0, 0xc7, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 
+		0x00, 0xa0, 0xca, 0xff, 0xff, 0x68, 0x00, 0x80, 0x00, 0x3a, 0x00, 0x48, 0x00, 0xdc, 0xc7, 0x40, 
+		0x00, 0x74, 0x00, 0x4c, 0x00, 0x6a, 0x00, 0xe0, 0xc7, 0x74, 0x00, 0xa8, 0x00, 0x4c, 0x00, 0x6a, 
+		0x00, 0xe4, 0xc7, 0x40, 0x00, 0x74, 0x00, 0x6a, 0x00, 0x88, 0x00, 0xe8, 0xc7, 0x74, 0x00, 0xa8, 
+		0x00, 0x6a, 0x00, 0x88, 0x00, 0xec, 0xc7, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa0, 
+		0xca, 0xff, 0xff, 0xba, 0x00, 0xca, 0x00, 0x9d, 0x00, 0xad, 0x00, 0x1c, 0xc8, 0xf3, 0x00, 0x03, 
+		0x01, 0x83, 0x00, 0x93, 0x00, 0x18, 0xc8, 0x0c, 0x01, 0x1c, 0x01, 0xa8, 0x00, 0xb8, 0x00, 0x50, 
+		0xc7, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa0, 0xca, 0xff, 0xff, 0x77, 0x00, 0xae, 
+		0x00, 0x52, 0x00, 0x80, 0x00, 0x34, 0xc8, 0x46, 0x00, 0x89, 0x00, 0x3e, 0x00, 0x6f, 0x00, 0x80, 
+		0xc8, 0xbc, 0x00, 0xfa, 0x00, 0x44, 0x00, 0x98, 0x00, 0x4c, 0xc8, 0x00, 0x00, 0x40, 0x01, 0x00, 
+		0x00, 0xc8, 0x00, 0xa0, 0xca, 0xff, 0xff, 0xec, 0x00, 0xfc, 0x00, 0x70, 0x00, 0x80, 0x00, 0x48, 
+		0xc8, 0xbc, 0x00, 0xfa, 0x00, 0x40, 0x00, 0x98, 0x00, 0x58, 0xc8, 0x3e, 0x00, 0x98, 0x00, 0x38, 
+		0x00, 0x85, 0x00, 0x74, 0xc8, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa0, 0xca, 0xff, 
+		0xff, 0x77, 0x00, 0xae, 0x00, 0x52, 0x00, 0x80, 0x00, 0x44, 0xc8, 0x46, 0x00, 0x8b, 0x00, 0x3e, 
+		0x00, 0x6f, 0x00, 0x50, 0xc8, 0xec, 0x00, 0xfc, 0x00, 0x70, 0x00, 0x80, 0x00, 0x48, 0xc8, 0x00, 
+		0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa0, 0xca, 0xff, 0xff, 0xec, 0x00, 0xfc, 0x00, 0x70, 
+		0x00, 0x80, 0x00, 0x48, 0xc8, 0xbc, 0x00, 0xfa, 0x00, 0x40, 0x00, 0x98, 0x00, 0x54, 0xc8, 0x3e, 
+		0x00, 0x98, 0x00, 0x38, 0x00, 0x85, 0x00, 0x74, 0xc8, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 
+		0x00, 0xa0, 0xca, 0xff, 0xff, 0x0d, 0x0a, 0x0d, 0x0a, 0x44, 0x72, 0x65, 0x61, 0x6d, 0x77, 0x65, 
 		0x62, 0x20, 0x68, 0x61, 0x73, 0x20, 0x61, 0x6e, 0x20, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x3a, 0x0d, 
 		0x0a, 0x55, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x20, 0x74, 0x6f, 0x20, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 
 		0x61, 0x74, 0x65, 0x20, 0x45, 0x78, 0x70, 0x61, 0x6e, 0x64, 0x65, 0x64, 0x20, 0x4d, 0x65, 0x6d, 
@@ -21075,18 +20983,18 @@ void __start(Context &context) {
 		0x0d, 0x0a, 0x24, 0x0d, 0x0a, 0x0d, 0x0a, 0x54, 0x72, 0x79, 0x20, 0x74, 0x68, 0x65, 0x20, 0x44, 
 		0x72, 0x65, 0x61, 0x6d, 0x77, 0x65, 0x62, 0x20, 0x43, 0x44, 0x20, 0x69, 0x6e, 0x20, 0x79, 0x6f, 
 		0x75, 0x72, 0x20, 0x73, 0x74, 0x65, 0x72, 0x65, 0x6f, 0x2e, 0x2e, 0x2e, 0x2e, 0x0d, 0x0a, 0x0d, 
-		0x0a, 0x0d, 0x0a, 0x24, 0x81, 0x00, 0xb8, 0x00, 0x52, 0x00, 0x80, 0x00, 0xc4, 0xc8, 0x50, 0x00, 
-		0x93, 0x00, 0x3e, 0x00, 0x6f, 0x00, 0x84, 0xc8, 0xb7, 0x00, 0xfa, 0x00, 0x3e, 0x00, 0x6f, 0x00, 
-		0xc8, 0xc8, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa4, 0xca, 0xff, 0xff, 0x53, 0x50, 
+		0x0a, 0x0d, 0x0a, 0x24, 0x81, 0x00, 0xb8, 0x00, 0x52, 0x00, 0x80, 0x00, 0xc0, 0xc8, 0x50, 0x00, 
+		0x93, 0x00, 0x3e, 0x00, 0x6f, 0x00, 0x80, 0xc8, 0xb7, 0x00, 0xfa, 0x00, 0x3e, 0x00, 0x6f, 0x00, 
+		0xc4, 0xc8, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xa0, 0xca, 0xff, 0xff, 0x53, 0x50, 
 		0x45, 0x45, 0x43, 0x48, 0x52, 0x32, 0x34, 0x43, 0x30, 0x30, 0x30, 0x35, 0x2e, 0x52, 0x41, 0x57, 
-		0x00, 0x87, 0x83, 0x81, 0x82, 0x2c, 0x00, 0x46, 0x00, 0x20, 0x00, 0x2e, 0x00, 0x74, 0xc4, 0x00, 
-		0x00, 0x32, 0x00, 0x00, 0x00, 0xb4, 0x00, 0x80, 0xc3, 0xe2, 0x00, 0xf4, 0x00, 0x0a, 0x00, 0x1a, 
-		0x00, 0x2c, 0xc8, 0xe2, 0x00, 0xf4, 0x00, 0x1a, 0x00, 0x28, 0x00, 0x30, 0xc8, 0xf0, 0x00, 0x04, 
-		0x01, 0x64, 0x00, 0x7c, 0x00, 0xd0, 0xc9, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xd8, 
-		0xc9, 0xff, 0xff, 0x2c, 0x00, 0x46, 0x00, 0x20, 0x00, 0x2e, 0x00, 0x74, 0xc4, 0x00, 0x00, 0x32, 
-		0x00, 0x00, 0x00, 0xb4, 0x00, 0x80, 0xc3, 0x12, 0x01, 0x24, 0x01, 0x0a, 0x00, 0x1a, 0x00, 0x2c, 
-		0xc8, 0x12, 0x01, 0x24, 0x01, 0x1a, 0x00, 0x28, 0x00, 0x30, 0xc8, 0xf0, 0x00, 0x04, 0x01, 0x64, 
-		0x00, 0x7c, 0x00, 0xd0, 0xc9, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xd8, 0xc9, 0xff, 
+		0x00, 0x87, 0x83, 0x81, 0x82, 0x2c, 0x00, 0x46, 0x00, 0x20, 0x00, 0x2e, 0x00, 0x70, 0xc4, 0x00, 
+		0x00, 0x32, 0x00, 0x00, 0x00, 0xb4, 0x00, 0x7c, 0xc3, 0xe2, 0x00, 0xf4, 0x00, 0x0a, 0x00, 0x1a, 
+		0x00, 0x28, 0xc8, 0xe2, 0x00, 0xf4, 0x00, 0x1a, 0x00, 0x28, 0x00, 0x2c, 0xc8, 0xf0, 0x00, 0x04, 
+		0x01, 0x64, 0x00, 0x7c, 0x00, 0xcc, 0xc9, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xd4, 
+		0xc9, 0xff, 0xff, 0x2c, 0x00, 0x46, 0x00, 0x20, 0x00, 0x2e, 0x00, 0x70, 0xc4, 0x00, 0x00, 0x32, 
+		0x00, 0x00, 0x00, 0xb4, 0x00, 0x7c, 0xc3, 0x12, 0x01, 0x24, 0x01, 0x0a, 0x00, 0x1a, 0x00, 0x28, 
+		0xc8, 0x12, 0x01, 0x24, 0x01, 0x1a, 0x00, 0x28, 0x00, 0x2c, 0xc8, 0xf0, 0x00, 0x04, 0x01, 0x64, 
+		0x00, 0x7c, 0x00, 0xcc, 0xc9, 0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0xc8, 0x00, 0xd4, 0xc9, 0xff, 
 		0xff, 0x00, 0x21, 0x0a, 0x0f, 0xff, 0x00, 0x16, 0x0a, 0x0f, 0xff, 0x00, 0x16, 0x00, 0x0f, 0xff, 
 		0x00, 0x0b, 0x00, 0x0f, 0xff, 0x00, 0x0b, 0x0a, 0x0f, 0xff, 0x00, 0x00, 0x0a, 0x0f, 0xff, 0x01, 
 		0x2c, 0x0a, 0x06, 0xff, 0x01, 0x2c, 0x00, 0x0d, 0xff, 0x02, 0x21, 0x00, 0x06, 0xff, 0x02, 0x16, 
@@ -21521,556 +21429,555 @@ void __dispatch_call(Context &context, unsigned addr) {
 		case 0xc314: monprint(context); break;
 		case 0xc318: getnumber(context); break;
 		case 0xc31c: getnextword(context); break;
-		case 0xc320: modifychar(context); break;
-		case 0xc324: fillryan(context); break;
-		case 0xc328: fillopen(context); break;
-		case 0xc32c: findallryan(context); break;
-		case 0xc330: findallopen(context); break;
-		case 0xc334: obtoinv(context); break;
-		case 0xc338: isitworn(context); break;
-		case 0xc33c: makeworn(context); break;
-		case 0xc340: examineob(context); break;
-		case 0xc344: makemainscreen(context); break;
-		case 0xc348: getbackfromob(context); break;
-		case 0xc34c: incryanpage(context); break;
-		case 0xc350: openinv(context); break;
-		case 0xc354: showryanpage(context); break;
-		case 0xc358: openob(context); break;
-		case 0xc35c: obicons(context); break;
-		case 0xc360: examicon(context); break;
-		case 0xc364: obpicture(context); break;
-		case 0xc368: describeob(context); break;
-		case 0xc36c: additionaltext(context); break;
-		case 0xc370: obsthatdothings(context); break;
-		case 0xc374: getobtextstart(context); break;
-		case 0xc378: searchforsame(context); break;
-		case 0xc37c: findnextcolon(context); break;
-		case 0xc380: inventory(context); break;
-		case 0xc384: setpickup(context); break;
-		case 0xc388: examinventory(context); break;
-		case 0xc38c: reexfrominv(context); break;
-		case 0xc390: reexfromopen(context); break;
-		case 0xc394: swapwithinv(context); break;
-		case 0xc398: swapwithopen(context); break;
-		case 0xc39c: intoinv(context); break;
-		case 0xc3a0: deletetaken(context); break;
-		case 0xc3a4: outofinv(context); break;
-		case 0xc3a8: getfreead(context); break;
-		case 0xc3ac: getexad(context); break;
-		case 0xc3b0: geteitherad(context); break;
-		case 0xc3b4: getanyad(context); break;
-		case 0xc3b8: getanyaddir(context); break;
-		case 0xc3bc: getopenedsize(context); break;
-		case 0xc3c0: getsetad(context); break;
-		case 0xc3c4: findinvpos(context); break;
-		case 0xc3c8: findopenpos(context); break;
-		case 0xc3cc: dropobject(context); break;
-		case 0xc3d0: droperror(context); break;
-		case 0xc3d4: cantdrop(context); break;
-		case 0xc3d8: wornerror(context); break;
-		case 0xc3dc: removeobfrominv(context); break;
-		case 0xc3e0: selectopenob(context); break;
-		case 0xc3e4: useopened(context); break;
-		case 0xc3e8: errormessage1(context); break;
-		case 0xc3ec: errormessage2(context); break;
-		case 0xc3f0: errormessage3(context); break;
-		case 0xc3f4: checkobjectsize(context); break;
-		case 0xc3f8: outofopen(context); break;
-		case 0xc3fc: transfertoex(context); break;
-		case 0xc400: pickupconts(context); break;
-		case 0xc404: transfercontoex(context); break;
-		case 0xc408: transfertext(context); break;
-		case 0xc40c: getexpos(context); break;
-		case 0xc410: purgealocation(context); break;
-		case 0xc414: emergencypurge(context); break;
-		case 0xc418: purgeanitem(context); break;
-		case 0xc41c: deleteexobject(context); break;
-		case 0xc420: deleteexframe(context); break;
-		case 0xc424: deleteextext(context); break;
-		case 0xc428: blockget(context); break;
-		case 0xc42c: drawfloor(context); break;
-		case 0xc430: calcmapad(context); break;
-		case 0xc434: getdimension(context); break;
-		case 0xc438: addalong(context); break;
-		case 0xc43c: addlength(context); break;
-		case 0xc440: drawflags(context); break;
-		case 0xc444: eraseoldobs(context); break;
-		case 0xc448: showallobs(context); break;
-		case 0xc44c: makebackob(context); break;
-		case 0xc450: showallfree(context); break;
-		case 0xc454: showallex(context); break;
-		case 0xc458: calcfrframe(context); break;
-		case 0xc45c: finalframe(context); break;
-		case 0xc460: adjustlen(context); break;
-		case 0xc464: getmapad(context); break;
-		case 0xc468: getxad(context); break;
-		case 0xc46c: getyad(context); break;
-		case 0xc470: autolook(context); break;
-		case 0xc474: look(context); break;
-		case 0xc478: dolook(context); break;
-		case 0xc47c: redrawmainscrn(context); break;
-		case 0xc480: getback1(context); break;
-		case 0xc484: talk(context); break;
-		case 0xc488: convicons(context); break;
-		case 0xc48c: getpersframe(context); break;
-		case 0xc490: starttalk(context); break;
-		case 0xc494: getpersontext(context); break;
-		case 0xc498: moretalk(context); break;
-		case 0xc49c: dosometalk(context); break;
-		case 0xc4a0: hangonpq(context); break;
-		case 0xc4a4: redes(context); break;
-		case 0xc4a8: newplace(context); break;
-		case 0xc4ac: selectlocation(context); break;
-		case 0xc4b0: showcity(context); break;
-		case 0xc4b4: lookatplace(context); break;
-		case 0xc4b8: getundercentre(context); break;
-		case 0xc4bc: putundercentre(context); break;
-		case 0xc4c0: locationpic(context); break;
-		case 0xc4c4: getdestinfo(context); break;
-		case 0xc4c8: showarrows(context); break;
-		case 0xc4cc: nextdest(context); break;
-		case 0xc4d0: lastdest(context); break;
-		case 0xc4d4: destselect(context); break;
-		case 0xc4d8: getlocation(context); break;
-		case 0xc4dc: setlocation(context); break;
-		case 0xc4e0: resetlocation(context); break;
-		case 0xc4e4: readdesticon(context); break;
-		case 0xc4e8: readcitypic(context); break;
-		case 0xc4ec: usemon(context); break;
-		case 0xc4f0: printoutermon(context); break;
-		case 0xc4f4: loadpersonal(context); break;
-		case 0xc4f8: loadnews(context); break;
-		case 0xc4fc: loadcart(context); break;
-		case 0xc500: lookininterface(context); break;
-		case 0xc504: turnonpower(context); break;
-		case 0xc508: randomaccess(context); break;
-		case 0xc50c: powerlighton(context); break;
-		case 0xc510: powerlightoff(context); break;
-		case 0xc514: accesslighton(context); break;
-		case 0xc518: accesslightoff(context); break;
-		case 0xc51c: locklighton(context); break;
-		case 0xc520: locklightoff(context); break;
-		case 0xc524: input(context); break;
-		case 0xc528: makecaps(context); break;
-		case 0xc52c: delchar(context); break;
-		case 0xc530: execcommand(context); break;
-		case 0xc534: neterror(context); break;
-		case 0xc538: dircom(context); break;
-		case 0xc53c: searchforfiles(context); break;
-		case 0xc540: signon(context); break;
-		case 0xc544: showkeys(context); break;
-		case 0xc548: read(context); break;
-		case 0xc54c: dirfile(context); break;
-		case 0xc550: getkeyandlogo(context); break;
-		case 0xc554: searchforstring(context); break;
-		case 0xc558: parser(context); break;
-		case 0xc55c: scrollmonitor(context); break;
-		case 0xc560: lockmon(context); break;
-		case 0xc564: monitorlogo(context); break;
-		case 0xc568: printlogo(context); break;
-		case 0xc56c: showcurrentfile(context); break;
-		case 0xc570: monmessage(context); break;
-		case 0xc574: processtrigger(context); break;
-		case 0xc578: triggermessage(context); break;
-		case 0xc57c: printcurs(context); break;
-		case 0xc580: delcurs(context); break;
-		case 0xc584: useobject(context); break;
-		case 0xc588: useroutine(context); break;
-		case 0xc58c: wheelsound(context); break;
-		case 0xc590: runtap(context); break;
-		case 0xc594: playguitar(context); break;
-		case 0xc598: hotelcontrol(context); break;
-		case 0xc59c: hotelbell(context); break;
-		case 0xc5a0: opentomb(context); break;
-		case 0xc5a4: usetrainer(context); break;
-		case 0xc5a8: nothelderror(context); break;
-		case 0xc5ac: usepipe(context); break;
-		case 0xc5b0: usefullcart(context); break;
-		case 0xc5b4: useplinth(context); break;
-		case 0xc5b8: chewy(context); break;
-		case 0xc5bc: useladder(context); break;
-		case 0xc5c0: useladderb(context); break;
-		case 0xc5c4: slabdoora(context); break;
-		case 0xc5c8: slabdoorb(context); break;
-		case 0xc5cc: slabdoord(context); break;
-		case 0xc5d0: slabdoorc(context); break;
-		case 0xc5d4: slabdoore(context); break;
-		case 0xc5d8: slabdoorf(context); break;
-		case 0xc5dc: useslab(context); break;
-		case 0xc5e0: usecart(context); break;
-		case 0xc5e4: useclearbox(context); break;
-		case 0xc5e8: usecoveredbox(context); break;
-		case 0xc5ec: userailing(context); break;
-		case 0xc5f0: useopenbox(context); break;
-		case 0xc5f4: wearwatch(context); break;
-		case 0xc5f8: wearshades(context); break;
-		case 0xc5fc: sitdowninbar(context); break;
-		case 0xc600: usechurchhole(context); break;
-		case 0xc604: usehole(context); break;
-		case 0xc608: usealtar(context); break;
-		case 0xc60c: opentvdoor(context); break;
-		case 0xc610: usedryer(context); break;
-		case 0xc614: openlouis(context); break;
-		case 0xc618: nextcolon(context); break;
-		case 0xc61c: openyourneighbour(context); break;
-		case 0xc620: usewindow(context); break;
-		case 0xc624: usebalcony(context); break;
-		case 0xc628: openryan(context); break;
-		case 0xc62c: openpoolboss(context); break;
-		case 0xc630: openeden(context); break;
-		case 0xc634: opensarters(context); break;
-		case 0xc638: isitright(context); break;
-		case 0xc63c: drawitall(context); break;
-		case 0xc640: openhoteldoor(context); break;
-		case 0xc644: openhoteldoor2(context); break;
-		case 0xc648: grafittidoor(context); break;
-		case 0xc64c: trapdoor(context); break;
-		case 0xc650: callhotellift(context); break;
-		case 0xc654: calledenslift(context); break;
-		case 0xc658: calledensdlift(context); break;
-		case 0xc65c: usepoolreader(context); break;
-		case 0xc660: uselighter(context); break;
-		case 0xc664: showseconduse(context); break;
-		case 0xc668: usecardreader1(context); break;
-		case 0xc66c: usecardreader2(context); break;
-		case 0xc670: usecardreader3(context); break;
-		case 0xc674: usecashcard(context); break;
-		case 0xc678: lookatcard(context); break;
-		case 0xc67c: moneypoke(context); break;
-		case 0xc680: usecontrol(context); break;
-		case 0xc684: usehatch(context); break;
-		case 0xc688: usewire(context); break;
-		case 0xc68c: usehandle(context); break;
-		case 0xc690: useelevator1(context); break;
-		case 0xc694: showfirstuse(context); break;
-		case 0xc698: useelevator3(context); break;
-		case 0xc69c: useelevator4(context); break;
-		case 0xc6a0: useelevator2(context); break;
-		case 0xc6a4: useelevator5(context); break;
-		case 0xc6a8: usekey(context); break;
-		case 0xc6ac: usestereo(context); break;
-		case 0xc6b0: usecooker(context); break;
-		case 0xc6b4: useaxe(context); break;
-		case 0xc6b8: useelvdoor(context); break;
-		case 0xc6bc: withwhat(context); break;
-		case 0xc6c0: selectob(context); break;
-		case 0xc6c4: compare(context); break;
-		case 0xc6c8: findsetobject(context); break;
-		case 0xc6cc: findexobject(context); break;
-		case 0xc6d0: isryanholding(context); break;
-		case 0xc6d4: checkinside(context); break;
-		case 0xc6d8: usetext(context); break;
-		case 0xc6dc: putbackobstuff(context); break;
-		case 0xc6e0: showpuztext(context); break;
-		case 0xc6e4: findpuztext(context); break;
-		case 0xc6e8: placesetobject(context); break;
-		case 0xc6ec: removesetobject(context); break;
-		case 0xc6f0: issetobonmap(context); break;
-		case 0xc6f4: placefreeobject(context); break;
-		case 0xc6f8: removefreeobject(context); break;
-		case 0xc6fc: findormake(context); break;
-		case 0xc700: switchryanon(context); break;
-		case 0xc704: switchryanoff(context); break;
-		case 0xc708: setallchanges(context); break;
-		case 0xc70c: dochange(context); break;
-		case 0xc710: autoappear(context); break;
-		case 0xc714: getundertimed(context); break;
-		case 0xc718: putundertimed(context); break;
-		case 0xc71c: dumptimedtext(context); break;
-		case 0xc720: setuptimeduse(context); break;
-		case 0xc724: setuptimedtemp(context); break;
-		case 0xc728: usetimedtext(context); break;
-		case 0xc72c: edenscdplayer(context); break;
-		case 0xc730: usewall(context); break;
-		case 0xc734: usechurchgate(context); break;
-		case 0xc738: usegun(context); break;
-		case 0xc73c: useshield(context); break;
-		case 0xc740: usebuttona(context); break;
-		case 0xc744: useplate(context); break;
-		case 0xc748: usewinch(context); break;
-		case 0xc74c: entercode(context); break;
-		case 0xc750: loadkeypad(context); break;
-		case 0xc754: quitkey(context); break;
-		case 0xc758: addtopresslist(context); break;
-		case 0xc75c: buttonone(context); break;
-		case 0xc760: buttontwo(context); break;
-		case 0xc764: buttonthree(context); break;
-		case 0xc768: buttonfour(context); break;
-		case 0xc76c: buttonfive(context); break;
-		case 0xc770: buttonsix(context); break;
-		case 0xc774: buttonseven(context); break;
-		case 0xc778: buttoneight(context); break;
-		case 0xc77c: buttonnine(context); break;
-		case 0xc780: buttonnought(context); break;
-		case 0xc784: buttonenter(context); break;
-		case 0xc788: buttonpress(context); break;
-		case 0xc78c: showouterpad(context); break;
-		case 0xc790: showkeypad(context); break;
-		case 0xc794: singlekey(context); break;
-		case 0xc798: dumpkeypad(context); break;
-		case 0xc79c: usemenu(context); break;
-		case 0xc7a0: dumpmenu(context); break;
-		case 0xc7a4: getundermenu(context); break;
-		case 0xc7a8: putundermenu(context); break;
-		case 0xc7ac: showoutermenu(context); break;
-		case 0xc7b0: showmenu(context); break;
-		case 0xc7b4: loadmenu(context); break;
-		case 0xc7b8: viewfolder(context); break;
-		case 0xc7bc: nextfolder(context); break;
-		case 0xc7c0: folderhints(context); break;
-		case 0xc7c4: lastfolder(context); break;
-		case 0xc7c8: loadfolder(context); break;
-		case 0xc7cc: showfolder(context); break;
-		case 0xc7d0: folderexit(context); break;
-		case 0xc7d4: showleftpage(context); break;
-		case 0xc7d8: showrightpage(context); break;
-		case 0xc7dc: entersymbol(context); break;
-		case 0xc7e0: quitsymbol(context); break;
-		case 0xc7e4: settopleft(context); break;
-		case 0xc7e8: settopright(context); break;
-		case 0xc7ec: setbotleft(context); break;
-		case 0xc7f0: setbotright(context); break;
-		case 0xc7f4: dumpsymbol(context); break;
-		case 0xc7f8: showsymbol(context); break;
-		case 0xc7fc: nextsymbol(context); break;
-		case 0xc800: updatesymboltop(context); break;
-		case 0xc804: updatesymbolbot(context); break;
-		case 0xc808: dumpsymbox(context); break;
-		case 0xc80c: usediary(context); break;
-		case 0xc810: showdiary(context); break;
-		case 0xc814: showdiarykeys(context); break;
-		case 0xc818: dumpdiarykeys(context); break;
-		case 0xc81c: diarykeyp(context); break;
-		case 0xc820: diarykeyn(context); break;
-		case 0xc824: showdiarypage(context); break;
-		case 0xc828: findtext1(context); break;
-		case 0xc82c: zoomonoff(context); break;
-		case 0xc830: saveload(context); break;
-		case 0xc834: dosaveload(context); break;
-		case 0xc838: getbackfromops(context); break;
-		case 0xc83c: showmainops(context); break;
-		case 0xc840: showdiscops(context); break;
-		case 0xc844: loadsavebox(context); break;
-		case 0xc848: loadgame(context); break;
-		case 0xc84c: getbacktoops(context); break;
-		case 0xc850: discops(context); break;
-		case 0xc854: savegame(context); break;
-		case 0xc858: actualsave(context); break;
-		case 0xc85c: actualload(context); break;
-		case 0xc860: selectslot2(context); break;
-		case 0xc864: checkinput(context); break;
-		case 0xc868: getnamepos(context); break;
-		case 0xc86c: showopbox(context); break;
-		case 0xc870: showloadops(context); break;
-		case 0xc874: showsaveops(context); break;
-		case 0xc878: selectslot(context); break;
-		case 0xc87c: showslots(context); break;
-		case 0xc880: shownames(context); break;
-		case 0xc884: dosreturn(context); break;
-		case 0xc888: error(context); break;
-		case 0xc88c: namestoold(context); break;
-		case 0xc890: oldtonames(context); break;
-		case 0xc894: savefilewrite(context); break;
-		case 0xc898: savefileread(context); break;
-		case 0xc89c: saveposition(context); break;
-		case 0xc8a0: loadposition(context); break;
-		case 0xc8a4: loadseg(context); break;
-		case 0xc8a8: makeheader(context); break;
-		case 0xc8ac: storeit(context); break;
-		case 0xc8b0: saveseg(context); break;
-		case 0xc8b4: findlen(context); break;
-		case 0xc8b8: scanfornames(context); break;
-		case 0xc8bc: decide(context); break;
-		case 0xc8c0: showdecisions(context); break;
-		case 0xc8c4: newgame(context); break;
-		case 0xc8c8: loadold(context); break;
-		case 0xc8cc: loadspeech(context); break;
-		case 0xc8d0: createname(context); break;
-		case 0xc8d4: loadsample(context); break;
-		case 0xc8d8: loadsecondsample(context); break;
-		case 0xc8dc: soundstartup(context); break;
-		case 0xc8e0: trysoundalloc(context); break;
-		case 0xc8e4: setsoundoff(context); break;
-		case 0xc8e8: checksoundint(context); break;
-		case 0xc8ec: enablesoundint(context); break;
-		case 0xc8f0: disablesoundint(context); break;
-		case 0xc8f4: interupttest(context); break;
-		case 0xc8f8: soundend(context); break;
-		case 0xc8fc: out22c(context); break;
-		case 0xc900: playchannel0(context); break;
-		case 0xc904: playchannel1(context); break;
-		case 0xc908: makenextblock(context); break;
-		case 0xc90c: volumeadjust(context); break;
-		case 0xc910: loopchannel0(context); break;
-		case 0xc914: cancelch0(context); break;
-		case 0xc918: cancelch1(context); break;
-		case 0xc91c: channel0only(context); break;
-		case 0xc920: channel1only(context); break;
-		case 0xc924: channel0tran(context); break;
-		case 0xc928: bothchannels(context); break;
-		case 0xc92c: saveems(context); break;
-		case 0xc930: restoreems(context); break;
-		case 0xc934: domix(context); break;
-		case 0xc938: dmaend(context); break;
-		case 0xc93c: startdmablock(context); break;
-		case 0xc940: setuppit(context); break;
-		case 0xc944: getridofpit(context); break;
-		case 0xc948: pitinterupt(context); break;
-		case 0xc94c: dreamweb(context); break;
-		case 0xc950: entrytexts(context); break;
-		case 0xc954: entryanims(context); break;
-		case 0xc958: initialinv(context); break;
-		case 0xc95c: pickupob(context); break;
-		case 0xc960: setupemm(context); break;
-		case 0xc964: removeemm(context); break;
-		case 0xc968: checkforemm(context); break;
-		case 0xc96c: checkbasemem(context); break;
-		case 0xc970: allocatebuffers(context); break;
-		case 0xc974: clearbuffers(context); break;
-		case 0xc978: clearchanges(context); break;
-		case 0xc97c: clearbeforeload(context); break;
-		case 0xc980: clearreels(context); break;
-		case 0xc984: clearrest(context); break;
-		case 0xc988: deallocatemem(context); break;
-		case 0xc98c: allocatemem(context); break;
-		case 0xc994: parseblaster(context); break;
-		case 0xc998: startup(context); break;
-		case 0xc99c: startup1(context); break;
-		case 0xc9a0: screenupdate(context); break;
-		case 0xc9a4: watchreel(context); break;
-		case 0xc9a8: checkforshake(context); break;
-		case 0xc9ac: watchcount(context); break;
-		case 0xc9b0: showtime(context); break;
-		case 0xc9b4: dumpwatch(context); break;
-		case 0xc9b8: showbyte(context); break;
-		case 0xc9bc: onedigit(context); break;
-		case 0xc9c0: twodigitnum(context); break;
-		case 0xc9c4: showword(context); break;
-		case 0xc9c8: convnum(context); break;
-		case 0xc9cc: mainscreen(context); break;
-		case 0xc9d0: madmanrun(context); break;
-		case 0xc9d4: checkcoords(context); break;
-		case 0xc9d8: identifyob(context); break;
-		case 0xc9dc: checkifperson(context); break;
-		case 0xc9e0: checkifset(context); break;
-		case 0xc9e4: checkifex(context); break;
-		case 0xc9e8: checkiffree(context); break;
-		case 0xc9ec: isitdescribed(context); break;
-		case 0xc9f0: findpathofpoint(context); break;
-		case 0xc9f4: findfirstpath(context); break;
-		case 0xc9f8: turnpathon(context); break;
-		case 0xc9fc: turnpathoff(context); break;
-		case 0xca00: turnanypathon(context); break;
-		case 0xca04: turnanypathoff(context); break;
-		case 0xca08: checkifpathison(context); break;
-		case 0xca0c: afternewroom(context); break;
-		case 0xca10: atmospheres(context); break;
-		case 0xca14: walkintoroom(context); break;
-		case 0xca18: afterintroroom(context); break;
-		case 0xca1c: obname(context); break;
-		case 0xca20: finishedwalking(context); break;
-		case 0xca24: examineobtext(context); break;
-		case 0xca28: commandwithob(context); break;
-		case 0xca2c: commandonly(context); break;
-		case 0xca30: printmessage(context); break;
-		case 0xca34: printmessage2(context); break;
-		case 0xca38: blocknametext(context); break;
-		case 0xca3c: personnametext(context); break;
-		case 0xca40: walktotext(context); break;
-		case 0xca44: getflagunderp(context); break;
-		case 0xca48: setwalk(context); break;
-		case 0xca4c: autosetwalk(context); break;
-		case 0xca50: checkdest(context); break;
-		case 0xca54: bresenhams(context); break;
-		case 0xca58: workoutframes(context); break;
-		case 0xca5c: getroomspaths(context); break;
-		case 0xca60: copyname(context); break;
-		case 0xca64: findobname(context); break;
-		case 0xca68: showicon(context); break;
-		case 0xca6c: middlepanel(context); break;
-		case 0xca70: showman(context); break;
-		case 0xca74: showpanel(context); break;
-		case 0xca78: roomname(context); break;
-		case 0xca7c: usecharset1(context); break;
-		case 0xca80: usetempcharset(context); break;
-		case 0xca84: showexit(context); break;
-		case 0xca88: panelicons1(context); break;
-		case 0xca8c: showwatch(context); break;
-		case 0xca90: gettime(context); break;
-		case 0xca94: zoomicon(context); break;
-		case 0xca98: showblink(context); break;
-		case 0xca9c: dumpblink(context); break;
-		case 0xcaa0: worktoscreenm(context); break;
-		case 0xcaa4: blank(context); break;
-		case 0xcaa8: allpointer(context); break;
-		case 0xcaac: hangonp(context); break;
-		case 0xcab0: hangonw(context); break;
-		case 0xcab4: hangoncurs(context); break;
-		case 0xcab8: getunderzoom(context); break;
-		case 0xcabc: dumpzoom(context); break;
-		case 0xcac0: putunderzoom(context); break;
-		case 0xcac4: crosshair(context); break;
-		case 0xcac8: showpointer(context); break;
-		case 0xcacc: delpointer(context); break;
-		case 0xcad0: dumppointer(context); break;
-		case 0xcad4: undertextline(context); break;
-		case 0xcad8: deltextline(context); break;
-		case 0xcadc: dumptextline(context); break;
-		case 0xcae0: animpointer(context); break;
-		case 0xcae4: setmouse(context); break;
-		case 0xcae8: readmouse(context); break;
-		case 0xcaec: mousecall(context); break;
-		case 0xcaf0: readmouse1(context); break;
-		case 0xcaf4: readmouse2(context); break;
-		case 0xcaf8: readmouse3(context); break;
-		case 0xcafc: readmouse4(context); break;
-		case 0xcb00: readkey(context); break;
-		case 0xcb04: convertkey(context); break;
-		case 0xcb08: randomnum1(context); break;
-		case 0xcb0c: randomnum2(context); break;
-		case 0xcb14: hangon(context); break;
-		case 0xcb18: loadtraveltext(context); break;
-		case 0xcb1c: loadintotemp(context); break;
-		case 0xcb20: loadintotemp2(context); break;
-		case 0xcb24: loadintotemp3(context); break;
-		case 0xcb28: loadtempcharset(context); break;
-		case 0xcb2c: standardload(context); break;
-		case 0xcb30: loadtemptext(context); break;
-		case 0xcb34: loadroom(context); break;
-		case 0xcb38: loadroomssample(context); break;
-		case 0xcb3c: getridofreels(context); break;
-		case 0xcb40: getridofall(context); break;
-		case 0xcb44: restorereels(context); break;
-		case 0xcb48: restoreall(context); break;
-		case 0xcb4c: sortoutmap(context); break;
-		case 0xcb50: startloading(context); break;
-		case 0xcb54: disablepath(context); break;
-		case 0xcb58: findxyfrompath(context); break;
-		case 0xcb5c: findroominloc(context); break;
-		case 0xcb60: getroomdata(context); break;
-		case 0xcb64: readheader(context); break;
-		case 0xcb68: dontloadseg(context); break;
-		case 0xcb6c: allocateload(context); break;
-		case 0xcb70: fillspace(context); break;
-		case 0xcb74: getridoftemp(context); break;
-		case 0xcb78: getridoftemptext(context); break;
-		case 0xcb7c: getridoftemp2(context); break;
-		case 0xcb80: getridoftemp3(context); break;
-		case 0xcb84: getridoftempcharset(context); break;
-		case 0xcb88: getridoftempsp(context); break;
-		case 0xcb8c: readsetdata(context); break;
-		case 0xcb90: createfile(context); break;
-		case 0xcb94: openfile(context); break;
-		case 0xcb98: openfilenocheck(context); break;
-		case 0xcb9c: openforsave(context); break;
-		case 0xcba0: closefile(context); break;
-		case 0xcba4: readfromfile(context); break;
-		case 0xcba8: setkeyboardint(context); break;
-		case 0xcbac: resetkeyboard(context); break;
-		case 0xcbb0: keyboardread(context); break;
-		case 0xcbb4: walkandexamine(context); break;
-		case 0xcbb8: doload(context); break;
-		case 0xcbbc: generalerror(context); break;
+		case 0xc320: fillryan(context); break;
+		case 0xc324: fillopen(context); break;
+		case 0xc328: findallryan(context); break;
+		case 0xc32c: findallopen(context); break;
+		case 0xc330: obtoinv(context); break;
+		case 0xc334: isitworn(context); break;
+		case 0xc338: makeworn(context); break;
+		case 0xc33c: examineob(context); break;
+		case 0xc340: makemainscreen(context); break;
+		case 0xc344: getbackfromob(context); break;
+		case 0xc348: incryanpage(context); break;
+		case 0xc34c: openinv(context); break;
+		case 0xc350: showryanpage(context); break;
+		case 0xc354: openob(context); break;
+		case 0xc358: obicons(context); break;
+		case 0xc35c: examicon(context); break;
+		case 0xc360: obpicture(context); break;
+		case 0xc364: describeob(context); break;
+		case 0xc368: additionaltext(context); break;
+		case 0xc36c: obsthatdothings(context); break;
+		case 0xc370: getobtextstart(context); break;
+		case 0xc374: searchforsame(context); break;
+		case 0xc378: findnextcolon(context); break;
+		case 0xc37c: inventory(context); break;
+		case 0xc380: setpickup(context); break;
+		case 0xc384: examinventory(context); break;
+		case 0xc388: reexfrominv(context); break;
+		case 0xc38c: reexfromopen(context); break;
+		case 0xc390: swapwithinv(context); break;
+		case 0xc394: swapwithopen(context); break;
+		case 0xc398: intoinv(context); break;
+		case 0xc39c: deletetaken(context); break;
+		case 0xc3a0: outofinv(context); break;
+		case 0xc3a4: getfreead(context); break;
+		case 0xc3a8: getexad(context); break;
+		case 0xc3ac: geteitherad(context); break;
+		case 0xc3b0: getanyad(context); break;
+		case 0xc3b4: getanyaddir(context); break;
+		case 0xc3b8: getopenedsize(context); break;
+		case 0xc3bc: getsetad(context); break;
+		case 0xc3c0: findinvpos(context); break;
+		case 0xc3c4: findopenpos(context); break;
+		case 0xc3c8: dropobject(context); break;
+		case 0xc3cc: droperror(context); break;
+		case 0xc3d0: cantdrop(context); break;
+		case 0xc3d4: wornerror(context); break;
+		case 0xc3d8: removeobfrominv(context); break;
+		case 0xc3dc: selectopenob(context); break;
+		case 0xc3e0: useopened(context); break;
+		case 0xc3e4: errormessage1(context); break;
+		case 0xc3e8: errormessage2(context); break;
+		case 0xc3ec: errormessage3(context); break;
+		case 0xc3f0: checkobjectsize(context); break;
+		case 0xc3f4: outofopen(context); break;
+		case 0xc3f8: transfertoex(context); break;
+		case 0xc3fc: pickupconts(context); break;
+		case 0xc400: transfercontoex(context); break;
+		case 0xc404: transfertext(context); break;
+		case 0xc408: getexpos(context); break;
+		case 0xc40c: purgealocation(context); break;
+		case 0xc410: emergencypurge(context); break;
+		case 0xc414: purgeanitem(context); break;
+		case 0xc418: deleteexobject(context); break;
+		case 0xc41c: deleteexframe(context); break;
+		case 0xc420: deleteextext(context); break;
+		case 0xc424: blockget(context); break;
+		case 0xc428: drawfloor(context); break;
+		case 0xc42c: calcmapad(context); break;
+		case 0xc430: getdimension(context); break;
+		case 0xc434: addalong(context); break;
+		case 0xc438: addlength(context); break;
+		case 0xc43c: drawflags(context); break;
+		case 0xc440: eraseoldobs(context); break;
+		case 0xc444: showallobs(context); break;
+		case 0xc448: makebackob(context); break;
+		case 0xc44c: showallfree(context); break;
+		case 0xc450: showallex(context); break;
+		case 0xc454: calcfrframe(context); break;
+		case 0xc458: finalframe(context); break;
+		case 0xc45c: adjustlen(context); break;
+		case 0xc460: getmapad(context); break;
+		case 0xc464: getxad(context); break;
+		case 0xc468: getyad(context); break;
+		case 0xc46c: autolook(context); break;
+		case 0xc470: look(context); break;
+		case 0xc474: dolook(context); break;
+		case 0xc478: redrawmainscrn(context); break;
+		case 0xc47c: getback1(context); break;
+		case 0xc480: talk(context); break;
+		case 0xc484: convicons(context); break;
+		case 0xc488: getpersframe(context); break;
+		case 0xc48c: starttalk(context); break;
+		case 0xc490: getpersontext(context); break;
+		case 0xc494: moretalk(context); break;
+		case 0xc498: dosometalk(context); break;
+		case 0xc49c: hangonpq(context); break;
+		case 0xc4a0: redes(context); break;
+		case 0xc4a4: newplace(context); break;
+		case 0xc4a8: selectlocation(context); break;
+		case 0xc4ac: showcity(context); break;
+		case 0xc4b0: lookatplace(context); break;
+		case 0xc4b4: getundercentre(context); break;
+		case 0xc4b8: putundercentre(context); break;
+		case 0xc4bc: locationpic(context); break;
+		case 0xc4c0: getdestinfo(context); break;
+		case 0xc4c4: showarrows(context); break;
+		case 0xc4c8: nextdest(context); break;
+		case 0xc4cc: lastdest(context); break;
+		case 0xc4d0: destselect(context); break;
+		case 0xc4d4: getlocation(context); break;
+		case 0xc4d8: setlocation(context); break;
+		case 0xc4dc: resetlocation(context); break;
+		case 0xc4e0: readdesticon(context); break;
+		case 0xc4e4: readcitypic(context); break;
+		case 0xc4e8: usemon(context); break;
+		case 0xc4ec: printoutermon(context); break;
+		case 0xc4f0: loadpersonal(context); break;
+		case 0xc4f4: loadnews(context); break;
+		case 0xc4f8: loadcart(context); break;
+		case 0xc4fc: lookininterface(context); break;
+		case 0xc500: turnonpower(context); break;
+		case 0xc504: randomaccess(context); break;
+		case 0xc508: powerlighton(context); break;
+		case 0xc50c: powerlightoff(context); break;
+		case 0xc510: accesslighton(context); break;
+		case 0xc514: accesslightoff(context); break;
+		case 0xc518: locklighton(context); break;
+		case 0xc51c: locklightoff(context); break;
+		case 0xc520: input(context); break;
+		case 0xc524: makecaps(context); break;
+		case 0xc528: delchar(context); break;
+		case 0xc52c: execcommand(context); break;
+		case 0xc530: neterror(context); break;
+		case 0xc534: dircom(context); break;
+		case 0xc538: searchforfiles(context); break;
+		case 0xc53c: signon(context); break;
+		case 0xc540: showkeys(context); break;
+		case 0xc544: read(context); break;
+		case 0xc548: dirfile(context); break;
+		case 0xc54c: getkeyandlogo(context); break;
+		case 0xc550: searchforstring(context); break;
+		case 0xc554: parser(context); break;
+		case 0xc558: scrollmonitor(context); break;
+		case 0xc55c: lockmon(context); break;
+		case 0xc560: monitorlogo(context); break;
+		case 0xc564: printlogo(context); break;
+		case 0xc568: showcurrentfile(context); break;
+		case 0xc56c: monmessage(context); break;
+		case 0xc570: processtrigger(context); break;
+		case 0xc574: triggermessage(context); break;
+		case 0xc578: printcurs(context); break;
+		case 0xc57c: delcurs(context); break;
+		case 0xc580: useobject(context); break;
+		case 0xc584: useroutine(context); break;
+		case 0xc588: wheelsound(context); break;
+		case 0xc58c: runtap(context); break;
+		case 0xc590: playguitar(context); break;
+		case 0xc594: hotelcontrol(context); break;
+		case 0xc598: hotelbell(context); break;
+		case 0xc59c: opentomb(context); break;
+		case 0xc5a0: usetrainer(context); break;
+		case 0xc5a4: nothelderror(context); break;
+		case 0xc5a8: usepipe(context); break;
+		case 0xc5ac: usefullcart(context); break;
+		case 0xc5b0: useplinth(context); break;
+		case 0xc5b4: chewy(context); break;
+		case 0xc5b8: useladder(context); break;
+		case 0xc5bc: useladderb(context); break;
+		case 0xc5c0: slabdoora(context); break;
+		case 0xc5c4: slabdoorb(context); break;
+		case 0xc5c8: slabdoord(context); break;
+		case 0xc5cc: slabdoorc(context); break;
+		case 0xc5d0: slabdoore(context); break;
+		case 0xc5d4: slabdoorf(context); break;
+		case 0xc5d8: useslab(context); break;
+		case 0xc5dc: usecart(context); break;
+		case 0xc5e0: useclearbox(context); break;
+		case 0xc5e4: usecoveredbox(context); break;
+		case 0xc5e8: userailing(context); break;
+		case 0xc5ec: useopenbox(context); break;
+		case 0xc5f0: wearwatch(context); break;
+		case 0xc5f4: wearshades(context); break;
+		case 0xc5f8: sitdowninbar(context); break;
+		case 0xc5fc: usechurchhole(context); break;
+		case 0xc600: usehole(context); break;
+		case 0xc604: usealtar(context); break;
+		case 0xc608: opentvdoor(context); break;
+		case 0xc60c: usedryer(context); break;
+		case 0xc610: openlouis(context); break;
+		case 0xc614: nextcolon(context); break;
+		case 0xc618: openyourneighbour(context); break;
+		case 0xc61c: usewindow(context); break;
+		case 0xc620: usebalcony(context); break;
+		case 0xc624: openryan(context); break;
+		case 0xc628: openpoolboss(context); break;
+		case 0xc62c: openeden(context); break;
+		case 0xc630: opensarters(context); break;
+		case 0xc634: isitright(context); break;
+		case 0xc638: drawitall(context); break;
+		case 0xc63c: openhoteldoor(context); break;
+		case 0xc640: openhoteldoor2(context); break;
+		case 0xc644: grafittidoor(context); break;
+		case 0xc648: trapdoor(context); break;
+		case 0xc64c: callhotellift(context); break;
+		case 0xc650: calledenslift(context); break;
+		case 0xc654: calledensdlift(context); break;
+		case 0xc658: usepoolreader(context); break;
+		case 0xc65c: uselighter(context); break;
+		case 0xc660: showseconduse(context); break;
+		case 0xc664: usecardreader1(context); break;
+		case 0xc668: usecardreader2(context); break;
+		case 0xc66c: usecardreader3(context); break;
+		case 0xc670: usecashcard(context); break;
+		case 0xc674: lookatcard(context); break;
+		case 0xc678: moneypoke(context); break;
+		case 0xc67c: usecontrol(context); break;
+		case 0xc680: usehatch(context); break;
+		case 0xc684: usewire(context); break;
+		case 0xc688: usehandle(context); break;
+		case 0xc68c: useelevator1(context); break;
+		case 0xc690: showfirstuse(context); break;
+		case 0xc694: useelevator3(context); break;
+		case 0xc698: useelevator4(context); break;
+		case 0xc69c: useelevator2(context); break;
+		case 0xc6a0: useelevator5(context); break;
+		case 0xc6a4: usekey(context); break;
+		case 0xc6a8: usestereo(context); break;
+		case 0xc6ac: usecooker(context); break;
+		case 0xc6b0: useaxe(context); break;
+		case 0xc6b4: useelvdoor(context); break;
+		case 0xc6b8: withwhat(context); break;
+		case 0xc6bc: selectob(context); break;
+		case 0xc6c0: compare(context); break;
+		case 0xc6c4: findsetobject(context); break;
+		case 0xc6c8: findexobject(context); break;
+		case 0xc6cc: isryanholding(context); break;
+		case 0xc6d0: checkinside(context); break;
+		case 0xc6d4: usetext(context); break;
+		case 0xc6d8: putbackobstuff(context); break;
+		case 0xc6dc: showpuztext(context); break;
+		case 0xc6e0: findpuztext(context); break;
+		case 0xc6e4: placesetobject(context); break;
+		case 0xc6e8: removesetobject(context); break;
+		case 0xc6ec: issetobonmap(context); break;
+		case 0xc6f0: placefreeobject(context); break;
+		case 0xc6f4: removefreeobject(context); break;
+		case 0xc6f8: findormake(context); break;
+		case 0xc6fc: switchryanon(context); break;
+		case 0xc700: switchryanoff(context); break;
+		case 0xc704: setallchanges(context); break;
+		case 0xc708: dochange(context); break;
+		case 0xc70c: autoappear(context); break;
+		case 0xc710: getundertimed(context); break;
+		case 0xc714: putundertimed(context); break;
+		case 0xc718: dumptimedtext(context); break;
+		case 0xc71c: setuptimeduse(context); break;
+		case 0xc720: setuptimedtemp(context); break;
+		case 0xc724: usetimedtext(context); break;
+		case 0xc728: edenscdplayer(context); break;
+		case 0xc72c: usewall(context); break;
+		case 0xc730: usechurchgate(context); break;
+		case 0xc734: usegun(context); break;
+		case 0xc738: useshield(context); break;
+		case 0xc73c: usebuttona(context); break;
+		case 0xc740: useplate(context); break;
+		case 0xc744: usewinch(context); break;
+		case 0xc748: entercode(context); break;
+		case 0xc74c: loadkeypad(context); break;
+		case 0xc750: quitkey(context); break;
+		case 0xc754: addtopresslist(context); break;
+		case 0xc758: buttonone(context); break;
+		case 0xc75c: buttontwo(context); break;
+		case 0xc760: buttonthree(context); break;
+		case 0xc764: buttonfour(context); break;
+		case 0xc768: buttonfive(context); break;
+		case 0xc76c: buttonsix(context); break;
+		case 0xc770: buttonseven(context); break;
+		case 0xc774: buttoneight(context); break;
+		case 0xc778: buttonnine(context); break;
+		case 0xc77c: buttonnought(context); break;
+		case 0xc780: buttonenter(context); break;
+		case 0xc784: buttonpress(context); break;
+		case 0xc788: showouterpad(context); break;
+		case 0xc78c: showkeypad(context); break;
+		case 0xc790: singlekey(context); break;
+		case 0xc794: dumpkeypad(context); break;
+		case 0xc798: usemenu(context); break;
+		case 0xc79c: dumpmenu(context); break;
+		case 0xc7a0: getundermenu(context); break;
+		case 0xc7a4: putundermenu(context); break;
+		case 0xc7a8: showoutermenu(context); break;
+		case 0xc7ac: showmenu(context); break;
+		case 0xc7b0: loadmenu(context); break;
+		case 0xc7b4: viewfolder(context); break;
+		case 0xc7b8: nextfolder(context); break;
+		case 0xc7bc: folderhints(context); break;
+		case 0xc7c0: lastfolder(context); break;
+		case 0xc7c4: loadfolder(context); break;
+		case 0xc7c8: showfolder(context); break;
+		case 0xc7cc: folderexit(context); break;
+		case 0xc7d0: showleftpage(context); break;
+		case 0xc7d4: showrightpage(context); break;
+		case 0xc7d8: entersymbol(context); break;
+		case 0xc7dc: quitsymbol(context); break;
+		case 0xc7e0: settopleft(context); break;
+		case 0xc7e4: settopright(context); break;
+		case 0xc7e8: setbotleft(context); break;
+		case 0xc7ec: setbotright(context); break;
+		case 0xc7f0: dumpsymbol(context); break;
+		case 0xc7f4: showsymbol(context); break;
+		case 0xc7f8: nextsymbol(context); break;
+		case 0xc7fc: updatesymboltop(context); break;
+		case 0xc800: updatesymbolbot(context); break;
+		case 0xc804: dumpsymbox(context); break;
+		case 0xc808: usediary(context); break;
+		case 0xc80c: showdiary(context); break;
+		case 0xc810: showdiarykeys(context); break;
+		case 0xc814: dumpdiarykeys(context); break;
+		case 0xc818: diarykeyp(context); break;
+		case 0xc81c: diarykeyn(context); break;
+		case 0xc820: showdiarypage(context); break;
+		case 0xc824: findtext1(context); break;
+		case 0xc828: zoomonoff(context); break;
+		case 0xc82c: saveload(context); break;
+		case 0xc830: dosaveload(context); break;
+		case 0xc834: getbackfromops(context); break;
+		case 0xc838: showmainops(context); break;
+		case 0xc83c: showdiscops(context); break;
+		case 0xc840: loadsavebox(context); break;
+		case 0xc844: loadgame(context); break;
+		case 0xc848: getbacktoops(context); break;
+		case 0xc84c: discops(context); break;
+		case 0xc850: savegame(context); break;
+		case 0xc854: actualsave(context); break;
+		case 0xc858: actualload(context); break;
+		case 0xc85c: selectslot2(context); break;
+		case 0xc860: checkinput(context); break;
+		case 0xc864: getnamepos(context); break;
+		case 0xc868: showopbox(context); break;
+		case 0xc86c: showloadops(context); break;
+		case 0xc870: showsaveops(context); break;
+		case 0xc874: selectslot(context); break;
+		case 0xc878: showslots(context); break;
+		case 0xc87c: shownames(context); break;
+		case 0xc880: dosreturn(context); break;
+		case 0xc884: error(context); break;
+		case 0xc888: namestoold(context); break;
+		case 0xc88c: oldtonames(context); break;
+		case 0xc890: savefilewrite(context); break;
+		case 0xc894: savefileread(context); break;
+		case 0xc898: saveposition(context); break;
+		case 0xc89c: loadposition(context); break;
+		case 0xc8a0: loadseg(context); break;
+		case 0xc8a4: makeheader(context); break;
+		case 0xc8a8: storeit(context); break;
+		case 0xc8ac: saveseg(context); break;
+		case 0xc8b0: findlen(context); break;
+		case 0xc8b4: scanfornames(context); break;
+		case 0xc8b8: decide(context); break;
+		case 0xc8bc: showdecisions(context); break;
+		case 0xc8c0: newgame(context); break;
+		case 0xc8c4: loadold(context); break;
+		case 0xc8c8: loadspeech(context); break;
+		case 0xc8cc: createname(context); break;
+		case 0xc8d0: loadsample(context); break;
+		case 0xc8d4: loadsecondsample(context); break;
+		case 0xc8d8: soundstartup(context); break;
+		case 0xc8dc: trysoundalloc(context); break;
+		case 0xc8e0: setsoundoff(context); break;
+		case 0xc8e4: checksoundint(context); break;
+		case 0xc8e8: enablesoundint(context); break;
+		case 0xc8ec: disablesoundint(context); break;
+		case 0xc8f0: interupttest(context); break;
+		case 0xc8f4: soundend(context); break;
+		case 0xc8f8: out22c(context); break;
+		case 0xc8fc: playchannel0(context); break;
+		case 0xc900: playchannel1(context); break;
+		case 0xc904: makenextblock(context); break;
+		case 0xc908: volumeadjust(context); break;
+		case 0xc90c: loopchannel0(context); break;
+		case 0xc910: cancelch0(context); break;
+		case 0xc914: cancelch1(context); break;
+		case 0xc918: channel0only(context); break;
+		case 0xc91c: channel1only(context); break;
+		case 0xc920: channel0tran(context); break;
+		case 0xc924: bothchannels(context); break;
+		case 0xc928: saveems(context); break;
+		case 0xc92c: restoreems(context); break;
+		case 0xc930: domix(context); break;
+		case 0xc934: dmaend(context); break;
+		case 0xc938: startdmablock(context); break;
+		case 0xc93c: setuppit(context); break;
+		case 0xc940: getridofpit(context); break;
+		case 0xc944: pitinterupt(context); break;
+		case 0xc948: dreamweb(context); break;
+		case 0xc94c: entrytexts(context); break;
+		case 0xc950: entryanims(context); break;
+		case 0xc954: initialinv(context); break;
+		case 0xc958: pickupob(context); break;
+		case 0xc95c: setupemm(context); break;
+		case 0xc960: removeemm(context); break;
+		case 0xc964: checkforemm(context); break;
+		case 0xc968: checkbasemem(context); break;
+		case 0xc96c: allocatebuffers(context); break;
+		case 0xc970: clearbuffers(context); break;
+		case 0xc974: clearchanges(context); break;
+		case 0xc978: clearbeforeload(context); break;
+		case 0xc97c: clearreels(context); break;
+		case 0xc980: clearrest(context); break;
+		case 0xc984: deallocatemem(context); break;
+		case 0xc988: allocatemem(context); break;
+		case 0xc990: parseblaster(context); break;
+		case 0xc994: startup(context); break;
+		case 0xc998: startup1(context); break;
+		case 0xc99c: screenupdate(context); break;
+		case 0xc9a0: watchreel(context); break;
+		case 0xc9a4: checkforshake(context); break;
+		case 0xc9a8: watchcount(context); break;
+		case 0xc9ac: showtime(context); break;
+		case 0xc9b0: dumpwatch(context); break;
+		case 0xc9b4: showbyte(context); break;
+		case 0xc9b8: onedigit(context); break;
+		case 0xc9bc: twodigitnum(context); break;
+		case 0xc9c0: showword(context); break;
+		case 0xc9c4: convnum(context); break;
+		case 0xc9c8: mainscreen(context); break;
+		case 0xc9cc: madmanrun(context); break;
+		case 0xc9d0: checkcoords(context); break;
+		case 0xc9d4: identifyob(context); break;
+		case 0xc9d8: checkifperson(context); break;
+		case 0xc9dc: checkifset(context); break;
+		case 0xc9e0: checkifex(context); break;
+		case 0xc9e4: checkiffree(context); break;
+		case 0xc9e8: isitdescribed(context); break;
+		case 0xc9ec: findpathofpoint(context); break;
+		case 0xc9f0: findfirstpath(context); break;
+		case 0xc9f4: turnpathon(context); break;
+		case 0xc9f8: turnpathoff(context); break;
+		case 0xc9fc: turnanypathon(context); break;
+		case 0xca00: turnanypathoff(context); break;
+		case 0xca04: checkifpathison(context); break;
+		case 0xca08: afternewroom(context); break;
+		case 0xca0c: atmospheres(context); break;
+		case 0xca10: walkintoroom(context); break;
+		case 0xca14: afterintroroom(context); break;
+		case 0xca18: obname(context); break;
+		case 0xca1c: finishedwalking(context); break;
+		case 0xca20: examineobtext(context); break;
+		case 0xca24: commandwithob(context); break;
+		case 0xca28: commandonly(context); break;
+		case 0xca2c: printmessage(context); break;
+		case 0xca30: printmessage2(context); break;
+		case 0xca34: blocknametext(context); break;
+		case 0xca38: personnametext(context); break;
+		case 0xca3c: walktotext(context); break;
+		case 0xca40: getflagunderp(context); break;
+		case 0xca44: setwalk(context); break;
+		case 0xca48: autosetwalk(context); break;
+		case 0xca4c: checkdest(context); break;
+		case 0xca50: bresenhams(context); break;
+		case 0xca54: workoutframes(context); break;
+		case 0xca58: getroomspaths(context); break;
+		case 0xca5c: copyname(context); break;
+		case 0xca60: findobname(context); break;
+		case 0xca64: showicon(context); break;
+		case 0xca68: middlepanel(context); break;
+		case 0xca6c: showman(context); break;
+		case 0xca70: showpanel(context); break;
+		case 0xca74: roomname(context); break;
+		case 0xca78: usecharset1(context); break;
+		case 0xca7c: usetempcharset(context); break;
+		case 0xca80: showexit(context); break;
+		case 0xca84: panelicons1(context); break;
+		case 0xca88: showwatch(context); break;
+		case 0xca8c: gettime(context); break;
+		case 0xca90: zoomicon(context); break;
+		case 0xca94: showblink(context); break;
+		case 0xca98: dumpblink(context); break;
+		case 0xca9c: worktoscreenm(context); break;
+		case 0xcaa0: blank(context); break;
+		case 0xcaa4: allpointer(context); break;
+		case 0xcaa8: hangonp(context); break;
+		case 0xcaac: hangonw(context); break;
+		case 0xcab0: hangoncurs(context); break;
+		case 0xcab4: getunderzoom(context); break;
+		case 0xcab8: dumpzoom(context); break;
+		case 0xcabc: putunderzoom(context); break;
+		case 0xcac0: crosshair(context); break;
+		case 0xcac4: showpointer(context); break;
+		case 0xcac8: delpointer(context); break;
+		case 0xcacc: dumppointer(context); break;
+		case 0xcad0: undertextline(context); break;
+		case 0xcad4: deltextline(context); break;
+		case 0xcad8: dumptextline(context); break;
+		case 0xcadc: animpointer(context); break;
+		case 0xcae0: setmouse(context); break;
+		case 0xcae4: readmouse(context); break;
+		case 0xcae8: mousecall(context); break;
+		case 0xcaec: readmouse1(context); break;
+		case 0xcaf0: readmouse2(context); break;
+		case 0xcaf4: readmouse3(context); break;
+		case 0xcaf8: readmouse4(context); break;
+		case 0xcafc: readkey(context); break;
+		case 0xcb00: convertkey(context); break;
+		case 0xcb04: randomnum1(context); break;
+		case 0xcb08: randomnum2(context); break;
+		case 0xcb10: hangon(context); break;
+		case 0xcb14: loadtraveltext(context); break;
+		case 0xcb18: loadintotemp(context); break;
+		case 0xcb1c: loadintotemp2(context); break;
+		case 0xcb20: loadintotemp3(context); break;
+		case 0xcb24: loadtempcharset(context); break;
+		case 0xcb28: standardload(context); break;
+		case 0xcb2c: loadtemptext(context); break;
+		case 0xcb30: loadroom(context); break;
+		case 0xcb34: loadroomssample(context); break;
+		case 0xcb38: getridofreels(context); break;
+		case 0xcb3c: getridofall(context); break;
+		case 0xcb40: restorereels(context); break;
+		case 0xcb44: restoreall(context); break;
+		case 0xcb48: sortoutmap(context); break;
+		case 0xcb4c: startloading(context); break;
+		case 0xcb50: disablepath(context); break;
+		case 0xcb54: findxyfrompath(context); break;
+		case 0xcb58: findroominloc(context); break;
+		case 0xcb5c: getroomdata(context); break;
+		case 0xcb60: readheader(context); break;
+		case 0xcb64: dontloadseg(context); break;
+		case 0xcb68: allocateload(context); break;
+		case 0xcb6c: fillspace(context); break;
+		case 0xcb70: getridoftemp(context); break;
+		case 0xcb74: getridoftemptext(context); break;
+		case 0xcb78: getridoftemp2(context); break;
+		case 0xcb7c: getridoftemp3(context); break;
+		case 0xcb80: getridoftempcharset(context); break;
+		case 0xcb84: getridoftempsp(context); break;
+		case 0xcb88: readsetdata(context); break;
+		case 0xcb8c: createfile(context); break;
+		case 0xcb90: openfile(context); break;
+		case 0xcb94: openfilenocheck(context); break;
+		case 0xcb98: openforsave(context); break;
+		case 0xcb9c: closefile(context); break;
+		case 0xcba0: readfromfile(context); break;
+		case 0xcba4: setkeyboardint(context); break;
+		case 0xcba8: resetkeyboard(context); break;
+		case 0xcbac: keyboardread(context); break;
+		case 0xcbb0: walkandexamine(context); break;
+		case 0xcbb4: doload(context); break;
+		case 0xcbb8: generalerror(context); break;
 		default: ::error("invalid call to %04x dispatched", (uint16)context.ax);
 	}
 }
