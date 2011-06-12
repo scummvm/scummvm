@@ -62,7 +62,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_vSyncInterrupt = false;
 
 	_console = 0;
-	_mouseState = 0;
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	_outSaveFile = 0;
@@ -117,27 +116,6 @@ void DreamWebEngine::processEvents() {
 	Common::Event event;
 	while (event_manager->pollEvent(event)) {
 		switch(event.type) {
-		case Common::EVENT_LBUTTONDOWN:
-			_mouseState |= 1;
-			break;
-		case Common::EVENT_LBUTTONUP:
-			_mouseState &= ~1;
-			break;
-		case Common::EVENT_RBUTTONDOWN:
-			_mouseState |= 2;
-			break;
-		case Common::EVENT_RBUTTONUP:
-			_mouseState &= ~2;
-			break;
-		case Common::EVENT_MBUTTONDOWN:
-			_mouseState |= 4;
-			break;
-		case Common::EVENT_MBUTTONUP:
-			_mouseState &= ~4;
-			break;
-		case Common::EVENT_MOUSEMOVE:
-			_mouse = event.mouse;
-			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_d:
@@ -170,7 +148,6 @@ void DreamWebEngine::processEvents() {
 
 
 Common::Error DreamWebEngine::run() {
-	_mouseState = 0;
 	_console = new DreamWebConsole(this);
 
 	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this);
@@ -262,7 +239,8 @@ void DreamWebEngine::keyPressed(uint16 ascii) {
 
 void DreamWebEngine::mouseCall() {
 	processEvents();
-	Common::Point pos = _mouse;
+	Common::EventManager *eventMan = _system->getEventManager();
+	Common::Point pos = eventMan->getMousePos();
 	if (pos.x > 298)
 		pos.x = 298;
 	if (pos.x < 15)
@@ -273,7 +251,7 @@ void DreamWebEngine::mouseCall() {
 		pos.y = 184;
 	_context.cx = pos.x;
 	_context.dx = pos.y;
-	_context.bx = _mouseState;
+	_context.bx = eventMan->getButtonState();
 }
 
 void DreamWebEngine::setGraphicsMode() {

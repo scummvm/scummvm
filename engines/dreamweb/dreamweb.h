@@ -105,8 +105,6 @@ private:
 
 	const DreamWebGameDescription	*_gameDescription;
 	Common::RandomSource			_rnd;
-	Common::Point					_mouse;
-	unsigned						_mouseState;
 
 	Common::File _file;
 	Common::OutSaveFile *_outSaveFile;
