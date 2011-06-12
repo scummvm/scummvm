@@ -591,11 +591,6 @@ void loadspeech(Context &context) {
 	::error("loadspeech");
 }
 
-void scanfornames(Context &context) {
-	warning("scanfornames: STUB");
-	context.ch = 0;
-}
-
 void saveseg(Context &context) {
 	context.cx = context.es.word(context.di);
 	context._add(context.di, 2);

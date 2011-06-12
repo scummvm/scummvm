@@ -7,6 +7,7 @@ void allocatebuffers(Context &context);
 void clearbuffers(Context &context);
 void clearpalette(Context &context);
 void readsetdata(Context &context);
+void scanfornames(Context &context);
 void loadpalfromiff(Context &context);
 void titles(Context &context);
 void credits(Context &context);
@@ -16374,7 +16375,6 @@ void loadposition(Context & context) {
 	context.dx = 8469;
 	context._add(context.dx, context.ax);
 	openfile(context);
-	context.ah = 0x3f;
 	context.ds = context.cs;
 	context.dx = 5862;
 	context.cx = (5958-5862);
@@ -16449,6 +16449,54 @@ nextone:
 	context._cmp(context.ax, 0);
 	if (!context.flags.z()) goto nextone;
 foundlen:
+	return;
+}
+
+void scanfornames(Context & context) {
+	context.dx = context.data;
+	context.es = context.dx;
+	context.di = 8350;
+	context.dx = context.data;
+	context.ds = context.dx;
+	context.dx = 8469;
+	context.cx = 7;
+scanloop:
+	context.push(context.es);
+	context.push(context.ds);
+	context.push(context.di);
+	context.push(context.dx);
+	context.push(context.cx);
+	openfilenocheck(context);
+	if (context.flags.c()) goto notexist;
+	context.cx = context.pop();
+	context._add(context.ch, 1);
+	context.push(context.cx);
+	context.push(context.di);
+	context.push(context.es);
+	context.dx = context.data;
+	context.ds = context.dx;
+	context.dx = 5862;
+	context.cx = (5958-5862);
+	savefileread(context);
+	context.dx = context.data;
+	context.es = context.dx;
+	context.di = 5912;
+	context.ds = context.pop();
+	context.dx = context.pop();
+	loadseg(context);
+	context.bx = context.data.word(kHandle);
+	closefile(context);
+notexist:
+	context.cx = context.pop();
+	context.dx = context.pop();
+	context.di = context.pop();
+	context.ds = context.pop();
+	context.es = context.pop();
+	context._add(context.dx, 13);
+	context._add(context.di, 17);
+	context._sub(context.cl, 1);
+	if (!context.flags.z()) goto scanloop;
+	context.al = context.ch;
 	return;
 }
 

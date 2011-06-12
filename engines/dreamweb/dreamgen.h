@@ -57,7 +57,6 @@ namespace dreamgen {
 	void loadsecondsample(Context &context);
 	void loadsample(Context &context);
 	void loadspeech(Context &context);
-	void scanfornames(Context &context);
 	void saveseg(Context &context);
 	void loadseg(Context &context);
 	void savefileread(Context &context);
