@@ -168,16 +168,16 @@ int AgiEngine::cond_not(uint8 *p) {
 }
 
 int AgiEngine::cond_or(uint8 *p) {
-	int ec = true;
 	// if or_test is ON and we hit 0xFC, end of OR, then
 	// or is STILL false so break.
 	if (_orTest) {
-		ec = false;
-		_retval = false;
-		_endTest = true;
+		_orTest = false;
+		_testVal &= _orVal;
+	} else {
+		_orTest = true;
+		_orVal = false;
 	}
-	_orTest = true;
-	return ec;
+	return true;
 }
 
 uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
@@ -347,15 +347,16 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 
 int AgiEngine::testIfCode(int lognum) {
 	int ec = true;
-	_retval = true;
 	uint8 op = 0;
-	_notTest = false;
-	_orTest = false;
 	uint16 lastIp = ip;
 	uint8 p[16] = { 0 };
-	_endTest = false;
 
-	while (_retval && !(shouldQuit() || _restartGame) && !_endTest) {
+	_notTest = false;
+	_orTest = false;
+	_endTest = false;
+	_testVal = true;
+
+	while (!(shouldQuit() || _restartGame) && !_endTest) {
 		if (_debug.enabled && (_debug.logic0 || lognum))
 			debugConsole(lognum, lTEST_MODE, NULL);
 
@@ -364,87 +365,30 @@ int AgiEngine::testIfCode(int lognum) {
 		memmove(p, (code + ip), 16);
 
 		ec = (this->*_agiCondCommands[op])(p);
-		if (op == 0xFD || op == 0xFC)
+		if (op == 0xFF || op == 0xFD || op == 0xFC)
 			continue;
 
-		if (!_endTest) {
-//			if (op <= 0x12)
-//				ip += logicNamesTest[op].numArgs;
+		// not is only enabled for 1 test command
+		if (_notTest)
+			ec = !ec;
+		_notTest = false;
 
-			// exchange ec value
-			if (_notTest)
-				ec = !ec;
-
-			// not is only enabled for 1 test command
-			_notTest = false;
-
-			if (_orTest && ec) {
-				// a true inside an OR statement passes
-				// ENTIRE statement scan for end of OR
-
-				// CM: test for opcode < 0xfc changed from 'op' to
-				//     '*(code+ip)', to avoid problem with the 0xfd (NOT)
-				//     opcode byte. Changed a bad ip += ... ip++ construct.
-				//     This should fix the crash with Larry's logic.0 code:
-				//
-				//     if ((isset(4) ||
-				//          !isset(2) ||
-				//          v30 == 2 ||
-				//          v30 == 1)) {
-				//       goto Label1;
-				//     }
-				//
-				//     The bytecode is:
-				//     ff fc 07 04 fd 07 02 01 1e 02 01 1e 01 fc ff
-
-				// find end of OR
-				while (*(code + ip) != 0xFC) {
-					if (*(code + ip) == 0x0E) {	// said
-						ip++;
-
-						// cover count + ^words
-						ip += 1 + ((*(code + ip)) * 2);
-						continue;
-					}
-
-					if (*(code + ip) < 0xFC)
-						ip += logicNamesTest[*(code + ip)].numArgs;
-					ip++;
-				}
-				ip++;
-
-				_orTest = false;
-				_retval = true;
-			} else {
-				_retval = _orTest ? _retval || ec : _retval && ec;
-			}
-		}
+		if (_orTest)
+			_orVal |= ec;
+		else
+			_testVal &= ec;
 	}
 
 	// if false, scan for end of IP?
-	if (_retval)
+	if (_testVal)
 		ip += 2;
-	else {
-		ip = lastIp;
-		while (*(code + ip) != 0xff) {
-			if (*(code + ip) == 0x0e) {
-				ip++;
-				ip += (*(code + ip)) * 2 + 1;
-			} else if (*(code + ip) < 0xfc) {
-				ip += logicNamesTest[*(code + ip)].numArgs;
-				ip++;
-			} else {
-				ip++;
-			}
-		}
-		ip++;		// skip over 0xFF
+	else
 		ip += READ_LE_UINT16(code + ip) + 2;
-	}
 
 	if (_debug.enabled && (_debug.logic0 || lognum))
-		debugConsole(lognum, 0xFF, _retval ? "=true" : "=false");
+		debugConsole(lognum, 0xFF, _testVal ? "=true" : "=false");
 
-	return _retval;
+	return _testVal;
 }
 
 } // End of namespace Agi

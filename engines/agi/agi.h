@@ -1093,8 +1093,9 @@ private:
 	AgiLogic *_curLogic;
 	int _endTest;
 	int _orTest;
+	int _orVal;
 	int _notTest;
-	int _retval;
+	int _testVal;
 	int _timerHack;			// Workaround for timer loop in MH1 logic 153
 
 	void setupOpcodes();
