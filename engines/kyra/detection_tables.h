@@ -54,9 +54,6 @@ namespace {
 #define LOL_DEMO_FLAGS FLAGS(true, true, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
-#define EOB_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_EOB1)
-#define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_EOB2)
-
 const KYRAGameDescription adGameDescs[] = {
 	/* disable these targets until they get supported
 	{
@@ -1329,73 +1326,6 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_KYRA2_DEMO_FLAGS
 	},
 #endif // ENABLE_LOL
-#ifdef ENABLE_EOB
-
-	{
-		{
-			"eob",
-			0,
-			{
-				{ "EOBDATA2.PAK", 0, "feaf0345086b3a1d931352f4b0ad8feb", -1 },
-				{ 0, 0, 0, 0 }
-			},
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIPCSPK
-		},
-		EOB_FLAGS
-	},
-
-	{
-		{
-			"eob",
-			0,
-			{
-				{ "SHINDIA.CPS", 0, "383b0c7ba0903eae5d04cad28ce90aaf", -1 },
-				{ 0, 0, 0, 0 }
-			},
-			Common::DE_DEU,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIPCSPK
-		},
-		EOB_FLAGS
-	},
-
-	{
-		{
-			"eob2",
-			0,
-			{
-				{ "LEVEL15.INF", 0, "10f19eab75c73d0476dc58bcf70fff7a", -1 },
-				{ 0, 0, 0, 0 }
-			},
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIPCSPK
-		},
-		EOB2_FLAGS
-	},
-
-	{
-		{
-			"eob2",
-			0,
-			{
-				{ "LEVEL15.INF", 0, "ce54243ad1ca4447f521340428da2c91", -1 },
-				{ 0, 0, 0, 0 }
-			},
-			Common::DE_DEU,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIPCSPK
-		},
-		EOB2_FLAGS
-	},
-#endif // ENABLE_EOB
-
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0) }
 };
 
@@ -1406,10 +1336,6 @@ const PlainGameDescriptor gameList[] = {
 #ifdef ENABLE_LOL
 	{ "lol", "Lands of Lore: The Throne of Chaos" },
 #endif // ENABLE_LOL
-#ifdef ENABLE_EOB
-	{ "eob", "Eye of the Beholder" },
-	{ "eob2", "Eye of the Beholder II: The Legend of Darkmoon" },
-#endif // ENABLE_EOB
 	{ 0, 0 }
 };
 
