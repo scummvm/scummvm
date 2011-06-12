@@ -1738,6 +1738,12 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 	assert(bakMemory);
 	_engine->_gfxScreen->bitsSave(rect, bakMask, bakMemory);
 
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	// If a graphical debugger overlay is used, hide it here, so that the
+	// results can be drawn.
+	g_system->hideOverlay();
+#endif
+
 	const int paintCount = 3;
 	for (int i = 0; i < paintCount; ++i) {
 		_engine->_gfxScreen->bitsRestore(memoryPtr);
@@ -1756,6 +1762,11 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 	}
 
 	_engine->_gfxPaint16->bitsFree(bakScreen);
+
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	// Show the graphical debugger overlay
+	g_system->showOverlay();
+#endif
 
 	return true;
 }
