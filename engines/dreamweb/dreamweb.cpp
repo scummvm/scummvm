@@ -355,6 +355,9 @@ void multiget(Context &context) {
 		uint8 *dst_p = context.es.ptr(dst + w * y, w);
 		memcpy(dst_p, src_p, w);
 	}
+	context.si += w * h;
+	context.di = src + kScreenwidth * h;
+	context.cx = 0;
 }
 
 void multiput(Context &context) {
@@ -368,6 +371,9 @@ void multiput(Context &context) {
 		uint8 *dst_p = context.es.ptr(dst + kScreenwidth * y, w);
 		memcpy(dst_p, src_p, w);
 	}
+	context.si += w * h;
+	context.di = dst + kScreenwidth * h;
+	context.cx = 0;
 }
 
 void multidump(Context &context) {
@@ -377,11 +383,14 @@ void multidump(Context &context) {
 	unsigned offset = x + y * kScreenwidth;
 	//debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)context.ds, x, y, offset);
 	context.engine->blit(context.ds.ptr(offset, w * h), kScreenwidth, x, y, w, h);
+	context.si = context.di = offset + h * kScreenwidth;
+	context.cx = 0;
 }
 
 void worktoscreen(Context &context) {
 	context.ds = context.data.word(kWorkspace);
 	context.engine->blit(context.ds.ptr(0, 320 * 200), 320, 0, 0, 320, 200);
+	context.cx = 0;
 }
 
 void printundermon(Context &context) {
