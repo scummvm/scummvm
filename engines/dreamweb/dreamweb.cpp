@@ -183,7 +183,7 @@ void DreamWebEngine::openFile(const Common::String &name) {
 
 uint32 DreamWebEngine::skipBytes(uint32 bytes) {
 	if (!_file.seek(bytes, SEEK_CUR))
-		error("seekk failed");
+		error("seek failed");
 	return _file.pos();
 }
 
