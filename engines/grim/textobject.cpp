@@ -55,6 +55,7 @@ TextObject::~TextObject() {
 }
 
 void TextObject::setText(const char *text) {
+	destroy();
 	if (strlen(text) < sizeof(_textID))
 		strcpy(_textID, text);
 	else {
