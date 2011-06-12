@@ -613,8 +613,21 @@ void generalerror(Context &context) {
 	::error("generalerror");
 }
 
+void commandonly(Context &context);
+
 void dosreturn(Context &context) {
-	::error("dosreturn");
+	context._cmp(context.data.byte(kCommandtype), 250);
+	if (context.flags.z()) goto alreadydos;
+	context.data.byte(kCommandtype) = 250;
+	context.al = 46;
+	commandonly(context);
+alreadydos:
+	context.ax = context.data.word(kMousebutton);
+	context._and(context.ax, 1);
+	if (context.flags.z()) return;
+
+	quickquit2(context);
+	quickquit(context);
 }
 
 void set16colpalette(Context &context) {
