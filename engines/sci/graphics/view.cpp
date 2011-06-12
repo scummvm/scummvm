@@ -692,7 +692,7 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 	const int16 celHeight = celInfo->height;
 	const int16 celWidth = celInfo->width;
 	const byte clearKey = celInfo->clearKey;
-	const byte drawMask = (priority == 255) ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
+	const byte drawMask = priority > 15 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
 	int x, y;
 
 	if (_embeddedPal)
@@ -753,7 +753,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	const int16 celHeight = celInfo->height;
 	const int16 celWidth = celInfo->width;
 	const byte clearKey = celInfo->clearKey;
-	const byte drawMask = (priority == 255) ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
+	const byte drawMask = priority > 15 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
 	uint16 scalingX[640];
 	uint16 scalingY[480];
 	int16 scaledWidth, scaledHeight;
