@@ -2760,7 +2760,7 @@ continuewalk:
 	context._add(context.ax, context.ax);
 	context.push(context.es);
 	context.push(context.bx);
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context.bx = 7944;
 	context._add(context.bx, context.ax);
@@ -9807,14 +9807,14 @@ void getdestinfo(Context & context) {
 	context.al = context.data.byte(kDestpos);
 	context.ah = 0;
 	context.push(context.ax);
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context.si = 7782;
 	context._add(context.si, context.ax);
 	context.cl = context.es.byte(context.si);
 	context.ax = context.pop();
 	context.push(context.cx);
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context.si = 7798;
 	context._add(context.si, context.ax);
@@ -9942,7 +9942,7 @@ notrav:
 void getlocation(Context & context) {
 	context.ah = 0;
 	context.bx = context.ax;
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context._add(context.bx, 7782);
 	context.al = context.es.byte(context.bx);
@@ -9952,7 +9952,7 @@ void getlocation(Context & context) {
 void setlocation(Context & context) {
 	context.ah = 0;
 	context.bx = context.ax;
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context._add(context.bx, 7782);
 	context.es.byte(context.bx) = 1;
@@ -9999,7 +9999,7 @@ clearedlocations:
 	context.ax = context.pop();
 	context.ah = 0;
 	context.bx = context.ax;
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context._add(context.bx, 7782);
 	context.es.byte(context.bx) = 0;
@@ -11303,7 +11303,7 @@ powerok:
 	context.data.byte(kPointerpower) = 0;
 nodream7:
 	getanyad(context);
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.ds = context.dx;
 	context.si = 2895;
 checkuselist:
@@ -12248,7 +12248,7 @@ void opensarters(Context & context) {
 }
 
 void isitright(Context & context) {
-	context.bx = context.ds;
+	context.bx = context.data;
 	context.es = context.bx;
 	context.bx = 8344;
 	context._cmp(context.es.byte(context.bx+0), context.al);
@@ -14301,7 +14301,7 @@ void addtopresslist(Context & context) {
 	context.al = 0;
 not10:
 	context.bx = context.data.word(kPresspointer);
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context._add(context.bx, 8344);
 	context.es.byte(context.bx) = context.al;
@@ -15810,7 +15810,7 @@ loadops:
 	context._cmp(context.data.byte(kGetback), 2);
 	if (context.flags.z()) goto quitloaded;
 	getridoftemp(context);
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context.bx = 7750;
 	startloading(context);
@@ -15939,7 +15939,7 @@ alreadyactsave:
 	context.ax = context.data.word(kMousebutton);
 	context._and(context.ax, 1);
 	if (context.flags.z()) goto noactsave;
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.ds = context.dx;
 	context.si = 8350;
 	context.al = context.data.byte(kCurrentslot);
@@ -16001,7 +16001,7 @@ alreadyactload:
 	if (context.flags.z()) goto notactload;
 	context._cmp(context.ax, 1);
 	if (!context.flags.z()) goto notactload;
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.ds = context.dx;
 	context.si = 8350;
 	context.al = context.data.byte(kCurrentslot);
@@ -16075,7 +16075,7 @@ void getnamepos(Context & context) {
 	context.ah = 0;
 	context.cx = 17;
 	context._mul(context.cx);
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context.bx = 8350;
 	context._add(context.bx, context.ax);
@@ -16223,7 +16223,7 @@ nomatchslot:
 }
 
 void shownames(Context & context) {
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context.si = 8350+1;
 	context.di = (60)+21;
@@ -16309,7 +16309,7 @@ void oldtonames(Context & context) {
 }
 
 void makeheader(Context & context) {
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context.di = 5912;
 	context.ax = 17;
@@ -16440,7 +16440,7 @@ loadops:
 	context._cmp(context.data.byte(kGetback), 2);
 	if (context.flags.z()) goto quitloaded;
 	getridoftemp(context);
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context.bx = 7750;
 	startloading(context);
@@ -18808,7 +18808,7 @@ nextcheck2:
 
 void bresenhams(Context & context) {
 	workoutframes(context);
-	context.dx = context.ds;
+	context.dx = context.data;
 	context.es = context.dx;
 	context.di = 7944;
 	context.si = 1;

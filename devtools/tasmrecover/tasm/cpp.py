@@ -125,7 +125,7 @@ namespace %s {
 
 		m = re.match(r'seg\s+(.*?)$', expr)
 		if m is not None:
-			return "context.ds"
+			return "context.data"
 		
 		match_id = True
 		m = re.match(r'offset\s+(.*?)$', expr)
