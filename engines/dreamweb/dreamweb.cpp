@@ -102,13 +102,18 @@ void DreamWebEngine::waitForVSync() {
 	_system->updateScreen();
 }
 
+void DreamWebEngine::quit() {
+	warning("Engine should quit gracefully (but doesn't yet)");
+	g_system->quit();
+}
+
 void DreamWebEngine::processEvents() {
 	Common::EventManager *event_manager = _system->getEventManager();
-	Common::Event event;
 	if (event_manager->shouldQuit()) {
-		warning("Engine should quit gracefully (but doesn't yet)");
-		g_system->quit();
+		quit();
+		return;
 	}
+	Common::Event event;
 	while (event_manager->pollEvent(event)) {
 		switch(event.type) {
 		case Common::EVENT_LBUTTONDOWN:
@@ -407,13 +412,11 @@ void randomnumber(Context &context) {
 }
 
 void quickquit(Context &context) {
-	assert(0);
-	::error("quickquit");
+	context.engine->quit();
 }
 
 void quickquit2(Context &context) {
-	assert(0);
-	::error("quickquit2");
+	context.engine->quit();
 }
 
 void keyboardread(Context &context) {

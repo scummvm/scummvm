@@ -97,6 +97,8 @@ public:
 
 	void setShakePos(int pos) { _system->setShakePos(pos); }
 
+	void quit();
+
 private:
 
 	void keyPressed(uint16 ascii);
