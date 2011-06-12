@@ -171,8 +171,8 @@ struct Flags {
 	inline bool c() const	{ return _c; }
 	inline bool s() const	{ return _s; }
 
-	inline bool l() const	{ return _o; }
-	inline bool le() const	{ return _o || _z; }
+	inline bool l() const	{ return _o != _s; }
+	inline bool le() const	{ return _o != _s|| _z; }
 	
 	inline void update_zs(uint8 v) {
 		_s = v & 0x80;
@@ -184,12 +184,14 @@ struct Flags {
 		_z = v == 0;
 	}
 
-	inline void update_o(uint8 v, uint8 old) {
-		_o = (old & 0x80) != (v & 0x80);
+	inline void update_o(uint8 v, uint8 a, uint8 b) {
+		uint8 s1 = a & 0x80, s2 = b & 0x80;
+		_o = (s1 == s2) && (v & 0x80) != s1;
 	}
 
-	inline void update_o(uint16 v, uint16 old) {
-		_o = (old & 0x8000) != (v & 0x8000);
+	inline void update_o(uint16 v, uint16 a, uint16 b) {
+		uint16 s1 = a & 0x8000, s2 = b & 0x8000;
+		_o = (s1 == s2) && (v & 0x8000) != s1;
 	}
 };
 
@@ -274,7 +276,7 @@ public:
 
 	inline void _add(uint8 &dst, uint8 src) {
 		unsigned r = (unsigned)dst + src;
-		flags.update_o((uint8)r, dst);
+		flags.update_o((uint8)r, dst, src);
 		flags._c = r >= 0x100;
 		dst = r;
 		flags.update_zs(dst);
@@ -282,46 +284,46 @@ public:
 
 	inline void _add(uint16 &dst, uint16 src) {
 		unsigned r = (unsigned)dst + src;
-		flags.update_o((uint16)r, dst);
+		flags.update_o((uint16)r, dst, src);
 		flags._c = r >= 0x10000;
 		dst = r;
 		flags.update_zs(dst);
 	}
 
 	inline void _sub(uint8 &dst, uint8 src) {
-		flags.update_o(uint8(dst - src), dst);
+		flags.update_o(uint8(dst - src), dst, (uint8)-src);
 		flags._c = dst < src;
 		dst -= src;
 		flags.update_zs(dst);
 	}
 
 	inline void _sub(uint16 &dst, uint16 src) {
-		flags.update_o(uint16(dst - src), dst);
+		flags.update_o(uint16(dst - src), dst, (uint16)-src);
 		flags._c = dst < src;
 		dst -= src;
 		flags.update_zs(dst);
 	}
 
 	inline void _inc(uint8 &dst) {
-		flags.update_o((uint8)(dst + 1), dst);
+		flags.update_o((uint8)(dst + 1), dst, 1);
 		++dst;
 		flags.update_zs(dst);
 	}
 
 	inline void _inc(uint16 &dst) {
-		flags.update_o((uint16)(dst + 1), dst);
+		flags.update_o((uint16)(dst + 1), dst, 1);
 		++dst;
 		flags.update_zs(dst);
 	}
 
 	inline void _dec(uint8 &dst) {
-		flags.update_o(uint8(dst - 1), dst);
+		flags.update_o(uint8(dst - 1), dst, 1);
 		--dst;
 		flags.update_zs(dst);
 	}
 
 	inline void _dec(uint16 &dst) {
-		flags.update_o(uint16(dst - 1), dst);
+		flags.update_o(uint16(dst - 1), dst, 1);
 		--dst;
 		flags.update_zs(dst);
 	}
