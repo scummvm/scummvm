@@ -85,15 +85,17 @@ public:
 	void fadeDos();
 	void blit(const uint8 *src, int pitch, int x, int y, int w, int h);
 	void cls();
-	
+
 	void getPalette(uint8 *data, uint start, uint count);
 	void setPalette(const uint8 *data, uint start, uint count);
-	
+
 	void openSaveFileForWriting(const Common::String &name);
 	uint writeToSaveFile(const uint8 *data, uint size);
 
 	bool openSaveFileForReading(const Common::String &name);
 	uint readFromSaveFile(uint8 *data, uint size);
+
+	void setShakePos(int pos) { _system->setShakePos(pos); }
 
 private:
 
@@ -103,11 +105,11 @@ private:
 	Common::RandomSource			_rnd;
 	Common::Point					_mouse;
 	unsigned						_mouseState;
-	
+
 	Common::File _file;
 	Common::OutSaveFile *_outSaveFile;
 	Common::InSaveFile *_inSaveFile;
-	
+
 	dreamgen::Context _context;
 };
 

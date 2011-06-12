@@ -683,7 +683,32 @@ void fadedos(Context &context) {
 }
 
 void doshake(Context &context) {
-	//warning("doshake: STUB");
+	uint8 &counter = context.data.byte(kShakecounter);
+	context._cmp(counter, 48);
+	if (context.flags.z())
+		return;
+
+	context._add(counter, 1);
+	static const int shakeTable[] = {
+		0, -2,  3, -2,  0,  2,  4, -1,
+		1, -3,  3,  2,  0, -2,  3, -2,
+		0,  2,  4, -1,  1, -3,  3,  2,
+		0, -2,  3, -2,  0,  2,  4, -1,
+
+		1, -3,  3,  2,  0, -2,  3, -2,
+		0,  2,  4, -1,  1, -3,  3,  2,
+		0, -2,  3, -2,  0,  2,  4, -1,
+		1, -3,  3,  2,  0, -2,  3, -2,
+
+		0,  2,  4, -1,  1, -3,  3,  2,
+		0, -2,  3, -2,  0,  2,  4, -1,
+		1, -3,  3,  2,  0, -2,  3, -2,
+		0,  2,  4, -1,  1, -3,  3,  2,
+
+		0, -2,  3, -2,  0,  2,  4, -1,
+		1, -3,  3,  0,
+	};
+	context.engine->setShakePos(shakeTable[counter]);
 }
 
 void vsync(Context &context) {
