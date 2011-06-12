@@ -51,7 +51,6 @@ class DreamWebEngine : public Engine {
 private:
 	DreamWebConsole			*_console;
 	bool					_vSyncInterrupt;
-	static DreamWebEngine	*_instance;
 
 protected:
 	// Engine APIs
@@ -61,7 +60,6 @@ protected:
 public:
 	DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc);
 	virtual ~DreamWebEngine();
-	static DreamWebEngine* instance() { return _instance; }
 
 	void setVSyncInterrupt(bool flag);
 	void waitForVSync();

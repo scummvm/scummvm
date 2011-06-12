@@ -50,10 +50,10 @@ namespace dreamgen {
 
 namespace DreamWeb {
 
-DreamWebEngine *DreamWebEngine::_instance;
-
 DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) : 
 	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb") {
+
+	_context.engine = this;
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
@@ -64,7 +64,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_console = 0;
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
-	_instance = this;
 	_outSaveFile = 0;
 	_inSaveFile = 0;
 }
@@ -332,10 +331,6 @@ void DreamWebEngine::cls() {
 
 namespace dreamgen {
 
-static inline DreamWeb::DreamWebEngine *engine() {
-	return DreamWeb::DreamWebEngine::instance();
-}
-
 void multiget(Context &context) {
 	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
 	unsigned src = (uint16)context.di + (uint16)context.bx * kScreenwidth;
@@ -369,12 +364,12 @@ void multidump(Context &context) {
 	int x = (int16)context.di, y = (int16)context.bx;
 	unsigned offset = x + y * kScreenwidth;
 	//debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)context.ds, x, y, offset);
-	engine()->blit(context.ds.ptr(offset, w * h), kScreenwidth, x, y, w, h);
+	context.engine->blit(context.ds.ptr(offset, w * h), kScreenwidth, x, y, w, h);
 }
 
 void worktoscreen(Context &context) {
 	context.ds = context.data.word(kWorkspace);
-	engine()->blit(context.ds.ptr(0, 320 * 200), 320, 0, 0, 320, 200);
+	context.engine->blit(context.ds.ptr(0, 320 * 200), 320, 0, 0, 320, 200);
 }
 
 void printundermon(Context &context) {
@@ -382,7 +377,7 @@ void printundermon(Context &context) {
 }
 
 void cls(Context &context) {
-	engine()->cls();
+	context.engine->cls();
 }
 
 void frameoutnm(Context &context) {
@@ -408,7 +403,7 @@ void seecommandtail(Context &context) {
 }
 
 void randomnumber(Context &context) {
-	context.al = engine()->randomNumber();
+	context.al = context.engine->randomNumber();
 }
 
 void quickquit(Context &context) {
@@ -435,25 +430,25 @@ void readfromfile(Context &context) {
 	uint16 dst_offset = context.dx;
 	uint16 size = context.cx;
 	debug(1, "readfromfile(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
-	context.ax = engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
+	context.ax = context.engine->readFromFile(context.ds.ptr(dst_offset, size), size);
 	context.flags._c = false;
 }
 
 void closefile(Context &context) {
-	engine()->closeFile();
+	context.engine->closeFile();
 	context.data.byte(kHandle) = 0;
 }
 
 void openforsave(Context &context) {
 	const char *name = (const char *)context.ds.ptr(context.dx, 13);
 	debug(1, "openforsave(%s)", name);
-	engine()->openSaveFileForWriting(name);
+	context.engine->openSaveFileForWriting(name);
 }
 
 void openfilenocheck(Context &context) {
 	const char *name = (const char *)context.ds.ptr(context.dx, 13);
 	debug(1, "checksavefile(%s)", name);
-	bool ok = engine()->openSaveFileForReading(name);
+	bool ok = context.engine->openSaveFileForReading(name);
 	context.flags._c = !ok;
 }
 
@@ -464,7 +459,7 @@ void openfile(Context &context) {
 	while((c = context.cs.byte(name_ptr++)) != 0)
 		name += (char)c;
 	debug(1, "opening file: %s", name.c_str());
-	engine()->openFile(name);
+	context.engine->openFile(name);
 	context.cs.word(kHandle) = 1; //only one handle
 	context.flags._c = false;
 }
@@ -478,13 +473,13 @@ void dontloadseg(Context &context) {
 	context._add(context.di, 2);
 	context.dx = context.ax;
 	context.cx = 0;
-	unsigned pos = engine()->skipBytes(context.dx);
+	unsigned pos = context.engine->skipBytes(context.dx);
 	context.dx = pos >> 16;
 	context.ax = pos & 0xffff;
 }
 
 void mousecall(Context &context) {
-	engine()->mouseCall();
+	context.engine->mouseCall();
 }
 
 void setmouse(Context &context) {
@@ -624,11 +619,11 @@ void saveseg(Context &context) {
 }
 
 void savefilewrite(Context &context) {
-	context.ax = engine()->writeToSaveFile(context.ds.ptr(context.dx, context.cx), context.cx);
+	context.ax = context.engine->writeToSaveFile(context.ds.ptr(context.dx, context.cx), context.cx);
 }
 
 void savefileread(Context &context) {
-	context.ax = engine()->readFromSaveFile(context.ds.ptr(context.dx, context.cx), context.cx);
+	context.ax = context.engine->readFromSaveFile(context.ds.ptr(context.dx, context.cx), context.cx);
 }
 
 void loadseg(Context &context) {
@@ -639,7 +634,7 @@ void loadseg(Context &context) {
 	uint16 size = context.ax;
 
 	debug(1, "loadseg(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
-	context.ax = engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
+	context.ax = context.engine->readFromFile(context.ds.ptr(dst_offset, size), size);
 	context.flags._c = false;
 }
 
@@ -680,11 +675,11 @@ void mode640x480(Context &context) {
 }
 
 void showgroup(Context &context) {
-	engine()->setPalette();
+	context.engine->setPalette();
 }
 
 void fadedos(Context &context) {
-	engine()->fadeDos();
+	context.engine->fadeDos();
 }
 
 void doshake(Context &context) {
@@ -692,12 +687,12 @@ void doshake(Context &context) {
 }
 
 void vsync(Context &context) {
-	engine()->waitForVSync();
+	context.engine->waitForVSync();
 }
 
 void setmode(Context &context) {
 	vsync(context);
-	engine()->setGraphicsMode();
+	context.engine->setGraphicsMode();
 }
 
 void readoneblock(Context &context) {

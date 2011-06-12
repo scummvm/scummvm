@@ -9,6 +9,10 @@
 #include "common/list.h"
 #include "common/ptr.h"
 
+namespace DreamWeb {
+	class DreamWebEngine;
+}
+
 namespace dreamgen {
 
 //fixme: name clash
@@ -195,10 +199,12 @@ class Context {
 
 	typedef Common::List<uint16> FreeSegmentList;
 	FreeSegmentList _freeSegments;
-	
+
 public:
+	DreamWeb::DreamWebEngine *engine;
+
 	enum { kDefaultDataSegment = 0x1000 };
-	
+
 	Register ax, dx, bx, cx, si, di;
 	LowPartOfRegister	al;
 	HighPartOfRegister	ah;
@@ -208,12 +214,12 @@ public:
 	HighPartOfRegister	ch;
 	LowPartOfRegister	dl;
 	HighPartOfRegister	dh;
-	
+
 	SegmentRef cs, ds, es, data;
 	//data == fake segment register always pointing to data segment
 	Flags flags;
 
-	inline Context(): al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), 
+	inline Context(): engine(0), al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), 
 		cs(this), ds(this), es(this), data(this) {
 		_segments[kDefaultDataSegment] = SegmentPtr(new Segment());
 		cs.reset(kDefaultDataSegment);
