@@ -181,6 +181,12 @@ void DreamWebEngine::openFile(const Common::String &name) {
 	}
 }
 
+uint32 DreamWebEngine::skipBytes(uint32 bytes) {
+	if (!_file.seek(bytes, SEEK_CUR))
+		error("seekk failed");
+	return _file.pos();
+}
+
 uint32 DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
 	processEvents();
 	if (!_file.isOpen())
@@ -427,7 +433,13 @@ void createfile(Context &context) {
 }
 
 void dontloadseg(Context &context) {
-	::error("dontloadseg");
+	context.ax = context.es.word(context.di);
+	context._add(context.di, 2);
+	context.dx = context.ax;
+	context.cx = 0;
+	unsigned pos = engine()->skipBytes(context.dx);
+	context.dx = pos >> 16;
+	context.ax = pos & 0xffff;
 }
 
 void mousecall(Context &context) {

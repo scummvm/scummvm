@@ -80,6 +80,7 @@ public:
 
 	void openFile(const Common::String &name);
 	uint32 readFromFile(uint8 *dst, unsigned size);
+	uint32 skipBytes(uint32 bytes);
 	void closeFile();
 
 	void mouseCall(); //fill mouse pos and button state
