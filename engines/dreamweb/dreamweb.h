@@ -96,6 +96,7 @@ public:
 	uint readFromSaveFile(uint8 *data, uint size);
 
 	void setShakePos(int pos) { _system->setShakePos(pos); }
+	void printUnderMonitor();
 
 	void quit();
 

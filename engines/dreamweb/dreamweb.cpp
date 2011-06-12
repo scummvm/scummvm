@@ -312,6 +312,29 @@ void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int 
 	_system->copyRectToScreen(src, pitch, x, y, w, h);
 }
 
+void DreamWebEngine::printUnderMonitor() {
+	_context.di = dreamgen::kScreenwidth * 43 + 76;
+	_context.si = _context.di + 8 * dreamgen::kScreenwidth;
+	_context.es = _context.data.word(dreamgen::kWorkspace);
+
+	Graphics::Surface *s = _system->lockScreen();
+	if (!s)
+		error("lockScreen failed");
+
+	for(uint y = 0; y < 104; ++y) {
+		uint8 *src = (uint8 *)s->getBasePtr(76 + 8, 43 + y);
+		uint8 *dst = _context.es.ptr(_context.di, 170);
+		for(uint x = 0; x < 170; ++x) {
+			if (*src < 231)
+				*dst++ = *src++;
+		}
+		_context._add(_context.di, dreamgen::kScreenwidth);
+		_context._add(_context.si, dreamgen::kScreenwidth);
+	}
+	_system->unlockScreen();
+}
+
+
 void DreamWebEngine::cls() {
 	_system->fillScreen(0);
 }
@@ -372,7 +395,7 @@ void worktoscreen(Context &context) {
 }
 
 void printundermon(Context &context) {
-	warning("printundermon: STUB");
+	context.engine->printUnderMonitor();
 }
 
 void cls(Context &context) {
