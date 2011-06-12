@@ -17870,6 +17870,9 @@ norun:
 }
 
 void checkcoords(Context & context) {
+	context._cmp(context.data.byte(kNewlocation), 255);
+	if (context.flags.z()) goto loop048;
+	return;
 loop048:
 	context.ax = context.cs.word(context.bx);
 	context._cmp(context.ax, 0x0ffff);
