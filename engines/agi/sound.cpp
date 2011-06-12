@@ -42,7 +42,7 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, S
 	uint16 type = READ_LE_UINT16(data);
 
 	// For V1 sound resources
-	if ((type & 0xFF) == 0x01)
+	if (type != AGI_SOUND_SAMPLE && (type & 0xFF) == 0x01)
 		return new PCjrSound(data, len, resnum, manager);
 
 	switch (type) { // Create a sound object based on the type
