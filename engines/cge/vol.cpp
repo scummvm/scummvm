@@ -25,12 +25,12 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include	"cge/vol.h"
+#include "cge/vol.h"
 #include "common/system.h"
 #include "common/str.h"
-#include	<stdlib.h>
-#include	<string.h>
-#include	<errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 namespace CGE {
 

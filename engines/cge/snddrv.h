@@ -94,13 +94,13 @@ struct SMPINFO
 // *  Data                                              *
 // ******************************************************
 // driver info
-extern  DRVINFO      SNDDrvInfo;
+extern DRVINFO SNDDrvInfo;
 
 // midi player flag (1 means we are playing)
-extern  uint16         MIDIPlayFlag;
+extern uint16 MIDIPlayFlag;
 
 // midi song end flag (1 means we have crossed end mark)
-extern  uint16         MIDIEndFlag;
+extern uint16 MIDIEndFlag;
 
 // ******************************************************
 // *  Driver Code                                       *

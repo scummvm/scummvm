@@ -92,7 +92,7 @@ FLY::FLY (BITMAP ** shpl)
 : SPRITE(shpl), Tx(0), Ty(0)
 {
   Step(new_random(2));
-  Goto(L+new_random(R-L-W), T+new_random(B-T-H));
+  Goto(L + new_random(R - L - W), T + new_random(B - T - H));
 }
 
 
