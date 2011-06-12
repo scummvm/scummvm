@@ -174,12 +174,13 @@ Common::Error DreamWebEngine::run() {
 
 void DreamWebEngine::openFile(const Common::String &name) {
 	processEvents();
-	if (_file.isOpen()) {
-		_file.close();
-	}
-	if (!_file.open(name)) {
-		error("cannot open file %s", name.c_str());
-	}
+	closeFile();
+	if (_file.open(name))
+		return;
+	_inSaveFile = _system->getSavefileManager()->openForLoading(name);
+	if (_inSaveFile)
+		return;
+	error("cannot open file %s", name.c_str());
 }
 
 uint32 DreamWebEngine::skipBytes(uint32 bytes) {
