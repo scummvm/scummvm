@@ -36,10 +36,6 @@
 #include "dreamweb/dreamgen.h"
 #include "dreamweb/console.h"
 
-namespace Graphics {
-	class Surface;
-}
-
 namespace DreamWeb {
 
 // Engine Debug Flags
@@ -79,7 +75,7 @@ public:
 	uint8 randomNumber() { return _rnd.getRandomNumber(255); }
 
 	void openFile(const Common::String &name);
-	uint32 readFromFile(uint8 *dst, unsigned size);
+	uint32 readFromFile(uint8 *data, unsigned size);
 	uint32 skipBytes(uint32 bytes);
 	void closeFile();
 

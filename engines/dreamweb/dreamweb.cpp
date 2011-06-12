@@ -29,7 +29,7 @@
 #include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/func.h"
-#include "common/iff_container.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/timer.h"
 #include "common/util.h"
@@ -289,7 +289,6 @@ void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int 
 void DreamWebEngine::cls() {
 	_system->fillScreen(0);
 }
-
 
 } // End of namespace DreamWeb
 
@@ -585,6 +584,12 @@ void saveseg(Context &context) {
 	::error("saveseg");
 }
 
+void savefilewrite(Context &context) {
+}
+
+void savefileread(Context &context) {
+}
+
 void loadseg(Context &context) {
 	context.ax = context.es.word(context.di);
 	context.di += 2;
@@ -595,14 +600,6 @@ void loadseg(Context &context) {
 	debug(1, "loadseg(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
 	context.ax = engine()->readFromFile(context.ds.ptr(dst_offset, size), size);
 	context.flags._c = false;
-}
-
-void loadposition(Context &context) {
-	::error("loadposition");
-}
-
-void saveposition(Context &context) {
-	::error("saveposition");
 }
 
 void error(Context &context) {

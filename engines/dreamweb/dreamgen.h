@@ -60,8 +60,8 @@ namespace dreamgen {
 	void scanfornames(Context &context);
 	void saveseg(Context &context);
 	void loadseg(Context &context);
-	void loadposition(Context &context);
-	void saveposition(Context &context);
+	void savefileread(Context &context);
+	void savefilewrite(Context &context);
 	void error(Context &context);
 	void generalerror(Context &context);
 	void dosreturn(Context &context);
