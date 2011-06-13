@@ -10330,6 +10330,8 @@ endmon:
 	playchannel1(context);
 	context.data.byte(kManisoffscreen) = 0;
 	restoreall(context);
+	redrawmainscrn(context);
+	worktoscreenm(context);
 	{assert(stack_depth == context.stack.size()); return; }
 }
 
@@ -20819,7 +20821,6 @@ dontrestore:
 
 void restoreall(Context & context) {
 	uint stack_depth = context.stack.size();
-	clearsprites(context);
 	context.al = context.data.byte(kLocation);
 	getroomdata(context);
 	context.dx = context.bx;
