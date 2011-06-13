@@ -199,7 +199,7 @@ void Say(const char *txt, SPRITE *spr) {
 		}
 		x = (east) ? (spr->X + spr->W - 2) : (spr->X + 2 - sw);
 		if (spr->Ref == 1)
-			x += (east) ? -10 : 10; // Hero
+			x += ((east) ? -10 : 10); // Hero
 
 		Talk->Flags.Kill = true;
 		Talk->Flags.BDel = true;

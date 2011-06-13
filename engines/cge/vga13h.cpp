@@ -279,9 +279,9 @@ extern "C" void TimerProc (void)
 
 
 void ENGINE::NewTimer(...) {
+	/*
 	static SPRITE *spr;
 	static uint8 run = 0, cntr1 = TMR_RATE1, cntr2 = TMR_RATE2;
-	/*
 	___1152_Hz___:
 
 	SNDMIDIPlay();
@@ -502,9 +502,7 @@ SPRITE *SPRITE::Expand(void) {
 			    neacnt = 0,
 			    takcnt = 0,
 			    maxnow = 0,
-			    maxnxt = 0,
-			    lcnt   = 0,
-			    len;
+			    maxnxt = 0;
 
 			SNAIL::COM *nea = NULL;
 			SNAIL::COM *tak = NULL;
@@ -513,9 +511,9 @@ SPRITE *SPRITE::Expand(void) {
 				INI_FILE sprf(fname);
 				if (! OK(sprf))
 					error("Bad SPR [%s]", fname);
-
+				int len = 0, lcnt = 0;
 				while ((len = sprf.Read((uint8 *)line)) != 0) {
-					++ lcnt;
+					++lcnt;
 					if (len && line[len - 1] == '\n')
 						line[-- len] = '\0';
 					if (len == 0 || *line == '.')

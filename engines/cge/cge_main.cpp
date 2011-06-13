@@ -668,7 +668,7 @@ static void MiniStep(int stp) {
 
 
 static void PostMiniStep(int stp) {
-	static int recent = -2;
+	//static int recent = -2;
 	//TODO Change the SNPOST message send to a special way to send function pointer
 	//if (MiniCave && stp != recent) SNPOST_(SNEXEC, -1, recent = stp, (void *)&MiniStep);
 	warning("STUB: PostMiniStep()");
@@ -843,7 +843,6 @@ void SwitchCave(int cav) {
 void SYSTEM::Touch(uint16 mask, int x, int y) {
 	static int pp = 0;
 	void SwitchCave(int cav);
-	int cav = 0;
 
 	FunTouch();
 
@@ -968,7 +967,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 	} else {
 		if (Startup)
 			return;
-
+		int cav = 0;
 		InfoLine.Update(NULL);
 		if (y >= WORLD_HIG) {
 			if (x < BUTTON_X) {                           // select cave?
@@ -998,7 +997,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 #ifdef  DEBUG
 			if (!HorzLine.Flags.Hide) {
 				if (y >= MAP_TOP && y < MAP_TOP + MAP_HIG) {
-					signed char x1, z1;
+					int8 x1, z1;
 					XZ(x, y).Split(x1, z1);
 					CLUSTER::Map[z1][x1] = 1;
 					SetMapBrick(x1, z1);
