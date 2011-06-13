@@ -249,7 +249,7 @@ void DreamWebEngine::keyPressed(uint16 ascii) {
 		ascii = (ascii - 'a') + 'A';
 	debug(1, "key pressed = %04x", ascii);
 	uint8* keybuf = _context.data.ptr(5715, 16); //fixme: some hardcoded offsets are not added as consts
-	uint16 in = (_context.data.word(dreamgen::kBufferin) + 1) % 0x0f;
+	uint16 in = (_context.data.word(dreamgen::kBufferin) + 1) & 0x0f;
 	uint16 out = _context.data.word(dreamgen::kBufferout);
 	if (in == out) {
 		warning("keyboard buffer is full");
@@ -286,10 +286,10 @@ void DreamWebEngine::setGraphicsMode() {
 }
 
 void DreamWebEngine::fadeDos() {
+	_context.ds = _context.es = _context.data.word(dreamgen::kBuffers);
 	return; //fixme later
 	waitForVSync();
 	//processEvents will be called from vsync
-	_context.ds = _context.es = _context.data.word(dreamgen::kBuffers);
 	uint8 *dst = _context.es.ptr(dreamgen::kStartpal, 768);
 	getPalette(dst, 0, 64);
 	for(int fade = 0; fade < 64; ++fade) {
