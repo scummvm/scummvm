@@ -49,34 +49,15 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 
 #include "dreamweb/detection_tables.h"
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)DreamWeb::gameDescriptions,
-	// Size of that superset structure
-	sizeof(DreamWeb::DreamWebGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	dreamWebGames,
-	// Structure for autoupgrading obsolete targets
-	obsoleteGameIDsTable,
-	// Name of single gameid (optional)
-	"dreamweb",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOMIDI,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class DreamWebMetaEngine : public AdvancedMetaEngine {
 public:
-	DreamWebMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	DreamWebMetaEngine():
+	AdvancedMetaEngine(DreamWeb::gameDescriptions, 
+	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames) {
+		params.obsoleteList = obsoleteGameIDsTable;
+		params.singleid = "dreamweb";
+		params.guioptions = Common::GUIO_NOMIDI;
+	}
 
 	virtual const char *getName() const {
 		return "DreamWeb engine";
