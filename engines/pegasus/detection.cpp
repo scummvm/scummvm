@@ -83,37 +83,15 @@ static const PegasusGameDescription gameDescriptions[] = {
 
 } // End of namespace Pegasus
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Pegasus::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Pegasus::PegasusGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	pegasusGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"pegasus",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game)
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
 
 class PegasusMetaEngine : public AdvancedMetaEngine {
 public:
-	PegasusMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	PegasusMetaEngine() : AdvancedMetaEngine(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
+		params.singleid = "pegasus";
+	}
 
 	virtual const char *getName() const {
-		return "Pegasus Prime Engine";
+		return "The Journeyman Project: Pegasus Prime";
 	}
 
 	virtual const char *getOriginalCopyright() const {
