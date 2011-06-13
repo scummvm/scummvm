@@ -2192,6 +2192,7 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -Wl,--stack,65536"
 			_tremolo=yes
 			_backend="wince"
+			_detectlang=yes
 			_mt32emu=no
 			_port_mk="backends/platform/wince/wince.mk"
 			;;
@@ -3083,12 +3084,14 @@ if test "$_translation" = no ; then
 else
 	echo_n "yes ("
 
-	cat > $TMPC << EOF
+	if test "$_detectlang" != yes ; then
+		cat > $TMPC << EOF
 #include <locale.h>
 int main(void) { setlocale(LC_ALL, ""); return 0; }
 EOF
-	_detectlang=no
-	cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+		_detectlang=no
+		cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+	fi
 
 	define_in_config_h_if_yes $_detectlang 'USE_DETECTLANG'
 	if test "$_detectlang" = yes ; then

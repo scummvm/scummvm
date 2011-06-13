@@ -53,6 +53,8 @@ public:
 
 	// Overloaded from SDL backend
 	void quit();
+	virtual Common::String getSystemLanguage() const;
+
 	// Overloaded from OSystem
 	void engineInit();
 	void getTimeAndDate(TimeDate &t) const;
