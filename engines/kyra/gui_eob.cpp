@@ -834,6 +834,29 @@ int EobCoreEngine::clickedCharPortraitDefault(Button *button) {
 }
 
 int EobCoreEngine::clickedCamp(Button *button) {
+	gui_updateControls();
+	disableSysTimer(2);
+	int cd = _screen->curDimIndex();
+
+	for (int i = 0; i < 6; i++) {
+		if (!testCharacter(i, 1))
+			continue;
+		_characters[i].damageTaken = 0;
+		_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = 0;
+		gui_drawCharPortraitWithStats(i);
+	}
+
+	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 14, Screen::CR_NO_P_CHECK);
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+	
+
+	_screen->setFont(of);
+	_screen->setCurPage(0);
+	_screen->setScreenDim(cd);
+
+	enableSysTimer(2);	
+	updateCharacterEvents(true);
+
 	return button->arg;
 }
 
@@ -1317,13 +1340,14 @@ void EobCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex
 
 		case 7:
 			// Food ration
-			/* don't do anything if mouse control is enabled */
-			//eatItemInHand(charIndex);
+			// Don't do anything if mouse control is enabled (we don't support anything else)
+			// eatItemInHand(charIndex);
 			break;
 
 		case 10:
 			if (_flags.gameID == GI_EOB1)
 				vl += _clericSpellOffset;
+			// drop through
 		case 9:
 			// Mage/Cleric Scroll
 			if (!_currentControlMode)

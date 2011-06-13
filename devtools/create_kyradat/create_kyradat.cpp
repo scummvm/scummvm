@@ -251,6 +251,26 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseCancelStrings, kTypeStringList, true },
 	{ kEobBaseAbortStrings, kTypeStringList, true },
 
+	{ kEobBaseMenuStringsMain, kTypeStringList, true },
+	{ kEobBaseMenuStringsSaveLoad, kTypeStringList, true },
+	{ kEobBaseMenuStringsOnOff, kTypeStringList, true },
+	{ kEobBaseMenuStringsSpells, kTypeStringList, true },
+	{ kEobBaseMenuStringsRest, kTypeStringList, true },
+	{ kEobBaseMenuStringsDrop, kTypeStringList, true },
+	{ kEobBaseMenuStringsExit, kTypeStringList, true },
+	{ kEobBaseMenuStringsStarve, kTypeStringList, true },
+	{ kEobBaseMenuStringsScribe, kTypeStringList, true },
+	{ kEobBaseMenuStringsDrop2, kTypeStringList, true },
+	{ kEobBaseMenuStringsHead, kTypeStringList, true },
+	{ kEobBaseMenuStringsPoison, kTypeStringList, true },
+	{ kEobBaseMenuStringsMgc, kTypeStringList, true },
+	{ kEobBaseMenuStringsPrefs, kTypeStringList, true },
+	{ kEobBaseMenuStringsRest2, kTypeStringList, true },
+	{ kEobBaseMenuStringsDefeat, kTypeStringList, true },
+	{ kEobBaseMenuStringsTransfer, kTypeStringList, true },
+	{ kEobBaseMenuStringsSpec, kTypeStringList, true },
+	{ kEobBaseMenuStringsSpellNo, kTypeStringList, false },
+	
 	{ kEobBaseCharGuiStringsHp, kTypeStringList, true },
 	{ kEobBaseCharGuiStringsWp1, kTypeStringList, true },
 	{ kEobBaseCharGuiStringsWp2, kTypeStringList, true },
@@ -1292,6 +1312,44 @@ const char *getIdString(const int id) {
 		return "kEobBaseCancelStrings";
 	case kEobBaseAbortStrings:
 		return "kEobBaseAbortStrings";
+	case kEobBaseMenuStringsMain:
+		return "kEobBaseMenuStringsMain";
+	case kEobBaseMenuStringsSaveLoad:
+		return "kEobBaseMenuStringsSaveLoad";
+	case kEobBaseMenuStringsOnOff:
+		return "kEobBaseMenuStringsOnOff";
+	case kEobBaseMenuStringsSpells:
+		return "kEobBaseMenuStringsSpells";
+	case kEobBaseMenuStringsRest:
+		return "kEobBaseMenuStringsRest";
+	case kEobBaseMenuStringsDrop:
+		return "kEobBaseMenuStringsDrop";
+	case kEobBaseMenuStringsExit:
+		return "kEobBaseMenuStringsExit";
+	case kEobBaseMenuStringsStarve:
+		return "kEobBaseMenuStringsStarve";
+	case kEobBaseMenuStringsScribe:
+		return "kEobBaseMenuStringsScribe";
+	case kEobBaseMenuStringsDrop2:
+		return "kEobBaseMenuStringsDrop2";
+	case kEobBaseMenuStringsHead:
+		return "kEobBaseMenuStringsHead";
+	case kEobBaseMenuStringsPoison:
+		return "kEobBaseMenuStringsPoison";
+	case kEobBaseMenuStringsMgc:
+		return "kEobBaseMenuStringsMgc";
+	case kEobBaseMenuStringsPrefs:
+		return "kEobBaseMenuStringsPrefs";
+	case kEobBaseMenuStringsRest2:
+		return "kEobBaseMenuStringsRest2";
+	case kEobBaseMenuStringsDefeat:
+		return "kEobBaseMenuStringsDefeat";
+	case kEobBaseMenuStringsTransfer:
+		return "kEobBaseMenuStringsTransfer";
+	case kEobBaseMenuStringsSpec:
+		return "kEobBaseMenuStringsSpec";
+	case kEobBaseMenuStringsSpellNo:
+		return "kEobBaseMenuStringsSpellNo";
 	case kEobBaseCharGuiStringsHp:
 		return "kEobBaseCharGuiStringsHp";
 	case kEobBaseCharGuiStringsWp1:

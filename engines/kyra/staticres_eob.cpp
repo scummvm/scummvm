@@ -366,6 +366,26 @@ void EobCoreEngine::initStaticResource() {
 	_cancelStrings = _staticres->loadStrings(kEobBaseCancelStrings, temp);
 	_abortStrings = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseAbortStrings : kEobBaseCancelStrings, temp);
 
+	_menuStringsMain = _staticres->loadStrings(kEobBaseMenuStringsMain, temp);
+	_menuStringsSaveLoad = _staticres->loadStrings(kEobBaseMenuStringsSaveLoad, temp);
+	_menuStringsOnOff = _staticres->loadStrings(kEobBaseMenuStringsOnOff, temp);
+	_menuStringsSpells = _staticres->loadStrings(kEobBaseMenuStringsSpells, temp);
+	_menuStringsRest = _staticres->loadStrings(kEobBaseMenuStringsRest, temp);
+	_menuStringsDrop = _staticres->loadStrings(kEobBaseMenuStringsDrop, temp);
+	_menuStringsExit = _staticres->loadStrings(kEobBaseMenuStringsExit, temp);
+	_menuStringsStarve = _staticres->loadStrings(kEobBaseMenuStringsStarve, temp);
+	_menuStringsScribe = _staticres->loadStrings(kEobBaseMenuStringsScribe, temp);
+	_menuStringsDrop2 = _staticres->loadStrings(kEobBaseMenuStringsDrop2, temp);
+	_menuStringsHead = _staticres->loadStrings(kEobBaseMenuStringsHead, temp);
+	_menuStringsPoison = _staticres->loadStrings(kEobBaseMenuStringsPoison, temp);
+	_menuStringsMgc = _staticres->loadStrings(kEobBaseMenuStringsMgc, temp);
+	_menuStringsPrefs = _staticres->loadStrings(kEobBaseMenuStringsPrefs, temp);
+	_menuStringsRest2 = _staticres->loadStrings(kEobBaseMenuStringsRest2, temp);
+	_menuStringsDefeat = _staticres->loadStrings(kEobBaseMenuStringsDefeat, temp);
+	_menuStringsTransfer = _staticres->loadStrings(kEobBaseMenuStringsTransfer, temp);
+	_menuStringsSpec = _staticres->loadStrings(kEobBaseMenuStringsSpec, temp);
+	_menuStringsSpellNo = _staticres->loadStrings(kEobBaseMenuStringsSpellNo, temp);
+
 	_characterGuiStringsHp = _staticres->loadStrings(kEobBaseCharGuiStringsHp, temp);
 	_characterGuiStringsWp = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseCharGuiStringsWp2 : kEobBaseCharGuiStringsWp1, temp);
 	_characterGuiStringsWr = _staticres->loadStrings(kEobBaseCharGuiStringsWr, temp);

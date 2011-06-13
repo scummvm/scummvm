@@ -956,6 +956,28 @@ protected:
 
 	const uint8 *_magicFlightObjectProperties;
 
+	// Menu
+	const char *const *_menuStringsMain;
+	const char *const *_menuStringsSaveLoad;
+	const char *const *_menuStringsOnOff;
+	const char *const *_menuStringsSpells;
+	const char *const *_menuStringsRest;
+	const char *const *_menuStringsDrop;
+	const char *const *_menuStringsExit;
+	const char *const *_menuStringsStarve;
+	const char *const *_menuStringsScribe;
+	const char *const *_menuStringsDrop2;
+	const char *const *_menuStringsHead;
+	const char *const *_menuStringsPoison;
+	const char *const *_menuStringsMgc;
+	const char *const *_menuStringsPrefs;
+	const char *const *_menuStringsRest2;
+	const char *const *_menuStringsDefeat;
+
+	const char *const *_menuStringsTransfer;
+	const char *const *_menuStringsSpec;
+	const char *const *_menuStringsSpellNo;
+
 	// sound
 	void snd_playSoundEffect(int id, int volume=0xFF);
 };
