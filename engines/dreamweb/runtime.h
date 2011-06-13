@@ -137,6 +137,13 @@ public:
 		return *this;
 	}
 
+	inline SegmentRef& operator=(const SegmentRef &ref) {
+		_context = ref._context;
+		_value = ref._value;
+		_segment = ref._segment;
+		return *this;
+	}
+
 	inline uint8 &byte(unsigned index) {
 		assert(_segment != 0);
 		return _segment->byte(index);
