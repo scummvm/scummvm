@@ -76,7 +76,7 @@ MIXER::MIXER(int x, int y) : SPRITE(NULL), Fall(MIX_FALL) {
 	Led[ArrayCount(Led) - 1]->Flags.BDel = true;
 
 	VGA::ShowQ.Insert(this);
-	for (i = 0; i < ArrayCount(Led); i ++) 
+	for (i = 0; i < ArrayCount(Led); i ++)
 		VGA::ShowQ.Insert(Led[i]);
 
 	//--- reset balance
@@ -101,10 +101,10 @@ void MIXER::Touch(uint16 mask, int x, int y) {
 	if (mask & L_UP) {
 		uint8 *vol = (&SNDDrvInfo.VOL2.D) + (x < W / 2);
 		if (y < MIX_BHIG) {
-			if (*vol < 0xFF) 
+			if (*vol < 0xFF)
 				*vol += 0x11;
 		} else if (y >= H - MIX_BHIG) {
-			if (*vol > 0x00) 
+			if (*vol > 0x00)
 				*vol -= 0x11;
 		}
 		Update();
@@ -116,10 +116,10 @@ void MIXER::Tick(void) {
 	int x = Mouse.X, y = Mouse.Y;
 	if (SpriteAt(x, y) == this) {
 		Fall = MIX_FALL;
-		if (Flags.Hold) 
+		if (Flags.Hold)
 			Touch(L_UP, x - X, y - Y);
 	} else {
-		if (Fall) 
+		if (Fall)
 			--Fall;
 		else {
 			for (int i = 0; i < ArrayCount(Led); i ++)

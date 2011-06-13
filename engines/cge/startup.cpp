@@ -160,25 +160,25 @@ const char *UsrPath(const char *nam) {
 			int i = strlen(key);
 			while (ini.Read(buf) && !ok) {
 				int j = strlen(buf);
-				if (j) 
-					if (buf[--j] == '\n') 
+				if (j)
+					if (buf[--j] == '\n')
 						buf[j] = '\0';
-				if (memicmp(buf, key, i) == 0) 
+				if (memicmp(buf, key, i) == 0)
 					ok = true;
 			}
 			if (ok) {
 				strcpy(buf, buf + i);
 				p = buf + strlen(buf);
-				if (*(p - 1) != '\\') 
+				if (*(p - 1) != '\\')
 					*(p++) = '\\';
 				strcpy(p, "NUL");
-				if (_dos_open(buf, 0, &i) == 0) 
+				if (_dos_open(buf, 0, &i) == 0)
 					_dos_close(i);
-				else 
+				else
 					ok = false;
 			}
 		}
-		if (!ok) 
+		if (!ok)
 			quit_now(BADCD_TEXT);
 	}
 #endif

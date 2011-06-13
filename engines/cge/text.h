@@ -34,10 +34,10 @@
 namespace CGE {
 
 #ifndef SYSTXT_MAX
-#define SYSTXT_MAX  1000
+#define SYSTXT_MAX      1000
 #endif
 
-#define SAY_EXT     ".SAY"
+#define SAY_EXT         ".SAY"
 
 #define NOT_VGA_TEXT    90
 #define BAD_CHIP_TEXT   91
@@ -45,11 +45,8 @@ namespace CGE {
 #define NO_CORE_TEXT    93
 #define BAD_MIPS_TEXT   94
 #define NO_MOUSE_TEXT   95
-
-
 #define INF_NAME        101
 #define SAY_NAME        102
-                        
 #define INF_REF         301
 #define SAY_REF         302
 

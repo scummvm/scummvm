@@ -83,9 +83,9 @@ void FLY::Tick(void) {
 			Tx = new_random(3) - 1;
 			Ty = new_random(3) - 1;
 		}
-		if (X + Tx < L || X + Tx + W > R) 
+		if (X + Tx < L || X + Tx + W > R)
 			Tx = -Tx;
-		if (Y + Ty < T || Y + Ty + H > B) 
+		if (Y + Ty < T || Y + Ty + H > B)
 			Ty = -Ty;
 		Goto(X + Tx, Y + Ty);
 	}

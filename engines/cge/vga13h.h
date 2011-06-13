@@ -287,12 +287,12 @@ uint8 Closest(CBLK *pal, CBLK x) {
 #define f(col, lum) ((((uint16)(col)) << 8) / lum)
 	uint16 i, dif = 0xFFFF, found = 0;
 	uint16 L = x.R + x.G + x.B;
-	if (!L) 
+	if (!L)
 		++L;
 	uint16 R = f(x.R, L), G = f(x.G, L), B = f(x.B, L);
 	for (i = 0; i < 256; i ++) {
 		uint16 l = pal[i].R + pal[i].G + pal[i].B;
-		if (! l) 
+		if (! l)
 			++l;
 		int  r = f(pal[i].R, l), g = f(pal[i].G, l), b = f(pal[i].B, l);
 		uint16 D = ((r > R) ? (r - R) : (R - r)) +
@@ -303,7 +303,7 @@ uint8 Closest(CBLK *pal, CBLK x) {
 		if (D < dif) {
 			found = i;
 			dif = D;
-			if (D == 0) 
+			if (D == 0)
 				break;    // exact!
 		}
 	}

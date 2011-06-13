@@ -56,7 +56,7 @@ VFILE::VFILE(const char *name, IOMODE mode)
 		EndMark = (BufMark = BegMark = kp->Mark) + kp->Size;
 	}
 #ifdef VOL_UPD
-	else 
+	else
 		Make(name);
 #endif
 }
@@ -80,7 +80,7 @@ void VFILE::ReadBuff(void) {
 	}
 	BufMark = Dat.File.Mark();
 	long n = EndMark - BufMark;
-	if (n > IOBUF_SIZE) 
+	if (n > IOBUF_SIZE)
 		n = IOBUF_SIZE;
 	Lim = Dat.File.Read(Buff, (uint16) n);
 	Ptr = 0;

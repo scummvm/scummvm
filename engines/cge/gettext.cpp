@@ -75,7 +75,7 @@ void GET_TEXT::Touch(uint16 mask, int x, int y) {
 	char *p;
 
 	if (mask & KEYB) {
-		if (Click) 
+		if (Click)
 			Click();
 		switch (x) {
 		case Enter :
@@ -83,7 +83,7 @@ void GET_TEXT::Touch(uint16 mask, int x, int y) {
 			strcpy(Text, Buff);
 			for (p = Text; *p; p ++) {
 				char *q = strchr(ogon, *p);
-				if (q) 
+				if (q)
 					*p = bezo[q - ogon];
 			}
 		case Esc   :
@@ -103,7 +103,7 @@ void GET_TEXT::Touch(uint16 mask, int x, int y) {
 			} else {
 				if (KEYBOARD::Key[ALT]) {
 					p = strchr(bezo, x);
-					if (p) 
+					if (p)
 						x = ogon[p - bezo];
 				}
 				if (Len < Size && 2 * TEXT_HM + Font.Width(Buff) + Font.Wid[x] <= W) {
@@ -114,7 +114,7 @@ void GET_TEXT::Touch(uint16 mask, int x, int y) {
 			}
 			break;
 		}
-	} else 
+	} else
 		SPRITE::Touch(mask, x, y);
 }
 
