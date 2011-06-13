@@ -561,6 +561,7 @@ void allocatemem(Context &context) {
 void deallocatemem(Context &context) {
 	debug(1, "deallocating segment %04x", (uint16)context.es);
 	context.deallocateSegment(context.es);
+	context.es = context.data;
 }
 
 void removeemm(Context &context) {
