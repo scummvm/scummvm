@@ -61,18 +61,34 @@ void SdlMixerManager::init() {
 	// Get the desired audio specs
 	SDL_AudioSpec desired = getAudioSpec(SAMPLES_PER_SEC);
 
+	// Needed as SDL_OpenAudio as of SDL-1.2.14 mutates fields in
+	// "desired" if used directly.
+	SDL_AudioSpec fmt = desired;
+
 	// Start SDL audio with the desired specs
-	if (SDL_OpenAudio(&desired, &_obtainedRate) != 0) {
+	if (SDL_OpenAudio(&fmt, &_obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
 
 		_mixer = new Audio::MixerImpl(g_system, desired.freq);
 		assert(_mixer); 
 		_mixer->setReady(false);
 	} else {
-		debug(1, "Output sample rate: %d Hz", _obtainedRate.freq);
+		debug(1, "Output sample rate: %d Hz", _obtained.freq);
+		if (_obtained.freq != desired.freq)
+			warning("SDL mixer output sample rate: %d differs from desired: %d", _obtained.freq, desired.freq);
 
-		_mixer = new Audio::MixerImpl(g_system, _obtainedRate.freq);
-		assert(_mixer); 
+		debug(1, "Output buffer size: %d samples", _obtained.samples);
+		if (_obtained.samples != desired.samples)
+			warning("SDL mixer output buffer size: %d differs from desired: %d", _obtained.samples, desired.samples);
+
+		if (_obtained.format != desired.format)
+			warning("SDL mixer sound format: %d differs from desired: %d", _obtained.format, desired.format);
+
+		if (_obtained.channels != 2)
+			error("SDL mixer output requires stereo output device");
+
+		_mixer = new Audio::MixerImpl(g_system, _obtained.freq);
+		assert(_mixer);
 		_mixer->setReady(true);
 
 		startAudio();
@@ -133,7 +149,7 @@ void SdlMixerManager::suspendAudio() {
 int SdlMixerManager::resumeAudio() {
 	if (!_audioSuspended)
 		return -2;
-	if (SDL_OpenAudio(&_obtainedRate, NULL) < 0){
+	if (SDL_OpenAudio(&_obtained, NULL) < 0){
 		return -1;
 	}
 	SDL_PauseAudio(0);
