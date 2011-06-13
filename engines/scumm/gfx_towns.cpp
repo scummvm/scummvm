@@ -251,7 +251,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 	l->palette = (uint8*)pal;
 
 	if (l->palette && _bpp == 1)
-		warning("TownsScreen::setupLayer(): Layer palette usage requires 15 bit graphics setting.\nLayer palette will be ignored.");
+		warning("TownsScreen::setupLayer(): Layer palette usage requires 16 bit graphics setting.\nLayer palette will be ignored.");
 
 	delete[] l->pixels;
 	l->pixels = new uint8[l->pitch * l->height];
@@ -273,7 +273,8 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 	l->bltTmpPal = (l->bpp == 1 && _bpp == 2) ? new uint16[l->numCol] : 0;
 	
 	l->enabled = true;
-	l->onBottom = (!layer || !_layers[0].enabled);
+	_layers[0].onBottom = true;
+	_layers[1].onBottom = _layers[0].enabled ? false : true;
 	l->ready = true;
 }
 	
@@ -423,10 +424,10 @@ void TownsScreen::toggleLayers(int flag) {
 	if (flag < 0 || flag > 3)
 		return;
 
-	for (int i = 0; i < 2; ++i) {
-		_layers[i].enabled = (flag & (i + 1)) ? true : false;
-		_layers[i].onBottom = (!i || !_layers[0].enabled);
-	}
+	_layers[0].enabled = (flag & 1) ? true : false;
+	_layers[0].onBottom = true;
+	_layers[1].enabled = (flag & 2) ? true : false;
+	_layers[1].onBottom = _layers[0].enabled ? false : true;
 
 	_dirtyRects.clear();
 	_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));
@@ -461,12 +462,12 @@ void TownsScreen::updateOutputBuffer() {
 
 			for (int y = r->top; y <= r->bottom; ++y) {
 				if (l->bpp == _bpp && l->scaleW == 1 && l->onBottom) {
-					memcpy(dst, l->bltInternY[y] + l->bltInternX[r->left], (r->right + 1 - r->left) * _bpp);
+					memcpy(dst, &l->bltInternY[y][l->bltInternX[r->left]], (r->right + 1 - r->left) * _bpp);
 					dst += _pitch;
 
 				} else if (_bpp == 2) {
 					for (int x = r->left; x <= r->right; ++x) {
-						uint8 *src = l->bltInternY[y] + l->bltInternX[x];
+						uint8 *src = &l->bltInternY[y][l->bltInternX[x]];
 						if (l->bpp == 1) {
 							uint8 col = *src;
 							if (col || l->onBottom) {
@@ -483,7 +484,7 @@ void TownsScreen::updateOutputBuffer() {
 
 				} else {
 					for (int x = r->left; x <= r->right; ++x) {
-						uint8 col = *(l->bltInternY[y] + l->bltInternX[x]);
+						uint8 col = l->bltInternY[y][l->bltInternX[x]];
 						if (col || l->onBottom) {
 							if (l->numCol == 16)
 								col = (col >> 4) & (col & 0x0f);						
