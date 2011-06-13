@@ -137,6 +137,13 @@ void DreamWebEngine::processEvents() {
 					keyHandled = true;
 				}
 				break;
+			case Common::KEYCODE_c: //skip statue puzzle
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					_context.data.byte(dreamgen::kSymbolbotnum) = 3;
+					_context.data.byte(dreamgen::kSymboltopnum) = 5;
+					keyHandled = true;
+				}
+				break;
 			default:
 				break;
 			}
@@ -900,7 +907,8 @@ void doshake(Context &context) {
 		0, -2,  3, -2,  0,  2,  4, -1,
 		1, -3,  3,  0,
 	};
-	context.engine->setShakePos(shakeTable[counter]);
+	int offset = shakeTable[counter];
+	context.engine->setShakePos(offset >= 0? offset: -offset);
 }
 
 void vsync(Context &context) {
