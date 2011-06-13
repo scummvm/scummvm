@@ -114,6 +114,7 @@ private:
 	Common::InSaveFile *_inSaveFile;
 
 	uint _speed;
+	uint _oldMouseState;
 
 	dreamgen::Context _context;
 };

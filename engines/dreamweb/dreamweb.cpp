@@ -67,6 +67,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_outSaveFile = 0;
 	_inSaveFile = 0;
 	_speed = 1;
+	_oldMouseState = 0;
 }
 
 DreamWebEngine::~DreamWebEngine() {
@@ -270,7 +271,10 @@ void DreamWebEngine::mouseCall() {
 		pos.y = 184;
 	_context.cx = pos.x;
 	_context.dx = pos.y;
-	_context.bx = eventMan->getButtonState();
+
+	unsigned state = eventMan->getButtonState();
+	_context.bx = state == _oldMouseState? 0: state;
+	_oldMouseState = state;
 }
 
 void DreamWebEngine::setGraphicsMode() {
