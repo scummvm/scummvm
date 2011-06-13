@@ -350,6 +350,15 @@ void DreamWebEngine::cls() {
 
 namespace dreamgen {
 
+Common::String getFilename(Context &context) {
+	uint16 name_ptr = context.dx;
+	Common::String name;
+	uint8 c;
+	while((c = context.cs.byte(name_ptr++)) != 0)
+		name += (char)c;
+	return name;
+}
+
 void multiget(Context &context) {
 	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
 	unsigned src = (uint16)context.di + (uint16)context.bx * kScreenwidth;
@@ -479,11 +488,7 @@ void openfilenocheck(Context &context) {
 }
 
 void openfile(Context &context) {
-	uint16 name_ptr = context.dx;
-	Common::String name;
-	uint8 c;
-	while((c = context.cs.byte(name_ptr++)) != 0)
-		name += (char)c;
+	Common::String name = getFilename(context);
 	debug(1, "opening file: %s", name.c_str());
 	context.engine->openFile(name);
 	context.cs.word(kHandle) = 1; //only one handle
@@ -755,12 +760,7 @@ void readoneblock(Context &context) {
 void readabyte(Context & context);
 
 void showpcx(Context &context) {
-	uint16 name_ptr = context.dx;
-	Common::String name;
-	uint8 c;
-	while((c = context.cs.byte(name_ptr++)) != 0)
-		name += (char)c;
-
+	Common::String name = getFilename(context);
 	Common::File pcxFile;
 
 	if (!pcxFile.open(name)) {
