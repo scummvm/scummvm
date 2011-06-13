@@ -681,9 +681,25 @@ void allocatemem(Context &context) {
 }
 
 void deallocatemem(Context &context) {
-	debug(1, "deallocating segment %04x", (uint16)context.es);
-	context.deallocateSegment(context.es);
+	uint16 id = (uint16)context.es;
+	debug(1, "deallocating segment %04x", id);
+	context.deallocateSegment(id);
+
+	//fixing invalid entries in the sprite table
 	context.es = context.data;
+	uint tsize = 16 * 32;
+	uint16 bseg = context.data.word(kBuffers);
+	if (!bseg)
+		return;
+	SegmentRef buffers(&context);
+	buffers = bseg;
+	uint8 *ptr = buffers.ptr(kSpritetable, tsize);
+	for(uint i = 0; i < tsize; i += 32) {
+		uint16 seg = READ_LE_UINT16(ptr + i + 6);
+		//debug(1, "sprite segment = %04x", seg);
+		if (seg == id)
+			memset(ptr + i, 0xff, 32);
+	}
 }
 
 void removeemm(Context &context) {
