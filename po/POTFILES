@@ -58,6 +58,5 @@ backends/platform/wince/CEActionsPocket.cpp
 backends/platform/wince/CEActionsSmartphone.cpp
 backends/platform/wince/CELauncherDialog.cpp
 backends/platform/wince/wince-sdl.cpp
-backends/events/gp2xsdl/gp2xsdl-events.cpp
 backends/events/gph/gph-events.cpp
 backends/events/openpandora/op-events.cpp
