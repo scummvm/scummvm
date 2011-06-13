@@ -452,9 +452,10 @@ void DreamWebEngine::soundHandler() {
 	volumeadjust(_context);
 	_context.ax = _context.pop();
 
-	uint8 volume = _context.data.byte(dreamgen::kVolume);
-	//if (volume)
-	//	debug(1, "volume = %u", volume);
+	uint volume = _context.data.byte(dreamgen::kVolume);
+	volume = (8 - volume) * Audio::Mixer::kMaxChannelVolume / 8;
+	_mixer->setChannelVolume(_channelHandle[0], volume);
+
 	uint8 ch0 = _context.data.byte(dreamgen::kCh0playing);
 	if (ch0 == 255)
 		ch0 = 0;
