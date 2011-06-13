@@ -100,11 +100,12 @@ public:
 
 	void quit();
 
+	void loadSounds(uint bank, const Common::String &file);
+
 private:
-
 	void keyPressed(uint16 ascii);
-
 	void setSpeed(uint speed);
+	void soundHandler();
 
 	const DreamWebGameDescription	*_gameDescription;
 	Common::RandomSource			_rnd;
@@ -115,6 +116,7 @@ private:
 
 	uint _speed;
 	uint _oldMouseState;
+	Common::Array<uint8> _samples[2];
 
 	dreamgen::Context _context;
 };

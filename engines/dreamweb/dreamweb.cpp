@@ -111,6 +111,7 @@ void DreamWebEngine::processEvents() {
 		quit();
 		return;
 	}
+	soundHandler();
 	Common::Event event;
 	while (event_manager->pollEvent(event)) {
 		bool keyHandled = false;
@@ -364,10 +365,27 @@ void DreamWebEngine::printUnderMonitor() {
 	_system->unlockScreen();
 }
 
-
 void DreamWebEngine::cls() {
 	_system->fillScreen(0);
 }
+
+void DreamWebEngine::soundHandler() {
+	uint volume = _context.data.byte(dreamgen::kVolume);
+	uint ch0 = _context.data.byte(dreamgen::kCh0playing);
+	if (ch0 == 255)
+		ch0 = 0;
+	uint ch1 = _context.data.byte(dreamgen::kCh1playing);
+	if (ch1 == 255)
+		ch1 = 0;
+	uint ch0loop = _context.data.byte(dreamgen::kCh0repeat);
+	if (ch0 || ch1)
+		debug("volume: %u, samples: %u, %u, loop0: %u", volume, ch0, ch1, ch0loop);
+}
+
+void DreamWebEngine::loadSounds(uint bank, const Common::String &file) {
+	debug(1, "loadSounds(%u, %s)", bank, file.c_str());
+}
+
 
 } // End of namespace DreamWeb
 
@@ -669,15 +687,46 @@ void setsoundoff(Context &context) {
 void readheader(Context &context);
 
 void loadsample(Context &context) {
-	warning("loadsample: STUB");
+	context.engine->loadSounds(1, (const char *)context.data.ptr(context.dx, 13));
+	/*
 	openfile(context);
+	readheader(context);
+	context.bx = context.es.word(context.di);
+	context.push(context.es);
+	context.push(context.di);
+	context.push(context.bx);
+	context.ds = context.data.word(kSounddata);
+	context.cx = context.pop();
+	context.dx = 0;
+	readfromfile(context);
+	context.di = context.pop();
+	context.es = context.pop();
+	context._add(context.di, 2);
+	context.bx = 0;
+	context.dx = context.es.word(context.di);
+	context._add(context.dx, 1);
+	context._shr(context.dx, 1);
+	//debug(1, "dx = %u", (uint16)context.dx);
+	uint32 size = 0x8000 * context.dx;
+	debug(1, "file size = %u", size);
+	context.engine->loadSounds(0, size);
+	
 	closefile(context);
+	*/
 }
 
+void cancelch0(Context &context);
+void cancelch1(Context &context);
+
+
 void loadsecondsample(Context &context) {
-	warning("loadsecondsample: STUB");
-	openfile(context);
-	closefile(context);
+	uint8 ch0 = context.data.byte(kCh0playing);
+	if (ch0 >= 12 && ch0 != 255)
+		cancelch0(context);
+	uint8 ch1 = context.data.byte(kCh1playing);
+	if (ch1 >= 12)
+		cancelch1(context);
+	context.engine->loadSounds(1, (const char *)context.data.ptr(context.dx, 13));
 }
 
 void loadspeech(Context &context) {
