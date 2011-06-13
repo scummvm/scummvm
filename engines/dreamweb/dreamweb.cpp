@@ -431,8 +431,8 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	_mixer->playStream(type, &_channelHandle[channel], stream);
 }
 
-bool DreamWebEngine::playSpeech(const Common::String &filename) {
-	debug(1, "playSpeech(%s)", filename.c_str());
+bool DreamWebEngine::loadSpeech(const Common::String &filename) {
+	debug(1, "loadSpeech(%s)", filename.c_str());
 	Common::File file;
 	if (!file.open("speech/" + filename))
 		return false;
@@ -845,7 +845,7 @@ void loadspeech(Context &context) {
 	createname(context);
 	const char *name = (const char *)context.data.ptr(context.di, 13);
 	//warning("name = %s", name);
-	if (context.engine->playSpeech(name)) 
+	if (context.engine->loadSpeech(name))
 		context.data.byte(kSpeechloaded) = 1;
 }
 

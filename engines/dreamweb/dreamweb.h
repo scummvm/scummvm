@@ -104,7 +104,7 @@ public:
 	void quit();
 
 	void loadSounds(uint bank, const Common::String &file);
-	bool playSpeech(const Common::String &filename);
+	bool loadSpeech(const Common::String &filename);
 
 private:
 	void keyPressed(uint16 ascii);
