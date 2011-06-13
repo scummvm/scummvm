@@ -239,7 +239,7 @@ long CFILE::Seek(long pos) {
 			WriteBuff();
 		else
 			Lim = 0;
-			
+
 		Ptr = 0;
 		return BufMark = IOHAND::Seek(pos);
 	}
