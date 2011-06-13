@@ -430,7 +430,7 @@ void DreamWebEngine::soundHandler() {
 		_channel1 = ch1;
 		if (ch1) {
 			debug(1, "playing sound %u at channel 1", ch1);
-			playSound(1, ch1, ch0loop);
+			playSound(1, ch1, 1);
 		}
 	}
 }
