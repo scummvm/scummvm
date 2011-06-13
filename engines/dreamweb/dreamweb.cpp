@@ -372,7 +372,7 @@ void DreamWebEngine::cls() {
 }
 
 void DreamWebEngine::soundHandler() {
-	uint volume = _context.data.byte(dreamgen::kVolume);
+	//uint volume = _context.data.byte(dreamgen::kVolume);
 	uint ch0 = _context.data.byte(dreamgen::kCh0playing);
 	if (ch0 == 255)
 		ch0 = 0;
@@ -397,8 +397,34 @@ void DreamWebEngine::soundHandler() {
 	}
 }
 
-void DreamWebEngine::loadSounds(uint bank, const Common::String &file) {
-	debug(1, "loadSounds(%u, %s)", bank, file.c_str());
+void DreamWebEngine::loadSounds(uint bank, const Common::String &filename) {
+	debug(1, "loadSounds(%u, %s)", bank, filename.c_str());
+	Common::File file;
+	if (!file.open(filename)) {
+		warning("cannot open %s", filename.c_str());
+		return;
+	}
+
+	uint8 header[0x60];
+	file.read(header, sizeof(header));
+	uint tablesize = READ_LE_UINT16(header + 0x32);
+	debug(1, "table size = %u", tablesize);
+
+	SoundData &soundData = _soundData[bank];
+	soundData.samples.resize(tablesize / 6);
+	uint total = 0;
+	for(uint i = 0; i < tablesize / 6; ++i) {
+		uint8 entry[6];
+		Sample &sample = soundData.samples[i];
+		file.read(entry, sizeof(entry));
+		sample.offset = entry[0] * 0x4000 + READ_LE_UINT16(entry + 1);
+		sample.size = READ_LE_UINT16(entry + 3) * 0x800;
+		total += sample.size;
+		debug(1, "offset: %08x, size: %u", sample.offset, sample.size);
+	}
+	soundData.data.resize(total);
+	file.read(soundData.data.begin(), total);
+	file.close();
 }
 
 

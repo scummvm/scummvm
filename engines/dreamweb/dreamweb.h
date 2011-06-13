@@ -119,7 +119,19 @@ private:
 
 	uint _speed;
 	uint _oldMouseState;
-	Common::Array<uint8> _samples[2];
+
+	struct Sample {
+		uint offset;
+		uint size;
+	};
+
+	struct SoundData {
+		Common::Array<Sample> samples;
+		Common::Array<uint8> data;
+	};
+
+	SoundData _soundData[2];
+
 	Audio::SoundHandle _musicHandle, _soundHandle;
 	uint _channel0, _channel1;
 
