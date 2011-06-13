@@ -670,7 +670,7 @@ void openfilenocheck(Context &context) {
 }
 
 void openfilefromc(Context &context) {
-	openfile(context);
+	openfilenocheck(context);
 }
 
 void openfile(Context &context) {
