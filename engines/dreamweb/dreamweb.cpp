@@ -275,6 +275,7 @@ void DreamWebEngine::mouseCall() {
 	unsigned state = eventMan->getButtonState();
 	_context.bx = state == _oldMouseState? 0: state;
 	_oldMouseState = state;
+	_context.flags._c = false;
 }
 
 void DreamWebEngine::setGraphicsMode() {
@@ -426,7 +427,9 @@ void multidump(Context &context) {
 
 void worktoscreen(Context &context) {
 	context.ds = context.data.word(kWorkspace);
-	context.engine->blit(context.ds.ptr(0, 320 * 200), 320, 0, 0, 320, 200);
+	uint size = 320 * 200;
+	context.engine->blit(context.ds.ptr(0, size), 320, 0, 0, 320, 200);
+	context.di = context.si = size;
 	context.cx = 0;
 }
 
@@ -450,6 +453,9 @@ void frameoutnm(Context &context) {
 		uint8 *dst_p = context.es.ptr(dst + pitch * l, w);
 		memcpy(dst_p, src_p, w);
 	}
+	context.di += dst + pitch * h;
+	context.si += w * h;
+	context.cx = 0;
 }
 
 void seecommandtail(Context &context) {
@@ -528,6 +534,7 @@ void dontloadseg(Context &context) {
 	unsigned pos = context.engine->skipBytes(context.dx);
 	context.dx = pos >> 16;
 	context.ax = pos & 0xffff;
+	context.flags._c = false;
 }
 
 void mousecall(Context &context) {
