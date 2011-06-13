@@ -25,38 +25,39 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__VMENU__
-#define		__VMENU__
+#ifndef __VMENU__
+#define __VMENU__
 
-#include	"cge/talk.h"
+#include "cge/talk.h"
 
 namespace CGE {
 
-#define		MB_VM		1
-#define		MB_HM		3
+#define MB_VM       1
+#define MB_HM       3
 
 
-typedef	struct	{ char * Text; void (* Proc)(void); } CHOICE;
+typedef struct  {
+	char *Text;
+	void (* Proc)(void);
+} CHOICE;
 
 
-class MENU_BAR : public TALK
-{
+class MENU_BAR : public TALK {
 public:
-  MENU_BAR (uint16 w);
+	MENU_BAR(uint16 w);
 };
 
 
-class VMENU : public TALK
-{
-  uint16 Items;
-  CHOICE * Menu;
+class VMENU : public TALK {
+	uint16 Items;
+	CHOICE *Menu;
 public:
-  static VMENU * Addr;
-  static int Recent;
-  MENU_BAR * Bar;
-  VMENU (CHOICE * list, int x, int y);
-  ~VMENU (void);
-  void Touch (uint16 mask, int x, int y);
+	static VMENU *Addr;
+	static int Recent;
+	MENU_BAR *Bar;
+	VMENU(CHOICE *list, int x, int y);
+	~VMENU(void);
+	void Touch(uint16 mask, int x, int y);
 };
 
 } // End of namespace CGE

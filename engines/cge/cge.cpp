@@ -21,7 +21,6 @@
  */
 
 #include "common/scummsys.h"
- 
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -29,43 +28,41 @@
 #include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
- 
 #include "engines/util.h"
- 
 #include "cge/cge.h"
 #include "cge/cge_main.h"
- 
+
 namespace CGE {
- 
+
 CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
- : Engine(syst), _gameDescription(gameDescription) {
- 
+	: Engine(syst), _gameDescription(gameDescription) {
+
 	DebugMan.addDebugChannel(kCGEDebug, "general", "CGE general debug channel");
- 	_console = new CGEConsole(this);
+	_console = new CGEConsole(this);
 
 	debug("CGEEngine::CGEEngine");
 }
- 
+
 CGEEngine::~CGEEngine() {
 	debug("CGEEngine::~CGEEngine");
- 
+
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 }
- 
+
 Common::Error CGEEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);
- 
- 	// Create debugger console. It requires GFX to be initialized
+
+	// Create debugger console. It requires GFX to be initialized
 	_console = new CGEConsole(this);
- 
+
 	// Additional setup.
 	debug("CGEEngine::init");
-	
+
 	cge_main();
-	
+
 	return Common::kNoError;
 }
- 
+
 } // End of namespace CGE

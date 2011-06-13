@@ -44,50 +44,45 @@ namespace CGE {
 // ******************************************************
 // available devices
 
-enum  DEV_TYPE  { DEV_AUTO = -1,         // auto-detect mode
-                  DEV_QUIET,             // disable sound
-                  DEV_SB,                // sb/pro/16/awe32
-		  DEV_GUS,               // gus/max
-		  DEV_GM                 // general midi
+enum  DEV_TYPE  { DEV_AUTO = -1,                    // auto-detect mode
+                  DEV_QUIET,                        // disable sound
+                  DEV_SB,                           // sb/pro/16/awe32
+                  DEV_GUS,                          // gus/max
+                  DEV_GM                            // general midi
                 };
 
-#define                SERR_OK           0        // no error
-#define                SERR_INITFAIL     1        // couldn't initialize
-#define                SERR_BADDDEV      128      // bad device
+#define SERR_OK           0                         // no error
+#define SERR_INITFAIL     1                         // couldn't initialize
+#define SERR_BADDDEV      128                       // bad device
 
 // driver info
-struct DRVINFO
-{
-  DEV_TYPE            DDEV;              // digi device
-  DEV_TYPE            MDEV;              // midi device
-  uint16                DBASE;             // digi base port
-  uint16                DDMA;              // digi dma no
-  uint16                DIRQ;              // digi irq no
-  uint16                MBASE;             // midi base port
-  union
-    {
-      struct
-	{
-	  uint16        DR : 4;
-	  uint16        DL : 4;
-	  uint16        MR : 4;
-	  uint16        ML : 4;
-	} VOL4;
-      struct
-	{
-	  uint8        D;                 // digi volume
-	  uint8        M;                 // midi volume
-	} VOL2;
-    };
+struct DRVINFO {
+	DEV_TYPE DDEV;                                    // digi device
+	DEV_TYPE MDEV;                                    // midi device
+	uint16   DBASE;                                   // digi base port
+	uint16   DDMA;                                    // digi dma no
+	uint16   DIRQ;                                    // digi irq no
+	uint16   MBASE;                                   // midi base port
+	union {
+		struct {
+			uint16 DR : 4;
+			uint16 DL : 4;
+			uint16 MR : 4;
+			uint16 ML : 4;
+		} VOL4;
+		struct {
+			uint8  D;                                     // digi volume
+			uint8  M;                                     // midi volume
+		} VOL2;
+	};
 };
 
 // sample info
-struct SMPINFO
-{
-  uint8 *          saddr;             // address
-  uint16                slen;              // length
-  uint16                span;              // left/right pan (0-15)
-  int                 sflag;             // flag
+struct SMPINFO {
+	uint8  *saddr;                                    // address
+	uint16  slen;                                     // length
+	uint16  span;                                     // left/right pan (0-15)
+	int     sflag;                                    // flag
 };
 
 // ******************************************************
@@ -106,31 +101,30 @@ extern uint16 MIDIEndFlag;
 // *  Driver Code                                       *
 // ******************************************************
 // Init Digi Device
-EC void SNDInit        (void);
+EC void SNDInit(void);
 
 // Close Digi Device
-EC void SNDDone        (void);
+EC void SNDDone(void);
 
 // Set Volume
-EC void SNDSetVolume   (void);
+EC void SNDSetVolume(void);
 
 // Start Digi
-EC void SNDDigiStart   (SMPINFO *PSmpInfo);
+EC void SNDDigiStart(SMPINFO *PSmpInfo);
 
 // Stop Digi
-EC void SNDDigiStop    (SMPINFO *PSmpInfo);
+EC void SNDDigiStop(SMPINFO *PSmpInfo);
 
 // Start MIDI File
-EC void SNDMIDIStart   (uint8 *MIDFile);
+EC void SNDMIDIStart(uint8 *MIDFile);
 
 // Stop MIDI File
-EC void SNDMIDIStop    (void);
+EC void SNDMIDIStop(void);
 
 // Play MIDI File (to be called while interrupting)
 // WARNING: Uses ALL registers!
-EC void SNDMIDIPlay    (void);
+EC void SNDMIDIPlay(void);
 
 } // End of namespace CGE
-
 
 #endif

@@ -52,7 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"soltys", "Soltys Freeware",
 		{
 			{"vol.cat", 0, "0c33e2c304821a2444d297fc5e2d67c6", 50176},
-			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437676},	
+			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437676},
 			AD_LISTEND
 		},
 		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
@@ -145,7 +145,9 @@ void CGEMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int CGEMetaEngine::getMaximumSaveSlot() const { return 99; }
+int CGEMetaEngine::getMaximumSaveSlot() const {
+	return 99;
+}
 
 SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
@@ -249,7 +251,7 @@ bool CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CGE)
-	REGISTER_PLUGIN_DYNAMIC(CGE, PLUGIN_TYPE_ENGINE, CGEMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CGE, PLUGIN_TYPE_ENGINE, CGEMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CGE, PLUGIN_TYPE_ENGINE, CGEMetaEngine);
+REGISTER_PLUGIN_STATIC(CGE, PLUGIN_TYPE_ENGINE, CGEMetaEngine);
 #endif
