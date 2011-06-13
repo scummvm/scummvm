@@ -1769,7 +1769,7 @@ void ScummEngine::setupMusic(int midi) {
 				Common::String::format(
 					_("Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 					"but %s is missing. Using AdLib instead."), fileName.c_str()),
-				_("Ok"));
+				_("OK"));
 			dialog.runModal();
 			_musicType = MDT_ADLIB;
 		}
