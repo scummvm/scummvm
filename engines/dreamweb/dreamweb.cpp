@@ -247,7 +247,7 @@ uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
 void DreamWebEngine::keyPressed(uint16 ascii) {
 	if (ascii >= 'a' && ascii <= 'z')
 		ascii = (ascii - 'a') + 'A';
-	debug(1, "key pressed = %04x", ascii);
+	debug(2, "key pressed = %04x", ascii);
 	uint8* keybuf = _context.data.ptr(5912, 16); //fixme: some hardcoded offsets are not added as consts
 	uint16 in = (_context.data.word(dreamgen::kBufferin) + 1) & 0x0f;
 	uint16 out = _context.data.word(dreamgen::kBufferout);
@@ -385,14 +385,19 @@ Common::String getFilename(Context &context) {
 
 void multiget(Context &context) {
 	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
-	unsigned src = (uint16)context.di + (uint16)context.bx * kScreenwidth;
+	unsigned x = (uint16)context.di, y = (uint16)context.bx;
+	unsigned src = x + y * kScreenwidth;
 	unsigned dst = (uint16)context.si;
 	context.es = context.ds;
 	context.ds = context.data.word(kWorkspace);
-	//debug(1, "multiget %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
-	for(unsigned y = 0; y < h; ++y) {
-		uint8 *src_p = context.ds.ptr(src + kScreenwidth * y, w);
-		uint8 *dst_p = context.es.ptr(dst + w * y, w);
+	if (y + h > 200)
+		h = 200 - y;
+	if (x + w > 320)
+		w = 320 - x;
+	//debug(1, "multiget %u,%u %ux%u -> segment: %04x->%04x", x, y, w, h, (uint16)context.ds, (uint16)context.es);
+	for(unsigned l = 0; l < h; ++l) {
+		uint8 *src_p = context.ds.ptr(src + kScreenwidth * l, w);
+		uint8 *dst_p = context.es.ptr(dst + w * l, w);
 		memcpy(dst_p, src_p, w);
 	}
 	context.si += w * h;
@@ -402,13 +407,18 @@ void multiget(Context &context) {
 
 void multiput(Context &context) {
 	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
+	unsigned x = (uint16)context.di, y = (uint16)context.bx;
 	unsigned src = (uint16)context.si;
-	unsigned dst = (uint16)context.di + (uint16)context.bx * kScreenwidth;
+	unsigned dst = x + y * kScreenwidth;
 	context.es = context.data.word(kWorkspace);
+	if (y + h > 200)
+		h = 200 - y;
+	if (x + w > 320)
+		w = 320 - x;
 	//debug(1, "multiput %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
-	for(unsigned y = 0; y < h; ++y) {
-		uint8 *src_p = context.ds.ptr(src + w * y, w);
-		uint8 *dst_p = context.es.ptr(dst + kScreenwidth * y, w);
+	for(unsigned l = 0; l < h; ++l) {
+		uint8 *src_p = context.ds.ptr(src + w * l, w);
+		uint8 *dst_p = context.es.ptr(dst + kScreenwidth * l, w);
 		memcpy(dst_p, src_p, w);
 	}
 	context.si += w * h;
