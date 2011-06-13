@@ -169,15 +169,17 @@ class parser:
 			if len(line) == 0 or line[0] == ';' or line[0] == chr(0x1a):
 				continue
 
-			#print cmd
+			#print line
 			m = re.match('(\w+)\s*?:', line)
 			if m is not None:
-				line = line[len(m.group(0)):]
+				line = line[len(m.group(0)):].strip()
 				if self.visible():
 					name = m.group(1)
 					if self.proc is not None:
 						self.proc.add_label(name)
+					print "offset %s -> %d" %(name, len(self.binary_data))
 					self.set_offset(name, (len(self.binary_data), self.proc, len(self.proc.stmts) if self.proc is not None else 0))
+			#print line
 
 			cmd = line.split()
 			if len(cmd) == 0:
@@ -198,8 +200,8 @@ class parser:
 				continue
 
 			if cmd0 == 'db' or cmd0 == 'dw' or cmd0 == 'dd':
-				arg = " ".join(cmd[1:])
-				print "%d: %s" %(len(self.binary_data), line) #fixme: COPYPASTE
+				arg = line[len(cmd0):].strip()
+				print "%d:1: %s" %(len(self.binary_data), arg) #fixme: COPYPASTE
 				binary_width = {'b': 1, 'w': 2, 'd': 4}[cmd0[1]]
 				self.binary_data += self.compact_data(binary_width, lex.parse_args(arg))
 				continue
@@ -223,10 +225,12 @@ class parser:
 					v = cmd[2]
 					self.set_global(cmd0, op.const(self.fix_dollar(v)))
 				elif cmd1 == 'db' or cmd1 == 'dw' or cmd1 == 'dd':
-					print "%d: %s" %(len(self.binary_data), line)
 					binary_width = {'b': 1, 'w': 2, 'd': 4}[cmd1[1]]
 					offset = len(self.binary_data)
-					self.binary_data += self.compact_data(binary_width, lex.parse_args(" ".join(cmd[2:])))
+					arg = line[len(cmd0):].strip()
+					arg = arg[len(cmd1):].strip()
+					print "%d: %s" %(offset, arg)
+					self.binary_data += self.compact_data(binary_width, lex.parse_args(arg))
 					self.set_global(cmd0.lower(), op.var(binary_width, offset))
 					continue
 				elif cmd1 == 'proc':

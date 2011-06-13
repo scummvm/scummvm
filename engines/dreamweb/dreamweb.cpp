@@ -248,7 +248,7 @@ void DreamWebEngine::keyPressed(uint16 ascii) {
 	if (ascii >= 'a' && ascii <= 'z')
 		ascii = (ascii - 'a') + 'A';
 	debug(1, "key pressed = %04x", ascii);
-	uint8* keybuf = _context.data.ptr(5715, 16); //fixme: some hardcoded offsets are not added as consts
+	uint8* keybuf = _context.data.ptr(5912, 16); //fixme: some hardcoded offsets are not added as consts
 	uint16 in = (_context.data.word(dreamgen::kBufferin) + 1) & 0x0f;
 	uint16 out = _context.data.word(dreamgen::kBufferout);
 	if (in == out) {
@@ -807,7 +807,7 @@ void showpcx(Context &context) {
 
 	pcxFile.seek(16, SEEK_SET);
 	context.es = context.data.word(kBuffers);
-	maingamepal = context.es.ptr(4782, 768);
+	maingamepal = context.es.ptr(4782, 768); //fixme: hardcoded offset
 	pcxFile.read(maingamepal, 48);
 
 	memset(maingamepal + 48, 0xff, 720);

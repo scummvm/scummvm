@@ -41,7 +41,7 @@ def parse_args(text):
 			break
 		
 		token += c
-	token = token.strip()
+	#token = token.strip()
 	if len(token):
 		result.append(token)
 	#print result
