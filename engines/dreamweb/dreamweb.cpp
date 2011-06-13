@@ -68,6 +68,8 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_inSaveFile = 0;
 	_speed = 1;
 	_oldMouseState = 0;
+	_channel0 = 0;
+	_channel1 = 0;
 }
 
 DreamWebEngine::~DreamWebEngine() {
@@ -378,8 +380,21 @@ void DreamWebEngine::soundHandler() {
 	if (ch1 == 255)
 		ch1 = 0;
 	uint ch0loop = _context.data.byte(dreamgen::kCh0repeat);
-	if (ch0 || ch1)
-		debug("volume: %u, samples: %u, %u, loop0: %u", volume, ch0, ch1, ch0loop);
+
+	if (_channel0 != ch0) {
+		_channel0 = ch0;
+		if (ch0) {
+			//Audio::AudioStream *stream = LoopingAudioStream(Audio::makeRawStream(data, size, 22050, 0), ch0loops);
+			//_mixer->playStream(Audio::Mixer::kMusicType, &_musicHandle, stream); //dispose is YES by default
+			debug(1, "playing sound %u at channel 0, loop: %u", ch0, ch0loop);
+		}
+	}
+	if (_channel1 != ch1) {
+		_channel1 = ch1;
+		if (ch1) {
+			debug(1, "playing sound %u at channel 1", ch1);
+		}
+	}
 }
 
 void DreamWebEngine::loadSounds(uint bank, const Common::String &file) {

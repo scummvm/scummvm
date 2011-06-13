@@ -33,6 +33,9 @@
 #include "common/savefile.h"
 #include "common/scummsys.h"
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+
 #include "engines/engine.h"
 #include "dreamweb/dreamgen.h"
 #include "dreamweb/console.h"
@@ -117,6 +120,8 @@ private:
 	uint _speed;
 	uint _oldMouseState;
 	Common::Array<uint8> _samples[2];
+	Audio::SoundHandle _musicHandle, _soundHandle;
+	uint _channel0, _channel1;
 
 	dreamgen::Context _context;
 };
