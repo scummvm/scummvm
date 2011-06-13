@@ -78,24 +78,28 @@ public:
 	const Common::String &getShortDriverDescription() { return _shortDescription; }
 	const Common::String &getLongDriverDescription() { return _longDescription; }
 
-	virtual bool open() { return true; }
-	virtual void close() {}
-	virtual const GroupData *getGroupData() = 0;
-	virtual void installPatchBank(const byte *data) {}
-	virtual void poll() {}
-	virtual void setMasterVolume(int volume) {}
-	virtual void proc18(int al, VoiceType voiceType) {}
-	virtual void proc20(int al, VoiceType voiceType) {}
-	virtual void proc22(int al, VoiceType voiceType, int v3) {}
+	virtual bool open() { return true; }						// Method #0
+	virtual void close() {}										// Method #1
+	virtual bool reset() { return true; }						// Method #2
+	virtual const GroupData *getGroupData() { return NULL; }	// Method #3
+	virtual void installPatch(const byte *data) {}				// Method #4
+	virtual void poll() {}										// Method #5
+	virtual void proc12() {}									// Method #6
+	virtual int setMasterVolume(int volume) { return 0; }		// Method #7
+	virtual void proc16() {}									// Method #8
+	virtual void proc18(int al, VoiceType voiceType) {}			// Method #9
+	virtual void proc20(int al, VoiceType voiceType) {}			// Method #10
+	virtual void proc22(int al, VoiceType voiceType, int v3) {}	// Method #11
 	virtual void proc24(int channel, int voiceIndex, Sound *sound, int v1, int v2) {}
-	virtual void setProgram(int channel, int program) {}
+	virtual void setProgram(int channel, int program) {}			// Method #13
 	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
-	virtual void setPitchBlend(int channel, int pitchBlend) {}
-	virtual void proc32(int voiceNum, int program, ...) {} // TODO: Determine params
-	virtual void proc38(int voiceNum, int cmd, int value) {}
-	virtual void proc40(int voiceNum, int pitchBlend) {}
-	virtual void proc42(int voiceNum, ...) {} // TODO: Determine params
-	virtual void updateVoice(int voiceNum) {}
+	virtual void setPitchBlend(int channel, int pitchBlend) {}		// Method #15
+	virtual void proc32(int channel, int program, int v0, int v1) {}// Method #16
+	virtual void updateVoice(int channel) {}						// Method #17
+	virtual void proc36() {}										// Method #18
+	virtual void proc38(int channel, int cmd, int value) {}			// Method #19
+	virtual void proc40(int channel, int pitchBlend) {}				// Method #20
+	virtual void proc42(int channel, int v0, int v1) {}				// Method #21
 };
 
 struct VoiceStructEntryType0 {
@@ -141,7 +145,7 @@ struct VoiceStructEntry {
 class VoiceTypeStruct {
 public:
 	VoiceType _voiceType;
-	int _field1;
+	int _total;
 	int _numVoices;
 	int _field3;
 
@@ -332,7 +336,7 @@ public:
 	void _soRemoteReceive();
 	void _soServiceTrackType0(int trackIndex, const byte *channelData);
 	void _soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceType mode, int v0);
-	void _soProc32(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0);
+	void _soProc32(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0, int v1);
 	void _soProc42(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0);
 	void _soProc38(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int cmd, int value);
 	void _soProc40(VoiceTypeStruct *vtStruct, int channelNum, int pitchBlend);
@@ -381,16 +385,49 @@ public:
 	void release() { _sound.release(); }
 };
 
+#define ADLIB_CHANNEL_COUNT 9
+
 class AdlibSoundDriver: public SoundDriver {
 private:
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
+	FM_OPL *_opl;
+	int _sampleRate;
+	byte _portContents[256];
+	const byte *_patchData;
+	int _masterVolume;
+
+	bool _channelVoiced[ADLIB_CHANNEL_COUNT];
+	int _channelVolume[ADLIB_CHANNEL_COUNT];
+	int _v4405E[ADLIB_CHANNEL_COUNT];
+	int _v44067[ADLIB_CHANNEL_COUNT];
+	int _v44070[ADLIB_CHANNEL_COUNT];
+	int _v44079[ADLIB_CHANNEL_COUNT];
+	int _v44082[ADLIB_CHANNEL_COUNT + 1];
+	int _v4408C[ADLIB_CHANNEL_COUNT];
+	int _v4409E[ADLIB_CHANNEL_COUNT];
+
+
+	void write(byte reg, byte value);
+	void updateChannelVolume(int channel);
+	void setVoice(int channel);
+	void clearVoice(int channel);
+	void updateChannel(int channel);
+	void setFrequency(int channel);
 public:
 	AdlibSoundDriver();
+	~AdlibSoundDriver();
 
-	virtual void setVolume(int volume) {}
-	virtual void installPatchBank(const byte *data) {}
-	virtual const GroupData *getGroupData() { return &_groupData; }
+	virtual bool open();
+	virtual void close();
+	virtual bool reset();
+	virtual const GroupData *getGroupData();
+	virtual void installPatch(const byte *data);
+	virtual int setMasterVolume(int volume);
+	virtual void proc32(int channel, int program, int v0, int v1);
+	virtual void updateVoice(int channel);
+	virtual void proc38(int channel, int cmd, int value);
+	void proc40(int channel, int pitchBlend);
 };
 
 } // End of namespace tSage

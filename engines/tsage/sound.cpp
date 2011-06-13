@@ -358,7 +358,6 @@ void SoundManager::_sfSoundServer() {
 	do {
 		_sfProcessFading();
 	} while (sfManager()._serverSuspendedCount > 0);
-	sfManager()._serverSuspendedCount = 0;
 
 	// Poll all sound drivers in case they need it
 	for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin(); 
@@ -416,12 +415,14 @@ void SoundManager::_sfProcessFading() {
 
 	// Loop through the voiceType list
 	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
-		VoiceTypeStruct &voiceType = *sfManager()._voiceTypeStructPtrs[voiceIndex];
+		VoiceTypeStruct *vtStruct = sfManager()._voiceTypeStructPtrs[voiceIndex];
+		if (!vtStruct)
+			continue;
 
-		if (voiceType._voiceType == VOICETYPE_1) {
-			for (uint idx = 0; idx < voiceType._entries.size(); ++idx) {
-				if (voiceType._entries[idx]._type1._field6 >= -1)
-					++voiceType._entries[idx]._type1._field6;
+		if (vtStruct->_voiceType == VOICETYPE_1) {
+			for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx) {
+				if (vtStruct->_entries[idx]._type1._field6 >= -1)
+					++vtStruct->_entries[idx]._type1._field6;
 			}
 		}
 	}
@@ -430,6 +431,8 @@ void SoundManager::_sfProcessFading() {
 void SoundManager::_sfUpdateVoiceStructs() {
 	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
 		VoiceTypeStruct *vs = sfManager()._voiceTypeStructPtrs[voiceIndex];
+		if (!vs)
+			continue;
 
 		for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
 			VoiceStructEntry &vse = vs->_entries[idx];
@@ -496,6 +499,7 @@ void SoundManager::listenerSynchronize(Serializer &s) {
 /*--------------------------------------------------------------------------*/
 
 SoundManager &SoundManager::sfManager() {
+	assert(_soundManager);
 	return *_soundManager;
 }
 
@@ -584,18 +588,15 @@ void SoundManager::_sfRethinkSoundDrivers() {
 		}
 
 		if (total) {
-			int dataSize = !flag ? total * 28 + 30 : total * 26 + 30;
-			debugC(9, ktSageSound, "data Size = %d\n", dataSize);
-
 			VoiceTypeStruct *vs = new VoiceTypeStruct();
 			sfManager()._voiceTypeStructPtrs[idx] = vs;
 
 			if (!flag) {
 				vs->_voiceType = VOICETYPE_0;
-				vs->_field1 = total;
+				vs->_total = total;
 			} else {
 				vs->_voiceType = VOICETYPE_1;
-				vs->_field1 = vs->_numVoices = total;
+				vs->_total = vs->_numVoices = total;
 			}
 
 			for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin();
@@ -608,6 +609,8 @@ void SoundManager::_sfRethinkSoundDrivers() {
 					byte byteVal = *groupData++;
 				
 					if (byteVal == idx) {
+						++groupData;
+
 						if (!flag) {
 							while ((byteVal = *groupData++) != 0xff) {
 								VoiceStructEntry ve;
@@ -628,7 +631,7 @@ void SoundManager::_sfRethinkSoundDrivers() {
 								VoiceStructEntry ve;
 								ve._voiceNum = idx;
 								ve._driver = driver;
-								ve._type1._field4 = 0xff;
+								ve._type1._field4 = -1;
 								ve._type1._field5 = 0;
 								ve._type1._field6 = 0;
 								ve._type1._sound = NULL;
@@ -642,6 +645,8 @@ void SoundManager::_sfRethinkSoundDrivers() {
 						if (*groupData++ != 0) {
 							while (*groupData != 0xff)
 								++groupData;
+						} else {
+							groupData += 2;
 						}
 					}
 				}
@@ -1171,6 +1176,8 @@ void SoundManager::_sfRethinkVoiceTypes() {
 			}
 		}
 	}
+
+	--sfManager()._serverSuspendedCount;
 }
 
 void SoundManager::_sfUpdateVolume(Sound *sound) {
@@ -1287,7 +1294,7 @@ void SoundManager::_sfUnInstallDriver(SoundDriver *driver) {
 }
 
 void SoundManager::_sfInstallPatchBank(SoundDriver *driver, const byte *bankData) {
-	driver->installPatchBank(bankData);
+	driver->installPatch(bankData);
 }
 
 /**
@@ -1392,7 +1399,6 @@ void Sound::play(int soundNum) {
 }
 
 void Sound::stop() {
-	_soundManager->removeFromPlayList(this);
 	_unPrime();
 }
 
@@ -1458,7 +1464,8 @@ void Sound::_unPrime() {
 		}
 
 		_trackInfo._numTracks = 0;
-		_soundManager->removeFromSoundList(this);
+		if (_soundManager)
+			_soundManager->removeFromSoundList(this);
 
 		_primed = false;
 		_stoppedAsynchronously = false;
@@ -1738,7 +1745,8 @@ void Sound::_soPrimeChannelData() {
 			int mode = *d; 
 			int channelNum = (int8)*(d + 1);
 			assert((channelNum >= 0) && (channelNum < 16));
-
+			
+			_trkChannel[idx] = channelNum;
 			_chProgram[idx] = *(d + 10);
 			_chModulation[idx] = 0;
 			_chVolume[idx] = *(d + 11);
@@ -1784,6 +1792,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 		return;
 
 	int channelNum = _trkChannel[trackIndex];
+	assert((channelNum >= 0) && (channelNum < SOUND_ARR_SIZE));
 	int chFlags = (channelNum == -1) ? 0 : _chFlags[channelNum];
 	int voiceNum = -1;
 	SoundDriver *driver = NULL;
@@ -1847,7 +1856,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 						if (chFlags & 0x10)
 							_soProc42(vtStruct, channelNum, chVoiceType, v);
 						else
-							_soProc32(vtStruct, channelNum, chVoiceType, v);
+							_soProc32(vtStruct, channelNum, chVoiceType, v, b);
 					} else if (voiceNum != -1) {
 						assert(driver);
 						driver->proc20(voiceNum, chVoiceType);
@@ -2011,7 +2020,7 @@ void Sound::_soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceTyp
 	}
 }
 
-void Sound::_soProc32(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0) {
+void Sound::_soProc32(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0, int v1) {
 	int entryIndex = _soFindSound(vtStruct, channelNum);
 	if (entryIndex != -1) {
 		SoundDriver *driver = vtStruct->_entries[entryIndex]._driver;
@@ -2021,7 +2030,7 @@ void Sound::_soProc32(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voice
 		vtStruct->_entries[entryIndex]._type1._field4 = v0;
 		vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
-		driver->proc32(vtStruct->_entries[entryIndex]._voiceNum, _chProgram[channelNum]);
+		driver->proc32(vtStruct->_entries[entryIndex]._voiceNum, _chProgram[channelNum], v0, v1);
 	}
 }
 
@@ -2039,8 +2048,7 @@ void Sound::_soProc42(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voice
 				vtStruct->_entries[entryIndex]._type1._field4 = v0;
 				vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
-				driver->proc32(vtStruct->_entries[entryIndex]._voiceNum, voiceType, 
-					_channelData[trackCtr], this, 0x7f, 0xff, 0xE);
+				driver->proc32(vtStruct->_entries[entryIndex]._voiceNum, -1, v0, 0x7F);
 				driver->proc42(vtStruct->_entries[entryIndex]._voiceNum, voiceType, 0);
 			}
 			break;
@@ -2168,8 +2176,7 @@ void Sound::_soServiceTrackType1(int trackIndex, const byte *channelData) {
 						vtStruct->_entries[entryIndex]._type1._field4 = *(channelData + 1);
 						vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
-						driver->proc32(vtStruct->_entries[entryIndex]._voiceNum, voiceType, 
-							_channelData[trackIndex], this, 0x7f, 0xff, 0xE);
+						driver->proc32(vtStruct->_entries[entryIndex]._voiceNum, -1, *(channelData + 1), 0x7f); 
 					}
 				} else {
 
@@ -2295,9 +2302,34 @@ SoundDriver::SoundDriver() {
 
 const byte adlib_group_data[] = { 1, 1, 9, 1, 0xff };
 
-AdlibSoundDriver::AdlibSoundDriver() {
+const byte v440B0[9] = { 0, 1, 2, 6, 7, 8, 12, 13, 14 };
+
+const byte v440B9[9] = { 3, 4, 5, 9, 10, 11, 15, 16, 17 };
+
+const byte v440C2[18] = { 
+	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21
+};
+
+const byte v44134[64] = {
+	0, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
+	33, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+	46, 47, 47, 48, 49, 50, 50, 51, 52, 52, 53, 54, 54, 55, 
+	56, 56, 57, 57, 58, 58, 59, 59, 59, 60, 60, 60, 61, 61,
+	61, 62, 62, 62, 62, 63, 63, 63
+};
+
+const int v440D4[48] = {
+	343, 348, 353, 358, 363, 369, 374, 379, 385, 391, 396,
+	402, 408, 414, 420, 426, 432, 438, 445, 451, 458, 465,
+	471, 478, 485, 492, 499, 507, 514, 521, 529, 537, 544,
+	552, 560, 569, 577, 585, 594, 602, 611, 620, 629, 638,
+	647, 657, 666, 676
+};
+
+AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	_minVersion = 0x102;
 	_maxVersion = 0x10A;
+	_masterVolume = 0;
 
 	_groupData.groupMask = 9;
 	_groupData.v1 = 0x46;
@@ -2305,6 +2337,252 @@ AdlibSoundDriver::AdlibSoundDriver() {
 	_groupData.pData = &adlib_group_data[0];
 
 	_mixer = _vm->_mixer;
+	_sampleRate = _mixer->getOutputRate();
+	_opl = makeAdLibOPL(_sampleRate);
+
+	memset(_channelVoiced, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
+	memset(_channelVolume, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
+	memset(_v4405E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
+	memset(_v44067, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
+	memset(_v44070, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
+	memset(_v44079, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
+	memset(_v44082, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
+	_v44082[ADLIB_CHANNEL_COUNT] = 0x90;
+	Common::set_to(_v4408C, _v4408C + ADLIB_CHANNEL_COUNT, 0x2000);
+	memset(_v4409E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
+}
+
+AdlibSoundDriver::~AdlibSoundDriver() {
+	DEALLOCATE(_patchData);
+}
+
+bool AdlibSoundDriver::open() {
+	write(1, 0x20);
+	if (!reset())
+		return false;
+
+	write(8, 0);
+	for (int idx = 0x20; idx < 0xF6; ++idx)
+		write(idx, 0);
+
+	write(0xBD, 0);
+	return true;
+}
+
+void AdlibSoundDriver::close() {
+	for (int idx = 0xB0; idx < 0xB8; ++idx)
+		write(idx, _portContents[idx] & 0xDF);
+	for (int idx = 0x40; idx < 0x55; ++idx)
+		write(idx, 0x3F);
+	reset();
+}
+
+bool AdlibSoundDriver::reset() {
+	write(1, 0x20);
+	write(4, 0x80);
+/*
+ * code fragment originally part of testing Adlib timer speed
+	write(2, 1);
+	write(4, 1);
+*/
+	return true;
+}
+
+const GroupData *AdlibSoundDriver::getGroupData() {
+	return &_groupData;
+}
+
+void AdlibSoundDriver::installPatch(const byte *data) {
+	_patchData = data;
+}
+
+int AdlibSoundDriver::setMasterVolume(int volume) {
+	int oldVolume = _masterVolume;
+	_masterVolume = volume;
+
+	for (int channelNum = 0; channelNum < ADLIB_CHANNEL_COUNT; ++channelNum)
+		updateChannelVolume(channelNum);
+
+	return oldVolume;
+}
+
+void AdlibSoundDriver::proc32(int channel, int program, int v0, int v1) {
+	if (program == -1)
+		return;
+
+	int offset = READ_LE_UINT16(_patchData + program * 2);
+	if (offset) {
+		const byte *dataP = _patchData + offset;
+
+		for (int offset = 2, id = 0; id != READ_LE_UINT16(dataP); offset += 30, ++id) {
+			if ((dataP[offset] <= v0) && (dataP[offset + 1] >= v0)) {
+				if (dataP[offset + 2] != 0xff)
+					v0 = dataP[offset + 2];
+
+				// Set sustain/release
+				int portNum = v440C2[v440B0[channel]] + 0x80;
+				write(portNum, (_portContents[portNum] & 0xF0) | 0xF);
+
+				portNum = v440C2[v440B9[channel]] + 0x80;
+				write(portNum, (_portContents[portNum] & 0xF0) | 0xF);
+
+				if (_channelVoiced[channel])
+					clearVoice(channel);
+
+				_v44067[channel] = v0;
+				_v4405E[channel] = v1;
+
+				updateChannel(channel);
+				setFrequency(channel);
+				updateChannelVolume(channel);
+				setVoice(channel);
+				break;
+			}
+		}
+	}
+}
+
+void AdlibSoundDriver::updateVoice(int channel) {
+	if (_channelVoiced[channel])
+		clearVoice(channel);
+}
+
+void AdlibSoundDriver::proc38(int channel, int cmd, int value) {
+	if (cmd == 7) {
+		// Set channel volume
+		_channelVolume[channel] = value;
+		updateChannelVolume(channel);
+	}
+}
+
+void AdlibSoundDriver::proc40(int channel, int pitchBlend) {
+	_v4408C[channel] = pitchBlend;
+	setFrequency(channel);
+}
+
+void AdlibSoundDriver::write(byte reg, byte value) {
+static int num = 0;
+debug("%d [%x]=%x", ++num, reg, value);//***DEBUG****
+	_portContents[reg] = value;
+	OPLWriteReg(_opl, reg, value);
+}
+
+void AdlibSoundDriver::updateChannelVolume(int channelNum) {
+	int volume = (_masterVolume * _channelVolume[channelNum] / 127 * _v4405E[channelNum] / 127) / 2;
+	int level2 = 63 - v44134[volume * _v44079[channelNum] / 63];
+	int level1 = !_v44082[channelNum] ? 63 - _v44070[channelNum] :
+		63 - v44134[volume * _v44070[channelNum] / 63];
+
+	int portNum = v440C2[v440B0[channelNum]] + 0x40; 
+	write(portNum, (_portContents[portNum] & 0x80) | level1);
+
+	portNum = v440C2[v440B9[channelNum]] + 0x40;
+	write(portNum, (_portContents[portNum] & 0x80) | level2);
+}
+
+void AdlibSoundDriver::setVoice(int channel) {
+	int portNum = 0xB0 + channel;
+	write(portNum, _portContents[portNum] | 0x20);
+	_channelVoiced[channel] = true;
+}
+
+void AdlibSoundDriver::clearVoice(int channel) {
+	write(0xB0 + channel, _portContents[0xB0 + channel] & ~0x20);
+	_channelVoiced[channel] = false;
+}
+
+void AdlibSoundDriver::updateChannel(int channel) {
+	const byte *dataP = _patchData + _v4409E[channel];
+	int portOffset = v440C2[v440B0[channel]];
+
+	int portNum = portOffset + 0x20;
+	int portValue = 0;
+	if (*(dataP + 4))
+		portValue |= 0x80;
+	if (*(dataP + 5))
+		portValue |= 0x40;
+	if (*(dataP + 8))
+		portValue |= 0x20;
+	if (*(dataP + 6))
+		portValue |= 0x10;
+	portValue |= *(dataP + 7);
+	write(portNum, portValue);
+
+	portValue = (_portContents[0x40 + portOffset] & 0x3F) | (*(dataP + 9) << 6);
+	write(0x40 + portOffset, portValue);
+
+	_v44070[channel] = 63 - *(dataP + 10);
+	write(0x60 + portOffset, *(dataP + 12) | (*(dataP + 11) << 4));
+	write(0x80 + portOffset, *(dataP + 14) | (*(dataP + 13) << 4));
+	write(0xE0 + portOffset, (_portContents[0xE0 + portOffset] & 0xFC) | *(dataP + 15));
+
+	portNum = portOffset + 0x20;
+	portValue = 0;
+	if (*(dataP + 17))
+		portValue |= 0x80;
+	if (*(dataP + 18))
+		portValue |= 0x40;
+	if (*(dataP + 21))
+		portValue |= 0x20;
+	if (*(dataP + 19))
+		portValue |= 0x10;
+	portValue |= *(dataP + 20);
+	write(portNum, portValue);
+
+	write(0x40 + portOffset, (_portContents[0x40 + portOffset] & 0x3f) | (*(dataP + 22) << 6));
+	_v44079[channel] = *(dataP + 23);
+	write(0x60 + portOffset, *(dataP + 25) | (*(dataP + 24) << 4));
+	write(0x80 + portOffset, *(dataP + 27) | (*(dataP + 26) << 4));
+	write(0xE0 + portOffset, (_portContents[0xE0 + portOffset] & 0xFC) | *(dataP + 28));
+	write(0xC0 + portOffset, (_portContents[0xE0 + portOffset] & 0xF0) 
+		| (*(dataP + 16) << 1) | *(dataP + 3));
+
+	_v44082[channel] = *(dataP + 3);
+}
+
+void AdlibSoundDriver::setFrequency(int channel) {
+	int offset, ch;
+
+	int v = _v4408C[channel];
+	if (v == 0x2000) {
+		offset = 0;
+		ch = _v44067[channel];
+	} else if (v > 0x2000) {
+		ch = _v44067[channel];
+		v -= 0x2000;
+		if (v == 0x1fff)
+			v = 0x2000;
+		
+		offset = (v / 170) & 3;
+		ch += (v / 170) >> 2;
+
+		if (ch >= 128)
+			ch = 127;
+	} else {
+		ch = _v44067[channel];
+		int tempVal = (0x2000 - v) / 170;
+		int tempVal2 = 4 - (tempVal & 3);
+
+		if (tempVal2 == 4)
+			offset = 0;
+		else {
+			offset = tempVal2;
+			--ch;
+		}
+
+		ch -= tempVal >> 2;
+		if (ch >= 128)
+			ch = 0;
+	}
+
+	int var2 = ch / 12;
+	if (var2)
+		--var2;
+
+	int dataWord = v440D4[((ch % 12) << 2) + offset];
+	write(0xA0 + channel, dataWord & 0xff);
+	write(0xB0 + channel, (_portContents[0xB0 + channel] & 0xE0) | 
+		((dataWord >> 8) & 3) | (var2 << 2));
 }
 
 } // End of namespace tSage
