@@ -66,16 +66,13 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	_outSaveFile = 0;
 	_inSaveFile = 0;
+	_speed = 1;
 }
 
 DreamWebEngine::~DreamWebEngine() {
 	DebugMan.clearAllDebugChannels();
 	delete _console;
 }
-
-// Let's see if it's a good idea to emulate VSYNC interrupts with a timer like
-// this. There's a chance we'll miss interrupts, which could be countered by
-// counting them instead of just flagging them, but we'll see...
 
 static void vSyncInterrupt(void *refCon) {
 	DreamWebEngine *vm = (DreamWebEngine *)refCon;
@@ -126,6 +123,15 @@ void DreamWebEngine::processEvents() {
 					keyHandled = true;
 				}
 				break;
+			case Common::KEYCODE_f:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					if (_speed != 10)
+						setSpeed(10);
+					else
+						setSpeed(1);
+					keyHandled = true;
+				}
+				break;
 			default:
 				break;
 			}
@@ -164,6 +170,13 @@ Common::Error DreamWebEngine::run() {
 	getTimerManager()->removeTimerProc(vSyncInterrupt);
 
 	return Common::kNoError;
+}
+
+void DreamWebEngine::setSpeed(uint speed) {
+	debug(0, "setting speed %u", speed);
+	_speed = speed;
+	getTimerManager()->removeTimerProc(vSyncInterrupt);
+	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this);
 }
 
 void DreamWebEngine::openFile(const Common::String &name) {

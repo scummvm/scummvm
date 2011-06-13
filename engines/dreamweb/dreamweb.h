@@ -104,12 +104,16 @@ private:
 
 	void keyPressed(uint16 ascii);
 
+	void setSpeed(uint speed);
+
 	const DreamWebGameDescription	*_gameDescription;
 	Common::RandomSource			_rnd;
 
 	Common::File _file;
 	Common::OutSaveFile *_outSaveFile;
 	Common::InSaveFile *_inSaveFile;
+
+	uint _speed;
 
 	dreamgen::Context _context;
 };
