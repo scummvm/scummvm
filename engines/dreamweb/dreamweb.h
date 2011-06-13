@@ -109,6 +109,7 @@ private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
 	void soundHandler();
+	void playSound(uint8 channel, uint8 id, uint8 loops);
 
 	const DreamWebGameDescription	*_gameDescription;
 	Common::RandomSource			_rnd;
@@ -129,11 +130,10 @@ private:
 		Common::Array<Sample> samples;
 		Common::Array<uint8> data;
 	};
-
 	SoundData _soundData[2];
 
-	Audio::SoundHandle _musicHandle, _soundHandle;
-	uint _channel0, _channel1;
+	Audio::SoundHandle _channelHandle[2];
+	uint8 _channel0, _channel1;
 
 	dreamgen::Context _context;
 };

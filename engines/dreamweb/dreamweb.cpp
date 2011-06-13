@@ -36,6 +36,7 @@
 #include "engines/util.h"
 
 #include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 
 #include "graphics/palette.h"
 #include "graphics/surface.h"
@@ -371,15 +372,50 @@ void DreamWebEngine::cls() {
 	_system->fillScreen(0);
 }
 
+void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
+	const SoundData &data = _soundData[id >= 12? 1: 0];
+
+	Audio::Mixer::SoundType type;
+	if (id >= 12) {
+		id -= 12;
+		type = Audio::Mixer::kSFXSoundType;
+	} else
+		type = Audio::Mixer::kMusicSoundType;
+
+	if (id >= data.samples.size()) {
+		warning("invalid sample #%u played", id);
+		return;
+	}
+
+	const Sample &sample = data.samples[id];
+
+	uint8 *buffer = (uint8 *)malloc(sample.size);
+	if (!buffer)
+		error("out of memory: cannot allocate memory for sound(%u bytes)", sample.size);
+	memcpy(buffer, data.data.begin() + sample.offset, sample.size);
+
+	Audio::SeekableAudioStream *raw = Audio::makeRawStream(
+		buffer, 
+		sample.size, 22050, Audio::FLAG_UNSIGNED);
+
+	Audio::AudioStream *stream;
+	if (loops > 1) {
+		stream = new Audio::LoopingAudioStream(raw, loops < 255? loops: 0);
+	} else
+		stream = raw;
+
+	_mixer->playStream(type, &_channelHandle[channel], stream);
+}
+
 void DreamWebEngine::soundHandler() {
-	//uint volume = _context.data.byte(dreamgen::kVolume);
-	uint ch0 = _context.data.byte(dreamgen::kCh0playing);
+	//uint8 volume = _context.data.byte(dreamgen::kVolume);
+	uint8 ch0 = _context.data.byte(dreamgen::kCh0playing);
 	if (ch0 == 255)
 		ch0 = 0;
-	uint ch1 = _context.data.byte(dreamgen::kCh1playing);
+	uint8 ch1 = _context.data.byte(dreamgen::kCh1playing);
 	if (ch1 == 255)
 		ch1 = 0;
-	uint ch0loop = _context.data.byte(dreamgen::kCh0repeat);
+	uint8 ch0loop = _context.data.byte(dreamgen::kCh0repeat);
 
 	if (_channel0 != ch0) {
 		_channel0 = ch0;
@@ -387,12 +423,14 @@ void DreamWebEngine::soundHandler() {
 			//Audio::AudioStream *stream = LoopingAudioStream(Audio::makeRawStream(data, size, 22050, 0), ch0loops);
 			//_mixer->playStream(Audio::Mixer::kMusicType, &_musicHandle, stream); //dispose is YES by default
 			debug(1, "playing sound %u at channel 0, loop: %u", ch0, ch0loop);
+			playSound(0, ch0, ch0loop);
 		}
 	}
 	if (_channel1 != ch1) {
 		_channel1 = ch1;
 		if (ch1) {
 			debug(1, "playing sound %u at channel 1", ch1);
+			playSound(1, ch1, ch0loop);
 		}
 	}
 }
