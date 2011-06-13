@@ -88,7 +88,7 @@ extern "C"  void    SNDMIDIPlay(void);
 
 char *NumStr(char *str, int num) {
 	char *p = strchr(str, '#');
-	if (p) 
+	if (p)
 		wtom(num, p, 10, 5);
 	return str;
 }
@@ -345,7 +345,7 @@ void ENGINE::NewTimer(...) {
 
 
 void HEART::SetXTimer(uint16 *ptr) {
-	if (XTimer && ptr != XTimer) 
+	if (XTimer && ptr != XTimer)
 		*XTimer = 0;
 	XTimer = ptr;
 }
@@ -374,7 +374,7 @@ SPRITE::~SPRITE(void) {
 
 BMP_PTR SPRITE::Shp(void) {
 	register SPREXT *e = Ext;
-	if (e) 
+	if (e)
 		if (e->Seq) {
 			int i = e->Seq[SeqPtr].Now;
 #ifdef DEBUG
@@ -403,15 +403,15 @@ BMP_PTR *SPRITE::SetShapeList(BMP_PTR *shp) {
 		BMP_PTR *p;
 		for (p = shp; *p; p++) {
 			BMP_PTR b = (*p); // ->Code();
-			if (b->W > W) 
+			if (b->W > W)
 				W = b->W;
-			if (b->H > H) 
+			if (b->H > H)
 				H = b->H;
 			++ShpCnt;
 		}
 		Expand();
 		Ext->ShpList = shp;
-		if (! Ext->Seq) 
+		if (! Ext->Seq)
 			SetSeq((ShpCnt < 2) ? Seq1 : Seq2);
 	}
 	return r;
@@ -427,7 +427,7 @@ void SPRITE::MoveShapes(uint8 *buf) {
 
 
 bool SPRITE::Works(SPRITE *spr) {
-	if (spr) 
+	if (spr)
 		if (spr->Ext) {
 			SNAIL::COM *c = spr->Ext->Take;
 			if (c != NULL) {
@@ -445,18 +445,18 @@ SEQ *SPRITE::SetSeq(SEQ *seq) {
 	Expand();
 	register SEQ *s = Ext->Seq;
 	Ext->Seq = seq;
-	if (SeqPtr == NO_SEQ) 
+	if (SeqPtr == NO_SEQ)
 		Step(0);
-	else if (Time == 0) 
+	else if (Time == 0)
 		Step(SeqPtr);
 	return s;
 }
 
 
 bool SPRITE::SeqTest(int n) {
-	if (n >= 0) 
+	if (n >= 0)
 		return (SeqPtr == n);
-	if (Ext) 
+	if (Ext)
 		return (Ext->Seq[SeqPtr].Next == SeqPtr);
 	return true;
 }
@@ -464,7 +464,7 @@ bool SPRITE::SeqTest(int n) {
 
 SNAIL::COM *SPRITE::SnList(SNLIST type) {
 	register SPREXT *e = Ext;
-	if (e) 
+	if (e)
 		return (type == NEAR) ? e->Near : e->Take;
 	return NULL;
 }
@@ -477,7 +477,7 @@ void SPRITE::SetName(char *n) {
 			Ext->Name = NULL;
 		}
 		if (n) {
-			if ((Ext->Name = new char[strlen(n) + 1]) != NULL) 
+			if ((Ext->Name = new char[strlen(n) + 1]) != NULL)
 				strcpy(Ext->Name, n);
 			else
 				error("No core [%s]", n);
@@ -516,9 +516,9 @@ SPRITE *SPRITE::Expand(void) {
 
 				while ((len = sprf.Read((uint8 *)line)) != 0) {
 					++ lcnt;
-					if (len && line[len - 1] == '\n') 
+					if (len && line[len - 1] == '\n')
 						line[-- len] = '\0';
-					if (len == 0 || *line == '.') 
+					if (len == 0 || *line == '.')
 						continue;
 
 					switch (TakeEnum(Comd, strtok(line, " =\t"))) {
@@ -536,7 +536,7 @@ SPRITE *SPRITE::Expand(void) {
 							error("No core [%s]", fname);
 						SEQ *s = &seq[seqcnt ++];
 						s->Now  = atoi(strtok(NULL, " \t,;/"));
-						if (s->Now > maxnow) 
+						if (s->Now > maxnow)
 							maxnow = s->Now;
 						s->Next = atoi(strtok(NULL, " \t,;/"));
 						switch (s->Next) {
@@ -547,7 +547,7 @@ SPRITE *SPRITE::Expand(void) {
 							s->Next = seqcnt - 1;
 							break;
 						}
-						if (s->Next > maxnxt) 
+						if (s->Next > maxnxt)
 							maxnxt = s->Next;
 						s->Dx   = atoi(strtok(NULL, " \t,;/"));
 						s->Dy   = atoi(strtok(NULL, " \t,;/"));
@@ -598,19 +598,19 @@ SPRITE *SPRITE::Expand(void) {
 				if (maxnxt >= seqcnt)
 					error("Bad JUMP in SEQ [%s]", fname);
 				SetSeq(seq);
-			} else 
+			} else
 				SetSeq((ShpCnt == 1) ? Seq1 : Seq2);
 			//disable();  // disable interupt
 
 			SetShapeList(shplist);
 			//enable();  // enable interupt
-			if (nea) 
+			if (nea)
 				nea[neacnt - 1].Ptr = Ext->Near = nea;
-			else 
+			else
 				NearPtr = NO_PTR;
-			if (tak) 
+			if (tak)
 				tak[takcnt - 1].Ptr = Ext->Take = tak;
-			else 
+			else
 				TakePtr = NO_PTR;
 		}
 		HEART::Enable = enbl;
@@ -622,20 +622,20 @@ SPRITE *SPRITE::Expand(void) {
 SPRITE *SPRITE::Contract(void) {
 	register SPREXT *e = Ext;
 	if (e) {
-		if (e->Name) 
+		if (e->Name)
 			delete[] e->Name;
 		if (Flags.BDel && e->ShpList) {
 			int i;
-			for (i = 0; e->ShpList[i]; i ++) 
+			for (i = 0; e->ShpList[i]; i ++)
 			delete e->ShpList[i];
-			if (MemType(e->ShpList) == NEAR_MEM) 
+			if (MemType(e->ShpList) == NEAR_MEM)
 				delete[] e->ShpList;
 		}
-		if (MemType(e->Seq) == NEAR_MEM) 
+		if (MemType(e->Seq) == NEAR_MEM)
 			free(e->Seq);
-		if (e->Near) 
+		if (e->Near)
 			free(e->Near);
-		if (e->Take) 
+		if (e->Take)
 			free(e->Take);
 		delete e;
 		Ext = NULL;
@@ -648,7 +648,7 @@ SPRITE *SPRITE::BackShow(bool fast) {
 	Expand();
 	Show(2);
 	Show(1);
-	if (fast) 
+	if (fast)
 		Show(0);
 	Contract();
 	return this;
@@ -656,11 +656,11 @@ SPRITE *SPRITE::BackShow(bool fast) {
 
 
 void SPRITE::Step(int nr) {
-	if (nr >= 0) 
+	if (nr >= 0)
 		SeqPtr = nr;
 	if (Ext) {
 		SEQ *seq;
-		if (nr < 0) 
+		if (nr < 0)
 			SeqPtr = Ext->Seq[SeqPtr].Next;
 		seq = Ext->Seq + SeqPtr;
 		if (seq->Dly >= 0) {
@@ -680,7 +680,7 @@ void SPRITE::MakeXlat(uint8 *x) {
 	if (Ext) {
 		BMP_PTR *b;
 
-		if (Flags.Xlat) 
+		if (Flags.Xlat)
 			KillXlat();
 		for (b = Ext->ShpList; *b; b ++)
 			(*b)->M = x;
@@ -712,23 +712,23 @@ void SPRITE::KillXlat(void) {
 void SPRITE::Goto(int x, int y) {
 	int xo = X, yo = Y;
 	if (W < SCR_WID) {
-		if (x < 0) 
+		if (x < 0)
 			x = 0;
-		if (x + W > SCR_WID) 
+		if (x + W > SCR_WID)
 			x = (SCR_WID - W);
 		X = x;
 	}
 	if (H < SCR_HIG) {
-		if (y < 0) 
+		if (y < 0)
 			y = 0;
-		if (y + H > SCR_HIG) 
+		if (y + H > SCR_HIG)
 			y = (SCR_HIG - H);
 		Y = y;
 	}
-	if (Next) 
-		if (Next->Flags.Slav) 
+	if (Next)
+		if (Next->Flags.Slav)
 			Next->Goto(Next->X - xo + X, Next->Y - yo + Y);
-	if (Flags.Shad) 
+	if (Flags.Shad)
 		Prev->Goto(Prev->X - xo + X, Prev->Y - yo + Y);
 }
 
@@ -766,7 +766,7 @@ void SPRITE::Show(uint16 pg) {
 
 void SPRITE::Hide(void) {
 	register SPREXT *e = Ext;
-	if (e->b0) 
+	if (e->b0)
 		e->b0->Hide(e->x0, e->y0);
 }
 
@@ -815,7 +815,7 @@ QUEUE::~QUEUE(void) {
 void QUEUE::Clear(void) {
 	while (Head) {
 		SPRITE *s = Remove(Head);
-		if (s->Flags.Kill) 
+		if (s->Flags.Kill)
 			delete s;
 	}
 }
@@ -835,12 +835,12 @@ void QUEUE::Append(SPRITE *spr) {
 	if (Tail) {
 		spr->Prev = Tail;
 		Tail->Next = spr;
-	} else 
+	} else
 		Head = spr;
 	Tail = spr;
-	if (Show) 
+	if (Show)
 		spr->Expand();
-	else 
+	else
 		spr->Contract();
 }
 
@@ -849,19 +849,19 @@ void QUEUE::Insert(SPRITE *spr, SPRITE *nxt) {
 	if (nxt == Head) {
 		spr->Next = Head;
 		Head = spr;
-		if (! Tail) 
+		if (! Tail)
 			Tail = spr;
 	} else {
 		spr->Next = nxt;
 		spr->Prev = nxt->Prev;
-		if (spr->Prev) 
+		if (spr->Prev)
 			spr->Prev->Next = spr;
 	}
-	if (spr->Next) 
+	if (spr->Next)
 		spr->Next->Prev = spr;
-	if (Show) 
+	if (Show)
 		spr->Expand();
-	else 
+	else
 		spr->Contract();
 }
 
@@ -871,25 +871,25 @@ void QUEUE::Insert(SPRITE *spr) {
 	for (s = Head; s; s = s->Next)
 		if (s->Z > spr->Z)
 			break;
-	if (s) 
+	if (s)
 		Insert(spr, s);
-	else 
+	else
 		Append(spr);
-	if (Show) 
+	if (Show)
 		spr->Expand();
-	else 
+	else
 		spr->Contract();
 }
 
 
 SPRITE *QUEUE::Remove(SPRITE *spr) {
-	if (spr == Head) 
+	if (spr == Head)
 		Head = spr->Next;
-	if (spr == Tail) 
+	if (spr == Tail)
 		Tail = spr->Prev;
-	if (spr->Next) 
+	if (spr->Next)
 		spr->Next->Prev = spr->Prev;
-	if (spr->Prev) 
+	if (spr->Prev)
 		spr->Prev->Next = spr->Next;
 	spr->Prev = NULL;
 	spr->Next = NULL;
@@ -899,8 +899,8 @@ SPRITE *QUEUE::Remove(SPRITE *spr) {
 
 SPRITE *QUEUE::Locate(int ref) {
 	SPRITE *spr;
-	for (spr = Head; spr; spr = spr->Next) 
-		if (spr->Ref == ref) 
+	for (spr = Head; spr; spr = spr->Next)
+		if (spr->Ref == ref)
 			return spr;
 	return NULL;
 }
@@ -948,7 +948,7 @@ VGA::VGA(int mode)
 	warning("TODO: Fix Copr");
 
 	SetStatAdr();
-	if (StatAdr != VGAST1_) 
+	if (StatAdr != VGAST1_)
 		++Mono;
 	if (IsVga()) {
 		OldColors = farnew(DAC, 256);
@@ -1194,10 +1194,10 @@ void VGA::Sunset(void) {
 void VGA::Show(void) {
 	SPRITE *spr = ShowQ.First();
 
-	for (spr = ShowQ.First(); spr; spr = spr->Next) 
+	for (spr = ShowQ.First(); spr; spr = spr->Next)
 		spr->Show();
 	Update();
-	for (spr = ShowQ.First(); spr; spr = spr->Next) 
+	for (spr = ShowQ.First(); spr; spr = spr->Next)
 		spr->Hide();
 
 	++ FrmCnt;

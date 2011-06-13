@@ -34,26 +34,26 @@ namespace CGE {
 SPRITE *KEYBOARD::Client = NULL;
 uint8  KEYBOARD::Key[0x60] = { 0 };
 uint16  KEYBOARD::Current = 0;
-uint16  KEYBOARD::Code[0x60] = { 
-	0,               Esc,      '1',         '2',       '3', 
-	'4',             '5',      '6',         '7',       '8', 
-	'9',             '0',      '-',         '+',       BSp, 
-	Tab,             'Q',      'W',         'E',       'R', 
-	'T',             'Y',      'U',         'I',       'O', 
-	'P',             '[',      ']',         Enter,     0/*Ctrl*/, 
-	'A',             'S',      'D',         'F',       'G', 
-	'H',             'J',      'K',         'L',       ';', 
-	'\'',            '`',      0/*LShift*/, '\\',      'Z', 
-	'X',             'C',      'V',         'B',       'N', 
-	'M',             ',',      '.',         '/',       0/*RShift*/, 
-	'*',             0/*Alt*/, ' ',         0/*Caps*/, F1, 
-	F2,              F3,       F4,          F5,        F6, 
-	F7,              F8,       F9,          F10,       0/*NumLock*/, 
-	0/*ScrollLock*/, Home,     Up,          PgUp,      '-', 
-	Left,            Ctr,      Right,       '+',       End, 
-	Down,            PgDn,     Ins,         Del,       0 * 0x54, 
-	0 * 0x55,        0 * 0x56, F11,         F12,       0 * 0x59, 
-	0 * 0x5A,        0 * 0x5B, 0 * 0x5C,    0 * 0x5D,  0 * 0x5E, 
+uint16  KEYBOARD::Code[0x60] = {
+	0,               Esc,      '1',         '2',       '3',
+	'4',             '5',      '6',         '7',       '8',
+	'9',             '0',      '-',         '+',       BSp,
+	Tab,             'Q',      'W',         'E',       'R',
+	'T',             'Y',      'U',         'I',       'O',
+	'P',             '[',      ']',         Enter,     0/*Ctrl*/,
+	'A',             'S',      'D',         'F',       'G',
+	'H',             'J',      'K',         'L',       ';',
+	'\'',            '`',      0/*LShift*/, '\\',      'Z',
+	'X',             'C',      'V',         'B',       'N',
+	'M',             ',',      '.',         '/',       0/*RShift*/,
+	'*',             0/*Alt*/, ' ',         0/*Caps*/, F1,
+	F2,              F3,       F4,          F5,        F6,
+	F7,              F8,       F9,          F10,       0/*NumLock*/,
+	0/*ScrollLock*/, Home,     Up,          PgUp,      '-',
+	Left,            Ctr,      Right,       '+',       End,
+	Down,            PgDn,     Ins,         Del,       0 * 0x54,
+	0 * 0x55,        0 * 0x56, F11,         F12,       0 * 0x59,
+	0 * 0x5A,        0 * 0x5B, 0 * 0x5C,    0 * 0x5D,  0 * 0x5E,
 	0 * 0x5F
 };
 

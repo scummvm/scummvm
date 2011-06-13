@@ -1322,19 +1322,19 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 				if (Flags.Kept || Hero->Distance(this) < MAX_DISTANCE) {
 					if (Works(ps)) {
 						FeedSnail(ps, TAKE);
-					} else 
+					} else
 						OffUse();
 					SelectPocket(-1);
-				} else 
+				} else
 					TooFar();
 			} else {
-				if (Flags.Kept) 
+				if (Flags.Kept)
 					mask |= L_UP;
 				else {
 					if (Hero->Distance(this) < MAX_DISTANCE) {
 						///
 						if (Flags.Port) {
-							if (FindPocket(NULL) < 0) 
+							if (FindPocket(NULL) < 0)
 								PocFul();
 							else {
 								SNPOST(SNREACH, -1, -1, this);
@@ -1343,15 +1343,15 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 							}
 						} else {
 							if (TakePtr != NO_PTR) {
-								if (SnList(TAKE)[TakePtr].Com == SNNEXT) 
+								if (SnList(TAKE)[TakePtr].Com == SNNEXT)
 									OffUse();
-								else 
+								else
 									FeedSnail(this, TAKE);
-							} else 
+							} else
 								OffUse();
 						}
 					}///
-					else 
+					else
 						TooFar();
 				}
 			}
@@ -1365,7 +1365,7 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 						break;
 					}
 				}
-			} else  
+			} else
 				SNPOST(SNWALK, -1, -1, this); // Hero->FindWay(this);
 		}
 	}
@@ -1400,9 +1400,9 @@ static void LoadSprite(const char *fname, int ref, int cav, int col = 0, int row
 
 		while ((len = sprf.Read((uint8 *)line)) != 0) {
 			++ lcnt;
-			if (len && line[len - 1] == '\n') 
+			if (len && line[len - 1] == '\n')
 				line[-- len] = '\0';
-			if (len == 0 || *line == '.') 
+			if (len == 0 || *line == '.')
 				continue;
 
 			if ((i = TakeEnum(Comd, strtok(line, " =\t"))) < 0)
@@ -1531,42 +1531,42 @@ static void LoadScript(const char *fname) {
 	int lcnt = 0;
 	bool ok = true;
 
-	if (scrf.Error) 
+	if (scrf.Error)
 		return;
 
 	while (scrf.Read((uint8 *)line) != 0) {
 		char *p;
 
 		++lcnt;
-		if (*line == 0 || *line == '\n' || *line == '.') 
+		if (*line == 0 || *line == '\n' || *line == '.')
 			continue;
 
 		ok = false;   // not OK if break
 		// sprite ident number
-		if ((p = strtok(line, " \t\n")) == NULL) 
+		if ((p = strtok(line, " \t\n")) == NULL)
 			break;
 		SpI = atoi(p);
 		// sprite file name
-		if ((SpN = strtok(NULL, " ,;/\t\n")) == NULL) 
+		if ((SpN = strtok(NULL, " ,;/\t\n")) == NULL)
 			break;
 		// sprite cave
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL) 
+		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
 			break;
 		SpA = atoi(p);
 		// sprite column
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL) 
+		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
 			break;
 		SpX = atoi(p);
 		// sprite row
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL) 
+		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
 			break;
 		SpY = atoi(p);
 		// sprite Z pos
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL) 
+		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
 			break;
 		SpZ = atoi(p);
 		// sprite life
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL) 
+		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
 			break;
 		BkG = atoi(p) == 0;
 
@@ -1574,7 +1574,7 @@ static void LoadScript(const char *fname) {
 
 		Sprite = NULL;
 		LoadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
-		if (Sprite && BkG) 
+		if (Sprite && BkG)
 			Sprite->Flags.Back = true;
 	}
 	if (! ok)
@@ -1688,10 +1688,10 @@ static void RunGame(void) {
 
 	if ((Sprite = VGA::SpareQ.Locate(121)) != NULL)
 		SNPOST_(SNSEQ, -1, VGA::Mono, Sprite);
-	if ((Sprite = VGA::SpareQ.Locate(122)) != NULL) 
+	if ((Sprite = VGA::SpareQ.Locate(122)) != NULL)
 		Sprite->Step(Music);
 	SNPOST_(SNSEQ, -1, Music, Sprite);
-	if (! Music) 
+	if (! Music)
 		KillMIDI();
 
 	if (Mini && INI_FILE::Exist("MINI.SPR")) {
@@ -1738,7 +1738,7 @@ static void RunGame(void) {
 #endif
 
 	Mouse.Busy = VGA::SpareQ.Locate(BUSY_REF);
-	if (Mouse.Busy) 
+	if (Mouse.Busy)
 		ExpandSprite(Mouse.Busy);
 
 	Startup = 0;
@@ -1820,14 +1820,14 @@ bool ShowTitle(const char *name) {
 		VGA::ShowQ.Append(&Mouse);
 		HEART::Enable = true;
 		Mouse.On();
-		for (SelectSound(); ! Snail.Idle() || VMENU::Addr;) 
+		for (SelectSound(); ! Snail.Idle() || VMENU::Addr;)
 			MainLoop();
 		Mouse.Off();
 		HEART::Enable = false;
 		VGA::ShowQ.Clear();
 		VGA::CopyPage(0, 2);
 		STARTUP::SoundOk = 2;
-		if (Music) 
+		if (Music)
 			LoadMIDI(0);
 	}
 
@@ -1857,12 +1857,12 @@ bool ShowTitle(const char *name) {
 		VGA::ShowQ.Append(&Mouse);
 		//Mouse.On();
 		HEART::Enable = true;
-		for (TakeName(); GET_TEXT::Ptr;) 
+		for (TakeName(); GET_TEXT::Ptr;)
 			MainLoop();
 		HEART::Enable = false;
-		if (KEYBOARD::Last() == Enter && *UsrFnam) 
+		if (KEYBOARD::Last() == Enter && *UsrFnam)
 			usr_ok = true;
-		if (usr_ok) 
+		if (usr_ok)
 			strcat(UsrFnam, SVG_EXT);
 		//Mouse.Off();
 		VGA::ShowQ.Clear();
@@ -1879,12 +1879,12 @@ bool ShowTitle(const char *name) {
 					++ STARTUP::Mode;
 					FINIS = false;
 				}
-			} else 
+			} else
 				++STARTUP::Mode;
 		}
 	}
 
-	if (STARTUP::Mode < 2) 
+	if (STARTUP::Mode < 2)
 		Movie("X01"); // wink
 
 	VGA::CopyPage(0, 2);
@@ -1918,7 +1918,7 @@ void cge_main(void) {
 
 	if (! Mouse.Exist)
 		error("%s", Text[NO_MOUSE_TEXT]);
-	if (! SVG0FILE::Exist(SVG0NAME)) 
+	if (! SVG0FILE::Exist(SVG0NAME))
 		STARTUP::Mode = 2;
 
 	Debug(DebugLine.Flags.Hide = true;)
@@ -1927,9 +1927,9 @@ void cge_main(void) {
 	//srand((uint16) Timer());
 	Sys = new SYSTEM;
 
-	if (Music && STARTUP::SoundOk) 
+	if (Music && STARTUP::SoundOk)
 		LoadMIDI(0);
-	if (STARTUP::Mode < 2) 
+	if (STARTUP::Mode < 2)
 		Movie(LGO_EXT);
 	if (ShowTitle("WELCOME")) {
 #ifndef   DEMO
@@ -1937,9 +1937,9 @@ void cge_main(void) {
 #endif
 		RunGame();
 		Startup = 2;
-		if (FINIS) 
+		if (FINIS)
 			Movie("X03");
-	} else 
+	} else
 		Vga.Sunset();
 	error("%s", Text[EXIT_OK_TEXT + FINIS]);
 }

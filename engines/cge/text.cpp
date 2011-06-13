@@ -79,7 +79,7 @@ int TEXT::Find(int ref) {
 	for (p = Cache, q = p + Size; p < q; p ++) {
 		if (p->Ref == ref)
 			break;
-		else 
+		else
 			++i;
 	}
 	return i;
@@ -111,14 +111,14 @@ void TEXT::Preload(int from, int upto) {
 				if (p < CacheLim) {
 					delete[] p->Txt;
 					p->Txt = NULL;
-				} else 
+				} else
 					p = &Cache[Find(0)];
-				if (p >= CacheLim) 
+				if (p >= CacheLim)
 					break;
 				s += strlen(s);
-				if (s < line + n) 
+				if (s < line + n)
 					++s;
-				if ((p->Txt = new char[strlen(s) + 1]) == NULL) 
+				if ((p->Txt = new char[strlen(s) + 1]) == NULL)
 					break;
 				p->Ref = ref;
 				strcpy(p->Txt, s);
@@ -138,24 +138,24 @@ char *TEXT::Load(int idx, int ref) {
 		while ((n = tf.Read((uint8 *)line)) != 0) {
 			char *s;
 
-			if (line[n - 1] == '\n') 
+			if (line[n - 1] == '\n')
 				line[-- n] = '\0';
-			if ((s = strtok(line, " =,;/\t\n")) == NULL) 
+			if ((s = strtok(line, " =,;/\t\n")) == NULL)
 				continue;
-			if (! IsDigit(*s)) 
+			if (! IsDigit(*s))
 				continue;
 
 			int r = atoi(s);
-			if (r < ref) 
+			if (r < ref)
 				continue;
-			if (r > ref) 
+			if (r > ref)
 				break;
 			// (r == ref)
 			s += strlen(s);
-			if (s < line + n) 
+			if (s < line + n)
 				++s;
 			p->Ref = ref;
-			if ((p->Txt = new char[strlen(s) + 1]) == NULL) 
+			if ((p->Txt = new char[strlen(s) + 1]) == NULL)
 				return NULL;
 			return strcpy(p->Txt, s);
 		}
@@ -166,7 +166,7 @@ char *TEXT::Load(int idx, int ref) {
 
 char *TEXT::operator [](int ref) {
 	int i;
-	if ((i = Find(ref)) < Size) 
+	if ((i = Find(ref)) < Size)
 		return Cache[i].Txt;
 
 	if ((i = Find(0)) >= Size) {
@@ -191,14 +191,14 @@ void Say(const char *txt, SPRITE *spr) {
 		uint16 sw = spike->W;
 
 		if (east) {
-			if (x + sw + TEXT_RD + 5 >= SCR_WID) 
+			if (x + sw + TEXT_RD + 5 >= SCR_WID)
 				east = false;
 		} else {
-			if (x <= 5 + TEXT_RD + sw) 
+			if (x <= 5 + TEXT_RD + sw)
 				east = true;
 		}
 		x = (east) ? (spr->X + spr->W - 2) : (spr->X + 2 - sw);
-		if (spr->Ref == 1) 
+		if (spr->Ref == 1)
 			x += (east) ? -10 : 10; // Hero
 
 		Talk->Flags.Kill = true;

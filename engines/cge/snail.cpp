@@ -88,7 +88,7 @@ static void SNGame(SPRITE *spr, int num) {
 		if (Game) { // continue game
 			int i = new_random(3), hand = (dup[0]->ShpCnt == 6);
 			++ Stage;
-			if (hand && Stage > DRESSED) 
+			if (hand && Stage > DRESSED)
 				++hand;
 			if (Debug(i >= 0 ||)
 			    dup[i] == spr && new_random(3) == 0) {
@@ -138,8 +138,8 @@ static void SNGame(SPRITE *spr, int num) {
 				SNPOST(SNSEQ, -1, 2, dup[1]);               // no
 				SNPOST(SNSEQ, -1, 2, dup[2]);               // no
 				SNPOST(SNPAUSE, -1, 72, NULL);              // 1 sec
-			}                                             
-		}                                               
+			}
+		}
 		SNPOST(SNWALK, 198, 134, NULL);                 // na miejsce
 		SNPOST(SNWAIT, 1, -1, NULL);                    // stoi
 		SNPOST(SNCOVER, 1, 16101, NULL);                // ch’op do bicia
@@ -152,7 +152,7 @@ static void SNGame(SPRITE *spr, int num) {
 		SNPOST(SNSEQ, 16040, 0, NULL);                  // schowaj plask
 		SNPOST(SNWAIT, 16101, -1, NULL);                // stoi
 		SNPOST(SNUNCOVER, 1, 16101, NULL);              // SDS
-		if (! Game) {                                   
+		if (! Game) {
 			SNPOST(SNSAY, buref, 16008, NULL);            // zgadnij!
 			Game = true;
 		}
@@ -200,13 +200,13 @@ static void SNGame(SPRITE *spr, int num) {
 					SNPOST(SNKEEP, 20007,     0, NULL);       // do kieszeni
 					SNPOST(SNSEND, 20006,    20, NULL);       // bilon
 					SNPOST(SNSOUND, 20006, 20002, NULL);      // bilon!
-					SNPOST(SNSAY,  20002, 20004, NULL);       
+					SNPOST(SNSAY,  20002, 20004, NULL);
 					SNPOST(SNSEND, 20010,    20, NULL);       // papier
 					SNPOST(SNSOUND, 20010, 20003, NULL);      // papier!
 					SNPOST(SNSAY,  20001, 20005, NULL);
 					Game = false;
 					return;
-				} else 
+				} else
 					k3->Step(new_random(5));
 			}
 			if (count < 100) {
@@ -237,7 +237,7 @@ static void SNGame(SPRITE *spr, int num) {
 				SNPOST(SNWAIT, 20007, -1, NULL);            // koniec
 				SNPOST(SNGAME, 20001, 2, NULL);             // again!
 				break;
-			case 20001 :
+			case 20001:
 				SNPOST(SNSAY, 20002, 20012, NULL);          // zapro
 				SNPOST(SNSEQ, 20002, 1, NULL);              // rzu
 				SNPOST(SNWAIT, 20002, 3, NULL);             // czekaj
@@ -249,8 +249,8 @@ static void SNGame(SPRITE *spr, int num) {
 				SNPOST(SNSOUND, 20007, 20001, NULL);        // grzech
 				SNPOST(SNWAIT, 20007, -1, NULL);            // koniec
 				SNPOST(SNGAME, 20002, 2, NULL);             // again!
-				break;                                      
-			case 20002 :                                  
+				break;
+			case 20002:
 				SNPOST(SNSAY, 20002, 20010, NULL);          // zapro
 				SNPOST(SNWALK, 20005, -1, NULL);            // do stol
 				SNPOST(SNWAIT, 1, -1, NULL);                // stoi
@@ -276,19 +276,19 @@ static void SNGame(SPRITE *spr, int num) {
 
 
 void ExpandSprite(SPRITE *spr) {
-	if (spr) 
+	if (spr)
 		VGA::ShowQ.Insert(VGA::SpareQ.Remove(spr));
 }
 
 
 void ContractSprite(SPRITE *spr) {
-	if (spr) 
+	if (spr)
 		VGA::SpareQ.Append(VGA::ShowQ.Remove(spr));
 }
 
 int FindPocket(SPRITE *spr) {
-	for (int i = 0; i < POCKET_NX; i ++) 
-	if (Pocket[i] == spr) 
+	for (int i = 0; i < POCKET_NX; i ++)
+	if (Pocket[i] == spr)
 		return i;
 	return -1;
 }
@@ -298,7 +298,7 @@ void SelectPocket(int n) {
 	if (n < 0 || (PocLight.SeqPtr && PocPtr == n)) {
 		PocLight.Step(0);
 		n = FindPocket(NULL);
-		if (n >= 0) 
+		if (n >= 0)
 			PocPtr = n;
 	} else {
 		if (Pocket[n] != NULL) {
@@ -335,7 +335,7 @@ void SNGhost(BITMAP *bmp) {
 
 
 void FeedSnail(SPRITE *spr, SNLIST snq) {
-	if (spr) 
+	if (spr)
 		if (spr->Active()) {
 			uint8 ptr = (snq == TAKE) ? spr->TakePtr : spr->NearPtr;
 
@@ -350,13 +350,13 @@ void FeedSnail(SPRITE *spr, SNLIST snq) {
 							PocFul();
 							return;
 						}
-						if (p->Ptr) 
+						if (p->Ptr)
 							break;
 					}
 				}
 				while (true) {
 					if (c->Com == SNTALK) {
-						if ((Snail.TalkEnable = (c->Val != 0)) == false) 
+						if ((Snail.TalkEnable = (c->Val != 0)) == false)
 							KillText();
 					}
 					if (c->Com == SNNEXT) {
@@ -379,27 +379,27 @@ void FeedSnail(SPRITE *spr, SNLIST snq) {
 									v = c->Val;
 									break;
 								}
-								if (v >= 0) 
+								if (v >= 0)
 									*idx = v;
 							}
 						}
-						if (s == spr) 
+						if (s == spr)
 							break;
 					}
 					if (c->Com == SNIF) {
 						SPRITE *s = (c->Ref < 0) ? spr : Locate(c->Ref);
 						if (s) { // sprite extsts
-							if (! s->SeqTest(-1)) 
+							if (! s->SeqTest(-1))
 								c = comtab + c->Val;                // not parked
-							else 
+							else
 								++c;
-						} else 
+						} else
 							++c;
 					} else {
 						SNPOST(c->Com, c->Ref, c->Val, spr);
-						if (c->Ptr) 
+						if (c->Ptr)
 							break;
-						else 
+						else
 							++c;
 					}
 				}
@@ -408,17 +408,17 @@ void FeedSnail(SPRITE *spr, SNLIST snq) {
 }
 
 
-const char *SNAIL::ComTxt[] = { 
-	"LABEL",  "PAUSE",  "WAIT",    "LEVEL",   "HIDE", 
-	"SAY",    "INF",    "TIME",    "CAVE",    "KILL", 
-	"RSEQ",   "SEQ",    "SEND",    "SWAP",    "KEEP", 
-	"GIVE",   "IF",     "GAME",    "SETX0",   "SETY0", 
+const char *SNAIL::ComTxt[] = {
+	"LABEL",  "PAUSE",  "WAIT",    "LEVEL",   "HIDE",
+	"SAY",    "INF",    "TIME",    "CAVE",    "KILL",
+	"RSEQ",   "SEQ",    "SEND",    "SWAP",    "KEEP",
+	"GIVE",   "IF",     "GAME",    "SETX0",   "SETY0",
 	"SLAVE",  "SETXY",  "RELX",    "RELY",    "RELZ",
 	"SETX",   "SETY",   "SETZ",    "TRANS",   "PORT",
 	"NEXT",   "NNEXT",  "TNEXT",   "RNNEXT",  "RTNEXT",
-	"RMNEAR", "RMTAKE", "FLAG",    "SETREF",  "BACKPT", 
-	"FLASH",  "LIGHT",  "SETHB",   "SETVB",   "WALK", 
-	"REACH",  "COVER",  "UNCOVER", "CLEAR",   "TALK", 
+	"RMNEAR", "RMTAKE", "FLAG",    "SETREF",  "BACKPT",
+	"FLASH",  "LIGHT",  "SETHB",   "SETVB",   "WALK",
+	"REACH",  "COVER",  "UNCOVER", "CLEAR",   "TALK",
 	"MOUSE",  "SOUND",  "COUNT",   NULL
 };
 
@@ -431,7 +431,7 @@ SNAIL::SNAIL(bool turbo)
 
 
 SNAIL::~SNAIL(void) {
-	if (SNList) 
+	if (SNList)
 		free(SNList);
 }
 
@@ -459,7 +459,7 @@ void SNAIL::InsCom(SNCOM com, int ref, int val, void *ptr) {
 	if (Busy) {
 		SNList[(Tail - 1) & 0xFF] = SNList[Tail];
 		snc = &SNList[Tail];
-	} else 
+	} else
 		snc = &SNList[(Tail - 1) & 0xFF];
 	--Tail;
 	snc->Com = com;
@@ -476,35 +476,35 @@ void SNAIL::InsCom(SNCOM com, int ref, int val, void *ptr) {
 
 
 static void SNNNext(SPRITE *sprel, int p) {
-	if (sprel) 
-		if (sprel->NearPtr != NO_PTR) 
+	if (sprel)
+		if (sprel->NearPtr != NO_PTR)
 			sprel->NearPtr = p;
 }
 
 
 static void SNTNext(SPRITE *sprel, int p) {
-	if (sprel) 
-		if (sprel->TakePtr != NO_PTR) 
+	if (sprel)
+		if (sprel->TakePtr != NO_PTR)
 			sprel->TakePtr = p;
 }
 
 
 static void SNRNNext(SPRITE *sprel, int p) {
-	if (sprel) 
-		if (sprel->NearPtr != NO_PTR) 
+	if (sprel)
+		if (sprel->NearPtr != NO_PTR)
 			sprel->NearPtr += p;
 }
 
 
 static void SNRTNext(SPRITE *sprel, int p) {
-	if (sprel) 
-		if (sprel->TakePtr != NO_PTR) 
+	if (sprel)
+		if (sprel->TakePtr != NO_PTR)
 			sprel->TakePtr += p;
 }
 
 
 static void SNZTrim(SPRITE *spr) {
-	if (spr) 
+	if (spr)
 		if (spr->Active()) {
 			bool en = HEART::Enable;
 			SPRITE *s;
@@ -523,36 +523,36 @@ static void SNZTrim(SPRITE *spr) {
 static void SNHide(SPRITE *spr, int val) {
 	if (spr) {
 		spr->Flags.Hide = (val >= 0) ? (val != 0) : (! spr->Flags.Hide);
-		if (spr->Flags.Shad) 
+		if (spr->Flags.Shad)
 			spr->Prev->Flags.Hide = spr->Flags.Hide;
 	}
 }
 
 
 static void SNRmNear(SPRITE *spr) {
-	if (spr) 
+	if (spr)
 		spr->NearPtr = NO_PTR;
 }
 
 
 static void SNRmTake(SPRITE *spr) {
-	if (spr) 
+	if (spr)
 		spr->TakePtr = NO_PTR;
 }
 
 
 void SNSeq(SPRITE *spr, int val) {
 	if (spr) {
-		if (spr == Hero && val == 0) 
+		if (spr == Hero && val == 0)
 			Hero->Park();
-		else 
+		else
 			spr->Step(val);
 	}
 }
 
 
 void SNRSeq(SPRITE *spr, int val) {
-	if (spr) 
+	if (spr)
 		SNSeq(spr, spr->SeqPtr + val);
 }
 
@@ -567,18 +567,18 @@ void SNSend(SPRITE *spr, int val) {
 			if (was1) {
 				if (spr->Flags.Kept) {
 					int n = FindPocket(spr);
-					if (n >= 0) 
+					if (n >= 0)
 						Pocket[n] = NULL;
 				}
 				Hide1(spr);
 				ContractSprite(spr);
 				spr->Flags.Slav = false;
 			} else {
-				if (spr->Ref % 1000 == 0) 
+				if (spr->Ref % 1000 == 0)
 					BITMAP::Pal = SysPal;
-				if (spr->Flags.Back) 
+				if (spr->Flags.Back)
 					spr->BackShow(true);
-				else 
+				else
 					ExpandSprite(spr);
 				BITMAP::Pal = NULL;
 			}
@@ -601,7 +601,7 @@ void SNSwap(SPRITE *spr, int xref) {
 		Swap(spr->Z, xspr->Z);
 		if (spr->Flags.Kept) {
 			int n = FindPocket(spr);
-			if (n >= 0) 
+			if (n >= 0)
 				Pocket[n] = xspr;
 			xspr->Flags.Kept = true;
 			xspr->Flags.Port = false;
@@ -610,12 +610,12 @@ void SNSwap(SPRITE *spr, int xref) {
 			if (was1) {
 				Hide1(spr);
 				ContractSprite(spr);
-			} else 
+			} else
 				ExpandSprite(spr);
 			if (xwas1) {
 				Hide1(xspr);
 				ContractSprite(xspr);
-			} else 
+			} else
 				ExpandSprite(xspr);
 		}
 	}
@@ -650,7 +650,7 @@ void SNUncover(SPRITE *spr, SPRITE *xspr) {
 		}
 		spr->Z = xspr->Z;
 		SNSend(xspr, -1);
-		if (spr->Time == 0) 
+		if (spr->Time == 0)
 			++spr->Time;
 	}
 }
@@ -742,21 +742,21 @@ void SNKill(SPRITE *spr) {
 	if (spr) {
 		if (spr->Flags.Kept) {
 			int n = FindPocket(spr);
-			if (n >= 0) 
+			if (n >= 0)
 				Pocket[n] = NULL;
 		}
 		SPRITE *nx = spr->Next;
 		Hide1(spr);
 		VGA::ShowQ.Remove(spr);
 		MOUSE::ClrEvt(spr);
-		if (spr->Flags.Kill) 
+		if (spr->Flags.Kill)
 			delete spr;
 		else {
 			spr->Cave = -1;
 			VGA::SpareQ.Append(spr);
 		}
-		if (nx) 
-			if (nx->Flags.Slav) 
+		if (nx)
+			if (nx->Flags.Slav)
 				SNKill(nx);
 	}
 }
@@ -764,7 +764,7 @@ void SNKill(SPRITE *spr) {
 
 static void SNSound(SPRITE *spr, int wav, int cnt) {
 	if (SNDDrvInfo.DDEV) {
-		if (wav == -1) 
+		if (wav == -1)
 			Sound.Stop();
 		else
 			Sound.Play(Fx[wav], (spr) ? ((spr->X + spr->W / 2) / (SCR_WID / 16)) : 8, cnt);
@@ -781,7 +781,7 @@ void SNKeep(SPRITE *spr, int stp) {
 		spr->Flags.Kept = true;
 		spr->Goto(POCKET_X + POCKET_DX * PocPtr + POCKET_DX / 2 - spr->W / 2,
 		          POCKET_Y + POCKET_DY / 2 - spr->H / 2);
-		if (stp >= 0) 
+		if (stp >= 0)
 			spr->Step(stp);
 	}
 	SelectPocket(-1);
@@ -795,7 +795,7 @@ void SNGive(SPRITE *spr, int stp) {
 			Pocket[p] = NULL;
 			spr->Cave = Now;
 			spr->Flags.Kept = false;
-			if (stp >= 0) 
+			if (stp >= 0)
 				spr->Step(stp);
 		}
 	}
@@ -805,7 +805,7 @@ void SNGive(SPRITE *spr, int stp) {
 
 static void SNBackPt(SPRITE *spr, int stp) {
 	if (spr) {
-		if (stp >= 0) 
+		if (stp >= 0)
 			spr->Step(stp);
 		spr->BackShow(true);
 	}
@@ -828,7 +828,7 @@ static void SNLevel(SPRITE *spr, int lev) {
 		}
 	}
 	MaxCave = maxcav[Lev];
-	if (spr) 
+	if (spr)
 		spr->Flags.Hide = false;
 }
 
@@ -860,14 +860,14 @@ void SNFlash(bool on) {
 			}
 			VGA::SetColors(pal, 64);
 		}
-	} else 
+	} else
 		VGA::SetColors(SysPal, 64);
 	Dark = false;
 }
 
 
 static void SNLight(bool in) {
-	if (in) 
+	if (in)
 		VGA::Sunrise(SysPal);
 	else
 		VGA::Sunset();
@@ -882,16 +882,16 @@ static void SNBarrier(int cav, int bar, bool horz) {
 
 static void SNWalk(SPRITE *spr, int x, int y) {
 	if (Hero) {
-		if (spr && y < 0) 
+		if (spr && y < 0)
 			Hero->FindWay(spr);
-		else 
+		else
 			Hero->FindWay(XZ(x, y));
 	}
 }
 
 
 static void SNReach(SPRITE *spr, int mode) {
-	if (Hero) 
+	if (Hero)
 		Hero->Reach(spr, mode);
 }
 
@@ -914,7 +914,7 @@ void SNAIL::RunCom(void) {
 			COM *snc = &SNList[Tail];
 
 			if (! Turbo) { // only for the slower one
-				if (Pause) 
+				if (Pause)
 					break;
 				else {
 					if (TextDelay) {
@@ -922,7 +922,7 @@ void SNAIL::RunCom(void) {
 						TextDelay = false;
 					}
 				}
-				if (Talk && snc->Com != SNPAUSE) 
+				if (Talk && snc->Com != SNPAUSE)
 					break;
 			}
 
@@ -932,7 +932,7 @@ void SNAIL::RunCom(void) {
 				break;
 			case SNPAUSE    :
 				HEART::SetXTimer(&Pause, snc->Val);
-				if (Talk) 
+				if (Talk)
 					TextDelay = true;
 				break;
 			case SNWAIT     :
@@ -940,7 +940,7 @@ void SNAIL::RunCom(void) {
 					if (sprel->SeqTest(snc->Val) &&
 					        (snc->Val >= 0 || sprel != Hero || Hero->TracePtr < 0)) {
 						HEART::SetXTimer(&Pause, sprel->Time);
-					} else 
+					} else
 						goto xit;
 				}
 				break;
@@ -1116,7 +1116,7 @@ void SNAIL::RunCom(void) {
 				break;
 			}
 			++Tail;
-			if (!Turbo) 
+			if (!Turbo)
 				break;
 		}
 xit:

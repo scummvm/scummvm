@@ -40,9 +40,9 @@ uint16     MOUSE::OldMouseMask = 0;
 
 
 MOUSE::MOUSE(BITMAP **shpl) : SPRITE(shpl), Busy(NULL), Hold(NULL), hx(0) {
-	static SEQ ms[] = { 
-		{ 0, 0, 0, 0, 1 }, 
-		{ 1, 1, 0, 0, 1 } 
+	static SEQ ms[] = {
+		{ 0, 0, 0, 0, 1 },
+		{ 1, 1, 0, 0, 1 }
 	};
 
 	SetSeq(ms);
@@ -135,9 +135,9 @@ void MOUSE::ClrEvt(SPRITE *spr) {
 	if (spr) {
 		uint16 e;
 		for (e = EvtTail; e != EvtHead; e = (e + 1) % EVT_MAX)
-			if (Evt[e].Ptr == spr) 
+			if (Evt[e].Ptr == spr)
 				Evt[e].Msk = 0;
-	} else 
+	} else
 		EvtTail = EvtHead;
 }
 
@@ -156,11 +156,11 @@ void MOUSE::Tick(void) {
 
 			// activate current touched SPRITE
 			if (e.Ptr) {
-				if (e.Msk & KEYB) 
+				if (e.Msk & KEYB)
 					e.Ptr->Touch(e.Msk, e.X, e.Y);
-				else 
+				else
 					e.Ptr->Touch(e.Msk, e.X - e.Ptr->X, e.Y - e.Ptr->Y);
-			} else if (Sys) 
+			} else if (Sys)
 					Sys->Touch(e.Msk, e.X, e.Y);
 
 			if (e.Msk & L_DN) {
@@ -186,7 +186,7 @@ void MOUSE::Tick(void) {
 			///Touched = e.Ptr;
 
 			// discard Text if button released
-			if (e.Msk & (L_UP | R_UP)) 
+			if (e.Msk & (L_UP | R_UP))
 				KillText();
 		}
 		EvtTail = (EvtTail + 1) % EVT_MAX;
