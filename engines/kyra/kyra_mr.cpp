@@ -366,10 +366,9 @@ void KyraEngine_MR::uninitMainMenu() {
 void KyraEngine_MR::playVQA(const char *name) {
 	VQAMovie vqa(this, _system);
 
-	char filename[20];
-	snprintf(filename, sizeof(filename), "%s%d.VQA", name, _configVQAQuality);
+	Common::String filename = Common::String::format("%s%d.VQA", name, _configVQAQuality);
 
-	if (vqa.open(filename)) {
+	if (vqa.open(filename.c_str())) {
 		for (int i = 0; i < 4; ++i) {
 			if (i != _musicSoundChannel)
 				_soundDigital->stopSound(i);
@@ -444,12 +443,11 @@ void KyraEngine_MR::fadeOutMusic(int ticks) {
 
 void KyraEngine_MR::snd_playSoundEffect(int item, int volume) {
 	if (_sfxFileMap[item*2+0] != 0xFF) {
-		char filename[16];
 		assert(_sfxFileMap[item*2+0] < _sfxFileListSize);
-		snprintf(filename, 16, "%s", _sfxFileList[_sfxFileMap[item*2+0]]);
+		Common::String filename = Common::String::format("%s", _sfxFileList[_sfxFileMap[item*2+0]]);
 		uint8 priority = _sfxFileMap[item*2+1];
 
-		_soundDigital->playSound(filename, priority, Audio::Mixer::kSFXSoundType, volume);
+		_soundDigital->playSound(filename.c_str(), priority, Audio::Mixer::kSFXSoundType, volume);
 	}
 }
 
@@ -458,11 +456,10 @@ void KyraEngine_MR::playVoice(int high, int low) {
 }
 
 void KyraEngine_MR::snd_playVoiceFile(int file) {
-	char filename[16];
-	snprintf(filename, 16, "%.08u", (uint)file);
+	Common::String filename = Common::String::format("%.08u", (uint)file);
 
 	if (speechEnabled())
-		_voiceSoundChannel = _soundDigital->playSound(filename, 0xFE, Audio::Mixer::kSpeechSoundType, 255);
+		_voiceSoundChannel = _soundDigital->playSound(filename.c_str(), 0xFE, Audio::Mixer::kSpeechSoundType, 255);
 }
 
 bool KyraEngine_MR::snd_voiceIsPlaying() {
@@ -1242,26 +1239,14 @@ void KyraEngine_MR::restoreGfxRect32x32(int x, int y) {
 
 #pragma mark -
 
-char *KyraEngine_MR::appendLanguage(char *buf, int lang, int bufSize) {
-	assert(lang < _languageExtensionSize);
-
-	const int size = Common::strlcat(buf, _languageExtension[lang], bufSize);
-	if (size >= bufSize) {
-		warning("buffer too small to append language extension");
-		return 0;
-	}
-
-	return buf;
-}
-
 int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
 	delete[] buffer;
 	buffer = 0;
 
 	uint32 size = 0;
-	char nBuf[32];
-	Common::strlcpy(nBuf, file, sizeof(nBuf));
-	buffer = _res->fileData(appendLanguage(nBuf, _lang, sizeof(nBuf)), &size);
+	Common::String nBuf = file;
+	nBuf += _languageExtension[_lang];
+	buffer = _res->fileData(nBuf.c_str(), &size);
 
 	return buffer ? size : 0;
 }

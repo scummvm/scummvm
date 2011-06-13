@@ -19,11 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "common/str.h"
 #include "common/hash-str.h"
-#include "common/util.h"
-
+#include "common/list.h"
 #include "common/memorypool.h"
+#include "common/str.h"
+#include "common/util.h"
 
 #include <stdarg.h>
 
@@ -256,7 +256,7 @@ String &String::operator=(char c) {
 
 String &String::operator+=(const char *str) {
 	if (_str <= str && str <= _str + _size)
-		return operator+=(Common::String(str));
+		return operator+=(String(str));
 
 	int len = strlen(str);
 	if (len > 0) {
@@ -270,7 +270,7 @@ String &String::operator+=(const char *str) {
 
 String &String::operator+=(const String &str) {
 	if (&str == this)
-		return operator+=(Common::String(str));
+		return operator+=(String(str));
 
 	int len = str._size;
 	if (len > 0) {
@@ -612,7 +612,7 @@ char *trim(char *t) {
 	return rtrim(ltrim(t));
 }
 
-Common::String lastPathComponent(const Common::String &path, const char sep) {
+String lastPathComponent(const String &path, const char sep) {
 	const char *str = path.c_str();
 	const char *last = str + path.size();
 
@@ -622,7 +622,7 @@ Common::String lastPathComponent(const Common::String &path, const char sep) {
 
 	// Path consisted of only slashes -> return empty string
 	if (last == str)
-		return Common::String();
+		return String();
 
 	// Now scan the whole component
 	const char *first = last - 1;
@@ -632,24 +632,26 @@ Common::String lastPathComponent(const Common::String &path, const char sep) {
 	if (*first == sep)
 		first++;
 
-	return Common::String(first, last);
+	return String(first, last);
 }
 
-Common::String normalizePath(const Common::String &path, const char sep) {
+String normalizePath(const String &path, const char sep) {
 	if (path.empty())
 		return path;
 
 	const char *cur = path.c_str();
-	Common::String result;
+	String result;
 
 	// If there is a leading slash, preserve that:
 	if (*cur == sep) {
 		result += sep;
+		// Skip over multiple leading slashes, so "//" equals "/"
 		while (*cur == sep)
 			++cur;
 	}
 
-	// Scan till the end of the String
+	// Scan for path components till the end of the String
+	List<String> comps;
 	while (*cur != 0) {
 		const char *start = cur;
 
@@ -657,23 +659,29 @@ Common::String normalizePath(const Common::String &path, const char sep) {
 		while (*cur != sep && *cur != 0)
 			cur++;
 
-		const Common::String component(start, cur);
+		const String component(start, cur);
 
-		// Skip empty components and dot components, add all others
-		if (!component.empty() && component != ".") {
-			// Add a separator before the component, unless the result
-			// string already ends with one (which happens only if the
-			// path *starts* with a separator).
-			if (!result.empty() && result.lastChar() != sep)
-				result += sep;
-
-			// Add the component
-			result += component;
+		if (component.empty() || component == ".") {
+			// Skip empty components and dot components
+		} else if (!comps.empty() && component == ".." && comps.back() != "..") {
+			// If stack is non-empty and top is not "..", remove top
+			comps.pop_back();
+		} else {
+			// Add the component to the stack
+			comps.push_back(component);
 		}
 
 		// Skip over separator chars
 		while (*cur == sep)
 			cur++;
+	}
+
+	// Finally, assemble all components back into a path
+	while (!comps.empty()) {
+		result += comps.front();
+		comps.pop_front();
+		if (!comps.empty())
+			result += sep;
 	}
 
 	return result;
@@ -749,7 +757,7 @@ String tag2string(uint32 tag) {
 		if (!isprint((unsigned char)str[i]))
 			str[i] = '.';
 	}
-	return Common::String(str);
+	return String(str);
 }
 
 size_t strlcpy(char *dst, const char *src, size_t size) {

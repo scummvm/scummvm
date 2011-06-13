@@ -202,35 +202,13 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{AD_TABLE_END_MARKER, kGroovieT7G, 0}
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)gameDescriptions,
-	// Size of that superset structure
-	sizeof(GroovieGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	groovieGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"groovie",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	kADFlagUseExtraAsHint,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
-
 class GroovieMetaEngine : public AdvancedMetaEngine {
 public:
-	GroovieMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames) {
+		params.singleid = "groovie";
+		params.flags = kADFlagUseExtraAsHint;
+		params.guioptions = Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX;
+	}
 
 	const char *getName() const {
 		return "Groovie";

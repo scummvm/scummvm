@@ -94,11 +94,25 @@ public:
 	void setVolume(const byte volume);
 
 	/**
+	 * Gets the channel's own volume.
+	 *
+	 * @return volume
+	 */
+	byte getVolume();
+
+	/**
 	 * Sets the channel's balance setting.
 	 *
 	 * @param balance new balance
 	 */
 	void setBalance(const int8 balance);
+
+	/**
+	 * Gets the channel's balance setting.
+	 *
+	 * @return balance
+	 */
+	int8 getBalance();
 
 	/**
 	 * Notifies the channel that the global sound type
@@ -342,6 +356,14 @@ void MixerImpl::setChannelVolume(SoundHandle handle, byte volume) {
 	_channels[index]->setVolume(volume);
 }
 
+byte MixerImpl::getChannelVolume(SoundHandle handle) {
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return 0;
+
+	return _channels[index]->getVolume();
+}
+
 void MixerImpl::setChannelBalance(SoundHandle handle, int8 balance) {
 	Common::StackLock lock(_mutex);
 
@@ -350,6 +372,14 @@ void MixerImpl::setChannelBalance(SoundHandle handle, int8 balance) {
 		return;
 
 	_channels[index]->setBalance(balance);
+}
+
+int8 MixerImpl::getChannelBalance(SoundHandle handle) {
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return 0;
+
+	return _channels[index]->getBalance();
 }
 
 uint32 MixerImpl::getSoundElapsedTime(SoundHandle handle) {
@@ -482,9 +512,17 @@ void Channel::setVolume(const byte volume) {
 	updateChannelVolumes();
 }
 
+byte Channel::getVolume() {
+	return _volume;
+}
+
 void Channel::setBalance(const int8 balance) {
 	_balance = balance;
 	updateChannelVolumes();
+}
+
+int8 Channel::getBalance() {
+	return _balance;
 }
 
 void Channel::updateChannelVolumes() {

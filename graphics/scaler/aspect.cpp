@@ -57,19 +57,6 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 
 template<typename ColorMask, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
-	// For efficiency reasons we blit two pixels at a time, so it is important
-	// that makeRectStretchable() guarantees that the width is even and that
-	// the rect starts on a well-aligned address. (Even where unaligned memory
-	// access is allowed there may be a speed penalty for it.)
-
-	// These asserts are disabled for maximal speed; but I leave them in here
-	// in case  other people want to test if the memory alignment (to an
-	// address divisible by 4) is really working properly.
-	//assert(((int)dst & 3) == 0);
-	//assert(((int)srcA & 3) == 0);
-	//assert(((int)srcB & 3) == 0);
-	//assert((width & 1) == 0);
-
 	if (scale == 1) {
 		while (width--) {
 			*dst++ = interpolate16_7_1<ColorMask>(*srcB++, *srcA++);
@@ -86,6 +73,18 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 
 template<typename ColorMask, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
+	// For efficiency reasons we blit two pixels at a time, so it is important
+	// that makeRectStretchable() guarantees that the width is even and that
+	// the rect starts on a well-aligned address. (Even where unaligned memory
+	// access is allowed there may be a speed penalty for it.)
+
+	// These asserts are disabled for maximal speed; but I leave them in here
+	// in case  other people want to test if the memory alignment (to an
+	// address divisible by 4) is really working properly.
+	//assert(((int)dst & 3) == 0);
+	//assert(((int)srcA & 3) == 0);
+	//assert(((int)srcB & 3) == 0);
+	//assert((width & 1) == 0);
 
 	width /= 2;
 	const uint32 *sA = (const uint32 *)srcA;

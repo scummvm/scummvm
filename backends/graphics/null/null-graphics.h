@@ -79,7 +79,6 @@ public:
 	void warpMouse(int x, int y) {}
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) {}
 	void setCursorPalette(const byte *colors, uint start, uint num) {}
-	void disableCursorPalette(bool disable) {}
 };
 
 #endif

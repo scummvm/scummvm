@@ -20,6 +20,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/system.h"
 
 #ifdef USE_MT32EMU
 
@@ -134,7 +135,7 @@ static int eatSystemEvents() {
 }
 
 static void drawProgress(float progress) {
-	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kGUIFont));
 	Graphics::Surface *screen = g_system->lockScreen();
 
 	assert(screen);
@@ -173,7 +174,7 @@ static void drawProgress(float progress) {
 }
 
 static void drawMessage(int offset, const Common::String &text) {
-	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kGUIFont));
 	Graphics::Surface *screen = g_system->lockScreen();
 
 	assert(screen);
@@ -547,6 +548,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
+	bool checkDevice(MidiDriver::DeviceHandle) const;
 	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
@@ -554,6 +556,16 @@ MusicDevices MT32EmuMusicPlugin::getDevices() const {
 	MusicDevices devices;
 	devices.push_back(MusicDevice(this, "", MT_MT32));
 	return devices;
+}
+
+bool MT32EmuMusicPlugin::checkDevice(MidiDriver::DeviceHandle) const {
+	if (!((Common::File::exists("MT32_CONTROL.ROM") && Common::File::exists("MT32_PCM.ROM")) ||
+		(Common::File::exists("CM32L_CONTROL.ROM") && Common::File::exists("CM32L_PCM.ROM")))) {
+			warning("The MT-32 emulator requires one of the two following file sets (not bundled with ScummVM):\n Either 'MT32_CONTROL.ROM' and 'MT32_PCM.ROM' or 'CM32L_CONTROL.ROM' and 'CM32L_PCM.ROM'");
+			return false;
+	}
+	
+	return true;	
 }
 
 Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {

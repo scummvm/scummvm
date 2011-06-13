@@ -524,7 +524,7 @@ int LoLEngine::olol_initAnimStruct(EMCState *script) {
 
 int LoLEngine::olol_playAnimationPart(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playAnimationPart(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_animator->playPart(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	_tim->animator()->playPart(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	return 1;
 }
 
@@ -593,13 +593,13 @@ int LoLEngine::olol_clearDialogueField(EMCState *script) {
 
 int LoLEngine::olol_setupBackgroundAnimationPart(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setupBackgroundAnimationPart(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
-	_animator->setupPart(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
+	_tim->animator()->setupPart(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
 	return 0;
 }
 
 int LoLEngine::olol_startBackgroundAnimation(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_startBackgroundAnimation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_animator->start(stackPos(0), stackPos(1));
+	_tim->animator()->start(stackPos(0), stackPos(1));
 	return 1;
 }
 
@@ -629,7 +629,7 @@ int LoLEngine::olol_loadBitmap(EMCState *script) {
 
 int LoLEngine::olol_stopBackgroundAnimation(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopBackgroundAnimation(%p) (%d)", (const void *)script, stackPos(0));
-	_animator->stop(stackPos(0));
+	_tim->animator()->stop(stackPos(0));
 	return 1;
 }
 
@@ -1136,9 +1136,8 @@ int LoLEngine::olol_loadTimScript(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadTimScript(%p) (%d, %s)", (const void *)script, stackPos(0), stackPosString(1));
 	if (_activeTim[stackPos(0)])
 		return 1;
-	char file[13];
-	snprintf(file, sizeof(file), "%s.TIM", stackPosString(1));
-	_activeTim[stackPos(0)] = _tim->load(file, &_timIngameOpcodes);
+	Common::String file = Common::String::format("%s.TIM", stackPosString(1));
+	_activeTim[stackPos(0)] = _tim->load(file.c_str(), &_timIngameOpcodes);
 	return 1;
 }
 
@@ -1185,10 +1184,9 @@ int LoLEngine::olol_giveItemToMonster(EMCState *script) {
 
 int LoLEngine::olol_loadLangFile(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLangFile(%p) (%s)", (const void *)script, stackPosString(0));
-	char filename[13];
-	snprintf(filename, sizeof(filename), "%s.%s", stackPosString(0), _languageExt[_lang]);
+	Common::String filename = Common::String::format("%s.%s", stackPosString(0), _languageExt[_lang]);
 	delete[] _levelLangFile;
-	_levelLangFile = _res->fileData(filename, 0);
+	_levelLangFile = _res->fileData(filename.c_str(), 0);
 	return 1;
 }
 
@@ -1440,7 +1438,10 @@ int LoLEngine::olol_playEndSequence(EMCState *script){
 	_screen->getPalette(1).clear();
 
 	showOutro(c, (_monsterDifficulty == 2));
-	quitGame();
+	// Don't call quitGame() on a RTL request (because this would
+	// make the next game launched from the launcher quit instantly.
+	if (!shouldQuit())
+		quitGame();
 
 	return 0;
 }
@@ -1983,7 +1984,7 @@ int LoLEngine::olol_removeInventoryItem(EMCState *script) {
 
 int LoLEngine::olol_getAnimationLastPart(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getAnimationLastPart(%p) (%d)", (const void *)script, stackPos(0));
-	return _animator->resetLastPart(stackPos(0));
+	return _tim->animator()->resetLastPart(stackPos(0));
 }
 
 int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
@@ -2406,16 +2407,16 @@ int LoLEngine::tlol_processWsaFrame(const TIM *tim, const uint16 *param) {
 	const int y2 = param[3];
 	const int factor = MAX<int>(0, (int16)param[4]);
 
-	const int x1 = _animator->getAnimX(animIndex);
-	const int y1 = _animator->getAnimY(animIndex);
-	const Movie *wsa = _animator->getWsaCPtr(animIndex);
+	const int x1 = _tim->animator()->getAnimX(animIndex);
+	const int y1 = _tim->animator()->getAnimY(animIndex);
+	const Movie *wsa = _tim->animator()->getWsaCPtr(animIndex);
 
 	int w1 = wsa->width();
 	int h1 = wsa->height();
 	int w2 = (w1 * factor) / 100;
 	int h2 = (h1 * factor) / 100;
 
-	_animator->displayFrame(animIndex, 2, frame);
+	_tim->animator()->displayFrame(animIndex, 2, frame);
 	_screen->wsaFrameAnimationStep(x1, y1, x2, y2, w1, h1, w2, h2, 2, _flags.isDemo && _flags.platform != Common::kPlatformPC98 ? 0 : 8, 0);
 	if (!_flags.isDemo && _flags.platform != Common::kPlatformPC98)
 		_screen->checkedPageUpdate(8, 4);
@@ -2584,13 +2585,13 @@ int LoLEngine::tlol_playSoundEffect(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_startBackgroundAnimation(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_startBackgroundAnimation(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
-	_animator->start(param[0], param[1]);
+	_tim->animator()->start(param[0], param[1]);
 	return 1;
 }
 
 int LoLEngine::tlol_stopBackgroundAnimation(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_stopBackgroundAnimation(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
-	_animator->stop(param[0]);
+	_tim->animator()->stop(param[0]);
 	return 1;
 }
 
@@ -2674,12 +2675,12 @@ int LoLEngine::tlol_displayAnimFrame(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_displayAnimFrame(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
 
 	const int animIndex = tim->wsa[param[0]].anim - 1;
-	const Movie *wsa = _animator->getWsaCPtr(animIndex);
+	const Movie *wsa = _tim->animator()->getWsaCPtr(animIndex);
 
 	if (param[1] == 0xFFFF) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
 	} else {
-		_animator->displayFrame(animIndex, 2, param[1], 0);
+		_tim->animator()->displayFrame(animIndex, 2, param[1], 0);
 		_screen->copyRegion(wsa->xAdd(), wsa->yAdd(), wsa->xAdd(), wsa->yAdd(), wsa->width(), wsa->height(), 2, 0);
 	}
 

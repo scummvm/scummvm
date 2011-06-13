@@ -24,7 +24,7 @@ namespace tSage {
 
 static const tSageGameDescription gameDescriptions[] = {
 
-	// Ringworld English CD version
+	// Ringworld CD and First Wave versions
 	{
 		{
 			"ring",
@@ -38,26 +38,12 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_CD | GF_ALT_REGIONS
 	},
-	// Ringworld First Wave English CD version
-	{
-		{
-			"ring",
-			"CD",
-			AD_ENTRY1s("ring.rlb", "0a25b4ee58d44a54425c0b47e5096bbc", 37847618),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		GType_Ringworld,
-		GF_CD | GF_ALT_REGIONS
-	},
 	// Ringworld English Floppy version
 	{
 		{
 			"ring",
 			"Floppy",
-			AD_ENTRY1s("ring.rlb", "61f78f68a56832ae95fe06748c403234", 8438770),
+			AD_ENTRY1s("ring.rlb", "7b7f0c5b37b58fa5ec06ebb2ca0d0d9d", 8438770),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -71,7 +57,7 @@ static const tSageGameDescription gameDescriptions[] = {
 		{
 			"ring",
 			"Floppy Demo",
-			AD_ENTRY1s("tsage.rlb", "bf4e8525d0cab84b08b57126092eeacd", 833453),
+			AD_ENTRY1s("tsage.rlb", "3b3604a97c06c91f3735d3e9d341f63f", 833453),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO,
@@ -80,6 +66,8 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO
 	},
+#if 0
+	// FIXME: Compute new MD5s based on 5000 bytes instead of 0 (unlimited)
 	// Ringworld English Floppy Demo #2 version
 	{
 		{
@@ -94,21 +82,7 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
 	},
-
-	// Blue Force
-	{
-		{
-			"blueforce",
-			"",
-			AD_ENTRY1s("blue.rlb", "467da43c848cc0e800b547c59d84ccb1", 10032614),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		GType_BlueForce,
-		GF_FLOPPY
-	},
+	// FIXME: Compute new MD5s based on 5000 bytes instead of 0 (unlimited)
 	// Blue Force floppy
 	{
 		{
@@ -123,12 +97,27 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_BlueForce,
 		GF_FLOPPY
 	},
+#endif
+	// Blue Force
+	{
+		{
+			"blueforce",
+			"",
+			AD_ENTRY1s("blue.rlb", "17eabb456cb1546c66baf1aff387ba6a", 10032614),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_BlueForce,
+		GF_FLOPPY
+	},
 	// Blue Force CD and First Wave use the same files
 	{
 		{
 			"blueforce",
 			"CD",
-			AD_ENTRY1s("blue.rlb", "ac29f38184cb3b874ea18523059872ba", 63863322),
+			AD_ENTRY1s("blue.rlb", "99983f48cb218f1f3760cf2f9a7ef11d", 63863322),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,

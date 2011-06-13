@@ -44,6 +44,7 @@ Normal2xARM:
 	ADD	r3, r3, r6
 yloop:
 	SUBS	r14,r4, #4
+	ADDLT	r14,r14, #4
 	BLT	thin
 xloop:
 	LDRH	r6, [r0], #2

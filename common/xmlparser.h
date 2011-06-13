@@ -274,7 +274,7 @@ protected:
 	 * Parser error always returns "false" so we can pass the return value
 	 * directly and break down the parsing.
 	 */
-	bool parserError(const char *errorString, ...) GCC_PRINTF(2, 3);
+	bool parserError(const Common::String &errStr);
 
 	/**
 	 * Skips spaces/whitelines etc.

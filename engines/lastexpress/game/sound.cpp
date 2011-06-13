@@ -699,7 +699,6 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag
 }
 
 void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
-	char filename[12];
 	int values[5];
 
 	if (getEntityData(entity)->car != getEntityData(kEntityPlayer)->car)
@@ -842,7 +841,6 @@ void SoundManager::playSteam(CityIndex index) {
 
 void SoundManager::playFightSound(byte action, byte a4) {
 	int _action = (int)action;
-	char filename[12];
 	int values[5];
 
 	switch (action) {

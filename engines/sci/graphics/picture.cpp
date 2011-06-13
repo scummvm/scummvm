@@ -330,7 +330,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		if (!_addToFlag && _resourceType != SCI_PICTURE_TYPE_SCI32)
 			clearColor = _screen->getColorWhite();
 
-		byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY;
+		byte drawMask = priority > 15 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY;
 
 		ptr = celBitmap;
 		ptr += skipCelBitmapPixels;

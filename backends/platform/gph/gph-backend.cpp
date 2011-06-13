@@ -56,7 +56,14 @@
 /* Dump console info to files. */
 #define DUMP_STDOUT
 
+OSystem_GPH::OSystem_GPH()
+	:
+	OSystem_POSIX() {
+}
+
 void OSystem_GPH::initBackend() {
+
+	assert(!_inited);
 
 	// Create the events manager
 	if (_eventSource == 0)
@@ -81,7 +88,7 @@ void OSystem_GPH::initBackend() {
 	char workDirName[PATH_MAX+1];
 
 	if (getcwd(workDirName, PATH_MAX) == NULL) {
-		error("Could not obtain current working directory");
+		error("Could not obtain current working directory.");
 	} else {
 		printf("Current working directory: %s\n", workDirName);
 	}
@@ -155,7 +162,8 @@ void OSystem_GPH::initBackend() {
 	/* Trigger autosave every 4 minutes - On low batts 5 mins is about your warning time. */
 	ConfMan.registerDefault("autosave_period", 4 * 60);
 
-	/* Make sure that aspect ratio correction is enabled on the 1st run to stop users asking me what the 'wasted space' is ;-). */
+	/* Make sure that aspect ratio correction is enabled on the 1st run to stop
+	   users asking me what the 'wasted space' at the bottom is ;-). */
 	ConfMan.registerDefault("aspect_ratio", true);
 
 	/* Make sure SDL knows that we have a joystick we want to use. */
@@ -164,10 +172,10 @@ void OSystem_GPH::initBackend() {
 	/* Now setup any device specific user options (Left handed mode, that sort of thing). */
 	// GPH::setOptions();
 
-	printf("%s\n", "Passing to OSystem::SDL initBackend.");
-
 	/* Pass to POSIX method to do the heavy lifting */
 	OSystem_POSIX::initBackend();
+
+	_inited = true;
 }
 
 void OSystem_GPH::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -176,7 +184,7 @@ void OSystem_GPH::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 	char workDirName[PATH_MAX+1];
 
 	if (getcwd(workDirName, PATH_MAX) == NULL) {
-		error("Error: Could not obtain current working directory");
+		error("Error: Could not obtain current working directory.");
 	}
 
 	Common::FSNode workdirNode(workDirName);
@@ -215,5 +223,5 @@ void OSystem_GPH::quit() {
 		fclose(stderr);
 	#endif /* DUMP_STDOUT */
 
-	OSystem_SDL::quit();
+	OSystem_POSIX::quit();
 }

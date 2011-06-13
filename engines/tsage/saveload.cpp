@@ -206,7 +206,6 @@ Common::Error Saver::restore(int slot) {
 	// Final post-restore notifications
 	_macroRestoreFlag = false;
 	_loadNotifiers.notify(false);
-	_globals->_events.setCursor(_globals->_player._uiEnabled ? CURSOR_WALK : CURSOR_NONE);
 
 	return Common::kNoError;
 }

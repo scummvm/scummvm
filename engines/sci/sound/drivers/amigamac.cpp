@@ -24,6 +24,7 @@
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/resource.h"
 
+#include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/frac.h"
 #include "common/memstream.h"
@@ -32,8 +33,6 @@
 #include "common/util.h"
 
 namespace Sci {
-
-//#define DEBUG
 
 class MidiDriver_AmigaMac : public MidiDriver_Emulated {
 public:
@@ -287,12 +286,10 @@ void MidiDriver_AmigaMac::playInstrument(int16 *dest, Voice *channel, int count)
 }
 
 void MidiDriver_AmigaMac::changeInstrument(int channel, int instrument) {
-#ifdef DEBUG
-	if (_bank.instruments[instrument][0])
-		debugN("Amiga/Mac driver: Setting channel %i to \"%s\" (%i)\n", channel, _bank.instruments[instrument].name, instrument);
+	if (((uint)instrument < _bank.instruments.size()) && (_bank.instruments[instrument].size() > 0))
+		debugC(1, kDebugLevelSound, "Amiga/Mac driver: Setting channel %i to \"%s\" (%i)", channel, _bank.instruments[instrument].name, instrument);
 	else
-		warning("Amiga/Mac driver: instrument %i does not exist (channel %i)", instrument, channel);
-#endif
+		debugC(kDebugLevelSound, "Amiga/Mac driver: instrument %i does not exist (channel %i)", instrument, channel);
 	_channels[channel].instrument = instrument;
 }
 
@@ -325,9 +322,7 @@ void MidiDriver_AmigaMac::stopNote(int ch, int note) {
 			break;
 
 	if (channel == kChannels) {
-#ifdef DEBUG
-		warning("Amiga/Mac driver: cannot stop note %i on channel %i", note, ch);
-#endif
+		debugC(1, kDebugLevelSound, "Amiga/Mac driver: cannot stop note %i on channel %i", note, ch);
 		return;
 	}
 
@@ -466,9 +461,9 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 	instrument->fixedNote = 101;
 
 	instrument->mode = header[33];
-	instrument->transpose = (int8) header[34];
+	instrument->transpose = (int8)header[34];
 	for (int i = 0; i < 4; i++) {
-		int length = (int8) header[49 + i];
+		int length = (int8)header[49 + i];
 
 		if (length == 0 && i > 0)
 			length = 256;
@@ -488,15 +483,18 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 	strncpy(instrument->name, (char *) header + 2, 29);
 	instrument->name[29] = 0;
 
-#ifdef DEBUG
-	debugN("Amiga/Mac driver: Reading instrument %i: \"%s\" (%i bytes)\n",
-	          *id, instrument->name, size);
-	debugN("                Mode: %02x\n", instrument->mode);
-	debugN("                Looping: %s\n", instrument->mode & kModeLoop ? "on" : "off");
-	debugN("                Pitch changes: %s\n", instrument->mode & kModePitch ? "on" : "off");
-	debugN("                Segment sizes: %i %i %i\n", seg_size[0], seg_size[1], seg_size[2]);
-	debugN("                Segment offsets: 0 %i %i\n", loop_offset, (int32)READ_BE_UINT32(header + 43));
-#endif
+	if (DebugMan.isDebugChannelEnabled(kDebugLevelSound)) {
+		debug("Amiga/Mac driver: Reading instrument %i: \"%s\" (%i bytes)",
+		       *id, instrument->name, size);
+		debugN("    Mode: %02x (", header[33]);
+		debugN("looping: %s, ", header[33] & kModeLoop ? "on" : "off");
+		debug("pitch changes: %s)", header[33] & kModePitch ? "on" : "off");
+		debug("    Transpose: %i", (int8)header[34]);
+		for (uint i = 0; i < 3; i++)
+			debug("    Segment %i: %i words @ offset %i", i, (int16)READ_BE_UINT16(header + 35 + 6 * i), (i == 0 ? 0 : (int32)READ_BE_UINT32(header + 31 + 6 * i)));
+		for (uint i = 0; i < 4; i++)
+			debug("    Envelope %i: period %i / delta %i / target %i", i, header[49 + i], (int8)header[53 + i], header[57 + i]);
+	}
 
 	instrument->samples = (int8 *) malloc(size + 1);
 	if (file.read(instrument->samples, size) < (unsigned int)size) {
@@ -511,10 +509,8 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 
 	if (instrument->mode & kModeLoop) {
 		if (loop_offset + seg_size[1] > size) {
-#ifdef DEBUG
-			warning("Amiga/Mac driver: looping samples extend %i bytes past end of sample block",
-			          loop_offset + seg_size[1] - size);
-#endif
+			debugC(kDebugLevelSound, "Amiga/Mac driver: looping samples extend %i bytes past end of sample block",
+			       loop_offset + seg_size[1] - size);
 			seg_size[1] = size - loop_offset;
 		}
 
@@ -675,15 +671,11 @@ void MidiDriver_AmigaMac::send(uint32 b) {
 			break;
 		case 0x0a:	// pan
 			// TODO
-#ifdef DEBUG
-			warning("Amiga/Mac driver: ignoring pan 0x%02x event for channel %i", op2, channel);
-#endif
+			debugC(1, kDebugLevelSound, "Amiga/Mac driver: ignoring pan 0x%02x event for channel %i", op2, channel);
 			break;
 		case 0x40:	// hold
 			// TODO
-#ifdef DEBUG
-			warning("Amiga/Mac driver: ignoring hold 0x%02x event for channel %i", op2, channel);
-#endif
+			debugC(1, kDebugLevelSound, "Amiga/Mac driver: ignoring hold 0x%02x event for channel %i", op2, channel);
 			break;
 		case 0x4b:	// voice mapping
 			break;
@@ -768,9 +760,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0(Common::File &file) {
 	_bank.size = READ_BE_UINT16(header + 38);
 	strncpy(_bank.name, (char *) header + 8, 29);
 	_bank.name[29] = 0;
-#ifdef DEBUG
-	debugN("Amiga/Mac driver: Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
-#endif
+	debugC(kDebugLevelSound, "Amiga/Mac driver: Reading %i instruments from bank \"%s\"", _bank.size, _bank.name);
 
 	for (uint i = 0; i < _bank.size; i++) {
 		int id;
@@ -807,9 +797,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &fil
 	_bank.size = 128;
 	strncpy(_bank.name, (char *) header + 8, 29);
 	_bank.name[29] = 0;
-#ifdef DEBUG
-	debugN("Amiga/Mac driver: Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
-#endif
+	debugC(kDebugLevelSound, "Amiga/Mac driver: Reading %i instruments from bank \"%s\"", _bank.size, _bank.name);
 
 	Common::Array<uint32> instrumentOffsets;
 	instrumentOffsets.resize(_bank.size);

@@ -42,9 +42,13 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_gui = 0;
 	_txt = 0;
 	_tim = 0;
-	_animator = 0;
 
-	switch (_flags.lang) {
+	_lang = 0;
+	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+	if (lang == _flags.fanLang && _flags.replacedLang != Common::UNK_LANG)
+		lang = _flags.replacedLang;
+
+	switch (lang) {
 	case Common::EN_ANY:
 	case Common::EN_USA:
 	case Common::EN_GRB:
@@ -576,7 +580,6 @@ Common::Error LoLEngine::go() {
 
 	_tim = new TIMInterpreter_LoL(this, _screen, _system);
 	assert(_tim);
-	_animator = _tim->animator();
 
 	if (shouldQuit())
 		return Common::kNoError;
@@ -613,11 +616,11 @@ void LoLEngine::preInit() {
 
 	loadTalkFile(0);
 
-	char filename[32];
-	snprintf(filename, sizeof(filename), "LANDS.%s", _languageExt[_lang]);
-	_res->exists(filename, true);
+	Common::String filename;
+	filename = Common::String::format("LANDS.%s", _languageExt[_lang]);
+	_res->exists(filename.c_str(), true);
 	delete[] _landsFile;
-	_landsFile = _res->fileData(filename, 0);
+	_landsFile = _res->fileData(filename.c_str(), 0);
 	loadItemIconShapes();
 }
 
@@ -1163,9 +1166,8 @@ void LoLEngine::loadCharFaceShapes(int charNum, int id) {
 	if (id < 0)
 		id = -id;
 
-	char file[13];
-	snprintf(file, sizeof(file), "FACE%02d.SHP", id);
-	_screen->loadBitmap(file, 3, 3, 0);
+	Common::String file = Common::String::format("FACE%02d.SHP", id);
+	_screen->loadBitmap(file.c_str(), 3, 3, 0);
 
 	const uint8 *p = _screen->getCPagePtr(3);
 	for (int i = 0; i < 40; i++) {
@@ -1811,29 +1813,26 @@ void LoLEngine::createTransparencyTables() {
 }
 
 void LoLEngine::updateSequenceBackgroundAnimations() {
-	if (_updateFlags & 8 || !_animator)
+	if (_updateFlags & 8 || !_tim)
+		return;
+	if (!_tim->animator())
 		return;
 
 	for (int i = 0; i < 6; i++)
-		_animator->update(i);
+		_tim->animator()->update(i);
 }
 
 void LoLEngine::loadTalkFile(int index) {
-	char file[8];
-
 	if (index == _curTlkFile)
 		return;
 
-	if (_curTlkFile > 0 && index > 0) {
-		snprintf(file, sizeof(file), "%02d.TLK", _curTlkFile);
-		_res->unloadPakFile(file);
-	}
+	if (_curTlkFile > 0 && index > 0)
+		_res->unloadPakFile(Common::String::format("%02d.TLK", _curTlkFile));
 
 	if (index > 0)
 		_curTlkFile = index;
 
-	snprintf(file, sizeof(file), "%02d.TLK", index);
-	_res->loadPakFile(file);
+	_res->loadPakFile(Common::String::format("%02d.TLK", index));
 }
 
 int LoLEngine::characterSays(int track, int charId, bool redraw) {
@@ -2702,12 +2701,11 @@ int LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
 
 	snd_playSoundEffect(155, -1);
 
-	char wsafile[13];
-	snprintf(wsafile, 13, "mists%0d.wsa", spellLevel + 1);
+	Common::String wsafile = Common::String::format("mists%0d.wsa", spellLevel + 1);
 	WSAMovie_v2 *mov = new WSAMovie_v2(this);
-	mov->open(wsafile, 1, 0);
+	mov->open(wsafile.c_str(), 1, 0);
 	if (!mov->opened())
-		error("Mist: Unable to load mists.wsa");
+		error("Mist: Unable to load %s", wsafile.c_str());
 
 	snd_playSoundEffect(_mistAnimData[spellLevel].sound, -1);
 	playSpellAnimation(mov, _mistAnimData[spellLevel].part1First, _mistAnimData[spellLevel].part1Last, 7, 112, 0, 0, 0, 0, 0, false);
@@ -2720,7 +2718,7 @@ int LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
 	_screen->copyPage(12, 0);
 
 	updateDrawPage2();
-	this->snd_playQueuedEffects();
+	snd_playQueuedEffects();
 	return 1;
 }
 
@@ -2734,12 +2732,11 @@ int LoLEngine::processMagicLightning(int charNum, int spellLevel) {
 	_lightningDiv = _lightningProps[spellLevel].frameDiv;
 	_lightningFirstSfx = 0;
 
-	char wsafile[13];
-	snprintf(wsafile, 13, "litning%d.wsa", spellLevel + 1);
+	Common::String wsafile = Common::String::format("litning%d.wsa", spellLevel + 1);
 	WSAMovie_v2 *mov = new WSAMovie_v2(this);
-	mov->open(wsafile, 1, 0);
+	mov->open(wsafile.c_str(), 1, 0);
 	if (!mov->opened())
-		error("Litning: Unable to load litning.wsa");
+		error("Litning: Unable to load %s", wsafile.c_str());
 
 	for (int i = 0; i < 4; i++)
 		playSpellAnimation(mov, 0, _lightningProps[spellLevel].lastFrame, 3, 93, 0, &LoLEngine::callbackProcessMagicLightning, 0, 0, 0, false);
@@ -3139,11 +3136,10 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 	int vX = _updateSpellBookCoords[slot << 1] + 32;
 	int vY = _updateSpellBookCoords[(slot << 1) + 1] + 5;
 
-	char wsaFile[13];
+	Common::String wsaFile = Common::String::format("write%0d", spell);
 	if (_flags.isTalkie)
-		snprintf(wsaFile, 13, "write%0d%c.wsa", spell, (_lang == 1) ? 'f' : (_lang == 0 ? 'e' : 'g'));
-	else
-		snprintf(wsaFile, 13, "write%0d.wsa", spell);
+		wsaFile += (_lang == 1) ? 'f' : (_lang == 0 ? 'e' : 'g');
+	wsaFile += ".wsa";
 	snd_playSoundEffect(_updateSpellBookAnimData[(spell << 2) + 3], -1);
 	snd_playSoundEffect(95, -1);
 
@@ -3187,7 +3183,7 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 	playSpellAnimation(mov, 0, 6, 5, _updateSpellBookCoords[slot << 1], _updateSpellBookCoords[(slot << 1) + 1], 0, 0, 0, 0, false);
 	mov->close();
 
-	mov->open(wsaFile, 0, 0);
+	mov->open(wsaFile.c_str(), 0, 0);
 	if (!mov->opened())
 		error("SpellBook: Unable to load spellbook anim");
 	snd_playSoundEffect(_updateSpellBookAnimData[(spell << 2) + 3], -1);
@@ -4160,10 +4156,9 @@ void LoLEngine::loadMapLegendData(int level) {
 		legendData[i * 6 + 5] = 0xffff;
 	}
 
-	char file[13];
+	Common::String file = Common::String::format("level%d.xxx", level);
 	uint32 size = 0;
-	snprintf(file, 12, "level%d.xxx", level);
-	uint8 *data = _res->fileData(file, &size);
+	uint8 *data = _res->fileData(file.c_str(), &size);
 	uint8 *pos = data;
 	size = MIN<uint32>(size / 12, 32);
 
@@ -4531,10 +4526,9 @@ void LoLEngine::generateTempData() {
 	_lvlTempData[l]->monsters = new MonsterInPlay[30];
 	_lvlTempData[l]->flyingObjects = new FlyingObject[8];
 
-	char filename[13];
-	snprintf(filename, sizeof(filename), "LEVEL%d.CMZ", _currentLevel);
+	Common::String filename = Common::String::format("LEVEL%d.CMZ", _currentLevel);
 
-	_screen->loadBitmap(filename, 15, 15, 0);
+	_screen->loadBitmap(filename.c_str(), 15, 15, 0);
 	const uint8 *p = _screen->getCPagePtr(14);
 	uint16 len = READ_LE_UINT16(p + 4);
 	p += 6;

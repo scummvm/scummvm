@@ -60,34 +60,13 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 
 #include "cine/detection_tables.h"
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Cine::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Cine::CINEGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	cineGames,
-	// Structure for autoupgrading obsolete targets
-	obsoleteGameIDsTable,
-	// Name of single gameid (optional)
-	"cine",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
-	CineMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
+		params.obsoleteList = obsoleteGameIDsTable;
+		params.singleid = "cine";
+		params.guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
+	}
 
 	virtual const char *getName() const {
 		return "Cine";

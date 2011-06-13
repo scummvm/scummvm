@@ -30,7 +30,22 @@ public:
 	virtual void init();
 
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+
+	virtual bool hasFeature(Feature f);
+
+	virtual bool displayLogFile();
+
 protected:
+	/**
+	 * The path of the currently open log file, if any.
+	 *
+	 * @note This is currently a string and not an FSNode for simplicity;
+	 * e.g. we don't need to include fs.h here, and currently the
+	 * only use of this value is to use it to open the log file in an
+	 * editor; for that, we need it only as a string anyway.
+	 */
+	Common::String _logFilePath;
+
 	virtual Common::String getDefaultConfigFileName();
 	virtual Common::WriteStream *createLogFile();
 };

@@ -63,7 +63,7 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{0, 0, Common::kPlatformUnknown}
 };
 
-static const PlainGameDescriptor simonGames[] = {
+static const PlainGameDescriptor agosGames[] = {
 	{"pn", "Personal Nightmare"},
 	{"elvira1", "Elvira - Mistress of the Dark"},
 	{"elvira2", "Elvira II - The Jaws of Cerberus"},
@@ -87,36 +87,16 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)AGOS::gameDescriptions,
-	// Size of that superset structure
-	sizeof(AGOS::AGOSGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	simonGames,
-	// Structure for autoupgrading obsolete targets
-	obsoleteGameIDsTable,
-	// Name of single gameid (optional)
-	0,
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOLAUNCHLOAD,
-	// Maximum directory depth
-	2,
-	// List of directory globs
-	directoryGlobs
-};
-
 using namespace AGOS;
 
 class AgosMetaEngine : public AdvancedMetaEngine {
 public:
-	AgosMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	AgosMetaEngine() : AdvancedMetaEngine(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
+		params.obsoleteList = obsoleteGameIDsTable;
+		params.guioptions = Common::GUIO_NOLAUNCHLOAD;
+		params.depth = 2;
+		params.directoryGlobs = directoryGlobs;
+	}
 
 	virtual const char *getName() const {
 		return "AGOS";

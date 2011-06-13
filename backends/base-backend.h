@@ -24,26 +24,22 @@
 #define BACKENDS_BASE_BACKEND_H
 
 #include "common/system.h"
-#include "backends/events/default/default-events.h"
+#include "common/events.h"
 
-class BaseBackend : public OSystem, Common::EventSource {
+class BaseBackend : public OSystem {
+protected:
+	virtual Common::EventSource *getDefaultEventSource() = 0;
 public:
-	BaseBackend();
-	~BaseBackend();
+	virtual void initBackend();
 
-	virtual Common::EventManager *getEventManager();
 	virtual void displayMessageOnOSD(const char *msg);
 	virtual void fillScreen(uint32 col);
+};
 
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
-
-	virtual AudioCDManager *getAudioCDManager();
-
-	virtual void resetGraphicsScale();
-
+class EventsBaseBackend : public BaseBackend, Common::EventSource {
 protected:
-	AudioCDManager *_audiocdManager;
+	virtual Common::EventSource *getDefaultEventSource() { return this; }
+public:
 };
 
 

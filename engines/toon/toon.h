@@ -23,7 +23,6 @@
 #ifndef TOON_TOON_H
 #define TOON_TOON_H
 
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
 #include "common/random.h"
@@ -43,6 +42,8 @@
 namespace Common {
 class MemoryWriteStreamDynamic;
 }
+
+struct ADGameDescription;
 
 #define TOON_DAT_VER_MAJ 0  // 1 byte
 #define TOON_DAT_VER_MIN 3  // 1 byte

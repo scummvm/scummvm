@@ -135,7 +135,7 @@ void SoundGen2GS::stop() {
  * Fill output buffer by advancing the generators for a 1/60th of a second.
  * @return Number of generated samples
  */
-uint32 SoundGen2GS::generateOutput() {
+uint SoundGen2GS::generateOutput() {
 	memset(_out, 0, _outSize * 2 * 2);
 
 	if (!_playing || _playingSound == -1)

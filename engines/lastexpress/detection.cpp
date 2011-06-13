@@ -21,6 +21,7 @@
  */
 
 #include "lastexpress/lastexpress.h"
+#include "engines/advancedDetector.h"
 
 namespace LastExpress {
 
@@ -176,35 +177,13 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)gameDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	lastExpressGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"lastexpress",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 
 class LastExpressMetaEngine : public AdvancedMetaEngine {
 public:
-	LastExpressMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	LastExpressMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
+		params.singleid = "lastexpress";
+		params.guioptions = Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX;
+	}
 
 	const char *getName() const {
 		return "Lastexpress";
@@ -222,6 +201,10 @@ bool LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const
 		*engine = new LastExpressEngine(syst, (const ADGameDescription *)gd);
 	}
 	return gd != 0;
+}
+
+bool LastExpressEngine::isDemo() const {
+	return (bool)(_gameDescription->flags & ADGF_DEMO);
 }
 
 } // End of namespace LastExpress

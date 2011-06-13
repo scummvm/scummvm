@@ -269,6 +269,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t\tStringPooling=\"true\"\n"
 		              "\t\tBufferSecurityCheck=\"false\"\n"
 		              "\t\tDebugInformationFormat=\"0\"\n"
+		              "\t\tRuntimeLibrary=\"0\"\n"
 		              "\t\tAdditionalOption=\"" << (enableAnalysis ? "/analyze" : "") << "\"\n"
 		              "\t/>\n"
 		              "\t<Tool\n"

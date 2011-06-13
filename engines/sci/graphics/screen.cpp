@@ -763,11 +763,14 @@ int16 GfxScreen::kernelPicNotValid(int16 newPicNotValid) {
 uint16 GfxScreen::getLowResScreenHeight() {
 	// Some Mac SCI1/1.1 games only take up 190 rows and do not
 	// have the menu bar.
+	// TODO: Verify that LSL1 and LSL5 use height 190
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 		switch (g_sci->getGameId()) {
 		case GID_FREDDYPHARKAS:
 		case GID_KQ5:
 		case GID_KQ6:
+		case GID_LSL1:
+		case GID_LSL5:
 		case GID_SQ1:
 			return 190;
 		default:

@@ -53,6 +53,7 @@ public:
 	Buffer &buffer() { return _buffer; }
 	void setCursorPalette(const byte *colors, uint start, uint num);
 	void enableCursorPalette(bool enable);
+	bool isCursorPaletteEnabled() const { return _useCursorPalette; }
 	void setLimits(uint32 width, uint32 height);
 	void setXY(int x, int y);
 	int32 getX() const { return _x; }

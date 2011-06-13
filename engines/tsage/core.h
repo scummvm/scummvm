@@ -229,12 +229,12 @@ protected:
 	int regionIndexOf(int xp, int yp) { return regionIndexOf(Common::Point(xp, yp)); }
 	int findClosestRegion(Common::Point &pt, const Common::List<int> &indexList);
 	int checkMover(Common::Point &srcPos, const Common::Point &destPos);
-	void checkMovement2(const Common::Point &pt1, const Common::Point &pt2, int numSteps, Common::Point &ptOut);
-	int proc1(int *routeList, int srcRegion, int destRegion, int &v);
+	void doStepsOfNpcMovement(const Common::Point &pt1, const Common::Point &pt2, int numSteps, Common::Point &ptOut);
+	int calculateRestOfRoute(int *routeList, int srcRegion, int destRegion, bool &foundRoute);
 
 	static Common::Point *findLinePoint(RouteEnds *routeEnds, Common::Point *objPos, int length, Common::Point *outPos);
 	static int findDistance(const Common::Point &pt1, const Common::Point &pt2);
-	static bool sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
+	static bool sub_F8E5_calculatePoint(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
 		const Common::Point &pt4, Common::Point *ptOut = NULL);
 public:
 	Common::Point _finalDest;

@@ -220,34 +220,11 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 
 }
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Parallaction::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Parallaction::PARALLACTIONGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	parallactionGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	0,
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOLAUNCHLOAD,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class ParallactionMetaEngine : public AdvancedMetaEngine {
 public:
-	ParallactionMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	ParallactionMetaEngine() : AdvancedMetaEngine(Parallaction::gameDescriptions, sizeof(Parallaction::PARALLACTIONGameDescription), parallactionGames) {
+		params.guioptions = Common::GUIO_NOLAUNCHLOAD;
+	}
 
 	virtual const char *getName() const {
 		return "Parallaction";

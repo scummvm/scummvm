@@ -369,7 +369,7 @@ void OptionsDialog::close() {
 
 			if (gfxError != OSystem::kTransactionSuccess) {
 				// Revert ConfMan to what OSystem is using.
-				Common::String message = "Failed to apply some of the graphic options changes:";
+				Common::String message = _("Failed to apply some of the graphic options changes:");
 
 				if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 					const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
@@ -380,17 +380,20 @@ void OptionsDialog::close() {
 						}
 						gm++;
 					}
-					message += "\nthe video mode could not be changed.";
+					message += "\n";
+					message += _("the video mode could not be changed.");
 				}
 			
 				if (gfxError & OSystem::kTransactionAspectRatioFailed) {
 					ConfMan.setBool("aspect_ratio", g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection), _domain);
-					message += "\nthe fullscreen setting could not be changed";
+					message += "\n";
+					message += _("the fullscreen setting could not be changed");
 				}
 
 				if (gfxError & OSystem::kTransactionFullscreenFailed) {
 					ConfMan.setBool("fullscreen", g_system->getFeatureState(OSystem::kFeatureFullscreenMode), _domain);
-					message += "\nthe aspect ratio setting could not be changed";
+					message += "\n";
+					message += _("the aspect ratio setting could not be changed");
 				}
 
 				// And display the error
@@ -1289,7 +1292,7 @@ void GlobalOptionsDialog::close() {
 			// only become active *after* the options dialog has closed.
 			g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
 #else
-			MessageDialog error(_("You have to restart ScummVM to take the effect."));
+			MessageDialog error(_("You have to restart ScummVM before your changes will take effect."));
 			error.runModal();
 #endif
 		}

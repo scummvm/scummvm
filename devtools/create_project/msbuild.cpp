@@ -373,6 +373,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t\t<StringPooling>true</StringPooling>\n"
 		              "\t\t\t<BufferSecurityCheck>false</BufferSecurityCheck>\n"
 		              "\t\t\t<DebugInformationFormat></DebugInformationFormat>\n"
+		              "\t\t\t<RuntimeLibrary>MultiThreaded</RuntimeLibrary>\n"
 		              "\t\t\t<EnablePREfast>" << (enableAnalysis ? "true" : "false") << "</EnablePREfast>\n"
 		              "\t\t</ClCompile>\n"
 		              "\t\t<Link>\n"

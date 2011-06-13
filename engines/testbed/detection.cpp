@@ -45,34 +45,11 @@ static const ADGameDescription testbedDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)testbedDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	512,
-	// List of all engine targets
-	testbed_setting,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"testbed",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	ADGF_NO_FLAGS,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class TestbedMetaEngine : public AdvancedMetaEngine {
 public:
-	TestbedMetaEngine() : AdvancedMetaEngine(detectionParams) {
+	TestbedMetaEngine() : AdvancedMetaEngine(testbedDescriptions, sizeof(ADGameDescription), testbed_setting) {
+		params.md5Bytes = 512;
+		params.singleid = "testbed";
 	}
 
 	virtual const char *getName() const {
@@ -83,7 +60,7 @@ public:
 		return "Copyright (C) ScummVM";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const {
 		// Instantiate Engine even if the game data is not found.
 		*engine = new Testbed::TestbedEngine(syst);
 		return true;

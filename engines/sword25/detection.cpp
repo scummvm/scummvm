@@ -31,7 +31,7 @@ namespace Sword25 {
 uint32 Sword25Engine::getGameFlags() const { return _gameDescription->flags; }
 }
 
-static const PlainGameDescriptor Sword25Game[] = {
+static const PlainGameDescriptor sword25Game[] = {
 	{"sword25", "Broken Sword 2.5"},
 	{0, 0}
 };
@@ -41,35 +41,13 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Sword25::gameDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	Sword25Game,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	NULL,
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOMIDI,
-	// Maximum directory depth
-	2,
-	// List of directory globs
-	directoryGlobs
-};
-
 class Sword25MetaEngine : public AdvancedMetaEngine {
 public:
-	Sword25MetaEngine() : AdvancedMetaEngine(detectionParams) {}
-
+	Sword25MetaEngine() : AdvancedMetaEngine(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
+		params.guioptions = Common::GUIO_NOMIDI;
+		params.depth = 2;
+		params.directoryGlobs = directoryGlobs;
+	}
 	virtual const char *getName() const {
 		return "Sword25";
 	}

@@ -396,20 +396,20 @@ bool LoLEngine::launchObject(int objectType, Item item, int startX, int startY, 
 	return true;
 }
 
-void LoLEngine::endObjectFlight(FlyingObject *t, int x, int y, int objectOnNextBlock) {
+void LoLEngine::endObjectFlight(FlyingObject *t, int x, int y, int collisionObject) {
 	int cx = x;
 	int cy = y;
 	uint16 block = calcBlockIndex(t->x, t->y);
 	removeAssignedObjectFromBlock(&_levelBlockProperties[block], t->item);
 	removeDrawObjectFromBlock(&_levelBlockProperties[block], t->item);
 
-	if (objectOnNextBlock == 1) {
+	if (collisionObject == 1) {
 		cx = t->x;
 		cy = t->y;
 	}
 
 	if (t->objectType == 0 || t->objectType == 1) {
-		objectFlightProcessHits(t, cx, cy, objectOnNextBlock);
+		objectFlightProcessHits(t, cx, cy, collisionObject);
 		t->x = (cx & 0xffc0) | 0x40;
 		t->y = (cy & 0xffc0) | 0x40;
 		t->flyingHeight = 0;
@@ -481,8 +481,24 @@ void LoLEngine::updateFlyingObject(FlyingObject *t) {
 	int x = 0;
 	int y = 0;
 	getNextStepCoords(t->x, t->y, x, y, t->direction);
-	// WORKAROUND: The next line seems to be bugged in the original code. I have fixed it in a way that at least seems to work fine.
-	int objectOnNextBlock = checkBlockBeforeObjectPlacement(x, y, _itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000 ? 127 : 63,  t->flags, t->wallFlags);
+	/* WORKAROUND:
+	Large fireballs cast by the "birds" in white tower level 2 and by the "wraith knights" in castle cimmeria
+	level 1	(or possible other objects with flag 0x4000) could not fly through corridors in ScummVM and would
+	be terminated prematurely. The original code (all versions) involuntarily circumvents this via a bug in the
+	next line of code.
+	The original checks for _itemProperties[t->item].flags instead of _itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags.
+	This leads to more or less unpredictable object widths. The large fireballs will usually get a width of 63
+	instead of 256 making them work just fine in the original.
+
+	I have fixed this by setting an object width of 63 of here. This produces results faithful to the original
+	at least.
+
+	Other methods of working around this issue don't make too much sense. An object with a width of 256
+	could never	fly through corridors, since 256 is also the width of a block. Aligning the fireballs to the
+	middle of a block (or making the monsters align to the middle before casting them) wouldn't help here
+	(and wouldn't be faithful to the original either).
+	*/
+	int objectOnNextBlock = checkBlockBeforeObjectPlacement(x, y, /*_itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000 ? 256 :*/ 63,  t->flags, t->wallFlags);
 	if (objectOnNextBlock) {
 		endObjectFlight(t, x, y, objectOnNextBlock);
 	} else {

@@ -19,6 +19,7 @@ base/main.cpp
 common/error.cpp
 common/util.cpp
 
+engines/advancedDetector.cpp
 engines/dialogs.cpp
 engines/scumm/dialogs.cpp
 engines/scumm/help.cpp
@@ -31,6 +32,7 @@ engines/sci/engine/kfile.cpp
 engines/agos/saveload.cpp
 
 audio/fmopl.cpp
+audio/mididrv.cpp
 audio/musicplugin.cpp
 audio/null.h
 audio/null.cpp
@@ -40,7 +42,6 @@ audio/softsynth/appleiigs.cpp
 audio/softsynth/sid.cpp
 audio/softsynth/mt32.cpp
 audio/softsynth/pcspk.cpp
-audio/softsynth/ym2612.cpp
 
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
@@ -48,6 +49,7 @@ backends/platform/ds/arm9/source/dsoptions.cpp
 backends/platform/iphone/osys_events.cpp
 backends/graphics/sdl/sdl-graphics.cpp
 backends/graphics/opengl/opengl-graphics.cpp
+backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/platform/symbian/src/SymbianActions.cpp
 backends/platform/symbian/src/SymbianOS.cpp
 backends/events/symbiansdl/symbiansdl-events.cpp
@@ -56,3 +58,6 @@ backends/platform/wince/CEActionsPocket.cpp
 backends/platform/wince/CEActionsSmartphone.cpp
 backends/platform/wince/CELauncherDialog.cpp
 backends/platform/wince/wince-sdl.cpp
+backends/events/gp2xsdl/gp2xsdl-events.cpp
+backends/events/gph/gph-events.cpp
+backends/events/openpandora/op-events.cpp

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-04-22 19:33+0100\n"
+"POT-Creation-Date: 2011-06-06 23:15+0100\n"
 "PO-Revision-Date: 2011-01-08 22:53+0100\n"
 "Last-Translator: Steffen Nyeland <steffen@nyeland.dk>\n"
 "Language-Team: Steffen Nyeland <steffen@nyeland.dk>\n"
@@ -16,108 +16,108 @@ msgstr ""
 "Language: Dansk\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: gui/about.cpp:96
+#: gui/about.cpp:91
 #, c-format
 msgid "(built on %s)"
 msgstr "(bygget den %s)"
 
-#: gui/about.cpp:103
+#: gui/about.cpp:98
 msgid "Features compiled in:"
 msgstr "Funktioner kompileret ind:"
 
-#: gui/about.cpp:112
+#: gui/about.cpp:107
 msgid "Available engines:"
 msgstr "Tilgængelige \"motorer\":"
 
-#: gui/browser.cpp:70
+#: gui/browser.cpp:66
 msgid "Go up"
 msgstr "Gå op"
 
-#: gui/browser.cpp:70 gui/browser.cpp:72
+#: gui/browser.cpp:66 gui/browser.cpp:68
 msgid "Go to previous directory level"
 msgstr "Gå til forrige biblioteks niveau"
 
-#: gui/browser.cpp:72
+#: gui/browser.cpp:68
 msgctxt "lowres"
 msgid "Go up"
 msgstr "Gå op"
 
-#: gui/browser.cpp:73 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
-#: gui/launcher.cpp:319 gui/massadd.cpp:95 gui/options.cpp:1124
-#: gui/saveload.cpp:66 gui/saveload.cpp:158 gui/themebrowser.cpp:57
+#: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
+#: gui/launcher.cpp:312 gui/massadd.cpp:92 gui/options.cpp:1178
+#: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
 #: backends/platform/wii/options.cpp:48
 msgid "Cancel"
 msgstr "Fortryd"
 
-#: gui/browser.cpp:74 gui/chooser.cpp:50 gui/themebrowser.cpp:58
+#: gui/browser.cpp:70 gui/chooser.cpp:46 gui/themebrowser.cpp:55
 msgid "Choose"
 msgstr "Vælg"
 
-#: gui/gui-manager.cpp:106 engines/scumm/help.cpp:128
-#: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
-#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
-#: backends/keymapper/remap-dialog.cpp:54
+#: gui/gui-manager.cpp:114 engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:190 engines/scumm/help.cpp:208
+#: backends/keymapper/remap-dialog.cpp:52
 msgid "Close"
 msgstr "Luk"
 
-#: gui/gui-manager.cpp:109
+#: gui/gui-manager.cpp:117
 msgid "Mouse click"
 msgstr "Muse klik"
 
-#: gui/gui-manager.cpp:112 base/main.cpp:281
+#: gui/gui-manager.cpp:120 base/main.cpp:280
 msgid "Display keyboard"
 msgstr "Vis tastatur"
 
-#: gui/gui-manager.cpp:115 base/main.cpp:284
+#: gui/gui-manager.cpp:123 base/main.cpp:283
 msgid "Remap keys"
 msgstr "Kortlæg taster"
 
-#: gui/KeysDialog.h:39 gui/KeysDialog.cpp:148
+#: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
 msgid "Choose an action to map"
 msgstr "Vælg en handling at kortlægge"
 
-#: gui/KeysDialog.cpp:44
+#: gui/KeysDialog.cpp:41
 msgid "Map"
 msgstr "Kortlæg"
 
-#: gui/KeysDialog.cpp:45 gui/launcher.cpp:320 gui/launcher.cpp:945
-#: gui/launcher.cpp:949 gui/massadd.cpp:92 gui/options.cpp:1125
+#: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
+#: gui/launcher.cpp:940 gui/massadd.cpp:89 gui/options.cpp:1179
 #: backends/platform/wii/options.cpp:47
-#: backends/platform/wince/CELauncherDialog.cpp:58
+#: backends/platform/wince/CELauncherDialog.cpp:52
 msgid "OK"
 msgstr "OK"
 
-#: gui/KeysDialog.cpp:52
+#: gui/KeysDialog.cpp:49
 msgid "Select an action and click 'Map'"
 msgstr "Vælg en handling og klik 'Kortlæg'"
 
-#: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:144
+#: gui/KeysDialog.cpp:80 gui/KeysDialog.cpp:102 gui/KeysDialog.cpp:141
 #, c-format
 msgid "Associated key : %s"
 msgstr "Tilknyttet tast : %s"
 
-#: gui/KeysDialog.cpp:85 gui/KeysDialog.cpp:107 gui/KeysDialog.cpp:146
+#: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
 #, c-format
 msgid "Associated key : none"
 msgstr "Tilknyttet tast : ingen"
 
-#: gui/KeysDialog.cpp:93
+#: gui/KeysDialog.cpp:90
 msgid "Please select an action"
 msgstr "Vælg venligst en handling"
 
-#: gui/KeysDialog.cpp:109
+#: gui/KeysDialog.cpp:106
 msgid "Press the key to associate"
 msgstr "Tryk tasten for at tilknytte"
 
-#: gui/launcher.cpp:172
+#: gui/launcher.cpp:165
 msgid "Game"
 msgstr "Spil"
 
-#: gui/launcher.cpp:176
+#: gui/launcher.cpp:169
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/launcher.cpp:176 gui/launcher.cpp:178 gui/launcher.cpp:179
+#: gui/launcher.cpp:169 gui/launcher.cpp:171 gui/launcher.cpp:172
 msgid ""
 "Short game identifier used for referring to savegames and running the game "
 "from the command line"
@@ -125,29 +125,29 @@ msgstr ""
 "Kort spil identifikator til brug for gemmer, og for at køre spillet fra "
 "kommandolinien"
 
-#: gui/launcher.cpp:178
+#: gui/launcher.cpp:171
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/launcher.cpp:183
+#: gui/launcher.cpp:176
 msgid "Name:"
 msgstr "Navn:"
 
-#: gui/launcher.cpp:183 gui/launcher.cpp:185 gui/launcher.cpp:186
+#: gui/launcher.cpp:176 gui/launcher.cpp:178 gui/launcher.cpp:179
 msgid "Full title of the game"
 msgstr "Fuld titel på spillet"
 
-#: gui/launcher.cpp:185
+#: gui/launcher.cpp:178
 msgctxt "lowres"
 msgid "Name:"
 msgstr "Navn:"
 
-#: gui/launcher.cpp:189
+#: gui/launcher.cpp:182
 msgid "Language:"
 msgstr "Sprog:"
 
-#: gui/launcher.cpp:189 gui/launcher.cpp:190
+#: gui/launcher.cpp:182 gui/launcher.cpp:183
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
@@ -155,282 +155,282 @@ msgstr ""
 "Spillets sprog. Dette vil ikke ændre din spanske version af spillet til "
 "engelsk"
 
-#: gui/launcher.cpp:191 gui/launcher.cpp:205 gui/options.cpp:80
-#: gui/options.cpp:654 gui/options.cpp:664 gui/options.cpp:1095
-#: audio/null.cpp:42
+#: gui/launcher.cpp:184 gui/launcher.cpp:198 gui/options.cpp:74
+#: gui/options.cpp:708 gui/options.cpp:718 gui/options.cpp:1149
+#: audio/null.cpp:40
 msgid "<default>"
 msgstr "<standard>"
 
-#: gui/launcher.cpp:201
+#: gui/launcher.cpp:194
 msgid "Platform:"
 msgstr "Platform:"
 
-#: gui/launcher.cpp:201 gui/launcher.cpp:203 gui/launcher.cpp:204
+#: gui/launcher.cpp:194 gui/launcher.cpp:196 gui/launcher.cpp:197
 msgid "Platform the game was originally designed for"
 msgstr "Platform som spillet oprindeligt var designet til"
 
-#: gui/launcher.cpp:203
+#: gui/launcher.cpp:196
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Platform:"
 
-#: gui/launcher.cpp:215 gui/options.cpp:964 gui/options.cpp:981
+#: gui/launcher.cpp:208 gui/options.cpp:1018 gui/options.cpp:1035
 msgid "Graphics"
 msgstr "Grafik"
 
-#: gui/launcher.cpp:215 gui/options.cpp:964 gui/options.cpp:981
+#: gui/launcher.cpp:208 gui/options.cpp:1018 gui/options.cpp:1035
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/launcher.cpp:218
+#: gui/launcher.cpp:211
 msgid "Override global graphic settings"
 msgstr "Overstyr globale grafik indstillinger"
 
-#: gui/launcher.cpp:220
+#: gui/launcher.cpp:213
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Overstyr globale grafik indstillinger"
 
-#: gui/launcher.cpp:227 gui/options.cpp:987
+#: gui/launcher.cpp:220 gui/options.cpp:1041
 msgid "Audio"
 msgstr "Lyd"
 
-#: gui/launcher.cpp:230
+#: gui/launcher.cpp:223
 msgid "Override global audio settings"
 msgstr "Overstyr globale lyd indstillinger"
 
-#: gui/launcher.cpp:232
+#: gui/launcher.cpp:225
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Overstyr globale lyd indstillinger"
 
-#: gui/launcher.cpp:241 gui/options.cpp:992
+#: gui/launcher.cpp:234 gui/options.cpp:1046
 msgid "Volume"
 msgstr "Lydstyrke"
 
-#: gui/launcher.cpp:243 gui/options.cpp:994
+#: gui/launcher.cpp:236 gui/options.cpp:1048
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Lydstyrke"
 
-#: gui/launcher.cpp:246
+#: gui/launcher.cpp:239
 msgid "Override global volume settings"
 msgstr "Overstyr globale lydstyrke indstillinger"
 
-#: gui/launcher.cpp:248
+#: gui/launcher.cpp:241
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Overstyr globale lydstyrke indstillinger"
 
-#: gui/launcher.cpp:255 gui/options.cpp:1002
+#: gui/launcher.cpp:248 gui/options.cpp:1056
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/launcher.cpp:258
+#: gui/launcher.cpp:251
 msgid "Override global MIDI settings"
 msgstr "Overstyr globale MIDI indstillinger"
 
-#: gui/launcher.cpp:260
+#: gui/launcher.cpp:253
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Overstyr globale MIDI indstillinger"
 
-#: gui/launcher.cpp:270 gui/options.cpp:1008
+#: gui/launcher.cpp:263 gui/options.cpp:1062
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/launcher.cpp:273
+#: gui/launcher.cpp:266
 msgid "Override global MT-32 settings"
 msgstr "Overstyr globale MT-32 indstillinger"
 
-#: gui/launcher.cpp:275
+#: gui/launcher.cpp:268
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Overstyr globale MT-32 indstillinger"
 
-#: gui/launcher.cpp:286 gui/options.cpp:1015
+#: gui/launcher.cpp:279 gui/options.cpp:1069
 msgid "Paths"
 msgstr "Stier"
 
-#: gui/launcher.cpp:288 gui/options.cpp:1017
+#: gui/launcher.cpp:281 gui/options.cpp:1071
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Stier"
 
-#: gui/launcher.cpp:295
+#: gui/launcher.cpp:288
 msgid "Game Path:"
 msgstr "Spil sti:"
 
-#: gui/launcher.cpp:297
+#: gui/launcher.cpp:290
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Spil sti:"
 
-#: gui/launcher.cpp:302 gui/options.cpp:1037
+#: gui/launcher.cpp:295 gui/options.cpp:1091
 msgid "Extra Path:"
 msgstr "Ekstra sti:"
 
-#: gui/launcher.cpp:302 gui/launcher.cpp:304 gui/launcher.cpp:305
+#: gui/launcher.cpp:295 gui/launcher.cpp:297 gui/launcher.cpp:298
 msgid "Specifies path to additional data used the game"
 msgstr "Angiver sti til ekstra data der bruges i spillet"
 
-#: gui/launcher.cpp:304 gui/options.cpp:1039
+#: gui/launcher.cpp:297 gui/options.cpp:1093
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Ekstra sti:"
 
-#: gui/launcher.cpp:309 gui/options.cpp:1025
+#: gui/launcher.cpp:302 gui/options.cpp:1079
 msgid "Save Path:"
 msgstr "Gemme sti:"
 
-#: gui/launcher.cpp:309 gui/launcher.cpp:311 gui/launcher.cpp:312
-#: gui/options.cpp:1025 gui/options.cpp:1027 gui/options.cpp:1028
+#: gui/launcher.cpp:302 gui/launcher.cpp:304 gui/launcher.cpp:305
+#: gui/options.cpp:1079 gui/options.cpp:1081 gui/options.cpp:1082
 msgid "Specifies where your savegames are put"
 msgstr "Angiver hvor dine gemmer bliver lagt"
 
-#: gui/launcher.cpp:311 gui/options.cpp:1027
+#: gui/launcher.cpp:304 gui/options.cpp:1081
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Gemme sti:"
 
-#: gui/launcher.cpp:328 gui/launcher.cpp:411 gui/launcher.cpp:460
-#: gui/options.cpp:1034 gui/options.cpp:1040 gui/options.cpp:1047
-#: gui/options.cpp:1148 gui/options.cpp:1154 gui/options.cpp:1160
-#: gui/options.cpp:1168 gui/options.cpp:1192 gui/options.cpp:1196
-#: gui/options.cpp:1202 gui/options.cpp:1209 gui/options.cpp:1308
+#: gui/launcher.cpp:321 gui/launcher.cpp:404 gui/launcher.cpp:453
+#: gui/options.cpp:1088 gui/options.cpp:1094 gui/options.cpp:1101
+#: gui/options.cpp:1202 gui/options.cpp:1208 gui/options.cpp:1214
+#: gui/options.cpp:1222 gui/options.cpp:1246 gui/options.cpp:1250
+#: gui/options.cpp:1256 gui/options.cpp:1263 gui/options.cpp:1362
 msgctxt "path"
 msgid "None"
 msgstr "Ingen"
 
-#: gui/launcher.cpp:333 gui/launcher.cpp:415
+#: gui/launcher.cpp:326 gui/launcher.cpp:408
 #: backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Standard"
 
-#: gui/launcher.cpp:453 gui/options.cpp:1302
+#: gui/launcher.cpp:446 gui/options.cpp:1356
 msgid "Select SoundFont"
 msgstr "Vælg SoundFont"
 
-#: gui/launcher.cpp:472 gui/launcher.cpp:619
+#: gui/launcher.cpp:465 gui/launcher.cpp:612
 msgid "Select directory with game data"
 msgstr "Vælg bibliotek med spil data"
 
-#: gui/launcher.cpp:490
+#: gui/launcher.cpp:483
 msgid "Select additional game directory"
 msgstr "Vælg ekstra spil bibliotek"
 
-#: gui/launcher.cpp:502
+#: gui/launcher.cpp:495
 msgid "Select directory for saved games"
 msgstr "Vælg bibliotek til spil gemmer"
 
-#: gui/launcher.cpp:521
+#: gui/launcher.cpp:514
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Dette spil ID er allerede i brug. Vælg venligst et andet."
 
-#: gui/launcher.cpp:562 engines/dialogs.cpp:113
+#: gui/launcher.cpp:555 engines/dialogs.cpp:110
 msgid "~Q~uit"
 msgstr "~A~fslut"
 
-#: gui/launcher.cpp:562
+#: gui/launcher.cpp:555
 msgid "Quit ScummVM"
 msgstr "Afslut ScummVM"
 
-#: gui/launcher.cpp:563
+#: gui/launcher.cpp:556
 msgid "A~b~out..."
 msgstr "~O~m..."
 
-#: gui/launcher.cpp:563
+#: gui/launcher.cpp:556
 msgid "About ScummVM"
 msgstr "Om ScummVM"
 
-#: gui/launcher.cpp:564
+#: gui/launcher.cpp:557
 msgid "~O~ptions..."
 msgstr "~I~ndstillinger..."
 
-#: gui/launcher.cpp:564
+#: gui/launcher.cpp:557
 msgid "Change global ScummVM options"
 msgstr "Ændre globale ScummVM indstillinger"
 
-#: gui/launcher.cpp:566
+#: gui/launcher.cpp:559
 msgid "~S~tart"
 msgstr "~S~tart"
 
-#: gui/launcher.cpp:566
+#: gui/launcher.cpp:559
 msgid "Start selected game"
 msgstr "Start det valgte spil"
 
-#: gui/launcher.cpp:569
+#: gui/launcher.cpp:562
 msgid "~L~oad..."
 msgstr "~H~ent..."
 
-#: gui/launcher.cpp:569
+#: gui/launcher.cpp:562
 msgid "Load savegame for selected game"
 msgstr "Hent gemmer for det valgte spil"
 
-#: gui/launcher.cpp:574
+#: gui/launcher.cpp:567
 msgid "~A~dd Game..."
 msgstr "~T~ilføj spil..."
 
-#: gui/launcher.cpp:574 gui/launcher.cpp:581
+#: gui/launcher.cpp:567 gui/launcher.cpp:574
 msgid "Hold Shift for Mass Add"
 msgstr "Hold Skift for at tilføje flere"
 
-#: gui/launcher.cpp:576
+#: gui/launcher.cpp:569
 msgid "~E~dit Game..."
 msgstr "~R~ediger spil..."
 
-#: gui/launcher.cpp:576 gui/launcher.cpp:583
+#: gui/launcher.cpp:569 gui/launcher.cpp:576
 msgid "Change game options"
 msgstr "Ændre spil indstillinger"
 
-#: gui/launcher.cpp:578
+#: gui/launcher.cpp:571
 msgid "~R~emove Game"
 msgstr "~F~jern spil"
 
-#: gui/launcher.cpp:578 gui/launcher.cpp:585
+#: gui/launcher.cpp:571 gui/launcher.cpp:578
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Fjerner spil fra listen. Spillets data filer forbliver uberørt"
 
-#: gui/launcher.cpp:581
+#: gui/launcher.cpp:574
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~T~ilføj spil..."
 
-#: gui/launcher.cpp:583
+#: gui/launcher.cpp:576
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "~R~ediger spil..."
 
-#: gui/launcher.cpp:585
+#: gui/launcher.cpp:578
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~F~jern spil"
 
-#: gui/launcher.cpp:593
+#: gui/launcher.cpp:586
 msgid "Search in game list"
 msgstr "Søg i spil liste"
 
-#: gui/launcher.cpp:597 gui/launcher.cpp:1111
+#: gui/launcher.cpp:590 gui/launcher.cpp:1102
 msgid "Search:"
 msgstr "Søg:"
 
-#: gui/launcher.cpp:600 gui/options.cpp:772
+#: gui/launcher.cpp:593 gui/options.cpp:826
 msgid "Clear value"
 msgstr "Slet værdi"
 
-#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:255
-#: engines/mohawk/riven.cpp:715 engines/cruise/menu.cpp:218
+#: gui/launcher.cpp:615 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:255
+#: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:216
 msgid "Load game:"
 msgstr "Indlæs spil:"
 
-#: gui/launcher.cpp:622 engines/dialogs.cpp:117 engines/mohawk/myst.cpp:255
-#: engines/mohawk/riven.cpp:715 engines/cruise/menu.cpp:218
-#: backends/platform/wince/CEActionsPocket.cpp:268
-#: backends/platform/wince/CEActionsSmartphone.cpp:231
+#: gui/launcher.cpp:615 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:255
+#: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:216
+#: backends/platform/wince/CEActionsPocket.cpp:265
+#: backends/platform/wince/CEActionsSmartphone.cpp:228
 msgid "Load"
 msgstr "Indlæs"
 
-#: gui/launcher.cpp:731
+#: gui/launcher.cpp:723
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -438,205 +438,222 @@ msgstr ""
 "Vil du virkelig køre fler spils detektoren? Dette kunne potentielt tilføje "
 "et stort antal spil."
 
-#: gui/launcher.cpp:732 gui/launcher.cpp:881
-#: backends/events/symbiansdl/symbiansdl-events.cpp:187
-#: backends/platform/wince/CEActionsPocket.cpp:330
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-#: backends/platform/wince/CELauncherDialog.cpp:106
+#: gui/launcher.cpp:724 gui/launcher.cpp:872
+#: backends/events/symbiansdl/symbiansdl-events.cpp:184
+#: backends/platform/wince/CEActionsPocket.cpp:327
+#: backends/platform/wince/CEActionsSmartphone.cpp:284
+#: backends/platform/wince/CELauncherDialog.cpp:77
 msgid "Yes"
 msgstr "Ja"
 
-#: gui/launcher.cpp:732 gui/launcher.cpp:881
-#: backends/events/symbiansdl/symbiansdl-events.cpp:187
-#: backends/platform/wince/CEActionsPocket.cpp:330
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-#: backends/platform/wince/CELauncherDialog.cpp:106
+#: gui/launcher.cpp:724 gui/launcher.cpp:872
+#: backends/events/symbiansdl/symbiansdl-events.cpp:184
+#: backends/platform/wince/CEActionsPocket.cpp:327
+#: backends/platform/wince/CEActionsSmartphone.cpp:284
+#: backends/platform/wince/CELauncherDialog.cpp:77
 msgid "No"
 msgstr "Nej"
 
-#: gui/launcher.cpp:779
+#: gui/launcher.cpp:772
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM kunne ikke åbne det angivne bibliotek!"
 
-#: gui/launcher.cpp:791
+#: gui/launcher.cpp:784
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM kunne ikke finde noget spil i det angivne bibliotek!"
 
-#: gui/launcher.cpp:805
+#: gui/launcher.cpp:798
 msgid "Pick the game:"
 msgstr "Vælg spillet:"
 
-#: gui/launcher.cpp:881
+#: gui/launcher.cpp:872
 msgid "Do you really want to remove this game configuration?"
 msgstr "Vil du virkelig fjerne denne spil konfiguration?"
 
-#: gui/launcher.cpp:945
+#: gui/launcher.cpp:936
 msgid "This game does not support loading games from the launcher."
 msgstr "Dette spil understøtter ikke hentning af spil fra spiloversigten."
 
-#: gui/launcher.cpp:949
+#: gui/launcher.cpp:940
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM kunne ikke finde en motor, istand til at afvikle det valgte spil!"
 
-#: gui/launcher.cpp:1063
+#: gui/launcher.cpp:1054
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Tilføj flere..."
 
-#: gui/launcher.cpp:1063
+#: gui/launcher.cpp:1054
 msgid "Mass Add..."
 msgstr "Tilføj flere..."
 
-#: gui/launcher.cpp:1064
+#: gui/launcher.cpp:1055
 msgctxt "lowres"
 msgid "Add Game..."
 msgstr "Tilføj spil..."
 
-#: gui/launcher.cpp:1064
+#: gui/launcher.cpp:1055
 msgid "Add Game..."
 msgstr "Tilføj spil..."
 
-#: gui/massadd.cpp:79 gui/massadd.cpp:82
+#: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
 msgstr "... fremskridt ..."
 
-#: gui/massadd.cpp:244
+#: gui/massadd.cpp:243
 msgid "Scan complete!"
 msgstr "Skan gennemført!"
 
-#: gui/massadd.cpp:247
+#: gui/massadd.cpp:246
 #, c-format
-msgid "Discovered %d new games."
-msgstr "Fundet %d nye spil."
+msgid "Discovered %d new games, ignored %d previously added games."
+msgstr ""
 
-#: gui/massadd.cpp:251
+#: gui/massadd.cpp:250
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "Gennemset %d biblioteker ..."
 
-#: gui/massadd.cpp:254
-#, c-format
-msgid "Discovered %d new games ..."
+#: gui/massadd.cpp:253
+#, fuzzy, c-format
+msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "Fundet %d nye spil ..."
 
-#: gui/options.cpp:78
+#: gui/options.cpp:72
 msgid "Never"
 msgstr "Aldrig"
 
-#: gui/options.cpp:78
+#: gui/options.cpp:72
 msgid "every 5 mins"
 msgstr "hvert 5. minut"
 
-#: gui/options.cpp:78
+#: gui/options.cpp:72
 msgid "every 10 mins"
 msgstr "hvert 10. minut"
 
-#: gui/options.cpp:78
+#: gui/options.cpp:72
 msgid "every 15 mins"
 msgstr "hvert 15. minut"
 
-#: gui/options.cpp:78
+#: gui/options.cpp:72
 msgid "every 30 mins"
 msgstr "hvert 30. minut"
 
-#: gui/options.cpp:80
+#: gui/options.cpp:74
 msgid "8 kHz"
 msgstr "8 kHz"
 
-#: gui/options.cpp:80
+#: gui/options.cpp:74
 msgid "11kHz"
 msgstr "11 kHz"
 
-#: gui/options.cpp:80
+#: gui/options.cpp:74
 msgid "22 kHz"
 msgstr "22 kHz"
 
-#: gui/options.cpp:80
+#: gui/options.cpp:74
 msgid "44 kHz"
 msgstr "44 kHz"
 
-#: gui/options.cpp:80
+#: gui/options.cpp:74
 msgid "48 kHz"
 msgstr "48 kHz"
 
-#: gui/options.cpp:242 gui/options.cpp:407 gui/options.cpp:505
-#: gui/options.cpp:571 gui/options.cpp:771
+#: gui/options.cpp:236 gui/options.cpp:464 gui/options.cpp:559
+#: gui/options.cpp:625 gui/options.cpp:825
 msgctxt "soundfont"
 msgid "None"
 msgstr "Ingen"
 
-#: gui/options.cpp:651
+#: gui/options.cpp:372
+msgid "Failed to apply some of the graphic options changes:"
+msgstr ""
+
+#: gui/options.cpp:384
+msgid "the video mode could not be changed."
+msgstr ""
+
+#: gui/options.cpp:390
+msgid "the fullscreen setting could not be changed"
+msgstr ""
+
+#: gui/options.cpp:396
+msgid "the aspect ratio setting could not be changed"
+msgstr ""
+
+#: gui/options.cpp:705
 msgid "Graphics mode:"
 msgstr "Grafik tilstand:"
 
-#: gui/options.cpp:662
+#: gui/options.cpp:716
 msgid "Render mode:"
 msgstr "Rendere tilstand:"
 
-#: gui/options.cpp:662 gui/options.cpp:663
+#: gui/options.cpp:716 gui/options.cpp:717
 msgid "Special dithering modes supported by some games"
 msgstr "Speciel farvereduceringstilstand understøttet a nogle spil"
 
-#: gui/options.cpp:672
+#: gui/options.cpp:726 backends/graphics/sdl/sdl-graphics.cpp:2252
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:456
 msgid "Fullscreen mode"
 msgstr "Fuldskærms tilstand"
 
-#: gui/options.cpp:675
+#: gui/options.cpp:729
 msgid "Aspect ratio correction"
 msgstr "Billedformat korrektion"
 
-#: gui/options.cpp:675
+#: gui/options.cpp:729
 msgid "Correct aspect ratio for 320x200 games"
 msgstr "Korrekt billedformat til 320x200 spil"
 
-#: gui/options.cpp:676
+#: gui/options.cpp:730
 msgid "EGA undithering"
 msgstr "EGA farveforøgelse"
 
-#: gui/options.cpp:676
+#: gui/options.cpp:730
 msgid "Enable undithering in EGA games that support it"
 msgstr "Aktiver farveforøgelse i EGA spil der understøtter det"
 
-#: gui/options.cpp:684
+#: gui/options.cpp:738
 msgid "Preferred Device:"
 msgstr "Foretruk. enhed:"
 
-#: gui/options.cpp:684
+#: gui/options.cpp:738
 msgid "Music Device:"
 msgstr "Musik enhed:"
 
-#: gui/options.cpp:684 gui/options.cpp:686
+#: gui/options.cpp:738 gui/options.cpp:740
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "Angiver foretukket lyd enhed eller lydkort emulator"
 
-#: gui/options.cpp:684 gui/options.cpp:686 gui/options.cpp:687
+#: gui/options.cpp:738 gui/options.cpp:740 gui/options.cpp:741
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Angiver lyd udgangsenhed eller lydkorts emulator"
 
-#: gui/options.cpp:686
+#: gui/options.cpp:740
 msgctxt "lowres"
 msgid "Preferred Dev.:"
 msgstr "Foretruk. enh.:"
 
-#: gui/options.cpp:686
+#: gui/options.cpp:740
 msgctxt "lowres"
 msgid "Music Device:"
 msgstr "Musik enhed:"
 
-#: gui/options.cpp:712
+#: gui/options.cpp:766
 msgid "AdLib emulator:"
 msgstr "AdLib emulator:"
 
-#: gui/options.cpp:712 gui/options.cpp:713
+#: gui/options.cpp:766 gui/options.cpp:767
 msgid "AdLib is used for music in many games"
 msgstr "AdLib bliver brugt til musik i mange spil"
 
-#: gui/options.cpp:723
+#: gui/options.cpp:777
 msgid "Output rate:"
 msgstr "Udgangsfrekvens:"
 
-#: gui/options.cpp:723 gui/options.cpp:724
+#: gui/options.cpp:777 gui/options.cpp:778
 msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
@@ -644,60 +661,60 @@ msgstr ""
 "Højere værdi angiver bedre lyd kvalitet, men understøttes måske ikke af dit "
 "lydkort"
 
-#: gui/options.cpp:734
+#: gui/options.cpp:788
 msgid "GM Device:"
 msgstr "GM enhed:"
 
-#: gui/options.cpp:734
+#: gui/options.cpp:788
 msgid "Specifies default sound device for General MIDI output"
 msgstr "Angiver standard lyd enhed for General MIDI udgang"
 
-#: gui/options.cpp:745
+#: gui/options.cpp:799
 msgid "Don't use General MIDI music"
 msgstr "Brug ikke General MIDI musik"
 
-#: gui/options.cpp:756 gui/options.cpp:817
+#: gui/options.cpp:810 gui/options.cpp:871
 msgid "Use first available device"
 msgstr "Brug første tilgængelig enhed"
 
-#: gui/options.cpp:768
+#: gui/options.cpp:822
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:768 gui/options.cpp:770 gui/options.cpp:771
+#: gui/options.cpp:822 gui/options.cpp:824 gui/options.cpp:825
 msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr "SoundFont er understøttet af nogle lydkort, Fluidsynth og Timidity"
 
-#: gui/options.cpp:770
+#: gui/options.cpp:824
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:775
+#: gui/options.cpp:829
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Blandet AdLib/MIDI tilstand"
 
-#: gui/options.cpp:775
+#: gui/options.cpp:829
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "Brug både MIDI og AdLib lyd generering"
 
-#: gui/options.cpp:778
+#: gui/options.cpp:832
 msgid "MIDI gain:"
 msgstr "MIDI lydstyrke:"
 
-#: gui/options.cpp:788
+#: gui/options.cpp:842
 msgid "MT-32 Device:"
 msgstr "MT-32 enhed:"
 
-#: gui/options.cpp:788
+#: gui/options.cpp:842
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr "Angiver standard lyd enhed for Roland MT-32/LAPC1/CM32I/CM64 udgang"
 
-#: gui/options.cpp:793
+#: gui/options.cpp:847
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Ægte Roland MT-32 (undlad GM emulering)"
 
-#: gui/options.cpp:793 gui/options.cpp:795
+#: gui/options.cpp:847 gui/options.cpp:849
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -705,190 +722,191 @@ msgstr ""
 "Kontroller om du vil bruge din rigtige hardware Roland-kompatible lyd enhed "
 "tilsluttet til din computer"
 
-#: gui/options.cpp:795
+#: gui/options.cpp:849
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Ægte Roland MT-32 (ingen GM emulering)"
 
-#: gui/options.cpp:798
+#: gui/options.cpp:852
 msgid "Enable Roland GS Mode"
 msgstr "Aktivér Roland GS tilstand"
 
-#: gui/options.cpp:798
+#: gui/options.cpp:852
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
 msgstr "Sluk for General MIDI kortlægning for spil med Roland MT-32 lydspor"
 
-#: gui/options.cpp:807
+#: gui/options.cpp:861
 msgid "Don't use Roland MT-32 music"
 msgstr "Brug ikke Roland MT-32 musik"
 
-#: gui/options.cpp:834
+#: gui/options.cpp:888
 msgid "Text and Speech:"
 msgstr "Tekst og tale:"
 
-#: gui/options.cpp:838 gui/options.cpp:848
+#: gui/options.cpp:892 gui/options.cpp:902
 msgid "Speech"
 msgstr "Tale"
 
-#: gui/options.cpp:839 gui/options.cpp:849
+#: gui/options.cpp:893 gui/options.cpp:903
 msgid "Subtitles"
 msgstr "Undertekster"
 
-#: gui/options.cpp:840
+#: gui/options.cpp:894
 msgid "Both"
 msgstr "Begge"
 
-#: gui/options.cpp:842
+#: gui/options.cpp:896
 msgid "Subtitle speed:"
 msgstr "Tekst hastighed:"
 
-#: gui/options.cpp:844
+#: gui/options.cpp:898
 msgctxt "lowres"
 msgid "Text and Speech:"
 msgstr "Tekst og tale:"
 
-#: gui/options.cpp:848
+#: gui/options.cpp:902
 msgid "Spch"
 msgstr "Tale"
 
-#: gui/options.cpp:849
+#: gui/options.cpp:903
 msgid "Subs"
 msgstr "Tekst"
 
-#: gui/options.cpp:850
+#: gui/options.cpp:904
 msgctxt "lowres"
 msgid "Both"
 msgstr "Begge"
 
-#: gui/options.cpp:850
+#: gui/options.cpp:904
 msgid "Show subtitles and play speech"
 msgstr "Vis undertekster og afspil tale"
 
-#: gui/options.cpp:852
+#: gui/options.cpp:906
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Tekst hastighed:"
 
-#: gui/options.cpp:868
+#: gui/options.cpp:922
 msgid "Music volume:"
 msgstr "Musik lydstyrke:"
 
-#: gui/options.cpp:870
+#: gui/options.cpp:924
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Musik lydstyrke:"
 
-#: gui/options.cpp:877
+#: gui/options.cpp:931
 msgid "Mute All"
 msgstr "Mute alle"
 
-#: gui/options.cpp:880
+#: gui/options.cpp:934
 msgid "SFX volume:"
 msgstr "SFX lydstyrke:"
 
-#: gui/options.cpp:880 gui/options.cpp:882 gui/options.cpp:883
+#: gui/options.cpp:934 gui/options.cpp:936 gui/options.cpp:937
 msgid "Special sound effects volume"
 msgstr "Lydstyrke for specielle lydeffekter"
 
-#: gui/options.cpp:882
+#: gui/options.cpp:936
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "SFX lydstyrke:"
 
-#: gui/options.cpp:890
+#: gui/options.cpp:944
 msgid "Speech volume:"
 msgstr "Tale lydstyrke:"
 
-#: gui/options.cpp:892
+#: gui/options.cpp:946
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Tale lydstyrke:"
 
-#: gui/options.cpp:1031
+#: gui/options.cpp:1085
 msgid "Theme Path:"
 msgstr "Tema sti:"
 
-#: gui/options.cpp:1033
+#: gui/options.cpp:1087
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Tema sti:"
 
-#: gui/options.cpp:1037 gui/options.cpp:1039 gui/options.cpp:1040
+#: gui/options.cpp:1091 gui/options.cpp:1093 gui/options.cpp:1094
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "Angiver sti til ekstra data brugt af alle spil eller ScummVM"
 
-#: gui/options.cpp:1044
+#: gui/options.cpp:1098
 msgid "Plugins Path:"
 msgstr "Plugin sti:"
 
-#: gui/options.cpp:1046
+#: gui/options.cpp:1100
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Plugin sti:"
 
-#: gui/options.cpp:1055
+#: gui/options.cpp:1109
 msgid "Misc"
 msgstr "Andet"
 
-#: gui/options.cpp:1057
+#: gui/options.cpp:1111
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Andet"
 
-#: gui/options.cpp:1059
+#: gui/options.cpp:1113
 msgid "Theme:"
 msgstr "Tema:"
 
-#: gui/options.cpp:1063
+#: gui/options.cpp:1117
 msgid "GUI Renderer:"
 msgstr "GUI renderer:"
 
-#: gui/options.cpp:1075
+#: gui/options.cpp:1129
 msgid "Autosave:"
 msgstr "Auto gemme:"
 
-#: gui/options.cpp:1077
+#: gui/options.cpp:1131
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Auto gemme:"
 
-#: gui/options.cpp:1085
+#: gui/options.cpp:1139
 msgid "Keys"
 msgstr "Taster"
 
-#: gui/options.cpp:1092
+#: gui/options.cpp:1146
 msgid "GUI Language:"
 msgstr "Sprog:"
 
-#: gui/options.cpp:1092
+#: gui/options.cpp:1146
 msgid "Language of ScummVM GUI"
 msgstr "Sprog for brugerfladen i ScummVM"
 
-#: gui/options.cpp:1241
-msgid "You have to restart ScummVM to take the effect."
+#: gui/options.cpp:1295
+#, fuzzy
+msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Du skal genstarte ScummVM for at ændringer vises."
 
-#: gui/options.cpp:1254
+#: gui/options.cpp:1308
 msgid "Select directory for savegames"
 msgstr "Vælg bibliotek til gemmer"
 
-#: gui/options.cpp:1261
+#: gui/options.cpp:1315
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Der kan ikke skrives til det valgte bibliotek. Vælg venligst et andet."
 
-#: gui/options.cpp:1270
+#: gui/options.cpp:1324
 msgid "Select directory for GUI themes"
 msgstr "Vælg bibliotek for GUI temaer"
 
-#: gui/options.cpp:1280
+#: gui/options.cpp:1334
 msgid "Select directory for extra files"
 msgstr "Vælg bibliotek for ekstra filer"
 
-#: gui/options.cpp:1291
+#: gui/options.cpp:1345
 msgid "Select directory for plugins"
 msgstr "Vælg bibliotek for plugins"
 
-#: gui/options.cpp:1335
+#: gui/options.cpp:1389
 msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
@@ -896,786 +914,811 @@ msgstr ""
 "Temaet du valgte understøtter ikke dit aktuelle sprog. Hvis du ønsker at "
 "bruge dette tema, skal du skifte til et andet sprog først."
 
-#: gui/saveload.cpp:61 gui/saveload.cpp:242
+#: gui/saveload.cpp:58 gui/saveload.cpp:239
 msgid "No date saved"
 msgstr "Ingen dato gemt"
 
-#: gui/saveload.cpp:62 gui/saveload.cpp:243
+#: gui/saveload.cpp:59 gui/saveload.cpp:240
 msgid "No time saved"
 msgstr "Intet tidspunkt gemt"
 
-#: gui/saveload.cpp:63 gui/saveload.cpp:244
+#: gui/saveload.cpp:60 gui/saveload.cpp:241
 msgid "No playtime saved"
 msgstr "Ingen spilletid gemt"
 
-#: gui/saveload.cpp:70 gui/saveload.cpp:158
+#: gui/saveload.cpp:67 gui/saveload.cpp:155
 msgid "Delete"
 msgstr "Slet"
 
-#: gui/saveload.cpp:157
+#: gui/saveload.cpp:154
 msgid "Do you really want to delete this savegame?"
 msgstr "Vil du virkelig slette denne gemmer?"
 
-#: gui/saveload.cpp:266
+#: gui/saveload.cpp:263
 msgid "Date: "
 msgstr "Dato:"
 
-#: gui/saveload.cpp:269
+#: gui/saveload.cpp:266
 msgid "Time: "
 msgstr "Tid:"
 
-#: gui/saveload.cpp:274
+#: gui/saveload.cpp:271
 msgid "Playtime: "
 msgstr "Spilletid:"
 
-#: gui/saveload.cpp:287 gui/saveload.cpp:354
+#: gui/saveload.cpp:284 gui/saveload.cpp:351
 msgid "Untitled savestate"
 msgstr "Unavngivet gemmetilstand"
 
-#: gui/themebrowser.cpp:47
+#: gui/themebrowser.cpp:44
 msgid "Select a Theme"
 msgstr "Vælg et tema"
 
-#: gui/ThemeEngine.cpp:332
+#: gui/ThemeEngine.cpp:327
 msgid "Disabled GFX"
 msgstr "Deaktiveret GFX"
 
-#: gui/ThemeEngine.cpp:332
+#: gui/ThemeEngine.cpp:327
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Deaktiveret GFX"
 
-#: gui/ThemeEngine.cpp:333
+#: gui/ThemeEngine.cpp:328
 msgid "Standard Renderer (16bpp)"
 msgstr "Standard renderer (16bpp)"
 
-#: gui/ThemeEngine.cpp:333
+#: gui/ThemeEngine.cpp:328
 msgid "Standard (16bpp)"
 msgstr "Standard (16bpp)"
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:330
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Antialias renderer (16bpp)"
 
-#: gui/ThemeEngine.cpp:335
+#: gui/ThemeEngine.cpp:330
 msgid "Antialiased (16bpp)"
 msgstr "Antialias (16bpp)"
 
-#: base/main.cpp:201
+#: base/main.cpp:200
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Motor understøtter ikke fejlfindingsniveau '%s'"
 
-#: base/main.cpp:269
+#: base/main.cpp:268
 msgid "Menu"
 msgstr "Menu"
 
-#: base/main.cpp:272 backends/platform/symbian/src/SymbianActions.cpp:48
-#: backends/platform/wince/CEActionsPocket.cpp:48
-#: backends/platform/wince/CEActionsSmartphone.cpp:49
+#: base/main.cpp:271 backends/platform/symbian/src/SymbianActions.cpp:45
+#: backends/platform/wince/CEActionsPocket.cpp:45
+#: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Spring over"
 
-#: base/main.cpp:275 backends/platform/symbian/src/SymbianActions.cpp:53
-#: backends/platform/wince/CEActionsPocket.cpp:45
+#: base/main.cpp:274 backends/platform/symbian/src/SymbianActions.cpp:50
+#: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Pause"
 
-#: base/main.cpp:278
+#: base/main.cpp:277
 msgid "Skip line"
 msgstr "Spring linje over"
 
-#: base/main.cpp:433
+#: base/main.cpp:432
 msgid "Error running game:"
 msgstr "Fejl ved kørsel af spil:"
 
-#: base/main.cpp:457
+#: base/main.cpp:456
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikke finde nogen motor istand til at afvikle det valgte spil"
 
-#: common/error.cpp:42
+#: common/error.cpp:38
 msgid "No error"
 msgstr ""
 
-#: common/error.cpp:44
+#: common/error.cpp:40
 #, fuzzy
 msgid "Game data not found"
 msgstr "Spil data ikke fundet"
 
-#: common/error.cpp:46
+#: common/error.cpp:42
 #, fuzzy
 msgid "Game id not supported"
 msgstr "Spil id ikke understøttet"
 
-#: common/error.cpp:48
+#: common/error.cpp:44
 #, fuzzy
 msgid "Unsupported color mode"
 msgstr "Ikke understøttet farve tilstand"
 
-#: common/error.cpp:51
+#: common/error.cpp:47
 msgid "Read permission denied"
 msgstr "Læse rettighed nægtet"
 
-#: common/error.cpp:53
+#: common/error.cpp:49
 msgid "Write permission denied"
 msgstr "Skrive rettighed nægtet"
 
-#: common/error.cpp:56
+#: common/error.cpp:52
 #, fuzzy
 msgid "Path does not exist"
 msgstr "Sti eksistere ikke"
 
-#: common/error.cpp:58
+#: common/error.cpp:54
 msgid "Path not a directory"
 msgstr "Sti ikke et bibliotek"
 
-#: common/error.cpp:60
+#: common/error.cpp:56
 msgid "Path not a file"
 msgstr "Sti ikke en fil"
 
-#: common/error.cpp:63
+#: common/error.cpp:59
 msgid "Cannot create file"
 msgstr "Kan ikke oprette fil"
 
-#: common/error.cpp:65
+#: common/error.cpp:61
 #, fuzzy
 msgid "Reading data failed"
 msgstr "Læsning fejlet"
 
-#: common/error.cpp:67
+#: common/error.cpp:63
 msgid "Writing data failed"
 msgstr "Skrivning af data fejlet"
 
-#: common/error.cpp:70
+#: common/error.cpp:66
 msgid "Could not find suitable engine plugin"
 msgstr ""
 
-#: common/error.cpp:72
+#: common/error.cpp:68
 #, fuzzy
 msgid "Engine plugin does not support save states"
 msgstr "Motor understøtter ikke fejlfindingsniveau '%s'"
 
-#: common/error.cpp:75
-msgid "Command line argument not processed"
-msgstr ""
-
-#: common/error.cpp:79
+#: common/error.cpp:72
 #, fuzzy
 msgid "Unknown error"
 msgstr "Ukendt fejl"
 
-#: common/util.cpp:276
+#: common/util.cpp:274
 msgid "Hercules Green"
 msgstr "Hercules grøn"
 
-#: common/util.cpp:277
+#: common/util.cpp:275
 msgid "Hercules Amber"
 msgstr "Hercules brun"
 
-#: common/util.cpp:284
+#: common/util.cpp:282
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules grøn"
 
-#: common/util.cpp:285
+#: common/util.cpp:283
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules brun"
 
-#: engines/dialogs.cpp:87
+#: engines/advancedDetector.cpp:368
+#, c-format
+msgid "The game in '%s' seems to be unknown."
+msgstr ""
+
+#: engines/advancedDetector.cpp:369
+msgid "Please, report the following data to the ScummVM team along with name"
+msgstr ""
+
+#: engines/advancedDetector.cpp:371
+msgid "of the game you tried to add and its version/language/etc.:"
+msgstr ""
+
+#: engines/advancedDetector.cpp:632
+#, c-format
+msgid ""
+"Your game version has been detected using filename matching as a variant of %"
+"s."
+msgstr ""
+
+#: engines/advancedDetector.cpp:635
+msgid "If this is an original and unmodified version, please report any"
+msgstr ""
+
+#: engines/advancedDetector.cpp:637
+msgid "information previously printed by ScummVM to the team."
+msgstr ""
+
+#: engines/dialogs.cpp:84
 msgid "~R~esume"
 msgstr "Gen~o~ptag"
 
-#: engines/dialogs.cpp:89
+#: engines/dialogs.cpp:86
 msgid "~L~oad"
 msgstr "~H~ent"
 
-#: engines/dialogs.cpp:93
+#: engines/dialogs.cpp:90
 msgid "~S~ave"
 msgstr "~G~em"
 
-#: engines/dialogs.cpp:97
+#: engines/dialogs.cpp:94
 msgid "~O~ptions"
 msgstr "~I~ndstillinger"
 
-#: engines/dialogs.cpp:102
+#: engines/dialogs.cpp:99
 msgid "~H~elp"
 msgstr "H~j~ælp"
 
-#: engines/dialogs.cpp:104
+#: engines/dialogs.cpp:101
 msgid "~A~bout"
 msgstr "~O~m"
 
-#: engines/dialogs.cpp:107 engines/dialogs.cpp:185
+#: engines/dialogs.cpp:104 engines/dialogs.cpp:182
 msgid "~R~eturn to Launcher"
 msgstr "~R~etur til spiloversigt"
 
-#: engines/dialogs.cpp:109 engines/dialogs.cpp:187
+#: engines/dialogs.cpp:106 engines/dialogs.cpp:184
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~R~etur til oversigt"
 
-#: engines/dialogs.cpp:119 engines/cruise/menu.cpp:216
-#: engines/sci/engine/kfile.cpp:577
+#: engines/dialogs.cpp:116 engines/cruise/menu.cpp:214
+#: engines/sci/engine/kfile.cpp:575
 msgid "Save game:"
 msgstr "Gemmer:"
 
-#: engines/dialogs.cpp:119 engines/cruise/menu.cpp:216
-#: engines/sci/engine/kfile.cpp:577
-#: backends/platform/symbian/src/SymbianActions.cpp:47
-#: backends/platform/wince/CEActionsPocket.cpp:46
-#: backends/platform/wince/CEActionsPocket.cpp:268
-#: backends/platform/wince/CEActionsSmartphone.cpp:48
-#: backends/platform/wince/CEActionsSmartphone.cpp:231
+#: engines/dialogs.cpp:116 engines/cruise/menu.cpp:214
+#: engines/sci/engine/kfile.cpp:575
+#: backends/platform/symbian/src/SymbianActions.cpp:44
+#: backends/platform/wince/CEActionsPocket.cpp:43
+#: backends/platform/wince/CEActionsPocket.cpp:265
+#: backends/platform/wince/CEActionsSmartphone.cpp:45
+#: backends/platform/wince/CEActionsSmartphone.cpp:228
 msgid "Save"
 msgstr "Gem"
 
-#: engines/dialogs.cpp:315 engines/mohawk/dialogs.cpp:92
-#: engines/mohawk/dialogs.cpp:130
+#: engines/dialogs.cpp:312 engines/mohawk/dialogs.cpp:100
+#: engines/mohawk/dialogs.cpp:152
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:316 engines/mohawk/dialogs.cpp:93
-#: engines/mohawk/dialogs.cpp:131
+#: engines/dialogs.cpp:313 engines/mohawk/dialogs.cpp:101
+#: engines/mohawk/dialogs.cpp:153
 msgid "~C~ancel"
 msgstr "~F~ortryd"
 
-#: engines/dialogs.cpp:319
+#: engines/dialogs.cpp:316
 msgid "~K~eys"
 msgstr "~T~aster"
 
-#: engines/scumm/dialogs.cpp:284
+#: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
 msgstr "Fo~r~rige"
 
-#: engines/scumm/dialogs.cpp:285
+#: engines/scumm/dialogs.cpp:282
 msgid "~N~ext"
 msgstr "~N~æste"
 
-#: engines/scumm/dialogs.cpp:286
-#: backends/platform/ds/arm9/source/dsoptions.cpp:59
+#: engines/scumm/dialogs.cpp:283
+#: backends/platform/ds/arm9/source/dsoptions.cpp:56
 msgid "~C~lose"
 msgstr "~L~uk"
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
 msgstr "Almindelige tastatur kommandoer:"
 
-#: engines/scumm/help.cpp:77
+#: engines/scumm/help.cpp:74
 msgid "Save / Load dialog"
 msgstr "Gem / Hent dialog"
 
-#: engines/scumm/help.cpp:79
+#: engines/scumm/help.cpp:76
 msgid "Skip line of text"
 msgstr "Spring tekstlinje over"
 
-#: engines/scumm/help.cpp:80
+#: engines/scumm/help.cpp:77
 msgid "Esc"
 msgstr "Esc"
 
-#: engines/scumm/help.cpp:80
+#: engines/scumm/help.cpp:77
 msgid "Skip cutscene"
 msgstr "Spring mellemscene over"
 
-#: engines/scumm/help.cpp:81
+#: engines/scumm/help.cpp:78
 msgid "Space"
 msgstr "Mellemrum"
 
-#: engines/scumm/help.cpp:81
+#: engines/scumm/help.cpp:78
 msgid "Pause game"
 msgstr "Pause spil"
 
-#: engines/scumm/help.cpp:82 engines/scumm/help.cpp:87
-#: engines/scumm/help.cpp:98 engines/scumm/help.cpp:99
-#: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
-#: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
-#: engines/scumm/help.cpp:104 engines/scumm/help.cpp:105
+#: engines/scumm/help.cpp:79 engines/scumm/help.cpp:84
+#: engines/scumm/help.cpp:95 engines/scumm/help.cpp:96
+#: engines/scumm/help.cpp:97 engines/scumm/help.cpp:98
+#: engines/scumm/help.cpp:99 engines/scumm/help.cpp:100
+#: engines/scumm/help.cpp:101 engines/scumm/help.cpp:102
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: engines/scumm/help.cpp:82
+#: engines/scumm/help.cpp:79
 msgid "Load game state 1-10"
 msgstr "Hent spil tilstand 1-10"
 
-#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:87
-#: engines/scumm/help.cpp:89 engines/scumm/help.cpp:103
-#: engines/scumm/help.cpp:104 engines/scumm/help.cpp:105
+#: engines/scumm/help.cpp:80 engines/scumm/help.cpp:84
+#: engines/scumm/help.cpp:86 engines/scumm/help.cpp:100
+#: engines/scumm/help.cpp:101 engines/scumm/help.cpp:102
 msgid "Alt"
 msgstr "Alt"
 
-#: engines/scumm/help.cpp:83
+#: engines/scumm/help.cpp:80
 msgid "Save game state 1-10"
 msgstr "Gem spil tilstand 1-10"
 
-#: engines/scumm/help.cpp:85 engines/scumm/help.cpp:87
-#: backends/platform/symbian/src/SymbianActions.cpp:55
-#: backends/platform/wince/CEActionsPocket.cpp:47
-#: backends/platform/wince/CEActionsSmartphone.cpp:55
+#: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
+#: backends/platform/symbian/src/SymbianActions.cpp:52
+#: backends/platform/wince/CEActionsPocket.cpp:44
+#: backends/platform/wince/CEActionsSmartphone.cpp:52
 msgid "Quit"
 msgstr "Afslut"
 
-#: engines/scumm/help.cpp:89 engines/scumm/help.cpp:92
+#: engines/scumm/help.cpp:86 engines/scumm/help.cpp:89
 msgid "Enter"
 msgstr "Enter"
 
-#: engines/scumm/help.cpp:89
+#: engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Skift fuldskærm"
 
-#: engines/scumm/help.cpp:90
+#: engines/scumm/help.cpp:87
 msgid "Music volume up / down"
 msgstr "Musik lydstyrke op / ned"
 
-#: engines/scumm/help.cpp:91
+#: engines/scumm/help.cpp:88
 msgid "Text speed slower / faster"
 msgstr "Tekst hastighed langsommere / hurtigere"
 
-#: engines/scumm/help.cpp:92
+#: engines/scumm/help.cpp:89
 msgid "Simulate left mouse button"
 msgstr "Simulere venstre museknap"
 
-#: engines/scumm/help.cpp:93
+#: engines/scumm/help.cpp:90
 msgid "Tab"
 msgstr "Tab"
 
-#: engines/scumm/help.cpp:93
+#: engines/scumm/help.cpp:90
 msgid "Simulate right mouse button"
 msgstr "Simulere højre museknap"
 
-#: engines/scumm/help.cpp:96
+#: engines/scumm/help.cpp:93
 msgid "Special keyboard commands:"
 msgstr "Specielle tastatur kommandoer:"
 
-#: engines/scumm/help.cpp:97
+#: engines/scumm/help.cpp:94
 msgid "Show / Hide console"
 msgstr "Vis / Skjul konsol"
 
-#: engines/scumm/help.cpp:98
+#: engines/scumm/help.cpp:95
 msgid "Start the debugger"
 msgstr "Start fejlfinder"
 
-#: engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:96
 msgid "Show memory consumption"
 msgstr "Vis hukommelsesforbrug"
 
-#: engines/scumm/help.cpp:100
+#: engines/scumm/help.cpp:97
 msgid "Run in fast mode (*)"
 msgstr "Kør i hurtig tilstand (*)"
 
-#: engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:98
 msgid "Run in really fast mode (*)"
 msgstr "Kør i meget hurtig tilstand (*)"
 
-#: engines/scumm/help.cpp:102
+#: engines/scumm/help.cpp:99
 msgid "Toggle mouse capture"
 msgstr "Skift muse fanger"
 
-#: engines/scumm/help.cpp:103
+#: engines/scumm/help.cpp:100
 msgid "Switch between graphics filters"
 msgstr "Skift mellem grafik filtre"
 
-#: engines/scumm/help.cpp:104
+#: engines/scumm/help.cpp:101
 msgid "Increase / Decrease scale factor"
 msgstr "Hæv / Sænk skaleringsfaktor"
 
-#: engines/scumm/help.cpp:105
+#: engines/scumm/help.cpp:102
 msgid "Toggle aspect-ratio correction"
 msgstr "Skift billedformat korrektion"
 
-#: engines/scumm/help.cpp:110
+#: engines/scumm/help.cpp:107
 msgid "* Note that using ctrl-f and"
 msgstr "* Bemærk at brug af ctrl-f og"
 
-#: engines/scumm/help.cpp:111
+#: engines/scumm/help.cpp:108
 msgid "  ctrl-g are not recommended"
 msgstr "  ctrl-g ikke kan ikke anbefales"
 
-#: engines/scumm/help.cpp:112
+#: engines/scumm/help.cpp:109
 msgid "  since they may cause crashes"
 msgstr "  siden de kan skabe nedbrud"
 
-#: engines/scumm/help.cpp:113
-msgid "  or incorrect game behaviour."
+#: engines/scumm/help.cpp:110
+#, fuzzy
+msgid "  or incorrect game behavior."
 msgstr "  eller ukorrekt opførsel af spil."
 
-#: engines/scumm/help.cpp:117
+#: engines/scumm/help.cpp:114
 msgid "Spinning drafts on the keyboard:"
 msgstr "Spind ordspil på tastaturet:"
 
-#: engines/scumm/help.cpp:119
+#: engines/scumm/help.cpp:116
 msgid "Main game controls:"
 msgstr "Vigtigste spilstyring:"
 
-#: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
-#: engines/scumm/help.cpp:164
+#: engines/scumm/help.cpp:121 engines/scumm/help.cpp:136
+#: engines/scumm/help.cpp:161
 msgid "Push"
 msgstr "Skub"
 
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
+#: engines/scumm/help.cpp:162
 msgid "Pull"
 msgstr "Træk"
 
-#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:199
-#: engines/scumm/help.cpp:209
+#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
+#: engines/scumm/help.cpp:163 engines/scumm/help.cpp:196
+#: engines/scumm/help.cpp:206
 msgid "Give"
 msgstr "Giv"
 
-#: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
-#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:192
-#: engines/scumm/help.cpp:210
+#: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
+#: engines/scumm/help.cpp:164 engines/scumm/help.cpp:189
+#: engines/scumm/help.cpp:207
 msgid "Open"
 msgstr "Åbn"
 
-#: engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:126
 msgid "Go to"
 msgstr "Gå til"
 
-#: engines/scumm/help.cpp:130
+#: engines/scumm/help.cpp:127
 msgid "Get"
 msgstr "Tag"
 
-#: engines/scumm/help.cpp:131 engines/scumm/help.cpp:155
-#: engines/scumm/help.cpp:173 engines/scumm/help.cpp:200
-#: engines/scumm/help.cpp:215 engines/scumm/help.cpp:226
-#: engines/scumm/help.cpp:251
+#: engines/scumm/help.cpp:128 engines/scumm/help.cpp:152
+#: engines/scumm/help.cpp:170 engines/scumm/help.cpp:197
+#: engines/scumm/help.cpp:212 engines/scumm/help.cpp:223
+#: engines/scumm/help.cpp:248
 msgid "Use"
 msgstr "Brug"
 
-#: engines/scumm/help.cpp:132 engines/scumm/help.cpp:144
+#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:141
 msgid "Read"
 msgstr "Læs"
 
-#: engines/scumm/help.cpp:133 engines/scumm/help.cpp:150
+#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:147
 msgid "New kid"
 msgstr "Nyt barn"
 
-#: engines/scumm/help.cpp:134 engines/scumm/help.cpp:156
-#: engines/scumm/help.cpp:174
+#: engines/scumm/help.cpp:131 engines/scumm/help.cpp:153
+#: engines/scumm/help.cpp:171
 msgid "Turn on"
 msgstr "Tænd"
 
-#: engines/scumm/help.cpp:135 engines/scumm/help.cpp:157
-#: engines/scumm/help.cpp:175
+#: engines/scumm/help.cpp:132 engines/scumm/help.cpp:154
+#: engines/scumm/help.cpp:172
 msgid "Turn off"
 msgstr "Sluk"
 
-#: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
-#: engines/scumm/help.cpp:196
+#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
+#: engines/scumm/help.cpp:193
 msgid "Walk to"
 msgstr "Gå til"
 
-#: engines/scumm/help.cpp:146 engines/scumm/help.cpp:171
-#: engines/scumm/help.cpp:197 engines/scumm/help.cpp:212
-#: engines/scumm/help.cpp:229
+#: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
+#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:209
+#: engines/scumm/help.cpp:226
 msgid "Pick up"
 msgstr "Tag op"
 
-#: engines/scumm/help.cpp:147 engines/scumm/help.cpp:172
+#: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
 msgid "What is"
 msgstr "Hvad er"
 
-#: engines/scumm/help.cpp:149
+#: engines/scumm/help.cpp:146
 msgid "Unlock"
 msgstr "Lås op"
 
-#: engines/scumm/help.cpp:152
+#: engines/scumm/help.cpp:149
 msgid "Put on"
 msgstr "Tag på"
 
-#: engines/scumm/help.cpp:153
+#: engines/scumm/help.cpp:150
 msgid "Take off"
 msgstr "Tag af"
 
-#: engines/scumm/help.cpp:159
+#: engines/scumm/help.cpp:156
 msgid "Fix"
 msgstr "Lav"
 
-#: engines/scumm/help.cpp:161
+#: engines/scumm/help.cpp:158
 msgid "Switch"
 msgstr "Skift"
 
-#: engines/scumm/help.cpp:169 engines/scumm/help.cpp:230
+#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:227
 msgid "Look"
 msgstr "Se"
 
-#: engines/scumm/help.cpp:176 engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:173 engines/scumm/help.cpp:222
 msgid "Talk"
 msgstr "Tal"
 
-#: engines/scumm/help.cpp:177
+#: engines/scumm/help.cpp:174
 msgid "Travel"
 msgstr "Rejs"
 
-#: engines/scumm/help.cpp:178
+#: engines/scumm/help.cpp:175
 msgid "To Henry / To Indy"
 msgstr "Til Henry / Til Indy"
 
-#: engines/scumm/help.cpp:181
+#: engines/scumm/help.cpp:178
 msgid "play C minor on distaff"
 msgstr "spil C-mol på rok"
 
-#: engines/scumm/help.cpp:182
+#: engines/scumm/help.cpp:179
 msgid "play D on distaff"
 msgstr "spil D på rok"
 
-#: engines/scumm/help.cpp:183
+#: engines/scumm/help.cpp:180
 msgid "play E on distaff"
 msgstr "spil E på rok"
 
-#: engines/scumm/help.cpp:184
+#: engines/scumm/help.cpp:181
 msgid "play F on distaff"
 msgstr "spil F på rok"
 
-#: engines/scumm/help.cpp:185
+#: engines/scumm/help.cpp:182
 msgid "play G on distaff"
 msgstr "spil G på rok"
 
-#: engines/scumm/help.cpp:186
+#: engines/scumm/help.cpp:183
 msgid "play A on distaff"
 msgstr "spil A på rok"
 
-#: engines/scumm/help.cpp:187
+#: engines/scumm/help.cpp:184
 msgid "play B on distaff"
 msgstr "spil H på rok"
 
-#: engines/scumm/help.cpp:188
+#: engines/scumm/help.cpp:185
 msgid "play C major on distaff"
 msgstr "spil C-dur på rok"
 
-#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:216
+#: engines/scumm/help.cpp:191 engines/scumm/help.cpp:213
 msgid "puSh"
 msgstr "Skub"
 
-#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:192 engines/scumm/help.cpp:214
 msgid "pull (Yank)"
 msgstr "træk (Y)"
 
-#: engines/scumm/help.cpp:198 engines/scumm/help.cpp:214
-#: engines/scumm/help.cpp:249
+#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:211
+#: engines/scumm/help.cpp:246
 msgid "Talk to"
 msgstr "Tal til"
 
-#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:213
+#: engines/scumm/help.cpp:198 engines/scumm/help.cpp:210
 msgid "Look at"
 msgstr "Lur på"
 
-#: engines/scumm/help.cpp:202
+#: engines/scumm/help.cpp:199
 msgid "turn oN"
 msgstr "tæNd"
 
-#: engines/scumm/help.cpp:203
+#: engines/scumm/help.cpp:200
 msgid "turn oFf"
 msgstr "sluk (F)"
 
-#: engines/scumm/help.cpp:219
+#: engines/scumm/help.cpp:216
 msgid "KeyUp"
 msgstr "TastOp"
 
-#: engines/scumm/help.cpp:219
+#: engines/scumm/help.cpp:216
 msgid "Highlight prev dialogue"
 msgstr "Fremhæv forrige dialog"
 
-#: engines/scumm/help.cpp:220
+#: engines/scumm/help.cpp:217
 msgid "KeyDown"
 msgstr "TastNed"
 
-#: engines/scumm/help.cpp:220
+#: engines/scumm/help.cpp:217
 msgid "Highlight next dialogue"
 msgstr "Fremhæv næste dialog"
 
-#: engines/scumm/help.cpp:224
+#: engines/scumm/help.cpp:221
 msgid "Walk"
 msgstr "Gå"
 
-#: engines/scumm/help.cpp:227 engines/scumm/help.cpp:236
-#: engines/scumm/help.cpp:243 engines/scumm/help.cpp:250
+#: engines/scumm/help.cpp:224 engines/scumm/help.cpp:233
+#: engines/scumm/help.cpp:240 engines/scumm/help.cpp:247
 msgid "Inventory"
 msgstr "Oversigt"
 
-#: engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:225
 msgid "Object"
 msgstr "Objekt"
 
-#: engines/scumm/help.cpp:231
+#: engines/scumm/help.cpp:228
 msgid "Black and White / Color"
 msgstr "Sort og hvid / Farve"
 
-#: engines/scumm/help.cpp:234
+#: engines/scumm/help.cpp:231
 msgid "Eyes"
 msgstr "Øjne"
 
-#: engines/scumm/help.cpp:235
+#: engines/scumm/help.cpp:232
 msgid "Tongue"
 msgstr "Tunge"
 
-#: engines/scumm/help.cpp:237
+#: engines/scumm/help.cpp:234
 msgid "Punch"
 msgstr "Slag"
 
-#: engines/scumm/help.cpp:238
+#: engines/scumm/help.cpp:235
 msgid "Kick"
 msgstr "Spark"
 
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:248
+#: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
 msgid "Examine"
 msgstr "Undersøg"
 
-#: engines/scumm/help.cpp:242
+#: engines/scumm/help.cpp:239
 msgid "Regular cursor"
 msgstr "Normal markør"
 
-#: engines/scumm/help.cpp:244
+#: engines/scumm/help.cpp:241
 msgid "Comm"
 msgstr "Komm"
 
-#: engines/scumm/help.cpp:247
+#: engines/scumm/help.cpp:244
 msgid "Save / Load / Options"
 msgstr "Gem / Hent / Indstillinger"
 
-#: engines/scumm/help.cpp:256
+#: engines/scumm/help.cpp:253
 msgid "Other game controls:"
 msgstr "Andre spil kontroller"
 
-#: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
+#: engines/scumm/help.cpp:255 engines/scumm/help.cpp:265
 msgid "Inventory:"
 msgstr "Oversigt:"
 
-#: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
+#: engines/scumm/help.cpp:256 engines/scumm/help.cpp:272
 msgid "Scroll list up"
 msgstr "Rul liste op"
 
-#: engines/scumm/help.cpp:260 engines/scumm/help.cpp:276
+#: engines/scumm/help.cpp:257 engines/scumm/help.cpp:273
 msgid "Scroll list down"
 msgstr "Rul liste ned"
 
-#: engines/scumm/help.cpp:261 engines/scumm/help.cpp:269
+#: engines/scumm/help.cpp:258 engines/scumm/help.cpp:266
 msgid "Upper left item"
 msgstr "Øverste venstre punkt"
 
-#: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
+#: engines/scumm/help.cpp:259 engines/scumm/help.cpp:268
 msgid "Lower left item"
 msgstr "Nederste højre punkt"
 
-#: engines/scumm/help.cpp:263 engines/scumm/help.cpp:272
+#: engines/scumm/help.cpp:260 engines/scumm/help.cpp:269
 msgid "Upper right item"
 msgstr "Øverste højre punkt"
 
-#: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
+#: engines/scumm/help.cpp:261 engines/scumm/help.cpp:271
 msgid "Lower right item"
 msgstr "Nederste venstre punkt"
 
-#: engines/scumm/help.cpp:270
+#: engines/scumm/help.cpp:267
 msgid "Middle left item"
 msgstr "Midterste højre punkt"
 
-#: engines/scumm/help.cpp:273
+#: engines/scumm/help.cpp:270
 msgid "Middle right item"
 msgstr "Midterste højre punkt"
 
-#: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
+#: engines/scumm/help.cpp:277 engines/scumm/help.cpp:282
 msgid "Switching characters:"
 msgstr "Skift personer:"
 
-#: engines/scumm/help.cpp:282
+#: engines/scumm/help.cpp:279
 msgid "Second kid"
 msgstr "Andet barn"
 
-#: engines/scumm/help.cpp:283
+#: engines/scumm/help.cpp:280
 msgid "Third kid"
 msgstr "Tredie barn"
 
-#: engines/scumm/help.cpp:295
+#: engines/scumm/help.cpp:292
 msgid "Fighting controls (numpad):"
 msgstr "Kamp kontroller (numtast):"
 
-#: engines/scumm/help.cpp:296 engines/scumm/help.cpp:297
-#: engines/scumm/help.cpp:298
+#: engines/scumm/help.cpp:293 engines/scumm/help.cpp:294
+#: engines/scumm/help.cpp:295
 msgid "Step back"
 msgstr "Skridt tilbage"
 
-#: engines/scumm/help.cpp:299
+#: engines/scumm/help.cpp:296
 msgid "Block high"
 msgstr "Blokér højt"
 
-#: engines/scumm/help.cpp:300
+#: engines/scumm/help.cpp:297
 msgid "Block middle"
 msgstr "Blokér midtfor"
 
-#: engines/scumm/help.cpp:301
+#: engines/scumm/help.cpp:298
 msgid "Block low"
 msgstr "Blokér lavt"
 
-#: engines/scumm/help.cpp:302
+#: engines/scumm/help.cpp:299
 msgid "Punch high"
 msgstr "Slå højt"
 
-#: engines/scumm/help.cpp:303
+#: engines/scumm/help.cpp:300
 msgid "Punch middle"
 msgstr "Slå midtfor"
 
-#: engines/scumm/help.cpp:304
+#: engines/scumm/help.cpp:301
 msgid "Punch low"
 msgstr "Slå lavt"
 
-#: engines/scumm/help.cpp:307
+#: engines/scumm/help.cpp:304
 msgid "These are for Indy on left."
 msgstr "Disse er for Indy til venstre"
 
-#: engines/scumm/help.cpp:308
+#: engines/scumm/help.cpp:305
 msgid "When Indy is on the right,"
 msgstr "Når Indy er til højre,"
 
-#: engines/scumm/help.cpp:309
+#: engines/scumm/help.cpp:306
 msgid "7, 4, and 1 are switched with"
 msgstr "7, 4 og 1 bliver bytte med"
 
-#: engines/scumm/help.cpp:310
+#: engines/scumm/help.cpp:307
 msgid "9, 6, and 3, respectively."
 msgstr "repektivt 9, 6 og 3."
 
-#: engines/scumm/help.cpp:317
+#: engines/scumm/help.cpp:314
 msgid "Biplane controls (numpad):"
 msgstr "Biplan kontroller (numtast):"
 
-#: engines/scumm/help.cpp:318
+#: engines/scumm/help.cpp:315
 msgid "Fly to upper left"
 msgstr "Flyv øverst til venste"
 
-#: engines/scumm/help.cpp:319
+#: engines/scumm/help.cpp:316
 msgid "Fly to left"
 msgstr "Flyv til venstre"
 
-#: engines/scumm/help.cpp:320
+#: engines/scumm/help.cpp:317
 msgid "Fly to lower left"
 msgstr "Flyv nederst til venstre"
 
-#: engines/scumm/help.cpp:321
+#: engines/scumm/help.cpp:318
 msgid "Fly upwards"
 msgstr "Flyv opad"
 
-#: engines/scumm/help.cpp:322
+#: engines/scumm/help.cpp:319
 msgid "Fly straight"
 msgstr "Flyv ligeud"
 
-#: engines/scumm/help.cpp:323
+#: engines/scumm/help.cpp:320
 msgid "Fly down"
 msgstr "Flyv nedad"
 
-#: engines/scumm/help.cpp:324
+#: engines/scumm/help.cpp:321
 msgid "Fly to upper right"
 msgstr "Flyv øverst til højre"
 
-#: engines/scumm/help.cpp:325
+#: engines/scumm/help.cpp:322
 msgid "Fly to right"
 msgstr "Flyv til højre"
 
-#: engines/scumm/help.cpp:326
+#: engines/scumm/help.cpp:323
 msgid "Fly to lower right"
 msgstr "Flyv nederst til højre"
 
-#: engines/scumm/scumm.cpp:2255 engines/agos/saveload.cpp:192
+#: engines/scumm/scumm.cpp:2250 engines/agos/saveload.cpp:190
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1686,7 +1729,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2262 engines/agos/saveload.cpp:157
+#: engines/scumm/scumm.cpp:2257 engines/agos/saveload.cpp:155
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1697,7 +1740,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2274 engines/agos/saveload.cpp:200
+#: engines/scumm/scumm.cpp:2269 engines/agos/saveload.cpp:198
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1708,273 +1751,332 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2497
+#: engines/scumm/scumm.cpp:2484
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
 "directory inside the Tentacle game directory."
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:89 engines/mohawk/dialogs.cpp:127
+#: engines/mohawk/dialogs.cpp:90 engines/mohawk/dialogs.cpp:149
 msgid "~Z~ip Mode Activated"
 msgstr "~Z~ip tilstand aktiveret"
 
-#: engines/mohawk/dialogs.cpp:90
+#: engines/mohawk/dialogs.cpp:91
 msgid "~T~ransitions Enabled"
 msgstr "~O~vergange aktiveret"
 
-#: engines/mohawk/dialogs.cpp:128
+#: engines/mohawk/dialogs.cpp:92
+msgid "~D~rop Page"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:96
+msgid "~S~how Map"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:150
 msgid "~W~ater Effect Enabled"
 msgstr "~V~andeffekter aktiveret"
 
-#: engines/sci/engine/kfile.cpp:680
+#: engines/sci/engine/kfile.cpp:678
 msgid "Restore game:"
 msgstr "Gendan spil:"
 
-#: engines/sci/engine/kfile.cpp:680
+#: engines/sci/engine/kfile.cpp:678
 msgid "Restore"
 msgstr "Gendan"
 
-#: audio/fmopl.cpp:51
+#: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
 msgstr "MAME OPL emulator"
 
-#: audio/fmopl.cpp:53
+#: audio/fmopl.cpp:51
 msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL emulator"
 
-#: audio/null.h:46
+#: audio/mididrv.cpp:206
+#, c-format
+msgid ""
+"Failed to detect the selected audio device '%s'. See log file for more "
+"information. Attempting to fall back to the next available device..."
+msgstr ""
+
+#: audio/mididrv.cpp:246
+#, c-format
+msgid ""
+"Failed to detect the preferred device '%s'. See log file for more "
+"information. Attempting to fall back to the next available device..."
+msgstr ""
+
+#: audio/null.h:43
 msgid "No music"
 msgstr "Ingen musik"
 
-#: audio/mods/paula.cpp:192
+#: audio/mods/paula.cpp:189
 msgid "Amiga Audio Emulator"
 msgstr "Amiga lyd emulator"
 
-#: audio/softsynth/adlib.cpp:1590
+#: audio/softsynth/adlib.cpp:1594
 msgid "AdLib Emulator"
 msgstr "AdLib emulator"
 
-#: audio/softsynth/appleiigs.cpp:36
+#: audio/softsynth/appleiigs.cpp:33
 msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS emulator (IKKE IMPLEMENTERET)"
 
-#: audio/softsynth/sid.cpp:1434
+#: audio/softsynth/sid.cpp:1430
 msgid "C64 Audio Emulator"
 msgstr "C64 lyd emulator"
 
-#: audio/softsynth/mt32.cpp:326
-msgid "Initialising MT-32 Emulator"
+#: audio/softsynth/mt32.cpp:329
+#, fuzzy
+msgid "Initializing MT-32 Emulator"
 msgstr "Initialisere MT-32 emulator"
 
-#: audio/softsynth/mt32.cpp:540
+#: audio/softsynth/mt32.cpp:543
 msgid "MT-32 Emulator"
 msgstr "MT-32 emulator"
 
-#: audio/softsynth/pcspk.cpp:142
+#: audio/softsynth/pcspk.cpp:139
 msgid "PC Speaker Emulator"
 msgstr "PC Speaker emulator"
 
-#: audio/softsynth/pcspk.cpp:161
+#: audio/softsynth/pcspk.cpp:158
 msgid "IBM PCjr Emulator"
 msgstr "IBM PCjr emulator"
 
-#: audio/softsynth/ym2612.cpp:762
-msgid "FM Towns Emulator"
-msgstr "FM Towns emulator"
-
-#: backends/keymapper/remap-dialog.cpp:49
+#: backends/keymapper/remap-dialog.cpp:47
 msgid "Keymap:"
 msgstr "Tasteoversigt:"
 
-#: backends/keymapper/remap-dialog.cpp:66
+#: backends/keymapper/remap-dialog.cpp:64
 msgid " (Active)"
 msgstr " (Aktiv)"
 
-#: backends/keymapper/remap-dialog.cpp:100
+#: backends/keymapper/remap-dialog.cpp:98
 msgid " (Global)"
 msgstr " (Global)"
 
-#: backends/keymapper/remap-dialog.cpp:110
+#: backends/keymapper/remap-dialog.cpp:108
 msgid " (Game)"
 msgstr " (Spil)"
 
-#: backends/midi/windows.cpp:165
+#: backends/midi/windows.cpp:164
 msgid "Windows MIDI"
 msgstr "Windows MIDI"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:60
+#: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
 msgstr "ScummVM Hovedmenu"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:66
+#: backends/platform/ds/arm9/source/dsoptions.cpp:63
 msgid "~L~eft handed mode"
 msgstr "~V~enstrehåndstilstand "
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:67
+#: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
 msgstr "~I~ndy kamp styring"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:68
+#: backends/platform/ds/arm9/source/dsoptions.cpp:65
 msgid "Show mouse cursor"
 msgstr "Vis muse markør"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:69
+#: backends/platform/ds/arm9/source/dsoptions.cpp:66
 msgid "Snap to edges"
 msgstr "Hæft til hjørner"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:71
+#: backends/platform/ds/arm9/source/dsoptions.cpp:68
 msgid "Touch X Offset"
 msgstr "Touch X forskydning"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:78
+#: backends/platform/ds/arm9/source/dsoptions.cpp:75
 msgid "Touch Y Offset"
 msgstr "Touch Y forskydning"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:90
+#: backends/platform/ds/arm9/source/dsoptions.cpp:87
 msgid "Use laptop trackpad-style cursor control"
 msgstr "Brug bærbar museplade-agtig markør kontrol"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:91
+#: backends/platform/ds/arm9/source/dsoptions.cpp:88
 msgid "Tap for left click, double tap right click"
 msgstr "Tryk for venstre klik, dobbelt tryk for højre klik"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:93
+#: backends/platform/ds/arm9/source/dsoptions.cpp:90
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:102
+#: backends/platform/ds/arm9/source/dsoptions.cpp:99
 msgid "Initial top screen scale:"
 msgstr "Skalering af øverste skærm ved opstart:"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:108
+#: backends/platform/ds/arm9/source/dsoptions.cpp:105
 msgid "Main screen scaling:"
 msgstr "Hovedskærm skalering"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:110
+#: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Hardware skalering (hurtig, men lav kvalitet)"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:111
+#: backends/platform/ds/arm9/source/dsoptions.cpp:108
 msgid "Software scale (good quality, but slower)"
 msgstr "Software skalering (god kvalitet, men langsommere)"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:112
+#: backends/platform/ds/arm9/source/dsoptions.cpp:109
 msgid "Unscaled (you must scroll left and right)"
 msgstr "Ikke skaleret (du skal rulle til venstre og højre)"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:114
+#: backends/platform/ds/arm9/source/dsoptions.cpp:111
 msgid "Brightness:"
 msgstr "Lysstyrke:"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:124
+#: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
 msgstr "Høj lydkvalitet (langsommere) (genstart)"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:125
+#: backends/platform/ds/arm9/source/dsoptions.cpp:122
 msgid "Disable power off"
 msgstr "Deaktiver slukning"
 
-#: backends/platform/iphone/osys_events.cpp:360
+#: backends/platform/iphone/osys_events.cpp:351
 msgid "Touchpad mode enabled."
 msgstr "Pegeplade tilstand aktiveret."
 
-#: backends/platform/iphone/osys_events.cpp:362
+#: backends/platform/iphone/osys_events.cpp:353
 msgid "Touchpad mode disabled."
 msgstr "Pegeplade tilstand deaktiveret."
 
-#: backends/graphics/sdl/sdl-graphics.cpp:47
+#: backends/graphics/sdl/sdl-graphics.cpp:45
 msgid "Normal (no scaling)"
 msgstr "Normal (ingen skalering)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:66
+#: backends/graphics/sdl/sdl-graphics.cpp:64
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (ingen skalering)"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:133
+#: backends/graphics/sdl/sdl-graphics.cpp:2137
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:517
+#, fuzzy
+msgid "Enabled aspect ratio correction"
+msgstr "Skift billedformat korrektion"
+
+#: backends/graphics/sdl/sdl-graphics.cpp:2143
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:522
+#, fuzzy
+msgid "Disabled aspect ratio correction"
+msgstr "Skift billedformat korrektion"
+
+#: backends/graphics/sdl/sdl-graphics.cpp:2198
+#, fuzzy
+msgid "Active graphics filter:"
+msgstr "Skift mellem grafik filtre"
+
+#: backends/graphics/sdl/sdl-graphics.cpp:2254
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:461
+#, fuzzy
+msgid "Windowed mode"
+msgstr "Rendere tilstand:"
+
+#: backends/graphics/opengl/opengl-graphics.cpp:139
 msgid "OpenGL Normal"
 msgstr "OpenGL Normal"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:134
+#: backends/graphics/opengl/opengl-graphics.cpp:140
 msgid "OpenGL Conserve"
 msgstr "OpenGL Bevar"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:135
+#: backends/graphics/opengl/opengl-graphics.cpp:141
 msgid "OpenGL Original"
 msgstr "OpenGL Original"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:41
-#: backends/platform/wince/CEActionsSmartphone.cpp:42
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:399
+#, fuzzy
+msgid "Current display mode"
+msgstr "Aktuel videotilstand:"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:412
+msgid "Current scale"
+msgstr ""
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
+msgid "Active filter mode: Linear"
+msgstr ""
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:544
+msgid "Active filter mode: Nearest"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:38
+#: backends/platform/wince/CEActionsSmartphone.cpp:39
 msgid "Up"
 msgstr "Op"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:42
-#: backends/platform/wince/CEActionsSmartphone.cpp:43
+#: backends/platform/symbian/src/SymbianActions.cpp:39
+#: backends/platform/wince/CEActionsSmartphone.cpp:40
 msgid "Down"
 msgstr "Ned"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:43
-#: backends/platform/wince/CEActionsSmartphone.cpp:44
+#: backends/platform/symbian/src/SymbianActions.cpp:40
+#: backends/platform/wince/CEActionsSmartphone.cpp:41
 msgid "Left"
 msgstr "Venstre"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:44
-#: backends/platform/wince/CEActionsSmartphone.cpp:45
+#: backends/platform/symbian/src/SymbianActions.cpp:41
+#: backends/platform/wince/CEActionsSmartphone.cpp:42
 msgid "Right"
 msgstr "Højre"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:45
-#: backends/platform/wince/CEActionsPocket.cpp:63
-#: backends/platform/wince/CEActionsSmartphone.cpp:46
+#: backends/platform/symbian/src/SymbianActions.cpp:42
+#: backends/platform/wince/CEActionsPocket.cpp:60
+#: backends/platform/wince/CEActionsSmartphone.cpp:43
 msgid "Left Click"
 msgstr "Venstre klik"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:46
-#: backends/platform/wince/CEActionsSmartphone.cpp:47
+#: backends/platform/symbian/src/SymbianActions.cpp:43
+#: backends/platform/wince/CEActionsSmartphone.cpp:44
 msgid "Right Click"
 msgstr "Højre klik"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:49
-#: backends/platform/wince/CEActionsSmartphone.cpp:50
+#: backends/platform/symbian/src/SymbianActions.cpp:46
+#: backends/platform/wince/CEActionsSmartphone.cpp:47
 msgid "Zone"
 msgstr "Zone"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:50
-#: backends/platform/wince/CEActionsPocket.cpp:57
-#: backends/platform/wince/CEActionsSmartphone.cpp:51
+#: backends/platform/symbian/src/SymbianActions.cpp:47
+#: backends/platform/wince/CEActionsPocket.cpp:54
+#: backends/platform/wince/CEActionsSmartphone.cpp:48
 msgid "Multi Function"
 msgstr "Multi funktion"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:51
+#: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Swap character"
 msgstr "Skift person"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:52
+#: backends/platform/symbian/src/SymbianActions.cpp:49
 msgid "Skip text"
 msgstr "Spring tekst over"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:54
+#: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Fast mode"
 msgstr "Hurtig tilstand"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:56
+#: backends/platform/symbian/src/SymbianActions.cpp:53
 msgid "Debugger"
 msgstr "Fejlsøger"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:57
+#: backends/platform/symbian/src/SymbianActions.cpp:54
 msgid "Global menu"
 msgstr "Global menu"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:58
+#: backends/platform/symbian/src/SymbianActions.cpp:55
 msgid "Virtual keyboard"
 msgstr "Virtuelt tastatur"
 
-#: backends/platform/symbian/src/SymbianActions.cpp:59
+#: backends/platform/symbian/src/SymbianActions.cpp:56
 msgid "Key mapper"
 msgstr "Tastetildeling"
 
-#: backends/events/symbiansdl/symbiansdl-events.cpp:187
+#: backends/events/symbiansdl/symbiansdl-events.cpp:184
 msgid "Do you want to quit ?"
 msgstr "Vil du afslutte?"
 
@@ -2095,134 +2197,188 @@ msgid "Network down"
 msgstr "Netværk nede"
 
 #: backends/platform/wii/options.cpp:178
-msgid "Initialising network"
+#, fuzzy
+msgid "Initializing network"
 msgstr "Initialisere netværk"
 
 #: backends/platform/wii/options.cpp:182
-msgid "Timeout while initialising network"
+#, fuzzy
+msgid "Timeout while initializing network"
 msgstr "Tidsgrænse nået ved initialisering af netværk"
 
 #: backends/platform/wii/options.cpp:186
-#, c-format
-msgid "Network not initialised (%d)"
+#, fuzzy, c-format
+msgid "Network not initialized (%d)"
 msgstr "Netværk ikke initialiseret (%d)"
 
-#: backends/platform/wince/CEActionsPocket.cpp:49
+#: backends/platform/wince/CEActionsPocket.cpp:46
 msgid "Hide Toolbar"
 msgstr "Skjul værktøjslinje"
 
-#: backends/platform/wince/CEActionsPocket.cpp:50
+#: backends/platform/wince/CEActionsPocket.cpp:47
 msgid "Show Keyboard"
 msgstr "Vis tastatur"
 
-#: backends/platform/wince/CEActionsPocket.cpp:51
+#: backends/platform/wince/CEActionsPocket.cpp:48
 msgid "Sound on/off"
 msgstr "Lyd til/fra"
 
-#: backends/platform/wince/CEActionsPocket.cpp:52
+#: backends/platform/wince/CEActionsPocket.cpp:49
 msgid "Right click"
 msgstr "Højre klik"
 
-#: backends/platform/wince/CEActionsPocket.cpp:53
+#: backends/platform/wince/CEActionsPocket.cpp:50
 msgid "Show/Hide Cursor"
 msgstr "Vis/skjul markør"
 
-#: backends/platform/wince/CEActionsPocket.cpp:54
+#: backends/platform/wince/CEActionsPocket.cpp:51
 msgid "Free look"
 msgstr "Fri udsigt"
 
-#: backends/platform/wince/CEActionsPocket.cpp:55
+#: backends/platform/wince/CEActionsPocket.cpp:52
 msgid "Zoom up"
 msgstr "Formindsk"
 
-#: backends/platform/wince/CEActionsPocket.cpp:56
+#: backends/platform/wince/CEActionsPocket.cpp:53
 msgid "Zoom down"
 msgstr "Forstør"
 
-#: backends/platform/wince/CEActionsPocket.cpp:58
-#: backends/platform/wince/CEActionsSmartphone.cpp:52
+#: backends/platform/wince/CEActionsPocket.cpp:55
+#: backends/platform/wince/CEActionsSmartphone.cpp:49
 msgid "Bind Keys"
 msgstr "Tildel taster"
 
-#: backends/platform/wince/CEActionsPocket.cpp:59
+#: backends/platform/wince/CEActionsPocket.cpp:56
 msgid "Cursor Up"
 msgstr "Pil op"
 
-#: backends/platform/wince/CEActionsPocket.cpp:60
+#: backends/platform/wince/CEActionsPocket.cpp:57
 msgid "Cursor Down"
 msgstr "Pil ned"
 
-#: backends/platform/wince/CEActionsPocket.cpp:61
+#: backends/platform/wince/CEActionsPocket.cpp:58
 msgid "Cursor Left"
 msgstr "Pil til venstre"
 
-#: backends/platform/wince/CEActionsPocket.cpp:62
+#: backends/platform/wince/CEActionsPocket.cpp:59
 msgid "Cursor Right"
 msgstr "Pil til højre"
 
-#: backends/platform/wince/CEActionsPocket.cpp:268
-#: backends/platform/wince/CEActionsSmartphone.cpp:231
+#: backends/platform/wince/CEActionsPocket.cpp:265
+#: backends/platform/wince/CEActionsSmartphone.cpp:228
 msgid "Do you want to load or save the game?"
 msgstr "Vil du hente eller gemme spillet?"
 
-#: backends/platform/wince/CEActionsPocket.cpp:330
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
+#: backends/platform/wince/CEActionsPocket.cpp:327
+#: backends/platform/wince/CEActionsSmartphone.cpp:284
 msgid "   Are you sure you want to quit ?   "
 msgstr "   Er du sikker på at du vil afslutte ?   "
 
-#: backends/platform/wince/CEActionsSmartphone.cpp:53
+#: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
 msgstr "Tastatur"
 
-#: backends/platform/wince/CEActionsSmartphone.cpp:54
+#: backends/platform/wince/CEActionsSmartphone.cpp:51
 msgid "Rotate"
 msgstr "Drej"
 
-#: backends/platform/wince/CELauncherDialog.cpp:60
+#: backends/platform/wince/CELauncherDialog.cpp:54
 msgid "Using SDL driver "
 msgstr "Brug SDL driver"
 
-#: backends/platform/wince/CELauncherDialog.cpp:64
+#: backends/platform/wince/CELauncherDialog.cpp:58
 msgid "Display "
 msgstr "Vis"
 
-#: backends/platform/wince/CELauncherDialog.cpp:106
+#: backends/platform/wince/CELauncherDialog.cpp:77
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Vil du udføre en automatisk skanning ?"
 
-#: backends/platform/wince/wince-sdl.cpp:486
+#: backends/platform/wince/wince-sdl.cpp:485
 msgid "Map right click action"
 msgstr "Tildel højreklikshandling"
 
-#: backends/platform/wince/wince-sdl.cpp:490
+#: backends/platform/wince/wince-sdl.cpp:489
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
 "Du skal tildele en tast til 'Højreklik' handlingen for at spille dette spil"
 
-#: backends/platform/wince/wince-sdl.cpp:499
+#: backends/platform/wince/wince-sdl.cpp:498
 msgid "Map hide toolbar action"
 msgstr "Tildel \"skjul værktøjslinje\" handling"
 
-#: backends/platform/wince/wince-sdl.cpp:503
+#: backends/platform/wince/wince-sdl.cpp:502
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "Du skal tildele en tast til 'Skjul værktøjslinje' handlingen for at spille "
 "dette spil"
 
-#: backends/platform/wince/wince-sdl.cpp:512
+#: backends/platform/wince/wince-sdl.cpp:511
 msgid "Map Zoom Up action (optional)"
 msgstr "Tildel Formindsk handling (valgfri)"
 
-#: backends/platform/wince/wince-sdl.cpp:515
+#: backends/platform/wince/wince-sdl.cpp:514
 msgid "Map Zoom Down action (optional)"
 msgstr "Tildel Forstør handling (valgfri)"
 
-#: backends/platform/wince/wince-sdl.cpp:523
+#: backends/platform/wince/wince-sdl.cpp:522
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
 "Glem ikke at tildele en tast til 'Skjul værktøjslinje' handling for at se "
 "hele oversigten"
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:273
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:317
+#: backends/events/gph/gph-events.cpp:367
+#: backends/events/gph/gph-events.cpp:410
+#: backends/events/openpandora/op-events.cpp:78
+msgid "Touchscreen 'Tap Mode' - Left Click"
+msgstr ""
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:275
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:319
+#: backends/events/gph/gph-events.cpp:369
+#: backends/events/gph/gph-events.cpp:412
+#: backends/events/openpandora/op-events.cpp:80
+msgid "Touchscreen 'Tap Mode' - Right Click"
+msgstr ""
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:277
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:321
+#: backends/events/gph/gph-events.cpp:371
+#: backends/events/gph/gph-events.cpp:414
+#: backends/events/openpandora/op-events.cpp:82
+msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
+msgstr ""
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:297
+#: backends/events/gph/gph-events.cpp:391
+#, fuzzy
+msgid "Maximum Volume"
+msgstr "Lydstyrke"
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:299
+#: backends/events/gph/gph-events.cpp:393
+msgid "Increasing Volume"
+msgstr ""
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:306
+#: backends/events/gph/gph-events.cpp:399
+#, fuzzy
+msgid "Minimal Volume"
+msgstr "Lydstyrke"
+
+#: backends/events/gp2xsdl/gp2xsdl-events.cpp:308
+#: backends/events/gph/gph-events.cpp:401
+msgid "Decreasing Volume"
+msgstr ""
+
+#~ msgid "Discovered %d new games."
+#~ msgstr "Fundet %d nye spil."
+
+#~ msgid "FM Towns Emulator"
+#~ msgstr "FM Towns emulator"
 
 #~ msgid "Invalid Path"
 #~ msgstr "Ugyldig sti"

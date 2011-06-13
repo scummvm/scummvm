@@ -315,7 +315,6 @@ private:
 	GUI_LoL *_gui;
 
 	TIMInterpreter *_tim;
-	TimAnimator *_animator;
 
 	Common::Error init();
 	Common::Error go();
@@ -1215,7 +1214,7 @@ private:
 	void setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight, int b);
 	void removeLevelItem(Item item, int block);
 	bool launchObject(int objectType, Item item, int startX, int startY, int flyingHeight, int direction, int, int attackerId, int c);
-	void endObjectFlight(FlyingObject *t, int x, int y, int objectOnNextBlock);
+	void endObjectFlight(FlyingObject *t, int x, int y, int collisionObject);
 	void processObjectFlight(FlyingObject *t, int x, int y);
 	void updateObjectFlightPosition(FlyingObject *t);
 	void objectFlightProcessHits(FlyingObject *t, int x, int y, int objectOnNextBlock);

@@ -32,9 +32,9 @@ reg_t reg_t::lookForWorkaround(const reg_t right) const {
 	SciTrackOriginReply originReply;
 	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, arithmeticWorkarounds, &originReply);
 	if (solution.type == WORKAROUND_NONE)
-		error("Invalid arithmetic operation (params: %04x:%04x and %04x:%04x) from method %s::%s (script %d, room %d, localCall %x)", 
+		error("Invalid arithmetic operation (params: %04x:%04x and %04x:%04x) from method %s::%s (room %d, script %d, localCall %x)", 
 		PRINT_REG(*this), PRINT_REG(right), originReply.objectName.c_str(), 
-		originReply.methodName.c_str(), originReply.scriptNr, g_sci->getEngineState()->currentRoomNumber(),
+		originReply.methodName.c_str(), g_sci->getEngineState()->currentRoomNumber(), originReply.scriptNr,
 		originReply.localCallOffset);
 	assert(solution.type == WORKAROUND_FAKE);
 	return make_reg(0, solution.value);
