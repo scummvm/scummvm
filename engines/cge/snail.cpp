@@ -164,7 +164,6 @@ static void SNGame(SPRITE *spr, int num) {
 	case 2 : {
 		static SPRITE *k = NULL, * k1, * k2, * k3;
 		static int count = 0;
-		bool hit;
 
 		if (k == NULL) {
 			k  = VGA::ShowQ.Locate(20700);
@@ -188,7 +187,7 @@ static void SNGame(SPRITE *spr, int num) {
 			}
 			///--------------------
 			SNPOST(SNSETZ, 20700, 0, NULL);
-			hit = (k1->SeqPtr + k2->SeqPtr + k3->SeqPtr == 15);
+			bool hit = (k1->SeqPtr + k2->SeqPtr + k3->SeqPtr == 15);
 			if (hit) {
 				if (spr->Ref == 1) {
 					SNPOST(SNSAY,      1, 20003, NULL);       // hura!

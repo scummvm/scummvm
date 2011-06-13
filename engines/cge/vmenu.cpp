@@ -126,14 +126,13 @@ VMENU::~VMENU(void) {
 
 void VMENU::Touch(uint16 mask, int x, int y) {
 #define h (FONT_HIG + TEXT_LS)
-	int n = 0;
 	bool ok = false;
 
 	if (Items) {
 		SPRITE::Touch(mask, x, y);
 
 		y -= TEXT_VM - 1;
-		//if
+		int n = 0;
 		if (y >= 0) {
 			n = y / h;
 			if (n < Items)
