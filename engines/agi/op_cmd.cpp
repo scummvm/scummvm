@@ -41,23 +41,30 @@ namespace Agi {
 #define p5	(p[5])
 #define p6	(p[6])
 
-#define ip	_curLogic->cIP
-#define vt	_game.viewTable[p0]
-#define vt_v _game.viewTable[_game.vars[p0]]
+#define ip	state->_curLogic->cIP
+#define vt	state->viewTable[p0]
+#define vt_v state->viewTable[state->vars[p0]]
 
-#define _v _game.vars
+#define _v state->vars
 
-void AgiEngine::cmd_increment(uint8 *p) {
+#define getGameID() state->_vm->getGameID()
+#define getFeatures() state->_vm->getFeatures()
+#define getVersion() state->_vm->getVersion()
+#define getLanguage() state->_vm->getLanguage()
+#define setflag(a,b) state->_vm->setflag(a,b)
+#define getflag(a) state->_vm->getflag(a)
+
+void cmd_increment(AgiGame *state, uint8 *p) {
 	if (_v[p0] != 0xff)
 		++_v[p0];
 }
 
-void AgiEngine::cmd_decrement(uint8 *p) {
+void cmd_decrement(AgiGame *state, uint8 *p) {
 	if (_v[p0] != 0)
 		--_v[p0];
 }
 
-void AgiEngine::cmd_assignn(uint8 *p) {
+void cmd_assignn(AgiGame *state, uint8 *p) {
 	_v[p0] = p1;
 
 	// WORKAROUND for a bug in fan _game "Get outta SQ"
@@ -71,84 +78,84 @@ void AgiEngine::cmd_assignn(uint8 *p) {
 		_v[p0] = 8;
 }
 
-void AgiEngine::cmd_addn(uint8 *p) {
+void cmd_addn(AgiGame *state, uint8 *p) {
 	_v[p0] += p1;
 }
 
-void AgiEngine::cmd_subn(uint8 *p) {
+void cmd_subn(AgiGame *state, uint8 *p) {
 	_v[p0] -= p1;
 }
 
-void AgiEngine::cmd_assignv(uint8 *p) {
+void cmd_assignv(AgiGame *state, uint8 *p) {
 	_v[p0] = _v[p1];
 }
 
-void AgiEngine::cmd_addv(uint8 *p) {
+void cmd_addv(AgiGame *state, uint8 *p) {
 	_v[p0] += _v[p1];
 }
 
-void AgiEngine::cmd_subv(uint8 *p) {
+void cmd_subv(AgiGame *state, uint8 *p) {
 	_v[p0] -= _v[p1];
 }
 
-void AgiEngine::cmd_mul_n(uint8 *p) {
+void cmd_mul_n(AgiGame *state, uint8 *p) {
 	_v[p0] *= p1;
 }
 
-void AgiEngine::cmd_mul_v(uint8 *p) {
+void cmd_mul_v(AgiGame *state, uint8 *p) {
 	_v[p0] *= _v[p1];
 }
 
-void AgiEngine::cmd_div_n(uint8 *p) {
+void cmd_div_n(AgiGame *state, uint8 *p) {
 	_v[p0] /= p1;
 }
 
-void AgiEngine::cmd_div_v(uint8 *p) {
+void cmd_div_v(AgiGame *state, uint8 *p) {
 	_v[p0] /= _v[p1];
 }
 
-void AgiEngine::cmd_random(uint8 *p) {
-	_v[p2] = _rnd->getRandomNumber(p1 - p0) + p0;
+void cmd_random(AgiGame *state, uint8 *p) {
+	_v[p2] = state->_vm->_rnd->getRandomNumber(p1 - p0) + p0;
 }
 
-void AgiEngine::cmd_lindirectn(uint8 *p) {
+void cmd_lindirectn(AgiGame *state, uint8 *p) {
 	_v[_v[p0]] = p1;
 }
 
-void AgiEngine::cmd_lindirectv(uint8 *p) {
+void cmd_lindirectv(AgiGame *state, uint8 *p) {
 	_v[_v[p0]] = _v[p1];
 }
 
-void AgiEngine::cmd_rindirect(uint8 *p) {
+void cmd_rindirect(AgiGame *state, uint8 *p) {
 	_v[p0] = _v[_v[p1]];
 }
 
-void AgiEngine::cmd_set(uint8 *p) {
+void cmd_set(AgiGame *state, uint8 *p) {
 	setflag(*p, true);
 }
 
-void AgiEngine::cmd_reset(uint8 *p) {
+void cmd_reset(AgiGame *state, uint8 *p) {
 	setflag(*p, false);
 }
 
-void AgiEngine::cmd_toggle(uint8 *p) {
+void cmd_toggle(AgiGame *state, uint8 *p) {
 	setflag(*p, !getflag(*p));
 }
 
-void AgiEngine::cmd_set_v(uint8 *p) {
+void cmd_set_v(AgiGame *state, uint8 *p) {
 	setflag(_v[p0], true);
 }
 
-void AgiEngine::cmd_reset_v(uint8 *p) {
+void cmd_reset_v(AgiGame *state, uint8 *p) {
 	setflag(_v[p0], false);
 }
 
-void AgiEngine::cmd_toggle_v(uint8 *p) {
+void cmd_toggle_v(AgiGame *state, uint8 *p) {
 	setflag(_v[p0], !getflag(_v[p0]));
 }
 
-void AgiEngine::cmd_new_room(uint8 *p) {
-	newRoom(p0);
+void cmd_new_room(AgiGame *state, uint8 *p) {
+	state->_vm->newRoom(p0);
 
 	// WORKAROUND: Works around intro skipping bug (#1737343) in Gold Rush.
 	// Intro was skipped because the enter-keypress finalizing the entering
@@ -160,82 +167,82 @@ void AgiEngine::cmd_new_room(uint8 *p) {
 	// loaded so that no keys from the copy protection scene can be left
 	// over to cause the intro to skip to the _game's start.
 	if (getGameID() == GID_GOLDRUSH && p0 == 73)
-		_game.keypress = 0;
+		state->keypress = 0;
 }
 
-void AgiEngine::cmd_new_room_f(uint8 *p) {
-	newRoom(_v[p0]);
+void cmd_new_room_f(AgiGame *state, uint8 *p) {
+	state->_vm->newRoom(_v[p0]);
 }
 
-void AgiEngine::cmd_load_view(uint8 *p) {
-	agiLoadResource(rVIEW, p0);
+void cmd_load_view(AgiGame *state, uint8 *p) {
+	state->_vm->agiLoadResource(rVIEW, p0);
 }
 
-void AgiEngine::cmd_load_logic(uint8 *p) {
-	agiLoadResource(rLOGIC, p0);
+void cmd_load_logic(AgiGame *state, uint8 *p) {
+	state->_vm->agiLoadResource(rLOGIC, p0);
 }
 
-void AgiEngine::cmd_load_sound(uint8 *p) {
-	agiLoadResource(rSOUND, p0);
+void cmd_load_sound(AgiGame *state, uint8 *p) {
+	state->_vm->agiLoadResource(rSOUND, p0);
 }
 
-void AgiEngine::cmd_load_view_f(uint8 *p) {
-	agiLoadResource(rVIEW, _v[p0]);
+void cmd_load_view_f(AgiGame *state, uint8 *p) {
+	state->_vm->agiLoadResource(rVIEW, _v[p0]);
 }
 
-void AgiEngine::cmd_load_logic_f(uint8 *p) {
-	agiLoadResource(rLOGIC, _v[p0]);
+void cmd_load_logic_f(AgiGame *state, uint8 *p) {
+	state->_vm->agiLoadResource(rLOGIC, _v[p0]);
 }
 
-void AgiEngine::cmd_discard_view(uint8 *p) {
-	agiUnloadResource(rVIEW, p0);
+void cmd_discard_view(AgiGame *state, uint8 *p) {
+	state->_vm->agiUnloadResource(rVIEW, p0);
 }
 
-void AgiEngine::cmd_object_on_anything(uint8 *p) {
+void cmd_object_on_anything(AgiGame *state, uint8 *p) {
 	vt.flags &= ~(ON_WATER | ON_LAND);
 }
 
-void AgiEngine::cmd_object_on_land(uint8 *p) {
+void cmd_object_on_land(AgiGame *state, uint8 *p) {
 	vt.flags |= ON_LAND;
 }
 
-void AgiEngine::cmd_object_on_water(uint8 *p) {
+void cmd_object_on_water(AgiGame *state, uint8 *p) {
 	vt.flags |= ON_WATER;
 }
 
-void AgiEngine::cmd_observe_horizon(uint8 *p) {
+void cmd_observe_horizon(AgiGame *state, uint8 *p) {
 	vt.flags &= ~IGNORE_HORIZON;
 }
 
-void AgiEngine::cmd_ignore_horizon(uint8 *p) {
+void cmd_ignore_horizon(AgiGame *state, uint8 *p) {
 	vt.flags |= IGNORE_HORIZON;
 }
 
-void AgiEngine::cmd_observe_objs(uint8 *p) {
+void cmd_observe_objs(AgiGame *state, uint8 *p) {
 	vt.flags &= ~IGNORE_OBJECTS;
 }
 
-void AgiEngine::cmd_ignore_objs(uint8 *p) {
+void cmd_ignore_objs(AgiGame *state, uint8 *p) {
 	vt.flags |= IGNORE_OBJECTS;
 }
 
-void AgiEngine::cmd_observe_blocks(uint8 *p) {
+void cmd_observe_blocks(AgiGame *state, uint8 *p) {
 	vt.flags &= ~IGNORE_BLOCKS;
 }
 
-void AgiEngine::cmd_ignore_blocks(uint8 *p) {
+void cmd_ignore_blocks(AgiGame *state, uint8 *p) {
 	vt.flags |= IGNORE_BLOCKS;
 }
 
-void AgiEngine::cmd_set_horizon(uint8 *p) {
-	_game.horizon = p0;
+void cmd_set_horizon(AgiGame *state, uint8 *p) {
+	state->horizon = p0;
 }
 
-void AgiEngine::cmd_get_priority(uint8 *p) {
+void cmd_get_priority(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.priority;
 }
 
-void AgiEngine::cmd_set_priority(uint8 *p) {
+void cmd_set_priority(AgiGame *state, uint8 *p) {
 	vt.flags |= FIXED_PRIORITY;
 	vt.priority = p1;
 
@@ -253,250 +260,250 @@ void AgiEngine::cmd_set_priority(uint8 *p) {
 	// Therefore, this workaround only affects that specific part of this scene
 	// Ego is set to object 19 by script 54
 	if (getGameID() == GID_KQ4 && vt.currentView == 152) {
-		_game.viewTable[19].flags |= FIXED_PRIORITY;
-		_game.viewTable[19].priority = 7;
+		state->viewTable[19].flags |= FIXED_PRIORITY;
+		state->viewTable[19].priority = 7;
 	}
 }
 
-void AgiEngine::cmd_set_priority_f(uint8 *p) {
+void cmd_set_priority_f(AgiGame *state, uint8 *p) {
 	vt.flags |= FIXED_PRIORITY;
 	vt.priority = _v[p1];
 }
 
-void AgiEngine::cmd_release_priority(uint8 *p) {
+void cmd_release_priority(AgiGame *state, uint8 *p) {
 	vt.flags &= ~FIXED_PRIORITY;
 }
 
-void AgiEngine::cmd_set_upper_left(uint8 *p) {				// do nothing (AGI 2.917)
+void cmd_set_upper_left(AgiGame *state, uint8 *p) {				// do nothing (AGI 2.917)
 }
 
-void AgiEngine::cmd_start_update(uint8 *p) {
-	startUpdate(&vt);
+void cmd_start_update(AgiGame *state, uint8 *p) {
+	state->_vm->startUpdate(&vt);
 }
 
-void AgiEngine::cmd_stop_update(uint8 *p) {
-	stopUpdate(&vt);
+void cmd_stop_update(AgiGame *state, uint8 *p) {
+	state->_vm->stopUpdate(&vt);
 }
 
-void AgiEngine::cmd_current_view(uint8 *p) {
+void cmd_current_view(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.currentView;
 }
 
-void AgiEngine::cmd_current_cel(uint8 *p) {
+void cmd_current_cel(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.currentCel;
 	debugC(4, kDebugLevelScripts, "v%d=%d", p1, _v[p1]);
 }
 
-void AgiEngine::cmd_current_loop(uint8 *p) {
+void cmd_current_loop(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.currentLoop;
 }
 
-void AgiEngine::cmd_last_cel(uint8 *p) {
+void cmd_last_cel(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.loopData->numCels - 1;
 }
 
-void AgiEngine::cmd_set_cel(uint8 *p) {
-	setCel(&vt, p1);
+void cmd_set_cel(AgiGame *state, uint8 *p) {
+	state->_vm->setCel(&vt, p1);
 	vt.flags &= ~DONTUPDATE;
 }
 
-void AgiEngine::cmd_set_cel_f(uint8 *p) {
-	setCel(&vt, _v[p1]);
+void cmd_set_cel_f(AgiGame *state, uint8 *p) {
+	state->_vm->setCel(&vt, _v[p1]);
 	vt.flags &= ~DONTUPDATE;
 }
 
-void AgiEngine::cmd_set_view(uint8 *p) {
-	setView(&vt, p1);
+void cmd_set_view(AgiGame *state, uint8 *p) {
+	state->_vm->setView(&vt, p1);
 }
 
-void AgiEngine::cmd_set_view_f(uint8 *p) {
-	setView(&vt, _v[p1]);
+void cmd_set_view_f(AgiGame *state, uint8 *p) {
+	state->_vm->setView(&vt, _v[p1]);
 }
 
-void AgiEngine::cmd_set_loop(uint8 *p) {
-	setLoop(&vt, p1);
+void cmd_set_loop(AgiGame *state, uint8 *p) {
+	state->_vm->setLoop(&vt, p1);
 }
 
-void AgiEngine::cmd_set_loop_f(uint8 *p) {
-	setLoop(&vt, _v[p1]);
+void cmd_set_loop_f(AgiGame *state, uint8 *p) {
+	state->_vm->setLoop(&vt, _v[p1]);
 }
 
-void AgiEngine::cmd_number_of_loops(uint8 *p) {
+void cmd_number_of_loops(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.numLoops;
 }
 
-void AgiEngine::cmd_fix_loop(uint8 *p) {
+void cmd_fix_loop(AgiGame *state, uint8 *p) {
 	vt.flags |= FIX_LOOP;
 }
 
-void AgiEngine::cmd_release_loop(uint8 *p) {
+void cmd_release_loop(AgiGame *state, uint8 *p) {
 	vt.flags &= ~FIX_LOOP;
 }
 
-void AgiEngine::cmd_step_size(uint8 *p) {
+void cmd_step_size(AgiGame *state, uint8 *p) {
 	vt.stepSize = _v[p1];
 }
 
-void AgiEngine::cmd_step_time(uint8 *p) {
+void cmd_step_time(AgiGame *state, uint8 *p) {
 	vt.stepTime = vt.stepTimeCount = _v[p1];
 }
 
-void AgiEngine::cmd_cycle_time(uint8 *p) {
+void cmd_cycle_time(AgiGame *state, uint8 *p) {
 	vt.cycleTime = vt.cycleTimeCount = _v[p1];
 }
 
-void AgiEngine::cmd_stop_cycling(uint8 *p) {
+void cmd_stop_cycling(AgiGame *state, uint8 *p) {
 	vt.flags &= ~CYCLING;
 }
 
-void AgiEngine::cmd_start_cycling(uint8 *p) {
+void cmd_start_cycling(AgiGame *state, uint8 *p) {
 	vt.flags |= CYCLING;
 }
 
-void AgiEngine::cmd_normal_cycle(uint8 *p) {
+void cmd_normal_cycle(AgiGame *state, uint8 *p) {
 	vt.cycle = CYCLE_NORMAL;
 	vt.flags |= CYCLING;
 }
 
-void AgiEngine::cmd_reverse_cycle(uint8 *p) {
+void cmd_reverse_cycle(AgiGame *state, uint8 *p) {
 	vt.cycle = CYCLE_REVERSE;
 	vt.flags |= CYCLING;
 }
 
-void AgiEngine::cmd_set_dir(uint8 *p) {
+void cmd_set_dir(AgiGame *state, uint8 *p) {
 	vt.direction = _v[p1];
 }
 
-void AgiEngine::cmd_get_dir(uint8 *p) {
+void cmd_get_dir(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.direction;
 }
 
-void AgiEngine::cmd_get_room_f(uint8 *p) {
-	_v[p1] = objectGetLocation(_v[p0]);
+void cmd_get_room_f(AgiGame *state, uint8 *p) {
+	_v[p1] = state->_vm->objectGetLocation(_v[p0]);
 }
 
-void AgiEngine::cmd_put(uint8 *p) {
-	objectSetLocation(p0, _v[p1]);
+void cmd_put(AgiGame *state, uint8 *p) {
+	state->_vm->objectSetLocation(p0, _v[p1]);
 }
 
-void AgiEngine::cmd_put_f(uint8 *p) {
-	objectSetLocation(_v[p0], _v[p1]);
+void cmd_put_f(AgiGame *state, uint8 *p) {
+	state->_vm->objectSetLocation(_v[p0], _v[p1]);
 }
 
-void AgiEngine::cmd_drop(uint8 *p) {
-	objectSetLocation(p0, 0);
+void cmd_drop(AgiGame *state, uint8 *p) {
+	state->_vm->objectSetLocation(p0, 0);
 }
 
-void AgiEngine::cmd_get(uint8 *p) {
-	objectSetLocation(p0, EGO_OWNED);
+void cmd_get(AgiGame *state, uint8 *p) {
+	state->_vm->objectSetLocation(p0, EGO_OWNED);
 }
 
-void AgiEngine::cmd_get_f(uint8 *p) {
-	objectSetLocation(_v[p0], EGO_OWNED);
+void cmd_get_f(AgiGame *state, uint8 *p) {
+	state->_vm->objectSetLocation(_v[p0], EGO_OWNED);
 }
 
-void AgiEngine::cmd_word_to_string(uint8 *p) {
-	strcpy(_game.strings[p0], _game.egoWords[p1].word);
+void cmd_word_to_string(AgiGame *state, uint8 *p) {
+	strcpy(state->strings[p0], state->egoWords[p1].word);
 }
 
-void AgiEngine::cmd_open_dialogue(uint8 *p) {
-	_game.hasWindow = true;
+void cmd_open_dialogue(AgiGame *state, uint8 *p) {
+	state->hasWindow = true;
 }
 
-void AgiEngine::cmd_close_dialogue(uint8 *p) {
-	_game.hasWindow = false;
+void cmd_close_dialogue(AgiGame *state, uint8 *p) {
+	state->hasWindow = false;
 }
 
-void AgiEngine::cmd_close_window(uint8 *p) {
-	closeWindow();
+void cmd_close_window(AgiGame *state, uint8 *p) {
+	state->_vm->closeWindow();
 }
 
-void AgiEngine::cmd_status_line_on(uint8 *p) {
-	_game.statusLine = true;
-	writeStatus();
+void cmd_status_line_on(AgiGame *state, uint8 *p) {
+	state->statusLine = true;
+	state->_vm->writeStatus();
 }
 
-void AgiEngine::cmd_status_line_off(uint8 *p) {
-	_game.statusLine = false;
-	writeStatus();
+void cmd_status_line_off(AgiGame *state, uint8 *p) {
+	state->statusLine = false;
+	state->_vm->writeStatus();
 }
 
-void AgiEngine::cmd_show_obj(uint8 *p) {
-	_sprites->showObj(p0);
+void cmd_show_obj(AgiGame *state, uint8 *p) {
+	state->_vm->_sprites->showObj(p0);
 }
 
-void AgiEngine::cmd_show_obj_v(uint8 *p) {
-	_sprites->showObj(_v[p0]);
+void cmd_show_obj_v(AgiGame *state, uint8 *p) {
+	state->_vm->_sprites->showObj(_v[p0]);
 }
 
-void AgiEngine::cmd_sound(uint8 *p) {
-	_sound->startSound(p0, p1);
+void cmd_sound(AgiGame *state, uint8 *p) {
+	state->_vm->_sound->startSound(p0, p1);
 }
 
-void AgiEngine::cmd_stop_sound(uint8 *p) {
-	_sound->stopSound();
+void cmd_stop_sound(AgiGame *state, uint8 *p) {
+	state->_vm->_sound->stopSound();
 }
 
-void AgiEngine::cmd_menu_input(uint8 *p) {
-	newInputMode(INPUT_MENU);
+void cmd_menu_input(AgiGame *state, uint8 *p) {
+	state->_vm->newInputMode(INPUT_MENU);
 }
 
-void AgiEngine::cmd_enable_item(uint8 *p) {
-	_menu->setItem(p0, true);
+void cmd_enable_item(AgiGame *state, uint8 *p) {
+	state->_vm->_menu->setItem(p0, true);
 }
 
-void AgiEngine::cmd_disable_item(uint8 *p) {
-	_menu->setItem(p0, false);
+void cmd_disable_item(AgiGame *state, uint8 *p) {
+	state->_vm->_menu->setItem(p0, false);
 }
 
-void AgiEngine::cmd_submit_menu(uint8 *p) {
-	_menu->submit();
+void cmd_submit_menu(AgiGame *state, uint8 *p) {
+	state->_vm->_menu->submit();
 }
 
-void AgiEngine::cmd_set_scan_start(uint8 *p) {
-	_curLogic->sIP = _curLogic->cIP;
+void cmd_set_scan_start(AgiGame *state, uint8 *p) {
+	state->_curLogic->sIP = state->_curLogic->cIP;
 }
 
-void AgiEngine::cmd_reset_scan_start(uint8 *p) {
-	_curLogic->sIP = 2;
+void cmd_reset_scan_start(AgiGame *state, uint8 *p) {
+	state->_curLogic->sIP = 2;
 }
 
-void AgiEngine::cmd_save_game(uint8 *p) {
-	_game.simpleSave ? saveGameSimple() : saveGameDialog();
+void cmd_save_game(AgiGame *state, uint8 *p) {
+	state->simpleSave ? state->_vm->saveGameSimple() : state->_vm->saveGameDialog();
 }
 
-void AgiEngine::cmd_load_game(uint8 *p) {
+void cmd_load_game(AgiGame *state, uint8 *p) {
 	assert(1);
-	_game.simpleSave ? loadGameSimple() : loadGameDialog();
+	state->simpleSave ? state->_vm->loadGameSimple() : state->_vm->loadGameDialog();
 }
 
-void AgiEngine::cmd_init_disk(uint8 *p) {				// do nothing
+void cmd_init_disk(AgiGame *state, uint8 *p) {				// do nothing
 }
 
-void AgiEngine::cmd_log(uint8 *p) {				// do nothing
+void cmd_log(AgiGame *state, uint8 *p) {				// do nothing
 }
 
-void AgiEngine::cmd_trace_on(uint8 *p) {				// do nothing
+void cmd_trace_on(AgiGame *state, uint8 *p) {				// do nothing
 }
 
-void AgiEngine::cmd_trace_info(uint8 *p) {				// do nothing
+void cmd_trace_info(AgiGame *state, uint8 *p) {				// do nothing
 }
 
-void AgiEngine::cmd_show_mem(uint8 *p) {
-	messageBox("Enough memory");
+void cmd_show_mem(AgiGame *state, uint8 *p) {
+	state->_vm->messageBox("Enough memory");
 }
 
-void AgiEngine::cmd_init_joy(uint8 *p) { // do nothing
+void cmd_init_joy(AgiGame *state, uint8 *p) { // do nothing
 }
 
-void AgiEngine::cmd_script_size(uint8 *p) {
+void cmd_script_size(AgiGame *state, uint8 *p) {
 	debug(0, "script.size(%d)", p0);
 }
 
-void AgiEngine::cmd_cancel_line(uint8 *p) {
-	_game.inputBuffer[0] = 0;
-	_game.cursorPos = 0;
-	writePrompt();
+void cmd_cancel_line(AgiGame *state, uint8 *p) {
+	state->inputBuffer[0] = 0;
+	state->cursorPos = 0;
+	state->_vm->writePrompt();
 }
 
 // This implementation is based on observations of Amiga's Gold Rush.
@@ -509,7 +516,7 @@ void AgiEngine::cmd_cancel_line(uint8 *p) {
 // 4051 (When ego is stationary),
 // 471 (When walking on the first screen's bridge),
 // 71 (When walking around, using the mouse or the keyboard).
-void AgiEngine::cmd_obj_status_f(uint8 *p) {
+void cmd_obj_status_f(AgiGame *state, uint8 *p) {
 	const char *cycleDesc;  // Object's cycle description line
 	const char *motionDesc; // Object's motion description line
 	char msg[256];          // The whole object status message
@@ -570,7 +577,7 @@ void AgiEngine::cmd_obj_status_f(uint8 *p) {
 		vt_v.stepSize,
 		cycleDesc,
 		motionDesc);
-	messageBox(msg);
+	state->_vm->messageBox(msg);
 }
 
 // unknown commands:
@@ -581,49 +588,49 @@ void AgiEngine::cmd_obj_status_f(uint8 *p) {
 // unk_174: Change priority table (used in KQ4) -- j5
 // unk_177: Disable menus completely -- j5
 // unk_181: Deactivate keypressed control (default control of ego)
-void AgiEngine::cmd_set_simple(uint8 *p) {
+void cmd_set_simple(AgiGame *state, uint8 *p) {
 	if (!(getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
-		_game.simpleSave = true;
+		state->simpleSave = true;
 	} else { // AGI256 and AGI256-2 use this unknown170 command to load 256 color pictures.
-		// Load the picture. Similar to void AgiEngine::cmd_load_pic(uint8 *p).
-		_sprites->eraseBoth();
-		agiLoadResource(rPICTURE, _v[p0]);
+		// Load the picture. Similar to void cmd_load_pic(AgiGame *state, uint8 *p).
+		state->_vm->_sprites->eraseBoth();
+		state->_vm->agiLoadResource(rPICTURE, _v[p0]);
 
-		// Draw the picture. Similar to void AgiEngine::cmd_draw_pic(uint8 *p).
-		_picture->decodePicture(_v[p0], false, true);
-		_sprites->blitBoth();
-		_game.pictureShown = 0;
+		// Draw the picture. Similar to void cmd_draw_pic(AgiGame *state, uint8 *p).
+		state->_vm->_picture->decodePicture(_v[p0], false, true);
+		state->_vm->_sprites->blitBoth();
+		state->pictureShown = 0;
 
-		// Show the picture. Similar to void AgiEngine::cmd_show_pic(uint8 *p).
+		// Show the picture. Similar to void cmd_show_pic(AgiGame *state, uint8 *p).
 		setflag(fOutputMode, false);
-		closeWindow();
-		_picture->showPic();
-		_game.pictureShown = 1;
+		state->_vm->closeWindow();
+		state->_vm->_picture->showPic();
+		state->pictureShown = 1;
 
 		// Simulate slowww computer. Many effects rely on this
-		pause(kPausePicture);
+		state->_vm->pause(kPausePicture);
 	}
 }
 
-void AgiEngine::cmd_pop_script(uint8 *p) {
+void cmd_pop_script(AgiGame *state, uint8 *p) {
 	if (getVersion() >= 0x2915) {
 		debug(0, "pop.script");
 	}
 }
 
-void AgiEngine::cmd_hold_key(uint8 *p) {
+void cmd_hold_key(AgiGame *state, uint8 *p) {
 	if (getVersion() >= 0x3098) {
-		_egoHoldKey = true;
+		state->_vm->_egoHoldKey = true;
 	}
 }
 
-void AgiEngine::cmd_discard_sound(uint8 *p) {
+void cmd_discard_sound(AgiGame *state, uint8 *p) {
 	if (getVersion() >= 0x2936) {
 		debug(0, "discard.sound");
 	}
 }
 
-void AgiEngine::cmd_hide_mouse(uint8 *p) {
+void cmd_hide_mouse(AgiGame *state, uint8 *p) {
 	// WORKAROUND: Turns off current movement that's being caused with the mouse.
 	// This fixes problems with too many popup boxes appearing in the Amiga
 	// Gold Rush's copy protection failure scene (i.e. the hanging scene, logic.192).
@@ -631,37 +638,37 @@ void AgiEngine::cmd_hide_mouse(uint8 *p) {
 	// to walk somewhere else than to the right using the mouse.
 	// FIXME: Write a proper implementation using disassembly and
 	//        apply it to other games as well if applicable.
-	_game.viewTable[0].flags &= ~ADJ_EGO_XY;
+	state->viewTable[0].flags &= ~ADJ_EGO_XY;
 
 	g_system->showMouse(false);
 }
 
-void AgiEngine::cmd_allow_menu(uint8 *p) {
+void cmd_allow_menu(AgiGame *state, uint8 *p) {
 	if (getVersion() >= 0x3098) {
 		setflag(fMenusWork, ((p0 != 0) ? true : false));
 	}
 }
 
-void AgiEngine::cmd_show_mouse(uint8 *p) {
+void cmd_show_mouse(AgiGame *state, uint8 *p) {
 	g_system->showMouse(true);
 }
 
-void AgiEngine::cmd_fence_mouse(uint8 *p) {
-	_game.mouseFence.moveTo(p0, p1);
-	_game.mouseFence.setWidth(p2 - p0);
-	_game.mouseFence.setHeight(p3 - p1);
+void cmd_fence_mouse(AgiGame *state, uint8 *p) {
+	state->mouseFence.moveTo(p0, p1);
+	state->mouseFence.setWidth(p2 - p0);
+	state->mouseFence.setHeight(p3 - p1);
 }
 
-void AgiEngine::cmd_release_key(uint8 *p) {
+void cmd_release_key(AgiGame *state, uint8 *p) {
 	if (getVersion() >= 0x3098) {
-		_egoHoldKey = false;
+		state->_vm->_egoHoldKey = false;
 	}
 }
 
-void AgiEngine::cmd_adj_ego_move_to_x_y(uint8 *p) {
+void cmd_adj_ego_move_to_x_y(AgiGame *state, uint8 *p) {
 	int8 x, y;
 
-	switch (logicNamesCmd[182].numArgs) {
+	switch (logicNamesCmd[182].argumentsLength()) {
 	// The 2 arguments version is used at least in Amiga Gold Rush!
 	// (v2.05 1989-03-09, Amiga AGI 2.316) in logics 130 and 150
 	// (Using arguments (0, 0), (0, 7), (0, 8), (9, 9) and (-9, 9)).
@@ -680,57 +687,57 @@ void AgiEngine::cmd_adj_ego_move_to_x_y(uint8 *p) {
 		// onto the ladder so this is more like it (Although that may be caused
 		// by something else because this command doesn't do any flag manipulations
 		// in the Amiga version - checked it with disassembly).
-		if (x != _game.adjMouseX || y != _game.adjMouseY)
-			_game.viewTable[EGO_VIEW_TABLE].flags &= ~ADJ_EGO_XY;
+		if (x != state->adjMouseX || y != state->adjMouseY)
+			state->viewTable[EGO_VIEW_TABLE].flags &= ~ADJ_EGO_XY;
 
-		_game.adjMouseX = x;
-		_game.adjMouseY = y;
+		state->adjMouseX = x;
+		state->adjMouseY = y;
 
 		debugC(4, kDebugLevelScripts, "adj.ego.move.to.x.y(%d, %d)", x, y);
 		break;
 	// TODO: Check where (if anywhere) the 0 arguments version is used
 	case 0:
 	default:
-		_game.viewTable[0].flags |= ADJ_EGO_XY;
+		state->viewTable[0].flags |= ADJ_EGO_XY;
 		break;
 	}
 }
 
-void AgiEngine::cmd_parse(uint8 *p) {
+void cmd_parse(AgiGame *state, uint8 *p) {
 	_v[vWordNotFound] = 0;
 	setflag(fEnteredCli, false);
 	setflag(fSaidAcceptedInput, false);
 
-	dictionaryWords(agiSprintf(_game.strings[p0]));
+	state->_vm->dictionaryWords(state->_vm->agiSprintf(state->strings[p0]));
 }
 
-void AgiEngine::cmd_call(uint8 *p) {
+void cmd_call(AgiGame *state, uint8 *p) {
 	int oldCIP;
 	int oldLognum;
 
 	// CM: we don't save sIP because set.scan.start can be
 	//     used in a called script (fixes xmas demo)
-	oldCIP = _curLogic->cIP;
-	oldLognum = _game.lognum;
+	oldCIP = state->_curLogic->cIP;
+	oldLognum = state->lognum;
 
-	runLogic(p0);
+	state->_vm->runLogic(p0);
 
-	_game.lognum = oldLognum;
-	_curLogic = &_game.logics[_game.lognum];
-	_curLogic->cIP = oldCIP;
+	state->lognum = oldLognum;
+	state->_curLogic = &state->logics[state->lognum];
+	state->_curLogic->cIP = oldCIP;
 }
 
-void AgiEngine::cmd_call_f(uint8 *p) {
-	cmd_call(&_v[p0]);
+void cmd_call_f(AgiGame *state, uint8 *p) {
+	cmd_call(state, &_v[p0]);
 }
 
-void AgiEngine::cmd_draw_pic(uint8 *p) {
+void cmd_draw_pic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "=== draw pic %d ===", _v[p0]);
-	_sprites->eraseBoth();
-	_picture->decodePicture(_v[p0], true);
-	_sprites->blitBoth();
-	_sprites->commitBoth();
-	_game.pictureShown = 0;
+	state->_vm->_sprites->eraseBoth();
+	state->_vm->_picture->decodePicture(_v[p0], true);
+	state->_vm->_sprites->blitBoth();
+	state->_vm->_sprites->commitBoth();
+	state->pictureShown = 0;
 	debugC(6, kDebugLevelScripts, "--- end of draw pic %d ---", _v[p0]);
 
 	// WORKAROUND for a script bug which exists in SQ1, logic scripts
@@ -749,60 +756,60 @@ void AgiEngine::cmd_draw_pic(uint8 *p) {
 		setflag(103, false);
 
 	// Simulate slowww computer. Many effects rely on this
-	pause(kPausePicture);
+	state->_vm->pause(kPausePicture);
 }
 
-void AgiEngine::cmd_show_pic(uint8 *p) {
+void cmd_show_pic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "=== show pic ===");
 
 	setflag(fOutputMode, false);
-	closeWindow();
-	_picture->showPic();
-	_game.pictureShown = 1;
+	state->_vm->closeWindow();
+	state->_vm->_picture->showPic();
+	state->pictureShown = 1;
 
 	debugC(6, kDebugLevelScripts, "--- end of show pic ---");
 }
 
-void AgiEngine::cmd_load_pic(uint8 *p) {
-	_sprites->eraseBoth();
-	agiLoadResource(rPICTURE, _v[p0]);
-	_sprites->blitBoth();
-	_sprites->commitBoth();
+void cmd_load_pic(AgiGame *state, uint8 *p) {
+	state->_vm->_sprites->eraseBoth();
+	state->_vm->agiLoadResource(rPICTURE, _v[p0]);
+	state->_vm->_sprites->blitBoth();
+	state->_vm->_sprites->commitBoth();
 }
 
-void AgiEngine::cmd_discard_pic(uint8 *p) {
+void cmd_discard_pic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "--- discard pic ---");
 	// do nothing
 }
 
-void AgiEngine::cmd_overlay_pic(uint8 *p) {
+void cmd_overlay_pic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "--- overlay pic ---");
 
-	_sprites->eraseBoth();
-	_picture->decodePicture(_v[p0], false);
-	_sprites->blitBoth();
-	_game.pictureShown = 0;
-	_sprites->commitBoth();
+	state->_vm->_sprites->eraseBoth();
+	state->_vm->_picture->decodePicture(_v[p0], false);
+	state->_vm->_sprites->blitBoth();
+	state->pictureShown = 0;
+	state->_vm->_sprites->commitBoth();
 
 	// Simulate slowww computer. Many effects rely on this
-	pause(kPausePicture);
+	state->_vm->pause(kPausePicture);
 }
 
-void AgiEngine::cmd_show_pri_screen(uint8 *p) {
-	_debug.priority = 1;
-	_sprites->eraseBoth();
-	_picture->showPic();
-	_sprites->blitBoth();
+void cmd_show_pri_screen(AgiGame *state, uint8 *p) {
+	state->_vm->_debug.priority = 1;
+	state->_vm->_sprites->eraseBoth();
+	state->_vm->_picture->showPic();
+	state->_vm->_sprites->blitBoth();
 
-	waitKey();
+	state->_vm->waitKey();
 
-	_debug.priority = 0;
-	_sprites->eraseBoth();
-	_picture->showPic();
-	_sprites->blitBoth();
+	state->_vm->_debug.priority = 0;
+	state->_vm->_sprites->eraseBoth();
+	state->_vm->_picture->showPic();
+	state->_vm->_sprites->blitBoth();
 }
 
-void AgiEngine::cmd_animate_obj(uint8 *p) {
+void cmd_animate_obj(AgiGame *state, uint8 *p) {
 	if (vt.flags & ANIMATED)
 		return;
 
@@ -813,14 +820,14 @@ void AgiEngine::cmd_animate_obj(uint8 *p) {
 	vt.direction = 0;
 }
 
-void AgiEngine::cmd_unanimate_all(uint8 *p) {
+void cmd_unanimate_all(AgiGame *state, uint8 *p) {
 	int i;
 
 	for (i = 0; i < MAX_VIEWTABLE; i++)
-		_game.viewTable[i].flags &= ~(ANIMATED | DRAWN);
+		state->viewTable[i].flags &= ~(ANIMATED | DRAWN);
 }
 
-void AgiEngine::cmd_draw(uint8 *p) {
+void cmd_draw(AgiGame *state, uint8 *p) {
 	if (vt.flags & DRAWN)
 		return;
 
@@ -831,15 +838,15 @@ void AgiEngine::cmd_draw(uint8 *p) {
 
 	vt.flags |= UPDATE;
 	if (getVersion() >= 0x3000) {
-		setLoop(&vt, vt.currentLoop);
-		setCel(&vt, vt.currentCel);
+		state->_vm->setLoop(&vt, vt.currentLoop);
+		state->_vm->setCel(&vt, vt.currentCel);
 	}
 
-	fixPosition(p0);
+	state->_vm->fixPosition(p0);
 	vt.xPos2 = vt.xPos;
 	vt.yPos2 = vt.yPos;
 	vt.celData2 = vt.celData;
-	_sprites->eraseUpdSprites();
+	state->_vm->_sprites->eraseUpdSprites();
 	vt.flags |= DRAWN;
 
 	// WORKAROUND: This fixes a bug with AGI Fanmade _game Space Trek.
@@ -856,28 +863,28 @@ void AgiEngine::cmd_draw(uint8 *p) {
 	if (getFeatures() & GF_FANMADE)	// See Sarien bug #546562
 		vt.flags |= ANIMATED;
 
-	_sprites->blitUpdSprites();
+	state->_vm->_sprites->blitUpdSprites();
 	vt.flags &= ~DONTUPDATE;
 
-	_sprites->commitBlock(vt.xPos, vt.yPos - vt.ySize + 1, vt.xPos + vt.xSize - 1, vt.yPos, true);
+	state->_vm->_sprites->commitBlock(vt.xPos, vt.yPos - vt.ySize + 1, vt.xPos + vt.xSize - 1, vt.yPos, true);
 
 	debugC(4, kDebugLevelScripts, "vt entry #%d flags = %02x", p0, vt.flags);
 }
 
-void AgiEngine::cmd_erase(uint8 *p) {
+void cmd_erase(AgiGame *state, uint8 *p) {
 	if (~vt.flags & DRAWN)
 		return;
 
-	_sprites->eraseUpdSprites();
+	state->_vm->_sprites->eraseUpdSprites();
 
 	if (vt.flags & UPDATE) {
 		vt.flags &= ~DRAWN;
 	} else {
-		_sprites->eraseNonupdSprites();
+		state->_vm->_sprites->eraseNonupdSprites();
 		vt.flags &= ~DRAWN;
-		_sprites->blitNonupdSprites();
+		state->_vm->_sprites->blitNonupdSprites();
 	}
-	_sprites->blitUpdSprites();
+	state->_vm->_sprites->blitUpdSprites();
 
 	int x1, y1, x2, y2;
 
@@ -886,10 +893,10 @@ void AgiEngine::cmd_erase(uint8 *p) {
 	y1 = MIN((int)MIN(vt.yPos, vt.yPos2), MIN(vt.yPos - vt.celData->height, vt.yPos2 - vt.celData2->height));
 	y2 = MAX((int)MAX(vt.yPos, vt.yPos2), MAX(vt.yPos - vt.celData->height, vt.yPos2 - vt.celData2->height));
 
-	_sprites->commitBlock(x1, y1, x2, y2, true);
+	state->_vm->_sprites->commitBlock(x1, y1, x2, y2, true);
 }
 
-void AgiEngine::cmd_position(uint8 *p) {
+void cmd_position(AgiGame *state, uint8 *p) {
 	vt.xPos = vt.xPos2 = p1;
 	vt.yPos = vt.yPos2 = p2;
 
@@ -907,10 +914,10 @@ void AgiEngine::cmd_position(uint8 *p) {
 	// strictly need the identical workaround in the position.v-command but it does make
 	// for a nice symmetry.
 	if (getFeatures() & GF_CLIPCOORDS)
-		clipViewCoordinates(&vt);
+		state->_vm->clipViewCoordinates(&vt);
 }
 
-void AgiEngine::cmd_position_f(uint8 *p) {
+void cmd_position_f(AgiGame *state, uint8 *p) {
 	vt.xPos = vt.xPos2 = _v[p1];
 	vt.yPos = vt.yPos2 = _v[p2];
 
@@ -918,15 +925,15 @@ void AgiEngine::cmd_position_f(uint8 *p) {
 	// with an accompanying identical workaround in position-command (i.e. command 0x25).
 	// See that workaround's comment for more in-depth information.
 	if (getFeatures() & GF_CLIPCOORDS)
-		clipViewCoordinates(&vt);
+		state->_vm->clipViewCoordinates(&vt);
 }
 
-void AgiEngine::cmd_get_posn(uint8 *p) {
-	_game.vars[p1] = (unsigned char)vt.xPos;
-	_game.vars[p2] = (unsigned char)vt.yPos;
+void cmd_get_posn(AgiGame *state, uint8 *p) {
+	state->vars[p1] = (unsigned char)vt.xPos;
+	state->vars[p2] = (unsigned char)vt.yPos;
 }
 
-void AgiEngine::cmd_reposition(uint8 *p) {
+void cmd_reposition(AgiGame *state, uint8 *p) {
 	int dx = (int8) _v[p1], dy = (int8) _v[p2];
 
 	debugC(4, kDebugLevelScripts, "dx=%d, dy=%d", dx, dy);
@@ -942,38 +949,38 @@ void AgiEngine::cmd_reposition(uint8 *p) {
 	else
 		vt.yPos += dy;
 
-	fixPosition(p0);
+	state->_vm->fixPosition(p0);
 }
 
-void AgiEngine::cmd_reposition_to(uint8 *p) {
+void cmd_reposition_to(AgiGame *state, uint8 *p) {
 	vt.xPos = p1;
 	vt.yPos = p2;
 	vt.flags |= UPDATE_POS;
-	fixPosition(p0);
+	state->_vm->fixPosition(p0);
 }
 
-void AgiEngine::cmd_reposition_to_f(uint8 *p) {
+void cmd_reposition_to_f(AgiGame *state, uint8 *p) {
 	vt.xPos = _v[p1];
 	vt.yPos = _v[p2];
 	vt.flags |= UPDATE_POS;
-	fixPosition(p0);
+	state->_vm->fixPosition(p0);
 }
 
-void AgiEngine::cmd_add_to_pic(uint8 *p) {
-	_sprites->addToPic(p0, p1, p2, p3, p4, p5, p6);
+void cmd_add_to_pic(AgiGame *state, uint8 *p) {
+	state->_vm->_sprites->addToPic(p0, p1, p2, p3, p4, p5, p6);
 }
 
-void AgiEngine::cmd_add_to_pic_f(uint8 *p) {
-	_sprites->addToPic(_v[p0], _v[p1], _v[p2], _v[p3], _v[p4], _v[p5], _v[p6]);
+void cmd_add_to_pic_f(AgiGame *state, uint8 *p) {
+	state->_vm->_sprites->addToPic(_v[p0], _v[p1], _v[p2], _v[p3], _v[p4], _v[p5], _v[p6]);
 }
 
-void AgiEngine::cmd_force_update(uint8 *p) {
-	_sprites->eraseBoth();
-	_sprites->blitBoth();
-	_sprites->commitBoth();
+void cmd_force_update(AgiGame *state, uint8 *p) {
+	state->_vm->_sprites->eraseBoth();
+	state->_vm->_sprites->blitBoth();
+	state->_vm->_sprites->commitBoth();
 }
 
-void AgiEngine::cmd_reverse_loop(uint8 *p) {
+void cmd_reverse_loop(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
 	vt.cycle = CYCLE_REV_LOOP;
 	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
@@ -981,7 +988,7 @@ void AgiEngine::cmd_reverse_loop(uint8 *p) {
 	setflag(p1, false);
 }
 
-void AgiEngine::cmd_end_of_loop(uint8 *p) {
+void cmd_end_of_loop(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
 	vt.cycle = CYCLE_END_OF_LOOP;
 	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
@@ -989,50 +996,50 @@ void AgiEngine::cmd_end_of_loop(uint8 *p) {
 	setflag(p1, false);
 }
 
-void AgiEngine::cmd_block(uint8 *p) {
+void cmd_block(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "x1=%d, y1=%d, x2=%d, y2=%d", p0, p1, p2, p3);
-	_game.block.active = true;
-	_game.block.x1 = p0;
-	_game.block.y1 = p1;
-	_game.block.x2 = p2;
-	_game.block.y2 = p3;
+	state->block.active = true;
+	state->block.x1 = p0;
+	state->block.y1 = p1;
+	state->block.x2 = p2;
+	state->block.y2 = p3;
 }
 
-void AgiEngine::cmd_unblock(uint8 *p) {
-	_game.block.active = false;
+void cmd_unblock(AgiGame *state, uint8 *p) {
+	state->block.active = false;
 }
 
-void AgiEngine::cmd_normal_motion(uint8 *p) {
+void cmd_normal_motion(AgiGame *state, uint8 *p) {
 	vt.motion = MOTION_NORMAL;
 }
 
-void AgiEngine::cmd_stop_motion(uint8 *p) {
+void cmd_stop_motion(AgiGame *state, uint8 *p) {
 	vt.direction = 0;
 	vt.motion = MOTION_NORMAL;
 	if (p0 == 0) {		// ego only
 		_v[vEgoDir] = 0;
-		_game.playerControl = false;
+		state->playerControl = false;
 	}
 }
 
-void AgiEngine::cmd_start_motion(uint8 *p) {
+void cmd_start_motion(AgiGame *state, uint8 *p) {
 	vt.motion = MOTION_NORMAL;
 	if (p0 == 0) {		// ego only
 		_v[vEgoDir] = 0;
-		_game.playerControl = true;
+		state->playerControl = true;
 	}
 }
 
-void AgiEngine::cmd_player_control(uint8 *p) {
-	_game.playerControl = true;
-	_game.viewTable[0].motion = MOTION_NORMAL;
+void cmd_player_control(AgiGame *state, uint8 *p) {
+	state->playerControl = true;
+	state->viewTable[0].motion = MOTION_NORMAL;
 }
 
-void AgiEngine::cmd_program_control(uint8 *p) {
-	_game.playerControl = false;
+void cmd_program_control(AgiGame *state, uint8 *p) {
+	state->playerControl = false;
 }
 
-void AgiEngine::cmd_follow_ego(uint8 *p) {
+void cmd_follow_ego(AgiGame *state, uint8 *p) {
 	vt.motion = MOTION_FOLLOW_EGO;
 	vt.parm1 = p1 > vt.stepSize ? p1 : vt.stepSize;
 	vt.parm2 = p2;
@@ -1041,7 +1048,7 @@ void AgiEngine::cmd_follow_ego(uint8 *p) {
 	vt.flags |= UPDATE;
 }
 
-void AgiEngine::cmd_move_obj(uint8 *p) {
+void cmd_move_obj(AgiGame *state, uint8 *p) {
 	// _D (_D_WARN "o=%d, x=%d, y=%d, s=%d, f=%d", p0, p1, p2, p3, p4);
 
 	vt.motion = MOTION_MOVE_OBJ;
@@ -1057,14 +1064,14 @@ void AgiEngine::cmd_move_obj(uint8 *p) {
 	vt.flags |= UPDATE;
 
 	if (p0 == 0)
-		_game.playerControl = false;
+		state->playerControl = false;
 
 	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
 	if (getVersion() > 0x2272)
-		moveObj(&vt);
+		state->_vm->moveObj(&vt);
 }
 
-void AgiEngine::cmd_move_obj_f(uint8 *p) {
+void cmd_move_obj_f(AgiGame *state, uint8 *p) {
 	vt.motion = MOTION_MOVE_OBJ;
 	vt.parm1 = _v[p1];
 	vt.parm2 = _v[p2];
@@ -1078,63 +1085,63 @@ void AgiEngine::cmd_move_obj_f(uint8 *p) {
 	vt.flags |= UPDATE;
 
 	if (p0 == 0)
-		_game.playerControl = false;
+		state->playerControl = false;
 
 	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
 	if (getVersion() > 0x2272)
-		moveObj(&vt);
+		state->_vm->moveObj(&vt);
 }
 
-void AgiEngine::cmd_wander(uint8 *p) {
+void cmd_wander(AgiGame *state, uint8 *p) {
 	if (p0 == 0)
-		_game.playerControl = false;
+		state->playerControl = false;
 
 	vt.motion = MOTION_WANDER;
 	vt.flags |= UPDATE;
 }
 
-void AgiEngine::cmd_set_game_id(uint8 *p) {
-	if (_curLogic->texts && (p0 - 1) <= _curLogic->numTexts)
-		strncpy(_game.id, _curLogic->texts[p0 - 1], 8);
+void cmd_set_game_id(AgiGame *state, uint8 *p) {
+	if (state->_curLogic->texts && (p0 - 1) <= state->_curLogic->numTexts)
+		strncpy(state->id, state->_curLogic->texts[p0 - 1], 8);
 	else
-		_game.id[0] = 0;
+		state->id[0] = 0;
 
-	debug(0, "Game ID: \"%s\"", _game.id);
+	debug(0, "Game ID: \"%s\"", state->id);
 }
 
-void AgiEngine::cmd_pause(uint8 *p) {
-	int tmp = _game.clockEnabled;
+void cmd_pause(AgiGame *state, uint8 *p) {
+	int tmp = state->clockEnabled;
 	const char *b[] = { "Continue", NULL };
 	const char *b_ru[] = { "\x8f\xe0\xae\xa4\xae\xab\xa6\xa8\xe2\xec", NULL };
 
-	_game.clockEnabled = false;
+	state->clockEnabled = false;
 
 	switch (getLanguage()) {
 	case Common::RU_RUS:
-		selectionBox("  \x88\xa3\xe0\xa0 \xae\xe1\xe2\xa0\xad\xae\xa2\xab\xa5\xad\xa0.  \n\n\n", b_ru);
+		state->_vm->selectionBox("  \x88\xa3\xe0\xa0 \xae\xe1\xe2\xa0\xad\xae\xa2\xab\xa5\xad\xa0.  \n\n\n", b_ru);
 		break;
 	default:
-		selectionBox("  Game is paused.  \n\n\n", b);
+		state->_vm->selectionBox("  Game is paused.  \n\n\n", b);
 		break;
 	}
-	_game.clockEnabled = tmp;
+	state->clockEnabled = tmp;
 }
 
-void AgiEngine::cmd_set_menu(uint8 *p) {
-	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, _curLogic->numTexts);
+void cmd_set_menu(AgiGame *state, uint8 *p) {
+	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, state->_curLogic->numTexts);
 
-	if (_curLogic->texts != NULL && p0 <= _curLogic->numTexts)
-		_menu->add(_curLogic->texts[p0 - 1]);
+	if (state->_curLogic->texts != NULL && p0 <= state->_curLogic->numTexts)
+		state->_vm->_menu->add(state->_curLogic->texts[p0 - 1]);
 }
 
-void AgiEngine::cmd_set_menu_item(uint8 *p) {
-	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, _curLogic->numTexts);
+void cmd_set_menu_item(AgiGame *state, uint8 *p) {
+	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, state->_curLogic->numTexts);
 
-	if (_curLogic->texts != NULL && p0 <= _curLogic->numTexts)
-		_menu->addItem(_curLogic->texts[p0 - 1], p1);
+	if (state->_curLogic->texts != NULL && p0 <= state->_curLogic->numTexts)
+		state->_vm->_menu->addItem(state->_curLogic->texts[p0 - 1], p1);
 }
 
-void AgiEngine::cmd_version(uint8 *p) {
+void cmd_version(AgiGame *state, uint8 *p) {
 	char verMsg[64];
 	char ver2Msg[] =
 	    "\n"
@@ -1171,87 +1178,87 @@ void AgiEngine::cmd_version(uint8 *p) {
 
 	strncpy(q + 1 + gap, verMsg, strlen(verMsg));
 	sprintf(msg, q, maj, min);
-	messageBox(msg);
+	state->_vm->messageBox(msg);
 }
 
-void AgiEngine::cmd_configure_screen(uint8 *p) {
-	_game.lineMinPrint = p0;
-	_game.lineUserInput = p1;
-	_game.lineStatus = p2;
+void cmd_configure_screen(AgiGame *state, uint8 *p) {
+	state->lineMinPrint = p0;
+	state->lineUserInput = p1;
+	state->lineStatus = p2;
 }
 
-void AgiEngine::cmd_text_screen(uint8 *p) {
+void cmd_text_screen(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "switching to text mode");
-	_game.gfxMode = false;
+	state->gfxMode = false;
 
 	// Simulates the "bright background bit" of the PC video
 	// controller.
-	if (_game.colorBg)
-		_game.colorBg |= 0x08;
+	if (state->colorBg)
+		state->colorBg |= 0x08;
 
-	_gfx->clearScreen(_game.colorBg);
+	state->_vm->_gfx->clearScreen(state->colorBg);
 }
 
-void AgiEngine::cmd_graphics(uint8 *p) {
+void cmd_graphics(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "switching to graphics mode");
 
-	if (!_game.gfxMode) {
-		_game.gfxMode = true;
-		_gfx->clearScreen(0);
-		_picture->showPic();
-		writeStatus();
-		writePrompt();
+	if (!state->gfxMode) {
+		state->gfxMode = true;
+		state->_vm->_gfx->clearScreen(0);
+		state->_vm->_picture->showPic();
+		state->_vm->writeStatus();
+		state->_vm->writePrompt();
 	}
 }
 
-void AgiEngine::cmd_set_text_attribute(uint8 *p) {
-	_game.colorFg = p0;
-	_game.colorBg = p1;
+void cmd_set_text_attribute(AgiGame *state, uint8 *p) {
+	state->colorFg = p0;
+	state->colorBg = p1;
 
-	if (_game.gfxMode) {
-		if (_game.colorBg != 0) {
-			_game.colorFg = 0;
-			_game.colorBg = 15;
+	if (state->gfxMode) {
+		if (state->colorBg != 0) {
+			state->colorFg = 0;
+			state->colorBg = 15;
 		}
 	}
 }
 
-void AgiEngine::cmd_status(uint8 *p) {
-	inventory();
+void cmd_status(AgiGame *state, uint8 *p) {
+	state->_vm->inventory();
 }
 
-void AgiEngine::cmd_quit(uint8 *p) {
+void cmd_quit(AgiGame *state, uint8 *p) {
 	const char *buttons[] = { "Quit", "Continue", NULL };
 
-	_sound->stopSound();
+	state->_vm->_sound->stopSound();
 	if (p0) {
-		quitGame();
+		state->_vm->quitGame();
 	} else {
-		if (selectionBox(" Quit the game, or continue? \n\n\n", buttons) == 0) {
-			quitGame();
+		if (state->_vm->selectionBox(" Quit the game, or continue? \n\n\n", buttons) == 0) {
+			state->_vm->quitGame();
 		}
 	}
 }
 
-void AgiEngine::cmd_restart_game(uint8 *p) {
+void cmd_restart_game(AgiGame *state, uint8 *p) {
 	const char *buttons[] = { "Restart", "Continue", NULL };
 	int sel;
 
-	_sound->stopSound();
+	state->_vm->_sound->stopSound();
 	sel = getflag(fAutoRestart) ? 0 :
-		selectionBox(" Restart _game, or continue? \n\n\n", buttons);
+		state->_vm->selectionBox(" Restart _game, or continue? \n\n\n", buttons);
 
 	if (sel == 0) {
-		_restartGame = true;
+		state->_vm->_restartGame = true;
 		setflag(fRestartGame, true);
-		_menu->enableAll();
+		state->_vm->_menu->enableAll();
 	}
 }
 
-void AgiEngine::cmd_distance(uint8 *p) {
+void cmd_distance(AgiGame *state, uint8 *p) {
 	int16 x1, y1, x2, y2, d;
-	VtEntry *v0 = &_game.viewTable[p0];
-	VtEntry *v1 = &_game.viewTable[p1];
+	VtEntry *v0 = &state->viewTable[p0];
+	VtEntry *v1 = &state->viewTable[p1];
 
 	if (v0->flags & DRAWN && v1->flags & DRAWN) {
 		x1 = v0->xPos + v0->xSize / 2;
@@ -1299,24 +1306,24 @@ void AgiEngine::cmd_distance(uint8 *p) {
 	_v[p2] = (unsigned char)d;
 }
 
-void AgiEngine::cmd_accept_input(uint8 *p) {
+void cmd_accept_input(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "input normal");
 
-	newInputMode(INPUT_NORMAL);
-	_game.inputEnabled = true;
-	writePrompt();
+	state->_vm->newInputMode(INPUT_NORMAL);
+	state->inputEnabled = true;
+	state->_vm->writePrompt();
 }
 
-void AgiEngine::cmd_prevent_input(uint8 *p) {
+void cmd_prevent_input(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "no input");
 
-	newInputMode(INPUT_NONE);
-	_game.inputEnabled = false;
+	state->_vm->newInputMode(INPUT_NONE);
+	state->inputEnabled = false;
 
-	clearPrompt();
+	state->_vm->clearPrompt();
 }
 
-void AgiEngine::cmd_get_string(uint8 *p) {
+void cmd_get_string(AgiGame *state, uint8 *p) {
 	int tex, row, col;
 
 	debugC(4, kDebugLevelScripts, "%d %d %d %d %d", p0, p1, p2, p3, p4);
@@ -1332,63 +1339,63 @@ void AgiEngine::cmd_get_string(uint8 *p) {
 	if (col > 39)
 		col = 39;
 
-	newInputMode(INPUT_GETSTRING);
+	state->_vm->newInputMode(INPUT_GETSTRING);
 
-	if (_curLogic->texts != NULL && _curLogic->numTexts >= tex) {
-		int len = strlen(_curLogic->texts[tex]);
+	if (state->_curLogic->texts != NULL && state->_curLogic->numTexts >= tex) {
+		int len = strlen(state->_curLogic->texts[tex]);
 
-		printText(_curLogic->texts[tex], 0, col, row, len, _game.colorFg, _game.colorBg);
-		getString(col + len - 1, row, p4, p0);
+		state->_vm->printText(state->_curLogic->texts[tex], 0, col, row, len, state->colorFg, state->colorBg);
+		state->_vm->getString(col + len - 1, row, p4, p0);
 
 		// SGEO: display input char
-		_gfx->printCharacter((col + len), row, _game.cursorChar, _game.colorFg, _game.colorBg);
+		state->_vm->_gfx->printCharacter((col + len), row, state->cursorChar, state->colorFg, state->colorBg);
 	}
 
 	do {
-		mainCycle();
-	} while (_game.inputMode == INPUT_GETSTRING && !(shouldQuit() || _restartGame));
+		state->_vm->mainCycle();
+	} while (state->inputMode == INPUT_GETSTRING && !(state->_vm->shouldQuit() || state->_vm->_restartGame));
 }
 
-void AgiEngine::cmd_get_num(uint8 *p) {
+void cmd_get_num(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "%d %d", p0, p1);
 
-	newInputMode(INPUT_GETSTRING);
+	state->_vm->newInputMode(INPUT_GETSTRING);
 
-	if (_curLogic->texts != NULL && _curLogic->numTexts >= (p0 - 1)) {
-		int len = strlen(_curLogic->texts[p0 - 1]);
+	if (state->_curLogic->texts != NULL && state->_curLogic->numTexts >= (p0 - 1)) {
+		int len = strlen(state->_curLogic->texts[p0 - 1]);
 
-		printText(_curLogic->texts[p0 - 1], 0, 0, 22, len, _game.colorFg, _game.colorBg);
-		getString(len - 1, 22, 3, MAX_STRINGS);
+		state->_vm->printText(state->_curLogic->texts[p0 - 1], 0, 0, 22, len, state->colorFg, state->colorBg);
+		state->_vm->getString(len - 1, 22, 3, MAX_STRINGS);
 
 		// CM: display input char
-		_gfx->printCharacter((p3 + len), 22, _game.cursorChar, _game.colorFg, _game.colorBg);
+		state->_vm->_gfx->printCharacter((p3 + len), 22, state->cursorChar, state->colorFg, state->colorBg);
 	}
 
 	do {
-		mainCycle();
-	} while (_game.inputMode == INPUT_GETSTRING && !(shouldQuit() || _restartGame));
+		state->_vm->mainCycle();
+	} while (state->inputMode == INPUT_GETSTRING && !(state->_vm->shouldQuit() || state->_vm->_restartGame));
 
-	_v[p1] = atoi(_game.strings[MAX_STRINGS]);
+	_v[p1] = atoi(state->strings[MAX_STRINGS]);
 
-	debugC(4, kDebugLevelScripts, "[%s] -> %d", _game.strings[MAX_STRINGS], _v[p1]);
+	debugC(4, kDebugLevelScripts, "[%s] -> %d", state->strings[MAX_STRINGS], _v[p1]);
 
-	clearLines(22, 22, _game.colorBg);
-	flushLines(22, 22);
+	state->_vm->clearLines(22, 22, state->colorBg);
+	state->_vm->flushLines(22, 22);
 }
 
-void AgiEngine::cmd_set_cursor_char(uint8 *p) {
-	if (_curLogic->texts != NULL && (p0 - 1) <= _curLogic->numTexts) {
-		_game.cursorChar = *_curLogic->texts[p0 - 1];
+void cmd_set_cursor_char(AgiGame *state, uint8 *p) {
+	if (state->_curLogic->texts != NULL && (p0 - 1) <= state->_curLogic->numTexts) {
+		state->cursorChar = *state->_curLogic->texts[p0 - 1];
 	} else {
 		// default
-		_game.cursorChar = '_';
+		state->cursorChar = '_';
 	}
 }
 
-void AgiEngine::cmd_set_key(uint8 *p) {
+void cmd_set_key(AgiGame *state, uint8 *p) {
 	int key;
 
-	if (_game.lastController >= MAX_CONTROLLERS) {
+	if (state->lastController >= MAX_CONTROLLERS) {
 		warning("Number of set.keys exceeded %d", MAX_CONTROLLERS);
 		return;
 	}
@@ -1397,35 +1404,35 @@ void AgiEngine::cmd_set_key(uint8 *p) {
 
 	key = 256 * p1 + p0;
 
-	_game.controllers[_game.lastController].keycode = key;
-	_game.controllers[_game.lastController].controller = p2;
-	_game.lastController++;
+	state->controllers[state->lastController].keycode = key;
+	state->controllers[state->lastController].controller = p2;
+	state->lastController++;
 
-	_game.controllerOccured[p2] = false;
+	state->controllerOccured[p2] = false;
 }
 
-void AgiEngine::cmd_set_string(uint8 *p) {
+void cmd_set_string(AgiGame *state, uint8 *p) {
 	// CM: to avoid crash in Groza (str = 150)
 	if (p0 > MAX_STRINGS)
 		return;
-	strcpy(_game.strings[p0], _curLogic->texts[p1 - 1]);
+	strcpy(state->strings[p0], state->_curLogic->texts[p1 - 1]);
 }
 
-void AgiEngine::cmd_display(uint8 *p) {
+void cmd_display(AgiGame *state, uint8 *p) {
 	int len = 40;
 
-	char *s = wordWrapString(_curLogic->texts[p2 - 1], &len);
+	char *s = state->_vm->wordWrapString(state->_curLogic->texts[p2 - 1], &len);
 
-	printText(s, p1, 0, p0, 40, _game.colorFg, _game.colorBg);
+	state->_vm->printText(s, p1, 0, p0, 40, state->colorFg, state->colorBg);
 
 	free(s);
 }
 
-void AgiEngine::cmd_display_f(uint8 *p) {
-	printText(_curLogic->texts[_v[p2] - 1], _v[p1], 0, _v[p0], 40, _game.colorFg, _game.colorBg);
+void cmd_display_f(AgiGame *state, uint8 *p) {
+	state->_vm->printText(state->_curLogic->texts[_v[p2] - 1], _v[p1], 0, _v[p0], 40, state->colorFg, state->colorBg);
 }
 
-void AgiEngine::cmd_clear_text_rect(uint8 *p) {
+void cmd_clear_text_rect(AgiGame *state, uint8 *p) {
 	int c, x1, y1, x2, y2;
 
 	if ((c = p4) != 0)
@@ -1446,21 +1453,21 @@ void AgiEngine::cmd_clear_text_rect(uint8 *p) {
 	if (y2 > GFX_HEIGHT)
 		y2 = GFX_HEIGHT - 1;
 
-	_gfx->drawRectangle(x1, y1, x2, y2, c);
-	_gfx->flushBlock(x1, y1, x2, y2);
+	state->_vm->_gfx->drawRectangle(x1, y1, x2, y2, c);
+	state->_vm->_gfx->flushBlock(x1, y1, x2, y2);
 }
 
-void AgiEngine::cmd_toggle_monitor(uint8 *p) {
+void cmd_toggle_monitor(AgiGame *state, uint8 *p) {
 	debug(0, "toggle.monitor");
 }
 
-void AgiEngine::cmd_echo_line(uint8 *p) {
-	strcpy((char *)_game.inputBuffer, (const char *)_game.echoBuffer);
-	_game.cursorPos = strlen((char *)_game.inputBuffer);
-	_game.hasPrompt = 0;
+void cmd_echo_line(AgiGame *state, uint8 *p) {
+	strcpy((char *)state->inputBuffer, (const char *)state->echoBuffer);
+	state->cursorPos = strlen((char *)state->inputBuffer);
+	state->hasPrompt = 0;
 }
 
-void AgiEngine::cmd_clear_lines(uint8 *p) {
+void cmd_clear_lines(AgiGame *state, uint8 *p) {
 	uint8 l;
 
 	// Residence 44 calls clear.lines(24,0,0), see Sarien bug #558423
@@ -1470,42 +1477,42 @@ void AgiEngine::cmd_clear_lines(uint8 *p) {
 	// #1935838 and #1935842
 	l = (l <= 24) ? l : 24;
 
-	clearLines(p0, l, p2);
-	flushLines(p0, l);
+	state->_vm->clearLines(p0, l, p2);
+	state->_vm->flushLines(p0, l);
 }
 
-void AgiEngine::cmd_print(uint8 *p) {
+void cmd_print(AgiGame *state, uint8 *p) {
 	int n = p0 < 1 ? 1 : p0;
 
-	print(_curLogic->texts[n - 1], 0, 0, 0);
+	state->_vm->print(state->_curLogic->texts[n - 1], 0, 0, 0);
 }
 
-void AgiEngine::cmd_print_f(uint8 *p) {
+void cmd_print_f(AgiGame *state, uint8 *p) {
 	int n = _v[p0] < 1 ? 1 : _v[p0];
 
-	print(_curLogic->texts[n - 1], 0, 0, 0);
+	state->_vm->print(state->_curLogic->texts[n - 1], 0, 0, 0);
 }
 
-void AgiEngine::cmd_print_at(uint8 *p) {
+void cmd_print_at(AgiGame *state, uint8 *p) {
 	int n = p0 < 1 ? 1 : p0;
 
 	debugC(4, kDebugLevelScripts, "%d %d %d %d", p0, p1, p2, p3);
 
-	print(_curLogic->texts[n - 1], p1, p2, p3);
+	state->_vm->print(state->_curLogic->texts[n - 1], p1, p2, p3);
 }
 
-void AgiEngine::cmd_print_at_v(uint8 *p) {
+void cmd_print_at_v(AgiGame *state, uint8 *p) {
 	int n = _v[p0] < 1 ? 1 : _v[p0];
 
-	print(_curLogic->texts[n - 1], p1, p2, p3);
+	state->_vm->print(state->_curLogic->texts[n - 1], p1, p2, p3);
 }
 
-void AgiEngine::cmd_push_script(uint8 *p) {
+void cmd_push_script(AgiGame *state, uint8 *p) {
 	// We run AGIMOUSE always as a side effect
 	if (getFeatures() & GF_AGIMOUSE || true) {
-		_game.vars[27] = _mouse.button;
-		_game.vars[28] = _mouse.x / 2;
-		_game.vars[29] = _mouse.y;
+		state->vars[27] = state->_vm->_mouse.button;
+		state->vars[28] = state->_vm->_mouse.x / 2;
+		state->vars[29] = state->_vm->_mouse.y;
 	} else {
 		if (getVersion() >= 0x2915) {
 			debug(0, "push.script");
@@ -1513,35 +1520,35 @@ void AgiEngine::cmd_push_script(uint8 *p) {
 	}
 }
 
-void AgiEngine::cmd_set_pri_base(uint8 *p) {
+void cmd_set_pri_base(AgiGame *state, uint8 *p) {
 	int i, x, pri;
 
 	debug(0, "Priority base set to %d", p0);
 
-	// _game.alt_pri = true;
+	// state->alt_pri = true;
 	x = (_HEIGHT - p0) * _HEIGHT / 10;
 
 	for (i = 0; i < _HEIGHT; i++) {
 		pri = (i - p0) < 0 ? 4 : (i - p0) * _HEIGHT / x + 5;
 		if (pri > 15)
 			pri = 15;
-		_game.priTable[i] = pri;
+		state->priTable[i] = pri;
 	}
 }
 
-void AgiEngine::cmd_mouse_posn(uint8 *p) {
-	_v[p0] = WIN_TO_PIC_X(_mouse.x);
-	_v[p1] = WIN_TO_PIC_Y(_mouse.y);
+void cmd_mouse_posn(AgiGame *state, uint8 *p) {
+	_v[p0] = WIN_TO_PIC_X(state->_vm->_mouse.x);
+	_v[p1] = WIN_TO_PIC_Y(state->_vm->_mouse.y);
 }
 
-void AgiEngine::cmd_shake_screen(uint8 *p) {
+void cmd_shake_screen(AgiGame *state, uint8 *p) {
 	int i;
 
 	// AGIPAL uses shake.screen values between 100 and 109 to set the palette
 	// (Checked the original AGIPAL-hack's shake.screen-routine's disassembly).
 	if (p0 >= 100 && p0 < 110) {
 		if (getFeatures() & GF_AGIPAL) {
-			_gfx->setAGIPal(p0);
+			state->_vm->_gfx->setAGIPal(p0);
 			return;
 		} else {
 			warning("It looks like GF_AGIPAL flag is missing");
@@ -1550,242 +1557,21 @@ void AgiEngine::cmd_shake_screen(uint8 *p) {
 
 	// Disables input while shaking to prevent bug
 	// #1678230: AGI: Entering text while screen is shaking
-	bool originalValue = _game.inputEnabled;
-	_game.inputEnabled = false;
+	bool originalValue = state->inputEnabled;
+	state->inputEnabled = false;
 
-	_gfx->shakeStart();
+	state->_vm->_gfx->shakeStart();
 
-	_sprites->commitBoth();		// Fixes SQ1 demo
+	state->_vm->_sprites->commitBoth();		// Fixes SQ1 demo
 	for (i = 4 * p0; i; i--) {
-		_gfx->shakeScreen(i & 1);
-		_gfx->flushBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
-		mainCycle();
+		state->_vm->_gfx->shakeScreen(i & 1);
+		state->_vm->_gfx->flushBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
+		state->_vm->mainCycle();
 	}
-	_gfx->shakeEnd();
+	state->_vm->_gfx->shakeEnd();
 
 	// Sets input back to what it was
-	_game.inputEnabled = originalValue;
-}
-
-void AgiEngine::setupOpcodes() {
-	AgiCondCommand condTmp[] = {
-		&AgiEngine::cond_end,				// 00
-		&AgiEngine::cond_equal,				// 01
-		&AgiEngine::cond_equalv,			// 02
-		&AgiEngine::cond_less,				// 03
-		&AgiEngine::cond_lessv,				// 04
-		&AgiEngine::cond_greater,			// 05
-		&AgiEngine::cond_greaterv,			// 06
-		&AgiEngine::cond_isset,				// 07
-		&AgiEngine::cond_issetv,			// 08
-		&AgiEngine::cond_has,				// 09
-		&AgiEngine::cond_obj_in_room,		// 0A
-		&AgiEngine::cond_posn,				// 0B
-		&AgiEngine::cond_controller,		// 0C
-		&AgiEngine::cond_have_key,			// 0D
-		&AgiEngine::cond_said,				// 0E
-		&AgiEngine::cond_compare_strings,	// 0F
-		&AgiEngine::cond_obj_in_box,		// 10
-		&AgiEngine::cond_center_posn,		// 11
-		&AgiEngine::cond_right_posn,		// 12
-		&AgiEngine::cond_unknown_13			// 13
-	};
-	for (int i = 0; i < 256; ++i)
-		_agiCondCommands[i] = &AgiEngine::cond_unknown;
-	for (int i = 0; i < ARRAYSIZE(condTmp); ++i)
-		_agiCondCommands[i] = condTmp[i];
-	_agiCondCommands[0xFF] = &AgiEngine::cond_end;
-	_agiCondCommands[0xFD] = &AgiEngine::cond_not;
-	_agiCondCommands[0xFC] = &AgiEngine::cond_or;
-
-	AgiCommand tmp[] = {
-		NULL,			// 0x00
-		&AgiEngine::cmd_increment,
-		&AgiEngine::cmd_decrement,
-		&AgiEngine::cmd_assignn,
-		&AgiEngine::cmd_assignv,
-		&AgiEngine::cmd_addn,
-		&AgiEngine::cmd_addv,
-		&AgiEngine::cmd_subn,
-		&AgiEngine::cmd_subv,	// 0x08
-		&AgiEngine::cmd_lindirectv,
-		&AgiEngine::cmd_rindirect,
-		&AgiEngine::cmd_lindirectn,
-		&AgiEngine::cmd_set,
-		&AgiEngine::cmd_reset,
-		&AgiEngine::cmd_toggle,
-		&AgiEngine::cmd_set_v,
-		&AgiEngine::cmd_reset_v,	// 0x10
-		&AgiEngine::cmd_toggle_v,
-		&AgiEngine::cmd_new_room,
-		&AgiEngine::cmd_new_room_f,
-		&AgiEngine::cmd_load_logic,
-		&AgiEngine::cmd_load_logic_f,
-		&AgiEngine::cmd_call,
-		&AgiEngine::cmd_call_f,
-		&AgiEngine::cmd_load_pic,	// 0x18
-		&AgiEngine::cmd_draw_pic,
-		&AgiEngine::cmd_show_pic,
-		&AgiEngine::cmd_discard_pic,
-		&AgiEngine::cmd_overlay_pic,
-		&AgiEngine::cmd_show_pri_screen,
-		&AgiEngine::cmd_load_view,
-		&AgiEngine::cmd_load_view_f,
-		&AgiEngine::cmd_discard_view,	// 0x20
-		&AgiEngine::cmd_animate_obj,
-		&AgiEngine::cmd_unanimate_all,
-		&AgiEngine::cmd_draw,
-		&AgiEngine::cmd_erase,
-		&AgiEngine::cmd_position,
-		&AgiEngine::cmd_position_f,
-		&AgiEngine::cmd_get_posn,
-		&AgiEngine::cmd_reposition,	// 0x28
-		&AgiEngine::cmd_set_view,
-		&AgiEngine::cmd_set_view_f,
-		&AgiEngine::cmd_set_loop,
-		&AgiEngine::cmd_set_loop_f,
-		&AgiEngine::cmd_fix_loop,
-		&AgiEngine::cmd_release_loop,
-		&AgiEngine::cmd_set_cel,
-		&AgiEngine::cmd_set_cel_f,	// 0x30
-		&AgiEngine::cmd_last_cel,
-		&AgiEngine::cmd_current_cel,
-		&AgiEngine::cmd_current_loop,
-		&AgiEngine::cmd_current_view,
-		&AgiEngine::cmd_number_of_loops,
-		&AgiEngine::cmd_set_priority,
-		&AgiEngine::cmd_set_priority_f,
-		&AgiEngine::cmd_release_priority,	// 0x38
-		&AgiEngine::cmd_get_priority,
-		&AgiEngine::cmd_stop_update,
-		&AgiEngine::cmd_start_update,
-		&AgiEngine::cmd_force_update,
-		&AgiEngine::cmd_ignore_horizon,
-		&AgiEngine::cmd_observe_horizon,
-		&AgiEngine::cmd_set_horizon,
-		&AgiEngine::cmd_object_on_water,	// 0x40
-		&AgiEngine::cmd_object_on_land,
-		&AgiEngine::cmd_object_on_anything,
-		&AgiEngine::cmd_ignore_objs,
-		&AgiEngine::cmd_observe_objs,
-		&AgiEngine::cmd_distance,
-		&AgiEngine::cmd_stop_cycling,
-		&AgiEngine::cmd_start_cycling,
-		&AgiEngine::cmd_normal_cycle,	// 0x48
-		&AgiEngine::cmd_end_of_loop,
-		&AgiEngine::cmd_reverse_cycle,
-		&AgiEngine::cmd_reverse_loop,
-		&AgiEngine::cmd_cycle_time,
-		&AgiEngine::cmd_stop_motion,
-		&AgiEngine::cmd_start_motion,
-		&AgiEngine::cmd_step_size,
-		&AgiEngine::cmd_step_time,	// 0x50
-		&AgiEngine::cmd_move_obj,
-		&AgiEngine::cmd_move_obj_f,
-		&AgiEngine::cmd_follow_ego,
-		&AgiEngine::cmd_wander,
-		&AgiEngine::cmd_normal_motion,
-		&AgiEngine::cmd_set_dir,
-		&AgiEngine::cmd_get_dir,
-		&AgiEngine::cmd_ignore_blocks,	// 0x58
-		&AgiEngine::cmd_observe_blocks,
-		&AgiEngine::cmd_block,
-		&AgiEngine::cmd_unblock,
-		&AgiEngine::cmd_get,
-		&AgiEngine::cmd_get_f,
-		&AgiEngine::cmd_drop,
-		&AgiEngine::cmd_put,
-		&AgiEngine::cmd_put_f,	// 0x60
-		&AgiEngine::cmd_get_room_f,
-		&AgiEngine::cmd_load_sound,
-		&AgiEngine::cmd_sound,
-		&AgiEngine::cmd_stop_sound,
-		&AgiEngine::cmd_print,
-		&AgiEngine::cmd_print_f,
-		&AgiEngine::cmd_display,
-		&AgiEngine::cmd_display_f,	// 0x68
-		&AgiEngine::cmd_clear_lines,
-		&AgiEngine::cmd_text_screen,
-		&AgiEngine::cmd_graphics,
-		&AgiEngine::cmd_set_cursor_char,
-		&AgiEngine::cmd_set_text_attribute,
-		&AgiEngine::cmd_shake_screen,
-		&AgiEngine::cmd_configure_screen,
-		&AgiEngine::cmd_status_line_on,	// 0x70
-		&AgiEngine::cmd_status_line_off,
-		&AgiEngine::cmd_set_string,
-		&AgiEngine::cmd_get_string,
-		&AgiEngine::cmd_word_to_string,
-		&AgiEngine::cmd_parse,
-		&AgiEngine::cmd_get_num,
-		&AgiEngine::cmd_prevent_input,
-		&AgiEngine::cmd_accept_input,	// 0x78
-		&AgiEngine::cmd_set_key,
-		&AgiEngine::cmd_add_to_pic,
-		&AgiEngine::cmd_add_to_pic_f,
-		&AgiEngine::cmd_status,
-		&AgiEngine::cmd_save_game,
-		&AgiEngine::cmd_load_game,
-		&AgiEngine::cmd_init_disk,
-		&AgiEngine::cmd_restart_game,	// 0x80
-		&AgiEngine::cmd_show_obj,
-		&AgiEngine::cmd_random,
-		&AgiEngine::cmd_program_control,
-		&AgiEngine::cmd_player_control,
-		&AgiEngine::cmd_obj_status_f,
-		&AgiEngine::cmd_quit,
-		&AgiEngine::cmd_show_mem,
-		&AgiEngine::cmd_pause,	// 0x88
-		&AgiEngine::cmd_echo_line,
-		&AgiEngine::cmd_cancel_line,
-		&AgiEngine::cmd_init_joy,
-		&AgiEngine::cmd_toggle_monitor,
-		&AgiEngine::cmd_version,
-		&AgiEngine::cmd_script_size,
-		&AgiEngine::cmd_set_game_id,
-		&AgiEngine::cmd_log,	// 0x90
-		&AgiEngine::cmd_set_scan_start,
-		&AgiEngine::cmd_reset_scan_start,
-		&AgiEngine::cmd_reposition_to,
-		&AgiEngine::cmd_reposition_to_f,
-		&AgiEngine::cmd_trace_on,
-		&AgiEngine::cmd_trace_info,
-		&AgiEngine::cmd_print_at,
-		&AgiEngine::cmd_print_at_v,	// 0x98
-		&AgiEngine::cmd_discard_view,	// Opcode repeated from 0x20 ?
-		&AgiEngine::cmd_clear_text_rect,
-		&AgiEngine::cmd_set_upper_left,
-		&AgiEngine::cmd_set_menu,
-		&AgiEngine::cmd_set_menu_item,
-		&AgiEngine::cmd_submit_menu,
-		&AgiEngine::cmd_enable_item,
-		&AgiEngine::cmd_disable_item,	// 0xa0
-		&AgiEngine::cmd_menu_input,
-		&AgiEngine::cmd_show_obj_v,
-		&AgiEngine::cmd_open_dialogue,
-		&AgiEngine::cmd_close_dialogue,
-		&AgiEngine::cmd_mul_n,
-		&AgiEngine::cmd_mul_v,
-		&AgiEngine::cmd_div_n,
-		&AgiEngine::cmd_div_v,	// 0xa8
-		&AgiEngine::cmd_close_window,
-		&AgiEngine::cmd_set_simple,
-		&AgiEngine::cmd_push_script,
-		&AgiEngine::cmd_pop_script,
-		&AgiEngine::cmd_hold_key,
-		&AgiEngine::cmd_set_pri_base,
-		&AgiEngine::cmd_discard_sound,
-		&AgiEngine::cmd_hide_mouse,	// 0xb0
-		&AgiEngine::cmd_allow_menu,
-		&AgiEngine::cmd_show_mouse,
-		&AgiEngine::cmd_fence_mouse,
-		&AgiEngine::cmd_mouse_posn,
-		&AgiEngine::cmd_release_key,
-		&AgiEngine::cmd_adj_ego_move_to_x_y
-	};
-	assert(ARRAYSIZE(_agiCommands) == ARRAYSIZE(tmp));
-	for (int i = 0; i < ARRAYSIZE(tmp); ++i)
-		_agiCommands[i] = tmp[i];
+	state->inputEnabled = originalValue;
 }
 
 /**
@@ -1798,6 +1584,7 @@ int AgiEngine::runLogic(int n) {
 	uint8 *code = NULL;
 	int num = 0;
 	ScriptPos sp;
+	AgiGame *state = &_game;
 
 	debugC(2, kDebugLevelScripts, "=================");
 	debugC(2, kDebugLevelScripts, "runLogic(%d)", n);
@@ -1813,10 +1600,10 @@ int AgiEngine::runLogic(int n) {
 	}
 
 	_game.lognum = n;
-	_curLogic = &_game.logics[_game.lognum];
+	_game._curLogic = &_game.logics[_game.lognum];
 
-	code = _curLogic->data;
-	_curLogic->cIP = _curLogic->sIP;
+	code = _game._curLogic->data;
+	_game._curLogic->cIP = _game._curLogic->sIP;
 
 	_timerHack = 0;
 	while (ip < _game.logics[n].size && !(shouldQuit() || _restartGame)) {
@@ -1866,13 +1653,14 @@ int AgiEngine::runLogic(int n) {
 			_game.execStack.pop_back();
 			return 1;
 		default:
-			num = logicNamesCmd[op].numArgs;
+			num = logicNamesCmd[op].argumentsLength();
 			memmove(p, code + ip, num);
 			memset(p + num, 0, CMD_BSIZE - num);
 
 			debugC(2, kDebugLevelScripts, "%s%s(%d %d %d)", st, logicNamesCmd[op].name, p[0], p[1], p[2]);
 
-			(this->*_agiCommands[op])(p);
+//			(this->*_agiCommands[op])(&_game, p);
+			_agiCommands[op](&_game, p);
 			ip += num;
 		}
 
@@ -1888,7 +1676,8 @@ int AgiEngine::runLogic(int n) {
 void AgiEngine::executeAgiCommand(uint8 op, uint8 *p) {
 	debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logicNamesCmd[op].name, p[0], p[1], p[2]);
 
-	(this->*_agiCommands[op])(p);
+	_agiCommands[op](&_game, p);
+//	(this->*_agiCommands[op])(p);
 }
 
 } // End of namespace Agi

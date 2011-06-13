@@ -96,8 +96,8 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 	for (int i = 0; logicNamesCmd[i].name; i++) {
 		if (!strcmp(argv[1], logicNamesCmd[i].name)) {
 			uint8 p[16];
-			if ((argc - 2) != logicNamesCmd[i].numArgs) {
-				DebugPrintf("AGI command wants %d arguments\n", logicNamesCmd[i].numArgs);
+			if ((argc - 2) != logicNamesCmd[i].argumentsLength()) {
+				DebugPrintf("AGI command wants %d arguments\n", logicNamesCmd[i].argumentsLength());
 				return 0;
 			}
 			p[0] = argv[2] ? (char)strtoul(argv[2], NULL, 0) : 0;
@@ -260,7 +260,7 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 	for (it = _vm->_game.execStack.begin(); it != _vm->_game.execStack.end(); ++it) {
 		code = _vm->_game.logics[it->script].data;
 		op = code[it->curIP];
-		num = logicNamesCmd[op].numArgs;
+		num = logicNamesCmd[op].argumentsLength();
 		memmove(p, &code[it->curIP], num);
 		memset(p + num, 0, CMD_BSIZE - num);
 

@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	menu.o \
 	motion.o \
 	objects.o \
+	opcodes.o \
 	op_cmd.o \
 	op_dbg.o \
 	op_test.o \
