@@ -432,12 +432,12 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 }
 
 bool DreamWebEngine::loadSpeech(const Common::String &filename) {
-	debug(1, "loadSpeech(%s)", filename.c_str());
 	Common::File file;
 	if (!file.open("speech/" + filename))
 		return false;
 
-	debug(1, "\tfound speech file");
+	debug(1, "loadSpeech(%s)", filename.c_str());
+
 	uint size = file.size();
 	_speechData.resize(size);
 	file.read(_speechData.begin(), size);
@@ -468,6 +468,10 @@ void DreamWebEngine::soundHandler() {
 			playSound(1, ch1, 1);
 		}
 	}
+	if (!_mixer->isSoundHandleActive(_channelHandle[0]))
+		_context.data.byte(dreamgen::kCh0playing) = 255;
+	if (!_mixer->isSoundHandleActive(_channelHandle[1]))
+		_context.data.byte(dreamgen::kCh1playing) = 255;
 }
 
 void DreamWebEngine::loadSounds(uint bank, const Common::String &filename) {
