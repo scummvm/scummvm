@@ -25,54 +25,54 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__BOOT__
-#define		__BOOT__
+#ifndef __BOOT__
+#define __BOOT__
 
-#include	"cge/jbw.h"
+#include "cge/jbw.h"
 
 namespace CGE {
 
-#define		BOOTSECT_SIZ	512
-#define		BOOTHEAD_SIZ	62
-#define		BOOTCODE_SIZ	BOOTSECT_SIZ-BOOTHEAD_SIZ
-#define		FreeBoot(b)	free(b)
+#define BOOTSECT_SIZ  512
+#define BOOTHEAD_SIZ  62
+#define BOOTCODE_SIZ  BOOTSECT_SIZ-BOOTHEAD_SIZ
+#define FreeBoot(b)   free(b)
 
-#ifndef		EC
-  #define	EC
+#ifndef EC
+#define EC
 #endif
 
 typedef struct {
-		 uint8	Jmp[3];			// NEAR jump machine code
-		 char	OEM_ID[8];		// OEM name and version
-		 uint16	SectSize;		// bytes per sector
-		 uint8	ClustSize;		// sectors per cluster
-		 uint16	ResSecs;		// sectors before 1st FAT
-		 uint8	FatCnt;			// number of FATs
-		 uint16	RootSize;		// root directory entries
-		 uint16	TotSecs;		// total sectors on disk
-		 uint8	Media;			// media descriptor byte
-		 uint16	FatSize;		// sectors per FAT
-		 uint16	TrkSecs;		// sectors per track
-		 uint16	HeadCnt;		// number of sufraces
-		 uint16	HidnSecs;		// special hidden sectors
-		 uint16	_;			//  (unknown: reserved?)
-		 uint32	lTotSecs;		// total number of sectors
-		 uint16	DriveNum;		// physical drive number
-		 uint8	XSign;			// extended boot signature
-		 uint32	Serial;			// volume serial number
-		 char	Label[11];		// volume label
-		 char	FileSysID[8];		// file system ID
-		 char	Code[BOOTCODE_SIZ-8];	// 8 = length of following
-		 uint32	Secret;			// long secret number
-		 uint8	BootCheck;		// boot sector checksum
-		 uint8	BootFlags;		// secret flags
-		 uint16	BootSig;		// boot signature 0xAA55
-		} Boot;
+	uint8  Jmp[3];                                    // NEAR jump machine code
+	char   OEM_ID[8];                                 // OEM name and version
+	uint16 SectSize;                                  // bytes per sector
+	uint8  ClustSize;                                 // sectors per cluster
+	uint16 ResSecs;                                   // sectors before 1st FAT
+	uint8  FatCnt;                                    // number of FATs
+	uint16 RootSize;                                  // root directory entries
+	uint16 TotSecs;                                   // total sectors on disk
+	uint8  Media;                                     // media descriptor byte
+	uint16 FatSize;                                   // sectors per FAT
+	uint16 TrkSecs;                                   // sectors per track
+	uint16 HeadCnt;                                   // number of sufraces
+	uint16 HidnSecs;                                  // special hidden sectors
+	uint16 _;                                         //  (unknown: reserved?)
+	uint32 lTotSecs;                                  // total number of sectors
+	uint16 DriveNum;                                  // physical drive number
+	uint8  XSign;                                     // extended boot signature
+	uint32 Serial;                                    // volume serial number
+	char   Label[11];                                 // volume label
+	char   FileSysID[8];                              // file system ID
+	char   Code[BOOTCODE_SIZ - 8];                    // 8 = length of following
+	uint32 Secret;                                    // long secret number
+	uint8  BootCheck;                                 // boot sector checksum
+	uint8  BootFlags;                                 // secret flags
+	uint16 BootSig;                                   // boot signature 0xAA55
+} Boot;
 
 
-EC	Boot *		ReadBoot	(int drive);
-EC	uint8		CheckBoot	(Boot * boot);
-EC	bool		WriteBoot	(int drive, Boot * boot);
+EC Boot  *ReadBoot(int drive);
+EC uint8  CheckBoot(Boot *boot);
+EC bool   WriteBoot(int drive, Boot *boot);
 
 } // End of namespace CGE
 

@@ -25,32 +25,30 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef	__GETTEXT__
-#define	__GETTEXT__
+#ifndef __GETTEXT__
+#define __GETTEXT__
 
-#include	"cge/general.h"
-#include	"cge/talk.h"
+#include "cge/general.h"
+#include "cge/talk.h"
 
 namespace CGE {
 
-#define		GTMAX		24
-#define		GTBLINK		 6
-#define		GTTIME		 6
+#define GTMAX       24
+#define GTBLINK      6
+#define GTTIME       6
 
-
-class GET_TEXT : public TALK
-{
-  char Buff[GTMAX+2], * Text;
-  uint16 Size, Len;
-  uint16 Cntr;
-  SPRITE * OldKeybClient;
-  void (*Click)(void);
+class GET_TEXT : public TALK {
+	char Buff[GTMAX + 2], * Text;
+	uint16 Size, Len;
+	uint16 Cntr;
+	SPRITE *OldKeybClient;
+	void (*Click)(void);
 public:
-  static GET_TEXT * Ptr;
-  GET_TEXT (const char * info, char * text, int size, void (*click)(void) = NULL);
-  ~GET_TEXT (void);
-  void Touch (uint16 mask, int x, int y);
-  void Tick (void);
+	static GET_TEXT *Ptr;
+	GET_TEXT(const char *info, char *text, int size, void (*click)(void) = NULL);
+	~GET_TEXT(void);
+	void Touch(uint16 mask, int x, int y);
+	void Tick(void);
 };
 
 } // End of namespace CGE

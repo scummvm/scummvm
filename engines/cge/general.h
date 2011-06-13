@@ -25,243 +25,218 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__GENERAL__
-#define		__GENERAL__
+#ifndef __GENERAL__
+#define __GENERAL__
 
 #include "common/system.h"
 #include "common/random.h"
 #include "common/textconsole.h"
 #include "common/str.h"
-
-#include	"cge\jbw.h"
-#include	<io.h>
+#include "cge/jbw.h"
+#include <io.h>
+#include "cge/boot.h"
 
 namespace CGE {
 
-#define		SEED		0xA5
+#define     SEED        0xA5
 
-#define		SCR_WID_	320
-#define		SCR_HIG_	200
-#define		SCR_WID		((uint16)SCR_WID_)
-#define		SCR_HIG		((uint16)SCR_HIG_)
-#define		SCR_SEG		0xA000
-#define		SCR_ADR		((uint8 *) MK_FP(SCR_SEG, 0))
+#define     SCR_WID_    320
+#define     SCR_HIG_    200
+#define     SCR_WID     ((uint16)SCR_WID_)
+#define     SCR_HIG     ((uint16)SCR_HIG_)
+#define     SCR_SEG     0xA000
+#define     SCR_ADR     ((uint8 *) MK_FP(SCR_SEG, 0))
 
 
 
-//enum	CPU		{ _8086, _80186, _80286, _80386, _80486 };
-enum	MEM_TYPE	{ BAD_MEM, EMS_MEM, NEAR_MEM, FAR_MEM };
-enum	ALLOC_MODE	{ FIRST_FIT, BEST_FIT, LAST_FIT };
-enum	IOMODE		{ REA, WRI, UPD };
+//enum  CPU     { _8086, _80186, _80286, _80386, _80486 };
+enum    MEM_TYPE    { BAD_MEM, EMS_MEM, NEAR_MEM, FAR_MEM };
+enum    ALLOC_MODE  { FIRST_FIT, BEST_FIT, LAST_FIT };
+enum    IOMODE      { REA, WRI, UPD };
 
-typedef	struct	{
-		  uint8 R, G, B;
-		} DAC;
+typedef struct  {
+	uint8 R, G, B;
+} DAC;
 
-typedef	uint16	CRYPT	(void *buf, uint16 siz, uint16 seed);
+typedef uint16  CRYPT(void *buf, uint16 siz, uint16 seed);
 
 extern Common::RandomSource randSrc;
 
 #define new_random(a)  (randSrc.getRandomNumber(a))
 
-class COUPLE
-{
+class COUPLE {
 protected:
-  signed char A;
-  signed char B;
+	signed char A;
+	signed char B;
 public:
-  COUPLE (void) { }
-  COUPLE (const signed char a, const signed char b) : A(a), B(b) { }
-  COUPLE operator + (COUPLE c) { return COUPLE(A+c.A, B+c.B); }
-  void operator += (COUPLE c) { A += c.A; B += c.B; }
-  COUPLE operator - (COUPLE c) { return COUPLE(A-c.A, B-c.B); }
-  void operator -= (COUPLE c) { A -= c.A; B -= c.B; }
-  bool operator == (COUPLE c) { return ((A - c.A) | (B - c.B)) == 0; }
-  bool operator != (COUPLE c) { return ! (operator == (c)); }
-  void Split (signed char& a, signed char& b) { a = A; b = B; }
+	COUPLE(void) { }
+	COUPLE(const signed char a, const signed char b) : A(a), B(b) { }
+	COUPLE operator + (COUPLE c) {
+		return COUPLE(A + c.A, B + c.B);
+	}
+	
+	void operator += (COUPLE c) {
+		A += c.A;
+		B += c.B;
+	}
+
+	COUPLE operator - (COUPLE c) {
+		return COUPLE(A - c.A, B - c.B);
+	}
+
+	void operator -= (COUPLE c) {
+		A -= c.A;
+		B -= c.B;
+	}
+
+	bool operator == (COUPLE c) {
+		return ((A - c.A) | (B - c.B)) == 0;
+	}
+
+	bool operator != (COUPLE c) {
+		return !(operator == (c));
+	}
+
+	void Split(signed char &a, signed char &b) {
+		a = A;
+		b = B;
+	}
 };
 
 
-//-------------------------------------------------------------------------
-
-
-
-class ENGINE
-{
+class ENGINE {
 protected:
-  static void (* OldTimer) (...);
-  static void NewTimer (...);
+	static void (* OldTimer)(...);
+	static void NewTimer(...);
 public:
-  ENGINE (uint16 tdiv);
-  ~ENGINE (void);
+	ENGINE(uint16 tdiv);
+	~ENGINE(void);
 };
-
-
-
-
-//-------------------------------------------------------------------------
 
 
 class EMS;
 
 
-
-class EMM
-{
-  friend EMS;
-  bool Test (void);
-  long Top, Lim;
-  EMS * List;
-  int Han;
-  static void * Frame;
+class EMM {
+	friend EMS;
+	bool Test(void);
+	long Top, Lim;
+	EMS *List;
+	int Han;
+	static void *Frame;
 public:
-  EMM::EMM (long size = 0);
-  EMM::~EMM (void);
-  EMS * Alloc (uint16 siz);
-  void Release (void);
+	EMM::EMM(long size = 0);
+	EMM::~EMM(void);
+	EMS *Alloc(uint16 siz);
+	void Release(void);
 };
 
 
-
-
-
-class EMS
-{
-  friend EMM;
-  EMM * Emm;
-  long Ptr;
-  uint16 Siz;
-  EMS * Nxt;
+class EMS {
+	friend EMM;
+	EMM *Emm;
+	long Ptr;
+	uint16 Siz;
+	EMS *Nxt;
 public:
-  EMS (void);
-  void * operator & () const;
-  uint16 Size (void);
+	EMS(void);
+	void *operator & () const;
+	uint16 Size(void);
 };
-
-
-
-//-------------------------------------------------------------------------
-
-
 
 
 template <class T>
-void Swap (T& A, T& B)
-{
-  T a = A;
-    A = B;
-    B = a;
+void Swap(T &A, T &B) {
+	T a = A;
+	A = B;
+	B = a;
 };
-
-
-
 
 
 #ifdef __cplusplus
-
-
 template <class T>
-T max (T A, T B)
-{
-  return (A > B) ? A : B;
+T max(T A, T B) {
+	return (A > B) ? A : B;
 };
 
-
-
 template <class T>
-T min (T A, T B)
-{
-  return (A < B) ? A : B;
+T min(T A, T B) {
+	return (A < B) ? A : B;
 };
-
-
 #endif
 
 
-
-
-
-
-
-class XFILE
-{
+class XFILE {
 public:
-  IOMODE Mode;
-  uint16 Error;
-  XFILE (void) : Mode(REA), Error(0) { }
-  XFILE (IOMODE mode) : Mode(mode), Error(0) { }
-  virtual uint16 Read (void * buf, uint16 len) = 0;
-  virtual uint16 Write (void * buf, uint16 len) = 0;
-  virtual long Mark (void) = 0;
-  virtual long Size (void) = 0;
-  virtual long Seek (long pos) = 0;
+	IOMODE Mode;
+	uint16 Error;
+	XFILE(void) : Mode(REA), Error(0) { }
+	XFILE(IOMODE mode) : Mode(mode), Error(0) { }
+	virtual uint16 Read(void *buf, uint16 len) = 0;
+	virtual uint16 Write(void *buf, uint16 len) = 0;
+	virtual long Mark(void) = 0;
+	virtual long Size(void) = 0;
+	virtual long Seek(long pos) = 0;
 };
-
-
-
 
 
 template <class T>
-inline uint16 XRead (XFILE * xf, T * t)
-{
-  return xf->Read((uint8 *) t, sizeof(*t));
+inline uint16 XRead(XFILE *xf, T *t) {
+	return xf->Read((uint8 *) t, sizeof(*t));
 };
 
 
-
-
-
-class IOHAND : public XFILE
-{
+class IOHAND : public XFILE {
 protected:
-  int Handle;
-  uint16 Seed;
-  CRYPT * Crypt;
+	int Handle;
+	uint16 Seed;
+	CRYPT *Crypt;
 public:
-  IOHAND (const char * name, IOMODE mode = REA, CRYPT crypt = NULL);
-  IOHAND (IOMODE mode = REA, CRYPT * crpt = NULL);
-  virtual ~IOHAND (void);
-  static bool Exist (const char * name);
-  uint16 Read (void * buf, uint16 len);
-  uint16 Write (void * buf, uint16 len);
-  long Mark (void);
-  long Size (void);
-  long Seek (long pos);
-  //timeb  Time (void);
- // void SetTime (timeb  t);
+	IOHAND(const char *name, IOMODE mode = REA, CRYPT crypt = NULL);
+	IOHAND(IOMODE mode = REA, CRYPT *crpt = NULL);
+	virtual ~IOHAND(void);
+	static bool Exist(const char *name);
+	uint16 Read(void *buf, uint16 len);
+	uint16 Write(void *buf, uint16 len);
+	long Mark(void);
+	long Size(void);
+	long Seek(long pos);
+	//timeb  Time (void);
+// void SetTime (timeb  t);
 };
 
 
-
-
-
-CRYPT		XCrypt;
-CRYPT		RCrypt;
-
-MEM_TYPE	MemType		(void *mem);
-uint16		atow		(const char * a);
-uint16		xtow		(const char * x);
-char *		wtom		(uint16 val, char * str, int radix, int len);
-char *		dwtom		(uint32 val, char * str, int radix, int len);
-int		TakeEnum	(const char ** tab, const char * txt);
-uint16		ChkSum		(void *m, uint16 n);
-long		Timer		(void);
-char *		MergeExt	(char * buf, const char * nam, const char * ext);
-char *		ForceExt	(char * buf, const char * nam, const char * ext);
-int 		DriveCD		(unsigned drv);
-bool		IsVga		(void);
+CRYPT     XCrypt;
+CRYPT     RCrypt;
+MEM_TYPE  MemType(void *mem);
+uint16    atow(const char *a);
+uint16    xtow(const char *x);
+char     *wtom(uint16 val, char *str, int radix, int len);
+char     *dwtom(uint32 val, char *str, int radix, int len);
+int       TakeEnum(const char **tab, const char *txt);
+uint16    ChkSum(void *m, uint16 n);
+long      Timer(void);
+char     *MergeExt(char *buf, const char *nam, const char *ext);
+char     *ForceExt(char *buf, const char *nam, const char *ext);
+int       DriveCD(unsigned drv);
+bool      IsVga(void);
 
 
 // MISSING FUNCTIONS
-EC void		_fqsort		(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void*, const void*));
-const char *ProgName	(const char *ext = NULL);
-char *MergeExt (char *buf, const char *nam, const char *ext);
-char *ForceExt (char *buf, const char *nam, const char *ext);
-unsigned FastRand (void);
-unsigned FastRand (unsigned s);
-uint16 RCrypt (void * buf, uint16 siz, uint16 seed);
-uint16 atow (const char *a);
-uint16 xtow (const char *x);
+EC void     _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *));
+const char *ProgName(const char *ext = NULL);
+char *MergeExt(char *buf, const char *nam, const char *ext);
+char *ForceExt(char *buf, const char *nam, const char *ext);
+unsigned FastRand(void);
+unsigned FastRand(unsigned s);
+uint16 RCrypt(void *buf, uint16 siz, uint16 seed);
+uint16 atow(const char *a);
+uint16 xtow(const char *x);
+char *wtom(uint16 val, char *str, int radix, int len);
+char *dwtom(uint32 val, char * str, int radix, int len);
+int TakeEnum(const char **tab, const char *txt);
+Boot *ReadBoot(int drive);
+long Timer(void);
 
 } // End of namespace CGE
 

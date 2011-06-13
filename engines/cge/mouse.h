@@ -25,61 +25,57 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__MOUSE__
-#define		__MOUSE__
+#ifndef __MOUSE__
+#define __MOUSE__
 
-#include	"cge/game.h"
-#include	"cge/talk.h"
+#include "cge/game.h"
+#include "cge/talk.h"
 
 namespace CGE {
 
-#define		EVT_MAX		256
-#define		ROLL		0x01
-#define		L_DN		0x02
-#define		L_UP		0x04
-#define		R_DN		0x08
-#define		R_UP		0x10
-#define		ATTN		0x20
-//				0x40
-#define		KEYB		0x80
+#define EVT_MAX     256
+#define ROLL        0x01
+#define L_DN        0x02
+#define L_UP        0x04
+#define R_DN        0x08
+#define R_UP        0x10
+#define ATTN        0x20 // 0x40
+#define KEYB        0x80
 
 
-extern	TALK *	Talk;
+extern TALK *Talk;
 
-struct	EVENT	{ uint16 Msk;
-		  uint16 X, Y;
-		  SPRITE * Ptr;
-		};
-extern	EVENT	Evt[EVT_MAX];
-extern	uint16	EvtHead, EvtTail;
-typedef	void	(MOUSE_FUN)		(void);
-
-
-
-
-
-class MOUSE : public SPRITE
-{
-  static MOUSE_FUN * OldMouseFun;
-  static MOUSE_FUN NewMouseFun;
-  static uint16 OldMouseMask;
-  SPRITE * Hold;
-  int hx, hy;
-  //void SetFun (void);
-  //void ResetFun (void);
-public:
-  bool Exist;
-  int Buttons;
-  SPRITE * Busy;
-  //SPRITE * Touched;
-  MOUSE (BITMAP ** shpl = MC);
-  ~MOUSE (void);
-  void On (void);
-  void Off (void);
-  static void ClrEvt (SPRITE * spr = NULL);
-  void Tick (void);
+struct EVENT {
+	uint16 Msk;
+	uint16 X, Y;
+	SPRITE *Ptr;
 };
 
+extern EVENT  Evt[EVT_MAX];
+extern uint16 EvtHead, EvtTail;
+typedef void (MOUSE_FUN)(void);
+
+
+class MOUSE : public SPRITE {
+	static MOUSE_FUN *OldMouseFun;
+	static MOUSE_FUN NewMouseFun;
+	static uint16 OldMouseMask;
+	SPRITE *Hold;
+	int hx, hy;
+	//void SetFun (void);
+	//void ResetFun (void);
+public:
+	bool Exist;
+	int Buttons;
+	SPRITE *Busy;
+	//SPRITE * Touched;
+	MOUSE(BITMAP **shpl = MC);
+	~MOUSE(void);
+	void On(void);
+	void Off(void);
+	static void ClrEvt(SPRITE *spr = NULL);
+	void Tick(void);
+};
 
 } // End of namespace CGE
 

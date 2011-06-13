@@ -32,149 +32,150 @@
 
 namespace CGE {
 
+// Defines found in cge.mak
+#define DEBUG
 #define VOL
-#define INI_FILE VFILE
+#define INI_FILE VFILE // Or is it CFILE?
 #define PIC_FILE VFILE
 #define BMP_MODE 0
+//
 
-#define		BEL		 7
-#define		BS		 8
-#define		HT		 9
-#define		LF		10
-#define		FF		12
-#define		CR		13
+#define BEL      7
+#define BS       8
+#define HT       9
+#define LF      10
+#define FF      12
+#define CR      13
 
-#define		TRUE	1
-#define		FALSE	0
+#define TRUE    1
+#define FALSE   0
 
-#define		MAXFILE 128
+#define MAXFILE 128
 
-#define		NULL		0
-#define		OFF		false
-#define		ON		true
+#define NULL        0
+#define OFF     false
+#define ON      true
 
-#define		IsWhite(c)	((c) == ' ' || (c) == '\t' || (c) == '\n')
-#define		IsUpper(c)	((c) >= 'A' && (c) <= 'Z')
-#define		IsLower(c)	((c) >= 'a' && (c) <= 'z')
-#define         IsDigit(c)	((c) >= '0' && (c) <= '9')
-#define		IsAlpha(c)	(IsLower(c) || IsUpper(c) || (c) == '_')
-#define		IsAlNum(c)	(IsAlpha(c) || IsDigit(c))
-#define		IsHxDig(c)	(IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
+#define IsWhite(c)  ((c) == ' ' || (c) == '\t' || (c) == '\n')
+#define IsUpper(c)  ((c) >= 'A' && (c) <= 'Z')
+#define IsLower(c)  ((c) >= 'a' && (c) <= 'z')
+#define IsDigit(c)  ((c) >= '0' && (c) <= '9')
+#define IsAlpha(c)  (IsLower(c) || IsUpper(c) || (c) == '_')
+#define IsAlNum(c)  (IsAlpha(c) || IsDigit(c))
+#define IsHxDig(c)  (IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
 
-#define		farnew(t,n)	((t *) malloc(sizeof(t) * (n)))
-#define		ArrayCount(a)	(sizeof(a)/sizeof((a)[0]))
-#define		MAX_TIMER	0x1800B0L
+#define farnew(t,n) ((t *) malloc(sizeof(t) * (n)))
+#define ArrayCount(a)   (sizeof(a)/sizeof((a)[0]))
+#define MAX_TIMER   0x1800B0L
 
-typedef	void (MouseFunType)(void);
+typedef void (MouseFunType)(void);
 
-#define		Lo(d)		(((int *) &d)[0])
-#define		Hi(d)		(((int *) &d)[1])
-#define		LoWord(d)	((uint16) Lo(d))
-#define		HiWord(d)	((uint16) Hi(d))
-#define		K(n)		(1024*(n))
-#define		MASK(n)		((1<<n)-1)
+#define Lo(d)       (((int *) &d)[0])
+#define Hi(d)       (((int *) &d)[1])
+#define LoWord(d)   ((uint16) Lo(d))
+#define HiWord(d)   ((uint16) Hi(d))
+#define K(n)        (1024*(n))
+#define MASK(n)     ((1<<n)-1)
 
-typedef enum
-  {
-    NoKey	= 0, CtrlA, CtrlB, CtrlC, CtrlD, CtrlE, CtrlF, CtrlG, CtrlH,
-		     CtrlI, CtrlJ, CtrlK, CtrlL, CtrlM, CtrlN, CtrlO, CtrlP,
-		     CtrlQ, CtrlR, CtrlS, CtrlT, CtrlU, CtrlV, CtrlW, CtrlX,
-		     CtrlY, CtrlZ,
-    BSp		= 8,
-    Tab		= 9,
-    Enter	= 13,
-    Eof		= 26,
-    Esc		= 27,
-    AltQ	= 256+16, AltW, AltE, AltR, AltT, AltY, AltU, AltI, AltO, AltP,
-    AltA	= 256+30, AltS, AltD, AltF, AltG, AltH, AltJ, AltK, AltL,
-    AltZ	= 256+44, AltX, AltC, AltV, AltB, AltN, AltM,
-    F11		= 256+87, F12,
-    F1		= 256+59, F2, F3, F4, F5, F6, F7, F8, F9, F10,
-    ShiftTab	= 256+15,
-    ShiftF1	= 256+84, ShiftF2, ShiftF3, ShiftF4, ShiftF5,
-			  ShiftF6, ShiftF7, ShiftF8, ShiftF9, ShiftF10,
-    CtrlF1	= 256+94, CtrlF2,  CtrlF3,  CtrlF4,  CtrlF5,
-			  CtrlF6,  CtrlF7,  CtrlF8,  CtrlF9,  CtrlF10,
-    AltF1	= 256+104, AltF2,  AltF3,   AltF4,   AltF5,
-			   AltF6,  AltF7,   AltF8,   AltF9,   AltF10,
-    Home	= 256+71,
+typedef enum {
+    NoKey   = 0, CtrlA, CtrlB, CtrlC, CtrlD, CtrlE, CtrlF, CtrlG, CtrlH,
+    CtrlI, CtrlJ, CtrlK, CtrlL, CtrlM, CtrlN, CtrlO, CtrlP,
+    CtrlQ, CtrlR, CtrlS, CtrlT, CtrlU, CtrlV, CtrlW, CtrlX,
+    CtrlY, CtrlZ,
+    BSp     = 8,
+    Tab     = 9,
+    Enter   = 13,
+    Eof     = 26,
+    Esc     = 27,
+    AltQ    = 256 + 16, AltW, AltE, AltR, AltT, AltY, AltU, AltI, AltO, AltP,
+    AltA    = 256 + 30, AltS, AltD, AltF, AltG, AltH, AltJ, AltK, AltL,
+    AltZ    = 256 + 44, AltX, AltC, AltV, AltB, AltN, AltM,
+    F11     = 256 + 87, F12,
+    F1      = 256 + 59, F2, F3, F4, F5, F6, F7, F8, F9, F10,
+    ShiftTab    = 256 + 15,
+    ShiftF1 = 256 + 84, ShiftF2, ShiftF3, ShiftF4, ShiftF5,
+    ShiftF6, ShiftF7, ShiftF8, ShiftF9, ShiftF10,
+    CtrlF1  = 256 + 94, CtrlF2,  CtrlF3,  CtrlF4,  CtrlF5,
+    CtrlF6,  CtrlF7,  CtrlF8,  CtrlF9,  CtrlF10,
+    AltF1   = 256 + 104, AltF2,  AltF3,   AltF4,   AltF5,
+    AltF6,  AltF7,   AltF8,   AltF9,   AltF10,
+    Home    = 256 + 71,
     Up,
     PgUp,
-    Left	= 256+75,
+    Left    = 256 + 75,
     Ctr,
     Right,
-    End		= 256+79,
+    End     = 256 + 79,
     Down,
     PgDn,
     Ins,
     Del,
-    CtrlLeft	= 256+115,
+    CtrlLeft    = 256 + 115,
     CtrlRight,
     CtrlEnd,
     CtrlPgDn,
     CtrlHome,
-    CtrlPgUp	= 256+132,
+    CtrlPgUp    = 256 + 132,
 
-    MouseLeft	= 512+1,
+    MouseLeft   = 512 + 1,
     MouseRight,
-    TwiceLeft	= 512+256+1,
+    TwiceLeft   = 512 + 256 + 1,
     TwiceRight
-  }  Keys;
+}  Keys;
 
-struct	KeyStatStruct
-	  {
-	    int	RShift		: 1;
-	    int	LShift		: 1;
-	    int	Ctrl		: 1;
-	    int	Alt		: 1;
+struct  KeyStatStruct {
+	int RShift      : 1;
+	int LShift      : 1;
+	int Ctrl        : 1;
+	int Alt         : 1;
 
-	    int	ScrollLock	: 1;
-	    int	NumLock		: 1;
-	    int	CapsLock	: 1;
-	    int	Ins		: 1;
+	int ScrollLock  : 1;
+	int NumLock     : 1;
+	int CapsLock    : 1;
+	int Ins         : 1;
 
-	    int	LeftCtrl	: 1;
-	    int	LeftAlt		: 1;
-	    int	Unused		: 6;
-	  };
+	int LeftCtrl    : 1;
+	int LeftAlt     : 1;
+	int Unused      : 6;
+};
 
-#define		HGC_Cursor	0x0B0C
-#define		CGA_Cursor	0x0607
-#define		OFF_Cursor	0x2000
+#define HGC_Cursor  0x0B0C
+#define CGA_Cursor  0x0607
+#define OFF_Cursor  0x2000
 
-#define		TimerCount	(* ((volatile long *) ((void _seg *) 0x40 + (void *) 0x6C)))
-#define		KeyStat		(* ((volatile struct KeyStatStruct *) ((void _seg *) 0x40 + (void *) 0x17)))
-#define		BreakFlag	(* ((volatile uint8 *) ((void _seg *) 0x40 + (void *) 0x71)))
-#define		PostFlag	(* ((volatile uint16 *) ((void _seg *) 0x40 + (void *) 0x72)))
-#define		POST		((void (*)(void)) ((void _seg *) 0xF000 + (void *) 0xFFF0))
-#define		SLIF		if (KeyStat.ScrollLock)
+#define TimerCount  (* ((volatile long *) ((void _seg *) 0x40 + (void *) 0x6C)))
+#define KeyStat     (* ((volatile struct KeyStatStruct *) ((void _seg *) 0x40 + (void *) 0x17)))
+#define BreakFlag   (* ((volatile uint8 *) ((void _seg *) 0x40 + (void *) 0x71)))
+#define PostFlag    (* ((volatile uint16 *) ((void _seg *) 0x40 + (void *) 0x72)))
+#define POST        ((void (*)(void)) ((void _seg *) 0xF000 + (void *) 0xFFF0))
+#define SLIF        if (KeyStat.ScrollLock)
 
-#define		FOR(i,n)	for(i=0;i<(n);i++)
+#define FOR(i,n)    for(i = 0; i < (n); i++)
 
-#define		TRAP(x)		{ if (x) asm { int 3 } }
+#define TRAP(x)     { warning("STUB: TRAP"); /*if (x) asm { int 3 } */ }
 
-#ifdef		DEBUG
-  #define	Debug(x)	x
+#ifdef DEBUG
+#define   Debug(x)    x
 #else
-  #define	Debug(x)
+#define   Debug(x)
 #endif
 
-#ifdef		DEMO
-  #define	Demo(x)		x
+#ifdef      DEMO
+#define   Demo(x)     x
 #else
-  #define	Demo(x)
-#endif
-
-
-#ifdef	__cplusplus
-  #define	EC		extern "C"
-#else
-  #define	EC
+#define   Demo(x)
 #endif
 
 
-extern	uint16	_stklen;
-extern	uint16	_heaplen;
+#ifdef  __cplusplus
+#define   EC      extern "C"
+#else
+#define   EC
+#endif
+
+
+extern  uint16  _stklen;
+extern  uint16  _heaplen;
 
 } // End of namespace CGE
 

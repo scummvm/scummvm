@@ -25,151 +25,131 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include	"cge/vmenu.h"
-#include	"cge/mouse.h"
-#include	<string.h>
-//#include	<alloc.h>
+#include "cge/vmenu.h"
+#include "cge/mouse.h"
+#include <string.h>
 
 namespace CGE {
 
-//--------------------------------------------------------------------------
 
-#define		RELIEF		1
-#if	RELIEF
-  #define	MB_LT		LGRAY
-  #define	MB_RB		DGRAY
+#define RELIEF      1
+#if RELIEF
+#define MB_LT       LGRAY
+#define MB_RB       DGRAY
 #else
-  #define	MB_LT		DGRAY
-  #define	MB_RB		LGRAY
+#define MB_LT       DGRAY
+#define MB_RB       LGRAY
 #endif
 
 
 
 
-MENU_BAR::MENU_BAR (uint16 w)
-{
-  int h = FONT_HIG + 2 * MB_VM, i = (w += 2 * MB_HM) * h;
-  uint8 * p = farnew(uint8, i), * p1, * p2;
+MENU_BAR::MENU_BAR(uint16 w) {
+	int h = FONT_HIG + 2 * MB_VM, i = (w += 2 * MB_HM) * h;
+	uint8 *p = farnew(uint8, i), * p1, * p2;
 
-  memset(p+w, TRANS, i-2*w);
-  memset(p, MB_LT, w);
-  memset(p+i-w, MB_RB, w);
-  p1 = p;
-  p2 = p+i-1;
-  for (i = 0; i < h; i ++)
-    {
-      * p1 = MB_LT;
-      * p2 = MB_RB;
-      p1 += w;
-      p2 -= w;
-    }
-  TS[0] = new BITMAP(w, h, p);
-  SetShapeList(TS);
-  Flags.Slav = true;
-  Flags.Tran = true;
-  Flags.Kill = true;
-  Flags.BDel = true;
-}
-
-
-
-//--------------------------------------------------------------------------
-
-static	char *	vmgt;
-
-
-
-char * VMGather (CHOICE * list)
-{
-  CHOICE * cp;
-  int len = 0, h = 0;
-
-  for (cp = list; cp->Text; cp ++)
-    {
-      len += strlen(cp->Text);
-      ++ h;
-    }
-  vmgt = new char[len+h];
-  if (vmgt)
-    {
-      *vmgt = '\0';
-      for (cp = list; cp->Text; cp ++)
-	{
-	  if (*vmgt) strcat(vmgt, "|");
-	  strcat(vmgt, cp->Text);
-	  ++ h;
+	memset(p + w, TRANS, i - 2 * w);
+	memset(p, MB_LT, w);
+	memset(p + i - w, MB_RB, w);
+	p1 = p;
+	p2 = p + i - 1;
+	for (i = 0; i < h; i ++) {
+		*p1 = MB_LT;
+		*p2 = MB_RB;
+		p1 += w;
+		p2 -= w;
 	}
-    }
-  return vmgt;
+	TS[0] = new BITMAP(w, h, p);
+	SetShapeList(TS);
+	Flags.Slav = true;
+	Flags.Tran = true;
+	Flags.Kill = true;
+	Flags.BDel = true;
 }
 
 
+static  char   *vmgt;
 
 
-VMENU *		VMENU::Addr	= NULL;
-int		VMENU::Recent	= -1;
+char *VMGather(CHOICE *list) {
+	CHOICE *cp;
+	int len = 0, h = 0;
 
-
-
-
-VMENU::VMENU (CHOICE * list, int x, int y)
-: TALK(VMGather(list), RECT), Menu(list), Bar(NULL)
-{
-  CHOICE * cp;
-
-  Addr = this;
-  delete[] vmgt;
-  Items = 0;
-  for (cp = list; cp->Text; cp ++) ++ Items;
-  Flags.BDel = true;
-  Flags.Kill = true;
-  if (x < 0 || y < 0) Center();
-  else Goto(x - W / 2, y - (TEXT_VM + FONT_HIG / 2));
-  VGA::ShowQ.Insert(this, VGA::ShowQ.Last());
-  Bar = new MENU_BAR(W - 2 * TEXT_HM);
-  Bar->Goto(X + TEXT_HM - MB_HM, Y + TEXT_VM - MB_VM);
-  VGA::ShowQ.Insert(Bar, VGA::ShowQ.Last());
-}
-
-
-
-
-VMENU::~VMENU (void)
-{
-  Addr = NULL;
-}
-
-
-
-
-void VMENU::Touch (uint16 mask, int x, int y)
-{
-#define h (FONT_HIG+TEXT_LS)
-  int n = 0;
-  bool ok = false;
-
-  if (Items)
-    {
-      SPRITE::Touch(mask, x, y);
-
-      y -= TEXT_VM-1;
-      //if
-      if (y >= 0)
-	{
-	  n = y / h;
-	  if (n < Items) ok = (x >= TEXT_HM && x < W - TEXT_HM/* && y % h < FONT_HIG*/);
-	  else n = Items-1;
+	for (cp = list; cp->Text; cp ++) {
+		len += strlen(cp->Text);
+		++h;
 	}
-
-      Bar->Goto(X + TEXT_HM - MB_HM, Y + TEXT_VM + n * h - MB_VM);
-
-      if (ok && (mask & L_UP))
-	{
-	  Items = 0;
-	  SNPOST_(SNKILL, -1, 0, this);
-	  Menu[Recent = n].Proc();
+	vmgt = new char[len + h];
+	if (vmgt) {
+		*vmgt = '\0';
+		for (cp = list; cp->Text; cp ++) {
+			if (*vmgt) 
+				strcat(vmgt, "|");
+			strcat(vmgt, cp->Text);
+			++ h;
+		}
 	}
-    }
+	return vmgt;
+}
+
+
+VMENU *VMENU::Addr = NULL;
+int    VMENU::Recent   = -1;
+
+
+VMENU::VMENU(CHOICE *list, int x, int y)
+	: TALK(VMGather(list), RECT), Menu(list), Bar(NULL) {
+	CHOICE *cp;
+
+	Addr = this;
+	delete[] vmgt;
+	Items = 0;
+	for (cp = list; cp->Text; cp ++) 
+		++Items;
+	Flags.BDel = true;
+	Flags.Kill = true;
+	if (x < 0 || y < 0) 
+		Center();
+	else 
+		Goto(x - W / 2, y - (TEXT_VM + FONT_HIG / 2));
+	VGA::ShowQ.Insert(this, VGA::ShowQ.Last());
+	Bar = new MENU_BAR(W - 2 * TEXT_HM);
+	Bar->Goto(X + TEXT_HM - MB_HM, Y + TEXT_VM - MB_VM);
+	VGA::ShowQ.Insert(Bar, VGA::ShowQ.Last());
+}
+
+
+VMENU::~VMENU(void) {
+	Addr = NULL;
+}
+
+
+void VMENU::Touch(uint16 mask, int x, int y) {
+#define h (FONT_HIG + TEXT_LS)
+	int n = 0;
+	bool ok = false;
+
+	if (Items) {
+		SPRITE::Touch(mask, x, y);
+
+		y -= TEXT_VM - 1;
+		//if
+		if (y >= 0) {
+			n = y / h;
+			if (n < Items) 
+				ok = (x >= TEXT_HM && x < W - TEXT_HM/* && y % h < FONT_HIG*/);
+			else 
+				n = Items - 1;
+		}
+
+		Bar->Goto(X + TEXT_HM - MB_HM, Y + TEXT_VM + n * h - MB_VM);
+
+		if (ok && (mask & L_UP)) {
+			Items = 0;
+			SNPOST_(SNKILL, -1, 0, this);
+			Menu[Recent = n].Proc();
+		}
+	}
 #undef h
 }
 

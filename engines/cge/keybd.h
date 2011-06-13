@@ -25,34 +25,37 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__KEYBD__
-#define		__KEYBD__
+#ifndef __KEYBD__
+#define __KEYBD__
 
-#include	"cge/jbw.h"
-#include	"cge/vga13h.h"
+#include "cge/jbw.h"
+#include "cge/vga13h.h"
 
 namespace CGE {
 
-#define		KEYBD_INT	9
-#define		LSHIFT		42
-#define		RSHIFT		54
-#define		CTRL		29
-#define		ALT		56
+#define KEYBD_INT   9
+#define LSHIFT      42
+#define RSHIFT      54
+#define CTRL        29
+#define ALT         56
 
 
-class KEYBOARD
-{
+class KEYBOARD {
 public:
-  static void (* OldKeyboard) (...);
-  static void NewKeyboard (...);
-  static uint16 Code[0x60];
-  static uint16 Current;
-  static SPRITE * Client;
-  static uint8 Key[0x60];
-  static uint16 Last (void) { uint16 cur = Current; Current = 0; return cur; }
-  static SPRITE * SetClient (SPRITE * spr);
-  KEYBOARD (void);
-  ~KEYBOARD (void);
+	static void (* OldKeyboard)(...);
+	static void NewKeyboard(...);
+	static uint16 Code[0x60];
+	static uint16 Current;
+	static SPRITE *Client;
+	static uint8 Key[0x60];
+	static uint16 Last(void) {
+		uint16 cur = Current;
+		Current = 0;
+		return cur;
+	}
+	static SPRITE *SetClient(SPRITE *spr);
+	KEYBOARD(void);
+	~KEYBOARD(void);
 };
 
 } // End of namespace CGE

@@ -25,59 +25,54 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__CFILE__
-#define		__CFILE__
+#ifndef __CFILE__
+#define __CFILE__
 
-#include	"cge/general.h"
-#include	<io.h>
+#include "cge/general.h"
+#include <io.h>
 
 namespace CGE {
 
-#define		LINE_MAX	512
+#define LINE_MAX    512
 
-#ifndef		IOBUF_SIZE
-  #define	IOBUF_SIZE	K(2)
+#ifndef IOBUF_SIZE
+#define IOBUF_SIZE  K(2)
 #endif
 
-#define		CFREAD(x)	Read((uint8 *)(x),sizeof(*(x)))
+#define CFREAD(x)   Read((uint8 *)(x),sizeof(*(x)))
 
 
-
-
-class IOBUF : public IOHAND
-{
+class IOBUF : public IOHAND {
 protected:
-  uint8 * Buff;
-  uint16 Ptr, Lim;
-  long BufMark;
-  uint16 Seed;
-  CRYPT * Crypt;
-  virtual void ReadBuff (void);
-  virtual void WriteBuff (void);
+	uint8 *Buff;
+	uint16 Ptr, Lim;
+	long BufMark;
+	uint16 Seed;
+	CRYPT *Crypt;
+	virtual void ReadBuff(void);
+	virtual void WriteBuff(void);
 public:
-  IOBUF (IOMODE mode, CRYPT * crpt = NULL);
-  IOBUF (const char * name, IOMODE mode, CRYPT * crpt = NULL);
-  virtual ~IOBUF (void);
-  uint16 Read (void * buf, uint16 len);
-  uint16 Read (uint8 * buf);
-  int Read (void);
-  uint16 Write (void * buf, uint16 len);
-  uint16 Write (uint8 * buf);
-  void Write (uint8 b);
+	IOBUF(IOMODE mode, CRYPT *crpt = NULL);
+	IOBUF(const char *name, IOMODE mode, CRYPT *crpt = NULL);
+	virtual ~IOBUF(void);
+	uint16 Read(void *buf, uint16 len);
+	uint16 Read(uint8 *buf);
+	int Read(void);
+	uint16 Write(void *buf, uint16 len);
+	uint16 Write(uint8 *buf);
+	void Write(uint8 b);
 };
 
 
-
-class CFILE : public IOBUF
-{
+class CFILE : public IOBUF {
 public:
-  static uint16 MaxLineLen;
-  CFILE (const char * name, IOMODE mode = REA, CRYPT * crpt = NULL);
-  virtual ~CFILE (void);
-  void Flush (void);
-  long Mark (void);
-  long Seek (long pos);
-  void Append (CFILE& f);
+	static uint16 MaxLineLen;
+	CFILE(const char *name, IOMODE mode = REA, CRYPT *crpt = NULL);
+	virtual ~CFILE(void);
+	void Flush(void);
+	long Mark(void);
+	long Seek(long pos);
+	void Append(CFILE &f);
 };
 
 } // End of namespace CGE

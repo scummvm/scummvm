@@ -25,334 +25,239 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include	"cge/cfile.h"
-#include	<dos.h>
-#include	<fcntl.h>
-#include	<string.h>
+#include "cge/cfile.h"
+#include <dos.h>
+#include <fcntl.h>
+#include <string.h>
 #include "common/system.h"
 
 namespace CGE {
 
-IOBUF::IOBUF (IOMODE mode, CRYPT * crpt)
-: IOHAND(mode, crpt),
-  BufMark(0),
-  Ptr(0),
-  Lim(0)
-{
-  Buff = farnew(uint8, IOBUF_SIZE);
-  if (Buff == NULL)
-  	error("No core for I/O");
+IOBUF::IOBUF(IOMODE mode, CRYPT *crpt)
+	: IOHAND(mode, crpt),
+	  BufMark(0),
+	  Ptr(0),
+	  Lim(0) {
+	Buff = farnew(uint8, IOBUF_SIZE);
+	if (Buff == NULL)
+		error("No core for I/O");
 }
 
 
+IOBUF::IOBUF(const char *name, IOMODE mode, CRYPT *crpt)
+	: IOHAND(name, mode, crpt),
+	  BufMark(0),
+	  Ptr(0),
+	  Lim(0) {
+	Buff = farnew(uint8, IOBUF_SIZE);
+	if (Buff == NULL)
+		error("No core for I/O [%s]", name);
+}
 
-
-
-
-
-
-
-IOBUF::IOBUF (const char * name, IOMODE mode, CRYPT * crpt)
-: IOHAND(name, mode, crpt),
-  BufMark(0),
-  Ptr(0),
-  Lim(0)
-{
-  Buff = farnew(uint8, IOBUF_SIZE);
-  if (Buff == NULL) 
-  	error("No core for I/O [%s]", name);
+IOBUF::~IOBUF(void) {
+	if (Mode > REA) 
+		WriteBuff();
+	if (Buff) 
+		free(Buff);
 }
 
 
-
-
-
-
-
-
-
-IOBUF::~IOBUF (void)
-{
-  if (Mode > REA) WriteBuff();
-  if (Buff) free(Buff);
+void IOBUF::ReadBuff(void) {
+	BufMark = IOHAND::Mark();
+	Lim = IOHAND::Read(Buff, IOBUF_SIZE);
+	Ptr = 0;
 }
 
 
-
-
-
-
-void IOBUF::ReadBuff (void)
-{
-  BufMark = IOHAND::Mark();
-  Lim = IOHAND::Read(Buff, IOBUF_SIZE);
-  Ptr = 0;
-}
-
-
-
-
-
-void IOBUF::WriteBuff (void)
-{
-  if (Lim)
-    {
-      IOHAND::Write(Buff, Lim);
-      BufMark = IOHAND::Mark();
-      Lim = 0;
-    }
-}
-
-
-
-
-
-uint16 IOBUF::Read (void *buf, uint16 len)
-{
-  uint16 total = 0;
-  while (len)
-    {
-      if (Ptr >= Lim) ReadBuff();
-      uint16 n = Lim - Ptr;
-      if (n)
-	{
-	  if (len < n) n = len;
-	  memcpy(buf, Buff+Ptr, n);
-	  buf = (uint8 *)buf + n;
-	  len -= n;
-	  total += n;
-	  Ptr += n;
+void IOBUF::WriteBuff(void) {
+	if (Lim) {
+		IOHAND::Write(Buff, Lim);
+		BufMark = IOHAND::Mark();
+		Lim = 0;
 	}
-      else break;
-    }
-  return total;
 }
 
 
-
-
-
-
-uint16 IOBUF::Read (uint8 * buf)
-{
-  uint16 total = 0;
-
-  while (total < LINE_MAX-2)
-    {
-      if (Ptr >= Lim) ReadBuff();
-      uint8 * p = Buff + Ptr;
-      uint16 n = Lim - Ptr;
-      if (n)
-	{
-	  if (total + n >= LINE_MAX-2) n = LINE_MAX-2 - total;
-	  uint8 * eol = (uint8 *) memchr(p, '\r', n);
-	  if (eol) n = (uint16) (eol - p);
-	  uint8 * eof = (uint8 *) memchr(p, '\32', n);
-	  if (eof) // end-of-file
-	    {
-	      n = (uint16) (eof - p);
-	      Ptr = (uint16) (eof - Buff);
-	    }
-	  if (n) memcpy(buf, p, n);
-	  buf += n;
-	  total += n;
-	  if (eof) break;
-	  Ptr += n;
-	  if (eol)
-	    {
-	      ++ Ptr;
-	      * (buf ++) = '\n';
-	      ++ total;
-	      if (Ptr >= Lim) ReadBuff();
-	      if (Ptr < Lim) if (Buff[Ptr] == '\n') ++ Ptr;
-	      break;
-	    }
+uint16 IOBUF::Read(void *buf, uint16 len) {
+	uint16 total = 0;
+	while (len) {
+		if (Ptr >= Lim) 
+			ReadBuff();
+		uint16 n = Lim - Ptr;
+		if (n) {
+			if (len < n) 
+				n = len;
+			memcpy(buf, Buff + Ptr, n);
+			buf = (uint8 *)buf + n;
+			len -= n;
+			total += n;
+			Ptr += n;
+		} else 
+			break;
 	}
-      else break;
-    }
-  *buf = '\0';
-  return total;
+	return total;
 }
 
 
+uint16 IOBUF::Read(uint8 *buf) {
+	uint16 total = 0;
 
-
-
-
-
-uint16 IOBUF::Write (void * buf, uint16 len)
-{
-  uint16 tot = 0;
-  while (len)
-    {
-      uint16 n = IOBUF_SIZE - Lim;
-      if (n > len) n = len;
-      if (n)
-	{
-	  memcpy(Buff+Lim, buf, n);
-	  Lim += n;
-	  len -= n;
-	  buf = (uint8 *)buf + n;
-	  tot += n;
+	while (total < LINE_MAX - 2) {
+		if (Ptr >= Lim) 
+			ReadBuff();
+		uint8 *p = Buff + Ptr;
+		uint16 n = Lim - Ptr;
+		if (n) {
+			if (total + n >= LINE_MAX - 2) 
+				n = LINE_MAX - 2 - total;
+			uint8 *eol = (uint8 *) memchr(p, '\r', n);
+			if (eol) 
+				n = (uint16)(eol - p);
+			uint8 *eof = (uint8 *) memchr(p, '\32', n);
+			if (eof) { // end-of-file
+				n = (uint16)(eof - p);
+				Ptr = (uint16)(eof - Buff);
+			}
+			if (n) 
+				memcpy(buf, p, n);
+			buf += n;
+			total += n;
+			if (eof) 
+				break;
+			Ptr += n;
+			if (eol) {
+				++ Ptr;
+				* (buf ++) = '\n';
+				++ total;
+				if (Ptr >= Lim) 
+					ReadBuff();
+				if (Ptr < Lim) 
+					if (Buff[Ptr] == '\n') 
+						++Ptr;
+				break;
+			}
+		} else 
+			break;
 	}
-      else WriteBuff();
-    }
-  return tot;
+	*buf = '\0';
+	return total;
 }
 
 
-
-
-
-
-uint16 IOBUF::Write (uint8 * buf)
-{
-  uint16 len = 0;
-  if (buf)
-    {
-      len = strlen((const char *) buf);
-      if (len) if (buf[len-1] == '\n') -- len;
-      len = Write(buf, len);
-      if (len)
-	{
-	  static char EOL[] = "\r\n";
-	  uint16 n = Write(EOL, sizeof(EOL)-1);
-	  len += n;
+uint16 IOBUF::Write(void *buf, uint16 len) {
+	uint16 tot = 0;
+	while (len) {
+		uint16 n = IOBUF_SIZE - Lim;
+		if (n > len) 
+			n = len;
+		if (n) {
+			memcpy(Buff + Lim, buf, n);
+			Lim += n;
+			len -= n;
+			buf = (uint8 *)buf + n;
+			tot += n;
+		} else 
+			WriteBuff();
 	}
-    }
-  return len;
+	return tot;
 }
 
 
-
-
-
-
-int IOBUF::Read (void)
-{
-  if (Ptr >= Lim)
-    {
-      ReadBuff();
-      if (Lim == 0) return -1;
-    }
-  return Buff[Ptr ++];
-}
-
-
-
-
-
-
-void IOBUF::Write (uint8 b)
-{
-  if (Lim >= IOBUF_SIZE)
-    {
-      WriteBuff();
-    }
-  Buff[Lim ++] = b;
-}
-
-
-
-
-
-
-	uint16	CFILE::MaxLineLen	= LINE_MAX;
-
-
-
-
-
-
-
-
-CFILE::CFILE (const char * name, IOMODE mode, CRYPT * crpt)
-: IOBUF(name, mode, crpt)
-{
-}
-
-
-
-
-
-
-
-
-
-CFILE::~CFILE (void)
-{
-}
-
-
-
-
-
-
-void CFILE::Flush (void)
-{
-  if (Mode > REA) WriteBuff();
-  else Lim = 0;
-
-  /*
-  _BX = Handle;
-  _AH = 0x68;		// Flush buffer
-  asm	int	0x21
-  */
-  warning("FIXME: CFILE::Flush");
-}
-
-
-
-
-
-long CFILE::Mark (void)
-{
-  return BufMark + ((Mode > REA) ? Lim : Ptr);
-}
-
-
-
-
-
-long CFILE::Seek (long pos)
-{
-  if (pos >= BufMark && pos < BufMark + Lim)
-    {
-      ((Mode == REA) ? Ptr : Lim) = (uint16) (pos - BufMark);
-      return pos;
-    }
-  else
-    {
-      if (Mode > REA)
-	{
-	  WriteBuff();
+uint16 IOBUF::Write(uint8 *buf) {
+	uint16 len = 0;
+	if (buf) {
+		len = strlen((const char *) buf);
+		if (len) 
+			if (buf[len - 1] == '\n') 
+				--len;
+		len = Write(buf, len);
+		if (len) {
+			static char EOL[] = "\r\n";
+			uint16 n = Write(EOL, sizeof(EOL) - 1);
+			len += n;
+		}
 	}
-      else
-	{
-	  Lim = 0;
-	}
-      Ptr = 0;
-      return BufMark = IOHAND::Seek(pos);
-    }
+	return len;
 }
 
 
-
-
-
-
-void CFILE::Append (CFILE& f)
-{
-  Seek(Size());
-  if (f.Error == 0)
-    {
-      while (true)
-	{
-	  if ((Lim = f.IOHAND::Read(Buff, IOBUF_SIZE)) == IOBUF_SIZE) WriteBuff();
-	  else break;
-	  if ((Error = f.Error) != 0) break;
+int IOBUF::Read(void) {
+	if (Ptr >= Lim) {
+		ReadBuff();
+		if (Lim == 0) 
+			return -1;
 	}
-    }
+	return Buff[Ptr ++];
+}
+
+
+void IOBUF::Write(uint8 b) {
+	if (Lim >= IOBUF_SIZE)
+		WriteBuff();
+	Buff[Lim ++] = b;
+}
+
+
+uint16  CFILE::MaxLineLen   = LINE_MAX;
+
+
+CFILE::CFILE(const char *name, IOMODE mode, CRYPT *crpt)
+	: IOBUF(name, mode, crpt) {
+}
+
+
+CFILE::~CFILE(void) {
+}
+
+
+void CFILE::Flush(void) {
+	if (Mode > REA) 
+		WriteBuff();
+	else 
+		Lim = 0;
+
+	/*
+	_BX = Handle;
+	_AH = 0x68;       // Flush buffer
+	asm   int 0x21
+	*/
+	warning("FIXME: CFILE::Flush");
+}
+
+
+long CFILE::Mark(void) {
+	return BufMark + ((Mode > REA) ? Lim : Ptr);
+}
+
+
+long CFILE::Seek(long pos) {
+	if (pos >= BufMark && pos < BufMark + Lim) {
+		((Mode == REA) ? Ptr : Lim) = (uint16)(pos - BufMark);
+		return pos;
+	} else {
+		if (Mode > REA)
+			WriteBuff();
+		else
+			Lim = 0;
+			
+		Ptr = 0;
+		return BufMark = IOHAND::Seek(pos);
+	}
+}
+
+
+void CFILE::Append(CFILE &f) {
+	Seek(Size());
+	if (f.Error == 0) {
+		while (true) {
+			if ((Lim = f.IOHAND::Read(Buff, IOBUF_SIZE)) == IOBUF_SIZE) 
+				WriteBuff();
+			else 
+				break;
+			if ((Error = f.Error) != 0) 
+				break;
+		}
+	}
 }
 
 } // End of namespace CGE

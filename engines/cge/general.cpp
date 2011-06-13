@@ -32,77 +32,77 @@
 
 namespace CGE {
 
-	DAC StdPal[] =  {// R    G   B
-			{   0,  60,  0},	// 198
-			{   0, 104,  0},	// 199
-			{  20, 172,  0},	// 200
-			{  82,  82,  0},	// 201
-			{   0, 132, 82},	// 202
-			{ 132, 173, 82},	// 203
-			{  82,   0,  0},	// 204
-			{ 206,   0, 24},	// 205
-			{ 255,  33, 33},	// 206
-			{ 123,  41,  0},	// 207
-			{   0,  41,  0},	// 208
-			{   0,   0, 82},	// 209
-			{ 132,   0,  0},	// 210
-			{ 255,   0,  0},	// 211
-			{ 255,  66, 66},	// 212
-			{ 148,  66, 16},	// 213
-			{   0,  82,  0},	// 214
-			{   0,   0,132},	// 215
-			{ 173,   0,  0},	// 216
-			{ 255,  49,  0},	// 217
-			{ 255,  99, 99},	// 218
-			{ 181, 107, 49},	// 219
-			{   0, 132,  0},	// 220
-			{   0,   0,255},	// 221
-			{ 173,  41,  0},	// 222
-			{ 255,  82,  0},	// 223
-			{ 255, 132,132},	// 224
-			{ 214, 148, 74},	// 225
-			{  41, 214,  0},	// 226
-			{   0,  82,173},	// 227
-			{ 255, 214,  0},	// 228
-			{ 247, 132, 49},	// 229
-			{ 255, 165,165},	// 230
-			{ 239, 198,123},	// 231
-			{ 173, 214,  0},	// 232
-			{   0, 132,214},	// 233
-			{  57,  57, 57},	// 234
-			{ 247, 189, 74},	// 235
-			{ 255, 198,198},	// 236
-			{ 255, 239,173},	// 237
-			{ 214, 255,173},	// 238
-			{  82, 173,255},	// 239
-			{ 107, 107,107},	// 240
-			{ 247, 222, 99},	// 241
-			{ 255,   0,255},	// 242
-			{ 255, 132,255},	// 243
-			{ 132, 132,173},	// 244
-			{ 148, 247,255},	// 245
-			{ 148, 148,148},	// 246
-			{  82,   0, 82},	// 247
-			{ 112,  68,112},	// 248
-			{ 176,  88,144},	// 249
-			{ 214, 132,173},	// 250
-			{ 206, 247,255},	// 251
-			{ 198, 198,198},	// 252
-			{   0, 214,255},	// 253
-			{  96, 224,96 },	// 254
-			{ 255, 255,255},	// 255
-					};
+DAC StdPal[] =  {// R    G   B
+	{   0,  60,  0},    // 198
+	{   0, 104,  0},    // 199
+	{  20, 172,  0},    // 200
+	{  82,  82,  0},    // 201
+	{   0, 132, 82},    // 202
+	{ 132, 173, 82},    // 203
+	{  82,   0,  0},    // 204
+	{ 206,   0, 24},    // 205
+	{ 255,  33, 33},    // 206
+	{ 123,  41,  0},    // 207
+	{   0,  41,  0},    // 208
+	{   0,   0, 82},    // 209
+	{ 132,   0,  0},    // 210
+	{ 255,   0,  0},    // 211
+	{ 255,  66, 66},    // 212
+	{ 148,  66, 16},    // 213
+	{   0,  82,  0},    // 214
+	{   0,   0, 132},   // 215
+	{ 173,   0,  0},    // 216
+	{ 255,  49,  0},    // 217
+	{ 255,  99, 99},    // 218
+	{ 181, 107, 49},    // 219
+	{   0, 132,  0},    // 220
+	{   0,   0, 255},   // 221
+	{ 173,  41,  0},    // 222
+	{ 255,  82,  0},    // 223
+	{ 255, 132, 132},   // 224
+	{ 214, 148, 74},    // 225
+	{  41, 214,  0},    // 226
+	{   0,  82, 173},   // 227
+	{ 255, 214,  0},    // 228
+	{ 247, 132, 49},    // 229
+	{ 255, 165, 165},   // 230
+	{ 239, 198, 123},   // 231
+	{ 173, 214,  0},    // 232
+	{   0, 132, 214},   // 233
+	{  57,  57, 57},    // 234
+	{ 247, 189, 74},    // 235
+	{ 255, 198, 198},   // 236
+	{ 255, 239, 173},   // 237
+	{ 214, 255, 173},   // 238
+	{  82, 173, 255},   // 239
+	{ 107, 107, 107},   // 240
+	{ 247, 222, 99},    // 241
+	{ 255,   0, 255},   // 242
+	{ 255, 132, 255},   // 243
+	{ 132, 132, 173},   // 244
+	{ 148, 247, 255},   // 245
+	{ 148, 148, 148},   // 246
+	{  82,   0, 82},    // 247
+	{ 112,  68, 112},   // 248
+	{ 176,  88, 144},   // 249
+	{ 214, 132, 173},   // 250
+	{ 206, 247, 255},   // 251
+	{ 198, 198, 198},   // 252
+	{   0, 214, 255},   // 253
+	{  96, 224, 96 },   // 254
+	{ 255, 255, 255},   // 255
+};
 
-EC void		_fqsort		(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void*, const void*)) {
+EC void     _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *)) {
 	warning("STUB: _fqsort");
 }
 
-const char *	ProgName	(const char * ext) {
+const char     *ProgName(const char *ext) {
 	warning("STUB: ProgName");
 	return NULL;
 }
 
-char *MergeExt (char *buf, const char *nam, const char *ext) {
+char *MergeExt(char *buf, const char *nam, const char *ext) {
 //  char dr[MAXDRIVE], di[MAXDIR], na[MAXFILE], ex[MAXEXT];
 //  fnmerge(buf, dr, di, na, (fnsplit(nam, dr, di, na, ex) & EXTENSION) ? ex : ext);
 //  return buf;
@@ -110,7 +110,7 @@ char *MergeExt (char *buf, const char *nam, const char *ext) {
 	return buf;
 }
 
-char *ForceExt (char *buf, const char *nam, const char* ext) {
+char *ForceExt(char *buf, const char *nam, const char *ext) {
 //  char dr[MAXDRIVE], di[MAXDIR], na[MAXFILE], ex[MAXEXT];
 //  fnsplit(nam, dr, di, na, ex);
 //  fnmerge(buf, dr, di, na, ext);
@@ -120,157 +120,168 @@ char *ForceExt (char *buf, const char *nam, const char* ext) {
 }
 
 
-#define		BUF	((uint8 *) buf)
-static	unsigned	Seed = 1;
+#define     BUF ((uint8 *) buf)
+static  unsigned    Seed = 1;
 
-unsigned FastRand (void) { return Seed = 257 * Seed + 817; }
-unsigned FastRand (unsigned s) { return Seed = 257 * s + 817; }
+unsigned FastRand(void) {
+	return Seed = 257 * Seed + 817;
+}
+unsigned FastRand(unsigned s) {
+	return Seed = 257 * s + 817;
+}
 
-uint16 RCrypt (void * buf, uint16 siz, uint16 seed) {
-/*
-	if (buf && siz) {
-      uint8 * q = BUF + (siz-1);
-      seed = FastRand(seed);
-      * (BUF ++) ^= seed;
-      while (buf < q) * (BUF ++) ^= FastRand();
-      if (buf == q) * BUF ^= (seed = FastRand());
-    }
-  return seed;
-*/
+uint16 RCrypt(void *buf, uint16 siz, uint16 seed) {
+	/*
+	    if (buf && siz) {
+	      uint8 * q = BUF + (siz-1);
+	      seed = FastRand(seed);
+	      * (BUF ++) ^= seed;
+	      while (buf < q) * (BUF ++) ^= FastRand();
+	      if (buf == q) * BUF ^= (seed = FastRand());
+	    }
+	  return seed;
+	*/
 	warning("STUB: RCrypt");
 	return 0;
 }
 
-uint16 XCrypt (void *buf, uint16 siz, uint16 seed) {
-//  for (uint16 i = 0; i < siz; i ++) 
+uint16 XCrypt(void *buf, uint16 siz, uint16 seed) {
+//  for (uint16 i = 0; i < siz; i ++)
 //	  *(BUF ++) ^= seed;
 	warning("STUB: XCrypt");
 	return seed;
 }
 
-uint16 atow (const char *a) {
-  uint16 w = 0;
+uint16 atow(const char *a) {
+	uint16 w = 0;
 	if (a)
 		while (IsDigit(*a))
 			w = (10 * w) + (*(a ++) & 0xF);
-  return w;
+	return w;
 }
 
-uint16 xtow (const char *x) {
-  uint16 w = 0;
-  if (x) {
-      while (IsHxDig(*x)) {
-		register uint16 d = * (x ++);
-		if (d > '9')
-		  d -= 'A' - ('9' + 1);
-		w = (w << 4) | (d & 0xF);
-	  }
-  }
-  return w;
+uint16 xtow(const char *x) {
+	uint16 w = 0;
+	if (x) {
+		while (IsHxDig(*x)) {
+			register uint16 d = * (x ++);
+			if (d > '9')
+				d -= 'A' - ('9' + 1);
+			w = (w << 4) | (d & 0xF);
+		}
+	}
+	return w;
 }
 
-char *wtom (uint16 val, char *str, int radix, int len) {
-  while (-- len >= 0) {
-      uint16 w = val % radix;
-      if (w > 9) w += ('A' - ('9'+1));
-      str[len] = '0' + w;
-      val /= radix;
-    }
-  return str;
+char *wtom(uint16 val, char *str, int radix, int len) {
+	while (--len >= 0) {
+		uint16 w = val % radix;
+		if (w > 9)
+			w += ('A' - ('9' + 1));
+		str[len] = '0' + w;
+		val /= radix;
+	}
+	return str;
 }
 
-IOHAND::IOHAND (IOMODE mode, CRYPT * crpt)
-: XFILE(mode), Handle(-1), Crypt(crpt), Seed(SEED)
-{
+char *dwtom(uint32 val, char *str, int radix, int len) {
+	while (--len >= 0) {
+		uint16 w = (uint16) (val % radix);
+		if (w > 9) 
+			w += ('A' - ('9' + 1));
+		str[len] = '0' + w;
+		val /= radix;
+	}
+	return str;
 }
 
-IOHAND::IOHAND (const char *name, IOMODE mode, CRYPT *crpt)
-: XFILE(mode), Crypt(crpt), Seed(SEED)
-{
-/*  switch (mode)
-    {
-      case REA : Error = _dos_open(name, O_RDONLY | O_DENYNONE, &Handle); break;
-      case WRI : Error = _dos_creat(name, FA_ARCH, &Handle); break;
-      case UPD : Error = _dos_open(name, O_RDWR | O_DENYALL, &Handle); break;
-    }
-  if (Error) Handle = -1;
-*/
+IOHAND::IOHAND(IOMODE mode, CRYPT *crpt)
+	: XFILE(mode), Handle(-1), Crypt(crpt), Seed(SEED) {
+}
+
+IOHAND::IOHAND(const char *name, IOMODE mode, CRYPT *crpt)
+	: XFILE(mode), Crypt(crpt), Seed(SEED) {
+	/*  switch (mode)
+	    {
+	      case REA : Error = _dos_open(name, O_RDONLY | O_DENYNONE, &Handle); break;
+	      case WRI : Error = _dos_creat(name, FA_ARCH, &Handle); break;
+	      case UPD : Error = _dos_open(name, O_RDWR | O_DENYALL, &Handle); break;
+	    }
+	  if (Error) Handle = -1;
+	*/
 	warning("STUB: IOHAND::IOHAND");
 }
 
 IOHAND::~IOHAND(void) {
-/*
-	if (Handle != -1)
-    {
-      Error = _dos_close(Handle);
-      Handle = -1;
-    }
-*/
+	/*
+	    if (Handle != -1)
+	    {
+	      Error = _dos_close(Handle);
+	      Handle = -1;
+	    }
+	*/
 	warning("STUB: IOHAND::~IOHAND");
 }
 
 uint16 IOHAND::Read(void *buf, uint16 len) {
-/*
-  if (Mode == WRI || Handle < 0) return 0;
-  if (len) Error = _dos_read(Handle, buf, len, &len);
-  if (Crypt) Seed = Crypt(buf, len, Seed);
-  return len;
-*/
+	/*
+	  if (Mode == WRI || Handle < 0) return 0;
+	  if (len) Error = _dos_read(Handle, buf, len, &len);
+	  if (Crypt) Seed = Crypt(buf, len, Seed);
+	  return len;
+	*/
 	warning("STUB: IOHAND::Read");
 	return 0;
 }
 
 uint16 IOHAND::Write(void *buf, uint16 len) {
-/*
-  if (len) {
-      if (Mode == REA || Handle < 0) return 0;
-      if (Crypt) Seed = Crypt(buf, len, Seed);
-      Error = _dos_write(Handle, buf, len, &len);
-      if (Crypt) Seed = Crypt(buf, len, Seed); //------$$$$$$$
-    }
-  return len;
-*/
+	/*
+	  if (len) {
+	      if (Mode == REA || Handle < 0) return 0;
+	      if (Crypt) Seed = Crypt(buf, len, Seed);
+	      Error = _dos_write(Handle, buf, len, &len);
+	      if (Crypt) Seed = Crypt(buf, len, Seed); //------$$$$$$$
+	    }
+	  return len;
+	*/
 	warning("STUB: IOHAND::Write");
 	return 0;
 }
 
-long IOHAND::Mark (void)
-{
-  return (Handle < 0) ? 0 : tell(Handle);
+long IOHAND::Mark(void) {
+	return (Handle < 0) ? 0 : tell(Handle);
 }
 
-long IOHAND::Seek (long pos)
-{
-  if (Handle < 0) return 0;
-  lseek(Handle, pos, SEEK_SET);
-  return tell(Handle);
+long IOHAND::Seek(long pos) {
+	if (Handle < 0) return 0;
+	lseek(Handle, pos, SEEK_SET);
+	return tell(Handle);
 }
 
-long IOHAND::Size (void)
-{
-  if (Handle < 0) return 0;
-  return filelength(Handle);
+long IOHAND::Size(void) {
+	if (Handle < 0) return 0;
+	return filelength(Handle);
 }
 
-bool IOHAND::Exist (const char * name) {
-  return access(name, 0) == 0;
+bool IOHAND::Exist(const char *name) {
+	return access(name, 0) == 0;
 }
 
-//#define		EMS_ADR(a)	(FP_SEG(a) > 0xA000)
-//#define		HNODE_OK(p)	(heapchecknode(p)==4)
+//#define       EMS_ADR(a)  (FP_SEG(a) > 0xA000)
+//#define       HNODE_OK(p) (heapchecknode(p)==4)
 
-MEM_TYPE MemType (void *mem) {
-/*	if (FP_SEG(mem) == _DS) {
-      if (heapchecknode((void *)mem)==4)
-		  return NEAR_MEM;
-	} else {
-      if (FP_SEG(mem) > 0xA000)
-		  return EMS_MEM;
-      else if (farheapchecknode(mem)==4)
-		  return FAR_MEM;
-    }
-  return BAD_MEM;
-*/
+MEM_TYPE MemType(void *mem) {
+	/*  if (FP_SEG(mem) == _DS) {
+	      if (heapchecknode((void *)mem)==4)
+	          return NEAR_MEM;
+	    } else {
+	      if (FP_SEG(mem) > 0xA000)
+	          return EMS_MEM;
+	      else if (farheapchecknode(mem)==4)
+	          return FAR_MEM;
+	    }
+	  return BAD_MEM;
+	*/
 	warning("STUB: MemType");
 	return FAR_MEM;
 }
@@ -307,40 +318,48 @@ EC void SNDMIDIStop() {
 	warning("STUB: SNDMIDIStop");
 }
 
-DATACK *LoadWave(XFILE * file, EMM * emm) {
+DATACK *LoadWave(XFILE *file, EMM *emm) {
 	warning("STUB: LoadWave");
 	return NULL;
 }
 
 int TakeEnum(const char **tab, const char *txt) {
-  const char **e;
-  if (txt)
-    {
-      for (e = tab; *e; e ++)
-	{
-	  if (scumm_stricmp(txt, *e) == 0)
-	    {
-	      return e - tab;
-	    }
+	const char **e;
+	if (txt) {
+		for (e = tab; *e; e ++) {
+			if (scumm_stricmp(txt, *e) == 0) {
+				return e - tab;
+			}
+		}
 	}
-    }
-  return -1;
+	return -1;
 }
 
 Boot *ReadBoot(int drive) {
-/*
-  struct fatinfo fi; Boot *b;
-  getfat(drive+1, &fi);
-  if (fi.fi_sclus & 0x80) return NULL;
-  if ((b = malloc(fi.fi_bysec)) == NULL) return NULL;
-  // read boot sector
-  if (absread(drive, 1, 0L, b) == 0) return b;
-  free(b);
-  return NULL;
-*/
+	/*
+	  struct fatinfo fi; Boot *b;
+	  getfat(drive+1, &fi);
+	  if (fi.fi_sclus & 0x80) return NULL;
+	  if ((b = malloc(fi.fi_bysec)) == NULL) return NULL;
+	  // read boot sector
+	  if (absread(drive, 1, 0L, b) == 0) return b;
+	  free(b);
+	  return NULL;
+	*/
 	warning("STUB: ReadBoot");
 	return NULL;
 }
 
+long Timer(void) {
+/*
+  asm	mov	ax,0x40
+  asm	mov	es,ax
+  asm	mov	cx,es:[0x6C]
+  asm	mov	dx,es:[0x6E]
+  return  ((long) _DX << 16) | _CX;
+*/
+	warning("STUB: Timer");
+	return 0;
+}
 } // End of namespace CGE
 

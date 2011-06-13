@@ -25,96 +25,98 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__SNAIL__
-#define		__SNAIL__
+#ifndef __SNAIL__
+#define __SNAIL__
 
-#include	"cge/jbw.h"
+#include "cge/jbw.h"
 
 namespace CGE {
 
-#define		POCKET_X	174
-#define		POCKET_Y	176
-#define		POCKET_DX	18
-#define		POCKET_DY	22
-#define		POCKET_NX	8
-#define		POCKET_NY	1
+#define POCKET_X    174
+#define POCKET_Y    176
+#define POCKET_DX   18
+#define POCKET_DY   22
+#define POCKET_NX   8
+#define POCKET_NY   1
 
-#define		POCKET_SX	8
-#define		POCKET_SY	3
+#define POCKET_SX   8
+#define POCKET_SY   3
 
-#define		SNINSERT(c,r,v,p)	Snail.InsCom(c,r,v,p)
-#define		SNPOST(c,r,v,p)		Snail.AddCom(c,r,v,p)
-#define		SNPOST_(c,r,v,p)	Snail_.AddCom(c,r,v,p)
-
-
-
-typedef	struct	{ uint8 Horz, Vert; } BAR;
+#define SNINSERT(c,r,v,p)   Snail.InsCom(c,r,v,p)
+#define SNPOST(c,r,v,p)     Snail.AddCom(c,r,v,p)
+#define SNPOST_(c,r,v,p)    Snail_.AddCom(c,r,v,p)
 
 
+typedef struct  {
+	uint8 Horz, Vert;
+} BAR;
 
-struct SCB
-{
-  uint8 *	Ptr;
-  uint16		Siz;
-  SCB *		Nxt;
+
+struct SCB {
+	uint8  *Ptr;
+	uint16  Siz;
+	SCB    *Nxt;
 };
 
 
+enum SNCOM {
+	SNLABEL,  SNPAUSE,  SNWAIT,    SNLEVEL,  SNHIDE,
+	SNSAY,    SNINF,    SNTIME,    SNCAVE,   SNKILL, 
+	SNRSEQ,   SNSEQ,    SNSEND,    SNSWAP,   SNKEEP, 
+	SNGIVE,   SNIF,     SNGAME,    SNSETX0,  SNSETY0, 
+	SNSLAVE,  SNSETXY,  SNRELX,    SNRELY,   SNRELZ,
+	SNSETX,   SNSETY,   SNSETZ,    SNTRANS,  SNPORT,
+	SNNEXT,   SNNNEXT,  SNTNEXT,   SNRNNEXT, SNRTNEXT,
+	SNRMNEAR, SNRMTAKE, SNFLAG,    SNSETREF, SNBACKPT, 
+	SNFLASH,  SNLIGHT,  SNSETHB,   SNSETVB,  SNWALK, 
+	SNREACH,  SNCOVER,  SNUNCOVER, SNCLEAR,  SNTALK, 
+	SNMOUSE,  SNSOUND,  SNCOUNT,   SNEXEC,   SNSTEP, 
+	SNZTRIM,  SNGHOST
+};
 
-enum	SNCOM	{ SNLABEL, SNPAUSE, SNWAIT, SNLEVEL,
-		  SNHIDE, SNSAY, SNINF, SNTIME,
-		  SNCAVE, SNKILL, SNRSEQ,
-		  SNSEQ, SNSEND, SNSWAP, SNKEEP, SNGIVE,
-		  SNIF, SNGAME, SNSETX0, SNSETY0, SNSLAVE,
-		  SNSETXY, SNRELX, SNRELY, SNRELZ,
-		  SNSETX, SNSETY, SNSETZ, SNTRANS, SNPORT,
-		  SNNEXT, SNNNEXT, SNTNEXT, SNRNNEXT, SNRTNEXT,
-		  SNRMNEAR, SNRMTAKE, SNFLAG, SNSETREF,
-		  SNBACKPT, SNFLASH, SNLIGHT,
-		  SNSETHB, SNSETVB,
-		  SNWALK, SNREACH, SNCOVER, SNUNCOVER,
-		  SNCLEAR, SNTALK, SNMOUSE,
-		  SNSOUND, SNCOUNT,
-		  SNEXEC, SNSTEP, SNZTRIM,
-		  SNGHOST
-		};
+enum SNLIST { NEAR, TAKE };
 
-enum	SNLIST	{ NEAR, TAKE };
-
-class SNAIL
-{
+class SNAIL {
 public:
-  struct COM { SNCOM Com; int Ref; int Val; void * Ptr; } * SNList;
-  uint8 Head, Tail;
-  bool Turbo, Busy, TextDelay;
-  uint16 Pause;
-  static const char * ComTxt[];
-  bool TalkEnable;
-  SNAIL (bool turbo = false);
-  ~SNAIL (void);
-  void RunCom (void);
-  void AddCom (SNCOM com, int ref = 0, int val = 0, void * ptr = NULL);
-  void InsCom (SNCOM com, int ref = 0, int val = 0, void * ptr = NULL);
-  bool Idle (void);
+	struct COM {
+		SNCOM Com;
+		int Ref;
+		int Val;
+		void *Ptr;
+	} *SNList;
+	uint8 Head, Tail;
+	bool Turbo, Busy, TextDelay;
+	uint16 Pause;
+	static const char *ComTxt[];
+	bool TalkEnable;
+	SNAIL(bool turbo = false);
+	~SNAIL(void);
+	void RunCom(void);
+	void AddCom(SNCOM com, int ref = 0, int val = 0, void *ptr = NULL);
+	void InsCom(SNCOM com, int ref = 0, int val = 0, void *ptr = NULL);
+	bool Idle(void);
 };
 
 
-void	SelectPocket	(int n);
-void	PocFul		(void);
+void    SelectPocket(int n);
+void    PocFul(void);
 
 
-extern	SCB		Scb;
-extern	bool		Flag[4];
-extern	bool		Game;
-extern	bool		Dark;
-extern	SNAIL		Snail;
-extern	SNAIL		Snail_;
-extern	int		Now;
-extern	int		Lev;
-extern	int		MaxCave;
-extern	int		PocPtr;
-extern	BAR		Barriers[];
-extern	struct HXY { int X; int Y; } HeroXY[];
+extern  SCB     Scb;
+extern  bool        Flag[4];
+extern  bool        Game;
+extern  bool        Dark;
+extern  SNAIL       Snail;
+extern  SNAIL       Snail_;
+extern  int     Now;
+extern  int     Lev;
+extern  int     MaxCave;
+extern  int     PocPtr;
+extern  BAR     Barriers[];
+extern  struct HXY {
+	int X;
+	int Y;
+} HeroXY[];
 
 } // End of namespace CGE
 
