@@ -404,6 +404,8 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	} else
 		stream = raw;
 
+	if (_mixer->isSoundHandleActive(_channelHandle[channel]))
+		_mixer->stopHandle(_channelHandle[channel]);
 	_mixer->playStream(type, &_channelHandle[channel], stream);
 }
 
