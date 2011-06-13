@@ -74,7 +74,7 @@ public:
 	COUPLE operator + (COUPLE c) {
 		return COUPLE(A + c.A, B + c.B);
 	}
-	
+
 	void operator += (COUPLE c) {
 		A += c.A;
 		B += c.B;

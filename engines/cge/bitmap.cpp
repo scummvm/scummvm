@@ -125,7 +125,7 @@ BITMAP::BITMAP(const BITMAP &bmp) : W(bmp.W), H(bmp.H), M(NULL), V(NULL) {
 BITMAP::~BITMAP(void) {
 	if (MemType(M) == FAR_MEM)
 		free(M);
-	
+
 	switch (MemType(V)) {
 	case NEAR_MEM :
 		delete[](uint8 *) V;
