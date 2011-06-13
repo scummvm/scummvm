@@ -104,6 +104,7 @@ public:
 	void quit();
 
 	void loadSounds(uint bank, const Common::String &file);
+	bool playSpeech(const Common::String &filename);
 
 private:
 	void keyPressed(uint16 ascii);
@@ -124,6 +125,7 @@ private:
 	struct Sample {
 		uint offset;
 		uint size;
+		Sample(): offset(), size() {}
 	};
 
 	struct SoundData {
@@ -131,6 +133,7 @@ private:
 		Common::Array<uint8> data;
 	};
 	SoundData _soundData[2];
+	Common::Array<uint8> _speechData;
 
 	Audio::SoundHandle _channelHandle[2];
 	uint8 _channel0, _channel1;

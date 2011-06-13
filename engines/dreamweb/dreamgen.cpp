@@ -29,6 +29,7 @@ void fadescreendown(Context &context);
 void hangon(Context &context);
 void fadescreendowns(Context &context);
 void endgame(Context &context);
+void makename(Context &context);
 void standardload(Context &context);
 void getroomspaths(Context &context);
 void readheader(Context &context);
@@ -1660,6 +1661,7 @@ notmonk2text2:
 notmonk2text3:
 	context._cmp(context.data.byte(kIntrocount), 10);
 	if (!context.flags.z()) goto notmonk2text4;
+	context.data.byte(kIntrocount) = 12;
 	context.al = 11;
 	context.bl = 0;
 	context.bh = 105;
@@ -1668,6 +1670,8 @@ notmonk2text3:
 notmonk2text4:
 	context._cmp(context.data.byte(kIntrocount), 13);
 	if (!context.flags.z()) goto notmonk2text5;
+	context.data.byte(kIntrocount) = 17;
+	{assert(stack_depth == context.stack.size()); return; }
 	context.al = 12;
 	context.bl = 0;
 	context.bh = 120;
@@ -1708,7 +1712,7 @@ notmonk2text8:
 	context.cx = 100;
 	goto gotmonks2text;
 notmonk2text9:
-	context._cmp(context.data.byte(kIntrocount), 28);
+	context._cmp(context.data.byte(kIntrocount), 27);
 	if (!context.flags.z()) goto notmonk2text10;
 	context.al = 17;
 	context.bl = 36;
@@ -1763,6 +1767,10 @@ notintro1text3:
 gotintro1text:
 	context.dx = 1;
 	context.ah = 82;
+	context._cmp(context.data.byte(kCh1playing), 255);
+	if (context.flags.z()) goto oktalk2;
+	context._dec(context.data.byte(kIntrocount));
+	{assert(stack_depth == context.stack.size()); return; }
 oktalk2:
 	setuptimedtemp(context);
 	{assert(stack_depth == context.stack.size()); return; }
@@ -1804,7 +1812,7 @@ void intro3text(Context & context) {
 	context.cx = 100;
 	goto gotintro3text;
 notintro3text1:
-	context._cmp(context.ax, 109);
+	context._cmp(context.ax, 108);
 	if (!context.flags.z()) goto notintro3text2;
 	context.al = 46;
 	context.bl = 36;
@@ -2059,13 +2067,13 @@ notfirstmad:
 	context.bx = context.pop();
 	context.es = context.pop();
 	context.ax = 53;
-	context._cmp(context.data.byte(kCombatcount), 62);
+	context._cmp(context.data.byte(kCombatcount), 64);
 	if (context.flags.c()) goto nomadspeak;
-	context._cmp(context.data.byte(kCombatcount), 68);
+	context._cmp(context.data.byte(kCombatcount), 70);
 	if (context.flags.z()) goto killryan;
 	context._cmp(context.data.byte(kLastweapon), 8);
 	if (!context.flags.z()) goto nomadspeak;
-	context.data.byte(kCombatcount) = 70;
+	context.data.byte(kCombatcount) = 72;
 	context.data.byte(kLastweapon) = -1;
 	context.data.byte(kMadmanflag) = 1;
 	context.ax = 67;
@@ -2099,14 +2107,12 @@ ryansded:
 
 void madmantext(Context & context) {
 	uint stack_depth = context.stack.size();
-	context._cmp(context.data.byte(kCombatcount), 61);
+	context._cmp(context.data.byte(kSpeechcount), 63);
 	if (!context.flags.c()) goto nomadtext;
-	context.al = context.data.byte(kCombatcount);
-	context._and(context.al, 3);
+	context._cmp(context.data.byte(kCh1playing), 255);
 	if (!context.flags.z()) goto nomadtext;
-	context.al = context.data.byte(kCombatcount);
-	context._shr(context.al, 1);
-	context._shr(context.al, 1);
+	context.al = context.data.byte(kSpeechcount);
+	context._inc(context.data.byte(kSpeechcount));
 	context._add(context.al, 47);
 	context.bl = 72;
 	context.bh = 80;
@@ -2122,9 +2128,9 @@ void madmode(Context & context) {
 	uint stack_depth = context.stack.size();
 	context.data.word(kWatchingtime) = 2;
 	context.data.byte(kPointermode) = 0;
-	context._cmp(context.data.byte(kCombatcount), 63);
+	context._cmp(context.data.byte(kCombatcount), 65);
 	if (context.flags.c()) goto iswatchmad;
-	context._cmp(context.data.byte(kCombatcount), 68);
+	context._cmp(context.data.byte(kCombatcount), 70);
 	if (!context.flags.c()) goto iswatchmad;
 	context.data.byte(kPointermode) = 2;
 iswatchmad:
@@ -2162,7 +2168,7 @@ void textforend(Context & context) {
 	context.cx = 60;
 	goto gotendtext;
 notendtext1:
-	context._cmp(context.data.byte(kIntrocount), 65);
+	context._cmp(context.data.byte(kIntrocount), 50);
 	if (!context.flags.z()) goto notendtext2;
 	context.al = 1;
 	context.bl = 34;
@@ -2170,7 +2176,7 @@ notendtext1:
 	context.cx = 60;
 	goto gotendtext;
 notendtext2:
-	context._cmp(context.data.byte(kIntrocount), 110);
+	context._cmp(context.data.byte(kIntrocount), 85);
 	if (!context.flags.z()) goto notendtext3;
 	context.al = 2;
 	context.bl = 34;
@@ -2220,7 +2226,7 @@ notmonktext3:
 	context.cx = 120;
 	goto gotmonktext;
 notmonktext4:
-	context._cmp(context.data.byte(kIntrocount), 17);
+	context._cmp(context.data.byte(kIntrocount), 15);
 	if (!context.flags.z()) goto notmonktext5;
 	context.al = 23;
 	context.bl = 68;
@@ -2284,7 +2290,7 @@ notmonktext11:
 	context.cx = 120;
 	goto gotmonktext;
 notmonktext12:
-	context._cmp(context.data.byte(kIntrocount), 49);
+	context._cmp(context.data.byte(kIntrocount), 52);
 	if (!context.flags.z()) goto notmonktext13;
 	context.al = 31;
 	context.bl = 68;
@@ -2295,11 +2301,17 @@ notmonktext13:
 	context._cmp(context.data.byte(kIntrocount), 53);
 	if (!context.flags.z()) goto notendtitles;
 	fadescreendowns(context);
+	context.data.byte(kVolumeto) = 7;
+	context.data.byte(kVolumedirection) = 1;
 notendtitles:
 	{assert(stack_depth == context.stack.size()); return; }
 gotmonktext:
 	context.dx = 1;
 	context.ah = 82;
+	context._cmp(context.data.byte(kCh1playing), 255);
+	if (context.flags.z()) goto oktalk;
+	context._dec(context.data.byte(kIntrocount));
+	{assert(stack_depth == context.stack.size()); return; }
 oktalk:
 	setuptimedtemp(context);
 	{assert(stack_depth == context.stack.size()); return; }
@@ -2845,7 +2857,7 @@ continuewalk:
 	context.push(context.bx);
 	context.dx = context.data;
 	context.es = context.dx;
-	context.bx = 8141;
+	context.bx = 8173;
 	context._add(context.bx, context.ax);
 	context.ax = context.es.word(context.bx);
 	context.bx = context.pop();
@@ -5704,7 +5716,7 @@ void monkspeaking(Context & context) {
 	worktoscreen(context);
 	context.data.byte(kVolume) = 7;
 	context.data.byte(kVolumedirection) = -1;
-	context.data.byte(kVolumeto) = 0;
+	context.data.byte(kVolumeto) = 5;
 	context.al = 12;
 	context.ah = 255;
 	playchannel0(context);
@@ -5712,37 +5724,22 @@ void monkspeaking(Context & context) {
 	context.cx = 300;
 	hangon(context);
 	context.al = 40;
-nextmonkspeak:
+loadspeech2:
 	context.push(context.ax);
+	context.dl = 'T';
+	context.dh = 83;
+	context.cl = 'T';
 	context.ah = 0;
-	context.si = context.ax;
-	context._add(context.si, context.si);
-	context.es = context.data.word(kTextfile1);
-	context.ax = context.es.word(context.si);
-	context._add(context.ax, (66*2));
-	context.si = context.ax;
-nextbit:
-	context.di = 36;
-	context.bx = 140;
-	context.dl = 239;
-	printdirect(context);
-	context.push(context.ax);
-	context.push(context.si);
-	context.push(context.es);
-	worktoscreen(context);
-	clearwork(context);
-	showmonk(context);
-	context.cx = 240;
-	hangon(context);
-	context.es = context.pop();
-	context.si = context.pop();
-	context.ax = context.pop();
-	context._cmp(context.al, 0);
-	if (!context.flags.z()) goto nextbit;
+	loadspeech(context);
+	context.al = 50+12;
+	playchannel1(context);
+notloadspeech2:
+	context._cmp(context.data.byte(kCh1playing), 255);
+	if (!context.flags.z()) goto notloadspeech2;
 	context.ax = context.pop();
 	context._inc(context.al);
-	context._cmp(context.al, 44);
-	if (!context.flags.z()) goto nextmonkspeak;
+	context._cmp(context.al, 48);
+	if (!context.flags.z()) goto loadspeech2;
 	context.data.byte(kVolumedirection) = 1;
 	context.data.byte(kVolumeto) = 7;
 	fadescreendowns(context);
@@ -5831,7 +5828,7 @@ void intro(Context & context) {
 	loadintroroom(context);
 	context.data.byte(kVolume) = 7;
 	context.data.byte(kVolumedirection) = -1;
-	context.data.byte(kVolumeto) = 0;
+	context.data.byte(kVolumeto) = 4;
 	context.al = 12;
 	context.ah = 255;
 	playchannel0(context);
@@ -9569,6 +9566,22 @@ void starttalk(Context & context) {
 	context.al = 0;
 	context.ah = 0;
 	printdirect(context);
+	context.data.byte(kSpeechloaded) = 0;
+	context.al = context.data.byte(kCharacter);
+	context._and(context.al, 127);
+	context.ah = 0;
+	context.cx = 64;
+	context._mul(context.cx);
+	context.cl = 'C';
+	context.dl = 'R';
+	context.dh = context.data.byte(kReallocation);
+	loadspeech(context);
+	context._cmp(context.data.byte(kSpeechloaded), 1);
+	if (!context.flags.z()) goto nospeech1;
+	context.data.byte(kVolumedirection) = 1;
+	context.data.byte(kVolumeto) = 6;
+	context.al = 50+12;
+	playchannel1(context);
 nospeech1:
 	{assert(stack_depth == context.stack.size()); return; }
 }
@@ -9621,7 +9634,7 @@ notsecondpart:
 
 void dosometalk(Context & context) {
 	uint stack_depth = context.stack.size();
-watchtalk:
+dospeech:
 	context.al = context.data.byte(kTalkpos);
 	context.al = context.data.byte(kCharacter);
 	context._and(context.al, 127);
@@ -9641,7 +9654,7 @@ watchtalk:
 	context._add(context.ax, context.cx);
 	context.si = context.ax;
 	context._cmp(context.es.byte(context.si), 0);
-	if (context.flags.z()) goto endwatchtalk;
+	if (context.flags.z()) goto endheartalk;
 	context.push(context.es);
 	context.push(context.si);
 	createpanel(context);
@@ -9657,6 +9670,23 @@ watchtalk:
 	context.al = 0;
 	context.ah = 0;
 	printdirect(context);
+	context.al = context.data.byte(kCharacter);
+	context._and(context.al, 127);
+	context.ah = 0;
+	context.cx = 64;
+	context._mul(context.cx);
+	context.cl = context.data.byte(kTalkpos);
+	context.ch = 0;
+	context._add(context.ax, context.cx);
+	context.cl = 'C';
+	context.dl = 'R';
+	context.dh = context.data.byte(kReallocation);
+	loadspeech(context);
+	context._cmp(context.data.byte(kSpeechloaded), 0);
+	if (context.flags.z()) goto noplay1;
+	context.al = 62;
+	playchannel1(context);
+noplay1:
 	context.data.byte(kPointermode) = 3;
 	worktoscreenm(context);
 	context.cx = 180;
@@ -9681,11 +9711,11 @@ watchtalk:
 	context._add(context.ax, context.cx);
 	context.si = context.ax;
 	context._cmp(context.es.byte(context.si), 0);
-	if (context.flags.z()) goto endwatchtalk;
+	if (context.flags.z()) goto endheartalk;
 	context._cmp(context.es.byte(context.si), ':');
-	if (context.flags.z()) goto skiptalk;
+	if (context.flags.z()) goto skiptalk2;
 	context._cmp(context.es.byte(context.si), 32);
-	if (context.flags.z()) goto skiptalk;
+	if (context.flags.z()) goto skiptalk2;
 	context.push(context.es);
 	context.push(context.si);
 	createpanel(context);
@@ -9701,14 +9731,31 @@ watchtalk:
 	context.al = 0;
 	context.ah = 0;
 	printdirect(context);
+	context.al = context.data.byte(kCharacter);
+	context._and(context.al, 127);
+	context.ah = 0;
+	context.cx = 64;
+	context._mul(context.cx);
+	context.cl = context.data.byte(kTalkpos);
+	context.ch = 0;
+	context._add(context.ax, context.cx);
+	context.cl = 'C';
+	context.dl = 'R';
+	context.dh = context.data.byte(kReallocation);
+	loadspeech(context);
+	context._cmp(context.data.byte(kSpeechloaded), 0);
+	if (context.flags.z()) goto noplay2;
+	context.al = 62;
+	playchannel1(context);
+noplay2:
 	context.data.byte(kPointermode) = 3;
 	worktoscreenm(context);
 	context.cx = 180;
 	hangonpq(context);
-skiptalk:
+skiptalk2:
 	context._inc(context.data.byte(kTalkpos));
-	goto watchtalk;
-endwatchtalk:
+	goto dospeech;
+endheartalk:
 	context.data.byte(kPointermode) = 0;
 	{assert(stack_depth == context.stack.size()); return; }
 }
@@ -10022,14 +10069,14 @@ void getdestinfo(Context & context) {
 	context.push(context.ax);
 	context.dx = context.data;
 	context.es = context.dx;
-	context.si = 7979;
+	context.si = 8011;
 	context._add(context.si, context.ax);
 	context.cl = context.es.byte(context.si);
 	context.ax = context.pop();
 	context.push(context.cx);
 	context.dx = context.data;
 	context.es = context.dx;
-	context.si = 7995;
+	context.si = 8027;
 	context._add(context.si, context.ax);
 	context.ax = context.pop();
 	{assert(stack_depth == context.stack.size()); return; }
@@ -10162,7 +10209,7 @@ void getlocation(Context & context) {
 	context.bx = context.ax;
 	context.dx = context.data;
 	context.es = context.dx;
-	context._add(context.bx, 7979);
+	context._add(context.bx, 8011);
 	context.al = context.es.byte(context.bx);
 	{assert(stack_depth == context.stack.size()); return; }
 }
@@ -10173,7 +10220,7 @@ void setlocation(Context & context) {
 	context.bx = context.ax;
 	context.dx = context.data;
 	context.es = context.dx;
-	context._add(context.bx, 7979);
+	context._add(context.bx, 8011);
 	context.es.byte(context.bx) = 1;
 	{assert(stack_depth == context.stack.size()); return; }
 }
@@ -10221,7 +10268,7 @@ clearedlocations:
 	context.bx = context.ax;
 	context.dx = context.data;
 	context.es = context.dx;
-	context._add(context.bx, 7979);
+	context._add(context.bx, 8011);
 	context.es.byte(context.bx) = 0;
 	{assert(stack_depth == context.stack.size()); return; }
 }
@@ -10623,7 +10670,7 @@ void locklightoff(Context & context) {
 void input(Context & context) {
 	uint stack_depth = context.stack.size();
 	context.es = context.cs;
-	context.di = 8013;
+	context.di = 8045;
 	context.cx = 64;
 	context.al = 0;
 	while(context.cx--) 	context._stosb();
@@ -10672,7 +10719,7 @@ notleadingspace:
 	context.es = context.cs;
 	context.si = context.data.word(kCurpos);
 	context._add(context.si, context.si);
-	context._add(context.si, 8013);
+	context._add(context.si, 8045);
 	context.es.byte(context.si) = context.al;
 	context._cmp(context.al, 'Z'+1);
 	if (!context.flags.c()) goto waitkey;
@@ -10725,7 +10772,7 @@ void delchar(Context & context) {
 	context.si = context.data.word(kCurpos);
 	context._add(context.si, context.si);
 	context.es = context.cs;
-	context._add(context.si, 8013);
+	context._add(context.si, 8045);
 	context.es.byte(context.si) = 0;
 	context.al = context.es.byte(context.si+1);
 	context.ah = 0;
@@ -10753,7 +10800,7 @@ void execcommand(Context & context) {
 	context.es = context.cs;
 	context.bx = 2776;
 	context.ds = context.cs;
-	context.si = 8013;
+	context.si = 8045;
 	context.al = context.ds.byte(context.si);
 	context._cmp(context.al, 0);
 	if (!context.flags.z()) goto notblankinp;
@@ -10943,7 +10990,7 @@ notyetassigned:
 	context.push(context.bx);
 	context._add(context.bx, 2);
 	context.ds = context.cs;
-	context.si = 8013;
+	context.si = 8045;
 checkpass:
 	context._lodsw();
 	context.ah = context.es.byte(context.bx);
@@ -11251,7 +11298,7 @@ void parser(Context & context) {
 	context.al = '=';
 	context._stosb();
 	context.ds = context.cs;
-	context.si = 8013;
+	context.si = 8045;
 notspace1:
 	context._lodsw();
 	context._cmp(context.al, 32);
@@ -12551,7 +12598,7 @@ void isitright(Context & context) {
 	uint stack_depth = context.stack.size();
 	context.bx = context.data;
 	context.es = context.bx;
-	context.bx = 8541;
+	context.bx = 8573;
 	context._cmp(context.es.byte(context.bx+0), context.al);
 	if (!context.flags.z()) goto notright;
 	context._cmp(context.es.byte(context.bx+1), context.ah);
@@ -14111,6 +14158,19 @@ cantsetup:
 
 void setuptimedtemp(Context & context) {
 	uint stack_depth = context.stack.size();
+	context._cmp(context.ah, 0);
+	if (context.flags.z()) goto notloadspeech3;
+	context.dl = 'T';
+	context.dh = context.ah;
+	context.cl = 'T';
+	context.ah = 0;
+	loadspeech(context);
+	context._cmp(context.data.byte(kSpeechloaded), 1);
+	if (!context.flags.z()) goto notloadspeech3;
+	context.al = 50+12;
+	playchannel1(context);
+	{assert(stack_depth == context.stack.size()); return; }
+notloadspeech3:
 	context._cmp(context.data.word(kTimecount), 0);
 	if (!context.flags.z()) goto cantsetup2;
 	context.data.byte(kTimedy) = context.bh;
@@ -14673,7 +14733,7 @@ not10:
 	context.bx = context.data.word(kPresspointer);
 	context.dx = context.data;
 	context.es = context.dx;
-	context._add(context.bx, 8541);
+	context._add(context.bx, 8573);
 	context.es.byte(context.bx) = context.al;
 	context._inc(context.data.word(kPresspointer));
 nomorekeys:
@@ -16242,7 +16302,7 @@ loadops:
 	getridoftemp(context);
 	context.dx = context.data;
 	context.es = context.dx;
-	context.bx = 7947;
+	context.bx = 7979;
 	startloading(context);
 	loadroomssample(context);
 	context.data.byte(kRoomloaded) = 1;
@@ -16375,7 +16435,7 @@ alreadyactsave:
 	if (context.flags.z()) goto noactsave;
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.si = 8547;
+	context.si = 8579;
 	context.al = context.data.byte(kCurrentslot);
 	context.ah = 0;
 	context.cx = 17;
@@ -16389,9 +16449,9 @@ alreadyactsave:
 	context.cx = 32;
 	context._mul(context.cx);
 	context.ds = context.cs;
-	context.si = 6155;
+	context.si = 6187;
 	context._add(context.si, context.ax);
-	context.di = 7947;
+	context.di = 7979;
 	context.bx = context.di;
 	context.es = context.cs;
 	context.cx = 16;
@@ -16438,7 +16498,7 @@ alreadyactload:
 	if (!context.flags.z()) goto notactload;
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.si = 8547;
+	context.si = 8579;
 	context.al = context.data.byte(kCurrentslot);
 	context.ah = 0;
 	context.cx = 17;
@@ -16515,7 +16575,7 @@ void getnamepos(Context & context) {
 	context._mul(context.cx);
 	context.dx = context.data;
 	context.es = context.dx;
-	context.bx = 8547;
+	context.bx = 8579;
 	context._add(context.bx, context.ax);
 	context.al = context.data.byte(kCursorpos);
 	context.ah = 0;
@@ -16669,7 +16729,7 @@ void shownames(Context & context) {
 	uint stack_depth = context.stack.size();
 	context.dx = context.data;
 	context.es = context.dx;
-	context.si = 8547+1;
+	context.si = 8579+1;
 	context.di = (60)+21;
 	context.bx = (52)+10;
 	context.cl = 0;
@@ -16735,7 +16795,7 @@ afterprintname:
 void namestoold(Context & context) {
 	uint stack_depth = context.stack.size();
 	context.ds = context.cs;
-	context.si = 8547;
+	context.si = 8579;
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	context.es = context.data.word(kBuffers);
 	context.cx = 17*4;
@@ -16746,7 +16806,7 @@ void namestoold(Context & context) {
 void oldtonames(Context & context) {
 	uint stack_depth = context.stack.size();
 	context.es = context.cs;
-	context.di = 8547;
+	context.di = 8579;
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	context.ds = context.data.word(kBuffers);
 	context.cx = 17*4;
@@ -16764,23 +16824,23 @@ void saveposition(Context & context) {
 	context._mul(context.cx);
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.dx = 8666;
+	context.dx = 8698;
 	context._add(context.dx, context.ax);
 	openforsave(context);
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.dx = 6059;
-	context.cx = (6155-6059);
+	context.dx = 6091;
+	context.cx = (6187-6091);
 	savefilewrite(context);
 	context.dx = context.data;
 	context.es = context.dx;
-	context.di = 6109;
+	context.di = 6141;
 	context.ax = context.pop();
 	context.cx = 17;
 	context._mul(context.cx);
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.dx = 8547;
+	context.dx = 8579;
 	context._add(context.dx, context.ax);
 	saveseg(context);
 	context.dx = context.data;
@@ -16795,7 +16855,7 @@ void saveposition(Context & context) {
 	saveseg(context);
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.dx = 7947;
+	context.dx = 7979;
 	saveseg(context);
 	context.dx = context.data;
 	context.ds = context.dx;
@@ -16817,21 +16877,21 @@ void loadposition(Context & context) {
 	context._mul(context.cx);
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.dx = 8666;
+	context.dx = 8698;
 	context._add(context.dx, context.ax);
-	openfile(context);
+	openfilefromc(context);
 	context.ds = context.cs;
-	context.dx = 6059;
-	context.cx = (6155-6059);
+	context.dx = 6091;
+	context.cx = (6187-6091);
 	savefileread(context);
 	context.es = context.cs;
-	context.di = 6109;
+	context.di = 6141;
 	context.ax = context.pop();
 	context.cx = 17;
 	context._mul(context.cx);
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.dx = 8547;
+	context.dx = 8579;
 	context._add(context.dx, context.ax);
 	loadseg(context);
 	context.dx = context.data;
@@ -16846,7 +16906,7 @@ void loadposition(Context & context) {
 	loadseg(context);
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.dx = 7947;
+	context.dx = 7979;
 	loadseg(context);
 	context.ds = context.cs;
 	context.dx = 534;
@@ -16859,7 +16919,7 @@ void makeheader(Context & context) {
 	uint stack_depth = context.stack.size();
 	context.dx = context.data;
 	context.es = context.dx;
-	context.di = 6109;
+	context.di = 6141;
 	context.ax = 17;
 	storeit(context);
 	context.ax = (68-0);
@@ -16904,10 +16964,10 @@ void scanfornames(Context & context) {
 	uint stack_depth = context.stack.size();
 	context.dx = context.data;
 	context.es = context.dx;
-	context.di = 8547;
+	context.di = 8579;
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.dx = 8666;
+	context.dx = 8698;
 	context.cx = 7;
 scanloop:
 	context.push(context.es);
@@ -16915,7 +16975,7 @@ scanloop:
 	context.push(context.di);
 	context.push(context.dx);
 	context.push(context.cx);
-	openfilenocheck(context);
+	openfilefromc(context);
 	if (context.flags.c()) goto notexist;
 	context.cx = context.pop();
 	context._inc(context.ch);
@@ -16924,12 +16984,12 @@ scanloop:
 	context.push(context.es);
 	context.dx = context.data;
 	context.ds = context.dx;
-	context.dx = 6059;
-	context.cx = (6155-6059);
+	context.dx = 6091;
+	context.cx = (6187-6091);
 	savefileread(context);
 	context.dx = context.data;
 	context.es = context.dx;
-	context.di = 6109;
+	context.di = 6141;
 	context.ds = context.pop();
 	context.dx = context.pop();
 	loadseg(context);
@@ -17045,7 +17105,7 @@ loadops:
 	getridoftemp(context);
 	context.dx = context.data;
 	context.es = context.dx;
-	context.bx = 7947;
+	context.bx = 7979;
 	startloading(context);
 	loadroomssample(context);
 	context.data.byte(kRoomloaded) = 1;
@@ -17811,7 +17871,7 @@ void clearchanges(Context & context) {
 	context.di = 0;
 	while(context.cx--) 	context._stosw();
 	context.es = context.cs;
-	context.di = 7979;
+	context.di = 8011;
 	context.al = 1;
 	context._stosb();
 	context._stosb();
@@ -18983,6 +19043,18 @@ notweb:
 	if (!context.flags.z()) goto notlouisvol;
 	context.data.byte(kVolume) = 5;
 notlouisvol:
+	context._cmp(context.data.byte(kReallocation), 14);
+	if (!context.flags.z()) goto notmad1;
+	context._cmp(context.data.byte(kMapx), 33);
+	if (context.flags.z()) goto ismad2;
+	context._cmp(context.data.byte(kMapx), 22);
+	if (!context.flags.z()) goto notmad1;
+	context.data.byte(kVolume) = 5;
+	{assert(stack_depth == context.stack.size()); return; }
+ismad2:
+	context.data.byte(kVolume) = 0;
+	{assert(stack_depth == context.stack.size()); return; }
+notmad1:
 playingalready:
 	context._cmp(context.data.byte(kReallocation), 2);
 	if (!context.flags.z()) goto notlouisvol2;
@@ -19490,7 +19562,7 @@ void bresenhams(Context & context) {
 	workoutframes(context);
 	context.dx = context.data;
 	context.es = context.dx;
-	context.di = 8141;
+	context.di = 8173;
 	context.si = 1;
 	context.data.byte(kLinedirection) = 0;
 	context.cx = context.data.word(kLineendx);
@@ -19592,7 +19664,7 @@ line23:
 	context._inc(context.al);
 	if (--context.cx) goto hiloop;
 lineexit:
-	context._sub(context.di, 8141);
+	context._sub(context.di, 8173);
 	context.ax = context.di;
 	context._shr(context.ax, 1);
 	context.data.byte(kLinelength) = context.al;
@@ -21132,7 +21204,7 @@ void getroomdata(Context & context) {
 	context.ah = 0;
 	context.cx = 32;
 	context._mul(context.cx);
-	context.bx = 6155;
+	context.bx = 6187;
 	context._add(context.bx, context.ax);
 	{assert(stack_depth == context.stack.size()); return; }
 }
@@ -21140,11 +21212,11 @@ void getroomdata(Context & context) {
 void readheader(Context & context) {
 	uint stack_depth = context.stack.size();
 	context.ds = context.cs;
-	context.dx = 6059;
-	context.cx = (6155-6059);
+	context.dx = 6091;
+	context.cx = (6187-6091);
 	readfromfile(context);
 	context.es = context.cs;
-	context.di = 6109;
+	context.di = 6141;
 	{assert(stack_depth == context.stack.size()); return; }
 }
 
@@ -21253,6 +21325,21 @@ void readsetdata(Context & context) {
 	readfromfile(context);
 	closefile(context);
 novolumeload:
+	{assert(stack_depth == context.stack.size()); return; }
+}
+
+void makename(Context & context) {
+	uint stack_depth = context.stack.size();
+	context.si = context.dx;
+	context.di = 6061;
+transfer:
+	context.al = context.cs.byte(context.si);
+	context.cs.byte(context.di) = context.al;
+	context._inc(context.si);
+	context._inc(context.di);
+	context._cmp(context.al, 0);
+	if (!context.flags.z()) goto transfer;
+	context.dx = 6059;
 	{assert(stack_depth == context.stack.size()); return; }
 }
 
@@ -21748,6 +21835,8 @@ void __start(Context &context) {
 		0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x44, 0x3a, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x44, 0x52, 0x45, 0x41, 0x4d, 
 		0x57, 0x45, 0x42, 0x20, 0x44, 0x41, 0x54, 0x41, 0x20, 0x46, 0x49, 0x4c, 0x45, 0x20, 0x43, 0x4f, 
@@ -22674,16 +22763,18 @@ void __dispatch_call(Context &context, unsigned addr) {
 		case 0xcb88: readsetdata(context); break;
 		case 0xcb8c: createfile(context); break;
 		case 0xcb90: openfile(context); break;
-		case 0xcb94: openfilenocheck(context); break;
-		case 0xcb98: openforsave(context); break;
-		case 0xcb9c: closefile(context); break;
-		case 0xcba0: readfromfile(context); break;
-		case 0xcba4: setkeyboardint(context); break;
-		case 0xcba8: resetkeyboard(context); break;
-		case 0xcbac: keyboardread(context); break;
-		case 0xcbb0: walkandexamine(context); break;
-		case 0xcbb4: doload(context); break;
-		case 0xcbb8: generalerror(context); break;
+		case 0xcb94: openfilefromc(context); break;
+		case 0xcb98: makename(context); break;
+		case 0xcb9c: openfilenocheck(context); break;
+		case 0xcba0: openforsave(context); break;
+		case 0xcba4: closefile(context); break;
+		case 0xcba8: readfromfile(context); break;
+		case 0xcbac: setkeyboardint(context); break;
+		case 0xcbb0: resetkeyboard(context); break;
+		case 0xcbb4: keyboardread(context); break;
+		case 0xcbb8: walkandexamine(context); break;
+		case 0xcbbc: doload(context); break;
+		case 0xcbc0: generalerror(context); break;
 		default: ::error("invalid call to %04x dispatched", (uint16)context.ax);
 	}
 }

@@ -380,30 +380,45 @@ void DreamWebEngine::cls() {
 }
 
 void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
+	debug(1, "playSound(%u, %u, %u)", channel, id, loops);
 	const SoundData &data = _soundData[id >= 12? 1: 0];
 
 	Audio::Mixer::SoundType type;
+	bool speech = id == 62; //actually 50
 	if (id >= 12) {
 		id -= 12;
 		type = Audio::Mixer::kSFXSoundType;
-	} else
+	} else if (speech)
+		type = Audio::Mixer::kSpeechSoundType;
+	else 
 		type = Audio::Mixer::kMusicSoundType;
 
-	if (id >= data.samples.size()) {
-		warning("invalid sample #%u played", id);
-		return;
+	Audio::SeekableAudioStream *raw;
+	if (!speech) {
+		if (id >= data.samples.size() || data.samples[id].size == 0) {
+			warning("invalid sample #%u played", id);
+			return;
+		}
+
+		const Sample &sample = data.samples[id];
+		uint8 *buffer = (uint8 *)malloc(sample.size);
+		if (!buffer)
+			error("out of memory: cannot allocate memory for sound(%u bytes)", sample.size);
+		memcpy(buffer, data.data.begin() + sample.offset, sample.size);
+
+		raw = Audio::makeRawStream(
+			buffer, 
+			sample.size, 22050, Audio::FLAG_UNSIGNED);
+	} else {
+		uint8 *buffer = (uint8 *)malloc(_speechData.size());
+		memcpy(buffer, _speechData.begin(), _speechData.size());
+		if (!buffer)
+			error("out of memory: cannot allocate memory for sound(%u bytes)", _speechData.size());
+		raw = Audio::makeRawStream(
+			buffer, 
+			_speechData.size(), 22050, Audio::FLAG_UNSIGNED);
+		
 	}
-
-	const Sample &sample = data.samples[id];
-
-	uint8 *buffer = (uint8 *)malloc(sample.size);
-	if (!buffer)
-		error("out of memory: cannot allocate memory for sound(%u bytes)", sample.size);
-	memcpy(buffer, data.data.begin() + sample.offset, sample.size);
-
-	Audio::SeekableAudioStream *raw = Audio::makeRawStream(
-		buffer, 
-		sample.size, 22050, Audio::FLAG_UNSIGNED);
 
 	Audio::AudioStream *stream;
 	if (loops > 1) {
@@ -415,6 +430,21 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 		_mixer->stopHandle(_channelHandle[channel]);
 	_mixer->playStream(type, &_channelHandle[channel], stream);
 }
+
+bool DreamWebEngine::playSpeech(const Common::String &filename) {
+	debug(1, "playSpeech(%s)", filename.c_str());
+	Common::File file;
+	if (!file.open("speech/" + filename))
+		return false;
+
+	debug(1, "\tfound speech file");
+	uint size = file.size();
+	_speechData.resize(size);
+	file.read(_speechData.begin(), size);
+	file.close();
+	return true;
+}
+
 
 void DreamWebEngine::soundHandler() {
 	//uint8 volume = _context.data.byte(dreamgen::kVolume);
@@ -429,16 +459,12 @@ void DreamWebEngine::soundHandler() {
 	if (_channel0 != ch0) {
 		_channel0 = ch0;
 		if (ch0) {
-			//Audio::AudioStream *stream = LoopingAudioStream(Audio::makeRawStream(data, size, 22050, 0), ch0loops);
-			//_mixer->playStream(Audio::Mixer::kMusicType, &_musicHandle, stream); //dispose is YES by default
-			debug(1, "playing sound %u at channel 0, loop: %u", ch0, ch0loop);
 			playSound(0, ch0, ch0loop);
 		}
 	}
 	if (_channel1 != ch1) {
 		_channel1 = ch1;
 		if (ch1) {
-			debug(1, "playing sound %u at channel 1", ch1);
 			playSound(1, ch1, 1);
 		}
 	}
@@ -632,6 +658,10 @@ void openfilenocheck(Context &context) {
 	context.flags._c = !ok;
 }
 
+void openfilefromc(Context &context) {
+	openfile(context);
+}
+
 void openfile(Context &context) {
 	Common::String name = getFilename(context);
 	debug(1, "opening file: %s", name.c_str());
@@ -797,7 +827,6 @@ void loadsample(Context &context) {
 void cancelch0(Context &context);
 void cancelch1(Context &context);
 
-
 void loadsecondsample(Context &context) {
 	uint8 ch0 = context.data.byte(kCh0playing);
 	if (ch0 >= 12 && ch0 != 255)
@@ -808,8 +837,16 @@ void loadsecondsample(Context &context) {
 	context.engine->loadSounds(1, (const char *)context.data.ptr(context.dx, 13));
 }
 
+void createname(Context &context);
+
 void loadspeech(Context &context) {
-	::error("loadspeech");
+	cancelch1(context);
+	context.data.byte(kSpeechloaded) = 0;
+	createname(context);
+	const char *name = (const char *)context.data.ptr(context.di, 13);
+	//warning("name = %s", name);
+	if (context.engine->playSpeech(name)) 
+		context.data.byte(kSpeechloaded) = 1;
 }
 
 void saveseg(Context &context) {
