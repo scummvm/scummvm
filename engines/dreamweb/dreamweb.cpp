@@ -768,32 +768,7 @@ void setsoundoff(Context &context) {
 void readheader(Context &context);
 
 void loadsample(Context &context) {
-	context.engine->loadSounds(1, (const char *)context.data.ptr(context.dx, 13));
-	/*
-	openfile(context);
-	readheader(context);
-	context.bx = context.es.word(context.di);
-	context.push(context.es);
-	context.push(context.di);
-	context.push(context.bx);
-	context.ds = context.data.word(kSounddata);
-	context.cx = context.pop();
-	context.dx = 0;
-	readfromfile(context);
-	context.di = context.pop();
-	context.es = context.pop();
-	context._add(context.di, 2);
-	context.bx = 0;
-	context.dx = context.es.word(context.di);
-	context._add(context.dx, 1);
-	context._shr(context.dx, 1);
-	//debug(1, "dx = %u", (uint16)context.dx);
-	uint32 size = 0x8000 * context.dx;
-	debug(1, "file size = %u", size);
-	context.engine->loadSounds(0, size);
-	
-	closefile(context);
-	*/
+	context.engine->loadSounds(0, (const char *)context.data.ptr(context.dx, 13));
 }
 
 void cancelch0(Context &context);
