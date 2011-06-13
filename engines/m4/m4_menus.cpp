@@ -22,6 +22,7 @@
 
 #include "common/algorithm.h"		// for find()
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "gui/dialog.h"
 #include "gui/message.h"
 
@@ -134,7 +135,7 @@ void OrionCallbacks::saveLoadSaveFn(DialogView *view, MenuObject *item) {
 	bool succeeded = view->vm()->_saveLoad->save(view->_selectedSlot + 1, textItem->getText());
 
 	if (!succeeded) {
-		GUI::MessageDialog dialog("Save game failed!");
+		GUI::MessageDialog dialog(_("Save game failed!"));
 		dialog.runModal();
 	}
 

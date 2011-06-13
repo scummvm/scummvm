@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "graphics/palette.h"
 #include "graphics/thumbnail.h"
@@ -859,9 +860,9 @@ void Control::checkForOldSaveGames() {
 	}
 
 	GUI::MessageDialog dialog0(
-		"ScummVM found that you have old savefiles for Broken Sword 1 that should be converted.\n"
+		_("ScummVM found that you have old savefiles for Broken Sword 1 that should be converted.\n"
 		"The old save game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
-		"Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n", "OK", "Cancel");
+		"Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"), _("OK"), _("Cancel"));
 
 	int choice = dialog0.runModal();
 	if (choice == GUI::kMessageCancel) {
@@ -1228,11 +1229,10 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 	if (testSave) {
 		delete testSave;
 
-		char msg[200];
-		sprintf(msg, "Target new save game already exists!\n"
-					 "Would you like to keep the old save game (%s) or the new one (%s)?\n",
+		Common::String msg = Common::String::format(_("Target new save game already exists!\n"
+					 "Would you like to keep the old save game (%s) or the new one (%s)?\n"),
 					 oldFileName, newFileName);
-		GUI::MessageDialog dialog0(msg, "Keep the old one", "Keep the new one");
+		GUI::MessageDialog dialog0(msg, _("Keep the old one"), _("Keep the new one"));
 
 		int choice = dialog0.runModal();
 		if (choice == GUI::kMessageCancel) {

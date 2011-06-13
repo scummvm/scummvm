@@ -22,6 +22,7 @@
 
 #include "common/endian.h"
 #include "common/str.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 
@@ -252,7 +253,7 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 		WRITE_VAR(1, 1);
 
 		if (!_vm->_saveLoad->load(file.c_str(), dataVar, size, offset)) {
-			GUI::MessageDialog dialog("Failed to load game state from file.");
+			GUI::MessageDialog dialog(_("Failed to load game state from file."));
 			dialog.runModal();
 		} else
 			WRITE_VAR(1, 0);

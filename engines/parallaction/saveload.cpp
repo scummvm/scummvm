@@ -23,6 +23,7 @@
 #include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "gui/dialog.h"
 #include "gui/saveload.h"
@@ -129,8 +130,7 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	Common::OutSaveFile *f = getOutSaveFile(slot);
 	if (f == 0) {
-		char buf[32];
-		sprintf(buf, "Can't save game in slot %i\n\n", slot);
+		Common::String buf = Common::String::format(_("Can't save game in slot %i\n\n"), slot);
 		GUI::MessageDialog dialog(buf);
 		dialog.runModal();
 		return;
@@ -208,7 +208,7 @@ bool SaveLoad::loadGame() {
 
 	doLoadGame(_di);
 
-	GUI::TimedMessageDialog dialog("Loading game...", 1500);
+	GUI::TimedMessageDialog dialog(_("Loading game..."), 1500);
 	dialog.runModal();
 
 	return true;
@@ -223,7 +223,7 @@ bool SaveLoad::saveGame() {
 
 	doSaveGame(slot, saveName.c_str());
 
-	GUI::TimedMessageDialog dialog("Saving game...", 1500);
+	GUI::TimedMessageDialog dialog(_("Saving game..."), 1500);
 	dialog.runModal();
 
 	return true;
@@ -276,9 +276,9 @@ void SaveLoad_ns::getGamePartProgress(bool *complete, int size) {
 
 static bool askRenameOldSavefiles() {
 	GUI::MessageDialog dialog0(
-		"ScummVM found that you have old savefiles for Nippon Safes that should be renamed.\n"
+		_("ScummVM found that you have old savefiles for Nippon Safes that should be renamed.\n"
 		"The old names are no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
-		"Press OK to convert them now, otherwise you will be asked next time.\n", "OK", "Cancel");
+		"Press OK to convert them now, otherwise you will be asked next time.\n"), _("OK"), _("Cancel"));
 
 	return (dialog0.runModal() != 0);
 }
@@ -321,12 +321,11 @@ void SaveLoad_ns::renameOldSavefiles() {
 		return;
 	}
 
-	char msg[200];
+	Common::String msg;
 	if (success == numOldSaves) {
-		sprintf(msg, "ScummVM successfully converted all your savefiles.");
+		msg = _("ScummVM successfully converted all your savefiles.");
 	} else {
-		sprintf(msg,
-			"ScummVM printed some warnings in your console window and can't guarantee all your files have been converted.\n\n"
+		msg = _("ScummVM printed some warnings in your console window and can't guarantee all your files have been converted.\n\n"
 			"Please report to the team.");
 	}
 

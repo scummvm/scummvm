@@ -143,9 +143,9 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kHelpCmd: {
 		GUI::MessageDialog dialog(
-					"Sorry, this engine does not currently provide in-game help. "
+					_("Sorry, this engine does not currently provide in-game help. "
 					"Please consult the README for basic information, and for "
-					"instructions on how to obtain further assistance.");
+					"instructions on how to obtain further assistance."));
 		dialog.runModal();
 		}
 		break;
