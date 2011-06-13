@@ -25,18 +25,17 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef	__IDENT__
-#define	__IDENT__
+#ifndef __IDENT__
+#define __IDENT__
 
 namespace CGE {
 
-struct IDENT
-  {
-    char		copr[83];
-    char		fill[8];
-    unsigned long	disk;
-    unsigned char	cork;
-  };
+struct IDENT {
+	char            copr[83];
+	char            fill[8];
+	unsigned long   disk;
+	unsigned char   cork;
+};
 
 } // End of namespace CGE
 

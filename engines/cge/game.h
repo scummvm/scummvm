@@ -25,43 +25,36 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__GAME__
-#define		__GAME__
+#ifndef __GAME__
+#define __GAME__
 
-#include	"cge/vga13h.h"
-#include	"cge/bitmaps.h"
+#include "cge/vga13h.h"
+#include "cge/bitmaps.h"
 
 namespace CGE {
 
 
-#define		PAN_HIG		40
-#define		LBound(s)	(s->X <= 0)
-#define		RBound(s)	(s->X+s->W >= SCR_WID)
-#define		TBound(s)	(s->Y <= 0)
-#define		BBound(s)	(s->Y+s->H >= SCR_HIG - PAN_HIG)
+#define PAN_HIG     40
+#define LBound(s)   (s->X <= 0)
+#define RBound(s)   (s->X+s->W >= SCR_WID)
+#define TBound(s)   (s->Y <= 0)
+#define BBound(s)   (s->Y+s->H >= SCR_HIG - PAN_HIG)
 
 
+extern SPRITE *Sys;
 
-extern		SPRITE *	Sys;
-
-int		Sinus		(long x);
-uint8 *		Glass		(DAC * pal, uint8 r, uint8 g, uint8 b);
-uint8 *		Mark		(DAC * pal);
-
+int    Sinus(long x);
+uint8 *Glass(DAC *pal, uint8 r, uint8 g, uint8 b);
+uint8 *Mark(DAC *pal);
 
 
-
-
-class FLY : public SPRITE
-{
-  static int L, T, R, B;
+class FLY : public SPRITE {
+	static int L, T, R, B;
 public:
-  int Tx, Ty;
-  FLY (BITMAP ** shpl);
-  void Tick (void);
+	int Tx, Ty;
+	FLY(BITMAP **shpl);
+	void Tick(void);
 };
-
-
 
 } // End of namespace CGE
 

@@ -25,34 +25,33 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__MIXER__
-#define		__MIXER__
+#ifndef __MIXER__
+#define __MIXER__
 
-#include	"cge/vga13h.h"
+#include "cge/vga13h.h"
 
 namespace CGE {
 
-#define		MIX_MAX		16	// count of Leds
-#define		MIX_Z		64	// mixer Z position
-#define		MIX_DELAY	12 	// 6/s
-#define		MIX_FALL	6 	// in MIX_DELAY units
-#define		MIX_BHIG	6	// mixer button high
-#define		MIX_NAME	105	// sprite name
+#define MIX_MAX     16                              // count of Leds
+#define MIX_Z       64                              // mixer Z position
+#define MIX_DELAY   12                              // 6/s
+#define MIX_FALL    6                               // in MIX_DELAY units
+#define MIX_BHIG    6                               // mixer button high
+#define MIX_NAME    105                             // sprite name
 
-class MIXER : public SPRITE
-{
-  BMP_PTR mb[2];
-  BMP_PTR lb[MIX_MAX+1];
-  SEQ ls[MIX_MAX];
-  SPRITE * Led[2];
-  int Fall;
-  void Update (void);
+class MIXER : public SPRITE {
+	BMP_PTR mb[2];
+	BMP_PTR lb[MIX_MAX + 1];
+	SEQ ls[MIX_MAX];
+	SPRITE *Led[2];
+	int Fall;
+	void Update(void);
 public:
-  static bool Appear;
-  MIXER (int x, int y);
-  ~MIXER (void);
-  void Touch (uint16 mask, int x, int y);
-  void Tick (void);
+	static bool Appear;
+	MIXER(int x, int y);
+	~MIXER(void);
+	void Touch(uint16 mask, int x, int y);
+	void Tick(void);
 };
 
 } // End of namespace CGE

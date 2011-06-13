@@ -22,7 +22,7 @@
 
 #ifndef CGE_H
 #define CGE_H
- 
+
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
@@ -33,12 +33,12 @@
 #define CGE_SAVEGAME_VERSION 1
 
 namespace CGE {
- 
+
 class Console;
- 
+
 // our engine debug channels
 enum {
-	kCGEDebug = 1 << 0
+    kCGEDebug = 1 << 0
 };
 
 class CGEEngine : public Engine {
@@ -49,19 +49,21 @@ public:
 	const ADGameDescription *_gameDescription;
 
 	virtual Common::Error run();
-	GUI::Debugger *getDebugger() { return _console; }
- 
+	GUI::Debugger *getDebugger() {
+		return _console;
+	}
+
 private:
 	CGEConsole *_console;
 };
- 
+
 // Example console class
 class Console : public GUI::Debugger {
 public:
 	Console(CGEEngine *vm) {}
 	virtual ~Console(void) {}
 };
- 
+
 } // End of namespace CGE
- 
+
 #endif

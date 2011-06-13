@@ -25,12 +25,12 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef	__CONFIG__
-#define	__CONFIG__
+#ifndef __CONFIG__
+#define __CONFIG__
 
 namespace CGE {
 
-void		SelectSound		(void);
+void SelectSound(void);
 
 } // End of namespace CGE
 

@@ -25,22 +25,22 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__BITMAPS__
-#define		__BITMAPS__
+#ifndef __BITMAPS__
+#define __BITMAPS__
 
-#include	"cge/vga13h.h"
+#include "cge/vga13h.h"
 
 namespace CGE {
 
 #ifdef DEBUG
- extern	BITMAP *	MB[];
- extern	BITMAP *	HL[];
+extern BITMAP  *MB[];
+extern BITMAP  *HL[];
 #endif
 
-extern	BITMAP *	MC[];
-extern	BITMAP *	PR[];
-extern	BITMAP *	SP[];
-extern	BITMAP *	LI[];
+extern BITMAP  *MC[];
+extern BITMAP  *PR[];
+extern BITMAP  *SP[];
+extern BITMAP  *LI[];
 
 } // End of namespace CGE
 

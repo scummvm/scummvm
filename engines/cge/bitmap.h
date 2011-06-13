@@ -25,64 +25,64 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef		__BITMAP__
-#define		__BITMAP__
+#ifndef __BITMAP__
+#define __BITMAP__
 
-#include	"cge/general.h"
+#include "cge/general.h"
 
 namespace CGE {
 
-#define		EOI		0x0000
-#define		SKP		0x4000
-#define		REP		0x8000
-#define		CPY		0xC000
+#define EOI     0x0000
+#define SKP     0x4000
+#define REP     0x8000
+#define CPY     0xC000
 
-#define		TRANS		0xFE
-
-
-typedef	struct	{ uint16 b : 2;
-		  uint16 B : 6;
-		  uint16 g : 2;
-		  uint16 G : 6;
-		  uint16 r : 2;
-		  uint16 R : 6;
-		  uint16 Z : 8;
-		} BGR4;
+#define TRANS   0xFE
 
 
-typedef	struct	{ uint16 skip; uint16 hide; } HideDesc;
+typedef struct  {
+	uint16 b : 2;
+	uint16 B : 6;
+	uint16 g : 2;
+	uint16 G : 6;
+	uint16 r : 2;
+	uint16 R : 6;
+	uint16 Z : 8;
+} BGR4;
 
 
+typedef struct  {
+	uint16 skip;
+	uint16 hide;
+} HideDesc;
 
 
-class BITMAP
-{
-  bool BMPLoad (XFILE * f);
-  bool VBMLoad (XFILE * f);
+class BITMAP {
+	bool BMPLoad(XFILE *f);
+	bool VBMLoad(XFILE *f);
 public:
-  static DAC * Pal;
-  uint16 W, H;
-  uint8 * M, * V; HideDesc * B;
-  BITMAP (const char * fname, bool rem = true);
-  BITMAP (uint16 w, uint16 h, uint8 * map);
-  BITMAP (uint16 w, uint16 h, uint8 fill);
-  BITMAP (const BITMAP& bmp);
-  ~BITMAP (void);
-  BITMAP * FlipH (void);
-  BITMAP * Code ();
-  BITMAP& operator = (const BITMAP& bmp);
-  void Hide (int x, int y);
-  void Show (int x, int y);
-  void XShow (int x, int y);
-  bool SolidAt (int x, int y);
-  bool VBMSave (XFILE * f);
-  uint16 MoveVmap (uint8 * buf);
+	static DAC *Pal;
+	uint16 W, H;
+	uint8 *M, * V;
+	HideDesc *B;
+	BITMAP(const char *fname, bool rem = true);
+	BITMAP(uint16 w, uint16 h, uint8 *map);
+	BITMAP(uint16 w, uint16 h, uint8 fill);
+	BITMAP(const BITMAP &bmp);
+	~BITMAP(void);
+	BITMAP *FlipH(void);
+	BITMAP *Code();
+	BITMAP &operator = (const BITMAP &bmp);
+	void Hide(int x, int y);
+	void Show(int x, int y);
+	void XShow(int x, int y);
+	bool SolidAt(int x, int y);
+	bool VBMSave(XFILE *f);
+	uint16 MoveVmap(uint8 *buf);
 };
 
 
-
-typedef	BITMAP *	BMP_PTR;
-
+typedef BITMAP     *BMP_PTR;
 
 } // End of namespace CGE
 
