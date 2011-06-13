@@ -41,7 +41,7 @@ SOUND Sound;
 
 
 SOUND::SOUND(void) {
-	if (STARTUP::SoundOk) 
+	if (STARTUP::SoundOk)
 		Open();
 }
 
@@ -115,7 +115,7 @@ int FX::Find(int ref) {
 	for (p = Cache, q = p + Size; p < q; p ++) {
 		if (p->Ref == ref)
 			break;
-		else 
+		else
 			++i;
 	}
 	return i;
@@ -133,7 +133,7 @@ void FX::Preload(int ref0) {
 		DATACK *wav = LoadWave(&file, &Emm);
 		if (wav) {
 			HAN *p = &Cache[Find(0)];
-			if (p >= CacheLim) 
+			if (p >= CacheLim)
 				break;
 			p->Wav = wav;
 			p->Ref = ref;
@@ -159,7 +159,7 @@ DATACK *FX::Load(int idx, int ref) {
 
 DATACK *FX::operator [](int ref) {
 	int i;
-	if ((i = Find(ref)) < Size) 
+	if ((i = Find(ref)) < Size)
 		Current = Cache[i].Wav;
 	else {
 		if ((i = Find(0)) >= Size) {
@@ -195,7 +195,7 @@ void LoadMIDI(int ref) {
 			midi = new uint8[siz];
 			if (midi) {
 				mid.Read(midi, siz);
-				if (mid.Error) 
+				if (mid.Error)
 					KillMIDI();
 				else
 					SNDMIDIStart(midi);

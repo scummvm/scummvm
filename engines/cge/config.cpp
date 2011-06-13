@@ -72,12 +72,12 @@ static void SetIRQ(void);
 static void SetDMA(void);
 
 
-static int DevName[] = { 
+static int DevName[] = {
 	NONE_TEXT, SB_TEXT, SBM_TEXT, GUS_TEXT, GUSM_TEXT,
 	MIDI_TEXT, AUTO_TEXT
 };
 
-static CHOICE DevMenu[] = { 
+static CHOICE DevMenu[] = {
 	{ NULL, NONE  },
 	{ NULL, SB    },
 	{ NULL, SBM   },
@@ -89,7 +89,7 @@ static CHOICE DevMenu[] = {
 };
 
 
-static CHOICE DigiPorts[] = { 
+static CHOICE DigiPorts[] = {
 	{ " 210h", SetPortD },
 	{ " 220h", SetPortD },
 	{ " 230h", SetPortD },
@@ -100,7 +100,7 @@ static CHOICE DigiPorts[] = {
 	{ NULL,   NULL     }
 };
 
-static CHOICE MIDIPorts[] = { 
+static CHOICE MIDIPorts[] = {
 	{ " 220h", SetPortM },
 	{ " 230h", SetPortM },
 	{ " 240h", SetPortM },
@@ -115,7 +115,7 @@ static CHOICE MIDIPorts[] = {
 	{ NULL,   NULL     }
 };
 
-static CHOICE BlsterIRQ[] = { 
+static CHOICE BlsterIRQ[] = {
 	{ "IRQ  2", SetIRQ },
 	{ "IRQ  5", SetIRQ },
 	{ "IRQ  7", SetIRQ },
@@ -124,7 +124,7 @@ static CHOICE BlsterIRQ[] = {
 	{ NULL,   NULL     }
 };
 
-static CHOICE GravisIRQ[] = { 
+static CHOICE GravisIRQ[] = {
 	{ "IRQ  2", SetIRQ },
 	{ "IRQ  5", SetIRQ },
 	{ "IRQ  7", SetIRQ },
@@ -135,7 +135,7 @@ static CHOICE GravisIRQ[] = {
 	{ NULL,   NULL     }
 };
 
-static CHOICE GravisDMA[] = { 
+static CHOICE GravisDMA[] = {
 	{ "DMA 1", SetDMA },
 	{ "DMA 3", SetDMA },
 	{ "DMA 5", SetDMA },
@@ -145,7 +145,7 @@ static CHOICE GravisDMA[] = {
 	{ NULL,   NULL    }
 };
 
-static CHOICE BlsterDMA[] = { 
+static CHOICE BlsterDMA[] = {
 	{ "DMA 0", SetDMA },
 	{ "DMA 1", SetDMA },
 	{ "DMA 3", SetDMA },
@@ -157,7 +157,7 @@ static CHOICE BlsterDMA[] = {
 void SelectSound(void) {
 	int i;
 	Sound.Close();
-	if (VMENU::Addr) 
+	if (VMENU::Addr)
 		SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 	Inf(Text[STYPE_TEXT]);
 	Talk->Goto(Talk->X, FONT_HIG / 2);
@@ -173,11 +173,11 @@ static void Reset(void) {
 
 
 static uint16 deco(const char *str, uint16(*dco)(const char *)) {
-	while (*str && ! IsDigit(*str)) 
+	while (*str && ! IsDigit(*str))
 	++str;
-	if (*str) 
+	if (*str)
 		return dco(str);
-	else 
+	else
 		return DETECT;
 }
 
@@ -286,9 +286,9 @@ static void SetIRQ(void) {
 
 static void SetDMA(void) {
 	SNDDrvInfo.DDMA = ddeco(((SNDDrvInfo.DDEV == DEV_SB) ? BlsterDMA : GravisDMA)[VMENU::Recent].Text);
-	if (SNDDrvInfo.MDEV != SNDDrvInfo.DDEV) 
+	if (SNDDrvInfo.MDEV != SNDDrvInfo.DDEV)
 		Select(MIDIPorts, MPORT_TEXT);
-	else 
+	else
 		Sound.Open();
 }
 

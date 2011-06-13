@@ -83,7 +83,7 @@ char *VMGather(CHOICE *list) {
 	if (vmgt) {
 		*vmgt = '\0';
 		for (cp = list; cp->Text; cp ++) {
-			if (*vmgt) 
+			if (*vmgt)
 				strcat(vmgt, "|");
 			strcat(vmgt, cp->Text);
 			++ h;
@@ -104,13 +104,13 @@ VMENU::VMENU(CHOICE *list, int x, int y)
 	Addr = this;
 	delete[] vmgt;
 	Items = 0;
-	for (cp = list; cp->Text; cp ++) 
+	for (cp = list; cp->Text; cp ++)
 		++Items;
 	Flags.BDel = true;
 	Flags.Kill = true;
-	if (x < 0 || y < 0) 
+	if (x < 0 || y < 0)
 		Center();
-	else 
+	else
 		Goto(x - W / 2, y - (TEXT_VM + FONT_HIG / 2));
 	VGA::ShowQ.Insert(this, VGA::ShowQ.Last());
 	Bar = new MENU_BAR(W - 2 * TEXT_HM);
@@ -136,9 +136,9 @@ void VMENU::Touch(uint16 mask, int x, int y) {
 		//if
 		if (y >= 0) {
 			n = y / h;
-			if (n < Items) 
+			if (n < Items)
 				ok = (x >= TEXT_HM && x < W - TEXT_HM/* && y % h < FONT_HIG*/);
-			else 
+			else
 				n = Items - 1;
 		}
 

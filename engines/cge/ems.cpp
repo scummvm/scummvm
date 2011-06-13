@@ -34,7 +34,7 @@ namespace CGE {
 #define SIZ(n)      ((n) ? ((long)n) : (0x10000L))
 
 
-enum EMM_FUN { 
+enum EMM_FUN {
 	GET_STATUS = 0x40, GET_FRAME, GET_SIZE,     OPEN_HANDLE,  MAP_PAGE,
 	CLOSE_HANDLE,      GET_VER,   SAVE_CONTEXT, REST_CONTEXT, GET_PAGES = 0x4B,
 	GET_HANDLES,       GET_INFO,  CONTROL

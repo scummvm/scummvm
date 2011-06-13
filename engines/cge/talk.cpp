@@ -79,8 +79,8 @@ void FONT::Load(void) {
 
 uint16 FONT::Width(const char *text) {
 	uint16 w = 0;
-	if (text) 
-		while (* text) 
+	if (text)
+		while (* text)
 			w += Wid[*(text ++)];
 	return w;
 }
@@ -141,13 +141,13 @@ void TALK::Update(const char *tx) {
 		for (p = tx; *p; p ++) {
 			if (*p == '|' || *p == '\n') {
 				mh += FONT_HIG + TEXT_LS;
-				if (k > mw) 
+				if (k > mw)
 					mw = k;
 				k = 2 * hmarg;
-			} else 
+			} else
 				k += Font.Wid[*p];
 		}
-		if (k > mw) 
+		if (k > mw)
 			mw = k;
 		TS[0] = Box(mw, mh);
 	}
@@ -165,7 +165,7 @@ void TALK::Update(const char *tx) {
 				uint16 n;
 				register uint16 b = *(f++);
 				for (n = 0; n < FONT_HIG; n++) {
-					if (b & 1) 
+					if (b & 1)
 						*p = TEXT_FG;
 					b >>= 1;
 					p += mw;
@@ -186,9 +186,9 @@ BITMAP *TALK::Box(uint16 w, uint16 h) {
 	uint8 *b, * p, * q;
 	uint16 n, r = (Mode == ROUND) ? TEXT_RD : 0;
 
-	if (w < 8) 
+	if (w < 8)
 		w = 8;
-	if (h < 8) 
+	if (h < 8)
 		h = 8;
 	b = farnew(uint8, n = w * h);
 	if (! b)
@@ -263,13 +263,13 @@ void TALK::PutLine(int line, const char *text) {
 				register uint16 b = fp[i];
 				uint16 n;
 				for (n = 0; n < FONT_HIG; n ++) {
-					if (b & 1) 
+					if (b & 1)
 						*p = TEXT_FG;
 					b >>= 1;
 					p += lsiz;
 				}
 				p = p - rsiz + psiz;
-				if (p >= q) 
+				if (p >= q)
 					p = p - size + 1;
 			}
 			++text;
@@ -310,12 +310,12 @@ void INFO_LINE::Update(const char *tx) {
 				for (uint16 i = 0; i < cw; i++) {
 					register uint16 b = fp[i];
 					for (uint16 n = 0; n < FONT_HIG; n ++) {
-						if (b & 1) 
+						if (b & 1)
 							*p = TEXT_FG;
 						b >>= 1;
 						p += lsiz;
 					}
-					if (p >= q) 
+					if (p >= q)
 						p = p - size + 1;
 				}
 				++tx;

@@ -187,7 +187,7 @@ char *wtom(uint16 val, char *str, int radix, int len) {
 char *dwtom(uint32 val, char *str, int radix, int len) {
 	while (--len >= 0) {
 		uint16 w = (uint16) (val % radix);
-		if (w > 9) 
+		if (w > 9)
 			w += ('A' - ('9' + 1));
 		str[len] = '0' + w;
 		val /= radix;
