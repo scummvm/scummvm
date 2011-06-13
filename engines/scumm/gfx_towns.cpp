@@ -461,7 +461,7 @@ void TownsScreen::updateOutputBuffer() {
 			}
 
 			for (int y = r->top; y <= r->bottom; ++y) {
-				if (l->bpp == _bpp && l->scaleW == 1 && l->onBottom) {
+				if (l->bpp == _bpp && l->scaleW == 1 && l->onBottom && l->numCol & 0xff00) {
 					memcpy(dst, &l->bltInternY[y][l->bltInternX[r->left]], (r->right + 1 - r->left) * _bpp);
 					dst += _pitch;
 
