@@ -47,6 +47,7 @@
 namespace dreamgen {
 	void doshake(dreamgen::Context &context);
 	void dofade(dreamgen::Context &context);
+	void volumeadjust(dreamgen::Context &context);
 }
 
 namespace DreamWeb {
@@ -447,7 +448,13 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 
 
 void DreamWebEngine::soundHandler() {
-	//uint8 volume = _context.data.byte(dreamgen::kVolume);
+	_context.push(_context.ax);
+	volumeadjust(_context);
+	_context.ax = _context.pop();
+
+	uint8 volume = _context.data.byte(dreamgen::kVolume);
+	//if (volume)
+	//	debug(1, "volume = %u", volume);
 	uint8 ch0 = _context.data.byte(dreamgen::kCh0playing);
 	if (ch0 == 255)
 		ch0 = 0;
