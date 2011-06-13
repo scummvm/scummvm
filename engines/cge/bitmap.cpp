@@ -348,7 +348,7 @@ bool BITMAP::SolidAt(int x, int y) {
 				return true;
 			break;
 		}
-		m += (t == REP) ? 1 : w;
+		m += ((t == REP) ? 1 : w);
 	}
 }
 
