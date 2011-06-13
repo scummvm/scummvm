@@ -10330,8 +10330,6 @@ endmon:
 	playchannel1(context);
 	context.data.byte(kManisoffscreen) = 0;
 	restoreall(context);
-	redrawmainscrn(context);
-	worktoscreenm(context);
 	{assert(stack_depth == context.stack.size()); return; }
 }
 
