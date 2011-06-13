@@ -245,6 +245,8 @@ uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
 
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
+	if (ascii >= 'a' && ascii <= 'z')
+		ascii = (ascii - 'a') + 'A';
 	debug(1, "key pressed = %04x", ascii);
 	uint8* keybuf = _context.data.ptr(5715, 16); //fixme: some hardcoded offsets are not added as consts
 	uint16 in = (_context.data.word(dreamgen::kBufferin) + 1) % 0x0f;
