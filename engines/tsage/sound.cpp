@@ -434,15 +434,21 @@ void SoundManager::_sfUpdateVoiceStructs() {
 		if (!vs)
 			continue;
 
-		for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
-			VoiceStructEntry &vse = vs->_entries[idx];
+		if (vs->_voiceType == VOICETYPE_0) {
+			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
+				VoiceStructEntry &vse = vs->_entries[idx];
 
-			if (vs->_voiceType == VOICETYPE_0) {
 				vse._type0._sound = vse._type0._sound2;
 				vse._type0._channelNum = vse._type0._channelNum2;
 				vse._type0._priority = vse._type0._priority2;
 				vse._type0._fieldA = vse._type0._field12;
-			} else {
+			}
+		} else {
+			vs->_field3 = vs->_numVoices;
+
+			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
+				VoiceStructEntry &vse = vs->_entries[idx];
+
 				vse._type1._sound = vse._type1._sound2;
 				vse._type1._channelNum = vse._type1._channelNum2;
 				vse._type1._priority = vse._type1._priority2;
@@ -593,11 +599,12 @@ void SoundManager::_sfRethinkSoundDrivers() {
 
 			if (!flag) {
 				vs->_voiceType = VOICETYPE_0;
-				vs->_total = total;
 			} else {
 				vs->_voiceType = VOICETYPE_1;
-				vs->_total = vs->_numVoices = total;
 			}
+
+			vs->_total = vs->_numVoices = total;
+			vs->_field3 = 0;
 
 			for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin();
 							i != sfManager()._installedDrivers.end(); ++i) {
@@ -614,6 +621,8 @@ void SoundManager::_sfRethinkSoundDrivers() {
 						if (!flag) {
 							while ((byteVal = *groupData++) != 0xff) {
 								VoiceStructEntry ve;
+								memset(&ve, 0, sizeof(VoiceStructEntry));
+
 								ve._field1 = (byteVal & 0x80) ? 0 : 1;
 								ve._driver = driver;
 								ve._type0._sound = NULL;
@@ -629,6 +638,8 @@ void SoundManager::_sfRethinkSoundDrivers() {
 
 							for (int idx = 0; idx < byteVal; ++idx) {
 								VoiceStructEntry ve;
+								memset(&ve, 0, sizeof(VoiceStructEntry));
+
 								ve._voiceNum = idx;
 								ve._driver = driver;
 								ve._type1._field4 = -1;
@@ -692,6 +703,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 				vse._type1._priority = 0;
 				vse._type1._sound2 = NULL;
 				vse._type1._channelNum2 = 0;
+				vse._type1._priority2 = 0;
 			}
 		}
 	}
@@ -1387,6 +1399,27 @@ Sound::Sound() {
 	_primed = false;
 	_isEmpty = false;
 	_remoteReceiver = NULL;
+
+	
+	memset(_chProgram, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_chModulation, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_chVolume, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_chPan, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_chDamper, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_chPitchBlend, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_chVoiceType, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_chNumVoices, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_chSubPriority, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_chFlags, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_chWork, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_channelData, 0, SOUND_ARR_SIZE * sizeof(byte *));
+	memset(_trkChannel, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_trkState, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_trkLoopState, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_trkIndex, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_trkLoopIndex, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_trkRest, 0, SOUND_ARR_SIZE * sizeof(int));
+	memset(_trkLoopRest, 0, SOUND_ARR_SIZE * sizeof(int));
 }
 
 Sound::~Sound() {
@@ -1744,19 +1777,22 @@ void Sound::_soPrimeChannelData() {
 			byte *d = _channelData[idx];
 			int mode = *d; 
 			int channelNum = (int8)*(d + 1);
-			assert((channelNum >= 0) && (channelNum < 16));
-			
+
 			_trkChannel[idx] = channelNum;
-			_chProgram[idx] = *(d + 10);
-			_chModulation[idx] = 0;
-			_chVolume[idx] = *(d + 11);
-			_chPan[idx] = *(d + 12);
-			_chDamper[idx] = 0;
-			_chVoiceType[idx] = _trackInfo._voiceTypes[idx];
-			_chNumVoices[idx] = *(d + 6);
-			_chSubPriority[idx] = *(d + 7);
-			_chPitchBlend[idx] = 0x2000;
-			_chFlags[idx] = READ_LE_UINT16(d + 8);
+			assert((channelNum >= -1) && (channelNum < 16));
+			
+			if (channelNum >= 0) {
+				_chProgram[channelNum] = *(d + 10);
+				_chModulation[channelNum] = 0;
+				_chVolume[channelNum] = *(d + 11);
+				_chPan[channelNum] = *(d + 12);
+				_chDamper[channelNum] = 0;
+				_chVoiceType[channelNum] = _trackInfo._voiceTypes[idx];
+				_chNumVoices[channelNum] = *(d + 6);
+				_chSubPriority[channelNum] = *(d + 7);
+				_chPitchBlend[channelNum] = 0x2000;
+				_chFlags[channelNum] = READ_LE_UINT16(d + 8);
+			}
 
 			if (mode == 0) {
 				_trkState[idx] = 1;
