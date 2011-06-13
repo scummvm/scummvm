@@ -93,6 +93,8 @@ DAC StdPal[] =  {// R    G   B
 	{ 255, 255, 255},   // 255
 };
 
+DRVINFO SNDDrvInfo;
+
 EC void     _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *)) {
 	warning("STUB: _fqsort");
 }
