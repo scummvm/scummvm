@@ -43,10 +43,6 @@ static const PlainGameDescriptor dreamWebGames[] = {
 	{ 0, 0 }
 };
 
-static const ADObsoleteGameID obsoleteGameIDsTable[] = {
-	{ 0, 0, Common::kPlatformUnknown }
-};
-
 #include "dreamweb/detection_tables.h"
 
 class DreamWebMetaEngine : public AdvancedMetaEngine {
@@ -54,9 +50,8 @@ public:
 	DreamWebMetaEngine():
 	AdvancedMetaEngine(DreamWeb::gameDescriptions, 
 	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames) {
-		params.obsoleteList = obsoleteGameIDsTable;
-		params.singleid = "dreamweb";
-		params.guioptions = Common::GUIO_NOMIDI;
+		_singleid = "dreamweb";
+		_guioptions = Common::GUIO_NOMIDI;
 	}
 
 	virtual const char *getName() const {
