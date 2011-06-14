@@ -453,6 +453,16 @@ void DreamWebEngine::soundHandler() {
 	_context.ax = _context.pop();
 
 	uint volume = _context.data.byte(dreamgen::kVolume);
+	//.vol file loaded into soundbuf:0x4000
+	//volume table at (volume * 0x100 + 0x3f00)
+	//volume value could be from 1 to 7
+	//1 - 0x10-0xff
+	//2 - 0x1f-0xdf
+	//3 - 0x2f-0xd0
+	//4 - 0x3e-0xc1
+	//5 - 0x4d-0xb2
+	//6 - 0x5d-0xa2
+	//7 - 0x6f-0x91
 	volume = (8 - volume) * Audio::Mixer::kMaxChannelVolume / 8;
 	_mixer->setChannelVolume(_channelHandle[0], volume);
 
