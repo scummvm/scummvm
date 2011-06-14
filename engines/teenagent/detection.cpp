@@ -117,10 +117,6 @@ public:
 		return desc != 0;
 	}
 
-//	virtual const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const {
-//		return 0;
-//	}
-
 	static Common::String generateGameStateFileName(const char *target, int slot) {
 		return Common::String::format("%s.%02d", target, slot);
 	}

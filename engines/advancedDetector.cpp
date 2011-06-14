@@ -127,12 +127,22 @@ bool cleanupPirated(ADGameDescList &matched) {
 
 
 GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
-	ADGameDescList matches = detectGame(fslist, Common::UNK_LANG, Common::kPlatformUnknown, "");
+	ADGameDescList matches;
 	GameList detectedGames;
+	FileMap allFiles;
+
+	if (fslist.empty())
+		return detectedGames;
+
+	// Compose a hashmap of all files in fslist.
+	composeFileHashMap(allFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
+
+	// Run the detector on this
+	matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "");
 
 	if (matches.empty()) {
 		// Use fallback detector if there were no matches by other means
-		const ADGameDescription *fallbackDesc = fallbackDetect(fslist);
+		const ADGameDescription *fallbackDesc = fallbackDetect(allFiles, fslist);
 		if (fallbackDesc != 0) {
 			GameDescriptor desc(toGameDescriptor(*fallbackDesc, _gameids));
 			updateGameDescriptor(desc, fallbackDesc);
@@ -196,7 +206,15 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		return Common::kNoGameDataFoundError;
 	}
 
-	ADGameDescList matches = detectGame(files, language, platform, extra);
+	if (files.empty())
+		return Common::kNoGameDataFoundError;
+
+	// Compose a hashmap of all files in fslist.
+	FileMap allFiles;
+	composeFileHashMap(allFiles, files, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
+
+	// Run the detector on this
+	ADGameDescList matches = detectGame(files.begin()->getParent(), allFiles, language, platform, extra);
 
 	if (cleanupPirated(matches))
 		return Common::kNoGameDataFoundError;
@@ -215,7 +233,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	if (agdDesc == 0) {
 		// Use fallback detector if there were no matches by other means
-		agdDesc = fallbackDetect(files);
+		agdDesc = fallbackDetect(allFiles, files);
 		if (agdDesc != 0) {
 			// Seems we found a fallback match. But first perform a basic
 			// sanity check: the gameid must match.
@@ -270,7 +288,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 	g_system->logMessage(LogMessageType::kInfo, report.c_str());
 }
 
-void AdvancedMetaEngine::composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, int depth) const {
+void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth) const {
 	if (depth <= 0)
 		return;
 
@@ -297,7 +315,7 @@ void AdvancedMetaEngine::composeFileHashMap(const Common::FSList &fslist, FileMa
 			if (!file->getChildren(files, Common::FSNode::kListAll))
 				continue;
 
-			composeFileHashMap(files, allFiles, depth - 1);
+			composeFileHashMap(allFiles, files, depth - 1);
 		}
 
 		Common::String tstr = file->getName();
@@ -310,24 +328,17 @@ void AdvancedMetaEngine::composeFileHashMap(const Common::FSList &fslist, FileMa
 	}
 }
 
-ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSList &fslist, Common::Language language, Common::Platform platform, const Common::String &extra) const {
-	FileMap allFiles;
+ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
 	SizeMD5Map filesSizeMD5;
 
 	const ADGameFileDescription *fileDesc;
 	const ADGameDescription *g;
 	const byte *descPtr;
 
-	if (fslist.empty())
-		return ADGameDescList();
-	Common::FSNode parent = fslist.begin()->getParent();
 	debug(3, "Starting detection in dir '%s'", parent.getPath().c_str());
 
-	// First we compose a hashmap of all files in fslist.
-	composeFileHashMap(fslist, allFiles, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
-
-	// Check which files are included in some ADGameDescription *and* present
-	// in fslist. Compute MD5s and file sizes for these files.
+	// Check which files are included in some ADGameDescription *and* are present.
+	// Compute MD5s and file sizes for these files.
 	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += _descItemSize) {
 		g = (const ADGameDescription *)descPtr;
 

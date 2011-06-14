@@ -230,31 +230,30 @@ protected:
 	// To be implemented by subclasses
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
 
+	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+
 	/**
 	 * An (optional) generic fallback detect function which is invoked
 	 * if both the regular MD5 based detection as well as the file
 	 * based fallback failed to detect anything.
 	 */
-	virtual const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const {
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 		return 0;
 	}
 
 protected:
-	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
-
 	/**
 	 * Detect games in specified directory.
 	 * Parameters language and platform are used to pass on values
 	 * specified by the user. This is used to restrict search scope.
 	 *
-	 * @param fslist	FSList to scan or NULL for scanning all specified
-	 *					default directories.
+	 * @param allFiles	list of all present files, as computed by composeFileHashMap
 	 * @param language	restrict results to specified language
 	 * @param platform	restrict results to specified platform
 	 * @param extra		restrict results to specified extra string (only if kADFlagUseExtraAsHint is set)
 	 * @return	list of ADGameDescription pointers corresponding to matched games
 	 */
-	ADGameDescList detectGame(const Common::FSList &fslist, Common::Language language, Common::Platform platform, const Common::String &extra) const;
+	ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
 
 	/**
 	 * Iterates over all ADFileBasedFallback records inside _fileBasedFallback.
@@ -275,7 +274,7 @@ protected:
 	 * Compose a hashmap of all files in fslist.
 	 * Includes nifty stuff like removing trailing dots and ignoring case.
 	 */
-	void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, int depth) const;
+	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth) const;
 };
 
 #endif
