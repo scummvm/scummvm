@@ -69,6 +69,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_outSaveFile = 0;
 	_inSaveFile = 0;
 	_speed = 1;
+	_turbo = false;
 	_oldMouseState = 0;
 	_channel0 = 0;
 	_channel1 = 0;
@@ -94,10 +95,12 @@ void DreamWebEngine::setVSyncInterrupt(bool flag) {
 void DreamWebEngine::waitForVSync() {
 	processEvents();
 
-	while (!_vSyncInterrupt) {
-		_system->delayMillis(10);
+	if (!_turbo) {
+		while (!_vSyncInterrupt) {
+			_system->delayMillis(10);
+		}
+		setVSyncInterrupt(false);
 	}
-	setVSyncInterrupt(false);
 
 	dreamgen::doshake(_context);
 	dreamgen::dofade(_context);
@@ -118,52 +121,48 @@ void DreamWebEngine::processEvents() {
 	soundHandler();
 	Common::Event event;
 	while (event_manager->pollEvent(event)) {
-		bool keyHandled = false;
 		switch(event.type) {
 		case Common::EVENT_KEYDOWN:
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_d:
-				if (event.kbd.flags & Common::KBD_CTRL) {
+			if (event.kbd.flags & Common::KBD_CTRL) {
+				switch (event.kbd.keycode) {
+
+				case Common::KEYCODE_d:
 					_console->attach();
 					_console->onFrame();
-					keyHandled = true;
-				}
-				break;
-			case Common::KEYCODE_f:
-				if (event.kbd.flags & Common::KBD_CTRL) {
-					if (_speed != 10)
-						setSpeed(10);
-					else
-						setSpeed(1);
-					keyHandled = true;
-				}
-				break;
-			case Common::KEYCODE_c: //skip statue puzzle
-				if (event.kbd.flags & Common::KBD_CTRL) {
+					break;
+
+				case Common::KEYCODE_f:
+					setSpeed(_speed != 20? 20: 1);
+					break;
+
+				case Common::KEYCODE_g:
+					_turbo = !_turbo;
+					break;
+
+				case Common::KEYCODE_c: //skip statue puzzle
 					_context.data.byte(dreamgen::kSymbolbotnum) = 3;
 					_context.data.byte(dreamgen::kSymboltopnum) = 5;
-					keyHandled = true;
+					break;
+
+				default:
+					break;
 				}
-				break;
-			default:
-				break;
+
+				return; //do not pass ctrl + key to the engine
 			}
 
-			if (!keyHandled) {
-				// As far as I can see, the only keys checked
-				// for in 'lasthardkey' are 1 (ESC) and 57
-				// (space) so add special cases for them and
-				// treat everything else as 0.
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
-					_context.data.byte(dreamgen::kLasthardkey) = 1;
-				else if (event.kbd.keycode == Common::KEYCODE_SPACE)
-					_context.data.byte(dreamgen::kLasthardkey) = 57;
-				else
-					_context.data.byte(dreamgen::kLasthardkey) = 0;
-				if (event.kbd.ascii)
-					keyPressed(event.kbd.ascii);
-			}
-
+			// As far as I can see, the only keys checked
+			// for in 'lasthardkey' are 1 (ESC) and 57
+			// (space) so add special cases for them and
+			// treat everything else as 0.
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				_context.data.byte(dreamgen::kLasthardkey) = 1;
+			else if (event.kbd.keycode == Common::KEYCODE_SPACE)
+				_context.data.byte(dreamgen::kLasthardkey) = 57;
+			else
+				_context.data.byte(dreamgen::kLasthardkey) = 0;
+			if (event.kbd.ascii)
+				keyPressed(event.kbd.ascii);
 			break;
 		default:
 			break;

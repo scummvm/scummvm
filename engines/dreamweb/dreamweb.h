@@ -120,6 +120,7 @@ private:
 	Common::InSaveFile *_inSaveFile;
 
 	uint _speed;
+	bool _turbo;
 	uint _oldMouseState;
 
 	struct Sample {
