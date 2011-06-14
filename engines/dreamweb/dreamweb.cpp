@@ -990,8 +990,6 @@ void readoneblock(Context &context) {
 	readfromfile(context);
 }
 
-void readabyte(Context & context);
-
 void showpcx(Context &context) {
 	Common::String name = getFilename(context);
 	Common::File pcxFile;
