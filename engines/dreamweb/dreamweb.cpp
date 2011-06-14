@@ -463,6 +463,8 @@ void DreamWebEngine::soundHandler() {
 	//5 - 0x4d-0xb2
 	//6 - 0x5d-0xa2
 	//7 - 0x6f-0x91
+	if (volume >= 8)
+		volume = 7;
 	volume = (8 - volume) * Audio::Mixer::kMaxChannelVolume / 8;
 	_mixer->setChannelVolume(_channelHandle[0], volume);
 
