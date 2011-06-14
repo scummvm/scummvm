@@ -60,10 +60,6 @@ typedef struct  {
 
 typedef uint16  CRYPT(void *buf, uint16 siz, uint16 seed);
 
-extern Common::RandomSource randSrc;
-
-#define new_random(a)  (randSrc.getRandomNumber(a))
-
 class COUPLE {
 protected:
 	signed char A;
@@ -237,7 +233,7 @@ char *dwtom(uint32 val, char * str, int radix, int len);
 int TakeEnum(const char **tab, const char *txt);
 Boot *ReadBoot(int drive);
 long Timer(void);
-
+int new_random(int range);
 } // End of namespace CGE
 
 #endif
