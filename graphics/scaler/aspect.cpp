@@ -201,7 +201,7 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 template<typename ColorMask>
 void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 
-	for (int y = 0; y < height; ++y) {
+	for (int y = 0; y < (height * 6 / 5); ++y) {
 
 #if ASPECT_MODE == kSuperFastAndUglyAspectMode
 		if ((y % 6) == 5)
