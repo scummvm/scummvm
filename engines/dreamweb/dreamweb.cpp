@@ -155,14 +155,17 @@ void DreamWebEngine::processEvents() {
 			// for in 'lasthardkey' are 1 (ESC) and 57
 			// (space) so add special cases for them and
 			// treat everything else as 0.
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			switch(event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
 				_context.data.byte(dreamgen::kLasthardkey) = 1;
-			else if (event.kbd.keycode == Common::KEYCODE_SPACE)
+				break;
+			case Common::KEYCODE_SPACE:
 				_context.data.byte(dreamgen::kLasthardkey) = 57;
-			else
+				break;
+			default:
 				_context.data.byte(dreamgen::kLasthardkey) = 0;
-			if (event.kbd.ascii)
-				keyPressed(event.kbd.ascii);
+				break;
+			}
 			break;
 		default:
 			break;
