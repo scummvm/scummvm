@@ -35,14 +35,32 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"",
-			AD_ENTRY1s("dreamweb.r00", "3b5c87717fc40cc5a5ae19c155662ee3", 152918),
+			{
+				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
+				{"dreamweb.r02", 0, "28458718167a040d7e988cf7d2298eae", 210466},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
 	},
-
+	{
+		{
+			"dreamweb",
+			"CD",
+			{
+				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
+				{"dreamweb.r02", 0, "d6fe5e3590ec1eea42ff65c10b023e0f", 198681},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_CD,
+			GUIO_NONE
+		},
+	},
 	{ AD_TABLE_END_MARKER }
 };
 
