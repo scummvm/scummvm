@@ -511,19 +511,6 @@ const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &
 		}
 	}
 
-	if (matchedDesc) { // We got a match
-		if (_flags & kADFlagPrintWarningOnFileBasedFallback) {
-			Common::String report = Common::String::format(_("Your game version has been detected using "
-				"filename matching as a variant of %s."), matchedDesc->gameid);
-			report += "\n";
-			report += _("If this is an original and unmodified version, please report any");
-			report += "\n";
-			report += _("information previously printed by ScummVM to the team.");
-			report += "\n";
-			g_system->logMessage(LogMessageType::kInfo, report.c_str());
-		}
-	}
-
 	return matchedDesc;
 }
 

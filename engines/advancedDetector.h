@@ -117,16 +117,14 @@ struct ADFileBasedFallback {
 
 enum ADFlags {
 	/**
-	 * Warn user about new variant if his version was detected with fallback
-	 */
-	kADFlagPrintWarningOnFileBasedFallback = (1 << 1),
-	/**
 	 * Store value of extra field in config file, and use it as a hint
 	 * on subsequent runs. Could be used when there is no way to autodetect
 	 * game (when more than one game sits in same directory), and user picks
 	 * up a variant manually.
+	 * In addition, this is useful if two variants of a game sharing the same
+	 * gameid are contained in a single directory.
 	 */
-	kADFlagUseExtraAsHint = (1 << 2)
+	kADFlagUseExtraAsHint = (1 << 0)
 };
 
 
