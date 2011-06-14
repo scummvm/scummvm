@@ -5734,6 +5734,7 @@ loadspeech2:
 	context.al = 50+12;
 	playchannel1(context);
 notloadspeech2:
+	vsync(context);
 	context._cmp(context.data.byte(kCh1playing), 255);
 	if (!context.flags.z()) goto notloadspeech2;
 	context.ax = context.pop();

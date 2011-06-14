@@ -516,10 +516,15 @@ void DreamWebEngine::soundHandler() {
 			playSound(1, ch1, 1);
 		}
 	}
-	if (!_mixer->isSoundHandleActive(_channelHandle[0]))
+	if (!_mixer->isSoundHandleActive(_channelHandle[0])) {
 		_context.data.byte(dreamgen::kCh0playing) = 255;
-	if (!_mixer->isSoundHandleActive(_channelHandle[1]))
+		_channel0 = 0;
+	}
+	if (!_mixer->isSoundHandleActive(_channelHandle[1])) {
 		_context.data.byte(dreamgen::kCh1playing) = 255;
+		_channel1 = 0;
+	}
+
 }
 
 void DreamWebEngine::loadSounds(uint bank, const Common::String &filename) {
