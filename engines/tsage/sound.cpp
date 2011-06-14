@@ -2562,6 +2562,7 @@ void AdlibSoundDriver::updateChannel(int channel) {
 	write(0x80 + portOffset, *(dataP + 14) | (*(dataP + 13) << 4));
 	write(0xE0 + portOffset, (_portContents[0xE0 + portOffset] & 0xFC) | *(dataP + 15));
 
+	portOffset = v440C2[v440B9[channel]];
 	portNum = portOffset + 0x20;
 	portValue = 0;
 	if (*(dataP + 17))
@@ -2576,11 +2577,12 @@ void AdlibSoundDriver::updateChannel(int channel) {
 	write(portNum, portValue);
 
 	write(0x40 + portOffset, (_portContents[0x40 + portOffset] & 0x3f) | (*(dataP + 22) << 6));
-	_v44079[channel] = *(dataP + 23);
+	_v44079[channel] = 0x3F - *(dataP + 23);
 	write(0x60 + portOffset, *(dataP + 25) | (*(dataP + 24) << 4));
 	write(0x80 + portOffset, *(dataP + 27) | (*(dataP + 26) << 4));
 	write(0xE0 + portOffset, (_portContents[0xE0 + portOffset] & 0xFC) | *(dataP + 28));
-	write(0xC0 + portOffset, (_portContents[0xE0 + portOffset] & 0xF0) 
+
+	write(0xC0 + channel, (_portContents[0xC0 + channel] & 0xF0) 
 		| (*(dataP + 16) << 1) | *(dataP + 3));
 
 	_v44082[channel] = *(dataP + 3);
