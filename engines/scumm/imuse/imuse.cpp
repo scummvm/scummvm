@@ -26,6 +26,7 @@
 
 #include "common/util.h"
 #include "common/system.h"
+#include "common/endian.h"
 
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse/imuse_internal.h"
@@ -101,8 +102,14 @@ IMuseInternal::~IMuseInternal() {
 
 byte *IMuseInternal::findStartOfSound(int sound, int ct) {	
 	int32 size, pos;
-	static uint32 id[] = { 'MThd', 'FORM', 'MDhd', 'MDpg' };
-
+	
+	static const uint32 id[] = {
+		MKTAG('M', 'T', 'h', 'd'),
+		MKTAG('F', 'O', 'R', 'M'),
+		MKTAG('M', 'D', 'h', 'd'),
+		MKTAG('M', 'D', 'p', 'g')
+	};
+	
 	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
 
 	if (ptr == NULL) {
