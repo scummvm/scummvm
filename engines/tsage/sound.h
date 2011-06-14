@@ -98,7 +98,7 @@ public:
 	virtual void updateVoice(int channel) {}						// Method #17
 	virtual void proc36() {}										// Method #18
 	virtual void proc38(int channel, int cmd, int value) {}			// Method #19
-	virtual void proc40(int channel, int pitchBlend) {}				// Method #20
+	virtual void setPitch(int channel, int pitchBlend) {}			// Method #20
 	virtual void proc42(int channel, int v0, int v1) {}				// Method #21
 };
 
@@ -282,7 +282,7 @@ public:
 	int _chNumVoices[SOUND_ARR_SIZE];
 	int _chSubPriority[SOUND_ARR_SIZE];
 	int _chFlags[SOUND_ARR_SIZE];
-	int _chWork[SOUND_ARR_SIZE];
+	bool _chWork[SOUND_ARR_SIZE];
 	trackInfoStruct _trackInfo;
 	byte *_channelData[SOUND_ARR_SIZE];
 	int _trkChannel[SOUND_ARR_SIZE];
@@ -404,7 +404,7 @@ private:
 	int _v44070[ADLIB_CHANNEL_COUNT];
 	int _v44079[ADLIB_CHANNEL_COUNT];
 	int _v44082[ADLIB_CHANNEL_COUNT + 1];
-	int _v4408C[ADLIB_CHANNEL_COUNT];
+	int _pitchBlend[ADLIB_CHANNEL_COUNT];
 	int _v4409E[ADLIB_CHANNEL_COUNT];
 
 
@@ -427,7 +427,7 @@ public:
 	virtual void proc32(int channel, int program, int v0, int v1);
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
-	void proc40(int channel, int pitchBlend);
+	virtual void setPitch(int channel, int pitchBlend);
 };
 
 } // End of namespace tSage

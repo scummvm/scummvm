@@ -460,6 +460,8 @@ void SoundManager::_sfUpdateVoiceStructs() {
 void SoundManager::_sfUpdateVoiceStructs2() {
 	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
 		VoiceTypeStruct *vtStruct = sfManager()._voiceTypeStructPtrs[voiceIndex];
+		if (!vtStruct)
+			continue;
 
 		for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx) {
 
@@ -716,8 +718,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 			continue;
 
 		_sfUpdateVoiceStructs();
-		for (int idx = 0; idx < SOUND_ARR_SIZE; ++idx)
-			sound->_chWork[idx] = 0;
+		Common::set_to(sound->_chWork, sound->_chWork + SOUND_ARR_SIZE, false);
 
 		for (;;) {
 			// Scan for sub priority
@@ -743,7 +744,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 				break;
 
 			int chNumVoices = sound->_chNumVoices[foundIndex];
-			sound->_chWork[foundIndex] = 1;
+			sound->_chWork[foundIndex] = true;
 
 			VoiceTypeStruct *vtStruct = sfManager()._voiceTypeStructPtrs[sound->_chVoiceType[foundIndex]];
 			if (!vtStruct) {
@@ -770,7 +771,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 						++idx;
 					}
 
-					vtStruct->_numVoices = numVoices;
+					vtStruct->_numVoices -= chNumVoices;
 					continue;
 				} else if (!foundPriority) {
 					do {
@@ -1133,7 +1134,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 
 				for (uint entryIndex = 0; entryIndex < vs->_entries.size(); ++entryIndex) {
 					VoiceStructEntryType1 &vse2 = vs->_entries[entryIndex]._type1;
-					if (!vse2._sound && (vse._sound3 == sound) && (vse._channelNum3 == channelNum)) {
+					if (!vse2._sound && (vse2._sound3 == sound) && (vse2._channelNum3 == channelNum)) {
 						vse2._sound = sound;
 						vse2._channelNum = channelNum;
 						vse._channelNum = vse2._channelNum2;
@@ -1170,7 +1171,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 				driver->proc38(vs->_entries[idx2]._voiceNum, 7, 
 					vse2._sound->_chVolume[vse2._channelNum] * vse2._sound->_volume / 127);
 				driver->proc38(vs->_entries[idx2]._voiceNum, 10, vse2._sound->_chPan[vse2._channelNum]);
-				driver->proc40(vs->_entries[idx2]._voiceNum, vse2._sound->_chPitchBlend[vse2._channelNum]);
+				driver->setPitch(vs->_entries[idx2]._voiceNum, vse2._sound->_chPitchBlend[vse2._channelNum]);
 			}
 
 			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
@@ -1411,7 +1412,7 @@ Sound::Sound() {
 	memset(_chNumVoices, 0, SOUND_ARR_SIZE * sizeof(int));
 	memset(_chSubPriority, 0, SOUND_ARR_SIZE * sizeof(int));
 	memset(_chFlags, 0, SOUND_ARR_SIZE * sizeof(int));
-	memset(_chWork, 0, SOUND_ARR_SIZE * sizeof(int));
+	Common::set_to(_chWork, _chWork + SOUND_ARR_SIZE, false);
 	memset(_channelData, 0, SOUND_ARR_SIZE * sizeof(byte *));
 	memset(_trkChannel, 0, SOUND_ARR_SIZE * sizeof(int));
 	memset(_trkState, 0, SOUND_ARR_SIZE * sizeof(int));
@@ -1733,6 +1734,7 @@ bool Sound::_soServiceTracks() {
 			flag = false;
 	}
 
+	++_timer;
 	if (!flag)
 		return false;
 	else if ((_loop > 0) && (--_loop == 0))
@@ -1841,7 +1843,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 		voiceType = VOICETYPE_0;
 	} else {
 		chVoiceType = (VoiceType)_chVoiceType[channelNum];
-		vtStruct = _soundManager->_voiceTypeStructPtrs[channelNum];
+		vtStruct = _soundManager->_voiceTypeStructPtrs[(int)chVoiceType];
 
 		if (vtStruct) {
 			voiceType = vtStruct->_voiceType;
@@ -1912,7 +1914,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 				trkRest = (trkRest << 5) | (b & 0x1f);
 			}
 
-			_trkRest[trackIndex] = trkRest;
+			_trkRest[trackIndex] = trkRest - 1;
 			_trkIndex[trackIndex] = pData - channelData;
 			return;
 		} else if (!(v & 0x10)) {
@@ -1935,6 +1937,9 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 				_soDoTrackCommand(_trkChannel[trackIndex], cmdVal, b);
 
 				if (!_soundManager->_soTimeIndexFlag) {
+					if (cmdVal == 7)
+						b = static_cast<byte>(_volume * (int)b / 127);
+
 					if (voiceType != VOICETYPE_0) {
 						_soProc38(vtStruct, channelNum, chVoiceType, cmdVal, v);
 					} else if (voiceNum != -1) {
@@ -1979,7 +1984,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 		} else if (!(v & 0x2)) {
 			// Area #7
 			if (!_soundManager->_soTimeIndexFlag) {
-				int pitchBlend = READ_LE_UINT16(pData);
+				int pitchBlend = READ_BE_UINT16(pData);
 				pData += 2;
 
 				if (channelNum != -1) {
@@ -2132,7 +2137,7 @@ void Sound::_soProc40(VoiceTypeStruct *vtStruct, int channelNum, int pitchBlend)
 			SoundDriver *driver = vtStruct->_entries[entryIndex]._driver;
 			assert(driver);
 
-			driver->proc40(vtStruct->_entries[entryIndex]._voiceNum, pitchBlend);
+			driver->setPitch(vtStruct->_entries[entryIndex]._voiceNum, pitchBlend);
 		}
 	}
 }
@@ -2384,7 +2389,7 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	memset(_v44079, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	memset(_v44082, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	_v44082[ADLIB_CHANNEL_COUNT] = 0x90;
-	Common::set_to(_v4408C, _v4408C + ADLIB_CHANNEL_COUNT, 0x2000);
+	Common::set_to(_pitchBlend, _pitchBlend + ADLIB_CHANNEL_COUNT, 0x2000);
 	memset(_v4409E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 }
 
@@ -2491,8 +2496,8 @@ void AdlibSoundDriver::proc38(int channel, int cmd, int value) {
 	}
 }
 
-void AdlibSoundDriver::proc40(int channel, int pitchBlend) {
-	_v4408C[channel] = pitchBlend;
+void AdlibSoundDriver::setPitch(int channel, int pitchBlend) {
+	_pitchBlend[channel] = pitchBlend;
 	setFrequency(channel);
 }
 
@@ -2579,7 +2584,7 @@ void AdlibSoundDriver::updateChannel(int channel) {
 void AdlibSoundDriver::setFrequency(int channel) {
 	int offset, ch;
 
-	int v = _v4408C[channel];
+	int v = _pitchBlend[channel];
 	if (v == 0x2000) {
 		offset = 0;
 		ch = _v44067[channel];
