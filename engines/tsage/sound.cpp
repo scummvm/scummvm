@@ -1156,8 +1156,8 @@ void SoundManager::_sfRethinkVoiceTypes() {
 					++idx2;
 
 				VoiceStructEntryType1 &vse2 = vs->_entries[idx2]._type1;
-				vse2._sound = sound;
-				vse2._channelNum = vse._channelNum;
+				vse2._sound = vse._sound2;
+				vse2._channelNum = vse._channelNum2;
 				vse2._priority = vse._priority2;
 				vse._field4 = -1;
 				vse2._field5 = 0;
@@ -1941,7 +1941,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 						b = static_cast<byte>(_volume * (int)b / 127);
 
 					if (voiceType != VOICETYPE_0) {
-						_soProc38(vtStruct, channelNum, chVoiceType, cmdVal, v);
+						_soProc38(vtStruct, channelNum, chVoiceType, cmdVal, b);
 					} else if (voiceNum != -1) {
 						assert(driver);
 						driver->proc24(voiceNum, chVoiceType, this, cmdVal, b);
@@ -2117,13 +2117,13 @@ void Sound::_soProc38(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voice
 		_soundManager->_needToRethink = true;
 	} else {
 		for (uint entryIndex = 0; entryIndex < vtStruct->_entries.size(); ++entryIndex) {
-			VoiceStructEntryType1 &vte = vtStruct->_entries[entryIndex]._type1;
+			VoiceStructEntry &vte = vtStruct->_entries[entryIndex];
 
-			if ((vte._sound == this) && (vte._channelNum == channelNum)) {
-				SoundDriver *driver = vtStruct->_entries[entryIndex]._driver;
+			if ((vte._type1._sound == this) && (vte._type1._channelNum == channelNum)) {
+				SoundDriver *driver = vte._driver;
 				assert(driver);
 
-				driver->proc38(vtStruct->_entries[entryIndex]._voiceNum, cmd, value);
+				driver->proc38(vte._voiceNum, cmd, value);
 			}
 		}
 	}
@@ -2502,8 +2502,8 @@ void AdlibSoundDriver::setPitch(int channel, int pitchBlend) {
 }
 
 void AdlibSoundDriver::write(byte reg, byte value) {
-static int num = 0;
-debug("%d [%x]=%x", ++num, reg, value);//***DEBUG****
+static int num = 1;
+debug("%d [%x]=%x", num++, reg, value);//***DEBUG****
 	_portContents[reg] = value;
 	OPLWriteReg(_opl, reg, value);
 }

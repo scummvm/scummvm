@@ -250,7 +250,6 @@ private:
 	void _unPrime();
 	void orientAfterRestore();
 public:
-	int _field0;
 	bool _stoppedAsynchronously;
 	int _soundResID;
 	int _group;
