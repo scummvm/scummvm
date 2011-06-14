@@ -461,14 +461,17 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSList &fslist, Comm
 		}
 
 		// Filename based fallback
-		if (_fileBasedFallback != 0)
-			matched = detectGameFilebased(allFiles);
+		if (_fileBasedFallback != 0) {
+			g = detectGameFilebased(allFiles);
+			if (g)
+				matched.push_back(g);
+		}
 	}
 
 	return matched;
 }
 
-ADGameDescList AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles) const {
+const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles) const {
 	const ADFileBasedFallback *ptr;
 	const char* const* filenames;
 
@@ -502,10 +505,7 @@ ADGameDescList AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles) 
 		}
 	}
 
-	ADGameDescList matched;
-
 	if (matchedDesc) { // We got a match
-		matched.push_back(matchedDesc);
 		if (_flags & kADFlagPrintWarningOnFileBasedFallback) {
 			Common::String report = Common::String::format(_("Your game version has been detected using "
 				"filename matching as a variant of %s."), matchedDesc->gameid);
@@ -518,7 +518,7 @@ ADGameDescList AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles) 
 		}
 	}
 
-	return matched;
+	return matchedDesc;
 }
 
 GameList AdvancedMetaEngine::getSupportedGames() const {

@@ -257,12 +257,16 @@ protected:
 	ADGameDescList detectGame(const Common::FSList &fslist, Common::Language language, Common::Platform platform, const Common::String &extra) const;
 
 	/**
-	 * Check for each ADFileBasedFallback record whether all files listed
-	 * in it are present. If multiple pass this test, we pick the one with
-	 * the maximal number of matching files. In case of a tie, the entry
-	 * coming first in the list is chosen.
+	 * Iterates over all ADFileBasedFallback records inside _fileBasedFallback.
+	 * This then returns the record (or rather, the ADGameDescription
+	 * contained in it) for which all files described by it are present, and
+	 * among those the one with the maximal number of matching files.
+	 * In case of a tie, the entry coming first in the list is chosen.
+	 *
+	 * @param allFiles	a map describing all present files
+	 * @param fileBasedFallback	a list of ADFileBasedFallback records, zero-terminated
 	 */
-	ADGameDescList detectGameFilebased(const FileMap &allFiles) const;
+	const ADGameDescription *detectGameFilebased(const FileMap &allFiles) const;
 
 	// TODO
 	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;
