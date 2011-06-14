@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-06-13 22:20+0100\n"
-"PO-Revision-Date: 2011-06-07 16:23+0100\n"
+"PO-Revision-Date: 2011-06-14 15:04+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1185,6 +1185,9 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
+"Je nám líto, ale toto jádro v souèasnosti nepodporuje herní nápovìdu. Prosím "
+"prohlédnìte si README pro základní informace a pro instrukce jak získat "
+"dal¹í pomoc."
 
 #: engines/dialogs.cpp:312 engines/mohawk/dialogs.cpp:100
 #: engines/mohawk/dialogs.cpp:152
@@ -1202,21 +1205,19 @@ msgstr "~K~lávesy"
 
 #: engines/engine.cpp:220
 msgid "Could not initialize color format."
-msgstr ""
+msgstr "Nelze zavést barevný formát."
 
 #: engines/engine.cpp:228
-#, fuzzy
 msgid "Could not switch to video mode: '"
-msgstr "Souèasný re¾im obrazu:"
+msgstr "Nelze pøepnout na re¾im obrazu: '"
 
 #: engines/engine.cpp:237
-#, fuzzy
 msgid "Could not apply aspect ratio setting."
-msgstr "Povolena korekce pomìru stran"
+msgstr "Nelze pou¾ít nastavení pomìru stran."
 
 #: engines/engine.cpp:242
 msgid "Could not apply fullscreen setting."
-msgstr ""
+msgstr "Nelze pou¾ít nastavení celé obrazovky."
 
 #: engines/engine.cpp:342
 msgid ""
@@ -1226,6 +1227,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
+"Vypadá to, ¾e tuto hru hrajete pøímo z\n"
+" CD. Je známo, ¾e toto zpùsobuje problémy\n"
+" a je tedy doporuèeno, a» místo toho zkopírujete\n"
+"datové soubory na Vá¹ pevný disk.\n"
+"Pro podrobnosti si pøeètìte README."
 
 #: engines/engine.cpp:353
 msgid ""
@@ -1235,6 +1241,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the README file for details."
 msgstr ""
+"Tato hra má na svém disku zvukové stopy. Tyto\n"
+"stopy musí být z disku zkopírovány pou¾itím\n"
+"vhodného nástroje pro extrakci zvuku z CD,\n"
+"abyste mohli poslouchat hudbu ve høe.\n"
+"Pro podrobnosti si pøeètìte README."
 
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
@@ -1774,6 +1785,8 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
+"Pøirozená podpora MIDI vy¾aduje Aktualizaci Roland od LucasArts,\n"
+"ale %s chybí. Místo toho je pou¾it AdLib."
 
 #: engines/scumm/scumm.cpp:2256 engines/agos/saveload.cpp:190
 #, c-format
@@ -1849,40 +1862,24 @@ msgstr "Obnovit"
 #: engines/agos/animation.cpp:544
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr ""
+msgstr "Soubor videa '%s' nenalezen'"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
 #: engines/tinsel/saveload.cpp:468
-#, fuzzy
 msgid "Failed to load game state from file."
-msgstr ""
-"Nahrání stavu hry selhalo ze souboru:\n"
-"\n"
-"%s"
+msgstr "Nelze naèíst stav hry ze souboru."
 
 #: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:546
-#, fuzzy
 msgid "Failed to save game state to file."
-msgstr ""
-"Ulo¾ení stavu hry selhalo do souboru:\n"
-"\n"
-"%s"
+msgstr "Nelze ulo¾it stav hry do souboru."
 
 #: engines/gob/inter_v5.cpp:107
-#, fuzzy
 msgid "Failed to delete file."
-msgstr ""
-"Ulo¾ení stavu hry selhalo do souboru:\n"
-"\n"
-"%s"
+msgstr "Nelze smazat soubor."
 
 #: engines/groovie/script.cpp:417
-#, fuzzy
 msgid "Failed to save game"
-msgstr ""
-"Ulo¾ení stavu hry selhalo do souboru:\n"
-"\n"
-"%s"
+msgstr "Nelze ulo¾it hru."
 
 #: engines/kyra/sound_midi.cpp:475
 msgid ""
@@ -1892,36 +1889,44 @@ msgid ""
 "General MIDI ones. After all it might happen\n"
 "that a few tracks will not be correctly played."
 msgstr ""
+"Zdá se, ¾e pou¾íváte zaøízení General MIDI,\n"
+"ale Va¹e hra podporuje pouze Roland MT32 MIDI.\n"
+"Sna¾íme se mapovat nástroje Roland MT32 na\n"
+"ty od General MIDI. Po tomto se mù¾e stát,\n"
+"¾e pár stop nebude správnì pøehráno."
 
 #: engines/m4/m4_menus.cpp:138
-#, fuzzy
 msgid "Save game failed!"
-msgstr "Ulo¾it hru:"
+msgstr "Ukládání hry selhalo!"
 
 #: engines/sky/compact.cpp:130
 msgid ""
 "Unable to find \"sky.cpt\" file!\n"
 "Please download it from www.scummvm.org"
 msgstr ""
+"Nelze nalézt soubor \"sky.cpt\"!\n"
+"Stáhnìte si ho, prosím z www.scummvm.org"
 
 #: engines/sky/compact.cpp:141
 msgid ""
 "The \"sky.cpt\" file has an incorrect size.\n"
 "Please (re)download it from www.scummvm.org"
 msgstr ""
+"Soubor \"sky.cpt\" má nesprávnou velikost.\n"
+"Stáhnìte si ho, prosím, (znovu) z www.scummvm.org"
 
 #: engines/sword1/animation.cpp:344 engines/sword2/animation.cpp:379
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
-msgstr ""
+msgstr "Videa DXA nalezena, ale ScummVM byl sestaven bez podpory zlib"
 
 #: engines/sword1/animation.cpp:354 engines/sword2/animation.cpp:389
 msgid "MPEG2 cutscenes are no longer supported"
-msgstr ""
+msgstr "Videa MPGE2 ji¾ nejsou podporována"
 
 #: engines/sword1/animation.cpp:359 engines/sword2/animation.cpp:397
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr ""
+msgstr "Video '%s' nenalezeno"
 
 #: engines/sword1/control.cpp:863
 msgid ""
@@ -1933,6 +1938,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"ScummVM zjistil, ¾e máte staré ulo¾ené pozice pro Broken Sword 1, které by "
+"mìly být pøevedeny.\n"
+"Starý formát ulo¾ených her ji¾ není podporován, tak¾e pokud je nepøevedete, "
+"nebudete moci Va¹e hry naèíst.\n"
+"\n"
+"Stisknìte OK, abyste je pøevedli teï, jinak budete po¾ádáni znovu, pøi "
+"spu¹tìní této hry.\n"
 
 #: engines/sword1/control.cpp:1232
 #, c-format
@@ -1940,18 +1952,20 @@ msgid ""
 "Target new save game already exists!\n"
 "Would you like to keep the old save game (%s) or the new one (%s)?\n"
 msgstr ""
+"Nová cílová ulo¾ená hra ji¾ existuje!\n"
+"Chtìli byste ponechat starou ulo¾enou hru (%s), nebo novou (%s)?\n"
 
 #: engines/sword1/control.cpp:1235
 msgid "Keep the old one"
-msgstr ""
+msgstr "Ponechat starou"
 
 #: engines/sword1/control.cpp:1235
 msgid "Keep the new one"
-msgstr ""
+msgstr "Ponechat novou"
 
 #: engines/sword1/logic.cpp:1633
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr ""
+msgstr "Toto je konec Dema Broken Sword 1"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -1959,16 +1973,16 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
+"Nelze ulo¾it hru do pozice %i\n"
+"\n"
 
 #: engines/parallaction/saveload.cpp:211
-#, fuzzy
 msgid "Loading game..."
-msgstr "Nahrát hru:"
+msgstr "Nahrávání hry..."
 
 #: engines/parallaction/saveload.cpp:226
-#, fuzzy
 msgid "Saving game..."
-msgstr "Ulo¾it hru:"
+msgstr "Ukládání hry..."
 
 #: engines/parallaction/saveload.cpp:279
 msgid ""
@@ -1979,10 +1993,16 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
+"ScummVM zjistil, ¾e máte staré ulo¾ené pozice pro Nippon Safes, které by "
+"mìly být pøejmenovány.\n"
+"Staré názvy ji¾ nejsou podporovány, tak¾e pokud je nepøevedete, nebudete "
+"moci Va¹e hry naèíst.\n"
+"\n"
+"Stisknìte OK, abyste je pøevedli teï, jinak budete po¾ádáni pøí¹tì.\n"
 
 #: engines/parallaction/saveload.cpp:326
 msgid "ScummVM successfully converted all your savefiles."
-msgstr ""
+msgstr "ScummVM úspì¹nì pøevedl v¹echny Va¹e ulo¾ené pozice. "
 
 #: engines/parallaction/saveload.cpp:328
 msgid ""
@@ -1991,6 +2011,10 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
+"ScummVM vytiskl nìkterá varování ve Va¹em oknì konzole a nemù¾e zaruèit, ¾e "
+"v¹echny Va¹e soubory byly pøevedeny.\n"
+"\n"
+"Prosím nahlaste to týmu"
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
@@ -2001,39 +2025,39 @@ msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL Emulátor"
 
 #: audio/mididrv.cpp:204
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected). Attempting to fall back to the next available device..."
 msgstr ""
-"Nelze zjistit zvolené zvukové zaøízení '%s'. Podívejte se na záznam pro více "
-"informací. Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
+"Zvolené zaøízení '%s' nebylo nalezeno (napø. mù¾e být vypnuto nebo "
+"odpojeno). Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
 
 #: audio/mididrv.cpp:216
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information. Attempting to fall back to the next available device..."
 msgstr ""
-"Nelze zjistit zvolené zvukové zaøízení '%s'. Podívejte se na záznam pro více "
+"Zvolené zaøízení '%s' nelze pou¾ít.. Podívejte se na záznam pro více "
 "informací. Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
 
 #: audio/mididrv.cpp:250
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected). Attempting to fall back to the next available device..."
 msgstr ""
-"Nelze zjistit upøednostòované zaøízení '%s'. Podívejte se na záznam pro více "
-"informací. Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
+"Upøednostòované zaøízení '%s' nebylo nalezeno (napø. mù¾e být vypnuto nebo "
+"odpojeno). Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
 
 #: audio/mididrv.cpp:265
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information. Attempting to fall back to the next available device..."
 msgstr ""
-"Nelze zjistit upøednostòované zaøízení '%s'. Podívejte se na záznam pro více "
+"Upøednostòované zaøízení '%s' nelze pou¾ít. Podívejte se na záznam pro více "
 "informací. Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
 
 #: audio/null.h:43
@@ -2165,14 +2189,12 @@ msgid "Disable power off"
 msgstr "Zakázat vypnutí"
 
 #: backends/platform/iphone/osys_events.cpp:338
-#, fuzzy
 msgid "Mouse-click-and-drag mode enabled."
-msgstr "Touchpad re¾im zapnut"
+msgstr "Re¾im pøetáhnutí my¹i zapnut."
 
 #: backends/platform/iphone/osys_events.cpp:340
-#, fuzzy
 msgid "Mouse-click-and-drag mode disabled."
-msgstr "Touchpad re¾im vypnut"
+msgstr "Re¾im pøetáhnutí my¹i vypnut."
 
 #: backends/platform/iphone/osys_events.cpp:351
 msgid "Touchpad mode enabled."
@@ -2310,7 +2332,7 @@ msgstr "Mapovaè kláves"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
 msgid "Do you want to quit ?"
-msgstr "Chcete ukonèit?"
+msgstr "Chcete ukonèit ?"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -2522,7 +2544,7 @@ msgstr "Displej"
 
 #: backends/platform/wince/CELauncherDialog.cpp:77
 msgid "Do you want to perform an automatic scan ?"
-msgstr "Chcete provést automatické hledání?"
+msgstr "Chcete provést automatické hledání ?"
 
 #: backends/platform/wince/wince-sdl.cpp:487
 msgid "Map right click action"
@@ -2560,19 +2582,16 @@ msgstr ""
 "vidìli celý inventáø"
 
 #: backends/events/default/default-events.cpp:222
-#, fuzzy
 msgid "Do you really want to return to the Launcher?"
-msgstr "Opravdu chcete tuto ulo¾enou hru vymazat"
+msgstr "Opravdu se chcete vrátit tuto do Spou¹tìèe?"
 
 #: backends/events/default/default-events.cpp:222
-#, fuzzy
 msgid "Launcher"
-msgstr "Udeøit"
+msgstr "Spou¹tìè"
 
 #: backends/events/default/default-events.cpp:244
-#, fuzzy
 msgid "Do you really want to quit?"
-msgstr "Chcete ukonèit?"
+msgstr "Opravdu chcete skonèit?"
 
 #: backends/events/gph/gph-events.cpp:366
 #: backends/events/gph/gph-events.cpp:409
