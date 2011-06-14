@@ -106,7 +106,7 @@ void AdvancedMetaEngine::updateGameDescriptor(GameDescriptor &desc, const ADGame
 }
 
 bool cleanupPirated(ADGameDescList &matched) {
-	// OKay, now let's sense presense of pirated games
+	// OKay, now let's sense presence of pirated games
 	if (!matched.empty()) {
 		for (uint j = 0; j < matched.size();) {
 			if (matched[j]->flags & ADGF_PIRATED)
@@ -117,9 +117,7 @@ bool cleanupPirated(ADGameDescList &matched) {
 
 		// We ruled out all variants and now have nothing
 		if (matched.empty()) {
-
 			warning("Illegitimate game copy detected. We give no support in such cases %d", matched.size());
-
 			return true;
 		}
 	}
@@ -132,9 +130,6 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 	ADGameDescList matches = detectGame(fslist, Common::UNK_LANG, Common::kPlatformUnknown, "");
 	GameList detectedGames;
 
-	if (cleanupPirated(matches))
-		return detectedGames;
-
 	if (matches.empty()) {
 		// Use fallback detector if there were no matches by other means
 		const ADGameDescription *fallbackDesc = fallbackDetect(fslist);
@@ -145,6 +140,7 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 		}
 	} else {
 		// Otherwise use the found matches
+		cleanupPirated(matches);
 		for (uint i = 0; i < matches.size(); i++) {
 			GameDescriptor desc(toGameDescriptor(*matches[i], _gameids));
 			updateGameDescriptor(desc, matches[i]);
