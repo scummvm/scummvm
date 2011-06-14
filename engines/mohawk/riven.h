@@ -131,6 +131,8 @@ public:
 
 	typedef void (*TimerProc)(MohawkEngine_Riven *vm);
 
+	void doVideoTimer(VideoHandle handle, bool force);
+
 private:
 	MohawkArchive *_extrasFile; // We need a separate handle for the extra data
 	RivenConsole *_console;
