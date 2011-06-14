@@ -35,8 +35,8 @@ struct AgiInstruction {
 	int argumentsLength() { return strlen(args); }
 };
 
-extern AgiInstruction logicNamesTest[];
-extern AgiInstruction logicNamesCmd[];
+extern AgiInstruction *logicNamesTest;
+extern AgiInstruction *logicNamesCmd;
 
 void cmd_increment(AgiGame *state, uint8 *p);
 void cmd_decrement(AgiGame *state, uint8 *p);

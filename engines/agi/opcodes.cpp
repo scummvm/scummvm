@@ -25,7 +25,132 @@
 
 namespace Agi {
 
-AgiInstruction logicNamesTest[] = {
+AgiInstruction *logicNamesTest;
+AgiInstruction *logicNamesCmd;
+
+AgiInstruction insV1Test[] = {
+	{ "",					"",			NULL },					// 00
+	{ "equaln",				"vn",		&cond_equal },			// 01
+	{ "equalv",				"vv",		&cond_equalv },			// 02
+	{ "lessn",				"vn",		&cond_less },			// 03
+	{ "lessv",				"vv",		&cond_lessv },			// 04
+	{ "greatern",			"vn",		&cond_greater },		// 05
+	{ "greaterv",			"vv",		&cond_greaterv },		// 06
+	{ "isset",				"n",		&cond_isset },			// 07
+	{ "issetv",				"v",		&cond_issetv },			// 08
+	{ "...",				"nnnn",		NULL },					// 09
+	{ "posn",				"nnnnn",	&cond_posn },			// 0A
+	{ "controller",			"n",		&cond_controller },		// 0B
+	{ "...",				"nn",		NULL },					// 0C
+	{ "...",				"",			NULL },					// 0D
+	{ "have.key",			"",			&cond_have_key },		// 0E
+	{ "...",				"nn",		NULL },					// 0F
+	{ "bit",				"nv",		NULL },					// 10
+	{ "...",				"nnnnn",	NULL },					// 11
+	{ "...",				"nnnnn",	NULL },					// 12
+};
+
+AgiInstruction insV1[] = {
+	{ "return",				"",			NULL },						// 00
+	{ "increment",			"v",		&cmd_increment },			// 01
+	{ "decrement",			"v",		&cmd_decrement },			// 02
+	{ "assignn",			"vn",		&cmd_assignn },				// 03
+	{ "assignv",			"vv",		&cmd_assignv },				// 04
+	{ "addn",				"vn",		&cmd_addn },				// 05
+	{ "addv",				"vv",		&cmd_addv },				// 06
+	{ "subn",				"vn",		&cmd_subn },				// 07
+	{ "subv",				"vv",		&cmd_subv },				// 08
+	{ "load.view",			"n",		&cmd_load_view },			// 09
+	{ "animate.obj",		"n",		&cmd_animate_obj },			// 0A
+	{ "new.room",			"n",		&cmd_new_room },			// 0B
+	{ "draw.pic",			"v",		&cmd_draw_pic },			// 0C
+	{ "print",				"s",		&cmd_print },				// 0D
+	{ "status",				"",			&cmd_status },				// 0E
+	{ "save.game",			"",			&cmd_save_game },			// 0F
+	{ "restore.game",		"",			&cmd_load_game },			// 10
+	{ "...",				"",			NULL },						// 11
+	{ "restart.game",		"",			&cmd_restart_game },		// 12
+	{ "random",				"v",		&cmd_random },				// 13 TODO: 1 vs 3 vars
+	{ "get",				"n",		&cmd_get },					// 14
+	{ "drop",				"n",		&cmd_drop },				// 15
+	{ "draw",				"n",		&cmd_draw },				// 16
+	{ "erase",				"n",		&cmd_erase },				// 17
+	{ "position",			"nnn",		&cmd_position },			// 18
+	{ "position.v",			"nvv",		&cmd_position_f },			// 19
+	{ "get.posn",			"nvv",		&cmd_get_posn },			// 1A
+	{ "set.cel",			"nn",		&cmd_set_cel },				// 1B
+	{ "set.loop",			"nn",		&cmd_set_loop },			// 1C
+	{ "end.of.loop",		"nn",		&cmd_end_of_loop },			// 1D
+	{ "reverse.loop",		"nn",		&cmd_reverse_loop },		// 1E
+	{ "move.obj",			"nnnnn",	&cmd_move_obj },			// 1F
+	{ "set.view",			"nn",		&cmd_set_view },			// 20
+	{ "follow.ego",			"nnn",		&cmd_follow_ego },			// 21
+	{ "...",				"",			NULL },						// 22
+	{ "...",				"",			NULL },						// 23
+	{ "ignore.blocks",		"n",		&cmd_ignore_blocks },		// 24
+	{ "observe.blocks",		"n",		&cmd_observe_blocks },		// 25
+	{ "wander",				"n",		&cmd_wander },				// 26
+	{ "reposition",			"nvv",		&cmd_reposition },			// 27
+	{ "stop.motion",		"n",		&cmd_stop_motion },			// 28
+	{ "start.motion",		"n",		&cmd_start_motion },		// 29
+	{ "stop.cycling",		"n",		&cmd_stop_cycling },		// 2A
+	{ "start.cycling",		"n",		&cmd_start_cycling },		// 2B
+	{ "stop.update",		"n",		&cmd_stop_update },			// 2C
+	{ "start.update",		"n",		&cmd_start_update },		// 2D
+	{ "program.control",	"",			&cmd_program_control },		// 2E
+	{ "player.control",		"",			&cmd_player_control },		// 2F
+	{ "set.priority",		"nn",		&cmd_set_priority },		// 30
+	{ "release.priority",	"n",		&cmd_release_priority },	// 31
+	{ "add.to.pic",			"nnnnnn",	&cmd_add_to_pic },			// 32 TODO: 7 vs 8 args
+	{ "set.horizon",		"n",		&cmd_set_horizon },			// 33
+	{ "ignore.horizon",		"n",		&cmd_ignore_horizon },		// 34
+	{ "observe.horizon",	"n",		&cmd_observe_horizon },		// 35
+	{ "load.logics",		"n",		&cmd_load_logic },			// 36
+	{ "object.on.water",	"n",		&cmd_object_on_water },		// 37
+	{ "load.pic",			"v",		&cmd_load_pic },			// 38
+	{ "load.sound",			"n",		&cmd_load_sound },			// 39
+	{ "sound",				"nn",		&cmd_sound },				// 3A
+	{ "stop.sound",			"",			&cmd_stop_sound },			// 3B
+	{ "set",				"n",		&cmd_set },					// 3C
+	{ "reset",				"n",		&cmd_reset },				// 3D
+	{ "...",				"n",		NULL },						// 3E
+	{ "new.room.v",			"v",		&cmd_new_room_f },			// 3F
+	{ "...",				"n",		NULL },						// 40
+	{ "...",				"",			NULL },						// 41
+	{ "...",				"v",		NULL },						// 42
+	{ "move.obj.v",			"nvvvv",	&cmd_move_obj_f },			// 43
+	{ "...",				"",			NULL },						// 44
+	{ "...",				"",			NULL },						// 45
+	{ "...",				"",			NULL },						// 46
+	{ "...",				"",			NULL },						// 47
+	{ "...",				"nv",		NULL },						// 48 get.priority??
+	{ "ignore.objs",		"n",		&cmd_ignore_objs },			// 49
+	{ "observe.objs",		"n",		&cmd_observe_objs },		// 4A
+	{ "distance",			"nnv",		&cmd_distance },			// 4B
+	{ "object.on.land",		"n",		&cmd_object_on_land },		// 4C
+	{ "...",				"nv",		NULL },						// 4D set.priority.v???
+	{ "...",				"",			NULL },						// 4E
+	{ "...",				"n",		NULL },						// 4F
+	{ "display",			"nnns",		&cmd_display },				// 50 TODO: 4 vs 3 args
+	{ "prevent.input???",	"",			NULL },						// 51
+	{ "...",				"",			NULL },						// 52
+	{ "...",				"n",		NULL },						// 53 ???
+	{ "...",				"",			NULL },						// 54 ???
+	{ "stop.motion",		"",			&cmd_stop_motion },			// 55 or force.update??
+	{ "discard.view",		"n",		&cmd_discard_view },		// 56
+	{ "discard.pic",		"v",		&cmd_discard_pic },			// 57
+	{ "...",				"nn",		NULL },						// 58
+	{ "...",				"",			NULL },						// 59
+	{ "last.cel",			"nv",		&cmd_last_cel },			// 5A
+	{ "set.cel.v",			"nv",		&cmd_set_cel_f },			// 5B
+	{ "...",				"",			NULL },						// 5C
+	{ "...",				"n",		NULL },						// 5D
+	{ "...",				"",			NULL },						// 5E
+	{ "...",				"",			NULL },						// 5F
+	{ "setbit",				"nv",		NULL },						// 60
+};
+
+AgiInstruction insV2Test[] = {
 	{ "",					"",			NULL },						// 00
 	{ "equaln",				"vn",		&cond_equal },				// 01
 	{ "equalv",				"vv",		&cond_equalv },				// 02
@@ -45,10 +170,10 @@ AgiInstruction logicNamesTest[] = {
 	{ "obj.in.box",			"nnnnn",	&cond_obj_in_box },			// 10
 	{ "center.posn",		"nnnnn",	&cond_center_posn },		// 11
 	{ "right.posn",			"nnnnn",	&cond_right_posn },			// 12
-	{ "in.motion.using.mouse", "",		&cond_unknown_13 } // 13
+	{ "in.motion.using.mouse", "",		&cond_unknown_13 }			// 13
 };
 
-AgiInstruction logicNamesCmd[] = {
+AgiInstruction insV2[] = {
 	{ "return",				"",			NULL },
 	{ "increment",			"v",		&cmd_increment },
 	{ "decrement",			"v",		&cmd_decrement },
@@ -237,11 +362,24 @@ AgiInstruction logicNamesCmd[] = {
 void AgiEngine::setupOpcodes() {
 	for (int i = 0; i < 256; ++i)
 		_agiCondCommands[i] = &cond_unknown;
-	for (int i = 0; i <= ARRAYSIZE(logicNamesTest); ++i)
-		_agiCondCommands[i] = logicNamesTest[i].func;
 
-	for (int i = 0; i < ARRAYSIZE(logicNamesCmd); ++i)
-		_agiCommands[i] = logicNamesCmd[i].func;
+	if (getVersion() >= 0x2000) {
+		for (int i = 0; i <= ARRAYSIZE(insV2Test); ++i)
+			_agiCondCommands[i] = insV2Test[i].func;
+		for (int i = 0; i < ARRAYSIZE(insV2); ++i)
+			_agiCommands[i] = insV2[i].func;
+
+		logicNamesTest = insV2Test;
+		logicNamesCmd = insV2;
+	} else {
+		for (int i = 0; i <= ARRAYSIZE(insV1Test); ++i)
+			_agiCondCommands[i] = insV1Test[i].func;
+		for (int i = 0; i < ARRAYSIZE(insV1); ++i)
+			_agiCommands[i] = insV1[i].func;
+
+		logicNamesTest = insV1Test;
+		logicNamesCmd = insV1;
+	}
 }
 
 }
