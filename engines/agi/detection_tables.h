@@ -865,9 +865,11 @@ static AGIGameDescription g_fallbackDesc = {
 /**
  * Descriptor table for booter games
  */
+#define BOOTER_V1(id, extra, md50, md51, gid) { md50, md51, id, extra, gid, GType_V1, ADGF_NO_FLAGS, 0x1120 },
 #define BOOTER_V2(id, extra, md50, md51, gid) { md50, md51, id, extra, gid, GType_V2, ADGF_NO_FLAGS, 0x2001 },
 
 static AGIBooterDescription booterDescription[] = {
+	BOOTER_V1("bc", "booter", "98a51d3a372baa9df288b6c0f0232567", "5568f7a52e787305656246f95e2aa375", GID_BC)
 	BOOTER_V2("ddp", "booter", "f323f10abf8140ffb2668b09af2e7b87", "", GID_DDP)
 	{ "", "", "", "", 0, 0, 0, 0 }
 };

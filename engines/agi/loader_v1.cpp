@@ -23,41 +23,56 @@
 #include "agi/agi.h"
 #include "common/md5.h"
 
+#define IMAGE_SIZE 368640 // = 40 * 2 * 9 * 512 = tracks * sides * sectors * sector size
 #define SECTOR_OFFSET(s) ((s) * 512)
 
-#define BASE_SECTOR	0x1C2
 
-#define LOGDIR_SEC	SECTOR_OFFSET(171) + 5
-#define LOGDIR_NUM	43
+#define DDP_BASE_SECTOR	0x1C2
 
-#define PICDIR_SEC	SECTOR_OFFSET(180) + 5
-#define PICDIR_NUM	30
+#define DDP_LOGDIR_SEC	SECTOR_OFFSET(171) + 5
+#define DDP_LOGDIR_MAX	43
 
-#define VIEWDIR_SEC	SECTOR_OFFSET(189) + 5
-#define VIEWDIR_NUM	171
+#define DDP_PICDIR_SEC	SECTOR_OFFSET(180) + 5
+#define DDP_PICDIR_MAX	30
 
-#define SNDDIR_SEC	SECTOR_OFFSET(198) + 5
-#define SNDDIR_NUM	64
+#define DDP_VIEWDIR_SEC	SECTOR_OFFSET(189) + 5
+#define DDP_VIEWDIR_MAX	171
+
+#define DDP_SNDDIR_SEC	SECTOR_OFFSET(198) + 5
+#define DDP_SNDDIR_MAX	64
+
+
+#define BC_LOGDIR_SEC	SECTOR_OFFSET(90) + 5
+#define BC_LOGDIR_MAX	118
+
+#define BC_VIEWDIR_SEC	SECTOR_OFFSET(96) + 5
+#define BC_VIEWDIR_MAX	180
+
+#define BC_PICDIR_SEC	SECTOR_OFFSET(93) + 8
+#define BC_PICDIR_MAX	117
+
+#define BC_SNDDIR_SEC	SECTOR_OFFSET(99) + 5
+#define BC_SNDDIR_MAX	29
 
 namespace Agi {
 
 
 AgiLoader_v1::AgiLoader_v1(AgiEngine *vm) {
 	_vm = vm;
-	
+}
+
+int AgiLoader_v1::detectGame() {
 	// Find filenames for the disk images
 	Common::String md5Disk0, md5Disk1;
 	getBooterMD5Sums((AgiGameID)_vm->getGameID(), md5Disk0, md5Disk1);
 	diskImageExists(md5Disk0, _filenameDisk0);
 	if (!md5Disk1.empty())
 		diskImageExists(md5Disk1, _filenameDisk1);
-}
 
-int AgiLoader_v1::detectGame() {
 	return _vm->setupV2Game(_vm->getVersion());
 }
 
-int AgiLoader_v1::loadDir(AgiDir *agid, int offset, int num) {
+int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {
 	Common::File fp;
 	
 	if (!fp.open(_filenameDisk0))
@@ -70,7 +85,7 @@ int AgiLoader_v1::loadDir(AgiDir *agid, int offset, int num) {
 	}
 	
 	fp.seek(offset, SEEK_SET);
-	for (int i = 0; i < num; i++) {
+	for (int i = 0; i <= max; i++) {
 		int b0 = fp.readByte();
 		int b1 = fp.readByte();
 		int b2 = fp.readByte();
@@ -79,7 +94,7 @@ int AgiLoader_v1::loadDir(AgiDir *agid, int offset, int num) {
 			agid[i].volume = 0xFF;
 			agid[i].offset = _EMPTY;
 		} else {
-			int sec = (BASE_SECTOR + (((b0 & 0xF) << 8) | b1)) >> 1;
+			int sec = (DDP_BASE_SECTOR + (((b0 & 0xF) << 8) | b1)) >> 1;
 			int off = ((b1 & 0x1) << 8) | b2;
 			agid[i].volume = 0;
 			agid[i].offset = SECTOR_OFFSET(sec) + off;
@@ -91,16 +106,65 @@ int AgiLoader_v1::loadDir(AgiDir *agid, int offset, int num) {
 	return errOK;
 }
 
+int AgiLoader_v1::loadDir_BC(AgiDir *agid, int offset, int max) {
+	Common::File fp;
+	
+	if (!fp.open(_filenameDisk0))
+		return errBadFileOpen;
+
+	// Cleanup
+	for (int i = 0; i < MAX_DIRS; i++) {
+		agid[i].volume = 0xFF;
+		agid[i].offset = _EMPTY;
+	}
+	
+	fp.seek(offset, SEEK_SET);
+	for (int i = 0; i <= max; i++) {
+		int b0 = fp.readByte();
+		int b1 = fp.readByte();
+		int b2 = fp.readByte();
+		
+		if (b0 == 0xFF && b1 == 0xFF && b2 == 0xFF) {
+			agid[i].volume = 0xFF;
+			agid[i].offset = _EMPTY;
+		} else {
+			int sec = (b0 & 0x3F) * 18 + ((b1 >> 1) & 0x1) * 9 + ((b1 >> 2) & 0x1F) - 1;
+			int off = ((b1 & 0x1) << 8) | b2;
+			int vol = (b0 & 0xC0) >> 6;
+			agid[i].volume = 0;
+			agid[i].offset = (vol == 2) * IMAGE_SIZE + SECTOR_OFFSET(sec) + off;
+		}
+	}
+
+	fp.close();
+
+	return errOK;
+}
+
 int AgiLoader_v1::init() {
 	int ec = errOK;
 
-	ec = loadDir(_vm->_game.dirLogic, LOGDIR_SEC, LOGDIR_NUM);
-	if (ec == errOK)
-		ec = loadDir(_vm->_game.dirPic, PICDIR_SEC, PICDIR_NUM);
-	if (ec == errOK)
-		ec = loadDir(_vm->_game.dirView, VIEWDIR_SEC, VIEWDIR_NUM);
-	if (ec == errOK)
-		ec = loadDir(_vm->_game.dirSound, SNDDIR_SEC, SNDDIR_NUM);
+	switch (_vm->getGameID()) {
+	case GID_DDP:
+		ec = loadDir_DDP(_vm->_game.dirLogic, DDP_LOGDIR_SEC, DDP_LOGDIR_MAX);
+		if (ec == errOK)
+			ec = loadDir_DDP(_vm->_game.dirPic, DDP_PICDIR_SEC, DDP_PICDIR_MAX);
+		if (ec == errOK)
+			ec = loadDir_DDP(_vm->_game.dirView, DDP_VIEWDIR_SEC, DDP_VIEWDIR_MAX);
+		if (ec == errOK)
+			ec = loadDir_DDP(_vm->_game.dirSound, DDP_SNDDIR_SEC, DDP_SNDDIR_MAX);
+		break;
+
+	case GID_BC:
+		ec = loadDir_BC(_vm->_game.dirLogic, BC_LOGDIR_SEC, BC_LOGDIR_MAX);
+		if (ec == errOK)
+			ec = loadDir_BC(_vm->_game.dirPic, BC_PICDIR_SEC, BC_PICDIR_MAX);
+		if (ec == errOK)
+			ec = loadDir_BC(_vm->_game.dirView, BC_VIEWDIR_SEC, BC_VIEWDIR_MAX);
+		if (ec == errOK)
+			ec = loadDir_BC(_vm->_game.dirSound, BC_SNDDIR_SEC, BC_SNDDIR_MAX);
+		break;
+	}
 
 	return ec;
 }
@@ -113,12 +177,19 @@ int AgiLoader_v1::deinit() {
 uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 	uint8 *data = NULL;
 	Common::File fp;
+	int offset = agid->offset;
 
-	if (agid->offset == _EMPTY)
+	if (offset == _EMPTY)
 		return NULL;
 	
-	fp.open(_filenameDisk0);
-	fp.seek(agid->offset, SEEK_SET);
+	if (offset > IMAGE_SIZE) {
+		fp.open(_filenameDisk1);
+		offset -= IMAGE_SIZE;
+	} else {
+		fp.open(_filenameDisk0);
+	}
+
+	fp.seek(offset, SEEK_SET);
 
 	int signature = fp.readUint16BE();
 	if (signature != 0x1234) {

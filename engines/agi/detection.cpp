@@ -199,6 +199,7 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	case Agi::GType_PreAGI:
 		*engine = new Agi::PreAgiEngine(syst, gd);
 		break;
+	case Agi::GType_V1:
 	case Agi::GType_V2:
 	case Agi::GType_V3:
 		*engine = new Agi::AgiEngine(syst, gd);

@@ -131,8 +131,9 @@ enum AgiGameID {
 
 enum AgiGameType {
 	GType_PreAGI = 0,
-	GType_V2 = 1,
-	GType_V3 = 2
+	GType_V1 = 1,
+	GType_V2 = 2,
+	GType_V3 = 3
 };
 
 //
@@ -678,7 +679,8 @@ private:
 	Common::String _filenameDisk0;
 	Common::String _filenameDisk1;
 
-	int loadDir(AgiDir *agid, int offset, int num);
+	int loadDir_DDP(AgiDir *agid, int offset, int max);
+	int loadDir_BC(AgiDir *agid, int offset, int max);
 	uint8 *loadVolRes(AgiDir *agid);
 
 public:
