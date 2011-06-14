@@ -120,7 +120,7 @@ void DreamWebEngine::processEvents() {
 	}
 	soundHandler();
 	Common::Event event;
-	int key = 0;
+	int softKey, hardKey;
 	while (event_manager->pollEvent(event)) {
 		switch(event.type) {
 		case Common::EVENT_KEYDOWN:
@@ -152,48 +152,55 @@ void DreamWebEngine::processEvents() {
 				return; //do not pass ctrl + key to the engine
 			}
 
-			// As far as I can see, the only keys checked
-			// for in 'lasthardkey' are 1 (ESC) and 57
-			// (space) so add special cases for them and
-			// treat everything else as 0.
-			switch(event.kbd.keycode) {
+			// Some parts of the ASM code uses the hardware key
+			// code directly. We don't have that code, so we fake
+			// it for the keys where it's needed and assume it's
+			// 0 (which is actually an invalid value, as far as I
+			// know) otherwise.
+
+			hardKey = 0;
+
+			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				_context.data.byte(dreamgen::kLasthardkey) = 1;
+				hardKey = 1;
 				break;
 			case Common::KEYCODE_SPACE:
-				_context.data.byte(dreamgen::kLasthardkey) = 57;
+				hardKey = 57;
 				break;
 			default:
-				_context.data.byte(dreamgen::kLasthardkey) = 0;
+				hardKey = 0;
 				break;
 			}
 
-			// This is pretty much the equivalent of convertkey(),
-			// but we can't use that one because we don't get the
-			// same key codes as input. Eventually, we may want to
-			// be a bit more permissive than the original, but for
-			// now let's be conservative.
+			_context.data.byte(dreamgen::kLasthardkey) = hardKey;
+
+			// The rest of the keys are converted to ASCII. This
+			// is fairly restrictive, and eventually we may want
+			// to let through more keys. I think this is mostly to
+			// keep weird glyphs out of savegame names.
+
+			softKey = 0;
 
 			if (event.kbd.keycode >= Common::KEYCODE_a && event.kbd.keycode <= Common::KEYCODE_z) {
-				key = event.kbd.ascii & ~0x20;
+				softKey = event.kbd.ascii & ~0x20;
 			} else if (event.kbd.keycode == Common::KEYCODE_MINUS ||
 				event.kbd.keycode == Common::KEYCODE_SPACE ||
 				(event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9)) {
-				key = event.kbd.ascii;
+				softKey = event.kbd.ascii;
 			} else if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
-				key = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
+				softKey = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 			} else if (event.kbd.keycode == Common::KEYCODE_KP_MINUS) {
-				key = '-';
+				softKey = '-';
 			} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE ||
 				event.kbd.keycode == Common::KEYCODE_DELETE) {
-				key = 8;
+				softKey = 8;
 			} else if (event.kbd.keycode == Common::KEYCODE_RETURN
 				|| event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-				key = 13;
+				softKey = 13;
 			}
 
-			if (key)
-				keyPressed(key);
+			if (softKey)
+				keyPressed(softKey);
 			break;
 		default:
 			break;
