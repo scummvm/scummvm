@@ -822,11 +822,12 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 
 	expireResources(size);
 
-	byte *ptr = (byte *)calloc(size + SAFETY_AREA, 1);
+	byte *ptr = new byte[size + SAFETY_AREA];
 	if (ptr == NULL) {
 		error("createResource(%s,%d): Out of memory while allocating %d", nameOfResType(type), idx, size);
 	}
 
+	memset(ptr, 0, size + SAFETY_AREA);
 	_allocatedSize += size;
 
 	_types[type][idx]._address = ptr;
@@ -845,12 +846,12 @@ ResourceManager::Resource::Resource() {
 }
 
 ResourceManager::Resource::~Resource() {
-	delete _address;
+	delete[] _address;
 	_address = 0;
 }
 
 void ResourceManager::Resource::nuke() {
-	delete _address;
+	delete[] _address;
 	_address = 0;
 	_size = 0;
 	_flags = 0;
