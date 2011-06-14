@@ -32,68 +32,7 @@
 #include "common/translation.h"
 
 #include "engines/advancedDetector.h"
-
-void AdvancedMetaEngine::upgradeTargetIfNecessary() const {
-	if (_obsoleteList == 0)
-		return;
-
-	Common::String gameid = ConfMan.get("gameid");
-
-	for (const ADObsoleteGameID *o = _obsoleteList; o->from; ++o) {
-		if (gameid.equalsIgnoreCase(o->from)) {
-			gameid = o->to;
-			ConfMan.set("gameid", gameid);
-
-			if (o->platform != Common::kPlatformUnknown)
-				ConfMan.set("platform", Common::getPlatformCode(o->platform));
-
-			warning("Target upgraded from %s to %s", o->from, o->to);
-
-			// WORKAROUND: Fix for bug #1719463: "DETECTOR: Launching
-			// undefined target adds launcher entry"
-			if (ConfMan.hasKey("id_came_from_command_line")) {
-				warning("Target came from command line. Skipping save");
-			} else {
-				ConfMan.flushToDisk();
-			}
-			break;
-		}
-	}
-}
-
-namespace AdvancedDetector {
-
-GameDescriptor findGameID(
-	const char *gameid,
-	const PlainGameDescriptor *gameids,
-	const ADObsoleteGameID *obsoleteList
-	) {
-	// First search the list of supported gameids for a match.
-	const PlainGameDescriptor *g = findPlainGameDescriptor(gameid, gameids);
-	if (g)
-		return GameDescriptor(*g);
-
-	// If we didn't find the gameid in the main list, check if it
-	// is an obsolete game id.
-	if (obsoleteList != 0) {
-		const ADObsoleteGameID *o = obsoleteList;
-		while (o->from) {
-			if (0 == scumm_stricmp(gameid, o->from)) {
-				g = findPlainGameDescriptor(o->to, gameids);
-				if (g && g->description)
-					return GameDescriptor(gameid, "Obsolete game ID (" + Common::String(g->description) + ")");
-				else
-					return GameDescriptor(gameid, "Obsolete game ID");
-			}
-			o++;
-		}
-	}
-
-	// No match found
-	return GameDescriptor();
-}
-
-}	// End of namespace AdvancedDetector
+#include "engines/obsolete.h"
 
 static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGameDescriptor *sg) {
 	const char *title = 0;
@@ -218,7 +157,6 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
-	upgradeTargetIfNecessary();
 
 	const ADGameDescription *agdDesc = 0;
 	Common::Language language = Common::UNK_LANG;
@@ -605,14 +543,19 @@ GameList AdvancedMetaEngine::getSupportedGames() const {
 }
 
 GameDescriptor AdvancedMetaEngine::findGame(const char *gameid) const {
-	return AdvancedDetector::findGameID(gameid, _gameids, _obsoleteList);
+	// First search the list of supported gameids for a match.
+	const PlainGameDescriptor *g = findPlainGameDescriptor(gameid, _gameids);
+	if (g)
+		return GameDescriptor(*g);
+
+	// No match found
+	return GameDescriptor();
 }
 
 AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids)
 	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameids(gameids) {
 
 	_md5Bytes = 5000;
-	_obsoleteList = NULL;
 	_singleid = NULL;
 	_fileBasedFallback = NULL;
 	_flags = 0;

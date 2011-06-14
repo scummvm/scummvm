@@ -882,7 +882,7 @@ GameList ScummMetaEngine::getSupportedGames() const {
 }
 
 GameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
-	return AdvancedDetector::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
+	return Engines::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 
 static Common::String generatePreferredTarget(const DetectorResult &x) {
@@ -975,20 +975,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// We start by checking whether the specified game ID is obsolete.
 	// If that is the case, we automatically upgrade the target to use
 	// the correct new game ID (and platform, if specified).
-	for (const ADObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
-		if (!scumm_stricmp(gameid, o->from)) {
-			// Match found, perform upgrade
-			gameid = o->to;
-			ConfMan.set("gameid", o->to);
-
-			if (o->platform != Common::kPlatformUnknown)
-				ConfMan.set("platform", Common::getPlatformCode(o->platform));
-
-			warning("Target upgraded from game ID %s to %s", o->from, o->to);
-			ConfMan.flushToDisk();
-			break;
-		}
-	}
+	Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 
 	// Fetch the list of files in the current directory
 	Common::FSList fslist;

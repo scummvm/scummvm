@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef ENGINES_ADVANCED_DETECTOR_H
 #define ENGINES_ADVANCED_DETECTOR_H
 
@@ -73,7 +74,7 @@ struct ADGameDescription {
 /**
  * A list of pointers to ADGameDescription structs (or subclasses thereof).
  */
-typedef Common::Array<const ADGameDescription*> ADGameDescList;
+typedef Common::Array<const ADGameDescription *> ADGameDescList;
 
 /**
  * End marker for a table of ADGameDescription structs. Use this to
@@ -81,13 +82,6 @@ typedef Common::Array<const ADGameDescription*> ADGameDescList;
  */
 #define AD_TABLE_END_MARKER	\
 	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS, Common::GUIO_NONE }
-
-
-struct ADObsoleteGameID {
-	const char *from;
-	const char *to;
-	Common::Platform platform;
-};
 
 struct ADFileBasedFallback {
 	/**
@@ -118,21 +112,6 @@ enum ADFlags {
 	kADFlagUseExtraAsHint = (1 << 2)
 };
 
-
-namespace AdvancedDetector {
-
-/**
- * Scan through the game descriptors specified in params and search for
- * 'gameid' in there. If a match is found, returns a GameDescriptor
- * with gameid and description set.
- */
-GameDescriptor findGameID(
-	const char *gameid,
-	const PlainGameDescriptor *gameids,
-	const ADObsoleteGameID *obsoleteList = 0
-	);
-
-} // End of namespace AdvancedDetector
 
 /**
  * A MetaEngine implementation based around the advanced detector code.
@@ -168,13 +147,6 @@ protected:
 	 * by this engine.
 	 */
 	const PlainGameDescriptor *_gameids;
-
-	/**
-	 * Structure for autoupgrading obsolete targets (optional).
-	 *
-	 * @todo Properly explain this.
-	 */
-	const ADObsoleteGameID *_obsoleteList;
 
 	/**
 	 * Name of single gameid (optional).
@@ -274,8 +246,7 @@ protected:
 	 */
 	ADGameDescList detectGameFilebased(const FileMap &allFiles) const;
 
-	void upgradeTargetIfNecessary() const;
-
+	// TODO
 	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;
 
 	/**
