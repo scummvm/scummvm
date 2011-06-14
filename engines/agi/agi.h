@@ -634,12 +634,8 @@ struct AgiGame {
 
 	Common::Rect mouseFence;		/**< rectangle set by fence.mouse command */
 
-	// IF conditions
+	// IF condition handling
 	int endTest;
-	int orTest;
-	int orVal;
-	int notTest;
-	int testVal;
 	int ec;
 };
 

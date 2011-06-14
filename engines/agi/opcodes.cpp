@@ -26,7 +26,7 @@
 namespace Agi {
 
 AgiInstruction logicNamesTest[] = {
-	{ "",					"",			&cond_end },				// 00
+	{ "",					"",			NULL },						// 00
 	{ "equaln",				"vn",		&cond_equal },				// 01
 	{ "equalv",				"vv",		&cond_equalv },				// 02
 	{ "lessn",				"vn",		&cond_less },				// 03
@@ -239,9 +239,6 @@ void AgiEngine::setupOpcodes() {
 		_agiCondCommands[i] = &cond_unknown;
 	for (int i = 0; i <= ARRAYSIZE(logicNamesTest); ++i)
 		_agiCondCommands[i] = logicNamesTest[i].func;
-	_agiCondCommands[0xFF] = &cond_end;
-	_agiCondCommands[0xFD] = &cond_not;
-	_agiCondCommands[0xFC] = &cond_or;
 
 	for (int i = 0; i < ARRAYSIZE(logicNamesCmd); ++i)
 		_agiCommands[i] = logicNamesCmd[i].func;

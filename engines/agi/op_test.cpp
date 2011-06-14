@@ -39,80 +39,63 @@ namespace Agi {
 #define testHas(obj)			(state->_vm->objectGetLocation(obj) == EGO_OWNED)
 #define testObjInRoom(obj, v)	(state->_vm->objectGetLocation(obj) == getvar(v))
 
-void cond_end(AgiGame *state, uint8 *p) {
-	state->endTest = true;
-	state->ec = true;
-}
-
 void cond_equal(AgiGame *state, uint8 *p) {
 	if (p[0] == 11)
 		state->_vm->_timerHack++;
-	ip += 2;
 	state->ec = testEqual(p[0], p[1]);
 }
 
 void cond_equalv(AgiGame *state, uint8 *p) {
 	if (p[0] == 11 || p[1] == 11)
 		state->_vm->_timerHack++;
-	ip += 2;
 	state->ec = testEqual(p[0], getvar(p[1]));
 }
 
 void cond_less(AgiGame *state, uint8 *p) {
 	if (p[0] == 11)
 		state->_vm->_timerHack++;
-	ip += 2;
 	state->ec = testLess(p[0], p[1]);
 }
 
 void cond_lessv(AgiGame *state, uint8 *p) {
 	if (p[0] == 11 || p[1] == 11)
 		state->_vm->_timerHack++;
-	ip += 2;
 	state->ec = testLess(p[0], getvar(p[1]));
 }
 
 void cond_greater(AgiGame *state, uint8 *p) {
 	if (p[0] == 11)
 		state->_vm->_timerHack++;
-	ip += 2;
 	state->ec = testGreater(p[0], p[1]);
 }
 
 void cond_greaterv(AgiGame *state, uint8 *p) {
 	if (p[0] == 11 || p[1] == 11)
 		state->_vm->_timerHack++;
-	ip += 2;
 	state->ec = testGreater(p[0], getvar(p[1]));
 }
 
 void cond_isset(AgiGame *state, uint8 *p) {
-	ip += 1;
 	state->ec = testIsSet(p[0]);
 }
 
 void cond_issetv(AgiGame *state, uint8 *p) {
-	ip += 1;
 	state->ec = testIsSet(getvar(p[1]));
 }
 
 void cond_has(AgiGame *state, uint8 *p) {
-	ip += 1;
 	state->ec = testHas(p[0]);
 }
 
 void cond_obj_in_room(AgiGame *state, uint8 *p) {
-	ip += 2;
 	state->ec = testObjInRoom(p[0], p[1]);
 }
 
 void cond_posn(AgiGame *state, uint8 *p) {
-	ip += 5;
 	state->ec = state->_vm->testPosn(p[0], p[1], p[2], p[3], p[4]);
 }
 
 void cond_controller(AgiGame *state, uint8 *p) {
-	ip += 1;
 	state->ec = state->_vm->testController(p[0]);
 }
 
@@ -122,29 +105,23 @@ void cond_have_key(AgiGame *state, uint8 *p) {
 
 void cond_said(AgiGame *state, uint8 *p) {
 	int ec = state->_vm->testSaid(p[0], p + 1);
-	ip += p[0] * 2;	// skip num_words * 2
-	ip++;	// skip num_words opcode
 	state->ec = ec;
 }
 
 void cond_compare_strings(AgiGame *state, uint8 *p) {
 	debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", state->strings[p[0]], state->strings[p[1]]);
-	ip += 2;
 	state->ec = state->_vm->testCompareStrings(p[0], p[1]);
 }
 
 void cond_obj_in_box(AgiGame *state, uint8 *p) {
-	ip += 5;
 	state->ec = state->_vm->testObjInBox(p[0], p[1], p[2], p[3], p[4]);
 }
 
 void cond_center_posn(AgiGame *state, uint8 *p) {
-	ip += 5;
 	state->ec = state->_vm->testObjCenter(p[0], p[1], p[2], p[3], p[4]);
 }
 
 void cond_right_posn(AgiGame *state, uint8 *p) {
-	ip += 5;
 	state->ec = state->_vm->testObjRight(p[0], p[1], p[2], p[3], p[4]);
 }
 
@@ -162,22 +139,6 @@ void cond_unknown_13(AgiGame *state, uint8 *p) {
 
 void cond_unknown(AgiGame *state, uint8 *p) {
 	state->endTest = true;
-}
-
-void cond_not(AgiGame *state, uint8 *p) {
-	state->notTest = !state->notTest;
-}
-
-void cond_or(AgiGame *state, uint8 *p) {
-	// if or_test is ON and we hit 0xFC, end of OR, then
-	// or is STILL false so break.
-	if (state->orTest) {
-		state->orTest = false;
-		state->testVal &= state->orVal;
-	} else {
-		state->orTest = true;
-		state->orVal = false;
-	}
 }
 
 uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
@@ -349,49 +310,87 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 int AgiEngine::testIfCode(int lognum) {
 	AgiGame *state = &_game;
 	uint8 op = 0;
-	uint16 lastIp = ip;
 	uint8 p[16] = { 0 };
 
 	state->ec = true;
-	state->notTest = false;
-	state->orTest = false;
+	int notTest = false;
+	int orTest = false;
+	int orVal = false;
 	state->endTest = false;
-	state->testVal = true;
+	int testVal = true;
+	int skipTest = false;
+	int skipOr = false;
 
 	while (!(shouldQuit() || _restartGame) && !state->endTest) {
 		if (_debug.enabled && (_debug.logic0 || lognum))
 			debugConsole(lognum, lTEST_MODE, NULL);
 
-		lastIp = ip;
 		op = *(code + ip++);
 		memmove(p, (code + ip), 16);
 
-		_agiCondCommands[op](state, p);
-		if (op == 0xFF || op == 0xFD || op == 0xFC)
+		// Execute test command if needed
+		switch (op) {
+		case 0xFC:
+			skipOr = false;
+			if (orTest) {
+				orTest = false;
+				testVal &= orVal;
+				if (!orVal)
+					skipTest = true;
+			} else {
+				orTest = true;
+				orVal = false;
+			}
 			continue;
+		case 0xFD:
+			notTest = true;
+			continue;
+		case 0x00:
+		case 0xFF:
+			state->endTest = true;
+			continue;
+		
+		default:
+			if (!skipTest && !skipOr) {
+				_agiCondCommands[op](state, p);
 
-		// not is only enabled for 1 test command
-		if (state->notTest)
-			state->ec = !state->ec;
-		state->notTest = false;
+				// not is only enabled for 1 test command
+				if (notTest)
+					state->ec = !state->ec;
+				notTest = false;
 
-		if (state->orTest)
-			state->orVal |= state->ec;
-		else
-			state->testVal &= state->ec;
+				if (orTest) {
+					orVal |= state->ec;
+					if (state->ec)
+						skipOr = true;
+				} else {
+					testVal &= state->ec;
+					if (!state->ec)
+						skipTest = true;
+				}
+			}
+			break;
+		}
+
+		// Skip the instruction
+		if (op <= 0x13) {
+			if (op == 0x0E) // said()
+				ip += *(code + ip) * 2 + 1;
+			else
+				ip += logicNamesTest[op].argumentsLength();
+		}
 	}
 
-	// Execute the following IF block if the condition is true, otherwise
-	// skip the block.
-	if (state->testVal)
+	// Skip the following IF block if the condition evaluates as false
+	if (testVal)
 		ip += 2;
 	else
 		ip += READ_LE_UINT16(code + ip) + 2;
 
 	if (_debug.enabled && (_debug.logic0 || lognum))
-		debugConsole(lognum, 0xFF, state->testVal ? "=true" : "=false");
+		debugConsole(lognum, 0xFF, testVal ? "=true" : "=false");
 
-	return state->testVal;
+	return testVal;
 }
 
 } // End of namespace Agi
