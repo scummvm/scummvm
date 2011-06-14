@@ -413,6 +413,12 @@ namespace %s {
 	def _movsw(self):
 		self.body += "\tcontext._movsw();\n ";
 
+	def _stc(self):
+		self.body += "\tcontext.flags._c = true;\n ";
+
+	def _clc(self):
+		self.body += "\tcontext.flags._c = false;\n ";
+
 	def __proc(self, name, def_skip = 0):
 		try:
 			skip = def_skip

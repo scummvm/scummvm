@@ -9691,6 +9691,9 @@ noplay1:
 	worktoscreenm(context);
 	context.cx = 180;
 	hangonpq(context);
+	if (!context.flags.c()) goto _tmp1;
+	{assert(stack_depth == context.stack.size()); return; }
+_tmp1:
 	context._inc(context.data.byte(kTalkpos));
 	context.al = context.data.byte(kTalkpos);
 	context.al = context.data.byte(kCharacter);
@@ -9752,6 +9755,8 @@ noplay2:
 	worktoscreenm(context);
 	context.cx = 180;
 	hangonpq(context);
+	if (!context.flags.c()) goto skiptalk2;
+	{assert(stack_depth == context.stack.size()); return; }
 skiptalk2:
 	context._inc(context.data.byte(kTalkpos));
 	goto dospeech;
@@ -9795,13 +9800,14 @@ notspeaking:
 finishconv:
 	delpointer(context);
 	context.data.byte(kPointermode) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	context.flags._c = false;
+ 	{assert(stack_depth == context.stack.size()); return; }
 quitconv:
 	delpointer(context);
 	context.data.byte(kPointermode) = 0;
-	context.ax = context.pop();
 	cancelch1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	context.flags._c = true;
+ 	{assert(stack_depth == context.stack.size()); return; }
 }
 
 void redes(Context & context) {

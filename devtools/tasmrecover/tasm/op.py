@@ -386,6 +386,18 @@ class _nop(baseop):
 	def visit(self, visitor):
 		pass
 
+class _stc(baseop):
+	def __init__(self, arg):
+		pass
+	def visit(self, visitor):
+		visitor._stc()
+
+class _clc(baseop):
+	def __init__(self, arg):
+		pass
+	def visit(self, visitor):
+		visitor._clc()
+
 class label(baseop):
 	def __init__(self, name):
 		self.name = name
