@@ -905,7 +905,7 @@ static void SNMouse(bool on) {
 
 void SNAIL::RunCom(void) {
 	static int count = 1;
-	extern void SwitchCave(int);
+//	extern void SwitchCave(int);
 	if (! Busy) {
 		Busy = true;
 		uint8 tmphea = Head;
@@ -971,7 +971,8 @@ void SNAIL::RunCom(void) {
 				}
 				break;
 			case SNCAVE     :
-				SwitchCave(snc->Val);
+				// SwitchCave(snc->Val);
+				warning("Problematic call of SwitchCave in SNAIL::RunCom");
 				break;
 			case SNKILL     :
 				SNKill(sprel);

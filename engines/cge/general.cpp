@@ -363,5 +363,51 @@ long Timer(void) {
 	warning("STUB: Timer");
 	return 0;
 }
+
+int new_random(int range) {
+	warning("STUB: new_random(a)");
+	return 0;
+}
+
+#define		TIMER_INT	0x08
+//void interrupt	(* ENGINE::OldTimer) (...) = NULL;
+
+ENGINE::ENGINE (uint16 tdiv)
+{
+/*
+  // steal timer interrupt
+  OldTimer = getvect(TIMER_INT);
+  setvect(TIMER_INT, NewTimer);
+
+  // set turbo-timer mode
+  asm	mov	al,0x36
+  asm	out	0x43,al
+  asm	mov	ax,TMR_DIV
+  asm	out	0x40,al
+  asm	mov	al,ah
+  asm	out	0x40,al
+*/
+	warning("STUB: ENGINE::ENGINE");
+}
+
+ENGINE::~ENGINE (void)
+{
+/*
+  // reset timer
+  asm	mov	al,0x36
+  asm	out	0x43,al
+  asm	xor	al,al
+  asm	out	0x40,al
+  asm	out	0x40,al
+  // bring back timer interrupt
+  setvect(TIMER_INT, OldTimer);
+*/
+	warning("STUB: ENGINE::~ENGINE");
+}
+
+DATACK::~DATACK (void)
+{
+  if (!e && Buf) free(Buf);
+}
 } // End of namespace CGE
 
