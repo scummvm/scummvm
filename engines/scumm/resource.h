@@ -63,9 +63,9 @@ class ScummEngine;
  * marked in this way.
  */
 enum ResTypeMode {
-	kDynamicResTypeMode = 0,	///!< Resource is generated during runtime and may change
-	kStaticResTypeMode = 1,		///!< Resource comes from data files, does not change
-	kSoundResTypeMode = 2		///!< Resource comes from data files, but may change
+	kDynamicResTypeMode = 0,	///< Resource is generated during runtime and may change
+	kStaticResTypeMode = 1,		///< Resource comes from data files, does not change
+	kSoundResTypeMode = 2		///< Resource comes from data files, but may change
 };
 
 /**
