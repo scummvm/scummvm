@@ -167,9 +167,10 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		language = Common::parseLanguage(ConfMan.get("language"));
 	if (ConfMan.hasKey("platform"))
 		platform = Common::parsePlatform(ConfMan.get("platform"));
-	if (_flags & kADFlagUseExtraAsHint)
+	if (_flags & kADFlagUseExtraAsHint) {
 		if (ConfMan.hasKey("extra"))
 			extra = ConfMan.get("extra");
+	}
 
 	Common::String gameid = ConfMan.get("gameid");
 
@@ -205,6 +206,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		return Common::kNoGameDataFoundError;
 
 	if (_singleid == NULL) {
+		// Find the first match with correct gameid.
 		for (uint i = 0; i < matches.size(); i++) {
 			if (matches[i]->gameid == gameid) {
 				agdDesc = matches[i];

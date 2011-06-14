@@ -30,28 +30,45 @@ class Error;
 class FSList;
 }
 
-
+/**
+ * A record describing a file to be matched for detecting a specific game
+ * variant. A list of such records is used inside every ADGameDescription to
+ * enable detection.
+ */
 struct ADGameFileDescription {
-	const char *fileName;
-	uint16 fileType; // Optional. Not used during detection, only by engines.
-	const char *md5; // Optional. May be NULL.
-	int32 fileSize;  // Optional. Set to -1 to ignore.
+	const char *fileName;	///< Name of described file.
+	uint16 fileType; ///< Optional. Not used during detection, only by engines.
+	const char *md5; ///< MD5 of (the beginning of) the described file. Optional. Set to NULL to ignore.
+	int32 fileSize;  ///< Size of the described file. Set to -1 to ignore.
 };
 
+/**
+ * A shortcut to produce an empty ADGameFileDescription record. Used to mark
+ * the end of a list of these.
+ */
 #define AD_LISTEND {NULL, 0, NULL, 0}
 
+/**
+ * A shortcut to produce a list of ADGameFileDescription records with only one
+ * record that contains just a filename with an MD5, and no file size.
+ */
 #define AD_ENTRY1(f, x) {{ f, 0, x, -1}, AD_LISTEND}
+
+/**
+ * A shortcut to produce a list of ADGameFileDescription records with only one
+ * record that contains just a filename with an MD5, plus a file size.
+ */
 #define AD_ENTRY1s(f, x, s) {{ f, 0, x, s}, AD_LISTEND}
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS = 0,
-	ADGF_PIRATED = (1 << 23), // flag to designate well known pirated versions with cracks
-	ADGF_ADDENGLISH = (1 << 24), // always add English as language option
-	ADGF_MACRESFORK = (1 << 25), // the md5 for this entry will be calculated from the resource fork
-	ADGF_USEEXTRAASTITLE = (1 << 26), // Extra field value will be used as main game title, not gameid
-	ADGF_DROPLANGUAGE = (1 << 28), // don't add language to gameid
-	ADGF_CD = (1 << 29),    	// add "-cd" to gameid
-	ADGF_DEMO = (1 << 30)   	// add "-demo" to gameid
+	ADGF_PIRATED = (1 << 23), ///< flag to designate well known pirated versions with cracks
+	ADGF_ADDENGLISH = (1 << 24), ///< always add English as language option
+	ADGF_MACRESFORK = (1 << 25), ///< the md5 for this entry will be calculated from the resource fork
+	ADGF_USEEXTRAASTITLE = (1 << 26), ///< Extra field value will be used as main game title, not gameid
+	ADGF_DROPLANGUAGE = (1 << 28), ///< don't add language to gameid
+	ADGF_CD = (1 << 29),    	///< add "-cd" to gameid
+	ADGF_DEMO = (1 << 30)   	///< add "-demo" to gameid
 };
 
 struct ADGameDescription {
@@ -130,7 +147,13 @@ protected:
 	 * The size of a single entry of the above descs array. Always
 	 * must be >= sizeof(ADGameDescription).
 	 */
-	uint _descItemSize;
+	const uint _descItemSize;
+
+	/**
+	 * A list of all gameids (and their corresponding descriptions) supported
+	 * by this engine.
+	 */
+	const PlainGameDescriptor *_gameids;
 
 	/**
 	 * The number of bytes to compute MD5 sum for. The AdvancedDetector
@@ -138,15 +161,9 @@ protected:
 	 * Since doing that for large files can be slow, it can be restricted
 	 * to a subset of all files.
 	 * Typically this will be set to something between 5 and 50 kilobyte,
-	 * but arbitrary non-zero values are possible.
+	 * but arbitrary non-zero values are possible. The default is 5000.
 	 */
 	uint _md5Bytes;
-
-	/**
-	 * A list of all gameids (and their corresponding descriptions) supported
-	 * by this engine.
-	 */
-	const PlainGameDescriptor *_gameids;
 
 	/**
 	 * Name of single gameid (optional).
@@ -228,13 +245,14 @@ protected:
 	/**
 	 * Detect games in specified directory.
 	 * Parameters language and platform are used to pass on values
-	 * specified by the user. I.e. this is used to restrict search scope.
+	 * specified by the user. This is used to restrict search scope.
 	 *
 	 * @param fslist	FSList to scan or NULL for scanning all specified
 	 *					default directories.
-	 * @param language	restrict results to specified language only
-	 * @param platform	restrict results to specified platform only
-	 * @return	list of ADGameDescription (or subclass) pointers corresponding to matched games
+	 * @param language	restrict results to specified language
+	 * @param platform	restrict results to specified platform
+	 * @param extra		restrict results to specified extra string (only if kADFlagUseExtraAsHint is set)
+	 * @return	list of ADGameDescription pointers corresponding to matched games
 	 */
 	ADGameDescList detectGame(const Common::FSList &fslist, Common::Language language, Common::Platform platform, const Common::String &extra) const;
 
