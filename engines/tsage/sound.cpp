@@ -2396,6 +2396,7 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 
 AdlibSoundDriver::~AdlibSoundDriver() {
 	DEALLOCATE(_patchData);
+	OPLDestroy(_opl);
 }
 
 bool AdlibSoundDriver::open() {
