@@ -407,14 +407,14 @@ void RivenScript::stopSound(uint16 op, uint16 argc, uint16 *argv) {
 		return;
 
 	// The argument is a bitflag for the setting.
-	// bit 0 is normal sound stopping (unused)
+	// bit 0 is normal sound stopping
 	// bit 1 is ambient sound stopping
 	// Having no flags set means clear all
 	if (argv[0] & 2 || argv[0] == 0)
 		_vm->_sound->stopAllSLST();
 
-	if (argv[0] & 1)
-		warning("Unhandled stopSound() flag");
+	if (argv[0] & 1 || argv[0] == 0)
+		_vm->_sound->stopSound();
 }
 
 // Command 13: set mouse cursor (cursor_id)
