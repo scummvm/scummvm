@@ -1766,8 +1766,10 @@ void ScummEngine::setupMusic(int midi) {
 
 		if (missingFile) {
 			GUI::MessageDialog dialog(
-				"Native MIDI support requires the Roland Upgrade from LucasArts,\n"
-				"but " + fileName + " is missing. Using AdLib instead.", "Ok");
+				Common::String::format(
+					_("Native MIDI support requires the Roland Upgrade from LucasArts,\n"
+					"but %s is missing. Using AdLib instead."), fileName.c_str()),
+				_("OK"));
 			dialog.runModal();
 			_musicType = MDT_ADLIB;
 		}

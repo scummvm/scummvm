@@ -26,6 +26,7 @@
 #include "common/mutex.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -359,7 +360,6 @@ uint32 DXADecoderWithSound::getElapsedTime() const {
 
 MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *snd, OSystem *system) {
 	Common::String filename;
-	char buf[60];
 	Audio::SoundHandle *bgSoundHandle = new Audio::SoundHandle;
 
 	filename = Common::String::format("%s.smk", name);
@@ -376,7 +376,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *s
 		DXADecoderWithSound *dxaDecoder = new DXADecoderWithSound(snd, bgSoundHandle);
 		return new MoviePlayer(vm, snd, system, bgSoundHandle, dxaDecoder, kVideoDecoderDXA);
 #else
-		GUI::MessageDialog dialog("DXA cutscenes found but ScummVM has been built without zlib support", "OK");
+		GUI::MessageDialog dialog(_("DXA cutscenes found but ScummVM has been built without zlib support"), _("OK"));
 		dialog.runModal();
 		return NULL;
 #endif
@@ -386,7 +386,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *s
 	filename = Common::String::format("%s.mp2", name);
 
 	if (Common::File::exists(filename)) {
-		GUI::MessageDialog dialog("MPEG2 cutscenes are no longer supported", "OK");
+		GUI::MessageDialog dialog(_("MPEG2 cutscenes are no longer supported"), _("OK"));
 		dialog.runModal();
 		return NULL;
 	}
@@ -394,8 +394,8 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *s
 	// The demo tries to play some cutscenes that aren't there, so make those warnings more discreet.
 	// In addition, some of the later re-releases of the game don't have the "eye" Virgin logo movie.
 	if (!vm->_logic->readVar(DEMO) && strcmp(name, "eye") != 0) {
-		sprintf(buf, "Cutscene '%s' not found", name);
-		GUI::MessageDialog dialog(buf, "OK");
+		Common::String buf = Common::String::format(_("Cutscene '%s' not found"), name);
+		GUI::MessageDialog dialog(buf, _("OK"));
 		dialog.runModal();
 	} else
 		warning("Cutscene '%s' not found", name);

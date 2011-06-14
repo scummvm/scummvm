@@ -40,20 +40,9 @@ struct PlainGameDescriptor {
 };
 
 /**
- * Same as PlainGameDsscriptor except it adds Game GUI options parameter
- * This is a plain struct to make it possible to declare NULL-terminated C arrays
- * consisting of PlainGameDescriptors.
- */
-struct PlainGameDescriptorGUIOpts {
-	const char *gameid;
-	const char *description;
-	uint32 guioptions;
-};
-
-/**
  * Given a list of PlainGameDescriptors, returns the first PlainGameDescriptor
  * matching the given gameid. If not match is found return 0.
- * The end of the list must marked by a PlainGameDescriptor with gameid equal to 0.
+ * The end of the list must be marked by an entry with gameid 0.
  */
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list);
 
@@ -67,8 +56,7 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
 class GameDescriptor : public Common::StringMap {
 public:
 	GameDescriptor();
-	GameDescriptor(const PlainGameDescriptor &pgd);
-	GameDescriptor(const PlainGameDescriptorGUIOpts &pgd);
+	GameDescriptor(const PlainGameDescriptor &pgd, uint32 guioptions = 0);
 	GameDescriptor(const Common::String &gameid,
 	              const Common::String &description,
 	              Common::Language language = Common::UNK_LANG,
@@ -102,7 +90,7 @@ public:
 	GameList(const GameList &list) : Common::Array<GameDescriptor>(list) {}
 	GameList(const PlainGameDescriptor *g) {
 		while (g->gameid) {
-			push_back(GameDescriptor(g->gameid, g->description));
+			push_back(GameDescriptor(*g));
 			g++;
 		}
 	}

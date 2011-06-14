@@ -33,18 +33,18 @@
 #include "engines/metaengine.h"
 
 /* Broken Sword */
-static const PlainGameDescriptorGUIOpts sword1FullSettings =
-	{"sword1", "Broken Sword: The Shadow of the Templars", Common::GUIO_NOMIDI};
-static const PlainGameDescriptorGUIOpts sword1DemoSettings =
-	{"sword1demo", "Broken Sword: The Shadow of the Templars (Demo)", Common::GUIO_NOMIDI};
-static const PlainGameDescriptorGUIOpts sword1MacFullSettings =
-	{"sword1mac", "Broken Sword: The Shadow of the Templars (Mac)", Common::GUIO_NOMIDI};
-static const PlainGameDescriptorGUIOpts sword1MacDemoSettings =
-	{"sword1macdemo", "Broken Sword: The Shadow of the Templars (Mac demo)", Common::GUIO_NOMIDI};
-static const PlainGameDescriptorGUIOpts sword1PSXSettings =
-	{"sword1psx", "Broken Sword: The Shadow of the Templars (PlayStation)", Common::GUIO_NOMIDI};
-static const PlainGameDescriptorGUIOpts sword1PSXDemoSettings =
-	{"sword1psxdemo", "Broken Sword: The Shadow of the Templars (PlayStation demo)", Common::GUIO_NOMIDI};
+static const PlainGameDescriptor sword1FullSettings =
+	{"sword1", "Broken Sword: The Shadow of the Templars"};
+static const PlainGameDescriptor sword1DemoSettings =
+	{"sword1demo", "Broken Sword: The Shadow of the Templars (Demo)"};
+static const PlainGameDescriptor sword1MacFullSettings =
+	{"sword1mac", "Broken Sword: The Shadow of the Templars (Mac)"};
+static const PlainGameDescriptor sword1MacDemoSettings =
+	{"sword1macdemo", "Broken Sword: The Shadow of the Templars (Mac demo)"};
+static const PlainGameDescriptor sword1PSXSettings =
+	{"sword1psx", "Broken Sword: The Shadow of the Templars (PlayStation)"};
+static const PlainGameDescriptor sword1PSXDemoSettings =
+	{"sword1psxdemo", "Broken Sword: The Shadow of the Templars (PlayStation demo)"};
 
 
 // check these subdirectories (if present)
@@ -117,12 +117,12 @@ bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 
 GameList SwordMetaEngine::getSupportedGames() const {
 	GameList games;
-	games.push_back(sword1FullSettings);
-	games.push_back(sword1DemoSettings);
-	games.push_back(sword1MacFullSettings);
-	games.push_back(sword1MacDemoSettings);
-	games.push_back(sword1PSXSettings);
-	games.push_back(sword1PSXDemoSettings);
+	games.push_back(GameDescriptor(sword1FullSettings, Common::GUIO_NOMIDI));
+	games.push_back(GameDescriptor(sword1DemoSettings, Common::GUIO_NOMIDI));
+	games.push_back(GameDescriptor(sword1MacFullSettings, Common::GUIO_NOMIDI));
+	games.push_back(GameDescriptor(sword1MacDemoSettings, Common::GUIO_NOMIDI));
+	games.push_back(GameDescriptor(sword1PSXSettings, Common::GUIO_NOMIDI));
+	games.push_back(GameDescriptor(sword1PSXDemoSettings, Common::GUIO_NOMIDI));
 	return games;
 }
 
@@ -198,17 +198,17 @@ GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 			psxDemoFilesFound = false;
 
 	if (mainFilesFound && pcFilesFound && demoFilesFound)
-		detectedGames.push_back(sword1DemoSettings);
+		detectedGames.push_back(GameDescriptor(sword1DemoSettings, Common::GUIO_NOMIDI));
 	else if (mainFilesFound && pcFilesFound && psxFilesFound)
-		detectedGames.push_back(sword1PSXSettings);
+		detectedGames.push_back(GameDescriptor(sword1PSXSettings, Common::GUIO_NOMIDI));
 	else if (mainFilesFound && pcFilesFound && psxDemoFilesFound)
-		detectedGames.push_back(sword1PSXDemoSettings);
+		detectedGames.push_back(GameDescriptor(sword1PSXDemoSettings, Common::GUIO_NOMIDI));
 	else if (mainFilesFound && pcFilesFound && !psxFilesFound)
-		detectedGames.push_back(sword1FullSettings);
+		detectedGames.push_back(GameDescriptor(sword1FullSettings, Common::GUIO_NOMIDI));
 	else if (mainFilesFound && macFilesFound)
-		detectedGames.push_back(sword1MacFullSettings);
+		detectedGames.push_back(GameDescriptor(sword1MacFullSettings, Common::GUIO_NOMIDI));
 	else if (mainFilesFound && macDemoFilesFound)
-		detectedGames.push_back(sword1MacDemoSettings);
+		detectedGames.push_back(GameDescriptor(sword1MacDemoSettings, Common::GUIO_NOMIDI));
 
 	return detectedGames;
 }

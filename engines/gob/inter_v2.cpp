@@ -22,6 +22,7 @@
 
 #include "common/endian.h"
 #include "common/str.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 
@@ -1279,7 +1280,7 @@ void Inter_v2::o2_readData(OpFuncParams &params) {
 
 		if (!_vm->_saveLoad->load(file, dataVar, size, offset)) {
 
-			GUI::MessageDialog dialog("Failed to load game state from file.");
+			GUI::MessageDialog dialog(_("Failed to load game state from file."));
 			dialog.runModal();
 
 		} else
@@ -1349,7 +1350,7 @@ void Inter_v2::o2_writeData(OpFuncParams &params) {
 
 		if (!_vm->_saveLoad->save(file, dataVar, size, offset)) {
 
-			GUI::MessageDialog dialog("Failed to save game state to file.");
+			GUI::MessageDialog dialog(_("Failed to save game state to file."));
 			dialog.runModal();
 
 		} else

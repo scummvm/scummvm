@@ -28,6 +28,7 @@
 
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
 
@@ -91,7 +92,7 @@ static const PlainGameDescriptor sagaGames[] = {
 	{0, 0}
 };
 
-static const ADObsoleteGameID obsoleteGameIDsTable[] = {
+static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"ite", "saga", Common::kPlatformUnknown},
 	{"ihnm", "saga", Common::kPlatformUnknown},
 	{"dino", "saga", Common::kPlatformUnknown},
@@ -104,8 +105,11 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 class SagaMetaEngine : public AdvancedMetaEngine {
 public:
 	SagaMetaEngine() : AdvancedMetaEngine(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
-		params.obsoleteList = obsoleteGameIDsTable;
-		params.singleid = "saga";
+		_singleid = "saga";
+	}
+
+	virtual GameDescriptor findGame(const char *gameid) const {
+		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
 	}
 
 	virtual const char *getName() const {
@@ -135,7 +139,13 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
+
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngine::createInstance(syst, engine);
+	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;

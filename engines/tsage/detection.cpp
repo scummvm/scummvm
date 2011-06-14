@@ -73,9 +73,9 @@ enum {
 class TSageMetaEngine : public AdvancedMetaEngine {
 public:
 	TSageMetaEngine() : AdvancedMetaEngine(tSage::gameDescriptions, sizeof(tSage::tSageGameDescription), tSageGameTitles) {
-		params.md5Bytes = 5000;
-		params.singleid = "tsage";
-		params.guioptions = Common::GUIO_NOSPEECH;
+		_md5Bytes = 5000;
+		_singleid = "tsage";
+		_guioptions = Common::GUIO_NOSPEECH;
 	}
 
 	virtual const char *getName() const {

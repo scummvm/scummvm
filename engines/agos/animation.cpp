@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -540,10 +541,8 @@ MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name) {
 		return new MoviePlayerSMK(vm, baseName);
 	}
 
-	char buf[60];
-
-	sprintf(buf, "Cutscene file '%s' not found!", baseName);
-	GUI::MessageDialog dialog(buf, "OK");
+	Common::String buf = Common::String::format(_("Cutscene file '%s' not found!"), baseName);
+	GUI::MessageDialog dialog(buf, _("OK"));
 	dialog.runModal();
 
 	return NULL;

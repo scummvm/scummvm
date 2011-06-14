@@ -45,7 +45,7 @@ void DoubleBufferSDLMixerManager::startAudio() {
 
 	// Create two sound buffers
 	_activeSoundBuf = 0;
-	uint bufSize = _obtainedRate.samples * 4;
+	uint bufSize = _obtained.samples * 4;
 	_soundBufSize = bufSize;
 	_soundBuffers[0] = (byte *)calloc(1, bufSize);
 	_soundBuffers[1] = (byte *)calloc(1, bufSize);

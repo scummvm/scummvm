@@ -2220,11 +2220,11 @@ static const MohawkGameDescription fallbackDescs[] = {
 };
 
 static const ADFileBasedFallback fileBased[] = {
-	{ &fallbackDescs[0],  { "MYST.DAT", 0 } },
-	{ &fallbackDescs[1],  { "MAKING.DAT", 0 } },
-	{ &fallbackDescs[2],  { "MYST.DAT", "Help.dat", 0 } },	// Help system doesn't exist in original
-	{ &fallbackDescs[3],  { "a_Data.MHK", 0 } },
-	{ &fallbackDescs[4],  { "a_Data.MHK", "t_Data1.MHK" , 0 } },
+	{ &fallbackDescs[0].desc,  { "MYST.DAT", 0 } },
+	{ &fallbackDescs[1].desc,  { "MAKING.DAT", 0 } },
+	{ &fallbackDescs[2].desc,  { "MYST.DAT", "Help.dat", 0 } },	// Help system doesn't exist in original
+	{ &fallbackDescs[3].desc,  { "a_Data.MHK", 0 } },
+	{ &fallbackDescs[4].desc,  { "a_Data.MHK", "t_Data1.MHK" , 0 } },
 	{ 0, { 0 } }
 };
 

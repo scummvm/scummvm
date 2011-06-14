@@ -407,14 +407,14 @@ void RivenScript::stopSound(uint16 op, uint16 argc, uint16 *argv) {
 		return;
 
 	// The argument is a bitflag for the setting.
-	// bit 0 is normal sound stopping (unused)
+	// bit 0 is normal sound stopping
 	// bit 1 is ambient sound stopping
 	// Having no flags set means clear all
 	if (argv[0] & 2 || argv[0] == 0)
 		_vm->_sound->stopAllSLST();
 
-	if (argv[0] & 1)
-		warning("Unhandled stopSound() flag");
+	if (argv[0] & 1 || argv[0] == 0)
+		_vm->_sound->stopSound();
 }
 
 // Command 13: set mouse cursor (cursor_id)
@@ -536,6 +536,10 @@ void RivenScript::fadeAmbientSounds(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 38: Store an opcode for use when playing a movie (movie id, time high, time low, opcode, arguments...)
 void RivenScript::storeMovieOpcode(uint16 op, uint16 argc, uint16 *argv) {
+	// This opcode is used to delay an opcode's usage based on the elapsed
+	// time of a specified movie. However, every use in the game is for
+	// delaying an activateSLST opcode.
+
 	uint32 scriptSize = 6 + (argc - 4) * 2;
 
 	// Create our dummy script
@@ -557,13 +561,11 @@ void RivenScript::storeMovieOpcode(uint16 op, uint16 argc, uint16 *argv) {
 		// Store the script
 		RivenScriptManager::StoredMovieOpcode storedOp;
 		storedOp.script = script;
-		storedOp.time = delayTime + _vm->getTotalPlayTime();
+		storedOp.time = delayTime;
 		storedOp.id = argv[0];
 
-		// TODO: Actually store the movie and call it in our movie loop
-		// For now, just delete the script and move on
-		//_vm->_scriptMan->setStoredMovieOpcode(storedOp);
-		delete script;
+		// Store the opcode for later
+		_vm->_scriptMan->setStoredMovieOpcode(storedOp);
 	} else {
 		// Run immediately if we have no delay
 		script->runScript();
@@ -716,18 +718,10 @@ void RivenScriptManager::setStoredMovieOpcode(const StoredMovieOpcode &op) {
 	_storedMovieOpcode.time = op.time;
 }
 
-void RivenScriptManager::runStoredMovieOpcode(uint16 id) {
+void RivenScriptManager::runStoredMovieOpcode() {
 	if (_storedMovieOpcode.script) {
-		if (_storedMovieOpcode.id == id) {
-			// If we've passed the time, run our script
-			if (_vm->getTotalPlayTime() >= _storedMovieOpcode.time) {
-				_storedMovieOpcode.script->runScript();
-				clearStoredMovieOpcode();
-			}
-		} else {
-			// We're on a completely different video, kill off any remaining opcode
-			clearStoredMovieOpcode();
-		}
+		_storedMovieOpcode.script->runScript();
+		clearStoredMovieOpcode();
 	}
 }
 

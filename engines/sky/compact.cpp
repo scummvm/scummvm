@@ -25,6 +25,7 @@
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "sky/compact.h"
 #include "gui/message.h"
 #include <stddef.h>	// for ptrdiff_t
@@ -126,8 +127,8 @@ static const uint32 turnTableOffsets[] = {
 SkyCompact::SkyCompact() {
 	_cptFile = new Common::File();
 	if (!_cptFile->open("sky.cpt")) {
-		GUI::MessageDialog dialog("Unable to find \"sky.cpt\" file!\n"
-								  "Please download it from www.scummvm.org", "OK", NULL);
+		GUI::MessageDialog dialog(_("Unable to find \"sky.cpt\" file!\n"
+								  "Please download it from www.scummvm.org"), _("OK"), NULL);
 		dialog.runModal();
 		error("Unable to find \"sky.cpt\" file\nPlease download it from www.scummvm.org");
 	}
@@ -137,7 +138,7 @@ SkyCompact::SkyCompact() {
 		error("unknown \"sky.cpt\" version");
 
 	if (SKY_CPT_SIZE != _cptFile->size()) {
-		GUI::MessageDialog dialog("The \"sky.cpt\" file has an incorrect size.\nPlease (re)download it from www.scummvm.org", "OK", NULL);
+		GUI::MessageDialog dialog(_("The \"sky.cpt\" file has an incorrect size.\nPlease (re)download it from www.scummvm.org"), _("OK"), NULL);
 		dialog.runModal();
 		error("Incorrect sky.cpt size (%d, expected: %d)", _cptFile->size(), SKY_CPT_SIZE);
 	}

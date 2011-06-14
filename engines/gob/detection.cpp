@@ -22,6 +22,7 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 
 #include "gob/gob.h"
 
@@ -78,7 +79,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{0, 0}
 };
 
-static const ADObsoleteGameID obsoleteGameIDsTable[] = {
+static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"gob1", "gob", kPlatformUnknown},
 	{"gob2", "gob", kPlatformUnknown},
 	{0, 0, kPlatformUnknown}
@@ -89,10 +90,16 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 class GobMetaEngine : public AdvancedMetaEngine {
 public:
 	GobMetaEngine() : AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
-		params.obsoleteList = obsoleteGameIDsTable;
-		params.singleid = "gob";
-		params.fileBasedFallback = Gob::fileBased;
-		params.guioptions = Common::GUIO_NOLAUNCHLOAD;
+		_singleid = "gob";
+		_guioptions = Common::GUIO_NOLAUNCHLOAD;
+	}
+
+	virtual GameDescriptor findGame(const char *gameid) const {
+		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	}
+
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		return detectGameFilebased(allFiles, Gob::fileBased);
 	}
 
 	virtual const char *getName() const {
@@ -104,6 +111,11 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
+
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngine::createInstance(syst, engine);
+	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 

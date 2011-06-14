@@ -115,8 +115,8 @@ static const ADGameDescription tuckerDemoGameDescription = {
 class TuckerMetaEngine : public AdvancedMetaEngine {
 public:
 	TuckerMetaEngine() : AdvancedMetaEngine(tuckerGameDescriptions, sizeof(ADGameDescription), tuckerGames) {
-		params.md5Bytes = 512;
-		params.singleid = "tucker";
+		_md5Bytes = 512;
+		_singleid = "tucker";
 	}
 
 	virtual const char *getName() const {
@@ -145,7 +145,7 @@ public:
 		return desc != 0;
 	}
 
-	virtual const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const {
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 		for (Common::FSList::const_iterator d = fslist.begin(); d != fslist.end(); ++d) {
 			Common::FSList audiofslist;
 			if (d->isDirectory() && d->getName().equalsIgnoreCase("audio") && d->getChildren(audiofslist, Common::FSNode::kListFilesOnly)) {

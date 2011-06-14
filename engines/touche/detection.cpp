@@ -24,6 +24,7 @@
 #include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "base/plugins.h"
 
@@ -129,13 +130,29 @@ static const char *directoryGlobs[] = {
 class ToucheMetaEngine : public AdvancedMetaEngine {
 public:
 	ToucheMetaEngine() : AdvancedMetaEngine(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
-		params.md5Bytes = 4096;
-		params.singleid = "touche";
-		params.fileBasedFallback = Touche::fileBasedFallback;
-		params.flags = kADFlagPrintWarningOnFileBasedFallback;
-		params.depth = 2;
-		params.directoryGlobs = directoryGlobs;
+		_md5Bytes = 4096;
+		_singleid = "touche";
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
+
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		const ADGameDescription *matchedDesc = detectGameFilebased(allFiles, Touche::fileBasedFallback);
+
+		if (matchedDesc) { // We got a match
+			Common::String report = Common::String::format(_("Your game version has been detected using "
+				"filename matching as a variant of %s."), matchedDesc->gameid);
+			report += "\n";
+			report += _("If this is an original and unmodified version, please report any");
+			report += "\n";
+			report += _("information previously printed by ScummVM to the team.");
+			report += "\n";
+			g_system->logMessage(LogMessageType::kInfo, report.c_str());
+		}
+
+		return matchedDesc;
+	}
+
 	virtual const char *getName() const {
 		return "Touche";
 	}

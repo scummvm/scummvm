@@ -528,7 +528,7 @@ static MadeGameDescription g_fallbackDesc = {
 class MadeMetaEngine : public AdvancedMetaEngine {
 public:
 	MadeMetaEngine() : AdvancedMetaEngine(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames) {
-		params.singleid = "made";
+		_singleid = "made";
 	}
 
 	virtual const char *getName() const {
@@ -542,7 +542,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
-	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
+	const ADGameDescription *fallbackDetect(const Common::FSList &fslist, const FileMap &allFiles) const;
 
 };
 
@@ -564,7 +564,7 @@ bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	return gd != 0;
 }
 
-const ADGameDescription *MadeMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
+const ADGameDescription *MadeMetaEngine::fallbackDetect(const Common::FSList &fslist, const FileMap &allFiles) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	Made::g_fallbackDesc.desc.language = Common::UNK_LANG;
 	Made::g_fallbackDesc.desc.platform = Common::kPlatformPC;

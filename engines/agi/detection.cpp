@@ -137,8 +137,8 @@ class AgiMetaEngine : public AdvancedMetaEngine {
 
 public:
 	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
-		params.singleid = "agi";
-		params.guioptions = Common::GUIO_NOSPEECH;
+		_singleid = "agi";
+		_guioptions = Common::GUIO_NOSPEECH;
 	}
 
 	virtual const char *getName() const {
@@ -155,7 +155,7 @@ public:
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 
-	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
+	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 };
 
 bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -293,7 +293,7 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
-const ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
+const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
 	typedef Common::HashMap<Common::String, int32> IntMap;
 	IntMap allFiles;
 	bool matchedUsingFilenames = false;

@@ -205,9 +205,18 @@ static const GroovieGameDescription gameDescriptions[] = {
 class GroovieMetaEngine : public AdvancedMetaEngine {
 public:
 	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames) {
-		params.singleid = "groovie";
-		params.flags = kADFlagUseExtraAsHint;
-		params.guioptions = Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX;
+		_singleid = "groovie";
+
+		// Use kADFlagUseExtraAsHint in order to distinguish the 11th hour from
+		// its "Making of" as well as the Clandestiny Trailer; they all share
+		// the same MD5.
+		// TODO: Is this the only reason, or are there others (like the three
+		// potentially sharing a single directory) ? In the former case, then
+		// perhaps a better solution would be to add additional files
+		// to the detection entries. In the latter case, this TODO should be
+		// replaced with an according explanation.
+		_flags = kADFlagUseExtraAsHint;
+		_guioptions = Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX;
 	}
 
 	const char *getName() const {

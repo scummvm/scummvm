@@ -431,7 +431,7 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 	}
 }
 
-static void composeFileHashMap(const Common::FSList &fslist, DescMap &fileMD5Map, int depth, const char **globs) {
+static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist, int depth, const char **globs) {
 	if (depth <= 0)
 		return;
 
@@ -459,9 +459,8 @@ static void composeFileHashMap(const Common::FSList &fslist, DescMap &fileMD5Map
 				continue;
 
 			Common::FSList files;
-
 			if (file->getChildren(files, Common::FSNode::kListAll)) {
-				composeFileHashMap(files, fileMD5Map, depth - 1, globs);
+				composeFileHashMap(fileMD5Map, files, depth - 1, globs);
 			}
 		}
 	}
@@ -472,7 +471,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 	DetectorResult dr;
 
 	// Dive one level down since mac indy3/loom has its files split into directories. See Bug #1438631
-	composeFileHashMap(fslist, fileMD5Map, 2, directoryGlobs);
+	composeFileHashMap(fileMD5Map, fslist, 2, directoryGlobs);
 
 	// Iterate over all filename patterns.
 	for (const GameFilenamePattern *gfp = gameFilenamesTable; gfp->gameid; ++gfp) {
@@ -882,7 +881,7 @@ GameList ScummMetaEngine::getSupportedGames() const {
 }
 
 GameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
-	return AdvancedDetector::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
+	return Engines::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 
 static Common::String generatePreferredTarget(const DetectorResult &x) {
@@ -975,20 +974,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// We start by checking whether the specified game ID is obsolete.
 	// If that is the case, we automatically upgrade the target to use
 	// the correct new game ID (and platform, if specified).
-	for (const ADObsoleteGameID *o = obsoleteGameIDsTable; o->from; ++o) {
-		if (!scumm_stricmp(gameid, o->from)) {
-			// Match found, perform upgrade
-			gameid = o->to;
-			ConfMan.set("gameid", o->to);
-
-			if (o->platform != Common::kPlatformUnknown)
-				ConfMan.set("platform", Common::getPlatformCode(o->platform));
-
-			warning("Target upgraded from game ID %s to %s", o->from, o->to);
-			ConfMan.flushToDisk();
-			break;
-		}
-	}
+	Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 
 	// Fetch the list of files in the current directory
 	Common::FSList fslist;
