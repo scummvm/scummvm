@@ -472,24 +472,19 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 		}
 
 		// Filename based fallback
-		if (_fileBasedFallback != 0) {
-			g = detectGameFilebased(allFiles);
-			if (g)
-				matched.push_back(g);
-		}
 	}
 
 	return matched;
 }
 
-const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles) const {
+const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const {
 	const ADFileBasedFallback *ptr;
 	const char* const* filenames;
 
 	int maxNumMatchedFiles = 0;
 	const ADGameDescription *matchedDesc = 0;
 
-	for (ptr = _fileBasedFallback; ptr->desc; ++ptr) {
+	for (ptr = fileBasedFallback; ptr->desc; ++ptr) {
 		const ADGameDescription *agdesc = (const ADGameDescription *)ptr->desc;
 		int numMatchedFiles = 0;
 		bool fileMissing = false;
@@ -566,7 +561,6 @@ AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, con
 
 	_md5Bytes = 5000;
 	_singleid = NULL;
-	_fileBasedFallback = NULL;
 	_flags = 0;
 	_guioptions = Common::GUIO_NONE;
 	_maxScanDepth = 1;

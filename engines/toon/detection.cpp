@@ -121,10 +121,14 @@ class ToonMetaEngine : public AdvancedMetaEngine {
 public:
 	ToonMetaEngine() : AdvancedMetaEngine(Toon::gameDescriptions, sizeof(ADGameDescription), toonGames) {
 		_singleid = "toon";
-		_fileBasedFallback = Toon::fileBasedFallback;
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
+
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		return detectGameFilebased(allFiles, Toon::fileBasedFallback);
+	}
+
 	virtual const char *getName() const {
 		return "Toon";
 	}

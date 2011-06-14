@@ -91,12 +91,15 @@ class GobMetaEngine : public AdvancedMetaEngine {
 public:
 	GobMetaEngine() : AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
 		_singleid = "gob";
-		_fileBasedFallback = Gob::fileBased;
 		_guioptions = Common::GUIO_NOLAUNCHLOAD;
 	}
 
 	virtual GameDescriptor findGame(const char *gameid) const {
 		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	}
+
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		return detectGameFilebased(allFiles, Gob::fileBased);
 	}
 
 	virtual const char *getName() const {

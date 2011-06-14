@@ -162,10 +162,14 @@ class MohawkMetaEngine : public AdvancedMetaEngine {
 public:
 	MohawkMetaEngine() : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames) {
 		_singleid = "mohawk";
-		_fileBasedFallback = Mohawk::fileBased;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
+
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		return detectGameFilebased(allFiles, Mohawk::fileBased);
+	}
+
 	virtual const char *getName() const {
 		return "Mohawk";
 	}

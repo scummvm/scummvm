@@ -173,16 +173,6 @@ protected:
 	const char *_singleid;
 
 	/**
-	 * List of files for file-based fallback detection (optional).
-	 * This is used if the regular MD5 based detection failed to
-	 * detect anything.
-	 * As usual this list is terminated by an all-zero entry.
-	 *
-	 * @todo Properly explain this
-	 */
-	const ADFileBasedFallback *_fileBasedFallback;
-
-	/**
 	 * A bitmask of flags which can be used to configure the behavior
 	 * of the AdvancedDetector. Refer to ADFlags for a list of flags
 	 * that can be ORed together and passed here.
@@ -234,8 +224,7 @@ protected:
 
 	/**
 	 * An (optional) generic fallback detect function which is invoked
-	 * if both the regular MD5 based detection as well as the file
-	 * based fallback failed to detect anything.
+	 * if the regular MD5 based detection failed to detect anything.
 	 */
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 		return 0;
@@ -256,7 +245,7 @@ protected:
 	ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
 
 	/**
-	 * Iterates over all ADFileBasedFallback records inside _fileBasedFallback.
+	 * Iterates over all ADFileBasedFallback records inside fileBasedFallback.
 	 * This then returns the record (or rather, the ADGameDescription
 	 * contained in it) for which all files described by it are present, and
 	 * among those the one with the maximal number of matching files.
@@ -265,7 +254,7 @@ protected:
 	 * @param allFiles	a map describing all present files
 	 * @param fileBasedFallback	a list of ADFileBasedFallback records, zero-terminated
 	 */
-	const ADGameDescription *detectGameFilebased(const FileMap &allFiles) const;
+	const ADGameDescription *detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const;
 
 	// TODO
 	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;

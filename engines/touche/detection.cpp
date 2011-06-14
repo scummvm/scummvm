@@ -131,11 +131,15 @@ public:
 	ToucheMetaEngine() : AdvancedMetaEngine(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
 		_md5Bytes = 4096;
 		_singleid = "touche";
-		_fileBasedFallback = Touche::fileBasedFallback;
 		_flags = kADFlagPrintWarningOnFileBasedFallback;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
+
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		return detectGameFilebased(allFiles, Touche::fileBasedFallback);
+	}
+
 	virtual const char *getName() const {
 		return "Touche";
 	}
