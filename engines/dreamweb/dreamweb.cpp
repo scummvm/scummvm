@@ -120,6 +120,7 @@ void DreamWebEngine::processEvents() {
 	}
 	soundHandler();
 	Common::Event event;
+	int key = 0;
 	while (event_manager->pollEvent(event)) {
 		switch(event.type) {
 		case Common::EVENT_KEYDOWN:
@@ -166,6 +167,33 @@ void DreamWebEngine::processEvents() {
 				_context.data.byte(dreamgen::kLasthardkey) = 0;
 				break;
 			}
+
+			// This is pretty much the equivalent of convertkey(),
+			// but we can't use that one because we don't get the
+			// same key codes as input. Eventually, we may want to
+			// be a bit more permissive than the original, but for
+			// now let's be conservative.
+
+			if (event.kbd.keycode >= Common::KEYCODE_a && event.kbd.keycode <= Common::KEYCODE_z) {
+				key = event.kbd.ascii & ~0x20;
+			} else if (event.kbd.keycode == Common::KEYCODE_MINUS ||
+				event.kbd.keycode == Common::KEYCODE_SPACE ||
+				(event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9)) {
+				key = event.kbd.ascii;
+			} else if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
+				key = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
+			} else if (event.kbd.keycode == Common::KEYCODE_KP_MINUS) {
+				key = '-';
+			} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE ||
+				event.kbd.keycode == Common::KEYCODE_DELETE) {
+				key = 8;
+			} else if (event.kbd.keycode == Common::KEYCODE_RETURN
+				|| event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+				key = 13;
+			}
+
+			if (key)
+				keyPressed(key);
 			break;
 		default:
 			break;
@@ -259,8 +287,6 @@ uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
 
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
-	if (ascii >= 'a' && ascii <= 'z')
-		ascii = (ascii - 'a') + 'A';
 	debug(2, "key pressed = %04x", ascii);
 	uint8* keybuf = _context.data.ptr(5912, 16); //fixme: some hardcoded offsets are not added as consts
 	uint16 in = (_context.data.word(dreamgen::kBufferin) + 1) & 0x0f;
