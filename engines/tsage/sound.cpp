@@ -193,7 +193,7 @@ void SoundManager::installDriver(int driverNum) {
 	case ROLAND_DRIVER_NUM:
 	case ADLIB_DRIVER_NUM: {
 		// Handle loading bank infomation
-		byte *bankData = _resourceManager->getResource(RES_BANK, ROLAND_DRIVER_NUM, 0, true);
+		byte *bankData = _resourceManager->getResource(RES_BANK, driverNum, 0, true);
 		if (bankData) {
 			// Install the patch bank data
 			_sfInstallPatchBank(driver, bankData);
@@ -2462,6 +2462,8 @@ void AdlibSoundDriver::proc32(int channel, int program, int v0, int v1) {
 			if ((dataP[offset] <= v0) && (dataP[offset + 1] >= v0)) {
 				if (dataP[offset + 2] != 0xff)
 					v0 = dataP[offset + 2];
+
+				_v4409E[channel] = dataP + offset - _patchData;
 
 				// Set sustain/release
 				int portNum = v440C2[v440B0[channel]] + 0x80;
