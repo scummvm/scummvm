@@ -82,7 +82,7 @@ public:
 	virtual void close() {}										// Method #1
 	virtual bool reset() { return true; }						// Method #2
 	virtual const GroupData *getGroupData() { return NULL; }	// Method #3
-	virtual void installPatch(const byte *data) {}				// Method #4
+	virtual void installPatch(const byte *data, int size) {}	// Method #4
 	virtual void poll() {}										// Method #5
 	virtual void proc12() {}									// Method #6
 	virtual int setMasterVolume(int volume) { return 0; }		// Method #7
@@ -421,7 +421,7 @@ public:
 	virtual void close();
 	virtual bool reset();
 	virtual const GroupData *getGroupData();
-	virtual void installPatch(const byte *data);
+	virtual void installPatch(const byte *data, int size);
 	virtual int setMasterVolume(int volume);
 	virtual void proc32(int channel, int program, int v0, int v1);
 	virtual void updateVoice(int channel);

@@ -1307,7 +1307,7 @@ void SoundManager::_sfUnInstallDriver(SoundDriver *driver) {
 }
 
 void SoundManager::_sfInstallPatchBank(SoundDriver *driver, const byte *bankData) {
-	driver->installPatch(bankData);
+	driver->installPatch(bankData, _vm->_memoryManager.getSize(bankData));
 }
 
 /**
@@ -2391,6 +2391,7 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	_v44082[ADLIB_CHANNEL_COUNT] = 0x90;
 	Common::set_to(_pitchBlend, _pitchBlend + ADLIB_CHANNEL_COUNT, 0x2000);
 	memset(_v4409E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
+	_patchData = NULL;
 }
 
 AdlibSoundDriver::~AdlibSoundDriver() {
@@ -2433,8 +2434,10 @@ const GroupData *AdlibSoundDriver::getGroupData() {
 	return &_groupData;
 }
 
-void AdlibSoundDriver::installPatch(const byte *data) {
-	_patchData = data;
+void AdlibSoundDriver::installPatch(const byte *data, int size) {
+	byte *patchData = ALLOCATE(size);
+	Common::copy(data, data + size, patchData);
+	_patchData = patchData;
 }
 
 int AdlibSoundDriver::setMasterVolume(int volume) {
@@ -2612,7 +2615,7 @@ void AdlibSoundDriver::setFrequency(int channel) {
 		}
 
 		ch -= tempVal >> 2;
-		if (ch >= 128)
+		if (ch < 0)
 			ch = 0;
 	}
 
