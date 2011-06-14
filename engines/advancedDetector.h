@@ -105,7 +105,7 @@ struct ADFileBasedFallback {
 	 * Pointer to an ADGameDescription or subclass thereof which will get
 	 * returned if there's a detection match.
 	 */
-	const void *desc;
+	const ADGameDescription *desc;
 
 	/**
 	 * A zero-terminated list of filenames used for matching. All files in

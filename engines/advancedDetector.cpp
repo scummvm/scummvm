@@ -485,7 +485,7 @@ const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &
 	const ADGameDescription *matchedDesc = 0;
 
 	for (ptr = fileBasedFallback; ptr->desc; ++ptr) {
-		const ADGameDescription *agdesc = (const ADGameDescription *)ptr->desc;
+		const ADGameDescription *agdesc = ptr->desc;
 		int numMatchedFiles = 0;
 		bool fileMissing = false;
 
