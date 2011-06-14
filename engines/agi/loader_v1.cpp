@@ -82,7 +82,7 @@ int AgiLoader_v1::loadDir(AgiDir *agid, int offset, int num) {
 			int sec = (BASE_SECTOR + (((b0 & 0xF) << 8) | b1)) >> 1;
 			int off = ((b1 & 0x1) << 8) | b2;
 			agid[i].volume = 0;
-			agid[i].offset = (sec << 16) | off;
+			agid[i].offset = SECTOR_OFFSET(sec) + off;
 		}
 	}
 
@@ -117,11 +117,8 @@ uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 	if (agid->offset == _EMPTY)
 		return NULL;
 	
-	int sec = agid->offset >> 16;
-	int off = agid->offset & 0xFFFF;
-	
 	fp.open(_filenameDisk0);
-	fp.seek(SECTOR_OFFSET(sec) + off, SEEK_SET);
+	fp.seek(agid->offset, SEEK_SET);
 
 	int signature = fp.readUint16BE();
 	if (signature != 0x1234) {
