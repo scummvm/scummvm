@@ -429,7 +429,7 @@ public:
 // switching graphics layers on and off).
 class TownsScreen {
 public:
-	TownsScreen(OSystem *system, int width, int height, int bpp);
+	TownsScreen(OSystem *system, int width, int height, Graphics::PixelFormat &format);
 	~TownsScreen();
 
 	void setupLayer(int layer, int width, int height, int numCol, void *srcPal = 0);
@@ -476,7 +476,7 @@ private:
 	int _height;
 	int _width;
 	int _pitch;
-	int _bpp;
+	Graphics::PixelFormat _pixelFormat;
 	
 	int _numDirtyRects;
 	Common::List<Common::Rect> _dirtyRects;	
