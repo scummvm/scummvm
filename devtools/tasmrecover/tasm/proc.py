@@ -23,9 +23,9 @@ class proc:
 		while len(self.stmts) and isinstance(self.stmts[-1], op.label):
 			print "stripping last label"
 			self.stmts.pop()
-		#if isinstance(self.stmts[-1], op._ret) and (len(self.stmts) < 2 or not isinstance(self.stmts[-2], op.label)):
-		#	print "stripping last ret"
-		#	self.stmts.pop()
+		if isinstance(self.stmts[-1], op._ret) and (len(self.stmts) < 2 or not isinstance(self.stmts[-2], op.label)):
+			print "stripping last ret"
+			self.stmts.pop()
 		#merging push ax pop bx constructs
 		i = 0
 		while i + 1 < len(self.stmts):

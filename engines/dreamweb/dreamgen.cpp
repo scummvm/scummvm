@@ -490,12 +490,10 @@ void alleybarksound(Context &context) {
 	context.ax = 1000;
 nobark:
 	context.es.word(context.bx+3) = context.ax;
-	return;
 }
 
 void intromusic(Context &context) {
 	STACK_CHECK(context);
-	return;
 }
 
 void foghornsound(Context &context) {
@@ -585,7 +583,6 @@ notsmokeb2:
 gotsmokeb:
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void attendant(Context &context) {
@@ -607,7 +604,6 @@ void manasleep(Context &context) {
 	context.es.byte(context.bx+7) = context.al;
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void eden(Context &context) {
@@ -640,14 +636,12 @@ void malefan(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void femalefan(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void louis(Context &context) {
@@ -696,21 +690,18 @@ void manasleep2(Context &context) {
 	context.es.byte(context.bx+7) = context.al;
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void mansatstill(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void tattooman(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void drinker(Context &context) {
@@ -732,7 +723,6 @@ notdrinker1:
 gotdrinker:
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void bartender(Context &context) {
@@ -760,21 +750,18 @@ gotsmoket:
 	context.es.byte(context.bx+7) = 9;
 notgotgun:
 	addtopeoplelist(context);
-	return;
 }
 
 void othersmoker(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void barwoman(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void interviewer(Context &context) {
@@ -792,7 +779,6 @@ notgeneralstart:
 	context._inc(context.es.word(context.bx+3));
 talking:
 	showgamereel(context);
-	return;
 }
 
 void soldier1(Context &context) {
@@ -826,7 +812,6 @@ soldierwait:
 gotsoldframe:
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void rockstar(Context &context) {
@@ -878,7 +863,6 @@ notalkrock:
 rockcombatend:
 	context.data.byte(kNewlocation) = 45;
 	showgamereel(context);
-	return;
 }
 
 void helicopter(Context &context) {
@@ -936,7 +920,6 @@ notwaitingheli:
 	return;
 heliwon:
 	context.data.byte(kPointermode) = 0;
-	return;
 }
 
 void mugger(Context &context) {
@@ -1017,7 +1000,6 @@ void aide(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void businessman(Context &context) {
@@ -1107,7 +1089,6 @@ buscombatend:
 buscombatwonend:
 	context.data.byte(kPointermode) = 0;
 	context.data.word(kWatchingtime) = 0;
-	return;
 }
 
 void poolguard(Context &context) {
@@ -1221,7 +1202,6 @@ securwait:
 gotsecurframe:
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void heavy(Context &context) {
@@ -1257,7 +1237,6 @@ heavywait:
 gotheavyframe:
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void bossman(Context &context) {
@@ -1321,7 +1300,6 @@ gameragain:
 gamerfin:
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void sparkydrip(Context &context) {
@@ -1380,7 +1358,6 @@ notendcandle1:
 	context.es.word(context.bx+3) = context.ax;
 candle1:
 	showgamereel(context);
-	return;
 }
 
 void smallcandle(Context &context) {
@@ -1396,7 +1373,6 @@ notendsmallcandle:
 	context.es.word(context.bx+3) = context.ax;
 smallcandlef:
 	showgamereel(context);
-	return;
 }
 
 void intromagic1(Context &context) {
@@ -1424,7 +1400,6 @@ gotintrom1:
 	context.data.byte(kNowinnewroom) = 1;
 introm1fin:
 	showgamereel(context);
-	return;
 }
 
 void candles(Context &context) {
@@ -1440,7 +1415,6 @@ gotcandles:
 	context.es.word(context.bx+3) = context.ax;
 candlesfin:
 	showgamereel(context);
-	return;
 }
 
 void candles2(Context &context) {
@@ -1456,7 +1430,6 @@ gotcandles2:
 	context.es.word(context.bx+3) = context.ax;
 candles2fin:
 	showgamereel(context);
-	return;
 }
 
 void gates(Context &context) {
@@ -1493,7 +1466,6 @@ gotgates:
 	context.es = context.pop();
 gatesfin:
 	showgamereel(context);
-	return;
 }
 
 void intromagic2(Context &context) {
@@ -1509,7 +1481,6 @@ gotintrom2:
 	context.es.word(context.bx+3) = context.ax;
 introm2fin:
 	showgamereel(context);
-	return;
 }
 
 void intromagic3(Context &context) {
@@ -1527,7 +1498,6 @@ introm3fin:
 	showgamereel(context);
 	context.al = context.data.byte(kMapx);
 	context.es.byte(context.bx+1) = context.al;
-	return;
 }
 
 void intromonks1(Context &context) {
@@ -1572,7 +1542,6 @@ intromonk1fin:
 	showgamereel(context);
 	context.al = context.data.byte(kMapy);
 	context.es.byte(context.bx+2) = context.al;
-	return;
 }
 
 void intromonks2(Context &context) {
@@ -1625,12 +1594,10 @@ gotintromonk2:
 	context.es.word(context.bx+3) = context.ax;
 intromonk2fin:
 	showgamereel(context);
-	return;
 }
 
 void handclap(Context &context) {
 	STACK_CHECK(context);
-	return;
 }
 
 void monks2text(Context &context) {
@@ -1734,7 +1701,6 @@ gotmonks2text:
 	context.cx = 120;
 	context.ah = 82;
 	setuptimedtemp(context);
-	return;
 }
 
 void intro1text(Context &context) {
@@ -1773,7 +1739,6 @@ gotintro1text:
 	return;
 oktalk2:
 	setuptimedtemp(context);
-	return;
 }
 
 void intro2text(Context &context) {
@@ -1799,7 +1764,6 @@ gotintro2text:
 	context.dx = 1;
 	context.ah = 82;
 	setuptimedtemp(context);
-	return;
 }
 
 void intro3text(Context &context) {
@@ -1825,7 +1789,6 @@ gotintro3text:
 	context.dx = 1;
 	context.ah = 82;
 	setuptimedtemp(context);
-	return;
 }
 
 void monkandryan(Context &context) {
@@ -1851,7 +1814,6 @@ gotmonkryan:
 	context.es.word(context.bx+3) = context.ax;
 notmonkryan:
 	showgamereel(context);
-	return;
 }
 
 void endgameseq(Context &context) {
@@ -1998,7 +1960,6 @@ gotnext:
 	hangon(context);
 	paneltomap(context);
 	fadescreenuphalf(context);
-	return;
 }
 
 void priest(Context &context) {
@@ -2031,7 +1992,6 @@ void madmanstelly(Context &context) {
 notendtelly:
 	context.es.word(context.bx+3) = context.ax;
 	showgamereel(context);
-	return;
 }
 
 void madman(Context &context) {
@@ -2102,7 +2062,6 @@ alreadywon:
 ryansded:
 	context.data.byte(kMandead) = 2;
 	showgamereel(context);
-	return;
 }
 
 void madmantext(Context &context) {
@@ -2189,7 +2148,6 @@ gotendtext:
 	context.dx = 1;
 	context.ah = 83;
 	setuptimedtemp(context);
-	return;
 }
 
 void textformonk(Context &context) {
@@ -2314,7 +2272,6 @@ gotmonktext:
 	return;
 oktalk:
 	setuptimedtemp(context);
-	return;
 }
 
 void drunk(Context &context) {
@@ -2356,7 +2313,6 @@ gotadvframe:
 noadvisor:
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void copper(Context &context) {
@@ -2387,7 +2343,6 @@ gotcopframe:
 nocopper:
 	showgamereel(context);
 	addtopeoplelist(context);
-	return;
 }
 
 void sparky(Context &context) {
@@ -2464,7 +2419,6 @@ void addtopeoplelist(Context &context) {
 	context.bx = context.pop();
 	context.es = context.pop();
 	context._add(context.data.word(kListpos), 5);
-	return;
 }
 
 void showgamereel(Context &context) {
@@ -2499,7 +2453,6 @@ notspeed:
 	return;
 forcenext:
 	context._cmp(context.al, context.al);
-	return;
 }
 
 void clearsprites(Context &context) {
@@ -2509,7 +2462,6 @@ void clearsprites(Context &context) {
 	context.al = 255;
 	context.cx = (32)*16;
 	while(context.cx--) 	context._stosb();
-	return;
 }
 
 void makesprite(Context &context) {
@@ -2529,7 +2481,6 @@ _tmp17a:
 	context.es.word(context.bx+2) = 0x0ffff;
 	context.es.byte(context.bx+15) = 0;
 	context.es.byte(context.bx+18) = 0;
-	return;
 }
 
 void delsprite(Context &context) {
@@ -2538,7 +2489,6 @@ void delsprite(Context &context) {
 	context.cx = (32);
 	context.al = 255;
 	while(context.cx--) 	context._stosb();
-	return;
 }
 
 void spriteupdate(Context &context) {
@@ -2604,7 +2554,6 @@ skipsprite:
 	context._inc(context.cx);
 	context._cmp(context.cx, 7);
 	if (!context.flags.z()) goto priorityloop;
-	return;
 }
 
 void printasprite(Context &context) {
@@ -2641,7 +2590,6 @@ notquickp:
 	showframe(context);
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void checkone(Context &context) {
@@ -2677,7 +2625,6 @@ void checkone(Context &context) {
 	context.cx = context.ax;
 	context._lodsb();
 	context.dx = context.pop();
-	return;
 }
 
 void findsource(Context &context) {
@@ -2697,7 +2644,6 @@ over1000:
 over1001:
 	context.ds = context.data.word(kReel3);
 	context.data.word(kTakeoff) = 320;
-	return;
 }
 
 void initman(Context &context) {
@@ -2712,7 +2658,6 @@ void initman(Context &context) {
 	context.es.byte(context.bx+23) = 4;
 	context.es.byte(context.bx+22) = 0;
 	context.es.byte(context.bx+29) = 0;
-	return;
 }
 
 void mainman(Context &context) {
@@ -2796,7 +2741,6 @@ notwalk:
 	context.ax = context.es.word(context.bx+10);
 	context.data.byte(kRyanx) = context.al;
 	context.data.byte(kRyany) = context.ah;
-	return;
 }
 
 void aboutturn(Context &context) {
@@ -2831,7 +2775,6 @@ decdir:
 	context._and(context.al, 7);
 	context.data.byte(kFacing) = context.al;
 	context.es.byte(context.bx+29) = 0;
-	return;
 }
 
 void walking(Context &context) {
@@ -2881,7 +2824,6 @@ endofline:
 	return;
 finishedwalk:
 	facerightway(context);
-	return;
 }
 
 void facerightway(Context &context) {
@@ -2900,7 +2842,6 @@ void facerightway(Context &context) {
 	context.data.byte(kLeavedirection) = context.al;
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void checkforexit(Context &context) {
@@ -3008,7 +2949,6 @@ void adjustdown(Context &context) {
 	context.data.byte(kNowinnewroom) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void adjustup(Context &context) {
@@ -3023,7 +2963,6 @@ void adjustup(Context &context) {
 	context.data.byte(kNowinnewroom) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void adjustleft(Context &context) {
@@ -3039,7 +2978,6 @@ void adjustleft(Context &context) {
 	context.data.byte(kNowinnewroom) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void adjustright(Context &context) {
@@ -3055,7 +2993,6 @@ void adjustright(Context &context) {
 	context.data.byte(kNowinnewroom) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void reminders(Context &context) {
@@ -3164,7 +3101,6 @@ initrainside2:
 finishinitrain:
 	context.al = 255;
 	context._stosb();
-	return;
 }
 
 void splitintolines(Context &context) {
@@ -3238,7 +3174,6 @@ failrain:
 	context.es = context.pop();
 	context.cx = context.pop();
 	context.al = 0;
-	return;
 }
 
 void showrain(Context &context) {
@@ -3460,7 +3395,6 @@ void liftnoise(Context &context) {
 hissnoise:
 	context.al = 13;
 	playchannel1(context);
-	return;
 }
 
 void random(Context &context) {
@@ -3473,7 +3407,6 @@ void random(Context &context) {
 	context.al = context.ds.byte(context.di);
 	context.di = context.pop();
 	context.es.byte(context.bx+15) = context.al;
-	return;
 }
 
 void steady(Context &context) {
@@ -3481,7 +3414,6 @@ void steady(Context &context) {
 	context.al = context.ds.byte(context.di+18);
 	context.ds.byte(context.di+17) = context.al;
 	context.es.byte(context.bx+15) = context.al;
-	return;
 }
 
 void constant(Context &context) {
@@ -3500,7 +3432,6 @@ gotconst:
 	context._sub(context.di, context.cx);
 	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
-	return;
 }
 
 void doorway(Context &context) {
@@ -3510,7 +3441,6 @@ void doorway(Context &context) {
 	context.data.byte(kDoorcheck3) = -30;
 	context.data.byte(kDoorcheck4) = 10;
 	dodoor(context);
-	return;
 }
 
 void widedoor(Context &context) {
@@ -3520,7 +3450,6 @@ void widedoor(Context &context) {
 	context.data.byte(kDoorcheck3) = -30;
 	context.data.byte(kDoorcheck4) = 24;
 	dodoor(context);
-	return;
 }
 
 void dodoor(Context &context) {
@@ -3801,7 +3730,6 @@ void getreelframeax(Context &context) {
 	context._add(context.ax, context.ax);
 	context._add(context.ax, context.cx);
 	context.bx = context.ax;
-	return;
 }
 
 void reelsonscreen(Context &context) {
@@ -3811,7 +3739,6 @@ void reelsonscreen(Context &context) {
 	watchreel(context);
 	showrain(context);
 	usetimedtext(context);
-	return;
 }
 
 void plotreel(Context &context) {
@@ -3850,7 +3777,6 @@ notplot:
 	soundonreels(context);
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void soundonreels(Context &context) {
@@ -3956,7 +3882,6 @@ notryanon:
 	return;
 notchangeloc:
 	movemap(context);
-	return;
 }
 
 void movemap(Context &context) {
@@ -3987,7 +3912,6 @@ notmapdownspec:
 notmaprightspec:
 	context._sub(context.data.byte(kMapx), 11);
 	context.data.byte(kNowinnewroom) = 1;
-	return;
 }
 
 void getreelstart(Context &context) {
@@ -3998,7 +3922,6 @@ void getreelstart(Context &context) {
 	context.es = context.data.word(kReels);
 	context.si = context.ax;
 	context._add(context.si, (0+(36*144)));
-	return;
 }
 
 void showreelframe(Context &context) {
@@ -4017,7 +3940,6 @@ void showreelframe(Context &context) {
 	context._sub(context.ax, context.data.word(kTakeoff));
 	context.ah = 8;
 	showframe(context);
-	return;
 }
 
 void deleverything(Context &context) {
@@ -4033,7 +3955,6 @@ bigroom:
 	context._sub(context.data.byte(kMapysize), 8);
 	maptopanel(context);
 	context._add(context.data.byte(kMapysize), 8);
-	return;
 }
 
 void dumpeverything(Context &context) {
@@ -4097,7 +4018,6 @@ void allocatework(Context &context) {
 	context.bx = 0x1000;
 	allocatemem(context);
 	context.data.word(kWorkspace) = context.ax;
-	return;
 }
 
 void readabyte(Context &context) {
@@ -4118,7 +4038,6 @@ void readabyte(Context &context) {
 	context.si = 0;
 notendblock:
 	context._lodsb();
-	return;
 }
 
 void loadpalfromiff(Context &context) {
@@ -4154,7 +4073,6 @@ palloop:
 nought:
 	context._stosb();
 	if (--context.cx) goto palloop;
-	return;
 }
 
 void paneltomap(Context &context) {
@@ -4168,7 +4086,6 @@ void paneltomap(Context &context) {
 	context.cl = context.data.byte(kMapxsize);
 	context.ch = context.data.byte(kMapysize);
 	multiget(context);
-	return;
 }
 
 void maptopanel(Context &context) {
@@ -4182,7 +4099,6 @@ void maptopanel(Context &context) {
 	context.cl = context.data.byte(kMapxsize);
 	context.ch = context.data.byte(kMapysize);
 	multiput(context);
-	return;
 }
 
 void dumpmap(Context &context) {
@@ -4194,7 +4110,6 @@ void dumpmap(Context &context) {
 	context.cl = context.data.byte(kMapxsize);
 	context.ch = context.data.byte(kMapysize);
 	multidump(context);
-	return;
 }
 
 void pixelcheckset(Context &context) {
@@ -4235,7 +4150,6 @@ void pixelcheckset(Context &context) {
 	context.es = context.pop();
 	context.ax = context.pop();
 	context._cmp(context.dl, 0);
-	return;
 }
 
 void createpanel(Context &context) {
@@ -4264,7 +4178,6 @@ void createpanel(Context &context) {
 	context.al = 0;
 	context.ah = 2;
 	showframe(context);
-	return;
 }
 
 void createpanel2(Context &context) {
@@ -4282,7 +4195,6 @@ void createpanel2(Context &context) {
 	context.al = 5;
 	context.ah = 2;
 	showframe(context);
-	return;
 }
 
 void clearwork(Context &context) {
@@ -4325,7 +4237,6 @@ clearloop:
 	context._stosw();
 	context._stosw();
 	if (--context.cx) goto clearloop;
-	return;
 }
 
 void zoom(Context &context) {
@@ -4373,7 +4284,6 @@ zoomloop2:
 	if (--context.cx) goto zoomloop;
 	crosshair(context);
 	context.data.byte(kDidzoom) = 1;
-	return;
 }
 
 void delthisone(Context &context) {
@@ -4417,7 +4327,6 @@ deloneloop:
 	context._add(context.si, context.dx);
 	context._dec(context.ch);
 	if (!context.flags.z()) goto deloneloop;
-	return;
 }
 
 void doblocks(Context &context) {
@@ -4533,7 +4442,6 @@ zeroblock:
 	context.di = context.pop();
 	context._add(context.di, (320)*16);
 	if (--context.cx) goto loop120;
-	return;
 }
 
 void showframe(Context &context) {
@@ -4633,7 +4541,6 @@ noeffects:
 	context.push(context.cx);
 	frameoutv(context);
 	context.cx = context.pop();
-	return;
 }
 
 void frameoutv(Context &context) {
@@ -4674,7 +4581,6 @@ backtosolid:
 	context._add(context.di, context.dx);
 	context._dec(context.ch);
 	if (!context.flags.z()) goto frameloop1;
-	return;
 }
 
 void frameoutbh(Context &context) {
@@ -4708,7 +4614,6 @@ nextline:
 	context.cx = context.pop();
 	context._dec(context.ch);
 	if (!context.flags.z()) goto bhloop2;
-	return;
 }
 
 void frameoutfx(Context &context) {
@@ -4750,7 +4655,6 @@ backtosolidfx:
 	context._add(context.di, context.dx);
 	context._dec(context.ch);
 	if (!context.flags.z()) goto frameloopfx1;
-	return;
 }
 
 void transferinv(Context &context) {
@@ -4800,7 +4704,6 @@ void transferinv(Context &context) {
 	context.ax = context.pop();
 	context.es.word(context.bx+2) = context.ax;
 	context._add(context.data.word(kExframepos), context.cx);
-	return;
 }
 
 void transfermap(Context &context) {
@@ -4848,7 +4751,6 @@ void transfermap(Context &context) {
 	context.ax = context.pop();
 	context.es.word(context.bx+2) = context.ax;
 	context._add(context.data.word(kExframepos), context.cx);
-	return;
 }
 
 void dofade(Context &context) {
@@ -4882,7 +4784,6 @@ void clearendpal(Context &context) {
 	context.cx = 768;
 	context.al = 0;
 	while(context.cx--) 	context._stosb();
-	return;
 }
 
 void clearpalette(Context &context) {
@@ -4890,7 +4791,6 @@ void clearpalette(Context &context) {
 	context.data.byte(kFadedirection) = 0;
 	clearstartpal(context);
 	dumpcurrent(context);
-	return;
 }
 
 void fadescreenup(Context &context) {
@@ -4901,7 +4801,6 @@ void fadescreenup(Context &context) {
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 128;
-	return;
 }
 
 void fadetowhite(Context &context) {
@@ -4921,7 +4820,6 @@ void fadetowhite(Context &context) {
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 128;
-	return;
 }
 
 void fadefromwhite(Context &context) {
@@ -4941,7 +4839,6 @@ void fadefromwhite(Context &context) {
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 128;
-	return;
 }
 
 void fadescreenups(Context &context) {
@@ -4952,7 +4849,6 @@ void fadescreenups(Context &context) {
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 64;
-	return;
 }
 
 void fadescreendownhalf(Context &context) {
@@ -4982,7 +4878,6 @@ halfend:
 	context.data.byte(kFadecount) = 31;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 32;
-	return;
 }
 
 void fadescreenuphalf(Context &context) {
@@ -4993,7 +4888,6 @@ void fadescreenuphalf(Context &context) {
 	context.data.byte(kFadecount) = 31;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 32;
-	return;
 }
 
 void fadescreendown(Context &context) {
@@ -5004,7 +4898,6 @@ void fadescreendown(Context &context) {
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 128;
-	return;
 }
 
 void fadescreendowns(Context &context) {
@@ -5015,7 +4908,6 @@ void fadescreendowns(Context &context) {
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 64;
-	return;
 }
 
 void clearstartpal(Context &context) {
@@ -5029,7 +4921,6 @@ wholeloop1:
 	context.al = 0;
 	context._stosb();
 	if (--context.cx) goto wholeloop1;
-	return;
 }
 
 void showgun(Context &context) {
@@ -5084,13 +4975,11 @@ void showgun(Context &context) {
 	loadtemptext(context);
 	rollendcredits2(context);
 	getridoftemptext(context);
-	return;
 }
 
 void rollendcredits2(Context &context) {
 	STACK_CHECK(context);
 	rollem(context);
-	return;
 }
 
 void rollem(Context &context) {
@@ -5213,7 +5102,6 @@ gotthere:
 	return;
 nomorefading:
 	context.data.byte(kFadedirection) = 0;
-	return;
 }
 
 void greyscalesum(Context &context) {
@@ -5269,7 +5157,6 @@ noaddb:
 	context._add(context.si, 3);
 	context.cx = context.pop();
 	if (--context.cx) goto greysumloop1;
-	return;
 }
 
 void paltostartpal(Context &context) {
@@ -5280,8 +5167,7 @@ void paltostartpal(Context &context) {
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
- 	return;
-}
+ }
 
 void endpaltostart(Context &context) {
 	STACK_CHECK(context);
@@ -5291,8 +5177,7 @@ void endpaltostart(Context &context) {
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
- 	return;
-}
+ }
 
 void startpaltoend(Context &context) {
 	STACK_CHECK(context);
@@ -5302,8 +5187,7 @@ void startpaltoend(Context &context) {
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
- 	return;
-}
+ }
 
 void paltoendpal(Context &context) {
 	STACK_CHECK(context);
@@ -5313,8 +5197,7 @@ void paltoendpal(Context &context) {
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
- 	return;
-}
+ }
 
 void allpalette(Context &context) {
 	STACK_CHECK(context);
@@ -5325,7 +5208,6 @@ void allpalette(Context &context) {
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
  	dumpcurrent(context);
-	return;
 }
 
 void dumpcurrent(Context &context) {
@@ -5340,7 +5222,6 @@ void dumpcurrent(Context &context) {
 	context.al = 128;
 	context.cx = 128;
 	showgroup(context);
-	return;
 }
 
 void fadedownmon(Context &context) {
@@ -5361,7 +5242,6 @@ void fadedownmon(Context &context) {
 	context.data.byte(kNumtofade) = 128;
 	context.cx = 64;
 	hangon(context);
-	return;
 }
 
 void fadeupmon(Context &context) {
@@ -5382,7 +5262,6 @@ void fadeupmon(Context &context) {
 	context.data.byte(kNumtofade) = 128;
 	context.cx = 128;
 	hangon(context);
-	return;
 }
 
 void fadeupmonfirst(Context &context) {
@@ -5407,7 +5286,6 @@ void fadeupmonfirst(Context &context) {
 	playchannel1(context);
 	context.cx = 64;
 	hangon(context);
-	return;
 }
 
 void fadeupyellows(Context &context) {
@@ -5427,7 +5305,6 @@ void fadeupyellows(Context &context) {
 	context.data.byte(kNumtofade) = 128;
 	context.cx = 128;
 	hangon(context);
-	return;
 }
 
 void initialmoncols(Context &context) {
@@ -5446,7 +5323,6 @@ void initialmoncols(Context &context) {
 	context.al = 230;
 	context.cx = 18;
 	showgroup(context);
-	return;
 }
 
 void titles(Context &context) {
@@ -5454,7 +5330,6 @@ void titles(Context &context) {
 	clearpalette(context);
 	biblequote(context);
 	intro(context);
-	return;
 }
 
 void endgame(Context &context) {
@@ -5468,7 +5343,6 @@ void endgame(Context &context) {
 	context.data.byte(kVolumedirection) = 1;
 	context.cx = 200;
 	hangon(context);
-	return;
 }
 
 void monkspeaking(Context &context) {
@@ -5513,7 +5387,6 @@ notloadspeech2:
 	context.cx = 300;
 	hangon(context);
 	getridoftemp(context);
-	return;
 }
 
 void showmonk(Context &context) {
@@ -5524,7 +5397,6 @@ void showmonk(Context &context) {
 	context.bx = 72;
 	context.ds = context.data.word(kTempgraphics);
 	showframe(context);
-	return;
 }
 
 void gettingshot(Context &context) {
@@ -5537,14 +5409,12 @@ void gettingshot(Context &context) {
 	context.data.byte(kVolumedirection) = -1;
 	runendseq(context);
 	clearbeforeload(context);
-	return;
 }
 
 void credits(Context &context) {
 	STACK_CHECK(context);
 	clearpalette(context);
 	realcredits(context);
-	return;
 }
 
 void biblequote(Context &context) {
@@ -5569,7 +5439,6 @@ void biblequote(Context &context) {
 	cancelch0(context);
 biblequotearly:
 	context.data.byte(kLasthardkey) = 0;
-	return;
 }
 
 void hangone(Context &context) {
@@ -5627,7 +5496,6 @@ void intro(Context &context) {
 	clearbeforeload(context);
 introearly:
 	context.data.byte(kLasthardkey) =  0;
-	return;
 }
 
 void runintroseq(Context &context) {
@@ -5660,7 +5528,6 @@ moreintroseq:
 earlyendrun:
 	getridoftemptext(context);
 	clearbeforeload(context);
-	return;
 }
 
 void runendseq(Context &context) {
@@ -5682,7 +5549,6 @@ moreendseq:
 	vsync(context);
 	context._cmp(context.data.byte(kGetback), 1);
 	if (!context.flags.z()) goto moreendseq;
-	return;
 }
 
 void loadintroroom(Context &context) {
@@ -5703,7 +5569,6 @@ void loadintroroom(Context &context) {
 	spriteupdate(context);
 	printsprites(context);
 	worktoscreen(context);
-	return;
 }
 
 void realcredits(Context &context) {
@@ -5828,7 +5693,6 @@ void realcredits(Context &context) {
 	hangone(context);
 realcreditsearly:
 	context.data.byte(kLasthardkey) =  0;
-	return;
 }
 
 void printchar(Context &context) {
@@ -5880,7 +5744,6 @@ iskern:
 	return;
 kernit:
 	context._dec(context.cl);
-	return;
 }
 
 void printslow(Context &context) {
@@ -5973,7 +5836,6 @@ finishslow2:
 	context.di = context.pop();
 	context.bx = context.pop();
 	context.al = 1;
-	return;
 }
 
 void waitframes(Context &context) {
@@ -5994,7 +5856,6 @@ void waitframes(Context &context) {
 	context.es = context.pop();
 	context.bx = context.pop();
 	context.di = context.pop();
-	return;
 }
 
 void printboth(Context &context) {
@@ -6012,7 +5873,6 @@ void printboth(Context &context) {
 	context.bx = context.pop();
 	context.cx = context.pop();
 	context.ax = context.pop();
-	return;
 }
 
 void printdirect(Context &context) {
@@ -6048,7 +5908,6 @@ finishdirct:
 	context.dx = context.pop();
 	context.di = context.pop();
 	context.bx = context.pop();
-	return;
 }
 
 void monprint(Context &context) {
@@ -6127,7 +5986,6 @@ nottrigger2:
 	scrollmonitor(context);
 	context.bx = context.si;
 	context.data.byte(kKerning) = 0;
-	return;
 }
 
 void getnumber(Context &context) {
@@ -6231,7 +6089,6 @@ notcent2:
 	context.bx = context.pop();
 	context.si = context.pop();
 	context.cl = context.ch;
-	return;
 }
 
 void getnextword(Context &context) {
@@ -6269,7 +6126,6 @@ endword:
 endall:
 	context._add(context.bl, 6);
 	context.al = 1;
-	return;
 }
 
 void fillryan(Context &context) {
@@ -6313,7 +6169,6 @@ ryanloop1:
 	context._add(context.bx, (44));
 	if (--context.cx) goto ryanloop2;
 	showryanpage(context);
-	return;
 }
 
 void fillopen(Context &context) {
@@ -6355,7 +6210,6 @@ nextopenslot:
 	context._cmp(context.cl, 5);
 	if (!context.flags.z()) goto openloop1;
 	undertextline(context);
-	return;
 }
 
 void findallryan(Context &context) {
@@ -6388,7 +6242,6 @@ notinryaninv:
 	context._inc(context.ch);
 	context._cmp(context.ch, (114));
 	if (!context.flags.z()) goto findryanloop;
-	return;
 }
 
 void findallopen(Context &context) {
@@ -6454,7 +6307,6 @@ findopen2a:
 	context._inc(context.ch);
 	context._cmp(context.ch, 80);
 	if (!context.flags.z()) goto findopen1a;
-	return;
 }
 
 void obtoinv(Context &context) {
@@ -6512,7 +6364,6 @@ finishfill:
 	context.si = context.pop();
 	context.es = context.pop();
 	context.bx = context.pop();
-	return;
 }
 
 void isitworn(Context &context) {
@@ -6530,7 +6381,6 @@ void makeworn(Context &context) {
 	STACK_CHECK(context);
 	context.es.byte(context.bx+12) = 'W'-'A';
 	context.es.byte(context.bx+13) = 'E'-'A';
-	return;
 }
 
 void examineob(Context &context) {
@@ -6596,7 +6446,6 @@ iswatching:
 justgetback:
 	context.data.byte(kInvopen) = 0;
 	context.data.byte(kOpenedob) = 255;
-	return;
 }
 
 void makemainscreen(Context &context) {
@@ -6615,7 +6464,6 @@ void makemainscreen(Context &context) {
 	worktoscreenm(context);
 	context.data.byte(kCommandtype) = 200;
 	context.data.byte(kManisoffscreen) = 0;
-	return;
 }
 
 void getbackfromob(Context &context) {
@@ -6626,7 +6474,6 @@ void getbackfromob(Context &context) {
 	return;
 notheldob:
 	getback1(context);
-	return;
 }
 
 void incryanpage(Context &context) {
@@ -6658,7 +6505,6 @@ findnewpage:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void openinv(Context &context) {
@@ -6671,7 +6517,6 @@ void openinv(Context &context) {
 	printmessage(context);
 	fillryan(context);
 	context.data.byte(kCommandtype) = 255;
-	return;
 }
 
 void showryanpage(Context &context) {
@@ -6696,7 +6541,6 @@ void showryanpage(Context &context) {
 	context.ax = context.pop();
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void openob(Context &context) {
@@ -6728,7 +6572,6 @@ void openob(Context &context) {
 	context._add(context.ax, (80));
 	context.bx = 2588;
 	context.cs.word(context.bx) = context.ax;
-	return;
 }
 
 void obicons(Context &context) {
@@ -6750,7 +6593,6 @@ cantopenit:
 	context.al = 1;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void examicon(Context &context) {
@@ -6761,7 +6603,6 @@ void examicon(Context &context) {
 	context.al = 3;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void obpicture(Context &context) {
@@ -6794,7 +6635,6 @@ exframe:
 	context._inc(context.al);
 	context.ah = 128;
 	showframe(context);
-	return;
 }
 
 void describeob(Context &context) {
@@ -6816,7 +6656,6 @@ void describeob(Context &context) {
 	obsthatdothings(context);
 	context.bx = context.pop();
 	additionaltext(context);
-	return;
 }
 
 void additionaltext(Context &context) {
@@ -6858,7 +6697,6 @@ fullcup:
 	context.dl = 241;
 	context.ah = 0;
 	printdirect(context);
-	return;
 }
 
 void obsthatdothings(Context &context) {
@@ -6925,7 +6763,6 @@ cantmakeoneup:
 findsometext:
 	searchforsame(context);
 	goto tryagain;
-	return;
 }
 
 void searchforsame(Context &context) {
@@ -6964,7 +6801,6 @@ keepchecking:
 foundmatch:
 	context.si = context.pop();
 	context.bx = context.pop();
-	return;
 }
 
 void findnextcolon(Context &context) {
@@ -7148,7 +6984,6 @@ pickupexob:
 	context.data.byte(kOpenedob) = 255;
 	openinv(context);
 	worktoscreenm(context);
-	return;
 }
 
 void examinventory(Context &context) {
@@ -7173,7 +7008,6 @@ doexinv:
 	context.data.byte(kInvopen) = 2;
 	openinv(context);
 	worktoscreenm(context);
-	return;
 }
 
 void reexfrominv(Context &context) {
@@ -7184,7 +7018,6 @@ void reexfrominv(Context &context) {
 	context.data.byte(kCommand) = context.al;
 	context.data.byte(kExamagain) = 1;
 	context.data.byte(kPointermode) = 0;
-	return;
 }
 
 void reexfromopen(Context &context) {
@@ -7196,7 +7029,6 @@ void reexfromopen(Context &context) {
 	context.data.byte(kCommand) = context.al;
 	context.data.byte(kExamagain) = 1;
 	context.data.byte(kPointermode) = 0;
-	return;
 }
 
 void swapwithinv(Context &context) {
@@ -7254,7 +7086,6 @@ doswap1:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void swapwithopen(Context &context) {
@@ -7349,7 +7180,6 @@ actuallyswap:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void intoinv(Context &context) {
@@ -7401,7 +7231,6 @@ doplace:
 	outofinv(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void deletetaken(Context &context) {
@@ -7425,7 +7254,6 @@ takenloop:
 notinhere:
 	context._add(context.si, 16);
 	if (--context.cx) goto takenloop;
-	return;
 }
 
 void outofinv(Context &context) {
@@ -7477,7 +7305,6 @@ dograb:
 	intoinv(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void getfreead(Context &context) {
@@ -7487,7 +7314,6 @@ void getfreead(Context &context) {
 	context._shl(context.ax, context.cl);
 	context.bx = context.ax;
 	context.es = context.data.word(kFreedat);
-	return;
 }
 
 void getexad(Context &context) {
@@ -7498,7 +7324,6 @@ void getexad(Context &context) {
 	context.bx = context.ax;
 	context.es = context.data.word(kExtras);
 	context._add(context.bx, (0+2080+30000));
-	return;
 }
 
 void geteitherad(Context &context) {
@@ -7511,7 +7336,6 @@ void geteitherad(Context &context) {
 isinexlist:
 	context.al = context.data.byte(kItemframe);
 	getexad(context);
-	return;
 }
 
 void getanyad(Context &context) {
@@ -7533,7 +7357,6 @@ isex:
 	context.al = context.data.byte(kCommand);
 	getexad(context);
 	context.ax = context.es.word(context.bx+7);
-	return;
 }
 
 void getanyaddir(Context &context) {
@@ -7549,7 +7372,6 @@ isfree3:
 	return;
 isex3:
 	getexad(context);
-	return;
 }
 
 void getopenedsize(Context &context) {
@@ -7571,7 +7393,6 @@ isex2:
 	context.al = context.data.byte(kOpenedob);
 	getexad(context);
 	context.ax = context.es.word(context.bx+7);
-	return;
 }
 
 void getsetad(Context &context) {
@@ -7581,7 +7402,6 @@ void getsetad(Context &context) {
 	context._mul(context.bx);
 	context.bx = context.ax;
 	context.es = context.data.word(kSetdat);
-	return;
 }
 
 void findinvpos(Context &context) {
@@ -7610,7 +7430,6 @@ findinv2:
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(kBuffers);
 	context._add(context.bx, (0+(180*10)+32));
-	return;
 }
 
 void findopenpos(Context &context) {
@@ -7627,7 +7446,6 @@ findopenp1:
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(kBuffers);
 	context._add(context.bx, (0+(180*10)));
-	return;
 }
 
 void dropobject(Context &context) {
@@ -7719,7 +7537,6 @@ notinlift:
 	context.data.byte(kPickup) = 0;
 	context.al = context.data.byte(kReallocation);
 	context.es.byte(context.bx) = context.al;
-	return;
 }
 
 void droperror(Context &context) {
@@ -7739,7 +7556,6 @@ void droperror(Context &context) {
 	examicon(context);
 	context.data.byte(kCommandtype) = 255;
 	worktoscreenm(context);
-	return;
 }
 
 void cantdrop(Context &context) {
@@ -7759,7 +7575,6 @@ void cantdrop(Context &context) {
 	examicon(context);
 	context.data.byte(kCommandtype) = 255;
 	worktoscreenm(context);
-	return;
 }
 
 void wornerror(Context &context) {
@@ -7779,7 +7594,6 @@ void wornerror(Context &context) {
 	examicon(context);
 	context.data.byte(kCommandtype) = 255;
 	worktoscreenm(context);
-	return;
 }
 
 void removeobfrominv(Context &context) {
@@ -7836,7 +7650,6 @@ doopenob:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void useopened(Context &context) {
@@ -7921,7 +7734,6 @@ sizeok1:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void errormessage1(Context &context) {
@@ -7946,7 +7758,6 @@ void errormessage1(Context &context) {
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void errormessage2(Context &context) {
@@ -7972,7 +7783,6 @@ void errormessage2(Context &context) {
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void errormessage3(Context &context) {
@@ -7994,7 +7804,6 @@ void errormessage3(Context &context) {
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void checkobjectsize(Context &context) {
@@ -8036,7 +7845,6 @@ sizewrong:
 	return;
 sizeok:
 	context.al = 0;
-	return;
 }
 
 void outofopen(Context &context) {
@@ -8100,7 +7908,6 @@ actuallyout:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void transfertoex(Context &context) {
@@ -8142,7 +7949,6 @@ void transfertoex(Context &context) {
 	context.ds.byte(context.si+2) = 254;
 	pickupconts(context);
 	context.ax = context.pop();
-	return;
 }
 
 void pickupconts(Context &context) {
@@ -8210,7 +8016,6 @@ void transfercontoex(Context &context) {
 	context.si = context.pop();
 	context.ds = context.pop();
 	context.ds.byte(context.si+2) = 255;
-	return;
 }
 
 void transfertext(Context &context) {
@@ -8239,7 +8044,6 @@ moretext:
 	context._inc(context.data.word(kExtextpos));
 	context._cmp(context.al, 0);
 	if (!context.flags.z()) goto moretext;
-	return;
 }
 
 void getexpos(Context &context) {
@@ -8256,7 +8060,6 @@ tryanotherex:
 	if (!context.flags.z()) goto tryanotherex;
 foundnewex:
 	context.data.byte(kExpos) = context.al;
-	return;
 }
 
 void purgealocation(Context &context) {
@@ -8285,7 +8088,6 @@ dontpurge:
 	context._inc(context.cx);
 	context._cmp(context.cx, (114));
 	if (!context.flags.z()) goto purgeloc;
-	return;
 }
 
 void emergencypurge(Context &context) {
@@ -8348,7 +8150,6 @@ cantpurge2:
 	context._inc(context.cx);
 	context._cmp(context.cx, (114));
 	if (!context.flags.z()) goto lookforpurge2;
-	return;
 }
 
 void deleteexobject(Context &context) {
@@ -8393,7 +8194,6 @@ notinsideex:
 	context._inc(context.cx);
 	context._cmp(context.cx, (114));
 	if (!context.flags.z()) goto deleteconts;
-	return;
 }
 
 void deleteexframe(Context &context) {
@@ -8433,7 +8233,6 @@ beforethisone:
 	context.es.word(context.di+2) = context.ax;
 	context._add(context.di, 6);
 	if (--context.cx) goto shuffleadsdown;
-	return;
 }
 
 void deleteextext(Context &context) {
@@ -8475,7 +8274,6 @@ beforethistext:
 	context.es.word(context.di) = context.ax;
 	context._add(context.di, 2);
 	if (--context.cx) goto shuffletextads;
-	return;
 }
 
 void blockget(Context &context) {
@@ -8485,7 +8283,6 @@ void blockget(Context &context) {
 	context.ds = context.data.word(kBackdrop);
 	context.si = (0+192);
 	context._add(context.si, context.ax);
-	return;
 }
 
 void drawfloor(Context &context) {
@@ -8504,7 +8301,6 @@ void drawfloor(Context &context) {
 	context.data.byte(kNewobs) = 0;
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void calcmapad(Context &context) {
@@ -8532,7 +8328,6 @@ void calcmapad(Context &context) {
 	context._mul(context.bx);
 	context._add(context.ax, context.data.word(kMapoffsety));
 	context.data.word(kMapady) = context.ax;
-	return;
 }
 
 void getdimension(Context &context) {
@@ -8613,7 +8408,6 @@ finishdim4:
 	context._shl(context.ax, 1);
 	context._shl(context.ax, 1);
 	context.data.byte(kMapysize) = context.al;
-	return;
 }
 
 void addalong(Context &context) {
@@ -8629,7 +8423,6 @@ addloop:
 	return;
 gotalong:
 	context.al = 1;
-	return;
 }
 
 void addlength(Context &context) {
@@ -8645,7 +8438,6 @@ addloop2:
 	return;
 gotlength:
 	context.al = 1;
-	return;
 }
 
 void drawflags(Context &context) {
@@ -8683,7 +8475,6 @@ _tmp28a:
 	context._add(context.si, (66)-11);
 	context.cx = context.pop();
 	if (--context.cx) goto _tmp28;
-	return;
 }
 
 void eraseoldobs(Context &context) {
@@ -9027,7 +8818,6 @@ nullframe:
 	context.ax = context.pop();
 	context.cx = 0;
 	context.data.word(kSavesize) = context.cx;
-	return;
 }
 
 void finalframe(Context &context) {
@@ -9040,7 +8830,6 @@ void finalframe(Context &context) {
 	context.data.byte(kSavey) = context.al;
 	context.di = context.data.word(kObjectx);
 	context.bx = context.data.word(kObjecty);
-	return;
 }
 
 void adjustlen(Context &context) {
@@ -9093,7 +8882,6 @@ void getxad(Context &context) {
 	return;
 over148:
 	context.ch = 0;
-	return;
 }
 
 void getyad(Context &context) {
@@ -9114,7 +8902,6 @@ void getyad(Context &context) {
 	return;
 over147:
 	context.ch = 0;
-	return;
 }
 
 void autolook(Context &context) {
@@ -9135,7 +8922,6 @@ noautolook:
 	return;
 diffmouse:
 	context.data.word(kLookcounter) = 1000;
-	return;
 }
 
 void look(Context &context) {
@@ -9194,7 +8980,6 @@ afterlook:
 	context.data.byte(kCommandtype) = 0;
 	redrawmainscrn(context);
 	worktoscreenm(context);
-	return;
 }
 
 void redrawmainscrn(Context &context) {
@@ -9210,7 +8995,6 @@ void redrawmainscrn(Context &context) {
 	undertextline(context);
 	readmouse(context);
 	context.data.byte(kCommandtype) = 255;
-	return;
 }
 
 void getback1(Context &context) {
@@ -9236,7 +9020,6 @@ nogetback:
 dogetback:
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kPickup) = 0;
-	return;
 }
 
 void talk(Context &context) {
@@ -9302,7 +9085,6 @@ void convicons(Context &context) {
 	context._sub(context.ax, context.data.word(kTakeoff));
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void getpersframe(Context &context) {
@@ -9313,7 +9095,6 @@ void getpersframe(Context &context) {
 	context.es = context.data.word(kPeople);
 	context._add(context.bx, (0));
 	context.ax = context.es.word(context.bx);
-	return;
 }
 
 void starttalk(Context &context) {
@@ -9368,7 +9149,6 @@ void getpersontext(Context &context) {
 	context.ax = context.es.word(context.si);
 	context._add(context.ax, context.cx);
 	context.si = context.ax;
-	return;
 }
 
 void moretalk(Context &context) {
@@ -9399,7 +9179,6 @@ domoretalk:
 	context.data.byte(kTalkpos) = 48;
 notsecondpart:
 	dosometalk(context);
-	return;
 }
 
 void dosometalk(Context &context) {
@@ -9532,7 +9311,6 @@ skiptalk2:
 	goto dospeech;
 endheartalk:
 	context.data.byte(kPointermode) = 0;
-	return;
 }
 
 void hangonpq(Context &context) {
@@ -9577,8 +9355,7 @@ quitconv:
 	context.data.byte(kPointermode) = 0;
 	cancelch1(context);
 	context.flags._c = true;
- 	return;
-}
+ }
 
 void redes(Context &context) {
 	STACK_CHECK(context);
@@ -9612,7 +9389,6 @@ doredes:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void newplace(Context &context) {
@@ -9630,7 +9406,6 @@ isautoloc:
 istravel:
 	context.data.byte(kNeedtotravel) = 0;
 	selectlocation(context);
-	return;
 }
 
 void selectlocation(Context &context) {
@@ -9690,7 +9465,6 @@ quittravel:
 	getridoftemp3(context);
 	context.es = context.data.word(kTraveltext);
 	deallocatemem(context);
-	return;
 }
 
 void showcity(Context &context) {
@@ -9708,7 +9482,6 @@ void showcity(Context &context) {
 	context.al = 1;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void lookatplace(Context &context) {
@@ -9776,7 +9549,6 @@ void getundercentre(Context &context) {
 	context.cl = 254;
 	context.ch = 110;
 	multiget(context);
-	return;
 }
 
 void putundercentre(Context &context) {
@@ -9788,7 +9560,6 @@ void putundercentre(Context &context) {
 	context.cl = 254;
 	context.ch = 110;
 	multiput(context);
-	return;
 }
 
 void locationpic(Context &context) {
@@ -9835,7 +9606,6 @@ notinthisone:
 	context.al = 0;
 	context.ah = 0;
 	printdirect(context);
-	return;
 }
 
 void getdestinfo(Context &context) {
@@ -9855,7 +9625,6 @@ void getdestinfo(Context &context) {
 	context.si = 8027;
 	context._add(context.si, context.ax);
 	context.ax = context.pop();
-	return;
 }
 
 void showarrows(Context &context) {
@@ -9878,7 +9647,6 @@ void showarrows(Context &context) {
 	context.al = 2;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void nextdest(Context &context) {
@@ -9987,7 +9755,6 @@ void getlocation(Context &context) {
 	context.es = context.dx;
 	context._add(context.bx, 8011);
 	context.al = context.es.byte(context.bx);
-	return;
 }
 
 void setlocation(Context &context) {
@@ -9998,7 +9765,6 @@ void setlocation(Context &context) {
 	context.es = context.dx;
 	context._add(context.bx, 8011);
 	context.es.byte(context.bx) = 1;
-	return;
 }
 
 void resetlocation(Context &context) {
@@ -10046,7 +9812,6 @@ clearedlocations:
 	context.es = context.dx;
 	context._add(context.bx, 8011);
 	context.es.byte(context.bx) = 0;
-	return;
 }
 
 void readdesticon(Context &context) {
@@ -10057,14 +9822,12 @@ void readdesticon(Context &context) {
 	loadintotemp2(context);
 	context.dx = 1961;
 	loadintotemp3(context);
-	return;
 }
 
 void readcitypic(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 2000;
 	loadintotemp(context);
-	return;
 }
 
 void usemon(Context &context) {
@@ -10155,7 +9918,6 @@ endmon:
 	restoreall(context);
 	redrawmainscrn(context);
 	worktoscreenm(context);
-	return;
 }
 
 void printoutermon(Context &context) {
@@ -10184,7 +9946,6 @@ void printoutermon(Context &context) {
 	context.al = 4;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void loadpersonal(Context &context) {
@@ -10212,7 +9973,6 @@ foundpersonal:
 	context.dx = 0;
 	readfromfile(context);
 	closefile(context);
-	return;
 }
 
 void loadnews(Context &context) {
@@ -10242,7 +10002,6 @@ foundnews:
 	context.dx = 0;
 	readfromfile(context);
 	closefile(context);
-	return;
 }
 
 void loadcart(Context &context) {
@@ -10275,7 +10034,6 @@ gotcart:
 	context.dx = 0;
 	readfromfile(context);
 	closefile(context);
-	return;
 }
 
 void lookininterface(Context &context) {
@@ -10294,7 +10052,6 @@ void lookininterface(Context &context) {
 	return;
 emptyinterface:
 	context.al = 0;
-	return;
 }
 
 void turnonpower(Context &context) {
@@ -10311,7 +10068,6 @@ powerloop:
 	context.cx = context.pop();
 	if (--context.cx) goto powerloop;
 	powerlighton(context);
-	return;
 }
 
 void randomaccess(Context &context) {
@@ -10332,7 +10088,6 @@ chosenaccess:
 	context.cx = context.pop();
 	if (--context.cx) goto accessloop;
 	accesslightoff(context);
-	return;
 }
 
 void powerlighton(Context &context) {
@@ -10350,7 +10105,6 @@ void powerlighton(Context &context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	return;
 }
 
 void powerlightoff(Context &context) {
@@ -10368,7 +10122,6 @@ void powerlightoff(Context &context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	return;
 }
 
 void accesslighton(Context &context) {
@@ -10386,7 +10139,6 @@ void accesslighton(Context &context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	return;
 }
 
 void accesslightoff(Context &context) {
@@ -10404,7 +10156,6 @@ void accesslightoff(Context &context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	return;
 }
 
 void locklighton(Context &context) {
@@ -10422,7 +10173,6 @@ void locklighton(Context &context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	return;
 }
 
 void locklightoff(Context &context) {
@@ -10440,7 +10190,6 @@ void locklightoff(Context &context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	return;
 }
 
 void input(Context &context) {
@@ -10568,7 +10317,6 @@ void delchar(Context &context) {
 	context.cl = context.al;
 	context.ch = 8;
 	multidump(context);
-	return;
 }
 
 void execcommand(Context &context) {
@@ -10642,7 +10390,6 @@ testcom:
 	return;
 quitcom:
 	context.al = 1;
-	return;
 }
 
 void neterror(Context &context) {
@@ -10650,7 +10397,6 @@ void neterror(Context &context) {
 	context.al = 5;
 	monmessage(context);
 	scrollmonitor(context);
-	return;
 }
 
 void dircom(Context &context) {
@@ -10683,7 +10429,6 @@ dirroot:
 	context.es = context.data.word(kTextfile3);
 	searchforfiles(context);
 	scrollmonitor(context);
-	return;
 }
 
 void searchforfiles(Context &context) {
@@ -10795,7 +10540,6 @@ passpassed:
 	context.bx = context.pop();
 	context.es = context.pop();
 	context.es.byte(context.bx) = 1;
-	return;
 }
 
 void showkeys(Context &context) {
@@ -10821,7 +10565,6 @@ notheld:
 	context._add(context.bx, 26);
 	if (--context.cx) goto keysloop;
 	scrollmonitor(context);
-	return;
 }
 
 void read(Context &context) {
@@ -10904,7 +10647,6 @@ moretopic:
 	goto moretopic;
 endoftopic:
 	scrollmonitor(context);
-	return;
 }
 
 void dirfile(Context &context) {
@@ -10976,7 +10718,6 @@ directloop2:
 	goto directloop2;
 endofdir2:
 	scrollmonitor(context);
-	return;
 }
 
 void getkeyandlogo(Context &context) {
@@ -11021,7 +10762,6 @@ keyok:
 	context.al = context.data.byte(kNewlogonum);
 	context.data.byte(kLogonum) = context.al;
 	context.al = 0;
-	return;
 }
 
 void searchforstring(Context &context) {
@@ -11060,7 +10800,6 @@ complete:
 	return;
 notfound:
 	context.al = 1;
-	return;
 }
 
 void parser(Context &context) {
@@ -11095,7 +10834,6 @@ copyin1:
 	if (!context.flags.z()) goto copyin1;
 finishpars:
 	context.di = 2942;
-	return;
 }
 
 void scrollmonitor(Context &context) {
@@ -11124,7 +10862,6 @@ void scrollmonitor(Context &context) {
 	context.cx = context.pop();
 	context.bx = context.pop();
 	context.ax = context.pop();
-	return;
 }
 
 void lockmon(Context &context) {
@@ -11158,7 +10895,6 @@ void monitorlogo(Context &context) {
 	return;
 notnewlogo:
 	printlogo(context);
-	return;
 }
 
 void printlogo(Context &context) {
@@ -11170,7 +10906,6 @@ void printlogo(Context &context) {
 	context.ah = 0;
 	showframe(context);
 	showcurrentfile(context);
-	return;
 }
 
 void showcurrentfile(Context &context) {
@@ -11206,7 +10941,6 @@ monmessageloop:
 	if (!context.flags.z()) goto monmessageloop;
 	if (--context.cx) goto monmessageloop;
 	monprint(context);
-	return;
 }
 
 void processtrigger(Context &context) {
@@ -11268,7 +11002,6 @@ void triggermessage(Context &context) {
 	multiput(context);
 	worktoscreen(context);
 	context.data.byte(kLasttrigger) = 0;
-	return;
 }
 
 void printcurs(Context &context) {
@@ -11314,7 +11047,6 @@ flashcurs:
 	context.ds = context.pop();
 	context.di = context.pop();
 	context.si = context.pop();
-	return;
 }
 
 void delcurs(Context &context) {
@@ -11346,7 +11078,6 @@ finishcurdel:
 	context.di = context.pop();
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void useobject(Context &context) {
@@ -11369,7 +11100,6 @@ nouse:
 	return;
 douse:
 	useroutine(context);
-	return;
 }
 
 void useroutine(Context &context) {
@@ -11445,7 +11175,6 @@ cantuse2:
 	hangonp(context);
 	putbackobstuff(context);
 	context.data.byte(kCommandtype) = 255;
-	return;
 }
 
 void wheelsound(Context &context) {
@@ -11454,7 +11183,6 @@ void wheelsound(Context &context) {
 	playchannel1(context);
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void runtap(Context &context) {
@@ -11501,7 +11229,6 @@ cupfromtapfull:
 	context.al = 58;
 	showpuztext(context);
 	putbackobstuff(context);
-	return;
 }
 
 void playguitar(Context &context) {
@@ -11510,7 +11237,6 @@ void playguitar(Context &context) {
 	playchannel1(context);
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void hotelcontrol(Context &context) {
@@ -11525,7 +11251,6 @@ void hotelcontrol(Context &context) {
 notrightcont:
 	showseconduse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void hotelbell(Context &context) {
@@ -11534,7 +11259,6 @@ void hotelbell(Context &context) {
 	playchannel1(context);
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void opentomb(Context &context) {
@@ -11547,7 +11271,6 @@ void opentomb(Context &context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void usetrainer(Context &context) {
@@ -11562,7 +11285,6 @@ void usetrainer(Context &context) {
 	return;
 notheldtrainer:
 	nothelderror(context);
-	return;
 }
 
 void nothelderror(Context &context) {
@@ -11582,7 +11304,6 @@ void nothelderror(Context &context) {
 	context.cx = 50;
 	hangonp(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usepipe(Context &context) {
@@ -11627,7 +11348,6 @@ alreadyfull:
 	context.al = 35;
 	showpuztext(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usefullcart(Context &context) {
@@ -11650,7 +11370,6 @@ void usefullcart(Context &context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void useplinth(Context &context) {
@@ -11682,7 +11401,6 @@ isrightkey:
 	context.data.byte(kGetback) = 1;
 	context.al = context.data.byte(kRoomafterdream);
 	context.data.byte(kNewlocation) = context.al;
-	return;
 }
 
 void chewy(Context &context) {
@@ -11691,7 +11409,6 @@ void chewy(Context &context) {
 	getanyad(context);
 	context.es.byte(context.bx+2) = 255;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void useladder(Context &context) {
@@ -11707,7 +11424,6 @@ void useladder(Context &context) {
 	findxyfrompath(context);
 	context.data.byte(kResetmanxy) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void useladderb(Context &context) {
@@ -11723,7 +11439,6 @@ void useladderb(Context &context) {
 	findxyfrompath(context);
 	context.data.byte(kResetmanxy) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void slabdoora(Context &context) {
@@ -11745,7 +11460,6 @@ slabawrong:
 	context.data.word(kEndwatchreel) = 34;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	return;
 }
 
 void slabdoorb(Context &context) {
@@ -11784,7 +11498,6 @@ slabbwrong:
 	context.data.word(kEndwatchreel) = 63;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	return;
 }
 
 void slabdoord(Context &context) {
@@ -11806,7 +11519,6 @@ slabcwrong:
 	context.data.word(kEndwatchreel) = 94;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	return;
 }
 
 void slabdoorc(Context &context) {
@@ -11828,7 +11540,6 @@ slabdwrong:
 	context.data.word(kEndwatchreel) = 127;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	return;
 }
 
 void slabdoore(Context &context) {
@@ -11850,7 +11561,6 @@ slabewrong:
 	context.data.word(kEndwatchreel) = 160;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	return;
 }
 
 void slabdoorf(Context &context) {
@@ -11872,7 +11582,6 @@ slabfwrong:
 	context.data.word(kEndwatchreel) = 189;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	return;
 }
 
 void useslab(Context &context) {
@@ -11920,7 +11629,6 @@ notlastslab:
 	context._inc(context.data.byte(kProgresspoints));
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void usecart(Context &context) {
@@ -11958,7 +11666,6 @@ nextcart:
 	playchannel1(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void useclearbox(Context &context) {
@@ -11990,7 +11697,6 @@ openbox:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void usecoveredbox(Context &context) {
@@ -12003,7 +11709,6 @@ void usecoveredbox(Context &context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void userailing(Context &context) {
@@ -12016,7 +11721,6 @@ void userailing(Context &context) {
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kMandead) = 4;
-	return;
 }
 
 void useopenbox(Context &context) {
@@ -12066,7 +11770,6 @@ openboxwrong:
 	context.al = 38;
 	showpuztext(context);
 	putbackobstuff(context);
-	return;
 }
 
 void wearwatch(Context &context) {
@@ -12082,7 +11785,6 @@ void wearwatch(Context &context) {
 wearingwatch:
 	showseconduse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void wearshades(Context &context) {
@@ -12098,7 +11800,6 @@ void wearshades(Context &context) {
 wearingshades:
 	showseconduse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void sitdowninbar(Context &context) {
@@ -12118,7 +11819,6 @@ void sitdowninbar(Context &context) {
 satdown:
 	showseconduse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usechurchhole(Context &context) {
@@ -12130,7 +11830,6 @@ void usechurchhole(Context &context) {
 	context.data.word(kEndwatchreel) = 26;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	return;
 }
 
 void usehole(Context &context) {
@@ -12162,7 +11861,6 @@ righthand:
 	context.es.byte(context.bx+2) = 255;
 	context.data.byte(kCanmovealtar) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void usealtar(Context &context) {
@@ -12207,7 +11905,6 @@ movealtar:
 thingsonaltar:
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void opentvdoor(Context &context) {
@@ -12234,7 +11931,6 @@ keyontv:
 	showfirstuse(context);
 	context.data.byte(kLockstatus) = 0;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void usedryer(Context &context) {
@@ -12243,7 +11939,6 @@ void usedryer(Context &context) {
 	playchannel1(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void openlouis(Context &context) {
@@ -12254,7 +11949,6 @@ void openlouis(Context &context) {
 	context.ch = 8;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void nextcolon(Context &context) {
@@ -12264,7 +11958,6 @@ lookcolon:
 	context._inc(context.si);
 	context._cmp(context.al, ':');
 	if (!context.flags.z()) goto lookcolon;
-	return;
 }
 
 void openyourneighbour(Context &context) {
@@ -12275,7 +11968,6 @@ void openyourneighbour(Context &context) {
 	context.ch = 255;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void usewindow(Context &context) {
@@ -12290,7 +11982,6 @@ void usewindow(Context &context) {
 notonbalc:
 	showseconduse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usebalcony(Context &context) {
@@ -12323,7 +12014,6 @@ void usebalcony(Context &context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void openryan(Context &context) {
@@ -12334,7 +12024,6 @@ void openryan(Context &context) {
 	context.ch = 6;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void openpoolboss(Context &context) {
@@ -12345,7 +12034,6 @@ void openpoolboss(Context &context) {
 	context.ch = 2;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void openeden(Context &context) {
@@ -12356,7 +12044,6 @@ void openeden(Context &context) {
 	context.ch = 5;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void opensarters(Context &context) {
@@ -12367,7 +12054,6 @@ void opensarters(Context &context) {
 	context.ch = 3;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void isitright(Context &context) {
@@ -12392,7 +12078,6 @@ void drawitall(Context &context) {
 	drawfloor(context);
 	printsprites(context);
 	showicon(context);
-	return;
 }
 
 void openhoteldoor(Context &context) {
@@ -12421,7 +12106,6 @@ keyonhotel1:
 	showfirstuse(context);
 	context.data.byte(kLockstatus) = 0;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void openhoteldoor2(Context &context) {
@@ -12449,7 +12133,6 @@ keyonhotel2:
 	playchannel1(context);
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void grafittidoor(Context &context) {
@@ -12475,7 +12158,6 @@ grafwith:
 dograf:
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void trapdoor(Context &context) {
@@ -12490,7 +12172,6 @@ void trapdoor(Context &context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void callhotellift(Context &context) {
@@ -12505,7 +12186,6 @@ void callhotellift(Context &context) {
 	autosetwalk(context);
 	context.al = 4;
 	turnpathon(context);
-	return;
 }
 
 void calledenslift(Context &context) {
@@ -12515,7 +12195,6 @@ void calledenslift(Context &context) {
 	context.data.byte(kGetback) = 1;
 	context.al = 2;
 	turnpathon(context);
-	return;
 }
 
 void calledensdlift(Context &context) {
@@ -12531,7 +12210,6 @@ void calledensdlift(Context &context) {
 edensdhere:
 	showseconduse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usepoolreader(Context &context) {
@@ -12566,7 +12244,6 @@ canopenpool:
 	showfirstuse(context);
 	context.data.byte(kCounttoopen) = 6;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void uselighter(Context &context) {
@@ -12595,7 +12272,6 @@ cigarette:
 	getexad(context);
 	context.es.byte(context.bx+2) = 255;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void showseconduse(Context &context) {
@@ -12607,7 +12283,6 @@ void showseconduse(Context &context) {
 	usetext(context);
 	context.cx = 400;
 	hangonp(context);
-	return;
 }
 
 void usecardreader1(Context &context) {
@@ -12653,7 +12328,6 @@ getscash:
 notyet:
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usecardreader2(Context &context) {
@@ -12710,7 +12384,6 @@ alreadygotnew:
 notyetboss:
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usecardreader3(Context &context) {
@@ -12757,7 +12430,6 @@ alreadyusedit:
 notyetrecep:
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usecashcard(Context &context) {
@@ -12810,7 +12482,6 @@ void usecashcard(Context &context) {
 	getridoftemp(context);
 	restorereels(context);
 	putbackobstuff(context);
-	return;
 }
 
 void lookatcard(Context &context) {
@@ -12862,7 +12533,6 @@ void lookatcard(Context &context) {
 	getridoftemp(context);
 	restorereels(context);
 	putbackobstuff(context);
-	return;
 }
 
 void moneypoke(Context &context) {
@@ -12902,7 +12572,6 @@ numberpoke3:
 	context.bx = 3479;
 	context._add(context.al, 48);
 	context.cs.byte(context.bx) = context.al;
-	return;
 }
 
 void usecontrol(Context &context) {
@@ -12993,7 +12662,6 @@ axeoncontrols:
 	showpuztext(context);
 	context._inc(context.data.byte(kProgresspoints));
 	putbackobstuff(context);
-	return;
 }
 
 void usehatch(Context &context) {
@@ -13001,7 +12669,6 @@ void usehatch(Context &context) {
 	showfirstuse(context);
 	context.data.byte(kNewlocation) = 40;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void usewire(Context &context) {
@@ -13048,7 +12715,6 @@ wireknife:
 	showpuztext(context);
 	context._inc(context.data.byte(kProgresspoints));
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void usehandle(Context &context) {
@@ -13072,7 +12738,6 @@ havecutwire:
 	showpuztext(context);
 	context.data.byte(kNewlocation) = 22;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void useelevator1(Context &context) {
@@ -13080,7 +12745,6 @@ void useelevator1(Context &context) {
 	showfirstuse(context);
 	selectlocation(context);
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void showfirstuse(Context &context) {
@@ -13091,7 +12755,6 @@ void showfirstuse(Context &context) {
 	usetext(context);
 	context.cx = 400;
 	hangonp(context);
-	return;
 }
 
 void useelevator3(Context &context) {
@@ -13105,7 +12768,6 @@ void useelevator3(Context &context) {
 	context.data.byte(kSpeedcount) = 1;
 	context.data.word(kWatchingtime) = 80;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void useelevator4(Context &context) {
@@ -13119,7 +12781,6 @@ void useelevator4(Context &context) {
 	context.data.word(kWatchingtime) = 80;
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kNewlocation) = 24;
-	return;
 }
 
 void useelevator2(Context &context) {
@@ -13140,7 +12801,6 @@ inpoolhall:
 	context.data.byte(kCounttoopen) = 0;
 	context.data.word(kWatchingtime) = 80;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void useelevator5(Context &context) {
@@ -13154,7 +12814,6 @@ void useelevator5(Context &context) {
 	context.data.byte(kLiftflag) = 1;
 	context.data.byte(kCounttoclose) = 8;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void usekey(Context &context) {
@@ -13200,7 +12859,6 @@ wrongroom1:
 	context.al = 2;
 	showpuztext(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usestereo(Context &context) {
@@ -13258,7 +12916,6 @@ stereoon:
 	context.cx = 400;
 	showpuztext(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usecooker(Context &context) {
@@ -13274,7 +12931,6 @@ void usecooker(Context &context) {
 foodinside:
 	showseconduse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void useaxe(Context &context) {
@@ -13291,8 +12947,7 @@ void useaxe(Context &context) {
 	return;
 notinpool:
 	showfirstuse(context);
-	return;
-/*continuing to unbounded code: axeondoor from useelvdoor:19-30*/
+/*continuing to unbounded code: axeondoor from useelvdoor:19-29*/
 axeondoor:
 	context.al = 15;
 	context.cx = 300;
@@ -13304,7 +12959,6 @@ axeondoor:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 	return;
 }
 
@@ -13339,7 +12993,6 @@ axeondoor:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void withwhat(Context &context) {
@@ -13382,7 +13035,6 @@ void withwhat(Context &context) {
 	worktoscreen(context);
 	delpointer(context);
 	context.data.byte(kInvopen) = 2;
-	return;
 }
 
 void selectob(Context &context) {
@@ -13418,7 +13070,6 @@ doselob:
 	delpointer(context);
 	context.data.byte(kInvopen) = 0;
 	useroutine(context);
-	return;
 }
 
 void compare(Context &context) {
@@ -13465,7 +13116,6 @@ nofind:
 	context._cmp(context.dl, 128);
 	if (!context.flags.z()) goto findsetloop;
 	context.al = context.dl;
-	return;
 }
 
 void findexobject(Context &context) {
@@ -13494,7 +13144,6 @@ nofindex:
 	context._cmp(context.dl, (114));
 	if (!context.flags.z()) goto findexloop;
 	context.al = context.dl;
-	return;
 }
 
 void isryanholding(Context &context) {
@@ -13527,7 +13176,6 @@ nofindininv:
 	if (!context.flags.z()) goto searchinv;
 	context.al = context.dl;
 	context._cmp(context.al, (114));
-	return;
 }
 
 void checkinside(Context &context) {
@@ -13546,7 +13194,6 @@ notfoundinside:
 	context._inc(context.cl);
 	context._cmp(context.cl, (114));
 	if (!context.flags.z()) goto insideloop;
-	return;
 }
 
 void usetext(Context &context) {
@@ -13567,7 +13214,6 @@ void usetext(Context &context) {
 	context.ah = 0;
 	printdirect(context);
 	worktoscreenm(context);
-	return;
 }
 
 void putbackobstuff(Context &context) {
@@ -13585,7 +13231,6 @@ void putbackobstuff(Context &context) {
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void showpuztext(Context &context) {
@@ -13609,7 +13254,6 @@ void showpuztext(Context &context) {
 	worktoscreenm(context);
 	context.cx = context.pop();
 	hangonp(context);
-	return;
 }
 
 void findpuztext(Context &context) {
@@ -13621,7 +13265,6 @@ void findpuztext(Context &context) {
 	context.ax = context.es.word(context.si);
 	context._add(context.ax, (66*2));
 	context.si = context.ax;
-	return;
 }
 
 void placesetobject(Context &context) {
@@ -13635,7 +13278,6 @@ void placesetobject(Context &context) {
 	context.es.byte(context.bx+58) = 0;
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void removesetobject(Context &context) {
@@ -13649,7 +13291,6 @@ void removesetobject(Context &context) {
 	context.es.byte(context.bx+58) = 255;
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void issetobonmap(Context &context) {
@@ -13661,7 +13302,6 @@ void issetobonmap(Context &context) {
 	context.bx = context.pop();
 	context.es = context.pop();
 	context._cmp(context.al, 0);
-	return;
 }
 
 void placefreeobject(Context &context) {
@@ -13675,7 +13315,6 @@ void placefreeobject(Context &context) {
 	context.es.byte(context.bx+2) = 0;
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void removefreeobject(Context &context) {
@@ -13686,7 +13325,6 @@ void removefreeobject(Context &context) {
 	context.es.byte(context.bx+2) = 255;
 	context.bx = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void findormake(Context &context) {
@@ -13713,19 +13351,16 @@ haventfound:
 	context.es.word(context.bx) = context.ax;
 	context.es.word(context.bx+2) = context.cx;
 	context.ax = context.pop();
-	return;
 }
 
 void switchryanon(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kRyanon) = 255;
-	return;
 }
 
 void switchryanoff(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kRyanon) = 1;
-	return;
 }
 
 void setallchanges(Context &context) {
@@ -13872,7 +13507,6 @@ void getundertimed(Context &context) {
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiget(context);
-	return;
 }
 
 void putundertimed(Context &context) {
@@ -13888,7 +13522,6 @@ void putundertimed(Context &context) {
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiput(context);
-	return;
 }
 
 void dumptimedtext(Context &context) {
@@ -13999,7 +13632,6 @@ notext:
 deltimedtext:
 	putundertimed(context);
 	context.data.byte(kNeedtodumptimed) = 1;
-	return;
 }
 
 void edenscdplayer(Context &context) {
@@ -14011,7 +13643,6 @@ void edenscdplayer(Context &context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void usewall(Context &context) {
@@ -14067,7 +13698,6 @@ gobackover:
 	findxyfrompath(context);
 	context.data.byte(kResetmanxy) = 1;
 	switchryanoff(context);
-	return;
 }
 
 void usechurchgate(Context &context) {
@@ -14262,7 +13892,6 @@ pathoktv:
 nottvsoldier:
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void useshield(Context &context) {
@@ -14280,7 +13909,6 @@ void useshield(Context &context) {
 notinsartroom:
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usebuttona(Context &context) {
@@ -14308,7 +13936,6 @@ void usebuttona(Context &context) {
 donethisbit:
 	showseconduse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void useplate(Context &context) {
@@ -14359,7 +13986,6 @@ triedknife:
 	context.al = 54;
 	showpuztext(context);
 	putbackobstuff(context);
-	return;
 }
 
 void usewinch(Context &context) {
@@ -14394,7 +14020,6 @@ void usewinch(Context &context) {
 nowinch:
 	showfirstuse(context);
 	putbackobstuff(context);
-	return;
 }
 
 void entercode(Context &context) {
@@ -14467,14 +14092,12 @@ numberright:
 	restorereels(context);
 	redrawmainscrn(context);
 	worktoscreenm(context);
-	return;
 }
 
 void loadkeypad(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 1948;
 	loadintotemp(context);
-	return;
 }
 
 void quitkey(Context &context) {
@@ -14494,7 +14117,6 @@ notqk:
 	return;
 doqk:
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void addtopresslist(Context &context) {
@@ -14520,77 +14142,66 @@ void buttonone(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 1;
 	buttonpress(context);
-	return;
 }
 
 void buttontwo(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 2;
 	buttonpress(context);
-	return;
 }
 
 void buttonthree(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 3;
 	buttonpress(context);
-	return;
 }
 
 void buttonfour(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 4;
 	buttonpress(context);
-	return;
 }
 
 void buttonfive(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 5;
 	buttonpress(context);
-	return;
 }
 
 void buttonsix(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 6;
 	buttonpress(context);
-	return;
 }
 
 void buttonseven(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 7;
 	buttonpress(context);
-	return;
 }
 
 void buttoneight(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 8;
 	buttonpress(context);
-	return;
 }
 
 void buttonnine(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 9;
 	buttonpress(context);
-	return;
 }
 
 void buttonnought(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 10;
 	buttonpress(context);
-	return;
 }
 
 void buttonenter(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 11;
 	buttonpress(context);
-	return;
 }
 
 void buttonpress(Context &context) {
@@ -14640,7 +14251,6 @@ void showouterpad(Context &context) {
 	context.al = 37;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void showkeypad(Context &context) {
@@ -14726,7 +14336,6 @@ gotkey:
 	context._sub(context.al, 20);
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void dumpkeypad(Context &context) {
@@ -14736,7 +14345,6 @@ void dumpkeypad(Context &context) {
 	context.cl = 120;
 	context.ch = 90;
 	multidump(context);
-	return;
 }
 
 void usemenu(Context &context) {
@@ -14796,7 +14404,6 @@ void dumpmenu(Context &context) {
 	context.cl = 48;
 	context.ch = 48;
 	multidump(context);
-	return;
 }
 
 void getundermenu(Context &context) {
@@ -14808,7 +14415,6 @@ void getundermenu(Context &context) {
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiget(context);
-	return;
 }
 
 void putundermenu(Context &context) {
@@ -14820,7 +14426,6 @@ void putundermenu(Context &context) {
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiput(context);
-	return;
 }
 
 void showoutermenu(Context &context) {
@@ -14849,7 +14454,6 @@ void showoutermenu(Context &context) {
 	context.bx = (60)+57-40;
 	context.ds = context.data.word(kTempgraphics);
 	showframe(context);
-	return;
 }
 
 void showmenu(Context &context) {
@@ -14866,7 +14470,6 @@ menuframeok:
 	context.bx = (60);
 	context.ds = context.data.word(kTempgraphics);
 	showframe(context);
-	return;
 }
 
 void loadmenu(Context &context) {
@@ -14875,7 +14478,6 @@ void loadmenu(Context &context) {
 	loadintotemp(context);
 	context.dx = 1987;
 	loadintotemp2(context);
-	return;
 }
 
 void viewfolder(Context &context) {
@@ -14906,7 +14508,6 @@ folderloop:
 	restoreall(context);
 	redrawmainscrn(context);
 	worktoscreenm(context);
-	return;
 }
 
 void nextfolder(Context &context) {
@@ -14938,7 +14539,6 @@ donextf:
 	context.bx = 3636;
 	checkcoords(context);
 	worktoscreenm(context);
-	return;
 }
 
 void folderhints(Context &context) {
@@ -15019,7 +14619,6 @@ dolastf:
 	context.bx = 3636;
 	checkcoords(context);
 	worktoscreenm(context);
-	return;
 }
 
 void loadfolder(Context &context) {
@@ -15034,7 +14633,6 @@ void loadfolder(Context &context) {
 	loadtempcharset(context);
 	context.dx = 2195;
 	loadtemptext(context);
-	return;
 }
 
 void showfolder(Context &context) {
@@ -15096,7 +14694,6 @@ closedfolder:
 	showframe(context);
 	folderexit(context);
 	undertextline(context);
-	return;
 }
 
 void folderexit(Context &context) {
@@ -15107,7 +14704,6 @@ void folderexit(Context &context) {
 	context.al = 6;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void showleftpage(Context &context) {
@@ -15189,7 +14785,6 @@ flipfolderline:
 	context._add(context.si, 320);
 	context._add(context.di, 320);
 	if (--context.cx) goto flipfolder;
-	return;
 }
 
 void showrightpage(Context &context) {
@@ -15244,7 +14839,6 @@ contrightpage:
 	if (--context.cx) goto twolotsright;
 	context.data.byte(kKerning) = 0;
 	context.data.word(kLinespacing) = 10;
-	return;
 }
 
 void entersymbol(Context &context) {
@@ -15311,7 +14905,6 @@ symbolwrong:
 	getridoftemp(context);
 	restorereels(context);
 	worktoscreenm(context);
-	return;
 }
 
 void quitsymbol(Context &context) {
@@ -15335,7 +14928,6 @@ notqs:
 	return;
 doqs:
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void settopleft(Context &context) {
@@ -15414,7 +15006,6 @@ void dumpsymbol(Context &context) {
 	context.cl = 104;
 	context.ch = 60;
 	multidump(context);
-	return;
 }
 
 void showsymbol(Context &context) {
@@ -15488,7 +15079,6 @@ void showsymbol(Context &context) {
 	nextsymbol(context);
 	context._add(context.di, 49);
 	showframe(context);
-	return;
 }
 
 void nextsymbol(Context &context) {
@@ -15504,7 +15094,6 @@ topwrap:
 	return;
 botwrap:
 	context.al = 6;
-	return;
 }
 
 void updatesymboltop(Context &context) {
@@ -15655,7 +15244,6 @@ void showdiary(Context &context) {
 	context.bx = (48+12)+108;
 	context.ds = context.data.word(kTempgraphics);
 	showframe(context);
-	return;
 }
 
 void showdiarykeys(Context &context) {
@@ -15753,7 +15341,6 @@ notdumpdiary:
 	context.cl = 16;
 	context.ch = 16;
 	multidump(context);
-	return;
 }
 
 void diarykeyp(Context &context) {
@@ -15841,7 +15428,6 @@ void showdiarypage(Context &context) {
 	context.data.byte(kKerning) = 0;
 	context.data.word(kCharshift) = 0;
 	usecharset1(context);
-	return;
 }
 
 void findtext1(Context &context) {
@@ -15853,7 +15439,6 @@ void findtext1(Context &context) {
 	context.ax = context.es.word(context.si);
 	context._add(context.ax, (66*2));
 	context.si = context.ax;
-	return;
 }
 
 void zoomonoff(Context &context) {
@@ -15891,7 +15476,6 @@ dozoomonoff:
 	commandonly(context);
 	readmouse(context);
 	worktoscreenm(context);
-	return;
 }
 
 void saveload(Context &context) {
@@ -15963,7 +15547,6 @@ waitops:
 	context.data.byte(kCommandtype) = 200;
 justret:
 	context.data.byte(kManisoffscreen) = 0;
-	return;
 }
 
 void getbackfromops(Context &context) {
@@ -15974,7 +15557,6 @@ void getbackfromops(Context &context) {
 	return;
 opsblock1:
 	blank(context);
-	return;
 }
 
 void showmainops(Context &context) {
@@ -15997,7 +15579,6 @@ void showmainops(Context &context) {
 	context.al = 1;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void showdiscops(Context &context) {
@@ -16026,14 +15607,12 @@ void showdiscops(Context &context) {
 	context.al = 5;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void loadsavebox(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 1961;
 	loadintotemp(context);
-	return;
 }
 
 void loadgame(Context &context) {
@@ -16114,7 +15693,6 @@ nogetbackops:
 dogetbackops:
 	oldtonames(context);
 	context.data.byte(kGetback) = 2;
-	return;
 }
 
 void discops(Context &context) {
@@ -16151,7 +15729,6 @@ discopsloop:
 	checkcoords(context);
 	context._cmp(context.data.byte(kGetback), 0);
 	if (context.flags.z()) goto discopsloop;
-	return;
 }
 
 void savegame(Context &context) {
@@ -16195,7 +15772,6 @@ saveops:
 	checkcoords(context);
 	context._cmp(context.data.byte(kGetback), 0);
 	if (context.flags.z()) goto saveops;
-	return;
 }
 
 void actualsave(Context &context) {
@@ -16296,7 +15872,6 @@ void selectslot2(Context &context) {
 	context.data.byte(kLoadingorsave) = 2;
 noselslot2:
 	selectslot(context);
-	return;
 }
 
 void checkinput(Context &context) {
@@ -16340,7 +15915,6 @@ afterkey:
 	showslots(context);
 	showsaveops(context);
 	worktoscreenm(context);
-	return;
 }
 
 void getnamepos(Context &context) {
@@ -16356,7 +15930,6 @@ void getnamepos(Context &context) {
 	context.al = context.data.byte(kCursorpos);
 	context.ah = 0;
 	context._add(context.bx, context.ax);
-	return;
 }
 
 void showopbox(Context &context) {
@@ -16373,7 +15946,6 @@ void showopbox(Context &context) {
 	context.al = 4;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void showloadops(Context &context) {
@@ -16395,7 +15967,6 @@ void showloadops(Context &context) {
 	context.al = 55;
 	context.dl = 101;
 	printmessage(context);
-	return;
 }
 
 void showsaveops(Context &context) {
@@ -16417,7 +15988,6 @@ void showsaveops(Context &context) {
 	context.al = 54;
 	context.dl = 101;
 	printmessage(context);
-	return;
 }
 
 void selectslot(Context &context) {
@@ -16498,7 +16068,6 @@ nomatchslot:
 	context._inc(context.cl);
 	context._cmp(context.cl, 7);
 	if (!context.flags.z()) goto slotloop;
-	return;
 }
 
 void shownames(Context &context) {
@@ -16565,7 +16134,6 @@ afterprintname:
 	context._inc(context.cl);
 	context._cmp(context.cl, 7);
 	if (!context.flags.z()) goto shownameloop;
-	return;
 }
 
 void namestoold(Context &context) {
@@ -16576,8 +16144,7 @@ void namestoold(Context &context) {
 	context.es = context.data.word(kBuffers);
 	context.cx = 17*4;
 	while(context.cx--) 	context._movsb();
- 	return;
-}
+ }
 
 void oldtonames(Context &context) {
 	STACK_CHECK(context);
@@ -16587,8 +16154,7 @@ void oldtonames(Context &context) {
 	context.ds = context.data.word(kBuffers);
 	context.cx = 17*4;
 	while(context.cx--) 	context._movsb();
- 	return;
-}
+ }
 
 void saveposition(Context &context) {
 	STACK_CHECK(context);
@@ -16639,7 +16205,6 @@ void saveposition(Context &context) {
 	saveseg(context);
 fquit:
 	closefile(context);
-	return;
 }
 
 void loadposition(Context &context) {
@@ -16688,7 +16253,6 @@ void loadposition(Context &context) {
 	context.dx = 534;
 	loadseg(context);
 	closefile(context);
-	return;
 }
 
 void makeheader(Context &context) {
@@ -16708,7 +16272,6 @@ void makeheader(Context &context) {
 	storeit(context);
 	context.ax = (991-534);
 	storeit(context);
-	return;
 }
 
 void storeit(Context &context) {
@@ -16718,7 +16281,6 @@ void storeit(Context &context) {
 	context._inc(context.ax);
 isntblank:
 	context._stosw();
-	return;
 }
 
 void findlen(Context &context) {
@@ -16782,7 +16344,6 @@ notexist:
 	context._dec(context.cl);
 	if (!context.flags.z()) goto scanloop;
 	context.al = context.ch;
-	return;
 }
 
 void decide(Context &context) {
@@ -16820,7 +16381,6 @@ hasloadedroom:
 	context.data.word(kTextaddressx) = 13;
 	context.data.word(kTextaddressy) = 182;
 	context.data.byte(kTextlen) = 240;
-	return;
 }
 
 void showdecisions(Context &context) {
@@ -16834,7 +16394,6 @@ void showdecisions(Context &context) {
 	context.ah = 0;
 	showframe(context);
 	undertextline(context);
-	return;
 }
 
 void newgame(Context &context) {
@@ -16959,7 +16518,6 @@ tensc:
 	context.cs.byte(context.di+6) = context.cl;
 	context._add(context.al, '0');
 	context.cs.byte(context.di+7) = context.al;
-	return;
 }
 
 void trysoundalloc(Context &context) {
@@ -17120,7 +16678,6 @@ notch0only:
 	while(context.cx--) 	context._stosw();
 	context._and(context.di, 16384-1);
 	context.data.word(kSoundbufferwrite) = context.di;
-	return;
 }
 
 void volumeadjust(Context &context) {
@@ -17170,14 +16727,12 @@ void cancelch0(Context &context) {
 	context.data.byte(kCh0repeat) = 0;
 	context.data.word(kCh0blockstocopy) = 0;
 	context.data.byte(kCh0playing) = 255;
-	return;
 }
 
 void cancelch1(Context &context) {
 	STACK_CHECK(context);
 	context.data.word(kCh1blockstocopy) = 0;
 	context.data.byte(kCh1playing) = 255;
-	return;
 }
 
 void channel0tran(Context &context) {
@@ -17200,7 +16755,6 @@ volloop:
 	context.ah = context.es.byte(context.bx);
 	context._stosw();
 	if (--context.cx) goto volloop;
-	return;
 }
 
 void domix(Context &context) {
@@ -17526,7 +17080,6 @@ isedens:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	switchryanoff(context);
-	return;
 }
 
 void pickupob(Context &context) {
@@ -17537,12 +17090,10 @@ void pickupob(Context &context) {
 	context.data.byte(kCommand) = context.al;
 	getanyad(context);
 	transfertoex(context);
-	return;
 }
 
 void checkforemm(Context &context) {
 	STACK_CHECK(context);
-	return;
 }
 
 void checkbasemem(Context &context) {
@@ -17588,7 +17139,6 @@ void allocatebuffers(Context &context) {
 	context.bx = 2048/16;
 	allocatemem(context);
 	context.data.word(kSounddata2) = context.ax;
-	return;
 }
 
 void clearbuffers(Context &context) {
@@ -17616,7 +17166,6 @@ void clearbuffers(Context &context) {
 	context.cx = (68-0);
 	while(context.cx--) 	context._movsb();
  	clearchanges(context);
-	return;
 }
 
 void clearchanges(Context &context) {
@@ -17658,7 +17207,6 @@ void clearchanges(Context &context) {
 	context.ax = 0;
 	context.cx = 6;
 	while(context.cx--) 	context._stosw();
-	return;
 }
 
 void clearbeforeload(Context &context) {
@@ -17680,7 +17228,6 @@ void clearreels(Context &context) {
 	deallocatemem(context);
 	context.es = context.data.word(kReel3);
 	deallocatemem(context);
-	return;
 }
 
 void clearrest(Context &context) {
@@ -17708,7 +17255,6 @@ void clearrest(Context &context) {
 	deallocatemem(context);
 	context.es = context.data.word(kFreedesc);
 	deallocatemem(context);
-	return;
 }
 
 void parseblaster(Context &context) {
@@ -17792,7 +17338,6 @@ void startup(Context &context) {
 	undertextline(context);
 	reelsonscreen(context);
 	atmospheres(context);
-	return;
 }
 
 void startup1(Context &context) {
@@ -17813,7 +17358,6 @@ void startup1(Context &context) {
 	atmospheres(context);
 	worktoscreen(context);
 	fadescreenup(context);
-	return;
 }
 
 void screenupdate(Context &context) {
@@ -17988,7 +17532,6 @@ finishtime:
 	showtime(context);
 finishwatch:
 	context.data.byte(kWatchdump) = 1;
-	return;
 }
 
 void showtime(Context &context) {
@@ -18086,7 +17629,6 @@ void showbyte(Context &context) {
 	onedigit(context);
 	context.es.byte(context.di+1) = context.dl;
 	context._add(context.di, 3);
-	return;
 }
 
 void onedigit(Context &context) {
@@ -18098,7 +17640,6 @@ void onedigit(Context &context) {
 morethan10:
 	context._sub(context.dl, 10);
 	context._add(context.dl, 'A');
-	return;
 }
 
 void twodigitnum(Context &context) {
@@ -18111,7 +17652,6 @@ numloop1:
 	if (!context.flags.c()) goto numloop1;
 	context._add(context.al, 10);
 	context._add(context.al, context.cl);
-	return;
 }
 
 void showword(Context &context) {
@@ -18157,7 +17697,6 @@ word4:
 	context.cl = context.al;
 	convnum(context);
 	context.cs.byte(context.di+4) = context.cl;
-	return;
 }
 
 void convnum(Context &context) {
@@ -18243,7 +17782,6 @@ isaperson:
 	return;
 toofaraway:
 	walktotext(context);
-	return;
 }
 
 void mainscreen(Context &context) {
@@ -18375,7 +17913,6 @@ finishidentify:
 	return;
 nothingund:
 	blank(context);
-	return;
 }
 
 void checkifperson(Context &context) {
@@ -18432,7 +17969,6 @@ notareelid:
 	context._add(context.bx, 5);
 	context._dec(context.cx);
 	if (!context.flags.z()) goto identifyreel;
-	return;
 }
 
 void checkifset(Context &context) {
@@ -18466,7 +18002,6 @@ notasetid:
 	context._dec(context.cx);
 	context._cmp(context.cx, -1);
 	if (!context.flags.z()) goto identifyset;
-	return;
 }
 
 void checkifex(Context &context) {
@@ -18496,7 +18031,6 @@ notanexid:
 	context._dec(context.cx);
 	context._cmp(context.cx, -1);
 	if (!context.flags.z()) goto identifyex;
-	return;
 }
 
 void checkiffree(Context &context) {
@@ -18526,7 +18060,6 @@ notafreeid:
 	context._dec(context.cx);
 	context._cmp(context.cx, -1);
 	if (!context.flags.z()) goto identifyfree;
-	return;
 }
 
 void isitdescribed(Context &context) {
@@ -18550,7 +18083,6 @@ void isitdescribed(Context &context) {
 	context.cx = context.pop();
 	context.ax = context.pop();
 	context._cmp(context.dl, 0);
-	return;
 }
 
 void findpathofpoint(Context &context) {
@@ -18627,7 +18159,6 @@ nofirst:
 	return;
 gotfirst:
 	context.al = context.es.byte(context.bx+6);
-	return;
 }
 
 void turnpathon(Context &context) {
@@ -18702,7 +18233,6 @@ void turnanypathon(Context &context) {
 	context._add(context.bx, context.ax);
 	context.al = 255;
 	context.es.byte(context.bx+6) = context.al;
-	return;
 }
 
 void turnanypathoff(Context &context) {
@@ -18729,7 +18259,6 @@ void turnanypathoff(Context &context) {
 	context._add(context.bx, context.ax);
 	context.al = 0;
 	context.es.byte(context.bx+6) = context.al;
-	return;
 }
 
 void checkifpathison(Context &context) {
@@ -18744,7 +18273,6 @@ void checkifpathison(Context &context) {
 	context._add(context.bx, context.ax);
 	context.al = context.es.byte(context.bx+6);
 	context._cmp(context.al, 255);
-	return;
 }
 
 void afternewroom(Context &context) {
@@ -18850,7 +18378,6 @@ wrongatmos:
 	goto nextatmos;
 nomoreatmos:
 	cancelch0(context);
-	return;
 }
 
 void walkintoroom(Context &context) {
@@ -18991,7 +18518,6 @@ isaperson:
 	return;
 toofaraway:
 	walktotext(context);
-	return;
 }
 
 void finishedwalking(Context &context) {
@@ -19010,7 +18536,6 @@ void examineobtext(Context &context) {
 	context.bh = context.data.byte(kCommandtype);
 	context.al = 1;
 	commandwithob(context);
-	return;
 }
 
 void commandwithob(Context &context) {
@@ -19064,7 +18589,6 @@ noadd:
 	context.ah = 0;
 	printdirect(context);
 	context.data.byte(kNewtextline) = 1;
-	return;
 }
 
 void commandonly(Context &context) {
@@ -19100,7 +18624,6 @@ void commandonly(Context &context) {
 	context.ah = 0;
 	printdirect(context);
 	context.data.byte(kNewtextline) = 1;
-	return;
 }
 
 void printmessage(Context &context) {
@@ -19121,7 +18644,6 @@ void printmessage(Context &context) {
 	context.al = 0;
 	context.ah = 0;
 	printdirect(context);
-	return;
 }
 
 void printmessage2(Context &context) {
@@ -19150,7 +18672,6 @@ searchmess:
 	context.al = 0;
 	context.ah = 0;
 	printdirect(context);
-	return;
 }
 
 void blocknametext(Context &context) {
@@ -19159,7 +18680,6 @@ void blocknametext(Context &context) {
 	context.bh = context.data.byte(kCommandtype);
 	context.al = 0;
 	commandwithob(context);
-	return;
 }
 
 void personnametext(Context &context) {
@@ -19169,7 +18689,6 @@ void personnametext(Context &context) {
 	context.bh = context.data.byte(kCommandtype);
 	context.al = 2;
 	commandwithob(context);
-	return;
 }
 
 void walktotext(Context &context) {
@@ -19178,7 +18697,6 @@ void walktotext(Context &context) {
 	context.bh = context.data.byte(kCommandtype);
 	context.al = 3;
 	commandwithob(context);
-	return;
 }
 
 void getflagunderp(Context &context) {
@@ -19191,7 +18709,6 @@ void getflagunderp(Context &context) {
 	checkone(context);
 	context.data.byte(kLastflag) = context.cl;
 	context.data.byte(kLastflagex) = context.ch;
-	return;
 }
 
 void setwalk(Context &context) {
@@ -19230,7 +18747,6 @@ alreadywalking:
 holdingreel:
 	context.data.byte(kDestafterhold) = context.al;
 	context.data.byte(kWatchmode) = 2;
-	return;
 }
 
 void autosetwalk(Context &context) {
@@ -19282,7 +18798,6 @@ notsamealready:
 	return;
 normalline:
 	context.data.byte(kLinepointer) = 0;
-	return;
 }
 
 void checkdest(Context &context) {
@@ -19330,7 +18845,6 @@ nextcheck2:
 	if (!context.flags.z()) goto checkdestloop;
 	context.data.byte(kDestination) = context.ch;
 	context.bx = context.pop();
-	return;
 }
 
 void bresenhams(Context &context) {
@@ -19444,7 +18958,6 @@ lineexit:
 	context.ax = context.di;
 	context._shr(context.ax, 1);
 	context.data.byte(kLinelength) = context.al;
-	return;
 }
 
 void workoutframes(Context &context) {
@@ -19523,7 +19036,6 @@ success:
 	context._and(context.dl, 7);
 	context.data.byte(kTurntoface) = context.dl;
 	context.data.byte(kTurndirection) = 0;
-	return;
 }
 
 void getroomspaths(Context &context) {
@@ -19535,7 +19047,6 @@ void getroomspaths(Context &context) {
 	context.es = context.data.word(kReels);
 	context.bx = (0);
 	context._add(context.bx, context.ax);
-	return;
 }
 
 void copyname(Context &context) {
@@ -19561,7 +19072,6 @@ finishmakename:
 	return;
 	context.al = 255;
 	while(context.cx--) 	context._stosb();
-	return;
 }
 
 void findobname(Context &context) {
@@ -19620,7 +19130,6 @@ notsetname:
 	context.ax = context.ds.word(context.bx);
 	context._add(context.ax, (0+(98*2)));
 	context.si = context.ax;
-	return;
 }
 
 void showicon(Context &context) {
@@ -19671,7 +19180,6 @@ isdream1:
 	context.ah = 4;
 	showframe(context);
 	middlepanel(context);
-	return;
 }
 
 void middlepanel(Context &context) {
@@ -19700,7 +19208,6 @@ void middlepanel(Context &context) {
 	context.al = 47;
 	context.ah = 4;
 	showframe(context);
-	return;
 }
 
 void showman(Context &context) {
@@ -19743,7 +19250,6 @@ void showpanel(Context &context) {
 	context.al = 19;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void roomname(Context &context) {
@@ -19778,21 +19284,18 @@ gotpl:
 	printdirect(context);
 	context.data.word(kLinespacing) = 10;
 	usecharset1(context);
-	return;
 }
 
 void usecharset1(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kCharset1);
 	context.data.word(kCurrentset) = context.ax;
-	return;
 }
 
 void usetempcharset(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kTempcharset);
 	context.data.word(kCurrentset) = context.ax;
-	return;
 }
 
 void showexit(Context &context) {
@@ -19803,7 +19306,6 @@ void showexit(Context &context) {
 	context.al = 11;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void panelicons1(Context &context) {
@@ -19833,7 +19335,6 @@ watchison:
 zoomisoff:
 	context.di = context.pop();
 	showwatch(context);
-	return;
 }
 
 void showwatch(Context &context) {
@@ -19928,7 +19429,6 @@ void worktoscreenm(Context &context) {
 	vsync(context);
 	worktoscreen(context);
 	delpointer(context);
-	return;
 }
 
 void blank(Context &context) {
@@ -19947,7 +19447,6 @@ void allpointer(Context &context) {
 	readmouse(context);
 	showpointer(context);
 	dumppointer(context);
-	return;
 }
 
 void hangonp(Context &context) {
@@ -19992,7 +19491,6 @@ getoutofit:
 	context.data.byte(kPointerframe) = context.al;
 	context.data.byte(kPickup) = context.ah;
 	context.data.byte(kPointermode) = 0;
-	return;
 }
 
 void hangonw(Context &context) {
@@ -20007,7 +19505,6 @@ hangloopw:
 	dumppointer(context);
 	context.cx = context.pop();
 	if (--context.cx) goto hangloopw;
-	return;
 }
 
 void hangoncurs(Context &context) {
@@ -20019,7 +19516,6 @@ monloop1:
 	delcurs(context);
 	context.cx = context.pop();
 	if (--context.cx) goto monloop1;
-	return;
 }
 
 void getunderzoom(Context &context) {
@@ -20031,7 +19527,6 @@ void getunderzoom(Context &context) {
 	context.cl = 46;
 	context.ch = 40;
 	multiget(context);
-	return;
 }
 
 void dumpzoom(Context &context) {
@@ -20056,7 +19551,6 @@ void putunderzoom(Context &context) {
 	context.cl = 46;
 	context.ch = 40;
 	multiput(context);
-	return;
 }
 
 void crosshair(Context &context) {
@@ -20081,7 +19575,6 @@ nocross:
 	context.al = 29;
 	context.ah = 0;
 	showframe(context);
-	return;
 }
 
 void showpointer(Context &context) {
@@ -20190,7 +19683,6 @@ notsmally2:
 	context.al = 3;
 	context.ah = 128;
 	showframe(context);
-	return;
 }
 
 void delpointer(Context &context) {
@@ -20245,7 +19737,6 @@ void undertextline(Context &context) {
 	context.cl = (180);
 	context.ch = (10);
 	multiget(context);
-	return;
 }
 
 void deltextline(Context &context) {
@@ -20257,7 +19748,6 @@ void deltextline(Context &context) {
 	context.cl = (180);
 	context.ch = (10);
 	multiput(context);
-	return;
 }
 
 void dumptextline(Context &context) {
@@ -20353,7 +19843,6 @@ void readmouse(Context &context) {
 	context.data.word(kMousex) = context.cx;
 	context.data.word(kMousey) = context.dx;
 	context.data.word(kMousebutton) = context.bx;
-	return;
 }
 
 void readmouse1(Context &context) {
@@ -20366,7 +19855,6 @@ void readmouse1(Context &context) {
 	context.data.word(kMousex) = context.cx;
 	context.data.word(kMousey) = context.dx;
 	context.data.word(kMousebutton1) = context.bx;
-	return;
 }
 
 void readmouse2(Context &context) {
@@ -20379,7 +19867,6 @@ void readmouse2(Context &context) {
 	context.data.word(kMousex) = context.cx;
 	context.data.word(kMousey) = context.dx;
 	context.data.word(kMousebutton2) = context.bx;
-	return;
 }
 
 void readmouse3(Context &context) {
@@ -20392,7 +19879,6 @@ void readmouse3(Context &context) {
 	context.data.word(kMousex) = context.cx;
 	context.data.word(kMousey) = context.dx;
 	context.data.word(kMousebutton3) = context.bx;
-	return;
 }
 
 void readmouse4(Context &context) {
@@ -20411,7 +19897,6 @@ void readmouse4(Context &context) {
 	context._or(context.ax, context.data.word(kMousebutton3));
 	context._or(context.bx, context.ax);
 	context.data.word(kMousebutton) = context.bx;
-	return;
 }
 
 void readkey(Context &context) {
@@ -20429,7 +19914,6 @@ void readkey(Context &context) {
 	return;
 nokey:
 	context.data.byte(kCurrentkey) = 0;
-	return;
 }
 
 void convertkey(Context &context) {
@@ -20439,7 +19923,6 @@ void convertkey(Context &context) {
 	context.di = 5928;
 	context._add(context.di, context.ax);
 	context.al = context.cs.byte(context.di);
-	return;
 }
 
 void randomnum1(Context &context) {
@@ -20455,7 +19938,6 @@ void randomnum1(Context &context) {
 	context.di = context.pop();
 	context.es = context.pop();
 	context.ds = context.pop();
-	return;
 }
 
 void randomnum2(Context &context) {
@@ -20472,7 +19954,6 @@ void randomnum2(Context &context) {
 	context.di = context.pop();
 	context.es = context.pop();
 	context.ds = context.pop();
-	return;
 }
 
 void hangon(Context &context) {
@@ -20482,7 +19963,6 @@ hangonloop:
 	vsync(context);
 	context.cx = context.pop();
 	if (--context.cx) goto hangonloop;
-	return;
 }
 
 void loadtraveltext(Context &context) {
@@ -20490,7 +19970,6 @@ void loadtraveltext(Context &context) {
 	context.dx = 2234;
 	standardload(context);
 	context.data.word(kTraveltext) = context.ax;
-	return;
 }
 
 void loadintotemp(Context &context) {
@@ -20498,7 +19977,6 @@ void loadintotemp(Context &context) {
 	context.ds = context.cs;
 	standardload(context);
 	context.data.word(kTempgraphics) = context.ax;
-	return;
 }
 
 void loadintotemp2(Context &context) {
@@ -20506,7 +19984,6 @@ void loadintotemp2(Context &context) {
 	context.ds = context.cs;
 	standardload(context);
 	context.data.word(kTempgraphics2) = context.ax;
-	return;
 }
 
 void loadintotemp3(Context &context) {
@@ -20514,14 +19991,12 @@ void loadintotemp3(Context &context) {
 	context.ds = context.cs;
 	standardload(context);
 	context.data.word(kTempgraphics3) = context.ax;
-	return;
 }
 
 void loadtempcharset(Context &context) {
 	STACK_CHECK(context);
 	standardload(context);
 	context.data.word(kTempcharset) = context.ax;
-	return;
 }
 
 void standardload(Context &context) {
@@ -20540,14 +20015,12 @@ void standardload(Context &context) {
 	readfromfile(context);
 	closefile(context);
 	context.ax = context.pop();
-	return;
 }
 
 void loadtemptext(Context &context) {
 	STACK_CHECK(context);
 	standardload(context);
 	context.data.word(kTextfile1) = context.ax;
-	return;
 }
 
 void loadroom(Context &context) {
@@ -20568,7 +20041,6 @@ void loadroom(Context &context) {
 	switchryanon(context);
 	drawflags(context);
 	getdimension(context);
-	return;
 }
 
 void loadroomssample(Context &context) {
@@ -20631,7 +20103,6 @@ void getridofall(Context &context) {
 	deallocatemem(context);
 	context.es = context.data.word(kFreedesc);
 	deallocatemem(context);
-	return;
 }
 
 void restorereels(Context &context) {
@@ -20745,7 +20216,6 @@ void restoreall(Context &context) {
 	loadseg(context);
 	closefile(context);
 	setallchanges(context);
-	return;
 }
 
 void sortoutmap(Context &context) {
@@ -20768,7 +20238,6 @@ blimey:
 	if (--context.cx) goto blimey;
 	context.di = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void startloading(Context &context) {
@@ -20904,7 +20373,6 @@ void startloading(Context &context) {
 	context.bx = context.pop();
 dontwalkin:
 	findxyfrompath(context);
-	return;
 }
 
 void disablepath(Context &context) {
@@ -20937,7 +20405,6 @@ lookx2:
 	context._add(context.bx, context.ax);
 	context.al = 0;
 	context.es.byte(context.bx+6) = context.al;
-	return;
 }
 
 void findxyfrompath(Context &context) {
@@ -20954,7 +20421,6 @@ void findxyfrompath(Context &context) {
 	context._sub(context.ah, 12);
 	context.data.byte(kRyanx) = context.al;
 	context.data.byte(kRyany) = context.ah;
-	return;
 }
 
 void findroominloc(Context &context) {
@@ -20972,7 +20438,6 @@ lookx:
 	context._sub(context.al, 11);
 	if (!context.flags.c()) goto lookx;
 	context.data.byte(kRoomnum) = context.cl;
-	return;
 }
 
 void getroomdata(Context &context) {
@@ -20982,7 +20447,6 @@ void getroomdata(Context &context) {
 	context._mul(context.cx);
 	context.bx = 6187;
 	context._add(context.bx, context.ax);
-	return;
 }
 
 void readheader(Context &context) {
@@ -20993,7 +20457,6 @@ void readheader(Context &context) {
 	readfromfile(context);
 	context.es = context.cs;
 	context.di = 6141;
-	return;
 }
 
 void allocateload(Context &context) {
@@ -21006,7 +20469,6 @@ void allocateload(Context &context) {
 	allocatemem(context);
 	context.di = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void fillspace(Context &context) {
@@ -21024,49 +20486,42 @@ void fillspace(Context &context) {
 	context.dx = context.pop();
 	context.ds = context.pop();
 	context.es = context.pop();
-	return;
 }
 
 void getridoftemp(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTempgraphics);
 	deallocatemem(context);
-	return;
 }
 
 void getridoftemptext(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTextfile1);
 	deallocatemem(context);
-	return;
 }
 
 void getridoftemp2(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTempgraphics2);
 	deallocatemem(context);
-	return;
 }
 
 void getridoftemp3(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTempgraphics3);
 	deallocatemem(context);
-	return;
 }
 
 void getridoftempcharset(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTempcharset);
 	deallocatemem(context);
-	return;
 }
 
 void getridoftempsp(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTempsprites);
 	deallocatemem(context);
-	return;
 }
 
 void readsetdata(Context &context) {
@@ -21116,7 +20571,6 @@ transfer:
 	context._cmp(context.al, 0);
 	if (!context.flags.z()) goto transfer;
 	context.dx = 6059;
-	return;
 }
 
 void dreamweb(Context &context) {
