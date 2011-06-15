@@ -1,3 +1,5 @@
+/* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */
+
 #include "dreamgen.h"
 
 namespace dreamgen {

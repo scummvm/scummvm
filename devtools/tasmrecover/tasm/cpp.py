@@ -16,8 +16,16 @@ class cpp:
 		self.namespace = namespace
 		fname = namespace + ".cpp"
 		header = namespace + ".h"
+		banner = "/* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */"
 		self.fd = open(fname, "wt")
 		self.hd = open(header, "wt")
+		hid = "TASMRECOVER_%s_STUBS_H__" %namespace.upper()
+		self.hd.write("""#ifndef %s
+#define %s
+
+%s
+
+""" %(hid, hid, banner))
 		self.context = context
 		self.data_seg = context.binary_data
 		self.procs = context.proc_list
@@ -29,11 +37,13 @@ class cpp:
 		self.translated = []
 		self.proc_addr = []
 		self.forwards = []
-		self.fd.write("""#include \"%s\"
+		self.fd.write("""%s
+
+#include \"%s\"
 
 namespace %s {
 
-""" %(header, namespace))
+""" %(banner, header, namespace))
 
 	def expand_cb(self, match):
 		name = match.group(0).lower()
@@ -531,12 +541,8 @@ namespace %s {
 			if (n & 0xf) == 0:
 				data_impl += "\n\t\t"
 		data_impl += "};\n\tcontext.ds.assign(src, src + sizeof(src));\n"
-		hid = "TASMRECOVER_%s_STUBS_H__" %self.namespace.upper()
-		self.hd.write("""#ifndef %s
-#define %s
-""" %(hid, hid))
 		self.hd.write(
-"""\n#\tinclude "runtime.h"
+"""\n#include "dreamweb/runtime.h"
 
 namespace %s {
 

@@ -1,7 +1,10 @@
 #ifndef TASMRECOVER_DREAMGEN_STUBS_H__
 #define TASMRECOVER_DREAMGEN_STUBS_H__
 
-#	include "runtime.h"
+/* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */
+
+
+#include "dreamweb/runtime.h"
 
 namespace dreamgen {
 
