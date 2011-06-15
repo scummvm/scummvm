@@ -18,32 +18,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * $URL: https://svn.scummvm.org:4444/svn/dreamweb/console.cpp $
+ * $Id: console.cpp 70 2011-01-26 05:36:55Z digitall $
+ *
  */
 
-#ifndef PLATFORM_SDL_GP2X_H
-#define PLATFORM_SDL_GP2X_H
+#include "dreamweb/console.h"
 
-#include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl.h"
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/graphics/gp2xsdl/gp2xsdl-graphics.h"
-#include "backends/events/gp2xsdl/gp2xsdl-events.h"
+namespace DreamWeb {
 
-#ifndef PATH_MAX
-	#define PATH_MAX 255
-#endif
+DreamWebConsole::DreamWebConsole(DreamWebEngine *vm) : GUI::Debugger(), _vm(vm) {
+}
 
-class OSystem_GP2X : public OSystem_POSIX {
-public:
-	OSystem_GP2X() {}
+DreamWebConsole::~DreamWebConsole() {
+}
 
-	void initBackend();
-	void quit();
-	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-	void initSDL();
-
-protected:
-
-};
-
-#endif
+} // End of namespace DreamWeb

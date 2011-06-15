@@ -86,7 +86,7 @@ enum {
 class TeenAgentMetaEngine : public AdvancedMetaEngine {
 public:
 	TeenAgentMetaEngine() : AdvancedMetaEngine(teenAgentGameDescriptions, sizeof(ADGameDescription), teenAgentGames) {
-		params.singleid = "teenagent";
+		_singleid = "teenagent";
 	}
 
 	virtual const char *getName() const {
@@ -116,10 +116,6 @@ public:
 		}
 		return desc != 0;
 	}
-
-//	virtual const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const {
-//		return 0;
-//	}
 
 	static Common::String generateGameStateFileName(const char *target, int slot) {
 		return Common::String::format("%s.%02d", target, slot);

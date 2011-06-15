@@ -187,7 +187,6 @@ GPHEventSource::GPHEventSource()
 //	}
 //}
 
-
 void GPHEventSource::moveStick() {
 	bool stickBtn[32];
 

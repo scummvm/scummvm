@@ -141,8 +141,10 @@ public:
 		uint16 id;
 	};
 
+	uint16 getStoredMovieOpcodeID() { return _storedMovieOpcode.id; }
+	uint32 getStoredMovieOpcodeTime() { return _storedMovieOpcode.time; }
 	void setStoredMovieOpcode(const StoredMovieOpcode &op);
-	void runStoredMovieOpcode(uint16 id);
+	void runStoredMovieOpcode();
 	void clearStoredMovieOpcode();
 
 private:

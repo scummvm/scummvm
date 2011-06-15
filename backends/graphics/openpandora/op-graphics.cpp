@@ -26,15 +26,13 @@
 
 #include "backends/graphics/openpandora/op-graphics.h"
 #include "backends/events/openpandora/op-events.h"
-#include "backends/platform/openpandora/op-sdl.h"
-#include "common/mutex.h"
-#include "common/util.h"
-
+//#include "backends/platform/openpandora/op-sdl.h"
 #include "graphics/scaler/aspect.h"
-#include "graphics/surface.h"
+#include "common/mutex.h"
+#include "common/textconsole.h"
 
-OPGraphicsManager::OPGraphicsManager(SdlEventSource *boss)
-	: SdlGraphicsManager(boss) {
+OPGraphicsManager::OPGraphicsManager(SdlEventSource *sdlEventSource)
+	: SdlGraphicsManager(sdlEventSource) {
 }
 
 bool OPGraphicsManager::loadGFXMode() {

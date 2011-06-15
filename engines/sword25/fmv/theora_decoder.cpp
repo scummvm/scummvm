@@ -479,12 +479,6 @@ void TheoraDecoder::reset() {
 	if (_fileStream)
 		_fileStream->seek(0);
 
-#if ENABLE_THEORA_SEEKING
-	_videobufGranulePos = -1;
-	_audiobufGranulePos = 0;
-	_videobufTime = 0;
-#endif
-
 	_audiobufFill = 0;
 	_audiobufReady = false;
 

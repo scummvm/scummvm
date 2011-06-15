@@ -118,14 +118,6 @@ MODULE_OBJS += \
 	graphics/gph/gph-graphics.o
 endif
 
-# TODO/FIXME: The gp2xsdl files are only compiled if GP2X_OLD is defined,
-# which currently is never the case (unless the user manually requests it).
-# ifeq ($(BACKEND),gp2x)
-# MODULE_OBJS += \
-# 	events/gp2xsdl/gp2xsdl-events.o \
-# 	graphics/gp2xsdl/gp2xsdl-graphics.o
-# endif
-
 ifeq ($(BACKEND),linuxmoto)
 MODULE_OBJS += \
 	events/linuxmotosdl/linuxmotosdl-events.o \

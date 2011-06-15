@@ -162,7 +162,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_pauseDialog = NULL;
 	_versionDialog = NULL;
 	_fastMode = 0;
-	_actors = NULL;
+	_actors = _sortedActors = NULL;
 	_arraySlot = NULL;
 	_inventory = NULL;
 	_newNames = NULL;
@@ -584,9 +584,12 @@ ScummEngine::~ScummEngine() {
 
 	_mixer->stopAll();
 
-	for (int i = 0; i < _numActors; ++i)
-		delete _actors[i];
-	delete[] _actors;
+	if (_actors) {
+		for (int i = 0; i < _numActors; ++i)
+			delete _actors[i];
+		delete[] _actors;
+	}
+	
 	delete[] _sortedActors;
 
 	delete[] _2byteFontPtr;
@@ -1153,8 +1156,15 @@ Common::Error ScummEngine::init() {
 #ifdef USE_RGB_COLOR
 			Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 			initGraphics(screenWidth, screenHeight, screenWidth > 320, &format);
-			if (format != _system->getScreenFormat())
-				return Common::kUnsupportedColorMode;
+			if (format != _system->getScreenFormat()) {
+				if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
+					warning("Your ScummVM build does not support the type of 16bit color mode required by this target.\nStarting game in 8bit color mode...\nYou may experience color glitches");
+					_bytesPerPixelOutput = 1;
+					initGraphics(screenWidth, screenHeight, (screenWidth > 320));
+				} else {
+					return Common::kUnsupportedColorMode;
+				}
+			}
 #else
 			if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
 				warning("Starting game without the required 16bit color support.\nYou may experience color glitches");
@@ -1361,7 +1371,7 @@ void ScummEngine::resetScumm() {
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-		|| _game.platform == Common::kPlatformFMTowns
+		|| (_game.platform == Common::kPlatformFMTowns && _bytesPerPixelOutput == 2)
 #endif
 		)
 		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
@@ -1762,8 +1772,10 @@ void ScummEngine::setupMusic(int midi) {
 
 		if (missingFile) {
 			GUI::MessageDialog dialog(
-				"Native MIDI support requires the Roland Upgrade from LucasArts,\n"
-				"but " + fileName + " is missing. Using AdLib instead.", "Ok");
+				Common::String::format(
+					_("Native MIDI support requires the Roland Upgrade from LucasArts,\n"
+					"but %s is missing. Using AdLib instead."), fileName.c_str()),
+				_("OK"));
 			dialog.runModal();
 			_musicType = MDT_ADLIB;
 		}

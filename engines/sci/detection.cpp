@@ -374,7 +374,7 @@ static char s_fallbackGameIdBuf[256];
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
 	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles) {
-		params.singleid = "sci";
+		_singleid = "sci";
 	}
 
 	virtual const char *getName() const {
@@ -390,7 +390,7 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
-	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
+	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
@@ -418,7 +418,7 @@ Common::Language charToScummVMLanguage(const char c) {
 	}
 }
 
-const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
+const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
 
@@ -430,6 +430,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	s_fallbackDesc.gameid = "sci";
 
 	// First grab all filenames
+	// TODO: Consider using allFiles instead of fslist
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory())
 			continue;

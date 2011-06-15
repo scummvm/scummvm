@@ -252,6 +252,13 @@ public:
 		_size = newSize;
 	}
 
+	void assign(const T *srcBegin, const T *srcEnd) {
+		resize(distance(srcBegin, srcEnd)); //fixme: ineffective?
+		T *dst = _storage;
+		while(srcBegin != srcEnd)
+			*dst++ = *srcBegin++;
+	}
+
 protected:
 	static uint roundUpCapacity(uint capacity) {
 		// Round up capacity to the next power of 2;

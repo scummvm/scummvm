@@ -178,10 +178,13 @@ static const LureGameDescription gameDescriptions[] = {
 class LureMetaEngine : public AdvancedMetaEngine {
 public:
 	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
-		params.md5Bytes = 1024;
-		params.singleid = "lure";
-		params.flags = kADFlagUseExtraAsHint;
-		params.guioptions = Common::GUIO_NOSPEECH;
+		_md5Bytes = 1024;
+		_singleid = "lure";
+
+		// Use kADFlagUseExtraAsHint to distinguish between EGA and VGA versions
+		// of italian Lure when their datafiles sit in the same directory.
+		_flags = kADFlagUseExtraAsHint;
+		_guioptions = Common::GUIO_NOSPEECH;
 	}
 
 	virtual const char *getName() const {

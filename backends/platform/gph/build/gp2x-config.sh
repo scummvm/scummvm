@@ -23,8 +23,9 @@ cd ../../../..
   --enable-tremor --with-tremor-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
   --enable-zlib --with-zlib-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
   --enable-mad --with-mad-prefix=/opt/open2x/gcc-4.1.1-glibc-2.3.6 \
-  --enable-vkeybd --enable-plugins --default-dynamic
-# --disable-release --enable-debug  
+  --enable-vkeybd
+
 # --enable-plugins --default-dynamic
+# --disable-release --enable-debug  
 
 echo Generating config for GP2X complete. Check for errors.

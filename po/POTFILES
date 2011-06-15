@@ -21,6 +21,7 @@ common/util.cpp
 
 engines/advancedDetector.cpp
 engines/dialogs.cpp
+engines/engine.cpp
 engines/scumm/dialogs.cpp
 engines/scumm/help.cpp
 engines/scumm/scumm.cpp
@@ -30,6 +31,21 @@ engines/mohawk/riven.cpp
 engines/cruise/menu.cpp
 engines/sci/engine/kfile.cpp
 engines/agos/saveload.cpp
+engines/agos/animation.cpp
+engines/gob/inter_playtoons.cpp
+engines/gob/inter_v2.cpp
+engines/gob/inter_v5.cpp
+engines/groovie/script.cpp
+engines/kyra/sound_midi.cpp
+engines/m4/m4_menus.cpp
+engines/sky/compact.cpp
+engines/sword1/animation.cpp
+engines/sword1/control.cpp
+engines/sword1/logic.cpp
+engines/sword1/sword1.cpp
+engines/sword2/animation.cpp
+engines/tinsel/saveload.cpp
+engines/parallaction/saveload.cpp
 
 audio/fmopl.cpp
 audio/mididrv.cpp
@@ -58,6 +74,6 @@ backends/platform/wince/CEActionsPocket.cpp
 backends/platform/wince/CEActionsSmartphone.cpp
 backends/platform/wince/CELauncherDialog.cpp
 backends/platform/wince/wince-sdl.cpp
-backends/events/gp2xsdl/gp2xsdl-events.cpp
+backends/events/default/default-events.cpp
 backends/events/gph/gph-events.cpp
 backends/events/openpandora/op-events.cpp

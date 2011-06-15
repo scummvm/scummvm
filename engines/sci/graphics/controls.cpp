@@ -329,7 +329,6 @@ void GfxControls::kernelDrawText(Common::Rect rect, reg_t obj, const char *text,
 		if (style & SCI_CONTROLS_STYLE_SELECTED) {
 			_paint16->frameRect(rect);
 		}
-		rect.grow(1);
 		if (!getPicNotValid())
 			_paint16->bitsShow(rect);
 	} else {

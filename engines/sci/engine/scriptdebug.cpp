@@ -174,13 +174,15 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 			break;
 
 		case Script_SRelative:
-			if (opsize)
-				param_value = scr[retval.offset++];
-			else {
-				param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
-				retval.offset += 2;
+			if (opsize) {
+				int8 offset = (int8)scr[retval.offset++];
+				debugN(" %02x  [%04x]", 0xff & offset, 0xffff & (retval.offset + offset));
 			}
-			debugN(opsize ? " %02x  [%04x]" : " %04x  [%04x]", param_value, (0xffff) & (retval.offset + param_value));
+			else {
+				int16 offset = (int16)READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
+				retval.offset += 2;
+				debugN(" %04x  [%04x]", 0xffff & offset, 0xffff & (retval.offset + offset));
+			}
 			break;
 
 		case Script_End:

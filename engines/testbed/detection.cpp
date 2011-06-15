@@ -48,8 +48,8 @@ static const ADGameDescription testbedDescriptions[] = {
 class TestbedMetaEngine : public AdvancedMetaEngine {
 public:
 	TestbedMetaEngine() : AdvancedMetaEngine(testbedDescriptions, sizeof(ADGameDescription), testbed_setting) {
-		params.md5Bytes = 512;
-		params.singleid = "testbed";
+		_md5Bytes = 512;
+		_singleid = "testbed";
 	}
 
 	virtual const char *getName() const {

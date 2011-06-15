@@ -189,14 +189,6 @@ void GfxTransitions::doit(Common::Rect picRect) {
 	// Now we do the actual transition to the new screen
 	doTransition(_number, false);
 
-	if (picRect.bottom != _screen->getHeight()) {
-		// TODO: this is a workaround for lsl6 not showing menubar when playing
-		//  There is some new code in the sierra sci in ShowPic that seems to do
-		//  something similar to this
-		_screen->copyToScreen();
-		g_system->updateScreen();
-	}
-
 	_screen->_picNotValid = 0;
 }
 

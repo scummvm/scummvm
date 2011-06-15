@@ -87,6 +87,7 @@ add_engine cine "Cinematique evo 1" yes
 add_engine cruise "Cinematique evo 2" yes
 add_engine draci "Dragon History" yes
 add_engine drascula "Drascula: The Vampire Strikes Back" yes
+add_engine dreamweb "Dreamweb" no
 add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes "groovie2"
 add_engine groovie2 "Groovie 2 games" no
@@ -2237,6 +2238,7 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -Wl,--stack,65536"
 			_tremolo=yes
 			_backend="wince"
+			_detectlang=yes
 			_mt32emu=no
 			_port_mk="backends/platform/wince/wince.mk"
 			;;
@@ -3128,12 +3130,14 @@ if test "$_translation" = no ; then
 else
 	echo_n "yes ("
 
-	cat > $TMPC << EOF
+	if test "$_detectlang" != yes ; then
+		cat > $TMPC << EOF
 #include <locale.h>
 int main(void) { setlocale(LC_ALL, ""); return 0; }
 EOF
-	_detectlang=no
-	cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+		_detectlang=no
+		cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+	fi
 
 	define_in_config_h_if_yes $_detectlang 'USE_DETECTLANG'
 	if test "$_detectlang" = yes ; then

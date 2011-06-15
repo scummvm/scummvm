@@ -24,7 +24,7 @@
 #define BACKENDS_GRAPHICS_GPH_H
 
 #include "backends/graphics/sdl/sdl-graphics.h"
-#include "graphics/scaler/aspect.h"	// for aspect2Real 
+#include "graphics/scaler/aspect.h"	// for aspect2Real
 #include "graphics/scaler/downscaler.h"
 
 enum {
@@ -40,7 +40,7 @@ public:
 	bool getFeatureState(OSystem::Feature f);
 	int getDefaultGraphicsMode() const;
 
-	void initSize(uint w, uint h);
+	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	bool setGraphicsMode(const char *name);
 	bool setGraphicsMode(int mode);

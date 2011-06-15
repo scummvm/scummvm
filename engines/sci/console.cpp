@@ -131,6 +131,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("al",                 WRAP_METHOD(Console, cmdAnimateList));	// alias
 	DCmd_Register("window_list",        WRAP_METHOD(Console, cmdWindowList));
 	DCmd_Register("wl",                 WRAP_METHOD(Console, cmdWindowList));	// alias
+	DCmd_Register("saved_bits",         WRAP_METHOD(Console, cmdSavedBits));
+	DCmd_Register("show_saved_bits",    WRAP_METHOD(Console, cmdShowSavedBits));
 	// Segments
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
 	DCmd_Register("segtable",			WRAP_METHOD(Console, cmdPrintSegmentTable));	// alias
@@ -364,6 +366,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" undither - Enable/disable undithering\n");
 	DebugPrintf(" play_video - Plays a SEQ, AVI, VMD, RBT or DUK video\n");
 	DebugPrintf(" animate_object_list / al - Shows the current list of objects in kAnimate's draw list\n");
+	DebugPrintf(" saved_bits - List saved bits on the hunk\n");
+	DebugPrintf(" show_saved_bits - Display saved bits\n");
 	DebugPrintf("\n");
 	DebugPrintf("Segments:\n");
 	DebugPrintf(" segment_table / segtable - Lists all segments\n");
@@ -1600,6 +1604,174 @@ bool Console::cmdWindowList(int argc, const char **argv) {
 	return true;
 
 }
+
+bool Console::cmdSavedBits(int argc, const char **argv) {
+	SegManager *segman = _engine->_gamestate->_segMan;
+	SegmentId id = segman->findSegmentByType(SEG_TYPE_HUNK);
+	HunkTable* hunks = (HunkTable*)segman->getSegmentObj(id);
+	if (!hunks) {
+		DebugPrintf("No hunk segment found.\n");
+		return true;
+	}
+
+	Common::Array<reg_t> entries = hunks->listAllDeallocatable(id);
+
+	for (uint i = 0; i < entries.size(); ++i) {
+		uint16 offset = entries[i].offset;
+		const Hunk& h = hunks->_table[offset];
+		if (strcmp(h.type, "SaveBits()") == 0) {
+			byte* memoryPtr = (byte*)h.mem;
+
+			if (memoryPtr) {
+				DebugPrintf("%04x:%04x:", PRINT_REG(entries[i]));
+
+				Common::Rect rect;
+				byte mask;
+				assert(h.size >= sizeof(rect) + sizeof(mask));
+
+				memcpy((void *)&rect, memoryPtr, sizeof(rect));
+				memcpy((void *)&mask, memoryPtr + sizeof(rect), sizeof(mask));
+
+				DebugPrintf(" %d,%d - %d,%d", rect.top, rect.left,
+				                              rect.bottom, rect.right);
+				if (mask & GFX_SCREEN_MASK_VISUAL)
+					DebugPrintf(" visual");
+				if (mask & GFX_SCREEN_MASK_PRIORITY)
+					DebugPrintf(" priority");
+				if (mask & GFX_SCREEN_MASK_CONTROL)
+					DebugPrintf(" control");
+				if (mask & GFX_SCREEN_MASK_DISPLAY)
+					DebugPrintf(" display");
+				DebugPrintf("\n");
+			}
+		}
+	}
+
+
+	return true;
+}
+
+bool Console::cmdShowSavedBits(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Display saved bits.\n");
+		DebugPrintf("Usage: %s <address>\n", argv[0]);
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t memoryHandle = NULL_REG;
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &memoryHandle, false)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	if (memoryHandle.isNull()) {
+		DebugPrintf("Invalid address.\n");
+		return true;
+	}
+
+	SegManager *segman = _engine->_gamestate->_segMan;
+	SegmentId id = segman->findSegmentByType(SEG_TYPE_HUNK);
+	HunkTable* hunks = (HunkTable*)segman->getSegmentObj(id);
+	if (!hunks) {
+		DebugPrintf("No hunk segment found.\n");
+		return true;
+	}
+
+	if (memoryHandle.segment != id || !hunks->isValidOffset(memoryHandle.offset)) {
+		DebugPrintf("Invalid address.\n");
+		return true;
+	}
+
+	const Hunk& h = hunks->_table[memoryHandle.offset];
+
+	if (strcmp(h.type, "SaveBits()") != 0) {
+		DebugPrintf("Invalid address.\n");
+		return true;
+	}
+
+	byte *memoryPtr = segman->getHunkPointer(memoryHandle);
+
+	if (!memoryPtr) {
+		DebugPrintf("Invalid or freed bits.\n");
+		return true;
+	}
+
+	// Now we _finally_ know these are valid saved bits 
+
+	Common::Rect rect;
+	byte mask;
+	assert(h.size >= sizeof(rect) + sizeof(mask));
+
+	memcpy((void *)&rect, memoryPtr, sizeof(rect));
+	memcpy((void *)&mask, memoryPtr + sizeof(rect), sizeof(mask));
+
+	Common::Point tl(rect.left, rect.top);
+	Common::Point tr(rect.right-1, rect.top);
+	Common::Point bl(rect.left, rect.bottom-1);
+	Common::Point br(rect.right-1, rect.bottom-1);
+
+	DebugPrintf(" %d,%d - %d,%d", rect.top, rect.left,
+	                              rect.bottom, rect.right);
+	if (mask & GFX_SCREEN_MASK_VISUAL)
+		DebugPrintf(" visual");
+	if (mask & GFX_SCREEN_MASK_PRIORITY)
+		DebugPrintf(" priority");
+	if (mask & GFX_SCREEN_MASK_CONTROL)
+		DebugPrintf(" control");
+	if (mask & GFX_SCREEN_MASK_DISPLAY)
+		DebugPrintf(" display");
+	DebugPrintf("\n");
+
+	if (!_engine->_gfxPaint16 || !_engine->_gfxScreen)
+		return true;
+
+	// We backup all planes, and then flash the saved bits
+	// FIXME: This probably won't work well with hi-res games
+
+	byte bakMask = GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY | GFX_SCREEN_MASK_CONTROL;
+	int bakSize = _engine->_gfxScreen->bitsGetDataSize(rect, bakMask);
+	reg_t bakScreen = segman->allocateHunkEntry("show_saved_bits backup", bakSize);
+	byte* bakMemory = segman->getHunkPointer(bakScreen);
+	assert(bakMemory);
+	_engine->_gfxScreen->bitsSave(rect, bakMask, bakMemory);
+
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	// If a graphical debugger overlay is used, hide it here, so that the
+	// results can be drawn.
+	g_system->hideOverlay();
+#endif
+
+	const int paintCount = 3;
+	for (int i = 0; i < paintCount; ++i) {
+		_engine->_gfxScreen->bitsRestore(memoryPtr);
+		_engine->_gfxScreen->drawLine(tl, tr, 0, 255, 255);
+		_engine->_gfxScreen->drawLine(tr, br, 0, 255, 255);
+		_engine->_gfxScreen->drawLine(br, bl, 0, 255, 255);
+		_engine->_gfxScreen->drawLine(bl, tl, 0, 255, 255);
+		_engine->_gfxScreen->copyRectToScreen(rect);
+		g_system->updateScreen();
+		g_sci->sleep(500);
+		_engine->_gfxScreen->bitsRestore(bakMemory);
+		_engine->_gfxScreen->copyRectToScreen(rect);
+		g_system->updateScreen();
+		if (i < paintCount - 1)
+			g_sci->sleep(500);
+	}
+
+	_engine->_gfxPaint16->bitsFree(bakScreen);
+
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	// Show the graphical debugger overlay
+	g_system->showOverlay();
+#endif
+
+	return true;
+}
+
+
 bool Console::cmdParseGrammar(int argc, const char **argv) {
 	DebugPrintf("Parse grammar, in strict GNF:\n");
 
@@ -2782,7 +2954,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 						uint16 argc2 = opparams[1];
 
 						if (kFuncNum == kernelFuncNum) {
-							DebugPrintf("Called from script %d, object %s, method %s(%d) with %d parameters\n", 
+							DebugPrintf("Called from script %d, object %s, method %s(%d) with %d bytes for arguments\n", 
 								itr->getNumber(), objName, 
 								_engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, argc2);
 						}
@@ -2799,7 +2971,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 					// Check for end of function/script
 					if (offset >= script->getBufSize())
 						break;
-					if (opcode == op_ret)// && offset >= maxJmpOffset)
+					if (opcode == op_ret && offset >= maxJmpOffset)
 						break;
 				}	// while (true)
 			}	// for (uint16 i = 0; i < obj->getMethodCount(); i++)

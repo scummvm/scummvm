@@ -43,7 +43,12 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_txt = 0;
 	_tim = 0;
 
-	switch (_flags.lang) {
+	_lang = 0;
+	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+	if (lang == _flags.fanLang && _flags.replacedLang != Common::UNK_LANG)
+		lang = _flags.replacedLang;
+
+	switch (lang) {
 	case Common::EN_ANY:
 	case Common::EN_USA:
 	case Common::EN_GRB:

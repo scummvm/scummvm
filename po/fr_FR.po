@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-06-06 23:15+0100\n"
+"POT-Creation-Date: 2011-06-13 22:20+0100\n"
 "PO-Revision-Date: 2011-05-02 19:50+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
@@ -46,7 +46,10 @@ msgstr "Remonter"
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:312 gui/massadd.cpp:92 gui/options.cpp:1178
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
+#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:281
 #: backends/platform/wii/options.cpp:48
+#: backends/events/default/default-events.cpp:222
+#: backends/events/default/default-events.cpp:244
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -83,7 +86,14 @@ msgstr "Affecter"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
 #: gui/launcher.cpp:940 gui/massadd.cpp:89 gui/options.cpp:1179
-#: backends/platform/wii/options.cpp:47
+#: engines/engine.cpp:346 engines/engine.cpp:357 engines/scumm/scumm.cpp:1772
+#: engines/agos/animation.cpp:545 engines/groovie/script.cpp:417
+#: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:344 engines/sword1/animation.cpp:354
+#: engines/sword1/animation.cpp:360 engines/sword1/control.cpp:865
+#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:379
+#: engines/sword2/animation.cpp:389 engines/sword2/animation.cpp:398
+#: engines/parallaction/saveload.cpp:281 backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:52
 msgid "OK"
 msgstr "OK"
@@ -427,7 +437,7 @@ msgstr "Charger le jeu:"
 
 #: gui/launcher.cpp:615 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:255
 #: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:216
-#: backends/platform/wince/CEActionsPocket.cpp:265
+#: backends/platform/wince/CEActionsPocket.cpp:264
 #: backends/platform/wince/CEActionsSmartphone.cpp:228
 msgid "Load"
 msgstr "Charger"
@@ -442,16 +452,16 @@ msgstr ""
 
 #: gui/launcher.cpp:724 gui/launcher.cpp:872
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
-#: backends/platform/wince/CEActionsPocket.cpp:327
-#: backends/platform/wince/CEActionsSmartphone.cpp:284
+#: backends/platform/wince/CEActionsPocket.cpp:314
+#: backends/platform/wince/CEActionsSmartphone.cpp:275
 #: backends/platform/wince/CELauncherDialog.cpp:77
 msgid "Yes"
 msgstr "Oui"
 
 #: gui/launcher.cpp:724 gui/launcher.cpp:872
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
-#: backends/platform/wince/CEActionsPocket.cpp:327
-#: backends/platform/wince/CEActionsSmartphone.cpp:284
+#: backends/platform/wince/CEActionsPocket.cpp:314
+#: backends/platform/wince/CEActionsSmartphone.cpp:275
 #: backends/platform/wince/CELauncherDialog.cpp:77
 msgid "No"
 msgstr "Non"
@@ -1102,31 +1112,31 @@ msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Ambre"
 
-#: engines/advancedDetector.cpp:368
+#: engines/advancedDetector.cpp:323
 #, c-format
 msgid "The game in '%s' seems to be unknown."
 msgstr ""
 
-#: engines/advancedDetector.cpp:369
+#: engines/advancedDetector.cpp:324
 msgid "Please, report the following data to the ScummVM team along with name"
 msgstr ""
 
-#: engines/advancedDetector.cpp:371
+#: engines/advancedDetector.cpp:326
 msgid "of the game you tried to add and its version/language/etc.:"
 msgstr ""
 
-#: engines/advancedDetector.cpp:632
+#: engines/advancedDetector.cpp:574
 #, c-format
 msgid ""
 "Your game version has been detected using filename matching as a variant of %"
 "s."
 msgstr ""
 
-#: engines/advancedDetector.cpp:635
+#: engines/advancedDetector.cpp:577
 msgid "If this is an original and unmodified version, please report any"
 msgstr ""
 
-#: engines/advancedDetector.cpp:637
+#: engines/advancedDetector.cpp:579
 msgid "information previously printed by ScummVM to the team."
 msgstr ""
 
@@ -1172,11 +1182,18 @@ msgstr "Sauvegarde:"
 #: engines/sci/engine/kfile.cpp:575
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
-#: backends/platform/wince/CEActionsPocket.cpp:265
+#: backends/platform/wince/CEActionsPocket.cpp:264
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:228
 msgid "Save"
 msgstr "Sauver"
+
+#: engines/dialogs.cpp:146
+msgid ""
+"Sorry, this engine does not currently provide in-game help. Please consult "
+"the README for basic information, and for instructions on how to obtain "
+"further assistance."
+msgstr ""
 
 #: engines/dialogs.cpp:312 engines/mohawk/dialogs.cpp:100
 #: engines/mohawk/dialogs.cpp:152
@@ -1191,6 +1208,42 @@ msgstr "~A~nnuler"
 #: engines/dialogs.cpp:316
 msgid "~K~eys"
 msgstr "~T~ouches"
+
+#: engines/engine.cpp:220
+msgid "Could not initialize color format."
+msgstr ""
+
+#: engines/engine.cpp:228
+#, fuzzy
+msgid "Could not switch to video mode: '"
+msgstr "Mode vidéo actuel"
+
+#: engines/engine.cpp:237
+#, fuzzy
+msgid "Could not apply aspect ratio setting."
+msgstr "Changer correction du rapport d'aspect"
+
+#: engines/engine.cpp:242
+msgid "Could not apply fullscreen setting."
+msgstr ""
+
+#: engines/engine.cpp:342
+msgid ""
+"You appear to be playing this game directly\n"
+"from the CD. This is known to cause problems,\n"
+"and it is therefore recommended that you copy\n"
+"the data files to your hard disk instead.\n"
+"See the README file for details."
+msgstr ""
+
+#: engines/engine.cpp:353
+msgid ""
+"This game has audio tracks in its disk. These\n"
+"tracks need to be ripped from the disk using\n"
+"an appropriate CD audio extracting tool in\n"
+"order to listen to the game's music.\n"
+"See the README file for details."
+msgstr ""
 
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
@@ -1259,6 +1312,7 @@ msgstr "Écrire sauvegarde 1-10:"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
+#: backends/events/default/default-events.cpp:244
 msgid "Quit"
 msgstr "Quitter"
 
@@ -1724,7 +1778,14 @@ msgstr "Voler vers la droite"
 msgid "Fly to lower right"
 msgstr "Voler vers la bas à droite"
 
-#: engines/scumm/scumm.cpp:2250 engines/agos/saveload.cpp:190
+#: engines/scumm/scumm.cpp:1770
+#, c-format
+msgid ""
+"Native MIDI support requires the Roland Upgrade from LucasArts,\n"
+"but %s is missing. Using AdLib instead."
+msgstr ""
+
+#: engines/scumm/scumm.cpp:2256 engines/agos/saveload.cpp:190
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1735,7 +1796,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2257 engines/agos/saveload.cpp:155
+#: engines/scumm/scumm.cpp:2263 engines/agos/saveload.cpp:155
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1746,7 +1807,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2269 engines/agos/saveload.cpp:198
+#: engines/scumm/scumm.cpp:2275 engines/agos/saveload.cpp:198
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1757,7 +1818,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2484
+#: engines/scumm/scumm.cpp:2490
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -1796,6 +1857,152 @@ msgstr "Charger le jeu:"
 msgid "Restore"
 msgstr "Charger"
 
+#: engines/agos/animation.cpp:544
+#, c-format
+msgid "Cutscene file '%s' not found!"
+msgstr ""
+
+#: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
+#: engines/tinsel/saveload.cpp:468
+#, fuzzy
+msgid "Failed to load game state from file."
+msgstr ""
+"Échec du chargement de l'état du jeu depuis le fichier:\n"
+"\n"
+"%s"
+
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:546
+#, fuzzy
+msgid "Failed to save game state to file."
+msgstr ""
+"Échec de l'enregistrement de l'état du jeu dans le fichier:\n"
+"\n"
+"%s"
+
+#: engines/gob/inter_v5.cpp:107
+#, fuzzy
+msgid "Failed to delete file."
+msgstr ""
+"Échec de l'enregistrement de l'état du jeu dans le fichier:\n"
+"\n"
+"%s"
+
+#: engines/groovie/script.cpp:417
+#, fuzzy
+msgid "Failed to save game"
+msgstr ""
+"Échec de l'enregistrement de l'état du jeu dans le fichier:\n"
+"\n"
+"%s"
+
+#: engines/kyra/sound_midi.cpp:475
+msgid ""
+"You appear to be using a General MIDI device,\n"
+"but your game only supports Roland MT32 MIDI.\n"
+"We try to map the Roland MT32 instruments to\n"
+"General MIDI ones. After all it might happen\n"
+"that a few tracks will not be correctly played."
+msgstr ""
+
+#: engines/m4/m4_menus.cpp:138
+#, fuzzy
+msgid "Save game failed!"
+msgstr "Sauvegarde:"
+
+#: engines/sky/compact.cpp:130
+msgid ""
+"Unable to find \"sky.cpt\" file!\n"
+"Please download it from www.scummvm.org"
+msgstr ""
+
+#: engines/sky/compact.cpp:141
+msgid ""
+"The \"sky.cpt\" file has an incorrect size.\n"
+"Please (re)download it from www.scummvm.org"
+msgstr ""
+
+#: engines/sword1/animation.cpp:344 engines/sword2/animation.cpp:379
+msgid "DXA cutscenes found but ScummVM has been built without zlib support"
+msgstr ""
+
+#: engines/sword1/animation.cpp:354 engines/sword2/animation.cpp:389
+msgid "MPEG2 cutscenes are no longer supported"
+msgstr ""
+
+#: engines/sword1/animation.cpp:359 engines/sword2/animation.cpp:397
+#, c-format
+msgid "Cutscene '%s' not found"
+msgstr ""
+
+#: engines/sword1/control.cpp:863
+msgid ""
+"ScummVM found that you have old savefiles for Broken Sword 1 that should be "
+"converted.\n"
+"The old save game format is no longer supported, so you will not be able to "
+"load your games if you don't convert them.\n"
+"\n"
+"Press OK to convert them now, otherwise you will be asked again the next "
+"time you start the game.\n"
+msgstr ""
+
+#: engines/sword1/control.cpp:1232
+#, c-format
+msgid ""
+"Target new save game already exists!\n"
+"Would you like to keep the old save game (%s) or the new one (%s)?\n"
+msgstr ""
+
+#: engines/sword1/control.cpp:1235
+msgid "Keep the old one"
+msgstr ""
+
+#: engines/sword1/control.cpp:1235
+msgid "Keep the new one"
+msgstr ""
+
+#: engines/sword1/logic.cpp:1633
+msgid "This is the end of the Broken Sword 1 Demo"
+msgstr ""
+
+#: engines/parallaction/saveload.cpp:133
+#, c-format
+msgid ""
+"Can't save game in slot %i\n"
+"\n"
+msgstr ""
+
+#: engines/parallaction/saveload.cpp:211
+#, fuzzy
+msgid "Loading game..."
+msgstr "Charger le jeu:"
+
+#: engines/parallaction/saveload.cpp:226
+#, fuzzy
+msgid "Saving game..."
+msgstr "Sauvegarde:"
+
+#: engines/parallaction/saveload.cpp:279
+msgid ""
+"ScummVM found that you have old savefiles for Nippon Safes that should be "
+"renamed.\n"
+"The old names are no longer supported, so you will not be able to load your "
+"games if you don't convert them.\n"
+"\n"
+"Press OK to convert them now, otherwise you will be asked next time.\n"
+msgstr ""
+
+#: engines/parallaction/saveload.cpp:326
+msgid "ScummVM successfully converted all your savefiles."
+msgstr ""
+
+#: engines/parallaction/saveload.cpp:328
+msgid ""
+"ScummVM printed some warnings in your console window and can't guarantee all "
+"your files have been converted.\n"
+"\n"
+"Please report to the team."
+msgstr ""
+
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
 msgstr "Émulateur MAME OPL"
@@ -1804,17 +2011,31 @@ msgstr "Émulateur MAME OPL"
 msgid "DOSBox OPL emulator"
 msgstr "Émulateur DOSBox OPL"
 
-#: audio/mididrv.cpp:206
+#: audio/mididrv.cpp:204
 #, c-format
 msgid ""
-"Failed to detect the selected audio device '%s'. See log file for more "
+"The selected audio device '%s' was not found (e.g. might be turned off or "
+"disconnected). Attempting to fall back to the next available device..."
+msgstr ""
+
+#: audio/mididrv.cpp:216
+#, c-format
+msgid ""
+"The selected audio device '%s' cannot be used. See log file for more "
 "information. Attempting to fall back to the next available device..."
 msgstr ""
 
-#: audio/mididrv.cpp:246
+#: audio/mididrv.cpp:250
 #, c-format
 msgid ""
-"Failed to detect the preferred device '%s'. See log file for more "
+"The preferred audio device '%s' was not found (e.g. might be turned off or "
+"disconnected). Attempting to fall back to the next available device..."
+msgstr ""
+
+#: audio/mididrv.cpp:265
+#, c-format
+msgid ""
+"The preferred audio device '%s' cannot be used. See log file for more "
 "information. Attempting to fall back to the next available device..."
 msgstr ""
 
@@ -1946,6 +2167,16 @@ msgstr "Audio haute qualité (plus lent) (redémarrer)"
 #: backends/platform/ds/arm9/source/dsoptions.cpp:122
 msgid "Disable power off"
 msgstr "Désactivé l'extinction"
+
+#: backends/platform/iphone/osys_events.cpp:338
+#, fuzzy
+msgid "Mouse-click-and-drag mode enabled."
+msgstr "Mode touchpad activé"
+
+#: backends/platform/iphone/osys_events.cpp:340
+#, fuzzy
+msgid "Mouse-click-and-drag mode disabled."
+msgstr "Mode touchpad désactivé"
 
 #: backends/platform/iphone/osys_events.cpp:351
 msgid "Touchpad mode enabled."
@@ -2274,13 +2505,13 @@ msgstr "Gauche"
 msgid "Cursor Right"
 msgstr "Droit"
 
-#: backends/platform/wince/CEActionsPocket.cpp:265
+#: backends/platform/wince/CEActionsPocket.cpp:264
 #: backends/platform/wince/CEActionsSmartphone.cpp:228
 msgid "Do you want to load or save the game?"
 msgstr "Voulez-vous charger ou enregistrer le jeu?"
 
-#: backends/platform/wince/CEActionsPocket.cpp:327
-#: backends/platform/wince/CEActionsSmartphone.cpp:284
+#: backends/platform/wince/CEActionsPocket.cpp:314
+#: backends/platform/wince/CEActionsSmartphone.cpp:275
 msgid "   Are you sure you want to quit ?   "
 msgstr "Voulez-vous vraiment quitter?"
 
@@ -2304,84 +2535,89 @@ msgstr "Affichage"
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Voulez-vous exécuter une recherche automatique?"
 
-#: backends/platform/wince/wince-sdl.cpp:485
+#: backends/platform/wince/wince-sdl.cpp:487
 msgid "Map right click action"
 msgstr "Affecter l'action 'Clic Droit'"
 
-#: backends/platform/wince/wince-sdl.cpp:489
+#: backends/platform/wince/wince-sdl.cpp:491
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
 "Vous devez affecter une touche à l'action de 'Clic Droit' pour pouvoir jouer "
 "à ce jeu"
 
-#: backends/platform/wince/wince-sdl.cpp:498
+#: backends/platform/wince/wince-sdl.cpp:500
 msgid "Map hide toolbar action"
 msgstr "Affecter l'action 'Cacher Bar d'Outils'"
 
-#: backends/platform/wince/wince-sdl.cpp:502
+#: backends/platform/wince/wince-sdl.cpp:504
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "Vous devez affecter une touche à l'action 'Cacher Bar d'Outils' pour pouvoir "
 "jouer à ce jeu"
 
-#: backends/platform/wince/wince-sdl.cpp:511
+#: backends/platform/wince/wince-sdl.cpp:513
 msgid "Map Zoom Up action (optional)"
 msgstr "Affecter l'action 'Dézoomer' (optionnelle)"
 
-#: backends/platform/wince/wince-sdl.cpp:514
+#: backends/platform/wince/wince-sdl.cpp:516
 msgid "Map Zoom Down action (optional)"
 msgstr "Affecter l'action 'Zoomer' (optionnelle)"
 
-#: backends/platform/wince/wince-sdl.cpp:522
+#: backends/platform/wince/wince-sdl.cpp:524
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
 "Noubliez pas d'affecter une touche à l'action 'Cacher Bar d'Outils' pour "
 "pouvoir voir entièrement l'inventaire"
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:273
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:317
-#: backends/events/gph/gph-events.cpp:367
-#: backends/events/gph/gph-events.cpp:410
-#: backends/events/openpandora/op-events.cpp:78
+#: backends/events/default/default-events.cpp:222
+#, fuzzy
+msgid "Do you really want to return to the Launcher?"
+msgstr "Voulez-vous vraiment supprimer cette sauvegarde?"
+
+#: backends/events/default/default-events.cpp:222
+#, fuzzy
+msgid "Launcher"
+msgstr "Frapper"
+
+#: backends/events/default/default-events.cpp:244
+#, fuzzy
+msgid "Do you really want to quit?"
+msgstr "Voulez-vous quitter?"
+
+#: backends/events/gph/gph-events.cpp:366
+#: backends/events/gph/gph-events.cpp:409
+#: backends/events/openpandora/op-events.cpp:141
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr ""
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:275
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:319
-#: backends/events/gph/gph-events.cpp:369
-#: backends/events/gph/gph-events.cpp:412
-#: backends/events/openpandora/op-events.cpp:80
+#: backends/events/gph/gph-events.cpp:368
+#: backends/events/gph/gph-events.cpp:411
+#: backends/events/openpandora/op-events.cpp:143
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr ""
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:277
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:321
-#: backends/events/gph/gph-events.cpp:371
-#: backends/events/gph/gph-events.cpp:414
-#: backends/events/openpandora/op-events.cpp:82
+#: backends/events/gph/gph-events.cpp:370
+#: backends/events/gph/gph-events.cpp:413
+#: backends/events/openpandora/op-events.cpp:145
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr ""
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:297
-#: backends/events/gph/gph-events.cpp:391
+#: backends/events/gph/gph-events.cpp:390
 #, fuzzy
 msgid "Maximum Volume"
 msgstr "Volume"
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:299
-#: backends/events/gph/gph-events.cpp:393
+#: backends/events/gph/gph-events.cpp:392
 msgid "Increasing Volume"
 msgstr ""
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:306
-#: backends/events/gph/gph-events.cpp:399
+#: backends/events/gph/gph-events.cpp:398
 #, fuzzy
 msgid "Minimal Volume"
 msgstr "Volume"
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:308
-#: backends/events/gph/gph-events.cpp:401
+#: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
 msgstr ""
 

@@ -20,13 +20,16 @@
  *
  */
 
+#if defined(OPENPANDORA)
+
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/platform/openpandora/op-sdl.h"
-#include "base/main.h"
+#include "backends/platform/sdl/sdl-sys.h"
 
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
+#include "backends/platform/openpandora/op-sdl.h"
+#include "backends/plugins/posix/posix-provider.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
@@ -35,6 +38,7 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "audio/mixer_intern.h"
@@ -52,14 +56,28 @@
 
 static SDL_Cursor *hiddenCursor;
 
-static Uint32 timer_handler(Uint32 interval, void *param) {
-	((DefaultTimerManager *)param)->handler();
-	return interval;
+OSystem_OP::OSystem_OP()
+	:
+	OSystem_POSIX() {
 }
+
+//static Uint32 timer_handler(Uint32 interval, void *param) {
+//	((DefaultTimerManager *)param)->handler();
+//	return interval;
+//}
 
 void OSystem_OP::initBackend() {
 
 	assert(!_inited);
+
+	// Create the events manager
+	if (_eventSource == 0)
+		_eventSource = new OPEventSource();
+
+	// Create the graphics manager
+	if (_graphicsManager == 0) {
+		_graphicsManager = new OPGraphicsManager(_eventSource);
+	}
 
 //	int joystick_num = ConfMan.getInt("joystick_num");
 //	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
@@ -76,12 +94,12 @@ void OSystem_OP::initBackend() {
 //
 
 	// Create the mixer manager
-	if (_mixer == 0) {
-		_mixerManager = new DoubleBufferSDLMixerManager();
+//	if (_mixer == 0) {
+//		_mixerManager = new DoubleBufferSDLMixerManager();
 
 		// Setup and start mixer
-		_mixerManager->init();
-	}
+//		_mixerManager->init();
+//	}
 
 	/* Setup default save path to be workingdir/saves */
 
@@ -103,7 +121,7 @@ void OSystem_OP::initBackend() {
 			if (mkdir(savePath, 0755) != 0)
 				warning("mkdir for '%s' failed!", savePath);
 
-//	_savefileManager = new DefaultSaveFileManager(savePath);
+	_savefileManager = new DefaultSaveFileManager(savePath);
 
 	#ifdef DUMP_STDOUT
 		// The OpenPandora has a serial console on the EXT connection but most users do not use this so we
@@ -161,21 +179,31 @@ void OSystem_OP::initBackend() {
 	/* Make sure SDL knows that we have a joystick we want to use. */
 	ConfMan.setInt("joystick_num", 0);
 
-	// Create the events manager
-	if (_eventSource == 0)
-		_eventSource = new OPEventSource();
-
-	// Create the graphics manager
-	if (_graphicsManager == 0)
-		_graphicsManager = new OPGraphicsManager(_eventSource);
-
 //	_graphicsMutex = createMutex();
 
-	// Invoke parent implementation of this method
+	/* Pass to POSIX method to do the heavy lifting */
 	OSystem_POSIX::initBackend();
 
 	_inited = true;
 }
+
+	// enable joystick
+//	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
+//		printf("Using joystick: %s\n", SDL_JoystickName(0));
+//		_joystick = SDL_JoystickOpen(joystick_num);
+//	}
+//
+//	setupMixer();
+
+	// Note: We could implement a custom SDLTimerManager by using
+	// SDL_AddTimer. That might yield better timer resolution, but it would
+	// also change the semantics of a timer: Right now, ScummVM timers
+	// *never* run in parallel, due to the way they are implemented. If we
+	// switched to SDL_AddTimer, each timer might run in a separate thread.
+	// However, not all our code is prepared for that, so we can't just
+	// switch. Still, it's a potential future change to keep in mind.
+//	_timer = new DefaultTimerManager();
+//	_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 
 void OSystem_OP::initSDL() {
 	// Check if SDL has not been initialized
@@ -219,13 +247,14 @@ void OSystem_OP::initSDL() {
 //		_videoMode.fullscreen = true;
 
 		_initedSDL = true;
+
+//	OSystem_POSIX::initSDL();
 	}
 }
 
 void OSystem_OP::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 	/* Setup default extra data paths for engine data files and plugins */
-
 	char workDirName[PATH_MAX+1];
 
 	if (getcwd(workDirName, PATH_MAX) == NULL) {
@@ -256,3 +285,5 @@ void OSystem_OP::quit() {
 
 	OSystem_POSIX::quit();
 }
+
+#endif

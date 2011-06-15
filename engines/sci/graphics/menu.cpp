@@ -423,7 +423,9 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		default:
 			while (itemIterator != itemEnd) {
 				itemEntry = *itemIterator;
-				if ((itemEntry->keyPress == keyPress) && (itemEntry->keyModifier == keyModifier))
+				if (itemEntry->keyPress == keyPress && 
+					itemEntry->keyModifier == keyModifier && 
+					itemEntry->enabled)
 					break;
 				itemIterator++;
 			}

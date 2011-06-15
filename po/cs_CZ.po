@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-06-06 23:15+0100\n"
-"PO-Revision-Date: 2011-04-23 10:55+0100\n"
+"POT-Creation-Date: 2011-06-13 22:20+0100\n"
+"PO-Revision-Date: 2011-06-14 15:04+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -49,7 +49,10 @@ msgstr "Jít nahoru"
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:312 gui/massadd.cpp:92 gui/options.cpp:1178
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
+#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:281
 #: backends/platform/wii/options.cpp:48
+#: backends/events/default/default-events.cpp:222
+#: backends/events/default/default-events.cpp:244
 msgid "Cancel"
 msgstr "Zru¹it"
 
@@ -86,7 +89,14 @@ msgstr "Mapovat"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
 #: gui/launcher.cpp:940 gui/massadd.cpp:89 gui/options.cpp:1179
-#: backends/platform/wii/options.cpp:47
+#: engines/engine.cpp:346 engines/engine.cpp:357 engines/scumm/scumm.cpp:1772
+#: engines/agos/animation.cpp:545 engines/groovie/script.cpp:417
+#: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:344 engines/sword1/animation.cpp:354
+#: engines/sword1/animation.cpp:360 engines/sword1/control.cpp:865
+#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:379
+#: engines/sword2/animation.cpp:389 engines/sword2/animation.cpp:398
+#: engines/parallaction/saveload.cpp:281 backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:52
 msgid "OK"
 msgstr "OK"
@@ -427,7 +437,7 @@ msgstr "Nahrát hru:"
 
 #: gui/launcher.cpp:615 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:255
 #: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:216
-#: backends/platform/wince/CEActionsPocket.cpp:265
+#: backends/platform/wince/CEActionsPocket.cpp:264
 #: backends/platform/wince/CEActionsSmartphone.cpp:228
 msgid "Load"
 msgstr "Nahrát"
@@ -442,16 +452,16 @@ msgstr ""
 
 #: gui/launcher.cpp:724 gui/launcher.cpp:872
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
-#: backends/platform/wince/CEActionsPocket.cpp:327
-#: backends/platform/wince/CEActionsSmartphone.cpp:284
+#: backends/platform/wince/CEActionsPocket.cpp:314
+#: backends/platform/wince/CEActionsSmartphone.cpp:275
 #: backends/platform/wince/CELauncherDialog.cpp:77
 msgid "Yes"
 msgstr "Ano"
 
 #: gui/launcher.cpp:724 gui/launcher.cpp:872
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
-#: backends/platform/wince/CEActionsPocket.cpp:327
-#: backends/platform/wince/CEActionsSmartphone.cpp:284
+#: backends/platform/wince/CEActionsPocket.cpp:314
+#: backends/platform/wince/CEActionsSmartphone.cpp:275
 #: backends/platform/wince/CELauncherDialog.cpp:77
 msgid "No"
 msgstr "Ne"
@@ -509,7 +519,7 @@ msgstr "Hledání dokonèeno!"
 #: gui/massadd.cpp:246
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr ""
+msgstr "Objeveno %d nových her, ignorováno %d døíve pøidaných her."
 
 #: gui/massadd.cpp:250
 #, c-format
@@ -517,9 +527,9 @@ msgid "Scanned %d directories ..."
 msgstr "Prohledáno %d adresáøù..."
 
 #: gui/massadd.cpp:253
-#, fuzzy, c-format
+#, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr "Objeveno %d nových her..."
+msgstr "Objeveno %d nových her, ignorováno %d døíve pøidaných her ..."
 
 #: gui/options.cpp:72
 msgid "Never"
@@ -569,19 +579,19 @@ msgstr "®ádné"
 
 #: gui/options.cpp:372
 msgid "Failed to apply some of the graphic options changes:"
-msgstr ""
+msgstr "Nelze pou¾ít nìkteré zmìny mo¾ností grafiky:"
 
 #: gui/options.cpp:384
 msgid "the video mode could not be changed."
-msgstr ""
+msgstr "re¾im obrazu nemohl být zmìnìn."
 
 #: gui/options.cpp:390
 msgid "the fullscreen setting could not be changed"
-msgstr ""
+msgstr "nastavení celé obrazovky nemohlo být zmìnìno"
 
 #: gui/options.cpp:396
 msgid "the aspect ratio setting could not be changed"
-msgstr ""
+msgstr "nastavení pomìru stran nemohlo být zmìnìno"
 
 #: gui/options.cpp:705
 msgid "Graphics mode:"
@@ -885,9 +895,8 @@ msgid "Language of ScummVM GUI"
 msgstr "Jazyk GUI ScummVM"
 
 #: gui/options.cpp:1295
-#, fuzzy
 msgid "You have to restart ScummVM before your changes will take effect."
-msgstr "Pro pou¾ití tìchto nastavení musíte restartovat ScummVM"
+msgstr "Pro pou¾ití tìchto nastavení musíte restartovat ScummVM."
 
 #: gui/options.cpp:1308
 msgid "Select directory for savegames"
@@ -1092,33 +1101,35 @@ msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Jantarová"
 
-#: engines/advancedDetector.cpp:368
+#: engines/advancedDetector.cpp:323
 #, c-format
 msgid "The game in '%s' seems to be unknown."
-msgstr ""
+msgstr "Hra v '%s' se zdá být neznámá."
 
-#: engines/advancedDetector.cpp:369
+#: engines/advancedDetector.cpp:324
 msgid "Please, report the following data to the ScummVM team along with name"
-msgstr ""
+msgstr "Prosím nahlaste následující data týmu ScummVM spolu se jménem"
 
-#: engines/advancedDetector.cpp:371
+#: engines/advancedDetector.cpp:326
 msgid "of the game you tried to add and its version/language/etc.:"
-msgstr ""
+msgstr "hry, kterou jste se pokusili pøidat a její verzi/jazyk/atd.:"
 
-#: engines/advancedDetector.cpp:632
+#: engines/advancedDetector.cpp:574
 #, c-format
 msgid ""
 "Your game version has been detected using filename matching as a variant of %"
 "s."
 msgstr ""
+"Bylo zji¹tìno, ¾e Va¹e verze hry pou¾ívá jméno souboru shodující se s "
+"variantou %s."
 
-#: engines/advancedDetector.cpp:635
+#: engines/advancedDetector.cpp:577
 msgid "If this is an original and unmodified version, please report any"
-msgstr ""
+msgstr "Pokud je toto pùvodní a nezmìnìná verze, ohlaste prosím jakékoli"
 
-#: engines/advancedDetector.cpp:637
+#: engines/advancedDetector.cpp:579
 msgid "information previously printed by ScummVM to the team."
-msgstr ""
+msgstr "pøede¹le vypsané informace od ScummVM zpátky týmu."
 
 #: engines/dialogs.cpp:84
 msgid "~R~esume"
@@ -1162,11 +1173,21 @@ msgstr "Ulo¾it hru:"
 #: engines/sci/engine/kfile.cpp:575
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
-#: backends/platform/wince/CEActionsPocket.cpp:265
+#: backends/platform/wince/CEActionsPocket.cpp:264
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:228
 msgid "Save"
 msgstr "Ulo¾it"
+
+#: engines/dialogs.cpp:146
+msgid ""
+"Sorry, this engine does not currently provide in-game help. Please consult "
+"the README for basic information, and for instructions on how to obtain "
+"further assistance."
+msgstr ""
+"Je nám líto, ale toto jádro v souèasnosti nepodporuje herní nápovìdu. Prosím "
+"prohlédnìte si README pro základní informace a pro instrukce jak získat "
+"dal¹í pomoc."
 
 #: engines/dialogs.cpp:312 engines/mohawk/dialogs.cpp:100
 #: engines/mohawk/dialogs.cpp:152
@@ -1181,6 +1202,50 @@ msgstr "~Z~ru¹it"
 #: engines/dialogs.cpp:316
 msgid "~K~eys"
 msgstr "~K~lávesy"
+
+#: engines/engine.cpp:220
+msgid "Could not initialize color format."
+msgstr "Nelze zavést barevný formát."
+
+#: engines/engine.cpp:228
+msgid "Could not switch to video mode: '"
+msgstr "Nelze pøepnout na re¾im obrazu: '"
+
+#: engines/engine.cpp:237
+msgid "Could not apply aspect ratio setting."
+msgstr "Nelze pou¾ít nastavení pomìru stran."
+
+#: engines/engine.cpp:242
+msgid "Could not apply fullscreen setting."
+msgstr "Nelze pou¾ít nastavení celé obrazovky."
+
+#: engines/engine.cpp:342
+msgid ""
+"You appear to be playing this game directly\n"
+"from the CD. This is known to cause problems,\n"
+"and it is therefore recommended that you copy\n"
+"the data files to your hard disk instead.\n"
+"See the README file for details."
+msgstr ""
+"Vypadá to, ¾e tuto hru hrajete pøímo z\n"
+" CD. Je známo, ¾e toto zpùsobuje problémy\n"
+" a je tedy doporuèeno, a» místo toho zkopírujete\n"
+"datové soubory na Vá¹ pevný disk.\n"
+"Pro podrobnosti si pøeètìte README."
+
+#: engines/engine.cpp:353
+msgid ""
+"This game has audio tracks in its disk. These\n"
+"tracks need to be ripped from the disk using\n"
+"an appropriate CD audio extracting tool in\n"
+"order to listen to the game's music.\n"
+"See the README file for details."
+msgstr ""
+"Tato hra má na svém disku zvukové stopy. Tyto\n"
+"stopy musí být z disku zkopírovány pou¾itím\n"
+"vhodného nástroje pro extrakci zvuku z CD,\n"
+"abyste mohli poslouchat hudbu ve høe.\n"
+"Pro podrobnosti si pøeètìte README."
 
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
@@ -1249,6 +1314,7 @@ msgstr "Ulo¾it stav hry 1-10"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
+#: backends/events/default/default-events.cpp:244
 msgid "Quit"
 msgstr "Ukonèit"
 
@@ -1333,9 +1399,8 @@ msgid "  since they may cause crashes"
 msgstr "jeliko¾ mù¾ou zpùsobit pád"
 
 #: engines/scumm/help.cpp:110
-#, fuzzy
 msgid "  or incorrect game behavior."
-msgstr "nebo nesprávné chování hry"
+msgstr "  nebo nesprávné chování hry."
 
 #: engines/scumm/help.cpp:114
 msgid "Spinning drafts on the keyboard:"
@@ -1714,7 +1779,16 @@ msgstr "Letìt doprava"
 msgid "Fly to lower right"
 msgstr "Letìt doprava dolù"
 
-#: engines/scumm/scumm.cpp:2250 engines/agos/saveload.cpp:190
+#: engines/scumm/scumm.cpp:1770
+#, c-format
+msgid ""
+"Native MIDI support requires the Roland Upgrade from LucasArts,\n"
+"but %s is missing. Using AdLib instead."
+msgstr ""
+"Pøirozená podpora MIDI vy¾aduje Aktualizaci Roland od LucasArts,\n"
+"ale %s chybí. Místo toho je pou¾it AdLib."
+
+#: engines/scumm/scumm.cpp:2256 engines/agos/saveload.cpp:190
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1725,7 +1799,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2257 engines/agos/saveload.cpp:155
+#: engines/scumm/scumm.cpp:2263 engines/agos/saveload.cpp:155
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1736,18 +1810,18 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2269 engines/agos/saveload.cpp:198
+#: engines/scumm/scumm.cpp:2275 engines/agos/saveload.cpp:198
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
 "\n"
 "%s"
 msgstr ""
-"Stav hry úspe¹nì ulo¾en do:\n"
+"Stav hry úspì¹nì ulo¾en do:\n"
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2484
+#: engines/scumm/scumm.cpp:2490
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -1767,11 +1841,11 @@ msgstr "~P~øechody zapnuty"
 
 #: engines/mohawk/dialogs.cpp:92
 msgid "~D~rop Page"
-msgstr ""
+msgstr "~Z~ahodit Stránku"
 
 #: engines/mohawk/dialogs.cpp:96
 msgid "~S~how Map"
-msgstr ""
+msgstr "~Z~obrazit Mapu"
 
 #: engines/mohawk/dialogs.cpp:150
 msgid "~W~ater Effect Enabled"
@@ -1785,6 +1859,163 @@ msgstr "Obnovit hru"
 msgid "Restore"
 msgstr "Obnovit"
 
+#: engines/agos/animation.cpp:544
+#, c-format
+msgid "Cutscene file '%s' not found!"
+msgstr "Soubor videa '%s' nenalezen'"
+
+#: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
+#: engines/tinsel/saveload.cpp:468
+msgid "Failed to load game state from file."
+msgstr "Nelze naèíst stav hry ze souboru."
+
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:546
+msgid "Failed to save game state to file."
+msgstr "Nelze ulo¾it stav hry do souboru."
+
+#: engines/gob/inter_v5.cpp:107
+msgid "Failed to delete file."
+msgstr "Nelze smazat soubor."
+
+#: engines/groovie/script.cpp:417
+msgid "Failed to save game"
+msgstr "Nelze ulo¾it hru."
+
+#: engines/kyra/sound_midi.cpp:475
+msgid ""
+"You appear to be using a General MIDI device,\n"
+"but your game only supports Roland MT32 MIDI.\n"
+"We try to map the Roland MT32 instruments to\n"
+"General MIDI ones. After all it might happen\n"
+"that a few tracks will not be correctly played."
+msgstr ""
+"Zdá se, ¾e pou¾íváte zaøízení General MIDI,\n"
+"ale Va¹e hra podporuje pouze Roland MT32 MIDI.\n"
+"Sna¾íme se mapovat nástroje Roland MT32 na\n"
+"ty od General MIDI. Po tomto se mù¾e stát,\n"
+"¾e pár stop nebude správnì pøehráno."
+
+#: engines/m4/m4_menus.cpp:138
+msgid "Save game failed!"
+msgstr "Ukládání hry selhalo!"
+
+#: engines/sky/compact.cpp:130
+msgid ""
+"Unable to find \"sky.cpt\" file!\n"
+"Please download it from www.scummvm.org"
+msgstr ""
+"Nelze nalézt soubor \"sky.cpt\"!\n"
+"Stáhnìte si ho, prosím z www.scummvm.org"
+
+#: engines/sky/compact.cpp:141
+msgid ""
+"The \"sky.cpt\" file has an incorrect size.\n"
+"Please (re)download it from www.scummvm.org"
+msgstr ""
+"Soubor \"sky.cpt\" má nesprávnou velikost.\n"
+"Stáhnìte si ho, prosím, (znovu) z www.scummvm.org"
+
+#: engines/sword1/animation.cpp:344 engines/sword2/animation.cpp:379
+msgid "DXA cutscenes found but ScummVM has been built without zlib support"
+msgstr "Videa DXA nalezena, ale ScummVM byl sestaven bez podpory zlib"
+
+#: engines/sword1/animation.cpp:354 engines/sword2/animation.cpp:389
+msgid "MPEG2 cutscenes are no longer supported"
+msgstr "Videa MPGE2 ji¾ nejsou podporována"
+
+#: engines/sword1/animation.cpp:359 engines/sword2/animation.cpp:397
+#, c-format
+msgid "Cutscene '%s' not found"
+msgstr "Video '%s' nenalezeno"
+
+#: engines/sword1/control.cpp:863
+msgid ""
+"ScummVM found that you have old savefiles for Broken Sword 1 that should be "
+"converted.\n"
+"The old save game format is no longer supported, so you will not be able to "
+"load your games if you don't convert them.\n"
+"\n"
+"Press OK to convert them now, otherwise you will be asked again the next "
+"time you start the game.\n"
+msgstr ""
+"ScummVM zjistil, ¾e máte staré ulo¾ené pozice pro Broken Sword 1, které by "
+"mìly být pøevedeny.\n"
+"Starý formát ulo¾ených her ji¾ není podporován, tak¾e pokud je nepøevedete, "
+"nebudete moci Va¹e hry naèíst.\n"
+"\n"
+"Stisknìte OK, abyste je pøevedli teï, jinak budete po¾ádáni znovu, pøi "
+"spu¹tìní této hry.\n"
+
+#: engines/sword1/control.cpp:1232
+#, c-format
+msgid ""
+"Target new save game already exists!\n"
+"Would you like to keep the old save game (%s) or the new one (%s)?\n"
+msgstr ""
+"Nová cílová ulo¾ená hra ji¾ existuje!\n"
+"Chtìli byste ponechat starou ulo¾enou hru (%s), nebo novou (%s)?\n"
+
+#: engines/sword1/control.cpp:1235
+msgid "Keep the old one"
+msgstr "Ponechat starou"
+
+#: engines/sword1/control.cpp:1235
+msgid "Keep the new one"
+msgstr "Ponechat novou"
+
+#: engines/sword1/logic.cpp:1633
+msgid "This is the end of the Broken Sword 1 Demo"
+msgstr "Toto je konec Dema Broken Sword 1"
+
+#: engines/parallaction/saveload.cpp:133
+#, c-format
+msgid ""
+"Can't save game in slot %i\n"
+"\n"
+msgstr ""
+"Nelze ulo¾it hru do pozice %i\n"
+"\n"
+
+#: engines/parallaction/saveload.cpp:211
+msgid "Loading game..."
+msgstr "Nahrávání hry..."
+
+#: engines/parallaction/saveload.cpp:226
+msgid "Saving game..."
+msgstr "Ukládání hry..."
+
+#: engines/parallaction/saveload.cpp:279
+msgid ""
+"ScummVM found that you have old savefiles for Nippon Safes that should be "
+"renamed.\n"
+"The old names are no longer supported, so you will not be able to load your "
+"games if you don't convert them.\n"
+"\n"
+"Press OK to convert them now, otherwise you will be asked next time.\n"
+msgstr ""
+"ScummVM zjistil, ¾e máte staré ulo¾ené pozice pro Nippon Safes, které by "
+"mìly být pøejmenovány.\n"
+"Staré názvy ji¾ nejsou podporovány, tak¾e pokud je nepøevedete, nebudete "
+"moci Va¹e hry naèíst.\n"
+"\n"
+"Stisknìte OK, abyste je pøevedli teï, jinak budete po¾ádáni pøí¹tì.\n"
+
+#: engines/parallaction/saveload.cpp:326
+msgid "ScummVM successfully converted all your savefiles."
+msgstr "ScummVM úspì¹nì pøevedl v¹echny Va¹e ulo¾ené pozice. "
+
+#: engines/parallaction/saveload.cpp:328
+msgid ""
+"ScummVM printed some warnings in your console window and can't guarantee all "
+"your files have been converted.\n"
+"\n"
+"Please report to the team."
+msgstr ""
+"ScummVM vytiskl nìkterá varování ve Va¹em oknì konzole a nemù¾e zaruèit, ¾e "
+"v¹echny Va¹e soubory byly pøevedeny.\n"
+"\n"
+"Prosím nahlaste to týmu"
+
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
 msgstr "MAME OPL Emulátor"
@@ -1793,19 +2024,41 @@ msgstr "MAME OPL Emulátor"
 msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL Emulátor"
 
-#: audio/mididrv.cpp:206
+#: audio/mididrv.cpp:204
 #, c-format
 msgid ""
-"Failed to detect the selected audio device '%s'. See log file for more "
-"information. Attempting to fall back to the next available device..."
+"The selected audio device '%s' was not found (e.g. might be turned off or "
+"disconnected). Attempting to fall back to the next available device..."
 msgstr ""
+"Zvolené zaøízení '%s' nebylo nalezeno (napø. mù¾e být vypnuto nebo "
+"odpojeno). Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
 
-#: audio/mididrv.cpp:246
+#: audio/mididrv.cpp:216
 #, c-format
 msgid ""
-"Failed to detect the preferred device '%s'. See log file for more "
+"The selected audio device '%s' cannot be used. See log file for more "
 "information. Attempting to fall back to the next available device..."
 msgstr ""
+"Zvolené zaøízení '%s' nelze pou¾ít.. Podívejte se na záznam pro více "
+"informací. Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
+
+#: audio/mididrv.cpp:250
+#, c-format
+msgid ""
+"The preferred audio device '%s' was not found (e.g. might be turned off or "
+"disconnected). Attempting to fall back to the next available device..."
+msgstr ""
+"Upøednostòované zaøízení '%s' nebylo nalezeno (napø. mù¾e být vypnuto nebo "
+"odpojeno). Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
+
+#: audio/mididrv.cpp:265
+#, c-format
+msgid ""
+"The preferred audio device '%s' cannot be used. See log file for more "
+"information. Attempting to fall back to the next available device..."
+msgstr ""
+"Upøednostòované zaøízení '%s' nelze pou¾ít. Podívejte se na záznam pro více "
+"informací. Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
 
 #: audio/null.h:43
 msgid "No music"
@@ -1828,9 +2081,8 @@ msgid "C64 Audio Emulator"
 msgstr "Emulátor zvuku C64"
 
 #: audio/softsynth/mt32.cpp:329
-#, fuzzy
 msgid "Initializing MT-32 Emulator"
-msgstr "Spou¹tím MT-32 Emulátor"
+msgstr "Zavádím MT-32 Emulátor"
 
 #: audio/softsynth/mt32.cpp:543
 msgid "MT-32 Emulator"
@@ -1936,6 +2188,14 @@ msgstr "Vysoká kvalita zvuku (pomalej¹í) (restart) "
 msgid "Disable power off"
 msgstr "Zakázat vypnutí"
 
+#: backends/platform/iphone/osys_events.cpp:338
+msgid "Mouse-click-and-drag mode enabled."
+msgstr "Re¾im pøetáhnutí my¹i zapnut."
+
+#: backends/platform/iphone/osys_events.cpp:340
+msgid "Mouse-click-and-drag mode disabled."
+msgstr "Re¾im pøetáhnutí my¹i vypnut."
+
 #: backends/platform/iphone/osys_events.cpp:351
 msgid "Touchpad mode enabled."
 msgstr "Touchpad re¾im zapnut"
@@ -1955,26 +2215,22 @@ msgstr "Normální (bez zmìny velikosti)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:2137
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:517
-#, fuzzy
 msgid "Enabled aspect ratio correction"
-msgstr "Povolit korekci pomìru stran"
+msgstr "Povolena korekce pomìru stran"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:2143
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:522
-#, fuzzy
 msgid "Disabled aspect ratio correction"
-msgstr "Povolit korekci pomìru stran"
+msgstr "Zakázána korekce pomìru stran"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:2198
-#, fuzzy
 msgid "Active graphics filter:"
-msgstr "Pøepínat mezi grafickými filtry"
+msgstr "Aktivní grafický filtr:"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:2254
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:461
-#, fuzzy
 msgid "Windowed mode"
-msgstr "Re¾im vykreslení:"
+msgstr "Re¾im do okna"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:139
 msgid "OpenGL Normal"
@@ -1989,21 +2245,20 @@ msgid "OpenGL Original"
 msgstr "OpenGL Pùvodní"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:399
-#, fuzzy
 msgid "Current display mode"
-msgstr "Souèasný re¾im obrazu:"
+msgstr "Souèasný re¾im obrazu"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:412
 msgid "Current scale"
-msgstr ""
+msgstr "Souèasná velikost"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
 msgid "Active filter mode: Linear"
-msgstr ""
+msgstr "Aktivní re¾im filtru: Lineární"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:544
 msgid "Active filter mode: Nearest"
-msgstr ""
+msgstr "Aktivní re¾im filtru: Nejbli¾¹í"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2077,7 +2332,7 @@ msgstr "Mapovaè kláves"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
 msgid "Do you want to quit ?"
-msgstr "Chcete ukonèit?"
+msgstr "Chcete ukonèit ?"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -2196,19 +2451,17 @@ msgid "Network down"
 msgstr "Sí» je nedostupná"
 
 #: backends/platform/wii/options.cpp:178
-#, fuzzy
 msgid "Initializing network"
-msgstr "Spou¹tím sí»"
+msgstr "Zavádím sí»"
 
 #: backends/platform/wii/options.cpp:182
-#, fuzzy
 msgid "Timeout while initializing network"
-msgstr "Pøi spou¹tìní sítì vypr¹el limit"
+msgstr "Pøi zavádìní sítì vypr¹el limit"
 
 #: backends/platform/wii/options.cpp:186
-#, fuzzy, c-format
+#, c-format
 msgid "Network not initialized (%d)"
-msgstr "Sí» není zapnuta (%d)"
+msgstr "Sí» není zavedena (%d)"
 
 #: backends/platform/wince/CEActionsPocket.cpp:46
 msgid "Hide Toolbar"
@@ -2263,13 +2516,13 @@ msgstr "©ipka Doleva"
 msgid "Cursor Right"
 msgstr "©ipka Doprava"
 
-#: backends/platform/wince/CEActionsPocket.cpp:265
+#: backends/platform/wince/CEActionsPocket.cpp:264
 #: backends/platform/wince/CEActionsSmartphone.cpp:228
 msgid "Do you want to load or save the game?"
 msgstr "Chcete hru nahrát nebo ulo¾it?"
 
-#: backends/platform/wince/CEActionsPocket.cpp:327
-#: backends/platform/wince/CEActionsSmartphone.cpp:284
+#: backends/platform/wince/CEActionsPocket.cpp:314
+#: backends/platform/wince/CEActionsSmartphone.cpp:275
 msgid "   Are you sure you want to quit ?   "
 msgstr "   Jste si jisti, ¾e chcete odejít ?   "
 
@@ -2291,88 +2544,88 @@ msgstr "Displej"
 
 #: backends/platform/wince/CELauncherDialog.cpp:77
 msgid "Do you want to perform an automatic scan ?"
-msgstr "Chcete provést automatické hledání?"
+msgstr "Chcete provést automatické hledání ?"
 
-#: backends/platform/wince/wince-sdl.cpp:485
+#: backends/platform/wince/wince-sdl.cpp:487
 msgid "Map right click action"
 msgstr "Mapovat èinnost pravé kliknutí"
 
-#: backends/platform/wince/wince-sdl.cpp:489
+#: backends/platform/wince/wince-sdl.cpp:491
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
 "Musíte namapovat klávesu pro èinnost 'Pravé Kliknutí', abyste tuto hru mohli "
 "hrát"
 
-#: backends/platform/wince/wince-sdl.cpp:498
+#: backends/platform/wince/wince-sdl.cpp:500
 msgid "Map hide toolbar action"
 msgstr "Mapovat èinnost skrýt panel nástrojù"
 
-#: backends/platform/wince/wince-sdl.cpp:502
+#: backends/platform/wince/wince-sdl.cpp:504
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "Musíte namapovat klávesu pro èinnost 'Skrýt Panel nástrojù', abyste tuto hru "
 "mohli hrát"
 
-#: backends/platform/wince/wince-sdl.cpp:511
+#: backends/platform/wince/wince-sdl.cpp:513
 msgid "Map Zoom Up action (optional)"
 msgstr "Namapovat èinnost Pøiblí¾it Nahoru (nepovinné)"
 
-#: backends/platform/wince/wince-sdl.cpp:514
+#: backends/platform/wince/wince-sdl.cpp:516
 msgid "Map Zoom Down action (optional)"
 msgstr "Namapovat èinnost Pøiblí¾it Dolù (nepovinné)"
 
-#: backends/platform/wince/wince-sdl.cpp:522
+#: backends/platform/wince/wince-sdl.cpp:524
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
 "Nezapomeòte namapovat klávesu k èinnosti 'Skrýt Panel Nástrojù, abyste "
 "vidìli celý inventáø"
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:273
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:317
-#: backends/events/gph/gph-events.cpp:367
-#: backends/events/gph/gph-events.cpp:410
-#: backends/events/openpandora/op-events.cpp:78
+#: backends/events/default/default-events.cpp:222
+msgid "Do you really want to return to the Launcher?"
+msgstr "Opravdu se chcete vrátit tuto do Spou¹tìèe?"
+
+#: backends/events/default/default-events.cpp:222
+msgid "Launcher"
+msgstr "Spou¹tìè"
+
+#: backends/events/default/default-events.cpp:244
+msgid "Do you really want to quit?"
+msgstr "Opravdu chcete skonèit?"
+
+#: backends/events/gph/gph-events.cpp:366
+#: backends/events/gph/gph-events.cpp:409
+#: backends/events/openpandora/op-events.cpp:141
 msgid "Touchscreen 'Tap Mode' - Left Click"
-msgstr ""
+msgstr "'Re¾im «uknutí' Dotykové Obrazovky - Levé Kliknutí"
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:275
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:319
-#: backends/events/gph/gph-events.cpp:369
-#: backends/events/gph/gph-events.cpp:412
-#: backends/events/openpandora/op-events.cpp:80
+#: backends/events/gph/gph-events.cpp:368
+#: backends/events/gph/gph-events.cpp:411
+#: backends/events/openpandora/op-events.cpp:143
 msgid "Touchscreen 'Tap Mode' - Right Click"
-msgstr ""
+msgstr "'Re¾im «uknutí' Dotykové Obrazovky - Pravé Kliknutí"
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:277
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:321
-#: backends/events/gph/gph-events.cpp:371
-#: backends/events/gph/gph-events.cpp:414
-#: backends/events/openpandora/op-events.cpp:82
+#: backends/events/gph/gph-events.cpp:370
+#: backends/events/gph/gph-events.cpp:413
+#: backends/events/openpandora/op-events.cpp:145
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
-msgstr ""
+msgstr "'Re¾im «uknutí' Dotykové Obrazovky - Najetí (Bez Kliknutí)"
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:297
-#: backends/events/gph/gph-events.cpp:391
-#, fuzzy
+#: backends/events/gph/gph-events.cpp:390
 msgid "Maximum Volume"
-msgstr "Hlasitost"
+msgstr "Maximální Hlasitost"
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:299
-#: backends/events/gph/gph-events.cpp:393
+#: backends/events/gph/gph-events.cpp:392
 msgid "Increasing Volume"
-msgstr ""
+msgstr "Zvy¹uji Hlasitost"
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:306
-#: backends/events/gph/gph-events.cpp:399
-#, fuzzy
+#: backends/events/gph/gph-events.cpp:398
 msgid "Minimal Volume"
-msgstr "Hlasitost"
+msgstr "Minimální Hlasitost"
 
-#: backends/events/gp2xsdl/gp2xsdl-events.cpp:308
-#: backends/events/gph/gph-events.cpp:401
+#: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
-msgstr ""
+msgstr "Sni¾uji Hlasitost"
 
 #~ msgid "Discovered %d new games."
 #~ msgstr "Objeveno %d nových her."

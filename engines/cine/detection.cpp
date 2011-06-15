@@ -23,6 +23,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -52,7 +53,7 @@ static const PlainGameDescriptor cineGames[] = {
 	{0, 0}
 };
 
-static const ADObsoleteGameID obsoleteGameIDsTable[] = {
+static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"fw", "cine", Common::kPlatformUnknown},
 	{"os", "cine", Common::kPlatformUnknown},
 	{0, 0, Common::kPlatformUnknown}
@@ -63,9 +64,12 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
 	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
-		params.obsoleteList = obsoleteGameIDsTable;
-		params.singleid = "cine";
-		params.guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
+		_singleid = "cine";
+		_guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
+	}
+
+	virtual GameDescriptor findGame(const char *gameid) const {
+		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
 	}
 
 	virtual const char *getName() const {
@@ -76,7 +80,12 @@ public:
 		return "Future Wars & Operation Stealth (C) Delphine Software";
 	}
 
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngine::createInstance(syst, engine);
+	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;

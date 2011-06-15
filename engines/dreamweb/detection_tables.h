@@ -18,39 +18,52 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * $URL: https://svn.scummvm.org:4444/svn/dreamweb/detection_tables.h $
+ * $Id: detection_tables.h 66 2010-11-07 08:31:21Z eriktorbjorn $
+ *
  */
 
-#if !defined(BACKEND_EVENTS_SDL_GP2X_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_EVENTS_SDL_GP2X_H
+#ifndef DREAMWEB_DETECTION_TABLES_H
+#define DREAMWEB_DETECTION_TABLES_H
 
-#include "backends/events/sdl/sdl-events.h"
+namespace DreamWeb {
 
-/**
- * SDL events manager for GP2X
- */
-class GP2XSdlEventSource : public SdlEventSource {
-public:
-	GP2XSdlEventSource();
+using Common::GUIO_NONE;
 
-protected:
-	bool _stickBtn[32];
-
-	/** Button state for L button modifier */
-	bool _buttonStateL;
-
-	/**
-	 * Handles the stick movement
-	 */
-	void moveStick();
-
-	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
-
-	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
-
-	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
+static const DreamWebGameDescription gameDescriptions[] = {
+	{
+		{
+			"dreamweb",
+			"",
+			{
+				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
+				{"dreamweb.r02", 0, "28458718167a040d7e988cf7d2298eae", 210466},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+	},
+	{
+		{
+			"dreamweb",
+			"CD",
+			{
+				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
+				{"dreamweb.r02", 0, "d6fe5e3590ec1eea42ff65c10b023e0f", 198681},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_CD,
+			GUIO_NONE
+		},
+	},
+	{ AD_TABLE_END_MARKER }
 };
+
+} // End of namespace DreamWeb
 
 #endif

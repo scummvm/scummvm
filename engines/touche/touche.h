@@ -385,8 +385,6 @@ public:
 
 protected:
 
-	bool detectGame();
-
 	void restart();
 	void readConfigurationSettings();
 	void writeConfigurationSettings();

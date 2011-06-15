@@ -466,7 +466,7 @@ void OSystem_WINCE3::swap_sound_master() {
 void OSystem_WINCE3::engineInit() {
 	check_mappings(); // called here to initialize virtual keys handling
 
-	//update_game_settings();
+	((WINCESdlGraphicsManager *)_graphicsManager)->update_game_settings();
 	// finalize mixer init
 	_mixerManager->init();
 }
@@ -576,6 +576,73 @@ void OSystem_WINCE3::getTimeAndDate(TimeDate &t) const {
 	t.tm_hour   = systime.wHour;
 	t.tm_min    = systime.wMinute;
 	t.tm_sec    = systime.wSecond;
+}
+
+Common::String OSystem_WINCE3::getSystemLanguage() const {
+#ifdef USE_DETECTLANG
+	// We can not use "setlocale" (at least not for MSVC builds), since it
+	// will return locales like: "English_USA.1252", thus we need a special
+	// way to determine the locale string for Win32.
+	char langName[9];
+	char ctryName[9];
+	TCHAR langNameW[32];
+	TCHAR ctryNameW[32];
+	int i = 0;
+	bool localeFound = false;
+	Common::String localeName;
+
+	// Really not nice, but the only way to map Windows CE language/country codes to posix NLS names,
+	// because Windows CE doesn't support LOCALE_SISO639LANGNAME and LOCALE_SISO3166CTRYNAME,
+	// according to this: http://msdn.microsoft.com/en-us/library/aa912934.aspx
+	//
+	// See http://msdn.microsoft.com/en-us/goglobal/bb896001.aspx for a translation table
+	// This table has to be updated manually when new translations are added
+	const char *posixMappingTable[][3] = {
+		{"CAT", "ESP", "ca_ES"},
+		{"CSY", "CZE", "cs_CZ"},
+		{"DAN", "DNK", "da_DA"},
+		{"DEU", "DEU", "de_DE"},
+		{"ESN", "ESP", "es_ES"},
+		{"ESP", "ESP", "es_ES"},
+		{"FRA", "FRA", "fr_FR"},
+		{"HUN", "HUN", "hu_HU"},
+		{"ITA", "ITA", "it_IT"},
+		{"NOR", "NOR", "nb_NO"},
+		{"NON", "NOR", "nn_NO"},
+		{"PLK", "POL", "pl_PL"},
+		{"PTB", "BRA", "pt_BR"},
+		{"RUS", "RUS", "ru_RU"},
+		{"SVE", "SWE", "se_SE"},
+		{"UKR", "UKR", "uk_UA"},
+		{NULL, NULL, NULL}
+	};
+
+	if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVLANGNAME, langNameW, sizeof(langNameW)) != 0 &&
+		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVCTRYNAME, ctryNameW, sizeof(ctryNameW)) != 0) {
+		WideCharToMultiByte(CP_ACP, 0, langNameW, -1, langName, (wcslen(langNameW) + 1), NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, ctryNameW, -1, ctryName, (wcslen(ctryNameW) + 1), NULL, NULL);
+		
+		debug(1, "Trying to find posix locale name for %s_%s", langName, ctryName);
+		while (posixMappingTable[i][0] && !localeFound) {
+			if ( (!strcmp(posixMappingTable[i][0], langName) || !strcmp(posixMappingTable[i][0], "*")) &&
+				 (!strcmp(posixMappingTable[i][1], ctryName) || !strcmp(posixMappingTable[i][0], "*")) ) {
+				localeFound = true;
+				localeName = posixMappingTable[i][2];
+			}
+			i++;
+		}
+		if (!localeFound) warning("No posix locale name found for %s_%s", langName, ctryName);
+	}
+
+	if (localeFound) {
+		debug(1, "Found posix locale name: %s", localeName.c_str());
+		return localeName;
+	} else {
+		return ModularBackend::getSystemLanguage();
+	}
+#else // USE_DETECTLANG
+	return ModularBackend::getSystemLanguage();
+#endif // USE_DETECTLANG
 }
 
 int OSystem_WINCE3::_platformScreenWidth;

@@ -45,8 +45,6 @@ public:
 	// Overloaded from SDL backend (mouse and new scaler handling)
 	void fillMouseEvent(Common::Event &event, int x, int y);
 
-	void swap_freeLook();
-
 protected:
 
 private:
@@ -61,8 +59,6 @@ private:
 
 	bool _closeClick;           // flag when taps are spatially close together
 	bool _rbutton;              // double tap -> right button simulation
-	bool _freeLook;             // freeLook mode (do not send mouse button events)
-
 };
 
 #endif

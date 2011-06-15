@@ -833,6 +833,19 @@ void MohawkEngine_Riven::installCardTimer() {
 	}
 }
 
+void MohawkEngine_Riven::doVideoTimer(VideoHandle handle, bool force) {
+	assert(handle != NULL_VID_HANDLE);
+
+	uint16 id = _scriptMan->getStoredMovieOpcodeID();
+
+	if (handle != _video->findVideoHandleRiven(id)) // Check if we've got a video match
+		return;
+
+	// Run the opcode if we can at this point
+	if (force || _video->getElapsedTime(handle) >= _scriptMan->getStoredMovieOpcodeTime())
+		_scriptMan->runStoredMovieOpcode();
+}
+
 bool ZipMode::operator== (const ZipMode &z) const {
 	return z.name == name && z.id == id;
 }

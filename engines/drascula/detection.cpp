@@ -269,8 +269,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
 	DrasculaMetaEngine() : AdvancedMetaEngine(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
-		params.singleid = "drascula";
-		params.guioptions = Common::GUIO_NOMIDI | Common::GUIO_NOLAUNCHLOAD;
+		_singleid = "drascula";
+		_guioptions = Common::GUIO_NOMIDI | Common::GUIO_NOLAUNCHLOAD;
 	}
 
 	virtual const char *getName() const {

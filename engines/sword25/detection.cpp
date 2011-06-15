@@ -44,9 +44,9 @@ static const char *directoryGlobs[] = {
 class Sword25MetaEngine : public AdvancedMetaEngine {
 public:
 	Sword25MetaEngine() : AdvancedMetaEngine(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
-		params.guioptions = Common::GUIO_NOMIDI;
-		params.depth = 2;
-		params.directoryGlobs = directoryGlobs;
+		_guioptions = Common::GUIO_NOMIDI;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 	virtual const char *getName() const {
 		return "Sword25";

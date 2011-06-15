@@ -18,29 +18,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * $URL: https://svn.scummvm.org:4444/svn/dreamweb/console.h $
+ * $Id: console.h 70 2011-01-26 05:36:55Z digitall $
+ *
  */
 
-#ifndef BACKENDS_GRAPHICS_SDL_GP2X_H
-#define BACKENDS_GRAPHICS_SDL_GP2X_H
+#ifndef DREAMWEB_CONSOLE_H
+#define DREAMWEB_CONSOLE_H
 
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "gui/debugger.h"
 
-class GP2XSdlGraphicsManager : public SdlGraphicsManager {
+namespace DreamWeb {
+
+class DreamWebEngine;
+
+class DreamWebConsole : public GUI::Debugger {
 public:
-	GP2XSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	DreamWebConsole(DreamWebEngine *vm);
+	virtual ~DreamWebConsole(void);
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual void drawMouse();
-
-	virtual bool hasFeature(OSystem::Feature f);
-	virtual void setFeatureState(OSystem::Feature f, bool enable);
-
-	// Toggles zoom adjust on mouse
-	void toggleZoomOnMouse();
-
-protected:
-	bool _adjustZoomOnMouse;
+private:
+	DreamWebEngine *_vm;
 };
+
+} // End of namespace DreamWeb
 
 #endif

@@ -24,6 +24,7 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "sword1/sword1.h"
 #include "sword1/animation.h"
 #include "sword1/text.h"
@@ -324,7 +325,6 @@ uint32 DXADecoderWithSound::getElapsedTime() const {
 
 MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system) {
 	Common::String filename;
-	char buf[60];
 	Audio::SoundHandle *bgSoundHandle = new Audio::SoundHandle;
 
 	filename = Common::String::format("%s.smk", sequenceList[id]);
@@ -341,7 +341,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::M
 		DXADecoderWithSound *dxaDecoder = new DXADecoderWithSound(snd, bgSoundHandle);
 		return new MoviePlayer(vm, textMan, snd, system, bgSoundHandle, dxaDecoder, kVideoDecoderDXA);
 #else
-		GUI::MessageDialog dialog("DXA cutscenes found but ScummVM has been built without zlib support", "OK");
+		GUI::MessageDialog dialog(_("DXA cutscenes found but ScummVM has been built without zlib support"), _("OK"));
 		dialog.runModal();
 		return NULL;
 #endif
@@ -351,13 +351,13 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::M
 	filename = Common::String::format("%s.mp2", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
-		GUI::MessageDialog dialog("MPEG2 cutscenes are no longer supported", "OK");
+		GUI::MessageDialog dialog(_("MPEG2 cutscenes are no longer supported"), _("OK"));
 		dialog.runModal();
 		return NULL;
 	}
 
-	sprintf(buf, "Cutscene '%s' not found", sequenceList[id]);
-	GUI::MessageDialog dialog(buf, "OK");
+	Common::String buf = Common::String::format(_("Cutscene '%s' not found"), sequenceList[id]);
+	GUI::MessageDialog dialog(buf, _("OK"));
 	dialog.runModal();
 
 	return NULL;

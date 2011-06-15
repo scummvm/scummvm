@@ -23,6 +23,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -48,7 +49,7 @@ struct AGOSGameDescription {
  * corresponding new target and platform combination.
  *
  */
-static const ADObsoleteGameID obsoleteGameIDsTable[] = {
+static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"simon1acorn", "simon1", Common::kPlatformAcorn},
 	{"simon1amiga", "simon1", Common::kPlatformAmiga},
 	{"simon1cd32", "simon1", Common::kPlatformAmiga},
@@ -92,10 +93,13 @@ using namespace AGOS;
 class AgosMetaEngine : public AdvancedMetaEngine {
 public:
 	AgosMetaEngine() : AdvancedMetaEngine(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
-		params.obsoleteList = obsoleteGameIDsTable;
-		params.guioptions = Common::GUIO_NOLAUNCHLOAD;
-		params.depth = 2;
-		params.directoryGlobs = directoryGlobs;
+		_guioptions = Common::GUIO_NOLAUNCHLOAD;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
+	}
+
+	virtual GameDescriptor findGame(const char *gameid) const {
+		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
 	}
 
 	virtual const char *getName() const {
@@ -107,7 +111,13 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
+
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngine::createInstance(syst, engine);
+	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 };
