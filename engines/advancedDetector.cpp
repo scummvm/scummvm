@@ -51,7 +51,7 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 		extra = g.extra;
 	}
 
-	GameDescriptor gd(g.gameid, title, g.language, g.platform);
+	GameDescriptor gd(g.gameid, title, g.language, g.platform, 0, g.flags & ADGF_WIP_TESTING, g.flags & ADGF_WIP_UNSTABLE);
 	gd.updateDesc(extra);
 	return gd;
 }
@@ -253,8 +253,20 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	Common::updateGameGUIOptions(agdDesc->guioptions | _guioptions, lang);
 
+	GameDescriptor gameDescriptor = toGameDescriptor(*agdDesc, _gameids);
 
-	debug(2, "Running %s", toGameDescriptor(*agdDesc, _gameids).description().c_str());
+	bool showWIPTestingWarning = false;
+
+#ifdef RELEASE_BUILD
+	showWIPTestingWarning = true;
+#endif
+
+	if (((gameDescriptor.isWIPUnstable()
+			|| (gameDescriptor.isWIPTesting() && showWIPTestingWarning)))
+			&& !Engine::warnUserAboutWIPGame())
+		return Common::kUserCanceled;
+
+	debug(2, "Running %s", gameDescriptor.description().c_str());
 	if (!createInstance(syst, engine, agdDesc))
 		return Common::kNoGameDataFoundError;
 	else

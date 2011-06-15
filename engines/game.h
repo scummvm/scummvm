@@ -61,7 +61,9 @@ public:
 	              const Common::String &description,
 	              Common::Language language = Common::UNK_LANG,
 				  Common::Platform platform = Common::kPlatformUnknown,
-				  uint32 guioptions = 0);
+				  uint32 guioptions = 0,
+				  bool wipTesting = false,
+				  bool wipUnstable = false);
 
 	/**
 	 * Update the description string by appending (LANG/PLATFORM/EXTRA) to it.
@@ -70,6 +72,19 @@ public:
 
 	void setGUIOptions(uint32 options);
 	void appendGUIOptions(const Common::String &str);
+
+	/**
+	 * Check if the game is a work in progress or unstable
+	 * or not officially supported and should not be publicly tested
+	 */
+	bool isWIPTesting() const { return contains("wipTesting"); };
+	void setWIPTesting(bool wipTesting) { if (wipTesting) setVal("wipTesting", "true"); else erase("wipTesting"); };
+	/**
+	 * Check if the game is a work in progress or unstable
+	 * or not officially supported but should be publicly tested
+	 */
+	bool isWIPUnstable() const { return contains("wipUnstable"); };
+	void setWIPUnstable(bool wipUnstable) { if (wipUnstable) setVal("wipUnstable", "true"); else erase("wipUnstable"); };
 
 	Common::String &gameid() { return getVal("gameid"); }
 	Common::String &description() { return getVal("description"); }
