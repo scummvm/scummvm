@@ -42,7 +42,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_WIP_UNSTABLE,
 			GUIO_NONE
 		},
 	},
@@ -57,7 +57,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_CD,
+			ADGF_CD | ADGF_WIP_UNSTABLE,
 			GUIO_NONE
 		},
 	},
