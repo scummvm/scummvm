@@ -1165,11 +1165,8 @@ Common::Error ScummEngine::init() {
 					continue;
 				_outputPixelFormat = *g;
 				initGraphics(screenWidth, screenHeight, screenWidth > 320, &_outputPixelFormat);
-				// athrxx-06/15/2011: To avoid regressions I add support for other modes than 555 only
-				// for FM-TOWNS games and for LOOM PCE atm.
-				// TODO: Someone knowledgeable about HE games might check whether other modes can be
-				// supported for these games, too. Quick tests with SPYOZON indicate that this should
-				// not be a problem.				
+				// Other modes than 555 are only supported for FM-TOWNS games and LOOM PCE.
+				// Especially the HE games require 555.
 				if (*g == _system->getScreenFormat() || (_game.platform != Common::kPlatformFMTowns && _game.platform != Common::kPlatformPCEngine))
 					break;
 			}
