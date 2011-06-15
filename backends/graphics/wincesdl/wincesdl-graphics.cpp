@@ -49,8 +49,8 @@ WINCESdlGraphicsManager::WINCESdlGraphicsManager(SdlEventSource *sdlEventSource)
 	  _panelVisible(true), _saveActiveToolbar(NAME_MAIN_PANEL), _panelStateForced(false),
 	  _canBeAspectScaled(false), _scalersChanged(false), _saveToolbarState(false),
 	  _mouseBackupOld(NULL), _mouseBackupDim(0), _mouseBackupToolbar(NULL),
-	  _usesEmulatedMouse(false), _forceHideMouse(false), _hasfocus(true),
-	  _zoomUp(false), _zoomDown(false) {
+	  _usesEmulatedMouse(false), _forceHideMouse(false), _freeLook(false),
+	  _hasfocus(true), _zoomUp(false), _zoomDown(false) {
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 	if (_isSmartphone) {
 		_mouseCurState.x = 20;
@@ -444,7 +444,6 @@ void WINCESdlGraphicsManager::update_game_settings() {
 		// Skip
 		panel->add(NAME_ITEM_SKIP, new CEGUI::ItemAction(ITEM_SKIP, POCKET_ACTION_SKIP));
 		// sound
-//__XXX__       panel->add(NAME_ITEM_SOUND, new CEGUI::ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster));
 		panel->add(NAME_ITEM_SOUND, new CEGUI::ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &OSystem_WINCE3::_soundMaster));
 
 		// bind keys
@@ -1160,16 +1159,16 @@ void WINCESdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 	if (!event.synthetic) {
 		Common::Event newEvent(event);
 		newEvent.synthetic = true;
+		/*
 		if (!_overlayVisible) {
-			/*
 			newEvent.mouse.x = newEvent.mouse.x * _scaleFactorXd / _scaleFactorXm;
 			newEvent.mouse.y = newEvent.mouse.y * _scaleFactorYd / _scaleFactorYm;
 			newEvent.mouse.x /= _videoMode.scaleFactor;
 			newEvent.mouse.y /= _videoMode.scaleFactor;
-			*/
 			if (_videoMode.aspectRatioCorrection)
 				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
 		}
+		*/
 		g_system->getEventManager()->pushEvent(newEvent);
 	}
 }
@@ -1625,6 +1624,14 @@ void WINCESdlGraphicsManager::create_toolbar() {
 	keyboard = new CEGUI::PanelKeyboard(PANEL_KEYBOARD);
 	_toolbarHandler.add(NAME_PANEL_KEYBOARD, *keyboard);
 	_toolbarHandler.setVisible(false);
+}
+
+void WINCESdlGraphicsManager::swap_freeLook() {
+	_freeLook = !_freeLook;
+}
+
+bool WINCESdlGraphicsManager::getFreeLookState() {
+	return _freeLook;
 }
 
 WINCESdlGraphicsManager::zoneDesc WINCESdlGraphicsManager::_zones[TOTAL_ZONES] = {

@@ -237,7 +237,7 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 			pos += 4;
 			_num_tracks = 1;
 		} else if (memcmp(pos, "XDIR", 4)) {
-			// Not an XMIDI that we recognise
+			// Not an XMIDI that we recognize
 			warning("Expected 'XDIR' but found '%c%c%c%c'", pos[0], pos[1], pos[2], pos[3]);
 			return false;
 		} else {
@@ -256,26 +256,25 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 				// Add eight bytes
 				i += 8;
 
-				if (memcmp(buf, "INFO", 4)) {
-					// Must align
-					pos += (chunk_len + 1) & ~1;
-					i += (chunk_len + 1) & ~1;
-					continue;
+				if (memcmp(buf, "INFO", 4) == 0) {
+					// Must be at least 2 bytes long
+					if (chunk_len < 2) {
+						warning("Invalid chunk length %d for 'INFO' block", (int)chunk_len);
+						return false;
+					}
+
+					_num_tracks = (byte)read2low(pos);
+
+					if (chunk_len > 2) {
+						warning("Chunk length %d is greater than 2", (int)chunk_len);
+						//pos += chunk_len - 2;
+					}
+					break;
 				}
 
-				// Must be at least 2 bytes long
-				if (chunk_len < 2) {
-					warning("Invalid chunk length %d for 'INFO' block", (int)chunk_len);
-					return false;
-				}
-
-				_num_tracks = (byte)read2low(pos);
-
-				if (chunk_len > 2) {
-					warning("Chunk length %d is greater than 2", (int)chunk_len);
-					pos += chunk_len - 2;
-				}
-				break;
+				// Must align
+				pos += (chunk_len + 1) & ~1;
+				i += (chunk_len + 1) & ~1;
 			}
 
 			// Didn't get to fill the header

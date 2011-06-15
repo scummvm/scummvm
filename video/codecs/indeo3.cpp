@@ -22,8 +22,6 @@
 
 #include "common/scummsys.h"
 
-#ifdef USE_INDEO3
-
 /* Intel Indeo 3 decompressor, derived from ffmpeg.
  *
  * Original copyright note: * Intel Indeo 3 (IV31, IV32, etc.) video decoder for ffmpeg
@@ -3516,5 +3514,3 @@ const uint32 Indeo3Decoder::correctionhighorder[] = {
 };
 
 } // End of namespace Video
-
-#endif // USE_INDEO3

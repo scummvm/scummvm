@@ -33,7 +33,9 @@
 #include "common/archive.h"
 #include "common/fs.h"
 
-#include "CoreFoundation/CoreFoundation.h"
+#include "ApplicationServices/ApplicationServices.h"	// for LSOpenFSRef
+#include "CoreFoundation/CoreFoundation.h"	// for CF* stuff
+#include "CoreServices/CoreServices.h"	// for FSPathMakeRef
 
 OSystem_MacOSX::OSystem_MacOSX()
 	:
@@ -73,6 +75,29 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 
 void OSystem_MacOSX::setupIcon() {
 	// Don't set icon on OS X, as we use a nicer external icon there. 
+}
+
+bool OSystem_MacOSX::hasFeature(Feature f) {
+	if (f == kFeatureDisplayLogFile)
+		return true;
+	return OSystem_POSIX::hasFeature(f);
+}
+
+bool OSystem_MacOSX::displayLogFile() {
+	// Use LaunchServices to open the log file, if possible.
+
+	if (_logFilePath.empty())
+		return false;
+
+	FSRef ref;
+	OSStatus err;
+
+	err = FSPathMakeRef((const UInt8 *)_logFilePath.c_str(), &ref, NULL);
+	if (err == noErr) {
+		err = LSOpenFSRef(&ref, NULL);
+	}
+
+	return err != noErr;
 }
 
 #endif

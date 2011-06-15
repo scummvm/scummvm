@@ -614,6 +614,7 @@ void Scene5000::dispatch() {
  *--------------------------------------------------------------------------*/
 
 void Scene5100::Action1::signal() {
+	// Quinn enters the cave for the first time
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -663,6 +664,7 @@ void Scene5100::Action1::signal() {
 }
 
 void Scene5100::Action2::signal() {
+	// Quinn and Seeker exit the cave
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -712,6 +714,7 @@ void Scene5100::Action2::signal() {
 }
 
 void Scene5100::Action3::signal() {
+	// Quinns shots flesheater
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -746,7 +749,7 @@ void Scene5100::Action3::signal() {
 			scene->_hotspot2.setAction(NULL);
 
 			scene->_hotspot3.setStrip2(1);
-			ADD_PLAYER_MOVER_THIS(scene->_hotspot3, 1200, 100);
+			ADD_PLAYER_MOVER_NULL(scene->_hotspot3, 1200, 100);
 		} else {
 			scene->_hotspot3.setVisage(5130);
 			scene->_hotspot3._strip = 1;
@@ -807,6 +810,7 @@ void Scene5100::Action4::signal() {
 }
 
 void Scene5100::Action5::signal() {
+	// Quinns forgot the statis box in the throne room, and goes back
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -822,7 +826,7 @@ void Scene5100::Action5::signal() {
 		break;
 	case 3:
 		scene->_sceneMode = 5106;
-		scene->setAction(&scene->_sequenceManager, scene, 5106, &_globals->_player, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 5106, &_globals->_player, &scene->_hotspot14, NULL);
 		break;
 	}
 }
@@ -943,6 +947,7 @@ void Scene5100::Hotspot9::doAction(int action) {
 }
 
 void Scene5100::Hotspot17::doAction(int action) {
+	// Rock blocking pit entrance
 	Scene5100 *scene = (Scene5100 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1083,7 +1088,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.animate(ANIM_MODE_1, NULL);
 	_globals->_player.disableControl();
 
-	if (!_globals->getFlag(66)) {
+	if ((!_globals->getFlag(66)) || (RING_INVENTORY._stasisBox._sceneNumber != 1)) {
 		_hotspot14.postInit();
 		_hotspot14.setVisage(5101);
 		_hotspot14.setPosition(Common::Point(498, 147));
@@ -1744,6 +1749,7 @@ void Scene5200::dispatch() {
  *--------------------------------------------------------------------------*/
 
 void Scene5300::Action1::signal() {
+	// Seeker waking up
 	Scene5300 *scene = (Scene5300 *)_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
@@ -1777,7 +1783,8 @@ void Scene5300::Action1::signal() {
 			_globals->_player.enableControl();
 			remove();
 		} else {
-			_globals->getFlag(60);
+			_globals->setFlag(60);
+			scene->_hotspot2._numFrames = 10;
 
 			if (_globals->getFlag(67)) {
 				scene->_sceneMode = 5310;
@@ -1855,8 +1862,8 @@ void Scene5300::Hotspot1::doAction(int action) {
 		break;
 	}
 }
-
 void Scene5300::Hotspot2::doAction(int action) {
+	// Seeker
 	Scene5300 *scene = (Scene5300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -1883,11 +1890,17 @@ void Scene5300::Hotspot2::doAction(int action) {
 			_globals->_player.disableControl();
 
 			if (RING_INVENTORY._stasisBox._sceneNumber != 1) {
+				scene->_sceneMode = 5316;
 				scene->setAction(&scene->_sequenceManager, scene, 5316, NULL);
 			} else {
 				_globals->setFlag(60);
-				scene->_sceneMode = _globals->getFlag(67) ? 5315 : 5347;
-				scene->setAction(&scene->_sequenceManager, scene, 5315, this);
+				if (_globals->getFlag(67)) {
+					scene->_sceneMode = 5315;
+					scene->setAction(&scene->_sequenceManager, scene, 5315, this, NULL);
+				} else {
+					scene->_sceneMode = 5347;
+					scene->setAction(&scene->_sequenceManager, scene, 5347, NULL);
+				}
 			}
 		}
 		break;
@@ -1924,6 +1937,7 @@ void Scene5300::Hotspot2::doAction(int action) {
 }
 
 void Scene5300::Hotspot5::doAction(int action) {
+	// Sharp bone
 	Scene5300 *scene = (Scene5300 *)_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2068,6 +2082,7 @@ void Scene5300::postInit(SceneObjectList *OwnerList) {
 		_globals->_player.disableControl();
 
 		if (_globals->getFlag(107) && _globals->getFlag(106)) {
+			_hotspot2.setVisage(2806);
 			_hotspot2.postInit();
 			_hotspot2.setObjectWrapper(new SceneObjectWrapper());
 			_hotspot2.animate(ANIM_MODE_1, NULL);
@@ -2175,7 +2190,7 @@ void Scene5300::signal() {
 		setAction(&_sequenceManager, this, 5315, &_hotspot2, NULL);
 		break;
 	case 5315:
-		_globals->_stripNum = 5315;
+		_globals->_stripNum = 5302;
 		_globals->_sceneManager.changeScene(5100);
 		break;
 	}

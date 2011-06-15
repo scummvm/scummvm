@@ -28,6 +28,7 @@
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/mp3.h"
 
+#include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/util.h"
 #include "scumm/imuse_digi/dimuse.h"

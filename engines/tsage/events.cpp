@@ -151,8 +151,13 @@ void EventsClass::setCursor(CursorType cursorType) {
 	switch (cursorType) {
 	case CURSOR_NONE:
 		// No cursor
-		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
 		_globals->setFlag(122);
+
+		if (_vm->getFeatures() & GF_DEMO) {
+			CursorMan.showMouse(false);
+			return;
+		}
+		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
 		break;
 
 	case CURSOR_LOOK:
@@ -297,6 +302,16 @@ void EventsClass::delay(int numFrames) {
 	g_system->updateScreen();
 	_prevDelayFrame = _frameNumber;
 	_priorFrameTime = g_system->getMillis();
+}
+
+void EventsClass::listenerSynchronize(Serializer &s) {
+	s.syncAsUint32LE(_frameNumber);
+	s.syncAsUint32LE(_prevDelayFrame);
+	
+	if (s.getVersion() >= 5) {
+		s.syncAsSint16LE(_currentCursor);
+		s.syncAsSint16LE(_lastCursor);
+	}
 }
 
 } // end of namespace tSage

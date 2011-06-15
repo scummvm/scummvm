@@ -61,7 +61,7 @@ void Scheduler::initCypher() {
 }
 
 /**
- * Initialise the timer event queue
+ * Initialize the timer event queue
  */
 void Scheduler::initEventQueue() {
 	debugC(1, kDebugSchedule, "initEventQueue");
@@ -159,7 +159,7 @@ void Scheduler::processBonus(const int bonusIndex) {
  * 2. Set the new screen (in the hero object and any carried objects)
  * 3. Read in the screen files for the new screen
  * 4. Schedule action list for new screen
- * 5. Initialise prompt line and status line
+ * 5. Initialize prompt line and status line
  */
 void Scheduler::newScreen(const int screenIndex) {
 	debugC(1, kDebugSchedule, "newScreen(%d)", screenIndex);
@@ -193,7 +193,7 @@ void Scheduler::newScreen(const int screenIndex) {
 	// 4. Schedule action list for this screen
 	_vm->_scheduler->screenActions(screenIndex);
 
-	// 5. Initialise prompt line and status line
+	// 5. Initialize prompt line and status line
 	_vm->_screen->initNewScreenDisplay();
 }
 
@@ -201,7 +201,7 @@ void Scheduler::newScreen(const int screenIndex) {
  * Transition to a new screen as follows:
  * 1. Set the new screen (in the hero object and any carried objects)
  * 2. Read in the screen files for the new screen
- * 3. Initialise prompt line and status line
+ * 3. Initialize prompt line and status line
  */
 void Scheduler::restoreScreen(const int screenIndex) {
 	debugC(1, kDebugSchedule, "restoreScreen(%d)", screenIndex);
@@ -212,7 +212,7 @@ void Scheduler::restoreScreen(const int screenIndex) {
 	// 2. Read in new screen files
 	_vm->readScreenFiles(screenIndex);
 
-	// 3. Initialise prompt line and status line
+	// 3. Initialize prompt line and status line
 	_vm->_screen->initNewScreenDisplay();
 }
 
@@ -1135,7 +1135,7 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 void Scheduler::insertAction(act *action) {
 	debugC(1, kDebugSchedule, "insertAction() - Action type A%d", action->a0.actType);
 
-	// First, get and initialise the event structure
+	// First, get and initialize the event structure
 	event_t *curEvent = getQueue();
 	curEvent->action = action;
 	switch (action->a0.actType) {                   // Assign whether local or global
@@ -1208,7 +1208,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		_vm->_object->_objects[action->a1.objIndex].cycleNumb = action->a1.cycleNumb;
 		_vm->_object->_objects[action->a1.objIndex].cycling = action->a1.cycle;
 		break;
-	case INIT_OBJXY:                                // act2: Initialise an object
+	case INIT_OBJXY:                                // act2: Initialize an object
 		_vm->_object->_objects[action->a2.objIndex].x = action->a2.x;          // Coordinates
 		_vm->_object->_objects[action->a2.objIndex].y = action->a2.y;
 		break;
@@ -1218,13 +1218,13 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 	case BKGD_COLOR:                                // act4: Set new background color
 		_vm->_screen->setBackgroundColor(action->a4.newBackgroundColor);
 		break;
-	case INIT_OBJVXY:                               // act5: Initialise an object velocity
+	case INIT_OBJVXY:                               // act5: Initialize an object velocity
 		_vm->_object->setVelocity(action->a5.objIndex, action->a5.vx, action->a5.vy);
 		break;
-	case INIT_CARRY:                                // act6: Initialise an object
+	case INIT_CARRY:                                // act6: Initialize an object
 		_vm->_object->setCarry(action->a6.objIndex, action->a6.carriedFl);  // carried status
 		break;
-	case INIT_HF_COORD:                             // act7: Initialise an object to hero's "feet" coords
+	case INIT_HF_COORD:                             // act7: Initialize an object to hero's "feet" coords
 		_vm->_object->_objects[action->a7.objIndex].x = _vm->_hero->x - 1;
 		_vm->_object->_objects[action->a7.objIndex].y = _vm->_hero->y + _vm->_hero->currImagePtr->y2 - 1;
 		_vm->_object->_objects[action->a7.objIndex].screenIndex = *_vm->_screen_p;  // Don't forget screen!
@@ -1232,10 +1232,10 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 	case NEW_SCREEN:                                // act8: Start new screen
 		newScreen(action->a8.screenIndex);
 		break;
-	case INIT_OBJSTATE:                             // act9: Initialise an object state
+	case INIT_OBJSTATE:                             // act9: Initialize an object state
 		_vm->_object->_objects[action->a9.objIndex].state = action->a9.newState;
 		break;
-	case INIT_PATH:                                 // act10: Initialise an object path and velocity
+	case INIT_PATH:                                 // act10: Initialize an object path and velocity
 		_vm->_object->setPath(action->a10.objIndex, (path_t) action->a10.newPathType, action->a10.vxPath, action->a10.vyPath);
 		break;
 	case COND_R:                                    // act11: action lists conditional on object state
@@ -1284,7 +1284,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		// any objects are to be made invisible!
 		gameStatus.gameOverFl = true;
 		break;
-	case INIT_HH_COORD:                             // act22: Initialise an object to hero's actual coords
+	case INIT_HH_COORD:                             // act22: Initialize an object to hero's actual coords
 		_vm->_object->_objects[action->a22.objIndex].x = _vm->_hero->x;
 		_vm->_object->_objects[action->a22.objIndex].y = _vm->_hero->y;
 		_vm->_object->_objects[action->a22.objIndex].screenIndex = *_vm->_screen_p;// Don't forget screen!

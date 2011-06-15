@@ -59,7 +59,7 @@ public:
 	ScummEngine_v3old(OSystem *syst, const DetectorResult &dr);
 
 protected:
-	virtual int readResTypeList(int id);
+	virtual int readResTypeList(ResType type);
 	virtual void readIndexFile();
 	virtual void setupRoomSubBlocks();
 	virtual void resetRoomSubBlocks();

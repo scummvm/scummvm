@@ -73,6 +73,7 @@ struct TimeDate {
 namespace LogMessageType {
 
 enum Type {
+	kInfo,
 	kError,
 	kWarning,
 	kDebug
@@ -95,6 +96,72 @@ protected:
 	OSystem();
 	virtual ~OSystem();
 
+protected:
+	/**
+	 * @name Module slots
+	 *
+	 * For backend authors only, the following pointers (= "slots) to various
+	 * subsystem managers / factories / etc. can and should be set to
+	 * a suitable instance of the respective type.
+	 *
+	 * For some of the slots, a default instance is set if your backend
+	 * does not do so. For details, please look at the documentation of
+	 * each slot.
+	 *
+	 * A backend may setup slot values in its initBackend() method,
+	 * its constructor or somewhere in between. But it must a slot's value
+	 * no later than in its initBackend() implementation, because
+	 * OSystem::initBackend() will create any default instances if
+	 * none has been set yet (and for other slots, will verify that
+	 * one has been set; if not, an error may be generated).
+	 */
+	//@{
+
+	/**
+	 * No default value is provided for _audiocdManager by OSystem.
+	 * However, BaseBackend::initBackend() does set a default value
+	 * if none has been set before.
+	 *
+	 * @note _audiocdManager is deleted by the OSystem destructor.
+	 */
+	AudioCDManager *_audiocdManager;
+
+	/**
+	 * No default value is provided for _eventManager by OSystem.
+	 * However, BaseBackend::initBackend() does set a default value
+	 * if none has been set before.
+	 *
+	 * @note _eventManager is deleted by the OSystem destructor.
+	 */
+	Common::EventManager *_eventManager;
+
+	/**
+	 * No default value is provided for _timerManager by OSystem.
+	 *
+	 * @note _timerManager is deleted by the OSystem destructor.
+	 */
+	Common::TimerManager *_timerManager;
+
+	/**
+	 * No default value is provided for _savefileManager by OSystem.
+	 *
+	 * @note _savefileManager is deleted by the OSystem destructor.
+	 */
+	Common::SaveFileManager *_savefileManager;
+
+	/**
+	 * No default value is provided for _fsFactory by OSystem.
+	 *
+	 * Note that _fsFactory is typically required very early on,
+	 * so it usually should be set in the backends constructor or shortly
+	 * thereafter, and before initBackend() is called.
+	 *
+	 * @note _fsFactory is deleted by the OSystem destructor.
+	 */
+	FilesystemFactory *_fsFactory;
+
+	//@}
+
 public:
 
 	/**
@@ -105,7 +172,7 @@ public:
 	 *       parent class. They should do so near the end of their own
 	 *       implementation.
 	 */
-	virtual void initBackend() { }
+	virtual void initBackend();
 
 	/**
 	 * Allows the backend to perform engine specific init.
@@ -128,11 +195,19 @@ public:
 	 *  - fullscreen mode
 	 *  - aspect ration correction
 	 *  - a virtual keyboard for text entry (on PDAs)
+	 *
+	 * One has to distinguish between the *availability* of a feature,
+	 * which can be checked using hasFeature(), and its *state*.
+	 * For example, the SDL backend *has* the kFeatureFullscreenMode,
+	 * so hasFeature returns true for it. On the other hand,
+	 * fullscreen mode may be active or not; this can be determined
+	 * by checking the state via getFeatureState(). Finally, to
+	 * switch between fullscreen and windowed mode, use setFeatureState().
 	 */
 	enum Feature {
 		/**
-		 * If your backend supports both a windowed and a fullscreen mode,
-		 * then this feature flag can be used to switch between the two.
+		 * If supported, this feature flag can be used to switch between
+		 * windowed and fullscreen mode.
 		 */
 		kFeatureFullscreenMode,
 
@@ -144,10 +219,10 @@ public:
 		 * pixels). When the backend support this, then games running at
 		 * 320x200 pixels should be scaled up to 320x240 pixels. For all other
 		 * resolutions, ignore this feature flag.
-		 * @note You can find utility functions in common/scaler.h which can
-		 *       be used to implement aspect ratio correction. In particular,
+		 * @note Backend implementors can find utility functions in common/scaler.h
+		 *       which can be used to implement aspect ratio correction. In
 		 *       stretch200To240() can stretch a rect, including (very fast)
-		 *       interpolation, and works in-place.
+		 *       particular, interpolation, and works in-place.
 		 */
 		kFeatureAspectRatioCorrection,
 
@@ -159,43 +234,58 @@ public:
 		kFeatureVirtualKeyboard,
 
 		/**
-		 * This flag determines whether or not the cursor can have its own palette.
-		 * It is currently used only by some Macintosh versions of Humongous
-		 * Entertainment games. If the backend doesn't implement this feature then
-		 * the engine switches to b/w versions of cursors.
-		 * The GUI also relies on this feature for mouse cursors.
+		 * Backends supporting this feature allow specifying a custom palette
+		 * for the cursor. The custom palette is used if the feature state
+		 * is set to true by the client code via setFeatureState().
 		 *
-		 * To enable the cursor palette call "disableCursorPalette" with false.
-		 * @see disableCursorPalette
+		 * It is currently used only by some Macintosh versions of Humongous
+		 * Entertainment games. If the backend doesn't implement this feature
+		 * then the engine switches to b/w versions of cursors.
+		 * The GUI also relies on this feature for mouse cursors.
 		 */
-		kFeatureCursorHasPalette,
+		kFeatureCursorPalette,
 
 		/**
-		 * Set to true if the overlay pixel format has an alpha channel.
-		 * This should only be set if it offers at least 3-4 bits of accuracy,
-		 * as opposed to a single alpha bit.
+		 * A backend have this feature if its overlay pixel format has an alpha
+		 * channel which offers at least 3-4 bits of accuracy (as opposed to
+		 * just a single alpha bit).
+		 *
+		 * This feature has no associated state.
 		 */
 		kFeatureOverlaySupportsAlpha,
 
 		/**
-		 * Set to true to iconify the window.
+		 * Client code can set the state of this feature to true in order to
+		 * iconify the application window.
 		 */
 		kFeatureIconifyWindow,
 
 		/**
-		 * This feature, set to true, is a hint toward the backend to disable all
-		 * key filtering/mapping, in cases where it would be beneficial to do so.
-		 * As an example case, this is used in the agi engine's predictive dialog.
+		 * Setting the state of this feature to true tells the backend to disable
+		 * all key filtering/mapping, in cases where it would be beneficial to do so.
+		 * As an example case, this is used in the AGI engine's predictive dialog.
 		 * When the dialog is displayed this feature is set so that backends with
 		 * phone-like keypad temporarily unmap all user actions which leads to
 		 * comfortable word entry. Conversely, when the dialog exits the feature
 		 * is set to false.
+		 *
+		 * TODO: The word 'beneficial' above is very unclear. Beneficial to
+		 * whom and for what??? Just giving an example is not enough.
+		 *
 		 * TODO: Fingolfin suggests that the way the feature is used can be
 		 * generalized in this sense: Have a keyboard mapping feature, which the
 		 * engine queries for to assign keys to actions ("Here's my default key
 		 * map for these actions, what do you want them set to?").
 		 */
-		kFeatureDisableKeyFiltering
+		kFeatureDisableKeyFiltering,
+
+		/**
+		 * The presence of this feature indicates whether the displayLogFile()
+		 * call is supported.
+		 *
+		 * This feature has no associated state.
+		 */
+		kFeatureDisplayLogFile
 	};
 
 	/**
@@ -367,7 +457,7 @@ public:
 	 * reset the scale to x1 so the screen will not be too big when starting
 	 * the game.
 	 */
-	virtual void resetGraphicsScale() = 0;
+	virtual void resetGraphicsScale() {}
 
 #ifdef USE_RGB_COLOR
 	/**
@@ -770,24 +860,12 @@ public:
 	 * The palette entries from 'start' till (start+num-1) will be replaced - so
 	 * a full palette update is accomplished via start=0, num=256.
 	 *
-	 * Backends which implement it should have kFeatureCursorHasPalette flag set
+	 * Backends which implement it should have kFeatureCursorPalette flag set
 	 *
 	 * @see setPalette
-	 * @see kFeatureCursorHasPalette
+	 * @see kFeatureCursorPalette
 	 */
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
-
-	/**
-	 * Disable or enable cursor palette.
-	 *
-	 * Backends which implement it should have kFeatureCursorHasPalette flag set
-	 *
-	 * @param disable  True to disable, false to enable.
-	 *
-	 * @see setPalette
-	 * @see kFeatureCursorHasPalette
-	 */
-	virtual void disableCursorPalette(bool disable) {}
 
 	//@}
 
@@ -813,13 +891,17 @@ public:
 	 * Return the timer manager singleton. For more information, refer
 	 * to the TimerManager documentation.
 	 */
-	virtual Common::TimerManager *getTimerManager() = 0;
+	inline Common::TimerManager *getTimerManager() {
+		return _timerManager;
+	}
 
 	/**
 	 * Return the event manager singleton. For more information, refer
 	 * to the EventManager documentation.
 	 */
-	virtual Common::EventManager *getEventManager() = 0;
+	inline Common::EventManager *getEventManager() {
+		return _eventManager;
+	}
 
 	/**
 	 * Register hardware keys with keymapper
@@ -909,7 +991,9 @@ public:
 	 * Return the audio cd manager. For more information, refer to the
 	 * AudioCDManager documentation.
 	 */
-	virtual AudioCDManager *getAudioCDManager() = 0;
+	inline AudioCDManager *getAudioCDManager() {
+		return _audiocdManager;
+	}
 
 	//@}
 
@@ -943,7 +1027,8 @@ public:
 	 * rectangle over the regular screen content; or in a message box beneath
 	 * it; etc.).
 	 *
-	 * Currently, only pure ASCII messages can be expected to show correctly.
+	 * The message is expected to be provided in the current TranslationManager
+	 * charset.
 	 *
 	 * @note There is a default implementation in BaseBackend which uses a
 	 *       TimedMessageDialog to display the message. Hence implementing
@@ -958,14 +1043,16 @@ public:
 	 * and other modifiable persistent game data. For more information,
 	 * refer to the SaveFileManager documentation.
 	 */
-	virtual Common::SaveFileManager *getSavefileManager() = 0;
+	inline Common::SaveFileManager *getSavefileManager() {
+		return _savefileManager;
+	}
 
 	/**
 	 * Returns the FilesystemFactory object, depending on the current architecture.
 	 *
 	 * @return the FSNode factory for the current architecture
 	 */
-	virtual FilesystemFactory *getFilesystemFactory() = 0;
+	virtual FilesystemFactory *getFilesystemFactory();
 
 	/**
 	 * Add system specific Common::Archive objects to the given SearchSet.
@@ -984,7 +1071,7 @@ public:
 	 * ReadStream instance. It is the callers responsiblity to delete
 	 * the stream after use.
 	 */
-	virtual Common::SeekableReadStream *createConfigReadStream() = 0;
+	virtual Common::SeekableReadStream *createConfigReadStream();
 
 	/**
 	 * Open the default config file for writing, by returning a suitable
@@ -993,7 +1080,14 @@ public:
 	 *
 	 * May return 0 to indicate that writing to config file is not possible.
 	 */
-	virtual Common::WriteStream *createConfigWriteStream() = 0;
+	virtual Common::WriteStream *createConfigWriteStream();
+
+	/**
+	 * Get the default file name (or even path) where the user configuration
+	 * of ScummVM will be saved.
+	 * Note that not all ports may use this.
+	 */
+	virtual Common::String getDefaultConfigFileName();
 
 	/**
 	 * Logs a given message.
@@ -1008,6 +1102,33 @@ public:
 	 * @param message the message itself
 	 */
 	virtual void logMessage(LogMessageType::Type type, const char *message);
+
+	/**
+	 * Open the log file in a way that allows the user to review it,
+	 * and possibly email it (or parts of it) to the ScummVM team,
+	 * e.g. as part of a bug report.
+	 *
+	 * On a desktop operating system, this would typically launch
+	 * some kind of (external) text editor / viewer.
+	 * On a phone, it might also cause a context switch to another
+	 * application. Finally, on some ports, it might not be supported
+	 * at all, and so do nothing.
+	 *
+	 * The kFeatureDisplayLogFile feature flag can be used to
+	 * test whether this call has been implemented by the active
+	 * backend.
+	 *
+	 * @return true if all seems to have gone fine, false if an error occurred
+	 *
+	 * @note An error could mean that the log file did not exist,
+	 * or the editor could not launch. However, a return value of true does
+	 * not guarantee that the user actually will see the log file.
+	 *
+	 * @note It is up to the backend to ensure that the system is in a state
+	 * that allows the user to actually see the displayed log files. This
+	 * might for example require leaving fullscreen mode.
+	 */
+	virtual bool displayLogFile() { return false; }
 
 	/**
 	 * Returns the locale of the system.
@@ -1031,7 +1152,7 @@ public:
 };
 
 
-/** The global OSystem instance. Initialised in main(). */
+/** The global OSystem instance. Initialized in main(). */
 extern OSystem *g_system;
 
 #endif

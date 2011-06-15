@@ -302,8 +302,13 @@ void TranslationManager::loadTranslationsInfoDat() {
 	_messageIds.resize(numMessages);
 	for (int i = 0; i < numMessages; ++i) {
 		len = in.readUint16BE();
-		in.read(buf, len);
-		_messageIds[i] = String(buf, len - 1);
+		String msg;
+		while (len > 0) {
+			in.read(buf, len > 256 ? 256 : len);
+			msg += String(buf, len > 256 ? 256 : len - 1);
+			len -= 256;
+		}
+		_messageIds[i] = msg;
 	}
 }
 
@@ -357,8 +362,13 @@ void TranslationManager::loadLanguageDat(int index) {
 	for (int i = 0; i < nbMessages; ++i) {
 		_currentTranslationMessages[i].msgid = in.readUint16BE();
 		len = in.readUint16BE();
-		in.read(buf, len);
-		_currentTranslationMessages[i].msgstr = String(buf, len - 1);
+		String msg;
+		while (len > 0) {
+			in.read(buf, len > 256 ? 256 : len);
+			msg += String(buf, len > 256 ? 256 : len - 1);
+			len -= 256;
+		}
+		_currentTranslationMessages[i].msgstr = msg;
 		len = in.readUint16BE();
 		if (len > 0) {
 			in.read(buf, len);

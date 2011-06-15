@@ -384,37 +384,17 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)M4::gameDescriptions,
-	// Size of that superset structure
-	sizeof(M4::M4GameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	m4Games,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"m4",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOMIDI,
-	// Maximum directory depth
-	2,
-	// List of directory globs
-	directoryGlobs
-};
-
 class M4MetaEngine : public AdvancedMetaEngine {
 public:
-	M4MetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	M4MetaEngine() : AdvancedMetaEngine(M4::gameDescriptions, sizeof(M4::M4GameDescription), m4Games) {
+		_singleid = "m4";
+		_guioptions = Common::GUIO_NOMIDI;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
+	}
 
 	virtual const char *getName() const {
-		return "MADS/M4 engine";
+		return "MADS/M4";
 	}
 
 	virtual const char *getOriginalCopyright() const {

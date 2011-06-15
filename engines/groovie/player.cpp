@@ -28,23 +28,34 @@
 namespace Groovie {
 
 VideoPlayer::VideoPlayer(GroovieEngine *vm) :
-	_vm(vm), _syst(vm->_system), _file(NULL), _audioStream(NULL) {
+	_vm(vm), _syst(vm->_system), _file(NULL), _audioStream(NULL), _fps(0), _overrideSpeed(false) {
 }
 
 bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {
 	_file = file;
 	_flags = flags;
+	_overrideSpeed = false;
 	_audioStream = NULL;
 
-	uint16 fps = loadInternal();
+	_fps = loadInternal();
 
-	if (fps != 0) {
-		_millisBetweenFrames = 1000 / fps;
+	if (_fps != 0) {
+		setOverrideSpeed(_overrideSpeed);
 		_begunPlaying = false;
 		return true;
 	} else {
 		_file = NULL;
 		return false;
+	}
+}
+
+void VideoPlayer::setOverrideSpeed(bool isOverride) {
+	_overrideSpeed = isOverride;
+	if (_fps != 0) {
+		if (isOverride)
+			_millisBetweenFrames = 1000 / 26;
+		else
+			_millisBetweenFrames = 1000 / _fps;
 	}
 }
 

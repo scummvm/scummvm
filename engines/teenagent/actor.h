@@ -22,6 +22,10 @@
 #include "teenagent/animation.h"
 #include "common/rect.h"
 
+namespace Common {
+class RandomSource;
+}
+
 namespace TeenAgent {
 
 class Actor : public Animation {
@@ -30,7 +34,7 @@ class Actor : public Animation {
 public:
 	Actor();
 	Common::Rect render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool head, uint zoom);
-	Common::Rect renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom);
+	Common::Rect renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom, Common::RandomSource &rnd);
 };
 
 } // End of namespace TeenAgent

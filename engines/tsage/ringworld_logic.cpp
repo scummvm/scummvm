@@ -39,10 +39,7 @@
 
 namespace tSage {
 
-Scene *SceneFactory::createScene(int sceneNumber) {
-	if (_vm->getFeatures() & GF_DEMO)
-		return new RingworldDemoScene();
-
+Scene *RingworldGame::createScene(int sceneNumber) {
 	switch (sceneNumber) {
 	/* Scene group 1 */
 	// Kziniti Palace (Introduction)
@@ -1337,8 +1334,12 @@ void RingworldGame::start() {
 	RING_INVENTORY._scanner._sceneNumber = 1;
 	RING_INVENTORY._ring._sceneNumber = 1;
 
-	// Switch to the title screen
-	_globals->_sceneManager.setNewScene(1000);
+
+	if (ConfMan.hasKey("save_slot"))
+		_globals->_sceneHandler._loadGameSlot = ConfMan.getInt("save_slot");
+	else
+		// Switch to the title screen
+		_globals->_sceneManager.setNewScene(1000);
 
 	_globals->_events.showCursor();
 }
@@ -1412,11 +1413,14 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 		// Savegames exist, so prompt for Restore/Restart
 		bool breakFlag;
 		do {
-			if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0) {
+			if (_vm->shouldQuit()) {
+				breakFlag = true;
+			} else if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0) {
+				restart();
 				breakFlag = true;
 			} else {
 				handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);
-				breakFlag = _globals->_sceneHandler._loadGameSlot > 0;
+				breakFlag = _globals->_sceneHandler._loadGameSlot >= 0;
 			}
 		} while (!breakFlag);
 	}
@@ -1424,16 +1428,52 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 	_globals->_events.setCursorFromFlag();
 }
 
-/*--------------------------------------------------------------------------*/
+void RingworldGame::processEvent(Event &event) {
+	if (event.eventType == EVENT_KEYPRESS) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_F1:
+			// F1 - Help
+			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			break;
 
-void RingworldDemoGame::start() {
-	// Start the demo's single scene
-	_globals->_sceneManager.changeScene(1);
-	
-	_globals->_events.setCursor(CURSOR_NONE);
-}
+		case Common::KEYCODE_F2: {
+			// F2 - Sound Options
+			ConfigDialog *dlg = new ConfigDialog();
+			dlg->runModal();
+			delete dlg;
+			_globals->_events.setCursorFromFlag();
+			break;
+		}
 
-void RingworldDemoGame::restart() {
+		case Common::KEYCODE_F3:
+			// F3 - Quit
+			quitGame();
+			event.handled = false;
+			break;
+
+		case Common::KEYCODE_F4:
+			// F4 - Restart
+			restartGame();
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		case Common::KEYCODE_F7:
+			// F7 - Restore
+			restoreGame();
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		case Common::KEYCODE_F10:
+			// F10 - Pause
+			GfxDialog::setPalette();
+			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 } // End of namespace tSage

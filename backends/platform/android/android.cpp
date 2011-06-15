@@ -132,10 +132,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_show_mouse(false),
 	_show_overlay(false),
 	_enable_zoning(false),
-	_savefile(0),
 	_mixer(0),
-	_timer(0),
-	_fsFactory(new POSIXFilesystemFactory()),
 	_shake_offset(0),
 	_event_queue_lock(createMutex()),
 	_touch_pt_down(),
@@ -149,6 +146,9 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_dpad_scale(4),
 	_fingersDown(0),
 	_trackball_scale(2) {
+
+	_fsFactory = new POSIXFilesystemFactory();
+
 	Common::String mf = getSystemProperty("ro.product.manufacturer");
 
 	LOGI("Running on: [%s] [%s] [%s] [%s] [%s] SDK:%s ABI:%s",
@@ -170,17 +170,17 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 OSystem_Android::~OSystem_Android() {
 	ENTER();
 
-	delete _savefile;
-	delete _timer;
 	delete _mixer;
+	_mixer = 0;
 	delete _fsFactory;
+	_fsFactory = 0;
 
 	deleteMutex(_event_queue_lock);
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {
 	OSystem_Android *system = (OSystem_Android *)arg;
-	DefaultTimerManager *timer = (DefaultTimerManager *)(system->_timer);
+	DefaultTimerManager *timer = (DefaultTimerManager *)(system->_timerManager);
 
 	// renice this thread to boost the audio thread
 	if (setpriority(PRIO_PROCESS, 0, 19) < 0)
@@ -359,8 +359,8 @@ void OSystem_Android::initBackend() {
 	// BUG: "transient" ConfMan settings get nuked by the options
 	// screen. Passing the savepath in this way makes it stick
 	// (via ConfMan.registerDefault)
-	_savefile = new DefaultSaveFileManager(ConfMan.get("savepath"));
-	_timer = new DefaultTimerManager();
+	_savefileManager = new DefaultSaveFileManager(ConfMan.get("savepath"));
+	_timerManager = new DefaultTimerManager();
 
 	gettimeofday(&_startTime, 0);
 
@@ -388,6 +388,8 @@ void OSystem_Android::initBackend() {
 		warning("couldn't renice the main thread");
 
 	JNI::setReadyForEvents(true);
+
+	EventsBaseBackend::initBackend();
 }
 
 void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
@@ -399,7 +401,7 @@ void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
 bool OSystem_Android::hasFeature(Feature f) {
 	return (f == kFeatureFullscreenMode ||
 			f == kFeatureAspectRatioCorrection ||
-			f == kFeatureCursorHasPalette ||
+			f == kFeatureCursorPalette ||
 			f == kFeatureVirtualKeyboard ||
 			f == kFeatureOverlaySupportsAlpha);
 }
@@ -420,6 +422,11 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		_virtkeybd_on = enable;
 		showVirtualKeyboard(enable);
 		break;
+	case kFeatureCursorPalette:
+		_use_mouse_palette = !enable;
+		if (!enable)
+			disableCursorPalette();
+		break;
 	default:
 		break;
 	}
@@ -433,6 +440,8 @@ bool OSystem_Android::getFeatureState(Feature f) {
 		return _ar_correction;
 	case kFeatureVirtualKeyboard:
 		return _virtkeybd_on;
+	case kFeatureCursorPalette:
+		return _use_mouse_palette;
 	default:
 		return false;
 	}
@@ -526,19 +535,9 @@ void OSystem_Android::showVirtualKeyboard(bool enable) {
 	JNI::showVirtualKeyboard(enable);
 }
 
-Common::SaveFileManager *OSystem_Android::getSavefileManager() {
-	assert(_savefile);
-	return _savefile;
-}
-
 Audio::Mixer *OSystem_Android::getMixer() {
 	assert(_mixer);
 	return _mixer;
-}
-
-Common::TimerManager *OSystem_Android::getTimerManager() {
-	assert(_timer);
-	return _timer;
 }
 
 void OSystem_Android::getTimeAndDate(TimeDate &td) const {
@@ -554,10 +553,6 @@ void OSystem_Android::getTimeAndDate(TimeDate &td) const {
 	td.tm_year = tm.tm_year;
 }
 
-FilesystemFactory *OSystem_Android::getFilesystemFactory() {
-	return _fsFactory;
-}
-
 void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
 												int priority) {
 	ENTER("");
@@ -568,6 +563,10 @@ void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
 void OSystem_Android::logMessage(LogMessageType::Type type,
 									const char *message) {
 	switch (type) {
+	case LogMessageType::kInfo:
+		__android_log_write(ANDROID_LOG_INFO, android_log_tag, message);
+		break;
+
 	case LogMessageType::kDebug:
 		__android_log_write(ANDROID_LOG_DEBUG, android_log_tag, message);
 		break;

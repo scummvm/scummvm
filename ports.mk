@@ -4,7 +4,7 @@
 
 
 #
-# UNIX specific
+# POSIX specific
 #
 install:
 	$(INSTALL) -d "$(DESTDIR)$(bindir)"
@@ -92,16 +92,16 @@ ifdef USE_MAD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmad.a
 endif
 
-ifdef USE_MPEG2
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
-endif
-
 ifdef USE_PNG
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libpng.a
 endif
 
 ifdef USE_THEORADEC
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libtheoradec.a
+endif
+
+ifdef USE_FAAD
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfaad.a
 endif
 
 ifdef USE_ZLIB

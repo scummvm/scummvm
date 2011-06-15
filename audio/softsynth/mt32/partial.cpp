@@ -28,7 +28,7 @@
 #if defined(MACOSX) || defined(SOLARIS) || defined(__MINGW32__)
 // Older versions of Mac OS X didn't supply a powf function, so using it
 // will cause a binary incompatibility when trying to run a binary built
-// on a newer OS X release on an olderr one. And Solaris 8 doesn't provide
+// on a newer OS X release on an older one. And Solaris 8 doesn't provide
 // powf, floorf, fabsf etc. at all.
 // Cross-compiled MinGW32 toolchains suffer from a cross-compile bug in
 // libstdc++. math/stubs.o should be empty, but it comes with a symbol for
@@ -164,7 +164,7 @@ void Partial::startPartial(dpoly *usePoly, const PatchCache *useCache, Partial *
 	structurePosition = patchCache->structurePosition;
 
 	play = true;
-	initKeyFollow(poly->freqnum); // Initialises noteVal, filtVal and realVal
+	initKeyFollow(poly->freqnum); // Initializes noteVal, filtVal and realVal
 #if MT32EMU_ACCURATENOTES == 0
 	noteLookup = &synth->tables.noteLookups[noteVal - LOWEST_NOTE];
 #else

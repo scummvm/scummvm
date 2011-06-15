@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "dc.h"
 #include "backends/fs/abstract-fs.h"

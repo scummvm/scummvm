@@ -319,7 +319,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	debug(0, "Loaded state, current episode %d", _currentEpisodeNum);
 }
 
-Common::Error ToucheEngine::saveGameState(int num, const char *description) {
+Common::Error ToucheEngine::saveGameState(int num, const Common::String &description) {
 	bool saveOk = false;
 	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
 	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName);
@@ -328,7 +328,7 @@ Common::Error ToucheEngine::saveGameState(int num, const char *description) {
 		f->writeUint16LE(0);
 		char headerDescription[kGameStateDescriptionLen];
 		memset(headerDescription, 0, kGameStateDescriptionLen);
-		strncpy(headerDescription, description, kGameStateDescriptionLen - 1);
+		strncpy(headerDescription, description.c_str(), kGameStateDescriptionLen - 1);
 		f->write(headerDescription, kGameStateDescriptionLen);
 		saveGameStateData(f);
 		f->finalize();
@@ -380,9 +380,7 @@ Common::String generateGameStateFileName(const char *target, int slot, bool pref
 	if (prefixOnly) {
 		name += ".*";
 	} else {
-		char slotStr[16];
-		snprintf(slotStr, sizeof(slotStr), ".%d", slot);
-		name += slotStr;
+		name += Common::String::format(".%d", slot);
 	}
 	return name;
 }

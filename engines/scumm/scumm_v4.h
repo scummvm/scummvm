@@ -56,7 +56,7 @@ protected:
 
 	virtual void scummLoop_handleSaveLoad();
 
-	virtual int readResTypeList(int id);
+	virtual int readResTypeList(ResType type);
 	virtual void readIndexFile();
 	virtual void loadCharset(int no);
 	virtual void resetRoomObjects();

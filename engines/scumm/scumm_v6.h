@@ -107,7 +107,7 @@ protected:
 	virtual void decodeParseString(int a, int b);
 	virtual void readArrayFromIndexFile();
 
-	virtual byte *getStringAddress(int i);
+	virtual byte *getStringAddress(ResId idx);
 	virtual void readMAXS(int blockSize);
 
 	virtual void palManipulateInit(int resID, int start, int end, int time);

@@ -44,7 +44,7 @@
 
 #ifdef __DS__
 /* This disables the dual layer mode which is used in FM-Towns versions
- * of SCUMM games and which emulates the behaviour of the original code.
+ * of SCUMM games and which emulates the behavior of the original code.
  * The only purpose is code size reduction for certain backends.
  * SCUMM 3 (FM-Towns) games will run in normal (DOS VGA) mode, which should
  * work just fine in most situations. Some glitches might occur. SCUMM 5 games
@@ -168,17 +168,6 @@ enum {
 	DEBUG_SMUSH	=	1 << 10		// Track SMUSH
 };
 
-/**
- * Internal header for any memory block allocated by the resource manager.
- *
- * @todo Hide MemBlkHeader; no code outside the resource manager should
- * have to use it, ever. Currently script code needs it to detect whether
- * some scripts have moved (in fetchScriptByte()).
- */
-struct MemBlkHeader {
-	uint32 size;
-};
-
 struct VerbSlot;
 struct ObjectData;
 
@@ -239,7 +228,7 @@ enum ScummGameId {
 	GID_TENTACLE,
 	GID_ZAK,
 
-	GID_HEGAME,      // Generic name for all HE games with default behaviour
+	GID_HEGAME,      // Generic name for all HE games with default behavior
 	GID_PUTTDEMO,
 	GID_FBEAR,
 	GID_PUTTMOON,
@@ -319,7 +308,8 @@ struct SaveStateMetaInfos {
  * WARNING: Do not change the order of these, as the savegame format relies
  * on it; any change made here will break savegame compatibility!
  */
-enum ResTypes {
+enum ResType {
+	rtInvalid = 0,
 	rtFirst = 1,
 	rtRoom = 1,
 	rtScript = 2,
@@ -342,75 +332,12 @@ enum ResTypes {
 	rtImage = 19,
 	rtTalkie = 20,
 	rtSpoolBuffer = 21,
-	rtLast = 21,
-	rtNumTypes = 22
+	rtLast = 21
 };
 
-enum {
-	RES_INVALID_OFFSET = 0xFFFFFFFF
-};
+typedef uint16 ResId;
 
-/**
- * The 'resource manager' class. Currently doesn't really deserve to be called
- * a 'class', at least until somebody gets around to OOfying this more.
- */
-class ResourceManager {
-	//friend class ScummDebugger;
-	//friend class ScummEngine;
-protected:
-	ScummEngine *_vm;
-
-public:
-	byte mode[rtNumTypes];
-	uint16 num[rtNumTypes];
-	uint32 tags[rtNumTypes];
-	const char *name[rtNumTypes];
-	byte **address[rtNumTypes];
-protected:
-	byte *flags[rtNumTypes];
-	byte *status[rtNumTypes];
-public:
-	byte *roomno[rtNumTypes];
-	uint32 *roomoffs[rtNumTypes];
-	uint32 *globsize[rtNumTypes];
-
-protected:
-	uint32 _allocatedSize;
-	uint32 _maxHeapThreshold, _minHeapThreshold;
-	byte _expireCounter;
-
-public:
-	ResourceManager(ScummEngine *vm);
-	~ResourceManager();
-
-	void setHeapThreshold(int min, int max);
-
-	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
-	void freeResources();
-
-	byte *createResource(int type, int index, uint32 size);
-	void nukeResource(int type, int i);
-
-	bool isResourceLoaded(int type, int index) const;
-
-	void lock(int type, int i);
-	void unlock(int type, int i);
-	bool isLocked(int type, int i) const;
-
-	void setModified(int type, int i);
-	bool isModified(int type, int i) const;
-
-	void increaseExpireCounter();
-	void setResourceCounter(int type, int index, byte flag);
-	void increaseResourceCounter();
-
-	void resourceStats();
-
-//protected:
-	bool validateResource(const char *str, int type, int index) const;
-protected:
-	void expireResources(uint32 size);
-};
+class ResourceManager;
 
 /**
  * Base class for all SCUMM engines.
@@ -474,7 +401,7 @@ public:
 
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const char *desc);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canSaveGameStateCurrently();
 
 	virtual void pauseEngineIntern(bool pause);
@@ -645,15 +572,15 @@ protected:
 	uint32 _lastSaveTime;
 	bool _saveTemporaryState;
 	Common::String _saveLoadFileName;
-	char _saveLoadName[32];
+	Common::String _saveLoadDescription;
 
 	bool saveState(Common::OutSaveFile *out, bool writeHeader = true);
 	bool saveState(int slot, bool compat);
 	bool loadState(int slot, bool compat);
 	virtual void saveOrLoad(Serializer *s);
-	void saveLoadResource(Serializer *ser, int type, int index);	// "Obsolete"
-	void saveResource(Serializer *ser, int type, int index);
-	void loadResource(Serializer *ser, int type, int index);
+	void saveResource(Serializer *ser, ResType type, ResId idx);
+	void loadResource(Serializer *ser, ResType type, ResId idx);
+	void loadResourceOLD(Serializer *ser, ResType type, ResId idx);	// "Obsolete"
 
 	Common::String makeSavegameName(int slot, bool temporary) const {
 		return makeSavegameName(_targetName, slot, temporary);
@@ -667,7 +594,7 @@ public:
 	bool getSavegameName(int slot, Common::String &desc);
 	void listSavegames(bool *marks, int num);
 
-	void requestSave(int slot, const char *name);
+	void requestSave(int slot, const Common::String &name);
 	void requestLoad(int slot);
 
 // thumbnail + info stuff
@@ -686,9 +613,11 @@ protected:
 protected:
 	/* Script VM - should be in Script class */
 	uint32 _localScriptOffsets[1024];
-	const byte *_scriptPointer, *_scriptOrgPointer;
-	byte _opcode, _currentScript;
+	const byte *_scriptPointer;
+	const byte *_scriptOrgPointer;
 	const byte * const *_lastCodePtr;
+	byte _opcode;
+	byte _currentScript;
 	int _scummStackPos;
 	int _vmStack[150];
 
@@ -784,26 +713,26 @@ protected:
 	void askForDisk(const char *filename, int disknum);	// TODO: Use Common::String
 	bool openResourceFile(const Common::String &filename, byte encByte);	// TODO: Use Common::String
 
-	void loadPtrToResource(int type, int i, const byte *ptr);
-	virtual int readResTypeList(int id);
-//	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
+	void loadPtrToResource(ResType type, ResId idx, const byte *ptr);
+	virtual int readResTypeList(ResType type);
+//	void allocResTypeData(ResType type, uint32 tag, int num, int mode);
 //	byte *createResource(int type, int index, uint32 size);
-	int loadResource(int type, int i);
-//	void nukeResource(int type, int i);
-	int getResourceRoomNr(int type, int idx);
-	virtual uint32 getResourceRoomOffset(int type, int idx);
-	int getResourceSize(int type, int idx);
+	int loadResource(ResType type, ResId idx);
+//	void nukeResource(ResType type, ResId idx);
+	int getResourceRoomNr(ResType type, ResId idx);
+	virtual uint32 getResourceRoomOffset(ResType type, ResId idx);
+	int getResourceSize(ResType type, ResId idx);
 
 public:
-	byte *getResourceAddress(int type, int i);
-	virtual byte *getStringAddress(int i);
+	byte *getResourceAddress(ResType type, ResId idx);
+	virtual byte *getStringAddress(ResId idx);
 	byte *getStringAddressVar(int i);
-	void ensureResourceLoaded(int type, int i);
+	void ensureResourceLoaded(ResType type, ResId idx);
 
 protected:
-	int readSoundResource(int index);
-	int readSoundResourceSmallHeader(int index);
-	bool isResourceInUse(int type, int i) const;
+	int readSoundResource(ResId idx);
+	int readSoundResourceSmallHeader(ResId idx);
+	bool isResourceInUse(ResType type, ResId idx) const;
 
 	virtual void setupRoomSubBlocks();
 	virtual void resetRoomSubBlocks();
@@ -1191,7 +1120,7 @@ protected:
 
 	void calcItineraryMatrix(byte *itineraryMatrix, int num);
 	void createBoxMatrix();
-	virtual bool areBoxesNeighbours(int i, int j);
+	virtual bool areBoxesNeighbors(int i, int j);
 
 	/* String class */
 public:

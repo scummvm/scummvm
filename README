@@ -2052,8 +2052,7 @@ compiler. Several compilers, including GCC, mingw and recent versions of
 Microsoft Visual C++ are supported. If you wish to use MP3-compressed CD
 tracks or .SOU files, you will need to install the MAD library; likewise
 you will need the appropriate libraries for Ogg Vorbis and FLAC
-compressed sound. For MPEG2 support, libmpeg2 is required. For
-compressed save states, zlib is required.
+compressed sound. For compressed save states, zlib is required.
 
 Some parts of ScummVM, particularly scalers, have highly optimized
 versions written in assembler. If you wish to use this option, you will
@@ -2137,7 +2136,7 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
   Maemo:
     * Get Scratchbox environment with Maemo 2.2 rootstrap (2.2 is for 770 and up)
-    * Install libmad, Tremor, FLAC, libmpeg2 from source
+    * Install libmad, Tremor, FLAC from source
     * patch scummvm source (some stuff is currently too dirty to be in svn directly)
       patch -p1 < backends/platform/maemo/scummvm-[currentversion]-maemo.patch
     * update debian/changelog

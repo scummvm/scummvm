@@ -54,7 +54,8 @@ Kernel::Kernel() :
 	_input(0),
 	_package(0),
 	_script(0),
-	_fmv(0)
+	_fmv(0),
+	_rnd("sword25")
 	{
 
 	_instance = this;
@@ -62,7 +63,7 @@ Kernel::Kernel() :
 	// Create the resource manager
 	_resourceManager = new ResourceManager(this);
 
-	// Initialise the script engine
+	// Initialize the script engine
 	_script = new LuaScriptEngine(this);
 	if (!_script || !_script->init()) {
 		_initSuccess = false;

@@ -74,7 +74,7 @@ struct INT_CONTEXT {
 	int ip;				///< instruction pointer
 	bool bHalt;			///< set to exit interpeter
 	bool escOn;
-	int myEscape;		///< only initialised to prevent compiler warning!
+	int myEscape;		///< only initialized to prevent compiler warning!
 
 	uint32 waitNumber1;		// The waiting numbert
 	uint32 waitNumber2;		// The wait for number

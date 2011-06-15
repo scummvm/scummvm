@@ -100,12 +100,12 @@ enum {
 
 
 
-reg_t file_open(EngineState *s, const char *filename, int mode, bool unwrapFilename) {
+reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool unwrapFilename) {
 	Common::String englishName = g_sci->getSciLanguageString(filename, K_LANG_ENGLISH);
 	Common::String wrappedName = unwrapFilename ? g_sci->wrapFilename(englishName) : englishName;
 	Common::SeekableReadStream *inFile = 0;
 	Common::WriteStream *outFile = 0;
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 
 	if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
 		// Try to open file, abort if not possible
@@ -178,7 +178,7 @@ reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
 	int mode = argv[1].toUint16();
 
 	debugC(kDebugLevelFile, "kFOpen(%s,0x%x)", name.c_str(), mode);
-	return file_open(s, name.c_str(), mode, true);
+	return file_open(s, name, mode, true);
 }
 
 static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
@@ -349,7 +349,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		if (findSavegame(saves, savegameId) != -1) {
 			// Confirmed that this id still lives...
 			Common::String filename = g_sci->getSavegameName(savegameId);
-			Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+			Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 			saveFileMan->removeSavefile(filename);
 		}
 		break;
@@ -410,7 +410,7 @@ static bool _savegame_sort_byDate(const SavegameDesc &l, const SavegameDesc &r) 
 
 // Create a sorted array containing all found savedgames
 static void listSavegames(Common::Array<SavegameDesc> &saves) {
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 
 	// Load all saves
 	Common::StringArray saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
@@ -463,7 +463,7 @@ static int findSavegame(Common::Array<SavegameDesc> &saves, int16 savegameId) {
 // The scripts get IDs ranging from 100->199, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
 //  SAVES and the scripts also use "saves-count + 1" to create a new savedgame slot.
 //  SCI1.1 actually recycles ids, in that case we will currently get "0".
-// This behaviour is required especially for LSL6. In this game, it's possible to quick save. The scripts will use
+// This behavior is required especially for LSL6. In this game, it's possible to quick save. The scripts will use
 //  the last-used id for that feature. If we don't assign sticky ids, the feature will overwrite different saves all the
 //  time. And sadly we can't just use the actual filename ids directly, because of the creation method for new slots.
 
@@ -637,14 +637,14 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	s->r_acc = NULL_REG;
 
 	Common::String filename = g_sci->getSavegameName(savegameId);
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 	Common::OutSaveFile *out;
 
 	out = saveFileMan->openForSaving(filename);
 	if (!out) {
 		warning("Error opening savegame \"%s\" for writing", filename.c_str());
 	} else {
-		if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
+		if (!gamestate_save(s, out, game_description, version)) {
 			warning("Saving the game failed");
 		} else {
 			s->r_acc = TRUE_REG; // save successful
@@ -705,7 +705,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = TRUE_REG;
 		warning("Savegame ID %d not found", savegameId);
 	} else {
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 		Common::String filename = g_sci->getSavegameName(savegameId);
 		Common::SeekableReadStream *in;
 
@@ -792,7 +792,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		unwrapFilename = false;
 	}
 
-	return file_open(s, name.c_str(), mode, unwrapFilename);
+	return file_open(s, name, mode, unwrapFilename);
 }
 
 reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
@@ -845,7 +845,7 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 	bool result;
 
 	// SQ4 floppy prepends /\ to the filenames
@@ -920,7 +920,7 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 }
 
 void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask) {
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 	Common::StringArray foundFiles = saveFileMan->listSavefiles(fileMask);
 	if (!foundFiles.empty()) {
 		_files.push_back(title);
@@ -984,7 +984,7 @@ reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager 
 		const Common::String wrappedMask = g_sci->wrapFilename(mask);
 
 		// Obtain a list of all files matching the given mask
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 		_files = saveFileMan->listSavefiles(wrappedMask);
 	}
 
@@ -1043,7 +1043,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	exists = Common::File::exists(name);
 
 	// Check for a savegame with the name
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 	if (!exists)
 		exists = !saveFileMan->listSavefiles(name).empty();
 
@@ -1083,7 +1083,7 @@ reg_t kFileIORename(EngineState *s, int argc, reg_t *argv) {
 
 	// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32
 	// returns -1 on fail. We just return -1 for all versions.
-	if (g_engine->getSaveFileManager()->renameSavefile(oldName, newName))
+	if (g_sci->getSaveFileManager()->renameSavefile(oldName, newName))
 		return NULL_REG;
 	else
 		return SIGNAL_REG;

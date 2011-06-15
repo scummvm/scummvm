@@ -96,7 +96,7 @@ void ProcessSRQueue();
 void RequestSaveGame(char *name, char *desc, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData);
 void RequestRestoreGame(int num, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData);
 
-void InitialiseSaveScenes();
+void InitializeSaveScenes();
 void FreeSaveScenes();
 
 } // End of namespace Tinsel

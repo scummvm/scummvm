@@ -76,12 +76,16 @@ void TestbedExitDialog::init() {
 
 void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
+	default:
+		break;
+
 	case kCmdRerunTestbed :
 		ConfParams.setRerunFlag(true);
 		cmd = GUI::kCloseCmd;
-	default:
-		GUI::Dialog::handleCommand(sender, cmd, data);
+		break;
 	}
+
+	GUI::Dialog::handleCommand(sender, cmd, data);
 }
 
 bool TestbedEngine::hasFeature(EngineFeature f) const {

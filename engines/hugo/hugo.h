@@ -177,6 +177,8 @@ struct status_t {                                   // Game status (not saved)
 	bool     recallFl;                              // Toolbar "recall" button pressed
 	bool     newScreenFl;                           // New screen just loaded in dib_a
 	bool     godModeFl;                             // Allow DEBUG features in live version
+	bool     showBoundariesFl;                      // Flag used to show and hide boundaries, 
+	                                                // used by the console
 	bool     doQuitFl;
 	bool     skipIntroFl;
 	bool     helpFl;
@@ -299,7 +301,7 @@ public:
 	void adjustScore(const int adjustment);
 	int getMaxScore() const;
 	void setMaxScore(const int newScore);
-	Common::Error saveGameState(int slot, const char *desc);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 	Common::Error loadGameState(int slot);
 	bool hasFeature(EngineFeature f) const;
 	const char *getCopyrightString() const;

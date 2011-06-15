@@ -27,7 +27,6 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/keyboard.h"
-#include "common/EventRecorder.h"
 
 #include "engines/util.h"
 
@@ -71,7 +70,8 @@ const uint kSoundsFrequency = 13000;
 const uint kDubbingFrequency = 22050;
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
- : Engine(syst) {
+ : Engine(syst), _rnd("draci") {
+
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
@@ -92,9 +92,6 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kDraciWalkingDebugLevel, "walking", "Walking debug info");
 
 	_console = new DraciConsole(this);
-
-	// Don't forget to register your random source
-	g_eventRec.registerRandomSource(_rnd, "draci");
 }
 
 bool DraciEngine::hasFeature(EngineFeature f) const {
@@ -442,10 +439,8 @@ void DraciEngine::syncSoundSettings() {
 	_music->syncVolume();
 }
 
-const char *DraciEngine::getSavegameFile(int saveGameIdx) {
-	static char buffer[20];
-	sprintf(buffer, "draci.s%02d", saveGameIdx);
-	return buffer;
+Common::String DraciEngine::getSavegameFile(int saveGameIdx) {
+	return Common::String::format("draci.s%02d", saveGameIdx);
 }
 
 Common::Error DraciEngine::loadGameState(int slot) {
@@ -466,7 +461,7 @@ bool DraciEngine::canLoadGameStateCurrently() {
 		(_game->getLoopSubstatus() == kOuterLoop);
 }
 
-Common::Error DraciEngine::saveGameState(int slot, const char *desc) {
+Common::Error DraciEngine::saveGameState(int slot, const Common::String &desc) {
 	return saveSavegameData(slot, desc, *this);
 }
 

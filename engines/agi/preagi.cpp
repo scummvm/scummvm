@@ -42,8 +42,6 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 	// Setup mixer
 	syncSoundSettings();
 
-	_rnd = new Common::RandomSource();
-
 	DebugMan.addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
 	DebugMan.addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
 	DebugMan.addDebugChannel(kDebugLevelSprites, "Sprites", "Sprites debugging");

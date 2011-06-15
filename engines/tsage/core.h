@@ -229,12 +229,12 @@ protected:
 	int regionIndexOf(int xp, int yp) { return regionIndexOf(Common::Point(xp, yp)); }
 	int findClosestRegion(Common::Point &pt, const Common::List<int> &indexList);
 	int checkMover(Common::Point &srcPos, const Common::Point &destPos);
-	void checkMovement2(const Common::Point &pt1, const Common::Point &pt2, int numSteps, Common::Point &ptOut);
-	int proc1(int *routeList, int srcRegion, int destRegion, int &v);
+	void doStepsOfNpcMovement(const Common::Point &pt1, const Common::Point &pt2, int numSteps, Common::Point &ptOut);
+	int calculateRestOfRoute(int *routeList, int srcRegion, int destRegion, bool &foundRoute);
 
 	static Common::Point *findLinePoint(RouteEnds *routeEnds, Common::Point *objPos, int length, Common::Point *outPos);
 	static int findDistance(const Common::Point &pt1, const Common::Point &pt2);
-	static bool sub_F8E5(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
+	static bool sub_F8E5_calculatePoint(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
 		const Common::Point &pt4, Common::Point *ptOut = NULL);
 public:
 	Common::Point _finalDest;
@@ -907,30 +907,6 @@ public:
 
 	static void dispatchObject(EventHandler *obj);
 	static void saveListener(Serializer &ser);
-};
-
-/*--------------------------------------------------------------------------*/
-
-class Game {
-protected:
-	SynchronizedList<GameHandler *> _handlers;
-
-	static bool notLockedFn(GameHandler *g);
-	virtual void handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {}
-public:
-	virtual ~Game() {}
-
-	void addHandler(GameHandler *entry) { _handlers.push_back(entry); }
-	void removeHandler(GameHandler *entry) { _handlers.remove(entry); }
-
-	void execute();
-	virtual void start() = 0;
-	virtual void restart() {}
-	virtual void restartGame() {}
-	virtual void saveGame() {}
-	virtual void restoreGame() {}
-	virtual void quitGame() {}
-	virtual void endGame(int resNum, int lineNum) {}
 };
 
 } // End of namespace tSage

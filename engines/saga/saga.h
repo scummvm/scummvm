@@ -654,7 +654,7 @@ public:
 
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const char *desc);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	const GameDisplayInfo &getDisplayInfo();

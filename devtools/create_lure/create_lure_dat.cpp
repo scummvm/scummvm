@@ -1920,7 +1920,7 @@ bool validate_executable() {
 		dataSegment = 0xAD20;
 		printf("Detected Spanish version\n");
 	} else {
-		printf("Lure executable version not recognised. Checksum = %xh\n", sumTotal);
+		printf("Lure executable version not recognized. Checksum = %xh\n", sumTotal);
 		return false;
 	}
 

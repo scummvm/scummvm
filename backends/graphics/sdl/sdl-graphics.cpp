@@ -223,7 +223,7 @@ bool SdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
-		(f == OSystem::kFeatureCursorHasPalette) ||
+		(f == OSystem::kFeatureCursorPalette) ||
 		(f == OSystem::kFeatureIconifyWindow);
 }
 
@@ -235,6 +235,10 @@ void SdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	case OSystem::kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
 		break;
+	case OSystem::kFeatureCursorPalette:
+		_cursorPaletteDisabled = !enable;
+		blitCursor();
+		break;
 	case OSystem::kFeatureIconifyWindow:
 		if (enable)
 			SDL_WM_IconifyWindow();
@@ -245,13 +249,15 @@ void SdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 }
 
 bool SdlGraphicsManager::getFeatureState(OSystem::Feature f) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
 		return _videoMode.fullscreen;
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
+	case OSystem::kFeatureCursorPalette:
+		return !_cursorPaletteDisabled;
 	default:
 		return false;
 	}
@@ -1458,11 +1464,6 @@ void SdlGraphicsManager::setCursorPalette(const byte *colors, uint start, uint n
 	blitCursor();
 }
 
-void SdlGraphicsManager::disableCursorPalette(bool disable) {
-	_cursorPaletteDisabled = disable;
-	blitCursor();
-}
-
 void SdlGraphicsManager::setShakePos(int shake_pos) {
 	assert (_transactionMode == kTransactionNone);
 
@@ -2059,7 +2060,7 @@ void SdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	                                   _osdSurface->format->Bshift, _osdSurface->format->Ashift);
 
 	// The font we are going to use:
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kOSDFont);
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
 
 	// Clear everything with the "transparent" color, i.e. the colorkey
 	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
@@ -2132,12 +2133,14 @@ bool SdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 #ifdef USE_OSD
 		char buffer[128];
 		if (_videoMode.aspectRatioCorrection)
-			sprintf(buffer, "Enabled aspect ratio correction\n%d x %d -> %d x %d",
+			sprintf(buffer, "%s\n%d x %d -> %d x %d",
+				_("Enabled aspect ratio correction"),
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwscreen->w, _hwscreen->h
 				);
 		else
-			sprintf(buffer, "Disabled aspect ratio correction\n%d x %d -> %d x %d",
+			sprintf(buffer, "%s\n%d x %d -> %d x %d",
+				_("Disabled aspect ratio correction"),
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwscreen->w, _hwscreen->h
 				);
@@ -2191,7 +2194,8 @@ bool SdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			}
 			if (newScalerName) {
 				char buffer[128];
-				sprintf(buffer, "Active graphics filter: %s\n%d x %d -> %d x %d",
+				sprintf(buffer, "%s %s\n%d x %d -> %d x %d",
+					_("Active graphics filter:"),
 					newScalerName,
 					_videoMode.screenWidth, _videoMode.screenHeight,
 					_hwscreen->w, _hwscreen->h
@@ -2245,9 +2249,9 @@ void SdlGraphicsManager::toggleFullScreen() {
 	endGFXTransaction();
 #ifdef USE_OSD
 	if (_videoMode.fullscreen)
-		displayMessageOnOSD("Fullscreen mode");
+		displayMessageOnOSD(_("Fullscreen mode"));
 	else
-		displayMessageOnOSD("Windowed mode");
+		displayMessageOnOSD(_("Windowed mode"));
 #endif
 }
 

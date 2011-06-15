@@ -1081,10 +1081,10 @@ void Command::setAreas(uint16 command) {
 			Area *area = _vm->grid()->area(cmdArea->room, areaNum);
 			if (cmdArea->area > 0) {
 				// turn on area
-				area->mapNeighbours = ABS(area->mapNeighbours);
+				area->mapNeighbors = ABS(area->mapNeighbors);
 			} else {
 				// turn off area
-				area->mapNeighbours = -ABS(area->mapNeighbours);
+				area->mapNeighbors = -ABS(area->mapNeighbors);
 			}
 		}
 	}

@@ -34,7 +34,7 @@
  */
 #if defined(__amigaos4__)
 	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
-#elif defined(UNIX)
+#elif defined(POSIX)
 	#include "backends/fs/posix/posix-fs-factory.h"
 #elif defined(WIN32)
 	#include "backends/fs/windows/windows-fs-factory.h"
@@ -52,15 +52,12 @@ public:
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const {}
-
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
 };
 
 OSystem_NULL::OSystem_NULL() {
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
-	#elif defined(UNIX)
+	#elif defined(POSIX)
 		_fsFactory = new POSIXFilesystemFactory();
 	#elif defined(WIN32)
 		_fsFactory = new WindowsFilesystemFactory();
@@ -73,12 +70,11 @@ OSystem_NULL::~OSystem_NULL() {
 }
 
 void OSystem_NULL::initBackend() {
-	_mutexManager = (MutexManager *)new NullMutexManager();
+	_mutexManager = new NullMutexManager();
 	_timerManager = new DefaultTimerManager();
 	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
-	_graphicsManager = (GraphicsManager *)new NullGraphicsManager();
-	_audiocdManager = (AudioCDManager *)new DefaultAudioCDManager();
+	_graphicsManager = new NullGraphicsManager();
 	_mixer = new Audio::MixerImpl(this, 22050);
 
 	((Audio::MixerImpl *)_mixer)->setReady(false);
@@ -87,7 +83,7 @@ void OSystem_NULL::initBackend() {
 	// this way; they need to be hooked into the system somehow to
 	// be functional. Of course, can't do that in a NULL backend :).
 
-	OSystem::initBackend();
+	ModularBackend::initBackend();
 }
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {
@@ -99,18 +95,6 @@ uint32 OSystem_NULL::getMillis() {
 }
 
 void OSystem_NULL::delayMillis(uint msecs) {
-}
-
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
-
-Common::SeekableReadStream *OSystem_NULL::createConfigReadStream() {
-	Common::FSNode file(DEFAULT_CONFIG_FILE);
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_NULL::createConfigWriteStream() {
-	Common::FSNode file(DEFAULT_CONFIG_FILE);
-	return file.createWriteStream();
 }
 
 OSystem *OSystem_NULL_create() {

@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/debug-channels.h"
 #include "common/textconsole.h"
@@ -41,7 +40,8 @@ namespace Cruise {
 
 CruiseEngine *_vm;
 
-CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc)
+	: Engine(syst), _gameDescription(gameDesc), _rnd("cruise") {
 
 	DebugMan.addDebugChannel(kCruiseDebugScript, "scripts", "Scripts debug level");
 	DebugMan.addDebugChannel(kCruiseDebugSound, "sound", "Sound debug level");
@@ -52,8 +52,6 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 
 	// Setup mixer
 	syncSoundSettings();
-
-	g_eventRec.registerRandomSource(_rnd, "cruise");
 }
 
 extern void listMemory();
@@ -94,7 +92,7 @@ Common::Error CruiseEngine::run() {
 
 	mainLoop();
 
-	deinitialise();
+	deinitialize();
 
 	return Common::kNoError;
 }
@@ -120,7 +118,7 @@ void CruiseEngine::initialize() {
 	_vm->_polyStruct = NULL;
 }
 
-void CruiseEngine::deinitialise() {
+void CruiseEngine::deinitialize() {
 	_vm->_polyStructNorm.clear();
 	_vm->_polyStructExp.clear();
 
@@ -211,7 +209,7 @@ bool CruiseEngine::canLoadGameStateCurrently() {
 	return playerMenuEnabled != 0;
 }
 
-Common::Error CruiseEngine::saveGameState(int slot, const char *desc) {
+Common::Error CruiseEngine::saveGameState(int slot, const Common::String &desc) {
 	return saveSavegameData(slot, desc);
 }
 

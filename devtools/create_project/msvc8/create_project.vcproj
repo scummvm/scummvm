@@ -184,6 +184,10 @@
 				RelativePath="..\visualstudio.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\xcode.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -212,6 +216,10 @@
 			</File>
 			<File
 				RelativePath="..\visualstudio.h"
+				>
+			</File>
+			<File
+				RelativePath="..\xcode.h"
 				>
 			</File>
 		</Filter>

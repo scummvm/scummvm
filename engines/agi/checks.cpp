@@ -265,7 +265,7 @@ void AgiEngine::updatePosition() {
  * This function adjusts the position of a sprite moving it until
  * certain criteria is matched. According to priority and control line
  * data, a sprite may not always appear at the location we specified.
- * This behaviour is also known as the "Budin-Sonneveld effect".
+ * This behavior is also known as the "Budin-Sonneveld effect".
  *
  * @param n view table entry number
  */

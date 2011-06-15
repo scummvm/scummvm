@@ -89,8 +89,11 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 				x1++;
 
 				// DF: changed the len-1 to len...
-				if (x1 == len && m[len] != '\n')
-					y1++, x1 = foff = 0;
+				// FIXME: m[len] doesn't make sense and may read out of bounds?
+				if (x1 == len && m[len] != '\n') {
+					y1++;
+					x1 = foff = 0;
+				}
 			} else {
 				y1++;
 				x1 = foff = 0;

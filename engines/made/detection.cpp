@@ -525,37 +525,14 @@ static MadeGameDescription g_fallbackDesc = {
 
 } // End of namespace Made
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Made::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Made::MadeGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	madeGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"made",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class MadeMetaEngine : public AdvancedMetaEngine {
 public:
-	MadeMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	MadeMetaEngine() : AdvancedMetaEngine(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames) {
+		_singleid = "made";
+	}
 
 	virtual const char *getName() const {
-		return "MADE Engine";
+		return "MADE";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -565,7 +542,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
-	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
+	const ADGameDescription *fallbackDetect(const Common::FSList &fslist, const FileMap &allFiles) const;
 
 };
 
@@ -587,7 +564,7 @@ bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	return gd != 0;
 }
 
-const ADGameDescription *MadeMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
+const ADGameDescription *MadeMetaEngine::fallbackDetect(const Common::FSList &fslist, const FileMap &allFiles) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	Made::g_fallbackDesc.desc.language = Common::UNK_LANG;
 	Made::g_fallbackDesc.desc.platform = Common::kPlatformPC;

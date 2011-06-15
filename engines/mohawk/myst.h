@@ -165,6 +165,8 @@ public:
 
 	bool _tweaksEnabled;
 	bool _needsUpdate;
+	bool _needsPageDrop;
+	bool _needsShowMap;
 
 	MystView _view;
 	MystGraphics *_gfx;
@@ -191,7 +193,7 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const char *desc);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool hasFeature(EngineFeature f) const;
 
 private:
@@ -206,6 +208,8 @@ private:
 	uint16 _curCard;
 
 	bool _runExitScript;
+
+	void dropPage();
 
 	void loadCard();
 	void unloadCard();

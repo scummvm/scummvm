@@ -105,7 +105,9 @@ public:
 	virtual bool isSoundTypeMuted(SoundType type) const;
 
 	virtual void setChannelVolume(SoundHandle handle, byte volume);
+	virtual byte getChannelVolume(SoundHandle handle);
 	virtual void setChannelBalance(SoundHandle handle, int8 balance);
+	virtual int8 getChannelBalance(SoundHandle handle);
 
 	virtual uint32 getSoundElapsedTime(SoundHandle handle);
 	virtual Timestamp getElapsedTime(SoundHandle handle);
@@ -126,6 +128,8 @@ public:
 	 * the backend (e.g. from an audio mixing thread). All the actual mixing
 	 * work is done from here.
 	 *
+	 * @param samples Sample buffer, in which stereo 16-bit samples will be stored.
+	 * @param len Length of the provided buffer to fill (in bytes, should be divisible by 4).
 	 * @return number of sample pairs processed (which can still be silence!)
 	 */
 	int mixCallback(byte *samples, uint len);

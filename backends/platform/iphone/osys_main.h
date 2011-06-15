@@ -49,7 +49,7 @@ typedef struct AQCallbackStruct {
     AudioStreamBasicDescription dataFormat;
 } AQCallbackStruct;
 
-class OSystem_IPHONE : public BaseBackend, public PaletteManager {
+class OSystem_IPHONE : public EventsBaseBackend, public PaletteManager {
 protected:
 
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
@@ -57,9 +57,7 @@ protected:
 	static SoundProc s_soundCallback;
 	static void *s_soundParam;
 
-	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
-	Common::TimerManager *_timer;
 
 	Graphics::Surface _framebuffer;
 	byte *_offscreen;
@@ -86,9 +84,9 @@ protected:
 	bool _mouseDirty;
 	long _lastMouseDown;
 	long _lastMouseTap;
+	long _queuedEventTime;
 	Common::Rect _lastDrawnMouseRect;
 	Common::Event _queuedInputEvent;
-	bool _needEventRestPeriod;
 	bool _secondaryTapped;
 	long _lastSecondaryDown;
 	long _lastSecondaryTap;
@@ -110,7 +108,6 @@ protected:
 	bool _fullScreenIsDirty;
 	bool _fullScreenOverlayIsDirty;
 	int _screenChangeCount;
-	FilesystemFactory *_fsFactory;
 
 public:
 
@@ -173,19 +170,15 @@ public:
  	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	virtual void quit();
 
-	FilesystemFactory *getFilesystemFactory() { return _fsFactory; }
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual void getTimeAndDate(TimeDate &t) const;
 
-	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
-	virtual Common::TimerManager *getTimerManager();
 
 	void startSoundsystem();
 	void stopSoundsystem();
 
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
+	virtual Common::String getDefaultConfigFileName();
 
 protected:
 	void internUpdateScreen();

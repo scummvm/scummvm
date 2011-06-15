@@ -111,6 +111,20 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G, 0
 	},
 
+	{
+		{
+			"t7g", "",
+			{
+				{ "script.grv", 0, "d1b8033b40aa67c076039881eccce90d", 16659},
+				{ "SeventhGuest", 0, NULL, -1},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY, Common::kPlatformIOS, ADGF_NO_FLAGS,
+			Common::GUIO_NOMIDI
+		},
+		kGroovieT7G, 0
+	},
+
 #ifdef ENABLE_GROOVIE2
 	// The 11th Hour DOS English
 	{
@@ -188,38 +202,25 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{AD_TABLE_END_MARKER, kGroovieT7G, 0}
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)gameDescriptions,
-	// Size of that superset structure
-	sizeof(GroovieGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	groovieGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"groovie",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	kADFlagUseExtraAsHint,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
-
 class GroovieMetaEngine : public AdvancedMetaEngine {
 public:
-	GroovieMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames) {
+		_singleid = "groovie";
+
+		// Use kADFlagUseExtraAsHint in order to distinguish the 11th hour from
+		// its "Making of" as well as the Clandestiny Trailer; they all share
+		// the same MD5.
+		// TODO: Is this the only reason, or are there others (like the three
+		// potentially sharing a single directory) ? In the former case, then
+		// perhaps a better solution would be to add additional files
+		// to the detection entries. In the latter case, this TODO should be
+		// replaced with an according explanation.
+		_flags = kADFlagUseExtraAsHint;
+		_guioptions = Common::GUIO_NOSUBTITLES | Common::GUIO_NOSFX;
+	}
 
 	const char *getName() const {
-		return "Groovie Engine";
+		return "Groovie";
 	}
 
 	const char *getOriginalCopyright() const {

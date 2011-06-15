@@ -65,7 +65,6 @@ public:
 	virtual bool get_sound_active(int sound) const = 0;
 	virtual int32 doCommand(int numargs, int args[]) = 0;
 	virtual int clear_queue() = 0;
-	virtual void setBase(byte **base) = 0;
 	virtual uint32 property(int prop, uint32 value) = 0;
 	virtual void addSysexHandler (byte mfgID, sysexfunc handler) = 0;
 

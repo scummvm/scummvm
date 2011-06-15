@@ -90,6 +90,13 @@ public:
 	virtual MusicDevices getDevices() const = 0;
 
 	/**
+	 * Checks whether a device can actually be used. Currently this is only
+	 * implemented for the MT-32 emulator to check whether the required rom
+	 * files are present.
+	 */
+	virtual bool checkDevice(MidiDriver::DeviceHandle) const { return true; }
+
+	/**
 	 * Tries to instantiate a MIDI Driver instance based on the device
 	 * previously detected via MidiDriver::detectDevice()
 	 *

@@ -37,7 +37,7 @@ namespace Tinsel {
 const BACKGND *pCurBgnd = NULL;
 
 /**
- * Called to initialise a background.
+ * Called to initialize a background.
  * @param pBgnd			Pointer to data struct for current background
  */
 
@@ -149,7 +149,7 @@ int PlayfieldGetCenterX(int which) {
  * @param which			Which playfield
  */
 
-OBJECT *GetPlayfieldList(int which) {
+OBJECT **GetPlayfieldList(int which) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
@@ -162,7 +162,7 @@ OBJECT *GetPlayfieldList(int which) {
 	pPlayfield = pCurBgnd->fieldArray + which;
 
 	// return the display list pointer for this playfield
-	return pPlayfield->pDispList;
+	return &pPlayfield->pDispList;
 }
 
 /**
@@ -202,10 +202,10 @@ void DrawBackgnd() {
 			pPlay->bMoved = true;
 
 		// sort the display list for this background - just in case somebody has changed object Z positions
-		SortObjectList(pPlay->pDispList);
+		SortObjectList(&pPlay->pDispList);
 
 		// generate clipping rects for all objects that have moved etc.
-		FindMovingObjects(pPlay->pDispList, &ptWin,
+		FindMovingObjects(&pPlay->pDispList, &ptWin,
 			&pPlay->rcClip,	false, pPlay->bMoved);
 
 		// clear playfield moved flag
@@ -232,8 +232,7 @@ void DrawBackgnd() {
 
 			if (IntersectRectangle(rcPlayClip, pPlay->rcClip, *r))
 				// redraw all objects within this clipping rect
-				UpdateClipRect(pPlay->pDispList,
-						&ptWin,	&rcPlayClip);
+				UpdateClipRect(&pPlay->pDispList, &ptWin,	&rcPlayClip);
 		}
 	}
 

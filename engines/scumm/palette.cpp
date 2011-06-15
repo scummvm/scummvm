@@ -214,7 +214,7 @@ void ScummEngine::resetPalette() {
 	} else {
 		if ((_game.platform == Common::kPlatformAmiga) && _game.version == 4) {
 			// if rendermode is set to EGA we use the full palette from the resources
-			// else we initialise and then lock down the first 16 colors.
+			// else we initialize and then lock down the first 16 colors.
 			if (_renderMode != Common::kRenderEGA)
 				setPaletteFromTable(tableAmigaMIPalette, sizeof(tableAmigaMIPalette) / 3);
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -1006,9 +1006,6 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 }
 
 void ScummEngine::setCurrentPalette(int palindex) {
-	// TODO: This method could almost be moved to ScummEngin_v6, the only
-	// problem is that it is called by ScummEngine::resetRoomSubBlocks().
-	// But it should be possible to get rid of that, too (with some care).
 	const byte *pals;
 
 	_curPalIndex = palindex;

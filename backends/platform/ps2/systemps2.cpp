@@ -33,36 +33,41 @@
 #include <assert.h>
 #include <iopcontrol.h>
 #include <iopheap.h>
-#include "common/scummsys.h"
-#include "engines/engine.h"
-#include "backends/platform/ps2/systemps2.h"
-#include "backends/platform/ps2/Gs2dScreen.h"
-#include "backends/platform/ps2/ps2input.h"
-#include "backends/platform/ps2/irxboot.h"
+
 #include <sjpcm.h>
 #include <libhdd.h>
-#include "backends/platform/ps2/savefilemgr.h"
-#include "common/file.h"
-#include "backends/platform/ps2/sysdefs.h"
-#include "backends/platform/ps2/fileio.h"
 #include <libmc.h>
 #include <libpad.h>
-#include "backends/platform/ps2/cd.h"
 #include <fileXio_rpc.h>
-#include "backends/platform/ps2/asyncfio.h"
 #include "eecodyvdfs.h"
-#include "graphics/surface.h"
-#include "graphics/font.h"
-#include "backends/timer/default/default-timer.h"
-#include "audio/mixer_intern.h"
-#include "common/events.h"
-#include "backends/platform/ps2/ps2debug.h"
-#include "backends/fs/ps2/ps2-fs-factory.h"
 
+#include "common/config-manager.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/scummsys.h"
+
+#include "backends/platform/ps2/asyncfio.h"
+#include "backends/platform/ps2/cd.h"
+#include "backends/platform/ps2/fileio.h"
+#include "backends/platform/ps2/Gs2dScreen.h"
+#include "backends/platform/ps2/irxboot.h"
+#include "backends/platform/ps2/ps2debug.h"
+#include "backends/platform/ps2/ps2input.h"
+#include "backends/platform/ps2/savefilemgr.h"
+#include "backends/platform/ps2/sysdefs.h"
+#include "backends/platform/ps2/systemps2.h"
+
+#include "backends/fs/ps2/ps2-fs-factory.h"
 #include "backends/plugins/ps2/ps2-provider.h"
 
-#include "backends/saves/default/default-saves.h"
-#include "common/config-manager.h"
+#include "backends/timer/default/default-timer.h"
+
+#include "audio/mixer_intern.h"
+
+#include "engines/engine.h"
+
+#include "graphics/font.h"
+#include "graphics/surface.h"
 
 #include "icon.h"
 #include "ps2temp.h"
@@ -342,13 +347,14 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 
 void OSystem_PS2::init(void) {
 	sioprintf("Timer...\n");
-	_scummTimerManager = new DefaultTimerManager();
+	_timerManager = new DefaultTimerManager();
 	_scummMixer = new Audio::MixerImpl(this, 48000);
 	_scummMixer->setReady(true);
+
 	initTimer();
 
 	sioprintf("Starting SavefileManager\n");
-	_saveManager = new Ps2SaveFileManager(this, _screen);
+	_savefileManager = new Ps2SaveFileManager(this, _screen);
 
 	sioprintf("Initializing ps2Input\n");
 	_input = new Ps2Input(this, _useMouse, _useKbd);
@@ -423,7 +429,7 @@ void OSystem_PS2::initTimer(void) {
 void OSystem_PS2::timerThreadCallback(void) {
 	while (!_systemQuit) {
 		WaitSema(g_TimerThreadSema);
-		_scummTimerManager->handler();
+		((DefaultTimerManager *)_timerManager)->handler();
 	}
 	ExitThread();
 }
@@ -593,20 +599,8 @@ void OSystem_PS2::delayMillis(uint msecs) {
 	}
 }
 
-Common::TimerManager *OSystem_PS2::getTimerManager() {
-	return _scummTimerManager;
-}
-/*
-Common::EventManager *OSystem_PS2::getEventManager() {
-	return getEventManager();
-}
-*/
 Audio::Mixer *OSystem_PS2::getMixer() {
 	return _scummMixer;
-}
-
-Common::SaveFileManager *OSystem_PS2::getSavefileManager(void) {
-	return _saveManager;
 }
 
 FilesystemFactory *OSystem_PS2::getFilesystemFactory() {
@@ -767,7 +761,7 @@ void OSystem_PS2::msgPrintf(int millis, const char *format, ...) {
 
 void OSystem_PS2::powerOffCallback(void) {
 	sioprintf("powerOffCallback\n");
-	// _saveManager->quit(); // romeo
+	// _savefileManager->quit(); // romeo
 	if (_useHdd) {
 		sioprintf("umount\n");
 		fio.umount("pfs0:");
@@ -807,7 +801,7 @@ void OSystem_PS2::quit(void) {
 		DisableIntc(INT_TIMER0);
 		RemoveIntcHandler(INT_TIMER0, _intrId);
 
-		// _saveManager->quit(); // romeo
+		// _savefileManager->quit(); // romeo
 		_screen->quit();
 
 		padEnd(); // stop pad library
@@ -976,12 +970,11 @@ void OSystem_PS2::makeConfigPath() {
 	_configFile = strdup(path);
 }
 
-Common::SeekableReadStream *OSystem_PS2::createConfigReadStream() {
-	Common::FSNode file(_configFile);
-	return file.createReadStream();
+Common::String OSystem_PS2::getDefaultConfigFileName() {
+	return _configFile;
 }
 
-Common::WriteStream *OSystem_PS2::createConfigWriteStream() {
-	Common::FSNode file(_configFile);
-	return file.createWriteStream();
+void OSystem_PS2::logMessage(LogMessageType::Type type, const char *message) {
+	printf("%s", message);
+	sioprintf("%s", message);
 }

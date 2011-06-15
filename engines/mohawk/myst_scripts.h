@@ -76,6 +76,9 @@ public:
 	virtual void toggleVar(uint16 var);
 	virtual bool setVarValue(uint16 var, uint16 value);
 
+	virtual uint16 getMap() { return 0; }
+	void showMap();
+
 	void animatedUpdate(uint16 argc, uint16 *argv, uint16 delay);
 
 	DECLARE_OPCODE(unknown);
@@ -119,6 +122,7 @@ public:
 	DECLARE_OPCODE(o_saveMainCursor);
 	DECLARE_OPCODE(o_restoreMainCursor);
 	DECLARE_OPCODE(o_soundWaitStop);
+	DECLARE_OPCODE(o_exitMap);
 
 	// Used in multiple stacks
 	DECLARE_OPCODE(o_quit);
@@ -144,6 +148,7 @@ protected:
 	MystResource *_invokingResource;
 
 	uint16 _savedCardId;
+	uint16 _savedMapCardId;
 	uint16 _savedCursorId;
 	int16 _tempVar; // Generic temp var used by the scripts
 	uint32 _startTime; // Generic start time used by the scripts

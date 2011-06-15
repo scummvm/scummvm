@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 
@@ -471,11 +472,11 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 	// (This will only happen in The Legend of Kyrandia 1 though, all other
 	// supported games include special General MIDI tracks).
 	if (_type == kMidiMT32 && !_nativeMT32) {
-		::GUI::MessageDialog dialog("You appear to be using a General MIDI device,\n"
+		::GUI::MessageDialog dialog(_("You appear to be using a General MIDI device,\n"
 									"but your game only supports Roland MT32 MIDI.\n"
 									"We try to map the Roland MT32 instruments to\n"
 									"General MIDI ones. After all it might happen\n"
-									"that a few tracks will not be correctly played.");
+									"that a few tracks will not be correctly played."));
 		dialog.runModal();
 	}
 }
@@ -712,6 +713,26 @@ void SoundMidiPC::beginFadeOut() {
 
 	_fadeMusicOut = true;
 	_fadeStartTime = _vm->_system->getMillis();
+}
+
+void SoundMidiPC::pause(bool paused) {
+	// Stop all mixer related sounds
+	Sound::pause(paused);
+
+	Common::StackLock lock(_mutex);
+
+	if (paused) {
+		_music->setMidiDriver(0);
+		for (int i = 0; i < 3; i++)
+			_sfx[i]->setMidiDriver(0);
+		for (int i = 0; i < 16; i++)
+			_output->stopNotesOnChannel(i);
+	} else {
+		_music->setMidiDriver(_output);
+		for (int i = 0; i < 3; ++i)
+			_sfx[i]->setMidiDriver(_output);
+		// Possible TODO (IMHO unnecessary): restore notes and/or update _fadeStartTime
+	}
 }
 
 void SoundMidiPC::onTimer(void *data) {

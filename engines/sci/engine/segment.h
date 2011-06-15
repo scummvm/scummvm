@@ -131,7 +131,7 @@ public:
 	/**
 	 * Iterates over all references reachable from the specified object.
 	 * Used by the garbage collector.
-	 * @param  object	object (within the current segment) to analyse
+	 * @param  object	object (within the current segment) to analyze
 	 * @return a list of outgoing references within the object
 	 *
 	 * @note This function may also choose to report numbers (segment 0) as adresses

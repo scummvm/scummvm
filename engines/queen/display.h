@@ -44,7 +44,7 @@ public:
 	Display(QueenEngine *vm, OSystem *system);
 	~Display();
 
-	//! initialise dynalum for the specified room
+	//! initialize dynalum for the specified room
 	void dynalumInit(const char *roomName, uint16 roomNum);
 
 	//! update dynalum for the current room
@@ -138,7 +138,7 @@ public:
 	//! show/hide mouse cursor
 	void showMouseCursor(bool show);
 
-	//! initialise font, compute justification sizes
+	//! initialize font, compute justification sizes
 	void initFont();
 
 	//! add the specified text to the texts list

@@ -42,6 +42,7 @@
 #include "common/list_intern.h"
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "gui/debugger.h"
 #include "gui/dialog.h"
@@ -206,12 +207,8 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 
 	// Error out on size switch failure
 	if (gfxError & OSystem::kTransactionSizeChangeFailed) {
-		char buffer[16];
-		snprintf(buffer, 16, "%dx%d", width, height);
-
-		Common::String message = "Could not switch to resolution: '";
-		message += buffer;
-		message += "'.";
+		Common::String message;
+		message = Common::String::format("Could not switch to resolution: '%dx%d'.", width, height);
 
 		GUIErrorMessage(message);
 		error("%s", message.c_str());
@@ -220,7 +217,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 	// Just show warnings then these occur:
 #ifdef USE_RGB_COLOR
 	if (gfxError & OSystem::kTransactionFormatNotSupported) {
-		Common::String message = "Could not initialize color format.";
+		Common::String message = _("Could not initialize color format.");
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -228,7 +225,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 #endif
 
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
-		Common::String message = "Could not switch to video mode: '";
+		Common::String message = _("Could not switch to video mode: '");
 		message += ConfMan.get("gfx_mode");
 		message += "'.";
 
@@ -237,12 +234,12 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 	}
 
 	if (gfxError & OSystem::kTransactionAspectRatioFailed) {
-		GUI::MessageDialog dialog("Could not apply aspect ratio setting.");
+		GUI::MessageDialog dialog(_("Could not apply aspect ratio setting."));
 		dialog.runModal();
 	}
 
 	if (gfxError & OSystem::kTransactionFullscreenFailed) {
-		GUI::MessageDialog dialog("Could not apply fullscreen setting.");
+		GUI::MessageDialog dialog(_("Could not apply fullscreen setting."));
 		dialog.runModal();
 	}
 }
@@ -342,22 +339,22 @@ void Engine::checkCD() {
 
 	if (GetDriveType(buffer) == DRIVE_CDROM) {
 		GUI::MessageDialog dialog(
-			"You appear to be playing this game directly\n"
+			_("You appear to be playing this game directly\n"
 			"from the CD. This is known to cause problems,\n"
 			"and it is therefore recommended that you copy\n"
 			"the data files to your hard disk instead.\n"
-			"See the README file for details.", "OK");
+			"See the README file for details."), _("OK"));
 		dialog.runModal();
 	} else {
 		// If we reached here, the game has audio tracks,
 		// it's not ran from the CD and the tracks have not
 		// been ripped.
 		GUI::MessageDialog dialog(
-			"This game has audio tracks in its disk. These\n"
+			_("This game has audio tracks in its disk. These\n"
 			"tracks need to be ripped from the disk using\n"
 			"an appropriate CD audio extracting tool in\n"
 			"order to listen to the game's music.\n"
-			"See the README file for details.", "OK");
+			"See the README file for details."), _("OK"));
 		dialog.runModal();
 	}
 #endif
@@ -474,7 +471,7 @@ bool Engine::canLoadGameStateCurrently() {
 	return false;
 }
 
-Common::Error Engine::saveGameState(int slot, const char *desc) {
+Common::Error Engine::saveGameState(int slot, const Common::String &desc) {
 	// Do nothing by default
 	return Common::kNoError;
 }

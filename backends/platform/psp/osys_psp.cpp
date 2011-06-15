@@ -89,9 +89,9 @@ void OSystem_PSP::initBackend() {
 	_imageViewer.setInputHandler(&_inputHandler);
 	_imageViewer.setDisplayManager(&_displayManager);
 
-	_savefile = new PSPSaveFileManager;
+	_savefileManager = new PSPSaveFileManager;
 
-	_timer = new DefaultTimerManager();
+	_timerManager = new DefaultTimerManager();
 
 	PSP_DEBUG_PRINT("calling keyboard.load()\n");
 	_keyboard.load();	// Load virtual keyboard files into memory
@@ -100,7 +100,7 @@ void OSystem_PSP::initBackend() {
 
 	setupMixer();
 
-	OSystem::initBackend();
+	EventsBaseBackend::initBackend();
 }
 
 // Let's us know an engine
@@ -110,13 +110,20 @@ void OSystem_PSP::engineDone() {
 }
 
 bool OSystem_PSP::hasFeature(Feature f) {
-	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorHasPalette);
+	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette);
 }
 
 void OSystem_PSP::setFeatureState(Feature f, bool enable) {
+	if (f == kFeatureCursorPalette) {
+		_pendingUpdate = false;
+		_cursor.enableCursorPalette(enable);
+	}
 }
 
 bool OSystem_PSP::getFeatureState(Feature f) {
+	if (f == kFeatureCursorPalette) {
+		return _cursor.isCursorPaletteEnabled();
+	}
 	return false;
 }
 
@@ -196,12 +203,6 @@ void OSystem_PSP::setCursorPalette(const byte *colors, uint start, uint num) {
 	_cursor.setCursorPalette(colors, start, num);
 	_cursor.enableCursorPalette(true);
 	_cursor.clearKeyColor();	// Do we need this?
-}
-
-void OSystem_PSP::disableCursorPalette(bool disable) {
-	DEBUG_ENTER_FUNC();
-	_pendingUpdate = false;
-	_cursor.enableCursorPalette(!disable);
 }
 
 void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
@@ -421,7 +422,7 @@ void OSystem_PSP::quit() {
 }
 
 void OSystem_PSP::logMessage(LogMessageType::Type type, const char *message) {
-	BaseBackend::logMessage(type, message);
+	EventsBaseBackend::logMessage(type, message);
 
 	if (type == LogMessageType::kError)
 		PspDebugTrace(false, "%s", message);	// write to file
@@ -438,14 +439,6 @@ void OSystem_PSP::getTimeAndDate(TimeDate &td) const {
 	td.tm_year = t.tm_year;
 }
 
-#define PSP_CONFIG_FILE "ms0:/scummvm.ini"
-
-Common::SeekableReadStream *OSystem_PSP::createConfigReadStream() {
-	Common::FSNode file(PSP_CONFIG_FILE);
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_PSP::createConfigWriteStream() {
-	Common::FSNode file(PSP_CONFIG_FILE);
-	return file.createWriteStream();
+Common::String OSystem_PSP::getDefaultConfigFileName() {
+	return "ms0:/scummvm.ini";
 }

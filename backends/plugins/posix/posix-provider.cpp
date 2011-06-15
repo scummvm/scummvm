@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(DYNAMIC_MODULES) && defined(UNIX)
+#if defined(DYNAMIC_MODULES) && defined(POSIX)
 
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
@@ -77,9 +77,9 @@ public:
 };
 
 
-Plugin* POSIXPluginProvider::createPlugin(const Common::FSNode &node) const {
+Plugin *POSIXPluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new POSIXPlugin(node.getPath());
 }
 
 
-#endif // defined(DYNAMIC_MODULES) && defined(UNIX)
+#endif // defined(DYNAMIC_MODULES) && defined(POSIX)

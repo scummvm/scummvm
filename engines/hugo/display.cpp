@@ -644,13 +644,13 @@ bool Screen::isOverlapping(const rect_t *rectA, const rect_t *rectB) const {
 }
 
 /**
- * Display active boundaries in God Mode ('PPG')
+ * Display active boundaries (activated in the console)
  * Light Red   = Exit hotspots
  * Light Green = Visible objects
- * White       = Fixed objects, parts of background
+ * White       = Fix objects, parts of background
  */
 void Screen::drawBoundaries() {
-	if (!_vm->getGameStatus().godModeFl)
+	if (!_vm->getGameStatus().showBoundariesFl)
 		return;
 
 	_vm->_mouse->drawHotspots();

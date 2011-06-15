@@ -392,9 +392,11 @@ void Vocabulary::lookupWord(ResultWordList& retval, const char *word, int word_l
 		// SCI01 was the first version to support
 		// multiple matches, so no need to look further
 		// in earlier versions.
-		if (getSciVersion() < SCI_VERSION_01)
-			return;
 
+		// In versions that do support multiple matches, it seems
+		// that SSCI also aborts early when it finds an exact match in the
+		// dictionary.
+		return;
 	}
 
 	// Now try all suffixes

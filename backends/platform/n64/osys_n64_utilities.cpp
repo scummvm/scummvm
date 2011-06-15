@@ -21,6 +21,7 @@
  */
 
 #include "osys_n64.h"
+#include "backends/timer/default/default-timer.h"
 
 void checkTimers(void) {
 	OSystem_N64 *osys = (OSystem_N64 *)g_system;

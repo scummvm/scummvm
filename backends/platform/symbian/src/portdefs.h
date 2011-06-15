@@ -18,8 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
+
 #ifndef SYMBIAN_PORTDEFS_H
 #define SYMBIAN_PORTDEFS_H
+
 #include <assert.h>
 #include <stdarg.h>
 #include <string.h>
@@ -36,6 +38,26 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif  /*  M_PI  */
+
+
+// Enable Symbians own datatypes
+// This is done for two reasons
+// a) uint is already defined by Symbians libc component
+// b) Symbian is using its "own" datatyping, and the Scummvm port
+//    should follow this to ensure the best compability possible.
+typedef unsigned char byte;
+typedef unsigned char uint8;
+typedef signed char int8;
+typedef unsigned short int uint16;
+typedef signed short int int16;
+typedef unsigned long int uint32;
+typedef signed long int int32;
+
+// Define SCUMMVM_DONT_DEFINE_TYPES to prevent scummsys.h from trying to
+// re-define those data types.
+#define SCUMMVM_DONT_DEFINE_TYPES
+
+#define SMALL_SCREEN_DEVICE
 
 #define DISABLE_COMMAND_LINE
 

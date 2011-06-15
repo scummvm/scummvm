@@ -22,8 +22,8 @@
 
 #include "common/endian.h"
 #include "common/util.h"
-#include "common/EventRecorder.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "sword1/logic.h"
 #include "sword1/text.h"
@@ -50,8 +50,8 @@ namespace Sword1 {
 
 uint32 Logic::_scriptVars[NUM_SCRIPT_VARS];
 
-Logic::Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer) {
-	g_eventRec.registerRandomSource(_rnd, "sword1");
+Logic::Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer)
+	: _rnd("sword1") {
 
 	_vm = vm;
 	_objMan = pObjMan;
@@ -1630,7 +1630,7 @@ int Logic::fnRestartGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32
 
 int Logic::fnQuitGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	if (SwordEngine::_systemVars.isDemo) {
-		GUI::MessageDialog dialog("This is the end of the Broken Sword 1 Demo", "OK", NULL);
+		GUI::MessageDialog dialog(_("This is the end of the Broken Sword 1 Demo"), _("OK"), NULL);
 		dialog.runModal();
 		Engine::quitGame();
 	} else

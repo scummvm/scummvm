@@ -36,7 +36,7 @@ namespace TeenAgent {
 void TeenAgentEngine::rejectMessage() {
 	Resources * res = Resources::instance();
 	//random reject message:
-	uint i = random.getRandomNumber(3);
+	uint i = _rnd.getRandomNumber(3);
 	//debug(0, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
 	displayMessage(res->dseg.get_word(0x339e + 2 * i));
 }
@@ -3004,7 +3004,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		moveTo(153, 163, 4);
 		playActorAnimation(973);
 		if (CHECK_FLAG(0xDBC1, 0)) {
-			SET_FLAG(0xDBC1, random.getRandomNumber(5) + 1);
+			SET_FLAG(0xDBC1, _rnd.getRandomNumber(5) + 1);
 		}
 		loadScene(30, 18, 159, 2);
 		return true;

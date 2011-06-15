@@ -164,7 +164,7 @@ public:
 	void setSubtitles(bool b) { _useSubtitles = b; }
 
 	// GMM Loading/Saving
-	Common::Error saveGameState(int slot, const char *desc);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	bool canLoadGameStateCurrently();
@@ -224,7 +224,7 @@ public:
 	bool saveExists();
 	bool saveExists(uint16 slotNo);
 	uint32 restoreFromBuffer(byte *buffer, uint32 size);
-	char *getSaveFileName(uint16 slotNo);
+	Common::String getSaveFileName(uint16 slotNo);
 	uint32 findBufferSize();
 
 	void startGame();
@@ -233,8 +233,8 @@ public:
 
 	void sleepUntil(uint32 time);
 
-	void initialiseFontResourceFlags();
-	void initialiseFontResourceFlags(uint8 language);
+	void initializeFontResourceFlags();
+	void initializeFontResourceFlags(uint8 language);
 
 	bool initStartMenu();
 	void registerStartPoint(int32 key, char *name);

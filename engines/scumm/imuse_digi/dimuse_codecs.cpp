@@ -206,7 +206,7 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 	int32 destPos;
 	int16 firstWord;
 	byte initialTablePos[MAX_CHANNELS] = {0, 0};
-	int32 initialimcTableEntry[MAX_CHANNELS] = {7, 7};
+	//int32 initialimcTableEntry[MAX_CHANNELS] = {7, 7};
 	int32 initialOutputWord[MAX_CHANNELS] = {0, 0};
 	int32 totalBitOffset, curTablePos, outputWord;
 	byte *dst;
@@ -245,7 +245,7 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 		for (i = 0; i < channels; i++) {
 			initialTablePos[i] = *src;
 			src += 1;
-			initialimcTableEntry[i] = READ_BE_UINT32(src);
+			//initialimcTableEntry[i] = READ_BE_UINT32(src);
 			src += 4;
 			initialOutputWord[i] = READ_BE_UINT32(src);
 			src += 4;

@@ -51,7 +51,7 @@ public:
 	void deinit();
 
 	/** Register random source so it can be serialized in game test purposes */
-	void registerRandomSource(RandomSource &rnd, const char *name);
+	void registerRandomSource(RandomSource &rnd, const String &name);
 
 	/** TODO: Add documentation, this is only used by the backend */
 	void processMillis(uint32 &millis);

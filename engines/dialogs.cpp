@@ -143,9 +143,9 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kHelpCmd: {
 		GUI::MessageDialog dialog(
-					"Sorry, this engine does not currently provide in-game help. "
+					_("Sorry, this engine does not currently provide in-game help. "
 					"Please consult the README for basic information, and for "
-					"instructions on how to obtain further assistance.");
+					"instructions on how to obtain further assistance."));
 		dialog.runModal();
 		}
 		break;
@@ -227,11 +227,11 @@ void MainMenuDialog::save() {
 		Common::String result(_saveDialog->getResultString());
 		if (result.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
-			char buf[20];
-			snprintf(buf, 20, "Save %d", slot + 1);
+			Common::String buf;
+			buf = Common::String::format("Save %d", slot + 1);
 			_engine->saveGameState(slot, buf);
 		} else {
-			_engine->saveGameState(slot, result.c_str());
+			_engine->saveGameState(slot, result);
 		}
 
 		close();

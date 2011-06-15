@@ -31,6 +31,10 @@
 
 namespace Sci {
 
+// This table is only used for debugging. Don't include it for devices
+// with not enough available memory (e.g. phones), where REDUCE_MEMORY_USAGE
+// is defined
+#ifndef REDUCE_MEMORY_USAGE
 const char *opcodeNames[] = {
 	   "bnot",       "add",      "sub",      "mul",      "div",
 		"mod",       "shr",      "shl",      "xor",      "and",
@@ -59,6 +63,7 @@ const char *opcodeNames[] = {
 	   "-agi",      "-ali",     "-ati",     "-api",     "-sgi",
 	   "-sli",      "-sti",     "-spi"
 };
+#endif	// REDUCE_MEMORY_USAGE
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode) {
@@ -110,7 +115,9 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 	if (printBWTag)
 		debugN("[%c] ", opsize ? 'B' : 'W');
 
+#ifndef REDUCE_MEMORY_USAGE
 	debugN("%s", opcodeNames[opcode]);
+#endif
 
 	i = 0;
 	while (g_opcode_formats[opcode][i]) {
@@ -167,13 +174,15 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 			break;
 
 		case Script_SRelative:
-			if (opsize)
-				param_value = scr[retval.offset++];
-			else {
-				param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
-				retval.offset += 2;
+			if (opsize) {
+				int8 offset = (int8)scr[retval.offset++];
+				debugN(" %02x  [%04x]", 0xff & offset, 0xffff & (retval.offset + offset));
 			}
-			debugN(opsize ? " %02x  [%04x]" : " %04x  [%04x]", param_value, (0xffff) & (retval.offset + param_value));
+			else {
+				int16 offset = (int16)READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
+				retval.offset += 2;
+				debugN(" %04x  [%04x]", 0xffff & offset, 0xffff & (retval.offset + offset));
+			}
 			break;
 
 		case Script_End:

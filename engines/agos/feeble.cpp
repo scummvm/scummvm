@@ -32,8 +32,8 @@
 
 namespace AGOS {
 
-AGOSEngine_Feeble::AGOSEngine_Feeble(OSystem *system)
-	: AGOSEngine_Simon2(system) {
+AGOSEngine_Feeble::AGOSEngine_Feeble(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Simon2(system, gd) {
 
 	_interactiveVideo = 0;
 	_moviePlayer = 0;
@@ -108,8 +108,8 @@ void AGOSEngine_Feeble::stopInteractiveVideo() {
 	}
 }
 
-AGOSEngine_FeebleDemo::AGOSEngine_FeebleDemo(OSystem *system)
-	: AGOSEngine_Feeble(system) {
+AGOSEngine_FeebleDemo::AGOSEngine_FeebleDemo(OSystem *system, const AGOSGameDescription *gd)
+	: AGOSEngine_Feeble(system, gd) {
 
 	_filmMenuUsed = 0;
 }

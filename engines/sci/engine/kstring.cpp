@@ -66,8 +66,9 @@ reg_t kStrCpy(EngineState *s, int argc, reg_t *argv) {
 			s->_segMan->strncpy(argv[0], argv[1], length);
 		else
 			s->_segMan->memcpy(argv[0], argv[1], -length);
-	} else
+	} else {
 		s->_segMan->strcpy(argv[0], argv[1]);
+	}
 
 	return argv[0];
 }

@@ -243,9 +243,6 @@ void LoadCDGraphData(MEMHANDLE *pH) {
  * @param next			Handle of end of range + 1
  */
 void LoadExtraGraphData(SCNHANDLE start, SCNHANDLE next) {
-	if (start == cdBaseHandle)
-		return;
-
 	OpenCDGraphFile();
 
 	MemoryDiscard((handleTable + cdPlayHandle)->_node); // Free it

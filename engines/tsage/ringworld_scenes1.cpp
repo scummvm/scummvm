@@ -1759,6 +1759,8 @@ Scene50::Scene50() :
 		_item3(8, OBJECT_STUNNER, 50, 14, OBJECT_SCANNER, 50, 13, CURSOR_LOOK, 50, 3, LIST_END),
 		_item4(9, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_USE, 40, 41, CURSOR_LOOK, 50, 5, LIST_END),
 		_item5(10, OBJECT_SCANNER, 50, 17, OBJECT_STUNNER, 50, 18, CURSOR_LOOK, 50, 6, CURSOR_USE, 30, 8, LIST_END) {
+
+	_doorwayRect = Rect(80, 108, 160, 112);
 }
 
 void Scene50::postInit(SceneObjectList *OwnerList) {
@@ -1821,7 +1823,6 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 
 	_item0.setBounds(Rect(200, 0, 320, 200));
 	_globals->_sceneItems.addItems(&_item3, &_item4, &_item5, &_item0, NULL);
-	_doorwayRect = Rect(80, 108, 160, 112);
 }
 
 void Scene50::signal() {
@@ -1840,6 +1841,8 @@ void Scene50::signal() {
 }
 
 void Scene50::dispatch() {
+	Scene::dispatch();
+
 	if ((_sceneMode != 55) && _doorwayRect.contains(_globals->_player._position)) {
 		// Player in house doorway, start player moving to within
 		_globals->_player.disableControl();
@@ -2996,6 +2999,13 @@ void Scene6100::Action5::dispatch() {
 		if ((idx != 3) && (scene->_fadePercent == 100) &&
 				(tempSet.sqrt(zeroSet) < 150.0)) {
 			switch (scene->_hitCount++) {
+			case 0:
+				scene->_soundHandler.startSound(233);
+				scene->showMessage(NULL, 0, NULL);
+
+				if (!_globals->getFlag(76))
+					scene->_probe.setAction(&scene->_action1);
+				break;
 			case 1:
 				scene->_soundHandler.startSound(233);
 				scene->showMessage(NULL, 0, NULL);
@@ -3003,7 +3013,6 @@ void Scene6100::Action5::dispatch() {
 				if (!_globals->getFlag(76))
 					scene->_probe.setAction(&scene->_action2);
 				break;
-
 			case 2:
 				scene->_soundHandler.startSound(234);
 				scene->showMessage(NULL, 0, NULL);
@@ -3011,14 +3020,6 @@ void Scene6100::Action5::dispatch() {
 				if (!_globals->getFlag(76))
 					scene->_probe.setAction(NULL);
 				scene->setAction(&scene->_action3);
-				break;
-
-			default:
-				scene->_soundHandler.startSound(233);
-				scene->showMessage(NULL, 0, NULL);
-
-				if (!_globals->getFlag(76))
-					scene->_probe.setAction(&scene->_action1);
 				break;
 			}
 
@@ -3101,6 +3102,18 @@ void Scene6100::Action7::signal() {
 
 /*--------------------------------------------------------------------------*/
 
+void Scene6100::Object::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
+
+	// Save the double fields of the FloatSet
+	s.syncBytes((byte *)&_floats._float1, sizeof(double));
+	s.syncBytes((byte *)&_floats._float2, sizeof(double));
+	s.syncBytes((byte *)&_floats._float3, sizeof(double));
+	s.syncBytes((byte *)&_floats._float4, sizeof(double));
+}
+
+/*--------------------------------------------------------------------------*/
+
 void Scene6100::ProbeMover::dispatch() {
 	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
 
@@ -3122,14 +3135,43 @@ void Scene6100::Item1::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene6100::postInit(SceneObjectList *OwnerList) {
-	loadScene(6100);
-	Scene::postInit();
-	setZoomPercents(62, 2, 200, 425);
+Scene6100::Scene6100(): Scene() {
+	_objList[0] = &_sunflower1;
+	_objList[1] = &_sunflower2;
+	_objList[2] = &_sunflower3;
+	_objList[3] = &_rocks;
+
+	_speed = 30;
+	_fadePercent = 100;
+	_rocksCheck = false;
+	_hitCount = 0;
+	_turnAmount = 0;
+	_angle = 0;
+	_msgActive = false;
+
 	_globals->_sceneHandler._delayTicks = 8;
 
 	_globals->_player.disableControl();
 	_globals->_events.setCursor(CURSOR_WALK);
+}
+
+void Scene6100::synchronize(Serializer &s) {
+	Scene::synchronize(s);
+
+	s.syncAsSint16LE(_speed);
+	s.syncAsSint16LE(_fadePercent);
+	s.syncAsByte(_rocksCheck);
+	s.syncAsByte(_msgActive);
+	s.syncAsSint16LE(_hitCount);
+	s.syncAsSint16LE(_turnAmount);
+	s.syncAsSint16LE(_angle);
+}
+
+void Scene6100::postInit(SceneObjectList *OwnerList) {
+	loadScene(6100);
+	Scene::postInit();
+	setZoomPercents(62, 2, 200, 425);
+
 	_stripManager.addSpeaker(&_speakerQR);
 	_stripManager.addSpeaker(&_speakerSL);
 
@@ -3177,11 +3219,6 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	_probe._floats._float3 = 0.0;
 	_probe.hide();
 
-	_objList[0] = &_sunflower1;
-	_objList[1] = &_sunflower2;
-	_objList[2] = &_sunflower3;
-	_objList[3] = &_rocks;
-
 	int baseVal = 2000;
 	for (int idx = 0; idx < 3; ++idx) {
 		_objList[idx]->_floats._float1 = _globals->_randomSource.getRandomNumber(999);
@@ -3199,14 +3236,6 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 		_objList[idx]->fixPriority(1);
 		_objList[idx]->changeZoom(-1);
 	}
-
-	_speed = 30;
-	_fadePercent = 100;
-	_rocksCheck = false;
-	_hitCount = 0;
-	_turnAmount = 0;
-	_angle = 0;
-	_msgActive = false;
 
 	setAction(&_action5);
 	_globals->_scenePalette.addRotation(96, 143, -1);

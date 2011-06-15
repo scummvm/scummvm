@@ -440,13 +440,12 @@ void CineEngine::makeSystemMenu() {
 
 					getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 					if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
-						char saveString[256], tmp[80];
-
-						snprintf(tmp, 80, "%s.dir", _targetName.c_str());
+						char saveString[256];
+						Common::String tmp = Common::String::format("%s.dir", _targetName.c_str());
 
 						Common::OutSaveFile *fHandle = _saveFileMan->openForSaving(tmp);
 						if (!fHandle) {
-							warning("Unable to open file %s for saving", tmp);
+							warning("Unable to open file %s for saving", tmp.c_str());
 							break;
 						}
 

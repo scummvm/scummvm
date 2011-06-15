@@ -443,7 +443,7 @@ public:
 	GameInterfaceView(MadsM4Engine *vm, const Common::Rect &rect): View(vm, rect) {}
 	~GameInterfaceView() {}
 
-	virtual void initialise() {}
+	virtual void initialize() {}
 	virtual void setSelectedObject(int objectNumber) {}
 	virtual void addObjectToInventory(int objectNumber) {}
 };

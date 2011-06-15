@@ -49,6 +49,8 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
+	virtual uint16 getMap() { return 9934; }
+
 	void towerRotationMap_run();
 	void libraryBookcaseTransform_run();
 	void generatorControlRoom_run();

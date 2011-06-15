@@ -25,7 +25,6 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 
 #include "audio/mixer.h"
 
@@ -56,7 +55,7 @@ namespace Saga {
 #define MAX_TIME_DELTA 100
 
 SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
-	: Engine(syst), _gameDescription(gameDesc) {
+	: Engine(syst), _gameDescription(gameDesc), _rnd("saga") {
 
 	_framesEsc = 0;
 
@@ -133,7 +132,6 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 
 	_displayClip.left = _displayClip.top = 0;
-	g_eventRec.registerRandomSource(_rnd, "saga");
 }
 
 SagaEngine::~SagaEngine() {

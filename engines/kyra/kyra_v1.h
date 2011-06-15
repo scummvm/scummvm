@@ -99,7 +99,7 @@ class KyraMetaEngine;
  * - The Legend of Kyrandia (fully supported, except for Macintosh port, which lacks sound)
  * - (The) Hand of Fate (fully supported)
  * - Malcolm's Revenge (fully supported)
- * - Lands of Lore: The Throne of Chaos (completable, still work in progress)
+ * - Lands of Lore: The Throne of Chaos (fully supported)
  */
 namespace Kyra {
 
@@ -418,7 +418,7 @@ protected:
 
 	void loadGameStateCheck(int slot);
 	virtual Common::Error loadGameState(int slot) = 0;
-	Common::Error saveGameState(int slot, const char *saveName) { return saveGameStateIntern(slot, saveName, 0); }
+	Common::Error saveGameState(int slot, const Common::String &desc) { return saveGameStateIntern(slot, desc.c_str(), 0); }
 	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);

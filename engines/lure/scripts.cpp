@@ -31,7 +31,6 @@
 #include "lure/sound.h"
 #include "common/stack.h"
 #include "common/endian.h"
-#include "common/EventRecorder.h"
 
 namespace Lure {
 
@@ -1128,7 +1127,7 @@ uint16 Script::execute(uint16 startOffset) {
 			break;
 
 		case S_OPCODE_RANDOM:
-			param = r.random() >> 8; // make number between 0 to 255
+			param = r.getRandom() >> 8; // make number between 0 to 255
 			break;
 
 		case S_OPCODE_END:

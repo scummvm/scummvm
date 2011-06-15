@@ -71,6 +71,8 @@ public:
 	void stopAllSoundEffects();
 
 	void beginFadeOut();
+
+	void pause(bool paused);
 private:
 	static void onTimer(void *data);
 
@@ -139,8 +141,6 @@ private:
 
 	TownsEuphonyDriver *_driver;
 	
-	Common::Mutex _mutex;
-
 	bool _cdaPlaying;
 
 	const uint8 *_musicFadeTable;

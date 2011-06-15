@@ -108,7 +108,7 @@ public:
 	//@{
 
 	/**
-	 * Initialise the specified CD drive for audio playback.
+	 * Initialize the specified CD drive for audio playback.
 	 * @param drive the drive id
 	 * @return true if the CD drive was inited succesfully
 	 */

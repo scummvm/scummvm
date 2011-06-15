@@ -80,6 +80,7 @@ Sub DetermineRevision()
 				If Not DetermineGitVersion() Then
 					If Not DetermineHgVersion() Then
 						Wscript.StdErr.WriteLine "Could not determine the current revision, skipping..."
+						OutputRevisionHeader ""
 						Exit Sub
 					End If
 				End If
@@ -91,6 +92,7 @@ Sub DetermineRevision()
 				If Not DetermineTortoiseSVNVersion() Then
 					If Not DetermineSVNVersion() Then
 						Wscript.StdErr.WriteLine "Could not determine the current revision, skipping..."
+						OutputRevisionHeader ""
 						Exit Sub
 					End If
 				End If
@@ -121,9 +123,13 @@ Sub DetermineRevision()
 	
 	Wscript.StdErr.WriteLine outputInfo & vbCrLf
 
-	' Output revision header file
+	OutputRevisionHeader revisionString
+End Sub
+
+' Output revision header file
+Sub OutputRevisionHeader(str)
 	FSO.CopyFile rootFolder & "\\base\\internal_revision.h.in", targetFolder & "\\internal_revision.h"
-	FindReplaceInFile targetFolder & "\\internal_revision.h", "@REVISION@", revisionString
+	FindReplaceInFile targetFolder & "\\internal_revision.h", "@REVISION@", str
 End Sub
 
 Function DetermineTortoiseSVNVersion()

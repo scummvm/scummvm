@@ -22,7 +22,6 @@
 
 
 #include "common/system.h"
-#include "common/EventRecorder.h"
 #include "common/events.h"
 
 #include "graphics/cursorman.h"
@@ -38,7 +37,7 @@ namespace Queen {
 
 Display::Display(QueenEngine *vm, OSystem *system)
 	: _fullscreen(true), _horizontalScroll(0), _bdWidth(0), _bdHeight(0),
-	_system(system), _vm(vm) {
+	_system(system), _vm(vm), _rnd("queenDisplay") {
 
 	initFont();
 
@@ -73,7 +72,6 @@ Display::Display(QueenEngine *vm, OSystem *system)
 	memset(&_dynalum, 0, sizeof(_dynalum));
 
 	setupInkColors();
-	g_eventRec.registerRandomSource(_rnd, "queenDisplay");
 }
 
 Display::~Display() {

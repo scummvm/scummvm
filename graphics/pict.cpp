@@ -324,8 +324,8 @@ void PictDecoder::outputPixelBuffer(byte *&out, byte value, byte bitsPerPixel) {
 }
 
 // Compressed QuickTime details can be found here:
-// http://developer.apple.com/documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
-// http://developer.apple.com/documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
+// http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
+// http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
 // I'm just ignoring that because Myst ME uses none of that extra stuff. The offset is always the same.
 
 void PictDecoder::decodeCompressedQuickTime(Common::SeekableReadStream *stream) {

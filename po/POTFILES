@@ -19,7 +19,9 @@ base/main.cpp
 common/error.cpp
 common/util.cpp
 
+engines/advancedDetector.cpp
 engines/dialogs.cpp
+engines/engine.cpp
 engines/scumm/dialogs.cpp
 engines/scumm/help.cpp
 engines/scumm/scumm.cpp
@@ -29,8 +31,24 @@ engines/mohawk/riven.cpp
 engines/cruise/menu.cpp
 engines/sci/engine/kfile.cpp
 engines/agos/saveload.cpp
+engines/agos/animation.cpp
+engines/gob/inter_playtoons.cpp
+engines/gob/inter_v2.cpp
+engines/gob/inter_v5.cpp
+engines/groovie/script.cpp
+engines/kyra/sound_midi.cpp
+engines/m4/m4_menus.cpp
+engines/sky/compact.cpp
+engines/sword1/animation.cpp
+engines/sword1/control.cpp
+engines/sword1/logic.cpp
+engines/sword1/sword1.cpp
+engines/sword2/animation.cpp
+engines/tinsel/saveload.cpp
+engines/parallaction/saveload.cpp
 
 audio/fmopl.cpp
+audio/mididrv.cpp
 audio/musicplugin.cpp
 audio/null.h
 audio/null.cpp
@@ -40,7 +58,6 @@ audio/softsynth/appleiigs.cpp
 audio/softsynth/sid.cpp
 audio/softsynth/mt32.cpp
 audio/softsynth/pcspk.cpp
-audio/softsynth/ym2612.cpp
 
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
@@ -48,6 +65,7 @@ backends/platform/ds/arm9/source/dsoptions.cpp
 backends/platform/iphone/osys_events.cpp
 backends/graphics/sdl/sdl-graphics.cpp
 backends/graphics/opengl/opengl-graphics.cpp
+backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/platform/symbian/src/SymbianActions.cpp
 backends/platform/symbian/src/SymbianOS.cpp
 backends/events/symbiansdl/symbiansdl-events.cpp
@@ -56,3 +74,6 @@ backends/platform/wince/CEActionsPocket.cpp
 backends/platform/wince/CEActionsSmartphone.cpp
 backends/platform/wince/CELauncherDialog.cpp
 backends/platform/wince/wince-sdl.cpp
+backends/events/default/default-events.cpp
+backends/events/gph/gph-events.cpp
+backends/events/openpandora/op-events.cpp

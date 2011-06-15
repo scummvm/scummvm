@@ -24,7 +24,6 @@
 #include "common/endian.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
@@ -706,7 +705,7 @@ void LoadBasicChunks() {
 	int numObjects;
 
 	// Allocate RAM for savescene data
-	InitialiseSaveScenes();
+	InitializeSaveScenes();
 
 	// CHUNK_TOTAL_ACTORS seems to be missing in the released version, hard coding a value
 	// TODO: Would be nice to just change 511 to MAX_SAVED_ALIVES
@@ -815,7 +814,7 @@ const char *TinselEngine::_textFiles[][3] = {
 
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc) {
+		Engine(syst), _gameDescription(gameDesc), _random("tinsel") {
 	_vm = this;
 
 	_config = new Config(this);
@@ -887,9 +886,7 @@ TinselEngine::~TinselEngine() {
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
-	char filename[256];
-	snprintf(filename, 256, "%s.%03d", getTargetName().c_str(), saveNum);
-	return filename;
+	return Common::String::format("%s.%03d", getTargetName().c_str(), saveNum);
 }
 
 Common::Error TinselEngine::run() {
@@ -905,8 +902,6 @@ Common::Error TinselEngine::run() {
 		initGraphics(320, 200, false);
 		_screenSurface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
-
-	g_eventRec.registerRandomSource(_random, "tinsel");
 
 	_console = new Console();
 

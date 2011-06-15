@@ -23,6 +23,8 @@
 #ifndef PLATFORM_SDL_SAMSUNGTV_H
 #define PLATFORM_SDL_SAMSUNGTV_H
 
+#if defined(SAMSUNGTV)
+
 #include "backends/platform/sdl/posix/posix.h"
 
 class OSystem_SDL_SamsungTV : public OSystem_POSIX {
@@ -30,10 +32,10 @@ public:
 	OSystem_SDL_SamsungTV();
 
 	virtual void initBackend();
-
-	virtual bool hasFeature(Feature f);
-	virtual void setFeatureState(Feature f, bool enable);
-	virtual bool getFeatureState(Feature f);
+	virtual void quit();
+	virtual void fatalError();
 };
+
+#endif
 
 #endif

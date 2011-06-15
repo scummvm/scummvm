@@ -34,6 +34,9 @@
  * Backend files may #define FORBIDDEN_SYMBOL_ALLOW_ALL if they
  * have to access functions like fopen, fread etc.
  * Regular code, esp. code in engines/, should never do that.
+ * To ease transition, though, we allow re-enabling selected symbols
+ * in frontend code. However, this should only be used as a temporary
+ * measure. Especially new code should avoid this at all costs.
  */
 
 #ifndef FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -51,7 +54,7 @@
  * the compiler will hopefully print along with its own error message),
  * we try to make clear what is causing the error.
  */
-#define FORBIDDEN_SYMBOL_REPLACEMENT	FORBIDDEN SYMBOL !%*
+#define FORBIDDEN_SYMBOL_REPLACEMENT	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_printf
@@ -77,6 +80,21 @@
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #undef FILE
 #define FILE	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_stdin
+#undef stdin
+#define stdin	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_stdout
+#undef stdout
+#define stdout	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#undef stderr
+#define stderr	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_fopen
@@ -124,6 +142,46 @@
 #define fputc(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_fgets
+#undef fgets
+#define fgets(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_fputs
+#undef fputs
+#define fputs(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getc
+#undef getc
+#define getc(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putc
+#undef putc
+#define putc(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_gets
+#undef gets
+#define gets(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_puts
+#undef puts
+#define puts(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getchar
+#undef getchar
+#define getchar()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putchar
+#undef putchar
+#define putchar(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #undef setjmp
@@ -138,6 +196,31 @@
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_system
 #undef system
 #define system(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_exit
+#undef exit
+#define exit(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getenv
+#undef getenv
+#define getenv(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_putenv
+#undef putenv
+#define putenv(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_setenv
+#undef setenv
+#define setenv(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_unsetenv
+#undef unsetenv
+#define unsetenv(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 
@@ -243,6 +326,64 @@
 #undef setvbuf
 #define setvbuf(a,b,c,d)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
+
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_tmpfile
+#undef tmpfile
+#define tmpfile()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_tmpnam
+#undef tmpnam
+#define tmpnam(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_tempnam
+#undef tempnam
+#define tempnam(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_rand
+#undef rand
+#define rand()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_srand
+#undef srand
+#define srand(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_random
+#undef random
+#define random()	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_srandom
+#undef srandom
+#define srandom(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_stricmp
+#undef stricmp
+#define stricmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strnicmp
+#undef strnicmp
+#define strnicmp(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strcasecmp
+#undef strcasecmp
+#define strcasecmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp
+#undef strncasecmp
+#define strncasecmp(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
 
 /*
  * We also would like to disable the following symbols;

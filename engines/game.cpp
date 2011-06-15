@@ -38,17 +38,12 @@ GameDescriptor::GameDescriptor() {
 	setVal("description", "");
 }
 
-GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd) {
-	setVal("gameid", pgd.gameid);
-	setVal("description", pgd.description);
-}
-
-GameDescriptor::GameDescriptor(const PlainGameDescriptorGUIOpts &pgd) {
+GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, uint32 guioptions) {
 	setVal("gameid", pgd.gameid);
 	setVal("description", pgd.description);
 
-	if (pgd.guioptions != 0)
-		setVal("guioptions", Common::getGameGUIOptionsDescription(pgd.guioptions));
+	if (guioptions != 0)
+		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
 }
 
 GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, uint32 guioptions) {

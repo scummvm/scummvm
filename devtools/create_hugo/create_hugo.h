@@ -144,7 +144,7 @@ struct act1 {                                       // Type 1 - Start an object
 	cycle_t  cycle;                                 // Direction to start cycling
 };
 
-struct act2 {                                       // Type 2 - Initialise an object coords
+struct act2 {                                       // Type 2 - Initialize an object coords
 	byte     actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objNumb;                               // The object number
@@ -168,21 +168,21 @@ struct act4 {                                       // Type 4 - Set new backgrou
 	long     newBkgColor;                           // New color
 };
 
-struct act5 {                                       // Type 5 - Initialise an object velocity
+struct act5 {                                       // Type 5 - Initialize an object velocity
 	byte     actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objNumb;                               // The object number
 	int      vx, vy;                                // velocity
 };
 
-struct act6 {                                       // Type 6 - Initialise an object carrying
+struct act6 {                                       // Type 6 - Initialize an object carrying
 	byte     actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objNumb;                               // The object number
 	bool     carriedFl;                             // carrying
 };
 
-struct act7 {                                       // Type 7 - Initialise an object to hero's coords
+struct act7 {                                       // Type 7 - Initialize an object to hero's coords
 	byte     actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objNumb;                               // The object number
@@ -194,14 +194,14 @@ struct act8 {                                       // Type 8 - switch to new sc
 	int      screenIndex;                           // The new screen number
 };
 
-struct act9 {                                       // Type 9 - Initialise an object state
+struct act9 {                                       // Type 9 - Initialize an object state
 	byte     actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objNumb;                               // The object number
 	byte     newState;                              // New state
 };
 
-struct act10 {                                      // Type 10 - Initialise an object path type
+struct act10 {                                      // Type 10 - Initialize an object path type
 	byte     actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objNumb;                               // The object number
@@ -290,7 +290,7 @@ struct act21 {                                      // Type 21 - Gameover.  Disa
 	int      timer;                                 // Time to set off the action
 };
 
-struct act22 {                                      // Type 22 - Initialise an object to hero's coords
+struct act22 {                                      // Type 22 - Initialize an object to hero's coords
 	byte     actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objNumb;                               // The object number

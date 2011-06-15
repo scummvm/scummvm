@@ -49,6 +49,8 @@ private:
 	void toggleVar(uint16 var);
 	bool setVarValue(uint16 var, uint16 value);
 
+	virtual uint16 getMap() { return 9932; }
+
 	DECLARE_OPCODE(o_bridgeToggle);
 	DECLARE_OPCODE(o_pipeExtend);
 	DECLARE_OPCODE(o_drawImageChangeCardAndVolume);

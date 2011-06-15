@@ -284,6 +284,19 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(Common::normalizePath("foo/./bar", '/'), "foo/bar");
 		TS_ASSERT_EQUALS(Common::normalizePath("foo//./bar//", '/'), "foo/bar");
 		TS_ASSERT_EQUALS(Common::normalizePath("foo//.bar//", '/'), "foo/.bar");
+
+		TS_ASSERT_EQUALS(Common::normalizePath("..", '/'), "..");
+		TS_ASSERT_EQUALS(Common::normalizePath("../", '/'), "..");
+		TS_ASSERT_EQUALS(Common::normalizePath("/..", '/'), "/..");
+		TS_ASSERT_EQUALS(Common::normalizePath("../bar", '/'), "../bar");
+		TS_ASSERT_EQUALS(Common::normalizePath("foo//../", '/'), "");
+		TS_ASSERT_EQUALS(Common::normalizePath("foo/../bar", '/'), "bar");
+		TS_ASSERT_EQUALS(Common::normalizePath("foo//../bar//", '/'), "bar");
+		TS_ASSERT_EQUALS(Common::normalizePath("foo//..bar//", '/'), "foo/..bar");
+
+		TS_ASSERT_EQUALS(Common::normalizePath("foo/../../bar//", '/'), "../bar");
+		TS_ASSERT_EQUALS(Common::normalizePath("../foo/../bar", '/'), "../bar");
+		TS_ASSERT_EQUALS(Common::normalizePath("../../foo/bar/", '/'), "../../foo/bar");
 	}
 
 	void test_matchString() {
@@ -377,5 +390,22 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(strcmp(test4, initialString), 0);
 		TS_ASSERT_EQUALS(Common::strlcat(test4, appendString, 11), strlen(resultString));
 		TS_ASSERT_EQUALS(strcmp(test4, resultString), 0);
+	}
+
+	void test_scumm_stricmp() {
+		TS_ASSERT_EQUALS(scumm_stricmp("abCd", "abCd"), 0);
+		TS_ASSERT_EQUALS(scumm_stricmp("abCd", "ABCd"), 0);
+		TS_ASSERT_LESS_THAN(scumm_stricmp("abCd", "ABCe"), 0);
+		TS_ASSERT_LESS_THAN(scumm_stricmp("abCd", "ABCde"), 0);
+	}
+
+	void test_scumm_strnicmp() {
+		TS_ASSERT_EQUALS(scumm_strnicmp("abCd", "abCd", 3), 0);
+		TS_ASSERT_EQUALS(scumm_strnicmp("abCd", "ABCd", 4), 0);
+		TS_ASSERT_EQUALS(scumm_strnicmp("abCd", "ABCd", 5), 0);
+		TS_ASSERT_EQUALS(scumm_strnicmp("abCd", "ABCe", 3), 0);
+		TS_ASSERT_LESS_THAN(scumm_strnicmp("abCd", "ABCe", 4), 0);
+		TS_ASSERT_EQUALS(scumm_strnicmp("abCd", "ABCde", 4), 0);
+		TS_ASSERT_LESS_THAN(scumm_strnicmp("abCd", "ABCde", 5), 0);
 	}
 };

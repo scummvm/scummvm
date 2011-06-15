@@ -34,6 +34,7 @@
 #include "common/serializer.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 
@@ -464,7 +465,7 @@ static bool DoRestore() {
 	delete f;
 
 	if (failed) {
-		GUI::MessageDialog dialog("Failed to load game state from file.");
+		GUI::MessageDialog dialog(_("Failed to load game state from file."));
 		dialog.runModal();
 	}
 
@@ -542,7 +543,7 @@ save_failure:
 		_vm->getSaveFileMan()->removeSavefile(SaveSceneName);
 		SaveSceneName = NULL;	// Invalidate save name
 	}
-	GUI::MessageDialog dialog("Failed to save game state to file.");
+	GUI::MessageDialog dialog(_("Failed to save game state to file."));
 	dialog.runModal();
 }
 

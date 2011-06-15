@@ -47,7 +47,7 @@ class Scene;
 class MusicPlayer;
 class Console;
 
-class TeenAgentEngine: public Engine {
+class TeenAgentEngine : public Engine {
 public:
 	enum Action { kActionNone, kActionExamine, kActionUse };
 
@@ -56,7 +56,7 @@ public:
 
 	virtual Common::Error run();
 	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const char *desc);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canLoadGameStateCurrently() { return true; }
 	virtual bool canSaveGameStateCurrently() { return !scene_busy; }
 	virtual bool hasFeature(EngineFeature f) const;
@@ -117,7 +117,7 @@ public:
 	void fadeOut();
 	void wait(uint16 frames);
 
-	Common::RandomSource random;
+	Common::RandomSource _rnd;
 
 	Scene *scene;
 	Inventory *inventory;

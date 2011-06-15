@@ -47,7 +47,6 @@ enum ErrorCode {
 	kUnsupportedGameidError,	///< Engine initialization: Gameid not supported by this (Meta)Engine
 	kUnsupportedColorMode,		///< Engine initialization: Engine does not support backend's color mode
 
-
 	kReadPermissionDenied,		///< Unable to read data due to missing read permission
 	kWritePermissionDenied,		///< Unable to write data due to missing write permission
 
@@ -62,8 +61,6 @@ enum ErrorCode {
 	// The following are used by --list-saves
 	kEnginePluginNotFound,		///< Failed to find plugin to handle target
 	kEnginePluginNotSupportSaves,	///< Failed if plugin does not support listing save states
-
-	kArgumentNotProcessed,		///< Used in command line parsing
 
 	kUnknownError				///< Catch-all error, used if no other error code matches
 };

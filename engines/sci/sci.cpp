@@ -23,8 +23,6 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/EventRecorder.h"
-#include "common/file.h"	// for Common::File::exists()
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -75,7 +73,7 @@ SciEngine *g_sci = 0;
 class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId)
-		: Engine(syst), _gameDescription(desc), _gameId(gameId) {
+		: Engine(syst), _gameDescription(desc), _gameId(gameId), _rng("sci") {
 
 	assert(g_sci == 0);
 	g_sci = this;
@@ -183,8 +181,6 @@ SciEngine::~SciEngine() {
 extern void showScummVMDialog(const Common::String &message);
 
 Common::Error SciEngine::run() {
-	g_eventRec.registerRandomSource(_rng, "sci");
-
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("sci_originalsaveload", "false");
 	ConfMan.registerDefault("native_fb01", "false");
@@ -217,8 +213,6 @@ Common::Error SciEngine::run() {
 	_gfxScreen = new GfxScreen(_resMan);
 	_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
 
-	// Create debugger console. It requires GFX to be initialized
-	_console = new Console(this);
 	_kernel = new Kernel(_resMan, segMan);
 
 	_features = new GameFeatures(segMan, _kernel);
@@ -230,6 +224,9 @@ Common::Error SciEngine::run() {
 	_audio = new AudioPlayer(_resMan);
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
+
+	// Create debugger console. It requires GFX and _gamestate to be initialized
+	_console = new Console(this);
 
 	// The game needs to be initialized before the graphics system is initialized, as
 	// the graphics code checks parts of the seg manager upon initialization (e.g. for

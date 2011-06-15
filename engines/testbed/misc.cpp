@@ -24,13 +24,12 @@
 
 namespace Testbed {
 
-Common::String MiscTests::getHumanReadableFormat(TimeDate &td) {
+Common::String MiscTests::getHumanReadableFormat(const TimeDate &td) {
 	return Common::String::format("%d:%d:%d on %d/%d/%d (dd/mm/yyyy)", td.tm_hour, td.tm_min, td.tm_sec, td.tm_mday, td.tm_mon + 1, td.tm_year + 1900);
 }
 
 void MiscTests::timerCallback(void *arg) {
 	// Increment arg which actually points to an int
-	// arg must point to a static data, threads otherwise have their own stack
 	int &valToModify = *((int *) arg);
 	valToModify = 999; // some arbitrary value
 }
@@ -110,7 +109,7 @@ TestExitStatus MiscTests::testDateTime() {
 }
 
 TestExitStatus MiscTests::testTimers() {
-	static int valToModify = 0;
+	int valToModify = 0;
 	if (g_system->getTimerManager()->installTimerProc(timerCallback, 100000, &valToModify)) {
 		g_system->delayMillis(150);
 		g_system->getTimerManager()->removeTimerProc(timerCallback);
@@ -132,7 +131,7 @@ TestExitStatus MiscTests::testMutexes() {
 		Testsuite::writeOnScreen("Installing mutex", Common::Point(0, 100));
 	}
 
-	static SharedVars sv = {1, 1, true, g_system->createMutex()};
+	SharedVars sv = {1, 1, true, g_system->createMutex()};
 
 	if (g_system->getTimerManager()->installTimerProc(criticalSection, 100000, &sv)) {
 		g_system->delayMillis(150);

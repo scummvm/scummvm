@@ -21,7 +21,6 @@
  */
 
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -97,8 +96,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	rightMouseButton = 0;
 	*textName = 0;
 
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "drascula");
+	_rnd = new Common::RandomSource("drascula");
 
 	_console = 0;
 
@@ -895,9 +893,9 @@ bool DrasculaEngine::loadDrasculaDat() {
 	ver = in.readByte();
 
 	if (ver != DRASCULA_DAT_VER) {
-		snprintf(buf, 256, "File 'drascula.dat' is wrong version. Expected %d but got %d. Get it from the ScummVM website", DRASCULA_DAT_VER, ver);
-		GUIErrorMessage(buf);
-		warning("%s", buf);
+		Common::String errorMessage = Common::String::format("File 'drascula.dat' is wrong version. Expected %d but got %d. Get it from the ScummVM website", DRASCULA_DAT_VER, ver);
+		GUIErrorMessage(errorMessage);
+		warning("%s", errorMessage.c_str());
 
 		return false;
 	}

@@ -1624,11 +1624,7 @@ bool VMDDecoder::openExternalCodec() {
 		if (_videoCodec == kVideoCodecIndeo3) {
 			_isPaletted = false;
 
-#ifdef USE_INDEO3
 			_codec = new Indeo3Decoder(_width, _height);
-#else
-			warning("VMDDecoder::openExternalCodec(): Indeo3 decoder not compiled in");
-#endif
 
 		} else {
 			warning("VMDDecoder::openExternalCodec(): Unknown video codec FourCC \"%s\"",

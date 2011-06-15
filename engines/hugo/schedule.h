@@ -73,7 +73,7 @@ enum action_t {                                     // Parameters:
 	INIT_MAZE,                                      // 30 - Start special maze hotspot processing
 	EXIT_MAZE,                                      // 31 - Exit special maze processing
 	INIT_PRIORITY,                                  // 32 - Initialize fbg field
-	INIT_SCREEN,                                    // 33 - Initialise screen field of object
+	INIT_SCREEN,                                    // 33 - Initialize screen field of object
 	AGSCHEDULE,                                     // 34 - Global schedule - lasts over new screen
 	REMAPPAL,                                       // 35 - Remappe palette - palette index, color
 	COND_NOUN,                                      // 36 - Conditional on noun appearing in line
@@ -106,7 +106,7 @@ struct act1 {                                       // Type 1 - Start an object
 	cycle_t  cycle;                                 // Direction to start cycling
 };
 
-struct act2 {                                       // Type 2 - Initialise an object coords
+struct act2 {                                       // Type 2 - Initialize an object coords
 	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objIndex;                              // The object number
@@ -129,21 +129,21 @@ struct act4 {                                       // Type 4 - Set new backgrou
 	long     newBackgroundColor;                    // New color
 };
 
-struct act5 {                                       // Type 5 - Initialise an object velocity
+struct act5 {                                       // Type 5 - Initialize an object velocity
 	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objIndex;                              // The object number
 	int      vx, vy;                                // velocity
 };
 
-struct act6 {                                       // Type 6 - Initialise an object carrying
+struct act6 {                                       // Type 6 - Initialize an object carrying
 	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objIndex;                              // The object number
 	bool     carriedFl;                             // carrying
 };
 
-struct act7 {                                       // Type 7 - Initialise an object to hero's coords
+struct act7 {                                       // Type 7 - Initialize an object to hero's coords
 	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objIndex;                              // The object number
@@ -155,14 +155,14 @@ struct act8 {                                       // Type 8 - switch to new sc
 	int      screenIndex;                           // The new screen number
 };
 
-struct act9 {                                       // Type 9 - Initialise an object state
+struct act9 {                                       // Type 9 - Initialize an object state
 	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objIndex;                              // The object number
 	byte     newState;                              // New state
 };
 
-struct act10 {                                      // Type 10 - Initialise an object path type
+struct act10 {                                      // Type 10 - Initialize an object path type
 	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objIndex;                              // The object number
@@ -251,7 +251,7 @@ struct act21 {                                      // Type 21 - Gameover.  Disa
 	int      timer;                                 // Time to set off the action
 };
 
-struct act22 {                                      // Type 22 - Initialise an object to hero's coords
+struct act22 {                                      // Type 22 - Initialize an object to hero's coords
 	action_t actType;                               // The type of action
 	int      timer;                                 // Time to set off the action
 	int      objIndex;                              // The object number

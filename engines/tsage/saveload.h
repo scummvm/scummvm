@@ -33,7 +33,7 @@ namespace tSage {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
-#define TSAGE_SAVEGAME_VERSION 2
+#define TSAGE_SAVEGAME_VERSION 5
 
 class SavedObject;
 
@@ -115,7 +115,7 @@ template<typename T>
 class SynchronizedList : public Common::List<T> {
 public:
 	void synchronize(Serializer &s) {
-		int entryCount;
+		int entryCount = 0;
 
 		if (s.isLoading()) {
 			this->clear();

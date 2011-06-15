@@ -67,12 +67,11 @@ public:
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
-		#ifndef _WIN32_WCE
+#ifndef _WIN32_WCE
 		_dlHandle = LoadLibrary(_filename.c_str());
-		#else
-		if (!_filename.hasSuffix("scummvm.dll"))	// skip loading the core scummvm module
-			_dlHandle = LoadLibrary(toUnicode(_filename.c_str()));
-		#endif
+#else
+		_dlHandle = LoadLibrary(toUnicode(_filename.c_str()));
+#endif
 
 		if (!_dlHandle) {
 			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), (int32) GetLastError());
@@ -104,7 +103,11 @@ Plugin* Win32PluginProvider::createPlugin(const Common::FSNode &node) const {
 bool Win32PluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
+#ifndef _WIN32_WCE
 	if (!filename.hasSuffix(".dll"))
+#else
+	if (!filename.hasSuffix(".plugin"))
+#endif
 		return false;
 
 	return true;

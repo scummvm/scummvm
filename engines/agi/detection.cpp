@@ -129,31 +129,6 @@ static const PlainGameDescriptor agiGames[] = {
 
 #include "agi/detection_tables.h"
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Agi::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Agi::AGIGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	agiGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"agi",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOSPEECH,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 using namespace Agi;
 
 class AgiMetaEngine : public AdvancedMetaEngine {
@@ -161,10 +136,13 @@ class AgiMetaEngine : public AdvancedMetaEngine {
 	mutable Common::String	_extra;
 
 public:
-	AgiMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
+		_singleid = "agi";
+		_guioptions = Common::GUIO_NOSPEECH;
+	}
 
 	virtual const char *getName() const {
-		return "AGI preAGI + v2 + v3 Engine";
+		return "AGI preAGI + v2 + v3";
 	}
 	virtual const char *getOriginalCopyright() const {
 		return "Sierra AGI Engine (C) Sierra On-Line Software";
@@ -177,7 +155,7 @@ public:
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 
-	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
+	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 };
 
 bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -315,7 +293,7 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
-const ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
+const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
 	typedef Common::HashMap<Common::String, int32> IntMap;
 	IntMap allFiles;
 	bool matchedUsingFilenames = false;

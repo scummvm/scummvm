@@ -73,7 +73,7 @@ struct BACKGND {
 |*			Background Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void InitBackground(		// called to initialise a background
+void InitBackground(		// called to initialize a background
 	const BACKGND *pBgnd);	// pointer to data struct for current background
 
 void StartupBackground(CORO_PARAM, SCNHANDLE hFilm);
@@ -93,7 +93,7 @@ void PlayfieldGetPos(		// Returns the xy position of the specified playfield in 
 int PlayfieldGetCenterX(	// Returns the xy position of the specified playfield in the current background
 	int which);		// which playfield
 
-OBJECT *GetPlayfieldList(	// Returns the display list for the specified playfield
+OBJECT **GetPlayfieldList(	// Returns the display list for the specified playfield
 	int which);		// which playfield
 
 void KillPlayfieldList(		// Kills all the objects on the display list for the specified playfield

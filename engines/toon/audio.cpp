@@ -232,8 +232,8 @@ AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer,
 	_mixer = mixer;
 	_compBuffer = NULL;
 	_bufferOffset = 0;
-	_lastADPCMval1 = 0;
-	_lastADPCMval2 = 0;
+	_lastSample = 0;
+	_lastStepIndex = 0;
 	_file = stream;
 	_fadingIn = false;
 	_fadingOut = false;
@@ -307,8 +307,8 @@ bool AudioStreamInstance::readPacket() {
 		if (_looping) {
 			_file->seek(8);
 			_currentReadSize = 8;
-			_lastADPCMval1 = 0;
-			_lastADPCMval2 = 0;
+			_lastSample = 0;
+			_lastStepIndex = 0;
 		} else {
 			_bufferSize = 0;
 			stopNow();
@@ -342,58 +342,54 @@ bool AudioStreamInstance::readPacket() {
 void AudioStreamInstance::decodeADPCM(uint8 *comp, int16 *dest, int32 packetSize) {
 	debugC(5, kDebugAudio, "decodeADPCM(comp, dest, %d)", packetSize);
 
+	// standard IMA ADPCM decoding
 	int32 numSamples = 2 * packetSize;
-	int32 v18 = _lastADPCMval1;
-	int32 v19 = _lastADPCMval2;
+	int32 samp = _lastSample;
+	int32 stepIndex = _lastStepIndex;
 	for (int32 i = 0; i < numSamples; i++) {
 		uint8 comm = *comp;
+		bool isOddSample = (i & 1);
 
-		int32 v29 = i & 1;
-		int32 v30;
-		if (v29 == 0)
-			v30 = comm & 0xf;
+		uint8 code;
+		if (!isOddSample)
+			code = comm & 0xf;
 		else
-			v30 = (comm & 0xf0) >> 4;
+			code = (comm & 0xf0) >> 4;
 
-		int32 v31 = v30 & 0x8;
-		int32 v32 = v30 & 0x7;
-		int32 v33 = Audio::Ima_ADPCMStream::_imaTable[v19];
-		int32 v34 = v33 >> 3;
-		if (v32 & 4)
-			v34 += v33;
+		uint8 sample = code & 0x7;
 
-		if (v32 & 2)
-			v34 += v33 >> 1;
+		int32 step = Audio::Ima_ADPCMStream::_imaTable[stepIndex];
+		int32 E = step >> 3;
+		if (sample & 4)
+			E += step;
+		if (sample & 2)
+			E += step >> 1;
+		if (sample & 1)
+			E += step >> 2;
 
-		if (v32 & 1)
-			v34 += v33 >> 2;
+		stepIndex += Audio::ADPCMStream::_stepAdjustTable[sample];
+		stepIndex = CLIP<int32>(stepIndex, 0, ARRAYSIZE(Audio::Ima_ADPCMStream::_imaTable) - 1);
 
-		v19 += Audio::ADPCMStream::_stepAdjustTable[v32];
-		v19 = CLIP<int32>(v19, 0, ARRAYSIZE(Audio::Ima_ADPCMStream::_imaTable) - 1);
-
-		if (v31)
-			v18 -= v34;
+		if (code & 0x8)
+			samp -= E;
 		else
-			v18 += v34;
+			samp += E;
 
-		if (v18 > 32767)
-			v18 = 32767;
-		else if (v18 < -32768)
-			v18 = -32768;
+		samp = CLIP<int32>(samp, -32768, 32767);
 
-		*dest = v18;
-		comp += v29;
+		*dest = samp;
+		if (isOddSample)
+			comp++;
 		dest++;
 	}
 
-	_lastADPCMval1 = v18;
-	_lastADPCMval2 = v19;
+	_lastSample = samp;
+	_lastStepIndex = stepIndex;
 }
 
 void AudioStreamInstance::play(bool fade, Audio::Mixer::SoundType soundType) {
 	debugC(1, kDebugAudio, "play(%d)", (fade) ? 1 : 0);
 
-	Audio::SoundHandle soundHandle;
 	_stopped = false;
 	_fadingIn = fade;
 	_fadeTime = 0;

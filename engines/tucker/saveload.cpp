@@ -36,9 +36,7 @@ Common::String generateGameStateFileName(const char *target, int slot, bool pref
 	if (prefixOnly) {
 		name += ".*";
 	} else {
-		char slotStr[16];
-		snprintf(slotStr, sizeof(slotStr), ".%d", slot);
-		name += slotStr;
+		name += Common::String::format(".%d", slot);
 	}
 	return name;
 }
@@ -101,7 +99,7 @@ Common::Error TuckerEngine::loadGameState(int num) {
 	return ret;
 }
 
-Common::Error TuckerEngine::saveGameState(int num, const char *description) {
+Common::Error TuckerEngine::saveGameState(int num, const Common::String &description) {
 	Common::Error ret = Common::kNoError;
 	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
 	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName);

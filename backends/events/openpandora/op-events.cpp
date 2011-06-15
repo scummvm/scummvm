@@ -24,7 +24,6 @@
 
 /*
  * OpenPandora: Device Specific Event Handling.
- *
  */
 
 #if defined(OPENPANDORA)
@@ -33,6 +32,10 @@
 #include "backends/graphics/openpandora/op-graphics.h"
 #include "backends/platform/openpandora/op-sdl.h"
 #include "backends/platform/openpandora/op-options.h"
+
+#include "common/translation.h"
+#include "common/util.h"
+#include "common/events.h"
 
 /* Quick default button states for modifiers. */
 int BUTTON_STATE_L					=	false;
@@ -46,80 +49,6 @@ enum {
 
 OPEventSource::OPEventSource()
 	: _buttonStateL(false){
-}
-
-/* On the OpenPandora by default the ABXY and L/R Trigger buttons are returned by SDL as
-   (A): SDLK_HOME (B): SDLK_END (X): SDLK_PAGEDOWN (Y): SDLK_PAGEUP (L): SDLK_RSHIFT (R): SDLK_RCTRL
-*/
-
-bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
-
-	if (ev.type == SDL_KEYDOWN) {
-		switch (ev.key.keysym.sym) {
-		case SDLK_HOME:
-			event.type = Common::EVENT_LBUTTONDOWN;
-			fillMouseEvent(event, _km.x, _km.y);
-			return true;
-			break;
-		case SDLK_END:
-			event.type = Common::EVENT_RBUTTONDOWN;
-			fillMouseEvent(event, _km.x, _km.y);
-			return true;
-			break;
-		case SDLK_PAGEDOWN:
-			event.type = Common::EVENT_MAINMENU;
-			return true;
-			break;
-		case SDLK_PAGEUP:
-			OP::ToggleTapMode();
-			if (OP::tapmodeLevel == TAPMODE_LEFT) {
-				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Left Click");
-			} else if (OP::tapmodeLevel == TAPMODE_RIGHT) {
-				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Right Click");
-			} else if (OP::tapmodeLevel == TAPMODE_HOVER) {
-				g_system->displayMessageOnOSD("Touchscreen 'Tap Mode' - Hover (No Click)");
-			}
-			break;
-		case SDLK_RSHIFT:
-			BUTTON_STATE_L = true;
-			break;
-		case SDLK_RCTRL:
-			break;
-		default:
-			return false;
-			break;
-		}
-		return false;
-	} else {
-		switch (ev.key.keysym.sym) {
-		case SDLK_HOME:
-			event.type = Common::EVENT_LBUTTONUP;
-			fillMouseEvent(event, _km.x, _km.y);
-			return true;
-			break;
-		case SDLK_END:
-			event.type = Common::EVENT_RBUTTONUP;
-			fillMouseEvent(event, _km.x, _km.y);
-			return true;
-			break;
-		case SDLK_PAGEDOWN:
-			event.type = Common::EVENT_MAINMENU;
-			return true;
-			break;
-		case SDLK_PAGEUP:
-			break;
-		case SDLK_RSHIFT:
-			BUTTON_STATE_L = false;
-			break;
-		case SDLK_RCTRL:
-			break;
-		default:
-			return false;
-			break;
-		}
-		return false;
-	}
-	return false;
 }
 
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
@@ -183,4 +112,79 @@ bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 
 	return true;
 }
+
+/* On the OpenPandora by default the ABXY and L/R Trigger buttons are returned by SDL as
+   (A): SDLK_HOME (B): SDLK_END (X): SDLK_PAGEDOWN (Y): SDLK_PAGEUP (L): SDLK_RSHIFT (R): SDLK_RCTRL
+*/
+
+bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
+
+	if (ev.type == SDL_KEYDOWN) {
+		switch (ev.key.keysym.sym) {
+		case SDLK_HOME:
+			event.type = Common::EVENT_LBUTTONDOWN;
+			fillMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+		case SDLK_END:
+			event.type = Common::EVENT_RBUTTONDOWN;
+			fillMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+		case SDLK_PAGEDOWN:
+			event.type = Common::EVENT_MAINMENU;
+			return true;
+			break;
+		case SDLK_PAGEUP:
+			OP::ToggleTapMode();
+			if (OP::tapmodeLevel == TAPMODE_LEFT) {
+				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Left Click"));
+			} else if (OP::tapmodeLevel == TAPMODE_RIGHT) {
+				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Right Click"));
+			} else if (OP::tapmodeLevel == TAPMODE_HOVER) {
+				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Hover (No Click)"));
+			}
+			break;
+		case SDLK_RSHIFT:
+			BUTTON_STATE_L = true;
+			break;
+		case SDLK_RCTRL:
+			break;
+		default:
+			return false;
+			break;
+		}
+		return false;
+	} else {
+		switch (ev.key.keysym.sym) {
+		case SDLK_HOME:
+			event.type = Common::EVENT_LBUTTONUP;
+			fillMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+		case SDLK_END:
+			event.type = Common::EVENT_RBUTTONUP;
+			fillMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+		case SDLK_PAGEDOWN:
+			event.type = Common::EVENT_MAINMENU;
+			return true;
+			break;
+		case SDLK_PAGEUP:
+			break;
+		case SDLK_RSHIFT:
+			BUTTON_STATE_L = false;
+			break;
+		case SDLK_RCTRL:
+			break;
+		default:
+			return false;
+			break;
+		}
+		return false;
+	}
+	return false;
+}
+
 #endif

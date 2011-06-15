@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include <pspgu.h>
 #include <pspdisplay.h>
 #include <pspthreadman.h>

@@ -13,12 +13,15 @@ MODULE_OBJS := \
 	musicplugin.o \
 	null.o \
 	timestamp.o \
+	decoders/aac.o \
 	decoders/adpcm.o \
 	decoders/aiff.o \
 	decoders/flac.o \
 	decoders/iff_sound.o \
 	decoders/mac_snd.o \
 	decoders/mp3.o \
+	decoders/qdm2.o \
+	decoders/quicktime.o \
 	decoders/raw.o \
 	decoders/vag.o \
 	decoders/voc.o \
@@ -39,10 +42,11 @@ MODULE_OBJS := \
 	softsynth/opl/mame.o \
 	softsynth/fmtowns_pc98/towns_audio.o \
 	softsynth/fmtowns_pc98/towns_euphony.o \
+	softsynth/fmtowns_pc98/towns_midi.o \
 	softsynth/fmtowns_pc98/towns_pc98_driver.o \
 	softsynth/fmtowns_pc98/towns_pc98_fmsynth.o \
+	softsynth/fmtowns_pc98/towns_pc98_plugins.o \
 	softsynth/appleiigs.o \
-	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \
 	softsynth/eas.o \

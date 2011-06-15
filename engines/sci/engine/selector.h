@@ -44,7 +44,7 @@ struct SelectorCache {
 	Selector underBits; ///< Used by the graphics subroutines to store backupped BG pic data
 	Selector nsTop, nsLeft, nsBottom, nsRight; ///< View boundaries ('now seen')
 	Selector lsTop, lsLeft, lsBottom, lsRight; ///< Used by Animate() subfunctions and scroll list controls
-	Selector signal; ///< Used by Animate() to control a view's behaviour
+	Selector signal; ///< Used by Animate() to control a view's behavior
 	Selector illegalBits; ///< Used by CanBeHere
 	Selector brTop, brLeft, brBottom, brRight; ///< Bounding Rectangle
 	// name, key, time

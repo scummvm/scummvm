@@ -154,24 +154,24 @@ void Kernel::loadGlobalScriptFunctions() {
 }
 
 void Kernel::loadSectionScriptFunctions() {
-	char tempFnName[128];
-	snprintf(tempFnName, 128, "section_init_%d", currentSection);
+	Common::String tempFnName;
+	tempFnName = Common::String::format("section_init_%d", currentSection);
 	_sectionInitFn = _vm->_script->loadFunction(tempFnName);
-	snprintf(tempFnName, 128, "section_daemon_%d", currentSection);
+	tempFnName = Common::String::format("section_daemon_%d", currentSection);
 	_sectionDaemonFn = _vm->_script->loadFunction(tempFnName);
-	snprintf(tempFnName, 128, "section_parser_%d", currentSection);
+	tempFnName = Common::String::format("section_parser_%d", currentSection);
 	_sectionParserFn = _vm->_script->loadFunction(tempFnName);
 }
 
 void Kernel::loadRoomScriptFunctions() {
-	char tempFnName[128];
-	snprintf(tempFnName, 128, "room_init_%d", currentRoom);
+	Common::String tempFnName;
+	tempFnName = Common::String::format("room_init_%d", currentRoom);
 	_roomInitFn = _vm->_script->loadFunction(tempFnName);
-	snprintf(tempFnName, 128, "room_daemon_%d", currentRoom);
+	tempFnName = Common::String::format("room_daemon_%d", currentRoom);
 	_roomDaemonFn = _vm->_script->loadFunction(tempFnName);
-	snprintf(tempFnName, 128, "room_pre_parser_%d", currentRoom);
+	tempFnName = Common::String::format("room_pre_parser_%d", currentRoom);
 	_roomPreParserFn = _vm->_script->loadFunction(tempFnName);
-	snprintf(tempFnName, 128, "room_parser_%d", currentRoom);
+	tempFnName = Common::String::format("room_parser_%d", currentRoom);
 	_roomParserFn = _vm->_script->loadFunction(tempFnName);
 }
 
@@ -523,19 +523,23 @@ void MadsObject::load(Common::SeekableReadStream *stream) {
 	stream->read(obj, 0x30);
 
 	// Extract object data fields
-	descId = READ_LE_UINT16(&obj[0]);
-	roomNumber = READ_LE_UINT16(&obj[2]);
-	article = (MADSArticles)obj[4];
-	vocabCount = obj[5] & 0x7f;
+	_descId = READ_LE_UINT16(&obj[0]);
+	_roomNumber = READ_LE_UINT16(&obj[2]);
+	_article = (MADSArticles)obj[4];
+	_vocabCount = obj[5] & 0x7f;
 	// Phantom / Dragon
-	if (vocabCount > 3)
-		warning("MadsObject::load(), vocab cound > 3 (it's %d)", vocabCount);
+	if (_vocabCount > 3)
+		warning("MadsObject::load(), vocab cound > 3 (it's %d)", _vocabCount);
 
-	for (int i = 0; i < vocabCount; ++i) {
-		vocabList[i].flags1 = obj[6 + i * 4];
-		vocabList[i].flags2 = obj[7 + i * 4];
-		vocabList[i].vocabId = READ_LE_UINT16(&obj[8 + i * 4]);
+	for (int i = 0; i < _vocabCount; ++i) {
+		_vocabList[i].flags1 = obj[6 + i * 4];
+		_vocabList[i].flags2 = obj[7 + i * 4];
+		_vocabList[i].vocabId = READ_LE_UINT16(&obj[8 + i * 4]);
 	}
+}
+
+void MadsObject::setRoom(int roomNumber) {
+	
 }
 
 } // End of namespace M4

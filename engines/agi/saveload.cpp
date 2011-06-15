@@ -551,11 +551,8 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 #define NUM_VISIBLE_SLOTS 12
 
 const char *AgiEngine::getSavegameFilename(int num) {
-	static Common::String saveLoadSlot;
-	char extension[5];
-	snprintf(extension, sizeof(extension), ".%.3d", num);
-
-	saveLoadSlot = _targetName + extension;
+	Common::String saveLoadSlot = _targetName;
+	saveLoadSlot += Common::String::format(".%.3d", num);
 	return saveLoadSlot.c_str();
 }
 
@@ -987,14 +984,12 @@ void AgiEngine::releaseImageStack() {
 
 void AgiEngine::checkQuickLoad() {
 	if (ConfMan.hasKey("save_slot")) {
-		char saveNameBuffer[256];
-
-		snprintf(saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
+		Common::String saveNameBuffer = Common::String::format("%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
 
 		_sprites->eraseBoth();
 		_sound->stopSound();
 
-		if (loadGame(saveNameBuffer, false) == errOK) {	 // Do not check game id
+		if (loadGame(saveNameBuffer.c_str(), false) == errOK) {	 // Do not check game id
 			_game.exitAllLogics = 1;
 			_menu->enableAll();
 		}
@@ -1017,10 +1012,10 @@ Common::Error AgiEngine::loadGameState(int slot) {
 	}
 }
 
-Common::Error AgiEngine::saveGameState(int slot, const char *desc) {
+Common::Error AgiEngine::saveGameState(int slot, const Common::String &desc) {
 	char saveLoadSlot[12];
 	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
-	if (saveGame(saveLoadSlot, desc) == errOK)
+	if (saveGame(saveLoadSlot, desc.c_str()) == errOK)
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;

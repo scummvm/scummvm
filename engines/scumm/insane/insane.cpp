@@ -28,6 +28,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/file.h"
+#include "scumm/resource.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
 

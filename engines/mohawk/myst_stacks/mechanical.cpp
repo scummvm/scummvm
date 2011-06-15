@@ -59,6 +59,18 @@ void Mechanical::setupOpcodes() {
 	OPCODE(106, o_elevatorRotationStart);
 	OPCODE(107, o_elevatorRotationMove);
 	OPCODE(108, o_elevatorRotationStop);
+	OPCODE(109, o_fortressRotationSpeedStart);
+	OPCODE(110, o_fortressRotationSpeedMove);
+	OPCODE(111, o_fortressRotationSpeedStop);
+	OPCODE(112, o_fortressRotationBrakeStart);
+	OPCODE(113, o_fortressRotationBrakeMove);
+	OPCODE(114, o_fortressRotationBrakeStop);
+	OPCODE(115, o_fortressSimulationSpeedStart);
+	OPCODE(116, o_fortressSimulationSpeedMove);
+	OPCODE(117, o_fortressSimulationSpeedStop);
+	OPCODE(118, o_fortressSimulationBrakeStart);
+	OPCODE(119, o_fortressSimulationBrakeMove);
+	OPCODE(120, o_fortressSimulationBrakeStop);
 	OPCODE(121, o_elevatorWindowMovie);
 	OPCODE(122, o_elevatorGoMiddle);
 	OPCODE(123, o_elevatorTopMovie);
@@ -78,9 +90,9 @@ void Mechanical::setupOpcodes() {
 	OPCODE(202, o_bird_init);
 	OPCODE(203, o_snakeBox_init);
 	OPCODE(204, o_elevatorRotation_init);
-	OPCODE(205, opcode_205);
-	OPCODE(206, opcode_206);
-	OPCODE(209, opcode_209);
+	OPCODE(205, o_fortressRotation_init);
+	OPCODE(206, o_fortressSimulation_init);
+	OPCODE(209, o_fortressSimulationStartup_init);
 
 	// "Exit" Opcodes
 	OPCODE(300, NOP);
@@ -89,11 +101,10 @@ void Mechanical::setupOpcodes() {
 #undef OPCODE
 
 void Mechanical::disablePersistentScripts() {
-	opcode_205_disable();
-	opcode_206_disable();
-	opcode_209_disable();
+	_fortressSimulationRunning = false;
 	_elevatorGoingMiddle = false;
 	_birdSinging = false;
+	_fortressRotationRunning = false;
 }
 
 void Mechanical::runPersistentScripts() {
@@ -106,9 +117,11 @@ void Mechanical::runPersistentScripts() {
 	if (_elevatorGoingMiddle)
 		elevatorGoMiddle_run();
 
-	opcode_205_run();
-	opcode_206_run();
-	opcode_209_run();
+	if (_fortressRotationRunning)
+		fortressRotation_run();
+
+	if (_fortressSimulationRunning)
+		fortressSimulation_run();
 }
 
 uint16 Mechanical::getVar(uint16 var) {
@@ -379,6 +392,164 @@ void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint
 	_vm->checkCursorHints();
 }
 
+void Mechanical::o_fortressRotationSpeedStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation speed lever start", op);
+
+	_vm->_cursor->setCursor(700);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	lever->drawFrame(0);
+}
+
+void Mechanical::o_fortressRotationSpeedMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation speed lever move", op);
+
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Make the handle follow the mouse
+	int16 maxStep = lever->getNumFrames() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((rect.top + 65 - mouse.y) * lever->getNumFrames()) / 65;
+	step = CLIP<int16>(step, 0, maxStep);
+
+	_fortressRotationSpeed = step;
+
+	// Draw current frame
+	lever->drawFrame(step);
+}
+
+void Mechanical::o_fortressRotationSpeedStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation speed lever stop", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Release lever
+	for (int i = _fortressRotationSpeed; i >= 0; i--) {
+		lever->drawFrame(i);
+		_vm->_system->delayMillis(10);
+	}
+
+	_fortressRotationSpeed = 0;
+
+	_vm->checkCursorHints();
+}
+
+void Mechanical::o_fortressRotationBrakeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation brake lever start", op);
+
+	_vm->_cursor->setCursor(700);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	lever->drawFrame(_fortressRotationBrake);
+}
+
+void Mechanical::o_fortressRotationBrakeMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation brake lever move", op);
+
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Make the handle follow the mouse
+	int16 maxStep = lever->getNumFrames() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((rect.top + 65 - mouse.y) * lever->getNumFrames()) / 65;
+	step = CLIP<int16>(step, 0, maxStep);
+
+	_fortressRotationBrake = step;
+
+	// Draw current frame
+	lever->drawFrame(step);
+}
+
+void Mechanical::o_fortressRotationBrakeStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation brake lever stop", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	lever->drawFrame(_fortressRotationBrake);
+
+	_vm->checkCursorHints();
+}
+
+void Mechanical::o_fortressSimulationSpeedStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation simulator speed lever start", op);
+
+	_vm->_cursor->setCursor(700);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	lever->drawFrame(0);
+}
+
+void Mechanical::o_fortressSimulationSpeedMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation simulator speed lever move", op);
+
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Make the handle follow the mouse
+	int16 maxStep = lever->getNumFrames() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((rect.bottom - mouse.y) * lever->getNumFrames()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	_fortressSimulationSpeed = step;
+
+	// Draw current frame
+	lever->drawFrame(step);
+}
+
+void Mechanical::o_fortressSimulationSpeedStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation simulator speed lever stop", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Release lever
+	for (int i = _fortressSimulationSpeed; i >= 0; i--) {
+		lever->drawFrame(i);
+		_vm->_system->delayMillis(10);
+	}
+
+	_fortressSimulationSpeed = 0;
+
+	_vm->checkCursorHints();
+}
+
+void Mechanical::o_fortressSimulationBrakeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation simulator brake lever start", op);
+
+	_vm->_cursor->setCursor(700);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	lever->drawFrame(_fortressSimulationBrake);
+}
+
+void Mechanical::o_fortressSimulationBrakeMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation simulator brake lever move", op);
+
+	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+
+	// Make the handle follow the mouse
+	int16 maxStep = lever->getNumFrames() - 1;
+	Common::Rect rect = lever->getRect();
+	int16 step = ((rect.bottom - mouse.y) * lever->getNumFrames()) / rect.height();
+	step = CLIP<int16>(step, 0, maxStep);
+
+	_fortressSimulationBrake = step;
+
+	// Draw current frame
+	lever->drawFrame(step);
+}
+
+void Mechanical::o_fortressSimulationBrakeStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d Fortress rotation simulator brake lever stop", op);
+
+	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	lever->drawFrame(_fortressSimulationBrake);
+
+	_vm->checkCursorHints();
+}
+
 void Mechanical::o_elevatorWindowMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 startTime = argv[0];
 	uint16 endTime = argv[1];
@@ -596,101 +767,53 @@ void Mechanical::o_elevatorRotation_init(uint16 op, uint16 var, uint16 argc, uin
 	_elevatorRotationLeverMoving = false;
 }
 
-static struct {
-	uint16 soundIdPosition[4];
-
-	bool enabled;
-} g_opcode205Parameters;
-
-void Mechanical::opcode_205_run() {
+void Mechanical::fortressRotation_run() {
 	// Used for Card 6156 (Fortress Rotation Controls)
 	// TODO: Fill in function...
-	// g_opcode205Parameters.soundIdPosition[4]
 }
 
-void Mechanical::opcode_205_disable() {
-	g_opcode205Parameters.enabled = false;
+void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Fortress rotation init", op);
+
+	_fortressRotationGears = static_cast<MystResourceType6 *>(_invokingResource);
+
+	_fortressRotationSounds[0] = argv[0];
+	_fortressRotationSounds[1] = argv[1];
+	_fortressRotationSounds[2] = argv[2];
+	_fortressRotationSounds[3] = argv[3];
+
+	_fortressRotationBrake = 0;
+
+	_fortressRotationRunning = true;
 }
 
-void Mechanical::opcode_205(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 6156 (Fortress Rotation Controls)
-
-	if (argc == 4) {
-		g_opcode205Parameters.soundIdPosition[0] = argv[0];
-		g_opcode205Parameters.soundIdPosition[1] = argv[1];
-		g_opcode205Parameters.soundIdPosition[2] = argv[2];
-		g_opcode205Parameters.soundIdPosition[3] = argv[3];
-
-		g_opcode205Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
-}
-
-static struct {
-	uint16 soundIdStart[2];
-	uint16 soundIdPosition[4];
-
-	bool enabled;
-} g_opcode206Parameters;
-
-void Mechanical::opcode_206_run() {
-	if (g_opcode206Parameters.enabled) {
-		// Used for Card 6044 (Fortress Rotation Simulator)
-
-		// g_opcode206Parameters.soundIdStart[2]
-		// g_opcode206Parameters.soundIdPosition[4]
-
-		// TODO: Fill in function...
-	}
-}
-
-void Mechanical::opcode_206_disable() {
-	g_opcode206Parameters.enabled = false;
-}
-
-void Mechanical::opcode_206(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
+void Mechanical::fortressSimulation_run() {
 	// Used for Card 6044 (Fortress Rotation Simulator)
-	if (argc == 6) {
-		g_opcode206Parameters.soundIdStart[0] = argv[0];
-		g_opcode206Parameters.soundIdStart[1] = argv[1];
-		g_opcode206Parameters.soundIdPosition[0] = argv[2];
-		g_opcode206Parameters.soundIdPosition[1] = argv[3];
-		g_opcode206Parameters.soundIdPosition[2] = argv[4];
-		g_opcode206Parameters.soundIdPosition[3] = argv[5];
-
-		g_opcode206Parameters.enabled = true;
-	} else
-		unknown(op, var, argc, argv);
+	// TODO: Fill in function...
 }
 
+void Mechanical::o_fortressSimulation_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Fortress rotation simulator init", op);
 
-static struct {
-	bool enabled;
-} g_opcode209Parameters;
+	_fortressSimulationHolo = static_cast<MystResourceType6 *>(_invokingResource);
 
-void Mechanical::opcode_209_run() {
-	// Used for Card 6044 (Fortress Rotation Simulator)
+	_fortressSimulationStartSound1 = argv[0];
+	_fortressSimulationStartSound2 = argv[1];
 
-	// TODO: Implement Function For Secret Panel State as
-	//       per Opcode 200 function (Mechanical)
+	_fortressRotationSounds[0] = argv[2];
+	_fortressRotationSounds[1] = argv[3];
+	_fortressRotationSounds[2] = argv[4];
+	_fortressRotationSounds[3] = argv[5];
+
+	_fortressSimulationBrake = 0;
+
+	_fortressSimulationRunning = true;
 }
 
-void Mechanical::opcode_209_disable() {
-	g_opcode209Parameters.enabled = false;
-}
+void Mechanical::o_fortressSimulationStartup_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Fortress rotation simulator startup init", op);
 
-void Mechanical::opcode_209(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used for Card 6044 (Fortress Rotation Simulator)
-	if (argc == 0)
-		g_opcode209Parameters.enabled = true;
-	else
-		unknown(op, var, argc, argv);
+	_fortressSimulationStartup = static_cast<MystResourceType6 *>(_invokingResource);
 }
 
 } // End of namespace MystStacks

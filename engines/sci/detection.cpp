@@ -371,38 +371,14 @@ static ADGameDescription s_fallbackDesc = {
 
 static char s_fallbackGameIdBuf[256];
 
-
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Sci::SciGameDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	s_sciGameTitles,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"sci",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
-	SciMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles) {
+		_singleid = "sci";
+	}
 
 	virtual const char *getName() const {
-		return "SCI Engine [SCI0, SCI01, SCI10, SCI11"
+		return "SCI [SCI0, SCI01, SCI10, SCI11"
 #ifdef ENABLE_SCI32
 			", SCI32"
 #endif
@@ -414,7 +390,7 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
-	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
+	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
@@ -442,7 +418,7 @@ Common::Language charToScummVMLanguage(const char c) {
 	}
 }
 
-const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
+const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
 
@@ -454,6 +430,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	s_fallbackDesc.gameid = "sci";
 
 	// First grab all filenames
+	// TODO: Consider using allFiles instead of fslist
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory())
 			continue;
@@ -748,7 +725,7 @@ Common::Error SciEngine::loadGameState(int slot) {
 	}
 }
 
-Common::Error SciEngine::saveGameState(int slot, const char *desc) {
+Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
 	Common::String fileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out = saveFileMan->openForSaving(fileName);

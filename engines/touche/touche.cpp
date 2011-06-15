@@ -24,7 +24,6 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/archive.h"
@@ -45,7 +44,7 @@
 namespace Touche {
 
 ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
-	: Engine(system), _midiPlayer(0), _language(language) {
+	: Engine(system), _midiPlayer(0), _language(language), _rnd("touche") {
 	_saveLoadCurrentPage = 0;
 	_saveLoadCurrentSlot = 0;
 	_hideInventoryTexts = false;
@@ -84,8 +83,6 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	DebugMan.addDebugChannel(kDebugMenu,     "Menu",     "Menu debug level");
 
 	_console = new ToucheConsole(this);
-
-	g_eventRec.registerRandomSource(_rnd, "touche");
 }
 
 ToucheEngine::~ToucheEngine() {

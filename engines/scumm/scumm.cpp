@@ -24,7 +24,6 @@
 #include "common/debug-channels.h"
 #include "common/md5.h"
 #include "common/events.h"
-#include "common/EventRecorder.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -62,6 +61,7 @@
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
 #include "scumm/player_v4a.h"
+#include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
@@ -110,9 +110,13 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _language(dr.language),
 	  _debugger(0),
 	  _currentScript(0xFF), // Let debug() work on init stage
-	  _messageDialog(0), _pauseDialog(0), _versionDialog(0) {
+	  _messageDialog(0), _pauseDialog(0), _versionDialog(0),
+	  _rnd("scumm")
+	  {
 
-	if (_game.platform == Common::kPlatformNES) {
+	if (_game.heversion > 0) {
+		_gdi = new GdiHE(this);
+	} else if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
 #ifdef USE_RGB_COLOR
 	} else if (_game.features & GF_16BIT_COLOR) {
@@ -158,7 +162,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_pauseDialog = NULL;
 	_versionDialog = NULL;
 	_fastMode = 0;
-	_actors = NULL;
+	_actors = _sortedActors = NULL;
 	_arraySlot = NULL;
 	_inventory = NULL;
 	_newNames = NULL;
@@ -209,7 +213,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_saveLoadSlot = 0;
 	_lastSaveTime = 0;
 	_saveTemporaryState = false;
-	memset(_saveLoadName, 0, sizeof(_saveLoadName));
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
 	_scriptPointer = NULL;
 	_scriptOrgPointer = NULL;
@@ -571,8 +574,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	assert(!_mainMenuDialog);
 	_mainMenuDialog = new ScummMenuDialog(this);
 #endif
-
-	g_eventRec.registerRandomSource(_rnd, "scumm");
 }
 
 
@@ -583,9 +584,12 @@ ScummEngine::~ScummEngine() {
 
 	_mixer->stopAll();
 
-	for (int i = 0; i < _numActors; ++i)
-		delete _actors[i];
-	delete[] _actors;
+	if (_actors) {
+		for (int i = 0; i < _numActors; ++i)
+			delete _actors[i];
+		delete[] _actors;
+	}
+	
 	delete[] _sortedActors;
 
 	delete[] _2byteFontPtr;
@@ -1181,10 +1185,6 @@ Common::Error ScummEngine::init() {
 	resetScumm();
 	resetScummVars();
 
-	if (_imuse) {
-		_imuse->setBase(_res->address[rtSound]);
-	}
-
 	if (_game.version >= 5 && _game.version <= 7)
 		_sound->setupSound();
 
@@ -1230,7 +1230,7 @@ void ScummEngine::setupScumm() {
 		requestLoad(ConfMan.getInt("save_slot"));
 	}
 
-	_res->allocResTypeData(rtBuffer, 0, 10, "buffer", 0);
+	_res->allocResTypeData(rtBuffer, 0, 10, kDynamicResTypeMode);
 
 	setupScummVars();
 
@@ -1364,6 +1364,7 @@ void ScummEngine::resetScumm() {
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+
 		|| _game.platform == Common::kPlatformFMTowns
 #endif
 		)
@@ -1765,8 +1766,10 @@ void ScummEngine::setupMusic(int midi) {
 
 		if (missingFile) {
 			GUI::MessageDialog dialog(
-				"Native MIDI support requires the Roland Upgrade from LucasArts,\n"
-				"but " + fileName + " is missing. Using AdLib instead.", "Ok");
+				Common::String::format(
+					_("Native MIDI support requires the Roland Upgrade from LucasArts,\n"
+					"but %s is missing. Using AdLib instead."), fileName.c_str()),
+				_("OK"));
 			dialog.runModal();
 			_musicType = MDT_ADLIB;
 		}
@@ -1830,22 +1833,22 @@ void ScummEngine::setupMusic(int midi) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
 
-		if (_musicType != MDT_ADLIB)
+		if (_musicType != MDT_ADLIB && _musicType != MDT_TOWNS)
 			nativeMidiDriver = MidiDriver::createMidi(dev);
 		if (nativeMidiDriver != NULL && _native_mt32)
 			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		bool multi_midi = ConfMan.getBool("multi_midi") && _musicType != MDT_NONE && (midi & MDT_ADLIB);
-		if (_musicType == MDT_ADLIB || multi_midi) {
-			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(MDT_ADLIB));
+		if (_musicType == MDT_ADLIB || _musicType == MDT_TOWNS || multi_midi) {
+			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 		}
 
 		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
 		
 		if (_game.platform == Common::kPlatformFMTowns) {
-			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _imuse, _mixer, true);
+			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _mixer, _imuse, true);
 			if (!_townsPlayer->init())
-				error("Failed to initialize FM-Towns audio driver");
+				error("ScummEngine::setupMusic(): Failed to initialize FM-Towns audio driver");
 		} else {
 			_musicEngine = _imuse;
 		}
@@ -1857,7 +1860,6 @@ void ScummEngine::setupMusic(int midi) {
 			_imuse->property(IMuse::PROP_GAME_ID, _game.id);
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
-			// YM2162 driver can't handle midi->getPercussionChannel(), NULL shouldn't init MT-32/GM/GS
 			if (midi != MDT_NONE) {
 				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 				if (MidiDriver::getMusicType(dev) != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
@@ -2059,7 +2061,7 @@ void ScummEngine::scummLoop(int delta) {
 	// Trigger autosave if necessary.
 	if (!_saveLoadFlag && shouldPerformAutoSave(_lastSaveTime) && canSaveGameStateCurrently()) {
 		_saveLoadSlot = 0;
-		sprintf(_saveLoadName, "Autosave %d", _saveLoadSlot);
+		_saveLoadDescription = Common::String::format("Autosave %d", _saveLoadSlot);
 		_saveLoadFlag = 1;
 		_saveTemporaryState = false;
 	}
@@ -2419,13 +2421,16 @@ void ScummEngine::pauseGame() {
 }
 
 void ScummEngine::restart() {
-// TODO: Check this function - we should probably be reinitting a lot more stuff, and I suspect
-//	 this leaks memory like a sieve
+	// FIXME: This function *leaks memory*, and quite a lot so. For example,
+	// we re-init the resource manager, which causes readMAXS() to be called
+	// again, which allocates some memory. There are many other leaks, though.
 
-// Fingolfin seez: An alternate way to implement restarting would be to create
-// a save state right after startup ... to this end we could introduce a SaveFile
-// subclass which is implemented using a memory buffer (i.e. no actual file is
-// created). Then to restart we just have to load that pseudo save state.
+	// TODO: We should also probably be reinitting a lot more stuff.
+
+	// Fingolfin seez: An alternate way to implement restarting would be to create
+	// a save state right after startup ... to this end we could introduce a SaveFile
+	// subclass which is implemented using a memory buffer (i.e. no actual file is
+	// created). Then to restart we just have to load that pseudo save state.
 
 
 	int i;
@@ -2445,22 +2450,11 @@ void ScummEngine::restart() {
 	for (i = 1; i < _numGlobalObjects; i++)
 		clearOwnerOf(i);
 
-	// Reallocate arrays
-	// FIXME: This should already be called by readIndexFile.
-	// FIXME: regardless of that, allocateArrays and allocResTypeData leaks
-	// heavily, which should be fixed.
-	allocateArrays();
-
-	// Reread index (reset objectstate etc)
 	readIndexFile();
 
 	// Reinit scumm variables
 	resetScumm();
 	resetScummVars();
-
-	if (_imuse) {
-		_imuse->setBase(_res->address[rtSound]);
-	}
 
 	// Reinit sound engine
 	if (_game.version >= 5 && _game.version <= 7)

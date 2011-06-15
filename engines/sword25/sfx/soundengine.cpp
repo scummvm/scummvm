@@ -37,6 +37,7 @@
 #include "audio/decoders/vorbis.h"
 
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace Sword25 {
 
@@ -65,8 +66,6 @@ SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
 }
 
 bool SoundEngine::init(uint sampleRate, uint channels) {
-	warning("STUB: SoundEngine::init(%d, %d)", sampleRate, channels);
-
 	return true;
 }
 
@@ -74,12 +73,44 @@ void SoundEngine::update() {
 }
 
 void SoundEngine::setVolume(float volume, SOUND_TYPES type) {
-	warning("STUB: SoundEngine::setVolume(%f, %d)", volume, type);
+	int val = (int)(255 * volume);
+
+	switch (type) {
+	case SoundEngine::MUSIC:
+		ConfMan.setInt("music_volume", val);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, val);
+		break;
+	case SoundEngine::SPEECH:
+		ConfMan.setInt("speech_volume", val);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, val);
+		break;
+	case SoundEngine::SFX:
+		ConfMan.setInt("sfx_volume", val);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, val);
+		break;
+	default:
+		error("Unknown SOUND_TYPE");
+	}
 }
 
 float SoundEngine::getVolume(SOUND_TYPES type) {
-	warning("STUB: SoundEngine::getVolume(%d)", type);
-	return 0;
+	int val = 0;
+
+	switch (type) {
+	case SoundEngine::MUSIC:
+		val = ConfMan.getInt("music_volume");
+		break;
+	case SoundEngine::SPEECH:
+		val = ConfMan.getInt("speech_volume");
+		break;
+	case SoundEngine::SFX:
+		val = ConfMan.getInt("sfx_volume");
+		break;
+	default:
+		error("Unknown SOUND_TYPE");
+	}
+
+	return (float)val / 255.0;
 }
 
 void SoundEngine::pauseAll() {
@@ -95,11 +126,15 @@ void SoundEngine::resumeAll() {
 }
 
 void SoundEngine::pauseLayer(uint layer) {
-	warning("STUB: SoundEngine::pauseLayer(%d)", layer);
+	// Not used in the game
+
+	warning("SoundEngine::pauseLayer(%d)", layer);
 }
 
 void SoundEngine::resumeLayer(uint layer) {
-	warning("STUB: SoundEngine::resumeLayer(%d)", layer);
+	// Not used in the game
+
+	warning("SoundEngine::resumeLayer(%d)", layer);
 }
 
 SndHandle *SoundEngine::getHandle(uint *id) {
@@ -151,13 +186,17 @@ bool SoundEngine::playSound(const Common::String &fileName, SOUND_TYPES type, fl
 
 uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
 	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
+#ifdef USE_VORBIS
 	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
+#endif
 	uint id;
 	SndHandle *handle = getHandle(&id);
 
 	debugC(1, kDebugSound, "SoundEngine::playSoundEx(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
+#ifdef USE_VORBIS
 	_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
+#endif
 
 	return id;
 }
@@ -203,7 +242,9 @@ void SoundEngine::stopSound(uint handle) {
 }
 
 bool SoundEngine::isSoundPaused(uint handle) {
-	warning("STUB: SoundEngine::isSoundPaused(%d)", handle);
+	// Not used in the game
+
+	warning("SoundEngine::isSoundPaused(%d)", handle);
 
 	return false;
 }
@@ -217,20 +258,18 @@ bool SoundEngine::isSoundPlaying(uint handle) {
 }
 
 float SoundEngine::getSoundVolume(uint handle) {
-	warning("STUB: SoundEngine::getSoundVolume(%d)", handle);
+	debugC(1, kDebugSound, "SoundEngine::getSoundVolume(%d)", handle);
 
-	return 0;
+	return (float)_mixer->getChannelVolume(_handles[handle].handle) / 255.0;
 }
 
 float SoundEngine::getSoundPanning(uint handle) {
-	warning("STUB: SoundEngine::getSoundPanning(%d)", handle);
+	debugC(1, kDebugSound, "SoundEngine::getSoundPanning(%d)", handle);
 
-	return 0;
+	return (float)_mixer->getChannelBalance(_handles[handle].handle) / 127.0;
 }
 
 Resource *SoundEngine::loadResource(const Common::String &fileName) {
-	warning("STUB: SoundEngine::loadResource(%s)", fileName.c_str());
-
 	return new SoundResource(fileName);
 }
 

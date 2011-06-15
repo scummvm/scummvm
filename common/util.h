@@ -172,6 +172,7 @@ enum Platform {
 	kPlatformWii,
 	kPlatformPSX,
 	kPlatformCDi,
+	kPlatformIOS,
 
 	kPlatformUnknown = -1
 };

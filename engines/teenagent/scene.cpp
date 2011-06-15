@@ -804,7 +804,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 				if (_idle_timer < 50)
 					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
 				else
-					actor_animation_position = teenagent_idle.renderIdle(surface, position, orientation, mark_delta, zoom);
+					actor_animation_position = teenagent_idle.renderIdle(surface, position, orientation, mark_delta, zoom, _engine->_rnd);
 			}
 		}
 

@@ -25,13 +25,13 @@
 
 #include "base/plugins.h"
 
-#if defined(DYNAMIC_MODULES) && defined(UNIX)
+#if defined(DYNAMIC_MODULES) && defined(POSIX)
 
 class POSIXPluginProvider : public FilePluginProvider {
 protected:
-	Plugin* createPlugin(const Common::FSNode &node) const;
+	Plugin *createPlugin(const Common::FSNode &node) const;
 };
 
-#endif // defined(DYNAMIC_MODULES) && defined(UNIX)
+#endif // defined(DYNAMIC_MODULES) && defined(POSIX)
 
 #endif

@@ -108,6 +108,30 @@ public:
 	static void loadNotifier(bool postFlag);
 };
 
+class Game {
+protected:
+	SynchronizedList<GameHandler *> _handlers;
+
+	static bool notLockedFn(GameHandler *g);
+	virtual void handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {}
+public:
+	virtual ~Game() {}
+
+	void addHandler(GameHandler *entry) { _handlers.push_back(entry); }
+	void removeHandler(GameHandler *entry) { _handlers.remove(entry); }
+
+	void execute();
+	virtual void start() = 0;
+	virtual void restart() {}
+	virtual void restartGame() {}
+	virtual void saveGame() {}
+	virtual void restoreGame() {}
+	virtual void quitGame() {}
+	virtual void endGame(int resNum, int lineNum) {}
+	virtual Scene *createScene(int sceneNumber) = 0;
+	virtual void processEvent(Event &event) {}
+};
+
 } // End of namespace tSage
 
 #endif

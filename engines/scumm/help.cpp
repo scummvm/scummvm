@@ -107,7 +107,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		ADD_TEXT(_("* Note that using ctrl-f and"));
 		ADD_TEXT(_("  ctrl-g are not recommended"));
 		ADD_TEXT(_("  since they may cause crashes"));
-		ADD_TEXT(_("  or incorrect game behaviour."));
+		ADD_TEXT(_("  or incorrect game behavior."));
 		break;
 	case 3:
 		if (gameId == GID_LOOM)

@@ -1010,7 +1010,7 @@ DIR_ENT FAT_GetDirEntry ( u32 dirCluster, int entry, int origin)
 	dir.name[0] = FILE_FREE; // default to no file found
 	dir.attrib = 0x00;
 
-	// Check if fat has been initialised
+	// Check if fat has been initialized
 	if (filesysBytePerSec == 0)
 	{
 		return (dir);

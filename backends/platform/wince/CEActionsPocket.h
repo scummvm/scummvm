@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "gui/Key.h"
 #include "gui/Actions.h"
+#include "backends/graphics/wincesdl/wincesdl-graphics.h"
 
 #define POCKET_ACTION_VERSION 5
 
@@ -80,6 +81,7 @@ public:
 	~CEActionsPocket();
 private:
 	CEActionsPocket(const Common::String &gameid);
+	WINCESdlGraphicsManager *_graphicsMan;
 	bool _right_click_needed;
 	bool _hide_toolbar_needed;
 	bool _zoom_needed;

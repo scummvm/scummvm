@@ -20,7 +20,7 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -205,6 +205,8 @@ void OSystem_SDL::initBackend() {
 	setupIcon();
 
 	_inited = true;
+
+	ModularBackend::initBackend();
 }
 
 void OSystem_SDL::initSDL() {
@@ -241,20 +243,6 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 	}
 #endif
 
-}
-
-Common::String OSystem_SDL::getDefaultConfigFileName() {
-	return "scummvm.ini";
-}
-
-Common::SeekableReadStream *OSystem_SDL::createConfigReadStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_SDL::createConfigWriteStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createWriteStream();
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {
@@ -313,7 +301,7 @@ void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 }
 
 Common::String OSystem_SDL::getSystemLanguage() const {
-#ifdef USE_DETECTLANG
+#if defined(USE_DETECTLANG) && !defined(_WIN32_WCE)
 #ifdef WIN32
 	// We can not use "setlocale" (at least not for MSVC builds), since it
 	// will return locales like: "English_USA.1252", thus we need a special

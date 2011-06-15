@@ -4791,6 +4791,60 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		0, 0, 0
 	},
+	{
+		{
+			"adibou2",
+			"Non-Interactive Demo",
+			{
+				{"demogb.scn", 0, "9291455a908ac0e6aaaca686e532609b", 105},
+				{"demogb.vmd", 0, "bc9c1db97db7bec8f566332444fa0090", 14320840},
+				{0, 0, 0, 0}
+			},
+			EN_GRB,
+			kPlatformPC,
+			ADGF_DEMO,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeAdibou2,
+		kFeatures640x480 | kFeaturesSCNDemo,
+		0, 0, 9
+	},
+	{
+		{
+			"adibou2",
+			"Non-Interactive Demo",
+			{
+				{"demoall.scn", 0, "c8fd308c037b829800006332b2c32674", 106},
+				{"demoall.vmd", 0, "4672b2deacc6fca97484840424b1921b", 14263433},
+				{0, 0, 0, 0}
+			},
+			DE_DEU,
+			kPlatformPC,
+			ADGF_DEMO,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeAdibou2,
+		kFeatures640x480 | kFeaturesSCNDemo,
+		0, 0, 10
+	},
+	{
+		{
+			"adibou2",
+			"Non-Interactive Demo",
+			{
+				{"demofra.scn", 0, "d1b2b1618af384ea1120def8b986c02b", 106},
+				{"demofra.vmd", 0, "b494cdec1aac7e54c3f2480512d2880e", 14297100},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_DEMO,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeAdibou2,
+		kFeatures640x480 | kFeaturesSCNDemo,
+		0, 0, 11
+	},
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0, 0}
 };
 
@@ -5148,32 +5202,32 @@ static const GOBGameDescription fallbackDescs[] = {
 };
 
 static const ADFileBasedFallback fileBased[] = {
-	{ &fallbackDescs[ 0], { "intro.stk", "disk1.stk", "disk2.stk", "disk3.stk", "disk4.stk", 0 } },
-	{ &fallbackDescs[ 1], { "intro.stk", "gob.lic", 0 } },
-	{ &fallbackDescs[ 2], { "intro.stk", 0 } },
-	{ &fallbackDescs[ 2], { "intro.stk", "disk2.stk", "disk3.stk", 0 } },
-	{ &fallbackDescs[ 3], { "intro.stk", "disk2.stk", "disk3.stk", "musmac1.mid", 0 } },
-	{ &fallbackDescs[ 4], { "intro.stk", "gobnew.lic", 0 } },
-	{ &fallbackDescs[ 5], { "intro.stk", "scaa.imd", "scba.imd", "scbf.imd", 0 } },
-	{ &fallbackDescs[ 6], { "intro.stk", "imd.itk", 0 } },
-	{ &fallbackDescs[ 7], { "intro.stk", "mus_gob3.lic", 0 } },
-	{ &fallbackDescs[ 8], { "intro.stk", "woodruff.itk", 0 } },
-	{ &fallbackDescs[ 9], { "intro.stk", "commun1.itk", 0 } },
-	{ &fallbackDescs[10], { "intro.stk", "commun1.itk", "musmac1.mid", 0 } },
-	{ &fallbackDescs[11], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
-	{ &fallbackDescs[12], { "intro.stk", "cd1.itk", "objet1.itk", 0 } },
-	{ &fallbackDescs[13], { "playtoon.stk", "archi.stk", 0 } },
-	{ &fallbackDescs[14], { "playtoon.stk", "spirou.stk", 0 } },
-	{ &fallbackDescs[15], { "playtoon.stk", "chato.stk", 0 } },
-	{ &fallbackDescs[16], { "playtoon.stk", "manda.stk", 0 } },
-	{ &fallbackDescs[17], { "playtoon.stk", "wakan.stk", 0 } },
-	{ &fallbackDescs[18], { "playtoon.stk", "dan.itk" } },
-	{ &fallbackDescs[19], { "intro.stk", "bambou.itk", 0 } },
-	{ &fallbackDescs[20], { "disk0.stk", "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
-	{ &fallbackDescs[21], { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
-	{ &fallbackDescs[22], { "adi2.stk", 0 } },
-	{ &fallbackDescs[23], { "adif41.stk", "adim41.stk", 0 } },
-	{ &fallbackDescs[24], { "coktelplayer.scn", 0 } },
+	{ &fallbackDescs[ 0].desc, { "intro.stk", "disk1.stk", "disk2.stk", "disk3.stk", "disk4.stk", 0 } },
+	{ &fallbackDescs[ 1].desc, { "intro.stk", "gob.lic", 0 } },
+	{ &fallbackDescs[ 2].desc, { "intro.stk", 0 } },
+	{ &fallbackDescs[ 2].desc, { "intro.stk", "disk2.stk", "disk3.stk", 0 } },
+	{ &fallbackDescs[ 3].desc, { "intro.stk", "disk2.stk", "disk3.stk", "musmac1.mid", 0 } },
+	{ &fallbackDescs[ 4].desc, { "intro.stk", "gobnew.lic", 0 } },
+	{ &fallbackDescs[ 5].desc, { "intro.stk", "scaa.imd", "scba.imd", "scbf.imd", 0 } },
+	{ &fallbackDescs[ 6].desc, { "intro.stk", "imd.itk", 0 } },
+	{ &fallbackDescs[ 7].desc, { "intro.stk", "mus_gob3.lic", 0 } },
+	{ &fallbackDescs[ 8].desc, { "intro.stk", "woodruff.itk", 0 } },
+	{ &fallbackDescs[ 9].desc, { "intro.stk", "commun1.itk", 0 } },
+	{ &fallbackDescs[10].desc, { "intro.stk", "commun1.itk", "musmac1.mid", 0 } },
+	{ &fallbackDescs[11].desc, { "intro.stk", "commun1.itk", "lost.lic", 0 } },
+	{ &fallbackDescs[12].desc, { "intro.stk", "cd1.itk", "objet1.itk", 0 } },
+	{ &fallbackDescs[13].desc, { "playtoon.stk", "archi.stk", 0 } },
+	{ &fallbackDescs[14].desc, { "playtoon.stk", "spirou.stk", 0 } },
+	{ &fallbackDescs[15].desc, { "playtoon.stk", "chato.stk", 0 } },
+	{ &fallbackDescs[16].desc, { "playtoon.stk", "manda.stk", 0 } },
+	{ &fallbackDescs[17].desc, { "playtoon.stk", "wakan.stk", 0 } },
+	{ &fallbackDescs[18].desc, { "playtoon.stk", "dan.itk" } },
+	{ &fallbackDescs[19].desc, { "intro.stk", "bambou.itk", 0 } },
+	{ &fallbackDescs[20].desc, { "disk0.stk", "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
+	{ &fallbackDescs[21].desc, { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
+	{ &fallbackDescs[22].desc, { "adi2.stk", 0 } },
+	{ &fallbackDescs[23].desc, { "adif41.stk", "adim41.stk", 0 } },
+	{ &fallbackDescs[24].desc, { "coktelplayer.scn", 0 } },
 	{ 0, { 0 } }
 };
 

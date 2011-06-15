@@ -466,7 +466,7 @@ void GfxText16::Box(const char *text, bool show, const Common::Rect &rect, TextA
 
 	if (doubleByteMode) {
 		// Kanji is written by pc98 rom to screen directly. Because of
-		// GetLongest() behaviour (not cutting off the last char, that causes a
+		// GetLongest() behavior (not cutting off the last char, that causes a
 		// new line), results in the script thinking that the text would need
 		// less space. The coordinate adjustment in fontsjis.cpp handles the
 		// incorrect centering because of that and this code actually shows all

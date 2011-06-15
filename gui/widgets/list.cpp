@@ -38,7 +38,7 @@ ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, ui
 	_scrollBar = NULL;
 	_textWidth = NULL;
 
-	// This ensures that _entriesPerPage is properly initialised.
+	// This ensures that _entriesPerPage is properly initialized.
 	reflowLayout();
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);
@@ -70,7 +70,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *too
 	_scrollBar = NULL;
 	_textWidth = NULL;
 
-	// This ensures that _entriesPerPage is properly initialised.
+	// This ensures that _entriesPerPage is properly initialized.
 	reflowLayout();
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);
@@ -499,9 +499,7 @@ void ListWidget::drawWidget() {
 
 		// If in numbering mode, we first print a number prefix
 		if (_numberingMode != kListNumberingOff) {
-			char temp[10];
-			sprintf(temp, "%2d. ", (pos + _numberingMode));
-			buffer = temp;
+			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
 			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2),
 									buffer, _state, Graphics::kTextAlignLeft, inverted, _leftPadding, true);
 			pad = 0;
@@ -543,9 +541,8 @@ Common::Rect ListWidget::getEditRect() const {
 	r.bottom += offset;
 
 	if (_numberingMode != kListNumberingOff) {
-		char temp[10];
 		// FIXME: Assumes that all digits have the same width.
-		sprintf(temp, "%2d. ", (_list.size() - 1 + _numberingMode));
+		Common::String temp = Common::String::format("%2d. ", (_list.size() - 1 + _numberingMode));
 		r.left += g_gui.getStringWidth(temp) + _leftPadding;
 	}
 
@@ -587,6 +584,7 @@ void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
 		setEditString(_list[_selectedItem]);
+		_caretPos = _editString.size();	// Force caret to the *end* of the selection.
 		if (_listColors.empty()) {
 			_editColor = ThemeEngine::kFontColorNormal;
 		} else {

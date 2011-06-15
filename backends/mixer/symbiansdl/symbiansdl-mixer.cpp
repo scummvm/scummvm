@@ -43,8 +43,8 @@ SymbianSdlMixerManager::~SymbianSdlMixerManager() {
 
 void SymbianSdlMixerManager::startAudio() {
 	// Need to create mixbuffer for stereo mix to downmix
-	if (_obtainedRate.channels != 2) {
-		_stereoMixBuffer = new byte [_obtainedRate.size * 2]; // * 2 for stereo values
+	if (_obtained.channels != 2) {
+		_stereoMixBuffer = new byte [_obtained.size * 2]; // * 2 for stereo values
 	}
 
 	SdlMixerManager::startAudio();
@@ -54,7 +54,7 @@ void SymbianSdlMixerManager::callbackHandler(byte *samples, int len) {
 	assert(_mixer);
 #if defined (S60) && !defined(S60V3)
 	// If not stereo then we need to downmix
-	if (_obtainedRate.channels != 2) {
+	if (_obtained.channels != 2) {
 		_mixer->mixCallback(_stereoMixBuffer, len * 2);
 
 		int16 *bitmixDst = (int16 *)samples;

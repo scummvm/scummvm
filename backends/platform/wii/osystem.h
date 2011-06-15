@@ -32,8 +32,6 @@
 #include "common/rect.h"
 #include "common/events.h"
 #include "backends/base-backend.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
@@ -54,7 +52,7 @@ extern void wii_memstats(void);
 }
 #endif
 
-class OSystem_Wii : public BaseBackend, public PaletteManager {
+class OSystem_Wii : public EventsBaseBackend, public PaletteManager {
 private:
 	s64 _startup_time;
 
@@ -130,9 +128,7 @@ private:
 	void showOptionsDialog();
 
 protected:
-	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
-	DefaultTimerManager *_timer;
 
 public:
 	enum {
@@ -171,7 +167,6 @@ protected:
 	virtual void grabPalette(byte *colors, uint start, uint num);
 public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-	virtual void disableCursorPalette(bool disable);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y,
 									int w, int h);
 	virtual void updateScreen();
@@ -212,9 +207,7 @@ public:
 
 	virtual void setWindowCaption(const char *caption);
 
-	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
-	virtual Common::TimerManager *getTimerManager();
 	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void getTimeAndDate(TimeDate &t) const;
 

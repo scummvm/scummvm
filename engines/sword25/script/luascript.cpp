@@ -112,7 +112,7 @@ bool LuaScriptEngine::init() {
 	// Place the error handler function in the Lua registry, and remember the index
 	_pcallErrorhandlerRegistryIndex = luaL_ref(_state, LUA_REGISTRYINDEX);
 
-	// Initialise the Pluto-Persistence library
+	// Initialize the Pluto-Persistence library
 	luaopen_pluto(_state);
 	lua_pop(_state, 1);
 
@@ -177,7 +177,7 @@ bool LuaScriptEngine::executeFile(const Common::String &fileName) {
 }
 
 bool LuaScriptEngine::executeString(const Common::String &code) {
-	return executeBuffer((byte *)code.c_str(), code.size(), "???");
+	return executeBuffer((const byte *)code.c_str(), code.size(), "???");
 }
 
 namespace {

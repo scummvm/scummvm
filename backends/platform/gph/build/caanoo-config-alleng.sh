@@ -8,10 +8,10 @@ echo and let all the build work be done from the backend/build folder.
 
 # Edit the configure line to suit.
 cd ../../../..
-./configure --backend=caanoo --disable-mt32emu --host=caanoo --disable-alsa --disable-flac \
+./configure --backend=caanoo --disable-mt32emu --host=caanoo \
+  --disable-alsa --disable-flac \
   --disable-nasm --disable-vorbis --disable-hq-scalers \
   --with-sdl-prefix=/opt/arm-caanoo/arm-none-linux-gnueabi/usr/bin \
-  --with-mpeg2-prefix=/opt/arm-caanoo/arm-none-linux-gnueabi/usr \
   --enable-tremor --with-tremor-prefix=/opt/arm-caanoo/arm-none-linux-gnueabi/usr \
   --enable-zlib --with-zlib-prefix=/opt/arm-caanoo/arm-none-linux-gnueabi/usr \
   --enable-mad --with-mad-prefix=/opt/arm-caanoo/arm-none-linux-gnueabi/usr \

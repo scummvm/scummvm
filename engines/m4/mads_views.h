@@ -34,7 +34,8 @@ namespace M4 {
 class MadsView;
 
 enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
-enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_4 = 4, ACTMODE2_5 = 5};
+enum MadsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_4 = 4, ACTMODE2_5 = 5};
+enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
 
 struct ActionDetails {
 	int verbId;
@@ -62,7 +63,7 @@ public:
 	int _currentAction;
 	int8 _flags1, _flags2;
 	MadsActionMode _actionMode;
-	MAdsActionMode2 _actionMode2;
+	MadsActionMode2 _actionMode2;
 	int _articleNumber;
 	bool _lookFlag;
 	int _selectedRow;
@@ -82,7 +83,7 @@ public:
 	int16 _v86F4C;
 	int _v83338;
 	bool _inProgress;
-	bool _v8453A;
+	AbortTimerMode _v8453A;
 
 public:
 	MadsAction(MadsView &owner);
@@ -95,8 +96,6 @@ public:
 	void checkAction();
 	bool isAction(int verbId, int objectNameId = 0, int indirectObjectId = 0);
 };
-
-enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
 
 class SpriteSlotSubset {
 public:
@@ -447,7 +446,7 @@ protected:
 public:
 	Animation(MadsM4Engine *vm);
 	virtual ~Animation();
-	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) = 0;
+	virtual void initialize(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) = 0;
 	virtual void load(const Common::String &filename, int v0) = 0;
 	virtual void update() = 0;
 	virtual void setCurrentFrame(int frameNumber) = 0;

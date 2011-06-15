@@ -106,7 +106,7 @@ public:
 	// ---------
 
 	/**
-	 * Initialises the graphics engine and sets the screen mode. Returns
+	 * Initializes the graphics engine and sets the screen mode. Returns
 	 * true if initialisation failed.
 	 * @note This method should be called immediately after the
 	 * initialisation of all services.

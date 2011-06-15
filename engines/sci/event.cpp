@@ -250,7 +250,7 @@ SciEvent EventManager::getScummVMEvent() {
 	// When Ctrl AND Alt are pressed together with a regular key, Linux will give us control-key, Windows will give
 	//  us the actual key. My opinion is that windows is right, because under DOS the keys worked the same, anyway
 	//  we support the other case as well
-	if ((modifiers & Common::KBD_SHIFT) && input.character > 0 && input.character < 27)
+	if ((modifiers & Common::KBD_ALT) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
 
 	if (getSciVersion() <= SCI_VERSION_1_MIDDLE) {

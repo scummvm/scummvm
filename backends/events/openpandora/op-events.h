@@ -28,17 +28,22 @@
 /**
  * Events manager for the OpenPandora.
  */
+
 class OPEventSource : public SdlEventSource {
 public:
 	OPEventSource();
 
 protected:
-	/** Button state for L button modifier */
+
+	/**
+	 * Button state for L button modifier
+	 */
 	bool _buttonStateL;
 
-	bool remapKey(SDL_Event &ev, Common::Event &event);
+
 	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
 	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+	bool remapKey(SDL_Event &ev, Common::Event &event);
 };
 
 #endif /* BACKEND_EVENTS_OP_H */

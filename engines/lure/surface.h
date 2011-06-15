@@ -49,8 +49,8 @@ public:
 	static void getDialogBounds(Common::Point &size, int charWidth, int numLines,
 		bool squashedLines = true);
 
-	static void initialise();
-	static void deinitialise();
+	static void initialize();
+	static void deinitialize();
 
 	uint16 width() { return _width; }
 	uint16 height() { return _height; }
