@@ -202,7 +202,7 @@ static PrisonerGameDescription g_fallbackDesc = {
 class PrisonerMetaEngine : public AdvancedMetaEngine {
 public:
 	PrisonerMetaEngine() : AdvancedMetaEngine(Prisoner::gameDescriptions, sizeof(Prisoner::PrisonerGameDescription), prisonerGames) {
-		params.singleid = "prisoner";
+		_singleid = "prisoner";
 	}
 
 	virtual const char *getName() const {
