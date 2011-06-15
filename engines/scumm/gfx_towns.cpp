@@ -50,10 +50,10 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 				
 	if (vs->number == kMainVirtScreen || _game.id == GID_INDY3 || _game.id == GID_ZAK) {
 		for (int h = 0; h < height; ++h) {
-			if (_bytesPerPixelOutput == 2) {
+			if (_outputPixelFormat.bytesPerPixel == 2) {
 				for (int w = 0; w < width; ++w) {
 					*(uint16*)dst1 = _16BitPalette[*src1++];
-					dst1 += _bytesPerPixelOutput;
+					dst1 += _outputPixelFormat.bytesPerPixel;
 				}
 
 				src1 += sp1;
@@ -197,8 +197,8 @@ const uint8 ScummEngine::_townsLayer2Mask[] = {
 #define DIRTY_RECTS_MAX 20
 #define FULL_REDRAW (DIRTY_RECTS_MAX + 1)
 
-TownsScreen::TownsScreen(OSystem *system, int width, int height, int bpp) :
-	_system(system), _width(width), _height(height), _bpp(bpp), _pitch(width * bpp) {
+TownsScreen::TownsScreen(OSystem *system, int width, int height, Graphics::PixelFormat &format) :
+	_system(system), _width(width), _height(height), _pixelFormat(format), _pitch(width * format.bytesPerPixel) {
 	memset(&_layers[0], 0, sizeof(TownsScreenLayer));
 	memset(&_layers[1], 0, sizeof(TownsScreenLayer));
 	_outBuffer = new byte[_pitch * _height];
@@ -247,7 +247,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 	l->pitch = width * l->bpp;
 	l->palette = (uint8*)pal;
 
-	if (l->palette && _bpp == 1)
+	if (l->palette && _pixelFormat.bytesPerPixel == 1)
 		warning("TownsScreen::setupLayer(): Layer palette usage requires 16 bit graphics setting.\nLayer palette will be ignored.");
 
 	delete[] l->pixels;
@@ -267,7 +267,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 		l->bltInternY[i] = l->pixels + (i / l->scaleH) * l->pitch;
 
 	delete[] l->bltTmpPal;
-	l->bltTmpPal = (l->bpp == 1 && _bpp == 2) ? new uint16[l->numCol] : 0;
+	l->bltTmpPal = (l->bpp == 1 && _pixelFormat.bytesPerPixel == 2) ? new uint16[l->numCol] : 0;
 	
 	l->enabled = true;
 	_layers[0].onBottom = true;
@@ -449,20 +449,20 @@ void TownsScreen::updateOutputBuffer() {
 			if (!l->enabled || !l->ready)
 				continue;
 
-			uint8 *dst = _outBuffer + r->top * _pitch + r->left * _bpp;
-			int ptch = _pitch - (r->right - r->left + 1) * _bpp;
+			uint8 *dst = _outBuffer + r->top * _pitch + r->left * _pixelFormat.bytesPerPixel;
+			int ptch = _pitch - (r->right - r->left + 1) * _pixelFormat.bytesPerPixel;
 
-			if (_bpp == 2 && l->bpp == 1) {
+			if (_pixelFormat.bytesPerPixel == 2 && l->bpp == 1) {
 				for (int ic = 0; ic < l->numCol; ic++)
 					l->bltTmpPal[ic] = calc16BitColor(&l->palette[ic * 3]);
 			}
 
 			for (int y = r->top; y <= r->bottom; ++y) {
-				if (l->bpp == _bpp && l->scaleW == 1 && l->onBottom && l->numCol & 0xff00) {
-					memcpy(dst, &l->bltInternY[y][l->bltInternX[r->left]], (r->right + 1 - r->left) * _bpp);
+				if (l->bpp == _pixelFormat.bytesPerPixel && l->scaleW == 1 && l->onBottom && l->numCol & 0xff00) {
+					memcpy(dst, &l->bltInternY[y][l->bltInternX[r->left]], (r->right + 1 - r->left) * _pixelFormat.bytesPerPixel);
 					dst += _pitch;
 
-				} else if (_bpp == 2) {
+				} else if (_pixelFormat.bytesPerPixel == 2) {
 					for (int x = r->left; x <= r->right; ++x) {
 						uint8 *src = &l->bltInternY[y][l->bltInternX[x]];
 						if (l->bpp == 1) {
@@ -498,17 +498,13 @@ void TownsScreen::updateOutputBuffer() {
 
 void TownsScreen::outputToScreen() {
 	for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i)
-		_system->copyRectToScreen(_outBuffer + i->top * _pitch + i->left * _bpp, _pitch, i->left, i->top, i->right - i->left + 1, i->bottom - i->top + 1);
+		_system->copyRectToScreen(_outBuffer + i->top * _pitch + i->left * _pixelFormat.bytesPerPixel, _pitch, i->left, i->top, i->right - i->left + 1, i->bottom - i->top + 1);
 	_dirtyRects.clear();
 	_numDirtyRects = 0;
 }
 
-uint16 TownsScreen::calc16BitColor(const uint8 *palEntry) {
-	uint16 ar = (palEntry[0] & 0xf8) << 7;
-	uint16 ag = (palEntry[1] & 0xf8) << 2;
-	uint16 ab = (palEntry[2] >> 3);
-	uint16 col = ar | ag | ab;
-	return col;
+uint16 TownsScreen::calc16BitColor(const uint8 *palEntry) {	
+	return _pixelFormat.RGBToColor(palEntry[0], palEntry[1], palEntry[2]);
 }
 
 #undef DIRTY_RECTS_MAX

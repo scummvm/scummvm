@@ -260,7 +260,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_switchRoomEffect2 = 0;
 	_switchRoomEffect = 0;
 
-	_bytesPerPixelOutput = _bytesPerPixel = 1;
+	_bytesPerPixel = 1;
 	_doEffect = false;
 	_snapScroll = false;
 	_currentLights = 0;
@@ -545,18 +545,19 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_screenHeight = 200;
 	}
 
-	_bytesPerPixelOutput = _bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
+	_bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
+	uint8 sizeMult = _bytesPerPixel;
 
 #ifdef USE_RGB_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns)
-		_bytesPerPixelOutput = 2;
+		sizeMult = 2;
 #endif
 #endif
 
 	// Allocate gfx compositing buffer (not needed for V7/V8 games).
 	if (_game.version < 7)
-		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * _bytesPerPixelOutput);
+		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * sizeMult);
 	else
 		_compositeBuf = 0;
 
@@ -1154,17 +1155,27 @@ Common::Error ScummEngine::init() {
 #endif
 			) {
 #ifdef USE_RGB_COLOR
-			Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-			initGraphics(screenWidth, screenHeight, screenWidth > 320, &format);
-			if (format != _system->getScreenFormat()) {
-				if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
-					warning("Your ScummVM build does not support the type of 16bit color mode required by this target.\nStarting game in 8bit color mode...\nYou may experience color glitches");
-					_bytesPerPixelOutput = 1;
-					initGraphics(screenWidth, screenHeight, (screenWidth > 320));
-				} else {
-					return Common::kUnsupportedColorMode;
-				}
+			_outputPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+			Common::List<Graphics::PixelFormat> tryModes = _system->getSupportedFormats();
+			// Try default 555 mode first
+			tryModes.push_front(_outputPixelFormat);
+
+			for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ++g) {
+				if (g->bytesPerPixel != 2 || g->aBits())
+					continue;
+				_outputPixelFormat = *g;
+				initGraphics(screenWidth, screenHeight, screenWidth > 320, &_outputPixelFormat);
+				// athrxx-06/15/2011: To avoid regressions I add support for other modes than 555 only
+				// for FM-TOWNS games and for LOOM PCE atm.
+				// TODO: Someone knowledgeable about HE games might check whether other modes can be
+				// supported for these games, too. Quick tests with SPYOZON indicate that this should
+				// not be a problem.				
+				if (*g == _system->getScreenFormat() || (_game.platform != Common::kPlatformFMTowns && _game.platform != Common::kPlatformPCEngine))
+					break;
 			}
+			
+			if (_outputPixelFormat != _system->getScreenFormat())
+				return Common::kUnsupportedColorMode;
 #else
 			if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
 				warning("Starting game without the required 16bit color support.\nYou may experience color glitches");
@@ -1181,6 +1192,8 @@ Common::Error ScummEngine::init() {
 			initGraphics(screenWidth, screenHeight, (screenWidth > 320));
 		}
 	}
+
+	_outputPixelFormat = _system->getScreenFormat();
 
 	setupScumm();
 
@@ -1290,7 +1303,7 @@ void ScummEngine::setupScumm() {
 	_res->setHeapThreshold(400000, maxHeapThreshold);
 
 	free(_compositeBuf);
-	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _bytesPerPixelOutput);
+	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _outputPixelFormat.bytesPerPixel);
 }
 
 #ifdef ENABLE_SCUMM_7_8
@@ -1371,7 +1384,7 @@ void ScummEngine::resetScumm() {
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-		|| (_game.platform == Common::kPlatformFMTowns && _bytesPerPixelOutput == 2)
+		|| (_game.platform == Common::kPlatformFMTowns)
 #endif
 		)
 		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
@@ -1380,8 +1393,8 @@ void ScummEngine::resetScumm() {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns) {
 		delete _townsScreen;
-		_townsScreen = new TownsScreen(_system, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, _bytesPerPixelOutput);
-		_townsScreen->setupLayer(0, _screenWidth, _screenHeight, (_bytesPerPixelOutput == 2) ? 32767 : 256);
+		_townsScreen = new TownsScreen(_system, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, _outputPixelFormat);
+		_townsScreen->setupLayer(0, _screenWidth, _screenHeight, (_outputPixelFormat.bytesPerPixel == 2) ? 32767 : 256);
 		_townsScreen->setupLayer(1, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, 16, _textPalette);
 	}
 #endif

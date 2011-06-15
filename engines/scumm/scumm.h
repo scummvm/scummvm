@@ -897,7 +897,7 @@ public:
 
 	Common::RenderMode _renderMode;
 	uint8 _bytesPerPixel;
-	uint8 _bytesPerPixelOutput;
+	Graphics::PixelFormat _outputPixelFormat;
 
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
