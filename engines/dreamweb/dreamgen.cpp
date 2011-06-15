@@ -476,7 +476,7 @@ void intro3text(Context &context);
 void intro1text(Context &context);
 
 void alleybarksound(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._dec(context.ax);
 	context._cmp(context.ax, 0);
@@ -490,27 +490,27 @@ void alleybarksound(Context & context) {
 	context.ax = 1000;
 nobark:
 	context.es.word(context.bx+3) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intromusic(Context & context) {
-	uint stack_depth = context.stack.size();
-	{assert(stack_depth == context.stack.size()); return; }
+	STACK_CHECK(context);
+	return;
 }
 
 void foghornsound(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	randomnumber(context);
 	context._cmp(context.al, 198);
 	if (!context.flags.z()) goto nofog;
 	context.al = 13;
 	playchannel1(context);
 nofog:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void receptionist(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto gotrecep;
 	context._cmp(context.data.byte(kCardpassflag), 1);
@@ -549,11 +549,11 @@ gotrecep:
 	if (context.flags.z()) goto nottalkedrecep;
 	context.data.byte(kTalkedtorecep) = 1;
 nottalkedrecep:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void smokebloke(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRockstardead), 0);
 	if (!context.flags.z()) goto notspokento;
 	context.al = context.es.byte(context.bx+7);
@@ -585,11 +585,11 @@ notsmokeb2:
 gotsmokeb:
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void attendant(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
 	context.al = context.es.byte(context.bx+7);
@@ -597,31 +597,31 @@ void attendant(Context & context) {
 	if (context.flags.z()) goto nottalked;
 	context.data.byte(kTalkedtoattendant) = 1;
 nottalked:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void manasleep(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 127);
 	context.es.byte(context.bx+7) = context.al;
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void eden(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kGeneraldead), 0);
 	if (!context.flags.z()) goto notinbed;
 	showgamereel(context);
 	addtopeoplelist(context);
 notinbed:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void edeninbath(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kGeneraldead), 0);
 	if (context.flags.z()) goto notinbed;
 	context._cmp(context.data.byte(kSartaindead), 0);
@@ -629,39 +629,39 @@ void edeninbath(Context & context) {
 	showgamereel(context);
 	addtopeoplelist(context);
 notinbath:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 /*continuing to unbounded code: notinbed from eden:5-6*/
 notinbed:
-	{assert(stack_depth == context.stack.size()); return; }
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
+	return;
 }
 
 void malefan(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void femalefan(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void louis(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRockstardead), 0);
 	if (!context.flags.z()) goto notlouis1;
 	showgamereel(context);
 	addtopeoplelist(context);
 notlouis1:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void louischair(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRockstardead), 0);
 	if (context.flags.z()) goto notlouis2;
 	checkspeed(context);
@@ -686,35 +686,35 @@ notlouisanim:
 	showgamereel(context);
 	addtopeoplelist(context);
 notlouis2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void manasleep2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 127);
 	context.es.byte(context.bx+7) = context.al;
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void mansatstill(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void tattooman(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void drinker(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto gotdrinker;
 	context._inc(context.es.word(context.bx+3));
@@ -732,11 +732,11 @@ notdrinker1:
 gotdrinker:
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void bartender(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto gotsmoket;
 	context._cmp(context.es.word(context.bx+3), 86);
@@ -760,25 +760,25 @@ gotsmoket:
 	context.es.byte(context.bx+7) = 9;
 notgotgun:
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void othersmoker(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void barwoman(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void interviewer(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kReeltowatch), 68);
 	if (!context.flags.z()) goto notgeneralstart;
 	context._inc(context.es.word(context.bx+3));
@@ -792,11 +792,11 @@ notgeneralstart:
 	context._inc(context.es.word(context.bx+3));
 talking:
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void soldier1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.es.word(context.bx+3), 0);
 	if (context.flags.z()) goto soldierwait;
 	context.data.word(kWatchingtime) = 10;
@@ -826,11 +826,11 @@ soldierwait:
 gotsoldframe:
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void rockstar(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 303);
 	if (context.flags.z()) goto rockcombatend;
@@ -868,21 +868,21 @@ rockspeed:
 	addtopeoplelist(context);
 	context.data.byte(kPointermode) = 2;
 	context.data.word(kWatchingtime) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notalkrock:
 	context.data.word(kWatchingtime) = 2;
 	context.data.byte(kPointermode) = 0;
 	context.al = context.data.byte(kMapy);
 	context.es.byte(context.bx+2) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 rockcombatend:
 	context.data.byte(kNewlocation) = 45;
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void helicopter(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 203);
 	if (context.flags.z()) goto heliwon;
@@ -929,18 +929,18 @@ helicombatend:
 	if (context.flags.c()) goto notwaitingheli;
 	context.data.byte(kPointermode) = 2;
 	context.data.word(kWatchingtime) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwaitingheli:
 	context.data.byte(kPointermode) = 0;
 	context.data.word(kWatchingtime) = 2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 heliwon:
 	context.data.byte(kPointermode) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void mugger(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 138);
 	if (context.flags.z()) goto endmugger1;
@@ -957,7 +957,7 @@ notmugger:
 	showgamereel(context);
 	context.al = context.data.byte(kMapx);
 	context.es.byte(context.bx+1) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 endmugger1:
 	context.push(context.es);
 	context.push(context.bx);
@@ -1008,20 +1008,20 @@ endmugger1:
 	context.data.byte(kBeenmugged) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 endmugger2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void aide(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void businessman(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kPointermode) = 0;
 	context.data.word(kWatchingtime) = 2;
 	context.ax = context.es.word(context.bx+3);
@@ -1101,17 +1101,17 @@ busspeed:
 	if (!context.flags.z()) goto buscombatend;
 	context.data.word(kWatchingtime) = 0;
 	context.data.byte(kPointermode) = 2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 buscombatend:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 buscombatwonend:
 	context.data.byte(kPointermode) = 0;
 	context.data.word(kWatchingtime) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void poolguard(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 214);
 	if (context.flags.z()) goto combatover2;
@@ -1169,11 +1169,11 @@ guardspeed:
 	if (context.flags.z()) goto iswaitingpool;
 	context.data.byte(kPointermode) = 0;
 	context.data.word(kWatchingtime) = 2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 iswaitingpool:
 	context.data.byte(kPointermode) = 2;
 	context.data.word(kWatchingtime) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 combatover1:
 	context.data.word(kWatchingtime) = 0;
 	context.data.byte(kPointermode) = 0;
@@ -1181,7 +1181,7 @@ combatover1:
 	turnpathon(context);
 	context.al = 1;
 	turnpathoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 combatover2:
 	showgamereel(context);
 	context.data.word(kWatchingtime) = 2;
@@ -1192,16 +1192,16 @@ combatover2:
 	context.data.word(kWatchingtime) = 0;
 	context.data.byte(kMandead) = 2;
 doneover2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void security(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.es.word(context.bx+3), 32);
 	if (context.flags.z()) goto securwait;
 	context._cmp(context.es.word(context.bx+3), 69);
 	if (!context.flags.z()) goto notaftersec;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notaftersec:
 	context.data.word(kWatchingtime) = 10;
 	checkspeed(context);
@@ -1221,11 +1221,11 @@ securwait:
 gotsecurframe:
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void heavy(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 127);
 	context.es.byte(context.bx+7) = context.al;
@@ -1257,11 +1257,11 @@ heavywait:
 gotheavyframe:
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void bossman(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto notboss;
 	context.ax = context.es.word(context.bx+3);
@@ -1301,11 +1301,11 @@ notboss:
 	if (context.flags.z()) goto nottalkedboss;
 	context.data.byte(kTalkedtoboss) = 1;
 nottalkedboss:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void gamer(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto gamerfin;
 gameragain:
@@ -1321,32 +1321,32 @@ gameragain:
 gamerfin:
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void sparkydrip(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto cantdrip;
 	context.al = 14;
 	context.ah = 0;
 	playchannel0(context);
 cantdrip:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void carparkdrip(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto cantdrip2;
 	context.al = 14;
 	playchannel1(context);
 cantdrip2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void keeper(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kKeeperflag), 0);
 	if (!context.flags.z()) goto notwaiting;
 	context._cmp(context.data.word(kReeltowatch), 190);
@@ -1359,16 +1359,16 @@ void keeper(Context & context) {
 	context.al = context.data.byte(kDreamnumber);
 	context.es.byte(context.bx+7) = context.al;
 notdiff:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwaiting:
 	addtopeoplelist(context);
 	showgamereel(context);
 waiting:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void candles1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto candle1;
 	context.ax = context.es.word(context.bx+3);
@@ -1380,11 +1380,11 @@ notendcandle1:
 	context.es.word(context.bx+3) = context.ax;
 candle1:
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void smallcandle(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto smallcandlef;
 	context.ax = context.es.word(context.bx+3);
@@ -1396,11 +1396,11 @@ notendsmallcandle:
 	context.es.word(context.bx+3) = context.ax;
 smallcandlef:
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intromagic1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto introm1fin;
 	context.ax = context.es.word(context.bx+3);
@@ -1424,11 +1424,11 @@ gotintrom1:
 	context.data.byte(kNowinnewroom) = 1;
 introm1fin:
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void candles(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto candlesfin;
 	context.ax = context.es.word(context.bx+3);
@@ -1440,11 +1440,11 @@ gotcandles:
 	context.es.word(context.bx+3) = context.ax;
 candlesfin:
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void candles2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto candles2fin;
 	context.ax = context.es.word(context.bx+3);
@@ -1456,11 +1456,11 @@ gotcandles2:
 	context.es.word(context.bx+3) = context.ax;
 candles2fin:
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void gates(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto gatesfin;
 	context.ax = context.es.word(context.bx+3);
@@ -1493,11 +1493,11 @@ gotgates:
 	context.es = context.pop();
 gatesfin:
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intromagic2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto introm2fin;
 	context.ax = context.es.word(context.bx+3);
@@ -1509,11 +1509,11 @@ gotintrom2:
 	context.es.word(context.bx+3) = context.ax;
 introm2fin:
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intromagic3(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto introm3fin;
 	context.ax = context.es.word(context.bx+3);
@@ -1527,11 +1527,11 @@ introm3fin:
 	showgamereel(context);
 	context.al = context.data.byte(kMapx);
 	context.es.byte(context.bx+1) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intromonks1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto intromonk1fin;
 	context.ax = context.es.word(context.bx+3);
@@ -1541,7 +1541,7 @@ void intromonks1(Context & context) {
 	context._add(context.data.byte(kMapy), 10);
 	context.data.byte(kNowinnewroom) = 1;
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notendmonk1:
 	context._cmp(context.ax, 30);
 	if (!context.flags.z()) goto gotintromonk1;
@@ -1572,11 +1572,11 @@ intromonk1fin:
 	showgamereel(context);
 	context.al = context.data.byte(kMapy);
 	context.es.byte(context.bx+2) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intromonks2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto intromonk2fin;
 	context.ax = context.es.word(context.bx+3);
@@ -1625,16 +1625,16 @@ gotintromonk2:
 	context.es.word(context.bx+3) = context.ax;
 intromonk2fin:
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void handclap(Context & context) {
-	uint stack_depth = context.stack.size();
-	{assert(stack_depth == context.stack.size()); return; }
+	STACK_CHECK(context);
+	return;
 }
 
 void monks2text(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kIntrocount), 1);
 	if (!context.flags.z()) goto notmonk2text1;
 	context.al = 8;
@@ -1671,7 +1671,7 @@ notmonk2text4:
 	context._cmp(context.data.byte(kIntrocount), 13);
 	if (!context.flags.z()) goto notmonk2text5;
 	context.data.byte(kIntrocount) = 17;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 	context.al = 12;
 	context.bl = 0;
 	context.bh = 120;
@@ -1728,17 +1728,17 @@ notmonk2text10:
 	context.cx = 100;
 	goto gotmonks2text;
 notmonk2text11:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotmonks2text:
 	context.dx = 1;
 	context.cx = 120;
 	context.ah = 82;
 	setuptimedtemp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intro1text(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kIntrocount), 2);
 	if (!context.flags.z()) goto notintro1text1;
 	context.al = 40;
@@ -1763,21 +1763,21 @@ notintro1text2:
 	context.cx = 90;
 	goto gotintro1text;
 notintro1text3:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotintro1text:
 	context.dx = 1;
 	context.ah = 82;
 	context._cmp(context.data.byte(kCh1playing), 255);
 	if (context.flags.z()) goto oktalk2;
 	context._dec(context.data.byte(kIntrocount));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 oktalk2:
 	setuptimedtemp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intro2text(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.ax, 5);
 	if (!context.flags.z()) goto notintro2text1;
 	context.al = 43;
@@ -1794,16 +1794,16 @@ notintro2text1:
 	context.cx = 90;
 	goto gotintro2text;
 notintro2text2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotintro2text:
 	context.dx = 1;
 	context.ah = 82;
 	setuptimedtemp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intro3text(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.ax, 107);
 	if (!context.flags.z()) goto notintro3text1;
 	context.al = 45;
@@ -1820,16 +1820,16 @@ notintro3text1:
 	context.cx = 100;
 	goto gotintro3text;
 notintro3text2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotintro3text:
 	context.dx = 1;
 	context.ah = 82;
 	setuptimedtemp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void monkandryan(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto notmonkryan;
 	context.ax = context.es.word(context.bx+3);
@@ -1846,16 +1846,16 @@ void monkandryan(Context & context) {
 	context._cmp(context.data.byte(kIntrocount), 57);
 	if (!context.flags.z()) goto gotmonkryan;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotmonkryan:
 	context.es.word(context.bx+3) = context.ax;
 notmonkryan:
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void endgameseq(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto notendseq;
 	context.ax = context.es.word(context.bx+3);
@@ -1909,11 +1909,11 @@ notendseq:
 	context.es.word(context.bx+3) = 146;
 	rollendcredits(context);
 notendcreds:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void rollendcredits(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 16;
 	context.ah = 255;
 	playchannel0(context);
@@ -1998,11 +1998,11 @@ gotnext:
 	hangon(context);
 	paneltomap(context);
 	fadescreenuphalf(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void priest(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.es.word(context.bx+3), 8);
 	if (context.flags.z()) goto priestspoken;
 	context.data.byte(kPointermode) = 0;
@@ -2016,13 +2016,13 @@ void priest(Context & context) {
 	context.bx = context.pop();
 	context.es = context.pop();
 priestwait:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 priestspoken:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void madmanstelly(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._inc(context.ax);
 	context._cmp(context.ax, 307);
@@ -2031,11 +2031,11 @@ void madmanstelly(Context & context) {
 notendtelly:
 	context.es.word(context.bx+3) = context.ax;
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void madman(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.word(kWatchingtime) = 2;
 	checkspeed(context);
 	if (!context.flags.z()) goto nomadspeed;
@@ -2087,7 +2087,7 @@ nomadspeed:
 	context.al = context.data.byte(kMapx);
 	context.es.byte(context.bx+1) = context.al;
 	madmode(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 madmanspoken:
 	context._cmp(context.data.byte(kWongame), 1);
 	if (context.flags.z()) goto alreadywon;
@@ -2098,15 +2098,15 @@ madmanspoken:
 	context.bx = context.pop();
 	context.es = context.pop();
 alreadywon:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 ryansded:
 	context.data.byte(kMandead) = 2;
 	showgamereel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void madmantext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSpeechcount), 63);
 	if (!context.flags.c()) goto nomadtext;
 	context._cmp(context.data.byte(kCh1playing), 255);
@@ -2121,11 +2121,11 @@ void madmantext(Context & context) {
 	context.ah = 82;
 	setuptimedtemp(context);
 nomadtext:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void madmode(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.word(kWatchingtime) = 2;
 	context.data.byte(kPointermode) = 0;
 	context._cmp(context.data.byte(kCombatcount), 65);
@@ -2134,11 +2134,11 @@ void madmode(Context & context) {
 	if (!context.flags.c()) goto iswatchmad;
 	context.data.byte(kPointermode) = 2;
 iswatchmad:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void priesttext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.es.word(context.bx+3), 2);
 	if (context.flags.c()) goto nopriesttext;
 	context._cmp(context.es.word(context.bx+3), 7);
@@ -2155,11 +2155,11 @@ void priesttext(Context & context) {
 	context.dx = 1;
 	setuptimeduse(context);
 nopriesttext:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void textforend(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kIntrocount), 20);
 	if (!context.flags.z()) goto notendtext1;
 	context.al = 0;
@@ -2184,16 +2184,16 @@ notendtext2:
 	context.cx = 60;
 	goto gotendtext;
 notendtext3:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotendtext:
 	context.dx = 1;
 	context.ah = 83;
 	setuptimedtemp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void textformonk(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kIntrocount), 1);
 	if (!context.flags.z()) goto notmonktext1;
 	context.al = 19;
@@ -2304,21 +2304,21 @@ notmonktext13:
 	context.data.byte(kVolumeto) = 7;
 	context.data.byte(kVolumedirection) = 1;
 notendtitles:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotmonktext:
 	context.dx = 1;
 	context.ah = 82;
 	context._cmp(context.data.byte(kCh1playing), 255);
 	if (context.flags.z()) goto oktalk;
 	context._dec(context.data.byte(kIntrocount));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 oktalk:
 	setuptimedtemp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void drunk(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kGeneraldead), 0);
 	if (!context.flags.z()) goto trampgone;
 	context.al = context.es.byte(context.bx+7);
@@ -2327,11 +2327,11 @@ void drunk(Context & context) {
 	showgamereel(context);
 	addtopeoplelist(context);
 trampgone:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void advisor(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto noadvisor;
 	goto noadvisor;
@@ -2356,11 +2356,11 @@ gotadvframe:
 noadvisor:
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void copper(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto nocopper;
 	context.ax = context.es.word(context.bx+3);
@@ -2387,11 +2387,11 @@ gotcopframe:
 nocopper:
 	showgamereel(context);
 	addtopeoplelist(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void sparky(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kCard1money), 0);
 	if (context.flags.z()) goto animsparky;
 	context.es.byte(context.bx+7) = 3;
@@ -2421,12 +2421,12 @@ finishsparky:
 	if (context.flags.z()) goto nottalkedsparky;
 	context.data.byte(kTalkedtosparky) = 1;
 nottalkedsparky:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void train(Context & context) {
-	uint stack_depth = context.stack.size();
-	{assert(stack_depth == context.stack.size()); return; }
+	STACK_CHECK(context);
+	return;
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 21);
 	if (!context.flags.c()) goto notrainyet;
@@ -2445,11 +2445,11 @@ gottrainframe:
 	context.es.word(context.bx+3) = context.ax;
 	showgamereel(context);
 notrainatall:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void addtopeoplelist(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context.push(context.bx);
@@ -2464,11 +2464,11 @@ void addtopeoplelist(Context & context) {
 	context.bx = context.pop();
 	context.es = context.pop();
 	context._add(context.data.word(kListpos), 5);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showgamereel(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 512);
 	if (!context.flags.c()) goto noshow;
@@ -2481,11 +2481,11 @@ void showgamereel(Context & context) {
 	context.ax = context.data.word(kReelpointer);
 	context.es.word(context.bx+3) = context.ax;
 noshow:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkspeed(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLastweapon), -1);
 	if (!context.flags.z()) goto forcenext;
 	context._inc(context.es.byte(context.bx+6));
@@ -2496,24 +2496,24 @@ void checkspeed(Context & context) {
 	context.es.byte(context.bx+6) = context.al;
 	context._cmp(context.al, context.al);
 notspeed:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 forcenext:
 	context._cmp(context.al, context.al);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void clearsprites(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 	context.al = 255;
 	context.cx = (32)*16;
 	while(context.cx--) 	context._stosb();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void makesprite(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 _tmp17:
@@ -2529,20 +2529,20 @@ _tmp17a:
 	context.es.word(context.bx+2) = 0x0ffff;
 	context.es.byte(context.bx+15) = 0;
 	context.es.byte(context.bx+18) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void delsprite(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = context.bx;
 	context.cx = (32);
 	context.al = 255;
 	while(context.cx--) 	context._stosb();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void spriteupdate(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 	context.al = context.data.byte(kRyanon);
@@ -2571,11 +2571,11 @@ _tmp18a:
 	context._add(context.bx, (32));
 	if (--context.cx) goto _tmp18;
 _tmp18b:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printsprites(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.cx = 0;
 priorityloop:
@@ -2604,11 +2604,11 @@ skipsprite:
 	context._inc(context.cx);
 	context._cmp(context.cx, 7);
 	if (!context.flags.z()) goto priorityloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printasprite(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context.si = context.bx;
@@ -2641,11 +2641,11 @@ notquickp:
 	showframe(context);
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkone(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.cx);
 	context.al = context.ch;
 	context.ah = 0;
@@ -2677,31 +2677,31 @@ void checkone(Context & context) {
 	context.cx = context.ax;
 	context._lodsb();
 	context.dx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findsource(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kCurrentframe);
 	context._cmp(context.ax, 160);
 	if (!context.flags.c()) goto over1000;
 	context.ds = context.data.word(kReel1);
 	context.data.word(kTakeoff) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 over1000:
 	context._cmp(context.ax, 320);
 	if (!context.flags.c()) goto over1001;
 	context.ds = context.data.word(kReel2);
 	context.data.word(kTakeoff) = 160;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 over1001:
 	context.ds = context.data.word(kReel3);
 	context.data.word(kTakeoff) = 320;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void initman(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kRyanx);
 	context.ah = context.data.byte(kRyany);
 	context.si = context.ax;
@@ -2712,11 +2712,11 @@ void initman(Context & context) {
 	context.es.byte(context.bx+23) = 4;
 	context.es.byte(context.bx+22) = 0;
 	context.es.byte(context.bx+29) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void mainman(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kResetmanxy), 1);
 	if (!context.flags.z()) goto notinnewroom;
 	context.data.byte(kResetmanxy) = 0;
@@ -2729,7 +2729,7 @@ notinnewroom:
 	context._dec(context.es.byte(context.bx+22));
 	context._cmp(context.es.byte(context.bx+22), -1);
 	if (context.flags.z()) goto executewalk;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 executewalk:
 	context.es.byte(context.bx+22) = 0;
 	context.al = context.data.byte(kTurntoface);
@@ -2796,11 +2796,11 @@ notwalk:
 	context.ax = context.es.word(context.bx+10);
 	context.data.byte(kRyanx) = context.al;
 	context.data.byte(kRyany) = context.ah;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void aboutturn(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kTurndirection), 1);
 	if (context.flags.z()) goto incdir;
 	context._cmp(context.data.byte(kTurndirection), -1);
@@ -2823,7 +2823,7 @@ incdir:
 	context._and(context.al, 7);
 	context.data.byte(kFacing) = context.al;
 	context.es.byte(context.bx+29) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 decdir:
 	context.data.byte(kTurndirection) = -1;
 	context.al = context.data.byte(kFacing);
@@ -2831,11 +2831,11 @@ decdir:
 	context._and(context.al, 7);
 	context.data.byte(kFacing) = context.al;
 	context.es.byte(context.bx+29) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void walking(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLinedirection), 0);
 	if (context.flags.z()) goto normalwalk;
 	context.al = context.data.byte(kLinepointer);
@@ -2864,7 +2864,7 @@ continuewalk:
 	context.es = context.pop();
 stillline:
 	context.es.word(context.bx+10) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 endofline:
 	context.data.byte(kLinepointer) = 254;
 	context.al = context.data.byte(kDestination);
@@ -2878,14 +2878,14 @@ endofline:
 	autosetwalk(context);
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 finishedwalk:
 	facerightway(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void facerightway(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	getroomspaths(context);
@@ -2900,11 +2900,11 @@ void facerightway(Context & context) {
 	context.data.byte(kLeavedirection) = context.al;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkforexit(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = context.data.byte(kRyanx);
 	context._add(context.cl, 12);
 	context.ch = context.data.byte(kRyany);
@@ -2919,7 +2919,7 @@ void checkforexit(Context & context) {
 	if (context.flags.z()) goto notnewdirect;
 	context.al = context.data.byte(kLastflagex);
 	context.data.byte(kAutolocation) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notnewdirect:
 	context._test(context.al, 32);
 	if (context.flags.z()) goto notleave;
@@ -2966,38 +2966,38 @@ notravmessage:
 	context.data.byte(kTurntoface) = context.al;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notlouis:
 	context.bx = context.pop();
 	context.es = context.pop();
 	context.data.byte(kNeedtotravel) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notleave:
 	context._test(context.al, 4);
 	if (context.flags.z()) goto notaleft;
 	adjustleft(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notaleft:
 	context._test(context.al, 2);
 	if (context.flags.z()) goto notaright;
 	adjustright(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notaright:
 	context._test(context.al, 8);
 	if (context.flags.z()) goto notadown;
 	adjustdown(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notadown:
 	context._test(context.al, 16);
 	if (context.flags.z()) goto notanup;
 	adjustup(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notanup:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void adjustdown(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context._add(context.data.byte(kMapy), 10);
@@ -3008,11 +3008,11 @@ void adjustdown(Context & context) {
 	context.data.byte(kNowinnewroom) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void adjustup(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context._sub(context.data.byte(kMapy), 10);
@@ -3023,11 +3023,11 @@ void adjustup(Context & context) {
 	context.data.byte(kNowinnewroom) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void adjustleft(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context.data.byte(kLastflag) = 0;
@@ -3039,11 +3039,11 @@ void adjustleft(Context & context) {
 	context.data.byte(kNowinnewroom) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void adjustright(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context._add(context.data.byte(kMapx), 11);
@@ -3055,11 +3055,11 @@ void adjustright(Context & context) {
 	context.data.byte(kNowinnewroom) = 1;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void reminders(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 24);
 	if (!context.flags.z()) goto notinedenslift;
 	context._cmp(context.data.byte(kMapx), 44);
@@ -3094,7 +3094,7 @@ void reminders(Context & context) {
 havegotcard:
 	context._inc(context.data.byte(kProgresspoints));
 notfirst:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 forgotone:
 	context.al = 50;
 	context.bl = 54;
@@ -3102,13 +3102,13 @@ forgotone:
 	context.cx = 48;
 	context.dx = 8;
 	setuptimeduse(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notinedenslift:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void initrain(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24));
 	context.bx = 1113;
@@ -3164,11 +3164,11 @@ initrainside2:
 finishinitrain:
 	context.al = 255;
 	context._stosb();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void splitintolines(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 lookforlinestart:
 	getblockofpixel(context);
 	context._cmp(context.al, 0);
@@ -3214,11 +3214,11 @@ foundlineend:
 	if (!context.flags.c()) goto endofthisline;
 	goto lookforlinestart;
 endofthisline:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getblockofpixel(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.cx);
 	context.push(context.es);
 	context.push(context.di);
@@ -3232,17 +3232,17 @@ void getblockofpixel(Context & context) {
 	context.di = context.pop();
 	context.es = context.pop();
 	context.cx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 failrain:
 	context.di = context.pop();
 	context.es = context.pop();
 	context.cx = context.pop();
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showrain(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kMainsprites);
 	context.si = 6*58;
 	context.ax = context.ds.word(context.si+2);
@@ -3316,11 +3316,11 @@ notlouisthund:
 isthunder1:
 	playchannel1(context);
 nothunder:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void backobject(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kSetdat);
 	context.di = context.es.word(context.bx+20);
 	context.al = context.es.byte(context.bx+18);
@@ -3365,11 +3365,11 @@ notdoor:
 steadyob:
 	steady(context);
 finishback:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void liftsprite(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kLiftflag);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto liftclosed;
@@ -3390,7 +3390,7 @@ void liftsprite(Context & context) {
 	goto pokelift;
 finishclose:
 	context.data.byte(kLiftflag) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 openlift:
 	context.al = context.es.byte(context.bx+19);
 	context._cmp(context.al, 12);
@@ -3411,10 +3411,10 @@ pokelift:
 	context.di = context.pop();
 	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 endoflist:
 	context.data.byte(kLiftflag) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 liftopen:
 	context.al = context.data.byte(kLiftpath);
 	context.push(context.es);
@@ -3450,21 +3450,21 @@ nocountopen:
 }
 
 void liftnoise(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 5);
 	if (context.flags.z()) goto hissnoise;
 	context._cmp(context.data.byte(kReallocation), 21);
 	if (context.flags.z()) goto hissnoise;
 	playchannel1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 hissnoise:
 	context.al = 13;
 	playchannel1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void random(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	randomnum1(context);
 	context.push(context.di);
 	context._and(context.ax, 7);
@@ -3473,19 +3473,19 @@ void random(Context & context) {
 	context.al = context.ds.byte(context.di);
 	context.di = context.pop();
 	context.es.byte(context.bx+15) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void steady(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.ds.byte(context.di+18);
 	context.ds.byte(context.di+17) = context.al;
 	context.es.byte(context.bx+15) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void constant(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._inc(context.es.byte(context.bx+19));
 	context.cl = context.es.byte(context.bx+19);
 	context.ch = 0;
@@ -3500,31 +3500,31 @@ gotconst:
 	context._sub(context.di, context.cx);
 	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void doorway(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kDoorcheck1) = -24;
 	context.data.byte(kDoorcheck2) = 10;
 	context.data.byte(kDoorcheck3) = -30;
 	context.data.byte(kDoorcheck4) = 10;
 	dodoor(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void widedoor(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kDoorcheck1) = -24;
 	context.data.byte(kDoorcheck2) = 24;
 	context.data.byte(kDoorcheck3) = -30;
 	context.data.byte(kDoorcheck4) = 24;
 	dodoor(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dodoor(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kRyanx);
 	context.ah = context.data.byte(kRyany);
 	context.cl = context.es.byte(context.bx+10);
@@ -3583,7 +3583,7 @@ atlast1:
 	context.es.byte(context.bx+15) = context.al;
 	context.ds.byte(context.di+17) = context.al;
 	context.data.byte(kThroughdoor) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 shutdoor:
 	context.cl = context.es.byte(context.bx+19);
 	context._cmp(context.cl, 5);
@@ -3611,11 +3611,11 @@ atlast2:
 	if (!context.flags.z()) goto notnearly;
 	context.data.byte(kThroughdoor) = 0;
 notnearly:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void lockeddoorway(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kRyanx);
 	context.ah = context.data.byte(kRyany);
 	context.cl = context.es.byte(context.bx+10);
@@ -3688,7 +3688,7 @@ atlast3:
 	if (!context.flags.z()) goto justshutting;
 	context.data.byte(kThroughdoor) = 1;
 justshutting:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 shutdoor2:
 	context.cl = context.es.byte(context.bx+19);
 	context._cmp(context.cl, 5);
@@ -3719,7 +3719,7 @@ atlast4:
 	context.es = context.pop();
 	context.data.byte(kLockstatus) = 1;
 notlocky:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 /*continuing to unbounded code: shutdoor from dodoor:60-87*/
 shutdoor:
 	context.cl = context.es.byte(context.bx+19);
@@ -3748,12 +3748,12 @@ atlast2:
 	if (!context.flags.z()) goto notnearly;
 	context.data.byte(kThroughdoor) = 0;
 notnearly:
-	{assert(stack_depth == context.stack.size()); return; }
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
+	return;
 }
 
 void updatepeople(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
 	context.data.word(kListpos) = context.di;
@@ -3784,11 +3784,11 @@ notinthisroom:
 	context._add(context.di, 2);
 	goto updateloop;
 endupdate:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getreelframeax(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ds);
 	context.data.word(kCurrentframe) = context.ax;
 	findsource(context);
@@ -3801,21 +3801,21 @@ void getreelframeax(Context & context) {
 	context._add(context.ax, context.ax);
 	context._add(context.ax, context.cx);
 	context.bx = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void reelsonscreen(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	reconstruct(context);
 	updatepeople(context);
 	watchreel(context);
 	showrain(context);
 	usetimedtext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void plotreel(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getreelstart(context);
 retryreel:
 	context.push(context.es);
@@ -3850,11 +3850,11 @@ notplot:
 	soundonreels(context);
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void soundonreels(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bl = context.data.byte(kReallocation);
 	context._add(context.bl, context.bl);
 	context._xor(context.bh, context.bh);
@@ -3891,11 +3891,11 @@ endreelsound:
 	if (context.flags.z()) goto nochange2;
 	context.data.word(kLastsoundreel) = -1;
 nochange2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void reconstruct(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kHavedoneobs), 0);
 	if (context.flags.z()) goto noneedtorecon;
 	context.data.byte(kNewobs) = 1;
@@ -3904,105 +3904,105 @@ void reconstruct(Context & context) {
 	printsprites(context);
 	context.data.byte(kHavedoneobs) = 0;
 noneedtorecon:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dealwithspecial(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._sub(context.al, 220);
 	context._cmp(context.al, 0);
 	if (!context.flags.z()) goto notplset;
 	context.al = context.ah;
 	placesetobject(context);
 	context.data.byte(kHavedoneobs) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notplset:
 	context._cmp(context.al, 1);
 	if (!context.flags.z()) goto notremset;
 	context.al = context.ah;
 	removesetobject(context);
 	context.data.byte(kHavedoneobs) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notremset:
 	context._cmp(context.al, 2);
 	if (!context.flags.z()) goto notplfree;
 	context.al = context.ah;
 	placefreeobject(context);
 	context.data.byte(kHavedoneobs) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notplfree:
 	context._cmp(context.al, 3);
 	if (!context.flags.z()) goto notremfree;
 	context.al = context.ah;
 	removefreeobject(context);
 	context.data.byte(kHavedoneobs) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notremfree:
 	context._cmp(context.al, 4);
 	if (!context.flags.z()) goto notryanoff;
 	switchryanoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notryanoff:
 	context._cmp(context.al, 5);
 	if (!context.flags.z()) goto notryanon;
 	context.data.byte(kTurntoface) = context.ah;
 	context.data.byte(kFacing) = context.ah;
 	switchryanon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notryanon:
 	context._cmp(context.al, 6);
 	if (!context.flags.z()) goto notchangeloc;
 	context.data.byte(kNewlocation) = context.ah;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notchangeloc:
 	movemap(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void movemap(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.ah, 32);
 	if (!context.flags.z()) goto notmapup2;
 	context._sub(context.data.byte(kMapy), 20);
 	context.data.byte(kNowinnewroom) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notmapup2:
 	context._cmp(context.ah, 16);
 	if (!context.flags.z()) goto notmapupspec;
 	context._sub(context.data.byte(kMapy), 10);
 	context.data.byte(kNowinnewroom) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notmapupspec:
 	context._cmp(context.ah, 8);
 	if (!context.flags.z()) goto notmapdownspec;
 	context._add(context.data.byte(kMapy), 10);
 	context.data.byte(kNowinnewroom) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notmapdownspec:
 	context._cmp(context.ah, 2);
 	if (!context.flags.z()) goto notmaprightspec;
 	context._add(context.data.byte(kMapx), 11);
 	context.data.byte(kNowinnewroom) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notmaprightspec:
 	context._sub(context.data.byte(kMapx), 11);
 	context.data.byte(kNowinnewroom) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getreelstart(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kReelpointer);
 	context.cx = 40;
 	context._mul(context.cx);
 	context.es = context.data.word(kReels);
 	context.si = context.ax;
 	context._add(context.si, (0+(36*144)));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showreelframe(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.es.byte(context.si+2);
 	context.ah = 0;
 	context.di = context.ax;
@@ -4017,27 +4017,27 @@ void showreelframe(Context & context) {
 	context._sub(context.ax, context.data.word(kTakeoff));
 	context.ah = 8;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void deleverything(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kMapysize);
 	context.ah = 0;
 	context._add(context.ax, context.data.word(kMapoffsety));
 	context._cmp(context.ax, 182);
 	if (!context.flags.c()) goto bigroom;
 	maptopanel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 bigroom:
 	context._sub(context.data.byte(kMapysize), 8);
 	maptopanel(context);
 	context._add(context.data.byte(kMapysize), 8);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpeverything(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40));
 dumpevery1:
@@ -4089,19 +4089,19 @@ dumpevery2:
 	context._add(context.bx, 5);
 	goto dumpevery2;
 finishevery2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void allocatework(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bx = 0x1000;
 	allocatemem(context);
 	context.data.word(kWorkspace) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readabyte(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.si, 30000);
 	if (!context.flags.z()) goto notendblock;
 	context.push(context.bx);
@@ -4118,11 +4118,11 @@ void readabyte(Context & context) {
 	context.si = 0;
 notendblock:
 	context._lodsb();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadpalfromiff(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 2481;
 	openfile(context);
 	context.cx = 2000;
@@ -4154,11 +4154,11 @@ palloop:
 nought:
 	context._stosb();
 	if (--context.cx) goto palloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void paneltomap(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = context.data.word(kMapxstart);
 	context._add(context.di, context.data.word(kMapadx));
 	context.bx = context.data.word(kMapystart);
@@ -4168,11 +4168,11 @@ void paneltomap(Context & context) {
 	context.cl = context.data.byte(kMapxsize);
 	context.ch = context.data.byte(kMapysize);
 	multiget(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void maptopanel(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = context.data.word(kMapxstart);
 	context._add(context.di, context.data.word(kMapadx));
 	context.bx = context.data.word(kMapystart);
@@ -4182,11 +4182,11 @@ void maptopanel(Context & context) {
 	context.cl = context.data.byte(kMapxsize);
 	context.ch = context.data.byte(kMapysize);
 	multiput(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpmap(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = context.data.word(kMapxstart);
 	context._add(context.di, context.data.word(kMapadx));
 	context.bx = context.data.word(kMapystart);
@@ -4194,11 +4194,11 @@ void dumpmap(Context & context) {
 	context.cl = context.data.byte(kMapxsize);
 	context.ch = context.data.byte(kMapysize);
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void pixelcheckset(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context._sub(context.al, context.es.byte(context.bx));
 	context._sub(context.ah, context.es.byte(context.bx+1));
@@ -4235,11 +4235,11 @@ void pixelcheckset(Context & context) {
 	context.es = context.pop();
 	context.ax = context.pop();
 	context._cmp(context.dl, 0);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void createpanel(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 0;
 	context.bx = 8;
 	context.ds = context.data.word(kIcons2);
@@ -4264,11 +4264,11 @@ void createpanel(Context & context) {
 	context.al = 0;
 	context.ah = 2;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void createpanel2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	createpanel(context);
 	context.di = 0;
 	context.bx = 0;
@@ -4282,11 +4282,11 @@ void createpanel2(Context & context) {
 	context.al = 5;
 	context.ah = 2;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void clearwork(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = 0x0;
 	context.es = context.data.word(kWorkspace);
 	context.di = 0;
@@ -4325,23 +4325,23 @@ clearloop:
 	context._stosw();
 	context._stosw();
 	if (--context.cx) goto clearloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void zoom(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) goto inwatching;
 	context._cmp(context.data.byte(kZoomon), 1);
 	if (context.flags.z()) goto zoomswitch;
 inwatching:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 zoomswitch:
 	context._cmp(context.data.byte(kCommandtype), 199);
 	if (context.flags.c()) goto zoomit;
 cantzoom:
 	putunderzoom(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 zoomit:
 	context.ax = context.data.word(kOldpointery);
 	context._sub(context.ax, 9);
@@ -4373,11 +4373,11 @@ zoomloop2:
 	if (--context.cx) goto zoomloop;
 	crosshair(context);
 	context.data.byte(kDidzoom) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void delthisone(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
 	context.al = context.ah;
@@ -4417,11 +4417,11 @@ deloneloop:
 	context._add(context.si, context.dx);
 	context._dec(context.ch);
 	if (!context.flags.z()) goto deloneloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void width160(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._movsw();
  	context._movsw();
  	context._movsw();
@@ -4651,11 +4651,11 @@ void width160(Context & context) {
  width1:
 	context._movsw();
  width0:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void doblocks(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kWorkspace);
 	context.ax = context.data.word(kMapady);
 	context.cx = (320);
@@ -4767,11 +4767,11 @@ zeroblock:
 	context.di = context.pop();
 	context._add(context.di, (320)*16);
 	if (--context.cx) goto loop120;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showframe(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.dx);
 	context.push(context.ax);
 	context.cx = context.ax;
@@ -4785,7 +4785,7 @@ void showframe(Context & context) {
 	context.ax = context.pop();
 	context.dx = context.pop();
 	context.cx = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notblankshow:
 	context._test(context.ah, 128);
 	if (!context.flags.z()) goto skipoffsets;
@@ -4822,7 +4822,7 @@ notcentred:
 	context.push(context.cx);
 	frameoutfx(context);
 	context.cx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notdiffdest:
 	context._test(context.ah, 8);
 	if (context.flags.z()) goto notprintlist;
@@ -4842,7 +4842,7 @@ notprintlist:
 	context.push(context.cx);
 	frameoutfx(context);
 	context.cx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notflippedx:
 	context._test(context.ah, 2);
 	if (context.flags.z()) goto notnomask;
@@ -4851,7 +4851,7 @@ notflippedx:
 	context.push(context.cx);
 	frameoutnm(context);
 	context.cx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notnomask:
 	context._test(context.ah, 32);
 	if (context.flags.z()) goto noeffects;
@@ -4860,18 +4860,18 @@ notnomask:
 	context.push(context.cx);
 	frameoutbh(context);
 	context.cx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 noeffects:
 	context.dx = (320);
 	context.es = context.data.word(kWorkspace);
 	context.push(context.cx);
 	frameoutv(context);
 	context.cx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void frameoutv(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.dx);
 	context.ax = context.bx;
 	context.bx = context.dx;
@@ -4896,7 +4896,7 @@ backtoother:
 	context._add(context.di, context.dx);
 	context._dec(context.ch);
 	if (!context.flags.z()) goto frameloop1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 frameloop3:
 	context._lodsb();
 	context._cmp(context.al, 0);
@@ -4908,11 +4908,11 @@ backtosolid:
 	context._add(context.di, context.dx);
 	context._dec(context.ch);
 	if (!context.flags.z()) goto frameloop1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void frameoutbh(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.dx);
 	context.ax = context.bx;
 	context.bx = context.dx;
@@ -4942,11 +4942,11 @@ nextline:
 	context.cx = context.pop();
 	context._dec(context.ch);
 	if (!context.flags.z()) goto bhloop2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void frameoutfx(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.dx);
 	context.ax = context.bx;
 	context.bx = context.dx;
@@ -4971,7 +4971,7 @@ backtootherfx:
 	context._add(context.di, context.dx);
 	context._dec(context.ch);
 	if (!context.flags.z()) goto frameloopfx1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 frameloopfx3:
 	context._lodsb();
 	context._cmp(context.al, 0);
@@ -4984,11 +4984,11 @@ backtosolidfx:
 	context._add(context.di, context.dx);
 	context._dec(context.ch);
 	if (!context.flags.z()) goto frameloopfx1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void transferinv(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = context.data.word(kExframepos);
 	context.push(context.di);
 	context.al = context.data.byte(kExpos);
@@ -5034,11 +5034,11 @@ void transferinv(Context & context) {
 	context.ax = context.pop();
 	context.es.word(context.bx+2) = context.ax;
 	context._add(context.data.word(kExframepos), context.cx);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void transfermap(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = context.data.word(kExframepos);
 	context.push(context.di);
 	context.al = context.data.byte(kExpos);
@@ -5082,11 +5082,11 @@ void transfermap(Context & context) {
 	context.ax = context.pop();
 	context.es.word(context.bx+2) = context.ax;
 	context._add(context.data.word(kExframepos), context.cx);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dofade(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kFadedirection), 0);
 	if (context.flags.z()) goto finishfade;
 	context.cl = context.data.byte(kNumtofade);
@@ -5106,40 +5106,40 @@ void dofade(Context & context) {
 	if (!context.flags.z()) goto finishfade;
 	fadecalculation(context);
 finishfade:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void clearendpal(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	context.cx = 768;
 	context.al = 0;
 	while(context.cx--) 	context._stosb();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void clearpalette(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kFadedirection) = 0;
 	clearstartpal(context);
 	dumpcurrent(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadescreenup(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	clearstartpal(context);
 	paltoendpal(context);
 	context.data.byte(kFadedirection) = 1;
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 128;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadetowhite(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	context.cx = 768;
@@ -5155,11 +5155,11 @@ void fadetowhite(Context & context) {
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 128;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadefromwhite(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768;
@@ -5175,22 +5175,22 @@ void fadefromwhite(Context & context) {
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 128;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadescreenups(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	clearstartpal(context);
 	paltoendpal(context);
 	context.data.byte(kFadedirection) = 1;
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 64;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadescreendownhalf(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	paltostartpal(context);
 	paltoendpal(context);
 	context.cx = 768;
@@ -5216,44 +5216,44 @@ halfend:
 	context.data.byte(kFadecount) = 31;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 32;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadescreenuphalf(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	endpaltostart(context);
 	paltoendpal(context);
 	context.data.byte(kFadedirection) = 1;
 	context.data.byte(kFadecount) = 31;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 32;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadescreendown(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	paltostartpal(context);
 	clearendpal(context);
 	context.data.byte(kFadedirection) = 1;
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 128;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadescreendowns(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	paltostartpal(context);
 	clearendpal(context);
 	context.data.byte(kFadedirection) = 1;
 	context.data.byte(kFadecount) = 63;
 	context.data.byte(kColourpos) = 0;
 	context.data.byte(kNumtofade) = 64;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void clearstartpal(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 256;
@@ -5263,11 +5263,11 @@ wholeloop1:
 	context.al = 0;
 	context._stosb();
 	if (--context.cx) goto wholeloop1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showgun(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kAddtored) = 0;
 	context.data.byte(kAddtogreen) = 0;
 	context.data.byte(kAddtoblue) = 0;
@@ -5318,17 +5318,17 @@ void showgun(Context & context) {
 	loadtemptext(context);
 	rollendcredits2(context);
 	getridoftemptext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void rollendcredits2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	rollem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void rollem(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 160;
 	context.ch = 160;
 	context.di = 25;
@@ -5409,15 +5409,15 @@ gotnext2:
 	if (--context.cx) goto endcredits21;
 	context.cx = 120;
 	hangone(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 endearly2:
 	context.cx = context.pop();
 endearly:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadecalculation(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kFadecount), 0);
 	if (context.flags.z()) goto nomorefading;
 	context.bl = context.data.byte(kFadecount);
@@ -5444,14 +5444,14 @@ gotthere:
 	context._inc(context.di);
 	if (--context.cx) goto fadecolloop;
 	context._dec(context.data.byte(kFadecount));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nomorefading:
 	context.data.byte(kFadedirection) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void greyscalesum(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
@@ -5503,55 +5503,55 @@ noaddb:
 	context._add(context.si, 3);
 	context.cx = context.pop();
 	if (--context.cx) goto greysumloop1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void paltostartpal(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
- 	{assert(stack_depth == context.stack.size()); return; }
+ 	return;
 }
 
 void endpaltostart(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
- 	{assert(stack_depth == context.stack.size()); return; }
+ 	return;
 }
 
 void startpaltoend(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
- 	{assert(stack_depth == context.stack.size()); return; }
+ 	return;
 }
 
 void paltoendpal(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
- 	{assert(stack_depth == context.stack.size()); return; }
+ 	return;
 }
 
 void allpalette(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
@@ -5559,11 +5559,11 @@ void allpalette(Context & context) {
 	context.cx = 768/2;
 	while(context.cx--) 	context._movsw();
  	dumpcurrent(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpcurrent(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.ds = context.data.word(kBuffers);
 	vsync(context);
@@ -5574,11 +5574,11 @@ void dumpcurrent(Context & context) {
 	context.al = 128;
 	context.cx = 128;
 	showgroup(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadedownmon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	paltostartpal(context);
 	paltoendpal(context);
 	context.es = context.data.word(kBuffers);
@@ -5595,11 +5595,11 @@ void fadedownmon(Context & context) {
 	context.data.byte(kNumtofade) = 128;
 	context.cx = 64;
 	hangon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadeupmon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	paltostartpal(context);
 	paltoendpal(context);
 	context.es = context.data.word(kBuffers);
@@ -5616,11 +5616,11 @@ void fadeupmon(Context & context) {
 	context.data.byte(kNumtofade) = 128;
 	context.cx = 128;
 	hangon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadeupmonfirst(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	paltostartpal(context);
 	paltoendpal(context);
 	context.es = context.data.word(kBuffers);
@@ -5641,11 +5641,11 @@ void fadeupmonfirst(Context & context) {
 	playchannel1(context);
 	context.cx = 64;
 	hangon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fadeupyellows(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	paltoendpal(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(231*3);
@@ -5661,11 +5661,11 @@ void fadeupyellows(Context & context) {
 	context.data.byte(kNumtofade) = 128;
 	context.cx = 128;
 	hangon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void initialmoncols(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	paltostartpal(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(230*3);
@@ -5680,19 +5680,19 @@ void initialmoncols(Context & context) {
 	context.al = 230;
 	context.cx = 18;
 	showgroup(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void titles(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	clearpalette(context);
 	biblequote(context);
 	intro(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void endgame(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 2260;
 	loadtemptext(context);
 	monkspeaking(context);
@@ -5702,11 +5702,11 @@ void endgame(Context & context) {
 	context.data.byte(kVolumedirection) = 1;
 	context.cx = 200;
 	hangon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void monkspeaking(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kRoomssample) = 35;
 	loadroomssample(context);
 	context.dx = 2364;
@@ -5747,22 +5747,22 @@ notloadspeech2:
 	context.cx = 300;
 	hangon(context);
 	getridoftemp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showmonk(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 0;
 	context.ah = 128;
 	context.di = 160;
 	context.bx = 72;
 	context.ds = context.data.word(kTempgraphics);
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void gettingshot(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kNewlocation) = 55;
 	clearpalette(context);
 	loadintroroom(context);
@@ -5771,18 +5771,18 @@ void gettingshot(Context & context) {
 	context.data.byte(kVolumedirection) = -1;
 	runendseq(context);
 	clearbeforeload(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void credits(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	clearpalette(context);
 	realcredits(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void biblequote(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	mode640x480(context);
 	context.dx = 2377;
 	showpcx(context);
@@ -5803,11 +5803,11 @@ void biblequote(Context & context) {
 	cancelch0(context);
 biblequotearly:
 	context.data.byte(kLasthardkey) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void hangone(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 hangonloope:
 	context.push(context.cx);
 	vsync(context);
@@ -5816,11 +5816,11 @@ hangonloope:
 	if (context.flags.z()) goto hangonearly;
 	if (--context.cx) goto hangonloope;
 hangonearly:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intro(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 2247;
 	loadtemptext(context);
 	loadpalfromiff(context);
@@ -5861,11 +5861,11 @@ void intro(Context & context) {
 	clearbeforeload(context);
 introearly:
 	context.data.byte(kLasthardkey) =  0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void runintroseq(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kGetback) = 0;
 moreintroseq:
 	vsync(context);
@@ -5890,15 +5890,15 @@ moreintroseq:
 	if (context.flags.z()) goto earlyendrun;
 	context._cmp(context.data.byte(kGetback), 1);
 	if (!context.flags.z()) goto moreintroseq;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 earlyendrun:
 	getridoftemptext(context);
 	clearbeforeload(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void runendseq(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	atmospheres(context);
 	context.data.byte(kGetback) = 0;
 moreendseq:
@@ -5916,11 +5916,11 @@ moreendseq:
 	vsync(context);
 	context._cmp(context.data.byte(kGetback), 1);
 	if (!context.flags.z()) goto moreendseq;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadintroroom(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kIntrocount) = 0;
 	context.data.byte(kLocation) = 255;
 	loadroom(context);
@@ -5937,11 +5937,11 @@ void loadintroroom(Context & context) {
 	spriteupdate(context);
 	printsprites(context);
 	worktoscreen(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void realcredits(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kRoomssample) = 33;
 	loadroomssample(context);
 	context.data.byte(kVolume) = 0;
@@ -6062,11 +6062,11 @@ void realcredits(Context & context) {
 	hangone(context);
 realcreditsearly:
 	context.data.byte(kLasthardkey) =  0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printchar(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto ignoreit;
 	context.push(context.si);
@@ -6090,16 +6090,16 @@ nokern:
 	context._add(context.di, context.cx);
 	context.cx = context.pop();
 ignoreit:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void kernchars(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.al, 'a');
 	if (context.flags.z()) goto iskern;
 	context._cmp(context.al, 'u');
 	if (context.flags.z()) goto iskern;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 iskern:
 	context._cmp(context.ah, 'n');
 	if (context.flags.z()) goto kernit;
@@ -6111,14 +6111,14 @@ iskern:
 	if (context.flags.z()) goto kernit;
 	context._cmp(context.ah, 'l');
 	if (context.flags.z()) goto kernit;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 kernit:
 	context._dec(context.cl);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printslow(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kPointerframe) = 1;
 	context.data.byte(kPointermode) = 3;
 	context.ds = context.data.word(kCharset1);
@@ -6198,7 +6198,7 @@ finishslow:
 	context.di = context.pop();
 	context.bx = context.pop();
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 finishslow2:
 	context.es = context.pop();
 	context.si = context.pop();
@@ -6207,11 +6207,11 @@ finishslow2:
 	context.di = context.pop();
 	context.bx = context.pop();
 	context.al = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void waitframes(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.di);
 	context.push(context.bx);
 	context.push(context.es);
@@ -6228,11 +6228,11 @@ void waitframes(Context & context) {
 	context.es = context.pop();
 	context.bx = context.pop();
 	context.di = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printboth(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.cx);
 	context.push(context.bx);
@@ -6246,11 +6246,11 @@ void printboth(Context & context) {
 	context.bx = context.pop();
 	context.cx = context.pop();
 	context.ax = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printdirect(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.word(kLastxpos) = context.di;
 	context.ds = context.data.word(kCurrentset);
 printloop6:
@@ -6282,11 +6282,11 @@ finishdirct:
 	context.dx = context.pop();
 	context.di = context.pop();
 	context.bx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void monprint(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kKerning) = 1;
 	context.si = context.bx;
 	context.dl = 166;
@@ -6361,11 +6361,11 @@ nottrigger2:
 	scrollmonitor(context);
 	context.bx = context.si;
 	context.data.byte(kKerning) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getnumber(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cx = 0;
 	context.push(context.si);
 	context.push(context.bx);
@@ -6414,7 +6414,7 @@ gotoverend:
 	context.si = context.pop();
 	context._add(context.di, context.ax);
 	context.cl = context.ch;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notcentre:
 	context.es = context.pop();
 	context.ds = context.pop();
@@ -6422,7 +6422,7 @@ notcentre:
 	context.bx = context.pop();
 	context.si = context.pop();
 	context.cl = context.ch;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 endoftext:
 	context.al = context.cl;
 	context.ah = 0;
@@ -6457,7 +6457,7 @@ gotoverend2:
 	context.si = context.pop();
 	context._add(context.di, context.ax);
 	context.cl = context.ch;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notcent2:
 	context.es = context.pop();
 	context.ds = context.pop();
@@ -6465,11 +6465,11 @@ notcent2:
 	context.bx = context.pop();
 	context.si = context.pop();
 	context.cl = context.ch;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getnextword(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bx = 0;
 getloop:
 	context.ax = context.es.word(context.di);
@@ -6499,15 +6499,15 @@ getloop:
 endword:
 	context._add(context.bl, 6);
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 endall:
 	context._add(context.bl, 6);
 	context.al = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fillryan(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32);
 	findallryan(context);
@@ -6547,11 +6547,11 @@ ryanloop1:
 	context._add(context.bx, (44));
 	if (--context.cx) goto ryanloop2;
 	showryanpage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fillopen(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	deltextline(context);
 	getopenedsize(context);
 	context._cmp(context.ah, 4);
@@ -6589,11 +6589,11 @@ nextopenslot:
 	context._cmp(context.cl, 5);
 	if (!context.flags.z()) goto openloop1;
 	undertextline(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findallryan(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.di);
 	context.cx = 30;
 	context.ax = 0x0ffff;
@@ -6622,11 +6622,11 @@ notinryaninv:
 	context._inc(context.ch);
 	context._cmp(context.ch, (114));
 	if (!context.flags.z()) goto findryanloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findallopen(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.di);
 	context.cx = 16;
 	context.ax = 0x0ffff;
@@ -6688,11 +6688,11 @@ findopen2a:
 	context._inc(context.ch);
 	context._cmp(context.ch, 80);
 	if (!context.flags.z()) goto findopen1a;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void obtoinv(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.bx);
 	context.push(context.es);
 	context.push(context.si);
@@ -6746,29 +6746,29 @@ finishfill:
 	context.si = context.pop();
 	context.es = context.pop();
 	context.bx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void isitworn(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.es.byte(context.bx+12);
 	context._cmp(context.al, 'W'-'A');
 	if (!context.flags.z()) goto notworn;
 	context.al = context.es.byte(context.bx+13);
 	context._cmp(context.al, 'E'-'A');
 notworn:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void makeworn(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es.byte(context.bx+12) = 'W'-'A';
 	context.es.byte(context.bx+13) = 'E'-'A';
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void examineob(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kPointermode) = 0;
 	context.data.word(kTimecount) = 0;
 examineagain:
@@ -6826,15 +6826,15 @@ iswatching:
 	makemainscreen(context);
 	context.data.byte(kInvopen) = 0;
 	context.data.byte(kOpenedob) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 justgetback:
 	context.data.byte(kInvopen) = 0;
 	context.data.byte(kOpenedob) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void makemainscreen(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	createpanel(context);
 	context.data.byte(kNewobs) = 1;
 	drawfloor(context);
@@ -6849,22 +6849,22 @@ void makemainscreen(Context & context) {
 	worktoscreenm(context);
 	context.data.byte(kCommandtype) = 200;
 	context.data.byte(kManisoffscreen) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getbackfromob(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPickup), 1);
 	if (!context.flags.z()) goto notheldob;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notheldob:
 	getback1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void incryanpage(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 222);
 	if (context.flags.z()) goto alreadyincryan;
 	context.data.byte(kCommandtype) = 222;
@@ -6877,7 +6877,7 @@ alreadyincryan:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doincryan;
 noincryan:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doincryan:
 	context.ax = context.data.word(kMousex);
 	context._sub(context.ax, (80)+167);
@@ -6892,11 +6892,11 @@ findnewpage:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void openinv(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kInvopen) = 1;
 	context.al = 61;
 	context.di = (80);
@@ -6905,11 +6905,11 @@ void openinv(Context & context) {
 	printmessage(context);
 	fillryan(context);
 	context.data.byte(kCommandtype) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showryanpage(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kIcons1);
 	context.di = (80)+167;
 	context.bx = (58)-12;
@@ -6930,11 +6930,11 @@ void showryanpage(Context & context) {
 	context.ax = context.pop();
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void openob(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kOpenedob);
 	context.ah = context.data.byte(kOpenedtype);
 	context.di = 5847;
@@ -6962,11 +6962,11 @@ void openob(Context & context) {
 	context._add(context.ax, (80));
 	context.bx = 2588;
 	context.cs.word(context.bx) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void obicons(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kCommand);
 	getanyad(context);
 	context._cmp(context.al, 255);
@@ -6984,22 +6984,22 @@ cantopenit:
 	context.al = 1;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void examicon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kIcons2);
 	context.di = 254;
 	context.bx = 5;
 	context.al = 3;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void obpicture(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kCommand);
 	context.ah = context.data.byte(kObjecttype);
 	context._cmp(context.ah, 1);
@@ -7015,9 +7015,9 @@ void obpicture(Context & context) {
 	context._inc(context.al);
 	context.ah = 128;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 setframe:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 exframe:
 	context.ds = context.data.word(kExtras);
 	context.di = 160;
@@ -7028,11 +7028,11 @@ exframe:
 	context._inc(context.al);
 	context.ah = 128;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void describeob(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getobtextstart(context);
 	context.di = 33;
 	context.bx = 92;
@@ -7050,11 +7050,11 @@ void describeob(Context & context) {
 	obsthatdothings(context);
 	context.bx = context.pop();
 	additionaltext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void additionaltext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._add(context.bx, 10);
 	context.push(context.bx);
 	context.al = context.data.byte(kCommand);
@@ -7074,7 +7074,7 @@ void additionaltext(Context & context) {
 	compare(context);
 	if (context.flags.z()) goto fullcup;
 	context.bx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 emptycup:
 	context.al = 40;
 	findpuztext(context);
@@ -7083,7 +7083,7 @@ emptycup:
 	context.dl = 241;
 	context.ah = 0;
 	printdirect(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 fullcup:
 	context.al = 39;
 	findpuztext(context);
@@ -7092,11 +7092,11 @@ fullcup:
 	context.dl = 241;
 	context.ah = 0;
 	printdirect(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void obsthatdothings(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kCommand);
 	context.ah = context.data.byte(kObjecttype);
 	context.cl = 'M';
@@ -7113,13 +7113,13 @@ void obsthatdothings(Context & context) {
 	setlocation(context);
 	lookatcard(context);
 seencard:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notlouiscard:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getobtextstart(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kFreedesc);
 	context.si = (0);
 	context.cx = (0+(82*2));
@@ -7155,15 +7155,15 @@ tryagain:
 	context._cmp(context.al, ':');
 	if (context.flags.z()) goto findsometext;
 cantmakeoneup:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 findsometext:
 	searchforsame(context);
 	goto tryagain;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void searchforsame(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.si = context.cx;
 searchagain:
 	context._inc(context.si);
@@ -7177,7 +7177,7 @@ search:
 	if (context.flags.c()) goto search;
 	context.si = context.bx;
 	context.ax = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotstartletter:
 	context.push(context.bx);
 	context.push(context.si);
@@ -7198,11 +7198,11 @@ keepchecking:
 foundmatch:
 	context.si = context.pop();
 	context.bx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findnextcolon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 isntcolon:
 	context.al = context.es.byte(context.si);
 	context._inc(context.si);
@@ -7211,18 +7211,18 @@ isntcolon:
 	context._cmp(context.al, ':');
 	if (!context.flags.z()) goto isntcolon;
 endofcolon:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void inventory(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kMandead), 1);
 	if (context.flags.z()) goto iswatchinv;
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (context.flags.z()) goto notwatchinv;
 iswatchinv:
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwatchinv:
 	context._cmp(context.data.byte(kCommandtype), 239);
 	if (context.flags.z()) goto alreadyopinv;
@@ -7236,7 +7236,7 @@ alreadyopinv:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doopeninv;
 cantopinv:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doopeninv:
 	context.data.word(kTimecount) = 0;
 	context.data.byte(kPointermode) = 0;
@@ -7313,20 +7313,20 @@ iswatching:
 	makemainscreen(context);
 	context.data.byte(kInvopen) = 0;
 	context.data.byte(kOpenedob) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 justgetback:
 	context.data.byte(kInvopen) = 0;
 	context.data.byte(kOpenedob) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 examlist:
 invlist1:
 openchangesize:
 withlist1:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void setpickup(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kObjecttype), 1);
 	if (context.flags.z()) goto cantpick;
 	context._cmp(context.data.byte(kObjecttype), 3);
@@ -7337,7 +7337,7 @@ void setpickup(Context & context) {
 	if (!context.flags.z()) goto canpick;
 cantpick:
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canpick:
 	context._cmp(context.data.byte(kCommandtype), 209);
 	if (context.flags.z()) goto alreadysp;
@@ -7353,7 +7353,7 @@ alreadysp:
 	context._cmp(context.ax, context.data.word(kOldbutton));
 	if (!context.flags.z()) goto dosetpick;
 nosetpick:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dosetpick:
 	createpanel(context);
 	showpanel(context);
@@ -7375,18 +7375,18 @@ dosetpick:
 	context.es.byte(context.bx+3) = 255;
 	openinv(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 pickupexob:
 	context.al = context.data.byte(kCommand);
 	context.data.byte(kItemframe) = context.al;
 	context.data.byte(kOpenedob) = 255;
 	openinv(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void examinventory(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 249);
 	if (context.flags.z()) goto alreadyexinv;
 	context.data.byte(kCommandtype) = 249;
@@ -7396,7 +7396,7 @@ alreadyexinv:
 	context.ax = context.data.word(kMousebutton);
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doexinv;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doexinv:
 	createpanel(context);
 	showpanel(context);
@@ -7407,34 +7407,34 @@ doexinv:
 	context.data.byte(kInvopen) = 2;
 	openinv(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void reexfrominv(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	findinvpos(context);
 	context.ax = context.es.word(context.bx);
 	context.data.byte(kCommandtype) = context.ah;
 	context.data.byte(kCommand) = context.al;
 	context.data.byte(kExamagain) = 1;
 	context.data.byte(kPointermode) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void reexfromopen(Context & context) {
-	uint stack_depth = context.stack.size();
-	{assert(stack_depth == context.stack.size()); return; }
+	STACK_CHECK(context);
+	return;
 	findopenpos(context);
 	context.ax = context.es.word(context.bx);
 	context.data.byte(kCommandtype) = context.ah;
 	context.data.byte(kCommand) = context.al;
 	context.data.byte(kExamagain) = 1;
 	context.data.byte(kPointermode) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void swapwithinv(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kItemframe);
 	context.ah = context.data.byte(kObjecttype);
 	context._cmp(context.ax, context.data.word(kOldsubject));
@@ -7454,7 +7454,7 @@ alreadyswap1:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doswap1;
 cantswap1:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doswap1:
 	context.ah = context.data.byte(kObjecttype);
 	context.al = context.data.byte(kItemframe);
@@ -7488,11 +7488,11 @@ doswap1:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void swapwithopen(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kItemframe);
 	context.ah = context.data.byte(kObjecttype);
 	context._cmp(context.ax, context.data.word(kOldsubject));
@@ -7512,13 +7512,13 @@ alreadyswap2:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doswap2;
 cantswap2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doswap2:
 	geteitherad(context);
 	isitworn(context);
 	if (!context.flags.z()) goto notwornswap;
 	wornerror(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwornswap:
 	delpointer(context);
 	context.al = context.data.byte(kItemframe);
@@ -7528,12 +7528,12 @@ notwornswap:
 	context._cmp(context.al, context.data.byte(kOpenedtype));
 	if (!context.flags.z()) goto isntsame2;
 	errormessage1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isntsame2:
 	checkobjectsize(context);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto sizeok2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 sizeok2:
 	context.ah = context.data.byte(kObjecttype);
 	context.al = context.data.byte(kItemframe);
@@ -7583,22 +7583,22 @@ actuallyswap:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void intoinv(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPickup), 0);
 	if (!context.flags.z()) goto notout;
 	outofinv(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notout:
 	findinvpos(context);
 	context.ax = context.es.word(context.bx);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto canplace1;
 	swapwithinv(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canplace1:
 	context.al = context.data.byte(kItemframe);
 	context.ah = context.data.byte(kObjecttype);
@@ -7619,7 +7619,7 @@ alreadyplce:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doplace;
 notletgo2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doplace:
 	delpointer(context);
 	context.al = context.data.byte(kItemframe);
@@ -7635,11 +7635,11 @@ doplace:
 	outofinv(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void deletetaken(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kFreedat);
 	context.ah = context.data.byte(kReallocation);
 	context.ds = context.data.word(kExtras);
@@ -7659,23 +7659,23 @@ takenloop:
 notinhere:
 	context._add(context.si, 16);
 	if (--context.cx) goto takenloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void outofinv(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	findinvpos(context);
 	context.ax = context.es.word(context.bx);
 	context._cmp(context.al, 255);
 	if (!context.flags.z()) goto canpick2;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canpick2:
 	context.bx = context.data.word(kMousebutton);
 	context._cmp(context.bx, 2);
 	if (!context.flags.z()) goto canpick2a;
 	reexfrominv(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canpick2a:
 	context._cmp(context.ax, context.data.word(kOldsubject));
 	if (!context.flags.z()) goto difsub3;
@@ -7694,7 +7694,7 @@ alreadygrab:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto dograb;
 notletgo:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dograb:
 	delpointer(context);
 	context.data.byte(kPickup) = 1;
@@ -7711,45 +7711,45 @@ dograb:
 	intoinv(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getfreead(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 0;
 	context.cl = 4;
 	context._shl(context.ax, context.cl);
 	context.bx = context.ax;
 	context.es = context.data.word(kFreedat);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getexad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 0;
 	context.bx = 16;
 	context._mul(context.bx);
 	context.bx = context.ax;
 	context.es = context.data.word(kExtras);
 	context._add(context.bx, (0+2080+30000));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void geteitherad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kObjecttype), 4);
 	if (context.flags.z()) goto isinexlist;
 	context.al = context.data.byte(kItemframe);
 	getfreead(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isinexlist:
 	context.al = context.data.byte(kItemframe);
 	getexad(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getanyad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kObjecttype), 4);
 	if (context.flags.z()) goto isex;
 	context._cmp(context.data.byte(kObjecttype), 2);
@@ -7757,37 +7757,37 @@ void getanyad(Context & context) {
 	context.al = context.data.byte(kCommand);
 	getsetad(context);
 	context.ax = context.es.word(context.bx+4);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isfree:
 	context.al = context.data.byte(kCommand);
 	getfreead(context);
 	context.ax = context.es.word(context.bx+7);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isex:
 	context.al = context.data.byte(kCommand);
 	getexad(context);
 	context.ax = context.es.word(context.bx+7);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getanyaddir(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.ah, 4);
 	if (context.flags.z()) goto isex3;
 	context._cmp(context.ah, 2);
 	if (context.flags.z()) goto isfree3;
 	getsetad(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isfree3:
 	getfreead(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isex3:
 	getexad(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getopenedsize(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kOpenedtype), 4);
 	if (context.flags.z()) goto isex2;
 	context._cmp(context.data.byte(kOpenedtype), 2);
@@ -7795,31 +7795,31 @@ void getopenedsize(Context & context) {
 	context.al = context.data.byte(kOpenedob);
 	getsetad(context);
 	context.ax = context.es.word(context.bx+3);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isfree2:
 	context.al = context.data.byte(kOpenedob);
 	getfreead(context);
 	context.ax = context.es.word(context.bx+7);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isex2:
 	context.al = context.data.byte(kOpenedob);
 	getexad(context);
 	context.ax = context.es.word(context.bx+7);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getsetad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 0;
 	context.bx = 64;
 	context._mul(context.bx);
 	context.bx = context.ax;
 	context.es = context.data.word(kSetdat);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findinvpos(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cx = context.data.word(kMousex);
 	context._sub(context.cx, (80));
 	context.bx = -1;
@@ -7844,11 +7844,11 @@ findinv2:
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(kBuffers);
 	context._add(context.bx, (0+(180*10)+32));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findopenpos(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cx = context.data.word(kMousex);
 	context._sub(context.cx, (80));
 	context.bx = -1;
@@ -7861,11 +7861,11 @@ findopenp1:
 	context._add(context.bx, context.bx);
 	context.es = context.data.word(kBuffers);
 	context._add(context.bx, (0+(180*10)));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dropobject(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 223);
 	if (context.flags.z()) goto alreadydrop;
 	context.data.byte(kCommandtype) = 223;
@@ -7882,13 +7882,13 @@ alreadydrop:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto dodrop;
 nodrop:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dodrop:
 	geteitherad(context);
 	isitworn(context);
 	if (!context.flags.z()) goto nowornerror;
 	wornerror(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nowornerror:
 	context._cmp(context.data.byte(kReallocation), 47);
 	if (context.flags.z()) goto nodrop2;
@@ -7901,14 +7901,14 @@ nowornerror:
 	if (context.flags.c()) goto nodroperror;
 nodrop2:
 	droperror(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nodroperror:
 	context._cmp(context.data.byte(kMapxsize), 64);
 	if (!context.flags.z()) goto notinlift;
 	context._cmp(context.data.byte(kMapysize), 64);
 	if (!context.flags.z()) goto notinlift;
 	droperror(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notinlift:
 	context.al = context.data.byte(kItemframe);
 	context.ah = 4;
@@ -7953,11 +7953,11 @@ notinlift:
 	context.data.byte(kPickup) = 0;
 	context.al = context.data.byte(kReallocation);
 	context.es.byte(context.bx) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void droperror(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kCommandtype) = 255;
 	delpointer(context);
 	context.di = 76;
@@ -7973,11 +7973,11 @@ void droperror(Context & context) {
 	examicon(context);
 	context.data.byte(kCommandtype) = 255;
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void cantdrop(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kCommandtype) = 255;
 	delpointer(context);
 	context.di = 76;
@@ -7993,11 +7993,11 @@ void cantdrop(Context & context) {
 	examicon(context);
 	context.data.byte(kCommandtype) = 255;
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void wornerror(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kCommandtype) = 255;
 	delpointer(context);
 	context.di = 76;
@@ -8013,11 +8013,11 @@ void wornerror(Context & context) {
 	examicon(context);
 	context.data.byte(kCommandtype) = 255;
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void removeobfrominv(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommand), 100);
 	if (context.flags.z()) goto obnotexist;
 	getanyad(context);
@@ -8026,17 +8026,17 @@ void removeobfrominv(Context & context) {
 	context.ch = 0;
 	deleteexobject(context);
 obnotexist:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void selectopenob(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kCommand);
 	getanyad(context);
 	context._cmp(context.al, 255);
 	if (!context.flags.z()) goto canopenit1;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canopenit1:
 	context._cmp(context.data.byte(kCommandtype), 224);
 	if (context.flags.z()) goto alreadyopob;
@@ -8052,7 +8052,7 @@ alreadyopob:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doopenob;
 noopenob:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doopenob:
 	context.al = context.data.byte(kCommand);
 	context.data.byte(kOpenedob) = context.al;
@@ -8070,17 +8070,17 @@ doopenob:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useopened(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kOpenedob), 255);
 	if (context.flags.z()) goto cannotuseopen;
 	context._cmp(context.data.byte(kPickup), 0);
 	if (!context.flags.z()) goto notout2;
 	outofopen(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notout2:
 	findopenpos(context);
 	context.ax = context.es.word(context.bx);
@@ -8088,12 +8088,12 @@ notout2:
 	if (context.flags.z()) goto canplace3;
 	swapwithopen(context);
 cannotuseopen:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canplace3:
 	context._cmp(context.data.byte(kPickup), 1);
 	if (context.flags.z()) goto intoopen;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 intoopen:
 	context.al = context.data.byte(kItemframe);
 	context.ah = context.data.byte(kObjecttype);
@@ -8114,13 +8114,13 @@ alreadyplc2:
 	context._cmp(context.ax, 1);
 	if (context.flags.z()) goto doplace2;
 notletgo3:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doplace2:
 	geteitherad(context);
 	isitworn(context);
 	if (!context.flags.z()) goto notworntoopen;
 	wornerror(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notworntoopen:
 	delpointer(context);
 	context.al = context.data.byte(kItemframe);
@@ -8130,12 +8130,12 @@ notworntoopen:
 	context._cmp(context.al, context.data.byte(kOpenedtype));
 	if (!context.flags.z()) goto isntsame;
 	errormessage1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isntsame:
 	checkobjectsize(context);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto sizeok1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 sizeok1:
 	context.data.byte(kPickup) = 0;
 	context.al = context.data.byte(kItemframe);
@@ -8155,11 +8155,11 @@ sizeok1:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void errormessage1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	delpointer(context);
 	context.di = 76;
 	context.bx = 21;
@@ -8180,11 +8180,11 @@ void errormessage1(Context & context) {
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void errormessage2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kCommandtype) = 255;
 	delpointer(context);
 	context.di = 76;
@@ -8206,11 +8206,11 @@ void errormessage2(Context & context) {
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void errormessage3(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	delpointer(context);
 	context.di = 76;
 	context.bx = 21;
@@ -8228,11 +8228,11 @@ void errormessage3(Context & context) {
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkobjectsize(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getopenedsize(context);
 	context.push(context.ax);
 	context.al = context.data.byte(kItemframe);
@@ -8267,14 +8267,14 @@ bothspecial:
 	errormessage3(context);
 sizewrong:
 	context.al = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 sizeok:
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void outofopen(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kOpenedob), 255);
 	if (context.flags.z()) goto cantuseopen;
 	findopenpos(context);
@@ -8283,7 +8283,7 @@ void outofopen(Context & context) {
 	if (!context.flags.z()) goto canpick4;
 cantuseopen:
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canpick4:
 	context._cmp(context.ax, context.data.word(kOldsubject));
 	if (!context.flags.z()) goto difsub4;
@@ -8305,7 +8305,7 @@ alreadygrb:
 	if (!context.flags.z()) goto notletgo4;
 	reexfromopen(context);
 notletgo4:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dogrb:
 	delpointer(context);
 	context.data.byte(kPickup) = 1;
@@ -8334,11 +8334,11 @@ actuallyout:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void transfertoex(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	emergencypurge(context);
 	getexpos(context);
 	context.al = context.data.byte(kExpos);
@@ -8376,11 +8376,11 @@ void transfertoex(Context & context) {
 	context.ds.byte(context.si+2) = 254;
 	pickupconts(context);
 	context.ax = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void pickupconts(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.ds.byte(context.si+7);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto notopenable;
@@ -8413,11 +8413,11 @@ notinsidethis:
 	context._cmp(context.cx, 80);
 	if (!context.flags.z()) goto pickupcontloop;
 notopenable:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void transfercontoex(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context.push(context.dx);
@@ -8444,11 +8444,11 @@ void transfercontoex(Context & context) {
 	context.si = context.pop();
 	context.ds = context.pop();
 	context.ds.byte(context.si+2) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void transfertext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kExtras);
 	context.al = context.data.byte(kExpos);
 	context.ah = 0;
@@ -8473,11 +8473,11 @@ moretext:
 	context._inc(context.data.word(kExtextpos));
 	context._cmp(context.al, 0);
 	if (!context.flags.z()) goto moretext;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getexpos(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kExtras);
 	context.al = 0;
 	context.di = (0+2080+30000);
@@ -8490,11 +8490,11 @@ tryanotherex:
 	if (!context.flags.z()) goto tryanotherex;
 foundnewex:
 	context.data.byte(kExpos) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void purgealocation(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.es = context.data.word(kExtras);
 	context.di = (0+2080+30000);
@@ -8519,11 +8519,11 @@ dontpurge:
 	context._inc(context.cx);
 	context._cmp(context.cx, (114));
 	if (!context.flags.z()) goto purgeloc;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void emergencypurge(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 checkpurgeagain:
 	context.ax = context.data.word(kExframepos);
 	context._add(context.ax, 4000);
@@ -8539,11 +8539,11 @@ notnearframeend:
 	purgeanitem(context);
 	goto checkpurgeagain;
 notneartextend:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void purgeanitem(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kExtras);
 	context.di = (0+2080+30000);
 	context.bl = context.data.byte(kReallocation);
@@ -8560,7 +8560,7 @@ iscup:
 	context._cmp(context.es.byte(context.di+11), context.bl);
 	if (context.flags.z()) goto cantpurge;
 	deleteexobject(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cantpurge:
 	context._add(context.di, 16);
 	context._inc(context.cx);
@@ -8576,17 +8576,17 @@ lookforpurge2:
 	context._cmp(context.es.byte(context.di+12), 255);
 	if (!context.flags.z()) goto cantpurge2;
 	deleteexobject(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cantpurge2:
 	context._add(context.di, 16);
 	context._inc(context.cx);
 	context._cmp(context.cx, (114));
 	if (!context.flags.z()) goto lookforpurge2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void deleteexobject(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.cx);
 	context.push(context.cx);
 	context.push(context.cx);
@@ -8627,11 +8627,11 @@ notinsideex:
 	context._inc(context.cx);
 	context._cmp(context.cx, (114));
 	if (!context.flags.z()) goto deleteconts;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void deleteexframe(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = (0);
 	context.ah = 0;
 	context._add(context.ax, context.ax);
@@ -8667,11 +8667,11 @@ beforethisone:
 	context.es.word(context.di+2) = context.ax;
 	context._add(context.di, 6);
 	if (--context.cx) goto shuffleadsdown;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void deleteextext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = (0+2080+30000+(16*114));
 	context.ah = 0;
 	context._add(context.ax, context.ax);
@@ -8709,21 +8709,21 @@ beforethistext:
 	context.es.word(context.di) = context.ax;
 	context._add(context.di, 2);
 	if (--context.cx) goto shuffletextads;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void blockget(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = context.al;
 	context.al = 0;
 	context.ds = context.data.word(kBackdrop);
 	context.si = (0+192);
 	context._add(context.si, context.ax);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void drawfloor(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	eraseoldobs(context);
@@ -8738,11 +8738,11 @@ void drawfloor(Context & context) {
 	context.data.byte(kNewobs) = 0;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void calcmapad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getdimension(context);
 	context.push(context.cx);
 	context.push(context.dx);
@@ -8766,11 +8766,11 @@ void calcmapad(Context & context) {
 	context._mul(context.bx);
 	context._add(context.ax, context.data.word(kMapoffsety));
 	context.data.word(kMapady) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getdimension(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32));
 	context.ch = 0;
@@ -8847,11 +8847,11 @@ finishdim4:
 	context._shl(context.ax, 1);
 	context._shl(context.ax, 1);
 	context.data.byte(kMapysize) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void addalong(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 11;
 addloop:
 	context._cmp(context.es.byte(context.bx), 0);
@@ -8860,14 +8860,14 @@ addloop:
 	context._dec(context.ah);
 	if (!context.flags.z()) goto addloop;
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotalong:
 	context.al = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void addlength(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 10;
 addloop2:
 	context._cmp(context.es.byte(context.bx), 0);
@@ -8876,14 +8876,14 @@ addloop2:
 	context._dec(context.ah);
 	if (!context.flags.z()) goto addloop2;
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotlength:
 	context.al = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void drawflags(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32));
 	context.al = context.data.byte(kMapy);
@@ -8917,11 +8917,11 @@ _tmp28a:
 	context._add(context.si, (66)-11);
 	context.cx = context.pop();
 	if (--context.cx) goto _tmp28;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void eraseoldobs(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNewobs), 0);
 	if (context.flags.z()) goto donterase;
 	context.es = context.data.word(kBuffers);
@@ -8943,11 +8943,11 @@ notthisob:
 	context._add(context.bx, (32));
 	if (--context.cx) goto oberase;
 donterase:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showallobs(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32));
 	context.data.word(kListpos) = context.bx;
@@ -9026,11 +9026,11 @@ blankframe:
 	if (context.flags.z()) goto finishedsetobs;
 	goto showobsloop;
 finishedsetobs:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void makebackob(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNewobs), 0);
 	if (context.flags.z()) goto nomake;
 	context.al = context.es.byte(context.si+5);
@@ -9060,11 +9060,11 @@ usedpriority:
 	context.es.byte(context.bx+19) = 0;
 	context.si = context.pop();
 nomake:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showallfree(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
 	context.data.word(kListpos) = context.bx;
@@ -9140,11 +9140,11 @@ over138:
 	if (context.flags.z()) goto finfree;
 	goto loop127;
 finfree:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showallex(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
 	context.data.word(kListpos) = context.bx;
@@ -9225,11 +9225,11 @@ blankex:
 	if (context.flags.z()) goto finex;
 	goto exloop;
 finex:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void calcfrframe(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = context.data.word(kFrsegment);
 	context.ax = context.data.word(kFramesad);
 	context.push(context.ax);
@@ -9256,16 +9256,16 @@ void calcfrframe(Context & context) {
 	context.al = context.ah;
 	context.ah = 0;
 	context.data.word(kOffsety) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nullframe:
 	context.ax = context.pop();
 	context.cx = 0;
 	context.data.word(kSavesize) = context.cx;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void finalframe(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kObjecty);
 	context._add(context.ax, context.data.word(kOffsety));
 	context.bx = context.data.word(kObjectx);
@@ -9274,11 +9274,11 @@ void finalframe(Context & context) {
 	context.data.byte(kSavey) = context.al;
 	context.di = context.data.word(kObjectx);
 	context.bx = context.data.word(kObjecty);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void adjustlen(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = context.al;
 	context._add(context.al, context.ch);
 	context._cmp(context.al, 100);
@@ -9287,11 +9287,11 @@ void adjustlen(Context & context) {
 	context._sub(context.al, context.ch);
 	context.ch = context.al;
 over242:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getmapad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getxad(context);
 	context._cmp(context.ch, 0);
 	if (context.flags.z()) goto over146;
@@ -9302,11 +9302,11 @@ void getmapad(Context & context) {
 	context.data.word(kObjecty) = context.ax;
 	context.ch = 1;
 over146:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getxad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = context.es.byte(context.si);
 	context._inc(context.si);
 	context.al = context.es.byte(context.si);
@@ -9324,14 +9324,14 @@ void getxad(Context & context) {
 	context._or(context.al, context.ah);
 	context.ah = 0;
 	context.ch = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 over148:
 	context.ch = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getyad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.es.byte(context.si);
 	context._inc(context.si);
 	context.ah = context.es.byte(context.si);
@@ -9345,14 +9345,14 @@ void getyad(Context & context) {
 	context._or(context.al, context.ah);
 	context.ah = 0;
 	context.ch = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 over147:
 	context.ch = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void autolook(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kMousex);
 	context._cmp(context.ax, context.data.word(kOldx));
 	if (!context.flags.z()) goto diffmouse;
@@ -9366,14 +9366,14 @@ void autolook(Context & context) {
 	if (!context.flags.z()) goto noautolook;
 	dolook(context);
 noautolook:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 diffmouse:
 	context.data.word(kLookcounter) = 1000;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void look(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) { blank(context); return; };
 	context._cmp(context.data.byte(kPointermode), 2);
@@ -9391,11 +9391,11 @@ alreadylook:
 	if (context.flags.z()) goto nolook;
 	dolook(context);
 nolook:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dolook(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	createpanel(context);
 	showicon(context);
 	undertextline(context);
@@ -9428,11 +9428,11 @@ afterlook:
 	context.data.byte(kCommandtype) = 0;
 	redrawmainscrn(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void redrawmainscrn(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.word(kTimecount) = 0;
 	createpanel(context);
 	context.data.byte(kNewobs) = 0;
@@ -9444,15 +9444,15 @@ void redrawmainscrn(Context & context) {
 	undertextline(context);
 	readmouse(context);
 	context.data.byte(kCommandtype) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getback1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPickup), 0);
 	if (context.flags.z()) goto notgotobject;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notgotobject:
 	context._cmp(context.data.byte(kCommandtype), 202);
 	if (context.flags.z()) goto alreadyget;
@@ -9466,15 +9466,15 @@ alreadyget:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto dogetback;
 nogetback:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dogetback:
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kPickup) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void talk(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kTalkpos) = 0;
 	context.data.byte(kInmaparea) = 0;
 	context.al = context.data.byte(kCommand);
@@ -9520,11 +9520,11 @@ notnexttalk:
 	context.data.byte(kVolumedirection) = -1;
 	context.data.byte(kVolumeto) = 0;
 nospeech:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void convicons(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kCharacter);
 	context._and(context.al, 127);
 	getpersframe(context);
@@ -9536,22 +9536,22 @@ void convicons(Context & context) {
 	context._sub(context.ax, context.data.word(kTakeoff));
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getpersframe(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 0;
 	context._add(context.ax, context.ax);
 	context.bx = context.ax;
 	context.es = context.data.word(kPeople);
 	context._add(context.bx, (0));
 	context.ax = context.es.word(context.bx);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void starttalk(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kTalkmode) = 0;
 	context.al = context.data.byte(kCharacter);
 	context._and(context.al, 127);
@@ -9587,11 +9587,11 @@ void starttalk(Context & context) {
 	context.al = 50+12;
 	playchannel1(context);
 nospeech1:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getpersontext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 0;
 	context.cx = 64*2;
 	context._mul(context.cx);
@@ -9602,15 +9602,15 @@ void getpersontext(Context & context) {
 	context.ax = context.es.word(context.si);
 	context._add(context.ax, context.cx);
 	context.si = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void moretalk(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kTalkmode), 0);
 	if (context.flags.z()) goto canmore;
 	redes(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canmore:
 	context._cmp(context.data.byte(kCommandtype), 215);
 	if (context.flags.z()) goto alreadymore;
@@ -9624,7 +9624,7 @@ alreadymore:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto domoretalk;
 nomore:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 domoretalk:
 	context.data.byte(kTalkmode) = 2;
 	context.data.byte(kTalkpos) = 4;
@@ -9633,11 +9633,11 @@ domoretalk:
 	context.data.byte(kTalkpos) = 48;
 notsecondpart:
 	dosometalk(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dosometalk(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 dospeech:
 	context.al = context.data.byte(kTalkpos);
 	context.al = context.data.byte(kCharacter);
@@ -9696,7 +9696,7 @@ noplay1:
 	context.cx = 180;
 	hangonpq(context);
 	if (!context.flags.c()) goto _tmp1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 _tmp1:
 	context._inc(context.data.byte(kTalkpos));
 	context.al = context.data.byte(kTalkpos);
@@ -9760,17 +9760,17 @@ noplay2:
 	context.cx = 180;
 	hangonpq(context);
 	if (!context.flags.c()) goto skiptalk2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 skiptalk2:
 	context._inc(context.data.byte(kTalkpos));
 	goto dospeech;
 endheartalk:
 	context.data.byte(kPointermode) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void hangonpq(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kGetback) = 0;
 	context.bx = 0;
 hangloopq:
@@ -9805,24 +9805,24 @@ finishconv:
 	delpointer(context);
 	context.data.byte(kPointermode) = 0;
 	context.flags._c = false;
- 	{assert(stack_depth == context.stack.size()); return; }
+ 	return;
 quitconv:
 	delpointer(context);
 	context.data.byte(kPointermode) = 0;
 	cancelch1(context);
 	context.flags._c = true;
- 	{assert(stack_depth == context.stack.size()); return; }
+ 	return;
 }
 
 void redes(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCh1playing), 255);
 	if (!context.flags.z()) goto cantredes;
 	context._cmp(context.data.byte(kTalkmode), 2);
 	if (context.flags.z()) goto canredes;
 cantredes:
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canredes:
 	context._cmp(context.data.byte(kCommandtype), 217);
 	if (context.flags.z()) goto alreadyreds;
@@ -9833,7 +9833,7 @@ alreadyreds:
 	context.ax = context.data.word(kMousebutton);
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doredes;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doredes:
 	delpointer(context);
 	createpanel(context);
@@ -9846,29 +9846,29 @@ doredes:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void newplace(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNeedtotravel), 1);
 	if (context.flags.z()) goto istravel;
 	context._cmp(context.data.byte(kAutolocation), -1);
 	if (!context.flags.z()) goto isautoloc;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isautoloc:
 	context.al = context.data.byte(kAutolocation);
 	context.data.byte(kNewlocation) = context.al;
 	context.data.byte(kAutolocation) = -1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 istravel:
 	context.data.byte(kNeedtotravel) = 0;
 	selectlocation(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void selectlocation(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kInmaparea) = 0;
 	clearbeforeload(context);
 	context.data.byte(kGetback) = 0;
@@ -9914,7 +9914,7 @@ select:
 	getridoftemp3(context);
 	context.es = context.data.word(kTraveltext);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 quittravel:
 	context.al = context.data.byte(kReallocation);
 	context.data.byte(kNewlocation) = context.al;
@@ -9924,11 +9924,11 @@ quittravel:
 	getridoftemp3(context);
 	context.es = context.data.word(kTraveltext);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showcity(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	clearwork(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = 57;
@@ -9942,11 +9942,11 @@ void showcity(Context & context) {
 	context.al = 1;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void lookatplace(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 224);
 	if (context.flags.z()) goto alreadyinfo;
 	context.data.byte(kCommandtype) = 224;
@@ -9998,11 +9998,11 @@ afterinfo:
 	putundercentre(context);
 	worktoscreenm(context);
 noinfo:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getundercentre(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 58;
 	context.bx = 72;
 	context.ds = context.data.word(kMapstore);
@@ -10010,11 +10010,11 @@ void getundercentre(Context & context) {
 	context.cl = 254;
 	context.ch = 110;
 	multiget(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void putundercentre(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 58;
 	context.bx = 72;
 	context.ds = context.data.word(kMapstore);
@@ -10022,11 +10022,11 @@ void putundercentre(Context & context) {
 	context.cl = 254;
 	context.ch = 110;
 	multiput(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void locationpic(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getdestinfo(context);
 	context.al = context.es.byte(context.si);
 	context.push(context.es);
@@ -10069,11 +10069,11 @@ notinthisone:
 	context.al = 0;
 	context.ah = 0;
 	printdirect(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getdestinfo(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kDestpos);
 	context.ah = 0;
 	context.push(context.ax);
@@ -10089,11 +10089,11 @@ void getdestinfo(Context & context) {
 	context.si = 8027;
 	context._add(context.si, context.ax);
 	context.ax = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showarrows(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 116-12;
 	context.bx = 16;
 	context.ds = context.data.word(kTempgraphics);
@@ -10112,11 +10112,11 @@ void showarrows(Context & context) {
 	context.al = 2;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void nextdest(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 duok:
 	context._cmp(context.data.byte(kCommandtype), 218);
 	if (context.flags.z()) goto alreadydu;
@@ -10151,11 +10151,11 @@ notlastdest:
 	worktoscreen(context);
 	delpointer(context);
 nodu:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void lastdest(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 ddok:
 	context._cmp(context.data.byte(kCommandtype), 219);
 	if (context.flags.z()) goto alreadydd;
@@ -10190,11 +10190,11 @@ notfirstdest:
 	worktoscreen(context);
 	delpointer(context);
 nodd:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void destselect(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 222);
 	if (context.flags.z()) goto alreadytrav;
 	context.data.byte(kCommandtype) = 222;
@@ -10210,33 +10210,33 @@ alreadytrav:
 	context.al = context.data.byte(kDestpos);
 	context.data.byte(kNewlocation) = context.al;
 notrav:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getlocation(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 0;
 	context.bx = context.ax;
 	context.dx = context.data;
 	context.es = context.dx;
 	context._add(context.bx, 8011);
 	context.al = context.es.byte(context.bx);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void setlocation(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 0;
 	context.bx = context.ax;
 	context.dx = context.data;
 	context.es = context.dx;
 	context._add(context.bx, 8011);
 	context.es.byte(context.bx) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void resetlocation(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context._cmp(context.al, 5);
 	if (!context.flags.z()) goto notdelhotel;
@@ -10280,29 +10280,29 @@ clearedlocations:
 	context.es = context.dx;
 	context._add(context.bx, 8011);
 	context.es.byte(context.bx) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readdesticon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 2013;
 	loadintotemp(context);
 	context.dx = 2026;
 	loadintotemp2(context);
 	context.dx = 1961;
 	loadintotemp3(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readcitypic(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 2000;
 	loadintotemp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usemon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kLasttrigger) = 0;
 	context.es = context.cs;
 	context.di = 2970+1;
@@ -10389,11 +10389,11 @@ endmon:
 	restoreall(context);
 	redrawmainscrn(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printoutermon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 40;
 	context.bx = 32;
 	context.ds = context.data.word(kTempgraphics);
@@ -10418,11 +10418,11 @@ void printoutermon(Context & context) {
 	context.al = 4;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadpersonal(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kLocation);
 	context.dx = 2052;
 	context._cmp(context.al, 0);
@@ -10446,11 +10446,11 @@ foundpersonal:
 	context.dx = 0;
 	readfromfile(context);
 	closefile(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadnews(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kNewsitem);
 	context.dx = 2078;
 	context._cmp(context.al, 0);
@@ -10476,11 +10476,11 @@ foundnews:
 	context.dx = 0;
 	readfromfile(context);
 	closefile(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadcart(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	lookininterface(context);
 	context.dx = 2130;
 	context._cmp(context.al, 0);
@@ -10509,11 +10509,11 @@ gotcart:
 	context.dx = 0;
 	readfromfile(context);
 	closefile(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void lookininterface(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 'I';
 	context.ah = 'N';
 	context.cl = 'T';
@@ -10525,14 +10525,14 @@ void lookininterface(Context & context) {
 	if (context.flags.z()) goto emptyinterface;
 	context.al = context.es.byte(context.bx+15);
 	context._inc(context.al);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 emptyinterface:
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void turnonpower(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cx = 3;
 powerloop:
 	context.push(context.cx);
@@ -10545,11 +10545,11 @@ powerloop:
 	context.cx = context.pop();
 	if (--context.cx) goto powerloop;
 	powerlighton(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void randomaccess(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 accessloop:
 	context.push(context.cx);
 	vsync(context);
@@ -10566,11 +10566,11 @@ chosenaccess:
 	context.cx = context.pop();
 	if (--context.cx) goto accessloop;
 	accesslightoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void powerlighton(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 257+4;
 	context.bx = 182;
 	context.ds = context.data.word(kTempgraphics);
@@ -10584,11 +10584,11 @@ void powerlighton(Context & context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void powerlightoff(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 257+4;
 	context.bx = 182;
 	context.ds = context.data.word(kTempgraphics);
@@ -10602,11 +10602,11 @@ void powerlightoff(Context & context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void accesslighton(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 74;
 	context.bx = 182;
 	context.ds = context.data.word(kTempgraphics);
@@ -10620,11 +10620,11 @@ void accesslighton(Context & context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void accesslightoff(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 74;
 	context.bx = 182;
 	context.ds = context.data.word(kTempgraphics);
@@ -10638,11 +10638,11 @@ void accesslightoff(Context & context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void locklighton(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 56;
 	context.bx = 182;
 	context.ds = context.data.word(kTempgraphics);
@@ -10656,11 +10656,11 @@ void locklighton(Context & context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void locklightoff(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 56;
 	context.bx = 182;
 	context.ds = context.data.word(kTempgraphics);
@@ -10674,11 +10674,11 @@ void locklightoff(Context & context) {
 	context.cl = 12;
 	context.ch = 8;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void input(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.cs;
 	context.di = 8045;
 	context.cx = 64;
@@ -10764,20 +10764,20 @@ notleadingspace:
 	context._add(context.data.word(kCurslocx), context.cx);
 	goto waitkey;
 endofinput:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void makecaps(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.al, 'a');
 	if (context.flags.c()) goto notupperc;
 	context._sub(context.al, 32);
 notupperc:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void delchar(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._dec(context.data.word(kCurpos));
 	context.si = context.data.word(kCurpos);
 	context._add(context.si, context.si);
@@ -10802,11 +10802,11 @@ void delchar(Context & context) {
 	context.cl = context.al;
 	context.ch = 8;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void execcommand(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.cs;
 	context.bx = 2776;
 	context.ds = context.cs;
@@ -10815,7 +10815,7 @@ void execcommand(Context & context) {
 	context._cmp(context.al, 0);
 	if (!context.flags.z()) goto notblankinp;
 	scrollmonitor(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notblankinp:
 	context.cl = 0;
 comloop:
@@ -10838,7 +10838,7 @@ comloop2:
 	if (!context.flags.z()) goto comloop;
 	neterror(context);
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 foundcom:
 	context.si = context.pop();
 	context.bx = context.pop();
@@ -10856,46 +10856,46 @@ foundcom:
 directory:
 	dircom(context);
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 signoncom:
 	signon(context);
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 accesscom:
 	read(context);
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 keyscom:
 	showkeys(context);
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 testcom:
 	context.al = 6;
 	monmessage(context);
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 quitcom:
 	context.al = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void neterror(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 5;
 	monmessage(context);
 	scrollmonitor(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dircom(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cx = 30;
 	randomaccess(context);
 	parser(context);
 	context._cmp(context.es.byte(context.di+1), 0);
 	if (context.flags.z()) goto dirroot;
 	dirfile(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dirroot:
 	context.data.byte(kLogonum) = 0;
 	context.ds = context.cs;
@@ -10917,11 +10917,11 @@ dirroot:
 	context.es = context.data.word(kTextfile3);
 	searchforfiles(context);
 	scrollmonitor(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void searchforfiles(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bx = (66*2);
 directloop1:
 	context.al = context.es.byte(context.bx);
@@ -10933,11 +10933,11 @@ directloop1:
 	monprint(context);
 	goto directloop1;
 endofdir:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void signon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	parser(context);
 	context._inc(context.di);
 	context.ds = context.cs;
@@ -10967,7 +10967,7 @@ nomatch:
 	if (--context.cx) goto signonloop;
 	context.al = 13;
 	monmessage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 foundsign:
 	context.di = context.pop();
 	context.si = context.pop();
@@ -10978,7 +10978,7 @@ foundsign:
 	if (context.flags.z()) goto notyetassigned;
 	context.al = 17;
 	monmessage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notyetassigned:
 	context.push(context.es);
 	context.push(context.bx);
@@ -11015,7 +11015,7 @@ passerror:
 	scrollmonitor(context);
 	context.al = 16;
 	monmessage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 passpassed:
 	context.al = 14;
 	monmessage(context);
@@ -11029,11 +11029,11 @@ passpassed:
 	context.bx = context.pop();
 	context.es = context.pop();
 	context.es.byte(context.bx) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showkeys(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cx = 10;
 	randomaccess(context);
 	scrollmonitor(context);
@@ -11055,18 +11055,18 @@ notheld:
 	context._add(context.bx, 26);
 	if (--context.cx) goto keysloop;
 	scrollmonitor(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void read(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cx = 40;
 	randomaccess(context);
 	parser(context);
 	context._cmp(context.es.byte(context.di+1), 0);
 	if (!context.flags.z()) goto okcom;
 	neterror(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 okcom:
 	context.es = context.cs;
 	context.di = 2970;
@@ -11093,12 +11093,12 @@ okcom:
 	if (context.flags.z()) goto foundfile2;
 	context.al = 7;
 	monmessage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 foundfile2:
 	getkeyandlogo(context);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto keyok1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 keyok1:
 	context.es = context.cs;
 	context.di = 2942;
@@ -11110,7 +11110,7 @@ keyok1:
 	context.data.byte(kLogonum) = context.al;
 	context.al = 11;
 	monmessage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 findtopictext:
 	context._inc(context.bx);
 	context.push(context.es);
@@ -11138,11 +11138,11 @@ moretopic:
 	goto moretopic;
 endoftopic:
 	scrollmonitor(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dirfile(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 34;
 	context.es.byte(context.di) = context.al;
 	context.push(context.es);
@@ -11174,14 +11174,14 @@ void dirfile(Context & context) {
 	context.es = context.pop();
 	context.al = 7;
 	monmessage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 foundfile:
 	context.ax = context.pop();
 	context.ax = context.pop();
 	getkeyandlogo(context);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto keyok2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 keyok2:
 	context.push(context.es);
 	context.push(context.bx);
@@ -11210,11 +11210,11 @@ directloop2:
 	goto directloop2;
 endofdir2:
 	scrollmonitor(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getkeyandlogo(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._inc(context.bx);
 	context.al = context.es.byte(context.bx);
 	context._sub(context.al, 48);
@@ -11248,18 +11248,18 @@ void getkeyandlogo(Context & context) {
 	context.bx = context.pop();
 	context.es = context.pop();
 	context.al = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 keyok:
 	context.bx = context.pop();
 	context.es = context.pop();
 	context.al = context.data.byte(kNewlogonum);
 	context.data.byte(kLogonum) = context.al;
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void searchforstring(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dl = context.es.byte(context.di);
 	context.cx = context.di;
 restartlook:
@@ -11291,14 +11291,14 @@ complete:
 	context.es = context.ds;
 	context.al = 0;
 	context.bx = context.si;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notfound:
 	context.al = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void parser(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.cs;
 	context.di = 2942;
 	context.cx = 13;
@@ -11329,11 +11329,11 @@ copyin1:
 	if (!context.flags.z()) goto copyin1;
 finishpars:
 	context.di = 2942;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void scrollmonitor(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.bx);
 	context.push(context.cx);
@@ -11358,11 +11358,11 @@ void scrollmonitor(Context & context) {
 	context.cx = context.pop();
 	context.bx = context.pop();
 	context.ax = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void lockmon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLasthardkey), 57);
 	if (!context.flags.z()) goto notlock;
 	locklighton(context);
@@ -11371,11 +11371,11 @@ lockloop:
 	if (context.flags.z()) goto lockloop;
 	locklightoff(context);
 notlock:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void monitorlogo(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kLogonum);
 	context._cmp(context.al, context.data.byte(kOldlogonum));
 	if (context.flags.z()) goto notnewlogo;
@@ -11389,14 +11389,14 @@ void monitorlogo(Context & context) {
 	playchannel1(context);
 	context.cx = 20;
 	randomaccess(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notnewlogo:
 	printlogo(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printlogo(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 56;
 	context.bx = 32;
 	context.ds = context.data.word(kTempgraphics);
@@ -11404,11 +11404,11 @@ void printlogo(Context & context) {
 	context.ah = 0;
 	showframe(context);
 	showcurrentfile(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showcurrentfile(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 178;
 	context.bx = 37;
 	context.si = 2970+1;
@@ -11424,11 +11424,11 @@ curfileloop:
 	context.si = context.pop();
 	goto curfileloop;
 finishfile:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void monmessage(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kTextfile1);
 	context.bx = (66*2);
 	context.cl = context.al;
@@ -11440,18 +11440,18 @@ monmessageloop:
 	if (!context.flags.z()) goto monmessageloop;
 	if (--context.cx) goto monmessageloop;
 	monprint(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void processtrigger(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLasttrigger), '1');
 	if (!context.flags.z()) goto notfirsttrigger;
 	context.al = 8;
 	setlocation(context);
 	context.al = 45;
 	triggermessage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notfirsttrigger:
 	context._cmp(context.data.byte(kLasttrigger), '2');
 	if (!context.flags.z()) goto notsecondtrigger;
@@ -11459,7 +11459,7 @@ notfirsttrigger:
 	setlocation(context);
 	context.al = 55;
 	triggermessage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notsecondtrigger:
 	context._cmp(context.data.byte(kLasttrigger), '3');
 	if (!context.flags.z()) goto notthirdtrigger;
@@ -11468,11 +11468,11 @@ notsecondtrigger:
 	context.al = 59;
 	triggermessage(context);
 notthirdtrigger:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void triggermessage(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.di = 174;
 	context.bx = 153;
@@ -11502,11 +11502,11 @@ void triggermessage(Context & context) {
 	multiput(context);
 	worktoscreen(context);
 	context.data.byte(kLasttrigger) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printcurs(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.si);
 	context.push(context.di);
 	context.push(context.ds);
@@ -11548,11 +11548,11 @@ flashcurs:
 	context.ds = context.pop();
 	context.di = context.pop();
 	context.si = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void delcurs(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context.push(context.di);
@@ -11580,11 +11580,11 @@ finishcurdel:
 	context.di = context.pop();
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useobject(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kWithobject) = 255;
 	context._cmp(context.data.byte(kCommandtype), 229);
 	if (context.flags.z()) goto alreadyuse;
@@ -11600,19 +11600,19 @@ alreadyuse:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto douse;
 nouse:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 douse:
 	useroutine(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useroutine(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 50);
 	if (context.flags.c()) goto nodream7;
 	context._cmp(context.data.byte(kPointerpower), 0);
 	if (!context.flags.z()) goto powerok;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 powerok:
 	context.data.byte(kPointerpower) = 0;
 nodream7:
@@ -11641,7 +11641,7 @@ checkuselist:
 	context._lodsw();
 	context.si = context.pop();
 	__dispatch_call(context, context.ax);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 failed:
 	context.si = context.pop();
 	context._add(context.si, 6);
@@ -11662,7 +11662,7 @@ failed:
 	context.cx = 400;
 	hangonp(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cantuse2:
 	createpanel(context);
 	showpanel(context);
@@ -11679,24 +11679,24 @@ cantuse2:
 	hangonp(context);
 	putbackobstuff(context);
 	context.data.byte(kCommandtype) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void wheelsound(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 17;
 	playchannel1(context);
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void runtap(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto tapwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 tapwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -11718,7 +11718,7 @@ tapwith:
 	context.al = 56;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 fillcupfromtap:
 	context.al = context.data.byte(kWithobject);
 	getexad(context);
@@ -11729,50 +11729,50 @@ fillcupfromtap:
 	context.al = 57;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cupfromtapfull:
 	context.cx = 300;
 	context.al = 58;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void playguitar(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 14;
 	playchannel1(context);
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void hotelcontrol(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 21);
 	if (!context.flags.z()) goto notrightcont;
 	context._cmp(context.data.byte(kMapx), 33);
 	if (!context.flags.z()) goto notrightcont;
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notrightcont:
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void hotelbell(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 12;
 	playchannel1(context);
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void opentomb(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._inc(context.data.byte(kProgresspoints));
 	showfirstuse(context);
 	context.data.word(kWatchingtime) = 35*2;
@@ -11781,11 +11781,11 @@ void opentomb(Context & context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usetrainer(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getanyad(context);
 	context._cmp(context.es.byte(context.bx+2), 4);
 	if (!context.flags.z()) goto notheldtrainer;
@@ -11793,14 +11793,14 @@ void usetrainer(Context & context) {
 	makeworn(context);
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notheldtrainer:
 	nothelderror(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void nothelderror(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	createpanel(context);
 	showpanel(context);
 	showman(context);
@@ -11816,15 +11816,15 @@ void nothelderror(Context & context) {
 	context.cx = 50;
 	hangonp(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usepipe(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto pipewith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 pipewith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -11846,7 +11846,7 @@ pipewith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 fillcup:
 	context.cx = 300;
 	context.al = 36;
@@ -11855,17 +11855,17 @@ fillcup:
 	context.al = context.data.byte(kWithobject);
 	getexad(context);
 	context.es.byte(context.bx+15) = 'F'-'A';
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 alreadyfull:
 	context.cx = 300;
 	context.al = 35;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usefullcart(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._inc(context.data.byte(kProgresspoints));
 	context.al = 2;
 	context.ah = context.data.byte(kRoomnum);
@@ -11884,15 +11884,15 @@ void usefullcart(Context & context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useplinth(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto plinthwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 plinthwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -11904,7 +11904,7 @@ plinthwith:
 	if (context.flags.z()) goto isrightkey;
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isrightkey:
 	context._inc(context.data.byte(kProgresspoints));
 	showseconduse(context);
@@ -11916,20 +11916,20 @@ isrightkey:
 	context.data.byte(kGetback) = 1;
 	context.al = context.data.byte(kRoomafterdream);
 	context.data.byte(kNewlocation) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void chewy(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	getanyad(context);
 	context.es.byte(context.bx+2) = 255;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useladder(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context._sub(context.data.byte(kMapx), 11);
 	findroominloc(context);
@@ -11941,11 +11941,11 @@ void useladder(Context & context) {
 	findxyfrompath(context);
 	context.data.byte(kResetmanxy) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useladderb(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context._add(context.data.byte(kMapx), 11);
 	findroominloc(context);
@@ -11957,11 +11957,11 @@ void useladderb(Context & context) {
 	findxyfrompath(context);
 	context.data.byte(kResetmanxy) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void slabdoora(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kWatchspeed) = 1;
@@ -11973,17 +11973,17 @@ void slabdoora(Context & context) {
 	context.data.word(kWatchingtime) = 60;
 	context.data.word(kEndwatchreel) = 42;
 	context.data.byte(kNewlocation) = 47;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 slabawrong:
 	context.data.word(kWatchingtime) = 40;
 	context.data.word(kEndwatchreel) = 34;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void slabdoorb(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kDreamnumber), 1);
 	if (!context.flags.z()) goto slabbwrong;
 	context.al = 'S';
@@ -11996,7 +11996,7 @@ void slabdoorb(Context & context) {
 	context.cx = 200;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotcrystal:
 	showfirstuse(context);
 	context._inc(context.data.byte(kProgresspoints));
@@ -12007,7 +12007,7 @@ gotcrystal:
 	context.data.word(kWatchingtime) = 60;
 	context.data.word(kEndwatchreel) = 71;
 	context.data.byte(kNewlocation) = 47;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 slabbwrong:
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
@@ -12018,11 +12018,11 @@ slabbwrong:
 	context.data.word(kEndwatchreel) = 63;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void slabdoord(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kWatchspeed) = 1;
@@ -12034,17 +12034,17 @@ void slabdoord(Context & context) {
 	context.data.word(kWatchingtime) = 60;
 	context.data.word(kEndwatchreel) = 102;
 	context.data.byte(kNewlocation) = 47;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 slabcwrong:
 	context.data.word(kWatchingtime) = 40;
 	context.data.word(kEndwatchreel) = 94;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void slabdoorc(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kWatchspeed) = 1;
@@ -12056,17 +12056,17 @@ void slabdoorc(Context & context) {
 	context.data.word(kWatchingtime) = 60;
 	context.data.word(kEndwatchreel) = 135;
 	context.data.byte(kNewlocation) = 47;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 slabdwrong:
 	context.data.word(kWatchingtime) = 40;
 	context.data.word(kEndwatchreel) = 127;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void slabdoore(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kWatchspeed) = 1;
@@ -12078,17 +12078,17 @@ void slabdoore(Context & context) {
 	context.data.word(kWatchingtime) = 60;
 	context.data.word(kEndwatchreel) = 168;
 	context.data.byte(kNewlocation) = 47;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 slabewrong:
 	context.data.word(kWatchingtime) = 40;
 	context.data.word(kEndwatchreel) = 160;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void slabdoorf(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kWatchspeed) = 1;
@@ -12100,21 +12100,21 @@ void slabdoorf(Context & context) {
 	context.data.word(kWatchingtime) = 60;
 	context.data.word(kEndwatchreel) = 197;
 	context.data.byte(kNewlocation) = 47;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 slabfwrong:
 	context.data.word(kWatchingtime) = 40;
 	context.data.word(kEndwatchreel) = 189;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useslab(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto slabwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 slabwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12128,7 +12128,7 @@ slabwith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nextslab:
 	context.al = context.data.byte(kWithobject);
 	getexad(context);
@@ -12154,15 +12154,15 @@ notlastslab:
 	context._inc(context.data.byte(kProgresspoints));
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usecart(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto cartwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cartwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12176,7 +12176,7 @@ cartwith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nextcart:
 	context.al = context.data.byte(kWithobject);
 	getexad(context);
@@ -12192,15 +12192,15 @@ nextcart:
 	playchannel1(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useclearbox(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto clearboxwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 clearboxwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12214,7 +12214,7 @@ clearboxwith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 openbox:
 	context._inc(context.data.byte(kProgresspoints));
 	showfirstuse(context);
@@ -12224,11 +12224,11 @@ openbox:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usecoveredbox(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._inc(context.data.byte(kProgresspoints));
 	showfirstuse(context);
 	context.data.word(kWatchingtime) = 50;
@@ -12237,11 +12237,11 @@ void usecoveredbox(Context & context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void userailing(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.word(kWatchingtime) = 80;
 	context.data.word(kReeltowatch) = 0;
@@ -12250,15 +12250,15 @@ void userailing(Context & context) {
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kMandead) = 4;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useopenbox(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto openboxwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 openboxwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12277,7 +12277,7 @@ openboxwith:
 	compare(context);
 	if (context.flags.z()) goto openboxwrong;
 	showfirstuse(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 destoryopenbox:
 	context._inc(context.data.byte(kProgresspoints));
 	context.cx = 300;
@@ -12294,17 +12294,17 @@ destoryopenbox:
 	context.al = 4;
 	turnpathon(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 openboxwrong:
 	context.cx = 300;
 	context.al = 38;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void wearwatch(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchon), 1);
 	if (context.flags.z()) goto wearingwatch;
 	showfirstuse(context);
@@ -12312,15 +12312,15 @@ void wearwatch(Context & context) {
 	context.data.byte(kGetback) = 1;
 	getanyad(context);
 	makeworn(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 wearingwatch:
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void wearshades(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kShadeson), 1);
 	if (context.flags.z()) goto wearingshades;
 	context.data.byte(kShadeson) = 1;
@@ -12328,15 +12328,15 @@ void wearshades(Context & context) {
 	context.data.byte(kGetback) = 1;
 	getanyad(context);
 	makeworn(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 wearingshades:
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void sitdowninbar(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchmode), -1);
 	if (!context.flags.z()) goto satdown;
 	showfirstuse(context);
@@ -12348,15 +12348,15 @@ void sitdowninbar(Context & context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 satdown:
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usechurchhole(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
 	context.data.word(kWatchingtime) = 28;
@@ -12364,15 +12364,15 @@ void usechurchhole(Context & context) {
 	context.data.word(kEndwatchreel) = 26;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usehole(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto holewith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 holewith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12386,7 +12386,7 @@ holewith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 righthand:
 	showfirstuse(context);
 	context.al = 86;
@@ -12396,11 +12396,11 @@ righthand:
 	context.es.byte(context.bx+2) = 255;
 	context.data.byte(kCanmovealtar) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usealtar(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 'C';
 	context.ah = 'N';
 	context.cl = 'D';
@@ -12421,7 +12421,7 @@ void usealtar(Context & context) {
 	context.al = 23;
 	showpuztext(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 movealtar:
 	context._inc(context.data.byte(kProgresspoints));
 	showseconduse(context);
@@ -12437,19 +12437,19 @@ movealtar:
 	context.dx = 98;
 	setuptimeduse(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 thingsonaltar:
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void opentvdoor(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto tvdoorwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 tvdoorwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12463,72 +12463,72 @@ tvdoorwith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 keyontv:
 	showfirstuse(context);
 	context.data.byte(kLockstatus) = 0;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usedryer(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 12;
 	playchannel1(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void openlouis(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 5;
 	context.ah = 2;
 	context.cl = 3;
 	context.ch = 8;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void nextcolon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 lookcolon:
 	context.al = context.es.byte(context.si);
 	context._inc(context.si);
 	context._cmp(context.al, ':');
 	if (!context.flags.z()) goto lookcolon;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void openyourneighbour(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 255;
 	context.ah = 255;
 	context.cl = 255;
 	context.ch = 255;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usewindow(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kManspath), 6);
 	if (!context.flags.z()) goto notonbalc;
 	context._inc(context.data.byte(kProgresspoints));
 	showfirstuse(context);
 	context.data.byte(kNewlocation) = 29;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notonbalc:
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usebalcony(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.al = 6;
 	turnpathon(context);
@@ -12557,55 +12557,55 @@ void usebalcony(Context & context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void openryan(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 5;
 	context.ah = 1;
 	context.cl = 0;
 	context.ch = 6;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void openpoolboss(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 5;
 	context.ah = 2;
 	context.cl = 2;
 	context.ch = 2;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void openeden(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 2;
 	context.ah = 8;
 	context.cl = 6;
 	context.ch = 5;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void opensarters(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 7;
 	context.ah = 8;
 	context.cl = 3;
 	context.ch = 3;
 	entercode(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void isitright(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bx = context.data;
 	context.es = context.bx;
 	context.bx = 8573;
@@ -12617,24 +12617,24 @@ void isitright(Context & context) {
 	if (!context.flags.z()) goto notright;
 	context._cmp(context.es.byte(context.bx+3), context.ch);
 notright:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void drawitall(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	createpanel(context);
 	drawfloor(context);
 	printsprites(context);
 	showicon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void openhoteldoor(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto hoteldoorwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 hoteldoorwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12648,22 +12648,22 @@ hoteldoorwith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 keyonhotel1:
 	context.al = 16;
 	playchannel1(context);
 	showfirstuse(context);
 	context.data.byte(kLockstatus) = 0;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void openhoteldoor2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto hoteldoorwith2;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 hoteldoorwith2:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12677,21 +12677,21 @@ hoteldoorwith2:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 keyonhotel2:
 	context.al = 16;
 	playchannel1(context);
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void grafittidoor(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto grafwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 grafwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12705,15 +12705,15 @@ grafwith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dograf:
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void trapdoor(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._inc(context.data.byte(kProgresspoints));
 	showfirstuse(context);
 	switchryanoff(context);
@@ -12724,11 +12724,11 @@ void trapdoor(Context & context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void callhotellift(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 12;
 	playchannel1(context);
 	showfirstuse(context);
@@ -12739,21 +12739,21 @@ void callhotellift(Context & context) {
 	autosetwalk(context);
 	context.al = 4;
 	turnpathon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void calledenslift(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kCounttoopen) = 8;
 	context.data.byte(kGetback) = 1;
 	context.al = 2;
 	turnpathon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void calledensdlift(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLiftflag), 1);
 	if (context.flags.z()) goto edensdhere;
 	showfirstuse(context);
@@ -12761,19 +12761,19 @@ void calledensdlift(Context & context) {
 	context.data.byte(kGetback) = 1;
 	context.al = 2;
 	turnpathon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 edensdhere:
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usepoolreader(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto poolwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 poolwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12787,28 +12787,28 @@ poolwith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 openpool:
 	context._cmp(context.data.byte(kTalkedtoattendant), 1);
 	if (context.flags.z()) goto canopenpool;
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canopenpool:
 	context.al = 17;
 	playchannel1(context);
 	showfirstuse(context);
 	context.data.byte(kCounttoopen) = 6;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void uselighter(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotlighterwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotlighterwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12820,7 +12820,7 @@ gotlighterwith:
 	if (context.flags.z()) goto cigarette;
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cigarette:
 	context.cx = 300;
 	context.al = 9;
@@ -12829,11 +12829,11 @@ cigarette:
 	getexad(context);
 	context.es.byte(context.bx+2) = 255;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showseconduse(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getobtextstart(context);
 	nextcolon(context);
 	nextcolon(context);
@@ -12841,15 +12841,15 @@ void showseconduse(Context & context) {
 	usetext(context);
 	context.cx = 400;
 	hangonp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usecardreader1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotreader1with;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotreader1with:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12863,7 +12863,7 @@ gotreader1with:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 correctcard:
 	context._cmp(context.data.byte(kTalkedtosparky), 0);
 	if (context.flags.z()) goto notyet;
@@ -12873,7 +12873,7 @@ correctcard:
 	context.al = 17;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 getscash:
 	context.al = 16;
 	playchannel1(context);
@@ -12883,19 +12883,19 @@ getscash:
 	context._inc(context.data.byte(kProgresspoints));
 	context.data.word(kCard1money) = 12432;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notyet:
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usecardreader2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotreader2with;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotreader2with:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12909,7 +12909,7 @@ gotreader2with:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 correctcard2:
 	context._cmp(context.data.byte(kTalkedtoboss), 0);
 	if (context.flags.z()) goto notyetboss;
@@ -12928,31 +12928,31 @@ correctcard2:
 	context._sub(context.data.word(kCard1money), 2000);
 	context._inc(context.data.byte(kProgresspoints));
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nocash:
 	context.cx = 300;
 	context.al = 20;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 alreadygotnew:
 	context.cx = 300;
 	context.al = 22;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notyetboss:
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usecardreader3(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotreader3with;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotreader3with:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -12966,7 +12966,7 @@ gotreader3with:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 rightcard:
 	context._cmp(context.data.byte(kTalkedtorecep), 0);
 	if (context.flags.z()) goto notyetrecep;
@@ -12981,21 +12981,21 @@ rightcard:
 	context._sub(context.data.word(kCard1money), 8300);
 	context.data.byte(kCardpassflag) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 alreadyusedit:
 	context.cx = 300;
 	context.al = 26;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notyetrecep:
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usecashcard(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getridofreels(context);
 	loadkeypad(context);
 	createpanel(context);
@@ -13044,11 +13044,11 @@ void usecashcard(Context & context) {
 	getridoftemp(context);
 	restorereels(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void lookatcard(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kManisoffscreen) = 1;
 	getridofreels(context);
 	loadkeypad(context);
@@ -13096,11 +13096,11 @@ void lookatcard(Context & context) {
 	getridoftemp(context);
 	restorereels(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void moneypoke(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bx = 3474;
 	context.cl = 48-1;
 numberpoke0:
@@ -13136,15 +13136,15 @@ numberpoke3:
 	context.bx = 3479;
 	context._add(context.al, 48);
 	context.cs.byte(context.bx) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usecontrol(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotcontrolwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotcontrolwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -13175,7 +13175,7 @@ gotcontrolwith:
 balls:
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 rightkey:
 	context.al = 16;
 	playchannel1(context);
@@ -13189,7 +13189,7 @@ rightkey:
 	context.data.byte(kCounttoopen) = 0;
 	context.data.word(kWatchingtime) = 80;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 goingdown:
 	context.cx = 300;
 	context.al = 3;
@@ -13199,7 +13199,7 @@ goingdown:
 	context.data.byte(kCounttoopen) = 0;
 	context.data.word(kWatchingtime) = 80;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 jimmycontrols:
 	context.al = 50;
 	placesetobject(context);
@@ -13220,30 +13220,30 @@ jimmycontrols:
 	showpuztext(context);
 	context._inc(context.data.byte(kProgresspoints));
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 axeoncontrols:
 	context.cx = 300;
 	context.al = 16;
 	showpuztext(context);
 	context._inc(context.data.byte(kProgresspoints));
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usehatch(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kNewlocation) = 40;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usewire(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotwirewith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotwirewith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -13265,13 +13265,13 @@ gotwirewith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 wireaxe:
 	context.cx = 300;
 	context.al = 16;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 wireknife:
 	context.al = 51;
 	removesetobject(context);
@@ -13282,11 +13282,11 @@ wireknife:
 	showpuztext(context);
 	context._inc(context.data.byte(kProgresspoints));
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usehandle(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 'C';
 	context.ah = 'U';
 	context.cl = 'T';
@@ -13299,37 +13299,37 @@ void usehandle(Context & context) {
 	context.al = 12;
 	showpuztext(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 havecutwire:
 	context.cx = 300;
 	context.al = 13;
 	showpuztext(context);
 	context.data.byte(kNewlocation) = 22;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useelevator1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	selectlocation(context);
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showfirstuse(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getobtextstart(context);
 	findnextcolon(context);
 	findnextcolon(context);
 	usetext(context);
 	context.cx = 400;
 	hangonp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useelevator3(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kCounttoclose) = 20;
 	context.data.byte(kNewlocation) = 34;
@@ -13339,11 +13339,11 @@ void useelevator3(Context & context) {
 	context.data.byte(kSpeedcount) = 1;
 	context.data.word(kWatchingtime) = 80;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useelevator4(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.word(kReeltowatch) = 0;
 	context.data.word(kEndwatchreel) = 11;
@@ -13353,11 +13353,11 @@ void useelevator4(Context & context) {
 	context.data.word(kWatchingtime) = 80;
 	context.data.byte(kGetback) = 1;
 	context.data.byte(kNewlocation) = 24;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useelevator2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 23);
 	if (context.flags.z()) goto inpoolhall;
 	showfirstuse(context);
@@ -13366,7 +13366,7 @@ void useelevator2(Context & context) {
 	context.data.byte(kCounttoopen) = 0;
 	context.data.word(kWatchingtime) = 80;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 inpoolhall:
 	showfirstuse(context);
 	context.data.byte(kNewlocation) = 31;
@@ -13374,11 +13374,11 @@ inpoolhall:
 	context.data.byte(kCounttoopen) = 0;
 	context.data.word(kWatchingtime) = 80;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useelevator5(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 4;
 	placesetobject(context);
 	context.al = 0;
@@ -13388,11 +13388,11 @@ void useelevator5(Context & context) {
 	context.data.byte(kLiftflag) = 1;
 	context.data.byte(kCounttoclose) = 8;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usekey(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 5);
 	if (context.flags.z()) goto usekey1;
 	context._cmp(context.data.byte(kLocation), 30);
@@ -13403,7 +13403,7 @@ void usekey(Context & context) {
 	context.al = 1;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 usekey1:
 	context._cmp(context.data.byte(kMapx), 22);
 	if (!context.flags.z()) goto wrongroom1;
@@ -13414,7 +13414,7 @@ usekey1:
 	showpuztext(context);
 	context.data.byte(kCounttoclose) = 100;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 usekey2:
 	context._cmp(context.data.byte(kMapx), 11);
 	if (!context.flags.z()) goto wrongroom1;
@@ -13428,24 +13428,24 @@ usekey2:
 	fadescreendown(context);
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 wrongroom1:
 	context.cx = 200;
 	context.al = 2;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usestereo(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 0);
 	if (context.flags.z()) goto stereook;
 	context.cx = 400;
 	context.al = 4;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 stereook:
 	context._cmp(context.data.byte(kMapx), 11);
 	if (!context.flags.z()) goto stereonotok;
@@ -13456,7 +13456,7 @@ stereonotok:
 	context.al = 5;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 stereook2:
 	context.al = 'C';
 	context.ah = 'D';
@@ -13474,7 +13474,7 @@ stereook2:
 	getanyad(context);
 	context.al = 255;
 	context.es.byte(context.bx+10) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cdinside:
 	getanyad(context);
 	context.al = context.es.byte(context.bx+10);
@@ -13486,17 +13486,17 @@ cdinside:
 	context.cx = 400;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 stereoon:
 	context.al = 8;
 	context.cx = 400;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usecooker(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kCommand);
 	context.ah = context.data.byte(kObjecttype);
 	checkinside(context);
@@ -13504,15 +13504,15 @@ void usecooker(Context & context) {
 	if (!context.flags.z()) goto foodinside;
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 foodinside:
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useaxe(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 22);
 	if (!context.flags.z()) goto notinpool;
 	context._cmp(context.data.byte(kMapy), 10);
@@ -13522,10 +13522,10 @@ void useaxe(Context & context) {
 	context.data.byte(kLastweapon) = 2;
 	context.data.byte(kGetback) = 1;
 	removeobfrominv(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notinpool:
 	showfirstuse(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 /*continuing to unbounded code: axeondoor from useelvdoor:19-30*/
 axeondoor:
 	context.al = 15;
@@ -13538,16 +13538,16 @@ axeondoor:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
+	return;
 }
 
 void useelvdoor(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotdoorwith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotdoorwith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -13561,7 +13561,7 @@ gotdoorwith:
 	context.cx = 300;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 axeondoor:
 	context.al = 15;
 	context.cx = 300;
@@ -13573,11 +13573,11 @@ axeondoor:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void withwhat(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	createpanel(context);
 	showpanel(context);
 	showman(context);
@@ -13616,17 +13616,17 @@ void withwhat(Context & context) {
 	worktoscreen(context);
 	delpointer(context);
 	context.data.byte(kInvopen) = 2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void selectob(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	findinvpos(context);
 	context.ax = context.es.word(context.bx);
 	context._cmp(context.al, 255);
 	if (!context.flags.z()) goto canselectob;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canselectob:
 	context.data.byte(kWithobject) = context.al;
 	context.data.byte(kWithtype) = context.ah;
@@ -13647,16 +13647,16 @@ alreadyselob:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doselob;
 notselob:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doselob:
 	delpointer(context);
 	context.data.byte(kInvopen) = 0;
 	useroutine(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void compare(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._sub(context.dl, 'A');
 	context._sub(context.dh, 'A');
 	context._sub(context.cl, 'A');
@@ -13670,11 +13670,11 @@ void compare(Context & context) {
 	if (!context.flags.z()) goto comparefin;
 	context._cmp(context.es.word(context.bx+14), context.dx);
 comparefin:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findsetobject(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._sub(context.al, 'A');
 	context._sub(context.ah, 'A');
 	context._sub(context.cl, 'A');
@@ -13692,18 +13692,18 @@ findsetloop:
 	context._cmp(context.ch, context.es.byte(context.bx+15));
 	if (!context.flags.z()) goto nofind;
 	context.al = context.dl;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nofind:
 	context._add(context.bx, 64);
 	context._inc(context.dl);
 	context._cmp(context.dl, 128);
 	if (!context.flags.z()) goto findsetloop;
 	context.al = context.dl;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findexobject(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._sub(context.al, 'A');
 	context._sub(context.ah, 'A');
 	context._sub(context.cl, 'A');
@@ -13721,18 +13721,18 @@ findexloop:
 	context._cmp(context.ch, context.es.byte(context.bx+15));
 	if (!context.flags.z()) goto nofindex;
 	context.al = context.dl;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nofindex:
 	context._add(context.bx, 16);
 	context._inc(context.dl);
 	context._cmp(context.dl, (114));
 	if (!context.flags.z()) goto findexloop;
 	context.al = context.dl;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void isryanholding(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._sub(context.al, 'A');
 	context._sub(context.ah, 'A');
 	context._sub(context.cl, 'A');
@@ -13753,7 +13753,7 @@ searchinv:
 	if (!context.flags.z()) goto nofindininv;
 	context.al = context.dl;
 	context._cmp(context.al, (114));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nofindininv:
 	context._add(context.bx, 16);
 	context._inc(context.dl);
@@ -13761,11 +13761,11 @@ nofindininv:
 	if (!context.flags.z()) goto searchinv;
 	context.al = context.dl;
 	context._cmp(context.al, (114));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkinside(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kExtras);
 	context.bx = (0+2080+30000);
 	context.cl = 0;
@@ -13774,17 +13774,17 @@ insideloop:
 	if (!context.flags.z()) goto notfoundinside;
 	context._cmp(context.ah, context.es.byte(context.bx+2));
 	if (!context.flags.z()) goto notfoundinside;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notfoundinside:
 	context._add(context.bx, 16);
 	context._inc(context.cl);
 	context._cmp(context.cl, (114));
 	if (!context.flags.z()) goto insideloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usetext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.si);
 	createpanel(context);
@@ -13801,11 +13801,11 @@ void usetext(Context & context) {
 	context.ah = 0;
 	printdirect(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void putbackobstuff(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	createpanel(context);
 	showpanel(context);
 	showman(context);
@@ -13819,11 +13819,11 @@ void putbackobstuff(Context & context) {
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showpuztext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.cx);
 	findpuztext(context);
 	context.push(context.es);
@@ -13843,11 +13843,11 @@ void showpuztext(Context & context) {
 	worktoscreenm(context);
 	context.cx = context.pop();
 	hangonp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findpuztext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 0;
 	context.si = context.ax;
 	context._add(context.si, context.si);
@@ -13855,11 +13855,11 @@ void findpuztext(Context & context) {
 	context.ax = context.es.word(context.si);
 	context._add(context.ax, (66*2));
 	context.si = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void placesetobject(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context.cl = 0;
@@ -13869,11 +13869,11 @@ void placesetobject(Context & context) {
 	context.es.byte(context.bx+58) = 0;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void removesetobject(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context.cl = 255;
@@ -13883,11 +13883,11 @@ void removesetobject(Context & context) {
 	context.es.byte(context.bx+58) = 255;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void issetobonmap(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	getsetad(context);
@@ -13895,11 +13895,11 @@ void issetobonmap(Context & context) {
 	context.bx = context.pop();
 	context.es = context.pop();
 	context._cmp(context.al, 0);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void placefreeobject(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	context.cl = 0;
@@ -13909,22 +13909,22 @@ void placefreeobject(Context & context) {
 	context.es.byte(context.bx+2) = 0;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void removefreeobject(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
 	getfreead(context);
 	context.es.byte(context.bx+2) = 255;
 	context.bx = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findormake(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
 	context.push(context.ax);
 	context.es = context.data.word(kBuffers);
@@ -13942,28 +13942,28 @@ nofoundchange:
 foundchange:
 	context.ax = context.pop();
 	context.es.byte(context.bx+2) = context.cl;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 haventfound:
 	context.es.word(context.bx) = context.ax;
 	context.es.word(context.bx+2) = context.cx;
 	context.ax = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void switchryanon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kRyanon) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void switchryanoff(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kRyanon) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void setallchanges(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
 setallloop:
@@ -13981,11 +13981,11 @@ setallloop:
 	context.es = context.pop();
 	goto setallloop;
 endsetloop:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dochange(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.ch, 0);
 	if (context.flags.z()) goto object;
 	context._cmp(context.ch, 1);
@@ -14009,13 +14009,13 @@ path:
 	context.cx = context.pop();
 	context.es.byte(context.bx+6) = context.cl;
 nopath:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 object:
 	context.push(context.cx);
 	getsetad(context);
 	context.cx = context.pop();
 	context.es.byte(context.bx+58) = context.cl;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 freeobject:
 	context.push(context.cx);
 	getfreead(context);
@@ -14024,11 +14024,11 @@ freeobject:
 	if (!context.flags.z()) goto beenpickedup;
 	context.es.byte(context.bx+2) = context.cl;
 beenpickedup:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void autoappear(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 32);
 	if (!context.flags.z()) goto notinalley;
 	context.al = 5;
@@ -14036,7 +14036,7 @@ void autoappear(Context & context) {
 	context.al = 10;
 	setlocation(context);
 	context.data.byte(kDestpos) = 10;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notinalley:
 	context._cmp(context.data.byte(kReallocation), 24);
 	if (!context.flags.z()) goto notinedens;
@@ -14059,7 +14059,7 @@ notinalley:
 	removesetobject(context);
 	context.al = 85;
 	removesetobject(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 edenspart2:
 	context._cmp(context.data.byte(kSartaindead), 1);
 	if (!context.flags.z()) goto notedens2;
@@ -14071,7 +14071,7 @@ edenspart2:
 	placesetobject(context);
 	context._inc(context.data.byte(kSartaindead));
 notedens2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notinedens:
 	context._cmp(context.data.byte(kReallocation), 25);
 	if (!context.flags.z()) goto notonsartroof;
@@ -14081,7 +14081,7 @@ notinedens:
 	context.al = 11;
 	setlocation(context);
 	context.data.byte(kDestpos) = 11;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notonsartroof:
 	context._cmp(context.data.byte(kReallocation), 2);
 	if (!context.flags.z()) goto notinlouiss;
@@ -14090,11 +14090,11 @@ notonsartroof:
 	context.al = 23;
 	placesetobject(context);
 notinlouiss:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getundertimed(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kTimedy);
 	context.ah = 0;
 	context.bx = context.ax;
@@ -14106,11 +14106,11 @@ void getundertimed(Context & context) {
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiget(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void putundertimed(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kTimedy);
 	context.ah = 0;
 	context.bx = context.ax;
@@ -14122,11 +14122,11 @@ void putundertimed(Context & context) {
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiput(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumptimedtext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNeedtodumptimed), 1);
 	if (!context.flags.z()) goto nodumptimed;
 	context.al = context.data.byte(kTimedy);
@@ -14140,11 +14140,11 @@ void dumptimedtext(Context & context) {
 	multidump(context);
 	context.data.byte(kNeedtodumptimed) = 0;
 nodumptimed:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void setuptimeduse(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kTimecount), 0);
 	if (!context.flags.z()) goto cantsetup;
 	context.data.byte(kTimedy) = context.bh;
@@ -14163,11 +14163,11 @@ void setuptimeduse(Context & context) {
 	context.data.word(kTimedseg) = context.es;
 	context.data.word(kTimedoffset) = context.bx;
 cantsetup:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void setuptimedtemp(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.ah, 0);
 	if (context.flags.z()) goto notloadspeech3;
 	context.dl = 'T';
@@ -14179,7 +14179,7 @@ void setuptimedtemp(Context & context) {
 	if (!context.flags.z()) goto notloadspeech3;
 	context.al = 50+12;
 	playchannel1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notloadspeech3:
 	context._cmp(context.data.word(kTimecount), 0);
 	if (!context.flags.z()) goto cantsetup2;
@@ -14199,11 +14199,11 @@ notloadspeech3:
 	context.data.word(kTimedseg) = context.es;
 	context.data.word(kTimedoffset) = context.bx;
 cantsetup2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usetimedtext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kTimecount), 0);
 	if (context.flags.z()) goto notext;
 	context._dec(context.data.word(kTimecount));
@@ -14229,15 +14229,15 @@ notfirsttimed:
 	printdirect(context);
 	context.data.byte(kNeedtodumptimed) = 1;
 notext:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 deltimedtext:
 	putundertimed(context);
 	context.data.byte(kNeedtodumptimed) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void edenscdplayer(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.word(kWatchingtime) = 18*2;
 	context.data.word(kReeltowatch) = 25;
@@ -14245,11 +14245,11 @@ void edenscdplayer(Context & context) {
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usewall(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showfirstuse(context);
 	context._cmp(context.data.byte(kManspath), 3);
 	if (context.flags.z()) goto gobackover;
@@ -14276,7 +14276,7 @@ void usewall(Context & context) {
 	findxyfrompath(context);
 	context.data.byte(kResetmanxy) = 1;
 	switchryanoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gobackover:
 	context.data.word(kWatchingtime) = 30*2;
 	context.data.word(kReeltowatch) = 34;
@@ -14301,15 +14301,15 @@ gobackover:
 	findxyfrompath(context);
 	context.data.byte(kResetmanxy) = 1;
 	switchryanoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usechurchgate(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gatewith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gatewith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -14323,7 +14323,7 @@ gatewith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cutgate:
 	showfirstuse(context);
 	context.data.word(kWatchingtime) = 64*2;
@@ -14340,16 +14340,16 @@ cutgate:
 	context.al = 2;
 	turnpathon(context);
 notopenchurch:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usegun(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kObjecttype), 4);
 	if (context.flags.z()) goto istakengun;
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 istakengun:
 	context._cmp(context.data.byte(kReallocation), 22);
 	if (!context.flags.z()) goto notinpoolroom;
@@ -14360,7 +14360,7 @@ istakengun:
 	context.data.byte(kCombatcount) = 39;
 	context.data.byte(kGetback) = 1;
 	context._inc(context.data.byte(kProgresspoints));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notinpoolroom:
 	context._cmp(context.data.byte(kReallocation), 25);
 	if (!context.flags.z()) goto nothelicopter;
@@ -14374,7 +14374,7 @@ notinpoolroom:
 	context.data.byte(kRoomafterdream) = 38;
 	context.data.byte(kSartaindead) = 1;
 	context._inc(context.data.byte(kProgresspoints));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nothelicopter:
 	context._cmp(context.data.byte(kReallocation), 27);
 	if (!context.flags.z()) goto notinrockroom;
@@ -14389,7 +14389,7 @@ nothelicopter:
 	context.data.byte(kRoomafterdream) = 32;
 	context.data.byte(kDreamnumber) = 0;
 	context._inc(context.data.byte(kProgresspoints));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notinrockroom:
 	context._cmp(context.data.byte(kReallocation), 8);
 	if (!context.flags.z()) goto notbystudio;
@@ -14408,7 +14408,7 @@ notinrockroom:
 	context.data.byte(kLastweapon) = 1;
 	context.data.byte(kGetback) = 1;
 	context._inc(context.data.byte(kProgresspoints));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notbystudio:
 	context._cmp(context.data.byte(kReallocation), 6);
 	if (!context.flags.z()) goto notsarters;
@@ -14438,7 +14438,7 @@ notbystudio:
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
 	context._inc(context.data.byte(kProgresspoints));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notsarters:
 	context._cmp(context.data.byte(kReallocation), 29);
 	if (!context.flags.z()) goto notaide;
@@ -14460,7 +14460,7 @@ notsarters:
 	context.data.byte(kDreamnumber) = 3;
 	context.data.byte(kRoomafterdream) = 33;
 	context._inc(context.data.byte(kProgresspoints));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notaide:
 	context._cmp(context.data.byte(kReallocation), 23);
 	if (!context.flags.z()) goto notwithboss;
@@ -14476,7 +14476,7 @@ notaide:
 pathokboss:
 	context.data.byte(kLastweapon) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwithboss:
 	context._cmp(context.data.byte(kReallocation), 8);
 	if (!context.flags.z()) goto nottvsoldier;
@@ -14492,15 +14492,15 @@ notwithboss:
 pathoktv:
 	context.data.byte(kLastweapon) = 1;
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nottvsoldier:
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useshield(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 20);
 	if (!context.flags.z()) goto notinsartroom;
 	context._cmp(context.data.byte(kCombatcount), 0);
@@ -14510,15 +14510,15 @@ void useshield(Context & context) {
 	context.data.byte(kGetback) = 1;
 	context._inc(context.data.byte(kProgresspoints));
 	removeobfrominv(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notinsartroom:
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usebuttona(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 95;
 	issetobonmap(context);
 	if (context.flags.z()) goto donethisbit;
@@ -14538,19 +14538,19 @@ void usebuttona(Context & context) {
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
 	context._inc(context.data.byte(kProgresspoints));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 donethisbit:
 	showseconduse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void useplate(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto platewith;
 	withwhat(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 platewith:
 	context.al = context.data.byte(kWithobject);
 	context.ah = context.data.byte(kWithtype);
@@ -14572,7 +14572,7 @@ platewith:
 	context.al = 14;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 unscrewplate:
 	context.al = 20;
 	playchannel1(context);
@@ -14587,17 +14587,17 @@ unscrewplate:
 	placefreeobject(context);
 	context._inc(context.data.byte(kProgresspoints));
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 triedknife:
 	context.cx = 300;
 	context.al = 54;
 	showpuztext(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usewinch(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 40;
 	context.ah = 1;
 	checkinside(context);
@@ -14624,15 +14624,15 @@ void usewinch(Context & context) {
 	context.data.byte(kNewsitem) = 2;
 	context.data.byte(kGetback) = 1;
 	context._inc(context.data.byte(kProgresspoints));
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nowinch:
 	showfirstuse(context);
 	putbackobstuff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void entercode(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.word(kKeypadax) = context.ax;
 	context.data.word(kKeypadcx) = context.cx;
 	getridofreels(context);
@@ -14701,18 +14701,18 @@ numberright:
 	restorereels(context);
 	redrawmainscrn(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadkeypad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 1948;
 	loadintotemp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void quitkey(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 222);
 	if (context.flags.z()) goto alreadyqk;
 	context.data.byte(kCommandtype) = 222;
@@ -14725,14 +14725,14 @@ alreadyqk:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doqk;
 notqk:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doqk:
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void addtopresslist(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kPresspointer), 5);
 	if (context.flags.z()) goto nomorekeys;
 	context.al = context.data.byte(kPressed);
@@ -14747,88 +14747,88 @@ not10:
 	context.es.byte(context.bx) = context.al;
 	context._inc(context.data.word(kPresspointer));
 nomorekeys:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttonone(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 1;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttontwo(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 2;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttonthree(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 3;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttonfour(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 4;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttonfive(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 5;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttonsix(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 6;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttonseven(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 7;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttoneight(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 8;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttonnine(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 9;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttonnought(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 10;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttonenter(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = 11;
 	buttonpress(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void buttonpress(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ch = context.cl;
 	context._add(context.ch, 100);
 	context._cmp(context.data.byte(kCommandtype), context.ch);
@@ -14846,7 +14846,7 @@ alreadyb:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto dob;
 notb:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dob:
 	context.data.byte(kPressed) = context.cl;
 	context._add(context.cl, 21);
@@ -14857,11 +14857,11 @@ dob:
 	context.al = 10;
 	playchannel1(context);
 nonoise:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showouterpad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = (36+112)-3;
 	context.bx = (72)-4;
 	context.ds = context.data.word(kTempgraphics);
@@ -14874,11 +14874,11 @@ void showouterpad(Context & context) {
 	context.al = 37;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showkeypad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 22;
 	context.di = (36+112)+9;
 	context.bx = (72)+5;
@@ -14944,11 +14944,11 @@ gotlight:
 	context.di = (36+112)+60;
 	showframe(context);
 notenter:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void singlekey(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kGraphicpress), context.al);
 	if (!context.flags.z()) goto gotkey;
 	context._add(context.al, 11);
@@ -14960,21 +14960,21 @@ gotkey:
 	context._sub(context.al, 20);
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpkeypad(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = (36+112)-3;
 	context.bx = (72)-4;
 	context.cl = 120;
 	context.ch = 90;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usemenu(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getridofreels(context);
 	loadmenu(context);
 	createpanel(context);
@@ -15018,23 +15018,23 @@ menuloop:
 	getridoftemp2(context);
 	restorereels(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 menulist:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpmenu(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = (80+40);
 	context.bx = (60);
 	context.cl = 48;
 	context.ch = 48;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getundermenu(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = (80+40);
 	context.bx = (60);
 	context.cl = 48;
@@ -15042,11 +15042,11 @@ void getundermenu(Context & context) {
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiget(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void putundermenu(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = (80+40);
 	context.bx = (60);
 	context.cl = 48;
@@ -15054,11 +15054,11 @@ void putundermenu(Context & context) {
 	context.ds = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
 	multiput(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showoutermenu(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 40;
 	context.ah = 0;
 	context.di = (80+40)-34;
@@ -15083,11 +15083,11 @@ void showoutermenu(Context & context) {
 	context.bx = (60)+57-40;
 	context.ds = context.data.word(kTempgraphics);
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showmenu(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._inc(context.data.byte(kMenucount));
 	context._cmp(context.data.byte(kMenucount), 37*2);
 	if (!context.flags.z()) goto menuframeok;
@@ -15100,20 +15100,20 @@ menuframeok:
 	context.bx = (60);
 	context.ds = context.data.word(kTempgraphics);
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadmenu(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 1832;
 	loadintotemp(context);
 	context.dx = 1987;
 	loadintotemp2(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void viewfolder(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kManisoffscreen) = 1;
 	getridofall(context);
 	loadfolder(context);
@@ -15140,15 +15140,15 @@ folderloop:
 	restoreall(context);
 	redrawmainscrn(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void nextfolder(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kFolderpage), 12);
 	if (!context.flags.z()) goto cannextf;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cannextf:
 	context._cmp(context.data.byte(kCommandtype), 201);
 	if (context.flags.z()) goto alreadynextf;
@@ -15162,7 +15162,7 @@ alreadynextf:
 	context._cmp(context.ax, 1);
 	if (context.flags.z()) goto donextf;
 notnextf:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 donextf:
 	context._inc(context.data.byte(kFolderpage));
 	folderhints(context);
@@ -15172,11 +15172,11 @@ donextf:
 	context.bx = 3636;
 	checkcoords(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void folderhints(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kFolderpage), 5);
 	if (!context.flags.z()) goto notaideadd;
 	context._cmp(context.data.byte(kAidedead), 1);
@@ -15198,7 +15198,7 @@ void folderhints(Context & context) {
 	worktoscreenm(context);
 	context.cx = 200;
 	hangonp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notaideadd:
 	context._cmp(context.data.byte(kFolderpage), 9);
 	if (!context.flags.z()) goto notaristoadd;
@@ -15220,15 +15220,15 @@ notaideadd:
 	context.cx = 200;
 	hangonp(context);
 notaristoadd:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void lastfolder(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kFolderpage), 0);
 	if (!context.flags.z()) goto canlastf;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 canlastf:
 	context._cmp(context.data.byte(kCommandtype), 202);
 	if (context.flags.z()) goto alreadylastf;
@@ -15244,7 +15244,7 @@ alreadylastf:
 	context._cmp(context.ax, 1);
 	if (context.flags.z()) goto dolastf;
 notlastf:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dolastf:
 	context._dec(context.data.byte(kFolderpage));
 	delpointer(context);
@@ -15253,11 +15253,11 @@ dolastf:
 	context.bx = 3636;
 	checkcoords(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadfolder(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 2299;
 	loadintotemp(context);
 	context.dx = 2312;
@@ -15268,11 +15268,11 @@ void loadfolder(Context & context) {
 	loadtempcharset(context);
 	context.dx = 2195;
 	loadtemptext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showfolder(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kCommandtype) = 255;
 	context._cmp(context.data.byte(kFolderpage), 0);
 	if (context.flags.z()) goto closedfolder;
@@ -15313,7 +15313,7 @@ noleftpage:
 norightpage:
 	usecharset1(context);
 	undertextline(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 closedfolder:
 	createpanel2(context);
 	context.ds = context.data.word(kTempgraphics3);
@@ -15330,22 +15330,22 @@ closedfolder:
 	showframe(context);
 	folderexit(context);
 	undertextline(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void folderexit(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics2);
 	context.di = 296;
 	context.bx = 178;
 	context.al = 6;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showleftpage(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics2);
 	context.di = 0;
 	context.bx = 12;
@@ -15423,11 +15423,11 @@ flipfolderline:
 	context._add(context.si, 320);
 	context._add(context.di, 320);
 	if (--context.cx) goto flipfolder;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showrightpage(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics2);
 	context.di = 143;
 	context.bx = 12;
@@ -15478,11 +15478,11 @@ contrightpage:
 	if (--context.cx) goto twolotsright;
 	context.data.byte(kKerning) = 0;
 	context.data.word(kLinespacing) = 10;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void entersymbol(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kManisoffscreen) = 1;
 	getridofreels(context);
 	context.dx = 2338;
@@ -15530,7 +15530,7 @@ symbolloop:
 	worktoscreenm(context);
 	context.al = 13;
 	playchannel1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 symbolwrong:
 	context.al = 46;
 	removesetobject(context);
@@ -15545,11 +15545,11 @@ symbolwrong:
 	getridoftemp(context);
 	restorereels(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void quitsymbol(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymboltopx), 24);
 	if (!context.flags.z()) { blank(context); return; };
 	context._cmp(context.data.byte(kSymbolbotx), 24);
@@ -15566,14 +15566,14 @@ alreadyqs:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto doqs;
 notqs:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doqs:
 	context.data.byte(kGetback) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void settopleft(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymboltopdir), 0);
 	if (!context.flags.z()) { blank(context); return; };
 	context._cmp(context.data.byte(kCommandtype), 210);
@@ -15586,11 +15586,11 @@ alreadytopl:
 	if (context.flags.z()) goto notopleft;
 	context.data.byte(kSymboltopdir) = -1;
 notopleft:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void settopright(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymboltopdir), 0);
 	if (!context.flags.z()) { blank(context); return; };
 	context._cmp(context.data.byte(kCommandtype), 211);
@@ -15603,11 +15603,11 @@ alreadytopr:
 	if (context.flags.z()) goto notopright;
 	context.data.byte(kSymboltopdir) = 1;
 notopright:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void setbotleft(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymbolbotdir), 0);
 	if (!context.flags.z()) { blank(context); return; };
 	context._cmp(context.data.byte(kCommandtype), 212);
@@ -15620,11 +15620,11 @@ alreadybotl:
 	if (context.flags.z()) goto nobotleft;
 	context.data.byte(kSymbolbotdir) = -1;
 nobotleft:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void setbotright(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymbolbotdir), 0);
 	if (!context.flags.z()) { blank(context); return; };
 	context._cmp(context.data.byte(kCommandtype), 213);
@@ -15637,22 +15637,22 @@ alreadybotr:
 	if (context.flags.z()) goto nobotright;
 	context.data.byte(kSymbolbotdir) = 1;
 nobotright:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpsymbol(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kNewtextline) = 0;
 	context.di = (64);
 	context.bx = (56)+20;
 	context.cl = 104;
 	context.ch = 60;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showsymbol(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 12;
 	context.ah = 0;
 	context.di = (64);
@@ -15722,27 +15722,27 @@ void showsymbol(Context & context) {
 	nextsymbol(context);
 	context._add(context.di, 49);
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void nextsymbol(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._inc(context.al);
 	context._cmp(context.al, 6);
 	if (context.flags.z()) goto topwrap;
 	context._cmp(context.al, 12);
 	if (context.flags.z()) goto botwrap;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 topwrap:
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 botwrap:
 	context.al = 6;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void updatesymboltop(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymboltopdir), 0);
 	if (context.flags.z()) goto topfinished;
 	context._cmp(context.data.byte(kSymboltopdir), -1);
@@ -15755,12 +15755,12 @@ void updatesymboltop(Context & context) {
 	context._cmp(context.data.byte(kSymboltopnum), -1);
 	if (!context.flags.z()) goto topfinished;
 	context.data.byte(kSymboltopnum) = 5;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwrapfor:
 	context._cmp(context.data.byte(kSymboltopx), 24);
 	if (!context.flags.z()) goto topfinished;
 	context.data.byte(kSymboltopdir) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 backwards:
 	context._dec(context.data.byte(kSymboltopx));
 	context._cmp(context.data.byte(kSymboltopx), -1);
@@ -15770,17 +15770,17 @@ backwards:
 	context._cmp(context.data.byte(kSymboltopnum), 6);
 	if (!context.flags.z()) goto topfinished;
 	context.data.byte(kSymboltopnum) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwrapback:
 	context._cmp(context.data.byte(kSymboltopx), 24);
 	if (!context.flags.z()) goto topfinished;
 	context.data.byte(kSymboltopdir) = 0;
 topfinished:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void updatesymbolbot(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymbolbotdir), 0);
 	if (context.flags.z()) goto botfinished;
 	context._cmp(context.data.byte(kSymbolbotdir), -1);
@@ -15793,12 +15793,12 @@ void updatesymbolbot(Context & context) {
 	context._cmp(context.data.byte(kSymbolbotnum), -1);
 	if (!context.flags.z()) goto botfinished;
 	context.data.byte(kSymbolbotnum) = 5;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwrapforb:
 	context._cmp(context.data.byte(kSymbolbotx), 24);
 	if (!context.flags.z()) goto botfinished;
 	context.data.byte(kSymbolbotdir) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 backwardsbot:
 	context._dec(context.data.byte(kSymbolbotx));
 	context._cmp(context.data.byte(kSymbolbotx), -1);
@@ -15808,17 +15808,17 @@ backwardsbot:
 	context._cmp(context.data.byte(kSymbolbotnum), 6);
 	if (!context.flags.z()) goto botfinished;
 	context.data.byte(kSymbolbotnum) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwrapbackb:
 	context._cmp(context.data.byte(kSymbolbotx), 24);
 	if (!context.flags.z()) goto botfinished;
 	context.data.byte(kSymbolbotdir) = 0;
 botfinished:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpsymbox(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kDumpx), -1);
 	if (context.flags.z()) goto nodumpsym;
 	context.di = context.data.word(kDumpx);
@@ -15828,11 +15828,11 @@ void dumpsymbox(Context & context) {
 	multidump(context);
 	context.data.word(kDumpx) = -1;
 nodumpsym:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usediary(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getridofreels(context);
 	context.dx = 2039;
 	loadintotemp(context);
@@ -15870,13 +15870,13 @@ diaryloop:
 	context.data.byte(kManisoffscreen) = 0;
 	redrawmainscrn(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 diarylist:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showdiary(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 1;
 	context.ah = 0;
 	context.di = (68+24);
@@ -15889,11 +15889,11 @@ void showdiary(Context & context) {
 	context.bx = (48+12)+108;
 	context.ds = context.data.word(kTempgraphics);
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showdiarykeys(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPresscount), 0);
 	if (context.flags.z()) goto nokeyatall;
 	context._dec(context.data.byte(kPresscount));
@@ -15915,7 +15915,7 @@ gotkeyn:
 	if (!context.flags.z()) goto notshown;
 	showdiarypage(context);
 notshown:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nokeyn:
 	context.al = 5;
 	context._cmp(context.data.byte(kPresscount), 1);
@@ -15931,13 +15931,13 @@ gotkeyp:
 	if (!context.flags.z()) goto notshowp;
 	showdiarypage(context);
 notshowp:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nokeyatall:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpdiarykeys(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPresscount), 1);
 	if (!context.flags.z()) goto notdumpdiary;
 	context._cmp(context.data.byte(kSartaindead), 1);
@@ -15969,7 +15969,7 @@ void dumpdiarykeys(Context & context) {
 	showdiarypage(context);
 	worktoscreenm(context);
 	showpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notsartadd:
 	context.di = (68+24)+48;
 	context.bx = (48+12)+15;
@@ -15987,11 +15987,11 @@ notdumpdiary:
 	context.cl = 16;
 	context.ch = 16;
 	multidump(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void diarykeyp(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 214);
 	if (context.flags.z()) goto alreadykeyp;
 	context.data.byte(kCommandtype) = 214;
@@ -16014,11 +16014,11 @@ alreadykeyp:
 	if (!context.flags.z()) goto notkeyp;
 	context.data.byte(kDiarypage) = 11;
 notkeyp:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void diarykeyn(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 213);
 	if (context.flags.z()) goto alreadykeyn;
 	context.data.byte(kCommandtype) = 213;
@@ -16041,11 +16041,11 @@ alreadykeyn:
 	if (!context.flags.z()) goto notkeyn;
 	context.data.byte(kDiarypage) = 0;
 notkeyn:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showdiarypage(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = 0;
 	context.ah = 0;
 	context.di = (68+24);
@@ -16075,11 +16075,11 @@ void showdiarypage(Context & context) {
 	context.data.byte(kKerning) = 0;
 	context.data.word(kCharshift) = 0;
 	usecharset1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findtext1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 0;
 	context.si = context.ax;
 	context._add(context.si, context.si);
@@ -16087,11 +16087,11 @@ void findtext1(Context & context) {
 	context.ax = context.es.word(context.si);
 	context._add(context.ax, (66*2));
 	context.si = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void zoomonoff(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) { blank(context); return; };
 	context._cmp(context.data.byte(kPointermode), 2);
@@ -16108,7 +16108,7 @@ alreadyonoff:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto dozoomonoff;
 nozoomonoff:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dozoomonoff:
 	context.al = context.data.byte(kZoomon);
 	context._xor(context.al, 1);
@@ -16125,11 +16125,11 @@ dozoomonoff:
 	commandonly(context);
 	readmouse(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void saveload(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) { blank(context); return; };
 	context._cmp(context.data.byte(kPointermode), 2);
@@ -16147,11 +16147,11 @@ alreadyops:
 	if (context.flags.z()) goto noops;
 	dosaveload(context);
 noops:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dosaveload(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kPointerframe) = 0;
 	context.data.word(kTextaddressx) = 70;
 	context.data.word(kTextaddressy) = 182-8;
@@ -16197,22 +16197,22 @@ waitops:
 	context.data.byte(kCommandtype) = 200;
 justret:
 	context.data.byte(kManisoffscreen) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getbackfromops(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kMandead), 2);
 	if (context.flags.z()) goto opsblock1;
 	getback1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 opsblock1:
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showmainops(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = (60)+10;
 	context.bx = (52)+10;
@@ -16231,11 +16231,11 @@ void showmainops(Context & context) {
 	context.al = 1;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showdiscops(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = (60)+128+4;
 	context.bx = (52)+12;
@@ -16260,18 +16260,18 @@ void showdiscops(Context & context) {
 	context.al = 5;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadsavebox(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 1961;
 	loadintotemp(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadgame(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 246);
 	if (context.flags.z()) goto alreadyload;
 	context.data.byte(kCommandtype) = 246;
@@ -16284,7 +16284,7 @@ alreadyload:
 	context._cmp(context.ax, 1);
 	if (context.flags.z()) goto doload;
 noload:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 doload:
 	context.data.byte(kLoadingorsave) = 1;
 	showopbox(context);
@@ -16327,11 +16327,11 @@ loadops:
 	worktoscreen(context);
 	context.data.byte(kGetback) = 4;
 quitloaded:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getbacktoops(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 201);
 	if (context.flags.z()) goto alreadygetops;
 	context.data.byte(kCommandtype) = 201;
@@ -16344,15 +16344,15 @@ alreadygetops:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto dogetbackops;
 nogetbackops:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dogetbackops:
 	oldtonames(context);
 	context.data.byte(kGetback) = 2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void discops(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 249);
 	if (context.flags.z()) goto alreadydiscops;
 	context.data.byte(kCommandtype) = 249;
@@ -16365,7 +16365,7 @@ alreadydiscops:
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto dodiscops;
 nodiscops:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dodiscops:
 	scanfornames(context);
 	context.data.byte(kLoadingorsave) = 2;
@@ -16385,15 +16385,15 @@ discopsloop:
 	checkcoords(context);
 	context._cmp(context.data.byte(kGetback), 0);
 	if (context.flags.z()) goto discopsloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void savegame(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kMandead), 2);
 	if (!context.flags.z()) goto cansaveok;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cansaveok:
 	context._cmp(context.data.byte(kCommandtype), 247);
 	if (context.flags.z()) goto alreadysave;
@@ -16404,7 +16404,7 @@ alreadysave:
 	context.ax = context.data.word(kMousebutton);
 	context._and(context.ax, 1);
 	if (!context.flags.z()) goto dosave;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 dosave:
 	context.data.byte(kLoadingorsave) = 2;
 	showopbox(context);
@@ -16429,11 +16429,11 @@ saveops:
 	checkcoords(context);
 	context._cmp(context.data.byte(kGetback), 0);
 	if (context.flags.z()) goto saveops;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void actualsave(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 222);
 	if (context.flags.z()) goto alreadyactsave;
 	context.data.byte(kCommandtype) = 222;
@@ -16490,11 +16490,11 @@ alreadyactsave:
 	worktoscreenm(context);
 	context.data.byte(kGetback) = 4;
 noactsave:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void actualload(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 221);
 	if (context.flags.z()) goto alreadyactload;
 	context.data.byte(kCommandtype) = 221;
@@ -16520,21 +16520,21 @@ alreadyactload:
 	loadposition(context);
 	context.data.byte(kGetback) = 1;
 notactload:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void selectslot2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kMousebutton), 0);
 	if (context.flags.z()) goto noselslot2;
 	context.data.byte(kLoadingorsave) = 2;
 noselslot2:
 	selectslot(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkinput(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLoadingorsave), 3);
 	if (context.flags.z()) goto nokeypress;
 	readkey(context);
@@ -16567,18 +16567,18 @@ spacepress:
 	context.es.byte(context.bx+3) = 1;
 	goto afterkey;
 nokeypress:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 afterkey:
 	showopbox(context);
 	shownames(context);
 	showslots(context);
 	showsaveops(context);
 	worktoscreenm(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getnamepos(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kCurrentslot);
 	context.ah = 0;
 	context.cx = 17;
@@ -16590,11 +16590,11 @@ void getnamepos(Context & context) {
 	context.al = context.data.byte(kCursorpos);
 	context.ah = 0;
 	context._add(context.bx, context.ax);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showopbox(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = (60);
 	context.bx = (52);
@@ -16607,11 +16607,11 @@ void showopbox(Context & context) {
 	context.al = 4;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showloadops(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = (60)+128+4;
 	context.bx = (52)+12;
@@ -16629,11 +16629,11 @@ void showloadops(Context & context) {
 	context.al = 55;
 	context.dl = 101;
 	printmessage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showsaveops(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = (60)+128+4;
 	context.bx = (52)+12;
@@ -16651,11 +16651,11 @@ void showsaveops(Context & context) {
 	context.al = 54;
 	context.dl = 101;
 	printmessage(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void selectslot(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 244);
 	if (context.flags.z()) goto alreadysel;
 	context.data.byte(kCommandtype) = 244;
@@ -16691,20 +16691,20 @@ getslotnum:
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isloadmode:
 	showloadops(context);
 	readmouse(context);
 	showpointer(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 noselslot:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showslots(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = (60)+7;
 	context.bx = (52)+8;
 	context.al = 2;
@@ -16732,11 +16732,11 @@ nomatchslot:
 	context._inc(context.cl);
 	context._cmp(context.cl, 7);
 	if (!context.flags.z()) goto slotloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void shownames(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = context.data;
 	context.es = context.dx;
 	context.si = 8579+1;
@@ -16799,33 +16799,33 @@ afterprintname:
 	context._inc(context.cl);
 	context._cmp(context.cl, 7);
 	if (!context.flags.z()) goto shownameloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void namestoold(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.cs;
 	context.si = 8579;
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	context.es = context.data.word(kBuffers);
 	context.cx = 17*4;
 	while(context.cx--) 	context._movsb();
- 	{assert(stack_depth == context.stack.size()); return; }
+ 	return;
 }
 
 void oldtonames(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.cs;
 	context.di = 8579;
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	context.ds = context.data.word(kBuffers);
 	context.cx = 17*4;
 	while(context.cx--) 	context._movsb();
- 	{assert(stack_depth == context.stack.size()); return; }
+ 	return;
 }
 
 void saveposition(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	makeheader(context);
 	context.al = context.data.byte(kCurrentslot);
 	context.ah = 0;
@@ -16873,11 +16873,11 @@ void saveposition(Context & context) {
 	saveseg(context);
 fquit:
 	closefile(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadposition(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.word(kTimecount) = 0;
 	clearchanges(context);
 	context.al = context.data.byte(kCurrentslot);
@@ -16922,11 +16922,11 @@ void loadposition(Context & context) {
 	context.dx = 534;
 	loadseg(context);
 	closefile(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void makeheader(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = context.data;
 	context.es = context.dx;
 	context.di = 6141;
@@ -16942,21 +16942,21 @@ void makeheader(Context & context) {
 	storeit(context);
 	context.ax = (991-534);
 	storeit(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void storeit(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.ax, 0);
 	if (!context.flags.z()) goto isntblank;
 	context._inc(context.ax);
 isntblank:
 	context._stosw();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findlen(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._dec(context.bx);
 	context._add(context.bx, context.ax);
 nextone:
@@ -16967,11 +16967,11 @@ nextone:
 	context._cmp(context.ax, 0);
 	if (!context.flags.z()) goto nextone;
 foundlen:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void scanfornames(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = context.data;
 	context.es = context.dx;
 	context.di = 8579;
@@ -17016,11 +17016,11 @@ notexist:
 	context._dec(context.cl);
 	if (!context.flags.z()) goto scanloop;
 	context.al = context.ch;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void decide(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	setmode(context);
 	loadpalfromiff(context);
 	clearpalette(context);
@@ -17054,11 +17054,11 @@ hasloadedroom:
 	context.data.word(kTextaddressx) = 13;
 	context.data.word(kTextaddressy) = 182;
 	context.data.byte(kTextlen) = 240;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showdecisions(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	createpanel2(context);
 	showopbox(context);
 	context.ds = context.data.word(kTempgraphics);
@@ -17068,11 +17068,11 @@ void showdecisions(Context & context) {
 	context.ah = 0;
 	showframe(context);
 	undertextline(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void newgame(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 251);
 	if (context.flags.z()) goto alreadynewgame;
 	context.data.byte(kCommandtype) = 251;
@@ -17084,11 +17084,11 @@ alreadynewgame:
 	if (!context.flags.z()) goto nonewgame;
 	context.data.byte(kGetback) = 3;
 nonewgame:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void doload(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kLoadingorsave) = 1;
 	showopbox(context);
 	showloadops(context);
@@ -17130,11 +17130,11 @@ loadops:
 	worktoscreen(context);
 	context.data.byte(kGetback) = 4;
 quitloaded:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadold(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 252);
 	if (context.flags.z()) goto alreadyloadold;
 	context.data.byte(kCommandtype) = 252;
@@ -17151,11 +17151,11 @@ alreadyloadold:
 	worktoscreenm(context);
 	context.data.byte(kGetback) = 0;
 noloadold:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void createname(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.di = 5105;
 	context.cs.byte(context.di+0) = context.dl;
@@ -17193,11 +17193,11 @@ tensc:
 	context.cs.byte(context.di+6) = context.cl;
 	context._add(context.al, '0');
 	context.cs.byte(context.di+7) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void trysoundalloc(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNeedsoundbuff), 1);
 	if (context.flags.z()) goto gotsoundbuff;
 	context._inc(context.data.byte(kSoundtimes));
@@ -17221,16 +17221,16 @@ void trysoundalloc(Context & context) {
 	context.ax = 0x7f7f;
 	while(context.cx--) 	context._stosw();
 	context.data.byte(kNeedsoundbuff) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 soundfail:
 	context.es = context.data.word(kSoundbuffer);
 	deallocatemem(context);
 gotsoundbuff:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void playchannel0(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSoundint), 255);
 	if (context.flags.z()) goto dontbother4;
 	context.push(context.es);
@@ -17275,11 +17275,11 @@ nosetloop:
 	context.ds = context.pop();
 	context.es = context.pop();
 dontbother4:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void playchannel1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSoundint), 255);
 	if (context.flags.z()) goto dontbother5;
 	context._cmp(context.data.byte(kCh1playing), 7);
@@ -17316,11 +17316,11 @@ notsecondbank1:
 	context.ds = context.pop();
 	context.es = context.pop();
 dontbother5:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void makenextblock(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	volumeadjust(context);
 	loopchannel0(context);
 	context._cmp(context.data.word(kCh1blockstocopy), 0);
@@ -17330,7 +17330,7 @@ void makenextblock(Context & context) {
 	context._dec(context.data.word(kCh0blockstocopy));
 	context._dec(context.data.word(kCh1blockstocopy));
 	bothchannels(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 mightbeonlych1:
 	context.data.byte(kCh0playing) = 255;
 	context._cmp(context.data.word(kCh1blockstocopy), 0);
@@ -17338,14 +17338,14 @@ mightbeonlych1:
 	context._dec(context.data.word(kCh1blockstocopy));
 	channel1only(context);
 notch1only:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 mightbeonlych0:
 	context.data.byte(kCh1playing) = 255;
 	context._cmp(context.data.word(kCh0blockstocopy), 0);
 	if (context.flags.z()) goto notch0only;
 	context._dec(context.data.word(kCh0blockstocopy));
 	channel0only(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notch0only:
 	context.es = context.data.word(kSoundbuffer);
 	context.di = context.data.word(kSoundbufferwrite);
@@ -17354,11 +17354,11 @@ notch0only:
 	while(context.cx--) 	context._stosw();
 	context._and(context.di, 16384-1);
 	context.data.word(kSoundbufferwrite) = context.di;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void volumeadjust(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kVolumedirection);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto volok;
@@ -17370,15 +17370,15 @@ void volumeadjust(Context & context) {
 	context.al = context.data.byte(kVolume);
 	context._add(context.al, context.data.byte(kVolumedirection));
 	context.data.byte(kVolume) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 volfinish:
 	context.data.byte(kVolumedirection) = 0;
 volok:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loopchannel0(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kCh0blockstocopy), 0);
 	if (!context.flags.z()) goto notloop;
 	context._cmp(context.data.byte(kCh0repeat), 0);
@@ -17394,33 +17394,33 @@ endlessloop:
 	context.ax = context.data.word(kCh0blockstocopy);
 	context._add(context.ax, context.data.word(kCh0oldblockstocopy));
 	context.data.word(kCh0blockstocopy) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notloop:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void cancelch0(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kCh0repeat) = 0;
 	context.data.word(kCh0blockstocopy) = 0;
 	context.data.byte(kCh0playing) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void cancelch1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.word(kCh1blockstocopy) = 0;
 	context.data.byte(kCh1playing) = 255;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void channel0tran(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kVolume), 0);
 	if (!context.flags.z()) goto lowvolumetran;
 	context.cx = 1024;
 	while(context.cx--) 	context._movsw();
- 	{assert(stack_depth == context.stack.size()); return; }
+ 	return;
 lowvolumetran:
 	context.cx = 1024;
 	context.bh = context.data.byte(kVolume);
@@ -17434,11 +17434,11 @@ volloop:
 	context.ah = context.es.byte(context.bx);
 	context._stosw();
 	if (--context.cx) goto volloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void domix(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kVolume), 0);
 	if (!context.flags.z()) goto lowvolumemix;
 slow:
@@ -17527,11 +17527,11 @@ nodistortv:
 	context._stosb();
 	if (--context.cx) goto lowvolumemix;
 doneit:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void entrytexts(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 21);
 	if (!context.flags.z()) goto notloc15;
 	context.al = 28;
@@ -17540,7 +17540,7 @@ void entrytexts(Context & context) {
 	context.bl = 68;
 	context.bh = 64;
 	setuptimeduse(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notloc15:
 	context._cmp(context.data.byte(kLocation), 30);
 	if (!context.flags.z()) goto notloc43;
@@ -17550,7 +17550,7 @@ notloc15:
 	context.bl = 68;
 	context.bh = 64;
 	setuptimeduse(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notloc43:
 	context._cmp(context.data.byte(kLocation), 23);
 	if (!context.flags.z()) goto notloc23;
@@ -17560,7 +17560,7 @@ notloc43:
 	context.bl = 68;
 	context.bh = 64;
 	setuptimeduse(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notloc23:
 	context._cmp(context.data.byte(kLocation), 31);
 	if (!context.flags.z()) goto notloc44;
@@ -17570,7 +17570,7 @@ notloc23:
 	context.bl = 68;
 	context.bh = 64;
 	setuptimeduse(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notloc44:
 	context._cmp(context.data.byte(kLocation), 20);
 	if (!context.flags.z()) goto notsarters2;
@@ -17580,7 +17580,7 @@ notloc44:
 	context.bl = 68;
 	context.bh = 64;
 	setuptimeduse(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notsarters2:
 	context._cmp(context.data.byte(kLocation), 24);
 	if (!context.flags.z()) goto notedenlob;
@@ -17590,7 +17590,7 @@ notsarters2:
 	context.bl = 68;
 	context.bh = 64;
 	setuptimeduse(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notedenlob:
 	context._cmp(context.data.byte(kLocation), 34);
 	if (!context.flags.z()) goto noteden2;
@@ -17600,13 +17600,13 @@ notedenlob:
 	context.bl = 68;
 	context.bh = 64;
 	setuptimeduse(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 noteden2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void entryanims(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.word(kReeltowatch) = -1;
 	context.data.byte(kWatchmode) = -1;
 	context._cmp(context.data.byte(kLocation), 33);
@@ -17617,7 +17617,7 @@ void entryanims(Context & context) {
 	context.data.word(kEndwatchreel) = 76;
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notinthebeach:
 	context._cmp(context.data.byte(kLocation), 44);
 	if (!context.flags.z()) goto notsparkys;
@@ -17629,7 +17629,7 @@ notinthebeach:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	switchryanoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notsparkys:
 	context._cmp(context.data.byte(kLocation), 22);
 	if (!context.flags.z()) goto notinthelift;
@@ -17639,13 +17639,13 @@ notsparkys:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	switchryanoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notinthelift:
 	context._cmp(context.data.byte(kLocation), 26);
 	if (!context.flags.z()) goto notunderchurch;
 	context.data.byte(kSymboltopnum) = 2;
 	context.data.byte(kSymbolbotnum) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notunderchurch:
 	context._cmp(context.data.byte(kLocation), 45);
 	if (!context.flags.z()) goto notenterdream;
@@ -17656,7 +17656,7 @@ notunderchurch:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	switchryanoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notenterdream:
 	context._cmp(context.data.byte(kReallocation), 46);
 	if (!context.flags.z()) goto notcrystal;
@@ -17664,7 +17664,7 @@ notenterdream:
 	if (!context.flags.z()) goto notcrystal;
 	context.al = 0;
 	removefreeobject(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notcrystal:
 	context._cmp(context.data.byte(kLocation), 9);
 	if (!context.flags.z()) goto nottopchurch;
@@ -17683,7 +17683,7 @@ makedoorsopen:
 	removesetobject(context);
 	context.al = 5;
 	placesetobject(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nottopchurch:
 	context._cmp(context.data.byte(kLocation), 47);
 	if (!context.flags.z()) goto notdreamcentre;
@@ -17691,7 +17691,7 @@ nottopchurch:
 	placesetobject(context);
 	context.al = 5;
 	placesetobject(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notdreamcentre:
 	context._cmp(context.data.byte(kLocation), 38);
 	if (!context.flags.z()) goto notcarpark;
@@ -17701,7 +17701,7 @@ notdreamcentre:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	switchryanoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notcarpark:
 	context._cmp(context.data.byte(kLocation), 32);
 	if (!context.flags.z()) goto notalley;
@@ -17711,7 +17711,7 @@ notcarpark:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	switchryanoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notalley:
 	context._cmp(context.data.byte(kLocation), 24);
 	if (!context.flags.z()) goto notedensagain;
@@ -17720,14 +17720,14 @@ notalley:
 	context._dec(context.ah);
 	turnanypathon(context);
 notedensagain:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void initialinv(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 24);
 	if (context.flags.z()) goto isedens;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isedens:
 	context.al = 11;
 	context.ah = 5;
@@ -17760,38 +17760,38 @@ isedens:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	switchryanoff(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void pickupob(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kLastinvpos) = context.ah;
 	context.data.byte(kObjecttype) = 2;
 	context.data.byte(kItemframe) = context.al;
 	context.data.byte(kCommand) = context.al;
 	getanyad(context);
 	transfertoex(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkforemm(Context & context) {
-	uint stack_depth = context.stack.size();
-	{assert(stack_depth == context.stack.size()); return; }
+	STACK_CHECK(context);
+	return;
 }
 
 void checkbasemem(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bx = context.data.word(kHowmuchalloc);
 	context._cmp(context.bx, 0x9360);
 	if (!context.flags.c()) goto enoughmem;
 	context.data.byte(kGameerror) = 5;
 	{ quickquit(context); return; };
 enoughmem:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void allocatebuffers(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/16;
 	allocatemem(context);
 	context.data.word(kExtras) = context.ax;
@@ -17822,11 +17822,11 @@ void allocatebuffers(Context & context) {
 	context.bx = 2048/16;
 	allocatemem(context);
 	context.data.word(kSounddata2) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void clearbuffers(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.cx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534+68-0)/2;
 	context.ax = 0;
@@ -17850,11 +17850,11 @@ void clearbuffers(Context & context) {
 	context.cx = (68-0);
 	while(context.cx--) 	context._movsb();
  	clearchanges(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void clearchanges(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.cx = (250)*2;
 	context.ax = 0x0ffff;
@@ -17892,33 +17892,33 @@ void clearchanges(Context & context) {
 	context.ax = 0;
 	context.cx = 6;
 	while(context.cx--) 	context._stosw();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void clearbeforeload(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRoomloaded), 1);
 	if (!context.flags.z()) goto noclear;
 	clearreels(context);
 	clearrest(context);
 	context.data.byte(kRoomloaded) = 0;
 noclear:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void clearreels(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kReel1);
 	deallocatemem(context);
 	context.es = context.data.word(kReel2);
 	deallocatemem(context);
 	context.es = context.data.word(kReel3);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void clearrest(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kMapdata);
 	context.cx = (66*60)/2;
 	context.ax = 0;
@@ -17942,11 +17942,11 @@ void clearrest(Context & context) {
 	deallocatemem(context);
 	context.es = context.data.word(kFreedesc);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void parseblaster(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 lookattail:
 	context.al = context.es.byte(context.bx);
 	context._cmp(context.al, 0);
@@ -17975,7 +17975,7 @@ lookattail:
 	if (context.flags.z()) goto isdma;
 	context._inc(context.bx);
 	if (--context.cx) goto lookattail;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 issoundint:
 	context.al = context.es.byte(context.bx+1);
 	context._sub(context.al, '0');
@@ -18009,11 +18009,11 @@ isnosound:
 	context._inc(context.bx);
 	goto lookattail;
 endtail:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void startup(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kCurrentkey) = 0;
 	context.data.byte(kMainmode) = 0;
 	createpanel(context);
@@ -18026,11 +18026,11 @@ void startup(Context & context) {
 	undertextline(context);
 	reelsonscreen(context);
 	atmospheres(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void startup1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	clearpalette(context);
 	context.data.byte(kThroughdoor) = 0;
 	context.data.byte(kCurrentkey) = '0';
@@ -18047,11 +18047,11 @@ void startup1(Context & context) {
 	atmospheres(context);
 	worktoscreen(context);
 	fadescreenup(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void screenupdate(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	newplace(context);
 	mainscreen(context);
 	animpointer(context);
@@ -18096,11 +18096,11 @@ iswatchingmode:
 	dumpwatch(context);
 	delpointer(context);
 finishearly:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void watchreel(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kReeltowatch), -1);
 	if (context.flags.z()) goto notplayingreel;
 	context.al = context.data.byte(kManspath);
@@ -18110,7 +18110,7 @@ void watchreel(Context & context) {
 	context._cmp(context.al, context.data.byte(kFacing));
 	if (context.flags.z()) goto notwatchpath;
 waitstopwalk:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwatchpath:
 	context._dec(context.data.byte(kSpeedcount));
 	context._cmp(context.data.byte(kSpeedcount), -1);
@@ -18138,14 +18138,14 @@ showwatchreel:
 	context.data.word(kReeltowatch) = context.ax;
 	checkforshake(context);
 nomorereel:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notplayingreel:
 	context._cmp(context.data.byte(kWatchmode), 1);
 	if (!context.flags.z()) goto notholdingreel;
 	context.ax = context.data.word(kReeltohold);
 	context.data.word(kReelpointer) = context.ax;
 	plotreel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notholdingreel:
 	context._cmp(context.data.byte(kWatchmode), 2);
 	if (!context.flags.z()) goto notreleasehold;
@@ -18165,29 +18165,29 @@ notlastspeed2:
 	context.data.byte(kDestination) = context.al;
 	context.data.byte(kFinaldest) = context.al;
 	autosetwalk(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 ismorereel2:
 	context.ax = context.data.word(kReeltohold);
 	context.data.word(kReelpointer) = context.ax;
 	plotreel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notreleasehold:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkforshake(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 26);
 	if (!context.flags.z()) goto notstartshake;
 	context._cmp(context.ax, 104);
 	if (!context.flags.z()) goto notstartshake;
 	context.data.byte(kShakecounter) = -1;
 notstartshake:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void watchcount(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchon), 0);
 	if (context.flags.z()) goto nowatchworn;
 	context._inc(context.data.byte(kTimercount));
@@ -18196,7 +18196,7 @@ void watchcount(Context & context) {
 	context._cmp(context.data.byte(kTimercount), 18);
 	if (context.flags.z()) goto uptime;
 nowatchworn:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 flashdots:
 	context.ax = 91*3+21;
 	context.di = 268+4;
@@ -18222,11 +18222,11 @@ finishtime:
 	showtime(context);
 finishwatch:
 	context.data.byte(kWatchdump) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showtime(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchon), 0);
 	if (context.flags.z()) goto nowatch;
 	context.al = context.data.byte(kSecondcount);
@@ -18289,11 +18289,11 @@ void showtime(Context & context) {
 	context.bx = 21;
 	showframe(context);
 nowatch:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpwatch(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchdump), 1);
 	if (!context.flags.z()) goto nodumpwatch;
 	context.di = 256;
@@ -18303,11 +18303,11 @@ void dumpwatch(Context & context) {
 	multidump(context);
 	context.data.byte(kWatchdump) = 0;
 nodumpwatch:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showbyte(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dl = context.al;
 	context._shr(context.dl, 1);
 	context._shr(context.dl, 1);
@@ -18320,23 +18320,23 @@ void showbyte(Context & context) {
 	onedigit(context);
 	context.es.byte(context.di+1) = context.dl;
 	context._add(context.di, 3);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void onedigit(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.dl, 10);
 	if (!context.flags.c()) goto morethan10;
 	context._add(context.dl, '0');
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 morethan10:
 	context._sub(context.dl, 10);
 	context._add(context.dl, 'A');
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void twodigitnum(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = context.cl;
 	context._dec(context.ah);
 numloop1:
@@ -18345,11 +18345,11 @@ numloop1:
 	if (!context.flags.c()) goto numloop1;
 	context._add(context.al, 10);
 	context._add(context.al, context.cl);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showword(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ch = 0;
 	context.bx = 10000;
 	context.cl = 47;
@@ -18391,11 +18391,11 @@ word4:
 	context.cl = context.al;
 	convnum(context);
 	context.cs.byte(context.di+4) = context.cl;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void convnum(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.ch, 0);
 	if (!context.flags.z()) goto noconvnum;
 	context._cmp(context.cl, '0');
@@ -18405,11 +18405,11 @@ void convnum(Context & context) {
 notzeronum:
 	context.ch = 1;
 noconvnum:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void walkandexamine(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	finishedwalking(context);
 	if (!context.flags.z()) goto noobselect;
 	context.al = context.data.byte(kWalkexamtype);
@@ -18420,12 +18420,12 @@ void walkandexamine(Context & context) {
 	context._cmp(context.data.byte(kCommandtype), 5);
 	if (context.flags.z()) goto noobselect;
 	examineob(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 wantstowalk:
 	setwalk(context);
 	context.data.byte(kReasseschanges) = 1;
 noobselect:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 diff:
 	context.data.byte(kCommand) = context.al;
 	context.data.byte(kCommandtype) = context.ah;
@@ -18465,23 +18465,23 @@ notblock:
 	context._cmp(context.data.byte(kCommandtype), 5);
 	if (context.flags.z()) goto isaperson;
 	examineobtext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 middleofwalk:
 	blocknametext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isblock:
 	blocknametext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isaperson:
 	personnametext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 toofaraway:
 	walktotext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void mainscreen(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kInmaparea) = 0;
 	context.bx = 5122;
 	context._cmp(context.data.byte(kWatchon), 1);
@@ -18493,11 +18493,11 @@ checkmain:
 	if (context.flags.z()) goto finishmain;
 	walkandexamine(context);
 finishmain:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void madmanrun(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 14);
 	if (!context.flags.z()) { identifyob(context); return; };
 	context._cmp(context.data.byte(kMapx), 22);
@@ -18519,14 +18519,14 @@ alreadyrun:
 	if (context.flags.z()) goto norun;
 	context.data.byte(kLastweapon) = 8;
 norun:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkcoords(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNewlocation), 255);
 	if (context.flags.z()) goto loop048;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 loop048:
 	context.ax = context.cs.word(context.bx);
 	context._cmp(context.ax, 0x0ffff);
@@ -18547,17 +18547,17 @@ loop048:
 	__dispatch_call(context, context.ax);
 finished:
 	context.ax = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 over045:
 	context.bx = context.pop();
 	context._add(context.bx, 10);
 	goto loop048;
 nonefound:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void identifyob(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) { blank(context); return; };
 	context.ax = context.data.word(kMousex);
@@ -18565,14 +18565,14 @@ void identifyob(Context & context) {
 	context._cmp(context.ax, 22*8);
 	if (context.flags.c()) goto notover1;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notover1:
 	context.bx = context.data.word(kMousey);
 	context._sub(context.bx, context.data.word(kMapady));
 	context._cmp(context.bx, 20*8);
 	if (context.flags.c()) goto notover2;
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notover2:
 	context.data.byte(kInmaparea) = 1;
 	context.ah = context.bl;
@@ -18606,14 +18606,14 @@ notover2:
 	context.ah = 3;
 	obname(context);
 finishidentify:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nothingund:
 	blank(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkifperson(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
 	context.cx = 12;
@@ -18660,17 +18660,17 @@ notblankpers:
 	obname(context);
 	context.al = 0;
 	context._cmp(context.al, 1);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notareelid:
 	context.cx = context.pop();
 	context._add(context.bx, 5);
 	context._dec(context.cx);
 	if (!context.flags.z()) goto identifyreel;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkifset(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32))+(127*5);
 	context.cx = 127;
@@ -18694,17 +18694,17 @@ identifyset:
 	obname(context);
 	context.al = 0;
 	context._cmp(context.al, 1);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notasetid:
 	context._sub(context.bx, 5);
 	context._dec(context.cx);
 	context._cmp(context.cx, -1);
 	if (!context.flags.z()) goto identifyset;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkifex(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5))+(99*5);
 	context.cx = 99;
@@ -18724,17 +18724,17 @@ identifyex:
 	obname(context);
 	context.al = 1;
 	context._cmp(context.al, 0);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notanexid:
 	context._sub(context.bx, 5);
 	context._dec(context.cx);
 	context._cmp(context.cx, -1);
 	if (!context.flags.z()) goto identifyex;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkiffree(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5))+(79*5);
 	context.cx = 79;
@@ -18754,17 +18754,17 @@ identifyfree:
 	obname(context);
 	context.al = 0;
 	context._cmp(context.al, 1);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notafreeid:
 	context._sub(context.bx, 5);
 	context._dec(context.cx);
 	context._cmp(context.cx, -1);
 	if (!context.flags.z()) goto identifyfree;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void isitdescribed(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.cx);
 	context.push(context.es);
@@ -18784,11 +18784,11 @@ void isitdescribed(Context & context) {
 	context.cx = context.pop();
 	context.ax = context.pop();
 	context._cmp(context.dl, 0);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findpathofpoint(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.bx = (0);
 	context.es = context.data.word(kReels);
@@ -18823,11 +18823,11 @@ flunkedit:
 	if (!context.flags.z()) goto pathloop;
 	context.dl = 255;
 gotvalidpath:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findfirstpath(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.bx = (0);
 	context.es = context.data.word(kReels);
@@ -18858,14 +18858,14 @@ nofirst:
 	context._cmp(context.dl, 12);
 	if (!context.flags.z()) goto fpathloop;
 	context.al = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 gotfirst:
 	context.al = context.es.byte(context.bx+6);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void turnpathon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
 	context.cl = 255;
@@ -18885,11 +18885,11 @@ void turnpathon(Context & context) {
 	context.al = 255;
 	context.es.byte(context.bx+6) = context.al;
 nopathon:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void turnpathoff(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
 	context.cl = 0;
@@ -18909,11 +18909,11 @@ void turnpathoff(Context & context) {
 	context.al = 0;
 	context.es.byte(context.bx+6) = context.al;
 nopathoff:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void turnanypathon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
 	context.cl = 255;
@@ -18936,11 +18936,11 @@ void turnanypathon(Context & context) {
 	context._add(context.bx, context.ax);
 	context.al = 255;
 	context.es.byte(context.bx+6) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void turnanypathoff(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
 	context.cl = 0;
@@ -18963,11 +18963,11 @@ void turnanypathoff(Context & context) {
 	context._add(context.bx, context.ax);
 	context.al = 0;
 	context.es.byte(context.bx+6) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkifpathison(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	getroomspaths(context);
 	context.ax = context.pop();
@@ -18978,11 +18978,11 @@ void checkifpathison(Context & context) {
 	context._add(context.bx, context.ax);
 	context.al = context.es.byte(context.bx+6);
 	context._cmp(context.al, 255);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void afternewroom(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNowinnewroom), 0);
 	if (context.flags.z()) goto notnew;
 	context.data.word(kTimecount) = 0;
@@ -19017,11 +19017,11 @@ ryansoff:
 	reminders(context);
 	atmospheres(context);
 notnew:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void atmospheres(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cl = context.data.byte(kMapx);
 	context.ch = context.data.byte(kMapy);
 	context.bx = 5246;
@@ -19060,10 +19060,10 @@ notlouisvol:
 	context._cmp(context.data.byte(kMapx), 22);
 	if (!context.flags.z()) goto notmad1;
 	context.data.byte(kVolume) = 5;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 ismad2:
 	context.data.byte(kVolume) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notmad1:
 playingalready:
 	context._cmp(context.data.byte(kReallocation), 2);
@@ -19075,20 +19075,20 @@ playingalready:
 fullvol:
 	context.data.byte(kVolume) = 0;
 notlouisvol2:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 louisvol:
 	context.data.byte(kVolume) = 5;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 wrongatmos:
 	context._add(context.bx, 5);
 	goto nextatmos;
 nomoreatmos:
 	cancelch0(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void walkintoroom(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 14);
 	if (!context.flags.z()) goto notlair;
 	context._cmp(context.data.byte(kMapx), 22);
@@ -19097,11 +19097,11 @@ void walkintoroom(Context & context) {
 	context.data.byte(kFinaldest) = 1;
 	autosetwalk(context);
 notlair:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void afterintroroom(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNowinnewroom), 0);
 	if (context.flags.z()) goto notnewintro;
 	clearwork(context);
@@ -19114,11 +19114,11 @@ void afterintroroom(Context & context) {
 	worktoscreen(context);
 	context.data.byte(kNowinnewroom) = 0;
 notnewintro:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void obname(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReasseschanges), 0);
 	if (context.flags.z()) goto notnewpath;
 	context.data.byte(kReasseschanges) = 0;
@@ -19151,12 +19151,12 @@ isntblock:
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) goto noobselect;
 	examineob(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 wantstotalk:
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) goto noobselect;
 	talk(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 walkandexamine:
 	finishedwalking(context);
 	if (!context.flags.z()) goto noobselect;
@@ -19168,12 +19168,12 @@ walkandexamine:
 	context._cmp(context.data.byte(kCommandtype), 5);
 	if (context.flags.z()) goto noobselect;
 	examineob(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 wantstowalk:
 	setwalk(context);
 	context.data.byte(kReasseschanges) = 1;
 noobselect:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 diff:
 	context.data.byte(kCommand) = context.al;
 	context.data.byte(kCommandtype) = context.ah;
@@ -19213,42 +19213,42 @@ notblock:
 	context._cmp(context.data.byte(kCommandtype), 5);
 	if (context.flags.z()) goto isaperson;
 	examineobtext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 middleofwalk:
 	blocknametext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isblock:
 	blocknametext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isaperson:
 	personnametext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 toofaraway:
 	walktotext(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void finishedwalking(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLinepointer), 254);
 	if (!context.flags.z()) goto iswalking;
 	context.al = context.data.byte(kFacing);
 	context._cmp(context.al, context.data.byte(kTurntoface));
 iswalking:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void examineobtext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bl = context.data.byte(kCommand);
 	context.bh = context.data.byte(kCommandtype);
 	context.al = 1;
 	commandwithob(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void commandwithob(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
 	context.push(context.bx);
@@ -19298,11 +19298,11 @@ noadd:
 	context.ah = 0;
 	printdirect(context);
 	context.data.byte(kNewtextline) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void commandonly(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.bx);
 	context.push(context.cx);
@@ -19334,11 +19334,11 @@ void commandonly(Context & context) {
 	context.ah = 0;
 	printdirect(context);
 	context.data.byte(kNewtextline) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printmessage(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.dx);
 	context.push(context.bx);
 	context.push(context.di);
@@ -19355,11 +19355,11 @@ void printmessage(Context & context) {
 	context.al = 0;
 	context.ah = 0;
 	printdirect(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void printmessage2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.dx);
 	context.push(context.bx);
 	context.push(context.di);
@@ -19384,39 +19384,39 @@ searchmess:
 	context.al = 0;
 	context.ah = 0;
 	printdirect(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void blocknametext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bl = context.data.byte(kCommand);
 	context.bh = context.data.byte(kCommandtype);
 	context.al = 0;
 	commandwithob(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void personnametext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bl = context.data.byte(kCommand);
 	context._and(context.bl, 127);
 	context.bh = context.data.byte(kCommandtype);
 	context.al = 2;
 	commandwithob(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void walktotext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bl = context.data.byte(kCommand);
 	context.bh = context.data.byte(kCommandtype);
 	context.al = 3;
 	commandwithob(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getflagunderp(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.cx = context.data.word(kMousex);
 	context._sub(context.cx, context.data.word(kMapadx));
 	context.ax = context.data.word(kMousey);
@@ -19425,11 +19425,11 @@ void getflagunderp(Context & context) {
 	checkone(context);
 	context.data.byte(kLastflag) = context.cl;
 	context.data.byte(kLastflagex) = context.ch;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void setwalk(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLinepointer), 254);
 	if (!context.flags.z()) goto alreadywalking;
 	context.al = context.data.byte(kPointerspath);
@@ -19453,26 +19453,26 @@ void setwalk(Context & context) {
 notwalkandexam:
 	autosetwalk(context);
 cantwalk:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 cantwalk2:
 	facerightway(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 alreadywalking:
 	context.al = context.data.byte(kPointerspath);
 	context.data.byte(kFinaldest) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 holdingreel:
 	context.data.byte(kDestafterhold) = context.al;
 	context.data.byte(kWatchmode) = 2;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void autosetwalk(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kManspath);
 	context._cmp(context.data.byte(kFinaldest), context.al);
 	if (!context.flags.z()) goto notsamealready;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notsamealready:
 	getroomspaths(context);
 	checkdest(context);
@@ -19513,14 +19513,14 @@ notsamealready:
 	context._dec(context.al);
 	context.data.byte(kLinepointer) = context.al;
 	context.data.byte(kLinedirection) = 1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 normalline:
 	context.data.byte(kLinepointer) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void checkdest(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.bx);
 	context._add(context.bx, 12*8);
 	context.ah = context.data.byte(kManspath);
@@ -19540,7 +19540,7 @@ checkdestloop:
 	context._and(context.al, 15);
 	context.data.byte(kDestination) = context.al;
 	context.bx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nextcheck:
 	context.dl = context.es.byte(context.bx);
 	context._and(context.dl, 0xf0);
@@ -19564,11 +19564,11 @@ nextcheck2:
 	if (!context.flags.z()) goto checkdestloop;
 	context.data.byte(kDestination) = context.ch;
 	context.bx = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void bresenhams(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	workoutframes(context);
 	context.dx = context.data;
 	context.es = context.dx;
@@ -19678,11 +19678,11 @@ lineexit:
 	context.ax = context.di;
 	context._shr(context.ax, 1);
 	context.data.byte(kLinelength) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void workoutframes(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bx = context.data.word(kLinestartx);
 	context._add(context.bx, 32);
 	context.ax = context.data.word(kLineendx);
@@ -19757,11 +19757,11 @@ success:
 	context._and(context.dl, 7);
 	context.data.byte(kTurntoface) = context.dl;
 	context.data.byte(kTurndirection) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getroomspaths(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kRoomnum);
 	context.ah = 0;
 	context.cx = 144;
@@ -19769,11 +19769,11 @@ void getroomspaths(Context & context) {
 	context.es = context.data.word(kReels);
 	context.bx = (0);
 	context._add(context.bx, context.ax);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void copyname(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.di);
 	findobname(context);
 	context.di = context.pop();
@@ -19792,14 +19792,14 @@ finishmakename:
 	context._inc(context.cx);
 	context.al = 0;
 	context._stosb();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 	context.al = 255;
 	while(context.cx--) 	context._stosb();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findobname(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ax);
 	context.ah = 0;
 	context._add(context.ax, context.ax);
@@ -19820,7 +19820,7 @@ void findobname(Context & context) {
 	context._add(context.ax, context.cx);
 	context.si = context.ax;
 	context.ax = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notpersonname:
 	context._cmp(context.ah, 4);
 	if (!context.flags.z()) goto notextraname;
@@ -19829,7 +19829,7 @@ notpersonname:
 	context.ax = context.ds.word(context.bx);
 	context._add(context.ax, (0+2080+30000+(16*114)+((114+2)*2)));
 	context.si = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notextraname:
 	context._cmp(context.ah, 2);
 	if (!context.flags.z()) goto notfreename;
@@ -19838,7 +19838,7 @@ notextraname:
 	context.ax = context.ds.word(context.bx);
 	context._add(context.ax, (0+(82*2)));
 	context.si = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notfreename:
 	context._cmp(context.ah, 1);
 	if (!context.flags.z()) goto notsetname;
@@ -19847,18 +19847,18 @@ notfreename:
 	context.ax = context.ds.word(context.bx);
 	context._add(context.ax, (0+(130*2)));
 	context.si = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notsetname:
 	context.ds = context.data.word(kBlockdesc);
 	context._add(context.bx, (0));
 	context.ax = context.ds.word(context.bx);
 	context._add(context.ax, (0+(98*2)));
 	context.si = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showicon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 50);
 	if (!context.flags.c()) goto isdream1;
 	showpanel(context);
@@ -19866,7 +19866,7 @@ void showicon(Context & context) {
 	roomname(context);
 	panelicons1(context);
 	zoomicon(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 isdream1:
 	context.ds = context.data.word(kTempsprites);
 	context.di = 72;
@@ -19905,11 +19905,11 @@ isdream1:
 	context.ah = 4;
 	showframe(context);
 	middlepanel(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void middlepanel(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kTempsprites);
 	context.di = 72+47+20;
 	context.bx = 0;
@@ -19934,11 +19934,11 @@ void middlepanel(Context & context) {
 	context.al = 47;
 	context.ah = 4;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showman(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kIcons1);
 	context.di = 0;
 	context.bx = 0;
@@ -19960,11 +19960,11 @@ void showman(Context & context) {
 	context.ah = 0;
 	showframe(context);
 notverycool:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showpanel(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kIcons1);
 	context.di = 72;
 	context.bx = 0;
@@ -19977,11 +19977,11 @@ void showpanel(Context & context) {
 	context.al = 19;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void roomname(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 88;
 	context.bx = 18;
 	context.al = 53;
@@ -20012,36 +20012,36 @@ gotpl:
 	printdirect(context);
 	context.data.word(kLinespacing) = 10;
 	usecharset1(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usecharset1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kCharset1);
 	context.data.word(kCurrentset) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void usetempcharset(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kTempcharset);
 	context.data.word(kCurrentset) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showexit(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.data.word(kIcons1);
 	context.di = 274;
 	context.bx = 154;
 	context.al = 11;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void panelicons1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = 0;
 	context._cmp(context.data.byte(kWatchon), 1);
 	if (context.flags.z()) goto watchison;
@@ -20067,11 +20067,11 @@ watchison:
 zoomisoff:
 	context.di = context.pop();
 	showwatch(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showwatch(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchon), 0);
 	if (context.flags.z()) goto nowristwatch;
 	context.ds = context.data.word(kIcons1);
@@ -20082,11 +20082,11 @@ void showwatch(Context & context) {
 	showframe(context);
 	showtime(context);
 nowristwatch:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void zoomicon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kZoomon), 0);
 	if (context.flags.z()) goto nozoom1;
 	context.ds = context.data.word(kIcons1);
@@ -20096,11 +20096,11 @@ void zoomicon(Context & context) {
 	context.ah = 0;
 	showframe(context);
 nozoom1:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showblink(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kManisoffscreen), 1);
 	if (context.flags.z()) goto finblink1;
 	context._inc(context.data.byte(kBlinkcount));
@@ -20129,13 +20129,13 @@ nomorethan6:
 	context.ah = 0;
 	showframe(context);
 finblink1:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 eyesshut:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpblink(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kShadeson), 0);
 	if (!context.flags.z()) goto nodumpeye;
 	context._cmp(context.data.byte(kBlinkcount), 0);
@@ -20151,41 +20151,41 @@ void dumpblink(Context & context) {
 	multidump(context);
 	context.ds = context.pop();
 nodumpeye:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void worktoscreenm(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	animpointer(context);
 	readmouse(context);
 	showpointer(context);
 	vsync(context);
 	worktoscreen(context);
 	delpointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void blank(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 199);
 	if (context.flags.z()) goto alreadyblnk;
 	context.data.byte(kCommandtype) = 199;
 	context.al = 0;
 	commandonly(context);
 alreadyblnk:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void allpointer(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	readmouse(context);
 	showpointer(context);
 	dumppointer(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void hangonp(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.cx);
 	context._add(context.cx, context.cx);
 	context.ax = context.pop();
@@ -20226,11 +20226,11 @@ getoutofit:
 	context.data.byte(kPointerframe) = context.al;
 	context.data.byte(kPickup) = context.ah;
 	context.data.byte(kPointermode) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void hangonw(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 hangloopw:
 	context.push(context.cx);
 	delpointer(context);
@@ -20241,11 +20241,11 @@ hangloopw:
 	dumppointer(context);
 	context.cx = context.pop();
 	if (--context.cx) goto hangloopw;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void hangoncurs(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 monloop1:
 	context.push(context.cx);
 	printcurs(context);
@@ -20253,11 +20253,11 @@ monloop1:
 	delcurs(context);
 	context.cx = context.pop();
 	if (--context.cx) goto monloop1;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getunderzoom(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = (8)+5;
 	context.bx = (132)+4;
 	context.ds = context.data.word(kBuffers);
@@ -20265,11 +20265,11 @@ void getunderzoom(Context & context) {
 	context.cl = 46;
 	context.ch = 40;
 	multiget(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumpzoom(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kZoomon), 1);
 	if (!context.flags.z()) goto notzoomon;
 	context.di = (8)+5;
@@ -20278,11 +20278,11 @@ void dumpzoom(Context & context) {
 	context.ch = 40;
 	multidump(context);
 notzoomon:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void putunderzoom(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = (8)+5;
 	context.bx = (132)+4;
 	context.ds = context.data.word(kBuffers);
@@ -20290,11 +20290,11 @@ void putunderzoom(Context & context) {
 	context.cl = 46;
 	context.ch = 40;
 	multiput(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void crosshair(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 3);
 	if (context.flags.z()) goto nocross;
 	context._cmp(context.data.byte(kCommandtype), 10);
@@ -20306,7 +20306,7 @@ void crosshair(Context & context) {
 	context.al = 9;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nocross:
 	context.es = context.data.word(kWorkspace);
 	context.ds = context.data.word(kIcons1);
@@ -20315,11 +20315,11 @@ nocross:
 	context.al = 29;
 	context.ah = 0;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void showpointer(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	showblink(context);
 	context.di = context.data.word(kMousex);
 	context.data.word(kOldpointerx) = context.di;
@@ -20363,7 +20363,7 @@ notsmally:
 	showframe(context);
 	context.bx = context.pop();
 	context.di = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 itsanobject:
 	context.al = context.data.byte(kItemframe);
 	context.ds = context.data.word(kExtras);
@@ -20424,11 +20424,11 @@ notsmally2:
 	context.al = 3;
 	context.ah = 128;
 	showframe(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void delpointer(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kOldpointerx);
 	context._cmp(context.ax, 0x0ffff);
 	if (context.flags.z()) goto nevershown;
@@ -20445,11 +20445,11 @@ void delpointer(Context & context) {
 	context.bx = context.data.word(kDelherey);
 	multiput(context);
 nevershown:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumppointer(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	dumpblink(context);
 	context.cl = context.data.byte(kDelxs);
 	context.ch = context.data.byte(kDelys);
@@ -20467,11 +20467,11 @@ difffound:
 	context.ch = context.data.byte(kPointerys);
 	multidump(context);
 notboth:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void undertextline(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = context.data.word(kTextaddressx);
 	context.bx = context.data.word(kTextaddressy);
 	context.ds = context.data.word(kBuffers);
@@ -20479,11 +20479,11 @@ void undertextline(Context & context) {
 	context.cl = (180);
 	context.ch = (10);
 	multiget(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void deltextline(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.di = context.data.word(kTextaddressx);
 	context.bx = context.data.word(kTextaddressy);
 	context.ds = context.data.word(kBuffers);
@@ -20491,11 +20491,11 @@ void deltextline(Context & context) {
 	context.cl = (180);
 	context.ch = (10);
 	multiput(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dumptextline(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNewtextline), 1);
 	if (!context.flags.z()) goto nodumptextline;
 	context.data.byte(kNewtextline) = 0;
@@ -20505,11 +20505,11 @@ void dumptextline(Context & context) {
 	context.ch = (10);
 	multidump(context);
 nodumptextline:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void animpointer(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPointermode), 2);
 	if (context.flags.z()) goto combathand;
 	context._cmp(context.data.byte(kPointermode), 3);
@@ -20517,7 +20517,7 @@ void animpointer(Context & context) {
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (context.flags.z()) goto notwatchpoint;
 	context.data.byte(kPointerframe) = 11;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 notwatchpoint:
 	context.data.byte(kPointerframe) = 0;
 	context._cmp(context.data.byte(kInmaparea), 0);
@@ -20544,7 +20544,7 @@ arrow:
 	if (!context.flags.z()) goto gothand;
 	context.data.byte(kPointerframe) = 8;
 gothand:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 mousehand:
 	context._cmp(context.data.byte(kPointerspeed), 0);
 	if (context.flags.z()) goto rightspeed3;
@@ -20563,7 +20563,7 @@ finflashmouse:
 	context._add(context.bx, context.ax);
 	context.al = context.cs.byte(context.bx);
 	context.data.byte(kPointerframe) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 combathand:
 	context.data.byte(kPointerframe) = 0;
 	context._cmp(context.data.byte(kReallocation), 14);
@@ -20572,11 +20572,11 @@ combathand:
 	if (!context.flags.z()) goto notarrow;
 	context.data.byte(kPointerframe) = 5;
 notarrow:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readmouse(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kMousebutton);
 	context.data.word(kOldbutton) = context.ax;
 	context.ax = context.data.word(kMousex);
@@ -20587,11 +20587,11 @@ void readmouse(Context & context) {
 	context.data.word(kMousex) = context.cx;
 	context.data.word(kMousey) = context.dx;
 	context.data.word(kMousebutton) = context.bx;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readmouse1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kMousex);
 	context.data.word(kOldx) = context.ax;
 	context.ax = context.data.word(kMousey);
@@ -20600,11 +20600,11 @@ void readmouse1(Context & context) {
 	context.data.word(kMousex) = context.cx;
 	context.data.word(kMousey) = context.dx;
 	context.data.word(kMousebutton1) = context.bx;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readmouse2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kMousex);
 	context.data.word(kOldx) = context.ax;
 	context.ax = context.data.word(kMousey);
@@ -20613,11 +20613,11 @@ void readmouse2(Context & context) {
 	context.data.word(kMousex) = context.cx;
 	context.data.word(kMousey) = context.dx;
 	context.data.word(kMousebutton2) = context.bx;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readmouse3(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kMousex);
 	context.data.word(kOldx) = context.ax;
 	context.ax = context.data.word(kMousey);
@@ -20626,11 +20626,11 @@ void readmouse3(Context & context) {
 	context.data.word(kMousex) = context.cx;
 	context.data.word(kMousey) = context.dx;
 	context.data.word(kMousebutton3) = context.bx;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readmouse4(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ax = context.data.word(kMousebutton);
 	context.data.word(kOldbutton) = context.ax;
 	context.ax = context.data.word(kMousex);
@@ -20645,11 +20645,11 @@ void readmouse4(Context & context) {
 	context._or(context.ax, context.data.word(kMousebutton3));
 	context._or(context.bx, context.ax);
 	context.data.word(kMousebutton) = context.bx;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readkey(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.bx = context.data.word(kBufferout);
 	context._cmp(context.bx, context.data.word(kBufferin));
 	if (context.flags.z()) goto nokey;
@@ -20660,24 +20660,24 @@ void readkey(Context & context) {
 	context._add(context.di, context.bx);
 	context.al = context.cs.byte(context.di);
 	context.data.byte(kCurrentkey) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 nokey:
 	context.data.byte(kCurrentkey) = 0;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void convertkey(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._and(context.al, 127);
 	context.ah = 0;
 	context.di = 5928;
 	context._add(context.di, context.ax);
 	context.al = context.cs.byte(context.di);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void randomnum1(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ds);
 	context.push(context.es);
 	context.push(context.di);
@@ -20689,11 +20689,11 @@ void randomnum1(Context & context) {
 	context.di = context.pop();
 	context.es = context.pop();
 	context.ds = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void randomnum2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.ds);
 	context.push(context.es);
 	context.push(context.di);
@@ -20706,60 +20706,60 @@ void randomnum2(Context & context) {
 	context.di = context.pop();
 	context.es = context.pop();
 	context.ds = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void hangon(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 hangonloop:
 	context.push(context.cx);
 	vsync(context);
 	context.cx = context.pop();
 	if (--context.cx) goto hangonloop;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadtraveltext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 2234;
 	standardload(context);
 	context.data.word(kTraveltext) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadintotemp(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.cs;
 	standardload(context);
 	context.data.word(kTempgraphics) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadintotemp2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.cs;
 	standardload(context);
 	context.data.word(kTempgraphics2) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadintotemp3(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.cs;
 	standardload(context);
 	context.data.word(kTempgraphics3) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadtempcharset(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	standardload(context);
 	context.data.word(kTempcharset) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void standardload(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	openfile(context);
 	readheader(context);
 	context.bx = context.es.word(context.di);
@@ -20774,18 +20774,18 @@ void standardload(Context & context) {
 	readfromfile(context);
 	closefile(context);
 	context.ax = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadtemptext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	standardload(context);
 	context.data.word(kTextfile1) = context.ax;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadroom(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kRoomloaded) = 1;
 	context.data.word(kTimecount) = 0;
 	context.data.word(kMaintimer) = 0;
@@ -20802,11 +20802,11 @@ void loadroom(Context & context) {
 	switchryanon(context);
 	drawflags(context);
 	getdimension(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void loadroomssample(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kRoomssample);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto loadedalready;
@@ -20822,11 +20822,11 @@ void loadroomssample(Context & context) {
 	context.dx = context.di;
 	loadsecondsample(context);
 loadedalready:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getridofreels(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRoomloaded), 0);
 	if (context.flags.z()) goto dontgetrid;
 	context.es = context.data.word(kReel1);
@@ -20836,11 +20836,11 @@ void getridofreels(Context & context) {
 	context.es = context.data.word(kReel3);
 	deallocatemem(context);
 dontgetrid:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getridofall(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kBackdrop);
 	deallocatemem(context);
 	context.es = context.data.word(kSetframes);
@@ -20865,11 +20865,11 @@ void getridofall(Context & context) {
 	deallocatemem(context);
 	context.es = context.data.word(kFreedesc);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void restorereels(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRoomloaded), 0);
 	if (context.flags.z()) goto dontrestore;
 	context.al = context.data.byte(kReallocation);
@@ -20898,11 +20898,11 @@ void restorereels(Context & context) {
 	loadseg(context);
 	closefile(context);
 dontrestore:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void restoreall(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kLocation);
 	getroomdata(context);
 	context.dx = context.bx;
@@ -20979,11 +20979,11 @@ void restoreall(Context & context) {
 	loadseg(context);
 	closefile(context);
 	setallchanges(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void sortoutmap(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.di);
 	context.ds = context.data.word(kWorkspace);
@@ -21002,11 +21002,11 @@ blimey:
 	if (--context.cx) goto blimey;
 	context.di = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void startloading(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.data.byte(kCombatcount) = 0;
 	context.al = context.cs.byte(context.bx+13);
 	context.data.byte(kRoomssample) = context.al;
@@ -21138,11 +21138,11 @@ void startloading(Context & context) {
 	context.bx = context.pop();
 dontwalkin:
 	findxyfrompath(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void disablepath(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.cx);
 	context._xchg(context.al, context.ah);
 	context.cx = -6;
@@ -21171,11 +21171,11 @@ lookx2:
 	context._add(context.bx, context.ax);
 	context.al = 0;
 	context.es.byte(context.bx+6) = context.al;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findxyfrompath(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	getroomspaths(context);
 	context.al = context.data.byte(kManspath);
 	context.ah = 0;
@@ -21188,11 +21188,11 @@ void findxyfrompath(Context & context) {
 	context._sub(context.ah, 12);
 	context.data.byte(kRyanx) = context.al;
 	context.data.byte(kRyany) = context.ah;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void findroominloc(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.al = context.data.byte(kMapy);
 	context.cx = -6;
 looky:
@@ -21206,32 +21206,32 @@ lookx:
 	context._sub(context.al, 11);
 	if (!context.flags.c()) goto lookx;
 	context.data.byte(kRoomnum) = context.cl;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getroomdata(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ah = 0;
 	context.cx = 32;
 	context._mul(context.cx);
 	context.bx = 6187;
 	context._add(context.bx, context.ax);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readheader(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.ds = context.cs;
 	context.dx = 6091;
 	context.cx = (6187-6091);
 	readfromfile(context);
 	context.es = context.cs;
 	context.di = 6141;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void allocateload(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.di);
 	context.bx = context.es.word(context.di);
@@ -21240,11 +21240,11 @@ void allocateload(Context & context) {
 	allocatemem(context);
 	context.di = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void fillspace(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.ds);
 	context.push(context.dx);
@@ -21258,53 +21258,53 @@ void fillspace(Context & context) {
 	context.dx = context.pop();
 	context.ds = context.pop();
 	context.es = context.pop();
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getridoftemp(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kTempgraphics);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getridoftemptext(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kTextfile1);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getridoftemp2(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kTempgraphics2);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getridoftemp3(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kTempgraphics3);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getridoftempcharset(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kTempcharset);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void getridoftempsp(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.es = context.data.word(kTempsprites);
 	deallocatemem(context);
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void readsetdata(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.dx = 1857;
 	standardload(context);
 	context.data.word(kCharset1) = context.ax;
@@ -21335,11 +21335,11 @@ void readsetdata(Context & context) {
 	readfromfile(context);
 	closefile(context);
 novolumeload:
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void makename(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	context.si = context.dx;
 	context.di = 6061;
 transfer:
@@ -21350,11 +21350,11 @@ transfer:
 	context._cmp(context.al, 0);
 	if (!context.flags.z()) goto transfer;
 	context.dx = 6059;
-	{assert(stack_depth == context.stack.size()); return; }
+	return;
 }
 
 void dreamweb(Context & context) {
-	uint stack_depth = context.stack.size();
+	STACK_CHECK(context);
 	seecommandtail(context);
 	checkbasemem(context);
 	soundstartup(context);

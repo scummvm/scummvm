@@ -257,7 +257,7 @@ namespace %s {
 		self.schedule(name)
 
 	def _ret(self):
-		self.body += "\t{assert(stack_depth == context.stack.size()); return; }\n"
+		self.body += "\treturn;\n"
 
 	def parse2(self, dst, src):
 		dst_size, src_size = self.get_size(dst), self.get_size(src)
@@ -443,7 +443,7 @@ namespace %s {
 			
 			self.proc_addr.append((name, self.proc.offset))
 			self.body = str()
-			self.body += "void %s(Context & context) {\n\tuint stack_depth = context.stack.size();\n" %name;
+			self.body += "void %s(Context & context) {\n\tSTACK_CHECK(context);\n" %name;
 			self.proc.optimize()
 			self.unbounded = []
 			self.proc.visit(self, skip)

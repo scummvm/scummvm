@@ -505,6 +505,21 @@ inline void SegmentRef::reset(uint16 value) {
 	*this = _context->getSegment(value);
 }
 
+class StackChecker {
+	const Context	&_context;
+	const uint		_stackDepth;
+
+public:
+	StackChecker(const Context &context): _context(context), _stackDepth(context.stack.size()) {}
+	~StackChecker() { assert(_context.stack.size() == _stackDepth); }
+};
+
+#ifndef NDEBUG
+#	define STACK_CHECK(context)  StackChecker checker(context)
+#else
+#	define STACK_CHECK(context)  do {} while (0)
+#endif
+
 }
 
 #endif
