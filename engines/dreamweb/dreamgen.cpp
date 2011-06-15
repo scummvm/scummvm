@@ -5802,6 +5802,7 @@ void biblequote(Context & context) {
 	if (context.flags.z()) goto biblequotearly;
 	cancelch0(context);
 biblequotearly:
+	context.data.byte(kLasthardkey) = 0;
 	{assert(stack_depth == context.stack.size()); return; }
 }
 
@@ -5859,6 +5860,7 @@ void intro(Context & context) {
 	getridoftemptext(context);
 	clearbeforeload(context);
 introearly:
+	context.data.byte(kLasthardkey) =  0;
 	{assert(stack_depth == context.stack.size()); return; }
 }
 
@@ -6059,6 +6061,7 @@ void realcredits(Context & context) {
 	context.cx = 256;
 	hangone(context);
 realcreditsearly:
+	context.data.byte(kLasthardkey) =  0;
 	{assert(stack_depth == context.stack.size()); return; }
 }
 
