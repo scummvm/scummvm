@@ -403,31 +403,31 @@ namespace %s {
 		self.body += p
 
 	def _rep(self):
-		self.body += "\twhile(context.cx--) ";
+		self.body += "\twhile(context.cx--) "
 
 	def _lodsb(self):
-		self.body += "\tcontext._lodsb();\n";
+		self.body += "\tcontext._lodsb();\n"
 
 	def _lodsw(self):
-		self.body += "\tcontext._lodsw();\n";
+		self.body += "\tcontext._lodsw();\n"
 
-	def _stosb(self):
-		self.body += "\tcontext._stosb();\n";
+	def _stosb(self, n):
+		self.body += "\tcontext._stosb(%s);\n" %("" if n == 1 else n)
 
-	def _stosw(self):
-		self.body += "\tcontext._stosw();\n";
+	def _stosw(self, n):
+		self.body += "\tcontext._stosw(%s);\n" %("" if n == 1 else n)
 
-	def _movsb(self):
-		self.body += "\tcontext._movsb();\n ";
+	def _movsb(self, n):
+		self.body += "\tcontext._movsb(%s);\n " %("" if n == 1 else n)
 
-	def _movsw(self):
-		self.body += "\tcontext._movsw();\n ";
+	def _movsw(self, n):
+		self.body += "\tcontext._movsw(%s);\n " %("" if n == 1 else n)
 
 	def _stc(self):
-		self.body += "\tcontext.flags._c = true;\n ";
+		self.body += "\tcontext.flags._c = true;\n "
 
 	def _clc(self):
-		self.body += "\tcontext.flags._c = false;\n ";
+		self.body += "\tcontext.flags._c = false;\n "
 
 	def __proc(self, name, def_skip = 0):
 		try:

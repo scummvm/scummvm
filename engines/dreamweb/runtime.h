@@ -449,15 +449,6 @@ public:
 		src = r;
 	}
 
-	inline void _movsb() {
-		es.byte(di++) = ds.byte(si++);
-	}
-
-	inline void _movsw() {
-		_movsb();
-		_movsb();
-	}
-
 	inline void _lodsb() {
 		al = ds.byte(si++);
 	}
@@ -467,13 +458,49 @@ public:
 		si += 2;
 	}
 
+	inline void _movsb() {
+		es.byte(di++) = ds.byte(si++);
+	}
+
+	inline void _movsb(uint size) {
+		uint8 *dst = es.ptr(di, size);
+		uint8 *src = ds.ptr(si, size);
+		memcpy(dst, src, size);
+		di += size;
+		si += size;
+	}
+
+	inline void _movsw() {
+		_movsb();
+		_movsb();
+	}
+
+	inline void _movsw(uint size) {
+		_movsb(size * 2);
+	}
+
 	inline void _stosb() {
 		es.byte(di++) = al;
 	}
 
+	inline void _stosb(uint size) {
+		uint8 *dst = es.ptr(di, size);
+		memset(dst, al, size);
+		di += size;
+	}
+
 	inline void _stosw() {
-		es.word(di) = ax;
-		di += 2;
+		es.byte(di++) = al;
+		es.byte(di++) = ah;
+	}
+
+	inline void _stosw(uint size) {
+		uint8 *dst = es.ptr(di, size);
+		di += 2 * size;
+		while(size--) {
+			*dst++ = al;
+			*dst++ = ah;
+		}
 	}
 
 	inline void _xchg(uint16 &a, uint16 &b) {

@@ -27,6 +27,30 @@ class proc:
 				self.stmts.remove(l)
 				return
 	
+	def optimize_sequence(self, cls):
+		i = 0
+		stmts = self.stmts
+		while i < len(stmts):
+			if not isinstance(stmts[i], cls):
+				i += 1
+				continue
+			j = i + 1
+
+			while j < len(stmts):
+				if not isinstance(stmts[j], cls):
+					break
+				j = j + 1
+
+			n = j - i
+			if n > 1:
+				print "Eliminate consequtive storage instructions at %u-%u" %(i, j)
+				del stmts[i + 1:j]
+				stmts[i].repeat = n
+			else:
+				i = j
+
+		return
+	
 	def optimize(self):
 		print "optimizing..."
 		#trivial simplifications, removing last ret
@@ -72,6 +96,11 @@ class proc:
 			if not used:
 				print self.labels
 				self.remove_label(s.name)
+
+		self.optimize_sequence(op._stosb);
+		self.optimize_sequence(op._stosw);
+		self.optimize_sequence(op._movsb);
+		self.optimize_sequence(op._movsw);
 	
 	def add(self, stmt):
 		#print stmt
