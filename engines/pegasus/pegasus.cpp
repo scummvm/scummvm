@@ -37,6 +37,10 @@
 //#define RUN_SUB_MOVIE // :D :D :D :D :D :D
 //#define RUN_INTERFACE_TEST
 
+#ifdef RUN_INTERFACE_TEST
+#include "pegasus/MMShell/Sounds/MMSound.h"
+#endif
+
 namespace Pegasus {
 
 PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc) {
@@ -44,7 +48,6 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 
 PegasusEngine::~PegasusEngine() {
 	delete _video;
-	delete _sound;
 	delete _gfx;
 	delete _resFork;
 	delete _inventoryLid;
@@ -56,7 +59,6 @@ Common::Error PegasusEngine::run() {
 	_console = new PegasusConsole(this);
 	_gfx = new GraphicsManager(this);
 	_video = new VideoManager(this);
-	_sound = new SoundManager(this);
 	_resFork = new Common::MacResManager();
 	_inventoryLid = new Common::MacResManager();
 	_biochipLid = new Common::MacResManager();
@@ -112,7 +114,9 @@ Common::Error PegasusEngine::run() {
 #elif defined(RUN_INTERFACE_TEST)
 	drawInterface();
 	_gfx->setCursor(kMainCursor);
-	_sound->playSound("Sounds/Caldoria/Apartment Music.aiff", true);
+	MMSound sound;
+	sound.InitFromAIFFFile("Sounds/Caldoria/Apartment Music.aiff");
+	sound.LoopSound();
 
 	while (!shouldQuit()) {
 		Common::Event event;

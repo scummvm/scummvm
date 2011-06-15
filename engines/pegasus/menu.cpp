@@ -26,6 +26,8 @@
 #include "pegasus/console.h"
 #include "pegasus/pegasus.h"
 
+#include "pegasus/MMShell/Sounds/MMSound.h"
+
 namespace Pegasus {
 
 enum {
@@ -44,7 +46,9 @@ enum {
 };	
 
 void PegasusEngine::runMainMenu() {
-	_sound->playSound("Sounds/Main Menu.aiff", true);
+	MMSound sound;
+	sound.InitFromAIFFFile("Sounds/Main Menu.aiff");
+	sound.LoopSound();
 
 	// Note down how long since the last click
 	uint32 lastClickTime = _system->getMillis();
@@ -82,14 +86,14 @@ void PegasusEngine::runMainMenu() {
 				case Common::KEYCODE_RETURN:
 					if (buttonSelected != kDifficultyButton) {
 						drawMenuButtonSelected(buttonSelected);
+						sound.StopSound();
 						setGameMode(buttonSelected);
 
-						if (_gameMode != kMainMenuMode) {
-							_sound->stopSound();
+						if (_gameMode != kMainMenuMode)
 							return;
-						}
-
+						
 						drawMenu(buttonSelected);
+						sound.LoopSound();
 					}
 					break;
 				case Common::KEYCODE_d:
@@ -118,7 +122,7 @@ void PegasusEngine::runMainMenu() {
 		return;
 
 	// Too slow! Go back and show the intro again.
-	_sound->stopSound();
+	sound.StopSound();
 	_video->playMovie(_introDirectory + "/LilMovie.movie");
 	_gameMode = kIntroMode;
 }
@@ -173,9 +177,7 @@ void PegasusEngine::setGameMode(int buttonSelected) {
 			_gameMode = kMainGameMode;
 			break;
 		case kDemoCreditsButton:
-			_sound->stopSound();
 			runDemoCredits();
-			_sound->playSound("Sounds/Main Menu.aiff", true);
 			break;
 		case kDemoQuitButton:
 			_gameMode = kQuitMode;
@@ -184,9 +186,7 @@ void PegasusEngine::setGameMode(int buttonSelected) {
 	} else {
 		switch (buttonSelected) {
 		case kInterfaceOverviewButton:
-			_sound->stopSound();
 			runInterfaceOverview();
-			_sound->playSound("Sounds/Main Menu.aiff", true);
 			break;
 		case kStartButton:
 			_gameMode = kMainGameMode;
@@ -195,9 +195,7 @@ void PegasusEngine::setGameMode(int buttonSelected) {
 			showLoadDialog();
 			break;
 		case kCreditsButton:
-			_sound->stopSound();
 			runCredits();
-			_sound->playSound("Sounds/Main Menu.aiff", true);
 			break;
 		case kQuitButton:
 			_gameMode = kQuitMode;

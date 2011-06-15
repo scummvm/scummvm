@@ -31,7 +31,6 @@
 
 #include "engines/engine.h"
 
-#include "pegasus/sound.h"
 #include "pegasus/graphics.h"
 #include "pegasus/video.h"
 
@@ -204,7 +203,6 @@ public:
 	GUI::Debugger *getDebugger();
 	
 	VideoManager *_video;
-	SoundManager *_sound;
 	GraphicsManager *_gfx;
 	Common::MacResManager *_resFork, *_inventoryLid, *_biochipLid;
 

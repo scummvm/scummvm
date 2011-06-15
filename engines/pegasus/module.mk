@@ -8,7 +8,6 @@ MODULE_OBJS = \
 	menu.o \
 	overview.o \
 	pegasus.o \
-	sound.o \
 	video.o \
 	Game_Shell/CItem.o \
 	MMShell/Sounds/MMSound.o \
