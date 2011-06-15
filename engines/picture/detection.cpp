@@ -145,7 +145,7 @@ static const PictureGameDescription gameDescriptions[] = {
 class PictureMetaEngine : public AdvancedMetaEngine {
 public:
 	PictureMetaEngine() : AdvancedMetaEngine(Picture::gameDescriptions, sizeof(Picture::PictureGameDescription), pictureGames) {
-		params.singleid = "toltecs";
+		_singleid = "toltecs";
 	}
 
 	virtual const char *getName() const {
