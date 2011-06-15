@@ -11,7 +11,8 @@ MODULE_OBJS = \
 	video.o \
 	Game_Shell/CItem.o \
 	MMShell/Sounds/MMSound.o \
-	MMShell/Utilities/MMResourceFile.o
+	MMShell/Utilities/MMResourceFile.o \
+	MMShell/Utilities/MMUtilities.o
 
 
 # This module can be built as a plugin
