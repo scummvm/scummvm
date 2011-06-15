@@ -46,7 +46,9 @@ class parser:
 
 	def get_global(self, name):
 		name = name.lower()
-		return self.__globals[name]
+		g = self.__globals[name]
+		g.used = True
+		return g
 
 	def get_globals(self):
 		return self.__globals
