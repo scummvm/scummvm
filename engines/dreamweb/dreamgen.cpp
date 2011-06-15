@@ -475,7 +475,7 @@ void intro2text(Context &context);
 void intro3text(Context &context);
 void intro1text(Context &context);
 
-void alleybarksound(Context & context) {
+void alleybarksound(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._dec(context.ax);
@@ -493,12 +493,12 @@ nobark:
 	return;
 }
 
-void intromusic(Context & context) {
+void intromusic(Context &context) {
 	STACK_CHECK(context);
 	return;
 }
 
-void foghornsound(Context & context) {
+void foghornsound(Context &context) {
 	STACK_CHECK(context);
 	randomnumber(context);
 	context._cmp(context.al, 198);
@@ -509,7 +509,7 @@ nofog:
 	return;
 }
 
-void receptionist(Context & context) {
+void receptionist(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto gotrecep;
@@ -552,7 +552,7 @@ nottalkedrecep:
 	return;
 }
 
-void smokebloke(Context & context) {
+void smokebloke(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRockstardead), 0);
 	if (!context.flags.z()) goto notspokento;
@@ -588,7 +588,7 @@ gotsmokeb:
 	return;
 }
 
-void attendant(Context & context) {
+void attendant(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
@@ -600,7 +600,7 @@ nottalked:
 	return;
 }
 
-void manasleep(Context & context) {
+void manasleep(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 127);
@@ -610,7 +610,7 @@ void manasleep(Context & context) {
 	return;
 }
 
-void eden(Context & context) {
+void eden(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kGeneraldead), 0);
 	if (!context.flags.z()) goto notinbed;
@@ -620,7 +620,7 @@ notinbed:
 	return;
 }
 
-void edeninbath(Context & context) {
+void edeninbath(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kGeneraldead), 0);
 	if (context.flags.z()) goto notinbed;
@@ -636,21 +636,21 @@ notinbed:
 	return;
 }
 
-void malefan(Context & context) {
+void malefan(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
 	return;
 }
 
-void femalefan(Context & context) {
+void femalefan(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
 	return;
 }
 
-void louis(Context & context) {
+void louis(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRockstardead), 0);
 	if (!context.flags.z()) goto notlouis1;
@@ -660,7 +660,7 @@ notlouis1:
 	return;
 }
 
-void louischair(Context & context) {
+void louischair(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRockstardead), 0);
 	if (context.flags.z()) goto notlouis2;
@@ -689,7 +689,7 @@ notlouis2:
 	return;
 }
 
-void manasleep2(Context & context) {
+void manasleep2(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 127);
@@ -699,21 +699,21 @@ void manasleep2(Context & context) {
 	return;
 }
 
-void mansatstill(Context & context) {
+void mansatstill(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
 	return;
 }
 
-void tattooman(Context & context) {
+void tattooman(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
 	return;
 }
 
-void drinker(Context & context) {
+void drinker(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto gotdrinker;
@@ -735,7 +735,7 @@ gotdrinker:
 	return;
 }
 
-void bartender(Context & context) {
+void bartender(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto gotsmoket;
@@ -763,21 +763,21 @@ notgotgun:
 	return;
 }
 
-void othersmoker(Context & context) {
+void othersmoker(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
 	return;
 }
 
-void barwoman(Context & context) {
+void barwoman(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
 	return;
 }
 
-void interviewer(Context & context) {
+void interviewer(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kReeltowatch), 68);
 	if (!context.flags.z()) goto notgeneralstart;
@@ -795,7 +795,7 @@ talking:
 	return;
 }
 
-void soldier1(Context & context) {
+void soldier1(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.es.word(context.bx+3), 0);
 	if (context.flags.z()) goto soldierwait;
@@ -829,7 +829,7 @@ gotsoldframe:
 	return;
 }
 
-void rockstar(Context & context) {
+void rockstar(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 303);
@@ -881,7 +881,7 @@ rockcombatend:
 	return;
 }
 
-void helicopter(Context & context) {
+void helicopter(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 203);
@@ -939,7 +939,7 @@ heliwon:
 	return;
 }
 
-void mugger(Context & context) {
+void mugger(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 138);
@@ -1013,14 +1013,14 @@ endmugger2:
 	return;
 }
 
-void aide(Context & context) {
+void aide(Context &context) {
 	STACK_CHECK(context);
 	showgamereel(context);
 	addtopeoplelist(context);
 	return;
 }
 
-void businessman(Context & context) {
+void businessman(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kPointermode) = 0;
 	context.data.word(kWatchingtime) = 2;
@@ -1110,7 +1110,7 @@ buscombatwonend:
 	return;
 }
 
-void poolguard(Context & context) {
+void poolguard(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 214);
@@ -1195,7 +1195,7 @@ doneover2:
 	return;
 }
 
-void security(Context & context) {
+void security(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.es.word(context.bx+3), 32);
 	if (context.flags.z()) goto securwait;
@@ -1224,7 +1224,7 @@ gotsecurframe:
 	return;
 }
 
-void heavy(Context & context) {
+void heavy(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.es.byte(context.bx+7);
 	context._and(context.al, 127);
@@ -1260,7 +1260,7 @@ gotheavyframe:
 	return;
 }
 
-void bossman(Context & context) {
+void bossman(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto notboss;
@@ -1304,7 +1304,7 @@ nottalkedboss:
 	return;
 }
 
-void gamer(Context & context) {
+void gamer(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto gamerfin;
@@ -1324,7 +1324,7 @@ gamerfin:
 	return;
 }
 
-void sparkydrip(Context & context) {
+void sparkydrip(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto cantdrip;
@@ -1335,7 +1335,7 @@ cantdrip:
 	return;
 }
 
-void carparkdrip(Context & context) {
+void carparkdrip(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto cantdrip2;
@@ -1345,7 +1345,7 @@ cantdrip2:
 	return;
 }
 
-void keeper(Context & context) {
+void keeper(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kKeeperflag), 0);
 	if (!context.flags.z()) goto notwaiting;
@@ -1367,7 +1367,7 @@ waiting:
 	return;
 }
 
-void candles1(Context & context) {
+void candles1(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto candle1;
@@ -1383,7 +1383,7 @@ candle1:
 	return;
 }
 
-void smallcandle(Context & context) {
+void smallcandle(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto smallcandlef;
@@ -1399,7 +1399,7 @@ smallcandlef:
 	return;
 }
 
-void intromagic1(Context & context) {
+void intromagic1(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto introm1fin;
@@ -1427,7 +1427,7 @@ introm1fin:
 	return;
 }
 
-void candles(Context & context) {
+void candles(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto candlesfin;
@@ -1443,7 +1443,7 @@ candlesfin:
 	return;
 }
 
-void candles2(Context & context) {
+void candles2(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto candles2fin;
@@ -1459,7 +1459,7 @@ candles2fin:
 	return;
 }
 
-void gates(Context & context) {
+void gates(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto gatesfin;
@@ -1496,7 +1496,7 @@ gatesfin:
 	return;
 }
 
-void intromagic2(Context & context) {
+void intromagic2(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto introm2fin;
@@ -1512,7 +1512,7 @@ introm2fin:
 	return;
 }
 
-void intromagic3(Context & context) {
+void intromagic3(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto introm3fin;
@@ -1530,7 +1530,7 @@ introm3fin:
 	return;
 }
 
-void intromonks1(Context & context) {
+void intromonks1(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto intromonk1fin;
@@ -1575,7 +1575,7 @@ intromonk1fin:
 	return;
 }
 
-void intromonks2(Context & context) {
+void intromonks2(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto intromonk2fin;
@@ -1628,12 +1628,12 @@ intromonk2fin:
 	return;
 }
 
-void handclap(Context & context) {
+void handclap(Context &context) {
 	STACK_CHECK(context);
 	return;
 }
 
-void monks2text(Context & context) {
+void monks2text(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kIntrocount), 1);
 	if (!context.flags.z()) goto notmonk2text1;
@@ -1737,7 +1737,7 @@ gotmonks2text:
 	return;
 }
 
-void intro1text(Context & context) {
+void intro1text(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kIntrocount), 2);
 	if (!context.flags.z()) goto notintro1text1;
@@ -1776,7 +1776,7 @@ oktalk2:
 	return;
 }
 
-void intro2text(Context & context) {
+void intro2text(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.ax, 5);
 	if (!context.flags.z()) goto notintro2text1;
@@ -1802,7 +1802,7 @@ gotintro2text:
 	return;
 }
 
-void intro3text(Context & context) {
+void intro3text(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.ax, 107);
 	if (!context.flags.z()) goto notintro3text1;
@@ -1828,7 +1828,7 @@ gotintro3text:
 	return;
 }
 
-void monkandryan(Context & context) {
+void monkandryan(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto notmonkryan;
@@ -1854,7 +1854,7 @@ notmonkryan:
 	return;
 }
 
-void endgameseq(Context & context) {
+void endgameseq(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto notendseq;
@@ -1912,7 +1912,7 @@ notendcreds:
 	return;
 }
 
-void rollendcredits(Context & context) {
+void rollendcredits(Context &context) {
 	STACK_CHECK(context);
 	context.al = 16;
 	context.ah = 255;
@@ -2001,7 +2001,7 @@ gotnext:
 	return;
 }
 
-void priest(Context & context) {
+void priest(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.es.word(context.bx+3), 8);
 	if (context.flags.z()) goto priestspoken;
@@ -2021,7 +2021,7 @@ priestspoken:
 	return;
 }
 
-void madmanstelly(Context & context) {
+void madmanstelly(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._inc(context.ax);
@@ -2034,7 +2034,7 @@ notendtelly:
 	return;
 }
 
-void madman(Context & context) {
+void madman(Context &context) {
 	STACK_CHECK(context);
 	context.data.word(kWatchingtime) = 2;
 	checkspeed(context);
@@ -2105,7 +2105,7 @@ ryansded:
 	return;
 }
 
-void madmantext(Context & context) {
+void madmantext(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSpeechcount), 63);
 	if (!context.flags.c()) goto nomadtext;
@@ -2124,7 +2124,7 @@ nomadtext:
 	return;
 }
 
-void madmode(Context & context) {
+void madmode(Context &context) {
 	STACK_CHECK(context);
 	context.data.word(kWatchingtime) = 2;
 	context.data.byte(kPointermode) = 0;
@@ -2137,7 +2137,7 @@ iswatchmad:
 	return;
 }
 
-void priesttext(Context & context) {
+void priesttext(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.es.word(context.bx+3), 2);
 	if (context.flags.c()) goto nopriesttext;
@@ -2158,7 +2158,7 @@ nopriesttext:
 	return;
 }
 
-void textforend(Context & context) {
+void textforend(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kIntrocount), 20);
 	if (!context.flags.z()) goto notendtext1;
@@ -2192,7 +2192,7 @@ gotendtext:
 	return;
 }
 
-void textformonk(Context & context) {
+void textformonk(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kIntrocount), 1);
 	if (!context.flags.z()) goto notmonktext1;
@@ -2317,7 +2317,7 @@ oktalk:
 	return;
 }
 
-void drunk(Context & context) {
+void drunk(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kGeneraldead), 0);
 	if (!context.flags.z()) goto trampgone;
@@ -2330,7 +2330,7 @@ trampgone:
 	return;
 }
 
-void advisor(Context & context) {
+void advisor(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto noadvisor;
@@ -2359,7 +2359,7 @@ noadvisor:
 	return;
 }
 
-void copper(Context & context) {
+void copper(Context &context) {
 	STACK_CHECK(context);
 	checkspeed(context);
 	if (!context.flags.z()) goto nocopper;
@@ -2390,7 +2390,7 @@ nocopper:
 	return;
 }
 
-void sparky(Context & context) {
+void sparky(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kCard1money), 0);
 	if (context.flags.z()) goto animsparky;
@@ -2424,7 +2424,7 @@ nottalkedsparky:
 	return;
 }
 
-void train(Context & context) {
+void train(Context &context) {
 	STACK_CHECK(context);
 	return;
 	context.ax = context.es.word(context.bx+3);
@@ -2448,7 +2448,7 @@ notrainatall:
 	return;
 }
 
-void addtopeoplelist(Context & context) {
+void addtopeoplelist(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -2467,7 +2467,7 @@ void addtopeoplelist(Context & context) {
 	return;
 }
 
-void showgamereel(Context & context) {
+void showgamereel(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 512);
@@ -2484,7 +2484,7 @@ noshow:
 	return;
 }
 
-void checkspeed(Context & context) {
+void checkspeed(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLastweapon), -1);
 	if (!context.flags.z()) goto forcenext;
@@ -2502,7 +2502,7 @@ forcenext:
 	return;
 }
 
-void clearsprites(Context & context) {
+void clearsprites(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
@@ -2512,7 +2512,7 @@ void clearsprites(Context & context) {
 	return;
 }
 
-void makesprite(Context & context) {
+void makesprite(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
@@ -2532,7 +2532,7 @@ _tmp17a:
 	return;
 }
 
-void delsprite(Context & context) {
+void delsprite(Context &context) {
 	STACK_CHECK(context);
 	context.di = context.bx;
 	context.cx = (32);
@@ -2541,7 +2541,7 @@ void delsprite(Context & context) {
 	return;
 }
 
-void spriteupdate(Context & context) {
+void spriteupdate(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
@@ -2574,7 +2574,7 @@ _tmp18b:
 	return;
 }
 
-void printsprites(Context & context) {
+void printsprites(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.cx = 0;
@@ -2607,7 +2607,7 @@ skipsprite:
 	return;
 }
 
-void printasprite(Context & context) {
+void printasprite(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -2644,7 +2644,7 @@ notquickp:
 	return;
 }
 
-void checkone(Context & context) {
+void checkone(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.cx);
 	context.al = context.ch;
@@ -2680,7 +2680,7 @@ void checkone(Context & context) {
 	return;
 }
 
-void findsource(Context & context) {
+void findsource(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kCurrentframe);
 	context._cmp(context.ax, 160);
@@ -2700,7 +2700,7 @@ over1001:
 	return;
 }
 
-void initman(Context & context) {
+void initman(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kRyanx);
 	context.ah = context.data.byte(kRyany);
@@ -2715,7 +2715,7 @@ void initman(Context & context) {
 	return;
 }
 
-void mainman(Context & context) {
+void mainman(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kResetmanxy), 1);
 	if (!context.flags.z()) goto notinnewroom;
@@ -2799,7 +2799,7 @@ notwalk:
 	return;
 }
 
-void aboutturn(Context & context) {
+void aboutturn(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kTurndirection), 1);
 	if (context.flags.z()) goto incdir;
@@ -2834,7 +2834,7 @@ decdir:
 	return;
 }
 
-void walking(Context & context) {
+void walking(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLinedirection), 0);
 	if (context.flags.z()) goto normalwalk;
@@ -2884,7 +2884,7 @@ finishedwalk:
 	return;
 }
 
-void facerightway(Context & context) {
+void facerightway(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -2903,7 +2903,7 @@ void facerightway(Context & context) {
 	return;
 }
 
-void checkforexit(Context & context) {
+void checkforexit(Context &context) {
 	STACK_CHECK(context);
 	context.cl = context.data.byte(kRyanx);
 	context._add(context.cl, 12);
@@ -2996,7 +2996,7 @@ notanup:
 	return;
 }
 
-void adjustdown(Context & context) {
+void adjustdown(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -3011,7 +3011,7 @@ void adjustdown(Context & context) {
 	return;
 }
 
-void adjustup(Context & context) {
+void adjustup(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -3026,7 +3026,7 @@ void adjustup(Context & context) {
 	return;
 }
 
-void adjustleft(Context & context) {
+void adjustleft(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -3042,7 +3042,7 @@ void adjustleft(Context & context) {
 	return;
 }
 
-void adjustright(Context & context) {
+void adjustright(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -3058,7 +3058,7 @@ void adjustright(Context & context) {
 	return;
 }
 
-void reminders(Context & context) {
+void reminders(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 24);
 	if (!context.flags.z()) goto notinedenslift;
@@ -3107,7 +3107,7 @@ notinedenslift:
 	return;
 }
 
-void initrain(Context & context) {
+void initrain(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24));
@@ -3167,7 +3167,7 @@ finishinitrain:
 	return;
 }
 
-void splitintolines(Context & context) {
+void splitintolines(Context &context) {
 	STACK_CHECK(context);
 lookforlinestart:
 	getblockofpixel(context);
@@ -3217,7 +3217,7 @@ endofthisline:
 	return;
 }
 
-void getblockofpixel(Context & context) {
+void getblockofpixel(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.cx);
 	context.push(context.es);
@@ -3241,7 +3241,7 @@ failrain:
 	return;
 }
 
-void showrain(Context & context) {
+void showrain(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kMainsprites);
 	context.si = 6*58;
@@ -3319,7 +3319,7 @@ nothunder:
 	return;
 }
 
-void backobject(Context & context) {
+void backobject(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kSetdat);
 	context.di = context.es.word(context.bx+20);
@@ -3368,7 +3368,7 @@ finishback:
 	return;
 }
 
-void liftsprite(Context & context) {
+void liftsprite(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kLiftflag);
 	context._cmp(context.al, 0);
@@ -3449,7 +3449,7 @@ nocountopen:
 	goto pokelift;
 }
 
-void liftnoise(Context & context) {
+void liftnoise(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 5);
 	if (context.flags.z()) goto hissnoise;
@@ -3463,7 +3463,7 @@ hissnoise:
 	return;
 }
 
-void random(Context & context) {
+void random(Context &context) {
 	STACK_CHECK(context);
 	randomnum1(context);
 	context.push(context.di);
@@ -3476,7 +3476,7 @@ void random(Context & context) {
 	return;
 }
 
-void steady(Context & context) {
+void steady(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.ds.byte(context.di+18);
 	context.ds.byte(context.di+17) = context.al;
@@ -3484,7 +3484,7 @@ void steady(Context & context) {
 	return;
 }
 
-void constant(Context & context) {
+void constant(Context &context) {
 	STACK_CHECK(context);
 	context._inc(context.es.byte(context.bx+19));
 	context.cl = context.es.byte(context.bx+19);
@@ -3503,7 +3503,7 @@ gotconst:
 	return;
 }
 
-void doorway(Context & context) {
+void doorway(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kDoorcheck1) = -24;
 	context.data.byte(kDoorcheck2) = 10;
@@ -3513,7 +3513,7 @@ void doorway(Context & context) {
 	return;
 }
 
-void widedoor(Context & context) {
+void widedoor(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kDoorcheck1) = -24;
 	context.data.byte(kDoorcheck2) = 24;
@@ -3523,7 +3523,7 @@ void widedoor(Context & context) {
 	return;
 }
 
-void dodoor(Context & context) {
+void dodoor(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kRyanx);
 	context.ah = context.data.byte(kRyany);
@@ -3614,7 +3614,7 @@ notnearly:
 	return;
 }
 
-void lockeddoorway(Context & context) {
+void lockeddoorway(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kRyanx);
 	context.ah = context.data.byte(kRyany);
@@ -3752,7 +3752,7 @@ notnearly:
 	return;
 }
 
-void updatepeople(Context & context) {
+void updatepeople(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
@@ -3787,7 +3787,7 @@ endupdate:
 	return;
 }
 
-void getreelframeax(Context & context) {
+void getreelframeax(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ds);
 	context.data.word(kCurrentframe) = context.ax;
@@ -3804,7 +3804,7 @@ void getreelframeax(Context & context) {
 	return;
 }
 
-void reelsonscreen(Context & context) {
+void reelsonscreen(Context &context) {
 	STACK_CHECK(context);
 	reconstruct(context);
 	updatepeople(context);
@@ -3814,7 +3814,7 @@ void reelsonscreen(Context & context) {
 	return;
 }
 
-void plotreel(Context & context) {
+void plotreel(Context &context) {
 	STACK_CHECK(context);
 	getreelstart(context);
 retryreel:
@@ -3853,7 +3853,7 @@ notplot:
 	return;
 }
 
-void soundonreels(Context & context) {
+void soundonreels(Context &context) {
 	STACK_CHECK(context);
 	context.bl = context.data.byte(kReallocation);
 	context._add(context.bl, context.bl);
@@ -3894,7 +3894,7 @@ nochange2:
 	return;
 }
 
-void reconstruct(Context & context) {
+void reconstruct(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kHavedoneobs), 0);
 	if (context.flags.z()) goto noneedtorecon;
@@ -3907,7 +3907,7 @@ noneedtorecon:
 	return;
 }
 
-void dealwithspecial(Context & context) {
+void dealwithspecial(Context &context) {
 	STACK_CHECK(context);
 	context._sub(context.al, 220);
 	context._cmp(context.al, 0);
@@ -3959,7 +3959,7 @@ notchangeloc:
 	return;
 }
 
-void movemap(Context & context) {
+void movemap(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.ah, 32);
 	if (!context.flags.z()) goto notmapup2;
@@ -3990,7 +3990,7 @@ notmaprightspec:
 	return;
 }
 
-void getreelstart(Context & context) {
+void getreelstart(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kReelpointer);
 	context.cx = 40;
@@ -4001,7 +4001,7 @@ void getreelstart(Context & context) {
 	return;
 }
 
-void showreelframe(Context & context) {
+void showreelframe(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.es.byte(context.si+2);
 	context.ah = 0;
@@ -4020,7 +4020,7 @@ void showreelframe(Context & context) {
 	return;
 }
 
-void deleverything(Context & context) {
+void deleverything(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kMapysize);
 	context.ah = 0;
@@ -4036,7 +4036,7 @@ bigroom:
 	return;
 }
 
-void dumpeverything(Context & context) {
+void dumpeverything(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40));
@@ -4092,7 +4092,7 @@ finishevery2:
 	return;
 }
 
-void allocatework(Context & context) {
+void allocatework(Context &context) {
 	STACK_CHECK(context);
 	context.bx = 0x1000;
 	allocatemem(context);
@@ -4100,7 +4100,7 @@ void allocatework(Context & context) {
 	return;
 }
 
-void readabyte(Context & context) {
+void readabyte(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.si, 30000);
 	if (!context.flags.z()) goto notendblock;
@@ -4121,7 +4121,7 @@ notendblock:
 	return;
 }
 
-void loadpalfromiff(Context & context) {
+void loadpalfromiff(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 2481;
 	openfile(context);
@@ -4157,7 +4157,7 @@ nought:
 	return;
 }
 
-void paneltomap(Context & context) {
+void paneltomap(Context &context) {
 	STACK_CHECK(context);
 	context.di = context.data.word(kMapxstart);
 	context._add(context.di, context.data.word(kMapadx));
@@ -4171,7 +4171,7 @@ void paneltomap(Context & context) {
 	return;
 }
 
-void maptopanel(Context & context) {
+void maptopanel(Context &context) {
 	STACK_CHECK(context);
 	context.di = context.data.word(kMapxstart);
 	context._add(context.di, context.data.word(kMapadx));
@@ -4185,7 +4185,7 @@ void maptopanel(Context & context) {
 	return;
 }
 
-void dumpmap(Context & context) {
+void dumpmap(Context &context) {
 	STACK_CHECK(context);
 	context.di = context.data.word(kMapxstart);
 	context._add(context.di, context.data.word(kMapadx));
@@ -4197,7 +4197,7 @@ void dumpmap(Context & context) {
 	return;
 }
 
-void pixelcheckset(Context & context) {
+void pixelcheckset(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context._sub(context.al, context.es.byte(context.bx));
@@ -4238,7 +4238,7 @@ void pixelcheckset(Context & context) {
 	return;
 }
 
-void createpanel(Context & context) {
+void createpanel(Context &context) {
 	STACK_CHECK(context);
 	context.di = 0;
 	context.bx = 8;
@@ -4267,7 +4267,7 @@ void createpanel(Context & context) {
 	return;
 }
 
-void createpanel2(Context & context) {
+void createpanel2(Context &context) {
 	STACK_CHECK(context);
 	createpanel(context);
 	context.di = 0;
@@ -4285,7 +4285,7 @@ void createpanel2(Context & context) {
 	return;
 }
 
-void clearwork(Context & context) {
+void clearwork(Context &context) {
 	STACK_CHECK(context);
 	context.ax = 0x0;
 	context.es = context.data.word(kWorkspace);
@@ -4328,7 +4328,7 @@ clearloop:
 	return;
 }
 
-void zoom(Context & context) {
+void zoom(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) goto inwatching;
@@ -4376,7 +4376,7 @@ zoomloop2:
 	return;
 }
 
-void delthisone(Context & context) {
+void delthisone(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
@@ -4420,7 +4420,7 @@ deloneloop:
 	return;
 }
 
-void doblocks(Context & context) {
+void doblocks(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kWorkspace);
 	context.ax = context.data.word(kMapady);
@@ -4536,7 +4536,7 @@ zeroblock:
 	return;
 }
 
-void showframe(Context & context) {
+void showframe(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.dx);
 	context.push(context.ax);
@@ -4636,7 +4636,7 @@ noeffects:
 	return;
 }
 
-void frameoutv(Context & context) {
+void frameoutv(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.dx);
 	context.ax = context.bx;
@@ -4677,7 +4677,7 @@ backtosolid:
 	return;
 }
 
-void frameoutbh(Context & context) {
+void frameoutbh(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.dx);
 	context.ax = context.bx;
@@ -4711,7 +4711,7 @@ nextline:
 	return;
 }
 
-void frameoutfx(Context & context) {
+void frameoutfx(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.dx);
 	context.ax = context.bx;
@@ -4753,7 +4753,7 @@ backtosolidfx:
 	return;
 }
 
-void transferinv(Context & context) {
+void transferinv(Context &context) {
 	STACK_CHECK(context);
 	context.di = context.data.word(kExframepos);
 	context.push(context.di);
@@ -4803,7 +4803,7 @@ void transferinv(Context & context) {
 	return;
 }
 
-void transfermap(Context & context) {
+void transfermap(Context &context) {
 	STACK_CHECK(context);
 	context.di = context.data.word(kExframepos);
 	context.push(context.di);
@@ -4851,7 +4851,7 @@ void transfermap(Context & context) {
 	return;
 }
 
-void dofade(Context & context) {
+void dofade(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kFadedirection), 0);
 	if (context.flags.z()) goto finishfade;
@@ -4875,7 +4875,7 @@ finishfade:
 	return;
 }
 
-void clearendpal(Context & context) {
+void clearendpal(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
@@ -4885,7 +4885,7 @@ void clearendpal(Context & context) {
 	return;
 }
 
-void clearpalette(Context & context) {
+void clearpalette(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kFadedirection) = 0;
 	clearstartpal(context);
@@ -4893,7 +4893,7 @@ void clearpalette(Context & context) {
 	return;
 }
 
-void fadescreenup(Context & context) {
+void fadescreenup(Context &context) {
 	STACK_CHECK(context);
 	clearstartpal(context);
 	paltoendpal(context);
@@ -4904,7 +4904,7 @@ void fadescreenup(Context & context) {
 	return;
 }
 
-void fadetowhite(Context & context) {
+void fadetowhite(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
@@ -4924,7 +4924,7 @@ void fadetowhite(Context & context) {
 	return;
 }
 
-void fadefromwhite(Context & context) {
+void fadefromwhite(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
@@ -4944,7 +4944,7 @@ void fadefromwhite(Context & context) {
 	return;
 }
 
-void fadescreenups(Context & context) {
+void fadescreenups(Context &context) {
 	STACK_CHECK(context);
 	clearstartpal(context);
 	paltoendpal(context);
@@ -4955,7 +4955,7 @@ void fadescreenups(Context & context) {
 	return;
 }
 
-void fadescreendownhalf(Context & context) {
+void fadescreendownhalf(Context &context) {
 	STACK_CHECK(context);
 	paltostartpal(context);
 	paltoendpal(context);
@@ -4985,7 +4985,7 @@ halfend:
 	return;
 }
 
-void fadescreenuphalf(Context & context) {
+void fadescreenuphalf(Context &context) {
 	STACK_CHECK(context);
 	endpaltostart(context);
 	paltoendpal(context);
@@ -4996,7 +4996,7 @@ void fadescreenuphalf(Context & context) {
 	return;
 }
 
-void fadescreendown(Context & context) {
+void fadescreendown(Context &context) {
 	STACK_CHECK(context);
 	paltostartpal(context);
 	clearendpal(context);
@@ -5007,7 +5007,7 @@ void fadescreendown(Context & context) {
 	return;
 }
 
-void fadescreendowns(Context & context) {
+void fadescreendowns(Context &context) {
 	STACK_CHECK(context);
 	paltostartpal(context);
 	clearendpal(context);
@@ -5018,7 +5018,7 @@ void fadescreendowns(Context & context) {
 	return;
 }
 
-void clearstartpal(Context & context) {
+void clearstartpal(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
@@ -5032,7 +5032,7 @@ wholeloop1:
 	return;
 }
 
-void showgun(Context & context) {
+void showgun(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kAddtored) = 0;
 	context.data.byte(kAddtogreen) = 0;
@@ -5087,13 +5087,13 @@ void showgun(Context & context) {
 	return;
 }
 
-void rollendcredits2(Context & context) {
+void rollendcredits2(Context &context) {
 	STACK_CHECK(context);
 	rollem(context);
 	return;
 }
 
-void rollem(Context & context) {
+void rollem(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 160;
 	context.ch = 160;
@@ -5182,7 +5182,7 @@ endearly:
 	return;
 }
 
-void fadecalculation(Context & context) {
+void fadecalculation(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kFadecount), 0);
 	if (context.flags.z()) goto nomorefading;
@@ -5216,7 +5216,7 @@ nomorefading:
 	return;
 }
 
-void greyscalesum(Context & context) {
+void greyscalesum(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
@@ -5272,7 +5272,7 @@ noaddb:
 	return;
 }
 
-void paltostartpal(Context & context) {
+void paltostartpal(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
@@ -5283,7 +5283,7 @@ void paltostartpal(Context & context) {
  	return;
 }
 
-void endpaltostart(Context & context) {
+void endpaltostart(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
@@ -5294,7 +5294,7 @@ void endpaltostart(Context & context) {
  	return;
 }
 
-void startpaltoend(Context & context) {
+void startpaltoend(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
@@ -5305,7 +5305,7 @@ void startpaltoend(Context & context) {
  	return;
 }
 
-void paltoendpal(Context & context) {
+void paltoendpal(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
@@ -5316,7 +5316,7 @@ void paltoendpal(Context & context) {
  	return;
 }
 
-void allpalette(Context & context) {
+void allpalette(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.ds = context.data.word(kBuffers);
@@ -5328,7 +5328,7 @@ void allpalette(Context & context) {
 	return;
 }
 
-void dumpcurrent(Context & context) {
+void dumpcurrent(Context &context) {
 	STACK_CHECK(context);
 	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	context.ds = context.data.word(kBuffers);
@@ -5343,7 +5343,7 @@ void dumpcurrent(Context & context) {
 	return;
 }
 
-void fadedownmon(Context & context) {
+void fadedownmon(Context &context) {
 	STACK_CHECK(context);
 	paltostartpal(context);
 	paltoendpal(context);
@@ -5364,7 +5364,7 @@ void fadedownmon(Context & context) {
 	return;
 }
 
-void fadeupmon(Context & context) {
+void fadeupmon(Context &context) {
 	STACK_CHECK(context);
 	paltostartpal(context);
 	paltoendpal(context);
@@ -5385,7 +5385,7 @@ void fadeupmon(Context & context) {
 	return;
 }
 
-void fadeupmonfirst(Context & context) {
+void fadeupmonfirst(Context &context) {
 	STACK_CHECK(context);
 	paltostartpal(context);
 	paltoendpal(context);
@@ -5410,7 +5410,7 @@ void fadeupmonfirst(Context & context) {
 	return;
 }
 
-void fadeupyellows(Context & context) {
+void fadeupyellows(Context &context) {
 	STACK_CHECK(context);
 	paltoendpal(context);
 	context.es = context.data.word(kBuffers);
@@ -5430,7 +5430,7 @@ void fadeupyellows(Context & context) {
 	return;
 }
 
-void initialmoncols(Context & context) {
+void initialmoncols(Context &context) {
 	STACK_CHECK(context);
 	paltostartpal(context);
 	context.es = context.data.word(kBuffers);
@@ -5449,7 +5449,7 @@ void initialmoncols(Context & context) {
 	return;
 }
 
-void titles(Context & context) {
+void titles(Context &context) {
 	STACK_CHECK(context);
 	clearpalette(context);
 	biblequote(context);
@@ -5457,7 +5457,7 @@ void titles(Context & context) {
 	return;
 }
 
-void endgame(Context & context) {
+void endgame(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 2260;
 	loadtemptext(context);
@@ -5471,7 +5471,7 @@ void endgame(Context & context) {
 	return;
 }
 
-void monkspeaking(Context & context) {
+void monkspeaking(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kRoomssample) = 35;
 	loadroomssample(context);
@@ -5516,7 +5516,7 @@ notloadspeech2:
 	return;
 }
 
-void showmonk(Context & context) {
+void showmonk(Context &context) {
 	STACK_CHECK(context);
 	context.al = 0;
 	context.ah = 128;
@@ -5527,7 +5527,7 @@ void showmonk(Context & context) {
 	return;
 }
 
-void gettingshot(Context & context) {
+void gettingshot(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kNewlocation) = 55;
 	clearpalette(context);
@@ -5540,14 +5540,14 @@ void gettingshot(Context & context) {
 	return;
 }
 
-void credits(Context & context) {
+void credits(Context &context) {
 	STACK_CHECK(context);
 	clearpalette(context);
 	realcredits(context);
 	return;
 }
 
-void biblequote(Context & context) {
+void biblequote(Context &context) {
 	STACK_CHECK(context);
 	mode640x480(context);
 	context.dx = 2377;
@@ -5572,7 +5572,7 @@ biblequotearly:
 	return;
 }
 
-void hangone(Context & context) {
+void hangone(Context &context) {
 	STACK_CHECK(context);
 hangonloope:
 	context.push(context.cx);
@@ -5585,7 +5585,7 @@ hangonearly:
 	return;
 }
 
-void intro(Context & context) {
+void intro(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 2247;
 	loadtemptext(context);
@@ -5630,7 +5630,7 @@ introearly:
 	return;
 }
 
-void runintroseq(Context & context) {
+void runintroseq(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kGetback) = 0;
 moreintroseq:
@@ -5663,7 +5663,7 @@ earlyendrun:
 	return;
 }
 
-void runendseq(Context & context) {
+void runendseq(Context &context) {
 	STACK_CHECK(context);
 	atmospheres(context);
 	context.data.byte(kGetback) = 0;
@@ -5685,7 +5685,7 @@ moreendseq:
 	return;
 }
 
-void loadintroroom(Context & context) {
+void loadintroroom(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kIntrocount) = 0;
 	context.data.byte(kLocation) = 255;
@@ -5706,7 +5706,7 @@ void loadintroroom(Context & context) {
 	return;
 }
 
-void realcredits(Context & context) {
+void realcredits(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kRoomssample) = 33;
 	loadroomssample(context);
@@ -5831,7 +5831,7 @@ realcreditsearly:
 	return;
 }
 
-void printchar(Context & context) {
+void printchar(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.al, 255);
 	if (context.flags.z()) goto ignoreit;
@@ -5859,7 +5859,7 @@ ignoreit:
 	return;
 }
 
-void kernchars(Context & context) {
+void kernchars(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.al, 'a');
 	if (context.flags.z()) goto iskern;
@@ -5883,7 +5883,7 @@ kernit:
 	return;
 }
 
-void printslow(Context & context) {
+void printslow(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kPointerframe) = 1;
 	context.data.byte(kPointermode) = 3;
@@ -5976,7 +5976,7 @@ finishslow2:
 	return;
 }
 
-void waitframes(Context & context) {
+void waitframes(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.di);
 	context.push(context.bx);
@@ -5997,7 +5997,7 @@ void waitframes(Context & context) {
 	return;
 }
 
-void printboth(Context & context) {
+void printboth(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.cx);
@@ -6015,7 +6015,7 @@ void printboth(Context & context) {
 	return;
 }
 
-void printdirect(Context & context) {
+void printdirect(Context &context) {
 	STACK_CHECK(context);
 	context.data.word(kLastxpos) = context.di;
 	context.ds = context.data.word(kCurrentset);
@@ -6051,7 +6051,7 @@ finishdirct:
 	return;
 }
 
-void monprint(Context & context) {
+void monprint(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kKerning) = 1;
 	context.si = context.bx;
@@ -6130,7 +6130,7 @@ nottrigger2:
 	return;
 }
 
-void getnumber(Context & context) {
+void getnumber(Context &context) {
 	STACK_CHECK(context);
 	context.cx = 0;
 	context.push(context.si);
@@ -6234,7 +6234,7 @@ notcent2:
 	return;
 }
 
-void getnextword(Context & context) {
+void getnextword(Context &context) {
 	STACK_CHECK(context);
 	context.bx = 0;
 getloop:
@@ -6272,7 +6272,7 @@ endall:
 	return;
 }
 
-void fillryan(Context & context) {
+void fillryan(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32);
@@ -6316,7 +6316,7 @@ ryanloop1:
 	return;
 }
 
-void fillopen(Context & context) {
+void fillopen(Context &context) {
 	STACK_CHECK(context);
 	deltextline(context);
 	getopenedsize(context);
@@ -6358,7 +6358,7 @@ nextopenslot:
 	return;
 }
 
-void findallryan(Context & context) {
+void findallryan(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.di);
 	context.cx = 30;
@@ -6391,7 +6391,7 @@ notinryaninv:
 	return;
 }
 
-void findallopen(Context & context) {
+void findallopen(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.di);
 	context.cx = 16;
@@ -6457,7 +6457,7 @@ findopen2a:
 	return;
 }
 
-void obtoinv(Context & context) {
+void obtoinv(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.bx);
 	context.push(context.es);
@@ -6515,7 +6515,7 @@ finishfill:
 	return;
 }
 
-void isitworn(Context & context) {
+void isitworn(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.es.byte(context.bx+12);
 	context._cmp(context.al, 'W'-'A');
@@ -6526,14 +6526,14 @@ notworn:
 	return;
 }
 
-void makeworn(Context & context) {
+void makeworn(Context &context) {
 	STACK_CHECK(context);
 	context.es.byte(context.bx+12) = 'W'-'A';
 	context.es.byte(context.bx+13) = 'E'-'A';
 	return;
 }
 
-void examineob(Context & context) {
+void examineob(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kPointermode) = 0;
 	context.data.word(kTimecount) = 0;
@@ -6599,7 +6599,7 @@ justgetback:
 	return;
 }
 
-void makemainscreen(Context & context) {
+void makemainscreen(Context &context) {
 	STACK_CHECK(context);
 	createpanel(context);
 	context.data.byte(kNewobs) = 1;
@@ -6618,7 +6618,7 @@ void makemainscreen(Context & context) {
 	return;
 }
 
-void getbackfromob(Context & context) {
+void getbackfromob(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPickup), 1);
 	if (!context.flags.z()) goto notheldob;
@@ -6629,7 +6629,7 @@ notheldob:
 	return;
 }
 
-void incryanpage(Context & context) {
+void incryanpage(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 222);
 	if (context.flags.z()) goto alreadyincryan;
@@ -6661,7 +6661,7 @@ findnewpage:
 	return;
 }
 
-void openinv(Context & context) {
+void openinv(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kInvopen) = 1;
 	context.al = 61;
@@ -6674,7 +6674,7 @@ void openinv(Context & context) {
 	return;
 }
 
-void showryanpage(Context & context) {
+void showryanpage(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kIcons1);
 	context.di = (80)+167;
@@ -6699,7 +6699,7 @@ void showryanpage(Context & context) {
 	return;
 }
 
-void openob(Context & context) {
+void openob(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kOpenedob);
 	context.ah = context.data.byte(kOpenedtype);
@@ -6731,7 +6731,7 @@ void openob(Context & context) {
 	return;
 }
 
-void obicons(Context & context) {
+void obicons(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kCommand);
 	getanyad(context);
@@ -6753,7 +6753,7 @@ cantopenit:
 	return;
 }
 
-void examicon(Context & context) {
+void examicon(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kIcons2);
 	context.di = 254;
@@ -6764,7 +6764,7 @@ void examicon(Context & context) {
 	return;
 }
 
-void obpicture(Context & context) {
+void obpicture(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kCommand);
 	context.ah = context.data.byte(kObjecttype);
@@ -6797,7 +6797,7 @@ exframe:
 	return;
 }
 
-void describeob(Context & context) {
+void describeob(Context &context) {
 	STACK_CHECK(context);
 	getobtextstart(context);
 	context.di = 33;
@@ -6819,7 +6819,7 @@ void describeob(Context & context) {
 	return;
 }
 
-void additionaltext(Context & context) {
+void additionaltext(Context &context) {
 	STACK_CHECK(context);
 	context._add(context.bx, 10);
 	context.push(context.bx);
@@ -6861,7 +6861,7 @@ fullcup:
 	return;
 }
 
-void obsthatdothings(Context & context) {
+void obsthatdothings(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kCommand);
 	context.ah = context.data.byte(kObjecttype);
@@ -6884,7 +6884,7 @@ notlouiscard:
 	return;
 }
 
-void getobtextstart(Context & context) {
+void getobtextstart(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kFreedesc);
 	context.si = (0);
@@ -6928,7 +6928,7 @@ findsometext:
 	return;
 }
 
-void searchforsame(Context & context) {
+void searchforsame(Context &context) {
 	STACK_CHECK(context);
 	context.si = context.cx;
 searchagain:
@@ -6967,7 +6967,7 @@ foundmatch:
 	return;
 }
 
-void findnextcolon(Context & context) {
+void findnextcolon(Context &context) {
 	STACK_CHECK(context);
 isntcolon:
 	context.al = context.es.byte(context.si);
@@ -6980,7 +6980,7 @@ endofcolon:
 	return;
 }
 
-void inventory(Context & context) {
+void inventory(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kMandead), 1);
 	if (context.flags.z()) goto iswatchinv;
@@ -7091,7 +7091,7 @@ withlist1:
 	return;
 }
 
-void setpickup(Context & context) {
+void setpickup(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kObjecttype), 1);
 	if (context.flags.z()) goto cantpick;
@@ -7151,7 +7151,7 @@ pickupexob:
 	return;
 }
 
-void examinventory(Context & context) {
+void examinventory(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 249);
 	if (context.flags.z()) goto alreadyexinv;
@@ -7176,7 +7176,7 @@ doexinv:
 	return;
 }
 
-void reexfrominv(Context & context) {
+void reexfrominv(Context &context) {
 	STACK_CHECK(context);
 	findinvpos(context);
 	context.ax = context.es.word(context.bx);
@@ -7187,7 +7187,7 @@ void reexfrominv(Context & context) {
 	return;
 }
 
-void reexfromopen(Context & context) {
+void reexfromopen(Context &context) {
 	STACK_CHECK(context);
 	return;
 	findopenpos(context);
@@ -7199,7 +7199,7 @@ void reexfromopen(Context & context) {
 	return;
 }
 
-void swapwithinv(Context & context) {
+void swapwithinv(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kItemframe);
 	context.ah = context.data.byte(kObjecttype);
@@ -7257,7 +7257,7 @@ doswap1:
 	return;
 }
 
-void swapwithopen(Context & context) {
+void swapwithopen(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kItemframe);
 	context.ah = context.data.byte(kObjecttype);
@@ -7352,7 +7352,7 @@ actuallyswap:
 	return;
 }
 
-void intoinv(Context & context) {
+void intoinv(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPickup), 0);
 	if (!context.flags.z()) goto notout;
@@ -7404,7 +7404,7 @@ doplace:
 	return;
 }
 
-void deletetaken(Context & context) {
+void deletetaken(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kFreedat);
 	context.ah = context.data.byte(kReallocation);
@@ -7428,7 +7428,7 @@ notinhere:
 	return;
 }
 
-void outofinv(Context & context) {
+void outofinv(Context &context) {
 	STACK_CHECK(context);
 	findinvpos(context);
 	context.ax = context.es.word(context.bx);
@@ -7480,7 +7480,7 @@ dograb:
 	return;
 }
 
-void getfreead(Context & context) {
+void getfreead(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 0;
 	context.cl = 4;
@@ -7490,7 +7490,7 @@ void getfreead(Context & context) {
 	return;
 }
 
-void getexad(Context & context) {
+void getexad(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 0;
 	context.bx = 16;
@@ -7501,7 +7501,7 @@ void getexad(Context & context) {
 	return;
 }
 
-void geteitherad(Context & context) {
+void geteitherad(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kObjecttype), 4);
 	if (context.flags.z()) goto isinexlist;
@@ -7514,7 +7514,7 @@ isinexlist:
 	return;
 }
 
-void getanyad(Context & context) {
+void getanyad(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kObjecttype), 4);
 	if (context.flags.z()) goto isex;
@@ -7536,7 +7536,7 @@ isex:
 	return;
 }
 
-void getanyaddir(Context & context) {
+void getanyaddir(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.ah, 4);
 	if (context.flags.z()) goto isex3;
@@ -7552,7 +7552,7 @@ isex3:
 	return;
 }
 
-void getopenedsize(Context & context) {
+void getopenedsize(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kOpenedtype), 4);
 	if (context.flags.z()) goto isex2;
@@ -7574,7 +7574,7 @@ isex2:
 	return;
 }
 
-void getsetad(Context & context) {
+void getsetad(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 0;
 	context.bx = 64;
@@ -7584,7 +7584,7 @@ void getsetad(Context & context) {
 	return;
 }
 
-void findinvpos(Context & context) {
+void findinvpos(Context &context) {
 	STACK_CHECK(context);
 	context.cx = context.data.word(kMousex);
 	context._sub(context.cx, (80));
@@ -7613,7 +7613,7 @@ findinv2:
 	return;
 }
 
-void findopenpos(Context & context) {
+void findopenpos(Context &context) {
 	STACK_CHECK(context);
 	context.cx = context.data.word(kMousex);
 	context._sub(context.cx, (80));
@@ -7630,7 +7630,7 @@ findopenp1:
 	return;
 }
 
-void dropobject(Context & context) {
+void dropobject(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 223);
 	if (context.flags.z()) goto alreadydrop;
@@ -7722,7 +7722,7 @@ notinlift:
 	return;
 }
 
-void droperror(Context & context) {
+void droperror(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kCommandtype) = 255;
 	delpointer(context);
@@ -7742,7 +7742,7 @@ void droperror(Context & context) {
 	return;
 }
 
-void cantdrop(Context & context) {
+void cantdrop(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kCommandtype) = 255;
 	delpointer(context);
@@ -7762,7 +7762,7 @@ void cantdrop(Context & context) {
 	return;
 }
 
-void wornerror(Context & context) {
+void wornerror(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kCommandtype) = 255;
 	delpointer(context);
@@ -7782,7 +7782,7 @@ void wornerror(Context & context) {
 	return;
 }
 
-void removeobfrominv(Context & context) {
+void removeobfrominv(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommand), 100);
 	if (context.flags.z()) goto obnotexist;
@@ -7795,7 +7795,7 @@ obnotexist:
 	return;
 }
 
-void selectopenob(Context & context) {
+void selectopenob(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kCommand);
 	getanyad(context);
@@ -7839,7 +7839,7 @@ doopenob:
 	return;
 }
 
-void useopened(Context & context) {
+void useopened(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kOpenedob), 255);
 	if (context.flags.z()) goto cannotuseopen;
@@ -7924,7 +7924,7 @@ sizeok1:
 	return;
 }
 
-void errormessage1(Context & context) {
+void errormessage1(Context &context) {
 	STACK_CHECK(context);
 	delpointer(context);
 	context.di = 76;
@@ -7949,7 +7949,7 @@ void errormessage1(Context & context) {
 	return;
 }
 
-void errormessage2(Context & context) {
+void errormessage2(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kCommandtype) = 255;
 	delpointer(context);
@@ -7975,7 +7975,7 @@ void errormessage2(Context & context) {
 	return;
 }
 
-void errormessage3(Context & context) {
+void errormessage3(Context &context) {
 	STACK_CHECK(context);
 	delpointer(context);
 	context.di = 76;
@@ -7997,7 +7997,7 @@ void errormessage3(Context & context) {
 	return;
 }
 
-void checkobjectsize(Context & context) {
+void checkobjectsize(Context &context) {
 	STACK_CHECK(context);
 	getopenedsize(context);
 	context.push(context.ax);
@@ -8039,7 +8039,7 @@ sizeok:
 	return;
 }
 
-void outofopen(Context & context) {
+void outofopen(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kOpenedob), 255);
 	if (context.flags.z()) goto cantuseopen;
@@ -8103,7 +8103,7 @@ actuallyout:
 	return;
 }
 
-void transfertoex(Context & context) {
+void transfertoex(Context &context) {
 	STACK_CHECK(context);
 	emergencypurge(context);
 	getexpos(context);
@@ -8145,7 +8145,7 @@ void transfertoex(Context & context) {
 	return;
 }
 
-void pickupconts(Context & context) {
+void pickupconts(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.ds.byte(context.si+7);
 	context._cmp(context.al, 255);
@@ -8182,7 +8182,7 @@ notopenable:
 	return;
 }
 
-void transfercontoex(Context & context) {
+void transfercontoex(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -8213,7 +8213,7 @@ void transfercontoex(Context & context) {
 	return;
 }
 
-void transfertext(Context & context) {
+void transfertext(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kExtras);
 	context.al = context.data.byte(kExpos);
@@ -8242,7 +8242,7 @@ moretext:
 	return;
 }
 
-void getexpos(Context & context) {
+void getexpos(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kExtras);
 	context.al = 0;
@@ -8259,7 +8259,7 @@ foundnewex:
 	return;
 }
 
-void purgealocation(Context & context) {
+void purgealocation(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.es = context.data.word(kExtras);
@@ -8288,7 +8288,7 @@ dontpurge:
 	return;
 }
 
-void emergencypurge(Context & context) {
+void emergencypurge(Context &context) {
 	STACK_CHECK(context);
 checkpurgeagain:
 	context.ax = context.data.word(kExframepos);
@@ -8308,7 +8308,7 @@ notneartextend:
 	return;
 }
 
-void purgeanitem(Context & context) {
+void purgeanitem(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kExtras);
 	context.di = (0+2080+30000);
@@ -8351,7 +8351,7 @@ cantpurge2:
 	return;
 }
 
-void deleteexobject(Context & context) {
+void deleteexobject(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.cx);
 	context.push(context.cx);
@@ -8396,7 +8396,7 @@ notinsideex:
 	return;
 }
 
-void deleteexframe(Context & context) {
+void deleteexframe(Context &context) {
 	STACK_CHECK(context);
 	context.di = (0);
 	context.ah = 0;
@@ -8436,7 +8436,7 @@ beforethisone:
 	return;
 }
 
-void deleteextext(Context & context) {
+void deleteextext(Context &context) {
 	STACK_CHECK(context);
 	context.di = (0+2080+30000+(16*114));
 	context.ah = 0;
@@ -8478,7 +8478,7 @@ beforethistext:
 	return;
 }
 
-void blockget(Context & context) {
+void blockget(Context &context) {
 	STACK_CHECK(context);
 	context.ah = context.al;
 	context.al = 0;
@@ -8488,7 +8488,7 @@ void blockget(Context & context) {
 	return;
 }
 
-void drawfloor(Context & context) {
+void drawfloor(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -8507,7 +8507,7 @@ void drawfloor(Context & context) {
 	return;
 }
 
-void calcmapad(Context & context) {
+void calcmapad(Context &context) {
 	STACK_CHECK(context);
 	getdimension(context);
 	context.push(context.cx);
@@ -8535,7 +8535,7 @@ void calcmapad(Context & context) {
 	return;
 }
 
-void getdimension(Context & context) {
+void getdimension(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32));
@@ -8616,7 +8616,7 @@ finishdim4:
 	return;
 }
 
-void addalong(Context & context) {
+void addalong(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 11;
 addloop:
@@ -8632,7 +8632,7 @@ gotalong:
 	return;
 }
 
-void addlength(Context & context) {
+void addlength(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 10;
 addloop2:
@@ -8648,7 +8648,7 @@ gotlength:
 	return;
 }
 
-void drawflags(Context & context) {
+void drawflags(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.di = (0+(180*10)+32+60+(32*32));
@@ -8686,7 +8686,7 @@ _tmp28a:
 	return;
 }
 
-void eraseoldobs(Context & context) {
+void eraseoldobs(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNewobs), 0);
 	if (context.flags.z()) goto donterase;
@@ -8712,7 +8712,7 @@ donterase:
 	return;
 }
 
-void showallobs(Context & context) {
+void showallobs(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32));
@@ -8795,7 +8795,7 @@ finishedsetobs:
 	return;
 }
 
-void makebackob(Context & context) {
+void makebackob(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNewobs), 0);
 	if (context.flags.z()) goto nomake;
@@ -8829,7 +8829,7 @@ nomake:
 	return;
 }
 
-void showallfree(Context & context) {
+void showallfree(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
@@ -8909,7 +8909,7 @@ finfree:
 	return;
 }
 
-void showallex(Context & context) {
+void showallex(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
@@ -8994,7 +8994,7 @@ finex:
 	return;
 }
 
-void calcfrframe(Context & context) {
+void calcfrframe(Context &context) {
 	STACK_CHECK(context);
 	context.dx = context.data.word(kFrsegment);
 	context.ax = context.data.word(kFramesad);
@@ -9030,7 +9030,7 @@ nullframe:
 	return;
 }
 
-void finalframe(Context & context) {
+void finalframe(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kObjecty);
 	context._add(context.ax, context.data.word(kOffsety));
@@ -9043,7 +9043,7 @@ void finalframe(Context & context) {
 	return;
 }
 
-void adjustlen(Context & context) {
+void adjustlen(Context &context) {
 	STACK_CHECK(context);
 	context.ah = context.al;
 	context._add(context.al, context.ch);
@@ -9056,7 +9056,7 @@ over242:
 	return;
 }
 
-void getmapad(Context & context) {
+void getmapad(Context &context) {
 	STACK_CHECK(context);
 	getxad(context);
 	context._cmp(context.ch, 0);
@@ -9071,7 +9071,7 @@ over146:
 	return;
 }
 
-void getxad(Context & context) {
+void getxad(Context &context) {
 	STACK_CHECK(context);
 	context.cl = context.es.byte(context.si);
 	context._inc(context.si);
@@ -9096,7 +9096,7 @@ over148:
 	return;
 }
 
-void getyad(Context & context) {
+void getyad(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.es.byte(context.si);
 	context._inc(context.si);
@@ -9117,7 +9117,7 @@ over147:
 	return;
 }
 
-void autolook(Context & context) {
+void autolook(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kMousex);
 	context._cmp(context.ax, context.data.word(kOldx));
@@ -9138,7 +9138,7 @@ diffmouse:
 	return;
 }
 
-void look(Context & context) {
+void look(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) { blank(context); return; };
@@ -9160,7 +9160,7 @@ nolook:
 	return;
 }
 
-void dolook(Context & context) {
+void dolook(Context &context) {
 	STACK_CHECK(context);
 	createpanel(context);
 	showicon(context);
@@ -9197,7 +9197,7 @@ afterlook:
 	return;
 }
 
-void redrawmainscrn(Context & context) {
+void redrawmainscrn(Context &context) {
 	STACK_CHECK(context);
 	context.data.word(kTimecount) = 0;
 	createpanel(context);
@@ -9213,7 +9213,7 @@ void redrawmainscrn(Context & context) {
 	return;
 }
 
-void getback1(Context & context) {
+void getback1(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPickup), 0);
 	if (context.flags.z()) goto notgotobject;
@@ -9239,7 +9239,7 @@ dogetback:
 	return;
 }
 
-void talk(Context & context) {
+void talk(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kTalkpos) = 0;
 	context.data.byte(kInmaparea) = 0;
@@ -9289,7 +9289,7 @@ nospeech:
 	return;
 }
 
-void convicons(Context & context) {
+void convicons(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kCharacter);
 	context._and(context.al, 127);
@@ -9305,7 +9305,7 @@ void convicons(Context & context) {
 	return;
 }
 
-void getpersframe(Context & context) {
+void getpersframe(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 0;
 	context._add(context.ax, context.ax);
@@ -9316,7 +9316,7 @@ void getpersframe(Context & context) {
 	return;
 }
 
-void starttalk(Context & context) {
+void starttalk(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kTalkmode) = 0;
 	context.al = context.data.byte(kCharacter);
@@ -9356,7 +9356,7 @@ nospeech1:
 	return;
 }
 
-void getpersontext(Context & context) {
+void getpersontext(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 0;
 	context.cx = 64*2;
@@ -9371,7 +9371,7 @@ void getpersontext(Context & context) {
 	return;
 }
 
-void moretalk(Context & context) {
+void moretalk(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kTalkmode), 0);
 	if (context.flags.z()) goto canmore;
@@ -9402,7 +9402,7 @@ notsecondpart:
 	return;
 }
 
-void dosometalk(Context & context) {
+void dosometalk(Context &context) {
 	STACK_CHECK(context);
 dospeech:
 	context.al = context.data.byte(kTalkpos);
@@ -9535,7 +9535,7 @@ endheartalk:
 	return;
 }
 
-void hangonpq(Context & context) {
+void hangonpq(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kGetback) = 0;
 	context.bx = 0;
@@ -9580,7 +9580,7 @@ quitconv:
  	return;
 }
 
-void redes(Context & context) {
+void redes(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCh1playing), 255);
 	if (!context.flags.z()) goto cantredes;
@@ -9615,7 +9615,7 @@ doredes:
 	return;
 }
 
-void newplace(Context & context) {
+void newplace(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNeedtotravel), 1);
 	if (context.flags.z()) goto istravel;
@@ -9633,7 +9633,7 @@ istravel:
 	return;
 }
 
-void selectlocation(Context & context) {
+void selectlocation(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kInmaparea) = 0;
 	clearbeforeload(context);
@@ -9693,7 +9693,7 @@ quittravel:
 	return;
 }
 
-void showcity(Context & context) {
+void showcity(Context &context) {
 	STACK_CHECK(context);
 	clearwork(context);
 	context.ds = context.data.word(kTempgraphics);
@@ -9711,7 +9711,7 @@ void showcity(Context & context) {
 	return;
 }
 
-void lookatplace(Context & context) {
+void lookatplace(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 224);
 	if (context.flags.z()) goto alreadyinfo;
@@ -9767,7 +9767,7 @@ noinfo:
 	return;
 }
 
-void getundercentre(Context & context) {
+void getundercentre(Context &context) {
 	STACK_CHECK(context);
 	context.di = 58;
 	context.bx = 72;
@@ -9779,7 +9779,7 @@ void getundercentre(Context & context) {
 	return;
 }
 
-void putundercentre(Context & context) {
+void putundercentre(Context &context) {
 	STACK_CHECK(context);
 	context.di = 58;
 	context.bx = 72;
@@ -9791,7 +9791,7 @@ void putundercentre(Context & context) {
 	return;
 }
 
-void locationpic(Context & context) {
+void locationpic(Context &context) {
 	STACK_CHECK(context);
 	getdestinfo(context);
 	context.al = context.es.byte(context.si);
@@ -9838,7 +9838,7 @@ notinthisone:
 	return;
 }
 
-void getdestinfo(Context & context) {
+void getdestinfo(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kDestpos);
 	context.ah = 0;
@@ -9858,7 +9858,7 @@ void getdestinfo(Context & context) {
 	return;
 }
 
-void showarrows(Context & context) {
+void showarrows(Context &context) {
 	STACK_CHECK(context);
 	context.di = 116-12;
 	context.bx = 16;
@@ -9881,7 +9881,7 @@ void showarrows(Context & context) {
 	return;
 }
 
-void nextdest(Context & context) {
+void nextdest(Context &context) {
 	STACK_CHECK(context);
 duok:
 	context._cmp(context.data.byte(kCommandtype), 218);
@@ -9920,7 +9920,7 @@ nodu:
 	return;
 }
 
-void lastdest(Context & context) {
+void lastdest(Context &context) {
 	STACK_CHECK(context);
 ddok:
 	context._cmp(context.data.byte(kCommandtype), 219);
@@ -9959,7 +9959,7 @@ nodd:
 	return;
 }
 
-void destselect(Context & context) {
+void destselect(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 222);
 	if (context.flags.z()) goto alreadytrav;
@@ -9979,7 +9979,7 @@ notrav:
 	return;
 }
 
-void getlocation(Context & context) {
+void getlocation(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 0;
 	context.bx = context.ax;
@@ -9990,7 +9990,7 @@ void getlocation(Context & context) {
 	return;
 }
 
-void setlocation(Context & context) {
+void setlocation(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 0;
 	context.bx = context.ax;
@@ -10001,7 +10001,7 @@ void setlocation(Context & context) {
 	return;
 }
 
-void resetlocation(Context & context) {
+void resetlocation(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context._cmp(context.al, 5);
@@ -10049,7 +10049,7 @@ clearedlocations:
 	return;
 }
 
-void readdesticon(Context & context) {
+void readdesticon(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 2013;
 	loadintotemp(context);
@@ -10060,14 +10060,14 @@ void readdesticon(Context & context) {
 	return;
 }
 
-void readcitypic(Context & context) {
+void readcitypic(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 2000;
 	loadintotemp(context);
 	return;
 }
 
-void usemon(Context & context) {
+void usemon(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kLasttrigger) = 0;
 	context.es = context.cs;
@@ -10158,7 +10158,7 @@ endmon:
 	return;
 }
 
-void printoutermon(Context & context) {
+void printoutermon(Context &context) {
 	STACK_CHECK(context);
 	context.di = 40;
 	context.bx = 32;
@@ -10187,7 +10187,7 @@ void printoutermon(Context & context) {
 	return;
 }
 
-void loadpersonal(Context & context) {
+void loadpersonal(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kLocation);
 	context.dx = 2052;
@@ -10215,7 +10215,7 @@ foundpersonal:
 	return;
 }
 
-void loadnews(Context & context) {
+void loadnews(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kNewsitem);
 	context.dx = 2078;
@@ -10245,7 +10245,7 @@ foundnews:
 	return;
 }
 
-void loadcart(Context & context) {
+void loadcart(Context &context) {
 	STACK_CHECK(context);
 	lookininterface(context);
 	context.dx = 2130;
@@ -10278,7 +10278,7 @@ gotcart:
 	return;
 }
 
-void lookininterface(Context & context) {
+void lookininterface(Context &context) {
 	STACK_CHECK(context);
 	context.al = 'I';
 	context.ah = 'N';
@@ -10297,7 +10297,7 @@ emptyinterface:
 	return;
 }
 
-void turnonpower(Context & context) {
+void turnonpower(Context &context) {
 	STACK_CHECK(context);
 	context.cx = 3;
 powerloop:
@@ -10314,7 +10314,7 @@ powerloop:
 	return;
 }
 
-void randomaccess(Context & context) {
+void randomaccess(Context &context) {
 	STACK_CHECK(context);
 accessloop:
 	context.push(context.cx);
@@ -10335,7 +10335,7 @@ chosenaccess:
 	return;
 }
 
-void powerlighton(Context & context) {
+void powerlighton(Context &context) {
 	STACK_CHECK(context);
 	context.di = 257+4;
 	context.bx = 182;
@@ -10353,7 +10353,7 @@ void powerlighton(Context & context) {
 	return;
 }
 
-void powerlightoff(Context & context) {
+void powerlightoff(Context &context) {
 	STACK_CHECK(context);
 	context.di = 257+4;
 	context.bx = 182;
@@ -10371,7 +10371,7 @@ void powerlightoff(Context & context) {
 	return;
 }
 
-void accesslighton(Context & context) {
+void accesslighton(Context &context) {
 	STACK_CHECK(context);
 	context.di = 74;
 	context.bx = 182;
@@ -10389,7 +10389,7 @@ void accesslighton(Context & context) {
 	return;
 }
 
-void accesslightoff(Context & context) {
+void accesslightoff(Context &context) {
 	STACK_CHECK(context);
 	context.di = 74;
 	context.bx = 182;
@@ -10407,7 +10407,7 @@ void accesslightoff(Context & context) {
 	return;
 }
 
-void locklighton(Context & context) {
+void locklighton(Context &context) {
 	STACK_CHECK(context);
 	context.di = 56;
 	context.bx = 182;
@@ -10425,7 +10425,7 @@ void locklighton(Context & context) {
 	return;
 }
 
-void locklightoff(Context & context) {
+void locklightoff(Context &context) {
 	STACK_CHECK(context);
 	context.di = 56;
 	context.bx = 182;
@@ -10443,7 +10443,7 @@ void locklightoff(Context & context) {
 	return;
 }
 
-void input(Context & context) {
+void input(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.cs;
 	context.di = 8045;
@@ -10533,7 +10533,7 @@ endofinput:
 	return;
 }
 
-void makecaps(Context & context) {
+void makecaps(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.al, 'a');
 	if (context.flags.c()) goto notupperc;
@@ -10542,7 +10542,7 @@ notupperc:
 	return;
 }
 
-void delchar(Context & context) {
+void delchar(Context &context) {
 	STACK_CHECK(context);
 	context._dec(context.data.word(kCurpos));
 	context.si = context.data.word(kCurpos);
@@ -10571,7 +10571,7 @@ void delchar(Context & context) {
 	return;
 }
 
-void execcommand(Context & context) {
+void execcommand(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.cs;
 	context.bx = 2776;
@@ -10645,7 +10645,7 @@ quitcom:
 	return;
 }
 
-void neterror(Context & context) {
+void neterror(Context &context) {
 	STACK_CHECK(context);
 	context.al = 5;
 	monmessage(context);
@@ -10653,7 +10653,7 @@ void neterror(Context & context) {
 	return;
 }
 
-void dircom(Context & context) {
+void dircom(Context &context) {
 	STACK_CHECK(context);
 	context.cx = 30;
 	randomaccess(context);
@@ -10686,7 +10686,7 @@ dirroot:
 	return;
 }
 
-void searchforfiles(Context & context) {
+void searchforfiles(Context &context) {
 	STACK_CHECK(context);
 	context.bx = (66*2);
 directloop1:
@@ -10702,7 +10702,7 @@ endofdir:
 	return;
 }
 
-void signon(Context & context) {
+void signon(Context &context) {
 	STACK_CHECK(context);
 	parser(context);
 	context._inc(context.di);
@@ -10798,7 +10798,7 @@ passpassed:
 	return;
 }
 
-void showkeys(Context & context) {
+void showkeys(Context &context) {
 	STACK_CHECK(context);
 	context.cx = 10;
 	randomaccess(context);
@@ -10824,7 +10824,7 @@ notheld:
 	return;
 }
 
-void read(Context & context) {
+void read(Context &context) {
 	STACK_CHECK(context);
 	context.cx = 40;
 	randomaccess(context);
@@ -10907,7 +10907,7 @@ endoftopic:
 	return;
 }
 
-void dirfile(Context & context) {
+void dirfile(Context &context) {
 	STACK_CHECK(context);
 	context.al = 34;
 	context.es.byte(context.di) = context.al;
@@ -10979,7 +10979,7 @@ endofdir2:
 	return;
 }
 
-void getkeyandlogo(Context & context) {
+void getkeyandlogo(Context &context) {
 	STACK_CHECK(context);
 	context._inc(context.bx);
 	context.al = context.es.byte(context.bx);
@@ -11024,7 +11024,7 @@ keyok:
 	return;
 }
 
-void searchforstring(Context & context) {
+void searchforstring(Context &context) {
 	STACK_CHECK(context);
 	context.dl = context.es.byte(context.di);
 	context.cx = context.di;
@@ -11063,7 +11063,7 @@ notfound:
 	return;
 }
 
-void parser(Context & context) {
+void parser(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.cs;
 	context.di = 2942;
@@ -11098,7 +11098,7 @@ finishpars:
 	return;
 }
 
-void scrollmonitor(Context & context) {
+void scrollmonitor(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.bx);
@@ -11127,7 +11127,7 @@ void scrollmonitor(Context & context) {
 	return;
 }
 
-void lockmon(Context & context) {
+void lockmon(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLasthardkey), 57);
 	if (!context.flags.z()) goto notlock;
@@ -11140,7 +11140,7 @@ notlock:
 	return;
 }
 
-void monitorlogo(Context & context) {
+void monitorlogo(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kLogonum);
 	context._cmp(context.al, context.data.byte(kOldlogonum));
@@ -11161,7 +11161,7 @@ notnewlogo:
 	return;
 }
 
-void printlogo(Context & context) {
+void printlogo(Context &context) {
 	STACK_CHECK(context);
 	context.di = 56;
 	context.bx = 32;
@@ -11173,7 +11173,7 @@ void printlogo(Context & context) {
 	return;
 }
 
-void showcurrentfile(Context & context) {
+void showcurrentfile(Context &context) {
 	STACK_CHECK(context);
 	context.di = 178;
 	context.bx = 37;
@@ -11193,7 +11193,7 @@ finishfile:
 	return;
 }
 
-void monmessage(Context & context) {
+void monmessage(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTextfile1);
 	context.bx = (66*2);
@@ -11209,7 +11209,7 @@ monmessageloop:
 	return;
 }
 
-void processtrigger(Context & context) {
+void processtrigger(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLasttrigger), '1');
 	if (!context.flags.z()) goto notfirsttrigger;
@@ -11237,7 +11237,7 @@ notthirdtrigger:
 	return;
 }
 
-void triggermessage(Context & context) {
+void triggermessage(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.di = 174;
@@ -11271,7 +11271,7 @@ void triggermessage(Context & context) {
 	return;
 }
 
-void printcurs(Context & context) {
+void printcurs(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.si);
 	context.push(context.di);
@@ -11317,7 +11317,7 @@ flashcurs:
 	return;
 }
 
-void delcurs(Context & context) {
+void delcurs(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -11349,7 +11349,7 @@ finishcurdel:
 	return;
 }
 
-void useobject(Context & context) {
+void useobject(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kWithobject) = 255;
 	context._cmp(context.data.byte(kCommandtype), 229);
@@ -11372,7 +11372,7 @@ douse:
 	return;
 }
 
-void useroutine(Context & context) {
+void useroutine(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 50);
 	if (context.flags.c()) goto nodream7;
@@ -11448,7 +11448,7 @@ cantuse2:
 	return;
 }
 
-void wheelsound(Context & context) {
+void wheelsound(Context &context) {
 	STACK_CHECK(context);
 	context.al = 17;
 	playchannel1(context);
@@ -11457,7 +11457,7 @@ void wheelsound(Context & context) {
 	return;
 }
 
-void runtap(Context & context) {
+void runtap(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto tapwith;
@@ -11504,7 +11504,7 @@ cupfromtapfull:
 	return;
 }
 
-void playguitar(Context & context) {
+void playguitar(Context &context) {
 	STACK_CHECK(context);
 	context.al = 14;
 	playchannel1(context);
@@ -11513,7 +11513,7 @@ void playguitar(Context & context) {
 	return;
 }
 
-void hotelcontrol(Context & context) {
+void hotelcontrol(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 21);
 	if (!context.flags.z()) goto notrightcont;
@@ -11528,7 +11528,7 @@ notrightcont:
 	return;
 }
 
-void hotelbell(Context & context) {
+void hotelbell(Context &context) {
 	STACK_CHECK(context);
 	context.al = 12;
 	playchannel1(context);
@@ -11537,7 +11537,7 @@ void hotelbell(Context & context) {
 	return;
 }
 
-void opentomb(Context & context) {
+void opentomb(Context &context) {
 	STACK_CHECK(context);
 	context._inc(context.data.byte(kProgresspoints));
 	showfirstuse(context);
@@ -11550,7 +11550,7 @@ void opentomb(Context & context) {
 	return;
 }
 
-void usetrainer(Context & context) {
+void usetrainer(Context &context) {
 	STACK_CHECK(context);
 	getanyad(context);
 	context._cmp(context.es.byte(context.bx+2), 4);
@@ -11565,7 +11565,7 @@ notheldtrainer:
 	return;
 }
 
-void nothelderror(Context & context) {
+void nothelderror(Context &context) {
 	STACK_CHECK(context);
 	createpanel(context);
 	showpanel(context);
@@ -11585,7 +11585,7 @@ void nothelderror(Context & context) {
 	return;
 }
 
-void usepipe(Context & context) {
+void usepipe(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto pipewith;
@@ -11630,7 +11630,7 @@ alreadyfull:
 	return;
 }
 
-void usefullcart(Context & context) {
+void usefullcart(Context &context) {
 	STACK_CHECK(context);
 	context._inc(context.data.byte(kProgresspoints));
 	context.al = 2;
@@ -11653,7 +11653,7 @@ void usefullcart(Context & context) {
 	return;
 }
 
-void useplinth(Context & context) {
+void useplinth(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto plinthwith;
@@ -11685,7 +11685,7 @@ isrightkey:
 	return;
 }
 
-void chewy(Context & context) {
+void chewy(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	getanyad(context);
@@ -11694,7 +11694,7 @@ void chewy(Context & context) {
 	return;
 }
 
-void useladder(Context & context) {
+void useladder(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context._sub(context.data.byte(kMapx), 11);
@@ -11710,7 +11710,7 @@ void useladder(Context & context) {
 	return;
 }
 
-void useladderb(Context & context) {
+void useladderb(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context._add(context.data.byte(kMapx), 11);
@@ -11726,7 +11726,7 @@ void useladderb(Context & context) {
 	return;
 }
 
-void slabdoora(Context & context) {
+void slabdoora(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
@@ -11748,7 +11748,7 @@ slabawrong:
 	return;
 }
 
-void slabdoorb(Context & context) {
+void slabdoorb(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kDreamnumber), 1);
 	if (!context.flags.z()) goto slabbwrong;
@@ -11787,7 +11787,7 @@ slabbwrong:
 	return;
 }
 
-void slabdoord(Context & context) {
+void slabdoord(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
@@ -11809,7 +11809,7 @@ slabcwrong:
 	return;
 }
 
-void slabdoorc(Context & context) {
+void slabdoorc(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
@@ -11831,7 +11831,7 @@ slabdwrong:
 	return;
 }
 
-void slabdoore(Context & context) {
+void slabdoore(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
@@ -11853,7 +11853,7 @@ slabewrong:
 	return;
 }
 
-void slabdoorf(Context & context) {
+void slabdoorf(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
@@ -11875,7 +11875,7 @@ slabfwrong:
 	return;
 }
 
-void useslab(Context & context) {
+void useslab(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto slabwith;
@@ -11923,7 +11923,7 @@ notlastslab:
 	return;
 }
 
-void usecart(Context & context) {
+void usecart(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto cartwith;
@@ -11961,7 +11961,7 @@ nextcart:
 	return;
 }
 
-void useclearbox(Context & context) {
+void useclearbox(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto clearboxwith;
@@ -11993,7 +11993,7 @@ openbox:
 	return;
 }
 
-void usecoveredbox(Context & context) {
+void usecoveredbox(Context &context) {
 	STACK_CHECK(context);
 	context._inc(context.data.byte(kProgresspoints));
 	showfirstuse(context);
@@ -12006,7 +12006,7 @@ void usecoveredbox(Context & context) {
 	return;
 }
 
-void userailing(Context & context) {
+void userailing(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.word(kWatchingtime) = 80;
@@ -12019,7 +12019,7 @@ void userailing(Context & context) {
 	return;
 }
 
-void useopenbox(Context & context) {
+void useopenbox(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto openboxwith;
@@ -12069,7 +12069,7 @@ openboxwrong:
 	return;
 }
 
-void wearwatch(Context & context) {
+void wearwatch(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchon), 1);
 	if (context.flags.z()) goto wearingwatch;
@@ -12085,7 +12085,7 @@ wearingwatch:
 	return;
 }
 
-void wearshades(Context & context) {
+void wearshades(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kShadeson), 1);
 	if (context.flags.z()) goto wearingshades;
@@ -12101,7 +12101,7 @@ wearingshades:
 	return;
 }
 
-void sitdowninbar(Context & context) {
+void sitdowninbar(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchmode), -1);
 	if (!context.flags.z()) goto satdown;
@@ -12121,7 +12121,7 @@ satdown:
 	return;
 }
 
-void usechurchhole(Context & context) {
+void usechurchhole(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kGetback) = 1;
@@ -12133,7 +12133,7 @@ void usechurchhole(Context & context) {
 	return;
 }
 
-void usehole(Context & context) {
+void usehole(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto holewith;
@@ -12165,7 +12165,7 @@ righthand:
 	return;
 }
 
-void usealtar(Context & context) {
+void usealtar(Context &context) {
 	STACK_CHECK(context);
 	context.al = 'C';
 	context.ah = 'N';
@@ -12210,7 +12210,7 @@ thingsonaltar:
 	return;
 }
 
-void opentvdoor(Context & context) {
+void opentvdoor(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto tvdoorwith;
@@ -12237,7 +12237,7 @@ keyontv:
 	return;
 }
 
-void usedryer(Context & context) {
+void usedryer(Context &context) {
 	STACK_CHECK(context);
 	context.al = 12;
 	playchannel1(context);
@@ -12246,7 +12246,7 @@ void usedryer(Context & context) {
 	return;
 }
 
-void openlouis(Context & context) {
+void openlouis(Context &context) {
 	STACK_CHECK(context);
 	context.al = 5;
 	context.ah = 2;
@@ -12257,7 +12257,7 @@ void openlouis(Context & context) {
 	return;
 }
 
-void nextcolon(Context & context) {
+void nextcolon(Context &context) {
 	STACK_CHECK(context);
 lookcolon:
 	context.al = context.es.byte(context.si);
@@ -12267,7 +12267,7 @@ lookcolon:
 	return;
 }
 
-void openyourneighbour(Context & context) {
+void openyourneighbour(Context &context) {
 	STACK_CHECK(context);
 	context.al = 255;
 	context.ah = 255;
@@ -12278,7 +12278,7 @@ void openyourneighbour(Context & context) {
 	return;
 }
 
-void usewindow(Context & context) {
+void usewindow(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kManspath), 6);
 	if (!context.flags.z()) goto notonbalc;
@@ -12293,7 +12293,7 @@ notonbalc:
 	return;
 }
 
-void usebalcony(Context & context) {
+void usebalcony(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.al = 6;
@@ -12326,7 +12326,7 @@ void usebalcony(Context & context) {
 	return;
 }
 
-void openryan(Context & context) {
+void openryan(Context &context) {
 	STACK_CHECK(context);
 	context.al = 5;
 	context.ah = 1;
@@ -12337,7 +12337,7 @@ void openryan(Context & context) {
 	return;
 }
 
-void openpoolboss(Context & context) {
+void openpoolboss(Context &context) {
 	STACK_CHECK(context);
 	context.al = 5;
 	context.ah = 2;
@@ -12348,7 +12348,7 @@ void openpoolboss(Context & context) {
 	return;
 }
 
-void openeden(Context & context) {
+void openeden(Context &context) {
 	STACK_CHECK(context);
 	context.al = 2;
 	context.ah = 8;
@@ -12359,7 +12359,7 @@ void openeden(Context & context) {
 	return;
 }
 
-void opensarters(Context & context) {
+void opensarters(Context &context) {
 	STACK_CHECK(context);
 	context.al = 7;
 	context.ah = 8;
@@ -12370,7 +12370,7 @@ void opensarters(Context & context) {
 	return;
 }
 
-void isitright(Context & context) {
+void isitright(Context &context) {
 	STACK_CHECK(context);
 	context.bx = context.data;
 	context.es = context.bx;
@@ -12386,7 +12386,7 @@ notright:
 	return;
 }
 
-void drawitall(Context & context) {
+void drawitall(Context &context) {
 	STACK_CHECK(context);
 	createpanel(context);
 	drawfloor(context);
@@ -12395,7 +12395,7 @@ void drawitall(Context & context) {
 	return;
 }
 
-void openhoteldoor(Context & context) {
+void openhoteldoor(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto hoteldoorwith;
@@ -12424,7 +12424,7 @@ keyonhotel1:
 	return;
 }
 
-void openhoteldoor2(Context & context) {
+void openhoteldoor2(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto hoteldoorwith2;
@@ -12452,7 +12452,7 @@ keyonhotel2:
 	return;
 }
 
-void grafittidoor(Context & context) {
+void grafittidoor(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto grafwith;
@@ -12478,7 +12478,7 @@ dograf:
 	return;
 }
 
-void trapdoor(Context & context) {
+void trapdoor(Context &context) {
 	STACK_CHECK(context);
 	context._inc(context.data.byte(kProgresspoints));
 	showfirstuse(context);
@@ -12493,7 +12493,7 @@ void trapdoor(Context & context) {
 	return;
 }
 
-void callhotellift(Context & context) {
+void callhotellift(Context &context) {
 	STACK_CHECK(context);
 	context.al = 12;
 	playchannel1(context);
@@ -12508,7 +12508,7 @@ void callhotellift(Context & context) {
 	return;
 }
 
-void calledenslift(Context & context) {
+void calledenslift(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kCounttoopen) = 8;
@@ -12518,7 +12518,7 @@ void calledenslift(Context & context) {
 	return;
 }
 
-void calledensdlift(Context & context) {
+void calledensdlift(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLiftflag), 1);
 	if (context.flags.z()) goto edensdhere;
@@ -12534,7 +12534,7 @@ edensdhere:
 	return;
 }
 
-void usepoolreader(Context & context) {
+void usepoolreader(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto poolwith;
@@ -12569,7 +12569,7 @@ canopenpool:
 	return;
 }
 
-void uselighter(Context & context) {
+void uselighter(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotlighterwith;
@@ -12598,7 +12598,7 @@ cigarette:
 	return;
 }
 
-void showseconduse(Context & context) {
+void showseconduse(Context &context) {
 	STACK_CHECK(context);
 	getobtextstart(context);
 	nextcolon(context);
@@ -12610,7 +12610,7 @@ void showseconduse(Context & context) {
 	return;
 }
 
-void usecardreader1(Context & context) {
+void usecardreader1(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotreader1with;
@@ -12656,7 +12656,7 @@ notyet:
 	return;
 }
 
-void usecardreader2(Context & context) {
+void usecardreader2(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotreader2with;
@@ -12713,7 +12713,7 @@ notyetboss:
 	return;
 }
 
-void usecardreader3(Context & context) {
+void usecardreader3(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotreader3with;
@@ -12760,7 +12760,7 @@ notyetrecep:
 	return;
 }
 
-void usecashcard(Context & context) {
+void usecashcard(Context &context) {
 	STACK_CHECK(context);
 	getridofreels(context);
 	loadkeypad(context);
@@ -12813,7 +12813,7 @@ void usecashcard(Context & context) {
 	return;
 }
 
-void lookatcard(Context & context) {
+void lookatcard(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kManisoffscreen) = 1;
 	getridofreels(context);
@@ -12865,7 +12865,7 @@ void lookatcard(Context & context) {
 	return;
 }
 
-void moneypoke(Context & context) {
+void moneypoke(Context &context) {
 	STACK_CHECK(context);
 	context.bx = 3474;
 	context.cl = 48-1;
@@ -12905,7 +12905,7 @@ numberpoke3:
 	return;
 }
 
-void usecontrol(Context & context) {
+void usecontrol(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotcontrolwith;
@@ -12996,7 +12996,7 @@ axeoncontrols:
 	return;
 }
 
-void usehatch(Context & context) {
+void usehatch(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kNewlocation) = 40;
@@ -13004,7 +13004,7 @@ void usehatch(Context & context) {
 	return;
 }
 
-void usewire(Context & context) {
+void usewire(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotwirewith;
@@ -13051,7 +13051,7 @@ wireknife:
 	return;
 }
 
-void usehandle(Context & context) {
+void usehandle(Context &context) {
 	STACK_CHECK(context);
 	context.al = 'C';
 	context.ah = 'U';
@@ -13075,7 +13075,7 @@ havecutwire:
 	return;
 }
 
-void useelevator1(Context & context) {
+void useelevator1(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	selectlocation(context);
@@ -13083,7 +13083,7 @@ void useelevator1(Context & context) {
 	return;
 }
 
-void showfirstuse(Context & context) {
+void showfirstuse(Context &context) {
 	STACK_CHECK(context);
 	getobtextstart(context);
 	findnextcolon(context);
@@ -13094,7 +13094,7 @@ void showfirstuse(Context & context) {
 	return;
 }
 
-void useelevator3(Context & context) {
+void useelevator3(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.byte(kCounttoclose) = 20;
@@ -13108,7 +13108,7 @@ void useelevator3(Context & context) {
 	return;
 }
 
-void useelevator4(Context & context) {
+void useelevator4(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.word(kReeltowatch) = 0;
@@ -13122,7 +13122,7 @@ void useelevator4(Context & context) {
 	return;
 }
 
-void useelevator2(Context & context) {
+void useelevator2(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 23);
 	if (context.flags.z()) goto inpoolhall;
@@ -13143,7 +13143,7 @@ inpoolhall:
 	return;
 }
 
-void useelevator5(Context & context) {
+void useelevator5(Context &context) {
 	STACK_CHECK(context);
 	context.al = 4;
 	placesetobject(context);
@@ -13157,7 +13157,7 @@ void useelevator5(Context & context) {
 	return;
 }
 
-void usekey(Context & context) {
+void usekey(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 5);
 	if (context.flags.z()) goto usekey1;
@@ -13203,7 +13203,7 @@ wrongroom1:
 	return;
 }
 
-void usestereo(Context & context) {
+void usestereo(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 0);
 	if (context.flags.z()) goto stereook;
@@ -13261,7 +13261,7 @@ stereoon:
 	return;
 }
 
-void usecooker(Context & context) {
+void usecooker(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kCommand);
 	context.ah = context.data.byte(kObjecttype);
@@ -13277,7 +13277,7 @@ foodinside:
 	return;
 }
 
-void useaxe(Context & context) {
+void useaxe(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 22);
 	if (!context.flags.z()) goto notinpool;
@@ -13308,7 +13308,7 @@ axeondoor:
 	return;
 }
 
-void useelvdoor(Context & context) {
+void useelvdoor(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gotdoorwith;
@@ -13342,7 +13342,7 @@ axeondoor:
 	return;
 }
 
-void withwhat(Context & context) {
+void withwhat(Context &context) {
 	STACK_CHECK(context);
 	createpanel(context);
 	showpanel(context);
@@ -13385,7 +13385,7 @@ void withwhat(Context & context) {
 	return;
 }
 
-void selectob(Context & context) {
+void selectob(Context &context) {
 	STACK_CHECK(context);
 	findinvpos(context);
 	context.ax = context.es.word(context.bx);
@@ -13421,7 +13421,7 @@ doselob:
 	return;
 }
 
-void compare(Context & context) {
+void compare(Context &context) {
 	STACK_CHECK(context);
 	context._sub(context.dl, 'A');
 	context._sub(context.dh, 'A');
@@ -13439,7 +13439,7 @@ comparefin:
 	return;
 }
 
-void findsetobject(Context & context) {
+void findsetobject(Context &context) {
 	STACK_CHECK(context);
 	context._sub(context.al, 'A');
 	context._sub(context.ah, 'A');
@@ -13468,7 +13468,7 @@ nofind:
 	return;
 }
 
-void findexobject(Context & context) {
+void findexobject(Context &context) {
 	STACK_CHECK(context);
 	context._sub(context.al, 'A');
 	context._sub(context.ah, 'A');
@@ -13497,7 +13497,7 @@ nofindex:
 	return;
 }
 
-void isryanholding(Context & context) {
+void isryanholding(Context &context) {
 	STACK_CHECK(context);
 	context._sub(context.al, 'A');
 	context._sub(context.ah, 'A');
@@ -13530,7 +13530,7 @@ nofindininv:
 	return;
 }
 
-void checkinside(Context & context) {
+void checkinside(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kExtras);
 	context.bx = (0+2080+30000);
@@ -13549,7 +13549,7 @@ notfoundinside:
 	return;
 }
 
-void usetext(Context & context) {
+void usetext(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.si);
@@ -13570,7 +13570,7 @@ void usetext(Context & context) {
 	return;
 }
 
-void putbackobstuff(Context & context) {
+void putbackobstuff(Context &context) {
 	STACK_CHECK(context);
 	createpanel(context);
 	showpanel(context);
@@ -13588,7 +13588,7 @@ void putbackobstuff(Context & context) {
 	return;
 }
 
-void showpuztext(Context & context) {
+void showpuztext(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.cx);
 	findpuztext(context);
@@ -13612,7 +13612,7 @@ void showpuztext(Context & context) {
 	return;
 }
 
-void findpuztext(Context & context) {
+void findpuztext(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 0;
 	context.si = context.ax;
@@ -13624,7 +13624,7 @@ void findpuztext(Context & context) {
 	return;
 }
 
-void placesetobject(Context & context) {
+void placesetobject(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -13638,7 +13638,7 @@ void placesetobject(Context & context) {
 	return;
 }
 
-void removesetobject(Context & context) {
+void removesetobject(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -13652,7 +13652,7 @@ void removesetobject(Context & context) {
 	return;
 }
 
-void issetobonmap(Context & context) {
+void issetobonmap(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -13664,7 +13664,7 @@ void issetobonmap(Context & context) {
 	return;
 }
 
-void placefreeobject(Context & context) {
+void placefreeobject(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -13678,7 +13678,7 @@ void placefreeobject(Context & context) {
 	return;
 }
 
-void removefreeobject(Context & context) {
+void removefreeobject(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.bx);
@@ -13689,7 +13689,7 @@ void removefreeobject(Context & context) {
 	return;
 }
 
-void findormake(Context & context) {
+void findormake(Context &context) {
 	STACK_CHECK(context);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
 	context.push(context.ax);
@@ -13716,19 +13716,19 @@ haventfound:
 	return;
 }
 
-void switchryanon(Context & context) {
+void switchryanon(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kRyanon) = 255;
 	return;
 }
 
-void switchryanoff(Context & context) {
+void switchryanoff(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kRyanon) = 1;
 	return;
 }
 
-void setallchanges(Context & context) {
+void setallchanges(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
@@ -13750,7 +13750,7 @@ endsetloop:
 	return;
 }
 
-void dochange(Context & context) {
+void dochange(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.ch, 0);
 	if (context.flags.z()) goto object;
@@ -13793,7 +13793,7 @@ beenpickedup:
 	return;
 }
 
-void autoappear(Context & context) {
+void autoappear(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 32);
 	if (!context.flags.z()) goto notinalley;
@@ -13859,7 +13859,7 @@ notinlouiss:
 	return;
 }
 
-void getundertimed(Context & context) {
+void getundertimed(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kTimedy);
 	context.ah = 0;
@@ -13875,7 +13875,7 @@ void getundertimed(Context & context) {
 	return;
 }
 
-void putundertimed(Context & context) {
+void putundertimed(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kTimedy);
 	context.ah = 0;
@@ -13891,7 +13891,7 @@ void putundertimed(Context & context) {
 	return;
 }
 
-void dumptimedtext(Context & context) {
+void dumptimedtext(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNeedtodumptimed), 1);
 	if (!context.flags.z()) goto nodumptimed;
@@ -13909,7 +13909,7 @@ nodumptimed:
 	return;
 }
 
-void setuptimeduse(Context & context) {
+void setuptimeduse(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kTimecount), 0);
 	if (!context.flags.z()) goto cantsetup;
@@ -13932,7 +13932,7 @@ cantsetup:
 	return;
 }
 
-void setuptimedtemp(Context & context) {
+void setuptimedtemp(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.ah, 0);
 	if (context.flags.z()) goto notloadspeech3;
@@ -13968,7 +13968,7 @@ cantsetup2:
 	return;
 }
 
-void usetimedtext(Context & context) {
+void usetimedtext(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kTimecount), 0);
 	if (context.flags.z()) goto notext;
@@ -14002,7 +14002,7 @@ deltimedtext:
 	return;
 }
 
-void edenscdplayer(Context & context) {
+void edenscdplayer(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context.data.word(kWatchingtime) = 18*2;
@@ -14014,7 +14014,7 @@ void edenscdplayer(Context & context) {
 	return;
 }
 
-void usewall(Context & context) {
+void usewall(Context &context) {
 	STACK_CHECK(context);
 	showfirstuse(context);
 	context._cmp(context.data.byte(kManspath), 3);
@@ -14070,7 +14070,7 @@ gobackover:
 	return;
 }
 
-void usechurchgate(Context & context) {
+void usechurchgate(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto gatewith;
@@ -14109,7 +14109,7 @@ notopenchurch:
 	return;
 }
 
-void usegun(Context & context) {
+void usegun(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kObjecttype), 4);
 	if (context.flags.z()) goto istakengun;
@@ -14265,7 +14265,7 @@ nottvsoldier:
 	return;
 }
 
-void useshield(Context & context) {
+void useshield(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 20);
 	if (!context.flags.z()) goto notinsartroom;
@@ -14283,7 +14283,7 @@ notinsartroom:
 	return;
 }
 
-void usebuttona(Context & context) {
+void usebuttona(Context &context) {
 	STACK_CHECK(context);
 	context.al = 95;
 	issetobonmap(context);
@@ -14311,7 +14311,7 @@ donethisbit:
 	return;
 }
 
-void useplate(Context & context) {
+void useplate(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWithobject), 255);
 	if (!context.flags.z()) goto platewith;
@@ -14362,7 +14362,7 @@ triedknife:
 	return;
 }
 
-void usewinch(Context & context) {
+void usewinch(Context &context) {
 	STACK_CHECK(context);
 	context.al = 40;
 	context.ah = 1;
@@ -14397,7 +14397,7 @@ nowinch:
 	return;
 }
 
-void entercode(Context & context) {
+void entercode(Context &context) {
 	STACK_CHECK(context);
 	context.data.word(kKeypadax) = context.ax;
 	context.data.word(kKeypadcx) = context.cx;
@@ -14470,14 +14470,14 @@ numberright:
 	return;
 }
 
-void loadkeypad(Context & context) {
+void loadkeypad(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 1948;
 	loadintotemp(context);
 	return;
 }
 
-void quitkey(Context & context) {
+void quitkey(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 222);
 	if (context.flags.z()) goto alreadyqk;
@@ -14497,7 +14497,7 @@ doqk:
 	return;
 }
 
-void addtopresslist(Context & context) {
+void addtopresslist(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kPresspointer), 5);
 	if (context.flags.z()) goto nomorekeys;
@@ -14516,84 +14516,84 @@ nomorekeys:
 	return;
 }
 
-void buttonone(Context & context) {
+void buttonone(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 1;
 	buttonpress(context);
 	return;
 }
 
-void buttontwo(Context & context) {
+void buttontwo(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 2;
 	buttonpress(context);
 	return;
 }
 
-void buttonthree(Context & context) {
+void buttonthree(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 3;
 	buttonpress(context);
 	return;
 }
 
-void buttonfour(Context & context) {
+void buttonfour(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 4;
 	buttonpress(context);
 	return;
 }
 
-void buttonfive(Context & context) {
+void buttonfive(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 5;
 	buttonpress(context);
 	return;
 }
 
-void buttonsix(Context & context) {
+void buttonsix(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 6;
 	buttonpress(context);
 	return;
 }
 
-void buttonseven(Context & context) {
+void buttonseven(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 7;
 	buttonpress(context);
 	return;
 }
 
-void buttoneight(Context & context) {
+void buttoneight(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 8;
 	buttonpress(context);
 	return;
 }
 
-void buttonnine(Context & context) {
+void buttonnine(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 9;
 	buttonpress(context);
 	return;
 }
 
-void buttonnought(Context & context) {
+void buttonnought(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 10;
 	buttonpress(context);
 	return;
 }
 
-void buttonenter(Context & context) {
+void buttonenter(Context &context) {
 	STACK_CHECK(context);
 	context.cl = 11;
 	buttonpress(context);
 	return;
 }
 
-void buttonpress(Context & context) {
+void buttonpress(Context &context) {
 	STACK_CHECK(context);
 	context.ch = context.cl;
 	context._add(context.ch, 100);
@@ -14626,7 +14626,7 @@ nonoise:
 	return;
 }
 
-void showouterpad(Context & context) {
+void showouterpad(Context &context) {
 	STACK_CHECK(context);
 	context.di = (36+112)-3;
 	context.bx = (72)-4;
@@ -14643,7 +14643,7 @@ void showouterpad(Context & context) {
 	return;
 }
 
-void showkeypad(Context & context) {
+void showkeypad(Context &context) {
 	STACK_CHECK(context);
 	context.al = 22;
 	context.di = (36+112)+9;
@@ -14713,7 +14713,7 @@ notenter:
 	return;
 }
 
-void singlekey(Context & context) {
+void singlekey(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kGraphicpress), context.al);
 	if (!context.flags.z()) goto gotkey;
@@ -14729,7 +14729,7 @@ gotkey:
 	return;
 }
 
-void dumpkeypad(Context & context) {
+void dumpkeypad(Context &context) {
 	STACK_CHECK(context);
 	context.di = (36+112)-3;
 	context.bx = (72)-4;
@@ -14739,7 +14739,7 @@ void dumpkeypad(Context & context) {
 	return;
 }
 
-void usemenu(Context & context) {
+void usemenu(Context &context) {
 	STACK_CHECK(context);
 	getridofreels(context);
 	loadmenu(context);
@@ -14789,7 +14789,7 @@ menulist:
 	return;
 }
 
-void dumpmenu(Context & context) {
+void dumpmenu(Context &context) {
 	STACK_CHECK(context);
 	context.di = (80+40);
 	context.bx = (60);
@@ -14799,7 +14799,7 @@ void dumpmenu(Context & context) {
 	return;
 }
 
-void getundermenu(Context & context) {
+void getundermenu(Context &context) {
 	STACK_CHECK(context);
 	context.di = (80+40);
 	context.bx = (60);
@@ -14811,7 +14811,7 @@ void getundermenu(Context & context) {
 	return;
 }
 
-void putundermenu(Context & context) {
+void putundermenu(Context &context) {
 	STACK_CHECK(context);
 	context.di = (80+40);
 	context.bx = (60);
@@ -14823,7 +14823,7 @@ void putundermenu(Context & context) {
 	return;
 }
 
-void showoutermenu(Context & context) {
+void showoutermenu(Context &context) {
 	STACK_CHECK(context);
 	context.al = 40;
 	context.ah = 0;
@@ -14852,7 +14852,7 @@ void showoutermenu(Context & context) {
 	return;
 }
 
-void showmenu(Context & context) {
+void showmenu(Context &context) {
 	STACK_CHECK(context);
 	context._inc(context.data.byte(kMenucount));
 	context._cmp(context.data.byte(kMenucount), 37*2);
@@ -14869,7 +14869,7 @@ menuframeok:
 	return;
 }
 
-void loadmenu(Context & context) {
+void loadmenu(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 1832;
 	loadintotemp(context);
@@ -14878,7 +14878,7 @@ void loadmenu(Context & context) {
 	return;
 }
 
-void viewfolder(Context & context) {
+void viewfolder(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kManisoffscreen) = 1;
 	getridofall(context);
@@ -14909,7 +14909,7 @@ folderloop:
 	return;
 }
 
-void nextfolder(Context & context) {
+void nextfolder(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kFolderpage), 12);
 	if (!context.flags.z()) goto cannextf;
@@ -14941,7 +14941,7 @@ donextf:
 	return;
 }
 
-void folderhints(Context & context) {
+void folderhints(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kFolderpage), 5);
 	if (!context.flags.z()) goto notaideadd;
@@ -14989,7 +14989,7 @@ notaristoadd:
 	return;
 }
 
-void lastfolder(Context & context) {
+void lastfolder(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kFolderpage), 0);
 	if (!context.flags.z()) goto canlastf;
@@ -15022,7 +15022,7 @@ dolastf:
 	return;
 }
 
-void loadfolder(Context & context) {
+void loadfolder(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 2299;
 	loadintotemp(context);
@@ -15037,7 +15037,7 @@ void loadfolder(Context & context) {
 	return;
 }
 
-void showfolder(Context & context) {
+void showfolder(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kCommandtype) = 255;
 	context._cmp(context.data.byte(kFolderpage), 0);
@@ -15099,7 +15099,7 @@ closedfolder:
 	return;
 }
 
-void folderexit(Context & context) {
+void folderexit(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics2);
 	context.di = 296;
@@ -15110,7 +15110,7 @@ void folderexit(Context & context) {
 	return;
 }
 
-void showleftpage(Context & context) {
+void showleftpage(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics2);
 	context.di = 0;
@@ -15192,7 +15192,7 @@ flipfolderline:
 	return;
 }
 
-void showrightpage(Context & context) {
+void showrightpage(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics2);
 	context.di = 143;
@@ -15247,7 +15247,7 @@ contrightpage:
 	return;
 }
 
-void entersymbol(Context & context) {
+void entersymbol(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kManisoffscreen) = 1;
 	getridofreels(context);
@@ -15314,7 +15314,7 @@ symbolwrong:
 	return;
 }
 
-void quitsymbol(Context & context) {
+void quitsymbol(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymboltopx), 24);
 	if (!context.flags.z()) { blank(context); return; };
@@ -15338,7 +15338,7 @@ doqs:
 	return;
 }
 
-void settopleft(Context & context) {
+void settopleft(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymboltopdir), 0);
 	if (!context.flags.z()) { blank(context); return; };
@@ -15355,7 +15355,7 @@ notopleft:
 	return;
 }
 
-void settopright(Context & context) {
+void settopright(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymboltopdir), 0);
 	if (!context.flags.z()) { blank(context); return; };
@@ -15372,7 +15372,7 @@ notopright:
 	return;
 }
 
-void setbotleft(Context & context) {
+void setbotleft(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymbolbotdir), 0);
 	if (!context.flags.z()) { blank(context); return; };
@@ -15389,7 +15389,7 @@ nobotleft:
 	return;
 }
 
-void setbotright(Context & context) {
+void setbotright(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymbolbotdir), 0);
 	if (!context.flags.z()) { blank(context); return; };
@@ -15406,7 +15406,7 @@ nobotright:
 	return;
 }
 
-void dumpsymbol(Context & context) {
+void dumpsymbol(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kNewtextline) = 0;
 	context.di = (64);
@@ -15417,7 +15417,7 @@ void dumpsymbol(Context & context) {
 	return;
 }
 
-void showsymbol(Context & context) {
+void showsymbol(Context &context) {
 	STACK_CHECK(context);
 	context.al = 12;
 	context.ah = 0;
@@ -15491,7 +15491,7 @@ void showsymbol(Context & context) {
 	return;
 }
 
-void nextsymbol(Context & context) {
+void nextsymbol(Context &context) {
 	STACK_CHECK(context);
 	context._inc(context.al);
 	context._cmp(context.al, 6);
@@ -15507,7 +15507,7 @@ botwrap:
 	return;
 }
 
-void updatesymboltop(Context & context) {
+void updatesymboltop(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymboltopdir), 0);
 	if (context.flags.z()) goto topfinished;
@@ -15545,7 +15545,7 @@ topfinished:
 	return;
 }
 
-void updatesymbolbot(Context & context) {
+void updatesymbolbot(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSymbolbotdir), 0);
 	if (context.flags.z()) goto botfinished;
@@ -15583,7 +15583,7 @@ botfinished:
 	return;
 }
 
-void dumpsymbox(Context & context) {
+void dumpsymbox(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kDumpx), -1);
 	if (context.flags.z()) goto nodumpsym;
@@ -15597,7 +15597,7 @@ nodumpsym:
 	return;
 }
 
-void usediary(Context & context) {
+void usediary(Context &context) {
 	STACK_CHECK(context);
 	getridofreels(context);
 	context.dx = 2039;
@@ -15641,7 +15641,7 @@ diarylist:
 	return;
 }
 
-void showdiary(Context & context) {
+void showdiary(Context &context) {
 	STACK_CHECK(context);
 	context.al = 1;
 	context.ah = 0;
@@ -15658,7 +15658,7 @@ void showdiary(Context & context) {
 	return;
 }
 
-void showdiarykeys(Context & context) {
+void showdiarykeys(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPresscount), 0);
 	if (context.flags.z()) goto nokeyatall;
@@ -15702,7 +15702,7 @@ nokeyatall:
 	return;
 }
 
-void dumpdiarykeys(Context & context) {
+void dumpdiarykeys(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPresscount), 1);
 	if (!context.flags.z()) goto notdumpdiary;
@@ -15756,7 +15756,7 @@ notdumpdiary:
 	return;
 }
 
-void diarykeyp(Context & context) {
+void diarykeyp(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 214);
 	if (context.flags.z()) goto alreadykeyp;
@@ -15783,7 +15783,7 @@ notkeyp:
 	return;
 }
 
-void diarykeyn(Context & context) {
+void diarykeyn(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 213);
 	if (context.flags.z()) goto alreadykeyn;
@@ -15810,7 +15810,7 @@ notkeyn:
 	return;
 }
 
-void showdiarypage(Context & context) {
+void showdiarypage(Context &context) {
 	STACK_CHECK(context);
 	context.al = 0;
 	context.ah = 0;
@@ -15844,7 +15844,7 @@ void showdiarypage(Context & context) {
 	return;
 }
 
-void findtext1(Context & context) {
+void findtext1(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 0;
 	context.si = context.ax;
@@ -15856,7 +15856,7 @@ void findtext1(Context & context) {
 	return;
 }
 
-void zoomonoff(Context & context) {
+void zoomonoff(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) { blank(context); return; };
@@ -15894,7 +15894,7 @@ dozoomonoff:
 	return;
 }
 
-void saveload(Context & context) {
+void saveload(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) { blank(context); return; };
@@ -15916,7 +15916,7 @@ noops:
 	return;
 }
 
-void dosaveload(Context & context) {
+void dosaveload(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kPointerframe) = 0;
 	context.data.word(kTextaddressx) = 70;
@@ -15966,7 +15966,7 @@ justret:
 	return;
 }
 
-void getbackfromops(Context & context) {
+void getbackfromops(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kMandead), 2);
 	if (context.flags.z()) goto opsblock1;
@@ -15977,7 +15977,7 @@ opsblock1:
 	return;
 }
 
-void showmainops(Context & context) {
+void showmainops(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = (60)+10;
@@ -16000,7 +16000,7 @@ void showmainops(Context & context) {
 	return;
 }
 
-void showdiscops(Context & context) {
+void showdiscops(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = (60)+128+4;
@@ -16029,14 +16029,14 @@ void showdiscops(Context & context) {
 	return;
 }
 
-void loadsavebox(Context & context) {
+void loadsavebox(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 1961;
 	loadintotemp(context);
 	return;
 }
 
-void loadgame(Context & context) {
+void loadgame(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 246);
 	if (context.flags.z()) goto alreadyload;
@@ -16096,7 +16096,7 @@ quitloaded:
 	return;
 }
 
-void getbacktoops(Context & context) {
+void getbacktoops(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 201);
 	if (context.flags.z()) goto alreadygetops;
@@ -16117,7 +16117,7 @@ dogetbackops:
 	return;
 }
 
-void discops(Context & context) {
+void discops(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 249);
 	if (context.flags.z()) goto alreadydiscops;
@@ -16154,7 +16154,7 @@ discopsloop:
 	return;
 }
 
-void savegame(Context & context) {
+void savegame(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kMandead), 2);
 	if (!context.flags.z()) goto cansaveok;
@@ -16198,7 +16198,7 @@ saveops:
 	return;
 }
 
-void actualsave(Context & context) {
+void actualsave(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 222);
 	if (context.flags.z()) goto alreadyactsave;
@@ -16259,7 +16259,7 @@ noactsave:
 	return;
 }
 
-void actualload(Context & context) {
+void actualload(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 221);
 	if (context.flags.z()) goto alreadyactload;
@@ -16289,7 +16289,7 @@ notactload:
 	return;
 }
 
-void selectslot2(Context & context) {
+void selectslot2(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kMousebutton), 0);
 	if (context.flags.z()) goto noselslot2;
@@ -16299,7 +16299,7 @@ noselslot2:
 	return;
 }
 
-void checkinput(Context & context) {
+void checkinput(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLoadingorsave), 3);
 	if (context.flags.z()) goto nokeypress;
@@ -16343,7 +16343,7 @@ afterkey:
 	return;
 }
 
-void getnamepos(Context & context) {
+void getnamepos(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kCurrentslot);
 	context.ah = 0;
@@ -16359,7 +16359,7 @@ void getnamepos(Context & context) {
 	return;
 }
 
-void showopbox(Context & context) {
+void showopbox(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = (60);
@@ -16376,7 +16376,7 @@ void showopbox(Context & context) {
 	return;
 }
 
-void showloadops(Context & context) {
+void showloadops(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = (60)+128+4;
@@ -16398,7 +16398,7 @@ void showloadops(Context & context) {
 	return;
 }
 
-void showsaveops(Context & context) {
+void showsaveops(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kTempgraphics);
 	context.di = (60)+128+4;
@@ -16420,7 +16420,7 @@ void showsaveops(Context & context) {
 	return;
 }
 
-void selectslot(Context & context) {
+void selectslot(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 244);
 	if (context.flags.z()) goto alreadysel;
@@ -16469,7 +16469,7 @@ noselslot:
 	return;
 }
 
-void showslots(Context & context) {
+void showslots(Context &context) {
 	STACK_CHECK(context);
 	context.di = (60)+7;
 	context.bx = (52)+8;
@@ -16501,7 +16501,7 @@ nomatchslot:
 	return;
 }
 
-void shownames(Context & context) {
+void shownames(Context &context) {
 	STACK_CHECK(context);
 	context.dx = context.data;
 	context.es = context.dx;
@@ -16568,7 +16568,7 @@ afterprintname:
 	return;
 }
 
-void namestoold(Context & context) {
+void namestoold(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.cs;
 	context.si = 8579;
@@ -16579,7 +16579,7 @@ void namestoold(Context & context) {
  	return;
 }
 
-void oldtonames(Context & context) {
+void oldtonames(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.cs;
 	context.di = 8579;
@@ -16590,7 +16590,7 @@ void oldtonames(Context & context) {
  	return;
 }
 
-void saveposition(Context & context) {
+void saveposition(Context &context) {
 	STACK_CHECK(context);
 	makeheader(context);
 	context.al = context.data.byte(kCurrentslot);
@@ -16642,7 +16642,7 @@ fquit:
 	return;
 }
 
-void loadposition(Context & context) {
+void loadposition(Context &context) {
 	STACK_CHECK(context);
 	context.data.word(kTimecount) = 0;
 	clearchanges(context);
@@ -16691,7 +16691,7 @@ void loadposition(Context & context) {
 	return;
 }
 
-void makeheader(Context & context) {
+void makeheader(Context &context) {
 	STACK_CHECK(context);
 	context.dx = context.data;
 	context.es = context.dx;
@@ -16711,7 +16711,7 @@ void makeheader(Context & context) {
 	return;
 }
 
-void storeit(Context & context) {
+void storeit(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.ax, 0);
 	if (!context.flags.z()) goto isntblank;
@@ -16721,7 +16721,7 @@ isntblank:
 	return;
 }
 
-void findlen(Context & context) {
+void findlen(Context &context) {
 	STACK_CHECK(context);
 	context._dec(context.bx);
 	context._add(context.bx, context.ax);
@@ -16736,7 +16736,7 @@ foundlen:
 	return;
 }
 
-void scanfornames(Context & context) {
+void scanfornames(Context &context) {
 	STACK_CHECK(context);
 	context.dx = context.data;
 	context.es = context.dx;
@@ -16785,7 +16785,7 @@ notexist:
 	return;
 }
 
-void decide(Context & context) {
+void decide(Context &context) {
 	STACK_CHECK(context);
 	setmode(context);
 	loadpalfromiff(context);
@@ -16823,7 +16823,7 @@ hasloadedroom:
 	return;
 }
 
-void showdecisions(Context & context) {
+void showdecisions(Context &context) {
 	STACK_CHECK(context);
 	createpanel2(context);
 	showopbox(context);
@@ -16837,7 +16837,7 @@ void showdecisions(Context & context) {
 	return;
 }
 
-void newgame(Context & context) {
+void newgame(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 251);
 	if (context.flags.z()) goto alreadynewgame;
@@ -16853,7 +16853,7 @@ nonewgame:
 	return;
 }
 
-void doload(Context & context) {
+void doload(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kLoadingorsave) = 1;
 	showopbox(context);
@@ -16899,7 +16899,7 @@ quitloaded:
 	return;
 }
 
-void loadold(Context & context) {
+void loadold(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 252);
 	if (context.flags.z()) goto alreadyloadold;
@@ -16920,7 +16920,7 @@ noloadold:
 	return;
 }
 
-void createname(Context & context) {
+void createname(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.di = 5105;
@@ -16962,7 +16962,7 @@ tensc:
 	return;
 }
 
-void trysoundalloc(Context & context) {
+void trysoundalloc(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNeedsoundbuff), 1);
 	if (context.flags.z()) goto gotsoundbuff;
@@ -16995,7 +16995,7 @@ gotsoundbuff:
 	return;
 }
 
-void playchannel0(Context & context) {
+void playchannel0(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSoundint), 255);
 	if (context.flags.z()) goto dontbother4;
@@ -17044,7 +17044,7 @@ dontbother4:
 	return;
 }
 
-void playchannel1(Context & context) {
+void playchannel1(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kSoundint), 255);
 	if (context.flags.z()) goto dontbother5;
@@ -17085,7 +17085,7 @@ dontbother5:
 	return;
 }
 
-void makenextblock(Context & context) {
+void makenextblock(Context &context) {
 	STACK_CHECK(context);
 	volumeadjust(context);
 	loopchannel0(context);
@@ -17123,7 +17123,7 @@ notch0only:
 	return;
 }
 
-void volumeadjust(Context & context) {
+void volumeadjust(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kVolumedirection);
 	context._cmp(context.al, 0);
@@ -17143,7 +17143,7 @@ volok:
 	return;
 }
 
-void loopchannel0(Context & context) {
+void loopchannel0(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kCh0blockstocopy), 0);
 	if (!context.flags.z()) goto notloop;
@@ -17165,7 +17165,7 @@ notloop:
 	return;
 }
 
-void cancelch0(Context & context) {
+void cancelch0(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kCh0repeat) = 0;
 	context.data.word(kCh0blockstocopy) = 0;
@@ -17173,14 +17173,14 @@ void cancelch0(Context & context) {
 	return;
 }
 
-void cancelch1(Context & context) {
+void cancelch1(Context &context) {
 	STACK_CHECK(context);
 	context.data.word(kCh1blockstocopy) = 0;
 	context.data.byte(kCh1playing) = 255;
 	return;
 }
 
-void channel0tran(Context & context) {
+void channel0tran(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kVolume), 0);
 	if (!context.flags.z()) goto lowvolumetran;
@@ -17203,7 +17203,7 @@ volloop:
 	return;
 }
 
-void domix(Context & context) {
+void domix(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kVolume), 0);
 	if (!context.flags.z()) goto lowvolumemix;
@@ -17296,7 +17296,7 @@ doneit:
 	return;
 }
 
-void entrytexts(Context & context) {
+void entrytexts(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 21);
 	if (!context.flags.z()) goto notloc15;
@@ -17371,7 +17371,7 @@ noteden2:
 	return;
 }
 
-void entryanims(Context & context) {
+void entryanims(Context &context) {
 	STACK_CHECK(context);
 	context.data.word(kReeltowatch) = -1;
 	context.data.byte(kWatchmode) = -1;
@@ -17489,7 +17489,7 @@ notedensagain:
 	return;
 }
 
-void initialinv(Context & context) {
+void initialinv(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 24);
 	if (context.flags.z()) goto isedens;
@@ -17529,7 +17529,7 @@ isedens:
 	return;
 }
 
-void pickupob(Context & context) {
+void pickupob(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kLastinvpos) = context.ah;
 	context.data.byte(kObjecttype) = 2;
@@ -17540,12 +17540,12 @@ void pickupob(Context & context) {
 	return;
 }
 
-void checkforemm(Context & context) {
+void checkforemm(Context &context) {
 	STACK_CHECK(context);
 	return;
 }
 
-void checkbasemem(Context & context) {
+void checkbasemem(Context &context) {
 	STACK_CHECK(context);
 	context.bx = context.data.word(kHowmuchalloc);
 	context._cmp(context.bx, 0x9360);
@@ -17556,7 +17556,7 @@ enoughmem:
 	return;
 }
 
-void allocatebuffers(Context & context) {
+void allocatebuffers(Context &context) {
 	STACK_CHECK(context);
 	context.bx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/16;
 	allocatemem(context);
@@ -17591,7 +17591,7 @@ void allocatebuffers(Context & context) {
 	return;
 }
 
-void clearbuffers(Context & context) {
+void clearbuffers(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.cx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534+68-0)/2;
@@ -17619,7 +17619,7 @@ void clearbuffers(Context & context) {
 	return;
 }
 
-void clearchanges(Context & context) {
+void clearchanges(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.cx = (250)*2;
@@ -17661,7 +17661,7 @@ void clearchanges(Context & context) {
 	return;
 }
 
-void clearbeforeload(Context & context) {
+void clearbeforeload(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRoomloaded), 1);
 	if (!context.flags.z()) goto noclear;
@@ -17672,7 +17672,7 @@ noclear:
 	return;
 }
 
-void clearreels(Context & context) {
+void clearreels(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kReel1);
 	deallocatemem(context);
@@ -17683,7 +17683,7 @@ void clearreels(Context & context) {
 	return;
 }
 
-void clearrest(Context & context) {
+void clearrest(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kMapdata);
 	context.cx = (66*60)/2;
@@ -17711,7 +17711,7 @@ void clearrest(Context & context) {
 	return;
 }
 
-void parseblaster(Context & context) {
+void parseblaster(Context &context) {
 	STACK_CHECK(context);
 lookattail:
 	context.al = context.es.byte(context.bx);
@@ -17778,7 +17778,7 @@ endtail:
 	return;
 }
 
-void startup(Context & context) {
+void startup(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kCurrentkey) = 0;
 	context.data.byte(kMainmode) = 0;
@@ -17795,7 +17795,7 @@ void startup(Context & context) {
 	return;
 }
 
-void startup1(Context & context) {
+void startup1(Context &context) {
 	STACK_CHECK(context);
 	clearpalette(context);
 	context.data.byte(kThroughdoor) = 0;
@@ -17816,7 +17816,7 @@ void startup1(Context & context) {
 	return;
 }
 
-void screenupdate(Context & context) {
+void screenupdate(Context &context) {
 	STACK_CHECK(context);
 	newplace(context);
 	mainscreen(context);
@@ -17865,7 +17865,7 @@ finishearly:
 	return;
 }
 
-void watchreel(Context & context) {
+void watchreel(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kReeltowatch), -1);
 	if (context.flags.z()) goto notplayingreel;
@@ -17941,7 +17941,7 @@ notreleasehold:
 	return;
 }
 
-void checkforshake(Context & context) {
+void checkforshake(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 26);
 	if (!context.flags.z()) goto notstartshake;
@@ -17952,7 +17952,7 @@ notstartshake:
 	return;
 }
 
-void watchcount(Context & context) {
+void watchcount(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchon), 0);
 	if (context.flags.z()) goto nowatchworn;
@@ -17991,7 +17991,7 @@ finishwatch:
 	return;
 }
 
-void showtime(Context & context) {
+void showtime(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchon), 0);
 	if (context.flags.z()) goto nowatch;
@@ -18058,7 +18058,7 @@ nowatch:
 	return;
 }
 
-void dumpwatch(Context & context) {
+void dumpwatch(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchdump), 1);
 	if (!context.flags.z()) goto nodumpwatch;
@@ -18072,7 +18072,7 @@ nodumpwatch:
 	return;
 }
 
-void showbyte(Context & context) {
+void showbyte(Context &context) {
 	STACK_CHECK(context);
 	context.dl = context.al;
 	context._shr(context.dl, 1);
@@ -18089,7 +18089,7 @@ void showbyte(Context & context) {
 	return;
 }
 
-void onedigit(Context & context) {
+void onedigit(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.dl, 10);
 	if (!context.flags.c()) goto morethan10;
@@ -18101,7 +18101,7 @@ morethan10:
 	return;
 }
 
-void twodigitnum(Context & context) {
+void twodigitnum(Context &context) {
 	STACK_CHECK(context);
 	context.ah = context.cl;
 	context._dec(context.ah);
@@ -18114,7 +18114,7 @@ numloop1:
 	return;
 }
 
-void showword(Context & context) {
+void showword(Context &context) {
 	STACK_CHECK(context);
 	context.ch = 0;
 	context.bx = 10000;
@@ -18160,7 +18160,7 @@ word4:
 	return;
 }
 
-void convnum(Context & context) {
+void convnum(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.ch, 0);
 	if (!context.flags.z()) goto noconvnum;
@@ -18174,7 +18174,7 @@ noconvnum:
 	return;
 }
 
-void walkandexamine(Context & context) {
+void walkandexamine(Context &context) {
 	STACK_CHECK(context);
 	finishedwalking(context);
 	if (!context.flags.z()) goto noobselect;
@@ -18246,7 +18246,7 @@ toofaraway:
 	return;
 }
 
-void mainscreen(Context & context) {
+void mainscreen(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kInmaparea) = 0;
 	context.bx = 5122;
@@ -18262,7 +18262,7 @@ finishmain:
 	return;
 }
 
-void madmanrun(Context & context) {
+void madmanrun(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 14);
 	if (!context.flags.z()) { identifyob(context); return; };
@@ -18288,7 +18288,7 @@ norun:
 	return;
 }
 
-void checkcoords(Context & context) {
+void checkcoords(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNewlocation), 255);
 	if (context.flags.z()) goto loop048;
@@ -18322,7 +18322,7 @@ nonefound:
 	return;
 }
 
-void identifyob(Context & context) {
+void identifyob(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.word(kWatchingtime), 0);
 	if (!context.flags.z()) { blank(context); return; };
@@ -18378,7 +18378,7 @@ nothingund:
 	return;
 }
 
-void checkifperson(Context & context) {
+void checkifperson(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
@@ -18435,7 +18435,7 @@ notareelid:
 	return;
 }
 
-void checkifset(Context & context) {
+void checkifset(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32))+(127*5);
@@ -18469,7 +18469,7 @@ notasetid:
 	return;
 }
 
-void checkifex(Context & context) {
+void checkifex(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5))+(99*5);
@@ -18499,7 +18499,7 @@ notanexid:
 	return;
 }
 
-void checkiffree(Context & context) {
+void checkiffree(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBuffers);
 	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5))+(79*5);
@@ -18529,7 +18529,7 @@ notafreeid:
 	return;
 }
 
-void isitdescribed(Context & context) {
+void isitdescribed(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.cx);
@@ -18553,7 +18553,7 @@ void isitdescribed(Context & context) {
 	return;
 }
 
-void findpathofpoint(Context & context) {
+void findpathofpoint(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.bx = (0);
@@ -18592,7 +18592,7 @@ gotvalidpath:
 	return;
 }
 
-void findfirstpath(Context & context) {
+void findfirstpath(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.bx = (0);
@@ -18630,7 +18630,7 @@ gotfirst:
 	return;
 }
 
-void turnpathon(Context & context) {
+void turnpathon(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
@@ -18654,7 +18654,7 @@ nopathon:
 	return;
 }
 
-void turnpathoff(Context & context) {
+void turnpathoff(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
@@ -18678,7 +18678,7 @@ nopathoff:
 	return;
 }
 
-void turnanypathon(Context & context) {
+void turnanypathon(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
@@ -18705,7 +18705,7 @@ void turnanypathon(Context & context) {
 	return;
 }
 
-void turnanypathoff(Context & context) {
+void turnanypathoff(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
@@ -18732,7 +18732,7 @@ void turnanypathoff(Context & context) {
 	return;
 }
 
-void checkifpathison(Context & context) {
+void checkifpathison(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	getroomspaths(context);
@@ -18747,7 +18747,7 @@ void checkifpathison(Context & context) {
 	return;
 }
 
-void afternewroom(Context & context) {
+void afternewroom(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNowinnewroom), 0);
 	if (context.flags.z()) goto notnew;
@@ -18786,7 +18786,7 @@ notnew:
 	return;
 }
 
-void atmospheres(Context & context) {
+void atmospheres(Context &context) {
 	STACK_CHECK(context);
 	context.cl = context.data.byte(kMapx);
 	context.ch = context.data.byte(kMapy);
@@ -18853,7 +18853,7 @@ nomoreatmos:
 	return;
 }
 
-void walkintoroom(Context & context) {
+void walkintoroom(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLocation), 14);
 	if (!context.flags.z()) goto notlair;
@@ -18866,7 +18866,7 @@ notlair:
 	return;
 }
 
-void afterintroroom(Context & context) {
+void afterintroroom(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNowinnewroom), 0);
 	if (context.flags.z()) goto notnewintro;
@@ -18883,7 +18883,7 @@ notnewintro:
 	return;
 }
 
-void obname(Context & context) {
+void obname(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReasseschanges), 0);
 	if (context.flags.z()) goto notnewpath;
@@ -18994,7 +18994,7 @@ toofaraway:
 	return;
 }
 
-void finishedwalking(Context & context) {
+void finishedwalking(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLinepointer), 254);
 	if (!context.flags.z()) goto iswalking;
@@ -19004,7 +19004,7 @@ iswalking:
 	return;
 }
 
-void examineobtext(Context & context) {
+void examineobtext(Context &context) {
 	STACK_CHECK(context);
 	context.bl = context.data.byte(kCommand);
 	context.bh = context.data.byte(kCommandtype);
@@ -19013,7 +19013,7 @@ void examineobtext(Context & context) {
 	return;
 }
 
-void commandwithob(Context & context) {
+void commandwithob(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.ax);
@@ -19067,7 +19067,7 @@ noadd:
 	return;
 }
 
-void commandonly(Context & context) {
+void commandonly(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.push(context.bx);
@@ -19103,7 +19103,7 @@ void commandonly(Context & context) {
 	return;
 }
 
-void printmessage(Context & context) {
+void printmessage(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.dx);
 	context.push(context.bx);
@@ -19124,7 +19124,7 @@ void printmessage(Context & context) {
 	return;
 }
 
-void printmessage2(Context & context) {
+void printmessage2(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.dx);
 	context.push(context.bx);
@@ -19153,7 +19153,7 @@ searchmess:
 	return;
 }
 
-void blocknametext(Context & context) {
+void blocknametext(Context &context) {
 	STACK_CHECK(context);
 	context.bl = context.data.byte(kCommand);
 	context.bh = context.data.byte(kCommandtype);
@@ -19162,7 +19162,7 @@ void blocknametext(Context & context) {
 	return;
 }
 
-void personnametext(Context & context) {
+void personnametext(Context &context) {
 	STACK_CHECK(context);
 	context.bl = context.data.byte(kCommand);
 	context._and(context.bl, 127);
@@ -19172,7 +19172,7 @@ void personnametext(Context & context) {
 	return;
 }
 
-void walktotext(Context & context) {
+void walktotext(Context &context) {
 	STACK_CHECK(context);
 	context.bl = context.data.byte(kCommand);
 	context.bh = context.data.byte(kCommandtype);
@@ -19181,7 +19181,7 @@ void walktotext(Context & context) {
 	return;
 }
 
-void getflagunderp(Context & context) {
+void getflagunderp(Context &context) {
 	STACK_CHECK(context);
 	context.cx = context.data.word(kMousex);
 	context._sub(context.cx, context.data.word(kMapadx));
@@ -19194,7 +19194,7 @@ void getflagunderp(Context & context) {
 	return;
 }
 
-void setwalk(Context & context) {
+void setwalk(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kLinepointer), 254);
 	if (!context.flags.z()) goto alreadywalking;
@@ -19233,7 +19233,7 @@ holdingreel:
 	return;
 }
 
-void autosetwalk(Context & context) {
+void autosetwalk(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kManspath);
 	context._cmp(context.data.byte(kFinaldest), context.al);
@@ -19285,7 +19285,7 @@ normalline:
 	return;
 }
 
-void checkdest(Context & context) {
+void checkdest(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.bx);
 	context._add(context.bx, 12*8);
@@ -19333,7 +19333,7 @@ nextcheck2:
 	return;
 }
 
-void bresenhams(Context & context) {
+void bresenhams(Context &context) {
 	STACK_CHECK(context);
 	workoutframes(context);
 	context.dx = context.data;
@@ -19447,7 +19447,7 @@ lineexit:
 	return;
 }
 
-void workoutframes(Context & context) {
+void workoutframes(Context &context) {
 	STACK_CHECK(context);
 	context.bx = context.data.word(kLinestartx);
 	context._add(context.bx, 32);
@@ -19526,7 +19526,7 @@ success:
 	return;
 }
 
-void getroomspaths(Context & context) {
+void getroomspaths(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kRoomnum);
 	context.ah = 0;
@@ -19538,7 +19538,7 @@ void getroomspaths(Context & context) {
 	return;
 }
 
-void copyname(Context & context) {
+void copyname(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.di);
 	findobname(context);
@@ -19564,7 +19564,7 @@ finishmakename:
 	return;
 }
 
-void findobname(Context & context) {
+void findobname(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ax);
 	context.ah = 0;
@@ -19623,7 +19623,7 @@ notsetname:
 	return;
 }
 
-void showicon(Context & context) {
+void showicon(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kReallocation), 50);
 	if (!context.flags.c()) goto isdream1;
@@ -19674,7 +19674,7 @@ isdream1:
 	return;
 }
 
-void middlepanel(Context & context) {
+void middlepanel(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kTempsprites);
 	context.di = 72+47+20;
@@ -19703,7 +19703,7 @@ void middlepanel(Context & context) {
 	return;
 }
 
-void showman(Context & context) {
+void showman(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kIcons1);
 	context.di = 0;
@@ -19729,7 +19729,7 @@ notverycool:
 	return;
 }
 
-void showpanel(Context & context) {
+void showpanel(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kIcons1);
 	context.di = 72;
@@ -19746,7 +19746,7 @@ void showpanel(Context & context) {
 	return;
 }
 
-void roomname(Context & context) {
+void roomname(Context &context) {
 	STACK_CHECK(context);
 	context.di = 88;
 	context.bx = 18;
@@ -19781,21 +19781,21 @@ gotpl:
 	return;
 }
 
-void usecharset1(Context & context) {
+void usecharset1(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kCharset1);
 	context.data.word(kCurrentset) = context.ax;
 	return;
 }
 
-void usetempcharset(Context & context) {
+void usetempcharset(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kTempcharset);
 	context.data.word(kCurrentset) = context.ax;
 	return;
 }
 
-void showexit(Context & context) {
+void showexit(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.data.word(kIcons1);
 	context.di = 274;
@@ -19806,7 +19806,7 @@ void showexit(Context & context) {
 	return;
 }
 
-void panelicons1(Context & context) {
+void panelicons1(Context &context) {
 	STACK_CHECK(context);
 	context.di = 0;
 	context._cmp(context.data.byte(kWatchon), 1);
@@ -19836,7 +19836,7 @@ zoomisoff:
 	return;
 }
 
-void showwatch(Context & context) {
+void showwatch(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kWatchon), 0);
 	if (context.flags.z()) goto nowristwatch;
@@ -19851,7 +19851,7 @@ nowristwatch:
 	return;
 }
 
-void zoomicon(Context & context) {
+void zoomicon(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kZoomon), 0);
 	if (context.flags.z()) goto nozoom1;
@@ -19865,7 +19865,7 @@ nozoom1:
 	return;
 }
 
-void showblink(Context & context) {
+void showblink(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kManisoffscreen), 1);
 	if (context.flags.z()) goto finblink1;
@@ -19900,7 +19900,7 @@ eyesshut:
 	return;
 }
 
-void dumpblink(Context & context) {
+void dumpblink(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kShadeson), 0);
 	if (!context.flags.z()) goto nodumpeye;
@@ -19920,7 +19920,7 @@ nodumpeye:
 	return;
 }
 
-void worktoscreenm(Context & context) {
+void worktoscreenm(Context &context) {
 	STACK_CHECK(context);
 	animpointer(context);
 	readmouse(context);
@@ -19931,7 +19931,7 @@ void worktoscreenm(Context & context) {
 	return;
 }
 
-void blank(Context & context) {
+void blank(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 199);
 	if (context.flags.z()) goto alreadyblnk;
@@ -19942,7 +19942,7 @@ alreadyblnk:
 	return;
 }
 
-void allpointer(Context & context) {
+void allpointer(Context &context) {
 	STACK_CHECK(context);
 	readmouse(context);
 	showpointer(context);
@@ -19950,7 +19950,7 @@ void allpointer(Context & context) {
 	return;
 }
 
-void hangonp(Context & context) {
+void hangonp(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.cx);
 	context._add(context.cx, context.cx);
@@ -19995,7 +19995,7 @@ getoutofit:
 	return;
 }
 
-void hangonw(Context & context) {
+void hangonw(Context &context) {
 	STACK_CHECK(context);
 hangloopw:
 	context.push(context.cx);
@@ -20010,7 +20010,7 @@ hangloopw:
 	return;
 }
 
-void hangoncurs(Context & context) {
+void hangoncurs(Context &context) {
 	STACK_CHECK(context);
 monloop1:
 	context.push(context.cx);
@@ -20022,7 +20022,7 @@ monloop1:
 	return;
 }
 
-void getunderzoom(Context & context) {
+void getunderzoom(Context &context) {
 	STACK_CHECK(context);
 	context.di = (8)+5;
 	context.bx = (132)+4;
@@ -20034,7 +20034,7 @@ void getunderzoom(Context & context) {
 	return;
 }
 
-void dumpzoom(Context & context) {
+void dumpzoom(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kZoomon), 1);
 	if (!context.flags.z()) goto notzoomon;
@@ -20047,7 +20047,7 @@ notzoomon:
 	return;
 }
 
-void putunderzoom(Context & context) {
+void putunderzoom(Context &context) {
 	STACK_CHECK(context);
 	context.di = (8)+5;
 	context.bx = (132)+4;
@@ -20059,7 +20059,7 @@ void putunderzoom(Context & context) {
 	return;
 }
 
-void crosshair(Context & context) {
+void crosshair(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kCommandtype), 3);
 	if (context.flags.z()) goto nocross;
@@ -20084,7 +20084,7 @@ nocross:
 	return;
 }
 
-void showpointer(Context & context) {
+void showpointer(Context &context) {
 	STACK_CHECK(context);
 	showblink(context);
 	context.di = context.data.word(kMousex);
@@ -20193,7 +20193,7 @@ notsmally2:
 	return;
 }
 
-void delpointer(Context & context) {
+void delpointer(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kOldpointerx);
 	context._cmp(context.ax, 0x0ffff);
@@ -20214,7 +20214,7 @@ nevershown:
 	return;
 }
 
-void dumppointer(Context & context) {
+void dumppointer(Context &context) {
 	STACK_CHECK(context);
 	dumpblink(context);
 	context.cl = context.data.byte(kDelxs);
@@ -20236,7 +20236,7 @@ notboth:
 	return;
 }
 
-void undertextline(Context & context) {
+void undertextline(Context &context) {
 	STACK_CHECK(context);
 	context.di = context.data.word(kTextaddressx);
 	context.bx = context.data.word(kTextaddressy);
@@ -20248,7 +20248,7 @@ void undertextline(Context & context) {
 	return;
 }
 
-void deltextline(Context & context) {
+void deltextline(Context &context) {
 	STACK_CHECK(context);
 	context.di = context.data.word(kTextaddressx);
 	context.bx = context.data.word(kTextaddressy);
@@ -20260,7 +20260,7 @@ void deltextline(Context & context) {
 	return;
 }
 
-void dumptextline(Context & context) {
+void dumptextline(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kNewtextline), 1);
 	if (!context.flags.z()) goto nodumptextline;
@@ -20274,7 +20274,7 @@ nodumptextline:
 	return;
 }
 
-void animpointer(Context & context) {
+void animpointer(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kPointermode), 2);
 	if (context.flags.z()) goto combathand;
@@ -20341,7 +20341,7 @@ notarrow:
 	return;
 }
 
-void readmouse(Context & context) {
+void readmouse(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kMousebutton);
 	context.data.word(kOldbutton) = context.ax;
@@ -20356,7 +20356,7 @@ void readmouse(Context & context) {
 	return;
 }
 
-void readmouse1(Context & context) {
+void readmouse1(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kMousex);
 	context.data.word(kOldx) = context.ax;
@@ -20369,7 +20369,7 @@ void readmouse1(Context & context) {
 	return;
 }
 
-void readmouse2(Context & context) {
+void readmouse2(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kMousex);
 	context.data.word(kOldx) = context.ax;
@@ -20382,7 +20382,7 @@ void readmouse2(Context & context) {
 	return;
 }
 
-void readmouse3(Context & context) {
+void readmouse3(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kMousex);
 	context.data.word(kOldx) = context.ax;
@@ -20395,7 +20395,7 @@ void readmouse3(Context & context) {
 	return;
 }
 
-void readmouse4(Context & context) {
+void readmouse4(Context &context) {
 	STACK_CHECK(context);
 	context.ax = context.data.word(kMousebutton);
 	context.data.word(kOldbutton) = context.ax;
@@ -20414,7 +20414,7 @@ void readmouse4(Context & context) {
 	return;
 }
 
-void readkey(Context & context) {
+void readkey(Context &context) {
 	STACK_CHECK(context);
 	context.bx = context.data.word(kBufferout);
 	context._cmp(context.bx, context.data.word(kBufferin));
@@ -20432,7 +20432,7 @@ nokey:
 	return;
 }
 
-void convertkey(Context & context) {
+void convertkey(Context &context) {
 	STACK_CHECK(context);
 	context._and(context.al, 127);
 	context.ah = 0;
@@ -20442,7 +20442,7 @@ void convertkey(Context & context) {
 	return;
 }
 
-void randomnum1(Context & context) {
+void randomnum1(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ds);
 	context.push(context.es);
@@ -20458,7 +20458,7 @@ void randomnum1(Context & context) {
 	return;
 }
 
-void randomnum2(Context & context) {
+void randomnum2(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.ds);
 	context.push(context.es);
@@ -20475,7 +20475,7 @@ void randomnum2(Context & context) {
 	return;
 }
 
-void hangon(Context & context) {
+void hangon(Context &context) {
 	STACK_CHECK(context);
 hangonloop:
 	context.push(context.cx);
@@ -20485,7 +20485,7 @@ hangonloop:
 	return;
 }
 
-void loadtraveltext(Context & context) {
+void loadtraveltext(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 2234;
 	standardload(context);
@@ -20493,7 +20493,7 @@ void loadtraveltext(Context & context) {
 	return;
 }
 
-void loadintotemp(Context & context) {
+void loadintotemp(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.cs;
 	standardload(context);
@@ -20501,7 +20501,7 @@ void loadintotemp(Context & context) {
 	return;
 }
 
-void loadintotemp2(Context & context) {
+void loadintotemp2(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.cs;
 	standardload(context);
@@ -20509,7 +20509,7 @@ void loadintotemp2(Context & context) {
 	return;
 }
 
-void loadintotemp3(Context & context) {
+void loadintotemp3(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.cs;
 	standardload(context);
@@ -20517,14 +20517,14 @@ void loadintotemp3(Context & context) {
 	return;
 }
 
-void loadtempcharset(Context & context) {
+void loadtempcharset(Context &context) {
 	STACK_CHECK(context);
 	standardload(context);
 	context.data.word(kTempcharset) = context.ax;
 	return;
 }
 
-void standardload(Context & context) {
+void standardload(Context &context) {
 	STACK_CHECK(context);
 	openfile(context);
 	readheader(context);
@@ -20543,14 +20543,14 @@ void standardload(Context & context) {
 	return;
 }
 
-void loadtemptext(Context & context) {
+void loadtemptext(Context &context) {
 	STACK_CHECK(context);
 	standardload(context);
 	context.data.word(kTextfile1) = context.ax;
 	return;
 }
 
-void loadroom(Context & context) {
+void loadroom(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kRoomloaded) = 1;
 	context.data.word(kTimecount) = 0;
@@ -20571,7 +20571,7 @@ void loadroom(Context & context) {
 	return;
 }
 
-void loadroomssample(Context & context) {
+void loadroomssample(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kRoomssample);
 	context._cmp(context.al, 255);
@@ -20591,7 +20591,7 @@ loadedalready:
 	return;
 }
 
-void getridofreels(Context & context) {
+void getridofreels(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRoomloaded), 0);
 	if (context.flags.z()) goto dontgetrid;
@@ -20605,7 +20605,7 @@ dontgetrid:
 	return;
 }
 
-void getridofall(Context & context) {
+void getridofall(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kBackdrop);
 	deallocatemem(context);
@@ -20634,7 +20634,7 @@ void getridofall(Context & context) {
 	return;
 }
 
-void restorereels(Context & context) {
+void restorereels(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kRoomloaded), 0);
 	if (context.flags.z()) goto dontrestore;
@@ -20667,7 +20667,7 @@ dontrestore:
 	return;
 }
 
-void restoreall(Context & context) {
+void restoreall(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kLocation);
 	getroomdata(context);
@@ -20748,7 +20748,7 @@ void restoreall(Context & context) {
 	return;
 }
 
-void sortoutmap(Context & context) {
+void sortoutmap(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.di);
@@ -20771,7 +20771,7 @@ blimey:
 	return;
 }
 
-void startloading(Context & context) {
+void startloading(Context &context) {
 	STACK_CHECK(context);
 	context.data.byte(kCombatcount) = 0;
 	context.al = context.cs.byte(context.bx+13);
@@ -20907,7 +20907,7 @@ dontwalkin:
 	return;
 }
 
-void disablepath(Context & context) {
+void disablepath(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.cx);
 	context._xchg(context.al, context.ah);
@@ -20940,7 +20940,7 @@ lookx2:
 	return;
 }
 
-void findxyfrompath(Context & context) {
+void findxyfrompath(Context &context) {
 	STACK_CHECK(context);
 	getroomspaths(context);
 	context.al = context.data.byte(kManspath);
@@ -20957,7 +20957,7 @@ void findxyfrompath(Context & context) {
 	return;
 }
 
-void findroominloc(Context & context) {
+void findroominloc(Context &context) {
 	STACK_CHECK(context);
 	context.al = context.data.byte(kMapy);
 	context.cx = -6;
@@ -20975,7 +20975,7 @@ lookx:
 	return;
 }
 
-void getroomdata(Context & context) {
+void getroomdata(Context &context) {
 	STACK_CHECK(context);
 	context.ah = 0;
 	context.cx = 32;
@@ -20985,7 +20985,7 @@ void getroomdata(Context & context) {
 	return;
 }
 
-void readheader(Context & context) {
+void readheader(Context &context) {
 	STACK_CHECK(context);
 	context.ds = context.cs;
 	context.dx = 6091;
@@ -20996,7 +20996,7 @@ void readheader(Context & context) {
 	return;
 }
 
-void allocateload(Context & context) {
+void allocateload(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.di);
@@ -21009,7 +21009,7 @@ void allocateload(Context & context) {
 	return;
 }
 
-void fillspace(Context & context) {
+void fillspace(Context &context) {
 	STACK_CHECK(context);
 	context.push(context.es);
 	context.push(context.ds);
@@ -21027,49 +21027,49 @@ void fillspace(Context & context) {
 	return;
 }
 
-void getridoftemp(Context & context) {
+void getridoftemp(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTempgraphics);
 	deallocatemem(context);
 	return;
 }
 
-void getridoftemptext(Context & context) {
+void getridoftemptext(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTextfile1);
 	deallocatemem(context);
 	return;
 }
 
-void getridoftemp2(Context & context) {
+void getridoftemp2(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTempgraphics2);
 	deallocatemem(context);
 	return;
 }
 
-void getridoftemp3(Context & context) {
+void getridoftemp3(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTempgraphics3);
 	deallocatemem(context);
 	return;
 }
 
-void getridoftempcharset(Context & context) {
+void getridoftempcharset(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTempcharset);
 	deallocatemem(context);
 	return;
 }
 
-void getridoftempsp(Context & context) {
+void getridoftempsp(Context &context) {
 	STACK_CHECK(context);
 	context.es = context.data.word(kTempsprites);
 	deallocatemem(context);
 	return;
 }
 
-void readsetdata(Context & context) {
+void readsetdata(Context &context) {
 	STACK_CHECK(context);
 	context.dx = 1857;
 	standardload(context);
@@ -21104,7 +21104,7 @@ novolumeload:
 	return;
 }
 
-void makename(Context & context) {
+void makename(Context &context) {
 	STACK_CHECK(context);
 	context.si = context.dx;
 	context.di = 6061;
@@ -21119,7 +21119,7 @@ transfer:
 	return;
 }
 
-void dreamweb(Context & context) {
+void dreamweb(Context &context) {
 	STACK_CHECK(context);
 	seecommandtail(context);
 	checkbasemem(context);

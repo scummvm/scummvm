@@ -443,7 +443,7 @@ namespace %s {
 			
 			self.proc_addr.append((name, self.proc.offset))
 			self.body = str()
-			self.body += "void %s(Context & context) {\n\tSTACK_CHECK(context);\n" %name;
+			self.body += "void %s(Context &context) {\n\tSTACK_CHECK(context);\n" %name;
 			self.proc.optimize()
 			self.unbounded = []
 			self.proc.visit(self, skip)
