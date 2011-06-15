@@ -143,7 +143,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 class ToltecsMetaEngine : public AdvancedMetaEngine {
 public:
 	ToltecsMetaEngine() : AdvancedMetaEngine(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames) {
-		params.singleid = "toltecs";
+		_singleid = "toltecs";
 	}
 
 	virtual const char *getName() const {
