@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	sound.o \
 	video.o \
 	Game_Shell/CItem.o \
+	MMShell/Sounds/MMSound.o \
 	MMShell/Utilities/MMResourceFile.o
 
 
