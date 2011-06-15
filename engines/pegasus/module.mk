@@ -10,7 +10,8 @@ MODULE_OBJS = \
 	pegasus.o \
 	sound.o \
 	video.o \
-	Game_Shell/CItem.o
+	Game_Shell/CItem.o \
+	MMShell/Utilities/MMResourceFile.o
 
 
 # This module can be built as a plugin
