@@ -907,7 +907,6 @@ helispeed:
 	showgamereel(context);
 	context.al = context.data.byte(kMapx);
 	context.es.byte(context.bx+1) = context.al;
-helicombatend:
 	context.ax = context.es.word(context.bx+3);
 	context._cmp(context.ax, 9);
 	if (!context.flags.c()) goto notwaitingheli;
@@ -2807,7 +2806,6 @@ continuewalk:
 	context.ax = context.es.word(context.bx);
 	context.bx = context.pop();
 	context.es = context.pop();
-stillline:
 	context.es.word(context.bx+10) = context.ax;
 	return;
 endofline:
@@ -4252,7 +4250,6 @@ inwatching:
 zoomswitch:
 	context._cmp(context.data.byte(kCommandtype), 199);
 	if (context.flags.c()) goto zoomit;
-cantzoom:
 	putunderzoom(context);
 	return;
 zoomit:
@@ -5140,7 +5137,6 @@ greysumloop2:
 	context.ah = context.data.byte(kAddtored);
 	context._cmp(context.al, 0);
 	context._add(context.al, context.ah);
-noaddr:
 	context._stosb();
 	context.ah = context.data.byte(kAddtogreen);
 	context.al = context.bl;
@@ -5805,7 +5801,6 @@ printloopslow5:
 	if (!context.flags.z()) goto finishslow2;
 keepgoing:
 	waitframes(context);
-noslow:
 	context._cmp(context.ax, 0);
 	if (context.flags.z()) goto afterslow;
 	context._cmp(context.ax, context.data.word(kOldbutton));
@@ -8816,7 +8811,6 @@ void calcfrframe(Context &context) {
 	context.ah = 0;
 	context.data.word(kOffsety) = context.ax;
 	return;
-nullframe:
 	context.ax = context.pop();
 	context.cx = 0;
 	context.data.word(kSavesize) = context.cx;
@@ -9054,7 +9048,6 @@ waittalk:
 	checkcoords(context);
 	context._cmp(context.data.byte(kGetback), 0);
 	if (context.flags.z()) goto waittalk;
-finishtalk:
 	context.bx = context.data.word(kPersondata);
 	context.es = context.cs;
 	context._cmp(context.data.byte(kTalkpos), 4);
@@ -9533,7 +9526,6 @@ alreadyinfo:
 	worktoscreenm(context);
 	context.cx = 500;
 	hangonp(context);
-afterinfo:
 	context.data.byte(kPointermode) = 0;
 	context.data.byte(kPointerframe) = 0;
 	putundercentre(context);
@@ -9653,7 +9645,6 @@ void showarrows(Context &context) {
 
 void nextdest(Context &context) {
 	STACK_CHECK(context);
-duok:
 	context._cmp(context.data.byte(kCommandtype), 218);
 	if (context.flags.z()) goto alreadydu;
 	context.data.byte(kCommandtype) = 218;
@@ -9692,7 +9683,6 @@ nodu:
 
 void lastdest(Context &context) {
 	STACK_CHECK(context);
-ddok:
 	context._cmp(context.data.byte(kCommandtype), 219);
 	if (context.flags.z()) goto alreadydd;
 	context.data.byte(kCommandtype) = 219;
@@ -9904,7 +9894,6 @@ moreinput:
 	execcommand(context);
 	context._cmp(context.al, 0);
 	if (context.flags.z()) goto moreinput;
-endmon:
 	getridoftemp(context);
 	getridoftempcharset(context);
 	context.es = context.data.word(kTextfile1);
@@ -10522,7 +10511,6 @@ checkpass:
 	if (context.flags.z()) goto passpassed;
 	context._cmp(context.al, context.ah);
 	if (context.flags.z()) goto checkpass;
-passerror:
 	context.bx = context.pop();
 	context.es = context.pop();
 	scrollmonitor(context);
@@ -11073,7 +11061,6 @@ void delcurs(Context &context) {
 	context.bx = context.pop();
 	context.di = context.pop();
 	multidump(context);
-finishcurdel:
 	context.si = context.pop();
 	context.dx = context.pop();
 	context.ds = context.pop();
@@ -13393,7 +13380,6 @@ void dochange(Context &context) {
 	if (context.flags.z()) goto object;
 	context._cmp(context.ch, 1);
 	if (context.flags.z()) goto freeobject;
-path:
 	context.push(context.cx);
 	context.ah = 0;
 	context._add(context.ax, context.ax);
@@ -13411,7 +13397,6 @@ path:
 	context.es = context.data.word(kReels);
 	context.cx = context.pop();
 	context.es.byte(context.bx+6) = context.cl;
-nopath:
 	return;
 object:
 	context.push(context.cx);
@@ -14395,7 +14380,6 @@ menuloop:
 	restorereels(context);
 	worktoscreenm(context);
 	return;
-menulist:
 	return;
 }
 
@@ -15228,7 +15212,6 @@ diaryloop:
 	redrawmainscrn(context);
 	worktoscreenm(context);
 	return;
-diarylist:
 	return;
 }
 
@@ -15899,7 +15882,6 @@ notret:
 	context.es.byte(context.bx+1) = 1;
 	goto afterkey;
 nodel2:
-spacepress:
 	context._cmp(context.data.byte(kCursorpos), 14);
 	if (context.flags.z()) goto nokeypress;
 	getnamepos(context);
@@ -16205,7 +16187,6 @@ void saveposition(Context &context) {
 	context.ds = context.dx;
 	context.dx = 534;
 	saveseg(context);
-fquit:
 	closefile(context);
 }
 
@@ -16769,7 +16750,6 @@ slow:
 	context._inc(context.bx);
 	context._cmp(context.al, context.dh);
 	if (!context.flags.c()) goto toplot;
-botlot:
 	context._cmp(context.ah, context.dh);
 	if (!context.flags.c()) goto nodistort;
 	context._add(context.al, context.ah);
@@ -16815,7 +16795,6 @@ lowvolumemix:
 	context._inc(context.bx);
 	context._cmp(context.al, context.dh);
 	if (!context.flags.c()) goto toplotv;
-botlotv:
 	context._cmp(context.ah, context.dh);
 	if (!context.flags.c()) goto nodistortv;
 	context._add(context.al, context.ah);
@@ -17736,7 +17715,6 @@ noobselect:
 diff:
 	context.data.byte(kCommand) = context.al;
 	context.data.byte(kCommandtype) = context.ah;
-diff2:
 	context._cmp(context.data.byte(kLinepointer), 254);
 	if (!context.flags.z()) goto middleofwalk;
 	context._cmp(context.data.word(kWatchingtime), 0);
@@ -17851,7 +17829,6 @@ loop048:
 	if (!context.flags.l()) goto over045;
 	context.ax = context.cs.word(context.bx+8);
 	__dispatch_call(context, context.ax);
-finished:
 	context.ax = context.pop();
 	return;
 over045:
@@ -18472,7 +18449,6 @@ noobselect:
 diff:
 	context.data.byte(kCommand) = context.al;
 	context.data.byte(kCommandtype) = context.ah;
-diff2:
 	context._cmp(context.data.byte(kLinepointer), 254);
 	if (!context.flags.z()) goto middleofwalk;
 	context._cmp(context.data.word(kWatchingtime), 0);
@@ -19004,7 +18980,6 @@ gotquad:
 	context._add(context.ax, 32);
 	context._sub(context.bx, context.ax);
 	if (context.flags.c()) goto isinright;
-isinleft:
 	context.cx = context.data.word(kLinestarty);
 	context._add(context.cx, 32);
 	context.ax = context.data.word(kLineendy);
@@ -19057,7 +19032,6 @@ void copyname(Context &context) {
 	findobname(context);
 	context.di = context.pop();
 	context.es = context.cs;
-copytext:
 	context.cx = 28;
 make:
 	context._lodsb();
@@ -19782,7 +19756,6 @@ notwatchpoint:
 	if (context.flags.z()) goto gothand;
 	context._cmp(context.data.byte(kPointerfirstpath), 0);
 	if (context.flags.z()) goto gothand;
-arrow:
 	getflagunderp(context);
 	context._cmp(context.cl, 2);
 	if (context.flags.c()) goto gothand;
@@ -20643,7 +20616,6 @@ loadnew:
 	context.data.byte(kCommandtype) = 255;
 	worktoscreenm(context);
 	goto mainloop;
-alreadyloaded:
 	context.data.byte(kNewlocation) = 255;
 	clearsprites(context);
 	initman(context);

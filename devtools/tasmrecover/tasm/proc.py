@@ -16,6 +16,16 @@ class proc:
 	def add_label(self, label):
 		self.stmts.append(op.label(label))
 		self.labels.add(label)
+
+	def remove_label(self, label):
+		try:
+			self.labels.remove(label)
+		except:
+			pass
+		for l in self.stmts:
+			if isinstance(l, op.label) and l.name == label:
+				self.stmts.remove(l)
+				return
 	
 	def optimize(self):
 		print "optimizing..."
@@ -47,7 +57,21 @@ class proc:
 					self.stmts.pop(i)
 			else:
 				i += 1
-		#fixme: add local? 
+		
+		#eliminating unused labels
+		for s in list(self.stmts):
+			if not isinstance(s, op.label):
+				continue
+			print "checking label %s..." %s.name
+			used = False
+			for j in self.stmts:
+				if isinstance(j, op.basejmp) and j.label == s.name:
+					print "used"
+					used = True
+					break
+			if not used:
+				print self.labels
+				self.remove_label(s.name)
 	
 	def add(self, stmt):
 		#print stmt
