@@ -9,7 +9,8 @@ MODULE_OBJS = \
 	overview.o \
 	pegasus.o \
 	sound.o \
-	video.o
+	video.o \
+	Game_Shell/CItem.o
 
 
 # This module can be built as a plugin
