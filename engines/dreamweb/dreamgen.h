@@ -19,6 +19,7 @@ namespace dreamgen {
 	void cls(Context &context);
 	void printundermon(Context &context);
 	void worktoscreen(Context &context);
+	void width160(Context &context);
 	void keyboardread(Context &context);
 	void resetkeyboard(Context &context);
 	void setkeyboardint(Context &context);
