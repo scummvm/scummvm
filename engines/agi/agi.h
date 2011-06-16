@@ -1024,6 +1024,7 @@ public:
 public:
 	int showWords();
 	int loadWords(const char *);
+	int loadWords_v1(Common::File &f);
 	void unloadWords();
 	int findWord(const char *word, int *flen);
 	void dictionaryWords(char *);

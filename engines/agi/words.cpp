@@ -36,6 +36,33 @@ static char *myStrndup(const char *src, int n) {
 	return tmp;
 }
 
+int AgiEngine::loadWords_v1(Common::File &f) {
+	char str[64];
+	int k;
+	
+	// Loop through alphabet, as words in the dictionary file are sorted by
+	// first character
+	f.seek(f.pos() + 26 * 2, SEEK_SET);
+	do {
+		// Read next word
+		for (k = 0; k < (int)sizeof(str) - 1; k++) {
+			str[k] = f.readByte();
+			if (str[k] == 0 || (uint8)str[k] == 0xFF)
+				break;
+		}
+
+		// And store it in our internal dictionary
+		if (k > 0) {
+			AgiWord *w = new AgiWord;
+			w->word = myStrndup(str, k + 1);
+			w->id = f.readUint16LE();
+			_game.words[str[0] - 'a'].push_back(w);
+		}
+	} while((uint8)str[0] != 0xFF);
+
+	return errOK;
+}
+
 int AgiEngine::loadWords(const char *fname) {
 	Common::File fp;
 
@@ -50,8 +77,7 @@ int AgiEngine::loadWords(const char *fname) {
 	for (int i = 0; i < 26; i++) {
 		fp.seek(i * 2, SEEK_SET);
 		int offset = fp.readUint16BE();
-		if (offset == 0)
-			continue;
+		if (offset == 0) continue;
 		fp.seek(offset, SEEK_SET);
 		int k = fp.readByte();
 		while (!fp.eos() && !fp.err()) {

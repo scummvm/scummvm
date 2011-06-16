@@ -26,33 +26,25 @@
 #define IMAGE_SIZE 368640 // = 40 * 2 * 9 * 512 = tracks * sides * sectors * sector size
 #define SECTOR_OFFSET(s) ((s) * 512)
 
-
 #define DDP_BASE_SECTOR	0x1C2
-
 #define DDP_LOGDIR_SEC	SECTOR_OFFSET(171) + 5
 #define DDP_LOGDIR_MAX	43
-
 #define DDP_PICDIR_SEC	SECTOR_OFFSET(180) + 5
 #define DDP_PICDIR_MAX	30
-
 #define DDP_VIEWDIR_SEC	SECTOR_OFFSET(189) + 5
 #define DDP_VIEWDIR_MAX	171
-
 #define DDP_SNDDIR_SEC	SECTOR_OFFSET(198) + 5
 #define DDP_SNDDIR_MAX	64
 
-
 #define BC_LOGDIR_SEC	SECTOR_OFFSET(90) + 5
 #define BC_LOGDIR_MAX	118
-
 #define BC_VIEWDIR_SEC	SECTOR_OFFSET(96) + 5
 #define BC_VIEWDIR_MAX	180
-
 #define BC_PICDIR_SEC	SECTOR_OFFSET(93) + 8
 #define BC_PICDIR_MAX	117
-
 #define BC_SNDDIR_SEC	SECTOR_OFFSET(99) + 5
 #define BC_SNDDIR_MAX	29
+#define BC_WORDS		SECTOR_OFFSET(0x26D) + 5
 
 namespace Agi {
 
@@ -321,9 +313,14 @@ int AgiLoader_v1::loadObjects(const char *fname) {
 	return _vm->loadObjects(fname);
 }
 
-// TODO: Find the disk image equivalent.
 int AgiLoader_v1::loadWords(const char *fname) {
-	return _vm->loadWords(fname);
+	if (_vm->getGameID() == GID_BC) {
+		Common::File f;
+		f.open(_filenameDisk0);
+		f.seek(BC_WORDS, SEEK_SET);
+		return _vm->loadWords_v1(f);
+	}
+	return errOK;
 }
 
 }
