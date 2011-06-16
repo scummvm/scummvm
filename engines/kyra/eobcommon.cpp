@@ -40,19 +40,22 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
 	_screen = 0;
 	_gui = 0;
-
+TTTTT=false;
 	//_runLoopUnk2 = 0;
 	//_runLoopTimerUnk = 0;
 	_playFinale = false;
 	_runFlag = true;
 	_saveLoadMode = 0;
 	_updateHandItemCursor = false;
+	_configMouse = true;
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = _itemIconShapes =
 		_wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
 	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = _blackBoxSmallGrid =
 		_weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
 	_tempIconShape = 0;
+
+	_menuStringsPrefsTemp = 0;
 
 	_monsterDustStrings = 0;
 	_monsterDistAttType10 = 0;
@@ -105,7 +108,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 
 	_exchangeCharacterId = -1;
 	_charExchangeSwap = 0;
-	_hpBarGraphs = true;
+	_configHpBarGraphs = true;
 
 	memset(_dialogueLastBitmap, 0, 13);
 	_dlgUnk1 = 0;
@@ -139,6 +142,12 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 EobCoreEngine::~EobCoreEngine() {
 	releaseItemsAndDecorationsShapes();
 	releaseTempData();
+
+	if (_menuStringsPrefsTemp) {
+		for (int i = 0; i < 4; i++)
+			delete _menuStringsPrefsTemp[i];
+		delete[] _menuStringsPrefsTemp;
+	}
 
 	if (_faceShapes) {
 		for (int i = 0; i < 44; i++) {
@@ -259,6 +268,9 @@ Common::Error EobCoreEngine::init() {
 	initStaticResource();
 	initSpells();
 
+	_menuStringsPrefsTemp = new char*[4];
+	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char*));
+
 	_timer = new TimerManager(this, _system);
 	assert(_timer);
 	setupTimers();
@@ -373,17 +385,13 @@ Common::Error EobCoreEngine::go() {
 
 void EobCoreEngine::runLoop() {
 	_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
-	///
-	// startupSub1
-	//
-	//
+	
 	_updateFlags = 0;
-	//_unkCharacterId = 0;
+	_updateCharNum = 0;
 	_flashShapeTimer = 0;
 	_drawSceneTimer = _system->getMillis();
-	//_unkBBBBBBBBBBBBBBBB = 1;
+	//__unkB__ = 1;
 	gui_setPlayFieldButtons();
-	//
 
 	_screen->_curPage = 0;
 	gui_drawPlayField(0);

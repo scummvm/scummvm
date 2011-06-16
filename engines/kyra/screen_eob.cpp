@@ -508,7 +508,7 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 							break;
 
 					if (!*(src-1) || i < marginLeft)
-						marginLeft = ++marginLeft - *src++;
+						marginLeft = marginLeft + 1 - *src++;
 					else
 						marginLeft = 0;
 
@@ -723,7 +723,6 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numSteps, int stepSize
 	int16 gx2 = _gfxX;
 	int16 gy2 = _gfxY;
 
-	uint8 *ptr1 = _dsTempPage;
 	int16 *ptr2 = (int16*)_dsTempPage;
 	int16 *ptr3 = (int16*)&_dsTempPage[300];
 	int16 *ptr4 = (int16*)&_dsTempPage[600];

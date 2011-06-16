@@ -71,8 +71,8 @@ struct EobChargenButtonDef {
 };
 
 struct EobGuiButtonDef {
-	uint8 keyCode;
-	uint8 keyCode2;
+	uint16 keyCode;
+	uint16 keyCode2;
 	uint16 flags;
 	uint16 x;
 	uint8 y;
@@ -547,7 +547,7 @@ protected:
 	virtual void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) {}
 	virtual const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8*shapeDefs) { return (const uint8*)filename; }
 
-	void drawScene(int update);
+	void drawScene(int refresh);
 	void drawSceneShapes(int start = 0);
 	void drawDecorations(int index);
 
@@ -707,7 +707,7 @@ protected:
 	const uint8 *_inventorySlotsY;
 	const uint8 **_compassShapes;
 	uint8 _charExchangeSwap;
-	bool _hpBarGraphs;
+	bool _configHpBarGraphs;
 
 	// text
 	void setupDialogueButtons(int presetfirst, int numStr, const char *str1, ...);
@@ -957,6 +957,10 @@ protected:
 	const uint8 *_magicFlightObjectProperties;
 
 	// Menu
+	char **_menuStringsPrefsTemp;
+
+	bool _configMouse;
+
 	const char *const *_menuStringsMain;
 	const char *const *_menuStringsSaveLoad;
 	const char *const *_menuStringsOnOff;

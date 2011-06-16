@@ -200,6 +200,7 @@ void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterInde
 				c += 6;
 
 			c = (c << 1) + (ii - 1);
+			assert(c < 24);
 			memcpy(_monsterPalettes[c], tmpPal, 16);
 		}
 	}
