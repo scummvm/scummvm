@@ -48,11 +48,7 @@ uint8 *ScummEngine::getHEPaletteSlot(uint16 palSlot) {
 }
 
 uint16 ScummEngine::get16BitColor(uint8 r, uint8 g, uint8 b) {
-	uint16 ar = (r >> 3) << 10;
-	uint16 ag = (g >> 3) <<  5;
-	uint16 ab = (b >> 3) <<  0;
-	uint16 col = ar | ag | ab;
-	return col;
+	return _outputPixelFormat.RGBToColor(r, g, b);
 }
 
 void ScummEngine::resetPalette() {
@@ -222,12 +218,10 @@ void ScummEngine::resetPalette() {
 			if (_game.id == GID_INDY4 || _game.id == GID_MONKEY2)
 				_townsClearLayerFlag = 0;
 #ifdef USE_RGB_COLOR
-			else if (_bytesPerPixelOutput == 2) {
-				if (_game.id == GID_LOOM)
-					towns_setTextPaletteFromPtr(tableTownsLoomPalette);
-				else if (_game.version == 3)
-					towns_setTextPaletteFromPtr(tableTownsV3Palette);
-			}
+			else if (_game.id == GID_LOOM)
+				towns_setTextPaletteFromPtr(tableTownsLoomPalette);
+			else if (_game.version == 3)
+				towns_setTextPaletteFromPtr(tableTownsV3Palette);
 #endif
 
 			_townsScreen->toggleLayers(_townsActiveLayerFlags);
@@ -1016,7 +1010,7 @@ void ScummEngine::setCurrentPalette(int palindex) {
 		setPCEPaletteFromPtr(pals);
 #ifdef USE_RGB_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	} else if (_game.platform == Common::kPlatformFMTowns && _bytesPerPixelOutput == 2) {
+	} else if (_game.platform == Common::kPlatformFMTowns) {
 		towns_setPaletteFromPtr(pals);
 #endif
 #endif
@@ -1119,7 +1113,7 @@ void ScummEngine::updatePalette() {
 
 #ifdef USE_RGB_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	if (_game.platform == Common::kPlatformFMTowns && _bytesPerPixelOutput == 2) {
+	if (_game.platform == Common::kPlatformFMTowns) {
 		p = palette_colors;
 		for (i = first; i < first + num; ++i) {
 			_16BitPalette[i] = get16BitColor(p[0], p[1], p[2]);

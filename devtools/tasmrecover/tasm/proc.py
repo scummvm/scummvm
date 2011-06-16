@@ -16,6 +16,40 @@ class proc:
 	def add_label(self, label):
 		self.stmts.append(op.label(label))
 		self.labels.add(label)
+
+	def remove_label(self, label):
+		try:
+			self.labels.remove(label)
+		except:
+			pass
+		for l in self.stmts:
+			if isinstance(l, op.label) and l.name == label:
+				self.stmts.remove(l)
+				return
+	
+	def optimize_sequence(self, cls):
+		i = 0
+		stmts = self.stmts
+		while i < len(stmts):
+			if not isinstance(stmts[i], cls):
+				i += 1
+				continue
+			j = i + 1
+
+			while j < len(stmts):
+				if not isinstance(stmts[j], cls):
+					break
+				j = j + 1
+
+			n = j - i
+			if n > 1:
+				print "Eliminate consequtive storage instructions at %u-%u" %(i, j)
+				del stmts[i + 1:j]
+				stmts[i].repeat = n
+			else:
+				i = j
+
+		return
 	
 	def optimize(self):
 		print "optimizing..."
@@ -23,9 +57,9 @@ class proc:
 		while len(self.stmts) and isinstance(self.stmts[-1], op.label):
 			print "stripping last label"
 			self.stmts.pop()
-		#if isinstance(self.stmts[-1], op._ret) and (len(self.stmts) < 2 or not isinstance(self.stmts[-2], op.label)):
-		#	print "stripping last ret"
-		#	self.stmts.pop()
+		if isinstance(self.stmts[-1], op._ret) and (len(self.stmts) < 2 or not isinstance(self.stmts[-2], op.label)):
+			print "stripping last ret"
+			self.stmts.pop()
 		#merging push ax pop bx constructs
 		i = 0
 		while i + 1 < len(self.stmts):
@@ -47,7 +81,26 @@ class proc:
 					self.stmts.pop(i)
 			else:
 				i += 1
-		#fixme: add local? 
+		
+		#eliminating unused labels
+		for s in list(self.stmts):
+			if not isinstance(s, op.label):
+				continue
+			print "checking label %s..." %s.name
+			used = False
+			for j in self.stmts:
+				if isinstance(j, op.basejmp) and j.label == s.name:
+					print "used"
+					used = True
+					break
+			if not used:
+				print self.labels
+				self.remove_label(s.name)
+
+		self.optimize_sequence(op._stosb);
+		self.optimize_sequence(op._stosw);
+		self.optimize_sequence(op._movsb);
+		self.optimize_sequence(op._movsw);
 	
 	def add(self, stmt):
 		#print stmt

@@ -1,0 +1,12 @@
+
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+
+Some files(dreamgen.*) in this directory is auto-generated. This means
+(at least for some time) any changes to them will be lost.
+
+Please look into /devtools/tasmrecover directory, patch assembler source
+or translator and run ./tasm-recover script.
+
+Then copy dreamgen.cpp/dreamgen.h to engine/dreamweb and check the diffs.
+
+If you'd like to reimplement something, blacklist it, then run script.

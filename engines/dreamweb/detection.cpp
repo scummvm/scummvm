@@ -25,10 +25,12 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
+#include "common/algorithm.h"
 #include "common/system.h"
 
 #include "dreamweb/dreamweb.h"
+
+#include "engines/advancedDetector.h"
 
 namespace DreamWeb {
 
@@ -70,7 +72,14 @@ public:
 };
 
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	switch(f) {
+	case kSupportsListSaves:
+	case kSupportsLoadingDuringStartup:
+	case kSupportsDeleteSave:
+		return true;
+	default:
+		return false;
+	}
 }
 
 bool DreamWeb::DreamWebEngine::hasFeature(EngineFeature f) const {
@@ -86,13 +95,29 @@ bool DreamWebMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 }
 
 SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
-	//Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray files = saveFileMan->listSavefiles("DREAMWEB.D??");
+	Common::sort(files.begin(), files.end());
+
 	SaveStateList saveList;
+	for(uint i = 0; i < files.size(); ++i) {
+		const Common::String &file = files[i];
+		Common::InSaveFile *stream = saveFileMan->openForLoading(file);
+		if (!stream)
+			error("cannot open save file %s", file.c_str());
+		char name[13] = {};
+		stream->seek(0x61);
+		stream->read(name, sizeof(name) - 1);
+		delete stream;
+
+		SaveStateDescriptor sd(i, name);
+		saveList.push_back(sd);
+	}
 
 	return saveList;
 }
 
-int DreamWebMetaEngine::getMaximumSaveSlot() const { return 99; }
+int DreamWebMetaEngine::getMaximumSaveSlot() const { return 6; }
 
 void DreamWebMetaEngine::removeSaveState(const char *target, int slot) const {
 }

@@ -32,6 +32,7 @@
 #include "common/rect.h"
 #include "common/savefile.h"
 #include "common/scummsys.h"
+#include "common/system.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -83,7 +84,6 @@ public:
 
 	void mouseCall(); //fill mouse pos and button state
 	void processEvents();
-	void setGraphicsMode();
 	void setPalette();
 	void fadeDos();
 	void blit(const uint8 *src, int pitch, int x, int y, int w, int h);

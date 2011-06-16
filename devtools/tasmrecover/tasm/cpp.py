@@ -16,8 +16,16 @@ class cpp:
 		self.namespace = namespace
 		fname = namespace + ".cpp"
 		header = namespace + ".h"
+		banner = "/* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */"
 		self.fd = open(fname, "wt")
 		self.hd = open(header, "wt")
+		hid = "TASMRECOVER_%s_STUBS_H__" %namespace.upper()
+		self.hd.write("""#ifndef %s
+#define %s
+
+%s
+
+""" %(hid, hid, banner))
 		self.context = context
 		self.data_seg = context.binary_data
 		self.procs = context.proc_list
@@ -29,11 +37,13 @@ class cpp:
 		self.translated = []
 		self.proc_addr = []
 		self.forwards = []
-		self.fd.write("""#include \"%s\"
+		self.fd.write("""%s
+
+#include \"%s\"
 
 namespace %s {
 
-""" %(header, namespace))
+""" %(banner, header, namespace))
 
 	def expand_cb(self, match):
 		name = match.group(0).lower()
@@ -257,7 +267,7 @@ namespace %s {
 		self.schedule(name)
 
 	def _ret(self):
-		self.body += "\t{assert(stack_depth == context.stack.size()); return; }\n"
+		self.body += "\treturn;\n"
 
 	def parse2(self, dst, src):
 		dst_size, src_size = self.get_size(dst), self.get_size(src)
@@ -393,31 +403,31 @@ namespace %s {
 		self.body += p
 
 	def _rep(self):
-		self.body += "\twhile(context.cx--) ";
+		self.body += "\twhile(context.cx--) "
 
 	def _lodsb(self):
-		self.body += "\tcontext._lodsb();\n";
+		self.body += "\tcontext._lodsb();\n"
 
 	def _lodsw(self):
-		self.body += "\tcontext._lodsw();\n";
+		self.body += "\tcontext._lodsw();\n"
 
-	def _stosb(self):
-		self.body += "\tcontext._stosb();\n";
+	def _stosb(self, n):
+		self.body += "\tcontext._stosb(%s);\n" %("" if n == 1 else n)
 
-	def _stosw(self):
-		self.body += "\tcontext._stosw();\n";
+	def _stosw(self, n):
+		self.body += "\tcontext._stosw(%s);\n" %("" if n == 1 else n)
 
-	def _movsb(self):
-		self.body += "\tcontext._movsb();\n ";
+	def _movsb(self, n):
+		self.body += "\tcontext._movsb(%s);\n " %("" if n == 1 else n)
 
-	def _movsw(self):
-		self.body += "\tcontext._movsw();\n ";
+	def _movsw(self, n):
+		self.body += "\tcontext._movsw(%s);\n " %("" if n == 1 else n)
 
 	def _stc(self):
-		self.body += "\tcontext.flags._c = true;\n ";
+		self.body += "\tcontext.flags._c = true;\n "
 
 	def _clc(self):
-		self.body += "\tcontext.flags._c = false;\n ";
+		self.body += "\tcontext.flags._c = false;\n "
 
 	def __proc(self, name, def_skip = 0):
 		try:
@@ -443,7 +453,7 @@ namespace %s {
 			
 			self.proc_addr.append((name, self.proc.offset))
 			self.body = str()
-			self.body += "void %s(Context & context) {\n\tuint stack_depth = context.stack.size();\n" %name;
+			self.body += "void %s(Context &context) {\n\tSTACK_CHECK(context);\n" %name;
 			self.proc.optimize()
 			self.unbounded = []
 			self.proc.visit(self, skip)
@@ -531,12 +541,8 @@ namespace %s {
 			if (n & 0xf) == 0:
 				data_impl += "\n\t\t"
 		data_impl += "};\n\tcontext.ds.assign(src, src + sizeof(src));\n"
-		hid = "TASMRECOVER_%s_STUBS_H__" %self.namespace.upper()
-		self.hd.write("""#ifndef %s
-#define %s
-""" %(hid, hid))
 		self.hd.write(
-"""\n#\tinclude "runtime.h"
+"""\n#include "dreamweb/runtime.h"
 
 namespace %s {
 

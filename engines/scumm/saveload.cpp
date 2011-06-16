@@ -1489,7 +1489,7 @@ void ScummEngine_v5::saveOrLoad(Serializer *s) {
 
 	// Reset cursors for old FM-Towns savegames saved with 256 color setting.
 	// Otherwise the cursor will be messed up when displayed in the new hi color setting.
-	if (_game.platform == Common::kPlatformFMTowns && _bytesPerPixelOutput == 2 && s->isLoading() && s->getVersion() < VER(82)) {
+	if (_game.platform == Common::kPlatformFMTowns && _outputPixelFormat.bytesPerPixel == 2 && s->isLoading() && s->getVersion() < VER(82)) {
 		if (_game.id == GID_LOOM) {
 			redefineBuiltinCursorFromChar(1, 1);
 			redefineBuiltinCursorHotspot(1, 0, 0);

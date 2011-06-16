@@ -252,11 +252,11 @@ public:
 		_size = newSize;
 	}
 
-	void assign(const T *srcBegin, const T *srcEnd) {
-		resize(distance(srcBegin, srcEnd)); //fixme: ineffective?
+	void assign(const_iterator first, const_iterator last) {
+		resize(distance(first, last)); // FIXME: ineffective?
 		T *dst = _storage;
-		while(srcBegin != srcEnd)
-			*dst++ = *srcBegin++;
+		while (first != last)
+			*dst++ = *first++;
 	}
 
 protected:

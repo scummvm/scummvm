@@ -19,5 +19,6 @@ generator = cpp(context, "dreamgen", blacklist = [
 	'cls', 
 	'printundermon',
 	'worktoscreen',
+	'width160'
 	])
 generator.generate('dreamweb') #start routine

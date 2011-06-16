@@ -2253,16 +2253,9 @@ fi
 #
 case $_backend in
 	android)
-		# ssp at this point so the cxxtests link
-		if test "$_debug_build" = yes; then
-			CXXFLAGS="$CXXFLAGS -fstack-protector"
-		else
-			CXXFLAGS="$CXXFLAGS -fno-stack-protector"
-		fi
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
-
-		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc'
@@ -3223,6 +3216,13 @@ fi
 #
 case $_backend in
 	android)
+		# ssp at this point so the cxxtests link
+		if test "$_debug_build" = yes; then
+			CXXFLAGS="$CXXFLAGS -fstack-protector"
+		else
+			CXXFLAGS="$CXXFLAGS -fno-stack-protector"
+		fi
+
 		static_libs=''
 		system_libs=''
 		for lib in $LIBS; do

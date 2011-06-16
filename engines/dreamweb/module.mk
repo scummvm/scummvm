@@ -4,7 +4,8 @@ MODULE_OBJS := \
 	console.o \
 	detection.o \
 	dreamweb.o \
-	dreamgen.o
+	dreamgen.o \
+	stubs.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DREAMWEB), DYNAMIC_PLUGIN)
