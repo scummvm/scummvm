@@ -9,6 +9,7 @@ class proc:
 		self.calls = []
 		self.stmts = []
 		self.labels = set()
+		self.retlabels = set()
 		self.__label_re = re.compile(r'^(\S+):(.*)$')
 		self.offset = proc.last_addr
 		proc.last_addr += 4
@@ -67,13 +68,20 @@ class proc:
 	
 	def optimize(self):
 		print "optimizing..."
-		#trivial simplifications, removing last ret
+		#trivial simplifications
 		while len(self.stmts) and isinstance(self.stmts[-1], op.label):
 			print "stripping last label"
 			self.stmts.pop()
-		if isinstance(self.stmts[-1], op._ret) and (len(self.stmts) < 2 or not isinstance(self.stmts[-2], op.label)):
-			print "stripping last ret"
-			self.stmts.pop()
+		#mark labels that directly precede a ret
+		for i in range(len(self.stmts)):
+			if not isinstance(self.stmts[i], op.label):
+				continue
+			j = i
+			while j < len(self.stmts) and isinstance(self.stmts[j], op.label):
+				j += 1
+			if j == len(self.stmts) or isinstance(self.stmts[j], op._ret):
+				print "Return label: %s" % (self.stmts[i].name,)
+				self.retlabels.add(self.stmts[i].name)
 		#merging push ax pop bx constructs
 		i = 0
 		while i + 1 < len(self.stmts):
@@ -102,14 +110,28 @@ class proc:
 				continue
 			print "checking label %s..." %s.name
 			used = False
-			for j in self.stmts:
-				if isinstance(j, op.basejmp) and j.label == s.name:
-					print "used"
-					used = True
-					break
+			if s.name not in self.retlabels:
+				for j in self.stmts:
+					if isinstance(j, op.basejmp) and j.label == s.name:
+						print "used"
+						used = True
+						break
 			if not used:
 				print self.labels
 				self.remove_label(s.name)
+
+		#removing duplicate rets
+		i = 0
+		while i < len(self.stmts)-1:
+			if isinstance(self.stmts[i], op._ret) and isinstance(self.stmts[i+1], op._ret):
+				del self.stmts[i]
+			else:
+				i += 1
+
+		#removing last ret
+		while len(self.stmts) > 0 and isinstance(self.stmts[-1], op._ret) and (len(self.stmts) < 2 or not isinstance(self.stmts[-2], op.label)):
+			print "stripping last ret"
+			self.stmts.pop()
 
 		self.optimize_sequence(op._stosb);
 		self.optimize_sequence(op._stosw);

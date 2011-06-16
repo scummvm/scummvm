@@ -241,6 +241,9 @@ namespace %s {
 			self.add_forward(name)
 			return "{ %s(context); return; }" %name
 		else:
+			# TODO: name or self.resolve_label(name) or self.mangle_label(name)??
+			if name in self.proc.retlabels:
+				return "return /* (%s) */" % (name,)
 			return "goto %s" %self.resolve_label(name)
 	
 	def _label(self, name):
@@ -443,6 +446,7 @@ namespace %s {
 				self.proc = proc_module.proc(name)
 				self.proc.stmts = copy(src_proc.stmts)
 				self.proc.labels = copy(src_proc.labels)
+				self.proc.retlabels = copy(src_proc.retlabels)
 				#for p in xrange(skip, len(self.proc.stmts)):
 				#	s = self.proc.stmts[p]
 				#	if isinstance(s, op.basejmp):
