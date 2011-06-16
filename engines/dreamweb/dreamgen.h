@@ -6,7 +6,7 @@
 
 #include "dreamweb/runtime.h"
 
-namespace dreamgen {
+namespace DreamGen {
 
 	void __dispatch_call(Context &context, unsigned addr);
 	void __start(Context &context);

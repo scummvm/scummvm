@@ -2,7 +2,7 @@
 #include "engines/util.h"
 #include "graphics/surface.h"
 
-namespace dreamgen {
+namespace DreamGen {
 
 Common::String getFilename(Context &context) {
 	uint16 name_ptr = context.dx;

@@ -105,7 +105,7 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 		Common::InSaveFile *stream = saveFileMan->openForLoading(file);
 		if (!stream)
 			error("cannot open save file %s", file.c_str());
-		char name[13] = {};
+		char name[17] = {};
 		stream->seek(0x61);
 		stream->read(name, sizeof(name) - 1);
 		delete stream;

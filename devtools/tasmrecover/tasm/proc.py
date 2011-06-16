@@ -34,6 +34,9 @@ class proc:
 			if not isinstance(stmts[i], cls):
 				i += 1
 				continue
+			if i > 0 and isinstance(stmts[i - 1], op._rep): #skip rep prefixed instructions for now
+				i += 1
+				continue
 			j = i + 1
 
 			while j < len(stmts):
@@ -49,6 +52,17 @@ class proc:
 			else:
 				i = j
 
+		i = 0
+		while i < len(stmts):
+			if not isinstance(stmts[i], op._rep):
+				i += 1
+				continue
+			if i + 1 >= len(stmts):
+				break
+			if isinstance(stmts[i + 1], cls):
+				stmts[i + 1].repeat = 'context.cx'
+				del stmts[i]
+			i += 1
 		return
 	
 	def optimize(self):

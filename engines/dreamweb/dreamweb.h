@@ -74,7 +74,6 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 
-//dreamgen public api:
 	uint8 randomNumber() { return _rnd.getRandomNumber(255); }
 
 	void openFile(const Common::String &name);
@@ -139,7 +138,7 @@ private:
 	Audio::SoundHandle _channelHandle[2];
 	uint8 _channel0, _channel1;
 
-	dreamgen::Context _context;
+	DreamGen::Context _context;
 };
 
 } // End of namespace DreamWeb

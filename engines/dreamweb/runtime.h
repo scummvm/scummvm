@@ -13,7 +13,7 @@ namespace DreamWeb {
 	class DreamWebEngine;
 }
 
-namespace dreamgen {
+namespace DreamGen {
 
 //fixme: name clash
 #undef random
