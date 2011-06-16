@@ -42,10 +42,10 @@
 #include "dreamweb/dreamweb.h"
 #include "dreamweb/dreamgen.h"
 
-namespace dreamgen {
-	void doshake(dreamgen::Context &context);
-	void dofade(dreamgen::Context &context);
-	void volumeadjust(dreamgen::Context &context);
+namespace DreamGen {
+	void doshake(DreamGen::Context &context);
+	void dofade(DreamGen::Context &context);
+	void volumeadjust(DreamGen::Context &context);
 }
 
 namespace DreamWeb {
@@ -100,8 +100,8 @@ void DreamWebEngine::waitForVSync() {
 		setVSyncInterrupt(false);
 	}
 
-	dreamgen::doshake(_context);
-	dreamgen::dofade(_context);
+	DreamGen::doshake(_context);
+	DreamGen::dofade(_context);
 	_system->updateScreen();
 }
 
@@ -139,8 +139,8 @@ void DreamWebEngine::processEvents() {
 					break;
 
 				case Common::KEYCODE_c: //skip statue puzzle
-					_context.data.byte(dreamgen::kSymbolbotnum) = 3;
-					_context.data.byte(dreamgen::kSymboltopnum) = 5;
+					_context.data.byte(DreamGen::kSymbolbotnum) = 3;
+					_context.data.byte(DreamGen::kSymboltopnum) = 5;
 					break;
 
 				default:
@@ -170,7 +170,7 @@ void DreamWebEngine::processEvents() {
 				break;
 			}
 
-			_context.data.byte(dreamgen::kLasthardkey) = hardKey;
+			_context.data.byte(DreamGen::kLasthardkey) = hardKey;
 
 			// The rest of the keys are converted to ASCII. This
 			// is fairly restrictive, and eventually we may want
@@ -213,7 +213,7 @@ Common::Error DreamWebEngine::run() {
 	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this);
 	//http://martin.hinner.info/vga/timing.html
 
-	dreamgen::__start(_context);
+	DreamGen::__start(_context);
 	
 	getTimerManager()->removeTimerProc(vSyncInterrupt);
 
@@ -294,13 +294,13 @@ uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
 void DreamWebEngine::keyPressed(uint16 ascii) {
 	debug(2, "key pressed = %04x", ascii);
 	uint8* keybuf = _context.data.ptr(5912, 16); //fixme: some hardcoded offsets are not added as consts
-	uint16 in = (_context.data.word(dreamgen::kBufferin) + 1) & 0x0f;
-	uint16 out = _context.data.word(dreamgen::kBufferout);
+	uint16 in = (_context.data.word(DreamGen::kBufferin) + 1) & 0x0f;
+	uint16 out = _context.data.word(DreamGen::kBufferout);
 	if (in == out) {
 		warning("keyboard buffer is full");
 		return;
 	}
-	_context.data.word(dreamgen::kBufferin) = in;
+	_context.data.word(DreamGen::kBufferin) = in;
 	keybuf[in] = ascii;
 }
 
@@ -326,11 +326,11 @@ void DreamWebEngine::mouseCall() {
 }
 
 void DreamWebEngine::fadeDos() {
-	_context.ds = _context.es = _context.data.word(dreamgen::kBuffers);
+	_context.ds = _context.es = _context.data.word(DreamGen::kBuffers);
 	return; //fixme later
 	waitForVSync();
 	//processEvents will be called from vsync
-	uint8 *dst = _context.es.ptr(dreamgen::kStartpal, 768);
+	uint8 *dst = _context.es.ptr(DreamGen::kStartpal, 768);
 	getPalette(dst, 0, 64);
 	for(int fade = 0; fade < 64; ++fade) {
 		for(int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
@@ -379,9 +379,9 @@ void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int 
 }
 
 void DreamWebEngine::printUnderMonitor() {
-	_context.es = _context.data.word(dreamgen::kWorkspace);
-	_context.di = dreamgen::kScreenwidth * 43 + 76;
-	_context.si = _context.di + 8 * dreamgen::kScreenwidth;
+	_context.es = _context.data.word(DreamGen::kWorkspace);
+	_context.di = DreamGen::kScreenwidth * 43 + 76;
+	_context.si = _context.di + 8 * DreamGen::kScreenwidth;
 
 	Graphics::Surface *s = _system->lockScreen();
 	if (!s)
@@ -397,8 +397,8 @@ void DreamWebEngine::printUnderMonitor() {
 				++dst; ++src;
 			}
 		}
-		_context._add(_context.di, dreamgen::kScreenwidth);
-		_context._add(_context.si, dreamgen::kScreenwidth);
+		_context._add(_context.di, DreamGen::kScreenwidth);
+		_context._add(_context.si, DreamGen::kScreenwidth);
 	}
 	_context.cx = 0;
 	_system->unlockScreen();
@@ -480,7 +480,7 @@ void DreamWebEngine::soundHandler() {
 	volumeadjust(_context);
 	_context.ax = _context.pop();
 
-	uint volume = _context.data.byte(dreamgen::kVolume);
+	uint volume = _context.data.byte(DreamGen::kVolume);
 	//.vol file loaded into soundbuf:0x4000
 	//volume table at (volume * 0x100 + 0x3f00)
 	//volume value could be from 1 to 7
@@ -496,13 +496,13 @@ void DreamWebEngine::soundHandler() {
 	volume = (8 - volume) * Audio::Mixer::kMaxChannelVolume / 8;
 	_mixer->setChannelVolume(_channelHandle[0], volume);
 
-	uint8 ch0 = _context.data.byte(dreamgen::kCh0playing);
+	uint8 ch0 = _context.data.byte(DreamGen::kCh0playing);
 	if (ch0 == 255)
 		ch0 = 0;
-	uint8 ch1 = _context.data.byte(dreamgen::kCh1playing);
+	uint8 ch1 = _context.data.byte(DreamGen::kCh1playing);
 	if (ch1 == 255)
 		ch1 = 0;
-	uint8 ch0loop = _context.data.byte(dreamgen::kCh0repeat);
+	uint8 ch0loop = _context.data.byte(DreamGen::kCh0repeat);
 
 	if (_channel0 != ch0) {
 		_channel0 = ch0;
@@ -517,11 +517,11 @@ void DreamWebEngine::soundHandler() {
 		}
 	}
 	if (!_mixer->isSoundHandleActive(_channelHandle[0])) {
-		_context.data.byte(dreamgen::kCh0playing) = 255;
+		_context.data.byte(DreamGen::kCh0playing) = 255;
 		_channel0 = 0;
 	}
 	if (!_mixer->isSoundHandleActive(_channelHandle[1])) {
-		_context.data.byte(dreamgen::kCh1playing) = 255;
+		_context.data.byte(DreamGen::kCh1playing) = 255;
 		_channel1 = 0;
 	}
 

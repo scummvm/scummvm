@@ -14,8 +14,8 @@ def parse_bin(s):
 class cpp:
 	def __init__(self, context, namespace, skip_first = 0, blacklist = []):
 		self.namespace = namespace
-		fname = namespace + ".cpp"
-		header = namespace + ".h"
+		fname = namespace.lower() + ".cpp"
+		header = namespace.lower() + ".h"
 		banner = "/* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */"
 		self.fd = open(fname, "wt")
 		self.hd = open(header, "wt")
@@ -348,34 +348,34 @@ namespace %s {
 		self.body += "\tcontext._test(%s, %s);\n" %self.parse2(a, b)
 
 	def _js(self, label):
-		self.body += "\tif (context.flags.s()) %s;\n" %(self.jump_to_label(label))
+		self.body += "\tif (context.flags.s())\n\t\t%s;\n" %(self.jump_to_label(label))
 
 	def _jns(self, label):
-		self.body += "\tif (!context.flags.s()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!context.flags.s())\n\t\t%s;\n" %(self.jump_to_label(label)) 
 
 	def _jz(self, label):
-		self.body += "\tif (context.flags.z()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (context.flags.z())\n\t\t%s;\n" %(self.jump_to_label(label)) 
 
 	def _jnz(self, label):
-		self.body += "\tif (!context.flags.z()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!context.flags.z())\n\t\t%s;\n" %(self.jump_to_label(label)) 
 
 	def _jl(self, label):
-		self.body += "\tif (context.flags.l()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (context.flags.l())\n\t\t%s;\n" %(self.jump_to_label(label)) 
 
 	def _jg(self, label):
-		self.body += "\tif (!context.flags.le()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!context.flags.le())\n\t\t%s;\n" %(self.jump_to_label(label)) 
 
 	def _jle(self, label):
-		self.body += "\tif (context.flags.le()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (context.flags.le())\n\t\t%s;\n" %(self.jump_to_label(label)) 
 
 	def _jge(self, label):
-		self.body += "\tif (!context.flags.l()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!context.flags.l())\n\t\t%s;\n" %(self.jump_to_label(label)) 
 
 	def _jc(self, label):
-		self.body += "\tif (context.flags.c()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (context.flags.c())\n\t\t%s;\n" %(self.jump_to_label(label)) 
 
 	def _jnc(self, label):
-		self.body += "\tif (!context.flags.c()) %s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!context.flags.c())\n\t\t%s;\n" %(self.jump_to_label(label)) 
 	
 	def _xchg(self, dst, src):
 		self.body += "\tcontext._xchg(%s, %s);\n" %self.parse2(dst, src)
@@ -384,7 +384,7 @@ namespace %s {
 		self.body += "\t%s;\n" %(self.jump_to_label(label)) 
 
 	def _loop(self, label):
-		self.body += "\tif (--context.cx) %s;\n" %self.jump_to_label(label)
+		self.body += "\tif (--context.cx)\n\t\t%s;\n" %self.jump_to_label(label)
 
 	def _push(self, regs):
 		p = str();
@@ -403,7 +403,7 @@ namespace %s {
 		self.body += p
 
 	def _rep(self):
-		self.body += "\twhile(context.cx--) "
+		self.body += "\twhile(context.cx--)\n\t"
 
 	def _lodsb(self):
 		self.body += "\tcontext._lodsb();\n"
@@ -418,10 +418,10 @@ namespace %s {
 		self.body += "\tcontext._stosw(%s);\n" %("" if n == 1 else n)
 
 	def _movsb(self, n):
-		self.body += "\tcontext._movsb(%s);\n " %("" if n == 1 else n)
+		self.body += "\tcontext._movsb(%s);\n" %("" if n == 1 else n)
 
 	def _movsw(self, n):
-		self.body += "\tcontext._movsw(%s);\n " %("" if n == 1 else n)
+		self.body += "\tcontext._movsw(%s);\n" %("" if n == 1 else n)
 
 	def _stc(self):
 		self.body += "\tcontext.flags._c = true;\n "
