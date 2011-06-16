@@ -53,8 +53,7 @@ const tDisplayElementID kCurrentDragSpriteID = 1000;
 //const Fixed kFixed1 = 1 << 16;
 //const Fixed kFixedMinus1 = -1 << 16;
 
-// Originally "TimeScale" instead of int
-const int kDefaultTimeScale = 600;
+const TimeScale kDefaultTimeScale = 600;
 
 // TODO
 //const RGBColor kWhiteRGB = {0xFFFF, 0xFFFF, 0xFFFF};

@@ -93,6 +93,11 @@ enum tSlideDirection {
 	kSlideDownRightMask = kSlideRightMask | kSlideDownMask
 };
 
+// ScummVM QuickTime/QuickDraw replacement types
+typedef uint TimeValue;
+typedef uint TimeScale;
+// TODO: Fixed and RGBColor
+
 } // End of namespace Pegasus
 
 #endif
