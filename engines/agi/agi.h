@@ -626,6 +626,9 @@ struct AgiGame {
 
 	AgiLogic *_curLogic;
 
+	// words
+	Common::Array<AgiWord*> words[26];
+
 	// view table
 	VtEntry viewTable[MAX_VIEWTABLE];
 
@@ -1018,6 +1021,7 @@ public:
 	bool isEgoView(const VtEntry *v);
 
 	// Words
+public:
 	int showWords();
 	int loadWords(const char *);
 	void unloadWords();
