@@ -61,6 +61,24 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 	},
+
+	// Second CD version
+	{
+		{
+			"dreamweb",
+			"CD",
+			{
+				{"dreamweb.r00", 0, "8acafd7f4418d08d0e16b65b8b10bc50", 152983},
+				{"dreamweb.r02", 0, "c0c363715ddf14ab54f2379906a3aa01", 198707},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_CD,
+			GUIO_NONE
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
