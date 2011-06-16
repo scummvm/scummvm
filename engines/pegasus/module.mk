@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	overview.o \
 	pegasus.o \
 	video.o \
+	Game_Shell/CInventory.o \
 	Game_Shell/CItem.o \
 	Game_Shell/CItemList.o \
 	MMShell/Base_Classes/MMFunctionPtr.o \
