@@ -58,8 +58,8 @@ void EobCoreEngine::loadItemDefs() {
 	s = _res->createReadStream("itemtype.dat");
 	uint16 numTypes = s->readUint16LE();
 
-	_itemTypes = new EobItemType[numTypes];
-	memset(_itemTypes, 0, sizeof(EobItemType) * numTypes);
+	_itemTypes = new EobItemType[65];
+	memset(_itemTypes, 0, sizeof(EobItemType) * 65);
 
 	for (int i = 0; i < numTypes; i++) {
 		_itemTypes[i].invFlags = s->readUint16LE();
