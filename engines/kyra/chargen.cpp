@@ -1028,11 +1028,11 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			v1++;
 
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP8]) {
-			ci = --ci % 7;
+			ci = (ci - 1) % 7;
 			loop = false;
 
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP2]) {
-			ci = ++ci % 7;
+			ci = (ci + 1) % 7;
 			loop = false;
 
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_o] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE] || inputFlag == 0x800A) {
@@ -1107,7 +1107,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			}
 		}
 
-		if (loop = false) {
+		if (loop == false) {
 			statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
 			_screen->printText(statStr.c_str(), b->x + 32, b->y, 15, 0);
 			_screen->updateScreen();

@@ -456,7 +456,7 @@ void EobCoreEngine::gui_drawHitpoints(int index) {
 
 	EobCharacter *c = &_characters[index];
 
-	if (_hpBarGraphs) {
+	if (_configHpBarGraphs) {
 		int bgCur = c->hitPointsCur + 10;
 		int bgMax = c->hitPointsMax + 10;
 		int col = ((bgMax / 3) > bgCur) ? 1 : 0;
@@ -849,10 +849,32 @@ int EobCoreEngine::clickedCamp(Button *button) {
 	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 14, Screen::CR_NO_P_CHECK);
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	
+	for (int i = 0; i < 4; i++) {
+		delete _menuStringsPrefsTemp[i];
+		_menuStringsPrefsTemp[i] = new char[strlen(_menuStringsPrefs[i]) + 8];
+	}
 
+	Common::strlcpy(_menuStringsPrefsTemp[0], Common::String::format(_menuStringsPrefs[0], _menuStringsOnOff[_configMusic ? 0 : 1]).c_str(), strlen(_menuStringsPrefs[0]) + 8);
+	Common::strlcpy(_menuStringsPrefsTemp[1], Common::String::format(_menuStringsPrefs[1], _menuStringsOnOff[_configSounds ? 0 : 1]).c_str(), strlen(_menuStringsPrefs[1]) + 8);
+	Common::strlcpy(_menuStringsPrefsTemp[2], Common::String::format(_menuStringsPrefs[2], _menuStringsOnOff[_configHpBarGraphs ? 0 : 1]).c_str(), strlen(_menuStringsPrefs[2]) + 8);
+	Common::strlcpy(_menuStringsPrefsTemp[3], Common::String::format(_menuStringsPrefs[3], _menuStringsOnOff[_configMouse ? 0 : 1]).c_str(), strlen(_menuStringsPrefs[3]) + 8);
+	
 	_screen->setFont(of);
-	_screen->setCurPage(0);
+	_screen->copyRegion(0, 0, 0, 120, 176, 24, 14, 2, Screen::CR_NO_P_CHECK);
 	_screen->setScreenDim(cd);
+	drawScene(0);
+
+	//for (int i = 0; i < 6; i++)
+	//	cleanupCharacterSpellList(i);
+
+	_screen->setCurPage(0);
+	const ScreenDim *dm = _screen->getScreenDim(10);
+	_screen->copyRegion(dm->sx << 3, dm->sy, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);	
+	
+	//if (displayInv)
+	//	_screen->loadEobCpsFileToPage("INVENT", 0, 5, 3, 2);
+	
+	_screen->updateScreen();
 
 	enableSysTimer(2);	
 	updateCharacterEvents(true);
@@ -1548,7 +1570,7 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 	uint16 in = inputFlags & 0xff;
 	uint16 buttonReleaseFlag = 0;
 	bool clickEvt = false;
-
+	_vm->TTTTT = true;
 	_flagsMouseLeft = (_vm->_mouseClick == 1) ? 2 : 4;
 	_flagsMouseRight = (_vm->_mouseClick == 2) ? 2 : 4;
 	_vm->_mouseClick = 0;
@@ -1919,7 +1941,7 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 
 	if (!result)
 		result = inputFlags;
-
+_vm->	TTTTT=false;
 	return result;
 }
 

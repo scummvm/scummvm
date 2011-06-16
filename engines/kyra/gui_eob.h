@@ -49,6 +49,7 @@ public:
 	int redrawShadedButtonCallback(Button *button) { return 0; }
 	int redrawButtonCallback(Button *button) { return 0; }
 
+	// general menu handling (main menu, character generation, ingame menus, etc.)
 	void setupMenu(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing);
 	int handleMenu(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);
 	int getMenuItem(int index, int32 menuItemsMask, int unk);
@@ -56,7 +57,7 @@ public:
 
 	int getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor);
 
-	//int runMenu(Menu &menu);
+	// int runMenu(Menu &menu);
 
 	// utilities for thumbnail creation
 	void createScreenThumbnail(Graphics::Surface &dst) {}

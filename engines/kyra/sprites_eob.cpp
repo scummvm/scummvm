@@ -387,18 +387,18 @@ void EobCoreEngine::flashMonsterShape(EobMonsterInPlay *m) {
 
 void EobCoreEngine::updateAllMonsterShapes() {
 	drawScene(1);
-	bool update = false;
+	bool updateShp = false;
 
 	for (EobMonsterInPlay *m = _monsters; m < &_monsters[30]; m++) {
 		if (m->flags & 2) {
 			m->flags &= ~2;
-			update = true;
+			updateShp = true;
 			if (m->hitPointsCur <= 0)
 				killMonster(m, true);
 		}
 	}
 
-	if (update) {
+	if (updateShp) {
 		_sceneUpdateRequired = true;
 		_flashShapeTimer = _system->getMillis() + _tickLength;
 	} else {
@@ -995,7 +995,7 @@ bool EobCoreEngine::updateMonsterTryDistanceAttack(EobMonsterInPlay *m) {
 					statusAttack(i, 4, _monsterSpecAttStrings[1], 1, 5, 9, 1);
 			}
 		} else {
-			Item itm = duplicateItem(-s);
+			itm = duplicateItem(-s);
 			if (itm) {
 				if (launchObject(-1, itm, m->block, m->pos, m->dir, _items[itm].type))
 					_items[itm].block = -1;
@@ -1240,7 +1240,7 @@ void EobCoreEngine::setBlockMonsterDirection(int block, int dir) {
 		if (_monsters[i].block != block || _monsters[i].dir == dir)
 			continue;
 		_monsters[i].dir = dir;
-		_monsters[i].directionChanged == 1;
+		_monsters[i].directionChanged = 1;
 	}
 }
 

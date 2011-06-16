@@ -260,7 +260,7 @@ uint16 LolEobBaseEngine::processDialogue() {
 		if (e)
 			gui_notifyButtonListChanged();
 
-		if (_flags.gameID == GI_LOL && (e == 200 || e == 202) || _flags.gameID != GI_LOL && (e == 199 || e == 201)) {
+		if ((_flags.gameID == GI_LOL && (e == 200 || e == 202)) || (_flags.gameID != GI_LOL && (e == 199 || e == 201))) {
 			for (int i = 0; i < _dialogueNumButtons; i++) {
 				int x = _dialogueButtonPosX[i];
 				int y = (gameFlags().use16ColorMode ? ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) & ~7) - 1 : (_dialogueButtonYoffs + _dialogueButtonPosY[i]));

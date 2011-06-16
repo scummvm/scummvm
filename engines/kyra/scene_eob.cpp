@@ -989,13 +989,13 @@ void EobCoreEngine::toggleWallState(int wall, int toggle) {
 	}
 }
 
-void EobCoreEngine::drawScene(int update) {
+void EobCoreEngine::drawScene(int refresh) {
 	generateBlockDrawingBuffer();
 	drawVcnBlocks();
 	drawSceneShapes();
 
 	if (_sceneDrawPage2) {
-		if (update)
+		if (refresh)
 			_screen->fillRect(0, 0, 176, 120, 12);
 
 		_screen->setScreenPalette(_screen->getPalette(0));
@@ -1018,15 +1018,15 @@ void EobCoreEngine::drawScene(int update) {
 		delayUntil(_drawSceneTimer);
 	}
 
-	if (update && !_partyResting)
+	if (refresh && !_partyResting)
 		_screen->copyRegion(0, 0, 0, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
 
 	updateEnvironmentalSfx(0);
 
-	if (!_dialogueField && update && !_updateFlags)
+	if (!_dialogueField && refresh && !_updateFlags)
 		gui_drawCompass(false);
 
-	if (update && !_partyResting)
+	if (refresh && !_partyResting)
 		_screen->updateScreen();
 
 	if (_sceneDefaultUpdate) {

@@ -37,8 +37,7 @@ int EobEngine::mainMenu() {
 	int menuChoice = 4;
 
 	Screen::FontId of = _screen->_currentFont;
-	Common::SeekableReadStream *s = 0;
-
+	
 	while (menuChoice >= 0 && !shouldQuit()) {
 		switch (menuChoice) {
 			case 0:

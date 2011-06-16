@@ -70,8 +70,6 @@ private:
 	Screen_Eob *_screen;
 	Mode _mode;
 
-	uint8 _notifier;
-
 	const char *const *_strings;
 	const char *const *_cpsFiles;
 	const char *const *_palFiles;
@@ -1259,7 +1257,7 @@ void DarkmoonSequenceHelper::delay(uint32 ticks) {
 
 void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim) {
 	int seq = 0;
-	while (_notifier < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
+	while (_vm->sound()->checkTrigger() < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
 		if (introUpdateAnim) {
 			runSequence(30 | seq);
 			seq ^= 1;

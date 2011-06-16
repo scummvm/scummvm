@@ -175,13 +175,14 @@ void EobCoreEngine::castSpell(int spell, int weaponSlot) {
 				memmove(&_openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellListOffset + _openBookSpellSelectedItem], &_openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellListOffset + _openBookSpellSelectedItem + 1], 8 - (_openBookSpellListOffset + _openBookSpellSelectedItem));
 			_openBookAvailableSpells[_openBookSpellLevel * 10 + 8] = -tmp;
 			if (_openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellListOffset + _openBookSpellSelectedItem] < 0) {
-				if (--_openBookSpellSelectedItem == -1)
+				if (--_openBookSpellSelectedItem == -1) {
 					if (_openBookSpellListOffset) {
 						_openBookSpellListOffset = 0;
 						_openBookSpellSelectedItem = 5;
 					} else {
 						_openBookSpellSelectedItem = 6;
 					}
+				}
 			}
 		} else if (weaponSlot != -1) {
 			updateUsedCharacterHandItem(_openBookChar, weaponSlot);
