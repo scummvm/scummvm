@@ -2943,18 +2943,26 @@ if test "$_unix" = no || test "$_taskbar" = no; then
 	_libunity=no
 else
 if test "$_libunity" = auto ; then
-	# Unity has a lots of dependencies, update the libs and cflags var with them
-	LIBUNITY_LIBS="$LIBUNITY_LIBS $(pkg-config --libs unity)"
-	LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS $(pkg-config --cflags unity)"
-	_libunity=no
-	cat > $TMPC << EOF
+	case $_host_os in
+		mingw*)
+			# pkgconfig and unity are not supported on mingw
+			_libunity=no
+			;;
+		*)
+			# Unity has a lots of dependencies, update the libs and cflags var with them
+			LIBUNITY_LIBS="$LIBUNITY_LIBS $(pkg-config --libs unity)"
+			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS $(pkg-config --cflags unity)"
+			_libunity=no
+			cat > $TMPC << EOF
 #include <unity.h>
 int main(void) {
 	unity_launcher_entry_get_for_desktop_id("scummvm.desktop");
 	return 0;
 }
 EOF
-	cc_check $LIBUNITY_CFLAGS $LIBUNITY_LIBS -lunity && _libunity=yes
+			cc_check $LIBUNITY_CFLAGS $LIBUNITY_LIBS -lunity && _libunity=yes
+			;;
+	esac
 fi
 if test "$_libunity" = yes ; then
 	LIBS="$LIBS $LIBUNITY_LIBS -lunity"
