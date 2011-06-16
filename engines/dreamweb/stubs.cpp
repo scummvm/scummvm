@@ -13,220 +13,220 @@ Common::String getFilename(Context &context) {
 	return name;
 }
 
-void multiget(Context &context) {
-	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
-	unsigned x = (uint16)context.di, y = (uint16)context.bx;
+void DreamGenContext::multiget() {
+	unsigned w = (uint8)cl, h = (uint8)ch;
+	unsigned x = (uint16)di, y = (uint16)bx;
 	unsigned src = x + y * kScreenwidth;
-	unsigned dst = (uint16)context.si;
-	context.es = context.ds;
-	context.ds = context.data.word(kWorkspace);
+	unsigned dst = (uint16)si;
+	es = ds;
+	ds = data.word(kWorkspace);
 	if (y + h > 200)
 		h = 200 - y;
 	if (x + w > 320)
 		w = 320 - x;
-	//debug(1, "multiget %u,%u %ux%u -> segment: %04x->%04x", x, y, w, h, (uint16)context.ds, (uint16)context.es);
+	//debug(1, "multiget %u,%u %ux%u -> segment: %04x->%04x", x, y, w, h, (uint16)ds, (uint16)es);
 	for(unsigned l = 0; l < h; ++l) {
-		uint8 *src_p = context.ds.ptr(src + kScreenwidth * l, w);
-		uint8 *dst_p = context.es.ptr(dst + w * l, w);
+		uint8 *src_p = ds.ptr(src + kScreenwidth * l, w);
+		uint8 *dst_p = es.ptr(dst + w * l, w);
 		memcpy(dst_p, src_p, w);
 	}
-	context.si += w * h;
-	context.di = src + kScreenwidth * h;
-	context.cx = 0;
+	si += w * h;
+	di = src + kScreenwidth * h;
+	cx = 0;
 }
 
-void multiput(Context &context) {
-	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
-	unsigned x = (uint16)context.di, y = (uint16)context.bx;
-	unsigned src = (uint16)context.si;
+void DreamGenContext::multiput() {
+	unsigned w = (uint8)cl, h = (uint8)ch;
+	unsigned x = (uint16)di, y = (uint16)bx;
+	unsigned src = (uint16)si;
 	unsigned dst = x + y * kScreenwidth;
-	context.es = context.data.word(kWorkspace);
+	es = data.word(kWorkspace);
 	if (y + h > 200)
 		h = 200 - y;
 	if (x + w > 320)
 		w = 320 - x;
-	//debug(1, "multiput %ux%u -> segment: %04x->%04x", w, h, (uint16)context.ds, (uint16)context.es);
+	//debug(1, "multiput %ux%u -> segment: %04x->%04x", w, h, (uint16)ds, (uint16)es);
 	for(unsigned l = 0; l < h; ++l) {
-		uint8 *src_p = context.ds.ptr(src + w * l, w);
-		uint8 *dst_p = context.es.ptr(dst + kScreenwidth * l, w);
+		uint8 *src_p = ds.ptr(src + w * l, w);
+		uint8 *dst_p = es.ptr(dst + kScreenwidth * l, w);
 		memcpy(dst_p, src_p, w);
 	}
-	context.si += w * h;
-	context.di = dst + kScreenwidth * h;
-	context.cx = 0;
+	si += w * h;
+	di = dst + kScreenwidth * h;
+	cx = 0;
 }
 
-void multidump(Context &context) {
-	context.ds = context.data.word(kWorkspace);
-	int w = (uint8)context.cl, h = (uint8)context.ch;
-	int x = (int16)context.di, y = (int16)context.bx;
+void DreamGenContext::multidump() {
+	ds = data.word(kWorkspace);
+	int w = (uint8)cl, h = (uint8)ch;
+	int x = (int16)di, y = (int16)bx;
 	unsigned offset = x + y * kScreenwidth;
-	//debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)context.ds, x, y, offset);
-	context.engine->blit(context.ds.ptr(offset, w * h), kScreenwidth, x, y, w, h);
-	context.si = context.di = offset + h * kScreenwidth;
-	context.cx = 0;
+	//debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
+	engine->blit(ds.ptr(offset, w * h), kScreenwidth, x, y, w, h);
+	si = di = offset + h * kScreenwidth;
+	cx = 0;
 }
 
-void worktoscreen(Context &context) {
-	context.ds = context.data.word(kWorkspace);
+void DreamGenContext::worktoscreen() {
+	ds = data.word(kWorkspace);
 	uint size = 320 * 200;
-	context.engine->blit(context.ds.ptr(0, size), 320, 0, 0, 320, 200);
-	context.di = context.si = size;
-	context.cx = 0;
+	engine->blit(ds.ptr(0, size), 320, 0, 0, 320, 200);
+	di = si = size;
+	cx = 0;
 }
 
-void printundermon(Context &context) {
-	context.engine->printUnderMonitor();
+void DreamGenContext::printundermon() {
+	engine->printUnderMonitor();
 }
 
-void cls(Context &context) {
-	context.engine->cls();
+void DreamGenContext::cls() {
+	engine->cls();
 }
 
-void frameoutnm(Context &context) {
-	unsigned w = (uint8)context.cl, h = (uint8)context.ch;
-	unsigned pitch = (uint16)context.dx;
-	unsigned src = (uint16)context.si;
-	int x = (uint16)context.di, y = (uint16)context.bx;
+void DreamGenContext::frameoutnm() {
+	unsigned w = (uint8)cl, h = (uint8)ch;
+	unsigned pitch = (uint16)dx;
+	unsigned src = (uint16)si;
+	int x = (uint16)di, y = (uint16)bx;
 	unsigned dst = x + y * pitch;
-	//debug(1, "framenm %ux%u[pitch: %u]-> %d,%d, segment: %04x->%04x", w, h, pitch, x, y, (uint16)context.ds, (uint16)context.es);
+	//debug(1, "framenm %ux%u[pitch: %u]-> %d,%d, segment: %04x->%04x", w, h, pitch, x, y, (uint16)ds, (uint16)es);
 	for(unsigned l = 0; l < h; ++l) {
-		uint8 *src_p = context.ds.ptr(src + w * l, w);
-		uint8 *dst_p = context.es.ptr(dst + pitch * l, w);
+		uint8 *src_p = ds.ptr(src + w * l, w);
+		uint8 *dst_p = es.ptr(dst + pitch * l, w);
 		memcpy(dst_p, src_p, w);
 	}
-	context.di += dst + pitch * h;
-	context.si += w * h;
-	context.cx = 0;
+	di += dst + pitch * h;
+	si += w * h;
+	cx = 0;
 }
 
-void seecommandtail(Context &context) {
-	context.data.word(kSoundbaseadd) = 0x220;
-	context.data.byte(kSoundint) = 5;
-	context.data.byte(kSounddmachannel) = 1;
-	context.data.byte(kBrightness) = 1;
-	context.data.word(kHowmuchalloc) = 0x9360;
+void DreamGenContext::seecommandtail() {
+	data.word(kSoundbaseadd) = 0x220;
+	data.byte(kSoundint) = 5;
+	data.byte(kSounddmachannel) = 1;
+	data.byte(kBrightness) = 1;
+	data.word(kHowmuchalloc) = 0x9360;
 }
 
-void randomnumber(Context &context) {
-	context.al = context.engine->randomNumber();
+void DreamGenContext::randomnumber() {
+	al = engine->randomNumber();
 }
 
-void quickquit(Context &context) {
-	context.engine->quit();
+void DreamGenContext::quickquit() {
+	engine->quit();
 }
 
-void quickquit2(Context &context) {
-	context.engine->quit();
+void DreamGenContext::quickquit2() {
+	engine->quit();
 }
 
-void keyboardread(Context &context) {
+void DreamGenContext::keyboardread() {
 	::error("keyboardread"); //this keyboard int handler, must never be called
 }
 
-void resetkeyboard(Context &context) {
+void DreamGenContext::resetkeyboard() {
 }
 
-void setkeyboardint(Context &context) {
+void DreamGenContext::setkeyboardint() {
 }
 
-void readfromfile(Context &context) {
-	uint16 dst_offset = context.dx;
-	uint16 size = context.cx;
-	debug(1, "readfromfile(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
-	context.ax = context.engine->readFromFile(context.ds.ptr(dst_offset, size), size);
-	context.flags._c = false;
+void DreamGenContext::readfromfile() {
+	uint16 dst_offset = dx;
+	uint16 size = cx;
+	debug(1, "readfromfile(%04x:%u, %u)", (uint16)ds, dst_offset, size);
+	ax = engine->readFromFile(ds.ptr(dst_offset, size), size);
+	flags._c = false;
 }
 
-void closefile(Context &context) {
-	context.engine->closeFile();
-	context.data.byte(kHandle) = 0;
+void DreamGenContext::closefile() {
+	engine->closeFile();
+	data.byte(kHandle) = 0;
 }
 
-void openforsave(Context &context) {
-	const char *name = (const char *)context.ds.ptr(context.dx, 13);
+void DreamGenContext::openforsave() {
+	const char *name = (const char *)ds.ptr(dx, 13);
 	debug(1, "openforsave(%s)", name);
-	context.engine->openSaveFileForWriting(name);
+	engine->openSaveFileForWriting(name);
 }
 
-void openfilenocheck(Context &context) {
-	const char *name = (const char *)context.ds.ptr(context.dx, 13);
+void DreamGenContext::openfilenocheck() {
+	const char *name = (const char *)ds.ptr(dx, 13);
 	debug(1, "checksavefile(%s)", name);
-	bool ok = context.engine->openSaveFileForReading(name);
-	context.flags._c = !ok;
+	bool ok = engine->openSaveFileForReading(name);
+	flags._c = !ok;
 }
 
-void openfilefromc(Context &context) {
-	openfilenocheck(context);
+void DreamGenContext::openfilefromc() {
+	openfilenocheck();
 }
 
-void openfile(Context &context) {
-	Common::String name = getFilename(context);
+void DreamGenContext::openfile() {
+	Common::String name = getFilename(*this);
 	debug(1, "opening file: %s", name.c_str());
-	context.engine->openFile(name);
-	context.cs.word(kHandle) = 1; //only one handle
-	context.flags._c = false;
+	engine->openFile(name);
+	cs.word(kHandle) = 1; //only one handle
+	flags._c = false;
 }
 
-void createfile(Context &context) {
+void DreamGenContext::createfile() {
 	::error("createfile");
 }
 
-void dontloadseg(Context &context) {
-	context.ax = context.es.word(context.di);
-	context._add(context.di, 2);
-	context.dx = context.ax;
-	context.cx = 0;
-	unsigned pos = context.engine->skipBytes(context.dx);
-	context.dx = pos >> 16;
-	context.ax = pos & 0xffff;
-	context.flags._c = false;
+void DreamGenContext::dontloadseg() {
+	ax = es.word(di);
+	_add(di, 2);
+	dx = ax;
+	cx = 0;
+	unsigned pos = engine->skipBytes(dx);
+	dx = pos >> 16;
+	ax = pos & 0xffff;
+	flags._c = false;
 }
 
-void mousecall(Context &context) {
-	context.engine->mouseCall();
+void DreamGenContext::mousecall() {
+	engine->mouseCall();
 }
 
-void setmouse(Context &context) {
-	context.data.word(kOldpointerx) = 0xffff;
+void DreamGenContext::setmouse() {
+	data.word(kOldpointerx) = 0xffff;
 	//warning("setmouse: fixme: add range setting");
 	//set vertical range to 15-184
 	//set horizontal range to 15-298*2
 }
 
-void gettime(Context &context) {
+void DreamGenContext::gettime() {
 	TimeDate t;
 	g_system->getTimeAndDate(t);
 	debug(1, "\tgettime: %02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
-	context.ch = t.tm_hour;
-	context.cl = t.tm_min;
-	context.dh = t.tm_sec;
-	context.data.byte(kSecondcount) = context.dh;
-	context.data.byte(kMinutecount) = context.cl;
-	context.data.byte(kHourcount) = context.ch;
+	ch = t.tm_hour;
+	cl = t.tm_min;
+	dh = t.tm_sec;
+	data.byte(kSecondcount) = dh;
+	data.byte(kMinutecount) = cl;
+	data.byte(kHourcount) = ch;
 }
 
-void allocatemem(Context &context) {
-	uint size = (context.bx + 2) * 16;
+void DreamGenContext::allocatemem() {
+	uint size = (bx + 2) * 16;
 	debug(1, "allocate mem, %u bytes", size);
-	context.flags._c = false;
-	SegmentRef seg = context.allocateSegment(size);
-	context.ax = (uint16)seg;
-	debug(1, "\tsegment address -> %04x", (uint16)context.ax);
+	flags._c = false;
+	SegmentRef seg = allocateSegment(size);
+	ax = (uint16)seg;
+	debug(1, "\tsegment address -> %04x", (uint16)ax);
 }
 
-void deallocatemem(Context &context) {
-	uint16 id = (uint16)context.es;
+void DreamGenContext::deallocatemem() {
+	uint16 id = (uint16)es;
 	debug(1, "deallocating segment %04x", id);
-	context.deallocateSegment(id);
+	deallocateSegment(id);
 
 	//fixing invalid entries in the sprite table
-	context.es = context.data;
+	es = data;
 	uint tsize = 16 * 32;
-	uint16 bseg = context.data.word(kBuffers);
+	uint16 bseg = data.word(kBuffers);
 	if (!bseg)
 		return;
-	SegmentRef buffers(&context);
+	SegmentRef buffers(this);
 	buffers = bseg;
 	uint8 *ptr = buffers.ptr(kSpritetable, tsize);
 	for(uint i = 0; i < tsize; i += 32) {
@@ -237,192 +237,167 @@ void deallocatemem(Context &context) {
 	}
 }
 
-void removeemm(Context &context) {
+void DreamGenContext::removeemm() {
 	::error("removeemm");
 }
 
-void setupemm(Context &context) {
-	//fixme: double check this, but it seems that emm pages used only for sound
+void DreamGenContext::setupemm() {
 }
 
-void pitinterupt(Context &context) {
+void DreamGenContext::pitinterupt() {
 	::error("pitinterupt");
 }
 
-void getridofpit(Context &context) {
+void DreamGenContext::getridofpit() {
 	::error("getridofpit");
 }
 
-void setuppit(Context &context) {
+void DreamGenContext::setuppit() {
 	::error("setuppit");
 }
 
-void startdmablock(Context &context) {
+void DreamGenContext::startdmablock() {
 	::error("startdmablock");
 }
 
-void dmaend(Context &context) {
+void DreamGenContext::dmaend() {
 	::error("dmaend");
 }
 
-void restoreems(Context &context) {
+void DreamGenContext::restoreems() {
 	::error("restoreems");
 }
 
-void saveems(Context &context) {
+void DreamGenContext::saveems() {
 	::error("saveems");
 }
 
-void bothchannels(Context &context) {
+void DreamGenContext::bothchannels() {
 	::error("bothchannels");
 }
 
-void channel1only(Context &context) {
+void DreamGenContext::channel1only() {
 	::error("channel1only");
 }
 
-void channel0only(Context &context) {
+void DreamGenContext::channel0only() {
 	::error("channel0only");
 }
 
-void out22c(Context &context) {
+void DreamGenContext::out22c() {
 	::error("out22c");
 }
 
-void soundstartup(Context &context) {
+void DreamGenContext::soundstartup() {}
+void DreamGenContext::soundend() {}
+void DreamGenContext::DreamGenContext::interupttest() {}
+void DreamGenContext::disablesoundint() {}
+void DreamGenContext::enablesoundint() {}
+void DreamGenContext::checksoundint() {
+	data.byte(kTestresult) = 1;
 }
 
-void soundend(Context &context) {
-}
-
-void interupttest(Context &context) {
-	::error("interupttest");
-}
-
-void disablesoundint(Context &context) {
-	warning("disablesoundint: STUB");
-}
-
-void enablesoundint(Context &context) {
-	warning("enablesoundint: STUB");
-}
-
-void checksoundint(Context &context) {
-	context.data.byte(kTestresult) = 1;
-	warning("checksoundint: STUB");
-}
-
-void setsoundoff(Context &context) {
+void DreamGenContext::setsoundoff() {
 	warning("setsoundoff: STUB");
 }
 
-void readheader(Context &context);
-
-void loadsample(Context &context) {
-	context.engine->loadSounds(0, (const char *)context.data.ptr(context.dx, 13));
+void DreamGenContext::loadsample() {
+	engine->loadSounds(0, (const char *)data.ptr(dx, 13));
 }
 
-void cancelch0(Context &context);
-void cancelch1(Context &context);
-
-void loadsecondsample(Context &context) {
-	uint8 ch0 = context.data.byte(kCh0playing);
+void DreamGenContext::loadsecondsample() {
+	uint8 ch0 = data.byte(kCh0playing);
 	if (ch0 >= 12 && ch0 != 255)
-		cancelch0(context);
-	uint8 ch1 = context.data.byte(kCh1playing);
+		cancelch0();
+	uint8 ch1 = data.byte(kCh1playing);
 	if (ch1 >= 12)
-		cancelch1(context);
-	context.engine->loadSounds(1, (const char *)context.data.ptr(context.dx, 13));
+		cancelch1();
+	engine->loadSounds(1, (const char *)data.ptr(dx, 13));
 }
 
-void createname(Context &context);
-
-void loadspeech(Context &context) {
-	cancelch1(context);
-	context.data.byte(kSpeechloaded) = 0;
-	createname(context);
-	const char *name = (const char *)context.data.ptr(context.di, 13);
+void DreamGenContext::loadspeech() {
+	cancelch1();
+	data.byte(kSpeechloaded) = 0;
+	createname();
+	const char *name = (const char *)data.ptr(di, 13);
 	//warning("name = %s", name);
-	if (context.engine->loadSpeech(name))
-		context.data.byte(kSpeechloaded) = 1;
+	if (engine->loadSpeech(name))
+		data.byte(kSpeechloaded) = 1;
 }
 
-void saveseg(Context &context) {
-	context.cx = context.es.word(context.di);
-	context._add(context.di, 2);
-	savefilewrite(context);
+void DreamGenContext::saveseg() {
+	cx = es.word(di);
+	_add(di, 2);
+	savefilewrite();
 }
 
-void savefilewrite(Context &context) {
-	context.ax = context.engine->writeToSaveFile(context.ds.ptr(context.dx, context.cx), context.cx);
+void DreamGenContext::savefilewrite() {
+	ax = engine->writeToSaveFile(ds.ptr(dx, cx), cx);
 }
 
-void savefileread(Context &context) {
-	context.ax = context.engine->readFromSaveFile(context.ds.ptr(context.dx, context.cx), context.cx);
+void DreamGenContext::savefileread() {
+	ax = engine->readFromSaveFile(ds.ptr(dx, cx), cx);
 }
 
-void loadseg(Context &context) {
-	context.ax = context.es.word(context.di);
-	context.di += 2;
+void DreamGenContext::loadseg() {
+	ax = es.word(di);
+	di += 2;
 
-	uint16 dst_offset = context.dx;
-	uint16 size = context.ax;
+	uint16 dst_offset = dx;
+	uint16 size = ax;
 
-	debug(1, "loadseg(%04x:%u, %u)", (uint16)context.ds, dst_offset, size);
-	context.ax = context.engine->readFromFile(context.ds.ptr(dst_offset, size), size);
-	context.flags._c = false;
+	debug(1, "loadseg(%04x:%u, %u)", (uint16)ds, dst_offset, size);
+	ax = engine->readFromFile(ds.ptr(dst_offset, size), size);
+	flags._c = false;
 }
 
-void error(Context &context) {
+void DreamGenContext::error() {
 	::error("error");
 }
 
-void generalerror(Context &context) {
+void DreamGenContext::generalerror() {
 	::error("generalerror");
 }
 
-void commandonly(Context &context);
-
-void dosreturn(Context &context) {
-	context._cmp(context.data.byte(kCommandtype), 250);
-	if (context.flags.z()) goto alreadydos;
-	context.data.byte(kCommandtype) = 250;
-	context.al = 46;
-	commandonly(context);
+void DreamGenContext::dosreturn() {
+	_cmp(data.byte(kCommandtype), 250);
+	if (flags.z()) goto alreadydos;
+	data.byte(kCommandtype) = 250;
+	al = 46;
+	commandonly();
 alreadydos:
-	context.ax = context.data.word(kMousebutton);
-	context._and(context.ax, 1);
-	if (context.flags.z()) return;
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (flags.z()) return;
 
-	quickquit2(context);
-	quickquit(context);
+	quickquit2();
+	quickquit();
 }
 
-void set16colpalette(Context &context) {
-}
+void DreamGenContext::set16colpalette() {}
 
-void mode640x480(Context &context) {
+void DreamGenContext::mode640x480() {
 	// Video mode 12h: 640x480 pixels, 16 colors, I believe
-	context.al = 0x12 + 128;
-	context.ah = 0;
+	al = 0x12 + 128;
+	ah = 0;
 	initGraphics(640, 480, true);
 }
 
-void showgroup(Context &context) {
-	context.engine->setPalette();
+void DreamGenContext::showgroup() {
+	engine->setPalette();
 }
 
-void fadedos(Context &context) {
-	context.engine->fadeDos();
+void DreamGenContext::fadedos() {
+	engine->fadeDos();
 }
 
-void doshake(Context &context) {
-	uint8 &counter = context.data.byte(kShakecounter);
-	context._cmp(counter, 48);
-	if (context.flags.z())
+void DreamGenContext::doshake() {
+	uint8 &counter = data.byte(kShakecounter);
+	_cmp(counter, 48);
+	if (flags.z())
 		return;
 
-	context._add(counter, 1);
+	_add(counter, 1);
 	static const int shakeTable[] = {
 		0, -2,  3, -2,  0,  2,  4, -1,
 		1, -3,  3,  2,  0, -2,  3, -2,
@@ -443,27 +418,27 @@ void doshake(Context &context) {
 		1, -3,  3,  0,
 	};
 	int offset = shakeTable[counter];
-	context.engine->setShakePos(offset >= 0? offset: -offset);
+	engine->setShakePos(offset >= 0? offset: -offset);
 }
 
-void vsync(Context &context) {
-	context.engine->waitForVSync();
+void DreamGenContext::vsync() {
+	engine->waitForVSync();
 }
 
-void setmode(Context &context) {
-	vsync(context);
+void DreamGenContext::setmode() {
+	vsync();
 	initGraphics(320, 200, false);
 }
 
-void readoneblock(Context &context) {
-	context.ds = context.data.word(kWorkspace);
-	context.cx = 30000;
-	context.dx = 0;
-	readfromfile(context);
+void DreamGenContext::readoneblock() {
+	ds = data.word(kWorkspace);
+	cx = 30000;
+	dx = 0;
+	readfromfile();
 }
 
-void showpcx(Context &context) {
-	Common::String name = getFilename(context);
+void DreamGenContext::showpcx() {
+	Common::String name = getFilename(*this);
 	Common::File pcxFile;
 
 	if (!pcxFile.open(name)) {
@@ -478,8 +453,8 @@ void showpcx(Context &context) {
 	// the color components have to be adjusted from 8 to 6 bits.
 
 	pcxFile.seek(16, SEEK_SET);
-	context.es = context.data.word(kBuffers);
-	maingamepal = context.es.ptr(4782, 768); //fixme: hardcoded offset
+	es = data.word(kBuffers);
+	maingamepal = es.ptr(4782, 768); //fixme: hardcoded offset
 	pcxFile.read(maingamepal, 48);
 
 	memset(maingamepal + 48, 0xff, 720);

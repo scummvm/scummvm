@@ -4,21880 +4,21407 @@
 
 namespace DreamGen {
 
-void checkbasemem(Context &context);
-void allocatebuffers(Context &context);
-void clearbuffers(Context &context);
-void clearpalette(Context &context);
-void readsetdata(Context &context);
-void scanfornames(Context &context);
-void loadpalfromiff(Context &context);
-void titles(Context &context);
-void credits(Context &context);
-void decide(Context &context);
-void clearchanges(Context &context);
-void loadroom(Context &context);
-void clearsprites(Context &context);
-void initman(Context &context);
-void entrytexts(Context &context);
-void entryanims(Context &context);
-void initialinv(Context &context);
-void startup1(Context &context);
-void clearbeforeload(Context &context);
-void startup(Context &context);
-void worktoscreenm(Context &context);
-void screenupdate(Context &context);
-void showgun(Context &context);
-void fadescreendown(Context &context);
-void hangon(Context &context);
-void fadescreendowns(Context &context);
-void endgame(Context &context);
-void makename(Context &context);
-void standardload(Context &context);
-void getroomspaths(Context &context);
-void readheader(Context &context);
-void allocateload(Context &context);
-void fillspace(Context &context);
-void sortoutmap(Context &context);
-void findroominloc(Context &context);
-void deletetaken(Context &context);
-void setallchanges(Context &context);
-void autoappear(Context &context);
-void getroomdata(Context &context);
-void autosetwalk(Context &context);
-void findxyfrompath(Context &context);
-void twodigitnum(Context &context);
-void startloading(Context &context);
-void loadroomssample(Context &context);
-void switchryanon(Context &context);
-void drawflags(Context &context);
-void getdimension(Context &context);
-void getflagunderp(Context &context);
-void dumpblink(Context &context);
-void showblink(Context &context);
-void showframe(Context &context);
-void printcurs(Context &context);
-void delcurs(Context &context);
-void delpointer(Context &context);
-void readmouse(Context &context);
-void animpointer(Context &context);
-void showpointer(Context &context);
-void dumppointer(Context &context);
-void commandonly(Context &context);
-void showtime(Context &context);
-void showwatch(Context &context);
-void printmessage(Context &context);
-void printdirect(Context &context);
-void usecharset1(Context &context);
-void showpanel(Context &context);
-void showman(Context &context);
-void roomname(Context &context);
-void panelicons1(Context &context);
-void zoomicon(Context &context);
-void middlepanel(Context &context);
-void findobname(Context &context);
-void workoutframes(Context &context);
-void checkdest(Context &context);
-void bresenhams(Context &context);
-void facerightway(Context &context);
-void checkone(Context &context);
-void commandwithob(Context &context);
-void findnextcolon(Context &context);
-void deltextline(Context &context);
-void copyname(Context &context);
-void finishedwalking(Context &context);
-void examineob(Context &context);
-void talk(Context &context);
-void setwalk(Context &context);
-void examineobtext(Context &context);
-void blocknametext(Context &context);
-void personnametext(Context &context);
-void walktotext(Context &context);
-void clearwork(Context &context);
-void drawfloor(Context &context);
-void reelsonscreen(Context &context);
-void spriteupdate(Context &context);
-void printsprites(Context &context);
-void playchannel0(Context &context);
-void cancelch0(Context &context);
-void createpanel(Context &context);
-void findpathofpoint(Context &context);
-void showicon(Context &context);
-void undertextline(Context &context);
-void mainscreen(Context &context);
-void getunderzoom(Context &context);
-void zoom(Context &context);
-void walkintoroom(Context &context);
-void reminders(Context &context);
-void atmospheres(Context &context);
-void findormake(Context &context);
-void obname(Context &context);
-void pixelcheckset(Context &context);
-void isitdescribed(Context &context);
-void getreelstart(Context &context);
-void getreelframeax(Context &context);
-void blank(Context &context);
-void findfirstpath(Context &context);
-void checkifex(Context &context);
-void checkiffree(Context &context);
-void checkifperson(Context &context);
-void checkifset(Context &context);
-void identifyob(Context &context);
-void checkcoords(Context &context);
-void walkandexamine(Context &context);
-void convnum(Context &context);
-void onedigit(Context &context);
-void plotreel(Context &context);
-void checkforshake(Context &context);
-void newplace(Context &context);
-void readmouse1(Context &context);
-void dumptextline(Context &context);
-void autolook(Context &context);
-void watchcount(Context &context);
-void readmouse2(Context &context);
-void dumpzoom(Context &context);
-void deleverything(Context &context);
-void afternewroom(Context &context);
-void readmouse3(Context &context);
-void dumpmap(Context &context);
-void dumptimedtext(Context &context);
-void readmouse4(Context &context);
-void dumpwatch(Context &context);
-void fadescreenup(Context &context);
-void clearreels(Context &context);
-void clearrest(Context &context);
-void trysoundalloc(Context &context);
-void allocatework(Context &context);
-void checkforemm(Context &context);
-void getanyad(Context &context);
-void transfertoex(Context &context);
-void pickupob(Context &context);
-void switchryanoff(Context &context);
-void resetlocation(Context &context);
-void removefreeobject(Context &context);
-void checkifpathison(Context &context);
-void turnpathon(Context &context);
-void removesetobject(Context &context);
-void placesetobject(Context &context);
-void turnanypathon(Context &context);
-void setuptimeduse(Context &context);
-void volumeadjust(Context &context);
-void loopchannel0(Context &context);
-void cancelch1(Context &context);
-void createname(Context &context);
-void doload(Context &context);
-void showdecisions(Context &context);
-void showopbox(Context &context);
-void showloadops(Context &context);
-void showslots(Context &context);
-void shownames(Context &context);
-void namestoold(Context &context);
-void getridoftemp(Context &context);
-void initrain(Context &context);
-void createpanel2(Context &context);
-void loadsavebox(Context &context);
-void storeit(Context &context);
-void makeheader(Context &context);
-void oldtonames(Context &context);
-void showsaveops(Context &context);
-void readkey(Context &context);
-void getnamepos(Context &context);
-void selectslot(Context &context);
-void loadposition(Context &context);
-void saveposition(Context &context);
-void restoreall(Context &context);
-void redrawmainscrn(Context &context);
-void checkinput(Context &context);
-void showdiscops(Context &context);
-void loadintotemp(Context &context);
-void getback1(Context &context);
-void getridofall(Context &context);
-void showmainops(Context &context);
-void dosaveload(Context &context);
-void findtext1(Context &context);
-void usetempcharset(Context &context);
-void playchannel1(Context &context);
-void getlocation(Context &context);
-void setlocation(Context &context);
-void hangonp(Context &context);
-void showdiary(Context &context);
-void showdiarypage(Context &context);
-void getridofreels(Context &context);
-void loadtemptext(Context &context);
-void loadtempcharset(Context &context);
-void showdiarykeys(Context &context);
-void dumpdiarykeys(Context &context);
-void getridoftemptext(Context &context);
-void getridoftempcharset(Context &context);
-void restorereels(Context &context);
-void nextsymbol(Context &context);
-void showsymbol(Context &context);
-void updatesymboltop(Context &context);
-void updatesymbolbot(Context &context);
-void dumpsymbol(Context &context);
-void turnanypathoff(Context &context);
-void folderexit(Context &context);
-void showleftpage(Context &context);
-void showrightpage(Context &context);
-void loadintotemp2(Context &context);
-void loadintotemp3(Context &context);
-void showfolder(Context &context);
-void folderhints(Context &context);
-void loadfolder(Context &context);
-void getridoftemp2(Context &context);
-void getridoftemp3(Context &context);
-void loadmenu(Context &context);
-void getundermenu(Context &context);
-void putundermenu(Context &context);
-void showmenu(Context &context);
-void dumpmenu(Context &context);
-void singlekey(Context &context);
-void buttonpress(Context &context);
-void loadkeypad(Context &context);
-void showouterpad(Context &context);
-void showkeypad(Context &context);
-void dumpkeypad(Context &context);
-void addtopresslist(Context &context);
-void isitright(Context &context);
-void checkinside(Context &context);
-void compare(Context &context);
-void showfirstuse(Context &context);
-void putbackobstuff(Context &context);
-void withwhat(Context &context);
-void showpuztext(Context &context);
-void placefreeobject(Context &context);
-void issetobonmap(Context &context);
-void showseconduse(Context &context);
-void removeobfrominv(Context &context);
-void turnpathoff(Context &context);
-void getundertimed(Context &context);
-void putundertimed(Context &context);
-void getsetad(Context &context);
-void getfreead(Context &context);
-void dochange(Context &context);
-void findpuztext(Context &context);
-void showexit(Context &context);
-void obicons(Context &context);
-void obpicture(Context &context);
-void describeob(Context &context);
-void getanyaddir(Context &context);
-void findinvpos(Context &context);
-void useroutine(Context &context);
-void printmessage2(Context &context);
-void fillryan(Context &context);
-void findsetobject(Context &context);
-void getobtextstart(Context &context);
-void usetext(Context &context);
-void selectlocation(Context &context);
-void hangonw(Context &context);
-void moneypoke(Context &context);
-void nextcolon(Context &context);
-void getexad(Context &context);
-void entercode(Context &context);
-void findexobject(Context &context);
-void makeworn(Context &context);
-void isryanholding(Context &context);
-void nothelderror(Context &context);
-void triggermessage(Context &context);
-void monprint(Context &context);
-void printchar(Context &context);
-void showcurrentfile(Context &context);
-void printlogo(Context &context);
-void randomaccess(Context &context);
-void locklighton(Context &context);
-void locklightoff(Context &context);
-void makecaps(Context &context);
-void monmessage(Context &context);
-void scrollmonitor(Context &context);
-void searchforstring(Context &context);
-void getkeyandlogo(Context &context);
-void monitorlogo(Context &context);
-void parser(Context &context);
-void neterror(Context &context);
-void processtrigger(Context &context);
-void input(Context &context);
-void dirfile(Context &context);
-void searchforfiles(Context &context);
-void dircom(Context &context);
-void signon(Context &context);
-void read(Context &context);
-void showkeys(Context &context);
-void delchar(Context &context);
-void randomnum1(Context &context);
-void accesslighton(Context &context);
-void accesslightoff(Context &context);
-void powerlighton(Context &context);
-void powerlightoff(Context &context);
-void lookininterface(Context &context);
-void loadpersonal(Context &context);
-void loadnews(Context &context);
-void loadcart(Context &context);
-void printoutermon(Context &context);
-void initialmoncols(Context &context);
-void turnonpower(Context &context);
-void fadeupyellows(Context &context);
-void fadeupmonfirst(Context &context);
-void hangoncurs(Context &context);
-void execcommand(Context &context);
-void purgealocation(Context &context);
-void getdestinfo(Context &context);
-void showarrows(Context &context);
-void locationpic(Context &context);
-void getundercentre(Context &context);
-void putundercentre(Context &context);
-void readcitypic(Context &context);
-void showcity(Context &context);
-void readdesticon(Context &context);
-void loadtraveltext(Context &context);
-void convicons(Context &context);
-void starttalk(Context &context);
-void hangonpq(Context &context);
-void redes(Context &context);
-void dosometalk(Context &context);
-void getpersontext(Context &context);
-void getpersframe(Context &context);
-void findsource(Context &context);
-void printslow(Context &context);
-void dolook(Context &context);
-void getxad(Context &context);
-void getyad(Context &context);
-void getmapad(Context &context);
-void calcfrframe(Context &context);
-void finalframe(Context &context);
-void makesprite(Context &context);
-void makebackob(Context &context);
-void addalong(Context &context);
-void addlength(Context &context);
-void eraseoldobs(Context &context);
-void calcmapad(Context &context);
-void doblocks(Context &context);
-void showallobs(Context &context);
-void showallfree(Context &context);
-void showallex(Context &context);
-void paneltomap(Context &context);
-void deleteexframe(Context &context);
-void deleteextext(Context &context);
-void deleteexobject(Context &context);
-void purgeanitem(Context &context);
-void getexpos(Context &context);
-void transfermap(Context &context);
-void transferinv(Context &context);
-void transfertext(Context &context);
-void transfercontoex(Context &context);
-void emergencypurge(Context &context);
-void pickupconts(Context &context);
-void findopenpos(Context &context);
-void reexfromopen(Context &context);
-void geteitherad(Context &context);
-void fillopen(Context &context);
-void useopened(Context &context);
-void getopenedsize(Context &context);
-void errormessage3(Context &context);
-void errormessage2(Context &context);
-void examicon(Context &context);
-void outofopen(Context &context);
-void swapwithopen(Context &context);
-void isitworn(Context &context);
-void wornerror(Context &context);
-void errormessage1(Context &context);
-void checkobjectsize(Context &context);
-void openinv(Context &context);
-void openob(Context &context);
-void droperror(Context &context);
-void cantdrop(Context &context);
-void reexfrominv(Context &context);
-void intoinv(Context &context);
-void outofinv(Context &context);
-void swapwithinv(Context &context);
-void makemainscreen(Context &context);
-void searchforsame(Context &context);
-void lookatcard(Context &context);
-void obsthatdothings(Context &context);
-void additionaltext(Context &context);
-void findallopen(Context &context);
-void obtoinv(Context &context);
-void findallryan(Context &context);
-void showryanpage(Context &context);
-void kernchars(Context &context);
-void getnextword(Context &context);
-void getnumber(Context &context);
-void lockmon(Context &context);
-void printboth(Context &context);
-void waitframes(Context &context);
-void hangone(Context &context);
-void allpalette(Context &context);
-void fadescreenups(Context &context);
-void afterintroroom(Context &context);
-void usetimedtext(Context &context);
-void loadintroroom(Context &context);
-void runintroseq(Context &context);
-void realcredits(Context &context);
-void runendseq(Context &context);
-void showmonk(Context &context);
-void monkspeaking(Context &context);
-void gettingshot(Context &context);
-void biblequote(Context &context);
-void intro(Context &context);
-void paltostartpal(Context &context);
-void paltoendpal(Context &context);
-void dumpcurrent(Context &context);
-void rollem(Context &context);
-void greyscalesum(Context &context);
-void endpaltostart(Context &context);
-void clearendpal(Context &context);
-void rollendcredits2(Context &context);
-void clearstartpal(Context &context);
-void fadecalculation(Context &context);
-void frameoutfx(Context &context);
-void frameoutbh(Context &context);
-void frameoutv(Context &context);
-void putunderzoom(Context &context);
-void crosshair(Context &context);
-void maptopanel(Context &context);
-void movemap(Context &context);
-void dealwithspecial(Context &context);
-void showreelframe(Context &context);
-void soundonreels(Context &context);
-void reconstruct(Context &context);
-void updatepeople(Context &context);
-void watchreel(Context &context);
-void showrain(Context &context);
-void dodoor(Context &context);
-void liftnoise(Context &context);
-void widedoor(Context &context);
-void random(Context &context);
-void lockeddoorway(Context &context);
-void liftsprite(Context &context);
-void doorway(Context &context);
-void constant(Context &context);
-void steady(Context &context);
-void getblockofpixel(Context &context);
-void splitintolines(Context &context);
-void adjustleft(Context &context);
-void adjustright(Context &context);
-void adjustdown(Context &context);
-void adjustup(Context &context);
-void aboutturn(Context &context);
-void checkforexit(Context &context);
-void walking(Context &context);
-void printasprite(Context &context);
-void showgamereel(Context &context);
-void checkspeed(Context &context);
-void addtopeoplelist(Context &context);
-void setuptimedtemp(Context &context);
-void madmantext(Context &context);
-void madmode(Context &context);
-void priesttext(Context &context);
-void fadescreenuphalf(Context &context);
-void textforend(Context &context);
-void fadescreendownhalf(Context &context);
-void rollendcredits(Context &context);
-void textformonk(Context &context);
-void monks2text(Context &context);
-void intro2text(Context &context);
-void intro3text(Context &context);
-void intro1text(Context &context);
-
-void alleybarksound(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.es.word(context.bx+3);
-	context._dec(context.ax);
-	context._cmp(context.ax, 0);
-	if (!context.flags.z())
+void DreamGenContext::alleybarksound() {
+	STACK_CHECK;
+	ax = es.word(bx+3);
+	_dec(ax);
+	_cmp(ax, 0);
+	if (!flags.z())
 		goto nobark;
-	context.push(context.bx);
-	context.push(context.es);
-	context.al = 14;
-	playchannel1(context);
-	context.es = context.pop();
-	context.bx = context.pop();
-	context.ax = 1000;
+	push(bx);
+	push(es);
+	al = 14;
+	playchannel1();
+	es = pop();
+	bx = pop();
+	ax = 1000;
 nobark:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 }
 
-void intromusic(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::intromusic() {
+	STACK_CHECK;
 }
 
-void foghornsound(Context &context) {
-	STACK_CHECK(context);
-	randomnumber(context);
-	context._cmp(context.al, 198);
-	if (!context.flags.z())
+void DreamGenContext::foghornsound() {
+	STACK_CHECK;
+	randomnumber();
+	_cmp(al, 198);
+	if (!flags.z())
 		return /* (nofog) */;
-	context.al = 13;
-	playchannel1(context);
+	al = 13;
+	playchannel1();
 }
 
-void receptionist(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::receptionist() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto gotrecep;
-	context._cmp(context.data.byte(kCardpassflag), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kCardpassflag), 1);
+	if (!flags.z())
 		goto notsetcard;
-	context._inc(context.data.byte(kCardpassflag));
-	context.es.byte(context.bx+7) = 1;
-	context.es.word(context.bx+3) = 64;
+	_inc(data.byte(kCardpassflag));
+	es.byte(bx+7) = 1;
+	es.word(bx+3) = 64;
 notsetcard:
-	context._cmp(context.es.word(context.bx+3), 58);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 58);
+	if (!flags.z())
 		goto notdes1;
-	randomnumber(context);
-	context._cmp(context.al, 30);
-	if (context.flags.c())
+	randomnumber();
+	_cmp(al, 30);
+	if (flags.c())
 		goto notdes2;
-	context.es.word(context.bx+3) = 55;
+	es.word(bx+3) = 55;
 	goto gotrecep;
 notdes1:
-	context._cmp(context.es.word(context.bx+3), 60);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 60);
+	if (!flags.z())
 		goto notdes2;
-	randomnumber(context);
-	context._cmp(context.al, 240);
-	if (context.flags.c())
+	randomnumber();
+	_cmp(al, 240);
+	if (flags.c())
 		goto gotrecep;
-	context.es.word(context.bx+3) = 53;
+	es.word(bx+3) = 53;
 	goto gotrecep;
 notdes2:
-	context._cmp(context.es.word(context.bx+3), 88);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 88);
+	if (!flags.z())
 		goto notendcard;
-	context.es.word(context.bx+3) = 53;
+	es.word(bx+3) = 53;
 	goto gotrecep;
 notendcard:
-	context._inc(context.es.word(context.bx+3));
+	_inc(es.word(bx+3));
 gotrecep:
-	showgamereel(context);
-	addtopeoplelist(context);
-	context.al = context.es.byte(context.bx+7);
-	context._and(context.al, 128);
-	if (context.flags.z())
+	showgamereel();
+	addtopeoplelist();
+	al = es.byte(bx+7);
+	_and(al, 128);
+	if (flags.z())
 		return /* (nottalkedrecep) */;
-	context.data.byte(kTalkedtorecep) = 1;
+	data.byte(kTalkedtorecep) = 1;
 }
 
-void smokebloke(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kRockstardead), 0);
-	if (!context.flags.z())
+void DreamGenContext::smokebloke() {
+	STACK_CHECK;
+	_cmp(data.byte(kRockstardead), 0);
+	if (!flags.z())
 		goto notspokento;
-	context.al = context.es.byte(context.bx+7);
-	context._and(context.al, 128);
-	if (context.flags.z())
+	al = es.byte(bx+7);
+	_and(al, 128);
+	if (flags.z())
 		goto notspokento;
-	context.push(context.es);
-	context.push(context.bx);
-	context.al = 5;
-	setlocation(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	push(es);
+	push(bx);
+	al = 5;
+	setlocation();
+	bx = pop();
+	es = pop();
 notspokento:
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto gotsmokeb;
-	context._cmp(context.es.word(context.bx+3), 100);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 100);
+	if (!flags.z())
 		goto notsmokeb1;
-	randomnumber(context);
-	context._cmp(context.al, 30);
-	if (context.flags.c())
+	randomnumber();
+	_cmp(al, 30);
+	if (flags.c())
 		goto notsmokeb2;
-	context.es.word(context.bx+3) = 96;
+	es.word(bx+3) = 96;
 	goto gotsmokeb;
 notsmokeb1:
-	context._cmp(context.es.word(context.bx+3), 117);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 117);
+	if (!flags.z())
 		goto notsmokeb2;
-	context.es.word(context.bx+3) = 96;
+	es.word(bx+3) = 96;
 	goto gotsmokeb;
 notsmokeb2:
-	context._inc(context.es.word(context.bx+3));
+	_inc(es.word(bx+3));
 gotsmokeb:
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void attendant(Context &context) {
-	STACK_CHECK(context);
-	showgamereel(context);
-	addtopeoplelist(context);
-	context.al = context.es.byte(context.bx+7);
-	context._and(context.al, 128);
-	if (context.flags.z())
+void DreamGenContext::attendant() {
+	STACK_CHECK;
+	showgamereel();
+	addtopeoplelist();
+	al = es.byte(bx+7);
+	_and(al, 128);
+	if (flags.z())
 		return /* (nottalked) */;
-	context.data.byte(kTalkedtoattendant) = 1;
+	data.byte(kTalkedtoattendant) = 1;
 }
 
-void manasleep(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.es.byte(context.bx+7);
-	context._and(context.al, 127);
-	context.es.byte(context.bx+7) = context.al;
-	showgamereel(context);
-	addtopeoplelist(context);
+void DreamGenContext::manasleep() {
+	STACK_CHECK;
+	al = es.byte(bx+7);
+	_and(al, 127);
+	es.byte(bx+7) = al;
+	showgamereel();
+	addtopeoplelist();
 }
 
-void eden(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kGeneraldead), 0);
-	if (!context.flags.z())
+void DreamGenContext::eden() {
+	STACK_CHECK;
+	_cmp(data.byte(kGeneraldead), 0);
+	if (!flags.z())
 		return /* (notinbed) */;
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void edeninbath(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kGeneraldead), 0);
-	if (context.flags.z())
+void DreamGenContext::edeninbath() {
+	STACK_CHECK;
+	_cmp(data.byte(kGeneraldead), 0);
+	if (flags.z())
 		return /* (notinbath) */;
-	context._cmp(context.data.byte(kSartaindead), 0);
-	if (!context.flags.z())
+	_cmp(data.byte(kSartaindead), 0);
+	if (!flags.z())
 		return /* (notinbath) */;
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void malefan(Context &context) {
-	STACK_CHECK(context);
-	showgamereel(context);
-	addtopeoplelist(context);
+void DreamGenContext::malefan() {
+	STACK_CHECK;
+	showgamereel();
+	addtopeoplelist();
 }
 
-void femalefan(Context &context) {
-	STACK_CHECK(context);
-	showgamereel(context);
-	addtopeoplelist(context);
+void DreamGenContext::femalefan() {
+	STACK_CHECK;
+	showgamereel();
+	addtopeoplelist();
 }
 
-void louis(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kRockstardead), 0);
-	if (!context.flags.z())
+void DreamGenContext::louis() {
+	STACK_CHECK;
+	_cmp(data.byte(kRockstardead), 0);
+	if (!flags.z())
 		return /* (notlouis1) */;
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void louischair(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kRockstardead), 0);
-	if (context.flags.z())
+void DreamGenContext::louischair() {
+	STACK_CHECK;
+	_cmp(data.byte(kRockstardead), 0);
+	if (flags.z())
 		return /* (notlouis2) */;
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto notlouisanim;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 191);
-	if (context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 191);
+	if (flags.z())
 		goto restartlouis;
-	context._cmp(context.ax, 185);
-	if (context.flags.z())
+	_cmp(ax, 185);
+	if (flags.z())
 		goto randomlouis;
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 	goto notlouisanim;
 randomlouis:
-	context.es.word(context.bx+3) = context.ax;
-	randomnumber(context);
-	context._cmp(context.al, 245);
-	if (!context.flags.c())
+	es.word(bx+3) = ax;
+	randomnumber();
+	_cmp(al, 245);
+	if (!flags.c())
 		goto notlouisanim;
 restartlouis:
-	context.ax = 182;
-	context.es.word(context.bx+3) = context.ax;
+	ax = 182;
+	es.word(bx+3) = ax;
 notlouisanim:
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void manasleep2(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.es.byte(context.bx+7);
-	context._and(context.al, 127);
-	context.es.byte(context.bx+7) = context.al;
-	showgamereel(context);
-	addtopeoplelist(context);
+void DreamGenContext::manasleep2() {
+	STACK_CHECK;
+	al = es.byte(bx+7);
+	_and(al, 127);
+	es.byte(bx+7) = al;
+	showgamereel();
+	addtopeoplelist();
 }
 
-void mansatstill(Context &context) {
-	STACK_CHECK(context);
-	showgamereel(context);
-	addtopeoplelist(context);
+void DreamGenContext::mansatstill() {
+	STACK_CHECK;
+	showgamereel();
+	addtopeoplelist();
 }
 
-void tattooman(Context &context) {
-	STACK_CHECK(context);
-	showgamereel(context);
-	addtopeoplelist(context);
+void DreamGenContext::tattooman() {
+	STACK_CHECK;
+	showgamereel();
+	addtopeoplelist();
 }
 
-void drinker(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::drinker() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto gotdrinker;
-	context._inc(context.es.word(context.bx+3));
-	context._cmp(context.es.word(context.bx+3), 115);
-	if (!context.flags.z())
+	_inc(es.word(bx+3));
+	_cmp(es.word(bx+3), 115);
+	if (!flags.z())
 		goto notdrinker1;
-	context.es.word(context.bx+3) = 105;
+	es.word(bx+3) = 105;
 	goto gotdrinker;
 notdrinker1:
-	context._cmp(context.es.word(context.bx+3), 106);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 106);
+	if (!flags.z())
 		goto gotdrinker;
-	randomnumber(context);
-	context._cmp(context.al, 3);
-	if (context.flags.c())
+	randomnumber();
+	_cmp(al, 3);
+	if (flags.c())
 		goto gotdrinker;
-	context.es.word(context.bx+3) = 105;
+	es.word(bx+3) = 105;
 gotdrinker:
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void bartender(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::bartender() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto gotsmoket;
-	context._cmp(context.es.word(context.bx+3), 86);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 86);
+	if (!flags.z())
 		goto notsmoket1;
-	randomnumber(context);
-	context._cmp(context.al, 18);
-	if (context.flags.c())
+	randomnumber();
+	_cmp(al, 18);
+	if (flags.c())
 		goto notsmoket2;
-	context.es.word(context.bx+3) = 81;
+	es.word(bx+3) = 81;
 	goto gotsmoket;
 notsmoket1:
-	context._cmp(context.es.word(context.bx+3), 103);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 103);
+	if (!flags.z())
 		goto notsmoket2;
-	context.es.word(context.bx+3) = 81;
+	es.word(bx+3) = 81;
 	goto gotsmoket;
 notsmoket2:
-	context._inc(context.es.word(context.bx+3));
+	_inc(es.word(bx+3));
 gotsmoket:
-	showgamereel(context);
-	context._cmp(context.data.byte(kGunpassflag), 1);
-	if (!context.flags.z())
+	showgamereel();
+	_cmp(data.byte(kGunpassflag), 1);
+	if (!flags.z())
 		goto notgotgun;
-	context.es.byte(context.bx+7) = 9;
+	es.byte(bx+7) = 9;
 notgotgun:
-	addtopeoplelist(context);
+	addtopeoplelist();
 }
 
-void othersmoker(Context &context) {
-	STACK_CHECK(context);
-	showgamereel(context);
-	addtopeoplelist(context);
+void DreamGenContext::othersmoker() {
+	STACK_CHECK;
+	showgamereel();
+	addtopeoplelist();
 }
 
-void barwoman(Context &context) {
-	STACK_CHECK(context);
-	showgamereel(context);
-	addtopeoplelist(context);
+void DreamGenContext::barwoman() {
+	STACK_CHECK;
+	showgamereel();
+	addtopeoplelist();
 }
 
-void interviewer(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kReeltowatch), 68);
-	if (!context.flags.z())
+void DreamGenContext::interviewer() {
+	STACK_CHECK;
+	_cmp(data.word(kReeltowatch), 68);
+	if (!flags.z())
 		goto notgeneralstart;
-	context._inc(context.es.word(context.bx+3));
+	_inc(es.word(bx+3));
 notgeneralstart:
-	context._cmp(context.es.word(context.bx+3), 250);
-	if (context.flags.z())
+	_cmp(es.word(bx+3), 250);
+	if (flags.z())
 		goto talking;
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto talking;
-	context._cmp(context.es.word(context.bx+3), 259);
-	if (context.flags.z())
+	_cmp(es.word(bx+3), 259);
+	if (flags.z())
 		goto talking;
-	context._inc(context.es.word(context.bx+3));
+	_inc(es.word(bx+3));
 talking:
-	showgamereel(context);
+	showgamereel();
 }
 
-void soldier1(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.es.word(context.bx+3), 0);
-	if (context.flags.z())
+void DreamGenContext::soldier1() {
+	STACK_CHECK;
+	_cmp(es.word(bx+3), 0);
+	if (flags.z())
 		goto soldierwait;
-	context.data.word(kWatchingtime) = 10;
-	context._cmp(context.es.word(context.bx+3), 30);
-	if (!context.flags.z())
+	data.word(kWatchingtime) = 10;
+	_cmp(es.word(bx+3), 30);
+	if (!flags.z())
 		goto notaftersshot;
-	context._inc(context.data.byte(kCombatcount));
-	context._cmp(context.data.byte(kCombatcount), 40);
-	if (!context.flags.z())
+	_inc(data.byte(kCombatcount));
+	_cmp(data.byte(kCombatcount), 40);
+	if (!flags.z())
 		goto gotsoldframe;
-	context.data.byte(kMandead) = 2;
+	data.byte(kMandead) = 2;
 	goto gotsoldframe;
 notaftersshot:
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto gotsoldframe;
-	context._inc(context.es.word(context.bx+3));
+	_inc(es.word(bx+3));
 	goto gotsoldframe;
 soldierwait:
-	context._cmp(context.data.byte(kLastweapon), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kLastweapon), 1);
+	if (!flags.z())
 		goto gotsoldframe;
-	context.data.word(kWatchingtime) = 10;
-	context._cmp(context.data.byte(kManspath), 2);
-	if (!context.flags.z())
+	data.word(kWatchingtime) = 10;
+	_cmp(data.byte(kManspath), 2);
+	if (!flags.z())
 		goto gotsoldframe;
-	context._cmp(context.data.byte(kFacing), 4);
-	if (!context.flags.z())
+	_cmp(data.byte(kFacing), 4);
+	if (!flags.z())
 		goto gotsoldframe;
-	context._inc(context.es.word(context.bx+3));
-	context.data.byte(kLastweapon) = -1;
-	context.data.byte(kCombatcount) = 0;
+	_inc(es.word(bx+3));
+	data.byte(kLastweapon) = -1;
+	data.byte(kCombatcount) = 0;
 gotsoldframe:
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void rockstar(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 303);
-	if (context.flags.z())
+void DreamGenContext::rockstar() {
+	STACK_CHECK;
+	ax = es.word(bx+3);
+	_cmp(ax, 303);
+	if (flags.z())
 		goto rockcombatend;
-	context._cmp(context.ax, 118);
-	if (context.flags.z())
+	_cmp(ax, 118);
+	if (flags.z())
 		goto rockcombatend;
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto rockspeed;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 118);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 118);
+	if (!flags.z())
 		goto notbeforedead;
-	context.data.byte(kMandead) = 2;
+	data.byte(kMandead) = 2;
 	goto gotrockframe;
 notbeforedead:
-	context._cmp(context.ax, 79);
-	if (!context.flags.z())
+	_cmp(ax, 79);
+	if (!flags.z())
 		goto gotrockframe;
-	context._dec(context.ax);
-	context._cmp(context.data.byte(kLastweapon), 1);
-	if (!context.flags.z())
+	_dec(ax);
+	_cmp(data.byte(kLastweapon), 1);
+	if (!flags.z())
 		goto notgunonrock;
-	context.data.byte(kLastweapon) = -1;
-	context.ax = 123;
+	data.byte(kLastweapon) = -1;
+	ax = 123;
 	goto gotrockframe;
 notgunonrock:
-	context._inc(context.data.byte(kCombatcount));
-	context._cmp(context.data.byte(kCombatcount), 40);
-	if (!context.flags.z())
+	_inc(data.byte(kCombatcount));
+	_cmp(data.byte(kCombatcount), 40);
+	if (!flags.z())
 		goto gotrockframe;
-	context.data.byte(kCombatcount) = 0;
-	context.ax = 79;
+	data.byte(kCombatcount) = 0;
+	ax = 79;
 gotrockframe:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 rockspeed:
-	showgamereel(context);
-	context._cmp(context.es.word(context.bx+3), 78);
-	if (!context.flags.z())
+	showgamereel();
+	_cmp(es.word(bx+3), 78);
+	if (!flags.z())
 		goto notalkrock;
-	addtopeoplelist(context);
-	context.data.byte(kPointermode) = 2;
-	context.data.word(kWatchingtime) = 0;
+	addtopeoplelist();
+	data.byte(kPointermode) = 2;
+	data.word(kWatchingtime) = 0;
 	return;
 notalkrock:
-	context.data.word(kWatchingtime) = 2;
-	context.data.byte(kPointermode) = 0;
-	context.al = context.data.byte(kMapy);
-	context.es.byte(context.bx+2) = context.al;
+	data.word(kWatchingtime) = 2;
+	data.byte(kPointermode) = 0;
+	al = data.byte(kMapy);
+	es.byte(bx+2) = al;
 	return;
 rockcombatend:
-	context.data.byte(kNewlocation) = 45;
-	showgamereel(context);
+	data.byte(kNewlocation) = 45;
+	showgamereel();
 }
 
-void helicopter(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 203);
-	if (context.flags.z())
+void DreamGenContext::helicopter() {
+	STACK_CHECK;
+	ax = es.word(bx+3);
+	_cmp(ax, 203);
+	if (flags.z())
 		goto heliwon;
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto helispeed;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 53);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 53);
+	if (!flags.z())
 		goto notbeforehdead;
-	context._inc(context.data.byte(kCombatcount));
-	context._cmp(context.data.byte(kCombatcount), 8);
-	if (context.flags.c())
+	_inc(data.byte(kCombatcount));
+	_cmp(data.byte(kCombatcount), 8);
+	if (flags.c())
 		goto waitabit;
-	context.data.byte(kMandead) = 2;
+	data.byte(kMandead) = 2;
 waitabit:
-	context.ax = 49;
+	ax = 49;
 	goto gotheliframe;
 notbeforehdead:
-	context._cmp(context.ax, 9);
-	if (!context.flags.z())
+	_cmp(ax, 9);
+	if (!flags.z())
 		goto gotheliframe;
-	context._dec(context.ax);
-	context._cmp(context.data.byte(kLastweapon), 1);
-	if (!context.flags.z())
+	_dec(ax);
+	_cmp(data.byte(kLastweapon), 1);
+	if (!flags.z())
 		goto notgunonheli;
-	context.data.byte(kLastweapon) = -1;
-	context.ax = 55;
+	data.byte(kLastweapon) = -1;
+	ax = 55;
 	goto gotheliframe;
 notgunonheli:
-	context.ax = 5;
-	context._inc(context.data.byte(kCombatcount));
-	context._cmp(context.data.byte(kCombatcount), 20);
-	if (!context.flags.z())
+	ax = 5;
+	_inc(data.byte(kCombatcount));
+	_cmp(data.byte(kCombatcount), 20);
+	if (!flags.z())
 		goto gotheliframe;
-	context.data.byte(kCombatcount) = 0;
-	context.ax = 9;
+	data.byte(kCombatcount) = 0;
+	ax = 9;
 gotheliframe:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 helispeed:
-	showgamereel(context);
-	context.al = context.data.byte(kMapx);
-	context.es.byte(context.bx+1) = context.al;
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 9);
-	if (!context.flags.c())
+	showgamereel();
+	al = data.byte(kMapx);
+	es.byte(bx+1) = al;
+	ax = es.word(bx+3);
+	_cmp(ax, 9);
+	if (!flags.c())
 		goto notwaitingheli;
-	context._cmp(context.data.byte(kCombatcount), 7);
-	if (context.flags.c())
+	_cmp(data.byte(kCombatcount), 7);
+	if (flags.c())
 		goto notwaitingheli;
-	context.data.byte(kPointermode) = 2;
-	context.data.word(kWatchingtime) = 0;
+	data.byte(kPointermode) = 2;
+	data.word(kWatchingtime) = 0;
 	return;
 notwaitingheli:
-	context.data.byte(kPointermode) = 0;
-	context.data.word(kWatchingtime) = 2;
+	data.byte(kPointermode) = 0;
+	data.word(kWatchingtime) = 2;
 	return;
 heliwon:
-	context.data.byte(kPointermode) = 0;
+	data.byte(kPointermode) = 0;
 }
 
-void mugger(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 138);
-	if (context.flags.z())
+void DreamGenContext::mugger() {
+	STACK_CHECK;
+	ax = es.word(bx+3);
+	_cmp(ax, 138);
+	if (flags.z())
 		goto endmugger1;
-	context._cmp(context.ax, 176);
-	if (context.flags.z())
+	_cmp(ax, 176);
+	if (flags.z())
 		return /* (endmugger2) */;
-	context._cmp(context.ax, 2);
-	if (!context.flags.z())
+	_cmp(ax, 2);
+	if (!flags.z())
 		goto havesetwatch;
-	context.data.word(kWatchingtime) = 175*2;
+	data.word(kWatchingtime) = 175*2;
 havesetwatch:
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto notmugger;
-	context._inc(context.es.word(context.bx+3));
+	_inc(es.word(bx+3));
 notmugger:
-	showgamereel(context);
-	context.al = context.data.byte(kMapx);
-	context.es.byte(context.bx+1) = context.al;
+	showgamereel();
+	al = data.byte(kMapx);
+	es.byte(bx+1) = al;
 	return;
 endmugger1:
-	context.push(context.es);
-	context.push(context.bx);
-	createpanel2(context);
-	showicon(context);
-	context.al = 41;
-	findpuztext(context);
-	context.di = 33+20;
-	context.bx = 104;
-	context.dl = 241;
-	context.ah = 0;
-	printdirect(context);
-	worktoscreen(context);
-	context.cx = 300;
-	hangon(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.push(context.es);
-	context.push(context.bx);
-	context.es.word(context.bx+3) = 140;
-	context.data.byte(kManspath) = 2;
-	context.data.byte(kFinaldest) = 2;
-	findxyfrompath(context);
-	context.data.byte(kResetmanxy) = 1;
-	context.al = 'W';
-	context.ah = 'E';
-	context.cl = 'T';
-	context.ch = 'A';
-	findexobject(context);
-	context.data.byte(kCommand) = context.al;
-	context.data.byte(kObjecttype) = 4;
-	removeobfrominv(context);
-	context.al = 'W';
-	context.ah = 'E';
-	context.cl = 'T';
-	context.ch = 'B';
-	findexobject(context);
-	context.data.byte(kCommand) = context.al;
-	context.data.byte(kObjecttype) = 4;
-	removeobfrominv(context);
-	makemainscreen(context);
-	context.al = 48;
-	context.bl = 68-32;
-	context.bh = 54+64;
-	context.cx = 70;
-	context.dx = 10;
-	setuptimeduse(context);
-	context.data.byte(kBeenmugged) = 1;
-	context.bx = context.pop();
-	context.es = context.pop();
+	push(es);
+	push(bx);
+	createpanel2();
+	showicon();
+	al = 41;
+	findpuztext();
+	di = 33+20;
+	bx = 104;
+	dl = 241;
+	ah = 0;
+	printdirect();
+	worktoscreen();
+	cx = 300;
+	hangon();
+	bx = pop();
+	es = pop();
+	push(es);
+	push(bx);
+	es.word(bx+3) = 140;
+	data.byte(kManspath) = 2;
+	data.byte(kFinaldest) = 2;
+	findxyfrompath();
+	data.byte(kResetmanxy) = 1;
+	al = 'W';
+	ah = 'E';
+	cl = 'T';
+	ch = 'A';
+	findexobject();
+	data.byte(kCommand) = al;
+	data.byte(kObjecttype) = 4;
+	removeobfrominv();
+	al = 'W';
+	ah = 'E';
+	cl = 'T';
+	ch = 'B';
+	findexobject();
+	data.byte(kCommand) = al;
+	data.byte(kObjecttype) = 4;
+	removeobfrominv();
+	makemainscreen();
+	al = 48;
+	bl = 68-32;
+	bh = 54+64;
+	cx = 70;
+	dx = 10;
+	setuptimeduse();
+	data.byte(kBeenmugged) = 1;
+	bx = pop();
+	es = pop();
 }
 
-void aide(Context &context) {
-	STACK_CHECK(context);
-	showgamereel(context);
-	addtopeoplelist(context);
+void DreamGenContext::aide() {
+	STACK_CHECK;
+	showgamereel();
+	addtopeoplelist();
 }
 
-void businessman(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kPointermode) = 0;
-	context.data.word(kWatchingtime) = 2;
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 2);
-	if (!context.flags.z())
+void DreamGenContext::businessman() {
+	STACK_CHECK;
+	data.byte(kPointermode) = 0;
+	data.word(kWatchingtime) = 2;
+	ax = es.word(bx+3);
+	_cmp(ax, 2);
+	if (!flags.z())
 		goto notfirstbiz;
-	context.push(context.ax);
-	context.push(context.bx);
-	context.push(context.es);
-	context.al = 49;
-	context.cx = 30;
-	context.dx = 1;
-	context.bl = 68;
-	context.bh = 174;
-	setuptimeduse(context);
-	context.es = context.pop();
-	context.bx = context.pop();
-	context.ax = context.pop();
+	push(ax);
+	push(bx);
+	push(es);
+	al = 49;
+	cx = 30;
+	dx = 1;
+	bl = 68;
+	bh = 174;
+	setuptimeduse();
+	es = pop();
+	bx = pop();
+	ax = pop();
 notfirstbiz:
-	context._cmp(context.ax, 95);
-	if (context.flags.z())
+	_cmp(ax, 95);
+	if (flags.z())
 		goto buscombatwonend;
-	context._cmp(context.ax, 49);
-	if (context.flags.z())
+	_cmp(ax, 49);
+	if (flags.z())
 		return /* (buscombatend) */;
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto busspeed;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 48);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 48);
+	if (!flags.z())
 		goto notbeforedeadb;
-	context.data.byte(kMandead) = 2;
+	data.byte(kMandead) = 2;
 	goto gotbusframe;
 notbeforedeadb:
-	context._cmp(context.ax, 15);
-	if (!context.flags.z())
+	_cmp(ax, 15);
+	if (!flags.z())
 		goto buscombatwon;
-	context._dec(context.ax);
-	context._cmp(context.data.byte(kLastweapon), 3);
-	if (!context.flags.z())
+	_dec(ax);
+	_cmp(data.byte(kLastweapon), 3);
+	if (!flags.z())
 		goto notshieldonbus;
-	context.data.byte(kLastweapon) = -1;
-	context.data.byte(kCombatcount) = 0;
-	context.ax = 51;
+	data.byte(kLastweapon) = -1;
+	data.byte(kCombatcount) = 0;
+	ax = 51;
 	goto gotbusframe;
 notshieldonbus:
-	context._inc(context.data.byte(kCombatcount));
-	context._cmp(context.data.byte(kCombatcount), 20);
-	if (!context.flags.z())
+	_inc(data.byte(kCombatcount));
+	_cmp(data.byte(kCombatcount), 20);
+	if (!flags.z())
 		goto gotbusframe;
-	context.data.byte(kCombatcount) = 0;
-	context.ax = 15;
+	data.byte(kCombatcount) = 0;
+	ax = 15;
 	goto gotbusframe;
 buscombatwon:
-	context._cmp(context.ax, 91);
-	if (!context.flags.z())
+	_cmp(ax, 91);
+	if (!flags.z())
 		goto gotbusframe;
-	context.push(context.bx);
-	context.push(context.es);
-	context.al = 0;
-	turnpathon(context);
-	context.al = 1;
-	turnpathon(context);
-	context.al = 2;
-	turnpathon(context);
-	context.al = 3;
-	turnpathoff(context);
-	context.data.byte(kManspath) = 5;
-	context.data.byte(kFinaldest) = 5;
-	findxyfrompath(context);
-	context.data.byte(kResetmanxy) = 1;
-	context.es = context.pop();
-	context.bx = context.pop();
-	context.ax = 92;
+	push(bx);
+	push(es);
+	al = 0;
+	turnpathon();
+	al = 1;
+	turnpathon();
+	al = 2;
+	turnpathon();
+	al = 3;
+	turnpathoff();
+	data.byte(kManspath) = 5;
+	data.byte(kFinaldest) = 5;
+	findxyfrompath();
+	data.byte(kResetmanxy) = 1;
+	es = pop();
+	bx = pop();
+	ax = 92;
 	goto gotbusframe;
 gotbusframe:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 busspeed:
-	showgamereel(context);
-	context.al = context.data.byte(kMapy);
-	context.es.byte(context.bx+2) = context.al;
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 14);
-	if (!context.flags.z())
+	showgamereel();
+	al = data.byte(kMapy);
+	es.byte(bx+2) = al;
+	ax = es.word(bx+3);
+	_cmp(ax, 14);
+	if (!flags.z())
 		return /* (buscombatend) */;
-	context.data.word(kWatchingtime) = 0;
-	context.data.byte(kPointermode) = 2;
+	data.word(kWatchingtime) = 0;
+	data.byte(kPointermode) = 2;
 	return;
 buscombatwonend:
-	context.data.byte(kPointermode) = 0;
-	context.data.word(kWatchingtime) = 0;
+	data.byte(kPointermode) = 0;
+	data.word(kWatchingtime) = 0;
 }
 
-void poolguard(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 214);
-	if (context.flags.z())
+void DreamGenContext::poolguard() {
+	STACK_CHECK;
+	ax = es.word(bx+3);
+	_cmp(ax, 214);
+	if (flags.z())
 		goto combatover2;
-	context._cmp(context.ax, 258);
-	if (context.flags.z())
+	_cmp(ax, 258);
+	if (flags.z())
 		goto combatover2;
-	context._cmp(context.ax, 185);
-	if (context.flags.z())
+	_cmp(ax, 185);
+	if (flags.z())
 		goto combatover1;
-	context._cmp(context.ax, 0);
-	if (!context.flags.z())
+	_cmp(ax, 0);
+	if (!flags.z())
 		goto notfirstpool;
-	context.al = 0;
-	turnpathon(context);
+	al = 0;
+	turnpathon();
 notfirstpool:
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto guardspeed;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 122);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 122);
+	if (!flags.z())
 		goto notendguard1;
-	context._dec(context.ax);
-	context._cmp(context.data.byte(kLastweapon), 2);
-	if (!context.flags.z())
+	_dec(ax);
+	_cmp(data.byte(kLastweapon), 2);
+	if (!flags.z())
 		goto notaxeonpool;
-	context.data.byte(kLastweapon) = -1;
-	context.ax = 122;
+	data.byte(kLastweapon) = -1;
+	ax = 122;
 	goto gotguardframe;
 notaxeonpool:
-	context._inc(context.data.byte(kCombatcount));
-	context._cmp(context.data.byte(kCombatcount), 40);
-	if (!context.flags.z())
+	_inc(data.byte(kCombatcount));
+	_cmp(data.byte(kCombatcount), 40);
+	if (!flags.z())
 		goto gotguardframe;
-	context.data.byte(kCombatcount) = 0;
-	context.ax = 195;
+	data.byte(kCombatcount) = 0;
+	ax = 195;
 	goto gotguardframe;
 notendguard1:
-	context._cmp(context.ax, 147);
-	if (!context.flags.z())
+	_cmp(ax, 147);
+	if (!flags.z())
 		goto gotguardframe;
-	context._dec(context.ax);
-	context._cmp(context.data.byte(kLastweapon), 1);
-	if (!context.flags.z())
+	_dec(ax);
+	_cmp(data.byte(kLastweapon), 1);
+	if (!flags.z())
 		goto notgunonpool;
-	context.data.byte(kLastweapon) = -1;
-	context.ax = 147;
+	data.byte(kLastweapon) = -1;
+	ax = 147;
 	goto gotguardframe;
 notgunonpool:
-	context._inc(context.data.byte(kCombatcount));
-	context._cmp(context.data.byte(kCombatcount), 40);
-	if (!context.flags.z())
+	_inc(data.byte(kCombatcount));
+	_cmp(data.byte(kCombatcount), 40);
+	if (!flags.z())
 		goto gotguardframe;
-	context.data.byte(kCombatcount) = 0;
-	context.ax = 220;
+	data.byte(kCombatcount) = 0;
+	ax = 220;
 gotguardframe:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 guardspeed:
-	showgamereel(context);
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 121);
-	if (context.flags.z())
+	showgamereel();
+	ax = es.word(bx+3);
+	_cmp(ax, 121);
+	if (flags.z())
 		goto iswaitingpool;
-	context._cmp(context.ax, 146);
-	if (context.flags.z())
+	_cmp(ax, 146);
+	if (flags.z())
 		goto iswaitingpool;
-	context.data.byte(kPointermode) = 0;
-	context.data.word(kWatchingtime) = 2;
+	data.byte(kPointermode) = 0;
+	data.word(kWatchingtime) = 2;
 	return;
 iswaitingpool:
-	context.data.byte(kPointermode) = 2;
-	context.data.word(kWatchingtime) = 0;
+	data.byte(kPointermode) = 2;
+	data.word(kWatchingtime) = 0;
 	return;
 combatover1:
-	context.data.word(kWatchingtime) = 0;
-	context.data.byte(kPointermode) = 0;
-	context.al = 0;
-	turnpathon(context);
-	context.al = 1;
-	turnpathoff(context);
+	data.word(kWatchingtime) = 0;
+	data.byte(kPointermode) = 0;
+	al = 0;
+	turnpathon();
+	al = 1;
+	turnpathoff();
 	return;
 combatover2:
-	showgamereel(context);
-	context.data.word(kWatchingtime) = 2;
-	context.data.byte(kPointermode) = 0;
-	context._inc(context.data.byte(kCombatcount));
-	context._cmp(context.data.byte(kCombatcount), 100);
-	if (context.flags.c())
+	showgamereel();
+	data.word(kWatchingtime) = 2;
+	data.byte(kPointermode) = 0;
+	_inc(data.byte(kCombatcount));
+	_cmp(data.byte(kCombatcount), 100);
+	if (flags.c())
 		return /* (doneover2) */;
-	context.data.word(kWatchingtime) = 0;
-	context.data.byte(kMandead) = 2;
+	data.word(kWatchingtime) = 0;
+	data.byte(kMandead) = 2;
 }
 
-void security(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.es.word(context.bx+3), 32);
-	if (context.flags.z())
+void DreamGenContext::security() {
+	STACK_CHECK;
+	_cmp(es.word(bx+3), 32);
+	if (flags.z())
 		goto securwait;
-	context._cmp(context.es.word(context.bx+3), 69);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 69);
+	if (!flags.z())
 		goto notaftersec;
 	return;
 notaftersec:
-	context.data.word(kWatchingtime) = 10;
-	checkspeed(context);
-	if (!context.flags.z())
+	data.word(kWatchingtime) = 10;
+	checkspeed();
+	if (!flags.z())
 		goto gotsecurframe;
-	context._inc(context.es.word(context.bx+3));
+	_inc(es.word(bx+3));
 	goto gotsecurframe;
 securwait:
-	context._cmp(context.data.byte(kLastweapon), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kLastweapon), 1);
+	if (!flags.z())
 		goto gotsecurframe;
-	context.data.word(kWatchingtime) = 10;
-	context._cmp(context.data.byte(kManspath), 9);
-	if (!context.flags.z())
+	data.word(kWatchingtime) = 10;
+	_cmp(data.byte(kManspath), 9);
+	if (!flags.z())
 		goto gotsecurframe;
-	context._cmp(context.data.byte(kFacing), 0);
-	if (!context.flags.z())
+	_cmp(data.byte(kFacing), 0);
+	if (!flags.z())
 		goto gotsecurframe;
-	context.data.byte(kLastweapon) = -1;
-	context._inc(context.es.word(context.bx+3));
+	data.byte(kLastweapon) = -1;
+	_inc(es.word(bx+3));
 gotsecurframe:
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void heavy(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.es.byte(context.bx+7);
-	context._and(context.al, 127);
-	context.es.byte(context.bx+7) = context.al;
-	context._cmp(context.es.word(context.bx+3), 43);
-	if (context.flags.z())
+void DreamGenContext::heavy() {
+	STACK_CHECK;
+	al = es.byte(bx+7);
+	_and(al, 127);
+	es.byte(bx+7) = al;
+	_cmp(es.word(bx+3), 43);
+	if (flags.z())
 		goto heavywait;
-	context.data.word(kWatchingtime) = 10;
-	context._cmp(context.es.word(context.bx+3), 70);
-	if (!context.flags.z())
+	data.word(kWatchingtime) = 10;
+	_cmp(es.word(bx+3), 70);
+	if (!flags.z())
 		goto notafterhshot;
-	context._inc(context.data.byte(kCombatcount));
-	context._cmp(context.data.byte(kCombatcount), 80);
-	if (!context.flags.z())
+	_inc(data.byte(kCombatcount));
+	_cmp(data.byte(kCombatcount), 80);
+	if (!flags.z())
 		goto gotheavyframe;
-	context.data.byte(kMandead) = 2;
+	data.byte(kMandead) = 2;
 	goto gotheavyframe;
 notafterhshot:
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto gotheavyframe;
-	context._inc(context.es.word(context.bx+3));
+	_inc(es.word(bx+3));
 	goto gotheavyframe;
 heavywait:
-	context._cmp(context.data.byte(kLastweapon), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kLastweapon), 1);
+	if (!flags.z())
 		goto gotheavyframe;
-	context._cmp(context.data.byte(kManspath), 5);
-	if (!context.flags.z())
+	_cmp(data.byte(kManspath), 5);
+	if (!flags.z())
 		goto gotheavyframe;
-	context._cmp(context.data.byte(kFacing), 4);
-	if (!context.flags.z())
+	_cmp(data.byte(kFacing), 4);
+	if (!flags.z())
 		goto gotheavyframe;
-	context.data.byte(kLastweapon) = -1;
-	context._inc(context.es.word(context.bx+3));
-	context.data.byte(kCombatcount) = 0;
+	data.byte(kLastweapon) = -1;
+	_inc(es.word(bx+3));
+	data.byte(kCombatcount) = 0;
 gotheavyframe:
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void bossman(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::bossman() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto notboss;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 4);
-	if (context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 4);
+	if (flags.z())
 		goto firstdes;
-	context._cmp(context.ax, 20);
-	if (context.flags.z())
+	_cmp(ax, 20);
+	if (flags.z())
 		goto secdes;
-	context._cmp(context.ax, 41);
-	if (!context.flags.z())
+	_cmp(ax, 41);
+	if (!flags.z())
 		goto gotallboss;
-	context.ax = 0;
-	context._inc(context.data.byte(kGunpassflag));
-	context.es.byte(context.bx+7) = 10;
+	ax = 0;
+	_inc(data.byte(kGunpassflag));
+	es.byte(bx+7) = 10;
 	goto gotallboss;
 firstdes:
-	context._cmp(context.data.byte(kGunpassflag), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kGunpassflag), 1);
+	if (flags.z())
 		goto gotallboss;
-	context.push(context.ax);
-	randomnumber(context);
-	context.cl = context.al;
-	context.ax = context.pop();
-	context._cmp(context.cl, 10);
-	if (context.flags.c())
+	push(ax);
+	randomnumber();
+	cl = al;
+	ax = pop();
+	_cmp(cl, 10);
+	if (flags.c())
 		goto gotallboss;
-	context.ax = 0;
+	ax = 0;
 	goto gotallboss;
 secdes:
-	context._cmp(context.data.byte(kGunpassflag), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kGunpassflag), 1);
+	if (flags.z())
 		goto gotallboss;
-	context.ax = 0;
+	ax = 0;
 gotallboss:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 notboss:
-	showgamereel(context);
-	addtopeoplelist(context);
-	context.al = context.es.byte(context.bx+7);
-	context._and(context.al, 128);
-	if (context.flags.z())
+	showgamereel();
+	addtopeoplelist();
+	al = es.byte(bx+7);
+	_and(al, 128);
+	if (flags.z())
 		return /* (nottalkedboss) */;
-	context.data.byte(kTalkedtoboss) = 1;
+	data.byte(kTalkedtoboss) = 1;
 }
 
-void gamer(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::gamer() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto gamerfin;
 gameragain:
-	randomnum1(context);
-	context._and(context.al, 7);
-	context._cmp(context.al, 5);
-	if (!context.flags.c())
+	randomnum1();
+	_and(al, 7);
+	_cmp(al, 5);
+	if (!flags.c())
 		goto gameragain;
-	context._add(context.al, 20);
-	context._cmp(context.al, context.es.byte(context.bx+3));
-	if (context.flags.z())
+	_add(al, 20);
+	_cmp(al, es.byte(bx+3));
+	if (flags.z())
 		goto gameragain;
-	context.ah = 0;
-	context.es.word(context.bx+3) = context.ax;
+	ah = 0;
+	es.word(bx+3) = ax;
 gamerfin:
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void sparkydrip(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::sparkydrip() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		return /* (cantdrip) */;
-	context.al = 14;
-	context.ah = 0;
-	playchannel0(context);
+	al = 14;
+	ah = 0;
+	playchannel0();
 }
 
-void carparkdrip(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::carparkdrip() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		return /* (cantdrip2) */;
-	context.al = 14;
-	playchannel1(context);
+	al = 14;
+	playchannel1();
 }
 
-void keeper(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kKeeperflag), 0);
-	if (!context.flags.z())
+void DreamGenContext::keeper() {
+	STACK_CHECK;
+	_cmp(data.byte(kKeeperflag), 0);
+	if (!flags.z())
 		goto notwaiting;
-	context._cmp(context.data.word(kReeltowatch), 190);
-	if (context.flags.c())
+	_cmp(data.word(kReeltowatch), 190);
+	if (flags.c())
 		return /* (waiting) */;
-	context._inc(context.data.byte(kKeeperflag));
-	context.ah = context.es.byte(context.bx+7);
-	context._and(context.ah, 127);
-	context._cmp(context.ah, context.data.byte(kDreamnumber));
-	if (context.flags.z())
+	_inc(data.byte(kKeeperflag));
+	ah = es.byte(bx+7);
+	_and(ah, 127);
+	_cmp(ah, data.byte(kDreamnumber));
+	if (flags.z())
 		return /* (notdiff) */;
-	context.al = context.data.byte(kDreamnumber);
-	context.es.byte(context.bx+7) = context.al;
+	al = data.byte(kDreamnumber);
+	es.byte(bx+7) = al;
 	return;
 notwaiting:
-	addtopeoplelist(context);
-	showgamereel(context);
+	addtopeoplelist();
+	showgamereel();
 }
 
-void candles1(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::candles1() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto candle1;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 44);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 44);
+	if (!flags.z())
 		goto notendcandle1;
-	context.ax = 39;
+	ax = 39;
 notendcandle1:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 candle1:
-	showgamereel(context);
+	showgamereel();
 }
 
-void smallcandle(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::smallcandle() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto smallcandlef;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 37);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 37);
+	if (!flags.z())
 		goto notendsmallcandle;
-	context.ax = 25;
+	ax = 25;
 notendsmallcandle:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 smallcandlef:
-	showgamereel(context);
+	showgamereel();
 }
 
-void intromagic1(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::intromagic1() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto introm1fin;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 145);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 145);
+	if (!flags.z())
 		goto gotintrom1;
-	context.ax = 121;
+	ax = 121;
 gotintrom1:
-	context.es.word(context.bx+3) = context.ax;
-	context._cmp(context.ax, 121);
-	if (!context.flags.z())
+	es.word(bx+3) = ax;
+	_cmp(ax, 121);
+	if (!flags.z())
 		goto introm1fin;
-	context._inc(context.data.byte(kIntrocount));
-	context.push(context.es);
-	context.push(context.bx);
-	intro1text(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context._cmp(context.data.byte(kIntrocount), 8);
-	if (!context.flags.z())
+	_inc(data.byte(kIntrocount));
+	push(es);
+	push(bx);
+	intro1text();
+	bx = pop();
+	es = pop();
+	_cmp(data.byte(kIntrocount), 8);
+	if (!flags.z())
 		goto introm1fin;
-	context._add(context.data.byte(kMapy), 10);
-	context.data.byte(kNowinnewroom) = 1;
+	_add(data.byte(kMapy), 10);
+	data.byte(kNowinnewroom) = 1;
 introm1fin:
-	showgamereel(context);
+	showgamereel();
 }
 
-void candles(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::candles() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto candlesfin;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 167);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 167);
+	if (!flags.z())
 		goto gotcandles;
-	context.ax = 162;
+	ax = 162;
 gotcandles:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 candlesfin:
-	showgamereel(context);
+	showgamereel();
 }
 
-void candles2(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::candles2() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto candles2fin;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 238);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 238);
+	if (!flags.z())
 		goto gotcandles2;
-	context.ax = 233;
+	ax = 233;
 gotcandles2:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 candles2fin:
-	showgamereel(context);
+	showgamereel();
 }
 
-void gates(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::gates() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto gatesfin;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 116);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 116);
+	if (!flags.z())
 		goto notbang;
-	context.push(context.ax);
-	context.push(context.bx);
-	context.push(context.es);
-	context.al = 17;
-	playchannel1(context);
-	context.es = context.pop();
-	context.bx = context.pop();
-	context.ax = context.pop();
+	push(ax);
+	push(bx);
+	push(es);
+	al = 17;
+	playchannel1();
+	es = pop();
+	bx = pop();
+	ax = pop();
 notbang:
-	context._cmp(context.ax, 110);
-	if (context.flags.c())
+	_cmp(ax, 110);
+	if (flags.c())
 		goto slowgates;
-	context.es.byte(context.bx+5) = 2;
+	es.byte(bx+5) = 2;
 slowgates:
-	context._cmp(context.ax, 120);
-	if (!context.flags.z())
+	_cmp(ax, 120);
+	if (!flags.z())
 		goto gotgates;
-	context.data.byte(kGetback) = 1;
-	context.ax = 119;
+	data.byte(kGetback) = 1;
+	ax = 119;
 gotgates:
-	context.es.word(context.bx+3) = context.ax;
-	context.push(context.es);
-	context.push(context.bx);
-	intro3text(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	es.word(bx+3) = ax;
+	push(es);
+	push(bx);
+	intro3text();
+	bx = pop();
+	es = pop();
 gatesfin:
-	showgamereel(context);
+	showgamereel();
 }
 
-void intromagic2(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::intromagic2() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto introm2fin;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 216);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 216);
+	if (!flags.z())
 		goto gotintrom2;
-	context.ax = 192;
+	ax = 192;
 gotintrom2:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 introm2fin:
-	showgamereel(context);
+	showgamereel();
 }
 
-void intromagic3(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::intromagic3() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto introm3fin;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 218);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 218);
+	if (!flags.z())
 		goto gotintrom3;
-	context.data.byte(kGetback) = 1;
+	data.byte(kGetback) = 1;
 gotintrom3:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 introm3fin:
-	showgamereel(context);
-	context.al = context.data.byte(kMapx);
-	context.es.byte(context.bx+1) = context.al;
+	showgamereel();
+	al = data.byte(kMapx);
+	es.byte(bx+1) = al;
 }
 
-void intromonks1(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::intromonks1() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto intromonk1fin;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 80);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 80);
+	if (!flags.z())
 		goto notendmonk1;
-	context._add(context.data.byte(kMapy), 10);
-	context.data.byte(kNowinnewroom) = 1;
-	showgamereel(context);
+	_add(data.byte(kMapy), 10);
+	data.byte(kNowinnewroom) = 1;
+	showgamereel();
 	return;
 notendmonk1:
-	context._cmp(context.ax, 30);
-	if (!context.flags.z())
+	_cmp(ax, 30);
+	if (!flags.z())
 		goto gotintromonk1;
-	context._sub(context.data.byte(kMapy), 10);
-	context.data.byte(kNowinnewroom) = 1;
-	context.ax = 51;
+	_sub(data.byte(kMapy), 10);
+	data.byte(kNowinnewroom) = 1;
+	ax = 51;
 gotintromonk1:
-	context.es.word(context.bx+3) = context.ax;
-	context._cmp(context.ax, 5);
-	if (context.flags.z())
+	es.word(bx+3) = ax;
+	_cmp(ax, 5);
+	if (flags.z())
 		goto waitstep;
-	context._cmp(context.ax, 15);
-	if (context.flags.z())
+	_cmp(ax, 15);
+	if (flags.z())
 		goto waitstep;
-	context._cmp(context.ax, 25);
-	if (context.flags.z())
+	_cmp(ax, 25);
+	if (flags.z())
 		goto waitstep;
-	context._cmp(context.ax, 61);
-	if (context.flags.z())
+	_cmp(ax, 61);
+	if (flags.z())
 		goto waitstep;
-	context._cmp(context.ax, 71);
-	if (context.flags.z())
+	_cmp(ax, 71);
+	if (flags.z())
 		goto waitstep;
 	goto intromonk1fin;
 waitstep:
-	context.push(context.es);
-	context.push(context.bx);
-	intro2text(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.es.byte(context.bx+6) = -20;
+	push(es);
+	push(bx);
+	intro2text();
+	bx = pop();
+	es = pop();
+	es.byte(bx+6) = -20;
 intromonk1fin:
-	showgamereel(context);
-	context.al = context.data.byte(kMapy);
-	context.es.byte(context.bx+2) = context.al;
+	showgamereel();
+	al = data.byte(kMapy);
+	es.byte(bx+2) = al;
 }
 
-void intromonks2(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::intromonks2() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto intromonk2fin;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 87);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 87);
+	if (!flags.z())
 		goto nottalk1;
-	context._inc(context.data.byte(kIntrocount));
-	context.push(context.es);
-	context.push(context.bx);
-	monks2text(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context._cmp(context.data.byte(kIntrocount), 19);
-	if (!context.flags.z())
+	_inc(data.byte(kIntrocount));
+	push(es);
+	push(bx);
+	monks2text();
+	bx = pop();
+	es = pop();
+	_cmp(data.byte(kIntrocount), 19);
+	if (!flags.z())
 		goto notlasttalk1;
-	context.ax = 87;
+	ax = 87;
 	goto gotintromonk2;
 notlasttalk1:
-	context.ax = 74;
+	ax = 74;
 	goto gotintromonk2;
 nottalk1:
-	context._cmp(context.ax, 110);
-	if (!context.flags.z())
+	_cmp(ax, 110);
+	if (!flags.z())
 		goto notraisearm;
-	context._inc(context.data.byte(kIntrocount));
-	context.push(context.es);
-	context.push(context.bx);
-	monks2text(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context._cmp(context.data.byte(kIntrocount), 35);
-	if (!context.flags.z())
+	_inc(data.byte(kIntrocount));
+	push(es);
+	push(bx);
+	monks2text();
+	bx = pop();
+	es = pop();
+	_cmp(data.byte(kIntrocount), 35);
+	if (!flags.z())
 		goto notlastraise;
-	context.ax = 111;
+	ax = 111;
 	goto gotintromonk2;
 notlastraise:
-	context.ax = 98;
+	ax = 98;
 	goto gotintromonk2;
 notraisearm:
-	context._cmp(context.ax, 176);
-	if (!context.flags.z())
+	_cmp(ax, 176);
+	if (!flags.z())
 		goto notendmonk2;
-	context.data.byte(kGetback) = 1;
+	data.byte(kGetback) = 1;
 	goto gotintromonk2;
 notendmonk2:
-	context._cmp(context.ax, 125);
-	if (!context.flags.z())
+	_cmp(ax, 125);
+	if (!flags.z())
 		goto gotintromonk2;
-	context.ax = 140;
+	ax = 140;
 gotintromonk2:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 intromonk2fin:
-	showgamereel(context);
+	showgamereel();
 }
 
-void handclap(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::handclap() {
+	STACK_CHECK;
 }
 
-void monks2text(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kIntrocount), 1);
-	if (!context.flags.z())
+void DreamGenContext::monks2text() {
+	STACK_CHECK;
+	_cmp(data.byte(kIntrocount), 1);
+	if (!flags.z())
 		goto notmonk2text1;
-	context.al = 8;
-	context.bl = 36;
-	context.bh = 160;
-	context.cx = 100;
+	al = 8;
+	bl = 36;
+	bh = 160;
+	cx = 100;
 	goto gotmonks2text;
 notmonk2text1:
-	context._cmp(context.data.byte(kIntrocount), 4);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 4);
+	if (!flags.z())
 		goto notmonk2text2;
-	context.al = 9;
-	context.bl = 36;
-	context.bh = 160;
-	context.cx = 100;
+	al = 9;
+	bl = 36;
+	bh = 160;
+	cx = 100;
 	goto gotmonks2text;
 notmonk2text2:
-	context._cmp(context.data.byte(kIntrocount), 7);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 7);
+	if (!flags.z())
 		goto notmonk2text3;
-	context.al = 10;
-	context.bl = 36;
-	context.bh = 160;
-	context.cx = 100;
+	al = 10;
+	bl = 36;
+	bh = 160;
+	cx = 100;
 	goto gotmonks2text;
 notmonk2text3:
-	context._cmp(context.data.byte(kIntrocount), 10);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 10);
+	if (!flags.z())
 		goto notmonk2text4;
-	context.data.byte(kIntrocount) = 12;
-	context.al = 11;
-	context.bl = 0;
-	context.bh = 105;
-	context.cx = 100;
+	data.byte(kIntrocount) = 12;
+	al = 11;
+	bl = 0;
+	bh = 105;
+	cx = 100;
 	goto gotmonks2text;
 notmonk2text4:
-	context._cmp(context.data.byte(kIntrocount), 13);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 13);
+	if (!flags.z())
 		goto notmonk2text5;
-	context.data.byte(kIntrocount) = 17;
+	data.byte(kIntrocount) = 17;
 	return;
-	context.al = 12;
-	context.bl = 0;
-	context.bh = 120;
-	context.cx = 100;
+	al = 12;
+	bl = 0;
+	bh = 120;
+	cx = 100;
 	goto gotmonks2text;
 notmonk2text5:
-	context._cmp(context.data.byte(kIntrocount), 16);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 16);
+	if (!flags.z())
 		goto notmonk2text6;
-	context.al = 13;
-	context.bl = 0;
-	context.bh = 135;
-	context.cx = 100;
+	al = 13;
+	bl = 0;
+	bh = 135;
+	cx = 100;
 	goto gotmonks2text;
 notmonk2text6:
-	context._cmp(context.data.byte(kIntrocount), 19);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 19);
+	if (!flags.z())
 		goto notmonk2text7;
-	context.al = 14;
-	context.bl = 36;
-	context.bh = 160;
-	context.cx = 100;
-	context.dx = 1;
-	context.ah = 82;
-	{ setuptimedtemp(context); return; };
+	al = 14;
+	bl = 36;
+	bh = 160;
+	cx = 100;
+	dx = 1;
+	ah = 82;
+	{ setuptimedtemp(); return; };
 notmonk2text7:
-	context._cmp(context.data.byte(kIntrocount), 22);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 22);
+	if (!flags.z())
 		goto notmonk2text8;
-	context.al = 15;
-	context.bl = 36;
-	context.bh = 160;
-	context.cx = 100;
+	al = 15;
+	bl = 36;
+	bh = 160;
+	cx = 100;
 	goto gotmonks2text;
 notmonk2text8:
-	context._cmp(context.data.byte(kIntrocount), 25);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 25);
+	if (!flags.z())
 		goto notmonk2text9;
-	context.al = 16;
-	context.bl = 36;
-	context.bh = 160;
-	context.cx = 100;
+	al = 16;
+	bl = 36;
+	bh = 160;
+	cx = 100;
 	goto gotmonks2text;
 notmonk2text9:
-	context._cmp(context.data.byte(kIntrocount), 27);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 27);
+	if (!flags.z())
 		goto notmonk2text10;
-	context.al = 17;
-	context.bl = 36;
-	context.bh = 160;
-	context.cx = 100;
+	al = 17;
+	bl = 36;
+	bh = 160;
+	cx = 100;
 	goto gotmonks2text;
 notmonk2text10:
-	context._cmp(context.data.byte(kIntrocount), 31);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 31);
+	if (!flags.z())
 		return /* (notmonk2text11) */;
-	context.al = 18;
-	context.bl = 36;
-	context.bh = 160;
-	context.cx = 100;
+	al = 18;
+	bl = 36;
+	bh = 160;
+	cx = 100;
 	goto gotmonks2text;
 	return;
 gotmonks2text:
-	context.dx = 1;
-	context.cx = 120;
-	context.ah = 82;
-	setuptimedtemp(context);
+	dx = 1;
+	cx = 120;
+	ah = 82;
+	setuptimedtemp();
 }
 
-void intro1text(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kIntrocount), 2);
-	if (!context.flags.z())
+void DreamGenContext::intro1text() {
+	STACK_CHECK;
+	_cmp(data.byte(kIntrocount), 2);
+	if (!flags.z())
 		goto notintro1text1;
-	context.al = 40;
-	context.bl = 34;
-	context.bh = 130;
-	context.cx = 90;
+	al = 40;
+	bl = 34;
+	bh = 130;
+	cx = 90;
 	goto gotintro1text;
 notintro1text1:
-	context._cmp(context.data.byte(kIntrocount), 4);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 4);
+	if (!flags.z())
 		goto notintro1text2;
-	context.al = 41;
-	context.bl = 34;
-	context.bh = 130;
-	context.cx = 90;
+	al = 41;
+	bl = 34;
+	bh = 130;
+	cx = 90;
 	goto gotintro1text;
 notintro1text2:
-	context._cmp(context.data.byte(kIntrocount), 6);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 6);
+	if (!flags.z())
 		return /* (notintro1text3) */;
-	context.al = 42;
-	context.bl = 34;
-	context.bh = 130;
-	context.cx = 90;
+	al = 42;
+	bl = 34;
+	bh = 130;
+	cx = 90;
 	goto gotintro1text;
 	return;
 gotintro1text:
-	context.dx = 1;
-	context.ah = 82;
-	context._cmp(context.data.byte(kCh1playing), 255);
-	if (context.flags.z())
+	dx = 1;
+	ah = 82;
+	_cmp(data.byte(kCh1playing), 255);
+	if (flags.z())
 		goto oktalk2;
-	context._dec(context.data.byte(kIntrocount));
+	_dec(data.byte(kIntrocount));
 	return;
 oktalk2:
-	setuptimedtemp(context);
+	setuptimedtemp();
 }
 
-void intro2text(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.ax, 5);
-	if (!context.flags.z())
+void DreamGenContext::intro2text() {
+	STACK_CHECK;
+	_cmp(ax, 5);
+	if (!flags.z())
 		goto notintro2text1;
-	context.al = 43;
-	context.bl = 34;
-	context.bh = 40;
-	context.cx = 90;
+	al = 43;
+	bl = 34;
+	bh = 40;
+	cx = 90;
 	goto gotintro2text;
 notintro2text1:
-	context._cmp(context.ax, 15);
-	if (!context.flags.z())
+	_cmp(ax, 15);
+	if (!flags.z())
 		return /* (notintro2text2) */;
-	context.al = 44;
-	context.bl = 34;
-	context.bh = 40;
-	context.cx = 90;
+	al = 44;
+	bl = 34;
+	bh = 40;
+	cx = 90;
 	goto gotintro2text;
 	return;
 gotintro2text:
-	context.dx = 1;
-	context.ah = 82;
-	setuptimedtemp(context);
+	dx = 1;
+	ah = 82;
+	setuptimedtemp();
 }
 
-void intro3text(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.ax, 107);
-	if (!context.flags.z())
+void DreamGenContext::intro3text() {
+	STACK_CHECK;
+	_cmp(ax, 107);
+	if (!flags.z())
 		goto notintro3text1;
-	context.al = 45;
-	context.bl = 36;
-	context.bh = 56;
-	context.cx = 100;
+	al = 45;
+	bl = 36;
+	bh = 56;
+	cx = 100;
 	goto gotintro3text;
 notintro3text1:
-	context._cmp(context.ax, 108);
-	if (!context.flags.z())
+	_cmp(ax, 108);
+	if (!flags.z())
 		return /* (notintro3text2) */;
-	context.al = 46;
-	context.bl = 36;
-	context.bh = 56;
-	context.cx = 100;
+	al = 46;
+	bl = 36;
+	bh = 56;
+	cx = 100;
 	goto gotintro3text;
 	return;
 gotintro3text:
-	context.dx = 1;
-	context.ah = 82;
-	setuptimedtemp(context);
+	dx = 1;
+	ah = 82;
+	setuptimedtemp();
 }
 
-void monkandryan(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::monkandryan() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto notmonkryan;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 83);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 83);
+	if (!flags.z())
 		goto gotmonkryan;
-	context._inc(context.data.byte(kIntrocount));
-	context.push(context.es);
-	context.push(context.bx);
-	textformonk(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.ax = 77;
-	context._cmp(context.data.byte(kIntrocount), 57);
-	if (!context.flags.z())
+	_inc(data.byte(kIntrocount));
+	push(es);
+	push(bx);
+	textformonk();
+	bx = pop();
+	es = pop();
+	ax = 77;
+	_cmp(data.byte(kIntrocount), 57);
+	if (!flags.z())
 		goto gotmonkryan;
-	context.data.byte(kGetback) = 1;
+	data.byte(kGetback) = 1;
 	return;
 gotmonkryan:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 notmonkryan:
-	showgamereel(context);
+	showgamereel();
 }
 
-void endgameseq(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::endgameseq() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto notendseq;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 51);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 51);
+	if (!flags.z())
 		goto gotendseq;
-	context._cmp(context.data.byte(kIntrocount), 140);
-	if (context.flags.z())
+	_cmp(data.byte(kIntrocount), 140);
+	if (flags.z())
 		goto gotendseq;
-	context._inc(context.data.byte(kIntrocount));
-	context.push(context.es);
-	context.push(context.bx);
-	textforend(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.ax = 50;
+	_inc(data.byte(kIntrocount));
+	push(es);
+	push(bx);
+	textforend();
+	bx = pop();
+	es = pop();
+	ax = 50;
 gotendseq:
-	context.es.word(context.bx+3) = context.ax;
-	context._cmp(context.ax, 134);
-	if (!context.flags.z())
+	es.word(bx+3) = ax;
+	_cmp(ax, 134);
+	if (!flags.z())
 		goto notfadedown;
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.ax);
-	fadescreendownhalf(context);
-	context.ax = context.pop();
-	context.bx = context.pop();
-	context.es = context.pop();
+	push(es);
+	push(bx);
+	push(ax);
+	fadescreendownhalf();
+	ax = pop();
+	bx = pop();
+	es = pop();
 	goto notendseq;
 notfadedown:
-	context._cmp(context.ax, 324);
-	if (!context.flags.z())
+	_cmp(ax, 324);
+	if (!flags.z())
 		goto notfadeend;
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.ax);
-	fadescreendowns(context);
-	context.data.byte(kVolumeto) = 7;
-	context.data.byte(kVolumedirection) = 1;
-	context.ax = context.pop();
-	context.bx = context.pop();
-	context.es = context.pop();
+	push(es);
+	push(bx);
+	push(ax);
+	fadescreendowns();
+	data.byte(kVolumeto) = 7;
+	data.byte(kVolumedirection) = 1;
+	ax = pop();
+	bx = pop();
+	es = pop();
 notfadeend:
-	context._cmp(context.ax, 340);
-	if (!context.flags.z())
+	_cmp(ax, 340);
+	if (!flags.z())
 		goto notendseq;
-	context.data.byte(kGetback) = 1;
+	data.byte(kGetback) = 1;
 notendseq:
-	showgamereel(context);
-	context.al = context.data.byte(kMapy);
-	context.es.byte(context.bx+2) = context.al;
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 145);
-	if (!context.flags.z())
+	showgamereel();
+	al = data.byte(kMapy);
+	es.byte(bx+2) = al;
+	ax = es.word(bx+3);
+	_cmp(ax, 145);
+	if (!flags.z())
 		return /* (notendcreds) */;
-	context.es.word(context.bx+3) = 146;
-	rollendcredits(context);
+	es.word(bx+3) = 146;
+	rollendcredits();
 }
 
-void rollendcredits(Context &context) {
-	STACK_CHECK(context);
-	context.al = 16;
-	context.ah = 255;
-	playchannel0(context);
-	context.data.byte(kVolume) = 7;
-	context.data.byte(kVolumeto) = 0;
-	context.data.byte(kVolumedirection) = -1;
-	context.cl = 160;
-	context.ch = 160;
-	context.di = 75;
-	context.bx = 20;
-	context.ds = context.data.word(kMapstore);
-	context.si = 0;
-	multiget(context);
-	context.es = context.data.word(kTextfile1);
-	context.si = 3*2;
-	context.ax = context.es.word(context.si);
-	context.si = context.ax;
-	context._add(context.si, (66*2));
-	context.cx = 254;
+void DreamGenContext::rollendcredits() {
+	STACK_CHECK;
+	al = 16;
+	ah = 255;
+	playchannel0();
+	data.byte(kVolume) = 7;
+	data.byte(kVolumeto) = 0;
+	data.byte(kVolumedirection) = -1;
+	cl = 160;
+	ch = 160;
+	di = 75;
+	bx = 20;
+	ds = data.word(kMapstore);
+	si = 0;
+	multiget();
+	es = data.word(kTextfile1);
+	si = 3*2;
+	ax = es.word(si);
+	si = ax;
+	_add(si, (66*2));
+	cx = 254;
 endcredits1:
-	context.push(context.cx);
-	context.bx = 10;
-	context.cx = context.data.word(kLinespacing);
+	push(cx);
+	bx = 10;
+	cx = data.word(kLinespacing);
 endcredits2:
-	context.push(context.cx);
-	context.push(context.si);
-	context.push(context.di);
-	context.push(context.es);
-	context.push(context.bx);
-	vsync(context);
-	context.cl = 160;
-	context.ch = 160;
-	context.di = 75;
-	context.bx = 20;
-	context.ds = context.data.word(kMapstore);
-	context.si = 0;
-	multiput(context);
-	vsync(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.di = context.pop();
-	context.si = context.pop();
-	context.push(context.si);
-	context.push(context.di);
-	context.push(context.es);
-	context.push(context.bx);
-	context.cx = 18;
+	push(cx);
+	push(si);
+	push(di);
+	push(es);
+	push(bx);
+	vsync();
+	cl = 160;
+	ch = 160;
+	di = 75;
+	bx = 20;
+	ds = data.word(kMapstore);
+	si = 0;
+	multiput();
+	vsync();
+	bx = pop();
+	es = pop();
+	di = pop();
+	si = pop();
+	push(si);
+	push(di);
+	push(es);
+	push(bx);
+	cx = 18;
 onelot:
-	context.push(context.cx);
-	context.di = 75;
-	context.dx = 161;
-	context.ax = 0;
-	printdirect(context);
-	context._add(context.bx, context.data.word(kLinespacing));
-	context.cx = context.pop();
-	if (--context.cx)
+	push(cx);
+	di = 75;
+	dx = 161;
+	ax = 0;
+	printdirect();
+	_add(bx, data.word(kLinespacing));
+	cx = pop();
+	if (--cx)
 		goto onelot;
-	vsync(context);
-	context.cl = 160;
-	context.ch = 160;
-	context.di = 75;
-	context.bx = 20;
-	multidump(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.di = context.pop();
-	context.si = context.pop();
-	context.cx = context.pop();
-	context._dec(context.bx);
-	if (--context.cx)
+	vsync();
+	cl = 160;
+	ch = 160;
+	di = 75;
+	bx = 20;
+	multidump();
+	bx = pop();
+	es = pop();
+	di = pop();
+	si = pop();
+	cx = pop();
+	_dec(bx);
+	if (--cx)
 		goto endcredits2;
-	context.cx = context.pop();
+	cx = pop();
 looknext:
-	context.al = context.es.byte(context.si);
-	context._inc(context.si);
-	context._cmp(context.al, ':');
-	if (context.flags.z())
+	al = es.byte(si);
+	_inc(si);
+	_cmp(al, ':');
+	if (flags.z())
 		goto gotnext;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_cmp(al, 0);
+	if (flags.z())
 		goto gotnext;
 	goto looknext;
 gotnext:
-	if (--context.cx)
+	if (--cx)
 		goto endcredits1;
-	context.cx = 100;
-	hangon(context);
-	paneltomap(context);
-	fadescreenuphalf(context);
+	cx = 100;
+	hangon();
+	paneltomap();
+	fadescreenuphalf();
 }
 
-void priest(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.es.word(context.bx+3), 8);
-	if (context.flags.z())
+void DreamGenContext::priest() {
+	STACK_CHECK;
+	_cmp(es.word(bx+3), 8);
+	if (flags.z())
 		return /* (priestspoken) */;
-	context.data.byte(kPointermode) = 0;
-	context.data.word(kWatchingtime) = 2;
-	checkspeed(context);
-	if (!context.flags.z())
+	data.byte(kPointermode) = 0;
+	data.word(kWatchingtime) = 2;
+	checkspeed();
+	if (!flags.z())
 		return /* (priestwait) */;
-	context._inc(context.es.word(context.bx+3));
-	context.push(context.es);
-	context.push(context.bx);
-	priesttext(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	_inc(es.word(bx+3));
+	push(es);
+	push(bx);
+	priesttext();
+	bx = pop();
+	es = pop();
 }
 
-void madmanstelly(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 307);
-	if (!context.flags.z())
+void DreamGenContext::madmanstelly() {
+	STACK_CHECK;
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 307);
+	if (!flags.z())
 		goto notendtelly;
-	context.ax = 300;
+	ax = 300;
 notendtelly:
-	context.es.word(context.bx+3) = context.ax;
-	showgamereel(context);
+	es.word(bx+3) = ax;
+	showgamereel();
 }
 
-void madman(Context &context) {
-	STACK_CHECK(context);
-	context.data.word(kWatchingtime) = 2;
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::madman() {
+	STACK_CHECK;
+	data.word(kWatchingtime) = 2;
+	checkspeed();
+	if (!flags.z())
 		goto nomadspeed;
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 364);
-	if (!context.flags.c())
+	ax = es.word(bx+3);
+	_cmp(ax, 364);
+	if (!flags.c())
 		goto ryansded;
-	context._cmp(context.ax, 10);
-	if (!context.flags.z())
+	_cmp(ax, 10);
+	if (!flags.z())
 		goto notfirstmad;
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.ax);
-	context.dx = 2247;
-	loadtemptext(context);
-	context.ax = context.pop();
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.data.byte(kCombatcount) = -1;
-	context.data.byte(kSpeechcount) = 0;
+	push(es);
+	push(bx);
+	push(ax);
+	dx = 2247;
+	loadtemptext();
+	ax = pop();
+	bx = pop();
+	es = pop();
+	data.byte(kCombatcount) = -1;
+	data.byte(kSpeechcount) = 0;
 notfirstmad:
-	context._inc(context.ax);
-	context._cmp(context.ax, 294);
-	if (context.flags.z())
+	_inc(ax);
+	_cmp(ax, 294);
+	if (flags.z())
 		goto madmanspoken;
-	context._cmp(context.ax, 66);
-	if (!context.flags.z())
+	_cmp(ax, 66);
+	if (!flags.z())
 		goto nomadspeak;
-	context._inc(context.data.byte(kCombatcount));
-	context.push(context.es);
-	context.push(context.bx);
-	madmantext(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.ax = 53;
-	context._cmp(context.data.byte(kCombatcount), 64);
-	if (context.flags.c())
+	_inc(data.byte(kCombatcount));
+	push(es);
+	push(bx);
+	madmantext();
+	bx = pop();
+	es = pop();
+	ax = 53;
+	_cmp(data.byte(kCombatcount), 64);
+	if (flags.c())
 		goto nomadspeak;
-	context._cmp(context.data.byte(kCombatcount), 70);
-	if (context.flags.z())
+	_cmp(data.byte(kCombatcount), 70);
+	if (flags.z())
 		goto killryan;
-	context._cmp(context.data.byte(kLastweapon), 8);
-	if (!context.flags.z())
+	_cmp(data.byte(kLastweapon), 8);
+	if (!flags.z())
 		goto nomadspeak;
-	context.data.byte(kCombatcount) = 72;
-	context.data.byte(kLastweapon) = -1;
-	context.data.byte(kMadmanflag) = 1;
-	context.ax = 67;
+	data.byte(kCombatcount) = 72;
+	data.byte(kLastweapon) = -1;
+	data.byte(kMadmanflag) = 1;
+	ax = 67;
 	goto nomadspeak;
 killryan:
-	context.ax = 310;
+	ax = 310;
 nomadspeak:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 nomadspeed:
-	showgamereel(context);
-	context.al = context.data.byte(kMapx);
-	context.es.byte(context.bx+1) = context.al;
-	madmode(context);
+	showgamereel();
+	al = data.byte(kMapx);
+	es.byte(bx+1) = al;
+	madmode();
 	return;
 madmanspoken:
-	context._cmp(context.data.byte(kWongame), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kWongame), 1);
+	if (flags.z())
 		return /* (alreadywon) */;
-	context.data.byte(kWongame) = 1;
-	context.push(context.es);
-	context.push(context.bx);
-	getridoftemptext(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	data.byte(kWongame) = 1;
+	push(es);
+	push(bx);
+	getridoftemptext();
+	bx = pop();
+	es = pop();
 	return;
 ryansded:
-	context.data.byte(kMandead) = 2;
-	showgamereel(context);
+	data.byte(kMandead) = 2;
+	showgamereel();
 }
 
-void madmantext(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kSpeechcount), 63);
-	if (!context.flags.c())
+void DreamGenContext::madmantext() {
+	STACK_CHECK;
+	_cmp(data.byte(kSpeechcount), 63);
+	if (!flags.c())
 		return /* (nomadtext) */;
-	context._cmp(context.data.byte(kCh1playing), 255);
-	if (!context.flags.z())
+	_cmp(data.byte(kCh1playing), 255);
+	if (!flags.z())
 		return /* (nomadtext) */;
-	context.al = context.data.byte(kSpeechcount);
-	context._inc(context.data.byte(kSpeechcount));
-	context._add(context.al, 47);
-	context.bl = 72;
-	context.bh = 80;
-	context.cx = 90;
-	context.dx = 1;
-	context.ah = 82;
-	setuptimedtemp(context);
+	al = data.byte(kSpeechcount);
+	_inc(data.byte(kSpeechcount));
+	_add(al, 47);
+	bl = 72;
+	bh = 80;
+	cx = 90;
+	dx = 1;
+	ah = 82;
+	setuptimedtemp();
 }
 
-void madmode(Context &context) {
-	STACK_CHECK(context);
-	context.data.word(kWatchingtime) = 2;
-	context.data.byte(kPointermode) = 0;
-	context._cmp(context.data.byte(kCombatcount), 65);
-	if (context.flags.c())
+void DreamGenContext::madmode() {
+	STACK_CHECK;
+	data.word(kWatchingtime) = 2;
+	data.byte(kPointermode) = 0;
+	_cmp(data.byte(kCombatcount), 65);
+	if (flags.c())
 		return /* (iswatchmad) */;
-	context._cmp(context.data.byte(kCombatcount), 70);
-	if (!context.flags.c())
+	_cmp(data.byte(kCombatcount), 70);
+	if (!flags.c())
 		return /* (iswatchmad) */;
-	context.data.byte(kPointermode) = 2;
+	data.byte(kPointermode) = 2;
 }
 
-void priesttext(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.es.word(context.bx+3), 2);
-	if (context.flags.c())
+void DreamGenContext::priesttext() {
+	STACK_CHECK;
+	_cmp(es.word(bx+3), 2);
+	if (flags.c())
 		return /* (nopriesttext) */;
-	context._cmp(context.es.word(context.bx+3), 7);
-	if (!context.flags.c())
+	_cmp(es.word(bx+3), 7);
+	if (!flags.c())
 		return /* (nopriesttext) */;
-	context.al = context.es.byte(context.bx+3);
-	context._and(context.al, 1);
-	if (!context.flags.z())
+	al = es.byte(bx+3);
+	_and(al, 1);
+	if (!flags.z())
 		return /* (nopriesttext) */;
-	context.al = context.es.byte(context.bx+3);
-	context._shr(context.al, 1);
-	context._add(context.al, 50);
-	context.bl = 72;
-	context.bh = 80;
-	context.cx = 54;
-	context.dx = 1;
-	setuptimeduse(context);
+	al = es.byte(bx+3);
+	_shr(al, 1);
+	_add(al, 50);
+	bl = 72;
+	bh = 80;
+	cx = 54;
+	dx = 1;
+	setuptimeduse();
 }
 
-void textforend(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kIntrocount), 20);
-	if (!context.flags.z())
+void DreamGenContext::textforend() {
+	STACK_CHECK;
+	_cmp(data.byte(kIntrocount), 20);
+	if (!flags.z())
 		goto notendtext1;
-	context.al = 0;
-	context.bl = 34;
-	context.bh = 20;
-	context.cx = 60;
+	al = 0;
+	bl = 34;
+	bh = 20;
+	cx = 60;
 	goto gotendtext;
 notendtext1:
-	context._cmp(context.data.byte(kIntrocount), 50);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 50);
+	if (!flags.z())
 		goto notendtext2;
-	context.al = 1;
-	context.bl = 34;
-	context.bh = 20;
-	context.cx = 60;
+	al = 1;
+	bl = 34;
+	bh = 20;
+	cx = 60;
 	goto gotendtext;
 notendtext2:
-	context._cmp(context.data.byte(kIntrocount), 85);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 85);
+	if (!flags.z())
 		return /* (notendtext3) */;
-	context.al = 2;
-	context.bl = 34;
-	context.bh = 20;
-	context.cx = 60;
+	al = 2;
+	bl = 34;
+	bh = 20;
+	cx = 60;
 	goto gotendtext;
 	return;
 gotendtext:
-	context.dx = 1;
-	context.ah = 83;
-	setuptimedtemp(context);
+	dx = 1;
+	ah = 83;
+	setuptimedtemp();
 }
 
-void textformonk(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kIntrocount), 1);
-	if (!context.flags.z())
+void DreamGenContext::textformonk() {
+	STACK_CHECK;
+	_cmp(data.byte(kIntrocount), 1);
+	if (!flags.z())
 		goto notmonktext1;
-	context.al = 19;
-	context.bl = 68;
-	context.bh = 154;
-	context.cx = 120;
+	al = 19;
+	bl = 68;
+	bh = 154;
+	cx = 120;
 	goto gotmonktext;
 notmonktext1:
-	context._cmp(context.data.byte(kIntrocount), 5);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 5);
+	if (!flags.z())
 		goto notmonktext2;
-	context.al = 20;
-	context.bl = 68;
-	context.bh = 38;
-	context.cx = 120;
+	al = 20;
+	bl = 68;
+	bh = 38;
+	cx = 120;
 	goto gotmonktext;
 notmonktext2:
-	context._cmp(context.data.byte(kIntrocount), 9);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 9);
+	if (!flags.z())
 		goto notmonktext3;
-	context.al = 21;
-	context.bl = 48;
-	context.bh = 154;
-	context.cx = 120;
+	al = 21;
+	bl = 48;
+	bh = 154;
+	cx = 120;
 	goto gotmonktext;
 notmonktext3:
-	context._cmp(context.data.byte(kIntrocount), 13);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 13);
+	if (!flags.z())
 		goto notmonktext4;
-	context.al = 22;
-	context.bl = 68;
-	context.bh = 38;
-	context.cx = 120;
+	al = 22;
+	bl = 68;
+	bh = 38;
+	cx = 120;
 	goto gotmonktext;
 notmonktext4:
-	context._cmp(context.data.byte(kIntrocount), 15);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 15);
+	if (!flags.z())
 		goto notmonktext5;
-	context.al = 23;
-	context.bl = 68;
-	context.bh = 154;
-	context.cx = 120;
+	al = 23;
+	bl = 68;
+	bh = 154;
+	cx = 120;
 	goto gotmonktext;
 notmonktext5:
-	context._cmp(context.data.byte(kIntrocount), 21);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 21);
+	if (!flags.z())
 		goto notmonktext6;
-	context.al = 24;
-	context.bl = 68;
-	context.bh = 38;
-	context.cx = 120;
+	al = 24;
+	bl = 68;
+	bh = 38;
+	cx = 120;
 	goto gotmonktext;
 notmonktext6:
-	context._cmp(context.data.byte(kIntrocount), 25);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 25);
+	if (!flags.z())
 		goto notmonktext7;
-	context.al = 25;
-	context.bl = 68;
-	context.bh = 154;
-	context.cx = 120;
+	al = 25;
+	bl = 68;
+	bh = 154;
+	cx = 120;
 	goto gotmonktext;
 notmonktext7:
-	context._cmp(context.data.byte(kIntrocount), 29);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 29);
+	if (!flags.z())
 		goto notmonktext8;
-	context.al = 26;
-	context.bl = 68;
-	context.bh = 38;
-	context.cx = 120;
+	al = 26;
+	bl = 68;
+	bh = 38;
+	cx = 120;
 	goto gotmonktext;
 notmonktext8:
-	context._cmp(context.data.byte(kIntrocount), 33);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 33);
+	if (!flags.z())
 		goto notmonktext9;
-	context.al = 27;
-	context.bl = 68;
-	context.bh = 154;
-	context.cx = 120;
+	al = 27;
+	bl = 68;
+	bh = 154;
+	cx = 120;
 	goto gotmonktext;
 notmonktext9:
-	context._cmp(context.data.byte(kIntrocount), 37);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 37);
+	if (!flags.z())
 		goto notmonktext10;
-	context.al = 28;
-	context.bl = 68;
-	context.bh = 154;
-	context.cx = 120;
+	al = 28;
+	bl = 68;
+	bh = 154;
+	cx = 120;
 	goto gotmonktext;
 notmonktext10:
-	context._cmp(context.data.byte(kIntrocount), 41);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 41);
+	if (!flags.z())
 		goto notmonktext11;
-	context.al = 29;
-	context.bl = 68;
-	context.bh = 38;
-	context.cx = 120;
+	al = 29;
+	bl = 68;
+	bh = 38;
+	cx = 120;
 	goto gotmonktext;
 notmonktext11:
-	context._cmp(context.data.byte(kIntrocount), 45);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 45);
+	if (!flags.z())
 		goto notmonktext12;
-	context.al = 30;
-	context.bl = 68;
-	context.bh = 154;
-	context.cx = 120;
+	al = 30;
+	bl = 68;
+	bh = 154;
+	cx = 120;
 	goto gotmonktext;
 notmonktext12:
-	context._cmp(context.data.byte(kIntrocount), 52);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 52);
+	if (!flags.z())
 		goto notmonktext13;
-	context.al = 31;
-	context.bl = 68;
-	context.bh = 154;
-	context.cx = 220;
+	al = 31;
+	bl = 68;
+	bh = 154;
+	cx = 220;
 	goto gotmonktext;
 notmonktext13:
-	context._cmp(context.data.byte(kIntrocount), 53);
-	if (!context.flags.z())
+	_cmp(data.byte(kIntrocount), 53);
+	if (!flags.z())
 		return /* (notendtitles) */;
-	fadescreendowns(context);
-	context.data.byte(kVolumeto) = 7;
-	context.data.byte(kVolumedirection) = 1;
+	fadescreendowns();
+	data.byte(kVolumeto) = 7;
+	data.byte(kVolumedirection) = 1;
 	return;
 gotmonktext:
-	context.dx = 1;
-	context.ah = 82;
-	context._cmp(context.data.byte(kCh1playing), 255);
-	if (context.flags.z())
+	dx = 1;
+	ah = 82;
+	_cmp(data.byte(kCh1playing), 255);
+	if (flags.z())
 		goto oktalk;
-	context._dec(context.data.byte(kIntrocount));
+	_dec(data.byte(kIntrocount));
 	return;
 oktalk:
-	setuptimedtemp(context);
+	setuptimedtemp();
 }
 
-void drunk(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kGeneraldead), 0);
-	if (!context.flags.z())
+void DreamGenContext::drunk() {
+	STACK_CHECK;
+	_cmp(data.byte(kGeneraldead), 0);
+	if (!flags.z())
 		return /* (trampgone) */;
-	context.al = context.es.byte(context.bx+7);
-	context._and(context.al, 127);
-	context.es.byte(context.bx+7) = context.al;
-	showgamereel(context);
-	addtopeoplelist(context);
+	al = es.byte(bx+7);
+	_and(al, 127);
+	es.byte(bx+7) = al;
+	showgamereel();
+	addtopeoplelist();
 }
 
-void advisor(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::advisor() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto noadvisor;
 	goto noadvisor;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 123);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 123);
+	if (!flags.z())
 		goto notendadvis;
-	context.ax = 106;
+	ax = 106;
 	goto gotadvframe;
 notendadvis:
-	context._cmp(context.ax, 108);
-	if (!context.flags.z())
+	_cmp(ax, 108);
+	if (!flags.z())
 		goto gotadvframe;
-	context.push(context.ax);
-	randomnumber(context);
-	context.cl = context.al;
-	context.ax = context.pop();
-	context._cmp(context.cl, 3);
-	if (context.flags.c())
+	push(ax);
+	randomnumber();
+	cl = al;
+	ax = pop();
+	_cmp(cl, 3);
+	if (flags.c())
 		goto gotadvframe;
-	context.ax = 106;
+	ax = 106;
 gotadvframe:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 noadvisor:
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void copper(Context &context) {
-	STACK_CHECK(context);
-	checkspeed(context);
-	if (!context.flags.z())
+void DreamGenContext::copper() {
+	STACK_CHECK;
+	checkspeed();
+	if (!flags.z())
 		goto nocopper;
-	context.ax = context.es.word(context.bx+3);
-	context._inc(context.ax);
-	context._cmp(context.ax, 94);
-	if (!context.flags.z())
+	ax = es.word(bx+3);
+	_inc(ax);
+	_cmp(ax, 94);
+	if (!flags.z())
 		goto notendcopper;
-	context.ax = 64;
+	ax = 64;
 	goto gotcopframe;
 notendcopper:
-	context._cmp(context.ax, 81);
-	if (context.flags.z())
+	_cmp(ax, 81);
+	if (flags.z())
 		goto mightwait;
-	context._cmp(context.ax, 66);
-	if (!context.flags.z())
+	_cmp(ax, 66);
+	if (!flags.z())
 		goto gotcopframe;
 mightwait:
-	context.push(context.ax);
-	randomnumber(context);
-	context.cl = context.al;
-	context.ax = context.pop();
-	context._cmp(context.cl, 7);
-	if (context.flags.c())
+	push(ax);
+	randomnumber();
+	cl = al;
+	ax = pop();
+	_cmp(cl, 7);
+	if (flags.c())
 		goto gotcopframe;
-	context._dec(context.ax);
+	_dec(ax);
 gotcopframe:
-	context.es.word(context.bx+3) = context.ax;
+	es.word(bx+3) = ax;
 nocopper:
-	showgamereel(context);
-	addtopeoplelist(context);
+	showgamereel();
+	addtopeoplelist();
 }
 
-void sparky(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kCard1money), 0);
-	if (context.flags.z())
+void DreamGenContext::sparky() {
+	STACK_CHECK;
+	_cmp(data.word(kCard1money), 0);
+	if (flags.z())
 		goto animsparky;
-	context.es.byte(context.bx+7) = 3;
+	es.byte(bx+7) = 3;
 	goto animsparky;
 animsparky:
-	checkspeed(context);
-	if (!context.flags.z())
+	checkspeed();
+	if (!flags.z())
 		goto finishsparky;
-	context._cmp(context.es.word(context.bx+3), 34);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 34);
+	if (!flags.z())
 		goto notsparky1;
-	randomnumber(context);
-	context._cmp(context.al, 30);
-	if (context.flags.c())
+	randomnumber();
+	_cmp(al, 30);
+	if (flags.c())
 		goto dosparky;
-	context.es.word(context.bx+3) = 27;
+	es.word(bx+3) = 27;
 	goto finishsparky;
 notsparky1:
-	context._cmp(context.es.word(context.bx+3), 48);
-	if (!context.flags.z())
+	_cmp(es.word(bx+3), 48);
+	if (!flags.z())
 		goto dosparky;
-	context.es.word(context.bx+3) = 27;
+	es.word(bx+3) = 27;
 	goto finishsparky;
 dosparky:
-	context._inc(context.es.word(context.bx+3));
+	_inc(es.word(bx+3));
 finishsparky:
-	showgamereel(context);
-	addtopeoplelist(context);
-	context.al = context.es.byte(context.bx+7);
-	context._and(context.al, 128);
-	if (context.flags.z())
+	showgamereel();
+	addtopeoplelist();
+	al = es.byte(bx+7);
+	_and(al, 128);
+	if (flags.z())
 		return /* (nottalkedsparky) */;
-	context.data.byte(kTalkedtosparky) = 1;
+	data.byte(kTalkedtosparky) = 1;
 }
 
-void train(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::train() {
+	STACK_CHECK;
 	return;
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 21);
-	if (!context.flags.c())
+	ax = es.word(bx+3);
+	_cmp(ax, 21);
+	if (!flags.c())
 		goto notrainyet;
-	context._inc(context.ax);
+	_inc(ax);
 	goto gottrainframe;
 notrainyet:
-	randomnumber(context);
-	context._cmp(context.al, 253);
-	if (context.flags.c())
+	randomnumber();
+	_cmp(al, 253);
+	if (flags.c())
 		return /* (notrainatall) */;
-	context._cmp(context.data.byte(kManspath), 5);
-	if (!context.flags.z())
+	_cmp(data.byte(kManspath), 5);
+	if (!flags.z())
 		return /* (notrainatall) */;
-	context._cmp(context.data.byte(kFinaldest), 5);
-	if (!context.flags.z())
+	_cmp(data.byte(kFinaldest), 5);
+	if (!flags.z())
 		return /* (notrainatall) */;
-	context.ax = 5;
+	ax = 5;
 gottrainframe:
-	context.es.word(context.bx+3) = context.ax;
-	showgamereel(context);
+	es.word(bx+3) = ax;
+	showgamereel();
 }
 
-void addtopeoplelist(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.bx);
-	context.cl = context.es.byte(context.bx+7);
-	context.ax = context.es.word(context.bx+3);
-	context.bx = context.data.word(kListpos);
-	context.es = context.data.word(kBuffers);
-	context.es.word(context.bx) = context.ax;
-	context.ax = context.pop();
-	context.es.word(context.bx+2) = context.ax;
-	context.es.byte(context.bx+4) = context.cl;
-	context.bx = context.pop();
-	context.es = context.pop();
-	context._add(context.data.word(kListpos), 5);
+void DreamGenContext::addtopeoplelist() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	push(bx);
+	cl = es.byte(bx+7);
+	ax = es.word(bx+3);
+	bx = data.word(kListpos);
+	es = data.word(kBuffers);
+	es.word(bx) = ax;
+	ax = pop();
+	es.word(bx+2) = ax;
+	es.byte(bx+4) = cl;
+	bx = pop();
+	es = pop();
+	_add(data.word(kListpos), 5);
 }
 
-void showgamereel(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.es.word(context.bx+3);
-	context._cmp(context.ax, 512);
-	if (!context.flags.c())
+void DreamGenContext::showgamereel() {
+	STACK_CHECK;
+	ax = es.word(bx+3);
+	_cmp(ax, 512);
+	if (!flags.c())
 		return /* (noshow) */;
-	context.data.word(kReelpointer) = context.ax;
-	context.push(context.es);
-	context.push(context.bx);
-	plotreel(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.ax = context.data.word(kReelpointer);
-	context.es.word(context.bx+3) = context.ax;
+	data.word(kReelpointer) = ax;
+	push(es);
+	push(bx);
+	plotreel();
+	bx = pop();
+	es = pop();
+	ax = data.word(kReelpointer);
+	es.word(bx+3) = ax;
 }
 
-void checkspeed(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLastweapon), -1);
-	if (!context.flags.z())
+void DreamGenContext::checkspeed() {
+	STACK_CHECK;
+	_cmp(data.byte(kLastweapon), -1);
+	if (!flags.z())
 		goto forcenext;
-	context._inc(context.es.byte(context.bx+6));
-	context.al = context.es.byte(context.bx+6);
-	context._cmp(context.al, context.es.byte(context.bx+5));
-	if (!context.flags.z())
+	_inc(es.byte(bx+6));
+	al = es.byte(bx+6);
+	_cmp(al, es.byte(bx+5));
+	if (!flags.z())
 		return /* (notspeed) */;
-	context.al = 0;
-	context.es.byte(context.bx+6) = context.al;
-	context._cmp(context.al, context.al);
+	al = 0;
+	es.byte(bx+6) = al;
+	_cmp(al, al);
 	return;
 forcenext:
-	context._cmp(context.al, context.al);
+	_cmp(al, al);
 }
 
-void clearsprites(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
-	context.al = 255;
-	context.cx = (32)*16;
-	context._stosb(context.cx);
+void DreamGenContext::clearsprites() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
+	al = 255;
+	cx = (32)*16;
+	_stosb(cx);
 }
 
-void makesprite(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
+void DreamGenContext::makesprite() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 _tmp17:
-	context._cmp(context.es.byte(context.bx+15), 255);
-	if (context.flags.z())
+	_cmp(es.byte(bx+15), 255);
+	if (flags.z())
 		goto _tmp17a;
-	context._add(context.bx, (32));
+	_add(bx, (32));
 	goto _tmp17;
 _tmp17a:
-	context.es.word(context.bx) = context.cx;
-	context.es.word(context.bx+10) = context.si;
-	context.es.word(context.bx+6) = context.dx;
-	context.es.word(context.bx+8) = context.di;
-	context.es.word(context.bx+2) = 0x0ffff;
-	context.es.byte(context.bx+15) = 0;
-	context.es.byte(context.bx+18) = 0;
+	es.word(bx) = cx;
+	es.word(bx+10) = si;
+	es.word(bx+6) = dx;
+	es.word(bx+8) = di;
+	es.word(bx+2) = 0x0ffff;
+	es.byte(bx+15) = 0;
+	es.byte(bx+18) = 0;
 }
 
-void delsprite(Context &context) {
-	STACK_CHECK(context);
-	context.di = context.bx;
-	context.cx = (32);
-	context.al = 255;
-	context._stosb(context.cx);
+void DreamGenContext::delsprite() {
+	STACK_CHECK;
+	di = bx;
+	cx = (32);
+	al = 255;
+	_stosb(cx);
 }
 
-void spriteupdate(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
-	context.al = context.data.byte(kRyanon);
-	context.es.byte(context.bx+31) = context.al;
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
-	context.cx = 16;
+void DreamGenContext::spriteupdate() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
+	al = data.byte(kRyanon);
+	es.byte(bx+31) = al;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
+	cx = 16;
 _tmp18:
-	context.push(context.cx);
-	context.push(context.bx);
-	context.ax = context.es.word(context.bx);
-	context._cmp(context.ax, 0x0ffff);
-	if (context.flags.z())
+	push(cx);
+	push(bx);
+	ax = es.word(bx);
+	_cmp(ax, 0x0ffff);
+	if (flags.z())
 		goto _tmp18a;
-	context.push(context.es);
-	context.push(context.ds);
-	context.cx = context.es.word(context.bx+2);
-	context.es.word(context.bx+24) = context.cx;
-	__dispatch_call(context, context.ax);
-	context.ds = context.pop();
-	context.es = context.pop();
+	push(es);
+	push(ds);
+	cx = es.word(bx+2);
+	es.word(bx+24) = cx;
+	__dispatch_call(ax);
+	ds = pop();
+	es = pop();
 _tmp18a:
-	context.bx = context.pop();
-	context.cx = context.pop();
-	context._cmp(context.data.byte(kNowinnewroom), 1);
-	if (context.flags.z())
+	bx = pop();
+	cx = pop();
+	_cmp(data.byte(kNowinnewroom), 1);
+	if (flags.z())
 		return /* ($18b) */;
-	context._add(context.bx, (32));
-	if (--context.cx)
+	_add(bx, (32));
+	if (--cx)
 		goto _tmp18;
 }
 
-void printsprites(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.cx = 0;
+void DreamGenContext::printsprites() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	cx = 0;
 priorityloop:
-	context.push(context.cx);
-	context.data.byte(kPriority) = context.cl;
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
-	context.cx = 16;
+	push(cx);
+	data.byte(kPriority) = cl;
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
+	cx = 16;
 prtspriteloop:
-	context.push(context.cx);
-	context.push(context.bx);
-	context.ax = context.es.word(context.bx);
-	context._cmp(context.ax, 0x0ffff);
-	if (context.flags.z())
+	push(cx);
+	push(bx);
+	ax = es.word(bx);
+	_cmp(ax, 0x0ffff);
+	if (flags.z())
 		goto skipsprite;
-	context.al = context.data.byte(kPriority);
-	context._cmp(context.al, context.es.byte(context.bx+23));
-	if (!context.flags.z())
+	al = data.byte(kPriority);
+	_cmp(al, es.byte(bx+23));
+	if (!flags.z())
 		goto skipsprite;
-	context._cmp(context.es.byte(context.bx+31), 1);
-	if (context.flags.z())
+	_cmp(es.byte(bx+31), 1);
+	if (flags.z())
 		goto skipsprite;
-	printasprite(context);
+	printasprite();
 skipsprite:
-	context.bx = context.pop();
-	context.cx = context.pop();
-	context._add(context.bx, (32));
-	if (--context.cx)
+	bx = pop();
+	cx = pop();
+	_add(bx, (32));
+	if (--cx)
 		goto prtspriteloop;
-	context.cx = context.pop();
-	context._inc(context.cx);
-	context._cmp(context.cx, 7);
-	if (!context.flags.z())
+	cx = pop();
+	_inc(cx);
+	_cmp(cx, 7);
+	if (!flags.z())
 		goto priorityloop;
 }
 
-void printasprite(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context.si = context.bx;
-	context.ds = context.es.word(context.si+6);
-	context.al = context.es.byte(context.si+11);
-	context.ah = 0;
-	context._cmp(context.al, 220);
-	if (context.flags.c())
+void DreamGenContext::printasprite() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	si = bx;
+	ds = es.word(si+6);
+	al = es.byte(si+11);
+	ah = 0;
+	_cmp(al, 220);
+	if (flags.c())
 		goto notnegative1;
-	context.ah = 255;
+	ah = 255;
 notnegative1:
-	context.bx = context.ax;
-	context._add(context.bx, context.data.word(kMapady));
-	context.al = context.es.byte(context.si+10);
-	context.ah = 0;
-	context._cmp(context.al, 220);
-	if (context.flags.c())
+	bx = ax;
+	_add(bx, data.word(kMapady));
+	al = es.byte(si+10);
+	ah = 0;
+	_cmp(al, 220);
+	if (flags.c())
 		goto notnegative2;
-	context.ah = 255;
+	ah = 255;
 notnegative2:
-	context.di = context.ax;
-	context._add(context.di, context.data.word(kMapadx));
-	context.al = context.es.byte(context.si+15);
-	context.ah = 0;
-	context._cmp(context.es.byte(context.si+30), 0);
-	if (context.flags.z())
+	di = ax;
+	_add(di, data.word(kMapadx));
+	al = es.byte(si+15);
+	ah = 0;
+	_cmp(es.byte(si+30), 0);
+	if (flags.z())
 		goto steadyframe;
-	context.ah = 8;
+	ah = 8;
 steadyframe:
-	context._cmp(context.data.byte(kPriority), 6);
-	if (!context.flags.z())
+	_cmp(data.byte(kPriority), 6);
+	if (!flags.z())
 		goto notquickp;
 notquickp:
-	showframe(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	showframe();
+	bx = pop();
+	es = pop();
 }
 
-void checkone(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.cx);
-	context.al = context.ch;
-	context.ah = 0;
-	context.cl = 4;
-	context._shr(context.ax, context.cl);
-	context.dl = context.al;
-	context.cx = context.pop();
-	context.al = context.cl;
-	context.ah = 0;
-	context.cl = 4;
-	context._shr(context.ax, context.cl);
-	context.ah = context.dl;
-	context.push(context.ax);
-	context.ch = 0;
-	context.cl = context.al;
-	context.push(context.cx);
-	context.al = context.ah;
-	context.ah = 0;
-	context.cx = 11;
-	context._mul(context.cx);
-	context.cx = context.pop();
-	context._add(context.ax, context.cx);
-	context.cx = 3;
-	context._mul(context.cx);
-	context.si = context.ax;
-	context.ds = context.data.word(kBuffers);
-	context._add(context.si, (0+(180*10)+32+60+(32*32)));
-	context._lodsw();
-	context.cx = context.ax;
-	context._lodsb();
-	context.dx = context.pop();
+void DreamGenContext::checkone() {
+	STACK_CHECK;
+	push(cx);
+	al = ch;
+	ah = 0;
+	cl = 4;
+	_shr(ax, cl);
+	dl = al;
+	cx = pop();
+	al = cl;
+	ah = 0;
+	cl = 4;
+	_shr(ax, cl);
+	ah = dl;
+	push(ax);
+	ch = 0;
+	cl = al;
+	push(cx);
+	al = ah;
+	ah = 0;
+	cx = 11;
+	_mul(cx);
+	cx = pop();
+	_add(ax, cx);
+	cx = 3;
+	_mul(cx);
+	si = ax;
+	ds = data.word(kBuffers);
+	_add(si, (0+(180*10)+32+60+(32*32)));
+	_lodsw();
+	cx = ax;
+	_lodsb();
+	dx = pop();
 }
 
-void findsource(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kCurrentframe);
-	context._cmp(context.ax, 160);
-	if (!context.flags.c())
+void DreamGenContext::findsource() {
+	STACK_CHECK;
+	ax = data.word(kCurrentframe);
+	_cmp(ax, 160);
+	if (!flags.c())
 		goto over1000;
-	context.ds = context.data.word(kReel1);
-	context.data.word(kTakeoff) = 0;
+	ds = data.word(kReel1);
+	data.word(kTakeoff) = 0;
 	return;
 over1000:
-	context._cmp(context.ax, 320);
-	if (!context.flags.c())
+	_cmp(ax, 320);
+	if (!flags.c())
 		goto over1001;
-	context.ds = context.data.word(kReel2);
-	context.data.word(kTakeoff) = 160;
+	ds = data.word(kReel2);
+	data.word(kTakeoff) = 160;
 	return;
 over1001:
-	context.ds = context.data.word(kReel3);
-	context.data.word(kTakeoff) = 320;
+	ds = data.word(kReel3);
+	data.word(kTakeoff) = 320;
 }
 
-void initman(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kRyanx);
-	context.ah = context.data.byte(kRyany);
-	context.si = context.ax;
-	context.cx = 49464;
-	context.dx = context.data.word(kMainsprites);
-	context.di = 0;
-	makesprite(context);
-	context.es.byte(context.bx+23) = 4;
-	context.es.byte(context.bx+22) = 0;
-	context.es.byte(context.bx+29) = 0;
+void DreamGenContext::initman() {
+	STACK_CHECK;
+	al = data.byte(kRyanx);
+	ah = data.byte(kRyany);
+	si = ax;
+	cx = 49464;
+	dx = data.word(kMainsprites);
+	di = 0;
+	makesprite();
+	es.byte(bx+23) = 4;
+	es.byte(bx+22) = 0;
+	es.byte(bx+29) = 0;
 }
 
-void mainman(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kResetmanxy), 1);
-	if (!context.flags.z())
+void DreamGenContext::mainman() {
+	STACK_CHECK;
+	_cmp(data.byte(kResetmanxy), 1);
+	if (!flags.z())
 		goto notinnewroom;
-	context.data.byte(kResetmanxy) = 0;
-	context.al = context.data.byte(kRyanx);
-	context.ah = context.data.byte(kRyany);
-	context.es.word(context.bx+10) = context.ax;
-	context.es.byte(context.bx+29) = 0;
+	data.byte(kResetmanxy) = 0;
+	al = data.byte(kRyanx);
+	ah = data.byte(kRyany);
+	es.word(bx+10) = ax;
+	es.byte(bx+29) = 0;
 	goto executewalk;
 notinnewroom:
-	context._dec(context.es.byte(context.bx+22));
-	context._cmp(context.es.byte(context.bx+22), -1);
-	if (context.flags.z())
+	_dec(es.byte(bx+22));
+	_cmp(es.byte(bx+22), -1);
+	if (flags.z())
 		goto executewalk;
 	return;
 executewalk:
-	context.es.byte(context.bx+22) = 0;
-	context.al = context.data.byte(kTurntoface);
-	context._cmp(context.al, context.data.byte(kFacing));
-	if (context.flags.z())
+	es.byte(bx+22) = 0;
+	al = data.byte(kTurntoface);
+	_cmp(al, data.byte(kFacing));
+	if (flags.z())
 		goto facingok;
-	aboutturn(context);
+	aboutturn();
 	goto notwalk;
 facingok:
-	context._cmp(context.data.byte(kTurndirection), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kTurndirection), 0);
+	if (flags.z())
 		goto alreadyturned;
-	context._cmp(context.data.byte(kLinepointer), 254);
-	if (!context.flags.z())
+	_cmp(data.byte(kLinepointer), 254);
+	if (!flags.z())
 		goto alreadyturned;
-	context.data.byte(kReasseschanges) = 1;
-	context.al = context.data.byte(kFacing);
-	context._cmp(context.al, context.data.byte(kLeavedirection));
-	if (!context.flags.z())
+	data.byte(kReasseschanges) = 1;
+	al = data.byte(kFacing);
+	_cmp(al, data.byte(kLeavedirection));
+	if (!flags.z())
 		goto alreadyturned;
-	checkforexit(context);
+	checkforexit();
 alreadyturned:
-	context.data.byte(kTurndirection) = 0;
-	context._cmp(context.data.byte(kLinepointer), 254);
-	if (!context.flags.z())
+	data.byte(kTurndirection) = 0;
+	_cmp(data.byte(kLinepointer), 254);
+	if (!flags.z())
 		goto walkman;
-	context.es.byte(context.bx+29) = 0;
+	es.byte(bx+29) = 0;
 	goto notwalk;
 walkman:
-	context.al = context.es.byte(context.bx+29);
-	context._inc(context.al);
-	context._cmp(context.al, 11);
-	if (!context.flags.z())
+	al = es.byte(bx+29);
+	_inc(al);
+	_cmp(al, 11);
+	if (!flags.z())
 		goto notanimend1;
-	context.al = 1;
+	al = 1;
 notanimend1:
-	context.es.byte(context.bx+29) = context.al;
-	walking(context);
-	context._cmp(context.data.byte(kLinepointer), 254);
-	if (context.flags.z())
+	es.byte(bx+29) = al;
+	walking();
+	_cmp(data.byte(kLinepointer), 254);
+	if (flags.z())
 		goto afterwalk;
-	context.al = context.data.byte(kFacing);
-	context._and(context.al, 1);
-	if (context.flags.z())
+	al = data.byte(kFacing);
+	_and(al, 1);
+	if (flags.z())
 		goto isdouble;
-	context.al = context.es.byte(context.bx+29);
-	context._cmp(context.al, 2);
-	if (context.flags.z())
+	al = es.byte(bx+29);
+	_cmp(al, 2);
+	if (flags.z())
 		goto afterwalk;
-	context._cmp(context.al, 7);
-	if (context.flags.z())
+	_cmp(al, 7);
+	if (flags.z())
 		goto afterwalk;
 isdouble:
-	walking(context);
+	walking();
 afterwalk:
-	context._cmp(context.data.byte(kLinepointer), 254);
-	if (!context.flags.z())
+	_cmp(data.byte(kLinepointer), 254);
+	if (!flags.z())
 		goto notwalk;
-	context.al = context.data.byte(kTurntoface);
-	context._cmp(context.al, context.data.byte(kFacing));
-	if (!context.flags.z())
+	al = data.byte(kTurntoface);
+	_cmp(al, data.byte(kFacing));
+	if (!flags.z())
 		goto notwalk;
-	context.data.byte(kReasseschanges) = 1;
-	context.al = context.data.byte(kFacing);
-	context._cmp(context.al, context.data.byte(kLeavedirection));
-	if (!context.flags.z())
+	data.byte(kReasseschanges) = 1;
+	al = data.byte(kFacing);
+	_cmp(al, data.byte(kLeavedirection));
+	if (!flags.z())
 		goto notwalk;
-	checkforexit(context);
+	checkforexit();
 notwalk:
-	context.al = context.data.byte(kFacing);
-	context.ah = 0;
-	context.di = 1105;
-	context._add(context.di, context.ax);
-	context.al = context.cs.byte(context.di);
-	context._add(context.al, context.es.byte(context.bx+29));
-	context.es.byte(context.bx+15) = context.al;
-	context.ax = context.es.word(context.bx+10);
-	context.data.byte(kRyanx) = context.al;
-	context.data.byte(kRyany) = context.ah;
+	al = data.byte(kFacing);
+	ah = 0;
+	di = 1105;
+	_add(di, ax);
+	al = cs.byte(di);
+	_add(al, es.byte(bx+29));
+	es.byte(bx+15) = al;
+	ax = es.word(bx+10);
+	data.byte(kRyanx) = al;
+	data.byte(kRyany) = ah;
 }
 
-void aboutturn(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kTurndirection), 1);
-	if (context.flags.z())
+void DreamGenContext::aboutturn() {
+	STACK_CHECK;
+	_cmp(data.byte(kTurndirection), 1);
+	if (flags.z())
 		goto incdir;
-	context._cmp(context.data.byte(kTurndirection), -1);
-	if (context.flags.z())
+	_cmp(data.byte(kTurndirection), -1);
+	if (flags.z())
 		goto decdir;
-	context.al = context.data.byte(kFacing);
-	context._sub(context.al, context.data.byte(kTurntoface));
-	if (!context.flags.c())
+	al = data.byte(kFacing);
+	_sub(al, data.byte(kTurntoface));
+	if (!flags.c())
 		goto higher;
-	context._neg(context.al);
-	context._cmp(context.al, 4);
-	if (!context.flags.c())
+	_neg(al);
+	_cmp(al, 4);
+	if (!flags.c())
 		goto decdir;
 	goto incdir;
 higher:
-	context._cmp(context.al, 4);
-	if (!context.flags.c())
+	_cmp(al, 4);
+	if (!flags.c())
 		goto incdir;
 	goto decdir;
 incdir:
-	context.data.byte(kTurndirection) = 1;
-	context.al = context.data.byte(kFacing);
-	context._inc(context.al);
-	context._and(context.al, 7);
-	context.data.byte(kFacing) = context.al;
-	context.es.byte(context.bx+29) = 0;
+	data.byte(kTurndirection) = 1;
+	al = data.byte(kFacing);
+	_inc(al);
+	_and(al, 7);
+	data.byte(kFacing) = al;
+	es.byte(bx+29) = 0;
 	return;
 decdir:
-	context.data.byte(kTurndirection) = -1;
-	context.al = context.data.byte(kFacing);
-	context._dec(context.al);
-	context._and(context.al, 7);
-	context.data.byte(kFacing) = context.al;
-	context.es.byte(context.bx+29) = 0;
+	data.byte(kTurndirection) = -1;
+	al = data.byte(kFacing);
+	_dec(al);
+	_and(al, 7);
+	data.byte(kFacing) = al;
+	es.byte(bx+29) = 0;
 }
 
-void walking(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLinedirection), 0);
-	if (context.flags.z())
+void DreamGenContext::walking() {
+	STACK_CHECK;
+	_cmp(data.byte(kLinedirection), 0);
+	if (flags.z())
 		goto normalwalk;
-	context.al = context.data.byte(kLinepointer);
-	context._dec(context.al);
-	context.data.byte(kLinepointer) = context.al;
-	context._cmp(context.al, 200);
-	if (!context.flags.c())
+	al = data.byte(kLinepointer);
+	_dec(al);
+	data.byte(kLinepointer) = al;
+	_cmp(al, 200);
+	if (!flags.c())
 		goto endofline;
 	goto continuewalk;
 normalwalk:
-	context.al = context.data.byte(kLinepointer);
-	context._inc(context.al);
-	context.data.byte(kLinepointer) = context.al;
-	context._cmp(context.al, context.data.byte(kLinelength));
-	if (!context.flags.c())
+	al = data.byte(kLinepointer);
+	_inc(al);
+	data.byte(kLinepointer) = al;
+	_cmp(al, data.byte(kLinelength));
+	if (!flags.c())
 		goto endofline;
 continuewalk:
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.push(context.es);
-	context.push(context.bx);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.bx = 8173;
-	context._add(context.bx, context.ax);
-	context.ax = context.es.word(context.bx);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.es.word(context.bx+10) = context.ax;
+	ah = 0;
+	_add(ax, ax);
+	push(es);
+	push(bx);
+	dx = data;
+	es = dx;
+	bx = 8173;
+	_add(bx, ax);
+	ax = es.word(bx);
+	bx = pop();
+	es = pop();
+	es.word(bx+10) = ax;
 	return;
 endofline:
-	context.data.byte(kLinepointer) = 254;
-	context.al = context.data.byte(kDestination);
-	context.data.byte(kManspath) = context.al;
-	context._cmp(context.al, context.data.byte(kFinaldest));
-	if (context.flags.z())
+	data.byte(kLinepointer) = 254;
+	al = data.byte(kDestination);
+	data.byte(kManspath) = al;
+	_cmp(al, data.byte(kFinaldest));
+	if (flags.z())
 		goto finishedwalk;
-	context.al = context.data.byte(kFinaldest);
-	context.data.byte(kDestination) = context.al;
-	context.push(context.es);
-	context.push(context.bx);
-	autosetwalk(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	al = data.byte(kFinaldest);
+	data.byte(kDestination) = al;
+	push(es);
+	push(bx);
+	autosetwalk();
+	bx = pop();
+	es = pop();
 	return;
 finishedwalk:
-	facerightway(context);
+	facerightway();
 }
 
-void facerightway(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	getroomspaths(context);
-	context.al = context.data.byte(kManspath);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = context.es.byte(context.bx+7);
-	context.data.byte(kTurntoface) = context.al;
-	context.data.byte(kLeavedirection) = context.al;
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::facerightway() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	getroomspaths();
+	al = data.byte(kManspath);
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(bx, ax);
+	al = es.byte(bx+7);
+	data.byte(kTurntoface) = al;
+	data.byte(kLeavedirection) = al;
+	bx = pop();
+	es = pop();
 }
 
-void checkforexit(Context &context) {
-	STACK_CHECK(context);
-	context.cl = context.data.byte(kRyanx);
-	context._add(context.cl, 12);
-	context.ch = context.data.byte(kRyany);
-	context._add(context.ch, 12);
-	checkone(context);
-	context.data.byte(kLastflag) = context.cl;
-	context.data.byte(kLastflagex) = context.ch;
-	context.data.byte(kFlagx) = context.dl;
-	context.data.byte(kFlagy) = context.dh;
-	context.al = context.data.byte(kLastflag);
-	context._test(context.al, 64);
-	if (context.flags.z())
+void DreamGenContext::checkforexit() {
+	STACK_CHECK;
+	cl = data.byte(kRyanx);
+	_add(cl, 12);
+	ch = data.byte(kRyany);
+	_add(ch, 12);
+	checkone();
+	data.byte(kLastflag) = cl;
+	data.byte(kLastflagex) = ch;
+	data.byte(kFlagx) = dl;
+	data.byte(kFlagy) = dh;
+	al = data.byte(kLastflag);
+	_test(al, 64);
+	if (flags.z())
 		goto notnewdirect;
-	context.al = context.data.byte(kLastflagex);
-	context.data.byte(kAutolocation) = context.al;
+	al = data.byte(kLastflagex);
+	data.byte(kAutolocation) = al;
 	return;
 notnewdirect:
-	context._test(context.al, 32);
-	if (context.flags.z())
+	_test(al, 32);
+	if (flags.z())
 		goto notleave;
-	context.push(context.es);
-	context.push(context.bx);
-	context._cmp(context.data.byte(kReallocation), 2);
-	if (!context.flags.z())
+	push(es);
+	push(bx);
+	_cmp(data.byte(kReallocation), 2);
+	if (!flags.z())
 		goto notlouis;
-	context.bl = 0;
-	context.push(context.bx);
-	context.al = 'W';
-	context.ah = 'E';
-	context.cl = 'T';
-	context.ch = 'A';
-	isryanholding(context);
-	context.bx = context.pop();
-	if (context.flags.z())
+	bl = 0;
+	push(bx);
+	al = 'W';
+	ah = 'E';
+	cl = 'T';
+	ch = 'A';
+	isryanholding();
+	bx = pop();
+	if (flags.z())
 		goto noshoe1;
-	context._inc(context.bl);
+	_inc(bl);
 noshoe1:
-	context.push(context.bx);
-	context.al = 'W';
-	context.ah = 'E';
-	context.cl = 'T';
-	context.ch = 'B';
-	isryanholding(context);
-	context.bx = context.pop();
-	if (context.flags.z())
+	push(bx);
+	al = 'W';
+	ah = 'E';
+	cl = 'T';
+	ch = 'B';
+	isryanholding();
+	bx = pop();
+	if (flags.z())
 		goto noshoe2;
-	context._inc(context.bl);
+	_inc(bl);
 noshoe2:
-	context._cmp(context.bl, 2);
-	if (context.flags.z())
+	_cmp(bl, 2);
+	if (flags.z())
 		goto notlouis;
-	context.al = 42;
-	context._cmp(context.bl, 0);
-	if (context.flags.z())
+	al = 42;
+	_cmp(bl, 0);
+	if (flags.z())
 		goto notravmessage;
-	context._inc(context.al);
+	_inc(al);
 notravmessage:
-	context.cx = 80;
-	context.dx = 10;
-	context.bl = 68;
-	context.bh = 64;
-	setuptimeduse(context);
-	context.al = context.data.byte(kFacing);
-	context._add(context.al, 4);
-	context._and(context.al, 7);
-	context.data.byte(kTurntoface) = context.al;
-	context.bx = context.pop();
-	context.es = context.pop();
+	cx = 80;
+	dx = 10;
+	bl = 68;
+	bh = 64;
+	setuptimeduse();
+	al = data.byte(kFacing);
+	_add(al, 4);
+	_and(al, 7);
+	data.byte(kTurntoface) = al;
+	bx = pop();
+	es = pop();
 	return;
 notlouis:
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.data.byte(kNeedtotravel) = 1;
+	bx = pop();
+	es = pop();
+	data.byte(kNeedtotravel) = 1;
 	return;
 notleave:
-	context._test(context.al, 4);
-	if (context.flags.z())
+	_test(al, 4);
+	if (flags.z())
 		goto notaleft;
-	adjustleft(context);
+	adjustleft();
 	return;
 notaleft:
-	context._test(context.al, 2);
-	if (context.flags.z())
+	_test(al, 2);
+	if (flags.z())
 		goto notaright;
-	adjustright(context);
+	adjustright();
 	return;
 notaright:
-	context._test(context.al, 8);
-	if (context.flags.z())
+	_test(al, 8);
+	if (flags.z())
 		goto notadown;
-	adjustdown(context);
+	adjustdown();
 	return;
 notadown:
-	context._test(context.al, 16);
-	if (context.flags.z())
+	_test(al, 16);
+	if (flags.z())
 		return /* (notanup) */;
-	adjustup(context);
+	adjustup();
 }
 
-void adjustdown(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context._add(context.data.byte(kMapy), 10);
-	context.al = context.data.byte(kLastflagex);
-	context.cl = 16;
-	context._mul(context.cl);
-	context.es.byte(context.bx+11) = context.al;
-	context.data.byte(kNowinnewroom) = 1;
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::adjustdown() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	_add(data.byte(kMapy), 10);
+	al = data.byte(kLastflagex);
+	cl = 16;
+	_mul(cl);
+	es.byte(bx+11) = al;
+	data.byte(kNowinnewroom) = 1;
+	bx = pop();
+	es = pop();
 }
 
-void adjustup(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context._sub(context.data.byte(kMapy), 10);
-	context.al = context.data.byte(kLastflagex);
-	context.cl = 16;
-	context._mul(context.cl);
-	context.es.byte(context.bx+11) = context.al;
-	context.data.byte(kNowinnewroom) = 1;
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::adjustup() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	_sub(data.byte(kMapy), 10);
+	al = data.byte(kLastflagex);
+	cl = 16;
+	_mul(cl);
+	es.byte(bx+11) = al;
+	data.byte(kNowinnewroom) = 1;
+	bx = pop();
+	es = pop();
 }
 
-void adjustleft(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context.data.byte(kLastflag) = 0;
-	context._sub(context.data.byte(kMapx), 11);
-	context.al = context.data.byte(kLastflagex);
-	context.cl = 16;
-	context._mul(context.cl);
-	context.es.byte(context.bx+10) = context.al;
-	context.data.byte(kNowinnewroom) = 1;
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::adjustleft() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	data.byte(kLastflag) = 0;
+	_sub(data.byte(kMapx), 11);
+	al = data.byte(kLastflagex);
+	cl = 16;
+	_mul(cl);
+	es.byte(bx+10) = al;
+	data.byte(kNowinnewroom) = 1;
+	bx = pop();
+	es = pop();
 }
 
-void adjustright(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context._add(context.data.byte(kMapx), 11);
-	context.al = context.data.byte(kLastflagex);
-	context.cl = 16;
-	context._mul(context.cl);
-	context._sub(context.al, 2);
-	context.es.byte(context.bx+10) = context.al;
-	context.data.byte(kNowinnewroom) = 1;
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::adjustright() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	_add(data.byte(kMapx), 11);
+	al = data.byte(kLastflagex);
+	cl = 16;
+	_mul(cl);
+	_sub(al, 2);
+	es.byte(bx+10) = al;
+	data.byte(kNowinnewroom) = 1;
+	bx = pop();
+	es = pop();
 }
 
-void reminders(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kReallocation), 24);
-	if (!context.flags.z())
+void DreamGenContext::reminders() {
+	STACK_CHECK;
+	_cmp(data.byte(kReallocation), 24);
+	if (!flags.z())
 		return /* (notinedenslift) */;
-	context._cmp(context.data.byte(kMapx), 44);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 44);
+	if (!flags.z())
 		return /* (notinedenslift) */;
-	context._cmp(context.data.byte(kProgresspoints), 0);
-	if (!context.flags.z())
+	_cmp(data.byte(kProgresspoints), 0);
+	if (!flags.z())
 		return /* (notfirst) */;
-	context.al = 'D';
-	context.ah = 'K';
-	context.cl = 'E';
-	context.ch = 'Y';
-	isryanholding(context);
-	if (context.flags.z())
+	al = 'D';
+	ah = 'K';
+	cl = 'E';
+	ch = 'Y';
+	isryanholding();
+	if (flags.z())
 		goto forgotone;
-	context.al = 'C';
-	context.ah = 'S';
-	context.cl = 'H';
-	context.ch = 'R';
-	findexobject(context);
-	context._cmp(context.al, (114));
-	if (context.flags.z())
+	al = 'C';
+	ah = 'S';
+	cl = 'H';
+	ch = 'R';
+	findexobject();
+	_cmp(al, (114));
+	if (flags.z())
 		goto forgotone;
-	context.ax = context.es.word(context.bx+2);
-	context._cmp(context.al, 4);
-	if (!context.flags.z())
+	ax = es.word(bx+2);
+	_cmp(al, 4);
+	if (!flags.z())
 		goto forgotone;
-	context._cmp(context.ah, 255);
-	if (context.flags.z())
+	_cmp(ah, 255);
+	if (flags.z())
 		goto havegotcard;
-	context.cl = 'P';
-	context.ch = 'U';
-	context.dl = 'R';
-	context.dh = 'S';
-	context._xchg(context.al, context.ah);
-	compare(context);
-	if (!context.flags.z())
+	cl = 'P';
+	ch = 'U';
+	dl = 'R';
+	dh = 'S';
+	_xchg(al, ah);
+	compare();
+	if (!flags.z())
 		goto forgotone;
 havegotcard:
-	context._inc(context.data.byte(kProgresspoints));
+	_inc(data.byte(kProgresspoints));
 	return;
 forgotone:
-	context.al = 50;
-	context.bl = 54;
-	context.bh = 70;
-	context.cx = 48;
-	context.dx = 8;
-	setuptimeduse(context);
+	al = 50;
+	bl = 54;
+	bh = 70;
+	cx = 48;
+	dx = 8;
+	setuptimeduse();
 }
 
-void initrain(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24));
-	context.bx = 1113;
+void DreamGenContext::initrain() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24));
+	bx = 1113;
 checkmorerain:
-	context.al = context.cs.byte(context.bx);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	al = cs.byte(bx);
+	_cmp(al, 255);
+	if (flags.z())
 		goto finishinitrain;
-	context._cmp(context.al, context.data.byte(kReallocation));
-	if (!context.flags.z())
+	_cmp(al, data.byte(kReallocation));
+	if (!flags.z())
 		goto checkrain;
-	context.al = context.cs.byte(context.bx+1);
-	context._cmp(context.al, context.data.byte(kMapx));
-	if (!context.flags.z())
+	al = cs.byte(bx+1);
+	_cmp(al, data.byte(kMapx));
+	if (!flags.z())
 		goto checkrain;
-	context.al = context.cs.byte(context.bx+2);
-	context._cmp(context.al, context.data.byte(kMapy));
-	if (!context.flags.z())
+	al = cs.byte(bx+2);
+	_cmp(al, data.byte(kMapy));
+	if (!flags.z())
 		goto checkrain;
-	context.al = context.cs.byte(context.bx+3);
-	context.data.byte(kRainspace) = context.al;
+	al = cs.byte(bx+3);
+	data.byte(kRainspace) = al;
 	goto dorain;
 checkrain:
-	context._add(context.bx, 4);
+	_add(bx, 4);
 	goto checkmorerain;
 dorain:
-	context.cx = 4;
+	cx = 4;
 initraintop:
-	randomnumber(context);
-	context._and(context.al, 31);
-	context._add(context.al, 3);
-	context._cmp(context.al, context.data.byte(kRainspace));
-	if (!context.flags.c())
+	randomnumber();
+	_and(al, 31);
+	_add(al, 3);
+	_cmp(al, data.byte(kRainspace));
+	if (!flags.c())
 		goto initraintop;
-	context._add(context.cl, context.al);
-	context._cmp(context.cl, context.data.byte(kMapxsize));
-	if (!context.flags.c())
+	_add(cl, al);
+	_cmp(cl, data.byte(kMapxsize));
+	if (!flags.c())
 		goto initrainside;
-	context.push(context.cx);
-	splitintolines(context);
-	context.cx = context.pop();
+	push(cx);
+	splitintolines();
+	cx = pop();
 	goto initraintop;
 initrainside:
-	context.cl = context.data.byte(kMapxsize);
-	context._dec(context.cl);
+	cl = data.byte(kMapxsize);
+	_dec(cl);
 initrainside2:
-	randomnumber(context);
-	context._and(context.al, 31);
-	context._add(context.al, 3);
-	context._cmp(context.al, context.data.byte(kRainspace));
-	if (!context.flags.c())
+	randomnumber();
+	_and(al, 31);
+	_add(al, 3);
+	_cmp(al, data.byte(kRainspace));
+	if (!flags.c())
 		goto initrainside2;
-	context._add(context.ch, context.al);
-	context._cmp(context.ch, context.data.byte(kMapysize));
-	if (!context.flags.c())
+	_add(ch, al);
+	_cmp(ch, data.byte(kMapysize));
+	if (!flags.c())
 		goto finishinitrain;
-	context.push(context.cx);
-	splitintolines(context);
-	context.cx = context.pop();
+	push(cx);
+	splitintolines();
+	cx = pop();
 	goto initrainside2;
 finishinitrain:
-	context.al = 255;
-	context._stosb();
+	al = 255;
+	_stosb();
 }
 
-void splitintolines(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::splitintolines() {
+	STACK_CHECK;
 lookforlinestart:
-	getblockofpixel(context);
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	getblockofpixel();
+	_cmp(al, 0);
+	if (!flags.z())
 		goto foundlinestart;
-	context._dec(context.cl);
-	context._inc(context.ch);
-	context._cmp(context.cl, 0);
-	if (context.flags.z())
+	_dec(cl);
+	_inc(ch);
+	_cmp(cl, 0);
+	if (flags.z())
 		return /* (endofthisline) */;
-	context._cmp(context.ch, context.data.byte(kMapysize));
-	if (!context.flags.c())
+	_cmp(ch, data.byte(kMapysize));
+	if (!flags.c())
 		return /* (endofthisline) */;
 	goto lookforlinestart;
 foundlinestart:
-	context.es.word(context.di) = context.cx;
-	context.bh = 1;
+	es.word(di) = cx;
+	bh = 1;
 lookforlineend:
-	getblockofpixel(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	getblockofpixel();
+	_cmp(al, 0);
+	if (flags.z())
 		goto foundlineend;
-	context._dec(context.cl);
-	context._inc(context.ch);
-	context._cmp(context.cl, 0);
-	if (context.flags.z())
+	_dec(cl);
+	_inc(ch);
+	_cmp(cl, 0);
+	if (flags.z())
 		goto foundlineend;
-	context._cmp(context.ch, context.data.byte(kMapysize));
-	if (!context.flags.c())
+	_cmp(ch, data.byte(kMapysize));
+	if (!flags.c())
 		goto foundlineend;
-	context._inc(context.bh);
+	_inc(bh);
 	goto lookforlineend;
 foundlineend:
-	context.push(context.cx);
-	context.es.byte(context.di+2) = context.bh;
-	randomnumber(context);
-	context.es.byte(context.di+3) = context.al;
-	randomnumber(context);
-	context.es.byte(context.di+4) = context.al;
-	randomnumber(context);
-	context._and(context.al, 3);
-	context._add(context.al, 4);
-	context.es.byte(context.di+5) = context.al;
-	context._add(context.di, 6);
-	context.cx = context.pop();
-	context._cmp(context.cl, 0);
-	if (context.flags.z())
+	push(cx);
+	es.byte(di+2) = bh;
+	randomnumber();
+	es.byte(di+3) = al;
+	randomnumber();
+	es.byte(di+4) = al;
+	randomnumber();
+	_and(al, 3);
+	_add(al, 4);
+	es.byte(di+5) = al;
+	_add(di, 6);
+	cx = pop();
+	_cmp(cl, 0);
+	if (flags.z())
 		return /* (endofthisline) */;
-	context._cmp(context.ch, context.data.byte(kMapysize));
-	if (!context.flags.c())
+	_cmp(ch, data.byte(kMapysize));
+	if (!flags.c())
 		return /* (endofthisline) */;
 	goto lookforlinestart;
 }
 
-void getblockofpixel(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.cx);
-	context.push(context.es);
-	context.push(context.di);
-	context.ax = context.data.word(kMapxstart);
-	context._add(context.cl, context.al);
-	context.ax = context.data.word(kMapystart);
-	context._add(context.ch, context.al);
-	checkone(context);
-	context._and(context.cl, 1);
-	if (!context.flags.z())
+void DreamGenContext::getblockofpixel() {
+	STACK_CHECK;
+	push(cx);
+	push(es);
+	push(di);
+	ax = data.word(kMapxstart);
+	_add(cl, al);
+	ax = data.word(kMapystart);
+	_add(ch, al);
+	checkone();
+	_and(cl, 1);
+	if (!flags.z())
 		goto failrain;
-	context.di = context.pop();
-	context.es = context.pop();
-	context.cx = context.pop();
+	di = pop();
+	es = pop();
+	cx = pop();
 	return;
 failrain:
-	context.di = context.pop();
-	context.es = context.pop();
-	context.cx = context.pop();
-	context.al = 0;
+	di = pop();
+	es = pop();
+	cx = pop();
+	al = 0;
 }
 
-void showrain(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kMainsprites);
-	context.si = 6*58;
-	context.ax = context.ds.word(context.si+2);
-	context.si = context.ax;
-	context._add(context.si, 2080);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24));
-	context.es = context.data.word(kBuffers);
-	context._cmp(context.es.byte(context.bx), 255);
-	if (context.flags.z())
+void DreamGenContext::showrain() {
+	STACK_CHECK;
+	ds = data.word(kMainsprites);
+	si = 6*58;
+	ax = ds.word(si+2);
+	si = ax;
+	_add(si, 2080);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24));
+	es = data.word(kBuffers);
+	_cmp(es.byte(bx), 255);
+	if (flags.z())
 		return /* (nothunder) */;
 morerain:
-	context.es = context.data.word(kBuffers);
-	context._cmp(context.es.byte(context.bx), 255);
-	if (context.flags.z())
+	es = data.word(kBuffers);
+	_cmp(es.byte(bx), 255);
+	if (flags.z())
 		goto finishrain;
-	context.al = context.es.byte(context.bx+1);
-	context.ah = 0;
-	context._add(context.ax, context.data.word(kMapady));
-	context._add(context.ax, context.data.word(kMapystart));
-	context.cx = 320;
-	context._mul(context.cx);
-	context.cl = context.es.byte(context.bx);
-	context.ch = 0;
-	context._add(context.ax, context.cx);
-	context._add(context.ax, context.data.word(kMapadx));
-	context._add(context.ax, context.data.word(kMapxstart));
-	context.di = context.ax;
-	context.cl = context.es.byte(context.bx+2);
-	context.ch = 0;
-	context.ax = context.es.word(context.bx+3);
-	context.dl = context.es.byte(context.bx+5);
-	context.dh = 0;
-	context._sub(context.ax, context.dx);
-	context._and(context.ax, 511);
-	context.es.word(context.bx+3) = context.ax;
-	context._add(context.bx, 6);
-	context.push(context.si);
-	context._add(context.si, context.ax);
-	context.es = context.data.word(kWorkspace);
-	context.ah = 0;
-	context.dx = 320-2;
+	al = es.byte(bx+1);
+	ah = 0;
+	_add(ax, data.word(kMapady));
+	_add(ax, data.word(kMapystart));
+	cx = 320;
+	_mul(cx);
+	cl = es.byte(bx);
+	ch = 0;
+	_add(ax, cx);
+	_add(ax, data.word(kMapadx));
+	_add(ax, data.word(kMapxstart));
+	di = ax;
+	cl = es.byte(bx+2);
+	ch = 0;
+	ax = es.word(bx+3);
+	dl = es.byte(bx+5);
+	dh = 0;
+	_sub(ax, dx);
+	_and(ax, 511);
+	es.word(bx+3) = ax;
+	_add(bx, 6);
+	push(si);
+	_add(si, ax);
+	es = data.word(kWorkspace);
+	ah = 0;
+	dx = 320-2;
 rainloop:
-	context._lodsb();
-	context._cmp(context.al, context.ah);
-	if (context.flags.z())
+	_lodsb();
+	_cmp(al, ah);
+	if (flags.z())
 		goto noplot;
-	context._stosb();
-	context._add(context.di, context.dx);
-	if (--context.cx)
+	_stosb();
+	_add(di, dx);
+	if (--cx)
 		goto rainloop;
-	context.si = context.pop();
+	si = pop();
 	goto morerain;
 noplot:
-	context._add(context.di, 320-1);
-	if (--context.cx)
+	_add(di, 320-1);
+	if (--cx)
 		goto rainloop;
-	context.si = context.pop();
+	si = pop();
 	goto morerain;
 finishrain:
-	context._cmp(context.data.word(kCh1blockstocopy), 0);
-	if (!context.flags.z())
+	_cmp(data.word(kCh1blockstocopy), 0);
+	if (!flags.z())
 		return /* (nothunder) */;
-	context._cmp(context.data.byte(kReallocation), 2);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 2);
+	if (!flags.z())
 		goto notlouisthund;
-	context._cmp(context.data.byte(kBeenmugged), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kBeenmugged), 1);
+	if (!flags.z())
 		return /* (nothunder) */;
 notlouisthund:
-	context._cmp(context.data.byte(kReallocation), 55);
-	if (context.flags.z())
+	_cmp(data.byte(kReallocation), 55);
+	if (flags.z())
 		return /* (nothunder) */;
-	randomnum1(context);
-	context._cmp(context.al, 1);
-	if (!context.flags.c())
+	randomnum1();
+	_cmp(al, 1);
+	if (!flags.c())
 		return /* (nothunder) */;
-	context.al = 7;
-	context._cmp(context.data.byte(kCh0playing), 6);
-	if (context.flags.z())
+	al = 7;
+	_cmp(data.byte(kCh0playing), 6);
+	if (flags.z())
 		goto isthunder1;
-	context.al = 4;
+	al = 4;
 isthunder1:
-	playchannel1(context);
+	playchannel1();
 }
 
-void backobject(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kSetdat);
-	context.di = context.es.word(context.bx+20);
-	context.al = context.es.byte(context.bx+18);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+void DreamGenContext::backobject() {
+	STACK_CHECK;
+	ds = data.word(kSetdat);
+	di = es.word(bx+20);
+	al = es.byte(bx+18);
+	_cmp(al, 0);
+	if (flags.z())
 		goto _tmp48z;
-	context._dec(context.al);
-	context.es.byte(context.bx+18) = context.al;
+	_dec(al);
+	es.byte(bx+18) = al;
 	return /* (finishback) */;
 _tmp48z:
-	context.al = context.ds.byte(context.di+7);
-	context.es.byte(context.bx+18) = context.al;
-	context.al = context.ds.byte(context.di+8);
-	context._cmp(context.al, 6);
-	if (!context.flags.z())
+	al = ds.byte(di+7);
+	es.byte(bx+18) = al;
+	al = ds.byte(di+8);
+	_cmp(al, 6);
+	if (!flags.z())
 		goto notwidedoor;
-	widedoor(context);
+	widedoor();
 	return /* (finishback) */;
 notwidedoor:
-	context._cmp(context.al, 5);
-	if (!context.flags.z())
+	_cmp(al, 5);
+	if (!flags.z())
 		goto notrandom;
-	random(context);
+	random();
 	return /* (finishback) */;
 notrandom:
-	context._cmp(context.al, 4);
-	if (!context.flags.z())
+	_cmp(al, 4);
+	if (!flags.z())
 		goto notlockdoor;
-	lockeddoorway(context);
+	lockeddoorway();
 	return /* (finishback) */;
 notlockdoor:
-	context._cmp(context.al, 3);
-	if (!context.flags.z())
+	_cmp(al, 3);
+	if (!flags.z())
 		goto notlift;
-	liftsprite(context);
+	liftsprite();
 	return /* (finishback) */;
 notlift:
-	context._cmp(context.al, 2);
-	if (!context.flags.z())
+	_cmp(al, 2);
+	if (!flags.z())
 		goto notdoor;
-	doorway(context);
+	doorway();
 	return /* (finishback) */;
 notdoor:
-	context._cmp(context.al, 1);
-	if (!context.flags.z())
+	_cmp(al, 1);
+	if (!flags.z())
 		goto steadyob;
-	constant(context);
+	constant();
 	return /* (finishback) */;
 steadyob:
-	steady(context);
+	steady();
 }
 
-void liftsprite(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kLiftflag);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+void DreamGenContext::liftsprite() {
+	STACK_CHECK;
+	al = data.byte(kLiftflag);
+	_cmp(al, 0);
+	if (flags.z())
 		goto liftclosed;
-	context._cmp(context.al, 1);
-	if (context.flags.z())
+	_cmp(al, 1);
+	if (flags.z())
 		goto liftopen;
-	context._cmp(context.al, 3);
-	if (context.flags.z())
+	_cmp(al, 3);
+	if (flags.z())
 		goto openlift;
-	context.al = context.es.byte(context.bx+19);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	al = es.byte(bx+19);
+	_cmp(al, 0);
+	if (flags.z())
 		goto finishclose;
-	context._dec(context.al);
-	context._cmp(context.al, 11);
-	if (!context.flags.z())
+	_dec(al);
+	_cmp(al, 11);
+	if (!flags.z())
 		goto pokelift;
-	context.push(context.ax);
-	context.al = 3;
-	liftnoise(context);
-	context.ax = context.pop();
+	push(ax);
+	al = 3;
+	liftnoise();
+	ax = pop();
 	goto pokelift;
 finishclose:
-	context.data.byte(kLiftflag) = 0;
+	data.byte(kLiftflag) = 0;
 	return;
 openlift:
-	context.al = context.es.byte(context.bx+19);
-	context._cmp(context.al, 12);
-	if (context.flags.z())
+	al = es.byte(bx+19);
+	_cmp(al, 12);
+	if (flags.z())
 		goto endoflist;
-	context._inc(context.al);
-	context._cmp(context.al, 1);
-	if (!context.flags.z())
+	_inc(al);
+	_cmp(al, 1);
+	if (!flags.z())
 		goto pokelift;
-	context.push(context.ax);
-	context.al = 2;
-	liftnoise(context);
-	context.ax = context.pop();
+	push(ax);
+	al = 2;
+	liftnoise();
+	ax = pop();
 pokelift:
-	context.es.byte(context.bx+19) = context.al;
-	context.ah = 0;
-	context.push(context.di);
-	context._add(context.di, context.ax);
-	context.al = context.ds.byte(context.di+18);
-	context.di = context.pop();
-	context.es.byte(context.bx+15) = context.al;
-	context.ds.byte(context.di+17) = context.al;
+	es.byte(bx+19) = al;
+	ah = 0;
+	push(di);
+	_add(di, ax);
+	al = ds.byte(di+18);
+	di = pop();
+	es.byte(bx+15) = al;
+	ds.byte(di+17) = al;
 	return;
 endoflist:
-	context.data.byte(kLiftflag) = 1;
+	data.byte(kLiftflag) = 1;
 	return;
 liftopen:
-	context.al = context.data.byte(kLiftpath);
-	context.push(context.es);
-	context.push(context.bx);
-	turnpathon(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context._cmp(context.data.byte(kCounttoclose), 0);
-	if (context.flags.z())
+	al = data.byte(kLiftpath);
+	push(es);
+	push(bx);
+	turnpathon();
+	bx = pop();
+	es = pop();
+	_cmp(data.byte(kCounttoclose), 0);
+	if (flags.z())
 		goto nocountclose;
-	context._dec(context.data.byte(kCounttoclose));
-	context._cmp(context.data.byte(kCounttoclose), 0);
-	if (!context.flags.z())
+	_dec(data.byte(kCounttoclose));
+	_cmp(data.byte(kCounttoclose), 0);
+	if (!flags.z())
 		goto nocountclose;
-	context.data.byte(kLiftflag) = 2;
+	data.byte(kLiftflag) = 2;
 nocountclose:
-	context.al = 12;
+	al = 12;
 	goto pokelift;
 liftclosed:
-	context.al = context.data.byte(kLiftpath);
-	context.push(context.es);
-	context.push(context.bx);
-	turnpathoff(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context._cmp(context.data.byte(kCounttoopen), 0);
-	if (context.flags.z())
+	al = data.byte(kLiftpath);
+	push(es);
+	push(bx);
+	turnpathoff();
+	bx = pop();
+	es = pop();
+	_cmp(data.byte(kCounttoopen), 0);
+	if (flags.z())
 		goto nocountopen;
-	context._dec(context.data.byte(kCounttoopen));
-	context._cmp(context.data.byte(kCounttoopen), 0);
-	if (!context.flags.z())
+	_dec(data.byte(kCounttoopen));
+	_cmp(data.byte(kCounttoopen), 0);
+	if (!flags.z())
 		goto nocountopen;
-	context.data.byte(kLiftflag) = 3;
+	data.byte(kLiftflag) = 3;
 nocountopen:
-	context.al = 0;
+	al = 0;
 	goto pokelift;
 }
 
-void liftnoise(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kReallocation), 5);
-	if (context.flags.z())
+void DreamGenContext::liftnoise() {
+	STACK_CHECK;
+	_cmp(data.byte(kReallocation), 5);
+	if (flags.z())
 		goto hissnoise;
-	context._cmp(context.data.byte(kReallocation), 21);
-	if (context.flags.z())
+	_cmp(data.byte(kReallocation), 21);
+	if (flags.z())
 		goto hissnoise;
-	playchannel1(context);
+	playchannel1();
 	return;
 hissnoise:
-	context.al = 13;
-	playchannel1(context);
+	al = 13;
+	playchannel1();
 }
 
-void random(Context &context) {
-	STACK_CHECK(context);
-	randomnum1(context);
-	context.push(context.di);
-	context._and(context.ax, 7);
-	context._add(context.di, 18);
-	context._add(context.di, context.ax);
-	context.al = context.ds.byte(context.di);
-	context.di = context.pop();
-	context.es.byte(context.bx+15) = context.al;
+void DreamGenContext::random() {
+	STACK_CHECK;
+	randomnum1();
+	push(di);
+	_and(ax, 7);
+	_add(di, 18);
+	_add(di, ax);
+	al = ds.byte(di);
+	di = pop();
+	es.byte(bx+15) = al;
 }
 
-void steady(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.ds.byte(context.di+18);
-	context.ds.byte(context.di+17) = context.al;
-	context.es.byte(context.bx+15) = context.al;
+void DreamGenContext::steady() {
+	STACK_CHECK;
+	al = ds.byte(di+18);
+	ds.byte(di+17) = al;
+	es.byte(bx+15) = al;
 }
 
-void constant(Context &context) {
-	STACK_CHECK(context);
-	context._inc(context.es.byte(context.bx+19));
-	context.cl = context.es.byte(context.bx+19);
-	context.ch = 0;
-	context._add(context.di, context.cx);
-	context._cmp(context.ds.byte(context.di+18), 255);
-	if (!context.flags.z())
+void DreamGenContext::constant() {
+	STACK_CHECK;
+	_inc(es.byte(bx+19));
+	cl = es.byte(bx+19);
+	ch = 0;
+	_add(di, cx);
+	_cmp(ds.byte(di+18), 255);
+	if (!flags.z())
 		goto gotconst;
-	context._sub(context.di, context.cx);
-	context.cx = 0;
-	context.es.byte(context.bx+19) = context.cl;
+	_sub(di, cx);
+	cx = 0;
+	es.byte(bx+19) = cl;
 gotconst:
-	context.al = context.ds.byte(context.di+18);
-	context._sub(context.di, context.cx);
-	context.es.byte(context.bx+15) = context.al;
-	context.ds.byte(context.di+17) = context.al;
+	al = ds.byte(di+18);
+	_sub(di, cx);
+	es.byte(bx+15) = al;
+	ds.byte(di+17) = al;
 }
 
-void doorway(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kDoorcheck1) = -24;
-	context.data.byte(kDoorcheck2) = 10;
-	context.data.byte(kDoorcheck3) = -30;
-	context.data.byte(kDoorcheck4) = 10;
-	dodoor(context);
+void DreamGenContext::doorway() {
+	STACK_CHECK;
+	data.byte(kDoorcheck1) = -24;
+	data.byte(kDoorcheck2) = 10;
+	data.byte(kDoorcheck3) = -30;
+	data.byte(kDoorcheck4) = 10;
+	dodoor();
 }
 
-void widedoor(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kDoorcheck1) = -24;
-	context.data.byte(kDoorcheck2) = 24;
-	context.data.byte(kDoorcheck3) = -30;
-	context.data.byte(kDoorcheck4) = 24;
-	dodoor(context);
+void DreamGenContext::widedoor() {
+	STACK_CHECK;
+	data.byte(kDoorcheck1) = -24;
+	data.byte(kDoorcheck2) = 24;
+	data.byte(kDoorcheck3) = -30;
+	data.byte(kDoorcheck4) = 24;
+	dodoor();
 }
 
-void dodoor(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kRyanx);
-	context.ah = context.data.byte(kRyany);
-	context.cl = context.es.byte(context.bx+10);
-	context.ch = context.es.byte(context.bx+11);
-	context._cmp(context.al, context.cl);
-	if (!context.flags.c())
+void DreamGenContext::dodoor() {
+	STACK_CHECK;
+	al = data.byte(kRyanx);
+	ah = data.byte(kRyany);
+	cl = es.byte(bx+10);
+	ch = es.byte(bx+11);
+	_cmp(al, cl);
+	if (!flags.c())
 		goto rtofdoor;
-	context._sub(context.al, context.cl);
-	context._cmp(context.al, context.data.byte(kDoorcheck1));
-	if (!context.flags.c())
+	_sub(al, cl);
+	_cmp(al, data.byte(kDoorcheck1));
+	if (!flags.c())
 		goto upordown;
 	goto shutdoor;
 rtofdoor:
-	context._sub(context.al, context.cl);
-	context._cmp(context.al, context.data.byte(kDoorcheck2));
-	if (!context.flags.c())
+	_sub(al, cl);
+	_cmp(al, data.byte(kDoorcheck2));
+	if (!flags.c())
 		goto shutdoor;
 upordown:
-	context._cmp(context.ah, context.ch);
-	if (!context.flags.c())
+	_cmp(ah, ch);
+	if (!flags.c())
 		goto botofdoor;
-	context._sub(context.ah, context.ch);
-	context._cmp(context.ah, context.data.byte(kDoorcheck3));
-	if (context.flags.c())
+	_sub(ah, ch);
+	_cmp(ah, data.byte(kDoorcheck3));
+	if (flags.c())
 		goto shutdoor;
 	goto opendoor;
 botofdoor:
-	context._sub(context.ah, context.ch);
-	context._cmp(context.ah, context.data.byte(kDoorcheck4));
-	if (!context.flags.c())
+	_sub(ah, ch);
+	_cmp(ah, data.byte(kDoorcheck4));
+	if (!flags.c())
 		goto shutdoor;
 opendoor:
-	context.cl = context.es.byte(context.bx+19);
-	context._cmp(context.data.byte(kThroughdoor), 1);
-	if (!context.flags.z())
+	cl = es.byte(bx+19);
+	_cmp(data.byte(kThroughdoor), 1);
+	if (!flags.z())
 		goto notthrough;
-	context._cmp(context.cl, 0);
-	if (!context.flags.z())
+	_cmp(cl, 0);
+	if (!flags.z())
 		goto notthrough;
-	context.cl = 6;
+	cl = 6;
 notthrough:
-	context._inc(context.cl);
-	context._cmp(context.cl, 1);
-	if (!context.flags.z())
+	_inc(cl);
+	_cmp(cl, 1);
+	if (!flags.z())
 		goto notdoorsound2;
-	context.al = 0;
-	context._cmp(context.data.byte(kReallocation), 5);
-	if (!context.flags.z())
+	al = 0;
+	_cmp(data.byte(kReallocation), 5);
+	if (!flags.z())
 		goto nothoteldoor2;
-	context.al = 13;
+	al = 13;
 nothoteldoor2:
-	playchannel1(context);
+	playchannel1();
 notdoorsound2:
-	context.ch = 0;
-	context.push(context.di);
-	context._add(context.di, context.cx);
-	context.al = context.ds.byte(context.di+18);
-	context._cmp(context.al, 255);
-	if (!context.flags.z())
+	ch = 0;
+	push(di);
+	_add(di, cx);
+	al = ds.byte(di+18);
+	_cmp(al, 255);
+	if (!flags.z())
 		goto atlast1;
-	context._dec(context.di);
-	context._dec(context.cl);
+	_dec(di);
+	_dec(cl);
 atlast1:
-	context.es.byte(context.bx+19) = context.cl;
-	context.al = context.ds.byte(context.di+18);
-	context.di = context.pop();
-	context.es.byte(context.bx+15) = context.al;
-	context.ds.byte(context.di+17) = context.al;
-	context.data.byte(kThroughdoor) = 1;
+	es.byte(bx+19) = cl;
+	al = ds.byte(di+18);
+	di = pop();
+	es.byte(bx+15) = al;
+	ds.byte(di+17) = al;
+	data.byte(kThroughdoor) = 1;
 	return;
 shutdoor:
-	context.cl = context.es.byte(context.bx+19);
-	context._cmp(context.cl, 5);
-	if (!context.flags.z())
+	cl = es.byte(bx+19);
+	_cmp(cl, 5);
+	if (!flags.z())
 		goto notdoorsound1;
-	context.al = 1;
-	context._cmp(context.data.byte(kReallocation), 5);
-	if (!context.flags.z())
+	al = 1;
+	_cmp(data.byte(kReallocation), 5);
+	if (!flags.z())
 		goto nothoteldoor1;
-	context.al = 13;
+	al = 13;
 nothoteldoor1:
-	playchannel1(context);
+	playchannel1();
 notdoorsound1:
-	context._cmp(context.cl, 0);
-	if (context.flags.z())
+	_cmp(cl, 0);
+	if (flags.z())
 		goto atlast2;
-	context._dec(context.cl);
-	context.es.byte(context.bx+19) = context.cl;
+	_dec(cl);
+	es.byte(bx+19) = cl;
 atlast2:
-	context.ch = 0;
-	context.push(context.di);
-	context._add(context.di, context.cx);
-	context.al = context.ds.byte(context.di+18);
-	context.di = context.pop();
-	context.es.byte(context.bx+15) = context.al;
-	context.ds.byte(context.di+17) = context.al;
-	context._cmp(context.cl, 5);
-	if (!context.flags.z())
+	ch = 0;
+	push(di);
+	_add(di, cx);
+	al = ds.byte(di+18);
+	di = pop();
+	es.byte(bx+15) = al;
+	ds.byte(di+17) = al;
+	_cmp(cl, 5);
+	if (!flags.z())
 		return /* (notnearly) */;
-	context.data.byte(kThroughdoor) = 0;
+	data.byte(kThroughdoor) = 0;
 }
 
-void lockeddoorway(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kRyanx);
-	context.ah = context.data.byte(kRyany);
-	context.cl = context.es.byte(context.bx+10);
-	context.ch = context.es.byte(context.bx+11);
-	context._cmp(context.al, context.cl);
-	if (!context.flags.c())
+void DreamGenContext::lockeddoorway() {
+	STACK_CHECK;
+	al = data.byte(kRyanx);
+	ah = data.byte(kRyany);
+	cl = es.byte(bx+10);
+	ch = es.byte(bx+11);
+	_cmp(al, cl);
+	if (!flags.c())
 		goto rtofdoor2;
-	context._sub(context.al, context.cl);
-	context._cmp(context.al, -24);
-	if (!context.flags.c())
+	_sub(al, cl);
+	_cmp(al, -24);
+	if (!flags.c())
 		goto upordown2;
 	goto shutdoor2;
 rtofdoor2:
-	context._sub(context.al, context.cl);
-	context._cmp(context.al, 10);
-	if (!context.flags.c())
+	_sub(al, cl);
+	_cmp(al, 10);
+	if (!flags.c())
 		goto shutdoor2;
 upordown2:
-	context._cmp(context.ah, context.ch);
-	if (!context.flags.c())
+	_cmp(ah, ch);
+	if (!flags.c())
 		goto botofdoor2;
-	context._sub(context.ah, context.ch);
-	context._cmp(context.ah, -30);
-	if (context.flags.c())
+	_sub(ah, ch);
+	_cmp(ah, -30);
+	if (flags.c())
 		goto shutdoor2;
 	goto opendoor2;
 botofdoor2:
-	context._sub(context.ah, context.ch);
-	context._cmp(context.ah, 12);
-	if (!context.flags.c())
+	_sub(ah, ch);
+	_cmp(ah, 12);
+	if (!flags.c())
 		goto shutdoor2;
 opendoor2:
-	context._cmp(context.data.byte(kThroughdoor), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kThroughdoor), 1);
+	if (flags.z())
 		goto mustbeopen;
-	context._cmp(context.data.byte(kLockstatus), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kLockstatus), 1);
+	if (flags.z())
 		goto shutdoor;
 mustbeopen:
-	context.cl = context.es.byte(context.bx+19);
-	context._cmp(context.cl, 1);
-	if (!context.flags.z())
+	cl = es.byte(bx+19);
+	_cmp(cl, 1);
+	if (!flags.z())
 		goto notdoorsound4;
-	context.al = 0;
-	playchannel1(context);
+	al = 0;
+	playchannel1();
 notdoorsound4:
-	context._cmp(context.cl, 6);
-	if (!context.flags.z())
+	_cmp(cl, 6);
+	if (!flags.z())
 		goto noturnonyet;
-	context.al = context.data.byte(kDoorpath);
-	context.push(context.es);
-	context.push(context.bx);
-	turnpathon(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	al = data.byte(kDoorpath);
+	push(es);
+	push(bx);
+	turnpathon();
+	bx = pop();
+	es = pop();
 noturnonyet:
-	context.cl = context.es.byte(context.bx+19);
-	context._cmp(context.data.byte(kThroughdoor), 1);
-	if (!context.flags.z())
+	cl = es.byte(bx+19);
+	_cmp(data.byte(kThroughdoor), 1);
+	if (!flags.z())
 		goto notthrough2;
-	context._cmp(context.cl, 0);
-	if (!context.flags.z())
+	_cmp(cl, 0);
+	if (!flags.z())
 		goto notthrough2;
-	context.cl = 6;
+	cl = 6;
 notthrough2:
-	context._inc(context.cl);
-	context.ch = 0;
-	context.push(context.di);
-	context._add(context.di, context.cx);
-	context.al = context.ds.byte(context.di+18);
-	context._cmp(context.al, 255);
-	if (!context.flags.z())
+	_inc(cl);
+	ch = 0;
+	push(di);
+	_add(di, cx);
+	al = ds.byte(di+18);
+	_cmp(al, 255);
+	if (!flags.z())
 		goto atlast3;
-	context._dec(context.di);
-	context._dec(context.cl);
+	_dec(di);
+	_dec(cl);
 atlast3:
-	context.es.byte(context.bx+19) = context.cl;
-	context.al = context.ds.byte(context.di+18);
-	context.di = context.pop();
-	context.es.byte(context.bx+15) = context.al;
-	context.ds.byte(context.di+17) = context.al;
-	context._cmp(context.cl, 5);
-	if (!context.flags.z())
+	es.byte(bx+19) = cl;
+	al = ds.byte(di+18);
+	di = pop();
+	es.byte(bx+15) = al;
+	ds.byte(di+17) = al;
+	_cmp(cl, 5);
+	if (!flags.z())
 		return /* (justshutting) */;
-	context.data.byte(kThroughdoor) = 1;
+	data.byte(kThroughdoor) = 1;
 	return;
 shutdoor2:
-	context.cl = context.es.byte(context.bx+19);
-	context._cmp(context.cl, 5);
-	if (!context.flags.z())
+	cl = es.byte(bx+19);
+	_cmp(cl, 5);
+	if (!flags.z())
 		goto notdoorsound3;
-	context.al = 1;
-	playchannel1(context);
+	al = 1;
+	playchannel1();
 notdoorsound3:
-	context._cmp(context.cl, 0);
-	if (context.flags.z())
+	_cmp(cl, 0);
+	if (flags.z())
 		goto atlast4;
-	context._dec(context.cl);
-	context.es.byte(context.bx+19) = context.cl;
+	_dec(cl);
+	es.byte(bx+19) = cl;
 atlast4:
-	context.ch = 0;
-	context.data.byte(kThroughdoor) = 0;
-	context.push(context.di);
-	context._add(context.di, context.cx);
-	context.al = context.ds.byte(context.di+18);
-	context.di = context.pop();
-	context.es.byte(context.bx+15) = context.al;
-	context.ds.byte(context.di+17) = context.al;
-	context._cmp(context.cl, 0);
-	if (!context.flags.z())
+	ch = 0;
+	data.byte(kThroughdoor) = 0;
+	push(di);
+	_add(di, cx);
+	al = ds.byte(di+18);
+	di = pop();
+	es.byte(bx+15) = al;
+	ds.byte(di+17) = al;
+	_cmp(cl, 0);
+	if (!flags.z())
 		return /* (notlocky) */;
-	context.al = context.data.byte(kDoorpath);
-	context.push(context.es);
-	context.push(context.bx);
-	turnpathoff(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.data.byte(kLockstatus) = 1;
+	al = data.byte(kDoorpath);
+	push(es);
+	push(bx);
+	turnpathoff();
+	bx = pop();
+	es = pop();
+	data.byte(kLockstatus) = 1;
 /*continuing to unbounded code: shutdoor from dodoor:60-87*/
 shutdoor:
-	context.cl = context.es.byte(context.bx+19);
-	context._cmp(context.cl, 5);
-	if (!context.flags.z())
+	cl = es.byte(bx+19);
+	_cmp(cl, 5);
+	if (!flags.z())
 		goto notdoorsound1;
-	context.al = 1;
-	context._cmp(context.data.byte(kReallocation), 5);
-	if (!context.flags.z())
+	al = 1;
+	_cmp(data.byte(kReallocation), 5);
+	if (!flags.z())
 		goto nothoteldoor1;
-	context.al = 13;
+	al = 13;
 nothoteldoor1:
-	playchannel1(context);
+	playchannel1();
 notdoorsound1:
-	context._cmp(context.cl, 0);
-	if (context.flags.z())
+	_cmp(cl, 0);
+	if (flags.z())
 		goto atlast2;
-	context._dec(context.cl);
-	context.es.byte(context.bx+19) = context.cl;
+	_dec(cl);
+	es.byte(bx+19) = cl;
 atlast2:
-	context.ch = 0;
-	context.push(context.di);
-	context._add(context.di, context.cx);
-	context.al = context.ds.byte(context.di+18);
-	context.di = context.pop();
-	context.es.byte(context.bx+15) = context.al;
-	context.ds.byte(context.di+17) = context.al;
-	context._cmp(context.cl, 5);
-	if (!context.flags.z())
+	ch = 0;
+	push(di);
+	_add(di, cx);
+	al = ds.byte(di+18);
+	di = pop();
+	es.byte(bx+15) = al;
+	ds.byte(di+17) = al;
+	_cmp(cl, 5);
+	if (!flags.z())
 		return /* (notnearly) */;
-	context.data.byte(kThroughdoor) = 0;
+	data.byte(kThroughdoor) = 0;
 }
 
-void updatepeople(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
-	context.data.word(kListpos) = context.di;
-	context.cx = 12*5;
-	context.al = 255;
-	context._stosb(context.cx);
-	context._inc(context.data.word(kMaintimer));
-	context.es = context.cs;
-	context.bx = 534;
-	context.di = 991;
+void DreamGenContext::updatepeople() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
+	data.word(kListpos) = di;
+	cx = 12*5;
+	al = 255;
+	_stosb(cx);
+	_inc(data.word(kMaintimer));
+	es = cs;
+	bx = 534;
+	di = 991;
 updateloop:
-	context.al = context.es.byte(context.bx);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	al = es.byte(bx);
+	_cmp(al, 255);
+	if (flags.z())
 		return /* (endupdate) */;
-	context._cmp(context.al, context.data.byte(kReallocation));
-	if (!context.flags.z())
+	_cmp(al, data.byte(kReallocation));
+	if (!flags.z())
 		goto notinthisroom;
-	context.cx = context.es.word(context.bx+1);
-	context._cmp(context.cl, context.data.byte(kMapx));
-	if (!context.flags.z())
+	cx = es.word(bx+1);
+	_cmp(cl, data.byte(kMapx));
+	if (!flags.z())
 		goto notinthisroom;
-	context._cmp(context.ch, context.data.byte(kMapy));
-	if (!context.flags.z())
+	_cmp(ch, data.byte(kMapy));
+	if (!flags.z())
 		goto notinthisroom;
-	context.push(context.di);
-	context.ax = context.cs.word(context.di);
-	__dispatch_call(context, context.ax);
-	context.di = context.pop();
+	push(di);
+	ax = cs.word(di);
+	__dispatch_call(ax);
+	di = pop();
 notinthisroom:
-	context._add(context.bx, 8);
-	context._add(context.di, 2);
+	_add(bx, 8);
+	_add(di, 2);
 	goto updateloop;
 }
 
-void getreelframeax(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ds);
-	context.data.word(kCurrentframe) = context.ax;
-	findsource(context);
-	context.es = context.ds;
-	context.ds = context.pop();
-	context.ax = context.data.word(kCurrentframe);
-	context._sub(context.ax, context.data.word(kTakeoff));
-	context._add(context.ax, context.ax);
-	context.cx = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.cx);
-	context.bx = context.ax;
+void DreamGenContext::getreelframeax() {
+	STACK_CHECK;
+	push(ds);
+	data.word(kCurrentframe) = ax;
+	findsource();
+	es = ds;
+	ds = pop();
+	ax = data.word(kCurrentframe);
+	_sub(ax, data.word(kTakeoff));
+	_add(ax, ax);
+	cx = ax;
+	_add(ax, ax);
+	_add(ax, cx);
+	bx = ax;
 }
 
-void reelsonscreen(Context &context) {
-	STACK_CHECK(context);
-	reconstruct(context);
-	updatepeople(context);
-	watchreel(context);
-	showrain(context);
-	usetimedtext(context);
+void DreamGenContext::reelsonscreen() {
+	STACK_CHECK;
+	reconstruct();
+	updatepeople();
+	watchreel();
+	showrain();
+	usetimedtext();
 }
 
-void plotreel(Context &context) {
-	STACK_CHECK(context);
-	getreelstart(context);
+void DreamGenContext::plotreel() {
+	STACK_CHECK;
+	getreelstart();
 retryreel:
-	context.push(context.es);
-	context.push(context.si);
-	context.ax = context.es.word(context.si+2);
-	context._cmp(context.al, 220);
-	if (context.flags.c())
+	push(es);
+	push(si);
+	ax = es.word(si+2);
+	_cmp(al, 220);
+	if (flags.c())
 		goto normalreel;
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	_cmp(al, 255);
+	if (flags.z())
 		goto normalreel;
-	dealwithspecial(context);
-	context._inc(context.data.word(kReelpointer));
-	context.si = context.pop();
-	context.es = context.pop();
-	context._add(context.si, 40);
+	dealwithspecial();
+	_inc(data.word(kReelpointer));
+	si = pop();
+	es = pop();
+	_add(si, 40);
 	goto retryreel;
 normalreel:
-	context.cx = 8;
+	cx = 8;
 plotloop:
-	context.push(context.cx);
-	context.push(context.es);
-	context.push(context.si);
-	context.ax = context.es.word(context.si);
-	context._cmp(context.ax, 0x0ffff);
-	if (context.flags.z())
+	push(cx);
+	push(es);
+	push(si);
+	ax = es.word(si);
+	_cmp(ax, 0x0ffff);
+	if (flags.z())
 		goto notplot;
-	showreelframe(context);
+	showreelframe();
 notplot:
-	context.si = context.pop();
-	context.es = context.pop();
-	context.cx = context.pop();
-	context._add(context.si, 5);
-	if (--context.cx)
+	si = pop();
+	es = pop();
+	cx = pop();
+	_add(si, 5);
+	if (--cx)
 		goto plotloop;
-	soundonreels(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	soundonreels();
+	bx = pop();
+	es = pop();
 }
 
-void soundonreels(Context &context) {
-	STACK_CHECK(context);
-	context.bl = context.data.byte(kReallocation);
-	context._add(context.bl, context.bl);
-	context._xor(context.bh, context.bh);
-	context._add(context.bx, 1214);
-	context.si = context.cs.word(context.bx);
+void DreamGenContext::soundonreels() {
+	STACK_CHECK;
+	bl = data.byte(kReallocation);
+	_add(bl, bl);
+	_xor(bh, bh);
+	_add(bx, 1214);
+	si = cs.word(bx);
 reelsoundloop:
-	context.al = context.cs.byte(context.si);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	al = cs.byte(si);
+	_cmp(al, 255);
+	if (flags.z())
 		goto endreelsound;
-	context.ax = context.cs.word(context.si+1);
-	context._cmp(context.ax, context.data.word(kReelpointer));
-	if (!context.flags.z())
+	ax = cs.word(si+1);
+	_cmp(ax, data.word(kReelpointer));
+	if (!flags.z())
 		goto skipreelsound;
-	context._cmp(context.ax, context.data.word(kLastsoundreel));
-	if (context.flags.z())
+	_cmp(ax, data.word(kLastsoundreel));
+	if (flags.z())
 		goto skipreelsound;
-	context.data.word(kLastsoundreel) = context.ax;
-	context.al = context.cs.byte(context.si);
-	context._cmp(context.al, 64);
-	if (context.flags.c())
-		{ playchannel1(context); return; };
-	context._cmp(context.al, 128);
-	if (context.flags.c())
+	data.word(kLastsoundreel) = ax;
+	al = cs.byte(si);
+	_cmp(al, 64);
+	if (flags.c())
+		{ playchannel1(); return; };
+	_cmp(al, 128);
+	if (flags.c())
 		goto channel0once;
-	context._and(context.al, 63);
-	context.ah = 255;
-	{ playchannel0(context); return; };
+	_and(al, 63);
+	ah = 255;
+	{ playchannel0(); return; };
 channel0once:
-	context._and(context.al, 63);
-	context.ah = 0;
-	{ playchannel0(context); return; };
+	_and(al, 63);
+	ah = 0;
+	{ playchannel0(); return; };
 skipreelsound:
-	context._add(context.si, 3);
+	_add(si, 3);
 	goto reelsoundloop;
 endreelsound:
-	context.ax = context.data.word(kLastsoundreel);
-	context._cmp(context.ax, context.data.word(kReelpointer));
-	if (context.flags.z())
+	ax = data.word(kLastsoundreel);
+	_cmp(ax, data.word(kReelpointer));
+	if (flags.z())
 		return /* (nochange2) */;
-	context.data.word(kLastsoundreel) = -1;
+	data.word(kLastsoundreel) = -1;
 }
 
-void reconstruct(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kHavedoneobs), 0);
-	if (context.flags.z())
+void DreamGenContext::reconstruct() {
+	STACK_CHECK;
+	_cmp(data.byte(kHavedoneobs), 0);
+	if (flags.z())
 		return /* (noneedtorecon) */;
-	context.data.byte(kNewobs) = 1;
-	drawfloor(context);
-	spriteupdate(context);
-	printsprites(context);
-	context.data.byte(kHavedoneobs) = 0;
+	data.byte(kNewobs) = 1;
+	drawfloor();
+	spriteupdate();
+	printsprites();
+	data.byte(kHavedoneobs) = 0;
 }
 
-void dealwithspecial(Context &context) {
-	STACK_CHECK(context);
-	context._sub(context.al, 220);
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+void DreamGenContext::dealwithspecial() {
+	STACK_CHECK;
+	_sub(al, 220);
+	_cmp(al, 0);
+	if (!flags.z())
 		goto notplset;
-	context.al = context.ah;
-	placesetobject(context);
-	context.data.byte(kHavedoneobs) = 1;
+	al = ah;
+	placesetobject();
+	data.byte(kHavedoneobs) = 1;
 	return;
 notplset:
-	context._cmp(context.al, 1);
-	if (!context.flags.z())
+	_cmp(al, 1);
+	if (!flags.z())
 		goto notremset;
-	context.al = context.ah;
-	removesetobject(context);
-	context.data.byte(kHavedoneobs) = 1;
+	al = ah;
+	removesetobject();
+	data.byte(kHavedoneobs) = 1;
 	return;
 notremset:
-	context._cmp(context.al, 2);
-	if (!context.flags.z())
+	_cmp(al, 2);
+	if (!flags.z())
 		goto notplfree;
-	context.al = context.ah;
-	placefreeobject(context);
-	context.data.byte(kHavedoneobs) = 1;
+	al = ah;
+	placefreeobject();
+	data.byte(kHavedoneobs) = 1;
 	return;
 notplfree:
-	context._cmp(context.al, 3);
-	if (!context.flags.z())
+	_cmp(al, 3);
+	if (!flags.z())
 		goto notremfree;
-	context.al = context.ah;
-	removefreeobject(context);
-	context.data.byte(kHavedoneobs) = 1;
+	al = ah;
+	removefreeobject();
+	data.byte(kHavedoneobs) = 1;
 	return;
 notremfree:
-	context._cmp(context.al, 4);
-	if (!context.flags.z())
+	_cmp(al, 4);
+	if (!flags.z())
 		goto notryanoff;
-	switchryanoff(context);
+	switchryanoff();
 	return;
 notryanoff:
-	context._cmp(context.al, 5);
-	if (!context.flags.z())
+	_cmp(al, 5);
+	if (!flags.z())
 		goto notryanon;
-	context.data.byte(kTurntoface) = context.ah;
-	context.data.byte(kFacing) = context.ah;
-	switchryanon(context);
+	data.byte(kTurntoface) = ah;
+	data.byte(kFacing) = ah;
+	switchryanon();
 	return;
 notryanon:
-	context._cmp(context.al, 6);
-	if (!context.flags.z())
+	_cmp(al, 6);
+	if (!flags.z())
 		goto notchangeloc;
-	context.data.byte(kNewlocation) = context.ah;
+	data.byte(kNewlocation) = ah;
 	return;
 notchangeloc:
-	movemap(context);
+	movemap();
 }
 
-void movemap(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.ah, 32);
-	if (!context.flags.z())
+void DreamGenContext::movemap() {
+	STACK_CHECK;
+	_cmp(ah, 32);
+	if (!flags.z())
 		goto notmapup2;
-	context._sub(context.data.byte(kMapy), 20);
-	context.data.byte(kNowinnewroom) = 1;
+	_sub(data.byte(kMapy), 20);
+	data.byte(kNowinnewroom) = 1;
 	return;
 notmapup2:
-	context._cmp(context.ah, 16);
-	if (!context.flags.z())
+	_cmp(ah, 16);
+	if (!flags.z())
 		goto notmapupspec;
-	context._sub(context.data.byte(kMapy), 10);
-	context.data.byte(kNowinnewroom) = 1;
+	_sub(data.byte(kMapy), 10);
+	data.byte(kNowinnewroom) = 1;
 	return;
 notmapupspec:
-	context._cmp(context.ah, 8);
-	if (!context.flags.z())
+	_cmp(ah, 8);
+	if (!flags.z())
 		goto notmapdownspec;
-	context._add(context.data.byte(kMapy), 10);
-	context.data.byte(kNowinnewroom) = 1;
+	_add(data.byte(kMapy), 10);
+	data.byte(kNowinnewroom) = 1;
 	return;
 notmapdownspec:
-	context._cmp(context.ah, 2);
-	if (!context.flags.z())
+	_cmp(ah, 2);
+	if (!flags.z())
 		goto notmaprightspec;
-	context._add(context.data.byte(kMapx), 11);
-	context.data.byte(kNowinnewroom) = 1;
+	_add(data.byte(kMapx), 11);
+	data.byte(kNowinnewroom) = 1;
 	return;
 notmaprightspec:
-	context._sub(context.data.byte(kMapx), 11);
-	context.data.byte(kNowinnewroom) = 1;
+	_sub(data.byte(kMapx), 11);
+	data.byte(kNowinnewroom) = 1;
 }
 
-void getreelstart(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kReelpointer);
-	context.cx = 40;
-	context._mul(context.cx);
-	context.es = context.data.word(kReels);
-	context.si = context.ax;
-	context._add(context.si, (0+(36*144)));
+void DreamGenContext::getreelstart() {
+	STACK_CHECK;
+	ax = data.word(kReelpointer);
+	cx = 40;
+	_mul(cx);
+	es = data.word(kReels);
+	si = ax;
+	_add(si, (0+(36*144)));
 }
 
-void showreelframe(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.es.byte(context.si+2);
-	context.ah = 0;
-	context.di = context.ax;
-	context._add(context.di, context.data.word(kMapadx));
-	context.al = context.es.byte(context.si+3);
-	context.bx = context.ax;
-	context._add(context.bx, context.data.word(kMapady));
-	context.ax = context.es.word(context.si);
-	context.data.word(kCurrentframe) = context.ax;
-	findsource(context);
-	context.ax = context.data.word(kCurrentframe);
-	context._sub(context.ax, context.data.word(kTakeoff));
-	context.ah = 8;
-	showframe(context);
+void DreamGenContext::showreelframe() {
+	STACK_CHECK;
+	al = es.byte(si+2);
+	ah = 0;
+	di = ax;
+	_add(di, data.word(kMapadx));
+	al = es.byte(si+3);
+	bx = ax;
+	_add(bx, data.word(kMapady));
+	ax = es.word(si);
+	data.word(kCurrentframe) = ax;
+	findsource();
+	ax = data.word(kCurrentframe);
+	_sub(ax, data.word(kTakeoff));
+	ah = 8;
+	showframe();
 }
 
-void deleverything(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kMapysize);
-	context.ah = 0;
-	context._add(context.ax, context.data.word(kMapoffsety));
-	context._cmp(context.ax, 182);
-	if (!context.flags.c())
+void DreamGenContext::deleverything() {
+	STACK_CHECK;
+	al = data.byte(kMapysize);
+	ah = 0;
+	_add(ax, data.word(kMapoffsety));
+	_cmp(ax, 182);
+	if (!flags.c())
 		goto bigroom;
-	maptopanel(context);
+	maptopanel();
 	return;
 bigroom:
-	context._sub(context.data.byte(kMapysize), 8);
-	maptopanel(context);
-	context._add(context.data.byte(kMapysize), 8);
+	_sub(data.byte(kMapysize), 8);
+	maptopanel();
+	_add(data.byte(kMapysize), 8);
 }
 
-void dumpeverything(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40));
+void DreamGenContext::dumpeverything() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40));
 dumpevery1:
-	context.ax = context.es.word(context.bx);
-	context.cx = context.es.word(context.bx+2);
-	context._cmp(context.ax, 0x0ffff);
-	if (context.flags.z())
+	ax = es.word(bx);
+	cx = es.word(bx+2);
+	_cmp(ax, 0x0ffff);
+	if (flags.z())
 		goto finishevery1;
-	context._cmp(context.ax, context.es.word(context.bx+(40*5)));
-	if (!context.flags.z())
+	_cmp(ax, es.word(bx+(40*5)));
+	if (!flags.z())
 		goto notskip1;
-	context._cmp(context.cx, context.es.word(context.bx+(40*5)+2));
-	if (context.flags.z())
+	_cmp(cx, es.word(bx+(40*5)+2));
+	if (flags.z())
 		goto skip1;
 notskip1:
-	context.push(context.bx);
-	context.push(context.es);
-	context.push(context.ds);
-	context.bl = context.ah;
-	context.bh = 0;
-	context.ah = 0;
-	context.di = context.ax;
-	context._add(context.di, context.data.word(kMapadx));
-	context._add(context.bx, context.data.word(kMapady));
-	multidump(context);
-	context.ds = context.pop();
-	context.es = context.pop();
-	context.bx = context.pop();
+	push(bx);
+	push(es);
+	push(ds);
+	bl = ah;
+	bh = 0;
+	ah = 0;
+	di = ax;
+	_add(di, data.word(kMapadx));
+	_add(bx, data.word(kMapady));
+	multidump();
+	ds = pop();
+	es = pop();
+	bx = pop();
 skip1:
-	context._add(context.bx, 5);
+	_add(bx, 5);
 	goto dumpevery1;
 finishevery1:
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40))+(40*5);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40))+(40*5);
 dumpevery2:
-	context.ax = context.es.word(context.bx);
-	context.cx = context.es.word(context.bx+2);
-	context._cmp(context.ax, 0x0ffff);
-	if (context.flags.z())
+	ax = es.word(bx);
+	cx = es.word(bx+2);
+	_cmp(ax, 0x0ffff);
+	if (flags.z())
 		return /* (finishevery2) */;
-	context.push(context.bx);
-	context.push(context.es);
-	context.push(context.ds);
-	context.bl = context.ah;
-	context.bh = 0;
-	context.ah = 0;
-	context.di = context.ax;
-	context._add(context.di, context.data.word(kMapadx));
-	context._add(context.bx, context.data.word(kMapady));
-	multidump(context);
-	context.ds = context.pop();
-	context.es = context.pop();
-	context.bx = context.pop();
-	context._add(context.bx, 5);
+	push(bx);
+	push(es);
+	push(ds);
+	bl = ah;
+	bh = 0;
+	ah = 0;
+	di = ax;
+	_add(di, data.word(kMapadx));
+	_add(bx, data.word(kMapady));
+	multidump();
+	ds = pop();
+	es = pop();
+	bx = pop();
+	_add(bx, 5);
 	goto dumpevery2;
 }
 
-void allocatework(Context &context) {
-	STACK_CHECK(context);
-	context.bx = 0x1000;
-	allocatemem(context);
-	context.data.word(kWorkspace) = context.ax;
+void DreamGenContext::allocatework() {
+	STACK_CHECK;
+	bx = 0x1000;
+	allocatemem();
+	data.word(kWorkspace) = ax;
 }
 
-void readabyte(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.si, 30000);
-	if (!context.flags.z())
+void DreamGenContext::readabyte() {
+	STACK_CHECK;
+	_cmp(si, 30000);
+	if (!flags.z())
 		goto notendblock;
-	context.push(context.bx);
-	context.push(context.es);
-	context.push(context.di);
-	context.push(context.ds);
-	context.push(context.si);
-	readoneblock(context);
-	context.si = context.pop();
-	context.ds = context.pop();
-	context.di = context.pop();
-	context.es = context.pop();
-	context.bx = context.pop();
-	context.si = 0;
+	push(bx);
+	push(es);
+	push(di);
+	push(ds);
+	push(si);
+	readoneblock();
+	si = pop();
+	ds = pop();
+	di = pop();
+	es = pop();
+	bx = pop();
+	si = 0;
 notendblock:
-	context._lodsb();
+	_lodsb();
 }
 
-void loadpalfromiff(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 2481;
-	openfile(context);
-	context.cx = 2000;
-	context.ds = context.data.word(kMapstore);
-	context.dx = 0;
-	readfromfile(context);
-	closefile(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
-	context.ds = context.data.word(kMapstore);
-	context.si = 0x30;
-	context.cx = 768;
+void DreamGenContext::loadpalfromiff() {
+	STACK_CHECK;
+	dx = 2481;
+	openfile();
+	cx = 2000;
+	ds = data.word(kMapstore);
+	dx = 0;
+	readfromfile();
+	closefile();
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
+	ds = data.word(kMapstore);
+	si = 0x30;
+	cx = 768;
 palloop:
-	context._lodsb();
-	context._shr(context.al, 1);
-	context._shr(context.al, 1);
-	context._cmp(context.data.byte(kBrightness), 1);
-	if (!context.flags.z())
+	_lodsb();
+	_shr(al, 1);
+	_shr(al, 1);
+	_cmp(data.byte(kBrightness), 1);
+	if (!flags.z())
 		goto nought;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_cmp(al, 0);
+	if (flags.z())
 		goto nought;
-	context.ah = context.al;
-	context._shr(context.ah, 1);
-	context._add(context.al, context.ah);
-	context._shr(context.ah, 1);
-	context._add(context.al, context.ah);
-	context._cmp(context.al, 64);
-	if (context.flags.c())
+	ah = al;
+	_shr(ah, 1);
+	_add(al, ah);
+	_shr(ah, 1);
+	_add(al, ah);
+	_cmp(al, 64);
+	if (flags.c())
 		goto nought;
-	context.al = 63;
+	al = 63;
 nought:
-	context._stosb();
-	if (--context.cx)
+	_stosb();
+	if (--cx)
 		goto palloop;
 }
 
-void paneltomap(Context &context) {
-	STACK_CHECK(context);
-	context.di = context.data.word(kMapxstart);
-	context._add(context.di, context.data.word(kMapadx));
-	context.bx = context.data.word(kMapystart);
-	context._add(context.bx, context.data.word(kMapady));
-	context.ds = context.data.word(kMapstore);
-	context.si = 0;
-	context.cl = context.data.byte(kMapxsize);
-	context.ch = context.data.byte(kMapysize);
-	multiget(context);
+void DreamGenContext::paneltomap() {
+	STACK_CHECK;
+	di = data.word(kMapxstart);
+	_add(di, data.word(kMapadx));
+	bx = data.word(kMapystart);
+	_add(bx, data.word(kMapady));
+	ds = data.word(kMapstore);
+	si = 0;
+	cl = data.byte(kMapxsize);
+	ch = data.byte(kMapysize);
+	multiget();
 }
 
-void maptopanel(Context &context) {
-	STACK_CHECK(context);
-	context.di = context.data.word(kMapxstart);
-	context._add(context.di, context.data.word(kMapadx));
-	context.bx = context.data.word(kMapystart);
-	context._add(context.bx, context.data.word(kMapady));
-	context.ds = context.data.word(kMapstore);
-	context.si = 0;
-	context.cl = context.data.byte(kMapxsize);
-	context.ch = context.data.byte(kMapysize);
-	multiput(context);
+void DreamGenContext::maptopanel() {
+	STACK_CHECK;
+	di = data.word(kMapxstart);
+	_add(di, data.word(kMapadx));
+	bx = data.word(kMapystart);
+	_add(bx, data.word(kMapady));
+	ds = data.word(kMapstore);
+	si = 0;
+	cl = data.byte(kMapxsize);
+	ch = data.byte(kMapysize);
+	multiput();
 }
 
-void dumpmap(Context &context) {
-	STACK_CHECK(context);
-	context.di = context.data.word(kMapxstart);
-	context._add(context.di, context.data.word(kMapadx));
-	context.bx = context.data.word(kMapystart);
-	context._add(context.bx, context.data.word(kMapady));
-	context.cl = context.data.byte(kMapxsize);
-	context.ch = context.data.byte(kMapysize);
-	multidump(context);
+void DreamGenContext::dumpmap() {
+	STACK_CHECK;
+	di = data.word(kMapxstart);
+	_add(di, data.word(kMapadx));
+	bx = data.word(kMapystart);
+	_add(bx, data.word(kMapady));
+	cl = data.byte(kMapxsize);
+	ch = data.byte(kMapysize);
+	multidump();
 }
 
-void pixelcheckset(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context._sub(context.al, context.es.byte(context.bx));
-	context._sub(context.ah, context.es.byte(context.bx+1));
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.cx);
-	context.push(context.ax);
-	context.al = context.es.byte(context.bx+4);
-	getsetad(context);
-	context.al = context.es.byte(context.bx+17);
-	context.es = context.data.word(kSetframes);
-	context.bx = (0);
-	context.ah = 0;
-	context.cx = 6;
-	context._mul(context.cx);
-	context._add(context.bx, context.ax);
-	context.ax = context.pop();
-	context.push(context.ax);
-	context.al = context.ah;
-	context.ah = 0;
-	context.cl = context.es.byte(context.bx);
-	context.ch = 0;
-	context._mul(context.cx);
-	context.cx = context.pop();
-	context.ch = 0;
-	context._add(context.ax, context.cx);
-	context._add(context.ax, context.es.word(context.bx+2));
-	context.bx = context.ax;
-	context._add(context.bx, (0+2080));
-	context.al = context.es.byte(context.bx);
-	context.dl = context.al;
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.ax = context.pop();
-	context._cmp(context.dl, 0);
+void DreamGenContext::pixelcheckset() {
+	STACK_CHECK;
+	push(ax);
+	_sub(al, es.byte(bx));
+	_sub(ah, es.byte(bx+1));
+	push(es);
+	push(bx);
+	push(cx);
+	push(ax);
+	al = es.byte(bx+4);
+	getsetad();
+	al = es.byte(bx+17);
+	es = data.word(kSetframes);
+	bx = (0);
+	ah = 0;
+	cx = 6;
+	_mul(cx);
+	_add(bx, ax);
+	ax = pop();
+	push(ax);
+	al = ah;
+	ah = 0;
+	cl = es.byte(bx);
+	ch = 0;
+	_mul(cx);
+	cx = pop();
+	ch = 0;
+	_add(ax, cx);
+	_add(ax, es.word(bx+2));
+	bx = ax;
+	_add(bx, (0+2080));
+	al = es.byte(bx);
+	dl = al;
+	cx = pop();
+	bx = pop();
+	es = pop();
+	ax = pop();
+	_cmp(dl, 0);
 }
 
-void createpanel(Context &context) {
-	STACK_CHECK(context);
-	context.di = 0;
-	context.bx = 8;
-	context.ds = context.data.word(kIcons2);
-	context.al = 0;
-	context.ah = 2;
-	showframe(context);
-	context.di = 160;
-	context.bx = 8;
-	context.ds = context.data.word(kIcons2);
-	context.al = 0;
-	context.ah = 2;
-	showframe(context);
-	context.di = 0;
-	context.bx = 104;
-	context.ds = context.data.word(kIcons2);
-	context.al = 0;
-	context.ah = 2;
-	showframe(context);
-	context.di = 160;
-	context.bx = 104;
-	context.ds = context.data.word(kIcons2);
-	context.al = 0;
-	context.ah = 2;
-	showframe(context);
+void DreamGenContext::createpanel() {
+	STACK_CHECK;
+	di = 0;
+	bx = 8;
+	ds = data.word(kIcons2);
+	al = 0;
+	ah = 2;
+	showframe();
+	di = 160;
+	bx = 8;
+	ds = data.word(kIcons2);
+	al = 0;
+	ah = 2;
+	showframe();
+	di = 0;
+	bx = 104;
+	ds = data.word(kIcons2);
+	al = 0;
+	ah = 2;
+	showframe();
+	di = 160;
+	bx = 104;
+	ds = data.word(kIcons2);
+	al = 0;
+	ah = 2;
+	showframe();
 }
 
-void createpanel2(Context &context) {
-	STACK_CHECK(context);
-	createpanel(context);
-	context.di = 0;
-	context.bx = 0;
-	context.ds = context.data.word(kIcons2);
-	context.al = 5;
-	context.ah = 2;
-	showframe(context);
-	context.di = 160;
-	context.bx = 0;
-	context.ds = context.data.word(kIcons2);
-	context.al = 5;
-	context.ah = 2;
-	showframe(context);
+void DreamGenContext::createpanel2() {
+	STACK_CHECK;
+	createpanel();
+	di = 0;
+	bx = 0;
+	ds = data.word(kIcons2);
+	al = 5;
+	ah = 2;
+	showframe();
+	di = 160;
+	bx = 0;
+	ds = data.word(kIcons2);
+	al = 5;
+	ah = 2;
+	showframe();
 }
 
-void clearwork(Context &context) {
-	STACK_CHECK(context);
-	context.ax = 0x0;
-	context.es = context.data.word(kWorkspace);
-	context.di = 0;
-	context.cx = (200*320)/64;
+void DreamGenContext::clearwork() {
+	STACK_CHECK;
+	ax = 0x0;
+	es = data.word(kWorkspace);
+	di = 0;
+	cx = (200*320)/64;
 clearloop:
-	context._stosw(32);
-	if (--context.cx)
+	_stosw(32);
+	if (--cx)
 		goto clearloop;
 }
 
-void zoom(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
+void DreamGenContext::zoom() {
+	STACK_CHECK;
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
 		return /* (inwatching) */;
-	context._cmp(context.data.byte(kZoomon), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kZoomon), 1);
+	if (flags.z())
 		goto zoomswitch;
 	return;
 zoomswitch:
-	context._cmp(context.data.byte(kCommandtype), 199);
-	if (context.flags.c())
+	_cmp(data.byte(kCommandtype), 199);
+	if (flags.c())
 		goto zoomit;
-	putunderzoom(context);
+	putunderzoom();
 	return;
 zoomit:
-	context.ax = context.data.word(kOldpointery);
-	context._sub(context.ax, 9);
-	context.cx = (320);
-	context._mul(context.cx);
-	context._add(context.ax, context.data.word(kOldpointerx));
-	context._sub(context.ax, 11);
-	context.si = context.ax;
-	context.ax = (132)+4;
-	context.cx = (320);
-	context._mul(context.cx);
-	context._add(context.ax, (8)+5);
-	context.di = context.ax;
-	context.es = context.data.word(kWorkspace);
-	context.ds = context.data.word(kWorkspace);
-	context.cx = 20;
+	ax = data.word(kOldpointery);
+	_sub(ax, 9);
+	cx = (320);
+	_mul(cx);
+	_add(ax, data.word(kOldpointerx));
+	_sub(ax, 11);
+	si = ax;
+	ax = (132)+4;
+	cx = (320);
+	_mul(cx);
+	_add(ax, (8)+5);
+	di = ax;
+	es = data.word(kWorkspace);
+	ds = data.word(kWorkspace);
+	cx = 20;
 zoomloop:
-	context.push(context.cx);
-	context.cx = 23;
+	push(cx);
+	cx = 23;
 zoomloop2:
-	context._lodsb();
-	context.ah = context.al;
-	context._stosw();
-	context.es.word(context.di+(320)-2) = context.ax;
-	if (--context.cx)
+	_lodsb();
+	ah = al;
+	_stosw();
+	es.word(di+(320)-2) = ax;
+	if (--cx)
 		goto zoomloop2;
-	context._add(context.si, (320)-23);
-	context._add(context.di, (320)-46+(320));
-	context.cx = context.pop();
-	if (--context.cx)
+	_add(si, (320)-23);
+	_add(di, (320)-46+(320));
+	cx = pop();
+	if (--cx)
 		goto zoomloop;
-	crosshair(context);
-	context.data.byte(kDidzoom) = 1;
+	crosshair();
+	data.byte(kDidzoom) = 1;
 }
 
-void delthisone(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.push(context.ax);
-	context.al = context.ah;
-	context.ah = 0;
-	context._add(context.ax, context.data.word(kMapady));
-	context.bx = (320);
-	context._mul(context.bx);
-	context.bx = context.pop();
-	context.bh = 0;
-	context._add(context.bx, context.data.word(kMapadx));
-	context._add(context.ax, context.bx);
-	context.di = context.ax;
-	context.ax = context.pop();
-	context.push(context.ax);
-	context.al = context.ah;
-	context.ah = 0;
-	context.bx = 22*8;
-	context._mul(context.bx);
-	context.bx = context.pop();
-	context.bh = 0;
-	context._add(context.ax, context.bx);
-	context.si = context.ax;
-	context.es = context.data.word(kWorkspace);
-	context.ds = context.data.word(kMapstore);
-	context.dl = context.cl;
-	context.dh = 0;
-	context.ax = (320);
-	context._sub(context.ax, context.dx);
-	context._neg(context.dx);
-	context._add(context.dx, 22*8);
+void DreamGenContext::delthisone() {
+	STACK_CHECK;
+	push(ax);
+	push(ax);
+	al = ah;
+	ah = 0;
+	_add(ax, data.word(kMapady));
+	bx = (320);
+	_mul(bx);
+	bx = pop();
+	bh = 0;
+	_add(bx, data.word(kMapadx));
+	_add(ax, bx);
+	di = ax;
+	ax = pop();
+	push(ax);
+	al = ah;
+	ah = 0;
+	bx = 22*8;
+	_mul(bx);
+	bx = pop();
+	bh = 0;
+	_add(ax, bx);
+	si = ax;
+	es = data.word(kWorkspace);
+	ds = data.word(kMapstore);
+	dl = cl;
+	dh = 0;
+	ax = (320);
+	_sub(ax, dx);
+	_neg(dx);
+	_add(dx, 22*8);
 deloneloop:
-	context.push(context.cx);
-	context.ch = 0;
-	context._movsb(context.cx);
-	context.cx = context.pop();
-	context._add(context.di, context.ax);
-	context._add(context.si, context.dx);
-	context._dec(context.ch);
-	if (!context.flags.z())
+	push(cx);
+	ch = 0;
+	_movsb(cx);
+	cx = pop();
+	_add(di, ax);
+	_add(si, dx);
+	_dec(ch);
+	if (!flags.z())
 		goto deloneloop;
 }
 
-void doblocks(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kWorkspace);
-	context.ax = context.data.word(kMapady);
-	context.cx = (320);
-	context._mul(context.cx);
-	context.di = context.data.word(kMapadx);
-	context._add(context.di, context.ax);
-	context.al = context.data.byte(kMapy);
-	context.ah = 0;
-	context.bx = (66);
-	context._mul(context.bx);
-	context.bl = context.data.byte(kMapx);
-	context.bh = 0;
-	context._add(context.ax, context.bx);
-	context.si = (0);
-	context._add(context.si, context.ax);
-	context.cx = 10;
+void DreamGenContext::doblocks() {
+	STACK_CHECK;
+	es = data.word(kWorkspace);
+	ax = data.word(kMapady);
+	cx = (320);
+	_mul(cx);
+	di = data.word(kMapadx);
+	_add(di, ax);
+	al = data.byte(kMapy);
+	ah = 0;
+	bx = (66);
+	_mul(bx);
+	bl = data.byte(kMapx);
+	bh = 0;
+	_add(ax, bx);
+	si = (0);
+	_add(si, ax);
+	cx = 10;
 loop120:
-	context.push(context.di);
-	context.push(context.cx);
-	context.cx = 11;
+	push(di);
+	push(cx);
+	cx = 11;
 loop124:
-	context.push(context.cx);
-	context.push(context.di);
-	context.ds = context.data.word(kMapdata);
-	context._lodsb();
-	context.ds = context.data.word(kBackdrop);
-	context.push(context.si);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	push(cx);
+	push(di);
+	ds = data.word(kMapdata);
+	_lodsb();
+	ds = data.word(kBackdrop);
+	push(si);
+	_cmp(al, 0);
+	if (flags.z())
 		goto zeroblock;
-	context.ah = context.al;
-	context.al = 0;
-	context.si = (0+192);
-	context._add(context.si, context.ax);
-	context.bh = 14;
-	context.bh = 4;
+	ah = al;
+	al = 0;
+	si = (0+192);
+	_add(si, ax);
+	bh = 14;
+	bh = 4;
 firstbitofblock:
-	context._movsw(8);
-	context._add(context.di, (320)-16);
-	context._dec(context.bh);
-	if (!context.flags.z())
+	_movsw(8);
+	_add(di, (320)-16);
+	_dec(bh);
+	if (!flags.z())
 		goto firstbitofblock;
-	context.bh = 12;
+	bh = 12;
 loop125:
-	context._movsw(8);
-	context.ax = 0x0dfdf;
-	context._stosw(2);
-	context._add(context.di, (320)-20);
-	context._dec(context.bh);
-	if (!context.flags.z())
+	_movsw(8);
+	ax = 0x0dfdf;
+	_stosw(2);
+	_add(di, (320)-20);
+	_dec(bh);
+	if (!flags.z())
 		goto loop125;
-	context._add(context.di, 4);
-	context.ax = 0x0dfdf;
-	context._stosw(8);
-	context._add(context.di, (320)-16);
-	context._stosw(8);
-	context._add(context.di, (320)-16);
-	context._stosw(8);
-	context._add(context.di, (320)-16);
-	context._stosw(8);
+	_add(di, 4);
+	ax = 0x0dfdf;
+	_stosw(8);
+	_add(di, (320)-16);
+	_stosw(8);
+	_add(di, (320)-16);
+	_stosw(8);
+	_add(di, (320)-16);
+	_stosw(8);
 zeroblock:
-	context.si = context.pop();
-	context.di = context.pop();
-	context.cx = context.pop();
-	context._add(context.di, 16);
-	if (--context.cx)
+	si = pop();
+	di = pop();
+	cx = pop();
+	_add(di, 16);
+	if (--cx)
 		goto loop124;
-	context._add(context.si, (66)-11);
-	context.cx = context.pop();
-	context.di = context.pop();
-	context._add(context.di, (320)*16);
-	if (--context.cx)
+	_add(si, (66)-11);
+	cx = pop();
+	di = pop();
+	_add(di, (320)*16);
+	if (--cx)
 		goto loop120;
 }
 
-void showframe(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.dx);
-	context.push(context.ax);
-	context.cx = context.ax;
-	context._and(context.cx, 511);
-	context._add(context.cx, context.cx);
-	context.si = context.cx;
-	context._add(context.cx, context.cx);
-	context._add(context.si, context.cx);
-	context._cmp(context.ds.word(context.si), 0);
-	if (!context.flags.z())
+void DreamGenContext::showframe() {
+	STACK_CHECK;
+	push(dx);
+	push(ax);
+	cx = ax;
+	_and(cx, 511);
+	_add(cx, cx);
+	si = cx;
+	_add(cx, cx);
+	_add(si, cx);
+	_cmp(ds.word(si), 0);
+	if (!flags.z())
 		goto notblankshow;
-	context.ax = context.pop();
-	context.dx = context.pop();
-	context.cx = 0;
+	ax = pop();
+	dx = pop();
+	cx = 0;
 	return;
 notblankshow:
-	context._test(context.ah, 128);
-	if (!context.flags.z())
+	_test(ah, 128);
+	if (!flags.z())
 		goto skipoffsets;
-	context.al = context.ds.byte(context.si+4);
-	context.ah = 0;
-	context._add(context.di, context.ax);
-	context.al = context.ds.byte(context.si+5);
-	context.ah = 0;
-	context._add(context.bx, context.ax);
+	al = ds.byte(si+4);
+	ah = 0;
+	_add(di, ax);
+	al = ds.byte(si+5);
+	ah = 0;
+	_add(bx, ax);
 skipoffsets:
-	context.cx = context.ds.word(context.si+0);
-	context.ax = context.ds.word(context.si+2);
-	context._add(context.ax, 2080);
-	context.si = context.ax;
-	context.ax = context.pop();
-	context.dx = context.pop();
-	context._cmp(context.ah, 0);
-	if (context.flags.z())
+	cx = ds.word(si+0);
+	ax = ds.word(si+2);
+	_add(ax, 2080);
+	si = ax;
+	ax = pop();
+	dx = pop();
+	_cmp(ah, 0);
+	if (flags.z())
 		goto noeffects;
-	context._test(context.ah, 128);
-	if (context.flags.z())
+	_test(ah, 128);
+	if (flags.z())
 		goto notcentred;
-	context.push(context.ax);
-	context.al = context.cl;
-	context.ah = 0;
-	context._shr(context.ax, 1);
-	context._sub(context.di, context.ax);
-	context.al = context.ch;
-	context.ah = 0;
-	context._shr(context.ax, 1);
-	context._sub(context.bx, context.ax);
-	context.ax = context.pop();
+	push(ax);
+	al = cl;
+	ah = 0;
+	_shr(ax, 1);
+	_sub(di, ax);
+	al = ch;
+	ah = 0;
+	_shr(ax, 1);
+	_sub(bx, ax);
+	ax = pop();
 notcentred:
-	context._test(context.ah, 64);
-	if (context.flags.z())
+	_test(ah, 64);
+	if (flags.z())
 		goto notdiffdest;
-	context.push(context.cx);
-	frameoutfx(context);
-	context.cx = context.pop();
+	push(cx);
+	frameoutfx();
+	cx = pop();
 	return;
 notdiffdest:
-	context._test(context.ah, 8);
-	if (context.flags.z())
+	_test(ah, 8);
+	if (flags.z())
 		goto notprintlist;
-	context.push(context.ax);
-	context.ax = context.di;
-	context._sub(context.ax, context.data.word(kMapadx));
-	context.push(context.bx);
-	context._sub(context.bx, context.data.word(kMapady));
-	context.ah = context.bl;
-	context.bx = context.pop();
-	context.ax = context.pop();
+	push(ax);
+	ax = di;
+	_sub(ax, data.word(kMapadx));
+	push(bx);
+	_sub(bx, data.word(kMapady));
+	ah = bl;
+	bx = pop();
+	ax = pop();
 notprintlist:
-	context._test(context.ah, 4);
-	if (context.flags.z())
+	_test(ah, 4);
+	if (flags.z())
 		goto notflippedx;
-	context.dx = (320);
-	context.es = context.data.word(kWorkspace);
-	context.push(context.cx);
-	frameoutfx(context);
-	context.cx = context.pop();
+	dx = (320);
+	es = data.word(kWorkspace);
+	push(cx);
+	frameoutfx();
+	cx = pop();
 	return;
 notflippedx:
-	context._test(context.ah, 2);
-	if (context.flags.z())
+	_test(ah, 2);
+	if (flags.z())
 		goto notnomask;
-	context.dx = (320);
-	context.es = context.data.word(kWorkspace);
-	context.push(context.cx);
-	frameoutnm(context);
-	context.cx = context.pop();
+	dx = (320);
+	es = data.word(kWorkspace);
+	push(cx);
+	frameoutnm();
+	cx = pop();
 	return;
 notnomask:
-	context._test(context.ah, 32);
-	if (context.flags.z())
+	_test(ah, 32);
+	if (flags.z())
 		goto noeffects;
-	context.dx = (320);
-	context.es = context.data.word(kWorkspace);
-	context.push(context.cx);
-	frameoutbh(context);
-	context.cx = context.pop();
+	dx = (320);
+	es = data.word(kWorkspace);
+	push(cx);
+	frameoutbh();
+	cx = pop();
 	return;
 noeffects:
-	context.dx = (320);
-	context.es = context.data.word(kWorkspace);
-	context.push(context.cx);
-	frameoutv(context);
-	context.cx = context.pop();
+	dx = (320);
+	es = data.word(kWorkspace);
+	push(cx);
+	frameoutv();
+	cx = pop();
 }
 
-void frameoutv(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.dx);
-	context.ax = context.bx;
-	context.bx = context.dx;
-	context._mul(context.bx);
-	context._add(context.di, context.ax);
-	context.dx = context.pop();
-	context.push(context.cx);
-	context.ch = 0;
-	context._sub(context.dx, context.cx);
-	context.cx = context.pop();
+void DreamGenContext::frameoutv() {
+	STACK_CHECK;
+	push(dx);
+	ax = bx;
+	bx = dx;
+	_mul(bx);
+	_add(di, ax);
+	dx = pop();
+	push(cx);
+	ch = 0;
+	_sub(dx, cx);
+	cx = pop();
 frameloop1:
-	context.push(context.cx);
-	context.ch = 0;
+	push(cx);
+	ch = 0;
 frameloop2:
-	context._lodsb();
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	_lodsb();
+	_cmp(al, 0);
+	if (!flags.z())
 		goto backtosolid;
 backtoother:
-	context._inc(context.di);
-	if (--context.cx)
+	_inc(di);
+	if (--cx)
 		goto frameloop2;
-	context.cx = context.pop();
-	context._add(context.di, context.dx);
-	context._dec(context.ch);
-	if (!context.flags.z())
+	cx = pop();
+	_add(di, dx);
+	_dec(ch);
+	if (!flags.z())
 		goto frameloop1;
 	return;
 frameloop3:
-	context._lodsb();
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_lodsb();
+	_cmp(al, 0);
+	if (flags.z())
 		goto backtoother;
 backtosolid:
-	context._stosb();
-	if (--context.cx)
+	_stosb();
+	if (--cx)
 		goto frameloop3;
-	context.cx = context.pop();
-	context._add(context.di, context.dx);
-	context._dec(context.ch);
-	if (!context.flags.z())
+	cx = pop();
+	_add(di, dx);
+	_dec(ch);
+	if (!flags.z())
 		goto frameloop1;
 }
 
-void frameoutbh(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.dx);
-	context.ax = context.bx;
-	context.bx = context.dx;
-	context._mul(context.bx);
-	context._add(context.di, context.ax);
-	context.dx = context.pop();
-	context.push(context.cx);
-	context.ch = 0;
-	context._sub(context.dx, context.cx);
-	context.cx = context.pop();
+void DreamGenContext::frameoutbh() {
+	STACK_CHECK;
+	push(dx);
+	ax = bx;
+	bx = dx;
+	_mul(bx);
+	_add(di, ax);
+	dx = pop();
+	push(cx);
+	ch = 0;
+	_sub(dx, cx);
+	cx = pop();
 bhloop2:
-	context.push(context.cx);
-	context.ch = 0;
-	context.ah = 255;
+	push(cx);
+	ch = 0;
+	ah = 255;
 bhloop1:
-	context._cmp(context.es.byte(context.di), context.ah);
-	if (!context.flags.z())
+	_cmp(es.byte(di), ah);
+	if (!flags.z())
 		goto nofill;
-	context._movsb();
-	if (--context.cx)
+	_movsb();
+	if (--cx)
 		goto bhloop1;
 	goto nextline;
 nofill:
-	context._inc(context.di);
-	context._inc(context.si);
-	if (--context.cx)
+	_inc(di);
+	_inc(si);
+	if (--cx)
 		goto bhloop1;
 nextline:
-	context._add(context.di, context.dx);
-	context.cx = context.pop();
-	context._dec(context.ch);
-	if (!context.flags.z())
+	_add(di, dx);
+	cx = pop();
+	_dec(ch);
+	if (!flags.z())
 		goto bhloop2;
 }
 
-void frameoutfx(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.dx);
-	context.ax = context.bx;
-	context.bx = context.dx;
-	context._mul(context.bx);
-	context._add(context.di, context.ax);
-	context.dx = context.pop();
-	context.push(context.cx);
-	context.ch = 0;
-	context._add(context.dx, context.cx);
-	context.cx = context.pop();
+void DreamGenContext::frameoutfx() {
+	STACK_CHECK;
+	push(dx);
+	ax = bx;
+	bx = dx;
+	_mul(bx);
+	_add(di, ax);
+	dx = pop();
+	push(cx);
+	ch = 0;
+	_add(dx, cx);
+	cx = pop();
 frameloopfx1:
-	context.push(context.cx);
-	context.ch = 0;
+	push(cx);
+	ch = 0;
 frameloopfx2:
-	context._lodsb();
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	_lodsb();
+	_cmp(al, 0);
+	if (!flags.z())
 		goto backtosolidfx;
 backtootherfx:
-	context._dec(context.di);
-	if (--context.cx)
+	_dec(di);
+	if (--cx)
 		goto frameloopfx2;
-	context.cx = context.pop();
-	context._add(context.di, context.dx);
-	context._dec(context.ch);
-	if (!context.flags.z())
+	cx = pop();
+	_add(di, dx);
+	_dec(ch);
+	if (!flags.z())
 		goto frameloopfx1;
 	return;
 frameloopfx3:
-	context._lodsb();
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_lodsb();
+	_cmp(al, 0);
+	if (flags.z())
 		goto backtootherfx;
 backtosolidfx:
-	context.es.byte(context.di) = context.al;
-	context._dec(context.di);
-	if (--context.cx)
+	es.byte(di) = al;
+	_dec(di);
+	if (--cx)
 		goto frameloopfx3;
-	context.cx = context.pop();
-	context._add(context.di, context.dx);
-	context._dec(context.ch);
-	if (!context.flags.z())
+	cx = pop();
+	_add(di, dx);
+	_dec(ch);
+	if (!flags.z())
 		goto frameloopfx1;
 }
 
-void transferinv(Context &context) {
-	STACK_CHECK(context);
-	context.di = context.data.word(kExframepos);
-	context.push(context.di);
-	context.al = context.data.byte(kExpos);
-	context.ah = 0;
-	context.bx = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.bx);
-	context._inc(context.ax);
-	context.cx = 6;
-	context._mul(context.cx);
-	context.es = context.data.word(kExtras);
-	context.bx = (0);
-	context._add(context.bx, context.ax);
-	context._add(context.di, (0+2080));
-	context.push(context.bx);
-	context.al = context.data.byte(kItemtotran);
-	context.ah = 0;
-	context.bx = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.bx);
-	context._inc(context.ax);
-	context.cx = 6;
-	context._mul(context.cx);
-	context.ds = context.data.word(kFreeframes);
-	context.bx = (0);
-	context._add(context.bx, context.ax);
-	context.si = (0+2080);
-	context.al = context.ds.byte(context.bx);
-	context.ah = 0;
-	context.cl = context.ds.byte(context.bx+1);
-	context.ch = 0;
-	context._add(context.si, context.ds.word(context.bx+2));
-	context.dx = context.ds.word(context.bx+4);
-	context.bx = context.pop();
-	context.es.byte(context.bx+0) = context.al;
-	context.es.byte(context.bx+1) = context.cl;
-	context.es.word(context.bx+4) = context.dx;
-	context._mul(context.cx);
-	context.cx = context.ax;
-	context.push(context.cx);
-	context._movsb(context.cx);
-	context.cx = context.pop();
-	context.ax = context.pop();
-	context.es.word(context.bx+2) = context.ax;
-	context._add(context.data.word(kExframepos), context.cx);
+void DreamGenContext::transferinv() {
+	STACK_CHECK;
+	di = data.word(kExframepos);
+	push(di);
+	al = data.byte(kExpos);
+	ah = 0;
+	bx = ax;
+	_add(ax, ax);
+	_add(ax, bx);
+	_inc(ax);
+	cx = 6;
+	_mul(cx);
+	es = data.word(kExtras);
+	bx = (0);
+	_add(bx, ax);
+	_add(di, (0+2080));
+	push(bx);
+	al = data.byte(kItemtotran);
+	ah = 0;
+	bx = ax;
+	_add(ax, ax);
+	_add(ax, bx);
+	_inc(ax);
+	cx = 6;
+	_mul(cx);
+	ds = data.word(kFreeframes);
+	bx = (0);
+	_add(bx, ax);
+	si = (0+2080);
+	al = ds.byte(bx);
+	ah = 0;
+	cl = ds.byte(bx+1);
+	ch = 0;
+	_add(si, ds.word(bx+2));
+	dx = ds.word(bx+4);
+	bx = pop();
+	es.byte(bx+0) = al;
+	es.byte(bx+1) = cl;
+	es.word(bx+4) = dx;
+	_mul(cx);
+	cx = ax;
+	push(cx);
+	_movsb(cx);
+	cx = pop();
+	ax = pop();
+	es.word(bx+2) = ax;
+	_add(data.word(kExframepos), cx);
 }
 
-void transfermap(Context &context) {
-	STACK_CHECK(context);
-	context.di = context.data.word(kExframepos);
-	context.push(context.di);
-	context.al = context.data.byte(kExpos);
-	context.ah = 0;
-	context.bx = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.bx);
-	context.cx = 6;
-	context._mul(context.cx);
-	context.es = context.data.word(kExtras);
-	context.bx = (0);
-	context._add(context.bx, context.ax);
-	context._add(context.di, (0+2080));
-	context.push(context.bx);
-	context.al = context.data.byte(kItemtotran);
-	context.ah = 0;
-	context.bx = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.bx);
-	context.cx = 6;
-	context._mul(context.cx);
-	context.ds = context.data.word(kFreeframes);
-	context.bx = (0);
-	context._add(context.bx, context.ax);
-	context.si = (0+2080);
-	context.al = context.ds.byte(context.bx);
-	context.ah = 0;
-	context.cl = context.ds.byte(context.bx+1);
-	context.ch = 0;
-	context._add(context.si, context.ds.word(context.bx+2));
-	context.dx = context.ds.word(context.bx+4);
-	context.bx = context.pop();
-	context.es.byte(context.bx+0) = context.al;
-	context.es.byte(context.bx+1) = context.cl;
-	context.es.word(context.bx+4) = context.dx;
-	context._mul(context.cx);
-	context.cx = context.ax;
-	context.push(context.cx);
-	context._movsb(context.cx);
-	context.cx = context.pop();
-	context.ax = context.pop();
-	context.es.word(context.bx+2) = context.ax;
-	context._add(context.data.word(kExframepos), context.cx);
+void DreamGenContext::transfermap() {
+	STACK_CHECK;
+	di = data.word(kExframepos);
+	push(di);
+	al = data.byte(kExpos);
+	ah = 0;
+	bx = ax;
+	_add(ax, ax);
+	_add(ax, bx);
+	cx = 6;
+	_mul(cx);
+	es = data.word(kExtras);
+	bx = (0);
+	_add(bx, ax);
+	_add(di, (0+2080));
+	push(bx);
+	al = data.byte(kItemtotran);
+	ah = 0;
+	bx = ax;
+	_add(ax, ax);
+	_add(ax, bx);
+	cx = 6;
+	_mul(cx);
+	ds = data.word(kFreeframes);
+	bx = (0);
+	_add(bx, ax);
+	si = (0+2080);
+	al = ds.byte(bx);
+	ah = 0;
+	cl = ds.byte(bx+1);
+	ch = 0;
+	_add(si, ds.word(bx+2));
+	dx = ds.word(bx+4);
+	bx = pop();
+	es.byte(bx+0) = al;
+	es.byte(bx+1) = cl;
+	es.word(bx+4) = dx;
+	_mul(cx);
+	cx = ax;
+	push(cx);
+	_movsb(cx);
+	cx = pop();
+	ax = pop();
+	es.word(bx+2) = ax;
+	_add(data.word(kExframepos), cx);
 }
 
-void dofade(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kFadedirection), 0);
-	if (context.flags.z())
+void DreamGenContext::dofade() {
+	STACK_CHECK;
+	_cmp(data.byte(kFadedirection), 0);
+	if (flags.z())
 		return /* (finishfade) */;
-	context.cl = context.data.byte(kNumtofade);
-	context.ch = 0;
-	context.al = context.data.byte(kColourpos);
-	context.ah = 0;
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
-	context._add(context.si, context.ax);
-	context._add(context.si, context.ax);
-	context._add(context.si, context.ax);
-	showgroup(context);
-	context.al = context.data.byte(kNumtofade);
-	context._add(context.al, context.data.byte(kColourpos));
-	context.data.byte(kColourpos) = context.al;
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	cl = data.byte(kNumtofade);
+	ch = 0;
+	al = data.byte(kColourpos);
+	ah = 0;
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	_add(si, ax);
+	_add(si, ax);
+	_add(si, ax);
+	showgroup();
+	al = data.byte(kNumtofade);
+	_add(al, data.byte(kColourpos));
+	data.byte(kColourpos) = al;
+	_cmp(al, 0);
+	if (!flags.z())
 		return /* (finishfade) */;
-	fadecalculation(context);
+	fadecalculation();
 }
 
-void clearendpal(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
-	context.cx = 768;
-	context.al = 0;
-	context._stosb(context.cx);
+void DreamGenContext::clearendpal() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	cx = 768;
+	al = 0;
+	_stosb(cx);
 }
 
-void clearpalette(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kFadedirection) = 0;
-	clearstartpal(context);
-	dumpcurrent(context);
+void DreamGenContext::clearpalette() {
+	STACK_CHECK;
+	data.byte(kFadedirection) = 0;
+	clearstartpal();
+	dumpcurrent();
 }
 
-void fadescreenup(Context &context) {
-	STACK_CHECK(context);
-	clearstartpal(context);
-	paltoendpal(context);
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 128;
+void DreamGenContext::fadescreenup() {
+	STACK_CHECK;
+	clearstartpal();
+	paltoendpal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
 }
 
-void fadetowhite(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
-	context.cx = 768;
-	context.al = 63;
-	context._stosb(context.cx);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
-	context.al = 0;
-	context._stosb(3);
-	paltostartpal(context);
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 128;
+void DreamGenContext::fadetowhite() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	cx = 768;
+	al = 63;
+	_stosb(cx);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	al = 0;
+	_stosb(3);
+	paltostartpal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
 }
 
-void fadefromwhite(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
-	context.cx = 768;
-	context.al = 63;
-	context._stosb(context.cx);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
-	context.al = 0;
-	context._stosb(3);
-	paltoendpal(context);
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 128;
+void DreamGenContext::fadefromwhite() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	cx = 768;
+	al = 63;
+	_stosb(cx);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	al = 0;
+	_stosb(3);
+	paltoendpal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
 }
 
-void fadescreenups(Context &context) {
-	STACK_CHECK(context);
-	clearstartpal(context);
-	paltoendpal(context);
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 64;
+void DreamGenContext::fadescreenups() {
+	STACK_CHECK;
+	clearstartpal();
+	paltoendpal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 64;
 }
 
-void fadescreendownhalf(Context &context) {
-	STACK_CHECK(context);
-	paltostartpal(context);
-	paltoendpal(context);
-	context.cx = 768;
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+void DreamGenContext::fadescreendownhalf() {
+	STACK_CHECK;
+	paltostartpal();
+	paltoendpal();
+	cx = 768;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 halfend:
-	context.al = context.es.byte(context.bx);
-	context._shr(context.al, 1);
-	context.es.byte(context.bx) = context.al;
-	context._inc(context.bx);
-	if (--context.cx)
+	al = es.byte(bx);
+	_shr(al, 1);
+	es.byte(bx) = al;
+	_inc(bx);
+	if (--cx)
 		goto halfend;
-	context.ds = context.data.word(kBuffers);
-	context.es = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(56*3);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(56*3);
-	context.cx = 3*5;
-	context._movsb(context.cx);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(77*3);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(77*3);
-	context.cx = 3*2;
-	context._movsb(context.cx);
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 31;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 32;
+	ds = data.word(kBuffers);
+	es = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(56*3);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(56*3);
+	cx = 3*5;
+	_movsb(cx);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(77*3);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(77*3);
+	cx = 3*2;
+	_movsb(cx);
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 31;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 32;
 }
 
-void fadescreenuphalf(Context &context) {
-	STACK_CHECK(context);
-	endpaltostart(context);
-	paltoendpal(context);
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 31;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 32;
+void DreamGenContext::fadescreenuphalf() {
+	STACK_CHECK;
+	endpaltostart();
+	paltoendpal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 31;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 32;
 }
 
-void fadescreendown(Context &context) {
-	STACK_CHECK(context);
-	paltostartpal(context);
-	clearendpal(context);
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 128;
+void DreamGenContext::fadescreendown() {
+	STACK_CHECK;
+	paltostartpal();
+	clearendpal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
 }
 
-void fadescreendowns(Context &context) {
-	STACK_CHECK(context);
-	paltostartpal(context);
-	clearendpal(context);
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 64;
+void DreamGenContext::fadescreendowns() {
+	STACK_CHECK;
+	paltostartpal();
+	clearendpal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 64;
 }
 
-void clearstartpal(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
-	context.cx = 256;
+void DreamGenContext::clearstartpal() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	cx = 256;
 wholeloop1:
-	context.ax = 0;
-	context._stosw();
-	context.al = 0;
-	context._stosb();
-	if (--context.cx)
+	ax = 0;
+	_stosw();
+	al = 0;
+	_stosb();
+	if (--cx)
 		goto wholeloop1;
 }
 
-void showgun(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kAddtored) = 0;
-	context.data.byte(kAddtogreen) = 0;
-	context.data.byte(kAddtoblue) = 0;
-	paltostartpal(context);
-	paltoendpal(context);
-	greyscalesum(context);
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 128;
-	context.cx = 130;
-	hangon(context);
-	endpaltostart(context);
-	clearendpal(context);
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 128;
-	context.cx = 200;
-	hangon(context);
-	context.data.byte(kRoomssample) = 34;
-	loadroomssample(context);
-	context.data.byte(kVolume) = 0;
-	context.dx = 2351;
-	loadintotemp(context);
-	createpanel2(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 0;
-	context.ah = 0;
-	context.di = 100;
-	context.bx = 4;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 1;
-	context.ah = 0;
-	context.di = 158;
-	context.bx = 106;
-	showframe(context);
-	worktoscreen(context);
-	getridoftemp(context);
-	fadescreenup(context);
-	context.cx = 160;
-	hangon(context);
-	context.al = 12;
-	context.ah = 0;
-	playchannel0(context);
-	context.dx = 2260;
-	loadtemptext(context);
-	rollendcredits2(context);
-	getridoftemptext(context);
+void DreamGenContext::showgun() {
+	STACK_CHECK;
+	data.byte(kAddtored) = 0;
+	data.byte(kAddtogreen) = 0;
+	data.byte(kAddtoblue) = 0;
+	paltostartpal();
+	paltoendpal();
+	greyscalesum();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	cx = 130;
+	hangon();
+	endpaltostart();
+	clearendpal();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	cx = 200;
+	hangon();
+	data.byte(kRoomssample) = 34;
+	loadroomssample();
+	data.byte(kVolume) = 0;
+	dx = 2351;
+	loadintotemp();
+	createpanel2();
+	ds = data.word(kTempgraphics);
+	al = 0;
+	ah = 0;
+	di = 100;
+	bx = 4;
+	showframe();
+	ds = data.word(kTempgraphics);
+	al = 1;
+	ah = 0;
+	di = 158;
+	bx = 106;
+	showframe();
+	worktoscreen();
+	getridoftemp();
+	fadescreenup();
+	cx = 160;
+	hangon();
+	al = 12;
+	ah = 0;
+	playchannel0();
+	dx = 2260;
+	loadtemptext();
+	rollendcredits2();
+	getridoftemptext();
 }
 
-void rollendcredits2(Context &context) {
-	STACK_CHECK(context);
-	rollem(context);
+void DreamGenContext::rollendcredits2() {
+	STACK_CHECK;
+	rollem();
 }
 
-void rollem(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 160;
-	context.ch = 160;
-	context.di = 25;
-	context.bx = 20;
-	context.ds = context.data.word(kMapstore);
-	context.si = 0;
-	multiget(context);
-	context.es = context.data.word(kTextfile1);
-	context.si = 49*2;
-	context.ax = context.es.word(context.si);
-	context.si = context.ax;
-	context._add(context.si, (66*2));
-	context.cx = 80;
+void DreamGenContext::rollem() {
+	STACK_CHECK;
+	cl = 160;
+	ch = 160;
+	di = 25;
+	bx = 20;
+	ds = data.word(kMapstore);
+	si = 0;
+	multiget();
+	es = data.word(kTextfile1);
+	si = 49*2;
+	ax = es.word(si);
+	si = ax;
+	_add(si, (66*2));
+	cx = 80;
 endcredits21:
-	context.push(context.cx);
-	context.bx = 10;
-	context.cx = context.data.word(kLinespacing);
+	push(cx);
+	bx = 10;
+	cx = data.word(kLinespacing);
 endcredits22:
-	context.push(context.cx);
-	context.push(context.si);
-	context.push(context.di);
-	context.push(context.es);
-	context.push(context.bx);
-	vsync(context);
-	context.cl = 160;
-	context.ch = 160;
-	context.di = 25;
-	context.bx = 20;
-	context.ds = context.data.word(kMapstore);
-	context.si = 0;
-	multiput(context);
-	vsync(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.di = context.pop();
-	context.si = context.pop();
-	context.push(context.si);
-	context.push(context.di);
-	context.push(context.es);
-	context.push(context.bx);
-	context.cx = 18;
+	push(cx);
+	push(si);
+	push(di);
+	push(es);
+	push(bx);
+	vsync();
+	cl = 160;
+	ch = 160;
+	di = 25;
+	bx = 20;
+	ds = data.word(kMapstore);
+	si = 0;
+	multiput();
+	vsync();
+	bx = pop();
+	es = pop();
+	di = pop();
+	si = pop();
+	push(si);
+	push(di);
+	push(es);
+	push(bx);
+	cx = 18;
 onelot2:
-	context.push(context.cx);
-	context.di = 25;
-	context.dx = 161;
-	context.ax = 0;
-	printdirect(context);
-	context._add(context.bx, context.data.word(kLinespacing));
-	context.cx = context.pop();
-	if (--context.cx)
+	push(cx);
+	di = 25;
+	dx = 161;
+	ax = 0;
+	printdirect();
+	_add(bx, data.word(kLinespacing));
+	cx = pop();
+	if (--cx)
 		goto onelot2;
-	vsync(context);
-	context.cl = 160;
-	context.ch = 160;
-	context.di = 25;
-	context.bx = 20;
-	multidump(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.di = context.pop();
-	context.si = context.pop();
-	context.cx = context.pop();
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	vsync();
+	cl = 160;
+	ch = 160;
+	di = 25;
+	bx = 20;
+	multidump();
+	bx = pop();
+	es = pop();
+	di = pop();
+	si = pop();
+	cx = pop();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto endearly2;
-	context._dec(context.bx);
-	if (--context.cx)
+	_dec(bx);
+	if (--cx)
 		goto endcredits22;
-	context.cx = context.pop();
+	cx = pop();
 looknext2:
-	context.al = context.es.byte(context.si);
-	context._inc(context.si);
-	context._cmp(context.al, ':');
-	if (context.flags.z())
+	al = es.byte(si);
+	_inc(si);
+	_cmp(al, ':');
+	if (flags.z())
 		goto gotnext2;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_cmp(al, 0);
+	if (flags.z())
 		goto gotnext2;
 	goto looknext2;
 gotnext2:
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		return /* (endearly) */;
-	if (--context.cx)
+	if (--cx)
 		goto endcredits21;
-	context.cx = 120;
-	hangone(context);
+	cx = 120;
+	hangone();
 	return;
 endearly2:
-	context.cx = context.pop();
+	cx = pop();
 }
 
-void fadecalculation(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kFadecount), 0);
-	if (context.flags.z())
+void DreamGenContext::fadecalculation() {
+	STACK_CHECK;
+	_cmp(data.byte(kFadecount), 0);
+	if (flags.z())
 		goto nomorefading;
-	context.bl = context.data.byte(kFadecount);
-	context.es = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
-	context.cx = 768;
+	bl = data.byte(kFadecount);
+	es = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	cx = 768;
 fadecolloop:
-	context.al = context.es.byte(context.si);
-	context.ah = context.es.byte(context.di);
-	context._cmp(context.al, context.ah);
-	if (context.flags.z())
+	al = es.byte(si);
+	ah = es.byte(di);
+	_cmp(al, ah);
+	if (flags.z())
 		goto gotthere;
-	if (context.flags.c())
+	if (flags.c())
 		goto lesscolour;
-	context._dec(context.es.byte(context.si));
+	_dec(es.byte(si));
 	goto gotthere;
 lesscolour:
-	context._cmp(context.bl, context.ah);
-	if (context.flags.z())
+	_cmp(bl, ah);
+	if (flags.z())
 		goto withit;
-	if (!context.flags.c())
+	if (!flags.c())
 		goto gotthere;
 withit:
-	context._inc(context.es.byte(context.si));
+	_inc(es.byte(si));
 gotthere:
-	context._inc(context.si);
-	context._inc(context.di);
-	if (--context.cx)
+	_inc(si);
+	_inc(di);
+	if (--cx)
 		goto fadecolloop;
-	context._dec(context.data.byte(kFadecount));
+	_dec(data.byte(kFadecount));
 	return;
 nomorefading:
-	context.data.byte(kFadedirection) = 0;
+	data.byte(kFadedirection) = 0;
 }
 
-void greyscalesum(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
-	context.cx = 256;
+void DreamGenContext::greyscalesum() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	cx = 256;
 greysumloop1:
-	context.push(context.cx);
-	context.bx = 0;
-	context.al = context.es.byte(context.si);
-	context.ah = 0;
-	context.cx = 20;
-	context._mul(context.cx);
-	context._add(context.bx, context.ax);
-	context.al = context.es.byte(context.si+1);
-	context.ah = 0;
-	context.cx = 59;
-	context._mul(context.cx);
-	context._add(context.bx, context.ax);
-	context.al = context.es.byte(context.si+2);
-	context.ah = 0;
-	context.cx = 11;
-	context._mul(context.cx);
-	context._add(context.bx, context.ax);
-	context.al = -1;
+	push(cx);
+	bx = 0;
+	al = es.byte(si);
+	ah = 0;
+	cx = 20;
+	_mul(cx);
+	_add(bx, ax);
+	al = es.byte(si+1);
+	ah = 0;
+	cx = 59;
+	_mul(cx);
+	_add(bx, ax);
+	al = es.byte(si+2);
+	ah = 0;
+	cx = 11;
+	_mul(cx);
+	_add(bx, ax);
+	al = -1;
 greysumloop2:
-	context._inc(context.al);
-	context._sub(context.bx, 100);
-	if (!context.flags.c())
+	_inc(al);
+	_sub(bx, 100);
+	if (!flags.c())
 		goto greysumloop2;
-	context.bl = context.al;
-	context.al = context.bl;
-	context.ah = context.data.byte(kAddtored);
-	context._cmp(context.al, 0);
-	context._add(context.al, context.ah);
-	context._stosb();
-	context.ah = context.data.byte(kAddtogreen);
-	context.al = context.bl;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	bl = al;
+	al = bl;
+	ah = data.byte(kAddtored);
+	_cmp(al, 0);
+	_add(al, ah);
+	_stosb();
+	ah = data.byte(kAddtogreen);
+	al = bl;
+	_cmp(al, 0);
+	if (flags.z())
 		goto noaddg;
-	context._add(context.al, context.ah);
+	_add(al, ah);
 noaddg:
-	context._stosb();
-	context.ah = context.data.byte(kAddtoblue);
-	context.al = context.bl;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_stosb();
+	ah = data.byte(kAddtoblue);
+	al = bl;
+	_cmp(al, 0);
+	if (flags.z())
 		goto noaddb;
-	context._add(context.al, context.ah);
+	_add(al, ah);
 noaddb:
-	context._stosb();
-	context._add(context.si, 3);
-	context.cx = context.pop();
-	if (--context.cx)
+	_stosb();
+	_add(si, 3);
+	cx = pop();
+	if (--cx)
 		goto greysumloop1;
 }
 
-void paltostartpal(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
-	context.cx = 768/2;
-	context._movsw(context.cx);
+void DreamGenContext::paltostartpal() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	cx = 768/2;
+	_movsw(cx);
 }
 
-void endpaltostart(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
-	context.cx = 768/2;
-	context._movsw(context.cx);
+void DreamGenContext::endpaltostart() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	cx = 768/2;
+	_movsw(cx);
 }
 
-void startpaltoend(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.ds = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
-	context.cx = 768/2;
-	context._movsw(context.cx);
+void DreamGenContext::startpaltoend() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	ds = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	cx = 768/2;
+	_movsw(cx);
 }
 
-void paltoendpal(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.ds = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
-	context.cx = 768/2;
-	context._movsw(context.cx);
+void DreamGenContext::paltoendpal() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	ds = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
+	cx = 768/2;
+	_movsw(cx);
 }
 
-void allpalette(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.ds = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3));
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
-	context.cx = 768/2;
-	context._movsw(context.cx);
-	dumpcurrent(context);
+void DreamGenContext::allpalette() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	ds = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
+	cx = 768/2;
+	_movsw(cx);
+	dumpcurrent();
 }
 
-void dumpcurrent(Context &context) {
-	STACK_CHECK(context);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3));
-	context.ds = context.data.word(kBuffers);
-	vsync(context);
-	context.al = 0;
-	context.cx = 128;
-	showgroup(context);
-	vsync(context);
-	context.al = 128;
-	context.cx = 128;
-	showgroup(context);
+void DreamGenContext::dumpcurrent() {
+	STACK_CHECK;
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3));
+	ds = data.word(kBuffers);
+	vsync();
+	al = 0;
+	cx = 128;
+	showgroup();
+	vsync();
+	al = 128;
+	cx = 128;
+	showgroup();
 }
 
-void fadedownmon(Context &context) {
-	STACK_CHECK(context);
-	paltostartpal(context);
-	paltoendpal(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(231*3);
-	context.cx = 3*8;
-	context.ax = 0;
-	context._stosb(context.cx);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(246*3);
-	context._stosb();
-	context._stosw();
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 128;
-	context.cx = 64;
-	hangon(context);
+void DreamGenContext::fadedownmon() {
+	STACK_CHECK;
+	paltostartpal();
+	paltoendpal();
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(231*3);
+	cx = 3*8;
+	ax = 0;
+	_stosb(cx);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(246*3);
+	_stosb();
+	_stosw();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	cx = 64;
+	hangon();
 }
 
-void fadeupmon(Context &context) {
-	STACK_CHECK(context);
-	paltostartpal(context);
-	paltoendpal(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(231*3);
-	context.cx = 3*8;
-	context.ax = 0;
-	context._stosb(context.cx);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
-	context._stosb();
-	context._stosw();
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 128;
-	context.cx = 128;
-	hangon(context);
+void DreamGenContext::fadeupmon() {
+	STACK_CHECK;
+	paltostartpal();
+	paltoendpal();
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(231*3);
+	cx = 3*8;
+	ax = 0;
+	_stosb(cx);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
+	_stosb();
+	_stosw();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	cx = 128;
+	hangon();
 }
 
-void fadeupmonfirst(Context &context) {
-	STACK_CHECK(context);
-	paltostartpal(context);
-	paltoendpal(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(231*3);
-	context.cx = 3*8;
-	context.ax = 0;
-	context._stosb(context.cx);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
-	context._stosb();
-	context._stosw();
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 128;
-	context.cx = 64;
-	hangon(context);
-	context.al = 26;
-	playchannel1(context);
-	context.cx = 64;
-	hangon(context);
+void DreamGenContext::fadeupmonfirst() {
+	STACK_CHECK;
+	paltostartpal();
+	paltoendpal();
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(231*3);
+	cx = 3*8;
+	ax = 0;
+	_stosb(cx);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
+	_stosb();
+	_stosw();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	cx = 64;
+	hangon();
+	al = 26;
+	playchannel1();
+	cx = 64;
+	hangon();
 }
 
-void fadeupyellows(Context &context) {
-	STACK_CHECK(context);
-	paltoendpal(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(231*3);
-	context.cx = 3*8;
-	context.ax = 0;
-	context._stosb(context.cx);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(246*3);
-	context._stosb();
-	context._stosw();
-	context.data.byte(kFadedirection) = 1;
-	context.data.byte(kFadecount) = 63;
-	context.data.byte(kColourpos) = 0;
-	context.data.byte(kNumtofade) = 128;
-	context.cx = 128;
-	hangon(context);
+void DreamGenContext::fadeupyellows() {
+	STACK_CHECK;
+	paltoendpal();
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(231*3);
+	cx = 3*8;
+	ax = 0;
+	_stosb(cx);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(246*3);
+	_stosb();
+	_stosw();
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	cx = 128;
+	hangon();
 }
 
-void initialmoncols(Context &context) {
-	STACK_CHECK(context);
-	paltostartpal(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(230*3);
-	context.cx = 3*9;
-	context.ax = 0;
-	context._stosb(context.cx);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
-	context._stosb();
-	context._stosw();
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(230*3);
-	context.al = 230;
-	context.cx = 18;
-	showgroup(context);
+void DreamGenContext::initialmoncols() {
+	STACK_CHECK;
+	paltostartpal();
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(230*3);
+	cx = 3*9;
+	ax = 0;
+	_stosb(cx);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
+	_stosb();
+	_stosw();
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(230*3);
+	al = 230;
+	cx = 18;
+	showgroup();
 }
 
-void titles(Context &context) {
-	STACK_CHECK(context);
-	clearpalette(context);
-	biblequote(context);
-	intro(context);
+void DreamGenContext::titles() {
+	STACK_CHECK;
+	clearpalette();
+	biblequote();
+	intro();
 }
 
-void endgame(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 2260;
-	loadtemptext(context);
-	monkspeaking(context);
-	gettingshot(context);
-	getridoftemptext(context);
-	context.data.byte(kVolumeto) = 7;
-	context.data.byte(kVolumedirection) = 1;
-	context.cx = 200;
-	hangon(context);
+void DreamGenContext::endgame() {
+	STACK_CHECK;
+	dx = 2260;
+	loadtemptext();
+	monkspeaking();
+	gettingshot();
+	getridoftemptext();
+	data.byte(kVolumeto) = 7;
+	data.byte(kVolumedirection) = 1;
+	cx = 200;
+	hangon();
 }
 
-void monkspeaking(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kRoomssample) = 35;
-	loadroomssample(context);
-	context.dx = 2364;
-	loadintotemp(context);
-	clearwork(context);
-	showmonk(context);
-	worktoscreen(context);
-	context.data.byte(kVolume) = 7;
-	context.data.byte(kVolumedirection) = -1;
-	context.data.byte(kVolumeto) = 5;
-	context.al = 12;
-	context.ah = 255;
-	playchannel0(context);
-	fadescreenups(context);
-	context.cx = 300;
-	hangon(context);
-	context.al = 40;
+void DreamGenContext::monkspeaking() {
+	STACK_CHECK;
+	data.byte(kRoomssample) = 35;
+	loadroomssample();
+	dx = 2364;
+	loadintotemp();
+	clearwork();
+	showmonk();
+	worktoscreen();
+	data.byte(kVolume) = 7;
+	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumeto) = 5;
+	al = 12;
+	ah = 255;
+	playchannel0();
+	fadescreenups();
+	cx = 300;
+	hangon();
+	al = 40;
 loadspeech2:
-	context.push(context.ax);
-	context.dl = 'T';
-	context.dh = 83;
-	context.cl = 'T';
-	context.ah = 0;
-	loadspeech(context);
-	context.al = 50+12;
-	playchannel1(context);
+	push(ax);
+	dl = 'T';
+	dh = 83;
+	cl = 'T';
+	ah = 0;
+	loadspeech();
+	al = 50+12;
+	playchannel1();
 notloadspeech2:
-	vsync(context);
-	context._cmp(context.data.byte(kCh1playing), 255);
-	if (!context.flags.z())
+	vsync();
+	_cmp(data.byte(kCh1playing), 255);
+	if (!flags.z())
 		goto notloadspeech2;
-	context.ax = context.pop();
-	context._inc(context.al);
-	context._cmp(context.al, 48);
-	if (!context.flags.z())
+	ax = pop();
+	_inc(al);
+	_cmp(al, 48);
+	if (!flags.z())
 		goto loadspeech2;
-	context.data.byte(kVolumedirection) = 1;
-	context.data.byte(kVolumeto) = 7;
-	fadescreendowns(context);
-	context.cx = 300;
-	hangon(context);
-	getridoftemp(context);
+	data.byte(kVolumedirection) = 1;
+	data.byte(kVolumeto) = 7;
+	fadescreendowns();
+	cx = 300;
+	hangon();
+	getridoftemp();
 }
 
-void showmonk(Context &context) {
-	STACK_CHECK(context);
-	context.al = 0;
-	context.ah = 128;
-	context.di = 160;
-	context.bx = 72;
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
+void DreamGenContext::showmonk() {
+	STACK_CHECK;
+	al = 0;
+	ah = 128;
+	di = 160;
+	bx = 72;
+	ds = data.word(kTempgraphics);
+	showframe();
 }
 
-void gettingshot(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kNewlocation) = 55;
-	clearpalette(context);
-	loadintroroom(context);
-	fadescreenups(context);
-	context.data.byte(kVolumeto) = 0;
-	context.data.byte(kVolumedirection) = -1;
-	runendseq(context);
-	clearbeforeload(context);
+void DreamGenContext::gettingshot() {
+	STACK_CHECK;
+	data.byte(kNewlocation) = 55;
+	clearpalette();
+	loadintroroom();
+	fadescreenups();
+	data.byte(kVolumeto) = 0;
+	data.byte(kVolumedirection) = -1;
+	runendseq();
+	clearbeforeload();
 }
 
-void credits(Context &context) {
-	STACK_CHECK(context);
-	clearpalette(context);
-	realcredits(context);
+void DreamGenContext::credits() {
+	STACK_CHECK;
+	clearpalette();
+	realcredits();
 }
 
-void biblequote(Context &context) {
-	STACK_CHECK(context);
-	mode640x480(context);
-	context.dx = 2377;
-	showpcx(context);
-	fadescreenups(context);
-	context.cx = 80;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+void DreamGenContext::biblequote() {
+	STACK_CHECK;
+	mode640x480();
+	dx = 2377;
+	showpcx();
+	fadescreenups();
+	cx = 80;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto biblequotearly;
-	context.cx = 560;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	cx = 560;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto biblequotearly;
-	fadescreendowns(context);
-	context.cx = 200;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	fadescreendowns();
+	cx = 200;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto biblequotearly;
-	cancelch0(context);
+	cancelch0();
 biblequotearly:
-	context.data.byte(kLasthardkey) = 0;
+	data.byte(kLasthardkey) = 0;
 }
 
-void hangone(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::hangone() {
+	STACK_CHECK;
 hangonloope:
-	context.push(context.cx);
-	vsync(context);
-	context.cx = context.pop();
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	push(cx);
+	vsync();
+	cx = pop();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		return /* (hangonearly) */;
-	if (--context.cx)
+	if (--cx)
 		goto hangonloope;
 }
 
-void intro(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 2247;
-	loadtemptext(context);
-	loadpalfromiff(context);
-	setmode(context);
-	context.data.byte(kNewlocation) = 50;
-	clearpalette(context);
-	loadintroroom(context);
-	context.data.byte(kVolume) = 7;
-	context.data.byte(kVolumedirection) = -1;
-	context.data.byte(kVolumeto) = 4;
-	context.al = 12;
-	context.ah = 255;
-	playchannel0(context);
-	fadescreenups(context);
-	runintroseq(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+void DreamGenContext::intro() {
+	STACK_CHECK;
+	dx = 2247;
+	loadtemptext();
+	loadpalfromiff();
+	setmode();
+	data.byte(kNewlocation) = 50;
+	clearpalette();
+	loadintroroom();
+	data.byte(kVolume) = 7;
+	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumeto) = 4;
+	al = 12;
+	ah = 255;
+	playchannel0();
+	fadescreenups();
+	runintroseq();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto introearly;
-	clearbeforeload(context);
-	context.data.byte(kNewlocation) = 52;
-	loadintroroom(context);
-	runintroseq(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	clearbeforeload();
+	data.byte(kNewlocation) = 52;
+	loadintroroom();
+	runintroseq();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto introearly;
-	clearbeforeload(context);
-	context.data.byte(kNewlocation) = 53;
-	loadintroroom(context);
-	runintroseq(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	clearbeforeload();
+	data.byte(kNewlocation) = 53;
+	loadintroroom();
+	runintroseq();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto introearly;
-	clearbeforeload(context);
-	allpalette(context);
-	context.data.byte(kNewlocation) = 54;
-	loadintroroom(context);
-	runintroseq(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	clearbeforeload();
+	allpalette();
+	data.byte(kNewlocation) = 54;
+	loadintroroom();
+	runintroseq();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto introearly;
-	getridoftemptext(context);
-	clearbeforeload(context);
+	getridoftemptext();
+	clearbeforeload();
 introearly:
-	context.data.byte(kLasthardkey) =  0;
+	data.byte(kLasthardkey) =  0;
 }
 
-void runintroseq(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kGetback) = 0;
+void DreamGenContext::runintroseq() {
+	STACK_CHECK;
+	data.byte(kGetback) = 0;
 moreintroseq:
-	vsync(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	vsync();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto earlyendrun;
-	spriteupdate(context);
-	vsync(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	spriteupdate();
+	vsync();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto earlyendrun;
-	deleverything(context);
-	printsprites(context);
-	reelsonscreen(context);
-	afterintroroom(context);
-	usetimedtext(context);
-	vsync(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	deleverything();
+	printsprites();
+	reelsonscreen();
+	afterintroroom();
+	usetimedtext();
+	vsync();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto earlyendrun;
-	dumpmap(context);
-	dumptimedtext(context);
-	vsync(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	dumpmap();
+	dumptimedtext();
+	vsync();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto earlyendrun;
-	context._cmp(context.data.byte(kGetback), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kGetback), 1);
+	if (!flags.z())
 		goto moreintroseq;
 	return;
 earlyendrun:
-	getridoftemptext(context);
-	clearbeforeload(context);
+	getridoftemptext();
+	clearbeforeload();
 }
 
-void runendseq(Context &context) {
-	STACK_CHECK(context);
-	atmospheres(context);
-	context.data.byte(kGetback) = 0;
+void DreamGenContext::runendseq() {
+	STACK_CHECK;
+	atmospheres();
+	data.byte(kGetback) = 0;
 moreendseq:
-	vsync(context);
-	spriteupdate(context);
-	vsync(context);
-	deleverything(context);
-	printsprites(context);
-	reelsonscreen(context);
-	afterintroroom(context);
-	usetimedtext(context);
-	vsync(context);
-	dumpmap(context);
-	dumptimedtext(context);
-	vsync(context);
-	context._cmp(context.data.byte(kGetback), 1);
-	if (!context.flags.z())
+	vsync();
+	spriteupdate();
+	vsync();
+	deleverything();
+	printsprites();
+	reelsonscreen();
+	afterintroroom();
+	usetimedtext();
+	vsync();
+	dumpmap();
+	dumptimedtext();
+	vsync();
+	_cmp(data.byte(kGetback), 1);
+	if (!flags.z())
 		goto moreendseq;
 }
 
-void loadintroroom(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kIntrocount) = 0;
-	context.data.byte(kLocation) = 255;
-	loadroom(context);
-	context.data.word(kMapoffsetx) = 72;
-	context.data.word(kMapoffsety) = 16;
-	clearsprites(context);
-	context.data.byte(kThroughdoor) = 0;
-	context.data.byte(kCurrentkey) = '0';
-	context.data.byte(kMainmode) = 0;
-	clearwork(context);
-	context.data.byte(kNewobs) = 1;
-	drawfloor(context);
-	reelsonscreen(context);
-	spriteupdate(context);
-	printsprites(context);
-	worktoscreen(context);
+void DreamGenContext::loadintroroom() {
+	STACK_CHECK;
+	data.byte(kIntrocount) = 0;
+	data.byte(kLocation) = 255;
+	loadroom();
+	data.word(kMapoffsetx) = 72;
+	data.word(kMapoffsety) = 16;
+	clearsprites();
+	data.byte(kThroughdoor) = 0;
+	data.byte(kCurrentkey) = '0';
+	data.byte(kMainmode) = 0;
+	clearwork();
+	data.byte(kNewobs) = 1;
+	drawfloor();
+	reelsonscreen();
+	spriteupdate();
+	printsprites();
+	worktoscreen();
 }
 
-void realcredits(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kRoomssample) = 33;
-	loadroomssample(context);
-	context.data.byte(kVolume) = 0;
-	mode640x480(context);
-	context.cx = 35;
-	hangon(context);
-	context.dx = 2390;
-	showpcx(context);
-	context.al = 12;
-	context.ah = 0;
-	playchannel0(context);
-	context.cx = 2;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+void DreamGenContext::realcredits() {
+	STACK_CHECK;
+	data.byte(kRoomssample) = 33;
+	loadroomssample();
+	data.byte(kVolume) = 0;
+	mode640x480();
+	cx = 35;
+	hangon();
+	dx = 2390;
+	showpcx();
+	al = 12;
+	ah = 0;
+	playchannel0();
+	cx = 2;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	allpalette(context);
-	context.cx = 80;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	allpalette();
+	cx = 80;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	fadescreendowns(context);
-	context.cx = 256;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	fadescreendowns();
+	cx = 256;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	context.dx = 2403;
-	showpcx(context);
-	context.al = 12;
-	context.ah = 0;
-	playchannel0(context);
-	context.cx = 2;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	dx = 2403;
+	showpcx();
+	al = 12;
+	ah = 0;
+	playchannel0();
+	cx = 2;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	allpalette(context);
-	context.cx = 80;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	allpalette();
+	cx = 80;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	fadescreendowns(context);
-	context.cx = 256;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	fadescreendowns();
+	cx = 256;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	context.dx = 2416;
-	showpcx(context);
-	context.al = 12;
-	context.ah = 0;
-	playchannel0(context);
-	context.cx = 2;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	dx = 2416;
+	showpcx();
+	al = 12;
+	ah = 0;
+	playchannel0();
+	cx = 2;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	allpalette(context);
-	context.cx = 80;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	allpalette();
+	cx = 80;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	fadescreendowns(context);
-	context.cx = 256;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	fadescreendowns();
+	cx = 256;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	context.dx = 2429;
-	showpcx(context);
-	context.al = 12;
-	context.ah = 0;
-	playchannel0(context);
-	context.cx = 2;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	dx = 2429;
+	showpcx();
+	al = 12;
+	ah = 0;
+	playchannel0();
+	cx = 2;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	allpalette(context);
-	context.cx = 80;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	allpalette();
+	cx = 80;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	fadescreendowns(context);
-	context.cx = 256;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	fadescreendowns();
+	cx = 256;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	context.dx = 2442;
-	showpcx(context);
-	context.al = 12;
-	context.ah = 0;
-	playchannel0(context);
-	context.cx = 2;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	dx = 2442;
+	showpcx();
+	al = 12;
+	ah = 0;
+	playchannel0();
+	cx = 2;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	allpalette(context);
-	context.cx = 80;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	allpalette();
+	cx = 80;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	fadescreendowns(context);
-	context.cx = 256;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	fadescreendowns();
+	cx = 256;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	context.dx = 2455;
-	showpcx(context);
-	fadescreenups(context);
-	context.cx = 60;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	dx = 2455;
+	showpcx();
+	fadescreenups();
+	cx = 60;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	context.al = 13;
-	context.ah = 0;
-	playchannel0(context);
-	context.cx = 350;
-	hangone(context);
-	context._cmp(context.data.byte(kLasthardkey), 1);
-	if (context.flags.z())
+	al = 13;
+	ah = 0;
+	playchannel0();
+	cx = 350;
+	hangone();
+	_cmp(data.byte(kLasthardkey), 1);
+	if (flags.z())
 		goto realcreditsearly;
-	fadescreendowns(context);
-	context.cx = 256;
-	hangone(context);
+	fadescreendowns();
+	cx = 256;
+	hangone();
 realcreditsearly:
-	context.data.byte(kLasthardkey) =  0;
+	data.byte(kLasthardkey) =  0;
 }
 
-void printchar(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+void DreamGenContext::printchar() {
+	STACK_CHECK;
+	_cmp(al, 255);
+	if (flags.z())
 		return /* (ignoreit) */;
-	context.push(context.si);
-	context.push(context.bx);
-	context.push(context.di);
-	context.push(context.ax);
-	context._sub(context.al, 32);
-	context.ah = 0;
-	context._add(context.ax, context.data.word(kCharshift));
-	showframe(context);
-	context.ax = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.si = context.pop();
-	context._cmp(context.data.byte(kKerning), 0);
-	if (!context.flags.z())
+	push(si);
+	push(bx);
+	push(di);
+	push(ax);
+	_sub(al, 32);
+	ah = 0;
+	_add(ax, data.word(kCharshift));
+	showframe();
+	ax = pop();
+	di = pop();
+	bx = pop();
+	si = pop();
+	_cmp(data.byte(kKerning), 0);
+	if (!flags.z())
 		goto nokern;
-	kernchars(context);
+	kernchars();
 nokern:
-	context.push(context.cx);
-	context.ch = 0;
-	context._add(context.di, context.cx);
-	context.cx = context.pop();
+	push(cx);
+	ch = 0;
+	_add(di, cx);
+	cx = pop();
 }
 
-void kernchars(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.al, 'a');
-	if (context.flags.z())
+void DreamGenContext::kernchars() {
+	STACK_CHECK;
+	_cmp(al, 'a');
+	if (flags.z())
 		goto iskern;
-	context._cmp(context.al, 'u');
-	if (context.flags.z())
+	_cmp(al, 'u');
+	if (flags.z())
 		goto iskern;
 	return;
 iskern:
-	context._cmp(context.ah, 'n');
-	if (context.flags.z())
+	_cmp(ah, 'n');
+	if (flags.z())
 		goto kernit;
-	context._cmp(context.ah, 't');
-	if (context.flags.z())
+	_cmp(ah, 't');
+	if (flags.z())
 		goto kernit;
-	context._cmp(context.ah, 'r');
-	if (context.flags.z())
+	_cmp(ah, 'r');
+	if (flags.z())
 		goto kernit;
-	context._cmp(context.ah, 'i');
-	if (context.flags.z())
+	_cmp(ah, 'i');
+	if (flags.z())
 		goto kernit;
-	context._cmp(context.ah, 'l');
-	if (context.flags.z())
+	_cmp(ah, 'l');
+	if (flags.z())
 		goto kernit;
 	return;
 kernit:
-	context._dec(context.cl);
+	_dec(cl);
 }
 
-void printslow(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kPointerframe) = 1;
-	context.data.byte(kPointermode) = 3;
-	context.ds = context.data.word(kCharset1);
+void DreamGenContext::printslow() {
+	STACK_CHECK;
+	data.byte(kPointerframe) = 1;
+	data.byte(kPointermode) = 3;
+	ds = data.word(kCharset1);
 printloopslow6:
-	context.push(context.bx);
-	context.push(context.di);
-	context.push(context.dx);
-	getnumber(context);
-	context.ch = 0;
+	push(bx);
+	push(di);
+	push(dx);
+	getnumber();
+	ch = 0;
 printloopslow5:
-	context.push(context.cx);
-	context.push(context.si);
-	context.push(context.es);
-	context.ax = context.es.word(context.si);
-	context.push(context.bx);
-	context.push(context.cx);
-	context.push(context.es);
-	context.push(context.si);
-	context.push(context.ds);
-	printboth(context);
-	context.ds = context.pop();
-	context.si = context.pop();
-	context.es = context.pop();
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.ax = context.es.word(context.si+1);
-	context._inc(context.si);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	push(cx);
+	push(si);
+	push(es);
+	ax = es.word(si);
+	push(bx);
+	push(cx);
+	push(es);
+	push(si);
+	push(ds);
+	printboth();
+	ds = pop();
+	si = pop();
+	es = pop();
+	cx = pop();
+	bx = pop();
+	ax = es.word(si+1);
+	_inc(si);
+	_cmp(al, 0);
+	if (flags.z())
 		goto finishslow;
-	context._cmp(context.al, ':');
-	if (context.flags.z())
+	_cmp(al, ':');
+	if (flags.z())
 		goto finishslow;
-	context._cmp(context.cl, 1);
-	if (context.flags.z())
+	_cmp(cl, 1);
+	if (flags.z())
 		goto afterslow;
-	context.push(context.di);
-	context.push(context.ds);
-	context.push(context.bx);
-	context.push(context.cx);
-	context.push(context.es);
-	context.push(context.si);
-	context.data.word(kCharshift) = 91;
-	printboth(context);
-	context.data.word(kCharshift) = 0;
-	context.si = context.pop();
-	context.es = context.pop();
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.ds = context.pop();
-	context.di = context.pop();
-	waitframes(context);
-	context._cmp(context.ax, 0);
-	if (context.flags.z())
+	push(di);
+	push(ds);
+	push(bx);
+	push(cx);
+	push(es);
+	push(si);
+	data.word(kCharshift) = 91;
+	printboth();
+	data.word(kCharshift) = 0;
+	si = pop();
+	es = pop();
+	cx = pop();
+	bx = pop();
+	ds = pop();
+	di = pop();
+	waitframes();
+	_cmp(ax, 0);
+	if (flags.z())
 		goto keepgoing;
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (!context.flags.z())
+	_cmp(ax, data.word(kOldbutton));
+	if (!flags.z())
 		goto finishslow2;
 keepgoing:
-	waitframes(context);
-	context._cmp(context.ax, 0);
-	if (context.flags.z())
+	waitframes();
+	_cmp(ax, 0);
+	if (flags.z())
 		goto afterslow;
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (!context.flags.z())
+	_cmp(ax, data.word(kOldbutton));
+	if (!flags.z())
 		goto finishslow2;
 afterslow:
-	context.es = context.pop();
-	context.si = context.pop();
-	context.cx = context.pop();
-	context._inc(context.si);
-	if (--context.cx)
+	es = pop();
+	si = pop();
+	cx = pop();
+	_inc(si);
+	if (--cx)
 		goto printloopslow5;
-	context.dx = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context._add(context.bx, 10);
+	dx = pop();
+	di = pop();
+	bx = pop();
+	_add(bx, 10);
 	goto printloopslow6;
 finishslow:
-	context.es = context.pop();
-	context.si = context.pop();
-	context.cx = context.pop();
-	context.dx = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.al = 0;
+	es = pop();
+	si = pop();
+	cx = pop();
+	dx = pop();
+	di = pop();
+	bx = pop();
+	al = 0;
 	return;
 finishslow2:
-	context.es = context.pop();
-	context.si = context.pop();
-	context.cx = context.pop();
-	context.dx = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.al = 1;
+	es = pop();
+	si = pop();
+	cx = pop();
+	dx = pop();
+	di = pop();
+	bx = pop();
+	al = 1;
 }
 
-void waitframes(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.di);
-	context.push(context.bx);
-	context.push(context.es);
-	context.push(context.si);
-	context.push(context.ds);
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	delpointer(context);
-	context.ax = context.data.word(kMousebutton);
-	context.ds = context.pop();
-	context.si = context.pop();
-	context.es = context.pop();
-	context.bx = context.pop();
-	context.di = context.pop();
+void DreamGenContext::waitframes() {
+	STACK_CHECK;
+	push(di);
+	push(bx);
+	push(es);
+	push(si);
+	push(ds);
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	delpointer();
+	ax = data.word(kMousebutton);
+	ds = pop();
+	si = pop();
+	es = pop();
+	bx = pop();
+	di = pop();
 }
 
-void printboth(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.push(context.cx);
-	context.push(context.bx);
-	context.push(context.di);
-	printchar(context);
-	context.ax = context.pop();
-	context.push(context.di);
-	context.di = context.ax;
-	multidump(context);
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.cx = context.pop();
-	context.ax = context.pop();
+void DreamGenContext::printboth() {
+	STACK_CHECK;
+	push(ax);
+	push(cx);
+	push(bx);
+	push(di);
+	printchar();
+	ax = pop();
+	push(di);
+	di = ax;
+	multidump();
+	di = pop();
+	bx = pop();
+	cx = pop();
+	ax = pop();
 }
 
-void printdirect(Context &context) {
-	STACK_CHECK(context);
-	context.data.word(kLastxpos) = context.di;
-	context.ds = context.data.word(kCurrentset);
+void DreamGenContext::printdirect() {
+	STACK_CHECK;
+	data.word(kLastxpos) = di;
+	ds = data.word(kCurrentset);
 printloop6:
-	context.push(context.bx);
-	context.push(context.di);
-	context.push(context.dx);
-	getnumber(context);
-	context.ch = 0;
+	push(bx);
+	push(di);
+	push(dx);
+	getnumber();
+	ch = 0;
 printloop5:
-	context.ax = context.es.word(context.si);
-	context._inc(context.si);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	ax = es.word(si);
+	_inc(si);
+	_cmp(al, 0);
+	if (flags.z())
 		goto finishdirct;
-	context._cmp(context.al, ':');
-	if (context.flags.z())
+	_cmp(al, ':');
+	if (flags.z())
 		goto finishdirct;
-	context.push(context.cx);
-	context.push(context.es);
-	printchar(context);
-	context.data.word(kLastxpos) = context.di;
-	context.es = context.pop();
-	context.cx = context.pop();
-	if (--context.cx)
+	push(cx);
+	push(es);
+	printchar();
+	data.word(kLastxpos) = di;
+	es = pop();
+	cx = pop();
+	if (--cx)
 		goto printloop5;
-	context.dx = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context._add(context.bx, context.data.word(kLinespacing));
+	dx = pop();
+	di = pop();
+	bx = pop();
+	_add(bx, data.word(kLinespacing));
 	goto printloop6;
 finishdirct:
-	context.dx = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
+	dx = pop();
+	di = pop();
+	bx = pop();
 }
 
-void monprint(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kKerning) = 1;
-	context.si = context.bx;
-	context.dl = 166;
-	context.di = context.data.word(kMonadx);
-	context.bx = context.data.word(kMonady);
-	context.ds = context.data.word(kTempcharset);
+void DreamGenContext::monprint() {
+	STACK_CHECK;
+	data.byte(kKerning) = 1;
+	si = bx;
+	dl = 166;
+	di = data.word(kMonadx);
+	bx = data.word(kMonady);
+	ds = data.word(kTempcharset);
 printloop8:
-	context.push(context.bx);
-	context.push(context.di);
-	context.push(context.dx);
-	getnumber(context);
-	context.ch = 0;
+	push(bx);
+	push(di);
+	push(dx);
+	getnumber();
+	ch = 0;
 printloop7:
-	context.al = context.es.byte(context.si);
-	context._inc(context.si);
-	context._cmp(context.al, ':');
-	if (context.flags.z())
+	al = es.byte(si);
+	_inc(si);
+	_cmp(al, ':');
+	if (flags.z())
 		goto finishmon2;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_cmp(al, 0);
+	if (flags.z())
 		goto finishmon;
-	context._cmp(context.al, 34);
-	if (context.flags.z())
+	_cmp(al, 34);
+	if (flags.z())
 		goto finishmon;
-	context._cmp(context.al, '=');
-	if (context.flags.z())
+	_cmp(al, '=');
+	if (flags.z())
 		goto finishmon;
-	context._cmp(context.al, '%');
-	if (!context.flags.z())
+	_cmp(al, '%');
+	if (!flags.z())
 		goto nottrigger;
-	context.ah = context.es.byte(context.si);
-	context._inc(context.si);
-	context._inc(context.si);
+	ah = es.byte(si);
+	_inc(si);
+	_inc(si);
 	goto finishmon;
 nottrigger:
-	context.push(context.cx);
-	context.push(context.es);
-	printchar(context);
-	context.data.word(kCurslocx) = context.di;
-	context.data.word(kCurslocy) = context.bx;
-	context.data.word(kMaintimer) = 1;
-	printcurs(context);
-	vsync(context);
-	context.push(context.si);
-	context.push(context.dx);
-	context.push(context.ds);
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.di);
-	lockmon(context);
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.ds = context.pop();
-	context.dx = context.pop();
-	context.si = context.pop();
-	delcurs(context);
-	context.es = context.pop();
-	context.cx = context.pop();
-	if (--context.cx)
+	push(cx);
+	push(es);
+	printchar();
+	data.word(kCurslocx) = di;
+	data.word(kCurslocy) = bx;
+	data.word(kMaintimer) = 1;
+	printcurs();
+	vsync();
+	push(si);
+	push(dx);
+	push(ds);
+	push(es);
+	push(bx);
+	push(di);
+	lockmon();
+	di = pop();
+	bx = pop();
+	es = pop();
+	ds = pop();
+	dx = pop();
+	si = pop();
+	delcurs();
+	es = pop();
+	cx = pop();
+	if (--cx)
 		goto printloop7;
 finishmon2:
-	context.dx = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	scrollmonitor(context);
-	context.data.word(kCurslocx) = context.di;
+	dx = pop();
+	di = pop();
+	bx = pop();
+	scrollmonitor();
+	data.word(kCurslocx) = di;
 	goto printloop8;
 finishmon:
-	context.dx = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context._cmp(context.al, '%');
-	if (!context.flags.z())
+	dx = pop();
+	di = pop();
+	bx = pop();
+	_cmp(al, '%');
+	if (!flags.z())
 		goto nottrigger2;
-	context.data.byte(kLasttrigger) = context.ah;
+	data.byte(kLasttrigger) = ah;
 nottrigger2:
-	context.data.word(kCurslocx) = context.di;
-	scrollmonitor(context);
-	context.bx = context.si;
-	context.data.byte(kKerning) = 0;
+	data.word(kCurslocx) = di;
+	scrollmonitor();
+	bx = si;
+	data.byte(kKerning) = 0;
 }
 
-void getnumber(Context &context) {
-	STACK_CHECK(context);
-	context.cx = 0;
-	context.push(context.si);
-	context.push(context.bx);
-	context.push(context.di);
-	context.push(context.ds);
-	context.push(context.es);
-	context.di = context.si;
+void DreamGenContext::getnumber() {
+	STACK_CHECK;
+	cx = 0;
+	push(si);
+	push(bx);
+	push(di);
+	push(ds);
+	push(es);
+	di = si;
 wordloop:
-	context.push(context.cx);
-	context.push(context.dx);
-	getnextword(context);
-	context.dx = context.pop();
-	context.cx = context.pop();
-	context._cmp(context.al, 1);
-	if (context.flags.z())
+	push(cx);
+	push(dx);
+	getnextword();
+	dx = pop();
+	cx = pop();
+	_cmp(al, 1);
+	if (flags.z())
 		goto endoftext;
-	context.al = context.cl;
-	context.ah = 0;
-	context.push(context.bx);
-	context.bh = 0;
-	context._add(context.ax, context.bx);
-	context.bx = context.pop();
-	context._sub(context.ax, 10);
-	context.dh = 0;
-	context._cmp(context.ax, context.dx);
-	if (!context.flags.c())
+	al = cl;
+	ah = 0;
+	push(bx);
+	bh = 0;
+	_add(ax, bx);
+	bx = pop();
+	_sub(ax, 10);
+	dh = 0;
+	_cmp(ax, dx);
+	if (!flags.c())
 		goto gotoverend;
-	context._add(context.cl, context.bl);
-	context._add(context.ch, context.bh);
+	_add(cl, bl);
+	_add(ch, bh);
 	goto wordloop;
 gotoverend:
-	context.al = context.dl;
-	context._and(context.al, 1);
-	if (context.flags.z())
+	al = dl;
+	_and(al, 1);
+	if (flags.z())
 		goto notcentre;
-	context.push(context.cx);
-	context.al = context.dl;
-	context._and(context.al, 0xfe);
-	context.ah = 0;
-	context.ch = 0;
-	context._sub(context.ax, context.cx);
-	context._add(context.ax, 20);
-	context._shr(context.ax, 1);
-	context.cx = context.pop();
-	context.es = context.pop();
-	context.ds = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.si = context.pop();
-	context._add(context.di, context.ax);
-	context.cl = context.ch;
+	push(cx);
+	al = dl;
+	_and(al, 0xfe);
+	ah = 0;
+	ch = 0;
+	_sub(ax, cx);
+	_add(ax, 20);
+	_shr(ax, 1);
+	cx = pop();
+	es = pop();
+	ds = pop();
+	di = pop();
+	bx = pop();
+	si = pop();
+	_add(di, ax);
+	cl = ch;
 	return;
 notcentre:
-	context.es = context.pop();
-	context.ds = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.si = context.pop();
-	context.cl = context.ch;
+	es = pop();
+	ds = pop();
+	di = pop();
+	bx = pop();
+	si = pop();
+	cl = ch;
 	return;
 endoftext:
-	context.al = context.cl;
-	context.ah = 0;
-	context.push(context.bx);
-	context.bh = 0;
-	context._add(context.ax, context.bx);
-	context.bx = context.pop();
-	context._sub(context.ax, 10);
-	context.dh = 0;
-	context._cmp(context.ax, context.dx);
-	if (!context.flags.c())
+	al = cl;
+	ah = 0;
+	push(bx);
+	bh = 0;
+	_add(ax, bx);
+	bx = pop();
+	_sub(ax, 10);
+	dh = 0;
+	_cmp(ax, dx);
+	if (!flags.c())
 		goto gotoverend2;
-	context._add(context.cl, context.bl);
-	context._add(context.ch, context.bh);
+	_add(cl, bl);
+	_add(ch, bh);
 gotoverend2:
-	context.al = context.dl;
-	context._and(context.al, 1);
-	if (context.flags.z())
+	al = dl;
+	_and(al, 1);
+	if (flags.z())
 		goto notcent2;
-	context.push(context.cx);
-	context.al = context.dl;
-	context._and(context.al, 0xfe);
-	context._add(context.al, 2);
-	context.ah = 0;
-	context.ch = 0;
-	context._add(context.ax, 20);
-	context._sub(context.ax, context.cx);
-	context._shr(context.ax, 1);
-	context.cx = context.pop();
-	context.es = context.pop();
-	context.ds = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.si = context.pop();
-	context._add(context.di, context.ax);
-	context.cl = context.ch;
+	push(cx);
+	al = dl;
+	_and(al, 0xfe);
+	_add(al, 2);
+	ah = 0;
+	ch = 0;
+	_add(ax, 20);
+	_sub(ax, cx);
+	_shr(ax, 1);
+	cx = pop();
+	es = pop();
+	ds = pop();
+	di = pop();
+	bx = pop();
+	si = pop();
+	_add(di, ax);
+	cl = ch;
 	return;
 notcent2:
-	context.es = context.pop();
-	context.ds = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.si = context.pop();
-	context.cl = context.ch;
+	es = pop();
+	ds = pop();
+	di = pop();
+	bx = pop();
+	si = pop();
+	cl = ch;
 }
 
-void getnextword(Context &context) {
-	STACK_CHECK(context);
-	context.bx = 0;
+void DreamGenContext::getnextword() {
+	STACK_CHECK;
+	bx = 0;
 getloop:
-	context.ax = context.es.word(context.di);
-	context._inc(context.di);
-	context._inc(context.bh);
-	context._cmp(context.al, ':');
-	if (context.flags.z())
+	ax = es.word(di);
+	_inc(di);
+	_inc(bh);
+	_cmp(al, ':');
+	if (flags.z())
 		goto endall;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_cmp(al, 0);
+	if (flags.z())
 		goto endall;
-	context._cmp(context.al, 32);
-	if (context.flags.z())
+	_cmp(al, 32);
+	if (flags.z())
 		goto endword;
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	_cmp(al, 255);
+	if (flags.z())
 		goto getloop;
-	context.push(context.ax);
-	context._sub(context.al, 32);
-	context.ah = 0;
-	context._add(context.ax, context.data.word(kCharshift));
-	context._add(context.ax, context.ax);
-	context.si = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.si, context.ax);
-	context.cl = context.ds.byte(context.si+0);
-	context.ax = context.pop();
-	kernchars(context);
-	context._add(context.bl, context.cl);
+	push(ax);
+	_sub(al, 32);
+	ah = 0;
+	_add(ax, data.word(kCharshift));
+	_add(ax, ax);
+	si = ax;
+	_add(ax, ax);
+	_add(si, ax);
+	cl = ds.byte(si+0);
+	ax = pop();
+	kernchars();
+	_add(bl, cl);
 	goto getloop;
 endword:
-	context._add(context.bl, 6);
-	context.al = 0;
+	_add(bl, 6);
+	al = 0;
 	return;
 endall:
-	context._add(context.bl, 6);
-	context.al = 1;
+	_add(bl, 6);
+	al = 1;
 }
 
-void fillryan(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32);
-	findallryan(context);
-	context.si = (0+(180*10)+32);
-	context.al = context.data.byte(kRyanpage);
-	context.ah = 0;
-	context.cx = 20;
-	context._mul(context.cx);
-	context._add(context.si, context.ax);
-	context.di = (80);
-	context.bx = (58);
-	context.cx = 2;
+void DreamGenContext::fillryan() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32);
+	findallryan();
+	si = (0+(180*10)+32);
+	al = data.byte(kRyanpage);
+	ah = 0;
+	cx = 20;
+	_mul(cx);
+	_add(si, ax);
+	di = (80);
+	bx = (58);
+	cx = 2;
 ryanloop2:
-	context.push(context.cx);
-	context.push(context.di);
-	context.push(context.bx);
-	context.cx = 5;
+	push(cx);
+	push(di);
+	push(bx);
+	cx = 5;
 ryanloop1:
-	context.push(context.cx);
-	context.push(context.di);
-	context.push(context.bx);
-	context.ax = context.es.word(context.si);
-	context._add(context.si, 2);
-	context.push(context.si);
-	context.push(context.es);
-	obtoinv(context);
-	context.es = context.pop();
-	context.si = context.pop();
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.cx = context.pop();
-	context._add(context.di, (44));
-	if (--context.cx)
+	push(cx);
+	push(di);
+	push(bx);
+	ax = es.word(si);
+	_add(si, 2);
+	push(si);
+	push(es);
+	obtoinv();
+	es = pop();
+	si = pop();
+	bx = pop();
+	di = pop();
+	cx = pop();
+	_add(di, (44));
+	if (--cx)
 		goto ryanloop1;
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.cx = context.pop();
-	context._add(context.bx, (44));
-	if (--context.cx)
+	bx = pop();
+	di = pop();
+	cx = pop();
+	_add(bx, (44));
+	if (--cx)
 		goto ryanloop2;
-	showryanpage(context);
+	showryanpage();
 }
 
-void fillopen(Context &context) {
-	STACK_CHECK(context);
-	deltextline(context);
-	getopenedsize(context);
-	context._cmp(context.ah, 4);
-	if (context.flags.c())
+void DreamGenContext::fillopen() {
+	STACK_CHECK;
+	deltextline();
+	getopenedsize();
+	_cmp(ah, 4);
+	if (flags.c())
 		goto lessthanapage;
-	context.ah = 4;
+	ah = 4;
 lessthanapage:
-	context.al = 1;
-	context.push(context.ax);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10));
-	findallopen(context);
-	context.si = (0+(180*10));
-	context.di = (80);
-	context.bx = (58)+96;
-	context.cx = context.pop();
+	al = 1;
+	push(ax);
+	es = data.word(kBuffers);
+	di = (0+(180*10));
+	findallopen();
+	si = (0+(180*10));
+	di = (80);
+	bx = (58)+96;
+	cx = pop();
 openloop1:
-	context.push(context.cx);
-	context.push(context.di);
-	context.push(context.bx);
-	context.ax = context.es.word(context.si);
-	context._add(context.si, 2);
-	context.push(context.si);
-	context.push(context.es);
-	context._cmp(context.ch, context.cl);
-	if (context.flags.c())
+	push(cx);
+	push(di);
+	push(bx);
+	ax = es.word(si);
+	_add(si, 2);
+	push(si);
+	push(es);
+	_cmp(ch, cl);
+	if (flags.c())
 		goto nextopenslot;
-	obtoinv(context);
+	obtoinv();
 nextopenslot:
-	context.es = context.pop();
-	context.si = context.pop();
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.cx = context.pop();
-	context._add(context.di, (44));
-	context._inc(context.cl);
-	context._cmp(context.cl, 5);
-	if (!context.flags.z())
+	es = pop();
+	si = pop();
+	bx = pop();
+	di = pop();
+	cx = pop();
+	_add(di, (44));
+	_inc(cl);
+	_cmp(cl, 5);
+	if (!flags.z())
 		goto openloop1;
-	undertextline(context);
+	undertextline();
 }
 
-void findallryan(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.di);
-	context.cx = 30;
-	context.ax = 0x0ffff;
-	context._stosw(context.cx);
-	context.di = context.pop();
-	context.cl = 4;
-	context.ds = context.data.word(kExtras);
-	context.bx = (0+2080+30000);
-	context.ch = 0;
+void DreamGenContext::findallryan() {
+	STACK_CHECK;
+	push(di);
+	cx = 30;
+	ax = 0x0ffff;
+	_stosw(cx);
+	di = pop();
+	cl = 4;
+	ds = data.word(kExtras);
+	bx = (0+2080+30000);
+	ch = 0;
 findryanloop:
-	context._cmp(context.ds.byte(context.bx+2), context.cl);
-	if (!context.flags.z())
+	_cmp(ds.byte(bx+2), cl);
+	if (!flags.z())
 		goto notinryaninv;
-	context._cmp(context.ds.byte(context.bx+3), 255);
-	if (!context.flags.z())
+	_cmp(ds.byte(bx+3), 255);
+	if (!flags.z())
 		goto notinryaninv;
-	context.al = context.ds.byte(context.bx+4);
-	context.ah = 0;
-	context.push(context.di);
-	context._add(context.di, context.ax);
-	context._add(context.di, context.ax);
-	context.al = context.ch;
-	context.ah = 4;
-	context._stosw();
-	context.di = context.pop();
+	al = ds.byte(bx+4);
+	ah = 0;
+	push(di);
+	_add(di, ax);
+	_add(di, ax);
+	al = ch;
+	ah = 4;
+	_stosw();
+	di = pop();
 notinryaninv:
-	context._add(context.bx, 16);
-	context._inc(context.ch);
-	context._cmp(context.ch, (114));
-	if (!context.flags.z())
+	_add(bx, 16);
+	_inc(ch);
+	_cmp(ch, (114));
+	if (!flags.z())
 		goto findryanloop;
 }
 
-void findallopen(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.di);
-	context.cx = 16;
-	context.ax = 0x0ffff;
-	context._stosw(context.cx);
-	context.di = context.pop();
-	context.cl = context.data.byte(kOpenedob);
-	context.dl = context.data.byte(kOpenedtype);
-	context.ds = context.data.word(kExtras);
-	context.bx = (0+2080+30000);
-	context.ch = 0;
+void DreamGenContext::findallopen() {
+	STACK_CHECK;
+	push(di);
+	cx = 16;
+	ax = 0x0ffff;
+	_stosw(cx);
+	di = pop();
+	cl = data.byte(kOpenedob);
+	dl = data.byte(kOpenedtype);
+	ds = data.word(kExtras);
+	bx = (0+2080+30000);
+	ch = 0;
 findopen1:
-	context._cmp(context.ds.byte(context.bx+3), context.cl);
-	if (!context.flags.z())
+	_cmp(ds.byte(bx+3), cl);
+	if (!flags.z())
 		goto findopen2;
-	context._cmp(context.ds.byte(context.bx+2), context.dl);
-	if (!context.flags.z())
+	_cmp(ds.byte(bx+2), dl);
+	if (!flags.z())
 		goto findopen2;
-	context._cmp(context.data.byte(kOpenedtype), 4);
-	if (context.flags.z())
+	_cmp(data.byte(kOpenedtype), 4);
+	if (flags.z())
 		goto noloccheck;
-	context.al = context.ds.byte(context.bx+5);
-	context._cmp(context.al, context.data.byte(kReallocation));
-	if (!context.flags.z())
+	al = ds.byte(bx+5);
+	_cmp(al, data.byte(kReallocation));
+	if (!flags.z())
 		goto findopen2;
 noloccheck:
-	context.al = context.ds.byte(context.bx+4);
-	context.ah = 0;
-	context.push(context.di);
-	context._add(context.di, context.ax);
-	context._add(context.di, context.ax);
-	context.al = context.ch;
-	context.ah = 4;
-	context._stosw();
-	context.di = context.pop();
+	al = ds.byte(bx+4);
+	ah = 0;
+	push(di);
+	_add(di, ax);
+	_add(di, ax);
+	al = ch;
+	ah = 4;
+	_stosw();
+	di = pop();
 findopen2:
-	context._add(context.bx, 16);
-	context._inc(context.ch);
-	context._cmp(context.ch, (114));
-	if (!context.flags.z())
+	_add(bx, 16);
+	_inc(ch);
+	_cmp(ch, (114));
+	if (!flags.z())
 		goto findopen1;
-	context.cl = context.data.byte(kOpenedob);
-	context.dl = context.data.byte(kOpenedtype);
-	context.push(context.dx);
-	context.ds = context.data.word(kFreedat);
-	context.dx = context.pop();
-	context.bx = 0;
-	context.ch = 0;
+	cl = data.byte(kOpenedob);
+	dl = data.byte(kOpenedtype);
+	push(dx);
+	ds = data.word(kFreedat);
+	dx = pop();
+	bx = 0;
+	ch = 0;
 findopen1a:
-	context._cmp(context.ds.byte(context.bx+3), context.cl);
-	if (!context.flags.z())
+	_cmp(ds.byte(bx+3), cl);
+	if (!flags.z())
 		goto findopen2a;
-	context._cmp(context.ds.byte(context.bx+2), context.dl);
-	if (!context.flags.z())
+	_cmp(ds.byte(bx+2), dl);
+	if (!flags.z())
 		goto findopen2a;
-	context.al = context.ds.byte(context.bx+4);
-	context.ah = 0;
-	context.push(context.di);
-	context._add(context.di, context.ax);
-	context._add(context.di, context.ax);
-	context.al = context.ch;
-	context.ah = 2;
-	context._stosw();
-	context.di = context.pop();
+	al = ds.byte(bx+4);
+	ah = 0;
+	push(di);
+	_add(di, ax);
+	_add(di, ax);
+	al = ch;
+	ah = 2;
+	_stosw();
+	di = pop();
 findopen2a:
-	context._add(context.bx, 16);
-	context._inc(context.ch);
-	context._cmp(context.ch, 80);
-	if (!context.flags.z())
+	_add(bx, 16);
+	_inc(ch);
+	_cmp(ch, 80);
+	if (!flags.z())
 		goto findopen1a;
 }
 
-void obtoinv(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.bx);
-	context.push(context.es);
-	context.push(context.si);
-	context.push(context.ax);
-	context.push(context.ax);
-	context.push(context.di);
-	context.push(context.bx);
-	context.ds = context.data.word(kIcons1);
-	context._sub(context.di, 2);
-	context._sub(context.bx, 1);
-	context.al = 10;
-	context.ah = 0;
-	showframe(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.ax = context.pop();
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+void DreamGenContext::obtoinv() {
+	STACK_CHECK;
+	push(bx);
+	push(es);
+	push(si);
+	push(ax);
+	push(ax);
+	push(di);
+	push(bx);
+	ds = data.word(kIcons1);
+	_sub(di, 2);
+	_sub(bx, 1);
+	al = 10;
+	ah = 0;
+	showframe();
+	bx = pop();
+	di = pop();
+	ax = pop();
+	_cmp(al, 255);
+	if (flags.z())
 		goto finishfill;
-	context.push(context.bx);
-	context.push(context.di);
-	context.push(context.ax);
-	context.ds = context.data.word(kExtras);
-	context._cmp(context.ah, 4);
-	if (context.flags.z())
+	push(bx);
+	push(di);
+	push(ax);
+	ds = data.word(kExtras);
+	_cmp(ah, 4);
+	if (flags.z())
 		goto isanextra;
-	context.ds = context.data.word(kFreeframes);
+	ds = data.word(kFreeframes);
 isanextra:
-	context.cl = context.al;
-	context._add(context.al, context.al);
-	context._add(context.al, context.cl);
-	context._inc(context.al);
-	context.ah = 128;
-	context._add(context.bx, 19);
-	context._add(context.di, 18);
-	showframe(context);
-	context.ax = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.push(context.bx);
-	getanyaddir(context);
-	isitworn(context);
-	context.bx = context.pop();
-	if (!context.flags.z())
+	cl = al;
+	_add(al, al);
+	_add(al, cl);
+	_inc(al);
+	ah = 128;
+	_add(bx, 19);
+	_add(di, 18);
+	showframe();
+	ax = pop();
+	di = pop();
+	bx = pop();
+	push(bx);
+	getanyaddir();
+	isitworn();
+	bx = pop();
+	if (!flags.z())
 		goto finishfill;
-	context.ds = context.data.word(kIcons1);
-	context._sub(context.di, 3);
-	context._sub(context.bx, 2);
-	context.al = 7;
-	context.ah = 0;
-	showframe(context);
+	ds = data.word(kIcons1);
+	_sub(di, 3);
+	_sub(bx, 2);
+	al = 7;
+	ah = 0;
+	showframe();
 finishfill:
-	context.ax = context.pop();
-	context.si = context.pop();
-	context.es = context.pop();
-	context.bx = context.pop();
+	ax = pop();
+	si = pop();
+	es = pop();
+	bx = pop();
 }
 
-void isitworn(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.es.byte(context.bx+12);
-	context._cmp(context.al, 'W'-'A');
-	if (!context.flags.z())
+void DreamGenContext::isitworn() {
+	STACK_CHECK;
+	al = es.byte(bx+12);
+	_cmp(al, 'W'-'A');
+	if (!flags.z())
 		return /* (notworn) */;
-	context.al = context.es.byte(context.bx+13);
-	context._cmp(context.al, 'E'-'A');
+	al = es.byte(bx+13);
+	_cmp(al, 'E'-'A');
 }
 
-void makeworn(Context &context) {
-	STACK_CHECK(context);
-	context.es.byte(context.bx+12) = 'W'-'A';
-	context.es.byte(context.bx+13) = 'E'-'A';
+void DreamGenContext::makeworn() {
+	STACK_CHECK;
+	es.byte(bx+12) = 'W'-'A';
+	es.byte(bx+13) = 'E'-'A';
 }
 
-void examineob(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kPointermode) = 0;
-	context.data.word(kTimecount) = 0;
+void DreamGenContext::examineob() {
+	STACK_CHECK;
+	data.byte(kPointermode) = 0;
+	data.word(kTimecount) = 0;
 examineagain:
-	context.data.byte(kInmaparea) = 0;
-	context.data.byte(kExamagain) = 0;
-	context.data.byte(kOpenedob) = 255;
-	context.data.byte(kOpenedtype) = 255;
-	context.data.byte(kInvopen) = 0;
-	context.al = context.data.byte(kCommandtype);
-	context.data.byte(kObjecttype) = context.al;
-	context.data.byte(kItemframe) = 0;
-	context.data.byte(kPointerframe) = 0;
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	obicons(context);
-	obpicture(context);
-	describeob(context);
-	undertextline(context);
-	context.data.byte(kCommandtype) = 255;
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	data.byte(kInmaparea) = 0;
+	data.byte(kExamagain) = 0;
+	data.byte(kOpenedob) = 255;
+	data.byte(kOpenedtype) = 255;
+	data.byte(kInvopen) = 0;
+	al = data.byte(kCommandtype);
+	data.byte(kObjecttype) = al;
+	data.byte(kItemframe) = 0;
+	data.byte(kPointerframe) = 0;
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	obicons();
+	obpicture();
+	describeob();
+	undertextline();
+	data.byte(kCommandtype) = 255;
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 waitexam:
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	delpointer(context);
-	context.data.byte(kGetback) = 0;
-	context.bx = 2494;
-	context._cmp(context.data.byte(kInvopen), 0);
-	if (context.flags.z())
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	delpointer();
+	data.byte(kGetback) = 0;
+	bx = 2494;
+	_cmp(data.byte(kInvopen), 0);
+	if (flags.z())
 		goto notuseinv;
-	context.bx = 2556;
-	context._cmp(context.data.byte(kInvopen), 1);
-	if (context.flags.z())
+	bx = 2556;
+	_cmp(data.byte(kInvopen), 1);
+	if (flags.z())
 		goto notuseinv;
-	context.bx = 2618;
+	bx = 2618;
 notuseinv:
-	checkcoords(context);
-	context._cmp(context.data.byte(kExamagain), 0);
-	if (context.flags.z())
+	checkcoords();
+	_cmp(data.byte(kExamagain), 0);
+	if (flags.z())
 		goto norex;
 	goto examineagain;
 norex:
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto waitexam;
-	context.data.byte(kPickup) = 0;
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
+	data.byte(kPickup) = 0;
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
 		goto iswatching;
-	context._cmp(context.data.byte(kNewlocation), 255);
-	if (!context.flags.z())
+	_cmp(data.byte(kNewlocation), 255);
+	if (!flags.z())
 		goto justgetback;
 iswatching:
-	makemainscreen(context);
-	context.data.byte(kInvopen) = 0;
-	context.data.byte(kOpenedob) = 255;
+	makemainscreen();
+	data.byte(kInvopen) = 0;
+	data.byte(kOpenedob) = 255;
 	return;
 justgetback:
-	context.data.byte(kInvopen) = 0;
-	context.data.byte(kOpenedob) = 255;
+	data.byte(kInvopen) = 0;
+	data.byte(kOpenedob) = 255;
 }
 
-void makemainscreen(Context &context) {
-	STACK_CHECK(context);
-	createpanel(context);
-	context.data.byte(kNewobs) = 1;
-	drawfloor(context);
-	spriteupdate(context);
-	printsprites(context);
-	reelsonscreen(context);
-	showicon(context);
-	getunderzoom(context);
-	undertextline(context);
-	context.data.byte(kCommandtype) = 255;
-	animpointer(context);
-	worktoscreenm(context);
-	context.data.byte(kCommandtype) = 200;
-	context.data.byte(kManisoffscreen) = 0;
+void DreamGenContext::makemainscreen() {
+	STACK_CHECK;
+	createpanel();
+	data.byte(kNewobs) = 1;
+	drawfloor();
+	spriteupdate();
+	printsprites();
+	reelsonscreen();
+	showicon();
+	getunderzoom();
+	undertextline();
+	data.byte(kCommandtype) = 255;
+	animpointer();
+	worktoscreenm();
+	data.byte(kCommandtype) = 200;
+	data.byte(kManisoffscreen) = 0;
 }
 
-void getbackfromob(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kPickup), 1);
-	if (!context.flags.z())
+void DreamGenContext::getbackfromob() {
+	STACK_CHECK;
+	_cmp(data.byte(kPickup), 1);
+	if (!flags.z())
 		goto notheldob;
-	blank(context);
+	blank();
 	return;
 notheldob:
-	getback1(context);
+	getback1();
 }
 
-void incryanpage(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 222);
-	if (context.flags.z())
+void DreamGenContext::incryanpage() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 222);
+	if (flags.z())
 		goto alreadyincryan;
-	context.data.byte(kCommandtype) = 222;
-	context.al = 31;
-	commandonly(context);
+	data.byte(kCommandtype) = 222;
+	al = 31;
+	commandonly();
 alreadyincryan:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (noincryan) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto doincryan;
 	return;
 doincryan:
-	context.ax = context.data.word(kMousex);
-	context._sub(context.ax, (80)+167);
-	context.data.byte(kRyanpage) = -1;
+	ax = data.word(kMousex);
+	_sub(ax, (80)+167);
+	data.byte(kRyanpage) = -1;
 findnewpage:
-	context._inc(context.data.byte(kRyanpage));
-	context._sub(context.ax, 18);
-	if (!context.flags.c())
+	_inc(data.byte(kRyanpage));
+	_sub(ax, 18);
+	if (!flags.c())
 		goto findnewpage;
-	delpointer(context);
-	fillryan(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	delpointer();
+	fillryan();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void openinv(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kInvopen) = 1;
-	context.al = 61;
-	context.di = (80);
-	context.bx = (58)-10;
-	context.dl = 240;
-	printmessage(context);
-	fillryan(context);
-	context.data.byte(kCommandtype) = 255;
+void DreamGenContext::openinv() {
+	STACK_CHECK;
+	data.byte(kInvopen) = 1;
+	al = 61;
+	di = (80);
+	bx = (58)-10;
+	dl = 240;
+	printmessage();
+	fillryan();
+	data.byte(kCommandtype) = 255;
 }
 
-void showryanpage(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kIcons1);
-	context.di = (80)+167;
-	context.bx = (58)-12;
-	context.al = 12;
-	context.ah = 0;
-	showframe(context);
-	context.al = 13;
-	context._add(context.al, context.data.byte(kRyanpage));
-	context.push(context.ax);
-	context.al = context.data.byte(kRyanpage);
-	context.ah = 0;
-	context.cx = 18;
-	context._mul(context.cx);
-	context.ds = context.data.word(kIcons1);
-	context.di = (80)+167;
-	context._add(context.di, context.ax);
-	context.bx = (58)-12;
-	context.ax = context.pop();
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::showryanpage() {
+	STACK_CHECK;
+	ds = data.word(kIcons1);
+	di = (80)+167;
+	bx = (58)-12;
+	al = 12;
+	ah = 0;
+	showframe();
+	al = 13;
+	_add(al, data.byte(kRyanpage));
+	push(ax);
+	al = data.byte(kRyanpage);
+	ah = 0;
+	cx = 18;
+	_mul(cx);
+	ds = data.word(kIcons1);
+	di = (80)+167;
+	_add(di, ax);
+	bx = (58)-12;
+	ax = pop();
+	ah = 0;
+	showframe();
 }
 
-void openob(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kOpenedob);
-	context.ah = context.data.byte(kOpenedtype);
-	context.di = 5847;
-	copyname(context);
-	context.di = (80);
-	context.bx = (58)+86;
-	context.al = 62;
-	context.dl = 240;
-	printmessage(context);
-	context.di = context.data.word(kLastxpos);
-	context._add(context.di, 5);
-	context.bx = (58)+86;
-	context.es = context.cs;
-	context.si = 5847;
-	context.dl = 220;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	fillopen(context);
-	getopenedsize(context);
-	context.al = context.ah;
-	context.ah = 0;
-	context.cx = (44);
-	context._mul(context.cx);
-	context._add(context.ax, (80));
-	context.bx = 2588;
-	context.cs.word(context.bx) = context.ax;
+void DreamGenContext::openob() {
+	STACK_CHECK;
+	al = data.byte(kOpenedob);
+	ah = data.byte(kOpenedtype);
+	di = 5847;
+	copyname();
+	di = (80);
+	bx = (58)+86;
+	al = 62;
+	dl = 240;
+	printmessage();
+	di = data.word(kLastxpos);
+	_add(di, 5);
+	bx = (58)+86;
+	es = cs;
+	si = 5847;
+	dl = 220;
+	al = 0;
+	ah = 0;
+	printdirect();
+	fillopen();
+	getopenedsize();
+	al = ah;
+	ah = 0;
+	cx = (44);
+	_mul(cx);
+	_add(ax, (80));
+	bx = 2588;
+	cs.word(bx) = ax;
 }
 
-void obicons(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kCommand);
-	getanyad(context);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+void DreamGenContext::obicons() {
+	STACK_CHECK;
+	al = data.byte(kCommand);
+	getanyad();
+	_cmp(al, 255);
+	if (flags.z())
 		goto cantopenit;
-	context.ds = context.data.word(kIcons2);
-	context.di = 210;
-	context.bx = 1;
-	context.al = 4;
-	context.ah = 0;
-	showframe(context);
+	ds = data.word(kIcons2);
+	di = 210;
+	bx = 1;
+	al = 4;
+	ah = 0;
+	showframe();
 cantopenit:
-	context.ds = context.data.word(kIcons2);
-	context.di = 260;
-	context.bx = 1;
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
+	ds = data.word(kIcons2);
+	di = 260;
+	bx = 1;
+	al = 1;
+	ah = 0;
+	showframe();
 }
 
-void examicon(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kIcons2);
-	context.di = 254;
-	context.bx = 5;
-	context.al = 3;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::examicon() {
+	STACK_CHECK;
+	ds = data.word(kIcons2);
+	di = 254;
+	bx = 5;
+	al = 3;
+	ah = 0;
+	showframe();
 }
 
-void obpicture(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kCommand);
-	context.ah = context.data.byte(kObjecttype);
-	context._cmp(context.ah, 1);
-	if (context.flags.z())
+void DreamGenContext::obpicture() {
+	STACK_CHECK;
+	al = data.byte(kCommand);
+	ah = data.byte(kObjecttype);
+	_cmp(ah, 1);
+	if (flags.z())
 		return /* (setframe) */;
-	context._cmp(context.ah, 4);
-	if (context.flags.z())
+	_cmp(ah, 4);
+	if (flags.z())
 		goto exframe;
-	context.ds = context.data.word(kFreeframes);
-	context.di = 160;
-	context.bx = 68;
-	context.cl = context.al;
-	context._add(context.al, context.al);
-	context._add(context.al, context.cl);
-	context._inc(context.al);
-	context.ah = 128;
-	showframe(context);
+	ds = data.word(kFreeframes);
+	di = 160;
+	bx = 68;
+	cl = al;
+	_add(al, al);
+	_add(al, cl);
+	_inc(al);
+	ah = 128;
+	showframe();
 	return;
 exframe:
-	context.ds = context.data.word(kExtras);
-	context.di = 160;
-	context.bx = 68;
-	context.cl = context.al;
-	context._add(context.al, context.al);
-	context._add(context.al, context.cl);
-	context._inc(context.al);
-	context.ah = 128;
-	showframe(context);
+	ds = data.word(kExtras);
+	di = 160;
+	bx = 68;
+	cl = al;
+	_add(al, al);
+	_add(al, cl);
+	_inc(al);
+	ah = 128;
+	showframe();
 }
 
-void describeob(Context &context) {
-	STACK_CHECK(context);
-	getobtextstart(context);
-	context.di = 33;
-	context.bx = 92;
-	context.dl = 241;
-	context.ah = 16;
-	context.data.word(kCharshift) = 91+91;
-	printdirect(context);
-	context.data.word(kCharshift) = 0;
-	context.di = 36;
-	context.bx = 104;
-	context.dl = 241;
-	context.ah = 0;
-	printdirect(context);
-	context.push(context.bx);
-	obsthatdothings(context);
-	context.bx = context.pop();
-	additionaltext(context);
+void DreamGenContext::describeob() {
+	STACK_CHECK;
+	getobtextstart();
+	di = 33;
+	bx = 92;
+	dl = 241;
+	ah = 16;
+	data.word(kCharshift) = 91+91;
+	printdirect();
+	data.word(kCharshift) = 0;
+	di = 36;
+	bx = 104;
+	dl = 241;
+	ah = 0;
+	printdirect();
+	push(bx);
+	obsthatdothings();
+	bx = pop();
+	additionaltext();
 }
 
-void additionaltext(Context &context) {
-	STACK_CHECK(context);
-	context._add(context.bx, 10);
-	context.push(context.bx);
-	context.al = context.data.byte(kCommand);
-	context.ah = context.data.byte(kObjecttype);
-	context.cl = 'C';
-	context.ch = 'U';
-	context.dl = 'P';
-	context.dh = 'E';
-	compare(context);
-	if (context.flags.z())
+void DreamGenContext::additionaltext() {
+	STACK_CHECK;
+	_add(bx, 10);
+	push(bx);
+	al = data.byte(kCommand);
+	ah = data.byte(kObjecttype);
+	cl = 'C';
+	ch = 'U';
+	dl = 'P';
+	dh = 'E';
+	compare();
+	if (flags.z())
 		goto emptycup;
-	context.al = context.data.byte(kCommand);
-	context.ah = context.data.byte(kObjecttype);
-	context.cl = 'C';
-	context.ch = 'U';
-	context.dl = 'P';
-	context.dh = 'F';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kCommand);
+	ah = data.byte(kObjecttype);
+	cl = 'C';
+	ch = 'U';
+	dl = 'P';
+	dh = 'F';
+	compare();
+	if (flags.z())
 		goto fullcup;
-	context.bx = context.pop();
+	bx = pop();
 	return;
 emptycup:
-	context.al = 40;
-	findpuztext(context);
-	context.bx = context.pop();
-	context.di = 36;
-	context.dl = 241;
-	context.ah = 0;
-	printdirect(context);
+	al = 40;
+	findpuztext();
+	bx = pop();
+	di = 36;
+	dl = 241;
+	ah = 0;
+	printdirect();
 	return;
 fullcup:
-	context.al = 39;
-	findpuztext(context);
-	context.bx = context.pop();
-	context.di = 36;
-	context.dl = 241;
-	context.ah = 0;
-	printdirect(context);
+	al = 39;
+	findpuztext();
+	bx = pop();
+	di = 36;
+	dl = 241;
+	ah = 0;
+	printdirect();
 }
 
-void obsthatdothings(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kCommand);
-	context.ah = context.data.byte(kObjecttype);
-	context.cl = 'M';
-	context.ch = 'E';
-	context.dl = 'M';
-	context.dh = 'B';
-	compare(context);
-	if (!context.flags.z())
+void DreamGenContext::obsthatdothings() {
+	STACK_CHECK;
+	al = data.byte(kCommand);
+	ah = data.byte(kObjecttype);
+	cl = 'M';
+	ch = 'E';
+	dl = 'M';
+	dh = 'B';
+	compare();
+	if (!flags.z())
 		return /* (notlouiscard) */;
-	context.al = 4;
-	getlocation(context);
-	context._cmp(context.al, 1);
-	if (context.flags.z())
+	al = 4;
+	getlocation();
+	_cmp(al, 1);
+	if (flags.z())
 		return /* (seencard) */;
-	context.al = 4;
-	setlocation(context);
-	lookatcard(context);
+	al = 4;
+	setlocation();
+	lookatcard();
 }
 
-void getobtextstart(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kFreedesc);
-	context.si = (0);
-	context.cx = (0+(82*2));
-	context._cmp(context.data.byte(kObjecttype), 2);
-	if (context.flags.z())
+void DreamGenContext::getobtextstart() {
+	STACK_CHECK;
+	es = data.word(kFreedesc);
+	si = (0);
+	cx = (0+(82*2));
+	_cmp(data.byte(kObjecttype), 2);
+	if (flags.z())
 		goto describe;
-	context.es = context.data.word(kSetdesc);
-	context.si = (0);
-	context.cx = (0+(130*2));
-	context._cmp(context.data.byte(kObjecttype), 1);
-	if (context.flags.z())
+	es = data.word(kSetdesc);
+	si = (0);
+	cx = (0+(130*2));
+	_cmp(data.byte(kObjecttype), 1);
+	if (flags.z())
 		goto describe;
-	context.es = context.data.word(kExtras);
-	context.si = (0+2080+30000+(16*114));
-	context.cx = (0+2080+30000+(16*114)+((114+2)*2));
+	es = data.word(kExtras);
+	si = (0+2080+30000+(16*114));
+	cx = (0+2080+30000+(16*114)+((114+2)*2));
 describe:
-	context.al = context.data.byte(kCommand);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.si, context.ax);
-	context.ax = context.es.word(context.si);
-	context._add(context.ax, context.cx);
-	context.si = context.ax;
-	context.bx = context.ax;
+	al = data.byte(kCommand);
+	ah = 0;
+	_add(ax, ax);
+	_add(si, ax);
+	ax = es.word(si);
+	_add(ax, cx);
+	si = ax;
+	bx = ax;
 tryagain:
-	context.push(context.si);
-	findnextcolon(context);
-	context.al = context.es.byte(context.si);
-	context.cx = context.si;
-	context.si = context.pop();
-	context._cmp(context.data.byte(kObjecttype), 1);
-	if (!context.flags.z())
+	push(si);
+	findnextcolon();
+	al = es.byte(si);
+	cx = si;
+	si = pop();
+	_cmp(data.byte(kObjecttype), 1);
+	if (!flags.z())
 		return /* (cantmakeoneup) */;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_cmp(al, 0);
+	if (flags.z())
 		goto findsometext;
-	context._cmp(context.al, ':');
-	if (context.flags.z())
+	_cmp(al, ':');
+	if (flags.z())
 		goto findsometext;
 	return;
 findsometext:
-	searchforsame(context);
+	searchforsame();
 	goto tryagain;
 }
 
-void searchforsame(Context &context) {
-	STACK_CHECK(context);
-	context.si = context.cx;
+void DreamGenContext::searchforsame() {
+	STACK_CHECK;
+	si = cx;
 searchagain:
-	context._inc(context.si);
-	context.al = context.es.byte(context.bx);
+	_inc(si);
+	al = es.byte(bx);
 search:
-	context._cmp(context.es.byte(context.si), context.al);
-	if (context.flags.z())
+	_cmp(es.byte(si), al);
+	if (flags.z())
 		goto gotstartletter;
-	context._inc(context.cx);
-	context._inc(context.si);
-	context._cmp(context.si, 8000);
-	if (context.flags.c())
+	_inc(cx);
+	_inc(si);
+	_cmp(si, 8000);
+	if (flags.c())
 		goto search;
-	context.si = context.bx;
-	context.ax = context.pop();
+	si = bx;
+	ax = pop();
 	return;
 gotstartletter:
-	context.push(context.bx);
-	context.push(context.si);
+	push(bx);
+	push(si);
 keepchecking:
-	context._inc(context.si);
-	context._inc(context.bx);
-	context.al = context.es.byte(context.bx);
-	context.ah = context.es.byte(context.si);
-	context._cmp(context.al, ':');
-	if (context.flags.z())
+	_inc(si);
+	_inc(bx);
+	al = es.byte(bx);
+	ah = es.byte(si);
+	_cmp(al, ':');
+	if (flags.z())
 		goto foundmatch;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_cmp(al, 0);
+	if (flags.z())
 		goto foundmatch;
-	context._cmp(context.al, context.ah);
-	if (context.flags.z())
+	_cmp(al, ah);
+	if (flags.z())
 		goto keepchecking;
-	context.si = context.pop();
-	context.bx = context.pop();
+	si = pop();
+	bx = pop();
 	goto searchagain;
 foundmatch:
-	context.si = context.pop();
-	context.bx = context.pop();
+	si = pop();
+	bx = pop();
 }
 
-void findnextcolon(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::findnextcolon() {
+	STACK_CHECK;
 isntcolon:
-	context.al = context.es.byte(context.si);
-	context._inc(context.si);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	al = es.byte(si);
+	_inc(si);
+	_cmp(al, 0);
+	if (flags.z())
 		return /* (endofcolon) */;
-	context._cmp(context.al, ':');
-	if (!context.flags.z())
+	_cmp(al, ':');
+	if (!flags.z())
 		goto isntcolon;
 }
 
-void inventory(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kMandead), 1);
-	if (context.flags.z())
+void DreamGenContext::inventory() {
+	STACK_CHECK;
+	_cmp(data.byte(kMandead), 1);
+	if (flags.z())
 		goto iswatchinv;
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (context.flags.z())
+	_cmp(data.word(kWatchingtime), 0);
+	if (flags.z())
 		goto notwatchinv;
 iswatchinv:
-	blank(context);
+	blank();
 	return;
 notwatchinv:
-	context._cmp(context.data.byte(kCommandtype), 239);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 239);
+	if (flags.z())
 		goto alreadyopinv;
-	context.data.byte(kCommandtype) = 239;
-	context.al = 32;
-	commandonly(context);
+	data.byte(kCommandtype) = 239;
+	al = 32;
+	commandonly();
 alreadyopinv:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (cantopinv) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto doopeninv;
 	return;
 doopeninv:
-	context.data.word(kTimecount) = 0;
-	context.data.byte(kPointermode) = 0;
-	context.data.byte(kInmaparea) = 0;
-	animpointer(context);
-	createpanel(context);
-	showpanel(context);
-	examicon(context);
-	showman(context);
-	showexit(context);
-	undertextline(context);
-	context.data.byte(kPickup) = 0;
-	context.data.byte(kInvopen) = 2;
-	openinv(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
-	context.data.byte(kOpenedob) = 255;
+	data.word(kTimecount) = 0;
+	data.byte(kPointermode) = 0;
+	data.byte(kInmaparea) = 0;
+	animpointer();
+	createpanel();
+	showpanel();
+	examicon();
+	showman();
+	showexit();
+	undertextline();
+	data.byte(kPickup) = 0;
+	data.byte(kInvopen) = 2;
+	openinv();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
+	data.byte(kOpenedob) = 255;
 	goto waitexam;
 /*continuing to unbounded code: examineagain from examineob:3-66*/
 examineagain:
-	context.data.byte(kInmaparea) = 0;
-	context.data.byte(kExamagain) = 0;
-	context.data.byte(kOpenedob) = 255;
-	context.data.byte(kOpenedtype) = 255;
-	context.data.byte(kInvopen) = 0;
-	context.al = context.data.byte(kCommandtype);
-	context.data.byte(kObjecttype) = context.al;
-	context.data.byte(kItemframe) = 0;
-	context.data.byte(kPointerframe) = 0;
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	obicons(context);
-	obpicture(context);
-	describeob(context);
-	undertextline(context);
-	context.data.byte(kCommandtype) = 255;
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	data.byte(kInmaparea) = 0;
+	data.byte(kExamagain) = 0;
+	data.byte(kOpenedob) = 255;
+	data.byte(kOpenedtype) = 255;
+	data.byte(kInvopen) = 0;
+	al = data.byte(kCommandtype);
+	data.byte(kObjecttype) = al;
+	data.byte(kItemframe) = 0;
+	data.byte(kPointerframe) = 0;
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	obicons();
+	obpicture();
+	describeob();
+	undertextline();
+	data.byte(kCommandtype) = 255;
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 waitexam:
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	delpointer(context);
-	context.data.byte(kGetback) = 0;
-	context.bx = 2494;
-	context._cmp(context.data.byte(kInvopen), 0);
-	if (context.flags.z())
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	delpointer();
+	data.byte(kGetback) = 0;
+	bx = 2494;
+	_cmp(data.byte(kInvopen), 0);
+	if (flags.z())
 		goto notuseinv;
-	context.bx = 2556;
-	context._cmp(context.data.byte(kInvopen), 1);
-	if (context.flags.z())
+	bx = 2556;
+	_cmp(data.byte(kInvopen), 1);
+	if (flags.z())
 		goto notuseinv;
-	context.bx = 2618;
+	bx = 2618;
 notuseinv:
-	checkcoords(context);
-	context._cmp(context.data.byte(kExamagain), 0);
-	if (context.flags.z())
+	checkcoords();
+	_cmp(data.byte(kExamagain), 0);
+	if (flags.z())
 		goto norex;
 	goto examineagain;
 norex:
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto waitexam;
-	context.data.byte(kPickup) = 0;
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
+	data.byte(kPickup) = 0;
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
 		goto iswatching;
-	context._cmp(context.data.byte(kNewlocation), 255);
-	if (!context.flags.z())
+	_cmp(data.byte(kNewlocation), 255);
+	if (!flags.z())
 		goto justgetback;
 iswatching:
-	makemainscreen(context);
-	context.data.byte(kInvopen) = 0;
-	context.data.byte(kOpenedob) = 255;
+	makemainscreen();
+	data.byte(kInvopen) = 0;
+	data.byte(kOpenedob) = 255;
 	return;
 justgetback:
-	context.data.byte(kInvopen) = 0;
-	context.data.byte(kOpenedob) = 255;
+	data.byte(kInvopen) = 0;
+	data.byte(kOpenedob) = 255;
 }
 
-void setpickup(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kObjecttype), 1);
-	if (context.flags.z())
+void DreamGenContext::setpickup() {
+	STACK_CHECK;
+	_cmp(data.byte(kObjecttype), 1);
+	if (flags.z())
 		goto cantpick;
-	context._cmp(context.data.byte(kObjecttype), 3);
-	if (context.flags.z())
+	_cmp(data.byte(kObjecttype), 3);
+	if (flags.z())
 		goto cantpick;
-	getanyad(context);
-	context.al = context.es.byte(context.bx+2);
-	context._cmp(context.al, 4);
-	if (!context.flags.z())
+	getanyad();
+	al = es.byte(bx+2);
+	_cmp(al, 4);
+	if (!flags.z())
 		goto canpick;
 cantpick:
-	blank(context);
+	blank();
 	return;
 canpick:
-	context._cmp(context.data.byte(kCommandtype), 209);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 209);
+	if (flags.z())
 		goto alreadysp;
-	context.data.byte(kCommandtype) = 209;
-	context.bl = context.data.byte(kCommand);
-	context.bh = context.data.byte(kObjecttype);
-	context.al = 33;
-	commandwithob(context);
+	data.byte(kCommandtype) = 209;
+	bl = data.byte(kCommand);
+	bh = data.byte(kObjecttype);
+	al = 33;
+	commandwithob();
 alreadysp:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, 1);
-	if (!context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, 1);
+	if (!flags.z())
 		return /* (nosetpick) */;
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (!context.flags.z())
+	_cmp(ax, data.word(kOldbutton));
+	if (!flags.z())
 		goto dosetpick;
 	return;
 dosetpick:
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	examicon(context);
-	context.data.byte(kPickup) = 1;
-	context.data.byte(kInvopen) = 2;
-	context._cmp(context.data.byte(kObjecttype), 4);
-	if (context.flags.z())
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	examicon();
+	data.byte(kPickup) = 1;
+	data.byte(kInvopen) = 2;
+	_cmp(data.byte(kObjecttype), 4);
+	if (flags.z())
 		goto pickupexob;
-	context.al = context.data.byte(kCommand);
-	context.data.byte(kItemframe) = context.al;
-	context.data.byte(kOpenedob) = 255;
-	transfertoex(context);
-	context.data.byte(kItemframe) = context.al;
-	context.data.byte(kObjecttype) = 4;
-	geteitherad(context);
-	context.es.byte(context.bx+2) = 20;
-	context.es.byte(context.bx+3) = 255;
-	openinv(context);
-	worktoscreenm(context);
+	al = data.byte(kCommand);
+	data.byte(kItemframe) = al;
+	data.byte(kOpenedob) = 255;
+	transfertoex();
+	data.byte(kItemframe) = al;
+	data.byte(kObjecttype) = 4;
+	geteitherad();
+	es.byte(bx+2) = 20;
+	es.byte(bx+3) = 255;
+	openinv();
+	worktoscreenm();
 	return;
 pickupexob:
-	context.al = context.data.byte(kCommand);
-	context.data.byte(kItemframe) = context.al;
-	context.data.byte(kOpenedob) = 255;
-	openinv(context);
-	worktoscreenm(context);
+	al = data.byte(kCommand);
+	data.byte(kItemframe) = al;
+	data.byte(kOpenedob) = 255;
+	openinv();
+	worktoscreenm();
 }
 
-void examinventory(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 249);
-	if (context.flags.z())
+void DreamGenContext::examinventory() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 249);
+	if (flags.z())
 		goto alreadyexinv;
-	context.data.byte(kCommandtype) = 249;
-	context.al = 32;
-	commandonly(context);
+	data.byte(kCommandtype) = 249;
+	al = 32;
+	commandonly();
 alreadyexinv:
-	context.ax = context.data.word(kMousebutton);
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (!flags.z())
 		goto doexinv;
 	return;
 doexinv:
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	examicon(context);
-	context.data.byte(kPickup) = 0;
-	context.data.byte(kInvopen) = 2;
-	openinv(context);
-	worktoscreenm(context);
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	examicon();
+	data.byte(kPickup) = 0;
+	data.byte(kInvopen) = 2;
+	openinv();
+	worktoscreenm();
 }
 
-void reexfrominv(Context &context) {
-	STACK_CHECK(context);
-	findinvpos(context);
-	context.ax = context.es.word(context.bx);
-	context.data.byte(kCommandtype) = context.ah;
-	context.data.byte(kCommand) = context.al;
-	context.data.byte(kExamagain) = 1;
-	context.data.byte(kPointermode) = 0;
+void DreamGenContext::reexfrominv() {
+	STACK_CHECK;
+	findinvpos();
+	ax = es.word(bx);
+	data.byte(kCommandtype) = ah;
+	data.byte(kCommand) = al;
+	data.byte(kExamagain) = 1;
+	data.byte(kPointermode) = 0;
 }
 
-void reexfromopen(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::reexfromopen() {
+	STACK_CHECK;
 	return;
-	findopenpos(context);
-	context.ax = context.es.word(context.bx);
-	context.data.byte(kCommandtype) = context.ah;
-	context.data.byte(kCommand) = context.al;
-	context.data.byte(kExamagain) = 1;
-	context.data.byte(kPointermode) = 0;
+	findopenpos();
+	ax = es.word(bx);
+	data.byte(kCommandtype) = ah;
+	data.byte(kCommand) = al;
+	data.byte(kExamagain) = 1;
+	data.byte(kPointermode) = 0;
 }
 
-void swapwithinv(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kItemframe);
-	context.ah = context.data.byte(kObjecttype);
-	context._cmp(context.ax, context.data.word(kOldsubject));
-	if (!context.flags.z())
+void DreamGenContext::swapwithinv() {
+	STACK_CHECK;
+	al = data.byte(kItemframe);
+	ah = data.byte(kObjecttype);
+	_cmp(ax, data.word(kOldsubject));
+	if (!flags.z())
 		goto difsub7;
-	context._cmp(context.data.byte(kCommandtype), 243);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 243);
+	if (flags.z())
 		goto alreadyswap1;
-	context.data.byte(kCommandtype) = 243;
+	data.byte(kCommandtype) = 243;
 difsub7:
-	context.data.word(kOldsubject) = context.ax;
-	context.bx = context.ax;
-	context.al = 34;
-	commandwithob(context);
+	data.word(kOldsubject) = ax;
+	bx = ax;
+	al = 34;
+	commandwithob();
 alreadyswap1:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (cantswap1) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto doswap1;
 	return;
 doswap1:
-	context.ah = context.data.byte(kObjecttype);
-	context.al = context.data.byte(kItemframe);
-	context.push(context.ax);
-	findinvpos(context);
-	context.ax = context.es.word(context.bx);
-	context.data.byte(kItemframe) = context.al;
-	context.data.byte(kObjecttype) = context.ah;
-	geteitherad(context);
-	context.es.byte(context.bx+2) = 20;
-	context.es.byte(context.bx+3) = 255;
-	context.bl = context.data.byte(kItemframe);
-	context.bh = context.data.byte(kObjecttype);
-	context.ax = context.pop();
-	context.data.byte(kObjecttype) = context.ah;
-	context.data.byte(kItemframe) = context.al;
-	context.push(context.bx);
-	findinvpos(context);
-	delpointer(context);
-	context.al = context.data.byte(kItemframe);
-	geteitherad(context);
-	context.es.byte(context.bx+2) = 4;
-	context.es.byte(context.bx+3) = 255;
-	context.al = context.data.byte(kLastinvpos);
-	context.es.byte(context.bx+4) = context.al;
-	context.ax = context.pop();
-	context.data.byte(kObjecttype) = context.ah;
-	context.data.byte(kItemframe) = context.al;
-	fillryan(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	ah = data.byte(kObjecttype);
+	al = data.byte(kItemframe);
+	push(ax);
+	findinvpos();
+	ax = es.word(bx);
+	data.byte(kItemframe) = al;
+	data.byte(kObjecttype) = ah;
+	geteitherad();
+	es.byte(bx+2) = 20;
+	es.byte(bx+3) = 255;
+	bl = data.byte(kItemframe);
+	bh = data.byte(kObjecttype);
+	ax = pop();
+	data.byte(kObjecttype) = ah;
+	data.byte(kItemframe) = al;
+	push(bx);
+	findinvpos();
+	delpointer();
+	al = data.byte(kItemframe);
+	geteitherad();
+	es.byte(bx+2) = 4;
+	es.byte(bx+3) = 255;
+	al = data.byte(kLastinvpos);
+	es.byte(bx+4) = al;
+	ax = pop();
+	data.byte(kObjecttype) = ah;
+	data.byte(kItemframe) = al;
+	fillryan();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void swapwithopen(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kItemframe);
-	context.ah = context.data.byte(kObjecttype);
-	context._cmp(context.ax, context.data.word(kOldsubject));
-	if (!context.flags.z())
+void DreamGenContext::swapwithopen() {
+	STACK_CHECK;
+	al = data.byte(kItemframe);
+	ah = data.byte(kObjecttype);
+	_cmp(ax, data.word(kOldsubject));
+	if (!flags.z())
 		goto difsub8;
-	context._cmp(context.data.byte(kCommandtype), 242);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 242);
+	if (flags.z())
 		goto alreadyswap2;
-	context.data.byte(kCommandtype) = 242;
+	data.byte(kCommandtype) = 242;
 difsub8:
-	context.data.word(kOldsubject) = context.ax;
-	context.bx = context.ax;
-	context.al = 34;
-	commandwithob(context);
+	data.word(kOldsubject) = ax;
+	bx = ax;
+	al = 34;
+	commandwithob();
 alreadyswap2:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (cantswap2) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto doswap2;
 	return;
 doswap2:
-	geteitherad(context);
-	isitworn(context);
-	if (!context.flags.z())
+	geteitherad();
+	isitworn();
+	if (!flags.z())
 		goto notwornswap;
-	wornerror(context);
+	wornerror();
 	return;
 notwornswap:
-	delpointer(context);
-	context.al = context.data.byte(kItemframe);
-	context._cmp(context.al, context.data.byte(kOpenedob));
-	if (!context.flags.z())
+	delpointer();
+	al = data.byte(kItemframe);
+	_cmp(al, data.byte(kOpenedob));
+	if (!flags.z())
 		goto isntsame2;
-	context.al = context.data.byte(kObjecttype);
-	context._cmp(context.al, context.data.byte(kOpenedtype));
-	if (!context.flags.z())
+	al = data.byte(kObjecttype);
+	_cmp(al, data.byte(kOpenedtype));
+	if (!flags.z())
 		goto isntsame2;
-	errormessage1(context);
+	errormessage1();
 	return;
 isntsame2:
-	checkobjectsize(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	checkobjectsize();
+	_cmp(al, 0);
+	if (flags.z())
 		goto sizeok2;
 	return;
 sizeok2:
-	context.ah = context.data.byte(kObjecttype);
-	context.al = context.data.byte(kItemframe);
-	context.push(context.ax);
-	findopenpos(context);
-	context.ax = context.es.word(context.bx);
-	context.data.byte(kItemframe) = context.al;
-	context.data.byte(kObjecttype) = context.ah;
-	context._cmp(context.ah, 4);
-	if (!context.flags.z())
+	ah = data.byte(kObjecttype);
+	al = data.byte(kItemframe);
+	push(ax);
+	findopenpos();
+	ax = es.word(bx);
+	data.byte(kItemframe) = al;
+	data.byte(kObjecttype) = ah;
+	_cmp(ah, 4);
+	if (!flags.z())
 		goto makeswapex;
-	geteitherad(context);
-	context.es.byte(context.bx+2) = 20;
-	context.es.byte(context.bx+3) = 255;
+	geteitherad();
+	es.byte(bx+2) = 20;
+	es.byte(bx+3) = 255;
 	goto actuallyswap;
 makeswapex:
-	transfertoex(context);
-	context.data.byte(kItemframe) = context.al;
-	context.data.byte(kObjecttype) = 4;
-	geteitherad(context);
-	context.es.byte(context.bx+2) = 20;
-	context.es.byte(context.bx+3) = 255;
+	transfertoex();
+	data.byte(kItemframe) = al;
+	data.byte(kObjecttype) = 4;
+	geteitherad();
+	es.byte(bx+2) = 20;
+	es.byte(bx+3) = 255;
 actuallyswap:
-	context.bl = context.data.byte(kItemframe);
-	context.bh = context.data.byte(kObjecttype);
-	context.ax = context.pop();
-	context.data.byte(kObjecttype) = context.ah;
-	context.data.byte(kItemframe) = context.al;
-	context.push(context.bx);
-	findopenpos(context);
-	geteitherad(context);
-	context.al = context.data.byte(kOpenedtype);
-	context.es.byte(context.bx+2) = context.al;
-	context.al = context.data.byte(kOpenedob);
-	context.es.byte(context.bx+3) = context.al;
-	context.al = context.data.byte(kLastinvpos);
-	context.es.byte(context.bx+4) = context.al;
-	context.al = context.data.byte(kReallocation);
-	context.es.byte(context.bx+5) = context.al;
-	context.ax = context.pop();
-	context.data.byte(kObjecttype) = context.ah;
-	context.data.byte(kItemframe) = context.al;
-	fillopen(context);
-	fillryan(context);
-	undertextline(context);
-	readmouse(context);
-	useopened(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	bl = data.byte(kItemframe);
+	bh = data.byte(kObjecttype);
+	ax = pop();
+	data.byte(kObjecttype) = ah;
+	data.byte(kItemframe) = al;
+	push(bx);
+	findopenpos();
+	geteitherad();
+	al = data.byte(kOpenedtype);
+	es.byte(bx+2) = al;
+	al = data.byte(kOpenedob);
+	es.byte(bx+3) = al;
+	al = data.byte(kLastinvpos);
+	es.byte(bx+4) = al;
+	al = data.byte(kReallocation);
+	es.byte(bx+5) = al;
+	ax = pop();
+	data.byte(kObjecttype) = ah;
+	data.byte(kItemframe) = al;
+	fillopen();
+	fillryan();
+	undertextline();
+	readmouse();
+	useopened();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void intoinv(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kPickup), 0);
-	if (!context.flags.z())
+void DreamGenContext::intoinv() {
+	STACK_CHECK;
+	_cmp(data.byte(kPickup), 0);
+	if (!flags.z())
 		goto notout;
-	outofinv(context);
+	outofinv();
 	return;
 notout:
-	findinvpos(context);
-	context.ax = context.es.word(context.bx);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	findinvpos();
+	ax = es.word(bx);
+	_cmp(al, 255);
+	if (flags.z())
 		goto canplace1;
-	swapwithinv(context);
+	swapwithinv();
 	return;
 canplace1:
-	context.al = context.data.byte(kItemframe);
-	context.ah = context.data.byte(kObjecttype);
-	context._cmp(context.ax, context.data.word(kOldsubject));
-	if (!context.flags.z())
+	al = data.byte(kItemframe);
+	ah = data.byte(kObjecttype);
+	_cmp(ax, data.word(kOldsubject));
+	if (!flags.z())
 		goto difsub1;
-	context._cmp(context.data.byte(kCommandtype), 220);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 220);
+	if (flags.z())
 		goto alreadyplce;
-	context.data.byte(kCommandtype) = 220;
+	data.byte(kCommandtype) = 220;
 difsub1:
-	context.data.word(kOldsubject) = context.ax;
-	context.bx = context.ax;
-	context.al = 35;
-	commandwithob(context);
+	data.word(kOldsubject) = ax;
+	bx = ax;
+	al = 35;
+	commandwithob();
 alreadyplce:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notletgo2) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto doplace;
 	return;
 doplace:
-	delpointer(context);
-	context.al = context.data.byte(kItemframe);
-	getexad(context);
-	context.es.byte(context.bx+2) = 4;
-	context.es.byte(context.bx+3) = 255;
-	context.al = context.data.byte(kLastinvpos);
-	context.es.byte(context.bx+4) = context.al;
-	context.data.byte(kPickup) = 0;
-	fillryan(context);
-	readmouse(context);
-	showpointer(context);
-	outofinv(context);
-	worktoscreen(context);
-	delpointer(context);
+	delpointer();
+	al = data.byte(kItemframe);
+	getexad();
+	es.byte(bx+2) = 4;
+	es.byte(bx+3) = 255;
+	al = data.byte(kLastinvpos);
+	es.byte(bx+4) = al;
+	data.byte(kPickup) = 0;
+	fillryan();
+	readmouse();
+	showpointer();
+	outofinv();
+	worktoscreen();
+	delpointer();
 }
 
-void deletetaken(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kFreedat);
-	context.ah = context.data.byte(kReallocation);
-	context.ds = context.data.word(kExtras);
-	context.si = (0+2080+30000);
-	context.cx = (114);
+void DreamGenContext::deletetaken() {
+	STACK_CHECK;
+	es = data.word(kFreedat);
+	ah = data.byte(kReallocation);
+	ds = data.word(kExtras);
+	si = (0+2080+30000);
+	cx = (114);
 takenloop:
-	context.al = context.ds.byte(context.si+11);
-	context._cmp(context.al, context.ah);
-	if (!context.flags.z())
+	al = ds.byte(si+11);
+	_cmp(al, ah);
+	if (!flags.z())
 		goto notinhere;
-	context.bl = context.ds.byte(context.si+1);
-	context.bh = 0;
-	context._add(context.bx, context.bx);
-	context._add(context.bx, context.bx);
-	context._add(context.bx, context.bx);
-	context._add(context.bx, context.bx);
-	context.es.byte(context.bx+2) = 254;
+	bl = ds.byte(si+1);
+	bh = 0;
+	_add(bx, bx);
+	_add(bx, bx);
+	_add(bx, bx);
+	_add(bx, bx);
+	es.byte(bx+2) = 254;
 notinhere:
-	context._add(context.si, 16);
-	if (--context.cx)
+	_add(si, 16);
+	if (--cx)
 		goto takenloop;
 }
 
-void outofinv(Context &context) {
-	STACK_CHECK(context);
-	findinvpos(context);
-	context.ax = context.es.word(context.bx);
-	context._cmp(context.al, 255);
-	if (!context.flags.z())
+void DreamGenContext::outofinv() {
+	STACK_CHECK;
+	findinvpos();
+	ax = es.word(bx);
+	_cmp(al, 255);
+	if (!flags.z())
 		goto canpick2;
-	blank(context);
+	blank();
 	return;
 canpick2:
-	context.bx = context.data.word(kMousebutton);
-	context._cmp(context.bx, 2);
-	if (!context.flags.z())
+	bx = data.word(kMousebutton);
+	_cmp(bx, 2);
+	if (!flags.z())
 		goto canpick2a;
-	reexfrominv(context);
+	reexfrominv();
 	return;
 canpick2a:
-	context._cmp(context.ax, context.data.word(kOldsubject));
-	if (!context.flags.z())
+	_cmp(ax, data.word(kOldsubject));
+	if (!flags.z())
 		goto difsub3;
-	context._cmp(context.data.byte(kCommandtype), 221);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 221);
+	if (flags.z())
 		goto alreadygrab;
-	context.data.byte(kCommandtype) = 221;
+	data.byte(kCommandtype) = 221;
 difsub3:
-	context.data.word(kOldsubject) = context.ax;
-	context.bx = context.ax;
-	context.al = 36;
-	commandwithob(context);
+	data.word(kOldsubject) = ax;
+	bx = ax;
+	al = 36;
+	commandwithob();
 alreadygrab:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notletgo) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto dograb;
 	return;
 dograb:
-	delpointer(context);
-	context.data.byte(kPickup) = 1;
-	findinvpos(context);
-	context.ax = context.es.word(context.bx);
-	context.data.byte(kItemframe) = context.al;
-	context.data.byte(kObjecttype) = context.ah;
-	getexad(context);
-	context.es.byte(context.bx+2) = 20;
-	context.es.byte(context.bx+3) = 255;
-	fillryan(context);
-	readmouse(context);
-	showpointer(context);
-	intoinv(context);
-	worktoscreen(context);
-	delpointer(context);
+	delpointer();
+	data.byte(kPickup) = 1;
+	findinvpos();
+	ax = es.word(bx);
+	data.byte(kItemframe) = al;
+	data.byte(kObjecttype) = ah;
+	getexad();
+	es.byte(bx+2) = 20;
+	es.byte(bx+3) = 255;
+	fillryan();
+	readmouse();
+	showpointer();
+	intoinv();
+	worktoscreen();
+	delpointer();
 }
 
-void getfreead(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 0;
-	context.cl = 4;
-	context._shl(context.ax, context.cl);
-	context.bx = context.ax;
-	context.es = context.data.word(kFreedat);
+void DreamGenContext::getfreead() {
+	STACK_CHECK;
+	ah = 0;
+	cl = 4;
+	_shl(ax, cl);
+	bx = ax;
+	es = data.word(kFreedat);
 }
 
-void getexad(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 0;
-	context.bx = 16;
-	context._mul(context.bx);
-	context.bx = context.ax;
-	context.es = context.data.word(kExtras);
-	context._add(context.bx, (0+2080+30000));
+void DreamGenContext::getexad() {
+	STACK_CHECK;
+	ah = 0;
+	bx = 16;
+	_mul(bx);
+	bx = ax;
+	es = data.word(kExtras);
+	_add(bx, (0+2080+30000));
 }
 
-void geteitherad(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kObjecttype), 4);
-	if (context.flags.z())
+void DreamGenContext::geteitherad() {
+	STACK_CHECK;
+	_cmp(data.byte(kObjecttype), 4);
+	if (flags.z())
 		goto isinexlist;
-	context.al = context.data.byte(kItemframe);
-	getfreead(context);
+	al = data.byte(kItemframe);
+	getfreead();
 	return;
 isinexlist:
-	context.al = context.data.byte(kItemframe);
-	getexad(context);
+	al = data.byte(kItemframe);
+	getexad();
 }
 
-void getanyad(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kObjecttype), 4);
-	if (context.flags.z())
+void DreamGenContext::getanyad() {
+	STACK_CHECK;
+	_cmp(data.byte(kObjecttype), 4);
+	if (flags.z())
 		goto isex;
-	context._cmp(context.data.byte(kObjecttype), 2);
-	if (context.flags.z())
+	_cmp(data.byte(kObjecttype), 2);
+	if (flags.z())
 		goto isfree;
-	context.al = context.data.byte(kCommand);
-	getsetad(context);
-	context.ax = context.es.word(context.bx+4);
+	al = data.byte(kCommand);
+	getsetad();
+	ax = es.word(bx+4);
 	return;
 isfree:
-	context.al = context.data.byte(kCommand);
-	getfreead(context);
-	context.ax = context.es.word(context.bx+7);
+	al = data.byte(kCommand);
+	getfreead();
+	ax = es.word(bx+7);
 	return;
 isex:
-	context.al = context.data.byte(kCommand);
-	getexad(context);
-	context.ax = context.es.word(context.bx+7);
+	al = data.byte(kCommand);
+	getexad();
+	ax = es.word(bx+7);
 }
 
-void getanyaddir(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.ah, 4);
-	if (context.flags.z())
+void DreamGenContext::getanyaddir() {
+	STACK_CHECK;
+	_cmp(ah, 4);
+	if (flags.z())
 		goto isex3;
-	context._cmp(context.ah, 2);
-	if (context.flags.z())
+	_cmp(ah, 2);
+	if (flags.z())
 		goto isfree3;
-	getsetad(context);
+	getsetad();
 	return;
 isfree3:
-	getfreead(context);
+	getfreead();
 	return;
 isex3:
-	getexad(context);
+	getexad();
 }
 
-void getopenedsize(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kOpenedtype), 4);
-	if (context.flags.z())
+void DreamGenContext::getopenedsize() {
+	STACK_CHECK;
+	_cmp(data.byte(kOpenedtype), 4);
+	if (flags.z())
 		goto isex2;
-	context._cmp(context.data.byte(kOpenedtype), 2);
-	if (context.flags.z())
+	_cmp(data.byte(kOpenedtype), 2);
+	if (flags.z())
 		goto isfree2;
-	context.al = context.data.byte(kOpenedob);
-	getsetad(context);
-	context.ax = context.es.word(context.bx+3);
+	al = data.byte(kOpenedob);
+	getsetad();
+	ax = es.word(bx+3);
 	return;
 isfree2:
-	context.al = context.data.byte(kOpenedob);
-	getfreead(context);
-	context.ax = context.es.word(context.bx+7);
+	al = data.byte(kOpenedob);
+	getfreead();
+	ax = es.word(bx+7);
 	return;
 isex2:
-	context.al = context.data.byte(kOpenedob);
-	getexad(context);
-	context.ax = context.es.word(context.bx+7);
+	al = data.byte(kOpenedob);
+	getexad();
+	ax = es.word(bx+7);
 }
 
-void getsetad(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 0;
-	context.bx = 64;
-	context._mul(context.bx);
-	context.bx = context.ax;
-	context.es = context.data.word(kSetdat);
+void DreamGenContext::getsetad() {
+	STACK_CHECK;
+	ah = 0;
+	bx = 64;
+	_mul(bx);
+	bx = ax;
+	es = data.word(kSetdat);
 }
 
-void findinvpos(Context &context) {
-	STACK_CHECK(context);
-	context.cx = context.data.word(kMousex);
-	context._sub(context.cx, (80));
-	context.bx = -1;
+void DreamGenContext::findinvpos() {
+	STACK_CHECK;
+	cx = data.word(kMousex);
+	_sub(cx, (80));
+	bx = -1;
 findinv1:
-	context._inc(context.bx);
-	context._sub(context.cx, (44));
-	if (!context.flags.c())
+	_inc(bx);
+	_sub(cx, (44));
+	if (!flags.c())
 		goto findinv1;
-	context.cx = context.data.word(kMousey);
-	context._sub(context.cx, (58));
-	context._sub(context.bx, 5);
+	cx = data.word(kMousey);
+	_sub(cx, (58));
+	_sub(bx, 5);
 findinv2:
-	context._add(context.bx, 5);
-	context._sub(context.cx, (44));
-	if (!context.flags.c())
+	_add(bx, 5);
+	_sub(cx, (44));
+	if (!flags.c())
 		goto findinv2;
-	context.al = context.data.byte(kRyanpage);
-	context.ah = 0;
-	context.cx = 10;
-	context._mul(context.cx);
-	context._add(context.bx, context.ax);
-	context.al = context.bl;
-	context.data.byte(kLastinvpos) = context.al;
-	context._add(context.bx, context.bx);
-	context.es = context.data.word(kBuffers);
-	context._add(context.bx, (0+(180*10)+32));
+	al = data.byte(kRyanpage);
+	ah = 0;
+	cx = 10;
+	_mul(cx);
+	_add(bx, ax);
+	al = bl;
+	data.byte(kLastinvpos) = al;
+	_add(bx, bx);
+	es = data.word(kBuffers);
+	_add(bx, (0+(180*10)+32));
 }
 
-void findopenpos(Context &context) {
-	STACK_CHECK(context);
-	context.cx = context.data.word(kMousex);
-	context._sub(context.cx, (80));
-	context.bx = -1;
+void DreamGenContext::findopenpos() {
+	STACK_CHECK;
+	cx = data.word(kMousex);
+	_sub(cx, (80));
+	bx = -1;
 findopenp1:
-	context._inc(context.bx);
-	context._sub(context.cx, (44));
-	if (!context.flags.c())
+	_inc(bx);
+	_sub(cx, (44));
+	if (!flags.c())
 		goto findopenp1;
-	context.al = context.bl;
-	context.data.byte(kLastinvpos) = context.al;
-	context._add(context.bx, context.bx);
-	context.es = context.data.word(kBuffers);
-	context._add(context.bx, (0+(180*10)));
+	al = bl;
+	data.byte(kLastinvpos) = al;
+	_add(bx, bx);
+	es = data.word(kBuffers);
+	_add(bx, (0+(180*10)));
 }
 
-void dropobject(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 223);
-	if (context.flags.z())
+void DreamGenContext::dropobject() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 223);
+	if (flags.z())
 		goto alreadydrop;
-	context.data.byte(kCommandtype) = 223;
-	context._cmp(context.data.byte(kPickup), 0);
-	if (context.flags.z())
-		{ blank(context); return; };
-	context.bl = context.data.byte(kItemframe);
-	context.bh = context.data.byte(kObjecttype);
-	context.al = 37;
-	commandwithob(context);
+	data.byte(kCommandtype) = 223;
+	_cmp(data.byte(kPickup), 0);
+	if (flags.z())
+		{ blank(); return; };
+	bl = data.byte(kItemframe);
+	bh = data.byte(kObjecttype);
+	al = 37;
+	commandwithob();
 alreadydrop:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (nodrop) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto dodrop;
 	return;
 dodrop:
-	geteitherad(context);
-	isitworn(context);
-	if (!context.flags.z())
+	geteitherad();
+	isitworn();
+	if (!flags.z())
 		goto nowornerror;
-	wornerror(context);
+	wornerror();
 	return;
 nowornerror:
-	context._cmp(context.data.byte(kReallocation), 47);
-	if (context.flags.z())
+	_cmp(data.byte(kReallocation), 47);
+	if (flags.z())
 		goto nodrop2;
-	context.cl = context.data.byte(kRyanx);
-	context._add(context.cl, 12);
-	context.ch = context.data.byte(kRyany);
-	context._add(context.ch, 12);
-	checkone(context);
-	context._cmp(context.cl, 2);
-	if (context.flags.c())
+	cl = data.byte(kRyanx);
+	_add(cl, 12);
+	ch = data.byte(kRyany);
+	_add(ch, 12);
+	checkone();
+	_cmp(cl, 2);
+	if (flags.c())
 		goto nodroperror;
 nodrop2:
-	droperror(context);
+	droperror();
 	return;
 nodroperror:
-	context._cmp(context.data.byte(kMapxsize), 64);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapxsize), 64);
+	if (!flags.z())
 		goto notinlift;
-	context._cmp(context.data.byte(kMapysize), 64);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapysize), 64);
+	if (!flags.z())
 		goto notinlift;
-	droperror(context);
+	droperror();
 	return;
 notinlift:
-	context.al = context.data.byte(kItemframe);
-	context.ah = 4;
-	context.cl = 'G';
-	context.ch = 'U';
-	context.dl = 'N';
-	context.dh = 'A';
-	compare(context);
-	if (context.flags.z())
-		{ cantdrop(context); return; };
-	context.al = context.data.byte(kItemframe);
-	context.ah = 4;
-	context.cl = 'S';
-	context.ch = 'H';
-	context.dl = 'L';
-	context.dh = 'D';
-	compare(context);
-	if (context.flags.z())
-		{ cantdrop(context); return; };
-	context.data.byte(kObjecttype) = 4;
-	context.al = context.data.byte(kItemframe);
-	getexad(context);
-	context.es.byte(context.bx+2) = 0;
-	context.al = context.data.byte(kRyanx);
-	context._add(context.al, 4);
-	context.cl = 4;
-	context._shr(context.al, context.cl);
-	context._add(context.al, context.data.byte(kMapx));
-	context.ah = context.data.byte(kRyany);
-	context._add(context.ah, 8);
-	context.cl = 4;
-	context._shr(context.ah, context.cl);
-	context._add(context.ah, context.data.byte(kMapy));
-	context.es.byte(context.bx+3) = context.al;
-	context.es.byte(context.bx+5) = context.ah;
-	context.al = context.data.byte(kRyanx);
-	context._add(context.al, 4);
-	context._and(context.al, 15);
-	context.ah = context.data.byte(kRyany);
-	context._add(context.ah, 8);
-	context._and(context.ah, 15);
-	context.es.byte(context.bx+4) = context.al;
-	context.es.byte(context.bx+6) = context.ah;
-	context.data.byte(kPickup) = 0;
-	context.al = context.data.byte(kReallocation);
-	context.es.byte(context.bx) = context.al;
+	al = data.byte(kItemframe);
+	ah = 4;
+	cl = 'G';
+	ch = 'U';
+	dl = 'N';
+	dh = 'A';
+	compare();
+	if (flags.z())
+		{ cantdrop(); return; };
+	al = data.byte(kItemframe);
+	ah = 4;
+	cl = 'S';
+	ch = 'H';
+	dl = 'L';
+	dh = 'D';
+	compare();
+	if (flags.z())
+		{ cantdrop(); return; };
+	data.byte(kObjecttype) = 4;
+	al = data.byte(kItemframe);
+	getexad();
+	es.byte(bx+2) = 0;
+	al = data.byte(kRyanx);
+	_add(al, 4);
+	cl = 4;
+	_shr(al, cl);
+	_add(al, data.byte(kMapx));
+	ah = data.byte(kRyany);
+	_add(ah, 8);
+	cl = 4;
+	_shr(ah, cl);
+	_add(ah, data.byte(kMapy));
+	es.byte(bx+3) = al;
+	es.byte(bx+5) = ah;
+	al = data.byte(kRyanx);
+	_add(al, 4);
+	_and(al, 15);
+	ah = data.byte(kRyany);
+	_add(ah, 8);
+	_and(ah, 15);
+	es.byte(bx+4) = al;
+	es.byte(bx+6) = ah;
+	data.byte(kPickup) = 0;
+	al = data.byte(kReallocation);
+	es.byte(bx) = al;
 }
 
-void droperror(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kCommandtype) = 255;
-	delpointer(context);
-	context.di = 76;
-	context.bx = 21;
-	context.al = 56;
-	context.dl = 240;
-	printmessage(context);
-	worktoscreenm(context);
-	context.cx = 50;
-	hangonp(context);
-	showpanel(context);
-	showman(context);
-	examicon(context);
-	context.data.byte(kCommandtype) = 255;
-	worktoscreenm(context);
+void DreamGenContext::droperror() {
+	STACK_CHECK;
+	data.byte(kCommandtype) = 255;
+	delpointer();
+	di = 76;
+	bx = 21;
+	al = 56;
+	dl = 240;
+	printmessage();
+	worktoscreenm();
+	cx = 50;
+	hangonp();
+	showpanel();
+	showman();
+	examicon();
+	data.byte(kCommandtype) = 255;
+	worktoscreenm();
 }
 
-void cantdrop(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kCommandtype) = 255;
-	delpointer(context);
-	context.di = 76;
-	context.bx = 21;
-	context.al = 24;
-	context.dl = 240;
-	printmessage(context);
-	worktoscreenm(context);
-	context.cx = 50;
-	hangonp(context);
-	showpanel(context);
-	showman(context);
-	examicon(context);
-	context.data.byte(kCommandtype) = 255;
-	worktoscreenm(context);
+void DreamGenContext::cantdrop() {
+	STACK_CHECK;
+	data.byte(kCommandtype) = 255;
+	delpointer();
+	di = 76;
+	bx = 21;
+	al = 24;
+	dl = 240;
+	printmessage();
+	worktoscreenm();
+	cx = 50;
+	hangonp();
+	showpanel();
+	showman();
+	examicon();
+	data.byte(kCommandtype) = 255;
+	worktoscreenm();
 }
 
-void wornerror(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kCommandtype) = 255;
-	delpointer(context);
-	context.di = 76;
-	context.bx = 21;
-	context.al = 57;
-	context.dl = 240;
-	printmessage(context);
-	worktoscreenm(context);
-	context.cx = 50;
-	hangonp(context);
-	showpanel(context);
-	showman(context);
-	examicon(context);
-	context.data.byte(kCommandtype) = 255;
-	worktoscreenm(context);
+void DreamGenContext::wornerror() {
+	STACK_CHECK;
+	data.byte(kCommandtype) = 255;
+	delpointer();
+	di = 76;
+	bx = 21;
+	al = 57;
+	dl = 240;
+	printmessage();
+	worktoscreenm();
+	cx = 50;
+	hangonp();
+	showpanel();
+	showman();
+	examicon();
+	data.byte(kCommandtype) = 255;
+	worktoscreenm();
 }
 
-void removeobfrominv(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommand), 100);
-	if (context.flags.z())
+void DreamGenContext::removeobfrominv() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommand), 100);
+	if (flags.z())
 		return /* (obnotexist) */;
-	getanyad(context);
-	context.di = context.bx;
-	context.cl = context.data.byte(kCommand);
-	context.ch = 0;
-	deleteexobject(context);
+	getanyad();
+	di = bx;
+	cl = data.byte(kCommand);
+	ch = 0;
+	deleteexobject();
 }
 
-void selectopenob(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kCommand);
-	getanyad(context);
-	context._cmp(context.al, 255);
-	if (!context.flags.z())
+void DreamGenContext::selectopenob() {
+	STACK_CHECK;
+	al = data.byte(kCommand);
+	getanyad();
+	_cmp(al, 255);
+	if (!flags.z())
 		goto canopenit1;
-	blank(context);
+	blank();
 	return;
 canopenit1:
-	context._cmp(context.data.byte(kCommandtype), 224);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 224);
+	if (flags.z())
 		goto alreadyopob;
-	context.data.byte(kCommandtype) = 224;
-	context.bl = context.data.byte(kCommand);
-	context.bh = context.data.byte(kObjecttype);
-	context.al = 38;
-	commandwithob(context);
+	data.byte(kCommandtype) = 224;
+	bl = data.byte(kCommand);
+	bh = data.byte(kObjecttype);
+	al = 38;
+	commandwithob();
 alreadyopob:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (noopenob) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto doopenob;
 	return;
 doopenob:
-	context.al = context.data.byte(kCommand);
-	context.data.byte(kOpenedob) = context.al;
-	context.al = context.data.byte(kObjecttype);
-	context.data.byte(kOpenedtype) = context.al;
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	examicon(context);
-	showexit(context);
-	openinv(context);
-	openob(context);
-	undertextline(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	al = data.byte(kCommand);
+	data.byte(kOpenedob) = al;
+	al = data.byte(kObjecttype);
+	data.byte(kOpenedtype) = al;
+	createpanel();
+	showpanel();
+	showman();
+	examicon();
+	showexit();
+	openinv();
+	openob();
+	undertextline();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void useopened(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kOpenedob), 255);
-	if (context.flags.z())
+void DreamGenContext::useopened() {
+	STACK_CHECK;
+	_cmp(data.byte(kOpenedob), 255);
+	if (flags.z())
 		return /* (cannotuseopen) */;
-	context._cmp(context.data.byte(kPickup), 0);
-	if (!context.flags.z())
+	_cmp(data.byte(kPickup), 0);
+	if (!flags.z())
 		goto notout2;
-	outofopen(context);
+	outofopen();
 	return;
 notout2:
-	findopenpos(context);
-	context.ax = context.es.word(context.bx);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	findopenpos();
+	ax = es.word(bx);
+	_cmp(al, 255);
+	if (flags.z())
 		goto canplace3;
-	swapwithopen(context);
+	swapwithopen();
 	return;
 canplace3:
-	context._cmp(context.data.byte(kPickup), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kPickup), 1);
+	if (flags.z())
 		goto intoopen;
-	blank(context);
+	blank();
 	return;
 intoopen:
-	context.al = context.data.byte(kItemframe);
-	context.ah = context.data.byte(kObjecttype);
-	context._cmp(context.ax, context.data.word(kOldsubject));
-	if (!context.flags.z())
+	al = data.byte(kItemframe);
+	ah = data.byte(kObjecttype);
+	_cmp(ax, data.word(kOldsubject));
+	if (!flags.z())
 		goto difsub2;
-	context._cmp(context.data.byte(kCommandtype), 227);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 227);
+	if (flags.z())
 		goto alreadyplc2;
-	context.data.byte(kCommandtype) = 227;
+	data.byte(kCommandtype) = 227;
 difsub2:
-	context.data.word(kOldsubject) = context.ax;
-	context.bx = context.ax;
-	context.al = 35;
-	commandwithob(context);
+	data.word(kOldsubject) = ax;
+	bx = ax;
+	al = 35;
+	commandwithob();
 alreadyplc2:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notletgo3) */;
-	context._cmp(context.ax, 1);
-	if (context.flags.z())
+	_cmp(ax, 1);
+	if (flags.z())
 		goto doplace2;
 	return;
 doplace2:
-	geteitherad(context);
-	isitworn(context);
-	if (!context.flags.z())
+	geteitherad();
+	isitworn();
+	if (!flags.z())
 		goto notworntoopen;
-	wornerror(context);
+	wornerror();
 	return;
 notworntoopen:
-	delpointer(context);
-	context.al = context.data.byte(kItemframe);
-	context._cmp(context.al, context.data.byte(kOpenedob));
-	if (!context.flags.z())
+	delpointer();
+	al = data.byte(kItemframe);
+	_cmp(al, data.byte(kOpenedob));
+	if (!flags.z())
 		goto isntsame;
-	context.al = context.data.byte(kObjecttype);
-	context._cmp(context.al, context.data.byte(kOpenedtype));
-	if (!context.flags.z())
+	al = data.byte(kObjecttype);
+	_cmp(al, data.byte(kOpenedtype));
+	if (!flags.z())
 		goto isntsame;
-	errormessage1(context);
+	errormessage1();
 	return;
 isntsame:
-	checkobjectsize(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	checkobjectsize();
+	_cmp(al, 0);
+	if (flags.z())
 		goto sizeok1;
 	return;
 sizeok1:
-	context.data.byte(kPickup) = 0;
-	context.al = context.data.byte(kItemframe);
-	geteitherad(context);
-	context.al = context.data.byte(kOpenedtype);
-	context.es.byte(context.bx+2) = context.al;
-	context.al = context.data.byte(kOpenedob);
-	context.es.byte(context.bx+3) = context.al;
-	context.al = context.data.byte(kLastinvpos);
-	context.es.byte(context.bx+4) = context.al;
-	context.al = context.data.byte(kReallocation);
-	context.es.byte(context.bx+5) = context.al;
-	fillopen(context);
-	undertextline(context);
-	readmouse(context);
-	useopened(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	data.byte(kPickup) = 0;
+	al = data.byte(kItemframe);
+	geteitherad();
+	al = data.byte(kOpenedtype);
+	es.byte(bx+2) = al;
+	al = data.byte(kOpenedob);
+	es.byte(bx+3) = al;
+	al = data.byte(kLastinvpos);
+	es.byte(bx+4) = al;
+	al = data.byte(kReallocation);
+	es.byte(bx+5) = al;
+	fillopen();
+	undertextline();
+	readmouse();
+	useopened();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void errormessage1(Context &context) {
-	STACK_CHECK(context);
-	delpointer(context);
-	context.di = 76;
-	context.bx = 21;
-	context.al = 58;
-	context.dl = 240;
-	printmessage(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
-	context.cx = 50;
-	hangonp(context);
-	showpanel(context);
-	showman(context);
-	examicon(context);
-	readmouse(context);
-	useopened(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+void DreamGenContext::errormessage1() {
+	STACK_CHECK;
+	delpointer();
+	di = 76;
+	bx = 21;
+	al = 58;
+	dl = 240;
+	printmessage();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
+	cx = 50;
+	hangonp();
+	showpanel();
+	showman();
+	examicon();
+	readmouse();
+	useopened();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void errormessage2(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kCommandtype) = 255;
-	delpointer(context);
-	context.di = 76;
-	context.bx = 21;
-	context.al = 59;
-	context.dl = 240;
-	printmessage(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
-	context.cx = 50;
-	hangonp(context);
-	showpanel(context);
-	showman(context);
-	examicon(context);
-	readmouse(context);
-	useopened(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+void DreamGenContext::errormessage2() {
+	STACK_CHECK;
+	data.byte(kCommandtype) = 255;
+	delpointer();
+	di = 76;
+	bx = 21;
+	al = 59;
+	dl = 240;
+	printmessage();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
+	cx = 50;
+	hangonp();
+	showpanel();
+	showman();
+	examicon();
+	readmouse();
+	useopened();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void errormessage3(Context &context) {
-	STACK_CHECK(context);
-	delpointer(context);
-	context.di = 76;
-	context.bx = 21;
-	context.al = 60;
-	context.dl = 240;
-	printmessage(context);
-	worktoscreenm(context);
-	context.cx = 50;
-	hangonp(context);
-	showpanel(context);
-	showman(context);
-	examicon(context);
-	readmouse(context);
-	useopened(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+void DreamGenContext::errormessage3() {
+	STACK_CHECK;
+	delpointer();
+	di = 76;
+	bx = 21;
+	al = 60;
+	dl = 240;
+	printmessage();
+	worktoscreenm();
+	cx = 50;
+	hangonp();
+	showpanel();
+	showman();
+	examicon();
+	readmouse();
+	useopened();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void checkobjectsize(Context &context) {
-	STACK_CHECK(context);
-	getopenedsize(context);
-	context.push(context.ax);
-	context.al = context.data.byte(kItemframe);
-	geteitherad(context);
-	context.al = context.es.byte(context.bx+9);
-	context.cx = context.pop();
-	context._cmp(context.al, 255);
-	if (!context.flags.z())
+void DreamGenContext::checkobjectsize() {
+	STACK_CHECK;
+	getopenedsize();
+	push(ax);
+	al = data.byte(kItemframe);
+	geteitherad();
+	al = es.byte(bx+9);
+	cx = pop();
+	_cmp(al, 255);
+	if (!flags.z())
 		goto notunsized;
-	context.al = 6;
+	al = 6;
 notunsized:
-	context._cmp(context.al, 100);
-	if (!context.flags.c())
+	_cmp(al, 100);
+	if (!flags.c())
 		goto specialcase;
-	context._cmp(context.cl, 100);
-	if (context.flags.c())
+	_cmp(cl, 100);
+	if (flags.c())
 		goto isntspecial;
-	errormessage3(context);
+	errormessage3();
 	goto sizewrong;
 isntspecial:
-	context._cmp(context.cl, context.al);
-	if (!context.flags.c())
+	_cmp(cl, al);
+	if (!flags.c())
 		goto sizeok;
 specialcase:
-	context._sub(context.al, 100);
-	context._cmp(context.cl, 100);
-	if (!context.flags.c())
+	_sub(al, 100);
+	_cmp(cl, 100);
+	if (!flags.c())
 		goto bothspecial;
-	context._cmp(context.cl, context.al);
-	if (!context.flags.c())
+	_cmp(cl, al);
+	if (!flags.c())
 		goto sizeok;
-	errormessage2(context);
+	errormessage2();
 	goto sizewrong;
 bothspecial:
-	context._sub(context.cl, 100);
-	context._cmp(context.al, context.cl);
-	if (context.flags.z())
+	_sub(cl, 100);
+	_cmp(al, cl);
+	if (flags.z())
 		goto sizeok;
-	errormessage3(context);
+	errormessage3();
 sizewrong:
-	context.al = 1;
+	al = 1;
 	return;
 sizeok:
-	context.al = 0;
+	al = 0;
 }
 
-void outofopen(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kOpenedob), 255);
-	if (context.flags.z())
+void DreamGenContext::outofopen() {
+	STACK_CHECK;
+	_cmp(data.byte(kOpenedob), 255);
+	if (flags.z())
 		goto cantuseopen;
-	findopenpos(context);
-	context.ax = context.es.word(context.bx);
-	context._cmp(context.al, 255);
-	if (!context.flags.z())
+	findopenpos();
+	ax = es.word(bx);
+	_cmp(al, 255);
+	if (!flags.z())
 		goto canpick4;
 cantuseopen:
-	blank(context);
+	blank();
 	return;
 canpick4:
-	context._cmp(context.ax, context.data.word(kOldsubject));
-	if (!context.flags.z())
+	_cmp(ax, data.word(kOldsubject));
+	if (!flags.z())
 		goto difsub4;
-	context._cmp(context.data.byte(kCommandtype), 228);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 228);
+	if (flags.z())
 		goto alreadygrb;
-	context.data.byte(kCommandtype) = 228;
+	data.byte(kCommandtype) = 228;
 difsub4:
-	context.data.word(kOldsubject) = context.ax;
-	context.bx = context.ax;
-	context.al = 36;
-	commandwithob(context);
+	data.word(kOldsubject) = ax;
+	bx = ax;
+	al = 36;
+	commandwithob();
 alreadygrb:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notletgo4) */;
-	context._cmp(context.ax, 1);
-	if (context.flags.z())
+	_cmp(ax, 1);
+	if (flags.z())
 		goto dogrb;
-	context._cmp(context.ax, 2);
-	if (!context.flags.z())
+	_cmp(ax, 2);
+	if (!flags.z())
 		return /* (notletgo4) */;
-	reexfromopen(context);
+	reexfromopen();
 	return;
 dogrb:
-	delpointer(context);
-	context.data.byte(kPickup) = 1;
-	findopenpos(context);
-	context.ax = context.es.word(context.bx);
-	context.data.byte(kItemframe) = context.al;
-	context.data.byte(kObjecttype) = context.ah;
-	context._cmp(context.ah, 4);
-	if (!context.flags.z())
+	delpointer();
+	data.byte(kPickup) = 1;
+	findopenpos();
+	ax = es.word(bx);
+	data.byte(kItemframe) = al;
+	data.byte(kObjecttype) = ah;
+	_cmp(ah, 4);
+	if (!flags.z())
 		goto makeintoex;
-	geteitherad(context);
-	context.es.byte(context.bx+2) = 20;
-	context.es.byte(context.bx+3) = 255;
+	geteitherad();
+	es.byte(bx+2) = 20;
+	es.byte(bx+3) = 255;
 	goto actuallyout;
 makeintoex:
-	transfertoex(context);
-	context.data.byte(kItemframe) = context.al;
-	context.data.byte(kObjecttype) = 4;
-	geteitherad(context);
-	context.es.byte(context.bx+2) = 20;
-	context.es.byte(context.bx+3) = 255;
+	transfertoex();
+	data.byte(kItemframe) = al;
+	data.byte(kObjecttype) = 4;
+	geteitherad();
+	es.byte(bx+2) = 20;
+	es.byte(bx+3) = 255;
 actuallyout:
-	fillopen(context);
-	undertextline(context);
-	readmouse(context);
-	useopened(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	fillopen();
+	undertextline();
+	readmouse();
+	useopened();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void transfertoex(Context &context) {
-	STACK_CHECK(context);
-	emergencypurge(context);
-	getexpos(context);
-	context.al = context.data.byte(kExpos);
-	context.push(context.ax);
-	context.push(context.di);
-	context.al = context.data.byte(kItemframe);
-	context.ah = 0;
-	context.bx = 16;
-	context._mul(context.bx);
-	context.ds = context.data.word(kFreedat);
-	context.si = context.ax;
-	context.cx = 8;
-	context._movsw(context.cx);
-	context.di = context.pop();
-	context.al = context.data.byte(kReallocation);
-	context.es.byte(context.di) = context.al;
-	context.es.byte(context.di+11) = context.al;
-	context.al = context.data.byte(kItemframe);
-	context.es.byte(context.di+1) = context.al;
-	context.es.byte(context.di+2) = 4;
-	context.es.byte(context.di+3) = 255;
-	context.al = context.data.byte(kLastinvpos);
-	context.es.byte(context.di+4) = context.al;
-	context.al = context.data.byte(kItemframe);
-	context.data.byte(kItemtotran) = context.al;
-	transfermap(context);
-	transferinv(context);
-	transfertext(context);
-	context.al = context.data.byte(kItemframe);
-	context.ah = 0;
-	context.bx = 16;
-	context._mul(context.bx);
-	context.ds = context.data.word(kFreedat);
-	context.si = context.ax;
-	context.ds.byte(context.si+2) = 254;
-	pickupconts(context);
-	context.ax = context.pop();
+void DreamGenContext::transfertoex() {
+	STACK_CHECK;
+	emergencypurge();
+	getexpos();
+	al = data.byte(kExpos);
+	push(ax);
+	push(di);
+	al = data.byte(kItemframe);
+	ah = 0;
+	bx = 16;
+	_mul(bx);
+	ds = data.word(kFreedat);
+	si = ax;
+	cx = 8;
+	_movsw(cx);
+	di = pop();
+	al = data.byte(kReallocation);
+	es.byte(di) = al;
+	es.byte(di+11) = al;
+	al = data.byte(kItemframe);
+	es.byte(di+1) = al;
+	es.byte(di+2) = 4;
+	es.byte(di+3) = 255;
+	al = data.byte(kLastinvpos);
+	es.byte(di+4) = al;
+	al = data.byte(kItemframe);
+	data.byte(kItemtotran) = al;
+	transfermap();
+	transferinv();
+	transfertext();
+	al = data.byte(kItemframe);
+	ah = 0;
+	bx = 16;
+	_mul(bx);
+	ds = data.word(kFreedat);
+	si = ax;
+	ds.byte(si+2) = 254;
+	pickupconts();
+	ax = pop();
 }
 
-void pickupconts(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.ds.byte(context.si+7);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+void DreamGenContext::pickupconts() {
+	STACK_CHECK;
+	al = ds.byte(si+7);
+	_cmp(al, 255);
+	if (flags.z())
 		return /* (notopenable) */;
-	context.al = context.data.byte(kItemframe);
-	context.ah = context.data.byte(kObjecttype);
-	context.dl = context.data.byte(kExpos);
-	context.es = context.data.word(kFreedat);
-	context.bx = 0;
-	context.cx = 0;
+	al = data.byte(kItemframe);
+	ah = data.byte(kObjecttype);
+	dl = data.byte(kExpos);
+	es = data.word(kFreedat);
+	bx = 0;
+	cx = 0;
 pickupcontloop:
-	context.push(context.cx);
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.dx);
-	context.push(context.ax);
-	context._cmp(context.es.byte(context.bx+2), context.ah);
-	if (!context.flags.z())
+	push(cx);
+	push(es);
+	push(bx);
+	push(dx);
+	push(ax);
+	_cmp(es.byte(bx+2), ah);
+	if (!flags.z())
 		goto notinsidethis;
-	context._cmp(context.es.byte(context.bx+3), context.al);
-	if (!context.flags.z())
+	_cmp(es.byte(bx+3), al);
+	if (!flags.z())
 		goto notinsidethis;
-	context.data.byte(kItemtotran) = context.cl;
-	transfercontoex(context);
+	data.byte(kItemtotran) = cl;
+	transfercontoex();
 notinsidethis:
-	context.ax = context.pop();
-	context.dx = context.pop();
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.cx = context.pop();
-	context._add(context.bx, 16);
-	context._inc(context.cx);
-	context._cmp(context.cx, 80);
-	if (!context.flags.z())
+	ax = pop();
+	dx = pop();
+	bx = pop();
+	es = pop();
+	cx = pop();
+	_add(bx, 16);
+	_inc(cx);
+	_cmp(cx, 80);
+	if (!flags.z())
 		goto pickupcontloop;
 }
 
-void transfercontoex(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.dx);
-	context.push(context.es);
-	context.push(context.bx);
-	getexpos(context);
-	context.si = context.pop();
-	context.ds = context.pop();
-	context.push(context.di);
-	context.cx = 8;
-	context._movsw(context.cx);
-	context.di = context.pop();
-	context.dx = context.pop();
-	context.al = context.data.byte(kReallocation);
-	context.es.byte(context.di) = context.al;
-	context.es.byte(context.di+11) = context.al;
-	context.al = context.data.byte(kItemtotran);
-	context.es.byte(context.di+1) = context.al;
-	context.es.byte(context.di+3) = context.dl;
-	context.es.byte(context.di+2) = 4;
-	transfermap(context);
-	transferinv(context);
-	transfertext(context);
-	context.si = context.pop();
-	context.ds = context.pop();
-	context.ds.byte(context.si+2) = 255;
+void DreamGenContext::transfercontoex() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	push(dx);
+	push(es);
+	push(bx);
+	getexpos();
+	si = pop();
+	ds = pop();
+	push(di);
+	cx = 8;
+	_movsw(cx);
+	di = pop();
+	dx = pop();
+	al = data.byte(kReallocation);
+	es.byte(di) = al;
+	es.byte(di+11) = al;
+	al = data.byte(kItemtotran);
+	es.byte(di+1) = al;
+	es.byte(di+3) = dl;
+	es.byte(di+2) = 4;
+	transfermap();
+	transferinv();
+	transfertext();
+	si = pop();
+	ds = pop();
+	ds.byte(si+2) = 255;
 }
 
-void transfertext(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kExtras);
-	context.al = context.data.byte(kExpos);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.bx = (0+2080+30000+(16*114));
-	context._add(context.bx, context.ax);
-	context.di = context.data.word(kExtextpos);
-	context.es.word(context.bx) = context.di;
-	context._add(context.di, (0+2080+30000+(16*114)+((114+2)*2)));
-	context.al = context.data.byte(kItemtotran);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.ds = context.data.word(kFreedesc);
-	context.bx = (0);
-	context._add(context.bx, context.ax);
-	context.si = (0+(82*2));
-	context.ax = context.ds.word(context.bx);
-	context._add(context.si, context.ax);
+void DreamGenContext::transfertext() {
+	STACK_CHECK;
+	es = data.word(kExtras);
+	al = data.byte(kExpos);
+	ah = 0;
+	_add(ax, ax);
+	bx = (0+2080+30000+(16*114));
+	_add(bx, ax);
+	di = data.word(kExtextpos);
+	es.word(bx) = di;
+	_add(di, (0+2080+30000+(16*114)+((114+2)*2)));
+	al = data.byte(kItemtotran);
+	ah = 0;
+	_add(ax, ax);
+	ds = data.word(kFreedesc);
+	bx = (0);
+	_add(bx, ax);
+	si = (0+(82*2));
+	ax = ds.word(bx);
+	_add(si, ax);
 moretext:
-	context._lodsb();
-	context._stosb();
-	context._inc(context.data.word(kExtextpos));
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	_lodsb();
+	_stosb();
+	_inc(data.word(kExtextpos));
+	_cmp(al, 0);
+	if (!flags.z())
 		goto moretext;
 }
 
-void getexpos(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kExtras);
-	context.al = 0;
-	context.di = (0+2080+30000);
+void DreamGenContext::getexpos() {
+	STACK_CHECK;
+	es = data.word(kExtras);
+	al = 0;
+	di = (0+2080+30000);
 tryanotherex:
-	context._cmp(context.es.byte(context.di+2), 255);
-	if (context.flags.z())
+	_cmp(es.byte(di+2), 255);
+	if (flags.z())
 		goto foundnewex;
-	context._add(context.di, 16);
-	context._inc(context.al);
-	context._cmp(context.al, (114));
-	if (!context.flags.z())
+	_add(di, 16);
+	_inc(al);
+	_cmp(al, (114));
+	if (!flags.z())
 		goto tryanotherex;
 foundnewex:
-	context.data.byte(kExpos) = context.al;
+	data.byte(kExpos) = al;
 }
 
-void purgealocation(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.es = context.data.word(kExtras);
-	context.di = (0+2080+30000);
-	context.bx = context.pop();
-	context.cx = 0;
+void DreamGenContext::purgealocation() {
+	STACK_CHECK;
+	push(ax);
+	es = data.word(kExtras);
+	di = (0+2080+30000);
+	bx = pop();
+	cx = 0;
 purgeloc:
-	context._cmp(context.bl, context.es.byte(context.di+0));
-	if (!context.flags.z())
+	_cmp(bl, es.byte(di+0));
+	if (!flags.z())
 		goto dontpurge;
-	context._cmp(context.es.byte(context.di+2), 0);
-	if (!context.flags.z())
+	_cmp(es.byte(di+2), 0);
+	if (!flags.z())
 		goto dontpurge;
-	context.push(context.di);
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.cx);
-	deleteexobject(context);
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.di = context.pop();
+	push(di);
+	push(es);
+	push(bx);
+	push(cx);
+	deleteexobject();
+	cx = pop();
+	bx = pop();
+	es = pop();
+	di = pop();
 dontpurge:
-	context._add(context.di, 16);
-	context._inc(context.cx);
-	context._cmp(context.cx, (114));
-	if (!context.flags.z())
+	_add(di, 16);
+	_inc(cx);
+	_cmp(cx, (114));
+	if (!flags.z())
 		goto purgeloc;
 }
 
-void emergencypurge(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::emergencypurge() {
+	STACK_CHECK;
 checkpurgeagain:
-	context.ax = context.data.word(kExframepos);
-	context._add(context.ax, 4000);
-	context._cmp(context.ax, (30000));
-	if (context.flags.c())
+	ax = data.word(kExframepos);
+	_add(ax, 4000);
+	_cmp(ax, (30000));
+	if (flags.c())
 		goto notnearframeend;
-	purgeanitem(context);
+	purgeanitem();
 	goto checkpurgeagain;
 notnearframeend:
-	context.ax = context.data.word(kExtextpos);
-	context._add(context.ax, 400);
-	context._cmp(context.ax, (18000));
-	if (context.flags.c())
+	ax = data.word(kExtextpos);
+	_add(ax, 400);
+	_cmp(ax, (18000));
+	if (flags.c())
 		return /* (notneartextend) */;
-	purgeanitem(context);
+	purgeanitem();
 	goto checkpurgeagain;
 }
 
-void purgeanitem(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kExtras);
-	context.di = (0+2080+30000);
-	context.bl = context.data.byte(kReallocation);
-	context.cx = 0;
+void DreamGenContext::purgeanitem() {
+	STACK_CHECK;
+	es = data.word(kExtras);
+	di = (0+2080+30000);
+	bl = data.byte(kReallocation);
+	cx = 0;
 lookforpurge:
-	context.al = context.es.byte(context.di+2);
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	al = es.byte(di+2);
+	_cmp(al, 0);
+	if (!flags.z())
 		goto cantpurge;
-	context._cmp(context.es.byte(context.di+12), 2);
-	if (context.flags.z())
+	_cmp(es.byte(di+12), 2);
+	if (flags.z())
 		goto iscup;
-	context._cmp(context.es.byte(context.di+12), 255);
-	if (!context.flags.z())
+	_cmp(es.byte(di+12), 255);
+	if (!flags.z())
 		goto cantpurge;
 iscup:
-	context._cmp(context.es.byte(context.di+11), context.bl);
-	if (context.flags.z())
+	_cmp(es.byte(di+11), bl);
+	if (flags.z())
 		goto cantpurge;
-	deleteexobject(context);
+	deleteexobject();
 	return;
 cantpurge:
-	context._add(context.di, 16);
-	context._inc(context.cx);
-	context._cmp(context.cx, (114));
-	if (!context.flags.z())
+	_add(di, 16);
+	_inc(cx);
+	_cmp(cx, (114));
+	if (!flags.z())
 		goto lookforpurge;
-	context.di = (0+2080+30000);
-	context.bl = context.data.byte(kReallocation);
-	context.cx = 0;
+	di = (0+2080+30000);
+	bl = data.byte(kReallocation);
+	cx = 0;
 lookforpurge2:
-	context.al = context.es.byte(context.di+2);
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	al = es.byte(di+2);
+	_cmp(al, 0);
+	if (!flags.z())
 		goto cantpurge2;
-	context._cmp(context.es.byte(context.di+12), 255);
-	if (!context.flags.z())
+	_cmp(es.byte(di+12), 255);
+	if (!flags.z())
 		goto cantpurge2;
-	deleteexobject(context);
+	deleteexobject();
 	return;
 cantpurge2:
-	context._add(context.di, 16);
-	context._inc(context.cx);
-	context._cmp(context.cx, (114));
-	if (!context.flags.z())
+	_add(di, 16);
+	_inc(cx);
+	_cmp(cx, (114));
+	if (!flags.z())
 		goto lookforpurge2;
 }
 
-void deleteexobject(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.cx);
-	context.push(context.cx);
-	context.push(context.cx);
-	context.push(context.cx);
-	context.al = 255;
-	context.cx = 16;
-	context._stosb(context.cx);
-	context.ax = context.pop();
-	context.cl = context.al;
-	context._add(context.al, context.al);
-	context._add(context.al, context.cl);
-	deleteexframe(context);
-	context.ax = context.pop();
-	context.cl = context.al;
-	context._add(context.al, context.al);
-	context._add(context.al, context.cl);
-	context._inc(context.al);
-	deleteexframe(context);
-	context.ax = context.pop();
-	deleteextext(context);
-	context.bx = context.pop();
-	context.bh = context.bl;
-	context.bl = 4;
-	context.di = (0+2080+30000);
-	context.cx = 0;
+void DreamGenContext::deleteexobject() {
+	STACK_CHECK;
+	push(cx);
+	push(cx);
+	push(cx);
+	push(cx);
+	al = 255;
+	cx = 16;
+	_stosb(cx);
+	ax = pop();
+	cl = al;
+	_add(al, al);
+	_add(al, cl);
+	deleteexframe();
+	ax = pop();
+	cl = al;
+	_add(al, al);
+	_add(al, cl);
+	_inc(al);
+	deleteexframe();
+	ax = pop();
+	deleteextext();
+	bx = pop();
+	bh = bl;
+	bl = 4;
+	di = (0+2080+30000);
+	cx = 0;
 deleteconts:
-	context._cmp(context.es.word(context.di+2), context.bx);
-	if (!context.flags.z())
+	_cmp(es.word(di+2), bx);
+	if (!flags.z())
 		goto notinsideex;
-	context.push(context.bx);
-	context.push(context.cx);
-	context.push(context.di);
-	deleteexobject(context);
-	context.di = context.pop();
-	context.cx = context.pop();
-	context.bx = context.pop();
+	push(bx);
+	push(cx);
+	push(di);
+	deleteexobject();
+	di = pop();
+	cx = pop();
+	bx = pop();
 notinsideex:
-	context._add(context.di, 16);
-	context._inc(context.cx);
-	context._cmp(context.cx, (114));
-	if (!context.flags.z())
+	_add(di, 16);
+	_inc(cx);
+	_cmp(cx, (114));
+	if (!flags.z())
 		goto deleteconts;
 }
 
-void deleteexframe(Context &context) {
-	STACK_CHECK(context);
-	context.di = (0);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.di, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.di, context.ax);
-	context.al = context.es.byte(context.di);
-	context.ah = 0;
-	context.cl = context.es.byte(context.di+1);
-	context.ch = 0;
-	context._mul(context.cx);
-	context.si = context.es.word(context.di+2);
-	context.push(context.si);
-	context._add(context.si, (0+2080));
-	context.cx = (30000);
-	context._sub(context.cx, context.es.word(context.di+2));
-	context.di = context.si;
-	context._add(context.si, context.ax);
-	context.push(context.ax);
-	context.ds = context.es;
-	context._movsb(context.cx);
-	context.bx = context.pop();
-	context._sub(context.data.word(kExframepos), context.bx);
-	context.si = context.pop();
-	context.cx = (114)*3;
-	context.di = (0);
+void DreamGenContext::deleteexframe() {
+	STACK_CHECK;
+	di = (0);
+	ah = 0;
+	_add(ax, ax);
+	_add(di, ax);
+	_add(ax, ax);
+	_add(di, ax);
+	al = es.byte(di);
+	ah = 0;
+	cl = es.byte(di+1);
+	ch = 0;
+	_mul(cx);
+	si = es.word(di+2);
+	push(si);
+	_add(si, (0+2080));
+	cx = (30000);
+	_sub(cx, es.word(di+2));
+	di = si;
+	_add(si, ax);
+	push(ax);
+	ds = es;
+	_movsb(cx);
+	bx = pop();
+	_sub(data.word(kExframepos), bx);
+	si = pop();
+	cx = (114)*3;
+	di = (0);
 shuffleadsdown:
-	context.ax = context.es.word(context.di+2);
-	context._cmp(context.ax, context.si);
-	if (context.flags.c())
+	ax = es.word(di+2);
+	_cmp(ax, si);
+	if (flags.c())
 		goto beforethisone;
-	context._sub(context.ax, context.bx);
+	_sub(ax, bx);
 beforethisone:
-	context.es.word(context.di+2) = context.ax;
-	context._add(context.di, 6);
-	if (--context.cx)
+	es.word(di+2) = ax;
+	_add(di, 6);
+	if (--cx)
 		goto shuffleadsdown;
 }
 
-void deleteextext(Context &context) {
-	STACK_CHECK(context);
-	context.di = (0+2080+30000+(16*114));
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.di, context.ax);
-	context.ax = context.es.word(context.di);
-	context.si = context.ax;
-	context.di = context.ax;
-	context._add(context.si, (0+2080+30000+(16*114)+((114+2)*2)));
-	context._add(context.di, (0+2080+30000+(16*114)+((114+2)*2)));
-	context.ax = 0;
+void DreamGenContext::deleteextext() {
+	STACK_CHECK;
+	di = (0+2080+30000+(16*114));
+	ah = 0;
+	_add(ax, ax);
+	_add(di, ax);
+	ax = es.word(di);
+	si = ax;
+	di = ax;
+	_add(si, (0+2080+30000+(16*114)+((114+2)*2)));
+	_add(di, (0+2080+30000+(16*114)+((114+2)*2)));
+	ax = 0;
 findlenextext:
-	context.cl = context.es.byte(context.si);
-	context._inc(context.ax);
-	context._inc(context.si);
-	context._cmp(context.cl, 0);
-	if (!context.flags.z())
+	cl = es.byte(si);
+	_inc(ax);
+	_inc(si);
+	_cmp(cl, 0);
+	if (!flags.z())
 		goto findlenextext;
-	context.cx = (18000);
-	context.bx = context.si;
-	context._sub(context.bx, (0+2080+30000+(16*114)+((114+2)*2)));
-	context.push(context.bx);
-	context.push(context.ax);
-	context._sub(context.cx, context.bx);
-	context._movsb(context.cx);
-	context.bx = context.pop();
-	context._sub(context.data.word(kExtextpos), context.bx);
-	context.si = context.pop();
-	context.cx = (114);
-	context.di = (0+2080+30000+(16*114));
+	cx = (18000);
+	bx = si;
+	_sub(bx, (0+2080+30000+(16*114)+((114+2)*2)));
+	push(bx);
+	push(ax);
+	_sub(cx, bx);
+	_movsb(cx);
+	bx = pop();
+	_sub(data.word(kExtextpos), bx);
+	si = pop();
+	cx = (114);
+	di = (0+2080+30000+(16*114));
 shuffletextads:
-	context.ax = context.es.word(context.di);
-	context._cmp(context.ax, context.si);
-	if (context.flags.c())
+	ax = es.word(di);
+	_cmp(ax, si);
+	if (flags.c())
 		goto beforethistext;
-	context._sub(context.ax, context.bx);
+	_sub(ax, bx);
 beforethistext:
-	context.es.word(context.di) = context.ax;
-	context._add(context.di, 2);
-	if (--context.cx)
+	es.word(di) = ax;
+	_add(di, 2);
+	if (--cx)
 		goto shuffletextads;
 }
 
-void blockget(Context &context) {
-	STACK_CHECK(context);
-	context.ah = context.al;
-	context.al = 0;
-	context.ds = context.data.word(kBackdrop);
-	context.si = (0+192);
-	context._add(context.si, context.ax);
+void DreamGenContext::blockget() {
+	STACK_CHECK;
+	ah = al;
+	al = 0;
+	ds = data.word(kBackdrop);
+	si = (0+192);
+	_add(si, ax);
 }
 
-void drawfloor(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	eraseoldobs(context);
-	drawflags(context);
-	calcmapad(context);
-	doblocks(context);
-	showallobs(context);
-	showallfree(context);
-	showallex(context);
-	paneltomap(context);
-	initrain(context);
-	context.data.byte(kNewobs) = 0;
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::drawfloor() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	eraseoldobs();
+	drawflags();
+	calcmapad();
+	doblocks();
+	showallobs();
+	showallfree();
+	showallex();
+	paneltomap();
+	initrain();
+	data.byte(kNewobs) = 0;
+	bx = pop();
+	es = pop();
 }
 
-void calcmapad(Context &context) {
-	STACK_CHECK(context);
-	getdimension(context);
-	context.push(context.cx);
-	context.push(context.dx);
-	context.al = 11;
-	context._sub(context.al, context.dl);
-	context._sub(context.al, context.cl);
-	context._sub(context.al, context.cl);
-	context.ax.cbw();
-	context.bx = 8;
-	context._mul(context.bx);
-	context._add(context.ax, context.data.word(kMapoffsetx));
-	context.data.word(kMapadx) = context.ax;
-	context.dx = context.pop();
-	context.cx = context.pop();
-	context.al = 10;
-	context._sub(context.al, context.dh);
-	context._sub(context.al, context.ch);
-	context._sub(context.al, context.ch);
-	context.ax.cbw();
-	context.bx = 8;
-	context._mul(context.bx);
-	context._add(context.ax, context.data.word(kMapoffsety));
-	context.data.word(kMapady) = context.ax;
+void DreamGenContext::calcmapad() {
+	STACK_CHECK;
+	getdimension();
+	push(cx);
+	push(dx);
+	al = 11;
+	_sub(al, dl);
+	_sub(al, cl);
+	_sub(al, cl);
+	ax.cbw();
+	bx = 8;
+	_mul(bx);
+	_add(ax, data.word(kMapoffsetx));
+	data.word(kMapadx) = ax;
+	dx = pop();
+	cx = pop();
+	al = 10;
+	_sub(al, dh);
+	_sub(al, ch);
+	_sub(al, ch);
+	ax.cbw();
+	bx = 8;
+	_mul(bx);
+	_add(ax, data.word(kMapoffsety));
+	data.word(kMapady) = ax;
 }
 
-void getdimension(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32));
-	context.ch = 0;
+void DreamGenContext::getdimension() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32));
+	ch = 0;
 dimloop1:
-	addalong(context);
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	addalong();
+	_cmp(al, 0);
+	if (!flags.z())
 		goto finishdim1;
-	context._inc(context.ch);
+	_inc(ch);
 	goto dimloop1;
 finishdim1:
-	context.bx = (0+(180*10)+32+60+(32*32));
-	context.cl = 0;
+	bx = (0+(180*10)+32+60+(32*32));
+	cl = 0;
 dimloop2:
-	context.push(context.bx);
-	addlength(context);
-	context.bx = context.pop();
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	push(bx);
+	addlength();
+	bx = pop();
+	_cmp(al, 0);
+	if (!flags.z())
 		goto finishdim2;
-	context._inc(context.cl);
-	context._add(context.bx, 3);
+	_inc(cl);
+	_add(bx, 3);
 	goto dimloop2;
 finishdim2:
-	context.bx = (0+(180*10)+32+60+(32*32))+(11*3*9);
-	context.dh = 10;
+	bx = (0+(180*10)+32+60+(32*32))+(11*3*9);
+	dh = 10;
 dimloop3:
-	context.push(context.bx);
-	addalong(context);
-	context.bx = context.pop();
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	push(bx);
+	addalong();
+	bx = pop();
+	_cmp(al, 0);
+	if (!flags.z())
 		goto finishdim3;
-	context._dec(context.dh);
-	context._sub(context.bx, 11*3);
+	_dec(dh);
+	_sub(bx, 11*3);
 	goto dimloop3;
 finishdim3:
-	context.bx = (0+(180*10)+32+60+(32*32))+(3*10);
-	context.dl = 11;
+	bx = (0+(180*10)+32+60+(32*32))+(3*10);
+	dl = 11;
 dimloop4:
-	context.push(context.bx);
-	addlength(context);
-	context.bx = context.pop();
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	push(bx);
+	addlength();
+	bx = pop();
+	_cmp(al, 0);
+	if (!flags.z())
 		goto finishdim4;
-	context._dec(context.dl);
-	context._sub(context.bx, 3);
+	_dec(dl);
+	_sub(bx, 3);
 	goto dimloop4;
 finishdim4:
-	context.al = context.cl;
-	context.ah = 0;
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context.data.word(kMapxstart) = context.ax;
-	context.al = context.ch;
-	context.ah = 0;
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context.data.word(kMapystart) = context.ax;
-	context._sub(context.dl, context.cl);
-	context._sub(context.dh, context.ch);
-	context.al = context.dl;
-	context.ah = 0;
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context.data.byte(kMapxsize) = context.al;
-	context.al = context.dh;
-	context.ah = 0;
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context._shl(context.ax, 1);
-	context.data.byte(kMapysize) = context.al;
+	al = cl;
+	ah = 0;
+	_shl(ax, 1);
+	_shl(ax, 1);
+	_shl(ax, 1);
+	_shl(ax, 1);
+	data.word(kMapxstart) = ax;
+	al = ch;
+	ah = 0;
+	_shl(ax, 1);
+	_shl(ax, 1);
+	_shl(ax, 1);
+	_shl(ax, 1);
+	data.word(kMapystart) = ax;
+	_sub(dl, cl);
+	_sub(dh, ch);
+	al = dl;
+	ah = 0;
+	_shl(ax, 1);
+	_shl(ax, 1);
+	_shl(ax, 1);
+	_shl(ax, 1);
+	data.byte(kMapxsize) = al;
+	al = dh;
+	ah = 0;
+	_shl(ax, 1);
+	_shl(ax, 1);
+	_shl(ax, 1);
+	_shl(ax, 1);
+	data.byte(kMapysize) = al;
 }
 
-void addalong(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 11;
+void DreamGenContext::addalong() {
+	STACK_CHECK;
+	ah = 11;
 addloop:
-	context._cmp(context.es.byte(context.bx), 0);
-	if (!context.flags.z())
+	_cmp(es.byte(bx), 0);
+	if (!flags.z())
 		goto gotalong;
-	context._add(context.bx, 3);
-	context._dec(context.ah);
-	if (!context.flags.z())
+	_add(bx, 3);
+	_dec(ah);
+	if (!flags.z())
 		goto addloop;
-	context.al = 0;
+	al = 0;
 	return;
 gotalong:
-	context.al = 1;
+	al = 1;
 }
 
-void addlength(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 10;
+void DreamGenContext::addlength() {
+	STACK_CHECK;
+	ah = 10;
 addloop2:
-	context._cmp(context.es.byte(context.bx), 0);
-	if (!context.flags.z())
+	_cmp(es.byte(bx), 0);
+	if (!flags.z())
 		goto gotlength;
-	context._add(context.bx, 3*11);
-	context._dec(context.ah);
-	if (!context.flags.z())
+	_add(bx, 3*11);
+	_dec(ah);
+	if (!flags.z())
 		goto addloop2;
-	context.al = 0;
+	al = 0;
 	return;
 gotlength:
-	context.al = 1;
+	al = 1;
 }
 
-void drawflags(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32));
-	context.al = context.data.byte(kMapy);
-	context.ah = 0;
-	context.cx = (66);
-	context._mul(context.cx);
-	context.bl = context.data.byte(kMapx);
-	context.bh = 0;
-	context._add(context.ax, context.bx);
-	context.si = (0);
-	context._add(context.si, context.ax);
-	context.cx = 10;
+void DreamGenContext::drawflags() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32));
+	al = data.byte(kMapy);
+	ah = 0;
+	cx = (66);
+	_mul(cx);
+	bl = data.byte(kMapx);
+	bh = 0;
+	_add(ax, bx);
+	si = (0);
+	_add(si, ax);
+	cx = 10;
 _tmp28:
-	context.push(context.cx);
-	context.cx = 11;
+	push(cx);
+	cx = 11;
 _tmp28a:
-	context.ds = context.data.word(kMapdata);
-	context._lodsb();
-	context.ds = context.data.word(kBackdrop);
-	context.push(context.si);
-	context.push(context.ax);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.si = (0);
-	context._add(context.si, context.ax);
-	context._movsw();
-	context.ax = context.pop();
-	context._stosb();
-	context.si = context.pop();
-	if (--context.cx)
+	ds = data.word(kMapdata);
+	_lodsb();
+	ds = data.word(kBackdrop);
+	push(si);
+	push(ax);
+	ah = 0;
+	_add(ax, ax);
+	si = (0);
+	_add(si, ax);
+	_movsw();
+	ax = pop();
+	_stosb();
+	si = pop();
+	if (--cx)
 		goto _tmp28a;
-	context._add(context.si, (66)-11);
-	context.cx = context.pop();
-	if (--context.cx)
+	_add(si, (66)-11);
+	cx = pop();
+	if (--cx)
 		goto _tmp28;
 }
 
-void eraseoldobs(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kNewobs), 0);
-	if (context.flags.z())
+void DreamGenContext::eraseoldobs() {
+	STACK_CHECK;
+	_cmp(data.byte(kNewobs), 0);
+	if (flags.z())
 		return /* (donterase) */;
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
-	context.cx = 16;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
+	cx = 16;
 oberase:
-	context.push(context.cx);
-	context.push(context.bx);
-	context.ax = context.es.word(context.bx+20);
-	context._cmp(context.ax, 0x0ffff);
-	if (context.flags.z())
+	push(cx);
+	push(bx);
+	ax = es.word(bx+20);
+	_cmp(ax, 0x0ffff);
+	if (flags.z())
 		goto notthisob;
-	context.di = context.bx;
-	context.al = 255;
-	context.cx = (32);
-	context._stosb(context.cx);
+	di = bx;
+	al = 255;
+	cx = (32);
+	_stosb(cx);
 notthisob:
-	context.bx = context.pop();
-	context.cx = context.pop();
-	context._add(context.bx, (32));
-	if (--context.cx)
+	bx = pop();
+	cx = pop();
+	_add(bx, (32));
+	if (--cx)
 		goto oberase;
 }
 
-void showallobs(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32));
-	context.data.word(kListpos) = context.bx;
-	context.di = context.bx;
-	context.cx = 128*5;
-	context.al = 255;
-	context._stosb(context.cx);
-	context.es = context.data.word(kSetframes);
-	context.data.word(kFrsegment) = context.es;
-	context.ax = (0);
-	context.data.word(kDataad) = context.ax;
-	context.ax = (0+2080);
-	context.data.word(kFramesad) = context.ax;
-	context.data.byte(kCurrentob) = 0;
-	context.ds = context.data.word(kSetdat);
-	context.si = 0;
-	context.cx = 128;
+void DreamGenContext::showallobs() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32));
+	data.word(kListpos) = bx;
+	di = bx;
+	cx = 128*5;
+	al = 255;
+	_stosb(cx);
+	es = data.word(kSetframes);
+	data.word(kFrsegment) = es;
+	ax = (0);
+	data.word(kDataad) = ax;
+	ax = (0+2080);
+	data.word(kFramesad) = ax;
+	data.byte(kCurrentob) = 0;
+	ds = data.word(kSetdat);
+	si = 0;
+	cx = 128;
 showobsloop:
-	context.push(context.cx);
-	context.push(context.si);
-	context.push(context.si);
-	context._add(context.si, 58);
-	context.es = context.data.word(kSetdat);
-	getmapad(context);
-	context.si = context.pop();
-	context._cmp(context.ch, 0);
-	if (context.flags.z())
+	push(cx);
+	push(si);
+	push(si);
+	_add(si, 58);
+	es = data.word(kSetdat);
+	getmapad();
+	si = pop();
+	_cmp(ch, 0);
+	if (flags.z())
 		goto blankframe;
-	context.al = context.es.byte(context.si+18);
-	context.ah = 0;
-	context.data.word(kCurrentframe) = context.ax;
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	al = es.byte(si+18);
+	ah = 0;
+	data.word(kCurrentframe) = ax;
+	_cmp(al, 255);
+	if (flags.z())
 		goto blankframe;
-	context.push(context.es);
-	context.push(context.si);
-	calcfrframe(context);
-	finalframe(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context.al = context.es.byte(context.si+18);
-	context.es.byte(context.si+17) = context.al;
-	context._cmp(context.es.byte(context.si+8), 0);
-	if (!context.flags.z())
+	push(es);
+	push(si);
+	calcfrframe();
+	finalframe();
+	si = pop();
+	es = pop();
+	al = es.byte(si+18);
+	es.byte(si+17) = al;
+	_cmp(es.byte(si+8), 0);
+	if (!flags.z())
 		goto animating;
-	context._cmp(context.es.byte(context.si+5), 5);
-	if (context.flags.z())
+	_cmp(es.byte(si+5), 5);
+	if (flags.z())
 		goto animating;
-	context._cmp(context.es.byte(context.si+5), 6);
-	if (context.flags.z())
+	_cmp(es.byte(si+5), 6);
+	if (flags.z())
 		goto animating;
-	context.ax = context.data.word(kCurrentframe);
-	context.ah = 0;
-	context._add(context.di, context.data.word(kMapadx));
-	context._add(context.bx, context.data.word(kMapady));
-	showframe(context);
+	ax = data.word(kCurrentframe);
+	ah = 0;
+	_add(di, data.word(kMapadx));
+	_add(bx, data.word(kMapady));
+	showframe();
 	goto drawnsetob;
 animating:
-	makebackob(context);
+	makebackob();
 drawnsetob:
-	context.si = context.data.word(kListpos);
-	context.es = context.data.word(kBuffers);
-	context.al = context.data.byte(kSavex);
-	context.ah = context.data.byte(kSavey);
-	context.es.word(context.si) = context.ax;
-	context.cx = context.ax;
-	context.ax = context.data.word(kSavesize);
-	context._add(context.al, context.cl);
-	context._add(context.ah, context.ch);
-	context.es.word(context.si+2) = context.ax;
-	context.al = context.data.byte(kCurrentob);
-	context.es.byte(context.si+4) = context.al;
-	context._add(context.si, 5);
-	context.data.word(kListpos) = context.si;
+	si = data.word(kListpos);
+	es = data.word(kBuffers);
+	al = data.byte(kSavex);
+	ah = data.byte(kSavey);
+	es.word(si) = ax;
+	cx = ax;
+	ax = data.word(kSavesize);
+	_add(al, cl);
+	_add(ah, ch);
+	es.word(si+2) = ax;
+	al = data.byte(kCurrentob);
+	es.byte(si+4) = al;
+	_add(si, 5);
+	data.word(kListpos) = si;
 blankframe:
-	context._inc(context.data.byte(kCurrentob));
-	context.si = context.pop();
-	context.cx = context.pop();
-	context._add(context.si, 64);
-	context._dec(context.cx);
-	if (context.flags.z())
+	_inc(data.byte(kCurrentob));
+	si = pop();
+	cx = pop();
+	_add(si, 64);
+	_dec(cx);
+	if (flags.z())
 		return /* (finishedsetobs) */;
 	goto showobsloop;
 }
 
-void makebackob(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kNewobs), 0);
-	if (context.flags.z())
+void DreamGenContext::makebackob() {
+	STACK_CHECK;
+	_cmp(data.byte(kNewobs), 0);
+	if (flags.z())
 		return /* (nomake) */;
-	context.al = context.es.byte(context.si+5);
-	context.ah = context.es.byte(context.si+8);
-	context.push(context.si);
-	context.push(context.ax);
-	context.push(context.si);
-	context.ax = context.data.word(kObjectx);
-	context.bx = context.data.word(kObjecty);
-	context.ah = context.bl;
-	context.si = context.ax;
-	context.cx = 49520;
-	context.dx = context.data.word(kSetframes);
-	context.di = (0);
-	makesprite(context);
-	context.ax = context.pop();
-	context.es.word(context.bx+20) = context.ax;
-	context.ax = context.pop();
-	context._cmp(context.al, 255);
-	if (!context.flags.z())
+	al = es.byte(si+5);
+	ah = es.byte(si+8);
+	push(si);
+	push(ax);
+	push(si);
+	ax = data.word(kObjectx);
+	bx = data.word(kObjecty);
+	ah = bl;
+	si = ax;
+	cx = 49520;
+	dx = data.word(kSetframes);
+	di = (0);
+	makesprite();
+	ax = pop();
+	es.word(bx+20) = ax;
+	ax = pop();
+	_cmp(al, 255);
+	if (!flags.z())
 		goto usedpriority;
-	context.al = 0;
+	al = 0;
 usedpriority:
-	context.es.byte(context.bx+23) = context.al;
-	context.es.byte(context.bx+30) = context.ah;
-	context.es.byte(context.bx+16) = 0;
-	context.es.byte(context.bx+18) = 0;
-	context.es.byte(context.bx+19) = 0;
-	context.si = context.pop();
+	es.byte(bx+23) = al;
+	es.byte(bx+30) = ah;
+	es.byte(bx+16) = 0;
+	es.byte(bx+18) = 0;
+	es.byte(bx+19) = 0;
+	si = pop();
 }
 
-void showallfree(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
-	context.data.word(kListpos) = context.bx;
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
-	context.cx = 80*5;
-	context.al = 255;
-	context._stosb(context.cx);
-	context.es = context.data.word(kFreeframes);
-	context.data.word(kFrsegment) = context.es;
-	context.ax = (0);
-	context.data.word(kDataad) = context.ax;
-	context.ax = (0+2080);
-	context.data.word(kFramesad) = context.ax;
-	context.al = 0;
-	context.data.byte(kCurrentfree) = context.al;
-	context.ds = context.data.word(kFreedat);
-	context.si = 2;
-	context.cx = 0;
+void DreamGenContext::showallfree() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
+	data.word(kListpos) = bx;
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
+	cx = 80*5;
+	al = 255;
+	_stosb(cx);
+	es = data.word(kFreeframes);
+	data.word(kFrsegment) = es;
+	ax = (0);
+	data.word(kDataad) = ax;
+	ax = (0+2080);
+	data.word(kFramesad) = ax;
+	al = 0;
+	data.byte(kCurrentfree) = al;
+	ds = data.word(kFreedat);
+	si = 2;
+	cx = 0;
 loop127:
-	context.push(context.cx);
-	context.push(context.si);
-	context.push(context.si);
-	context.es = context.data.word(kFreedat);
-	getmapad(context);
-	context.si = context.pop();
-	context._cmp(context.ch, 0);
-	if (context.flags.z())
+	push(cx);
+	push(si);
+	push(si);
+	es = data.word(kFreedat);
+	getmapad();
+	si = pop();
+	_cmp(ch, 0);
+	if (flags.z())
 		goto over138;
-	context.al = context.data.byte(kCurrentfree);
-	context.ah = 0;
-	context.dx = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.dx);
-	context.data.word(kCurrentframe) = context.ax;
-	context.push(context.es);
-	context.push(context.si);
-	calcfrframe(context);
-	context.es = context.data.word(kMapstore);
-	context.ds = context.data.word(kFrsegment);
-	finalframe(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context._cmp(context.cx, 0);
-	if (context.flags.z())
+	al = data.byte(kCurrentfree);
+	ah = 0;
+	dx = ax;
+	_add(ax, ax);
+	_add(ax, dx);
+	data.word(kCurrentframe) = ax;
+	push(es);
+	push(si);
+	calcfrframe();
+	es = data.word(kMapstore);
+	ds = data.word(kFrsegment);
+	finalframe();
+	si = pop();
+	es = pop();
+	_cmp(cx, 0);
+	if (flags.z())
 		goto over138;
-	context.ax = context.data.word(kCurrentframe);
-	context.ah = 0;
-	context._add(context.di, context.data.word(kMapadx));
-	context._add(context.bx, context.data.word(kMapady));
-	showframe(context);
-	context.si = context.data.word(kListpos);
-	context.es = context.data.word(kBuffers);
-	context.al = context.data.byte(kSavex);
-	context.ah = context.data.byte(kSavey);
-	context.es.word(context.si) = context.ax;
-	context.cx = context.ax;
-	context.ax = context.data.word(kSavesize);
-	context._add(context.al, context.cl);
-	context._add(context.ah, context.ch);
-	context.es.word(context.si+2) = context.ax;
-	context.ax = context.pop();
-	context.cx = context.pop();
-	context.push(context.cx);
-	context.push(context.ax);
-	context.es.byte(context.si+4) = context.cl;
-	context._add(context.si, 5);
-	context.data.word(kListpos) = context.si;
+	ax = data.word(kCurrentframe);
+	ah = 0;
+	_add(di, data.word(kMapadx));
+	_add(bx, data.word(kMapady));
+	showframe();
+	si = data.word(kListpos);
+	es = data.word(kBuffers);
+	al = data.byte(kSavex);
+	ah = data.byte(kSavey);
+	es.word(si) = ax;
+	cx = ax;
+	ax = data.word(kSavesize);
+	_add(al, cl);
+	_add(ah, ch);
+	es.word(si+2) = ax;
+	ax = pop();
+	cx = pop();
+	push(cx);
+	push(ax);
+	es.byte(si+4) = cl;
+	_add(si, 5);
+	data.word(kListpos) = si;
 over138:
-	context._inc(context.data.byte(kCurrentfree));
-	context.si = context.pop();
-	context.cx = context.pop();
-	context._add(context.si, 16);
-	context._inc(context.cx);
-	context._cmp(context.cx, 80);
-	if (context.flags.z())
+	_inc(data.byte(kCurrentfree));
+	si = pop();
+	cx = pop();
+	_add(si, 16);
+	_inc(cx);
+	_cmp(cx, 80);
+	if (flags.z())
 		return /* (finfree) */;
 	goto loop127;
 }
 
-void showallex(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
-	context.data.word(kListpos) = context.bx;
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
-	context.cx = 100*5;
-	context.al = 255;
-	context._stosb(context.cx);
-	context.es = context.data.word(kExtras);
-	context.data.word(kFrsegment) = context.es;
-	context.ax = (0);
-	context.data.word(kDataad) = context.ax;
-	context.ax = (0+2080);
-	context.data.word(kFramesad) = context.ax;
-	context.data.byte(kCurrentex) = 0;
-	context.si = (0+2080+30000)+2;
-	context.cx = 0;
+void DreamGenContext::showallex() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
+	data.word(kListpos) = bx;
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
+	cx = 100*5;
+	al = 255;
+	_stosb(cx);
+	es = data.word(kExtras);
+	data.word(kFrsegment) = es;
+	ax = (0);
+	data.word(kDataad) = ax;
+	ax = (0+2080);
+	data.word(kFramesad) = ax;
+	data.byte(kCurrentex) = 0;
+	si = (0+2080+30000)+2;
+	cx = 0;
 exloop:
-	context.push(context.cx);
-	context.push(context.si);
-	context.es = context.data.word(kExtras);
-	context.push(context.si);
-	context.ch = 0;
-	context._cmp(context.es.byte(context.si), 255);
-	if (context.flags.z())
+	push(cx);
+	push(si);
+	es = data.word(kExtras);
+	push(si);
+	ch = 0;
+	_cmp(es.byte(si), 255);
+	if (flags.z())
 		goto notinroom;
-	context.al = context.es.byte(context.si-2);
-	context._cmp(context.al, context.data.byte(kReallocation));
-	if (!context.flags.z())
+	al = es.byte(si-2);
+	_cmp(al, data.byte(kReallocation));
+	if (!flags.z())
 		goto notinroom;
-	getmapad(context);
+	getmapad();
 notinroom:
-	context.si = context.pop();
-	context._cmp(context.ch, 0);
-	if (context.flags.z())
+	si = pop();
+	_cmp(ch, 0);
+	if (flags.z())
 		goto blankex;
-	context.al = context.data.byte(kCurrentex);
-	context.ah = 0;
-	context.dx = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.dx);
-	context.data.word(kCurrentframe) = context.ax;
-	context.push(context.es);
-	context.push(context.si);
-	calcfrframe(context);
-	context.es = context.data.word(kMapstore);
-	context.ds = context.data.word(kFrsegment);
-	finalframe(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context._cmp(context.cx, 0);
-	if (context.flags.z())
+	al = data.byte(kCurrentex);
+	ah = 0;
+	dx = ax;
+	_add(ax, ax);
+	_add(ax, dx);
+	data.word(kCurrentframe) = ax;
+	push(es);
+	push(si);
+	calcfrframe();
+	es = data.word(kMapstore);
+	ds = data.word(kFrsegment);
+	finalframe();
+	si = pop();
+	es = pop();
+	_cmp(cx, 0);
+	if (flags.z())
 		goto blankex;
-	context.ax = context.data.word(kCurrentframe);
-	context.ah = 0;
-	context._add(context.di, context.data.word(kMapadx));
-	context._add(context.bx, context.data.word(kMapady));
-	showframe(context);
-	context.si = context.data.word(kListpos);
-	context.es = context.data.word(kBuffers);
-	context.al = context.data.byte(kSavex);
-	context.ah = context.data.byte(kSavey);
-	context.es.word(context.si) = context.ax;
-	context.cx = context.ax;
-	context.ax = context.data.word(kSavesize);
-	context._add(context.al, context.cl);
-	context._add(context.ah, context.ch);
-	context.es.word(context.si+2) = context.ax;
-	context.ax = context.pop();
-	context.cx = context.pop();
-	context.push(context.cx);
-	context.push(context.ax);
-	context.es.byte(context.si+4) = context.cl;
-	context._add(context.si, 5);
-	context.data.word(kListpos) = context.si;
+	ax = data.word(kCurrentframe);
+	ah = 0;
+	_add(di, data.word(kMapadx));
+	_add(bx, data.word(kMapady));
+	showframe();
+	si = data.word(kListpos);
+	es = data.word(kBuffers);
+	al = data.byte(kSavex);
+	ah = data.byte(kSavey);
+	es.word(si) = ax;
+	cx = ax;
+	ax = data.word(kSavesize);
+	_add(al, cl);
+	_add(ah, ch);
+	es.word(si+2) = ax;
+	ax = pop();
+	cx = pop();
+	push(cx);
+	push(ax);
+	es.byte(si+4) = cl;
+	_add(si, 5);
+	data.word(kListpos) = si;
 blankex:
-	context._inc(context.data.byte(kCurrentex));
-	context.si = context.pop();
-	context.cx = context.pop();
-	context._add(context.si, 16);
-	context._inc(context.cx);
-	context._cmp(context.cx, 100);
-	if (context.flags.z())
+	_inc(data.byte(kCurrentex));
+	si = pop();
+	cx = pop();
+	_add(si, 16);
+	_inc(cx);
+	_cmp(cx, 100);
+	if (flags.z())
 		return /* (finex) */;
 	goto exloop;
 }
 
-void calcfrframe(Context &context) {
-	STACK_CHECK(context);
-	context.dx = context.data.word(kFrsegment);
-	context.ax = context.data.word(kFramesad);
-	context.push(context.ax);
-	context.cx = context.data.word(kDataad);
-	context.ax = context.data.word(kCurrentframe);
-	context.ds = context.dx;
-	context.bx = 6;
-	context._mul(context.bx);
-	context._add(context.ax, context.cx);
-	context.bx = context.ax;
-	context.cx = context.ds.word(context.bx);
-	context.ax = context.ds.word(context.bx+2);
-	context.dx = context.ds.word(context.bx+4);
-	context.bx = context.pop();
-	context.push(context.dx);
-	context._add(context.ax, context.bx);
-	context.data.word(kSavesource) = context.ax;
-	context.data.word(kSavesize) = context.cx;
-	context.ax = context.pop();
-	context.push(context.ax);
-	context.ah = 0;
-	context.data.word(kOffsetx) = context.ax;
-	context.ax = context.pop();
-	context.al = context.ah;
-	context.ah = 0;
-	context.data.word(kOffsety) = context.ax;
+void DreamGenContext::calcfrframe() {
+	STACK_CHECK;
+	dx = data.word(kFrsegment);
+	ax = data.word(kFramesad);
+	push(ax);
+	cx = data.word(kDataad);
+	ax = data.word(kCurrentframe);
+	ds = dx;
+	bx = 6;
+	_mul(bx);
+	_add(ax, cx);
+	bx = ax;
+	cx = ds.word(bx);
+	ax = ds.word(bx+2);
+	dx = ds.word(bx+4);
+	bx = pop();
+	push(dx);
+	_add(ax, bx);
+	data.word(kSavesource) = ax;
+	data.word(kSavesize) = cx;
+	ax = pop();
+	push(ax);
+	ah = 0;
+	data.word(kOffsetx) = ax;
+	ax = pop();
+	al = ah;
+	ah = 0;
+	data.word(kOffsety) = ax;
 	return;
-	context.ax = context.pop();
-	context.cx = 0;
-	context.data.word(kSavesize) = context.cx;
+	ax = pop();
+	cx = 0;
+	data.word(kSavesize) = cx;
 }
 
-void finalframe(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kObjecty);
-	context._add(context.ax, context.data.word(kOffsety));
-	context.bx = context.data.word(kObjectx);
-	context._add(context.bx, context.data.word(kOffsetx));
-	context.data.byte(kSavex) = context.bl;
-	context.data.byte(kSavey) = context.al;
-	context.di = context.data.word(kObjectx);
-	context.bx = context.data.word(kObjecty);
+void DreamGenContext::finalframe() {
+	STACK_CHECK;
+	ax = data.word(kObjecty);
+	_add(ax, data.word(kOffsety));
+	bx = data.word(kObjectx);
+	_add(bx, data.word(kOffsetx));
+	data.byte(kSavex) = bl;
+	data.byte(kSavey) = al;
+	di = data.word(kObjectx);
+	bx = data.word(kObjecty);
 }
 
-void adjustlen(Context &context) {
-	STACK_CHECK(context);
-	context.ah = context.al;
-	context._add(context.al, context.ch);
-	context._cmp(context.al, 100);
-	if (context.flags.c())
+void DreamGenContext::adjustlen() {
+	STACK_CHECK;
+	ah = al;
+	_add(al, ch);
+	_cmp(al, 100);
+	if (flags.c())
 		return /* (over242) */;
-	context.al = 224;
-	context._sub(context.al, context.ch);
-	context.ch = context.al;
+	al = 224;
+	_sub(al, ch);
+	ch = al;
 }
 
-void getmapad(Context &context) {
-	STACK_CHECK(context);
-	getxad(context);
-	context._cmp(context.ch, 0);
-	if (context.flags.z())
+void DreamGenContext::getmapad() {
+	STACK_CHECK;
+	getxad();
+	_cmp(ch, 0);
+	if (flags.z())
 		return /* (over146) */;
-	context.data.word(kObjectx) = context.ax;
-	getyad(context);
-	context._cmp(context.ch, 0);
-	if (context.flags.z())
+	data.word(kObjectx) = ax;
+	getyad();
+	_cmp(ch, 0);
+	if (flags.z())
 		return /* (over146) */;
-	context.data.word(kObjecty) = context.ax;
-	context.ch = 1;
+	data.word(kObjecty) = ax;
+	ch = 1;
 }
 
-void getxad(Context &context) {
-	STACK_CHECK(context);
-	context.cl = context.es.byte(context.si);
-	context._inc(context.si);
-	context.al = context.es.byte(context.si);
-	context._inc(context.si);
-	context.ah = context.es.byte(context.si);
-	context._inc(context.si);
-	context._cmp(context.cl, 0);
-	if (!context.flags.z())
+void DreamGenContext::getxad() {
+	STACK_CHECK;
+	cl = es.byte(si);
+	_inc(si);
+	al = es.byte(si);
+	_inc(si);
+	ah = es.byte(si);
+	_inc(si);
+	_cmp(cl, 0);
+	if (!flags.z())
 		goto over148;
-	context._sub(context.al, context.data.byte(kMapx));
-	if (context.flags.c())
+	_sub(al, data.byte(kMapx));
+	if (flags.c())
 		goto over148;
-	context._cmp(context.al, 11);
-	if (!context.flags.c())
+	_cmp(al, 11);
+	if (!flags.c())
 		goto over148;
-	context.cl = 4;
-	context._shl(context.al, context.cl);
-	context._or(context.al, context.ah);
-	context.ah = 0;
-	context.ch = 1;
+	cl = 4;
+	_shl(al, cl);
+	_or(al, ah);
+	ah = 0;
+	ch = 1;
 	return;
 over148:
-	context.ch = 0;
+	ch = 0;
 }
 
-void getyad(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.es.byte(context.si);
-	context._inc(context.si);
-	context.ah = context.es.byte(context.si);
-	context._inc(context.si);
-	context._sub(context.al, context.data.byte(kMapy));
-	if (context.flags.c())
+void DreamGenContext::getyad() {
+	STACK_CHECK;
+	al = es.byte(si);
+	_inc(si);
+	ah = es.byte(si);
+	_inc(si);
+	_sub(al, data.byte(kMapy));
+	if (flags.c())
 		goto over147;
-	context._cmp(context.al, 10);
-	if (!context.flags.c())
+	_cmp(al, 10);
+	if (!flags.c())
 		goto over147;
-	context.cl = 4;
-	context._shl(context.al, context.cl);
-	context._or(context.al, context.ah);
-	context.ah = 0;
-	context.ch = 1;
+	cl = 4;
+	_shl(al, cl);
+	_or(al, ah);
+	ah = 0;
+	ch = 1;
 	return;
 over147:
-	context.ch = 0;
+	ch = 0;
 }
 
-void autolook(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kMousex);
-	context._cmp(context.ax, context.data.word(kOldx));
-	if (!context.flags.z())
+void DreamGenContext::autolook() {
+	STACK_CHECK;
+	ax = data.word(kMousex);
+	_cmp(ax, data.word(kOldx));
+	if (!flags.z())
 		goto diffmouse;
-	context.ax = context.data.word(kMousey);
-	context._cmp(context.ax, context.data.word(kOldy));
-	if (!context.flags.z())
+	ax = data.word(kMousey);
+	_cmp(ax, data.word(kOldy));
+	if (!flags.z())
 		goto diffmouse;
-	context._dec(context.data.word(kLookcounter));
-	context._cmp(context.data.word(kLookcounter), 0);
-	if (!context.flags.z())
+	_dec(data.word(kLookcounter));
+	_cmp(data.word(kLookcounter), 0);
+	if (!flags.z())
 		return /* (noautolook) */;
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
 		return /* (noautolook) */;
-	dolook(context);
+	dolook();
 	return;
 diffmouse:
-	context.data.word(kLookcounter) = 1000;
+	data.word(kLookcounter) = 1000;
 }
 
-void look(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kPointermode), 2);
-	if (context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kCommandtype), 241);
-	if (context.flags.z())
+void DreamGenContext::look() {
+	STACK_CHECK;
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kPointermode), 2);
+	if (flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kCommandtype), 241);
+	if (flags.z())
 		goto alreadylook;
-	context.data.byte(kCommandtype) = 241;
-	context.al = 25;
-	commandonly(context);
+	data.byte(kCommandtype) = 241;
+	al = 25;
+	commandonly();
 alreadylook:
-	context._cmp(context.data.word(kMousebutton), 1);
-	if (!context.flags.z())
+	_cmp(data.word(kMousebutton), 1);
+	if (!flags.z())
 		return /* (nolook) */;
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (nolook) */;
-	dolook(context);
+	dolook();
 }
 
-void dolook(Context &context) {
-	STACK_CHECK(context);
-	createpanel(context);
-	showicon(context);
-	undertextline(context);
-	worktoscreenm(context);
-	context.data.byte(kCommandtype) = 255;
-	dumptextline(context);
-	context.bl = context.data.byte(kRoomnum);
-	context._and(context.bl, 31);
-	context.bh = 0;
-	context._add(context.bx, context.bx);
-	context.es = context.data.word(kRoomdesc);
-	context._add(context.bx, (0));
-	context.si = context.es.word(context.bx);
-	context._add(context.si, (0+(38*2)));
-	findnextcolon(context);
-	context.di = 66;
-	context._cmp(context.data.byte(kReallocation), 50);
-	if (context.flags.c())
+void DreamGenContext::dolook() {
+	STACK_CHECK;
+	createpanel();
+	showicon();
+	undertextline();
+	worktoscreenm();
+	data.byte(kCommandtype) = 255;
+	dumptextline();
+	bl = data.byte(kRoomnum);
+	_and(bl, 31);
+	bh = 0;
+	_add(bx, bx);
+	es = data.word(kRoomdesc);
+	_add(bx, (0));
+	si = es.word(bx);
+	_add(si, (0+(38*2)));
+	findnextcolon();
+	di = 66;
+	_cmp(data.byte(kReallocation), 50);
+	if (flags.c())
 		goto notdream3;
-	context.di = 40;
+	di = 40;
 notdream3:
-	context.bx = 80;
-	context.dl = 241;
-	printslow(context);
-	context._cmp(context.al, 1);
-	if (context.flags.z())
+	bx = 80;
+	dl = 241;
+	printslow();
+	_cmp(al, 1);
+	if (flags.z())
 		goto afterlook;
-	context.cx = 400;
-	hangonp(context);
+	cx = 400;
+	hangonp();
 afterlook:
-	context.data.byte(kPointermode) = 0;
-	context.data.byte(kCommandtype) = 0;
-	redrawmainscrn(context);
-	worktoscreenm(context);
+	data.byte(kPointermode) = 0;
+	data.byte(kCommandtype) = 0;
+	redrawmainscrn();
+	worktoscreenm();
 }
 
-void redrawmainscrn(Context &context) {
-	STACK_CHECK(context);
-	context.data.word(kTimecount) = 0;
-	createpanel(context);
-	context.data.byte(kNewobs) = 0;
-	drawfloor(context);
-	printsprites(context);
-	reelsonscreen(context);
-	showicon(context);
-	getunderzoom(context);
-	undertextline(context);
-	readmouse(context);
-	context.data.byte(kCommandtype) = 255;
+void DreamGenContext::redrawmainscrn() {
+	STACK_CHECK;
+	data.word(kTimecount) = 0;
+	createpanel();
+	data.byte(kNewobs) = 0;
+	drawfloor();
+	printsprites();
+	reelsonscreen();
+	showicon();
+	getunderzoom();
+	undertextline();
+	readmouse();
+	data.byte(kCommandtype) = 255;
 }
 
-void getback1(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kPickup), 0);
-	if (context.flags.z())
+void DreamGenContext::getback1() {
+	STACK_CHECK;
+	_cmp(data.byte(kPickup), 0);
+	if (flags.z())
 		goto notgotobject;
-	blank(context);
+	blank();
 	return;
 notgotobject:
-	context._cmp(context.data.byte(kCommandtype), 202);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 202);
+	if (flags.z())
 		goto alreadyget;
-	context.data.byte(kCommandtype) = 202;
-	context.al = 26;
-	commandonly(context);
+	data.byte(kCommandtype) = 202;
+	al = 26;
+	commandonly();
 alreadyget:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (nogetback) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto dogetback;
 	return;
 dogetback:
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kPickup) = 0;
+	data.byte(kGetback) = 1;
+	data.byte(kPickup) = 0;
 }
 
-void talk(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kTalkpos) = 0;
-	context.data.byte(kInmaparea) = 0;
-	context.al = context.data.byte(kCommand);
-	context.data.byte(kCharacter) = context.al;
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	undertextline(context);
-	convicons(context);
-	starttalk(context);
-	context.data.byte(kCommandtype) = 255;
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
+void DreamGenContext::talk() {
+	STACK_CHECK;
+	data.byte(kTalkpos) = 0;
+	data.byte(kInmaparea) = 0;
+	al = data.byte(kCommand);
+	data.byte(kCharacter) = al;
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	undertextline();
+	convicons();
+	starttalk();
+	data.byte(kCommandtype) = 255;
+	readmouse();
+	showpointer();
+	worktoscreen();
 waittalk:
-	delpointer(context);
-	readmouse(context);
-	animpointer(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	context.data.byte(kGetback) = 0;
-	context.bx = 2660;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	delpointer();
+	readmouse();
+	animpointer();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	data.byte(kGetback) = 0;
+	bx = 2660;
+	checkcoords();
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto waittalk;
-	context.bx = context.data.word(kPersondata);
-	context.es = context.cs;
-	context._cmp(context.data.byte(kTalkpos), 4);
-	if (context.flags.c())
+	bx = data.word(kPersondata);
+	es = cs;
+	_cmp(data.byte(kTalkpos), 4);
+	if (flags.c())
 		goto notnexttalk;
-	context.al = context.es.byte(context.bx+7);
-	context._or(context.al, 128);
-	context.es.byte(context.bx+7) = context.al;
+	al = es.byte(bx+7);
+	_or(al, 128);
+	es.byte(bx+7) = al;
 notnexttalk:
-	redrawmainscrn(context);
-	worktoscreenm(context);
-	context._cmp(context.data.byte(kSpeechloaded), 1);
-	if (!context.flags.z())
+	redrawmainscrn();
+	worktoscreenm();
+	_cmp(data.byte(kSpeechloaded), 1);
+	if (!flags.z())
 		return /* (nospeech) */;
-	cancelch1(context);
-	context.data.byte(kVolumedirection) = -1;
-	context.data.byte(kVolumeto) = 0;
+	cancelch1();
+	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumeto) = 0;
 }
 
-void convicons(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kCharacter);
-	context._and(context.al, 127);
-	getpersframe(context);
-	context.di = 234;
-	context.bx = 2;
-	context.data.word(kCurrentframe) = context.ax;
-	findsource(context);
-	context.ax = context.data.word(kCurrentframe);
-	context._sub(context.ax, context.data.word(kTakeoff));
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::convicons() {
+	STACK_CHECK;
+	al = data.byte(kCharacter);
+	_and(al, 127);
+	getpersframe();
+	di = 234;
+	bx = 2;
+	data.word(kCurrentframe) = ax;
+	findsource();
+	ax = data.word(kCurrentframe);
+	_sub(ax, data.word(kTakeoff));
+	ah = 0;
+	showframe();
 }
 
-void getpersframe(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.bx = context.ax;
-	context.es = context.data.word(kPeople);
-	context._add(context.bx, (0));
-	context.ax = context.es.word(context.bx);
+void DreamGenContext::getpersframe() {
+	STACK_CHECK;
+	ah = 0;
+	_add(ax, ax);
+	bx = ax;
+	es = data.word(kPeople);
+	_add(bx, (0));
+	ax = es.word(bx);
 }
 
-void starttalk(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kTalkmode) = 0;
-	context.al = context.data.byte(kCharacter);
-	context._and(context.al, 127);
-	getpersontext(context);
-	context.data.word(kCharshift) = 91+91;
-	context.di = 66;
-	context.bx = 64;
-	context.dl = 241;
-	context.al = 0;
-	context.ah = 79;
-	printdirect(context);
-	context.data.word(kCharshift) = 0;
-	context.di = 66;
-	context.bx = 80;
-	context.dl = 241;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	context.data.byte(kSpeechloaded) = 0;
-	context.al = context.data.byte(kCharacter);
-	context._and(context.al, 127);
-	context.ah = 0;
-	context.cx = 64;
-	context._mul(context.cx);
-	context.cl = 'C';
-	context.dl = 'R';
-	context.dh = context.data.byte(kReallocation);
-	loadspeech(context);
-	context._cmp(context.data.byte(kSpeechloaded), 1);
-	if (!context.flags.z())
+void DreamGenContext::starttalk() {
+	STACK_CHECK;
+	data.byte(kTalkmode) = 0;
+	al = data.byte(kCharacter);
+	_and(al, 127);
+	getpersontext();
+	data.word(kCharshift) = 91+91;
+	di = 66;
+	bx = 64;
+	dl = 241;
+	al = 0;
+	ah = 79;
+	printdirect();
+	data.word(kCharshift) = 0;
+	di = 66;
+	bx = 80;
+	dl = 241;
+	al = 0;
+	ah = 0;
+	printdirect();
+	data.byte(kSpeechloaded) = 0;
+	al = data.byte(kCharacter);
+	_and(al, 127);
+	ah = 0;
+	cx = 64;
+	_mul(cx);
+	cl = 'C';
+	dl = 'R';
+	dh = data.byte(kReallocation);
+	loadspeech();
+	_cmp(data.byte(kSpeechloaded), 1);
+	if (!flags.z())
 		return /* (nospeech1) */;
-	context.data.byte(kVolumedirection) = 1;
-	context.data.byte(kVolumeto) = 6;
-	context.al = 50+12;
-	playchannel1(context);
+	data.byte(kVolumedirection) = 1;
+	data.byte(kVolumeto) = 6;
+	al = 50+12;
+	playchannel1();
 }
 
-void getpersontext(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 0;
-	context.cx = 64*2;
-	context._mul(context.cx);
-	context.si = context.ax;
-	context.es = context.data.word(kPeople);
-	context._add(context.si, (0+24));
-	context.cx = (0+24+(1026*2));
-	context.ax = context.es.word(context.si);
-	context._add(context.ax, context.cx);
-	context.si = context.ax;
+void DreamGenContext::getpersontext() {
+	STACK_CHECK;
+	ah = 0;
+	cx = 64*2;
+	_mul(cx);
+	si = ax;
+	es = data.word(kPeople);
+	_add(si, (0+24));
+	cx = (0+24+(1026*2));
+	ax = es.word(si);
+	_add(ax, cx);
+	si = ax;
 }
 
-void moretalk(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kTalkmode), 0);
-	if (context.flags.z())
+void DreamGenContext::moretalk() {
+	STACK_CHECK;
+	_cmp(data.byte(kTalkmode), 0);
+	if (flags.z())
 		goto canmore;
-	redes(context);
+	redes();
 	return;
 canmore:
-	context._cmp(context.data.byte(kCommandtype), 215);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 215);
+	if (flags.z())
 		goto alreadymore;
-	context.data.byte(kCommandtype) = 215;
-	context.al = 49;
-	commandonly(context);
+	data.byte(kCommandtype) = 215;
+	al = 49;
+	commandonly();
 alreadymore:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (nomore) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto domoretalk;
 	return;
 domoretalk:
-	context.data.byte(kTalkmode) = 2;
-	context.data.byte(kTalkpos) = 4;
-	context._cmp(context.data.byte(kCharacter), 100);
-	if (context.flags.c())
+	data.byte(kTalkmode) = 2;
+	data.byte(kTalkpos) = 4;
+	_cmp(data.byte(kCharacter), 100);
+	if (flags.c())
 		goto notsecondpart;
-	context.data.byte(kTalkpos) = 48;
+	data.byte(kTalkpos) = 48;
 notsecondpart:
-	dosometalk(context);
+	dosometalk();
 }
 
-void dosometalk(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::dosometalk() {
+	STACK_CHECK;
 dospeech:
-	context.al = context.data.byte(kTalkpos);
-	context.al = context.data.byte(kCharacter);
-	context._and(context.al, 127);
-	context.ah = 0;
-	context.cx = 64;
-	context._mul(context.cx);
-	context.cx = context.ax;
-	context.al = context.data.byte(kTalkpos);
-	context.ah = 0;
-	context._add(context.ax, context.cx);
-	context._add(context.ax, context.ax);
-	context.si = context.ax;
-	context.es = context.data.word(kPeople);
-	context._add(context.si, (0+24));
-	context.cx = (0+24+(1026*2));
-	context.ax = context.es.word(context.si);
-	context._add(context.ax, context.cx);
-	context.si = context.ax;
-	context._cmp(context.es.byte(context.si), 0);
-	if (context.flags.z())
+	al = data.byte(kTalkpos);
+	al = data.byte(kCharacter);
+	_and(al, 127);
+	ah = 0;
+	cx = 64;
+	_mul(cx);
+	cx = ax;
+	al = data.byte(kTalkpos);
+	ah = 0;
+	_add(ax, cx);
+	_add(ax, ax);
+	si = ax;
+	es = data.word(kPeople);
+	_add(si, (0+24));
+	cx = (0+24+(1026*2));
+	ax = es.word(si);
+	_add(ax, cx);
+	si = ax;
+	_cmp(es.byte(si), 0);
+	if (flags.z())
 		goto endheartalk;
-	context.push(context.es);
-	context.push(context.si);
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	convicons(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context.di = 164;
-	context.bx = 64;
-	context.dl = 144;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	context.al = context.data.byte(kCharacter);
-	context._and(context.al, 127);
-	context.ah = 0;
-	context.cx = 64;
-	context._mul(context.cx);
-	context.cl = context.data.byte(kTalkpos);
-	context.ch = 0;
-	context._add(context.ax, context.cx);
-	context.cl = 'C';
-	context.dl = 'R';
-	context.dh = context.data.byte(kReallocation);
-	loadspeech(context);
-	context._cmp(context.data.byte(kSpeechloaded), 0);
-	if (context.flags.z())
+	push(es);
+	push(si);
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	convicons();
+	si = pop();
+	es = pop();
+	di = 164;
+	bx = 64;
+	dl = 144;
+	al = 0;
+	ah = 0;
+	printdirect();
+	al = data.byte(kCharacter);
+	_and(al, 127);
+	ah = 0;
+	cx = 64;
+	_mul(cx);
+	cl = data.byte(kTalkpos);
+	ch = 0;
+	_add(ax, cx);
+	cl = 'C';
+	dl = 'R';
+	dh = data.byte(kReallocation);
+	loadspeech();
+	_cmp(data.byte(kSpeechloaded), 0);
+	if (flags.z())
 		goto noplay1;
-	context.al = 62;
-	playchannel1(context);
+	al = 62;
+	playchannel1();
 noplay1:
-	context.data.byte(kPointermode) = 3;
-	worktoscreenm(context);
-	context.cx = 180;
-	hangonpq(context);
-	if (!context.flags.c())
+	data.byte(kPointermode) = 3;
+	worktoscreenm();
+	cx = 180;
+	hangonpq();
+	if (!flags.c())
 		goto _tmp1;
 	return;
 _tmp1:
-	context._inc(context.data.byte(kTalkpos));
-	context.al = context.data.byte(kTalkpos);
-	context.al = context.data.byte(kCharacter);
-	context._and(context.al, 127);
-	context.ah = 0;
-	context.cx = 64;
-	context._mul(context.cx);
-	context.cx = context.ax;
-	context.al = context.data.byte(kTalkpos);
-	context.ah = 0;
-	context._add(context.ax, context.cx);
-	context._add(context.ax, context.ax);
-	context.si = context.ax;
-	context.es = context.data.word(kPeople);
-	context._add(context.si, (0+24));
-	context.cx = (0+24+(1026*2));
-	context.ax = context.es.word(context.si);
-	context._add(context.ax, context.cx);
-	context.si = context.ax;
-	context._cmp(context.es.byte(context.si), 0);
-	if (context.flags.z())
+	_inc(data.byte(kTalkpos));
+	al = data.byte(kTalkpos);
+	al = data.byte(kCharacter);
+	_and(al, 127);
+	ah = 0;
+	cx = 64;
+	_mul(cx);
+	cx = ax;
+	al = data.byte(kTalkpos);
+	ah = 0;
+	_add(ax, cx);
+	_add(ax, ax);
+	si = ax;
+	es = data.word(kPeople);
+	_add(si, (0+24));
+	cx = (0+24+(1026*2));
+	ax = es.word(si);
+	_add(ax, cx);
+	si = ax;
+	_cmp(es.byte(si), 0);
+	if (flags.z())
 		goto endheartalk;
-	context._cmp(context.es.byte(context.si), ':');
-	if (context.flags.z())
+	_cmp(es.byte(si), ':');
+	if (flags.z())
 		goto skiptalk2;
-	context._cmp(context.es.byte(context.si), 32);
-	if (context.flags.z())
+	_cmp(es.byte(si), 32);
+	if (flags.z())
 		goto skiptalk2;
-	context.push(context.es);
-	context.push(context.si);
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	convicons(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context.di = 48;
-	context.bx = 128;
-	context.dl = 144;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	context.al = context.data.byte(kCharacter);
-	context._and(context.al, 127);
-	context.ah = 0;
-	context.cx = 64;
-	context._mul(context.cx);
-	context.cl = context.data.byte(kTalkpos);
-	context.ch = 0;
-	context._add(context.ax, context.cx);
-	context.cl = 'C';
-	context.dl = 'R';
-	context.dh = context.data.byte(kReallocation);
-	loadspeech(context);
-	context._cmp(context.data.byte(kSpeechloaded), 0);
-	if (context.flags.z())
+	push(es);
+	push(si);
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	convicons();
+	si = pop();
+	es = pop();
+	di = 48;
+	bx = 128;
+	dl = 144;
+	al = 0;
+	ah = 0;
+	printdirect();
+	al = data.byte(kCharacter);
+	_and(al, 127);
+	ah = 0;
+	cx = 64;
+	_mul(cx);
+	cl = data.byte(kTalkpos);
+	ch = 0;
+	_add(ax, cx);
+	cl = 'C';
+	dl = 'R';
+	dh = data.byte(kReallocation);
+	loadspeech();
+	_cmp(data.byte(kSpeechloaded), 0);
+	if (flags.z())
 		goto noplay2;
-	context.al = 62;
-	playchannel1(context);
+	al = 62;
+	playchannel1();
 noplay2:
-	context.data.byte(kPointermode) = 3;
-	worktoscreenm(context);
-	context.cx = 180;
-	hangonpq(context);
-	if (!context.flags.c())
+	data.byte(kPointermode) = 3;
+	worktoscreenm();
+	cx = 180;
+	hangonpq();
+	if (!flags.c())
 		goto skiptalk2;
 	return;
 skiptalk2:
-	context._inc(context.data.byte(kTalkpos));
+	_inc(data.byte(kTalkpos));
 	goto dospeech;
 endheartalk:
-	context.data.byte(kPointermode) = 0;
+	data.byte(kPointermode) = 0;
 }
 
-void hangonpq(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kGetback) = 0;
-	context.bx = 0;
+void DreamGenContext::hangonpq() {
+	STACK_CHECK;
+	data.byte(kGetback) = 0;
+	bx = 0;
 hangloopq:
-	context.push(context.cx);
-	context.push(context.bx);
-	delpointer(context);
-	readmouse(context);
-	animpointer(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	context.bx = 2692;
-	checkcoords(context);
-	context.bx = context.pop();
-	context.cx = context.pop();
-	context._cmp(context.data.byte(kGetback), 1);
-	if (context.flags.z())
+	push(cx);
+	push(bx);
+	delpointer();
+	readmouse();
+	animpointer();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	bx = 2692;
+	checkcoords();
+	bx = pop();
+	cx = pop();
+	_cmp(data.byte(kGetback), 1);
+	if (flags.z())
 		goto quitconv;
-	context._cmp(context.data.byte(kSpeechloaded), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kSpeechloaded), 1);
+	if (!flags.z())
 		goto notspeaking;
-	context._cmp(context.data.byte(kCh1playing), 255);
-	if (!context.flags.z())
+	_cmp(data.byte(kCh1playing), 255);
+	if (!flags.z())
 		goto notspeaking;
-	context._inc(context.bx);
-	context._cmp(context.bx, 40);
-	if (context.flags.z())
+	_inc(bx);
+	_cmp(bx, 40);
+	if (flags.z())
 		goto finishconv;
 notspeaking:
-	context._cmp(context.data.word(kMousebutton), 0);
-	if (context.flags.z())
+	_cmp(data.word(kMousebutton), 0);
+	if (flags.z())
 		goto hangloopq;
-	context._cmp(context.data.word(kOldbutton), 0);
-	if (!context.flags.z())
+	_cmp(data.word(kOldbutton), 0);
+	if (!flags.z())
 		goto hangloopq;
 finishconv:
-	delpointer(context);
-	context.data.byte(kPointermode) = 0;
-	context.flags._c = false;
+	delpointer();
+	data.byte(kPointermode) = 0;
+	flags._c = false;
  	return;
 quitconv:
-	delpointer(context);
-	context.data.byte(kPointermode) = 0;
-	cancelch1(context);
-	context.flags._c = true;
+	delpointer();
+	data.byte(kPointermode) = 0;
+	cancelch1();
+	flags._c = true;
  }
 
-void redes(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCh1playing), 255);
-	if (!context.flags.z())
+void DreamGenContext::redes() {
+	STACK_CHECK;
+	_cmp(data.byte(kCh1playing), 255);
+	if (!flags.z())
 		goto cantredes;
-	context._cmp(context.data.byte(kTalkmode), 2);
-	if (context.flags.z())
+	_cmp(data.byte(kTalkmode), 2);
+	if (flags.z())
 		goto canredes;
 cantredes:
-	blank(context);
+	blank();
 	return;
 canredes:
-	context._cmp(context.data.byte(kCommandtype), 217);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 217);
+	if (flags.z())
 		goto alreadyreds;
-	context.data.byte(kCommandtype) = 217;
-	context.al = 50;
-	commandonly(context);
+	data.byte(kCommandtype) = 217;
+	al = 50;
+	commandonly();
 alreadyreds:
-	context.ax = context.data.word(kMousebutton);
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (!flags.z())
 		goto doredes;
 	return;
 doredes:
-	delpointer(context);
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	convicons(context);
-	starttalk(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	delpointer();
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	convicons();
+	starttalk();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void newplace(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kNeedtotravel), 1);
-	if (context.flags.z())
+void DreamGenContext::newplace() {
+	STACK_CHECK;
+	_cmp(data.byte(kNeedtotravel), 1);
+	if (flags.z())
 		goto istravel;
-	context._cmp(context.data.byte(kAutolocation), -1);
-	if (!context.flags.z())
+	_cmp(data.byte(kAutolocation), -1);
+	if (!flags.z())
 		goto isautoloc;
 	return;
 isautoloc:
-	context.al = context.data.byte(kAutolocation);
-	context.data.byte(kNewlocation) = context.al;
-	context.data.byte(kAutolocation) = -1;
+	al = data.byte(kAutolocation);
+	data.byte(kNewlocation) = al;
+	data.byte(kAutolocation) = -1;
 	return;
 istravel:
-	context.data.byte(kNeedtotravel) = 0;
-	selectlocation(context);
+	data.byte(kNeedtotravel) = 0;
+	selectlocation();
 }
 
-void selectlocation(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kInmaparea) = 0;
-	clearbeforeload(context);
-	context.data.byte(kGetback) = 0;
-	context.data.byte(kPointerframe) = 22;
-	readcitypic(context);
-	showcity(context);
-	getridoftemp(context);
-	readdesticon(context);
-	loadtraveltext(context);
-	showpanel(context);
-	showman(context);
-	showarrows(context);
-	showexit(context);
-	locationpic(context);
-	undertextline(context);
-	context.data.byte(kCommandtype) = 255;
-	readmouse(context);
-	context.data.byte(kPointerframe) = 0;
-	showpointer(context);
-	worktoscreen(context);
-	context.al = 9;
-	context.ah = 255;
-	playchannel0(context);
-	context.data.byte(kNewlocation) = 255;
+void DreamGenContext::selectlocation() {
+	STACK_CHECK;
+	data.byte(kInmaparea) = 0;
+	clearbeforeload();
+	data.byte(kGetback) = 0;
+	data.byte(kPointerframe) = 22;
+	readcitypic();
+	showcity();
+	getridoftemp();
+	readdesticon();
+	loadtraveltext();
+	showpanel();
+	showman();
+	showarrows();
+	showexit();
+	locationpic();
+	undertextline();
+	data.byte(kCommandtype) = 255;
+	readmouse();
+	data.byte(kPointerframe) = 0;
+	showpointer();
+	worktoscreen();
+	al = 9;
+	ah = 255;
+	playchannel0();
+	data.byte(kNewlocation) = 255;
 select:
-	delpointer(context);
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	context._cmp(context.data.byte(kGetback), 1);
-	if (context.flags.z())
+	delpointer();
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	_cmp(data.byte(kGetback), 1);
+	if (flags.z())
 		goto quittravel;
-	context.bx = 2714;
-	checkcoords(context);
-	context._cmp(context.data.byte(kNewlocation), 255);
-	if (context.flags.z())
+	bx = 2714;
+	checkcoords();
+	_cmp(data.byte(kNewlocation), 255);
+	if (flags.z())
 		goto select;
-	context.al = context.data.byte(kNewlocation);
-	context._cmp(context.al, context.data.byte(kLocation));
-	if (context.flags.z())
+	al = data.byte(kNewlocation);
+	_cmp(al, data.byte(kLocation));
+	if (flags.z())
 		goto quittravel;
-	getridoftemp(context);
-	getridoftemp2(context);
-	getridoftemp3(context);
-	context.es = context.data.word(kTraveltext);
-	deallocatemem(context);
+	getridoftemp();
+	getridoftemp2();
+	getridoftemp3();
+	es = data.word(kTraveltext);
+	deallocatemem();
 	return;
 quittravel:
-	context.al = context.data.byte(kReallocation);
-	context.data.byte(kNewlocation) = context.al;
-	context.data.byte(kGetback) = 0;
-	getridoftemp(context);
-	getridoftemp2(context);
-	getridoftemp3(context);
-	context.es = context.data.word(kTraveltext);
-	deallocatemem(context);
+	al = data.byte(kReallocation);
+	data.byte(kNewlocation) = al;
+	data.byte(kGetback) = 0;
+	getridoftemp();
+	getridoftemp2();
+	getridoftemp3();
+	es = data.word(kTraveltext);
+	deallocatemem();
 }
 
-void showcity(Context &context) {
-	STACK_CHECK(context);
-	clearwork(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = 57;
-	context.bx = 32;
-	context.al = 0;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = 120+57;
-	context.bx = 32;
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::showcity() {
+	STACK_CHECK;
+	clearwork();
+	ds = data.word(kTempgraphics);
+	di = 57;
+	bx = 32;
+	al = 0;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = 120+57;
+	bx = 32;
+	al = 1;
+	ah = 0;
+	showframe();
 }
 
-void lookatplace(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 224);
-	if (context.flags.z())
+void DreamGenContext::lookatplace() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 224);
+	if (flags.z())
 		goto alreadyinfo;
-	context.data.byte(kCommandtype) = 224;
-	context.al = 27;
-	commandonly(context);
+	data.byte(kCommandtype) = 224;
+	al = 27;
+	commandonly();
 alreadyinfo:
-	context.ax = context.data.word(kMousebutton);
-	context._and(context.ax, 1);
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (flags.z())
 		return /* (noinfo) */;
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (noinfo) */;
-	context.bl = context.data.byte(kDestpos);
-	context._cmp(context.bl, 15);
-	if (!context.flags.c())
+	bl = data.byte(kDestpos);
+	_cmp(bl, 15);
+	if (!flags.c())
 		return /* (noinfo) */;
-	context.push(context.bx);
-	delpointer(context);
-	deltextline(context);
-	getundercentre(context);
-	context.ds = context.data.word(kTempgraphics3);
-	context.al = 0;
-	context.ah = 0;
-	context.di = 60;
-	context.bx = 72;
-	showframe(context);
-	context.al = 4;
-	context.ah = 0;
-	context.di = 60;
-	context.bx = 72+55;
-	showframe(context);
-	context.bx = context.pop();
-	context.bh = 0;
-	context._add(context.bx, context.bx);
-	context.es = context.data.word(kTraveltext);
-	context.si = context.es.word(context.bx);
-	context._add(context.si, (66*2));
-	findnextcolon(context);
-	context.di = 63;
-	context.bx = 84;
-	context.dl = 191;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	worktoscreenm(context);
-	context.cx = 500;
-	hangonp(context);
-	context.data.byte(kPointermode) = 0;
-	context.data.byte(kPointerframe) = 0;
-	putundercentre(context);
-	worktoscreenm(context);
+	push(bx);
+	delpointer();
+	deltextline();
+	getundercentre();
+	ds = data.word(kTempgraphics3);
+	al = 0;
+	ah = 0;
+	di = 60;
+	bx = 72;
+	showframe();
+	al = 4;
+	ah = 0;
+	di = 60;
+	bx = 72+55;
+	showframe();
+	bx = pop();
+	bh = 0;
+	_add(bx, bx);
+	es = data.word(kTraveltext);
+	si = es.word(bx);
+	_add(si, (66*2));
+	findnextcolon();
+	di = 63;
+	bx = 84;
+	dl = 191;
+	al = 0;
+	ah = 0;
+	printdirect();
+	worktoscreenm();
+	cx = 500;
+	hangonp();
+	data.byte(kPointermode) = 0;
+	data.byte(kPointerframe) = 0;
+	putundercentre();
+	worktoscreenm();
 }
 
-void getundercentre(Context &context) {
-	STACK_CHECK(context);
-	context.di = 58;
-	context.bx = 72;
-	context.ds = context.data.word(kMapstore);
-	context.si = 0;
-	context.cl = 254;
-	context.ch = 110;
-	multiget(context);
+void DreamGenContext::getundercentre() {
+	STACK_CHECK;
+	di = 58;
+	bx = 72;
+	ds = data.word(kMapstore);
+	si = 0;
+	cl = 254;
+	ch = 110;
+	multiget();
 }
 
-void putundercentre(Context &context) {
-	STACK_CHECK(context);
-	context.di = 58;
-	context.bx = 72;
-	context.ds = context.data.word(kMapstore);
-	context.si = 0;
-	context.cl = 254;
-	context.ch = 110;
-	multiput(context);
+void DreamGenContext::putundercentre() {
+	STACK_CHECK;
+	di = 58;
+	bx = 72;
+	ds = data.word(kMapstore);
+	si = 0;
+	cl = 254;
+	ch = 110;
+	multiput();
 }
 
-void locationpic(Context &context) {
-	STACK_CHECK(context);
-	getdestinfo(context);
-	context.al = context.es.byte(context.si);
-	context.push(context.es);
-	context.push(context.si);
-	context.di = 0;
-	context._cmp(context.al, 6);
-	if (!context.flags.c())
+void DreamGenContext::locationpic() {
+	STACK_CHECK;
+	getdestinfo();
+	al = es.byte(si);
+	push(es);
+	push(si);
+	di = 0;
+	_cmp(al, 6);
+	if (!flags.c())
 		goto secondlot;
-	context.ds = context.data.word(kTempgraphics);
-	context._add(context.al, 4);
+	ds = data.word(kTempgraphics);
+	_add(al, 4);
 	goto gotgraphic;
 secondlot:
-	context._sub(context.al, 6);
-	context.ds = context.data.word(kTempgraphics2);
+	_sub(al, 6);
+	ds = data.word(kTempgraphics2);
 gotgraphic:
-	context._add(context.di, 104);
-	context.bx = 138+14;
-	context.ah = 0;
-	showframe(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context.al = context.data.byte(kDestpos);
-	context._cmp(context.al, context.data.byte(kReallocation));
-	if (!context.flags.z())
+	_add(di, 104);
+	bx = 138+14;
+	ah = 0;
+	showframe();
+	si = pop();
+	es = pop();
+	al = data.byte(kDestpos);
+	_cmp(al, data.byte(kReallocation));
+	if (!flags.z())
 		goto notinthisone;
-	context.al = 3;
-	context.di = 104;
-	context.bx = 140+14;
-	context.ds = context.data.word(kTempgraphics);
-	context.ah = 0;
-	showframe(context);
+	al = 3;
+	di = 104;
+	bx = 140+14;
+	ds = data.word(kTempgraphics);
+	ah = 0;
+	showframe();
 notinthisone:
-	context.bl = context.data.byte(kDestpos);
-	context.bh = 0;
-	context._add(context.bx, context.bx);
-	context.es = context.data.word(kTraveltext);
-	context.si = context.es.word(context.bx);
-	context._add(context.si, (66*2));
-	context.di = 50;
-	context.bx = 20;
-	context.dl = 241;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
+	bl = data.byte(kDestpos);
+	bh = 0;
+	_add(bx, bx);
+	es = data.word(kTraveltext);
+	si = es.word(bx);
+	_add(si, (66*2));
+	di = 50;
+	bx = 20;
+	dl = 241;
+	al = 0;
+	ah = 0;
+	printdirect();
 }
 
-void getdestinfo(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kDestpos);
-	context.ah = 0;
-	context.push(context.ax);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.si = 8011;
-	context._add(context.si, context.ax);
-	context.cl = context.es.byte(context.si);
-	context.ax = context.pop();
-	context.push(context.cx);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.si = 8027;
-	context._add(context.si, context.ax);
-	context.ax = context.pop();
+void DreamGenContext::getdestinfo() {
+	STACK_CHECK;
+	al = data.byte(kDestpos);
+	ah = 0;
+	push(ax);
+	dx = data;
+	es = dx;
+	si = 8011;
+	_add(si, ax);
+	cl = es.byte(si);
+	ax = pop();
+	push(cx);
+	dx = data;
+	es = dx;
+	si = 8027;
+	_add(si, ax);
+	ax = pop();
 }
 
-void showarrows(Context &context) {
-	STACK_CHECK(context);
-	context.di = 116-12;
-	context.bx = 16;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 0;
-	context.ah = 0;
-	showframe(context);
-	context.di = 226+12;
-	context.bx = 16;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
-	context.di = 280;
-	context.bx = 14;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 2;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::showarrows() {
+	STACK_CHECK;
+	di = 116-12;
+	bx = 16;
+	ds = data.word(kTempgraphics);
+	al = 0;
+	ah = 0;
+	showframe();
+	di = 226+12;
+	bx = 16;
+	ds = data.word(kTempgraphics);
+	al = 1;
+	ah = 0;
+	showframe();
+	di = 280;
+	bx = 14;
+	ds = data.word(kTempgraphics);
+	al = 2;
+	ah = 0;
+	showframe();
 }
 
-void nextdest(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 218);
-	if (context.flags.z())
+void DreamGenContext::nextdest() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 218);
+	if (flags.z())
 		goto alreadydu;
-	context.data.byte(kCommandtype) = 218;
-	context.al = 28;
-	commandonly(context);
+	data.byte(kCommandtype) = 218;
+	al = 28;
+	commandonly();
 alreadydu:
-	context.ax = context.data.word(kMousebutton);
-	context._and(context.ax, 1);
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (flags.z())
 		return /* (nodu) */;
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (nodu) */;
 searchdestup:
-	context._inc(context.data.byte(kDestpos));
-	context._cmp(context.data.byte(kDestpos), 15);
-	if (!context.flags.z())
+	_inc(data.byte(kDestpos));
+	_cmp(data.byte(kDestpos), 15);
+	if (!flags.z())
 		goto notlastdest;
-	context.data.byte(kDestpos) = 0;
+	data.byte(kDestpos) = 0;
 notlastdest:
-	getdestinfo(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	getdestinfo();
+	_cmp(al, 0);
+	if (flags.z())
 		goto searchdestup;
-	context.data.byte(kNewtextline) = 1;
-	deltextline(context);
-	delpointer(context);
-	showpanel(context);
-	showman(context);
-	showarrows(context);
-	locationpic(context);
-	undertextline(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	data.byte(kNewtextline) = 1;
+	deltextline();
+	delpointer();
+	showpanel();
+	showman();
+	showarrows();
+	locationpic();
+	undertextline();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void lastdest(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 219);
-	if (context.flags.z())
+void DreamGenContext::lastdest() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 219);
+	if (flags.z())
 		goto alreadydd;
-	context.data.byte(kCommandtype) = 219;
-	context.al = 29;
-	commandonly(context);
+	data.byte(kCommandtype) = 219;
+	al = 29;
+	commandonly();
 alreadydd:
-	context.ax = context.data.word(kMousebutton);
-	context._and(context.ax, 1);
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (flags.z())
 		return /* (nodd) */;
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (nodd) */;
 searchdestdown:
-	context._dec(context.data.byte(kDestpos));
-	context._cmp(context.data.byte(kDestpos), -1);
-	if (!context.flags.z())
+	_dec(data.byte(kDestpos));
+	_cmp(data.byte(kDestpos), -1);
+	if (!flags.z())
 		goto notfirstdest;
-	context.data.byte(kDestpos) = 15;
+	data.byte(kDestpos) = 15;
 notfirstdest:
-	getdestinfo(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	getdestinfo();
+	_cmp(al, 0);
+	if (flags.z())
 		goto searchdestdown;
-	context.data.byte(kNewtextline) = 1;
-	deltextline(context);
-	delpointer(context);
-	showpanel(context);
-	showman(context);
-	showarrows(context);
-	locationpic(context);
-	undertextline(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	data.byte(kNewtextline) = 1;
+	deltextline();
+	delpointer();
+	showpanel();
+	showman();
+	showarrows();
+	locationpic();
+	undertextline();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void destselect(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 222);
-	if (context.flags.z())
+void DreamGenContext::destselect() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 222);
+	if (flags.z())
 		goto alreadytrav;
-	context.data.byte(kCommandtype) = 222;
-	context.al = 30;
-	commandonly(context);
+	data.byte(kCommandtype) = 222;
+	al = 30;
+	commandonly();
 alreadytrav:
-	context.ax = context.data.word(kMousebutton);
-	context._and(context.ax, 1);
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (flags.z())
 		return /* (notrav) */;
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notrav) */;
-	getdestinfo(context);
-	context.al = context.data.byte(kDestpos);
-	context.data.byte(kNewlocation) = context.al;
+	getdestinfo();
+	al = data.byte(kDestpos);
+	data.byte(kNewlocation) = al;
 }
 
-void getlocation(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 0;
-	context.bx = context.ax;
-	context.dx = context.data;
-	context.es = context.dx;
-	context._add(context.bx, 8011);
-	context.al = context.es.byte(context.bx);
+void DreamGenContext::getlocation() {
+	STACK_CHECK;
+	ah = 0;
+	bx = ax;
+	dx = data;
+	es = dx;
+	_add(bx, 8011);
+	al = es.byte(bx);
 }
 
-void setlocation(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 0;
-	context.bx = context.ax;
-	context.dx = context.data;
-	context.es = context.dx;
-	context._add(context.bx, 8011);
-	context.es.byte(context.bx) = 1;
+void DreamGenContext::setlocation() {
+	STACK_CHECK;
+	ah = 0;
+	bx = ax;
+	dx = data;
+	es = dx;
+	_add(bx, 8011);
+	es.byte(bx) = 1;
 }
 
-void resetlocation(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context._cmp(context.al, 5);
-	if (!context.flags.z())
+void DreamGenContext::resetlocation() {
+	STACK_CHECK;
+	push(ax);
+	_cmp(al, 5);
+	if (!flags.z())
 		goto notdelhotel;
-	purgealocation(context);
-	context.al = 21;
-	purgealocation(context);
-	context.al = 22;
-	purgealocation(context);
-	context.al = 27;
-	purgealocation(context);
+	purgealocation();
+	al = 21;
+	purgealocation();
+	al = 22;
+	purgealocation();
+	al = 27;
+	purgealocation();
 	goto clearedlocations;
 notdelhotel:
-	context._cmp(context.al, 8);
-	if (!context.flags.z())
+	_cmp(al, 8);
+	if (!flags.z())
 		goto notdeltvstud;
-	purgealocation(context);
-	context.al = 28;
-	purgealocation(context);
+	purgealocation();
+	al = 28;
+	purgealocation();
 	goto clearedlocations;
 notdeltvstud:
-	context._cmp(context.al, 6);
-	if (!context.flags.z())
+	_cmp(al, 6);
+	if (!flags.z())
 		goto notdelsarters;
-	purgealocation(context);
-	context.al = 20;
-	purgealocation(context);
-	context.al = 25;
-	purgealocation(context);
+	purgealocation();
+	al = 20;
+	purgealocation();
+	al = 25;
+	purgealocation();
 	goto clearedlocations;
 notdelsarters:
-	context._cmp(context.al, 13);
-	if (!context.flags.z())
+	_cmp(al, 13);
+	if (!flags.z())
 		goto notdelboathouse;
-	purgealocation(context);
-	context.al = 29;
-	purgealocation(context);
+	purgealocation();
+	al = 29;
+	purgealocation();
 	goto clearedlocations;
 notdelboathouse:
 clearedlocations:
-	context.ax = context.pop();
-	context.ah = 0;
-	context.bx = context.ax;
-	context.dx = context.data;
-	context.es = context.dx;
-	context._add(context.bx, 8011);
-	context.es.byte(context.bx) = 0;
+	ax = pop();
+	ah = 0;
+	bx = ax;
+	dx = data;
+	es = dx;
+	_add(bx, 8011);
+	es.byte(bx) = 0;
 }
 
-void readdesticon(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 2013;
-	loadintotemp(context);
-	context.dx = 2026;
-	loadintotemp2(context);
-	context.dx = 1961;
-	loadintotemp3(context);
+void DreamGenContext::readdesticon() {
+	STACK_CHECK;
+	dx = 2013;
+	loadintotemp();
+	dx = 2026;
+	loadintotemp2();
+	dx = 1961;
+	loadintotemp3();
 }
 
-void readcitypic(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 2000;
-	loadintotemp(context);
+void DreamGenContext::readcitypic() {
+	STACK_CHECK;
+	dx = 2000;
+	loadintotemp();
 }
 
-void usemon(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kLasttrigger) = 0;
-	context.es = context.cs;
-	context.di = 2970+1;
-	context.cx = 12;
-	context.al = 32;
-	context._stosb(context.cx);
-	context.es = context.cs;
-	context.di = 2942+1;
-	context.cx = 12;
-	context.al = 32;
-	context._stosb(context.cx);
-	context.es = context.cs;
-	context.di = 2836;
-	context.es.byte(context.di) = 1;
-	context._add(context.di, 26);
-	context.cx = 3;
+void DreamGenContext::usemon() {
+	STACK_CHECK;
+	data.byte(kLasttrigger) = 0;
+	es = cs;
+	di = 2970+1;
+	cx = 12;
+	al = 32;
+	_stosb(cx);
+	es = cs;
+	di = 2942+1;
+	cx = 12;
+	al = 32;
+	_stosb(cx);
+	es = cs;
+	di = 2836;
+	es.byte(di) = 1;
+	_add(di, 26);
+	cx = 3;
 keyloop:
-	context.es.byte(context.di) = 0;
-	context._add(context.di, 26);
-	if (--context.cx)
+	es.byte(di) = 0;
+	_add(di, 26);
+	if (--cx)
 		goto keyloop;
-	createpanel(context);
-	showpanel(context);
-	showicon(context);
-	drawfloor(context);
-	getridofall(context);
-	context.dx = 1974;
-	loadintotemp(context);
-	loadpersonal(context);
-	loadnews(context);
-	loadcart(context);
-	context.dx = 1870;
-	loadtempcharset(context);
-	printoutermon(context);
-	initialmoncols(context);
-	printlogo(context);
-	worktoscreen(context);
-	turnonpower(context);
-	fadeupyellows(context);
-	fadeupmonfirst(context);
-	context.data.word(kMonadx) = 76;
-	context.data.word(kMonady) = 141;
-	context.al = 1;
-	monmessage(context);
-	context.cx = 120;
-	hangoncurs(context);
-	context.al = 2;
-	monmessage(context);
-	context.cx = 60;
-	randomaccess(context);
-	context.al = 3;
-	monmessage(context);
-	context.cx = 100;
-	hangoncurs(context);
-	printlogo(context);
-	scrollmonitor(context);
-	context.data.word(kBufferin) = 0;
-	context.data.word(kBufferout) = 0;
+	createpanel();
+	showpanel();
+	showicon();
+	drawfloor();
+	getridofall();
+	dx = 1974;
+	loadintotemp();
+	loadpersonal();
+	loadnews();
+	loadcart();
+	dx = 1870;
+	loadtempcharset();
+	printoutermon();
+	initialmoncols();
+	printlogo();
+	worktoscreen();
+	turnonpower();
+	fadeupyellows();
+	fadeupmonfirst();
+	data.word(kMonadx) = 76;
+	data.word(kMonady) = 141;
+	al = 1;
+	monmessage();
+	cx = 120;
+	hangoncurs();
+	al = 2;
+	monmessage();
+	cx = 60;
+	randomaccess();
+	al = 3;
+	monmessage();
+	cx = 100;
+	hangoncurs();
+	printlogo();
+	scrollmonitor();
+	data.word(kBufferin) = 0;
+	data.word(kBufferout) = 0;
 moreinput:
-	context.di = context.data.word(kMonadx);
-	context.bx = context.data.word(kMonady);
-	context.push(context.di);
-	context.push(context.bx);
-	input(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.data.word(kMonadx) = context.di;
-	context.data.word(kMonady) = context.bx;
-	execcommand(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	di = data.word(kMonadx);
+	bx = data.word(kMonady);
+	push(di);
+	push(bx);
+	input();
+	bx = pop();
+	di = pop();
+	data.word(kMonadx) = di;
+	data.word(kMonady) = bx;
+	execcommand();
+	_cmp(al, 0);
+	if (flags.z())
 		goto moreinput;
-	getridoftemp(context);
-	getridoftempcharset(context);
-	context.es = context.data.word(kTextfile1);
-	deallocatemem(context);
-	context.es = context.data.word(kTextfile2);
-	deallocatemem(context);
-	context.es = context.data.word(kTextfile3);
-	deallocatemem(context);
-	context.data.byte(kGetback) = 1;
-	context.al = 26;
-	playchannel1(context);
-	context.data.byte(kManisoffscreen) = 0;
-	restoreall(context);
-	redrawmainscrn(context);
-	worktoscreenm(context);
+	getridoftemp();
+	getridoftempcharset();
+	es = data.word(kTextfile1);
+	deallocatemem();
+	es = data.word(kTextfile2);
+	deallocatemem();
+	es = data.word(kTextfile3);
+	deallocatemem();
+	data.byte(kGetback) = 1;
+	al = 26;
+	playchannel1();
+	data.byte(kManisoffscreen) = 0;
+	restoreall();
+	redrawmainscrn();
+	worktoscreenm();
 }
 
-void printoutermon(Context &context) {
-	STACK_CHECK(context);
-	context.di = 40;
-	context.bx = 32;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
-	context.di = 264;
-	context.bx = 32;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 2;
-	context.ah = 0;
-	showframe(context);
-	context.di = 40;
-	context.bx = 12;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 3;
-	context.ah = 0;
-	showframe(context);
-	context.di = 40;
-	context.bx = 164;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 4;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::printoutermon() {
+	STACK_CHECK;
+	di = 40;
+	bx = 32;
+	ds = data.word(kTempgraphics);
+	al = 1;
+	ah = 0;
+	showframe();
+	di = 264;
+	bx = 32;
+	ds = data.word(kTempgraphics);
+	al = 2;
+	ah = 0;
+	showframe();
+	di = 40;
+	bx = 12;
+	ds = data.word(kTempgraphics);
+	al = 3;
+	ah = 0;
+	showframe();
+	di = 40;
+	bx = 164;
+	ds = data.word(kTempgraphics);
+	al = 4;
+	ah = 0;
+	showframe();
 }
 
-void loadpersonal(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kLocation);
-	context.dx = 2052;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+void DreamGenContext::loadpersonal() {
+	STACK_CHECK;
+	al = data.byte(kLocation);
+	dx = 2052;
+	_cmp(al, 0);
+	if (flags.z())
 		goto foundpersonal;
-	context._cmp(context.al, 42);
-	if (context.flags.z())
+	_cmp(al, 42);
+	if (flags.z())
 		goto foundpersonal;
-	context.dx = 2065;
-	context._cmp(context.al, 2);
-	if (context.flags.z())
+	dx = 2065;
+	_cmp(al, 2);
+	if (flags.z())
 		goto foundpersonal;
 foundpersonal:
-	openfile(context);
-	readheader(context);
-	context.bx = context.es.word(context.di);
-	context.push(context.bx);
-	context.cl = 4;
-	context._shr(context.bx, context.cl);
-	allocatemem(context);
-	context.data.word(kTextfile1) = context.ax;
-	context.ds = context.ax;
-	context.cx = context.pop();
-	context.dx = 0;
-	readfromfile(context);
-	closefile(context);
+	openfile();
+	readheader();
+	bx = es.word(di);
+	push(bx);
+	cl = 4;
+	_shr(bx, cl);
+	allocatemem();
+	data.word(kTextfile1) = ax;
+	ds = ax;
+	cx = pop();
+	dx = 0;
+	readfromfile();
+	closefile();
 }
 
-void loadnews(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kNewsitem);
-	context.dx = 2078;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+void DreamGenContext::loadnews() {
+	STACK_CHECK;
+	al = data.byte(kNewsitem);
+	dx = 2078;
+	_cmp(al, 0);
+	if (flags.z())
 		goto foundnews;
-	context.dx = 2091;
-	context._cmp(context.al, 1);
-	if (context.flags.z())
+	dx = 2091;
+	_cmp(al, 1);
+	if (flags.z())
 		goto foundnews;
-	context.dx = 2104;
-	context._cmp(context.al, 2);
-	if (context.flags.z())
+	dx = 2104;
+	_cmp(al, 2);
+	if (flags.z())
 		goto foundnews;
-	context.dx = 2117;
+	dx = 2117;
 foundnews:
-	openfile(context);
-	readheader(context);
-	context.bx = context.es.word(context.di);
-	context.push(context.bx);
-	context.cl = 4;
-	context._shr(context.bx, context.cl);
-	allocatemem(context);
-	context.data.word(kTextfile2) = context.ax;
-	context.ds = context.ax;
-	context.cx = context.pop();
-	context.dx = 0;
-	readfromfile(context);
-	closefile(context);
+	openfile();
+	readheader();
+	bx = es.word(di);
+	push(bx);
+	cl = 4;
+	_shr(bx, cl);
+	allocatemem();
+	data.word(kTextfile2) = ax;
+	ds = ax;
+	cx = pop();
+	dx = 0;
+	readfromfile();
+	closefile();
 }
 
-void loadcart(Context &context) {
-	STACK_CHECK(context);
-	lookininterface(context);
-	context.dx = 2130;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+void DreamGenContext::loadcart() {
+	STACK_CHECK;
+	lookininterface();
+	dx = 2130;
+	_cmp(al, 0);
+	if (flags.z())
 		goto gotcart;
-	context.dx = 2143;
-	context._cmp(context.al, 1);
-	if (context.flags.z())
+	dx = 2143;
+	_cmp(al, 1);
+	if (flags.z())
 		goto gotcart;
-	context.dx = 2156;
-	context._cmp(context.al, 2);
-	if (context.flags.z())
+	dx = 2156;
+	_cmp(al, 2);
+	if (flags.z())
 		goto gotcart;
-	context.dx = 2169;
-	context._cmp(context.al, 3);
-	if (context.flags.z())
+	dx = 2169;
+	_cmp(al, 3);
+	if (flags.z())
 		goto gotcart;
-	context.dx = 2182;
+	dx = 2182;
 gotcart:
-	openfile(context);
-	readheader(context);
-	context.bx = context.es.word(context.di);
-	context.push(context.bx);
-	context.cl = 4;
-	context._shr(context.bx, context.cl);
-	allocatemem(context);
-	context.data.word(kTextfile3) = context.ax;
-	context.ds = context.ax;
-	context.cx = context.pop();
-	context.dx = 0;
-	readfromfile(context);
-	closefile(context);
+	openfile();
+	readheader();
+	bx = es.word(di);
+	push(bx);
+	cl = 4;
+	_shr(bx, cl);
+	allocatemem();
+	data.word(kTextfile3) = ax;
+	ds = ax;
+	cx = pop();
+	dx = 0;
+	readfromfile();
+	closefile();
 }
 
-void lookininterface(Context &context) {
-	STACK_CHECK(context);
-	context.al = 'I';
-	context.ah = 'N';
-	context.cl = 'T';
-	context.ch = 'F';
-	findsetobject(context);
-	context.ah = 1;
-	checkinside(context);
-	context._cmp(context.cl, (114));
-	if (context.flags.z())
+void DreamGenContext::lookininterface() {
+	STACK_CHECK;
+	al = 'I';
+	ah = 'N';
+	cl = 'T';
+	ch = 'F';
+	findsetobject();
+	ah = 1;
+	checkinside();
+	_cmp(cl, (114));
+	if (flags.z())
 		goto emptyinterface;
-	context.al = context.es.byte(context.bx+15);
-	context._inc(context.al);
+	al = es.byte(bx+15);
+	_inc(al);
 	return;
 emptyinterface:
-	context.al = 0;
+	al = 0;
 }
 
-void turnonpower(Context &context) {
-	STACK_CHECK(context);
-	context.cx = 3;
+void DreamGenContext::turnonpower() {
+	STACK_CHECK;
+	cx = 3;
 powerloop:
-	context.push(context.cx);
-	powerlighton(context);
-	context.cx = 30;
-	hangon(context);
-	powerlightoff(context);
-	context.cx = 30;
-	hangon(context);
-	context.cx = context.pop();
-	if (--context.cx)
+	push(cx);
+	powerlighton();
+	cx = 30;
+	hangon();
+	powerlightoff();
+	cx = 30;
+	hangon();
+	cx = pop();
+	if (--cx)
 		goto powerloop;
-	powerlighton(context);
+	powerlighton();
 }
 
-void randomaccess(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::randomaccess() {
+	STACK_CHECK;
 accessloop:
-	context.push(context.cx);
-	vsync(context);
-	vsync(context);
-	randomnum1(context);
-	context._and(context.al, 15);
-	context._cmp(context.al, 10);
-	if (context.flags.c())
+	push(cx);
+	vsync();
+	vsync();
+	randomnum1();
+	_and(al, 15);
+	_cmp(al, 10);
+	if (flags.c())
 		goto off;
-	accesslighton(context);
+	accesslighton();
 	goto chosenaccess;
 off:
-	accesslightoff(context);
+	accesslightoff();
 chosenaccess:
-	context.cx = context.pop();
-	if (--context.cx)
+	cx = pop();
+	if (--cx)
 		goto accessloop;
-	accesslightoff(context);
+	accesslightoff();
 }
 
-void powerlighton(Context &context) {
-	STACK_CHECK(context);
-	context.di = 257+4;
-	context.bx = 182;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 6;
-	context.ah = 0;
-	context.push(context.di);
-	context.push(context.bx);
-	showframe(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.cl = 12;
-	context.ch = 8;
-	multidump(context);
+void DreamGenContext::powerlighton() {
+	STACK_CHECK;
+	di = 257+4;
+	bx = 182;
+	ds = data.word(kTempgraphics);
+	al = 6;
+	ah = 0;
+	push(di);
+	push(bx);
+	showframe();
+	bx = pop();
+	di = pop();
+	cl = 12;
+	ch = 8;
+	multidump();
 }
 
-void powerlightoff(Context &context) {
-	STACK_CHECK(context);
-	context.di = 257+4;
-	context.bx = 182;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 5;
-	context.ah = 0;
-	context.push(context.di);
-	context.push(context.bx);
-	showframe(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.cl = 12;
-	context.ch = 8;
-	multidump(context);
+void DreamGenContext::powerlightoff() {
+	STACK_CHECK;
+	di = 257+4;
+	bx = 182;
+	ds = data.word(kTempgraphics);
+	al = 5;
+	ah = 0;
+	push(di);
+	push(bx);
+	showframe();
+	bx = pop();
+	di = pop();
+	cl = 12;
+	ch = 8;
+	multidump();
 }
 
-void accesslighton(Context &context) {
-	STACK_CHECK(context);
-	context.di = 74;
-	context.bx = 182;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 8;
-	context.ah = 0;
-	context.push(context.di);
-	context.push(context.bx);
-	showframe(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.cl = 12;
-	context.ch = 8;
-	multidump(context);
+void DreamGenContext::accesslighton() {
+	STACK_CHECK;
+	di = 74;
+	bx = 182;
+	ds = data.word(kTempgraphics);
+	al = 8;
+	ah = 0;
+	push(di);
+	push(bx);
+	showframe();
+	bx = pop();
+	di = pop();
+	cl = 12;
+	ch = 8;
+	multidump();
 }
 
-void accesslightoff(Context &context) {
-	STACK_CHECK(context);
-	context.di = 74;
-	context.bx = 182;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 7;
-	context.ah = 0;
-	context.push(context.di);
-	context.push(context.bx);
-	showframe(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.cl = 12;
-	context.ch = 8;
-	multidump(context);
+void DreamGenContext::accesslightoff() {
+	STACK_CHECK;
+	di = 74;
+	bx = 182;
+	ds = data.word(kTempgraphics);
+	al = 7;
+	ah = 0;
+	push(di);
+	push(bx);
+	showframe();
+	bx = pop();
+	di = pop();
+	cl = 12;
+	ch = 8;
+	multidump();
 }
 
-void locklighton(Context &context) {
-	STACK_CHECK(context);
-	context.di = 56;
-	context.bx = 182;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 10;
-	context.ah = 0;
-	context.push(context.di);
-	context.push(context.bx);
-	showframe(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.cl = 12;
-	context.ch = 8;
-	multidump(context);
+void DreamGenContext::locklighton() {
+	STACK_CHECK;
+	di = 56;
+	bx = 182;
+	ds = data.word(kTempgraphics);
+	al = 10;
+	ah = 0;
+	push(di);
+	push(bx);
+	showframe();
+	bx = pop();
+	di = pop();
+	cl = 12;
+	ch = 8;
+	multidump();
 }
 
-void locklightoff(Context &context) {
-	STACK_CHECK(context);
-	context.di = 56;
-	context.bx = 182;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 9;
-	context.ah = 0;
-	context.push(context.di);
-	context.push(context.bx);
-	showframe(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.cl = 12;
-	context.ch = 8;
-	multidump(context);
+void DreamGenContext::locklightoff() {
+	STACK_CHECK;
+	di = 56;
+	bx = 182;
+	ds = data.word(kTempgraphics);
+	al = 9;
+	ah = 0;
+	push(di);
+	push(bx);
+	showframe();
+	bx = pop();
+	di = pop();
+	cl = 12;
+	ch = 8;
+	multidump();
 }
 
-void input(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.cs;
-	context.di = 8045;
-	context.cx = 64;
-	context.al = 0;
-	context._stosb(context.cx);
-	context.data.word(kCurpos) = 0;
-	context.al = '>';
-	context.di = context.data.word(kMonadx);
-	context.bx = context.data.word(kMonady);
-	context.ds = context.data.word(kTempcharset);
-	context.ah = 0;
-	printchar(context);
-	context.di = context.data.word(kMonadx);
-	context.bx = context.data.word(kMonady);
-	context.cl = 6;
-	context.ch = 8;
-	multidump(context);
-	context._add(context.data.word(kMonadx), 6);
-	context.ax = context.data.word(kMonadx);
-	context.data.word(kCurslocx) = context.ax;
-	context.ax = context.data.word(kMonady);
-	context.data.word(kCurslocy) = context.ax;
+void DreamGenContext::input() {
+	STACK_CHECK;
+	es = cs;
+	di = 8045;
+	cx = 64;
+	al = 0;
+	_stosb(cx);
+	data.word(kCurpos) = 0;
+	al = '>';
+	di = data.word(kMonadx);
+	bx = data.word(kMonady);
+	ds = data.word(kTempcharset);
+	ah = 0;
+	printchar();
+	di = data.word(kMonadx);
+	bx = data.word(kMonady);
+	cl = 6;
+	ch = 8;
+	multidump();
+	_add(data.word(kMonadx), 6);
+	ax = data.word(kMonadx);
+	data.word(kCurslocx) = ax;
+	ax = data.word(kMonady);
+	data.word(kCurslocy) = ax;
 waitkey:
-	printcurs(context);
-	vsync(context);
-	delcurs(context);
-	readkey(context);
-	context.al = context.data.byte(kCurrentkey);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	printcurs();
+	vsync();
+	delcurs();
+	readkey();
+	al = data.byte(kCurrentkey);
+	_cmp(al, 0);
+	if (flags.z())
 		goto waitkey;
-	context._cmp(context.al, 13);
-	if (context.flags.z())
+	_cmp(al, 13);
+	if (flags.z())
 		return /* (endofinput) */;
-	context._cmp(context.al, 8);
-	if (!context.flags.z())
+	_cmp(al, 8);
+	if (!flags.z())
 		goto notdel;
-	context._cmp(context.data.word(kCurpos), 0);
-	if (context.flags.z())
+	_cmp(data.word(kCurpos), 0);
+	if (flags.z())
 		goto waitkey;
-	delchar(context);
+	delchar();
 	goto waitkey;
 notdel:
-	context._cmp(context.data.word(kCurpos), 28);
-	if (context.flags.z())
+	_cmp(data.word(kCurpos), 28);
+	if (flags.z())
 		goto waitkey;
-	context._cmp(context.data.byte(kCurrentkey), 32);
-	if (!context.flags.z())
+	_cmp(data.byte(kCurrentkey), 32);
+	if (!flags.z())
 		goto notleadingspace;
-	context._cmp(context.data.word(kCurpos), 0);
-	if (context.flags.z())
+	_cmp(data.word(kCurpos), 0);
+	if (flags.z())
 		goto waitkey;
 notleadingspace:
-	makecaps(context);
-	context.es = context.cs;
-	context.si = context.data.word(kCurpos);
-	context._add(context.si, context.si);
-	context._add(context.si, 8045);
-	context.es.byte(context.si) = context.al;
-	context._cmp(context.al, 'Z'+1);
-	if (!context.flags.c())
+	makecaps();
+	es = cs;
+	si = data.word(kCurpos);
+	_add(si, si);
+	_add(si, 8045);
+	es.byte(si) = al;
+	_cmp(al, 'Z'+1);
+	if (!flags.c())
 		goto waitkey;
-	context.push(context.ax);
-	context.push(context.es);
-	context.push(context.si);
-	context.di = context.data.word(kMonadx);
-	context.bx = context.data.word(kMonady);
-	context.ds = context.data.word(kMapstore);
-	context.ax = context.data.word(kCurpos);
-	context._xchg(context.al, context.ah);
-	context.si = context.ax;
-	context.cl = 8;
-	context.ch = 8;
-	multiget(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context.ax = context.pop();
-	context.push(context.es);
-	context.push(context.si);
-	context.di = context.data.word(kMonadx);
-	context.bx = context.data.word(kMonady);
-	context.ds = context.data.word(kTempcharset);
-	context.ah = 0;
-	printchar(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context.es.byte(context.si+1) = context.cl;
-	context.ch = 0;
-	context._add(context.data.word(kMonadx), context.cx);
-	context._inc(context.data.word(kCurpos));
-	context._add(context.data.word(kCurslocx), context.cx);
+	push(ax);
+	push(es);
+	push(si);
+	di = data.word(kMonadx);
+	bx = data.word(kMonady);
+	ds = data.word(kMapstore);
+	ax = data.word(kCurpos);
+	_xchg(al, ah);
+	si = ax;
+	cl = 8;
+	ch = 8;
+	multiget();
+	si = pop();
+	es = pop();
+	ax = pop();
+	push(es);
+	push(si);
+	di = data.word(kMonadx);
+	bx = data.word(kMonady);
+	ds = data.word(kTempcharset);
+	ah = 0;
+	printchar();
+	si = pop();
+	es = pop();
+	es.byte(si+1) = cl;
+	ch = 0;
+	_add(data.word(kMonadx), cx);
+	_inc(data.word(kCurpos));
+	_add(data.word(kCurslocx), cx);
 	goto waitkey;
 }
 
-void makecaps(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.al, 'a');
-	if (context.flags.c())
+void DreamGenContext::makecaps() {
+	STACK_CHECK;
+	_cmp(al, 'a');
+	if (flags.c())
 		return /* (notupperc) */;
-	context._sub(context.al, 32);
+	_sub(al, 32);
 }
 
-void delchar(Context &context) {
-	STACK_CHECK(context);
-	context._dec(context.data.word(kCurpos));
-	context.si = context.data.word(kCurpos);
-	context._add(context.si, context.si);
-	context.es = context.cs;
-	context._add(context.si, 8045);
-	context.es.byte(context.si) = 0;
-	context.al = context.es.byte(context.si+1);
-	context.ah = 0;
-	context._sub(context.data.word(kMonadx), context.ax);
-	context._sub(context.data.word(kCurslocx), context.ax);
-	context.di = context.data.word(kMonadx);
-	context.bx = context.data.word(kMonady);
-	context.ds = context.data.word(kMapstore);
-	context.ax = context.data.word(kCurpos);
-	context._xchg(context.al, context.ah);
-	context.si = context.ax;
-	context.cl = 8;
-	context.ch = 8;
-	multiput(context);
-	context.di = context.data.word(kMonadx);
-	context.bx = context.data.word(kMonady);
-	context.cl = context.al;
-	context.ch = 8;
-	multidump(context);
+void DreamGenContext::delchar() {
+	STACK_CHECK;
+	_dec(data.word(kCurpos));
+	si = data.word(kCurpos);
+	_add(si, si);
+	es = cs;
+	_add(si, 8045);
+	es.byte(si) = 0;
+	al = es.byte(si+1);
+	ah = 0;
+	_sub(data.word(kMonadx), ax);
+	_sub(data.word(kCurslocx), ax);
+	di = data.word(kMonadx);
+	bx = data.word(kMonady);
+	ds = data.word(kMapstore);
+	ax = data.word(kCurpos);
+	_xchg(al, ah);
+	si = ax;
+	cl = 8;
+	ch = 8;
+	multiput();
+	di = data.word(kMonadx);
+	bx = data.word(kMonady);
+	cl = al;
+	ch = 8;
+	multidump();
 }
 
-void execcommand(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.cs;
-	context.bx = 2776;
-	context.ds = context.cs;
-	context.si = 8045;
-	context.al = context.ds.byte(context.si);
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+void DreamGenContext::execcommand() {
+	STACK_CHECK;
+	es = cs;
+	bx = 2776;
+	ds = cs;
+	si = 8045;
+	al = ds.byte(si);
+	_cmp(al, 0);
+	if (!flags.z())
 		goto notblankinp;
-	scrollmonitor(context);
+	scrollmonitor();
 	return;
 notblankinp:
-	context.cl = 0;
+	cl = 0;
 comloop:
-	context.push(context.bx);
-	context.push(context.si);
+	push(bx);
+	push(si);
 comloop2:
-	context.al = context.ds.byte(context.si);
-	context._add(context.si, 2);
-	context.ah = context.es.byte(context.bx);
-	context._inc(context.bx);
-	context._cmp(context.ah, 32);
-	if (context.flags.z())
+	al = ds.byte(si);
+	_add(si, 2);
+	ah = es.byte(bx);
+	_inc(bx);
+	_cmp(ah, 32);
+	if (flags.z())
 		goto foundcom;
-	context._cmp(context.al, context.ah);
-	if (context.flags.z())
+	_cmp(al, ah);
+	if (flags.z())
 		goto comloop2;
-	context.si = context.pop();
-	context.bx = context.pop();
-	context._add(context.bx, 10);
-	context._inc(context.cl);
-	context._cmp(context.cl, 6);
-	if (!context.flags.z())
+	si = pop();
+	bx = pop();
+	_add(bx, 10);
+	_inc(cl);
+	_cmp(cl, 6);
+	if (!flags.z())
 		goto comloop;
-	neterror(context);
-	context.al = 0;
+	neterror();
+	al = 0;
 	return;
 foundcom:
-	context.si = context.pop();
-	context.bx = context.pop();
-	context._cmp(context.cl, 1);
-	if (context.flags.z())
+	si = pop();
+	bx = pop();
+	_cmp(cl, 1);
+	if (flags.z())
 		goto testcom;
-	context._cmp(context.cl, 2);
-	if (context.flags.z())
+	_cmp(cl, 2);
+	if (flags.z())
 		goto directory;
-	context._cmp(context.cl, 3);
-	if (context.flags.z())
+	_cmp(cl, 3);
+	if (flags.z())
 		goto accesscom;
-	context._cmp(context.cl, 4);
-	if (context.flags.z())
+	_cmp(cl, 4);
+	if (flags.z())
 		goto signoncom;
-	context._cmp(context.cl, 5);
-	if (context.flags.z())
+	_cmp(cl, 5);
+	if (flags.z())
 		goto keyscom;
 	goto quitcom;
 directory:
-	dircom(context);
-	context.al = 0;
+	dircom();
+	al = 0;
 	return;
 signoncom:
-	signon(context);
-	context.al = 0;
+	signon();
+	al = 0;
 	return;
 accesscom:
-	read(context);
-	context.al = 0;
+	read();
+	al = 0;
 	return;
 keyscom:
-	showkeys(context);
-	context.al = 0;
+	showkeys();
+	al = 0;
 	return;
 testcom:
-	context.al = 6;
-	monmessage(context);
-	context.al = 0;
+	al = 6;
+	monmessage();
+	al = 0;
 	return;
 quitcom:
-	context.al = 1;
+	al = 1;
 }
 
-void neterror(Context &context) {
-	STACK_CHECK(context);
-	context.al = 5;
-	monmessage(context);
-	scrollmonitor(context);
+void DreamGenContext::neterror() {
+	STACK_CHECK;
+	al = 5;
+	monmessage();
+	scrollmonitor();
 }
 
-void dircom(Context &context) {
-	STACK_CHECK(context);
-	context.cx = 30;
-	randomaccess(context);
-	parser(context);
-	context._cmp(context.es.byte(context.di+1), 0);
-	if (context.flags.z())
+void DreamGenContext::dircom() {
+	STACK_CHECK;
+	cx = 30;
+	randomaccess();
+	parser();
+	_cmp(es.byte(di+1), 0);
+	if (flags.z())
 		goto dirroot;
-	dirfile(context);
+	dirfile();
 	return;
 dirroot:
-	context.data.byte(kLogonum) = 0;
-	context.ds = context.cs;
-	context.si = 2956;
-	context._inc(context.si);
-	context.es = context.cs;
-	context.di = 2970;
-	context._inc(context.di);
-	context.cx = 12;
-	context._movsb(context.cx);
-	monitorlogo(context);
-	scrollmonitor(context);
-	context.al = 9;
-	monmessage(context);
-	context.es = context.data.word(kTextfile1);
-	searchforfiles(context);
-	context.es = context.data.word(kTextfile2);
-	searchforfiles(context);
-	context.es = context.data.word(kTextfile3);
-	searchforfiles(context);
-	scrollmonitor(context);
+	data.byte(kLogonum) = 0;
+	ds = cs;
+	si = 2956;
+	_inc(si);
+	es = cs;
+	di = 2970;
+	_inc(di);
+	cx = 12;
+	_movsb(cx);
+	monitorlogo();
+	scrollmonitor();
+	al = 9;
+	monmessage();
+	es = data.word(kTextfile1);
+	searchforfiles();
+	es = data.word(kTextfile2);
+	searchforfiles();
+	es = data.word(kTextfile3);
+	searchforfiles();
+	scrollmonitor();
 }
 
-void searchforfiles(Context &context) {
-	STACK_CHECK(context);
-	context.bx = (66*2);
+void DreamGenContext::searchforfiles() {
+	STACK_CHECK;
+	bx = (66*2);
 directloop1:
-	context.al = context.es.byte(context.bx);
-	context._inc(context.bx);
-	context._cmp(context.al, '*');
-	if (context.flags.z())
+	al = es.byte(bx);
+	_inc(bx);
+	_cmp(al, '*');
+	if (flags.z())
 		return /* (endofdir) */;
-	context._cmp(context.al, 34);
-	if (!context.flags.z())
+	_cmp(al, 34);
+	if (!flags.z())
 		goto directloop1;
-	monprint(context);
+	monprint();
 	goto directloop1;
 }
 
-void signon(Context &context) {
-	STACK_CHECK(context);
-	parser(context);
-	context._inc(context.di);
-	context.ds = context.cs;
-	context.si = 2836;
-	context.cx = 4;
+void DreamGenContext::signon() {
+	STACK_CHECK;
+	parser();
+	_inc(di);
+	ds = cs;
+	si = 2836;
+	cx = 4;
 signonloop:
-	context.push(context.cx);
-	context.push(context.si);
-	context.push(context.di);
-	context._add(context.si, 14);
-	context.cx = 11;
+	push(cx);
+	push(si);
+	push(di);
+	_add(si, 14);
+	cx = 11;
 signonloop2:
-	context._lodsb();
-	context._cmp(context.al, 32);
-	if (context.flags.z())
+	_lodsb();
+	_cmp(al, 32);
+	if (flags.z())
 		goto foundsign;
-	makecaps(context);
-	context.ah = context.es.byte(context.di);
-	context._inc(context.di);
-	context._cmp(context.al, context.ah);
-	if (!context.flags.z())
+	makecaps();
+	ah = es.byte(di);
+	_inc(di);
+	_cmp(al, ah);
+	if (!flags.z())
 		goto nomatch;
-	if (--context.cx)
+	if (--cx)
 		goto signonloop2;
 nomatch:
-	context.di = context.pop();
-	context.si = context.pop();
-	context.cx = context.pop();
-	context._add(context.si, 26);
-	if (--context.cx)
+	di = pop();
+	si = pop();
+	cx = pop();
+	_add(si, 26);
+	if (--cx)
 		goto signonloop;
-	context.al = 13;
-	monmessage(context);
+	al = 13;
+	monmessage();
 	return;
 foundsign:
-	context.di = context.pop();
-	context.si = context.pop();
-	context.cx = context.pop();
-	context.bx = context.si;
-	context.es = context.ds;
-	context._cmp(context.es.byte(context.bx), 0);
-	if (context.flags.z())
+	di = pop();
+	si = pop();
+	cx = pop();
+	bx = si;
+	es = ds;
+	_cmp(es.byte(bx), 0);
+	if (flags.z())
 		goto notyetassigned;
-	context.al = 17;
-	monmessage(context);
+	al = 17;
+	monmessage();
 	return;
 notyetassigned:
-	context.push(context.es);
-	context.push(context.bx);
-	scrollmonitor(context);
-	context.al = 15;
-	monmessage(context);
-	context.di = context.data.word(kMonadx);
-	context.bx = context.data.word(kMonady);
-	context.push(context.di);
-	context.push(context.bx);
-	input(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.data.word(kMonadx) = context.di;
-	context.data.word(kMonady) = context.bx;
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.push(context.es);
-	context.push(context.bx);
-	context._add(context.bx, 2);
-	context.ds = context.cs;
-	context.si = 8045;
+	push(es);
+	push(bx);
+	scrollmonitor();
+	al = 15;
+	monmessage();
+	di = data.word(kMonadx);
+	bx = data.word(kMonady);
+	push(di);
+	push(bx);
+	input();
+	bx = pop();
+	di = pop();
+	data.word(kMonadx) = di;
+	data.word(kMonady) = bx;
+	bx = pop();
+	es = pop();
+	push(es);
+	push(bx);
+	_add(bx, 2);
+	ds = cs;
+	si = 8045;
 checkpass:
-	context._lodsw();
-	context.ah = context.es.byte(context.bx);
-	context._inc(context.bx);
-	context._cmp(context.ah, 32);
-	if (context.flags.z())
+	_lodsw();
+	ah = es.byte(bx);
+	_inc(bx);
+	_cmp(ah, 32);
+	if (flags.z())
 		goto passpassed;
-	context._cmp(context.al, context.ah);
-	if (context.flags.z())
+	_cmp(al, ah);
+	if (flags.z())
 		goto checkpass;
-	context.bx = context.pop();
-	context.es = context.pop();
-	scrollmonitor(context);
-	context.al = 16;
-	monmessage(context);
+	bx = pop();
+	es = pop();
+	scrollmonitor();
+	al = 16;
+	monmessage();
 	return;
 passpassed:
-	context.al = 14;
-	monmessage(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.push(context.es);
-	context.push(context.bx);
-	context._add(context.bx, 14);
-	monprint(context);
-	scrollmonitor(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.es.byte(context.bx) = 1;
+	al = 14;
+	monmessage();
+	bx = pop();
+	es = pop();
+	push(es);
+	push(bx);
+	_add(bx, 14);
+	monprint();
+	scrollmonitor();
+	bx = pop();
+	es = pop();
+	es.byte(bx) = 1;
 }
 
-void showkeys(Context &context) {
-	STACK_CHECK(context);
-	context.cx = 10;
-	randomaccess(context);
-	scrollmonitor(context);
-	context.al = 18;
-	monmessage(context);
-	context.es = context.cs;
-	context.bx = 2836;
-	context.cx = 4;
+void DreamGenContext::showkeys() {
+	STACK_CHECK;
+	cx = 10;
+	randomaccess();
+	scrollmonitor();
+	al = 18;
+	monmessage();
+	es = cs;
+	bx = 2836;
+	cx = 4;
 keysloop:
-	context.push(context.cx);
-	context.push(context.bx);
-	context._cmp(context.es.byte(context.bx), 0);
-	if (context.flags.z())
+	push(cx);
+	push(bx);
+	_cmp(es.byte(bx), 0);
+	if (flags.z())
 		goto notheld;
-	context._add(context.bx, 14);
-	monprint(context);
+	_add(bx, 14);
+	monprint();
 notheld:
-	context.bx = context.pop();
-	context.cx = context.pop();
-	context._add(context.bx, 26);
-	if (--context.cx)
+	bx = pop();
+	cx = pop();
+	_add(bx, 26);
+	if (--cx)
 		goto keysloop;
-	scrollmonitor(context);
+	scrollmonitor();
 }
 
-void read(Context &context) {
-	STACK_CHECK(context);
-	context.cx = 40;
-	randomaccess(context);
-	parser(context);
-	context._cmp(context.es.byte(context.di+1), 0);
-	if (!context.flags.z())
+void DreamGenContext::read() {
+	STACK_CHECK;
+	cx = 40;
+	randomaccess();
+	parser();
+	_cmp(es.byte(di+1), 0);
+	if (!flags.z())
 		goto okcom;
-	neterror(context);
+	neterror();
 	return;
 okcom:
-	context.es = context.cs;
-	context.di = 2970;
-	context.ax = context.data.word(kTextfile1);
-	context.data.word(kMonsource) = context.ax;
-	context.ds = context.ax;
-	context.si = (66*2);
-	searchforstring(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	es = cs;
+	di = 2970;
+	ax = data.word(kTextfile1);
+	data.word(kMonsource) = ax;
+	ds = ax;
+	si = (66*2);
+	searchforstring();
+	_cmp(al, 0);
+	if (flags.z())
 		goto foundfile2;
-	context.ax = context.data.word(kTextfile2);
-	context.data.word(kMonsource) = context.ax;
-	context.ds = context.ax;
-	context.si = (66*2);
-	searchforstring(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	ax = data.word(kTextfile2);
+	data.word(kMonsource) = ax;
+	ds = ax;
+	si = (66*2);
+	searchforstring();
+	_cmp(al, 0);
+	if (flags.z())
 		goto foundfile2;
-	context.ax = context.data.word(kTextfile3);
-	context.data.word(kMonsource) = context.ax;
-	context.ds = context.ax;
-	context.si = (66*2);
-	searchforstring(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	ax = data.word(kTextfile3);
+	data.word(kMonsource) = ax;
+	ds = ax;
+	si = (66*2);
+	searchforstring();
+	_cmp(al, 0);
+	if (flags.z())
 		goto foundfile2;
-	context.al = 7;
-	monmessage(context);
+	al = 7;
+	monmessage();
 	return;
 foundfile2:
-	getkeyandlogo(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	getkeyandlogo();
+	_cmp(al, 0);
+	if (flags.z())
 		goto keyok1;
 	return;
 keyok1:
-	context.es = context.cs;
-	context.di = 2942;
-	context.ds = context.data.word(kMonsource);
-	searchforstring(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	es = cs;
+	di = 2942;
+	ds = data.word(kMonsource);
+	searchforstring();
+	_cmp(al, 0);
+	if (flags.z())
 		goto findtopictext;
-	context.al = context.data.byte(kOldlogonum);
-	context.data.byte(kLogonum) = context.al;
-	context.al = 11;
-	monmessage(context);
+	al = data.byte(kOldlogonum);
+	data.byte(kLogonum) = al;
+	al = 11;
+	monmessage();
 	return;
 findtopictext:
-	context._inc(context.bx);
-	context.push(context.es);
-	context.push(context.bx);
-	monitorlogo(context);
-	scrollmonitor(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	_inc(bx);
+	push(es);
+	push(bx);
+	monitorlogo();
+	scrollmonitor();
+	bx = pop();
+	es = pop();
 moretopic:
-	monprint(context);
-	context.al = context.es.byte(context.bx);
-	context._cmp(context.al, 34);
-	if (context.flags.z())
+	monprint();
+	al = es.byte(bx);
+	_cmp(al, 34);
+	if (flags.z())
 		goto endoftopic;
-	context._cmp(context.al, '=');
-	if (context.flags.z())
+	_cmp(al, '=');
+	if (flags.z())
 		goto endoftopic;
-	context._cmp(context.al, '*');
-	if (context.flags.z())
+	_cmp(al, '*');
+	if (flags.z())
 		goto endoftopic;
-	context.push(context.es);
-	context.push(context.bx);
-	processtrigger(context);
-	context.cx = 24;
-	randomaccess(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	push(es);
+	push(bx);
+	processtrigger();
+	cx = 24;
+	randomaccess();
+	bx = pop();
+	es = pop();
 	goto moretopic;
 endoftopic:
-	scrollmonitor(context);
+	scrollmonitor();
 }
 
-void dirfile(Context &context) {
-	STACK_CHECK(context);
-	context.al = 34;
-	context.es.byte(context.di) = context.al;
-	context.push(context.es);
-	context.push(context.di);
-	context.ds = context.data.word(kTextfile1);
-	context.si = (66*2);
-	searchforstring(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+void DreamGenContext::dirfile() {
+	STACK_CHECK;
+	al = 34;
+	es.byte(di) = al;
+	push(es);
+	push(di);
+	ds = data.word(kTextfile1);
+	si = (66*2);
+	searchforstring();
+	_cmp(al, 0);
+	if (flags.z())
 		goto foundfile;
-	context.di = context.pop();
-	context.es = context.pop();
-	context.push(context.es);
-	context.push(context.di);
-	context.ds = context.data.word(kTextfile2);
-	context.si = (66*2);
-	searchforstring(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	di = pop();
+	es = pop();
+	push(es);
+	push(di);
+	ds = data.word(kTextfile2);
+	si = (66*2);
+	searchforstring();
+	_cmp(al, 0);
+	if (flags.z())
 		goto foundfile;
-	context.di = context.pop();
-	context.es = context.pop();
-	context.push(context.es);
-	context.push(context.di);
-	context.ds = context.data.word(kTextfile3);
-	context.si = (66*2);
-	searchforstring(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	di = pop();
+	es = pop();
+	push(es);
+	push(di);
+	ds = data.word(kTextfile3);
+	si = (66*2);
+	searchforstring();
+	_cmp(al, 0);
+	if (flags.z())
 		goto foundfile;
-	context.di = context.pop();
-	context.es = context.pop();
-	context.al = 7;
-	monmessage(context);
+	di = pop();
+	es = pop();
+	al = 7;
+	monmessage();
 	return;
 foundfile:
-	context.ax = context.pop();
-	context.ax = context.pop();
-	getkeyandlogo(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	ax = pop();
+	ax = pop();
+	getkeyandlogo();
+	_cmp(al, 0);
+	if (flags.z())
 		goto keyok2;
 	return;
 keyok2:
-	context.push(context.es);
-	context.push(context.bx);
-	context.ds = context.cs;
-	context.si = 2942+1;
-	context.es = context.cs;
-	context.di = 2970+1;
-	context.cx = 12;
-	context._movsb(context.cx);
-	monitorlogo(context);
-	scrollmonitor(context);
-	context.al = 10;
-	monmessage(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	push(es);
+	push(bx);
+	ds = cs;
+	si = 2942+1;
+	es = cs;
+	di = 2970+1;
+	cx = 12;
+	_movsb(cx);
+	monitorlogo();
+	scrollmonitor();
+	al = 10;
+	monmessage();
+	bx = pop();
+	es = pop();
 directloop2:
-	context.al = context.es.byte(context.bx);
-	context._inc(context.bx);
-	context._cmp(context.al, 34);
-	if (context.flags.z())
+	al = es.byte(bx);
+	_inc(bx);
+	_cmp(al, 34);
+	if (flags.z())
 		goto endofdir2;
-	context._cmp(context.al, '*');
-	if (context.flags.z())
+	_cmp(al, '*');
+	if (flags.z())
 		goto endofdir2;
-	context._cmp(context.al, '=');
-	if (!context.flags.z())
+	_cmp(al, '=');
+	if (!flags.z())
 		goto directloop2;
-	monprint(context);
+	monprint();
 	goto directloop2;
 endofdir2:
-	scrollmonitor(context);
+	scrollmonitor();
 }
 
-void getkeyandlogo(Context &context) {
-	STACK_CHECK(context);
-	context._inc(context.bx);
-	context.al = context.es.byte(context.bx);
-	context._sub(context.al, 48);
-	context.data.byte(kNewlogonum) = context.al;
-	context._add(context.bx, 2);
-	context.al = context.es.byte(context.bx);
-	context._sub(context.al, 48);
-	context.data.byte(kKeynum) = context.al;
-	context._inc(context.bx);
-	context.push(context.es);
-	context.push(context.bx);
-	context.al = context.data.byte(kKeynum);
-	context.ah = 0;
-	context.cx = 26;
-	context._mul(context.cx);
-	context.es = context.cs;
-	context.bx = 2836;
-	context._add(context.bx, context.ax);
-	context.al = context.es.byte(context.bx);
-	context._cmp(context.al, 1);
-	if (context.flags.z())
+void DreamGenContext::getkeyandlogo() {
+	STACK_CHECK;
+	_inc(bx);
+	al = es.byte(bx);
+	_sub(al, 48);
+	data.byte(kNewlogonum) = al;
+	_add(bx, 2);
+	al = es.byte(bx);
+	_sub(al, 48);
+	data.byte(kKeynum) = al;
+	_inc(bx);
+	push(es);
+	push(bx);
+	al = data.byte(kKeynum);
+	ah = 0;
+	cx = 26;
+	_mul(cx);
+	es = cs;
+	bx = 2836;
+	_add(bx, ax);
+	al = es.byte(bx);
+	_cmp(al, 1);
+	if (flags.z())
 		goto keyok;
-	context.push(context.bx);
-	context.push(context.es);
-	context.al = 12;
-	monmessage(context);
-	context.es = context.pop();
-	context.bx = context.pop();
-	context._add(context.bx, 14);
-	monprint(context);
-	scrollmonitor(context);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.al = 1;
+	push(bx);
+	push(es);
+	al = 12;
+	monmessage();
+	es = pop();
+	bx = pop();
+	_add(bx, 14);
+	monprint();
+	scrollmonitor();
+	bx = pop();
+	es = pop();
+	al = 1;
 	return;
 keyok:
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.al = context.data.byte(kNewlogonum);
-	context.data.byte(kLogonum) = context.al;
-	context.al = 0;
+	bx = pop();
+	es = pop();
+	al = data.byte(kNewlogonum);
+	data.byte(kLogonum) = al;
+	al = 0;
 }
 
-void searchforstring(Context &context) {
-	STACK_CHECK(context);
-	context.dl = context.es.byte(context.di);
-	context.cx = context.di;
+void DreamGenContext::searchforstring() {
+	STACK_CHECK;
+	dl = es.byte(di);
+	cx = di;
 restartlook:
-	context.di = context.cx;
-	context.bx = context.si;
-	context.dh = 0;
+	di = cx;
+	bx = si;
+	dh = 0;
 keeplooking:
-	context._lodsb();
-	makecaps(context);
-	context._cmp(context.al, '*');
-	if (context.flags.z())
+	_lodsb();
+	makecaps();
+	_cmp(al, '*');
+	if (flags.z())
 		goto notfound;
-	context._cmp(context.dl, '=');
-	if (!context.flags.z())
+	_cmp(dl, '=');
+	if (!flags.z())
 		goto nofindingtopic;
-	context._cmp(context.al, 34);
-	if (context.flags.z())
+	_cmp(al, 34);
+	if (flags.z())
 		goto notfound;
 nofindingtopic:
-	context.ah = context.es.byte(context.di);
-	context._cmp(context.al, context.dl);
-	if (!context.flags.z())
+	ah = es.byte(di);
+	_cmp(al, dl);
+	if (!flags.z())
 		goto notbracket;
-	context._inc(context.dh);
-	context._cmp(context.dh, 2);
-	if (context.flags.z())
+	_inc(dh);
+	_cmp(dh, 2);
+	if (flags.z())
 		goto complete;
 notbracket:
-	context._cmp(context.al, context.ah);
-	if (!context.flags.z())
+	_cmp(al, ah);
+	if (!flags.z())
 		goto restartlook;
-	context._inc(context.di);
+	_inc(di);
 	goto keeplooking;
 complete:
-	context.es = context.ds;
-	context.al = 0;
-	context.bx = context.si;
+	es = ds;
+	al = 0;
+	bx = si;
 	return;
 notfound:
-	context.al = 1;
+	al = 1;
 }
 
-void parser(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.cs;
-	context.di = 2942;
-	context.cx = 13;
-	context.al = 0;
-	context._stosb(context.cx);
-	context.di = 2942;
-	context.al = '=';
-	context._stosb();
-	context.ds = context.cs;
-	context.si = 8045;
+void DreamGenContext::parser() {
+	STACK_CHECK;
+	es = cs;
+	di = 2942;
+	cx = 13;
+	al = 0;
+	_stosb(cx);
+	di = 2942;
+	al = '=';
+	_stosb();
+	ds = cs;
+	si = 8045;
 notspace1:
-	context._lodsw();
-	context._cmp(context.al, 32);
-	if (context.flags.z())
+	_lodsw();
+	_cmp(al, 32);
+	if (flags.z())
 		goto stillspace1;
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	_cmp(al, 0);
+	if (!flags.z())
 		goto notspace1;
 	goto finishpars;
 stillspace1:
-	context._lodsw();
-	context._cmp(context.al, 32);
-	if (context.flags.z())
+	_lodsw();
+	_cmp(al, 32);
+	if (flags.z())
 		goto stillspace1;
 copyin1:
-	context._stosb();
-	context._lodsw();
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_stosb();
+	_lodsw();
+	_cmp(al, 0);
+	if (flags.z())
 		goto finishpars;
-	context._cmp(context.al, 32);
-	if (!context.flags.z())
+	_cmp(al, 32);
+	if (!flags.z())
 		goto copyin1;
 finishpars:
-	context.di = 2942;
+	di = 2942;
 }
 
-void scrollmonitor(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.push(context.bx);
-	context.push(context.cx);
-	context.push(context.dx);
-	context.push(context.di);
-	context.push(context.si);
-	context.push(context.es);
-	context.push(context.ds);
-	printlogo(context);
-	context.di = context.data.word(kMonadx);
-	context.bx = context.data.word(kMonady);
-	printundermon(context);
-	context.ax = context.data.word(kMonady);
-	worktoscreen(context);
-	context.al = 25;
-	playchannel1(context);
-	context.ds = context.pop();
-	context.es = context.pop();
-	context.si = context.pop();
-	context.di = context.pop();
-	context.dx = context.pop();
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.ax = context.pop();
+void DreamGenContext::scrollmonitor() {
+	STACK_CHECK;
+	push(ax);
+	push(bx);
+	push(cx);
+	push(dx);
+	push(di);
+	push(si);
+	push(es);
+	push(ds);
+	printlogo();
+	di = data.word(kMonadx);
+	bx = data.word(kMonady);
+	printundermon();
+	ax = data.word(kMonady);
+	worktoscreen();
+	al = 25;
+	playchannel1();
+	ds = pop();
+	es = pop();
+	si = pop();
+	di = pop();
+	dx = pop();
+	cx = pop();
+	bx = pop();
+	ax = pop();
 }
 
-void lockmon(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLasthardkey), 57);
-	if (!context.flags.z())
+void DreamGenContext::lockmon() {
+	STACK_CHECK;
+	_cmp(data.byte(kLasthardkey), 57);
+	if (!flags.z())
 		return /* (notlock) */;
-	locklighton(context);
+	locklighton();
 lockloop:
-	context._cmp(context.data.byte(kLasthardkey), 57);
-	if (context.flags.z())
+	_cmp(data.byte(kLasthardkey), 57);
+	if (flags.z())
 		goto lockloop;
-	locklightoff(context);
+	locklightoff();
 }
 
-void monitorlogo(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kLogonum);
-	context._cmp(context.al, context.data.byte(kOldlogonum));
-	if (context.flags.z())
+void DreamGenContext::monitorlogo() {
+	STACK_CHECK;
+	al = data.byte(kLogonum);
+	_cmp(al, data.byte(kOldlogonum));
+	if (flags.z())
 		goto notnewlogo;
-	context.data.byte(kOldlogonum) = context.al;
-	printlogo(context);
-	printundermon(context);
-	worktoscreen(context);
-	printlogo(context);
-	printlogo(context);
-	context.al = 26;
-	playchannel1(context);
-	context.cx = 20;
-	randomaccess(context);
+	data.byte(kOldlogonum) = al;
+	printlogo();
+	printundermon();
+	worktoscreen();
+	printlogo();
+	printlogo();
+	al = 26;
+	playchannel1();
+	cx = 20;
+	randomaccess();
 	return;
 notnewlogo:
-	printlogo(context);
+	printlogo();
 }
 
-void printlogo(Context &context) {
-	STACK_CHECK(context);
-	context.di = 56;
-	context.bx = 32;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 0;
-	context.ah = 0;
-	showframe(context);
-	showcurrentfile(context);
+void DreamGenContext::printlogo() {
+	STACK_CHECK;
+	di = 56;
+	bx = 32;
+	ds = data.word(kTempgraphics);
+	al = 0;
+	ah = 0;
+	showframe();
+	showcurrentfile();
 }
 
-void showcurrentfile(Context &context) {
-	STACK_CHECK(context);
-	context.di = 178;
-	context.bx = 37;
-	context.si = 2970+1;
+void DreamGenContext::showcurrentfile() {
+	STACK_CHECK;
+	di = 178;
+	bx = 37;
+	si = 2970+1;
 curfileloop:
-	context.al = context.cs.byte(context.si);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	al = cs.byte(si);
+	_cmp(al, 0);
+	if (flags.z())
 		return /* (finishfile) */;
-	context._inc(context.si);
-	context.push(context.si);
-	context.ds = context.data.word(kTempcharset);
-	context.ah = 0;
-	printchar(context);
-	context.si = context.pop();
+	_inc(si);
+	push(si);
+	ds = data.word(kTempcharset);
+	ah = 0;
+	printchar();
+	si = pop();
 	goto curfileloop;
 }
 
-void monmessage(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kTextfile1);
-	context.bx = (66*2);
-	context.cl = context.al;
-	context.ch = 0;
+void DreamGenContext::monmessage() {
+	STACK_CHECK;
+	es = data.word(kTextfile1);
+	bx = (66*2);
+	cl = al;
+	ch = 0;
 monmessageloop:
-	context.al = context.es.byte(context.bx);
-	context._inc(context.bx);
-	context._cmp(context.al, '+');
-	if (!context.flags.z())
+	al = es.byte(bx);
+	_inc(bx);
+	_cmp(al, '+');
+	if (!flags.z())
 		goto monmessageloop;
-	if (--context.cx)
+	if (--cx)
 		goto monmessageloop;
-	monprint(context);
+	monprint();
 }
 
-void processtrigger(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLasttrigger), '1');
-	if (!context.flags.z())
+void DreamGenContext::processtrigger() {
+	STACK_CHECK;
+	_cmp(data.byte(kLasttrigger), '1');
+	if (!flags.z())
 		goto notfirsttrigger;
-	context.al = 8;
-	setlocation(context);
-	context.al = 45;
-	triggermessage(context);
+	al = 8;
+	setlocation();
+	al = 45;
+	triggermessage();
 	return;
 notfirsttrigger:
-	context._cmp(context.data.byte(kLasttrigger), '2');
-	if (!context.flags.z())
+	_cmp(data.byte(kLasttrigger), '2');
+	if (!flags.z())
 		goto notsecondtrigger;
-	context.al = 9;
-	setlocation(context);
-	context.al = 55;
-	triggermessage(context);
+	al = 9;
+	setlocation();
+	al = 55;
+	triggermessage();
 	return;
 notsecondtrigger:
-	context._cmp(context.data.byte(kLasttrigger), '3');
-	if (!context.flags.z())
+	_cmp(data.byte(kLasttrigger), '3');
+	if (!flags.z())
 		return /* (notthirdtrigger) */;
-	context.al = 2;
-	setlocation(context);
-	context.al = 59;
-	triggermessage(context);
+	al = 2;
+	setlocation();
+	al = 59;
+	triggermessage();
 }
 
-void triggermessage(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.di = 174;
-	context.bx = 153;
-	context.cl = 200;
-	context.ch = 63;
-	context.ds = context.data.word(kMapstore);
-	context.si = 0;
-	multiget(context);
-	context.ax = context.pop();
-	findpuztext(context);
-	context.di = 174;
-	context.bx = 156;
-	context.dl = 141;
-	context.ah = 16;
-	printdirect(context);
-	context.cx = 140;
-	hangon(context);
-	worktoscreen(context);
-	context.cx = 340;
-	hangon(context);
-	context.di = 174;
-	context.bx = 153;
-	context.cl = 200;
-	context.ch = 63;
-	context.ds = context.data.word(kMapstore);
-	context.si = 0;
-	multiput(context);
-	worktoscreen(context);
-	context.data.byte(kLasttrigger) = 0;
+void DreamGenContext::triggermessage() {
+	STACK_CHECK;
+	push(ax);
+	di = 174;
+	bx = 153;
+	cl = 200;
+	ch = 63;
+	ds = data.word(kMapstore);
+	si = 0;
+	multiget();
+	ax = pop();
+	findpuztext();
+	di = 174;
+	bx = 156;
+	dl = 141;
+	ah = 16;
+	printdirect();
+	cx = 140;
+	hangon();
+	worktoscreen();
+	cx = 340;
+	hangon();
+	di = 174;
+	bx = 153;
+	cl = 200;
+	ch = 63;
+	ds = data.word(kMapstore);
+	si = 0;
+	multiput();
+	worktoscreen();
+	data.byte(kLasttrigger) = 0;
 }
 
-void printcurs(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.si);
-	context.push(context.di);
-	context.push(context.ds);
-	context.push(context.dx);
-	context.push(context.bx);
-	context.push(context.es);
-	context.di = context.data.word(kCurslocx);
-	context.bx = context.data.word(kCurslocy);
-	context.cl = 6;
-	context.ch = 8;
-	context.ds = context.data.word(kBuffers);
-	context.si = (0);
-	context.push(context.di);
-	context.push(context.bx);
-	multiget(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.push(context.bx);
-	context.push(context.di);
-	context._inc(context.data.word(kMaintimer));
-	context.ax = context.data.word(kMaintimer);
-	context._and(context.al, 16);
-	if (!context.flags.z())
+void DreamGenContext::printcurs() {
+	STACK_CHECK;
+	push(si);
+	push(di);
+	push(ds);
+	push(dx);
+	push(bx);
+	push(es);
+	di = data.word(kCurslocx);
+	bx = data.word(kCurslocy);
+	cl = 6;
+	ch = 8;
+	ds = data.word(kBuffers);
+	si = (0);
+	push(di);
+	push(bx);
+	multiget();
+	bx = pop();
+	di = pop();
+	push(bx);
+	push(di);
+	_inc(data.word(kMaintimer));
+	ax = data.word(kMaintimer);
+	_and(al, 16);
+	if (!flags.z())
 		goto flashcurs;
-	context.al = '/';
-	context._sub(context.al, 32);
-	context.ah = 0;
-	context.ds = context.data.word(kTempcharset);
-	showframe(context);
+	al = '/';
+	_sub(al, 32);
+	ah = 0;
+	ds = data.word(kTempcharset);
+	showframe();
 flashcurs:
-	context.di = context.pop();
-	context.bx = context.pop();
-	context._sub(context.di, 6);
-	context.cl = 12;
-	context.ch = 8;
-	multidump(context);
-	context.es = context.pop();
-	context.bx = context.pop();
-	context.dx = context.pop();
-	context.ds = context.pop();
-	context.di = context.pop();
-	context.si = context.pop();
+	di = pop();
+	bx = pop();
+	_sub(di, 6);
+	cl = 12;
+	ch = 8;
+	multidump();
+	es = pop();
+	bx = pop();
+	dx = pop();
+	ds = pop();
+	di = pop();
+	si = pop();
 }
 
-void delcurs(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.di);
-	context.push(context.ds);
-	context.push(context.dx);
-	context.push(context.si);
-	context.di = context.data.word(kCurslocx);
-	context.bx = context.data.word(kCurslocy);
-	context.cl = 6;
-	context.ch = 8;
-	context.push(context.di);
-	context.push(context.bx);
-	context.push(context.cx);
-	context.ds = context.data.word(kBuffers);
-	context.si = (0);
-	multiput(context);
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.di = context.pop();
-	multidump(context);
-	context.si = context.pop();
-	context.dx = context.pop();
-	context.ds = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::delcurs() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	push(di);
+	push(ds);
+	push(dx);
+	push(si);
+	di = data.word(kCurslocx);
+	bx = data.word(kCurslocy);
+	cl = 6;
+	ch = 8;
+	push(di);
+	push(bx);
+	push(cx);
+	ds = data.word(kBuffers);
+	si = (0);
+	multiput();
+	cx = pop();
+	bx = pop();
+	di = pop();
+	multidump();
+	si = pop();
+	dx = pop();
+	ds = pop();
+	di = pop();
+	bx = pop();
+	es = pop();
 }
 
-void useobject(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kWithobject) = 255;
-	context._cmp(context.data.byte(kCommandtype), 229);
-	if (context.flags.z())
+void DreamGenContext::useobject() {
+	STACK_CHECK;
+	data.byte(kWithobject) = 255;
+	_cmp(data.byte(kCommandtype), 229);
+	if (flags.z())
 		goto alreadyuse;
-	context.data.byte(kCommandtype) = 229;
-	context.bl = context.data.byte(kCommand);
-	context.bh = context.data.byte(kObjecttype);
-	context.al = 51;
-	commandwithob(context);
+	data.byte(kCommandtype) = 229;
+	bl = data.byte(kCommand);
+	bh = data.byte(kObjecttype);
+	al = 51;
+	commandwithob();
 alreadyuse:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (nouse) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto douse;
 	return;
 douse:
-	useroutine(context);
+	useroutine();
 }
 
-void useroutine(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kReallocation), 50);
-	if (context.flags.c())
+void DreamGenContext::useroutine() {
+	STACK_CHECK;
+	_cmp(data.byte(kReallocation), 50);
+	if (flags.c())
 		goto nodream7;
-	context._cmp(context.data.byte(kPointerpower), 0);
-	if (!context.flags.z())
+	_cmp(data.byte(kPointerpower), 0);
+	if (!flags.z())
 		goto powerok;
 	return;
 powerok:
-	context.data.byte(kPointerpower) = 0;
+	data.byte(kPointerpower) = 0;
 nodream7:
-	getanyad(context);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.si = 2984;
+	getanyad();
+	dx = data;
+	ds = dx;
+	si = 2984;
 checkuselist:
-	context.push(context.si);
-	context._lodsb();
-	context._sub(context.al, 'A');
-	context._cmp(context.al, context.es.byte(context.bx+12));
-	if (!context.flags.z())
+	push(si);
+	_lodsb();
+	_sub(al, 'A');
+	_cmp(al, es.byte(bx+12));
+	if (!flags.z())
 		goto failed;
-	context._lodsb();
-	context._sub(context.al, 'A');
-	context._cmp(context.al, context.es.byte(context.bx+13));
-	if (!context.flags.z())
+	_lodsb();
+	_sub(al, 'A');
+	_cmp(al, es.byte(bx+13));
+	if (!flags.z())
 		goto failed;
-	context._lodsb();
-	context._sub(context.al, 'A');
-	context._cmp(context.al, context.es.byte(context.bx+14));
-	if (!context.flags.z())
+	_lodsb();
+	_sub(al, 'A');
+	_cmp(al, es.byte(bx+14));
+	if (!flags.z())
 		goto failed;
-	context._lodsb();
-	context._sub(context.al, 'A');
-	context._cmp(context.al, context.es.byte(context.bx+15));
-	if (!context.flags.z())
+	_lodsb();
+	_sub(al, 'A');
+	_cmp(al, es.byte(bx+15));
+	if (!flags.z())
 		goto failed;
-	context._lodsw();
-	context.si = context.pop();
-	__dispatch_call(context, context.ax);
+	_lodsw();
+	si = pop();
+	__dispatch_call(ax);
 	return;
 failed:
-	context.si = context.pop();
-	context._add(context.si, 6);
-	context._cmp(context.ds.byte(context.si), 140);
-	if (!context.flags.z())
+	si = pop();
+	_add(si, 6);
+	_cmp(ds.byte(si), 140);
+	if (!flags.z())
 		goto checkuselist;
-	delpointer(context);
-	getobtextstart(context);
-	findnextcolon(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	delpointer();
+	getobtextstart();
+	findnextcolon();
+	_cmp(al, 0);
+	if (flags.z())
 		goto cantuse2;
-	findnextcolon(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	findnextcolon();
+	_cmp(al, 0);
+	if (flags.z())
 		goto cantuse2;
-	context.al = context.es.byte(context.si);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	al = es.byte(si);
+	_cmp(al, 0);
+	if (flags.z())
 		goto cantuse2;
-	usetext(context);
-	context.cx = 400;
-	hangonp(context);
-	putbackobstuff(context);
+	usetext();
+	cx = 400;
+	hangonp();
+	putbackobstuff();
 	return;
 cantuse2:
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	obicons(context);
-	context.di = 33;
-	context.bx = 100;
-	context.al = 63;
-	context.dl = 241;
-	printmessage(context);
-	worktoscreenm(context);
-	context.cx = 50;
-	hangonp(context);
-	putbackobstuff(context);
-	context.data.byte(kCommandtype) = 255;
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	obicons();
+	di = 33;
+	bx = 100;
+	al = 63;
+	dl = 241;
+	printmessage();
+	worktoscreenm();
+	cx = 50;
+	hangonp();
+	putbackobstuff();
+	data.byte(kCommandtype) = 255;
 }
 
-void wheelsound(Context &context) {
-	STACK_CHECK(context);
-	context.al = 17;
-	playchannel1(context);
-	showfirstuse(context);
-	putbackobstuff(context);
+void DreamGenContext::wheelsound() {
+	STACK_CHECK;
+	al = 17;
+	playchannel1();
+	showfirstuse();
+	putbackobstuff();
 }
 
-void runtap(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::runtap() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto tapwith;
-	withwhat(context);
+	withwhat();
 	return;
 tapwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'C';
-	context.ch = 'U';
-	context.dl = 'P';
-	context.dh = 'E';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'C';
+	ch = 'U';
+	dl = 'P';
+	dh = 'E';
+	compare();
+	if (flags.z())
 		goto fillcupfromtap;
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'C';
-	context.ch = 'U';
-	context.dl = 'P';
-	context.dh = 'F';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'C';
+	ch = 'U';
+	dl = 'P';
+	dh = 'F';
+	compare();
+	if (flags.z())
 		goto cupfromtapfull;
-	context.cx = 300;
-	context.al = 56;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 56;
+	showpuztext();
+	putbackobstuff();
 	return;
 fillcupfromtap:
-	context.al = context.data.byte(kWithobject);
-	getexad(context);
-	context.es.byte(context.bx+15) = 'F'-'A';
-	context.al = 8;
-	playchannel1(context);
-	context.cx = 300;
-	context.al = 57;
-	showpuztext(context);
-	putbackobstuff(context);
+	al = data.byte(kWithobject);
+	getexad();
+	es.byte(bx+15) = 'F'-'A';
+	al = 8;
+	playchannel1();
+	cx = 300;
+	al = 57;
+	showpuztext();
+	putbackobstuff();
 	return;
 cupfromtapfull:
-	context.cx = 300;
-	context.al = 58;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 58;
+	showpuztext();
+	putbackobstuff();
 }
 
-void playguitar(Context &context) {
-	STACK_CHECK(context);
-	context.al = 14;
-	playchannel1(context);
-	showfirstuse(context);
-	putbackobstuff(context);
+void DreamGenContext::playguitar() {
+	STACK_CHECK;
+	al = 14;
+	playchannel1();
+	showfirstuse();
+	putbackobstuff();
 }
 
-void hotelcontrol(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kReallocation), 21);
-	if (!context.flags.z())
+void DreamGenContext::hotelcontrol() {
+	STACK_CHECK;
+	_cmp(data.byte(kReallocation), 21);
+	if (!flags.z())
 		goto notrightcont;
-	context._cmp(context.data.byte(kMapx), 33);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 33);
+	if (!flags.z())
 		goto notrightcont;
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 	return;
 notrightcont:
-	showseconduse(context);
-	putbackobstuff(context);
+	showseconduse();
+	putbackobstuff();
 }
 
-void hotelbell(Context &context) {
-	STACK_CHECK(context);
-	context.al = 12;
-	playchannel1(context);
-	showfirstuse(context);
-	putbackobstuff(context);
+void DreamGenContext::hotelbell() {
+	STACK_CHECK;
+	al = 12;
+	playchannel1();
+	showfirstuse();
+	putbackobstuff();
 }
 
-void opentomb(Context &context) {
-	STACK_CHECK(context);
-	context._inc(context.data.byte(kProgresspoints));
-	showfirstuse(context);
-	context.data.word(kWatchingtime) = 35*2;
-	context.data.word(kReeltowatch) = 1;
-	context.data.word(kEndwatchreel) = 33;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::opentomb() {
+	STACK_CHECK;
+	_inc(data.byte(kProgresspoints));
+	showfirstuse();
+	data.word(kWatchingtime) = 35*2;
+	data.word(kReeltowatch) = 1;
+	data.word(kEndwatchreel) = 33;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void usetrainer(Context &context) {
-	STACK_CHECK(context);
-	getanyad(context);
-	context._cmp(context.es.byte(context.bx+2), 4);
-	if (!context.flags.z())
+void DreamGenContext::usetrainer() {
+	STACK_CHECK;
+	getanyad();
+	_cmp(es.byte(bx+2), 4);
+	if (!flags.z())
 		goto notheldtrainer;
-	context._inc(context.data.byte(kProgresspoints));
-	makeworn(context);
-	showseconduse(context);
-	putbackobstuff(context);
+	_inc(data.byte(kProgresspoints));
+	makeworn();
+	showseconduse();
+	putbackobstuff();
 	return;
 notheldtrainer:
-	nothelderror(context);
+	nothelderror();
 }
 
-void nothelderror(Context &context) {
-	STACK_CHECK(context);
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	obicons(context);
-	context.di = 64;
-	context.bx = 100;
-	context.al = 63;
-	context.ah = 1;
-	context.dl = 201;
-	printmessage2(context);
-	worktoscreenm(context);
-	context.cx = 50;
-	hangonp(context);
-	putbackobstuff(context);
+void DreamGenContext::nothelderror() {
+	STACK_CHECK;
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	obicons();
+	di = 64;
+	bx = 100;
+	al = 63;
+	ah = 1;
+	dl = 201;
+	printmessage2();
+	worktoscreenm();
+	cx = 50;
+	hangonp();
+	putbackobstuff();
 }
 
-void usepipe(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::usepipe() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto pipewith;
-	withwhat(context);
+	withwhat();
 	return;
 pipewith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'C';
-	context.ch = 'U';
-	context.dl = 'P';
-	context.dh = 'E';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'C';
+	ch = 'U';
+	dl = 'P';
+	dh = 'E';
+	compare();
+	if (flags.z())
 		goto fillcup;
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'C';
-	context.ch = 'U';
-	context.dl = 'P';
-	context.dh = 'F';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'C';
+	ch = 'U';
+	dl = 'P';
+	dh = 'F';
+	compare();
+	if (flags.z())
 		goto alreadyfull;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 fillcup:
-	context.cx = 300;
-	context.al = 36;
-	showpuztext(context);
-	putbackobstuff(context);
-	context.al = context.data.byte(kWithobject);
-	getexad(context);
-	context.es.byte(context.bx+15) = 'F'-'A';
+	cx = 300;
+	al = 36;
+	showpuztext();
+	putbackobstuff();
+	al = data.byte(kWithobject);
+	getexad();
+	es.byte(bx+15) = 'F'-'A';
 	return;
 alreadyfull:
-	context.cx = 300;
-	context.al = 35;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 35;
+	showpuztext();
+	putbackobstuff();
 }
 
-void usefullcart(Context &context) {
-	STACK_CHECK(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.al = 2;
-	context.ah = context.data.byte(kRoomnum);
-	context._add(context.ah, 6);
-	turnanypathon(context);
-	context.data.byte(kManspath) = 4;
-	context.data.byte(kFacing) = 4;
-	context.data.byte(kTurntoface) = 4;
-	context.data.byte(kFinaldest) = 4;
-	findxyfrompath(context);
-	context.data.byte(kResetmanxy) = 1;
-	showfirstuse(context);
-	context.data.word(kWatchingtime) = 72*2;
-	context.data.word(kReeltowatch) = 58;
-	context.data.word(kEndwatchreel) = 142;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::usefullcart() {
+	STACK_CHECK;
+	_inc(data.byte(kProgresspoints));
+	al = 2;
+	ah = data.byte(kRoomnum);
+	_add(ah, 6);
+	turnanypathon();
+	data.byte(kManspath) = 4;
+	data.byte(kFacing) = 4;
+	data.byte(kTurntoface) = 4;
+	data.byte(kFinaldest) = 4;
+	findxyfrompath();
+	data.byte(kResetmanxy) = 1;
+	showfirstuse();
+	data.word(kWatchingtime) = 72*2;
+	data.word(kReeltowatch) = 58;
+	data.word(kEndwatchreel) = 142;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void useplinth(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::useplinth() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto plinthwith;
-	withwhat(context);
+	withwhat();
 	return;
 plinthwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'D';
-	context.ch = 'K';
-	context.dl = 'E';
-	context.dh = 'Y';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'D';
+	ch = 'K';
+	dl = 'E';
+	dh = 'Y';
+	compare();
+	if (flags.z())
 		goto isrightkey;
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 	return;
 isrightkey:
-	context._inc(context.data.byte(kProgresspoints));
-	showseconduse(context);
-	context.data.word(kWatchingtime) = 220;
-	context.data.word(kReeltowatch) = 0;
-	context.data.word(kEndwatchreel) = 104;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
-	context.al = context.data.byte(kRoomafterdream);
-	context.data.byte(kNewlocation) = context.al;
+	_inc(data.byte(kProgresspoints));
+	showseconduse();
+	data.word(kWatchingtime) = 220;
+	data.word(kReeltowatch) = 0;
+	data.word(kEndwatchreel) = 104;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+	al = data.byte(kRoomafterdream);
+	data.byte(kNewlocation) = al;
 }
 
-void chewy(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	getanyad(context);
-	context.es.byte(context.bx+2) = 255;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::chewy() {
+	STACK_CHECK;
+	showfirstuse();
+	getanyad();
+	es.byte(bx+2) = 255;
+	data.byte(kGetback) = 1;
 }
 
-void useladder(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context._sub(context.data.byte(kMapx), 11);
-	findroominloc(context);
-	context.data.byte(kFacing) = 6;
-	context.data.byte(kTurntoface) = 6;
-	context.data.byte(kManspath) = 0;
-	context.data.byte(kDestination) = 0;
-	context.data.byte(kFinaldest) = 0;
-	findxyfrompath(context);
-	context.data.byte(kResetmanxy) = 1;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::useladder() {
+	STACK_CHECK;
+	showfirstuse();
+	_sub(data.byte(kMapx), 11);
+	findroominloc();
+	data.byte(kFacing) = 6;
+	data.byte(kTurntoface) = 6;
+	data.byte(kManspath) = 0;
+	data.byte(kDestination) = 0;
+	data.byte(kFinaldest) = 0;
+	findxyfrompath();
+	data.byte(kResetmanxy) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void useladderb(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context._add(context.data.byte(kMapx), 11);
-	findroominloc(context);
-	context.data.byte(kFacing) = 2;
-	context.data.byte(kTurntoface) = 2;
-	context.data.byte(kManspath) = 1;
-	context.data.byte(kDestination) = 1;
-	context.data.byte(kFinaldest) = 1;
-	findxyfrompath(context);
-	context.data.byte(kResetmanxy) = 1;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::useladderb() {
+	STACK_CHECK;
+	showfirstuse();
+	_add(data.byte(kMapx), 11);
+	findroominloc();
+	data.byte(kFacing) = 2;
+	data.byte(kTurntoface) = 2;
+	data.byte(kManspath) = 1;
+	data.byte(kDestination) = 1;
+	data.byte(kFinaldest) = 1;
+	findxyfrompath();
+	data.byte(kResetmanxy) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void slabdoora(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.word(kReeltowatch) = 13;
-	context._cmp(context.data.byte(kDreamnumber), 3);
-	if (!context.flags.z())
+void DreamGenContext::slabdoora() {
+	STACK_CHECK;
+	showfirstuse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 13;
+	_cmp(data.byte(kDreamnumber), 3);
+	if (!flags.z())
 		goto slabawrong;
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.word(kWatchingtime) = 60;
-	context.data.word(kEndwatchreel) = 42;
-	context.data.byte(kNewlocation) = 47;
+	_inc(data.byte(kProgresspoints));
+	data.word(kWatchingtime) = 60;
+	data.word(kEndwatchreel) = 42;
+	data.byte(kNewlocation) = 47;
 	return;
 slabawrong:
-	context.data.word(kWatchingtime) = 40;
-	context.data.word(kEndwatchreel) = 34;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
+	data.word(kWatchingtime) = 40;
+	data.word(kEndwatchreel) = 34;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
 }
 
-void slabdoorb(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kDreamnumber), 1);
-	if (!context.flags.z())
+void DreamGenContext::slabdoorb() {
+	STACK_CHECK;
+	_cmp(data.byte(kDreamnumber), 1);
+	if (!flags.z())
 		goto slabbwrong;
-	context.al = 'S';
-	context.ah = 'H';
-	context.cl = 'L';
-	context.ch = 'D';
-	isryanholding(context);
-	if (!context.flags.z())
+	al = 'S';
+	ah = 'H';
+	cl = 'L';
+	ch = 'D';
+	isryanholding();
+	if (!flags.z())
 		goto gotcrystal;
-	context.al = 44;
-	context.cx = 200;
-	showpuztext(context);
-	putbackobstuff(context);
+	al = 44;
+	cx = 200;
+	showpuztext();
+	putbackobstuff();
 	return;
 gotcrystal:
-	showfirstuse(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.word(kReeltowatch) = 44;
-	context.data.word(kWatchingtime) = 60;
-	context.data.word(kEndwatchreel) = 71;
-	context.data.byte(kNewlocation) = 47;
+	showfirstuse();
+	_inc(data.byte(kProgresspoints));
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 44;
+	data.word(kWatchingtime) = 60;
+	data.word(kEndwatchreel) = 71;
+	data.byte(kNewlocation) = 47;
 	return;
 slabbwrong:
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.word(kReeltowatch) = 44;
-	context.data.word(kWatchingtime) = 40;
-	context.data.word(kEndwatchreel) = 63;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
+	showfirstuse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 44;
+	data.word(kWatchingtime) = 40;
+	data.word(kEndwatchreel) = 63;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
 }
 
-void slabdoord(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.word(kReeltowatch) = 75;
-	context._cmp(context.data.byte(kDreamnumber), 0);
-	if (!context.flags.z())
+void DreamGenContext::slabdoord() {
+	STACK_CHECK;
+	showfirstuse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 75;
+	_cmp(data.byte(kDreamnumber), 0);
+	if (!flags.z())
 		goto slabcwrong;
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.word(kWatchingtime) = 60;
-	context.data.word(kEndwatchreel) = 102;
-	context.data.byte(kNewlocation) = 47;
+	_inc(data.byte(kProgresspoints));
+	data.word(kWatchingtime) = 60;
+	data.word(kEndwatchreel) = 102;
+	data.byte(kNewlocation) = 47;
 	return;
 slabcwrong:
-	context.data.word(kWatchingtime) = 40;
-	context.data.word(kEndwatchreel) = 94;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
+	data.word(kWatchingtime) = 40;
+	data.word(kEndwatchreel) = 94;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
 }
 
-void slabdoorc(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.word(kReeltowatch) = 108;
-	context._cmp(context.data.byte(kDreamnumber), 4);
-	if (!context.flags.z())
+void DreamGenContext::slabdoorc() {
+	STACK_CHECK;
+	showfirstuse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 108;
+	_cmp(data.byte(kDreamnumber), 4);
+	if (!flags.z())
 		goto slabdwrong;
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.word(kWatchingtime) = 60;
-	context.data.word(kEndwatchreel) = 135;
-	context.data.byte(kNewlocation) = 47;
+	_inc(data.byte(kProgresspoints));
+	data.word(kWatchingtime) = 60;
+	data.word(kEndwatchreel) = 135;
+	data.byte(kNewlocation) = 47;
 	return;
 slabdwrong:
-	context.data.word(kWatchingtime) = 40;
-	context.data.word(kEndwatchreel) = 127;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
+	data.word(kWatchingtime) = 40;
+	data.word(kEndwatchreel) = 127;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
 }
 
-void slabdoore(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.word(kReeltowatch) = 141;
-	context._cmp(context.data.byte(kDreamnumber), 5);
-	if (!context.flags.z())
+void DreamGenContext::slabdoore() {
+	STACK_CHECK;
+	showfirstuse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 141;
+	_cmp(data.byte(kDreamnumber), 5);
+	if (!flags.z())
 		goto slabewrong;
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.word(kWatchingtime) = 60;
-	context.data.word(kEndwatchreel) = 168;
-	context.data.byte(kNewlocation) = 47;
+	_inc(data.byte(kProgresspoints));
+	data.word(kWatchingtime) = 60;
+	data.word(kEndwatchreel) = 168;
+	data.byte(kNewlocation) = 47;
 	return;
 slabewrong:
-	context.data.word(kWatchingtime) = 40;
-	context.data.word(kEndwatchreel) = 160;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
+	data.word(kWatchingtime) = 40;
+	data.word(kEndwatchreel) = 160;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
 }
 
-void slabdoorf(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.word(kReeltowatch) = 171;
-	context._cmp(context.data.byte(kDreamnumber), 2);
-	if (!context.flags.z())
+void DreamGenContext::slabdoorf() {
+	STACK_CHECK;
+	showfirstuse();
+	data.byte(kGetback) = 1;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kReeltowatch) = 171;
+	_cmp(data.byte(kDreamnumber), 2);
+	if (!flags.z())
 		goto slabfwrong;
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.word(kWatchingtime) = 60;
-	context.data.word(kEndwatchreel) = 197;
-	context.data.byte(kNewlocation) = 47;
+	_inc(data.byte(kProgresspoints));
+	data.word(kWatchingtime) = 60;
+	data.word(kEndwatchreel) = 197;
+	data.byte(kNewlocation) = 47;
 	return;
 slabfwrong:
-	context.data.word(kWatchingtime) = 40;
-	context.data.word(kEndwatchreel) = 189;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
+	data.word(kWatchingtime) = 40;
+	data.word(kEndwatchreel) = 189;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
 }
 
-void useslab(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::useslab() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto slabwith;
-	withwhat(context);
+	withwhat();
 	return;
 slabwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'J';
-	context.ch = 'E';
-	context.dl = 'W';
-	context.dh = 'L';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'J';
+	ch = 'E';
+	dl = 'W';
+	dh = 'L';
+	compare();
+	if (flags.z())
 		goto nextslab;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 nextslab:
-	context.al = context.data.byte(kWithobject);
-	getexad(context);
-	context.es.byte(context.bx+2) = 0;
-	context.al = context.data.byte(kCommand);
-	context.push(context.ax);
-	removesetobject(context);
-	context.ax = context.pop();
-	context._inc(context.al);
-	context.push(context.ax);
-	placesetobject(context);
-	context.ax = context.pop();
-	context._cmp(context.al, 54);
-	if (!context.flags.z())
+	al = data.byte(kWithobject);
+	getexad();
+	es.byte(bx+2) = 0;
+	al = data.byte(kCommand);
+	push(ax);
+	removesetobject();
+	ax = pop();
+	_inc(al);
+	push(ax);
+	placesetobject();
+	ax = pop();
+	_cmp(al, 54);
+	if (!flags.z())
 		goto notlastslab;
-	context.al = 0;
-	turnpathon(context);
-	context.data.word(kWatchingtime) = 22;
-	context.data.word(kReeltowatch) = 35;
-	context.data.word(kEndwatchreel) = 48;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
+	al = 0;
+	turnpathon();
+	data.word(kWatchingtime) = 22;
+	data.word(kReeltowatch) = 35;
+	data.word(kEndwatchreel) = 48;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
 notlastslab:
-	context._inc(context.data.byte(kProgresspoints));
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
+	showfirstuse();
+	data.byte(kGetback) = 1;
 }
 
-void usecart(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::usecart() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto cartwith;
-	withwhat(context);
+	withwhat();
 	return;
 cartwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'R';
-	context.ch = 'O';
-	context.dl = 'C';
-	context.dh = 'K';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'R';
+	ch = 'O';
+	dl = 'C';
+	dh = 'K';
+	compare();
+	if (flags.z())
 		goto nextcart;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 nextcart:
-	context.al = context.data.byte(kWithobject);
-	getexad(context);
-	context.es.byte(context.bx+2) = 0;
-	context.al = context.data.byte(kCommand);
-	context.push(context.ax);
-	removesetobject(context);
-	context.ax = context.pop();
-	context._inc(context.al);
-	placesetobject(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.al = 17;
-	playchannel1(context);
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
+	al = data.byte(kWithobject);
+	getexad();
+	es.byte(bx+2) = 0;
+	al = data.byte(kCommand);
+	push(ax);
+	removesetobject();
+	ax = pop();
+	_inc(al);
+	placesetobject();
+	_inc(data.byte(kProgresspoints));
+	al = 17;
+	playchannel1();
+	showfirstuse();
+	data.byte(kGetback) = 1;
 }
 
-void useclearbox(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::useclearbox() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto clearboxwith;
-	withwhat(context);
+	withwhat();
 	return;
 clearboxwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'R';
-	context.ch = 'A';
-	context.dl = 'I';
-	context.dh = 'L';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'R';
+	ch = 'A';
+	dl = 'I';
+	dh = 'L';
+	compare();
+	if (flags.z())
 		goto openbox;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 openbox:
-	context._inc(context.data.byte(kProgresspoints));
-	showfirstuse(context);
-	context.data.word(kWatchingtime) = 80;
-	context.data.word(kReeltowatch) = 67;
-	context.data.word(kEndwatchreel) = 105;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
+	showfirstuse();
+	data.word(kWatchingtime) = 80;
+	data.word(kReeltowatch) = 67;
+	data.word(kEndwatchreel) = 105;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void usecoveredbox(Context &context) {
-	STACK_CHECK(context);
-	context._inc(context.data.byte(kProgresspoints));
-	showfirstuse(context);
-	context.data.word(kWatchingtime) = 50;
-	context.data.word(kReeltowatch) = 41;
-	context.data.word(kEndwatchreel) = 66;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::usecoveredbox() {
+	STACK_CHECK;
+	_inc(data.byte(kProgresspoints));
+	showfirstuse();
+	data.word(kWatchingtime) = 50;
+	data.word(kReeltowatch) = 41;
+	data.word(kEndwatchreel) = 66;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void userailing(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.word(kWatchingtime) = 80;
-	context.data.word(kReeltowatch) = 0;
-	context.data.word(kEndwatchreel) = 30;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kMandead) = 4;
+void DreamGenContext::userailing() {
+	STACK_CHECK;
+	showfirstuse();
+	data.word(kWatchingtime) = 80;
+	data.word(kReeltowatch) = 0;
+	data.word(kEndwatchreel) = 30;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+	data.byte(kMandead) = 4;
 }
 
-void useopenbox(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::useopenbox() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto openboxwith;
-	withwhat(context);
+	withwhat();
 	return;
 openboxwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'C';
-	context.ch = 'U';
-	context.dl = 'P';
-	context.dh = 'F';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'C';
+	ch = 'U';
+	dl = 'P';
+	dh = 'F';
+	compare();
+	if (flags.z())
 		goto destoryopenbox;
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'C';
-	context.ch = 'U';
-	context.dl = 'P';
-	context.dh = 'E';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'C';
+	ch = 'U';
+	dl = 'P';
+	dh = 'E';
+	compare();
+	if (flags.z())
 		goto openboxwrong;
-	showfirstuse(context);
+	showfirstuse();
 	return;
 destoryopenbox:
-	context._inc(context.data.byte(kProgresspoints));
-	context.cx = 300;
-	context.al = 37;
-	showpuztext(context);
-	context.al = context.data.byte(kWithobject);
-	getexad(context);
-	context.es.byte(context.bx+15) = 'E'-'A';
-	context.data.word(kWatchingtime) = 140;
-	context.data.word(kReeltowatch) = 105;
-	context.data.word(kEndwatchreel) = 181;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.al = 4;
-	turnpathon(context);
-	context.data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
+	cx = 300;
+	al = 37;
+	showpuztext();
+	al = data.byte(kWithobject);
+	getexad();
+	es.byte(bx+15) = 'E'-'A';
+	data.word(kWatchingtime) = 140;
+	data.word(kReeltowatch) = 105;
+	data.word(kEndwatchreel) = 181;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	al = 4;
+	turnpathon();
+	data.byte(kGetback) = 1;
 	return;
 openboxwrong:
-	context.cx = 300;
-	context.al = 38;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 38;
+	showpuztext();
+	putbackobstuff();
 }
 
-void wearwatch(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWatchon), 1);
-	if (context.flags.z())
+void DreamGenContext::wearwatch() {
+	STACK_CHECK;
+	_cmp(data.byte(kWatchon), 1);
+	if (flags.z())
 		goto wearingwatch;
-	showfirstuse(context);
-	context.data.byte(kWatchon) = 1;
-	context.data.byte(kGetback) = 1;
-	getanyad(context);
-	makeworn(context);
+	showfirstuse();
+	data.byte(kWatchon) = 1;
+	data.byte(kGetback) = 1;
+	getanyad();
+	makeworn();
 	return;
 wearingwatch:
-	showseconduse(context);
-	putbackobstuff(context);
+	showseconduse();
+	putbackobstuff();
 }
 
-void wearshades(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kShadeson), 1);
-	if (context.flags.z())
+void DreamGenContext::wearshades() {
+	STACK_CHECK;
+	_cmp(data.byte(kShadeson), 1);
+	if (flags.z())
 		goto wearingshades;
-	context.data.byte(kShadeson) = 1;
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
-	getanyad(context);
-	makeworn(context);
+	data.byte(kShadeson) = 1;
+	showfirstuse();
+	data.byte(kGetback) = 1;
+	getanyad();
+	makeworn();
 	return;
 wearingshades:
-	showseconduse(context);
-	putbackobstuff(context);
+	showseconduse();
+	putbackobstuff();
 }
 
-void sitdowninbar(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWatchmode), -1);
-	if (!context.flags.z())
+void DreamGenContext::sitdowninbar() {
+	STACK_CHECK;
+	_cmp(data.byte(kWatchmode), -1);
+	if (!flags.z())
 		goto satdown;
-	showfirstuse(context);
-	context.data.word(kWatchingtime) = 50;
-	context.data.word(kReeltowatch) = 55;
-	context.data.word(kEndwatchreel) = 71;
-	context.data.word(kReeltohold) = 73;
-	context.data.word(kEndofholdreel) = 83;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
+	showfirstuse();
+	data.word(kWatchingtime) = 50;
+	data.word(kReeltowatch) = 55;
+	data.word(kEndwatchreel) = 71;
+	data.word(kReeltohold) = 73;
+	data.word(kEndofholdreel) = 83;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 	return;
 satdown:
-	showseconduse(context);
-	putbackobstuff(context);
+	showseconduse();
+	putbackobstuff();
 }
 
-void usechurchhole(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
-	context.data.word(kWatchingtime) = 28;
-	context.data.word(kReeltowatch) = 13;
-	context.data.word(kEndwatchreel) = 26;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
+void DreamGenContext::usechurchhole() {
+	STACK_CHECK;
+	showfirstuse();
+	data.byte(kGetback) = 1;
+	data.word(kWatchingtime) = 28;
+	data.word(kReeltowatch) = 13;
+	data.word(kEndwatchreel) = 26;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
 }
 
-void usehole(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::usehole() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto holewith;
-	withwhat(context);
+	withwhat();
 	return;
 holewith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'H';
-	context.ch = 'N';
-	context.dl = 'D';
-	context.dh = 'A';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'H';
+	ch = 'N';
+	dl = 'D';
+	dh = 'A';
+	compare();
+	if (flags.z())
 		goto righthand;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 righthand:
-	showfirstuse(context);
-	context.al = 86;
-	removesetobject(context);
-	context.al = context.data.byte(kWithobject);
-	getexad(context);
-	context.es.byte(context.bx+2) = 255;
-	context.data.byte(kCanmovealtar) = 1;
-	context.data.byte(kGetback) = 1;
+	showfirstuse();
+	al = 86;
+	removesetobject();
+	al = data.byte(kWithobject);
+	getexad();
+	es.byte(bx+2) = 255;
+	data.byte(kCanmovealtar) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void usealtar(Context &context) {
-	STACK_CHECK(context);
-	context.al = 'C';
-	context.ah = 'N';
-	context.cl = 'D';
-	context.ch = 'A';
-	findexobject(context);
-	context._cmp(context.al, (114));
-	if (context.flags.z())
+void DreamGenContext::usealtar() {
+	STACK_CHECK;
+	al = 'C';
+	ah = 'N';
+	cl = 'D';
+	ch = 'A';
+	findexobject();
+	_cmp(al, (114));
+	if (flags.z())
 		goto thingsonaltar;
-	context.al = 'C';
-	context.ah = 'N';
-	context.cl = 'D';
-	context.ch = 'B';
-	findexobject(context);
-	context._cmp(context.al, (114));
-	if (context.flags.z())
+	al = 'C';
+	ah = 'N';
+	cl = 'D';
+	ch = 'B';
+	findexobject();
+	_cmp(al, (114));
+	if (flags.z())
 		goto thingsonaltar;
-	context._cmp(context.data.byte(kCanmovealtar), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kCanmovealtar), 1);
+	if (flags.z())
 		goto movealtar;
-	context.cx = 300;
-	context.al = 23;
-	showpuztext(context);
-	context.data.byte(kGetback) = 1;
+	cx = 300;
+	al = 23;
+	showpuztext();
+	data.byte(kGetback) = 1;
 	return;
 movealtar:
-	context._inc(context.data.byte(kProgresspoints));
-	showseconduse(context);
-	context.data.word(kWatchingtime) = 160;
-	context.data.word(kReeltowatch) = 81;
-	context.data.word(kEndwatchreel) = 174;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.al = 47;
-	context.bl = 52;
-	context.bh = 76;
-	context.cx = 32;
-	context.dx = 98;
-	setuptimeduse(context);
-	context.data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
+	showseconduse();
+	data.word(kWatchingtime) = 160;
+	data.word(kReeltowatch) = 81;
+	data.word(kEndwatchreel) = 174;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	al = 47;
+	bl = 52;
+	bh = 76;
+	cx = 32;
+	dx = 98;
+	setuptimeduse();
+	data.byte(kGetback) = 1;
 	return;
 thingsonaltar:
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
+	showfirstuse();
+	data.byte(kGetback) = 1;
 }
 
-void opentvdoor(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::opentvdoor() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto tvdoorwith;
-	withwhat(context);
+	withwhat();
 	return;
 tvdoorwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'U';
-	context.ch = 'L';
-	context.dl = 'O';
-	context.dh = 'K';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'U';
+	ch = 'L';
+	dl = 'O';
+	dh = 'K';
+	compare();
+	if (flags.z())
 		goto keyontv;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 keyontv:
-	showfirstuse(context);
-	context.data.byte(kLockstatus) = 0;
-	context.data.byte(kGetback) = 1;
+	showfirstuse();
+	data.byte(kLockstatus) = 0;
+	data.byte(kGetback) = 1;
 }
 
-void usedryer(Context &context) {
-	STACK_CHECK(context);
-	context.al = 12;
-	playchannel1(context);
-	showfirstuse(context);
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::usedryer() {
+	STACK_CHECK;
+	al = 12;
+	playchannel1();
+	showfirstuse();
+	data.byte(kGetback) = 1;
 }
 
-void openlouis(Context &context) {
-	STACK_CHECK(context);
-	context.al = 5;
-	context.ah = 2;
-	context.cl = 3;
-	context.ch = 8;
-	entercode(context);
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::openlouis() {
+	STACK_CHECK;
+	al = 5;
+	ah = 2;
+	cl = 3;
+	ch = 8;
+	entercode();
+	data.byte(kGetback) = 1;
 }
 
-void nextcolon(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::nextcolon() {
+	STACK_CHECK;
 lookcolon:
-	context.al = context.es.byte(context.si);
-	context._inc(context.si);
-	context._cmp(context.al, ':');
-	if (!context.flags.z())
+	al = es.byte(si);
+	_inc(si);
+	_cmp(al, ':');
+	if (!flags.z())
 		goto lookcolon;
 }
 
-void openyourneighbour(Context &context) {
-	STACK_CHECK(context);
-	context.al = 255;
-	context.ah = 255;
-	context.cl = 255;
-	context.ch = 255;
-	entercode(context);
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::openyourneighbour() {
+	STACK_CHECK;
+	al = 255;
+	ah = 255;
+	cl = 255;
+	ch = 255;
+	entercode();
+	data.byte(kGetback) = 1;
 }
 
-void usewindow(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kManspath), 6);
-	if (!context.flags.z())
+void DreamGenContext::usewindow() {
+	STACK_CHECK;
+	_cmp(data.byte(kManspath), 6);
+	if (!flags.z())
 		goto notonbalc;
-	context._inc(context.data.byte(kProgresspoints));
-	showfirstuse(context);
-	context.data.byte(kNewlocation) = 29;
-	context.data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
+	showfirstuse();
+	data.byte(kNewlocation) = 29;
+	data.byte(kGetback) = 1;
 	return;
 notonbalc:
-	showseconduse(context);
-	putbackobstuff(context);
+	showseconduse();
+	putbackobstuff();
 }
 
-void usebalcony(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.al = 6;
-	turnpathon(context);
-	context.al = 0;
-	turnpathoff(context);
-	context.al = 1;
-	turnpathoff(context);
-	context.al = 2;
-	turnpathoff(context);
-	context.al = 3;
-	turnpathoff(context);
-	context.al = 4;
-	turnpathoff(context);
-	context.al = 5;
-	turnpathoff(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.byte(kManspath) = 6;
-	context.data.byte(kDestination) = 6;
-	context.data.byte(kFinaldest) = 6;
-	findxyfrompath(context);
-	switchryanoff(context);
-	context.data.byte(kResetmanxy) = 1;
-	context.data.word(kWatchingtime) = 30*2;
-	context.data.word(kReeltowatch) = 183;
-	context.data.word(kEndwatchreel) = 212;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::usebalcony() {
+	STACK_CHECK;
+	showfirstuse();
+	al = 6;
+	turnpathon();
+	al = 0;
+	turnpathoff();
+	al = 1;
+	turnpathoff();
+	al = 2;
+	turnpathoff();
+	al = 3;
+	turnpathoff();
+	al = 4;
+	turnpathoff();
+	al = 5;
+	turnpathoff();
+	_inc(data.byte(kProgresspoints));
+	data.byte(kManspath) = 6;
+	data.byte(kDestination) = 6;
+	data.byte(kFinaldest) = 6;
+	findxyfrompath();
+	switchryanoff();
+	data.byte(kResetmanxy) = 1;
+	data.word(kWatchingtime) = 30*2;
+	data.word(kReeltowatch) = 183;
+	data.word(kEndwatchreel) = 212;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void openryan(Context &context) {
-	STACK_CHECK(context);
-	context.al = 5;
-	context.ah = 1;
-	context.cl = 0;
-	context.ch = 6;
-	entercode(context);
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::openryan() {
+	STACK_CHECK;
+	al = 5;
+	ah = 1;
+	cl = 0;
+	ch = 6;
+	entercode();
+	data.byte(kGetback) = 1;
 }
 
-void openpoolboss(Context &context) {
-	STACK_CHECK(context);
-	context.al = 5;
-	context.ah = 2;
-	context.cl = 2;
-	context.ch = 2;
-	entercode(context);
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::openpoolboss() {
+	STACK_CHECK;
+	al = 5;
+	ah = 2;
+	cl = 2;
+	ch = 2;
+	entercode();
+	data.byte(kGetback) = 1;
 }
 
-void openeden(Context &context) {
-	STACK_CHECK(context);
-	context.al = 2;
-	context.ah = 8;
-	context.cl = 6;
-	context.ch = 5;
-	entercode(context);
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::openeden() {
+	STACK_CHECK;
+	al = 2;
+	ah = 8;
+	cl = 6;
+	ch = 5;
+	entercode();
+	data.byte(kGetback) = 1;
 }
 
-void opensarters(Context &context) {
-	STACK_CHECK(context);
-	context.al = 7;
-	context.ah = 8;
-	context.cl = 3;
-	context.ch = 3;
-	entercode(context);
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::opensarters() {
+	STACK_CHECK;
+	al = 7;
+	ah = 8;
+	cl = 3;
+	ch = 3;
+	entercode();
+	data.byte(kGetback) = 1;
 }
 
-void isitright(Context &context) {
-	STACK_CHECK(context);
-	context.bx = context.data;
-	context.es = context.bx;
-	context.bx = 8573;
-	context._cmp(context.es.byte(context.bx+0), context.al);
-	if (!context.flags.z())
+void DreamGenContext::isitright() {
+	STACK_CHECK;
+	bx = data;
+	es = bx;
+	bx = 8573;
+	_cmp(es.byte(bx+0), al);
+	if (!flags.z())
 		return /* (notright) */;
-	context._cmp(context.es.byte(context.bx+1), context.ah);
-	if (!context.flags.z())
+	_cmp(es.byte(bx+1), ah);
+	if (!flags.z())
 		return /* (notright) */;
-	context._cmp(context.es.byte(context.bx+2), context.cl);
-	if (!context.flags.z())
+	_cmp(es.byte(bx+2), cl);
+	if (!flags.z())
 		return /* (notright) */;
-	context._cmp(context.es.byte(context.bx+3), context.ch);
+	_cmp(es.byte(bx+3), ch);
 }
 
-void drawitall(Context &context) {
-	STACK_CHECK(context);
-	createpanel(context);
-	drawfloor(context);
-	printsprites(context);
-	showicon(context);
+void DreamGenContext::drawitall() {
+	STACK_CHECK;
+	createpanel();
+	drawfloor();
+	printsprites();
+	showicon();
 }
 
-void openhoteldoor(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::openhoteldoor() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto hoteldoorwith;
-	withwhat(context);
+	withwhat();
 	return;
 hoteldoorwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'K';
-	context.ch = 'E';
-	context.dl = 'Y';
-	context.dh = 'A';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'K';
+	ch = 'E';
+	dl = 'Y';
+	dh = 'A';
+	compare();
+	if (flags.z())
 		goto keyonhotel1;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 keyonhotel1:
-	context.al = 16;
-	playchannel1(context);
-	showfirstuse(context);
-	context.data.byte(kLockstatus) = 0;
-	context.data.byte(kGetback) = 1;
+	al = 16;
+	playchannel1();
+	showfirstuse();
+	data.byte(kLockstatus) = 0;
+	data.byte(kGetback) = 1;
 }
 
-void openhoteldoor2(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::openhoteldoor2() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto hoteldoorwith2;
-	withwhat(context);
+	withwhat();
 	return;
 hoteldoorwith2:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'K';
-	context.ch = 'E';
-	context.dl = 'Y';
-	context.dh = 'A';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'K';
+	ch = 'E';
+	dl = 'Y';
+	dh = 'A';
+	compare();
+	if (flags.z())
 		goto keyonhotel2;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 keyonhotel2:
-	context.al = 16;
-	playchannel1(context);
-	showfirstuse(context);
-	putbackobstuff(context);
+	al = 16;
+	playchannel1();
+	showfirstuse();
+	putbackobstuff();
 }
 
-void grafittidoor(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::grafittidoor() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto grafwith;
-	withwhat(context);
+	withwhat();
 	return;
 grafwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'A';
-	context.ch = 'P';
-	context.dl = 'E';
-	context.dh = 'N';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'A';
+	ch = 'P';
+	dl = 'E';
+	dh = 'N';
+	compare();
+	if (flags.z())
 		goto dograf;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 dograf:
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 }
 
-void trapdoor(Context &context) {
-	STACK_CHECK(context);
-	context._inc(context.data.byte(kProgresspoints));
-	showfirstuse(context);
-	switchryanoff(context);
-	context.data.word(kWatchingtime) = 20*2;
-	context.data.word(kReeltowatch) = 181;
-	context.data.word(kEndwatchreel) = 197;
-	context.data.byte(kNewlocation) = 26;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::trapdoor() {
+	STACK_CHECK;
+	_inc(data.byte(kProgresspoints));
+	showfirstuse();
+	switchryanoff();
+	data.word(kWatchingtime) = 20*2;
+	data.word(kReeltowatch) = 181;
+	data.word(kEndwatchreel) = 197;
+	data.byte(kNewlocation) = 26;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void callhotellift(Context &context) {
-	STACK_CHECK(context);
-	context.al = 12;
-	playchannel1(context);
-	showfirstuse(context);
-	context.data.byte(kCounttoopen) = 8;
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kDestination) = 5;
-	context.data.byte(kFinaldest) = 5;
-	autosetwalk(context);
-	context.al = 4;
-	turnpathon(context);
+void DreamGenContext::callhotellift() {
+	STACK_CHECK;
+	al = 12;
+	playchannel1();
+	showfirstuse();
+	data.byte(kCounttoopen) = 8;
+	data.byte(kGetback) = 1;
+	data.byte(kDestination) = 5;
+	data.byte(kFinaldest) = 5;
+	autosetwalk();
+	al = 4;
+	turnpathon();
 }
 
-void calledenslift(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.byte(kCounttoopen) = 8;
-	context.data.byte(kGetback) = 1;
-	context.al = 2;
-	turnpathon(context);
+void DreamGenContext::calledenslift() {
+	STACK_CHECK;
+	showfirstuse();
+	data.byte(kCounttoopen) = 8;
+	data.byte(kGetback) = 1;
+	al = 2;
+	turnpathon();
 }
 
-void calledensdlift(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLiftflag), 1);
-	if (context.flags.z())
+void DreamGenContext::calledensdlift() {
+	STACK_CHECK;
+	_cmp(data.byte(kLiftflag), 1);
+	if (flags.z())
 		goto edensdhere;
-	showfirstuse(context);
-	context.data.byte(kCounttoopen) = 8;
-	context.data.byte(kGetback) = 1;
-	context.al = 2;
-	turnpathon(context);
+	showfirstuse();
+	data.byte(kCounttoopen) = 8;
+	data.byte(kGetback) = 1;
+	al = 2;
+	turnpathon();
 	return;
 edensdhere:
-	showseconduse(context);
-	putbackobstuff(context);
+	showseconduse();
+	putbackobstuff();
 }
 
-void usepoolreader(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::usepoolreader() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto poolwith;
-	withwhat(context);
+	withwhat();
 	return;
 poolwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'M';
-	context.ch = 'E';
-	context.dl = 'M';
-	context.dh = 'B';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'M';
+	ch = 'E';
+	dl = 'M';
+	dh = 'B';
+	compare();
+	if (flags.z())
 		goto openpool;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 openpool:
-	context._cmp(context.data.byte(kTalkedtoattendant), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kTalkedtoattendant), 1);
+	if (flags.z())
 		goto canopenpool;
-	showseconduse(context);
-	putbackobstuff(context);
+	showseconduse();
+	putbackobstuff();
 	return;
 canopenpool:
-	context.al = 17;
-	playchannel1(context);
-	showfirstuse(context);
-	context.data.byte(kCounttoopen) = 6;
-	context.data.byte(kGetback) = 1;
+	al = 17;
+	playchannel1();
+	showfirstuse();
+	data.byte(kCounttoopen) = 6;
+	data.byte(kGetback) = 1;
 }
 
-void uselighter(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::uselighter() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto gotlighterwith;
-	withwhat(context);
+	withwhat();
 	return;
 gotlighterwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'S';
-	context.ch = 'M';
-	context.dl = 'K';
-	context.dh = 'E';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'S';
+	ch = 'M';
+	dl = 'K';
+	dh = 'E';
+	compare();
+	if (flags.z())
 		goto cigarette;
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 	return;
 cigarette:
-	context.cx = 300;
-	context.al = 9;
-	showpuztext(context);
-	context.al = context.data.byte(kWithobject);
-	getexad(context);
-	context.es.byte(context.bx+2) = 255;
-	context.data.byte(kGetback) = 1;
+	cx = 300;
+	al = 9;
+	showpuztext();
+	al = data.byte(kWithobject);
+	getexad();
+	es.byte(bx+2) = 255;
+	data.byte(kGetback) = 1;
 }
 
-void showseconduse(Context &context) {
-	STACK_CHECK(context);
-	getobtextstart(context);
-	nextcolon(context);
-	nextcolon(context);
-	nextcolon(context);
-	usetext(context);
-	context.cx = 400;
-	hangonp(context);
+void DreamGenContext::showseconduse() {
+	STACK_CHECK;
+	getobtextstart();
+	nextcolon();
+	nextcolon();
+	nextcolon();
+	usetext();
+	cx = 400;
+	hangonp();
 }
 
-void usecardreader1(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::usecardreader1() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto gotreader1with;
-	withwhat(context);
+	withwhat();
 	return;
 gotreader1with:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'C';
-	context.ch = 'S';
-	context.dl = 'H';
-	context.dh = 'R';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'C';
+	ch = 'S';
+	dl = 'H';
+	dh = 'R';
+	compare();
+	if (flags.z())
 		goto correctcard;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 correctcard:
-	context._cmp(context.data.byte(kTalkedtosparky), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kTalkedtosparky), 0);
+	if (flags.z())
 		goto notyet;
-	context._cmp(context.data.word(kCard1money), 0);
-	if (context.flags.z())
+	_cmp(data.word(kCard1money), 0);
+	if (flags.z())
 		goto getscash;
-	context.cx = 300;
-	context.al = 17;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 17;
+	showpuztext();
+	putbackobstuff();
 	return;
 getscash:
-	context.al = 16;
-	playchannel1(context);
-	context.cx = 300;
-	context.al = 18;
-	showpuztext(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.word(kCard1money) = 12432;
-	context.data.byte(kGetback) = 1;
+	al = 16;
+	playchannel1();
+	cx = 300;
+	al = 18;
+	showpuztext();
+	_inc(data.byte(kProgresspoints));
+	data.word(kCard1money) = 12432;
+	data.byte(kGetback) = 1;
 	return;
 notyet:
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 }
 
-void usecardreader2(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::usecardreader2() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto gotreader2with;
-	withwhat(context);
+	withwhat();
 	return;
 gotreader2with:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'C';
-	context.ch = 'S';
-	context.dl = 'H';
-	context.dh = 'R';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'C';
+	ch = 'S';
+	dl = 'H';
+	dh = 'R';
+	compare();
+	if (flags.z())
 		goto correctcard2;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 correctcard2:
-	context._cmp(context.data.byte(kTalkedtoboss), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kTalkedtoboss), 0);
+	if (flags.z())
 		goto notyetboss;
-	context._cmp(context.data.word(kCard1money), 0);
-	if (context.flags.z())
+	_cmp(data.word(kCard1money), 0);
+	if (flags.z())
 		goto nocash;
-	context._cmp(context.data.byte(kGunpassflag), 2);
-	if (context.flags.z())
+	_cmp(data.byte(kGunpassflag), 2);
+	if (flags.z())
 		goto alreadygotnew;
-	context.al = 18;
-	playchannel1(context);
-	context.cx = 300;
-	context.al = 19;
-	showpuztext(context);
-	context.al = 94;
-	placesetobject(context);
-	context.data.byte(kGunpassflag) = 1;
-	context._sub(context.data.word(kCard1money), 2000);
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.byte(kGetback) = 1;
+	al = 18;
+	playchannel1();
+	cx = 300;
+	al = 19;
+	showpuztext();
+	al = 94;
+	placesetobject();
+	data.byte(kGunpassflag) = 1;
+	_sub(data.word(kCard1money), 2000);
+	_inc(data.byte(kProgresspoints));
+	data.byte(kGetback) = 1;
 	return;
 nocash:
-	context.cx = 300;
-	context.al = 20;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 20;
+	showpuztext();
+	putbackobstuff();
 	return;
 alreadygotnew:
-	context.cx = 300;
-	context.al = 22;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 22;
+	showpuztext();
+	putbackobstuff();
 	return;
 notyetboss:
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 }
 
-void usecardreader3(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::usecardreader3() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto gotreader3with;
-	withwhat(context);
+	withwhat();
 	return;
 gotreader3with:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'C';
-	context.ch = 'S';
-	context.dl = 'H';
-	context.dh = 'R';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'C';
+	ch = 'S';
+	dl = 'H';
+	dh = 'R';
+	compare();
+	if (flags.z())
 		goto rightcard;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 rightcard:
-	context._cmp(context.data.byte(kTalkedtorecep), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kTalkedtorecep), 0);
+	if (flags.z())
 		goto notyetrecep;
-	context._cmp(context.data.byte(kCardpassflag), 0);
-	if (!context.flags.z())
+	_cmp(data.byte(kCardpassflag), 0);
+	if (!flags.z())
 		goto alreadyusedit;
-	context.al = 16;
-	playchannel1(context);
-	context.cx = 300;
-	context.al = 25;
-	showpuztext(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context._sub(context.data.word(kCard1money), 8300);
-	context.data.byte(kCardpassflag) = 1;
-	context.data.byte(kGetback) = 1;
+	al = 16;
+	playchannel1();
+	cx = 300;
+	al = 25;
+	showpuztext();
+	_inc(data.byte(kProgresspoints));
+	_sub(data.word(kCard1money), 8300);
+	data.byte(kCardpassflag) = 1;
+	data.byte(kGetback) = 1;
 	return;
 alreadyusedit:
-	context.cx = 300;
-	context.al = 26;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 26;
+	showpuztext();
+	putbackobstuff();
 	return;
 notyetrecep:
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 }
 
-void usecashcard(Context &context) {
-	STACK_CHECK(context);
-	getridofreels(context);
-	loadkeypad(context);
-	createpanel(context);
-	showpanel(context);
-	showexit(context);
-	showman(context);
-	context.di = 114;
-	context.bx = 120;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 39;
-	context.ah = 0;
-	showframe(context);
-	context.ax = context.data.word(kCard1money);
-	moneypoke(context);
-	getobtextstart(context);
-	nextcolon(context);
-	nextcolon(context);
-	context.di = 36;
-	context.bx = 98;
-	context.dl = 241;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	context.di = 160;
-	context.bx = 155;
-	context.es = context.cs;
-	context.si = 3474;
-	context.data.word(kCharshift) = 91*2+75;
-	context.al = 0;
-	context.ah = 0;
-	context.dl = 240;
-	printdirect(context);
-	context.di = 187;
-	context.bx = 155;
-	context.es = context.cs;
-	context.si = 3479;
-	context.data.word(kCharshift) = 91*2+85;
-	context.al = 0;
-	context.ah = 0;
-	context.dl = 240;
-	printdirect(context);
-	context.data.word(kCharshift) = 0;
-	worktoscreenm(context);
-	context.cx = 400;
-	hangonp(context);
-	getridoftemp(context);
-	restorereels(context);
-	putbackobstuff(context);
+void DreamGenContext::usecashcard() {
+	STACK_CHECK;
+	getridofreels();
+	loadkeypad();
+	createpanel();
+	showpanel();
+	showexit();
+	showman();
+	di = 114;
+	bx = 120;
+	ds = data.word(kTempgraphics);
+	al = 39;
+	ah = 0;
+	showframe();
+	ax = data.word(kCard1money);
+	moneypoke();
+	getobtextstart();
+	nextcolon();
+	nextcolon();
+	di = 36;
+	bx = 98;
+	dl = 241;
+	al = 0;
+	ah = 0;
+	printdirect();
+	di = 160;
+	bx = 155;
+	es = cs;
+	si = 3474;
+	data.word(kCharshift) = 91*2+75;
+	al = 0;
+	ah = 0;
+	dl = 240;
+	printdirect();
+	di = 187;
+	bx = 155;
+	es = cs;
+	si = 3479;
+	data.word(kCharshift) = 91*2+85;
+	al = 0;
+	ah = 0;
+	dl = 240;
+	printdirect();
+	data.word(kCharshift) = 0;
+	worktoscreenm();
+	cx = 400;
+	hangonp();
+	getridoftemp();
+	restorereels();
+	putbackobstuff();
 }
 
-void lookatcard(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kManisoffscreen) = 1;
-	getridofreels(context);
-	loadkeypad(context);
-	createpanel2(context);
-	context.di = 160;
-	context.bx = 80;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 42;
-	context.ah = 128;
-	showframe(context);
-	getobtextstart(context);
-	findnextcolon(context);
-	findnextcolon(context);
-	findnextcolon(context);
-	context.di = 36;
-	context.bx = 124;
-	context.dl = 241;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	context.push(context.es);
-	context.push(context.si);
-	worktoscreenm(context);
-	context.cx = 280;
-	hangonw(context);
-	createpanel2(context);
-	context.di = 160;
-	context.bx = 80;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 42;
-	context.ah = 128;
-	showframe(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context.di = 36;
-	context.bx = 130;
-	context.dl = 241;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	worktoscreenm(context);
-	context.cx = 200;
-	hangonw(context);
-	context.data.byte(kManisoffscreen) = 0;
-	getridoftemp(context);
-	restorereels(context);
-	putbackobstuff(context);
+void DreamGenContext::lookatcard() {
+	STACK_CHECK;
+	data.byte(kManisoffscreen) = 1;
+	getridofreels();
+	loadkeypad();
+	createpanel2();
+	di = 160;
+	bx = 80;
+	ds = data.word(kTempgraphics);
+	al = 42;
+	ah = 128;
+	showframe();
+	getobtextstart();
+	findnextcolon();
+	findnextcolon();
+	findnextcolon();
+	di = 36;
+	bx = 124;
+	dl = 241;
+	al = 0;
+	ah = 0;
+	printdirect();
+	push(es);
+	push(si);
+	worktoscreenm();
+	cx = 280;
+	hangonw();
+	createpanel2();
+	di = 160;
+	bx = 80;
+	ds = data.word(kTempgraphics);
+	al = 42;
+	ah = 128;
+	showframe();
+	si = pop();
+	es = pop();
+	di = 36;
+	bx = 130;
+	dl = 241;
+	al = 0;
+	ah = 0;
+	printdirect();
+	worktoscreenm();
+	cx = 200;
+	hangonw();
+	data.byte(kManisoffscreen) = 0;
+	getridoftemp();
+	restorereels();
+	putbackobstuff();
 }
 
-void moneypoke(Context &context) {
-	STACK_CHECK(context);
-	context.bx = 3474;
-	context.cl = 48-1;
+void DreamGenContext::moneypoke() {
+	STACK_CHECK;
+	bx = 3474;
+	cl = 48-1;
 numberpoke0:
-	context._inc(context.cl);
-	context._sub(context.ax, 10000);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, 10000);
+	if (!flags.c())
 		goto numberpoke0;
-	context._add(context.ax, 10000);
-	context.cs.byte(context.bx) = context.cl;
-	context._inc(context.bx);
-	context.cl = 48-1;
+	_add(ax, 10000);
+	cs.byte(bx) = cl;
+	_inc(bx);
+	cl = 48-1;
 numberpoke1:
-	context._inc(context.cl);
-	context._sub(context.ax, 1000);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, 1000);
+	if (!flags.c())
 		goto numberpoke1;
-	context._add(context.ax, 1000);
-	context.cs.byte(context.bx) = context.cl;
-	context._inc(context.bx);
-	context.cl = 48-1;
+	_add(ax, 1000);
+	cs.byte(bx) = cl;
+	_inc(bx);
+	cl = 48-1;
 numberpoke2:
-	context._inc(context.cl);
-	context._sub(context.ax, 100);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, 100);
+	if (!flags.c())
 		goto numberpoke2;
-	context._add(context.ax, 100);
-	context.cs.byte(context.bx) = context.cl;
-	context._inc(context.bx);
-	context.cl = 48-1;
+	_add(ax, 100);
+	cs.byte(bx) = cl;
+	_inc(bx);
+	cl = 48-1;
 numberpoke3:
-	context._inc(context.cl);
-	context._sub(context.ax, 10);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, 10);
+	if (!flags.c())
 		goto numberpoke3;
-	context._add(context.ax, 10);
-	context.cs.byte(context.bx) = context.cl;
-	context.bx = 3479;
-	context._add(context.al, 48);
-	context.cs.byte(context.bx) = context.al;
+	_add(ax, 10);
+	cs.byte(bx) = cl;
+	bx = 3479;
+	_add(al, 48);
+	cs.byte(bx) = al;
 }
 
-void usecontrol(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::usecontrol() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto gotcontrolwith;
-	withwhat(context);
+	withwhat();
 	return;
 gotcontrolwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'K';
-	context.ch = 'E';
-	context.dl = 'Y';
-	context.dh = 'A';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'K';
+	ch = 'E';
+	dl = 'Y';
+	dh = 'A';
+	compare();
+	if (flags.z())
 		goto rightkey;
-	context._cmp(context.data.byte(kReallocation), 21);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 21);
+	if (!flags.z())
 		goto balls;
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'K';
-	context.ch = 'N';
-	context.dl = 'F';
-	context.dh = 'E';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'K';
+	ch = 'N';
+	dl = 'F';
+	dh = 'E';
+	compare();
+	if (flags.z())
 		goto jimmycontrols;
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'A';
-	context.ch = 'X';
-	context.dl = 'E';
-	context.dh = 'D';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'A';
+	ch = 'X';
+	dl = 'E';
+	dh = 'D';
+	compare();
+	if (flags.z())
 		goto axeoncontrols;
 balls:
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 	return;
 rightkey:
-	context.al = 16;
-	playchannel1(context);
-	context._cmp(context.data.byte(kLocation), 21);
-	if (context.flags.z())
+	al = 16;
+	playchannel1();
+	_cmp(data.byte(kLocation), 21);
+	if (flags.z())
 		goto goingdown;
-	context.cx = 300;
-	context.al = 0;
-	showpuztext(context);
-	context.data.byte(kNewlocation) = 21;
-	context.data.byte(kCounttoclose) = 8;
-	context.data.byte(kCounttoopen) = 0;
-	context.data.word(kWatchingtime) = 80;
-	context.data.byte(kGetback) = 1;
+	cx = 300;
+	al = 0;
+	showpuztext();
+	data.byte(kNewlocation) = 21;
+	data.byte(kCounttoclose) = 8;
+	data.byte(kCounttoopen) = 0;
+	data.word(kWatchingtime) = 80;
+	data.byte(kGetback) = 1;
 	return;
 goingdown:
-	context.cx = 300;
-	context.al = 3;
-	showpuztext(context);
-	context.data.byte(kNewlocation) = 30;
-	context.data.byte(kCounttoclose) = 8;
-	context.data.byte(kCounttoopen) = 0;
-	context.data.word(kWatchingtime) = 80;
-	context.data.byte(kGetback) = 1;
+	cx = 300;
+	al = 3;
+	showpuztext();
+	data.byte(kNewlocation) = 30;
+	data.byte(kCounttoclose) = 8;
+	data.byte(kCounttoopen) = 0;
+	data.word(kWatchingtime) = 80;
+	data.byte(kGetback) = 1;
 	return;
 jimmycontrols:
-	context.al = 50;
-	placesetobject(context);
-	context.al = 51;
-	placesetobject(context);
-	context.al = 26;
-	placesetobject(context);
-	context.al = 30;
-	placesetobject(context);
-	context.al = 16;
-	removesetobject(context);
-	context.al = 17;
-	removesetobject(context);
-	context.al = 14;
-	playchannel1(context);
-	context.cx = 300;
-	context.al = 10;
-	showpuztext(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.byte(kGetback) = 1;
+	al = 50;
+	placesetobject();
+	al = 51;
+	placesetobject();
+	al = 26;
+	placesetobject();
+	al = 30;
+	placesetobject();
+	al = 16;
+	removesetobject();
+	al = 17;
+	removesetobject();
+	al = 14;
+	playchannel1();
+	cx = 300;
+	al = 10;
+	showpuztext();
+	_inc(data.byte(kProgresspoints));
+	data.byte(kGetback) = 1;
 	return;
 axeoncontrols:
-	context.cx = 300;
-	context.al = 16;
-	showpuztext(context);
-	context._inc(context.data.byte(kProgresspoints));
-	putbackobstuff(context);
+	cx = 300;
+	al = 16;
+	showpuztext();
+	_inc(data.byte(kProgresspoints));
+	putbackobstuff();
 }
 
-void usehatch(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.byte(kNewlocation) = 40;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::usehatch() {
+	STACK_CHECK;
+	showfirstuse();
+	data.byte(kNewlocation) = 40;
+	data.byte(kGetback) = 1;
 }
 
-void usewire(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::usewire() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto gotwirewith;
-	withwhat(context);
+	withwhat();
 	return;
 gotwirewith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'K';
-	context.ch = 'N';
-	context.dl = 'F';
-	context.dh = 'E';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'K';
+	ch = 'N';
+	dl = 'F';
+	dh = 'E';
+	compare();
+	if (flags.z())
 		goto wireknife;
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'A';
-	context.ch = 'X';
-	context.dl = 'E';
-	context.dh = 'D';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'A';
+	ch = 'X';
+	dl = 'E';
+	dh = 'D';
+	compare();
+	if (flags.z())
 		goto wireaxe;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 wireaxe:
-	context.cx = 300;
-	context.al = 16;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 16;
+	showpuztext();
+	putbackobstuff();
 	return;
 wireknife:
-	context.al = 51;
-	removesetobject(context);
-	context.al = 52;
-	placesetobject(context);
-	context.cx = 300;
-	context.al = 11;
-	showpuztext(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.byte(kGetback) = 1;
+	al = 51;
+	removesetobject();
+	al = 52;
+	placesetobject();
+	cx = 300;
+	al = 11;
+	showpuztext();
+	_inc(data.byte(kProgresspoints));
+	data.byte(kGetback) = 1;
 }
 
-void usehandle(Context &context) {
-	STACK_CHECK(context);
-	context.al = 'C';
-	context.ah = 'U';
-	context.cl = 'T';
-	context.ch = 'W';
-	findsetobject(context);
-	context.al = context.es.byte(context.bx+58);
-	context._cmp(context.al, 255);
-	if (!context.flags.z())
+void DreamGenContext::usehandle() {
+	STACK_CHECK;
+	al = 'C';
+	ah = 'U';
+	cl = 'T';
+	ch = 'W';
+	findsetobject();
+	al = es.byte(bx+58);
+	_cmp(al, 255);
+	if (!flags.z())
 		goto havecutwire;
-	context.cx = 300;
-	context.al = 12;
-	showpuztext(context);
-	context.data.byte(kGetback) = 1;
+	cx = 300;
+	al = 12;
+	showpuztext();
+	data.byte(kGetback) = 1;
 	return;
 havecutwire:
-	context.cx = 300;
-	context.al = 13;
-	showpuztext(context);
-	context.data.byte(kNewlocation) = 22;
-	context.data.byte(kGetback) = 1;
+	cx = 300;
+	al = 13;
+	showpuztext();
+	data.byte(kNewlocation) = 22;
+	data.byte(kGetback) = 1;
 }
 
-void useelevator1(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	selectlocation(context);
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::useelevator1() {
+	STACK_CHECK;
+	showfirstuse();
+	selectlocation();
+	data.byte(kGetback) = 1;
 }
 
-void showfirstuse(Context &context) {
-	STACK_CHECK(context);
-	getobtextstart(context);
-	findnextcolon(context);
-	findnextcolon(context);
-	usetext(context);
-	context.cx = 400;
-	hangonp(context);
+void DreamGenContext::showfirstuse() {
+	STACK_CHECK;
+	getobtextstart();
+	findnextcolon();
+	findnextcolon();
+	usetext();
+	cx = 400;
+	hangonp();
 }
 
-void useelevator3(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.byte(kCounttoclose) = 20;
-	context.data.byte(kNewlocation) = 34;
-	context.data.word(kReeltowatch) = 46;
-	context.data.word(kEndwatchreel) = 63;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.word(kWatchingtime) = 80;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::useelevator3() {
+	STACK_CHECK;
+	showfirstuse();
+	data.byte(kCounttoclose) = 20;
+	data.byte(kNewlocation) = 34;
+	data.word(kReeltowatch) = 46;
+	data.word(kEndwatchreel) = 63;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.word(kWatchingtime) = 80;
+	data.byte(kGetback) = 1;
 }
 
-void useelevator4(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.word(kReeltowatch) = 0;
-	context.data.word(kEndwatchreel) = 11;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kCounttoclose) = 20;
-	context.data.word(kWatchingtime) = 80;
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kNewlocation) = 24;
+void DreamGenContext::useelevator4() {
+	STACK_CHECK;
+	showfirstuse();
+	data.word(kReeltowatch) = 0;
+	data.word(kEndwatchreel) = 11;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kCounttoclose) = 20;
+	data.word(kWatchingtime) = 80;
+	data.byte(kGetback) = 1;
+	data.byte(kNewlocation) = 24;
 }
 
-void useelevator2(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLocation), 23);
-	if (context.flags.z())
+void DreamGenContext::useelevator2() {
+	STACK_CHECK;
+	_cmp(data.byte(kLocation), 23);
+	if (flags.z())
 		goto inpoolhall;
-	showfirstuse(context);
-	context.data.byte(kNewlocation) = 23;
-	context.data.byte(kCounttoclose) = 20;
-	context.data.byte(kCounttoopen) = 0;
-	context.data.word(kWatchingtime) = 80;
-	context.data.byte(kGetback) = 1;
+	showfirstuse();
+	data.byte(kNewlocation) = 23;
+	data.byte(kCounttoclose) = 20;
+	data.byte(kCounttoopen) = 0;
+	data.word(kWatchingtime) = 80;
+	data.byte(kGetback) = 1;
 	return;
 inpoolhall:
-	showfirstuse(context);
-	context.data.byte(kNewlocation) = 31;
-	context.data.byte(kCounttoclose) = 20;
-	context.data.byte(kCounttoopen) = 0;
-	context.data.word(kWatchingtime) = 80;
-	context.data.byte(kGetback) = 1;
+	showfirstuse();
+	data.byte(kNewlocation) = 31;
+	data.byte(kCounttoclose) = 20;
+	data.byte(kCounttoopen) = 0;
+	data.word(kWatchingtime) = 80;
+	data.byte(kGetback) = 1;
 }
 
-void useelevator5(Context &context) {
-	STACK_CHECK(context);
-	context.al = 4;
-	placesetobject(context);
-	context.al = 0;
-	removesetobject(context);
-	context.data.byte(kNewlocation) = 20;
-	context.data.word(kWatchingtime) = 80;
-	context.data.byte(kLiftflag) = 1;
-	context.data.byte(kCounttoclose) = 8;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::useelevator5() {
+	STACK_CHECK;
+	al = 4;
+	placesetobject();
+	al = 0;
+	removesetobject();
+	data.byte(kNewlocation) = 20;
+	data.word(kWatchingtime) = 80;
+	data.byte(kLiftflag) = 1;
+	data.byte(kCounttoclose) = 8;
+	data.byte(kGetback) = 1;
 }
 
-void usekey(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLocation), 5);
-	if (context.flags.z())
+void DreamGenContext::usekey() {
+	STACK_CHECK;
+	_cmp(data.byte(kLocation), 5);
+	if (flags.z())
 		goto usekey1;
-	context._cmp(context.data.byte(kLocation), 30);
-	if (context.flags.z())
+	_cmp(data.byte(kLocation), 30);
+	if (flags.z())
 		goto usekey1;
-	context._cmp(context.data.byte(kLocation), 21);
-	if (context.flags.z())
+	_cmp(data.byte(kLocation), 21);
+	if (flags.z())
 		goto usekey2;
-	context.cx = 200;
-	context.al = 1;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 200;
+	al = 1;
+	showpuztext();
+	putbackobstuff();
 	return;
 usekey1:
-	context._cmp(context.data.byte(kMapx), 22);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 22);
+	if (!flags.z())
 		goto wrongroom1;
-	context._cmp(context.data.byte(kMapy), 10);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapy), 10);
+	if (!flags.z())
 		goto wrongroom1;
-	context.cx = 300;
-	context.al = 0;
-	showpuztext(context);
-	context.data.byte(kCounttoclose) = 100;
-	context.data.byte(kGetback) = 1;
+	cx = 300;
+	al = 0;
+	showpuztext();
+	data.byte(kCounttoclose) = 100;
+	data.byte(kGetback) = 1;
 	return;
 usekey2:
-	context._cmp(context.data.byte(kMapx), 11);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 11);
+	if (!flags.z())
 		goto wrongroom1;
-	context._cmp(context.data.byte(kMapy), 10);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapy), 10);
+	if (!flags.z())
 		goto wrongroom1;
-	context.cx = 300;
-	context.al = 3;
-	showpuztext(context);
-	context.data.byte(kNewlocation) = 30;
-	context.al = 2;
-	fadescreendown(context);
-	showfirstuse(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 3;
+	showpuztext();
+	data.byte(kNewlocation) = 30;
+	al = 2;
+	fadescreendown();
+	showfirstuse();
+	putbackobstuff();
 	return;
 wrongroom1:
-	context.cx = 200;
-	context.al = 2;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 200;
+	al = 2;
+	showpuztext();
+	putbackobstuff();
 }
 
-void usestereo(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLocation), 0);
-	if (context.flags.z())
+void DreamGenContext::usestereo() {
+	STACK_CHECK;
+	_cmp(data.byte(kLocation), 0);
+	if (flags.z())
 		goto stereook;
-	context.cx = 400;
-	context.al = 4;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 400;
+	al = 4;
+	showpuztext();
+	putbackobstuff();
 	return;
 stereook:
-	context._cmp(context.data.byte(kMapx), 11);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 11);
+	if (!flags.z())
 		goto stereonotok;
-	context._cmp(context.data.byte(kMapy), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kMapy), 0);
+	if (flags.z())
 		goto stereook2;
 stereonotok:
-	context.cx = 400;
-	context.al = 5;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 400;
+	al = 5;
+	showpuztext();
+	putbackobstuff();
 	return;
 stereook2:
-	context.al = 'C';
-	context.ah = 'D';
-	context.cl = 'P';
-	context.ch = 'L';
-	findsetobject(context);
-	context.ah = 1;
-	checkinside(context);
-	context._cmp(context.cl, (114));
-	if (!context.flags.z())
+	al = 'C';
+	ah = 'D';
+	cl = 'P';
+	ch = 'L';
+	findsetobject();
+	ah = 1;
+	checkinside();
+	_cmp(cl, (114));
+	if (!flags.z())
 		goto cdinside;
-	context.al = 6;
-	context.cx = 400;
-	showpuztext(context);
-	putbackobstuff(context);
-	getanyad(context);
-	context.al = 255;
-	context.es.byte(context.bx+10) = context.al;
+	al = 6;
+	cx = 400;
+	showpuztext();
+	putbackobstuff();
+	getanyad();
+	al = 255;
+	es.byte(bx+10) = al;
 	return;
 cdinside:
-	getanyad(context);
-	context.al = context.es.byte(context.bx+10);
-	context._xor(context.al, 1);
-	context.es.byte(context.bx+10) = context.al;
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	getanyad();
+	al = es.byte(bx+10);
+	_xor(al, 1);
+	es.byte(bx+10) = al;
+	_cmp(al, 255);
+	if (flags.z())
 		goto stereoon;
-	context.al = 7;
-	context.cx = 400;
-	showpuztext(context);
-	putbackobstuff(context);
+	al = 7;
+	cx = 400;
+	showpuztext();
+	putbackobstuff();
 	return;
 stereoon:
-	context.al = 8;
-	context.cx = 400;
-	showpuztext(context);
-	putbackobstuff(context);
+	al = 8;
+	cx = 400;
+	showpuztext();
+	putbackobstuff();
 }
 
-void usecooker(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kCommand);
-	context.ah = context.data.byte(kObjecttype);
-	checkinside(context);
-	context._cmp(context.cl, (114));
-	if (!context.flags.z())
+void DreamGenContext::usecooker() {
+	STACK_CHECK;
+	al = data.byte(kCommand);
+	ah = data.byte(kObjecttype);
+	checkinside();
+	_cmp(cl, (114));
+	if (!flags.z())
 		goto foodinside;
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 	return;
 foodinside:
-	showseconduse(context);
-	putbackobstuff(context);
+	showseconduse();
+	putbackobstuff();
 }
 
-void useaxe(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kReallocation), 22);
-	if (!context.flags.z())
+void DreamGenContext::useaxe() {
+	STACK_CHECK;
+	_cmp(data.byte(kReallocation), 22);
+	if (!flags.z())
 		goto notinpool;
-	context._cmp(context.data.byte(kMapy), 10);
-	if (context.flags.z())
+	_cmp(data.byte(kMapy), 10);
+	if (flags.z())
 		goto axeondoor;
-	showseconduse(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.byte(kLastweapon) = 2;
-	context.data.byte(kGetback) = 1;
-	removeobfrominv(context);
+	showseconduse();
+	_inc(data.byte(kProgresspoints));
+	data.byte(kLastweapon) = 2;
+	data.byte(kGetback) = 1;
+	removeobfrominv();
 	return;
 notinpool:
-	showfirstuse(context);
+	showfirstuse();
 /*continuing to unbounded code: axeondoor from useelvdoor:19-29*/
 axeondoor:
-	context.al = 15;
-	context.cx = 300;
-	showpuztext(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.word(kWatchingtime) = 46*2;
-	context.data.word(kReeltowatch) = 31;
-	context.data.word(kEndwatchreel) = 77;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
+	al = 15;
+	cx = 300;
+	showpuztext();
+	_inc(data.byte(kProgresspoints));
+	data.word(kWatchingtime) = 46*2;
+	data.word(kReeltowatch) = 31;
+	data.word(kEndwatchreel) = 77;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void useelvdoor(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::useelvdoor() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto gotdoorwith;
-	withwhat(context);
+	withwhat();
 	return;
 gotdoorwith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'A';
-	context.ch = 'X';
-	context.dl = 'E';
-	context.dh = 'D';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'A';
+	ch = 'X';
+	dl = 'E';
+	dh = 'D';
+	compare();
+	if (flags.z())
 		goto axeondoor;
-	context.al = 14;
-	context.cx = 300;
-	showpuztext(context);
-	putbackobstuff(context);
+	al = 14;
+	cx = 300;
+	showpuztext();
+	putbackobstuff();
 	return;
 axeondoor:
-	context.al = 15;
-	context.cx = 300;
-	showpuztext(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.word(kWatchingtime) = 46*2;
-	context.data.word(kReeltowatch) = 31;
-	context.data.word(kEndwatchreel) = 77;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
+	al = 15;
+	cx = 300;
+	showpuztext();
+	_inc(data.byte(kProgresspoints));
+	data.word(kWatchingtime) = 46*2;
+	data.word(kReeltowatch) = 31;
+	data.word(kEndwatchreel) = 77;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void withwhat(Context &context) {
-	STACK_CHECK(context);
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	context.al = context.data.byte(kCommand);
-	context.ah = context.data.byte(kObjecttype);
-	context.es = context.cs;
-	context.di = 5847;
-	copyname(context);
-	context.di = 100;
-	context.bx = 21;
-	context.dl = 200;
-	context.al = 63;
-	context.ah = 2;
-	printmessage2(context);
-	context.di = context.data.word(kLastxpos);
-	context._add(context.di, 5);
-	context.bx = 21;
-	context.es = context.cs;
-	context.si = 5847;
-	context.dl = 220;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	context.di = context.data.word(kLastxpos);
-	context._add(context.di, 5);
-	context.bx = 21;
-	context.dl = 200;
-	context.al = 63;
-	context.ah = 3;
-	printmessage2(context);
-	fillryan(context);
-	context.data.byte(kCommandtype) = 255;
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
-	context.data.byte(kInvopen) = 2;
+void DreamGenContext::withwhat() {
+	STACK_CHECK;
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	al = data.byte(kCommand);
+	ah = data.byte(kObjecttype);
+	es = cs;
+	di = 5847;
+	copyname();
+	di = 100;
+	bx = 21;
+	dl = 200;
+	al = 63;
+	ah = 2;
+	printmessage2();
+	di = data.word(kLastxpos);
+	_add(di, 5);
+	bx = 21;
+	es = cs;
+	si = 5847;
+	dl = 220;
+	al = 0;
+	ah = 0;
+	printdirect();
+	di = data.word(kLastxpos);
+	_add(di, 5);
+	bx = 21;
+	dl = 200;
+	al = 63;
+	ah = 3;
+	printmessage2();
+	fillryan();
+	data.byte(kCommandtype) = 255;
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
+	data.byte(kInvopen) = 2;
 }
 
-void selectob(Context &context) {
-	STACK_CHECK(context);
-	findinvpos(context);
-	context.ax = context.es.word(context.bx);
-	context._cmp(context.al, 255);
-	if (!context.flags.z())
+void DreamGenContext::selectob() {
+	STACK_CHECK;
+	findinvpos();
+	ax = es.word(bx);
+	_cmp(al, 255);
+	if (!flags.z())
 		goto canselectob;
-	blank(context);
+	blank();
 	return;
 canselectob:
-	context.data.byte(kWithobject) = context.al;
-	context.data.byte(kWithtype) = context.ah;
-	context._cmp(context.ax, context.data.word(kOldsubject));
-	if (!context.flags.z())
+	data.byte(kWithobject) = al;
+	data.byte(kWithtype) = ah;
+	_cmp(ax, data.word(kOldsubject));
+	if (!flags.z())
 		goto diffsub3;
-	context._cmp(context.data.byte(kCommandtype), 221);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 221);
+	if (flags.z())
 		goto alreadyselob;
-	context.data.byte(kCommandtype) = 221;
+	data.byte(kCommandtype) = 221;
 diffsub3:
-	context.data.word(kOldsubject) = context.ax;
-	context.bx = context.ax;
-	context.al = 0;
-	commandwithob(context);
+	data.word(kOldsubject) = ax;
+	bx = ax;
+	al = 0;
+	commandwithob();
 alreadyselob:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notselob) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto doselob;
 	return;
 doselob:
-	delpointer(context);
-	context.data.byte(kInvopen) = 0;
-	useroutine(context);
+	delpointer();
+	data.byte(kInvopen) = 0;
+	useroutine();
 }
 
-void compare(Context &context) {
-	STACK_CHECK(context);
-	context._sub(context.dl, 'A');
-	context._sub(context.dh, 'A');
-	context._sub(context.cl, 'A');
-	context._sub(context.ch, 'A');
-	context.push(context.cx);
-	context.push(context.dx);
-	getanyaddir(context);
-	context.dx = context.pop();
-	context.cx = context.pop();
-	context._cmp(context.es.word(context.bx+12), context.cx);
-	if (!context.flags.z())
+void DreamGenContext::compare() {
+	STACK_CHECK;
+	_sub(dl, 'A');
+	_sub(dh, 'A');
+	_sub(cl, 'A');
+	_sub(ch, 'A');
+	push(cx);
+	push(dx);
+	getanyaddir();
+	dx = pop();
+	cx = pop();
+	_cmp(es.word(bx+12), cx);
+	if (!flags.z())
 		return /* (comparefin) */;
-	context._cmp(context.es.word(context.bx+14), context.dx);
+	_cmp(es.word(bx+14), dx);
 }
 
-void findsetobject(Context &context) {
-	STACK_CHECK(context);
-	context._sub(context.al, 'A');
-	context._sub(context.ah, 'A');
-	context._sub(context.cl, 'A');
-	context._sub(context.ch, 'A');
-	context.es = context.data.word(kSetdat);
-	context.bx = 0;
-	context.dl = 0;
+void DreamGenContext::findsetobject() {
+	STACK_CHECK;
+	_sub(al, 'A');
+	_sub(ah, 'A');
+	_sub(cl, 'A');
+	_sub(ch, 'A');
+	es = data.word(kSetdat);
+	bx = 0;
+	dl = 0;
 findsetloop:
-	context._cmp(context.al, context.es.byte(context.bx+12));
-	if (!context.flags.z())
+	_cmp(al, es.byte(bx+12));
+	if (!flags.z())
 		goto nofind;
-	context._cmp(context.ah, context.es.byte(context.bx+13));
-	if (!context.flags.z())
+	_cmp(ah, es.byte(bx+13));
+	if (!flags.z())
 		goto nofind;
-	context._cmp(context.cl, context.es.byte(context.bx+14));
-	if (!context.flags.z())
+	_cmp(cl, es.byte(bx+14));
+	if (!flags.z())
 		goto nofind;
-	context._cmp(context.ch, context.es.byte(context.bx+15));
-	if (!context.flags.z())
+	_cmp(ch, es.byte(bx+15));
+	if (!flags.z())
 		goto nofind;
-	context.al = context.dl;
+	al = dl;
 	return;
 nofind:
-	context._add(context.bx, 64);
-	context._inc(context.dl);
-	context._cmp(context.dl, 128);
-	if (!context.flags.z())
+	_add(bx, 64);
+	_inc(dl);
+	_cmp(dl, 128);
+	if (!flags.z())
 		goto findsetloop;
-	context.al = context.dl;
+	al = dl;
 }
 
-void findexobject(Context &context) {
-	STACK_CHECK(context);
-	context._sub(context.al, 'A');
-	context._sub(context.ah, 'A');
-	context._sub(context.cl, 'A');
-	context._sub(context.ch, 'A');
-	context.es = context.data.word(kExtras);
-	context.bx = (0+2080+30000);
-	context.dl = 0;
+void DreamGenContext::findexobject() {
+	STACK_CHECK;
+	_sub(al, 'A');
+	_sub(ah, 'A');
+	_sub(cl, 'A');
+	_sub(ch, 'A');
+	es = data.word(kExtras);
+	bx = (0+2080+30000);
+	dl = 0;
 findexloop:
-	context._cmp(context.al, context.es.byte(context.bx+12));
-	if (!context.flags.z())
+	_cmp(al, es.byte(bx+12));
+	if (!flags.z())
 		goto nofindex;
-	context._cmp(context.ah, context.es.byte(context.bx+13));
-	if (!context.flags.z())
+	_cmp(ah, es.byte(bx+13));
+	if (!flags.z())
 		goto nofindex;
-	context._cmp(context.cl, context.es.byte(context.bx+14));
-	if (!context.flags.z())
+	_cmp(cl, es.byte(bx+14));
+	if (!flags.z())
 		goto nofindex;
-	context._cmp(context.ch, context.es.byte(context.bx+15));
-	if (!context.flags.z())
+	_cmp(ch, es.byte(bx+15));
+	if (!flags.z())
 		goto nofindex;
-	context.al = context.dl;
+	al = dl;
 	return;
 nofindex:
-	context._add(context.bx, 16);
-	context._inc(context.dl);
-	context._cmp(context.dl, (114));
-	if (!context.flags.z())
+	_add(bx, 16);
+	_inc(dl);
+	_cmp(dl, (114));
+	if (!flags.z())
 		goto findexloop;
-	context.al = context.dl;
+	al = dl;
 }
 
-void isryanholding(Context &context) {
-	STACK_CHECK(context);
-	context._sub(context.al, 'A');
-	context._sub(context.ah, 'A');
-	context._sub(context.cl, 'A');
-	context._sub(context.ch, 'A');
-	context.es = context.data.word(kExtras);
-	context.bx = (0+2080+30000);
-	context.dl = 0;
+void DreamGenContext::isryanholding() {
+	STACK_CHECK;
+	_sub(al, 'A');
+	_sub(ah, 'A');
+	_sub(cl, 'A');
+	_sub(ch, 'A');
+	es = data.word(kExtras);
+	bx = (0+2080+30000);
+	dl = 0;
 searchinv:
-	context._cmp(context.es.byte(context.bx+2), 4);
-	if (!context.flags.z())
+	_cmp(es.byte(bx+2), 4);
+	if (!flags.z())
 		goto nofindininv;
-	context._cmp(context.al, context.es.byte(context.bx+12));
-	if (!context.flags.z())
+	_cmp(al, es.byte(bx+12));
+	if (!flags.z())
 		goto nofindininv;
-	context._cmp(context.ah, context.es.byte(context.bx+13));
-	if (!context.flags.z())
+	_cmp(ah, es.byte(bx+13));
+	if (!flags.z())
 		goto nofindininv;
-	context._cmp(context.cl, context.es.byte(context.bx+14));
-	if (!context.flags.z())
+	_cmp(cl, es.byte(bx+14));
+	if (!flags.z())
 		goto nofindininv;
-	context._cmp(context.ch, context.es.byte(context.bx+15));
-	if (!context.flags.z())
+	_cmp(ch, es.byte(bx+15));
+	if (!flags.z())
 		goto nofindininv;
-	context.al = context.dl;
-	context._cmp(context.al, (114));
+	al = dl;
+	_cmp(al, (114));
 	return;
 nofindininv:
-	context._add(context.bx, 16);
-	context._inc(context.dl);
-	context._cmp(context.dl, (114));
-	if (!context.flags.z())
+	_add(bx, 16);
+	_inc(dl);
+	_cmp(dl, (114));
+	if (!flags.z())
 		goto searchinv;
-	context.al = context.dl;
-	context._cmp(context.al, (114));
+	al = dl;
+	_cmp(al, (114));
 }
 
-void checkinside(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kExtras);
-	context.bx = (0+2080+30000);
-	context.cl = 0;
+void DreamGenContext::checkinside() {
+	STACK_CHECK;
+	es = data.word(kExtras);
+	bx = (0+2080+30000);
+	cl = 0;
 insideloop:
-	context._cmp(context.al, context.es.byte(context.bx+3));
-	if (!context.flags.z())
+	_cmp(al, es.byte(bx+3));
+	if (!flags.z())
 		goto notfoundinside;
-	context._cmp(context.ah, context.es.byte(context.bx+2));
-	if (!context.flags.z())
+	_cmp(ah, es.byte(bx+2));
+	if (!flags.z())
 		goto notfoundinside;
 	return;
 notfoundinside:
-	context._add(context.bx, 16);
-	context._inc(context.cl);
-	context._cmp(context.cl, (114));
-	if (!context.flags.z())
+	_add(bx, 16);
+	_inc(cl);
+	_cmp(cl, (114));
+	if (!flags.z())
 		goto insideloop;
 }
 
-void usetext(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.si);
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	obicons(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context.di = 36;
-	context.bx = 104;
-	context.dl = 241;
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	worktoscreenm(context);
+void DreamGenContext::usetext() {
+	STACK_CHECK;
+	push(es);
+	push(si);
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	obicons();
+	si = pop();
+	es = pop();
+	di = 36;
+	bx = 104;
+	dl = 241;
+	al = 0;
+	ah = 0;
+	printdirect();
+	worktoscreenm();
 }
 
-void putbackobstuff(Context &context) {
-	STACK_CHECK(context);
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	obicons(context);
-	showexit(context);
-	obpicture(context);
-	describeob(context);
-	undertextline(context);
-	context.data.byte(kCommandtype) = 255;
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+void DreamGenContext::putbackobstuff() {
+	STACK_CHECK;
+	createpanel();
+	showpanel();
+	showman();
+	obicons();
+	showexit();
+	obpicture();
+	describeob();
+	undertextline();
+	data.byte(kCommandtype) = 255;
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void showpuztext(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.cx);
-	findpuztext(context);
-	context.push(context.es);
-	context.push(context.si);
-	createpanel(context);
-	showpanel(context);
-	showman(context);
-	showexit(context);
-	obicons(context);
-	context.si = context.pop();
-	context.es = context.pop();
-	context.di = 36;
-	context.bx = 104;
-	context.dl = 241;
-	context.ah = 0;
-	printdirect(context);
-	worktoscreenm(context);
-	context.cx = context.pop();
-	hangonp(context);
+void DreamGenContext::showpuztext() {
+	STACK_CHECK;
+	push(cx);
+	findpuztext();
+	push(es);
+	push(si);
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	obicons();
+	si = pop();
+	es = pop();
+	di = 36;
+	bx = 104;
+	dl = 241;
+	ah = 0;
+	printdirect();
+	worktoscreenm();
+	cx = pop();
+	hangonp();
 }
 
-void findpuztext(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 0;
-	context.si = context.ax;
-	context._add(context.si, context.si);
-	context.es = context.data.word(kPuzzletext);
-	context.ax = context.es.word(context.si);
-	context._add(context.ax, (66*2));
-	context.si = context.ax;
+void DreamGenContext::findpuztext() {
+	STACK_CHECK;
+	ah = 0;
+	si = ax;
+	_add(si, si);
+	es = data.word(kPuzzletext);
+	ax = es.word(si);
+	_add(ax, (66*2));
+	si = ax;
 }
 
-void placesetobject(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context.cl = 0;
-	context.ch = 0;
-	findormake(context);
-	getsetad(context);
-	context.es.byte(context.bx+58) = 0;
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::placesetobject() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	cl = 0;
+	ch = 0;
+	findormake();
+	getsetad();
+	es.byte(bx+58) = 0;
+	bx = pop();
+	es = pop();
 }
 
-void removesetobject(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context.cl = 255;
-	context.ch = 0;
-	findormake(context);
-	getsetad(context);
-	context.es.byte(context.bx+58) = 255;
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::removesetobject() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	cl = 255;
+	ch = 0;
+	findormake();
+	getsetad();
+	es.byte(bx+58) = 255;
+	bx = pop();
+	es = pop();
 }
 
-void issetobonmap(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	getsetad(context);
-	context.al = context.es.byte(context.bx+58);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context._cmp(context.al, 0);
+void DreamGenContext::issetobonmap() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	getsetad();
+	al = es.byte(bx+58);
+	bx = pop();
+	es = pop();
+	_cmp(al, 0);
 }
 
-void placefreeobject(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	context.cl = 0;
-	context.ch = 1;
-	findormake(context);
-	getfreead(context);
-	context.es.byte(context.bx+2) = 0;
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::placefreeobject() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	cl = 0;
+	ch = 1;
+	findormake();
+	getfreead();
+	es.byte(bx+2) = 0;
+	bx = pop();
+	es = pop();
 }
 
-void removefreeobject(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.bx);
-	getfreead(context);
-	context.es.byte(context.bx+2) = 255;
-	context.bx = context.pop();
-	context.es = context.pop();
+void DreamGenContext::removefreeobject() {
+	STACK_CHECK;
+	push(es);
+	push(bx);
+	getfreead();
+	es.byte(bx+2) = 255;
+	bx = pop();
+	es = pop();
 }
 
-void findormake(Context &context) {
-	STACK_CHECK(context);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-	context.push(context.ax);
-	context.es = context.data.word(kBuffers);
-	context.ah = context.data.byte(kReallocation);
+void DreamGenContext::findormake() {
+	STACK_CHECK;
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
+	push(ax);
+	es = data.word(kBuffers);
+	ah = data.byte(kReallocation);
 changeloop:
-	context._cmp(context.es.byte(context.bx), 255);
-	if (context.flags.z())
+	_cmp(es.byte(bx), 255);
+	if (flags.z())
 		goto haventfound;
-	context._cmp(context.ax, context.es.word(context.bx));
-	if (!context.flags.z())
+	_cmp(ax, es.word(bx));
+	if (!flags.z())
 		goto nofoundchange;
-	context._cmp(context.ch, context.es.byte(context.bx+3));
-	if (context.flags.z())
+	_cmp(ch, es.byte(bx+3));
+	if (flags.z())
 		goto foundchange;
 nofoundchange:
-	context._add(context.bx, 4);
+	_add(bx, 4);
 	goto changeloop;
 foundchange:
-	context.ax = context.pop();
-	context.es.byte(context.bx+2) = context.cl;
+	ax = pop();
+	es.byte(bx+2) = cl;
 	return;
 haventfound:
-	context.es.word(context.bx) = context.ax;
-	context.es.word(context.bx+2) = context.cx;
-	context.ax = context.pop();
+	es.word(bx) = ax;
+	es.word(bx+2) = cx;
+	ax = pop();
 }
 
-void switchryanon(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kRyanon) = 255;
+void DreamGenContext::switchryanon() {
+	STACK_CHECK;
+	data.byte(kRyanon) = 255;
 }
 
-void switchryanoff(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kRyanon) = 1;
+void DreamGenContext::switchryanoff() {
+	STACK_CHECK;
+	data.byte(kRyanon) = 1;
 }
 
-void setallchanges(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
+void DreamGenContext::setallchanges() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
 setallloop:
-	context.ax = context.es.word(context.bx);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	ax = es.word(bx);
+	_cmp(al, 255);
+	if (flags.z())
 		return /* (endsetloop) */;
-	context.cx = context.es.word(context.bx+2);
-	context._add(context.bx, 4);
-	context._cmp(context.ah, context.data.byte(kReallocation));
-	if (!context.flags.z())
+	cx = es.word(bx+2);
+	_add(bx, 4);
+	_cmp(ah, data.byte(kReallocation));
+	if (!flags.z())
 		goto setallloop;
-	context.push(context.es);
-	context.push(context.bx);
-	dochange(context);
-	context.bx = context.pop();
-	context.es = context.pop();
+	push(es);
+	push(bx);
+	dochange();
+	bx = pop();
+	es = pop();
 	goto setallloop;
 }
 
-void dochange(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.ch, 0);
-	if (context.flags.z())
+void DreamGenContext::dochange() {
+	STACK_CHECK;
+	_cmp(ch, 0);
+	if (flags.z())
 		goto object;
-	context._cmp(context.ch, 1);
-	if (context.flags.z())
+	_cmp(ch, 1);
+	if (flags.z())
 		goto freeobject;
-	context.push(context.cx);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context.push(context.ax);
-	context.al = context.ch;
-	context._sub(context.al, 100);
-	context.ah = 0;
-	context.cx = 144;
-	context._mul(context.cx);
-	context.bx = context.pop();
-	context._add(context.bx, context.ax);
-	context._add(context.bx, (0));
-	context.es = context.data.word(kReels);
-	context.cx = context.pop();
-	context.es.byte(context.bx+6) = context.cl;
+	push(cx);
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	push(ax);
+	al = ch;
+	_sub(al, 100);
+	ah = 0;
+	cx = 144;
+	_mul(cx);
+	bx = pop();
+	_add(bx, ax);
+	_add(bx, (0));
+	es = data.word(kReels);
+	cx = pop();
+	es.byte(bx+6) = cl;
 	return;
 object:
-	context.push(context.cx);
-	getsetad(context);
-	context.cx = context.pop();
-	context.es.byte(context.bx+58) = context.cl;
+	push(cx);
+	getsetad();
+	cx = pop();
+	es.byte(bx+58) = cl;
 	return;
 freeobject:
-	context.push(context.cx);
-	getfreead(context);
-	context.cx = context.pop();
-	context._cmp(context.es.byte(context.bx+2), 255);
-	if (!context.flags.z())
+	push(cx);
+	getfreead();
+	cx = pop();
+	_cmp(es.byte(bx+2), 255);
+	if (!flags.z())
 		return /* (beenpickedup) */;
-	context.es.byte(context.bx+2) = context.cl;
+	es.byte(bx+2) = cl;
 }
 
-void autoappear(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLocation), 32);
-	if (!context.flags.z())
+void DreamGenContext::autoappear() {
+	STACK_CHECK;
+	_cmp(data.byte(kLocation), 32);
+	if (!flags.z())
 		goto notinalley;
-	context.al = 5;
-	resetlocation(context);
-	context.al = 10;
-	setlocation(context);
-	context.data.byte(kDestpos) = 10;
+	al = 5;
+	resetlocation();
+	al = 10;
+	setlocation();
+	data.byte(kDestpos) = 10;
 	return;
 notinalley:
-	context._cmp(context.data.byte(kReallocation), 24);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 24);
+	if (!flags.z())
 		goto notinedens;
-	context._cmp(context.data.byte(kGeneraldead), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kGeneraldead), 1);
+	if (!flags.z())
 		goto edenspart2;
-	context._inc(context.data.byte(kGeneraldead));
-	context.al = 44;
-	placesetobject(context);
-	context.al = 18;
-	placesetobject(context);
-	context.al = 93;
-	placesetobject(context);
-	context.al = 92;
-	removesetobject(context);
-	context.al = 55;
-	removesetobject(context);
-	context.al = 75;
-	removesetobject(context);
-	context.al = 84;
-	removesetobject(context);
-	context.al = 85;
-	removesetobject(context);
+	_inc(data.byte(kGeneraldead));
+	al = 44;
+	placesetobject();
+	al = 18;
+	placesetobject();
+	al = 93;
+	placesetobject();
+	al = 92;
+	removesetobject();
+	al = 55;
+	removesetobject();
+	al = 75;
+	removesetobject();
+	al = 84;
+	removesetobject();
+	al = 85;
+	removesetobject();
 	return;
 edenspart2:
-	context._cmp(context.data.byte(kSartaindead), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kSartaindead), 1);
+	if (!flags.z())
 		return /* (notedens2) */;
-	context.al = 44;
-	removesetobject(context);
-	context.al = 93;
-	removesetobject(context);
-	context.al = 55;
-	placesetobject(context);
-	context._inc(context.data.byte(kSartaindead));
+	al = 44;
+	removesetobject();
+	al = 93;
+	removesetobject();
+	al = 55;
+	placesetobject();
+	_inc(data.byte(kSartaindead));
 	return;
 notinedens:
-	context._cmp(context.data.byte(kReallocation), 25);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 25);
+	if (!flags.z())
 		goto notonsartroof;
-	context.data.byte(kNewsitem) = 3;
-	context.al = 6;
-	resetlocation(context);
-	context.al = 11;
-	setlocation(context);
-	context.data.byte(kDestpos) = 11;
+	data.byte(kNewsitem) = 3;
+	al = 6;
+	resetlocation();
+	al = 11;
+	setlocation();
+	data.byte(kDestpos) = 11;
 	return;
 notonsartroof:
-	context._cmp(context.data.byte(kReallocation), 2);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 2);
+	if (!flags.z())
 		return /* (notinlouiss) */;
-	context._cmp(context.data.byte(kRockstardead), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kRockstardead), 0);
+	if (flags.z())
 		return /* (notinlouiss) */;
-	context.al = 23;
-	placesetobject(context);
+	al = 23;
+	placesetobject();
 }
 
-void getundertimed(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kTimedy);
-	context.ah = 0;
-	context.bx = context.ax;
-	context.al = context.data.byte(kTimedx);
-	context.ah = 0;
-	context.di = context.ax;
-	context.ch = (24);
-	context.cl = 240;
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiget(context);
+void DreamGenContext::getundertimed() {
+	STACK_CHECK;
+	al = data.byte(kTimedy);
+	ah = 0;
+	bx = ax;
+	al = data.byte(kTimedx);
+	ah = 0;
+	di = ax;
+	ch = (24);
+	cl = 240;
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
+	multiget();
 }
 
-void putundertimed(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kTimedy);
-	context.ah = 0;
-	context.bx = context.ax;
-	context.al = context.data.byte(kTimedx);
-	context.ah = 0;
-	context.di = context.ax;
-	context.ch = (24);
-	context.cl = 240;
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiput(context);
+void DreamGenContext::putundertimed() {
+	STACK_CHECK;
+	al = data.byte(kTimedy);
+	ah = 0;
+	bx = ax;
+	al = data.byte(kTimedx);
+	ah = 0;
+	di = ax;
+	ch = (24);
+	cl = 240;
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
+	multiput();
 }
 
-void dumptimedtext(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kNeedtodumptimed), 1);
-	if (!context.flags.z())
+void DreamGenContext::dumptimedtext() {
+	STACK_CHECK;
+	_cmp(data.byte(kNeedtodumptimed), 1);
+	if (!flags.z())
 		return /* (nodumptimed) */;
-	context.al = context.data.byte(kTimedy);
-	context.ah = 0;
-	context.bx = context.ax;
-	context.al = context.data.byte(kTimedx);
-	context.ah = 0;
-	context.di = context.ax;
-	context.cl = 240;
-	context.ch = (24);
-	multidump(context);
-	context.data.byte(kNeedtodumptimed) = 0;
+	al = data.byte(kTimedy);
+	ah = 0;
+	bx = ax;
+	al = data.byte(kTimedx);
+	ah = 0;
+	di = ax;
+	cl = 240;
+	ch = (24);
+	multidump();
+	data.byte(kNeedtodumptimed) = 0;
 }
 
-void setuptimeduse(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kTimecount), 0);
-	if (!context.flags.z())
+void DreamGenContext::setuptimeduse() {
+	STACK_CHECK;
+	_cmp(data.word(kTimecount), 0);
+	if (!flags.z())
 		return /* (cantsetup) */;
-	context.data.byte(kTimedy) = context.bh;
-	context.data.byte(kTimedx) = context.bl;
-	context.data.word(kCounttotimed) = context.cx;
-	context._add(context.dx, context.cx);
-	context.data.word(kTimecount) = context.dx;
-	context.bl = context.al;
-	context.bh = 0;
-	context._add(context.bx, context.bx);
-	context.es = context.data.word(kPuzzletext);
-	context.cx = (66*2);
-	context.ax = context.es.word(context.bx);
-	context._add(context.ax, context.cx);
-	context.bx = context.ax;
-	context.data.word(kTimedseg) = context.es;
-	context.data.word(kTimedoffset) = context.bx;
+	data.byte(kTimedy) = bh;
+	data.byte(kTimedx) = bl;
+	data.word(kCounttotimed) = cx;
+	_add(dx, cx);
+	data.word(kTimecount) = dx;
+	bl = al;
+	bh = 0;
+	_add(bx, bx);
+	es = data.word(kPuzzletext);
+	cx = (66*2);
+	ax = es.word(bx);
+	_add(ax, cx);
+	bx = ax;
+	data.word(kTimedseg) = es;
+	data.word(kTimedoffset) = bx;
 }
 
-void setuptimedtemp(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.ah, 0);
-	if (context.flags.z())
+void DreamGenContext::setuptimedtemp() {
+	STACK_CHECK;
+	_cmp(ah, 0);
+	if (flags.z())
 		goto notloadspeech3;
-	context.dl = 'T';
-	context.dh = context.ah;
-	context.cl = 'T';
-	context.ah = 0;
-	loadspeech(context);
-	context._cmp(context.data.byte(kSpeechloaded), 1);
-	if (!context.flags.z())
+	dl = 'T';
+	dh = ah;
+	cl = 'T';
+	ah = 0;
+	loadspeech();
+	_cmp(data.byte(kSpeechloaded), 1);
+	if (!flags.z())
 		goto notloadspeech3;
-	context.al = 50+12;
-	playchannel1(context);
+	al = 50+12;
+	playchannel1();
 	return;
 notloadspeech3:
-	context._cmp(context.data.word(kTimecount), 0);
-	if (!context.flags.z())
+	_cmp(data.word(kTimecount), 0);
+	if (!flags.z())
 		return /* (cantsetup2) */;
-	context.data.byte(kTimedy) = context.bh;
-	context.data.byte(kTimedx) = context.bl;
-	context.data.word(kCounttotimed) = context.cx;
-	context._add(context.dx, context.cx);
-	context.data.word(kTimecount) = context.dx;
-	context.bl = context.al;
-	context.bh = 0;
-	context._add(context.bx, context.bx);
-	context.es = context.data.word(kTextfile1);
-	context.cx = (66*2);
-	context.ax = context.es.word(context.bx);
-	context._add(context.ax, context.cx);
-	context.bx = context.ax;
-	context.data.word(kTimedseg) = context.es;
-	context.data.word(kTimedoffset) = context.bx;
+	data.byte(kTimedy) = bh;
+	data.byte(kTimedx) = bl;
+	data.word(kCounttotimed) = cx;
+	_add(dx, cx);
+	data.word(kTimecount) = dx;
+	bl = al;
+	bh = 0;
+	_add(bx, bx);
+	es = data.word(kTextfile1);
+	cx = (66*2);
+	ax = es.word(bx);
+	_add(ax, cx);
+	bx = ax;
+	data.word(kTimedseg) = es;
+	data.word(kTimedoffset) = bx;
 }
 
-void usetimedtext(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kTimecount), 0);
-	if (context.flags.z())
+void DreamGenContext::usetimedtext() {
+	STACK_CHECK;
+	_cmp(data.word(kTimecount), 0);
+	if (flags.z())
 		return /* (notext) */;
-	context._dec(context.data.word(kTimecount));
-	context._cmp(context.data.word(kTimecount), 0);
-	if (context.flags.z())
+	_dec(data.word(kTimecount));
+	_cmp(data.word(kTimecount), 0);
+	if (flags.z())
 		goto deltimedtext;
-	context.ax = context.data.word(kTimecount);
-	context._cmp(context.ax, context.data.word(kCounttotimed));
-	if (context.flags.z())
+	ax = data.word(kTimecount);
+	_cmp(ax, data.word(kCounttotimed));
+	if (flags.z())
 		goto firsttimed;
-	if (!context.flags.c())
+	if (!flags.c())
 		return /* (notext) */;
 	goto notfirsttimed;
 firsttimed:
-	getundertimed(context);
+	getundertimed();
 notfirsttimed:
-	context.bl = context.data.byte(kTimedy);
-	context.bh = 0;
-	context.al = context.data.byte(kTimedx);
-	context.ah = 0;
-	context.di = context.ax;
-	context.es = context.data.word(kTimedseg);
-	context.si = context.data.word(kTimedoffset);
-	context.dl = 237;
-	context.ah = 0;
-	printdirect(context);
-	context.data.byte(kNeedtodumptimed) = 1;
+	bl = data.byte(kTimedy);
+	bh = 0;
+	al = data.byte(kTimedx);
+	ah = 0;
+	di = ax;
+	es = data.word(kTimedseg);
+	si = data.word(kTimedoffset);
+	dl = 237;
+	ah = 0;
+	printdirect();
+	data.byte(kNeedtodumptimed) = 1;
 	return;
 deltimedtext:
-	putundertimed(context);
-	context.data.byte(kNeedtodumptimed) = 1;
+	putundertimed();
+	data.byte(kNeedtodumptimed) = 1;
 }
 
-void edenscdplayer(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context.data.word(kWatchingtime) = 18*2;
-	context.data.word(kReeltowatch) = 25;
-	context.data.word(kEndwatchreel) = 42;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
+void DreamGenContext::edenscdplayer() {
+	STACK_CHECK;
+	showfirstuse();
+	data.word(kWatchingtime) = 18*2;
+	data.word(kReeltowatch) = 25;
+	data.word(kEndwatchreel) = 42;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void usewall(Context &context) {
-	STACK_CHECK(context);
-	showfirstuse(context);
-	context._cmp(context.data.byte(kManspath), 3);
-	if (context.flags.z())
+void DreamGenContext::usewall() {
+	STACK_CHECK;
+	showfirstuse();
+	_cmp(data.byte(kManspath), 3);
+	if (flags.z())
 		goto gobackover;
-	context.data.word(kWatchingtime) = 30*2;
-	context.data.word(kReeltowatch) = 2;
-	context.data.word(kEndwatchreel) = 31;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
-	context.al = 3;
-	turnpathon(context);
-	context.al = 4;
-	turnpathon(context);
-	context.al = 0;
-	turnpathoff(context);
-	context.al = 1;
-	turnpathoff(context);
-	context.al = 2;
-	turnpathoff(context);
-	context.al = 5;
-	turnpathoff(context);
-	context.data.byte(kManspath) = 3;
-	context.data.byte(kFinaldest) = 3;
-	findxyfrompath(context);
-	context.data.byte(kResetmanxy) = 1;
-	switchryanoff(context);
+	data.word(kWatchingtime) = 30*2;
+	data.word(kReeltowatch) = 2;
+	data.word(kEndwatchreel) = 31;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+	al = 3;
+	turnpathon();
+	al = 4;
+	turnpathon();
+	al = 0;
+	turnpathoff();
+	al = 1;
+	turnpathoff();
+	al = 2;
+	turnpathoff();
+	al = 5;
+	turnpathoff();
+	data.byte(kManspath) = 3;
+	data.byte(kFinaldest) = 3;
+	findxyfrompath();
+	data.byte(kResetmanxy) = 1;
+	switchryanoff();
 	return;
 gobackover:
-	context.data.word(kWatchingtime) = 30*2;
-	context.data.word(kReeltowatch) = 34;
-	context.data.word(kEndwatchreel) = 60;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
-	context.al = 3;
-	turnpathoff(context);
-	context.al = 4;
-	turnpathoff(context);
-	context.al = 0;
-	turnpathon(context);
-	context.al = 1;
-	turnpathon(context);
-	context.al = 2;
-	turnpathon(context);
-	context.al = 5;
-	turnpathon(context);
-	context.data.byte(kManspath) = 5;
-	context.data.byte(kFinaldest) = 5;
-	findxyfrompath(context);
-	context.data.byte(kResetmanxy) = 1;
-	switchryanoff(context);
+	data.word(kWatchingtime) = 30*2;
+	data.word(kReeltowatch) = 34;
+	data.word(kEndwatchreel) = 60;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+	al = 3;
+	turnpathoff();
+	al = 4;
+	turnpathoff();
+	al = 0;
+	turnpathon();
+	al = 1;
+	turnpathon();
+	al = 2;
+	turnpathon();
+	al = 5;
+	turnpathon();
+	data.byte(kManspath) = 5;
+	data.byte(kFinaldest) = 5;
+	findxyfrompath();
+	data.byte(kResetmanxy) = 1;
+	switchryanoff();
 }
 
-void usechurchgate(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::usechurchgate() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto gatewith;
-	withwhat(context);
+	withwhat();
 	return;
 gatewith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'C';
-	context.ch = 'U';
-	context.dl = 'T';
-	context.dh = 'T';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'C';
+	ch = 'U';
+	dl = 'T';
+	dh = 'T';
+	compare();
+	if (flags.z())
 		goto cutgate;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 cutgate:
-	showfirstuse(context);
-	context.data.word(kWatchingtime) = 64*2;
-	context.data.word(kReeltowatch) = 4;
-	context.data.word(kEndwatchreel) = 70;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
-	context._inc(context.data.byte(kProgresspoints));
-	context.al = 3;
-	turnpathon(context);
-	context._cmp(context.data.byte(kAidedead), 0);
-	if (context.flags.z())
+	showfirstuse();
+	data.word(kWatchingtime) = 64*2;
+	data.word(kReeltowatch) = 4;
+	data.word(kEndwatchreel) = 70;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
+	al = 3;
+	turnpathon();
+	_cmp(data.byte(kAidedead), 0);
+	if (flags.z())
 		return /* (notopenchurch) */;
-	context.al = 2;
-	turnpathon(context);
+	al = 2;
+	turnpathon();
 }
 
-void usegun(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kObjecttype), 4);
-	if (context.flags.z())
+void DreamGenContext::usegun() {
+	STACK_CHECK;
+	_cmp(data.byte(kObjecttype), 4);
+	if (flags.z())
 		goto istakengun;
-	showseconduse(context);
-	putbackobstuff(context);
+	showseconduse();
+	putbackobstuff();
 	return;
 istakengun:
-	context._cmp(context.data.byte(kReallocation), 22);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 22);
+	if (!flags.z())
 		goto notinpoolroom;
-	context.cx = 300;
-	context.al = 34;
-	showpuztext(context);
-	context.data.byte(kLastweapon) = 1;
-	context.data.byte(kCombatcount) = 39;
-	context.data.byte(kGetback) = 1;
-	context._inc(context.data.byte(kProgresspoints));
+	cx = 300;
+	al = 34;
+	showpuztext();
+	data.byte(kLastweapon) = 1;
+	data.byte(kCombatcount) = 39;
+	data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
 	return;
 notinpoolroom:
-	context._cmp(context.data.byte(kReallocation), 25);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 25);
+	if (!flags.z())
 		goto nothelicopter;
-	context.cx = 300;
-	context.al = 34;
-	showpuztext(context);
-	context.data.byte(kLastweapon) = 1;
-	context.data.byte(kCombatcount) = 19;
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kDreamnumber) = 2;
-	context.data.byte(kRoomafterdream) = 38;
-	context.data.byte(kSartaindead) = 1;
-	context._inc(context.data.byte(kProgresspoints));
+	cx = 300;
+	al = 34;
+	showpuztext();
+	data.byte(kLastweapon) = 1;
+	data.byte(kCombatcount) = 19;
+	data.byte(kGetback) = 1;
+	data.byte(kDreamnumber) = 2;
+	data.byte(kRoomafterdream) = 38;
+	data.byte(kSartaindead) = 1;
+	_inc(data.byte(kProgresspoints));
 	return;
 nothelicopter:
-	context._cmp(context.data.byte(kReallocation), 27);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 27);
+	if (!flags.z())
 		goto notinrockroom;
-	context.cx = 300;
-	context.al = 46;
-	showpuztext(context);
-	context.data.byte(kPointermode) = 2;
-	context.data.byte(kRockstardead) = 1;
-	context.data.byte(kLastweapon) = 1;
-	context.data.byte(kNewsitem) = 1;
-	context.data.byte(kGetback) = 1;
-	context.data.byte(kRoomafterdream) = 32;
-	context.data.byte(kDreamnumber) = 0;
-	context._inc(context.data.byte(kProgresspoints));
+	cx = 300;
+	al = 46;
+	showpuztext();
+	data.byte(kPointermode) = 2;
+	data.byte(kRockstardead) = 1;
+	data.byte(kLastweapon) = 1;
+	data.byte(kNewsitem) = 1;
+	data.byte(kGetback) = 1;
+	data.byte(kRoomafterdream) = 32;
+	data.byte(kDreamnumber) = 0;
+	_inc(data.byte(kProgresspoints));
 	return;
 notinrockroom:
-	context._cmp(context.data.byte(kReallocation), 8);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 8);
+	if (!flags.z())
 		goto notbystudio;
-	context._cmp(context.data.byte(kMapx), 22);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 22);
+	if (!flags.z())
 		goto notbystudio;
-	context._cmp(context.data.byte(kMapy), 40);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapy), 40);
+	if (!flags.z())
 		goto notbystudio;
-	context.al = 92;
-	issetobonmap(context);
-	if (context.flags.z())
+	al = 92;
+	issetobonmap();
+	if (flags.z())
 		goto notbystudio;
-	context._cmp(context.data.byte(kManspath), 9);
-	if (context.flags.z())
+	_cmp(data.byte(kManspath), 9);
+	if (flags.z())
 		goto notbystudio;
-	context.data.byte(kDestination) = 9;
-	context.data.byte(kFinaldest) = 9;
-	autosetwalk(context);
-	context.data.byte(kLastweapon) = 1;
-	context.data.byte(kGetback) = 1;
-	context._inc(context.data.byte(kProgresspoints));
+	data.byte(kDestination) = 9;
+	data.byte(kFinaldest) = 9;
+	autosetwalk();
+	data.byte(kLastweapon) = 1;
+	data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
 	return;
 notbystudio:
-	context._cmp(context.data.byte(kReallocation), 6);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 6);
+	if (!flags.z())
 		goto notsarters;
-	context._cmp(context.data.byte(kMapx), 11);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 11);
+	if (!flags.z())
 		goto notsarters;
-	context._cmp(context.data.byte(kMapy), 20);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapy), 20);
+	if (!flags.z())
 		goto notsarters;
-	context.al = 5;
-	issetobonmap(context);
-	if (!context.flags.z())
+	al = 5;
+	issetobonmap();
+	if (!flags.z())
 		goto notsarters;
-	context.data.byte(kDestination) = 1;
-	context.data.byte(kFinaldest) = 1;
-	autosetwalk(context);
-	context.al = 5;
-	removesetobject(context);
-	context.al = 6;
-	placesetobject(context);
-	context.al = 1;
-	context.ah = context.data.byte(kRoomnum);
-	context._dec(context.ah);
-	turnanypathon(context);
-	context.data.byte(kLiftflag) = 1;
-	context.data.word(kWatchingtime) = 40*2;
-	context.data.word(kReeltowatch) = 4;
-	context.data.word(kEndwatchreel) = 43;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
-	context._inc(context.data.byte(kProgresspoints));
+	data.byte(kDestination) = 1;
+	data.byte(kFinaldest) = 1;
+	autosetwalk();
+	al = 5;
+	removesetobject();
+	al = 6;
+	placesetobject();
+	al = 1;
+	ah = data.byte(kRoomnum);
+	_dec(ah);
+	turnanypathon();
+	data.byte(kLiftflag) = 1;
+	data.word(kWatchingtime) = 40*2;
+	data.word(kReeltowatch) = 4;
+	data.word(kEndwatchreel) = 43;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
 	return;
 notsarters:
-	context._cmp(context.data.byte(kReallocation), 29);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 29);
+	if (!flags.z())
 		goto notaide;
-	context.data.byte(kGetback) = 1;
-	context.al = 13;
-	resetlocation(context);
-	context.al = 12;
-	setlocation(context);
-	context.data.byte(kDestpos) = 12;
-	context.data.byte(kDestination) = 2;
-	context.data.byte(kFinaldest) = 2;
-	autosetwalk(context);
-	context.data.word(kWatchingtime) = 164*2;
-	context.data.word(kReeltowatch) = 3;
-	context.data.word(kEndwatchreel) = 164;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kAidedead) = 1;
-	context.data.byte(kDreamnumber) = 3;
-	context.data.byte(kRoomafterdream) = 33;
-	context._inc(context.data.byte(kProgresspoints));
+	data.byte(kGetback) = 1;
+	al = 13;
+	resetlocation();
+	al = 12;
+	setlocation();
+	data.byte(kDestpos) = 12;
+	data.byte(kDestination) = 2;
+	data.byte(kFinaldest) = 2;
+	autosetwalk();
+	data.word(kWatchingtime) = 164*2;
+	data.word(kReeltowatch) = 3;
+	data.word(kEndwatchreel) = 164;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kAidedead) = 1;
+	data.byte(kDreamnumber) = 3;
+	data.byte(kRoomafterdream) = 33;
+	_inc(data.byte(kProgresspoints));
 	return;
 notaide:
-	context._cmp(context.data.byte(kReallocation), 23);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 23);
+	if (!flags.z())
 		goto notwithboss;
-	context._cmp(context.data.byte(kMapx), 0);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 0);
+	if (!flags.z())
 		goto notwithboss;
-	context._cmp(context.data.byte(kMapy), 50);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapy), 50);
+	if (!flags.z())
 		goto notwithboss;
-	context._cmp(context.data.byte(kManspath), 5);
-	if (context.flags.z())
+	_cmp(data.byte(kManspath), 5);
+	if (flags.z())
 		goto pathokboss;
-	context.data.byte(kDestination) = 5;
-	context.data.byte(kFinaldest) = 5;
-	autosetwalk(context);
+	data.byte(kDestination) = 5;
+	data.byte(kFinaldest) = 5;
+	autosetwalk();
 pathokboss:
-	context.data.byte(kLastweapon) = 1;
-	context.data.byte(kGetback) = 1;
+	data.byte(kLastweapon) = 1;
+	data.byte(kGetback) = 1;
 	return;
 notwithboss:
-	context._cmp(context.data.byte(kReallocation), 8);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 8);
+	if (!flags.z())
 		goto nottvsoldier;
-	context._cmp(context.data.byte(kMapx), 11);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 11);
+	if (!flags.z())
 		goto nottvsoldier;
-	context._cmp(context.data.byte(kMapy), 10);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapy), 10);
+	if (!flags.z())
 		goto nottvsoldier;
-	context._cmp(context.data.byte(kManspath), 2);
-	if (context.flags.z())
+	_cmp(data.byte(kManspath), 2);
+	if (flags.z())
 		goto pathoktv;
-	context.data.byte(kDestination) = 2;
-	context.data.byte(kFinaldest) = 2;
-	autosetwalk(context);
+	data.byte(kDestination) = 2;
+	data.byte(kFinaldest) = 2;
+	autosetwalk();
 pathoktv:
-	context.data.byte(kLastweapon) = 1;
-	context.data.byte(kGetback) = 1;
+	data.byte(kLastweapon) = 1;
+	data.byte(kGetback) = 1;
 	return;
 nottvsoldier:
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 }
 
-void useshield(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kReallocation), 20);
-	if (!context.flags.z())
+void DreamGenContext::useshield() {
+	STACK_CHECK;
+	_cmp(data.byte(kReallocation), 20);
+	if (!flags.z())
 		goto notinsartroom;
-	context._cmp(context.data.byte(kCombatcount), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kCombatcount), 0);
+	if (flags.z())
 		goto notinsartroom;
-	context.data.byte(kLastweapon) = 3;
-	showseconduse(context);
-	context.data.byte(kGetback) = 1;
-	context._inc(context.data.byte(kProgresspoints));
-	removeobfrominv(context);
+	data.byte(kLastweapon) = 3;
+	showseconduse();
+	data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
+	removeobfrominv();
 	return;
 notinsartroom:
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 }
 
-void usebuttona(Context &context) {
-	STACK_CHECK(context);
-	context.al = 95;
-	issetobonmap(context);
-	if (context.flags.z())
+void DreamGenContext::usebuttona() {
+	STACK_CHECK;
+	al = 95;
+	issetobonmap();
+	if (flags.z())
 		goto donethisbit;
-	showfirstuse(context);
-	context.al = 0;
-	context.ah = context.data.byte(kRoomnum);
-	context._dec(context.ah);
-	turnanypathon(context);
-	context.al = 9;
-	removesetobject(context);
-	context.al = 95;
-	placesetobject(context);
-	context.data.word(kWatchingtime) = 15*2;
-	context.data.word(kReeltowatch) = 71;
-	context.data.word(kEndwatchreel) = 85;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kGetback) = 1;
-	context._inc(context.data.byte(kProgresspoints));
+	showfirstuse();
+	al = 0;
+	ah = data.byte(kRoomnum);
+	_dec(ah);
+	turnanypathon();
+	al = 9;
+	removesetobject();
+	al = 95;
+	placesetobject();
+	data.word(kWatchingtime) = 15*2;
+	data.word(kReeltowatch) = 71;
+	data.word(kEndwatchreel) = 85;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
 	return;
 donethisbit:
-	showseconduse(context);
-	putbackobstuff(context);
+	showseconduse();
+	putbackobstuff();
 }
 
-void useplate(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWithobject), 255);
-	if (!context.flags.z())
+void DreamGenContext::useplate() {
+	STACK_CHECK;
+	_cmp(data.byte(kWithobject), 255);
+	if (!flags.z())
 		goto platewith;
-	withwhat(context);
+	withwhat();
 	return;
 platewith:
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'S';
-	context.ch = 'C';
-	context.dl = 'R';
-	context.dh = 'W';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'S';
+	ch = 'C';
+	dl = 'R';
+	dh = 'W';
+	compare();
+	if (flags.z())
 		goto unscrewplate;
-	context.al = context.data.byte(kWithobject);
-	context.ah = context.data.byte(kWithtype);
-	context.cl = 'K';
-	context.ch = 'N';
-	context.dl = 'F';
-	context.dh = 'E';
-	compare(context);
-	if (context.flags.z())
+	al = data.byte(kWithobject);
+	ah = data.byte(kWithtype);
+	cl = 'K';
+	ch = 'N';
+	dl = 'F';
+	dh = 'E';
+	compare();
+	if (flags.z())
 		goto triedknife;
-	context.cx = 300;
-	context.al = 14;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 14;
+	showpuztext();
+	putbackobstuff();
 	return;
 unscrewplate:
-	context.al = 20;
-	playchannel1(context);
-	showfirstuse(context);
-	context.al = 28;
-	placesetobject(context);
-	context.al = 24;
-	placesetobject(context);
-	context.al = 25;
-	removesetobject(context);
-	context.al = 0;
-	placefreeobject(context);
-	context._inc(context.data.byte(kProgresspoints));
-	context.data.byte(kGetback) = 1;
+	al = 20;
+	playchannel1();
+	showfirstuse();
+	al = 28;
+	placesetobject();
+	al = 24;
+	placesetobject();
+	al = 25;
+	removesetobject();
+	al = 0;
+	placefreeobject();
+	_inc(data.byte(kProgresspoints));
+	data.byte(kGetback) = 1;
 	return;
 triedknife:
-	context.cx = 300;
-	context.al = 54;
-	showpuztext(context);
-	putbackobstuff(context);
+	cx = 300;
+	al = 54;
+	showpuztext();
+	putbackobstuff();
 }
 
-void usewinch(Context &context) {
-	STACK_CHECK(context);
-	context.al = 40;
-	context.ah = 1;
-	checkinside(context);
-	context._cmp(context.cl, (114));
-	if (context.flags.z())
+void DreamGenContext::usewinch() {
+	STACK_CHECK;
+	al = 40;
+	ah = 1;
+	checkinside();
+	_cmp(cl, (114));
+	if (flags.z())
 		goto nowinch;
-	context.al = context.cl;
-	context.ah = 4;
-	context.cl = 'F';
-	context.ch = 'U';
-	context.dl = 'S';
-	context.dh = 'E';
-	compare(context);
-	if (!context.flags.z())
+	al = cl;
+	ah = 4;
+	cl = 'F';
+	ch = 'U';
+	dl = 'S';
+	dh = 'E';
+	compare();
+	if (!flags.z())
 		goto nowinch;
-	context.data.word(kWatchingtime) = 217*2;
-	context.data.word(kReeltowatch) = 0;
-	context.data.word(kEndwatchreel) = 217;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	context.data.byte(kDestpos) = 1;
-	context.data.byte(kNewlocation) = 45;
-	context.data.byte(kDreamnumber) = 1;
-	context.data.byte(kRoomafterdream) = 44;
-	context.data.byte(kGeneraldead) = 1;
-	context.data.byte(kNewsitem) = 2;
-	context.data.byte(kGetback) = 1;
-	context._inc(context.data.byte(kProgresspoints));
+	data.word(kWatchingtime) = 217*2;
+	data.word(kReeltowatch) = 0;
+	data.word(kEndwatchreel) = 217;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	data.byte(kDestpos) = 1;
+	data.byte(kNewlocation) = 45;
+	data.byte(kDreamnumber) = 1;
+	data.byte(kRoomafterdream) = 44;
+	data.byte(kGeneraldead) = 1;
+	data.byte(kNewsitem) = 2;
+	data.byte(kGetback) = 1;
+	_inc(data.byte(kProgresspoints));
 	return;
 nowinch:
-	showfirstuse(context);
-	putbackobstuff(context);
+	showfirstuse();
+	putbackobstuff();
 }
 
-void entercode(Context &context) {
-	STACK_CHECK(context);
-	context.data.word(kKeypadax) = context.ax;
-	context.data.word(kKeypadcx) = context.cx;
-	getridofreels(context);
-	loadkeypad(context);
-	createpanel(context);
-	showicon(context);
-	showouterpad(context);
-	showkeypad(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
-	context.data.word(kPresspointer) = 0;
-	context.data.byte(kGetback) = 0;
+void DreamGenContext::entercode() {
+	STACK_CHECK;
+	data.word(kKeypadax) = ax;
+	data.word(kKeypadcx) = cx;
+	getridofreels();
+	loadkeypad();
+	createpanel();
+	showicon();
+	showouterpad();
+	showkeypad();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
+	data.word(kPresspointer) = 0;
+	data.byte(kGetback) = 0;
 keypadloop:
-	delpointer(context);
-	readmouse(context);
-	showkeypad(context);
-	showpointer(context);
-	context._cmp(context.data.byte(kPresscount), 0);
-	if (context.flags.z())
+	delpointer();
+	readmouse();
+	showkeypad();
+	showpointer();
+	_cmp(data.byte(kPresscount), 0);
+	if (flags.z())
 		goto nopresses;
-	context._dec(context.data.byte(kPresscount));
+	_dec(data.byte(kPresscount));
 	goto afterpress;
 nopresses:
-	context.data.byte(kPressed) = 255;
-	context.data.byte(kGraphicpress) = 255;
-	vsync(context);
+	data.byte(kPressed) = 255;
+	data.byte(kGraphicpress) = 255;
+	vsync();
 afterpress:
-	dumppointer(context);
-	dumpkeypad(context);
-	dumptextline(context);
-	context.bx = 3482;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 1);
-	if (context.flags.z())
+	dumppointer();
+	dumpkeypad();
+	dumptextline();
+	bx = 3482;
+	checkcoords();
+	_cmp(data.byte(kGetback), 1);
+	if (flags.z())
 		goto numberright;
-	context._cmp(context.data.byte(kLightcount), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kLightcount), 1);
+	if (!flags.z())
 		goto notendkey;
-	context._cmp(context.data.byte(kLockstatus), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kLockstatus), 0);
+	if (flags.z())
 		goto numberright;
 	goto keypadloop;
 notendkey:
-	context._cmp(context.data.byte(kPresscount), 40);
-	if (!context.flags.z())
+	_cmp(data.byte(kPresscount), 40);
+	if (!flags.z())
 		goto keypadloop;
-	addtopresslist(context);
-	context._cmp(context.data.byte(kPressed), 11);
-	if (!context.flags.z())
+	addtopresslist();
+	_cmp(data.byte(kPressed), 11);
+	if (!flags.z())
 		goto keypadloop;
-	context.ax = context.data.word(kKeypadax);
-	context.cx = context.data.word(kKeypadcx);
-	isitright(context);
-	if (!context.flags.z())
+	ax = data.word(kKeypadax);
+	cx = data.word(kKeypadcx);
+	isitright();
+	if (!flags.z())
 		goto incorrect;
-	context.data.byte(kLockstatus) = 0;
-	context.al = 11;
-	playchannel1(context);
-	context.data.byte(kLightcount) = 120;
-	context.data.word(kPresspointer) = 0;
+	data.byte(kLockstatus) = 0;
+	al = 11;
+	playchannel1();
+	data.byte(kLightcount) = 120;
+	data.word(kPresspointer) = 0;
 	goto keypadloop;
 incorrect:
-	context.al = 11;
-	playchannel1(context);
-	context.data.byte(kLightcount) = 120;
-	context.data.word(kPresspointer) = 0;
+	al = 11;
+	playchannel1();
+	data.byte(kLightcount) = 120;
+	data.word(kPresspointer) = 0;
 	goto keypadloop;
 numberright:
-	context.data.byte(kManisoffscreen) = 0;
-	getridoftemp(context);
-	restorereels(context);
-	redrawmainscrn(context);
-	worktoscreenm(context);
+	data.byte(kManisoffscreen) = 0;
+	getridoftemp();
+	restorereels();
+	redrawmainscrn();
+	worktoscreenm();
 }
 
-void loadkeypad(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 1948;
-	loadintotemp(context);
+void DreamGenContext::loadkeypad() {
+	STACK_CHECK;
+	dx = 1948;
+	loadintotemp();
 }
 
-void quitkey(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 222);
-	if (context.flags.z())
+void DreamGenContext::quitkey() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 222);
+	if (flags.z())
 		goto alreadyqk;
-	context.data.byte(kCommandtype) = 222;
-	context.al = 4;
-	commandonly(context);
+	data.byte(kCommandtype) = 222;
+	al = 4;
+	commandonly();
 alreadyqk:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notqk) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto doqk;
 	return;
 doqk:
-	context.data.byte(kGetback) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void addtopresslist(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kPresspointer), 5);
-	if (context.flags.z())
+void DreamGenContext::addtopresslist() {
+	STACK_CHECK;
+	_cmp(data.word(kPresspointer), 5);
+	if (flags.z())
 		return /* (nomorekeys) */;
-	context.al = context.data.byte(kPressed);
-	context._cmp(context.al, 10);
-	if (!context.flags.z())
+	al = data.byte(kPressed);
+	_cmp(al, 10);
+	if (!flags.z())
 		goto not10;
-	context.al = 0;
+	al = 0;
 not10:
-	context.bx = context.data.word(kPresspointer);
-	context.dx = context.data;
-	context.es = context.dx;
-	context._add(context.bx, 8573);
-	context.es.byte(context.bx) = context.al;
-	context._inc(context.data.word(kPresspointer));
+	bx = data.word(kPresspointer);
+	dx = data;
+	es = dx;
+	_add(bx, 8573);
+	es.byte(bx) = al;
+	_inc(data.word(kPresspointer));
 }
 
-void buttonone(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 1;
-	buttonpress(context);
+void DreamGenContext::buttonone() {
+	STACK_CHECK;
+	cl = 1;
+	buttonpress();
 }
 
-void buttontwo(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 2;
-	buttonpress(context);
+void DreamGenContext::buttontwo() {
+	STACK_CHECK;
+	cl = 2;
+	buttonpress();
 }
 
-void buttonthree(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 3;
-	buttonpress(context);
+void DreamGenContext::buttonthree() {
+	STACK_CHECK;
+	cl = 3;
+	buttonpress();
 }
 
-void buttonfour(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 4;
-	buttonpress(context);
+void DreamGenContext::buttonfour() {
+	STACK_CHECK;
+	cl = 4;
+	buttonpress();
 }
 
-void buttonfive(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 5;
-	buttonpress(context);
+void DreamGenContext::buttonfive() {
+	STACK_CHECK;
+	cl = 5;
+	buttonpress();
 }
 
-void buttonsix(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 6;
-	buttonpress(context);
+void DreamGenContext::buttonsix() {
+	STACK_CHECK;
+	cl = 6;
+	buttonpress();
 }
 
-void buttonseven(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 7;
-	buttonpress(context);
+void DreamGenContext::buttonseven() {
+	STACK_CHECK;
+	cl = 7;
+	buttonpress();
 }
 
-void buttoneight(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 8;
-	buttonpress(context);
+void DreamGenContext::buttoneight() {
+	STACK_CHECK;
+	cl = 8;
+	buttonpress();
 }
 
-void buttonnine(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 9;
-	buttonpress(context);
+void DreamGenContext::buttonnine() {
+	STACK_CHECK;
+	cl = 9;
+	buttonpress();
 }
 
-void buttonnought(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 10;
-	buttonpress(context);
+void DreamGenContext::buttonnought() {
+	STACK_CHECK;
+	cl = 10;
+	buttonpress();
 }
 
-void buttonenter(Context &context) {
-	STACK_CHECK(context);
-	context.cl = 11;
-	buttonpress(context);
+void DreamGenContext::buttonenter() {
+	STACK_CHECK;
+	cl = 11;
+	buttonpress();
 }
 
-void buttonpress(Context &context) {
-	STACK_CHECK(context);
-	context.ch = context.cl;
-	context._add(context.ch, 100);
-	context._cmp(context.data.byte(kCommandtype), context.ch);
-	if (context.flags.z())
+void DreamGenContext::buttonpress() {
+	STACK_CHECK;
+	ch = cl;
+	_add(ch, 100);
+	_cmp(data.byte(kCommandtype), ch);
+	if (flags.z())
 		goto alreadyb;
-	context.data.byte(kCommandtype) = context.ch;
-	context.al = context.cl;
-	context._add(context.al, 4);
-	context.push(context.cx);
-	commandonly(context);
-	context.cx = context.pop();
+	data.byte(kCommandtype) = ch;
+	al = cl;
+	_add(al, 4);
+	push(cx);
+	commandonly();
+	cx = pop();
 alreadyb:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notb) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto dob;
 	return;
 dob:
-	context.data.byte(kPressed) = context.cl;
-	context._add(context.cl, 21);
-	context.data.byte(kGraphicpress) = context.cl;
-	context.data.byte(kPresscount) = 40;
-	context._cmp(context.cl, 32);
-	if (context.flags.z())
+	data.byte(kPressed) = cl;
+	_add(cl, 21);
+	data.byte(kGraphicpress) = cl;
+	data.byte(kPresscount) = 40;
+	_cmp(cl, 32);
+	if (flags.z())
 		return /* (nonoise) */;
-	context.al = 10;
-	playchannel1(context);
+	al = 10;
+	playchannel1();
 }
 
-void showouterpad(Context &context) {
-	STACK_CHECK(context);
-	context.di = (36+112)-3;
-	context.bx = (72)-4;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
-	context.di = (36+112)+74;
-	context.bx = (72)+76;
-	context.ds = context.data.word(kTempgraphics);
-	context.al = 37;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::showouterpad() {
+	STACK_CHECK;
+	di = (36+112)-3;
+	bx = (72)-4;
+	ds = data.word(kTempgraphics);
+	al = 1;
+	ah = 0;
+	showframe();
+	di = (36+112)+74;
+	bx = (72)+76;
+	ds = data.word(kTempgraphics);
+	al = 37;
+	ah = 0;
+	showframe();
 }
 
-void showkeypad(Context &context) {
-	STACK_CHECK(context);
-	context.al = 22;
-	context.di = (36+112)+9;
-	context.bx = (72)+5;
-	singlekey(context);
-	context.al = 23;
-	context.di = (36+112)+31;
-	context.bx = (72)+5;
-	singlekey(context);
-	context.al = 24;
-	context.di = (36+112)+53;
-	context.bx = (72)+5;
-	singlekey(context);
-	context.al = 25;
-	context.di = (36+112)+9;
-	context.bx = (72)+23;
-	singlekey(context);
-	context.al = 26;
-	context.di = (36+112)+31;
-	context.bx = (72)+23;
-	singlekey(context);
-	context.al = 27;
-	context.di = (36+112)+53;
-	context.bx = (72)+23;
-	singlekey(context);
-	context.al = 28;
-	context.di = (36+112)+9;
-	context.bx = (72)+41;
-	singlekey(context);
-	context.al = 29;
-	context.di = (36+112)+31;
-	context.bx = (72)+41;
-	singlekey(context);
-	context.al = 30;
-	context.di = (36+112)+53;
-	context.bx = (72)+41;
-	singlekey(context);
-	context.al = 31;
-	context.di = (36+112)+9;
-	context.bx = (72)+59;
-	singlekey(context);
-	context.al = 32;
-	context.di = (36+112)+31;
-	context.bx = (72)+59;
-	singlekey(context);
-	context._cmp(context.data.byte(kLightcount), 0);
-	if (context.flags.z())
+void DreamGenContext::showkeypad() {
+	STACK_CHECK;
+	al = 22;
+	di = (36+112)+9;
+	bx = (72)+5;
+	singlekey();
+	al = 23;
+	di = (36+112)+31;
+	bx = (72)+5;
+	singlekey();
+	al = 24;
+	di = (36+112)+53;
+	bx = (72)+5;
+	singlekey();
+	al = 25;
+	di = (36+112)+9;
+	bx = (72)+23;
+	singlekey();
+	al = 26;
+	di = (36+112)+31;
+	bx = (72)+23;
+	singlekey();
+	al = 27;
+	di = (36+112)+53;
+	bx = (72)+23;
+	singlekey();
+	al = 28;
+	di = (36+112)+9;
+	bx = (72)+41;
+	singlekey();
+	al = 29;
+	di = (36+112)+31;
+	bx = (72)+41;
+	singlekey();
+	al = 30;
+	di = (36+112)+53;
+	bx = (72)+41;
+	singlekey();
+	al = 31;
+	di = (36+112)+9;
+	bx = (72)+59;
+	singlekey();
+	al = 32;
+	di = (36+112)+31;
+	bx = (72)+59;
+	singlekey();
+	_cmp(data.byte(kLightcount), 0);
+	if (flags.z())
 		return /* (notenter) */;
-	context._dec(context.data.byte(kLightcount));
-	context.al = 36;
-	context.bx = (72)-1+63;
-	context._cmp(context.data.byte(kLockstatus), 0);
-	if (!context.flags.z())
+	_dec(data.byte(kLightcount));
+	al = 36;
+	bx = (72)-1+63;
+	_cmp(data.byte(kLockstatus), 0);
+	if (!flags.z())
 		goto changelight;
-	context.al = 41;
-	context.bx = (72)+4+63;
+	al = 41;
+	bx = (72)+4+63;
 changelight:
-	context._cmp(context.data.byte(kLightcount), 60);
-	if (context.flags.c())
+	_cmp(data.byte(kLightcount), 60);
+	if (flags.c())
 		goto gotlight;
-	context._cmp(context.data.byte(kLightcount), 100);
-	if (!context.flags.c())
+	_cmp(data.byte(kLightcount), 100);
+	if (!flags.c())
 		goto gotlight;
-	context._dec(context.al);
+	_dec(al);
 gotlight:
-	context.ds = context.data.word(kTempgraphics);
-	context.ah = 0;
-	context.di = (36+112)+60;
-	showframe(context);
+	ds = data.word(kTempgraphics);
+	ah = 0;
+	di = (36+112)+60;
+	showframe();
 }
 
-void singlekey(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kGraphicpress), context.al);
-	if (!context.flags.z())
+void DreamGenContext::singlekey() {
+	STACK_CHECK;
+	_cmp(data.byte(kGraphicpress), al);
+	if (!flags.z())
 		goto gotkey;
-	context._add(context.al, 11);
-	context._cmp(context.data.byte(kPresscount), 8);
-	if (!context.flags.c())
+	_add(al, 11);
+	_cmp(data.byte(kPresscount), 8);
+	if (!flags.c())
 		goto gotkey;
-	context._sub(context.al, 11);
+	_sub(al, 11);
 gotkey:
-	context.ds = context.data.word(kTempgraphics);
-	context._sub(context.al, 20);
-	context.ah = 0;
-	showframe(context);
+	ds = data.word(kTempgraphics);
+	_sub(al, 20);
+	ah = 0;
+	showframe();
 }
 
-void dumpkeypad(Context &context) {
-	STACK_CHECK(context);
-	context.di = (36+112)-3;
-	context.bx = (72)-4;
-	context.cl = 120;
-	context.ch = 90;
-	multidump(context);
+void DreamGenContext::dumpkeypad() {
+	STACK_CHECK;
+	di = (36+112)-3;
+	bx = (72)-4;
+	cl = 120;
+	ch = 90;
+	multidump();
 }
 
-void usemenu(Context &context) {
-	STACK_CHECK(context);
-	getridofreels(context);
-	loadmenu(context);
-	createpanel(context);
-	showpanel(context);
-	showicon(context);
-	context.data.byte(kNewobs) = 0;
-	drawfloor(context);
-	printsprites(context);
-	context.al = 4;
-	context.ah = 0;
-	context.di = (80+40)-48;
-	context.bx = (60)-4;
-	context.ds = context.data.word(kTempgraphics2);
-	showframe(context);
-	getundermenu(context);
-	context.al = 5;
-	context.ah = 0;
-	context.di = (80+40)+54;
-	context.bx = (60)+72;
-	context.ds = context.data.word(kTempgraphics2);
-	showframe(context);
-	worktoscreenm(context);
-	context.data.byte(kGetback) = 0;
+void DreamGenContext::usemenu() {
+	STACK_CHECK;
+	getridofreels();
+	loadmenu();
+	createpanel();
+	showpanel();
+	showicon();
+	data.byte(kNewobs) = 0;
+	drawfloor();
+	printsprites();
+	al = 4;
+	ah = 0;
+	di = (80+40)-48;
+	bx = (60)-4;
+	ds = data.word(kTempgraphics2);
+	showframe();
+	getundermenu();
+	al = 5;
+	ah = 0;
+	di = (80+40)+54;
+	bx = (60)+72;
+	ds = data.word(kTempgraphics2);
+	showframe();
+	worktoscreenm();
+	data.byte(kGetback) = 0;
 menuloop:
-	delpointer(context);
-	putundermenu(context);
-	showmenu(context);
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumpmenu(context);
-	dumptextline(context);
-	context.bx = 3614;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 1);
-	if (!context.flags.z())
+	delpointer();
+	putundermenu();
+	showmenu();
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumpmenu();
+	dumptextline();
+	bx = 3614;
+	checkcoords();
+	_cmp(data.byte(kGetback), 1);
+	if (!flags.z())
 		goto menuloop;
-	context.data.byte(kManisoffscreen) = 0;
-	redrawmainscrn(context);
-	getridoftemp(context);
-	getridoftemp2(context);
-	restorereels(context);
-	worktoscreenm(context);
+	data.byte(kManisoffscreen) = 0;
+	redrawmainscrn();
+	getridoftemp();
+	getridoftemp2();
+	restorereels();
+	worktoscreenm();
 }
 
-void dumpmenu(Context &context) {
-	STACK_CHECK(context);
-	context.di = (80+40);
-	context.bx = (60);
-	context.cl = 48;
-	context.ch = 48;
-	multidump(context);
+void DreamGenContext::dumpmenu() {
+	STACK_CHECK;
+	di = (80+40);
+	bx = (60);
+	cl = 48;
+	ch = 48;
+	multidump();
 }
 
-void getundermenu(Context &context) {
-	STACK_CHECK(context);
-	context.di = (80+40);
-	context.bx = (60);
-	context.cl = 48;
-	context.ch = 48;
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiget(context);
+void DreamGenContext::getundermenu() {
+	STACK_CHECK;
+	di = (80+40);
+	bx = (60);
+	cl = 48;
+	ch = 48;
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
+	multiget();
 }
 
-void putundermenu(Context &context) {
-	STACK_CHECK(context);
-	context.di = (80+40);
-	context.bx = (60);
-	context.cl = 48;
-	context.ch = 48;
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiput(context);
+void DreamGenContext::putundermenu() {
+	STACK_CHECK;
+	di = (80+40);
+	bx = (60);
+	cl = 48;
+	ch = 48;
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
+	multiput();
 }
 
-void showoutermenu(Context &context) {
-	STACK_CHECK(context);
-	context.al = 40;
-	context.ah = 0;
-	context.di = (80+40)-34;
-	context.bx = (60)-40;
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
-	context.al = 41;
-	context.ah = 0;
-	context.di = (80+40)+64-34;
-	context.bx = (60)-40;
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
-	context.al = 42;
-	context.ah = 0;
-	context.di = (80+40)-26;
-	context.bx = (60)+57-40;
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
-	context.al = 43;
-	context.ah = 0;
-	context.di = (80+40)+64-26;
-	context.bx = (60)+57-40;
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
+void DreamGenContext::showoutermenu() {
+	STACK_CHECK;
+	al = 40;
+	ah = 0;
+	di = (80+40)-34;
+	bx = (60)-40;
+	ds = data.word(kTempgraphics);
+	showframe();
+	al = 41;
+	ah = 0;
+	di = (80+40)+64-34;
+	bx = (60)-40;
+	ds = data.word(kTempgraphics);
+	showframe();
+	al = 42;
+	ah = 0;
+	di = (80+40)-26;
+	bx = (60)+57-40;
+	ds = data.word(kTempgraphics);
+	showframe();
+	al = 43;
+	ah = 0;
+	di = (80+40)+64-26;
+	bx = (60)+57-40;
+	ds = data.word(kTempgraphics);
+	showframe();
 }
 
-void showmenu(Context &context) {
-	STACK_CHECK(context);
-	context._inc(context.data.byte(kMenucount));
-	context._cmp(context.data.byte(kMenucount), 37*2);
-	if (!context.flags.z())
+void DreamGenContext::showmenu() {
+	STACK_CHECK;
+	_inc(data.byte(kMenucount));
+	_cmp(data.byte(kMenucount), 37*2);
+	if (!flags.z())
 		goto menuframeok;
-	context.data.byte(kMenucount) = 0;
+	data.byte(kMenucount) = 0;
 menuframeok:
-	context.al = context.data.byte(kMenucount);
-	context._shr(context.al, 1);
-	context.ah = 0;
-	context.di = (80+40);
-	context.bx = (60);
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
+	al = data.byte(kMenucount);
+	_shr(al, 1);
+	ah = 0;
+	di = (80+40);
+	bx = (60);
+	ds = data.word(kTempgraphics);
+	showframe();
 }
 
-void loadmenu(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 1832;
-	loadintotemp(context);
-	context.dx = 1987;
-	loadintotemp2(context);
+void DreamGenContext::loadmenu() {
+	STACK_CHECK;
+	dx = 1832;
+	loadintotemp();
+	dx = 1987;
+	loadintotemp2();
 }
 
-void viewfolder(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kManisoffscreen) = 1;
-	getridofall(context);
-	loadfolder(context);
-	context.data.byte(kFolderpage) = 0;
-	showfolder(context);
-	worktoscreenm(context);
-	context.data.byte(kGetback) = 0;
+void DreamGenContext::viewfolder() {
+	STACK_CHECK;
+	data.byte(kManisoffscreen) = 1;
+	getridofall();
+	loadfolder();
+	data.byte(kFolderpage) = 0;
+	showfolder();
+	worktoscreenm();
+	data.byte(kGetback) = 0;
 folderloop:
-	delpointer(context);
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	context.bx = 3636;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	delpointer();
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	bx = 3636;
+	checkcoords();
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto folderloop;
-	context.data.byte(kManisoffscreen) = 0;
-	getridoftemp(context);
-	getridoftemp2(context);
-	getridoftemp3(context);
-	getridoftempcharset(context);
-	restoreall(context);
-	redrawmainscrn(context);
-	worktoscreenm(context);
+	data.byte(kManisoffscreen) = 0;
+	getridoftemp();
+	getridoftemp2();
+	getridoftemp3();
+	getridoftempcharset();
+	restoreall();
+	redrawmainscrn();
+	worktoscreenm();
 }
 
-void nextfolder(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kFolderpage), 12);
-	if (!context.flags.z())
+void DreamGenContext::nextfolder() {
+	STACK_CHECK;
+	_cmp(data.byte(kFolderpage), 12);
+	if (!flags.z())
 		goto cannextf;
-	blank(context);
+	blank();
 	return;
 cannextf:
-	context._cmp(context.data.byte(kCommandtype), 201);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 201);
+	if (flags.z())
 		goto alreadynextf;
-	context.data.byte(kCommandtype) = 201;
-	context.al = 16;
-	commandonly(context);
+	data.byte(kCommandtype) = 201;
+	al = 16;
+	commandonly();
 alreadynextf:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notnextf) */;
-	context._cmp(context.ax, 1);
-	if (context.flags.z())
+	_cmp(ax, 1);
+	if (flags.z())
 		goto donextf;
 	return;
 donextf:
-	context._inc(context.data.byte(kFolderpage));
-	folderhints(context);
-	delpointer(context);
-	showfolder(context);
-	context.data.word(kMousebutton) = 0;
-	context.bx = 3636;
-	checkcoords(context);
-	worktoscreenm(context);
+	_inc(data.byte(kFolderpage));
+	folderhints();
+	delpointer();
+	showfolder();
+	data.word(kMousebutton) = 0;
+	bx = 3636;
+	checkcoords();
+	worktoscreenm();
 }
 
-void folderhints(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kFolderpage), 5);
-	if (!context.flags.z())
+void DreamGenContext::folderhints() {
+	STACK_CHECK;
+	_cmp(data.byte(kFolderpage), 5);
+	if (!flags.z())
 		goto notaideadd;
-	context._cmp(context.data.byte(kAidedead), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kAidedead), 1);
+	if (flags.z())
 		goto notaideadd;
-	context.al = 13;
-	getlocation(context);
-	context._cmp(context.al, 1);
-	if (context.flags.z())
+	al = 13;
+	getlocation();
+	_cmp(al, 1);
+	if (flags.z())
 		goto notaideadd;
-	context.al = 13;
-	setlocation(context);
-	showfolder(context);
-	context.al = 30;
-	findtext1(context);
-	context.di = 0;
-	context.bx = 86;
-	context.dl = 141;
-	context.ah = 16;
-	printdirect(context);
-	worktoscreenm(context);
-	context.cx = 200;
-	hangonp(context);
+	al = 13;
+	setlocation();
+	showfolder();
+	al = 30;
+	findtext1();
+	di = 0;
+	bx = 86;
+	dl = 141;
+	ah = 16;
+	printdirect();
+	worktoscreenm();
+	cx = 200;
+	hangonp();
 	return;
 notaideadd:
-	context._cmp(context.data.byte(kFolderpage), 9);
-	if (!context.flags.z())
+	_cmp(data.byte(kFolderpage), 9);
+	if (!flags.z())
 		return /* (notaristoadd) */;
-	context.al = 7;
-	getlocation(context);
-	context._cmp(context.al, 1);
-	if (context.flags.z())
+	al = 7;
+	getlocation();
+	_cmp(al, 1);
+	if (flags.z())
 		return /* (notaristoadd) */;
-	context.al = 7;
-	setlocation(context);
-	showfolder(context);
-	context.al = 31;
-	findtext1(context);
-	context.di = 0;
-	context.bx = 86;
-	context.dl = 141;
-	context.ah = 16;
-	printdirect(context);
-	worktoscreenm(context);
-	context.cx = 200;
-	hangonp(context);
+	al = 7;
+	setlocation();
+	showfolder();
+	al = 31;
+	findtext1();
+	di = 0;
+	bx = 86;
+	dl = 141;
+	ah = 16;
+	printdirect();
+	worktoscreenm();
+	cx = 200;
+	hangonp();
 }
 
-void lastfolder(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kFolderpage), 0);
-	if (!context.flags.z())
+void DreamGenContext::lastfolder() {
+	STACK_CHECK;
+	_cmp(data.byte(kFolderpage), 0);
+	if (!flags.z())
 		goto canlastf;
-	blank(context);
+	blank();
 	return;
 canlastf:
-	context._cmp(context.data.byte(kCommandtype), 202);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 202);
+	if (flags.z())
 		goto alreadylastf;
-	context.data.byte(kCommandtype) = 202;
-	context.al = 17;
-	commandonly(context);
+	data.byte(kCommandtype) = 202;
+	al = 17;
+	commandonly();
 alreadylastf:
-	context._cmp(context.data.byte(kFolderpage), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kFolderpage), 0);
+	if (flags.z())
 		return /* (notlastf) */;
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notlastf) */;
-	context._cmp(context.ax, 1);
-	if (context.flags.z())
+	_cmp(ax, 1);
+	if (flags.z())
 		goto dolastf;
 	return;
 dolastf:
-	context._dec(context.data.byte(kFolderpage));
-	delpointer(context);
-	showfolder(context);
-	context.data.word(kMousebutton) = 0;
-	context.bx = 3636;
-	checkcoords(context);
-	worktoscreenm(context);
+	_dec(data.byte(kFolderpage));
+	delpointer();
+	showfolder();
+	data.word(kMousebutton) = 0;
+	bx = 3636;
+	checkcoords();
+	worktoscreenm();
 }
 
-void loadfolder(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 2299;
-	loadintotemp(context);
-	context.dx = 2312;
-	loadintotemp2(context);
-	context.dx = 2325;
-	loadintotemp3(context);
-	context.dx = 1883;
-	loadtempcharset(context);
-	context.dx = 2195;
-	loadtemptext(context);
+void DreamGenContext::loadfolder() {
+	STACK_CHECK;
+	dx = 2299;
+	loadintotemp();
+	dx = 2312;
+	loadintotemp2();
+	dx = 2325;
+	loadintotemp3();
+	dx = 1883;
+	loadtempcharset();
+	dx = 2195;
+	loadtemptext();
 }
 
-void showfolder(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kCommandtype) = 255;
-	context._cmp(context.data.byte(kFolderpage), 0);
-	if (context.flags.z())
+void DreamGenContext::showfolder() {
+	STACK_CHECK;
+	data.byte(kCommandtype) = 255;
+	_cmp(data.byte(kFolderpage), 0);
+	if (flags.z())
 		goto closedfolder;
-	usetempcharset(context);
-	createpanel2(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = 0;
-	context.bx = 0;
-	context.al = 0;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = 143;
-	context.bx = 0;
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = 0;
-	context.bx = 92;
-	context.al = 2;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = 143;
-	context.bx = 92;
-	context.al = 3;
-	context.ah = 0;
-	showframe(context);
-	folderexit(context);
-	context._cmp(context.data.byte(kFolderpage), 1);
-	if (context.flags.z())
+	usetempcharset();
+	createpanel2();
+	ds = data.word(kTempgraphics);
+	di = 0;
+	bx = 0;
+	al = 0;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = 143;
+	bx = 0;
+	al = 1;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = 0;
+	bx = 92;
+	al = 2;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = 143;
+	bx = 92;
+	al = 3;
+	ah = 0;
+	showframe();
+	folderexit();
+	_cmp(data.byte(kFolderpage), 1);
+	if (flags.z())
 		goto noleftpage;
-	showleftpage(context);
+	showleftpage();
 noleftpage:
-	context._cmp(context.data.byte(kFolderpage), 12);
-	if (context.flags.z())
+	_cmp(data.byte(kFolderpage), 12);
+	if (flags.z())
 		goto norightpage;
-	showrightpage(context);
+	showrightpage();
 norightpage:
-	usecharset1(context);
-	undertextline(context);
+	usecharset1();
+	undertextline();
 	return;
 closedfolder:
-	createpanel2(context);
-	context.ds = context.data.word(kTempgraphics3);
-	context.di = 143-28;
-	context.bx = 0;
-	context.al = 0;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics3);
-	context.di = 143-28;
-	context.bx = 92;
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
-	folderexit(context);
-	undertextline(context);
+	createpanel2();
+	ds = data.word(kTempgraphics3);
+	di = 143-28;
+	bx = 0;
+	al = 0;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics3);
+	di = 143-28;
+	bx = 92;
+	al = 1;
+	ah = 0;
+	showframe();
+	folderexit();
+	undertextline();
 }
 
-void folderexit(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kTempgraphics2);
-	context.di = 296;
-	context.bx = 178;
-	context.al = 6;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::folderexit() {
+	STACK_CHECK;
+	ds = data.word(kTempgraphics2);
+	di = 296;
+	bx = 178;
+	al = 6;
+	ah = 0;
+	showframe();
 }
 
-void showleftpage(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kTempgraphics2);
-	context.di = 0;
-	context.bx = 12;
-	context.al = 3;
-	context.ah = 0;
-	showframe(context);
-	context.bx = 12+5;
-	context.cx = 9;
+void DreamGenContext::showleftpage() {
+	STACK_CHECK;
+	ds = data.word(kTempgraphics2);
+	di = 0;
+	bx = 12;
+	al = 3;
+	ah = 0;
+	showframe();
+	bx = 12+5;
+	cx = 9;
 leftpageloop:
-	context.push(context.cx);
-	context.push(context.bx);
-	context.ds = context.data.word(kTempgraphics2);
-	context.di = 0;
-	context.al = 4;
-	context.ah = 0;
-	showframe(context);
-	context.bx = context.pop();
-	context.cx = context.pop();
-	context._add(context.bx, 16);
-	if (--context.cx)
+	push(cx);
+	push(bx);
+	ds = data.word(kTempgraphics2);
+	di = 0;
+	al = 4;
+	ah = 0;
+	showframe();
+	bx = pop();
+	cx = pop();
+	_add(bx, 16);
+	if (--cx)
 		goto leftpageloop;
-	context.ds = context.data.word(kTempgraphics2);
-	context.di = 0;
-	context.al = 5;
-	context.ah = 0;
-	showframe(context);
-	context.data.word(kLinespacing) = 8;
-	context.data.word(kCharshift) = 91;
-	context.data.byte(kKerning) = 1;
-	context.bl = context.data.byte(kFolderpage);
-	context._dec(context.bl);
-	context._dec(context.bl);
-	context._add(context.bl, context.bl);
-	context.bh = 0;
-	context._add(context.bx, context.bx);
-	context.es = context.data.word(kTextfile1);
-	context.si = context.es.word(context.bx);
-	context._add(context.si, 66*2);
-	context.di = 2;
-	context.bx = 48;
-	context.dl = 140;
-	context.cx = 2;
+	ds = data.word(kTempgraphics2);
+	di = 0;
+	al = 5;
+	ah = 0;
+	showframe();
+	data.word(kLinespacing) = 8;
+	data.word(kCharshift) = 91;
+	data.byte(kKerning) = 1;
+	bl = data.byte(kFolderpage);
+	_dec(bl);
+	_dec(bl);
+	_add(bl, bl);
+	bh = 0;
+	_add(bx, bx);
+	es = data.word(kTextfile1);
+	si = es.word(bx);
+	_add(si, 66*2);
+	di = 2;
+	bx = 48;
+	dl = 140;
+	cx = 2;
 twolotsleft:
-	context.push(context.cx);
+	push(cx);
 contleftpage:
-	printdirect(context);
-	context._add(context.bx, context.data.word(kLinespacing));
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	printdirect();
+	_add(bx, data.word(kLinespacing));
+	_cmp(al, 0);
+	if (!flags.z())
 		goto contleftpage;
-	context.cx = context.pop();
-	if (--context.cx)
+	cx = pop();
+	if (--cx)
 		goto twolotsleft;
-	context.data.byte(kKerning) = 0;
-	context.data.word(kCharshift) = 0;
-	context.data.word(kLinespacing) = 10;
-	context.es = context.data.word(kWorkspace);
-	context.ds = context.data.word(kWorkspace);
-	context.di = (48*320)+2;
-	context.si = (48*320)+2+130;
-	context.cx = 120;
+	data.byte(kKerning) = 0;
+	data.word(kCharshift) = 0;
+	data.word(kLinespacing) = 10;
+	es = data.word(kWorkspace);
+	ds = data.word(kWorkspace);
+	di = (48*320)+2;
+	si = (48*320)+2+130;
+	cx = 120;
 flipfolder:
-	context.push(context.cx);
-	context.push(context.di);
-	context.push(context.si);
-	context.cx = 65;
+	push(cx);
+	push(di);
+	push(si);
+	cx = 65;
 flipfolderline:
-	context.al = context.es.byte(context.di);
-	context.ah = context.es.byte(context.si);
-	context.es.byte(context.di) = context.ah;
-	context.es.byte(context.si) = context.al;
-	context._dec(context.si);
-	context._inc(context.di);
-	if (--context.cx)
+	al = es.byte(di);
+	ah = es.byte(si);
+	es.byte(di) = ah;
+	es.byte(si) = al;
+	_dec(si);
+	_inc(di);
+	if (--cx)
 		goto flipfolderline;
-	context.si = context.pop();
-	context.di = context.pop();
-	context.cx = context.pop();
-	context._add(context.si, 320);
-	context._add(context.di, 320);
-	if (--context.cx)
+	si = pop();
+	di = pop();
+	cx = pop();
+	_add(si, 320);
+	_add(di, 320);
+	if (--cx)
 		goto flipfolder;
 }
 
-void showrightpage(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kTempgraphics2);
-	context.di = 143;
-	context.bx = 12;
-	context.al = 0;
-	context.ah = 0;
-	showframe(context);
-	context.bx = 12+37;
-	context.cx = 7;
+void DreamGenContext::showrightpage() {
+	STACK_CHECK;
+	ds = data.word(kTempgraphics2);
+	di = 143;
+	bx = 12;
+	al = 0;
+	ah = 0;
+	showframe();
+	bx = 12+37;
+	cx = 7;
 rightpageloop:
-	context.push(context.cx);
-	context.push(context.bx);
-	context.ds = context.data.word(kTempgraphics2);
-	context.di = 143;
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
-	context.bx = context.pop();
-	context.cx = context.pop();
-	context._add(context.bx, 16);
-	if (--context.cx)
+	push(cx);
+	push(bx);
+	ds = data.word(kTempgraphics2);
+	di = 143;
+	al = 1;
+	ah = 0;
+	showframe();
+	bx = pop();
+	cx = pop();
+	_add(bx, 16);
+	if (--cx)
 		goto rightpageloop;
-	context.ds = context.data.word(kTempgraphics2);
-	context.di = 143;
-	context.al = 2;
-	context.ah = 0;
-	showframe(context);
-	context.data.word(kLinespacing) = 8;
-	context.data.byte(kKerning) = 1;
-	context.bl = context.data.byte(kFolderpage);
-	context._dec(context.bl);
-	context._add(context.bl, context.bl);
-	context.bh = 0;
-	context._add(context.bx, context.bx);
-	context.es = context.data.word(kTextfile1);
-	context.si = context.es.word(context.bx);
-	context._add(context.si, 66*2);
-	context.di = 152;
-	context.bx = 48;
-	context.dl = 140;
-	context.cx = 2;
+	ds = data.word(kTempgraphics2);
+	di = 143;
+	al = 2;
+	ah = 0;
+	showframe();
+	data.word(kLinespacing) = 8;
+	data.byte(kKerning) = 1;
+	bl = data.byte(kFolderpage);
+	_dec(bl);
+	_add(bl, bl);
+	bh = 0;
+	_add(bx, bx);
+	es = data.word(kTextfile1);
+	si = es.word(bx);
+	_add(si, 66*2);
+	di = 152;
+	bx = 48;
+	dl = 140;
+	cx = 2;
 twolotsright:
-	context.push(context.cx);
+	push(cx);
 contrightpage:
-	printdirect(context);
-	context._add(context.bx, context.data.word(kLinespacing));
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	printdirect();
+	_add(bx, data.word(kLinespacing));
+	_cmp(al, 0);
+	if (!flags.z())
 		goto contrightpage;
-	context.cx = context.pop();
-	if (--context.cx)
+	cx = pop();
+	if (--cx)
 		goto twolotsright;
-	context.data.byte(kKerning) = 0;
-	context.data.word(kLinespacing) = 10;
+	data.byte(kKerning) = 0;
+	data.word(kLinespacing) = 10;
 }
 
-void entersymbol(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kManisoffscreen) = 1;
-	getridofreels(context);
-	context.dx = 2338;
-	loadintotemp(context);
-	context.data.byte(kSymboltopx) = 24;
-	context.data.byte(kSymboltopdir) = 0;
-	context.data.byte(kSymbolbotx) = 24;
-	context.data.byte(kSymbolbotdir) = 0;
-	redrawmainscrn(context);
-	showsymbol(context);
-	undertextline(context);
-	worktoscreenm(context);
-	context.data.byte(kGetback) = 0;
+void DreamGenContext::entersymbol() {
+	STACK_CHECK;
+	data.byte(kManisoffscreen) = 1;
+	getridofreels();
+	dx = 2338;
+	loadintotemp();
+	data.byte(kSymboltopx) = 24;
+	data.byte(kSymboltopdir) = 0;
+	data.byte(kSymbolbotx) = 24;
+	data.byte(kSymbolbotdir) = 0;
+	redrawmainscrn();
+	showsymbol();
+	undertextline();
+	worktoscreenm();
+	data.byte(kGetback) = 0;
 symbolloop:
-	delpointer(context);
-	updatesymboltop(context);
-	updatesymbolbot(context);
-	showsymbol(context);
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	dumpsymbol(context);
-	context.bx = 3678;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	delpointer();
+	updatesymboltop();
+	updatesymbolbot();
+	showsymbol();
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	dumpsymbol();
+	bx = 3678;
+	checkcoords();
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto symbolloop;
-	context._cmp(context.data.byte(kSymbolbotnum), 3);
-	if (!context.flags.z())
+	_cmp(data.byte(kSymbolbotnum), 3);
+	if (!flags.z())
 		goto symbolwrong;
-	context._cmp(context.data.byte(kSymboltopnum), 5);
-	if (!context.flags.z())
+	_cmp(data.byte(kSymboltopnum), 5);
+	if (!flags.z())
 		goto symbolwrong;
-	context.al = 43;
-	removesetobject(context);
-	context.al = 46;
-	placesetobject(context);
-	context.ah = context.data.byte(kRoomnum);
-	context._add(context.ah, 12);
-	context.al = 0;
-	turnanypathon(context);
-	context.data.byte(kManisoffscreen) = 0;
-	redrawmainscrn(context);
-	getridoftemp(context);
-	restorereels(context);
-	worktoscreenm(context);
-	context.al = 13;
-	playchannel1(context);
+	al = 43;
+	removesetobject();
+	al = 46;
+	placesetobject();
+	ah = data.byte(kRoomnum);
+	_add(ah, 12);
+	al = 0;
+	turnanypathon();
+	data.byte(kManisoffscreen) = 0;
+	redrawmainscrn();
+	getridoftemp();
+	restorereels();
+	worktoscreenm();
+	al = 13;
+	playchannel1();
 	return;
 symbolwrong:
-	context.al = 46;
-	removesetobject(context);
-	context.al = 43;
-	placesetobject(context);
-	context.ah = context.data.byte(kRoomnum);
-	context._add(context.ah, 12);
-	context.al = 0;
-	turnanypathoff(context);
-	context.data.byte(kManisoffscreen) = 0;
-	redrawmainscrn(context);
-	getridoftemp(context);
-	restorereels(context);
-	worktoscreenm(context);
+	al = 46;
+	removesetobject();
+	al = 43;
+	placesetobject();
+	ah = data.byte(kRoomnum);
+	_add(ah, 12);
+	al = 0;
+	turnanypathoff();
+	data.byte(kManisoffscreen) = 0;
+	redrawmainscrn();
+	getridoftemp();
+	restorereels();
+	worktoscreenm();
 }
 
-void quitsymbol(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kSymboltopx), 24);
-	if (!context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kSymbolbotx), 24);
-	if (!context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kCommandtype), 222);
-	if (context.flags.z())
+void DreamGenContext::quitsymbol() {
+	STACK_CHECK;
+	_cmp(data.byte(kSymboltopx), 24);
+	if (!flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kSymbolbotx), 24);
+	if (!flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kCommandtype), 222);
+	if (flags.z())
 		goto alreadyqs;
-	context.data.byte(kCommandtype) = 222;
-	context.al = 18;
-	commandonly(context);
+	data.byte(kCommandtype) = 222;
+	al = 18;
+	commandonly();
 alreadyqs:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notqs) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto doqs;
 	return;
 doqs:
-	context.data.byte(kGetback) = 1;
+	data.byte(kGetback) = 1;
 }
 
-void settopleft(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kSymboltopdir), 0);
-	if (!context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kCommandtype), 210);
-	if (context.flags.z())
+void DreamGenContext::settopleft() {
+	STACK_CHECK;
+	_cmp(data.byte(kSymboltopdir), 0);
+	if (!flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kCommandtype), 210);
+	if (flags.z())
 		goto alreadytopl;
-	context.data.byte(kCommandtype) = 210;
-	context.al = 19;
-	commandonly(context);
+	data.byte(kCommandtype) = 210;
+	al = 19;
+	commandonly();
 alreadytopl:
-	context._cmp(context.data.word(kMousebutton), 0);
-	if (context.flags.z())
+	_cmp(data.word(kMousebutton), 0);
+	if (flags.z())
 		return /* (notopleft) */;
-	context.data.byte(kSymboltopdir) = -1;
+	data.byte(kSymboltopdir) = -1;
 }
 
-void settopright(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kSymboltopdir), 0);
-	if (!context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kCommandtype), 211);
-	if (context.flags.z())
+void DreamGenContext::settopright() {
+	STACK_CHECK;
+	_cmp(data.byte(kSymboltopdir), 0);
+	if (!flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kCommandtype), 211);
+	if (flags.z())
 		goto alreadytopr;
-	context.data.byte(kCommandtype) = 211;
-	context.al = 20;
-	commandonly(context);
+	data.byte(kCommandtype) = 211;
+	al = 20;
+	commandonly();
 alreadytopr:
-	context._cmp(context.data.word(kMousebutton), 0);
-	if (context.flags.z())
+	_cmp(data.word(kMousebutton), 0);
+	if (flags.z())
 		return /* (notopright) */;
-	context.data.byte(kSymboltopdir) = 1;
+	data.byte(kSymboltopdir) = 1;
 }
 
-void setbotleft(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kSymbolbotdir), 0);
-	if (!context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kCommandtype), 212);
-	if (context.flags.z())
+void DreamGenContext::setbotleft() {
+	STACK_CHECK;
+	_cmp(data.byte(kSymbolbotdir), 0);
+	if (!flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kCommandtype), 212);
+	if (flags.z())
 		goto alreadybotl;
-	context.data.byte(kCommandtype) = 212;
-	context.al = 21;
-	commandonly(context);
+	data.byte(kCommandtype) = 212;
+	al = 21;
+	commandonly();
 alreadybotl:
-	context._cmp(context.data.word(kMousebutton), 0);
-	if (context.flags.z())
+	_cmp(data.word(kMousebutton), 0);
+	if (flags.z())
 		return /* (nobotleft) */;
-	context.data.byte(kSymbolbotdir) = -1;
+	data.byte(kSymbolbotdir) = -1;
 }
 
-void setbotright(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kSymbolbotdir), 0);
-	if (!context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kCommandtype), 213);
-	if (context.flags.z())
+void DreamGenContext::setbotright() {
+	STACK_CHECK;
+	_cmp(data.byte(kSymbolbotdir), 0);
+	if (!flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kCommandtype), 213);
+	if (flags.z())
 		goto alreadybotr;
-	context.data.byte(kCommandtype) = 213;
-	context.al = 22;
-	commandonly(context);
+	data.byte(kCommandtype) = 213;
+	al = 22;
+	commandonly();
 alreadybotr:
-	context._cmp(context.data.word(kMousebutton), 0);
-	if (context.flags.z())
+	_cmp(data.word(kMousebutton), 0);
+	if (flags.z())
 		return /* (nobotright) */;
-	context.data.byte(kSymbolbotdir) = 1;
+	data.byte(kSymbolbotdir) = 1;
 }
 
-void dumpsymbol(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kNewtextline) = 0;
-	context.di = (64);
-	context.bx = (56)+20;
-	context.cl = 104;
-	context.ch = 60;
-	multidump(context);
+void DreamGenContext::dumpsymbol() {
+	STACK_CHECK;
+	data.byte(kNewtextline) = 0;
+	di = (64);
+	bx = (56)+20;
+	cl = 104;
+	ch = 60;
+	multidump();
 }
 
-void showsymbol(Context &context) {
-	STACK_CHECK(context);
-	context.al = 12;
-	context.ah = 0;
-	context.di = (64);
-	context.bx = (56);
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
-	context.al = context.data.byte(kSymboltopx);
-	context.ah = 0;
-	context.di = context.ax;
-	context._add(context.di, (64)-44);
-	context.al = context.data.byte(kSymboltopnum);
-	context.bx = (56)+20;
-	context.ds = context.data.word(kTempgraphics);
-	context.ah = 32;
-	context.push(context.ax);
-	context.push(context.di);
-	context.push(context.bx);
-	context.push(context.ds);
-	showframe(context);
-	context.ds = context.pop();
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.ax = context.pop();
-	nextsymbol(context);
-	context._add(context.di, 49);
-	context.push(context.ax);
-	context.push(context.di);
-	context.push(context.bx);
-	context.push(context.ds);
-	showframe(context);
-	context.ds = context.pop();
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.ax = context.pop();
-	nextsymbol(context);
-	context._add(context.di, 49);
-	showframe(context);
-	context.al = context.data.byte(kSymbolbotx);
-	context.ah = 0;
-	context.di = context.ax;
-	context._add(context.di, (64)-44);
-	context.al = context.data.byte(kSymbolbotnum);
-	context._add(context.al, 6);
-	context.bx = (56)+49;
-	context.ds = context.data.word(kTempgraphics);
-	context.ah = 32;
-	context.push(context.ax);
-	context.push(context.di);
-	context.push(context.bx);
-	context.push(context.ds);
-	showframe(context);
-	context.ds = context.pop();
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.ax = context.pop();
-	nextsymbol(context);
-	context._add(context.di, 49);
-	context.push(context.ax);
-	context.push(context.di);
-	context.push(context.bx);
-	context.push(context.ds);
-	showframe(context);
-	context.ds = context.pop();
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.ax = context.pop();
-	nextsymbol(context);
-	context._add(context.di, 49);
-	showframe(context);
+void DreamGenContext::showsymbol() {
+	STACK_CHECK;
+	al = 12;
+	ah = 0;
+	di = (64);
+	bx = (56);
+	ds = data.word(kTempgraphics);
+	showframe();
+	al = data.byte(kSymboltopx);
+	ah = 0;
+	di = ax;
+	_add(di, (64)-44);
+	al = data.byte(kSymboltopnum);
+	bx = (56)+20;
+	ds = data.word(kTempgraphics);
+	ah = 32;
+	push(ax);
+	push(di);
+	push(bx);
+	push(ds);
+	showframe();
+	ds = pop();
+	bx = pop();
+	di = pop();
+	ax = pop();
+	nextsymbol();
+	_add(di, 49);
+	push(ax);
+	push(di);
+	push(bx);
+	push(ds);
+	showframe();
+	ds = pop();
+	bx = pop();
+	di = pop();
+	ax = pop();
+	nextsymbol();
+	_add(di, 49);
+	showframe();
+	al = data.byte(kSymbolbotx);
+	ah = 0;
+	di = ax;
+	_add(di, (64)-44);
+	al = data.byte(kSymbolbotnum);
+	_add(al, 6);
+	bx = (56)+49;
+	ds = data.word(kTempgraphics);
+	ah = 32;
+	push(ax);
+	push(di);
+	push(bx);
+	push(ds);
+	showframe();
+	ds = pop();
+	bx = pop();
+	di = pop();
+	ax = pop();
+	nextsymbol();
+	_add(di, 49);
+	push(ax);
+	push(di);
+	push(bx);
+	push(ds);
+	showframe();
+	ds = pop();
+	bx = pop();
+	di = pop();
+	ax = pop();
+	nextsymbol();
+	_add(di, 49);
+	showframe();
 }
 
-void nextsymbol(Context &context) {
-	STACK_CHECK(context);
-	context._inc(context.al);
-	context._cmp(context.al, 6);
-	if (context.flags.z())
+void DreamGenContext::nextsymbol() {
+	STACK_CHECK;
+	_inc(al);
+	_cmp(al, 6);
+	if (flags.z())
 		goto topwrap;
-	context._cmp(context.al, 12);
-	if (context.flags.z())
+	_cmp(al, 12);
+	if (flags.z())
 		goto botwrap;
 	return;
 topwrap:
-	context.al = 0;
+	al = 0;
 	return;
 botwrap:
-	context.al = 6;
+	al = 6;
 }
 
-void updatesymboltop(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kSymboltopdir), 0);
-	if (context.flags.z())
+void DreamGenContext::updatesymboltop() {
+	STACK_CHECK;
+	_cmp(data.byte(kSymboltopdir), 0);
+	if (flags.z())
 		return /* (topfinished) */;
-	context._cmp(context.data.byte(kSymboltopdir), -1);
-	if (context.flags.z())
+	_cmp(data.byte(kSymboltopdir), -1);
+	if (flags.z())
 		goto backwards;
-	context._inc(context.data.byte(kSymboltopx));
-	context._cmp(context.data.byte(kSymboltopx), 49);
-	if (!context.flags.z())
+	_inc(data.byte(kSymboltopx));
+	_cmp(data.byte(kSymboltopx), 49);
+	if (!flags.z())
 		goto notwrapfor;
-	context.data.byte(kSymboltopx) = 0;
-	context._dec(context.data.byte(kSymboltopnum));
-	context._cmp(context.data.byte(kSymboltopnum), -1);
-	if (!context.flags.z())
+	data.byte(kSymboltopx) = 0;
+	_dec(data.byte(kSymboltopnum));
+	_cmp(data.byte(kSymboltopnum), -1);
+	if (!flags.z())
 		return /* (topfinished) */;
-	context.data.byte(kSymboltopnum) = 5;
+	data.byte(kSymboltopnum) = 5;
 	return;
 notwrapfor:
-	context._cmp(context.data.byte(kSymboltopx), 24);
-	if (!context.flags.z())
+	_cmp(data.byte(kSymboltopx), 24);
+	if (!flags.z())
 		return /* (topfinished) */;
-	context.data.byte(kSymboltopdir) = 0;
+	data.byte(kSymboltopdir) = 0;
 	return;
 backwards:
-	context._dec(context.data.byte(kSymboltopx));
-	context._cmp(context.data.byte(kSymboltopx), -1);
-	if (!context.flags.z())
+	_dec(data.byte(kSymboltopx));
+	_cmp(data.byte(kSymboltopx), -1);
+	if (!flags.z())
 		goto notwrapback;
-	context.data.byte(kSymboltopx) = 48;
-	context._inc(context.data.byte(kSymboltopnum));
-	context._cmp(context.data.byte(kSymboltopnum), 6);
-	if (!context.flags.z())
+	data.byte(kSymboltopx) = 48;
+	_inc(data.byte(kSymboltopnum));
+	_cmp(data.byte(kSymboltopnum), 6);
+	if (!flags.z())
 		return /* (topfinished) */;
-	context.data.byte(kSymboltopnum) = 0;
+	data.byte(kSymboltopnum) = 0;
 	return;
 notwrapback:
-	context._cmp(context.data.byte(kSymboltopx), 24);
-	if (!context.flags.z())
+	_cmp(data.byte(kSymboltopx), 24);
+	if (!flags.z())
 		return /* (topfinished) */;
-	context.data.byte(kSymboltopdir) = 0;
+	data.byte(kSymboltopdir) = 0;
 }
 
-void updatesymbolbot(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kSymbolbotdir), 0);
-	if (context.flags.z())
+void DreamGenContext::updatesymbolbot() {
+	STACK_CHECK;
+	_cmp(data.byte(kSymbolbotdir), 0);
+	if (flags.z())
 		return /* (botfinished) */;
-	context._cmp(context.data.byte(kSymbolbotdir), -1);
-	if (context.flags.z())
+	_cmp(data.byte(kSymbolbotdir), -1);
+	if (flags.z())
 		goto backwardsbot;
-	context._inc(context.data.byte(kSymbolbotx));
-	context._cmp(context.data.byte(kSymbolbotx), 49);
-	if (!context.flags.z())
+	_inc(data.byte(kSymbolbotx));
+	_cmp(data.byte(kSymbolbotx), 49);
+	if (!flags.z())
 		goto notwrapforb;
-	context.data.byte(kSymbolbotx) = 0;
-	context._dec(context.data.byte(kSymbolbotnum));
-	context._cmp(context.data.byte(kSymbolbotnum), -1);
-	if (!context.flags.z())
+	data.byte(kSymbolbotx) = 0;
+	_dec(data.byte(kSymbolbotnum));
+	_cmp(data.byte(kSymbolbotnum), -1);
+	if (!flags.z())
 		return /* (botfinished) */;
-	context.data.byte(kSymbolbotnum) = 5;
+	data.byte(kSymbolbotnum) = 5;
 	return;
 notwrapforb:
-	context._cmp(context.data.byte(kSymbolbotx), 24);
-	if (!context.flags.z())
+	_cmp(data.byte(kSymbolbotx), 24);
+	if (!flags.z())
 		return /* (botfinished) */;
-	context.data.byte(kSymbolbotdir) = 0;
+	data.byte(kSymbolbotdir) = 0;
 	return;
 backwardsbot:
-	context._dec(context.data.byte(kSymbolbotx));
-	context._cmp(context.data.byte(kSymbolbotx), -1);
-	if (!context.flags.z())
+	_dec(data.byte(kSymbolbotx));
+	_cmp(data.byte(kSymbolbotx), -1);
+	if (!flags.z())
 		goto notwrapbackb;
-	context.data.byte(kSymbolbotx) = 48;
-	context._inc(context.data.byte(kSymbolbotnum));
-	context._cmp(context.data.byte(kSymbolbotnum), 6);
-	if (!context.flags.z())
+	data.byte(kSymbolbotx) = 48;
+	_inc(data.byte(kSymbolbotnum));
+	_cmp(data.byte(kSymbolbotnum), 6);
+	if (!flags.z())
 		return /* (botfinished) */;
-	context.data.byte(kSymbolbotnum) = 0;
+	data.byte(kSymbolbotnum) = 0;
 	return;
 notwrapbackb:
-	context._cmp(context.data.byte(kSymbolbotx), 24);
-	if (!context.flags.z())
+	_cmp(data.byte(kSymbolbotx), 24);
+	if (!flags.z())
 		return /* (botfinished) */;
-	context.data.byte(kSymbolbotdir) = 0;
+	data.byte(kSymbolbotdir) = 0;
 }
 
-void dumpsymbox(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kDumpx), -1);
-	if (context.flags.z())
+void DreamGenContext::dumpsymbox() {
+	STACK_CHECK;
+	_cmp(data.word(kDumpx), -1);
+	if (flags.z())
 		return /* (nodumpsym) */;
-	context.di = context.data.word(kDumpx);
-	context.bx = context.data.word(kDumpy);
-	context.cl = 30;
-	context.ch = 77;
-	multidump(context);
-	context.data.word(kDumpx) = -1;
+	di = data.word(kDumpx);
+	bx = data.word(kDumpy);
+	cl = 30;
+	ch = 77;
+	multidump();
+	data.word(kDumpx) = -1;
 }
 
-void usediary(Context &context) {
-	STACK_CHECK(context);
-	getridofreels(context);
-	context.dx = 2039;
-	loadintotemp(context);
-	context.dx = 2208;
-	loadtemptext(context);
-	context.dx = 1883;
-	loadtempcharset(context);
-	createpanel(context);
-	showicon(context);
-	showdiary(context);
-	undertextline(context);
-	showdiarypage(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
-	context.data.byte(kGetback) = 0;
+void DreamGenContext::usediary() {
+	STACK_CHECK;
+	getridofreels();
+	dx = 2039;
+	loadintotemp();
+	dx = 2208;
+	loadtemptext();
+	dx = 1883;
+	loadtempcharset();
+	createpanel();
+	showicon();
+	showdiary();
+	undertextline();
+	showdiarypage();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
+	data.byte(kGetback) = 0;
 diaryloop:
-	delpointer(context);
-	readmouse(context);
-	showdiarykeys(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumpdiarykeys(context);
-	dumptextline(context);
-	context.bx = 3740;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	delpointer();
+	readmouse();
+	showdiarykeys();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumpdiarykeys();
+	dumptextline();
+	bx = 3740;
+	checkcoords();
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto diaryloop;
-	getridoftemp(context);
-	getridoftemptext(context);
-	getridoftempcharset(context);
-	restorereels(context);
-	context.data.byte(kManisoffscreen) = 0;
-	redrawmainscrn(context);
-	worktoscreenm(context);
+	getridoftemp();
+	getridoftemptext();
+	getridoftempcharset();
+	restorereels();
+	data.byte(kManisoffscreen) = 0;
+	redrawmainscrn();
+	worktoscreenm();
 }
 
-void showdiary(Context &context) {
-	STACK_CHECK(context);
-	context.al = 1;
-	context.ah = 0;
-	context.di = (68+24);
-	context.bx = (48+12)+37;
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
-	context.al = 2;
-	context.ah = 0;
-	context.di = (68+24)+176;
-	context.bx = (48+12)+108;
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
+void DreamGenContext::showdiary() {
+	STACK_CHECK;
+	al = 1;
+	ah = 0;
+	di = (68+24);
+	bx = (48+12)+37;
+	ds = data.word(kTempgraphics);
+	showframe();
+	al = 2;
+	ah = 0;
+	di = (68+24)+176;
+	bx = (48+12)+108;
+	ds = data.word(kTempgraphics);
+	showframe();
 }
 
-void showdiarykeys(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kPresscount), 0);
-	if (context.flags.z())
+void DreamGenContext::showdiarykeys() {
+	STACK_CHECK;
+	_cmp(data.byte(kPresscount), 0);
+	if (flags.z())
 		return /* (nokeyatall) */;
-	context._dec(context.data.byte(kPresscount));
-	context._cmp(context.data.byte(kPresscount), 0);
-	if (context.flags.z())
+	_dec(data.byte(kPresscount));
+	_cmp(data.byte(kPresscount), 0);
+	if (flags.z())
 		return /* (nokeyatall) */;
-	context._cmp(context.data.byte(kPressed), 'N');
-	if (!context.flags.z())
+	_cmp(data.byte(kPressed), 'N');
+	if (!flags.z())
 		goto nokeyn;
-	context.al = 3;
-	context._cmp(context.data.byte(kPresscount), 1);
-	if (context.flags.z())
+	al = 3;
+	_cmp(data.byte(kPresscount), 1);
+	if (flags.z())
 		goto gotkeyn;
-	context.al = 4;
+	al = 4;
 gotkeyn:
-	context.ah = 0;
-	context.di = (68+24)+94;
-	context.bx = (48+12)+97;
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
-	context._cmp(context.data.byte(kPresscount), 1);
-	if (!context.flags.z())
+	ah = 0;
+	di = (68+24)+94;
+	bx = (48+12)+97;
+	ds = data.word(kTempgraphics);
+	showframe();
+	_cmp(data.byte(kPresscount), 1);
+	if (!flags.z())
 		return /* (notshown) */;
-	showdiarypage(context);
+	showdiarypage();
 	return;
 nokeyn:
-	context.al = 5;
-	context._cmp(context.data.byte(kPresscount), 1);
-	if (context.flags.z())
+	al = 5;
+	_cmp(data.byte(kPresscount), 1);
+	if (flags.z())
 		goto gotkeyp;
-	context.al = 6;
+	al = 6;
 gotkeyp:
-	context.ah = 0;
-	context.di = (68+24)+151;
-	context.bx = (48+12)+71;
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
-	context._cmp(context.data.byte(kPresscount), 1);
-	if (!context.flags.z())
+	ah = 0;
+	di = (68+24)+151;
+	bx = (48+12)+71;
+	ds = data.word(kTempgraphics);
+	showframe();
+	_cmp(data.byte(kPresscount), 1);
+	if (!flags.z())
 		return /* (notshowp) */;
-	showdiarypage(context);
+	showdiarypage();
 }
 
-void dumpdiarykeys(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kPresscount), 1);
-	if (!context.flags.z())
+void DreamGenContext::dumpdiarykeys() {
+	STACK_CHECK;
+	_cmp(data.byte(kPresscount), 1);
+	if (!flags.z())
 		goto notdumpdiary;
-	context._cmp(context.data.byte(kSartaindead), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kSartaindead), 1);
+	if (flags.z())
 		goto notsartadd;
-	context._cmp(context.data.byte(kDiarypage), 5);
-	if (!context.flags.z())
+	_cmp(data.byte(kDiarypage), 5);
+	if (!flags.z())
 		goto notsartadd;
-	context._cmp(context.data.byte(kDiarypage), 5);
-	if (!context.flags.z())
+	_cmp(data.byte(kDiarypage), 5);
+	if (!flags.z())
 		goto notsartadd;
-	context.al = 6;
-	getlocation(context);
-	context._cmp(context.al, 1);
-	if (context.flags.z())
+	al = 6;
+	getlocation();
+	_cmp(al, 1);
+	if (flags.z())
 		goto notsartadd;
-	context.al = 6;
-	setlocation(context);
-	delpointer(context);
-	context.al = 12;
-	findtext1(context);
-	context.di = 70;
-	context.bx = 106;
-	context.dl = 241;
-	context.ah = 16;
-	printdirect(context);
-	worktoscreenm(context);
-	context.cx = 200;
-	hangonp(context);
-	createpanel(context);
-	showicon(context);
-	showdiary(context);
-	showdiarypage(context);
-	worktoscreenm(context);
-	showpointer(context);
+	al = 6;
+	setlocation();
+	delpointer();
+	al = 12;
+	findtext1();
+	di = 70;
+	bx = 106;
+	dl = 241;
+	ah = 16;
+	printdirect();
+	worktoscreenm();
+	cx = 200;
+	hangonp();
+	createpanel();
+	showicon();
+	showdiary();
+	showdiarypage();
+	worktoscreenm();
+	showpointer();
 	return;
 notsartadd:
-	context.di = (68+24)+48;
-	context.bx = (48+12)+15;
-	context.cl = 200;
-	context.ch = 16;
-	multidump(context);
+	di = (68+24)+48;
+	bx = (48+12)+15;
+	cl = 200;
+	ch = 16;
+	multidump();
 notdumpdiary:
-	context.di = (68+24)+94;
-	context.bx = (48+12)+97;
-	context.cl = 16;
-	context.ch = 16;
-	multidump(context);
-	context.di = (68+24)+151;
-	context.bx = (48+12)+71;
-	context.cl = 16;
-	context.ch = 16;
-	multidump(context);
+	di = (68+24)+94;
+	bx = (48+12)+97;
+	cl = 16;
+	ch = 16;
+	multidump();
+	di = (68+24)+151;
+	bx = (48+12)+71;
+	cl = 16;
+	ch = 16;
+	multidump();
 }
 
-void diarykeyp(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 214);
-	if (context.flags.z())
+void DreamGenContext::diarykeyp() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 214);
+	if (flags.z())
 		goto alreadykeyp;
-	context.data.byte(kCommandtype) = 214;
-	context.al = 23;
-	commandonly(context);
+	data.byte(kCommandtype) = 214;
+	al = 23;
+	commandonly();
 alreadykeyp:
-	context._cmp(context.data.word(kMousebutton), 0);
-	if (context.flags.z())
+	_cmp(data.word(kMousebutton), 0);
+	if (flags.z())
 		return /* (notkeyp) */;
-	context.ax = context.data.word(kOldbutton);
-	context._cmp(context.ax, context.data.word(kMousebutton));
-	if (context.flags.z())
+	ax = data.word(kOldbutton);
+	_cmp(ax, data.word(kMousebutton));
+	if (flags.z())
 		return /* (notkeyp) */;
-	context._cmp(context.data.byte(kPresscount), 0);
-	if (!context.flags.z())
+	_cmp(data.byte(kPresscount), 0);
+	if (!flags.z())
 		return /* (notkeyp) */;
-	context.al = 16;
-	playchannel1(context);
-	context.data.byte(kPresscount) = 12;
-	context.data.byte(kPressed) = 'P';
-	context._dec(context.data.byte(kDiarypage));
-	context._cmp(context.data.byte(kDiarypage), -1);
-	if (!context.flags.z())
+	al = 16;
+	playchannel1();
+	data.byte(kPresscount) = 12;
+	data.byte(kPressed) = 'P';
+	_dec(data.byte(kDiarypage));
+	_cmp(data.byte(kDiarypage), -1);
+	if (!flags.z())
 		return /* (notkeyp) */;
-	context.data.byte(kDiarypage) = 11;
+	data.byte(kDiarypage) = 11;
 }
 
-void diarykeyn(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 213);
-	if (context.flags.z())
+void DreamGenContext::diarykeyn() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 213);
+	if (flags.z())
 		goto alreadykeyn;
-	context.data.byte(kCommandtype) = 213;
-	context.al = 23;
-	commandonly(context);
+	data.byte(kCommandtype) = 213;
+	al = 23;
+	commandonly();
 alreadykeyn:
-	context._cmp(context.data.word(kMousebutton), 0);
-	if (context.flags.z())
+	_cmp(data.word(kMousebutton), 0);
+	if (flags.z())
 		return /* (notkeyn) */;
-	context.ax = context.data.word(kOldbutton);
-	context._cmp(context.ax, context.data.word(kMousebutton));
-	if (context.flags.z())
+	ax = data.word(kOldbutton);
+	_cmp(ax, data.word(kMousebutton));
+	if (flags.z())
 		return /* (notkeyn) */;
-	context._cmp(context.data.byte(kPresscount), 0);
-	if (!context.flags.z())
+	_cmp(data.byte(kPresscount), 0);
+	if (!flags.z())
 		return /* (notkeyn) */;
-	context.al = 16;
-	playchannel1(context);
-	context.data.byte(kPresscount) = 12;
-	context.data.byte(kPressed) = 'N';
-	context._inc(context.data.byte(kDiarypage));
-	context._cmp(context.data.byte(kDiarypage), 12);
-	if (!context.flags.z())
+	al = 16;
+	playchannel1();
+	data.byte(kPresscount) = 12;
+	data.byte(kPressed) = 'N';
+	_inc(data.byte(kDiarypage));
+	_cmp(data.byte(kDiarypage), 12);
+	if (!flags.z())
 		return /* (notkeyn) */;
-	context.data.byte(kDiarypage) = 0;
+	data.byte(kDiarypage) = 0;
 }
 
-void showdiarypage(Context &context) {
-	STACK_CHECK(context);
-	context.al = 0;
-	context.ah = 0;
-	context.di = (68+24);
-	context.bx = (48+12);
-	context.ds = context.data.word(kTempgraphics);
-	showframe(context);
-	context.al = context.data.byte(kDiarypage);
-	findtext1(context);
-	context.data.byte(kKerning) = 1;
-	usetempcharset(context);
-	context.di = (68+24)+48;
-	context.bx = (48+12)+16;
-	context.dl = 240;
-	context.ah = 16;
-	context.data.word(kCharshift) = 91+91;
-	printdirect(context);
-	context.di = (68+24)+129;
-	context.bx = (48+12)+16;
-	context.dl = 240;
-	context.ah = 16;
-	printdirect(context);
-	context.di = (68+24)+48;
-	context.bx = (48+12)+23;
-	context.dl = 240;
-	context.ah = 16;
-	printdirect(context);
-	context.data.byte(kKerning) = 0;
-	context.data.word(kCharshift) = 0;
-	usecharset1(context);
+void DreamGenContext::showdiarypage() {
+	STACK_CHECK;
+	al = 0;
+	ah = 0;
+	di = (68+24);
+	bx = (48+12);
+	ds = data.word(kTempgraphics);
+	showframe();
+	al = data.byte(kDiarypage);
+	findtext1();
+	data.byte(kKerning) = 1;
+	usetempcharset();
+	di = (68+24)+48;
+	bx = (48+12)+16;
+	dl = 240;
+	ah = 16;
+	data.word(kCharshift) = 91+91;
+	printdirect();
+	di = (68+24)+129;
+	bx = (48+12)+16;
+	dl = 240;
+	ah = 16;
+	printdirect();
+	di = (68+24)+48;
+	bx = (48+12)+23;
+	dl = 240;
+	ah = 16;
+	printdirect();
+	data.byte(kKerning) = 0;
+	data.word(kCharshift) = 0;
+	usecharset1();
 }
 
-void findtext1(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 0;
-	context.si = context.ax;
-	context._add(context.si, context.si);
-	context.es = context.data.word(kTextfile1);
-	context.ax = context.es.word(context.si);
-	context._add(context.ax, (66*2));
-	context.si = context.ax;
+void DreamGenContext::findtext1() {
+	STACK_CHECK;
+	ah = 0;
+	si = ax;
+	_add(si, si);
+	es = data.word(kTextfile1);
+	ax = es.word(si);
+	_add(ax, (66*2));
+	si = ax;
 }
 
-void zoomonoff(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kPointermode), 2);
-	if (context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kCommandtype), 222);
-	if (context.flags.z())
+void DreamGenContext::zoomonoff() {
+	STACK_CHECK;
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kPointermode), 2);
+	if (flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kCommandtype), 222);
+	if (flags.z())
 		goto alreadyonoff;
-	context.data.byte(kCommandtype) = 222;
-	context.al = 39;
-	commandonly(context);
+	data.byte(kCommandtype) = 222;
+	al = 39;
+	commandonly();
 alreadyonoff:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (nozoomonoff) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto dozoomonoff;
 	return;
 dozoomonoff:
-	context.al = context.data.byte(kZoomon);
-	context._xor(context.al, 1);
-	context.data.byte(kZoomon) = context.al;
-	createpanel(context);
-	context.data.byte(kNewobs) = 0;
-	drawfloor(context);
-	printsprites(context);
-	reelsonscreen(context);
-	showicon(context);
-	getunderzoom(context);
-	undertextline(context);
-	context.al = 39;
-	commandonly(context);
-	readmouse(context);
-	worktoscreenm(context);
+	al = data.byte(kZoomon);
+	_xor(al, 1);
+	data.byte(kZoomon) = al;
+	createpanel();
+	data.byte(kNewobs) = 0;
+	drawfloor();
+	printsprites();
+	reelsonscreen();
+	showicon();
+	getunderzoom();
+	undertextline();
+	al = 39;
+	commandonly();
+	readmouse();
+	worktoscreenm();
 }
 
-void saveload(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kPointermode), 2);
-	if (context.flags.z())
-		{ blank(context); return; };
-	context._cmp(context.data.byte(kCommandtype), 253);
-	if (context.flags.z())
+void DreamGenContext::saveload() {
+	STACK_CHECK;
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kPointermode), 2);
+	if (flags.z())
+		{ blank(); return; };
+	_cmp(data.byte(kCommandtype), 253);
+	if (flags.z())
 		goto alreadyops;
-	context.data.byte(kCommandtype) = 253;
-	context.al = 43;
-	commandonly(context);
+	data.byte(kCommandtype) = 253;
+	al = 43;
+	commandonly();
 alreadyops:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (noops) */;
-	context._and(context.ax, 1);
-	if (context.flags.z())
+	_and(ax, 1);
+	if (flags.z())
 		return /* (noops) */;
-	dosaveload(context);
+	dosaveload();
 }
 
-void dosaveload(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kPointerframe) = 0;
-	context.data.word(kTextaddressx) = 70;
-	context.data.word(kTextaddressy) = 182-8;
-	context.data.byte(kTextlen) = 181;
-	context.data.byte(kManisoffscreen) = 1;
-	clearwork(context);
-	createpanel2(context);
-	undertextline(context);
-	getridofall(context);
-	loadsavebox(context);
-	showopbox(context);
-	showmainops(context);
-	worktoscreen(context);
+void DreamGenContext::dosaveload() {
+	STACK_CHECK;
+	data.byte(kPointerframe) = 0;
+	data.word(kTextaddressx) = 70;
+	data.word(kTextaddressy) = 182-8;
+	data.byte(kTextlen) = 181;
+	data.byte(kManisoffscreen) = 1;
+	clearwork();
+	createpanel2();
+	undertextline();
+	getridofall();
+	loadsavebox();
+	showopbox();
+	showmainops();
+	worktoscreen();
 	goto donefirstops;
 restartops:
-	showopbox(context);
-	showmainops(context);
-	worktoscreenm(context);
+	showopbox();
+	showmainops();
+	worktoscreenm();
 donefirstops:
-	context.data.byte(kGetback) = 0;
+	data.byte(kGetback) = 0;
 waitops:
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	delpointer(context);
-	context.bx = 3782;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	delpointer();
+	bx = 3782;
+	checkcoords();
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto waitops;
-	context._cmp(context.data.byte(kGetback), 2);
-	if (context.flags.z())
+	_cmp(data.byte(kGetback), 2);
+	if (flags.z())
 		goto restartops;
-	context.data.word(kTextaddressx) = 13;
-	context.data.word(kTextaddressy) = 182;
-	context.data.byte(kTextlen) = 240;
-	context._cmp(context.data.byte(kGetback), 4);
-	if (context.flags.z())
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
+	_cmp(data.byte(kGetback), 4);
+	if (flags.z())
 		goto justret;
-	getridoftemp(context);
-	restoreall(context);
-	redrawmainscrn(context);
-	worktoscreenm(context);
-	context.data.byte(kCommandtype) = 200;
+	getridoftemp();
+	restoreall();
+	redrawmainscrn();
+	worktoscreenm();
+	data.byte(kCommandtype) = 200;
 justret:
-	context.data.byte(kManisoffscreen) = 0;
+	data.byte(kManisoffscreen) = 0;
 }
 
-void getbackfromops(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kMandead), 2);
-	if (context.flags.z())
+void DreamGenContext::getbackfromops() {
+	STACK_CHECK;
+	_cmp(data.byte(kMandead), 2);
+	if (flags.z())
 		goto opsblock1;
-	getback1(context);
+	getback1();
 	return;
 opsblock1:
-	blank(context);
+	blank();
 }
 
-void showmainops(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+10;
-	context.bx = (52)+10;
-	context.al = 8;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+59;
-	context.bx = (52)+30;
-	context.al = 7;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+128+4;
-	context.bx = (52)+12;
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::showmainops() {
+	STACK_CHECK;
+	ds = data.word(kTempgraphics);
+	di = (60)+10;
+	bx = (52)+10;
+	al = 8;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = (60)+59;
+	bx = (52)+30;
+	al = 7;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = (60)+128+4;
+	bx = (52)+12;
+	al = 1;
+	ah = 0;
+	showframe();
 }
 
-void showdiscops(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+128+4;
-	context.bx = (52)+12;
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+10;
-	context.bx = (52)+10;
-	context.al = 9;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+59;
-	context.bx = (52)+30;
-	context.al = 10;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+176+2;
-	context.bx = (52)+60-4;
-	context.al = 5;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::showdiscops() {
+	STACK_CHECK;
+	ds = data.word(kTempgraphics);
+	di = (60)+128+4;
+	bx = (52)+12;
+	al = 1;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = (60)+10;
+	bx = (52)+10;
+	al = 9;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = (60)+59;
+	bx = (52)+30;
+	al = 10;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = (60)+176+2;
+	bx = (52)+60-4;
+	al = 5;
+	ah = 0;
+	showframe();
 }
 
-void loadsavebox(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 1961;
-	loadintotemp(context);
+void DreamGenContext::loadsavebox() {
+	STACK_CHECK;
+	dx = 1961;
+	loadintotemp();
 }
 
-void loadgame(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 246);
-	if (context.flags.z())
+void DreamGenContext::loadgame() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 246);
+	if (flags.z())
 		goto alreadyload;
-	context.data.byte(kCommandtype) = 246;
-	context.al = 41;
-	commandonly(context);
+	data.byte(kCommandtype) = 246;
+	al = 41;
+	commandonly();
 alreadyload:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (noload) */;
-	context._cmp(context.ax, 1);
-	if (context.flags.z())
+	_cmp(ax, 1);
+	if (flags.z())
 		goto doload;
 	return;
 doload:
-	context.data.byte(kLoadingorsave) = 1;
-	showopbox(context);
-	showloadops(context);
-	context.data.byte(kCurrentslot) = 0;
-	showslots(context);
-	shownames(context);
-	context.data.byte(kPointerframe) = 0;
-	worktoscreenm(context);
-	namestoold(context);
-	context.data.byte(kGetback) = 0;
+	data.byte(kLoadingorsave) = 1;
+	showopbox();
+	showloadops();
+	data.byte(kCurrentslot) = 0;
+	showslots();
+	shownames();
+	data.byte(kPointerframe) = 0;
+	worktoscreenm();
+	namestoold();
+	data.byte(kGetback) = 0;
 loadops:
-	delpointer(context);
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	context.bx = 3824;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	delpointer();
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	bx = 3824;
+	checkcoords();
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto loadops;
-	context._cmp(context.data.byte(kGetback), 2);
-	if (context.flags.z())
+	_cmp(data.byte(kGetback), 2);
+	if (flags.z())
 		return /* (quitloaded) */;
-	getridoftemp(context);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.bx = 7979;
-	startloading(context);
-	loadroomssample(context);
-	context.data.byte(kRoomloaded) = 1;
-	context.data.byte(kNewlocation) = 255;
-	clearsprites(context);
-	initman(context);
-	initrain(context);
-	context.data.word(kTextaddressx) = 13;
-	context.data.word(kTextaddressy) = 182;
-	context.data.byte(kTextlen) = 240;
-	startup(context);
-	worktoscreen(context);
-	context.data.byte(kGetback) = 4;
+	getridoftemp();
+	dx = data;
+	es = dx;
+	bx = 7979;
+	startloading();
+	loadroomssample();
+	data.byte(kRoomloaded) = 1;
+	data.byte(kNewlocation) = 255;
+	clearsprites();
+	initman();
+	initrain();
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
+	startup();
+	worktoscreen();
+	data.byte(kGetback) = 4;
 }
 
-void getbacktoops(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 201);
-	if (context.flags.z())
+void DreamGenContext::getbacktoops() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 201);
+	if (flags.z())
 		goto alreadygetops;
-	context.data.byte(kCommandtype) = 201;
-	context.al = 42;
-	commandonly(context);
+	data.byte(kCommandtype) = 201;
+	al = 42;
+	commandonly();
 alreadygetops:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (nogetbackops) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto dogetbackops;
 	return;
 dogetbackops:
-	oldtonames(context);
-	context.data.byte(kGetback) = 2;
+	oldtonames();
+	data.byte(kGetback) = 2;
 }
 
-void discops(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 249);
-	if (context.flags.z())
+void DreamGenContext::discops() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 249);
+	if (flags.z())
 		goto alreadydiscops;
-	context.data.byte(kCommandtype) = 249;
-	context.al = 43;
-	commandonly(context);
+	data.byte(kCommandtype) = 249;
+	al = 43;
+	commandonly();
 alreadydiscops:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (nodiscops) */;
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	_and(ax, 1);
+	if (!flags.z())
 		goto dodiscops;
 	return;
 dodiscops:
-	scanfornames(context);
-	context.data.byte(kLoadingorsave) = 2;
-	showopbox(context);
-	showdiscops(context);
-	context.data.byte(kCurrentslot) = 0;
-	worktoscreenm(context);
-	context.data.byte(kGetback) = 0;
+	scanfornames();
+	data.byte(kLoadingorsave) = 2;
+	showopbox();
+	showdiscops();
+	data.byte(kCurrentslot) = 0;
+	worktoscreenm();
+	data.byte(kGetback) = 0;
 discopsloop:
-	delpointer(context);
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	context.bx = 3866;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	delpointer();
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	bx = 3866;
+	checkcoords();
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto discopsloop;
 }
 
-void savegame(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kMandead), 2);
-	if (!context.flags.z())
+void DreamGenContext::savegame() {
+	STACK_CHECK;
+	_cmp(data.byte(kMandead), 2);
+	if (!flags.z())
 		goto cansaveok;
-	blank(context);
+	blank();
 	return;
 cansaveok:
-	context._cmp(context.data.byte(kCommandtype), 247);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 247);
+	if (flags.z())
 		goto alreadysave;
-	context.data.byte(kCommandtype) = 247;
-	context.al = 44;
-	commandonly(context);
+	data.byte(kCommandtype) = 247;
+	al = 44;
+	commandonly();
 alreadysave:
-	context.ax = context.data.word(kMousebutton);
-	context._and(context.ax, 1);
-	if (!context.flags.z())
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (!flags.z())
 		goto dosave;
 	return;
 dosave:
-	context.data.byte(kLoadingorsave) = 2;
-	showopbox(context);
-	showsaveops(context);
-	context.data.byte(kCurrentslot) = 0;
-	showslots(context);
-	shownames(context);
-	worktoscreenm(context);
-	namestoold(context);
-	context.data.word(kBufferin) = 0;
-	context.data.word(kBufferout) = 0;
-	context.data.byte(kGetback) = 0;
+	data.byte(kLoadingorsave) = 2;
+	showopbox();
+	showsaveops();
+	data.byte(kCurrentslot) = 0;
+	showslots();
+	shownames();
+	worktoscreenm();
+	namestoold();
+	data.word(kBufferin) = 0;
+	data.word(kBufferout) = 0;
+	data.byte(kGetback) = 0;
 saveops:
-	delpointer(context);
-	checkinput(context);
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	context.bx = 3908;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	delpointer();
+	checkinput();
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	bx = 3908;
+	checkcoords();
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto saveops;
 }
 
-void actualsave(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 222);
-	if (context.flags.z())
+void DreamGenContext::actualsave() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 222);
+	if (flags.z())
 		goto alreadyactsave;
-	context.data.byte(kCommandtype) = 222;
-	context.al = 44;
-	commandonly(context);
+	data.byte(kCommandtype) = 222;
+	al = 44;
+	commandonly();
 alreadyactsave:
-	context.ax = context.data.word(kMousebutton);
-	context._and(context.ax, 1);
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (flags.z())
 		return /* (noactsave) */;
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.si = 8579;
-	context.al = context.data.byte(kCurrentslot);
-	context.ah = 0;
-	context.cx = 17;
-	context._mul(context.cx);
-	context._add(context.si, context.ax);
-	context._inc(context.si);
-	context._cmp(context.ds.byte(context.si), 0);
-	if (context.flags.z())
+	dx = data;
+	ds = dx;
+	si = 8579;
+	al = data.byte(kCurrentslot);
+	ah = 0;
+	cx = 17;
+	_mul(cx);
+	_add(si, ax);
+	_inc(si);
+	_cmp(ds.byte(si), 0);
+	if (flags.z())
 		return /* (noactsave) */;
-	context.al = context.data.byte(kLocation);
-	context.ah = 0;
-	context.cx = 32;
-	context._mul(context.cx);
-	context.ds = context.cs;
-	context.si = 6187;
-	context._add(context.si, context.ax);
-	context.di = 7979;
-	context.bx = context.di;
-	context.es = context.cs;
-	context.cx = 16;
-	context._movsw(context.cx);
-	context.al = context.data.byte(kRoomssample);
-	context.es.byte(context.bx+13) = context.al;
-	context.al = context.data.byte(kMapx);
-	context.es.byte(context.bx+15) = context.al;
-	context.al = context.data.byte(kMapy);
-	context.es.byte(context.bx+16) = context.al;
-	context.al = context.data.byte(kLiftflag);
-	context.es.byte(context.bx+20) = context.al;
-	context.al = context.data.byte(kManspath);
-	context.es.byte(context.bx+21) = context.al;
-	context.al = context.data.byte(kFacing);
-	context.es.byte(context.bx+22) = context.al;
-	context.al = 255;
-	context.es.byte(context.bx+27) = context.al;
-	saveposition(context);
-	getridoftemp(context);
-	restoreall(context);
-	context.data.word(kTextaddressx) = 13;
-	context.data.word(kTextaddressy) = 182;
-	context.data.byte(kTextlen) = 240;
-	redrawmainscrn(context);
-	worktoscreenm(context);
-	context.data.byte(kGetback) = 4;
+	al = data.byte(kLocation);
+	ah = 0;
+	cx = 32;
+	_mul(cx);
+	ds = cs;
+	si = 6187;
+	_add(si, ax);
+	di = 7979;
+	bx = di;
+	es = cs;
+	cx = 16;
+	_movsw(cx);
+	al = data.byte(kRoomssample);
+	es.byte(bx+13) = al;
+	al = data.byte(kMapx);
+	es.byte(bx+15) = al;
+	al = data.byte(kMapy);
+	es.byte(bx+16) = al;
+	al = data.byte(kLiftflag);
+	es.byte(bx+20) = al;
+	al = data.byte(kManspath);
+	es.byte(bx+21) = al;
+	al = data.byte(kFacing);
+	es.byte(bx+22) = al;
+	al = 255;
+	es.byte(bx+27) = al;
+	saveposition();
+	getridoftemp();
+	restoreall();
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
+	redrawmainscrn();
+	worktoscreenm();
+	data.byte(kGetback) = 4;
 }
 
-void actualload(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 221);
-	if (context.flags.z())
+void DreamGenContext::actualload() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 221);
+	if (flags.z())
 		goto alreadyactload;
-	context.data.byte(kCommandtype) = 221;
-	context.al = 41;
-	commandonly(context);
+	data.byte(kCommandtype) = 221;
+	al = 41;
+	commandonly();
 alreadyactload:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (notactload) */;
-	context._cmp(context.ax, 1);
-	if (!context.flags.z())
+	_cmp(ax, 1);
+	if (!flags.z())
 		return /* (notactload) */;
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.si = 8579;
-	context.al = context.data.byte(kCurrentslot);
-	context.ah = 0;
-	context.cx = 17;
-	context._mul(context.cx);
-	context._add(context.si, context.ax);
-	context._inc(context.si);
-	context._cmp(context.ds.byte(context.si), 0);
-	if (context.flags.z())
+	dx = data;
+	ds = dx;
+	si = 8579;
+	al = data.byte(kCurrentslot);
+	ah = 0;
+	cx = 17;
+	_mul(cx);
+	_add(si, ax);
+	_inc(si);
+	_cmp(ds.byte(si), 0);
+	if (flags.z())
 		return /* (notactload) */;
-	loadposition(context);
-	context.data.byte(kGetback) = 1;
+	loadposition();
+	data.byte(kGetback) = 1;
 }
 
-void selectslot2(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kMousebutton), 0);
-	if (context.flags.z())
+void DreamGenContext::selectslot2() {
+	STACK_CHECK;
+	_cmp(data.word(kMousebutton), 0);
+	if (flags.z())
 		goto noselslot2;
-	context.data.byte(kLoadingorsave) = 2;
+	data.byte(kLoadingorsave) = 2;
 noselslot2:
-	selectslot(context);
+	selectslot();
 }
 
-void checkinput(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLoadingorsave), 3);
-	if (context.flags.z())
+void DreamGenContext::checkinput() {
+	STACK_CHECK;
+	_cmp(data.byte(kLoadingorsave), 3);
+	if (flags.z())
 		return /* (nokeypress) */;
-	readkey(context);
-	context.al = context.data.byte(kCurrentkey);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	readkey();
+	al = data.byte(kCurrentkey);
+	_cmp(al, 0);
+	if (flags.z())
 		return /* (nokeypress) */;
-	context._cmp(context.al, 13);
-	if (!context.flags.z())
+	_cmp(al, 13);
+	if (!flags.z())
 		goto notret;
-	context.data.byte(kLoadingorsave) = 3;
+	data.byte(kLoadingorsave) = 3;
 	goto afterkey;
 notret:
-	context._cmp(context.al, 8);
-	if (!context.flags.z())
+	_cmp(al, 8);
+	if (!flags.z())
 		goto nodel2;
-	context._cmp(context.data.byte(kCursorpos), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kCursorpos), 0);
+	if (flags.z())
 		return /* (nokeypress) */;
-	getnamepos(context);
-	context._dec(context.data.byte(kCursorpos));
-	context.es.byte(context.bx) = 0;
-	context.es.byte(context.bx+1) = 1;
+	getnamepos();
+	_dec(data.byte(kCursorpos));
+	es.byte(bx) = 0;
+	es.byte(bx+1) = 1;
 	goto afterkey;
 nodel2:
-	context._cmp(context.data.byte(kCursorpos), 14);
-	if (context.flags.z())
+	_cmp(data.byte(kCursorpos), 14);
+	if (flags.z())
 		return /* (nokeypress) */;
-	getnamepos(context);
-	context._inc(context.data.byte(kCursorpos));
-	context.al = context.data.byte(kCurrentkey);
-	context.es.byte(context.bx+1) = context.al;
-	context.es.byte(context.bx+2) = 0;
-	context.es.byte(context.bx+3) = 1;
+	getnamepos();
+	_inc(data.byte(kCursorpos));
+	al = data.byte(kCurrentkey);
+	es.byte(bx+1) = al;
+	es.byte(bx+2) = 0;
+	es.byte(bx+3) = 1;
 	goto afterkey;
 	return;
 afterkey:
-	showopbox(context);
-	shownames(context);
-	showslots(context);
-	showsaveops(context);
-	worktoscreenm(context);
+	showopbox();
+	shownames();
+	showslots();
+	showsaveops();
+	worktoscreenm();
 }
 
-void getnamepos(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kCurrentslot);
-	context.ah = 0;
-	context.cx = 17;
-	context._mul(context.cx);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.bx = 8579;
-	context._add(context.bx, context.ax);
-	context.al = context.data.byte(kCursorpos);
-	context.ah = 0;
-	context._add(context.bx, context.ax);
+void DreamGenContext::getnamepos() {
+	STACK_CHECK;
+	al = data.byte(kCurrentslot);
+	ah = 0;
+	cx = 17;
+	_mul(cx);
+	dx = data;
+	es = dx;
+	bx = 8579;
+	_add(bx, ax);
+	al = data.byte(kCursorpos);
+	ah = 0;
+	_add(bx, ax);
 }
 
-void showopbox(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60);
-	context.bx = (52);
-	context.al = 0;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60);
-	context.bx = (52)+55;
-	context.al = 4;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::showopbox() {
+	STACK_CHECK;
+	ds = data.word(kTempgraphics);
+	di = (60);
+	bx = (52);
+	al = 0;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = (60);
+	bx = (52)+55;
+	al = 4;
+	ah = 0;
+	showframe();
 }
 
-void showloadops(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+128+4;
-	context.bx = (52)+12;
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+176+2;
-	context.bx = (52)+60-4;
-	context.al = 5;
-	context.ah = 0;
-	showframe(context);
-	context.di = (60)+104;
-	context.bx = (52)+14;
-	context.al = 55;
-	context.dl = 101;
-	printmessage(context);
+void DreamGenContext::showloadops() {
+	STACK_CHECK;
+	ds = data.word(kTempgraphics);
+	di = (60)+128+4;
+	bx = (52)+12;
+	al = 1;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = (60)+176+2;
+	bx = (52)+60-4;
+	al = 5;
+	ah = 0;
+	showframe();
+	di = (60)+104;
+	bx = (52)+14;
+	al = 55;
+	dl = 101;
+	printmessage();
 }
 
-void showsaveops(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+128+4;
-	context.bx = (52)+12;
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+176+2;
-	context.bx = (52)+60-4;
-	context.al = 5;
-	context.ah = 0;
-	showframe(context);
-	context.di = (60)+104;
-	context.bx = (52)+14;
-	context.al = 54;
-	context.dl = 101;
-	printmessage(context);
+void DreamGenContext::showsaveops() {
+	STACK_CHECK;
+	ds = data.word(kTempgraphics);
+	di = (60)+128+4;
+	bx = (52)+12;
+	al = 1;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempgraphics);
+	di = (60)+176+2;
+	bx = (52)+60-4;
+	al = 5;
+	ah = 0;
+	showframe();
+	di = (60)+104;
+	bx = (52)+14;
+	al = 54;
+	dl = 101;
+	printmessage();
 }
 
-void selectslot(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 244);
-	if (context.flags.z())
+void DreamGenContext::selectslot() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 244);
+	if (flags.z())
 		goto alreadysel;
-	context.data.byte(kCommandtype) = 244;
-	context.al = 45;
-	commandonly(context);
+	data.byte(kCommandtype) = 244;
+	al = 45;
+	commandonly();
 alreadysel:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, 1);
-	if (!context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, 1);
+	if (!flags.z())
 		return /* (noselslot) */;
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (noselslot) */;
-	context._cmp(context.data.byte(kLoadingorsave), 3);
-	if (!context.flags.z())
+	_cmp(data.byte(kLoadingorsave), 3);
+	if (!flags.z())
 		goto notnocurs;
-	context._dec(context.data.byte(kLoadingorsave));
+	_dec(data.byte(kLoadingorsave));
 notnocurs:
-	oldtonames(context);
-	context.ax = context.data.word(kMousey);
-	context._sub(context.ax, (52)+4);
-	context.cl = -1;
+	oldtonames();
+	ax = data.word(kMousey);
+	_sub(ax, (52)+4);
+	cl = -1;
 getslotnum:
-	context._inc(context.cl);
-	context._sub(context.ax, 11);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, 11);
+	if (!flags.c())
 		goto getslotnum;
-	context.data.byte(kCurrentslot) = context.cl;
-	delpointer(context);
-	showopbox(context);
-	showslots(context);
-	shownames(context);
-	context._cmp(context.data.byte(kLoadingorsave), 1);
-	if (context.flags.z())
+	data.byte(kCurrentslot) = cl;
+	delpointer();
+	showopbox();
+	showslots();
+	shownames();
+	_cmp(data.byte(kLoadingorsave), 1);
+	if (flags.z())
 		goto isloadmode;
-	showsaveops(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	showsaveops();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 	return;
 isloadmode:
-	showloadops(context);
-	readmouse(context);
-	showpointer(context);
-	worktoscreen(context);
-	delpointer(context);
+	showloadops();
+	readmouse();
+	showpointer();
+	worktoscreen();
+	delpointer();
 }
 
-void showslots(Context &context) {
-	STACK_CHECK(context);
-	context.di = (60)+7;
-	context.bx = (52)+8;
-	context.al = 2;
-	context.ds = context.data.word(kTempgraphics);
-	context.ah = 0;
-	showframe(context);
-	context.di = (60)+10;
-	context.bx = (52)+11;
-	context.cl = 0;
+void DreamGenContext::showslots() {
+	STACK_CHECK;
+	di = (60)+7;
+	bx = (52)+8;
+	al = 2;
+	ds = data.word(kTempgraphics);
+	ah = 0;
+	showframe();
+	di = (60)+10;
+	bx = (52)+11;
+	cl = 0;
 slotloop:
-	context.push(context.cx);
-	context.push(context.di);
-	context.push(context.bx);
-	context._cmp(context.cl, context.data.byte(kCurrentslot));
-	if (!context.flags.z())
+	push(cx);
+	push(di);
+	push(bx);
+	_cmp(cl, data.byte(kCurrentslot));
+	if (!flags.z())
 		goto nomatchslot;
-	context.al = 3;
-	context.ds = context.data.word(kTempgraphics);
-	context.ah = 0;
-	showframe(context);
+	al = 3;
+	ds = data.word(kTempgraphics);
+	ah = 0;
+	showframe();
 nomatchslot:
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.cx = context.pop();
-	context._add(context.bx, 10);
-	context._inc(context.cl);
-	context._cmp(context.cl, 7);
-	if (!context.flags.z())
+	bx = pop();
+	di = pop();
+	cx = pop();
+	_add(bx, 10);
+	_inc(cl);
+	_cmp(cl, 7);
+	if (!flags.z())
 		goto slotloop;
 }
 
-void shownames(Context &context) {
-	STACK_CHECK(context);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.si = 8579+1;
-	context.di = (60)+21;
-	context.bx = (52)+10;
-	context.cl = 0;
+void DreamGenContext::shownames() {
+	STACK_CHECK;
+	dx = data;
+	es = dx;
+	si = 8579+1;
+	di = (60)+21;
+	bx = (52)+10;
+	cl = 0;
 shownameloop:
-	context.push(context.cx);
-	context.push(context.di);
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.si);
-	context.al = 4;
-	context._cmp(context.cl, context.data.byte(kCurrentslot));
-	if (!context.flags.z())
+	push(cx);
+	push(di);
+	push(es);
+	push(bx);
+	push(si);
+	al = 4;
+	_cmp(cl, data.byte(kCurrentslot));
+	if (!flags.z())
 		goto nomatchslot2;
-	context._cmp(context.data.byte(kLoadingorsave), 2);
-	if (!context.flags.z())
+	_cmp(data.byte(kLoadingorsave), 2);
+	if (!flags.z())
 		goto loadmode;
-	context.dx = context.si;
-	context.cx = 15;
-	context._add(context.si, 15);
+	dx = si;
+	cx = 15;
+	_add(si, 15);
 zerostill:
-	context._dec(context.si);
-	context._dec(context.cl);
-	context._cmp(context.es.byte(context.si), 1);
-	if (!context.flags.z())
+	_dec(si);
+	_dec(cl);
+	_cmp(es.byte(si), 1);
+	if (!flags.z())
 		goto foundcharacter;
 	goto zerostill;
 foundcharacter:
-	context.data.byte(kCursorpos) = context.cl;
-	context.es.byte(context.si) = '/';
-	context.es.byte(context.si+1) = 0;
-	context.push(context.si);
-	context.si = context.dx;
-	context.dl = 200;
-	context.ah = 0;
-	printdirect(context);
-	context.si = context.pop();
-	context.es.byte(context.si) = 0;
-	context.es.byte(context.si+1) = 1;
+	data.byte(kCursorpos) = cl;
+	es.byte(si) = '/';
+	es.byte(si+1) = 0;
+	push(si);
+	si = dx;
+	dl = 200;
+	ah = 0;
+	printdirect();
+	si = pop();
+	es.byte(si) = 0;
+	es.byte(si+1) = 1;
 	goto afterprintname;
 loadmode:
-	context.al = 0;
-	context.dl = 200;
-	context.ah = 0;
-	context.data.word(kCharshift) = 91;
-	printdirect(context);
-	context.data.word(kCharshift) = 0;
+	al = 0;
+	dl = 200;
+	ah = 0;
+	data.word(kCharshift) = 91;
+	printdirect();
+	data.word(kCharshift) = 0;
 	goto afterprintname;
 nomatchslot2:
-	context.dl = 200;
-	context.ah = 0;
-	printdirect(context);
+	dl = 200;
+	ah = 0;
+	printdirect();
 afterprintname:
-	context.si = context.pop();
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.di = context.pop();
-	context.cx = context.pop();
-	context._add(context.si, 17);
-	context._add(context.bx, 10);
-	context._inc(context.cl);
-	context._cmp(context.cl, 7);
-	if (!context.flags.z())
+	si = pop();
+	bx = pop();
+	es = pop();
+	di = pop();
+	cx = pop();
+	_add(si, 17);
+	_add(bx, 10);
+	_inc(cl);
+	_cmp(cl, 7);
+	if (!flags.z())
 		goto shownameloop;
 }
 
-void namestoold(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.cs;
-	context.si = 8579;
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
-	context.es = context.data.word(kBuffers);
-	context.cx = 17*4;
-	context._movsb(context.cx);
+void DreamGenContext::namestoold() {
+	STACK_CHECK;
+	ds = cs;
+	si = 8579;
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
+	es = data.word(kBuffers);
+	cx = 17*4;
+	_movsb(cx);
 }
 
-void oldtonames(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.cs;
-	context.di = 8579;
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
-	context.ds = context.data.word(kBuffers);
-	context.cx = 17*4;
-	context._movsb(context.cx);
+void DreamGenContext::oldtonames() {
+	STACK_CHECK;
+	es = cs;
+	di = 8579;
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
+	ds = data.word(kBuffers);
+	cx = 17*4;
+	_movsb(cx);
 }
 
-void saveposition(Context &context) {
-	STACK_CHECK(context);
-	makeheader(context);
-	context.al = context.data.byte(kCurrentslot);
-	context.ah = 0;
-	context.push(context.ax);
-	context.cx = 13;
-	context._mul(context.cx);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 8698;
-	context._add(context.dx, context.ax);
-	openforsave(context);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 6091;
-	context.cx = (6187-6091);
-	savefilewrite(context);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.di = 6141;
-	context.ax = context.pop();
-	context.cx = 17;
-	context._mul(context.cx);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 8579;
-	context._add(context.dx, context.ax);
-	saveseg(context);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 0;
-	saveseg(context);
-	context.ds = context.data.word(kExtras);
-	context.dx = (0);
-	saveseg(context);
-	context.ds = context.data.word(kBuffers);
-	context.dx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-	saveseg(context);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 7979;
-	saveseg(context);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 534;
-	saveseg(context);
-	closefile(context);
+void DreamGenContext::saveposition() {
+	STACK_CHECK;
+	makeheader();
+	al = data.byte(kCurrentslot);
+	ah = 0;
+	push(ax);
+	cx = 13;
+	_mul(cx);
+	dx = data;
+	ds = dx;
+	dx = 8698;
+	_add(dx, ax);
+	openforsave();
+	dx = data;
+	ds = dx;
+	dx = 6091;
+	cx = (6187-6091);
+	savefilewrite();
+	dx = data;
+	es = dx;
+	di = 6141;
+	ax = pop();
+	cx = 17;
+	_mul(cx);
+	dx = data;
+	ds = dx;
+	dx = 8579;
+	_add(dx, ax);
+	saveseg();
+	dx = data;
+	ds = dx;
+	dx = 0;
+	saveseg();
+	ds = data.word(kExtras);
+	dx = (0);
+	saveseg();
+	ds = data.word(kBuffers);
+	dx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
+	saveseg();
+	dx = data;
+	ds = dx;
+	dx = 7979;
+	saveseg();
+	dx = data;
+	ds = dx;
+	dx = 534;
+	saveseg();
+	closefile();
 }
 
-void loadposition(Context &context) {
-	STACK_CHECK(context);
-	context.data.word(kTimecount) = 0;
-	clearchanges(context);
-	context.al = context.data.byte(kCurrentslot);
-	context.ah = 0;
-	context.push(context.ax);
-	context.cx = 13;
-	context._mul(context.cx);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 8698;
-	context._add(context.dx, context.ax);
-	openfilefromc(context);
-	context.ds = context.cs;
-	context.dx = 6091;
-	context.cx = (6187-6091);
-	savefileread(context);
-	context.es = context.cs;
-	context.di = 6141;
-	context.ax = context.pop();
-	context.cx = 17;
-	context._mul(context.cx);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 8579;
-	context._add(context.dx, context.ax);
-	loadseg(context);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 0;
-	loadseg(context);
-	context.ds = context.data.word(kExtras);
-	context.dx = (0);
-	loadseg(context);
-	context.ds = context.data.word(kBuffers);
-	context.dx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-	loadseg(context);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 7979;
-	loadseg(context);
-	context.ds = context.cs;
-	context.dx = 534;
-	loadseg(context);
-	closefile(context);
+void DreamGenContext::loadposition() {
+	STACK_CHECK;
+	data.word(kTimecount) = 0;
+	clearchanges();
+	al = data.byte(kCurrentslot);
+	ah = 0;
+	push(ax);
+	cx = 13;
+	_mul(cx);
+	dx = data;
+	ds = dx;
+	dx = 8698;
+	_add(dx, ax);
+	openfilefromc();
+	ds = cs;
+	dx = 6091;
+	cx = (6187-6091);
+	savefileread();
+	es = cs;
+	di = 6141;
+	ax = pop();
+	cx = 17;
+	_mul(cx);
+	dx = data;
+	ds = dx;
+	dx = 8579;
+	_add(dx, ax);
+	loadseg();
+	dx = data;
+	ds = dx;
+	dx = 0;
+	loadseg();
+	ds = data.word(kExtras);
+	dx = (0);
+	loadseg();
+	ds = data.word(kBuffers);
+	dx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
+	loadseg();
+	dx = data;
+	ds = dx;
+	dx = 7979;
+	loadseg();
+	ds = cs;
+	dx = 534;
+	loadseg();
+	closefile();
 }
 
-void makeheader(Context &context) {
-	STACK_CHECK(context);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.di = 6141;
-	context.ax = 17;
-	storeit(context);
-	context.ax = (68-0);
-	storeit(context);
-	context.ax = (0+2080+30000+(16*114)+((114+2)*2)+18000);
-	storeit(context);
-	context.ax = (250)*4;
-	storeit(context);
-	context.ax = 48;
-	storeit(context);
-	context.ax = (991-534);
-	storeit(context);
+void DreamGenContext::makeheader() {
+	STACK_CHECK;
+	dx = data;
+	es = dx;
+	di = 6141;
+	ax = 17;
+	storeit();
+	ax = (68-0);
+	storeit();
+	ax = (0+2080+30000+(16*114)+((114+2)*2)+18000);
+	storeit();
+	ax = (250)*4;
+	storeit();
+	ax = 48;
+	storeit();
+	ax = (991-534);
+	storeit();
 }
 
-void storeit(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.ax, 0);
-	if (!context.flags.z())
+void DreamGenContext::storeit() {
+	STACK_CHECK;
+	_cmp(ax, 0);
+	if (!flags.z())
 		goto isntblank;
-	context._inc(context.ax);
+	_inc(ax);
 isntblank:
-	context._stosw();
+	_stosw();
 }
 
-void findlen(Context &context) {
-	STACK_CHECK(context);
-	context._dec(context.bx);
-	context._add(context.bx, context.ax);
+void DreamGenContext::findlen() {
+	STACK_CHECK;
+	_dec(bx);
+	_add(bx, ax);
 nextone:
-	context._cmp(context.cl, context.ds.byte(context.bx));
-	if (!context.flags.z())
+	_cmp(cl, ds.byte(bx));
+	if (!flags.z())
 		return /* (foundlen) */;
-	context._dec(context.bx);
-	context._dec(context.ax);
-	context._cmp(context.ax, 0);
-	if (!context.flags.z())
+	_dec(bx);
+	_dec(ax);
+	_cmp(ax, 0);
+	if (!flags.z())
 		goto nextone;
 }
 
-void scanfornames(Context &context) {
-	STACK_CHECK(context);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.di = 8579;
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 8698;
-	context.cx = 7;
+void DreamGenContext::scanfornames() {
+	STACK_CHECK;
+	dx = data;
+	es = dx;
+	di = 8579;
+	dx = data;
+	ds = dx;
+	dx = 8698;
+	cx = 7;
 scanloop:
-	context.push(context.es);
-	context.push(context.ds);
-	context.push(context.di);
-	context.push(context.dx);
-	context.push(context.cx);
-	openfilefromc(context);
-	if (context.flags.c())
+	push(es);
+	push(ds);
+	push(di);
+	push(dx);
+	push(cx);
+	openfilefromc();
+	if (flags.c())
 		goto notexist;
-	context.cx = context.pop();
-	context._inc(context.ch);
-	context.push(context.cx);
-	context.push(context.di);
-	context.push(context.es);
-	context.dx = context.data;
-	context.ds = context.dx;
-	context.dx = 6091;
-	context.cx = (6187-6091);
-	savefileread(context);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.di = 6141;
-	context.ds = context.pop();
-	context.dx = context.pop();
-	loadseg(context);
-	context.bx = context.data.word(kHandle);
-	closefile(context);
+	cx = pop();
+	_inc(ch);
+	push(cx);
+	push(di);
+	push(es);
+	dx = data;
+	ds = dx;
+	dx = 6091;
+	cx = (6187-6091);
+	savefileread();
+	dx = data;
+	es = dx;
+	di = 6141;
+	ds = pop();
+	dx = pop();
+	loadseg();
+	bx = data.word(kHandle);
+	closefile();
 notexist:
-	context.cx = context.pop();
-	context.dx = context.pop();
-	context.di = context.pop();
-	context.ds = context.pop();
-	context.es = context.pop();
-	context._add(context.dx, 13);
-	context._add(context.di, 17);
-	context._dec(context.cl);
-	if (!context.flags.z())
+	cx = pop();
+	dx = pop();
+	di = pop();
+	ds = pop();
+	es = pop();
+	_add(dx, 13);
+	_add(di, 17);
+	_dec(cl);
+	if (!flags.z())
 		goto scanloop;
-	context.al = context.ch;
+	al = ch;
 }
 
-void decide(Context &context) {
-	STACK_CHECK(context);
-	setmode(context);
-	loadpalfromiff(context);
-	clearpalette(context);
-	context.data.byte(kPointermode) = 0;
-	context.data.word(kWatchingtime) = 0;
-	context.data.byte(kPointerframe) = 0;
-	context.data.word(kTextaddressx) = 70;
-	context.data.word(kTextaddressy) = 182-8;
-	context.data.byte(kTextlen) = 181;
-	context.data.byte(kManisoffscreen) = 1;
-	loadsavebox(context);
-	showdecisions(context);
-	worktoscreen(context);
-	fadescreenup(context);
-	context.data.byte(kGetback) = 0;
+void DreamGenContext::decide() {
+	STACK_CHECK;
+	setmode();
+	loadpalfromiff();
+	clearpalette();
+	data.byte(kPointermode) = 0;
+	data.word(kWatchingtime) = 0;
+	data.byte(kPointerframe) = 0;
+	data.word(kTextaddressx) = 70;
+	data.word(kTextaddressy) = 182-8;
+	data.byte(kTextlen) = 181;
+	data.byte(kManisoffscreen) = 1;
+	loadsavebox();
+	showdecisions();
+	worktoscreen();
+	fadescreenup();
+	data.byte(kGetback) = 0;
 waitdecide:
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	delpointer(context);
-	context.bx = 5057;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	delpointer();
+	bx = 5057;
+	checkcoords();
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto waitdecide;
-	context._cmp(context.data.byte(kGetback), 4);
-	if (context.flags.z())
+	_cmp(data.byte(kGetback), 4);
+	if (flags.z())
 		goto hasloadedroom;
-	getridoftemp(context);
+	getridoftemp();
 hasloadedroom:
-	context.data.word(kTextaddressx) = 13;
-	context.data.word(kTextaddressy) = 182;
-	context.data.byte(kTextlen) = 240;
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
 }
 
-void showdecisions(Context &context) {
-	STACK_CHECK(context);
-	createpanel2(context);
-	showopbox(context);
-	context.ds = context.data.word(kTempgraphics);
-	context.di = (60)+17;
-	context.bx = (52)+13;
-	context.al = 6;
-	context.ah = 0;
-	showframe(context);
-	undertextline(context);
+void DreamGenContext::showdecisions() {
+	STACK_CHECK;
+	createpanel2();
+	showopbox();
+	ds = data.word(kTempgraphics);
+	di = (60)+17;
+	bx = (52)+13;
+	al = 6;
+	ah = 0;
+	showframe();
+	undertextline();
 }
 
-void newgame(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 251);
-	if (context.flags.z())
+void DreamGenContext::newgame() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 251);
+	if (flags.z())
 		goto alreadynewgame;
-	context.data.byte(kCommandtype) = 251;
-	context.al = 47;
-	commandonly(context);
+	data.byte(kCommandtype) = 251;
+	al = 47;
+	commandonly();
 alreadynewgame:
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, 1);
-	if (!context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, 1);
+	if (!flags.z())
 		return /* (nonewgame) */;
-	context.data.byte(kGetback) = 3;
+	data.byte(kGetback) = 3;
 }
 
-void doload(Context &context) {
-	STACK_CHECK(context);
-	showopbox(context);
-	showloadops(context);
-	context.data.byte(kCurrentslot) = 0;
-	showslots(context);
-	shownames(context);
-	context.data.byte(kPointerframe) = 0;
-	worktoscreenm(context);
-	namestoold(context);
-	context.data.byte(kGetback) = 0;
+void DreamGenContext::doload() {
+	STACK_CHECK;
+	showopbox();
+	showloadops();
+	data.byte(kCurrentslot) = 0;
+	showslots();
+	shownames();
+	data.byte(kPointerframe) = 0;
+	worktoscreenm();
+	namestoold();
+	data.byte(kGetback) = 0;
 loadops:
-	delpointer(context);
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	dumptextline(context);
-	context.bx = 3824;
-	checkcoords(context);
-	context._cmp(context.data.byte(kGetback), 0);
-	if (context.flags.z())
+	delpointer();
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	dumptextline();
+	bx = 3824;
+	checkcoords();
+	_cmp(data.byte(kGetback), 0);
+	if (flags.z())
 		goto loadops;
-	context._cmp(context.data.byte(kGetback), 2);
-	if (context.flags.z())
+	_cmp(data.byte(kGetback), 2);
+	if (flags.z())
 		return /* (quitloaded) */;
-	getridoftemp(context);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.bx = 7979;
-	startloading(context);
-	loadroomssample(context);
-	context.data.byte(kRoomloaded) = 1;
-	context.data.byte(kNewlocation) = 255;
-	clearsprites(context);
-	initman(context);
-	initrain(context);
-	context.data.word(kTextaddressx) = 13;
-	context.data.word(kTextaddressy) = 182;
-	context.data.byte(kTextlen) = 240;
-	startup(context);
-	worktoscreen(context);
-	context.data.byte(kGetback) = 4;
+	getridoftemp();
+	dx = data;
+	es = dx;
+	bx = 7979;
+	startloading();
+	loadroomssample();
+	data.byte(kRoomloaded) = 1;
+	data.byte(kNewlocation) = 255;
+	clearsprites();
+	initman();
+	initrain();
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
+	startup();
+	worktoscreen();
+	data.byte(kGetback) = 4;
 }
 
-void loadold(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 252);
-	if (context.flags.z())
+void DreamGenContext::loadold() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 252);
+	if (flags.z())
 		goto alreadyloadold;
-	context.data.byte(kCommandtype) = 252;
-	context.al = 48;
-	commandonly(context);
+	data.byte(kCommandtype) = 252;
+	al = 48;
+	commandonly();
 alreadyloadold:
-	context.ax = context.data.word(kMousebutton);
-	context._and(context.ax, 1);
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (flags.z())
 		return /* (noloadold) */;
-	doload(context);
-	context._cmp(context.data.byte(kGetback), 4);
-	if (context.flags.z())
+	doload();
+	_cmp(data.byte(kGetback), 4);
+	if (flags.z())
 		return /* (noloadold) */;
-	showdecisions(context);
-	worktoscreenm(context);
-	context.data.byte(kGetback) = 0;
+	showdecisions();
+	worktoscreenm();
+	data.byte(kGetback) = 0;
 }
 
-void createname(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.di = 5105;
-	context.cs.byte(context.di+0) = context.dl;
-	context.cs.byte(context.di+3) = context.cl;
-	context.al = context.dh;
-	context.ah = '0'-1;
+void DreamGenContext::createname() {
+	STACK_CHECK;
+	push(ax);
+	di = 5105;
+	cs.byte(di+0) = dl;
+	cs.byte(di+3) = cl;
+	al = dh;
+	ah = '0'-1;
 findten:
-	context._inc(context.ah);
-	context._sub(context.al, 10);
-	if (!context.flags.c())
+	_inc(ah);
+	_sub(al, 10);
+	if (!flags.c())
 		goto findten;
-	context.cs.byte(context.di+1) = context.ah;
-	context._add(context.al, 10+'0');
-	context.cs.byte(context.di+2) = context.al;
-	context.ax = context.pop();
-	context.cl = '0'-1;
+	cs.byte(di+1) = ah;
+	_add(al, 10+'0');
+	cs.byte(di+2) = al;
+	ax = pop();
+	cl = '0'-1;
 thousandsc:
-	context._inc(context.cl);
-	context._sub(context.ax, 1000);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, 1000);
+	if (!flags.c())
 		goto thousandsc;
-	context._add(context.ax, 1000);
-	context.cs.byte(context.di+4) = context.cl;
-	context.cl = '0'-1;
+	_add(ax, 1000);
+	cs.byte(di+4) = cl;
+	cl = '0'-1;
 hundredsc:
-	context._inc(context.cl);
-	context._sub(context.ax, 100);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, 100);
+	if (!flags.c())
 		goto hundredsc;
-	context._add(context.ax, 100);
-	context.cs.byte(context.di+5) = context.cl;
-	context.cl = '0'-1;
+	_add(ax, 100);
+	cs.byte(di+5) = cl;
+	cl = '0'-1;
 tensc:
-	context._inc(context.cl);
-	context._sub(context.ax, 10);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, 10);
+	if (!flags.c())
 		goto tensc;
-	context._add(context.ax, 10);
-	context.cs.byte(context.di+6) = context.cl;
-	context._add(context.al, '0');
-	context.cs.byte(context.di+7) = context.al;
+	_add(ax, 10);
+	cs.byte(di+6) = cl;
+	_add(al, '0');
+	cs.byte(di+7) = al;
 }
 
-void trysoundalloc(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kNeedsoundbuff), 1);
-	if (context.flags.z())
+void DreamGenContext::trysoundalloc() {
+	STACK_CHECK;
+	_cmp(data.byte(kNeedsoundbuff), 1);
+	if (flags.z())
 		return /* (gotsoundbuff) */;
-	context._inc(context.data.byte(kSoundtimes));
-	context.bx = (16384+2048)/16;
-	allocatemem(context);
-	context.data.word(kSoundbuffer) = context.ax;
-	context.push(context.ax);
-	context.al = context.ah;
-	context.cl = 4;
-	context._shr(context.al, context.cl);
-	context.data.byte(kSoundbufferpage) = context.al;
-	context.ax = context.pop();
-	context.cl = 4;
-	context._shl(context.ax, context.cl);
-	context.data.word(kSoundbufferad) = context.ax;
-	context._cmp(context.ax, 0x0b7ff);
-	if (!context.flags.c())
+	_inc(data.byte(kSoundtimes));
+	bx = (16384+2048)/16;
+	allocatemem();
+	data.word(kSoundbuffer) = ax;
+	push(ax);
+	al = ah;
+	cl = 4;
+	_shr(al, cl);
+	data.byte(kSoundbufferpage) = al;
+	ax = pop();
+	cl = 4;
+	_shl(ax, cl);
+	data.word(kSoundbufferad) = ax;
+	_cmp(ax, 0x0b7ff);
+	if (!flags.c())
 		goto soundfail;
-	context.es = context.data.word(kSoundbuffer);
-	context.di = 0;
-	context.cx = 16384/2;
-	context.ax = 0x7f7f;
-	context._stosw(context.cx);
-	context.data.byte(kNeedsoundbuff) = 1;
+	es = data.word(kSoundbuffer);
+	di = 0;
+	cx = 16384/2;
+	ax = 0x7f7f;
+	_stosw(cx);
+	data.byte(kNeedsoundbuff) = 1;
 	return;
 soundfail:
-	context.es = context.data.word(kSoundbuffer);
-	deallocatemem(context);
+	es = data.word(kSoundbuffer);
+	deallocatemem();
 }
 
-void playchannel0(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kSoundint), 255);
-	if (context.flags.z())
+void DreamGenContext::playchannel0() {
+	STACK_CHECK;
+	_cmp(data.byte(kSoundint), 255);
+	if (flags.z())
 		return /* (dontbother4) */;
-	context.push(context.es);
-	context.push(context.ds);
-	context.push(context.bx);
-	context.push(context.cx);
-	context.push(context.di);
-	context.push(context.si);
-	context.data.byte(kCh0playing) = context.al;
-	context.es = context.data.word(kSounddata);
-	context._cmp(context.al, 12);
-	if (context.flags.c())
+	push(es);
+	push(ds);
+	push(bx);
+	push(cx);
+	push(di);
+	push(si);
+	data.byte(kCh0playing) = al;
+	es = data.word(kSounddata);
+	_cmp(al, 12);
+	if (flags.c())
 		goto notsecondbank;
-	context.es = context.data.word(kSounddata2);
-	context._sub(context.al, 12);
+	es = data.word(kSounddata2);
+	_sub(al, 12);
 notsecondbank:
-	context.data.byte(kCh0repeat) = context.ah;
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.bx = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = context.es.byte(context.bx);
-	context.ah = 0;
-	context.data.word(kCh0emmpage) = context.ax;
-	context.ax = context.es.word(context.bx+1);
-	context.data.word(kCh0offset) = context.ax;
-	context.ax = context.es.word(context.bx+3);
-	context.data.word(kCh0blockstocopy) = context.ax;
-	context._cmp(context.data.byte(kCh0repeat), 0);
-	if (context.flags.z())
+	data.byte(kCh0repeat) = ah;
+	ah = 0;
+	_add(ax, ax);
+	bx = ax;
+	_add(ax, ax);
+	_add(bx, ax);
+	al = es.byte(bx);
+	ah = 0;
+	data.word(kCh0emmpage) = ax;
+	ax = es.word(bx+1);
+	data.word(kCh0offset) = ax;
+	ax = es.word(bx+3);
+	data.word(kCh0blockstocopy) = ax;
+	_cmp(data.byte(kCh0repeat), 0);
+	if (flags.z())
 		goto nosetloop;
-	context.ax = context.data.word(kCh0emmpage);
-	context.data.word(kCh0oldemmpage) = context.ax;
-	context.ax = context.data.word(kCh0offset);
-	context.data.word(kCh0oldoffset) = context.ax;
-	context.ax = context.data.word(kCh0blockstocopy);
-	context.data.word(kCh0oldblockstocopy) = context.ax;
+	ax = data.word(kCh0emmpage);
+	data.word(kCh0oldemmpage) = ax;
+	ax = data.word(kCh0offset);
+	data.word(kCh0oldoffset) = ax;
+	ax = data.word(kCh0blockstocopy);
+	data.word(kCh0oldblockstocopy) = ax;
 nosetloop:
-	context.si = context.pop();
-	context.di = context.pop();
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.ds = context.pop();
-	context.es = context.pop();
+	si = pop();
+	di = pop();
+	cx = pop();
+	bx = pop();
+	ds = pop();
+	es = pop();
 }
 
-void playchannel1(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kSoundint), 255);
-	if (context.flags.z())
+void DreamGenContext::playchannel1() {
+	STACK_CHECK;
+	_cmp(data.byte(kSoundint), 255);
+	if (flags.z())
 		return /* (dontbother5) */;
-	context._cmp(context.data.byte(kCh1playing), 7);
-	if (context.flags.z())
+	_cmp(data.byte(kCh1playing), 7);
+	if (flags.z())
 		return /* (dontbother5) */;
-	context.push(context.es);
-	context.push(context.ds);
-	context.push(context.bx);
-	context.push(context.cx);
-	context.push(context.di);
-	context.push(context.si);
-	context.data.byte(kCh1playing) = context.al;
-	context.es = context.data.word(kSounddata);
-	context._cmp(context.al, 12);
-	if (context.flags.c())
+	push(es);
+	push(ds);
+	push(bx);
+	push(cx);
+	push(di);
+	push(si);
+	data.byte(kCh1playing) = al;
+	es = data.word(kSounddata);
+	_cmp(al, 12);
+	if (flags.c())
 		goto notsecondbank1;
-	context.es = context.data.word(kSounddata2);
-	context._sub(context.al, 12);
+	es = data.word(kSounddata2);
+	_sub(al, 12);
 notsecondbank1:
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.bx = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = context.es.byte(context.bx);
-	context.ah = 0;
-	context.data.word(kCh1emmpage) = context.ax;
-	context.ax = context.es.word(context.bx+1);
-	context.data.word(kCh1offset) = context.ax;
-	context.ax = context.es.word(context.bx+3);
-	context.data.word(kCh1blockstocopy) = context.ax;
-	context.si = context.pop();
-	context.di = context.pop();
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.ds = context.pop();
-	context.es = context.pop();
+	ah = 0;
+	_add(ax, ax);
+	bx = ax;
+	_add(ax, ax);
+	_add(bx, ax);
+	al = es.byte(bx);
+	ah = 0;
+	data.word(kCh1emmpage) = ax;
+	ax = es.word(bx+1);
+	data.word(kCh1offset) = ax;
+	ax = es.word(bx+3);
+	data.word(kCh1blockstocopy) = ax;
+	si = pop();
+	di = pop();
+	cx = pop();
+	bx = pop();
+	ds = pop();
+	es = pop();
 }
 
-void makenextblock(Context &context) {
-	STACK_CHECK(context);
-	volumeadjust(context);
-	loopchannel0(context);
-	context._cmp(context.data.word(kCh1blockstocopy), 0);
-	if (context.flags.z())
+void DreamGenContext::makenextblock() {
+	STACK_CHECK;
+	volumeadjust();
+	loopchannel0();
+	_cmp(data.word(kCh1blockstocopy), 0);
+	if (flags.z())
 		goto mightbeonlych0;
-	context._cmp(context.data.word(kCh0blockstocopy), 0);
-	if (context.flags.z())
+	_cmp(data.word(kCh0blockstocopy), 0);
+	if (flags.z())
 		goto mightbeonlych1;
-	context._dec(context.data.word(kCh0blockstocopy));
-	context._dec(context.data.word(kCh1blockstocopy));
-	bothchannels(context);
+	_dec(data.word(kCh0blockstocopy));
+	_dec(data.word(kCh1blockstocopy));
+	bothchannels();
 	return;
 mightbeonlych1:
-	context.data.byte(kCh0playing) = 255;
-	context._cmp(context.data.word(kCh1blockstocopy), 0);
-	if (context.flags.z())
+	data.byte(kCh0playing) = 255;
+	_cmp(data.word(kCh1blockstocopy), 0);
+	if (flags.z())
 		return /* (notch1only) */;
-	context._dec(context.data.word(kCh1blockstocopy));
-	channel1only(context);
+	_dec(data.word(kCh1blockstocopy));
+	channel1only();
 	return;
 mightbeonlych0:
-	context.data.byte(kCh1playing) = 255;
-	context._cmp(context.data.word(kCh0blockstocopy), 0);
-	if (context.flags.z())
+	data.byte(kCh1playing) = 255;
+	_cmp(data.word(kCh0blockstocopy), 0);
+	if (flags.z())
 		goto notch0only;
-	context._dec(context.data.word(kCh0blockstocopy));
-	channel0only(context);
+	_dec(data.word(kCh0blockstocopy));
+	channel0only();
 	return;
 notch0only:
-	context.es = context.data.word(kSoundbuffer);
-	context.di = context.data.word(kSoundbufferwrite);
-	context.cx = 1024;
-	context.ax = 0x7f7f;
-	context._stosw(context.cx);
-	context._and(context.di, 16384-1);
-	context.data.word(kSoundbufferwrite) = context.di;
+	es = data.word(kSoundbuffer);
+	di = data.word(kSoundbufferwrite);
+	cx = 1024;
+	ax = 0x7f7f;
+	_stosw(cx);
+	_and(di, 16384-1);
+	data.word(kSoundbufferwrite) = di;
 }
 
-void volumeadjust(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kVolumedirection);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+void DreamGenContext::volumeadjust() {
+	STACK_CHECK;
+	al = data.byte(kVolumedirection);
+	_cmp(al, 0);
+	if (flags.z())
 		return /* (volok) */;
-	context.al = context.data.byte(kVolume);
-	context._cmp(context.al, context.data.byte(kVolumeto));
-	if (context.flags.z())
+	al = data.byte(kVolume);
+	_cmp(al, data.byte(kVolumeto));
+	if (flags.z())
 		goto volfinish;
-	context._add(context.data.byte(kVolumecount), 64);
-	if (!context.flags.z())
+	_add(data.byte(kVolumecount), 64);
+	if (!flags.z())
 		return /* (volok) */;
-	context.al = context.data.byte(kVolume);
-	context._add(context.al, context.data.byte(kVolumedirection));
-	context.data.byte(kVolume) = context.al;
+	al = data.byte(kVolume);
+	_add(al, data.byte(kVolumedirection));
+	data.byte(kVolume) = al;
 	return;
 volfinish:
-	context.data.byte(kVolumedirection) = 0;
+	data.byte(kVolumedirection) = 0;
 }
 
-void loopchannel0(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kCh0blockstocopy), 0);
-	if (!context.flags.z())
+void DreamGenContext::loopchannel0() {
+	STACK_CHECK;
+	_cmp(data.word(kCh0blockstocopy), 0);
+	if (!flags.z())
 		return /* (notloop) */;
-	context._cmp(context.data.byte(kCh0repeat), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kCh0repeat), 0);
+	if (flags.z())
 		return /* (notloop) */;
-	context._cmp(context.data.byte(kCh0repeat), 255);
-	if (context.flags.z())
+	_cmp(data.byte(kCh0repeat), 255);
+	if (flags.z())
 		goto endlessloop;
-	context._dec(context.data.byte(kCh0repeat));
+	_dec(data.byte(kCh0repeat));
 endlessloop:
-	context.ax = context.data.word(kCh0oldemmpage);
-	context.data.word(kCh0emmpage) = context.ax;
-	context.ax = context.data.word(kCh0oldoffset);
-	context.data.word(kCh0offset) = context.ax;
-	context.ax = context.data.word(kCh0blockstocopy);
-	context._add(context.ax, context.data.word(kCh0oldblockstocopy));
-	context.data.word(kCh0blockstocopy) = context.ax;
+	ax = data.word(kCh0oldemmpage);
+	data.word(kCh0emmpage) = ax;
+	ax = data.word(kCh0oldoffset);
+	data.word(kCh0offset) = ax;
+	ax = data.word(kCh0blockstocopy);
+	_add(ax, data.word(kCh0oldblockstocopy));
+	data.word(kCh0blockstocopy) = ax;
 }
 
-void cancelch0(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kCh0repeat) = 0;
-	context.data.word(kCh0blockstocopy) = 0;
-	context.data.byte(kCh0playing) = 255;
+void DreamGenContext::cancelch0() {
+	STACK_CHECK;
+	data.byte(kCh0repeat) = 0;
+	data.word(kCh0blockstocopy) = 0;
+	data.byte(kCh0playing) = 255;
 }
 
-void cancelch1(Context &context) {
-	STACK_CHECK(context);
-	context.data.word(kCh1blockstocopy) = 0;
-	context.data.byte(kCh1playing) = 255;
+void DreamGenContext::cancelch1() {
+	STACK_CHECK;
+	data.word(kCh1blockstocopy) = 0;
+	data.byte(kCh1playing) = 255;
 }
 
-void channel0tran(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kVolume), 0);
-	if (!context.flags.z())
+void DreamGenContext::channel0tran() {
+	STACK_CHECK;
+	_cmp(data.byte(kVolume), 0);
+	if (!flags.z())
 		goto lowvolumetran;
-	context.cx = 1024;
-	context._movsw(context.cx);
+	cx = 1024;
+	_movsw(cx);
 	return;
 lowvolumetran:
-	context.cx = 1024;
-	context.bh = context.data.byte(kVolume);
-	context.bl = 0;
-	context._add(context.bx, 16384-256);
+	cx = 1024;
+	bh = data.byte(kVolume);
+	bl = 0;
+	_add(bx, 16384-256);
 volloop:
-	context._lodsw();
-	context.bl = context.al;
-	context.al = context.es.byte(context.bx);
-	context.bl = context.ah;
-	context.ah = context.es.byte(context.bx);
-	context._stosw();
-	if (--context.cx)
+	_lodsw();
+	bl = al;
+	al = es.byte(bx);
+	bl = ah;
+	ah = es.byte(bx);
+	_stosw();
+	if (--cx)
 		goto volloop;
 }
 
-void domix(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kVolume), 0);
-	if (!context.flags.z())
+void DreamGenContext::domix() {
+	STACK_CHECK;
+	_cmp(data.byte(kVolume), 0);
+	if (!flags.z())
 		goto lowvolumemix;
 slow:
-	context._lodsb();
-	context.ah = context.ds.byte(context.bx);
-	context._inc(context.bx);
-	context._cmp(context.al, context.dh);
-	if (!context.flags.c())
+	_lodsb();
+	ah = ds.byte(bx);
+	_inc(bx);
+	_cmp(al, dh);
+	if (!flags.c())
 		goto toplot;
-	context._cmp(context.ah, context.dh);
-	if (!context.flags.c())
+	_cmp(ah, dh);
+	if (!flags.c())
 		goto nodistort;
-	context._add(context.al, context.ah);
-	if (context.flags.s())
+	_add(al, ah);
+	if (flags.s())
 		goto botok;
-	context._xor(context.al, context.al);
-	context._stosb();
-	if (--context.cx)
+	_xor(al, al);
+	_stosb();
+	if (--cx)
 		goto slow;
 	return /* (doneit) */;
 botok:
-	context._xor(context.al, context.dh);
-	context._stosb();
-	if (--context.cx)
+	_xor(al, dh);
+	_stosb();
+	if (--cx)
 		goto slow;
 	return /* (doneit) */;
 toplot:
-	context._cmp(context.ah, context.dh);
-	if (context.flags.c())
+	_cmp(ah, dh);
+	if (flags.c())
 		goto nodistort;
-	context._add(context.al, context.ah);
-	if (!context.flags.s())
+	_add(al, ah);
+	if (!flags.s())
 		goto topok;
-	context.al = context.dl;
-	context._stosb();
-	if (--context.cx)
+	al = dl;
+	_stosb();
+	if (--cx)
 		goto slow;
 	return /* (doneit) */;
 topok:
-	context._xor(context.al, context.dh);
-	context._stosb();
-	if (--context.cx)
+	_xor(al, dh);
+	_stosb();
+	if (--cx)
 		goto slow;
 	return /* (doneit) */;
 nodistort:
-	context._add(context.al, context.ah);
-	context._xor(context.al, context.dh);
-	context._stosb();
-	if (--context.cx)
+	_add(al, ah);
+	_xor(al, dh);
+	_stosb();
+	if (--cx)
 		goto slow;
 	return /* (doneit) */;
 lowvolumemix:
-	context._lodsb();
-	context.push(context.bx);
-	context.bh = context.data.byte(kVolume);
-	context._add(context.bh, 63);
-	context.bl = context.al;
-	context.al = context.es.byte(context.bx);
-	context.bx = context.pop();
-	context.ah = context.ds.byte(context.bx);
-	context._inc(context.bx);
-	context._cmp(context.al, context.dh);
-	if (!context.flags.c())
+	_lodsb();
+	push(bx);
+	bh = data.byte(kVolume);
+	_add(bh, 63);
+	bl = al;
+	al = es.byte(bx);
+	bx = pop();
+	ah = ds.byte(bx);
+	_inc(bx);
+	_cmp(al, dh);
+	if (!flags.c())
 		goto toplotv;
-	context._cmp(context.ah, context.dh);
-	if (!context.flags.c())
+	_cmp(ah, dh);
+	if (!flags.c())
 		goto nodistortv;
-	context._add(context.al, context.ah);
-	if (context.flags.s())
+	_add(al, ah);
+	if (flags.s())
 		goto botokv;
-	context._xor(context.al, context.al);
-	context._stosb();
-	if (--context.cx)
+	_xor(al, al);
+	_stosb();
+	if (--cx)
 		goto lowvolumemix;
 	return /* (doneit) */;
 botokv:
-	context._xor(context.al, context.dh);
-	context._stosb();
-	if (--context.cx)
+	_xor(al, dh);
+	_stosb();
+	if (--cx)
 		goto lowvolumemix;
 	return /* (doneit) */;
 toplotv:
-	context._cmp(context.ah, context.dh);
-	if (context.flags.c())
+	_cmp(ah, dh);
+	if (flags.c())
 		goto nodistortv;
-	context._add(context.al, context.ah);
-	if (!context.flags.s())
+	_add(al, ah);
+	if (!flags.s())
 		goto topokv;
-	context.al = context.dl;
-	context._stosb();
-	if (--context.cx)
+	al = dl;
+	_stosb();
+	if (--cx)
 		goto lowvolumemix;
 	return /* (doneit) */;
 topokv:
-	context._xor(context.al, context.dh);
-	context._stosb();
-	if (--context.cx)
+	_xor(al, dh);
+	_stosb();
+	if (--cx)
 		goto lowvolumemix;
 	return /* (doneit) */;
 nodistortv:
-	context._add(context.al, context.ah);
-	context._xor(context.al, context.dh);
-	context._stosb();
-	if (--context.cx)
+	_add(al, ah);
+	_xor(al, dh);
+	_stosb();
+	if (--cx)
 		goto lowvolumemix;
 }
 
-void entrytexts(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLocation), 21);
-	if (!context.flags.z())
+void DreamGenContext::entrytexts() {
+	STACK_CHECK;
+	_cmp(data.byte(kLocation), 21);
+	if (!flags.z())
 		goto notloc15;
-	context.al = 28;
-	context.cx = 60;
-	context.dx = 11;
-	context.bl = 68;
-	context.bh = 64;
-	setuptimeduse(context);
+	al = 28;
+	cx = 60;
+	dx = 11;
+	bl = 68;
+	bh = 64;
+	setuptimeduse();
 	return;
 notloc15:
-	context._cmp(context.data.byte(kLocation), 30);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 30);
+	if (!flags.z())
 		goto notloc43;
-	context.al = 27;
-	context.cx = 60;
-	context.dx = 11;
-	context.bl = 68;
-	context.bh = 64;
-	setuptimeduse(context);
+	al = 27;
+	cx = 60;
+	dx = 11;
+	bl = 68;
+	bh = 64;
+	setuptimeduse();
 	return;
 notloc43:
-	context._cmp(context.data.byte(kLocation), 23);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 23);
+	if (!flags.z())
 		goto notloc23;
-	context.al = 29;
-	context.cx = 60;
-	context.dx = 11;
-	context.bl = 68;
-	context.bh = 64;
-	setuptimeduse(context);
+	al = 29;
+	cx = 60;
+	dx = 11;
+	bl = 68;
+	bh = 64;
+	setuptimeduse();
 	return;
 notloc23:
-	context._cmp(context.data.byte(kLocation), 31);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 31);
+	if (!flags.z())
 		goto notloc44;
-	context.al = 30;
-	context.cx = 60;
-	context.dx = 11;
-	context.bl = 68;
-	context.bh = 64;
-	setuptimeduse(context);
+	al = 30;
+	cx = 60;
+	dx = 11;
+	bl = 68;
+	bh = 64;
+	setuptimeduse();
 	return;
 notloc44:
-	context._cmp(context.data.byte(kLocation), 20);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 20);
+	if (!flags.z())
 		goto notsarters2;
-	context.al = 31;
-	context.cx = 60;
-	context.dx = 11;
-	context.bl = 68;
-	context.bh = 64;
-	setuptimeduse(context);
+	al = 31;
+	cx = 60;
+	dx = 11;
+	bl = 68;
+	bh = 64;
+	setuptimeduse();
 	return;
 notsarters2:
-	context._cmp(context.data.byte(kLocation), 24);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 24);
+	if (!flags.z())
 		goto notedenlob;
-	context.al = 32;
-	context.cx = 60;
-	context.dx = 3;
-	context.bl = 68;
-	context.bh = 64;
-	setuptimeduse(context);
+	al = 32;
+	cx = 60;
+	dx = 3;
+	bl = 68;
+	bh = 64;
+	setuptimeduse();
 	return;
 notedenlob:
-	context._cmp(context.data.byte(kLocation), 34);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 34);
+	if (!flags.z())
 		return /* (noteden2) */;
-	context.al = 33;
-	context.cx = 60;
-	context.dx = 3;
-	context.bl = 68;
-	context.bh = 64;
-	setuptimeduse(context);
+	al = 33;
+	cx = 60;
+	dx = 3;
+	bl = 68;
+	bh = 64;
+	setuptimeduse();
 }
 
-void entryanims(Context &context) {
-	STACK_CHECK(context);
-	context.data.word(kReeltowatch) = -1;
-	context.data.byte(kWatchmode) = -1;
-	context._cmp(context.data.byte(kLocation), 33);
-	if (!context.flags.z())
+void DreamGenContext::entryanims() {
+	STACK_CHECK;
+	data.word(kReeltowatch) = -1;
+	data.byte(kWatchmode) = -1;
+	_cmp(data.byte(kLocation), 33);
+	if (!flags.z())
 		goto notinthebeach;
-	switchryanoff(context);
-	context.data.word(kWatchingtime) = 76*2;
-	context.data.word(kReeltowatch) = 0;
-	context.data.word(kEndwatchreel) = 76;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
+	switchryanoff();
+	data.word(kWatchingtime) = 76*2;
+	data.word(kReeltowatch) = 0;
+	data.word(kEndwatchreel) = 76;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
 	return;
 notinthebeach:
-	context._cmp(context.data.byte(kLocation), 44);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 44);
+	if (!flags.z())
 		goto notsparkys;
-	context.al = 8;
-	resetlocation(context);
-	context.data.word(kWatchingtime) = 50*2;
-	context.data.word(kReeltowatch) = 247;
-	context.data.word(kEndwatchreel) = 297;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	switchryanoff(context);
+	al = 8;
+	resetlocation();
+	data.word(kWatchingtime) = 50*2;
+	data.word(kReeltowatch) = 247;
+	data.word(kEndwatchreel) = 297;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	switchryanoff();
 	return;
 notsparkys:
-	context._cmp(context.data.byte(kLocation), 22);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 22);
+	if (!flags.z())
 		goto notinthelift;
-	context.data.word(kWatchingtime) = 31*2;
-	context.data.word(kReeltowatch) = 0;
-	context.data.word(kEndwatchreel) = 30;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	switchryanoff(context);
+	data.word(kWatchingtime) = 31*2;
+	data.word(kReeltowatch) = 0;
+	data.word(kEndwatchreel) = 30;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	switchryanoff();
 	return;
 notinthelift:
-	context._cmp(context.data.byte(kLocation), 26);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 26);
+	if (!flags.z())
 		goto notunderchurch;
-	context.data.byte(kSymboltopnum) = 2;
-	context.data.byte(kSymbolbotnum) = 1;
+	data.byte(kSymboltopnum) = 2;
+	data.byte(kSymbolbotnum) = 1;
 	return;
 notunderchurch:
-	context._cmp(context.data.byte(kLocation), 45);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 45);
+	if (!flags.z())
 		goto notenterdream;
-	context.data.byte(kKeeperflag) = 0;
-	context.data.word(kWatchingtime) = 296;
-	context.data.word(kReeltowatch) = 45;
-	context.data.word(kEndwatchreel) = 198;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	switchryanoff(context);
+	data.byte(kKeeperflag) = 0;
+	data.word(kWatchingtime) = 296;
+	data.word(kReeltowatch) = 45;
+	data.word(kEndwatchreel) = 198;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	switchryanoff();
 	return;
 notenterdream:
-	context._cmp(context.data.byte(kReallocation), 46);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 46);
+	if (!flags.z())
 		goto notcrystal;
-	context._cmp(context.data.byte(kSartaindead), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kSartaindead), 1);
+	if (!flags.z())
 		goto notcrystal;
-	context.al = 0;
-	removefreeobject(context);
+	al = 0;
+	removefreeobject();
 	return;
 notcrystal:
-	context._cmp(context.data.byte(kLocation), 9);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 9);
+	if (!flags.z())
 		goto nottopchurch;
-	context.al = 2;
-	checkifpathison(context);
-	if (context.flags.z())
+	al = 2;
+	checkifpathison();
+	if (flags.z())
 		goto nottopchurch;
-	context._cmp(context.data.byte(kAidedead), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kAidedead), 0);
+	if (flags.z())
 		goto nottopchurch;
-	context.al = 3;
-	checkifpathison(context);
-	if (!context.flags.z())
+	al = 3;
+	checkifpathison();
+	if (!flags.z())
 		goto makedoorsopen;
-	context.al = 2;
-	turnpathon(context);
+	al = 2;
+	turnpathon();
 makedoorsopen:
-	context.al = 4;
-	removesetobject(context);
-	context.al = 5;
-	placesetobject(context);
+	al = 4;
+	removesetobject();
+	al = 5;
+	placesetobject();
 	return;
 nottopchurch:
-	context._cmp(context.data.byte(kLocation), 47);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 47);
+	if (!flags.z())
 		goto notdreamcentre;
-	context.al = 4;
-	placesetobject(context);
-	context.al = 5;
-	placesetobject(context);
+	al = 4;
+	placesetobject();
+	al = 5;
+	placesetobject();
 	return;
 notdreamcentre:
-	context._cmp(context.data.byte(kLocation), 38);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 38);
+	if (!flags.z())
 		goto notcarpark;
-	context.data.word(kWatchingtime) = 57*2;
-	context.data.word(kReeltowatch) = 4;
-	context.data.word(kEndwatchreel) = 57;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	switchryanoff(context);
+	data.word(kWatchingtime) = 57*2;
+	data.word(kReeltowatch) = 4;
+	data.word(kEndwatchreel) = 57;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	switchryanoff();
 	return;
 notcarpark:
-	context._cmp(context.data.byte(kLocation), 32);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 32);
+	if (!flags.z())
 		goto notalley;
-	context.data.word(kWatchingtime) = 66*2;
-	context.data.word(kReeltowatch) = 0;
-	context.data.word(kEndwatchreel) = 66;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	switchryanoff(context);
+	data.word(kWatchingtime) = 66*2;
+	data.word(kReeltowatch) = 0;
+	data.word(kEndwatchreel) = 66;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	switchryanoff();
 	return;
 notalley:
-	context._cmp(context.data.byte(kLocation), 24);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 24);
+	if (!flags.z())
 		return /* (notedensagain) */;
-	context.al = 2;
-	context.ah = context.data.byte(kRoomnum);
-	context._dec(context.ah);
-	turnanypathon(context);
+	al = 2;
+	ah = data.byte(kRoomnum);
+	_dec(ah);
+	turnanypathon();
 }
 
-void initialinv(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kReallocation), 24);
-	if (context.flags.z())
+void DreamGenContext::initialinv() {
+	STACK_CHECK;
+	_cmp(data.byte(kReallocation), 24);
+	if (flags.z())
 		goto isedens;
 	return;
 isedens:
-	context.al = 11;
-	context.ah = 5;
-	pickupob(context);
-	context.al = 12;
-	context.ah = 6;
-	pickupob(context);
-	context.al = 13;
-	context.ah = 7;
-	pickupob(context);
-	context.al = 14;
-	context.ah = 8;
-	pickupob(context);
-	context.al = 18;
-	context.al = 18;
-	context.ah = 0;
-	pickupob(context);
-	context.al = 19;
-	context.ah = 1;
-	pickupob(context);
-	context.al = 20;
-	context.ah = 9;
-	pickupob(context);
-	context.al = 16;
-	context.ah = 2;
-	pickupob(context);
-	context.data.byte(kWatchmode) = 1;
-	context.data.word(kReeltohold) = 0;
-	context.data.word(kEndofholdreel) = 6;
-	context.data.byte(kWatchspeed) = 1;
-	context.data.byte(kSpeedcount) = 1;
-	switchryanoff(context);
+	al = 11;
+	ah = 5;
+	pickupob();
+	al = 12;
+	ah = 6;
+	pickupob();
+	al = 13;
+	ah = 7;
+	pickupob();
+	al = 14;
+	ah = 8;
+	pickupob();
+	al = 18;
+	al = 18;
+	ah = 0;
+	pickupob();
+	al = 19;
+	ah = 1;
+	pickupob();
+	al = 20;
+	ah = 9;
+	pickupob();
+	al = 16;
+	ah = 2;
+	pickupob();
+	data.byte(kWatchmode) = 1;
+	data.word(kReeltohold) = 0;
+	data.word(kEndofholdreel) = 6;
+	data.byte(kWatchspeed) = 1;
+	data.byte(kSpeedcount) = 1;
+	switchryanoff();
 }
 
-void pickupob(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kLastinvpos) = context.ah;
-	context.data.byte(kObjecttype) = 2;
-	context.data.byte(kItemframe) = context.al;
-	context.data.byte(kCommand) = context.al;
-	getanyad(context);
-	transfertoex(context);
+void DreamGenContext::pickupob() {
+	STACK_CHECK;
+	data.byte(kLastinvpos) = ah;
+	data.byte(kObjecttype) = 2;
+	data.byte(kItemframe) = al;
+	data.byte(kCommand) = al;
+	getanyad();
+	transfertoex();
 }
 
-void checkforemm(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::checkforemm() {
+	STACK_CHECK;
 }
 
-void checkbasemem(Context &context) {
-	STACK_CHECK(context);
-	context.bx = context.data.word(kHowmuchalloc);
-	context._cmp(context.bx, 0x9360);
-	if (!context.flags.c())
+void DreamGenContext::checkbasemem() {
+	STACK_CHECK;
+	bx = data.word(kHowmuchalloc);
+	_cmp(bx, 0x9360);
+	if (!flags.c())
 		return /* (enoughmem) */;
-	context.data.byte(kGameerror) = 5;
-	{ quickquit(context); return; };
+	data.byte(kGameerror) = 5;
+	{ quickquit(); return; };
 }
 
-void allocatebuffers(Context &context) {
-	STACK_CHECK(context);
-	context.bx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/16;
-	allocatemem(context);
-	context.data.word(kExtras) = context.ax;
-	trysoundalloc(context);
-	context.bx = (0+(66*60))/16;
-	allocatemem(context);
-	context.data.word(kMapdata) = context.ax;
-	trysoundalloc(context);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534+68-0)/16;
-	allocatemem(context);
-	context.data.word(kBuffers) = context.ax;
-	trysoundalloc(context);
-	context.bx = (16*80)/16;
-	allocatemem(context);
-	context.data.word(kFreedat) = context.ax;
-	trysoundalloc(context);
-	context.bx = (64*128)/16;
-	allocatemem(context);
-	context.data.word(kSetdat) = context.ax;
-	trysoundalloc(context);
-	context.bx = (22*8*20*8)/16;
-	allocatemem(context);
-	context.data.word(kMapstore) = context.ax;
-	allocatework(context);
-	context.bx = 2048/16;
-	allocatemem(context);
-	context.data.word(kSounddata) = context.ax;
-	context.bx = 2048/16;
-	allocatemem(context);
-	context.data.word(kSounddata2) = context.ax;
+void DreamGenContext::allocatebuffers() {
+	STACK_CHECK;
+	bx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/16;
+	allocatemem();
+	data.word(kExtras) = ax;
+	trysoundalloc();
+	bx = (0+(66*60))/16;
+	allocatemem();
+	data.word(kMapdata) = ax;
+	trysoundalloc();
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534+68-0)/16;
+	allocatemem();
+	data.word(kBuffers) = ax;
+	trysoundalloc();
+	bx = (16*80)/16;
+	allocatemem();
+	data.word(kFreedat) = ax;
+	trysoundalloc();
+	bx = (64*128)/16;
+	allocatemem();
+	data.word(kSetdat) = ax;
+	trysoundalloc();
+	bx = (22*8*20*8)/16;
+	allocatemem();
+	data.word(kMapstore) = ax;
+	allocatework();
+	bx = 2048/16;
+	allocatemem();
+	data.word(kSounddata) = ax;
+	bx = 2048/16;
+	allocatemem();
+	data.word(kSounddata2) = ax;
 }
 
-void clearbuffers(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.cx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534+68-0)/2;
-	context.ax = 0;
-	context.di = 0;
-	context._stosw(context.cx);
-	context.es = context.data.word(kExtras);
-	context.cx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/2;
-	context.ax = 0x0ffff;
-	context.di = 0;
-	context._stosw(context.cx);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64));
-	context.ds = context.cs;
-	context.si = 534;
-	context.cx = (991-534);
-	context._movsb(context.cx);
-	context.es = context.data.word(kBuffers);
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534);
-	context.ds = context.cs;
-	context.si = 0;
-	context.cx = (68-0);
-	context._movsb(context.cx);
-	clearchanges(context);
+void DreamGenContext::clearbuffers() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	cx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534+68-0)/2;
+	ax = 0;
+	di = 0;
+	_stosw(cx);
+	es = data.word(kExtras);
+	cx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/2;
+	ax = 0x0ffff;
+	di = 0;
+	_stosw(cx);
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64));
+	ds = cs;
+	si = 534;
+	cx = (991-534);
+	_movsb(cx);
+	es = data.word(kBuffers);
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534);
+	ds = cs;
+	si = 0;
+	cx = (68-0);
+	_movsb(cx);
+	clearchanges();
 }
 
-void clearchanges(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.cx = (250)*2;
-	context.ax = 0x0ffff;
-	context.di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-	context._stosw(context.cx);
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64));
-	context.es = context.cs;
-	context.di = 534;
-	context.cx = (991-534);
-	context._movsb(context.cx);
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534);
-	context.es = context.cs;
-	context.di = 0;
-	context.cx = (68-0);
-	context._movsb(context.cx);
-	context.data.byte(kExpos) = 0;
-	context.data.word(kExframepos) = 0;
-	context.data.word(kExtextpos) = 0;
-	context.es = context.data.word(kExtras);
-	context.cx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/2;
-	context.ax = 0x0ffff;
-	context.di = 0;
-	context._stosw(context.cx);
-	context.es = context.cs;
-	context.di = 8011;
-	context.al = 1;
-	context._stosb(2);
-	context.al = 0;
-	context._stosb();
-	context.al = 1;
-	context._stosb();
-	context.ax = 0;
-	context.cx = 6;
-	context._stosw(context.cx);
+void DreamGenContext::clearchanges() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	cx = (250)*2;
+	ax = 0x0ffff;
+	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
+	_stosw(cx);
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64));
+	es = cs;
+	di = 534;
+	cx = (991-534);
+	_movsb(cx);
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534);
+	es = cs;
+	di = 0;
+	cx = (68-0);
+	_movsb(cx);
+	data.byte(kExpos) = 0;
+	data.word(kExframepos) = 0;
+	data.word(kExtextpos) = 0;
+	es = data.word(kExtras);
+	cx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/2;
+	ax = 0x0ffff;
+	di = 0;
+	_stosw(cx);
+	es = cs;
+	di = 8011;
+	al = 1;
+	_stosb(2);
+	al = 0;
+	_stosb();
+	al = 1;
+	_stosb();
+	ax = 0;
+	cx = 6;
+	_stosw(cx);
 }
 
-void clearbeforeload(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kRoomloaded), 1);
-	if (!context.flags.z())
+void DreamGenContext::clearbeforeload() {
+	STACK_CHECK;
+	_cmp(data.byte(kRoomloaded), 1);
+	if (!flags.z())
 		return /* (noclear) */;
-	clearreels(context);
-	clearrest(context);
-	context.data.byte(kRoomloaded) = 0;
+	clearreels();
+	clearrest();
+	data.byte(kRoomloaded) = 0;
 }
 
-void clearreels(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kReel1);
-	deallocatemem(context);
-	context.es = context.data.word(kReel2);
-	deallocatemem(context);
-	context.es = context.data.word(kReel3);
-	deallocatemem(context);
+void DreamGenContext::clearreels() {
+	STACK_CHECK;
+	es = data.word(kReel1);
+	deallocatemem();
+	es = data.word(kReel2);
+	deallocatemem();
+	es = data.word(kReel3);
+	deallocatemem();
 }
 
-void clearrest(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kMapdata);
-	context.cx = (66*60)/2;
-	context.ax = 0;
-	context.di = (0);
-	context._stosw(context.cx);
-	context.es = context.data.word(kBackdrop);
-	deallocatemem(context);
-	context.es = context.data.word(kSetframes);
-	deallocatemem(context);
-	context.es = context.data.word(kReels);
-	deallocatemem(context);
-	context.es = context.data.word(kPeople);
-	deallocatemem(context);
-	context.es = context.data.word(kSetdesc);
-	deallocatemem(context);
-	context.es = context.data.word(kBlockdesc);
-	deallocatemem(context);
-	context.es = context.data.word(kRoomdesc);
-	deallocatemem(context);
-	context.es = context.data.word(kFreeframes);
-	deallocatemem(context);
-	context.es = context.data.word(kFreedesc);
-	deallocatemem(context);
+void DreamGenContext::clearrest() {
+	STACK_CHECK;
+	es = data.word(kMapdata);
+	cx = (66*60)/2;
+	ax = 0;
+	di = (0);
+	_stosw(cx);
+	es = data.word(kBackdrop);
+	deallocatemem();
+	es = data.word(kSetframes);
+	deallocatemem();
+	es = data.word(kReels);
+	deallocatemem();
+	es = data.word(kPeople);
+	deallocatemem();
+	es = data.word(kSetdesc);
+	deallocatemem();
+	es = data.word(kBlockdesc);
+	deallocatemem();
+	es = data.word(kRoomdesc);
+	deallocatemem();
+	es = data.word(kFreeframes);
+	deallocatemem();
+	es = data.word(kFreedesc);
+	deallocatemem();
 }
 
-void parseblaster(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::parseblaster() {
+	STACK_CHECK;
 lookattail:
-	context.al = context.es.byte(context.bx);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	al = es.byte(bx);
+	_cmp(al, 0);
+	if (flags.z())
 		return /* (endtail) */;
-	context._cmp(context.al, 13);
-	if (context.flags.z())
+	_cmp(al, 13);
+	if (flags.z())
 		return /* (endtail) */;
-	context._cmp(context.al, 'i');
-	if (context.flags.z())
+	_cmp(al, 'i');
+	if (flags.z())
 		goto issoundint;
-	context._cmp(context.al, 'I');
-	if (context.flags.z())
+	_cmp(al, 'I');
+	if (flags.z())
 		goto issoundint;
-	context._cmp(context.al, 'b');
-	if (context.flags.z())
+	_cmp(al, 'b');
+	if (flags.z())
 		goto isbright;
-	context._cmp(context.al, 'B');
-	if (context.flags.z())
+	_cmp(al, 'B');
+	if (flags.z())
 		goto isbright;
-	context._cmp(context.al, 'a');
-	if (context.flags.z())
+	_cmp(al, 'a');
+	if (flags.z())
 		goto isbaseadd;
-	context._cmp(context.al, 'A');
-	if (context.flags.z())
+	_cmp(al, 'A');
+	if (flags.z())
 		goto isbaseadd;
-	context._cmp(context.al, 'n');
-	if (context.flags.z())
+	_cmp(al, 'n');
+	if (flags.z())
 		goto isnosound;
-	context._cmp(context.al, 'N');
-	if (context.flags.z())
+	_cmp(al, 'N');
+	if (flags.z())
 		goto isnosound;
-	context._cmp(context.al, 'd');
-	if (context.flags.z())
+	_cmp(al, 'd');
+	if (flags.z())
 		goto isdma;
-	context._cmp(context.al, 'D');
-	if (context.flags.z())
+	_cmp(al, 'D');
+	if (flags.z())
 		goto isdma;
-	context._inc(context.bx);
-	if (--context.cx)
+	_inc(bx);
+	if (--cx)
 		goto lookattail;
 	return;
 issoundint:
-	context.al = context.es.byte(context.bx+1);
-	context._sub(context.al, '0');
-	context.data.byte(kSoundint) = context.al;
-	context._inc(context.bx);
+	al = es.byte(bx+1);
+	_sub(al, '0');
+	data.byte(kSoundint) = al;
+	_inc(bx);
 	goto lookattail;
 isdma:
-	context.al = context.es.byte(context.bx+1);
-	context._sub(context.al, '0');
-	context.data.byte(kSounddmachannel) = context.al;
-	context._inc(context.bx);
+	al = es.byte(bx+1);
+	_sub(al, '0');
+	data.byte(kSounddmachannel) = al;
+	_inc(bx);
 	goto lookattail;
 isbaseadd:
-	context.push(context.cx);
-	context.al = context.es.byte(context.bx+2);
-	context._sub(context.al, '0');
-	context.ah = 0;
-	context.cl = 4;
-	context._shl(context.ax, context.cl);
-	context._add(context.ax, 0x200);
-	context.data.word(kSoundbaseadd) = context.ax;
-	context.cx = context.pop();
-	context._inc(context.bx);
+	push(cx);
+	al = es.byte(bx+2);
+	_sub(al, '0');
+	ah = 0;
+	cl = 4;
+	_shl(ax, cl);
+	_add(ax, 0x200);
+	data.word(kSoundbaseadd) = ax;
+	cx = pop();
+	_inc(bx);
 	goto lookattail;
 isbright:
-	context.data.byte(kBrightness) = 1;
-	context._inc(context.bx);
+	data.byte(kBrightness) = 1;
+	_inc(bx);
 	goto lookattail;
 isnosound:
-	context.data.byte(kSoundint) = 255;
-	context._inc(context.bx);
+	data.byte(kSoundint) = 255;
+	_inc(bx);
 	goto lookattail;
 }
 
-void startup(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kCurrentkey) = 0;
-	context.data.byte(kMainmode) = 0;
-	createpanel(context);
-	context.data.byte(kNewobs) = 1;
-	drawfloor(context);
-	showicon(context);
-	getunderzoom(context);
-	spriteupdate(context);
-	printsprites(context);
-	undertextline(context);
-	reelsonscreen(context);
-	atmospheres(context);
+void DreamGenContext::startup() {
+	STACK_CHECK;
+	data.byte(kCurrentkey) = 0;
+	data.byte(kMainmode) = 0;
+	createpanel();
+	data.byte(kNewobs) = 1;
+	drawfloor();
+	showicon();
+	getunderzoom();
+	spriteupdate();
+	printsprites();
+	undertextline();
+	reelsonscreen();
+	atmospheres();
 }
 
-void startup1(Context &context) {
-	STACK_CHECK(context);
-	clearpalette(context);
-	context.data.byte(kThroughdoor) = 0;
-	context.data.byte(kCurrentkey) = '0';
-	context.data.byte(kMainmode) = 0;
-	createpanel(context);
-	context.data.byte(kNewobs) = 1;
-	drawfloor(context);
-	showicon(context);
-	getunderzoom(context);
-	spriteupdate(context);
-	printsprites(context);
-	undertextline(context);
-	reelsonscreen(context);
-	atmospheres(context);
-	worktoscreen(context);
-	fadescreenup(context);
+void DreamGenContext::startup1() {
+	STACK_CHECK;
+	clearpalette();
+	data.byte(kThroughdoor) = 0;
+	data.byte(kCurrentkey) = '0';
+	data.byte(kMainmode) = 0;
+	createpanel();
+	data.byte(kNewobs) = 1;
+	drawfloor();
+	showicon();
+	getunderzoom();
+	spriteupdate();
+	printsprites();
+	undertextline();
+	reelsonscreen();
+	atmospheres();
+	worktoscreen();
+	fadescreenup();
 }
 
-void screenupdate(Context &context) {
-	STACK_CHECK(context);
-	newplace(context);
-	mainscreen(context);
-	animpointer(context);
-	showpointer(context);
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
+void DreamGenContext::screenupdate() {
+	STACK_CHECK;
+	newplace();
+	mainscreen();
+	animpointer();
+	showpointer();
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
 		goto iswatchingmode;
-	context._cmp(context.data.byte(kNewlocation), 255);
-	if (!context.flags.z())
+	_cmp(data.byte(kNewlocation), 255);
+	if (!flags.z())
 		return /* (finishearly) */;
 iswatchingmode:
-	vsync(context);
-	readmouse1(context);
-	dumppointer(context);
-	dumptextline(context);
-	delpointer(context);
-	autolook(context);
-	spriteupdate(context);
-	watchcount(context);
-	zoom(context);
-	showpointer(context);
-	context._cmp(context.data.byte(kWongame), 0);
-	if (!context.flags.z())
+	vsync();
+	readmouse1();
+	dumppointer();
+	dumptextline();
+	delpointer();
+	autolook();
+	spriteupdate();
+	watchcount();
+	zoom();
+	showpointer();
+	_cmp(data.byte(kWongame), 0);
+	if (!flags.z())
 		return /* (finishearly) */;
-	vsync(context);
-	readmouse2(context);
-	dumppointer(context);
-	dumpzoom(context);
-	delpointer(context);
-	deleverything(context);
-	printsprites(context);
-	reelsonscreen(context);
-	afternewroom(context);
-	showpointer(context);
-	vsync(context);
-	readmouse3(context);
-	dumppointer(context);
-	dumpmap(context);
-	dumptimedtext(context);
-	delpointer(context);
-	showpointer(context);
-	vsync(context);
-	readmouse4(context);
-	dumppointer(context);
-	dumpwatch(context);
-	delpointer(context);
+	vsync();
+	readmouse2();
+	dumppointer();
+	dumpzoom();
+	delpointer();
+	deleverything();
+	printsprites();
+	reelsonscreen();
+	afternewroom();
+	showpointer();
+	vsync();
+	readmouse3();
+	dumppointer();
+	dumpmap();
+	dumptimedtext();
+	delpointer();
+	showpointer();
+	vsync();
+	readmouse4();
+	dumppointer();
+	dumpwatch();
+	delpointer();
 }
 
-void watchreel(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kReeltowatch), -1);
-	if (context.flags.z())
+void DreamGenContext::watchreel() {
+	STACK_CHECK;
+	_cmp(data.word(kReeltowatch), -1);
+	if (flags.z())
 		goto notplayingreel;
-	context.al = context.data.byte(kManspath);
-	context._cmp(context.al, context.data.byte(kFinaldest));
-	if (!context.flags.z())
+	al = data.byte(kManspath);
+	_cmp(al, data.byte(kFinaldest));
+	if (!flags.z())
 		return /* (waitstopwalk) */;
-	context.al = context.data.byte(kTurntoface);
-	context._cmp(context.al, context.data.byte(kFacing));
-	if (context.flags.z())
+	al = data.byte(kTurntoface);
+	_cmp(al, data.byte(kFacing));
+	if (flags.z())
 		goto notwatchpath;
 	return;
 notwatchpath:
-	context._dec(context.data.byte(kSpeedcount));
-	context._cmp(context.data.byte(kSpeedcount), -1);
-	if (!context.flags.z())
+	_dec(data.byte(kSpeedcount));
+	_cmp(data.byte(kSpeedcount), -1);
+	if (!flags.z())
 		goto showwatchreel;
-	context.al = context.data.byte(kWatchspeed);
-	context.data.byte(kSpeedcount) = context.al;
-	context.ax = context.data.word(kReeltowatch);
-	context._cmp(context.ax, context.data.word(kEndwatchreel));
-	if (!context.flags.z())
+	al = data.byte(kWatchspeed);
+	data.byte(kSpeedcount) = al;
+	ax = data.word(kReeltowatch);
+	_cmp(ax, data.word(kEndwatchreel));
+	if (!flags.z())
 		goto ismorereel;
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
 		goto showwatchreel;
-	context.data.word(kReeltowatch) = -1;
-	context.data.byte(kWatchmode) = -1;
-	context._cmp(context.data.word(kReeltohold), -1);
-	if (context.flags.z())
+	data.word(kReeltowatch) = -1;
+	data.byte(kWatchmode) = -1;
+	_cmp(data.word(kReeltohold), -1);
+	if (flags.z())
 		return /* (nomorereel) */;
-	context.data.byte(kWatchmode) = 1;
+	data.byte(kWatchmode) = 1;
 	goto notplayingreel;
 ismorereel:
-	context._inc(context.data.word(kReeltowatch));
+	_inc(data.word(kReeltowatch));
 showwatchreel:
-	context.ax = context.data.word(kReeltowatch);
-	context.data.word(kReelpointer) = context.ax;
-	plotreel(context);
-	context.ax = context.data.word(kReelpointer);
-	context.data.word(kReeltowatch) = context.ax;
-	checkforshake(context);
+	ax = data.word(kReeltowatch);
+	data.word(kReelpointer) = ax;
+	plotreel();
+	ax = data.word(kReelpointer);
+	data.word(kReeltowatch) = ax;
+	checkforshake();
 	return;
 notplayingreel:
-	context._cmp(context.data.byte(kWatchmode), 1);
-	if (!context.flags.z())
+	_cmp(data.byte(kWatchmode), 1);
+	if (!flags.z())
 		goto notholdingreel;
-	context.ax = context.data.word(kReeltohold);
-	context.data.word(kReelpointer) = context.ax;
-	plotreel(context);
+	ax = data.word(kReeltohold);
+	data.word(kReelpointer) = ax;
+	plotreel();
 	return;
 notholdingreel:
-	context._cmp(context.data.byte(kWatchmode), 2);
-	if (!context.flags.z())
+	_cmp(data.byte(kWatchmode), 2);
+	if (!flags.z())
 		return /* (notreleasehold) */;
-	context._dec(context.data.byte(kSpeedcount));
-	context._cmp(context.data.byte(kSpeedcount), -1);
-	if (!context.flags.z())
+	_dec(data.byte(kSpeedcount));
+	_cmp(data.byte(kSpeedcount), -1);
+	if (!flags.z())
 		goto notlastspeed2;
-	context.al = context.data.byte(kWatchspeed);
-	context.data.byte(kSpeedcount) = context.al;
-	context._inc(context.data.word(kReeltohold));
+	al = data.byte(kWatchspeed);
+	data.byte(kSpeedcount) = al;
+	_inc(data.word(kReeltohold));
 notlastspeed2:
-	context.ax = context.data.word(kReeltohold);
-	context._cmp(context.ax, context.data.word(kEndofholdreel));
-	if (!context.flags.z())
+	ax = data.word(kReeltohold);
+	_cmp(ax, data.word(kEndofholdreel));
+	if (!flags.z())
 		goto ismorereel2;
-	context.data.word(kReeltohold) = -1;
-	context.data.byte(kWatchmode) = -1;
-	context.al = context.data.byte(kDestafterhold);
-	context.data.byte(kDestination) = context.al;
-	context.data.byte(kFinaldest) = context.al;
-	autosetwalk(context);
+	data.word(kReeltohold) = -1;
+	data.byte(kWatchmode) = -1;
+	al = data.byte(kDestafterhold);
+	data.byte(kDestination) = al;
+	data.byte(kFinaldest) = al;
+	autosetwalk();
 	return;
 ismorereel2:
-	context.ax = context.data.word(kReeltohold);
-	context.data.word(kReelpointer) = context.ax;
-	plotreel(context);
+	ax = data.word(kReeltohold);
+	data.word(kReelpointer) = ax;
+	plotreel();
 }
 
-void checkforshake(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kReallocation), 26);
-	if (!context.flags.z())
+void DreamGenContext::checkforshake() {
+	STACK_CHECK;
+	_cmp(data.byte(kReallocation), 26);
+	if (!flags.z())
 		return /* (notstartshake) */;
-	context._cmp(context.ax, 104);
-	if (!context.flags.z())
+	_cmp(ax, 104);
+	if (!flags.z())
 		return /* (notstartshake) */;
-	context.data.byte(kShakecounter) = -1;
+	data.byte(kShakecounter) = -1;
 }
 
-void watchcount(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWatchon), 0);
-	if (context.flags.z())
+void DreamGenContext::watchcount() {
+	STACK_CHECK;
+	_cmp(data.byte(kWatchon), 0);
+	if (flags.z())
 		return /* (nowatchworn) */;
-	context._inc(context.data.byte(kTimercount));
-	context._cmp(context.data.byte(kTimercount), 9);
-	if (context.flags.z())
+	_inc(data.byte(kTimercount));
+	_cmp(data.byte(kTimercount), 9);
+	if (flags.z())
 		goto flashdots;
-	context._cmp(context.data.byte(kTimercount), 18);
-	if (context.flags.z())
+	_cmp(data.byte(kTimercount), 18);
+	if (flags.z())
 		goto uptime;
 	return;
 flashdots:
-	context.ax = 91*3+21;
-	context.di = 268+4;
-	context.bx = 21;
-	context.ds = context.data.word(kCharset1);
-	showframe(context);
+	ax = 91*3+21;
+	di = 268+4;
+	bx = 21;
+	ds = data.word(kCharset1);
+	showframe();
 	goto finishwatch;
 uptime:
-	context.data.byte(kTimercount) = 0;
-	context._add(context.data.byte(kSecondcount), 1);
-	context._cmp(context.data.byte(kSecondcount), 60);
-	if (!context.flags.z())
+	data.byte(kTimercount) = 0;
+	_add(data.byte(kSecondcount), 1);
+	_cmp(data.byte(kSecondcount), 60);
+	if (!flags.z())
 		goto finishtime;
-	context.data.byte(kSecondcount) = 0;
-	context._inc(context.data.byte(kMinutecount));
-	context._cmp(context.data.byte(kMinutecount), 60);
-	if (!context.flags.z())
+	data.byte(kSecondcount) = 0;
+	_inc(data.byte(kMinutecount));
+	_cmp(data.byte(kMinutecount), 60);
+	if (!flags.z())
 		goto finishtime;
-	context.data.byte(kMinutecount) = 0;
-	context._inc(context.data.byte(kHourcount));
-	context._cmp(context.data.byte(kHourcount), 24);
-	if (!context.flags.z())
+	data.byte(kMinutecount) = 0;
+	_inc(data.byte(kHourcount));
+	_cmp(data.byte(kHourcount), 24);
+	if (!flags.z())
 		goto finishtime;
-	context.data.byte(kHourcount) = 0;
+	data.byte(kHourcount) = 0;
 finishtime:
-	showtime(context);
+	showtime();
 finishwatch:
-	context.data.byte(kWatchdump) = 1;
+	data.byte(kWatchdump) = 1;
 }
 
-void showtime(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWatchon), 0);
-	if (context.flags.z())
+void DreamGenContext::showtime() {
+	STACK_CHECK;
+	_cmp(data.byte(kWatchon), 0);
+	if (flags.z())
 		return /* (nowatch) */;
-	context.al = context.data.byte(kSecondcount);
-	context.cl = 0;
-	twodigitnum(context);
-	context.push(context.ax);
-	context.al = context.ah;
-	context.ah = 0;
-	context._add(context.ax, 91*3+10);
-	context.ds = context.data.word(kCharset1);
-	context.di = 282+5;
-	context.bx = 21;
-	showframe(context);
-	context.ax = context.pop();
-	context.ah = 0;
-	context._add(context.ax, 91*3+10);
-	context.ds = context.data.word(kCharset1);
-	context.di = 282+9;
-	context.bx = 21;
-	showframe(context);
-	context.al = context.data.byte(kMinutecount);
-	context.cl = 0;
-	twodigitnum(context);
-	context.push(context.ax);
-	context.al = context.ah;
-	context.ah = 0;
-	context._add(context.ax, 91*3);
-	context.ds = context.data.word(kCharset1);
-	context.di = 270+5;
-	context.bx = 21;
-	showframe(context);
-	context.ax = context.pop();
-	context.ah = 0;
-	context._add(context.ax, 91*3);
-	context.ds = context.data.word(kCharset1);
-	context.di = 270+11;
-	context.bx = 21;
-	showframe(context);
-	context.al = context.data.byte(kHourcount);
-	context.cl = 0;
-	twodigitnum(context);
-	context.push(context.ax);
-	context.al = context.ah;
-	context.ah = 0;
-	context._add(context.ax, 91*3);
-	context.ds = context.data.word(kCharset1);
-	context.di = 256+5;
-	context.bx = 21;
-	showframe(context);
-	context.ax = context.pop();
-	context.ah = 0;
-	context._add(context.ax, 91*3);
-	context.ds = context.data.word(kCharset1);
-	context.di = 256+11;
-	context.bx = 21;
-	showframe(context);
-	context.ax = 91*3+20;
-	context.ds = context.data.word(kCharset1);
-	context.di = 267+5;
-	context.bx = 21;
-	showframe(context);
+	al = data.byte(kSecondcount);
+	cl = 0;
+	twodigitnum();
+	push(ax);
+	al = ah;
+	ah = 0;
+	_add(ax, 91*3+10);
+	ds = data.word(kCharset1);
+	di = 282+5;
+	bx = 21;
+	showframe();
+	ax = pop();
+	ah = 0;
+	_add(ax, 91*3+10);
+	ds = data.word(kCharset1);
+	di = 282+9;
+	bx = 21;
+	showframe();
+	al = data.byte(kMinutecount);
+	cl = 0;
+	twodigitnum();
+	push(ax);
+	al = ah;
+	ah = 0;
+	_add(ax, 91*3);
+	ds = data.word(kCharset1);
+	di = 270+5;
+	bx = 21;
+	showframe();
+	ax = pop();
+	ah = 0;
+	_add(ax, 91*3);
+	ds = data.word(kCharset1);
+	di = 270+11;
+	bx = 21;
+	showframe();
+	al = data.byte(kHourcount);
+	cl = 0;
+	twodigitnum();
+	push(ax);
+	al = ah;
+	ah = 0;
+	_add(ax, 91*3);
+	ds = data.word(kCharset1);
+	di = 256+5;
+	bx = 21;
+	showframe();
+	ax = pop();
+	ah = 0;
+	_add(ax, 91*3);
+	ds = data.word(kCharset1);
+	di = 256+11;
+	bx = 21;
+	showframe();
+	ax = 91*3+20;
+	ds = data.word(kCharset1);
+	di = 267+5;
+	bx = 21;
+	showframe();
 }
 
-void dumpwatch(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWatchdump), 1);
-	if (!context.flags.z())
+void DreamGenContext::dumpwatch() {
+	STACK_CHECK;
+	_cmp(data.byte(kWatchdump), 1);
+	if (!flags.z())
 		return /* (nodumpwatch) */;
-	context.di = 256;
-	context.bx = 21;
-	context.cl = 40;
-	context.ch = 12;
-	multidump(context);
-	context.data.byte(kWatchdump) = 0;
+	di = 256;
+	bx = 21;
+	cl = 40;
+	ch = 12;
+	multidump();
+	data.byte(kWatchdump) = 0;
 }
 
-void showbyte(Context &context) {
-	STACK_CHECK(context);
-	context.dl = context.al;
-	context._shr(context.dl, 1);
-	context._shr(context.dl, 1);
-	context._shr(context.dl, 1);
-	context._shr(context.dl, 1);
-	onedigit(context);
-	context.es.byte(context.di) = context.dl;
-	context.dl = context.al;
-	context._and(context.dl, 15);
-	onedigit(context);
-	context.es.byte(context.di+1) = context.dl;
-	context._add(context.di, 3);
+void DreamGenContext::showbyte() {
+	STACK_CHECK;
+	dl = al;
+	_shr(dl, 1);
+	_shr(dl, 1);
+	_shr(dl, 1);
+	_shr(dl, 1);
+	onedigit();
+	es.byte(di) = dl;
+	dl = al;
+	_and(dl, 15);
+	onedigit();
+	es.byte(di+1) = dl;
+	_add(di, 3);
 }
 
-void onedigit(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.dl, 10);
-	if (!context.flags.c())
+void DreamGenContext::onedigit() {
+	STACK_CHECK;
+	_cmp(dl, 10);
+	if (!flags.c())
 		goto morethan10;
-	context._add(context.dl, '0');
+	_add(dl, '0');
 	return;
 morethan10:
-	context._sub(context.dl, 10);
-	context._add(context.dl, 'A');
+	_sub(dl, 10);
+	_add(dl, 'A');
 }
 
-void twodigitnum(Context &context) {
-	STACK_CHECK(context);
-	context.ah = context.cl;
-	context._dec(context.ah);
+void DreamGenContext::twodigitnum() {
+	STACK_CHECK;
+	ah = cl;
+	_dec(ah);
 numloop1:
-	context._inc(context.ah);
-	context._sub(context.al, 10);
-	if (!context.flags.c())
+	_inc(ah);
+	_sub(al, 10);
+	if (!flags.c())
 		goto numloop1;
-	context._add(context.al, 10);
-	context._add(context.al, context.cl);
+	_add(al, 10);
+	_add(al, cl);
 }
 
-void showword(Context &context) {
-	STACK_CHECK(context);
-	context.ch = 0;
-	context.bx = 10000;
-	context.cl = 47;
+void DreamGenContext::showword() {
+	STACK_CHECK;
+	ch = 0;
+	bx = 10000;
+	cl = 47;
 word1:
-	context._inc(context.cl);
-	context._sub(context.ax, context.bx);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, bx);
+	if (!flags.c())
 		goto word1;
-	context._add(context.ax, context.bx);
-	convnum(context);
-	context.cs.byte(context.di) = context.cl;
-	context.bx = 1000;
-	context.cl = 47;
+	_add(ax, bx);
+	convnum();
+	cs.byte(di) = cl;
+	bx = 1000;
+	cl = 47;
 word2:
-	context._inc(context.cl);
-	context._sub(context.ax, context.bx);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, bx);
+	if (!flags.c())
 		goto word2;
-	context._add(context.ax, context.bx);
-	convnum(context);
-	context.cs.byte(context.di+1) = context.cl;
-	context.bx = 100;
-	context.cl = 47;
+	_add(ax, bx);
+	convnum();
+	cs.byte(di+1) = cl;
+	bx = 100;
+	cl = 47;
 word3:
-	context._inc(context.cl);
-	context._sub(context.ax, context.bx);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, bx);
+	if (!flags.c())
 		goto word3;
-	context._add(context.ax, context.bx);
-	convnum(context);
-	context.cs.byte(context.di+2) = context.cl;
-	context.bx = 10;
-	context.cl = 47;
+	_add(ax, bx);
+	convnum();
+	cs.byte(di+2) = cl;
+	bx = 10;
+	cl = 47;
 word4:
-	context._inc(context.cl);
-	context._sub(context.ax, context.bx);
-	if (!context.flags.c())
+	_inc(cl);
+	_sub(ax, bx);
+	if (!flags.c())
 		goto word4;
-	context._add(context.ax, context.bx);
-	convnum(context);
-	context.cs.byte(context.di+3) = context.cl;
-	context._add(context.al, 48);
-	context.cl = context.al;
-	convnum(context);
-	context.cs.byte(context.di+4) = context.cl;
+	_add(ax, bx);
+	convnum();
+	cs.byte(di+3) = cl;
+	_add(al, 48);
+	cl = al;
+	convnum();
+	cs.byte(di+4) = cl;
 }
 
-void convnum(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.ch, 0);
-	if (!context.flags.z())
+void DreamGenContext::convnum() {
+	STACK_CHECK;
+	_cmp(ch, 0);
+	if (!flags.z())
 		return /* (noconvnum) */;
-	context._cmp(context.cl, '0');
-	if (!context.flags.z())
+	_cmp(cl, '0');
+	if (!flags.z())
 		goto notzeronum;
-	context.cl = 32;
+	cl = 32;
 	return /* (noconvnum) */;
 notzeronum:
-	context.ch = 1;
+	ch = 1;
 }
 
-void walkandexamine(Context &context) {
-	STACK_CHECK(context);
-	finishedwalking(context);
-	if (!context.flags.z())
+void DreamGenContext::walkandexamine() {
+	STACK_CHECK;
+	finishedwalking();
+	if (!flags.z())
 		return /* (noobselect) */;
-	context.al = context.data.byte(kWalkexamtype);
-	context.data.byte(kCommandtype) = context.al;
-	context.al = context.data.byte(kWalkexamnum);
-	context.data.byte(kCommand) = context.al;
-	context.data.byte(kWalkandexam) = 0;
-	context._cmp(context.data.byte(kCommandtype), 5);
-	if (context.flags.z())
+	al = data.byte(kWalkexamtype);
+	data.byte(kCommandtype) = al;
+	al = data.byte(kWalkexamnum);
+	data.byte(kCommand) = al;
+	data.byte(kWalkandexam) = 0;
+	_cmp(data.byte(kCommandtype), 5);
+	if (flags.z())
 		return /* (noobselect) */;
-	examineob(context);
+	examineob();
 	return;
 wantstowalk:
-	setwalk(context);
-	context.data.byte(kReasseschanges) = 1;
+	setwalk();
+	data.byte(kReasseschanges) = 1;
 	return;
 diff:
-	context.data.byte(kCommand) = context.al;
-	context.data.byte(kCommandtype) = context.ah;
-	context._cmp(context.data.byte(kLinepointer), 254);
-	if (!context.flags.z())
+	data.byte(kCommand) = al;
+	data.byte(kCommandtype) = ah;
+	_cmp(data.byte(kLinepointer), 254);
+	if (!flags.z())
 		goto middleofwalk;
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
 		goto middleofwalk;
-	context.al = context.data.byte(kFacing);
-	context._cmp(context.al, context.data.byte(kTurntoface));
-	if (!context.flags.z())
+	al = data.byte(kFacing);
+	_cmp(al, data.byte(kTurntoface));
+	if (!flags.z())
 		goto middleofwalk;
-	context._cmp(context.data.byte(kCommandtype), 3);
-	if (!context.flags.z())
+	_cmp(data.byte(kCommandtype), 3);
+	if (!flags.z())
 		goto notblock;
-	context.bl = context.data.byte(kManspath);
-	context._cmp(context.bl, context.data.byte(kPointerspath));
-	if (!context.flags.z())
+	bl = data.byte(kManspath);
+	_cmp(bl, data.byte(kPointerspath));
+	if (!flags.z())
 		goto dontcheck;
-	context.cl = context.data.byte(kRyanx);
-	context._add(context.cl, 12);
-	context.ch = context.data.byte(kRyany);
-	context._add(context.ch, 12);
-	checkone(context);
-	context._cmp(context.cl, 2);
-	if (context.flags.c())
+	cl = data.byte(kRyanx);
+	_add(cl, 12);
+	ch = data.byte(kRyany);
+	_add(ch, 12);
+	checkone();
+	_cmp(cl, 2);
+	if (flags.c())
 		goto isblock;
 dontcheck:
-	getflagunderp(context);
-	context._cmp(context.data.byte(kLastflag), 2);
-	if (context.flags.c())
+	getflagunderp();
+	_cmp(data.byte(kLastflag), 2);
+	if (flags.c())
 		goto isblock;
-	context._cmp(context.data.byte(kLastflag), 128);
-	if (!context.flags.c())
+	_cmp(data.byte(kLastflag), 128);
+	if (!flags.c())
 		goto isblock;
 	goto toofaraway;
 notblock:
-	context.bl = context.data.byte(kManspath);
-	context._cmp(context.bl, context.data.byte(kPointerspath));
-	if (!context.flags.z())
+	bl = data.byte(kManspath);
+	_cmp(bl, data.byte(kPointerspath));
+	if (!flags.z())
 		goto toofaraway;
-	context._cmp(context.data.byte(kCommandtype), 3);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 3);
+	if (flags.z())
 		goto isblock;
-	context._cmp(context.data.byte(kCommandtype), 5);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 5);
+	if (flags.z())
 		goto isaperson;
-	examineobtext(context);
+	examineobtext();
 	return;
 middleofwalk:
-	blocknametext(context);
+	blocknametext();
 	return;
 isblock:
-	blocknametext(context);
+	blocknametext();
 	return;
 isaperson:
-	personnametext(context);
+	personnametext();
 	return;
 toofaraway:
-	walktotext(context);
+	walktotext();
 }
 
-void mainscreen(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kInmaparea) = 0;
-	context.bx = 5122;
-	context._cmp(context.data.byte(kWatchon), 1);
-	if (context.flags.z())
+void DreamGenContext::mainscreen() {
+	STACK_CHECK;
+	data.byte(kInmaparea) = 0;
+	bx = 5122;
+	_cmp(data.byte(kWatchon), 1);
+	if (flags.z())
 		goto checkmain;
-	context.bx = 5184;
+	bx = 5184;
 checkmain:
-	checkcoords(context);
-	context._cmp(context.data.byte(kWalkandexam), 0);
-	if (context.flags.z())
+	checkcoords();
+	_cmp(data.byte(kWalkandexam), 0);
+	if (flags.z())
 		return /* (finishmain) */;
-	walkandexamine(context);
+	walkandexamine();
 }
 
-void madmanrun(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLocation), 14);
-	if (!context.flags.z())
-		{ identifyob(context); return; };
-	context._cmp(context.data.byte(kMapx), 22);
-	if (!context.flags.z())
-		{ identifyob(context); return; };
-	context._cmp(context.data.byte(kPointermode), 2);
-	if (!context.flags.z())
-		{ identifyob(context); return; };
-	context._cmp(context.data.byte(kMadmanflag), 0);
-	if (!context.flags.z())
-		{ identifyob(context); return; };
-	context._cmp(context.data.byte(kCommandtype), 211);
-	if (context.flags.z())
+void DreamGenContext::madmanrun() {
+	STACK_CHECK;
+	_cmp(data.byte(kLocation), 14);
+	if (!flags.z())
+		{ identifyob(); return; };
+	_cmp(data.byte(kMapx), 22);
+	if (!flags.z())
+		{ identifyob(); return; };
+	_cmp(data.byte(kPointermode), 2);
+	if (!flags.z())
+		{ identifyob(); return; };
+	_cmp(data.byte(kMadmanflag), 0);
+	if (!flags.z())
+		{ identifyob(); return; };
+	_cmp(data.byte(kCommandtype), 211);
+	if (flags.z())
 		goto alreadyrun;
-	context.data.byte(kCommandtype) = 211;
-	context.al = 52;
-	commandonly(context);
+	data.byte(kCommandtype) = 211;
+	al = 52;
+	commandonly();
 alreadyrun:
-	context._cmp(context.data.word(kMousebutton), 1);
-	if (!context.flags.z())
+	_cmp(data.word(kMousebutton), 1);
+	if (!flags.z())
 		return /* (norun) */;
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (context.flags.z())
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
 		return /* (norun) */;
-	context.data.byte(kLastweapon) = 8;
+	data.byte(kLastweapon) = 8;
 }
 
-void checkcoords(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kNewlocation), 255);
-	if (context.flags.z())
+void DreamGenContext::checkcoords() {
+	STACK_CHECK;
+	_cmp(data.byte(kNewlocation), 255);
+	if (flags.z())
 		goto loop048;
 	return;
 loop048:
-	context.ax = context.cs.word(context.bx);
-	context._cmp(context.ax, 0x0ffff);
-	if (context.flags.z())
+	ax = cs.word(bx);
+	_cmp(ax, 0x0ffff);
+	if (flags.z())
 		return /* (nonefound) */;
-	context.push(context.bx);
-	context._cmp(context.data.word(kMousex), context.ax);
-	if (context.flags.l())
+	push(bx);
+	_cmp(data.word(kMousex), ax);
+	if (flags.l())
 		goto over045;
-	context.ax = context.cs.word(context.bx+2);
-	context._cmp(context.data.word(kMousex), context.ax);
-	if (!context.flags.l())
+	ax = cs.word(bx+2);
+	_cmp(data.word(kMousex), ax);
+	if (!flags.l())
 		goto over045;
-	context.ax = context.cs.word(context.bx+4);
-	context._cmp(context.data.word(kMousey), context.ax);
-	if (context.flags.l())
+	ax = cs.word(bx+4);
+	_cmp(data.word(kMousey), ax);
+	if (flags.l())
 		goto over045;
-	context.ax = context.cs.word(context.bx+6);
-	context._cmp(context.data.word(kMousey), context.ax);
-	if (!context.flags.l())
+	ax = cs.word(bx+6);
+	_cmp(data.word(kMousey), ax);
+	if (!flags.l())
 		goto over045;
-	context.ax = context.cs.word(context.bx+8);
-	__dispatch_call(context, context.ax);
-	context.ax = context.pop();
+	ax = cs.word(bx+8);
+	__dispatch_call(ax);
+	ax = pop();
 	return;
 over045:
-	context.bx = context.pop();
-	context._add(context.bx, 10);
+	bx = pop();
+	_add(bx, 10);
 	goto loop048;
 }
 
-void identifyob(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
-		{ blank(context); return; };
-	context.ax = context.data.word(kMousex);
-	context._sub(context.ax, context.data.word(kMapadx));
-	context._cmp(context.ax, 22*8);
-	if (context.flags.c())
+void DreamGenContext::identifyob() {
+	STACK_CHECK;
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
+		{ blank(); return; };
+	ax = data.word(kMousex);
+	_sub(ax, data.word(kMapadx));
+	_cmp(ax, 22*8);
+	if (flags.c())
 		goto notover1;
-	blank(context);
+	blank();
 	return;
 notover1:
-	context.bx = context.data.word(kMousey);
-	context._sub(context.bx, context.data.word(kMapady));
-	context._cmp(context.bx, 20*8);
-	if (context.flags.c())
+	bx = data.word(kMousey);
+	_sub(bx, data.word(kMapady));
+	_cmp(bx, 20*8);
+	if (flags.c())
 		goto notover2;
-	blank(context);
+	blank();
 	return;
 notover2:
-	context.data.byte(kInmaparea) = 1;
-	context.ah = context.bl;
-	context.push(context.ax);
-	findpathofpoint(context);
-	context.data.byte(kPointerspath) = context.dl;
-	context.ax = context.pop();
-	context.push(context.ax);
-	findfirstpath(context);
-	context.data.byte(kPointerfirstpath) = context.al;
-	context.ax = context.pop();
-	checkifex(context);
-	if (!context.flags.z())
+	data.byte(kInmaparea) = 1;
+	ah = bl;
+	push(ax);
+	findpathofpoint();
+	data.byte(kPointerspath) = dl;
+	ax = pop();
+	push(ax);
+	findfirstpath();
+	data.byte(kPointerfirstpath) = al;
+	ax = pop();
+	checkifex();
+	if (!flags.z())
 		return /* (finishidentify) */;
-	checkiffree(context);
-	if (!context.flags.z())
+	checkiffree();
+	if (!flags.z())
 		return /* (finishidentify) */;
-	checkifperson(context);
-	if (!context.flags.z())
+	checkifperson();
+	if (!flags.z())
 		return /* (finishidentify) */;
-	checkifset(context);
-	if (!context.flags.z())
+	checkifset();
+	if (!flags.z())
 		return /* (finishidentify) */;
-	context.ax = context.data.word(kMousex);
-	context._sub(context.ax, context.data.word(kMapadx));
-	context.cl = context.al;
-	context.ax = context.data.word(kMousey);
-	context._sub(context.ax, context.data.word(kMapady));
-	context.ch = context.al;
-	checkone(context);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	ax = data.word(kMousex);
+	_sub(ax, data.word(kMapadx));
+	cl = al;
+	ax = data.word(kMousey);
+	_sub(ax, data.word(kMapady));
+	ch = al;
+	checkone();
+	_cmp(al, 0);
+	if (flags.z())
 		goto nothingund;
-	context._cmp(context.data.byte(kMandead), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kMandead), 1);
+	if (flags.z())
 		goto nothingund;
-	context.ah = 3;
-	obname(context);
+	ah = 3;
+	obname();
 	return;
 nothingund:
-	blank(context);
+	blank();
 }
 
-void checkifperson(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
-	context.cx = 12;
+void DreamGenContext::checkifperson() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
+	cx = 12;
 identifyreel:
-	context.push(context.cx);
-	context._cmp(context.es.byte(context.bx+4), 255);
-	if (context.flags.z())
+	push(cx);
+	_cmp(es.byte(bx+4), 255);
+	if (flags.z())
 		goto notareelid;
-	context.push(context.es);
-	context.push(context.bx);
-	context.push(context.ax);
-	context.ax = context.es.word(context.bx+0);
-	context.data.word(kReelpointer) = context.ax;
-	getreelstart(context);
-	context._cmp(context.es.word(context.si+2), 0x0ffff);
-	if (!context.flags.z())
+	push(es);
+	push(bx);
+	push(ax);
+	ax = es.word(bx+0);
+	data.word(kReelpointer) = ax;
+	getreelstart();
+	_cmp(es.word(si+2), 0x0ffff);
+	if (!flags.z())
 		goto notblankpers;
-	context._add(context.si, 5);
+	_add(si, 5);
 notblankpers:
-	context.cx = context.es.word(context.si+2);
-	context.ax = context.es.word(context.si+0);
-	context.push(context.cx);
-	getreelframeax(context);
-	context.cx = context.pop();
-	context._add(context.cl, context.es.byte(context.bx+4));
-	context._add(context.ch, context.es.byte(context.bx+5));
-	context.dx = context.cx;
-	context._add(context.dl, context.es.byte(context.bx+0));
-	context._add(context.dh, context.es.byte(context.bx+1));
-	context.ax = context.pop();
-	context.bx = context.pop();
-	context.es = context.pop();
-	context._cmp(context.al, context.cl);
-	if (context.flags.c())
+	cx = es.word(si+2);
+	ax = es.word(si+0);
+	push(cx);
+	getreelframeax();
+	cx = pop();
+	_add(cl, es.byte(bx+4));
+	_add(ch, es.byte(bx+5));
+	dx = cx;
+	_add(dl, es.byte(bx+0));
+	_add(dh, es.byte(bx+1));
+	ax = pop();
+	bx = pop();
+	es = pop();
+	_cmp(al, cl);
+	if (flags.c())
 		goto notareelid;
-	context._cmp(context.ah, context.ch);
-	if (context.flags.c())
+	_cmp(ah, ch);
+	if (flags.c())
 		goto notareelid;
-	context._cmp(context.al, context.dl);
-	if (!context.flags.c())
+	_cmp(al, dl);
+	if (!flags.c())
 		goto notareelid;
-	context._cmp(context.ah, context.dh);
-	if (!context.flags.c())
+	_cmp(ah, dh);
+	if (!flags.c())
 		goto notareelid;
-	context.cx = context.pop();
-	context.ax = context.es.word(context.bx+2);
-	context.data.word(kPersondata) = context.ax;
-	context.al = context.es.byte(context.bx+4);
-	context.ah = 5;
-	obname(context);
-	context.al = 0;
-	context._cmp(context.al, 1);
+	cx = pop();
+	ax = es.word(bx+2);
+	data.word(kPersondata) = ax;
+	al = es.byte(bx+4);
+	ah = 5;
+	obname();
+	al = 0;
+	_cmp(al, 1);
 	return;
 notareelid:
-	context.cx = context.pop();
-	context._add(context.bx, 5);
-	context._dec(context.cx);
-	if (!context.flags.z())
+	cx = pop();
+	_add(bx, 5);
+	_dec(cx);
+	if (!flags.z())
 		goto identifyreel;
 }
 
-void checkifset(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32))+(127*5);
-	context.cx = 127;
+void DreamGenContext::checkifset() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32))+(127*5);
+	cx = 127;
 identifyset:
-	context._cmp(context.es.byte(context.bx+4), 255);
-	if (context.flags.z())
+	_cmp(es.byte(bx+4), 255);
+	if (flags.z())
 		goto notasetid;
-	context._cmp(context.al, context.es.byte(context.bx));
-	if (context.flags.c())
+	_cmp(al, es.byte(bx));
+	if (flags.c())
 		goto notasetid;
-	context._cmp(context.al, context.es.byte(context.bx+2));
-	if (!context.flags.c())
+	_cmp(al, es.byte(bx+2));
+	if (!flags.c())
 		goto notasetid;
-	context._cmp(context.ah, context.es.byte(context.bx+1));
-	if (context.flags.c())
+	_cmp(ah, es.byte(bx+1));
+	if (flags.c())
 		goto notasetid;
-	context._cmp(context.ah, context.es.byte(context.bx+3));
-	if (!context.flags.c())
+	_cmp(ah, es.byte(bx+3));
+	if (!flags.c())
 		goto notasetid;
-	pixelcheckset(context);
-	if (context.flags.z())
+	pixelcheckset();
+	if (flags.z())
 		goto notasetid;
-	isitdescribed(context);
-	if (context.flags.z())
+	isitdescribed();
+	if (flags.z())
 		goto notasetid;
-	context.al = context.es.byte(context.bx+4);
-	context.ah = 1;
-	obname(context);
-	context.al = 0;
-	context._cmp(context.al, 1);
+	al = es.byte(bx+4);
+	ah = 1;
+	obname();
+	al = 0;
+	_cmp(al, 1);
 	return;
 notasetid:
-	context._sub(context.bx, 5);
-	context._dec(context.cx);
-	context._cmp(context.cx, -1);
-	if (!context.flags.z())
+	_sub(bx, 5);
+	_dec(cx);
+	_cmp(cx, -1);
+	if (!flags.z())
 		goto identifyset;
 }
 
-void checkifex(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5))+(99*5);
-	context.cx = 99;
+void DreamGenContext::checkifex() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5))+(99*5);
+	cx = 99;
 identifyex:
-	context._cmp(context.es.byte(context.bx+4), 255);
-	if (context.flags.z())
+	_cmp(es.byte(bx+4), 255);
+	if (flags.z())
 		goto notanexid;
-	context._cmp(context.al, context.es.byte(context.bx));
-	if (context.flags.c())
+	_cmp(al, es.byte(bx));
+	if (flags.c())
 		goto notanexid;
-	context._cmp(context.al, context.es.byte(context.bx+2));
-	if (!context.flags.c())
+	_cmp(al, es.byte(bx+2));
+	if (!flags.c())
 		goto notanexid;
-	context._cmp(context.ah, context.es.byte(context.bx+1));
-	if (context.flags.c())
+	_cmp(ah, es.byte(bx+1));
+	if (flags.c())
 		goto notanexid;
-	context._cmp(context.ah, context.es.byte(context.bx+3));
-	if (!context.flags.c())
+	_cmp(ah, es.byte(bx+3));
+	if (!flags.c())
 		goto notanexid;
-	context.al = context.es.byte(context.bx+4);
-	context.ah = 4;
-	obname(context);
-	context.al = 1;
-	context._cmp(context.al, 0);
+	al = es.byte(bx+4);
+	ah = 4;
+	obname();
+	al = 1;
+	_cmp(al, 0);
 	return;
 notanexid:
-	context._sub(context.bx, 5);
-	context._dec(context.cx);
-	context._cmp(context.cx, -1);
-	if (!context.flags.z())
+	_sub(bx, 5);
+	_dec(cx);
+	_cmp(cx, -1);
+	if (!flags.z())
 		goto identifyex;
 }
 
-void checkiffree(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBuffers);
-	context.bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5))+(79*5);
-	context.cx = 79;
+void DreamGenContext::checkiffree() {
+	STACK_CHECK;
+	es = data.word(kBuffers);
+	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5))+(79*5);
+	cx = 79;
 identifyfree:
-	context._cmp(context.es.byte(context.bx+4), 255);
-	if (context.flags.z())
+	_cmp(es.byte(bx+4), 255);
+	if (flags.z())
 		goto notafreeid;
-	context._cmp(context.al, context.es.byte(context.bx));
-	if (context.flags.c())
+	_cmp(al, es.byte(bx));
+	if (flags.c())
 		goto notafreeid;
-	context._cmp(context.al, context.es.byte(context.bx+2));
-	if (!context.flags.c())
+	_cmp(al, es.byte(bx+2));
+	if (!flags.c())
 		goto notafreeid;
-	context._cmp(context.ah, context.es.byte(context.bx+1));
-	if (context.flags.c())
+	_cmp(ah, es.byte(bx+1));
+	if (flags.c())
 		goto notafreeid;
-	context._cmp(context.ah, context.es.byte(context.bx+3));
-	if (!context.flags.c())
+	_cmp(ah, es.byte(bx+3));
+	if (!flags.c())
 		goto notafreeid;
-	context.al = context.es.byte(context.bx+4);
-	context.ah = 2;
-	obname(context);
-	context.al = 0;
-	context._cmp(context.al, 1);
+	al = es.byte(bx+4);
+	ah = 2;
+	obname();
+	al = 0;
+	_cmp(al, 1);
 	return;
 notafreeid:
-	context._sub(context.bx, 5);
-	context._dec(context.cx);
-	context._cmp(context.cx, -1);
-	if (!context.flags.z())
+	_sub(bx, 5);
+	_dec(cx);
+	_cmp(cx, -1);
+	if (!flags.z())
 		goto identifyfree;
 }
 
-void isitdescribed(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.push(context.cx);
-	context.push(context.es);
-	context.push(context.bx);
-	context.al = context.es.byte(context.bx+4);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.bx = context.ax;
-	context.es = context.data.word(kSetdesc);
-	context._add(context.bx, (0));
-	context.ax = context.es.word(context.bx);
-	context._add(context.ax, (0+(130*2)));
-	context.bx = context.ax;
-	context.dl = context.es.byte(context.bx);
-	context.bx = context.pop();
-	context.es = context.pop();
-	context.cx = context.pop();
-	context.ax = context.pop();
-	context._cmp(context.dl, 0);
+void DreamGenContext::isitdescribed() {
+	STACK_CHECK;
+	push(ax);
+	push(cx);
+	push(es);
+	push(bx);
+	al = es.byte(bx+4);
+	ah = 0;
+	_add(ax, ax);
+	bx = ax;
+	es = data.word(kSetdesc);
+	_add(bx, (0));
+	ax = es.word(bx);
+	_add(ax, (0+(130*2)));
+	bx = ax;
+	dl = es.byte(bx);
+	bx = pop();
+	es = pop();
+	cx = pop();
+	ax = pop();
+	_cmp(dl, 0);
 }
 
-void findpathofpoint(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.bx = (0);
-	context.es = context.data.word(kReels);
-	context.al = context.data.byte(kRoomnum);
-	context.ah = 0;
-	context.cx = 144;
-	context._mul(context.cx);
-	context._add(context.bx, context.ax);
-	context.cx = context.pop();
-	context.dl = 0;
+void DreamGenContext::findpathofpoint() {
+	STACK_CHECK;
+	push(ax);
+	bx = (0);
+	es = data.word(kReels);
+	al = data.byte(kRoomnum);
+	ah = 0;
+	cx = 144;
+	_mul(cx);
+	_add(bx, ax);
+	cx = pop();
+	dl = 0;
 pathloop:
-	context.al = context.es.byte(context.bx+6);
-	context._cmp(context.al, 255);
-	if (!context.flags.z())
+	al = es.byte(bx+6);
+	_cmp(al, 255);
+	if (!flags.z())
 		goto flunkedit;
-	context.ax = context.es.word(context.bx+2);
-	context._cmp(context.ax, 0x0ffff);
-	if (context.flags.z())
+	ax = es.word(bx+2);
+	_cmp(ax, 0x0ffff);
+	if (flags.z())
 		goto flunkedit;
-	context._cmp(context.cl, context.al);
-	if (context.flags.c())
+	_cmp(cl, al);
+	if (flags.c())
 		goto flunkedit;
-	context._cmp(context.ch, context.ah);
-	if (context.flags.c())
+	_cmp(ch, ah);
+	if (flags.c())
 		goto flunkedit;
-	context.ax = context.es.word(context.bx+4);
-	context._cmp(context.cl, context.al);
-	if (!context.flags.c())
+	ax = es.word(bx+4);
+	_cmp(cl, al);
+	if (!flags.c())
 		goto flunkedit;
-	context._cmp(context.ch, context.ah);
-	if (!context.flags.c())
+	_cmp(ch, ah);
+	if (!flags.c())
 		goto flunkedit;
 	return /* (gotvalidpath) */;
 flunkedit:
-	context._add(context.bx, 8);
-	context._inc(context.dl);
-	context._cmp(context.dl, 12);
-	if (!context.flags.z())
+	_add(bx, 8);
+	_inc(dl);
+	_cmp(dl, 12);
+	if (!flags.z())
 		goto pathloop;
-	context.dl = 255;
+	dl = 255;
 }
 
-void findfirstpath(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.bx = (0);
-	context.es = context.data.word(kReels);
-	context.al = context.data.byte(kRoomnum);
-	context.ah = 0;
-	context.cx = 144;
-	context._mul(context.cx);
-	context._add(context.bx, context.ax);
-	context.cx = context.pop();
-	context.dl = 0;
+void DreamGenContext::findfirstpath() {
+	STACK_CHECK;
+	push(ax);
+	bx = (0);
+	es = data.word(kReels);
+	al = data.byte(kRoomnum);
+	ah = 0;
+	cx = 144;
+	_mul(cx);
+	_add(bx, ax);
+	cx = pop();
+	dl = 0;
 fpathloop:
-	context.ax = context.es.word(context.bx+2);
-	context._cmp(context.ax, 0x0ffff);
-	if (context.flags.z())
+	ax = es.word(bx+2);
+	_cmp(ax, 0x0ffff);
+	if (flags.z())
 		goto nofirst;
-	context._cmp(context.cl, context.al);
-	if (context.flags.c())
+	_cmp(cl, al);
+	if (flags.c())
 		goto nofirst;
-	context._cmp(context.ch, context.ah);
-	if (context.flags.c())
+	_cmp(ch, ah);
+	if (flags.c())
 		goto nofirst;
-	context.ax = context.es.word(context.bx+4);
-	context._cmp(context.cl, context.al);
-	if (!context.flags.c())
+	ax = es.word(bx+4);
+	_cmp(cl, al);
+	if (!flags.c())
 		goto nofirst;
-	context._cmp(context.ch, context.ah);
-	if (!context.flags.c())
+	_cmp(ch, ah);
+	if (!flags.c())
 		goto nofirst;
 	goto gotfirst;
 nofirst:
-	context._add(context.bx, 8);
-	context._inc(context.dl);
-	context._cmp(context.dl, 12);
-	if (!context.flags.z())
+	_add(bx, 8);
+	_inc(dl);
+	_cmp(dl, 12);
+	if (!flags.z())
 		goto fpathloop;
-	context.al = 0;
+	al = 0;
 	return;
 gotfirst:
-	context.al = context.es.byte(context.bx+6);
+	al = es.byte(bx+6);
 }
 
-void turnpathon(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.push(context.ax);
-	context.cl = 255;
-	context.ch = context.data.byte(kRoomnum);
-	context._add(context.ch, 100);
-	findormake(context);
-	context.ax = context.pop();
-	getroomspaths(context);
-	context.ax = context.pop();
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+void DreamGenContext::turnpathon() {
+	STACK_CHECK;
+	push(ax);
+	push(ax);
+	cl = 255;
+	ch = data.byte(kRoomnum);
+	_add(ch, 100);
+	findormake();
+	ax = pop();
+	getroomspaths();
+	ax = pop();
+	_cmp(al, 255);
+	if (flags.z())
 		return /* (nopathon) */;
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = 255;
-	context.es.byte(context.bx+6) = context.al;
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(bx, ax);
+	al = 255;
+	es.byte(bx+6) = al;
 }
 
-void turnpathoff(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.push(context.ax);
-	context.cl = 0;
-	context.ch = context.data.byte(kRoomnum);
-	context._add(context.ch, 100);
-	findormake(context);
-	context.ax = context.pop();
-	getroomspaths(context);
-	context.ax = context.pop();
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+void DreamGenContext::turnpathoff() {
+	STACK_CHECK;
+	push(ax);
+	push(ax);
+	cl = 0;
+	ch = data.byte(kRoomnum);
+	_add(ch, 100);
+	findormake();
+	ax = pop();
+	getroomspaths();
+	ax = pop();
+	_cmp(al, 255);
+	if (flags.z())
 		return /* (nopathoff) */;
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = 0;
-	context.es.byte(context.bx+6) = context.al;
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(bx, ax);
+	al = 0;
+	es.byte(bx+6) = al;
 }
 
-void turnanypathon(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.push(context.ax);
-	context.cl = 255;
-	context.ch = context.ah;
-	context._add(context.ch, 100);
-	findormake(context);
-	context.ax = context.pop();
-	context.al = context.ah;
-	context.ah = 0;
-	context.cx = 144;
-	context._mul(context.cx);
-	context.es = context.data.word(kReels);
-	context.bx = (0);
-	context._add(context.bx, context.ax);
-	context.ax = context.pop();
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = 255;
-	context.es.byte(context.bx+6) = context.al;
+void DreamGenContext::turnanypathon() {
+	STACK_CHECK;
+	push(ax);
+	push(ax);
+	cl = 255;
+	ch = ah;
+	_add(ch, 100);
+	findormake();
+	ax = pop();
+	al = ah;
+	ah = 0;
+	cx = 144;
+	_mul(cx);
+	es = data.word(kReels);
+	bx = (0);
+	_add(bx, ax);
+	ax = pop();
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(bx, ax);
+	al = 255;
+	es.byte(bx+6) = al;
 }
 
-void turnanypathoff(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.push(context.ax);
-	context.cl = 0;
-	context.ch = context.ah;
-	context._add(context.ch, 100);
-	findormake(context);
-	context.ax = context.pop();
-	context.al = context.ah;
-	context.ah = 0;
-	context.cx = 144;
-	context._mul(context.cx);
-	context.es = context.data.word(kReels);
-	context.bx = (0);
-	context._add(context.bx, context.ax);
-	context.ax = context.pop();
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = 0;
-	context.es.byte(context.bx+6) = context.al;
+void DreamGenContext::turnanypathoff() {
+	STACK_CHECK;
+	push(ax);
+	push(ax);
+	cl = 0;
+	ch = ah;
+	_add(ch, 100);
+	findormake();
+	ax = pop();
+	al = ah;
+	ah = 0;
+	cx = 144;
+	_mul(cx);
+	es = data.word(kReels);
+	bx = (0);
+	_add(bx, ax);
+	ax = pop();
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(bx, ax);
+	al = 0;
+	es.byte(bx+6) = al;
 }
 
-void checkifpathison(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	getroomspaths(context);
-	context.ax = context.pop();
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = context.es.byte(context.bx+6);
-	context._cmp(context.al, 255);
+void DreamGenContext::checkifpathison() {
+	STACK_CHECK;
+	push(ax);
+	getroomspaths();
+	ax = pop();
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(bx, ax);
+	al = es.byte(bx+6);
+	_cmp(al, 255);
 }
 
-void afternewroom(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kNowinnewroom), 0);
-	if (context.flags.z())
+void DreamGenContext::afternewroom() {
+	STACK_CHECK;
+	_cmp(data.byte(kNowinnewroom), 0);
+	if (flags.z())
 		return /* (notnew) */;
-	context.data.word(kTimecount) = 0;
-	createpanel(context);
-	context.data.byte(kCommandtype) = 0;
-	findroominloc(context);
-	context._cmp(context.data.byte(kRyanon), 1);
-	if (context.flags.z())
+	data.word(kTimecount) = 0;
+	createpanel();
+	data.byte(kCommandtype) = 0;
+	findroominloc();
+	_cmp(data.byte(kRyanon), 1);
+	if (flags.z())
 		goto ryansoff;
-	context.al = context.data.byte(kRyanx);
-	context._add(context.al, 12);
-	context.ah = context.data.byte(kRyany);
-	context._add(context.ah, 12);
-	findpathofpoint(context);
-	context.data.byte(kManspath) = context.dl;
-	findxyfrompath(context);
-	context.data.byte(kResetmanxy) = 1;
+	al = data.byte(kRyanx);
+	_add(al, 12);
+	ah = data.byte(kRyany);
+	_add(ah, 12);
+	findpathofpoint();
+	data.byte(kManspath) = dl;
+	findxyfrompath();
+	data.byte(kResetmanxy) = 1;
 ryansoff:
-	context.data.byte(kNewobs) = 1;
-	drawfloor(context);
-	context.data.word(kLookcounter) = 160;
-	context.data.byte(kNowinnewroom) = 0;
-	showicon(context);
-	spriteupdate(context);
-	printsprites(context);
-	undertextline(context);
-	reelsonscreen(context);
-	mainscreen(context);
-	getunderzoom(context);
-	zoom(context);
-	worktoscreenm(context);
-	walkintoroom(context);
-	reminders(context);
-	atmospheres(context);
+	data.byte(kNewobs) = 1;
+	drawfloor();
+	data.word(kLookcounter) = 160;
+	data.byte(kNowinnewroom) = 0;
+	showicon();
+	spriteupdate();
+	printsprites();
+	undertextline();
+	reelsonscreen();
+	mainscreen();
+	getunderzoom();
+	zoom();
+	worktoscreenm();
+	walkintoroom();
+	reminders();
+	atmospheres();
 }
 
-void atmospheres(Context &context) {
-	STACK_CHECK(context);
-	context.cl = context.data.byte(kMapx);
-	context.ch = context.data.byte(kMapy);
-	context.bx = 5246;
+void DreamGenContext::atmospheres() {
+	STACK_CHECK;
+	cl = data.byte(kMapx);
+	ch = data.byte(kMapy);
+	bx = 5246;
 nextatmos:
-	context.al = context.cs.byte(context.bx);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+	al = cs.byte(bx);
+	_cmp(al, 255);
+	if (flags.z())
 		goto nomoreatmos;
-	context._cmp(context.al, context.data.byte(kReallocation));
-	if (!context.flags.z())
+	_cmp(al, data.byte(kReallocation));
+	if (!flags.z())
 		goto wrongatmos;
-	context.ax = context.cs.word(context.bx+1);
-	context._cmp(context.ax, context.cx);
-	if (!context.flags.z())
+	ax = cs.word(bx+1);
+	_cmp(ax, cx);
+	if (!flags.z())
 		goto wrongatmos;
-	context.ax = context.cs.word(context.bx+3);
-	context._cmp(context.al, context.data.byte(kCh0playing));
-	if (context.flags.z())
+	ax = cs.word(bx+3);
+	_cmp(al, data.byte(kCh0playing));
+	if (flags.z())
 		goto playingalready;
-	context._cmp(context.data.byte(kLocation), 45);
-	if (!context.flags.z())
+	_cmp(data.byte(kLocation), 45);
+	if (!flags.z())
 		goto notweb;
-	context._cmp(context.data.word(kReeltowatch), 45);
-	if (context.flags.z())
+	_cmp(data.word(kReeltowatch), 45);
+	if (flags.z())
 		goto wrongatmos;
 notweb:
-	playchannel0(context);
-	context._cmp(context.data.byte(kReallocation), 2);
-	context._cmp(context.data.byte(kMapy), 0);
-	if (context.flags.z())
+	playchannel0();
+	_cmp(data.byte(kReallocation), 2);
+	_cmp(data.byte(kMapy), 0);
+	if (flags.z())
 		goto fullvol;
-	if (!context.flags.z())
+	if (!flags.z())
 		goto notlouisvol;
-	context._cmp(context.data.byte(kMapy), 10);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapy), 10);
+	if (!flags.z())
 		goto notlouisvol;
-	context._cmp(context.data.byte(kMapx), 22);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 22);
+	if (!flags.z())
 		goto notlouisvol;
-	context.data.byte(kVolume) = 5;
+	data.byte(kVolume) = 5;
 notlouisvol:
-	context._cmp(context.data.byte(kReallocation), 14);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 14);
+	if (!flags.z())
 		goto notmad1;
-	context._cmp(context.data.byte(kMapx), 33);
-	if (context.flags.z())
+	_cmp(data.byte(kMapx), 33);
+	if (flags.z())
 		goto ismad2;
-	context._cmp(context.data.byte(kMapx), 22);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 22);
+	if (!flags.z())
 		goto notmad1;
-	context.data.byte(kVolume) = 5;
+	data.byte(kVolume) = 5;
 	return;
 ismad2:
-	context.data.byte(kVolume) = 0;
+	data.byte(kVolume) = 0;
 	return;
 notmad1:
 playingalready:
-	context._cmp(context.data.byte(kReallocation), 2);
-	if (!context.flags.z())
+	_cmp(data.byte(kReallocation), 2);
+	if (!flags.z())
 		return /* (notlouisvol2) */;
-	context._cmp(context.data.byte(kMapx), 22);
-	if (context.flags.z())
+	_cmp(data.byte(kMapx), 22);
+	if (flags.z())
 		goto louisvol;
-	context._cmp(context.data.byte(kMapx), 11);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 11);
+	if (!flags.z())
 		return /* (notlouisvol2) */;
 fullvol:
-	context.data.byte(kVolume) = 0;
+	data.byte(kVolume) = 0;
 	return;
 louisvol:
-	context.data.byte(kVolume) = 5;
+	data.byte(kVolume) = 5;
 	return;
 wrongatmos:
-	context._add(context.bx, 5);
+	_add(bx, 5);
 	goto nextatmos;
 nomoreatmos:
-	cancelch0(context);
+	cancelch0();
 }
 
-void walkintoroom(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLocation), 14);
-	if (!context.flags.z())
+void DreamGenContext::walkintoroom() {
+	STACK_CHECK;
+	_cmp(data.byte(kLocation), 14);
+	if (!flags.z())
 		return /* (notlair) */;
-	context._cmp(context.data.byte(kMapx), 22);
-	if (!context.flags.z())
+	_cmp(data.byte(kMapx), 22);
+	if (!flags.z())
 		return /* (notlair) */;
-	context.data.byte(kDestination) = 1;
-	context.data.byte(kFinaldest) = 1;
-	autosetwalk(context);
+	data.byte(kDestination) = 1;
+	data.byte(kFinaldest) = 1;
+	autosetwalk();
 }
 
-void afterintroroom(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kNowinnewroom), 0);
-	if (context.flags.z())
+void DreamGenContext::afterintroroom() {
+	STACK_CHECK;
+	_cmp(data.byte(kNowinnewroom), 0);
+	if (flags.z())
 		return /* (notnewintro) */;
-	clearwork(context);
-	findroominloc(context);
-	context.data.byte(kNewobs) = 1;
-	drawfloor(context);
-	reelsonscreen(context);
-	spriteupdate(context);
-	printsprites(context);
-	worktoscreen(context);
-	context.data.byte(kNowinnewroom) = 0;
+	clearwork();
+	findroominloc();
+	data.byte(kNewobs) = 1;
+	drawfloor();
+	reelsonscreen();
+	spriteupdate();
+	printsprites();
+	worktoscreen();
+	data.byte(kNowinnewroom) = 0;
 }
 
-void obname(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kReasseschanges), 0);
-	if (context.flags.z())
+void DreamGenContext::obname() {
+	STACK_CHECK;
+	_cmp(data.byte(kReasseschanges), 0);
+	if (flags.z())
 		goto notnewpath;
-	context.data.byte(kReasseschanges) = 0;
+	data.byte(kReasseschanges) = 0;
 	goto diff;
 notnewpath:
-	context._cmp(context.ah, context.data.byte(kCommandtype));
-	if (context.flags.z())
+	_cmp(ah, data.byte(kCommandtype));
+	if (flags.z())
 		goto notdiffob;
 	goto diff;
 notdiffob:
-	context._cmp(context.al, context.data.byte(kCommand));
-	if (!context.flags.z())
+	_cmp(al, data.byte(kCommand));
+	if (!flags.z())
 		goto diff;
-	context._cmp(context.data.byte(kWalkandexam), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kWalkandexam), 1);
+	if (flags.z())
 		goto walkandexamine;
-	context._cmp(context.data.word(kMousebutton), 0);
-	if (context.flags.z())
+	_cmp(data.word(kMousebutton), 0);
+	if (flags.z())
 		return /* (noobselect) */;
-	context._cmp(context.data.byte(kCommandtype), 3);
-	if (!context.flags.z())
+	_cmp(data.byte(kCommandtype), 3);
+	if (!flags.z())
 		goto isntblock;
-	context._cmp(context.data.byte(kLastflag), 2);
-	if (context.flags.c())
+	_cmp(data.byte(kLastflag), 2);
+	if (flags.c())
 		return /* (noobselect) */;
 isntblock:
-	context.bl = context.data.byte(kManspath);
-	context._cmp(context.bl, context.data.byte(kPointerspath));
-	if (!context.flags.z())
+	bl = data.byte(kManspath);
+	_cmp(bl, data.byte(kPointerspath));
+	if (!flags.z())
 		goto wantstowalk;
-	context._cmp(context.data.byte(kCommandtype), 3);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 3);
+	if (flags.z())
 		goto wantstowalk;
-	finishedwalking(context);
-	if (!context.flags.z())
+	finishedwalking();
+	if (!flags.z())
 		return /* (noobselect) */;
-	context._cmp(context.data.byte(kCommandtype), 5);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 5);
+	if (flags.z())
 		goto wantstotalk;
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
 		return /* (noobselect) */;
-	examineob(context);
+	examineob();
 	return;
 wantstotalk:
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
 		return /* (noobselect) */;
-	talk(context);
+	talk();
 	return;
 walkandexamine:
-	finishedwalking(context);
-	if (!context.flags.z())
+	finishedwalking();
+	if (!flags.z())
 		return /* (noobselect) */;
-	context.al = context.data.byte(kWalkexamtype);
-	context.data.byte(kCommandtype) = context.al;
-	context.al = context.data.byte(kWalkexamnum);
-	context.data.byte(kCommand) = context.al;
-	context.data.byte(kWalkandexam) = 0;
-	context._cmp(context.data.byte(kCommandtype), 5);
-	if (context.flags.z())
+	al = data.byte(kWalkexamtype);
+	data.byte(kCommandtype) = al;
+	al = data.byte(kWalkexamnum);
+	data.byte(kCommand) = al;
+	data.byte(kWalkandexam) = 0;
+	_cmp(data.byte(kCommandtype), 5);
+	if (flags.z())
 		return /* (noobselect) */;
-	examineob(context);
+	examineob();
 	return;
 wantstowalk:
-	setwalk(context);
-	context.data.byte(kReasseschanges) = 1;
+	setwalk();
+	data.byte(kReasseschanges) = 1;
 	return;
 diff:
-	context.data.byte(kCommand) = context.al;
-	context.data.byte(kCommandtype) = context.ah;
-	context._cmp(context.data.byte(kLinepointer), 254);
-	if (!context.flags.z())
+	data.byte(kCommand) = al;
+	data.byte(kCommandtype) = ah;
+	_cmp(data.byte(kLinepointer), 254);
+	if (!flags.z())
 		goto middleofwalk;
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (!context.flags.z())
+	_cmp(data.word(kWatchingtime), 0);
+	if (!flags.z())
 		goto middleofwalk;
-	context.al = context.data.byte(kFacing);
-	context._cmp(context.al, context.data.byte(kTurntoface));
-	if (!context.flags.z())
+	al = data.byte(kFacing);
+	_cmp(al, data.byte(kTurntoface));
+	if (!flags.z())
 		goto middleofwalk;
-	context._cmp(context.data.byte(kCommandtype), 3);
-	if (!context.flags.z())
+	_cmp(data.byte(kCommandtype), 3);
+	if (!flags.z())
 		goto notblock;
-	context.bl = context.data.byte(kManspath);
-	context._cmp(context.bl, context.data.byte(kPointerspath));
-	if (!context.flags.z())
+	bl = data.byte(kManspath);
+	_cmp(bl, data.byte(kPointerspath));
+	if (!flags.z())
 		goto dontcheck;
-	context.cl = context.data.byte(kRyanx);
-	context._add(context.cl, 12);
-	context.ch = context.data.byte(kRyany);
-	context._add(context.ch, 12);
-	checkone(context);
-	context._cmp(context.cl, 2);
-	if (context.flags.c())
+	cl = data.byte(kRyanx);
+	_add(cl, 12);
+	ch = data.byte(kRyany);
+	_add(ch, 12);
+	checkone();
+	_cmp(cl, 2);
+	if (flags.c())
 		goto isblock;
 dontcheck:
-	getflagunderp(context);
-	context._cmp(context.data.byte(kLastflag), 2);
-	if (context.flags.c())
+	getflagunderp();
+	_cmp(data.byte(kLastflag), 2);
+	if (flags.c())
 		goto isblock;
-	context._cmp(context.data.byte(kLastflag), 128);
-	if (!context.flags.c())
+	_cmp(data.byte(kLastflag), 128);
+	if (!flags.c())
 		goto isblock;
 	goto toofaraway;
 notblock:
-	context.bl = context.data.byte(kManspath);
-	context._cmp(context.bl, context.data.byte(kPointerspath));
-	if (!context.flags.z())
+	bl = data.byte(kManspath);
+	_cmp(bl, data.byte(kPointerspath));
+	if (!flags.z())
 		goto toofaraway;
-	context._cmp(context.data.byte(kCommandtype), 3);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 3);
+	if (flags.z())
 		goto isblock;
-	context._cmp(context.data.byte(kCommandtype), 5);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 5);
+	if (flags.z())
 		goto isaperson;
-	examineobtext(context);
+	examineobtext();
 	return;
 middleofwalk:
-	blocknametext(context);
+	blocknametext();
 	return;
 isblock:
-	blocknametext(context);
+	blocknametext();
 	return;
 isaperson:
-	personnametext(context);
+	personnametext();
 	return;
 toofaraway:
-	walktotext(context);
+	walktotext();
 }
 
-void finishedwalking(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLinepointer), 254);
-	if (!context.flags.z())
+void DreamGenContext::finishedwalking() {
+	STACK_CHECK;
+	_cmp(data.byte(kLinepointer), 254);
+	if (!flags.z())
 		return /* (iswalking) */;
-	context.al = context.data.byte(kFacing);
-	context._cmp(context.al, context.data.byte(kTurntoface));
+	al = data.byte(kFacing);
+	_cmp(al, data.byte(kTurntoface));
 }
 
-void examineobtext(Context &context) {
-	STACK_CHECK(context);
-	context.bl = context.data.byte(kCommand);
-	context.bh = context.data.byte(kCommandtype);
-	context.al = 1;
-	commandwithob(context);
+void DreamGenContext::examineobtext() {
+	STACK_CHECK;
+	bl = data.byte(kCommand);
+	bh = data.byte(kCommandtype);
+	al = 1;
+	commandwithob();
 }
 
-void commandwithob(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.push(context.ax);
-	context.push(context.bx);
-	context.push(context.cx);
-	context.push(context.dx);
-	context.push(context.es);
-	context.push(context.ds);
-	context.push(context.si);
-	context.push(context.di);
-	deltextline(context);
-	context.di = context.pop();
-	context.si = context.pop();
-	context.ds = context.pop();
-	context.es = context.pop();
-	context.dx = context.pop();
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.ax = context.pop();
-	context.push(context.bx);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.bx = context.ax;
-	context.es = context.data.word(kCommandtext);
-	context.ax = context.es.word(context.bx);
-	context._add(context.ax, (66*2));
-	context.si = context.ax;
-	context.di = context.data.word(kTextaddressx);
-	context.bx = context.data.word(kTextaddressy);
-	context.dl = context.data.byte(kTextlen);
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	context.ax = context.pop();
-	context.di = 5847;
-	copyname(context);
-	context.ax = context.pop();
-	context.di = context.data.word(kLastxpos);
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+void DreamGenContext::commandwithob() {
+	STACK_CHECK;
+	push(ax);
+	push(ax);
+	push(bx);
+	push(cx);
+	push(dx);
+	push(es);
+	push(ds);
+	push(si);
+	push(di);
+	deltextline();
+	di = pop();
+	si = pop();
+	ds = pop();
+	es = pop();
+	dx = pop();
+	cx = pop();
+	bx = pop();
+	ax = pop();
+	push(bx);
+	ah = 0;
+	_add(ax, ax);
+	bx = ax;
+	es = data.word(kCommandtext);
+	ax = es.word(bx);
+	_add(ax, (66*2));
+	si = ax;
+	di = data.word(kTextaddressx);
+	bx = data.word(kTextaddressy);
+	dl = data.byte(kTextlen);
+	al = 0;
+	ah = 0;
+	printdirect();
+	ax = pop();
+	di = 5847;
+	copyname();
+	ax = pop();
+	di = data.word(kLastxpos);
+	_cmp(al, 0);
+	if (flags.z())
 		goto noadd;
-	context._add(context.di, 5);
+	_add(di, 5);
 noadd:
-	context.bx = context.data.word(kTextaddressy);
-	context.es = context.cs;
-	context.si = 5847;
-	context.dl = context.data.byte(kTextlen);
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	context.data.byte(kNewtextline) = 1;
+	bx = data.word(kTextaddressy);
+	es = cs;
+	si = 5847;
+	dl = data.byte(kTextlen);
+	al = 0;
+	ah = 0;
+	printdirect();
+	data.byte(kNewtextline) = 1;
 }
 
-void commandonly(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.push(context.bx);
-	context.push(context.cx);
-	context.push(context.dx);
-	context.push(context.es);
-	context.push(context.ds);
-	context.push(context.si);
-	context.push(context.di);
-	deltextline(context);
-	context.di = context.pop();
-	context.si = context.pop();
-	context.ds = context.pop();
-	context.es = context.pop();
-	context.dx = context.pop();
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.ax = context.pop();
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.bx = context.ax;
-	context.es = context.data.word(kCommandtext);
-	context.ax = context.es.word(context.bx);
-	context._add(context.ax, (66*2));
-	context.si = context.ax;
-	context.di = context.data.word(kTextaddressx);
-	context.bx = context.data.word(kTextaddressy);
-	context.dl = context.data.byte(kTextlen);
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	context.data.byte(kNewtextline) = 1;
+void DreamGenContext::commandonly() {
+	STACK_CHECK;
+	push(ax);
+	push(bx);
+	push(cx);
+	push(dx);
+	push(es);
+	push(ds);
+	push(si);
+	push(di);
+	deltextline();
+	di = pop();
+	si = pop();
+	ds = pop();
+	es = pop();
+	dx = pop();
+	cx = pop();
+	bx = pop();
+	ax = pop();
+	ah = 0;
+	_add(ax, ax);
+	bx = ax;
+	es = data.word(kCommandtext);
+	ax = es.word(bx);
+	_add(ax, (66*2));
+	si = ax;
+	di = data.word(kTextaddressx);
+	bx = data.word(kTextaddressy);
+	dl = data.byte(kTextlen);
+	al = 0;
+	ah = 0;
+	printdirect();
+	data.byte(kNewtextline) = 1;
 }
 
-void printmessage(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.dx);
-	context.push(context.bx);
-	context.push(context.di);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.bx = context.ax;
-	context.es = context.data.word(kCommandtext);
-	context.ax = context.es.word(context.bx);
-	context._add(context.ax, (66*2));
-	context.si = context.ax;
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.dx = context.pop();
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
+void DreamGenContext::printmessage() {
+	STACK_CHECK;
+	push(dx);
+	push(bx);
+	push(di);
+	ah = 0;
+	_add(ax, ax);
+	bx = ax;
+	es = data.word(kCommandtext);
+	ax = es.word(bx);
+	_add(ax, (66*2));
+	si = ax;
+	di = pop();
+	bx = pop();
+	dx = pop();
+	al = 0;
+	ah = 0;
+	printdirect();
 }
 
-void printmessage2(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.dx);
-	context.push(context.bx);
-	context.push(context.di);
-	context.push(context.ax);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.bx = context.ax;
-	context.es = context.data.word(kCommandtext);
-	context.ax = context.es.word(context.bx);
-	context._add(context.ax, (66*2));
-	context.si = context.ax;
-	context.ax = context.pop();
+void DreamGenContext::printmessage2() {
+	STACK_CHECK;
+	push(dx);
+	push(bx);
+	push(di);
+	push(ax);
+	ah = 0;
+	_add(ax, ax);
+	bx = ax;
+	es = data.word(kCommandtext);
+	ax = es.word(bx);
+	_add(ax, (66*2));
+	si = ax;
+	ax = pop();
 searchmess:
-	context.push(context.ax);
-	findnextcolon(context);
-	context.ax = context.pop();
-	context._dec(context.ah);
-	if (!context.flags.z())
+	push(ax);
+	findnextcolon();
+	ax = pop();
+	_dec(ah);
+	if (!flags.z())
 		goto searchmess;
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.dx = context.pop();
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
+	di = pop();
+	bx = pop();
+	dx = pop();
+	al = 0;
+	ah = 0;
+	printdirect();
 }
 
-void blocknametext(Context &context) {
-	STACK_CHECK(context);
-	context.bl = context.data.byte(kCommand);
-	context.bh = context.data.byte(kCommandtype);
-	context.al = 0;
-	commandwithob(context);
+void DreamGenContext::blocknametext() {
+	STACK_CHECK;
+	bl = data.byte(kCommand);
+	bh = data.byte(kCommandtype);
+	al = 0;
+	commandwithob();
 }
 
-void personnametext(Context &context) {
-	STACK_CHECK(context);
-	context.bl = context.data.byte(kCommand);
-	context._and(context.bl, 127);
-	context.bh = context.data.byte(kCommandtype);
-	context.al = 2;
-	commandwithob(context);
+void DreamGenContext::personnametext() {
+	STACK_CHECK;
+	bl = data.byte(kCommand);
+	_and(bl, 127);
+	bh = data.byte(kCommandtype);
+	al = 2;
+	commandwithob();
 }
 
-void walktotext(Context &context) {
-	STACK_CHECK(context);
-	context.bl = context.data.byte(kCommand);
-	context.bh = context.data.byte(kCommandtype);
-	context.al = 3;
-	commandwithob(context);
+void DreamGenContext::walktotext() {
+	STACK_CHECK;
+	bl = data.byte(kCommand);
+	bh = data.byte(kCommandtype);
+	al = 3;
+	commandwithob();
 }
 
-void getflagunderp(Context &context) {
-	STACK_CHECK(context);
-	context.cx = context.data.word(kMousex);
-	context._sub(context.cx, context.data.word(kMapadx));
-	context.ax = context.data.word(kMousey);
-	context._sub(context.ax, context.data.word(kMapady));
-	context.ch = context.al;
-	checkone(context);
-	context.data.byte(kLastflag) = context.cl;
-	context.data.byte(kLastflagex) = context.ch;
+void DreamGenContext::getflagunderp() {
+	STACK_CHECK;
+	cx = data.word(kMousex);
+	_sub(cx, data.word(kMapadx));
+	ax = data.word(kMousey);
+	_sub(ax, data.word(kMapady));
+	ch = al;
+	checkone();
+	data.byte(kLastflag) = cl;
+	data.byte(kLastflagex) = ch;
 }
 
-void setwalk(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kLinepointer), 254);
-	if (!context.flags.z())
+void DreamGenContext::setwalk() {
+	STACK_CHECK;
+	_cmp(data.byte(kLinepointer), 254);
+	if (!flags.z())
 		goto alreadywalking;
-	context.al = context.data.byte(kPointerspath);
-	context._cmp(context.al, context.data.byte(kManspath));
-	if (context.flags.z())
+	al = data.byte(kPointerspath);
+	_cmp(al, data.byte(kManspath));
+	if (flags.z())
 		goto cantwalk2;
-	context._cmp(context.data.byte(kWatchmode), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kWatchmode), 1);
+	if (flags.z())
 		goto holdingreel;
-	context._cmp(context.data.byte(kWatchmode), 2);
-	if (context.flags.z())
+	_cmp(data.byte(kWatchmode), 2);
+	if (flags.z())
 		return /* (cantwalk) */;
-	context.data.byte(kDestination) = context.al;
-	context.data.byte(kFinaldest) = context.al;
-	context._cmp(context.data.word(kMousebutton), 2);
-	if (!context.flags.z())
+	data.byte(kDestination) = al;
+	data.byte(kFinaldest) = al;
+	_cmp(data.word(kMousebutton), 2);
+	if (!flags.z())
 		goto notwalkandexam;
-	context._cmp(context.data.byte(kCommandtype), 3);
-	if (context.flags.z())
+	_cmp(data.byte(kCommandtype), 3);
+	if (flags.z())
 		goto notwalkandexam;
-	context.data.byte(kWalkandexam) = 1;
-	context.al = context.data.byte(kCommandtype);
-	context.data.byte(kWalkexamtype) = context.al;
-	context.al = context.data.byte(kCommand);
-	context.data.byte(kWalkexamnum) = context.al;
+	data.byte(kWalkandexam) = 1;
+	al = data.byte(kCommandtype);
+	data.byte(kWalkexamtype) = al;
+	al = data.byte(kCommand);
+	data.byte(kWalkexamnum) = al;
 notwalkandexam:
-	autosetwalk(context);
+	autosetwalk();
 	return;
 cantwalk2:
-	facerightway(context);
+	facerightway();
 	return;
 alreadywalking:
-	context.al = context.data.byte(kPointerspath);
-	context.data.byte(kFinaldest) = context.al;
+	al = data.byte(kPointerspath);
+	data.byte(kFinaldest) = al;
 	return;
 holdingreel:
-	context.data.byte(kDestafterhold) = context.al;
-	context.data.byte(kWatchmode) = 2;
+	data.byte(kDestafterhold) = al;
+	data.byte(kWatchmode) = 2;
 }
 
-void autosetwalk(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kManspath);
-	context._cmp(context.data.byte(kFinaldest), context.al);
-	if (!context.flags.z())
+void DreamGenContext::autosetwalk() {
+	STACK_CHECK;
+	al = data.byte(kManspath);
+	_cmp(data.byte(kFinaldest), al);
+	if (!flags.z())
 		goto notsamealready;
 	return;
 notsamealready:
-	getroomspaths(context);
-	checkdest(context);
-	context.push(context.bx);
-	context.al = context.data.byte(kManspath);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = context.es.byte(context.bx);
-	context.ah = 0;
-	context._sub(context.ax, 12);
-	context.data.word(kLinestartx) = context.ax;
-	context.al = context.es.byte(context.bx+1);
-	context.ah = 0;
-	context._sub(context.ax, 12);
-	context.data.word(kLinestarty) = context.ax;
-	context.bx = context.pop();
-	context.al = context.data.byte(kDestination);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = context.es.byte(context.bx);
-	context.ah = 0;
-	context._sub(context.ax, 12);
-	context.data.word(kLineendx) = context.ax;
-	context.al = context.es.byte(context.bx+1);
-	context.ah = 0;
-	context._sub(context.ax, 12);
-	context.data.word(kLineendy) = context.ax;
-	bresenhams(context);
-	context._cmp(context.data.byte(kLinedirection), 0);
-	if (context.flags.z())
+	getroomspaths();
+	checkdest();
+	push(bx);
+	al = data.byte(kManspath);
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(bx, ax);
+	al = es.byte(bx);
+	ah = 0;
+	_sub(ax, 12);
+	data.word(kLinestartx) = ax;
+	al = es.byte(bx+1);
+	ah = 0;
+	_sub(ax, 12);
+	data.word(kLinestarty) = ax;
+	bx = pop();
+	al = data.byte(kDestination);
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(bx, ax);
+	al = es.byte(bx);
+	ah = 0;
+	_sub(ax, 12);
+	data.word(kLineendx) = ax;
+	al = es.byte(bx+1);
+	ah = 0;
+	_sub(ax, 12);
+	data.word(kLineendy) = ax;
+	bresenhams();
+	_cmp(data.byte(kLinedirection), 0);
+	if (flags.z())
 		goto normalline;
-	context.al = context.data.byte(kLinelength);
-	context._dec(context.al);
-	context.data.byte(kLinepointer) = context.al;
-	context.data.byte(kLinedirection) = 1;
+	al = data.byte(kLinelength);
+	_dec(al);
+	data.byte(kLinepointer) = al;
+	data.byte(kLinedirection) = 1;
 	return;
 normalline:
-	context.data.byte(kLinepointer) = 0;
+	data.byte(kLinepointer) = 0;
 }
 
-void checkdest(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.bx);
-	context._add(context.bx, 12*8);
-	context.ah = context.data.byte(kManspath);
-	context.cl = 4;
-	context._shl(context.ah, context.cl);
-	context.al = context.data.byte(kDestination);
-	context.cl = 24;
-	context.ch = context.data.byte(kDestination);
+void DreamGenContext::checkdest() {
+	STACK_CHECK;
+	push(bx);
+	_add(bx, 12*8);
+	ah = data.byte(kManspath);
+	cl = 4;
+	_shl(ah, cl);
+	al = data.byte(kDestination);
+	cl = 24;
+	ch = data.byte(kDestination);
 checkdestloop:
-	context.dh = context.es.byte(context.bx);
-	context._and(context.dh, 0xf0);
-	context.dl = context.es.byte(context.bx);
-	context._and(context.dl, 0xf);
-	context._cmp(context.ax, context.dx);
-	if (!context.flags.z())
+	dh = es.byte(bx);
+	_and(dh, 0xf0);
+	dl = es.byte(bx);
+	_and(dl, 0xf);
+	_cmp(ax, dx);
+	if (!flags.z())
 		goto nextcheck;
-	context.al = context.es.byte(context.bx+1);
-	context._and(context.al, 15);
-	context.data.byte(kDestination) = context.al;
-	context.bx = context.pop();
+	al = es.byte(bx+1);
+	_and(al, 15);
+	data.byte(kDestination) = al;
+	bx = pop();
 	return;
 nextcheck:
-	context.dl = context.es.byte(context.bx);
-	context._and(context.dl, 0xf0);
-	context._shr(context.dl, 1);
-	context._shr(context.dl, 1);
-	context._shr(context.dl, 1);
-	context._shr(context.dl, 1);
-	context.dh = context.es.byte(context.bx);
-	context._and(context.dh, 0xf);
-	context._shl(context.dh, 1);
-	context._shl(context.dh, 1);
-	context._shl(context.dh, 1);
-	context._shl(context.dh, 1);
-	context._cmp(context.ax, context.dx);
-	if (!context.flags.z())
+	dl = es.byte(bx);
+	_and(dl, 0xf0);
+	_shr(dl, 1);
+	_shr(dl, 1);
+	_shr(dl, 1);
+	_shr(dl, 1);
+	dh = es.byte(bx);
+	_and(dh, 0xf);
+	_shl(dh, 1);
+	_shl(dh, 1);
+	_shl(dh, 1);
+	_shl(dh, 1);
+	_cmp(ax, dx);
+	if (!flags.z())
 		goto nextcheck2;
-	context.ch = context.es.byte(context.bx+1);
-	context._and(context.ch, 15);
+	ch = es.byte(bx+1);
+	_and(ch, 15);
 nextcheck2:
-	context._add(context.bx, 2);
-	context._dec(context.cl);
-	if (!context.flags.z())
+	_add(bx, 2);
+	_dec(cl);
+	if (!flags.z())
 		goto checkdestloop;
-	context.data.byte(kDestination) = context.ch;
-	context.bx = context.pop();
+	data.byte(kDestination) = ch;
+	bx = pop();
 }
 
-void bresenhams(Context &context) {
-	STACK_CHECK(context);
-	workoutframes(context);
-	context.dx = context.data;
-	context.es = context.dx;
-	context.di = 8173;
-	context.si = 1;
-	context.data.byte(kLinedirection) = 0;
-	context.cx = context.data.word(kLineendx);
-	context._sub(context.cx, context.data.word(kLinestartx));
-	if (context.flags.z())
+void DreamGenContext::bresenhams() {
+	STACK_CHECK;
+	workoutframes();
+	dx = data;
+	es = dx;
+	di = 8173;
+	si = 1;
+	data.byte(kLinedirection) = 0;
+	cx = data.word(kLineendx);
+	_sub(cx, data.word(kLinestartx));
+	if (flags.z())
 		goto vertline;
-	if (!context.flags.s())
+	if (!flags.s())
 		goto line1;
-	context._neg(context.cx);
-	context.bx = context.data.word(kLineendx);
-	context._xchg(context.bx, context.data.word(kLinestartx));
-	context.data.word(kLineendx) = context.bx;
-	context.bx = context.data.word(kLineendy);
-	context._xchg(context.bx, context.data.word(kLinestarty));
-	context.data.word(kLineendy) = context.bx;
-	context.data.byte(kLinedirection) = 1;
+	_neg(cx);
+	bx = data.word(kLineendx);
+	_xchg(bx, data.word(kLinestartx));
+	data.word(kLineendx) = bx;
+	bx = data.word(kLineendy);
+	_xchg(bx, data.word(kLinestarty));
+	data.word(kLineendy) = bx;
+	data.byte(kLinedirection) = 1;
 line1:
-	context.bx = context.data.word(kLineendy);
-	context._sub(context.bx, context.data.word(kLinestarty));
-	if (context.flags.z())
+	bx = data.word(kLineendy);
+	_sub(bx, data.word(kLinestarty));
+	if (flags.z())
 		goto horizline;
-	if (!context.flags.s())
+	if (!flags.s())
 		goto line3;
-	context._neg(context.bx);
-	context._neg(context.si);
+	_neg(bx);
+	_neg(si);
 line3:
-	context.push(context.si);
-	context.data.byte(kLineroutine) = 0;
-	context._cmp(context.bx, context.cx);
-	if (context.flags.le())
+	push(si);
+	data.byte(kLineroutine) = 0;
+	_cmp(bx, cx);
+	if (flags.le())
 		goto line4;
-	context.data.byte(kLineroutine) = 1;
-	context._xchg(context.bx, context.cx);
+	data.byte(kLineroutine) = 1;
+	_xchg(bx, cx);
 line4:
-	context._shl(context.bx, 1);
-	context.data.word(kIncrement1) = context.bx;
-	context._sub(context.bx, context.cx);
-	context.si = context.bx;
-	context._sub(context.bx, context.cx);
-	context.data.word(kIncrement2) = context.bx;
-	context.ax = context.data.word(kLinestartx);
-	context.bx = context.data.word(kLinestarty);
-	context.ah = context.bl;
-	context._inc(context.cx);
-	context.bx = context.pop();
-	context._cmp(context.data.byte(kLineroutine), 1);
-	if (context.flags.z())
+	_shl(bx, 1);
+	data.word(kIncrement1) = bx;
+	_sub(bx, cx);
+	si = bx;
+	_sub(bx, cx);
+	data.word(kIncrement2) = bx;
+	ax = data.word(kLinestartx);
+	bx = data.word(kLinestarty);
+	ah = bl;
+	_inc(cx);
+	bx = pop();
+	_cmp(data.byte(kLineroutine), 1);
+	if (flags.z())
 		goto hislope;
 	goto loslope;
 vertline:
-	context.ax = context.data.word(kLinestarty);
-	context.bx = context.data.word(kLineendy);
-	context.cx = context.bx;
-	context._sub(context.cx, context.ax);
-	if (!context.flags.l())
+	ax = data.word(kLinestarty);
+	bx = data.word(kLineendy);
+	cx = bx;
+	_sub(cx, ax);
+	if (!flags.l())
 		goto line31;
-	context._neg(context.cx);
-	context.ax = context.bx;
-	context.data.byte(kLinedirection) = 1;
+	_neg(cx);
+	ax = bx;
+	data.byte(kLinedirection) = 1;
 line31:
-	context._inc(context.cx);
-	context.bx = context.data.word(kLinestartx);
-	context._xchg(context.ax, context.bx);
-	context.ah = context.bl;
-	context.bx = context.si;
+	_inc(cx);
+	bx = data.word(kLinestartx);
+	_xchg(ax, bx);
+	ah = bl;
+	bx = si;
 line32:
-	context._stosw();
-	context._add(context.ah, context.bl);
-	if (--context.cx)
+	_stosw();
+	_add(ah, bl);
+	if (--cx)
 		goto line32;
 	goto lineexit;
 horizline:
-	context.ax = context.data.word(kLinestartx);
-	context.bx = context.data.word(kLinestarty);
-	context.ah = context.bl;
-	context._inc(context.cx);
+	ax = data.word(kLinestartx);
+	bx = data.word(kLinestarty);
+	ah = bl;
+	_inc(cx);
 horizloop:
-	context._stosw();
-	context._inc(context.al);
-	if (--context.cx)
+	_stosw();
+	_inc(al);
+	if (--cx)
 		goto horizloop;
 	goto lineexit;
 loslope:
 loloop:
-	context._stosw();
-	context._inc(context.al);
-	context._or(context.si, context.si);
-	if (!context.flags.s())
+	_stosw();
+	_inc(al);
+	_or(si, si);
+	if (!flags.s())
 		goto line12;
-	context._add(context.si, context.data.word(kIncrement1));
-	if (--context.cx)
+	_add(si, data.word(kIncrement1));
+	if (--cx)
 		goto loloop;
 	goto lineexit;
 line12:
-	context._add(context.si, context.data.word(kIncrement2));
-	context._add(context.ah, context.bl);
-	if (--context.cx)
+	_add(si, data.word(kIncrement2));
+	_add(ah, bl);
+	if (--cx)
 		goto loloop;
 	goto lineexit;
 hislope:
 hiloop:
-	context._stosw();
-	context._add(context.ah, context.bl);
-	context._or(context.si, context.si);
-	if (!context.flags.s())
+	_stosw();
+	_add(ah, bl);
+	_or(si, si);
+	if (!flags.s())
 		goto line23;
-	context._add(context.si, context.data.word(kIncrement1));
-	if (--context.cx)
+	_add(si, data.word(kIncrement1));
+	if (--cx)
 		goto hiloop;
 	goto lineexit;
 line23:
-	context._add(context.si, context.data.word(kIncrement2));
-	context._inc(context.al);
-	if (--context.cx)
+	_add(si, data.word(kIncrement2));
+	_inc(al);
+	if (--cx)
 		goto hiloop;
 lineexit:
-	context._sub(context.di, 8173);
-	context.ax = context.di;
-	context._shr(context.ax, 1);
-	context.data.byte(kLinelength) = context.al;
+	_sub(di, 8173);
+	ax = di;
+	_shr(ax, 1);
+	data.byte(kLinelength) = al;
 }
 
-void workoutframes(Context &context) {
-	STACK_CHECK(context);
-	context.bx = context.data.word(kLinestartx);
-	context._add(context.bx, 32);
-	context.ax = context.data.word(kLineendx);
-	context._add(context.ax, 32);
-	context._sub(context.bx, context.ax);
-	if (!context.flags.c())
+void DreamGenContext::workoutframes() {
+	STACK_CHECK;
+	bx = data.word(kLinestartx);
+	_add(bx, 32);
+	ax = data.word(kLineendx);
+	_add(ax, 32);
+	_sub(bx, ax);
+	if (!flags.c())
 		goto notneg1;
-	context._neg(context.bx);
+	_neg(bx);
 notneg1:
-	context.cx = context.data.word(kLinestarty);
-	context._add(context.cx, 32);
-	context.ax = context.data.word(kLineendy);
-	context._add(context.ax, 32);
-	context._sub(context.cx, context.ax);
-	if (!context.flags.c())
+	cx = data.word(kLinestarty);
+	_add(cx, 32);
+	ax = data.word(kLineendy);
+	_add(ax, 32);
+	_sub(cx, ax);
+	if (!flags.c())
 		goto notneg2;
-	context._neg(context.cx);
+	_neg(cx);
 notneg2:
-	context._cmp(context.bx, context.cx);
-	if (!context.flags.c())
+	_cmp(bx, cx);
+	if (!flags.c())
 		goto tendstohoriz;
-	context.dl = 2;
-	context.ax = context.cx;
-	context._shr(context.ax, 1);
-	context._cmp(context.bx, context.ax);
-	if (context.flags.c())
+	dl = 2;
+	ax = cx;
+	_shr(ax, 1);
+	_cmp(bx, ax);
+	if (flags.c())
 		goto gotquad;
-	context.dl = 1;
+	dl = 1;
 	goto gotquad;
 tendstohoriz:
-	context.dl = 0;
-	context.ax = context.bx;
-	context._shr(context.ax, 1);
-	context._cmp(context.cx, context.ax);
-	if (context.flags.c())
+	dl = 0;
+	ax = bx;
+	_shr(ax, 1);
+	_cmp(cx, ax);
+	if (flags.c())
 		goto gotquad;
-	context.dl = 1;
+	dl = 1;
 	goto gotquad;
 gotquad:
-	context.bx = context.data.word(kLinestartx);
-	context._add(context.bx, 32);
-	context.ax = context.data.word(kLineendx);
-	context._add(context.ax, 32);
-	context._sub(context.bx, context.ax);
-	if (context.flags.c())
+	bx = data.word(kLinestartx);
+	_add(bx, 32);
+	ax = data.word(kLineendx);
+	_add(ax, 32);
+	_sub(bx, ax);
+	if (flags.c())
 		goto isinright;
-	context.cx = context.data.word(kLinestarty);
-	context._add(context.cx, 32);
-	context.ax = context.data.word(kLineendy);
-	context._add(context.ax, 32);
-	context._sub(context.cx, context.ax);
-	if (!context.flags.c())
+	cx = data.word(kLinestarty);
+	_add(cx, 32);
+	ax = data.word(kLineendy);
+	_add(ax, 32);
+	_sub(cx, ax);
+	if (!flags.c())
 		goto topleft;
-	context._cmp(context.dl, 1);
-	if (context.flags.z())
+	_cmp(dl, 1);
+	if (flags.z())
 		goto noswap1;
-	context._xor(context.dl, 2);
+	_xor(dl, 2);
 noswap1:
-	context._add(context.dl, 4);
+	_add(dl, 4);
 	goto success;
 topleft:
-	context._add(context.dl, 6);
+	_add(dl, 6);
 	goto success;
 isinright:
-	context.cx = context.data.word(kLinestarty);
-	context._add(context.cx, 32);
-	context.ax = context.data.word(kLineendy);
-	context._add(context.ax, 32);
-	context._sub(context.cx, context.ax);
-	if (!context.flags.c())
+	cx = data.word(kLinestarty);
+	_add(cx, 32);
+	ax = data.word(kLineendy);
+	_add(ax, 32);
+	_sub(cx, ax);
+	if (!flags.c())
 		goto botright;
-	context._add(context.dl, 2);
+	_add(dl, 2);
 	goto success;
 botright:
-	context._cmp(context.dl, 1);
-	if (context.flags.z())
+	_cmp(dl, 1);
+	if (flags.z())
 		goto noswap2;
-	context._xor(context.dl, 2);
+	_xor(dl, 2);
 noswap2:
 success:
-	context._and(context.dl, 7);
-	context.data.byte(kTurntoface) = context.dl;
-	context.data.byte(kTurndirection) = 0;
+	_and(dl, 7);
+	data.byte(kTurntoface) = dl;
+	data.byte(kTurndirection) = 0;
 }
 
-void getroomspaths(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kRoomnum);
-	context.ah = 0;
-	context.cx = 144;
-	context._mul(context.cx);
-	context.es = context.data.word(kReels);
-	context.bx = (0);
-	context._add(context.bx, context.ax);
+void DreamGenContext::getroomspaths() {
+	STACK_CHECK;
+	al = data.byte(kRoomnum);
+	ah = 0;
+	cx = 144;
+	_mul(cx);
+	es = data.word(kReels);
+	bx = (0);
+	_add(bx, ax);
 }
 
-void copyname(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.di);
-	findobname(context);
-	context.di = context.pop();
-	context.es = context.cs;
-	context.cx = 28;
+void DreamGenContext::copyname() {
+	STACK_CHECK;
+	push(di);
+	findobname();
+	di = pop();
+	es = cs;
+	cx = 28;
 make:
-	context._lodsb();
-	context._cmp(context.al, ':');
-	if (context.flags.z())
+	_lodsb();
+	_cmp(al, ':');
+	if (flags.z())
 		goto finishmakename;
-	context._cmp(context.al, 0);
-	if (context.flags.z())
+	_cmp(al, 0);
+	if (flags.z())
 		goto finishmakename;
-	context._stosb();
-	if (--context.cx)
+	_stosb();
+	if (--cx)
 		goto make;
 finishmakename:
-	context._inc(context.cx);
-	context.al = 0;
-	context._stosb();
+	_inc(cx);
+	al = 0;
+	_stosb();
 	return;
-	context.al = 255;
-	context._stosb(context.cx);
+	al = 255;
+	_stosb(cx);
 }
 
-void findobname(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ax);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.bx = context.ax;
-	context.ax = context.pop();
-	context._cmp(context.ah, 5);
-	if (!context.flags.z())
+void DreamGenContext::findobname() {
+	STACK_CHECK;
+	push(ax);
+	ah = 0;
+	_add(ax, ax);
+	bx = ax;
+	ax = pop();
+	_cmp(ah, 5);
+	if (!flags.z())
 		goto notpersonname;
-	context.push(context.ax);
-	context._and(context.al, 127);
-	context.ah = 0;
-	context.bx = 64*2;
-	context._mul(context.bx);
-	context.si = context.ax;
-	context.ds = context.data.word(kPeople);
-	context._add(context.si, (0+24));
-	context.cx = (0+24+(1026*2));
-	context.ax = context.ds.word(context.si);
-	context._add(context.ax, context.cx);
-	context.si = context.ax;
-	context.ax = context.pop();
+	push(ax);
+	_and(al, 127);
+	ah = 0;
+	bx = 64*2;
+	_mul(bx);
+	si = ax;
+	ds = data.word(kPeople);
+	_add(si, (0+24));
+	cx = (0+24+(1026*2));
+	ax = ds.word(si);
+	_add(ax, cx);
+	si = ax;
+	ax = pop();
 	return;
 notpersonname:
-	context._cmp(context.ah, 4);
-	if (!context.flags.z())
+	_cmp(ah, 4);
+	if (!flags.z())
 		goto notextraname;
-	context.ds = context.data.word(kExtras);
-	context._add(context.bx, (0+2080+30000+(16*114)));
-	context.ax = context.ds.word(context.bx);
-	context._add(context.ax, (0+2080+30000+(16*114)+((114+2)*2)));
-	context.si = context.ax;
+	ds = data.word(kExtras);
+	_add(bx, (0+2080+30000+(16*114)));
+	ax = ds.word(bx);
+	_add(ax, (0+2080+30000+(16*114)+((114+2)*2)));
+	si = ax;
 	return;
 notextraname:
-	context._cmp(context.ah, 2);
-	if (!context.flags.z())
+	_cmp(ah, 2);
+	if (!flags.z())
 		goto notfreename;
-	context.ds = context.data.word(kFreedesc);
-	context._add(context.bx, (0));
-	context.ax = context.ds.word(context.bx);
-	context._add(context.ax, (0+(82*2)));
-	context.si = context.ax;
+	ds = data.word(kFreedesc);
+	_add(bx, (0));
+	ax = ds.word(bx);
+	_add(ax, (0+(82*2)));
+	si = ax;
 	return;
 notfreename:
-	context._cmp(context.ah, 1);
-	if (!context.flags.z())
+	_cmp(ah, 1);
+	if (!flags.z())
 		goto notsetname;
-	context.ds = context.data.word(kSetdesc);
-	context._add(context.bx, (0));
-	context.ax = context.ds.word(context.bx);
-	context._add(context.ax, (0+(130*2)));
-	context.si = context.ax;
+	ds = data.word(kSetdesc);
+	_add(bx, (0));
+	ax = ds.word(bx);
+	_add(ax, (0+(130*2)));
+	si = ax;
 	return;
 notsetname:
-	context.ds = context.data.word(kBlockdesc);
-	context._add(context.bx, (0));
-	context.ax = context.ds.word(context.bx);
-	context._add(context.ax, (0+(98*2)));
-	context.si = context.ax;
+	ds = data.word(kBlockdesc);
+	_add(bx, (0));
+	ax = ds.word(bx);
+	_add(ax, (0+(98*2)));
+	si = ax;
 }
 
-void showicon(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kReallocation), 50);
-	if (!context.flags.c())
+void DreamGenContext::showicon() {
+	STACK_CHECK;
+	_cmp(data.byte(kReallocation), 50);
+	if (!flags.c())
 		goto isdream1;
-	showpanel(context);
-	showman(context);
-	roomname(context);
-	panelicons1(context);
-	zoomicon(context);
+	showpanel();
+	showman();
+	roomname();
+	panelicons1();
+	zoomicon();
 	return;
 isdream1:
-	context.ds = context.data.word(kTempsprites);
-	context.di = 72;
-	context.bx = 2;
-	context.al = 45;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempsprites);
-	context.di = 72+47;
-	context.bx = 2;
-	context.al = 46;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempsprites);
-	context.di = 69-10;
-	context.bx = 21;
-	context.al = 49;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempsprites);
-	context.di = 160+88;
-	context.bx = 2;
-	context.al = 45;
-	context.ah = 4;
-	showframe(context);
-	context.ds = context.data.word(kTempsprites);
-	context.di = 160+43;
-	context.bx = 2;
-	context.al = 46;
-	context.ah = 4;
-	showframe(context);
-	context.ds = context.data.word(kTempsprites);
-	context.di = 160+101;
-	context.bx = 21;
-	context.al = 49;
-	context.ah = 4;
-	showframe(context);
-	middlepanel(context);
+	ds = data.word(kTempsprites);
+	di = 72;
+	bx = 2;
+	al = 45;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempsprites);
+	di = 72+47;
+	bx = 2;
+	al = 46;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempsprites);
+	di = 69-10;
+	bx = 21;
+	al = 49;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempsprites);
+	di = 160+88;
+	bx = 2;
+	al = 45;
+	ah = 4;
+	showframe();
+	ds = data.word(kTempsprites);
+	di = 160+43;
+	bx = 2;
+	al = 46;
+	ah = 4;
+	showframe();
+	ds = data.word(kTempsprites);
+	di = 160+101;
+	bx = 21;
+	al = 49;
+	ah = 4;
+	showframe();
+	middlepanel();
 }
 
-void middlepanel(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kTempsprites);
-	context.di = 72+47+20;
-	context.bx = 0;
-	context.al = 48;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempsprites);
-	context.di = 72+19;
-	context.bx = 21;
-	context.al = 47;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kTempsprites);
-	context.di = 160+23;
-	context.bx = 0;
-	context.al = 48;
-	context.ah = 4;
-	showframe(context);
-	context.ds = context.data.word(kTempsprites);
-	context.di = 160+71;
-	context.bx = 21;
-	context.al = 47;
-	context.ah = 4;
-	showframe(context);
+void DreamGenContext::middlepanel() {
+	STACK_CHECK;
+	ds = data.word(kTempsprites);
+	di = 72+47+20;
+	bx = 0;
+	al = 48;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempsprites);
+	di = 72+19;
+	bx = 21;
+	al = 47;
+	ah = 0;
+	showframe();
+	ds = data.word(kTempsprites);
+	di = 160+23;
+	bx = 0;
+	al = 48;
+	ah = 4;
+	showframe();
+	ds = data.word(kTempsprites);
+	di = 160+71;
+	bx = 21;
+	al = 47;
+	ah = 4;
+	showframe();
 }
 
-void showman(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kIcons1);
-	context.di = 0;
-	context.bx = 0;
-	context.al = 0;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kIcons1);
-	context.di = 0;
-	context.bx = 114;
-	context.al = 1;
-	context.ah = 0;
-	showframe(context);
-	context._cmp(context.data.byte(kShadeson), 0);
-	if (context.flags.z())
+void DreamGenContext::showman() {
+	STACK_CHECK;
+	ds = data.word(kIcons1);
+	di = 0;
+	bx = 0;
+	al = 0;
+	ah = 0;
+	showframe();
+	ds = data.word(kIcons1);
+	di = 0;
+	bx = 114;
+	al = 1;
+	ah = 0;
+	showframe();
+	_cmp(data.byte(kShadeson), 0);
+	if (flags.z())
 		return /* (notverycool) */;
-	context.ds = context.data.word(kIcons1);
-	context.di = 28;
-	context.bx = 25;
-	context.al = 2;
-	context.ah = 0;
-	showframe(context);
+	ds = data.word(kIcons1);
+	di = 28;
+	bx = 25;
+	al = 2;
+	ah = 0;
+	showframe();
 }
 
-void showpanel(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kIcons1);
-	context.di = 72;
-	context.bx = 0;
-	context.al = 19;
-	context.ah = 0;
-	showframe(context);
-	context.ds = context.data.word(kIcons1);
-	context.di = 192;
-	context.bx = 0;
-	context.al = 19;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::showpanel() {
+	STACK_CHECK;
+	ds = data.word(kIcons1);
+	di = 72;
+	bx = 0;
+	al = 19;
+	ah = 0;
+	showframe();
+	ds = data.word(kIcons1);
+	di = 192;
+	bx = 0;
+	al = 19;
+	ah = 0;
+	showframe();
 }
 
-void roomname(Context &context) {
-	STACK_CHECK(context);
-	context.di = 88;
-	context.bx = 18;
-	context.al = 53;
-	context.dl = 240;
-	printmessage(context);
-	context.bl = context.data.byte(kRoomnum);
-	context._cmp(context.bl, 32);
-	if (context.flags.c())
+void DreamGenContext::roomname() {
+	STACK_CHECK;
+	di = 88;
+	bx = 18;
+	al = 53;
+	dl = 240;
+	printmessage();
+	bl = data.byte(kRoomnum);
+	_cmp(bl, 32);
+	if (flags.c())
 		goto notover32;
-	context._sub(context.bl, 32);
+	_sub(bl, 32);
 notover32:
-	context.bh = 0;
-	context._add(context.bx, context.bx);
-	context.es = context.data.word(kRoomdesc);
-	context._add(context.bx, (0));
-	context.ax = context.es.word(context.bx);
-	context._add(context.ax, (0+(38*2)));
-	context.si = context.ax;
-	context.data.word(kLinespacing) = 7;
-	context.di = 88;
-	context.bx = 25;
-	context.dl = 120;
-	context._cmp(context.data.byte(kWatchon), 1);
-	if (context.flags.z())
+	bh = 0;
+	_add(bx, bx);
+	es = data.word(kRoomdesc);
+	_add(bx, (0));
+	ax = es.word(bx);
+	_add(ax, (0+(38*2)));
+	si = ax;
+	data.word(kLinespacing) = 7;
+	di = 88;
+	bx = 25;
+	dl = 120;
+	_cmp(data.byte(kWatchon), 1);
+	if (flags.z())
 		goto gotpl;
-	context.dl = 160;
+	dl = 160;
 gotpl:
-	context.al = 0;
-	context.ah = 0;
-	printdirect(context);
-	context.data.word(kLinespacing) = 10;
-	usecharset1(context);
+	al = 0;
+	ah = 0;
+	printdirect();
+	data.word(kLinespacing) = 10;
+	usecharset1();
 }
 
-void usecharset1(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kCharset1);
-	context.data.word(kCurrentset) = context.ax;
+void DreamGenContext::usecharset1() {
+	STACK_CHECK;
+	ax = data.word(kCharset1);
+	data.word(kCurrentset) = ax;
 }
 
-void usetempcharset(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kTempcharset);
-	context.data.word(kCurrentset) = context.ax;
+void DreamGenContext::usetempcharset() {
+	STACK_CHECK;
+	ax = data.word(kTempcharset);
+	data.word(kCurrentset) = ax;
 }
 
-void showexit(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.data.word(kIcons1);
-	context.di = 274;
-	context.bx = 154;
-	context.al = 11;
-	context.ah = 0;
-	showframe(context);
+void DreamGenContext::showexit() {
+	STACK_CHECK;
+	ds = data.word(kIcons1);
+	di = 274;
+	bx = 154;
+	al = 11;
+	ah = 0;
+	showframe();
 }
 
-void panelicons1(Context &context) {
-	STACK_CHECK(context);
-	context.di = 0;
-	context._cmp(context.data.byte(kWatchon), 1);
-	if (context.flags.z())
+void DreamGenContext::panelicons1() {
+	STACK_CHECK;
+	di = 0;
+	_cmp(data.byte(kWatchon), 1);
+	if (flags.z())
 		goto watchison;
-	context.di = 48;
+	di = 48;
 watchison:
-	context.push(context.di);
-	context.ds = context.data.word(kIcons2);
-	context._add(context.di, 204);
-	context.bx = 4;
-	context.al = 2;
-	context.ah = 0;
-	showframe(context);
-	context.di = context.pop();
-	context.push(context.di);
-	context._cmp(context.data.byte(kZoomon), 1);
-	if (context.flags.z())
+	push(di);
+	ds = data.word(kIcons2);
+	_add(di, 204);
+	bx = 4;
+	al = 2;
+	ah = 0;
+	showframe();
+	di = pop();
+	push(di);
+	_cmp(data.byte(kZoomon), 1);
+	if (flags.z())
 		goto zoomisoff;
-	context.ds = context.data.word(kIcons1);
-	context._add(context.di, 228);
-	context.bx = 8;
-	context.al = 5;
-	context.ah = 0;
-	showframe(context);
+	ds = data.word(kIcons1);
+	_add(di, 228);
+	bx = 8;
+	al = 5;
+	ah = 0;
+	showframe();
 zoomisoff:
-	context.di = context.pop();
-	showwatch(context);
+	di = pop();
+	showwatch();
 }
 
-void showwatch(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kWatchon), 0);
-	if (context.flags.z())
+void DreamGenContext::showwatch() {
+	STACK_CHECK;
+	_cmp(data.byte(kWatchon), 0);
+	if (flags.z())
 		return /* (nowristwatch) */;
-	context.ds = context.data.word(kIcons1);
-	context.di = 250;
-	context.bx = 1;
-	context.al = 6;
-	context.ah = 0;
-	showframe(context);
-	showtime(context);
+	ds = data.word(kIcons1);
+	di = 250;
+	bx = 1;
+	al = 6;
+	ah = 0;
+	showframe();
+	showtime();
 }
 
-void zoomicon(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kZoomon), 0);
-	if (context.flags.z())
+void DreamGenContext::zoomicon() {
+	STACK_CHECK;
+	_cmp(data.byte(kZoomon), 0);
+	if (flags.z())
 		return /* (nozoom1) */;
-	context.ds = context.data.word(kIcons1);
-	context.di = (8);
-	context.bx = (132)-1;
-	context.al = 8;
-	context.ah = 0;
-	showframe(context);
+	ds = data.word(kIcons1);
+	di = (8);
+	bx = (132)-1;
+	al = 8;
+	ah = 0;
+	showframe();
 }
 
-void showblink(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kManisoffscreen), 1);
-	if (context.flags.z())
+void DreamGenContext::showblink() {
+	STACK_CHECK;
+	_cmp(data.byte(kManisoffscreen), 1);
+	if (flags.z())
 		return /* (finblink1) */;
-	context._inc(context.data.byte(kBlinkcount));
-	context._cmp(context.data.byte(kShadeson), 0);
-	if (!context.flags.z())
+	_inc(data.byte(kBlinkcount));
+	_cmp(data.byte(kShadeson), 0);
+	if (!flags.z())
 		return /* (finblink1) */;
-	context._cmp(context.data.byte(kReallocation), 50);
-	if (!context.flags.c())
+	_cmp(data.byte(kReallocation), 50);
+	if (!flags.c())
 		return /* (eyesshut) */;
-	context.al = context.data.byte(kBlinkcount);
-	context._cmp(context.al, 3);
-	if (!context.flags.z())
+	al = data.byte(kBlinkcount);
+	_cmp(al, 3);
+	if (!flags.z())
 		return /* (finblink1) */;
-	context.data.byte(kBlinkcount) = 0;
-	context.al = context.data.byte(kBlinkframe);
-	context._inc(context.al);
-	context.data.byte(kBlinkframe) = context.al;
-	context._cmp(context.al, 6);
-	if (context.flags.c())
+	data.byte(kBlinkcount) = 0;
+	al = data.byte(kBlinkframe);
+	_inc(al);
+	data.byte(kBlinkframe) = al;
+	_cmp(al, 6);
+	if (flags.c())
 		goto nomorethan6;
-	context.al = 6;
+	al = 6;
 nomorethan6:
-	context.ah = 0;
-	context.bx = 5888;
-	context._add(context.bx, context.ax);
-	context.al = context.cs.byte(context.bx);
-	context.ds = context.data.word(kIcons1);
-	context.di = 44;
-	context.bx = 32;
-	context.ah = 0;
-	showframe(context);
+	ah = 0;
+	bx = 5888;
+	_add(bx, ax);
+	al = cs.byte(bx);
+	ds = data.word(kIcons1);
+	di = 44;
+	bx = 32;
+	ah = 0;
+	showframe();
 }
 
-void dumpblink(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kShadeson), 0);
-	if (!context.flags.z())
+void DreamGenContext::dumpblink() {
+	STACK_CHECK;
+	_cmp(data.byte(kShadeson), 0);
+	if (!flags.z())
 		return /* (nodumpeye) */;
-	context._cmp(context.data.byte(kBlinkcount), 0);
-	if (!context.flags.z())
+	_cmp(data.byte(kBlinkcount), 0);
+	if (!flags.z())
 		return /* (nodumpeye) */;
-	context.al = context.data.byte(kBlinkframe);
-	context._cmp(context.al, 6);
-	if (!context.flags.c())
+	al = data.byte(kBlinkframe);
+	_cmp(al, 6);
+	if (!flags.c())
 		return /* (nodumpeye) */;
-	context.push(context.ds);
-	context.di = 44;
-	context.bx = 32;
-	context.cl = 16;
-	context.ch = 12;
-	multidump(context);
-	context.ds = context.pop();
+	push(ds);
+	di = 44;
+	bx = 32;
+	cl = 16;
+	ch = 12;
+	multidump();
+	ds = pop();
 }
 
-void worktoscreenm(Context &context) {
-	STACK_CHECK(context);
-	animpointer(context);
-	readmouse(context);
-	showpointer(context);
-	vsync(context);
-	worktoscreen(context);
-	delpointer(context);
+void DreamGenContext::worktoscreenm() {
+	STACK_CHECK;
+	animpointer();
+	readmouse();
+	showpointer();
+	vsync();
+	worktoscreen();
+	delpointer();
 }
 
-void blank(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 199);
-	if (context.flags.z())
+void DreamGenContext::blank() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 199);
+	if (flags.z())
 		return /* (alreadyblnk) */;
-	context.data.byte(kCommandtype) = 199;
-	context.al = 0;
-	commandonly(context);
+	data.byte(kCommandtype) = 199;
+	al = 0;
+	commandonly();
 }
 
-void allpointer(Context &context) {
-	STACK_CHECK(context);
-	readmouse(context);
-	showpointer(context);
-	dumppointer(context);
+void DreamGenContext::allpointer() {
+	STACK_CHECK;
+	readmouse();
+	showpointer();
+	dumppointer();
 }
 
-void hangonp(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.cx);
-	context._add(context.cx, context.cx);
-	context.ax = context.pop();
-	context._add(context.cx, context.ax);
-	context.data.word(kMaintimer) = 0;
-	context.al = context.data.byte(kPointerframe);
-	context.ah = context.data.byte(kPickup);
-	context.push(context.ax);
-	context.data.byte(kPointermode) = 3;
-	context.data.byte(kPickup) = 0;
-	context.push(context.cx);
-	context.data.byte(kCommandtype) = 255;
-	readmouse(context);
-	animpointer(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	context.cx = context.pop();
+void DreamGenContext::hangonp() {
+	STACK_CHECK;
+	push(cx);
+	_add(cx, cx);
+	ax = pop();
+	_add(cx, ax);
+	data.word(kMaintimer) = 0;
+	al = data.byte(kPointerframe);
+	ah = data.byte(kPickup);
+	push(ax);
+	data.byte(kPointermode) = 3;
+	data.byte(kPickup) = 0;
+	push(cx);
+	data.byte(kCommandtype) = 255;
+	readmouse();
+	animpointer();
+	showpointer();
+	vsync();
+	dumppointer();
+	cx = pop();
 hangloop:
-	context.push(context.cx);
-	delpointer(context);
-	readmouse(context);
-	animpointer(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	context.cx = context.pop();
-	context.ax = context.data.word(kMousebutton);
-	context._cmp(context.ax, 0);
-	if (context.flags.z())
+	push(cx);
+	delpointer();
+	readmouse();
+	animpointer();
+	showpointer();
+	vsync();
+	dumppointer();
+	cx = pop();
+	ax = data.word(kMousebutton);
+	_cmp(ax, 0);
+	if (flags.z())
 		goto notpressed;
-	context._cmp(context.ax, context.data.word(kOldbutton));
-	if (!context.flags.z())
+	_cmp(ax, data.word(kOldbutton));
+	if (!flags.z())
 		goto getoutofit;
 notpressed:
-	if (--context.cx)
+	if (--cx)
 		goto hangloop;
 getoutofit:
-	delpointer(context);
-	context.ax = context.pop();
-	context.data.byte(kPointerframe) = context.al;
-	context.data.byte(kPickup) = context.ah;
-	context.data.byte(kPointermode) = 0;
+	delpointer();
+	ax = pop();
+	data.byte(kPointerframe) = al;
+	data.byte(kPickup) = ah;
+	data.byte(kPointermode) = 0;
 }
 
-void hangonw(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::hangonw() {
+	STACK_CHECK;
 hangloopw:
-	context.push(context.cx);
-	delpointer(context);
-	readmouse(context);
-	animpointer(context);
-	showpointer(context);
-	vsync(context);
-	dumppointer(context);
-	context.cx = context.pop();
-	if (--context.cx)
+	push(cx);
+	delpointer();
+	readmouse();
+	animpointer();
+	showpointer();
+	vsync();
+	dumppointer();
+	cx = pop();
+	if (--cx)
 		goto hangloopw;
 }
 
-void hangoncurs(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::hangoncurs() {
+	STACK_CHECK;
 monloop1:
-	context.push(context.cx);
-	printcurs(context);
-	vsync(context);
-	delcurs(context);
-	context.cx = context.pop();
-	if (--context.cx)
+	push(cx);
+	printcurs();
+	vsync();
+	delcurs();
+	cx = pop();
+	if (--cx)
 		goto monloop1;
 }
 
-void getunderzoom(Context &context) {
-	STACK_CHECK(context);
-	context.di = (8)+5;
-	context.bx = (132)+4;
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
-	context.cl = 46;
-	context.ch = 40;
-	multiget(context);
+void DreamGenContext::getunderzoom() {
+	STACK_CHECK;
+	di = (8)+5;
+	bx = (132)+4;
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
+	cl = 46;
+	ch = 40;
+	multiget();
 }
 
-void dumpzoom(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kZoomon), 1);
-	if (!context.flags.z())
+void DreamGenContext::dumpzoom() {
+	STACK_CHECK;
+	_cmp(data.byte(kZoomon), 1);
+	if (!flags.z())
 		return /* (notzoomon) */;
-	context.di = (8)+5;
-	context.bx = (132)+4;
-	context.cl = 46;
-	context.ch = 40;
-	multidump(context);
+	di = (8)+5;
+	bx = (132)+4;
+	cl = 46;
+	ch = 40;
+	multidump();
 }
 
-void putunderzoom(Context &context) {
-	STACK_CHECK(context);
-	context.di = (8)+5;
-	context.bx = (132)+4;
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
-	context.cl = 46;
-	context.ch = 40;
-	multiput(context);
+void DreamGenContext::putunderzoom() {
+	STACK_CHECK;
+	di = (8)+5;
+	bx = (132)+4;
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
+	cl = 46;
+	ch = 40;
+	multiput();
 }
 
-void crosshair(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kCommandtype), 3);
-	if (context.flags.z())
+void DreamGenContext::crosshair() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 3);
+	if (flags.z())
 		goto nocross;
-	context._cmp(context.data.byte(kCommandtype), 10);
-	if (!context.flags.c())
+	_cmp(data.byte(kCommandtype), 10);
+	if (!flags.c())
 		goto nocross;
-	context.es = context.data.word(kWorkspace);
-	context.ds = context.data.word(kIcons1);
-	context.di = (8)+24;
-	context.bx = (132)+19;
-	context.al = 9;
-	context.ah = 0;
-	showframe(context);
+	es = data.word(kWorkspace);
+	ds = data.word(kIcons1);
+	di = (8)+24;
+	bx = (132)+19;
+	al = 9;
+	ah = 0;
+	showframe();
 	return;
 nocross:
-	context.es = context.data.word(kWorkspace);
-	context.ds = context.data.word(kIcons1);
-	context.di = (8)+24;
-	context.bx = (132)+19;
-	context.al = 29;
-	context.ah = 0;
-	showframe(context);
+	es = data.word(kWorkspace);
+	ds = data.word(kIcons1);
+	di = (8)+24;
+	bx = (132)+19;
+	al = 29;
+	ah = 0;
+	showframe();
 }
 
-void showpointer(Context &context) {
-	STACK_CHECK(context);
-	showblink(context);
-	context.di = context.data.word(kMousex);
-	context.data.word(kOldpointerx) = context.di;
-	context.bx = context.data.word(kMousey);
-	context.data.word(kOldpointery) = context.bx;
-	context._cmp(context.data.byte(kPickup), 1);
-	if (context.flags.z())
+void DreamGenContext::showpointer() {
+	STACK_CHECK;
+	showblink();
+	di = data.word(kMousex);
+	data.word(kOldpointerx) = di;
+	bx = data.word(kMousey);
+	data.word(kOldpointery) = bx;
+	_cmp(data.byte(kPickup), 1);
+	if (flags.z())
 		goto itsanobject;
-	context.push(context.bx);
-	context.push(context.di);
-	context.ds = context.data.word(kIcons1);
-	context.al = context.data.byte(kPointerframe);
-	context._add(context.al, 20);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context.si = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.si, context.ax);
-	context.cx = context.ds.word(context.si);
-	context._cmp(context.cl, 12);
-	if (!context.flags.c())
+	push(bx);
+	push(di);
+	ds = data.word(kIcons1);
+	al = data.byte(kPointerframe);
+	_add(al, 20);
+	ah = 0;
+	_add(ax, ax);
+	si = ax;
+	_add(ax, ax);
+	_add(si, ax);
+	cx = ds.word(si);
+	_cmp(cl, 12);
+	if (!flags.c())
 		goto notsmallx;
-	context.cl = 12;
+	cl = 12;
 notsmallx:
-	context._cmp(context.ch, 12);
-	if (!context.flags.c())
+	_cmp(ch, 12);
+	if (!flags.c())
 		goto notsmally;
-	context.ch = 12;
+	ch = 12;
 notsmally:
-	context.data.byte(kPointerxs) = context.cl;
-	context.data.byte(kPointerys) = context.ch;
-	context.push(context.ds);
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60);
-	multiget(context);
-	context.ds = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.push(context.di);
-	context.push(context.bx);
-	context.al = context.data.byte(kPointerframe);
-	context._add(context.al, 20);
-	context.ah = 0;
-	showframe(context);
-	context.bx = context.pop();
-	context.di = context.pop();
+	data.byte(kPointerxs) = cl;
+	data.byte(kPointerys) = ch;
+	push(ds);
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60);
+	multiget();
+	ds = pop();
+	di = pop();
+	bx = pop();
+	push(di);
+	push(bx);
+	al = data.byte(kPointerframe);
+	_add(al, 20);
+	ah = 0;
+	showframe();
+	bx = pop();
+	di = pop();
 	return;
 itsanobject:
-	context.al = context.data.byte(kItemframe);
-	context.ds = context.data.word(kExtras);
-	context._cmp(context.data.byte(kObjecttype), 4);
-	if (context.flags.z())
+	al = data.byte(kItemframe);
+	ds = data.word(kExtras);
+	_cmp(data.byte(kObjecttype), 4);
+	if (flags.z())
 		goto itsfrominv;
-	context.ds = context.data.word(kFreeframes);
+	ds = data.word(kFreeframes);
 itsfrominv:
-	context.cl = context.al;
-	context._add(context.al, context.al);
-	context._add(context.al, context.cl);
-	context._inc(context.al);
-	context.ah = 0;
-	context.push(context.ax);
-	context._add(context.ax, context.ax);
-	context.si = context.ax;
-	context._add(context.ax, context.ax);
-	context._add(context.si, context.ax);
-	context.ax = 2080;
-	context.cx = context.ds.word(context.si);
-	context._cmp(context.cl, 12);
-	if (!context.flags.c())
+	cl = al;
+	_add(al, al);
+	_add(al, cl);
+	_inc(al);
+	ah = 0;
+	push(ax);
+	_add(ax, ax);
+	si = ax;
+	_add(ax, ax);
+	_add(si, ax);
+	ax = 2080;
+	cx = ds.word(si);
+	_cmp(cl, 12);
+	if (!flags.c())
 		goto notsmallx2;
-	context.cl = 12;
+	cl = 12;
 notsmallx2:
-	context._cmp(context.ch, 12);
-	if (!context.flags.c())
+	_cmp(ch, 12);
+	if (!flags.c())
 		goto notsmally2;
-	context.ch = 12;
+	ch = 12;
 notsmally2:
-	context.data.byte(kPointerxs) = context.cl;
-	context.data.byte(kPointerys) = context.ch;
-	context.ax = context.pop();
-	context.push(context.di);
-	context.push(context.bx);
-	context.push(context.ax);
-	context.push(context.bx);
-	context.push(context.di);
-	context.push(context.ds);
-	context.al = context.cl;
-	context.ah = 0;
-	context._shr(context.ax, 1);
-	context._sub(context.data.word(kOldpointerx), context.ax);
-	context._sub(context.di, context.ax);
-	context.al = context.ch;
-	context._shr(context.ax, 1);
-	context._sub(context.data.word(kOldpointery), context.ax);
-	context._sub(context.bx, context.ax);
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60);
-	multiget(context);
-	context.ds = context.pop();
-	context.di = context.pop();
-	context.bx = context.pop();
-	context.ax = context.pop();
-	context.ah = 128;
-	showframe(context);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.ds = context.data.word(kIcons1);
-	context.al = 3;
-	context.ah = 128;
-	showframe(context);
+	data.byte(kPointerxs) = cl;
+	data.byte(kPointerys) = ch;
+	ax = pop();
+	push(di);
+	push(bx);
+	push(ax);
+	push(bx);
+	push(di);
+	push(ds);
+	al = cl;
+	ah = 0;
+	_shr(ax, 1);
+	_sub(data.word(kOldpointerx), ax);
+	_sub(di, ax);
+	al = ch;
+	_shr(ax, 1);
+	_sub(data.word(kOldpointery), ax);
+	_sub(bx, ax);
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60);
+	multiget();
+	ds = pop();
+	di = pop();
+	bx = pop();
+	ax = pop();
+	ah = 128;
+	showframe();
+	bx = pop();
+	di = pop();
+	ds = data.word(kIcons1);
+	al = 3;
+	ah = 128;
+	showframe();
 }
 
-void delpointer(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kOldpointerx);
-	context._cmp(context.ax, 0x0ffff);
-	if (context.flags.z())
+void DreamGenContext::delpointer() {
+	STACK_CHECK;
+	ax = data.word(kOldpointerx);
+	_cmp(ax, 0x0ffff);
+	if (flags.z())
 		return /* (nevershown) */;
-	context.data.word(kDelherex) = context.ax;
-	context.ax = context.data.word(kOldpointery);
-	context.data.word(kDelherey) = context.ax;
-	context.cl = context.data.byte(kPointerxs);
-	context.data.byte(kDelxs) = context.cl;
-	context.ch = context.data.byte(kPointerys);
-	context.data.byte(kDelys) = context.ch;
-	context.ds = context.data.word(kBuffers);
-	context.si = (0+(180*10)+32+60);
-	context.di = context.data.word(kDelherex);
-	context.bx = context.data.word(kDelherey);
-	multiput(context);
+	data.word(kDelherex) = ax;
+	ax = data.word(kOldpointery);
+	data.word(kDelherey) = ax;
+	cl = data.byte(kPointerxs);
+	data.byte(kDelxs) = cl;
+	ch = data.byte(kPointerys);
+	data.byte(kDelys) = ch;
+	ds = data.word(kBuffers);
+	si = (0+(180*10)+32+60);
+	di = data.word(kDelherex);
+	bx = data.word(kDelherey);
+	multiput();
 }
 
-void dumppointer(Context &context) {
-	STACK_CHECK(context);
-	dumpblink(context);
-	context.cl = context.data.byte(kDelxs);
-	context.ch = context.data.byte(kDelys);
-	context.di = context.data.word(kDelherex);
-	context.bx = context.data.word(kDelherey);
-	multidump(context);
-	context.bx = context.data.word(kOldpointery);
-	context.di = context.data.word(kOldpointerx);
-	context._cmp(context.di, context.data.word(kDelherex));
-	if (!context.flags.z())
+void DreamGenContext::dumppointer() {
+	STACK_CHECK;
+	dumpblink();
+	cl = data.byte(kDelxs);
+	ch = data.byte(kDelys);
+	di = data.word(kDelherex);
+	bx = data.word(kDelherey);
+	multidump();
+	bx = data.word(kOldpointery);
+	di = data.word(kOldpointerx);
+	_cmp(di, data.word(kDelherex));
+	if (!flags.z())
 		goto difffound;
-	context._cmp(context.bx, context.data.word(kDelherey));
-	if (context.flags.z())
+	_cmp(bx, data.word(kDelherey));
+	if (flags.z())
 		return /* (notboth) */;
 difffound:
-	context.cl = context.data.byte(kPointerxs);
-	context.ch = context.data.byte(kPointerys);
-	multidump(context);
+	cl = data.byte(kPointerxs);
+	ch = data.byte(kPointerys);
+	multidump();
 }
 
-void undertextline(Context &context) {
-	STACK_CHECK(context);
-	context.di = context.data.word(kTextaddressx);
-	context.bx = context.data.word(kTextaddressy);
-	context.ds = context.data.word(kBuffers);
-	context.si = (0);
-	context.cl = (180);
-	context.ch = (10);
-	multiget(context);
+void DreamGenContext::undertextline() {
+	STACK_CHECK;
+	di = data.word(kTextaddressx);
+	bx = data.word(kTextaddressy);
+	ds = data.word(kBuffers);
+	si = (0);
+	cl = (180);
+	ch = (10);
+	multiget();
 }
 
-void deltextline(Context &context) {
-	STACK_CHECK(context);
-	context.di = context.data.word(kTextaddressx);
-	context.bx = context.data.word(kTextaddressy);
-	context.ds = context.data.word(kBuffers);
-	context.si = (0);
-	context.cl = (180);
-	context.ch = (10);
-	multiput(context);
+void DreamGenContext::deltextline() {
+	STACK_CHECK;
+	di = data.word(kTextaddressx);
+	bx = data.word(kTextaddressy);
+	ds = data.word(kBuffers);
+	si = (0);
+	cl = (180);
+	ch = (10);
+	multiput();
 }
 
-void dumptextline(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kNewtextline), 1);
-	if (!context.flags.z())
+void DreamGenContext::dumptextline() {
+	STACK_CHECK;
+	_cmp(data.byte(kNewtextline), 1);
+	if (!flags.z())
 		return /* (nodumptextline) */;
-	context.data.byte(kNewtextline) = 0;
-	context.di = context.data.word(kTextaddressx);
-	context.bx = context.data.word(kTextaddressy);
-	context.cl = (180);
-	context.ch = (10);
-	multidump(context);
+	data.byte(kNewtextline) = 0;
+	di = data.word(kTextaddressx);
+	bx = data.word(kTextaddressy);
+	cl = (180);
+	ch = (10);
+	multidump();
 }
 
-void animpointer(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kPointermode), 2);
-	if (context.flags.z())
+void DreamGenContext::animpointer() {
+	STACK_CHECK;
+	_cmp(data.byte(kPointermode), 2);
+	if (flags.z())
 		goto combathand;
-	context._cmp(context.data.byte(kPointermode), 3);
-	if (context.flags.z())
+	_cmp(data.byte(kPointermode), 3);
+	if (flags.z())
 		goto mousehand;
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (context.flags.z())
+	_cmp(data.word(kWatchingtime), 0);
+	if (flags.z())
 		goto notwatchpoint;
-	context.data.byte(kPointerframe) = 11;
+	data.byte(kPointerframe) = 11;
 	return;
 notwatchpoint:
-	context.data.byte(kPointerframe) = 0;
-	context._cmp(context.data.byte(kInmaparea), 0);
-	if (context.flags.z())
+	data.byte(kPointerframe) = 0;
+	_cmp(data.byte(kInmaparea), 0);
+	if (flags.z())
 		return /* (gothand) */;
-	context._cmp(context.data.byte(kPointerfirstpath), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kPointerfirstpath), 0);
+	if (flags.z())
 		return /* (gothand) */;
-	getflagunderp(context);
-	context._cmp(context.cl, 2);
-	if (context.flags.c())
+	getflagunderp();
+	_cmp(cl, 2);
+	if (flags.c())
 		return /* (gothand) */;
-	context._cmp(context.cl, 128);
-	if (!context.flags.c())
+	_cmp(cl, 128);
+	if (!flags.c())
 		return /* (gothand) */;
-	context.data.byte(kPointerframe) = 3;
-	context._test(context.cl, 4);
-	if (!context.flags.z())
+	data.byte(kPointerframe) = 3;
+	_test(cl, 4);
+	if (!flags.z())
 		return /* (gothand) */;
-	context.data.byte(kPointerframe) = 4;
-	context._test(context.cl, 16);
-	if (!context.flags.z())
+	data.byte(kPointerframe) = 4;
+	_test(cl, 16);
+	if (!flags.z())
 		return /* (gothand) */;
-	context.data.byte(kPointerframe) = 5;
-	context._test(context.cl, 2);
-	if (!context.flags.z())
+	data.byte(kPointerframe) = 5;
+	_test(cl, 2);
+	if (!flags.z())
 		return /* (gothand) */;
-	context.data.byte(kPointerframe) = 6;
-	context._test(context.cl, 8);
-	if (!context.flags.z())
+	data.byte(kPointerframe) = 6;
+	_test(cl, 8);
+	if (!flags.z())
 		return /* (gothand) */;
-	context.data.byte(kPointerframe) = 8;
+	data.byte(kPointerframe) = 8;
 	return;
 mousehand:
-	context._cmp(context.data.byte(kPointerspeed), 0);
-	if (context.flags.z())
+	_cmp(data.byte(kPointerspeed), 0);
+	if (flags.z())
 		goto rightspeed3;
-	context._dec(context.data.byte(kPointerspeed));
+	_dec(data.byte(kPointerspeed));
 	goto finflashmouse;
 rightspeed3:
-	context.data.byte(kPointerspeed) = 5;
-	context._inc(context.data.byte(kPointercount));
-	context._cmp(context.data.byte(kPointercount), 16);
-	if (!context.flags.z())
+	data.byte(kPointerspeed) = 5;
+	_inc(data.byte(kPointercount));
+	_cmp(data.byte(kPointercount), 16);
+	if (!flags.z())
 		goto finflashmouse;
-	context.data.byte(kPointercount) = 0;
+	data.byte(kPointercount) = 0;
 finflashmouse:
-	context.al = context.data.byte(kPointercount);
-	context.ah = 0;
-	context.bx = 5895;
-	context._add(context.bx, context.ax);
-	context.al = context.cs.byte(context.bx);
-	context.data.byte(kPointerframe) = context.al;
+	al = data.byte(kPointercount);
+	ah = 0;
+	bx = 5895;
+	_add(bx, ax);
+	al = cs.byte(bx);
+	data.byte(kPointerframe) = al;
 	return;
 combathand:
-	context.data.byte(kPointerframe) = 0;
-	context._cmp(context.data.byte(kReallocation), 14);
-	if (!context.flags.z())
+	data.byte(kPointerframe) = 0;
+	_cmp(data.byte(kReallocation), 14);
+	if (!flags.z())
 		return /* (notarrow) */;
-	context._cmp(context.data.byte(kCommandtype), 211);
-	if (!context.flags.z())
+	_cmp(data.byte(kCommandtype), 211);
+	if (!flags.z())
 		return /* (notarrow) */;
-	context.data.byte(kPointerframe) = 5;
+	data.byte(kPointerframe) = 5;
 }
 
-void readmouse(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kMousebutton);
-	context.data.word(kOldbutton) = context.ax;
-	context.ax = context.data.word(kMousex);
-	context.data.word(kOldx) = context.ax;
-	context.ax = context.data.word(kMousey);
-	context.data.word(kOldy) = context.ax;
-	mousecall(context);
-	context.data.word(kMousex) = context.cx;
-	context.data.word(kMousey) = context.dx;
-	context.data.word(kMousebutton) = context.bx;
+void DreamGenContext::readmouse() {
+	STACK_CHECK;
+	ax = data.word(kMousebutton);
+	data.word(kOldbutton) = ax;
+	ax = data.word(kMousex);
+	data.word(kOldx) = ax;
+	ax = data.word(kMousey);
+	data.word(kOldy) = ax;
+	mousecall();
+	data.word(kMousex) = cx;
+	data.word(kMousey) = dx;
+	data.word(kMousebutton) = bx;
 }
 
-void readmouse1(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kMousex);
-	context.data.word(kOldx) = context.ax;
-	context.ax = context.data.word(kMousey);
-	context.data.word(kOldy) = context.ax;
-	mousecall(context);
-	context.data.word(kMousex) = context.cx;
-	context.data.word(kMousey) = context.dx;
-	context.data.word(kMousebutton1) = context.bx;
+void DreamGenContext::readmouse1() {
+	STACK_CHECK;
+	ax = data.word(kMousex);
+	data.word(kOldx) = ax;
+	ax = data.word(kMousey);
+	data.word(kOldy) = ax;
+	mousecall();
+	data.word(kMousex) = cx;
+	data.word(kMousey) = dx;
+	data.word(kMousebutton1) = bx;
 }
 
-void readmouse2(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kMousex);
-	context.data.word(kOldx) = context.ax;
-	context.ax = context.data.word(kMousey);
-	context.data.word(kOldy) = context.ax;
-	mousecall(context);
-	context.data.word(kMousex) = context.cx;
-	context.data.word(kMousey) = context.dx;
-	context.data.word(kMousebutton2) = context.bx;
+void DreamGenContext::readmouse2() {
+	STACK_CHECK;
+	ax = data.word(kMousex);
+	data.word(kOldx) = ax;
+	ax = data.word(kMousey);
+	data.word(kOldy) = ax;
+	mousecall();
+	data.word(kMousex) = cx;
+	data.word(kMousey) = dx;
+	data.word(kMousebutton2) = bx;
 }
 
-void readmouse3(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kMousex);
-	context.data.word(kOldx) = context.ax;
-	context.ax = context.data.word(kMousey);
-	context.data.word(kOldy) = context.ax;
-	mousecall(context);
-	context.data.word(kMousex) = context.cx;
-	context.data.word(kMousey) = context.dx;
-	context.data.word(kMousebutton3) = context.bx;
+void DreamGenContext::readmouse3() {
+	STACK_CHECK;
+	ax = data.word(kMousex);
+	data.word(kOldx) = ax;
+	ax = data.word(kMousey);
+	data.word(kOldy) = ax;
+	mousecall();
+	data.word(kMousex) = cx;
+	data.word(kMousey) = dx;
+	data.word(kMousebutton3) = bx;
 }
 
-void readmouse4(Context &context) {
-	STACK_CHECK(context);
-	context.ax = context.data.word(kMousebutton);
-	context.data.word(kOldbutton) = context.ax;
-	context.ax = context.data.word(kMousex);
-	context.data.word(kOldx) = context.ax;
-	context.ax = context.data.word(kMousey);
-	context.data.word(kOldy) = context.ax;
-	mousecall(context);
-	context.data.word(kMousex) = context.cx;
-	context.data.word(kMousey) = context.dx;
-	context.ax = context.data.word(kMousebutton1);
-	context._or(context.ax, context.data.word(kMousebutton2));
-	context._or(context.ax, context.data.word(kMousebutton3));
-	context._or(context.bx, context.ax);
-	context.data.word(kMousebutton) = context.bx;
+void DreamGenContext::readmouse4() {
+	STACK_CHECK;
+	ax = data.word(kMousebutton);
+	data.word(kOldbutton) = ax;
+	ax = data.word(kMousex);
+	data.word(kOldx) = ax;
+	ax = data.word(kMousey);
+	data.word(kOldy) = ax;
+	mousecall();
+	data.word(kMousex) = cx;
+	data.word(kMousey) = dx;
+	ax = data.word(kMousebutton1);
+	_or(ax, data.word(kMousebutton2));
+	_or(ax, data.word(kMousebutton3));
+	_or(bx, ax);
+	data.word(kMousebutton) = bx;
 }
 
-void readkey(Context &context) {
-	STACK_CHECK(context);
-	context.bx = context.data.word(kBufferout);
-	context._cmp(context.bx, context.data.word(kBufferin));
-	if (context.flags.z())
+void DreamGenContext::readkey() {
+	STACK_CHECK;
+	bx = data.word(kBufferout);
+	_cmp(bx, data.word(kBufferin));
+	if (flags.z())
 		goto nokey;
-	context._inc(context.bx);
-	context._and(context.bx, 15);
-	context.data.word(kBufferout) = context.bx;
-	context.di = 5912;
-	context._add(context.di, context.bx);
-	context.al = context.cs.byte(context.di);
-	context.data.byte(kCurrentkey) = context.al;
+	_inc(bx);
+	_and(bx, 15);
+	data.word(kBufferout) = bx;
+	di = 5912;
+	_add(di, bx);
+	al = cs.byte(di);
+	data.byte(kCurrentkey) = al;
 	return;
 nokey:
-	context.data.byte(kCurrentkey) = 0;
+	data.byte(kCurrentkey) = 0;
 }
 
-void convertkey(Context &context) {
-	STACK_CHECK(context);
-	context._and(context.al, 127);
-	context.ah = 0;
-	context.di = 5928;
-	context._add(context.di, context.ax);
-	context.al = context.cs.byte(context.di);
+void DreamGenContext::convertkey() {
+	STACK_CHECK;
+	_and(al, 127);
+	ah = 0;
+	di = 5928;
+	_add(di, ax);
+	al = cs.byte(di);
 }
 
-void randomnum1(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ds);
-	context.push(context.es);
-	context.push(context.di);
-	context.push(context.bx);
-	context.push(context.cx);
-	randomnumber(context);
-	context.cx = context.pop();
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.es = context.pop();
-	context.ds = context.pop();
+void DreamGenContext::randomnum1() {
+	STACK_CHECK;
+	push(ds);
+	push(es);
+	push(di);
+	push(bx);
+	push(cx);
+	randomnumber();
+	cx = pop();
+	bx = pop();
+	di = pop();
+	es = pop();
+	ds = pop();
 }
 
-void randomnum2(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.ds);
-	context.push(context.es);
-	context.push(context.di);
-	context.push(context.bx);
-	context.push(context.ax);
-	randomnumber(context);
-	context.cl = context.al;
-	context.ax = context.pop();
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.es = context.pop();
-	context.ds = context.pop();
+void DreamGenContext::randomnum2() {
+	STACK_CHECK;
+	push(ds);
+	push(es);
+	push(di);
+	push(bx);
+	push(ax);
+	randomnumber();
+	cl = al;
+	ax = pop();
+	bx = pop();
+	di = pop();
+	es = pop();
+	ds = pop();
 }
 
-void hangon(Context &context) {
-	STACK_CHECK(context);
+void DreamGenContext::hangon() {
+	STACK_CHECK;
 hangonloop:
-	context.push(context.cx);
-	vsync(context);
-	context.cx = context.pop();
-	if (--context.cx)
+	push(cx);
+	vsync();
+	cx = pop();
+	if (--cx)
 		goto hangonloop;
 }
 
-void loadtraveltext(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 2234;
-	standardload(context);
-	context.data.word(kTraveltext) = context.ax;
+void DreamGenContext::loadtraveltext() {
+	STACK_CHECK;
+	dx = 2234;
+	standardload();
+	data.word(kTraveltext) = ax;
 }
 
-void loadintotemp(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.cs;
-	standardload(context);
-	context.data.word(kTempgraphics) = context.ax;
+void DreamGenContext::loadintotemp() {
+	STACK_CHECK;
+	ds = cs;
+	standardload();
+	data.word(kTempgraphics) = ax;
 }
 
-void loadintotemp2(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.cs;
-	standardload(context);
-	context.data.word(kTempgraphics2) = context.ax;
+void DreamGenContext::loadintotemp2() {
+	STACK_CHECK;
+	ds = cs;
+	standardload();
+	data.word(kTempgraphics2) = ax;
 }
 
-void loadintotemp3(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.cs;
-	standardload(context);
-	context.data.word(kTempgraphics3) = context.ax;
+void DreamGenContext::loadintotemp3() {
+	STACK_CHECK;
+	ds = cs;
+	standardload();
+	data.word(kTempgraphics3) = ax;
 }
 
-void loadtempcharset(Context &context) {
-	STACK_CHECK(context);
-	standardload(context);
-	context.data.word(kTempcharset) = context.ax;
+void DreamGenContext::loadtempcharset() {
+	STACK_CHECK;
+	standardload();
+	data.word(kTempcharset) = ax;
 }
 
-void standardload(Context &context) {
-	STACK_CHECK(context);
-	openfile(context);
-	readheader(context);
-	context.bx = context.es.word(context.di);
-	context.push(context.bx);
-	context.cl = 4;
-	context._shr(context.bx, context.cl);
-	allocatemem(context);
-	context.ds = context.ax;
-	context.cx = context.pop();
-	context.push(context.ax);
-	context.dx = 0;
-	readfromfile(context);
-	closefile(context);
-	context.ax = context.pop();
+void DreamGenContext::standardload() {
+	STACK_CHECK;
+	openfile();
+	readheader();
+	bx = es.word(di);
+	push(bx);
+	cl = 4;
+	_shr(bx, cl);
+	allocatemem();
+	ds = ax;
+	cx = pop();
+	push(ax);
+	dx = 0;
+	readfromfile();
+	closefile();
+	ax = pop();
 }
 
-void loadtemptext(Context &context) {
-	STACK_CHECK(context);
-	standardload(context);
-	context.data.word(kTextfile1) = context.ax;
+void DreamGenContext::loadtemptext() {
+	STACK_CHECK;
+	standardload();
+	data.word(kTextfile1) = ax;
 }
 
-void loadroom(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kRoomloaded) = 1;
-	context.data.word(kTimecount) = 0;
-	context.data.word(kMaintimer) = 0;
-	context.data.word(kMapoffsetx) = 104;
-	context.data.word(kMapoffsety) = 38;
-	context.data.word(kTextaddressx) = 13;
-	context.data.word(kTextaddressy) = 182;
-	context.data.byte(kTextlen) = 240;
-	context.al = context.data.byte(kNewlocation);
-	context.data.byte(kLocation) = context.al;
-	getroomdata(context);
-	startloading(context);
-	loadroomssample(context);
-	switchryanon(context);
-	drawflags(context);
-	getdimension(context);
+void DreamGenContext::loadroom() {
+	STACK_CHECK;
+	data.byte(kRoomloaded) = 1;
+	data.word(kTimecount) = 0;
+	data.word(kMaintimer) = 0;
+	data.word(kMapoffsetx) = 104;
+	data.word(kMapoffsety) = 38;
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
+	al = data.byte(kNewlocation);
+	data.byte(kLocation) = al;
+	getroomdata();
+	startloading();
+	loadroomssample();
+	switchryanon();
+	drawflags();
+	getdimension();
 }
 
-void loadroomssample(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kRoomssample);
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+void DreamGenContext::loadroomssample() {
+	STACK_CHECK;
+	al = data.byte(kRoomssample);
+	_cmp(al, 255);
+	if (flags.z())
 		return /* (loadedalready) */;
-	context._cmp(context.al, context.data.byte(kCurrentsample));
-	if (context.flags.z())
+	_cmp(al, data.byte(kCurrentsample));
+	if (flags.z())
 		return /* (loadedalready) */;
-	context.data.byte(kCurrentsample) = context.al;
-	context.al = context.data.byte(kCurrentsample);
-	context.cl = '0';
-	twodigitnum(context);
-	context.di = 1896;
-	context._xchg(context.al, context.ah);
-	context.cs.word(context.di+10) = context.ax;
-	context.dx = context.di;
-	loadsecondsample(context);
+	data.byte(kCurrentsample) = al;
+	al = data.byte(kCurrentsample);
+	cl = '0';
+	twodigitnum();
+	di = 1896;
+	_xchg(al, ah);
+	cs.word(di+10) = ax;
+	dx = di;
+	loadsecondsample();
 }
 
-void getridofreels(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kRoomloaded), 0);
-	if (context.flags.z())
+void DreamGenContext::getridofreels() {
+	STACK_CHECK;
+	_cmp(data.byte(kRoomloaded), 0);
+	if (flags.z())
 		return /* (dontgetrid) */;
-	context.es = context.data.word(kReel1);
-	deallocatemem(context);
-	context.es = context.data.word(kReel2);
-	deallocatemem(context);
-	context.es = context.data.word(kReel3);
-	deallocatemem(context);
+	es = data.word(kReel1);
+	deallocatemem();
+	es = data.word(kReel2);
+	deallocatemem();
+	es = data.word(kReel3);
+	deallocatemem();
 }
 
-void getridofall(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kBackdrop);
-	deallocatemem(context);
-	context.es = context.data.word(kSetframes);
-	deallocatemem(context);
-	context.es = context.data.word(kReel1);
-	deallocatemem(context);
-	context.es = context.data.word(kReel2);
-	deallocatemem(context);
-	context.es = context.data.word(kReel3);
-	deallocatemem(context);
-	context.es = context.data.word(kReels);
-	deallocatemem(context);
-	context.es = context.data.word(kPeople);
-	deallocatemem(context);
-	context.es = context.data.word(kSetdesc);
-	deallocatemem(context);
-	context.es = context.data.word(kBlockdesc);
-	deallocatemem(context);
-	context.es = context.data.word(kRoomdesc);
-	deallocatemem(context);
-	context.es = context.data.word(kFreeframes);
-	deallocatemem(context);
-	context.es = context.data.word(kFreedesc);
-	deallocatemem(context);
+void DreamGenContext::getridofall() {
+	STACK_CHECK;
+	es = data.word(kBackdrop);
+	deallocatemem();
+	es = data.word(kSetframes);
+	deallocatemem();
+	es = data.word(kReel1);
+	deallocatemem();
+	es = data.word(kReel2);
+	deallocatemem();
+	es = data.word(kReel3);
+	deallocatemem();
+	es = data.word(kReels);
+	deallocatemem();
+	es = data.word(kPeople);
+	deallocatemem();
+	es = data.word(kSetdesc);
+	deallocatemem();
+	es = data.word(kBlockdesc);
+	deallocatemem();
+	es = data.word(kRoomdesc);
+	deallocatemem();
+	es = data.word(kFreeframes);
+	deallocatemem();
+	es = data.word(kFreedesc);
+	deallocatemem();
 }
 
-void restorereels(Context &context) {
-	STACK_CHECK(context);
-	context._cmp(context.data.byte(kRoomloaded), 0);
-	if (context.flags.z())
+void DreamGenContext::restorereels() {
+	STACK_CHECK;
+	_cmp(data.byte(kRoomloaded), 0);
+	if (flags.z())
 		return /* (dontrestore) */;
-	context.al = context.data.byte(kReallocation);
-	getroomdata(context);
-	context.dx = context.bx;
-	openfile(context);
-	readheader(context);
-	dontloadseg(context);
-	dontloadseg(context);
-	dontloadseg(context);
-	dontloadseg(context);
-	allocateload(context);
-	context.data.word(kReel1) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kReel2) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kReel3) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	closefile(context);
+	al = data.byte(kReallocation);
+	getroomdata();
+	dx = bx;
+	openfile();
+	readheader();
+	dontloadseg();
+	dontloadseg();
+	dontloadseg();
+	dontloadseg();
+	allocateload();
+	data.word(kReel1) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReel2) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReel3) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	closefile();
 }
 
-void restoreall(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kLocation);
-	getroomdata(context);
-	context.dx = context.bx;
-	openfile(context);
-	readheader(context);
-	allocateload(context);
-	context.ds = context.ax;
-	context.data.word(kBackdrop) = context.ax;
-	context.dx = (0);
-	loadseg(context);
-	context.ds = context.data.word(kWorkspace);
-	context.dx = (0);
-	context.cx = 132*66;
-	context.al = 0;
-	fillspace(context);
-	loadseg(context);
-	sortoutmap(context);
-	allocateload(context);
-	context.data.word(kSetframes) = context.ax;
-	context.ds = context.ax;
-	context.dx = (0);
-	loadseg(context);
-	dontloadseg(context);
-	allocateload(context);
-	context.data.word(kReel1) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kReel2) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kReel3) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kReels) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kPeople) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kSetdesc) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kBlockdesc) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kRoomdesc) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kFreeframes) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	dontloadseg(context);
-	allocateload(context);
-	context.data.word(kFreedesc) = context.ax;
-	context.ds = context.ax;
-	context.dx = (0);
-	loadseg(context);
-	closefile(context);
-	setallchanges(context);
+void DreamGenContext::restoreall() {
+	STACK_CHECK;
+	al = data.byte(kLocation);
+	getroomdata();
+	dx = bx;
+	openfile();
+	readheader();
+	allocateload();
+	ds = ax;
+	data.word(kBackdrop) = ax;
+	dx = (0);
+	loadseg();
+	ds = data.word(kWorkspace);
+	dx = (0);
+	cx = 132*66;
+	al = 0;
+	fillspace();
+	loadseg();
+	sortoutmap();
+	allocateload();
+	data.word(kSetframes) = ax;
+	ds = ax;
+	dx = (0);
+	loadseg();
+	dontloadseg();
+	allocateload();
+	data.word(kReel1) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReel2) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReel3) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReels) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kPeople) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kSetdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kBlockdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kRoomdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kFreeframes) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	dontloadseg();
+	allocateload();
+	data.word(kFreedesc) = ax;
+	ds = ax;
+	dx = (0);
+	loadseg();
+	closefile();
+	setallchanges();
 }
 
-void sortoutmap(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.di);
-	context.ds = context.data.word(kWorkspace);
-	context.si = 0;
-	context.es = context.data.word(kMapdata);
-	context.di = 0;
-	context.cx = (60);
+void DreamGenContext::sortoutmap() {
+	STACK_CHECK;
+	push(es);
+	push(di);
+	ds = data.word(kWorkspace);
+	si = 0;
+	es = data.word(kMapdata);
+	di = 0;
+	cx = (60);
 blimey:
-	context.push(context.cx);
-	context.push(context.si);
-	context.cx = (66);
-	context._movsb(context.cx);
-	context.si = context.pop();
-	context.cx = context.pop();
-	context._add(context.si, 132);
-	if (--context.cx)
+	push(cx);
+	push(si);
+	cx = (66);
+	_movsb(cx);
+	si = pop();
+	cx = pop();
+	_add(si, 132);
+	if (--cx)
 		goto blimey;
-	context.di = context.pop();
-	context.es = context.pop();
+	di = pop();
+	es = pop();
 }
 
-void startloading(Context &context) {
-	STACK_CHECK(context);
-	context.data.byte(kCombatcount) = 0;
-	context.al = context.cs.byte(context.bx+13);
-	context.data.byte(kRoomssample) = context.al;
-	context.al = context.cs.byte(context.bx+15);
-	context.data.byte(kMapx) = context.al;
-	context.al = context.cs.byte(context.bx+16);
-	context.data.byte(kMapy) = context.al;
-	context.al = context.cs.byte(context.bx+20);
-	context.data.byte(kLiftflag) = context.al;
-	context.al = context.cs.byte(context.bx+21);
-	context.data.byte(kManspath) = context.al;
-	context.data.byte(kDestination) = context.al;
-	context.data.byte(kFinaldest) = context.al;
-	context.al = context.cs.byte(context.bx+22);
-	context.data.byte(kFacing) = context.al;
-	context.data.byte(kTurntoface) = context.al;
-	context.al = context.cs.byte(context.bx+23);
-	context.data.byte(kCounttoopen) = context.al;
-	context.al = context.cs.byte(context.bx+24);
-	context.data.byte(kLiftpath) = context.al;
-	context.al = context.cs.byte(context.bx+25);
-	context.data.byte(kDoorpath) = context.al;
-	context.data.byte(kLastweapon) = -1;
-	context.al = context.cs.byte(context.bx+27);
-	context.push(context.ax);
-	context.al = context.cs.byte(context.bx+31);
-	context.ah = context.data.byte(kReallocation);
-	context.data.byte(kReallocation) = context.al;
-	context.dx = context.bx;
-	openfile(context);
-	readheader(context);
-	allocateload(context);
-	context.ds = context.ax;
-	context.data.word(kBackdrop) = context.ax;
-	context.dx = (0);
-	loadseg(context);
-	context.ds = context.data.word(kWorkspace);
-	context.dx = (0);
-	context.cx = 132*66;
-	context.al = 0;
-	fillspace(context);
-	loadseg(context);
-	sortoutmap(context);
-	allocateload(context);
-	context.data.word(kSetframes) = context.ax;
-	context.ds = context.ax;
-	context.dx = (0);
-	loadseg(context);
-	context.ds = context.data.word(kSetdat);
-	context.dx = 0;
-	context.cx = (64*128);
-	context.al = 255;
-	fillspace(context);
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kReel1) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kReel2) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kReel3) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kReels) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kPeople) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kSetdesc) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kBlockdesc) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kRoomdesc) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kFreeframes) = context.ax;
-	context.ds = context.ax;
-	context.dx = 0;
-	loadseg(context);
-	context.ds = context.data.word(kFreedat);
-	context.dx = 0;
-	context.cx = (16*80);
-	context.al = 255;
-	fillspace(context);
-	loadseg(context);
-	allocateload(context);
-	context.data.word(kFreedesc) = context.ax;
-	context.ds = context.ax;
-	context.dx = (0);
-	loadseg(context);
-	closefile(context);
-	findroominloc(context);
-	deletetaken(context);
-	setallchanges(context);
-	autoappear(context);
-	context.al = context.data.byte(kNewlocation);
-	getroomdata(context);
-	context.data.byte(kLastweapon) = -1;
-	context.data.byte(kMandead) = 0;
-	context.data.word(kLookcounter) = 160;
-	context.data.byte(kNewlocation) = 255;
-	context.data.byte(kLinepointer) = 254;
-	context.ax = context.pop();
-	context._cmp(context.al, 255);
-	if (context.flags.z())
+void DreamGenContext::startloading() {
+	STACK_CHECK;
+	data.byte(kCombatcount) = 0;
+	al = cs.byte(bx+13);
+	data.byte(kRoomssample) = al;
+	al = cs.byte(bx+15);
+	data.byte(kMapx) = al;
+	al = cs.byte(bx+16);
+	data.byte(kMapy) = al;
+	al = cs.byte(bx+20);
+	data.byte(kLiftflag) = al;
+	al = cs.byte(bx+21);
+	data.byte(kManspath) = al;
+	data.byte(kDestination) = al;
+	data.byte(kFinaldest) = al;
+	al = cs.byte(bx+22);
+	data.byte(kFacing) = al;
+	data.byte(kTurntoface) = al;
+	al = cs.byte(bx+23);
+	data.byte(kCounttoopen) = al;
+	al = cs.byte(bx+24);
+	data.byte(kLiftpath) = al;
+	al = cs.byte(bx+25);
+	data.byte(kDoorpath) = al;
+	data.byte(kLastweapon) = -1;
+	al = cs.byte(bx+27);
+	push(ax);
+	al = cs.byte(bx+31);
+	ah = data.byte(kReallocation);
+	data.byte(kReallocation) = al;
+	dx = bx;
+	openfile();
+	readheader();
+	allocateload();
+	ds = ax;
+	data.word(kBackdrop) = ax;
+	dx = (0);
+	loadseg();
+	ds = data.word(kWorkspace);
+	dx = (0);
+	cx = 132*66;
+	al = 0;
+	fillspace();
+	loadseg();
+	sortoutmap();
+	allocateload();
+	data.word(kSetframes) = ax;
+	ds = ax;
+	dx = (0);
+	loadseg();
+	ds = data.word(kSetdat);
+	dx = 0;
+	cx = (64*128);
+	al = 255;
+	fillspace();
+	loadseg();
+	allocateload();
+	data.word(kReel1) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReel2) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReel3) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReels) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kPeople) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kSetdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kBlockdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kRoomdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kFreeframes) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	ds = data.word(kFreedat);
+	dx = 0;
+	cx = (16*80);
+	al = 255;
+	fillspace();
+	loadseg();
+	allocateload();
+	data.word(kFreedesc) = ax;
+	ds = ax;
+	dx = (0);
+	loadseg();
+	closefile();
+	findroominloc();
+	deletetaken();
+	setallchanges();
+	autoappear();
+	al = data.byte(kNewlocation);
+	getroomdata();
+	data.byte(kLastweapon) = -1;
+	data.byte(kMandead) = 0;
+	data.word(kLookcounter) = 160;
+	data.byte(kNewlocation) = 255;
+	data.byte(kLinepointer) = 254;
+	ax = pop();
+	_cmp(al, 255);
+	if (flags.z())
 		goto dontwalkin;
-	context.data.byte(kManspath) = context.al;
-	context.push(context.bx);
-	autosetwalk(context);
-	context.bx = context.pop();
+	data.byte(kManspath) = al;
+	push(bx);
+	autosetwalk();
+	bx = pop();
 dontwalkin:
-	findxyfrompath(context);
+	findxyfrompath();
 }
 
-void disablepath(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.cx);
-	context._xchg(context.al, context.ah);
-	context.cx = -6;
+void DreamGenContext::disablepath() {
+	STACK_CHECK;
+	push(cx);
+	_xchg(al, ah);
+	cx = -6;
 looky2:
-	context._add(context.cx, 6);
-	context._sub(context.al, 10);
-	if (!context.flags.c())
+	_add(cx, 6);
+	_sub(al, 10);
+	if (!flags.c())
 		goto looky2;
-	context.al = context.ah;
-	context._dec(context.cx);
+	al = ah;
+	_dec(cx);
 lookx2:
-	context._inc(context.cx);
-	context._sub(context.al, 11);
-	if (!context.flags.c())
+	_inc(cx);
+	_sub(al, 11);
+	if (!flags.c())
 		goto lookx2;
-	context.al = context.cl;
-	context.ah = 0;
-	context.cx = 144;
-	context._mul(context.cx);
-	context.es = context.data.word(kReels);
-	context.bx = (0);
-	context._add(context.bx, context.ax);
-	context.ax = context.pop();
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.al = 0;
-	context.es.byte(context.bx+6) = context.al;
+	al = cl;
+	ah = 0;
+	cx = 144;
+	_mul(cx);
+	es = data.word(kReels);
+	bx = (0);
+	_add(bx, ax);
+	ax = pop();
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(bx, ax);
+	al = 0;
+	es.byte(bx+6) = al;
 }
 
-void findxyfrompath(Context &context) {
-	STACK_CHECK(context);
-	getroomspaths(context);
-	context.al = context.data.byte(kManspath);
-	context.ah = 0;
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.ax, context.ax);
-	context._add(context.bx, context.ax);
-	context.ax = context.es.word(context.bx);
-	context._sub(context.al, 12);
-	context._sub(context.ah, 12);
-	context.data.byte(kRyanx) = context.al;
-	context.data.byte(kRyany) = context.ah;
+void DreamGenContext::findxyfrompath() {
+	STACK_CHECK;
+	getroomspaths();
+	al = data.byte(kManspath);
+	ah = 0;
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(ax, ax);
+	_add(bx, ax);
+	ax = es.word(bx);
+	_sub(al, 12);
+	_sub(ah, 12);
+	data.byte(kRyanx) = al;
+	data.byte(kRyany) = ah;
 }
 
-void findroominloc(Context &context) {
-	STACK_CHECK(context);
-	context.al = context.data.byte(kMapy);
-	context.cx = -6;
+void DreamGenContext::findroominloc() {
+	STACK_CHECK;
+	al = data.byte(kMapy);
+	cx = -6;
 looky:
-	context._add(context.cx, 6);
-	context._sub(context.al, 10);
-	if (!context.flags.c())
+	_add(cx, 6);
+	_sub(al, 10);
+	if (!flags.c())
 		goto looky;
-	context.al = context.data.byte(kMapx);
-	context._dec(context.cx);
+	al = data.byte(kMapx);
+	_dec(cx);
 lookx:
-	context._inc(context.cx);
-	context._sub(context.al, 11);
-	if (!context.flags.c())
+	_inc(cx);
+	_sub(al, 11);
+	if (!flags.c())
 		goto lookx;
-	context.data.byte(kRoomnum) = context.cl;
+	data.byte(kRoomnum) = cl;
 }
 
-void getroomdata(Context &context) {
-	STACK_CHECK(context);
-	context.ah = 0;
-	context.cx = 32;
-	context._mul(context.cx);
-	context.bx = 6187;
-	context._add(context.bx, context.ax);
+void DreamGenContext::getroomdata() {
+	STACK_CHECK;
+	ah = 0;
+	cx = 32;
+	_mul(cx);
+	bx = 6187;
+	_add(bx, ax);
 }
 
-void readheader(Context &context) {
-	STACK_CHECK(context);
-	context.ds = context.cs;
-	context.dx = 6091;
-	context.cx = (6187-6091);
-	readfromfile(context);
-	context.es = context.cs;
-	context.di = 6141;
+void DreamGenContext::readheader() {
+	STACK_CHECK;
+	ds = cs;
+	dx = 6091;
+	cx = (6187-6091);
+	readfromfile();
+	es = cs;
+	di = 6141;
 }
 
-void allocateload(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.di);
-	context.bx = context.es.word(context.di);
-	context.cl = 4;
-	context._shr(context.bx, context.cl);
-	allocatemem(context);
-	context.di = context.pop();
-	context.es = context.pop();
+void DreamGenContext::allocateload() {
+	STACK_CHECK;
+	push(es);
+	push(di);
+	bx = es.word(di);
+	cl = 4;
+	_shr(bx, cl);
+	allocatemem();
+	di = pop();
+	es = pop();
 }
 
-void fillspace(Context &context) {
-	STACK_CHECK(context);
-	context.push(context.es);
-	context.push(context.ds);
-	context.push(context.dx);
-	context.push(context.di);
-	context.push(context.bx);
-	context.di = context.dx;
-	context.es = context.ds;
-	context._stosb(context.cx);
-	context.bx = context.pop();
-	context.di = context.pop();
-	context.dx = context.pop();
-	context.ds = context.pop();
-	context.es = context.pop();
+void DreamGenContext::fillspace() {
+	STACK_CHECK;
+	push(es);
+	push(ds);
+	push(dx);
+	push(di);
+	push(bx);
+	di = dx;
+	es = ds;
+	_stosb(cx);
+	bx = pop();
+	di = pop();
+	dx = pop();
+	ds = pop();
+	es = pop();
 }
 
-void getridoftemp(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kTempgraphics);
-	deallocatemem(context);
+void DreamGenContext::getridoftemp() {
+	STACK_CHECK;
+	es = data.word(kTempgraphics);
+	deallocatemem();
 }
 
-void getridoftemptext(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kTextfile1);
-	deallocatemem(context);
+void DreamGenContext::getridoftemptext() {
+	STACK_CHECK;
+	es = data.word(kTextfile1);
+	deallocatemem();
 }
 
-void getridoftemp2(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kTempgraphics2);
-	deallocatemem(context);
+void DreamGenContext::getridoftemp2() {
+	STACK_CHECK;
+	es = data.word(kTempgraphics2);
+	deallocatemem();
 }
 
-void getridoftemp3(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kTempgraphics3);
-	deallocatemem(context);
+void DreamGenContext::getridoftemp3() {
+	STACK_CHECK;
+	es = data.word(kTempgraphics3);
+	deallocatemem();
 }
 
-void getridoftempcharset(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kTempcharset);
-	deallocatemem(context);
+void DreamGenContext::getridoftempcharset() {
+	STACK_CHECK;
+	es = data.word(kTempcharset);
+	deallocatemem();
 }
 
-void getridoftempsp(Context &context) {
-	STACK_CHECK(context);
-	context.es = context.data.word(kTempsprites);
-	deallocatemem(context);
+void DreamGenContext::getridoftempsp() {
+	STACK_CHECK;
+	es = data.word(kTempsprites);
+	deallocatemem();
 }
 
-void readsetdata(Context &context) {
-	STACK_CHECK(context);
-	context.dx = 1857;
-	standardload(context);
-	context.data.word(kCharset1) = context.ax;
-	context.dx = 1922;
-	standardload(context);
-	context.data.word(kIcons1) = context.ax;
-	context.dx = 1935;
-	standardload(context);
-	context.data.word(kIcons2) = context.ax;
-	context.dx = 1819;
-	standardload(context);
-	context.data.word(kMainsprites) = context.ax;
-	context.dx = 2221;
-	standardload(context);
-	context.data.word(kPuzzletext) = context.ax;
-	context.dx = 2273;
-	standardload(context);
-	context.data.word(kCommandtext) = context.ax;
-	context.ax = context.data.word(kCharset1);
-	context.data.word(kCurrentset) = context.ax;
-	context._cmp(context.data.byte(kSoundint), 255);
-	if (context.flags.z())
+void DreamGenContext::readsetdata() {
+	STACK_CHECK;
+	dx = 1857;
+	standardload();
+	data.word(kCharset1) = ax;
+	dx = 1922;
+	standardload();
+	data.word(kIcons1) = ax;
+	dx = 1935;
+	standardload();
+	data.word(kIcons2) = ax;
+	dx = 1819;
+	standardload();
+	data.word(kMainsprites) = ax;
+	dx = 2221;
+	standardload();
+	data.word(kPuzzletext) = ax;
+	dx = 2273;
+	standardload();
+	data.word(kCommandtext) = ax;
+	ax = data.word(kCharset1);
+	data.word(kCurrentset) = ax;
+	_cmp(data.byte(kSoundint), 255);
+	if (flags.z())
 		return /* (novolumeload) */;
-	context.dx = 2286;
-	openfile(context);
-	context.cx = 2048-256;
-	context.ds = context.data.word(kSoundbuffer);
-	context.dx = 16384;
-	readfromfile(context);
-	closefile(context);
+	dx = 2286;
+	openfile();
+	cx = 2048-256;
+	ds = data.word(kSoundbuffer);
+	dx = 16384;
+	readfromfile();
+	closefile();
 }
 
-void makename(Context &context) {
-	STACK_CHECK(context);
-	context.si = context.dx;
-	context.di = 6061;
+void DreamGenContext::makename() {
+	STACK_CHECK;
+	si = dx;
+	di = 6061;
 transfer:
-	context.al = context.cs.byte(context.si);
-	context.cs.byte(context.di) = context.al;
-	context._inc(context.si);
-	context._inc(context.di);
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+	al = cs.byte(si);
+	cs.byte(di) = al;
+	_inc(si);
+	_inc(di);
+	_cmp(al, 0);
+	if (!flags.z())
 		goto transfer;
-	context.dx = 6059;
+	dx = 6059;
 }
 
-void dreamweb(Context &context) {
-	STACK_CHECK(context);
-	seecommandtail(context);
-	checkbasemem(context);
-	soundstartup(context);
-	setkeyboardint(context);
-	setupemm(context);
-	allocatebuffers(context);
-	setmouse(context);
-	fadedos(context);
-	gettime(context);
-	clearbuffers(context);
-	clearpalette(context);
-	set16colpalette(context);
-	readsetdata(context);
-	context.data.byte(kWongame) = 0;
-	context.dx = 1909;
-	loadsample(context);
-	setsoundoff(context);
-	scanfornames(context);
-	context._cmp(context.al, 0);
-	if (!context.flags.z())
+void DreamGenContext::dreamweb() {
+	STACK_CHECK;
+	seecommandtail();
+	checkbasemem();
+	soundstartup();
+	setkeyboardint();
+	setupemm();
+	allocatebuffers();
+	setmouse();
+	fadedos();
+	gettime();
+	clearbuffers();
+	clearpalette();
+	set16colpalette();
+	readsetdata();
+	data.byte(kWongame) = 0;
+	dx = 1909;
+	loadsample();
+	setsoundoff();
+	scanfornames();
+	_cmp(al, 0);
+	if (!flags.z())
 		goto dodecisions;
-	setmode(context);
-	loadpalfromiff(context);
-	titles(context);
-	credits(context);
+	setmode();
+	loadpalfromiff();
+	titles();
+	credits();
 	goto playgame;
 dodecisions:
-	cls(context);
-	setmode(context);
-	decide(context);
-	context._cmp(context.data.byte(kGetback), 4);
-	if (context.flags.z())
+	cls();
+	setmode();
+	decide();
+	_cmp(data.byte(kGetback), 4);
+	if (flags.z())
 		goto mainloop;
-	titles(context);
-	credits(context);
+	titles();
+	credits();
 playgame:
-	clearchanges(context);
-	setmode(context);
-	loadpalfromiff(context);
-	context.data.byte(kLocation) = 255;
-	context.data.byte(kRoomafterdream) = 1;
-	context.data.byte(kNewlocation) = 35;
-	context.data.byte(kVolume) = 7;
-	loadroom(context);
-	clearsprites(context);
-	initman(context);
-	entrytexts(context);
-	entryanims(context);
-	context.data.byte(kDestpos) = 3;
-	initialinv(context);
-	context.data.byte(kLastflag) = 32;
-	startup1(context);
-	context.data.byte(kVolumeto) = 0;
-	context.data.byte(kVolumedirection) = -1;
-	context.data.byte(kCommandtype) = 255;
+	clearchanges();
+	setmode();
+	loadpalfromiff();
+	data.byte(kLocation) = 255;
+	data.byte(kRoomafterdream) = 1;
+	data.byte(kNewlocation) = 35;
+	data.byte(kVolume) = 7;
+	loadroom();
+	clearsprites();
+	initman();
+	entrytexts();
+	entryanims();
+	data.byte(kDestpos) = 3;
+	initialinv();
+	data.byte(kLastflag) = 32;
+	startup1();
+	data.byte(kVolumeto) = 0;
+	data.byte(kVolumedirection) = -1;
+	data.byte(kCommandtype) = 255;
 	goto mainloop;
 loadnew:
-	clearbeforeload(context);
-	loadroom(context);
-	clearsprites(context);
-	initman(context);
-	entrytexts(context);
-	entryanims(context);
-	context.data.byte(kNewlocation) = 255;
-	startup(context);
-	context.data.byte(kCommandtype) = 255;
-	worktoscreenm(context);
+	clearbeforeload();
+	loadroom();
+	clearsprites();
+	initman();
+	entrytexts();
+	entryanims();
+	data.byte(kNewlocation) = 255;
+	startup();
+	data.byte(kCommandtype) = 255;
+	worktoscreenm();
 	goto mainloop;
-	context.data.byte(kNewlocation) = 255;
-	clearsprites(context);
-	initman(context);
-	startup(context);
-	context.data.byte(kCommandtype) = 255;
+	data.byte(kNewlocation) = 255;
+	clearsprites();
+	initman();
+	startup();
+	data.byte(kCommandtype) = 255;
 mainloop:
-	screenupdate(context);
-	context._cmp(context.data.byte(kWongame), 0);
-	if (!context.flags.z())
+	screenupdate();
+	_cmp(data.byte(kWongame), 0);
+	if (!flags.z())
 		goto endofgame;
-	context._cmp(context.data.byte(kMandead), 1);
-	if (context.flags.z())
+	_cmp(data.byte(kMandead), 1);
+	if (flags.z())
 		goto gameover;
-	context._cmp(context.data.byte(kMandead), 2);
-	if (context.flags.z())
+	_cmp(data.byte(kMandead), 2);
+	if (flags.z())
 		goto gameover;
-	context._cmp(context.data.word(kWatchingtime), 0);
-	if (context.flags.z())
+	_cmp(data.word(kWatchingtime), 0);
+	if (flags.z())
 		goto notwatching;
-	context.al = context.data.byte(kFinaldest);
-	context._cmp(context.al, context.data.byte(kManspath));
-	if (!context.flags.z())
+	al = data.byte(kFinaldest);
+	_cmp(al, data.byte(kManspath));
+	if (!flags.z())
 		goto mainloop;
-	context._dec(context.data.word(kWatchingtime));
-	if (!context.flags.z())
+	_dec(data.word(kWatchingtime));
+	if (!flags.z())
 		goto mainloop;
 notwatching:
-	context._cmp(context.data.byte(kMandead), 4);
-	if (context.flags.z())
+	_cmp(data.byte(kMandead), 4);
+	if (flags.z())
 		goto gameover;
-	context._cmp(context.data.byte(kNewlocation), 255);
-	if (!context.flags.z())
+	_cmp(data.byte(kNewlocation), 255);
+	if (!flags.z())
 		goto loadnew;
 	goto mainloop;
 gameover:
-	clearbeforeload(context);
-	showgun(context);
-	fadescreendown(context);
-	context.cx = 100;
-	hangon(context);
+	clearbeforeload();
+	showgun();
+	fadescreendown();
+	cx = 100;
+	hangon();
 	goto dodecisions;
 endofgame:
-	clearbeforeload(context);
-	fadescreendowns(context);
-	context.cx = 200;
-	hangon(context);
-	endgame(context);
-	{ quickquit2(context); return; };
+	clearbeforeload();
+	fadescreendowns();
+	cx = 200;
+	hangon();
+	endgame();
+	{ quickquit2(); return; };
 }
 
 
 
-void __start(Context &context) { 
+void DreamGenContext::__start() { 
 	static const uint8 src[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x13, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 
@@ -22446,756 +21973,756 @@ void __start(Context &context) {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, };
-	context.ds.assign(src, src + sizeof(src));
-dreamweb(context); 
+	ds.assign(src, src + sizeof(src));
+dreamweb(); 
 }
 
-void __dispatch_call(Context &context, unsigned addr) {
+void DreamGenContext::__dispatch_call(uint16 addr) {
 	switch(addr) {
-		case 0xc000: alleybarksound(context); break;
-		case 0xc004: intromusic(context); break;
-		case 0xc008: foghornsound(context); break;
-		case 0xc00c: receptionist(context); break;
-		case 0xc010: smokebloke(context); break;
-		case 0xc014: attendant(context); break;
-		case 0xc018: manasleep(context); break;
-		case 0xc01c: eden(context); break;
-		case 0xc020: edeninbath(context); break;
-		case 0xc024: malefan(context); break;
-		case 0xc028: femalefan(context); break;
-		case 0xc02c: louis(context); break;
-		case 0xc030: louischair(context); break;
-		case 0xc034: manasleep2(context); break;
-		case 0xc038: mansatstill(context); break;
-		case 0xc03c: tattooman(context); break;
-		case 0xc040: drinker(context); break;
-		case 0xc044: bartender(context); break;
-		case 0xc048: othersmoker(context); break;
-		case 0xc04c: barwoman(context); break;
-		case 0xc050: interviewer(context); break;
-		case 0xc054: soldier1(context); break;
-		case 0xc058: rockstar(context); break;
-		case 0xc05c: helicopter(context); break;
-		case 0xc060: mugger(context); break;
-		case 0xc064: aide(context); break;
-		case 0xc068: businessman(context); break;
-		case 0xc06c: poolguard(context); break;
-		case 0xc070: security(context); break;
-		case 0xc074: heavy(context); break;
-		case 0xc078: bossman(context); break;
-		case 0xc07c: gamer(context); break;
-		case 0xc080: sparkydrip(context); break;
-		case 0xc084: carparkdrip(context); break;
-		case 0xc088: keeper(context); break;
-		case 0xc08c: candles1(context); break;
-		case 0xc090: smallcandle(context); break;
-		case 0xc094: intromagic1(context); break;
-		case 0xc098: candles(context); break;
-		case 0xc09c: candles2(context); break;
-		case 0xc0a0: gates(context); break;
-		case 0xc0a4: intromagic2(context); break;
-		case 0xc0a8: intromagic3(context); break;
-		case 0xc0ac: intromonks1(context); break;
-		case 0xc0b0: intromonks2(context); break;
-		case 0xc0b4: handclap(context); break;
-		case 0xc0b8: monks2text(context); break;
-		case 0xc0bc: intro1text(context); break;
-		case 0xc0c0: intro2text(context); break;
-		case 0xc0c4: intro3text(context); break;
-		case 0xc0c8: monkandryan(context); break;
-		case 0xc0cc: endgameseq(context); break;
-		case 0xc0d0: rollendcredits(context); break;
-		case 0xc0d4: priest(context); break;
-		case 0xc0d8: madmanstelly(context); break;
-		case 0xc0dc: madman(context); break;
-		case 0xc0e0: madmantext(context); break;
-		case 0xc0e4: madmode(context); break;
-		case 0xc0e8: priesttext(context); break;
-		case 0xc0ec: textforend(context); break;
-		case 0xc0f0: textformonk(context); break;
-		case 0xc0f4: drunk(context); break;
-		case 0xc0f8: advisor(context); break;
-		case 0xc0fc: copper(context); break;
-		case 0xc100: sparky(context); break;
-		case 0xc104: train(context); break;
-		case 0xc108: addtopeoplelist(context); break;
-		case 0xc10c: showgamereel(context); break;
-		case 0xc110: checkspeed(context); break;
-		case 0xc114: clearsprites(context); break;
-		case 0xc118: makesprite(context); break;
-		case 0xc11c: delsprite(context); break;
-		case 0xc120: spriteupdate(context); break;
-		case 0xc124: printsprites(context); break;
-		case 0xc128: printasprite(context); break;
-		case 0xc12c: checkone(context); break;
-		case 0xc130: findsource(context); break;
-		case 0xc134: initman(context); break;
-		case 0xc138: mainman(context); break;
-		case 0xc13c: aboutturn(context); break;
-		case 0xc140: walking(context); break;
-		case 0xc144: facerightway(context); break;
-		case 0xc148: checkforexit(context); break;
-		case 0xc14c: adjustdown(context); break;
-		case 0xc150: adjustup(context); break;
-		case 0xc154: adjustleft(context); break;
-		case 0xc158: adjustright(context); break;
-		case 0xc15c: reminders(context); break;
-		case 0xc160: initrain(context); break;
-		case 0xc164: splitintolines(context); break;
-		case 0xc168: getblockofpixel(context); break;
-		case 0xc16c: showrain(context); break;
-		case 0xc170: backobject(context); break;
-		case 0xc174: liftsprite(context); break;
-		case 0xc178: liftnoise(context); break;
-		case 0xc17c: random(context); break;
-		case 0xc180: steady(context); break;
-		case 0xc184: constant(context); break;
-		case 0xc188: doorway(context); break;
-		case 0xc18c: widedoor(context); break;
-		case 0xc190: dodoor(context); break;
-		case 0xc194: lockeddoorway(context); break;
-		case 0xc198: updatepeople(context); break;
-		case 0xc19c: getreelframeax(context); break;
-		case 0xc1a0: reelsonscreen(context); break;
-		case 0xc1a4: plotreel(context); break;
-		case 0xc1a8: soundonreels(context); break;
-		case 0xc1ac: reconstruct(context); break;
-		case 0xc1b0: dealwithspecial(context); break;
-		case 0xc1b4: movemap(context); break;
-		case 0xc1b8: getreelstart(context); break;
-		case 0xc1bc: showreelframe(context); break;
-		case 0xc1c0: deleverything(context); break;
-		case 0xc1c4: dumpeverything(context); break;
-		case 0xc1c8: allocatework(context); break;
-		case 0xc1cc: showpcx(context); break;
-		case 0xc1d0: readabyte(context); break;
-		case 0xc1d4: readoneblock(context); break;
-		case 0xc1d8: loadpalfromiff(context); break;
-		case 0xc1dc: setmode(context); break;
-		case 0xc1ec: paneltomap(context); break;
-		case 0xc1f0: maptopanel(context); break;
-		case 0xc1f4: dumpmap(context); break;
-		case 0xc1f8: pixelcheckset(context); break;
-		case 0xc1fc: createpanel(context); break;
-		case 0xc200: createpanel2(context); break;
-		case 0xc204: clearwork(context); break;
-		case 0xc208: vsync(context); break;
-		case 0xc20c: doshake(context); break;
-		case 0xc210: zoom(context); break;
-		case 0xc214: delthisone(context); break;
-		case 0xc228: doblocks(context); break;
-		case 0xc22c: showframe(context); break;
-		case 0xc230: frameoutv(context); break;
-		case 0xc238: frameoutbh(context); break;
-		case 0xc23c: frameoutfx(context); break;
-		case 0xc240: transferinv(context); break;
-		case 0xc244: transfermap(context); break;
-		case 0xc248: fadedos(context); break;
-		case 0xc24c: dofade(context); break;
-		case 0xc250: clearendpal(context); break;
-		case 0xc254: clearpalette(context); break;
-		case 0xc258: fadescreenup(context); break;
-		case 0xc25c: fadetowhite(context); break;
-		case 0xc260: fadefromwhite(context); break;
-		case 0xc264: fadescreenups(context); break;
-		case 0xc268: fadescreendownhalf(context); break;
-		case 0xc26c: fadescreenuphalf(context); break;
-		case 0xc270: fadescreendown(context); break;
-		case 0xc274: fadescreendowns(context); break;
-		case 0xc278: clearstartpal(context); break;
-		case 0xc27c: showgun(context); break;
-		case 0xc280: rollendcredits2(context); break;
-		case 0xc284: rollem(context); break;
-		case 0xc288: fadecalculation(context); break;
-		case 0xc28c: greyscalesum(context); break;
-		case 0xc290: showgroup(context); break;
-		case 0xc294: paltostartpal(context); break;
-		case 0xc298: endpaltostart(context); break;
-		case 0xc29c: startpaltoend(context); break;
-		case 0xc2a0: paltoendpal(context); break;
-		case 0xc2a4: allpalette(context); break;
-		case 0xc2a8: dumpcurrent(context); break;
-		case 0xc2ac: fadedownmon(context); break;
-		case 0xc2b0: fadeupmon(context); break;
-		case 0xc2b4: fadeupmonfirst(context); break;
-		case 0xc2b8: fadeupyellows(context); break;
-		case 0xc2bc: initialmoncols(context); break;
-		case 0xc2c0: titles(context); break;
-		case 0xc2c4: endgame(context); break;
-		case 0xc2c8: monkspeaking(context); break;
-		case 0xc2cc: showmonk(context); break;
-		case 0xc2d0: gettingshot(context); break;
-		case 0xc2d4: credits(context); break;
-		case 0xc2d8: biblequote(context); break;
-		case 0xc2dc: hangone(context); break;
-		case 0xc2e0: intro(context); break;
-		case 0xc2e4: runintroseq(context); break;
-		case 0xc2e8: runendseq(context); break;
-		case 0xc2ec: loadintroroom(context); break;
-		case 0xc2f0: mode640x480(context); break;
-		case 0xc2f4: set16colpalette(context); break;
-		case 0xc2f8: realcredits(context); break;
-		case 0xc2fc: printchar(context); break;
-		case 0xc300: kernchars(context); break;
-		case 0xc304: printslow(context); break;
-		case 0xc308: waitframes(context); break;
-		case 0xc30c: printboth(context); break;
-		case 0xc310: printdirect(context); break;
-		case 0xc314: monprint(context); break;
-		case 0xc318: getnumber(context); break;
-		case 0xc31c: getnextword(context); break;
-		case 0xc320: fillryan(context); break;
-		case 0xc324: fillopen(context); break;
-		case 0xc328: findallryan(context); break;
-		case 0xc32c: findallopen(context); break;
-		case 0xc330: obtoinv(context); break;
-		case 0xc334: isitworn(context); break;
-		case 0xc338: makeworn(context); break;
-		case 0xc33c: examineob(context); break;
-		case 0xc340: makemainscreen(context); break;
-		case 0xc344: getbackfromob(context); break;
-		case 0xc348: incryanpage(context); break;
-		case 0xc34c: openinv(context); break;
-		case 0xc350: showryanpage(context); break;
-		case 0xc354: openob(context); break;
-		case 0xc358: obicons(context); break;
-		case 0xc35c: examicon(context); break;
-		case 0xc360: obpicture(context); break;
-		case 0xc364: describeob(context); break;
-		case 0xc368: additionaltext(context); break;
-		case 0xc36c: obsthatdothings(context); break;
-		case 0xc370: getobtextstart(context); break;
-		case 0xc374: searchforsame(context); break;
-		case 0xc378: findnextcolon(context); break;
-		case 0xc37c: inventory(context); break;
-		case 0xc380: setpickup(context); break;
-		case 0xc384: examinventory(context); break;
-		case 0xc388: reexfrominv(context); break;
-		case 0xc38c: reexfromopen(context); break;
-		case 0xc390: swapwithinv(context); break;
-		case 0xc394: swapwithopen(context); break;
-		case 0xc398: intoinv(context); break;
-		case 0xc39c: deletetaken(context); break;
-		case 0xc3a0: outofinv(context); break;
-		case 0xc3a4: getfreead(context); break;
-		case 0xc3a8: getexad(context); break;
-		case 0xc3ac: geteitherad(context); break;
-		case 0xc3b0: getanyad(context); break;
-		case 0xc3b4: getanyaddir(context); break;
-		case 0xc3b8: getopenedsize(context); break;
-		case 0xc3bc: getsetad(context); break;
-		case 0xc3c0: findinvpos(context); break;
-		case 0xc3c4: findopenpos(context); break;
-		case 0xc3c8: dropobject(context); break;
-		case 0xc3cc: droperror(context); break;
-		case 0xc3d0: cantdrop(context); break;
-		case 0xc3d4: wornerror(context); break;
-		case 0xc3d8: removeobfrominv(context); break;
-		case 0xc3dc: selectopenob(context); break;
-		case 0xc3e0: useopened(context); break;
-		case 0xc3e4: errormessage1(context); break;
-		case 0xc3e8: errormessage2(context); break;
-		case 0xc3ec: errormessage3(context); break;
-		case 0xc3f0: checkobjectsize(context); break;
-		case 0xc3f4: outofopen(context); break;
-		case 0xc3f8: transfertoex(context); break;
-		case 0xc3fc: pickupconts(context); break;
-		case 0xc400: transfercontoex(context); break;
-		case 0xc404: transfertext(context); break;
-		case 0xc408: getexpos(context); break;
-		case 0xc40c: purgealocation(context); break;
-		case 0xc410: emergencypurge(context); break;
-		case 0xc414: purgeanitem(context); break;
-		case 0xc418: deleteexobject(context); break;
-		case 0xc41c: deleteexframe(context); break;
-		case 0xc420: deleteextext(context); break;
-		case 0xc424: blockget(context); break;
-		case 0xc428: drawfloor(context); break;
-		case 0xc42c: calcmapad(context); break;
-		case 0xc430: getdimension(context); break;
-		case 0xc434: addalong(context); break;
-		case 0xc438: addlength(context); break;
-		case 0xc43c: drawflags(context); break;
-		case 0xc440: eraseoldobs(context); break;
-		case 0xc444: showallobs(context); break;
-		case 0xc448: makebackob(context); break;
-		case 0xc44c: showallfree(context); break;
-		case 0xc450: showallex(context); break;
-		case 0xc454: calcfrframe(context); break;
-		case 0xc458: finalframe(context); break;
-		case 0xc45c: adjustlen(context); break;
-		case 0xc460: getmapad(context); break;
-		case 0xc464: getxad(context); break;
-		case 0xc468: getyad(context); break;
-		case 0xc46c: autolook(context); break;
-		case 0xc470: look(context); break;
-		case 0xc474: dolook(context); break;
-		case 0xc478: redrawmainscrn(context); break;
-		case 0xc47c: getback1(context); break;
-		case 0xc480: talk(context); break;
-		case 0xc484: convicons(context); break;
-		case 0xc488: getpersframe(context); break;
-		case 0xc48c: starttalk(context); break;
-		case 0xc490: getpersontext(context); break;
-		case 0xc494: moretalk(context); break;
-		case 0xc498: dosometalk(context); break;
-		case 0xc49c: hangonpq(context); break;
-		case 0xc4a0: redes(context); break;
-		case 0xc4a4: newplace(context); break;
-		case 0xc4a8: selectlocation(context); break;
-		case 0xc4ac: showcity(context); break;
-		case 0xc4b0: lookatplace(context); break;
-		case 0xc4b4: getundercentre(context); break;
-		case 0xc4b8: putundercentre(context); break;
-		case 0xc4bc: locationpic(context); break;
-		case 0xc4c0: getdestinfo(context); break;
-		case 0xc4c4: showarrows(context); break;
-		case 0xc4c8: nextdest(context); break;
-		case 0xc4cc: lastdest(context); break;
-		case 0xc4d0: destselect(context); break;
-		case 0xc4d4: getlocation(context); break;
-		case 0xc4d8: setlocation(context); break;
-		case 0xc4dc: resetlocation(context); break;
-		case 0xc4e0: readdesticon(context); break;
-		case 0xc4e4: readcitypic(context); break;
-		case 0xc4e8: usemon(context); break;
-		case 0xc4ec: printoutermon(context); break;
-		case 0xc4f0: loadpersonal(context); break;
-		case 0xc4f4: loadnews(context); break;
-		case 0xc4f8: loadcart(context); break;
-		case 0xc4fc: lookininterface(context); break;
-		case 0xc500: turnonpower(context); break;
-		case 0xc504: randomaccess(context); break;
-		case 0xc508: powerlighton(context); break;
-		case 0xc50c: powerlightoff(context); break;
-		case 0xc510: accesslighton(context); break;
-		case 0xc514: accesslightoff(context); break;
-		case 0xc518: locklighton(context); break;
-		case 0xc51c: locklightoff(context); break;
-		case 0xc520: input(context); break;
-		case 0xc524: makecaps(context); break;
-		case 0xc528: delchar(context); break;
-		case 0xc52c: execcommand(context); break;
-		case 0xc530: neterror(context); break;
-		case 0xc534: dircom(context); break;
-		case 0xc538: searchforfiles(context); break;
-		case 0xc53c: signon(context); break;
-		case 0xc540: showkeys(context); break;
-		case 0xc544: read(context); break;
-		case 0xc548: dirfile(context); break;
-		case 0xc54c: getkeyandlogo(context); break;
-		case 0xc550: searchforstring(context); break;
-		case 0xc554: parser(context); break;
-		case 0xc558: scrollmonitor(context); break;
-		case 0xc55c: lockmon(context); break;
-		case 0xc560: monitorlogo(context); break;
-		case 0xc564: printlogo(context); break;
-		case 0xc568: showcurrentfile(context); break;
-		case 0xc56c: monmessage(context); break;
-		case 0xc570: processtrigger(context); break;
-		case 0xc574: triggermessage(context); break;
-		case 0xc578: printcurs(context); break;
-		case 0xc57c: delcurs(context); break;
-		case 0xc580: useobject(context); break;
-		case 0xc584: useroutine(context); break;
-		case 0xc588: wheelsound(context); break;
-		case 0xc58c: runtap(context); break;
-		case 0xc590: playguitar(context); break;
-		case 0xc594: hotelcontrol(context); break;
-		case 0xc598: hotelbell(context); break;
-		case 0xc59c: opentomb(context); break;
-		case 0xc5a0: usetrainer(context); break;
-		case 0xc5a4: nothelderror(context); break;
-		case 0xc5a8: usepipe(context); break;
-		case 0xc5ac: usefullcart(context); break;
-		case 0xc5b0: useplinth(context); break;
-		case 0xc5b4: chewy(context); break;
-		case 0xc5b8: useladder(context); break;
-		case 0xc5bc: useladderb(context); break;
-		case 0xc5c0: slabdoora(context); break;
-		case 0xc5c4: slabdoorb(context); break;
-		case 0xc5c8: slabdoord(context); break;
-		case 0xc5cc: slabdoorc(context); break;
-		case 0xc5d0: slabdoore(context); break;
-		case 0xc5d4: slabdoorf(context); break;
-		case 0xc5d8: useslab(context); break;
-		case 0xc5dc: usecart(context); break;
-		case 0xc5e0: useclearbox(context); break;
-		case 0xc5e4: usecoveredbox(context); break;
-		case 0xc5e8: userailing(context); break;
-		case 0xc5ec: useopenbox(context); break;
-		case 0xc5f0: wearwatch(context); break;
-		case 0xc5f4: wearshades(context); break;
-		case 0xc5f8: sitdowninbar(context); break;
-		case 0xc5fc: usechurchhole(context); break;
-		case 0xc600: usehole(context); break;
-		case 0xc604: usealtar(context); break;
-		case 0xc608: opentvdoor(context); break;
-		case 0xc60c: usedryer(context); break;
-		case 0xc610: openlouis(context); break;
-		case 0xc614: nextcolon(context); break;
-		case 0xc618: openyourneighbour(context); break;
-		case 0xc61c: usewindow(context); break;
-		case 0xc620: usebalcony(context); break;
-		case 0xc624: openryan(context); break;
-		case 0xc628: openpoolboss(context); break;
-		case 0xc62c: openeden(context); break;
-		case 0xc630: opensarters(context); break;
-		case 0xc634: isitright(context); break;
-		case 0xc638: drawitall(context); break;
-		case 0xc63c: openhoteldoor(context); break;
-		case 0xc640: openhoteldoor2(context); break;
-		case 0xc644: grafittidoor(context); break;
-		case 0xc648: trapdoor(context); break;
-		case 0xc64c: callhotellift(context); break;
-		case 0xc650: calledenslift(context); break;
-		case 0xc654: calledensdlift(context); break;
-		case 0xc658: usepoolreader(context); break;
-		case 0xc65c: uselighter(context); break;
-		case 0xc660: showseconduse(context); break;
-		case 0xc664: usecardreader1(context); break;
-		case 0xc668: usecardreader2(context); break;
-		case 0xc66c: usecardreader3(context); break;
-		case 0xc670: usecashcard(context); break;
-		case 0xc674: lookatcard(context); break;
-		case 0xc678: moneypoke(context); break;
-		case 0xc67c: usecontrol(context); break;
-		case 0xc680: usehatch(context); break;
-		case 0xc684: usewire(context); break;
-		case 0xc688: usehandle(context); break;
-		case 0xc68c: useelevator1(context); break;
-		case 0xc690: showfirstuse(context); break;
-		case 0xc694: useelevator3(context); break;
-		case 0xc698: useelevator4(context); break;
-		case 0xc69c: useelevator2(context); break;
-		case 0xc6a0: useelevator5(context); break;
-		case 0xc6a4: usekey(context); break;
-		case 0xc6a8: usestereo(context); break;
-		case 0xc6ac: usecooker(context); break;
-		case 0xc6b0: useaxe(context); break;
-		case 0xc6b4: useelvdoor(context); break;
-		case 0xc6b8: withwhat(context); break;
-		case 0xc6bc: selectob(context); break;
-		case 0xc6c0: compare(context); break;
-		case 0xc6c4: findsetobject(context); break;
-		case 0xc6c8: findexobject(context); break;
-		case 0xc6cc: isryanholding(context); break;
-		case 0xc6d0: checkinside(context); break;
-		case 0xc6d4: usetext(context); break;
-		case 0xc6d8: putbackobstuff(context); break;
-		case 0xc6dc: showpuztext(context); break;
-		case 0xc6e0: findpuztext(context); break;
-		case 0xc6e4: placesetobject(context); break;
-		case 0xc6e8: removesetobject(context); break;
-		case 0xc6ec: issetobonmap(context); break;
-		case 0xc6f0: placefreeobject(context); break;
-		case 0xc6f4: removefreeobject(context); break;
-		case 0xc6f8: findormake(context); break;
-		case 0xc6fc: switchryanon(context); break;
-		case 0xc700: switchryanoff(context); break;
-		case 0xc704: setallchanges(context); break;
-		case 0xc708: dochange(context); break;
-		case 0xc70c: autoappear(context); break;
-		case 0xc710: getundertimed(context); break;
-		case 0xc714: putundertimed(context); break;
-		case 0xc718: dumptimedtext(context); break;
-		case 0xc71c: setuptimeduse(context); break;
-		case 0xc720: setuptimedtemp(context); break;
-		case 0xc724: usetimedtext(context); break;
-		case 0xc728: edenscdplayer(context); break;
-		case 0xc72c: usewall(context); break;
-		case 0xc730: usechurchgate(context); break;
-		case 0xc734: usegun(context); break;
-		case 0xc738: useshield(context); break;
-		case 0xc73c: usebuttona(context); break;
-		case 0xc740: useplate(context); break;
-		case 0xc744: usewinch(context); break;
-		case 0xc748: entercode(context); break;
-		case 0xc74c: loadkeypad(context); break;
-		case 0xc750: quitkey(context); break;
-		case 0xc754: addtopresslist(context); break;
-		case 0xc758: buttonone(context); break;
-		case 0xc75c: buttontwo(context); break;
-		case 0xc760: buttonthree(context); break;
-		case 0xc764: buttonfour(context); break;
-		case 0xc768: buttonfive(context); break;
-		case 0xc76c: buttonsix(context); break;
-		case 0xc770: buttonseven(context); break;
-		case 0xc774: buttoneight(context); break;
-		case 0xc778: buttonnine(context); break;
-		case 0xc77c: buttonnought(context); break;
-		case 0xc780: buttonenter(context); break;
-		case 0xc784: buttonpress(context); break;
-		case 0xc788: showouterpad(context); break;
-		case 0xc78c: showkeypad(context); break;
-		case 0xc790: singlekey(context); break;
-		case 0xc794: dumpkeypad(context); break;
-		case 0xc798: usemenu(context); break;
-		case 0xc79c: dumpmenu(context); break;
-		case 0xc7a0: getundermenu(context); break;
-		case 0xc7a4: putundermenu(context); break;
-		case 0xc7a8: showoutermenu(context); break;
-		case 0xc7ac: showmenu(context); break;
-		case 0xc7b0: loadmenu(context); break;
-		case 0xc7b4: viewfolder(context); break;
-		case 0xc7b8: nextfolder(context); break;
-		case 0xc7bc: folderhints(context); break;
-		case 0xc7c0: lastfolder(context); break;
-		case 0xc7c4: loadfolder(context); break;
-		case 0xc7c8: showfolder(context); break;
-		case 0xc7cc: folderexit(context); break;
-		case 0xc7d0: showleftpage(context); break;
-		case 0xc7d4: showrightpage(context); break;
-		case 0xc7d8: entersymbol(context); break;
-		case 0xc7dc: quitsymbol(context); break;
-		case 0xc7e0: settopleft(context); break;
-		case 0xc7e4: settopright(context); break;
-		case 0xc7e8: setbotleft(context); break;
-		case 0xc7ec: setbotright(context); break;
-		case 0xc7f0: dumpsymbol(context); break;
-		case 0xc7f4: showsymbol(context); break;
-		case 0xc7f8: nextsymbol(context); break;
-		case 0xc7fc: updatesymboltop(context); break;
-		case 0xc800: updatesymbolbot(context); break;
-		case 0xc804: dumpsymbox(context); break;
-		case 0xc808: usediary(context); break;
-		case 0xc80c: showdiary(context); break;
-		case 0xc810: showdiarykeys(context); break;
-		case 0xc814: dumpdiarykeys(context); break;
-		case 0xc818: diarykeyp(context); break;
-		case 0xc81c: diarykeyn(context); break;
-		case 0xc820: showdiarypage(context); break;
-		case 0xc824: findtext1(context); break;
-		case 0xc828: zoomonoff(context); break;
-		case 0xc82c: saveload(context); break;
-		case 0xc830: dosaveload(context); break;
-		case 0xc834: getbackfromops(context); break;
-		case 0xc838: showmainops(context); break;
-		case 0xc83c: showdiscops(context); break;
-		case 0xc840: loadsavebox(context); break;
-		case 0xc844: loadgame(context); break;
-		case 0xc848: getbacktoops(context); break;
-		case 0xc84c: discops(context); break;
-		case 0xc850: savegame(context); break;
-		case 0xc854: actualsave(context); break;
-		case 0xc858: actualload(context); break;
-		case 0xc85c: selectslot2(context); break;
-		case 0xc860: checkinput(context); break;
-		case 0xc864: getnamepos(context); break;
-		case 0xc868: showopbox(context); break;
-		case 0xc86c: showloadops(context); break;
-		case 0xc870: showsaveops(context); break;
-		case 0xc874: selectslot(context); break;
-		case 0xc878: showslots(context); break;
-		case 0xc87c: shownames(context); break;
-		case 0xc880: dosreturn(context); break;
-		case 0xc884: error(context); break;
-		case 0xc888: namestoold(context); break;
-		case 0xc88c: oldtonames(context); break;
-		case 0xc890: savefilewrite(context); break;
-		case 0xc894: savefileread(context); break;
-		case 0xc898: saveposition(context); break;
-		case 0xc89c: loadposition(context); break;
-		case 0xc8a0: loadseg(context); break;
-		case 0xc8a4: makeheader(context); break;
-		case 0xc8a8: storeit(context); break;
-		case 0xc8ac: saveseg(context); break;
-		case 0xc8b0: findlen(context); break;
-		case 0xc8b4: scanfornames(context); break;
-		case 0xc8b8: decide(context); break;
-		case 0xc8bc: showdecisions(context); break;
-		case 0xc8c0: newgame(context); break;
-		case 0xc8c4: loadold(context); break;
-		case 0xc8c8: loadspeech(context); break;
-		case 0xc8cc: createname(context); break;
-		case 0xc8d0: loadsample(context); break;
-		case 0xc8d4: loadsecondsample(context); break;
-		case 0xc8d8: soundstartup(context); break;
-		case 0xc8dc: trysoundalloc(context); break;
-		case 0xc8e0: setsoundoff(context); break;
-		case 0xc8e4: checksoundint(context); break;
-		case 0xc8e8: enablesoundint(context); break;
-		case 0xc8ec: disablesoundint(context); break;
-		case 0xc8f0: interupttest(context); break;
-		case 0xc8f4: soundend(context); break;
-		case 0xc8f8: out22c(context); break;
-		case 0xc8fc: playchannel0(context); break;
-		case 0xc900: playchannel1(context); break;
-		case 0xc904: makenextblock(context); break;
-		case 0xc908: volumeadjust(context); break;
-		case 0xc90c: loopchannel0(context); break;
-		case 0xc910: cancelch0(context); break;
-		case 0xc914: cancelch1(context); break;
-		case 0xc918: channel0only(context); break;
-		case 0xc91c: channel1only(context); break;
-		case 0xc920: channel0tran(context); break;
-		case 0xc924: bothchannels(context); break;
-		case 0xc928: saveems(context); break;
-		case 0xc92c: restoreems(context); break;
-		case 0xc930: domix(context); break;
-		case 0xc934: dmaend(context); break;
-		case 0xc938: startdmablock(context); break;
-		case 0xc93c: setuppit(context); break;
-		case 0xc940: getridofpit(context); break;
-		case 0xc944: pitinterupt(context); break;
-		case 0xc948: dreamweb(context); break;
-		case 0xc94c: entrytexts(context); break;
-		case 0xc950: entryanims(context); break;
-		case 0xc954: initialinv(context); break;
-		case 0xc958: pickupob(context); break;
-		case 0xc95c: setupemm(context); break;
-		case 0xc960: removeemm(context); break;
-		case 0xc964: checkforemm(context); break;
-		case 0xc968: checkbasemem(context); break;
-		case 0xc96c: allocatebuffers(context); break;
-		case 0xc970: clearbuffers(context); break;
-		case 0xc974: clearchanges(context); break;
-		case 0xc978: clearbeforeload(context); break;
-		case 0xc97c: clearreels(context); break;
-		case 0xc980: clearrest(context); break;
-		case 0xc984: deallocatemem(context); break;
-		case 0xc988: allocatemem(context); break;
-		case 0xc990: parseblaster(context); break;
-		case 0xc994: startup(context); break;
-		case 0xc998: startup1(context); break;
-		case 0xc99c: screenupdate(context); break;
-		case 0xc9a0: watchreel(context); break;
-		case 0xc9a4: checkforshake(context); break;
-		case 0xc9a8: watchcount(context); break;
-		case 0xc9ac: showtime(context); break;
-		case 0xc9b0: dumpwatch(context); break;
-		case 0xc9b4: showbyte(context); break;
-		case 0xc9b8: onedigit(context); break;
-		case 0xc9bc: twodigitnum(context); break;
-		case 0xc9c0: showword(context); break;
-		case 0xc9c4: convnum(context); break;
-		case 0xc9c8: mainscreen(context); break;
-		case 0xc9cc: madmanrun(context); break;
-		case 0xc9d0: checkcoords(context); break;
-		case 0xc9d4: identifyob(context); break;
-		case 0xc9d8: checkifperson(context); break;
-		case 0xc9dc: checkifset(context); break;
-		case 0xc9e0: checkifex(context); break;
-		case 0xc9e4: checkiffree(context); break;
-		case 0xc9e8: isitdescribed(context); break;
-		case 0xc9ec: findpathofpoint(context); break;
-		case 0xc9f0: findfirstpath(context); break;
-		case 0xc9f4: turnpathon(context); break;
-		case 0xc9f8: turnpathoff(context); break;
-		case 0xc9fc: turnanypathon(context); break;
-		case 0xca00: turnanypathoff(context); break;
-		case 0xca04: checkifpathison(context); break;
-		case 0xca08: afternewroom(context); break;
-		case 0xca0c: atmospheres(context); break;
-		case 0xca10: walkintoroom(context); break;
-		case 0xca14: afterintroroom(context); break;
-		case 0xca18: obname(context); break;
-		case 0xca1c: finishedwalking(context); break;
-		case 0xca20: examineobtext(context); break;
-		case 0xca24: commandwithob(context); break;
-		case 0xca28: commandonly(context); break;
-		case 0xca2c: printmessage(context); break;
-		case 0xca30: printmessage2(context); break;
-		case 0xca34: blocknametext(context); break;
-		case 0xca38: personnametext(context); break;
-		case 0xca3c: walktotext(context); break;
-		case 0xca40: getflagunderp(context); break;
-		case 0xca44: setwalk(context); break;
-		case 0xca48: autosetwalk(context); break;
-		case 0xca4c: checkdest(context); break;
-		case 0xca50: bresenhams(context); break;
-		case 0xca54: workoutframes(context); break;
-		case 0xca58: getroomspaths(context); break;
-		case 0xca5c: copyname(context); break;
-		case 0xca60: findobname(context); break;
-		case 0xca64: showicon(context); break;
-		case 0xca68: middlepanel(context); break;
-		case 0xca6c: showman(context); break;
-		case 0xca70: showpanel(context); break;
-		case 0xca74: roomname(context); break;
-		case 0xca78: usecharset1(context); break;
-		case 0xca7c: usetempcharset(context); break;
-		case 0xca80: showexit(context); break;
-		case 0xca84: panelicons1(context); break;
-		case 0xca88: showwatch(context); break;
-		case 0xca8c: gettime(context); break;
-		case 0xca90: zoomicon(context); break;
-		case 0xca94: showblink(context); break;
-		case 0xca98: dumpblink(context); break;
-		case 0xca9c: worktoscreenm(context); break;
-		case 0xcaa0: blank(context); break;
-		case 0xcaa4: allpointer(context); break;
-		case 0xcaa8: hangonp(context); break;
-		case 0xcaac: hangonw(context); break;
-		case 0xcab0: hangoncurs(context); break;
-		case 0xcab4: getunderzoom(context); break;
-		case 0xcab8: dumpzoom(context); break;
-		case 0xcabc: putunderzoom(context); break;
-		case 0xcac0: crosshair(context); break;
-		case 0xcac4: showpointer(context); break;
-		case 0xcac8: delpointer(context); break;
-		case 0xcacc: dumppointer(context); break;
-		case 0xcad0: undertextline(context); break;
-		case 0xcad4: deltextline(context); break;
-		case 0xcad8: dumptextline(context); break;
-		case 0xcadc: animpointer(context); break;
-		case 0xcae0: setmouse(context); break;
-		case 0xcae4: readmouse(context); break;
-		case 0xcae8: mousecall(context); break;
-		case 0xcaec: readmouse1(context); break;
-		case 0xcaf0: readmouse2(context); break;
-		case 0xcaf4: readmouse3(context); break;
-		case 0xcaf8: readmouse4(context); break;
-		case 0xcafc: readkey(context); break;
-		case 0xcb00: convertkey(context); break;
-		case 0xcb04: randomnum1(context); break;
-		case 0xcb08: randomnum2(context); break;
-		case 0xcb10: hangon(context); break;
-		case 0xcb14: loadtraveltext(context); break;
-		case 0xcb18: loadintotemp(context); break;
-		case 0xcb1c: loadintotemp2(context); break;
-		case 0xcb20: loadintotemp3(context); break;
-		case 0xcb24: loadtempcharset(context); break;
-		case 0xcb28: standardload(context); break;
-		case 0xcb2c: loadtemptext(context); break;
-		case 0xcb30: loadroom(context); break;
-		case 0xcb34: loadroomssample(context); break;
-		case 0xcb38: getridofreels(context); break;
-		case 0xcb3c: getridofall(context); break;
-		case 0xcb40: restorereels(context); break;
-		case 0xcb44: restoreall(context); break;
-		case 0xcb48: sortoutmap(context); break;
-		case 0xcb4c: startloading(context); break;
-		case 0xcb50: disablepath(context); break;
-		case 0xcb54: findxyfrompath(context); break;
-		case 0xcb58: findroominloc(context); break;
-		case 0xcb5c: getroomdata(context); break;
-		case 0xcb60: readheader(context); break;
-		case 0xcb64: dontloadseg(context); break;
-		case 0xcb68: allocateload(context); break;
-		case 0xcb6c: fillspace(context); break;
-		case 0xcb70: getridoftemp(context); break;
-		case 0xcb74: getridoftemptext(context); break;
-		case 0xcb78: getridoftemp2(context); break;
-		case 0xcb7c: getridoftemp3(context); break;
-		case 0xcb80: getridoftempcharset(context); break;
-		case 0xcb84: getridoftempsp(context); break;
-		case 0xcb88: readsetdata(context); break;
-		case 0xcb8c: createfile(context); break;
-		case 0xcb90: openfile(context); break;
-		case 0xcb94: openfilefromc(context); break;
-		case 0xcb98: makename(context); break;
-		case 0xcb9c: openfilenocheck(context); break;
-		case 0xcba0: openforsave(context); break;
-		case 0xcba4: closefile(context); break;
-		case 0xcba8: readfromfile(context); break;
-		case 0xcbac: setkeyboardint(context); break;
-		case 0xcbb0: resetkeyboard(context); break;
-		case 0xcbb4: keyboardread(context); break;
-		case 0xcbb8: walkandexamine(context); break;
-		case 0xcbbc: doload(context); break;
-		case 0xcbc0: generalerror(context); break;
-		default: ::error("invalid call to %04x dispatched", (uint16)context.ax);
+		case 0xc000: alleybarksound(); break;
+		case 0xc004: intromusic(); break;
+		case 0xc008: foghornsound(); break;
+		case 0xc00c: receptionist(); break;
+		case 0xc010: smokebloke(); break;
+		case 0xc014: attendant(); break;
+		case 0xc018: manasleep(); break;
+		case 0xc01c: eden(); break;
+		case 0xc020: edeninbath(); break;
+		case 0xc024: malefan(); break;
+		case 0xc028: femalefan(); break;
+		case 0xc02c: louis(); break;
+		case 0xc030: louischair(); break;
+		case 0xc034: manasleep2(); break;
+		case 0xc038: mansatstill(); break;
+		case 0xc03c: tattooman(); break;
+		case 0xc040: drinker(); break;
+		case 0xc044: bartender(); break;
+		case 0xc048: othersmoker(); break;
+		case 0xc04c: barwoman(); break;
+		case 0xc050: interviewer(); break;
+		case 0xc054: soldier1(); break;
+		case 0xc058: rockstar(); break;
+		case 0xc05c: helicopter(); break;
+		case 0xc060: mugger(); break;
+		case 0xc064: aide(); break;
+		case 0xc068: businessman(); break;
+		case 0xc06c: poolguard(); break;
+		case 0xc070: security(); break;
+		case 0xc074: heavy(); break;
+		case 0xc078: bossman(); break;
+		case 0xc07c: gamer(); break;
+		case 0xc080: sparkydrip(); break;
+		case 0xc084: carparkdrip(); break;
+		case 0xc088: keeper(); break;
+		case 0xc08c: candles1(); break;
+		case 0xc090: smallcandle(); break;
+		case 0xc094: intromagic1(); break;
+		case 0xc098: candles(); break;
+		case 0xc09c: candles2(); break;
+		case 0xc0a0: gates(); break;
+		case 0xc0a4: intromagic2(); break;
+		case 0xc0a8: intromagic3(); break;
+		case 0xc0ac: intromonks1(); break;
+		case 0xc0b0: intromonks2(); break;
+		case 0xc0b4: handclap(); break;
+		case 0xc0b8: monks2text(); break;
+		case 0xc0bc: intro1text(); break;
+		case 0xc0c0: intro2text(); break;
+		case 0xc0c4: intro3text(); break;
+		case 0xc0c8: monkandryan(); break;
+		case 0xc0cc: endgameseq(); break;
+		case 0xc0d0: rollendcredits(); break;
+		case 0xc0d4: priest(); break;
+		case 0xc0d8: madmanstelly(); break;
+		case 0xc0dc: madman(); break;
+		case 0xc0e0: madmantext(); break;
+		case 0xc0e4: madmode(); break;
+		case 0xc0e8: priesttext(); break;
+		case 0xc0ec: textforend(); break;
+		case 0xc0f0: textformonk(); break;
+		case 0xc0f4: drunk(); break;
+		case 0xc0f8: advisor(); break;
+		case 0xc0fc: copper(); break;
+		case 0xc100: sparky(); break;
+		case 0xc104: train(); break;
+		case 0xc108: addtopeoplelist(); break;
+		case 0xc10c: showgamereel(); break;
+		case 0xc110: checkspeed(); break;
+		case 0xc114: clearsprites(); break;
+		case 0xc118: makesprite(); break;
+		case 0xc11c: delsprite(); break;
+		case 0xc120: spriteupdate(); break;
+		case 0xc124: printsprites(); break;
+		case 0xc128: printasprite(); break;
+		case 0xc12c: checkone(); break;
+		case 0xc130: findsource(); break;
+		case 0xc134: initman(); break;
+		case 0xc138: mainman(); break;
+		case 0xc13c: aboutturn(); break;
+		case 0xc140: walking(); break;
+		case 0xc144: facerightway(); break;
+		case 0xc148: checkforexit(); break;
+		case 0xc14c: adjustdown(); break;
+		case 0xc150: adjustup(); break;
+		case 0xc154: adjustleft(); break;
+		case 0xc158: adjustright(); break;
+		case 0xc15c: reminders(); break;
+		case 0xc160: initrain(); break;
+		case 0xc164: splitintolines(); break;
+		case 0xc168: getblockofpixel(); break;
+		case 0xc16c: showrain(); break;
+		case 0xc170: backobject(); break;
+		case 0xc174: liftsprite(); break;
+		case 0xc178: liftnoise(); break;
+		case 0xc17c: random(); break;
+		case 0xc180: steady(); break;
+		case 0xc184: constant(); break;
+		case 0xc188: doorway(); break;
+		case 0xc18c: widedoor(); break;
+		case 0xc190: dodoor(); break;
+		case 0xc194: lockeddoorway(); break;
+		case 0xc198: updatepeople(); break;
+		case 0xc19c: getreelframeax(); break;
+		case 0xc1a0: reelsonscreen(); break;
+		case 0xc1a4: plotreel(); break;
+		case 0xc1a8: soundonreels(); break;
+		case 0xc1ac: reconstruct(); break;
+		case 0xc1b0: dealwithspecial(); break;
+		case 0xc1b4: movemap(); break;
+		case 0xc1b8: getreelstart(); break;
+		case 0xc1bc: showreelframe(); break;
+		case 0xc1c0: deleverything(); break;
+		case 0xc1c4: dumpeverything(); break;
+		case 0xc1c8: allocatework(); break;
+		case 0xc1cc: showpcx(); break;
+		case 0xc1d0: readabyte(); break;
+		case 0xc1d4: readoneblock(); break;
+		case 0xc1d8: loadpalfromiff(); break;
+		case 0xc1dc: setmode(); break;
+		case 0xc1ec: paneltomap(); break;
+		case 0xc1f0: maptopanel(); break;
+		case 0xc1f4: dumpmap(); break;
+		case 0xc1f8: pixelcheckset(); break;
+		case 0xc1fc: createpanel(); break;
+		case 0xc200: createpanel2(); break;
+		case 0xc204: clearwork(); break;
+		case 0xc208: vsync(); break;
+		case 0xc20c: doshake(); break;
+		case 0xc210: zoom(); break;
+		case 0xc214: delthisone(); break;
+		case 0xc228: doblocks(); break;
+		case 0xc22c: showframe(); break;
+		case 0xc230: frameoutv(); break;
+		case 0xc238: frameoutbh(); break;
+		case 0xc23c: frameoutfx(); break;
+		case 0xc240: transferinv(); break;
+		case 0xc244: transfermap(); break;
+		case 0xc248: fadedos(); break;
+		case 0xc24c: dofade(); break;
+		case 0xc250: clearendpal(); break;
+		case 0xc254: clearpalette(); break;
+		case 0xc258: fadescreenup(); break;
+		case 0xc25c: fadetowhite(); break;
+		case 0xc260: fadefromwhite(); break;
+		case 0xc264: fadescreenups(); break;
+		case 0xc268: fadescreendownhalf(); break;
+		case 0xc26c: fadescreenuphalf(); break;
+		case 0xc270: fadescreendown(); break;
+		case 0xc274: fadescreendowns(); break;
+		case 0xc278: clearstartpal(); break;
+		case 0xc27c: showgun(); break;
+		case 0xc280: rollendcredits2(); break;
+		case 0xc284: rollem(); break;
+		case 0xc288: fadecalculation(); break;
+		case 0xc28c: greyscalesum(); break;
+		case 0xc290: showgroup(); break;
+		case 0xc294: paltostartpal(); break;
+		case 0xc298: endpaltostart(); break;
+		case 0xc29c: startpaltoend(); break;
+		case 0xc2a0: paltoendpal(); break;
+		case 0xc2a4: allpalette(); break;
+		case 0xc2a8: dumpcurrent(); break;
+		case 0xc2ac: fadedownmon(); break;
+		case 0xc2b0: fadeupmon(); break;
+		case 0xc2b4: fadeupmonfirst(); break;
+		case 0xc2b8: fadeupyellows(); break;
+		case 0xc2bc: initialmoncols(); break;
+		case 0xc2c0: titles(); break;
+		case 0xc2c4: endgame(); break;
+		case 0xc2c8: monkspeaking(); break;
+		case 0xc2cc: showmonk(); break;
+		case 0xc2d0: gettingshot(); break;
+		case 0xc2d4: credits(); break;
+		case 0xc2d8: biblequote(); break;
+		case 0xc2dc: hangone(); break;
+		case 0xc2e0: intro(); break;
+		case 0xc2e4: runintroseq(); break;
+		case 0xc2e8: runendseq(); break;
+		case 0xc2ec: loadintroroom(); break;
+		case 0xc2f0: mode640x480(); break;
+		case 0xc2f4: set16colpalette(); break;
+		case 0xc2f8: realcredits(); break;
+		case 0xc2fc: printchar(); break;
+		case 0xc300: kernchars(); break;
+		case 0xc304: printslow(); break;
+		case 0xc308: waitframes(); break;
+		case 0xc30c: printboth(); break;
+		case 0xc310: printdirect(); break;
+		case 0xc314: monprint(); break;
+		case 0xc318: getnumber(); break;
+		case 0xc31c: getnextword(); break;
+		case 0xc320: fillryan(); break;
+		case 0xc324: fillopen(); break;
+		case 0xc328: findallryan(); break;
+		case 0xc32c: findallopen(); break;
+		case 0xc330: obtoinv(); break;
+		case 0xc334: isitworn(); break;
+		case 0xc338: makeworn(); break;
+		case 0xc33c: examineob(); break;
+		case 0xc340: makemainscreen(); break;
+		case 0xc344: getbackfromob(); break;
+		case 0xc348: incryanpage(); break;
+		case 0xc34c: openinv(); break;
+		case 0xc350: showryanpage(); break;
+		case 0xc354: openob(); break;
+		case 0xc358: obicons(); break;
+		case 0xc35c: examicon(); break;
+		case 0xc360: obpicture(); break;
+		case 0xc364: describeob(); break;
+		case 0xc368: additionaltext(); break;
+		case 0xc36c: obsthatdothings(); break;
+		case 0xc370: getobtextstart(); break;
+		case 0xc374: searchforsame(); break;
+		case 0xc378: findnextcolon(); break;
+		case 0xc37c: inventory(); break;
+		case 0xc380: setpickup(); break;
+		case 0xc384: examinventory(); break;
+		case 0xc388: reexfrominv(); break;
+		case 0xc38c: reexfromopen(); break;
+		case 0xc390: swapwithinv(); break;
+		case 0xc394: swapwithopen(); break;
+		case 0xc398: intoinv(); break;
+		case 0xc39c: deletetaken(); break;
+		case 0xc3a0: outofinv(); break;
+		case 0xc3a4: getfreead(); break;
+		case 0xc3a8: getexad(); break;
+		case 0xc3ac: geteitherad(); break;
+		case 0xc3b0: getanyad(); break;
+		case 0xc3b4: getanyaddir(); break;
+		case 0xc3b8: getopenedsize(); break;
+		case 0xc3bc: getsetad(); break;
+		case 0xc3c0: findinvpos(); break;
+		case 0xc3c4: findopenpos(); break;
+		case 0xc3c8: dropobject(); break;
+		case 0xc3cc: droperror(); break;
+		case 0xc3d0: cantdrop(); break;
+		case 0xc3d4: wornerror(); break;
+		case 0xc3d8: removeobfrominv(); break;
+		case 0xc3dc: selectopenob(); break;
+		case 0xc3e0: useopened(); break;
+		case 0xc3e4: errormessage1(); break;
+		case 0xc3e8: errormessage2(); break;
+		case 0xc3ec: errormessage3(); break;
+		case 0xc3f0: checkobjectsize(); break;
+		case 0xc3f4: outofopen(); break;
+		case 0xc3f8: transfertoex(); break;
+		case 0xc3fc: pickupconts(); break;
+		case 0xc400: transfercontoex(); break;
+		case 0xc404: transfertext(); break;
+		case 0xc408: getexpos(); break;
+		case 0xc40c: purgealocation(); break;
+		case 0xc410: emergencypurge(); break;
+		case 0xc414: purgeanitem(); break;
+		case 0xc418: deleteexobject(); break;
+		case 0xc41c: deleteexframe(); break;
+		case 0xc420: deleteextext(); break;
+		case 0xc424: blockget(); break;
+		case 0xc428: drawfloor(); break;
+		case 0xc42c: calcmapad(); break;
+		case 0xc430: getdimension(); break;
+		case 0xc434: addalong(); break;
+		case 0xc438: addlength(); break;
+		case 0xc43c: drawflags(); break;
+		case 0xc440: eraseoldobs(); break;
+		case 0xc444: showallobs(); break;
+		case 0xc448: makebackob(); break;
+		case 0xc44c: showallfree(); break;
+		case 0xc450: showallex(); break;
+		case 0xc454: calcfrframe(); break;
+		case 0xc458: finalframe(); break;
+		case 0xc45c: adjustlen(); break;
+		case 0xc460: getmapad(); break;
+		case 0xc464: getxad(); break;
+		case 0xc468: getyad(); break;
+		case 0xc46c: autolook(); break;
+		case 0xc470: look(); break;
+		case 0xc474: dolook(); break;
+		case 0xc478: redrawmainscrn(); break;
+		case 0xc47c: getback1(); break;
+		case 0xc480: talk(); break;
+		case 0xc484: convicons(); break;
+		case 0xc488: getpersframe(); break;
+		case 0xc48c: starttalk(); break;
+		case 0xc490: getpersontext(); break;
+		case 0xc494: moretalk(); break;
+		case 0xc498: dosometalk(); break;
+		case 0xc49c: hangonpq(); break;
+		case 0xc4a0: redes(); break;
+		case 0xc4a4: newplace(); break;
+		case 0xc4a8: selectlocation(); break;
+		case 0xc4ac: showcity(); break;
+		case 0xc4b0: lookatplace(); break;
+		case 0xc4b4: getundercentre(); break;
+		case 0xc4b8: putundercentre(); break;
+		case 0xc4bc: locationpic(); break;
+		case 0xc4c0: getdestinfo(); break;
+		case 0xc4c4: showarrows(); break;
+		case 0xc4c8: nextdest(); break;
+		case 0xc4cc: lastdest(); break;
+		case 0xc4d0: destselect(); break;
+		case 0xc4d4: getlocation(); break;
+		case 0xc4d8: setlocation(); break;
+		case 0xc4dc: resetlocation(); break;
+		case 0xc4e0: readdesticon(); break;
+		case 0xc4e4: readcitypic(); break;
+		case 0xc4e8: usemon(); break;
+		case 0xc4ec: printoutermon(); break;
+		case 0xc4f0: loadpersonal(); break;
+		case 0xc4f4: loadnews(); break;
+		case 0xc4f8: loadcart(); break;
+		case 0xc4fc: lookininterface(); break;
+		case 0xc500: turnonpower(); break;
+		case 0xc504: randomaccess(); break;
+		case 0xc508: powerlighton(); break;
+		case 0xc50c: powerlightoff(); break;
+		case 0xc510: accesslighton(); break;
+		case 0xc514: accesslightoff(); break;
+		case 0xc518: locklighton(); break;
+		case 0xc51c: locklightoff(); break;
+		case 0xc520: input(); break;
+		case 0xc524: makecaps(); break;
+		case 0xc528: delchar(); break;
+		case 0xc52c: execcommand(); break;
+		case 0xc530: neterror(); break;
+		case 0xc534: dircom(); break;
+		case 0xc538: searchforfiles(); break;
+		case 0xc53c: signon(); break;
+		case 0xc540: showkeys(); break;
+		case 0xc544: read(); break;
+		case 0xc548: dirfile(); break;
+		case 0xc54c: getkeyandlogo(); break;
+		case 0xc550: searchforstring(); break;
+		case 0xc554: parser(); break;
+		case 0xc558: scrollmonitor(); break;
+		case 0xc55c: lockmon(); break;
+		case 0xc560: monitorlogo(); break;
+		case 0xc564: printlogo(); break;
+		case 0xc568: showcurrentfile(); break;
+		case 0xc56c: monmessage(); break;
+		case 0xc570: processtrigger(); break;
+		case 0xc574: triggermessage(); break;
+		case 0xc578: printcurs(); break;
+		case 0xc57c: delcurs(); break;
+		case 0xc580: useobject(); break;
+		case 0xc584: useroutine(); break;
+		case 0xc588: wheelsound(); break;
+		case 0xc58c: runtap(); break;
+		case 0xc590: playguitar(); break;
+		case 0xc594: hotelcontrol(); break;
+		case 0xc598: hotelbell(); break;
+		case 0xc59c: opentomb(); break;
+		case 0xc5a0: usetrainer(); break;
+		case 0xc5a4: nothelderror(); break;
+		case 0xc5a8: usepipe(); break;
+		case 0xc5ac: usefullcart(); break;
+		case 0xc5b0: useplinth(); break;
+		case 0xc5b4: chewy(); break;
+		case 0xc5b8: useladder(); break;
+		case 0xc5bc: useladderb(); break;
+		case 0xc5c0: slabdoora(); break;
+		case 0xc5c4: slabdoorb(); break;
+		case 0xc5c8: slabdoord(); break;
+		case 0xc5cc: slabdoorc(); break;
+		case 0xc5d0: slabdoore(); break;
+		case 0xc5d4: slabdoorf(); break;
+		case 0xc5d8: useslab(); break;
+		case 0xc5dc: usecart(); break;
+		case 0xc5e0: useclearbox(); break;
+		case 0xc5e4: usecoveredbox(); break;
+		case 0xc5e8: userailing(); break;
+		case 0xc5ec: useopenbox(); break;
+		case 0xc5f0: wearwatch(); break;
+		case 0xc5f4: wearshades(); break;
+		case 0xc5f8: sitdowninbar(); break;
+		case 0xc5fc: usechurchhole(); break;
+		case 0xc600: usehole(); break;
+		case 0xc604: usealtar(); break;
+		case 0xc608: opentvdoor(); break;
+		case 0xc60c: usedryer(); break;
+		case 0xc610: openlouis(); break;
+		case 0xc614: nextcolon(); break;
+		case 0xc618: openyourneighbour(); break;
+		case 0xc61c: usewindow(); break;
+		case 0xc620: usebalcony(); break;
+		case 0xc624: openryan(); break;
+		case 0xc628: openpoolboss(); break;
+		case 0xc62c: openeden(); break;
+		case 0xc630: opensarters(); break;
+		case 0xc634: isitright(); break;
+		case 0xc638: drawitall(); break;
+		case 0xc63c: openhoteldoor(); break;
+		case 0xc640: openhoteldoor2(); break;
+		case 0xc644: grafittidoor(); break;
+		case 0xc648: trapdoor(); break;
+		case 0xc64c: callhotellift(); break;
+		case 0xc650: calledenslift(); break;
+		case 0xc654: calledensdlift(); break;
+		case 0xc658: usepoolreader(); break;
+		case 0xc65c: uselighter(); break;
+		case 0xc660: showseconduse(); break;
+		case 0xc664: usecardreader1(); break;
+		case 0xc668: usecardreader2(); break;
+		case 0xc66c: usecardreader3(); break;
+		case 0xc670: usecashcard(); break;
+		case 0xc674: lookatcard(); break;
+		case 0xc678: moneypoke(); break;
+		case 0xc67c: usecontrol(); break;
+		case 0xc680: usehatch(); break;
+		case 0xc684: usewire(); break;
+		case 0xc688: usehandle(); break;
+		case 0xc68c: useelevator1(); break;
+		case 0xc690: showfirstuse(); break;
+		case 0xc694: useelevator3(); break;
+		case 0xc698: useelevator4(); break;
+		case 0xc69c: useelevator2(); break;
+		case 0xc6a0: useelevator5(); break;
+		case 0xc6a4: usekey(); break;
+		case 0xc6a8: usestereo(); break;
+		case 0xc6ac: usecooker(); break;
+		case 0xc6b0: useaxe(); break;
+		case 0xc6b4: useelvdoor(); break;
+		case 0xc6b8: withwhat(); break;
+		case 0xc6bc: selectob(); break;
+		case 0xc6c0: compare(); break;
+		case 0xc6c4: findsetobject(); break;
+		case 0xc6c8: findexobject(); break;
+		case 0xc6cc: isryanholding(); break;
+		case 0xc6d0: checkinside(); break;
+		case 0xc6d4: usetext(); break;
+		case 0xc6d8: putbackobstuff(); break;
+		case 0xc6dc: showpuztext(); break;
+		case 0xc6e0: findpuztext(); break;
+		case 0xc6e4: placesetobject(); break;
+		case 0xc6e8: removesetobject(); break;
+		case 0xc6ec: issetobonmap(); break;
+		case 0xc6f0: placefreeobject(); break;
+		case 0xc6f4: removefreeobject(); break;
+		case 0xc6f8: findormake(); break;
+		case 0xc6fc: switchryanon(); break;
+		case 0xc700: switchryanoff(); break;
+		case 0xc704: setallchanges(); break;
+		case 0xc708: dochange(); break;
+		case 0xc70c: autoappear(); break;
+		case 0xc710: getundertimed(); break;
+		case 0xc714: putundertimed(); break;
+		case 0xc718: dumptimedtext(); break;
+		case 0xc71c: setuptimeduse(); break;
+		case 0xc720: setuptimedtemp(); break;
+		case 0xc724: usetimedtext(); break;
+		case 0xc728: edenscdplayer(); break;
+		case 0xc72c: usewall(); break;
+		case 0xc730: usechurchgate(); break;
+		case 0xc734: usegun(); break;
+		case 0xc738: useshield(); break;
+		case 0xc73c: usebuttona(); break;
+		case 0xc740: useplate(); break;
+		case 0xc744: usewinch(); break;
+		case 0xc748: entercode(); break;
+		case 0xc74c: loadkeypad(); break;
+		case 0xc750: quitkey(); break;
+		case 0xc754: addtopresslist(); break;
+		case 0xc758: buttonone(); break;
+		case 0xc75c: buttontwo(); break;
+		case 0xc760: buttonthree(); break;
+		case 0xc764: buttonfour(); break;
+		case 0xc768: buttonfive(); break;
+		case 0xc76c: buttonsix(); break;
+		case 0xc770: buttonseven(); break;
+		case 0xc774: buttoneight(); break;
+		case 0xc778: buttonnine(); break;
+		case 0xc77c: buttonnought(); break;
+		case 0xc780: buttonenter(); break;
+		case 0xc784: buttonpress(); break;
+		case 0xc788: showouterpad(); break;
+		case 0xc78c: showkeypad(); break;
+		case 0xc790: singlekey(); break;
+		case 0xc794: dumpkeypad(); break;
+		case 0xc798: usemenu(); break;
+		case 0xc79c: dumpmenu(); break;
+		case 0xc7a0: getundermenu(); break;
+		case 0xc7a4: putundermenu(); break;
+		case 0xc7a8: showoutermenu(); break;
+		case 0xc7ac: showmenu(); break;
+		case 0xc7b0: loadmenu(); break;
+		case 0xc7b4: viewfolder(); break;
+		case 0xc7b8: nextfolder(); break;
+		case 0xc7bc: folderhints(); break;
+		case 0xc7c0: lastfolder(); break;
+		case 0xc7c4: loadfolder(); break;
+		case 0xc7c8: showfolder(); break;
+		case 0xc7cc: folderexit(); break;
+		case 0xc7d0: showleftpage(); break;
+		case 0xc7d4: showrightpage(); break;
+		case 0xc7d8: entersymbol(); break;
+		case 0xc7dc: quitsymbol(); break;
+		case 0xc7e0: settopleft(); break;
+		case 0xc7e4: settopright(); break;
+		case 0xc7e8: setbotleft(); break;
+		case 0xc7ec: setbotright(); break;
+		case 0xc7f0: dumpsymbol(); break;
+		case 0xc7f4: showsymbol(); break;
+		case 0xc7f8: nextsymbol(); break;
+		case 0xc7fc: updatesymboltop(); break;
+		case 0xc800: updatesymbolbot(); break;
+		case 0xc804: dumpsymbox(); break;
+		case 0xc808: usediary(); break;
+		case 0xc80c: showdiary(); break;
+		case 0xc810: showdiarykeys(); break;
+		case 0xc814: dumpdiarykeys(); break;
+		case 0xc818: diarykeyp(); break;
+		case 0xc81c: diarykeyn(); break;
+		case 0xc820: showdiarypage(); break;
+		case 0xc824: findtext1(); break;
+		case 0xc828: zoomonoff(); break;
+		case 0xc82c: saveload(); break;
+		case 0xc830: dosaveload(); break;
+		case 0xc834: getbackfromops(); break;
+		case 0xc838: showmainops(); break;
+		case 0xc83c: showdiscops(); break;
+		case 0xc840: loadsavebox(); break;
+		case 0xc844: loadgame(); break;
+		case 0xc848: getbacktoops(); break;
+		case 0xc84c: discops(); break;
+		case 0xc850: savegame(); break;
+		case 0xc854: actualsave(); break;
+		case 0xc858: actualload(); break;
+		case 0xc85c: selectslot2(); break;
+		case 0xc860: checkinput(); break;
+		case 0xc864: getnamepos(); break;
+		case 0xc868: showopbox(); break;
+		case 0xc86c: showloadops(); break;
+		case 0xc870: showsaveops(); break;
+		case 0xc874: selectslot(); break;
+		case 0xc878: showslots(); break;
+		case 0xc87c: shownames(); break;
+		case 0xc880: dosreturn(); break;
+		case 0xc884: error(); break;
+		case 0xc888: namestoold(); break;
+		case 0xc88c: oldtonames(); break;
+		case 0xc890: savefilewrite(); break;
+		case 0xc894: savefileread(); break;
+		case 0xc898: saveposition(); break;
+		case 0xc89c: loadposition(); break;
+		case 0xc8a0: loadseg(); break;
+		case 0xc8a4: makeheader(); break;
+		case 0xc8a8: storeit(); break;
+		case 0xc8ac: saveseg(); break;
+		case 0xc8b0: findlen(); break;
+		case 0xc8b4: scanfornames(); break;
+		case 0xc8b8: decide(); break;
+		case 0xc8bc: showdecisions(); break;
+		case 0xc8c0: newgame(); break;
+		case 0xc8c4: loadold(); break;
+		case 0xc8c8: loadspeech(); break;
+		case 0xc8cc: createname(); break;
+		case 0xc8d0: loadsample(); break;
+		case 0xc8d4: loadsecondsample(); break;
+		case 0xc8d8: soundstartup(); break;
+		case 0xc8dc: trysoundalloc(); break;
+		case 0xc8e0: setsoundoff(); break;
+		case 0xc8e4: checksoundint(); break;
+		case 0xc8e8: enablesoundint(); break;
+		case 0xc8ec: disablesoundint(); break;
+		case 0xc8f0: interupttest(); break;
+		case 0xc8f4: soundend(); break;
+		case 0xc8f8: out22c(); break;
+		case 0xc8fc: playchannel0(); break;
+		case 0xc900: playchannel1(); break;
+		case 0xc904: makenextblock(); break;
+		case 0xc908: volumeadjust(); break;
+		case 0xc90c: loopchannel0(); break;
+		case 0xc910: cancelch0(); break;
+		case 0xc914: cancelch1(); break;
+		case 0xc918: channel0only(); break;
+		case 0xc91c: channel1only(); break;
+		case 0xc920: channel0tran(); break;
+		case 0xc924: bothchannels(); break;
+		case 0xc928: saveems(); break;
+		case 0xc92c: restoreems(); break;
+		case 0xc930: domix(); break;
+		case 0xc934: dmaend(); break;
+		case 0xc938: startdmablock(); break;
+		case 0xc93c: setuppit(); break;
+		case 0xc940: getridofpit(); break;
+		case 0xc944: pitinterupt(); break;
+		case 0xc948: dreamweb(); break;
+		case 0xc94c: entrytexts(); break;
+		case 0xc950: entryanims(); break;
+		case 0xc954: initialinv(); break;
+		case 0xc958: pickupob(); break;
+		case 0xc95c: setupemm(); break;
+		case 0xc960: removeemm(); break;
+		case 0xc964: checkforemm(); break;
+		case 0xc968: checkbasemem(); break;
+		case 0xc96c: allocatebuffers(); break;
+		case 0xc970: clearbuffers(); break;
+		case 0xc974: clearchanges(); break;
+		case 0xc978: clearbeforeload(); break;
+		case 0xc97c: clearreels(); break;
+		case 0xc980: clearrest(); break;
+		case 0xc984: deallocatemem(); break;
+		case 0xc988: allocatemem(); break;
+		case 0xc990: parseblaster(); break;
+		case 0xc994: startup(); break;
+		case 0xc998: startup1(); break;
+		case 0xc99c: screenupdate(); break;
+		case 0xc9a0: watchreel(); break;
+		case 0xc9a4: checkforshake(); break;
+		case 0xc9a8: watchcount(); break;
+		case 0xc9ac: showtime(); break;
+		case 0xc9b0: dumpwatch(); break;
+		case 0xc9b4: showbyte(); break;
+		case 0xc9b8: onedigit(); break;
+		case 0xc9bc: twodigitnum(); break;
+		case 0xc9c0: showword(); break;
+		case 0xc9c4: convnum(); break;
+		case 0xc9c8: mainscreen(); break;
+		case 0xc9cc: madmanrun(); break;
+		case 0xc9d0: checkcoords(); break;
+		case 0xc9d4: identifyob(); break;
+		case 0xc9d8: checkifperson(); break;
+		case 0xc9dc: checkifset(); break;
+		case 0xc9e0: checkifex(); break;
+		case 0xc9e4: checkiffree(); break;
+		case 0xc9e8: isitdescribed(); break;
+		case 0xc9ec: findpathofpoint(); break;
+		case 0xc9f0: findfirstpath(); break;
+		case 0xc9f4: turnpathon(); break;
+		case 0xc9f8: turnpathoff(); break;
+		case 0xc9fc: turnanypathon(); break;
+		case 0xca00: turnanypathoff(); break;
+		case 0xca04: checkifpathison(); break;
+		case 0xca08: afternewroom(); break;
+		case 0xca0c: atmospheres(); break;
+		case 0xca10: walkintoroom(); break;
+		case 0xca14: afterintroroom(); break;
+		case 0xca18: obname(); break;
+		case 0xca1c: finishedwalking(); break;
+		case 0xca20: examineobtext(); break;
+		case 0xca24: commandwithob(); break;
+		case 0xca28: commandonly(); break;
+		case 0xca2c: printmessage(); break;
+		case 0xca30: printmessage2(); break;
+		case 0xca34: blocknametext(); break;
+		case 0xca38: personnametext(); break;
+		case 0xca3c: walktotext(); break;
+		case 0xca40: getflagunderp(); break;
+		case 0xca44: setwalk(); break;
+		case 0xca48: autosetwalk(); break;
+		case 0xca4c: checkdest(); break;
+		case 0xca50: bresenhams(); break;
+		case 0xca54: workoutframes(); break;
+		case 0xca58: getroomspaths(); break;
+		case 0xca5c: copyname(); break;
+		case 0xca60: findobname(); break;
+		case 0xca64: showicon(); break;
+		case 0xca68: middlepanel(); break;
+		case 0xca6c: showman(); break;
+		case 0xca70: showpanel(); break;
+		case 0xca74: roomname(); break;
+		case 0xca78: usecharset1(); break;
+		case 0xca7c: usetempcharset(); break;
+		case 0xca80: showexit(); break;
+		case 0xca84: panelicons1(); break;
+		case 0xca88: showwatch(); break;
+		case 0xca8c: gettime(); break;
+		case 0xca90: zoomicon(); break;
+		case 0xca94: showblink(); break;
+		case 0xca98: dumpblink(); break;
+		case 0xca9c: worktoscreenm(); break;
+		case 0xcaa0: blank(); break;
+		case 0xcaa4: allpointer(); break;
+		case 0xcaa8: hangonp(); break;
+		case 0xcaac: hangonw(); break;
+		case 0xcab0: hangoncurs(); break;
+		case 0xcab4: getunderzoom(); break;
+		case 0xcab8: dumpzoom(); break;
+		case 0xcabc: putunderzoom(); break;
+		case 0xcac0: crosshair(); break;
+		case 0xcac4: showpointer(); break;
+		case 0xcac8: delpointer(); break;
+		case 0xcacc: dumppointer(); break;
+		case 0xcad0: undertextline(); break;
+		case 0xcad4: deltextline(); break;
+		case 0xcad8: dumptextline(); break;
+		case 0xcadc: animpointer(); break;
+		case 0xcae0: setmouse(); break;
+		case 0xcae4: readmouse(); break;
+		case 0xcae8: mousecall(); break;
+		case 0xcaec: readmouse1(); break;
+		case 0xcaf0: readmouse2(); break;
+		case 0xcaf4: readmouse3(); break;
+		case 0xcaf8: readmouse4(); break;
+		case 0xcafc: readkey(); break;
+		case 0xcb00: convertkey(); break;
+		case 0xcb04: randomnum1(); break;
+		case 0xcb08: randomnum2(); break;
+		case 0xcb10: hangon(); break;
+		case 0xcb14: loadtraveltext(); break;
+		case 0xcb18: loadintotemp(); break;
+		case 0xcb1c: loadintotemp2(); break;
+		case 0xcb20: loadintotemp3(); break;
+		case 0xcb24: loadtempcharset(); break;
+		case 0xcb28: standardload(); break;
+		case 0xcb2c: loadtemptext(); break;
+		case 0xcb30: loadroom(); break;
+		case 0xcb34: loadroomssample(); break;
+		case 0xcb38: getridofreels(); break;
+		case 0xcb3c: getridofall(); break;
+		case 0xcb40: restorereels(); break;
+		case 0xcb44: restoreall(); break;
+		case 0xcb48: sortoutmap(); break;
+		case 0xcb4c: startloading(); break;
+		case 0xcb50: disablepath(); break;
+		case 0xcb54: findxyfrompath(); break;
+		case 0xcb58: findroominloc(); break;
+		case 0xcb5c: getroomdata(); break;
+		case 0xcb60: readheader(); break;
+		case 0xcb64: dontloadseg(); break;
+		case 0xcb68: allocateload(); break;
+		case 0xcb6c: fillspace(); break;
+		case 0xcb70: getridoftemp(); break;
+		case 0xcb74: getridoftemptext(); break;
+		case 0xcb78: getridoftemp2(); break;
+		case 0xcb7c: getridoftemp3(); break;
+		case 0xcb80: getridoftempcharset(); break;
+		case 0xcb84: getridoftempsp(); break;
+		case 0xcb88: readsetdata(); break;
+		case 0xcb8c: createfile(); break;
+		case 0xcb90: openfile(); break;
+		case 0xcb94: openfilefromc(); break;
+		case 0xcb98: makename(); break;
+		case 0xcb9c: openfilenocheck(); break;
+		case 0xcba0: openforsave(); break;
+		case 0xcba4: closefile(); break;
+		case 0xcba8: readfromfile(); break;
+		case 0xcbac: setkeyboardint(); break;
+		case 0xcbb0: resetkeyboard(); break;
+		case 0xcbb4: keyboardread(); break;
+		case 0xcbb8: walkandexamine(); break;
+		case 0xcbbc: doload(); break;
+		case 0xcbc0: generalerror(); break;
+		default: ::error("invalid call to %04x dispatched", (uint16)ax);
 	}
 }
 

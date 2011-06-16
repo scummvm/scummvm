@@ -61,7 +61,7 @@ class proc:
 			if i + 1 >= len(stmts):
 				break
 			if isinstance(stmts[i + 1], cls):
-				stmts[i + 1].repeat = 'context.cx'
+				stmts[i + 1].repeat = 'cx'
 				del stmts[i]
 			i += 1
 		return

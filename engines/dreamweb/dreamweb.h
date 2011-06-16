@@ -138,7 +138,7 @@ private:
 	Audio::SoundHandle _channelHandle[2];
 	uint8 _channel0, _channel1;
 
-	DreamGen::Context _context;
+	DreamGen::DreamGenContext _context;
 };
 
 } // End of namespace DreamWeb

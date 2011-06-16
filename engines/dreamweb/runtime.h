@@ -542,9 +542,9 @@ public:
 };
 
 #ifndef NDEBUG
-#	define STACK_CHECK(context)  StackChecker checker(context)
+#	define STACK_CHECK  StackChecker checker(*this)
 #else
-#	define STACK_CHECK(context)  do {} while (0)
+#	define STACK_CHECK  do {} while (0)
 #endif
 
 }
