@@ -202,7 +202,7 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 			}
 			// The surface is a whole scanline wide, skip the rest of it.
 			if (_header.bitDepth == 4)
-				src += output->w / 2;
+				src += output->w / 2 + output->w % 2;
 		}
 	}
 
