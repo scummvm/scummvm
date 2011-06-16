@@ -1785,7 +1785,7 @@ case $_host_os in
 	mingw*)
 		DEFINES="$DEFINES -DWIN32"
 		DEFINES="$DEFINES -D__USE_MINGW_ANSI_STDIO=0"
-		LIBS="$LIBS -lmingw32 -lwinmm -lole32 -luuid"
+		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
 		;;
@@ -3152,7 +3152,23 @@ fi
 #
 echo_n "Building taskbar integration support... "
 define_in_config_if_yes $_taskbar 'USE_TASKBAR'
-echo "$_taskbar"
+if test "$_taskbar" = yes; then
+	case $_host_os in
+	mingw*)
+		LIBS="$LIBS -lole32 -luuid"
+		echo "win32"
+		;;
+	*)
+		if test "$_unity" = yes; then
+			echo "unity"
+		else
+			echo "$_taskbar"
+		fi
+		;;
+	esac
+else
+	echo "$_taskbar"
+fi
 
 #
 # Figure out installation directories
