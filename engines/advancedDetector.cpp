@@ -51,7 +51,13 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 		extra = g.extra;
 	}
 
-	GameDescriptor gd(g.gameid, title, g.language, g.platform, 0, g.flags & ADGF_WIP_TESTING, g.flags & ADGF_WIP_UNSTABLE);
+	WIPLevel wipLevel = WIP_STABLE;
+	if (g.flags & ADGF_WIP_UNSTABLE)
+		wipLevel = WIP_UNSTABLE;
+	else if (g.flags & ADGF_WIP_TESTING)
+		wipLevel = WIP_TESTING;
+
+	GameDescriptor gd(g.gameid, title, g.language, g.platform, 0, wipLevel);
 	gd.updateDesc(extra);
 	return gd;
 }
@@ -261,8 +267,9 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	showWIPTestingWarning = true;
 #endif
 
-	if (((gameDescriptor.isWIPUnstable()
-			|| (gameDescriptor.isWIPTesting() && showWIPTestingWarning)))
+	if (((gameDescriptor.getWIPLevel() == WIP_UNSTABLE
+			|| (gameDescriptor.getWIPLevel() == WIP_TESTING
+					&& showWIPTestingWarning)))
 			&& !Engine::warnUserAboutWIPGame())
 		return Common::kUserCanceled;
 

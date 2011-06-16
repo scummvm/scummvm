@@ -46,7 +46,7 @@ GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, uint32 guioptions
 		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
 }
 
-GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, uint32 guioptions, bool wipTesting, bool wipUnstable) {
+GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, uint32 guioptions, WIPLevel wipLevel) {
 	setVal("gameid", g);
 	setVal("description", d);
 	if (l != Common::UNK_LANG)
@@ -56,8 +56,7 @@ GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d,
 	if (guioptions != 0)
 		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
 
-	setWIPTesting(wipTesting);
-	setWIPUnstable(wipUnstable);
+	setWIPLevel(wipLevel);
 }
 
 void GameDescriptor::setGUIOptions(uint32 guioptions) {
@@ -98,5 +97,32 @@ void GameDescriptor::updateDesc(const char *extra) {
 		}
 		descr += ")";
 		setVal("description", descr);
+	}
+}
+
+WIPLevel GameDescriptor::getWIPLevel() {
+	WIPLevel wipLevel = WIP_STABLE;
+	if (contains("wiplevel")) {
+		Common::String wipLevelString = getVal("wiplevel");
+		if (wipLevelString.equals("unstable"))
+			wipLevel = WIP_UNSTABLE;
+		else if (wipLevelString.equals("testing"))
+			wipLevel = WIP_TESTING;
+	}
+	return wipLevel;
+}
+
+void GameDescriptor::setWIPLevel(WIPLevel wipLevel) {
+	switch (wipLevel) {
+	case WIP_UNSTABLE:
+		setVal("wiplevel", "unstable");
+		break;
+	case WIP_TESTING:
+		setVal("wiplevel", "testing");
+		break;
+	case WIP_STABLE:
+		// Fall Through intended
+	default:
+		erase("wiplevel");
 	}
 }
