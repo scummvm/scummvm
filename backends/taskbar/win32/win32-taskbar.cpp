@@ -22,7 +22,15 @@
  * $Id$
  *
  */
- 
+
+// We need certain functions that are excluded by default
+#undef NONLS
+#undef NOICONS
+#include <windows.h>
+#if defined(ARRAYSIZE)
+	#undef ARRAYSIZE
+#endif
+
 #include "common/scummsys.h"
 
 #if defined(WIN32) && defined(USE_TASKBAR)
