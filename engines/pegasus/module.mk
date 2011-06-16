@@ -14,6 +14,9 @@ MODULE_OBJS = \
 	Game_Shell/CItem.o \
 	Game_Shell/CItemList.o \
 	MMShell/Base_Classes/MMFunctionPtr.o \
+	MMShell/Notification/MMNotification.o \
+	MMShell/Notification/MMNotificationManager.o \
+	MMShell/Notification/MMNotificationReceiver.o \
 	MMShell/Sounds/MMSound.o \
 	MMShell/Utilities/MMResourceFile.o \
 	MMShell/Utilities/MMUtilities.o
