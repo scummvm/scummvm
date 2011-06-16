@@ -778,6 +778,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 						int maxPriority = 0;
 						for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx)
 							maxPriority = MAX(maxPriority, vtStruct->_entries[idx]._type1._priority2);
+
 						if (!maxPriority) {
 							_sfUpdateVoiceStructs2();
 							break;
@@ -793,11 +794,11 @@ void SoundManager::_sfRethinkVoiceTypes() {
 						}
 					} while (chNumVoices > numVoices);
 
-					int voicesCtr = numVoices;
+					int voicesCtr = chNumVoices;
 					for (uint idx = 0; (idx < vtStruct->_entries.size()) && (voicesCtr > 0); ++idx) {
 						if (!vtStruct->_entries[idx]._type1._sound2) {
 							vtStruct->_entries[idx]._type1._sound2 = sound;
-							vtStruct->_entries[idx]._type1._channelNum2 = idx;
+							vtStruct->_entries[idx]._type1._channelNum2 = foundIndex;
 							vtStruct->_entries[idx]._type1._priority2 = foundPriority;
 							--voicesCtr;
 						}
@@ -2509,7 +2510,17 @@ void AdlibSoundDriver::setPitch(int channel, int pitchBlend) {
 
 void AdlibSoundDriver::write(byte reg, byte value) {
 static int num = 1;
-debug("%d [%x]=%x", num++, reg, value);//***DEBUG****
+/*
+	if (((num - 1) % 8) == 0)
+		debugN("\n9800:%.4x   ", (num - 1) * 2 + 2);
+
+	debugN("%.2x %.2x ", reg, value);
+	++num;
+*/
+debugN("%d [%x]=%x ", num++, reg, value);//***DEBUG****
+	for (int idx = 0; idx < 16; ++idx) debugN("%d", _channelVoiced[idx] ? 1 : 0);
+	debugN("\n");
+
 	_portContents[reg] = value;
 	OPLWriteReg(_opl, reg, value);
 }
