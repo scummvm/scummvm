@@ -19,6 +19,7 @@ MODULE_OBJS = \
 	MMShell/Notification/MMNotificationReceiver.o \
 	MMShell/Sounds/MMSound.o \
 	MMShell/Utilities/MMResourceFile.o \
+	MMShell/Utilities/MMTimeValue.o \
 	MMShell/Utilities/MMUtilities.o
 
 
