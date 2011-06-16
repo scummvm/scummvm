@@ -23,15 +23,11 @@
  *
  */
 
-// We need certain functions that are excluded by default
-#undef NONLS
-#undef NOICONS
-#include <windows.h>
-#if defined(ARRAYSIZE)
-	#undef ARRAYSIZE
+// We cannot use common/scummsys.h directly as it will include
+// windows.h and we need to do it by hand to allow excluded functions
+#if defined(HAVE_CONFIG_H)
+#include "config.h"
 #endif
-
-#include "common/scummsys.h"
 
 #if defined(WIN32) && defined(USE_TASKBAR)
 
@@ -43,6 +39,14 @@
 	#error Only compilation with MingW is supported
 #endif
 #else
+	// We need certain functions that are excluded by default
+	#undef NONLS
+	#undef NOICONS
+	#include <windows.h>
+	#if defined(ARRAYSIZE)
+		#undef ARRAYSIZE
+	#endif
+
 	// Default MSVC headers for ITaskbarList3 and IShellLink
 	#include <SDKDDKVer.h>
 #endif
@@ -50,6 +54,8 @@
 
 // For HWND
 #include <SDL_syswm.h>
+
+#include "common/scummsys.h"
 
 #include "backends/taskbar/win32/win32-taskbar.h"
 
