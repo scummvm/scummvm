@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef PEGASUS_MMSHELL_MMTYPES_H
-#define PEGASUS_MMSHELL_MMTYPES_H
+#ifndef PEGASUS_MMSHELL_MMCONSTANTS_H
+#define PEGASUS_MMSHELL_MMCONSTANTS_H
 
 #include "pegasus/MMShell/MMTypes.h"
 
