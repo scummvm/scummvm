@@ -1574,6 +1574,16 @@ void cmd_shake_screen(AgiGame *state, uint8 *p) {
 	state->inputEnabled = originalValue;
 }
 
+void cmd_set_speed(AgiGame *state, uint8 *p) {
+	// V1 command
+	(void)state;
+	(void)p;
+}
+
+void cmd_unknown(AgiGame *state, uint8 *p) {
+	warning("Skipping unknown opcode %2X", *(p - 1));
+}
+
 /**
  * Execute a logic script
  * @param n  Number of the logic resource to execute
@@ -1659,7 +1669,6 @@ int AgiEngine::runLogic(int n) {
 
 			debugC(2, kDebugLevelScripts, "%s%s(%d %d %d)", st, logicNamesCmd[op].name, p[0], p[1], p[2]);
 
-//			(this->*_agiCommands[op])(&_game, p);
 			_agiCommands[op](&_game, p);
 			ip += num;
 		}

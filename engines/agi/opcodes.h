@@ -221,6 +221,9 @@ void cmd_mouse_posn(AgiGame *state, uint8 *p);
 void cmd_release_key(AgiGame *state, uint8 *p);
 void cmd_adj_ego_move_to_x_y(AgiGame *state, uint8 *p);
 
+void cmd_set_speed(AgiGame *state, uint8 *p);
+void cmd_unknown(AgiGame *state, uint8 *p);
+
 void cond_equal(AgiGame *state, uint8 *p);
 void cond_equalv(AgiGame *state, uint8 *p);
 void cond_less(AgiGame *state, uint8 *p);
@@ -241,6 +244,11 @@ void cond_center_posn(AgiGame *state, uint8 *p);
 void cond_right_posn(AgiGame *state, uint8 *p);
 void cond_unknown_13(AgiGame *state, uint8 *p);
 void cond_unknown(AgiGame *state, uint8 *p);
+
+void cond_isset_v1(AgiGame *state, uint8 *p);
+void cond_said1(AgiGame *state, uint8 *p);
+void cond_said2(AgiGame *state, uint8 *p);
+void cond_said3(AgiGame *state, uint8 *p);
 
 } // End of namespace Agi
 

@@ -23,6 +23,7 @@
 
 #include "agi/agi.h"
 #include "agi/opcodes.h"
+#include "common/endian.h"
 
 namespace Agi {
 
@@ -83,6 +84,10 @@ void cond_issetv(AgiGame *state, uint8 *p) {
 	state->ec = testIsSet(getvar(p[1]));
 }
 
+void cond_isset_v1(AgiGame *state, uint8 *p) {
+	state->ec = getvar(p[0]) > 0;
+}
+
 void cond_has(AgiGame *state, uint8 *p) {
 	state->ec = testHas(p[0]);
 }
@@ -106,6 +111,48 @@ void cond_have_key(AgiGame *state, uint8 *p) {
 void cond_said(AgiGame *state, uint8 *p) {
 	int ec = state->_vm->testSaid(p[0], p + 1);
 	state->ec = ec;
+}
+
+void cond_said1(AgiGame *state, uint8 *p) {
+	state->ec = false;
+
+	if (!getflag(fEnteredCli))
+		return;
+
+	int id0 = READ_LE_UINT16(p);
+
+	if ((id0 == 1 || id0 == state->egoWords[0].id))
+		state->ec = true;
+}
+
+void cond_said2(AgiGame *state, uint8 *p) {
+	state->ec = false;
+
+	if (!getflag(fEnteredCli))
+		return;
+
+	int id0 = READ_LE_UINT16(p);
+	int id1 = READ_LE_UINT16(p + 2);
+
+	if ((id0 == 1 || id0 == state->egoWords[0].id) &&
+		(id1 == 1 || id1 == state->egoWords[1].id))
+		state->ec = true;
+}
+
+void cond_said3(AgiGame *state, uint8 *p) {
+	state->ec = false;
+
+	if (!getflag(fEnteredCli))
+		return;
+
+	int id0 = READ_LE_UINT16(p);
+	int id1 = READ_LE_UINT16(p + 2);
+	int id2 = READ_LE_UINT16(p + 4);
+
+	if ((id0 == 1 || id0 == state->egoWords[0].id) &&
+		(id1 == 1 || id1 == state->egoWords[1].id) &&
+		(id2 == 1 || id2 == state->egoWords[2].id))
+		state->ec = true;
 }
 
 void cond_compare_strings(AgiGame *state, uint8 *p) {
