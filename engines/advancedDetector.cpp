@@ -52,9 +52,9 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 	}
 
 	GameSupportLevel gsl = kStableGame;
-	if (g.flags & ADGF_WIP_UNSTABLE)
+	if (g.flags & ADGF_UNSTABLE)
 		gsl = kUnstableGame;
-	else if (g.flags & ADGF_WIP_TESTING)
+	else if (g.flags & ADGF_TESTING)
 		gsl = kTestingGame;
 
 	GameDescriptor gd(g.gameid, title, g.language, g.platform, 0, gsl);
