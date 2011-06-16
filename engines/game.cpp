@@ -46,7 +46,7 @@ GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, uint32 guioptions
 		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
 }
 
-GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, uint32 guioptions, WIPLevel wipLevel) {
+GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, uint32 guioptions, GameSupportLevel gsl) {
 	setVal("gameid", g);
 	setVal("description", d);
 	if (l != Common::UNK_LANG)
@@ -56,7 +56,7 @@ GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d,
 	if (guioptions != 0)
 		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
 
-	setWIPLevel(wipLevel);
+	setSupportLevel(gsl);
 }
 
 void GameDescriptor::setGUIOptions(uint32 guioptions) {
@@ -100,29 +100,29 @@ void GameDescriptor::updateDesc(const char *extra) {
 	}
 }
 
-WIPLevel GameDescriptor::getWIPLevel() {
-	WIPLevel wipLevel = WIP_STABLE;
-	if (contains("wiplevel")) {
-		Common::String wipLevelString = getVal("wiplevel");
-		if (wipLevelString.equals("unstable"))
-			wipLevel = WIP_UNSTABLE;
-		else if (wipLevelString.equals("testing"))
-			wipLevel = WIP_TESTING;
+GameSupportLevel GameDescriptor::getSupportLevel() {
+	GameSupportLevel gsl = kStableGame;
+	if (contains("gsl")) {
+		Common::String gslString = getVal("gsl");
+		if (gslString.equals("unstable"))
+			gsl = kUnstableGame;
+		else if (gslString.equals("testing"))
+			gsl = kTestingGame;
 	}
-	return wipLevel;
+	return gsl;
 }
 
-void GameDescriptor::setWIPLevel(WIPLevel wipLevel) {
-	switch (wipLevel) {
-	case WIP_UNSTABLE:
-		setVal("wiplevel", "unstable");
+void GameDescriptor::setSupportLevel(GameSupportLevel gsl) {
+	switch (gsl) {
+	case kUnstableGame:
+		setVal("gsl", "unstable");
 		break;
-	case WIP_TESTING:
-		setVal("wiplevel", "testing");
+	case kTestingGame:
+		setVal("gsl", "testing");
 		break;
-	case WIP_STABLE:
+	case kStableGame:
 		// Fall Through intended
 	default:
-		erase("wiplevel");
+		erase("gsl");
 	}
 }

@@ -49,10 +49,10 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
 /**
  * Ths is an enum to describe how done a game is. This also indicates what level of support is expected.
  */
-enum WIPLevel {
-	WIP_STABLE = 0, // the game is fully supported
-	WIP_TESTING, // the game is not supposed to end up in releases yet but is ready for public testing
-	WIP_UNSTABLE // the game is not even ready for public testing yet
+enum GameSupportLevel {
+	kStableGame = 0, // the game is fully supported
+	kTestingGame, // the game is not supposed to end up in releases yet but is ready for public testing
+	kUnstableGame // the game is not even ready for public testing yet
 };
 
 /**
@@ -71,7 +71,7 @@ public:
 	              Common::Language language = Common::UNK_LANG,
 				  Common::Platform platform = Common::kPlatformUnknown,
 				  uint32 guioptions = 0,
-				  WIPLevel wipLevel = WIP_STABLE);
+				  GameSupportLevel gsl = kStableGame);
 
 	/**
 	 * Update the description string by appending (LANG/PLATFORM/EXTRA) to it.
@@ -84,8 +84,8 @@ public:
 	/**
 	 * What level of support is expected of this game
 	 */
-	WIPLevel getWIPLevel();
-	void setWIPLevel(WIPLevel wipLevel);
+	GameSupportLevel getSupportLevel();
+	void setSupportLevel(GameSupportLevel gsl);
 
 	Common::String &gameid() { return getVal("gameid"); }
 	Common::String &description() { return getVal("description"); }
