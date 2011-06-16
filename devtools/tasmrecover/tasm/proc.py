@@ -66,7 +66,7 @@ class proc:
 			i += 1
 		return
 	
-	def optimize(self):
+	def optimize(self, keep_labels=[]):
 		print "optimizing..."
 		#trivial simplifications
 		while len(self.stmts) and isinstance(self.stmts[-1], op.label):
@@ -109,7 +109,7 @@ class proc:
 			if not isinstance(s, op.label):
 				continue
 			print "checking label %s..." %s.name
-			used = False
+			used = s.name in keep_labels
 			if s.name not in self.retlabels:
 				for j in self.stmts:
 					if isinstance(j, op.basejmp) and j.label == s.name:

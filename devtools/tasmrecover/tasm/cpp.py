@@ -483,6 +483,8 @@ namespace %s {
 					self.proc.stmts.append(s)
 				self.proc.add("ret")
 				print "skipping %d instructions, todo: %d" %(start, len(self.proc.stmts) - start)
+				print "re-optimizing..."
+				self.proc.optimize(keep_labels=[label])
 				self.proc.visit(self, start)
 			self.body += "}\n";
 			self.translated.insert(0, self.body)

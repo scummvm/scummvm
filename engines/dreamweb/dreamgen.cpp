@@ -3984,11 +3984,8 @@ atlast2:
 	context.ds.byte(context.di+17) = context.al;
 	context._cmp(context.cl, 5);
 	if (!context.flags.z())
-		goto notnearly;
+		return /* (notnearly) */;
 	context.data.byte(kThroughdoor) = 0;
-notnearly:
-	return;
-	return;
 }
 
 void updatepeople(Context &context) {
@@ -7343,12 +7340,6 @@ iswatching:
 justgetback:
 	context.data.byte(kInvopen) = 0;
 	context.data.byte(kOpenedob) = 255;
-	return;
-examlist:
-invlist1:
-openchangesize:
-withlist1:
-	return;
 }
 
 void setpickup(Context &context) {
@@ -13731,7 +13722,6 @@ axeondoor:
 	context.data.byte(kWatchspeed) = 1;
 	context.data.byte(kSpeedcount) = 1;
 	context.data.byte(kGetback) = 1;
-	return;
 }
 
 void useelvdoor(Context &context) {
