@@ -991,10 +991,11 @@ arm-riscos)
 	;;
 bada)
 	_host_os=bada
-	_host_cpu=arm
   if test "$_debug_build" = yes; then
+  	_host_cpu=i686
 	  _host_alias=i686-mingw32
   else
+    _host_cpu=arm
 	  _host_alias=arm-samsung-nucleuseabi
 	fi
 	;;
@@ -1420,7 +1421,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | wii | wince )
+		amigaos* | android | bada | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | wii | wince )
 			;;
 		*)
 			CXXFLAGS="$CXXFLAGS -ansi"
@@ -2260,6 +2261,8 @@ case $_backend in
 
 		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
+  bada)
+    ;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc'
 		INCLUDES="$INCLUDES "'-isystem $(ronindir)/include'
@@ -3251,6 +3254,7 @@ case $_backend in
     # dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
     DEFINES="$DEFINES -DBADA -DDISABLE_POSIX_FS -DNONSTANDARD_PORT"
     DEFINES="$DEFINES -DNO_STDERR_STDOUT"
+		DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
     INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
     INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
     INCLUDES="$INCLUDES "'-I$(BADA_SDK_ROOT)/Include'
