@@ -491,11 +491,9 @@ int ConfigManager::getInt(const String &key, const String &domName) const {
 
 bool ConfigManager::getBool(const String &key, const String &domName) const {
 	String value(get(key, domName));
-
-	if ((value == "true") || (value == "yes") || (value == "1"))
-		return true;
-	if ((value == "false") || (value == "no") || (value == "0"))
-		return false;
+	bool val;
+	if (Common::parseBool(value, val))
+		return val;
 
 	error("ConfigManager::getBool(%s,%s): '%s' is not a valid bool",
 	      key.c_str(), domName.c_str(), value.c_str());
