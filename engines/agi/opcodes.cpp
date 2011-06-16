@@ -29,7 +29,7 @@ AgiInstruction *logicNamesTest;
 AgiInstruction *logicNamesCmd;
 
 AgiInstruction insV1Test[] = {
-	{ "",					"",			NULL },					// 00
+	{ "",					"",			&cond_unknown },		// 00
 	{ "equaln",				"vn",		&cond_equal },			// 01
 	{ "equalv",				"vv",		&cond_equalv },			// 02
 	{ "lessn",				"vn",		&cond_less },			// 03
@@ -149,7 +149,7 @@ AgiInstruction insV1[] = {
 };
 
 AgiInstruction insV2Test[] = {
-	{ "",					"",			NULL },						// 00
+	{ "",					"",			&cond_unknown },			// 00
 	{ "equaln",				"vn",		&cond_equal },				// 01
 	{ "equalv",				"vv",		&cond_equalv },				// 02
 	{ "lessn",				"vn",		&cond_less },				// 03
@@ -358,9 +358,6 @@ AgiInstruction insV2[] = {
 };
 
 void AgiEngine::setupOpcodes() {
-	for (int i = 0; i < 256; ++i)
-		_agiCondCommands[i] = &cond_unknown;
-
 	if (getVersion() >= 0x2000) {
 		for (int i = 0; i <= ARRAYSIZE(insV2Test); ++i)
 			_agiCondCommands[i] = insV2Test[i].func;

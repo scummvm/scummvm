@@ -639,8 +639,7 @@ struct AgiGame {
 	Common::Rect mouseFence;		/**< rectangle set by fence.mouse command */
 
 	// IF condition handling
-	int endTest;
-	int ec;
+	int testResult;
 };
 
 /**
@@ -989,6 +988,8 @@ public:
 
 public:
 	// Some submethods of testIfCode
+	void skipInstruction(byte op);
+	void skipInstructionsUntil(byte v);
 	uint8 testObjRight(uint8, uint8, uint8, uint8, uint8);
 	uint8 testObjCenter(uint8, uint8, uint8, uint8, uint8);
 	uint8 testObjInBox(uint8, uint8, uint8, uint8, uint8);
