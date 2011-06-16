@@ -201,20 +201,35 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 }
 
 Common::String Win32TaskbarManager::getIconPath(Common::String target) {
-	// Get extra path
-	Common::String extra = ConfMan.get("extrapath");
+	// We first try to look for a iconspath configuration variable then
+	// fallback to the extra path
+	//
+	// Icons can be either in a subfolder named "icons" or directly in the path
 
-	Common::String filename = target + ".ico";
+	Common::String iconsPath = ConfMan.get("iconspath");
+	Common::String extraPath = ConfMan.get("extrapath");
 
-	if (!Common::File::exists(filename)) {
-		// Try with the game id instead of the domain name
-		filename = ConfMan.get("gameid") + ".ico";
+#define TRY_ICON_PATH(path) { \
+	Common::FSNode node((path)); \
+	if (node.exists()) \
+		return (path); \
+}
 
-		if (!Common::File::exists(filename))
-			return "";
+	if (!iconsPath.empty()) {
+		TRY_ICON_PATH(iconsPath + "/" + target + ".ico");
+		TRY_ICON_PATH(iconsPath + "/" + ConfMan.get("gameid") + ".ico");
+		TRY_ICON_PATH(iconsPath + "/icons/" + target + ".ico");
+		TRY_ICON_PATH(iconsPath + "/icons/" + ConfMan.get("gameid") + ".ico");
 	}
 
-	return extra + filename;
+	if (!extraPath.empty()) {
+		TRY_ICON_PATH(extraPath + "/" + target + ".ico");
+		TRY_ICON_PATH(extraPath + "/" + ConfMan.get("gameid") + ".ico");
+		TRY_ICON_PATH(extraPath + "/icons/" + target + ".ico");
+		TRY_ICON_PATH(extraPath + "/icons/" + ConfMan.get("gameid") + ".ico");
+	}
+
+	return "";
 }
 
 bool Win32TaskbarManager::isWin7OrLater() {

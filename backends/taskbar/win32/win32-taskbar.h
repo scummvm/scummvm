@@ -46,6 +46,13 @@ public:
 private:
 	ITaskbarList3 *_taskbar;
 
+	/**
+	 * 	Get the path to an icon for the game
+	 *
+	 * @param	target	The game target
+	 *
+	 * @return	The icon path (or "" if no icon was found)
+	 */
 	Common::String getIconPath(Common::String target);
 
 	// Helper functions
