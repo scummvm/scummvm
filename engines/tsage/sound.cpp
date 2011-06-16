@@ -382,7 +382,7 @@ void SoundManager::_sfProcessFading() {
 			sfManager()._needToRethink = true;
 		}
 
-		if (s->_fadeDest != 255) {
+		if (s->_fadeDest != -1) {
 			if (s->_fadeCounter != 0)
 				--s->_fadeCounter;
 			else {
@@ -2382,7 +2382,7 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	_sampleRate = _mixer->getOutputRate();
 	_opl = makeAdLibOPL(_sampleRate);
 
-	memset(_channelVoiced, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
+	Common::set_to(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
 	memset(_channelVolume, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	memset(_v4405E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	memset(_v44067, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
@@ -2518,7 +2518,7 @@ static int num = 1;
 	++num;
 */
 debugN("%d [%x]=%x ", num++, reg, value);//***DEBUG****
-	for (int idx = 0; idx < 16; ++idx) debugN("%d", _channelVoiced[idx] ? 1 : 0);
+	for (int idx = 0; idx < ADLIB_CHANNEL_COUNT; ++idx) debugN("%d", _channelVoiced[idx] ? 1 : 0);
 	debugN("\n");
 
 	_portContents[reg] = value;
