@@ -83,6 +83,7 @@ add_engine cine "Cinematique evo 1" yes
 add_engine cruise "Cinematique evo 2" yes
 add_engine draci "Dragon History" yes
 add_engine drascula "Drascula: The Vampire Strikes Back" yes
+add_engine dreamweb "Dreamweb" no
 add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes "groovie2"
 add_engine groovie2 "Groovie 2 games" no
@@ -2250,16 +2251,9 @@ fi
 #
 case $_backend in
 	android)
-		# ssp at this point so the cxxtests link
-		if test "$_debug_build" = yes; then
-			CXXFLAGS="$CXXFLAGS -fstack-protector"
-		else
-			CXXFLAGS="$CXXFLAGS -fno-stack-protector"
-		fi
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
-
-		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
   bada)
     ;;
@@ -3230,6 +3224,13 @@ fi
 #
 case $_backend in
 	android)
+		# ssp at this point so the cxxtests link
+		if test "$_debug_build" = yes; then
+			CXXFLAGS="$CXXFLAGS -fstack-protector"
+		else
+			CXXFLAGS="$CXXFLAGS -fno-stack-protector"
+		fi
+
 		static_libs=''
 		system_libs=''
 		for lib in $LIBS; do

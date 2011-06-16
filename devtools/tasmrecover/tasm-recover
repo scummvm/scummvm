@@ -1,0 +1,24 @@
+#!/usr/bin/python
+
+from tasm.parser import parser
+from tasm.cpp import cpp
+
+p = parser()
+p.strip_path = 3
+context = p.parse('dreamweb/dreamweb.asm')
+p.link()
+generator = cpp(context, "DreamGen", blacklist = [
+	'randomnumber',
+	'quickquit',
+	'quickquit2',
+	'seecommandtail',
+	'multiget',
+	'multiput',
+	'multidump',
+	'frameoutnm', 
+	'cls', 
+	'printundermon',
+	'worktoscreen',
+	'width160'
+	])
+generator.generate('dreamweb') #start routine

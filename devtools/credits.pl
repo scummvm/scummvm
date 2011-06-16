@@ -523,6 +523,11 @@ begin_credits("Credits");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 	  end_section();
 
+	  begin_section("DreamWeb");
+		  add_person("Vladimir Menshakov", "whoozle", "");
+		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+	  end_section();
+
 	  begin_section("Gob");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");

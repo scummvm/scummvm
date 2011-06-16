@@ -66,14 +66,13 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO
 	},
-#if 0
-	// FIXME: Compute new MD5s based on 5000 bytes instead of 0 (unlimited)
+
 	// Ringworld English Floppy Demo #2 version
 	{
 		{
 			"ring",
 			"Floppy Demo",
-			AD_ENTRY1s("demoring.rlb", "9ecf48e088a0d475778fab480b3dbdd0", 832206),
+			AD_ENTRY1s("demoring.rlb", "64050e1806203b15bb03876140eb4f56", 832206),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO,
@@ -82,6 +81,7 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
 	},
+#if 0
 	// FIXME: Compute new MD5s based on 5000 bytes instead of 0 (unlimited)
 	// Blue Force floppy
 	{
