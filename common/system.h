@@ -43,7 +43,7 @@ class SaveFileManager;
 class SearchSet;
 class String;
 #if defined(USE_TASKBAR)
-	class TaskbarManager;
+class TaskbarManager;
 #endif
 class TimerManager;
 class SeekableReadStream;
@@ -151,6 +151,15 @@ protected:
 	 * @note _savefileManager is deleted by the OSystem destructor.
 	 */
 	Common::SaveFileManager *_savefileManager;
+
+#if defined(USE_TASKBAR)
+	/**
+	 * No default value is provided for _savefileManager by OSystem.
+	 *
+	 * @note _savefileManager is deleted by the OSystem destructor.
+	 */
+	Common::TaskbarManager *_taskbarManager;
+#endif
 
 	/**
 	 * No default value is provided for _fsFactory by OSystem.
@@ -1057,7 +1066,9 @@ public:
 	 *
 	 * @return the TaskbarManager for the current architecture
 	 */
-	virtual Common::TaskbarManager *getTaskbarManager() = 0;
+	virtual Common::TaskbarManager *getTaskbarManager() {
+		return _taskbarManager;
+	}
 #endif
 
 	/**

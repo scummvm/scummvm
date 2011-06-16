@@ -35,9 +35,7 @@ ModularBackend::ModularBackend()
 	_mutexManager(0),
 	_graphicsManager(0),
 	_mixer(0) {
-#if defined(USE_TASKBAR)
-	_taskbarManager = 0;
-#endif
+
 }
 
 ModularBackend::~ModularBackend() {
@@ -45,10 +43,6 @@ ModularBackend::~ModularBackend() {
 	_graphicsManager = 0;
 	delete _mixer;
 	_mixer = 0;
-#if defined(USE_TASKBAR)
-	delete _taskbarManager;
-	_taskbarManager = 0;
-#endif
 	delete _mutexManager;
 	_mutexManager = 0;
 }
@@ -241,11 +235,3 @@ void ModularBackend::displayMessageOnOSD(const char *msg) {
 void ModularBackend::quit() {
 	exit(0);
 }
-
-#if defined(USE_TASKBAR)
-Common::TaskbarManager *ModularBackend::getTaskbarManager() {
-	assert(_taskbarManager);
-	return _taskbarManager;
-}
-#endif
-
