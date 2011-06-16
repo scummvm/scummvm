@@ -40,80 +40,80 @@ namespace Agi {
 #define testHas(obj)			(state->_vm->objectGetLocation(obj) == EGO_OWNED)
 #define testObjInRoom(obj, v)	(state->_vm->objectGetLocation(obj) == getvar(v))
 
-void cond_equal(AgiGame *state, uint8 *p) {
+void condEqual(AgiGame *state, uint8 *p) {
 	if (p[0] == 11)
 		state->_vm->_timerHack++;
 	state->testResult = testEqual(p[0], p[1]);
 }
 
-void cond_equalv(AgiGame *state, uint8 *p) {
+void condEqualV(AgiGame *state, uint8 *p) {
 	if (p[0] == 11 || p[1] == 11)
 		state->_vm->_timerHack++;
 	state->testResult = testEqual(p[0], getvar(p[1]));
 }
 
-void cond_less(AgiGame *state, uint8 *p) {
+void condLess(AgiGame *state, uint8 *p) {
 	if (p[0] == 11)
 		state->_vm->_timerHack++;
 	state->testResult = testLess(p[0], p[1]);
 }
 
-void cond_lessv(AgiGame *state, uint8 *p) {
+void condLessV(AgiGame *state, uint8 *p) {
 	if (p[0] == 11 || p[1] == 11)
 		state->_vm->_timerHack++;
 	state->testResult = testLess(p[0], getvar(p[1]));
 }
 
-void cond_greater(AgiGame *state, uint8 *p) {
+void condGreater(AgiGame *state, uint8 *p) {
 	if (p[0] == 11)
 		state->_vm->_timerHack++;
 	state->testResult = testGreater(p[0], p[1]);
 }
 
-void cond_greaterv(AgiGame *state, uint8 *p) {
+void condGreaterV(AgiGame *state, uint8 *p) {
 	if (p[0] == 11 || p[1] == 11)
 		state->_vm->_timerHack++;
 	state->testResult = testGreater(p[0], getvar(p[1]));
 }
 
-void cond_isset(AgiGame *state, uint8 *p) {
+void condIsSet(AgiGame *state, uint8 *p) {
 	state->testResult = testIsSet(p[0]);
 }
 
-void cond_issetv(AgiGame *state, uint8 *p) {
+void condIsSetV(AgiGame *state, uint8 *p) {
 	state->testResult = testIsSet(getvar(p[1]));
 }
 
-void cond_isset_v1(AgiGame *state, uint8 *p) {
+void condIsSetV1(AgiGame *state, uint8 *p) {
 	state->testResult = getvar(p[0]) > 0;
 }
 
-void cond_has(AgiGame *state, uint8 *p) {
+void condHas(AgiGame *state, uint8 *p) {
 	state->testResult = testHas(p[0]);
 }
 
-void cond_obj_in_room(AgiGame *state, uint8 *p) {
+void condObjInRoom(AgiGame *state, uint8 *p) {
 	state->testResult = testObjInRoom(p[0], p[1]);
 }
 
-void cond_posn(AgiGame *state, uint8 *p) {
+void condPosn(AgiGame *state, uint8 *p) {
 	state->testResult = state->_vm->testPosn(p[0], p[1], p[2], p[3], p[4]);
 }
 
-void cond_controller(AgiGame *state, uint8 *p) {
+void condController(AgiGame *state, uint8 *p) {
 	state->testResult = state->_vm->testController(p[0]);
 }
 
-void cond_have_key(AgiGame *state, uint8 *p) {
+void condHaveKey(AgiGame *state, uint8 *p) {
 	state->testResult = state->_vm->testKeypressed();
 }
 
-void cond_said(AgiGame *state, uint8 *p) {
+void condSaid(AgiGame *state, uint8 *p) {
 	int ec = state->_vm->testSaid(p[0], p + 1);
 	state->testResult = ec;
 }
 
-void cond_said1(AgiGame *state, uint8 *p) {
+void condSaid1(AgiGame *state, uint8 *p) {
 	state->testResult = false;
 
 	if (!getflag(fEnteredCli))
@@ -125,7 +125,7 @@ void cond_said1(AgiGame *state, uint8 *p) {
 		state->testResult = true;
 }
 
-void cond_said2(AgiGame *state, uint8 *p) {
+void condSaid2(AgiGame *state, uint8 *p) {
 	state->testResult = false;
 
 	if (!getflag(fEnteredCli))
@@ -139,7 +139,7 @@ void cond_said2(AgiGame *state, uint8 *p) {
 		state->testResult = true;
 }
 
-void cond_said3(AgiGame *state, uint8 *p) {
+void condSaid3(AgiGame *state, uint8 *p) {
 	state->testResult = false;
 
 	if (!getflag(fEnteredCli))
@@ -155,24 +155,24 @@ void cond_said3(AgiGame *state, uint8 *p) {
 		state->testResult = true;
 }
 
-void cond_compare_strings(AgiGame *state, uint8 *p) {
+void condCompareStrings(AgiGame *state, uint8 *p) {
 	debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", state->strings[p[0]], state->strings[p[1]]);
 	state->testResult = state->_vm->testCompareStrings(p[0], p[1]);
 }
 
-void cond_obj_in_box(AgiGame *state, uint8 *p) {
+void condObjInBox(AgiGame *state, uint8 *p) {
 	state->testResult = state->_vm->testObjInBox(p[0], p[1], p[2], p[3], p[4]);
 }
 
-void cond_center_posn(AgiGame *state, uint8 *p) {
+void condCenterPosn(AgiGame *state, uint8 *p) {
 	state->testResult = state->_vm->testObjCenter(p[0], p[1], p[2], p[3], p[4]);
 }
 
-void cond_right_posn(AgiGame *state, uint8 *p) {
+void condRightPosn(AgiGame *state, uint8 *p) {
 	state->testResult = state->_vm->testObjRight(p[0], p[1], p[2], p[3], p[4]);
 }
 
-void cond_unknown_13(AgiGame *state, uint8 *p) {
+void condUnknown13(AgiGame *state, uint8 *p) {
 	// My current theory is that this command checks whether the ego is currently moving
 	// and that that movement has been caused using the mouse and not using the keyboard.
 	// I base this theory on the game's behavior on an Amiga emulator, not on disassembly.
@@ -184,7 +184,7 @@ void cond_unknown_13(AgiGame *state, uint8 *p) {
 	state->testResult = ec;
 }
 
-void cond_unknown(AgiGame *state, uint8 *p) {
+void condUnknown(AgiGame *state, uint8 *p) {
 	warning("Skipping unknown test command %2X", *(p - 1));
 	state->testResult = false;
 }

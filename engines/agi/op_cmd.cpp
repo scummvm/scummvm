@@ -54,17 +54,17 @@ namespace Agi {
 #define setflag(a,b) state->_vm->setflag(a,b)
 #define getflag(a) state->_vm->getflag(a)
 
-void cmd_increment(AgiGame *state, uint8 *p) {
+void cmdIncrement(AgiGame *state, uint8 *p) {
 	if (_v[p0] != 0xff)
 		++_v[p0];
 }
 
-void cmd_decrement(AgiGame *state, uint8 *p) {
+void cmdDecrement(AgiGame *state, uint8 *p) {
 	if (_v[p0] != 0)
 		--_v[p0];
 }
 
-void cmd_assignn(AgiGame *state, uint8 *p) {
+void cmdAssignN(AgiGame *state, uint8 *p) {
 	_v[p0] = p1;
 
 	// WORKAROUND for a bug in fan _game "Get outta SQ"
@@ -78,83 +78,83 @@ void cmd_assignn(AgiGame *state, uint8 *p) {
 		_v[p0] = 8;
 }
 
-void cmd_addn(AgiGame *state, uint8 *p) {
+void cmdAddN(AgiGame *state, uint8 *p) {
 	_v[p0] += p1;
 }
 
-void cmd_subn(AgiGame *state, uint8 *p) {
+void cmdSubN(AgiGame *state, uint8 *p) {
 	_v[p0] -= p1;
 }
 
-void cmd_assignv(AgiGame *state, uint8 *p) {
+void cmdAssignV(AgiGame *state, uint8 *p) {
 	_v[p0] = _v[p1];
 }
 
-void cmd_addv(AgiGame *state, uint8 *p) {
+void cmdAddV(AgiGame *state, uint8 *p) {
 	_v[p0] += _v[p1];
 }
 
-void cmd_subv(AgiGame *state, uint8 *p) {
+void cmdSubV(AgiGame *state, uint8 *p) {
 	_v[p0] -= _v[p1];
 }
 
-void cmd_mul_n(AgiGame *state, uint8 *p) {
+void cmdMulN(AgiGame *state, uint8 *p) {
 	_v[p0] *= p1;
 }
 
-void cmd_mul_v(AgiGame *state, uint8 *p) {
+void cmdMulV(AgiGame *state, uint8 *p) {
 	_v[p0] *= _v[p1];
 }
 
-void cmd_div_n(AgiGame *state, uint8 *p) {
+void cmdDivN(AgiGame *state, uint8 *p) {
 	_v[p0] /= p1;
 }
 
-void cmd_div_v(AgiGame *state, uint8 *p) {
+void cmdDivV(AgiGame *state, uint8 *p) {
 	_v[p0] /= _v[p1];
 }
 
-void cmd_random(AgiGame *state, uint8 *p) {
+void cmdRandom(AgiGame *state, uint8 *p) {
 	_v[p2] = state->_vm->_rnd->getRandomNumber(p1 - p0) + p0;
 }
 
-void cmd_lindirectn(AgiGame *state, uint8 *p) {
+void cmdLindirectN(AgiGame *state, uint8 *p) {
 	_v[_v[p0]] = p1;
 }
 
-void cmd_lindirectv(AgiGame *state, uint8 *p) {
+void cmdLindirectV(AgiGame *state, uint8 *p) {
 	_v[_v[p0]] = _v[p1];
 }
 
-void cmd_rindirect(AgiGame *state, uint8 *p) {
+void cmdRindirect(AgiGame *state, uint8 *p) {
 	_v[p0] = _v[_v[p1]];
 }
 
-void cmd_set(AgiGame *state, uint8 *p) {
+void cmdSet(AgiGame *state, uint8 *p) {
 	setflag(*p, true);
 }
 
-void cmd_reset(AgiGame *state, uint8 *p) {
+void cmdReset(AgiGame *state, uint8 *p) {
 	setflag(*p, false);
 }
 
-void cmd_toggle(AgiGame *state, uint8 *p) {
+void cmdToggle(AgiGame *state, uint8 *p) {
 	setflag(*p, !getflag(*p));
 }
 
-void cmd_set_v(AgiGame *state, uint8 *p) {
+void cmdSetV(AgiGame *state, uint8 *p) {
 	setflag(_v[p0], true);
 }
 
-void cmd_reset_v(AgiGame *state, uint8 *p) {
+void cmdResetV(AgiGame *state, uint8 *p) {
 	setflag(_v[p0], false);
 }
 
-void cmd_toggle_v(AgiGame *state, uint8 *p) {
+void cmdToggleV(AgiGame *state, uint8 *p) {
 	setflag(_v[p0], !getflag(_v[p0]));
 }
 
-void cmd_new_room(AgiGame *state, uint8 *p) {
+void cmdNewRoom(AgiGame *state, uint8 *p) {
 	state->_vm->newRoom(p0);
 
 	// WORKAROUND: Works around intro skipping bug (#1737343) in Gold Rush.
@@ -170,79 +170,79 @@ void cmd_new_room(AgiGame *state, uint8 *p) {
 		state->keypress = 0;
 }
 
-void cmd_new_room_f(AgiGame *state, uint8 *p) {
+void cmdNewRoomF(AgiGame *state, uint8 *p) {
 	state->_vm->newRoom(_v[p0]);
 }
 
-void cmd_load_view(AgiGame *state, uint8 *p) {
+void cmdLoadView(AgiGame *state, uint8 *p) {
 	state->_vm->agiLoadResource(rVIEW, p0);
 }
 
-void cmd_load_logic(AgiGame *state, uint8 *p) {
+void cmdLoadLogic(AgiGame *state, uint8 *p) {
 	state->_vm->agiLoadResource(rLOGIC, p0);
 }
 
-void cmd_load_sound(AgiGame *state, uint8 *p) {
+void cmdLoadSound(AgiGame *state, uint8 *p) {
 	state->_vm->agiLoadResource(rSOUND, p0);
 }
 
-void cmd_load_view_f(AgiGame *state, uint8 *p) {
+void cmdLoadViewF(AgiGame *state, uint8 *p) {
 	state->_vm->agiLoadResource(rVIEW, _v[p0]);
 }
 
-void cmd_load_logic_f(AgiGame *state, uint8 *p) {
+void cmdLoadLogicF(AgiGame *state, uint8 *p) {
 	state->_vm->agiLoadResource(rLOGIC, _v[p0]);
 }
 
-void cmd_discard_view(AgiGame *state, uint8 *p) {
+void cmdDiscardView(AgiGame *state, uint8 *p) {
 	state->_vm->agiUnloadResource(rVIEW, p0);
 }
 
-void cmd_object_on_anything(AgiGame *state, uint8 *p) {
+void cmdObjectOnAnything(AgiGame *state, uint8 *p) {
 	vt.flags &= ~(ON_WATER | ON_LAND);
 }
 
-void cmd_object_on_land(AgiGame *state, uint8 *p) {
+void cmdObjectOnLand(AgiGame *state, uint8 *p) {
 	vt.flags |= ON_LAND;
 }
 
-void cmd_object_on_water(AgiGame *state, uint8 *p) {
+void cmdObjectOnWater(AgiGame *state, uint8 *p) {
 	vt.flags |= ON_WATER;
 }
 
-void cmd_observe_horizon(AgiGame *state, uint8 *p) {
+void cmdObserveHorizon(AgiGame *state, uint8 *p) {
 	vt.flags &= ~IGNORE_HORIZON;
 }
 
-void cmd_ignore_horizon(AgiGame *state, uint8 *p) {
+void cmdIgnoreHorizon(AgiGame *state, uint8 *p) {
 	vt.flags |= IGNORE_HORIZON;
 }
 
-void cmd_observe_objs(AgiGame *state, uint8 *p) {
+void cmdObserveObjs(AgiGame *state, uint8 *p) {
 	vt.flags &= ~IGNORE_OBJECTS;
 }
 
-void cmd_ignore_objs(AgiGame *state, uint8 *p) {
+void cmdIgnoreObjs(AgiGame *state, uint8 *p) {
 	vt.flags |= IGNORE_OBJECTS;
 }
 
-void cmd_observe_blocks(AgiGame *state, uint8 *p) {
+void cmdObserveBlocks(AgiGame *state, uint8 *p) {
 	vt.flags &= ~IGNORE_BLOCKS;
 }
 
-void cmd_ignore_blocks(AgiGame *state, uint8 *p) {
+void cmdIgnoreBlocks(AgiGame *state, uint8 *p) {
 	vt.flags |= IGNORE_BLOCKS;
 }
 
-void cmd_set_horizon(AgiGame *state, uint8 *p) {
+void cmdSetHorizon(AgiGame *state, uint8 *p) {
 	state->horizon = p0;
 }
 
-void cmd_get_priority(AgiGame *state, uint8 *p) {
+void cmdGetPriority(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.priority;
 }
 
-void cmd_set_priority(AgiGame *state, uint8 *p) {
+void cmdSetPriority(AgiGame *state, uint8 *p) {
 	vt.flags |= FIXED_PRIORITY;
 	vt.priority = p1;
 
@@ -265,242 +265,242 @@ void cmd_set_priority(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_set_priority_f(AgiGame *state, uint8 *p) {
+void cmdSetPriorityF(AgiGame *state, uint8 *p) {
 	vt.flags |= FIXED_PRIORITY;
 	vt.priority = _v[p1];
 }
 
-void cmd_release_priority(AgiGame *state, uint8 *p) {
+void cmdReleasePriority(AgiGame *state, uint8 *p) {
 	vt.flags &= ~FIXED_PRIORITY;
 }
 
-void cmd_set_upper_left(AgiGame *state, uint8 *p) {				// do nothing (AGI 2.917)
+void cmdSetUpperLeft(AgiGame *state, uint8 *p) {				// do nothing (AGI 2.917)
 }
 
-void cmd_start_update(AgiGame *state, uint8 *p) {
+void cmdStartUpdate(AgiGame *state, uint8 *p) {
 	state->_vm->startUpdate(&vt);
 }
 
-void cmd_stop_update(AgiGame *state, uint8 *p) {
+void cmdStopUpdate(AgiGame *state, uint8 *p) {
 	state->_vm->stopUpdate(&vt);
 }
 
-void cmd_current_view(AgiGame *state, uint8 *p) {
+void cmdCurrentView(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.currentView;
 }
 
-void cmd_current_cel(AgiGame *state, uint8 *p) {
+void cmdCurrentCel(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.currentCel;
 	debugC(4, kDebugLevelScripts, "v%d=%d", p1, _v[p1]);
 }
 
-void cmd_current_loop(AgiGame *state, uint8 *p) {
+void cmdCurrentLoop(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.currentLoop;
 }
 
-void cmd_last_cel(AgiGame *state, uint8 *p) {
+void cmdLastCel(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.loopData->numCels - 1;
 }
 
-void cmd_set_cel(AgiGame *state, uint8 *p) {
+void cmdSetCel(AgiGame *state, uint8 *p) {
 	state->_vm->setCel(&vt, p1);
 	vt.flags &= ~DONTUPDATE;
 }
 
-void cmd_set_cel_f(AgiGame *state, uint8 *p) {
+void cmdSetCelF(AgiGame *state, uint8 *p) {
 	state->_vm->setCel(&vt, _v[p1]);
 	vt.flags &= ~DONTUPDATE;
 }
 
-void cmd_set_view(AgiGame *state, uint8 *p) {
+void cmdSetView(AgiGame *state, uint8 *p) {
 	state->_vm->setView(&vt, p1);
 }
 
-void cmd_set_view_f(AgiGame *state, uint8 *p) {
+void cmdSetViewF(AgiGame *state, uint8 *p) {
 	state->_vm->setView(&vt, _v[p1]);
 }
 
-void cmd_set_loop(AgiGame *state, uint8 *p) {
+void cmdSetLoop(AgiGame *state, uint8 *p) {
 	state->_vm->setLoop(&vt, p1);
 }
 
-void cmd_set_loop_f(AgiGame *state, uint8 *p) {
+void cmdSetLoopF(AgiGame *state, uint8 *p) {
 	state->_vm->setLoop(&vt, _v[p1]);
 }
 
-void cmd_number_of_loops(AgiGame *state, uint8 *p) {
+void cmdNumberOfLoops(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.numLoops;
 }
 
-void cmd_fix_loop(AgiGame *state, uint8 *p) {
+void cmdFixLoop(AgiGame *state, uint8 *p) {
 	vt.flags |= FIX_LOOP;
 }
 
-void cmd_release_loop(AgiGame *state, uint8 *p) {
+void cmdReleaseLoop(AgiGame *state, uint8 *p) {
 	vt.flags &= ~FIX_LOOP;
 }
 
-void cmd_step_size(AgiGame *state, uint8 *p) {
+void cmdStepSize(AgiGame *state, uint8 *p) {
 	vt.stepSize = _v[p1];
 }
 
-void cmd_step_time(AgiGame *state, uint8 *p) {
+void cmdStepTime(AgiGame *state, uint8 *p) {
 	vt.stepTime = vt.stepTimeCount = _v[p1];
 }
 
-void cmd_cycle_time(AgiGame *state, uint8 *p) {
+void cmdCycleTime(AgiGame *state, uint8 *p) {
 	vt.cycleTime = vt.cycleTimeCount = _v[p1];
 }
 
-void cmd_stop_cycling(AgiGame *state, uint8 *p) {
+void cmdStopCycling(AgiGame *state, uint8 *p) {
 	vt.flags &= ~CYCLING;
 }
 
-void cmd_start_cycling(AgiGame *state, uint8 *p) {
+void cmdStartCycling(AgiGame *state, uint8 *p) {
 	vt.flags |= CYCLING;
 }
 
-void cmd_normal_cycle(AgiGame *state, uint8 *p) {
+void cmdNormalCycle(AgiGame *state, uint8 *p) {
 	vt.cycle = CYCLE_NORMAL;
 	vt.flags |= CYCLING;
 }
 
-void cmd_reverse_cycle(AgiGame *state, uint8 *p) {
+void cmdReverseCycle(AgiGame *state, uint8 *p) {
 	vt.cycle = CYCLE_REVERSE;
 	vt.flags |= CYCLING;
 }
 
-void cmd_set_dir(AgiGame *state, uint8 *p) {
+void cmdSetDir(AgiGame *state, uint8 *p) {
 	vt.direction = _v[p1];
 }
 
-void cmd_get_dir(AgiGame *state, uint8 *p) {
+void cmdGetDir(AgiGame *state, uint8 *p) {
 	_v[p1] = vt.direction;
 }
 
-void cmd_get_room_f(AgiGame *state, uint8 *p) {
+void cmdGetRoomF(AgiGame *state, uint8 *p) {
 	_v[p1] = state->_vm->objectGetLocation(_v[p0]);
 }
 
-void cmd_put(AgiGame *state, uint8 *p) {
+void cmdPut(AgiGame *state, uint8 *p) {
 	state->_vm->objectSetLocation(p0, _v[p1]);
 }
 
-void cmd_put_f(AgiGame *state, uint8 *p) {
+void cmdPutF(AgiGame *state, uint8 *p) {
 	state->_vm->objectSetLocation(_v[p0], _v[p1]);
 }
 
-void cmd_drop(AgiGame *state, uint8 *p) {
+void cmdDrop(AgiGame *state, uint8 *p) {
 	state->_vm->objectSetLocation(p0, 0);
 }
 
-void cmd_get(AgiGame *state, uint8 *p) {
+void cmdGet(AgiGame *state, uint8 *p) {
 	state->_vm->objectSetLocation(p0, EGO_OWNED);
 }
 
-void cmd_get_f(AgiGame *state, uint8 *p) {
+void cmdGetF(AgiGame *state, uint8 *p) {
 	state->_vm->objectSetLocation(_v[p0], EGO_OWNED);
 }
 
-void cmd_word_to_string(AgiGame *state, uint8 *p) {
+void cmdWordToString(AgiGame *state, uint8 *p) {
 	strcpy(state->strings[p0], state->egoWords[p1].word);
 }
 
-void cmd_open_dialogue(AgiGame *state, uint8 *p) {
+void cmdOpenDialogue(AgiGame *state, uint8 *p) {
 	state->hasWindow = true;
 }
 
-void cmd_close_dialogue(AgiGame *state, uint8 *p) {
+void cmdCloseDialogue(AgiGame *state, uint8 *p) {
 	state->hasWindow = false;
 }
 
-void cmd_close_window(AgiGame *state, uint8 *p) {
+void cmdCloseWindow(AgiGame *state, uint8 *p) {
 	state->_vm->closeWindow();
 }
 
-void cmd_status_line_on(AgiGame *state, uint8 *p) {
+void cmdStatusLineOn(AgiGame *state, uint8 *p) {
 	state->statusLine = true;
 	state->_vm->writeStatus();
 }
 
-void cmd_status_line_off(AgiGame *state, uint8 *p) {
+void cmdStatusLineOff(AgiGame *state, uint8 *p) {
 	state->statusLine = false;
 	state->_vm->writeStatus();
 }
 
-void cmd_show_obj(AgiGame *state, uint8 *p) {
+void cmdShowObj(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->showObj(p0);
 }
 
-void cmd_show_obj_v(AgiGame *state, uint8 *p) {
+void cmdShowObjV(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->showObj(_v[p0]);
 }
 
-void cmd_sound(AgiGame *state, uint8 *p) {
+void cmdSound(AgiGame *state, uint8 *p) {
 	state->_vm->_sound->startSound(p0, p1);
 }
 
-void cmd_stop_sound(AgiGame *state, uint8 *p) {
+void cmdStopSound(AgiGame *state, uint8 *p) {
 	state->_vm->_sound->stopSound();
 }
 
-void cmd_menu_input(AgiGame *state, uint8 *p) {
+void cmdMenuInput(AgiGame *state, uint8 *p) {
 	state->_vm->newInputMode(INPUT_MENU);
 }
 
-void cmd_enable_item(AgiGame *state, uint8 *p) {
+void cmdEnableItem(AgiGame *state, uint8 *p) {
 	state->_vm->_menu->setItem(p0, true);
 }
 
-void cmd_disable_item(AgiGame *state, uint8 *p) {
+void cmdDisableItem(AgiGame *state, uint8 *p) {
 	state->_vm->_menu->setItem(p0, false);
 }
 
-void cmd_submit_menu(AgiGame *state, uint8 *p) {
+void cmdSubmitMenu(AgiGame *state, uint8 *p) {
 	state->_vm->_menu->submit();
 }
 
-void cmd_set_scan_start(AgiGame *state, uint8 *p) {
+void cmdSetScanStart(AgiGame *state, uint8 *p) {
 	state->_curLogic->sIP = state->_curLogic->cIP;
 }
 
-void cmd_reset_scan_start(AgiGame *state, uint8 *p) {
+void cmdResetScanStart(AgiGame *state, uint8 *p) {
 	state->_curLogic->sIP = 2;
 }
 
-void cmd_save_game(AgiGame *state, uint8 *p) {
+void cmdSaveGame(AgiGame *state, uint8 *p) {
 	state->simpleSave ? state->_vm->saveGameSimple() : state->_vm->saveGameDialog();
 }
 
-void cmd_load_game(AgiGame *state, uint8 *p) {
+void cmdLoadGame(AgiGame *state, uint8 *p) {
 	assert(1);
 	state->simpleSave ? state->_vm->loadGameSimple() : state->_vm->loadGameDialog();
 }
 
-void cmd_init_disk(AgiGame *state, uint8 *p) {				// do nothing
+void cmdInitDisk(AgiGame *state, uint8 *p) {				// do nothing
 }
 
-void cmd_log(AgiGame *state, uint8 *p) {				// do nothing
+void cmdLog(AgiGame *state, uint8 *p) {				// do nothing
 }
 
-void cmd_trace_on(AgiGame *state, uint8 *p) {				// do nothing
+void cmdTraceOn(AgiGame *state, uint8 *p) {				// do nothing
 }
 
-void cmd_trace_info(AgiGame *state, uint8 *p) {				// do nothing
+void cmdTraceInfo(AgiGame *state, uint8 *p) {				// do nothing
 }
 
-void cmd_show_mem(AgiGame *state, uint8 *p) {
+void cmdShowMem(AgiGame *state, uint8 *p) {
 	state->_vm->messageBox("Enough memory");
 }
 
-void cmd_init_joy(AgiGame *state, uint8 *p) { // do nothing
+void cmdInitJoy(AgiGame *state, uint8 *p) { // do nothing
 }
 
-void cmd_script_size(AgiGame *state, uint8 *p) {
+void cmdScriptSize(AgiGame *state, uint8 *p) {
 	debug(0, "script.size(%d)", p0);
 }
 
-void cmd_cancel_line(AgiGame *state, uint8 *p) {
+void cmdCancelLine(AgiGame *state, uint8 *p) {
 	state->inputBuffer[0] = 0;
 	state->cursorPos = 0;
 	state->_vm->writePrompt();
@@ -516,7 +516,7 @@ void cmd_cancel_line(AgiGame *state, uint8 *p) {
 // 4051 (When ego is stationary),
 // 471 (When walking on the first screen's bridge),
 // 71 (When walking around, using the mouse or the keyboard).
-void cmd_obj_status_f(AgiGame *state, uint8 *p) {
+void cmdObjStatusF(AgiGame *state, uint8 *p) {
 	const char *cycleDesc;  // Object's cycle description line
 	const char *motionDesc; // Object's motion description line
 	char msg[256];          // The whole object status message
@@ -588,20 +588,20 @@ void cmd_obj_status_f(AgiGame *state, uint8 *p) {
 // unk_174: Change priority table (used in KQ4) -- j5
 // unk_177: Disable menus completely -- j5
 // unk_181: Deactivate keypressed control (default control of ego)
-void cmd_set_simple(AgiGame *state, uint8 *p) {
+void cmdSetSimple(AgiGame *state, uint8 *p) {
 	if (!(getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
 		state->simpleSave = true;
 	} else { // AGI256 and AGI256-2 use this unknown170 command to load 256 color pictures.
-		// Load the picture. Similar to void cmd_load_pic(AgiGame *state, uint8 *p).
+		// Load the picture. Similar to void cmdLoad_pic(AgiGame *state, uint8 *p).
 		state->_vm->_sprites->eraseBoth();
 		state->_vm->agiLoadResource(rPICTURE, _v[p0]);
 
-		// Draw the picture. Similar to void cmd_draw_pic(AgiGame *state, uint8 *p).
+		// Draw the picture. Similar to void cmdDraw_pic(AgiGame *state, uint8 *p).
 		state->_vm->_picture->decodePicture(_v[p0], false, true);
 		state->_vm->_sprites->blitBoth();
 		state->pictureShown = 0;
 
-		// Show the picture. Similar to void cmd_show_pic(AgiGame *state, uint8 *p).
+		// Show the picture. Similar to void cmdShow_pic(AgiGame *state, uint8 *p).
 		setflag(fOutputMode, false);
 		state->_vm->closeWindow();
 		state->_vm->_picture->showPic();
@@ -612,25 +612,25 @@ void cmd_set_simple(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_pop_script(AgiGame *state, uint8 *p) {
+void cmdPopScript(AgiGame *state, uint8 *p) {
 	if (getVersion() >= 0x2915) {
 		debug(0, "pop.script");
 	}
 }
 
-void cmd_hold_key(AgiGame *state, uint8 *p) {
+void cmdHoldKey(AgiGame *state, uint8 *p) {
 	if (getVersion() >= 0x3098) {
 		state->_vm->_egoHoldKey = true;
 	}
 }
 
-void cmd_discard_sound(AgiGame *state, uint8 *p) {
+void cmdDiscardSound(AgiGame *state, uint8 *p) {
 	if (getVersion() >= 0x2936) {
 		debug(0, "discard.sound");
 	}
 }
 
-void cmd_hide_mouse(AgiGame *state, uint8 *p) {
+void cmdHideMouse(AgiGame *state, uint8 *p) {
 	// WORKAROUND: Turns off current movement that's being caused with the mouse.
 	// This fixes problems with too many popup boxes appearing in the Amiga
 	// Gold Rush's copy protection failure scene (i.e. the hanging scene, logic.192).
@@ -643,29 +643,29 @@ void cmd_hide_mouse(AgiGame *state, uint8 *p) {
 	g_system->showMouse(false);
 }
 
-void cmd_allow_menu(AgiGame *state, uint8 *p) {
+void cmdAllowMenu(AgiGame *state, uint8 *p) {
 	if (getVersion() >= 0x3098) {
 		setflag(fMenusWork, ((p0 != 0) ? true : false));
 	}
 }
 
-void cmd_show_mouse(AgiGame *state, uint8 *p) {
+void cmdShowMouse(AgiGame *state, uint8 *p) {
 	g_system->showMouse(true);
 }
 
-void cmd_fence_mouse(AgiGame *state, uint8 *p) {
+void cmdFenceMouse(AgiGame *state, uint8 *p) {
 	state->mouseFence.moveTo(p0, p1);
 	state->mouseFence.setWidth(p2 - p0);
 	state->mouseFence.setHeight(p3 - p1);
 }
 
-void cmd_release_key(AgiGame *state, uint8 *p) {
+void cmdReleaseKey(AgiGame *state, uint8 *p) {
 	if (getVersion() >= 0x3098) {
 		state->_vm->_egoHoldKey = false;
 	}
 }
 
-void cmd_adj_ego_move_to_x_y(AgiGame *state, uint8 *p) {
+void cmdAdjEgoMoveToXY(AgiGame *state, uint8 *p) {
 	int8 x, y;
 
 	switch (logicNamesCmd[182].argumentsLength()) {
@@ -703,7 +703,7 @@ void cmd_adj_ego_move_to_x_y(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_parse(AgiGame *state, uint8 *p) {
+void cmdParse(AgiGame *state, uint8 *p) {
 	_v[vWordNotFound] = 0;
 	setflag(fEnteredCli, false);
 	setflag(fSaidAcceptedInput, false);
@@ -711,7 +711,7 @@ void cmd_parse(AgiGame *state, uint8 *p) {
 	state->_vm->dictionaryWords(state->_vm->agiSprintf(state->strings[p0]));
 }
 
-void cmd_call(AgiGame *state, uint8 *p) {
+void cmdCall(AgiGame *state, uint8 *p) {
 	int oldCIP;
 	int oldLognum;
 
@@ -727,11 +727,11 @@ void cmd_call(AgiGame *state, uint8 *p) {
 	state->_curLogic->cIP = oldCIP;
 }
 
-void cmd_call_f(AgiGame *state, uint8 *p) {
-	cmd_call(state, &_v[p0]);
+void cmdCallF(AgiGame *state, uint8 *p) {
+	cmdCall(state, &_v[p0]);
 }
 
-void cmd_draw_pic(AgiGame *state, uint8 *p) {
+void cmdDrawPic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "=== draw pic %d ===", _v[p0]);
 	state->_vm->_sprites->eraseBoth();
 	state->_vm->_picture->decodePicture(_v[p0], true);
@@ -759,7 +759,7 @@ void cmd_draw_pic(AgiGame *state, uint8 *p) {
 	state->_vm->pause(kPausePicture);
 }
 
-void cmd_show_pic(AgiGame *state, uint8 *p) {
+void cmdShowPic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "=== show pic ===");
 
 	setflag(fOutputMode, false);
@@ -770,19 +770,19 @@ void cmd_show_pic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "--- end of show pic ---");
 }
 
-void cmd_load_pic(AgiGame *state, uint8 *p) {
+void cmdLoadPic(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->eraseBoth();
 	state->_vm->agiLoadResource(rPICTURE, _v[p0]);
 	state->_vm->_sprites->blitBoth();
 	state->_vm->_sprites->commitBoth();
 }
 
-void cmd_discard_pic(AgiGame *state, uint8 *p) {
+void cmdDiscardPic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "--- discard pic ---");
 	// do nothing
 }
 
-void cmd_overlay_pic(AgiGame *state, uint8 *p) {
+void cmdOverlayPic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "--- overlay pic ---");
 
 	state->_vm->_sprites->eraseBoth();
@@ -795,7 +795,7 @@ void cmd_overlay_pic(AgiGame *state, uint8 *p) {
 	state->_vm->pause(kPausePicture);
 }
 
-void cmd_show_pri_screen(AgiGame *state, uint8 *p) {
+void cmdShowPriScreen(AgiGame *state, uint8 *p) {
 	state->_vm->_debug.priority = 1;
 	state->_vm->_sprites->eraseBoth();
 	state->_vm->_picture->showPic();
@@ -809,7 +809,7 @@ void cmd_show_pri_screen(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->blitBoth();
 }
 
-void cmd_animate_obj(AgiGame *state, uint8 *p) {
+void cmdAnimateObj(AgiGame *state, uint8 *p) {
 	if (vt.flags & ANIMATED)
 		return;
 
@@ -820,14 +820,14 @@ void cmd_animate_obj(AgiGame *state, uint8 *p) {
 	vt.direction = 0;
 }
 
-void cmd_unanimate_all(AgiGame *state, uint8 *p) {
+void cmdUnanimateAll(AgiGame *state, uint8 *p) {
 	int i;
 
 	for (i = 0; i < MAX_VIEWTABLE; i++)
 		state->viewTable[i].flags &= ~(ANIMATED | DRAWN);
 }
 
-void cmd_draw(AgiGame *state, uint8 *p) {
+void cmdDraw(AgiGame *state, uint8 *p) {
 	if (vt.flags & DRAWN)
 		return;
 
@@ -871,7 +871,7 @@ void cmd_draw(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "vt entry #%d flags = %02x", p0, vt.flags);
 }
 
-void cmd_erase(AgiGame *state, uint8 *p) {
+void cmdErase(AgiGame *state, uint8 *p) {
 	if (~vt.flags & DRAWN)
 		return;
 
@@ -896,7 +896,7 @@ void cmd_erase(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->commitBlock(x1, y1, x2, y2, true);
 }
 
-void cmd_position(AgiGame *state, uint8 *p) {
+void cmdPosition(AgiGame *state, uint8 *p) {
 	vt.xPos = vt.xPos2 = p1;
 	vt.yPos = vt.yPos2 = p2;
 
@@ -917,7 +917,7 @@ void cmd_position(AgiGame *state, uint8 *p) {
 		state->_vm->clipViewCoordinates(&vt);
 }
 
-void cmd_position_f(AgiGame *state, uint8 *p) {
+void cmdPositionF(AgiGame *state, uint8 *p) {
 	vt.xPos = vt.xPos2 = _v[p1];
 	vt.yPos = vt.yPos2 = _v[p2];
 
@@ -928,12 +928,12 @@ void cmd_position_f(AgiGame *state, uint8 *p) {
 		state->_vm->clipViewCoordinates(&vt);
 }
 
-void cmd_get_posn(AgiGame *state, uint8 *p) {
+void cmdGetPosn(AgiGame *state, uint8 *p) {
 	state->vars[p1] = (unsigned char)vt.xPos;
 	state->vars[p2] = (unsigned char)vt.yPos;
 }
 
-void cmd_reposition(AgiGame *state, uint8 *p) {
+void cmdReposition(AgiGame *state, uint8 *p) {
 	int dx = (int8) _v[p1], dy = (int8) _v[p2];
 
 	debugC(4, kDebugLevelScripts, "dx=%d, dy=%d", dx, dy);
@@ -952,35 +952,35 @@ void cmd_reposition(AgiGame *state, uint8 *p) {
 	state->_vm->fixPosition(p0);
 }
 
-void cmd_reposition_to(AgiGame *state, uint8 *p) {
+void cmdRepositionTo(AgiGame *state, uint8 *p) {
 	vt.xPos = p1;
 	vt.yPos = p2;
 	vt.flags |= UPDATE_POS;
 	state->_vm->fixPosition(p0);
 }
 
-void cmd_reposition_to_f(AgiGame *state, uint8 *p) {
+void cmdRepositionToF(AgiGame *state, uint8 *p) {
 	vt.xPos = _v[p1];
 	vt.yPos = _v[p2];
 	vt.flags |= UPDATE_POS;
 	state->_vm->fixPosition(p0);
 }
 
-void cmd_add_to_pic(AgiGame *state, uint8 *p) {
+void cmdAddToPic(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->addToPic(p0, p1, p2, p3, p4, p5, p6);
 }
 
-void cmd_add_to_pic_f(AgiGame *state, uint8 *p) {
+void cmdAddToPicF(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->addToPic(_v[p0], _v[p1], _v[p2], _v[p3], _v[p4], _v[p5], _v[p6]);
 }
 
-void cmd_force_update(AgiGame *state, uint8 *p) {
+void cmdForceUpdate(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->eraseBoth();
 	state->_vm->_sprites->blitBoth();
 	state->_vm->_sprites->commitBoth();
 }
 
-void cmd_reverse_loop(AgiGame *state, uint8 *p) {
+void cmdReverseLoop(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
 	vt.cycle = CYCLE_REV_LOOP;
 	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
@@ -988,7 +988,7 @@ void cmd_reverse_loop(AgiGame *state, uint8 *p) {
 	setflag(p1, false);
 }
 
-void cmd_end_of_loop(AgiGame *state, uint8 *p) {
+void cmdEndOfLoop(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
 	vt.cycle = CYCLE_END_OF_LOOP;
 	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
@@ -996,7 +996,7 @@ void cmd_end_of_loop(AgiGame *state, uint8 *p) {
 	setflag(p1, false);
 }
 
-void cmd_block(AgiGame *state, uint8 *p) {
+void cmdBlock(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "x1=%d, y1=%d, x2=%d, y2=%d", p0, p1, p2, p3);
 	state->block.active = true;
 	state->block.x1 = p0;
@@ -1005,15 +1005,15 @@ void cmd_block(AgiGame *state, uint8 *p) {
 	state->block.y2 = p3;
 }
 
-void cmd_unblock(AgiGame *state, uint8 *p) {
+void cmdUnblock(AgiGame *state, uint8 *p) {
 	state->block.active = false;
 }
 
-void cmd_normal_motion(AgiGame *state, uint8 *p) {
+void cmdNormalMotion(AgiGame *state, uint8 *p) {
 	vt.motion = MOTION_NORMAL;
 }
 
-void cmd_stop_motion(AgiGame *state, uint8 *p) {
+void cmdStopMotion(AgiGame *state, uint8 *p) {
 	vt.direction = 0;
 	vt.motion = MOTION_NORMAL;
 	if (p0 == 0) {		// ego only
@@ -1022,7 +1022,7 @@ void cmd_stop_motion(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_start_motion(AgiGame *state, uint8 *p) {
+void cmdStartMotion(AgiGame *state, uint8 *p) {
 	vt.motion = MOTION_NORMAL;
 	if (p0 == 0) {		// ego only
 		_v[vEgoDir] = 0;
@@ -1030,16 +1030,16 @@ void cmd_start_motion(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_player_control(AgiGame *state, uint8 *p) {
+void cmdPlayerControl(AgiGame *state, uint8 *p) {
 	state->playerControl = true;
 	state->viewTable[0].motion = MOTION_NORMAL;
 }
 
-void cmd_program_control(AgiGame *state, uint8 *p) {
+void cmdProgramControl(AgiGame *state, uint8 *p) {
 	state->playerControl = false;
 }
 
-void cmd_follow_ego(AgiGame *state, uint8 *p) {
+void cmdFollowEgo(AgiGame *state, uint8 *p) {
 	vt.motion = MOTION_FOLLOW_EGO;
 	vt.parm1 = p1 > vt.stepSize ? p1 : vt.stepSize;
 	vt.parm2 = p2;
@@ -1048,7 +1048,7 @@ void cmd_follow_ego(AgiGame *state, uint8 *p) {
 	vt.flags |= UPDATE;
 }
 
-void cmd_move_obj(AgiGame *state, uint8 *p) {
+void cmdMoveObj(AgiGame *state, uint8 *p) {
 	// _D (_D_WARN "o=%d, x=%d, y=%d, s=%d, f=%d", p0, p1, p2, p3, p4);
 
 	vt.motion = MOTION_MOVE_OBJ;
@@ -1071,7 +1071,7 @@ void cmd_move_obj(AgiGame *state, uint8 *p) {
 		state->_vm->moveObj(&vt);
 }
 
-void cmd_move_obj_f(AgiGame *state, uint8 *p) {
+void cmdMoveObjF(AgiGame *state, uint8 *p) {
 	vt.motion = MOTION_MOVE_OBJ;
 	vt.parm1 = _v[p1];
 	vt.parm2 = _v[p2];
@@ -1092,7 +1092,7 @@ void cmd_move_obj_f(AgiGame *state, uint8 *p) {
 		state->_vm->moveObj(&vt);
 }
 
-void cmd_wander(AgiGame *state, uint8 *p) {
+void cmdWander(AgiGame *state, uint8 *p) {
 	if (p0 == 0)
 		state->playerControl = false;
 
@@ -1100,7 +1100,7 @@ void cmd_wander(AgiGame *state, uint8 *p) {
 	vt.flags |= UPDATE;
 }
 
-void cmd_set_game_id(AgiGame *state, uint8 *p) {
+void cmdSetGameID(AgiGame *state, uint8 *p) {
 	if (state->_curLogic->texts && (p0 - 1) <= state->_curLogic->numTexts)
 		strncpy(state->id, state->_curLogic->texts[p0 - 1], 8);
 	else
@@ -1109,7 +1109,7 @@ void cmd_set_game_id(AgiGame *state, uint8 *p) {
 	debug(0, "Game ID: \"%s\"", state->id);
 }
 
-void cmd_pause(AgiGame *state, uint8 *p) {
+void cmdPause(AgiGame *state, uint8 *p) {
 	int tmp = state->clockEnabled;
 	const char *b[] = { "Continue", NULL };
 	const char *b_ru[] = { "\x8f\xe0\xae\xa4\xae\xab\xa6\xa8\xe2\xec", NULL };
@@ -1127,21 +1127,21 @@ void cmd_pause(AgiGame *state, uint8 *p) {
 	state->clockEnabled = tmp;
 }
 
-void cmd_set_menu(AgiGame *state, uint8 *p) {
+void cmdSetMenu(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, state->_curLogic->numTexts);
 
 	if (state->_curLogic->texts != NULL && p0 <= state->_curLogic->numTexts)
 		state->_vm->_menu->add(state->_curLogic->texts[p0 - 1]);
 }
 
-void cmd_set_menu_item(AgiGame *state, uint8 *p) {
+void cmdSetMenuItem(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, state->_curLogic->numTexts);
 
 	if (state->_curLogic->texts != NULL && p0 <= state->_curLogic->numTexts)
 		state->_vm->_menu->addItem(state->_curLogic->texts[p0 - 1], p1);
 }
 
-void cmd_version(AgiGame *state, uint8 *p) {
+void cmdVersion(AgiGame *state, uint8 *p) {
 	char verMsg[64];
 	char ver2Msg[] =
 	    "\n"
@@ -1181,13 +1181,13 @@ void cmd_version(AgiGame *state, uint8 *p) {
 	state->_vm->messageBox(msg);
 }
 
-void cmd_configure_screen(AgiGame *state, uint8 *p) {
+void cmdConfigureScreen(AgiGame *state, uint8 *p) {
 	state->lineMinPrint = p0;
 	state->lineUserInput = p1;
 	state->lineStatus = p2;
 }
 
-void cmd_text_screen(AgiGame *state, uint8 *p) {
+void cmdTextScreen(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "switching to text mode");
 	state->gfxMode = false;
 
@@ -1199,7 +1199,7 @@ void cmd_text_screen(AgiGame *state, uint8 *p) {
 	state->_vm->_gfx->clearScreen(state->colorBg);
 }
 
-void cmd_graphics(AgiGame *state, uint8 *p) {
+void cmdGraphics(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "switching to graphics mode");
 
 	if (!state->gfxMode) {
@@ -1211,7 +1211,7 @@ void cmd_graphics(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_set_text_attribute(AgiGame *state, uint8 *p) {
+void cmdSetTextAttribute(AgiGame *state, uint8 *p) {
 	state->colorFg = p0;
 	state->colorBg = p1;
 
@@ -1223,11 +1223,11 @@ void cmd_set_text_attribute(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_status(AgiGame *state, uint8 *p) {
+void cmdStatus(AgiGame *state, uint8 *p) {
 	state->_vm->inventory();
 }
 
-void cmd_quit(AgiGame *state, uint8 *p) {
+void cmdQuit(AgiGame *state, uint8 *p) {
 	const char *buttons[] = { "Quit", "Continue", NULL };
 
 	state->_vm->_sound->stopSound();
@@ -1240,7 +1240,7 @@ void cmd_quit(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_restart_game(AgiGame *state, uint8 *p) {
+void cmdRestartGame(AgiGame *state, uint8 *p) {
 	const char *buttons[] = { "Restart", "Continue", NULL };
 	int sel;
 
@@ -1255,7 +1255,7 @@ void cmd_restart_game(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_distance(AgiGame *state, uint8 *p) {
+void cmdDistance(AgiGame *state, uint8 *p) {
 	int16 x1, y1, x2, y2, d;
 	VtEntry *v0 = &state->viewTable[p0];
 	VtEntry *v1 = &state->viewTable[p1];
@@ -1306,7 +1306,7 @@ void cmd_distance(AgiGame *state, uint8 *p) {
 	_v[p2] = (unsigned char)d;
 }
 
-void cmd_accept_input(AgiGame *state, uint8 *p) {
+void cmdAcceptInput(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "input normal");
 
 	state->_vm->newInputMode(INPUT_NORMAL);
@@ -1314,7 +1314,7 @@ void cmd_accept_input(AgiGame *state, uint8 *p) {
 	state->_vm->writePrompt();
 }
 
-void cmd_prevent_input(AgiGame *state, uint8 *p) {
+void cmdPreventInput(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "no input");
 
 	state->_vm->newInputMode(INPUT_NONE);
@@ -1323,7 +1323,7 @@ void cmd_prevent_input(AgiGame *state, uint8 *p) {
 	state->_vm->clearPrompt();
 }
 
-void cmd_get_string(AgiGame *state, uint8 *p) {
+void cmdGetString(AgiGame *state, uint8 *p) {
 	int tex, row, col;
 
 	debugC(4, kDebugLevelScripts, "%d %d %d %d %d", p0, p1, p2, p3, p4);
@@ -1356,7 +1356,7 @@ void cmd_get_string(AgiGame *state, uint8 *p) {
 	} while (state->inputMode == INPUT_GETSTRING && !(state->_vm->shouldQuit() || state->_vm->_restartGame));
 }
 
-void cmd_get_num(AgiGame *state, uint8 *p) {
+void cmdGetNum(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "%d %d", p0, p1);
 
 	state->_vm->newInputMode(INPUT_GETSTRING);
@@ -1383,7 +1383,7 @@ void cmd_get_num(AgiGame *state, uint8 *p) {
 	state->_vm->flushLines(22, 22);
 }
 
-void cmd_set_cursor_char(AgiGame *state, uint8 *p) {
+void cmdSetCursorChar(AgiGame *state, uint8 *p) {
 	if (state->_curLogic->texts != NULL && (p0 - 1) <= state->_curLogic->numTexts) {
 		state->cursorChar = *state->_curLogic->texts[p0 - 1];
 	} else {
@@ -1392,7 +1392,7 @@ void cmd_set_cursor_char(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_set_key(AgiGame *state, uint8 *p) {
+void cmdSetKey(AgiGame *state, uint8 *p) {
 	int key;
 
 	if (state->lastController >= MAX_CONTROLLERS) {
@@ -1411,14 +1411,14 @@ void cmd_set_key(AgiGame *state, uint8 *p) {
 	state->controllerOccured[p2] = false;
 }
 
-void cmd_set_string(AgiGame *state, uint8 *p) {
+void cmdSetString(AgiGame *state, uint8 *p) {
 	// CM: to avoid crash in Groza (str = 150)
 	if (p0 > MAX_STRINGS)
 		return;
 	strcpy(state->strings[p0], state->_curLogic->texts[p1 - 1]);
 }
 
-void cmd_display(AgiGame *state, uint8 *p) {
+void cmdDisplay(AgiGame *state, uint8 *p) {
 	int len = 40;
 
 	char *s = state->_vm->wordWrapString(state->_curLogic->texts[p2 - 1], &len);
@@ -1428,11 +1428,11 @@ void cmd_display(AgiGame *state, uint8 *p) {
 	free(s);
 }
 
-void cmd_display_f(AgiGame *state, uint8 *p) {
+void cmdDisplayF(AgiGame *state, uint8 *p) {
 	state->_vm->printText(state->_curLogic->texts[_v[p2] - 1], _v[p1], 0, _v[p0], 40, state->colorFg, state->colorBg);
 }
 
-void cmd_clear_text_rect(AgiGame *state, uint8 *p) {
+void cmdClearTextRect(AgiGame *state, uint8 *p) {
 	int c, x1, y1, x2, y2;
 
 	if ((c = p4) != 0)
@@ -1457,17 +1457,17 @@ void cmd_clear_text_rect(AgiGame *state, uint8 *p) {
 	state->_vm->_gfx->flushBlock(x1, y1, x2, y2);
 }
 
-void cmd_toggle_monitor(AgiGame *state, uint8 *p) {
+void cmdToggleMonitor(AgiGame *state, uint8 *p) {
 	debug(0, "toggle.monitor");
 }
 
-void cmd_echo_line(AgiGame *state, uint8 *p) {
+void cmdEchoLine(AgiGame *state, uint8 *p) {
 	strcpy((char *)state->inputBuffer, (const char *)state->echoBuffer);
 	state->cursorPos = strlen((char *)state->inputBuffer);
 	state->hasPrompt = 0;
 }
 
-void cmd_clear_lines(AgiGame *state, uint8 *p) {
+void cmdClearLines(AgiGame *state, uint8 *p) {
 	uint8 l;
 
 	// Residence 44 calls clear.lines(24,0,0), see Sarien bug #558423
@@ -1481,19 +1481,19 @@ void cmd_clear_lines(AgiGame *state, uint8 *p) {
 	state->_vm->flushLines(p0, l);
 }
 
-void cmd_print(AgiGame *state, uint8 *p) {
+void cmdPrint(AgiGame *state, uint8 *p) {
 	int n = p0 < 1 ? 1 : p0;
 
 	state->_vm->print(state->_curLogic->texts[n - 1], 0, 0, 0);
 }
 
-void cmd_print_f(AgiGame *state, uint8 *p) {
+void cmdPrintF(AgiGame *state, uint8 *p) {
 	int n = _v[p0] < 1 ? 1 : _v[p0];
 
 	state->_vm->print(state->_curLogic->texts[n - 1], 0, 0, 0);
 }
 
-void cmd_print_at(AgiGame *state, uint8 *p) {
+void cmdPrintAt(AgiGame *state, uint8 *p) {
 	int n = p0 < 1 ? 1 : p0;
 
 	debugC(4, kDebugLevelScripts, "%d %d %d %d", p0, p1, p2, p3);
@@ -1501,13 +1501,13 @@ void cmd_print_at(AgiGame *state, uint8 *p) {
 	state->_vm->print(state->_curLogic->texts[n - 1], p1, p2, p3);
 }
 
-void cmd_print_at_v(AgiGame *state, uint8 *p) {
+void cmdPrintAtV(AgiGame *state, uint8 *p) {
 	int n = _v[p0] < 1 ? 1 : _v[p0];
 
 	state->_vm->print(state->_curLogic->texts[n - 1], p1, p2, p3);
 }
 
-void cmd_push_script(AgiGame *state, uint8 *p) {
+void cmdPushScript(AgiGame *state, uint8 *p) {
 	// We run AGIMOUSE always as a side effect
 	if (getFeatures() & GF_AGIMOUSE || true) {
 		state->vars[27] = state->_vm->_mouse.button;
@@ -1520,7 +1520,7 @@ void cmd_push_script(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_set_pri_base(AgiGame *state, uint8 *p) {
+void cmdSetPriBase(AgiGame *state, uint8 *p) {
 	int i, x, pri;
 
 	debug(0, "Priority base set to %d", p0);
@@ -1536,12 +1536,12 @@ void cmd_set_pri_base(AgiGame *state, uint8 *p) {
 	}
 }
 
-void cmd_mouse_posn(AgiGame *state, uint8 *p) {
+void cmdMousePosn(AgiGame *state, uint8 *p) {
 	_v[p0] = WIN_TO_PIC_X(state->_vm->_mouse.x);
 	_v[p1] = WIN_TO_PIC_Y(state->_vm->_mouse.y);
 }
 
-void cmd_shake_screen(AgiGame *state, uint8 *p) {
+void cmdShakeScreen(AgiGame *state, uint8 *p) {
 	int i;
 
 	// AGIPAL uses shake.screen values between 100 and 109 to set the palette
@@ -1574,13 +1574,13 @@ void cmd_shake_screen(AgiGame *state, uint8 *p) {
 	state->inputEnabled = originalValue;
 }
 
-void cmd_set_speed(AgiGame *state, uint8 *p) {
+void cmdSetSpeed(AgiGame *state, uint8 *p) {
 	// V1 command
 	(void)state;
 	(void)p;
 }
 
-void cmd_unknown(AgiGame *state, uint8 *p) {
+void cmdUnknown(AgiGame *state, uint8 *p) {
 	warning("Skipping unknown opcode %2X", *(p - 1));
 }
 
