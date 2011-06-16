@@ -53,6 +53,7 @@ void ScummEngine::loadCJKFont() {
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 #ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
+		GUIErrorMessage("FM-Towns Kanji font drawing requires dual graphics layer support which is disabled in this build");
 		error("FM-Towns Kanji font drawing requires dual graphics layer support which is disabled in this build");
 #else
 		// use FM-TOWNS font rom, since game files don't have kanji font resources
