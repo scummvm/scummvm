@@ -252,11 +252,11 @@ public:
 	void openMainMenuDialog();
 
 	/**
-	 * Display a warning to the user that the game is still unstable.
+	 * Display a warning to the user that the game is not fully supported.
 	 *
 	 * @return true if the user chose to start anyway, false otherwise
 	 */
-	static bool warnUserAboutWIPGame();
+	static bool warnUserAboutUnsupportedGame();
 
 	/**
 	 * Get the total play time.

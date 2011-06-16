@@ -270,7 +270,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	if (((gameDescriptor.getSupportLevel() == kUnstableGame
 			|| (gameDescriptor.getSupportLevel() == kTestingGame
 					&& showTestingWarning)))
-			&& !Engine::warnUserAboutWIPGame())
+			&& !Engine::warnUserAboutUnsupportedGame())
 		return Common::kUserCanceled;
 
 	debug(2, "Running %s", gameDescriptor.description().c_str());

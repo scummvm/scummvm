@@ -186,7 +186,7 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("cdrom", 0);
 
-	ConfMan.registerDefault("enable_wip_game_warning", true);
+	ConfMan.registerDefault("enable_unsupported_game_warning", true);
 
 	// Game specific
 	ConfMan.registerDefault("path", "");
