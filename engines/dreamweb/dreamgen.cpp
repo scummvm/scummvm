@@ -632,16 +632,12 @@ void edeninbath(Context &context) {
 	STACK_CHECK(context);
 	context._cmp(context.data.byte(kGeneraldead), 0);
 	if (context.flags.z())
-		goto notinbed;
+		return /* (notinbath) */;
 	context._cmp(context.data.byte(kSartaindead), 0);
 	if (!context.flags.z())
 		return /* (notinbath) */;
 	showgamereel(context);
 	addtopeoplelist(context);
-/*continuing to unbounded code: notinbed from eden:5-6*/
-notinbed:
-	return;
-	return;
 }
 
 void malefan(Context &context) {

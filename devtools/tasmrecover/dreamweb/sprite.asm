@@ -441,7 +441,7 @@ notinbed:	ret
 Edeninbath	proc	near
 
 	cmp	generaldead,0
-	jz	notinbed
+	jz	notinbath
 	cmp	sartaindead,0
 	jnz	notinbath
 	call	showgamereel
