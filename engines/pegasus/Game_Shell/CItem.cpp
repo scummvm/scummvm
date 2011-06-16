@@ -27,6 +27,7 @@
 #include "common/stream.h"
 
 #include "pegasus/Game_Shell/CItem.h"
+#include "pegasus/Game_Shell/CItemList.h"
 #include "pegasus/Game_Shell/Headers/Game_Shell_Constants.h"
 
 namespace Pegasus {
@@ -39,8 +40,7 @@ CItem::CItem(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID
 	fItemOwnerID = kNoActorID;
 	fItemState = 0;
 
-	// TODO: This line would append this item to the list of all items
-	//gAllItems.Append(this);
+	gAllItems.push_back(this);
 }
 
 CItem::~CItem() {

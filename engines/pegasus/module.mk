@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	pegasus.o \
 	video.o \
 	Game_Shell/CItem.o \
+	Game_Shell/CItemList.o \
 	MMShell/Base_Classes/MMFunctionPtr.o \
 	MMShell/Sounds/MMSound.o \
 	MMShell/Utilities/MMResourceFile.o \
