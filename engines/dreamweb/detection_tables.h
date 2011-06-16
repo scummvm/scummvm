@@ -46,6 +46,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 	},
+
+	// International CD release
 	{
 		{
 			"dreamweb",
@@ -62,7 +64,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// Second CD version
+	// US CD release
 	{
 		{
 			"dreamweb",
@@ -72,7 +74,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 				{"dreamweb.r02", 0, "c0c363715ddf14ab54f2379906a3aa01", 198707},
 				AD_LISTEND
 			},
-			Common::EN_ANY,
+			Common::EN_USA,
 			Common::kPlatformPC,
 			ADGF_CD,
 			GUIO_NONE
