@@ -23,6 +23,7 @@
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 #include "common/file.h"
+#include "common/ptr.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
@@ -485,7 +486,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 		return 0;
 	}
 
-	ResourceManager *resMan = new ResourceManager();
+	Common::ScopedPtr<ResourceManager> resMan(new ResourceManager());
 	assert(resMan);
 	resMan->addAppropriateSources(fslist);
 	resMan->init(true);
@@ -495,7 +496,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
 	if (getSciVersion() >= SCI_VERSION_2) {
-		delete resMan;
 		return (const ADGameDescription *)&s_fallbackDesc;
 	}
 #endif
@@ -506,7 +506,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// Can't be SCI (or unsupported SCI views). Pinball Creep by sierra also uses resource.map/resource.000 files
 	//  but doesnt share sci format at all, if we dont return 0 here we will detect this game as SCI
 	if (gameViews == kViewUnknown) {
-		delete resMan;
 		return 0;
 	}
 
@@ -519,7 +518,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 
 	// If we don't have a game id, the game is not SCI
 	if (sierraGameId.empty()) {
-		delete resMan;
 		return 0;
 	}
 
@@ -574,8 +572,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// Add "demo" to the description for demos
 	if (s_fallbackDesc.flags & ADGF_DEMO)
 		s_fallbackDesc.extra = (gameId.hasSuffix("sci")) ? "SCI/Demo" : "Demo";
-
-	delete resMan;
 
 	return (const ADGameDescription *)&s_fallbackDesc;
 }
