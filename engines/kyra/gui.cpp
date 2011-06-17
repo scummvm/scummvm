@@ -643,32 +643,31 @@ void MainMenu::printString(const char *format, int x, int y, int col1, int col2,
 	if (!format)
 		return;
 
-	char string[512];
 	va_list vaList;
 	va_start(vaList, flags);
-	vsprintf(string, format, vaList);
+	Common::String string = Common::String::vformat(format, vaList);
 	va_end(vaList);
 
 	if (flags & 1)
-		x -= _screen->getTextWidth(string) >> 1;
+		x -= _screen->getTextWidth(string.c_str()) >> 1;
 
 	if (flags & 2)
-		x -= _screen->getTextWidth(string);
+		x -= _screen->getTextWidth(string.c_str());
 
 	if (_vm->gameFlags().use16ColorMode)
 		flags &= 3;
 
 	if (flags & 4) {
-		_screen->printText(string, x - 1, y, _static.altColor, col2);
-		_screen->printText(string, x, y + 1, _static.altColor, col2);
+		_screen->printText(string.c_str(), x - 1, y, _static.altColor, col2);
+		_screen->printText(string.c_str(), x, y + 1, _static.altColor, col2);
 	}
 
 	if (flags & 8) {
-		_screen->printText(string, x - 1, y, 227, col2);
-		_screen->printText(string, x, y + 1, 227, col2);
+		_screen->printText(string.c_str(), x - 1, y, 227, col2);
+		_screen->printText(string.c_str(), x, y + 1, 227, col2);
 	}
 
-	_screen->printText(string, x, y, col1, col2);
+	_screen->printText(string.c_str(), x, y, col1, col2);
 }
 
 } // End of namespace Kyra
