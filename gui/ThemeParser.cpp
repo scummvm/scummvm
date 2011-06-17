@@ -670,7 +670,7 @@ bool ThemeParser::parserCallback_import(ParserNode *node) {
 
 bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	int spacing = -1;
-	bool center;
+	bool center = false;
 
 	if (node->values.contains("spacing")) {
 		if (!parseIntegerKey(node->values["spacing"], 1, &spacing))
