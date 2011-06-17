@@ -41,6 +41,7 @@ namespace Agi {
 #define p5	(p[5])
 #define p6	(p[6])
 
+#define code state->_curLogic->data
 #define ip	state->_curLogic->cIP
 #define vt	state->viewTable[p0]
 #define vt_v state->viewTable[state->vars[p0]]
@@ -1581,7 +1582,7 @@ void cmdSetSpeed(AgiGame *state, uint8 *p) {
 }
 
 void cmdUnknown(AgiGame *state, uint8 *p) {
-	warning("Skipping unknown opcode %2X", *(p - 1));
+	warning("Skipping unknown opcode %2X", *(code + ip - 1));
 }
 
 /**
@@ -1589,12 +1590,11 @@ void cmdUnknown(AgiGame *state, uint8 *p) {
  * @param n  Number of the logic resource to execute
  */
 int AgiEngine::runLogic(int n) {
+	AgiGame *state = &_game;
 	uint8 op = 0;
 	uint8 p[CMD_BSIZE] = { 0 };
-	uint8 *code = NULL;
 	int num = 0;
 	ScriptPos sp;
-	AgiGame *state = &_game;
 
 	debugC(2, kDebugLevelScripts, "=================");
 	debugC(2, kDebugLevelScripts, "runLogic(%d)", n);
@@ -1612,7 +1612,6 @@ int AgiEngine::runLogic(int n) {
 	_game.lognum = n;
 	_game._curLogic = &_game.logics[_game.lognum];
 
-	code = _game._curLogic->data;
 	_game._curLogic->cIP = _game._curLogic->sIP;
 
 	_timerHack = 0;

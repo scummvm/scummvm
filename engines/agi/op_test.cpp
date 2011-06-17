@@ -189,7 +189,7 @@ void condUnknown13(AgiGame *state, uint8 *p) {
 }
 
 void condUnknown(AgiGame *state, uint8 *p) {
-	warning("Skipping unknown test command %2X", *(p - 1));
+	warning("Skipping unknown test command %2X", *(code + ip - 1));
 	state->testResult = false;
 }
 
