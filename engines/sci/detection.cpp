@@ -325,7 +325,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 
 	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId[0]; ++cur) {
 		if (sierraId == cur->oldId) {
-			// Distinguish same IDs from the SCI version
+			// Distinguish same IDs via the SCI version
 			if (cur->version != SCI_VERSION_NONE && cur->version != getSciVersion())
 				continue;
 
@@ -447,7 +447,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 		if (tmpStream->size() > 10 * 1024 * 1024) {
 			// We got a CD version, so set the CD flag accordingly
 			s_fallbackDesc.flags |= ADGF_CD;
-			s_fallbackDesc.extra = "CD";
 		}
 		delete tmpStream;
 	}
@@ -550,22 +549,40 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	}
 
 
-	// Fill in extras field
+	// Fill in "extra" field
+
+	// Is this an EGA version that might have a VGA pendant? Then we want
+	// to mark it as such in the "extra" field.
+	const bool markAsEGA = (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga
+			&& getSciVersion() > SCI_VERSION_1_EGA_ONLY);
+
+	const bool isDemo = (s_fallbackDesc.flags & ADGF_DEMO);
+	const bool isCD = (s_fallbackDesc.flags & ADGF_CD);
 
 	if (gameId.hasSuffix("sci")) {
 		s_fallbackDesc.extra = "SCI";
 
 		// Differentiate EGA versions from the VGA ones, where needed
-		if (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga)
+		if (markAsEGA)
 			s_fallbackDesc.extra = "SCI/EGA";
-	} else {
-		if (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga)
-			s_fallbackDesc.extra = "EGA";
-	}
 
-	// Add "demo" to the description for demos
-	if (s_fallbackDesc.flags & ADGF_DEMO)
-		s_fallbackDesc.extra = (gameId.hasSuffix("sci")) ? "SCI/Demo" : "Demo";
+		// Mark as demo.
+		// Note: This overwrites the 'EGA' info, if it was previously set.
+		if (isDemo)
+			s_fallbackDesc.extra = "SCI/Demo";
+	} else {
+		if (markAsEGA)
+			s_fallbackDesc.extra = "EGA";
+
+		// Set "CD" and "Demo" as appropriate.
+		// Note: This overwrites the 'EGA' info, if it was previously set.
+		if (isDemo && isCD)
+			s_fallbackDesc.extra = "CD Demo";
+		else if (isDemo)
+			s_fallbackDesc.extra = "Demo";
+		else if (isCD)
+			s_fallbackDesc.extra = "CD";
+	}
 
 	return (const ADGameDescription *)&s_fallbackDesc;
 }
