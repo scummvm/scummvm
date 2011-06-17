@@ -1570,7 +1570,7 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 	uint16 in = inputFlags & 0xff;
 	uint16 buttonReleaseFlag = 0;
 	bool clickEvt = false;
-	_vm->TTTTT = true;
+	//_vm->_processingButtons = true;
 	_flagsMouseLeft = (_vm->_mouseClick == 1) ? 2 : 4;
 	_flagsMouseRight = (_vm->_mouseClick == 2) ? 2 : 4;
 	_vm->_mouseClick = 0;
@@ -1589,7 +1589,7 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 
 		inputFlags = 0;
 		clickEvt = true;
-	} else {
+	} else if (inputFlags & 0x8000) {
 		inputFlags &= 0xff;
 	}
 
@@ -1668,13 +1668,13 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 		uint16 vR = 0;
 
 		if (inputFlags) {
-			if (buttonList->keyCode == in) {
+			if (buttonList->keyCode == inputFlags) {
 				_progress = 1;
 				_flagsMouseLeft = 1;
 				flgs2 ^= 1;
 				result = iFlag;
 				v6 = 1;
-			} else if (buttonList->keyCode2 == in) {
+			} else if (buttonList->keyCode2 == inputFlags) {
 				_progress = 2;
 				_flagsMouseRight = 1;
 				result = iFlag;
@@ -1941,7 +1941,9 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 
 	if (!result)
 		result = inputFlags;
-_vm->	TTTTT=false;
+	
+	//_vm->_processingButtons=false;
+
 	return result;
 }
 

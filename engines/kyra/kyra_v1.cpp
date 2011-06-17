@@ -285,10 +285,13 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				}
 			} else {
 				KeyMap::const_iterator keycode = _keyMap.find(event.kbd.keycode);
-				if (keycode != _keyMap.end())
+				if (keycode != _keyMap.end()) {
 					keys = keycode->_value;
-				else
+					if (event.kbd.flags & Common::KBD_SHIFT)
+						keys |= 0x100;
+				} else {
 					keys = 0;
+				}
 
 				// When we got an keypress, which we might need to handle,
 				// break the event loop and pass it to GUI code.

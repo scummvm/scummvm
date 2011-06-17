@@ -255,7 +255,7 @@ uint16 LolEobBaseEngine::processDialogue() {
 				}
 		}
 	} else {
-		int e = checkInput(0, false) & 0xFF;
+		int e = checkInput(0, false, 0) & 0xFF;
 		removeInputTop();
 		if (e)
 			gui_notifyButtonListChanged();

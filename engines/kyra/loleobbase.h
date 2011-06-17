@@ -253,7 +253,7 @@ protected:
 
 	Button *_activeButtons;
 	Button _activeButtonData[70];
-bool TTTTT;
+	//bool _processingButtons;
 
 	uint8 _mouseClick;
 	bool _preserveEvents;
