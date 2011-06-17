@@ -456,6 +456,8 @@ void TownsScreen::updateOutputBuffer() {
 			int ptch = _pitch - (r->right - r->left + 1) * _pixelFormat.bytesPerPixel;
 
 			if (_pixelFormat.bytesPerPixel == 2 && l->bpp == 1) {
+				if (!l->palette)
+					error("void TownsScreen::updateOutputBuffer(): No palette assigned to 8 bit layer %d", i);
 				for (int ic = 0; ic < l->numCol; ic++)
 					l->bltTmpPal[ic] = calc16BitColor(&l->palette[ic * 3]);
 			}
