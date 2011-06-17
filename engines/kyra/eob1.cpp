@@ -73,6 +73,7 @@ void EobEngine::startupNew() {
 	_currentBlock = 490;
 	_currentDirection = 0;
 	setHandItem(0);
+	EobCoreEngine::startupNew();
 }
 
 void EobEngine::startupLoad() {

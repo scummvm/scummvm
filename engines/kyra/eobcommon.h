@@ -292,7 +292,7 @@ protected:
 	const char *const *_mainMenuStrings;
 
 	// Main loop
-	virtual void startupNew() = 0;
+	virtual void startupNew();
 	virtual void startupLoad() = 0;
 	void runLoop();
 	void update() { screen()->updateScreen(); }

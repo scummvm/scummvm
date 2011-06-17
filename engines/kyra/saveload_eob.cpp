@@ -229,6 +229,23 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	_itemInHand = in.readSint16BE();
 	_hasTempDataFlags = in.readUint32BE();
 	_partyEffectFlags = in.readUint32BE();
+	
+	_updateFlags = in.readUint16BE();
+	_compassDirection = in.readUint16BE();
+	_currentControlMode = in.readUint16BE();
+	_updateCharNum = in.readUint16BE();
+	_openBookSpellLevel = in.readSByte();
+	_openBookSpellSelectedItem  = in.readSByte();
+	_openBookSpellListOffset = in.readSByte();
+	_openBookChar = in.readByte();
+	_openBookType = in.readByte();
+	_openBookCharBackup = in.readByte();
+	_openBookTypeBackup = in.readByte();
+	_activeSpellCaster = in.readByte();
+	_activeSpellCasterPos = in.readByte();
+	_activeSpell = in.readByte();
+	_returnAfterSpellCallback = in.readByte() ? true : false;
+
 	_inf->loadState(in);
 
 	for (int i = 0; i < 600; i++) {
@@ -336,14 +353,28 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 
 	if (_saveLoadMode != -1) {
 		loadLevel(_currentLevel, _currentSub);
-		gui_drawPlayField(0);
 		_sceneUpdateRequired = true;
-		_screen->setCurPage(0);
 		_screen->setFont(Screen::FID_6_FNT);
-		gui_drawAllCharPortraitsWithStats();
-		updateHandItemCursor();
 		_saveLoadMode = 1;
 	}
+
+	_screen->setCurPage(0);
+	gui_drawPlayField(0);
+
+	if (_currentControlMode)
+		_screen->copyRegion(176, 0, 0, 0, 144, 168, 0, 5, Screen::CR_NO_P_CHECK);
+
+	_screen->setCurPage(0);
+	gui_drawAllCharPortraitsWithStats();
+	drawScene(1);
+
+	if (_updateFlags) {
+		_updateFlags = 0;
+		useMagicBookOrSymbol(_openBookChar, _openBookType);
+	}
+
+	gui_toggleButtons();
+	updateHandItemCursor();
 
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
@@ -418,6 +449,23 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	out->writeSint16BE(_itemInHand);
 	out->writeUint32BE(_hasTempDataFlags);
 	out->writeUint32BE(_partyEffectFlags);
+	
+	out->writeUint16BE(_updateFlags);
+	out->writeUint16BE(_compassDirection);
+	out->writeUint16BE(_currentControlMode);
+	out->writeUint16BE(_updateCharNum);
+	out->writeSByte(_openBookSpellLevel);
+	out->writeSByte(_openBookSpellSelectedItem);
+	out->writeSByte(_openBookSpellListOffset);
+	out->writeByte(_openBookChar);
+	out->writeByte(_openBookType);
+	out->writeByte(_openBookCharBackup);
+	out->writeByte(_openBookTypeBackup);
+	out->writeByte(_activeSpellCaster);
+	out->writeByte(_activeSpellCasterPos);
+	out->writeByte(_activeSpell);
+	out->writeByte(_returnAfterSpellCallback ? 1 : 0);
+
 	_inf->saveState(out);
 
 	for (int i = 0; i < 600; i++) {
