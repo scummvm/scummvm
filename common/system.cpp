@@ -21,11 +21,6 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fputs
-#define FORBIDDEN_SYMBOL_EXCEPTION_fflush
-#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 
 #include "common/system.h"
 #include "common/events.h"
@@ -134,20 +129,6 @@ Common::WriteStream *OSystem::createConfigWriteStream() {
 
 Common::String OSystem::getDefaultConfigFileName() {
 	return "scummvm.ini";
-}
-
-void OSystem::logMessage(LogMessageType::Type type, const char *message) {
-#if !defined(__PLAYSTATION2__) && !defined(__DS__)
-	FILE *output = 0;
-
-	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
-		output = stdout;
-	else
-		output = stderr;
-
-	fputs(message, output);
-	fflush(output);
-#endif
 }
 
 Common::String OSystem::getSystemLanguage() const {

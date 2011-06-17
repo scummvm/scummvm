@@ -180,6 +180,8 @@ public:
 
 	virtual Common::String getDefaultConfigFileName();
 
+	virtual void logMessage(LogMessageType::Type type, const char *message);
+
 protected:
 	void internUpdateScreen();
 	void dirtyFullScreen();

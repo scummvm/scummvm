@@ -19,11 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// Allow use of stuff in <time.h>
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <unistd.h>
 
@@ -289,6 +285,18 @@ void OSystem_Wii::showOptionsDialog() {
 
 	_padSensitivity = 64 - ConfMan.getInt("wii_pad_sensitivity");
 	_padAcceleration = 9 - ConfMan.getInt("wii_pad_acceleration");
+}
+
+void OSystem_Wii::logMessage(LogMessageType::Type type, const char *message) {
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	fputs(message, output);
+	fflush(output);
 }
 
 #ifndef GAMECUBE

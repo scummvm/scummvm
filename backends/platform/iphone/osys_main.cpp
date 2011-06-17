@@ -242,6 +242,18 @@ void OSystem_IPHONE::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 	}
 }
 
+void OSystem_IPHONE::logMessage(LogMessageType::Type type, const char *message) {
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	fputs(message, output);
+	fflush(output);
+}
+
 void iphone_main(int argc, char *argv[]) {
 
 	//OSystem_IPHONE::migrateApp();

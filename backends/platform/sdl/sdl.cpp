@@ -275,10 +275,22 @@ void OSystem_SDL::fatalError() {
 
 
 void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
-	ModularBackend::logMessage(type, message);
+	// First log to stdout/stderr
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	fputs(message, output);
+	fflush(output);
+
+	// Then log into file (via the logger)
 	if (_logger)
 		_logger->print(message);
 
+	// Finally, some Windows / WinCE specific logging code.
 #if defined( USE_WINDBG )
 #if defined( _WIN32_WCE )
 	TCHAR buf_unicode[1024];
