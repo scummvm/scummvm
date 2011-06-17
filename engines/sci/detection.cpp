@@ -237,7 +237,7 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "kq4",		"kq4sci",			SCI_VERSION_NONE     },
 	// kq5 is the same
 	// kq6 is the same
-	// kq7 is the same
+	{ "kq7cd",		"kq7",				SCI_VERSION_NONE     },
 	{ "mm1",		"laurabow",			SCI_VERSION_NONE     },
 	{ "cb1",		"laurabow",			SCI_VERSION_NONE     },
 	{ "lb2",		"laurabow2",		SCI_VERSION_NONE     },
