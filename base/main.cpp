@@ -427,7 +427,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		#endif	
 			
 			// Did an error occur ?
-			if (result.getCode() != Common::kNoError) {
+			if (result.getCode() != Common::kNoError && result.getCode() != Common::kUserCanceled) {
 				// Shows an informative error dialog if starting the selected game failed.
 				GUI::displayErrorDialog(result, _("Error running game:"));
 			}
