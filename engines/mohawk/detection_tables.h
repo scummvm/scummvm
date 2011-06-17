@@ -447,6 +447,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
+			"v2.0",
+			AD_ENTRY1("ZOOMBINI.MHK", "506b1122ffa740e2566cf0b583d24478"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ZOOMBINI,
+		GF_HASMIDI,
+		0
+	},
+
+	{
+		{
+			"zoombini",
 			"",
 			AD_ENTRY1("ZOOMBINI.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa"),
 			Common::DE_DEU,
