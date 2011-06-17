@@ -400,6 +400,17 @@ void Engine::openMainMenuDialog() {
 	syncSoundSettings();
 }
 
+bool Engine::warnUserAboutUnsupportedGame() {
+	if (ConfMan.getBool("enable_unsupported_game_warning")) {
+		GUI::MessageDialog alert("WARNING: The game you are about to start is"
+			" not yet fully supported by ScummVM. As such, it is likely to be"
+			" unstable, and any saves you make might not work in future"
+			" versions of ScummVM.", "Start anyway", "Cancel");
+		return alert.runModal() == GUI::kMessageOK;
+	}
+	return true;
+}
+
 uint32 Engine::getTotalPlayTime() const {
 	if (!_pauseLevel)
 		return _system->getMillis() - _engineStartTime;
