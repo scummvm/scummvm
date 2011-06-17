@@ -225,6 +225,7 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "emc",		"funseeker",		SCI_VERSION_NONE     },
 	{ "gk",			"gk1",				SCI_VERSION_NONE     },
 	// gk2 is the same
+	{ "gk2demo",	"gk2",				SCI_VERSION_NONE     },
 	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE     },
 	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE     },
 	{ "solitare",	"hoyle2",			SCI_VERSION_NONE     },
