@@ -199,6 +199,7 @@ public:
 	virtual Audio::Mixer *getMixer();
 	virtual void getTimeAndDate(TimeDate &t) const;
 	virtual void setTimerCallback(TimerProc callback, int interval);
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 	void rebuildOffscreenGameBuffer(void);
 	void rebuildOffscreenMouseBuffer(void);

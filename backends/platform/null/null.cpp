@@ -52,6 +52,8 @@ public:
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const {}
+
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 };
 
 OSystem_NULL::OSystem_NULL() {
@@ -95,6 +97,18 @@ uint32 OSystem_NULL::getMillis() {
 }
 
 void OSystem_NULL::delayMillis(uint msecs) {
+}
+
+void OSystem_NULL::logMessage(LogMessageType::Type type, const char *message) {
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	fputs(message, output);
+	fflush(output);
 }
 
 OSystem *OSystem_NULL_create() {
