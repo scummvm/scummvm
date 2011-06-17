@@ -383,26 +383,23 @@ Common::Error EobCoreEngine::go() {
 	return Common::kNoError;
 }
 
-void EobCoreEngine::runLoop() {
-	_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
-	
+void EobCoreEngine::startupNew() {
+	gui_setPlayFieldButtons();
+	_screen->_curPage = 0;
+	gui_drawPlayField(0);
+	_screen->_curPage = 0;
+	gui_drawAllCharPortraitsWithStats();
+	drawScene(1);
 	_updateFlags = 0;
 	_updateCharNum = 0;
+}
+
+void EobCoreEngine::runLoop() {
+	_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);	
 	_flashShapeTimer = 0;
 	_drawSceneTimer = _system->getMillis();
 	//__unkB__ = 1;
-	gui_setPlayFieldButtons();
-
-	_screen->_curPage = 0;
-	gui_drawPlayField(0);
-
 	_screen->setFont(Screen::FID_6_FNT);
-
-	_screen->_curPage = 0;
-	gui_drawAllCharPortraitsWithStats();
-
-	drawScene(1);
-
 	_screen->setScreenDim(7);
 
 	//_runLoopUnk2 = _currentBlock;

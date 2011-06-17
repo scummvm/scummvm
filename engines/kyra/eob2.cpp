@@ -73,6 +73,7 @@ void DarkMoonEngine::startupNew() {
 	_currentBlock = 171;
 	_currentDirection = 2;
 	setHandItem(0);
+	EobCoreEngine::startupNew();
 }
 
 void DarkMoonEngine::startupLoad() {
