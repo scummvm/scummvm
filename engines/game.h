@@ -64,7 +64,9 @@ public:
 				  uint32 guioptions = 0);
 
 	/**
-	 * Update the description string by appending (LANG/PLATFORM/EXTRA) to it.
+	 * Update the description string by appending (EXTRA/PLATFORM/LANG) to it.
+	 * Values that are missing are omitted, so e.g. (EXTRA/LANG) would be
+	 * added if no platform has been specified but a language and an extra string.
 	 */
 	void updateDesc(const char *extra = 0);
 

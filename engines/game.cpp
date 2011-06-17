@@ -69,9 +69,6 @@ void GameDescriptor::appendGUIOptions(const Common::String &str) {
 }
 
 void GameDescriptor::updateDesc(const char *extra) {
-	// TODO: The format used here (LANG/PLATFORM/EXTRA) is not set in stone.
-	// We may want to change the order (PLATFORM/EXTRA/LANG, anybody?), or
-	// the seperator (instead of '/' use ', ' or ' ').
 	const bool hasCustomLanguage = (language() != Common::UNK_LANG);
 	const bool hasCustomPlatform = (platform() != Common::kPlatformUnknown);
 	const bool hasExtraDesc = (extra && extra[0]);
