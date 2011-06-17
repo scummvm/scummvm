@@ -40,7 +40,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
 	_screen = 0;
 	_gui = 0;
-TTTTT=false;
+	//_processingButtons=false;
 	//_runLoopUnk2 = 0;
 	//_runLoopTimerUnk = 0;
 	_playFinale = false;
@@ -411,7 +411,7 @@ void EobCoreEngine::runLoop() {
 	while (!shouldQuit() && _runFlag) {
 		//_runLoopUnk2 = _currentBlock;
 		updateCharacterEvents(true);
-		checkInput(_activeButtons, true);
+		checkInput(_activeButtons, true, 0);
 		removeInputTop();
 
 		if (_updateHandItemCursor) {
@@ -1269,7 +1269,7 @@ void EobCoreEngine::displayParchment(int id) {
 		removeInputTop();
 		while (!shouldQuit()) {
 			delay(_tickLength);
-			if (checkInput(0) & 0xff)
+			if (checkInput(0, false, 0) & 0xff)
 				break;
 			removeInputTop();
 		}
