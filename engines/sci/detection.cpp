@@ -430,56 +430,49 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	s_fallbackDesc.platform = Common::kPlatformPC;	// default to PC platform
 	s_fallbackDesc.gameid = "sci";
 
-	// First grab all filenames
-	// TODO: Consider using allFiles instead of fslist
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory())
-			continue;
-
-		Common::String filename = file->getName();
-		filename.toLowercase();
-
-		if (filename.contains("resource.map") || filename.contains("resmap.00") || filename.contains("Data1")) {
-			foundResMap = true;
-		}
-
-		// Determine if we got a CD version and set the CD flag accordingly, by checking for
-		// resource.aud for SCI1.1 CD games, or audio001.002 for SCI1 CD games. We assume that
-		// the file should be over 10MB, as it contains all the game speech and is usually
-		// around 450MB+. The size check is for some floppy game versions like KQ6 floppy, which
-		// also have a small resource.aud file
-		if (filename.contains("resource.aud") || filename.contains("audio001.002")) {
-			Common::SeekableReadStream *tmpStream = file->createReadStream();
-			if (tmpStream->size() > 10 * 1024 * 1024) {
-				// We got a CD version, so set the CD flag accordingly
-				s_fallbackDesc.flags |= ADGF_CD;
-				s_fallbackDesc.extra = "CD";
-			}
-			delete tmpStream;
-		}
-
-		if (filename.contains("resource.000") || filename.contains("resource.001")
-			|| filename.contains("ressci.000") || filename.contains("ressci.001"))
-			foundRes000 = true;
-
-		// Data1 contains both map and volume for SCI1.1+ Mac games
-		if (filename.contains("Data1")) {
-			foundResMap = foundRes000 = true;
-			 s_fallbackDesc.platform = Common::kPlatformMacintosh;
-		}
-
-		// Determine the game platform
-		// The existence of any of these files indicates an Amiga game
-		if (filename.contains("9.pat") || filename.contains("spal") ||
-			filename.contains("patch.005") || filename.contains("bank.001"))
-				s_fallbackDesc.platform = Common::kPlatformAmiga;
-
-		// The existence of 7.pat or patch.200 indicates a Mac game
-		if (filename.contains("7.pat") || filename.contains("patch.200"))
-			s_fallbackDesc.platform = Common::kPlatformMacintosh;
-
-		// The data files for Atari ST versions are the same as their DOS counterparts
+	if (allFiles.contains("resource.map") || allFiles.contains("Data1")
+	    || allFiles.contains("resmap.001") || allFiles.contains("resmap.001")) {
+		foundResMap = true;
 	}
+
+	// Determine if we got a CD version and set the CD flag accordingly, by checking for
+	// resource.aud for SCI1.1 CD games, or audio001.002 for SCI1 CD games. We assume that
+	// the file should be over 10MB, as it contains all the game speech and is usually
+	// around 450MB+. The size check is for some floppy game versions like KQ6 floppy, which
+	// also have a small resource.aud file
+	if (allFiles.contains("resource.aud") || allFiles.contains("audio001.002")) {
+		Common::FSNode file = allFiles.contains("resource.aud") ? allFiles["resource.aud"] :  allFiles["audio001.002"];
+		Common::SeekableReadStream *tmpStream = file.createReadStream();
+		if (tmpStream->size() > 10 * 1024 * 1024) {
+			// We got a CD version, so set the CD flag accordingly
+			s_fallbackDesc.flags |= ADGF_CD;
+			s_fallbackDesc.extra = "CD";
+		}
+		delete tmpStream;
+	}
+
+	if (allFiles.contains("resource.000") || allFiles.contains("resource.001")
+		|| allFiles.contains("ressci.000") || allFiles.contains("ressci.001"))
+		foundRes000 = true;
+
+	// Data1 contains both map and volume for SCI1.1+ Mac games
+	if (allFiles.contains("Data1")) {
+		foundResMap = foundRes000 = true;
+		 s_fallbackDesc.platform = Common::kPlatformMacintosh;
+	}
+
+	// Determine the game platform
+	// The existence of any of these files indicates an Amiga game
+	if (allFiles.contains("9.pat") || allFiles.contains("spal") ||
+		allFiles.contains("patch.005") || allFiles.contains("bank.001"))
+			s_fallbackDesc.platform = Common::kPlatformAmiga;
+
+	// The existence of 7.pat or patch.200 indicates a Mac game
+	if (allFiles.contains("7.pat") || allFiles.contains("patch.200"))
+		s_fallbackDesc.platform = Common::kPlatformMacintosh;
+
+	// The data files for Atari ST versions are the same as their DOS counterparts
+
 
 	// If these files aren't found, it can't be SCI
 	if (!foundResMap && !foundRes000) {
