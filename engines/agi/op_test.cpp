@@ -155,6 +155,10 @@ void condSaid3(AgiGame *state, uint8 *p) {
 		state->testResult = true;
 }
 
+void condBit(AgiGame *state, uint8 *p) {
+	state->testResult = (getvar(p[1]) >> p[0]) & 1;
+}
+
 void condCompareStrings(AgiGame *state, uint8 *p) {
 	debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", state->strings[p[0]], state->strings[p[1]]);
 	state->testResult = state->_vm->testCompareStrings(p[0], p[1]);
@@ -446,7 +450,7 @@ void AgiEngine::skipInstruction(byte op) {
 	AgiGame *state = &_game;
 	if (op >= 0xFC)
 		return;
-	if (op == 0x0E) // said
+	if (op == 0x0E && state->_vm->getVersion() >= 0x2000) // said
 		ip += *(code + ip) * 2 + 1;
 	else
 		ip += logicNamesTest[op].argumentsLength();

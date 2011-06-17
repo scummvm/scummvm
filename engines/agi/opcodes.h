@@ -249,6 +249,7 @@ void condIsSetV1(AgiGame *state, uint8 *p);
 void condSaid1(AgiGame *state, uint8 *p);
 void condSaid2(AgiGame *state, uint8 *p);
 void condSaid3(AgiGame *state, uint8 *p);
+void condBit(AgiGame *state, uint8 *p);
 
 } // End of namespace Agi
 

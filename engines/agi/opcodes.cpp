@@ -36,7 +36,7 @@ AgiInstruction insV1Test[] = {
 	{ "lessv",				"vv",		&condLessV },		// 04
 	{ "greatern",			"vn",		&condGreater },		// 05
 	{ "greaterv",			"vv",		&condGreaterV },	// 06
-	{ "isset",				"v",		&condIsSetV1 },	// 07
+	{ "isset",				"v",		&condIsSetV1 },		// 07
 	{ "has",				"n",		&condHas },			// 08
 	{ "said",				"nnnn",		&condSaid2 },		// 09
 	{ "posn",				"nnnnn",	&condPosn },		// 0A
@@ -45,7 +45,7 @@ AgiInstruction insV1Test[] = {
 	{ "said",				"nnnnnn",	&condSaid3 },		// 0D
 	{ "have.key",			"",			&condHaveKey },		// 0E
 	{ "said",				"nn",		&condSaid1 },		// 0F
-	{ "bit",				"nv",		&condUnknown },		// 10
+	{ "bit",				"nv",		&condBit },			// 10
 };
 
 AgiInstruction insV1[] = {
