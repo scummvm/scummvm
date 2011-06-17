@@ -236,7 +236,7 @@ bool PNG::read(Common::SeekableReadStream *str) {
 		case kChunkIDAT:
 			if (_compressedBufferSize == 0) {
 				_compressedBufferSize += chunkLength;
-				_compressedBuffer = new byte[_compressedBufferSize];
+				_compressedBuffer = (byte *)malloc(_compressedBufferSize);
 				_stream->read(_compressedBuffer, chunkLength);
 			} else {
 				// Expand the buffer
@@ -244,8 +244,8 @@ bool PNG::read(Common::SeekableReadStream *str) {
 				_compressedBufferSize += chunkLength;
 				byte *tmp = new byte[prevSize];
 				memcpy(tmp, _compressedBuffer, prevSize);
-				delete[] _compressedBuffer;
-				_compressedBuffer = new byte[_compressedBufferSize];
+				free(_compressedBuffer);
+				_compressedBuffer = (byte *)malloc(_compressedBufferSize);
 				memcpy(_compressedBuffer, tmp, prevSize);
 				delete[] tmp;
 				_stream->read(_compressedBuffer + prevSize, chunkLength);
