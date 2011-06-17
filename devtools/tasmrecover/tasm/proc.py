@@ -62,6 +62,7 @@ class proc:
 				break
 			if isinstance(stmts[i + 1], cls):
 				stmts[i + 1].repeat = 'cx'
+				stmts[i + 1].clear_cx = True
 				del stmts[i]
 			i += 1
 		return

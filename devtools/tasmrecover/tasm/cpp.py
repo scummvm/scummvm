@@ -407,17 +407,17 @@ namespace %s {
 	def _lodsw(self):
 		self.body += "\t_lodsw();\n"
 
-	def _stosb(self, n):
-		self.body += "\t_stosb(%s);\n" %("" if n == 1 else n)
+	def _stosb(self, n, clear_cx):
+		self.body += "\t_stosb(%s%s);\n" %("" if n == 1 else n, ", true" if clear_cx else "")
 
-	def _stosw(self, n):
-		self.body += "\t_stosw(%s);\n" %("" if n == 1 else n)
+	def _stosw(self, n, clear_cx):
+		self.body += "\t_stosw(%s%s);\n" %("" if n == 1 else n, ", true" if clear_cx else "")
 
-	def _movsb(self, n):
-		self.body += "\t_movsb(%s);\n" %("" if n == 1 else n)
+	def _movsb(self, n, clear_cx):
+		self.body += "\t_movsb(%s%s);\n" %("" if n == 1 else n, ", true" if clear_cx else "")
 
-	def _movsw(self, n):
-		self.body += "\t_movsw(%s);\n" %("" if n == 1 else n)
+	def _movsw(self, n, clear_cx):
+		self.body += "\t_movsw(%s%s);\n" %("" if n == 1 else n, ", true" if clear_cx else "")
 
 	def _stc(self):
 		self.body += "\tflags._c = true;\n "

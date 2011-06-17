@@ -2176,7 +2176,7 @@ void DreamGenContext::clearsprites() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
 	al = 255;
 	cx = (32)*16;
-	_stosb(cx);
+	_stosb(cx, true);
 }
 
 void DreamGenContext::makesprite() {
@@ -2204,7 +2204,7 @@ void DreamGenContext::delsprite() {
 	di = bx;
 	cx = (32);
 	al = 255;
-	_stosb(cx);
+	_stosb(cx, true);
 }
 
 void DreamGenContext::spriteupdate() {
@@ -3522,7 +3522,7 @@ void DreamGenContext::updatepeople() {
 	data.word(kListpos) = di;
 	cx = 12*5;
 	al = 255;
-	_stosb(cx);
+	_stosb(cx, true);
 	_inc(data.word(kMaintimer));
 	es = cs;
 	bx = 534;
@@ -4156,7 +4156,7 @@ void DreamGenContext::delthisone() {
 deloneloop:
 	push(cx);
 	ch = 0;
-	_movsb(cx);
+	_movsb(cx, true);
 	cx = pop();
 	_add(di, ax);
 	_add(si, dx);
@@ -4522,7 +4522,7 @@ void DreamGenContext::transferinv() {
 	_mul(cx);
 	cx = ax;
 	push(cx);
-	_movsb(cx);
+	_movsb(cx, true);
 	cx = pop();
 	ax = pop();
 	es.word(bx+2) = ax;
@@ -4569,7 +4569,7 @@ void DreamGenContext::transfermap() {
 	_mul(cx);
 	cx = ax;
 	push(cx);
-	_movsb(cx);
+	_movsb(cx, true);
 	cx = pop();
 	ax = pop();
 	es.word(bx+2) = ax;
@@ -4606,7 +4606,7 @@ void DreamGenContext::clearendpal() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	cx = 768;
 	al = 0;
-	_stosb(cx);
+	_stosb(cx, true);
 }
 
 void DreamGenContext::clearpalette() {
@@ -4632,7 +4632,7 @@ void DreamGenContext::fadetowhite() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	cx = 768;
 	al = 63;
-	_stosb(cx);
+	_stosb(cx, true);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	al = 0;
 	_stosb(3);
@@ -4649,7 +4649,7 @@ void DreamGenContext::fadefromwhite() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	cx = 768;
 	al = 63;
-	_stosb(cx);
+	_stosb(cx, true);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	al = 0;
 	_stosb(3);
@@ -4689,11 +4689,11 @@ halfend:
 	si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(56*3);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(56*3);
 	cx = 3*5;
-	_movsb(cx);
+	_movsb(cx, true);
 	si = (0+(180*10)+32+60+(32*32)+(11*10*3))+(77*3);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(77*3);
 	cx = 3*2;
-	_movsb(cx);
+	_movsb(cx, true);
 	data.byte(kFadedirection) = 1;
 	data.byte(kFadecount) = 31;
 	data.byte(kColourpos) = 0;
@@ -5001,7 +5001,7 @@ void DreamGenContext::paltostartpal() {
 	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	cx = 768/2;
-	_movsw(cx);
+	_movsw(cx, true);
 }
 
 void DreamGenContext::endpaltostart() {
@@ -5011,7 +5011,7 @@ void DreamGenContext::endpaltostart() {
 	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	cx = 768/2;
-	_movsw(cx);
+	_movsw(cx, true);
 }
 
 void DreamGenContext::startpaltoend() {
@@ -5021,7 +5021,7 @@ void DreamGenContext::startpaltoend() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	si = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	cx = 768/2;
-	_movsw(cx);
+	_movsw(cx, true);
 }
 
 void DreamGenContext::paltoendpal() {
@@ -5031,7 +5031,7 @@ void DreamGenContext::paltoendpal() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768);
 	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
 	cx = 768/2;
-	_movsw(cx);
+	_movsw(cx, true);
 }
 
 void DreamGenContext::allpalette() {
@@ -5041,7 +5041,7 @@ void DreamGenContext::allpalette() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3));
 	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768);
 	cx = 768/2;
-	_movsw(cx);
+	_movsw(cx, true);
 	dumpcurrent();
 }
 
@@ -5067,7 +5067,7 @@ void DreamGenContext::fadedownmon() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(231*3);
 	cx = 3*8;
 	ax = 0;
-	_stosb(cx);
+	_stosb(cx, true);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(246*3);
 	_stosb();
 	_stosw();
@@ -5087,7 +5087,7 @@ void DreamGenContext::fadeupmon() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(231*3);
 	cx = 3*8;
 	ax = 0;
-	_stosb(cx);
+	_stosb(cx, true);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
 	_stosb();
 	_stosw();
@@ -5107,7 +5107,7 @@ void DreamGenContext::fadeupmonfirst() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(231*3);
 	cx = 3*8;
 	ax = 0;
-	_stosb(cx);
+	_stosb(cx, true);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
 	_stosb();
 	_stosw();
@@ -5130,7 +5130,7 @@ void DreamGenContext::fadeupyellows() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(231*3);
 	cx = 3*8;
 	ax = 0;
-	_stosb(cx);
+	_stosb(cx, true);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768)+(246*3);
 	_stosb();
 	_stosw();
@@ -5149,7 +5149,7 @@ void DreamGenContext::initialmoncols() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(230*3);
 	cx = 3*9;
 	ax = 0;
-	_stosb(cx);
+	_stosb(cx, true);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3))+(246*3);
 	_stosb();
 	_stosw();
@@ -6122,7 +6122,7 @@ void DreamGenContext::findallryan() {
 	push(di);
 	cx = 30;
 	ax = 0x0ffff;
-	_stosw(cx);
+	_stosw(cx, true);
 	di = pop();
 	cl = 4;
 	ds = data.word(kExtras);
@@ -6157,7 +6157,7 @@ void DreamGenContext::findallopen() {
 	push(di);
 	cx = 16;
 	ax = 0x0ffff;
-	_stosw(cx);
+	_stosw(cx, true);
 	di = pop();
 	cl = data.byte(kOpenedob);
 	dl = data.byte(kOpenedtype);
@@ -7943,7 +7943,7 @@ void DreamGenContext::transfertoex() {
 	ds = data.word(kFreedat);
 	si = ax;
 	cx = 8;
-	_movsw(cx);
+	_movsw(cx, true);
 	di = pop();
 	al = data.byte(kReallocation);
 	es.byte(di) = al;
@@ -8021,7 +8021,7 @@ void DreamGenContext::transfercontoex() {
 	ds = pop();
 	push(di);
 	cx = 8;
-	_movsw(cx);
+	_movsw(cx, true);
 	di = pop();
 	dx = pop();
 	al = data.byte(kReallocation);
@@ -8195,7 +8195,7 @@ void DreamGenContext::deleteexobject() {
 	push(cx);
 	al = 255;
 	cx = 16;
-	_stosb(cx);
+	_stosb(cx, true);
 	ax = pop();
 	cl = al;
 	_add(al, al);
@@ -8255,7 +8255,7 @@ void DreamGenContext::deleteexframe() {
 	_add(si, ax);
 	push(ax);
 	ds = es;
-	_movsb(cx);
+	_movsb(cx, true);
 	bx = pop();
 	_sub(data.word(kExframepos), bx);
 	si = pop();
@@ -8299,7 +8299,7 @@ findlenextext:
 	push(bx);
 	push(ax);
 	_sub(cx, bx);
-	_movsb(cx);
+	_movsb(cx, true);
 	bx = pop();
 	_sub(data.word(kExtextpos), bx);
 	si = pop();
@@ -8547,7 +8547,7 @@ oberase:
 	di = bx;
 	al = 255;
 	cx = (32);
-	_stosb(cx);
+	_stosb(cx, true);
 notthisob:
 	bx = pop();
 	cx = pop();
@@ -8564,7 +8564,7 @@ void DreamGenContext::showallobs() {
 	di = bx;
 	cx = 128*5;
 	al = 255;
-	_stosb(cx);
+	_stosb(cx, true);
 	es = data.word(kSetframes);
 	data.word(kFrsegment) = es;
 	ax = (0);
@@ -8685,7 +8685,7 @@ void DreamGenContext::showallfree() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
 	cx = 80*5;
 	al = 255;
-	_stosb(cx);
+	_stosb(cx, true);
 	es = data.word(kFreeframes);
 	data.word(kFrsegment) = es;
 	ax = (0);
@@ -8766,7 +8766,7 @@ void DreamGenContext::showallex() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
 	cx = 100*5;
 	al = 255;
-	_stosb(cx);
+	_stosb(cx, true);
 	es = data.word(kExtras);
 	data.word(kFrsegment) = es;
 	ax = (0);
@@ -9950,12 +9950,12 @@ void DreamGenContext::usemon() {
 	di = 2970+1;
 	cx = 12;
 	al = 32;
-	_stosb(cx);
+	_stosb(cx, true);
 	es = cs;
 	di = 2942+1;
 	cx = 12;
 	al = 32;
-	_stosb(cx);
+	_stosb(cx, true);
 	es = cs;
 	di = 2836;
 	es.byte(di) = 1;
@@ -10326,7 +10326,7 @@ void DreamGenContext::input() {
 	di = 8045;
 	cx = 64;
 	al = 0;
-	_stosb(cx);
+	_stosb(cx, true);
 	data.word(kCurpos) = 0;
 	al = '>';
 	di = data.word(kMonadx);
@@ -10560,7 +10560,7 @@ dirroot:
 	di = 2970;
 	_inc(di);
 	cx = 12;
-	_movsb(cx);
+	_movsb(cx, true);
 	monitorlogo();
 	scrollmonitor();
 	al = 9;
@@ -10862,7 +10862,7 @@ keyok2:
 	es = cs;
 	di = 2970+1;
 	cx = 12;
-	_movsb(cx);
+	_movsb(cx, true);
 	monitorlogo();
 	scrollmonitor();
 	al = 10;
@@ -10982,7 +10982,7 @@ void DreamGenContext::parser() {
 	di = 2942;
 	cx = 13;
 	al = 0;
-	_stosb(cx);
+	_stosb(cx, true);
 	di = 2942;
 	al = '=';
 	_stosb();
@@ -16255,7 +16255,7 @@ alreadyactsave:
 	bx = di;
 	es = cs;
 	cx = 16;
-	_movsw(cx);
+	_movsw(cx, true);
 	al = data.byte(kRoomssample);
 	es.byte(bx+13) = al;
 	al = data.byte(kMapx);
@@ -16605,7 +16605,7 @@ void DreamGenContext::namestoold() {
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	es = data.word(kBuffers);
 	cx = 17*4;
-	_movsb(cx);
+	_movsb(cx, true);
 }
 
 void DreamGenContext::oldtonames() {
@@ -16615,7 +16615,7 @@ void DreamGenContext::oldtonames() {
 	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
 	ds = data.word(kBuffers);
 	cx = 17*4;
-	_movsb(cx);
+	_movsb(cx, true);
 }
 
 void DreamGenContext::saveposition() {
@@ -17015,7 +17015,7 @@ void DreamGenContext::trysoundalloc() {
 	di = 0;
 	cx = 16384/2;
 	ax = 0x7f7f;
-	_stosw(cx);
+	_stosw(cx, true);
 	data.byte(kNeedsoundbuff) = 1;
 	return;
 soundfail:
@@ -17150,7 +17150,7 @@ notch0only:
 	di = data.word(kSoundbufferwrite);
 	cx = 1024;
 	ax = 0x7f7f;
-	_stosw(cx);
+	_stosw(cx, true);
 	_and(di, 16384-1);
 	data.word(kSoundbufferwrite) = di;
 }
@@ -17217,7 +17217,7 @@ void DreamGenContext::channel0tran() {
 	if (!flags.z())
 		goto lowvolumetran;
 	cx = 1024;
-	_movsw(cx);
+	_movsw(cx, true);
 	return;
 lowvolumetran:
 	cx = 1024;
@@ -17659,24 +17659,24 @@ void DreamGenContext::clearbuffers() {
 	cx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534+68-0)/2;
 	ax = 0;
 	di = 0;
-	_stosw(cx);
+	_stosw(cx, true);
 	es = data.word(kExtras);
 	cx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/2;
 	ax = 0x0ffff;
 	di = 0;
-	_stosw(cx);
+	_stosw(cx, true);
 	es = data.word(kBuffers);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64));
 	ds = cs;
 	si = 534;
 	cx = (991-534);
-	_movsb(cx);
+	_movsb(cx, true);
 	es = data.word(kBuffers);
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534);
 	ds = cs;
 	si = 0;
 	cx = (68-0);
-	_movsb(cx);
+	_movsb(cx, true);
 	clearchanges();
 }
 
@@ -17686,19 +17686,19 @@ void DreamGenContext::clearchanges() {
 	cx = (250)*2;
 	ax = 0x0ffff;
 	di = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-	_stosw(cx);
+	_stosw(cx, true);
 	ds = data.word(kBuffers);
 	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64));
 	es = cs;
 	di = 534;
 	cx = (991-534);
-	_movsb(cx);
+	_movsb(cx, true);
 	ds = data.word(kBuffers);
 	si = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*24)+(6*64)+991-534);
 	es = cs;
 	di = 0;
 	cx = (68-0);
-	_movsb(cx);
+	_movsb(cx, true);
 	data.byte(kExpos) = 0;
 	data.word(kExframepos) = 0;
 	data.word(kExtextpos) = 0;
@@ -17706,7 +17706,7 @@ void DreamGenContext::clearchanges() {
 	cx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/2;
 	ax = 0x0ffff;
 	di = 0;
-	_stosw(cx);
+	_stosw(cx, true);
 	es = cs;
 	di = 8011;
 	al = 1;
@@ -17717,7 +17717,7 @@ void DreamGenContext::clearchanges() {
 	_stosb();
 	ax = 0;
 	cx = 6;
-	_stosw(cx);
+	_stosw(cx, true);
 }
 
 void DreamGenContext::clearbeforeload() {
@@ -17746,7 +17746,7 @@ void DreamGenContext::clearrest() {
 	cx = (66*60)/2;
 	ax = 0;
 	di = (0);
-	_stosw(cx);
+	_stosw(cx, true);
 	es = data.word(kBackdrop);
 	deallocatemem();
 	es = data.word(kSetframes);
@@ -19746,7 +19746,7 @@ finishmakename:
 	_stosb();
 	return;
 	al = 255;
-	_stosb(cx);
+	_stosb(cx, true);
 }
 
 void DreamGenContext::findobname() {
@@ -20934,7 +20934,7 @@ blimey:
 	push(cx);
 	push(si);
 	cx = (66);
-	_movsb(cx);
+	_movsb(cx, true);
 	si = pop();
 	cx = pop();
 	_add(si, 132);
@@ -21189,7 +21189,7 @@ void DreamGenContext::fillspace() {
 	push(bx);
 	di = dx;
 	es = ds;
-	_stosb(cx);
+	_stosb(cx, true);
 	bx = pop();
 	di = pop();
 	dx = pop();

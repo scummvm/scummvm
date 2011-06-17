@@ -317,26 +317,30 @@ class _lodsw(baseop):
 class _stosw(baseop):
 	def __init__(self, arg):
 		self.repeat = 1
+		self.clear_cx = False
 	def visit(self, visitor):
-		visitor._stosw(self.repeat)
+		visitor._stosw(self.repeat, self.clear_cx)
 
 class _stosb(baseop):
 	def __init__(self, arg):
 		self.repeat = 1
+		self.clear_cx = False
 	def visit(self, visitor):
-		visitor._stosb(self.repeat)
+		visitor._stosb(self.repeat, self.clear_cx)
 
 class _movsw(baseop):
 	def __init__(self, arg):
 		self.repeat = 1
+		self.clear_cx = False
 	def visit(self, visitor):
-		visitor._movsw(self.repeat)
+		visitor._movsw(self.repeat, self.clear_cx)
 
 class _movsb(baseop):
 	def __init__(self, arg):
 		self.repeat = 1
+		self.clear_cx = False
 	def visit(self, visitor):
-		visitor._movsb(self.repeat)
+		visitor._movsb(self.repeat, self.clear_cx)
 
 class _in(baseop):
 	def __init__(self, arg):

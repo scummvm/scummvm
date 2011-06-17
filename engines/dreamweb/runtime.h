@@ -462,12 +462,14 @@ public:
 		es.byte(di++) = ds.byte(si++);
 	}
 
-	inline void _movsb(uint size) {
+	inline void _movsb(uint size, bool clear_cx = false) {
 		uint8 *dst = es.ptr(di, size);
 		uint8 *src = ds.ptr(si, size);
 		memcpy(dst, src, size);
 		di += size;
 		si += size;
+		if (clear_cx)
+			cx = 0;
 	}
 
 	inline void _movsw() {
@@ -475,18 +477,20 @@ public:
 		_movsb();
 	}
 
-	inline void _movsw(uint size) {
-		_movsb(size * 2);
+	inline void _movsw(uint size, bool clear_cx = false) {
+		_movsb(size * 2, clear_cx);
 	}
 
 	inline void _stosb() {
 		es.byte(di++) = al;
 	}
 
-	inline void _stosb(uint size) {
+	inline void _stosb(uint size, bool clear_cx = false) {
 		uint8 *dst = es.ptr(di, size);
 		memset(dst, al, size);
 		di += size;
+		if (clear_cx)
+			cx = 0;
 	}
 
 	inline void _stosw() {
@@ -494,13 +498,15 @@ public:
 		es.byte(di++) = ah;
 	}
 
-	inline void _stosw(uint size) {
+	inline void _stosw(uint size, bool clear_cx = false) {
 		uint8 *dst = es.ptr(di, size);
 		di += 2 * size;
 		while(size--) {
 			*dst++ = al;
 			*dst++ = ah;
 		}
+		if (clear_cx)
+			cx = 0;
 	}
 
 	inline void _xchg(uint16 &a, uint16 &b) {
