@@ -33,10 +33,10 @@ Sword25FileProxy::Sword25FileProxy(const Common::String &filename, const Common:
 }
 
 void Sword25FileProxy::setupConfigFile() {
-	double sfxVolume = ConfMan.hasKey("sfx_volume") ? 1.0 : 1.0 * ConfMan.getInt("sfx_volume") / 255.0;
-	double musicVolume = ConfMan.hasKey("music_volume") ? 0.5 : 1.0 * ConfMan.getInt("music_volume") / 255.0;
-	double speechVolume = ConfMan.hasKey("speech_volume") ? 1.0 : 1.0 * ConfMan.getInt("speech_volume") / 255.0;
-	bool subtitles = ConfMan.hasKey("subtitles") ? true : ConfMan.getBool("subtitles");
+	double sfxVolume = !ConfMan.hasKey("sfx_volume") ? 1.0 : 1.0 * ConfMan.getInt("sfx_volume") / 255.0;
+	double musicVolume = !ConfMan.hasKey("music_volume") ? 0.5 : 1.0 * ConfMan.getInt("music_volume") / 255.0;
+	double speechVolume = !ConfMan.hasKey("speech_volume") ? 1.0 : 1.0 * ConfMan.getInt("speech_volume") / 255.0;
+	bool subtitles = !ConfMan.hasKey("subtitles") ? true : ConfMan.getBool("subtitles");
 
 	_readData = Common::String::format(
 "GAME_LANGUAGE = \"%s\"\r\n\
