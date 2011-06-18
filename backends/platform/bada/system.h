@@ -85,6 +85,7 @@ class BadaSystem : public ModularBackend,
   void fatalError();
   void logMessage(LogMessageType::Type type, const char *message);
 
+	Common::EventSource* getDefaultEventSource() {return this;}
   Common::SeekableReadStream* createConfigReadStream();
   Common::WriteStream* createConfigWriteStream();
   

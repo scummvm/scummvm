@@ -10,12 +10,23 @@ Build instructions:
 
  Add the following to your cygwin .bash_profile:
 
- export BADA_SDK=/cygdrive/f/bada/1.2.1
+ alias mmake=/cygdrive/c/MinGW/bin/mingw32-make.exe
+ export BADA_SDK=/cygdrive/c/bada/1.2.1
+ export ARM_BIN=c:/bada/1.2.1/Tools/Toolchains/ARM/bin
+ #export PATH=${BADA_SDK}/Tools/Toolchains/Win32/bin:${PATH}
+ export PATH=${BADA_SDK}/Tools/Toolchains/ARM/bin:~/utils:${PATH}
+ alias gcc=${ARM_BIN}/arm-samsung-nucleuseabi-gcc.exe
+ alias ar=${ARM_BIN}/arm-samsung-nucleuseabi-ar.exe
 
- #Build target: simulator
- export PATH=${BADA_SDK}/Tools/Toolchains/Win32/bin:${PATH}
- #Build target: device
- #export PATH=${BADA_SDK}/Tools/Toolchains/ARM/bin:${PATH}
+ The following were added to ~/utils for zlib:
+
+ ar:
+ #!/bin/sh
+ ${ARM_BIN}/arm-samsung-nucleuseabi-ar.exe $*
+
+ gcc:
+ #!/bin/sh
+ ${ARM_BIN}/arm-samsung-nucleuseabi-gcc.exe $*
 
 3. Build dependencies
 
@@ -23,11 +34,15 @@ Build instructions:
 
  see: "Building the libraries" under:
  http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW#Building_the_libraries
- Ignore NASM and SDL; install the libraries to /usr/local in lieu of /mingw as 
- per the document.
+ for instructions on how to obtain these modules
 
- 3.1 use this configure line when building libvorbis:
-     ./configure --disable-shared --with-ogg=c:/cygwin/usr/local
+ 3.1 For Target-Release configure ogg and mad with:
+      
+     ./configure --host=arm-samsung-nucleuseabi --disable-shared
+
+     when building vorbis and flac:
+
+     ./configure --host=arm-samsung-nucleuseabi --disable-shared --with-ogg=c:/cygwin/usr/local
 
  3.2 for each module, after a successful configure, add the following
      to the generated config.h (gzguts.h for zlib)
@@ -36,7 +51,13 @@ Build instructions:
      #undef _WIN32
      #include "c:/src/scummvm/backends/platform/bada/portdefs.h"
 
- 3.3 removed -fforce-mem from the libMAD Makefile
+ 3.3 Additional post configure edits:
+
+   - removed -fforce-mem from the libMAD Makefile
+   - in libvorbis/lib/Makefile comment lines with vorbis_selftests
+   - edit libFLAC/Makefile ... CFLAGS = $(OGG_CFLAGS)
+
+ Note: you can ignore the ranlib errors when doing make install.
 
 4. Build the ScummVM base library:
 
@@ -50,7 +71,3 @@ Note the debug build will target the Win32 simulator
  outside of the scummvm package. Start the BADA IDE then 
  choose this folder as the eclipse workspace. Click
  Project / Build.
-
-
-
-

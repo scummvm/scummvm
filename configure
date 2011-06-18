@@ -3265,6 +3265,13 @@ case $_backend in
     else
       # created a shared library for inclusion via the eclipse build
       CXXFLAGS="$CXXFLAGS -DSHP"
+      CXXFLAGS="$CXXFLAGS -fpic"
+      CXXFLAGS="$CXXFLAGS -fshort-wchar"
+      CXXFLAGS="$CXXFLAGS -mcpu=cortex-a8"
+      CXXFLAGS="$CXXFLAGS -mfpu=vfpv3"
+      CXXFLAGS="$CXXFLAGS -mfloat-abi=hard"
+      CXXFLAGS="$CXXFLAGS -mlittle-endian"
+      CXXFLAGS="$CXXFLAGS -mthumb-interwork"
     fi
     HOSTEXEPRE=lib
     HOSTEXEEXT=.a
