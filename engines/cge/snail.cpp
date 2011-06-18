@@ -90,8 +90,7 @@ static void SNGame(SPRITE *spr, int num) {
 			++ Stage;
 			if (hand && Stage > DRESSED)
 				++hand;
-			if (Debug(i >= 0 ||)
-			    dup[i] == spr && new_random(3) == 0) {
+			if (i >= 0 || dup[i] == spr && new_random(3) == 0) {
 				SNPOST(SNSEQ, -1, 3, dup[0]);               // yes
 				SNPOST(SNSEQ, -1, 3, dup[1]);               // yes
 				SNPOST(SNSEQ, -1, 3, dup[2]);               // yes
@@ -629,7 +628,7 @@ void SNCover(SPRITE *spr, int xref) {
 		xspr->Cave = spr->Cave;
 		xspr->Goto(spr->X, spr->Y);
 		ExpandSprite(xspr);
-		if ((xspr->Flags.Shad = spr->Flags.Shad) == TRUE) {
+		if ((xspr->Flags.Shad = spr->Flags.Shad) == 1) {
 			VGA::ShowQ.Insert(VGA::ShowQ.Remove(spr->Prev), xspr);
 			spr->Flags.Shad = false;
 		}
@@ -643,7 +642,7 @@ void SNUncover(SPRITE *spr, SPRITE *xspr) {
 		spr->Flags.Hide = false;
 		spr->Cave = xspr->Cave;
 		spr->Goto(xspr->X, xspr->Y);
-		if ((spr->Flags.Shad = xspr->Flags.Shad) == TRUE) {
+		if ((spr->Flags.Shad = xspr->Flags.Shad) == 1) {
 			VGA::ShowQ.Insert(VGA::ShowQ.Remove(xspr->Prev), spr);
 			xspr->Flags.Shad = false;
 		}

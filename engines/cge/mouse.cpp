@@ -167,13 +167,8 @@ void MOUSE::Tick(void) {
 				Hold = e.Ptr;
 				if (Hold) {
 					Hold->Flags.Hold = true;
-#ifndef DEBUG
-					if (Hold->Flags.Drag)
-#endif
-					{
-						hx = e.X - Hold->X;
-						hy = e.Y - Hold->Y;
-					}
+					hx = e.X - Hold->X;
+					hy = e.Y - Hold->Y;
 				}
 			}
 
@@ -192,10 +187,7 @@ void MOUSE::Tick(void) {
 		EvtTail = (EvtTail + 1) % EVT_MAX;
 	}
 	if (Hold)
-#ifndef DEBUG
-		if (Hold->Flags.Drag)
-#endif
-			Hold->Goto(X - hx, Y - hy);
+		Hold->Goto(X - hx, Y - hy);
 }
 
 } // End of namespace CGE

@@ -35,10 +35,7 @@
 #include <process.h>
 #include <dos.h>
 #include <string.h>
-
-#ifdef  DEBUG
 #include <stdlib.h>
-#endif
 
 namespace CGE {
 
@@ -124,14 +121,6 @@ STARTUP::STARTUP(void) {
 	  if (Cpu() < _80286) quit_now(BAD_CHIP_TEXT);
 	  if (100 * _osmajor + _osminor < 330) quit_now(BAD_DOS_TEXT);
 
-	  #ifndef DEBUG
-	  if (Core < CORE_LOW) quit_now(NO_CORE_TEXT);
-	  if (Core < CORE_HIG)
-	    {
-	      SNDDrvInfo.MDEV = DEV_QUIET;
-	      Music = false;
-	    }
-	  #endif
 	  if (! get_parms()) quit_now(BAD_ARG_TEXT);
 	  //--- load sound configuration
 	  const char * fn = UsrPath(ProgName(CFG_EXT));
