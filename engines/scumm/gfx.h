@@ -430,11 +430,11 @@ public:
 };
 
 #ifdef USE_RGB_COLOR
-class Gdi16Bit : public Gdi {
+class GdiHE16bit : public GdiHE {
 protected:
 	virtual void writeRoomColor(byte *dst, byte color) const;
 public:
-	Gdi16Bit(ScummEngine *vm);
+	GdiHE16bit(ScummEngine *vm);
 };
 #endif
 

@@ -114,17 +114,18 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _rnd("scumm")
 	  {
 
+#ifdef USE_RGB_COLOR
+	if (_game.features & GF_16BIT_COLOR) {
+		if (_game.platform == Common::kPlatformPCEngine)
+			_gdi = new GdiPCEngine(this);
+		else if (_game.heversion > 0)
+			_gdi = new GdiHE16bit(this);
+	} else
+#endif
 	if (_game.heversion > 0) {
 		_gdi = new GdiHE(this);
 	} else if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
-#ifdef USE_RGB_COLOR
-	} else if (_game.features & GF_16BIT_COLOR) {
-		if (_game.platform == Common::kPlatformPCEngine)
-			_gdi = new GdiPCEngine(this);
-		else
-			_gdi = new Gdi16Bit(this);
-#endif
 	} else if (_game.version <= 1) {
 		_gdi = new GdiV1(this);
 	} else if (_game.version == 2) {

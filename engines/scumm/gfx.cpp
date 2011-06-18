@@ -251,7 +251,7 @@ GdiV2::~GdiV2() {
 }
 
 #ifdef USE_RGB_COLOR
-Gdi16Bit::Gdi16Bit(ScummEngine *vm) : Gdi(vm) {
+GdiHE16bit::GdiHE16bit(ScummEngine *vm) : GdiHE(vm) {
 }
 #endif
 
@@ -3674,7 +3674,7 @@ void Gdi::unkDecode11(byte *dst, int dstPitch, const byte *src, int height) cons
 #undef READ_BIT_256
 
 #ifdef USE_RGB_COLOR
-void Gdi16Bit::writeRoomColor(byte *dst, byte color) const {
+void GdiHE16bit::writeRoomColor(byte *dst, byte color) const {
 	WRITE_UINT16(dst, READ_LE_UINT16(_vm->_hePalettes + 2048 + color * 2));
 }
 #endif
