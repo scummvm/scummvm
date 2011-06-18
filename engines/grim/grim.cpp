@@ -1477,6 +1477,8 @@ void GrimEngine::setScene(const char *name) {
 }
 
 void GrimEngine::setScene(Scene *scene) {
+	if (scene == _currScene)
+		return;
 	Scene *lastScene = _currScene;
 	_currScene = scene;
 	_currScene->setSoundParameters(20, 127);
