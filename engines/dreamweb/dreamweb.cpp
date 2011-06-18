@@ -100,8 +100,9 @@ void DreamWebEngine::waitForVSync() {
 }
 
 void DreamWebEngine::quit() {
-	warning("Engine should quit gracefully (but doesn't yet)");
-	g_system->quit();
+	_context.data.byte(DreamGen::DreamGenContext::kQuitrequested) = 1;
+	_context.data.byte(DreamGen::DreamGenContext::kLasthardkey) = 1;
+	_context.data.byte(DreamGen::DreamGenContext::kGetback) = 4;
 }
 
 void DreamWebEngine::processEvents() {
@@ -208,6 +209,7 @@ Common::Error DreamWebEngine::run() {
 	//http://martin.hinner.info/vga/timing.html
 
 	_context.__start();
+	_context.data.byte(DreamGen::DreamGenContext::kQuitrequested) = 0;
 	
 	getTimerManager()->removeTimerProc(vSyncInterrupt);
 

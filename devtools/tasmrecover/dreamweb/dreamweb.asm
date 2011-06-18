@@ -195,6 +195,10 @@ alreadyloaded:	mov	newlocation,255
 	mov	commandtype,255
 
 mainloop:	call	screenupdate
+	cmp quitrequested, 0
+	jz $1
+	ret
+$1:
 	cmp	wongame,0
 	jnz	endofgame
 	cmp	mandead,1
@@ -6218,6 +6222,8 @@ savefiles	db	"DREAMWEB.D00",0
 	db	"DREAMWEB.D06",0
 
 Recname	db	"DREAMWEB.DEM",0
+
+Quitrequested	db 0
 
 
 ;-------------------------------------------------------End of code segment----
