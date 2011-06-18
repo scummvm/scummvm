@@ -74,8 +74,8 @@ public:
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
 	switch(f) {
 	case kSupportsListSaves:
-	case kSupportsLoadingDuringStartup:
-	case kSupportsDeleteSave:
+	//case kSupportsLoadingDuringStartup:
+	//case kSupportsDeleteSave:
 		return true;
 	default:
 		return false;

@@ -111,6 +111,15 @@ void DreamWebEngine::processEvents() {
 		quit();
 		return;
 	}
+
+	if (_enableSavingOrLoading && _loadSavefile >= 0 && _loadSavefile <= 6) {
+		debug(1, "loading save state %d", _loadSavefile);
+		_context.data.byte(_context.kCurrentslot) = _loadSavefile;
+		_loadSavefile = -1;
+		_context.loadposition();
+		_context.data.byte(_context.kGetback) = 1;
+	}
+
 	soundHandler();
 	Common::Event event;
 	int softKey, hardKey;
@@ -207,6 +216,8 @@ void DreamWebEngine::processEvents() {
 
 Common::Error DreamWebEngine::run() {
 	_console = new DreamWebConsole(this);
+
+	_loadSavefile = Common::ConfigManager::instance().getInt("save_slot");
 
 	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this);
 	//http://martin.hinner.info/vga/timing.html

@@ -193,9 +193,6 @@ void DreamGenContext::mousecall() {
 
 void DreamGenContext::setmouse() {
 	data.word(kOldpointerx) = 0xffff;
-	//warning("setmouse: fixme: add range setting");
-	//set vertical range to 15-184
-	//set horizontal range to 15-298*2
 }
 
 void DreamGenContext::gettime() {
@@ -380,7 +377,10 @@ void DreamGenContext::dosreturn() {
 	engine->quit();
 }
 
-void DreamGenContext::set16colpalette() {}
+void DreamGenContext::set16colpalette() {
+	//fixme: this is a bit hackish, set16colpalette called after initialization and nearly before main loop.
+	engine->enableSavingOrLoading();
+}
 
 void DreamGenContext::mode640x480() {
 	// Video mode 12h: 640x480 pixels, 16 colors, I believe

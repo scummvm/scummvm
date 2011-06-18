@@ -104,6 +104,8 @@ public:
 
 	void loadSounds(uint bank, const Common::String &file);
 	bool loadSpeech(const Common::String &filename);
+	
+	void enableSavingOrLoading(bool enable = true) { _enableSavingOrLoading = enable; }
 
 private:
 	void keyPressed(uint16 ascii);
@@ -121,6 +123,8 @@ private:
 	uint _speed;
 	bool _turbo;
 	uint _oldMouseState;
+	int _loadSavefile;
+	bool _enableSavingOrLoading;
 
 	struct Sample {
 		uint offset;
