@@ -73,7 +73,7 @@ class BTFILE : public IOHAND {
 		int Indx;
 		bool Updt;
 	} Buff[BT_LEVELS];
-	void PutPage(int lev, bool hard = FALSE);
+	void PutPage(int lev, bool hard = false);
 	BT_PAGE *GetPage(int lev, uint16 pgn);
 public:
 	BTFILE(const char *name, IOMODE mode = REA, CRYPT *crpt = NULL);

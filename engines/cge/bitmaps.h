@@ -32,11 +32,8 @@
 
 namespace CGE {
 
-#ifdef DEBUG
 extern BITMAP  *MB[];
 extern BITMAP  *HL[];
-#endif
-
 extern BITMAP  *MC[];
 extern BITMAP  *PR[];
 extern BITMAP  *SP[];

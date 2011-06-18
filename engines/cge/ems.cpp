@@ -127,7 +127,7 @@ bool EMM::Test(void) {
 	  return FALSE;
 	*/
 	warning("EMM::Test");
-	return FALSE;
+	return false;
 }
 
 

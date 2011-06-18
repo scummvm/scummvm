@@ -224,7 +224,6 @@ static  uint8   MEDesign[][9] = { { R R R R R R R R R }, // 0
 
 namespace CGE {
 
-#ifdef DEBUG
 BMP_PTR MB[] = {
 	new BITMAP("BRICK"),
 	NULL
@@ -234,7 +233,6 @@ BMP_PTR HL[] = {
 	new BITMAP("HLINE"),
 	NULL
 };
-#endif
 
 BMP_PTR MC[] = {
 	new BITMAP("MOUSE"),

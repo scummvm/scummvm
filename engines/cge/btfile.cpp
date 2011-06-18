@@ -46,7 +46,7 @@ BTFILE::BTFILE(const char *name, IOMODE mode, CRYPT *crpt)
 		Buff[i].Page = new BT_PAGE;
 		Buff[i].PgNo = BT_NONE;
 		Buff[i].Indx = -1;
-		Buff[i].Updt = FALSE;
+		Buff[i].Updt = false;
 		if (Buff[i].Page == NULL)
 			error("No core");
 	}
@@ -65,7 +65,7 @@ void BTFILE::PutPage(int lev, bool hard) {
 	if (hard || Buff[lev].Updt) {
 		Seek(Buff[lev].PgNo * sizeof(BT_PAGE));
 		Write((uint8 *) Buff[lev].Page, sizeof(BT_PAGE));
-		Buff[lev].Updt = FALSE;
+		Buff[lev].Updt = false;
 	}
 }
 
@@ -78,12 +78,12 @@ BT_PAGE *BTFILE::GetPage(int lev, uint16 pgn) {
 		if (Size() > pos) {
 			Seek((uint32) pgn * sizeof(BT_PAGE));
 			Read((uint8 *) Buff[lev].Page, sizeof(BT_PAGE));
-			Buff[lev].Updt = FALSE;
+			Buff[lev].Updt = false;
 		} else {
 			Buff[lev].Page->Hea.Count = 0;
 			Buff[lev].Page->Hea.Down = BT_NONE;
 			memset(Buff[lev].Page->Data, '\0', sizeof(Buff[lev].Page->Data));
-			Buff[lev].Updt = TRUE;
+			Buff[lev].Updt = true;
 		}
 		Buff[lev].Indx = -1;
 	}
@@ -132,17 +132,17 @@ void BTFILE::Make(BT_KEYPACK *keypack, uint16 count) {
 	BT_PAGE *Root = GetPage(0, n++),
 	        *Leaf = GetPage(1, n);
 	Root->Hea.Down = n;
-	PutPage(0, TRUE);
+	PutPage(0, true);
 	while (count --) {
 		if (Leaf->Hea.Count >= ArrayCount(Leaf->Lea)) {
-			PutPage(1, TRUE);     // save filled page
+			PutPage(1, true);     // save filled page
 			Leaf = GetPage(1, ++n);   // take empty page
 			memcpy(Root->Inn[Root->Hea.Count].Key, keypack->Key, BT_KEYLEN);
 			Root->Inn[Root->Hea.Count ++].Down = n;
-			Buff[0].Updt = TRUE;
+			Buff[0].Updt = true;
 		}
 		Leaf->Lea[Leaf->Hea.Count ++] = * (keypack ++);
-		Buff[1].Updt = TRUE;
+		Buff[1].Updt = true;
 	}
 }
 

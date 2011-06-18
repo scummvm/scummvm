@@ -59,21 +59,8 @@ namespace CGE {
 #define     STACK_SIZ   (K(2))
 #define     SVGCHKSUM   (1956+Now+OldLev+Game+Music+DemoText)
 
-#ifdef  DEMO
-#ifdef DEBUG
 #define   SVG0NAME    ("{{INIT}}" SVG_EXT)
-#else
-#define   SVG0NAME    (ProgName(SVG_EXT))
-#endif
-#else
-#define   SVG0NAME    ("{{INIT}}" SVG_EXT)
-#endif
-
-#ifdef  DEBUG
 #define   SVG0FILE    CFILE
-#else
-#define   SVG0FILE    INI_FILE
-#endif
 
 extern  uint16  _stklen = (STACK_SIZ * 2);
 
@@ -152,9 +139,7 @@ extern  int FindPocket(SPRITE *);
 
 extern  DAC StdPal[58];
 
-#ifdef  DEBUG
 static  SPRITE HorzLine = HL;
-#endif
 
 void    FeedSnail(SPRITE *spr, SNLIST snq);         // defined in SNAIL
 uint8   CLUSTER::Map[MAP_ZCNT][MAP_XCNT];
@@ -204,7 +189,7 @@ bool CLUSTER::Protected(void) {
 	*/
 
 	warning("STUB: CLUSTER::Protected()");
-	return TRUE;
+	return true;
 }
 
 
@@ -548,8 +533,6 @@ void WALK::Reach(SPRITE *spr, int mode) {
 }
 
 
-#ifdef DEBUG
-
 class SQUARE : public SPRITE {
 public:
 	SQUARE(void);
@@ -586,14 +569,11 @@ static void SetMapBrick(int x, int z) {
 	}
 }
 
-#endif
-
-
 void   dummy(void) {}
 static void SwitchMapping(void);
 static void SwitchColorMode(void);
 static void StartCountDown(void);
-Debug(static void SwitchDebug(void);)
+static void SwitchDebug(void);
 static void SwitchMusic(void);
 static void KillSprite(void);
 static void PushSprite(void);
@@ -642,13 +622,6 @@ static void Quit(void) {
 
 
 static void AltCtrlDel(void) {
-#if 0
-	//def DEBUG
-	if (KEYBOARD::Key[LSHIFT] || KEYBOARD::Key[RSHIFT]) {
-		PostFlag = 0x1234;
-		POST();
-	} else
-#endif
 		SNPOST_(SNSAY,  -1, A_C_D_TEXT, Hero);
 }
 
@@ -774,18 +747,18 @@ static void CaveUp(void) {
 
 static void CaveDown(void) {
 	SPRITE *spr;
-	Debug(if (! HorzLine.Flags.Hide) SwitchMapping();)
+	if (! HorzLine.Flags.Hide)
+		SwitchMapping();
 
-		for (spr = VGA::ShowQ.First(); spr;) {
-			SPRITE *n = spr->Next;
-			if (spr->Ref >= 1000 /*&& spr->Cave*/) {
-				if (spr->Ref % 1000 == 999)
-					FeedSnail(spr, TAKE);
-
-				VGA::SpareQ.Append(VGA::ShowQ.Remove(spr));
-			}
-			spr = n;
+	for (spr = VGA::ShowQ.First(); spr;) {
+		SPRITE *n = spr->Next;
+		if (spr->Ref >= 1000 /*&& spr->Cave*/) {
+			if (spr->Ref % 1000 == 999)
+				FeedSnail(spr, TAKE);
+			VGA::SpareQ.Append(VGA::ShowQ.Remove(spr));
 		}
+		spr = n;
+	}
 	Text.Clear(1000);
 }
 
@@ -857,10 +830,11 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 		pp0 = pp;
 		switch (x) {
 		case Del:
-			if (KEYBOARD::Key[ALT] &&
-			        KEYBOARD::Key[CTRL]) AltCtrlDel();
-			Debug(else KillSprite();)
-				break;
+			if (KEYBOARD::Key[ALT] && KEYBOARD::Key[CTRL])
+				AltCtrlDel();
+			else 
+				KillSprite();
+			break;
 		case 'F':
 			if (KEYBOARD::Key[ALT]) {
 				SPRITE *m = VGA::ShowQ.Locate(17001);
@@ -870,8 +844,6 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 				}
 			}
 			break;
-
-#ifdef DEBUG
 		case PgUp:
 			PushSprite();
 			break;
@@ -932,19 +904,6 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			if (Sprite)
 				Sprite->Step(x - '0');
 			break;
-#else
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-			SelectPocket(x - '1');
-			break;
-#endif
-
 		case F10          :
 			if (Snail.Idle() && ! Hero->Flags.Hide)
 				StartCountDown();
@@ -994,7 +953,6 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			if (cav && Snail.Idle() && Hero->TracePtr < 0)
 				SwitchCave(cav);
 
-#ifdef  DEBUG
 			if (!HorzLine.Flags.Hide) {
 				if (y >= MAP_TOP && y < MAP_TOP + MAP_HIG) {
 					int8 x1, z1;
@@ -1003,7 +961,6 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 					SetMapBrick(x1, z1);
 				}
 			} else
-#endif
 			{
 				if (! Talk && Snail.Idle() && Hero
 				        && y >= MAP_TOP && y < MAP_TOP + MAP_HIG && ! Game) {
@@ -1119,7 +1076,6 @@ static void TakeName(void) {
 #endif
 
 
-#ifdef  DEBUG
 static void SwitchMapping(void) {
 	if (HorzLine.Flags.Hide) {
 		int i;
@@ -1200,10 +1156,6 @@ static void SaveMapping(void) {
 	}
 }
 
-#endif
-
-
-#ifdef  DEBUG
 //              1111111111222222222233333333 334444444444555555555566666666667777777777
 //    01234567890123456789012345678901234567 890123456789012345678901234567890123456789
 static  char    DebugText[] = " N=00000 F=000000 X=000 Y=000 FPS=0000\0S=00:00 000:000:000 000:000 00  ";
@@ -1272,8 +1224,6 @@ static void SwitchDebug(void) {
 	DebugLine.Flags.Hide = ! DebugLine.Flags.Hide;
 }
 
-#endif
-
 
 static void OptionTouch(int opt, uint16 mask) {
 	switch (opt) {
@@ -1304,7 +1254,7 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 	if ((mask & ATTN) == 0) {
 		InfoLine.Update(Name());
 		if (mask & (R_DN | L_DN))
-			Sprite = this; // DEBUG mode only?
+			Sprite = this;
 		if (Ref / 10 == 12) {
 			OptionTouch(Ref % 10, mask);
 			return;
@@ -1582,50 +1532,20 @@ static void LoadScript(const char *fname) {
 
 
 static void MainLoop(void) {
-#if 0
-//def DEBUG
-	static VgaRegBlk Mode[] = {
-
-		{ 0x04, VGASEQ, 0x08, 0x04 },   // memory mode
-
-		{ 0x03, VGAGRA, 0xFF, 0x00 },   // data rotate = 0
-		{ 0x05, VGAGRA, 0x03, 0x00 },   // R/W mode = 0
-		{ 0x06, VGAGRA, 0x02, 0x00 },   // misc
-
-		{ 0x14, VGACRT, 0x40, 0x00 },   // underline
-		{ 0x13, VGACRT, 0xFF, 0x28 },   // screen width
-		{ 0x17, VGACRT, 0xFF, 0xC3 },   // mode control
-
-		{ 0x11, VGACRT, 0x80, 0x00 },   // vert retrace end
-		{ 0x09, VGACRT, 0xEF, 0x01 },   // max scan line
-
-		{ 0x30, VGAATR, 0x00, 0x20 },   // 256 color mode
-
-//		    { 0x12, VGACRT, 0xFF, 0x6E },   // vert display end
-//		    { 0x15, VGACRT, 0xFF, 0x7F },   // start vb
-//		    { 0x10, VGACRT, 0xFF, 0x94 },   // start vr
-
-		{ 0x00                     }
-	};
-
-	Vga.Setup(Mode);
-#endif
-
-	Debug(SayDebug();)
+	SayDebug();
 
 #ifdef DEMO
-#define TIM ((182L*6L) * 5L)
 	static uint32 tc = 0;
-	if (TimerCount - tc >= TIM && Talk == NULL && Snail.Idle()) {
+	if (/* FIXME: TimerCount - tc >= ((182L*6L) * 5L) && */ Talk == NULL && Snail.Idle()) {
 		if (Text[DemoText]) {
 			SNPOST(SNSOUND,  -1, 4, NULL); // drumla
 			SNPOST(SNINF,  -1, DemoText, NULL);
 			SNPOST(SNLABEL, -1, -1, NULL);
-			if (Text[++ DemoText] == NULL) DemoText = DEMO_TEXT + 1;
+			if (Text[++ DemoText] == NULL)
+				DemoText = DEMO_TEXT + 1;
 		}
-		tc = TimerCount;
+		//FIXME: tc = TimerCount;
 	}
-#undef TIM
 #endif
 
 	Vga.Show();
@@ -1727,14 +1647,12 @@ static void RunGame(void) {
 	InfoLine.Update(NULL);
 	VGA::ShowQ.Insert(&InfoLine);
 
-#ifdef DEBUG
 	DebugLine.Z = 126;
 	VGA::ShowQ.Insert(&DebugLine);
 
 	HorzLine.Y = MAP_TOP - (MAP_TOP > 0);
 	HorzLine.Z = 126;
 	VGA::ShowQ.Insert(&HorzLine);
-#endif
 
 	Mouse.Busy = VGA::SpareQ.Locate(BUSY_REF);
 	if (Mouse.Busy)
@@ -1897,13 +1815,10 @@ bool ShowTitle(const char *name) {
 
 
 /*
-#ifdef DEBUG
-void StkDump (void)
-{
+void StkDump (void) {
   CFILE f("!STACK.DMP", BFW);
   f.Write((uint8 *) (intStackPtr-STACK_SIZ/2), STACK_SIZ*2);
 }
-#endif
 */
 
 
@@ -1920,8 +1835,8 @@ void cge_main(void) {
 	if (! SVG0FILE::Exist(SVG0NAME))
 		STARTUP::Mode = 2;
 
-	Debug(DebugLine.Flags.Hide = true;)
-	Debug(HorzLine.Flags.Hide = true;)
+	DebugLine.Flags.Hide = true;
+	HorzLine.Flags.Hide = true;
 
 	//srand((uint16) Timer());
 	Sys = new SYSTEM;

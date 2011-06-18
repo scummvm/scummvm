@@ -33,8 +33,8 @@
 namespace CGE {
 
 // Defines found in cge.mak
-#define DEBUG
 #define VOL
+//#define DEMO
 #define INI_FILE VFILE // Or is it CFILE?
 #define PIC_FILE VFILE
 #define BMP_MODE 0
@@ -46,15 +46,8 @@ namespace CGE {
 #define LF      10
 #define FF      12
 #define CR      13
-
-#define TRUE    1
-#define FALSE   0
-
 #define MAXFILE 128
-
-#define NULL        0
-#define OFF     false
-#define ON      true
+#define NULL    0
 
 #define IsWhite(c)  ((c) == ' ' || (c) == '\t' || (c) == '\n')
 #define IsUpper(c)  ((c) >= 'A' && (c) <= 'Z')
@@ -148,17 +141,6 @@ struct  KeyStatStruct {
 #define BreakFlag   (* ((volatile uint8 *) ((void _seg *) 0x40 + (void *) 0x71)))
 #define PostFlag    (* ((volatile uint16 *) ((void _seg *) 0x40 + (void *) 0x72)))
 #define POST        ((void (*)(void)) ((void _seg *) 0xF000 + (void *) 0xFFF0))
-#define SLIF        if (KeyStat.ScrollLock)
-
-#define FOR(i,n)    for(i = 0; i < (n); i++)
-
-#define TRAP(x)     { warning("STUB: TRAP"); /*if (x) asm { int 3 } */ }
-
-#ifdef DEBUG
-#define   Debug(x)    x
-#else
-#define   Debug(x)
-#endif
 
 #ifdef      DEMO
 #define   Demo(x)     x

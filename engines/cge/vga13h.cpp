@@ -40,25 +40,14 @@
 
 namespace CGE {
 
-#ifdef DEBUG
-#define     REPORT
-#endif
-
-#define     OK(f)       ((f).Error==0)
 #define     FADE_STEP   2
-
 #define     TMR_DIV     ((0x8000/TMR_RATE)*2)
-
 
 //--------------------------------------------------------------------------
 
-#ifdef  REPORT
 static char Report[] = "NearHeap=.....  FarHeap=......\n";
 #define NREP         9
 #define FREP        24
-#endif
-
-
 
 static  VgaRegBlk VideoMode[] = {
 
@@ -377,7 +366,6 @@ BMP_PTR SPRITE::Shp(void) {
 	if (e)
 		if (e->Seq) {
 			int i = e->Seq[SeqPtr].Now;
-#ifdef DEBUG
 			if (i >= ShpCnt) {
 				//char s[256];
 				//sprintf(s, "Seq=%p ShpCnt=%d SeqPtr=%d Now=%d Next=%d",
@@ -385,7 +373,6 @@ BMP_PTR SPRITE::Shp(void) {
 				//VGA::Exit(s, File);
 				error("Invalid PHASE in SPRITE::Shp() %s", File);
 			}
-#endif
 			return e->ShpList[i];
 		}
 	return NULL;
@@ -509,7 +496,7 @@ SPRITE *SPRITE::Expand(void) {
 			MergeExt(fname, File, SPR_EXT);
 			if (INI_FILE::Exist(fname)) { // sprite description file exist
 				INI_FILE sprf(fname);
-				if (! OK(sprf))
+				if (! (sprf.Error==0))
 					error("Bad SPR [%s]", fname);
 				int len = 0, lcnt = 0;
 				while ((len = sprf.Read((uint8 *)line)) != 0) {
@@ -936,14 +923,12 @@ VGA::VGA(int mode)
 		if (txt) {
 //	  puts(txt);
 			warning(txt);
-#ifndef DEBUG
 			std = false;
-#endif
 		}
 	}
-//  if (std)
+	if (std)
 //		warning(Copr);
-	warning("TODO: Fix Copr");
+		warning("TODO: Fix Copr");
 
 	SetStatAdr();
 	if (StatAdr != VGAST1_)
