@@ -309,7 +309,7 @@ uint8 Closest(CBLK *pal, CBLK x) {
 	}
 	return found;
 #undef f
-};
+}
 
 
 

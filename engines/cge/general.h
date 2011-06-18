@@ -146,19 +146,19 @@ void Swap(T &A, T &B) {
 	T a = A;
 	A = B;
 	B = a;
-};
+}
 
 
 #ifdef __cplusplus
 template <class T>
 T max(T A, T B) {
 	return (A > B) ? A : B;
-};
+}
 
 template <class T>
 T min(T A, T B) {
 	return (A < B) ? A : B;
-};
+}
 #endif
 
 
@@ -179,7 +179,7 @@ public:
 template <class T>
 inline uint16 XRead(XFILE *xf, T *t) {
 	return xf->Read((uint8 *) t, sizeof(*t));
-};
+}
 
 
 class IOHAND : public XFILE {
