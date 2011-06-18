@@ -140,7 +140,7 @@ Common::Error DreamWebEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error DreamWebEngine::saveGameState(int slot, const char *desc) {
+Common::Error DreamWebEngine::saveGameState(int slot, const Common::String &desc) {
 	return Common::kNoError;
 }
 
