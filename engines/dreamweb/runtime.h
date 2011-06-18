@@ -499,7 +499,7 @@ public:
 	}
 
 	inline void _stosw(uint size, bool clear_cx = false) {
-		uint8 *dst = es.ptr(di, size);
+		uint8 *dst = es.ptr(di, size * 2);
 		di += 2 * size;
 		while(size--) {
 			*dst++ = al;
