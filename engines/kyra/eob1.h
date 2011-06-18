@@ -44,6 +44,7 @@ private:
 	// Main Menu
 	int mainMenu();
 	int mainMenuLoop();
+	int _menuChoiceInit;
 
 	// Main loop
 	void startupNew();

@@ -350,27 +350,31 @@ Common::Error EobCoreEngine::go() {
 	//initPlayBuffers
 
 	loadItemDefs();
-
 	int action = 0;
 
-	if (_gameToLoad != -1) {
-		if (loadGameState(_gameToLoad).getCode() != Common::kNoError)
-			error("Couldn't load game slot %d on startup", _gameToLoad);
-		_gameToLoad = -1;
-	} else {
-		action = mainMenu();
-	}
+	for (bool repeatLoop = true; repeatLoop; repeatLoop ^= true) {
+		action = 0;
 
-	if (action == -1) {
-		// load game
-		_saveLoadMode = -1;
-		startupLoad();
-	} else if (action == -2) {
-		// new game
-		startCharacterGeneration();
-		startupNew();
-	} else if (action == -3) {
-		// transfer party
+		if (_gameToLoad != -1) {
+			if (loadGameState(_gameToLoad).getCode() != Common::kNoError)
+				error("Couldn't load game slot %d on startup", _gameToLoad);
+			_gameToLoad = -1;
+		} else {
+			action = mainMenu();
+		}
+
+		if (action == -1) {
+			// load game
+			_saveLoadMode = -1;
+			startupLoad();
+		} else if (action == -2) {
+			// new game
+			repeatLoop = startCharacterGeneration();
+			if (repeatLoop)
+				startupNew();
+		} else if (action == -3) {
+			// transfer party
+		}
 	}
 
 	if (!shouldQuit() && action > -3) {

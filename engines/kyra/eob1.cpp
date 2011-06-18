@@ -29,6 +29,7 @@ namespace Kyra {
 
 EobEngine::EobEngine(OSystem *system, const GameFlags &flags) : EobCoreEngine(system, flags) {
 	_numSpells = 53;
+	_menuChoiceInit = 4;
 }
 
 EobEngine::~EobEngine() {

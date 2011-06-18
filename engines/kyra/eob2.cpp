@@ -33,6 +33,7 @@ DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags) : EobCor
 	_shapesIntro = _shapesFinale = 0;
 	_dscDoorType5Offs = 0;
 	_numSpells = 70;
+	_menuChoiceInit = 4;
 }
 
 DarkMoonEngine::~DarkMoonEngine() {

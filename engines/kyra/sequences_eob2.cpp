@@ -86,7 +86,8 @@ private:
 };
 
 int DarkMoonEngine::mainMenu() {
-	int menuChoice = 4;
+	int menuChoice = _menuChoiceInit;
+	_menuChoiceInit = 0;
 
 	_sound->loadSoundFile("INTRO");
 	Screen::FontId of = _screen->_currentFont;
