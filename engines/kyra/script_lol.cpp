@@ -1088,32 +1088,26 @@ int LoLEngine::olol_playAttackSound(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_characterJoinsParty(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_characterJoinsParty(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+int LoLEngine::olol_addRemoveCharacter(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_addRemoveCharacter(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 
 	int16 id = stackPos(0);
-	if (id < 0)
+	if (id < 0) {
 		id = -id;
+		for (int i = 0; i < 4; i++) {
+			if (!(_characters[i].flags & 1) || _characters[i].id != id)
+				continue;
 
-	for (int i = 0; i < 4; i++) {
-		if (!(_characters[i].flags & 1) || _characters[i].id != id)
-			continue;
+			_characters[i].flags &= 0xfffe;
+			calcCharPortraitXpos();
 
-		_characters[i].flags &= 0xfffe;
-		calcCharPortraitXpos();
-
-		if (!_updateFlags) {
-			gui_enableDefaultPlayfieldButtons();
-			gui_drawPlayField();
+			if (_selectedCharacter == i)
+				_selectedCharacter = 0;
+			break;
 		}
-
-		if (_selectedCharacter == i)
-			_selectedCharacter = 0;
-
-		return 1;
+	} else {
+		addCharacter(id);
 	}
-
-	addCharacter(id);
 
 	if (!_updateFlags) {
 		gui_enableDefaultPlayfieldButtons();
@@ -2823,7 +2817,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_setScriptTimer);
 	Opcode(olol_createHandItem);
 	Opcode(olol_playAttackSound);
-	Opcode(olol_characterJoinsParty);
+	Opcode(olol_addRemoveCharacter);
 
 	// 0x4C
 	Opcode(olol_giveItem);

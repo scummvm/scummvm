@@ -717,7 +717,7 @@ private:
 	int olol_setScriptTimer(EMCState *script);
 	int olol_createHandItem(EMCState *script);
 	int olol_playAttackSound(EMCState *script);
-	int olol_characterJoinsParty(EMCState *script);
+	int olol_addRemoveCharacter(EMCState *script);
 	int olol_giveItem(EMCState *script);
 	int olol_loadTimScript(EMCState *script);
 	int olol_runTimScript(EMCState *script);
