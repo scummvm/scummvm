@@ -65,7 +65,7 @@ get_var() {
 # Add an engine: id name build subengines
 add_engine() {
 	_engines="${_engines} ${1}"
-	if test "${3}" == "no" ; then
+	if test "${3}" = "no" ; then
 		set_var _wip_engines "${_wip_engines} ${1}"
 	fi
 	set_var _engine_${1}_name "${2}"
