@@ -32,6 +32,25 @@ Sword25FileProxy::Sword25FileProxy(const Common::String &filename, const Common:
 		setupConfigFile();
 }
 
+Common::String Sword25FileProxy::formatDouble(double value) {
+	// This is a bit hackish. The point of it is that it's important that
+	// we ignore the locale decimal mark and force it to be a point. If it
+	// would happen to be a comma instead, it seems that it's seen as two
+	// comma-separated integers rather than one floating-point value. Or
+	// something like that.
+
+	bool negative = value < 0.0;
+	value = fabs(value);
+	double integerPart = floor(value);
+	double fractionalPart = (value - integerPart) * 1000000.0;
+
+	Common::String out = Common::String::format("%.0f.%.0f", integerPart, fractionalPart);
+	if (negative)
+		out = "-" + out;
+
+	return out;
+}
+
 void Sword25FileProxy::setupConfigFile() {
 	double sfxVolume = !ConfMan.hasKey("sfx_volume") ? 1.0 : 1.0 * ConfMan.getInt("sfx_volume") / 255.0;
 	double musicVolume = !ConfMan.hasKey("music_volume") ? 0.5 : 1.0 * ConfMan.getInt("music_volume") / 255.0;
@@ -45,10 +64,13 @@ MAX_MEMORY_USAGE = 256000000\r\n\
 GFX_VSYNC_ACTIVE = true\r\n\
 SFX_SAMPLING_RATE = 44100\r\n\
 SFX_CHANNEL_COUNT = 32\r\n\
-SFX_SOUND_VOLUME = %f\r\n\
-SFX_MUSIC_VOLUME = %f\r\n\
-SFX_SPEECH_VOLUME = %f\r\n",
-		getLanguage().c_str(), subtitles ? "true" : "false", sfxVolume, musicVolume, speechVolume);
+SFX_SOUND_VOLUME = %s\r\n\
+SFX_MUSIC_VOLUME = %s\r\n\
+SFX_SPEECH_VOLUME = %s\r\n",
+		getLanguage().c_str(), subtitles ? "true" : "false",
+		formatDouble(sfxVolume).c_str(),
+		formatDouble(musicVolume).c_str(),
+		formatDouble(speechVolume).c_str());
 
 	_readPos = 0;
 }
