@@ -302,7 +302,7 @@ protected:
 	//int _runLoopUnk2;
 
 	// Create Party
-	void startCharacterGeneration();
+	bool startCharacterGeneration();
 
 	uint8 **_faceShapes;
 

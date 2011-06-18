@@ -33,7 +33,7 @@ public:
 	CharacterGenerator(EobCoreEngine *vm, Screen_Eob *screen);
 	~CharacterGenerator();
 
-	void start(EobCharacter *characters, uint8 ***faceShapes);
+	bool start(EobCharacter *characters, uint8 ***faceShapes);
 
 private:
 	void init();
@@ -113,8 +113,8 @@ private:
 	Screen_Eob *_screen;
 };
 
-void EobCoreEngine::startCharacterGeneration() {
-	CharacterGenerator(this, _screen).start(_characters, &_faceShapes);
+bool EobCoreEngine::startCharacterGeneration() {
+	return CharacterGenerator(this, _screen).start(_characters, &_faceShapes);
 }
 
 CharacterGenerator::CharacterGenerator(EobCoreEngine *vm, Screen_Eob *screen) : _vm(vm), _screen(screen),
@@ -156,9 +156,9 @@ CharacterGenerator::~CharacterGenerator() {
 	}
 }
 
-void CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
+bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 	if (!characters && !faceShapes)
-		return;
+		return true;
 
 	_characters = characters;
 	_faceShapes = *faceShapes;
@@ -184,10 +184,15 @@ void CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 		_vm->removeInputTop();
 
 		if (inputFlag) {
-			if (inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT])
+			if (inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
 				_activeBox ^= 1;
-			else if (inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN])
+			} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN]) {
 				_activeBox ^= 2;
+			} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
+				// Unlike the original we allow returning to the main menu
+				_vm->sound()->haltTrack();
+				return false;
+			}
 			highlightBoxFrame(-1);
 		}
 
@@ -233,6 +238,7 @@ void CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 	_vm->sound()->playTrack(15);
 
 	*faceShapes = _faceShapes;
+	return true;
 }
 
 void CharacterGenerator::init() {
