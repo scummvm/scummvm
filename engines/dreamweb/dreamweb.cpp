@@ -116,6 +116,9 @@ void DreamWebEngine::processEvents() {
 	int softKey, hardKey;
 	while (event_manager->pollEvent(event)) {
 		switch(event.type) {
+		case Common::EVENT_RTL:
+			quit();
+			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags & Common::KBD_CTRL) {
 				switch (event.kbd.keycode) {

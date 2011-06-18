@@ -194,11 +194,12 @@ alreadyloaded:	mov	newlocation,255
 	call	startup
 	mov	commandtype,255
 
-mainloop:	call	screenupdate
+mainloop:
 	cmp quitrequested, 0
 	jz $1
 	ret
 $1:
+	call	screenupdate
 	cmp	wongame,0
 	jnz	endofgame
 	cmp	mandead,1

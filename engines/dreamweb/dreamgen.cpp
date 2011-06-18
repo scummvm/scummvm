@@ -4165,6 +4165,11 @@ deloneloop:
 		goto deloneloop;
 }
 
+void DreamGenContext::width160() {
+	STACK_CHECK;
+	_movsw(161);
+}
+
 void DreamGenContext::doblocks() {
 	STACK_CHECK;
 	es = data.word(kWorkspace);
@@ -21358,12 +21363,12 @@ loadnew:
 	startup();
 	data.byte(kCommandtype) = 255;
 mainloop:
-	screenupdate();
 	_cmp(data.byte(kQuitrequested),  0);
 	if (flags.z())
 		goto _tmp1;
 	return;
 _tmp1:
+	screenupdate();
 	_cmp(data.byte(kWongame), 0);
 	if (!flags.z())
 		goto endofgame;
@@ -22115,6 +22120,7 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case 0xc20c: doshake(); break;
 		case 0xc210: zoom(); break;
 		case 0xc214: delthisone(); break;
+		case 0xc224: width160(); break;
 		case 0xc228: doblocks(); break;
 		case 0xc22c: showframe(); break;
 		case 0xc230: frameoutv(); break;

@@ -83,6 +83,12 @@ bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool DreamWeb::DreamWebEngine::hasFeature(EngineFeature f) const {
+	switch(f) {
+	case kSupportsRTL:
+		return true;
+	default:
+		return false;
+	}
 	return false;
 }
 
