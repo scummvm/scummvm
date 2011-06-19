@@ -1115,7 +1115,7 @@ public:
 	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
 	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
 	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const char *description);
+	Common::Error saveGameState(int slot, const Common::String &description);
 	void savegame(const char *filename, const char *description);
 	void loadgame(const char *filename);
 	const char *getSavegameFilename(int num);

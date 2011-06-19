@@ -1078,9 +1078,9 @@ Common::Error PrisonerEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error PrisonerEngine::saveGameState(int slot, const char *description) {
+Common::Error PrisonerEngine::saveGameState(int slot, const Common::String &description) {
 	const char *fileName = getSavegameFilename(slot);
-	savegame(fileName, description);
+	savegame(fileName, description.c_str());
 	return Common::kNoError;
 }
 
