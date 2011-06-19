@@ -27,7 +27,6 @@
 
 #include    "cge/keybd.h"
 #include    "cge/mouse.h"
-#include    <dos.h>
 
 namespace CGE {
 

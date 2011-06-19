@@ -129,7 +129,7 @@ extern  SEQ Seq2[];
 
 
 class HEART : public ENGINE {
-	friend ENGINE;
+	friend class ENGINE;
 public:
 	static bool Enable;
 	static uint16 *XTimer;

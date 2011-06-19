@@ -33,12 +33,19 @@
 #include "cge/text.h"
 #include "cge/mouse.h"
 #include "cge/cge_main.h"
-#include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "cge/keybd.h"
 
 namespace CGE {
+
+static void _enable() {
+	warning("STUB: _enable");
+}
+
+static void _disable() {
+	warning("STUB: _disable");
+}
 
 int     MaxCave  =  0;
 

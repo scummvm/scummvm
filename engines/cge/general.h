@@ -33,7 +33,6 @@
 #include "common/textconsole.h"
 #include "common/str.h"
 #include "cge/jbw.h"
-#include <io.h>
 #include "cge/boot.h"
 
 namespace CGE {
@@ -114,22 +113,22 @@ class EMS;
 
 
 class EMM {
-	friend EMS;
+	friend class EMS;
 	bool Test(void);
 	long Top, Lim;
 	EMS *List;
 	int Han;
 	static void *Frame;
 public:
-	EMM::EMM(long size = 0);
-	EMM::~EMM(void);
+	EMM(long size = 0);
+	~EMM(void);
 	EMS *Alloc(uint16 siz);
 	void Release(void);
 };
 
 
 class EMS {
-	friend EMM;
+	friend class EMM;
 	EMM *Emm;
 	long Ptr;
 	uint16 Siz;

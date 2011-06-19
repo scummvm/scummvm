@@ -27,7 +27,6 @@
 
 #include "cge/mouse.h"
 #include "cge/text.h"
-#include <dos.h>
 
 namespace CGE {
 

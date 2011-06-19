@@ -32,8 +32,6 @@
 #include "cge/cfile.h"
 #include "cge/snddrv.h"
 #include <stdio.h>
-#include <process.h>
-#include <dos.h>
 #include <string.h>
 #include <stdlib.h>
 

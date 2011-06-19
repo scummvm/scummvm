@@ -29,7 +29,6 @@
 #define __CFILE__
 
 #include "cge/general.h"
-#include <io.h>
 
 namespace CGE {
 
