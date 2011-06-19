@@ -38,7 +38,7 @@
 
 namespace CGE {
 
-TEXT  Text = ProgName();
+TEXT *Text;
 TALK *Talk = NULL;
 
 TEXT::TEXT(const char *fname, int size) {
@@ -163,7 +163,7 @@ char *TEXT::Load(int idx, int ref) {
 }
 
 
-char *TEXT::operator [](int ref) {
+char *TEXT::getText(int ref) {
 	int i;
 	if ((i = Find(ref)) < Size)
 		return Cache[i].Txt;
@@ -202,7 +202,7 @@ void Say(const char *txt, SPRITE *spr) {
 
 		Talk->Flags.Kill = true;
 		Talk->Flags.BDel = true;
-		Talk->SetName(Text[SAY_NAME]);
+		Talk->SetName(Text->getText(SAY_NAME));
 		Talk->Goto(x - (Talk->W - sw) / 2 - 3 + 6 * east, y - spike->H - Talk->H + 1);
 		Talk->Z = 125;
 		Talk->Ref = SAY_REF;
@@ -211,7 +211,7 @@ void Say(const char *txt, SPRITE *spr) {
 		spike->Z = 126;
 		spike->Flags.Slav = true;
 		spike->Flags.Kill = true;
-		spike->SetName(Text[SAY_NAME]);
+		spike->SetName(Text->getText(SAY_NAME));
 		spike->Step(east);
 		spike->Ref = SAY_REF;
 
@@ -226,7 +226,7 @@ void Inf(const char *txt) {
 	if (Talk) {
 		Talk->Flags.Kill = true;
 		Talk->Flags.BDel = true;
-		Talk->SetName(Text[INF_NAME]);
+		Talk->SetName(Text->getText(INF_NAME));
 		Talk->Center();
 		Talk->Goto(Talk->X, Talk->Y - 20);
 		Talk->Z = 126;

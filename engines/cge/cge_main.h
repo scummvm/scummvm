@@ -169,6 +169,9 @@ void ExpandSprite(SPRITE *spr);
 void ContractSprite(SPRITE *spr);
 void cge_main(void);
 
+extern VGA *Vga;
+extern int OffUseCount;
+
 } // End of namespace CGE
 
 #endif

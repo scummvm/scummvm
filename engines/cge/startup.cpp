@@ -54,7 +54,7 @@ uint16 STARTUP::Summa;
 
 
 void quit_now(int ref) {
-	error("%d\n", Text[ref]);
+	error("%s", Text->getText(ref));
 }
 
 

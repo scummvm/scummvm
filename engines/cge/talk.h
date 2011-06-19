@@ -74,7 +74,7 @@ protected:
 	BITMAP *TS[2];
 	BITMAP *Box(uint16 w, uint16 h);
 public:
-	static FONT Font;
+	FONT *Font;
 	TALK(const char *tx, TBOX_STYLE mode = PURE);
 	TALK(void);
 	//~TALK (void);

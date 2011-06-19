@@ -65,12 +65,12 @@ public:
 	~TEXT(void);
 	void Clear(int from = 1, int upto = 0x7FFF);
 	void Preload(int from = 1, int upto = 0x7FFF);
-	char *operator[](int ref);
+	char *getText(int ref);
 };
 
 
 extern TALK       *Talk;
-extern TEXT        Text;
+extern TEXT       *Text;
 
 
 void Say(const char *txt, SPRITE *spr);

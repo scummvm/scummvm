@@ -97,14 +97,12 @@ void FONT::Save(void) {
 */
 
 
-FONT TALK::Font(ProgName());
-
-
 TALK::TALK(const char *tx, TBOX_STYLE mode)
 	: SPRITE(NULL), Mode(mode) {
 	TS[0] = TS[1] = NULL;
 	Flags.Syst = true;
 	Update(tx);
+	Font = new FONT(ProgName());
 }
 
 
@@ -144,7 +142,7 @@ void TALK::Update(const char *tx) {
 					mw = k;
 				k = 2 * hmarg;
 			} else
-				k += Font.Wid[*p];
+				k += Font->Wid[*p];
 		}
 		if (k > mw)
 			mw = k;
@@ -157,8 +155,8 @@ void TALK::Update(const char *tx) {
 		if (*tx == '|' || *tx == '\n')
 			m = TS[0]->M + (ln += FONT_HIG + TEXT_LS) * mw + hmarg;
 		else {
-			int cw = Font.Wid[*tx], i;
-			uint8 *f = Font.Map + Font.Pos[*tx];
+			int cw = Font->Wid[*tx], i;
+			uint8 *f = Font->Map + Font->Pos[*tx];
 			for (i = 0; i < cw; i++) {
 				uint8 *p = m;
 				uint16 n;
@@ -255,8 +253,8 @@ void TALK::PutLine(int line, const char *text) {
 		q = v + size;
 
 		while (* text) {
-			uint16 cw = Font.Wid[*text], i;
-			uint8 *fp = Font.Map + Font.Pos[*text];
+			uint16 cw = Font->Wid[*text], i;
+			uint8 *fp = Font->Map + Font->Pos[*text];
 
 			for (i = 0; i < cw; i ++) {
 				register uint16 b = fp[i];
@@ -303,8 +301,8 @@ void INFO_LINE::Update(const char *tx) {
 			uint8 *p = v + 2, * q = p + size;
 
 			while (*tx) {
-				uint16 cw = Font.Wid[*tx];
-				uint8 *fp = Font.Map + Font.Pos[*tx];
+				uint16 cw = Font->Wid[*tx];
+				uint8 *fp = Font->Map + Font->Pos[*tx];
 
 				for (uint16 i = 0; i < cw; i++) {
 					register uint16 b = fp[i];

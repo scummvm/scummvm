@@ -117,14 +117,14 @@ static  SPRITE   *Sprite      = NULL;
 static  SPRITE   *MiniCave    = NULL;
 static  SPRITE   *Shadow      = NULL;
 
-static  VGA       Vga         = M13H;
+VGA	*Vga;
 static  EMS      *Mini        = MiniEmm.Alloc((uint16)MINI_EMM_SIZE);
 static  BMP_PTR  *MiniShpList = NULL;
 static  BMP_PTR   MiniShp[]   = { NULL, NULL };
 static  KEYBOARD  Keyboard;
 static  bool      Finis       = false;
 static  int       Startup     = 1;
-static  int       OffUseCount = atoi(Text[OFF_USE_COUNT]);
+int	OffUseCount;
 uint16 *intStackPtr = false;
 
 
@@ -248,7 +248,7 @@ static void LoadGame(XFILE &file, bool tiny = false) {
 
 	file.Read((uint8 *) &i, sizeof(i));
 	if (i != SVGCHKSUM)
-		error(Text[BADSVG_TEXT]);
+		error(Text->getText(BADSVG_TEXT));
 
 	if (STARTUP::Core < CORE_HIG)
 		Music = false;
@@ -608,9 +608,9 @@ static void Quit(void) {
 			SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 			ResetQSwitch();
 		} else {
-			QuitMenu[0].Text = Text[QUIT_TEXT];
-			QuitMenu[1].Text = Text[NOQUIT_TEXT];
-			(new VMENU(QuitMenu, -1, -1))->SetName(Text[QUIT_TITLE]);
+			QuitMenu[0].Text = Text->getText(QUIT_TEXT);
+			QuitMenu[1].Text = Text->getText(NOQUIT_TEXT);
+			(new VMENU(QuitMenu, -1, -1))->SetName(Text->getText(QUIT_TITLE));
 			SNPOST_(SNSEQ, 123, 1, NULL);
 			KeyClick();
 		}
@@ -687,7 +687,7 @@ static void CaveUp(void) {
 
 	ShowBak(BakRef);
 	LoadMapping();
-	Text.Preload(BakRef, BakRef + 1000);
+	Text->Preload(BakRef, BakRef + 1000);
 	SPRITE *spr = VGA::SpareQ.First();
 	while (spr) {
 		SPRITE *n = spr->Next;
@@ -716,7 +716,7 @@ static void CaveUp(void) {
 	}
 
 	if (! Dark)
-		Vga.Sunset();
+		Vga->Sunset();
 
 	VGA::CopyPage(0, 1);
 	SelectPocket(-1);
@@ -730,10 +730,10 @@ static void CaveUp(void) {
 		Shadow->Z = Hero->Z;
 	}
 	FeedSnail(VGA::ShowQ.Locate(BakRef + 999), TAKE);
-	Vga.Show();
-	Vga.CopyPage(1, 0);
-	Vga.Show();
-	Vga.Sunrise(SysPal);
+	Vga->Show();
+	Vga->CopyPage(1, 0);
+	Vga->Show();
+	Vga->Sunrise(SysPal);
 	Dark = false;
 	if (! Startup)
 		Mouse.On();
@@ -756,7 +756,7 @@ static void CaveDown(void) {
 		}
 		spr = n;
 	}
-	Text.Clear(1000);
+	Text->Clear(1000);
 }
 
 
@@ -772,7 +772,7 @@ static void QGame(void) {
 	SaveSound();
 	CFILE file = CFILE(UsrPath(UsrFnam), WRI, RCrypt);
 	SaveGame(file);
-	Vga.Sunset();
+	Vga->Sunset();
 	Finis = true;
 }
 
@@ -1060,9 +1060,9 @@ static void TakeName(void) {
 	if (GET_TEXT::Ptr)
 		SNPOST_(SNKILL, -1, 0, GET_TEXT::Ptr);
 	else {
-		GET_TEXT *tn = new GET_TEXT(Text[GETNAME_PROMPT], UsrFnam, 8, KeyClick);
+		GET_TEXT *tn = new GET_TEXT(Text->getText(GETNAME_PROMPT), UsrFnam, 8, KeyClick);
 		if (tn) {
-			tn->SetName(Text[GETNAME_TITLE]);
+			tn->SetName(Text->getText(GETNAME_TITLE));
 			tn->Center();
 			tn->Goto(tn->X, tn->Y - 10);
 			tn->Z = 126;
@@ -1183,7 +1183,7 @@ static void SayDebug(void) {
 
 		if (t1 - t >= 18) {
 			static uint32 old = 0L;
-			uint32 now = Vga.FrmCnt;
+			uint32 now = Vga->FrmCnt;
 			dwtom(now - old, FRPS, 10, 4);
 			old = now;
 			t = t1;
@@ -1534,18 +1534,18 @@ static void MainLoop(void) {
 #ifdef DEMO
 	static uint32 tc = 0;
 	if (/* FIXME: TimerCount - tc >= ((182L*6L) * 5L) && */ Talk == NULL && Snail.Idle()) {
-		if (Text[DemoText]) {
+		if (Text->getText(DemoText)) {
 			SNPOST(SNSOUND,  -1, 4, NULL); // drumla
 			SNPOST(SNINF,  -1, DemoText, NULL);
 			SNPOST(SNLABEL, -1, -1, NULL);
-			if (Text[++ DemoText] == NULL)
+			if (Text->getText(++ DemoText) == NULL)
 				DemoText = DEMO_TEXT + 1;
 		}
 		//FIXME: tc = TimerCount;
 	}
 #endif
 
-	Vga.Show();
+	Vga->Show();
 	Snail_.RunCom();
 	Snail.RunCom();
 }
@@ -1573,8 +1573,8 @@ void LoadUser(void) {
 
 
 static void RunGame(void) {
-	Text.Clear();
-	Text.Preload(100, 1000);
+	Text->Clear();
+	Text->Preload(100, 1000);
 	LoadHeroXY();
 
 	CavLight.Flags.Tran = true;
@@ -1722,11 +1722,11 @@ bool ShowTitle(const char *name) {
 		Talk->Show(2);
 	}
 
-	Vga.Sunset();
+	Vga->Sunset();
 	VGA::CopyPage(1, 2);
 	VGA::CopyPage(0, 1);
 	SelectPocket(-1);
-	Vga.Sunrise(SysPal);
+	Vga->Sunrise(SysPal);
 
 	if (STARTUP::Mode < 2 && ! STARTUP::SoundOk) {
 		VGA::CopyPage(1, 2);
@@ -1788,7 +1788,7 @@ bool ShowTitle(const char *name) {
 				CFILE file = CFILE(n, REA, RCrypt);
 				LoadGame(file, true); // only system vars
 				VGA::SetColors(SysPal, 64);
-				Vga.Update();
+				Vga->Update();
 				if (FINIS) {
 					++ STARTUP::Mode;
 					FINIS = false;
@@ -1828,7 +1828,7 @@ void cge_main(void) {
 	memset(Barriers, 0xFF, sizeof(Barriers));
 
 	if (! Mouse.Exist)
-		error("%s", Text[NO_MOUSE_TEXT]);
+		error("%s", Text->getText(NO_MOUSE_TEXT));
 	if (! SVG0FILE::Exist(SVG0NAME))
 		STARTUP::Mode = 2;
 
@@ -1851,8 +1851,8 @@ void cge_main(void) {
 		if (FINIS)
 			Movie("X03");
 	} else
-		Vga.Sunset();
-	error("%s", Text[EXIT_OK_TEXT + FINIS]);
+		Vga->Sunset();
+	error("%s", Text->getText(EXIT_OK_TEXT + FINIS));
 }
 
 } // End of namespace CGE

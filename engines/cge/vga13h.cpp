@@ -916,7 +916,7 @@ VGA::VGA(int mode)
 	bool std = true;
 	int i;
 	for (i = 10; i < 20; i ++) {
-		char *txt = Text[i];
+		char *txt = Text->getText(i);
 		if (txt) {
 //	  puts(txt);
 			warning(txt);

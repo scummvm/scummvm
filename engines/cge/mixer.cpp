@@ -44,7 +44,7 @@ MIXER::MIXER(int x, int y) : SPRITE(NULL), Fall(MIX_FALL) {
 	mb[0] = new BITMAP("VOLUME");
 	mb[1] = NULL;
 	SetShapeList(mb);
-	SetName(Text[MIX_NAME]);
+	SetName(Text->getText(MIX_NAME));
 	Flags.Syst = true;
 	Flags.Kill = true;
 	Flags.BDel = true;
