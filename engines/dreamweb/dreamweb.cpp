@@ -102,7 +102,6 @@ void DreamWebEngine::waitForVSync() {
 void DreamWebEngine::quit() {
 	_context.data.byte(DreamGen::DreamGenContext::kQuitrequested) = 1;
 	_context.data.byte(DreamGen::DreamGenContext::kLasthardkey) = 1;
-	_context.data.byte(DreamGen::DreamGenContext::kGetback) = 4;
 }
 
 void DreamWebEngine::processEvents() {

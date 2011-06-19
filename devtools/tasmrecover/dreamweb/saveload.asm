@@ -109,7 +109,11 @@ restartops:	call	showopbox
 	call	showmainops
 	call	worktoscreenm
 donefirstops:	mov	getback,0
-waitops:	call	readmouse
+waitops:	
+	cmp quitrequested, 0
+	jnz justret
+
+	call	readmouse
 	call	showpointer
 	call	vsync
 	call	dumppointer
@@ -260,7 +264,11 @@ doload: 	mov	loadingorsave,1
 	call	namestoold
 	mov	getback,0
 
-loadops:	call	delpointer
+loadops:	
+	cmp quitrequested, 0
+	jnz quitloaded
+
+	call	delpointer
 	call	readmouse
 	call	showpointer
 	call	vsync
@@ -354,7 +362,11 @@ dodiscops:	call	scanfornames
 	call	worktoscreenm
 
 	mov	getback,0
-discopsloop:	call	delpointer
+discopsloop:
+	cmp quitrequested, 0
+	jnz quitdiscops
+
+	call	delpointer
 	call	readmouse
 	call	showpointer
 	call	vsync
@@ -364,6 +376,7 @@ discopsloop:	call	delpointer
 	call	checkcoords
 	cmp	getback,0
 	jz	discopsloop
+quitdiscops:
 	ret
 
 discopslist:	dw	opsx+59,opsx+114,opsy+30,opsy+76,loadgame
@@ -411,7 +424,11 @@ dosave: 	mov	loadingorsave,2
 
 	mov	getback,0
 
-saveops:	call	delpointer
+saveops:
+	cmp quitrequested, 0
+	jnz quitsavegame
+
+	call	delpointer
 	call	checkinput
 	call	readmouse
 	call	showpointer
@@ -423,6 +440,7 @@ saveops:	call	delpointer
 	call	checkcoords
 	cmp	getback,0
 	jz	saveops
+quitsavegame:
 	ret
 
 savelist:	dw	opsx+176,opsx+192,opsy+60,opsy+76,getbacktoops
@@ -1398,7 +1416,12 @@ Decide	proc	near
 	call	fadescreenup
 	mov	getback,0
 
-waitdecide:	call	readmouse
+waitdecide:	
+	cmp quitrequested, 0
+	jz $1
+	ret
+$1:
+	call	readmouse
 	call	showpointer
 	call	vsync
 	call	dumppointer
@@ -1482,6 +1505,8 @@ alreadyloadold:	mov	ax,mousebutton
 	call	doload
 	cmp	getback,4
 	jz	noloadold
+	cmp quitrequested, 0
+	jnz noloadold
 	call	showdecisions
 	call	worktoscreenm
 	mov	getback,0

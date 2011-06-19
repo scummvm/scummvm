@@ -9,7 +9,10 @@ Titles	proc	near
 	else
 	call	clearpalette
 	call	biblequote
+	cmp quitrequested, 0
+	jnz titlesearly
 	call	intro
+titlesearly:
 	ret
 	endif
 

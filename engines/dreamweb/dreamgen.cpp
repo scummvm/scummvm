@@ -4165,11 +4165,6 @@ deloneloop:
 		goto deloneloop;
 }
 
-void DreamGenContext::width160() {
-	STACK_CHECK;
-	_movsw(161);
-}
-
 void DreamGenContext::doblocks() {
 	STACK_CHECK;
 	es = data.word(kWorkspace);
@@ -5169,6 +5164,9 @@ void DreamGenContext::titles() {
 	STACK_CHECK;
 	clearpalette();
 	biblequote();
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		return /* (titlesearly) */;
 	intro();
 }
 
@@ -15958,6 +15956,9 @@ restartops:
 donefirstops:
 	data.byte(kGetback) = 0;
 waitops:
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		goto justret;
 	readmouse();
 	showpointer();
 	vsync();
@@ -16083,6 +16084,9 @@ doload:
 	namestoold();
 	data.byte(kGetback) = 0;
 loadops:
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		return /* (quitloaded) */;
 	delpointer();
 	readmouse();
 	showpointer();
@@ -16164,6 +16168,9 @@ dodiscops:
 	worktoscreenm();
 	data.byte(kGetback) = 0;
 discopsloop:
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		return /* (quitdiscops) */;
 	delpointer();
 	readmouse();
 	showpointer();
@@ -16210,6 +16217,9 @@ dosave:
 	data.word(kBufferout) = 0;
 	data.byte(kGetback) = 0;
 saveops:
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		return /* (quitsavegame) */;
 	delpointer();
 	checkinput();
 	readmouse();
@@ -16833,6 +16843,11 @@ void DreamGenContext::decide() {
 	fadescreenup();
 	data.byte(kGetback) = 0;
 waitdecide:
+	_cmp(data.byte(kQuitrequested),  0);
+	if (flags.z())
+		goto _tmp1;
+	return;
+_tmp1:
 	readmouse();
 	showpointer();
 	vsync();
@@ -16895,6 +16910,9 @@ void DreamGenContext::doload() {
 	namestoold();
 	data.byte(kGetback) = 0;
 loadops:
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		return /* (quitloaded) */;
 	delpointer();
 	readmouse();
 	showpointer();
@@ -16944,6 +16962,9 @@ alreadyloadold:
 	doload();
 	_cmp(data.byte(kGetback), 4);
 	if (flags.z())
+		return /* (noloadold) */;
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
 		return /* (noloadold) */;
 	showdecisions();
 	worktoscreenm();
@@ -21319,12 +21340,21 @@ dodecisions:
 	cls();
 	setmode();
 	decide();
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		return /* (exitgame) */;
 	_cmp(data.byte(kGetback), 4);
 	if (flags.z())
 		goto mainloop;
 	titles();
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		return /* (exitgame) */;
 	credits();
 playgame:
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		return /* (exitgame) */;
 	clearchanges();
 	setmode();
 	loadpalfromiff();
@@ -21364,10 +21394,8 @@ loadnew:
 	data.byte(kCommandtype) = 255;
 mainloop:
 	_cmp(data.byte(kQuitrequested),  0);
-	if (flags.z())
-		goto _tmp1;
-	return;
-_tmp1:
+	if (!flags.z())
+		return /* (exitgame) */;
 	screenupdate();
 	_cmp(data.byte(kWongame), 0);
 	if (!flags.z())
@@ -22120,7 +22148,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case 0xc20c: doshake(); break;
 		case 0xc210: zoom(); break;
 		case 0xc214: delthisone(); break;
-		case 0xc224: width160(); break;
 		case 0xc228: doblocks(); break;
 		case 0xc22c: showframe(); break;
 		case 0xc230: frameoutv(); break;

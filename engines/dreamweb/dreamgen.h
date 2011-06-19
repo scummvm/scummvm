@@ -964,7 +964,6 @@ public:
 	void createpanel();
 	void turnpathon();
 	void showmainops();
-	void width160dosreturn();
 	void madmanstelly();
 	void constant();
 	void loadroomssample();
