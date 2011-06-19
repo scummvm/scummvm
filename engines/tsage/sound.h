@@ -247,7 +247,7 @@ public:
 
 class Sound: public EventHandler {
 private:
-	void _prime(int soundResID, bool queueFlag);
+	void _prime(int soundResID, bool dontQueue);
 	void _unPrime();
 	void orientAfterRestore();
 public:
@@ -329,7 +329,7 @@ public:
 	void orientAfterDriverChange();
 
 	// _so methods
-	void _soPrimeSound(bool queueFlag);
+	void _soPrimeSound(bool dontQueue);
 	void _soSetTimeIndex(uint timeIndex);
 	bool _soServiceTracks();
 	void _soPrimeChannelData();

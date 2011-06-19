@@ -1454,7 +1454,7 @@ void Sound::unPrime() {
 	stop();
 }
 
-void Sound::_prime(int soundResID, bool queueFlag) {
+void Sound::_prime(int soundResID, bool dontQueue) {
 	if (_primed)
 		unPrime();
 
@@ -1485,8 +1485,8 @@ void Sound::_prime(int soundResID, bool queueFlag) {
 		_remoteReceiver = ALLOCATE(200);
 	}
 
-	_soPrimeSound(queueFlag);
-	if (queueFlag)
+	_soPrimeSound(dontQueue);
+	if (!dontQueue)
 		_soundManager->addToSoundList(this);
 
 	_primed = true;
@@ -1675,8 +1675,8 @@ void Sound::release() {
 	_hold = -1;
 }
 
-void Sound::_soPrimeSound(bool queueFlag) {
-	if (!queueFlag) {
+void Sound::_soPrimeSound(bool dontQueue) {
+	if (!dontQueue) {
 		_priority = (_fixedPriority != -1) ? _fixedPriority : _sndResPriority;
 		_loop = !_fixedLoop ? _fixedLoop : _sndResLoop;
 		_pausedCount = 0;
