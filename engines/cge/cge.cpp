@@ -31,6 +31,7 @@
 #include "engines/util.h"
 #include "cge/cge.h"
 #include "cge/cge_main.h"
+#include "cge/text.h"
 
 namespace CGE {
 
@@ -39,6 +40,10 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 
 	DebugMan.addDebugChannel(kCGEDebug, "general", "CGE general debug channel");
 	_console = new CGEConsole(this);
+	Text = new TEXT(ProgName());
+	Vga = new VGA(M13H);
+
+	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
 
 	debug("CGEEngine::CGEEngine");
 }

@@ -159,11 +159,11 @@ void SelectSound(void) {
 	Sound.Close();
 	if (VMENU::Addr)
 		SNPOST_(SNKILL, -1, 0, VMENU::Addr);
-	Inf(Text[STYPE_TEXT]);
+	Inf(Text->getText(STYPE_TEXT));
 	Talk->Goto(Talk->X, FONT_HIG / 2);
 	for (i = 0; i < ArrayCount(DevName); i ++)
-		DevMenu[i].Text = Text[DevName[i]];
-	(new VMENU(DevMenu, SCR_WID / 2, Talk->Y + Talk->H + TEXT_VM + FONT_HIG))->SetName(Text[MENU_TEXT]);
+		DevMenu[i].Text = Text->getText(DevName[i]);
+	(new VMENU(DevMenu, SCR_WID / 2, Talk->Y + Talk->H + TEXT_VM + FONT_HIG))->SetName(Text->getText(MENU_TEXT));
 }
 
 
@@ -196,9 +196,9 @@ static CHOICE *Cho;
 static int     Hlp;
 
 static void SNSelect(void) {
-	Inf(Text[Hlp]);
+	Inf(Text->getText(Hlp));
 	Talk->Goto(Talk->X, FONT_HIG / 2);
-	(new VMENU(Cho, SCR_WID / 2, Talk->Y + Talk->H + TEXT_VM + FONT_HIG))->SetName(Text[MENU_TEXT]);
+	(new VMENU(Cho, SCR_WID / 2, Talk->Y + Talk->H + TEXT_VM + FONT_HIG))->SetName(Text->getText(MENU_TEXT));
 }
 
 
