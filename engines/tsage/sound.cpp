@@ -707,6 +707,9 @@ void SoundManager::_sfRethinkVoiceTypes() {
 				vse._type1._channelNum2 = 0;
 				vse._type1._priority2 = 0;
 			}
+
+			// Reset the number of voices available
+			vs->_numVoices = vs->_total;
 		}
 	}
 
@@ -2058,6 +2061,7 @@ void Sound::_soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceTyp
 				vte._field5 = 0;
 				driver->updateVoice(voiceType->_entries[idx]._voiceNum);
 			}
+			return;
 		}
 	}
 }
@@ -2424,11 +2428,10 @@ void AdlibSoundDriver::close() {
 bool AdlibSoundDriver::reset() {
 	write(1, 0x20);
 	write(4, 0x80);
-/*
- * code fragment originally part of testing Adlib timer speed
+
 	write(2, 1);
 	write(4, 1);
-*/
+
 	return true;
 }
 
