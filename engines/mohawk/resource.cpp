@@ -79,12 +79,12 @@ bool MohawkArchive::open(Common::SeekableReadStream *stream) {
 	}
 
 	_rsrc.version = _mhk->readUint16BE();
-	
+
 	if (_rsrc.version != 0x100) {
 		warning("Unsupported Mohawk resource version %d.%d", (_rsrc.version >> 8) & 0xff, _rsrc.version & 0xff);
 		return false;
 	}
-	
+
 	_rsrc.compaction = _mhk->readUint16BE(); // Only used in creation, not in reading
 	_rsrc.filesize = _mhk->readUint32BE();
 	_rsrc.abs_offset = _mhk->readUint32BE();

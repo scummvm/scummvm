@@ -910,7 +910,7 @@ void DOSBitmap::expandEGAPlanes(Graphics::Surface *surface, Common::SeekableRead
 				j = -1;
 				x++;
 			}
-		}	
+		}
 
 		dst += surface->w;
 	}

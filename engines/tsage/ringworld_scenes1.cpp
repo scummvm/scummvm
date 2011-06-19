@@ -2890,7 +2890,7 @@ void Scene6100::Action3::signal() {
 		scene->_sunflower3.hide();
 		scene->_rocks.hide();
 		scene->_sceneText.hide();
-	
+
 		_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(8120, this);
 		break;

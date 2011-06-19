@@ -50,7 +50,7 @@ static const PlainGameDescriptor dreamWebGames[] = {
 class DreamWebMetaEngine : public AdvancedMetaEngine {
 public:
 	DreamWebMetaEngine():
-	AdvancedMetaEngine(DreamWeb::gameDescriptions, 
+	AdvancedMetaEngine(DreamWeb::gameDescriptions,
 	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames) {
 		_singleid = "dreamweb";
 		_guioptions = Common::GUIO_NOMIDI;

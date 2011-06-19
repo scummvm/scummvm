@@ -459,7 +459,7 @@ public:
 	void setGlobalVisible(bool visible);
 	void startPhase(uint phase);
 	void stop();
-	
+
 protected:
 	bool _starting;
 

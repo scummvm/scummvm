@@ -42,7 +42,7 @@ const reg_t NULL_REG = {0, 0};
 const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
 const reg_t TRUE_REG = {0, 1};
 //#define VM_DEBUG_SEND
-// Enable the define below to have the VM abort on cases where a conditional 
+// Enable the define below to have the VM abort on cases where a conditional
 // statement is followed by an unconditional jump (which will most likely lead
 // to an infinite loop). Aids in detecting script bugs such as #3040722.
 //#define ABORT_ON_INFINITE_LOOP
@@ -130,14 +130,14 @@ static reg_t read_var(EngineState *s, int type, int index) {
 				if (solution.type == WORKAROUND_NONE) {
 #ifdef RELEASE_BUILD
 					// If we are running an official ScummVM release -> fake 0 in unknown cases
-					warning("Uninitialized read for temp %d from method %s::%s (room %d, script %d, localCall %x)", 
+					warning("Uninitialized read for temp %d from method %s::%s (room %d, script %d, localCall %x)",
 					index, originReply.objectName.c_str(), originReply.methodName.c_str(), s->currentRoomNumber(),
 					originReply.scriptNr, originReply.localCallOffset);
 
 					s->variables[type][index] = NULL_REG;
 					break;
 #else
-					error("Uninitialized read for temp %d from method %s::%s (room %d, script %d, localCall %x)", 
+					error("Uninitialized read for temp %d from method %s::%s (room %d, script %d, localCall %x)",
 					index, originReply.objectName.c_str(), originReply.methodName.c_str(), s->currentRoomNumber(),
 					originReply.scriptNr, originReply.localCallOffset);
 #endif
@@ -366,8 +366,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		switch (solution.type) {
 		case WORKAROUND_NONE:
 			kernel->signatureDebug(kernelCall.signature, argc, argv);
-			error("[VM] k%s[%x]: signature mismatch via method %s::%s (room %d, script %d, localCall 0x%x)", 
-				kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+			error("[VM] k%s[%x]: signature mismatch via method %s::%s (room %d, script %d, localCall 0x%x)",
+				kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(),
 				s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
 			break;
 		case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
@@ -418,12 +418,12 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 				int callNameLen = strlen(kernelCall.name);
 				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
 					const char *subCallName = kernelSubCall.name + callNameLen;
-					error("[VM] k%s(%s): signature mismatch via method %s::%s (room %d, script %d, localCall %x)", 
-						kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+					error("[VM] k%s(%s): signature mismatch via method %s::%s (room %d, script %d, localCall %x)",
+						kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(),
 						s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
 				}
-				error("[VM] k%s: signature mismatch via method %s::%s (room %d, script %d, localCall %x)", 
-					kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+				error("[VM] k%s: signature mismatch via method %s::%s (room %d, script %d, localCall %x)",
+					kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(),
 					s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
 				break;
 			}
@@ -828,10 +828,10 @@ void run_vm(EngineState *s) {
 
 			uint16 localCallOffset = s->xs->addr.pc.offset + opparams[0];
 
-			ExecStack xstack(s->xs->objp, s->xs->objp, s->xs->sp, 
+			ExecStack xstack(s->xs->objp, s->xs->objp, s->xs->sp,
 							(call_base->requireUint16()) + s->r_rest, call_base,
 							s->xs->local_segment, make_reg(s->xs->addr.pc.segment, localCallOffset),
-							NULL_SELECTOR, -1, localCallOffset, s->_executionStack.size() - 1, 
+							NULL_SELECTOR, -1, localCallOffset, s->_executionStack.size() - 1,
 							EXEC_STACK_TYPE_CALL);
 
 			s->_executionStack.push_back(xstack);

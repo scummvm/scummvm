@@ -343,12 +343,12 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("render_mode", _domain);
 			}
 		}
-		
+
 		// Setup graphics again if needed
 		if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
 			g_system->beginGFXTransaction();
 			g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
-			
+
 			if (ConfMan.hasKey("aspect_ratio"))
 				g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
 			if (ConfMan.hasKey("fullscreen"))
@@ -383,7 +383,7 @@ void OptionsDialog::close() {
 					message += "\n";
 					message += _("the video mode could not be changed.");
 				}
-			
+
 				if (gfxError & OSystem::kTransactionAspectRatioFailed) {
 					ConfMan.setBool("aspect_ratio", g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection), _domain);
 					message += "\n";
@@ -808,7 +808,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 					_gmDevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
 			} else if (d->getMusicDriverId() == "auto") {
 				_gmDevicePopUp->appendEntry(_("Use first available device"), d->getHandle());
-			}		
+			}
 		}
 	}
 
@@ -855,7 +855,7 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 	// Make sure the null device is the first one in the list to avoid undesired
 	// auto detection for users who don't have a saved setting yet.
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (**m)->getDevices();		
+		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getMusicDriverId() == "null")
 				_mt32DevicePopUp->appendEntry(_("Don't use Roland MT-32 music"), d->getHandle());

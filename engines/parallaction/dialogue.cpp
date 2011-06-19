@@ -52,7 +52,7 @@ struct BalloonPositions {
 
 
 class DialogueManager {
-	
+
 	Parallaction	*_vm;
 	Dialogue		*_dialogue;
 
@@ -81,10 +81,10 @@ protected:
 	bool			_isKeyDown;
 	uint16			_downKey;
 
-protected:	
+protected:
 	Gfx				*_gfx;
 	BalloonManager  *_balloonMan;
-	
+
 public:
 	DialogueManager(Parallaction *vm, ZonePtr z);
 	virtual ~DialogueManager();
@@ -108,11 +108,11 @@ protected:
 		NEXT_ANSWER,
 		DIALOGUE_OVER
 	} _state;
-	
+
 	static const int NO_ANSWER_SELECTED = -1;
 
 	void transitionToState(DialogueState newState);
-	
+
 	bool displayQuestion();
 	void displayAnswers();
 	bool testAnswerFlags(Answer *a);
@@ -132,7 +132,7 @@ protected:
 DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
 	_gfx = _vm->_gfx;
 	_balloonMan = _vm->_balloonMan;
-	
+
 	_dialogue = _z->u._speakDialogue;
 	isNpc = !_z->u._filename.empty() && _z->u._filename.compareToIgnoreCase("yourself");
 	_questioner = isNpc ? _vm->_disk->loadTalk(_z->u._filename.c_str()) : _vm->_char._talk;
@@ -166,11 +166,11 @@ void DialogueManager::transitionToState(DialogueState newState) {
 		"nextanswer",
 		"over"
 	};
-	
+
 	if (_state != newState) {
 		debugC(3, kDebugDialogue, "DialogueManager moved to state '%s'", dialogueStates[newState]);
 
-		if (DebugMan.isDebugChannelEnabled(kDebugDialogue) && gDebugLevel == 9) {			
+		if (DebugMan.isDebugChannelEnabled(kDebugDialogue) && gDebugLevel == 9) {
 			switch (newState) {
 				case RUN_QUESTION:
 					debug("  Q  : %s", _q->_text.c_str());
@@ -188,7 +188,7 @@ void DialogueManager::transitionToState(DialogueState newState) {
 
 	_state = newState;
 }
-											
+
 bool DialogueManager::testAnswerFlags(Answer *a) {
 	uint32 flags = _vm->getLocationFlags();
 	if (a->_yesFlags & kFlagsGlobal)
@@ -240,7 +240,7 @@ int16 DialogueManager::selectAnswerN() {
 
 	VisibleAnswer *oldAnswer = &_visAnswers[_oldSelection];
 	VisibleAnswer *answer = &_visAnswers[_selection];
-	
+
 	if (_selection != _oldSelection) {
 		if (_oldSelection != NO_ANSWER_SELECTED) {
 			_balloonMan->setBalloonText(oldAnswer->_balloon, oldAnswer->_a->_text, BalloonManager::kUnselectedColor);
@@ -286,7 +286,7 @@ void DialogueManager::nextAnswer() {
 		return;
 	}
 
-	// try and check if there are any suitable answers, 
+	// try and check if there are any suitable answers,
 	// given the current game state.
 	addVisibleAnswers(_q);
 	if (!_numVisAnswers) {
@@ -294,9 +294,9 @@ void DialogueManager::nextAnswer() {
 		transitionToState(DIALOGUE_OVER);
 		return;
 	}
-	
+
 	if (_visAnswers[0]._a->textIsNull()) {
-		// if the first answer is null (it's implied that it's the 
+		// if the first answer is null (it's implied that it's the
 		// only one because we already called addVisibleAnswers),
 		// then jump to the next question
 		_answerId = _visAnswers[0]._index;
@@ -547,7 +547,7 @@ void Parallaction::runDialogueFrame() {
 	if (_input->_inputMode != Input::kInputModeDialogue) {
 		return;
 	}
-	
+
 	_dialogueMan->run();
 
 	if (_dialogueMan->isOver()) {

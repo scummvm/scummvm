@@ -58,7 +58,7 @@ public:
 	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 	const byte *getPalette() { _dirtyPalette = false; return _palette; }
 	bool hasDirtyPalette() const { return _dirtyPalette; }
-  
+
 protected:
 	Common::Rational getFrameRate() const { assert(_frameDelay); return Common::Rational(60, _frameDelay); }
 

@@ -824,12 +824,12 @@ void LocationParser_br::parseHearData(ZonePtr z) {
 }
 
 void LocationParser_br::parseNoneData(ZonePtr z) {
-	/* the only case we have to handle here is that of "scende2", which is the only Animation with 
+	/* the only case we have to handle here is that of "scende2", which is the only Animation with
 	   a command list following the type marker.
 	*/
 	if (!scumm_stricmp(_tokens[0], "commands")) {
 		parseCommands(z->_commands);
-	} 
+	}
 }
 
 

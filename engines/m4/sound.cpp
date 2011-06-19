@@ -97,8 +97,8 @@ void Sound::playSound(const char *soundName, int volume, bool loop, int channel)
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 }
 
-void Sound::playSound(int soundNum) { 
-	warning("TODO: playSound(%d)", soundNum); 
+void Sound::playSound(int soundNum) {
+	warning("TODO: playSound(%d)", soundNum);
 }
 
 void Sound::pauseSound() {

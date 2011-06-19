@@ -47,7 +47,7 @@ typedef struct { int FAKE; } FAKE_FILE;
 
 // Finally forbid FILE again (if it was forbidden to start with)
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_FILE)
-#undef FILE 
+#undef FILE
 #define FILE	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 

@@ -642,7 +642,7 @@ void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int 
 
 void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
 	assert(colors);
-	
+
 	// Save the cursor palette
 	memcpy(_cursorPalette + start * 3, colors, num * 3);
 
@@ -1315,7 +1315,7 @@ bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	int width = _videoMode.hardwareWidth;
 	int height = _videoMode.hardwareHeight;
-	
+
 	// A line of a BMP image must have a size divisible by 4.
 	// We calculate the padding bytes needed here.
 	// Since we use a 3 byte per pixel mode, we can use width % 4 here, since
@@ -1358,7 +1358,7 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	out.writeUint32LE(0);
 	out.writeUint32LE(0);
 	out.writeUint32LE(0);
-	out.writeUint32LE(0); 
+	out.writeUint32LE(0);
 
 	// Write pixel data to BMP
 	out.write(pixels, lineSize * height);
@@ -1423,9 +1423,9 @@ void OpenGLGraphicsManager::updateOSD() {
 		                 dstX, dstY + i * lineHeight + vOffset + lineSpacing, width,
 		                 0xFFFF, Graphics::kTextAlignCenter);
 	}
- 
+
 	// Update the texture
-	_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0, 
+	_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0,
 	                          _osdSurface.w, _osdSurface.h);
 }
 #endif

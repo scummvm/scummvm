@@ -30,7 +30,7 @@ namespace tSage {
 void BlueForceGame::start() {
 	// Start the game
 	_globals->_sceneManager.changeScene(20);
-	
+
 	_globals->_events.setCursor(CURSOR_WALK);
 }
 

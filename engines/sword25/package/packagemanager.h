@@ -151,7 +151,7 @@ public:
 
 		return result;
 	}
-	
+
 	/**
 	 * Returns the path to the current directory.
 	 * @return              Returns a string containing the path to the current directory.

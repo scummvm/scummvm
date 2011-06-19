@@ -75,7 +75,7 @@ public:
 	 * @return Message function type, SCI_VERSION_1_LATE / SCI_VERSION_1_1
 	 */
 	SciVersion detectMessageFunctionType();
-	
+
 #ifdef ENABLE_SCI32
 	/**
 	 * Autodetects the kernel functions used in SCI2.1

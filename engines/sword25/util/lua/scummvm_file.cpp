@@ -98,14 +98,14 @@ size_t Sword25FileProxy::write(const char *ptr, size_t count) {
 			// Legitimate data
 			const char *p = strchr(ptr, '\n');
 			if (!p) p = ptr + strlen(ptr);
-			while ((*p == '\r') || (*p == '\n')) 
+			while ((*p == '\r') || (*p == '\n'))
 				++p;
 
 			_settings += Common::String(ptr, p - ptr);
 			ptr = p;
 		}
 
-		while ((*ptr == '\r') || (*ptr == '\n')) 
+		while ((*ptr == '\r') || (*ptr == '\n'))
 			++ptr;
 	}
 
@@ -119,7 +119,7 @@ void Sword25FileProxy::writeSettings() {
 		if ((*pSrc != '\r') && (*pSrc != '\n')) {
 			const char *p = strchr(pSrc, '=');
 			assert(p);
-			
+
 			// Get the setting name
 			const char *pEnd = p - 1;
 			while (*pEnd == ' ')
@@ -132,10 +132,10 @@ void Sword25FileProxy::writeSettings() {
 				++pStart;
 
 			pEnd = pStart + 1;
-			while ((*pEnd != '\r') && (*pEnd != '\n') && (*pEnd != '\0')) 
+			while ((*pEnd != '\r') && (*pEnd != '\n') && (*pEnd != '\0'))
 				++pEnd;
 			Common::String value(pStart + (*pStart == '"' ? 1 : 0), pEnd - pStart - (*pStart == '"' ? 2 : 0));
-			
+
 			// Update the setting
 			updateSetting(settingName, value);
 			pSrc = pEnd;

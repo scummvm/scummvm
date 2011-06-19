@@ -414,7 +414,7 @@ const char *MadsGlobals::loadMessage(uint index) {
 }
 
 /**
- * Adds the specified scene number to list of scenes previously visited 
+ * Adds the specified scene number to list of scenes previously visited
  */
 void MadsGlobals::addVisitedScene(int newSceneNumber) {
 	if (!isSceneVisited(newSceneNumber))
@@ -539,7 +539,7 @@ void MadsObject::load(Common::SeekableReadStream *stream) {
 }
 
 void MadsObject::setRoom(int roomNumber) {
-	
+
 }
 
 } // End of namespace M4

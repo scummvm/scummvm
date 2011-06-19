@@ -272,7 +272,7 @@ class Scene50 : public Scene {
 	public:
 		virtual void signal();
 	};
-	
+
 	/* Objects */
 	class Object1 : public SceneObject {
 	public:
@@ -312,7 +312,7 @@ public:
 	virtual void dispatch();
 };
 
-class Scene60 : public Scene {	
+class Scene60 : public Scene {
 	class Action1 : public Action {
 	public:
 		virtual void signal();

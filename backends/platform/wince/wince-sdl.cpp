@@ -621,7 +621,7 @@ Common::String OSystem_WINCE3::getSystemLanguage() const {
 		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVCTRYNAME, ctryNameW, sizeof(ctryNameW)) != 0) {
 		WideCharToMultiByte(CP_ACP, 0, langNameW, -1, langName, (wcslen(langNameW) + 1), NULL, NULL);
 		WideCharToMultiByte(CP_ACP, 0, ctryNameW, -1, ctryName, (wcslen(ctryNameW) + 1), NULL, NULL);
-		
+
 		debug(1, "Trying to find posix locale name for %s_%s", langName, ctryName);
 		while (posixMappingTable[i][0] && !localeFound) {
 			if ( (!strcmp(posixMappingTable[i][0], langName) || !strcmp(posixMappingTable[i][0], "*")) &&

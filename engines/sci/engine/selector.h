@@ -185,7 +185,7 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 /**
  * Invokes a selector from an object.
  */
-void invokeSelector(EngineState *s, reg_t object, int selectorId, 
+void invokeSelector(EngineState *s, reg_t object, int selectorId,
 	int k_argc, StackPtr k_argp, int argc = 0, const reg_t *argv = 0);
 
 } // End of namespace Sci

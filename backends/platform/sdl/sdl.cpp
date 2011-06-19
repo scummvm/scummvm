@@ -376,7 +376,7 @@ void OSystem_SDL::setupIcon() {
 
 	if (sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes) != 4) {
 		warning("Wrong format of scummvm_icon[0] (%s)", scummvm_icon[0]);
-		
+
 		return;
 	}
 	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {

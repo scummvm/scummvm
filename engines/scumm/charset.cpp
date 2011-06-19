@@ -1070,7 +1070,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		Graphics::Surface backSurface;
 		if ((ignoreCharsetMask || !vs->hasTwoBuffers)
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-			&& (_vm->_game.platform != Common::kPlatformFMTowns) 
+			&& (_vm->_game.platform != Common::kPlatformFMTowns)
 #endif
 			) {
 			dstSurface = *vs;

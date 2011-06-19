@@ -483,7 +483,7 @@ static void DoSave() {
 	NeedLoad = true;
 
 	if (SaveSceneName == NULL) {
-		// Generate a new unique save name	
+		// Generate a new unique save name
 		int	i;
 		int	ano = 1;	// Allocated number
 

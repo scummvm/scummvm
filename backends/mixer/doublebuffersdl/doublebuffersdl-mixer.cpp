@@ -28,7 +28,7 @@ DoubleBufferSDLMixerManager::DoubleBufferSDLMixerManager()
 	:
 	_soundMutex(0), _soundCond(0), _soundThread(0),
 	_soundThreadIsRunning(false), _soundThreadShouldQuit(false) {
-	
+
 }
 
 DoubleBufferSDLMixerManager::~DoubleBufferSDLMixerManager() {

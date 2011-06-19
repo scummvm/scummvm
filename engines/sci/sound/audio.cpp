@@ -285,7 +285,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		// instead.
 		memcpy(compressedData, audioRes->data, audioRes->size);
 		Common::SeekableReadStream *compressedStream = new Common::MemoryReadStream(compressedData, audioRes->size, DisposeAfterUse::YES);
-		
+
 		switch (audioCompressionType) {
 		case MKTAG('M','P','3',' '):
 #ifdef USE_MAD

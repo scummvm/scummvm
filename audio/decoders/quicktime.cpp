@@ -220,7 +220,7 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	// First, we need to track down what audio sample we need
 	Audio::Timestamp curAudioTime = where.convertToFramerate(_tracks[_audioTrackIndex]->timeScale);
 	uint32 sample = curAudioTime.totalNumberOfFrames();
-	uint32 seekSample = sample; 
+	uint32 seekSample = sample;
 
 	if (!isOldDemuxing()) {
 		// We shouldn't have audio samples that are a different duration
@@ -246,7 +246,7 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 
 		totalSamples += chunkSampleCount;
 	}
-		
+
 	// Reposition the audio stream
 	queueNextAudioChunk();
 	if (sample != totalSamples) {

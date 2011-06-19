@@ -1962,7 +1962,7 @@ void Scene2100::signal() {
 void Scene2100::synchronize(Serializer &s) {
 	Scene::synchronize(s);
 	if (s.getVersion() >= 3)
-		s.syncAsSint16LE(_sitFl);		
+		s.syncAsSint16LE(_sitFl);
 }
 
 /*--------------------------------------------------------------------------

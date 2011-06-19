@@ -60,7 +60,7 @@ Parser::~Parser() {
 uint16 Parser::getCmdDefaultVerbIdx(const uint16 index) const {
 	return _cmdList[index][0].verbIndex;
 }
-	
+
 /**
  * Read a cmd structure from Hugo.dat
  */

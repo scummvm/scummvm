@@ -104,7 +104,7 @@ public:
 
 	void loadSounds(uint bank, const Common::String &file);
 	bool loadSpeech(const Common::String &filename);
-	
+
 	void enableSavingOrLoading(bool enable = true) { _enableSavingOrLoading = enable; }
 
 private:

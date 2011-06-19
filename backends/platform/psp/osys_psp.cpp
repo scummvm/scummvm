@@ -83,7 +83,7 @@ void OSystem_PSP::initBackend() {
 	_inputHandler.setKeyboard(&_keyboard);
 	_inputHandler.setImageViewer(&_imageViewer);
 	_inputHandler.init();
-	
+
 	// Set pointers for image viewer
 	_imageViewer.setInputHandler(&_inputHandler);
 	_imageViewer.setDisplayManager(&_displayManager);

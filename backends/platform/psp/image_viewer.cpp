@@ -34,45 +34,45 @@
 #include "backends/platform/psp/input.h"
 #include "backends/platform/psp/display_manager.h"
 #include "backends/platform/psp/display_client.h"
-#include "backends/platform/psp/image_viewer.h" 
-#include "backends/platform/psp/png_loader.h" 
+#include "backends/platform/psp/image_viewer.h"
+#include "backends/platform/psp/png_loader.h"
 #include "backends/platform/psp/thread.h"
 
 static const char *imageName = "psp_image";
 #define PSP_SCREEN_HEIGHT 272
 #define PSP_SCREEN_WIDTH 480
- 
+
 bool ImageViewer::load(int imageNum) {
 	if (_init)
 		unload();
-		
+
 	// build string
 	char number[8];
 	sprintf(number, "%d", imageNum);
-	Common::String imageNameStr(imageName);	
+	Common::String imageNameStr(imageName);
 	Common::String specificImageName = imageNameStr + Common::String(number) + Common::String(".png");
-	
+
 	// search for image file
 	if (!SearchMan.hasFile(specificImageName)) {
 		PSP_ERROR("file %s not found\n", specificImageName.c_str());
 		return false;
 	}
-	
+
 	Common::ScopedPtr<Common::SeekableReadStream> file(SearchMan.createReadStreamForMember(specificImageName));
-	
+
 	_buffer = new Buffer();
 	_palette = new Palette();
 	_renderer = new GuRenderer();
-	
+
 	assert(_buffer);
 	assert(_palette);
 	assert(_renderer);
-	
+
 	// Load a PNG into our buffer and palette. Size it by the actual size of the image
 	PngLoader image(file, *_buffer, *_palette, Buffer::kSizeBySourceSize);
-	
+
 	PngLoader::Status status = image.allocate();	// allocate the buffers for the file
-	
+
 	char error[100];
 	if (status == PngLoader::BAD_FILE) {
 		sprintf(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
@@ -89,29 +89,29 @@ bool ImageViewer::load(int imageNum) {
 	if (!image.load()) {
 		sprintf(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
 		GUI::TimedMessageDialog dialog(error, 4000);
-		dialog.runModal();	
+		dialog.runModal();
 		return false;
 	}
-	
+
 	setConstantRendererOptions();
 	setFullScreenImageParams();		// prepare renderer for full screen view
-	
+
 	_imageNum = imageNum;			// now we can say we displayed this image
 	_init = true;
-	
+
 	return true;
 }
 
 void ImageViewer::setConstantRendererOptions() {
 	_renderer->setBuffer(_buffer);
 	_renderer->setPalette(_palette);
-	
+
 	_renderer->setAlphaBlending(false);
 	_renderer->setColorTest(false);
 	_renderer->setUseGlobalScaler(false);
 	_renderer->setStretch(true);
 	_renderer->setOffsetInBuffer(0, 0);
-	_renderer->setDrawWholeBuffer();	
+	_renderer->setDrawWholeBuffer();
 }
 
 void ImageViewer::unload() {
@@ -130,32 +130,32 @@ void ImageViewer::resetOnEngineDone() {
 
 void ImageViewer::setVisible(bool visible) {
 	DEBUG_ENTER_FUNC();
-	
+
 	if (_visible == visible)
 		return;
-			
+
 	// from here on, we're making the loader visible
 	if (visible && g_engine) {	// we can only run the image viewer when there's an engine
 		g_engine->pauseEngine(true);
-		
+
 		load(_imageNum ? _imageNum : 1); 	// load the 1st image or the current
 	}
 
 	if (visible && _init) {	// we managed to load
 		_visible = true;
 		setViewerButtons(true);
-		
+
 		{ // so dialog goes out of scope, destroying all allocations
 			GUI::TimedMessageDialog dialog("Image Viewer", 1000);
 			dialog.runModal();
 		}
-		
+
 		runLoop();	// only listen to viewer events
 	} else {	// we were asked to make invisible or failed to load
 		_visible = false;
 		unload();
 		setViewerButtons(false);
-		
+
 		if (g_engine && g_engine->isPaused())
 			g_engine->pauseEngine(false);
 	}
@@ -175,7 +175,7 @@ void ImageViewer::runLoop() {
 
 void ImageViewer::setViewerButtons(bool active) {
 	_inputHandler->setImageViewerMode(active);
-}	
+}
 
 void ImageViewer::loadNextImage() {
 	if (!load(_imageNum+1)) {		// try to load the next image
@@ -190,21 +190,21 @@ void ImageViewer::loadLastImage() {
 		if (!load(_imageNum-1))
 			if (!load(_imageNum))
 				setVisible(false);	// we can't even show the old image so hide
-	}		
+	}
 	setDirty();
 }
 
 void ImageViewer::setFullScreenImageParams() {
 	// we try to fit the image fullscreen at least in one dimension
 	uint32 width = _buffer->getSourceWidth();
-	uint32 height = _buffer->getSourceHeight();	
+	uint32 height = _buffer->getSourceHeight();
 
 	_centerX = PSP_SCREEN_WIDTH / 2.0f;
 	_centerY = PSP_SCREEN_HEIGHT / 2.0f;
-	
+
 	// see if we fit width wise
 	if (PSP_SCREEN_HEIGHT >= (int)((height * PSP_SCREEN_WIDTH) / (float)width)) {
-		setZoom(PSP_SCREEN_WIDTH / (float)width);	
+		setZoom(PSP_SCREEN_WIDTH / (float)width);
 	} else {
 		setZoom(PSP_SCREEN_HEIGHT / (float)height);
 	}
@@ -233,32 +233,32 @@ void ImageViewer::render() {
 			break;
 		}
 		_renderer->render();
-	}	
+	}
 }
 
 void ImageViewer::modifyZoom(bool up) {
 	float factor = _zoomFactor;
-	if (up) 
+	if (up)
 		factor += 0.1f;
 	else // down
 		factor -= 0.1f;
-	
-	setZoom(factor);	
+
+	setZoom(factor);
 }
 
-void ImageViewer::setZoom(float value) { 
+void ImageViewer::setZoom(float value) {
 	if (value <= 0.0f)		// don't want 0 or negative zoom
 		return;
 
 	_zoomFactor = value;
-	_renderer->setStretchXY(value, value); 
+	_renderer->setStretchXY(value, value);
 	setOffsetParams();
 }
 
 void ImageViewer::moveImageX(float val) {
 	float newVal = _centerX + val;
-	
-	if (newVal - (_visibleWidth / 2) > PSP_SCREEN_WIDTH - 4 || newVal + (_visibleWidth / 2) < 4)  
+
+	if (newVal - (_visibleWidth / 2) > PSP_SCREEN_WIDTH - 4 || newVal + (_visibleWidth / 2) < 4)
 		return;
 	_centerX = newVal;
 	setOffsetParams();
@@ -266,22 +266,22 @@ void ImageViewer::moveImageX(float val) {
 
 void ImageViewer::moveImageY(float val) {
 	float newVal = _centerY + val;
-	
-	if (newVal - (_visibleHeight / 2) > PSP_SCREEN_HEIGHT - 4 || newVal + (_visibleHeight / 2) < 4)  
+
+	if (newVal - (_visibleHeight / 2) > PSP_SCREEN_HEIGHT - 4 || newVal + (_visibleHeight / 2) < 4)
 		return;
 	_centerY = newVal;
 	setOffsetParams();
 }
 
-//	Set the renderer with the proper offset on the screen 
+//	Set the renderer with the proper offset on the screen
 //
 void ImageViewer::setOffsetParams() {
 	_visibleWidth = _zoomFactor * _buffer->getSourceWidth();
-	_visibleHeight = _zoomFactor * _buffer->getSourceHeight();		
-	
+	_visibleHeight = _zoomFactor * _buffer->getSourceHeight();
+
 	int offsetX = _centerX - (int)(_visibleWidth * 0.5f);
 	int offsetY = _centerY - (int)(_visibleHeight * 0.5f);
-	
+
 	_renderer->setOffsetOnScreen(offsetX, offsetY);
 	setDirty();
 }
@@ -290,8 +290,8 @@ void ImageViewer::setOffsetParams() {
 //
 void ImageViewer::handleEvent(uint32 event) {
 	DEBUG_ENTER_FUNC();
-	
-	switch (event) {	
+
+	switch (event) {
 	case EVENT_HIDE:
 		setVisible(false);
 		break;

@@ -36,7 +36,7 @@ public:
 	void setupProgram(const uint8 *data, uint8 mLevelPara, uint8 tLevelPara);
 	void setupEffects(int index, uint8 flags, const uint8 *effectData);
 	void setModWheel(uint8 value);
-	
+
 	void connect(TownsMidiInputChannel *chan);
 	void disconnect();
 
@@ -100,7 +100,7 @@ private:
 	uint8 _operator1Tl;
 	uint8 _sustainNoteOff;
 	int16 _duration;
-	
+
 	uint16 _freq;
 	int16 _freqAdjust;
 
@@ -134,7 +134,7 @@ public:
 	void controlChange(byte control, byte value);
 	void pitchBendFactor(byte value);
 	void priority(byte value);
-	void sysEx_customInstrument(uint32 type, const byte *instr);	
+	void sysEx_customInstrument(uint32 type, const byte *instr);
 
 private:
 	void controlModulationWheel(byte value);
@@ -145,7 +145,7 @@ private:
 	void releasePedal();
 
 	TownsMidiOutputChannel *_out;
-	
+
 	uint8 *_instrument;
 	uint8 _prg;
 	uint8 _chanIndex;
@@ -175,7 +175,7 @@ private:
 class TownsMidiChanState {
 public:
 	TownsMidiChanState();
-	~TownsMidiChanState() {}	
+	~TownsMidiChanState() {}
 	uint8 get(uint8 type);
 
 	uint8 unk1;
@@ -247,7 +247,7 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 mLevelPara, u
 	// music (unsuitable data is just forced into the wrong audio device).
 
 	static const uint8 mul[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 12, 12, 15, 15 };
-	uint8 chan = _chanMap[_chan];	
+	uint8 chan = _chanMap[_chan];
 
 	uint8 mulAmsFms1 = _driver->_chanState[chan].mulAmsFms = data[0];
 	uint8 tl1 = _driver->_chanState[chan].tl = (data[1] | 0x3f) - mLevelPara;
@@ -296,7 +296,7 @@ void TownsMidiOutputChannel::setupProgram(const uint8 *data, uint8 mLevelPara, u
 void TownsMidiOutputChannel::setupEffects(int index, uint8 flags, const uint8 *effectData) {
 	uint16 effectMaxLevel[] = { 0x2FF, 0x1F, 0x07, 0x3F, 0x0F, 0x0F, 0x0F, 0x03, 0x3F, 0x0F, 0x0F, 0x0F, 0x03, 0x3E, 0x1F };
 	uint8 effectType[] = { 0x1D, 0x1C, 0x1B, 0x00, 0x03, 0x04, 0x07, 0x08, 0x0D, 0x10, 0x11, 0x14, 0x15, 0x1e, 0x1f, 0x00 };
-	
+
 	EffectEnvelope *s = &_effectEnvelopes[index];
 	EffectDef *d = &_effectDefs[index];
 
@@ -354,7 +354,7 @@ void TownsMidiOutputChannel::connect(TownsMidiInputChannel *chan) {
 
 void TownsMidiOutputChannel::disconnect() {
 	keyOff();
-	
+
 	TownsMidiOutputChannel *p = _prev;
 	TownsMidiOutputChannel *n = _next;
 
@@ -448,10 +448,10 @@ int TownsMidiOutputChannel::advanceEffectEnvelope(EffectEnvelope *s, EffectDef *
 			s->state = kEnvReady;
 			return 0;
 		}
-	} 
+	}
 
 	int32 t = s->currentLevel + s->incrPerStep;
-	
+
 	s->incrCountRem += s->incrPerStepRem;
 	if (s->incrCountRem >= s->numSteps) {
 		s->incrCountRem -= s->numSteps;
@@ -492,7 +492,7 @@ void TownsMidiOutputChannel::initNextEnvelopeState(EffectEnvelope *s) {
 
 	if (v & 0x80)
 		e = _driver->randomValue(e);
-	
+
 	if (!e)
 		e = 1;
 
@@ -525,7 +525,7 @@ void TownsMidiOutputChannel::initNextEnvelopeState(EffectEnvelope *s) {
 
 int16 TownsMidiOutputChannel::getEffectStartLevel(uint8 type) {
 	uint8 chan = (type < 13) ? _chanMap2[_chan] : ((type < 26) ? _chanMap[_chan] : _chan);
-	
+
 	if (type == 28)
 		return 15;
 	else if (type == 29)
@@ -539,8 +539,8 @@ int16 TownsMidiOutputChannel::getEffectStartLevel(uint8 type) {
 	uint8 res = (_driver->_chanState[chan].get(def[0] >> 5) & def[2]) >> def[1];
 	if (def[3])
 		res = def[3] - res;
-	
-	return res;	
+
+	return res;
 }
 
 int TownsMidiOutputChannel::getEffectModLevel(int lvl, int mod) {
@@ -554,12 +554,12 @@ int TownsMidiOutputChannel::getEffectModLevel(int lvl, int mod) {
 		return ((lvl + 1) * mod) >> 5;
 
 	if (mod < 0) {
-		if (lvl < 0)			
+		if (lvl < 0)
 			return _driver->_operatorLevelTable[((-lvl) << 5) - mod];
 		else
 			return -_driver->_operatorLevelTable[(lvl << 5) - mod];
 	} else {
-		if (lvl < 0)			
+		if (lvl < 0)
 			return -_driver->_operatorLevelTable[((-lvl) << 5) + mod];
 		else
 			return _driver->_operatorLevelTable[((-lvl) << 5) + mod];
@@ -577,7 +577,7 @@ void TownsMidiOutputChannel::keyOff() {
 }
 
 void TownsMidiOutputChannel::keyOnSetFreq(uint16 frq) {
-	uint16 note = (frq << 1) >> 8;	
+	uint16 note = (frq << 1) >> 8;
 	frq = (_freqMSB[note] << 11) | _freqLSB[note] ;
 	out(0xa4, frq >> 8);
 	out(0xa0, frq & 0xff);
@@ -701,7 +701,7 @@ void TownsMidiInputChannel::noteOff(byte note) {
 
 void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 	TownsMidiOutputChannel *oc = _driver->allocateOutputChannel(_priority);
-	
+
 	if (!oc)
 		return;
 
@@ -711,7 +711,7 @@ void TownsMidiInputChannel::noteOn(byte note, byte velocity) {
 	oc->_note = note;
 	oc->_sustainNoteOff = 0;
 	oc->_duration = _instrument[29] * 63;
-	
+
 	oc->_operator1Tl = (_instrument[1] & 0x3f) + _driver->_operatorLevelTable[((velocity >> 1) << 5) + (_instrument[4] >> 2)];
 	if (oc->_operator1Tl > 63)
 		oc->_operator1Tl = 63;
@@ -840,7 +840,7 @@ MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerP
 	_channels = new TownsMidiInputChannel*[32];
 	for (int i = 0; i < 32; i++)
 		_channels[i] = new TownsMidiInputChannel(this, i > 8 ? (i + 1) : i);
-	
+
 	_out = new TownsMidiOutputChannel*[6];
 	for (int i = 0; i < 6; i++)
 		_out[i] = new TownsMidiOutputChannel(this, i);
@@ -964,7 +964,7 @@ MidiChannel *MidiDriver_TOWNS::allocateChannel() {
 	if (!_isOpen)
 		return 0;
 
-	for (int i = 0; i < 32; ++i) {		
+	for (int i = 0; i < 32; ++i) {
 		TownsMidiInputChannel *chan = _channels[i];
 		if (chan->allocate())
 			return chan;
@@ -1023,7 +1023,7 @@ TownsMidiOutputChannel *MidiDriver_TOWNS::allocateOutputChannel(uint8 pri) {
 			res = _out[_allocCurPos];
 		}
 	}
-	
+
 	if (res)
 		res->disconnect();
 

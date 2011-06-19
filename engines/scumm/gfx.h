@@ -450,14 +450,14 @@ public:
 	void clearLayer(int layer);
 	void fillLayerRect(int layer, int x, int y, int w, int h, int col);
 	//void copyRectToLayer(int layer, int x, int y, int w, int h, const uint8 *src);
-	
+
 	uint8 *getLayerPixels(int layer, int x, int y);
 	int getLayerPitch(int layer);
 	int getLayerHeight(int layer);
 	int getLayerBpp(int layer);
 	int getLayerScaleW(int layer);
 	int getLayerScaleH(int layer);
-	
+
 	void addDirtyRect(int x, int y, int w, int h);
 	void toggleLayers(int flag);
 	void update();
@@ -484,16 +484,16 @@ private:
 		uint8 **bltInternY;
 		uint16 *bltTmpPal;
 	} _layers[2];
-	
+
 	uint8 *_outBuffer;
 
 	int _height;
 	int _width;
 	int _pitch;
 	Graphics::PixelFormat _pixelFormat;
-	
+
 	int _numDirtyRects;
-	Common::List<Common::Rect> _dirtyRects;	
+	Common::List<Common::Rect> _dirtyRects;
 	OSystem *_system;
 };
 #endif // DISABLE_TOWNS_DUAL_LAYER_MODE

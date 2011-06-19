@@ -229,7 +229,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		if ((flags & MDT_MIDI) && !skipMidi) {
 			// If a preferred MT32 or GM device has been selected that device gets returned if available.
 			Common::String devStr;
-			if (flags & MDT_PREFER_MT32) 
+			if (flags & MDT_PREFER_MT32)
 				devStr = ConfMan.get("mt32_device");
 			else if (flags & MDT_PREFER_GM)
 				devStr = ConfMan.get("gm_device");
@@ -261,7 +261,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						// If the preferred (expressly requested) device cannot be used we display a warning and continue.
 						// Don't warn about the failing device if we did already (this becomes relevant if the failing
 						// device is selected as preferred device and also as GM or MT-32 device).
-						if (failedDevStr != getDeviceString(hdl, MidiDriver::kDeviceName)) {							
+						if (failedDevStr != getDeviceString(hdl, MidiDriver::kDeviceName)) {
 							Common::String warningMsg = Common::String::format(_("The preferred audio device '%s' cannot be used. See log file for more information. Attempting to fall back to the next available device..."), getDeviceString(hdl, MidiDriver::kDeviceName).c_str());
 							GUI::MessageDialog dialog(warningMsg);
 							dialog.runModal();
@@ -285,7 +285,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 					}
 				}
 
-				// Now we default to the first available device with music type 'MT_GM' if not 
+				// Now we default to the first available device with music type 'MT_GM' if not
 				// MT-32 is preferred or if MT-32 is preferred but all other devices have failed.
 				if (!(flags & MDT_PREFER_MT32) || flags == (MDT_PREFER_MT32 | MDT_MIDI)) {
 					for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {

@@ -272,7 +272,7 @@ static BaseScummFile *openDiskImage(const Common::FSNode &node, const GameFilena
 		GameSettings gs;
 		memset(&gs, 0, sizeof(GameSettings));
 		gs.gameid = gfp->gameid;
-		gs.id = (Common::String(gfp->gameid) == "maniac" ? GID_MANIAC : GID_ZAK); 
+		gs.id = (Common::String(gfp->gameid) == "maniac" ? GID_MANIAC : GID_ZAK);
 		gs.platform = gfp->platform;
 
 		// determine second disk file name
@@ -454,7 +454,7 @@ static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist
 					matched = true;
 					break;
 				}
-					
+
 			if (!matched)
 				continue;
 
@@ -515,7 +515,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		if (d.md5.empty()) {
 			Common::SeekableReadStream *tmp = 0;
 			bool isDiskImg = (file.hasSuffix(".d64") || file.hasSuffix(".dsk") || file.hasSuffix(".prg"));
-			
+
 			if (isDiskImg) {
 				tmp = openDiskImage(d.node, gfp);
 

@@ -36,7 +36,7 @@
 
 PngLoader::Status PngLoader::allocate() {
 	DEBUG_ENTER_FUNC();
-	
+
 	if (!findImageDimensions()) {
 		PSP_ERROR("failed to get image dimensions\n");
 		return BAD_FILE;
@@ -45,7 +45,7 @@ PngLoader::Status PngLoader::allocate() {
 	_buffer->setSize(_width, _height, _sizeBy);
 
 	uint32 bitsPerPixel = _bitDepth * _channels;
-	
+
 	if (_paletteSize) {	// 8 or 4-bit image
 		if (bitsPerPixel == 4) {
 			_buffer->setPixelFormat(PSPPixelFormat::Type_Palette_4bit);
@@ -130,7 +130,7 @@ bool PngLoader::basicImageLoad() {
 	png_get_IHDR(_pngPtr, _infoPtr, (png_uint_32 *)&_width, (png_uint_32 *)&_height, &_bitDepth,
 		&_colorType, &interlaceType, int_p_NULL, int_p_NULL);
 	_channels = png_get_channels(_pngPtr, _infoPtr);
-		
+
 	if (_colorType & PNG_COLOR_MASK_PALETTE)
 		_paletteSize = _infoPtr->num_palette;
 
@@ -141,7 +141,7 @@ bool PngLoader::basicImageLoad() {
 bool PngLoader::findImageDimensions() {
 	DEBUG_ENTER_FUNC();
 
-	bool status = basicImageLoad(); 
+	bool status = basicImageLoad();
 
 	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d], channels[%d], rowBytes[%d]\n", _width, _height, _paletteSize, _bitDepth, _channels, _infoPtr->rowbytes);
 	png_destroy_read_struct(&_pngPtr, &_infoPtr, png_infopp_NULL);
@@ -157,7 +157,7 @@ bool PngLoader::loadImageIntoBuffer() {
 	if (!basicImageLoad()) {
 		png_destroy_read_struct(&_pngPtr, &_infoPtr, png_infopp_NULL);
 		return false;
-	}	
+	}
 	png_set_strip_16(_pngPtr);		// Strip off 16 bit channels in case they occur
 
 	if (_paletteSize) {
@@ -178,16 +178,16 @@ bool PngLoader::loadImageIntoBuffer() {
 	}
 
 	uint32 rowBytes = png_get_rowbytes(_pngPtr, _infoPtr);
-	
-	// there seems to be a bug in libpng where it doesn't increase the rowbytes or the 
+
+	// there seems to be a bug in libpng where it doesn't increase the rowbytes or the
 	// channel even after we add the alpha channel
 	if (_channels == 3 && (rowBytes / _width) == 3) {
 		_channels = 4;
-		rowBytes = _width * _channels;		
-	}	
-	
+		rowBytes = _width * _channels;
+	}
+
 	PSP_DEBUG_PRINT("rowBytes[%d], channels[%d]\n", rowBytes, _channels);
-	
+
 	unsigned char *line = (unsigned char*) malloc(rowBytes);
 	if (!line) {
 		png_destroy_read_struct(&_pngPtr, png_infopp_NULL, png_infopp_NULL);

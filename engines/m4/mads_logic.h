@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The MADS game logic is all hard-coded into the games, although for Rex at least
- * it seems to use only a fairly basic set of instructions and function calls, so it should be 
- * possible 
+ * it seems to use only a fairly basic set of instructions and function calls, so it should be
+ * possible
  */
 
 #ifndef M4_MADS_LOGIC_H

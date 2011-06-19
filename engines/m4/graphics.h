@@ -170,7 +170,7 @@ public:
 	void frameRect(const Common::Rect &r, uint8 color);
 	void fillRect(const Common::Rect &r, uint8 color);
 	void copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY, int transparentColor = -1);
-	void copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surface *depthSurface, 
+	void copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surface *depthSurface,
 			int scale, int transparentColor = -1);
 
 	void update() {

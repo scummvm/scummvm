@@ -44,7 +44,7 @@
 
 namespace DreamWeb {
 
-DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) : 
+DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb") {
 
 	_context.engine = this;
@@ -223,7 +223,7 @@ Common::Error DreamWebEngine::run() {
 
 	_context.__start();
 	_context.data.byte(DreamGen::DreamGenContext::kQuitrequested) = 0;
-	
+
 	getTimerManager()->removeTimerProc(vSyncInterrupt);
 
 	return Common::kNoError;
@@ -428,7 +428,7 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 		type = Audio::Mixer::kSFXSoundType;
 	} else if (speech)
 		type = Audio::Mixer::kSpeechSoundType;
-	else 
+	else
 		type = Audio::Mixer::kMusicSoundType;
 
 	Audio::SeekableAudioStream *raw;
@@ -445,7 +445,7 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 		memcpy(buffer, data.data.begin() + sample.offset, sample.size);
 
 		raw = Audio::makeRawStream(
-			buffer, 
+			buffer,
 			sample.size, 22050, Audio::FLAG_UNSIGNED);
 	} else {
 		uint8 *buffer = (uint8 *)malloc(_speechData.size());
@@ -453,9 +453,9 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 		if (!buffer)
 			error("out of memory: cannot allocate memory for sound(%u bytes)", _speechData.size());
 		raw = Audio::makeRawStream(
-			buffer, 
+			buffer,
 			_speechData.size(), 22050, Audio::FLAG_UNSIGNED);
-		
+
 	}
 
 	Audio::AudioStream *stream;

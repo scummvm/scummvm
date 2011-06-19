@@ -372,7 +372,7 @@ public:
 	void mute(bool flag) { _sound.mute(flag); }
 	void fadeIn() { fade(127, 5, 10, 0, NULL); }
 	void fadeOut(Action *action) { fade(0, 5, 10, 1, action); }
-	void fade(int v1, int v2, int v3, int v4, Action *action); 
+	void fade(int v1, int v2, int v3, int v4, Action *action);
 	void setTimeIndex(uint32 timeIndex) { _sound.setTimeIndex(timeIndex); }
 	uint32 getTimeIndex() const { return _sound.getTimeIndex(); }
 	void setPri(int v) { _sound.setPri(v); }

@@ -43,7 +43,7 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 							 const Common::String &btn2Message) : GfxDialog() {
 	// Set up the message
 	addElements(&_msg, &_btn1, NULL);
- 
+
 	_msg.set(message, 200, ALIGN_LEFT);
 	_msg._bounds.moveTo(0, 0);
 	_defaultButton = &_btn1;

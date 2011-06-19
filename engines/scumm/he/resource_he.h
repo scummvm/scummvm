@@ -61,7 +61,7 @@ private:
 
 	ResExtractor::CachedCursor *findCachedCursor(int id);
 	ResExtractor::CachedCursor *getCachedCursorSlot();
-	
+
 	CachedCursor _cursorCache[MAX_CACHED_CURSORS];
 };
 

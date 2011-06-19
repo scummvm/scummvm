@@ -97,16 +97,16 @@ public:
 
 struct Segment {
 	Common::Array<uint8> data;
-	
+
 	inline void assign(const uint8 *b, const uint8 *e) {
 		data.assign(b, e);
 	}
-	
+
 	inline uint8 &byte(unsigned index) {
 		assert(index < data.size());
 		return data[index];
 	}
-	
+
 	inline WordRef word(unsigned index) {
 		return WordRef(data, index);
 	}
@@ -163,7 +163,7 @@ public:
 		assert(_segment != 0);
 		_segment->assign(b, e);
 	}
-	
+
 	inline uint8* ptr(unsigned index, unsigned size) {
 		assert(_segment != 0);
 		return _segment->ptr(index, size);
@@ -180,7 +180,7 @@ struct Flags {
 
 	inline bool l() const	{ return _o != _s; }
 	inline bool le() const	{ return _o != _s|| _z; }
-	
+
 	inline void update_zs(uint8 v) {
 		_s = v & 0x80;
 		_z = v == 0;
@@ -228,7 +228,7 @@ public:
 	//data == fake segment register always pointing to data segment
 	Flags flags;
 
-	inline Context(): engine(0), al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx), 
+	inline Context(): engine(0), al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx),
 		cs(this), ds(this), es(this), data(this) {
 		_segments[kDefaultDataSegment] = SegmentPtr(new Segment());
 		cs.reset(kDefaultDataSegment);

@@ -367,7 +367,7 @@ void DreamGenContext::dosreturn() {
 
 	ax = data.word(kMousebutton);
 	_and(ax, 1);
-	if (flags.z()) 
+	if (flags.z())
 		return;
 
 	data.word(kMousebutton) = 0;

@@ -100,7 +100,7 @@ enum PNGFilters {
 	kFilterPaeth   = 4
 };
 
-PNG::PNG() : _compressedBuffer(0), _compressedBufferSize(0), 
+PNG::PNG() : _compressedBuffer(0), _compressedBufferSize(0),
 			_unfilteredSurface(0), _transparentColorSpecified(false) {
 }
 
@@ -282,7 +282,7 @@ bool PNG::read(Common::SeekableReadStream *str) {
 	// Unpack the compressed buffer
 	Common::MemoryReadStream *compData = new Common::MemoryReadStream(_compressedBuffer, _compressedBufferSize, DisposeAfterUse::YES);
 	_imageData = Common::wrapCompressedReadStream(compData);
-	
+
 	// Construct the final image
 	constructImage();
 
@@ -306,7 +306,7 @@ byte PNG::paethPredictor(int16 a, int16 b, int16 c) {
   int16 pa = ABS<int16>(b - c);
   int16 pb = ABS<int16>(a - c);
   int16 pc = ABS<int16>(a + b - c - c);
-    
+
   if (pa <= MIN<int16>(pb, pc))
 	  return (byte)a;
   else if (pb <= pc)

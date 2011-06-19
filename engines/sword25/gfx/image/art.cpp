@@ -2499,7 +2499,7 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 						ADD_STEP(x, xdelta)
 					}
 					if (x < x1) {
-						this_ = 
+						this_ =
 						    (int)(delta * (1 - 0.5 *
 						             (x_max - ix_max) * (x_max - ix_max) *
 						             rslope));

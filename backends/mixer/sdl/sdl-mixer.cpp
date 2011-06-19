@@ -70,7 +70,7 @@ void SdlMixerManager::init() {
 		warning("Could not open audio device: %s", SDL_GetError());
 
 		_mixer = new Audio::MixerImpl(g_system, desired.freq);
-		assert(_mixer); 
+		assert(_mixer);
 		_mixer->setReady(false);
 	} else {
 		debug(1, "Output sample rate: %d Hz", _obtained.freq);

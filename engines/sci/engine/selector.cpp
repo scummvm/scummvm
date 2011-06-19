@@ -212,7 +212,7 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 		*address.getPointer(segMan) = value;
 }
 
-void invokeSelector(EngineState *s, reg_t object, int selectorId, 
+void invokeSelector(EngineState *s, reg_t object, int selectorId,
 	int k_argc, StackPtr k_argp, int argc, const reg_t *argv) {
 	int i;
 	int framesize = 2 + 1 * argc;

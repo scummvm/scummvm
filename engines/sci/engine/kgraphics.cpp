@@ -151,7 +151,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 	case 2:
 		pos.y = argv[1].toSint16();
 		pos.x = argv[0].toSint16();
-		
+
 		g_sci->_gfxCursor->kernelSetPos(pos);
 		break;
 	case 4: {
@@ -192,7 +192,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case 10:
 		// Freddy pharkas, when using the whiskey glass to read the prescription (bug #3034973)
-		g_sci->_gfxCursor->kernelSetZoomZone(argv[0].toUint16(), 
+		g_sci->_gfxCursor->kernelSetZoomZone(argv[0].toUint16(),
 			Common::Rect(argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16()),
 			argv[5].toUint16(), argv[6].toUint16(), argv[7].toUint16(),
 			argv[8].toUint16(), argv[9].toUint16());
@@ -428,7 +428,7 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
-	
+
 	reg_t canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
 	return canBeHere;
 }
@@ -1279,7 +1279,7 @@ reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
 	// TODO
 //	reg_t curObject = argv[0];
 //	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
-	
+
 	return NULL_REG;
 }
 
@@ -1642,8 +1642,8 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
 	// TODO: This defines the resolution that the fonts are supposed to be displayed
 	// in. Currently, this is only used for showing high-res fonts in GK1 Mac, but
-	// should be extended to handle other font resolutions such as those 
-	
+	// should be extended to handle other font resolutions such as those
+
 	int xResolution = argv[0].toUint16();
 	//int yResolution = argv[1].toUint16();
 

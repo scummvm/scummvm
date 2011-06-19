@@ -120,7 +120,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 		_midi = NULL;
 		return false;
 	}
-	
+
 	debugC(DEBUG_IMUSE, "Starting music %d", sound);
 	return true;
 }
@@ -194,7 +194,7 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 	_parser->property(MidiParser::mpSmartJump, 1);
 	_parser->loadMusic(ptr, 0);
 	_parser->setTrack(_track_index);
-	
+
 	ptr = _se->findStartOfSound(sound, IMuseInternal::kMDhd);
 	setSpeed(reset_vars ? (ptr ? (READ_BE_UINT32(&ptr[4]) && ptr[15] ? ptr[15] : 128) : 128) : _speed);
 
@@ -226,7 +226,7 @@ void Player::loadStartParameters(int sound) {
 			_pan = ptr[4];
 			_transpose = ptr[5];
 			_detune = ptr[6];
-			setSpeed(ptr[7]);		
+			setSpeed(ptr[7]);
 		}
 	}
 }

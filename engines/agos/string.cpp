@@ -621,7 +621,7 @@ void AGOSEngine_PuzzlePack::printInfoText(const char *itemText) {
 					itemName = " Gem: ";
 			}
 			break;
-			
+
 		case 82:
 			if (_variableArray[flag]) {
 				if (_variableArray[flag] == 201 || _variableArray[flag] == 211)

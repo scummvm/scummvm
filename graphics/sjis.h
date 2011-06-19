@@ -141,7 +141,7 @@ public:
 	void toggleFlippedMode(bool enable) { _flippedMode = enable; }
 
 	uint getFontHeight() const { return (_drawMode == kOutlineMode) ? 18 : (_drawMode == kDefaultMode ? 16 : 17); }
-	
+
 	uint getMaxFontWidth() const { return (_drawMode == kOutlineMode) ? 18 : (_drawMode == kDefaultMode ? 16 : 17); }
 
 	uint getCharWidth(uint16 ch) const;

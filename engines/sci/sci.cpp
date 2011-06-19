@@ -282,7 +282,7 @@ Common::Error SciEngine::run() {
 		//  without this games would be pretty badly broken
 	}
 
-	// Show any special warnings for buggy scripts with severe game bugs, 
+	// Show any special warnings for buggy scripts with severe game bugs,
 	// which have been patched by Sierra
 	if (getGameId() == GID_LONGBOW) {
 		// Longbow 1.0 has a buggy script which prevents the game
@@ -868,7 +868,7 @@ void SciEngine::syncIngameAudioOptions() {
 			_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
 		} else if (subtitlesOn && speechOn) {
 			// Is it a game that supports simultaneous speech and subtitles?
-			if (getGameId() == GID_SQ4 
+			if (getGameId() == GID_SQ4
 				|| getGameId() == GID_FREDDYPHARKAS
 				// TODO: The following need script patches for simultaneous speech and subtitles
 				//|| getGameId() == GID_KQ6
@@ -907,7 +907,7 @@ void SciEngine::loadMacExecutable() {
 		// KQ6/Freddy require the executable to load their icon bar palettes
 		if (hasMacIconBar())
 			error("Could not load Mac resource fork '%s'", filename.c_str());
-		
+
 		// TODO: Show some sort of warning dialog saying they can't get any
 		// high-res Mac fonts, when we get to that point ;)
 	}

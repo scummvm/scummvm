@@ -68,7 +68,7 @@ public:
 	void moveCursor(Common::Point &pos);
 
 	Common::Rect pictureGetDisplayArea();
-	
+
 private:
 	GfxPorts *_ports;
 
@@ -90,7 +90,7 @@ public:
 
 	void pictureSetDisplayArea(Common::Rect displayArea);
 	Common::Rect pictureGetDisplayArea();
-	
+
 private:
 	SegManager *_segMan;
 

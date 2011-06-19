@@ -108,7 +108,7 @@ void GLTexture::refresh() {
 void GLTexture::allocBuffer(GLuint w, GLuint h) {
 	_realWidth = w;
 	_realHeight = h;
-	
+
 	if (w <= _textureWidth && h <= _textureHeight && !_refresh)
 		// Already allocated a sufficiently large buffer
 		return;

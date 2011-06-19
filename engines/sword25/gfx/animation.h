@@ -210,7 +210,7 @@ private:
 	AnimationDescription *getAnimationDescription() const;
 
 	/**
-	  * Initializes a new animation resource from an XML file. 
+	  * Initializes a new animation resource from an XML file.
 	  */
 	void initializeAnimationResource(const Common::String &fileName);
 };

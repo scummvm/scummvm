@@ -1066,7 +1066,7 @@ static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) 
 	int dist;
 
 	// MM C64: This fixes the trunk bug (#3070065), as well
-	// as the fruit bowl, however im not sure if its 
+	// as the fruit bowl, however im not sure if its
 	// the proper solution or not.
 	if( g_scumm->_game.version == 0 )
 		yDist = ABS(y - destY);

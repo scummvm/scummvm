@@ -282,7 +282,7 @@ void EventsClass::hideCursor() {
 	setCursor(CURSOR_NONE);
 }
 
-bool EventsClass::isCursorVisible() const { 
+bool EventsClass::isCursorVisible() const {
 	return !_globals->getFlag(122);
 }
 
@@ -312,7 +312,7 @@ void EventsClass::delay(int numFrames) {
 void EventsClass::listenerSynchronize(Serializer &s) {
 	s.syncAsUint32LE(_frameNumber);
 	s.syncAsUint32LE(_prevDelayFrame);
-	
+
 	if (s.getVersion() >= 5) {
 		s.syncAsSint16LE(_currentCursor);
 		s.syncAsSint16LE(_lastCursor);

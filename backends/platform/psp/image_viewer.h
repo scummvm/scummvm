@@ -54,10 +54,10 @@ private:
 	float _visibleHeight, _visibleWidth;
 	float _centerX, _centerY;
 	Event _movement;
-	
+
 	InputHandler *_inputHandler;
 	DisplayManager *_displayManager;
-	
+
 	void setFullScreenImageParams();
 	void loadNextImage();
 	void loadLastImage();
@@ -66,19 +66,19 @@ private:
 	void moveImageX(float val);
 	void moveImageY(float val);
 	bool load(int imageNum);
-	void unload();	
+	void unload();
 	void runLoop(); // to get total pausing we have to do our own loop
-	
+
 	void setZoom(float value);
 	void setOffsetParams();
 	void modifyZoom(bool up);	// up or down
 	void setVisible(bool visible);
-	
+
 public:
 
-	ImageViewer() : _buffer(0), _palette(0), _visible(false), 
-					_dirty(false), _init(false), _imageNum(0), 
-					_zoomFactor(0.0f), _visibleHeight(0.0f), _visibleWidth(0.0f), 
+	ImageViewer() : _buffer(0), _palette(0), _visible(false),
+					_dirty(false), _init(false), _imageNum(0),
+					_zoomFactor(0.0f), _visibleHeight(0.0f), _visibleWidth(0.0f),
 					_centerX(0.0f), _centerY(0.0f), _movement(EVENT_MOVE_STOP),
 					_inputHandler(0), _displayManager(0) {}
 	~ImageViewer() { unload(); }	// deallocate images
@@ -88,15 +88,15 @@ public:
 	bool isDirty() { return _dirty; }
 	void setDirty() { _dirty = true; }
 	void setClean() { if (!_visible) // otherwise we want to keep rendering
-							_dirty = false; 
-	}	
+							_dirty = false;
+	}
 	void resetOnEngineDone();
-	
+
 	void handleEvent(uint32 event);
-	
+
 	// pointer setters
-	void setInputHandler(InputHandler *inputHandler) { _inputHandler = inputHandler; }	
+	void setInputHandler(InputHandler *inputHandler) { _inputHandler = inputHandler; }
 	void setDisplayManager(DisplayManager *displayManager) { _displayManager = displayManager; }
 };
 
-#endif /* PSP_IMAGE_VIEWER_H */ 
+#endif /* PSP_IMAGE_VIEWER_H */

@@ -728,7 +728,7 @@ int QuickTimeParser::readESDS(Atom atom) {
 
 	byte tag;
 	int length;
-	
+
 	readMP4Desc(_fd, tag, length);
 	_fd->readUint16BE(); // id
 	if (tag == kMP4ESDescTag)
@@ -736,7 +736,7 @@ int QuickTimeParser::readESDS(Atom atom) {
 
 	// Check if we've got the Config MPEG-4 header
 	readMP4Desc(_fd, tag, length);
-	if (tag != kMP4DecConfigDescTag) 
+	if (tag != kMP4DecConfigDescTag)
 		return 0;
 
 	track->objectTypeMP4 = _fd->readByte();

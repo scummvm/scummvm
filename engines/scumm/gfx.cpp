@@ -655,9 +655,9 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_game.platform == Common::kPlatformFMTowns) {
 			towns_drawStripToScreen(vs, x, y, x, top, width, height);
-			return;	
+			return;
 		} else
-#endif	
+#endif
 		if (_outputPixelFormat.bytesPerPixel == 2) {
 			const byte *srcPtr = (const byte *)src;
 			const byte *textPtr = (byte *)_textSurface.getBasePtr(x * m, y * m);
@@ -1024,7 +1024,7 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 
 	if (rect.left > vs->w)
 		return;
-	
+
 	// Convert 'rect' to local (virtual screen) coordinates
 	rect.top -= vs->topline;
 	rect.bottom -= vs->topline;
@@ -1068,7 +1068,7 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 			fill(mask, _textSurface.pitch, backColor, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.format.bytesPerPixel);
 		}
 #endif
-			
+
 		if (_game.features & GF_16BIT_COLOR)
 			fill(screenBuf, vs->pitch, _16BitPalette[backColor], width, height, vs->format.bytesPerPixel);
 		else
@@ -1128,7 +1128,7 @@ void ScummEngine::clearTextSurface() {
 	fill((byte*)_textSurface.pixels,  _textSurface.pitch,
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		_game.platform == Common::kPlatformFMTowns ? 0 :
-#endif		
+#endif
 		CHARSET_MASK_TRANSPARENCY,  _textSurface.w, _textSurface.h, _textSurface.format.bytesPerPixel);
 }
 
@@ -1345,12 +1345,12 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 				color = ((color & 0x0f) << 4) | (color & 0x0f);
 				byte *mask = (byte *)_textSurface.getBasePtr(x * _textSurfaceMultiplier, (y - _screenTop + vs->topline) * _textSurfaceMultiplier);
 				fill(mask, _textSurface.pitch, color, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.format.bytesPerPixel);
-				
+
 				if (_game.id == GID_MONKEY2 || _game.id == GID_INDY4 || ((_game.id == GID_INDY3 || _game.id == GID_ZAK) && vs->number != kTextVirtScreen) || (_game.id == GID_LOOM && vs->number == kMainVirtScreen))
 					return;
 			}
 #endif
-			
+
 			fill(backbuff, vs->pitch, color, width, height, vs->format.bytesPerPixel);
 		}
 	}
@@ -4010,7 +4010,7 @@ void ScummEngine::scrollEffect(int dir) {
 		y = 1 + step;
 		while (y < vs->h) {
 			moveScreen(0, -step, vs->h);
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE	
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_townsScreen) {
 				towns_drawStripToScreen(vs, 0, vs->topline + vs->h - step, 0, y - step, vs->w, step);
 			} else
@@ -4023,7 +4023,7 @@ void ScummEngine::scrollEffect(int dir) {
 					vs->w * m, step * m);
 				_system->updateScreen();
 			}
-			
+
 			waitForTimer(delay);
 			y += step;
 		}
@@ -4046,7 +4046,7 @@ void ScummEngine::scrollEffect(int dir) {
 					vs->w * m, step * m);
 				_system->updateScreen();
 			}
-			
+
 			waitForTimer(delay);
 			y += step;
 		}
@@ -4093,7 +4093,7 @@ void ScummEngine::scrollEffect(int dir) {
 					0, 0,
 					step, vs->h);
 				_system->updateScreen();
-			}	
+			}
 
 			waitForTimer(delay);
 			x += step;

@@ -157,7 +157,7 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 
 		byte *buffer = new byte[file->size()];
 		file->read(buffer, file->size());
-		
+
 		delete file;
 		return buffer;
 	}

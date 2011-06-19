@@ -570,13 +570,13 @@ LUALIB_API int luaL_loadfile (lua_State *L, const char *filename) {
   }
 
   c = lf.f->getc();
-  if (c == '#') {  // Unix exec. file? 
+  if (c == '#') {  // Unix exec. file?
     lf.extraline = 1;
-    while ((c = lf.f->getc()) != EOF && c != '\n') ;  // skip first line 
+    while ((c = lf.f->getc()) != EOF && c != '\n') ;  // skip first line
     if (c == '\n') c = lf.f->getc();
   }
-  if (c == LUA_SIGNATURE[0] && filename) {  // binary file? 
-    lf.f = freopen(filename, "rb", lf.f);  // reopen in binary mode 
+  if (c == LUA_SIGNATURE[0] && filename) {  // binary file?
+    lf.f = freopen(filename, "rb", lf.f);  // reopen in binary mode
     if (lf.f == NULL) return errfile(L, "reopen", fnameindex);
     // skip eventual `#!...'
    while ((c = lf.f->getc()) != EOF && c != LUA_SIGNATURE[0]) ;

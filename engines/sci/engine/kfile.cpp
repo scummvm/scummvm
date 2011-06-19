@@ -208,7 +208,7 @@ reg_t kFClose(EngineState *s, int argc, reg_t *argv) {
 reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[0].toUint16();
 	Common::String data = s->_segMan->getString(argv[1]);
-	
+
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f)
 		f->_out->write(data.c_str(), data.size());
@@ -812,7 +812,7 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	int bytesRead = 0;
 	char *buf = new char[size];
 	debugC(kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
-		
+
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
 		bytesRead = f->_in->read(buf, size);
@@ -910,7 +910,7 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	int offset = argv[1].toUint16();
 	int whence = argv[2].toUint16();
 	debugC(kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
-		
+
 	FileHandle *f = getFileFromHandle(s, handle);
 
 	if (f)

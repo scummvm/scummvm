@@ -47,7 +47,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 	int dp2 = _townsScreen->getLayerPitch(1) - width * m * _townsScreen->getLayerBpp(1);
 	int sp1 = vs->pitch - (width * vs->format.bytesPerPixel);
 	int sp2 = _textSurface.pitch - width * m;
-				
+
 	if (vs->number == kMainVirtScreen || _game.id == GID_INDY3 || _game.id == GID_ZAK) {
 		for (int h = 0; h < height; ++h) {
 			if (_outputPixelFormat.bytesPerPixel == 2) {
@@ -63,13 +63,13 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 				src1 += vs->pitch;
 				dst1 += _townsScreen->getLayerPitch(0);
 			}
-			
+
 			for (int sH = 0; sH < m; ++sH) {
 				memcpy(dst2, src2, width * m);
 				src2 += _textSurface.pitch;
 				dst2 += _townsScreen->getLayerPitch(1);
 			}
-		}					
+		}
 	} else {
 		dst1 = dst2;
 		for (int h = 0; h < height; ++h) {
@@ -81,7 +81,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 
 			dst1 = dst2;
 			uint8 *src3 = src2;
-			
+
 			if (m == 2) {
 				dst2 += _townsScreen->getLayerPitch(1);
 				src3 += _townsScreen->getLayerPitch(1);
@@ -95,7 +95,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 				dst1++;
 			}
 
-			src1 += sp1;			
+			src1 += sp1;
 			src2 = src3 + sp2;
 			dst1 = dst2 + dp2;
 			dst2 += dp2;
@@ -231,7 +231,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 
 	if (width > _width || height > _height)
 		error("TownsScreen::setupLayer(): Layer width/height must be equal or less than screen width/height");
-	
+
 	l->scaleW = _width / width;
 	l->scaleH = _height / height;
 
@@ -268,13 +268,13 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 
 	delete[] l->bltTmpPal;
 	l->bltTmpPal = (l->bpp == 1 && _pixelFormat.bytesPerPixel == 2) ? new uint16[l->numCol] : 0;
-	
+
 	l->enabled = true;
 	_layers[0].onBottom = true;
 	_layers[1].onBottom = _layers[0].enabled ? false : true;
 	l->ready = true;
 }
-	
+
 void TownsScreen::clearLayer(int layer) {
 	if (layer < 0 || layer > 1)
 		return;
@@ -300,10 +300,10 @@ void TownsScreen::fillLayerRect(int layer, int x, int y, int w, int h, int col) 
 	assert(x >= 0 && y >= 0 && ((x + w) * l->bpp) <= (l->pitch) && (y + h) <= (l->height));
 
 	uint8 *pos = l->pixels + y * l->pitch + x * l->bpp;
-	
+
 	for (int i = 0; i < h; ++i) {
 		if (l->bpp == 2) {
-			for (int ii = 0; ii < w; ++ii) {			
+			for (int ii = 0; ii < w; ++ii) {
 				*(uint16*)pos = col;
 				pos += 2;
 			}
@@ -359,8 +359,8 @@ int TownsScreen::getLayerScaleH(int layer) {
 
 void TownsScreen::addDirtyRect(int x, int y, int w, int h) {
 	if (w <= 0 || h <= 0 || _numDirtyRects > DIRTY_RECTS_MAX)
-		return;	
-	
+		return;
+
 	if (_numDirtyRects == DIRTY_RECTS_MAX) {
 		// full redraw
 		_dirtyRects.clear();
@@ -383,25 +383,25 @@ void TownsScreen::addDirtyRect(int x, int y, int w, int h) {
 			y = r->top;
 			skip = true;
 		}
-		
+
 		if (x2 > r->left && x2 < r->right && y > r->top && y < r->bottom) {
 			x2 = r->right;
 			y = r->top;
 			skip = true;
 		}
-		
+
 		if (x2 > r->left && x2 < r->right && y2 > r->top && y2 < r->bottom) {
 			x2 = r->right;
 			y2 = r->bottom;
 			skip = true;
 		}
-		
+
 		if (x > r->left && x < r->right && y2 > r->top && y2 < r->bottom) {
 			x = r->left;
 			y2 = r->bottom;
 			skip = true;
-		}		
-				
+		}
+
 		if (skip) {
 			r->left = x;
 			r->top = y;
@@ -486,13 +486,13 @@ void TownsScreen::updateOutputBuffer() {
 						uint8 col = l->bltInternY[y][l->bltInternX[x]];
 						if (col || l->onBottom) {
 							if (l->numCol == 16)
-								col = (col >> 4) & (col & 0x0f);						
+								col = (col >> 4) & (col & 0x0f);
 							*dst = col;
 						}
 						dst++;
 					}
 					dst += ptch;
-				}				
+				}
 			}
 		}
 	}
@@ -505,7 +505,7 @@ void TownsScreen::outputToScreen() {
 	_numDirtyRects = 0;
 }
 
-uint16 TownsScreen::calc16BitColor(const uint8 *palEntry) {	
+uint16 TownsScreen::calc16BitColor(const uint8 *palEntry) {
 	return _pixelFormat.RGBToColor(palEntry[0], palEntry[1], palEntry[2]);
 }
 

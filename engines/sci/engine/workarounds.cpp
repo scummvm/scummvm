@@ -447,7 +447,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 		do {
 			workaround = workaroundList;
 			while (workaround->methodName) {
-				bool objectNameMatches = (workaround->objectName == NULL) || 
+				bool objectNameMatches = (workaround->objectName == NULL) ||
 										 (workaround->objectName == g_sci->getSciLanguageString(searchObjectName, K_LANG_ENGLISH));
 
 				// Special case: in the fanmade Russian translation of SQ4, all

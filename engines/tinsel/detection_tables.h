@@ -119,7 +119,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
-	{	
+	{
 		{
 			"dw",
 			"Floppy",
@@ -142,7 +142,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
-	{	
+	{
 		{
 			"dw",
 			"Floppy",
@@ -165,7 +165,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
-	{	
+	{
 		{
 			"dw",
 			"Floppy",

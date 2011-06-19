@@ -743,7 +743,7 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, 0);
 	writeUint16BE(outFile, kALnewscr_2d);
 	writeUint16BE(outFile, 0);
-	
+
 	writeSByte(outFile, NUM_TUNES_1w);
 	writeSByte(outFile, SILENCE_1w);
 	writeSByte(outFile, TEST_SOUND_1w);

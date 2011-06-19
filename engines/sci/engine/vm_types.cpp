@@ -32,8 +32,8 @@ reg_t reg_t::lookForWorkaround(const reg_t right) const {
 	SciTrackOriginReply originReply;
 	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, arithmeticWorkarounds, &originReply);
 	if (solution.type == WORKAROUND_NONE)
-		error("Invalid arithmetic operation (params: %04x:%04x and %04x:%04x) from method %s::%s (room %d, script %d, localCall %x)", 
-		PRINT_REG(*this), PRINT_REG(right), originReply.objectName.c_str(), 
+		error("Invalid arithmetic operation (params: %04x:%04x and %04x:%04x) from method %s::%s (room %d, script %d, localCall %x)",
+		PRINT_REG(*this), PRINT_REG(right), originReply.objectName.c_str(),
 		originReply.methodName.c_str(), g_sci->getEngineState()->currentRoomNumber(), originReply.scriptNr,
 		originReply.localCallOffset);
 	assert(solution.type == WORKAROUND_FAKE);
@@ -56,7 +56,7 @@ reg_t reg_t::operator+(const reg_t right) const {
 			return make_reg(segment, offset + right.toSint16());
 		default:
 			return lookForWorkaround(right);
-		}	
+		}
 	} else if (isNumber() && right.isPointer()) {
 		// Adding a pointer to a number, flip the order
 		return right + *this;
@@ -94,9 +94,9 @@ reg_t reg_t::operator/(const reg_t right) const {
 
 reg_t reg_t::operator%(const reg_t right) const {
 	if (isNumber() && right.isNumber() && !right.isNull()) {
-		// Support for negative numbers was added in Iceman, and perhaps in 
+		// Support for negative numbers was added in Iceman, and perhaps in
 		// SCI0 0.000.685 and later. Theoretically, this wasn't really used
-		// in SCI0, so the result is probably unpredictable. Such a case 
+		// in SCI0, so the result is probably unpredictable. Such a case
 		// would indicate either a script bug, or a modulo on an unsigned
 		// integer larger than 32767. In any case, such a case should be
 		// investigated, instead of being silently accepted.
@@ -178,7 +178,7 @@ int reg_t::cmp(const reg_t right, bool treatAsUnsigned) const {
 		if (treatAsUnsigned || !isNumber())
 			return toUint16() - right.toUint16();
 		else
-			return toSint16() - right.toSint16(); 
+			return toSint16() - right.toSint16();
 	} else if (pointerComparisonWithInteger(right)) {
 		return 1;
 	} else if (right.pointerComparisonWithInteger(*this)) {

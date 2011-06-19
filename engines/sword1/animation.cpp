@@ -261,7 +261,7 @@ bool MoviePlayer::playVideo() {
 				uint32 minWeight = 0xFFFFFFFF;
 				uint32 weight;
 				byte r, g, b;
-				
+
 				const byte *palette = _decoder->getPalette();
 
 				for (int i = 0; i < 256; i++) {

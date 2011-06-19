@@ -188,7 +188,7 @@ void AgiEngine::processEvents() {
 			case Common::KEYCODE_KP5:
 				if (_predictiveDialogRunning)
 					key = event.kbd.ascii;
-				else 
+				else
 					key = KEY_STATIONARY;
 				break;
 			case Common::KEYCODE_PLUS:

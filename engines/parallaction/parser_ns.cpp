@@ -1412,9 +1412,9 @@ void LocationParser_ns::parseSpeakData(ZonePtr z) {
 }
 
 void LocationParser_ns::parseNoneData(ZonePtr z) {
-	// "None" zones should have no content, but some 
-	// inconsistently define their command list after 
-	// the TYPE marker. This routine catches these 
+	// "None" zones should have no content, but some
+	// inconsistently define their command list after
+	// the TYPE marker. This routine catches these
 	// command lists that would be lost otherwise.
 	if (!scumm_stricmp(_tokens[0], "commands")) {
 		parseCommands(z->_commands);
@@ -1423,7 +1423,7 @@ void LocationParser_ns::parseNoneData(ZonePtr z) {
 			_script->readLineToken(true);
 			_parser->parseStatement();
 		} while (!ctxt.endcommands);
-		
+
 		// no need to parse one more line here, as
 		// it is done by the caller
 	}

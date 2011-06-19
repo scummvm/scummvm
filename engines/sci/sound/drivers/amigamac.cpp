@@ -178,7 +178,7 @@ int MidiDriver_AmigaMac::interpolate(int8 *samples, frac_t offset, bool isUnsign
 		int diff = (s2 - s1) << 8;
 		return (s1 << 8) + fracToInt(diff * (offset & FRAC_LO_MASK));
 	}
-	
+
 	int diff = (samples[x + 1] - samples[x]) << 8;
 	return (samples[x] << 8) + fracToInt(diff * (offset & FRAC_LO_MASK));
 }
@@ -373,7 +373,7 @@ void MidiDriver_AmigaMac::setOutputFrac(int voice) {
 	fnote -= instrument->baseNote;
 	fnote *= 4;
 	// FIXME: check how SSCI maps this
-	fnote += (_channels[_voices[voice].hw_channel].pitch - 0x2000) / 169; 
+	fnote += (_channels[_voices[voice].hw_channel].pitch - 0x2000) / 169;
 
 	while (fnote < 0) {
 		divFact *= 2;
@@ -617,7 +617,7 @@ int MidiDriver_AmigaMac::open() {
 		} else if (!loadInstrumentsSCI0Mac(stream))
 			return Common::kUnknownError;
 	}
-	
+
 	MidiDriver_Emulated::open();
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);

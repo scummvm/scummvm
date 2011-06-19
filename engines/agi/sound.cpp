@@ -144,7 +144,7 @@ void SoundMgr::stopSound() {
 	// not be any harm doing it, so do it anyway.
 	if (_endflag != -1)
 		_vm->setflag(_endflag, true);
-	
+
 	_endflag = -1;
 }
 
