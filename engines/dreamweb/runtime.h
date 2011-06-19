@@ -463,6 +463,7 @@ public:
 	}
 
 	inline void _movsb(uint size, bool clear_cx = false) {
+		assert(size != 0xffff);
 		uint8 *dst = es.ptr(di, size);
 		uint8 *src = ds.ptr(si, size);
 		memcpy(dst, src, size);
@@ -478,6 +479,7 @@ public:
 	}
 
 	inline void _movsw(uint size, bool clear_cx = false) {
+		assert(size != 0xffff);
 		_movsb(size * 2, clear_cx);
 	}
 
@@ -486,6 +488,7 @@ public:
 	}
 
 	inline void _stosb(uint size, bool clear_cx = false) {
+		assert(size != 0xffff);
 		uint8 *dst = es.ptr(di, size);
 		memset(dst, al, size);
 		di += size;
@@ -499,6 +502,7 @@ public:
 	}
 
 	inline void _stosw(uint size, bool clear_cx = false) {
+		assert(size != 0xffff);
 		uint8 *dst = es.ptr(di, size * 2);
 		di += 2 * size;
 		while(size--) {
