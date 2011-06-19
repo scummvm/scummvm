@@ -26,7 +26,6 @@
  */
 
 #include "cge/cfile.h"
-#include <dos.h>
 #include <fcntl.h>
 #include <string.h>
 #include "common/system.h"

@@ -46,6 +46,10 @@ struct BT_KEYPACK {
 	uint16 Size;
 };
 
+typedef struct {
+	uint8 Key[BT_KEYLEN];
+	uint16 Down;
+} INNER;
 
 struct BT_PAGE {
 	struct HEA {
@@ -56,10 +60,7 @@ struct BT_PAGE {
 		// dummy filler to make proper size of union
 		uint8 Data[BT_SIZE - sizeof(HEA)];
 		// inner version of data: key + word-sized page link
-		struct INNER {
-			uint8 Key[BT_KEYLEN];
-			uint16 Down;
-		} Inn[(BT_SIZE - sizeof(HEA)) / sizeof(INNER)];
+		INNER Inn[(BT_SIZE - sizeof(HEA)) / sizeof(INNER)];
 		// leaf version of data: key + all user data
 		BT_KEYPACK Lea[(BT_SIZE - sizeof(HEA)) / sizeof(BT_KEYPACK)];
 	};
