@@ -186,9 +186,9 @@ Common::Error PictureEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error PictureEngine::saveGameState(int slot, const char *description) {
+Common::Error PictureEngine::saveGameState(int slot, const Common::String &description) {
 	const char *fileName = getSavegameFilename(slot);
-	savegame(fileName, description);
+	savegame(fileName, description.c_str());
 	return Common::kNoError;
 }
 
