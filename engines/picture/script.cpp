@@ -194,7 +194,7 @@ void ScriptInterpreter::runScript() {
 			if (_vm->_saveLoadRequested == 1)
 				_vm->loadGameState(_vm->_saveLoadSlot);
 			else if (_vm->_saveLoadRequested == 2)
-				_vm->saveGameState(_vm->_saveLoadSlot, _vm->_saveLoadDescription.c_str());
+				_vm->saveGameState(_vm->_saveLoadSlot, _vm->_saveLoadDescription);
 			_vm->_saveLoadRequested = 0;
 		}
 			
