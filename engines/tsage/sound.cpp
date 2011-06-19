@@ -232,19 +232,20 @@ void SoundManager::unInstallDriver(int driverNum) {
 
 			// Mute any loaded sounds
 			disableSoundServer();
-			for (Common::List<Sound *>::iterator i = _playList.begin(); i != _playList.end(); ++i)
-				(*i)->mute(true);
+			Common::List<Sound *>::iterator j;
+			for (j = _playList.begin(); j != _playList.end(); ++j)
+				(*j)->mute(true);
 
 			// Uninstall the driver
 			_sfUnInstallDriver(*i);
 
 			// Re-orient all the loaded sounds 
-			for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-				(*i)->orientAfterDriverChange();
+			for (j = _soundList.begin(); j != _soundList.end(); ++j)
+				(*j)->orientAfterDriverChange();
 
 			// Unmute currently active sounds
-			for (Common::List<Sound *>::iterator i = _playList.begin(); i != _playList.end(); ++i)
-				(*i)->mute(false);
+			for (j = _playList.begin(); j != _playList.end(); ++j)
+				(*j)->mute(false);
 	
 			enableSoundServer();
 		}
@@ -549,14 +550,16 @@ bool SoundManager::_sfIsOnPlayList(Sound *sound) {
 
 void SoundManager::_sfRethinkSoundDrivers() {
 	// Free any existing entries
-	for (int idx = 0; idx < SOUND_ARR_SIZE; ++idx) {
+	int idx;
+
+	for (idx = 0; idx < SOUND_ARR_SIZE; ++idx) {
 		if (sfManager()._voiceTypeStructPtrs[idx]) {
 			delete sfManager()._voiceTypeStructPtrs[idx];
 			sfManager()._voiceTypeStructPtrs[idx] = NULL;
 		}
 	}
 
-	for (int idx = 0; idx < SOUND_ARR_SIZE; ++idx) {
+	for (idx = 0; idx < SOUND_ARR_SIZE; ++idx) {
 		byte flag = 0xff;
 		int total = 0;
 
@@ -638,7 +641,7 @@ void SoundManager::_sfRethinkSoundDrivers() {
 							byteVal = *groupData;
 							groupData += 2;
 
-							for (int idx = 0; idx < byteVal; ++idx) {
+							for (idx = 0; idx < byteVal; ++idx) {
 								VoiceStructEntry ve;
 								memset(&ve, 0, sizeof(VoiceStructEntry));
 
@@ -2462,8 +2465,9 @@ void AdlibSoundDriver::proc32(int channel, int program, int v0, int v1) {
 	int offset = READ_LE_UINT16(_patchData + program * 2);
 	if (offset) {
 		const byte *dataP = _patchData + offset;
+		int id;
 
-		for (int offset = 2, id = 0; id != READ_LE_UINT16(dataP); offset += 30, ++id) {
+		for (offset = 2, id = 0; id != READ_LE_UINT16(dataP); offset += 30, ++id) {
 			if ((dataP[offset] <= v0) && (dataP[offset + 1] >= v0)) {
 				if (dataP[offset + 2] != 0xff)
 					v0 = dataP[offset + 2];
