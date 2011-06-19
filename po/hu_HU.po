@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-06-13 22:20+0100\n"
-"PO-Revision-Date: 2011-06-12 07:17+0100\n"
+"PO-Revision-Date: 2011-06-15 07:42+0100\n"
 "Last-Translator: Gruby <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -1182,6 +1182,8 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
+"Sajnálom, a motor jelenleg nem tartalmaz játék közbeni súgót. Olvassd el a "
+"README-t az alap információkról, és hogy hogyan segíthetsz a késõbbiekben."
 
 #: engines/dialogs.cpp:312 engines/mohawk/dialogs.cpp:100
 #: engines/mohawk/dialogs.cpp:152
@@ -1199,21 +1201,19 @@ msgstr "Billentyük"
 
 #: engines/engine.cpp:220
 msgid "Could not initialize color format."
-msgstr ""
+msgstr "Szín formátum nincs alkalmazva"
 
 #: engines/engine.cpp:228
-#, fuzzy
 msgid "Could not switch to video mode: '"
-msgstr "Jelenlegi videómód:"
+msgstr "Videómód nincs átállítva: ' "
 
 #: engines/engine.cpp:237
-#, fuzzy
 msgid "Could not apply aspect ratio setting."
-msgstr "Méretarány korrekció engedélyezve"
+msgstr "Méretarány korrekció nem változott."
 
 #: engines/engine.cpp:242
 msgid "Could not apply fullscreen setting."
-msgstr ""
+msgstr "Teljesképernyõs beállítás nincs alkalmazva"
 
 #: engines/engine.cpp:342
 msgid ""
@@ -1223,6 +1223,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
+"Úgy néz ki, ezt a játékot CD-rõl futtatod\n"
+"Ez ismert problémákat okoz, ezért\n"
+"ajánlatos átmásolni a játék\n"
+"adatfájljait a merevlemezedre.\n"
+"Nézd meg a README fájlt a részletekért."
 
 #: engines/engine.cpp:353
 msgid ""
@@ -1232,6 +1237,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the README file for details."
 msgstr ""
+"A játékhoz audiósávok tartoznak a lemezen\n"
+"ezeket a sávokat másold ki egy megfelelõ\n"
+"CD audió kitömörítõ programmal\n"
+"hogy a játék zenéje hallható legyen.\n"
+"Nézd meg a README fájlt a részletekért."
 
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
@@ -1771,6 +1781,8 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
+"Native MIDI támogatáshoz kell a Roland Upgrade a LucasArts-tól,\n"
+"a %s hiányzik. AdLib-ot használok helyette."
 
 #: engines/scumm/scumm.cpp:2256 engines/agos/saveload.cpp:190
 #, c-format
@@ -1846,40 +1858,24 @@ msgstr "Visszaállítás"
 #: engines/agos/animation.cpp:544
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr ""
+msgstr "'%s' átvezetõ fájl nem található"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
 #: engines/tinsel/saveload.cpp:468
-#, fuzzy
 msgid "Failed to load game state from file."
-msgstr ""
-"Játékállás betöltése:\n"
-"\n"
-"%s fájlból nem sikerült"
+msgstr "Játékállás betöltése fájlból nem sikerült."
 
 #: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:546
-#, fuzzy
 msgid "Failed to save game state to file."
-msgstr ""
-"Játékállás mentése:\n"
-"\n"
-"%s fájlba nem sikerült"
+msgstr "Játékállás mentése fájlba nem sikerült."
 
 #: engines/gob/inter_v5.cpp:107
-#, fuzzy
 msgid "Failed to delete file."
-msgstr ""
-"Játékállás mentése:\n"
-"\n"
-"%s fájlba nem sikerült"
+msgstr "Fájl törlés sikertelen."
 
 #: engines/groovie/script.cpp:417
-#, fuzzy
 msgid "Failed to save game"
-msgstr ""
-"Játékállás mentése:\n"
-"\n"
-"%s fájlba nem sikerült"
+msgstr "Játék mentés nem sikerült"
 
 #: engines/kyra/sound_midi.cpp:475
 msgid ""
@@ -1889,36 +1885,44 @@ msgid ""
 "General MIDI ones. After all it might happen\n"
 "that a few tracks will not be correctly played."
 msgstr ""
+"Úgy néz ki egy General MIDI eszközt használsz,\n"
+"a játék csak Roland MT32 MIDI eszközt támogat.\n"
+"Cseréld ki Roland MT32 hangszerekre\n"
+"a General MIDI-t. Különben néhány\n"
+"sávot nem lehet rendesen lejátszani."
 
 #: engines/m4/m4_menus.cpp:138
-#, fuzzy
 msgid "Save game failed!"
-msgstr "Játék mentése:"
+msgstr "Játék mentése nem sikerült!"
 
 #: engines/sky/compact.cpp:130
 msgid ""
 "Unable to find \"sky.cpt\" file!\n"
 "Please download it from www.scummvm.org"
 msgstr ""
+"A \"sky.cpt\" fájl nem található!\n"
+"Töltsd le a www.scummvm.org oldaláról"
 
 #: engines/sky/compact.cpp:141
 msgid ""
 "The \"sky.cpt\" file has an incorrect size.\n"
 "Please (re)download it from www.scummvm.org"
 msgstr ""
+"A \"sky.cpt\" fájl mérete nem megfelelõ.\n"
+"Töltsd le a www.scummvm.org oldaláról"
 
 #: engines/sword1/animation.cpp:344 engines/sword2/animation.cpp:379
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
-msgstr ""
+msgstr "DXA átvezetõ elérhetõ, de a ScummVM zlib támogatás nincs lefordítva"
 
 #: engines/sword1/animation.cpp:354 engines/sword2/animation.cpp:389
 msgid "MPEG2 cutscenes are no longer supported"
-msgstr ""
+msgstr "MPEG2 átvezetõk már nem támogatottak"
 
 #: engines/sword1/animation.cpp:359 engines/sword2/animation.cpp:397
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr ""
+msgstr "'%s' átvezetõ nem található"
 
 #: engines/sword1/control.cpp:863
 msgid ""
@@ -1930,6 +1934,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"ScummVM régi játékmentést talált a Broken Sword 1 hez, ezt át kell "
+"alakítani.\n"
+"A régi játékmentés nem támogatott, ezért a játék nem töltõdik be átalakítás "
+"nélkül.\n"
+"\n"
+"Nyomj OK-t az átalakításhoz, vagy rákérdezzek ha legközelebb elindítod a "
+"játékot.\n"
 
 #: engines/sword1/control.cpp:1232
 #, c-format
@@ -1937,18 +1948,20 @@ msgid ""
 "Target new save game already exists!\n"
 "Would you like to keep the old save game (%s) or the new one (%s)?\n"
 msgstr ""
+"A választott játékmentés már létezik!\n"
+"Megtartod a régi játékmentést (%s) vagy kicseréled az újra (%s)?\n"
 
 #: engines/sword1/control.cpp:1235
 msgid "Keep the old one"
-msgstr ""
+msgstr "A régit megtartom"
 
 #: engines/sword1/control.cpp:1235
 msgid "Keep the new one"
-msgstr ""
+msgstr "Az újat megtartom"
 
 #: engines/sword1/logic.cpp:1633
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr ""
+msgstr "Ez a Broken Sword 1 Demo vége"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -1956,16 +1969,16 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
+"Játékállás nem menthetõ %i slotba\n"
+"\n"
 
 #: engines/parallaction/saveload.cpp:211
-#, fuzzy
 msgid "Loading game..."
-msgstr "Játék betöltése:"
+msgstr "Játék betöltés..."
 
 #: engines/parallaction/saveload.cpp:226
-#, fuzzy
 msgid "Saving game..."
-msgstr "Játék mentése:"
+msgstr "Játék mentés..."
 
 #: engines/parallaction/saveload.cpp:279
 msgid ""
@@ -1976,10 +1989,16 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
+"ScummVM régi játékmentést talált a Nippon Safes hez ezt át kell nevezni.\n"
+"A régi játékmentés nem támogatott, ezért a játék nem töltõdik be átnevezés "
+"nélkül..\n"
+"\n"
+"Nyomj OK-t az átalakításhoz, vagy rákérdezzek ha legközelebb elindítod a "
+"játékot.\n"
 
 #: engines/parallaction/saveload.cpp:326
 msgid "ScummVM successfully converted all your savefiles."
-msgstr ""
+msgstr "ScummVM konvertálta az összes játékállásodat."
 
 #: engines/parallaction/saveload.cpp:328
 msgid ""
@@ -1988,6 +2007,10 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
+"ScummVM kiírt néhány figyelmeztetést a konzolablakba és nem biztos hogy az "
+"összes fájlod át lett alakítva.\n"
+"\n"
+"Légyszíves jelentsd a csapatnak."
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
@@ -1998,40 +2021,40 @@ msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL emulátor"
 
 #: audio/mididrv.cpp:204
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected). Attempting to fall back to the next available device..."
 msgstr ""
-"A '%s' kiválasztott hangeszköz nem elérhetõ. Bõvebb információ a "
-"naplófájlban. Következõ elérhetõ eszköz keresése..."
+"A kiválasztott '%s' hangeszköz nem található. (Lekapcsoltad, vagy kihúztad). "
+"A következõ elérhetõ eszköz keresése..."
 
 #: audio/mididrv.cpp:216
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information. Attempting to fall back to the next available device..."
 msgstr ""
-"A '%s' kiválasztott hangeszköz nem elérhetõ. Bõvebb információ a "
-"naplófájlban. Következõ elérhetõ eszköz keresése..."
+"A kiválasztott '%s' hangeszköz nem használható. Bõvebb információ a "
+"naplófájlban. A következõ elérhetõ eszköz keresése..."
 
 #: audio/mididrv.cpp:250
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected). Attempting to fall back to the next available device..."
 msgstr ""
-"A '%s' elsõdleges hangeszköz nem elérhetõ. Bõvebb információ a naplófájlban. "
-"Következõ elérhetõ eszköz keresése..."
+"Az elsõdleges '%s' hangeszköz nem található. (Lekapcsoltad, vagy kihúztad). "
+"A következõ elérhetõ eszköz keresése..."
 
 #: audio/mididrv.cpp:265
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information. Attempting to fall back to the next available device..."
 msgstr ""
-"A '%s' elsõdleges hangeszköz nem elérhetõ. Bõvebb információ a naplófájlban. "
-"Következõ elérhetõ eszköz keresése..."
+"Az elsõdleges '%s' hangeszköz nem használható. Bõvebb információ a "
+"naplófájlban. A következõ elérhetõ eszköz keresése..."
 
 #: audio/null.h:43
 msgid "No music"
@@ -2162,14 +2185,12 @@ msgid "Disable power off"
 msgstr "Leállítás tiltva"
 
 #: backends/platform/iphone/osys_events.cpp:338
-#, fuzzy
 msgid "Mouse-click-and-drag mode enabled."
-msgstr "Touchpad mód engedélyezve."
+msgstr "Egér kattint-és-húz mód engedélyezve."
 
 #: backends/platform/iphone/osys_events.cpp:340
-#, fuzzy
 msgid "Mouse-click-and-drag mode disabled."
-msgstr "Touchpad mód letiltva."
+msgstr "Egér kattint-és-húz mód letiltva."
 
 #: backends/platform/iphone/osys_events.cpp:351
 msgid "Touchpad mode enabled."
@@ -2553,19 +2574,16 @@ msgstr ""
 "a teljes listát"
 
 #: backends/events/default/default-events.cpp:222
-#, fuzzy
 msgid "Do you really want to return to the Launcher?"
-msgstr "Biztos hogy törölni akarod ezt a játékállást?"
+msgstr "Biztos hogy visszatérsz az indítópulthoz?"
 
 #: backends/events/default/default-events.cpp:222
-#, fuzzy
 msgid "Launcher"
-msgstr "Megüt"
+msgstr "Indítópult"
 
 #: backends/events/default/default-events.cpp:244
-#, fuzzy
 msgid "Do you really want to quit?"
-msgstr "Ki akarsz lépni ?"
+msgstr "Biztos hogy ki akarsz lépni ?"
 
 #: backends/events/gph/gph-events.cpp:366
 #: backends/events/gph/gph-events.cpp:409
