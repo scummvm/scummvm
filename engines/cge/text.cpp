@@ -32,6 +32,7 @@
 #include "cge/bitmaps.h"
 #include "cge/game.h"
 #include "cge/snail.h"
+#include "cge/cge_main.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -215,8 +216,8 @@ void Say(const char *txt, SPRITE *spr) {
 		spike->Step(east);
 		spike->Ref = SAY_REF;
 
-		VGA::ShowQ.Insert(Talk, VGA::ShowQ.Last());
-		VGA::ShowQ.Insert(spike, VGA::ShowQ.Last());
+		Vga->ShowQ->Insert(Talk, Vga->ShowQ->Last());
+		Vga->ShowQ->Insert(spike, Vga->ShowQ->Last());
 	}
 }
 
@@ -231,7 +232,7 @@ void Inf(const char *txt) {
 		Talk->Goto(Talk->X, Talk->Y - 20);
 		Talk->Z = 126;
 		Talk->Ref = INF_REF;
-		VGA::ShowQ.Insert(Talk, VGA::ShowQ.Last());
+		Vga->ShowQ->Insert(Talk, Vga->ShowQ->Last());
 	}
 }
 

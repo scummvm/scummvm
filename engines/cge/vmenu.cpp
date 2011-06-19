@@ -27,6 +27,7 @@
 
 #include "cge/vmenu.h"
 #include "cge/mouse.h"
+#include "cge/cge_main.h"
 #include <string.h>
 
 namespace CGE {
@@ -112,10 +113,10 @@ VMENU::VMENU(CHOICE *list, int x, int y)
 		Center();
 	else
 		Goto(x - W / 2, y - (TEXT_VM + FONT_HIG / 2));
-	VGA::ShowQ.Insert(this, VGA::ShowQ.Last());
+	Vga->ShowQ->Insert(this, Vga->ShowQ->Last());
 	Bar = new MENU_BAR(W - 2 * TEXT_HM);
 	Bar->Goto(X + TEXT_HM - MB_HM, Y + TEXT_VM - MB_VM);
-	VGA::ShowQ.Insert(Bar, VGA::ShowQ.Last());
+	Vga->ShowQ->Insert(Bar, Vga->ShowQ->Last());
 }
 
 

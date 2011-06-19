@@ -30,6 +30,7 @@
 #include "cge/bitmap.h"
 #include "cge/vol.h"
 #include "cge/text.h"
+#include "cge/cge_main.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -213,8 +214,8 @@ RGB MkRGB(uint8 r, uint8 g, uint8 b) {
 
 
 SPRITE *Locate(int ref) {
-	SPRITE *spr = VGA::ShowQ.Locate(ref);
-	return (spr) ? spr : VGA::SpareQ.Locate(ref);
+	SPRITE *spr = Vga->ShowQ->Locate(ref);
+	return (spr) ? spr : Vga->SpareQ->Locate(ref);
 }
 
 
@@ -774,7 +775,7 @@ BMP_PTR SPRITE::Ghost(void) {
 
 
 SPRITE *SpriteAt(int x, int y) {
-	SPRITE *spr = NULL, * tail = VGA::ShowQ.Last();
+	SPRITE *spr = NULL, * tail = Vga->ShowQ->Last();
 	if (tail) {
 		for (spr = tail->Prev; spr; spr = spr->Prev)
 			if (! spr->Flags.Hide && ! spr->Flags.Tran)
@@ -888,17 +889,6 @@ SPRITE *QUEUE::Locate(int ref) {
 }
 
 
-uint16      VGA::StatAdr = VGAST1_;
-uint16      VGA::OldMode = 0;
-uint16     *VGA::OldScreen = NULL;
-const char *VGA::Msg = NULL;
-const char *VGA::Nam = NULL;
-DAC        *VGA::OldColors = NULL;
-DAC        *VGA::NewColors = NULL;
-bool        VGA::SetPal = false;
-int         VGA::Mono = 0;
-QUEUE       VGA::ShowQ = true, VGA::SpareQ = false;
-
 // TODO: Was direct mapping to VGA buffers.. need to create scummvm surfaces for that
 uint8  *VGA::Page[4] = { 0, 0, 0, 0 };
 
@@ -912,7 +902,13 @@ uint8 * VGA::Page[4] = { (uint8 *) MK_FP(SCR_SEG, 0x0000),
 //extern const char Copr[];
 
 VGA::VGA(int mode)
-	: FrmCnt(0) {
+	: FrmCnt(0), OldMode(0), OldScreen(NULL), StatAdr(VGAST1_), 
+	  Msg(NULL), Nam(NULL), SetPal(false), Mono(0) {
+	OldColors = NULL;
+	NewColors = NULL;
+	ShowQ = new QUEUE(true);
+	SpareQ = new QUEUE(false);
+
 	bool std = true;
 	int i;
 	for (i = 10; i < 20; i ++) {
@@ -939,7 +935,7 @@ VGA::VGA(int mode)
 		OldMode = SetMode(mode);
 		SetColors();
 		Setup(VideoMode);
-		Clear();
+		Clear(0);
 	}
 }
 
@@ -948,7 +944,7 @@ VGA::~VGA(void) {
 	Mono = 0;
 	if (IsVga()) {
 		Common::String buffer = "";
-		Clear();
+		Clear(0);
 		SetMode(OldMode);
 		SetColors();
 		RestoreScreen(OldScreen);
@@ -1154,7 +1150,7 @@ void VGA::SetColors(void) {
 void VGA::Sunrise(DAC *tab) {
 	for (int i = 0; i <= 64; i += FADE_STEP) {
 		SetColors(tab, i);
-		WaitVR();
+		WaitVR(true);
 		UpdateColors();
 	}
 }
@@ -1165,19 +1161,19 @@ void VGA::Sunset(void) {
 	GetColors(tab);
 	for (int i = 64; i >= 0; i -= FADE_STEP) {
 		SetColors(tab, i);
-		WaitVR();
+		WaitVR(true);
 		UpdateColors();
 	}
 }
 
 
 void VGA::Show(void) {
-	SPRITE *spr = ShowQ.First();
+	SPRITE *spr = ShowQ->First();
 
-	for (spr = ShowQ.First(); spr; spr = spr->Next)
+	for (spr = ShowQ->First(); spr; spr = spr->Next)
 		spr->Show();
 	Update();
-	for (spr = ShowQ.First(); spr; spr = spr->Next)
+	for (spr = ShowQ->First(); spr; spr = spr->Next)
 		spr->Hide();
 
 	++ FrmCnt;
@@ -1228,7 +1224,8 @@ void VGA::Update(void) {
 	  asm   mov ah,byte ptr p+1
 	  asm   out dx,ax
 	*/
-	if (! SpeedTest) WaitVR();
+	if (! SpeedTest)
+		WaitVR(true);
 
 	if (SetPal) {
 		UpdateColors();

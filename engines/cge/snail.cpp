@@ -80,7 +80,7 @@ static void SNGame(SPRITE *spr, int num) {
 		int buref = 0;
 		int Stage = 0;
 
-		for (dup[0] = VGA::ShowQ.First(); dup[0]; dup[0] = dup[0]->Next) {
+		for (dup[0] = Vga->ShowQ->First(); dup[0]; dup[0] = dup[0]->Next) {
 			buref = dup[0]->Ref;
 			if (buref / 1000 == 16 && buref % 100 == 6) {
 				Stage = (buref / 100) % 10;
@@ -88,8 +88,8 @@ static void SNGame(SPRITE *spr, int num) {
 			}
 		}
 		if (dup[1] == NULL) {
-			dup[1] = VGA::ShowQ.Locate(16003);    // pan
-			dup[2] = VGA::ShowQ.Locate(16004);    // pani
+			dup[1] = Vga->ShowQ->Locate(16003);    // pan
+			dup[2] = Vga->ShowQ->Locate(16004);    // pani
 		}
 
 		if (Game) { // continue game
@@ -172,10 +172,10 @@ static void SNGame(SPRITE *spr, int num) {
 		static int count = 0;
 
 		if (k == NULL) {
-			k  = VGA::ShowQ.Locate(20700);
-			k1 = VGA::ShowQ.Locate(20701);
-			k2 = VGA::ShowQ.Locate(20702);
-			k3 = VGA::ShowQ.Locate(20703);
+			k  = Vga->ShowQ->Locate(20700);
+			k1 = Vga->ShowQ->Locate(20701);
+			k2 = Vga->ShowQ->Locate(20702);
+			k3 = Vga->ShowQ->Locate(20703);
 		}
 
 		if (! Game) { // init
@@ -282,13 +282,13 @@ static void SNGame(SPRITE *spr, int num) {
 
 void ExpandSprite(SPRITE *spr) {
 	if (spr)
-		VGA::ShowQ.Insert(VGA::SpareQ.Remove(spr));
+		Vga->ShowQ->Insert(Vga->SpareQ->Remove(spr));
 }
 
 
 void ContractSprite(SPRITE *spr) {
 	if (spr)
-		VGA::SpareQ.Append(VGA::ShowQ.Remove(spr));
+		Vga->SpareQ->Append(Vga->ShowQ->Remove(spr));
 }
 
 int FindPocket(SPRITE *spr) {
@@ -515,10 +515,10 @@ static void SNZTrim(SPRITE *spr) {
 			SPRITE *s;
 			HEART::Enable = false;
 			s = (spr->Flags.Shad) ? spr->Prev : NULL;
-			VGA::ShowQ.Insert(VGA::ShowQ.Remove(spr));
+			Vga->ShowQ->Insert(Vga->ShowQ->Remove(spr));
 			if (s) {
 				s->Z = spr->Z;
-				VGA::ShowQ.Insert(VGA::ShowQ.Remove(s), spr);
+				Vga->ShowQ->Insert(Vga->ShowQ->Remove(s), spr);
 			}
 			HEART::Enable = en;
 		}
@@ -636,7 +636,7 @@ void SNCover(SPRITE *spr, int xref) {
 		xspr->Goto(spr->X, spr->Y);
 		ExpandSprite(xspr);
 		if ((xspr->Flags.Shad = spr->Flags.Shad) == 1) {
-			VGA::ShowQ.Insert(VGA::ShowQ.Remove(spr->Prev), xspr);
+			Vga->ShowQ->Insert(Vga->ShowQ->Remove(spr->Prev), xspr);
 			spr->Flags.Shad = false;
 		}
 		FeedSnail(xspr, NEAR);
@@ -650,7 +650,7 @@ void SNUncover(SPRITE *spr, SPRITE *xspr) {
 		spr->Cave = xspr->Cave;
 		spr->Goto(xspr->X, xspr->Y);
 		if ((spr->Flags.Shad = xspr->Flags.Shad) == 1) {
-			VGA::ShowQ.Insert(VGA::ShowQ.Remove(xspr->Prev), spr);
+			Vga->ShowQ->Insert(Vga->ShowQ->Remove(xspr->Prev), spr);
 			xspr->Flags.Shad = false;
 		}
 		spr->Z = xspr->Z;
@@ -725,7 +725,7 @@ void SNSlave(SPRITE *spr, int ref) {
 			SNSend(slv, spr->Cave);
 			slv->Flags.Slav = true;
 			slv->Z = spr->Z;
-			VGA::ShowQ.Insert(VGA::ShowQ.Remove(slv), spr->Next);
+			Vga->ShowQ->Insert(Vga->ShowQ->Remove(slv), spr->Next);
 		}
 	}
 }
@@ -752,13 +752,13 @@ void SNKill(SPRITE *spr) {
 		}
 		SPRITE *nx = spr->Next;
 		Hide1(spr);
-		VGA::ShowQ.Remove(spr);
+		Vga->ShowQ->Remove(spr);
 		MOUSE::ClrEvt(spr);
 		if (spr->Flags.Kill)
 			delete spr;
 		else {
 			spr->Cave = -1;
-			VGA::SpareQ.Append(spr);
+			Vga->SpareQ->Append(spr);
 		}
 		if (nx)
 			if (nx->Flags.Slav)
@@ -826,7 +826,7 @@ static void SNLevel(SPRITE *spr, int lev) {
 	while (Lev < lev) {
 		SPRITE *spr;
 		++Lev;
-		spr = VGA::SpareQ.Locate(100 + Lev);
+		spr = Vga->SpareQ->Locate(100 + Lev);
 		if (spr) {
 			spr->BackShow(true);
 			spr->Cave = 0;
@@ -863,19 +863,19 @@ void SNFlash(bool on) {
 				c = pal[i].B << 1;
 				pal[i].B = (c < 64) ? c : 63;
 			}
-			VGA::SetColors(pal, 64);
+			Vga->SetColors(pal, 64);
 		}
 	} else
-		VGA::SetColors(SysPal, 64);
+		Vga->SetColors(SysPal, 64);
 	Dark = false;
 }
 
 
 static void SNLight(bool in) {
 	if (in)
-		VGA::Sunrise(SysPal);
+		Vga->Sunrise(SysPal);
 	else
-		VGA::Sunset();
+		Vga->Sunset();
 	Dark = ! in;
 }
 
