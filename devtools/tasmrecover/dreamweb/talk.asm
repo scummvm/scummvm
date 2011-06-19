@@ -566,4 +566,3 @@ doredes:	call	delpointer
 
 
 
-

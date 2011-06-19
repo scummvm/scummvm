@@ -2605,4 +2605,3 @@ beforethistext:	mov	[es:di],ax
 
 
 
-
