@@ -561,11 +561,11 @@ bool GPHGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-SdlGraphicsManager::MousePos* GPHGraphicsManager::getMouseCurState() {
+SurfaceSdlGraphicsManager::MousePos *GPHGraphicsManager::getMouseCurState() {
 	return &_mouseCurState;
 }
 
-SdlGraphicsManager::VideoState* GPHGraphicsManager::getVideoMode() {
+SurfaceSdlGraphicsManager::VideoState *GPHGraphicsManager::getVideoMode() {
 	return &_videoMode;
 }
 

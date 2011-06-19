@@ -492,11 +492,11 @@ bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-SdlGraphicsManager::MousePos* DINGUXSdlGraphicsManager::getMouseCurState() {
+SurfaceSdlGraphicsManager::MousePos *DINGUXSdlGraphicsManager::getMouseCurState() {
 	return &_mouseCurState;
 }
 
-SdlGraphicsManager::VideoState* DINGUXSdlGraphicsManager::getVideoMode() {
+SurfaceSdlGraphicsManager::VideoState *DINGUXSdlGraphicsManager::getVideoMode() {
 	return &_videoMode;
 }
 
