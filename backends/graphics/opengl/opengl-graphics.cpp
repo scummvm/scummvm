@@ -179,7 +179,7 @@ bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
 }
 
 int OpenGLGraphicsManager::getGraphicsMode() const {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	return _videoMode.mode;
 }
 
@@ -420,12 +420,12 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 }
 
 void OpenGLGraphicsManager::updateScreen() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	internUpdateScreen();
 }
 
 void OpenGLGraphicsManager::setShakePos(int shakeOffset) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	_shakePos = shakeOffset;
 }
 
@@ -440,7 +440,7 @@ void OpenGLGraphicsManager::clearFocusRectangle() {
 //
 
 void OpenGLGraphicsManager::showOverlay() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayVisible)
 		return;
@@ -451,7 +451,7 @@ void OpenGLGraphicsManager::showOverlay() {
 }
 
 void OpenGLGraphicsManager::hideOverlay() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (!_overlayVisible)
 		return;
@@ -483,7 +483,7 @@ void OpenGLGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
 }
 
 void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayTexture == NULL)
 		return;
