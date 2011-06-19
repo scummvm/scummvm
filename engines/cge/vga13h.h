@@ -131,11 +131,12 @@ extern  SEQ Seq2[];
 class HEART : public ENGINE {
 	friend class ENGINE;
 public:
-	static bool Enable;
-	static uint16 *XTimer;
-	static void SetXTimer(uint16 *ptr);
-	static void SetXTimer(uint16 *ptr, uint16 time);
-	HEART(void);
+	HEART();
+
+	bool Enable;
+	uint16 *XTimer;
+	void SetXTimer(uint16 *ptr);
+	void SetXTimer(uint16 *ptr, uint16 time);
 };
 
 
