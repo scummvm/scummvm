@@ -2583,8 +2583,10 @@ findlenextext:	mov	cl,[es:si]
 	sub	bx,extext
 	push	bx ax
 	sub	cx,bx
+	cmp cx, 0xffff;		BIG FIXME! Find out why this is happening
+	jz $1
 	rep	movsb
-	pop	bx
+$1:	pop	bx
 	sub	extextpos,bx
 	
 	pop	si

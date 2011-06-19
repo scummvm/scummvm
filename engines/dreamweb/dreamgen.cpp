@@ -8302,7 +8302,11 @@ findlenextext:
 	push(bx);
 	push(ax);
 	_sub(cx, bx);
+	_cmp(cx,  0xffff);
+	if (flags.z())
+		goto _tmp1;
 	_movsb(cx, true);
+_tmp1:
 	bx = pop();
 	_sub(data.word(kExtextpos), bx);
 	si = pop();
@@ -9536,6 +9540,9 @@ void DreamGenContext::selectlocation() {
 	playchannel0();
 	data.byte(kNewlocation) = 255;
 select:
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		goto quittravel;
 	delpointer();
 	readmouse();
 	showpointer();
