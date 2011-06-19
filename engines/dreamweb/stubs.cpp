@@ -162,10 +162,6 @@ void DreamGenContext::openfilefromc() {
 
 void DreamGenContext::openfile() {
 	Common::String name = getFilename(*this);
-	if (name.empty()) { //fixme: this happens if you quit from new game/load screen
-		flags._c = true;
-		return;
-	}
 	debug(1, "opening file: %s", name.c_str());
 	engine->openFile(name);
 	cs.word(kHandle) = 1; //only one handle
@@ -361,6 +357,7 @@ void DreamGenContext::generalerror() {
 }
 
 void DreamGenContext::dosreturn() {
+
 	_cmp(data.byte(kCommandtype), 250);
 	if (!flags.z()) {
 		data.byte(kCommandtype) = 250;
