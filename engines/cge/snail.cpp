@@ -959,13 +959,13 @@ void SNAIL::RunCom(void) {
 				if (sprel && TalkEnable) {
 					if (sprel == Hero && sprel->SeqTest(-1))
 						sprel->Step(HTALK);
-					Say(Text[snc->Val], sprel);
+					Say(Text->getText(snc->Val), sprel);
 					SYSTEM::FunDel = HEROFUN0;
 				}
 				break;
 			case SNINF      :
 				if (TalkEnable) {
-					Inf(Text[snc->Val]);
+					Inf(Text->getText(snc->Val));
 					SYSTEM::FunDel = HEROFUN0;
 				}
 				break;
