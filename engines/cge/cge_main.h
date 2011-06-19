@@ -170,6 +170,7 @@ void ContractSprite(SPRITE *spr);
 void cge_main(void);
 
 extern VGA *Vga;
+extern HEART *Heart;
 extern int OffUseCount;
 
 } // End of namespace CGE

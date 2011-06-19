@@ -42,6 +42,8 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_console = new CGEConsole(this);
 	Text = new TEXT(ProgName());
 	Vga = new VGA(M13H);
+	Heart = new HEART;
+
 
 	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
 

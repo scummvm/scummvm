@@ -511,16 +511,16 @@ static void SNRTNext(SPRITE *sprel, int p) {
 static void SNZTrim(SPRITE *spr) {
 	if (spr)
 		if (spr->Active()) {
-			bool en = HEART::Enable;
+			bool en = Heart->Enable;
 			SPRITE *s;
-			HEART::Enable = false;
+			Heart->Enable = false;
 			s = (spr->Flags.Shad) ? spr->Prev : NULL;
 			Vga->ShowQ->Insert(Vga->ShowQ->Remove(spr));
 			if (s) {
 				s->Z = spr->Z;
 				Vga->ShowQ->Insert(Vga->ShowQ->Remove(s), spr);
 			}
-			HEART::Enable = en;
+			Heart->Enable = en;
 		}
 }
 
@@ -936,7 +936,7 @@ void SNAIL::RunCom(void) {
 			case SNLABEL    :
 				break;
 			case SNPAUSE    :
-				HEART::SetXTimer(&Pause, snc->Val);
+				Heart->SetXTimer(&Pause, snc->Val);
 				if (Talk)
 					TextDelay = true;
 				break;
@@ -944,7 +944,7 @@ void SNAIL::RunCom(void) {
 				if (sprel) {
 					if (sprel->SeqTest(snc->Val) &&
 					        (snc->Val >= 0 || sprel != Hero || Hero->TracePtr < 0)) {
-						HEART::SetXTimer(&Pause, sprel->Time);
+						Heart->SetXTimer(&Pause, sprel->Time);
 					} else
 						goto xit;
 				}
