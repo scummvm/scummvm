@@ -1413,7 +1413,7 @@ void OpenGLGraphicsManager::updateOSD() {
 	int dstX = (_osdSurface.w - width) / 2;
 	int dstY = (_osdSurface.h - height) / 2;
 
-	// Draw a dark gray rect
+	// Draw a dark gray rect (R = 40, G = 40, B = 40)
 	const uint16 color = 0x294B;
 	_osdSurface.fillRect(Common::Rect(dstX, dstY, dstX + width, dstY + height), color);
 
