@@ -54,6 +54,10 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	SDL_ShowCursor(SDL_DISABLE);
 
 	// Get desktop resolution
+	// TODO: In case the OpenGL manager is created *after* a plain SDL manager
+	// has been used, this will return the last setup graphics mode rather
+	// than the desktop resolution. We should really look into a way to
+	// properly retrieve the desktop resolution.
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 	if (videoInfo->current_w > 0 && videoInfo->current_h > 0) {
 		_desktopWidth = videoInfo->current_w;
