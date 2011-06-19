@@ -631,7 +631,7 @@ void SdlGraphicsManager::setGraphicsModeIntern() {
 }
 
 int SdlGraphicsManager::getGraphicsMode() const {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	return _videoMode.mode;
 }
 
@@ -941,7 +941,7 @@ bool SdlGraphicsManager::hotswapGFXMode() {
 }
 
 void SdlGraphicsManager::updateScreen() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
@@ -1223,7 +1223,7 @@ void SdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 }
 
 void SdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	assert(src);
 
 	if (_screen == NULL) {
@@ -1273,7 +1273,7 @@ void SdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int
 }
 
 Graphics::Surface *SdlGraphicsManager::lockScreen() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	// Lock the graphics mutex
 	g_system->lockMutex(_graphicsMutex);
@@ -1300,7 +1300,7 @@ Graphics::Surface *SdlGraphicsManager::lockScreen() {
 }
 
 void SdlGraphicsManager::unlockScreen() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	// paranoia check
 	assert(_screenIsLocked);
@@ -1465,7 +1465,7 @@ void SdlGraphicsManager::setCursorPalette(const byte *colors, uint start, uint n
 }
 
 void SdlGraphicsManager::setShakePos(int shake_pos) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	_newShakePos = shake_pos;
 }
@@ -1511,7 +1511,7 @@ void SdlGraphicsManager::clearFocusRectangle() {
 #pragma mark -
 
 void SdlGraphicsManager::showOverlay() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	int x, y;
 
@@ -1534,7 +1534,7 @@ void SdlGraphicsManager::showOverlay() {
 }
 
 void SdlGraphicsManager::hideOverlay() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (!_overlayVisible)
 		return;
@@ -1558,7 +1558,7 @@ void SdlGraphicsManager::hideOverlay() {
 }
 
 void SdlGraphicsManager::clearOverlay() {
-	//assert (_transactionMode == kTransactionNone);
+	//assert(_transactionMode == kTransactionNone);
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
@@ -1591,7 +1591,7 @@ void SdlGraphicsManager::clearOverlay() {
 }
 
 void SdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
 		return;
@@ -1611,7 +1611,7 @@ void SdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
 }
 
 void SdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
 		return;
@@ -2037,7 +2037,7 @@ void SdlGraphicsManager::drawMouse() {
 
 #ifdef USE_OSD
 void SdlGraphicsManager::displayMessageOnOSD(const char *msg) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	assert(msg);
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
