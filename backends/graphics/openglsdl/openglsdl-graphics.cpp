@@ -110,16 +110,16 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 	// use.
 	const Graphics::PixelFormat RGBList[] = {
 #if defined(ENABLE_32BIT)
-		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),	// RGBA8888
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), // RGBA8888
 #ifndef USE_GLES
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), // ARGB8888
 #endif
-		Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),	// RGB888
+		Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  // RGB888
 #endif
-		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),	// RGB565
-		Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),	// RGB5551
-		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
-		Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),	// RGBA4444
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  // RGB565
+		Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),  // RGB5551
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),  // RGB555
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  // RGBA4444
 #ifndef USE_GLES
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)   // ARGB4444
 #endif
