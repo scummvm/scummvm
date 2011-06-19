@@ -228,7 +228,7 @@ class QUEUE {
 	SPRITE *Head, * Tail;
 public:
 	bool Show;
-	QUEUE(bool show = false);
+	QUEUE(bool show);
 	~QUEUE(void);
 	void Append(SPRITE *spr);
 	void Insert(SPRITE *spr, SPRITE *nxt);
@@ -247,32 +247,35 @@ public:
 
 
 class VGA {
-	static uint16 OldMode;
-	static uint16 *OldScreen;
-	static uint16 StatAdr;
-	static bool SetPal;
-	static DAC *OldColors, * NewColors;
-	static int SetMode(int mode);
-	static void UpdateColors(void);
-	static void SetColors(void);
-	static const char *Msg;
-	static const char *Nam;
-	static void SetStatAdr(void);
-	static void WaitVR(bool on = true);
+	uint16 OldMode;
+	uint16 *OldScreen;
+	uint16 StatAdr;
+	bool SetPal;
+	DAC *OldColors, *NewColors;
+	const char *Msg;
+	const char *Nam;
+
+	int SetMode(int mode);
+	void UpdateColors(void);
+	void SetColors(void);
+	void SetStatAdr(void);
+	void WaitVR(bool on);
 public:
 	uint32 FrmCnt;
-	static QUEUE ShowQ, SpareQ;
-	static int Mono;
+	QUEUE *ShowQ, *SpareQ;
+	int Mono;
 	static uint8 *Page[4];
-	VGA(int mode = M13H);
+
+	VGA(int mode);
 	~VGA(void);
+
 	void Setup(VgaRegBlk *vrb);
-	static void GetColors(DAC *tab);
-	static void SetColors(DAC *tab, int lum);
-	static void Clear(uint8 color = 0);
-	static void CopyPage(uint16 d, uint16 s = 3);
-	static void Sunrise(DAC *tab);
-	static void Sunset(void);
+	void GetColors(DAC *tab);
+	void SetColors(DAC *tab, int lum);
+	void Clear(uint8 color);
+	void CopyPage(uint16 d, uint16 s);
+	void Sunrise(DAC *tab);
+	void Sunset(void);
 	void Show(void);
 	void Update(void);
 };

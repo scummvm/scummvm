@@ -30,6 +30,7 @@
 #include "cge/snail.h"
 #include "cge/mouse.h"
 #include "cge/snddrv.h"
+#include "cge/cge_main.h"
 #include <string.h>
 
 namespace CGE {
@@ -75,9 +76,9 @@ MIXER::MIXER(int x, int y) : SPRITE(NULL), Fall(MIX_FALL) {
 	}
 	Led[ArrayCount(Led) - 1]->Flags.BDel = true;
 
-	VGA::ShowQ.Insert(this);
+	Vga->ShowQ->Insert(this);
 	for (i = 0; i < ArrayCount(Led); i ++)
-		VGA::ShowQ.Insert(Led[i]);
+		Vga->ShowQ->Insert(Led[i]);
 
 	//--- reset balance
 	i = (SNDDrvInfo.VOL4.ML + SNDDrvInfo.VOL4.MR) / 2;

@@ -224,7 +224,7 @@ struct  SAVTAB {
 	{ &Game,          sizeof(Game),         1 },      // spare 2
 	{ &Game,          sizeof(Game),         1 },      // spare 3
 	{ &Game,          sizeof(Game),         1 },      // spare 4
-	{ &VGA::Mono,     sizeof(VGA::Mono),    0 },
+//	{ &VGA::Mono,     sizeof(VGA::Mono),    0 },
 	{ &Music,         sizeof(Music),        1 },
 	{ volume,         sizeof(volume),       1 },
 	{ Flag,           sizeof(Flag),         1 },
@@ -273,12 +273,12 @@ static void LoadGame(XFILE &file, bool tiny = false) {
 			if (spr == NULL)
 				error("No core");
 			*spr = S;
-			VGA::SpareQ.Append(spr);
+			Vga->SpareQ->Append(spr);
 		}
 
 		for (i = 0; i < POCKET_NX; i ++) {
 			register int r = pocref[i];
-			Pocket[i] = (r < 0) ? NULL : VGA::SpareQ.Locate(r);
+			Pocket[i] = (r < 0) ? NULL : Vga->SpareQ->Locate(r);
 		}
 	}
 }
@@ -311,7 +311,7 @@ static void SaveGame(XFILE &file) {
 
 	file.Write((uint8 *) & (i = SVGCHKSUM), sizeof(i));
 
-	for (spr = VGA::SpareQ.First(); spr; spr = spr->Next)
+	for (spr = Vga->SpareQ->First(); spr; spr = spr->Next)
 		if (spr->Ref >= 1000)
 			if (!file.Error)
 				file.Write((uint8 *)spr, sizeof(*spr));
@@ -386,7 +386,7 @@ void WALK::Tick(void) {
 	if (Dir != NO_DIR) {
 		SPRITE *spr;
 		SYSTEM::FunTouch();
-		for (spr = VGA::ShowQ.First(); spr; spr = spr->Next) {
+		for (spr = Vga->ShowQ->First(); spr; spr = spr->Next) {
 			if (Distance(spr) < 2) {
 				if (! spr->Flags.Near) {
 					FeedSnail(spr, NEAR);
@@ -562,7 +562,7 @@ static void SetMapBrick(int x, int z) {
 		wtom(z, n + 3, 10, 2);
 		CLUSTER::Map[z][x] = 1;
 		s->SetName(n);
-		VGA::ShowQ.Insert(s, VGA::ShowQ.First());
+		Vga->ShowQ->Insert(s, Vga->ShowQ->First());
 	}
 }
 
@@ -667,13 +667,13 @@ void SYSTEM::FunTouch(void) {
 
 
 static void ShowBak(int ref) {
-	SPRITE *spr = VGA::SpareQ.Locate(ref);
+	SPRITE *spr = Vga->SpareQ->Locate(ref);
 	if (spr) {
 		BITMAP::Pal = SysPal;
 		spr->Expand();
 		BITMAP::Pal = NULL;
 		spr->Show(2);
-		VGA::CopyPage(1, 2);
+		Vga->CopyPage(1, 2);
 		SYSTEM::SetPal();
 		spr->Contract();
 	}
@@ -688,7 +688,7 @@ static void CaveUp(void) {
 	ShowBak(BakRef);
 	LoadMapping();
 	Text->Preload(BakRef, BakRef + 1000);
-	SPRITE *spr = VGA::SpareQ.First();
+	SPRITE *spr = Vga->SpareQ->First();
 	while (spr) {
 		SPRITE *n = spr->Next;
 		if (spr->Cave == Now || spr->Cave == 0)
@@ -718,18 +718,18 @@ static void CaveUp(void) {
 	if (! Dark)
 		Vga->Sunset();
 
-	VGA::CopyPage(0, 1);
+	Vga->CopyPage(0, 1);
 	SelectPocket(-1);
 	if (Hero)
-		VGA::ShowQ.Insert(VGA::ShowQ.Remove(Hero));
+		Vga->ShowQ->Insert(Vga->ShowQ->Remove(Hero));
 
 	if (Shadow) {
-		VGA::ShowQ.Remove(Shadow);
+		Vga->ShowQ->Remove(Shadow);
 		Shadow->MakeXlat(Glass(SysPal, 204, 204, 204));
-		VGA::ShowQ.Insert(Shadow, Hero);
+		Vga->ShowQ->Insert(Shadow, Hero);
 		Shadow->Z = Hero->Z;
 	}
-	FeedSnail(VGA::ShowQ.Locate(BakRef + 999), TAKE);
+	FeedSnail(Vga->ShowQ->Locate(BakRef + 999), TAKE);
 	Vga->Show();
 	Vga->CopyPage(1, 0);
 	Vga->Show();
@@ -747,12 +747,12 @@ static void CaveDown(void) {
 	if (! HorzLine.Flags.Hide)
 		SwitchMapping();
 
-	for (spr = VGA::ShowQ.First(); spr;) {
+	for (spr = Vga->ShowQ->First(); spr;) {
 		SPRITE *n = spr->Next;
 		if (spr->Ref >= 1000 /*&& spr->Cave*/) {
 			if (spr->Ref % 1000 == 999)
 				FeedSnail(spr, TAKE);
-			VGA::SpareQ.Append(VGA::ShowQ.Remove(spr));
+			Vga->SpareQ->Append(Vga->ShowQ->Remove(spr));
 		}
 		spr = n;
 	}
@@ -793,14 +793,15 @@ void SwitchCave(int cav) {
 				Hero->Step(0);
 #ifndef DEMO
 				///// protection: auto-destruction on! ----------------------
-				VGA::SpareQ.Show = STARTUP::Summa * (cav <= CAVE_MAX);
+				Vga->SpareQ->Show = STARTUP::Summa * (cav <= CAVE_MAX);
 				/////--------------------------------------------------------
 #endif
 			}
 			CavLight.Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
 			              CAVE_Y + ((Now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
 			KillText();
-			if (! Startup) KeyClick();
+			if (! Startup)
+				KeyClick();
 			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
 			//TODO Change the SNPOST message send to a special way to send function pointer
 			//SNPOST(SNEXEC,   0, 0, (void *)&XCave); // switch cave
@@ -834,7 +835,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			break;
 		case 'F':
 			if (KEYBOARD::Key[ALT]) {
-				SPRITE *m = VGA::ShowQ.Locate(17001);
+				SPRITE *m = Vga->ShowQ->Locate(17001);
 				if (m) {
 					m->Step(1);
 					m->Time = 216; // 3s
@@ -1017,9 +1018,9 @@ static void SpkClose(void) {
 
 
 static void SwitchColorMode(void) {
-	SNPOST_(SNSEQ, 121, VGA::Mono = ! VGA::Mono, NULL);
+	SNPOST_(SNSEQ, 121, Vga->Mono = !Vga->Mono, NULL);
 	KeyClick();
-	VGA::SetColors(SysPal, 64);
+	Vga->SetColors(SysPal, 64);
 }
 
 
@@ -1066,7 +1067,7 @@ static void TakeName(void) {
 			tn->Center();
 			tn->Goto(tn->X, tn->Y - 10);
 			tn->Z = 126;
-			VGA::ShowQ.Insert(tn);
+			Vga->ShowQ->Insert(tn);
 		}
 	}
 }
@@ -1085,7 +1086,7 @@ static void SwitchMapping(void) {
 		}
 	} else {
 		SPRITE *s;
-		for (s = VGA::ShowQ.First(); s; s = s->Next)
+		for (s = Vga->ShowQ->First(); s; s = s->Next)
 			if (s->W == MAP_XGRID && s->H == MAP_ZGRID)
 				SNPOST_(SNKILL, -1, 0, s);
 	}
@@ -1104,7 +1105,7 @@ static void KillSprite(void) {
 static void PushSprite(void) {
 	SPRITE *spr = Sprite->Prev;
 	if (spr) {
-		VGA::ShowQ.Insert(VGA::ShowQ.Remove(Sprite), spr);
+		Vga->ShowQ->Insert(Vga->ShowQ->Remove(Sprite), spr);
 		while (Sprite->Z > Sprite->Next->Z)
 			--Sprite->Z;
 	} else
@@ -1121,7 +1122,7 @@ static void PullSprite(void) {
 			ok = (!spr->Flags.Slav);
 	}
 	if (ok) {
-		VGA::ShowQ.Insert(VGA::ShowQ.Remove(Sprite), spr);
+		Vga->ShowQ->Insert(Vga->ShowQ->Remove(Sprite), spr);
 		if (Sprite->Prev)
 			while (Sprite->Z < Sprite->Prev->Z)
 				++Sprite->Z;
@@ -1197,7 +1198,7 @@ static void SayDebug(void) {
 		// sprite queue size
 		uint16 n = 0;
 		SPRITE *spr;
-		for (spr = VGA::ShowQ.First(); spr; spr = spr->Next) {
+		for (spr = Vga->ShowQ->First(); spr; spr = spr->Next) {
 			++ n;
 			if (spr == Sprite) {
 				*XSPR = ' ';
@@ -1463,7 +1464,7 @@ static void LoadSprite(const char *fname, int ref, int cav, int col = 0, int row
 		warning("LoadSprite: use of fnsplit");
 
 		Sprite->ShpCnt = shpcnt;
-		VGA::SpareQ.Append(Sprite);
+		Vga->SpareQ->Append(Sprite);
 	}
 }
 
@@ -1578,7 +1579,7 @@ static void RunGame(void) {
 	LoadHeroXY();
 
 	CavLight.Flags.Tran = true;
-	VGA::ShowQ.Append(&CavLight);
+	Vga->ShowQ->Append(&CavLight);
 	CavLight.Flags.Hide = true;
 
 	static SEQ PocSeq[] = { { 0, 0, 0, 0, 20 },
@@ -1593,18 +1594,18 @@ static void RunGame(void) {
 	PocLight.Flags.Tran = true;
 	PocLight.Time = 1;
 	PocLight.Z = 120;
-	VGA::ShowQ.Append(&PocLight);
+	Vga->ShowQ->Append(&PocLight);
 	SelectPocket(-1);
 
-	VGA::ShowQ.Append(&Mouse);
+	Vga->ShowQ->Append(&Mouse);
 
 //    ___________
 	LoadUser();
 //    ~~~~~~~~~~~
 
-	if ((Sprite = VGA::SpareQ.Locate(121)) != NULL)
-		SNPOST_(SNSEQ, -1, VGA::Mono, Sprite);
-	if ((Sprite = VGA::SpareQ.Locate(122)) != NULL)
+	if ((Sprite = Vga->SpareQ->Locate(121)) != NULL)
+		SNPOST_(SNSEQ, -1, Vga->Mono, Sprite);
+	if ((Sprite = Vga->SpareQ->Locate(122)) != NULL)
 		Sprite->Step(Music);
 	SNPOST_(SNSEQ, -1, Music, Sprite);
 	if (! Music)
@@ -1634,7 +1635,7 @@ static void RunGame(void) {
 				Shadow->Ref = 2;
 				Shadow->Flags.Tran = true;
 				Hero->Flags.Shad = true;
-				VGA::ShowQ.Insert(VGA::SpareQ.Remove(Shadow), Hero);
+				Vga->ShowQ->Insert(Vga->SpareQ->Remove(Shadow), Hero);
 			}
 		}
 	}
@@ -1642,16 +1643,16 @@ static void RunGame(void) {
 	InfoLine.Goto(INFO_X, INFO_Y);
 	InfoLine.Flags.Tran = true;
 	InfoLine.Update(NULL);
-	VGA::ShowQ.Insert(&InfoLine);
+	Vga->ShowQ->Insert(&InfoLine);
 
 	DebugLine.Z = 126;
-	VGA::ShowQ.Insert(&DebugLine);
+	Vga->ShowQ->Insert(&DebugLine);
 
 	HorzLine.Y = MAP_TOP - (MAP_TOP > 0);
 	HorzLine.Z = 126;
-	VGA::ShowQ.Insert(&HorzLine);
+	Vga->ShowQ->Insert(&HorzLine);
 
-	Mouse.Busy = VGA::SpareQ.Locate(BUSY_REF);
+	Mouse.Busy = Vga->SpareQ->Locate(BUSY_REF);
 	if (Mouse.Busy)
 		ExpandSprite(Mouse.Busy);
 
@@ -1676,8 +1677,8 @@ static void RunGame(void) {
 	SNPOST(SNCLEAR, -1, 0, NULL);
 	SNPOST_(SNCLEAR, -1, 0, NULL);
 	Mouse.Off();
-	VGA::ShowQ.Clear();
-	VGA::SpareQ.Clear();
+	Vga->ShowQ->Clear();
+	Vga->SpareQ->Clear();
 	Hero = NULL;
 	Shadow = NULL;
 }
@@ -1687,9 +1688,9 @@ void Movie(const char *ext) {
 	const char *fn = ProgName(ext);
 	if (INI_FILE::Exist(fn)) {
 		LoadScript(fn);
-		ExpandSprite(VGA::SpareQ.Locate(999));
-		FeedSnail(VGA::ShowQ.Locate(999), TAKE);
-		VGA::ShowQ.Append(&Mouse);
+		ExpandSprite(Vga->SpareQ->Locate(999));
+		FeedSnail(Vga->ShowQ->Locate(999), TAKE);
+		Vga->ShowQ->Append(&Mouse);
 		HEART::Enable = true;
 		KEYBOARD::SetClient(Sys);
 		while (! Snail.Idle()) {
@@ -1699,8 +1700,8 @@ void Movie(const char *ext) {
 		HEART::Enable = false;
 		SNPOST(SNCLEAR, -1, 0, NULL);
 		SNPOST_(SNCLEAR, -1, 0, NULL);
-		VGA::ShowQ.Clear();
-		VGA::SpareQ.Clear();
+		Vga->ShowQ->Clear();
+		Vga->SpareQ->Clear();
 	}
 }
 
@@ -1723,23 +1724,23 @@ bool ShowTitle(const char *name) {
 	}
 
 	Vga->Sunset();
-	VGA::CopyPage(1, 2);
-	VGA::CopyPage(0, 1);
+	Vga->CopyPage(1, 2);
+	Vga->CopyPage(0, 1);
 	SelectPocket(-1);
 	Vga->Sunrise(SysPal);
 
 	if (STARTUP::Mode < 2 && ! STARTUP::SoundOk) {
-		VGA::CopyPage(1, 2);
-		VGA::CopyPage(0, 1);
-		VGA::ShowQ.Append(&Mouse);
+		Vga->CopyPage(1, 2);
+		Vga->CopyPage(0, 1);
+		Vga->ShowQ->Append(&Mouse);
 		HEART::Enable = true;
 		Mouse.On();
 		for (SelectSound(); ! Snail.Idle() || VMENU::Addr;)
 			MainLoop();
 		Mouse.Off();
 		HEART::Enable = false;
-		VGA::ShowQ.Clear();
-		VGA::CopyPage(0, 2);
+		Vga->ShowQ->Clear();
+		Vga->CopyPage(0, 2);
 		STARTUP::SoundOk = 2;
 		if (Music)
 			LoadMIDI(0);
@@ -1766,9 +1767,9 @@ bool ShowTitle(const char *name) {
 #endif
 		//-----------------------------------------
 		Movie("X00"); // paylist
-		VGA::CopyPage(1, 2);
-		VGA::CopyPage(0, 1);
-		VGA::ShowQ.Append(&Mouse);
+		Vga->CopyPage(1, 2);
+		Vga->CopyPage(0, 1);
+		Vga->ShowQ->Append(&Mouse);
 		//Mouse.On();
 		HEART::Enable = true;
 		for (TakeName(); GET_TEXT::Ptr;)
@@ -1779,15 +1780,15 @@ bool ShowTitle(const char *name) {
 		if (usr_ok)
 			strcat(UsrFnam, SVG_EXT);
 		//Mouse.Off();
-		VGA::ShowQ.Clear();
-		VGA::CopyPage(0, 2);
+		Vga->ShowQ->Clear();
+		Vga->CopyPage(0, 2);
 #endif
 		if (usr_ok && STARTUP::Mode == 0) {
 			const char *n = UsrPath(UsrFnam);
 			if (CFILE::Exist(n)) {
 				CFILE file = CFILE(n, REA, RCrypt);
 				LoadGame(file, true); // only system vars
-				VGA::SetColors(SysPal, 64);
+				Vga->SetColors(SysPal, 64);
 				Vga->Update();
 				if (FINIS) {
 					++ STARTUP::Mode;
@@ -1801,7 +1802,7 @@ bool ShowTitle(const char *name) {
 	if (STARTUP::Mode < 2)
 		Movie("X01"); // wink
 
-	VGA::CopyPage(0, 2);
+	Vga->CopyPage(0, 2);
 
 #ifdef DEMO
 	return true;
@@ -1844,7 +1845,8 @@ void cge_main(void) {
 		Movie(LGO_EXT);
 	if (ShowTitle("WELCOME")) {
 #ifndef   DEMO
-		if (STARTUP::Mode == 1) Movie("X02"); // intro
+		if (STARTUP::Mode == 1)
+			Movie("X02"); // intro
 #endif
 		RunGame();
 		Startup = 2;
