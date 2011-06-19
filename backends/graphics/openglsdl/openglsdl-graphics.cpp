@@ -394,27 +394,27 @@ void OpenGLSdlGraphicsManager::displayModeChangedMsg() {
 	if (newModeName) {
 		const int scaleFactor = getScale();
 
-		char buffer[128];
-		sprintf(buffer, "%s: %s\n%d x %d -> %d x %d",
+		Common::String osdMessage = Common::String::format(
+			"%s: %s\n%d x %d -> %d x %d",
 			_("Current display mode"),
 			newModeName,
 			_videoMode.screenWidth * scaleFactor,
 			_videoMode.screenHeight * scaleFactor,
 			_hwscreen->w, _hwscreen->h
 			);
-		displayMessageOnOSD(buffer);
+		displayMessageOnOSD(osdMessage.c_str());
 	}
 }
 void OpenGLSdlGraphicsManager::displayScaleChangedMsg() {
-	char buffer[128];
 	const int scaleFactor = getScale();
-	sprintf(buffer, "%s: x%d\n%d x %d -> %d x %d",
+	Common::String osdMessage = Common::String::format(
+		"%s: x%d\n%d x %d -> %d x %d",
 		_("Current scale"),
 		scaleFactor,
 		_videoMode.screenWidth, _videoMode.screenHeight,
 		_videoMode.overlayWidth, _videoMode.overlayHeight
 		);
-	displayMessageOnOSD(buffer);
+	displayMessageOnOSD(osdMessage.c_str());
 }
 #endif
 
@@ -450,18 +450,18 @@ void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 	_ignoreResizeFrames = 10;
 
 #ifdef USE_OSD
-	char buffer[128];
+	Common::String osdMessage;
 	if (getFullscreenMode())
-		sprintf(buffer, "%s\n%d x %d",
+		osdMessage = Common::String::format("%s\n%d x %d",
 			_("Fullscreen mode"),
 			_hwscreen->w, _hwscreen->h
 			);
 	else
-		sprintf(buffer, "%s\n%d x %d",
+		osdMessage = Common::String::format("%s\n%d x %d",
 			_("Windowed mode"),
 			_hwscreen->w, _hwscreen->h
 			);
-	displayMessageOnOSD(buffer);
+	displayMessageOnOSD(osdMessage.c_str());
 #endif
 }
 
@@ -478,19 +478,19 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 			// Alt-S create a screenshot
 			if (event.kbd.keycode == 's') {
-				char filename[20];
+				Common::String filename;
 
 				for (int n = 0;; n++) {
 					SDL_RWops *file;
 
-					sprintf(filename, "scummvm%05d.bmp", n);
-					file = SDL_RWFromFile(filename, "r");
+					filename = Common::String::format("scummvm%05d.bmp", n);
+					file = SDL_RWFromFile(filename.c_str(), "r");
 					if (!file)
 						break;
 					SDL_RWclose(file);
 				}
-				if (saveScreenshot(filename))
-					debug("Saved screenshot '%s'", filename);
+				if (saveScreenshot(filename.c_str()))
+					debug("Saved screenshot '%s'", filename.c_str());
 				else
 					warning("Could not save screenshot");
 				return true;
@@ -511,18 +511,18 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
 				endGFXTransaction();
 #ifdef USE_OSD
-			char buffer[128];
+			Common::String osdMessage;
 			if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
-				sprintf(buffer, "%s\n%d x %d -> %d x %d",
-						_("Enabled aspect ratio correction"),
+				osdMessage = Common::String::format("%s\n%d x %d -> %d x %d",
+				        _("Enabled aspect ratio correction"),
 				        _videoMode.screenWidth, _videoMode.screenHeight,
 				        _hwscreen->w, _hwscreen->h);
 			else
-				sprintf(buffer, "%s\n%d x %d -> %d x %d",
-						_("Disabled aspect ratio correction"),
+				osdMessage = Common::String::format("%s\n%d x %d -> %d x %d",
+				        _("Disabled aspect ratio correction"),
 				        _videoMode.screenWidth, _videoMode.screenHeight,
 				        _hwscreen->w, _hwscreen->h);
-			displayMessageOnOSD(buffer);
+			displayMessageOnOSD(osdMessage.c_str());
 #endif
 				internUpdateScreen();
 				return true;
