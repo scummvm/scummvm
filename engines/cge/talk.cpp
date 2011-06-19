@@ -30,7 +30,6 @@
 #include "cge/vol.h"
 #include "cge/game.h"
 #include "cge/mouse.h"
-#include <dos.h>
 
 namespace CGE {
 

@@ -47,7 +47,6 @@ namespace CGE {
 #define FF      12
 #define CR      13
 #define MAXFILE 128
-#define NULL    0
 
 #define IsWhite(c)  ((c) == ' ' || (c) == '\t' || (c) == '\n')
 #define IsUpper(c)  ((c) >= 'A' && (c) <= 'Z')

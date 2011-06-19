@@ -44,13 +44,10 @@
 #include    "cge/gettext.h"
 #include    "cge/mixer.h"
 #include    "cge/cge_main.h"
-#include    <conio.h>
 #include    <stdio.h>
 #include    <stdlib.h>
 #include    <string.h>
-#include    <dos.h>
 #include    <fcntl.h>
-#include    <io.h>
 
 #include "common/str.h"
 

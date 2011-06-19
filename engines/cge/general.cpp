@@ -251,22 +251,39 @@ uint16 IOHAND::Write(void *buf, uint16 len) {
 }
 
 long IOHAND::Mark(void) {
+	/*
 	return (Handle < 0) ? 0 : tell(Handle);
+	*/
+	warning("STUB: IOHAND::Mark");
+	return 0;
 }
 
 long IOHAND::Seek(long pos) {
+	/*
 	if (Handle < 0) return 0;
 	lseek(Handle, pos, SEEK_SET);
 	return tell(Handle);
+	*/
+	warning("STUB: IOHAND::Seek");
+	return 0;
 }
 
 long IOHAND::Size(void) {
+	/*
 	if (Handle < 0) return 0;
+	
 	return filelength(Handle);
+	*/
+	warning("STUB: IOHAND::Size");
+	return 0;
 }
 
 bool IOHAND::Exist(const char *name) {
+	/*
 	return access(name, 0) == 0;
+	*/
+	warning("STUB: IOHAND::Exist");
+	return 0;
 }
 
 //#define       EMS_ADR(a)  (FP_SEG(a) > 0xA000)

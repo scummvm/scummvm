@@ -35,7 +35,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <dos.h>
 
 namespace CGE {
 

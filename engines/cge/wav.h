@@ -95,7 +95,7 @@ class FMTCK : public CKHEA {
 	} Wav;
 
 	union {
-		struct PCM {
+		struct {
 			uint16 wBitsPerSample;      // Sample size
 		} Pcm;
 	};

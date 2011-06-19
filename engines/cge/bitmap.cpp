@@ -29,7 +29,6 @@
 #include "cge/cfile.h"
 #include "cge/jbw.h"
 #include "cge/vol.h"
-#include <dos.h>
 #include "cge/cfile.h"
 #include "common/system.h"
 

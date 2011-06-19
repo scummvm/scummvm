@@ -28,7 +28,6 @@
 #include "cge/game.h"
 #include "cge/mouse.h"
 #include <stdlib.h>
-#include <dos.h>
 
 
 namespace CGE {
