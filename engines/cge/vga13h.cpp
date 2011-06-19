@@ -219,12 +219,10 @@ SPRITE *Locate(int ref) {
 }
 
 
-bool    HEART::Enable = false;
-uint16 *HEART::XTimer = NULL;
-
-
 HEART::HEART(void)
 	: ENGINE(TMR_DIV) {
+	Enable = false;
+	XTimer = NULL;
 }
 
 
@@ -235,11 +233,11 @@ extern "C" void TimerProc (void)
   static uint8 run = 0;
 
   // decrement external timer uint16
-  if (HEART::XTimer)
-    if (*HEART::XTimer) -- *HEART::XTimer;
-    else HEART::XTimer = NULL;
+  if (Heart->XTimer)
+    if (*Heart->XTimer) -- *Heart->XTimer;
+    else Heart->XTimer = NULL;
 
-  if (! run && HEART::Enable)       // check overrun flag
+  if (! run && Heart->Enable)       // check overrun flag
     {
       static uint16 oldSP, oldSS;
 
@@ -299,11 +297,11 @@ void ENGINE::NewTimer(...) {
 	my_int: //------72Hz-------//
 
 	// decrement external timer uint16
-	if (HEART::XTimer)
-	  if (*HEART::XTimer) -- *HEART::XTimer;
-	  else HEART::XTimer = NULL;
+	if (Heart->XTimer)
+	  if (*Heart->XTimer) -- *Heart->XTimer;
+	  else Heart->XTimer = NULL;
 
-	if (! run && HEART::Enable)   // check overrun flag
+	if (! run && Heart->Enable)   // check overrun flag
 	  {
 	    static uint16 oldSP, oldSS;
 
@@ -473,8 +471,8 @@ void SPRITE::SetName(char *n) {
 
 SPRITE *SPRITE::Expand(void) {
 	if (! Ext) {
-		bool enbl = HEART::Enable;
-		HEART::Enable = false;
+		bool enbl = Heart->Enable;
+		Heart->Enable = false;
 		if ((Ext = new SPREXT) == NULL)
 			error("No core");
 		if (*File) {
@@ -596,7 +594,7 @@ SPRITE *SPRITE::Expand(void) {
 			else
 				TakePtr = NO_PTR;
 		}
-		HEART::Enable = enbl;
+		Heart->Enable = enbl;
 	}
 	return this;
 }

@@ -61,6 +61,9 @@ namespace CGE {
 
 extern  uint16  _stklen = (STACK_SIZ * 2);
 
+VGA	*Vga;
+HEART *Heart;
+
 // 0.75 - 17II95  - full sound support
 // 0.76 - 18II95  - small MiniEMS in DEMO,
 //		    unhide CavLight in SNLEVEL
@@ -117,7 +120,6 @@ static  SPRITE   *Sprite      = NULL;
 static  SPRITE   *MiniCave    = NULL;
 static  SPRITE   *Shadow      = NULL;
 
-VGA	*Vga;
 static  EMS      *Mini        = MiniEmm.Alloc((uint16)MINI_EMM_SIZE);
 static  BMP_PTR  *MiniShpList = NULL;
 static  BMP_PTR   MiniShp[]   = { NULL, NULL };
@@ -582,7 +584,6 @@ static void SaveMapping(void);
 
 WALK   *Hero        = NULL;
 static  INFO_LINE   InfoLine    = INFO_W;
-static  HEART       Heart;
 static  SPRITE      CavLight    = PR;
 
 
@@ -738,7 +739,7 @@ static void CaveUp(void) {
 	if (! Startup)
 		Mouse.On();
 
-	HEART::Enable = true;
+	Heart->Enable = true;
 }
 
 
@@ -779,7 +780,7 @@ static void QGame(void) {
 
 void SwitchCave(int cav) {
 	if (cav != Now) {
-		HEART::Enable = false;
+		Heart->Enable = false;
 		if (cav < 0) {
 			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
 			//TODO Change the SNPOST message send to a special way to send function pointer
@@ -1673,7 +1674,7 @@ static void RunGame(void) {
 	}
 
 	KEYBOARD::SetClient(NULL);
-	HEART::Enable = false;
+	Heart->Enable = false;
 	SNPOST(SNCLEAR, -1, 0, NULL);
 	SNPOST_(SNCLEAR, -1, 0, NULL);
 	Mouse.Off();
@@ -1691,13 +1692,13 @@ void Movie(const char *ext) {
 		ExpandSprite(Vga->SpareQ->Locate(999));
 		FeedSnail(Vga->ShowQ->Locate(999), TAKE);
 		Vga->ShowQ->Append(&Mouse);
-		HEART::Enable = true;
+		Heart->Enable = true;
 		KEYBOARD::SetClient(Sys);
 		while (! Snail.Idle()) {
 			MainLoop();
 		}
 		KEYBOARD::SetClient(NULL);
-		HEART::Enable = false;
+		Heart->Enable = false;
 		SNPOST(SNCLEAR, -1, 0, NULL);
 		SNPOST_(SNCLEAR, -1, 0, NULL);
 		Vga->ShowQ->Clear();
@@ -1733,12 +1734,12 @@ bool ShowTitle(const char *name) {
 		Vga->CopyPage(1, 2);
 		Vga->CopyPage(0, 1);
 		Vga->ShowQ->Append(&Mouse);
-		HEART::Enable = true;
+		Heart->Enable = true;
 		Mouse.On();
 		for (SelectSound(); ! Snail.Idle() || VMENU::Addr;)
 			MainLoop();
 		Mouse.Off();
-		HEART::Enable = false;
+		Heart->Enable = false;
 		Vga->ShowQ->Clear();
 		Vga->CopyPage(0, 2);
 		STARTUP::SoundOk = 2;
@@ -1771,10 +1772,10 @@ bool ShowTitle(const char *name) {
 		Vga->CopyPage(0, 1);
 		Vga->ShowQ->Append(&Mouse);
 		//Mouse.On();
-		HEART::Enable = true;
+		Heart->Enable = true;
 		for (TakeName(); GET_TEXT::Ptr;)
 			MainLoop();
-		HEART::Enable = false;
+		Heart->Enable = false;
 		if (KEYBOARD::Last() == Enter && *UsrFnam)
 			usr_ok = true;
 		if (usr_ok)
