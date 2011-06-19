@@ -45,6 +45,7 @@
 #define BC_SNDDIR_SEC	SECTOR_OFFSET(99) + 5
 #define BC_SNDDIR_MAX	29
 #define BC_WORDS		SECTOR_OFFSET(0x26D) + 5
+#define BC_OBJECTS		SECTOR_OFFSET(0x1E6) + 3
 
 namespace Agi {
 
@@ -308,9 +309,14 @@ int AgiLoader_v1::unloadResource(int t, int n) {
 	return errOK;
 }
 
-// TODO: Find the disk image equivalent.
 int AgiLoader_v1::loadObjects(const char *fname) {
-	return _vm->loadObjects(fname);
+	if (_vm->getGameID() == GID_BC) {
+		Common::File f;
+		f.open(_filenameDisk0);
+		f.seek(BC_OBJECTS, SEEK_SET);
+		return _vm->loadObjects(f);
+	}
+	return errOK;
 }
 
 int AgiLoader_v1::loadWords(const char *fname) {

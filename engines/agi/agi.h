@@ -969,16 +969,21 @@ public:
 	void checkQuickLoad();
 
 	// Objects
+public:
 	int showObjects();
-	int decodeObjects(uint8 *mem, uint32 flen);
 	int loadObjects(const char *fname);
-	int allocObjects(int);
+	int loadObjects(Common::File &fp);
 	void unloadObjects();
 	const char *objectName(unsigned int);
 	int objectGetLocation(unsigned int);
 	void objectSetLocation(unsigned int, int);
+private:
+	int decodeObjects(uint8 *mem, uint32 flen);
+	int readObjects(Common::File &fp, int flen);
+	int allocObjects(int);
 
 	// Logic
+public:
 	int decodeLogic(int);
 	void unloadLogic(int);
 	int runLogic(int);
