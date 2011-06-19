@@ -101,7 +101,7 @@ void RingworldDemoScene::postInit(SceneObjectList *OwnerList) {
 }
 
 void RingworldDemoScene::signal() {
-	_soundHandler.startSound(4);
+	_soundHandler.play(4);
 	_actor1.postInit();
 	_actor2.postInit();
 	_actor3.postInit();

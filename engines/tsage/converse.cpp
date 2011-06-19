@@ -231,7 +231,7 @@ void SequenceManager::signal() {
 		case 26:
 			v1 = getNextValue();
 			v2 = getNextValue();
-			_soundHandler.startSound(v1, v2 ? this : NULL, 127);
+			_soundHandler.play(v1, v2 ? this : NULL, 127);
 			break;
 		case 27: {
 			v1 = getNextValue();

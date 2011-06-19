@@ -31,6 +31,7 @@
 #include "tsage/scenes.h"
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
+#include "tsage/sound.h"
 
 namespace tSage {
 
@@ -2961,55 +2962,6 @@ int SceneRegions::indexOf(const Common::Point &pt) {
 
 /*--------------------------------------------------------------------------*/
 
-SoundHandler::SoundHandler() {
-	_action = NULL;
-	_field280 = -1;
-	if (_globals)
-		_globals->_sceneListeners.push_back(this);
-}
-
-SoundHandler::~SoundHandler() {
-	if (_globals)
-		_globals->_sceneListeners.remove(this);
-}
-
-void SoundHandler::dispatch() {
-	EventHandler::dispatch();
-	int v = _sound.proc12();
-
-	if (v != -1) {
-		_field280 = v;
-		_sound.proc2(-1);
-
-		if (_action)
-			_action->signal();
-	}
-
-	if (_field280 != -1) {
-		// FIXME: Hardcoded to only flag a sound ended if an action has been set
-		if (_action) {
-//		if (!_sound.proc3()) {
-			_field280 = -1;
-			if (_action) {
-				_action->signal();
-				_action = NULL;
-			}
-		}
-	}
-}
-
-void SoundHandler::startSound(int soundNum, Action *action, int volume) {
-	_action = action;
-	_field280 = 0;
-	setVolume(volume);
-	_sound.startSound(soundNum);
-
-	warning("TODO: SoundHandler::startSound");
-}
-
-
-/*--------------------------------------------------------------------------*/
-
 void SceneItemList::addItems(SceneItem *first, ...) {
 	va_list va;
 	va_start(va, first);
@@ -3490,8 +3442,9 @@ void SceneHandler::postInit(SceneObjectList *OwnerList) {
 	_globals->_scenePalette.loadPalette(0);
 	_globals->_scenePalette.refresh();
 
-	// TODO: Bunch of other scene related setup goes here
 	_globals->_soundManager.postInit();
+	_globals->_soundManager.buildDriverList(true);
+	_globals->_soundManager.installConfigDrivers();
 
 	_globals->_game->start();
 }

@@ -81,12 +81,17 @@ void TSageEngine::initialize() {
 
 	_globals = new Globals();
 	_globals->gfxManager().setDefaults();
+
+	// Setup sound settings
+	syncSoundSettings();
 }
 
 void TSageEngine::deinitialize() {
 	delete _globals;
 	delete _resourceManager;
 	delete _saver;
+	_resourceManager = NULL;
+	_saver = NULL;
 }
 
 Common::Error TSageEngine::run() {
@@ -134,6 +139,12 @@ Common::Error TSageEngine::saveGameState(int slot, const Common::String &desc) {
  */
 Common::String TSageEngine::generateSaveName(int slot) {
 	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+}
+
+void TSageEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_globals->_soundManager.syncSounds();
 }
 
 } // End of namespace tSage

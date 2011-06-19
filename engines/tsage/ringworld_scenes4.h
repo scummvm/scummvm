@@ -82,7 +82,7 @@ public:
 	SpeakerSText _speakerSText;
 	SpeakerMText _speakerMText;
 	SpeakerMR _speakerMR;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };

@@ -1346,7 +1346,7 @@ void RingworldGame::start() {
 
 void RingworldGame::restart() {
 	_globals->_scenePalette.clearListeners();
-	_globals->_soundHandler.proc3();
+	_globals->_soundHandler.stop();
 
 	// Reset the flags
 	_globals->reset();
