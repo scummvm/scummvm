@@ -92,7 +92,7 @@ BT_PAGE *BTFILE::GetPage(int lev, uint16 pgn) {
 
 // Does this work, or does it have to compare the entire buffer?
 #define memicmp(s1, s2, n) scumm_strnicmp((const char *)s1, (const char *)s2, n)
-
+ 
 BT_KEYPACK *BTFILE::Find(const char *key) {
 	int lev = 0;
 	uint16 nxt = BT_ROOT;
