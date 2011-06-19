@@ -237,51 +237,55 @@ uint16 IOHAND::Read(void *buf, uint16 len) {
 }
 
 uint16 IOHAND::Write(void *buf, uint16 len) {
-	/*
-	  if (len) {
-	      if (Mode == REA || Handle < 0) return 0;
-	      if (Crypt) Seed = Crypt(buf, len, Seed);
-	      Error = _dos_write(Handle, buf, len, &len);
-	      if (Crypt) Seed = Crypt(buf, len, Seed); //------$$$$$$$
-	    }
-	  return len;
-	*/
+/*
+	if (len) {
+		if (Mode == REA || Handle < 0)
+			return 0;
+		if (Crypt)
+			Seed = Crypt(buf, len, Seed);
+		Error = _dos_write(Handle, buf, len, &len);
+		if (Crypt)
+			Seed = Crypt(buf, len, Seed); //------$$$$$$$
+	}
+	return len;
+*/
 	warning("STUB: IOHAND::Write");
 	return 0;
 }
 
 long IOHAND::Mark(void) {
-	/*
-	return (Handle < 0) ? 0 : tell(Handle);
-	*/
+/*
+ 	return (Handle < 0) ? 0 : tell(Handle);
+*/
 	warning("STUB: IOHAND::Mark");
 	return 0;
 }
 
 long IOHAND::Seek(long pos) {
-	/*
-	if (Handle < 0) return 0;
-	lseek(Handle, pos, SEEK_SET);
-	return tell(Handle);
-	*/
+/*
+ 	if (Handle < 0)
+		return 0;
+ 	lseek(Handle, pos, SEEK_SET);
+ 	return tell(Handle);
+*/
 	warning("STUB: IOHAND::Seek");
 	return 0;
 }
 
 long IOHAND::Size(void) {
-	/*
-	if (Handle < 0) return 0;
-	
+/*
+	if (Handle < 0)
+		return 0;
 	return filelength(Handle);
-	*/
+*/
 	warning("STUB: IOHAND::Size");
 	return 0;
 }
 
 bool IOHAND::Exist(const char *name) {
-	/*
+/*
 	return access(name, 0) == 0;
-	*/
+*/
 	warning("STUB: IOHAND::Exist");
 	return 0;
 }
