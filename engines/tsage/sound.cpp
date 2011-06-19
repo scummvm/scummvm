@@ -2512,18 +2512,6 @@ void AdlibSoundDriver::setPitch(int channel, int pitchBlend) {
 }
 
 void AdlibSoundDriver::write(byte reg, byte value) {
-static int num = 1;
-/*
-	if (((num - 1) % 8) == 0)
-		debugN("\n9800:%.4x   ", (num - 1) * 2 + 2);
-
-	debugN("%.2x %.2x ", reg, value);
-	++num;
-*/
-debugN("%d [%x]=%x ", num++, reg, value);//***DEBUG****
-	for (int idx = 0; idx < ADLIB_CHANNEL_COUNT; ++idx) debugN("%d", _channelVoiced[idx] ? 1 : 0);
-	debugN("\n");
-
 	_portContents[reg] = value;
 	OPLWriteReg(_opl, reg, value);
 }
