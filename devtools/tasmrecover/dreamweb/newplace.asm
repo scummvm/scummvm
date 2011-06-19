@@ -53,7 +53,10 @@ Selectlocation	proc	near
 	call	playchannel0
 	mov	newlocation,255
 
-select:	call	delpointer
+select:
+	cmp quitrequested, 0
+	jnz quittravel
+	call	delpointer
 	call	readmouse
 	call	showpointer
 	call	vsync
