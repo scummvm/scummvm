@@ -38,7 +38,7 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #endif
@@ -167,7 +167,7 @@ void OSystem_SDL::initBackend() {
 		}
 #endif
 		if (_graphicsManager == 0) {
-			_graphicsManager = new SdlGraphicsManager(_eventSource);
+			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
 			graphicsManagerType = 0;
 		}
 	}
@@ -197,7 +197,7 @@ void OSystem_SDL::initBackend() {
 	// graphics manager as an event observer after initializing the event
 	// manager.
 	if (graphicsManagerType == 0)
-		((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
+		((SurfaceSdlGraphicsManager *)_graphicsManager)->initEventObserver();
 #ifdef USE_OPENGL
 	else if (graphicsManagerType == 1)
 		((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
@@ -480,7 +480,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 	// Check if mode is from SDL or OpenGL
 	if (mode < _sdlModesCount) {
-		srcMode = SdlGraphicsManager::supportedGraphicsModes();
+		srcMode = SurfaceSdlGraphicsManager::supportedGraphicsModes();
 		i = 0;
 	} else {
 		srcMode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
@@ -495,8 +495,8 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
 				debug(1, "switching to plain SDL graphics");
 				delete _graphicsManager;
-				_graphicsManager = new SdlGraphicsManager(_eventSource);
-				((SdlGraphicsManager *)_graphicsManager)->initEventObserver();
+				_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
+				((SurfaceSdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
 				debug(1, "switching to OpenGL graphics");
@@ -522,7 +522,7 @@ int OSystem_SDL::getGraphicsMode() const {
 }
 
 void OSystem_SDL::setupGraphicsModes() {
-	const OSystem::GraphicsMode *sdlGraphicsModes = SdlGraphicsManager::supportedGraphicsModes();
+	const OSystem::GraphicsMode *sdlGraphicsModes = SurfaceSdlGraphicsManager::supportedGraphicsModes();
 	const OSystem::GraphicsMode *openglGraphicsModes = OpenGLSdlGraphicsManager::supportedGraphicsModes();
 	_sdlModesCount = 0;
 	_glModesCount = 0;

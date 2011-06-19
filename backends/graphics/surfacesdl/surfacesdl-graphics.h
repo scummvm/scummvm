@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_SDL_H
-#define BACKENDS_GRAPHICS_SDL_H
+#ifndef BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
+#define BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
 
 #include "backends/graphics/graphics.h"
 #include "graphics/pixelformat.h"
@@ -74,10 +74,10 @@ public:
 /**
  * SDL graphics manager
  */
-class SdlGraphicsManager : public GraphicsManager, public Common::EventObserver {
+class SurfaceSdlGraphicsManager : public GraphicsManager, public Common::EventObserver {
 public:
-	SdlGraphicsManager(SdlEventSource *sdlEventSource);
-	virtual ~SdlGraphicsManager();
+	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	virtual ~SurfaceSdlGraphicsManager();
 
 	virtual void initEventObserver();
 

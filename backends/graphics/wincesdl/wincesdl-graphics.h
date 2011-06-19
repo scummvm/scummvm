@@ -23,7 +23,7 @@
 #ifndef BACKENDS_GRAPHICS_WINCE_SDL_H
 #define BACKENDS_GRAPHICS_WINCE_SDL_H
 
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/platform/wince/CEgui/CEGUI.h"
 
 // Internal GUI names
@@ -39,7 +39,7 @@
 
 extern bool _hasSmartphoneResolution;
 
-class WINCESdlGraphicsManager : public SdlGraphicsManager {
+class WINCESdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	WINCESdlGraphicsManager(SdlEventSource *sdlEventSource);
 

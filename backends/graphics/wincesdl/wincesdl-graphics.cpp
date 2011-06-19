@@ -43,7 +43,7 @@
 #include "backends/platform/wince/CEgui/ItemAction.h"
 
 WINCESdlGraphicsManager::WINCESdlGraphicsManager(SdlEventSource *sdlEventSource)
-	: SdlGraphicsManager(sdlEventSource),
+	: SurfaceSdlGraphicsManager(sdlEventSource),
 	  _panelInitialized(false), _noDoubleTapRMB(false),
 	  _toolbarHighDrawn(false), _newOrientation(0), _orientationLandscape(0),
 	  _panelVisible(true), _saveActiveToolbar(NAME_MAIN_PANEL), _panelStateForced(false),
@@ -149,7 +149,7 @@ void WINCESdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		return;
 
 	default:
-		SdlGraphicsManager::setFeatureState(f, enable);
+		SurfaceSdlGraphicsManager::setFeatureState(f, enable);
 	}
 }
 
@@ -160,7 +160,7 @@ bool WINCESdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	case OSystem::kFeatureVirtualKeyboard:
 		return (_panelStateForced);
 	default:
-		return SdlGraphicsManager::getFeatureState(f);
+		return SurfaceSdlGraphicsManager::getFeatureState(f);
 	}
 }
 
@@ -204,7 +204,7 @@ void WINCESdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelForm
 	_videoMode.overlayWidth = w;
 	_videoMode.overlayHeight = h;
 
-	SdlGraphicsManager::initSize(w, h, format);
+	SurfaceSdlGraphicsManager::initSize(w, h, format);
 
 	if (_scalersChanged) {
 		unloadGFXMode();
@@ -1185,7 +1185,7 @@ void WINCESdlGraphicsManager::setMousePos(int x, int y) {
 Graphics::Surface *WINCESdlGraphicsManager::lockScreen() {
 	// Make sure mouse pointer is not painted over the playfield at the time of locking
 	undrawMouse();
-	return SdlGraphicsManager::lockScreen();
+	return SurfaceSdlGraphicsManager::lockScreen();
 }
 
 void WINCESdlGraphicsManager::showOverlay() {
@@ -1293,7 +1293,7 @@ void WINCESdlGraphicsManager::warpMouse(int x, int y) {
 }
 
 void WINCESdlGraphicsManager::unlockScreen() {
-	SdlGraphicsManager::unlockScreen();
+	SurfaceSdlGraphicsManager::unlockScreen();
 }
 
 void WINCESdlGraphicsManager::internDrawMouse() {
@@ -1468,7 +1468,7 @@ void WINCESdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool mous
 	if (_forceFull || _paletteDirtyEnd)
 		return;
 
-	SdlGraphicsManager::addDirtyRect(x, y, w, h, false);
+	SurfaceSdlGraphicsManager::addDirtyRect(x, y, w, h, false);
 }
 
 void WINCESdlGraphicsManager::swap_panel_visibility() {

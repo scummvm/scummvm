@@ -36,7 +36,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *boss)
-	: SdlGraphicsManager(boss) {
+	: SurfaceSdlGraphicsManager(boss) {
 }
 
 const OSystem::GraphicsMode *DINGUXSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -415,7 +415,7 @@ void DINGUXSdlGraphicsManager::showOverlay() {
 		_mouseCurState.x = _mouseCurState.x / 2;
 		_mouseCurState.y = _mouseCurState.y / 2;
 	}
-	SdlGraphicsManager::showOverlay();
+	SurfaceSdlGraphicsManager::showOverlay();
 }
 
 void DINGUXSdlGraphicsManager::hideOverlay() {
@@ -423,7 +423,7 @@ void DINGUXSdlGraphicsManager::hideOverlay() {
 		_mouseCurState.x = _mouseCurState.x * 2;
 		_mouseCurState.y = _mouseCurState.y * 2;
 	}
-	SdlGraphicsManager::hideOverlay();
+	SurfaceSdlGraphicsManager::hideOverlay();
 }
 
 bool DINGUXSdlGraphicsManager::loadGFXMode() {
@@ -462,7 +462,7 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 	}
 
 
-	return SdlGraphicsManager::loadGFXMode();
+	return SurfaceSdlGraphicsManager::loadGFXMode();
 }
 
 bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -507,7 +507,7 @@ void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
 			y = y / 2;
 		}
 	}
-	SdlGraphicsManager::warpMouse(x, y);
+	SurfaceSdlGraphicsManager::warpMouse(x, y);
 }
 
 void DINGUXSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {

@@ -46,7 +46,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 LinuxmotoSdlGraphicsManager::LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource)
- : SdlGraphicsManager(sdlEventSource) {
+ : SurfaceSdlGraphicsManager(sdlEventSource) {
 }
 
 const OSystem::GraphicsMode *LinuxmotoSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -166,7 +166,7 @@ bool LinuxmotoSdlGraphicsManager::loadGFXMode() {
 		_videoMode.hardwareHeight = effectiveScreenHeight();
 	}
 
-	return SdlGraphicsManager::loadGFXMode();
+	return SurfaceSdlGraphicsManager::loadGFXMode();
 }
 
 void LinuxmotoSdlGraphicsManager::drawMouse() {
@@ -457,7 +457,7 @@ void LinuxmotoSdlGraphicsManager::showOverlay() {
 		_mouseCurState.x = _mouseCurState.x / 2;
 		_mouseCurState.y = _mouseCurState.y / 2;
 	}
-	SdlGraphicsManager::showOverlay();
+	SurfaceSdlGraphicsManager::showOverlay();
 }
 
 void LinuxmotoSdlGraphicsManager::hideOverlay() {
@@ -465,7 +465,7 @@ void LinuxmotoSdlGraphicsManager::hideOverlay() {
 		_mouseCurState.x = _mouseCurState.x * 2;
 		_mouseCurState.y = _mouseCurState.y * 2;
 	}
-	SdlGraphicsManager::hideOverlay();
+	SurfaceSdlGraphicsManager::hideOverlay();
 }
 
 void LinuxmotoSdlGraphicsManager::warpMouse(int x, int y) {
@@ -475,7 +475,7 @@ void LinuxmotoSdlGraphicsManager::warpMouse(int x, int y) {
 			y = y / 2;
 		}
 	}
-	SdlGraphicsManager::warpMouse(x, y);
+	SurfaceSdlGraphicsManager::warpMouse(x, y);
 }
 
 void LinuxmotoSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
