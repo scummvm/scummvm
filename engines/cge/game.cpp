@@ -29,7 +29,6 @@
 #include "cge/mouse.h"
 #include <stdlib.h>
 
-
 namespace CGE {
 
 uint8 *Glass(DAC *pal, uint8 r, uint8 g, uint8 b) {
