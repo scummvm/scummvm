@@ -20,12 +20,12 @@
  *
  */
 
-#if !defined(BACKEND_EVENTS_SDL_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#ifndef BACKEND_EVENTS_SDL_H
 #define BACKEND_EVENTS_SDL_H
 
-#include "backends/events/default/default-events.h"
-
 #include "backends/platform/sdl/sdl-sys.h"
+
+#include "common/events.h"
 
 
 /**
