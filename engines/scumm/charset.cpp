@@ -789,8 +789,10 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		else if (_vm->_cjkFont)
 			_vm->_cjkFont->drawChar(_vm->_textSurface, chr, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, _color, _shadowColor);
 #endif
-		if (is2byte)
+		if (is2byte) {
 			origWidth /= _vm->_textSurfaceMultiplier;
+			height /= _vm->_textSurfaceMultiplier;
+		}
 	}
 
 	if (_str.left > _left)
@@ -804,8 +806,8 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 			_str.right++;
 	}
 
-	if (_str.bottom < _top + height / _vm->_textSurfaceMultiplier)
-		_str.bottom = _top + height / _vm->_textSurfaceMultiplier;
+	if (_str.bottom < _top + height)
+		_str.bottom = _top + height;
 }
 
 void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
