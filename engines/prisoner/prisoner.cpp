@@ -862,7 +862,7 @@ void PrisonerEngine::performAutoSave() {
 	addDirtyRect(0, 398, 540, 82, 1);
 	_screen->update();
 
-	saveGameState(100, savegameDescription.c_str());
+	saveGameState(100, savegameDescription);
 
 }
 
