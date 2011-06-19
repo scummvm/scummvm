@@ -287,7 +287,7 @@ void DreamGenContext::out22c() {
 
 void DreamGenContext::soundstartup() {}
 void DreamGenContext::soundend() {}
-void DreamGenContext::DreamGenContext::interupttest() {}
+void DreamGenContext::interupttest() {}
 void DreamGenContext::disablesoundint() {}
 void DreamGenContext::enablesoundint() {}
 void DreamGenContext::checksoundint() {
