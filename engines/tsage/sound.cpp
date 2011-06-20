@@ -51,8 +51,6 @@ SoundManager::SoundManager() {
 	_needToRethink = false;
 
 	_soTimeIndexFlag = false;
-	_updateTicksCounter = 0;
-	_eventsDelay = GAME_FRAME_TIME;
 }
 
 SoundManager::~SoundManager() {
@@ -117,11 +115,7 @@ void SoundManager::syncSounds() {
 }
 
 void SoundManager::update() {
-	++_updateTicksCounter;
-	if (_updateTicksCounter > _eventsDelay) {
-		_sfSoundServer();
-		_updateTicksCounter = 0;
-	}
+	_sfSoundServer();
 }
 
 Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {

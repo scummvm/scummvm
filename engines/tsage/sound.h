@@ -177,8 +177,6 @@ public:
 	Common::List<Sound *> _soundList;
 	Common::List<SoundDriverEntry> _availableDrivers;
 	bool _needToRethink;
-	int _updateTicksCounter;
-	int _eventsDelay;
 	// Misc flags
 	bool _soTimeIndexFlag;
 public:
