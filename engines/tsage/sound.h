@@ -264,8 +264,8 @@ public:
 	int _group;
 	int _sndResPriority;
 	int _fixedPriority;
-	bool _sndResLoop;
-	bool _fixedLoop;
+	int _sndResLoop;
+	int _fixedLoop;
 	int _priority;
 	int _volume;
 	int _loop;
@@ -329,9 +329,9 @@ public:
 	void setVol(int volume);
 	int getVol() const;
 	void setPri(int priority);
-	void setLoop(bool flag);
+	void setLoop(int flag);
 	int getPri() const;
-	bool getLoop();
+	int getLoop();
 	void holdAt(int amount);
 	void release();
 	void orientAfterDriverChange();
@@ -384,9 +384,9 @@ public:
 	void setTimeIndex(uint32 timeIndex) { _sound.setTimeIndex(timeIndex); }
 	uint32 getTimeIndex() const { return _sound.getTimeIndex(); }
 	void setPri(int v) { _sound.setPri(v); }
-	void setLoop(bool flag) { _sound.setLoop(flag); }
+	void setLoop(int total) { _sound.setLoop(total); }
 	int getPri() const { return _sound.getPri(); }
-	bool getLoop() { return _sound.getLoop(); }
+	int getLoop() { return _sound.getLoop(); }
 	void setVol(int volume) { _sound.setVol(volume); }
 	int getVol() const { return _sound.getVol(); }
 	void holdAt(int v) { _sound.holdAt(v); }

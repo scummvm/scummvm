@@ -1395,11 +1395,11 @@ Sound::Sound() {
 	_group = 0;
 	_sndResPriority = 0;
 	_fixedPriority = -1;
-	_sndResLoop = true;
-	_fixedLoop = true;
+	_sndResLoop = 1;
+	_fixedLoop = -1;
 	_priority = 0;
 	_volume = 127;
-	_loop = false;
+	_loop = 0;
 	_pausedCount = 0;
 	_mutedCount = 0;
 	_hold = 0xff;
@@ -1660,7 +1660,7 @@ void Sound::setPri(int priority) {
 	_soundManager->updateSoundPri(this);
 }
 
-void Sound::setLoop(bool flag) {
+void Sound::setLoop(int flag) {
 	_fixedLoop = flag;
 	_soundManager->updateSoundLoop(this);
 }
@@ -1669,7 +1669,7 @@ int Sound::getPri() const {
 	return _priority;
 }
 
-bool Sound::getLoop() {
+int Sound::getLoop() {
 	return _loop;
 }
 
