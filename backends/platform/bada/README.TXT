@@ -13,6 +13,8 @@ Build instructions:
  alias mmake=/cygdrive/c/MinGW/bin/mingw32-make.exe
  export BADA_SDK=/cygdrive/c/bada/1.2.1
  export ARM_BIN=c:/bada/1.2.1/Tools/Toolchains/ARM/bin
+ export CPPFLAGS="-fpic -fshort-wchar -mcpu=cortex-a8 -mfpu=vfpv3 -mfloat-abi=hard -mlittle-endian -mthumb-interwork -Wno-psabi"
+ export LDFLAGS="-nostdlib -lc-newlib -lm-newlib -LC:/bada/1.2.1/Model/Wave_LP1/Target"
  #export PATH=${BADA_SDK}/Tools/Toolchains/Win32/bin:${PATH}
  export PATH=${BADA_SDK}/Tools/Toolchains/ARM/bin:~/utils:${PATH}
  alias gcc=${ARM_BIN}/arm-samsung-nucleuseabi-gcc.exe
