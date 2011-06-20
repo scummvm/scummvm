@@ -433,13 +433,6 @@ void DreamGenContext::setmode() {
 	initGraphics(320, 200, false);
 }
 
-void DreamGenContext::readoneblock() {
-	ds = data.word(kWorkspace);
-	cx = 30000;
-	dx = 0;
-	readfromfile();
-}
-
 void DreamGenContext::showpcx() {
 	Common::String name = getFilename(*this);
 	Common::File pcxFile;

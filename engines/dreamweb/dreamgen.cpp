@@ -3877,27 +3877,6 @@ void DreamGenContext::allocatework() {
 	data.word(kWorkspace) = ax;
 }
 
-void DreamGenContext::readabyte() {
-	STACK_CHECK;
-	_cmp(si, 30000);
-	if (!flags.z())
-		goto notendblock;
-	push(bx);
-	push(es);
-	push(di);
-	push(ds);
-	push(si);
-	readoneblock();
-	si = pop();
-	ds = pop();
-	di = pop();
-	es = pop();
-	bx = pop();
-	si = 0;
-notendblock:
-	_lodsb();
-}
-
 void DreamGenContext::loadpalfromiff() {
 	STACK_CHECK;
 	dx = 2481;
@@ -22131,8 +22110,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case 0xc1c4: dumpeverything(); break;
 		case 0xc1c8: allocatework(); break;
 		case 0xc1cc: showpcx(); break;
-		case 0xc1d0: readabyte(); break;
-		case 0xc1d4: readoneblock(); break;
 		case 0xc1d8: loadpalfromiff(); break;
 		case 0xc1dc: setmode(); break;
 		case 0xc1ec: paneltomap(); break;
