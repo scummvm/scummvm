@@ -72,6 +72,10 @@ public:
 	uint32 _groupMask;
 	const GroupData *_groupOffset;
 	int _driverResID;
+
+	typedef void (*UpdateCallback)(void *);
+	UpdateCallback _upCb;
+	void *_upRef;
 public:
 	SoundDriver();
 	virtual ~SoundDriver() {};
@@ -101,6 +105,8 @@ public:
 	virtual void proc38(int channel, int cmd, int value) {}			// Method #19
 	virtual void setPitch(int channel, int pitchBlend) {}			// Method #20
 	virtual void proc42(int channel, int v0, int v1) {}				// Method #21
+
+	virtual void setUpdateCallback(UpdateCallback upCb, void *ref) {}
 };
 
 struct VoiceStructEntryType0 {
@@ -171,6 +177,8 @@ public:
 	Common::List<Sound *> _soundList;
 	Common::List<SoundDriverEntry> _availableDrivers;
 	bool _needToRethink;
+	int _updateTicksCounter;
+	int _eventsDelay;
 	// Misc flags
 	bool _soTimeIndexFlag;
 public:
@@ -181,6 +189,7 @@ public:
 	virtual void listenerSynchronize(Serializer &s);
 	virtual void postInit();
 	void syncSounds();
+	void update();
 
 	static void saveNotifier(bool postFlag);
 	void saveNotifierProc(bool postFlag);
@@ -243,6 +252,7 @@ public:
 	static void _sfProcessFading();
 	static void _sfUpdateVoiceStructs();
 	static void _sfUpdateVoiceStructs2();
+	static void _sfUpdateCallback(void *ref);
 };
 
 class Sound: public EventHandler {
@@ -387,11 +397,12 @@ public:
 
 #define ADLIB_CHANNEL_COUNT 9
 
-class AdlibSoundDriver: public SoundDriver {
+class AdlibSoundDriver: public SoundDriver, Audio::AudioStream {
 private:
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
 	FM_OPL *_opl;
+	Audio::SoundHandle _soundHandle;
 	int _sampleRate;
 	byte _portContents[256];
 	const byte *_patchData;
@@ -428,6 +439,15 @@ public:
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void setPitch(int channel, int pitchBlend);
+	virtual void setUpdateCallback(UpdateCallback upCb, void *ref);
+
+	// AudioStream interface
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo() const { return false; }
+	virtual bool endOfData() const { return false; }
+	virtual int getRate() const { return _sampleRate; }
+
+	void update(int16 *buf, int len);
 };
 
 } // End of namespace tSage

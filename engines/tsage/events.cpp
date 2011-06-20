@@ -48,9 +48,8 @@ bool EventsClass::pollEvent() {
 		_priorFrameTime = milli;
 		++_frameNumber;
 
-		// Update screen and allow the sound manager to process pending sounds
+		// Update screen
 		g_system->updateScreen();
-		SoundManager::_sfSoundServer();
 	}
 
 	if (!g_system->getEventManager()->pollEvent(_event)) return false;
@@ -299,9 +298,6 @@ void EventsClass::delay(int numFrames) {
 
 		++_frameNumber;
 		_priorFrameTime = g_system->getMillis();
-
-		// Allow pending sounds to be processed
-		SoundManager::_sfSoundServer();
 	}
 
 	g_system->updateScreen();

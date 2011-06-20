@@ -51,6 +51,8 @@ SoundManager::SoundManager() {
 	_needToRethink = false;
 
 	_soTimeIndexFlag = false;
+	_updateTicksCounter = 0;
+	_eventsDelay = GAME_FRAME_TIME;
 }
 
 SoundManager::~SoundManager() {
@@ -112,6 +114,14 @@ void SoundManager::syncSounds() {
 
 	warning("Set volume music=%d sfx=%d", musicVolume, sfxVolume);
 	this->setMasterVol(musicVolume / 2);
+}
+
+void SoundManager::update() {
+	++_updateTicksCounter;
+	if (_updateTicksCounter > _eventsDelay) {
+		_sfSoundServer();
+		_updateTicksCounter = 0;
+	}
 }
 
 Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
@@ -480,6 +490,10 @@ void SoundManager::_sfUpdateVoiceStructs2() {
 			}
 		}
 	}
+}
+
+void SoundManager::_sfUpdateCallback(void *ref) {
+	((SoundManager *)ref)->update();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1293,7 +1307,8 @@ void SoundManager::_sfExtractGroupMask() {
 bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
 	if (!driver->open())
 		return false;
-
+	
+	driver->setUpdateCallback(_sfUpdateCallback, (void *)&sfManager());
 	sfManager()._installedDrivers.push_back(driver);
 	driver->_groupOffset = driver->getGroupData();
 	driver->_groupMask =  READ_LE_UINT32(driver->_groupOffset);
@@ -2376,6 +2391,8 @@ const int v440D4[48] = {
 };
 
 AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
+	_upCb = NULL;
+	_upRef = NULL;
 	_minVersion = 0x102;
 	_maxVersion = 0x10A;
 	_masterVolume = 0;
@@ -2388,6 +2405,7 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	_mixer = _vm->_mixer;
 	_sampleRate = _mixer->getOutputRate();
 	_opl = makeAdLibOPL(_sampleRate);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	Common::set_to(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
 	memset(_channelVolume, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
@@ -2404,6 +2422,7 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 
 AdlibSoundDriver::~AdlibSoundDriver() {
 	DEALLOCATE(_patchData);
+	_mixer->stopHandle(_soundHandle);
 	OPLDestroy(_opl);
 }
 
@@ -2638,6 +2657,36 @@ void AdlibSoundDriver::setFrequency(int channel) {
 	write(0xA0 + channel, dataWord & 0xff);
 	write(0xB0 + channel, (_portContents[0xB0 + channel] & 0xE0) |
 		((dataWord >> 8) & 3) | (var2 << 2));
+}
+
+int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
+	update(buffer, numSamples);
+	return numSamples;
+}
+
+void AdlibSoundDriver::update(int16 *buf, int len) {
+	static int samplesLeft = 0;
+	while (len != 0) {
+		int count = samplesLeft;
+		if (count > len) {
+			count = len;
+		}
+		samplesLeft -= count;
+		len -= count;
+		YM3812UpdateOne(_opl, buf, count);
+		if (samplesLeft == 0) {
+			if (_upCb) {
+				(*_upCb)(_upRef);
+			}
+			samplesLeft = _sampleRate / 50;
+		}
+		buf += count;
+	}
+}
+
+void AdlibSoundDriver::setUpdateCallback(UpdateCallback upCb, void *ref) {
+	_upCb = upCb;
+	_upRef = ref;
 }
 
 } // End of namespace tSage
