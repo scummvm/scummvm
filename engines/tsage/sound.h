@@ -323,7 +323,7 @@ public:
 	bool isMuted() const;
 	void pause(bool flag);
 	void mute(bool flag);
-	void fade(int fadeDest, int fadeTicks, int fadeSteps, bool stopAfterFadeFlag);
+	void fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag);
 	void setTimeIndex(uint32 timeIndex);
 	uint32 getTimeIndex() const;
 	int getCueValue() const;
@@ -380,9 +380,9 @@ public:
 	bool isMuted() const { return _sound.isMuted(); }
 	void pause(bool flag) { _sound.pause(flag); }
 	void mute(bool flag) { _sound.mute(flag); }
-	void fadeIn() { fade(127, 5, 10, 0, NULL); }
-	void fadeOut(Action *action) { fade(0, 5, 10, 1, action); }
-	void fade(int v1, int v2, int v3, int v4, Action *action);
+	void fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, Action *action);
+	void fadeIn() { fade(127, 5, 10, false, NULL); }
+	void fadeOut(Action *action) { fade(0, 5, 10, true, action); }
 	void setTimeIndex(uint32 timeIndex) { _sound.setTimeIndex(timeIndex); }
 	uint32 getTimeIndex() const { return _sound.getTimeIndex(); }
 	void setPri(int v) { _sound.setPri(v); }

@@ -398,15 +398,11 @@ void SoundManager::_sfProcessFading() {
 				--s->_fadeCounter;
 			else {
 				if (s->_volume >= s->_fadeDest) {
-					if ((s->_fadeDest - s->_volume) > s->_fadeSteps)
-						s->_volume += s->_fadeSteps;
-					else
-						s->_volume = s->_fadeDest;
+					s->_volume = ((s->_volume - s->_fadeDest) > s->_fadeSteps) ?
+						s->_volume - s->_fadeSteps : s->_fadeDest;
 				} else {
-					if (s->_fadeDest > s->_fadeSteps)
-						s->_volume -= s->_fadeSteps;
-					else
-						s->_volume = s->_fadeDest;
+					s->_volume = ((s->_fadeDest - s->_volume) > s->_fadeSteps) ?
+						s->_volume + s->_fadeSteps : s->_fadeDest;
 				}
 
 				_sfDoUpdateVolume(s);
@@ -1606,7 +1602,7 @@ void Sound::mute(bool flag) {
 	_soundManager->restartSoundServer();
 }
 
-void Sound::fade(int fadeDest, int fadeTicks, int fadeSteps, bool stopAfterFadeFlag) {
+void Sound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag) {
 	_soundManager->suspendSoundServer();
 
 	if (fadeDest > 127)
@@ -2346,11 +2342,11 @@ void ASound::unPrime() {
 	_action = NULL;
 }
 
-void ASound::fade(int v1, int v2, int v3, int v4, Action *action) {
+void ASound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, Action *action) {
 	if (action)
 		_action = action;
 
-	_sound.fade(v1, v2, v3, v4);
+	_sound.fade(fadeDest, fadeSteps, fadeTicks, stopAfterFadeFlag);
 }
 
 
