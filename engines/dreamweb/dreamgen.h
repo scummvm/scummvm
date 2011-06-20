@@ -600,7 +600,6 @@ public:
 	void clearbuffers();
 	void neterror();
 	void storeit();
-	void lockeddoorway();
 	void isitworn();
 	void putundertimed();
 	void dumpmap();
@@ -658,7 +657,7 @@ public:
 	void usewall();
 	void opentomb();
 	void buttonfour();
-	void dosometalk();
+	void animpointer();
 	void lockmon();
 	void dochange();
 	void getanyaddir();
@@ -867,7 +866,6 @@ public:
 	void adjustright();
 	void putunderzoom();
 	void vsync();
-	void showseconduse();
 	void turnpathoff();
 	void findinvpos();
 	void usetext();
@@ -956,9 +954,8 @@ public:
 	void showmonk();
 	void diarykeyn();
 	void set16colpalette();
-	void convicons();
-	void interviewer();
 	void sparky();
+	void interviewer();
 	void purgeanitem();
 	void madman();
 	void createpanel();
@@ -1011,7 +1008,7 @@ public:
 	void getback1();
 	void setlocation();
 	void fadefromwhite();
-	void animpointer();
+	void checksoundint();
 	void usewindow();
 	void wearshades();
 	void onedigit();
@@ -1253,12 +1250,14 @@ public:
 	void usechurchgate();
 	void monkandryan();
 	void allocatebuffers();
+	void convicons();
 	void swapwithinv();
 	void usecontrol();
 	void buttonseven();
 	void redrawmainscrn();
 	void finishedwalking();
 	void findallryan();
+	void lockeddoorway();
 	void channel0tran();
 	void buttonpress();
 	void parseblaster();
@@ -1281,7 +1280,7 @@ public:
 	void showryanpage();
 	void printlogo();
 	void allpointer();
-	void checksoundint();
+	void showseconduse();
 	void clearreels();
 	void malefan();
 	void dosaveload();
@@ -1310,6 +1309,7 @@ public:
 	void emergencypurge();
 	void usemenu();
 	void alleybarksound();
+	void dosometalk();
 	void usecart();
 	void intromusic();
 	void makename();
