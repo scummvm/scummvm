@@ -402,10 +402,10 @@ void Engine::openMainMenuDialog() {
 
 bool Engine::warnUserAboutUnsupportedGame() {
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
-		GUI::MessageDialog alert("WARNING: The game you are about to start is"
+		GUI::MessageDialog alert(_("WARNING: The game you are about to start is"
 			" not yet fully supported by ScummVM. As such, it is likely to be"
 			" unstable, and any saves you make might not work in future"
-			" versions of ScummVM.", "Start anyway", "Cancel");
+			" versions of ScummVM."), _("Start anyway"), _("Cancel"));
 		return alert.runModal() == GUI::kMessageOK;
 	}
 	return true;
