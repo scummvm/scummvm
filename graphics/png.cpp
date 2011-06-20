@@ -116,59 +116,52 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 	output->create(_unfilteredSurface->w, _unfilteredSurface->h, format);
 	byte *src = (byte *)_unfilteredSurface->pixels;
 	byte a = 0xFF;
+	byte bpp = _unfilteredSurface->format.bytesPerPixel;
 
 	if (_header.colorType != kIndexed) {
-		if (_header.colorType == kTrueColor || _header.colorType == kTrueColorWithAlpha) {
-			if (_unfilteredSurface->format.bytesPerPixel != 3 && _unfilteredSurface->format.bytesPerPixel != 4)
+		if (_header.colorType == kTrueColor || 
+			_header.colorType == kTrueColorWithAlpha) {
+			if (bpp != 3 && bpp != 4)
 				error("Unsupported truecolor PNG format");
-		} else if (_header.colorType == kGrayScale || _header.colorType == kGrayScaleWithAlpha) {
-			if (_unfilteredSurface->format.bytesPerPixel != 1 && _unfilteredSurface->format.bytesPerPixel != 2)
+		} else if (_header.colorType == kGrayScale ||
+				   _header.colorType == kGrayScaleWithAlpha) {
+			if (bpp != 1 && bpp != 2)
 				error("Unsupported grayscale PNG format");
 		}
 
 		for (uint16 i = 0; i < output->h; i++) {
 			for (uint16 j = 0; j < output->w; j++) {
-				if (format.bytesPerPixel == 2) {	// 2bpp
-					uint16 *dest = ((uint16 *)output->getBasePtr(j, i));
-					if (_unfilteredSurface->format.bytesPerPixel == 1) {		// Grayscale
-						if (_transparentColorSpecified)
-							a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
-						*dest = format.ARGBToColor(    a, src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 2) {	// Grayscale + alpha
-						*dest = format.ARGBToColor(src[1], src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 3) {	// RGB
-						if (_transparentColorSpecified) {
-							bool isTransparentColor = (src[0] == _transparentColor[0] &&
-													   src[1] == _transparentColor[1] &&
-													   src[2] == _transparentColor[2]);
-							a = isTransparentColor ? 0 : 0xFF;
-						}
-						*dest = format.ARGBToColor(     a, src[0], src[1], src[2]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 4) {	// RGBA
-						*dest = format.ARGBToColor(src[3], src[0], src[1], src[2]);
+				uint32 result = 0;
+
+				switch (bpp) {
+				case 1:	// Grayscale
+					if (_transparentColorSpecified)
+						a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
+					result = format.ARGBToColor(    a, src[0], src[0], src[0]);
+					break;
+				case 2: // Grayscale + alpha
+					result = format.ARGBToColor(src[1], src[0], src[0], src[0]);
+					break;
+				case 3: // RGB
+					if (_transparentColorSpecified) {
+						bool isTransparentColor = (src[0] == _transparentColor[0] &&
+												   src[1] == _transparentColor[1] &&
+												   src[2] == _transparentColor[2]);
+						a = isTransparentColor ? 0 : 0xFF;
 					}
-				} else {	// 4bpp
-					uint32 *dest = ((uint32 *)output->getBasePtr(j, i));
-					if (_unfilteredSurface->format.bytesPerPixel == 1) {		// Grayscale
-						if (_transparentColorSpecified)
-							a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
-						*dest = format.ARGBToColor(     a, src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 2) {	// Grayscale + alpha
-						*dest = format.ARGBToColor(src[1], src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 3) {	// RGB
-						if (_transparentColorSpecified) {
-							bool isTransparentColor = (src[0] == _transparentColor[0] &&
-													   src[1] == _transparentColor[1] &&
-													   src[2] == _transparentColor[2]);
-							a = isTransparentColor ? 0 : 0xFF;
-						}
-						*dest = format.ARGBToColor(     a, src[0], src[1], src[2]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 4) {	// RGBA
-						*dest = format.ARGBToColor(src[3], src[0], src[1], src[2]);
-					}
+					result = format.ARGBToColor(     a, src[0], src[1], src[2]);
+					break;
+				case 4: // RGBA
+					result = format.ARGBToColor(src[3], src[0], src[1], src[2]);
+					break;
 				}
 
-				src += _unfilteredSurface->format.bytesPerPixel;
+				if (format.bytesPerPixel == 2) 	// 2bpp
+					*((uint16 *)output->getBasePtr(j, i)) = (uint16)result;
+				else	// 4bpp
+					*((uint32 *)output->getBasePtr(j, i)) = result;
+
+				src += bpp;
 			}
 		}
 	} else {
