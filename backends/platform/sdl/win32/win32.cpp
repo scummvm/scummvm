@@ -300,7 +300,7 @@ Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(cons
 } // End of anonymous namespace
 
 void OSystem_Win32::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
-	s.add("Win32Res", new Win32ResourceArchive());
+	s.add("Win32Res", new Win32ResourceArchive(), priority);
 
 	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
 }
