@@ -450,7 +450,7 @@ void DreamGenContext::showpcx() {
 
 	pcxFile.seek(16, SEEK_SET);
 	es = data.word(kBuffers);
-	maingamepal = es.ptr(4782, 768); //fixme: hardcoded offset
+	maingamepal = es.ptr(kMaingamepal, 768);
 	pcxFile.read(maingamepal, 48);
 
 	memset(maingamepal + 48, 0xff, 720);
