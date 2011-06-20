@@ -30,6 +30,7 @@
 
 #include "cge/wav.h"
 #include "cge/vga13h.h"
+#include "cge/mouse.h"
 
 namespace CGE {
 
@@ -119,15 +120,14 @@ namespace CGE {
 class SYSTEM : public SPRITE {
 	int lum;
 public:
-	static int FunDel;
-	static void SetPal(void);
-	static void FunTouch(void);
-	SYSTEM(void) : SPRITE(NULL) {
-		SetPal();
-		Tick();
-	}
+	int FunDel;
+
+	SYSTEM();
+
+	void SetPal();
+	void FunTouch();
 	void Touch(uint16 mask, int x, int y);
-	void Tick(void);
+	void Tick();
 };
 
 
@@ -161,17 +161,18 @@ public:
 CLUSTER XZ(int x, int y);
 CLUSTER XZ(COUPLE xy);
 
-
-extern WALK *Hero;
-
-
 void ExpandSprite(SPRITE *spr);
 void ContractSprite(SPRITE *spr);
 void cge_main(void);
 
+extern WALK *Hero;
 extern VGA *Vga;
 extern HEART *Heart;
+extern SYSTEM *Sys;
 extern int OffUseCount;
+extern SPRITE *PocLight;
+extern MOUSE *Mouse;
+extern SPRITE *Pocket[];
 
 } // End of namespace CGE
 

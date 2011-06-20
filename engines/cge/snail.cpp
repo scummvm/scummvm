@@ -58,7 +58,7 @@ int     Lev      = -1;
 SNAIL   Snail    = false;
 SNAIL   Snail_   = true;
 
-extern  SPRITE   PocLight;
+extern  SPRITE *PocLight;
 
 //-------------------------------------------------------------------------
 //	SPRITE * Pocket[POCKET_NX]={ NULL, NULL, NULL, NULL,
@@ -68,8 +68,6 @@ extern  SPRITE   PocLight;
 extern  SPRITE     *Pocket[];
 extern  int     PocPtr;
 extern  DAC    *SysPal;
-extern  MOUSE       Mouse;
-
 
 static void SNGame(SPRITE *spr, int num) {
 	switch (num) {
@@ -300,18 +298,18 @@ int FindPocket(SPRITE *spr) {
 
 
 void SelectPocket(int n) {
-	if (n < 0 || (PocLight.SeqPtr && PocPtr == n)) {
-		PocLight.Step(0);
+	if (n < 0 || (PocLight->SeqPtr && PocPtr == n)) {
+		PocLight->Step(0);
 		n = FindPocket(NULL);
 		if (n >= 0)
 			PocPtr = n;
 	} else {
 		if (Pocket[n] != NULL) {
 			PocPtr = n;
-			PocLight.Step(1);
+			PocLight->Step(1);
 		}
 	}
-	PocLight.Goto(POCKET_X + PocPtr * POCKET_DX + POCKET_SX, POCKET_Y + POCKET_SY);
+	PocLight->Goto(POCKET_X + PocPtr * POCKET_DX + POCKET_SX, POCKET_Y + POCKET_SY);
 }
 
 
@@ -903,9 +901,9 @@ static void SNReach(SPRITE *spr, int mode) {
 
 static void SNMouse(bool on) {
 	if (on)
-		Mouse.On();
+		Mouse->On();
 	else
-		Mouse.Off();
+		Mouse->Off();
 }
 
 
@@ -960,13 +958,13 @@ void SNAIL::RunCom(void) {
 					if (sprel == Hero && sprel->SeqTest(-1))
 						sprel->Step(HTALK);
 					Say(Text->getText(snc->Val), sprel);
-					SYSTEM::FunDel = HEROFUN0;
+					Sys->FunDel = HEROFUN0;
 				}
 				break;
 			case SNINF      :
 				if (TalkEnable) {
 					Inf(Text->getText(snc->Val));
-					SYSTEM::FunDel = HEROFUN0;
+					Sys->FunDel = HEROFUN0;
 				}
 				break;
 			case SNTIME     :
