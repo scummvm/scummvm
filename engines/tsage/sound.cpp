@@ -55,8 +55,11 @@ SoundManager::SoundManager() {
 
 SoundManager::~SoundManager() {
 	if (__sndmgrReady) {
-		for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-			(*i)->stop();
+		for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ) {
+			Sound *s = *i;
+			++i;
+			s->stop();
+		}
 		for (Common::List<SoundDriver *>::iterator i = _installedDrivers.begin(); i != _installedDrivers.end(); ) {
 			SoundDriver *driver = *i;
 			++i;
