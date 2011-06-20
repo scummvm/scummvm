@@ -215,12 +215,12 @@ void SoundManager::installDriver(int driverNum) {
 			// Unmute currently active sounds
 			for (Common::List<Sound *>::iterator i = _playList.begin(); i != _playList.end(); ++i)
 				(*i)->mute(false);
-
-			enableSoundServer();
 		}
 		break;
 	}
 	}
+
+	enableSoundServer();
 }
 
 /**
@@ -355,7 +355,7 @@ void SoundManager::rethinkVoiceTypes() {
 }
 
 void SoundManager::_sfSoundServer() {
-	if (!sfManager()._serverDisabledCount && !sfManager()._serverSuspendedCount)
+	if (sfManager()._serverDisabledCount || sfManager()._serverSuspendedCount)
 		return;
 
 	if (sfManager()._needToRethink) {
