@@ -30,8 +30,11 @@
 #include "common/fs.h"
 #include "engines/util.h"
 #include "cge/cge.h"
+#include "cge/vga13h.h"
 #include "cge/cge_main.h"
 #include "cge/text.h"
+#include "cge/bitmaps.h"
+
 
 namespace CGE {
 
@@ -43,7 +46,12 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	Text = new TEXT(ProgName());
 	Vga = new VGA(M13H);
 	Heart = new HEART;
-
+	Hero = new WALK(NULL);
+	Sys = new SYSTEM();
+	PocLight = new SPRITE(LI);
+	Mouse = new MOUSE;
+	for (int i = 0; i < POCKET_NX; i++)
+		Pocket[i] = new SPRITE(NULL);
 
 	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
 

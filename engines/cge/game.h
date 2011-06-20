@@ -40,13 +40,9 @@ namespace CGE {
 #define TBound(s)   (s->Y <= 0)
 #define BBound(s)   (s->Y+s->H >= SCR_HIG - PAN_HIG)
 
-
-extern SPRITE *Sys;
-
 int    Sinus(long x);
 uint8 *Glass(DAC *pal, uint8 r, uint8 g, uint8 b);
 uint8 *Mark(DAC *pal);
-
 
 class FLY : public SPRITE {
 	static int L, T, R, B;

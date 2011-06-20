@@ -61,8 +61,13 @@ namespace CGE {
 
 extern  uint16  _stklen = (STACK_SIZ * 2);
 
-VGA	*Vga;
+VGA *Vga;
 HEART *Heart;
+WALK *Hero;
+SYSTEM *Sys;
+SPRITE *PocLight;
+MOUSE *Mouse;
+SPRITE *Pocket[POCKET_NX];
 
 // 0.75 - 17II95  - full sound support
 // 0.76 - 18II95  - small MiniEMS in DEMO,
@@ -109,13 +114,8 @@ bool JBW = false;
 DAC *SysPal = farnew(DAC, PAL_CNT);
 
 //-------------------------------------------------------------------------
-SPRITE      PocLight    = LI;
-SPRITE     *Pocket[POCKET_NX] = { NULL, NULL, NULL, NULL,
-                                  NULL, NULL, NULL, NULL,
-                                };
 int     PocPtr      =  0;
 
-MOUSE   Mouse;
 static  SPRITE   *Sprite      = NULL;
 static  SPRITE   *MiniCave    = NULL;
 static  SPRITE   *Shadow      = NULL;
@@ -387,9 +387,9 @@ void WALK::Tick(void) {
 
 	if (Dir != NO_DIR) {
 		SPRITE *spr;
-		SYSTEM::FunTouch();
+		Sys->FunTouch();
 		for (spr = Vga->ShowQ->First(); spr; spr = spr->Next) {
-			if (Distance(spr) < 2) {
+				if (Distance(spr) < 2) {
 				if (! spr->Flags.Near) {
 					FeedSnail(spr, NEAR);
 					spr->Flags.Near = true;
@@ -582,7 +582,6 @@ static void NextStep(void);
 static void SaveMapping(void);
 
 
-WALK   *Hero        = NULL;
 static  INFO_LINE   InfoLine    = INFO_W;
 static  SPRITE      CavLight    = PR;
 
@@ -645,10 +644,6 @@ static void PostMiniStep(int stp) {
 	warning("STUB: PostMiniStep()");
 }
 
-
-int SYSTEM::FunDel  = HEROFUN0;
-
-
 void SYSTEM::SetPal(void) {
 	int i;
 	DAC *p = SysPal + 256 - ArrayCount(StdPal);
@@ -675,7 +670,7 @@ static void ShowBak(int ref) {
 		BITMAP::Pal = NULL;
 		spr->Show(2);
 		Vga->CopyPage(1, 2);
-		SYSTEM::SetPal();
+		Sys->SetPal();
 		spr->Contract();
 	}
 }
@@ -737,7 +732,7 @@ static void CaveUp(void) {
 	Vga->Sunrise(SysPal);
 	Dark = false;
 	if (! Startup)
-		Mouse.On();
+		Mouse->On();
 
 	Heart->Enable = true;
 }
@@ -788,7 +783,7 @@ void SwitchCave(int cav) {
 			warning("SwitchCave() - SNPOST");
 		} else {
 			Now = cav;
-			Mouse.Off();
+			Mouse->Off();
 			if (Hero) {
 				Hero->Park();
 				Hero->Step(0);
@@ -811,6 +806,11 @@ void SwitchCave(int cav) {
 	}
 }
 
+SYSTEM::SYSTEM() : SPRITE(NULL) {
+	FunDel = HEROFUN0;
+	SetPal();
+	Tick();
+}
 
 void SYSTEM::Touch(uint16 mask, int x, int y) {
 	static int pp = 0;
@@ -880,7 +880,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			Hero->Step(TSEQ + 3);
 			break;
 		case F9:
-			SYSTEM::FunDel = 1;
+			Sys->FunDel = 1;
 			break;
 		case 'X':
 			if (KEYBOARD::Key[ALT])
@@ -1191,8 +1191,8 @@ static void SayDebug(void) {
 			t = t1;
 		}
 
-		dwtom(Mouse.X, ABSX, 10, 3);
-		dwtom(Mouse.Y, ABSY, 10, 3);
+		dwtom(Mouse->X, ABSX, 10, 3);
+		dwtom(Mouse->Y, ABSY, 10, 3);
 //		dwtom(coreleft(), NFRE, 10, 5);
 //		dwtom(farcoreleft(), FFRE, 10, 6);
 
@@ -1249,7 +1249,7 @@ static void OptionTouch(int opt, uint16 mask) {
 
 #pragma argsused
 void SPRITE::Touch(uint16 mask, int x, int y) {
-	SYSTEM::FunTouch();
+	Sys->FunTouch();
 	if ((mask & ATTN) == 0) {
 		InfoLine.Update(Name());
 		if (mask & (R_DN | L_DN))
@@ -1265,7 +1265,7 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 				mask |= R_UP;
 			}
 		if ((mask & R_UP) && Snail.Idle()) {
-			SPRITE *ps = (PocLight.SeqPtr) ? Pocket[PocPtr] : NULL;
+			SPRITE *ps = (PocLight->SeqPtr) ? Pocket[PocPtr] : NULL;
 			if (ps) {
 				if (Flags.Kept || Hero->Distance(this) < MAX_DISTANCE) {
 					if (Works(ps)) {
@@ -1591,14 +1591,14 @@ static void RunGame(void) {
 		{ 1, 6, 0, 0,  4 },
 		{ 0, 1, 0, 0, 16 },
 	};
-	PocLight.SetSeq(PocSeq);
-	PocLight.Flags.Tran = true;
-	PocLight.Time = 1;
-	PocLight.Z = 120;
-	Vga->ShowQ->Append(&PocLight);
+	PocLight->SetSeq(PocSeq);
+	PocLight->Flags.Tran = true;
+	PocLight->Time = 1;
+	PocLight->Z = 120;
+	Vga->ShowQ->Append(PocLight);
 	SelectPocket(-1);
 
-	Vga->ShowQ->Append(&Mouse);
+	Vga->ShowQ->Append(Mouse);
 
 //    ___________
 	LoadUser();
@@ -1653,9 +1653,9 @@ static void RunGame(void) {
 	HorzLine.Z = 126;
 	Vga->ShowQ->Insert(&HorzLine);
 
-	Mouse.Busy = Vga->SpareQ->Locate(BUSY_REF);
-	if (Mouse.Busy)
-		ExpandSprite(Mouse.Busy);
+	Mouse->Busy = Vga->SpareQ->Locate(BUSY_REF);
+	if (Mouse->Busy)
+		ExpandSprite(Mouse->Busy);
 
 	Startup = 0;
 
@@ -1677,7 +1677,7 @@ static void RunGame(void) {
 	Heart->Enable = false;
 	SNPOST(SNCLEAR, -1, 0, NULL);
 	SNPOST_(SNCLEAR, -1, 0, NULL);
-	Mouse.Off();
+	Mouse->Off();
 	Vga->ShowQ->Clear();
 	Vga->SpareQ->Clear();
 	Hero = NULL;
@@ -1691,7 +1691,7 @@ void Movie(const char *ext) {
 		LoadScript(fn);
 		ExpandSprite(Vga->SpareQ->Locate(999));
 		FeedSnail(Vga->ShowQ->Locate(999), TAKE);
-		Vga->ShowQ->Append(&Mouse);
+		Vga->ShowQ->Append(Mouse);
 		Heart->Enable = true;
 		KEYBOARD::SetClient(Sys);
 		while (! Snail.Idle()) {
@@ -1733,12 +1733,12 @@ bool ShowTitle(const char *name) {
 	if (STARTUP::Mode < 2 && ! STARTUP::SoundOk) {
 		Vga->CopyPage(1, 2);
 		Vga->CopyPage(0, 1);
-		Vga->ShowQ->Append(&Mouse);
+		Vga->ShowQ->Append(Mouse);
 		Heart->Enable = true;
-		Mouse.On();
+		Mouse->On();
 		for (SelectSound(); ! Snail.Idle() || VMENU::Addr;)
 			MainLoop();
-		Mouse.Off();
+		Mouse->Off();
 		Heart->Enable = false;
 		Vga->ShowQ->Clear();
 		Vga->CopyPage(0, 2);
@@ -1770,7 +1770,7 @@ bool ShowTitle(const char *name) {
 		Movie("X00"); // paylist
 		Vga->CopyPage(1, 2);
 		Vga->CopyPage(0, 1);
-		Vga->ShowQ->Append(&Mouse);
+		Vga->ShowQ->Append(Mouse);
 		//Mouse.On();
 		Heart->Enable = true;
 		for (TakeName(); GET_TEXT::Ptr;)
@@ -1829,9 +1829,9 @@ void cge_main(void) {
 	//Debug( memset((void *) (-K(4)), 0, K(1)); )
 	memset(Barriers, 0xFF, sizeof(Barriers));
 
-	if (! Mouse.Exist)
+	if (!Mouse->Exist)
 		error("%s", Text->getText(NO_MOUSE_TEXT));
-	if (! SVG0FILE::Exist(SVG0NAME))
+	if (!SVG0FILE::Exist(SVG0NAME))
 		STARTUP::Mode = 2;
 
 	DebugLine.Flags.Hide = true;
