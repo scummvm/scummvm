@@ -24,6 +24,7 @@
 #define TSAGE_SOUND_H
 
 #include "common/scummsys.h"
+#include "common/mutex.h"
 #include "audio/audiostream.h"
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
@@ -170,8 +171,8 @@ public:
 	VoiceTypeStruct *_voiceTypeStructPtrs[SOUND_ARR_SIZE];
 	uint32 _groupsAvail;
 	int _masterVol;
-	int _serverDisabledCount;
-	int _serverSuspendedCount;
+	Common::Mutex _serverDisabledMutex;
+	Common::Mutex _serverSuspendedMutex;
 	int _suspendedCount;
 	bool _driversDetected;
 	Common::List<Sound *> _soundList;
@@ -201,10 +202,6 @@ public:
 	void installDriver(int driverNum);
 	bool isInstalled(int driverNum) const;
 	void unInstallDriver(int driverNum);
-	void disableSoundServer();
-	void enableSoundServer();
-	void suspendSoundServer();
-	void restartSoundServer();
 	void checkResVersion(const byte *soundData);
 	int determineGroup(const byte *soundData);
 	int extractPriority(const byte *soundData);

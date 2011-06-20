@@ -44,8 +44,6 @@ SoundManager::SoundManager() {
 
 	_groupsAvail = 0;
 	_masterVol = 127;
-	_serverSuspendedCount = 0;
-	_serverDisabledCount = 0;
 	_suspendedCount = 0;
 	_driversDetected = false;
 	_needToRethink = false;
@@ -154,24 +152,6 @@ void SoundManager::dumpDriverList() {
 	_availableDrivers.clear();
 }
 
-void SoundManager::disableSoundServer() {
-	++_serverDisabledCount;
-}
-
-void SoundManager::enableSoundServer() {
-	if (_serverDisabledCount > 0)
-		--_serverDisabledCount;
-}
-
-void SoundManager::suspendSoundServer() {
-	++_serverSuspendedCount;
-}
-
-void SoundManager::restartSoundServer() {
-	if (_serverSuspendedCount > 0)
-		--_serverSuspendedCount;
-}
-
 /**
  * Install the specified driver number
  */
@@ -188,7 +168,8 @@ void SoundManager::installDriver(int driverNum) {
 	assert((_ourDrvResVersion >= driver->_minVersion) && (_ourDrvResVersion <= driver->_maxVersion));
 
 	// Mute any loaded sounds
-	disableSoundServer();
+	Common::StackLock slock(_serverDisabledMutex);
+
 	for (Common::List<Sound *>::iterator i = _playList.begin(); i != _playList.end(); ++i)
 		(*i)->mute(true);
 
@@ -216,8 +197,6 @@ void SoundManager::installDriver(int driverNum) {
 		break;
 	}
 	}
-
-	enableSoundServer();
 }
 
 /**
@@ -238,7 +217,8 @@ void SoundManager::unInstallDriver(int driverNum) {
 			// Found driver to remove
 
 			// Mute any loaded sounds
-			disableSoundServer();
+			Common::StackLock slock(_serverDisabledMutex);
+
 			Common::List<Sound *>::iterator j;
 			for (j = _playList.begin(); j != _playList.end(); ++j)
 				(*j)->mute(true);
@@ -253,8 +233,6 @@ void SoundManager::unInstallDriver(int driverNum) {
 			// Unmute currently active sounds
 			for (j = _playList.begin(); j != _playList.end(); ++j)
 				(*j)->mute(false);
-
-			enableSoundServer();
 		}
 	}
 }
@@ -348,12 +326,13 @@ void SoundManager::updateSoundLoop(Sound *sound) {
 }
 
 void SoundManager::rethinkVoiceTypes() {
+	Common::StackLock slock(sfManager()._serverSuspendedMutex);
 	_sfRethinkVoiceTypes();
 }
 
 void SoundManager::_sfSoundServer() {
-	if (sfManager()._serverDisabledCount || sfManager()._serverSuspendedCount)
-		return;
+	Common::StackLock slock1(sfManager()._serverDisabledMutex);
+	Common::StackLock slock2(sfManager()._serverSuspendedMutex);
 
 	if (sfManager()._needToRethink) {
 		_sfRethinkVoiceTypes();
@@ -363,9 +342,7 @@ void SoundManager::_sfSoundServer() {
 	}
 
 	// Handle any fading if necessary
-	do {
-		_sfProcessFading();
-	} while (sfManager()._serverSuspendedCount > 0);
+	_sfProcessFading();
 
 	// Poll all sound drivers in case they need it
 	for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin();
@@ -533,24 +510,24 @@ int SoundManager::_sfDetermineGroup(const byte *soundData) {
 }
 
 void SoundManager::_sfAddToPlayList(Sound *sound) {
-	++sfManager()._serverSuspendedCount;
+	Common::StackLock slock(sfManager()._serverSuspendedMutex);
+
 	_sfDoAddToPlayList(sound);
 	sound->_stoppedAsynchronously = false;
 	_sfRethinkVoiceTypes();
-	--sfManager()._serverSuspendedCount;
 }
 
 void SoundManager::_sfRemoveFromPlayList(Sound *sound) {
-	++sfManager()._serverSuspendedCount;
+	Common::StackLock slock(sfManager()._serverSuspendedMutex);
+
 	if (_sfDoRemoveFromPlayList(sound))
 		_sfRethinkVoiceTypes();
-	--sfManager()._serverSuspendedCount;
 }
 
 bool SoundManager::_sfIsOnPlayList(Sound *sound) {
-	++_soundManager->_serverSuspendedCount;
+	Common::StackLock slock(sfManager()._serverSuspendedMutex);
+
 	bool result = contains(_soundManager->_playList, sound);
-	--_soundManager->_serverSuspendedCount;
 
 	return result;
 }
@@ -679,7 +656,6 @@ void SoundManager::_sfRethinkSoundDrivers() {
 }
 
 void SoundManager::_sfRethinkVoiceTypes() {
-	++sfManager()._serverSuspendedCount;
 	_sfDereferenceAll();
 
 	// Pre-processing
@@ -1203,8 +1179,6 @@ void SoundManager::_sfRethinkVoiceTypes() {
 			}
 		}
 	}
-
-	--sfManager()._serverSuspendedCount;
 }
 
 void SoundManager::_sfUpdateVolume(Sound *sound) {
@@ -1219,7 +1193,7 @@ void SoundManager::_sfDereferenceAll() {
 }
 
 void SoundManager::_sfUpdatePriority(Sound *sound) {
-	++_soundManager->_serverSuspendedCount;
+	Common::StackLock slock(sfManager()._serverSuspendedMutex);
 
 	int tempPriority = (sound->_fixedPriority == 255) ? sound->_sndResPriority : sound->_priority;
 	if (sound->_priority != tempPriority) {
@@ -1229,8 +1203,6 @@ void SoundManager::_sfUpdatePriority(Sound *sound) {
 			_sfRethinkVoiceTypes();
 		}
 	}
-
-	--_soundManager->_serverSuspendedCount;
 }
 
 void SoundManager::_sfUpdateLoop(Sound *sound) {
@@ -1329,21 +1301,20 @@ void SoundManager::_sfInstallPatchBank(SoundDriver *driver, const byte *bankData
  * Adds the specified sound in the playing sound list, inserting in order of priority
  */
 void SoundManager::_sfDoAddToPlayList(Sound *sound) {
-	++sfManager()._serverSuspendedCount;
+	Common::StackLock slock2(sfManager()._serverSuspendedMutex);
 
 	Common::List<Sound *>::iterator i = sfManager()._playList.begin();
 	while ((i != sfManager()._playList.end()) && (sound->_priority > (*i)->_priority))
 		++i;
 
 	sfManager()._playList.insert(i, sound);
-	--sfManager()._serverSuspendedCount;
 }
 
 /**
  * Removes the specified sound from the play list
  */
 bool SoundManager::_sfDoRemoveFromPlayList(Sound *sound) {
-	++sfManager()._serverSuspendedCount;
+	Common::StackLock slock(sfManager()._serverSuspendedMutex);
 
 	bool result = false;
 	for (Common::List<Sound *>::iterator i = sfManager()._playList.begin(); i != sfManager()._playList.end(); ++i) {
@@ -1354,12 +1325,11 @@ bool SoundManager::_sfDoRemoveFromPlayList(Sound *sound) {
 		}
 	}
 
-	--sfManager()._serverSuspendedCount;
 	return result;
 }
 
 void SoundManager::_sfDoUpdateVolume(Sound *sound) {
-	++_soundManager->_serverSuspendedCount;
+	Common::StackLock slock(sfManager()._serverSuspendedMutex);
 
 	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
 		VoiceTypeStruct *vs = sfManager()._voiceTypeStructPtrs[voiceIndex];
@@ -1383,8 +1353,6 @@ void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 			}
 		}
 	}
-
-	--_soundManager->_serverSuspendedCount;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1576,7 +1544,7 @@ bool Sound::isMuted() const {
 }
 
 void Sound::pause(bool flag) {
-	_soundManager->suspendSoundServer();
+	Common::StackLock slock(_globals->_soundManager._serverSuspendedMutex);
 
 	if (flag)
 		++_pausedCount;
@@ -1584,11 +1552,10 @@ void Sound::pause(bool flag) {
 		--_pausedCount;
 
 	_soundManager->rethinkVoiceTypes();
-	_soundManager->restartSoundServer();
 }
 
 void Sound::mute(bool flag) {
-	_soundManager->suspendSoundServer();
+	Common::StackLock slock(_globals->_soundManager._serverSuspendedMutex);
 
 	if (flag)
 		++_mutedCount;
@@ -1596,11 +1563,10 @@ void Sound::mute(bool flag) {
 		--_mutedCount;
 
 	_soundManager->rethinkVoiceTypes();
-	_soundManager->restartSoundServer();
 }
 
 void Sound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag) {
-	_soundManager->suspendSoundServer();
+	Common::StackLock slock(_globals->_soundManager._serverSuspendedMutex);
 
 	if (fadeDest > 127)
 		fadeDest = 127;
@@ -1614,8 +1580,6 @@ void Sound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeF
 	_fadeSteps = fadeSteps;
 	_fadeCounter = 0;
 	_stopAfterFadeFlag = stopAfterFadeFlag;
-
-	_soundManager->restartSoundServer();
 }
 
 void Sound::setTimeIndex(uint32 timeIndex) {
@@ -1704,7 +1668,7 @@ void Sound::_soPrimeSound(bool dontQueue) {
 }
 
 void Sound::_soSetTimeIndex(uint timeIndex) {
-	++_soundManager->_serverDisabledCount;
+	Common::StackLock slock(_globals->_soundManager._serverSuspendedMutex);
 
 	if (timeIndex != _timer) {
 		_soundManager->_soTimeIndexFlag = true;
@@ -1723,8 +1687,6 @@ void Sound::_soSetTimeIndex(uint timeIndex) {
 
 		_soundManager->_soTimeIndexFlag = false;
 	}
-
-	--_soundManager->_serverDisabledCount;
 }
 
 bool Sound::_soServiceTracks() {
