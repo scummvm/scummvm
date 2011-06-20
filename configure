@@ -1038,7 +1038,7 @@ arm-riscos)
 bada)
 	_host_os=bada
   if test "$_debug_build" = yes; then
-  	_host_cpu=i686
+    _host_cpu=i686
 	  _host_alias=i686-mingw32
   else
     _host_cpu=arm
@@ -3317,6 +3317,7 @@ case $_backend in
       CXXFLAGS="$CXXFLAGS -mfloat-abi=hard"
       CXXFLAGS="$CXXFLAGS -mlittle-endian"
       CXXFLAGS="$CXXFLAGS -mthumb-interwork"
+      CXXFLAGS="$CXXFLAGS -Wno-psabi"
     fi
     HOSTEXEPRE=lib
     HOSTEXEEXT=.a
@@ -3402,7 +3403,7 @@ fi;
 
 # Some platforms use certain GNU extensions in header files
 case $_host_os in
-android | gamecube | psp | wii)
+android | bada | gamecube | psp | wii)
 	;;
 *)
 	# ICC does not support pedantic
