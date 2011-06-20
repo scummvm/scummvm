@@ -178,10 +178,15 @@ public:
 #define CORO_RESCHEDULE do { g_scheduler->reschedule(); CORO_SLEEP(1); } while (0)
 
 /**
- * Stop the currently running coroutine.
+ * Stop the currently running coroutine and all calling coroutines.
+ *
+ * This sets _sleep to -1 rather than 0 so that the context doesn't get
+ * deleted by CoroContextHolder, since we want CORO_INVOKE_ARGS to
+ * propogate the _sleep value and return immediately (the scheduler will
+ * then delete the entire coroutine's state, including all subcontexts).
  */
 #define CORO_KILL_SELF() \
-		do { if (&coroParam != &nullContext) { coroParam->_sleep = 0; } return; } while (0)
+		do { if (&coroParam != &nullContext) { coroParam->_sleep = -1; } return; } while (0)
 
 
 /**
@@ -193,8 +198,12 @@ public:
 /**
  * Invoke another coroutine.
  *
- * What makes this tricky is that the coroutine we called my yield/sleep,
- * and we need to deal with this adequately.
+ * If the subcontext still exists after the coroutine is invoked, it has
+ * either yielded/slept or killed itself, and so we copy the _sleep value
+ * to our own context and return (execution will continue at the case
+ * statement below, where we loop and call the coroutine again).
+ * If the subcontext is null, the coroutine ended normally, and we can
+ * simply break out of the loop and continue execution.
  *
  * @param subCoro	name of the coroutine-enabled function to invoke
  * @param ARGS		list of arguments to pass to subCoro
