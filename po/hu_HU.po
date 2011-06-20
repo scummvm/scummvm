@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-06-13 22:20+0100\n"
+"POT-Creation-Date: 2011-06-20 23:09+0100\n"
 "PO-Revision-Date: 2011-06-15 07:42+0100\n"
 "Last-Translator: Gruby <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -49,8 +49,8 @@ msgstr "Feljebb"
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:312 gui/massadd.cpp:92 gui/options.cpp:1178
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
-#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:281
-#: backends/platform/wii/options.cpp:48
+#: engines/engine.cpp:408 engines/sword1/control.cpp:865
+#: engines/parallaction/saveload.cpp:281 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:222
 #: backends/events/default/default-events.cpp:244
 msgid "Cancel"
@@ -89,7 +89,7 @@ msgstr "Kiosztás"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
 #: gui/launcher.cpp:940 gui/massadd.cpp:89 gui/options.cpp:1179
-#: engines/engine.cpp:346 engines/engine.cpp:357 engines/scumm/scumm.cpp:1772
+#: engines/engine.cpp:346 engines/engine.cpp:357 engines/scumm/scumm.cpp:1796
 #: engines/agos/animation.cpp:545 engines/groovie/script.cpp:417
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:344 engines/sword1/animation.cpp:354
@@ -606,8 +606,9 @@ msgstr "Kirajzolás mód:"
 msgid "Special dithering modes supported by some games"
 msgstr "Néhány játék támogatja a speciális árnyalási módokat"
 
-#: gui/options.cpp:726 backends/graphics/sdl/sdl-graphics.cpp:2252
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:456
+#: gui/options.cpp:726
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2252
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:460
 msgid "Fullscreen mode"
 msgstr "Teljesképernyõs mód:"
 
@@ -1078,7 +1079,11 @@ msgstr "Nem található alkalmas motor plugin"
 msgid "Engine plugin does not support save states"
 msgstr "A motor nem támogatja a játékállás mentését"
 
-#: common/error.cpp:72
+#: common/error.cpp:71
+msgid "User canceled"
+msgstr ""
+
+#: common/error.cpp:75
 msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
@@ -1100,33 +1105,18 @@ msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Sárga"
 
-#: engines/advancedDetector.cpp:323
+#: engines/advancedDetector.cpp:296
 #, c-format
 msgid "The game in '%s' seems to be unknown."
 msgstr "A '%s' játék ismeretlennek tûnik."
 
-#: engines/advancedDetector.cpp:324
+#: engines/advancedDetector.cpp:297
 msgid "Please, report the following data to the ScummVM team along with name"
 msgstr "Kérlek jelezd a ScummVM csapatnak a következõ adatokat, együtt a játék"
 
-#: engines/advancedDetector.cpp:326
+#: engines/advancedDetector.cpp:299
 msgid "of the game you tried to add and its version/language/etc.:"
 msgstr "címével és megbízható adataival játékverzió/nyelv(ek)/stb.:"
-
-#: engines/advancedDetector.cpp:574
-#, c-format
-msgid ""
-"Your game version has been detected using filename matching as a variant of %"
-"s."
-msgstr "A felismert játékverziód a használt fájlnévvel a %s egy változata."
-
-#: engines/advancedDetector.cpp:577
-msgid "If this is an original and unmodified version, please report any"
-msgstr "Ha ez egy eredeti nem változtatott verzió, kérlek jelezd minden"
-
-#: engines/advancedDetector.cpp:579
-msgid "information previously printed by ScummVM to the team."
-msgstr "elõzõleg kiírt információt a ScummVM csapatnak."
 
 #: engines/dialogs.cpp:84
 msgid "~R~esume"
@@ -1242,6 +1232,17 @@ msgstr ""
 "CD audió kitömörítõ programmal\n"
 "hogy a játék zenéje hallható legyen.\n"
 "Nézd meg a README fájlt a részletekért."
+
+#: engines/engine.cpp:405
+msgid ""
+"WARNING: The game you are about to start is not yet fully supported by "
+"ScummVM. As such, it is likely to be unstable, and any saves you make might "
+"not work in future versions of ScummVM."
+msgstr ""
+
+#: engines/engine.cpp:408
+msgid "Start anyway"
+msgstr ""
 
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
@@ -1775,7 +1776,7 @@ msgstr "Jobbra repülés"
 msgid "Fly to lower right"
 msgstr "Jobbra le repülés"
 
-#: engines/scumm/scumm.cpp:1770
+#: engines/scumm/scumm.cpp:1794
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -1784,7 +1785,7 @@ msgstr ""
 "Native MIDI támogatáshoz kell a Roland Upgrade a LucasArts-tól,\n"
 "a %s hiányzik. AdLib-ot használok helyette."
 
-#: engines/scumm/scumm.cpp:2256 engines/agos/saveload.cpp:190
+#: engines/scumm/scumm.cpp:2280 engines/agos/saveload.cpp:190
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1795,7 +1796,7 @@ msgstr ""
 "\n"
 "%s fájlba nem sikerült"
 
-#: engines/scumm/scumm.cpp:2263 engines/agos/saveload.cpp:155
+#: engines/scumm/scumm.cpp:2287 engines/agos/saveload.cpp:155
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1806,7 +1807,7 @@ msgstr ""
 "\n"
 "%s fájlból nem sikerült"
 
-#: engines/scumm/scumm.cpp:2275 engines/agos/saveload.cpp:198
+#: engines/scumm/scumm.cpp:2299 engines/agos/saveload.cpp:198
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1817,7 +1818,7 @@ msgstr ""
 "\n"
 "%s fájlba elkészült"
 
-#: engines/scumm/scumm.cpp:2490
+#: engines/scumm/scumm.cpp:2514
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -2200,31 +2201,31 @@ msgstr "Touchpad mód engedélyezve."
 msgid "Touchpad mode disabled."
 msgstr "Touchpad mód letiltva."
 
-#: backends/graphics/sdl/sdl-graphics.cpp:45
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"
 msgstr "Normál (nincs átméretezés)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:64
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:64
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normál (nincs átméretezés)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2137
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:517
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2137
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:521
 msgid "Enabled aspect ratio correction"
 msgstr "Méretarány korrekció engedélyezve"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2143
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:522
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2143
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:526
 msgid "Disabled aspect ratio correction"
 msgstr "Méretarány korrekció letiltva"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2198
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2198
 msgid "Active graphics filter:"
 msgstr "Aktív grafikus szûrõk:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2254
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:461
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2254
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:465
 msgid "Windowed mode"
 msgstr "Ablakos mód"
 
@@ -2240,19 +2241,19 @@ msgstr "OpenGL Megtartott"
 msgid "OpenGL Original"
 msgstr "OpenGL Eredeti"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:399
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:403
 msgid "Current display mode"
 msgstr "Jelenlegi videómód"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:412
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:416
 msgid "Current scale"
 msgstr "Aktuális méretezés"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:546
 msgid "Active filter mode: Linear"
 msgstr "Aktív filter mód: Lineáris"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:544
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:548
 msgid "Active filter mode: Nearest"
 msgstr "Aktív filter mód: Közelítõ"
 
@@ -2618,6 +2619,17 @@ msgstr "Minimum Hangerõ"
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
 msgstr "Hangerõ csökkentése"
+
+#~ msgid ""
+#~ "Your game version has been detected using filename matching as a variant "
+#~ "of %s."
+#~ msgstr "A felismert játékverziód a használt fájlnévvel a %s egy változata."
+
+#~ msgid "If this is an original and unmodified version, please report any"
+#~ msgstr "Ha ez egy eredeti nem változtatott verzió, kérlek jelezd minden"
+
+#~ msgid "information previously printed by ScummVM to the team."
+#~ msgstr "elõzõleg kiírt információt a ScummVM csapatnak."
 
 #~ msgid "Discovered %d new games."
 #~ msgstr "%d Új játékot találtam."
