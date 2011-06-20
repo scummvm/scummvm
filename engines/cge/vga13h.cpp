@@ -69,7 +69,6 @@ static  VgaRegBlk VideoMode[] = {
 bool        SpeedTest   = false;
 SEQ     Seq1[] = { { 0, 0, 0, 0, 0 } };
 SEQ     Seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
-SPRITE     *Sys     = NULL;
 
 extern "C"  void    SNDMIDIPlay(void);
 

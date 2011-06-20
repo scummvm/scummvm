@@ -35,7 +35,7 @@
 
 namespace CGE {
 
-extern MOUSE Mouse;
+extern MOUSE *Mouse;
 
 bool   MIXER::Appear = false;
 
@@ -114,7 +114,8 @@ void MIXER::Touch(uint16 mask, int x, int y) {
 
 
 void MIXER::Tick(void) {
-	int x = Mouse.X, y = Mouse.Y;
+	int x = Mouse->X;
+	int y = Mouse->Y;
 	if (SpriteAt(x, y) == this) {
 		Fall = MIX_FALL;
 		if (Flags.Hold)
