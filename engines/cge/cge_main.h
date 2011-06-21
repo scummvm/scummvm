@@ -173,6 +173,20 @@ extern int OffUseCount;
 extern SPRITE *PocLight;
 extern MOUSE *Mouse;
 extern SPRITE *Pocket[];
+extern SPRITE *Sprite;
+extern SPRITE *MiniCave;
+extern SPRITE *Shadow;
+extern SPRITE *HorzLine;
+extern INFO_LINE *InfoLine;
+extern SPRITE *CavLight;
+extern INFO_LINE *DebugLine;
+extern BMP_PTR MB[2];
+extern BMP_PTR MB[2];
+extern BMP_PTR HL[2];
+extern BMP_PTR MC[3];
+extern BMP_PTR PR[2];
+extern BMP_PTR SP[3];
+extern BMP_PTR LI[5];
 
 } // End of namespace CGE
 
