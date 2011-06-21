@@ -52,6 +52,30 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	Mouse = new MOUSE;
 	for (int i = 0; i < POCKET_NX; i++)
 		Pocket[i] = new SPRITE(NULL);
+	Sprite = new SPRITE(NULL);
+	MiniCave = new SPRITE(NULL);
+	Shadow = new SPRITE(NULL);
+	HorzLine = new SPRITE(HL);
+	InfoLine = new INFO_LINE(INFO_W);
+	CavLight = new SPRITE(PR);
+	DebugLine = new INFO_LINE(SCR_WID);
+	MB[0] = new BITMAP("BRICK");
+	MB[1] = NULL;
+	HL[0] = new BITMAP("HLINE");
+	HL[1] = NULL;
+	MC[0] = new BITMAP("MOUSE");
+	MC[1] = new BITMAP("DUMMY");
+	MC[2] = NULL;
+	PR[0] = new BITMAP("PRESS");
+	PR[1] = NULL;
+	SP[0] = new BITMAP("SPK_L");
+	SP[1] = new BITMAP("SPK_R");
+	SP[2] = NULL;
+	LI[0] = new BITMAP("LITE0");
+	LI[1] = new BITMAP("LITE1"),
+	LI[2] = new BITMAP("LITE2"),
+	LI[3] = new BITMAP("LITE3"),
+	LI[4] = NULL;
 
 	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
 
