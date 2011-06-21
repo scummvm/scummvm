@@ -1341,14 +1341,14 @@ void SoundManager::_sfDoUpdateVolume(Sound *sound) {
 			SoundDriver *driver = vse._driver;
 
 			if (vs->_voiceType == VOICETYPE_0) {
-				if (!vse._type0._sound) {
+				if (vse._type0._sound) {
 					int vol = sound->_volume * sound->_chVolume[vse._type0._channelNum] / 127;
 					driver->proc24(voiceIndex, vse._voiceNum, sound, 7, vol);
 				}
 			} else {
-				if (!vse._type1._sound) {
+				if (vse._type1._sound) {
 					int vol = sound->_volume * sound->_chVolume[vse._type1._channelNum] / 127;
-					driver->setVolume1(voiceIndex, vse._voiceNum, 7, vol);
+					driver->proc38(vse._voiceNum, 7, vol);
 				}
 			}
 		}
