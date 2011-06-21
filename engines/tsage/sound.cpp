@@ -43,7 +43,7 @@ SoundManager::SoundManager() {
 		_voiceTypeStructPtrs[i] = NULL;
 
 	_groupsAvail = 0;
-	_masterVol = 127;
+	_newVolume = _masterVol = 127;
 	_suspendedCount = 0;
 	_driversDetected = false;
 	_needToRethink = false;
@@ -100,18 +100,14 @@ void SoundManager::syncSounds() {
 		mute = ConfMan.getBool("mute");
 
 	bool music_mute = mute;
-	bool sfx_mute = mute;
 
 	if (!mute) {
 		music_mute = ConfMan.getBool("music_mute");
-		sfx_mute = ConfMan.getBool("sfx_mute");
 	}
 
-	// Get the new music and sfx volumes
+	// Get the new music volume
 	int musicVolume = music_mute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
-	int sfxVolume = sfx_mute ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
 
-	warning("Set volume music=%d sfx=%d", musicVolume, sfxVolume);
 	this->setMasterVol(musicVolume / 2);
 }
 
@@ -251,7 +247,7 @@ bool SoundManager::isInstalled(int driverNum) const {
 }
 
 void SoundManager::setMasterVol(int volume) {
-	_sfSetMasterVol(volume);
+	_newVolume = volume;
 }
 
 int SoundManager::getMasterVol() const {
@@ -340,6 +336,10 @@ void SoundManager::_sfSoundServer() {
 	} else {
 		_sfDereferenceAll();
 	}
+
+	// If the master volume has changed, update it
+	if (sfManager()._newVolume != sfManager()._masterVol)
+		_sfSetMasterVol(sfManager()._newVolume);
 
 	// Handle any fading if necessary
 	_sfProcessFading();

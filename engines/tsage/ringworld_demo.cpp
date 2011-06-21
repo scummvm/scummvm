@@ -72,6 +72,7 @@ void RingworldDemoGame::processEvent(Event &event) {
 			ConfigDialog *dlg = new ConfigDialog();
 			dlg->runModal();
 			delete dlg;
+			_globals->_soundManager.syncSounds();
 			_globals->_events.setCursorFromFlag();
 			break;
 		}
