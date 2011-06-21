@@ -68,6 +68,20 @@ SYSTEM *Sys;
 SPRITE *PocLight;
 MOUSE *Mouse;
 SPRITE *Pocket[POCKET_NX];
+SPRITE *Sprite;
+SPRITE *MiniCave;
+SPRITE *Shadow;
+SPRITE *HorzLine;
+INFO_LINE *InfoLine;
+SPRITE *CavLight;
+INFO_LINE *DebugLine;
+
+BMP_PTR MB[2];
+BMP_PTR HL[2];
+BMP_PTR MC[3];
+BMP_PTR PR[2];
+BMP_PTR SP[3];
+BMP_PTR LI[5];
 
 // 0.75 - 17II95  - full sound support
 // 0.76 - 18II95  - small MiniEMS in DEMO,
@@ -116,10 +130,6 @@ DAC *SysPal = farnew(DAC, PAL_CNT);
 //-------------------------------------------------------------------------
 int     PocPtr      =  0;
 
-static  SPRITE   *Sprite      = NULL;
-static  SPRITE   *MiniCave    = NULL;
-static  SPRITE   *Shadow      = NULL;
-
 static  EMS      *Mini        = MiniEmm.Alloc((uint16)MINI_EMM_SIZE);
 static  BMP_PTR  *MiniShpList = NULL;
 static  BMP_PTR   MiniShp[]   = { NULL, NULL };
@@ -137,8 +147,6 @@ BAR     Barriers[1 + CAVE_MAX] = { { 0xFF, 0xFF } };
 extern  int FindPocket(SPRITE *);
 
 extern  DAC StdPal[58];
-
-static  SPRITE HorzLine = HL;
 
 void    FeedSnail(SPRITE *spr, SNLIST snq);         // defined in SNAIL
 uint8   CLUSTER::Map[MAP_ZCNT][MAP_XCNT];
@@ -581,11 +589,6 @@ static void BackPaint(void);
 static void NextStep(void);
 static void SaveMapping(void);
 
-
-static  INFO_LINE   InfoLine    = INFO_W;
-static  SPRITE      CavLight    = PR;
-
-
 static void KeyClick(void) {
 	SNPOST_(SNSOUND, -1, 5, NULL);
 }
@@ -740,7 +743,7 @@ static void CaveUp(void) {
 
 static void CaveDown(void) {
 	SPRITE *spr;
-	if (! HorzLine.Flags.Hide)
+	if (! HorzLine->Flags.Hide)
 		SwitchMapping();
 
 	for (spr = Vga->ShowQ->First(); spr;) {
@@ -793,7 +796,7 @@ void SwitchCave(int cav) {
 				/////--------------------------------------------------------
 #endif
 			}
-			CavLight.Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
+			CavLight->Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
 			              CAVE_Y + ((Now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
 			KillText();
 			if (! Startup)
@@ -926,7 +929,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 		if (Startup)
 			return;
 		int cav = 0;
-		InfoLine.Update(NULL);
+		InfoLine->Update(NULL);
 		if (y >= WORLD_HIG) {
 			if (x < BUTTON_X) {                           // select cave?
 				if (y >= CAVE_Y && y < CAVE_Y + CAVE_NY * CAVE_DY &&
@@ -952,7 +955,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			if (cav && Snail.Idle() && Hero->TracePtr < 0)
 				SwitchCave(cav);
 
-			if (!HorzLine.Flags.Hide) {
+			if (!HorzLine->Flags.Hide) {
 				if (y >= MAP_TOP && y < MAP_TOP + MAP_HIG) {
 					int8 x1, z1;
 					XZ(x, y).Split(x1, z1);
@@ -1076,7 +1079,7 @@ static void TakeName(void) {
 
 
 static void SwitchMapping(void) {
-	if (HorzLine.Flags.Hide) {
+	if (HorzLine->Flags.Hide) {
 		int i;
 		for (i = 0; i < MAP_ZCNT; i ++) {
 			int j;
@@ -1091,7 +1094,7 @@ static void SwitchMapping(void) {
 			if (s->W == MAP_XGRID && s->H == MAP_ZGRID)
 				SNPOST_(SNKILL, -1, 0, s);
 	}
-	HorzLine.Flags.Hide = ! HorzLine.Flags.Hide;
+	HorzLine->Flags.Hide = ! HorzLine->Flags.Hide;
 }
 
 
@@ -1176,10 +1179,8 @@ static  char    DebugText[] = " N=00000 F=000000 X=000 Y=000 FPS=0000\0S=00:00 0
 #define SP_F    (DebugText + 67)
 #define SP__    (DebugText + 70)
 
-INFO_LINE   DebugLine(SCR_WID);
-
 static void SayDebug(void) {
-	if (!DebugLine.Flags.Hide) {
+	if (!DebugLine->Flags.Hide) {
 		static long t = -1L;
 		long t1 = Timer();
 
@@ -1214,13 +1215,13 @@ static void SayDebug(void) {
 		}
 		dwtom(n, SP_S, 10, 2);
 //		*SP__ = (heapcheck() < 0) ? '!' : ' ';
-		DebugLine.Update(DebugText);
+		DebugLine->Update(DebugText);
 	}
 }
 
 
 static void SwitchDebug(void) {
-	DebugLine.Flags.Hide = ! DebugLine.Flags.Hide;
+	DebugLine->Flags.Hide = ! DebugLine->Flags.Hide;
 }
 
 
@@ -1251,7 +1252,7 @@ static void OptionTouch(int opt, uint16 mask) {
 void SPRITE::Touch(uint16 mask, int x, int y) {
 	Sys->FunTouch();
 	if ((mask & ATTN) == 0) {
-		InfoLine.Update(Name());
+		InfoLine->Update(Name());
 		if (mask & (R_DN | L_DN))
 			Sprite = this;
 		if (Ref / 10 == 12) {
@@ -1579,9 +1580,9 @@ static void RunGame(void) {
 	Text->Preload(100, 1000);
 	LoadHeroXY();
 
-	CavLight.Flags.Tran = true;
-	Vga->ShowQ->Append(&CavLight);
-	CavLight.Flags.Hide = true;
+	CavLight->Flags.Tran = true;
+	Vga->ShowQ->Append(CavLight);
+	CavLight->Flags.Hide = true;
 
 	static SEQ PocSeq[] = { { 0, 0, 0, 0, 20 },
 		{ 1, 2, 0, 0,  4 },
@@ -1641,17 +1642,17 @@ static void RunGame(void) {
 		}
 	}
 
-	InfoLine.Goto(INFO_X, INFO_Y);
-	InfoLine.Flags.Tran = true;
-	InfoLine.Update(NULL);
-	Vga->ShowQ->Insert(&InfoLine);
+	InfoLine->Goto(INFO_X, INFO_Y);
+	InfoLine->Flags.Tran = true;
+	InfoLine->Update(NULL);
+	Vga->ShowQ->Insert(InfoLine);
 
-	DebugLine.Z = 126;
-	Vga->ShowQ->Insert(&DebugLine);
+	DebugLine->Z = 126;
+	Vga->ShowQ->Insert(DebugLine);
 
-	HorzLine.Y = MAP_TOP - (MAP_TOP > 0);
-	HorzLine.Z = 126;
-	Vga->ShowQ->Insert(&HorzLine);
+	HorzLine->Y = MAP_TOP - (MAP_TOP > 0);
+	HorzLine->Z = 126;
+	Vga->ShowQ->Insert(HorzLine);
 
 	Mouse->Busy = Vga->SpareQ->Locate(BUSY_REF);
 	if (Mouse->Busy)
@@ -1660,7 +1661,7 @@ static void RunGame(void) {
 	Startup = 0;
 
 	SNPOST(SNLEVEL, -1, OldLev, &CavLight);
-	CavLight.Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
+	CavLight->Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
 	              CAVE_Y + ((Now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
 	CaveUp();
 
@@ -1834,8 +1835,8 @@ void cge_main(void) {
 	if (!SVG0FILE::Exist(SVG0NAME))
 		STARTUP::Mode = 2;
 
-	DebugLine.Flags.Hide = true;
-	HorzLine.Flags.Hide = true;
+	DebugLine->Flags.Hide = true;
+	HorzLine->Flags.Hide = true;
 
 	//srand((uint16) Timer());
 	Sys = new SYSTEM;
