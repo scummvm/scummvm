@@ -381,7 +381,7 @@ private:
 	void drawSubtitleOnScreen(SubtitleEntry *subtitle);
 
 	// Sound filter
-	void applyFilter(SoundEntry *entry, SoundBuffer buffer);
+	void applyFilter(SoundEntry *entry, int16 *buffer);
 };
 
 } // End of namespace LastExpress
