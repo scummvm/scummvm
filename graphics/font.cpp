@@ -73,6 +73,7 @@ void drawCharIntern(byte *ptr, uint pitch, const bitmap_t *src, int h, int minX,
 
 void NewFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const uint32 color) const {
 	assert(dst != 0);
+
   assert(_desc.bits != 0 && _desc.maxwidth <= 50); // let theme designers decide what looks correct
 	assert(dst->format.bytesPerPixel == 1 || dst->format.bytesPerPixel == 2);
 

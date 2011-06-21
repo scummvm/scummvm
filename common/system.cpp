@@ -131,6 +131,20 @@ Common::String OSystem::getDefaultConfigFileName() {
 	return "scummvm.ini";
 }
 
+void OSystem::logMessage(LogMessageType::Type type, const char *message) {
+#if !defined(__PLAYSTATION2__) && !defined(__DS__) && !defined(NO_STDERR_STDOUT)
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	fputs(message, output);
+	fflush(output);
+#endif
+}
+
 Common::String OSystem::getSystemLanguage() const {
 	return "en_US";
 }
