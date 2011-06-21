@@ -24,6 +24,7 @@
 
 #include "kyra/eobcommon.h"
 #include "kyra/gui_eob.h"
+#include "kyra/text_eob.h"
 #include "kyra/timer.h"
 #include "kyra/util.h"
 
@@ -847,25 +848,15 @@ int EobCoreEngine::clickedCamp(Button *button) {
 	}
 
 	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 14, Screen::CR_NO_P_CHECK);
-	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	
-	for (int i = 0; i < 4; i++) {
-		delete _menuStringsPrefsTemp[i];
-		_menuStringsPrefsTemp[i] = new char[strlen(_menuStringsPrefs[i]) + 8];
-	}
-
-	Common::strlcpy(_menuStringsPrefsTemp[0], Common::String::format(_menuStringsPrefs[0], _menuStringsOnOff[_configMusic ? 0 : 1]).c_str(), strlen(_menuStringsPrefs[0]) + 8);
-	Common::strlcpy(_menuStringsPrefsTemp[1], Common::String::format(_menuStringsPrefs[1], _menuStringsOnOff[_configSounds ? 0 : 1]).c_str(), strlen(_menuStringsPrefs[1]) + 8);
-	Common::strlcpy(_menuStringsPrefsTemp[2], Common::String::format(_menuStringsPrefs[2], _menuStringsOnOff[_configHpBarGraphs ? 0 : 1]).c_str(), strlen(_menuStringsPrefs[2]) + 8);
-	Common::strlcpy(_menuStringsPrefsTemp[3], Common::String::format(_menuStringsPrefs[3], _menuStringsOnOff[_configMouse ? 0 : 1]).c_str(), strlen(_menuStringsPrefs[3]) + 8);
+	_gui->runCampMenu();	
 	
-	_screen->setFont(of);
 	_screen->copyRegion(0, 0, 0, 120, 176, 24, 14, 2, Screen::CR_NO_P_CHECK);
 	_screen->setScreenDim(cd);
 	drawScene(0);
 
-	//for (int i = 0; i < 6; i++)
-	//	cleanupCharacterSpellList(i);
+	for (int i = 0; i < 6; i++)
+		cleanupCharacterSpellList(i);
 
 	_screen->setCurPage(0);
 	const ScreenDim *dm = _screen->getScreenDim(10);
@@ -1447,18 +1438,30 @@ GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawButtonCallback);
 	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawShadedButtonCallback);
 
+	_menuStringsPrefsTemp = new char*[4];
+	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char*));
+
 	_specialProcessButton = _backupButtonList = 0;
 	_flagsMouseLeft = _flagsMouseRight = _flagsModifier = 0;
 	_backupButtonList = 0;
 	_progress = 0;
 	_prcButtonUnk3 = 1;
 	_cflag = 0xffff;
-
+	
 	_menuLineSpacing = 0;
 	_menuUnk1 = 0;
 	_menuLastInFlags = 0;
 	_menuCur = 0;
 	_menuNumItems = 0;
+	_menuButtons = 0;
+}
+
+GUI_Eob::~GUI_Eob() {
+	if (_menuStringsPrefsTemp) {
+		for (int i = 0; i < 4; i++)
+			delete _menuStringsPrefsTemp[i];
+		delete[] _menuStringsPrefsTemp;
+	}
 }
 
 void GUI_Eob::processButton(Button *button) {
@@ -2028,23 +2031,6 @@ int GUI_Eob::handleMenu(int sd, const char *const *strings, void *b, int32 menuI
 	return result;
 }
 
-void GUI_Eob::initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk) {
-	if (menuItemsMask == -1) {
-		_menuNumItems = _screen->getScreenDim(19 + menuId)->h;
-		_menuCur = _screen->getScreenDim(19 + menuId)->unk8;
-		return;
-	}
-
-	_menuNumItems = 0;
-
-	for (int i = 0; i < maxItem; i++) {
-		if (menuItemsMask & (1 << (i + unk)))
-			_menuNumItems++;
-	}
-
-	_menuCur = 0;
-}
-
 int GUI_Eob::getMenuItem(int index, int32 menuItemsMask, int unk) {
 	if (menuItemsMask == -1)
 		return index;
@@ -2072,6 +2058,172 @@ void GUI_Eob::menuFlashSelection(const char *str, int x, int y, int color1, int 
 		_screen->updateScreen();
 		_vm->_system->delayMillis(32);
 	}
+}
+
+int GUI_Eob::runCampMenu() {
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+	
+	Button *highlightButton = 0;
+	Button *prevHighlightButton = 0;
+	
+	int newMenu = 0;
+	int lastMenu = -1;
+	int e = 0;
+	int menuG = 0;
+	int menuH = 0;
+	_menuButtons = 0;
+
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+		if (newMenu == 2)
+			updateOptionsStrings();
+		
+		if (newMenu != -1) {
+			releaseButtons(_menuButtons);
+
+			_vm->_menuDefs[0].titleStrId = newMenu ? 1 : 56;
+			if (newMenu == 2)
+				_vm->_menuDefs[2].titleStrId = 57;
+			else if (newMenu == 1)
+				_vm->_menuDefs[1].titleStrId = 58;
+			
+			_menuButtons = initMenu(newMenu);
+
+			if (newMenu != lastMenu) {
+				highlightButton = _menuButtons;
+				prevHighlightButton = 0;
+			}
+
+			lastMenu = newMenu;
+			newMenu = -1;
+		}
+		
+		int inputFlag = _vm->checkInput(_menuButtons, false, 0) & 0x80ff;
+		_vm->removeInputTop();
+		
+		if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE])
+			inputFlag = 0x8007;
+		else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+			inputFlag = 0x8000 + prevHighlightButton->index;
+		}
+
+		Button *clickedButton = _vm->gui_getButton(_menuButtons, inputFlag & 0x7fff);
+
+		if (clickedButton) {
+			drawMenuButton(prevHighlightButton, false, false, true);
+			drawMenuButton(clickedButton, true, true, true);
+			_screen->updateScreen();
+			_vm->_system->delayMillis(80);
+			drawMenuButton(clickedButton, false, true, true);
+			_screen->updateScreen();
+			highlightButton = clickedButton;
+			prevHighlightButton = 0;
+		}
+
+		if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP3] || inputFlag == _vm->_keyMap[Common::KEYCODE_PAGEDOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP1] || inputFlag == _vm->_keyMap[Common::KEYCODE_END]) {
+			highlightButton = _vm->gui_getButton(_menuButtons, _vm->_menuDefs[lastMenu].firstButtonStrId + _vm->_menuDefs[lastMenu].numButtons);
+			inputFlag = _vm->_keyMap[Common::KEYCODE_UP];
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP7] || inputFlag == _vm->_keyMap[Common::KEYCODE_HOME] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP9] || inputFlag == _vm->_keyMap[Common::KEYCODE_PAGEUP]) {
+			highlightButton = _vm->gui_getButton(_menuButtons, _vm->_menuDefs[lastMenu].firstButtonStrId + 1);
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP8] || inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP2] || inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN]) {
+			if (prevHighlightButton) {
+				int dir = (inputFlag == _vm->_keyMap[Common::KEYCODE_UP]) ? -1 : 1;
+				int s = prevHighlightButton->index + dir;
+				int a = _vm->_menuDefs[lastMenu].firstButtonStrId + 1;
+				int b = a + _vm->_menuDefs[lastMenu].numButtons - 1;
+
+				do {
+					if (s < a)
+						s = b;
+					if (s > b)
+						s = a;
+					if (_vm->_menuButtonDefs[s - 1].flags & 2)
+						break;
+					s += dir;
+				} while(!_vm->shouldQuit());
+
+				highlightButton = _vm->gui_getButton(_menuButtons, s);
+			}
+			
+		} else if (inputFlag > 0x8001 && inputFlag < 0x8010) {
+			switch (inputFlag) {
+			case 0x8001:
+				break;
+			case 0x8002:
+				break;
+			case 0x8003:
+				break;
+			case 0x8004:
+				break;
+			case 0x8005:
+				newMenu = 2;
+				break;
+			case 0x8006:
+				newMenu = 1;
+				break;
+			case 0x8007:
+				if (menuH)
+					displayTextBox(44);
+				// fall through
+			case 0x800c:
+			case 0x800f:
+				if (lastMenu == 1 || lastMenu == 2)
+					newMenu = 0;
+				else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE])
+					newMenu = 0;
+				else
+					runLoop = false;
+				break;
+			case 0x8008:
+				break;
+			case 0x8009:
+				break;
+			case 0x800a:
+				break;
+			case 0x800b:
+				break;
+			case 0x800d:
+				break;
+			case 0x800e:
+				break;
+			default:
+				break;
+			}
+			
+		} else {
+			Common::Point p = _vm->getMousePos();
+			for (Button *b = _menuButtons; b; b = b->nextButton) {
+				if ((b->arg & 2) && _vm->posWithinRect(p.x, p.y, b->x, b->y, b->x + b->width, b->y + b->height))
+					highlightButton = b;
+			}
+		}
+		
+		if (menuG || e) {
+			for (int i = 0; i < 6; i++) {
+				_vm->gui_drawCharPortraitWithStats(i);
+				_vm->cleanupCharacterSpellList(i);
+			}
+		}
+
+		menuG = e = 0;
+
+		if (prevHighlightButton != highlightButton && newMenu == -1 && runLoop) {
+			drawMenuButton(prevHighlightButton, false, false, true);
+			drawMenuButton(highlightButton, false, true, true);
+			_screen->updateScreen();
+			prevHighlightButton = highlightButton;
+		}
+	}
+
+	releaseButtons(_menuButtons);
+	_menuButtons = 0;
+	
+	_screen->setFont(of);
+
+	return 0;
+}
+
+int GUI_Eob::runLoadMenu(int x, int y) {
+	return 0;
 }
 
 int GUI_Eob::getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor) {
@@ -2190,6 +2342,185 @@ int GUI_Eob::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	} while (_keyPressed.keycode != Common::KEYCODE_RETURN && _keyPressed.keycode != Common::KEYCODE_ESCAPE);
 
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
+}
+
+void GUI_Eob::initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk) {
+	if (menuItemsMask == -1) {
+		_menuNumItems = _screen->getScreenDim(19 + menuId)->h;
+		_menuCur = _screen->getScreenDim(19 + menuId)->unk8;
+		return;
+	}
+
+	_menuNumItems = 0;
+
+	for (int i = 0; i < maxItem; i++) {
+		if (menuItemsMask & (1 << (i + unk)))
+			_menuNumItems++;
+	}
+
+	_menuCur = 0;
+}
+
+Button *GUI_Eob::initMenu(int id) {
+	_screen->setCurPage(2);
+
+	EobMenuDef *m = &_vm->_menuDefs[id];
+
+	if (m->dim) {
+		const ScreenDim *dm = _screen->getScreenDim(m->dim);
+		_screen->fillRect(dm->sx << 3, dm->sy, ((dm->sx + dm->w) << 3) - 1, (dm->sy + dm->h) - 1, _vm->_bkgColor_1);
+		_screen->setScreenDim(m->dim);
+		drawMenuButtonBox(dm->sx << 3, dm->sy, dm->w << 3, dm->h, false, false);		
+	}
+
+	_screen->printShadedText(getMenuString(m->titleStrId), 5, 5, m->titleCol, 0);
+
+	Button *buttons = 0;
+	for (int i = 0; i < m->numButtons; i++) {
+		const EobMenuButtonDef *df = &_vm->_menuButtonDefs[m->firstButtonStrId + i];
+		Button *b = new Button;
+		b->index = m->firstButtonStrId + i + 1;		
+		b->data0Val2 = 12;
+		b->data1Val2 = b->data2Val2 = 15;
+		b->data3Val2 = 8;
+		b->flags = 0x1100;
+		b->keyCode = df->keyCode;
+		b->keyCode2 = df->keyCode | 0x100;
+		b->x = df->x;
+		b->y = df->y;
+		b->width = df->width;
+		b->height = df->height;
+		b->extButtonDef = df;
+		b->arg = df->flags;
+
+		drawMenuButton(b, false, false, false);
+		buttons = linkButton(buttons, b);
+	}
+
+	_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 2, 0, Screen::CR_NO_P_CHECK);
+	_vm->gui_notifyButtonListChanged();
+	_screen->setCurPage(0);
+	_screen->updateScreen();
+
+	return buttons;
+}
+
+void GUI_Eob::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill) {
+	if (!b)
+		return;
+	
+	EobMenuButtonDef *d = (EobMenuButtonDef*)b->extButtonDef;
+
+	if (d->flags & 1)
+		drawMenuButtonBox(b->x, b->y, b->width, b->height, clicked, noFill);
+
+	if (d->labelId) {
+		const char *s = getMenuString(d->labelId);
+		
+		int xOffs = 4;
+		int yOffs = 3;
+
+		if (d->flags & 4) {
+			xOffs = ((b->width - (strlen(s) << 3)) >> 1) + 1;
+			yOffs = (b->height - 7) >> 1;
+		}
+
+		if (noFill || clicked)
+			_screen->printText(s, b->x + xOffs, b->y + yOffs, highlight ? 6 : 15, 0);
+		else
+			_screen->printShadedText(s, b->x + xOffs, b->y + yOffs, highlight ? 6 : 15, 0);
+	}
+}
+
+void GUI_Eob::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill) {
+	uint8 col1 = _vm->_color1_1;
+	uint8 col2 = _vm->_color2_1;
+	
+	if (clicked)
+		col1 = col2 = _vm->_bkgColor_1;
+
+	_vm->gui_drawBox(x, y, w, h, col1, col2, -1);
+	_vm->gui_drawBox(x + 1, y + 1, w - 2, h - 2, _vm->_color1_1, _vm->_color2_1, noFill ? -1 : _vm->_bkgColor_1);
+}
+
+void GUI_Eob::displayTextBox(int id) {
+
+}
+
+void GUI_Eob::updateOptionsStrings() {
+	for (int i = 0; i < 4; i++) {
+		delete _menuStringsPrefsTemp[i];
+		_menuStringsPrefsTemp[i] = new char[strlen(_vm->_menuStringsPrefs[i]) + 8];
+	}
+
+	Common::strlcpy(_menuStringsPrefsTemp[0], Common::String::format(_vm->_menuStringsPrefs[0], _vm->_menuStringsOnOff[_vm->_configMusic ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[0]) + 8);
+	Common::strlcpy(_menuStringsPrefsTemp[1], Common::String::format(_vm->_menuStringsPrefs[1], _vm->_menuStringsOnOff[_vm->_configSounds ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[1]) + 8);
+	Common::strlcpy(_menuStringsPrefsTemp[2], Common::String::format(_vm->_menuStringsPrefs[2], _vm->_menuStringsOnOff[_vm->_configHpBarGraphs ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[2]) + 8);
+	Common::strlcpy(_menuStringsPrefsTemp[3], Common::String::format(_vm->_menuStringsPrefs[3], _vm->_menuStringsOnOff[_vm->_configMouse ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[3]) + 8);
+}
+
+const char *GUI_Eob::getMenuString(int id) {
+	if (id >= 69)
+		return _vm->_menuStringsTransfer[id - 69];
+	else if (id >= 67)
+		return _vm->_menuStringsDefeat[id - 67];
+	else if (id >= 63)
+		return _vm->_menuStringsSpec[id - 63];
+	else if (id >= 60)
+		return _vm->_menuStringsSpellNo[id - 60];
+	else if (id == 59)
+		return _vm->_menuStringsPoison[0];
+	else if (id >= 56)
+		return _vm->_menuStringsHead[id - 56];
+	else if (id >= 53)
+		return _vm->_menuStringsDrop2[id - 53];
+	else if (id >= 48)
+		return _vm->_menuStringsScribe[id - 48];
+	else if (id == 47)
+		_vm->_menuStringsStarve[0];
+	else if (id == 46)
+		_vm->_menuStringsExit[0];
+	else if (id == 45)
+		_vm->_menuStringsDrop[0];
+	else if (id >= 40)
+		return _vm->_menuStringsRest[id - 40];
+	else if (id >= 23)
+		return _vm->_menuStringsSpells[id - 23];
+	else if (id >= 21)
+		return _vm->_menuStringsOnOff[id - 21];
+	else if (id >= 17)
+		return _menuStringsPrefsTemp[id - 17];
+	else if (id >= 9)
+		return _vm->_menuStringsSaveLoad[id - 9];
+	else if (id >= 1)
+		return _vm->_menuStringsMain[id - 1];
+	return 0;
+}
+
+Button *GUI_Eob::linkButton(Button *list, Button *newbt) {
+	if (!list) {
+		list = newbt;
+		return list;
+	}
+
+	if (!newbt)
+		return list;
+
+	Button *resList = list;
+	while (list->nextButton)
+		list = list->nextButton;
+	list->nextButton = newbt;
+	newbt->nextButton = 0;
+
+	return resList;
+}
+
+void GUI_Eob::releaseButtons(Button *list) {
+	while (list) {
+		Button *n = list->nextButton;
+		delete list;
+		list = n;
+	}
 }
 
 #endif // ENABLE_EOB

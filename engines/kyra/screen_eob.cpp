@@ -91,8 +91,9 @@ const ScreenDim *Screen_Eob::getScreenDim(int dim) {
 }
 
 void Screen_Eob::modifyScreenDim(int dim, int x, int y, int w, int h) {
-	delete _customDimTable[dim];
-	_customDimTable[dim] = new ScreenDim;
+	if (!_customDimTable[dim])
+		_customDimTable[dim] = new ScreenDim;
+
 	memcpy(_customDimTable[dim], &_screenDimTable[dim], sizeof(ScreenDim));
 	_customDimTable[dim]->sx = x;
 	_customDimTable[dim]->sy = y;

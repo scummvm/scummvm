@@ -415,6 +415,10 @@ void EobCoreEngine::setSpellEventTimer(int spell, int timerBaseFactor, int timer
 	setCharEventTimer(_activeSpellCaster, countdown, -spell, updateExistingTimer);
 }
 
+void EobCoreEngine::cleanupCharacterSpellList(int charIndex) {
+
+}
+
 bool EobCoreEngine::magicObjectHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level) {
 	int ignoreAttackerId = fo->flags & 0x10;
 	int singleTargetCheckAdjacent = fo->flags & 1;

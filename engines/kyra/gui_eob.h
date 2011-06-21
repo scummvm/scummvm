@@ -39,6 +39,7 @@ class GUI_Eob : public GUI {
 	friend class CharacterGenerator;
 public:
 	GUI_Eob(EobCoreEngine *vm);
+	virtual ~GUI_Eob();
 
 	void initStaticData() {}
 
@@ -49,15 +50,17 @@ public:
 	int redrawShadedButtonCallback(Button *button) { return 0; }
 	int redrawButtonCallback(Button *button) { return 0; }
 
-	// general menu handling (main menu, character generation, ingame menus, etc.)
+	// Non button based menu handling (main menu, character generation)
 	void setupMenu(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing);
-	int handleMenu(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);
+	int handleMenu(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);	
 	int getMenuItem(int index, int32 menuItemsMask, int unk);
 	void menuFlashSelection(const char *str, int x, int y, int color1, int color2, int color3);
 
-	int getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor);
+	// Button based menus (camp menu, options, save/load)
+	int runCampMenu();
+	int runLoadMenu(int x, int y);
 
-	// int runMenu(Menu &menu);
+	int getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor);
 
 	// utilities for thumbnail creation
 	void createScreenThumbnail(Graphics::Surface &dst) {}
@@ -73,7 +76,17 @@ private:
 
 	//int getMenuCenterStringX(const char *str, int x1, int x2);
 
-	int getInput();
+	//int getInput();
+	Button *initMenu(int id);
+	
+	void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill);
+	void drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill);
+	void displayTextBox(int id);
+	void updateOptionsStrings();
+	const char *getMenuString(int id);
+
+	Button *linkButton(Button *list, Button *newbt);
+	void releaseButtons(Button *list);
 
 	Button *getButtonListData() { return _menuButtons; }
 	Button *getScrollUpButton() { return &_scrollUpButton; }
@@ -89,13 +102,16 @@ private:
 	const char *getMenuItemTitle(const MenuItem &menuItem) { return 0; }
 	const char *getMenuItemLabel(const MenuItem &menuItem) { return 0; }
 
-	Button _menuButtons[10];
+	//Button _menuButtons[10];
+	Button *_menuButtons;
 	Button _scrollUpButton;
 	Button _scrollDownButton;
 	//Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _deleteMenu, _savenameMenu, _deathMenu;
 	//Menu *_currentMenu, *_lastMenu, *_newMenu;
 	//int _menuResult;
 	//char *_saveDescription;
+
+	char **_menuStringsPrefsTemp;
 
 	EobCoreEngine *_vm;
 	Screen_Eob *_screen;
