@@ -23,9 +23,9 @@ class proc:
 			self.labels.remove(label)
 		except:
 			pass
-		for l in self.stmts:
-			if isinstance(l, op.label) and l.name == label:
-				self.stmts.remove(l)
+		for i in xrange(len(self.stmts)):
+			if isinstance(self.stmts[i], op.label) and self.stmts[i].name == label:
+				self.stmts[i] = op._nop(None)
 				return
 	
 	def optimize_sequence(self, cls):
@@ -48,7 +48,8 @@ class proc:
 			n = j - i
 			if n > 1:
 				print "Eliminate consequtive storage instructions at %u-%u" %(i, j)
-				del stmts[i + 1:j]
+				for k in range(i+1,j):
+					stmts[k] = op._nop(None)
 				stmts[i].repeat = n
 			else:
 				i = j
@@ -63,7 +64,7 @@ class proc:
 			if isinstance(stmts[i + 1], cls):
 				stmts[i + 1].repeat = 'cx'
 				stmts[i + 1].clear_cx = True
-				del stmts[i]
+				stmts[i] = op._nop(None)
 			i += 1
 		return
 	
@@ -78,7 +79,7 @@ class proc:
 			if not isinstance(self.stmts[i], op.label):
 				continue
 			j = i
-			while j < len(self.stmts) and isinstance(self.stmts[j], op.label):
+			while j < len(self.stmts) and isinstance(self.stmts[j], (op.label, op._nop)):
 				j += 1
 			if j == len(self.stmts) or isinstance(self.stmts[j], op._ret):
 				print "Return label: %s" % (self.stmts[i].name,)
@@ -121,18 +122,14 @@ class proc:
 				print self.labels
 				self.remove_label(s.name)
 
-		#removing duplicate rets
-		i = 0
-		while i < len(self.stmts)-1:
-			if isinstance(self.stmts[i], op._ret) and isinstance(self.stmts[i+1], op._ret):
-				del self.stmts[i]
-			else:
-				i += 1
-
-		#removing last ret
-		while len(self.stmts) > 0 and isinstance(self.stmts[-1], op._ret) and (len(self.stmts) < 2 or not isinstance(self.stmts[-2], op.label)):
-			print "stripping last ret"
-			self.stmts.pop()
+		#removing duplicate rets and rets at end
+		for i in xrange(len(self.stmts)):
+			if isinstance(self.stmts[i], op._ret):
+				j = i+1
+				while j < len(self.stmts) and isinstance(self.stmts[j], op._nop):
+					j += 1
+				if j == len(self.stmts) or isinstance(self.stmts[j], op._ret):
+					self.stmts[i] = op._nop(None)
 
 		self.optimize_sequence(op._stosb);
 		self.optimize_sequence(op._stosw);
