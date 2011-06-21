@@ -1416,6 +1416,7 @@ void Sound::play(int soundNum) {
 }
 
 void Sound::stop() {
+	_globals->_soundManager.removeFromPlayList(this);
 	_unPrime();
 }
 
@@ -2252,6 +2253,7 @@ void ASound::synchronize(Serializer &s) {
 
 	SYNC_POINTER(_action);
 	s.syncAsByte(_cueValue);
+
 }
 
 void ASound::dispatch() {
