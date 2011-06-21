@@ -55,8 +55,6 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 		_weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
 	_tempIconShape = 0;
 
-	_menuStringsPrefsTemp = 0;
-
 	_monsterDustStrings = 0;
 	_monsterDistAttType10 = 0;
 	_monsterDistAttSfx10 = 0;
@@ -106,6 +104,8 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_color10 = 23;
 	_color11 = 20;
 
+	_menuDefs = 0;
+
 	_exchangeCharacterId = -1;
 	_charExchangeSwap = 0;
 	_configHpBarGraphs = true;
@@ -142,12 +142,6 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 EobCoreEngine::~EobCoreEngine() {
 	releaseItemsAndDecorationsShapes();
 	releaseTempData();
-
-	if (_menuStringsPrefsTemp) {
-		for (int i = 0; i < 4; i++)
-			delete _menuStringsPrefsTemp[i];
-		delete[] _menuStringsPrefsTemp;
-	}
 
 	if (_faceShapes) {
 		for (int i = 0; i < 44; i++) {
@@ -207,6 +201,9 @@ EobCoreEngine::~EobCoreEngine() {
 
 	delete _gui;
 	_gui = 0;
+	delete[] _menuDefs;
+	_menuDefs = 0;
+
 	delete _inf;
 	delete _timer;
 	_timer = 0;
@@ -265,11 +262,9 @@ Common::Error EobCoreEngine::init() {
 		return err;
 
 	initButtonData();
+	initMenus();
 	initStaticResource();
 	initSpells();
-
-	_menuStringsPrefsTemp = new char*[4];
-	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char*));
 
 	_timer = new TimerManager(this, _system);
 	assert(_timer);

@@ -80,7 +80,9 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	_commandMin(engine->game() == GI_EOB1 ? -27 : -31) {
 
 #define Opcode(x) _opcodes.push_back(new InfProc(this, &EobInfProcessor::x))
-#define OpcodeAlt(x, y) if (_vm->game() == GI_EOB1) Opcode(x); else Opcode(y);
+//#define OpcodeAltV(x, y) if (_vm->game() == GI_EOB1) Opcode(x); else Opcode(y);
+//#define OpcodeAlt(x) OpcodeAltV(x##_v1, x##_v2)
+#define OpcodeAlt(x) if (_vm->game() == GI_EOB1) Opcode(x##_v1); else Opcode(x##_v2);
 	Opcode(oeob_setWallType);
 	Opcode(oeob_toggleWallState);
 	Opcode(oeob_openDoor);
@@ -88,7 +90,7 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	Opcode(oeob_replaceMonster);
 	Opcode(oeob_movePartyOrObject);
 	Opcode(oeob_moveInventoryItemToBlock);
-	OpcodeAlt(oeob_printMessage_v1, oeob_printMessage_v2);
+	OpcodeAlt(oeob_printMessage);
 	Opcode(oeob_setFlags);
 	Opcode(oeob_playSoundEffect);
 	Opcode(oeob_removeFlags);
@@ -98,11 +100,11 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	Opcode(oeob_end);
 	Opcode(oeob_popPosAndReturn);
 	Opcode(oeob_pushPosAndJump);
-	OpcodeAlt(oeob_eval_v1, oeob_eval_v2);
+	OpcodeAlt(oeob_eval);
 	Opcode(oeob_deleteItem);
 	Opcode(oeob_loadNewLevelOrMonsters);
 	Opcode(oeob_increasePartyExperience);
-	OpcodeAlt(oeob_createItem_v1, oeob_createItem_v2);
+	OpcodeAlt(oeob_createItem);
 	Opcode(oeob_launchObject);
 	Opcode(oeob_changeDirection);
 	Opcode(oeob_identifyItems);
@@ -112,6 +114,7 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	Opcode(oeob_dialogue);
 	Opcode(oeob_specialEvent);
 #undef Opcode
+//#undef OpcodeAltV
 #undef OpcodeAlt
 
 	_scriptData = 0;

@@ -228,6 +228,23 @@ struct ScriptTimer {
 	uint32 next;
 };
 
+struct EobMenuDef {
+	int8 titleStrId;
+	uint8 dim;
+	uint8 firstButtonStrId;
+	int8 numButtons;
+	int8 titleCol;
+};
+struct EobMenuButtonDef {
+	int8 labelId;
+	int16 x;
+	int8 y;
+	uint8 width;
+	uint8 height;
+	int16 keyCode;
+	int16 flags;
+};
+
 class EobInfProcessor;
 
 class EobCoreEngine : public LolEobBaseEngine {
@@ -258,8 +275,9 @@ protected:
 	void releaseItemsAndDecorationsShapes();
 
 	void initButtonData();
+	void initMenus();
 	void initStaticResource();
-	virtual void initSpells();
+	virtual void initSpells();	
 
 	const uint8 **_largeItemShapes;
 	const uint8 **_smallItemShapes;
@@ -825,6 +843,7 @@ protected:
 	void sparkEffectDefensive(int charIndex);
 	void sparkEffectOffensive();
 	void setSpellEventTimer(int spell, int timerBaseFactor, int timerLength, int timerLevelFactor, int updateExistingTimer);
+	void cleanupCharacterSpellList(int charIndex);
 
 	bool magicObjectHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level);
 
@@ -957,7 +976,8 @@ protected:
 	const uint8 *_magicFlightObjectProperties;
 
 	// Menu
-	char **_menuStringsPrefsTemp;
+	EobMenuDef *_menuDefs;
+	const EobMenuButtonDef *_menuButtonDefs;
 
 	bool _configMouse;
 

@@ -319,7 +319,7 @@ void CharacterGenerator::initButton(int index, int x, int y, int w, int h, int k
 	b->width = w;
 	b->height = h;
 	b->keyCode = keyCode;
-	b->keyCode2 = keyCode + 0x100;
+	b->keyCode2 = keyCode | 0x100;
 }
 
 void CharacterGenerator::checkForCompleteParty() {

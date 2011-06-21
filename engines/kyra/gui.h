@@ -88,6 +88,8 @@ struct Button {
 
 	Callback buttonCallback;
 
+	const void *extButtonDef;
+
 	uint16 arg;
 };
 
