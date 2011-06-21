@@ -33,7 +33,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
 		GF_CD | GF_ALT_REGIONS
@@ -47,7 +47,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
 		GF_FLOPPY
@@ -61,7 +61,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO
@@ -76,7 +76,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
@@ -92,7 +92,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
 		GF_FLOPPY
@@ -107,7 +107,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
 		GF_FLOPPY
@@ -121,7 +121,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
 		GF_CD
