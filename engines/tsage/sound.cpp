@@ -1808,7 +1808,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 		return;
 
 	int channelNum = _trkChannel[trackIndex];
-	assert((channelNum >= 0) && (channelNum < SOUND_ARR_SIZE));
+	assert((channelNum >= -1) && (channelNum < SOUND_ARR_SIZE));
 	int chFlags = (channelNum == -1) ? 0 : _chFlags[channelNum];
 	int voiceNum = -1;
 	SoundDriver *driver = NULL;
