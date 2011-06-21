@@ -1,17 +1,15 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.3.1
+1.3.1 (????-??-??)
  General:
    - Improved audio device detection and fallback.
      There should be no more silent errors due to invalid audio devices.
-	 Instead ScummVM should pick up a suitable alternative device.
+     Instead ScummVM should pick up a suitable alternative device.
 
  SCUMM:
-   - Fixed graphics bug in FM-TOWNS versions of games on ARM devices (Android, iPhone, etc.)
- 
-
-
+   - Fixed graphics bug in FM-TOWNS versions of games on ARM devices
+     (Android, iPhone, etc.).
 
 1.3.0 (2011-05-28)
  New Games:
