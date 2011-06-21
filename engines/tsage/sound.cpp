@@ -839,7 +839,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 					entryIndex = -1;
 					for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx) {
 						if ((vtStruct->_entries[idx]._field1 != 0) &&
-								(vtStruct->_entries[idx]._type0._priority2 > maxVoiceNum)) {
+								(vtStruct->_entries[idx]._type0._priority2 > maxPriority)) {
 							maxPriority = vtStruct->_entries[idx]._type0._priority2;
 							entryIndex = idx;
 						}
