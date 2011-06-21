@@ -73,3 +73,4 @@ Note the debug build will target the Win32 simulator
  outside of the scummvm package. Start the BADA IDE then 
  choose this folder as the eclipse workspace. Click
  Project / Build.
+===
