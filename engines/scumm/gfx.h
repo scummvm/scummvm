@@ -32,6 +32,11 @@ namespace Scumm {
 
 class ScummEngine;
 
+enum HerculesDimensions {
+	kHercWidth = 720,
+	kHercHeight = 350
+};
+
 /** Camera modes */
 enum {
 	kNormalCameraMode = 1,

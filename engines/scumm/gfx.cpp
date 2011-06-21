@@ -722,11 +722,11 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			ditherHerc(_compositeBuf, _herculesBuf, width, &x, &y, &width, &height);
 
-			src = _herculesBuf + x + y * Common::kHercW;
-			pitch = Common::kHercW;
+			src = _herculesBuf + x + y * kHercWidth;
+			pitch = kHercWidth;
 
 			// center image on the screen
-			x += (Common::kHercW - _screenWidth * 2) / 2;	// (720 - 320*2)/2 = 40
+			x += (kHercWidth - _screenWidth * 2) / 2;	// (720 - 320*2)/2 = 40
 		} else if (_useCJKMode && m == 2) {
 			pitch *= m;
 			x *= m;
@@ -819,10 +819,10 @@ void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *wid
 	int dsty = yo*2 - yo/4;
 
 	for (int y1 = 0; y1 < heighto;) {
-		assert(dsty < Common::kHercH);
+		assert(dsty < kHercHeight);
 
 		srcptr = src + y1 * srcPitch;
-		dstptr = hercbuf + dsty * Common::kHercW + xo * 2;
+		dstptr = hercbuf + dsty * kHercWidth + xo * 2;
 
 		const int idx1 = (dsty % 7) % 2;
 		for (int x1 = 0; x1 < widtho; x1++) {
