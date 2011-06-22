@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-06-20 23:09+0100\n"
-"PO-Revision-Date: 2011-06-15 07:42+0100\n"
+"PO-Revision-Date: 2011-06-21 09:54+0100\n"
 "Last-Translator: Gruby <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -1081,7 +1081,7 @@ msgstr "A motor nem támogatja a játékállás mentését"
 
 #: common/error.cpp:71
 msgid "User canceled"
-msgstr ""
+msgstr "Felhasználói megszakítás"
 
 #: common/error.cpp:75
 msgid "Unknown error"
@@ -1239,10 +1239,13 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
 "not work in future versions of ScummVM."
 msgstr ""
+"FIGYELEM: A játékot amit indítani akarsz még nem teljesen támogatotja a "
+"ScummVM. Számíts rá hogy nem stabilan fut, és a mentések nem mûködnek a "
+"jövõbeni ScummVM verziókkal."
 
 #: engines/engine.cpp:408
 msgid "Start anyway"
-msgstr ""
+msgstr "Indítás így is"
 
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
