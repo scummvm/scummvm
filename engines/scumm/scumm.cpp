@@ -564,7 +564,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	_herculesBuf = 0;
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
+		_herculesBuf = (byte *)malloc(kHercWidth * kHercHeight);
 	}
 
 	// Add debug levels
@@ -1140,7 +1140,7 @@ Common::Error ScummEngine::init() {
 
 	// Initialize backend
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-		initGraphics(Common::kHercW, Common::kHercH, true);
+		initGraphics(kHercWidth, kHercHeight, true);
 	} else {
 		int screenWidth = _screenWidth;
 		int screenHeight = _screenHeight;

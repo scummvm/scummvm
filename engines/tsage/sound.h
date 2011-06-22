@@ -171,6 +171,7 @@ public:
 	VoiceTypeStruct *_voiceTypeStructPtrs[SOUND_ARR_SIZE];
 	uint32 _groupsAvail;
 	int _masterVol;
+	int _newVolume;
 	Common::Mutex _serverDisabledMutex;
 	Common::Mutex _serverSuspendedMutex;
 	int _suspendedCount;

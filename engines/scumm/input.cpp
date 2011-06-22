@@ -181,7 +181,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 		_mouse.y = event.mouse.y;
 
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-			_mouse.x -= (Common::kHercW - _screenWidth * 2) / 2;
+			_mouse.x -= (kHercWidth - _screenWidth * 2) / 2;
 			_mouse.x >>= 1;
 			_mouse.y = _mouse.y * 4 / 7;
 		} else if (_useCJKMode && _textSurfaceMultiplier == 2) {

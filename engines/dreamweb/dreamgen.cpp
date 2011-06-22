@@ -13226,7 +13226,7 @@ void DreamGenContext::useaxe() {
 	return;
 notinpool:
 	showfirstuse();
-/*continuing to unbounded code: axeondoor from useelvdoor:19-29*/
+/*continuing to unbounded code: axeondoor from useelvdoor:19-30*/
 axeondoor:
 	al = 15;
 	cx = 300;
@@ -16886,6 +16886,7 @@ alreadynewgame:
 
 void DreamGenContext::doload() {
 	STACK_CHECK;
+	data.byte(kLoadingorsave) = 1;
 	showopbox();
 	showloadops();
 	data.byte(kCurrentslot) = 0;
