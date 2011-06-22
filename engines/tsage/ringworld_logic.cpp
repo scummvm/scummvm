@@ -1333,9 +1333,20 @@ void RingworldGame::start() {
 	RING_INVENTORY._scanner._sceneNumber = 1;
 	RING_INVENTORY._ring._sceneNumber = 1;
 
+	int slot = -1;
 
-	if (ConfMan.hasKey("save_slot"))
-		_globals->_sceneHandler._loadGameSlot = ConfMan.getInt("save_slot");
+	if (ConfMan.hasKey("save_slot")) {
+		slot = ConfMan.getInt("save_slot");
+		Common::String file = _vm->generateSaveName(slot);
+		Common::InSaveFile *in = _vm->_system->getSavefileManager()->openForLoading(file);
+		if (in)
+			delete in;
+		else
+			slot = -1;
+	}
+
+	if (slot >= 0)
+		_globals->_sceneHandler._loadGameSlot = slot;
 	else
 		// Switch to the title screen
 		_globals->_sceneManager.setNewScene(1000);
