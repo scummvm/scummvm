@@ -102,6 +102,7 @@ add_engine mohawk "Mohawk" yes "cstime myst riven"
 add_engine cstime "Where in Time is Carmen Sandiego?" no
 add_engine riven "Riven: The Sequel to Myst" no
 add_engine myst "Myst" no
+add_engine neverhood "Neverhood" no
 add_engine parallaction "Parallaction" yes
 add_engine queen "Flight of the Amazon Queen" yes
 add_engine saga "SAGA" yes "ihnm saga2"
