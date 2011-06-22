@@ -2995,8 +2995,8 @@ if test "$_libunity" = auto ; then
 			;;
 		*)
 			# Unity has a lots of dependencies, update the libs and cflags var with them
-			LIBUNITY_LIBS="$LIBUNITY_LIBS $(pkg-config --libs unity = 3.8.4)"
-			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS $(pkg-config --cflags unity = 3.8.4)"
+			LIBUNITY_LIBS="$LIBUNITY_LIBS $(pkg-config --libs unity = 3.8.4 2>> "$TMPLOG")"
+			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS $(pkg-config --cflags unity = 3.8.4 2>> "$TMPLOG")"
 			_libunity=no
 			cat > $TMPC << EOF
 #include <unity.h>
@@ -3005,12 +3005,12 @@ int main(void) {
 	return 0;
 }
 EOF
-			cc_check $LIBUNITY_CFLAGS $LIBUNITY_LIBS -lunity && _libunity=yes
+			cc_check $LIBUNITY_CFLAGS $LIBUNITY_LIBS && _libunity=yes
 			;;
 	esac
 fi
 if test "$_libunity" = yes ; then
-	LIBS="$LIBS $LIBUNITY_LIBS -lunity"
+	LIBS="$LIBS $LIBUNITY_LIBS"
 	INCLUDES="$INCLUDES $LIBUNITY_CFLAGS"
 fi
 define_in_config_h_if_yes "$_libunity" 'USE_TASKBAR_UNITY'
@@ -3204,7 +3204,7 @@ if test "$_taskbar" = yes; then
 		echo "win32"
 		;;
 	*)
-		if test "$_unity" = yes; then
+		if test "$_libunity" = yes; then
 			echo "unity"
 		else
 			echo "$_taskbar"
