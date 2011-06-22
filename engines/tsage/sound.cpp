@@ -302,7 +302,8 @@ void SoundManager::addToPlayList(Sound *sound) {
 }
 
 void SoundManager::removeFromPlayList(Sound *sound) {
-	_sfRemoveFromPlayList(sound);
+	if (_soundManager)
+		_sfRemoveFromPlayList(sound);
 }
 
 bool SoundManager::isOnPlayList(Sound *sound) {
@@ -2246,6 +2247,13 @@ int Sound::_soFindSound(VoiceTypeStruct *vtStruct, int channelNum) {
 ASound::ASound(): EventHandler() {
 	_action = NULL;
 	_cueValue = -1;
+	if (_globals)
+		_globals->_sounds.push_back(this);
+}
+
+ASound::~ASound() {
+	if (_globals)
+		_globals->_sounds.remove(this);
 }
 
 void ASound::synchronize(Serializer &s) {

@@ -361,6 +361,7 @@ public:
 	int _cueValue;
 
 	ASound();
+	~ASound();
 	virtual void synchronize(Serializer &s);
 	virtual void dispatch();
 
