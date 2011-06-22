@@ -123,7 +123,6 @@ struct VoiceStructEntryType0 {
 	int _channelNum3;
 	int _priority3;
 	int _field1A;
-	int _field1B;
 };
 
 struct VoiceStructEntryType1 {
@@ -166,7 +165,7 @@ private:
 public:
 	bool __sndmgrReady;
 	int _ourSndResVersion, _ourDrvResVersion;
-	Common::List<Sound *> _playList;
+	SynchronizedList<Sound *> _playList;
 	Common::List<SoundDriver *> _installedDrivers;
 	VoiceTypeStruct *_voiceTypeStructPtrs[SOUND_ARR_SIZE];
 	uint32 _groupsAvail;
@@ -174,9 +173,8 @@ public:
 	int _newVolume;
 	Common::Mutex _serverDisabledMutex;
 	Common::Mutex _serverSuspendedMutex;
-	int _suspendedCount;
 	bool _driversDetected;
-	Common::List<Sound *> _soundList;
+	SynchronizedList<Sound *> _soundList;
 	Common::List<SoundDriverEntry> _availableDrivers;
 	bool _needToRethink;
 	// Misc flags
@@ -255,7 +253,6 @@ class Sound: public EventHandler {
 private:
 	void _prime(int soundResID, bool dontQueue);
 	void _unPrime();
-	void orientAfterRestore();
 public:
 	bool _stoppedAsynchronously;
 	int _soundResID;
@@ -276,7 +273,8 @@ public:
 	int _fadeTicks;
 	int _fadeCounter;
 	bool _stopAfterFadeFlag;
-	uint _timer;
+	uint32 _timer;
+	uint32 _newTimeIndex;
 	int _loopTimer;
 	int _chProgram[SOUND_ARR_SIZE];
 	int _chModulation[SOUND_ARR_SIZE];
@@ -305,6 +303,9 @@ public:
 public:
 	Sound();
 	~Sound();
+
+	void synchronize(Serializer &s);
+	void orientAfterRestore();
 
 	void play(int soundResID);
 	void stop();

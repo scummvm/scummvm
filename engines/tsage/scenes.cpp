@@ -235,7 +235,11 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 
 	if (s.isLoading()) {
 		changeScene(_sceneNumber);
-		checkScene();
+		
+		if (_nextSceneNumber != -1) {
+			sceneChange();
+			_nextSceneNumber = -1;
+		}
 	}
 
 	_globals->_sceneManager._scrollerRect.synchronize(s);

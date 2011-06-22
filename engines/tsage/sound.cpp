@@ -44,7 +44,6 @@ SoundManager::SoundManager() {
 
 	_groupsAvail = 0;
 	_newVolume = _masterVol = 127;
-	_suspendedCount = 0;
 	_driversDetected = false;
 	_needToRethink = false;
 
@@ -53,6 +52,8 @@ SoundManager::SoundManager() {
 
 SoundManager::~SoundManager() {
 	if (__sndmgrReady) {
+		Common::StackLock slock(_serverDisabledMutex);
+
 		for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ) {
 			Sound *s = *i;
 			++i;
@@ -342,6 +343,18 @@ void SoundManager::_sfSoundServer() {
 	if (sfManager()._newVolume != sfManager()._masterVol)
 		_sfSetMasterVol(sfManager()._newVolume);
 
+	// If a time index has been set for any sound, fast forward to it
+	SynchronizedList<Sound *>::iterator i;
+	for (i = sfManager()._playList.begin(); i != sfManager()._playList.end(); ++i) {
+		Sound *s = *i;
+		if (s->_newTimeIndex != 0) {
+			s->mute(true);
+			s->_soSetTimeIndex(s->_newTimeIndex);
+			s->mute(false);
+			s->_newTimeIndex = 0;
+		}
+	}
+
 	// Handle any fading if necessary
 	_sfProcessFading();
 
@@ -474,7 +487,7 @@ void SoundManager::saveNotifier(bool postFlag) {
 }
 
 void SoundManager::saveNotifierProc(bool postFlag) {
-	warning("TODO: SoundManager::saveNotifierProc");
+	// Nothing needs to be done when saving the game
 }
 
 void SoundManager::loadNotifier(bool postFlag) {
@@ -482,12 +495,37 @@ void SoundManager::loadNotifier(bool postFlag) {
 }
 
 void SoundManager::loadNotifierProc(bool postFlag) {
-	warning("TODO: SoundManager::loadNotifierProc");
+	if (!postFlag) {
+		// Stop any currently playing sounds
+		if (__sndmgrReady) {
+			Common::StackLock slock(_serverDisabledMutex);
+
+			for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ) {
+				Sound *s = *i;
+				++i;
+				s->stop();
+			}
+		}
+	} else {
+		// Savegame is now loaded, so iterate over the sound list to prime any sounds as necessary
+		for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
+			Sound *s = *i;
+			s->orientAfterRestore();
+		}
+	}
 }
 
 void SoundManager::listenerSynchronize(Serializer &s) {
 	s.validate("SoundManager");
-	warning("TODO: SoundManager listenerSynchronise");
+	assert(__sndmgrReady && _driversDetected);
+
+	if (s.getVersion() < 6)
+		return;
+
+	Common::StackLock slock(_serverDisabledMutex);
+	_playList.synchronize(s);
+
+	_soundList.synchronize(s);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1188,7 +1226,7 @@ void SoundManager::_sfUpdateVolume(Sound *sound) {
 }
 
 void SoundManager::_sfDereferenceAll() {
-	// Orignal used handles for both the driver list and voiceStructPtrs list. This method then refreshed
+	// Orignal used handles for both the driver list and voiceTypeStructPtrs list. This method then refreshed
 	// pointer lists based on the handles. Since in ScummVM we're just using pointers directly, this
 	// method doesn't need any implementation
 }
@@ -1379,6 +1417,7 @@ Sound::Sound() {
 	_fadeCounter = 0;
 	_stopAfterFadeFlag = false;
 	_timer = 0;
+	_newTimeIndex = 0;
 	_loopTimer = 0;
 	_trackInfo._numTracks = 0;
 	_primed = false;
@@ -1411,6 +1450,36 @@ Sound::~Sound() {
 	stop();
 }
 
+void Sound::synchronize(Serializer &s) {
+	if (s.getVersion() < 6)
+		return;
+
+	assert(!_remoteReceiver);
+
+	s.syncAsSint16LE(_soundResID);
+	s.syncAsByte(_primed);
+	s.syncAsByte(_stoppedAsynchronously);
+	s.syncAsSint16LE(_group);
+	s.syncAsSint16LE(_sndResPriority);
+	s.syncAsSint16LE(_fixedPriority);
+	s.syncAsSint16LE(_sndResLoop);
+	s.syncAsSint16LE(_fixedLoop);
+	s.syncAsSint16LE(_priority);
+	s.syncAsSint16LE(_volume);
+	s.syncAsSint16LE(_loop);
+	s.syncAsSint16LE(_pausedCount);
+	s.syncAsSint16LE(_mutedCount);
+	s.syncAsSint16LE(_hold);
+	s.syncAsSint16LE(_cueValue);
+	s.syncAsSint16LE(_fadeDest);
+	s.syncAsSint16LE(_fadeSteps);
+	s.syncAsUint32LE(_fadeTicks);
+	s.syncAsUint32LE(_fadeCounter);
+	s.syncAsByte(_stopAfterFadeFlag);
+	s.syncAsUint32LE(_timer);
+	s.syncAsSint16LE(_loopTimer);
+}
+
 void Sound::play(int soundNum) {
 	prime(soundNum);
 	_soundManager->addToPlayList(this);
@@ -1436,6 +1505,7 @@ void Sound::_prime(int soundResID, bool dontQueue) {
 	if (_primed)
 		unPrime();
 
+	_soundResID = soundResID;
 	if (_soundResID != -1) {
 		// Sound number specified
 		_isEmpty = false;
@@ -1501,12 +1571,13 @@ void Sound::orientAfterDriverChange() {
 		_trackInfo._numTracks = 0;
 		_primed = false;
 		_prime(_soundResID, true);
+
 		setTimeIndex(timeIndex);
 	}
 }
 
 void Sound::orientAfterRestore() {
-	if (_isEmpty) {
+	if (!_isEmpty) {
 		int timeIndex = getTimeIndex();
 		_primed = false;
 		_prime(_soundResID, true);
@@ -1585,11 +1656,8 @@ void Sound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeF
 }
 
 void Sound::setTimeIndex(uint32 timeIndex) {
-	if (_primed) {
-		mute(true);
-		_soSetTimeIndex(timeIndex);
-		mute(false);
-	}
+	if (_primed)
+		_newTimeIndex = timeIndex;
 }
 
 uint32 Sound::getTimeIndex() const {
@@ -1665,6 +1733,7 @@ void Sound::_soPrimeSound(bool dontQueue) {
 	}
 
 	_timer = 0;
+	_newTimeIndex = 0;
 	_loopTimer = 0;
 	_soPrimeChannelData();
 }
@@ -1685,6 +1754,8 @@ void Sound::_soSetTimeIndex(uint timeIndex) {
 				_soundManager->_needToRethink = true;
 				break;
 			}
+
+			--timeIndex;
 		}
 
 		_soundManager->_soTimeIndexFlag = false;
