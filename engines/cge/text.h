@@ -61,7 +61,7 @@ class TEXT {
 	char *Load(int idx, int ref);
 	int Find(int ref);
 public:
-	TEXT(const char *fname, int size = 128);
+	TEXT(const char *fname, int size);
 	~TEXT(void);
 	void Clear(int from = 1, int upto = 0x7FFF);
 	void Preload(int from = 1, int upto = 0x7FFF);

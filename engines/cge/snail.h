@@ -42,9 +42,9 @@ namespace CGE {
 #define POCKET_SX   8
 #define POCKET_SY   3
 
-#define SNINSERT(c,r,v,p)   Snail.InsCom(c,r,v,p)
-#define SNPOST(c,r,v,p)     Snail.AddCom(c,r,v,p)
-#define SNPOST_(c,r,v,p)    Snail_.AddCom(c,r,v,p)
+#define SNINSERT(c,r,v,p)   Snail->InsCom(c,r,v,p)
+#define SNPOST(c,r,v,p)     Snail->AddCom(c,r,v,p)
+#define SNPOST_(c,r,v,p)    Snail_->AddCom(c,r,v,p)
 
 
 typedef struct  {
@@ -102,17 +102,17 @@ void    SelectPocket(int n);
 void    PocFul(void);
 
 
-extern  SCB     Scb;
-extern  bool        Flag[4];
-extern  bool        Game;
-extern  bool        Dark;
-extern  SNAIL       Snail;
-extern  SNAIL       Snail_;
-extern  int     Now;
-extern  int     Lev;
-extern  int     MaxCave;
-extern  int     PocPtr;
-extern  BAR     Barriers[];
+extern  SCB Scb;
+extern  bool Flag[4];
+extern  bool Game;
+extern  bool Dark;
+//extern  SNAIL *Snail;
+//extern  SNAIL *Snail_;
+extern  int Now;
+extern  int Lev;
+extern  int MaxCave;
+extern  int PocPtr;
+extern  BAR Barriers[];
 extern  struct HXY {
 	int X;
 	int Y;

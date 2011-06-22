@@ -55,8 +55,6 @@ bool    Dark     = false;
 bool    Game     = false;
 int     Now      =  1;
 int     Lev      = -1;
-SNAIL   Snail    = false;
-SNAIL   Snail_   = true;
 
 extern  SPRITE *PocLight;
 
@@ -359,7 +357,7 @@ void FeedSnail(SPRITE *spr, SNLIST snq) {
 				}
 				while (true) {
 					if (c->Com == SNTALK) {
-						if ((Snail.TalkEnable = (c->Val != 0)) == false)
+						if ((Snail->TalkEnable = (c->Val != 0)) == false)
 							KillText();
 					}
 					if (c->Com == SNNEXT) {
