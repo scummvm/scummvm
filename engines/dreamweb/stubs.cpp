@@ -503,4 +503,26 @@ void DreamGenContext::showpcx() {
 	pcxFile.close();
 }
 
+void DreamGenContext::frameoutv() {
+	uint16 pitch = dx;
+	uint16 width = cx & 0xff;
+	uint16 height = cx >> 8;
+	uint16 stride = pitch - width;
+
+	const uint8* src = ds.ptr(si, width * height);
+	uint8* base = es.ptr(di, stride * height);
+	uint8* dst = base + pitch * bx;
+
+	// NB: Original code assumes non-zero width and height, "for" are unneeded, do-while would suffice but would be less readable
+	for (uint16 y = 0; y < height; ++y) {
+		for (uint16 x = 0; x < width; ++x) {
+			uint8 pixel = *src++;
+			if (pixel)
+				*dst = pixel;
+			++dst;
+		}
+		dst += stride;
+	}
+}
+
 } /*namespace dreamgen */
