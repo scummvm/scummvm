@@ -42,8 +42,9 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription) {
 
 	DebugMan.addDebugChannel(kCGEDebug, "general", "CGE general debug channel");
+
 	_console = new CGEConsole(this);
-	Text = new TEXT(ProgName());
+	Text = new TEXT(ProgName(), 128);
 	Vga = new VGA(M13H);
 	Heart = new HEART;
 	Hero = new WALK(NULL);
@@ -72,10 +73,12 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	SP[1] = new BITMAP("SPK_R");
 	SP[2] = NULL;
 	LI[0] = new BITMAP("LITE0");
-	LI[1] = new BITMAP("LITE1"),
-	LI[2] = new BITMAP("LITE2"),
-	LI[3] = new BITMAP("LITE3"),
+	LI[1] = new BITMAP("LITE1");
+	LI[2] = new BITMAP("LITE2");
+	LI[3] = new BITMAP("LITE3");
 	LI[4] = NULL;
+	Snail = new SNAIL(false);
+	Snail_ = new SNAIL(true);
 
 	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
 
@@ -87,6 +90,38 @@ CGEEngine::~CGEEngine() {
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
+
+	_console = new CGEConsole(this);
+
+	delete Text;
+	delete Vga;
+	delete Heart;
+	delete Hero;
+	delete Sys;
+	delete PocLight;
+	delete Mouse;
+	for (int i = 0; i < POCKET_NX; i++)
+		delete Pocket[i];
+	delete Sprite;
+	delete MiniCave;
+	delete Shadow;
+	delete HorzLine;
+	delete InfoLine;
+	delete CavLight;
+	delete DebugLine;
+	delete MB[0];
+	delete HL[0];
+	delete MC[0];
+	delete MC[1];
+	delete PR[0];
+	delete SP[0];
+	delete SP[1];
+	delete LI[0];
+	delete LI[1];
+	delete LI[2];
+	delete LI[3];
+	delete Snail;
+	delete Snail_;
 }
 
 Common::Error CGEEngine::run() {

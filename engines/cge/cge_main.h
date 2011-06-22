@@ -187,6 +187,8 @@ extern BMP_PTR MC[3];
 extern BMP_PTR PR[2];
 extern BMP_PTR SP[3];
 extern BMP_PTR LI[5];
+extern SNAIL *Snail;
+extern SNAIL *Snail_;
 
 } // End of namespace CGE
 

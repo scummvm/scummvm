@@ -83,6 +83,9 @@ BMP_PTR PR[2];
 BMP_PTR SP[3];
 BMP_PTR LI[5];
 
+SNAIL *Snail;
+SNAIL *Snail_;
+
 // 0.75 - 17II95  - full sound support
 // 0.76 - 18II95  - small MiniEMS in DEMO,
 //		    unhide CavLight in SNLEVEL
@@ -606,7 +609,7 @@ static void Quit(void) {
 		{ NULL, dummy          }
 	};
 
-	if (Snail.Idle() && ! Hero->Flags.Hide) {
+	if (Snail->Idle() && ! Hero->Flags.Hide) {
 		if (VMENU::Addr) {
 			SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 			ResetQSwitch();
@@ -907,7 +910,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 				Sprite->Step(x - '0');
 			break;
 		case F10          :
-			if (Snail.Idle() && ! Hero->Flags.Hide)
+			if (Snail->Idle() && ! Hero->Flags.Hide)
 				StartCountDown();
 			break;
 		case 'J':
@@ -952,7 +955,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 		PostMiniStep(cav - 1);
 
 		if (mask & L_UP) {
-			if (cav && Snail.Idle() && Hero->TracePtr < 0)
+			if (cav && Snail->Idle() && Hero->TracePtr < 0)
 				SwitchCave(cav);
 
 			if (!HorzLine->Flags.Hide) {
@@ -964,7 +967,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 				}
 			} else
 			{
-				if (! Talk && Snail.Idle() && Hero
+				if (! Talk && Snail->Idle() && Hero
 				        && y >= MAP_TOP && y < MAP_TOP + MAP_HIG && ! Game) {
 					Hero->FindWay(XZ(x, y));
 				}
@@ -977,7 +980,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 void SYSTEM::Tick(void) {
 	if (! Startup) if (-- FunDel == 0) {
 			KillText();
-			if (Snail.Idle()) {
+			if (Snail->Idle()) {
 				if (PAIN)
 					HeroCover(9);
 				else if (STARTUP::Core >= CORE_MID) {
@@ -1265,7 +1268,7 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 				mask &= ~L_UP;
 				mask |= R_UP;
 			}
-		if ((mask & R_UP) && Snail.Idle()) {
+		if ((mask & R_UP) && Snail->Idle()) {
 			SPRITE *ps = (PocLight->SeqPtr) ? Pocket[PocPtr] : NULL;
 			if (ps) {
 				if (Flags.Kept || Hero->Distance(this) < MAX_DISTANCE) {
@@ -1305,7 +1308,7 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 				}
 			}
 		}
-		if ((mask & L_UP) && Snail.Idle()) {
+		if ((mask & L_UP) && Snail->Idle()) {
 			if (Flags.Kept) {
 				int n;
 				for (n = 0; n < POCKET_NX; n ++) {
@@ -1549,8 +1552,8 @@ static void MainLoop(void) {
 #endif
 
 	Vga->Show();
-	Snail_.RunCom();
-	Snail.RunCom();
+	Snail_->RunCom();
+	Snail->RunCom();
 }
 
 
@@ -1695,9 +1698,9 @@ void Movie(const char *ext) {
 		Vga->ShowQ->Append(Mouse);
 		Heart->Enable = true;
 		KEYBOARD::SetClient(Sys);
-		while (! Snail.Idle()) {
+		while (!Snail->Idle())
 			MainLoop();
-		}
+
 		KEYBOARD::SetClient(NULL);
 		Heart->Enable = false;
 		SNPOST(SNCLEAR, -1, 0, NULL);
@@ -1731,13 +1734,13 @@ bool ShowTitle(const char *name) {
 	SelectPocket(-1);
 	Vga->Sunrise(SysPal);
 
-	if (STARTUP::Mode < 2 && ! STARTUP::SoundOk) {
+	if (STARTUP::Mode < 2 && !STARTUP::SoundOk) {
 		Vga->CopyPage(1, 2);
 		Vga->CopyPage(0, 1);
 		Vga->ShowQ->Append(Mouse);
 		Heart->Enable = true;
 		Mouse->On();
-		for (SelectSound(); ! Snail.Idle() || VMENU::Addr;)
+		for (SelectSound(); !Snail->Idle() || VMENU::Addr;)
 			MainLoop();
 		Mouse->Off();
 		Heart->Enable = false;
