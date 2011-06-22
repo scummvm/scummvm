@@ -142,6 +142,8 @@ _fluidsynth=auto
 _opengl=auto
 _opengles=auto
 _readline=auto
+_taskbar=yes
+_libunity=auto
 # Default option behaviour yes/no
 _debug_build=auto
 _release_build=auto
@@ -767,6 +769,7 @@ Optional Features:
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
+  --disable-taskbar        don't build support for taskbar and launcher integration
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
                            process
@@ -816,6 +819,9 @@ Optional Libraries:
   --with-readline-prefix=DIR    Prefix where readline is installed (optional)
   --disable-readline       disable readline support in text console [autodetect]
 
+  --with-libunity-prefix=DIR   Prefix where libunity is installed (optional)
+  --disable-libunity           disable Unity launcher integration [autodetect]
+
 Some influential environment variables:
   LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
                  nonstandard directory <lib dir>
@@ -863,6 +869,10 @@ for ac_option in $@; do
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
+	--enable-taskbar)         _taskbar=yes    ;;
+	--disable-taskbar)        _taskbar=no     ;;
+	--enable-libunity)        _libunity=yes   ;;
+	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
@@ -937,6 +947,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		READLINE_CFLAGS="-I$arg/include"
 		READLINE_LIBS="-L$arg/lib"
+		;;
+	--with-libunity-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		LIBUNITY_CFLAGS="-I$arg/include"
+		LIBUNITY_LIBS="-L$arg/lib"
 		;;
 	--with-opengl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2966,6 +2981,43 @@ define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE_FOR_DEBUGGER'
 
 #
+# Check for Unity if taskbar integration is enabled
+#
+echocheck "libunity"
+if test "$_unix" = no || test "$_taskbar" = no; then
+	_libunity=no
+else
+if test "$_libunity" = auto ; then
+	case $_host_os in
+		mingw*)
+			# pkgconfig and unity are not supported on mingw
+			_libunity=no
+			;;
+		*)
+			# Unity has a lots of dependencies, update the libs and cflags var with them
+			LIBUNITY_LIBS="$LIBUNITY_LIBS $(pkg-config --libs unity = 3.8.4)"
+			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS $(pkg-config --cflags unity = 3.8.4)"
+			_libunity=no
+			cat > $TMPC << EOF
+#include <unity.h>
+int main(void) {
+	unity_launcher_entry_get_for_desktop_id("scummvm.desktop");
+	return 0;
+}
+EOF
+			cc_check $LIBUNITY_CFLAGS $LIBUNITY_LIBS -lunity && _libunity=yes
+			;;
+	esac
+fi
+if test "$_libunity" = yes ; then
+	LIBS="$LIBS $LIBUNITY_LIBS -lunity"
+	INCLUDES="$INCLUDES $LIBUNITY_CFLAGS"
+fi
+define_in_config_h_if_yes "$_libunity" 'USE_TASKBAR_UNITY'
+fi
+echo "$_libunity"
+
+#
 # Check for OpenGL (ES)
 #
 echocheck "OpenGL"
@@ -3138,6 +3190,29 @@ EOF
 	else
 		echo "without runtime language detection)"
 	fi
+fi
+
+#
+# Check whether to build taskbar integration support
+#
+echo_n "Building taskbar integration support... "
+define_in_config_if_yes $_taskbar 'USE_TASKBAR'
+if test "$_taskbar" = yes; then
+	case $_host_os in
+	mingw*)
+		LIBS="$LIBS -lole32 -luuid"
+		echo "win32"
+		;;
+	*)
+		if test "$_unity" = yes; then
+			echo "unity"
+		else
+			echo "$_taskbar"
+		fi
+		;;
+	esac
+else
+	echo "$_taskbar"
 fi
 
 #
