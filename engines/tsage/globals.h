@@ -34,6 +34,8 @@
 namespace tSage {
 
 class Globals : public SavedObject {
+private:
+	static void dispatchSound(ASound *obj);
 public:
 	GfxSurface _screenSurface;
 	GfxManager _gfxManagerInstance;
@@ -56,7 +58,7 @@ public:
 	SoundManager _soundManager;
 	Common::Point _dialogCenter;
 	WalkRegions _walkRegions;
-	SynchronizedList<EventHandler *> _sceneListeners;
+	SynchronizedList<ASound *> _sounds;
 	bool _flags[256];
 	Player _player;
 	ASound _soundHandler;
@@ -91,6 +93,7 @@ public:
 	GfxManager &gfxManager() { return **_gfxManagers.begin(); }
 	virtual Common::String getClassName() { return "Globals"; }
 	virtual void synchronize(Serializer &s);
+	void dispatchSounds();
 };
 
 extern Globals *_globals;

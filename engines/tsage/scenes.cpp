@@ -55,7 +55,7 @@ void SceneManager::checkScene() {
 		_nextSceneNumber = -1;
 	}
 
-	Common::for_each(_globals->_sceneListeners.begin(), _globals->_sceneListeners.end(), SceneHandler::dispatchObject);
+	_globals->dispatchSounds();
 }
 
 void SceneManager::sceneChange() {
