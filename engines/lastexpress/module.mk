@@ -46,6 +46,12 @@ MODULE_OBJS := \
 	entities/vesna.o \
 	entities/yasmin.o \
 	fight/fight.o \
+	fight/fighter.o \
+	fight/fighter_anna.o \
+	fight/fighter_ivo.o \
+	fight/fighter_milos.o \
+	fight/fighter_salko.o \
+	fight/fighter_vesna.o \
 	game/action.o \
 	game/beetle.o \
 	game/entities.o \

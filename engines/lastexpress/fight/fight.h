@@ -57,16 +57,14 @@
 
 #include "lastexpress/eventhandler.h"
 
-#include "common/array.h"
-
 namespace LastExpress {
 
 class LastExpressEngine;
 class Sequence;
-class SequenceFrame;
 
-//////////////////////////////////////////////////////////////////////////
-// TODO : objectify!
+class Fighter;
+class Opponent;
+
 class Fight : public EventHandler {
 public:
 	enum FightEndType {
@@ -83,82 +81,15 @@ public:
 	void eventMouse(const Common::Event &ev);
 	void eventTick(const Common::Event &ev);
 
+	// State
+	bool isRunning() { return _data->isFightRunning; }
+	void setRunningState(bool state) { _data->isFightRunning = state; }
+	void bailout(FightEndType type);
 	void setStopped();
 	void resetState() { _state = 0; }
+	void setEndType(FightEndType endType) { _endType = endType; }
 
 private:
-	enum FightSequenceType {
-		kFightSequenceType0 = 0,
-		kFightSequenceType1 = 1,
-		kFightSequenceType2 = 2
-	};
-
-	enum FightAction {
-		kFightAction1 = 1,
-		kFightAction2 = 2,
-		kFightAction3 = 3,
-		kFightAction4 = 4,
-		kFightAction5 = 5,
-		kFightAction101 = 101,
-		kFightActionResetFrame = 102,
-		kFightAction103 = 103,
-		kFightActionWin = 104,
-		kFightActionLost = 105,
-		kFightAction128 = 128,
-		kFightAction129 = 129,
-		kFightAction130 = 130,
-		kFightAction131 = 131,
-		kFightAction132 = 132
-	};
-
-	struct Fighter {
-		Common::Functor2<Fighter *, FightAction, void> *handleAction;
-		Common::Functor1<Fighter *, void> *update;
-		Common::Functor2<Fighter const *, FightAction, bool> *canInteract;
-		Fighter *opponent;
-		Common::Array<Sequence *> sequences;
-		uint32 sequenceIndex;
-		Sequence *sequence;
-		SequenceFrame *frame;
-		uint32 frameIndex;
-		uint32 field_24;
-		FightAction action;
-		uint32 sequenceIndex2;
-		int32 countdown;  // countdown before loosing ?
-		uint32 field_34;
-
-		Fighter() {
-			handleAction = NULL;
-			update = NULL;
-			canInteract = NULL;
-
-			opponent = NULL;
-
-			sequenceIndex = 0;
-			sequence = NULL;
-			frame = NULL;
-			frameIndex = 0;
-
-			field_24 = 0;
-
-			action = kFightAction101;
-			sequenceIndex2 = 0;
-
-			countdown = 1;
-
-			field_34 = 0;
-		}
-	};
-
-	// Opponent struct
-	struct Opponent : Fighter {
-		int32 field_38;
-
-		Opponent() : Fighter() {
-			field_38 = 0;
-		}
-	};
-
 	struct FightData {
 		Fighter *player;
 		Opponent *opponent;
@@ -167,20 +98,10 @@ private:
 		Sequence *sequences[20];
 		Common::String names[20];
 
-		bool isRunning;
+		bool isFightRunning;
 
-		FightData() {
-			player = new Fighter();
-			opponent = new Opponent();
-
-			// Set opponents
-			player->opponent = opponent;
-			opponent->opponent = player;
-
-			index = 0;
-
-			isRunning = false;
-		}
+		FightData();
+		~FightData();
 	};
 
 	LastExpressEngine *_engine;
@@ -193,72 +114,10 @@ private:
 	// Events
 	void handleTick(const Common::Event &ev, bool unknown);
 
-	// State
-	void bailout(FightEndType type);
-
-
-	// Drawing
-	void setSequenceAndDraw(Fighter *fighter, uint32 sequenceIndex, FightSequenceType type) const;
-	void draw(Fighter *fighter) const;
-
-	// Cleanup
-	void clearData();
-	void clearSequences(Fighter *fighter) const;
-
-	//////////////////////////////////////////////////////////////////////////
-	// Loading
+	// Data
 	void loadData(FightType type);
-
-	// Shared
-	void processFighter(Fighter *fighter);
-
-	// Default functions
-	void handleAction(Fighter *fighter, FightAction action);
-	void update(Fighter *fighter);
-	bool canInteract(Fighter const *fighter, FightAction = (FightAction)0);
-	void updateOpponent(Fighter *fighter);
-
-	// Milos
-	void loadMilosPlayer();
-	void loadMilosOpponent();
-	void handleActionMilos(Fighter *fighter, FightAction action);
-	void updateMilos(Fighter *fighter);
-	bool canInteractMilos(Fighter const *fighter, FightAction action);
-	void handleOpponentActionMilos(Fighter *fighter, FightAction action);
-	void updateOpponentMilos(Fighter *fighter);
-
-	// Anna
-	void loadAnnaPlayer();
-	void loadAnnaOpponent();
-	void handleActionAnna(Fighter *fighter, FightAction action);
-	void updateOpponentAnna(Fighter *fighter);
-
-	// Ivo
-	void loadIvoPlayer();
-	void loadIvoOpponent();
-	void handleActionIvo(Fighter *fighter, FightAction action);
-	void updateIvo(Fighter *fighter);
-	bool canInteractIvo(Fighter const *fighter, FightAction action);
-	void handleOpponentActionIvo(Fighter *fighter, FightAction action);
-	void updateOpponentIvo(Fighter *fighter);
-
-	// Salko
-	void loadSalkoPlayer();
-	void loadSalkoOpponent();
-	void handleActionSalko(Fighter *fighter, FightAction action);
-	void updateSalko(Fighter *fighter);
-	bool canInteractSalko(Fighter const *fighter, FightAction action);
-	void handleOpponentActionSalko(Fighter *fighter, FightAction action);
-	void updateOpponentSalko(Fighter *fighter);
-
-	// Vesna
-	void loadVesnaPlayer();
-	void loadVesnaOpponent();
-	void handleActionVesna(Fighter *fighter, FightAction action);
-	void updateVesna(Fighter *fighter);
-	bool canInteractVesna(Fighter const *fighter, FightAction action);
-	void handleOpponentActionVesna(Fighter *fighter, FightAction action);
-	void updateOpponentVesna(Fighter *fighter);
+	void clearData();
+	void setOpponents();
 };
 
 } // End of namespace LastExpress
