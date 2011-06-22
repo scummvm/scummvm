@@ -31,6 +31,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/EventRecorder.h"
+#include "common/taskbar.h"
 #include "common/textconsole.h"
 
 #include "backends/saves/default/default-saves.h"
@@ -125,6 +126,11 @@ void OSystem_SDL::init() {
 	if (_timerManager == 0)
 		_timerManager = new SdlTimerManager();
 
+#if defined(USE_TASKBAR)
+	if (_taskbarManager == 0)
+		_taskbarManager = new Common::TaskbarManager();
+#endif
+
 #ifdef USE_OPENGL
 	// Setup a list with both SDL and OpenGL graphics modes
 	setupGraphicsModes();
@@ -204,6 +210,21 @@ void OSystem_SDL::initBackend() {
 #endif
 
 }
+
+#if defined(USE_TASKBAR)
+void OSystem_SDL::engineInit() {
+	// Add the started engine to the list of recent tasks
+	_taskbarManager->addRecent(ConfMan.getActiveDomainName(), ConfMan.get("description"));
+
+	// Set the overlay icon the current running engine
+	_taskbarManager->setOverlayIcon(ConfMan.getActiveDomainName(), ConfMan.get("description"));
+}
+
+void OSystem_SDL::engineDone() {
+	// Remove overlay icon
+	_taskbarManager->setOverlayIcon("", "");
+}
+#endif
 
 void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized

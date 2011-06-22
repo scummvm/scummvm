@@ -75,7 +75,8 @@ MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
 	plugins/posix/posix-provider.o \
-	saves/posix/posix-saves.o
+	saves/posix/posix-saves.o \
+	taskbar/unity/unity-taskbar.o
 endif
 
 ifdef MACOSX
@@ -89,7 +90,8 @@ MODULE_OBJS += \
 	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
 	midi/windows.o \
-	plugins/win32/win32-provider.o
+	plugins/win32/win32-provider.o \
+	taskbar/win32/win32-taskbar.o
 endif
 
 ifdef AMIGAOS

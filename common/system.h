@@ -42,6 +42,9 @@ struct Rect;
 class SaveFileManager;
 class SearchSet;
 class String;
+#if defined(USE_TASKBAR)
+class TaskbarManager;
+#endif
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
@@ -148,6 +151,15 @@ protected:
 	 * @note _savefileManager is deleted by the OSystem destructor.
 	 */
 	Common::SaveFileManager *_savefileManager;
+
+#if defined(USE_TASKBAR)
+	/**
+	 * No default value is provided for _savefileManager by OSystem.
+	 *
+	 * @note _savefileManager is deleted by the OSystem destructor.
+	 */
+	Common::TaskbarManager *_taskbarManager;
+#endif
 
 	/**
 	 * No default value is provided for _fsFactory by OSystem.
@@ -1046,6 +1058,18 @@ public:
 	inline Common::SaveFileManager *getSavefileManager() {
 		return _savefileManager;
 	}
+
+#if defined(USE_TASKBAR)
+	/**
+	 * Returns the TaskbarManager, used to handle progress bars,
+	 * icon overlay, tasks and recent items list on the taskbar.
+	 *
+	 * @return the TaskbarManager for the current architecture
+	 */
+	virtual Common::TaskbarManager *getTaskbarManager() {
+		return _taskbarManager;
+	}
+#endif
 
 	/**
 	 * Returns the FilesystemFactory object, depending on the current architecture.
