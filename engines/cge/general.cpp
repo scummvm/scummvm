@@ -99,16 +99,26 @@ EC void     _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const vo
 	warning("STUB: _fqsort");
 }
 
-const char     *ProgName(const char *ext) {
-	warning("STUB: ProgName");
-	return NULL;
+const char *ProgName(const char *ext) {
+	warning("ProgName");
+
+	static Common::String buf = "CGE";
+	if (ext)
+		buf += ext;
+	return buf.c_str();
 }
 
 char *MergeExt(char *buf, const char *nam, const char *ext) {
 //  char dr[MAXDRIVE], di[MAXDIR], na[MAXFILE], ex[MAXEXT];
 //  fnmerge(buf, dr, di, na, (fnsplit(nam, dr, di, na, ex) & EXTENSION) ? ex : ext);
 //  return buf;
-	warning("STUB: MergeExt");
+	warning("MergeExt");
+
+	strcpy(buf, nam);
+	char *dot = strrchr(buf, '.');
+	if (!dot)
+		strcat(buf, ext);
+
 	return buf;
 }
 

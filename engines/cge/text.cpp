@@ -46,7 +46,7 @@ TEXT::TEXT(const char *fname, int size) {
 	Cache = new HAN[size];
 	MergeExt(FileName, fname, SAY_EXT);
 	if (!INI_FILE::Exist(FileName))
-		error("No talk\n");
+		error("No talk (%s)\n", FileName);
 
 	for (Size = 0; Size < size; Size ++) {
 		Cache[Size].Ref = 0;
