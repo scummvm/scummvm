@@ -895,7 +895,7 @@ bool GfxButton::process(Event &event) {
 
 	case EVENT_KEYPRESS:
 		if (!event.handled && (event.kbd.keycode == _keycode)) {
-			// TODO: Ensure momentary click operation displays
+			// Highlight the button momentarily
 			highlight();
 			g_system->delayMillis(20);
 			highlight();

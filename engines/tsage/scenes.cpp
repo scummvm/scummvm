@@ -105,8 +105,6 @@ void SceneManager::sceneChange() {
 	// Set the next scene to be active
 	_sceneNumber = _nextSceneNumber;
 
-	// TODO: Unknown check of word_45CD3 / call to saver method
-
 	// Free any regions
 	disposeRegions();
 
@@ -208,7 +206,6 @@ void SceneManager::setBackSurface() {
 }
 
 void SceneManager::saveListener(int saveMode) {
-	warning("TODO: SceneManager::saveLIstener");
 }
 
 void SceneManager::loadNotifier(bool postFlag) {

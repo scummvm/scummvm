@@ -2869,8 +2869,6 @@ void Region::draw() {
 }
 
 void Region::uniteLine(int yp, LineSliceSet &sliceSet) {
-	// TODO: More properly implement like the original
-
 	// First expand the bounds as necessary to fit in the row
 	if (_ySlices.empty()) {
 		_bounds = Rect(sliceSet.items[0].xs, yp, sliceSet.items[sliceSet.items.size() - 1].xe, yp + 1);
@@ -3024,13 +3022,12 @@ void WalkRegion::loadProcessList(byte *dataP, int dataSize, int &dataIndex, int 
 		int yp = READ_LE_UINT16(dataP + idx * 4 + 2);
 		if (yp != y1) {
 			/*
-			 * Commented out: doesn't seem to be used
+			 * Commented out: v doesn't seem to be used
 			int v;
 			if (idx == (dataSize - 1))
 				v = READ_LE_UINT16(dataP + 2);
 			else
 				v = process1(idx, dataP, dataSize);
-			warning("TODO: v not used? - %d", v);
 			*/
 			process2(dataIndex, x1, y1, xp, yp);
 			++dataIndex;
@@ -3547,9 +3544,10 @@ void SceneHandler::dispatch() {
 	if (_globals->_sceneManager._scene)
 		_globals->_sceneManager._scene->dispatch();
 
-	//TODO: Figure out purpose of the given list
-	//_globals->_regions.forEach(SceneHandler::handleListener);
+	// Not actually used
+	//_eventListeners.forEach(SceneHandler::handleListener);
 
+	// Handle pending eents
 	Event event;
 	while (_globals->_events.getEvent(event))
 		process(event);
@@ -3573,7 +3571,6 @@ void SceneHandler::dispatchObject(EventHandler *obj) {
 }
 
 void SceneHandler::saveListener(Serializer &ser) {
-	warning("TODO: SceneHandler::saveListener");
 }
 
 } // End of namespace tSage

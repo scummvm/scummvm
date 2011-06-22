@@ -1869,7 +1869,6 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 
 				if (channelNum != -1) {
 					if (voiceType == VOICETYPE_1) {
-						// TODO: sub_25E32/sub_25DD8
 						if (chFlags & 0x10)
 							_soProc42(vtStruct, channelNum, chVoiceType, v);
 						else

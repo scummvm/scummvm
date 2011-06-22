@@ -667,7 +667,6 @@ void SpeakerQL::setText(const Common::String &msg) {
 /*--------------------------------------------------------------------------*/
 
 SpeakerSR::SpeakerSR() {
-	// TODO: check initialization of object3
 	_speakerName = "SR";
 	_newSceneNumber = 2811;
 	_textPos = Common::Point(10, 30);

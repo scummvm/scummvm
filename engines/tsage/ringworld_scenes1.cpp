@@ -1255,8 +1255,7 @@ void Scene40::Action7::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		// TODO: check if it's rand(500) or rand(499)+500
-		setDelay(_globals->_randomSource.getRandomNumber(500));
+		setDelay(_globals->_randomSource.getRandomNumber(499) + 500);
 		break;
 	case 1:
 		scene->_object7.postInit();
