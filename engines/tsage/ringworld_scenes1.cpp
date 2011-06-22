@@ -342,7 +342,7 @@ void Scene20::Action2::signal() {
 	}
 	case 8:
 		scene->_sound.release();
-		scene->_sound.fadeOut(this);
+		_globals->_soundHandler.fadeOut(this);
 		break;
 	case 9:
 		SceneItem::display(0, 0, LIST_END);
