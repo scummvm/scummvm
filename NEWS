@@ -11,6 +11,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      There should be no more silent errors due to invalid audio devices.
      Instead ScummVM should pick up a suitable alternative device.
 
+ Tinsel:
+   - Fixed a regression that made Discworld uncompletable.
+
  SCUMM:
    - Fixed graphics bug in FM-TOWNS versions of games on ARM devices
      (Android, iPhone, etc.).
