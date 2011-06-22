@@ -40,7 +40,7 @@ namespace LastExpress {
 #define SOUNDCACHE_MAX_SIZE   6
 
 // Letters & messages
-const char *messages[24] = {
+static const char *const messages[24] = {
 	"",
 	"TXT1001",  // 1
 	"TXT1001A", // 2
@@ -67,7 +67,7 @@ const char *messages[24] = {
 	"ENDALRM3"  // 65
 };
 
-const char *cities[17] = {
+static const char *const cities[17] = {
 	"EPERNAY",
 	"CHALONS",
 	"BARLEDUC",
@@ -87,7 +87,7 @@ const char *cities[17] = {
 	"POLICE"
 };
 
-const char *locomotiveSounds[5] = {
+static const char *const locomotiveSounds[5] = {
 	"ZFX1005",
 	"ZFX1006",
 	"ZFX1007",
@@ -1952,7 +1952,7 @@ void SoundManager::stopAllSound() {
 // Sound filter
 //////////////////////////////////////////////////////////////////////////
 
-static int filterData[1424] = {
+static const int filterData[1424] = {
 	0, 0, 0, 0, 128, 256, 384, 512, 0, 0, 0, 0, 128, 256,
 	384, 512, 0, 0, 0, 0, 192, 320, 448, 576, 0, 0, 0, 0,
 	192, 320, 448, 576, 64, 64, 64, 64, 256, 384, 512, 640,
@@ -2109,7 +2109,7 @@ static int filterData[1424] = {
 	5632
 };
 
-static int filterData2[1424] = {
+static const int filterData2[1424] = {
 	0, 2, 4, 6, 7, 9, 11, 13, 0, -2, -4, -6, -7, -9, -11,
 	-13, 1, 3, 5, 7, 9, 11, 13, 15, -1, -3, -5, -7, -9,
 	-11, -13, -15, 1, 3, 5, 7, 10, 12, 14, 16, -1, -3, -5,
@@ -2258,8 +2258,8 @@ static int filterData2[1424] = {
 	-20479, -28671, -32767, -32767, -32767, -32767
 };
 
-static const int p1s[17] = { 0, 4, 3, 4, 2, 4, 3, 4, 1, 4, 3, 4,  2, 4,  3, 4,  0};
-static const int p2s[17] = { 0, 1, 1, 3, 1, 5, 3, 7, 1, 9, 5, 11, 3, 13, 7, 15, 1};
+static const int p1s[17] = { 0, 4, 3, 4, 2, 4, 3, 4, 1, 4, 3, 4,  2, 4,  3, 4,  0 };
+static const int p2s[17] = { 0, 1, 1, 3, 1, 5, 3, 7, 1, 9, 5, 11, 3, 13, 7, 15, 1 };
 
 static void soundFilter(byte *data, int16 *buffer, int p1, int p2);
 
