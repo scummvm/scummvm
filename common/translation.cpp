@@ -223,9 +223,17 @@ String TranslationManager::getLangById(int id) const {
 }
 
 bool TranslationManager::openTranslationsFile(File& inFile) {
-	// First try to open it directly (i.e. using the SearchMan).
-	if (inFile.open("translations.dat"))
-		return true;
+	// First try to open it using the SearchMan.
+	ArchiveMemberList fileList;
+	SearchMan.listMatchingMembers(fileList, "translations.dat");
+	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
+		SeekableReadStream *stream = it->get()->createReadStream();
+		if (stream && inFile.open(stream, it->get()->getName())) {
+			if (checkHeader(inFile))
+				return true;
+			inFile.close();
+		}
+	}
 
 	// Then look in the Themepath if we can find the file.
 	if (ConfMan.hasKey("themepath"))
@@ -243,8 +251,11 @@ bool TranslationManager::openTranslationsFile(const FSNode &node, File& inFile, 
 	// necessary to make them here. But it avoid printing warnings.
 	FSNode fileNode = node.getChild("translations.dat");
 	if (fileNode.exists() && fileNode.isReadable() && !fileNode.isDirectory()) {
-		if (inFile.open(fileNode))
-			return true;
+		if (inFile.open(fileNode)) {
+			if (checkHeader(inFile))
+				return true;
+			inFile.close();
+		}
 	}
 
 	// Check if we exceeded the given recursion depth
@@ -268,12 +279,9 @@ bool TranslationManager::openTranslationsFile(const FSNode &node, File& inFile, 
 void TranslationManager::loadTranslationsInfoDat() {
 	File in;
 	if (!openTranslationsFile(in)) {
-		warning("You are missing the 'translations.dat' file. GUI translation will not be available");
+		warning("You are missing a valid 'translations.dat' file. GUI translation will not be available");
 		return;
 	}
-
-	if (!checkHeader(in))
-		return;
 
 	char buf[256];
 	int len;
@@ -324,9 +332,6 @@ void TranslationManager::loadLanguageDat(int index) {
 
 	File in;
 	if (!openTranslationsFile(in))
-		return;
-
-	if (!checkHeader(in))
 		return;
 
 	char buf[1024];
@@ -386,7 +391,7 @@ bool TranslationManager::checkHeader(File &in) {
 
 	// Check header
 	if (strcmp(buf, "TRANSLATIONS")) {
-		warning("Your 'translations.dat' file is corrupt. GUI translation will not be available");
+		warning("File '%s' is not a valid translations data file. Skipping this file", in.getName());
 		return false;
 	}
 
@@ -394,7 +399,7 @@ bool TranslationManager::checkHeader(File &in) {
 	ver = in.readByte();
 
 	if (ver != TRANSLATIONS_DAT_VER) {
-		warning("Your 'translations.dat' file has a mismatching version, expected was %d but you got %d. GUI translation will not be available", TRANSLATIONS_DAT_VER, ver);
+		warning("File '%s' has a mismatching version, expected was %d but you got %d. Skipping this file", in.getName(), TRANSLATIONS_DAT_VER, ver);
 		return false;
 	}
 
