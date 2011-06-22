@@ -4329,52 +4329,6 @@ noeffects:
 	cx = pop();
 }
 
-void DreamGenContext::frameoutv() {
-	STACK_CHECK;
-	push(dx);
-	ax = bx;
-	bx = dx;
-	_mul(bx);
-	_add(di, ax);
-	dx = pop();
-	push(cx);
-	ch = 0;
-	_sub(dx, cx);
-	cx = pop();
-frameloop1:
-	push(cx);
-	ch = 0;
-frameloop2:
-	_lodsb();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto backtosolid;
-backtoother:
-	_inc(di);
-	if (--cx)
-		goto frameloop2;
-	cx = pop();
-	_add(di, dx);
-	_dec(ch);
-	if (!flags.z())
-		goto frameloop1;
-	return;
-frameloop3:
-	_lodsb();
-	_cmp(al, 0);
-	if (flags.z())
-		goto backtoother;
-backtosolid:
-	_stosb();
-	if (--cx)
-		goto frameloop3;
-	cx = pop();
-	_add(di, dx);
-	_dec(ch);
-	if (!flags.z())
-		goto frameloop1;
-}
-
 void DreamGenContext::frameoutbh() {
 	STACK_CHECK;
 	push(dx);
@@ -22126,7 +22080,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case 0xc214: delthisone(); break;
 		case 0xc228: doblocks(); break;
 		case 0xc22c: showframe(); break;
-		case 0xc230: frameoutv(); break;
 		case 0xc238: frameoutbh(); break;
 		case 0xc23c: frameoutfx(); break;
 		case 0xc240: transferinv(); break;
