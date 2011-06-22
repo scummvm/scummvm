@@ -3223,6 +3223,10 @@ fi
 echo_n "Backend... "
 echo_n "$_backend"
 
+if test "$_backend" = "sdl" -a -n "$_sdlversion"; then
+	echo_n " ($_sdlversion)"
+fi
+
 if test "$_nasm" = yes ; then
 	echo_n ", assembly routines"
 fi
