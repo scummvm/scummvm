@@ -246,14 +246,14 @@ private:
 	struct SoundEntry {
 		SoundStatusUnion status;
 		SoundType type;    // int
-		//int field_8;
-		//int field_C;
-		int processedFrameCount;
+		//int data;
+		//int endOffset;
+		int currentDataPtr;
 		void *soundData;
-		//int field_18;
-		int field_1C;
+		//int currentBufferPtr;
+		int blockCount;
 		uint32 time;
-		//int field_24;
+		//int size;
 		//int field_28;
 		Common::SeekableReadStream *stream;	// int
 		//int field_30;
@@ -276,10 +276,10 @@ private:
 			status.status = 0;
 			type = kSoundTypeNone;
 
-			processedFrameCount = 0;
+			currentDataPtr = 0;
 			soundData = NULL;
 
-			field_1C = 0;
+			blockCount = 0;
 			time = 0;
 
 			stream = NULL;
