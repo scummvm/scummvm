@@ -30,11 +30,13 @@
 // Entities
 #include "lastexpress/entities/chapters.h"
 
+// Fight
+#include "lastexpress/fight/fight.h"
+
 // Game
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/beetle.h"
 #include "lastexpress/game/entities.h"
-#include "lastexpress/game/fight.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/menu.h"
 #include "lastexpress/game/object.h"

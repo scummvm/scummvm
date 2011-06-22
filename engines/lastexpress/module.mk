@@ -45,10 +45,10 @@ MODULE_OBJS := \
 	entities/verges.o \
 	entities/vesna.o \
 	entities/yasmin.o \
+	fight/fight.o \
 	game/action.o \
 	game/beetle.o \
 	game/entities.o \
-	game/fight.o \
 	game/inventory.o \
 	game/logic.o \
 	game/menu.o \

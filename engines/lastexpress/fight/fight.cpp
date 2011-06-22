@@ -20,7 +20,7 @@
  *
  */
 
-#include "lastexpress/game/fight.h"
+#include "lastexpress/fight/fight.h"
 
 #include "lastexpress/data/cursor.h"
 #include "lastexpress/data/scene.h"

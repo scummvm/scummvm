@@ -31,9 +31,10 @@
 #include "lastexpress/data/snd.h"
 #include "lastexpress/data/subtitle.h"
 
+#include "lastexpress/fight/fight.h"
+
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/beetle.h"
-#include "lastexpress/game/fight.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
