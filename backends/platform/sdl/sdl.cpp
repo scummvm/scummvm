@@ -35,7 +35,14 @@
 #include "common/textconsole.h"
 
 #include "backends/saves/default/default-saves.h"
+
+// Audio CD support was removed with SDL 1.3
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+#include "backends/audiocd/default/default-audiocd.h"
+#else
 #include "backends/audiocd/sdl/sdl-audiocd.h"
+#endif
+
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
@@ -188,8 +195,15 @@ void OSystem_SDL::initBackend() {
 		_mixerManager->init();
 	}
 
-	if (_audiocdManager == 0)
+	if (_audiocdManager == 0) {
+		// Audio CD support was removed with SDL 1.3
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+		_audiocdManager = new DefaultAudioCDManager();
+#else
 		_audiocdManager = new SdlAudioCDManager();
+#endif
+
+	}
 
 	// Setup a custom program icon.
 	setupIcon();

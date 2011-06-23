@@ -745,6 +745,7 @@ Special configuration feature:
                                            n64 for Nintendo 64
                                            openpandora for OpenPandora
                                            ps2 for PlayStation 2
+                                           ps3 for PlayStation 3
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
                                            webos for HP Palm WebOS
@@ -1132,6 +1133,22 @@ ps2)
 	_host_cpu=mips64r5900el
 	_host_alias=ee
 	;;
+ps3)
+	_host_os=ps3
+	_host_cpu=ppc
+	_host_alias=powerpc64-ps3-elf
+	
+	# The prefix is always the same on PS3 so we hardcode the default
+	# here. It is still possible to define a custom prefix which is
+	# needed when packaging the app with a user-specific app ID.
+	test "x$prefix" = xNONE && prefix=/dev_hdd0/game/SCUM12000/USRDIR
+	# PS3 apps are installed into app-specific directories. The 
+	# default directory structure of ScummVM makes no sense here so we
+	# hardcode PS3 specific directories here.
+	datarootdir='${prefix}/data'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
+	;;
 psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
@@ -1270,6 +1287,12 @@ n64)
 ps2)
 	if test -z "$PS2SDK"; then
 		echo "Please set PS2SDK in your environment. export PS2SDK=<path to ps2 sdk>"
+		exit 1
+	fi
+	;;
+ps3)
+	if test -z "$PS3DEV"; then
+		echo "Please set PS3DEV in your environment. export PS3DEV=<path to ps3 toolchain>"
 		exit 1
 	fi
 	;;
@@ -1465,7 +1488,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | wii | wince )
+		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | wii | wince )
 			;;
 		*)
 			CXXFLAGS="$CXXFLAGS -ansi"
@@ -1854,6 +1877,16 @@ case $_host_os in
 		DEFINES="$DEFINES -D_EE"
 		DEFINES="$DEFINES -D__PLAYSTATION2__"
 		;;
+	ps3)
+		# Force use of SDL from the ps3 toolchain
+		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
+	
+		DEFINES="$DEFINES -DPLAYSTATION3"
+		CXXFLAGS="$CXXFLAGS -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
+		LDFLAGS="$LDFLAGS -L$PS3DEV/psl1ght/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
+		add_line_to_config_mk 'PLAYSTATION3 = 1'
+		add_line_to_config_h "#define PREFIX \"${prefix}\""
+		;;
 	psp)
 		if test -d "$PSPDEV/psp/lib"; then
 			LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
@@ -2211,6 +2244,11 @@ if test -n "$_host"; then
 				CXXFLAGS="$CXXFLAGS -s"
 			fi
 			;;
+		ps3)
+			_mt32emu=no
+			_timidity=no
+			_vkeybd=yes
+			;;
 		psp)
 			_backend="psp"
 			_build_scalers=no
@@ -2394,6 +2432,15 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
+
+		_sdlversion=`$_sdlconfig --version`
+		case $_sdlversion in
+			1.3.*)
+				add_line_to_config_mk "USE_SDL13 = 1"
+				;;
+			*)
+				;;
+		esac
 		;;
 esac
 
@@ -2425,7 +2472,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | psp | wii | wince)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
 	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
@@ -3250,6 +3297,10 @@ fi
 
 echo_n "Backend... "
 echo_n "$_backend"
+
+if test "$_backend" = "sdl" -a -n "$_sdlversion"; then
+	echo_n " ($_sdlversion)"
+fi
 
 if test "$_nasm" = yes ; then
 	echo_n ", assembly routines"

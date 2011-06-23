@@ -20,34 +20,28 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef PLATFORM_SDL_PS3_H
+#define PLATFORM_SDL_PS3_H
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3)
+#include "backends/platform/sdl/sdl.h"
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+class OSystem_PS3 : public OSystem_SDL {
+public:
+	// Let the subclasses be able to change _baseConfigName in the constructor
+	OSystem_PS3(Common::String baseConfigName = "scummvm.ini");
+	virtual ~OSystem_PS3() {}
 
-int main(int argc, char *argv[]) {
+	virtual void init();
+	virtual void initBackend();
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
+protected:
+	// Base string for creating the default path and filename
+	// for the configuration file
+	Common::String _baseConfigName;
 
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
+	virtual Common::String getDefaultConfigFileName();
 
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
-}
+	virtual Common::WriteStream *createLogFile();
+};
 
 #endif

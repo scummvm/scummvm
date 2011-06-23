@@ -20,34 +20,48 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef BACKENDS_MIXER_SDL13_H
+#define BACKENDS_MIXER_SDL13_H
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3)
+#include "backends/mixer/sdl/sdl-mixer.h"
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+/**
+ * SDL mixer manager. It wraps the actual implementation
+ * of the Audio:Mixer used by the engine, and setups
+ * the SDL audio subsystem and the callback for the
+ * audio mixer implementation.
+ */
+class Sdl13MixerManager : public SdlMixerManager {
+public:
+	Sdl13MixerManager();
+	virtual ~Sdl13MixerManager();
 
-int main(int argc, char *argv[]) {
+	/**
+	 * Initialize and setups the mixer
+	 */
+	virtual void init();
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
+	/**
+	 * Pauses the audio system
+	 */
+	virtual void suspendAudio();
 
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
+	/**
+	 * Resumes the audio system
+	 */
+	virtual int resumeAudio();
 
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
+protected:
 
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
+	/**
+	 * The opened SDL audio device
+	 */
+	SDL_AudioDeviceID _device;
 
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
-}
+	/**
+	 * Starts SDL audio
+	 */
+	virtual void startAudio();
+};
 
 #endif
