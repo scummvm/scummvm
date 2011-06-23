@@ -141,7 +141,7 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 		for (file = filenames.begin(); file != filenames.end(); ++file) {
 			// Jump over savegame files that don't end with a digit (e.g. "fw.3" is ok, "fw.a" is not).
-			if (!isdigit(file->lastChar()))
+			if (!isdigit(static_cast<unsigned char>(file->lastChar())))
 				continue;
 
 			// Obtain the last digit of the filename, since they correspond to the save slot

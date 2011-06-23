@@ -90,13 +90,13 @@ public:
 			assert(def_end != NULL);
 
 			char *id_end = def_end;
-			while (id_end >= def_start && !isdigit(*(id_end-1))) {
+			while (id_end >= def_start && !isdigit(static_cast<unsigned char>(*(id_end-1)))) {
 				id_end--;
 			}
 
 			assert(id_end > def_start);
 			char *id_start = id_end;
-			while (isdigit(*(id_start - 1))) {
+			while (isdigit(static_cast<unsigned char>(*(id_start - 1)))) {
 				id_start--;
 			}
 

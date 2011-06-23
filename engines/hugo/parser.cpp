@@ -235,7 +235,7 @@ void Parser::charHandler() {
 			if (_cmdLineIndex >= kMaxLineSize) {
 				//MessageBeep(MB_ICONASTERISK);
 				warning("STUB: MessageBeep() - Command line too long");
-			} else if (isprint(c)) {
+			} else if (isprint(static_cast<unsigned char>(c))) {
 				_cmdLine[_cmdLineIndex++] = c;
 				_cmdLine[_cmdLineIndex] = '\0';
 			}
