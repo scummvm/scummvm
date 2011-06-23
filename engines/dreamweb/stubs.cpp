@@ -525,4 +525,71 @@ void DreamGenContext::frameoutv() {
 	}
 }
 
+struct Sprite {
+	uint16 w0;
+	uint16 w2;
+	uint16 w4;
+	uint16 w6;
+	uint16 w8;
+	uint8  b10;
+	uint8  b11;
+	uint16 w12;
+	uint8  b14;
+	uint8  b15;
+	uint16 w16;
+	uint16 w18;
+	uint16 w20;
+	uint8  b22;
+	uint8  priority;
+	uint16 w24[3];
+	uint8  b30;
+	uint8  b31;
+};
+
+void DreamGenContext::printsprites() {
+	es = data.word(kBuffers);
+
+	for (size_t i = 0; i < 7; ++i) { // priorityloop
+		data.byte(kPriority) = i;
+		bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768); //spritetable
+
+		for (size_t j = 0; j < 16; ++j, bx += 32) { // prtspriteloop
+			const Sprite &sprite = *(const Sprite*)es.ptr(bx, sizeof(Sprite));
+			if (sprite.w0 == 0x0ffff)
+				continue;
+			if (data.byte(kPriority) != sprite.priority)
+				continue;
+			if (sprite.b31 == 1)
+				continue;
+			printasprite(); // NB: Takes its parameter for es:bx
+		}
+	}
+}
+
+void DreamGenContext::printasprite() {
+	const Sprite *sprite = (const Sprite*)es.ptr(bx, sizeof(Sprite));
+	push(es);
+	push(bx);
+	si = bx;
+	ds = sprite->w6;
+	ax = sprite->b11;
+	if (al >= 220) {
+		ah = 255;
+	}
+
+	bx = ax + data.word(kMapady);
+	ax = sprite->b10;
+	if (al >= 220) {
+		ah = 255;
+	}
+	
+	di = ax + data.word(kMapadx);
+	ax = sprite->b15;
+	if (sprite->b30 != 0)
+		ah = 8;
+	showframe(); // NB: Params in ax, ds:dx
+	bx = pop();
+	es = pop();
+}
+
 } /*namespace dreamgen */
