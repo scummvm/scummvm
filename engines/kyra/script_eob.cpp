@@ -80,8 +80,6 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	_commandMin(engine->game() == GI_EOB1 ? -27 : -31) {
 
 #define Opcode(x) _opcodes.push_back(new InfProc(this, &EobInfProcessor::x))
-//#define OpcodeAltV(x, y) if (_vm->game() == GI_EOB1) Opcode(x); else Opcode(y);
-//#define OpcodeAlt(x) OpcodeAltV(x##_v1, x##_v2)
 #define OpcodeAlt(x) if (_vm->game() == GI_EOB1) Opcode(x##_v1); else Opcode(x##_v2);
 	Opcode(oeob_setWallType);
 	Opcode(oeob_toggleWallState);
@@ -114,7 +112,6 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	Opcode(oeob_dialogue);
 	Opcode(oeob_specialEvent);
 #undef Opcode
-//#undef OpcodeAltV
 #undef OpcodeAlt
 
 	_scriptData = 0;

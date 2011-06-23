@@ -99,7 +99,7 @@ Kyra::Item EobCoreEngine::duplicateItem(Item itemIndex) {
 	if (!foundSlot)
 		return 0;
 
-	memcpy(&_items[i], &_items[itemIndex], sizeof(EobItem));
+	memcpy(&_items[i], itm, sizeof(EobItem));
 	return i;
 }
 
