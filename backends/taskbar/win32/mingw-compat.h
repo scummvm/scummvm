@@ -45,10 +45,10 @@
 #include <shlguid.h>
 #define CMIC_MASK_ASYNCOK SEE_MASK_ASYNCOK
 
-// Misc enumeration values
-#ifndef SHARD_LINK
+extern const GUID CLSID_ShellLink;
+
+// Shard enumeration value
 #define SHARD_LINK 0x00000006
-#endif
 
 // Taskbar GUID definitions
 DEFINE_GUID(CLSID_TaskbarList,0x56fdf344,0xfd6d,0x11d0,0x95,0x8a,0x0,0x60,0x97,0xc9,0xa0,0x90);
@@ -73,6 +73,9 @@ DECLARE_INTERFACE_(IPropertyStore, IUnknown) {
 	STDMETHOD (GetValue) (REFPROPERTYKEY key, PROPVARIANT *pv) PURE;
 	STDMETHOD (SetValue) (REFPROPERTYKEY key, REFPROPVARIANT propvar) PURE;
 	STDMETHOD (Commit) (void) PURE;
+	
+private:
+	~IPropertyStore();
 };
 typedef IPropertyStore *LPIPropertyStore;
 
@@ -137,6 +140,9 @@ DECLARE_INTERFACE_(ITaskbarList3, IUnknown) {
 	STDMETHOD (SetOverlayIcon) (THIS_ HWND hwnd, HICON hIcon, LPCWSTR pszDescription) PURE;
 	STDMETHOD (SetThumbnailTooltip) (THIS_ HWND hwnd, LPCWSTR pszTip) PURE;
 	STDMETHOD (SetThumbnailClip) (THIS_ HWND hwnd, RECT *prcClip) PURE;
+	
+private:
+	~ITaskbarList3();
 };
 
 typedef ITaskbarList3 *LPITaskbarList3;
