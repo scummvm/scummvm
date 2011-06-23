@@ -57,13 +57,13 @@ MODULE_OBJS := \
 	game/entities.o \
 	game/inventory.o \
 	game/logic.o \
-	game/menu.o \
 	game/object.o \
 	game/savegame.o \
 	game/savepoint.o \
 	game/scenes.o \
 	game/sound.o \
 	game/state.o \
+	menu/menu.o \
 	debug.o \
 	detection.o \
 	graphics.o \

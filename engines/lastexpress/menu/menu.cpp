@@ -20,7 +20,7 @@
  *
  */
 
-#include "lastexpress/game/menu.h"
+#include "lastexpress/menu/menu.h"
 
 // Data
 #include "lastexpress/data/animation.h"

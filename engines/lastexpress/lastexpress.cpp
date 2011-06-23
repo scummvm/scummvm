@@ -26,10 +26,11 @@
 #include "lastexpress/data/font.h"
 
 #include "lastexpress/game/logic.h"
-#include "lastexpress/game/menu.h"
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
 #include "lastexpress/game/sound.h"
+
+#include "lastexpress/menu/menu.h"
 
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
