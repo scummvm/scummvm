@@ -151,7 +151,7 @@ void EobCoreEngine::gui_drawPlayField(int pageNum) {
 	int cp = _screen->setCurPage(2);
 	gui_drawCompass(true);
 
-	if (pageNum && !_sceneDrawPage1)
+	if (pageNum && !_sceneDrawPage2)
 		drawScene(0);
 
 	_screen->setCurPage(cp);
@@ -280,7 +280,7 @@ void EobCoreEngine::gui_drawCharPortraitWithStats(int index) {
 			_screen->printText(Common::String::format("%d", c->armorClass).c_str(), 275, 124, 15, _color6);
 
 			for (int i = 0; i < 3; i++) {
-				int t = getClassHpIncreaseType(c->cClass, i);
+				int t = getCharacterClassType(c->cClass, i);
 				if (t == -1)
 					continue;
 
@@ -862,8 +862,8 @@ int EobCoreEngine::clickedCamp(Button *button) {
 	const ScreenDim *dm = _screen->getScreenDim(10);
 	_screen->copyRegion(dm->sx << 3, dm->sy, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);	
 	
-	//if (displayInv)
-	//	_screen->loadEobCpsFileToPage("INVENT", 0, 5, 3, 2);
+	/*if (reloadInv)
+		_screen->loadEobCpsFileToPage("INVENT", 0, 5, 3, 2);*/
 	
 	_screen->updateScreen();
 
@@ -948,11 +948,7 @@ int EobCoreEngine::clickedCharNameLabelRight(Button *button) {
 	} else {
 		int d = _exchangeCharacterId;
 		_exchangeCharacterId = -1;
-
-		EobCharacter temp;
-		memcpy(&temp, &_characters[d], sizeof(EobCharacter));
-		memcpy(&_characters[d], &_characters[button->arg], sizeof(EobCharacter));
-		memcpy(&_characters[button->arg], &temp, sizeof(EobCharacter));
+		exchangeCharacters(d, button->arg);
 
 		_timer->disable(0);
 		gui_drawCharPortraitWithStats(d);
@@ -1432,11 +1428,11 @@ void EobCoreEngine::gui_processInventorySlotClick(int slot) {
 	}
 }
 
-GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
+GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI_v1(vm), _vm(vm), _screen(vm->_screen) {
 	_scrollUpFunctor = _scrollDownFunctor = BUTTON_FUNCTOR(GUI_Eob, this, 0);
 
-	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawButtonCallback);
-	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawShadedButtonCallback);
+	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawButtonCallback);
+	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawShadedButtonCallback);
 
 	_menuStringsPrefsTemp = new char*[4];
 	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char*));
@@ -1453,7 +1449,12 @@ GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_menuLastInFlags = 0;
 	_menuCur = 0;
 	_menuNumItems = 0;
-	_menuButtons = 0;
+
+	_charSelectRedraw = false;
+	
+	_updateBoxIndex = -1;
+	_highLightBoxTimer = 0;
+	_updateBoxColorIndex = 0;
 }
 
 GUI_Eob::~GUI_Eob() {
@@ -1950,17 +1951,17 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 	return result;
 }
 
-void GUI_Eob::setupMenu(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing) {
-	initMenuItemsMask(sd, maxItem, menuItemsMask, unk);
+void GUI_Eob::simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing) {
+	simpleMenu_initMenuItemsMask(sd, maxItem, menuItemsMask, unk);
 
 	const ScreenDim *dm = _screen->getScreenDim(19 + sd);
 	int x = (_screen->_curDim->sx + dm->sx) << 3;
 	int y = _screen->_curDim->sy + dm->sy;
 
-	int v = getMenuItem(_menuCur, menuItemsMask, unk);
+	int v = simpleMenu_getMenuItem(_menuCur, menuItemsMask, unk);
 
 	for (int i = 0; i < _menuNumItems; i++) {
-		int item = getMenuItem(i, menuItemsMask, unk);
+		int item = simpleMenu_getMenuItem(i, menuItemsMask, unk);
 		int ty = y + i * (lineSpacing + _screen->getFontHeight());
 		_screen->printShadedText(strings[item], x, ty, dm->unkA, 0);
 		if (item == v)
@@ -1974,7 +1975,7 @@ void GUI_Eob::setupMenu(int sd, int maxItem, const char *const *strings, int32 m
 	_vm->removeInputTop();
 }
 
-int GUI_Eob::handleMenu(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk) {
+int GUI_Eob::simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk) {
 	const ScreenDim *dm = _screen->getScreenDim(19 + sd);
 	int h = _menuNumItems - 1;
 	int currentItem = _menuCur % _menuNumItems;
@@ -2016,14 +2017,14 @@ int GUI_Eob::handleMenu(int sd, const char *const *strings, void *b, int32 menuI
 	}
 
 	if (newItem != currentItem) {
-		_screen->printText(strings[getMenuItem(currentItem, menuItemsMask, unk)], x, y + currentItem * lineH , dm->unkA, 0);
-		_screen->printText(strings[getMenuItem(newItem,  menuItemsMask, unk)], x, y + newItem * lineH , dm->unkC, 0);
+		_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, unk)], x, y + currentItem * lineH , dm->unkA, 0);
+		_screen->printText(strings[simpleMenu_getMenuItem(newItem,  menuItemsMask, unk)], x, y + newItem * lineH , dm->unkC, 0);
 		_screen->updateScreen();
 	}
 
 	if (result != -1) {
-		result = getMenuItem(result, menuItemsMask, unk);
-		menuFlashSelection(strings[result], x, y + newItem * lineH, dm->unkA, dm->unkC, 0);
+		result = simpleMenu_getMenuItem(result, menuItemsMask, unk);
+		simpleMenu_flashSelection(strings[result], x, y + newItem * lineH, dm->unkA, dm->unkC, 0);
 	}
 
 	_menuCur = newItem;
@@ -2031,7 +2032,7 @@ int GUI_Eob::handleMenu(int sd, const char *const *strings, void *b, int32 menuI
 	return result;
 }
 
-int GUI_Eob::getMenuItem(int index, int32 menuItemsMask, int unk) {
+int GUI_Eob::simpleMenu_getMenuItem(int index, int32 menuItemsMask, int unk) {
 	if (menuItemsMask == -1)
 		return index;
 
@@ -2049,7 +2050,7 @@ int GUI_Eob::getMenuItem(int index, int32 menuItemsMask, int unk) {
 	return res;
 }
 
-void GUI_Eob::menuFlashSelection(const char *str, int x, int y, int color1, int color2, int color3) {
+void GUI_Eob::simpleMenu_flashSelection(const char *str, int x, int y, int color1, int color2, int color3) {
 	for (int i = 0; i < 3; i++) {
 		_screen->printText(str, x, y, color2, color3);
 		_screen->updateScreen();
@@ -2060,7 +2061,7 @@ void GUI_Eob::menuFlashSelection(const char *str, int x, int y, int color1, int 
 	}
 }
 
-int GUI_Eob::runCampMenu() {
+void GUI_Eob::runCampMenu() {
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	
 	Button *highlightButton = 0;
@@ -2068,17 +2069,18 @@ int GUI_Eob::runCampMenu() {
 	
 	int newMenu = 0;
 	int lastMenu = -1;
-	int e = 0;
-	int menuG = 0;
-	int menuH = 0;
-	_menuButtons = 0;
+	bool redrawPortraits = false;
+	bool res = false;
+	_charSelectRedraw = false;
+	_vm->_resting = false;
+	Button *buttonList = 0;
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
 		if (newMenu == 2)
 			updateOptionsStrings();
 		
 		if (newMenu != -1) {
-			releaseButtons(_menuButtons);
+			releaseButtons(buttonList);
 
 			_vm->_menuDefs[0].titleStrId = newMenu ? 1 : 56;
 			if (newMenu == 2)
@@ -2086,10 +2088,10 @@ int GUI_Eob::runCampMenu() {
 			else if (newMenu == 1)
 				_vm->_menuDefs[1].titleStrId = 58;
 			
-			_menuButtons = initMenu(newMenu);
+			buttonList = initMenu(newMenu);
 
 			if (newMenu != lastMenu) {
-				highlightButton = _menuButtons;
+				highlightButton = buttonList;
 				prevHighlightButton = 0;
 			}
 
@@ -2097,7 +2099,7 @@ int GUI_Eob::runCampMenu() {
 			newMenu = -1;
 		}
 		
-		int inputFlag = _vm->checkInput(_menuButtons, false, 0) & 0x80ff;
+		int inputFlag = _vm->checkInput(buttonList, false, 0) & 0x80ff;
 		_vm->removeInputTop();
 		
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE])
@@ -2106,7 +2108,7 @@ int GUI_Eob::runCampMenu() {
 			inputFlag = 0x8000 + prevHighlightButton->index;
 		}
 
-		Button *clickedButton = _vm->gui_getButton(_menuButtons, inputFlag & 0x7fff);
+		Button *clickedButton = _vm->gui_getButton(buttonList, inputFlag & 0x7fff);
 
 		if (clickedButton) {
 			drawMenuButton(prevHighlightButton, false, false, true);
@@ -2120,10 +2122,10 @@ int GUI_Eob::runCampMenu() {
 		}
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP3] || inputFlag == _vm->_keyMap[Common::KEYCODE_PAGEDOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP1] || inputFlag == _vm->_keyMap[Common::KEYCODE_END]) {
-			highlightButton = _vm->gui_getButton(_menuButtons, _vm->_menuDefs[lastMenu].firstButtonStrId + _vm->_menuDefs[lastMenu].numButtons);
+			highlightButton = _vm->gui_getButton(buttonList, _vm->_menuDefs[lastMenu].firstButtonStrId + _vm->_menuDefs[lastMenu].numButtons);
 			inputFlag = _vm->_keyMap[Common::KEYCODE_UP];
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP7] || inputFlag == _vm->_keyMap[Common::KEYCODE_HOME] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP9] || inputFlag == _vm->_keyMap[Common::KEYCODE_PAGEUP]) {
-			highlightButton = _vm->gui_getButton(_menuButtons, _vm->_menuDefs[lastMenu].firstButtonStrId + 1);
+			highlightButton = _vm->gui_getButton(buttonList, _vm->_menuDefs[lastMenu].firstButtonStrId + 1);
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP8] || inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP2] || inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN]) {
 			if (prevHighlightButton) {
 				int dir = (inputFlag == _vm->_keyMap[Common::KEYCODE_UP]) ? -1 : 1;
@@ -2141,29 +2143,50 @@ int GUI_Eob::runCampMenu() {
 					s += dir;
 				} while(!_vm->shouldQuit());
 
-				highlightButton = _vm->gui_getButton(_menuButtons, s);
+				highlightButton = _vm->gui_getButton(buttonList, s);
 			}
 			
-		} else if (inputFlag > 0x8001 && inputFlag < 0x8010) {
+		} else if (inputFlag > 0x8000 && inputFlag < 0x8010) {
+			int i = 0;
+			int cnt = 0;
+
 			switch (inputFlag) {
 			case 0x8001:
+				if (_vm->restParty())
+					runLoop = false;
+				else
+					_vm->_resting = false;
+				redrawPortraits = true;
 				break;
+
 			case 0x8002:
+				runMemorizePrayMenu(selectCharacterDialogue(23), 0);
+				newMenu = 0;
 				break;
+
 			case 0x8003:
+				runMemorizePrayMenu(selectCharacterDialogue(26), 1);
+				newMenu = 0;
 				break;
+
 			case 0x8004:
+				scribeScrollDialogue();
+				newMenu = 0;
 				break;
+
 			case 0x8005:
 				newMenu = 2;
 				break;
+
 			case 0x8006:
 				newMenu = 1;
 				break;
+
 			case 0x8007:
-				if (menuH)
+				if (_vm->_resting)
 					displayTextBox(44);
 				// fall through
+
 			case 0x800c:
 			case 0x800f:
 				if (lastMenu == 1 || lastMenu == 2)
@@ -2173,38 +2196,74 @@ int GUI_Eob::runCampMenu() {
 				else
 					runLoop = false;
 				break;
+
 			case 0x8008:
+				// load
 				break;
+
 			case 0x8009:
+				// save
 				break;
+
 			case 0x800a:
+				for (; i < 6; i++) {
+					if (_vm->testCharacter(i, 1))
+						cnt++;
+				}
+
+				if (cnt > 4) {
+					_vm->dropCharacter(selectCharacterDialogue(53));
+					_vm->gui_drawPlayField(0);
+					res = true;
+					_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 14, Screen::CR_NO_P_CHECK);
+					_screen->setFont(Screen::FID_6_FNT);
+					_vm->gui_drawAllCharPortraitsWithStats();
+					_screen->setFont(Screen::FID_8_FNT);
+				} else {
+					displayTextBox(45);
+				}
+
+				newMenu = 0;
 				break;
+
 			case 0x800b:
+				if (confirmDialogue(46))
+					_vm->quitGame();
+				newMenu = 0;
 				break;
+
 			case 0x800d:
+				_vm->_configSounds ^= true;
+				_vm->_configMusic = _vm->_configSounds ? 1 : 0;
+				newMenu = 2;
 				break;
+
 			case 0x800e:
+				_vm->_configHpBarGraphs ^= true;
+				newMenu = 2;
+				redrawPortraits = true;
 				break;
+
 			default:
 				break;
 			}
 			
 		} else {
 			Common::Point p = _vm->getMousePos();
-			for (Button *b = _menuButtons; b; b = b->nextButton) {
+			for (Button *b = buttonList; b; b = b->nextButton) {
 				if ((b->arg & 2) && _vm->posWithinRect(p.x, p.y, b->x, b->y, b->x + b->width, b->y + b->height))
 					highlightButton = b;
 			}
 		}
 		
-		if (menuG || e) {
+		if (_charSelectRedraw || redrawPortraits) {
 			for (int i = 0; i < 6; i++) {
 				_vm->gui_drawCharPortraitWithStats(i);
 				_vm->cleanupCharacterSpellList(i);
 			}
 		}
 
-		menuG = e = 0;
+		_charSelectRedraw = redrawPortraits = false;
 
 		if (prevHighlightButton != highlightButton && newMenu == -1 && runLoop) {
 			drawMenuButton(prevHighlightButton, false, false, true);
@@ -2214,16 +2273,49 @@ int GUI_Eob::runCampMenu() {
 		}
 	}
 
-	releaseButtons(_menuButtons);
-	_menuButtons = 0;
+	releaseButtons(buttonList);
+	
+	_vm->writeSettings();
 	
 	_screen->setFont(of);
-
-	return 0;
 }
 
 int GUI_Eob::runLoadMenu(int x, int y) {
 	return 0;
+}
+
+void GUI_Eob::highLightBoxFrame(int box) {
+	static const uint8 colorTable[] = { 0x0F, 0xB0, 0xB2, 0xB4, 0xB6,
+		0xB8, 0xBA, 0xBC, 0x0C, 0xBC, 0xBA, 0xB8, 0xB6, 0xB4, 0xB2, 0xB0, 0x00
+	};
+
+	if (_updateBoxIndex == box) {
+		if (_updateBoxIndex == -1)
+			return;
+
+		if (_vm->_system->getMillis() <= _highLightBoxTimer)
+			return;
+
+		if (!colorTable[_updateBoxColorIndex])
+			_updateBoxColorIndex = 0;
+
+		const EobRect16 *r = &_highLightBoxFrames[_updateBoxIndex];
+		_screen->drawBox(r->x1, r->y1, r->x2, r->y2, colorTable[_updateBoxColorIndex++]);
+		_screen->updateScreen();
+
+		_highLightBoxTimer = _vm->_system->getMillis() + _vm->_tickLength;
+
+	} else {
+		if (_updateBoxIndex != -1) {
+			const EobRect16 *r = &_highLightBoxFrames[_updateBoxIndex];
+			_screen->drawBox(r->x1, r->y1, r->x2, r->y2, 12);
+			_screen->updateScreen();
+		}
+
+		_updateBoxColorIndex = 0;
+		_updateBoxIndex = box;
+		_highLightBoxTimer = _vm->_system->getMillis();
+	}
 }
 
 int GUI_Eob::getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor) {
@@ -2344,7 +2436,7 @@ int GUI_Eob::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
 }
 
-void GUI_Eob::initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk) {
+void GUI_Eob::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk) {
 	if (menuItemsMask == -1) {
 		_menuNumItems = _screen->getScreenDim(19 + menuId)->h;
 		_menuCur = _screen->getScreenDim(19 + menuId)->unk8;
@@ -2359,6 +2451,253 @@ void GUI_Eob::initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, in
 	}
 
 	_menuCur = 0;
+}
+
+void GUI_Eob::runSaveMenu() {
+
+}
+
+void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
+
+}
+
+void GUI_Eob::scribeScrollDialogue() {
+
+}
+
+bool GUI_Eob::confirmDialogue(int id) {
+	int od = _screen->curDimIndex();
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+
+	Button *buttonList = initMenu(5);
+	
+	_screen->printShadedText(getMenuString(id), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 4, 15, 0);
+
+	int newHighlight = 0;
+	int lastHighlight = -1;
+	bool result = false;
+
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+		if (newHighlight != lastHighlight) {
+			if (lastHighlight != -1)
+				drawMenuButton(_vm->gui_getButton(buttonList, lastHighlight + 33), false, false, true);
+			drawMenuButton(_vm->gui_getButton(buttonList, newHighlight + 33), false, true, true);
+			_screen->updateScreen();
+			lastHighlight = newHighlight;
+		}
+		
+		int inputFlag = _vm->checkInput(buttonList, false, 0) & 0x80ff;
+		_vm->removeInputTop();
+
+		if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+			result = lastHighlight ? false : true;
+			inputFlag = 0x8021 + lastHighlight;
+			runLoop = false;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP6] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
+			newHighlight ^= 1;
+		} else if (inputFlag == 0x8021) {
+			result = true;
+			runLoop = false;
+		} else if (inputFlag == 0x8022) {
+			result = false;
+			runLoop = false;
+		} else {
+			Common::Point p = _vm->getMousePos();
+			for (Button *b = buttonList; b; b = b->nextButton) {
+				if ((b->arg & 2) && _vm->posWithinRect(p.x, p.y, b->x, b->y, b->x + b->width, b->y + b->height))
+					newHighlight = b->index - 33;
+			}
+		}
+
+		if (!runLoop) {
+			Button *b = _vm->gui_getButton(buttonList, lastHighlight + 33);
+			drawMenuButton(b, true, true, true);
+			_screen->updateScreen();
+			_vm->_system->delayMillis(80);
+			drawMenuButton(b, false, true, true);
+			_screen->updateScreen();
+		}
+	}
+
+	releaseButtons(buttonList);
+
+	_screen->setFont(of);
+	_screen->setScreenDim(od);
+
+	return result;
+}
+
+int GUI_Eob::selectCharacterDialogue(int id) {
+	uint8 flags = (id == 26) ? 0x14 : 0x02;
+	_vm->removeInputTop();
+
+	_charSelectRedraw = false;	
+	bool abort = false;
+	int count = 0;
+	int result = -1;
+	int found[6];
+
+	for (int i = 0; i < 6; i++) {
+		found[i] = -1;
+		
+		if (!_vm->testCharacter(i, 1))
+			continue;
+		
+		if (!(_vm->_classModifierFlags[_vm->_characters[i].cClass] & flags) && (id != 53))
+			continue;
+		
+		if (id != 53 && (!_vm->_characters[i].food || !_vm->testCharacter(i, 4))) {
+			abort = true;
+		} else {
+			found[i] = 0;
+			result = i;
+			count++;
+		} 
+	}
+
+	if (!count) {
+		int eid = 0;
+		if (id == 23)
+			eid = abort ? 28 : 72;
+		else if (id == 26)
+			eid = abort ? 27 : 73;
+		else if (id == 49)
+			eid = 52;
+
+		displayTextBox(eid);
+		return -1;
+	}
+
+	static const uint16 selX[] = { 184, 256, 184, 256, 184, 256 };
+	static const uint8 selY[] = { 2, 2, 54, 54, 106, 106};
+
+	for (int i = 0; i < 6; i++) {
+		if (found[i] != -1 || !_vm->testCharacter(i, 1))
+			continue;
+
+		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX[i], selY[i], 0);
+		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX[i] + 16, selY[i], 0);
+		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX[i] + 32, selY[i], 0);
+		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX[i] + 48, selY[i], 0);
+		_charSelectRedraw = true;
+	}
+
+	if (count == 1) {		
+		int l = _vm->getCharacterLevelIndex(4, _vm->_characters[result].cClass);
+
+		if (l == -1)
+			return result;
+
+		if (_vm->_characters[result].level[l] > 8)
+			return result;
+
+		displayTextBox(24);
+		return -1;
+	}
+
+	_vm->_menuDefs[3].titleStrId = id;
+	Button *buttonList = initMenu(3);
+
+	result = -2;
+	int hlCur = -1;
+	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+
+	while (result == -2 && !_vm->shouldQuit()) {
+		int inputFlag = _vm->checkInput(buttonList, false, 0);
+		_vm->removeInputTop();
+		
+		highLightBoxFrame(hlCur);
+
+		if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP8] || inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_a] || inputFlag == _vm->_keyMap[Common::KEYCODE_w]) {
+			highLightBoxFrame(-1);
+			_vm->gui_drawCharPortraitWithStats(hlCur--);
+			if (hlCur < 0)
+				hlCur = 5;
+			while (found[hlCur]) {
+				if (--hlCur < 0)
+					hlCur = 5;
+			}
+
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP6] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP2] || inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_z] || inputFlag == _vm->_keyMap[Common::KEYCODE_s]) {
+			highLightBoxFrame(-1);
+			_vm->gui_drawCharPortraitWithStats(hlCur++);
+			if (hlCur == 6)
+				hlCur = 0;
+			while (found[hlCur]) {
+				if (++hlCur == 6)
+					hlCur = 0;
+			}
+
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+			if (found >= 0)
+				result = hlCur;
+
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE] || inputFlag == 0x8010) {
+			_screen->setFont(Screen::FID_8_FNT);
+			drawMenuButton(buttonList, true, true, true);
+			_screen->updateScreen();
+			_vm->_system->delayMillis(80);
+			drawMenuButton(buttonList, false, false, true);
+			_screen->updateScreen();
+			_screen->setFont(Screen::FID_6_FNT);
+			result = -1;
+
+		} else if (inputFlag > 0x8010 && inputFlag < 0x8017) {
+			result = inputFlag - 0x8011;
+			if (found[result])
+				result = -2;
+		}
+	}
+
+	highLightBoxFrame(-1);
+	if (hlCur >= 0)
+		_vm->gui_drawCharPortraitWithStats(hlCur);
+
+	_screen->setFont(Screen::FID_8_FNT);
+
+	if (result != -1 && id != 53) {
+		if (flags == 0x14) {
+			if (_vm->_classModifierFlags[_vm->_characters[result].cClass] & 0x10 && _vm->_characters[result].level[0] < 9) {
+				displayTextBox(24);
+				result = -1;
+			}
+		} else {
+			if (_vm->checkCharacterInventoryForItem(result, 29, -1) == -1) {
+				displayTextBox(25);
+				result = -1;
+			}
+		}
+	}
+
+	releaseButtons(buttonList);
+	_screen->setFont(of);
+
+	return result;
+}
+
+void GUI_Eob::displayTextBox(int id) {
+	int op = _screen->setCurPage(2);
+	int od = _screen->curDimIndex();
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+	_screen->setClearScreenDim(11);
+	const ScreenDim *dm = _screen->getScreenDim(11);
+
+	drawMenuButtonBox(dm->sx << 3, dm->sy, dm->w << 3, dm->h, false, false);
+	_screen->printShadedText(getMenuString(id), (dm->sx << 3) + 5, dm->sy + 5, 15, 0);
+	_screen->copyRegion(dm->sx << 3, dm->sy, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+
+	for (uint32 timeOut = _vm->_system->getMillis() + 1440; _vm->_system->getMillis() < timeOut && !_vm->shouldQuit(); ) {
+	 	int in = _vm->checkInput(0, false, 0);
+		_vm->removeInputTop();
+		if (in && !(in & 0x800))
+			break;
+		_vm->_system->delayMillis(4);
+	}
+
+	_screen->setCurPage(op);
+	_screen->setFont(of);
+	_screen->setScreenDim(od);
 }
 
 Button *GUI_Eob::initMenu(int id) {
@@ -2443,10 +2782,6 @@ void GUI_Eob::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool n
 	_vm->gui_drawBox(x + 1, y + 1, w - 2, h - 2, _vm->_color1_1, _vm->_color2_1, noFill ? -1 : _vm->_bkgColor_1);
 }
 
-void GUI_Eob::displayTextBox(int id) {
-
-}
-
 void GUI_Eob::updateOptionsStrings() {
 	for (int i = 0; i < 4; i++) {
 		delete _menuStringsPrefsTemp[i];
@@ -2460,6 +2795,8 @@ void GUI_Eob::updateOptionsStrings() {
 }
 
 const char *GUI_Eob::getMenuString(int id) {
+	static const char empty[] = "";
+
 	if (id >= 69)
 		return _vm->_menuStringsTransfer[id - 69];
 	else if (id >= 67)
@@ -2477,11 +2814,11 @@ const char *GUI_Eob::getMenuString(int id) {
 	else if (id >= 48)
 		return _vm->_menuStringsScribe[id - 48];
 	else if (id == 47)
-		_vm->_menuStringsStarve[0];
+		return _vm->_menuStringsStarve[0];
 	else if (id == 46)
-		_vm->_menuStringsExit[0];
+		return _vm->_menuStringsExit[0];
 	else if (id == 45)
-		_vm->_menuStringsDrop[0];
+		return _vm->_menuStringsDrop[0];
 	else if (id >= 40)
 		return _vm->_menuStringsRest[id - 40];
 	else if (id >= 23)
@@ -2494,7 +2831,7 @@ const char *GUI_Eob::getMenuString(int id) {
 		return _vm->_menuStringsSaveLoad[id - 9];
 	else if (id >= 1)
 		return _vm->_menuStringsMain[id - 1];
-	return 0;
+	return empty;
 }
 
 Button *GUI_Eob::linkButton(Button *list, Button *newbt) {

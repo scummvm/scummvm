@@ -55,13 +55,6 @@ struct EobRect8 {
 	uint8 h;
 };
 
-struct EobRect16 {
-	int16 x1;
-	int16 y1;
-	uint16 x2;
-	uint16 y2;
-};
-
 struct EobChargenButtonDef {
 	uint8 x;
 	uint8 y;
@@ -258,7 +251,7 @@ public:
 	virtual ~EobCoreEngine();
 
 	Screen *screen() { return _screen; }
-	GUI *gui() const { return _gui; }
+	GUI_v1 *gui() const { return _gui; }
 
 protected:
 	// Startup
@@ -270,14 +263,18 @@ protected:
 	virtual void seq_playFinale() = 0;
 	bool _playFinale;
 
-	//Init
+	//Init, config
 	void loadItemsAndDecorationsShapes();
 	void releaseItemsAndDecorationsShapes();
 
 	void initButtonData();
 	void initMenus();
 	void initStaticResource();
-	virtual void initSpells();	
+	virtual void initSpells();
+
+	void registerDefaultSettings();
+	void readSettings();
+	void writeSettings();
 
 	const uint8 **_largeItemShapes;
 	const uint8 **_smallItemShapes;
@@ -324,7 +321,7 @@ protected:
 
 	uint8 **_faceShapes;
 
-	static const int8 _classHpIncreaseType[];
+	static const int8 _characterClassType[];
 	static const uint8 _hpIncrPerLevel[];
 	static const uint8 _numLevelsPerClass[];
 	static const int16 _hpConstModifiers[];
@@ -361,7 +358,7 @@ protected:
 	int getDexterityArmorClassModifier(int dexterity);
 	int generateCharacterHitpointsByLevel(int charIndex, int levelIndex);
 	int getClassAndConstHitpointsModifier(int cclass, int constitution);
-	int getClassHpIncreaseType(int cclass, int levelIndex);
+	int getCharacterClassType(int cclass, int levelIndex);
 	int getModifiedHpLimits(int hpModifier, int constModifier, int level, bool mode);
 	Common::String getCharStrength(int str, int strExt);
 	int testCharacter(int index, int flags);
@@ -371,7 +368,7 @@ protected:
 	int validateWeaponSlotItem(int index, int slot);
 	int getCharacterClericPaladinLevel(int index);
 	int getCharacterMageLevel(int index);
-	int getLevelIndexForHpIncType(int unk, int cClass);
+	int getCharacterLevelIndex(int type, int cClass);
 
 	int countCharactersWithSpecificItems(int16 itemType, int16 itemValue);
 	int checkCharacterInventoryForItem(int character, int16 itemType, int16 itemValue);
@@ -382,7 +379,9 @@ protected:
 	void initNpc(int npcIndex);
 	int npcJoinDialogue(int npcIndex, int queryJoinTextId, int confirmJoinTextId, int noJoinTextId);
 	int prepareForNewPartyMember(int16 itemType, int16 itemValue);
+	void dropCharacter(int charIndex);
 	void removeCharacterFromParty(int charIndex);
+	void exchangeCharacters(int charIndex1, int charIndex2);
 
 	void increasePartyExperience(int16 points);
 	void increaseCharacterExperience(int charIndex, int32 points);
@@ -773,6 +772,9 @@ protected:
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
 	void displayParchment(int id);
 
+	bool restParty();
+	void displayRestWarning(const char *str);
+
 	virtual void drawLightningColumn() {}
 	virtual int resurrectionSelectDialogue() { return -1; }
 	virtual int charSelectDialogue() { return -1; }
@@ -786,6 +788,7 @@ protected:
 	void releaseMonsterTempData(LevelTempData *tmp);
 
 	int _saveLoadMode;
+	bool _resting;
 
 	Screen_Eob *_screen;
 	GUI_Eob *_gui;
@@ -996,6 +999,8 @@ protected:
 	const char *const *_menuStringsMgc;
 	const char *const *_menuStringsPrefs;
 	const char *const *_menuStringsRest2;
+	const char *const *_menuStringsRest3;
+	const char *const *_menuStringsRest4;
 	const char *const *_menuStringsDefeat;
 
 	const char *const *_menuStringsTransfer;

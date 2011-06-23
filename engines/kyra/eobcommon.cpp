@@ -48,6 +48,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_saveLoadMode = 0;
 	_updateHandItemCursor = false;
 	_configMouse = true;
+	_resting = false;
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = _itemIconShapes =
 		_wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
@@ -257,6 +258,8 @@ Common::Error EobCoreEngine::init() {
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
 
+	readSettings();
+
 	Common::Error err = LolEobBaseEngine::init();
 	if (err.getCode() != Common::kNoError)
 		return err;
@@ -365,7 +368,7 @@ Common::Error EobCoreEngine::go() {
 		} else if (action == -2) {
 			// new game
 			repeatLoop = startCharacterGeneration();
-			if (repeatLoop)
+			if (repeatLoop && !shouldQuit())
 				startupNew();
 		} else if (action == -3) {
 			// transfer party
@@ -380,6 +383,34 @@ Common::Error EobCoreEngine::go() {
 	}
 
 	return Common::kNoError;
+}
+
+void EobCoreEngine::registerDefaultSettings() {
+	KyraEngine_v1::registerDefaultSettings();
+	ConfMan.registerDefault("hpbargraphs", true);
+}
+
+void EobCoreEngine::readSettings() {
+	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
+	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
+	_configMusic = _configSounds ? 1 : 0;
+
+	if (_sound)
+		_sound->enableSFX(_configSounds);
+}
+
+void EobCoreEngine::writeSettings() {
+	ConfMan.setBool("hpbargraphs", _configHpBarGraphs);
+	ConfMan.setBool("sfx_mute", _configSounds == 0);
+
+	if (_sound) {
+		if (!_configSounds)
+			_sound->beginFadeOut();
+		_sound->enableMusic(_configSounds ? 1 : 0);
+		_sound->enableSFX(_configSounds);
+	}
+
+	ConfMan.flushToDisk();
 }
 
 void EobCoreEngine::startupNew() {
@@ -659,7 +690,7 @@ int EobCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelInd
 		if (!(levelIndex & (1 << i)))
 			continue;
 
-		int d = getClassHpIncreaseType(c->cClass, i);
+		int d = getCharacterClassType(c->cClass, i);
 
 		if (c->level[i] <= _hpIncrPerLevel[6 + i])
 			h += rollDice(1, (d >= 0) ? _hpIncrPerLevel[d] : 0);
@@ -686,8 +717,8 @@ int EobCoreEngine::getClassAndConstHitpointsModifier(int cclass, int constitutio
 	return 2;
 }
 
-int EobCoreEngine::getClassHpIncreaseType(int cclass, int levelIndex) {
-	return _classHpIncreaseType[cclass * 3 + levelIndex];
+int EobCoreEngine::getCharacterClassType(int cclass, int levelIndex) {
+	return _characterClassType[cclass * 3 + levelIndex];
 }
 
 int EobCoreEngine::getModifiedHpLimits(int hpModifier, int constModifier, int level, bool mode) {
@@ -867,11 +898,11 @@ int EobCoreEngine::getCharacterClericPaladinLevel(int index) {
 	if (index == -1)
 		return (_currentLevel < 7) ? 5 : 9;
 
-	int l = getLevelIndexForHpIncType(2, _characters[index].cClass);
+	int l = getCharacterLevelIndex(2, _characters[index].cClass);
 	if (l > -1)
 		return _characters[index].level[l];
 
-	l = getLevelIndexForHpIncType(4, _characters[index].cClass);
+	l = getCharacterLevelIndex(4, _characters[index].cClass);
 	if (l > -1) {
 		if (_characters[index].level[l] > 8)
 			return _characters[index].level[l] - 8;
@@ -887,18 +918,18 @@ int EobCoreEngine::getCharacterMageLevel(int index) {
 	if (index == -1)
 		return (_currentLevel < 7) ? 5 : 9;
 
-	int l = getLevelIndexForHpIncType(1, _characters[index].cClass);
+	int l = getCharacterLevelIndex(1, _characters[index].cClass);
 	return (l > -1) ? _characters[index].level[l] : 1;
 }
 
-int EobCoreEngine::getLevelIndexForHpIncType(int hpIncType, int cClass) {
-	if (getClassHpIncreaseType(cClass, 0) == hpIncType)
+int EobCoreEngine::getCharacterLevelIndex(int type, int cClass) {
+	if (getCharacterClassType(cClass, 0) == type)
 		return 0;
 
-	if (getClassHpIncreaseType(cClass, 1) == hpIncType)
+	if (getCharacterClassType(cClass, 1) == type)
 		return 1;
 
-	if (getClassHpIncreaseType(cClass, 2) == hpIncType)
+	if (getCharacterClassType(cClass, 2) == type)
 		return 2;
 
 	return -1;
@@ -1020,6 +1051,20 @@ int EobCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
 	return 1;
 }
 
+void EobCoreEngine::dropCharacter(int charIndex) {
+	if (!testCharacter(charIndex, 1))
+		return;
+
+	removeCharacterFromParty(charIndex);
+	
+	if (charIndex < 5)
+		exchangeCharacters(charIndex, testCharacter(5, 1) ? 5 : 4);
+
+	gui_processCharPortraitClick(0);
+	gui_setPlayFieldButtons();
+	setupCharacterTimers();
+}
+
 void EobCoreEngine::removeCharacterFromParty(int charIndex) {
 	EobCharacter *c = &_characters[charIndex];
 	c->flags = 0;
@@ -1041,6 +1086,13 @@ void EobCoreEngine::removeCharacterFromParty(int charIndex) {
 		_updateCharNum = 0;
 
 	setupCharacterTimers();
+}
+
+void EobCoreEngine::exchangeCharacters(int charIndex1, int charIndex2) {
+	EobCharacter temp;
+	memcpy(&temp, &_characters[charIndex1], sizeof(EobCharacter));
+	memcpy(&_characters[charIndex1], &_characters[charIndex2], sizeof(EobCharacter));
+	memcpy(&_characters[charIndex2], &temp, sizeof(EobCharacter));
 }
 
 void EobCoreEngine::increasePartyExperience(int16 points) {
@@ -1067,7 +1119,7 @@ void EobCoreEngine::increaseCharacterExperience(int charIndex, int32 points) {
 	points /= _numLevelsPerClass[cl];
 
 	for (int i = 0; i < 3; i++) {
-		if (getClassHpIncreaseType(cl, i) == -1)
+		if (getCharacterClassType(cl, i) == -1)
 			continue;
 		_characters[charIndex].experience[i] += points;
 
@@ -1081,7 +1133,7 @@ void EobCoreEngine::increaseCharacterExperience(int charIndex, int32 points) {
 }
 
 uint32 EobCoreEngine::getRequiredExperience(int cClass, int levelIndex, int level) {
-	cClass = getClassHpIncreaseType(cClass, levelIndex);
+	cClass = getCharacterClassType(cClass, levelIndex);
 	if (cClass == -1)
 		return 0xffffffff;
 
@@ -1273,6 +1325,28 @@ void EobCoreEngine::displayParchment(int id) {
 	}
 
 	restoreAfterDialogueSequence();
+}
+
+bool EobCoreEngine::restParty() {
+	if (_inf->preventRest()) {
+		assert(_menuStringsRest3[0]);
+		displayRestWarning(_menuStringsRest3[0]);
+		return true;
+	}
+
+	return true;
+}
+
+void EobCoreEngine::displayRestWarning(const char *str) {
+	int od = _screen->curDimIndex();
+	_screen->setScreenDim(7);
+	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+	_screen->setCurPage(0);
+
+	_txt->printMessage(Common::String::format("\r%s\r", str).c_str());
+
+	_screen->setFont(of);
+	_screen->setScreenDim(od);
 }
 
 void EobCoreEngine::useSlotWeapon(int charIndex, int slotIndex, int item) {

@@ -88,7 +88,7 @@ namespace Kyra {
 class LoLEngine;
 class Screen_LoL;
 
-class GUI_LoL : public GUI {
+class GUI_LoL : public GUI_v1 {
 	friend class LoLEngine;
 public:
 	GUI_LoL(LoLEngine *vm);

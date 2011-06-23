@@ -357,7 +357,7 @@ Screen *LoLEngine::screen() {
 	return _screen;
 }
 
-GUI *LoLEngine::gui() const {
+GUI_v1 *LoLEngine::gui() const {
 	return _gui;
 }
 

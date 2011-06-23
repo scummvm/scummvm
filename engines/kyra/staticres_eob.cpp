@@ -266,7 +266,7 @@ const uint8 EobCoreEngine::_hpIncrPerLevel[] = { 10, 4, 8, 6, 10, 10, 9, 10, 9, 
 
 const uint8 EobCoreEngine::_numLevelsPerClass[] = { 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 2, 2, 3, 2, 2 };
 
-const int8 EobCoreEngine::_classHpIncreaseType[] = {
+const int8 EobCoreEngine::_characterClassType[] = {
 	0, -1, -1, 5, -1, -1, 4, -1, -1, 1, -1, -1, 2, -1, -1, 3, -1, -1,  0,
 	2, -1, 0, 3, -1, 0, 1, -1, 0, 1, 3, 3, 1, -1, 2, 3, -1, 0, 2,  1,  5,
 	2, -1, 2, 1, -1
@@ -381,6 +381,8 @@ void EobCoreEngine::initStaticResource() {
 	_menuStringsMgc = _staticres->loadStrings(kEobBaseMenuStringsMgc, temp);
 	_menuStringsPrefs = _staticres->loadStrings(kEobBaseMenuStringsPrefs, temp);
 	_menuStringsRest2 = _staticres->loadStrings(kEobBaseMenuStringsRest2, temp);
+	_menuStringsRest3 = _staticres->loadStrings(kEobBaseMenuStringsRest3, temp);
+	_menuStringsRest4 = _staticres->loadStrings(kEobBaseMenuStringsRest4, temp);
 	_menuStringsDefeat = _staticres->loadStrings(kEobBaseMenuStringsDefeat, temp);
 	_menuStringsTransfer = _staticres->loadStrings(kEobBaseMenuStringsTransfer, temp);
 	_menuStringsSpec = _staticres->loadStrings(kEobBaseMenuStringsSpec, temp);

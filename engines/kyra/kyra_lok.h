@@ -109,7 +109,7 @@ public:
 
 	Screen *screen() { return _screen; }
 	Animator_LoK *animator() { return _animator; }
-	GUI *gui() const { return _gui; }
+	GUI_v1 *gui() const { return _gui; }
 	virtual Movie *createWSAMovie();
 
 	uint8 **shapes() { return _shapes; }

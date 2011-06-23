@@ -30,15 +30,15 @@
 
 namespace Kyra {
 
-GUI::GUI(KyraEngine_v1 *kyra)
+GUI_v1::GUI_v1(KyraEngine_v1 *kyra)
 	: _vm(kyra), _screen(kyra->screen()), _text(kyra->text()) {
 	_menuButtonList = 0;
 
-	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawButtonCallback);
-	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawShadedButtonCallback);
+	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawButtonCallback);
+	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawShadedButtonCallback);
 }
 
-Button *GUI::addButtonToList(Button *list, Button *newButton) {
+Button *GUI_v1::addButtonToList(Button *list, Button *newButton) {
 	if (!newButton)
 		return list;
 
@@ -56,7 +56,7 @@ Button *GUI::addButtonToList(Button *list, Button *newButton) {
 	return list;
 }
 
-void GUI::initMenuLayout(Menu &menu) {
+void GUI_v1::initMenuLayout(Menu &menu) {
 	if (menu.x == -1)
 		menu.x = (320 - menu.width) >> 1;
 	if (menu.y == -1)
@@ -68,7 +68,7 @@ void GUI::initMenuLayout(Menu &menu) {
 	}
 }
 
-void GUI::initMenu(Menu &menu) {
+void GUI_v1::initMenu(Menu &menu) {
 	_menuButtonList = 0;
 
 	_screen->hideMouse();
@@ -197,7 +197,7 @@ void GUI::initMenu(Menu &menu) {
 	_screen->updateScreen();
 }
 
-void GUI::processHighlights(Menu &menu) {
+void GUI_v1::processHighlights(Menu &menu) {
 	int x1, y1, x2, y2;
 	Common::Point p = _vm->getMousePos();
 	int mouseX = p.x;
@@ -242,7 +242,7 @@ void GUI::processHighlights(Menu &menu) {
 	_screen->updateScreen();
 }
 
-void GUI::redrawText(const Menu &menu) {
+void GUI_v1::redrawText(const Menu &menu) {
 	int textX;
 	int i = menu.highlightedItem;
 
@@ -271,7 +271,7 @@ void GUI::redrawText(const Menu &menu) {
 	}
 }
 
-void GUI::redrawHighlight(const Menu &menu) {
+void GUI_v1::redrawHighlight(const Menu &menu) {
 	int textX;
 	int i = menu.highlightedItem;
 
@@ -301,12 +301,12 @@ void GUI::redrawHighlight(const Menu &menu) {
 	}
 }
 
-void GUI::updateAllMenuButtons() {
+void GUI_v1::updateAllMenuButtons() {
 	for (Button *cur = _menuButtonList; cur; cur = cur->nextButton)
 		updateMenuButton(cur);
 }
 
-void GUI::updateMenuButton(Button *button) {
+void GUI_v1::updateMenuButton(Button *button) {
 	if (!_displayMenu)
 		return;
 
@@ -316,7 +316,7 @@ void GUI::updateMenuButton(Button *button) {
 	_screen->showMouse();
 }
 
-void GUI::updateButton(Button *button) {
+void GUI_v1::updateButton(Button *button) {
 	if (!button || (button->flags & 8))
 		return;
 
@@ -337,7 +337,7 @@ void GUI::updateButton(Button *button) {
 	processButton(button);
 }
 
-int GUI::redrawButtonCallback(Button *button) {
+int GUI_v1::redrawButtonCallback(Button *button) {
 	if (!_displayMenu)
 		return 0;
 
@@ -351,7 +351,7 @@ int GUI::redrawButtonCallback(Button *button) {
 	return 0;
 }
 
-int GUI::redrawShadedButtonCallback(Button *button) {
+int GUI_v1::redrawShadedButtonCallback(Button *button) {
 	if (!_displayMenu)
 		return 0;
 
@@ -365,7 +365,7 @@ int GUI::redrawShadedButtonCallback(Button *button) {
 	return 0;
 }
 
-void GUI::updateSaveList(bool excludeQuickSaves) {
+void GUI_v1::updateSaveList(bool excludeQuickSaves) {
 	Common::String pattern = _vm->_targetName + ".???";
 	Common::StringArray saveFileList = _vm->_saveFileMan->listSavefiles(pattern);
 	_saveSlots.clear();
@@ -391,13 +391,13 @@ void GUI::updateSaveList(bool excludeQuickSaves) {
 	sortSaveSlots();
 }
 
-void GUI::sortSaveSlots() {
+void GUI_v1::sortSaveSlots() {
 	Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Less<int>());
 	if (_saveSlots.size() > 2)
 		Common::sort(_saveSlots.begin()+1, _saveSlots.end(), Common::Greater<int>());
 }
 
-int GUI::getNextSavegameSlot() {
+int GUI_v1::getNextSavegameSlot() {
 	Common::InSaveFile *in;
 
 	int start = _vm->game() == GI_LOL ? 0 : 1;
@@ -412,7 +412,7 @@ int GUI::getNextSavegameSlot() {
 	return 0;
 }
 
-void GUI::checkTextfieldInput() {
+void GUI_v1::checkTextfieldInput() {
 	Common::Event event;
 
 	uint32 now = _vm->_system->getMillis();
@@ -461,11 +461,11 @@ void GUI::checkTextfieldInput() {
 	_vm->_system->delayMillis(3);
 }
 
-void GUI::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
+void GUI_v1::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
 	_text->printText(str, x, y, c0, c1, c2);
 }
 
-int GUI::getMenuCenterStringX(const char *str, int x1, int x2) {
+int GUI_v1::getMenuCenterStringX(const char *str, int x1, int x2) {
 	return _text->getCenterStringX(str, x1, x2);
 }
 

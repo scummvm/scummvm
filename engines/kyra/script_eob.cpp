@@ -122,7 +122,7 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	_abortScript = 0;
 	_abortAfterSubroutine = 0;
 	_dlgResult = 0;
-	_script2 = 0;
+	_preventRest = 0;
 
 	_lastScriptFunc = 0;
 	_lastScriptSub = 0;
@@ -192,13 +192,13 @@ void EobInfProcessor::run(int func, int sub) {
 }
 
 void EobInfProcessor::loadState(Common::SeekableSubReadStreamEndian &in) {
-	_script2 = in.readByte();
+	_preventRest = in.readByte();
 	for (int i = 0; i < 18; i++)
 		_flagTable[i] = in.readUint16BE();
 }
 
 void EobInfProcessor::saveState(Common::OutSaveFile *out) {
-	out->writeByte(_script2);
+	out->writeByte(_preventRest);
 	for (int i = 0; i < 18; i++)
 		out->writeUint16BE(_flagTable[i]);
 }
@@ -521,7 +521,7 @@ int EobInfProcessor::oeob_setFlags(int8 *data) {
 
 	switch (*pos++) {
 	case -47:
-		_script2 = 0;
+		_preventRest = 0;
 		break;
 
 	case -28:
@@ -570,7 +570,7 @@ int EobInfProcessor::oeob_removeFlags(int8 *data) {
 
 	switch (a) {
 	case -47:
-		_script2 = 1;
+		_preventRest = 1;
 		break;
 
 	case -28:

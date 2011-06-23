@@ -94,10 +94,10 @@ int EobEngine::mainMenuLoop() {
 	int sel = -1;
 	do {
 		_screen->setScreenDim(28);
-		_gui->setupMenu(8, 0, _mainMenuStrings, -1, 0, 0);
+		_gui->simpleMenu_setup(8, 0, _mainMenuStrings, -1, 0, 0);
 
 		while (sel == -1 && !shouldQuit())
-			sel = _gui->handleMenu(8, _mainMenuStrings, 0, -1, 0);
+			sel = _gui->simpleMenu_process(8, _mainMenuStrings, 0, -1, 0);
 	} while ((sel < 0 || sel > 5) && !shouldQuit());
 
 	return sel + 1;

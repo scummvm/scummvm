@@ -241,6 +241,8 @@ enum kExtractID {
 	kEobBaseMenuStringsMgc,
 	kEobBaseMenuStringsPrefs,
 	kEobBaseMenuStringsRest2,
+	kEobBaseMenuStringsRest3,
+	kEobBaseMenuStringsRest4,
 	kEobBaseMenuStringsDefeat,
 	kEobBaseMenuStringsTransfer,
 	kEobBaseMenuStringsSpec,
