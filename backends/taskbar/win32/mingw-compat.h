@@ -24,7 +24,7 @@
  */
 
 // TODO: Remove header when the latest changes to the Windows SDK have been integrated into MingW
-//       For reference, the interface definitions here are imported the SDK headers and from the 
+//       For reference, the interface definitions here are imported the SDK headers and from the
 //       EcWin7 project (https://code.google.com/p/dukto/)
 
 #ifndef BACKEND_WIN32_TASKBAR_MINGW_H
@@ -42,7 +42,13 @@
 #include <commctrl.h>
 #include <initguid.h>
 #include <shlwapi.h>
+#include <shlguid.h>
 #define CMIC_MASK_ASYNCOK SEE_MASK_ASYNCOK
+
+// Misc enumeration values
+#ifndef SHARD_LINK
+#define SHARD_LINK 0x00000006
+#endif
 
 // Taskbar GUID definitions
 DEFINE_GUID(CLSID_TaskbarList,0x56fdf344,0xfd6d,0x11d0,0x95,0x8a,0x0,0x60,0x97,0xc9,0xa0,0x90);
