@@ -146,10 +146,10 @@ struct Menu {
 class Screen;
 class TextDisplayer;
 
-class GUI {
+class GUI_v1 {
 public:
-	GUI(KyraEngine_v1 *vm);
-	virtual ~GUI() {}
+	GUI_v1(KyraEngine_v1 *vm);
+	virtual ~GUI_v1() {}
 
 	// button specific
 	virtual Button *addButtonToList(Button *list, Button *newButton);

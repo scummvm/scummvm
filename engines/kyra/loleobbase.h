@@ -86,7 +86,7 @@ public:
 	virtual ~LolEobBaseEngine();
 
 	virtual Screen *screen() = 0;
-	virtual GUI *gui() const = 0;
+	virtual GUI_v1 *gui() const = 0;
 
 protected:
 	// Startup

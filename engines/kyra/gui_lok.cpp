@@ -184,7 +184,7 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 
 #pragma mark -
 
-GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI(vm), _vm(vm), _screen(screen) {
+GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI_v1(vm), _vm(vm), _screen(screen) {
 	_lastScreenUpdate = 0;
 	_menu = 0;
 	_pressFlag = false;

@@ -42,7 +42,6 @@ private:
 	void checkForCompleteParty();
 	void toggleSpecialButton(int index, int bodyCustom, int pageNum);
 	void processSpecialButton(int index);
-	void highlightBoxFrame(int index);
 	int viewDeleteCharacter();
 	void createPartyMember();
 	int raceSexMenu();
@@ -67,11 +66,8 @@ private:
 	uint8 **_chargenButtonLabels;
 	int _activeBox;
 	int _magicShapesBox;
-	int _updateBoxIndex;
-	int _updateBoxColorIndex;
 	int _updateBoxShapesIndex;
 	int _lastUpdateBoxShapesIndex;
-	uint32 _chargenBoxTimer;
 	uint32 _chargenMagicShapeTimer;
 	int8 _chargenSelectedPortraits[4];
 	int8 _chargenSelectedPortraits2[4];
@@ -95,7 +91,6 @@ private:
 	static const EobChargenButtonDef _chargenButtonDefs[];
 	static const CreatePartyModButton _chargenModButtons[];
 	static const EobRect8 _chargenButtonBodyCoords[];
-	static const EobRect16 _chargenPortraitBoxFrames[];
 	static const int16 _chargenBoxX[];
 	static const int16 _chargenBoxY[];
 	static const int16 _chargenNameFieldX[];
@@ -118,9 +113,8 @@ bool EobCoreEngine::startCharacterGeneration() {
 }
 
 CharacterGenerator::CharacterGenerator(EobCoreEngine *vm, Screen_Eob *screen) : _vm(vm), _screen(screen),
-	_characters(0), _faceShapes(0), _chargenMagicShapes(0), _chargenButtonLabels(0), _updateBoxIndex(-1),
-	_chargenBoxTimer(0), _chargenMagicShapeTimer(0), _updateBoxColorIndex(0), _updateBoxShapesIndex(0),
-	_lastUpdateBoxShapesIndex(0), _magicShapesBox(6), _activeBox(0) {
+	_characters(0), _faceShapes(0), _chargenMagicShapes(0), _chargenButtonLabels(0), _chargenMagicShapeTimer(0),
+	_updateBoxShapesIndex(0), _lastUpdateBoxShapesIndex(0), _magicShapesBox(6), _activeBox(0) {
 
 	_chargenStatStrings = _vm->_chargenStatStrings;
 	_chargenRaceSexStrings = _vm->_chargenRaceSexStrings;
@@ -178,7 +172,7 @@ bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 	_activeBox = 0;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit()); ) {
-		highlightBoxFrame(_activeBox + 6);
+		_vm->_gui->highLightBoxFrame(_activeBox + 6);
 		_vm->sound()->process();
 		int inputFlag = _vm->checkInput(_vm->_activeButtons, false, 0);
 		_vm->removeInputTop();
@@ -193,7 +187,7 @@ bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 				_vm->sound()->haltTrack();
 				return false;
 			}
-			highlightBoxFrame(-1);
+			_vm->_gui->highLightBoxFrame(-1);
 		}
 
 		if (inputFlag & 0x8000) {
@@ -207,7 +201,7 @@ bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 		}
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5]) {
-			highlightBoxFrame(-1);
+			_vm->_gui->highLightBoxFrame(-1);
 			if (_characters[_activeBox].name[0]) {
 				int b = _activeBox;
 				if (viewDeleteCharacter())
@@ -381,50 +375,16 @@ void CharacterGenerator::processSpecialButton(int index) {
 	toggleSpecialButton(index, 0, 0);
 }
 
-void CharacterGenerator::highlightBoxFrame(int index) {
-	static const uint8 colorTable[] = { 0x0F, 0xB0, 0xB2, 0xB4, 0xB6,
-		0xB8, 0xBA, 0xBC, 0x0C, 0xBC, 0xBA, 0xB8, 0xB6, 0xB4, 0xB2, 0xB0, 0x00
-	};
-
-	if (_updateBoxIndex == index) {
-		if (_updateBoxIndex == -1)
-			return;
-
-		if (_vm->_system->getMillis() <= _chargenBoxTimer)
-			return;
-
-		if (!colorTable[_updateBoxColorIndex])
-			_updateBoxColorIndex = 0;
-
-		const EobRect16 *r = &_chargenPortraitBoxFrames[_updateBoxIndex];
-		_screen->drawBox(r->x1, r->y1, r->x2, r->y2, colorTable[_updateBoxColorIndex++]);
-		_screen->updateScreen();
-
-		_chargenBoxTimer = _vm->_system->getMillis() + _vm->_tickLength;
-
-	} else {
-		if (_updateBoxIndex != -1) {
-			const EobRect16 *r = &_chargenPortraitBoxFrames[_updateBoxIndex];
-			_screen->drawBox(r->x1, r->y1, r->x2, r->y2, 12);
-			_screen->updateScreen();
-		}
-
-		_updateBoxColorIndex = 0;
-		_updateBoxIndex = index;
-		_chargenBoxTimer = _vm->_system->getMillis();
-	}
-}
-
 int CharacterGenerator::viewDeleteCharacter() {
 	initButtonsFromList(0, 7);
 	_vm->removeInputTop();
 
-	highlightBoxFrame(-1);
+	_vm->_gui->highLightBoxFrame(-1);
 	printStats(_activeBox, 2);
 
 	int res = 0;
 	for (bool loop = true; loop && _characters[_activeBox].name[0] && !_vm->shouldQuit(); ) {
-		highlightBoxFrame(_activeBox + 6);
+		_vm->_gui->highLightBoxFrame(_activeBox + 6);
 		_vm->sound()->process();
 
 		int inputFlag = _vm->checkInput(_vm->_activeButtons, false, 0);
@@ -463,14 +423,14 @@ int CharacterGenerator::viewDeleteCharacter() {
 		}
 
 		if (loop == false)
-			highlightBoxFrame(-1);
+			_vm->_gui->highLightBoxFrame(-1);
 
 		if (!_characters[cbx].name[0])
 			loop = false;
 
 		if (cbx != _activeBox) {
 			_activeBox = cbx;
-			highlightBoxFrame(-1);
+			_vm->_gui->highLightBoxFrame(-1);
 			if (loop)
 				printStats(_activeBox, 2);
 		}
@@ -480,8 +440,8 @@ int CharacterGenerator::viewDeleteCharacter() {
 }
 
 void CharacterGenerator::createPartyMember() {
-	_screen->setScreenDim(2);
-	_chargenBoxTimer = 0;
+	_screen->setScreenDim(2);	
+	assert(_vm->_gui);
 
 	for (int i = 0; i != 3 && !_vm->shouldQuit(); i++) {
 		bool bck = false;
@@ -528,11 +488,11 @@ int CharacterGenerator::raceSexMenu() {
 	_screen->printShadedText(_chargenStrings2[8], 147, 67, 9, 0);
 	_vm->removeInputTop();
 
-	_vm->_gui->setupMenu(1, 0, _chargenRaceSexStrings, -1, 0, 0);
+	_vm->_gui->simpleMenu_setup(1, 0, _chargenRaceSexStrings, -1, 0, 0);
 	int16 res = -1;
 
 	while (res == -1 && !_vm->shouldQuit()) {
-		res = _vm->_gui->handleMenu(1, _chargenRaceSexStrings, 0, -1, 0);
+		res = _vm->_gui->simpleMenu_process(1, _chargenRaceSexStrings, 0, -1, 0);
 		updateMagicShapes();
 	}
 
@@ -557,7 +517,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 	toggleSpecialButton(5, 0, 0);
 
 	itemsMask &=_classMenuMasks[raceSex / 2];
-	_vm->_gui->setupMenu(2, 15, _chargenClassStrings, itemsMask, 0, 0);
+	_vm->_gui->simpleMenu_setup(2, 15, _chargenClassStrings, itemsMask, 0, 0);
 
 	_vm->_mouseX = _vm->_mouseY = 0;
 	int16 res = -1;
@@ -576,7 +536,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 			else
 				_vm->removeInputTop();
 		} else {
-			res = _vm->_gui->handleMenu(2, _chargenClassStrings, 0, itemsMask, 0);
+			res = _vm->_gui->simpleMenu_process(2, _chargenClassStrings, 0, itemsMask, 0);
 		}
 	}
 
@@ -606,7 +566,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 	toggleSpecialButton(5, 0, 0);
 
 	itemsMask &=_alignmentMenuMasks[cClass];
-	_vm->_gui->setupMenu(3, 9, _chargenAlignmentStrings, itemsMask, 0, 0);
+	_vm->_gui->simpleMenu_setup(3, 9, _chargenAlignmentStrings, itemsMask, 0, 0);
 
 	_vm->_mouseX = _vm->_mouseY = 0;
 	int16 res = -1;
@@ -625,7 +585,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 			else
 				_vm->removeInputTop();
 		} else {
-			res = _vm->_gui->handleMenu(3, _chargenAlignmentStrings, 0, itemsMask, 0);
+			res = _vm->_gui->simpleMenu_process(3, _chargenAlignmentStrings, 0, itemsMask, 0);
 		}
 	}
 
@@ -793,8 +753,8 @@ void CharacterGenerator::statsAndFacesMenu() {
 		}
 	}
 
-	highlightBoxFrame(6 + _activeBox);
-	highlightBoxFrame(-1);
+	_vm->_gui->highLightBoxFrame(6 + _activeBox);
+	_vm->_gui->highLightBoxFrame(-1);
 }
 
 void CharacterGenerator::faceSelectMenu() {
@@ -809,7 +769,7 @@ void CharacterGenerator::faceSelectMenu() {
 	printStats(_activeBox, 4);
 	toggleSpecialButton(12, 0, 0);
 	toggleSpecialButton(13, 0, 0);
-	highlightBoxFrame(-1);
+	_vm->_gui->highLightBoxFrame(-1);
 
 	shp = getNextFreeFaceShape(shp, charSex, 1, _chargenSelectedPortraits);
 
@@ -833,7 +793,7 @@ void CharacterGenerator::faceSelectMenu() {
 			in = _vm->checkInput(_vm->_activeButtons, false, 0);
 			_vm->removeInputTop();
 
-			highlightBoxFrame(box + 10);
+			_vm->_gui->highLightBoxFrame(box + 10);
 
 			if (in == 0x8002 || in == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
 				processSpecialButton(13);
@@ -853,7 +813,7 @@ void CharacterGenerator::faceSelectMenu() {
 			}
 		}
 
-		highlightBoxFrame(-1);
+		_vm->_gui->highLightBoxFrame(-1);
 
 		if (in == 1)
 			shp = getNextFreeFaceShape(shp - 1, charSex, -1, _chargenSelectedPortraits);
@@ -864,7 +824,7 @@ void CharacterGenerator::faceSelectMenu() {
 	}
 
 	if (!_vm->shouldQuit()) {
-		highlightBoxFrame(-1);
+		_vm->_gui->highLightBoxFrame(-1);
 		updateMagicShapes();
 
 		_chargenSelectedPortraits[_activeBox] = sp[res];
@@ -899,7 +859,7 @@ int CharacterGenerator::getNextFreeFaceShape(int shpIndex, int charSex, int step
 }
 
 void CharacterGenerator::processFaceMenuSelection(int index) {
-	highlightBoxFrame(-1);
+	_vm->_gui->highLightBoxFrame(-1);
 	if (index <= 48)
 		_screen->drawShape(0, _characters[_activeBox].faceShape, _chargenBoxX[_activeBox], _chargenBoxY[_activeBox] + 1, 0);
 	else
@@ -1127,15 +1087,15 @@ int CharacterGenerator::getMaxHp(int cclass, int constitution, int level1, int l
 	int res = 0;
 	constitution = _vm->getClassAndConstHitpointsModifier(cclass, constitution);
 
-	int m = _vm->getClassHpIncreaseType(cclass, 0);
+	int m = _vm->getCharacterClassType(cclass, 0);
 	if (m != -1)
 		res = _vm->getModifiedHpLimits(m, constitution, level1, false);
 
-	m = _vm->getClassHpIncreaseType(cclass, 1);
+	m = _vm->getCharacterClassType(cclass, 1);
 	if (m != -1)
 		res += _vm->getModifiedHpLimits(m, constitution, level2, false);
 
-	m = _vm->getClassHpIncreaseType(cclass, 2);
+	m = _vm->getCharacterClassType(cclass, 2);
 	if (m != -1)
 		res += _vm->getModifiedHpLimits(m, constitution, level3, false);
 
@@ -1148,15 +1108,15 @@ int CharacterGenerator::getMinHp(int cclass, int constitution, int level1, int l
 	int res = 0;
 	constitution = _vm->getClassAndConstHitpointsModifier(cclass, constitution);
 
-	int m = _vm->getClassHpIncreaseType(cclass, 0);
+	int m = _vm->getCharacterClassType(cclass, 0);
 	if (m != -1)
 		res = _vm->getModifiedHpLimits(m, constitution, level1, true);
 
-	m = _vm->getClassHpIncreaseType(cclass, 1);
+	m = _vm->getCharacterClassType(cclass, 1);
 	if (m != -1)
 		res += _vm->getModifiedHpLimits(m, constitution, level2, true);
 
-	m = _vm->getClassHpIncreaseType(cclass, 2);
+	m = _vm->getCharacterClassType(cclass, 2);
 	if (m != -1)
 		res += _vm->getModifiedHpLimits(m, constitution, level3, true);
 
@@ -1443,7 +1403,7 @@ const EobRect8 CharacterGenerator::_chargenButtonBodyCoords[] = {
 	{ 0x14, 0x90, 0x0B, 0x10 }
 };
 
-const EobRect16 CharacterGenerator::_chargenPortraitBoxFrames[] = {
+const EobRect16 GUI_Eob::_highLightBoxFrames[] = {
 	{ 0x00B7, 0x0001, 0x00F7, 0x0034 },
 	{ 0x00FF, 0x0001, 0x013F, 0x0034 },
 	{ 0x00B7, 0x0035, 0x00F7, 0x0068 },

@@ -1092,6 +1092,7 @@ const int eob1FloppyNeed[] = {
 	kEobBaseMenuStringsMgc,
 	kEobBaseMenuStringsPrefs,
 	kEobBaseMenuStringsRest2,
+	kEobBaseMenuStringsRest4,
 	kEobBaseMenuStringsDefeat,
 	
 	kEobBaseCharGuiStringsHp,
@@ -1268,6 +1269,8 @@ const int eob2FloppyNeed[] = {
 	kEobBaseMenuStringsMgc,
 	kEobBaseMenuStringsPrefs,
 	kEobBaseMenuStringsRest2,
+	kEobBaseMenuStringsRest3,
+	kEobBaseMenuStringsRest4,
 	kEobBaseMenuStringsDefeat,
 	kEobBaseMenuStringsTransfer,
 	kEobBaseMenuStringsSpec,

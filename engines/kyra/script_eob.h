@@ -43,7 +43,8 @@ public:
 	void run(int func, int sub);
 
 	void setFlag(int flag) { _flagTable[17] |= flag; }
-	bool checkFlag(int flag) { return (_flagTable[17] & flag) ? true : false; }
+	bool checkFlag(int flag) const { return (_flagTable[17] & flag) ? true : false; }
+	bool preventRest() const { return _preventRest ? true : false; }
 
 	void loadState(Common::SeekableSubReadStreamEndian &in);
 	void saveState(Common::OutSaveFile *out);
@@ -96,7 +97,7 @@ private:
 	uint8 _abortScript;
 	uint16 _abortAfterSubroutine;
 	int _dlgResult;
-	uint8 _script2;
+	uint8 _preventRest;
 
 	uint16 _lastScriptFunc;
 	uint16 _lastScriptSub;

@@ -176,14 +176,14 @@ class TextDisplayer;
 class StaticResource;
 class TimerManager;
 class Debugger;
-class GUI;
+class GUI_v1;
 
 struct Button;
 
 class KyraEngine_v1 : public Engine {
 friend class Debugger;
 friend class ::KyraMetaEngine;
-friend class GUI;
+friend class GUI_v1;
 friend class SoundMidiPC;    // For _eventMan
 public:
 	KyraEngine_v1(OSystem *system, const GameFlags &flags);
@@ -196,7 +196,7 @@ public:
 	Resource *resource() { return _res; }
 	virtual Screen *screen() = 0;
 	virtual TextDisplayer *text() { return _text; }
-	virtual GUI *gui() const { return 0; }
+	virtual GUI_v1 *gui() const { return 0; }
 	Sound *sound() { return _sound; }
 	StaticResource *staticres() { return _staticres; }
 	TimerManager *timer() { return _timer; }

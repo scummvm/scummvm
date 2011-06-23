@@ -31,10 +31,17 @@
 
 namespace Kyra {
 
+struct EobRect16 {
+	int16 x1;
+	int16 y1;
+	uint16 x2;
+	uint16 y2;
+};
+
 class DarkMoonEngine;
 class Screen_Eob;
 
-class GUI_Eob : public GUI {
+class GUI_Eob : public GUI_v1 {
 	friend class EobCoreEngine;
 	friend class CharacterGenerator;
 public:
@@ -47,69 +54,49 @@ public:
 	void processButton(Button *button);
 	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);
 
-	int redrawShadedButtonCallback(Button *button) { return 0; }
-	int redrawButtonCallback(Button *button) { return 0; }
-
 	// Non button based menu handling (main menu, character generation)
-	void setupMenu(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing);
-	int handleMenu(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);	
-	int getMenuItem(int index, int32 menuItemsMask, int unk);
-	void menuFlashSelection(const char *str, int x, int y, int color1, int color2, int color3);
+	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing);
+	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);	
 
 	// Button based menus (camp menu, options, save/load)
-	int runCampMenu();
+	void runCampMenu();
 	int runLoadMenu(int x, int y);
+
+	void highLightBoxFrame(int box);
 
 	int getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor);
 
 	// utilities for thumbnail creation
 	void createScreenThumbnail(Graphics::Surface &dst) {}
 
+	// unused
+	int redrawShadedButtonCallback(Button *button) { return 0; }
+	int redrawButtonCallback(Button *button) { return 0; }
+
 private:
-	void initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk);
+	int simpleMenu_getMenuItem(int index, int32 menuItemsMask, int unk);
+	void simpleMenu_flashSelection(const char *str, int x, int y, int color1, int color2, int color3);
+	void simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk);
 
-	//void backupPage0();
-	//void restorePage0();
+	void runSaveMenu();
+	void runMemorizePrayMenu(int charIndex, int spellType);
+	void scribeScrollDialogue();
 
-	//void setupSavegameNames(Menu &menu, int num);
-	//void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags);
-
-	//int getMenuCenterStringX(const char *str, int x1, int x2);
-
-	//int getInput();
-	Button *initMenu(int id);
+	bool confirmDialogue(int id);
+	int selectCharacterDialogue(int id);
+	void displayTextBox(int id);
 	
+	Button *initMenu(int id);	
 	void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill);
 	void drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill);
-	void displayTextBox(int id);
 	void updateOptionsStrings();
 	const char *getMenuString(int id);
 
 	Button *linkButton(Button *list, Button *newbt);
 	void releaseButtons(Button *list);
 
-	Button *getButtonListData() { return _menuButtons; }
-	Button *getScrollUpButton() { return &_scrollUpButton; }
-	Button *getScrollDownButton() { return &_scrollDownButton; }
-
-	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
-	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
-
-	uint8 defaultColor1() const { return 0xFE; }
-	uint8 defaultColor2() const { return 0x00; }
-
-	const char *getMenuTitle(const Menu &menu) { return 0; }
-	const char *getMenuItemTitle(const MenuItem &menuItem) { return 0; }
-	const char *getMenuItemLabel(const MenuItem &menuItem) { return 0; }
-
-	//Button _menuButtons[10];
-	Button *_menuButtons;
-	Button _scrollUpButton;
+	Button _scrollUpButton;//////////////////77
 	Button _scrollDownButton;
-	//Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _deleteMenu, _savenameMenu, _deathMenu;
-	//Menu *_currentMenu, *_lastMenu, *_newMenu;
-	//int _menuResult;
-	//char *_saveDescription;
 
 	char **_menuStringsPrefsTemp;
 
@@ -124,7 +111,7 @@ private:
 	uint16 _flagsMouseRight;
 	uint16 _flagsModifier;
 	uint16 _progress;
-	uint16 _prcButtonUnk3; /// ALWAYS 1?? REMOVE ??
+	uint16 _prcButtonUnk3;
 	uint16 _cflag;
 
 	Button::Callback _scrollUpFunctor;
@@ -136,6 +123,27 @@ private:
 
 	int _menuCur;
 	int _menuNumItems;
+	bool _charSelectRedraw;
+
+	int _updateBoxIndex;
+	int _updateBoxColorIndex;
+	uint32 _highLightBoxTimer;
+	static const EobRect16 _highLightBoxFrames[];
+
+	// unused
+	Button *getButtonListData() { return 0; }
+	Button *getScrollUpButton() { return &_scrollUpButton; }
+	Button *getScrollDownButton() { return &_scrollDownButton; }
+
+	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
+	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
+
+	uint8 defaultColor1() const { return 0xFE; }
+	uint8 defaultColor2() const { return 0x00; }
+
+	const char *getMenuTitle(const Menu &menu) { return 0; }
+	const char *getMenuItemTitle(const MenuItem &menuItem) { return 0; }
+	const char *getMenuItemLabel(const MenuItem &menuItem) { return 0; }
 };
 
 }	// End of namespace Kyra

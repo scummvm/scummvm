@@ -30,7 +30,7 @@
 
 namespace Kyra {
 
-GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
+GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI_v1(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_backUpButtonList = _specialProcessButton = 0;
 	_buttonListChanged = false;
 	_lastScreenUpdate = 0;
@@ -48,7 +48,7 @@ GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 }
 
 Button *GUI_v2::addButtonToList(Button *list, Button *newButton) {
-	list = GUI::addButtonToList(list, newButton);
+	list = GUI_v1::addButtonToList(list, newButton);
 	_buttonListChanged = true;
 	return list;
 }
