@@ -941,7 +941,7 @@ bool EobCoreEngine::updateMonsterTryDistanceAttack(EobMonsterInPlay *m) {
 		case 11:
 			itm = duplicateItem(60);
 			if (itm) {
-				if (launchObject(-1, itm, m->block, m->pos, m->dir, _items[itm].type))
+				if (!launchObject(-1, itm, m->block, m->pos, m->dir, _items[itm].type))
 					_items[itm].block = -1;
 			}
 			break;
@@ -997,7 +997,7 @@ bool EobCoreEngine::updateMonsterTryDistanceAttack(EobMonsterInPlay *m) {
 		} else {
 			itm = duplicateItem(-s);
 			if (itm) {
-				if (launchObject(-1, itm, m->block, m->pos, m->dir, _items[itm].type))
+				if (!launchObject(-1, itm, m->block, m->pos, m->dir, _items[itm].type))
 					_items[itm].block = -1;
 			}
 		}
