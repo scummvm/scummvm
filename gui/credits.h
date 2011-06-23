@@ -529,7 +529,7 @@ static const char *credits[] = {
 "C2""Initial MI1 CD music support",
 "C0""Quietust",
 "C2""Sound support for Amiga SCUMM V2/V3 games, MM NES support",
-"C0""segra",
+"C0""Robert Crossfield",
 "C2""Improved support for Apple II/C64 versions of MM",
 "C0""Andreas R\366ver",
 "C2""Broken Sword I & II MPEG2 cutscene support",
