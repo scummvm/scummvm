@@ -63,7 +63,9 @@ MODULE_OBJS := \
 	game/scenes.o \
 	game/sound.o \
 	game/state.o \
+	menu/clock.o \
 	menu/menu.o \
+	menu/trainline.o \
 	debug.o \
 	detection.o \
 	graphics.o \
