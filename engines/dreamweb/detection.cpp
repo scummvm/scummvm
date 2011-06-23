@@ -85,6 +85,7 @@ bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
 bool DreamWeb::DreamWebEngine::hasFeature(EngineFeature f) const {
 	switch(f) {
 	case kSupportsRTL:
+	case kSupportsSubtitleOptions:
 		return true;
 	default:
 		return false;

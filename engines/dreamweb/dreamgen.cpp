@@ -13830,6 +13830,10 @@ void DreamGenContext::setuptimedtemp() {
 	_cmp(ah, 0);
 	if (flags.z())
 		goto notloadspeech3;
+	push(ax);
+	push(bx);
+	push(cx);
+	push(dx);
 	dl = 'T';
 	dh = ah;
 	cl = 'T';
@@ -13837,9 +13841,20 @@ void DreamGenContext::setuptimedtemp() {
 	loadspeech();
 	_cmp(data.byte(kSpeechloaded), 1);
 	if (!flags.z())
-		goto notloadspeech3;
+		goto _tmp1;
 	al = 50+12;
 	playchannel1();
+_tmp1:
+	dx = pop();
+	cx = pop();
+	bx = pop();
+	ax = pop();
+	_cmp(data.byte(kSpeechloaded), 1);
+	if (!flags.z())
+		goto notloadspeech3;
+	_cmp(data.byte(kSubtitles),  1);
+	if (flags.z())
+		goto notloadspeech3;
 	return;
 notloadspeech3:
 	_cmp(data.word(kTimecount), 0);
@@ -21942,7 +21957,7 @@ void DreamGenContext::__start() {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-		0x00, 0x00, 0x00, };
+		0x00, 0x00, 0x00, 0x00, };
 	ds.assign(src, src + sizeof(src));
 dreamweb(); 
 }

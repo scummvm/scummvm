@@ -3293,18 +3293,34 @@ Setuptimedtemp	proc	near
 	if	cd
 	cmp	ah,0
 	jz	notloadspeech3
+	push ax
+	push bx
+	push cx
+	push dx
 	mov	dl,"T"
 	mov	dh,ah
-               	mov	cl,"T"
+	mov	cl,"T"
 	mov	ah,0
 	call	loadspeech
 	cmp	speechloaded,1
-	jnz	notloadspeech3
+	jnz	$1
 	mov	al,50+12
 	call	playchannel1
+$1:
+	pop dx
+	pop cx
+	pop bx
+	pop ax
+
+	cmp	speechloaded,1
+	jnz	notloadspeech3 ; failed to load speech
+	cmp	subtitles, 1
+	jz	notloadspeech3
 	ret
+
 notloadspeech3:
-	endif
+	endif	;if cd
+
 	cmp	timecount,0
 	jnz	cantsetup2
 	mov	timedy,bh

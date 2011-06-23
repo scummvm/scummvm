@@ -219,8 +219,6 @@ Common::Error DreamWebEngine::run() {
 	_loadSavefile = Common::ConfigManager::instance().getInt("save_slot");
 
 	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this);
-	//http://martin.hinner.info/vga/timing.html
-
 	_context.__start();
 	_context.data.byte(DreamGen::DreamGenContext::kQuitrequested) = 0;
 
