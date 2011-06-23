@@ -468,6 +468,9 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 }
 
 bool DreamWebEngine::loadSpeech(const Common::String &filename) {
+	if (ConfMan.getBool("speech_mute"))
+		return false;
+
 	Common::File file;
 	if (!file.open("speech/" + filename))
 		return false;
@@ -483,6 +486,7 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 
 
 void DreamWebEngine::soundHandler() {
+	_context.data.byte(_context.kSubtitles) = ConfMan.getBool("subtitles");
 	_context.push(_context.ax);
 	_context.volumeadjust();
 	_context.ax = _context.pop();
