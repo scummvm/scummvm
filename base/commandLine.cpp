@@ -26,7 +26,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include <errno.h>
-#include <limits.h>
 
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
@@ -269,10 +268,10 @@ void registerDefaults() {
 // Use this for options which have a required integer value
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION(shortCmd, longCmd) \
-	char *endptr = 0; \
+	char *endptr; \
 	errno = 0; \
-	long int retval = strtol(option, &endptr, 0); \
-	if (endptr == NULL || *endptr != 0 || (errno != 0 && retval == 0) || (errno == ERANGE && (retval == LONG_MAX || retval == LONG_MIN))) \
+	strtol(option, &endptr, 0); \
+	if (*endptr != '\0' || errno == ERANGE) \
 		usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
