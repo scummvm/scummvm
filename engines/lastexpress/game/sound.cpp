@@ -26,6 +26,7 @@
 #include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
+#include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
 
@@ -117,6 +118,8 @@ SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine), _state(
 
 	_drawSubtitles = 0;
 	_currentSubtitle = NULL;
+
+	_loopingSoundDuration = 0;
 }
 
 SoundManager::~SoundManager() {
@@ -458,7 +461,7 @@ void SoundManager::removeEntry(SoundEntry *entry) {
 
 	if (entry->entity) {
 		if (entry->entity == kEntitySteam)
-			playLoopingSound();
+			playLoopingSound(2);
 		else if (entry->entity != kEntityTrain)
 			getSavePoints()->push(kEntityPlayer, entry->entity, kActionEndSound);
 	}
@@ -1937,8 +1940,110 @@ void SoundManager::drawSubtitleOnScreen(SubtitleEntry *subtitle) {
 //////////////////////////////////////////////////////////////////////////
 // Misc
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::playLoopingSound() {
-	warning("SoundManager::playLoopingSound: not implemented!");
+void SoundManager::playLoopingSound(int param) {
+	Common::List<SoundEntry *>::iterator snd;
+	char tmp[80];
+
+	for (snd = _soundList.begin(); snd != _soundList.end(); ++snd) {
+		if ((*snd)->type == kSoundType1)
+			break;
+	}
+
+	byte numLoops[8];
+	static const EntityPosition positions[8] = { kPosition_8200, kPosition_7500, 
+												 kPosition_6470, kPosition_5790,
+												 kPosition_4840, kPosition_4070,
+												 kPosition_3050, kPosition_2740 };
+
+	numLoops[1] = 4;
+	numLoops[2] = 2;
+	numLoops[3] = 2;
+	numLoops[4] = 2;
+	numLoops[5] = 2;
+	numLoops[6] = 2;
+
+	tmp[0] = 0;
+
+	int partNumber = 1;
+	int fnameLen = 6;
+
+	if (_state & 1 && param >= 0x45 && param <= 0x46) {
+		if (_state & 2) {
+			strcpy(tmp, "STEAM.SND");
+
+			_loopingSoundDuration = 32767;
+		} else {
+			if (getEntityData(kEntityPlayer)->location == kLocationOutsideTrain) {
+				partNumber = 6;
+			} else {
+				if (getEntities()->isInsideCompartments(kEntityPlayer)) {
+					int objNum = (getEntityData(kEntityPlayer)->car - 3) < 1 ? 9 : 40; // Weird numbers
+
+					numLoops[0] = 0;
+
+					for (int pos = 0; pos < 8; pos++) {
+						if (numLoops[0])
+							break;
+						if (getEntities()->isInsideCompartment(kEntityPlayer, getEntityData(kEntityPlayer)->car, positions[pos])) {
+							numLoops[0] = 1;
+							partNumber = (getObjects()->get((ObjectIndex)objNum).location - 2) < 1 ? 6 : 1;
+						}
+						objNum++;
+					}
+				} else {
+					switch (getEntityData(kEntityPlayer)->car) {
+					case 1:
+					case 6:
+						partNumber = 4;
+						break;
+					case 2:
+					case 3:
+					case 4:
+					case 5:
+						partNumber = 1;
+						break;
+					case 7:
+						partNumber = 5;
+						break;
+					case 8:
+						partNumber = 99;
+						break;
+					case 9:
+						partNumber = 3;
+						break;
+					default:
+						partNumber = 6;
+						break;
+					}
+				}
+			}
+
+			if (partNumber != 99) {
+				sprintf(tmp, "LOOP%d%c.SND", partNumber, _engine->getRandom().getRandomNumber(numLoops[partNumber] - 1) + 'A');
+			}
+		}
+
+		if (getFlags()->flag_3)
+			fnameLen = 5;
+
+		if (!*snd || scumm_strnicmp((*snd)->name2.c_str(), tmp, fnameLen)) {
+			_loopingSoundDuration = _engine->getRandom().getRandomNumber(319) + 260;
+
+			if (partNumber != 99) {
+				playSoundWithSubtitles(tmp, kFlagLoopedSound, kEntitySteam);
+
+				if (*snd)
+					updateEntry(*snd, 0);
+
+				for (snd = _soundList.begin(); snd != _soundList.end(); ++snd) {
+					if ((*snd)->type == kSoundType1) {
+						updateEntry((*snd), 7);
+						break;
+					}
+				}
+			}
+		}
+	}
 }
 
 void SoundManager::stopAllSound() {
