@@ -2241,83 +2241,6 @@ _tmp18a:
 		goto _tmp18;
 }
 
-void DreamGenContext::printsprites() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	cx = 0;
-priorityloop:
-	push(cx);
-	data.byte(kPriority) = cl;
-	bx = (0+(180*10)+32+60+(32*32)+(11*10*3)+768+768+768);
-	cx = 16;
-prtspriteloop:
-	push(cx);
-	push(bx);
-	ax = es.word(bx);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto skipsprite;
-	al = data.byte(kPriority);
-	_cmp(al, es.byte(bx+23));
-	if (!flags.z())
-		goto skipsprite;
-	_cmp(es.byte(bx+31), 1);
-	if (flags.z())
-		goto skipsprite;
-	printasprite();
-skipsprite:
-	bx = pop();
-	cx = pop();
-	_add(bx, (32));
-	if (--cx)
-		goto prtspriteloop;
-	cx = pop();
-	_inc(cx);
-	_cmp(cx, 7);
-	if (!flags.z())
-		goto priorityloop;
-}
-
-void DreamGenContext::printasprite() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	si = bx;
-	ds = es.word(si+6);
-	al = es.byte(si+11);
-	ah = 0;
-	_cmp(al, 220);
-	if (flags.c())
-		goto notnegative1;
-	ah = 255;
-notnegative1:
-	bx = ax;
-	_add(bx, data.word(kMapady));
-	al = es.byte(si+10);
-	ah = 0;
-	_cmp(al, 220);
-	if (flags.c())
-		goto notnegative2;
-	ah = 255;
-notnegative2:
-	di = ax;
-	_add(di, data.word(kMapadx));
-	al = es.byte(si+15);
-	ah = 0;
-	_cmp(es.byte(si+30), 0);
-	if (flags.z())
-		goto steadyframe;
-	ah = 8;
-steadyframe:
-	_cmp(data.byte(kPriority), 6);
-	if (!flags.z())
-		goto notquickp;
-notquickp:
-	showframe();
-	bx = pop();
-	es = pop();
-}
-
 void DreamGenContext::checkone() {
 	STACK_CHECK;
 	push(cx);
@@ -22044,8 +21967,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case 0xc118: makesprite(); break;
 		case 0xc11c: delsprite(); break;
 		case 0xc120: spriteupdate(); break;
-		case 0xc124: printsprites(); break;
-		case 0xc128: printasprite(); break;
 		case 0xc12c: checkone(); break;
 		case 0xc130: findsource(); break;
 		case 0xc134: initman(); break;
