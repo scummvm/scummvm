@@ -359,9 +359,9 @@ void SoundManager::_sfSoundServer() {
 	_sfProcessFading();
 
 	// Poll all sound drivers in case they need it
-	for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin();
-				i != sfManager()._installedDrivers.end(); ++i) {
-		(*i)->poll();
+	for (Common::List<SoundDriver *>::iterator j = sfManager()._installedDrivers.begin();
+				j != sfManager()._installedDrivers.end(); ++j) {
+		(*j)->poll();
 	}
 }
 
