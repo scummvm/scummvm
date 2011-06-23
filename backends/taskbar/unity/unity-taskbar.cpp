@@ -23,13 +23,17 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #include "common/scummsys.h"
 
-#if defined(UNIX) && defined(USE_TASKBAR) && defined(USE_TASKBAR_UNITY)
+#if defined(POSIX) && defined(USE_TASKBAR) && defined(USE_TASKBAR_UNITY)
 
 #include "backends/taskbar/unity/unity-taskbar.h"
 
 #include "common/textconsole.h"
+
+#include <unity.h>
 
 UnityTaskbarManager::UnityTaskbarManager() {
 	g_type_init();

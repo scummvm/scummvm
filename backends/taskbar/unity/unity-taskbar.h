@@ -26,13 +26,14 @@
 #ifndef BACKEND_UNITY_TASKBAR_H
 #define BACKEND_UNITY_TASKBAR_H
 
-#if defined(UNIX) && defined(USE_TASKBAR) && defined(USE_TASKBAR_UNITY)
+#if defined(POSIX) && defined(USE_TASKBAR) && defined(USE_TASKBAR_UNITY)
 
 #include "common/events.h"
 #include "common/str.h"
 #include "common/taskbar.h"
 
-#include <unity.h>
+typedef struct _GMainLoop GMainLoop;
+typedef struct _UnityLauncherEntry UnityLauncherEntry;
 
 class UnityTaskbarManager : public Common::TaskbarManager, public Common::EventSource {
 public:
