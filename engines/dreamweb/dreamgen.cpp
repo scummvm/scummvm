@@ -9065,9 +9065,13 @@ waittalk:
 	data.byte(kGetback) = 0;
 	bx = 2660;
 	checkcoords();
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		goto finishtalk;
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
 		goto waittalk;
+finishtalk:
 	bx = data.word(kPersondata);
 	es = cs;
 	_cmp(data.byte(kTalkpos), 4);
@@ -9359,6 +9363,9 @@ hangloopq:
 	cx = pop();
 	_cmp(data.byte(kGetback), 1);
 	if (flags.z())
+		goto quitconv;
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
 		goto quitconv;
 	_cmp(data.byte(kSpeechloaded), 1);
 	if (!flags.z())
