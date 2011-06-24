@@ -1999,30 +1999,36 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		entry->argc = stream->readUint16();
 		size -= 2;
 
+		entry->targetingType = 0;
+
 		uint16 targetingType = entry->argc;
-		if (targetingType == 0x3f3f || targetingType == 0xffff) {
-			entry->argc = 0;
+		if (targetingType == kTargetTypeExpression || targetingType == kTargetTypeCode
+			|| targetingType == kTargetTypeName) {
+			entry->targetingType = targetingType;
+
+			// FIXME
+			if (targetingType == kTargetTypeCode)
+				error("encountered kTargetTypeCode");
 
 			uint16 count = stream->readUint16();
 			size -= 2;
 
 			debug(4, "%d targets with targeting type %04x", count, targetingType);
 
-			// FIXME: targeting by name
 			uint oldAlign = size % 2;
 			for (uint i = 0; i < count; i++) {
 				Common::String target = _vm->readString(stream);
-				warning("ignoring target '%s' in script entry", target.c_str());
+				debug(4, "target '%s'", target.c_str());
+				entry->targets.push_back(target);
 				size -= target.size() + 1;
 			}
+			entry->argc = entry->targets.size();
 
 			if ((uint)(size % 2) != oldAlign) {
 				stream->skip(1);
 				size--;
 			}
-		}
-
-		if (entry->argc) {
+		} else if (entry->argc) {
 			entry->argvParam = new uint16[entry->argc];
 			entry->argvTarget = new uint16[entry->argc];
 			debug(4, "With %d targets:", entry->argc);
@@ -2612,15 +2618,58 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			entry->type, entry->event, entry->opcode, entry->param);
 
 		if (entry->argc) {
-			uint16 targetId = entry->argvTarget[n];
-			// TODO: is this type, perhaps?
-			uint16 param = entry->argvParam[n];
-			target = _vm->getItemById(targetId);
-			if (!target) {
-				debug(2, "Target %04x (%04x) doesn't exist, skipping", targetId, param);
-				continue;
+			switch (entry->targetingType) {
+			case kTargetTypeExpression:
+				{
+				// FIXME: this should be EVALUATED
+				LBValue &tgt = _vm->_variables[entry->targets[n]];
+				switch (tgt.type) {
+				case kLBValueItemPtr:
+					target = tgt.item;
+					break;
+				case kLBValueString:
+					// FIXME: handle 'self', at least
+					// TODO: correct otherwise? or only self?
+					target = _vm->getItemByName(tgt.string);
+					break;
+				case kLBValueInteger:
+					target = _vm->getItemById(tgt.integer);
+					break;
+				default:
+					// FIXME: handle list
+					debug(2, "Target '%s' (by expression) resulted in unknown type, skipping", entry->targets[n].c_str());
+				}
+				}
+				if (!target) {
+					debug(2, "Target '%s' (by expression) doesn't exist, skipping", entry->targets[n].c_str());
+					continue;
+				}
+				debug(2, "Target: '%s' (expression '%s')", target->_desc.c_str(), entry->targets[n].c_str());
+				break;
+			case kTargetTypeCode:
+				// FIXME
+				error("encountered kTargetTypeCode");
+				break;
+			case kTargetTypeName:
+				// FIXME: handle 'self'
+				target = _vm->getItemByName(entry->targets[n]);
+				if (!target) {
+					debug(2, "Target '%s' (by name) doesn't exist, skipping", entry->targets[n].c_str());
+					continue;
+				}
+				debug(2, "Target: '%s' (by name)", target->_desc.c_str());
+				break;
+			default:
+				uint16 targetId = entry->argvTarget[n];
+				// TODO: is this type, perhaps?
+				uint16 param = entry->argvParam[n];
+				target = _vm->getItemById(targetId);
+				if (!target) {
+					debug(2, "Target %04x (%04x) doesn't exist, skipping", targetId, param);
+					continue;
+				}
+				debug(2, "Target: %04x (%04x) '%s'", targetId, param, target->_desc.c_str());
 			}
-			debug(2, "Target: %04x (%04x) '%s'", targetId, param, target->_desc.c_str());
 		} else {
 			target = this;
 			debug(2, "Self-target on '%s'", _desc.c_str());

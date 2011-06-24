@@ -233,6 +233,12 @@ enum {
 	kLBNotifyQuit = 0xd
 };
 
+enum {
+	kTargetTypeExpression = 0x3f3f,
+	kTargetTypeCode = 0xfffe,
+	kTargetTypeName = 0xffff
+};
+
 class MohawkEngine_LivingBooks;
 class LBPage;
 class LBGraphics;
@@ -252,6 +258,9 @@ struct LBScriptEntry {
 	uint16 argc;
 	uint16 *argvParam;
 	uint16 *argvTarget;
+
+	uint16 targetingType;
+	Common::Array<Common::String> targets;
 
 	// kLBNotifyChangeMode
 	uint16 newUnknown;
