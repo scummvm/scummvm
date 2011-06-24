@@ -107,6 +107,14 @@ public:
 
 	// Accessors
 	uint32 getFlag() { return _flag; }
+	int getSubtitleFlag() { return _subtitlesFlag; }
+	void setSubtitleFlag(int flag) { _subtitlesFlag = flag; }
+
+	// Subtitles
+	void addSubtitle(SubtitleEntry *entry) { _subtitles.push_back(entry); }
+	void removeSubtitle(SubtitleEntry *entry) { _subtitles.remove(entry); }
+	void setCurrentSubtitle(SubtitleEntry *entry) { _currentSubtitle = entry; }
+	SubtitleEntry *getCurrentSubtitle() { return _currentSubtitle; }
 
 private:
 	typedef int32 *SoundBuffer;
@@ -161,15 +169,9 @@ private:
 	void removeEntry(SoundEntry *entry);
 
 	// Subtitles
-	int _drawSubtitles;
+	int _subtitlesFlag;
 	Common::List<SubtitleEntry *> _subtitles;
 	SubtitleEntry *_currentSubtitle;
-	void showSubtitle(SoundEntry *entry, Common::String filename);
-	SubtitleEntry *loadSubtitle(Common::String filename, SoundEntry *soundEntry);
-	void loadSubtitleData(SubtitleEntry * entry);
-	void setupSubtitleAndDraw(SubtitleEntry *subtitle);
-	void drawSubtitle(SubtitleEntry *subtitle);
-	void drawSubtitleOnScreen(SubtitleEntry *subtitle);
 
 	// Sound filter
 	void applyFilter(SoundEntry *entry, int16 *buffer);

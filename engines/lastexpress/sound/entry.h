@@ -120,6 +120,9 @@ public:
 	void updateState();
 	void reset();
 
+	// Subtitles
+	void showSubtitle(Common::String filename);
+
 private:
 	LastExpressEngine *_engine;
 
@@ -158,14 +161,26 @@ public:
 //////////////////////////////////////////////////////////////////////////
 class SubtitleEntry {
 public:
-	SubtitleEntry();
+	SubtitleEntry(LastExpressEngine *engine);
 	~SubtitleEntry();
 
-public:
-	Common::String filename;
-	SoundStatusUnion status;
-	SoundEntry *sound;
-	SubtitleManager *data;
+	void load(Common::String filename, SoundEntry *soundEntry);
+	void loadData();
+	void draw();
+	void setupAndDraw();
+	void drawOnScreen();
+
+	// Accessors
+	SoundStatusUnion getStatus() { return _status; }
+	SoundEntry *getSoundEntry() { return _sound; }
+
+private:
+	LastExpressEngine *_engine;
+
+	Common::String    _filename;
+	SoundStatusUnion  _status;
+	SoundEntry       *_sound;
+	SubtitleManager  *_data;
 };
 
 } // End of namespace LastExpress

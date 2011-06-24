@@ -127,7 +127,7 @@ SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine), _state(
 	// Sound cache
 	_soundCacheData = malloc(6 * SOUNDCACHE_ENTRY_SIZE);
 
-	_drawSubtitles = 0;
+	_subtitlesFlag = 0;
 	_currentSubtitle = NULL;
 
 	_loopingSoundDuration = 0;
@@ -436,7 +436,7 @@ void SoundManager::removeEntry(SoundEntry *entry) {
 	// removeFromCache(entry);
 
 	if (entry->subtitle) {
-		drawSubtitle(entry->subtitle);
+		entry->subtitle->draw();
 		SAFE_DELETE(entry->subtitle);
 	}
 
@@ -640,7 +640,7 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, SoundFlag fla
 		while (filename.size() > 4)
 			filename.deleteLastChar();
 
-		showSubtitle(entry, filename);
+		entry->showSubtitle(filename);
 		entry->updateState();
 	}
 
@@ -785,7 +785,7 @@ void SoundManager::playSteam(CityIndex index) {
 	// Get the new sound entry and show subtitles
 	SoundEntry *entry = getEntry(kSoundType1);
 	if (entry)
-		showSubtitle(entry, cities[index]);
+		entry->showSubtitle(cities[index]);
 }
 
 void SoundManager::playFightSound(byte action, byte a4) {
@@ -1762,7 +1762,7 @@ void SoundManager::updateSubtitles() {
 
 	for (Common::List<SubtitleEntry *>::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
 		uint32 current_index = 0;
-		SoundEntry *soundEntry = (*i)->sound;
+		SoundEntry *soundEntry = (*i)->getSoundEntry();
 		SoundStatus status = (SoundStatus)soundEntry->status.status;
 
 		if (!(status & kSoundStatus_40)
@@ -1786,101 +1786,18 @@ void SoundManager::updateSubtitles() {
 
 	if (_currentSubtitle == subtitle) {
 		if (subtitle)
-			setupSubtitleAndDraw(subtitle);
+			subtitle->setupAndDraw();
 
 		return;
 	}
 
-	if (_drawSubtitles & 1)
-		drawSubtitleOnScreen(subtitle);
+	if (_subtitlesFlag & 1)
+		subtitle->drawOnScreen();
 
 	if (subtitle) {
-		loadSubtitleData(subtitle);
-		setupSubtitleAndDraw(subtitle);
+		subtitle->loadData();
+		subtitle->setupAndDraw();
 	}
-}
-
-void SoundManager::showSubtitle(SoundEntry *entry, Common::String filename) {
-	entry->subtitle = loadSubtitle(filename, entry);
-
-	if (entry->subtitle->status.status2 & 4) {
-		drawSubtitle(entry->subtitle);
-		SAFE_DELETE(entry->subtitle);
-	} else {
-		entry->status.status |= kSoundStatus_20000;
-	}
-}
-
-SubtitleEntry *SoundManager::loadSubtitle(Common::String filename, SoundEntry *soundEntry) {
-	SubtitleEntry *entry = new SubtitleEntry();
-	_subtitles.push_back(entry);
-
-	// Set sound entry and filename
-	entry->filename = filename + ".SBE";
-	entry->sound = soundEntry;
-
-	// Load subtitle data
-	if (_engine->getResourceManager()->hasFile(filename)) {
-		if (_drawSubtitles & 2)
-			return entry;
-
-		loadSubtitleData(entry);
-	} else {
-		entry->status.status = kSoundStatus_400;
-	}
-
-	return entry;
-}
-
-void SoundManager::loadSubtitleData(SubtitleEntry * entry) {
-	entry->data = new SubtitleManager(_engine->getFont());
-	entry->data->load(getArchive(entry->filename));
-
-	_drawSubtitles |= 2;
-	_currentSubtitle = entry;
-}
-
-void SoundManager::setupSubtitleAndDraw(SubtitleEntry *subtitle) {
-	if (!subtitle->data) {
-		subtitle->data = new SubtitleManager(_engine->getFont());
-		subtitle->data->load(getArchive(subtitle->filename));
-	}
-
-	if (subtitle->data->getMaxTime() > subtitle->sound->time) {
-		subtitle->status.status = kSoundStatus_400;
-	} else {
-		subtitle->data->setTime((uint16)subtitle->sound->time);
-
-		if (_drawSubtitles & 1)
-			drawSubtitleOnScreen(subtitle);
-	}
-
-	_currentSubtitle = subtitle;
-}
-
-void SoundManager::drawSubtitle(SubtitleEntry *subtitle) {
-	// Remove subtitle from queue
-	_subtitles.remove(subtitle);
-
-	if (subtitle == _currentSubtitle) {
-		drawSubtitleOnScreen(subtitle);
-
-		_currentSubtitle = NULL;
-		_drawSubtitles = 0;
-	}
-}
-
-void SoundManager::drawSubtitleOnScreen(SubtitleEntry *subtitle) {
-	if (!subtitle)
-		error("SoundManager::drawSubtitleOnScreen: Invalid subtitle entry!");
-
-	_drawSubtitles &= ~1;
-
-	if (subtitle->data == NULL)
-		return;
-
-	if (_drawSubtitles & 1)
-		_engine->getGraphicsManager()->draw(subtitle->data, GraphicsManager::kBackgroundOverlay);
 }
 
 //////////////////////////////////////////////////////////////////////////

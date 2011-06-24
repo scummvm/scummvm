@@ -24,8 +24,10 @@
 
 #include "lastexpress/game/sound.h"
 
+#include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
+#include "lastexpress/resource.h"
 
 #include "common/stream.h"
 
@@ -35,7 +37,6 @@ namespace LastExpress {
 // SoundEntry
 //////////////////////////////////////////////////////////////////////////
 SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
-	status.status = 0;
 	type = kSoundTypeNone;
 
 	currentDataPtr = 0;
@@ -135,17 +136,95 @@ void SoundEntry::reset() {
 	}
 }
 
+void SoundEntry::showSubtitle(Common::String filename) {
+	subtitle = new SubtitleEntry(_engine);
+	subtitle->load(filename, this);
+
+	if (subtitle->getStatus().status2 & 4) {
+		subtitle->draw();
+		SAFE_DELETE(subtitle);
+	} else {
+		status.status |= kSoundStatus_20000;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 // SubtitleEntry
 //////////////////////////////////////////////////////////////////////////
-SubtitleEntry::SubtitleEntry() {
-	status.status = 0;
-	sound = NULL;
-	data = NULL;
+SubtitleEntry::SubtitleEntry(LastExpressEngine *engine) : _engine(engine) {
+	_sound = NULL;
+	_data = NULL;
 }
 
 SubtitleEntry::~SubtitleEntry() {
-	SAFE_DELETE(data);
+	SAFE_DELETE(_data);
+}
+
+void SubtitleEntry::load(Common::String filename, SoundEntry *soundEntry) {
+	// Add ourselves to the list of active subtitles
+	getSound()->addSubtitle(this);
+
+	// Set sound entry and filename
+	_filename = filename + ".SBE";
+	_sound = soundEntry;
+
+	// Load subtitle data
+	if (_engine->getResourceManager()->hasFile(filename)) {
+		if (getSound()->getSubtitleFlag() & 2)
+			return;
+
+		loadData();
+	} else {
+		_status.status = kSoundStatus_400;
+	}
+}
+
+void SubtitleEntry::loadData() {
+	_data = new SubtitleManager(_engine->getFont());
+	_data->load(getArchive(_filename));
+
+	getSound()->setSubtitleFlag(getSound()->getSubtitleFlag() | 2);
+	getSound()->setCurrentSubtitle(this);
+}
+
+void SubtitleEntry::setupAndDraw() {
+	if (!_data) {
+		_data = new SubtitleManager(_engine->getFont());
+		_data->load(getArchive(_filename));
+	}
+
+	if (_data->getMaxTime() > _sound->time) {
+		_status.status = kSoundStatus_400;
+	} else {
+		_data->setTime((uint16)_sound->time);
+
+		if (getSound()->getSubtitleFlag() & 1)
+			drawOnScreen();
+	}
+
+	getSound()->setCurrentSubtitle(this);
+}
+
+void SubtitleEntry::draw() {
+	// Remove ourselves from the queue
+	getSound()->removeSubtitle(this);
+
+	if (this == getSound()->getCurrentSubtitle()) {
+		drawOnScreen();
+
+		getSound()->setCurrentSubtitle(NULL);
+		getSound()->setSubtitleFlag(0);
+	}
+}
+
+void SubtitleEntry::drawOnScreen() {
+	getSound()->setSubtitleFlag(getSound()->getSubtitleFlag() & -1);
+
+	if (_data == NULL)
+		return;
+
+	if (getSound()->getSubtitleFlag() & 1)
+		_engine->getGraphicsManager()->draw(_data, GraphicsManager::kBackgroundOverlay);
 }
 
 } // End of namespace LastExpress
