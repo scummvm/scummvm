@@ -258,7 +258,7 @@ IMPLEMENT_FUNCTION_NOSETUP(7, Coudert, playSound16)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityCoudert, (char *)&params->seq1, SoundManager::kFlagDefault);
+		getSound()->playSound(kEntityCoudert, (char *)&params->seq1, kFlagDefault);
 		break;
 
 	case kActionCallback:

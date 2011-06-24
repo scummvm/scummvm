@@ -432,7 +432,7 @@ void Logic::gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, boo
 
 	if (showScene) {
 
-		getSound()->processEntry(SoundManager::kSoundType11);
+		getSound()->processEntry(kSoundType11);
 
 		if (sceneIndex && !getFlags()->mouseRightClick) {
 			getScenes()->loadScene(sceneIndex);

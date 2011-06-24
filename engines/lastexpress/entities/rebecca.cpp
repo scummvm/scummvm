@@ -316,7 +316,7 @@ IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
 			getData()->location = kLocationOutsideCompartment;
 
 			if (getProgress().chapter == kChapter3)
-				getSound()->playSound(kEntityRebecca, "Reb3005", SoundManager::kFlagInvalid, 75);
+				getSound()->playSound(kEntityRebecca, "Reb3005", kFlagInvalid, 75);
 
 			if (params->param1) {
 				setCallback(5);
@@ -1357,7 +1357,7 @@ label_callback_3:
 		params->param5 = kTimeInvalid;
 
 		getData()->inventoryItem = kItemNone;
-		getSound()->playSound(kEntityRebecca, "Reb3008", SoundManager::kFlagInvalid, 60);
+		getSound()->playSound(kEntityRebecca, "Reb3008", kFlagInvalid, 60);
 		getEntities()->updatePositionEnter(kEntityRebecca, kCarRestaurant, 52);
 
 		setCallback(3);

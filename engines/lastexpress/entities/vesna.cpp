@@ -1083,7 +1083,7 @@ IMPLEMENT_FUNCTION(30, Vesna, function30)
 	case kActionNone:
 		if (!params->param1) {
 			UPDATE_PARAM_PROC(params->param3, getState()->timeTicks, 120)
-				getSound()->playSound(kEntityVesna, "Ves50001", SoundManager::kFlagDefault);
+				getSound()->playSound(kEntityVesna, "Ves50001", kFlagDefault);
 				params->param1 = 1;
 			UPDATE_PARAM_PROC_END
 		}
@@ -1146,7 +1146,7 @@ IMPLEMENT_FUNCTION(30, Vesna, function30)
 			setCallback(2);
 			setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopKilled);
 		} else {
-			getSound()->playSound(kEntityVesna, "Ves5001", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityVesna, "Ves5001", kFlagDefault);
 			params->param1 = 1;
 		}
 		break;

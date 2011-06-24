@@ -289,7 +289,7 @@ IMPLEMENT_FUNCTION_S(8, Mertens, playSound16)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityMertens, (char *)&params->seq1, SoundManager::kFlagDefault);
+		getSound()->playSound(kEntityMertens, (char *)&params->seq1, kFlagDefault);
 		break;
 
 	case kActionCallback:
@@ -896,7 +896,7 @@ IMPLEMENT_FUNCTION(17, Mertens, function17)
 		} else {
 			// Got the passenger list, Mertens is looking for it before sitting
 			ENTITY_PARAM(0, 2) = 1;
-			getSound()->playSound(kEntityMertens, "CON1058", SoundManager::kFlagInvalid, 75);
+			getSound()->playSound(kEntityMertens, "CON1058", kFlagInvalid, 75);
 			getEntities()->drawSequenceRight(kEntityMertens, "601D");
 		}
 
@@ -984,7 +984,7 @@ IMPLEMENT_FUNCTION(18, Mertens, function18)
 			getEntities()->drawSequenceRight(kEntityMertens, "601A");
 		} else {
 			ENTITY_PARAM(0, 2) = 1;
-			getSound()->playSound(kEntityMertens, "CON1058", SoundManager::kFlagInvalid, 75);
+			getSound()->playSound(kEntityMertens, "CON1058", kFlagInvalid, 75);
 			getEntities()->drawSequenceRight(kEntityMertens, "601D");
 		}
 
@@ -1199,7 +1199,7 @@ IMPLEMENT_FUNCTION(22, Mertens, function22)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMertens);
 			if (!getSound()->isBuffered(kEntityMertens))
-				getSound()->playSound(kEntityMertens, "MAH1172", SoundManager::kFlagInvalid, 225);
+				getSound()->playSound(kEntityMertens, "MAH1172", kFlagInvalid, 225);
 
 			setCallback(7);
 			setup_function21(kObjectCompartment4, kObject20);

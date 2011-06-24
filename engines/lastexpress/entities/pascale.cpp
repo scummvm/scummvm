@@ -141,15 +141,15 @@ IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
 				break;
 
 			case kChapter1:
-				getSound()->playSound(kEntityPascale, "REB1198", SoundManager::kFlagInvalid, 30);
+				getSound()->playSound(kEntityPascale, "REB1198", kFlagInvalid, 30);
 				break;
 
 			case kChapter3:
-				getSound()->playSound(kEntityPascale, "REB3001", SoundManager::kFlagInvalid, 30);
+				getSound()->playSound(kEntityPascale, "REB3001", kFlagInvalid, 30);
 				break;
 
 			case kChapter4:
-				getSound()->playSound(kEntityPascale, "REB4001", SoundManager::kFlagInvalid, 30);
+				getSound()->playSound(kEntityPascale, "REB4001", kFlagInvalid, 30);
 				break;
 			}
 
@@ -754,7 +754,7 @@ IMPLEMENT_FUNCTION(24, Pascale, welcomeAbbot)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityPascale, "ABB3015", SoundManager::kFlagInvalid, 105);
+		getSound()->playSound(kEntityPascale, "ABB3015", kFlagInvalid, 105);
 		getEntities()->drawSequenceRight(kEntityPascale, "029A1");
 		getEntities()->drawSequenceRight(kEntityAbbot, "029A2");
 		break;

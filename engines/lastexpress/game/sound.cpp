@@ -30,6 +30,8 @@
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
 
+#include "lastexpress/sound/entry.h"
+
 #include "lastexpress/helpers.h"
 #include "lastexpress/graphics.h"
 #include "lastexpress/lastexpress.h"
@@ -96,12 +98,21 @@ static const char *const locomotiveSounds[5] = {
 	"ZFX1007B"
 };
 
-static const SoundManager::FlagType soundFlags[32] = {
-	SoundManager::kFlagDefault, SoundManager::kFlag15, SoundManager::kFlag14, SoundManager::kFlag13, SoundManager::kFlag12,
-	SoundManager::kFlag11,      SoundManager::kFlag11, SoundManager::kFlag10, SoundManager::kFlag10, SoundManager::kFlag9,  SoundManager::kFlag9, SoundManager::kFlag8, SoundManager::kFlag8,
-	SoundManager::kFlag7,       SoundManager::kFlag7,  SoundManager::kFlag7,  SoundManager::kFlag6,  SoundManager::kFlag6,  SoundManager::kFlag6,
-	SoundManager::kFlag5,       SoundManager::kFlag5,  SoundManager::kFlag5,  SoundManager::kFlag5,  SoundManager::kFlag4,  SoundManager::kFlag4, SoundManager::kFlag4, SoundManager::kFlag4,
-	SoundManager::kFlag3,       SoundManager::kFlag3,  SoundManager::kFlag3,  SoundManager::kFlag3,  SoundManager::kFlag3
+static const SoundFlag soundFlags[32] = {
+	kFlagDefault,
+	kFlag15,
+	kFlag14,
+	kFlag13,
+	kFlag12,
+	kFlag11, kFlag11,
+	kFlag10, kFlag10,
+	kFlag9,  kFlag9,
+	kFlag8,  kFlag8,
+	kFlag7,  kFlag7, kFlag7,
+	kFlag6,  kFlag6, kFlag6,
+	kFlag5,  kFlag5, kFlag5, kFlag5,
+	kFlag4,  kFlag4, kFlag4, kFlag4,
+	kFlag3,  kFlag3, kFlag3, kFlag3, kFlag3
 };
 
 SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine), _state(0), _currentType(kSoundType16), _flag(0) {
@@ -179,7 +190,7 @@ void SoundManager::resetQueue(SoundType type1, SoundType type2) {
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		if ((*i)->type != type1 && (*i)->type != type2)
-			resetEntry(*i);
+			(*i)->reset();
 	}
 }
 
@@ -188,7 +199,7 @@ void SoundManager::removeFromQueue(EntityIndex entity) {
 
 	SoundEntry *entry = getEntry(entity);
 	if (entry)
-		resetEntry(entry);
+		entry->reset();
 }
 
 void SoundManager::removeFromQueue(Common::String filename) {
@@ -196,7 +207,7 @@ void SoundManager::removeFromQueue(Common::String filename) {
 
 	SoundEntry *entry = getEntry(filename);
 	if (entry)
-		resetEntry(entry);
+		entry->reset();
 }
 
 void SoundManager::clearQueue() {
@@ -244,13 +255,13 @@ bool SoundManager::isBuffered(Common::String filename, bool testForEntity) {
 //////////////////////////////////////////////////////////////////////////
 // Entry
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::setupEntry(SoundEntry *entry, Common::String name, FlagType flag, int a4) {
+void SoundManager::setupEntry(SoundEntry *entry, Common::String name, SoundFlag flag, int a4) {
 	if (!entry)
 		error("SoundManager::setupEntry: Invalid entry!");
 
 	entry->field_4C = a4;
 	setEntryType(entry, flag);
-	setEntryStatus(entry, flag);
+	entry->setStatus(flag);
 
 	// Add entry to sound list
 	_soundList.push_back(entry);
@@ -260,7 +271,7 @@ void SoundManager::setupEntry(SoundEntry *entry, Common::String name, FlagType f
 	loadSoundData(entry, name);
 }
 
-void SoundManager::setEntryType(SoundEntry *entry, FlagType flag) {
+void SoundManager::setEntryType(SoundEntry *entry, SoundFlag flag) {
 	switch (flag & kFlagType9) {
 	default:
 	case kFlagNone:
@@ -271,12 +282,12 @@ void SoundManager::setEntryType(SoundEntry *entry, FlagType flag) {
 	case kFlagType1_2: {
 		SoundEntry *previous2 = getEntry(kSoundType2);
 		if (previous2)
-			updateEntry(previous2, 0);
+			previous2->update(0);
 
 		SoundEntry *previous = getEntry(kSoundType1);
 		if (previous) {
 			previous->type = kSoundType2;
-			updateEntry(previous, 0);
+			previous->update(0);
 		}
 
 		entry->type = kSoundType1;
@@ -287,7 +298,7 @@ void SoundManager::setEntryType(SoundEntry *entry, FlagType flag) {
 		SoundEntry *previous = getEntry(kSoundType3);
 		if (previous) {
 			previous->type = kSoundType4;
-			updateEntry(previous, 0);
+			previous->update(0);
 		}
 
 		entry->type = kSoundType11;
@@ -332,21 +343,6 @@ void SoundManager::setEntryType(SoundEntry *entry, FlagType flag) {
 	}
 }
 
-void SoundManager::setEntryStatus(SoundEntry *entry, FlagType flag) const {
-	SoundStatus status = (SoundStatus)flag;
-	if (!((status & 0xFF) & kSoundStatusClear1))
-		status = (SoundStatus)(status | kSoundStatusClear2);
-
-	if (((status & 0xFF00) >> 8) & kSoundStatusClear0)
-		entry->status.status = (uint32)status;
-	else
-		entry->status.status = (status | kSoundStatusClear4);
-}
-
-void SoundManager::setInCache(SoundEntry *entry) {
-	entry->status.status |= kSoundStatusClear2;
-}
-
 bool SoundManager::setupCache(SoundEntry *entry) {
 	if (entry->soundData)
 		return true;
@@ -370,8 +366,10 @@ bool SoundManager::setupCache(SoundEntry *entry) {
 		if (entry->field_4C <= size)
 			return false;
 
-		if (cacheEntry)
-			setInCache(cacheEntry);
+		if (!cacheEntry)
+			error("[SoundManager::setupCache] Cannot find a valid entry");
+
+		cacheEntry->setInCache();
 
 		// TODO: Wait until the cache entry is ready to be removed
 		while (!(cacheEntry->status.status1 & 1))
@@ -425,23 +423,6 @@ void SoundManager::loadSoundData(SoundEntry *entry, Common::String name) {
 	}
 }
 
-void SoundManager::resetEntry(SoundEntry *entry) const {
-	entry->status.status |= kSoundStatusRemoved;
-	entry->entity = kEntityPlayer;
-
-	if (entry->stream) {
-		if (!entry->soundStream) {
-			SAFE_DELETE(entry->stream);
-		} else {
-			entry->soundStream->stop();
-			SAFE_DELETE(entry->soundStream);
-		}
-
-		entry->stream = NULL;
-	}
-}
-
-
 void SoundManager::removeEntry(SoundEntry *entry) {
 	entry->status.status |= kSoundStatusRemoved;
 
@@ -467,47 +448,12 @@ void SoundManager::removeEntry(SoundEntry *entry) {
 	}
 }
 
-void SoundManager::updateEntry(SoundEntry *entry, uint value) const {
-	if (!(entry->status.status3 & 64)) {
-		int value2 = value;
-
-		entry->status.status |= kSoundStatus_100000;
-
-		if (value) {
-			if (_flag & 32) {
-				entry->field_40 = value;
-				value2 = value * 2 + 1;
-			}
-
-			entry->field_3C = value2;
-		} else {
-			entry->field_3C = 0;
-			entry->status.status |= kSoundStatus_40000000;
-		}
-	}
-}
-
-void SoundManager::updateEntryState(SoundEntry *entry) const {
-	if (_flag & 32) {
-		if (entry->type != kSoundType9 && entry->type != kSoundType7 && entry->type != kSoundType5) {
-			uint32 status = entry->status.status & kSoundStatusClear1;
-
-			entry->status.status &= kSoundStatusClearAll;
-
-			entry->field_40 = status;
-			entry->status.status |= status * 2 + 1;
-		}
-	}
-
-	entry->status.status |= kSoundStatus_20;
-}
-
 void SoundManager::processEntry(EntityIndex entity) {
 	Common::StackLock locker(_mutex);
 
 	SoundEntry *entry = getEntry(entity);
 	if (entry) {
-		updateEntry(entry, 0);
+		entry->update(0);
 		entry->entity = kEntityPlayer;
 	}
 }
@@ -517,7 +463,7 @@ void SoundManager::processEntry(SoundType type) {
 
 	SoundEntry *entry = getEntry(type);
 	if (entry)
-		updateEntry(entry, 0);
+		entry->update(0);
 }
 
 void SoundManager::setupEntry(SoundType type, EntityIndex index) {
@@ -533,7 +479,7 @@ void SoundManager::processEntry(Common::String filename) {
 
 	SoundEntry *entry = getEntry(filename);
 	if (entry) {
-		updateEntry(entry, 0);
+		entry->update(0);
 		entry->entity = kEntityPlayer;
 	}
 }
@@ -567,7 +513,7 @@ void SoundManager::unknownFunction4() {
 //////////////////////////////////////////////////////////////////////////
 // Entry search
 //////////////////////////////////////////////////////////////////////////
-SoundManager::SoundEntry *SoundManager::getEntry(EntityIndex index) {
+SoundEntry *SoundManager::getEntry(EntityIndex index) {
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		if ((*i)->entity == index)
 			return *i;
@@ -576,7 +522,7 @@ SoundManager::SoundEntry *SoundManager::getEntry(EntityIndex index) {
 	return NULL;
 }
 
-SoundManager::SoundEntry *SoundManager::getEntry(Common::String name) {
+SoundEntry *SoundManager::getEntry(Common::String name) {
 	if (!name.contains('.'))
 		name += ".SND";
 
@@ -588,7 +534,7 @@ SoundManager::SoundEntry *SoundManager::getEntry(Common::String name) {
 	return NULL;
 }
 
-SoundManager::SoundEntry *SoundManager::getEntry(SoundType type) {
+SoundEntry *SoundManager::getEntry(SoundType type) {
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		if ((*i)->type == type)
 			return *i;
@@ -663,11 +609,11 @@ uint32 SoundManager::count() {
 //////////////////////////////////////////////////////////////////////////
 // Game-related functions
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::playSound(EntityIndex entity, Common::String filename, FlagType flag, byte a4) {
+void SoundManager::playSound(EntityIndex entity, Common::String filename, SoundFlag flag, byte a4) {
 	if (isBuffered(entity) && entity)
 		removeFromQueue(entity);
 
-	FlagType currentFlag = (flag == -1) ? getSoundFlag(entity) : (FlagType)(flag | 0x80000);
+	SoundFlag currentFlag = (flag == -1) ? getSoundFlag(entity) : (SoundFlag)(flag | 0x80000);
 
 	// Add .SND at the end of the filename if needed
 	if (!filename.contains('.'))
@@ -678,8 +624,8 @@ void SoundManager::playSound(EntityIndex entity, Common::String filename, FlagTy
 			getSavePoints()->push(kEntityPlayer, entity, kActionEndSound);
 }
 
-bool SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag, EntityIndex entity, byte a4) {
-	SoundEntry *entry = new SoundEntry();
+bool SoundManager::playSoundWithSubtitles(Common::String filename, SoundFlag flag, EntityIndex entity, byte a4) {
+	SoundEntry *entry = new SoundEntry(_engine);
 
 	Common::StackLock locker(_mutex);
 
@@ -695,7 +641,7 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, FlagType flag
 			filename.deleteLastChar();
 
 		showSubtitle(entry, filename);
-		updateEntryState(entry);
+		entry->updateState();
 	}
 
 	return (entry->type != kSoundTypeNone);
@@ -711,7 +657,7 @@ void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
 		return;
 
 	int _action = (int)action;
-	FlagType flag = getSoundFlag(entity);
+	SoundFlag flag = getSoundFlag(entity);
 
 	switch (action) {
 	case 36: {
@@ -886,7 +832,7 @@ void SoundManager::playFightSound(byte action, byte a4) {
 		playSound(kEntityTrain, Common::String::format("LIB%03d.SND", _action), kFlagDefault, a4);
 }
 
-void SoundManager::playDialog(EntityIndex entity, EntityIndex entityDialog, FlagType flag, byte a4) {
+void SoundManager::playDialog(EntityIndex entity, EntityIndex entityDialog, SoundFlag flag, byte a4) {
 	if (isBuffered(getDialogName(entityDialog)))
 		removeFromQueue(getDialogName(entityDialog));
 
@@ -894,7 +840,7 @@ void SoundManager::playDialog(EntityIndex entity, EntityIndex entityDialog, Flag
 }
 
 void SoundManager::playLocomotiveSound() {
-	playSound(kEntityPlayer, locomotiveSounds[rnd(5)], (FlagType)(rnd(15) + 2));
+	playSound(kEntityPlayer, locomotiveSounds[rnd(5)], (SoundFlag)(rnd(15) + 2));
 }
 
 const char *SoundManager::getDialogName(EntityIndex entity) const {
@@ -1400,7 +1346,7 @@ void SoundManager::playWarningCompartment(EntityIndex entity, ObjectIndex compar
 	_lastWarning[compartment - 28] = getState()->timeTicks;
 }
 
-void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, FlagType flag) {
+void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag flag) {
 	if (isBuffered(entity) && entity != kEntityPlayer && entity != kEntityChapters && entity != kEntityTrain)
 		return;
 
@@ -1750,7 +1696,7 @@ const char *SoundManager::justAMinuteCath() const {
 //////////////////////////////////////////////////////////////////////////
 // Sound flags
 //////////////////////////////////////////////////////////////////////////
-SoundManager::FlagType SoundManager::getSoundFlag(EntityIndex entity) const {
+SoundFlag SoundManager::getSoundFlag(EntityIndex entity) const {
 	if (entity == kEntityPlayer)
 		return kFlagDefault;
 
@@ -1758,7 +1704,7 @@ SoundManager::FlagType SoundManager::getSoundFlag(EntityIndex entity) const {
 		return kFlagNone;
 
 	// Compute sound value
-	FlagType ret = kFlag2;
+	SoundFlag ret = kFlag2;
 
 	// Get default value if valid
 	int index = ABS(getEntityData(entity)->entityPosition - getEntityData(kEntityPlayer)->entityPosition) / 230;
@@ -1771,7 +1717,7 @@ SoundManager::FlagType SoundManager::getSoundFlag(EntityIndex entity) const {
 		&& !getEntities()->isOutsideAnnaWindow())
 			return kFlagNone;
 
-		return (FlagType)(ret / 6);
+		return (SoundFlag)(ret / 6);
 	}
 
 	switch (getEntityData(entity)->car) {
@@ -1780,25 +1726,25 @@ SoundManager::FlagType SoundManager::getSoundFlag(EntityIndex entity) const {
 
 	case kCarKronos:
 		if (getEntities()->isInKronosSalon(entity) != getEntities()->isInKronosSalon(kEntityPlayer))
-			ret = (FlagType)(ret * 2);
+			ret = (SoundFlag)(ret * 2);
 		break;
 
 	case kCarGreenSleeping:
 	case kCarRedSleeping:
 		if (getEntities()->isInGreenCarEntrance(kEntityPlayer) && !getEntities()->isInKronosSalon(entity))
-			ret = (FlagType)(ret * 2);
+			ret = (SoundFlag)(ret * 2);
 
 		if (getEntityData(kEntityPlayer)->location
 		&& (getEntityData(entity)->entityPosition != kPosition_1 || !getEntities()->isDistanceBetweenEntities(kEntityPlayer, entity, 400)))
-			ret = (FlagType)(ret * 2);
+			ret = (SoundFlag)(ret * 2);
 		break;
 
 	case kCarRestaurant:
 		if (getEntities()->isInSalon(entity) == getEntities()->isInSalon(kEntityPlayer)
 		&& (getEntities()->isInRestaurant(entity) != getEntities()->isInRestaurant(kEntityPlayer)))
-			ret = (FlagType)(ret * 2);
+			ret = (SoundFlag)(ret * 2);
 		else
-			ret = (FlagType)(ret * 4);
+			ret = (SoundFlag)(ret * 4);
 		break;
 	}
 
@@ -1865,7 +1811,7 @@ void SoundManager::showSubtitle(SoundEntry *entry, Common::String filename) {
 	}
 }
 
-SoundManager::SubtitleEntry *SoundManager::loadSubtitle(Common::String filename, SoundEntry *soundEntry) {
+SubtitleEntry *SoundManager::loadSubtitle(Common::String filename, SoundEntry *soundEntry) {
 	SubtitleEntry *entry = new SubtitleEntry();
 	_subtitles.push_back(entry);
 
@@ -1950,7 +1896,7 @@ void SoundManager::playLoopingSound(int param) {
 	}
 
 	byte numLoops[8];
-	static const EntityPosition positions[8] = { kPosition_8200, kPosition_7500, 
+	static const EntityPosition positions[8] = { kPosition_8200, kPosition_7500,
 												 kPosition_6470, kPosition_5790,
 												 kPosition_4840, kPosition_4070,
 												 kPosition_3050, kPosition_2740 };
@@ -2033,11 +1979,11 @@ void SoundManager::playLoopingSound(int param) {
 				playSoundWithSubtitles(tmp, kFlagLoopedSound, kEntitySteam);
 
 				if (*snd)
-					updateEntry(*snd, 0);
+					(*snd)->update(0);
 
 				for (snd = _soundList.begin(); snd != _soundList.end(); ++snd) {
 					if ((*snd)->type == kSoundType1) {
-						updateEntry((*snd), 7);
+						(*snd)->update(7);
 						break;
 					}
 				}

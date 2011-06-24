@@ -204,7 +204,7 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 			if (getState()->time >= kTimeCityGalanta) {
 				params->param3 = 0;
 			} else {
-				getSound()->playSound(kEntityTrain, "LIB050", SoundManager::kFlagDefault);
+				getSound()->playSound(kEntityTrain, "LIB050", kFlagDefault);
 				getLogic()->gameOver(kSavegameTypeIndex, 0, (getProgress().chapter == kChapter1) ? kSceneGameOverPolice1 : kSceneGameOverPolice2, true);
 			}
 			break;
@@ -235,7 +235,7 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityMahmud, params->param2 ? "MAH1170A" : "MAH1173", SoundManager::kFlagInvalid, 45);
+		getSound()->playSound(kEntityMahmud, params->param2 ? "MAH1170A" : "MAH1173", kFlagInvalid, 45);
 		getProgress().field_C4 = 1;
 
 		setCallback(1);
