@@ -326,7 +326,7 @@ void GfxSurface::synchronize(Serializer &s) {
 			s.syncAsSint16LE(zero);
 		}
 	} else {
-		int w, h;
+		int w = 0, h = 0;
 		s.syncAsSint16LE(w);
 		s.syncAsSint16LE(h);
 
