@@ -36,6 +36,7 @@
 
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/fs/windows/windows-fs-factory.h"
+#include "backends/taskbar/win32/win32-taskbar.h"
 
 #include "common/memstream.h"
 
@@ -81,8 +82,13 @@ void OSystem_Win32::init() {
 	}
 #endif
 
-	// Initialze File System Factory
+	// Initialize File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
+
+#if defined(USE_TASKBAR)
+	// Initialize taskbar manager
+	_taskbarManager = new Win32TaskbarManager();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
@@ -149,18 +155,31 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 				error("Unable to access user profile directory");
 
 			strcat(configFile, "\\Application Data");
-			CreateDirectory(configFile, NULL);
+
+			// If the directory already exists (as it should in most cases),
+			// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
+			if (!CreateDirectory(configFile, NULL)) {
+				if (GetLastError() != ERROR_ALREADY_EXISTS)
+					error("Cannot create Application data folder");
+			}
 		}
 
 		strcat(configFile, "\\ScummVM");
-		CreateDirectory(configFile, NULL);
+		if (!CreateDirectory(configFile, NULL)) {
+			if (GetLastError() != ERROR_ALREADY_EXISTS)
+				error("Cannot create ScummVM application data folder");
+		}
+
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 
 		FILE *tmp = NULL;
 		if ((tmp = fopen(configFile, "r")) == NULL) {
 			// Check windows directory
 			char oldConfigFile[MAXPATHLEN];
-			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
+			uint ret = GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
+			if (ret == 0 || ret > MAXPATHLEN)
+				error("Cannot retrieve the path of the Windows directory");
+
 			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
 			if ((tmp = fopen(oldConfigFile, "r"))) {
 				strcpy(configFile, oldConfigFile);
@@ -172,7 +191,10 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 		}
 	} else {
 		// Check windows directory
-		GetWindowsDirectory(configFile, MAXPATHLEN);
+		uint ret = GetWindowsDirectory(configFile, MAXPATHLEN);
+		if (ret == 0 || ret > MAXPATHLEN)
+			error("Cannot retrieve the path of the Windows directory");
+
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 	}
 

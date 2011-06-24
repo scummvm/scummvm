@@ -230,6 +230,8 @@ void BadaFilesystemNode::init(const Common::String& nodePath) {
   path = Common::normalizePath(nodePath, '/');
   displayName = Common::lastPathComponent(path, '/');
 
+  AppLog("init file %s", path.c_str());
+
   StringUtil::Utf8ToString(path.c_str(), unicodePath);
   isRoot = (path == "/");
   isValid = isRoot || !IsFailed(File::GetAttributes(unicodePath, attr));
@@ -259,7 +261,7 @@ bool BadaFilesystemNode::isDirectory() const {
 }
 
 bool BadaFilesystemNode::isWritable() const {
-  return (isValid && !attr.IsDirectory() && !attr.IsReadOnly());
+  return (isValid && !isRoot && !attr.IsDirectory() && !attr.IsReadOnly());
 }
 
 AbstractFSNode* BadaFilesystemNode::getChild(const Common::String &n) const {
@@ -273,6 +275,7 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
   AppAssert(isDirectory());
 
   bool result = false;
+  AppLog("getchildren of %s %S", path.c_str(), unicodePath.GetPointer());
 
   if (isRoot) {
     if (mode != Common::FSNode::kListFilesOnly) {
@@ -305,6 +308,7 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
         
         // skip 'invisible' files if necessary
         Osp::Base::String fileName = dirEntry.GetName();
+  AppLog("found file %S", fileName.GetPointer());
         
         if (fileName[0] == '.' && !hidden) {
           continue;

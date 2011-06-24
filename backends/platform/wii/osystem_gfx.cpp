@@ -20,6 +20,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_abort
 
 #include <malloc.h>
 

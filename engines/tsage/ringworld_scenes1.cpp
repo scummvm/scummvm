@@ -342,7 +342,7 @@ void Scene20::Action2::signal() {
 	}
 	case 8:
 		scene->_sound.release();
-		scene->_sound.fadeOut(this);
+		_globals->_soundHandler.fadeOut(this);
 		break;
 	case 9:
 		SceneItem::display(0, 0, LIST_END);
@@ -1255,8 +1255,7 @@ void Scene40::Action7::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		// TODO: check if it's rand(500) or rand(499)+500
-		setDelay(_globals->_randomSource.getRandomNumber(500));
+		setDelay(_globals->_randomSource.getRandomNumber(499) + 500);
 		break;
 	case 1:
 		scene->_object7.postInit();

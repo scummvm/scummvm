@@ -385,6 +385,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 
 	ByteArrayReadStreamEndian actorS(actorListData);
 
+	_actors.clear();
 	_actors.resize(actorCount);
 	i = 0;
 	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor, i++) {

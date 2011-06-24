@@ -466,7 +466,9 @@ namespace %s {
 						self.resolve_label(s.label)
 			
 			#adding statements
+			#BIG FIXME: this is quite ugly to handle code analysis from the code generation. rewrite me!
 			for label, proc, offset in self.unbounded:
+				self.body += "\treturn;\n" #we need to return before calling code from the other proc
 				self.body += "/*continuing to unbounded code: %s from %s:%d-%d*/\n" %(label, proc.name, offset, len(proc.stmts))
 				start = len(self.proc.stmts)
 				self.proc.add_label(label)

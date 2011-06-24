@@ -237,8 +237,13 @@ byte *TLib::getResource(uint16 id, bool suppressErrors) {
 	uint16 ctrCurrent = 0x102, ctrMax = 0x200;
 	uint16 word_48050 = 0, currentToken = 0, word_48054 =0;
 	byte byte_49068 = 0, byte_49069 = 0;
-	DecodeReference table[0x1000];
-	for (int i = 0; i < 0x1000; ++i) {
+
+	const uint tableSize = 0x1000;
+	DecodeReference *table = (DecodeReference *)malloc(tableSize * sizeof(DecodeReference));
+	if (!table)
+		error("[TLib::getResource] Cannot allocate table buffer");
+
+	for (uint i = 0; i < tableSize; ++i) {
 		table[i].vByte = table[i].vWord = 0;
 	}
 	Common::Stack<uint16> tokenList;
@@ -301,6 +306,8 @@ byte *TLib::getResource(uint16 id, bool suppressErrors) {
 			}
 		}
 	}
+
+	free(table);
 
 	assert(bytesWritten == re->uncompressedSize);
 	delete compStream;

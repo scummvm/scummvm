@@ -468,14 +468,22 @@ void ToucheEngine::res_loadSprite(int num, int index) {
 	if (size > spr->size) {
 		debug(8, "Reallocating memory for sprite %d (index %d), %d bytes needed", num, index, size - spr->size);
 		spr->size = size;
-		if (spr->ptr) {
-			spr->ptr = (uint8 *)realloc(spr->ptr, size);
-		} else {
-			spr->ptr = (uint8 *)malloc(size);
+
+		uint8 *buffer = NULL;
+		if (spr->ptr)
+			buffer = (uint8 *)realloc(spr->ptr, size);
+
+		if (!buffer) {
+			// Free previously allocated sprite (when realloc failed)
+			free(spr->ptr);
+
+			buffer = (uint8 *)malloc(size);
 		}
-		if (!spr->ptr) {
-			error("Unable to reallocate memory for sprite %d (%d bytes)", num, size);
-		}
+
+		if (!buffer)
+			error("[ToucheEngine::res_loadSprite] Unable to reallocate memory for sprite %d (%d bytes)", num, size);
+
+		spr->ptr = buffer;
 	}
 	for (int i = 0; i < _currentImageHeight; ++i) {
 		res_decodeScanLineImageRLE(spr->ptr + _currentImageWidth * i, _currentImageWidth);

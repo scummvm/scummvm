@@ -6237,6 +6237,7 @@ savefiles	db	"DREAMWEB.D00",0
 Recname	db	"DREAMWEB.DEM",0
 
 Quitrequested	db 0
+Subtitles		db 0
 
 
 ;-------------------------------------------------------End of code segment----

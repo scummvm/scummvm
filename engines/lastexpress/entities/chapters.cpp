@@ -57,12 +57,13 @@
 #include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
-#include "lastexpress/game/menu.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/menu/menu.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"

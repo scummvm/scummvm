@@ -24,9 +24,10 @@
 
 #include "lastexpress/entities/vesna.h"
 
+#include "lastexpress/fight/fight.h"
+
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
-#include "lastexpress/game/fight.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"

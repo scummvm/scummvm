@@ -206,7 +206,6 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 	}
 
 	SDL_Event ev;
-	ev.type = SDL_NOEVENT;
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
 		if (dispatchSDLEvent(ev, event))
@@ -304,7 +303,7 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, (Uint16)ev.key.keysym.unicode);
 
 	return true;
 }
@@ -348,7 +347,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 	event.type = Common::EVENT_KEYUP;
 	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, (Uint16)ev.key.keysym.unicode);
 
 	// Ctrl-Alt-<key> will change the GFX mode
 	SDLModToOSystemKeyFlags(mod, event);
@@ -418,19 +417,19 @@ bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 		switch (ev.jbutton.button) {
 		case JOY_BUT_ESCAPE:
 			event.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_PERIOD:
 			event.kbd.keycode = Common::KEYCODE_PERIOD;
-			event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_PERIOD, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_SPACE:
 			event.kbd.keycode = Common::KEYCODE_SPACE;
-			event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_F5:
 			event.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		}
 	}
@@ -449,19 +448,19 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 		switch (ev.jbutton.button) {
 		case JOY_BUT_ESCAPE:
 			event.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_PERIOD:
 			event.kbd.keycode = Common::KEYCODE_PERIOD;
-			event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_PERIOD, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_SPACE:
 			event.kbd.keycode = Common::KEYCODE_SPACE;
-			event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_F5:
 			event.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		}
 	}

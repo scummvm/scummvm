@@ -21,11 +21,13 @@
  */
 
 #include "common/savefile.h"
+#include "common/mutex.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "tsage/globals.h"
 #include "tsage/saveload.h"
+#include "tsage/sound.h"
 #include "tsage/tsage.h"
 
 namespace tSage {
@@ -105,6 +107,7 @@ void Serializer::validate(int v, Common::Serializer::Version minVersion,
 
 Common::Error Saver::save(int slot, const Common::String &saveName) {
 	assert(!getMacroRestoreFlag());
+	Common::StackLock slock1(_globals->_soundManager._serverDisabledMutex);
 
 	// Signal any objects registered for notification
 	_saveNotifiers.notify(false);
@@ -149,6 +152,7 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 
 Common::Error Saver::restore(int slot) {
 	assert(!getMacroRestoreFlag());
+	Common::StackLock slock1(_globals->_soundManager._serverDisabledMutex);
 
 	// Signal any objects registered for notification
 	_loadNotifiers.notify(false);
@@ -205,7 +209,7 @@ Common::Error Saver::restore(int slot) {
 
 	// Final post-restore notifications
 	_macroRestoreFlag = false;
-	_loadNotifiers.notify(false);
+	_loadNotifiers.notify(true);
 
 	return Common::kNoError;
 }

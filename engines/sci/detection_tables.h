@@ -3572,7 +3572,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "6dddfa3a8f3a3a513ec9dfdfae955005", 10528},
 		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE, GUIO_NONE	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD | ADGF_UNSTABLE, GUIO_NONE	},
 
 	// Space Quest 6 - English DOS/Win3.11 CD ver 1.11 (from FRG)
 	// SCI interpreter version 2.100.002 (just a guess)
@@ -3580,7 +3580,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "e0615d6e4e10e37ae42e6a2a95aaf145", 10528},
 		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE, GUIO_NONE	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD | ADGF_UNSTABLE, GUIO_NONE	},
 
 	// Space Quest 6 - French DOS/Win3.11 CD (from French magazine Joystick - September 1997)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
@@ -3588,7 +3588,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "3c831625931d5079b73ae8c275f52c95", 10534},
 		{"resource.000", 0, "4195ca940f759424f62b90e262cc1737", 40932397},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformPC, ADGF_UNSTABLE, GUIO_NONE	},
+		Common::FR_FRA, Common::kPlatformPC, ADGF_CD | ADGF_UNSTABLE, GUIO_NONE	},
 
 	// Space Quest 6 - German DOS (from Tobis87, updated info from markcoolio in bug report #2723884)
 	// SCI interpreter version 2.100.002 (just a guess)
@@ -3596,7 +3596,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "664d797415484f85c90b1b45aedc7686", 10534},
 		{"resource.000", 0, "ba87ba91e5bdabb4169dd0df75777722", 40933685},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformPC, ADGF_UNSTABLE, GUIO_NONE	},
+		Common::DE_DEU, Common::kPlatformPC, ADGF_CD | ADGF_UNSTABLE, GUIO_NONE	},
 
 	// Space Quest 6 - English DOS/Win3.11 Interactive Demo (from FRG)
 	// SCI interpreter version 2.100.002 (just a guess)

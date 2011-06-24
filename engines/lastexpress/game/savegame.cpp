@@ -24,10 +24,11 @@
 
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
-#include "lastexpress/game/menu.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/menu/menu.h"
 
 #include "lastexpress/debug.h"
 #include "lastexpress/lastexpress.h"

@@ -270,6 +270,9 @@ ArtVpath *art_vpath_cat(ArtVpath *a, ArtVpath *b) {
 	len_a = art_vpath_len(a);
 	len_b = art_vpath_len(b);
 	dest = art_new(ArtVpath, len_a + len_b + 1);
+	if (!dest)
+		error("[art_vpath_cat] Cannot allocate memory");
+
 	p = dest;
 
 	for (int i = 0; i < len_a; i++)
@@ -299,6 +302,8 @@ ArtVpath *art_vpath_reverse(ArtVpath *a) {
 
 	len = art_vpath_len(a);
 	dest = art_new(ArtVpath, len + 1);
+	if (!dest)
+		error("[art_vpath_reverse] Cannot allocate memory");
 
 	for (i = 0; i < len; i++) {
 		it = a[len - i - 1];
@@ -371,6 +376,8 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, byte *buffer, int width, int height
 
 	int size = art_vpath_len(vec);
 	ArtVpath *vect = art_new(ArtVpath, size + 1);
+	if (!vect)
+		error("[drawBez] Cannot allocate memory");
 
 	int k;
 	for (k = 0; k < size; k++) {

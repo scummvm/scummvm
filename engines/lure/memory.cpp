@@ -93,8 +93,12 @@ void MemoryBlock::copyFrom(const byte *src, uint32 srcPos, uint32 destPos, uint3
 
 void MemoryBlock::reallocate(uint32 size1) {
 	_size = size1;
-	_data = (byte *) realloc(_data, size1);
-	if (!_data) error ("Failed reallocating memory block");
+
+	byte *tmp = (byte *) realloc(_data, size1);
+	if (!tmp)
+		error ("[MemoryBlock::reallocate] Failed reallocating memory block");
+
+	_data = tmp;
 }
 
 } // End of namespace Lure

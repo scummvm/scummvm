@@ -60,6 +60,7 @@ private:
 
 	int _dirsScanned;
 	int _oldGamesCount;
+	int _dirTotal;
 
 	Widget *_okButton;
 	StaticTextWidget *_dirProgressText;

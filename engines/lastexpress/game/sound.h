@@ -125,6 +125,7 @@ public:
 		kFlagDefault     = 0x10,
 
 		kFlagType1_2     = 0x1000000,
+		kFlagLoopedSound = 0x1001001,
 		kFlagSteam       = 0x1001007,
 		kFlagType13      = 0x3000000,
 		kFlagMenuClock   = 0x3080010,
@@ -345,7 +346,8 @@ private:
 	uint32 _lastWarning[12];
 
 	// Looping sound
-	void playLoopingSound();
+	void playLoopingSound(int param);
+	int _loopingSoundDuration;
 
 	// Sound entries
 	Common::List<SoundEntry *> _soundList;    ///< List of all sound entries

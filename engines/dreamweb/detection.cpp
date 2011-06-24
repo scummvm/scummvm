@@ -86,6 +86,8 @@ bool DreamWeb::DreamWebEngine::hasFeature(EngineFeature f) const {
 	switch(f) {
 	case kSupportsRTL:
 		return true;
+	case kSupportsSubtitleOptions:
+		return _gameDescription->desc.flags & ADGF_CD;
 	default:
 		return false;
 	}

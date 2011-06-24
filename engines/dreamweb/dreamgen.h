@@ -487,7 +487,8 @@ public:
 	const static uint16 kSavefiles = 8698;
 	const static uint16 kRecname = 8789;
 	const static uint16 kQuitrequested = 8802;
-	const static uint16 kStak = 8803;
+	const static uint16 kSubtitles = 8803;
+	const static uint16 kStak = 8804;
 	const static uint16 kBlocktextdat = (0);
 	const static uint16 kPersonframes = (0);
 	const static uint16 kDebuglevel1 = (0);

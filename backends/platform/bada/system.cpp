@@ -214,7 +214,10 @@ void BadaSystem::initBackend() {
   logEntered();
 
   // allow translations to be found
-  ConfMan.set("themepath", "/Res");
+  ConfMan.set("themepath", "/Res/scummmobile");
+
+  // use the mobile device theme
+  ConfMan.set("gui_theme", "mobile");
 
   // allow virtual keypad pack to be found
   ConfMan.set("vkeybdpath", "/Res/vkeybd_default");

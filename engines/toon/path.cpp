@@ -342,8 +342,15 @@ next:
 	curX = destx;
 	curY = desty;
 
-	int32 retPathX[4096];
-	int32 retPathY[4096];
+	int32 *retPathX = (int32 *)malloc(4096 * sizeof(int32));
+	int32 *retPathY = (int32 *)malloc(4096 * sizeof(int32));
+	if (!retPathX || !retPathY) {
+		free(retPathX);
+		free(retPathY);
+
+		error("[PathFinding::findPath] Cannot allocate pathfinding buffers");
+	}
+
 	int32 numpath = 0;
 
 	retPathX[numpath] = curX;
@@ -377,8 +384,12 @@ next:
 			}
 		}
 
-		if (bestX < 0 || bestY < 0)
+		if (bestX < 0 || bestY < 0) {
+			free(retPathX);
+			free(retPathY);
+
 			return 0;
+		}
 
 		retPathX[numpath] = bestX;
 		retPathY[numpath] = bestY;
@@ -389,12 +400,19 @@ next:
 
 			memcpy(_tempPathX, retPathX, sizeof(int32) * numpath);
 			memcpy(_tempPathY, retPathY, sizeof(int32) * numpath);
+
+			free(retPathX);
+			free(retPathY);
+
 			return true;
 		}
 
 		curX = bestX;
 		curY = bestY;
 	}
+
+	free(retPathX);
+	free(retPathY);
 
 	return false;
 }

@@ -321,6 +321,8 @@ ArtBpath *VectorImage::storeBez(ArtBpath *bez, int lineStyle, int fillStyle0, in
 	bez[*bezNodes].code = ART_END;
 
 	ArtBpath *bez1 = art_new(ArtBpath, *bezNodes + 1);
+	if (!bez1)
+		error("[VectorImage::storeBez] Cannot allocate memory");
 
 	for (int i = 0; i <= *bezNodes; i++)
 		bez1[i] = bez[i];

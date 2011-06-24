@@ -94,8 +94,8 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 	_sceneObjects_queue.push_front(_sceneObjects);
 
 	_prevSceneOffset = Common::Point(-1, -1);
-	_sceneListeners.push_back(&_soundHandler);
-	_sceneListeners.push_back(&_sequenceManager._soundHandler);
+	_sounds.push_back(&_soundHandler);
+	_sounds.push_back(&_sequenceManager._soundHandler);
 
 	_scrollFollower = NULL;
 	_inventory = NULL;
@@ -148,7 +148,7 @@ void Globals::synchronize(Serializer &s) {
 	}
 
 	s.syncAsSint16LE(_dialogCenter.x); s.syncAsSint16LE(_dialogCenter.y);
-	_sceneListeners.synchronize(s);
+	_sounds.synchronize(s);
 	for (int i = 0; i < 256; ++i)
 		s.syncAsByte(_flags[i]);
 
@@ -157,5 +157,14 @@ void Globals::synchronize(Serializer &s) {
 	SYNC_POINTER(_scrollFollower);
 	s.syncAsSint32LE(_stripNum);
 }
+
+void Globals::dispatchSound(ASound *obj) {
+	obj->dispatch();
+}
+
+void Globals::dispatchSounds() {
+	Common::for_each(_sounds.begin(), _sounds.end(), Globals::dispatchSound);
+}
+
 
 } // end of namespace tSage

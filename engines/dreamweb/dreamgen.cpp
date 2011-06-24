@@ -3482,6 +3482,7 @@ atlast4:
 	bx = pop();
 	es = pop();
 	data.byte(kLockstatus) = 1;
+	return;
 /*continuing to unbounded code: shutdoor from dodoor:60-87*/
 shutdoor:
 	cl = es.byte(bx+19);
@@ -4327,52 +4328,6 @@ noeffects:
 	push(cx);
 	frameoutv();
 	cx = pop();
-}
-
-void DreamGenContext::frameoutv() {
-	STACK_CHECK;
-	push(dx);
-	ax = bx;
-	bx = dx;
-	_mul(bx);
-	_add(di, ax);
-	dx = pop();
-	push(cx);
-	ch = 0;
-	_sub(dx, cx);
-	cx = pop();
-frameloop1:
-	push(cx);
-	ch = 0;
-frameloop2:
-	_lodsb();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto backtosolid;
-backtoother:
-	_inc(di);
-	if (--cx)
-		goto frameloop2;
-	cx = pop();
-	_add(di, dx);
-	_dec(ch);
-	if (!flags.z())
-		goto frameloop1;
-	return;
-frameloop3:
-	_lodsb();
-	_cmp(al, 0);
-	if (flags.z())
-		goto backtoother;
-backtosolid:
-	_stosb();
-	if (--cx)
-		goto frameloop3;
-	cx = pop();
-	_add(di, dx);
-	_dec(ch);
-	if (!flags.z())
-		goto frameloop1;
 }
 
 void DreamGenContext::frameoutbh() {
@@ -6783,6 +6738,7 @@ doopeninv:
 	delpointer();
 	data.byte(kOpenedob) = 255;
 	goto waitexam;
+	return;
 /*continuing to unbounded code: examineagain from examineob:3-66*/
 examineagain:
 	data.byte(kInmaparea) = 0;
@@ -9111,9 +9067,13 @@ waittalk:
 	data.byte(kGetback) = 0;
 	bx = 2660;
 	checkcoords();
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		goto finishtalk;
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
 		goto waittalk;
+finishtalk:
 	bx = data.word(kPersondata);
 	es = cs;
 	_cmp(data.byte(kTalkpos), 4);
@@ -9405,6 +9365,9 @@ hangloopq:
 	cx = pop();
 	_cmp(data.byte(kGetback), 1);
 	if (flags.z())
+		goto quitconv;
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
 		goto quitconv;
 	_cmp(data.byte(kSpeechloaded), 1);
 	if (!flags.z())
@@ -13226,6 +13189,7 @@ void DreamGenContext::useaxe() {
 	return;
 notinpool:
 	showfirstuse();
+	return;
 /*continuing to unbounded code: axeondoor from useelvdoor:19-30*/
 axeondoor:
 	al = 15;
@@ -13876,6 +13840,10 @@ void DreamGenContext::setuptimedtemp() {
 	_cmp(ah, 0);
 	if (flags.z())
 		goto notloadspeech3;
+	push(ax);
+	push(bx);
+	push(cx);
+	push(dx);
 	dl = 'T';
 	dh = ah;
 	cl = 'T';
@@ -13883,9 +13851,20 @@ void DreamGenContext::setuptimedtemp() {
 	loadspeech();
 	_cmp(data.byte(kSpeechloaded), 1);
 	if (!flags.z())
-		goto notloadspeech3;
+		goto _tmp1;
 	al = 50+12;
 	playchannel1();
+_tmp1:
+	dx = pop();
+	cx = pop();
+	bx = pop();
+	ax = pop();
+	_cmp(data.byte(kSpeechloaded), 1);
+	if (!flags.z())
+		goto notloadspeech3;
+	_cmp(data.byte(kSubtitles),  1);
+	if (flags.z())
+		goto notloadspeech3;
 	return;
 notloadspeech3:
 	_cmp(data.word(kTimecount), 0);
@@ -21988,7 +21967,7 @@ void DreamGenContext::__start() {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-		0x00, 0x00, 0x00, };
+		0x00, 0x00, 0x00, 0x00, };
 	ds.assign(src, src + sizeof(src));
 dreamweb(); 
 }
@@ -22126,7 +22105,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case 0xc214: delthisone(); break;
 		case 0xc228: doblocks(); break;
 		case 0xc22c: showframe(); break;
-		case 0xc230: frameoutv(); break;
 		case 0xc238: frameoutbh(); break;
 		case 0xc23c: frameoutfx(); break;
 		case 0xc240: transferinv(); break;

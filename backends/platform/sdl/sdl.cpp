@@ -31,10 +31,18 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/EventRecorder.h"
+#include "common/taskbar.h"
 #include "common/textconsole.h"
 
 #include "backends/saves/default/default-saves.h"
+
+// Audio CD support was removed with SDL 1.3
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+#include "backends/audiocd/default/default-audiocd.h"
+#else
 #include "backends/audiocd/sdl/sdl-audiocd.h"
+#endif
+
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
@@ -125,6 +133,11 @@ void OSystem_SDL::init() {
 	if (_timerManager == 0)
 		_timerManager = new SdlTimerManager();
 
+#if defined(USE_TASKBAR)
+	if (_taskbarManager == 0)
+		_taskbarManager = new Common::TaskbarManager();
+#endif
+
 #ifdef USE_OPENGL
 	// Setup a list with both SDL and OpenGL graphics modes
 	setupGraphicsModes();
@@ -182,8 +195,15 @@ void OSystem_SDL::initBackend() {
 		_mixerManager->init();
 	}
 
-	if (_audiocdManager == 0)
+	if (_audiocdManager == 0) {
+		// Audio CD support was removed with SDL 1.3
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+		_audiocdManager = new DefaultAudioCDManager();
+#else
 		_audiocdManager = new SdlAudioCDManager();
+#endif
+
+	}
 
 	// Setup a custom program icon.
 	setupIcon();
@@ -204,6 +224,21 @@ void OSystem_SDL::initBackend() {
 #endif
 
 }
+
+#if defined(USE_TASKBAR)
+void OSystem_SDL::engineInit() {
+	// Add the started engine to the list of recent tasks
+	_taskbarManager->addRecent(ConfMan.getActiveDomainName(), ConfMan.get("description"));
+
+	// Set the overlay icon the current running engine
+	_taskbarManager->setOverlayIcon(ConfMan.getActiveDomainName(), ConfMan.get("description"));
+}
+
+void OSystem_SDL::engineDone() {
+	// Remove overlay icon
+	_taskbarManager->setOverlayIcon("", "");
+}
+#endif
 
 void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized
@@ -392,6 +427,7 @@ void OSystem_SDL::setupIcon() {
 	for (i = 0; i < ncols; i++) {
 		unsigned char code;
 		char color[32];
+		memset(color, 0, sizeof(color));
 		unsigned int col;
 		if (sscanf(scummvm_icon[1 + i], "%c c %s", &code, color) != 2) {
 			warning("Wrong format of scummvm_icon[%d] (%s)", 1 + i, scummvm_icon[1 + i]);
