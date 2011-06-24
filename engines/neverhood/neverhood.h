@@ -43,6 +43,8 @@ enum NeverhoodGameFeatures {
 
 struct NeverhoodGameDescription;
 
+class ResourceMan;
+
 class NeverhoodEngine : public ::Engine {
 protected:
 
@@ -65,6 +67,8 @@ public:
 	int _mouseX, _mouseY;
 	Common::KeyCode _keyState;
 	uint16 _buttonState;
+
+	ResourceMan *_res;
 
 	void updateEvents();
 

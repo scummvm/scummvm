@@ -38,6 +38,7 @@
 
 #include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
+#include "neverhood/graphics.h"
 #include "neverhood/resourceman.h"
 
 namespace Neverhood {
@@ -68,25 +69,49 @@ Common::Error NeverhoodEngine::run() {
 
 	_isSaveAllowed = false;
 
+	_res = new ResourceMan();
+	_res->addArchive("a.blb");
+	_res->addArchive("c.blb");
+	_res->addArchive("hd.blb");
+	_res->addArchive("i.blb");
+	_res->addArchive("m.blb");
+	_res->addArchive("s.blb");
+	_res->addArchive("t.blb");
+
 #if 0
 	BlbArchive *blb = new BlbArchive();
 	blb->open("m.blb");
 	delete blb;
 #endif
 
-#if 1
-	ResourceMan *res = new ResourceMan();
-	res->addArchive("a.blb");
-	res->addArchive("c.blb");
-	res->addArchive("hd.blb");
-	res->addArchive("i.blb");
-	res->addArchive("m.blb");
-	res->addArchive("s.blb");
-	res->addArchive("t.blb");
-	
-	ResourceFileEntry *r = res->findEntry(0x50A80517);
-	
+#if 0
+	ResourceFileEntry *r = _res->findEntry(0x50A80517);
 #endif
+
+#if 0
+	int resourceHandle = _res->useResource(0x0CA04202);
+	debug("resourceHandle = %d", resourceHandle);
+	byte *data = _res->loadResource(resourceHandle);
+	bool rle;
+	NDimensions dimensions;
+	NUnknown unknown;
+	byte *palette, *pixels;
+	parseBitmapResource(data, &rle, &dimensions, &unknown, &palette, &pixels);
+	debug("%d, %d", dimensions.width, dimensions.height);
+	byte *rawpixels = new byte[dimensions.width * dimensions.height];
+	memset(rawpixels, 0, dimensions.width * dimensions.height);
+	debug("rle = %d", rle);
+	unpackSpriteRle(pixels, dimensions.width, dimensions.height, rawpixels, dimensions.width, false, false);
+	Common::DumpFile d;
+	d.open("dump.0");
+	d.write(rawpixels, dimensions.width * dimensions.height);
+	d.close();
+	delete[] rawpixels;
+	_res->unloadResource(resourceHandle);
+	_res->unuseResource(resourceHandle);
+#endif
+	
+	delete _res;
 
 	return Common::kNoError;
 }
