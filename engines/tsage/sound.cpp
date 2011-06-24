@@ -664,11 +664,11 @@ void SoundManager::_sfRethinkSoundDrivers() {
 							byteVal = *groupData;
 							groupData += 2;
 
-							for (idx = 0; idx < byteVal; ++idx) {
+							for (int entryIndez = 0; entryIndez < byteVal; ++entryIndez) {
 								VoiceStructEntry ve;
 								memset(&ve, 0, sizeof(VoiceStructEntry));
 
-								ve._voiceNum = idx;
+								ve._voiceNum = entryIndez;
 								ve._driver = driver;
 								ve._type1._field4 = -1;
 								ve._type1._field5 = 0;
