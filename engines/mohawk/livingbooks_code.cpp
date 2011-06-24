@@ -441,6 +441,33 @@ void LBCode::parseMain() {
 		}
 		break;
 
+	case kTokenPlusPlus:
+	case kTokenMinusMinus:
+		{
+		byte token = _currToken;
+		if (token == kTokenPlusPlus)
+			debugN("++");
+		else
+			debugN("--");
+		nextToken();
+
+		if (_currToken != kTokenIdentifier)
+			error("expected identifier");
+		assert(_currValue.type == kLBValueString);
+		Common::String varname = _currValue.string;
+		debugN("%s", varname.c_str());
+		LBValue &val = _vm->_variables[varname];
+
+		// FIXME: pre/postincrement for non-integers
+		if (token == kTokenPlusPlus)
+			val.integer++;
+		else
+			val.integer--;
+		_stack.push(val);
+		nextToken();
+		}
+		break;
+
 	case kTokenLiteral:
 	case kTokenConstMode:
 	case kTokenConstEventId:
