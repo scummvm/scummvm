@@ -144,7 +144,7 @@ FighterOpponentIvo::FighterOpponentIvo(LastExpressEngine *engine) : Opponent(eng
 	_sequences.push_back(loadSequence("csdr.seq"));
 	_sequences.push_back(loadSequence("2003l.seq"));
 
-	getSound()->playSound(kEntityTables0, "MUS032", SoundManager::kFlagDefault);
+	getSound()->playSound(kEntityTables0, "MUS032", kFlagDefault);
 
 	_countdown = 5;
 	_field_38 = 15;

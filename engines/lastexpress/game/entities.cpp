@@ -299,7 +299,7 @@ void Entities::setupChapter(ChapterIndex chapter) {
 		memset(&_compartments1, 0, sizeof(_compartments1));
 		memset(&_positions, 0, sizeof(_positions));
 
-		getSound()->resetQueue(SoundManager::kSoundType13);
+		getSound()->resetQueue(kSoundType13);
 	}
 
 	// we skip the header when doing entity setup
@@ -2355,7 +2355,7 @@ bool Entities::changeCar(EntityData::EntityCallData *data, EntityIndex entity, C
 	if (data->car == newCar) {
 		if (isInGreenCarEntrance(kEntityPlayer)) {
 			getSound()->playSoundEvent(kEntityPlayer, 14);
-			getSound()->excuseMe(entity, kEntityPlayer, SoundManager::kFlagDefault);
+			getSound()->excuseMe(entity, kEntityPlayer, kFlagDefault);
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 1);
 			getSound()->playSound(kEntityPlayer, "CAT1127A");
 			getSound()->playSoundEvent(kEntityPlayer, 15);
@@ -2374,7 +2374,7 @@ bool Entities::changeCar(EntityData::EntityCallData *data, EntityIndex entity, C
 	if (data->car == newCar) {
 		if (isInKronosCarEntrance(kEntityPlayer)) {
 			getSound()->playSoundEvent(kEntityPlayer, 14);
-			getSound()->excuseMe(entity, kEntityPlayer, SoundManager::kFlagDefault);
+			getSound()->excuseMe(entity, kEntityPlayer, kFlagDefault);
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 62);
 			getSound()->playSound(kEntityPlayer, "CAT1127A");
 			getSound()->playSoundEvent(kEntityPlayer, 15);

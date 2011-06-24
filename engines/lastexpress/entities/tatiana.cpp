@@ -1952,7 +1952,7 @@ IMPLEMENT_FUNCTION(48, Tatiana, function48)
 
 		UPDATE_PARAM_GOTO(params->param2, getState()->timeTicks, 5 * (3 * rnd(5) + 30), label_end);
 
-		getSound()->playSound(kEntityTatiana, "LIB012", SoundManager::kFlagDefault);
+		getSound()->playSound(kEntityTatiana, "LIB012", kFlagDefault);
 		params->param2 = 0;
 
 label_end:

@@ -199,7 +199,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(13, August, playSound16)
-	Entity::playSound(savepoint, false, SoundManager::kFlagDefault);
+	Entity::playSound(savepoint, false, kFlagDefault);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -338,7 +338,7 @@ IMPLEMENT_FUNCTION_II(19, August, function19, bool, bool)
 	case kAction1:
 		getData()->inventoryItem = kItemNone;
 		getSound()->playSound(kEntityPlayer, "CAT1002");
-		getSound()->playSound(kEntityAugust, "AUG3101", SoundManager::kFlagInvalid, 15);
+		getSound()->playSound(kEntityAugust, "AUG3101", kFlagInvalid, 15);
 		break;
 
 	case kActionDefault:
@@ -2179,7 +2179,7 @@ IMPLEMENT_FUNCTION_III(42, August, function42, CarIndex, EntityPosition, bool)
 		getData()->inventoryItem = kItemNone;
 
 		getSound()->playSound(kEntityPlayer, "CAT1002");
-		getSound()->playSound(kEntityAugust, getEvent(kEventAugustBringBriefcase) ? "AUG3103" : "AUG3100", SoundManager::kFlagInvalid, 15);
+		getSound()->playSound(kEntityAugust, getEvent(kEventAugustBringBriefcase) ? "AUG3103" : "AUG3100", kFlagInvalid, 15);
 		break;
 
 	case kActionExcuseMe:
@@ -2385,7 +2385,7 @@ IMPLEMENT_FUNCTION(45, August, function45)
 	case kAction1:
 		getData()->inventoryItem = kItemNone;
 		getSound()->playSound(kEntityPlayer, "CAT1002");
-		getSound()->playSound(kEntityAugust, "AUG3102", SoundManager::kFlagInvalid, 15);
+		getSound()->playSound(kEntityAugust, "AUG3102", kFlagInvalid, 15);
 		break;
 
 	case kActionDefault:

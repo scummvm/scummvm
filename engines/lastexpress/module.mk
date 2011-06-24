@@ -66,6 +66,7 @@ MODULE_OBJS := \
 	menu/clock.o \
 	menu/menu.o \
 	menu/trainline.o \
+	sound/entry.o \
 	debug.o \
 	detection.o \
 	graphics.o \

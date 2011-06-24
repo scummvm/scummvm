@@ -111,7 +111,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(7, Milos, playSound16)
-	Entity::playSound(savepoint, false, SoundManager::kFlagDefault);
+	Entity::playSound(savepoint, false, kFlagDefault);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -1728,7 +1728,7 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 
 			getSound()->processEntries();
 			getAction()->playAnimation(isNight() ? kEventLocomotiveMilosNight : kEventLocomotiveMilosDay);
-			getSound()->setupEntry(SoundManager::kSoundType7, kEntityMilos);
+			getSound()->setupEntry(kSoundType7, kEntityMilos);
 			getScenes()->loadSceneFromPosition(kCarCoalTender, 1);
 			break;
 

@@ -223,7 +223,11 @@ String TranslationManager::getLangById(int id) const {
 }
 
 bool TranslationManager::openTranslationsFile(File& inFile) {
-	// First try to open it using the SearchMan.
+	// First look in the Themepath if we can find the file.
+	if (ConfMan.hasKey("themepath") && openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile))
+		return true;
+
+	// Then try to open it using the SearchMan.
 	ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, "translations.dat");
 	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
@@ -234,10 +238,6 @@ bool TranslationManager::openTranslationsFile(File& inFile) {
 			inFile.close();
 		}
 	}
-
-	// Then look in the Themepath if we can find the file.
-	if (ConfMan.hasKey("themepath"))
-		return openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile);
 
 	return false;
 }

@@ -2063,7 +2063,7 @@ IMPLEMENT_FUNCTION(47, Anna, function47)
 			break;
 
 		case 4:
-			getSound()->playSound(kEntityAnna, getEvent(kEventAugustLunch) ? "Ann3136" : "Ann3136A", SoundManager::kFlagInvalid, 30);
+			getSound()->playSound(kEntityAnna, getEvent(kEventAugustLunch) ? "Ann3136" : "Ann3136A", kFlagInvalid, 30);
 			getSavePoints()->push(kEntityAnna, kEntityAugust, kAction122358304);
 
 			setCallback(5);
@@ -2258,7 +2258,7 @@ IMPLEMENT_FUNCTION(51, Anna, function51)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityAnna, "Aug3142", SoundManager::kFlagInvalid, 30);
+		getSound()->playSound(kEntityAnna, "Aug3142", kFlagInvalid, 30);
 		getEntities()->updatePositionEnter(kEntityAnna, kCarRestaurant, 57);
 		getEntities()->drawSequenceRight(kEntityAnna, "112A");
 		if (getEntities()->isInRestaurant(kEntityPlayer))
@@ -3841,7 +3841,7 @@ IMPLEMENT_FUNCTION(78, Anna, function78)
 		case 2:
 			getAction()->playAnimation(kEventKronosHostageAnna);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 61);
-			getSound()->playSound(kEntityAnna, "Mus024", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityAnna, "Mus024", kFlagDefault);
 			setup_function79();
 			break;
 		}
@@ -3911,11 +3911,11 @@ IMPLEMENT_FUNCTION(80, Anna, function80)
 	case kActionNone:
 		UPDATE_PARAM(params->param1, getState()->timeTicks, 450);
 
-		getSound()->playSound(kEntityPlayer, "Kro5001", SoundManager::kFlagDefault);
+		getSound()->playSound(kEntityPlayer, "Kro5001", kFlagDefault);
 		break;
 
 	case kActionEndSound:
-		getSound()->playSound(kEntityPlayer, "Kro5002", SoundManager::kFlagDefault);
+		getSound()->playSound(kEntityPlayer, "Kro5002", kFlagDefault);
 		getState()->time = kTime4923000;
 
 		setCallback(1);
@@ -3940,7 +3940,7 @@ IMPLEMENT_FUNCTION(80, Anna, function80)
 
 			getAction()->playAnimation(kEventKronosBringFirebird);
 			getScenes()->loadSceneFromItem(kItemFirebird);
-			getSound()->playSound(kEntityAnna, "Mus025", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityAnna, "Mus025", kFlagDefault);
 			break;
 
 		case 2:

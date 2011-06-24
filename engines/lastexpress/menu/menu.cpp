@@ -314,7 +314,7 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 				getFlags()->mouseRightClick = false;
 
 				// Play intro music
-				getSound()->playSoundWithSubtitles("MUS001.SND", SoundManager::kFlagMusic, kEntityPlayer);
+				getSound()->playSoundWithSubtitles("MUS001.SND", kFlagMusic, kEntityPlayer);
 
 				// Show The Smoking Car logo
 				if (animation.load(getArchive("1931.nis")))
@@ -325,7 +325,7 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 		} else {
 			// Only show the quick intro
 			if (!_hasShownStartScreen) {
-				getSound()->playSoundWithSubtitles("MUS018.SND", SoundManager::kFlagMusic, kEntityPlayer);
+				getSound()->playSoundWithSubtitles("MUS018.SND", kFlagMusic, kEntityPlayer);
 				getScenes()->loadScene(kSceneStartScreen);
 
 				// Original game waits 60 frames and loops Sound::unknownFunction1 unless the right button is pressed
@@ -349,7 +349,7 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 
 	// Setup sound
 	getSound()->unknownFunction4();
-	getSound()->resetQueue(SoundManager::kSoundType11, SoundManager::kSoundType13);
+	getSound()->resetQueue(kSoundType11, kSoundType13);
 	if (getSound()->isBuffered("TIMER"))
 		getSound()->removeFromQueue("TIMER");
 
@@ -484,7 +484,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 		setLogicEventHandlers();
 
 		if (_index) {
-			getSound()->processEntry(SoundManager::kSoundType11);
+			getSound()->processEntry(kSoundType11);
 		} else {
 			if (!getFlags()->mouseRightClick) {
 				getScenes()->loadScene((SceneIndex)(5 * _gameId + 3));
@@ -496,7 +496,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 						getScenes()->loadScene((SceneIndex)(5 * _gameId + 5));
 
 						if (!getFlags()->mouseRightClick) {
-							getSound()->processEntry(SoundManager::kSoundType11);
+							getSound()->processEntry(kSoundType11);
 
 							// Show intro
 							Animation animation;
@@ -512,7 +512,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 			if (!getEvent(kEventIntro))	{
 				getEvent(kEventIntro) = 1;
 
-				getSound()->processEntry(SoundManager::kSoundType11);
+				getSound()->processEntry(kSoundType11);
 			}
 		}
 
@@ -1120,7 +1120,7 @@ void Menu::updateTime(uint32 time) {
 		if (getSound()->isBuffered(kEntityChapters))
 			getSound()->removeFromQueue(kEntityChapters);
 
-		getSound()->playSoundWithSubtitles((_currentTime >= _time) ? "LIB042" : "LIB041", SoundManager::kFlagMenuClock, kEntityChapters);
+		getSound()->playSoundWithSubtitles((_currentTime >= _time) ? "LIB042" : "LIB041", kFlagMenuClock, kEntityChapters);
 		adjustIndex(_currentTime, _time, false);
 	}
 }

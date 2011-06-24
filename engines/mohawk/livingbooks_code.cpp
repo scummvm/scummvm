@@ -32,6 +32,10 @@ bool LBValue::operator==(const LBValue &x) const {
 	if (type != x.type) {
 		if (isNumeric() && x.isNumeric())
 			return toDouble() == x.toDouble();
+		else if (type == kLBValueString && x.type == kLBValueItemPtr)
+			return string == x.item->getName();
+		else if (type == kLBValueItemPtr && x.type == kLBValueString)
+			return item->getName() == x.string;
 		else
 			return false;
 	}
@@ -434,6 +438,33 @@ void LBCode::parseMain() {
 			_vm->_variables[varname].integer--;
 			nextToken();
 		}
+		}
+		break;
+
+	case kTokenPlusPlus:
+	case kTokenMinusMinus:
+		{
+		byte token = _currToken;
+		if (token == kTokenPlusPlus)
+			debugN("++");
+		else
+			debugN("--");
+		nextToken();
+
+		if (_currToken != kTokenIdentifier)
+			error("expected identifier");
+		assert(_currValue.type == kLBValueString);
+		Common::String varname = _currValue.string;
+		debugN("%s", varname.c_str());
+		LBValue &val = _vm->_variables[varname];
+
+		// FIXME: pre/postincrement for non-integers
+		if (token == kTokenPlusPlus)
+			val.integer++;
+		else
+			val.integer--;
+		_stack.push(val);
+		nextToken();
 		}
 		break;
 

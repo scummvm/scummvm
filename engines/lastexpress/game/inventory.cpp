@@ -156,7 +156,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			_portraitHighlighted = false;
 			_isOpened = false;
 
-			getSound()->playSoundWithSubtitles("LIB039.SND", SoundManager::kFlagMenuClock, kEntityPlayer);
+			getSound()->playSoundWithSubtitles("LIB039.SND", kFlagMenuClock, kEntityPlayer);
 
 			getMenu()->show(true, kSavegameTypeIndex, 0);
 

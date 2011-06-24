@@ -132,7 +132,7 @@ FighterOpponentSalko::FighterOpponentSalko(LastExpressEngine *engine) : Opponent
 	_sequences.push_back(loadSequence("2004ohm.seq"));
 	_sequences.push_back(loadSequence("blank.seq"));
 
-	getSound()->playSound(kEntityTables0, "MUS035", SoundManager::kFlagDefault);
+	getSound()->playSound(kEntityTables0, "MUS035", kFlagDefault);
 
 	_countdown = 3;
 	_field_38 = 30;

@@ -480,7 +480,7 @@ IMPLEMENT_FUNCTION(14, Max, freeFromCage)
 				getSound()->removeFromQueue(kEntityMax);
 
 			getAction()->playAnimation(kEventCathMaxCage);
-			getSound()->setupEntry(SoundManager::kSoundType7, kEntityMax);
+			getSound()->setupEntry(kSoundType7, kEntityMax);
 			getScenes()->processScene();
 			break;
 

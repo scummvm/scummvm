@@ -1132,7 +1132,7 @@ void SceneManager::postProcessScene() {
 			}
 
 			if (progress)
-				getSound()->excuseMe((progress == 1) ? entities[0] : entities[rnd(progress)], kEntityPlayer, SoundManager::kFlagDefault);
+				getSound()->excuseMe((progress == 1) ? entities[0] : entities[rnd(progress)], kEntityPlayer, kFlagDefault);
 		}
 
 		if (hotspot->scene)
@@ -1157,8 +1157,8 @@ void SceneManager::postProcessScene() {
 		if (getState()->time >= kTimeCityGalanta || getProgress().field_18 == 4)
 			break;
 
-		getSound()->processEntry(SoundManager::kSoundType7);
-		getSound()->playSound(kEntityTrain, "LIB050", SoundManager::kFlagDefault);
+		getSound()->processEntry(kSoundType7);
+		getSound()->playSound(kEntityTrain, "LIB050", kFlagDefault);
 
 		switch (getProgress().chapter) {
 		default:

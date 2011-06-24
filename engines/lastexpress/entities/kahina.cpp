@@ -1186,7 +1186,7 @@ IMPLEMENT_FUNCTION(24, Kahina, function24)
 			getEntities()->updateEntity(kEntityKahina, kCarKronos, kPosition_9270);
 			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + 750));
 			getSavePoints()->push(kEntityKahina, kEntityKronos, kAction235599361);
-			getSound()->playSound(kEntityKahina, "MUS016", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityKahina, "MUS016", kFlagDefault);
 			getProgress().field_44 = 1;
 
 			params->param1 = true;

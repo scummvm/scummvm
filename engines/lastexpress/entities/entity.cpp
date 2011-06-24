@@ -255,7 +255,7 @@ void Entity::savegame(const SavePoint &savepoint) {
 	}
 }
 
-void Entity::playSound(const SavePoint &savepoint, bool resetItem, SoundManager::FlagType flag) {
+void Entity::playSound(const SavePoint &savepoint, bool resetItem, SoundFlag flag) {
 	EXPOSE_PARAMS(EntityData::EntityParametersSIIS)
 
 	switch (savepoint.action) {
