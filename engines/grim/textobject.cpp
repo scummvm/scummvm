@@ -162,8 +162,9 @@ void TextObject::setupText() {
 		msg.deleteLastChar();
 		pos = msg.size() - 1;
 	}
+	delete[] _lines;
 	if (msg.size() == 0) {
-		_disabled = true;
+		_lines = NULL;
 		return;
 	}
 
@@ -305,7 +306,7 @@ int TextObject::getLineY(int line) {
 }
 
 void TextObject::draw() {
-	if (_disabled)
+	if (_disabled || !_lines)
 		return;
 
 	if (!_created) {
