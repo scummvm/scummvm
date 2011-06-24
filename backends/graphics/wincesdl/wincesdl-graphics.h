@@ -90,6 +90,8 @@ public:
 	void swap_zoom_up();
 	void swap_zoom_down();
 	void swap_mouse_visibility();
+	void init_panel();
+	void reset_panel();
 	void swap_freeLook();
 	bool getFreeLookState();
 

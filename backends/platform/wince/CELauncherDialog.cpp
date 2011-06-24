@@ -24,6 +24,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/platform/wince/wince-sdl.h"
+#include "backends/graphics/wincesdl/wincesdl-graphics.h"
 
 #include "CELauncherDialog.h"
 
@@ -34,6 +35,7 @@
 #include "gui/browser.h"
 #include "gui/message.h"
 #include "gui/ThemeEval.h"
+#include "gui/widgets/list.h"
 
 #include "common/config-manager.h"
 
@@ -63,9 +65,13 @@ public:
 };
 
 CELauncherDialog::CELauncherDialog() : GUI::LauncherDialog() {
+	((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->reset_panel();
 }
 
 void CELauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	if ((cmd == 'STRT') || (cmd == kListItemActivatedCmd) || (cmd == kListItemDoubleClickedCmd)) {
+		((WINCESdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->init_panel();
+	}
 	LauncherDialog::handleCommand(sender, cmd, data);
 	if (cmd == 'ABOU') {
 		CEAboutDialog about;

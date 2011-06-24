@@ -1599,6 +1599,19 @@ void WINCESdlGraphicsManager::swap_mouse_visibility() {
 		undrawMouse();
 }
 
+void WINCESdlGraphicsManager::init_panel() {
+	_panelVisible = true;
+	if (_panelInitialized) {
+		_toolbarHandler.setVisible(true);
+		_toolbarHandler.setActive(NAME_MAIN_PANEL);
+	}
+}
+
+void WINCESdlGraphicsManager::reset_panel() {
+	_panelVisible = false;
+	_toolbarHandler.setVisible(false);
+}
+
 // Smartphone actions
 void WINCESdlGraphicsManager::initZones() {
 	int i;
