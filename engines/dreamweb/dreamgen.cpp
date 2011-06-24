@@ -3482,6 +3482,7 @@ atlast4:
 	bx = pop();
 	es = pop();
 	data.byte(kLockstatus) = 1;
+	return;
 /*continuing to unbounded code: shutdoor from dodoor:60-87*/
 shutdoor:
 	cl = es.byte(bx+19);
@@ -6737,6 +6738,7 @@ doopeninv:
 	delpointer();
 	data.byte(kOpenedob) = 255;
 	goto waitexam;
+	return;
 /*continuing to unbounded code: examineagain from examineob:3-66*/
 examineagain:
 	data.byte(kInmaparea) = 0;
@@ -13187,6 +13189,7 @@ void DreamGenContext::useaxe() {
 	return;
 notinpool:
 	showfirstuse();
+	return;
 /*continuing to unbounded code: axeondoor from useelvdoor:19-30*/
 axeondoor:
 	al = 15;
