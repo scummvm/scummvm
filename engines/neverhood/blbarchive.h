@@ -54,7 +54,10 @@ public:
 	~BlbArchive();
 	void open(const Common::String &filename);
 	void load(uint index, byte *buffer, uint32 size);
+	byte *getEntryExtData(uint index);
 	uint32 getSize(uint index) { return _entries[index].size; }
+	BlbArchiveEntry *getEntry(uint index) { return &_entries[index]; }
+	uint getCount() { return _entries.size(); }
 private:
 	Common::File _fd;
 	Common::Array<BlbArchiveEntry> _entries;

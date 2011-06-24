@@ -49,7 +49,7 @@ void BlbArchive::open(const Common::String &filename) {
 	if (header.id1 != 0x2004940 || header.id2 != 7 || header.fileSize != _fd.size())
 		error("BlbArchive::open() %s seems to be corrupt", filename.c_str());
 
-	debug("fileCount = %d", header.fileCount);
+	debug(2, "fileCount = %d", header.fileCount);
 
 	_entries.reserve(header.fileCount);
 
@@ -70,7 +70,7 @@ void BlbArchive::open(const Common::String &filename) {
 		entry.offset = _fd.readUint32LE();
 		entry.diskSize = _fd.readUint32LE();
 		entry.size = _fd.readUint32LE();
-		debug("%08X: %03d, %02X, %04X, %08X, %08X, %08X, %08X",
+		debug(2, "%08X: %03d, %02X, %04X, %08X, %08X, %08X, %08X",
 			entry.fileHash, entry.type, entry.comprType, entry.extDataOfs, entry.timeStamp,
 			entry.offset, entry.diskSize, entry.size);
 	}
@@ -84,7 +84,6 @@ void BlbArchive::open(const Common::String &filename) {
 }
 
 void BlbArchive::load(uint index, byte *buffer, uint32 size) {
-
 	BlbArchiveEntry &entry = _entries[index];
 	
 	_fd.seek(entry.offset);
@@ -102,6 +101,11 @@ void BlbArchive::load(uint index, byte *buffer, uint32 size) {
 		;
 	}
 
+}
+
+byte *BlbArchive::getEntryExtData(uint index) {
+	BlbArchiveEntry &entry = _entries[index];
+	return _extData && entry.extDataOfs != 0 ? &_extData[entry.extDataOfs - 1] : NULL;
 }
 
 } // End of namespace Neverhood

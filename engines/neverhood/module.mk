@@ -3,7 +3,8 @@ MODULE := engines/neverhood
 MODULE_OBJS = \
 	blbarchive.o \
 	detection.o \
-	neverhood.o
+	neverhood.o \
+	resourceman.o
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS

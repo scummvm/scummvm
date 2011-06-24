@@ -38,6 +38,7 @@
 
 #include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
+#include "neverhood/resourceman.h"
 
 namespace Neverhood {
 
@@ -67,11 +68,25 @@ Common::Error NeverhoodEngine::run() {
 
 	_isSaveAllowed = false;
 
-
+#if 0
 	BlbArchive *blb = new BlbArchive();
 	blb->open("m.blb");
-	
 	delete blb;
+#endif
+
+#if 1
+	ResourceMan *res = new ResourceMan();
+	res->addArchive("a.blb");
+	res->addArchive("c.blb");
+	res->addArchive("hd.blb");
+	res->addArchive("i.blb");
+	res->addArchive("m.blb");
+	res->addArchive("s.blb");
+	res->addArchive("t.blb");
+	
+	ResourceFileEntry *r = res->findEntry(0x50A80517);
+	
+#endif
 
 	return Common::kNoError;
 }
