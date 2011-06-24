@@ -66,7 +66,7 @@ public:
 	Common::KeyCode _keyState;
 	uint16 _buttonState;
 
-    void updateEvents();
+	void updateEvents();
 
 public:
 	

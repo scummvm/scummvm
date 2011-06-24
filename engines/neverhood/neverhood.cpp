@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/file.h"
@@ -35,10 +34,10 @@
 
 #include "engines/util.h"
 
-#include "audio/mididrv.h"
 #include "audio/mixer.h"
 
 #include "neverhood/neverhood.h"
+#include "neverhood/blbarchive.h"
 
 namespace Neverhood {
 
@@ -67,6 +66,12 @@ Common::Error NeverhoodEngine::run() {
 	_system->endGFXTransaction();
 
 	_isSaveAllowed = false;
+
+
+	BlbArchive *blb = new BlbArchive();
+	blb->open("m.blb");
+	
+	delete blb;
 
 	return Common::kNoError;
 }
