@@ -32,6 +32,10 @@ bool LBValue::operator==(const LBValue &x) const {
 	if (type != x.type) {
 		if (isNumeric() && x.isNumeric())
 			return toDouble() == x.toDouble();
+		else if (type == kLBValueString && x.type == kLBValueItemPtr)
+			return string == x.item->getName();
+		else if (type == kLBValueItemPtr && x.type == kLBValueString)
+			return item->getName() == x.string;
 		else
 			return false;
 	}
