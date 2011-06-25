@@ -22,6 +22,7 @@ keypadloop:	call	delpointer
 	call	readmouse
 	call	showkeypad
 	call	showpointer
+	call	vsync
 	cmp	presscount,0
 	jz	nopresses
 	dec	presscount

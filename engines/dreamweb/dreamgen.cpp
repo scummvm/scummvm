@@ -14630,6 +14630,7 @@ void DreamGenContext::showkeypad() {
 	di = (36+112)+31;
 	bx = (72)+59;
 	singlekey();
+	vsync();
 	_cmp(data.byte(kLightcount), 0);
 	if (flags.z())
 		return /* (notenter) */;
