@@ -23,6 +23,7 @@
 #include "dreamweb/dreamweb.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
+#include "common/config-manager.h"
 
 namespace DreamGen {
 
@@ -49,13 +50,30 @@ void DreamGenContext::dreamweb() {
 
 	bool firstLoop = true;
 
+	int savegameId = Common::ConfigManager::instance().getInt("save_slot");
+
 	while (true) {
 
 		scanfornames();
 
 		bool startNewGame = true;
 
-		if (al == 0 && firstLoop) {
+		if (firstLoop && savegameId >= 0) {
+
+			// loading a savegame requested from launcher/command line
+
+			cls();
+			setmode();
+			loadpalfromiff();
+			clearpalette();
+
+			ax = savegameId;
+			doload();
+			worktoscreen();
+			fadescreenup();
+			startNewGame = false;
+
+		} else if (al == 0 && firstLoop) {
 
 			// no savegames found, and we're not restarting.
 
@@ -576,8 +594,6 @@ void DreamGenContext::dosreturn() {
 }
 
 void DreamGenContext::set16colpalette() {
-	//fixme: this is a bit hackish, set16colpalette called after initialization and nearly before main loop.
-	engine->enableSavingOrLoading();
 }
 
 void DreamGenContext::mode640x480() {

@@ -14510,6 +14510,7 @@ alreadyloadold:
 	_and(ax, 1);
 	if (flags.z())
 		return /* (noloadold) */;
+	ax = 0x0ffff;
 	doload();
 	_cmp(data.byte(kGetback), 4);
 	if (flags.z())

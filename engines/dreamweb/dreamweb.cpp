@@ -110,14 +110,6 @@ void DreamWebEngine::processEvents() {
 		return;
 	}
 
-	if (_enableSavingOrLoading && _loadSavefile >= 0 && _loadSavefile <= 6) {
-		debug(1, "loading save state %d", _loadSavefile);
-		_context.data.byte(_context.kCurrentslot) = _loadSavefile;
-		_loadSavefile = -1;
-		_context.loadposition();
-		_context.data.byte(_context.kGetback) = 1;
-	}
-
 	soundHandler();
 	Common::Event event;
 	int softKey, hardKey;
@@ -217,8 +209,6 @@ Common::Error DreamWebEngine::run() {
 	_console = new DreamWebConsole(this);
 
 	ConfMan.registerDefault("dreamweb_originalsaveload", "true");
-
-	_loadSavefile = Common::ConfigManager::instance().getInt("save_slot");
 
 	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	_context.__start();

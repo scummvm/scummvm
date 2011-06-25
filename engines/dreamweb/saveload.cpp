@@ -37,15 +37,22 @@ void DreamGenContext::loadgame() {
 	}
 	if (data.word(kMousebutton) == data.word(kOldbutton))
 		return; // "noload"
-	if (data.word(kMousebutton) == 1)
+	if (data.word(kMousebutton) == 1) {
+		ax = 0xFFFF;
 		doload();
+	}
 }
 
+// input: ax = savegameId
+// if -1, open menu to ask for slot to load
+// if >= 0, directly load from that slot
 void DreamGenContext::doload() {
 	STACK_CHECK;
+	int savegameId = (int16)ax;
+
 	data.byte(kLoadingorsave) = 1;
 
-	if (ConfMan.getBool("dreamweb_originalsaveload")) {
+	if (ConfMan.getBool("dreamweb_originalsaveload") && savegameId == -1) {
 		showopbox();
 		showloadops();
 		data.byte(kCurrentslot) = 0;
@@ -73,13 +80,18 @@ void DreamGenContext::doload() {
 				return; // "quitloaded"
 		}
 	} else {
-		const EnginePlugin *plugin = NULL;
-		Common::String gameId = ConfMan.get("gameid");
-		EngineMan.findGame(gameId, &plugin);
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
-		dialog->setSaveMode(false);
-		int savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
-		delete dialog;
+
+		if (savegameId == -1) {
+			// Open dialog to get savegameId
+
+			const EnginePlugin *plugin = NULL;
+			Common::String gameId = ConfMan.get("gameid");
+			EngineMan.findGame(gameId, &plugin);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"));
+			dialog->setSaveMode(false);
+			savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			delete dialog;
+		}
 
 		if (savegameId < 0) {
 			data.byte(kGetback) = 0;
@@ -114,8 +126,10 @@ void DreamGenContext::doload() {
 		} else {
 			// For potential support of more than 7 savegame slots,
 			// loading into the savenames buffer isn't always possible
+			// Emulate a loadseg call:
 			uint8 namebuf[17];
 			engine->readFromFile(namebuf, 17);
+			_add(di, 2);
 		}
 		ds = data; 
 		dx = kStartvars;
@@ -136,7 +150,10 @@ void DreamGenContext::doload() {
 		data.byte(kGetback) = 1;
 	}
 
-	getridoftemp();
+	// kTempgraphics might not have been allocated if we bypassed all menus
+	if (data.word(kTempgraphics) != 0xFFFF)
+		getridoftemp();
+
 	dx = data;
 	es = dx;
 	bx = kMadeuproomdat;

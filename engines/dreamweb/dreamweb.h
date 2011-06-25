@@ -129,7 +129,6 @@ private:
 	uint _speed;
 	bool _turbo;
 	uint _oldMouseState;
-	int _loadSavefile;
 	bool _enableSavingOrLoading;
 	Common::Language _language;
 
