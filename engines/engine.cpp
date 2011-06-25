@@ -96,6 +96,7 @@ Engine::Engine(OSystem *syst)
 		_targetName(ConfMan.getActiveDomainName()),
 		_pauseLevel(0),
 		_pauseStartTime(0),
+		_saveSlotToLoad(-1),
 		_engineStartTime(_system->getMillis()),
 		_mainMenuDialog(NULL) {
 
@@ -396,7 +397,22 @@ void Engine::pauseEngineIntern(bool pause) {
 void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
+
+	setGameToLoadSlot(-1);
+
 	runDialog(*_mainMenuDialog);
+
+	// Load savegame after main menu execution
+	// (not from inside the menu loop to avoid
+	// mouse cursor glitches and simliar bugs,
+	// e.g. #2822778).
+	// FIXME: For now we just ignore the return
+	// value, which is quite bad since it could
+	// be a fatal loading error, which renders
+	// the engine unusable.
+	if (_saveSlotToLoad > 0)
+		loadGameState(_saveSlotToLoad);
+
 	syncSoundSettings();
 }
 
@@ -435,6 +451,10 @@ int Engine::runDialog(GUI::Dialog &dialog) {
 	pauseEngine(false);
 
 	return result;
+}
+
+void Engine::setGameToLoadSlot(int slot) {
+	_saveSlotToLoad = slot;
 }
 
 void Engine::syncSoundSettings() {

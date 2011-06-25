@@ -246,14 +246,10 @@ void MainMenuDialog::load() {
 
 	int slot = _loadDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 
-	if (slot >= 0) {
-		// FIXME: For now we just ignore the return
-		// value, which is quite bad since it could
-		// be a fatal loading error, which renders
-		// the engine unusable.
-		_engine->loadGameState(slot);
+	_engine->setGameToLoadSlot(slot);
+
+	if (slot >= 0)		
 		close();
-	}
 }
 
 enum {
