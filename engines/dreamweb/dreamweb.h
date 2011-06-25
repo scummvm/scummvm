@@ -107,6 +107,8 @@ public:
 
 	void enableSavingOrLoading(bool enable = true) { _enableSavingOrLoading = enable; }
 
+	uint8 modifyChar(uint8 c) const;
+
 private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);

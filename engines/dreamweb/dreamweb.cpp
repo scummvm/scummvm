@@ -568,6 +568,9 @@ void DreamWebEngine::loadSounds(uint bank, const Common::String &filename) {
 	file.close();
 }
 
+uint8 DreamWebEngine::modifyChar(uint8 c) const {
+	return c;
+}
 
 } // End of namespace DreamWeb
 

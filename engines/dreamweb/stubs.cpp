@@ -525,4 +525,8 @@ void DreamGenContext::frameoutv() {
 	}
 }
 
+void DreamGenContext::modifychar() {
+	al = engine->modifyChar(al);
+}
+
 } /*namespace dreamgen */
