@@ -66,7 +66,7 @@
 // System.Title property key, values taken from http://msdn.microsoft.com/en-us/library/bb787584.aspx
 const PROPERTYKEY PKEY_Title = { /* fmtid = */ { 0xF29F85E0, 0x4FF9, 0x1068, { 0xAB, 0x91, 0x08, 0x00, 0x2B, 0x27, 0xB3, 0xD9 } }, /* propID = */ 2 };
 
-Win32TaskbarManager::Win32TaskbarManager() {
+Win32TaskbarManager::Win32TaskbarManager() : _taskbar(NULL) {
 	// Do nothing if not running on Windows 7 or later
 	if (!isWin7OrLater())
 		return;
