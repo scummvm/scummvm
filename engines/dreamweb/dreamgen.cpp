@@ -14360,10 +14360,14 @@ void DreamGenContext::entercode() {
 	data.word(kPresspointer) = 0;
 	data.byte(kGetback) = 0;
 keypadloop:
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		goto numberright;
 	delpointer();
 	readmouse();
 	showkeypad();
 	showpointer();
+	vsync();
 	_cmp(data.byte(kPresscount), 0);
 	if (flags.z())
 		goto nopresses;
@@ -14630,7 +14634,6 @@ void DreamGenContext::showkeypad() {
 	di = (36+112)+31;
 	bx = (72)+59;
 	singlekey();
-	vsync();
 	_cmp(data.byte(kLightcount), 0);
 	if (flags.z())
 		return /* (notenter) */;

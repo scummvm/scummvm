@@ -18,7 +18,11 @@ Entercode	proc	near
 	mov	presspointer,0
 	mov	getback,0
 
-keypadloop:	call	delpointer
+keypadloop:
+	cmp quitrequested, 0
+	jnz numberright
+
+	call	delpointer
 	call	readmouse
 	call	showkeypad
 	call	showpointer
