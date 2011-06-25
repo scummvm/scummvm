@@ -11,8 +11,18 @@ For a more comprehensive changelog of the latest experimental code, see:
      There should be no more silent errors due to invalid audio devices.
      Instead ScummVM should pick up a suitable alternative device.
 
+ Mohawk:
+   - Added detection entries for more variants of some Living Books
+     games.
+
  Tinsel:
    - Fixed a regression that made Discworld uncompletable.
+
+ SAGA:
+   - Fixed a regression in Inherit the Earth's dragon walk code which
+     was causing crashes there.
+   - Fixed a regression causing various crashes in I Have No Mouth and
+     I Must Scream.
 
  SCUMM:
    - Fixed graphics bug in FM-TOWNS versions of games on ARM devices
