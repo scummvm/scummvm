@@ -216,6 +216,7 @@ void DreamWebEngine::processEvents() {
 
 
 Common::Error DreamWebEngine::run() {
+	syncSoundSettings();
 	_console = new DreamWebConsole(this);
 
 	_loadSavefile = Common::ConfigManager::instance().getInt("save_slot");
