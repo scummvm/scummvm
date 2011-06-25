@@ -226,12 +226,13 @@ ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) ps3pkg/USRDIR/data/
 endif
 	cp $(DIST_FILES_DOCS) ps3pkg/USRDIR/doc/
-	cp dists/ps3/readme-ps3.md ps3pkg/USRDIR/doc/
+	cp $(srcdir)/dists/ps3/readme-ps3.md ps3pkg/USRDIR/doc/
 	cp $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip ps3pkg/USRDIR/data/
-	cp dists/ps3/ICON0.PNG ps3pkg/
-	cp dists/ps3/PIC1.PNG ps3pkg/
-	sfo.py -f dists/ps3/sfo.xml ps3pkg/PARAM.SFO
+	cp $(srcdir)/dists/ps3/ICON0.PNG ps3pkg/
+	cp $(srcdir)/dists/ps3/PIC1.PNG ps3pkg/
+	sfo.py -f $(srcdir)/dists/ps3/sfo.xml ps3pkg/PARAM.SFO
 	pkg.py --contentid UP0001-SCUM12000_00-0000000000000000 ps3pkg/ scummvm-ps3.pkg
+	package_finalize scummvm-ps3.pkg
 
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg
