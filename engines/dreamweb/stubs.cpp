@@ -434,7 +434,23 @@ void DreamGenContext::doshake() {
 }
 
 void DreamGenContext::vsync() {
+	push(ax);
+	push(bx);
+	push(cx);
+	push(dx);
+	push(si);
+	push(di);
+	push(es);
+	push(ds);
 	engine->waitForVSync();
+	ds = pop();
+	es = pop();
+	di = pop();
+	si = pop();
+	dx = pop();
+	cx = pop();
+	bx = pop();
+	ax = pop();
 }
 
 void DreamGenContext::setmode() {
