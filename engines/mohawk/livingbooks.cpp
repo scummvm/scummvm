@@ -2637,7 +2637,8 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 					break;
 				default:
 					// FIXME: handle list
-					debug(2, "Target '%s' (by expression) resulted in unknown type, skipping", entry->targets[n].c_str());
+					warning("Target '%s' (by expression) resulted in unknown type, skipping", entry->targets[n].c_str());
+					continue;
 				}
 				}
 				if (!target) {
