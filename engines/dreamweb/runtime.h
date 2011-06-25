@@ -466,6 +466,7 @@ public:
 		assert(size != 0xffff);
 		uint8 *dst = es.ptr(di, size);
 		uint8 *src = ds.ptr(si, size);
+		assert(src < dst || src >= dst + size);
 		memcpy(dst, src, size);
 		di += size;
 		si += size;
