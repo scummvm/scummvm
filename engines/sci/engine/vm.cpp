@@ -462,7 +462,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 	extOpcode = src[offset++]; // Get "extended" opcode (lower bit has special meaning)
 	const byte opcode = extOpcode >> 1;	// get the actual opcode
 
-	memset(opparams, 0, sizeof(opparams));
+	memset(opparams, 0, 4*sizeof(int16));
 
 	for (int i = 0; g_opcode_formats[opcode][i]; ++i) {
 		//debugN("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opcode, temp);
