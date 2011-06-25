@@ -255,11 +255,11 @@ bool SoundManager::isBuffered(Common::String filename, bool testForEntity) {
 //////////////////////////////////////////////////////////////////////////
 // Entry
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::setupEntry(SoundEntry *entry, Common::String name, SoundFlag flag, int a4) {
+void SoundManager::setupEntry(SoundEntry *entry, Common::String name, SoundFlag flag, int priority) {
 	if (!entry)
 		error("SoundManager::setupEntry: Invalid entry!");
 
-	entry->field_4C = a4;
+	entry->priority = priority;
 	setEntryType(entry, flag);
 	entry->setStatus(flag);
 
@@ -354,7 +354,7 @@ bool SoundManager::setupCache(SoundEntry *entry) {
 
 		for (Common::List<SoundEntry *>::iterator i = _soundCache.begin(); i != _soundCache.end(); ++i) {
 			if (!((*i)->status.status & kSoundStatus_180)) {
-				uint32 newSize = (*i)->field_4C + ((*i)->status.status & kSoundStatusClear1);
+				uint32 newSize = (*i)->priority + ((*i)->status.status & kSoundStatusClear1);
 
 				if (newSize < size) {
 					cacheEntry = (*i);
@@ -363,7 +363,7 @@ bool SoundManager::setupCache(SoundEntry *entry) {
 			}
 		}
 
-		if (entry->field_4C <= size)
+		if (entry->priority <= size)
 			return false;
 
 		if (!cacheEntry)
@@ -574,7 +574,7 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 					blockCount = 0;
 				s.syncAsUint32LE(blockCount); // blockCount;
 
-				s.syncAsUint32LE(entry->field_4C); // field_20;
+				s.syncAsUint32LE(entry->priority); // field_20;
 
 				char name1[16];
 				strcpy((char *)&name1, entry->name1.c_str());
@@ -1769,10 +1769,10 @@ void SoundManager::updateSubtitles() {
 		 || status & 0x180
 		 || soundEntry->time == 0
 		 || (status & 0x1F) < 6
-		 || ((getFlags()->nis & 0x8000) && soundEntry->field_4C < 90)) {
+		 || ((getFlags()->nis & 0x8000) && soundEntry->priority < 90)) {
 			 current_index = 0;
 		} else {
-			current_index = soundEntry->field_4C + (status & 0x1F);
+			current_index = soundEntry->priority + (status & 0x1F);
 
 			if (_currentSubtitle == (*i))
 				current_index += 4;

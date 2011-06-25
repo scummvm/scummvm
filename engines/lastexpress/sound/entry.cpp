@@ -53,7 +53,7 @@ SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	field_40 = 0;
 	entity = kEntityPlayer;
 	field_48 = 0;
-	field_4C = 0;
+	priority = 0;
 
 	subtitle = NULL;
 

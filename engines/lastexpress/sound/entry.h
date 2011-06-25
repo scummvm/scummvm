@@ -146,7 +146,7 @@ public:
 	int field_40;
 	EntityIndex entity;
 	int field_48;
-	uint32 field_4C;
+	uint32 priority;
 	Common::String name1; //char[16];
 	Common::String name2; //char[16];
 	//int next; // offset to the next structure in the list (not used)

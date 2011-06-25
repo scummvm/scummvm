@@ -161,7 +161,7 @@ private:
 	SoundEntry *getEntry(Common::String name);
 	SoundEntry *getEntry(SoundType type);
 
-	void setupEntry(SoundEntry *entry, Common::String name, SoundFlag flag, int a4);
+	void setupEntry(SoundEntry *entry, Common::String name, SoundFlag flag, int priority);
 	void setEntryType(SoundEntry *entry, SoundFlag flag);
 	bool setupCache(SoundEntry *entry);
 	void removeFromCache(SoundEntry *entry);
