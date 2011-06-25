@@ -63,7 +63,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH	},
 
-	// Castle of Dr. Brain - German Amiga (from www.back2roots.org, also includes english language)
+	// Castle of Dr. Brain - German Amiga (from www.back2roots.org, also includes English language)
 	// Executable scanning reports "1.005.001"
 	// SCI interpreter version 1.000.510
 	{"castlebrain", "", {
@@ -74,6 +74,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "85e51acb5f9c539d66e3c8fe40e17da5", 493638},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformAmiga, ADGF_ADDENGLISH, GUIO_NOSPEECH	},
+
+	// Castle of Dr. Brain Macintosh (from omer_mor, bug report #3328251)
+	{"castlebrain", "", {
+		{"resource.map", 0, "75cb06a94d2e0641295edd043f26f3a8", 2763},
+		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 476566},
+		{"resource.001", 0, "7f7da982f5cd868e1e608cd4f6515656", 400521},
+		{"resource.002", 0, "e1a6b6f1060f60be9dcb6d28ad7a2a20", 1168310},
+		{"resource.003", 0, "6c3d1bb26ad532c94046bc9ac49b5ff4", 891295},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH	},
 
 	// Castle of Dr. Brain - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.000.005
@@ -1663,6 +1673,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Larry 1 VGA Remake - English Macintosh (from omer_mor, bug report #3328262)
+	{"lsl1sci", "SCI", {
+		{"resource.map", 0, "6395e7f7881e37e39d81ff5175a35f6f", 3237},
+		{"resource.000", 0, "5933df4ea688584d6f59fdea5a9404f8", 989066},
+		{"resource.001", 0, "aa6f153f70f1e32d1bde465fff08eecf", 1137418},
+		{"resource.002", 0, "b22c616aa789ebef990290c7ffd86548", 1097477},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH	},
+
 	// Larry 1 VGA Remake - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.000.084
 	{"lsl1sci", "SCI/Demo", {
@@ -1925,6 +1944,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 1030656},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Larry 5 - English Macintosh (from omer_mor, bug report #3328257)
+	{"lsl5", "", {
+		{"resource.map", 0, "f12439da78b9878e16436661deb83f84", 6525},
+		{"resource.000", 0, "f2537473213d70e7f4fc82e988ab90ca", 702403},
+		{"resource.001", 0, "db4a1381d88028876a99303bfaaba893", 704679},
+		{"resource.002", 0, "e86aeb27711f4a673e06ec32cfc84125", 1125854},
+		{"resource.003", 0, "13fd4942bb818f9acd2970d66fca6509", 854733},
+		{"resource.004", 0, "999f407c9f38f937d4b8c4230ff5bb38", 1046644},
+		{"resource.005", 0, "0cc8d35a744031c772ca7cd21ae95273", 1008293},
+		{"resource.006", 0, "dda27ce00682aa76198dac124bbbe334", 1110043},
+		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 989801},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH	},
 
 	// Larry 5 - German DOS (from Tobis87)
 	// SCI interpreter version T.A00.196
