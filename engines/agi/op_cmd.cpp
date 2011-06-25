@@ -1420,9 +1420,11 @@ void cmdSetString(AgiGame *state, uint8 *p) {
 }
 
 void cmdDisplay(AgiGame *state, uint8 *p) {
+	// V1 has 4 args
+	int t = (getVersion() >= 0x2000 ? p2 : p3);
 	int len = 40;
 
-	char *s = state->_vm->wordWrapString(state->_curLogic->texts[p2 - 1], &len);
+	char *s = state->_vm->wordWrapString(state->_curLogic->texts[t - 1], &len);
 
 	state->_vm->printText(s, p1, 0, p0, 40, state->colorFg, state->colorBg);
 
@@ -1581,6 +1583,34 @@ void cmdSetSpeed(AgiGame *state, uint8 *p) {
 	(void)p;
 }
 
+void cmdSetItemView(AgiGame *state, uint8 *p) {
+	// V1 command
+	(void)state;
+	(void)p;
+}
+
+void cmdCallV1(AgiGame *state, uint8 *p) {
+	state->_vm->agiLoadResource(rLOGIC, p0);
+	state->logic_list[++state->max_logics];
+	_v[13] = 1;
+}
+
+void cmdNewRoomV1(AgiGame *state, uint8 *p) {
+	warning("cmdNewRoomV1()");
+	state->_vm->agiLoadResource(rLOGIC, p0);
+	state->max_logics = 1;
+	state->logic_list[1] = p0;
+	_v[13] = 1;
+}
+
+void cmdNewRoomVV1(AgiGame *state, uint8 *p) {
+	warning("cmdNewRoomVV1()");
+	state->_vm->agiLoadResource(rLOGIC, _v[p0]);
+	state->max_logics = 1;
+	state->logic_list[1] = _v[p0];
+	_v[13] = 1;
+}
+
 void cmdUnknown(AgiGame *state, uint8 *p) {
 	warning("Skipping unknown opcode %2X", *(code + ip - 1));
 }
@@ -1595,6 +1625,10 @@ int AgiEngine::runLogic(int n) {
 	uint8 p[CMD_BSIZE] = { 0 };
 	int num = 0;
 	ScriptPos sp;
+	//int logic_index = 0;
+
+	state->logic_list[0] = 0;
+	state->max_logics = 0;
 
 	debugC(2, kDebugLevelScripts, "=================");
 	debugC(2, kDebugLevelScripts, "runLogic(%d)", n);
@@ -1659,6 +1693,18 @@ int AgiEngine::runLogic(int n) {
 			debugC(2, kDebugLevelScripts, "%sreturn() // Logic %d", st, n);
 			debugC(2, kDebugLevelScripts, "=================");
 
+//			if (getVersion() < 0x2000) {
+//				if (logic_index < state->max_logics) {
+//					n = state->logic_list[++logic_index];
+//					state->_curLogic = &state->logics[n];
+//					state->lognum = n;
+//					ip = 2;
+//					warning("running logic %d\n", n);
+//					break;
+//				}
+//				_v[13]=0;
+//			}
+
 			_game.execStack.pop_back();
 			return 1;
 		default:
@@ -1672,6 +1718,14 @@ int AgiEngine::runLogic(int n) {
 			ip += num;
 		}
 
+//		if ((op == 0x0B || op == 0x3F || op == 0x40) && logic_index < state->max_logics) {
+//			n = state->logic_list[++logic_index];
+//			state->_curLogic = &state->logics[n];
+//			state->lognum = n;
+//			ip = 2;
+//			warning("running logic %d\n", n);
+//		}
+		
 		if (_game.exitAllLogics)
 			break;
 	}
@@ -1685,7 +1739,6 @@ void AgiEngine::executeAgiCommand(uint8 op, uint8 *p) {
 	debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logicNamesCmd[op].name, p[0], p[1], p[2]);
 
 	_agiCommands[op](&_game, p);
-//	(this->*_agiCommands[op])(p);
 }
 
 } // End of namespace Agi

@@ -640,6 +640,10 @@ struct AgiGame {
 
 	// IF condition handling
 	int testResult;
+
+
+	int max_logics;
+	int logic_list[256];
 };
 
 /**

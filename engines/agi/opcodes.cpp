@@ -49,103 +49,103 @@ AgiInstruction insV1Test[] = {
 };
 
 AgiInstruction insV1[] = {
-	{ "return",				"",			NULL },						// 00
-	{ "increment",			"v",		&cmdIncrement },			// 01
-	{ "decrement",			"v",		&cmdDecrement },			// 02
-	{ "assignn",			"vn",		&cmdAssignN },				// 03
-	{ "assignv",			"vv",		&cmdAssignV },				// 04
+	{ "return",				"",			NULL },					// 00
+	{ "increment",			"v",		&cmdIncrement },		// 01
+	{ "decrement",			"v",		&cmdDecrement },		// 02
+	{ "assignn",			"vn",		&cmdAssignN },			// 03
+	{ "assignv",			"vv",		&cmdAssignV },			// 04
 	{ "addn",				"vn",		&cmdAddN },				// 05
 	{ "addv",				"vv",		&cmdAddV },				// 06
 	{ "subn",				"vn",		&cmdSubN },				// 07
 	{ "subv",				"vv",		&cmdSubV },				// 08
 	{ "load.view",			"n",		&cmdLoadView },			// 09
-	{ "animate.obj",		"n",		&cmdAnimateObj },			// 0A
-	{ "new.room",			"n",		&cmdNewRoom },			// 0B
+	{ "animate.obj",		"n",		&cmdAnimateObj },		// 0A
+	{ "new.room",			"n",		&cmdNewRoomV1 },		// 0B
 	{ "draw.pic",			"v",		&cmdDrawPic },			// 0C
-	{ "print",				"s",		&cmdPrint },				// 0D
-	{ "status",				"",			&cmdStatus },				// 0E
+	{ "print",				"s",		&cmdPrint },			// 0D
+	{ "status",				"",			&cmdStatus },			// 0E
 	{ "save.game",			"",			&cmdSaveGame },			// 0F
 	{ "restore.game",		"",			&cmdLoadGame },			// 10
 	{ "...",				"",			&cmdInitDisk },			// 11 TODO
 	{ "restart.game",		"",			&cmdRestartGame },		// 12
-	{ "random",				"v",		&cmdRandom },				// 13 TODO: 1 vs 3 vars
-	{ "get",				"n",		&cmdGet },					// 14
+	{ "random",				"v",		&cmdRandom },			// 13 TODO: 1 vs 3 vars
+	{ "get",				"n",		&cmdGet },				// 14
 	{ "drop",				"n",		&cmdDrop },				// 15
 	{ "draw",				"n",		&cmdDraw },				// 16
-	{ "erase",				"n",		&cmdErase },				// 17
+	{ "erase",				"n",		&cmdErase },			// 17
 	{ "position",			"nnn",		&cmdPosition },			// 18
-	{ "position.v",			"nvv",		&cmdPositionF },			// 19
+	{ "position.v",			"nvv",		&cmdPositionF },		// 19
 	{ "get.posn",			"nvv",		&cmdGetPosn },			// 1A
-	{ "set.cel",			"nn",		&cmdSetCel },				// 1B
+	{ "set.cel",			"nn",		&cmdSetCel },			// 1B
 	{ "set.loop",			"nn",		&cmdSetLoop },			// 1C
-	{ "end.of.loop",		"nn",		&cmdEndOfLoop },			// 1D
+	{ "end.of.loop",		"nn",		&cmdEndOfLoop },		// 1D
 	{ "reverse.loop",		"nn",		&cmdReverseLoop },		// 1E
 	{ "move.obj",			"nnnnn",	&cmdMoveObj },			// 1F
 	{ "set.view",			"nn",		&cmdSetView },			// 20
-	{ "follow.ego",			"nnn",		&cmdFollowEgo },			// 21
-	{ "...",				"",			&cmdUnknown },				// 22
-	{ "...",				"",			&cmdUnknown },				// 23
+	{ "follow.ego",			"nnn",		&cmdFollowEgo },		// 21
+	{ "...",				"",			&cmdUnknown },			// 22
+	{ "...",				"",			&cmdUnknown },			// 23
 	{ "ignore.blocks",		"n",		&cmdIgnoreBlocks },		// 24
-	{ "observe.blocks",		"n",		&cmdObserveBlocks },		// 25
-	{ "wander",				"n",		&cmdWander },				// 26
-	{ "reposition",			"nvv",		&cmdReposition },			// 27
-	{ "stop.motion",		"n",		&cmdStopMotion },			// 28
+	{ "observe.blocks",		"n",		&cmdObserveBlocks },	// 25
+	{ "wander",				"n",		&cmdWander },			// 26
+	{ "reposition",			"nvv",		&cmdReposition },		// 27
+	{ "stop.motion",		"n",		&cmdStopMotion },		// 28
 	{ "start.motion",		"n",		&cmdStartMotion },		// 29
 	{ "stop.cycling",		"n",		&cmdStopCycling },		// 2A
 	{ "start.cycling",		"n",		&cmdStartCycling },		// 2B
-	{ "stop.update",		"n",		&cmdStopUpdate },			// 2C
+	{ "stop.update",		"n",		&cmdStopUpdate },		// 2C
 	{ "start.update",		"n",		&cmdStartUpdate },		// 2D
-	{ "program.control",	"",			&cmdProgramControl },		// 2E
-	{ "player.control",		"",			&cmdPlayerControl },		// 2F
+	{ "program.control",	"",			&cmdProgramControl },	// 2E
+	{ "player.control",		"",			&cmdPlayerControl },	// 2F
 	{ "set.priority",		"nn",		&cmdSetPriority },		// 30
 	{ "release.priority",	"n",		&cmdReleasePriority },	// 31
 	{ "add.to.pic",			"nnnnnn",	&cmdAddToPic },			// 32 TODO: 7 vs 8 args
-	{ "set.horizon",		"n",		&cmdSetHorizon },			// 33
-	{ "ignore.horizon",		"n",		&cmdIgnoreHorizon },		// 34
-	{ "observe.horizon",	"n",		&cmdObserveHorizon },		// 35
-	{ "load.logics",		"n",		&cmdLoadLogic },			// 36
-	{ "object.on.water",	"n",		&cmdObjectOnWater },		// 37
+	{ "set.horizon",		"n",		&cmdSetHorizon },		// 33
+	{ "ignore.horizon",		"n",		&cmdIgnoreHorizon },	// 34
+	{ "observe.horizon",	"n",		&cmdObserveHorizon },	// 35
+	{ "load.logics",		"n",		&cmdLoadLogic },		// 36
+	{ "object.on.water",	"n",		&cmdObjectOnWater },	// 37
 	{ "load.pic",			"v",		&cmdLoadPic },			// 38
-	{ "load.sound",			"n",		&cmdLoadSound },			// 39
-	{ "sound",				"nn",		&cmdSound },				// 3A
-	{ "stop.sound",			"",			&cmdStopSound },			// 3B
+	{ "load.sound",			"n",		&cmdLoadSound },		// 39
+	{ "sound",				"nn",		&cmdSound },			// 3A
+	{ "stop.sound",			"",			&cmdStopSound },		// 3B
 	{ "set.v",				"v",		&cmdSetV },				// 3C
-	{ "reset.v",			"v",		&cmdResetV },				// 3D
+	{ "reset.v",			"v",		&cmdResetV },			// 3D
 	{ "toggle.v",			"v",		&cmdToggleV },			// 3E
-	{ "new.room.v",			"v",		&cmdNewRoomF },			// 3F
-	{ "call",				"n",		&cmdCall },				// 40
-	{ "...",				"",			&cmdUnknown },				// 41
+	{ "new.room.v",			"v",		&cmdNewRoomVV1 },		// 3F
+	{ "call",				"n",		&cmdCallV1 },			// 40
+	{ "...",				"",			&cmdUnknown },			// 41
 	{ "set.speed",			"v",		&cmdSetSpeed },			// 42
 	{ "move.obj.v",			"nvvvv",	&cmdMoveObjF },			// 43
-	{ "...",				"",			&cmdUnknown },				// 44
-	{ "...",				"",			&cmdUnknown },				// 45
-	{ "...",				"",			&cmdUnknown },				// 46
-	{ "...",				"",			&cmdUnknown },				// 47
-	{ "...",				"nv",		&cmdUnknown },				// 48 get.priority??
-	{ "ignore.objs",		"n",		&cmdIgnoreObjs },			// 49
+	{ "...",				"nn",		&cmdUnknown },			// 44
+	{ "get.v",				"v",		&cmdUnknown },			// 45
+	{ "assign.v",			"vv",		&cmdUnknown },			// 46
+	{ "...",				"n",		&cmdUnknown },			// 47
+	{ "get.priority",		"nv",		&cmdGetPriority },		// 48
+	{ "ignore.objs",		"n",		&cmdIgnoreObjs },		// 49
 	{ "observe.objs",		"n",		&cmdObserveObjs },		// 4A
 	{ "distance",			"nnv",		&cmdDistance },			// 4B
 	{ "object.on.land",		"n",		&cmdObjectOnLand },		// 4C
-	{ "...",				"nv",		&cmdUnknown },				// 4D set.priority.v???
-	{ "...",				"",			&cmdUnknown },				// 4E
-	{ "load.logics",		"n",		&cmdLoadLogic },			// 4F TODO: what is the other load.logics then?
-	{ "display",			"nnns",		&cmdDisplay },				// 50 TODO: 4 vs 3 args
-	{ "prevent.input???",	"",			&cmdUnknown },				// 51
-	{ "...",				"",			&cmdUnknown },				// 52
-	{ "...",				"n",		&cmdUnknown },				// 53 ???
-	{ "...",				"",			&cmdUnknown },				// 54 ???
-	{ "stop.motion",		"",			&cmdStopMotion },			// 55 or force.update??
+	{ "...",				"nv",		&cmdUnknown },			// 4D set.priority.v???
+	{ "...",				"",			&cmdUnknown },			// 4E
+	{ "load.logics",		"n",		&cmdLoadLogic },		// 4F TODO: what is the other load.logics then?
+	{ "display",			"nnns",		&cmdDisplay },			// 50 TODO: 4 vs 3 args
+	{ "prevent.input???",	"",			&cmdUnknown },			// 51
+	{ "...",				"",			&cmdUnknown },			// 52
+	{ "...",				"n",		&cmdUnknown },			// 53 ???
+	{ "...",				"",			&cmdUnknown },			// 54 ???
+	{ "stop.motion",		"",			&cmdStopMotion },		// 55 or force.update??
 	{ "discard.view",		"n",		&cmdDiscardView },		// 56
-	{ "discard.pic",		"v",		&cmdDiscardPic },			// 57
-	{ "...",				"nn",		&cmdUnknown },				// 58
-	{ "...",				"",			&cmdUnknown },				// 59
+	{ "discard.pic",		"v",		&cmdDiscardPic },		// 57
+	{ "set.item.view",		"nn",		&cmdSetItemView },		// 58
+	{ "...",				"",			&cmdUnknown },			// 59
 	{ "last.cel",			"nv",		&cmdLastCel },			// 5A
 	{ "set.cel.v",			"nv",		&cmdSetCelF },			// 5B
-	{ "...",				"",			&cmdUnknown },				// 5C
+	{ "...",				"",			&cmdUnknown },			// 5C
 	{ "load.view",			"n",		&cmdLoadView },			// 5D
-	{ "...",				"",			&cmdUnknown },				// 5E
-	{ "...",				"",			&cmdUnknown },				// 5F
-	{ "setbit",				"nv",		&cmdUnknown },				// 60
+	{ "...",				"",			&cmdUnknown },			// 5E
+	{ "...",				"",			&cmdUnknown },			// 5F
+	{ "setbit",				"nv",		&cmdUnknown },			// 60
 };
 
 AgiInstruction insV2Test[] = {

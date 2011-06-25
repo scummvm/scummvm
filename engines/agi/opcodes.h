@@ -222,6 +222,10 @@ void cmdReleaseKey(AgiGame *state, uint8 *p);
 void cmdAdjEgoMoveToXY(AgiGame *state, uint8 *p);
 
 void cmdSetSpeed(AgiGame *state, uint8 *p);
+void cmdSetItemView(AgiGame *state, uint8 *p);
+void cmdCallV1(AgiGame *state, uint8 *p);
+void cmdNewRoomV1(AgiGame *state, uint8 *p);
+void cmdNewRoomVV1(AgiGame *state, uint8 *p);
 void cmdUnknown(AgiGame *state, uint8 *p);
 
 void condEqual(AgiGame *state, uint8 *p);
