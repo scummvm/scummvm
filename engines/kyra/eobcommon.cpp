@@ -46,7 +46,6 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_playFinale = false;
 	_runFlag = true;
 	_saveLoadMode = 0;
-	_updateHandItemCursor = false;
 	_configMouse = true;
 	_resting = false;
 
@@ -440,11 +439,6 @@ void EobCoreEngine::runLoop() {
 		updateCharacterEvents(true);
 		checkInput(_activeButtons, true, 0);
 		removeInputTop();
-
-		if (_updateHandItemCursor) {
-			_updateHandItemCursor = false;
-			setHandItem(_itemInHand);
-		}
 
 		_timer->update();
 		updateScriptTimers();

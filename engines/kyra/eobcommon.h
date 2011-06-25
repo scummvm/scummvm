@@ -351,8 +351,6 @@ protected:
 
 	// Mouse
 	void setHandItem(Item itemIndex);
-	void updateHandItemCursor() { _updateHandItemCursor = true; }
-	bool _updateHandItemCursor;
 
 	// Characters
 	int getDexterityArmorClassModifier(int dexterity);

@@ -78,7 +78,7 @@ void EobEngine::startupNew() {
 }
 
 void EobEngine::startupLoad() {
-	updateHandItemCursor();
+	setHandItem(_itemInHand);
 	loadLevel(_currentLevel, _currentSub);
 	_saveLoadMode = 0;
 }

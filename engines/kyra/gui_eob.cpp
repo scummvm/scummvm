@@ -1951,17 +1951,17 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 	return result;
 }
 
-void GUI_Eob::simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing) {
-	simpleMenu_initMenuItemsMask(sd, maxItem, menuItemsMask, unk);
+void GUI_Eob::simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing) {
+	simpleMenu_initMenuItemsMask(sd, maxItem, menuItemsMask, itemOffset);
 
 	const ScreenDim *dm = _screen->getScreenDim(19 + sd);
 	int x = (_screen->_curDim->sx + dm->sx) << 3;
 	int y = _screen->_curDim->sy + dm->sy;
 
-	int v = simpleMenu_getMenuItem(_menuCur, menuItemsMask, unk);
+	int v = simpleMenu_getMenuItem(_menuCur, menuItemsMask, itemOffset);
 
 	for (int i = 0; i < _menuNumItems; i++) {
-		int item = simpleMenu_getMenuItem(i, menuItemsMask, unk);
+		int item = simpleMenu_getMenuItem(i, menuItemsMask, itemOffset);
 		int ty = y + i * (lineSpacing + _screen->getFontHeight());
 		_screen->printShadedText(strings[item], x, ty, dm->unkA, 0);
 		if (item == v)
@@ -1975,7 +1975,7 @@ void GUI_Eob::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 	_vm->removeInputTop();
 }
 
-int GUI_Eob::simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk) {
+int GUI_Eob::simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset) {
 	const ScreenDim *dm = _screen->getScreenDim(19 + sd);
 	int h = _menuNumItems - 1;
 	int currentItem = _menuCur % _menuNumItems;
@@ -2017,13 +2017,13 @@ int GUI_Eob::simpleMenu_process(int sd, const char *const *strings, void *b, int
 	}
 
 	if (newItem != currentItem) {
-		_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, unk)], x, y + currentItem * lineH , dm->unkA, 0);
-		_screen->printText(strings[simpleMenu_getMenuItem(newItem,  menuItemsMask, unk)], x, y + newItem * lineH , dm->unkC, 0);
+		_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH , dm->unkA, 0);
+		_screen->printText(strings[simpleMenu_getMenuItem(newItem,  menuItemsMask, itemOffset)], x, y + newItem * lineH , dm->unkC, 0);
 		_screen->updateScreen();
 	}
 
 	if (result != -1) {
-		result = simpleMenu_getMenuItem(result, menuItemsMask, unk);
+		result = simpleMenu_getMenuItem(result, menuItemsMask, itemOffset);
 		simpleMenu_flashSelection(strings[result], x, y + newItem * lineH, dm->unkA, dm->unkC, 0);
 	}
 
@@ -2032,7 +2032,7 @@ int GUI_Eob::simpleMenu_process(int sd, const char *const *strings, void *b, int
 	return result;
 }
 
-int GUI_Eob::simpleMenu_getMenuItem(int index, int32 menuItemsMask, int unk) {
+int GUI_Eob::simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffset) {
 	if (menuItemsMask == -1)
 		return index;
 
@@ -2040,11 +2040,11 @@ int GUI_Eob::simpleMenu_getMenuItem(int index, int32 menuItemsMask, int unk) {
 	int i = index;
 
 	for (; i; res++) {
-		if (menuItemsMask & (1 << (res + unk)))
+		if (menuItemsMask & (1 << (res + itemOffset)))
 			i--;
 	}
 
-	while (!(menuItemsMask & (1 << (res + unk))))
+	while (!(menuItemsMask & (1 << (res + itemOffset))))
 		res++;
 
 	return res;
@@ -2436,7 +2436,7 @@ int GUI_Eob::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
 }
 
-void GUI_Eob::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk) {
+void GUI_Eob::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int itemOffset) {
 	if (menuItemsMask == -1) {
 		_menuNumItems = _screen->getScreenDim(19 + menuId)->h;
 		_menuCur = _screen->getScreenDim(19 + menuId)->unk8;
@@ -2446,7 +2446,7 @@ void GUI_Eob::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuIt
 	_menuNumItems = 0;
 
 	for (int i = 0; i < maxItem; i++) {
-		if (menuItemsMask & (1 << (i + unk)))
+		if (menuItemsMask & (1 << (i + itemOffset)))
 			_menuNumItems++;
 	}
 
@@ -2462,7 +2462,7 @@ void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
 }
 
 void GUI_Eob::scribeScrollDialogue() {
-
+	
 }
 
 bool GUI_Eob::confirmDialogue(int id) {

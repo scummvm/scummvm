@@ -74,7 +74,7 @@ public:
 	int redrawButtonCallback(Button *button) { return 0; }
 
 private:
-	int simpleMenu_getMenuItem(int index, int32 menuItemsMask, int unk);
+	int simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffset);
 	void simpleMenu_flashSelection(const char *str, int x, int y, int color1, int color2, int color3);
 	void simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk);
 
