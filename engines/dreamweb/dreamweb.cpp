@@ -420,17 +420,21 @@ void DreamWebEngine::cls() {
 
 void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	debug(1, "playSound(%u, %u, %u)", channel, id, loops);
-	const SoundData &data = _soundData[id >= 12? 1: 0];
 
-	Audio::Mixer::SoundType type;
-	bool speech = id == 62; //actually 50
+	int bank = 0;
+	bool speech = false;
+	Audio::Mixer::SoundType type = channel == 0?
+		Audio::Mixer::kMusicSoundType: Audio::Mixer::kSFXSoundType;
+
 	if (id >= 12) {
 		id -= 12;
-		type = Audio::Mixer::kSFXSoundType;
-	} else if (speech)
-		type = Audio::Mixer::kSpeechSoundType;
-	else
-		type = Audio::Mixer::kMusicSoundType;
+		bank = 1;
+		if (id == 50) {
+			speech = true;
+			type = Audio::Mixer::kSpeechSoundType;
+		}
+	}
+	const SoundData &data = _soundData[bank];
 
 	Audio::SeekableAudioStream *raw;
 	if (!speech) {
