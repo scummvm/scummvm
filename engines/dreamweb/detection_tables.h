@@ -132,6 +132,23 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// Italian floppy release
+	{
+		{
+			"dreamweb",
+			"",
+			{
+				{"dreamweb.r00", 0, "66dcab08354232f423c590156335f819", 155448},
+				{"dreamweb.r02", 0, "87a026e9f80ed4f94169381f871ee305", 199676},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			ADGF_UNSTABLE,
+			GUIO_NONE
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
