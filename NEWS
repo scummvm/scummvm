@@ -24,6 +24,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a regression causing various crashes in I Have No Mouth and
      I Must Scream.
 
+ SCI:
+   - Added detection entries for some Macintosh game versions.
+   - Audio settings are now stored correctly for the CD version of EcoQuest 1.
+	 
  SCUMM:
    - Fixed graphics bug in FM-TOWNS versions of games on ARM devices
      (Android, iPhone, etc.).
