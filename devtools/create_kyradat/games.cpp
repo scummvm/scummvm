@@ -1094,6 +1094,13 @@ const int eob1FloppyNeed[] = {
 	kEobBaseMenuStringsRest2,
 	kEobBaseMenuStringsRest4,
 	kEobBaseMenuStringsDefeat,
+
+	kEobBaseSpellLevelsMage,
+	kEobBaseSpellLevelsCleric,
+	kEobBaseSpellMps1,
+	kEobBaseSpellMps2,
+	kEobBaseSpellMps3,
+	kEobBaseSpellMps4,
 	
 	kEobBaseCharGuiStringsHp,
 	kEobBaseCharGuiStringsWp1,
@@ -1275,6 +1282,13 @@ const int eob2FloppyNeed[] = {
 	kEobBaseMenuStringsTransfer,
 	kEobBaseMenuStringsSpec,
 	kEobBaseMenuStringsSpellNo,
+
+	kEobBaseSpellLevelsMage,
+	kEobBaseSpellLevelsCleric,
+	kEobBaseSpellMps1,
+	kEobBaseSpellMps2,
+	kEobBaseSpellMps3,
+	kEobBaseSpellMps4,
 
 	kEobBaseCharGuiStringsHp,
 	kEobBaseCharGuiStringsWp2,

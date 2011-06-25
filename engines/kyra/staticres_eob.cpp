@@ -388,6 +388,13 @@ void EobCoreEngine::initStaticResource() {
 	_menuStringsSpec = _staticres->loadStrings(kEobBaseMenuStringsSpec, temp);
 	_menuStringsSpellNo = _staticres->loadStrings(kEobBaseMenuStringsSpellNo, temp);
 
+	_spellLevelsMage = _staticres->loadRawData(kEobBaseSpellLevelsMage, temp);
+	_spellLevelsCleric = _staticres->loadRawData(kEobBaseSpellLevelsCleric, temp);
+	_spellLevelsMps1 = _staticres->loadRawData(kEobBaseSpellMps1, temp);
+	_spellLevelsMps2 = _staticres->loadRawData(kEobBaseSpellMps2, temp);
+	_spellLevelsMps3 = _staticres->loadRawData(kEobBaseSpellMps3, temp);
+	_spellLevelsMps4 = _staticres->loadRawData(kEobBaseSpellMps4, temp);
+
 	_characterGuiStringsHp = _staticres->loadStrings(kEobBaseCharGuiStringsHp, temp);
 	_characterGuiStringsWp = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseCharGuiStringsWp2 : kEobBaseCharGuiStringsWp1, temp);
 	_characterGuiStringsWr = _staticres->loadStrings(kEobBaseCharGuiStringsWr, temp);

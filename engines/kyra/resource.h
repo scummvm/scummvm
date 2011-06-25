@@ -321,6 +321,13 @@ enum KyraResources {
 	kEobBaseMenuStringsSpec,
 	kEobBaseMenuStringsSpellNo,
 
+	kEobBaseSpellLevelsMage,
+	kEobBaseSpellLevelsCleric,
+	kEobBaseSpellMps1,
+	kEobBaseSpellMps2,
+	kEobBaseSpellMps3,
+	kEobBaseSpellMps4,
+
 	kEobBaseCharGuiStringsHp,
 	kEobBaseCharGuiStringsWp1,
 	kEobBaseCharGuiStringsWp2,
