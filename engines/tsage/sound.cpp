@@ -31,6 +31,23 @@ namespace tSage {
 
 static SoundManager *_soundManager = NULL;
 
+static void dumpVoiceStruct() {
+	VoiceTypeStruct *vt = _soundManager->_voiceTypeStructPtrs[1]; 
+	if (!vt) {
+		debug("Not setup");
+		return;
+	}
+
+	assert(vt->_voiceType == VOICETYPE_1);
+	for (uint idx = 0; idx < vt->_entries.size(); ++idx) {
+		VoiceStructEntryType1 &vte = vt->_entries[idx]._type1;
+		debug("#%d - s=%x, ch=%x, pr=%x | s2=%x, ch2=%x, pr2=%x | s3=%x, ch3=%x, pr3=%x",
+			idx, vte._sound, vte._channelNum, vte._priority,
+			vte._sound2, vte._channelNum2, vte._priority2,
+			vte._sound3, vte._channelNum3, vte._priority3);
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 SoundManager::SoundManager() {
@@ -1166,8 +1183,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 					if (!vse2._sound && (vse2._sound3 == sound) && (vse2._channelNum3 == channelNum)) {
 						vse2._sound = sound;
 						vse2._channelNum = channelNum;
-						vse._channelNum = vse2._channelNum2;
-						vse._priority = vse2._priority2;
+						vse2._priority = vse._priority2;
 						vse._sound2 = NULL;
 						break;
 					}
@@ -1188,7 +1204,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 				vse2._sound = vse._sound2;
 				vse2._channelNum = vse._channelNum2;
 				vse2._priority = vse._priority2;
-				vse._field4 = -1;
+				vse2._field4 = -1;
 				vse2._field5 = 0;
 				vse2._field6 = 0;
 
@@ -1213,7 +1229,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 
 					SoundDriver *driver = vs->_entries[idx]._driver;
 					assert(driver);
-					driver->updateVoice(voiceIndex);
+					driver->updateVoice(vs->_entries[idx]._voiceNum);
 				}
 			}
 		}
@@ -1939,7 +1955,7 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 				b &= 0x7f;
 
 				if (channelNum != -1) {
-					if (voiceType == VOICETYPE_1) {
+					if (voiceType != VOICETYPE_0) {
 						if (chFlags & 0x10)
 							_soProc42(vtStruct, channelNum, chVoiceType, v);
 						else
@@ -2484,10 +2500,7 @@ void AdlibSoundDriver::close() {
 
 bool AdlibSoundDriver::reset() {
 	write(1, 0x20);
-	write(4, 0x80);
-
-	write(2, 1);
-	write(4, 1);
+	write(1, 0x20);
 
 	return true;
 }
