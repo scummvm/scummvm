@@ -374,7 +374,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	}
 
 	gui_toggleButtons();
-	updateHandItemCursor();
+	setHandItem(_itemInHand);
 
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
