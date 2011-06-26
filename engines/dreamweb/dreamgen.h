@@ -490,7 +490,6 @@ public:
 	static const uint16 addr_showallfree = 0xc44c;
 	static const uint16 addr_makebackob = 0xc448;
 	static const uint16 addr_showallobs = 0xc444;
-	static const uint16 addr_eraseoldobs = 0xc440;
 	static const uint16 addr_drawflags = 0xc43c;
 	static const uint16 addr_addlength = 0xc438;
 	static const uint16 addr_addalong = 0xc434;
@@ -677,12 +676,7 @@ public:
 	static const uint16 addr_initman = 0xc134;
 	static const uint16 addr_findsource = 0xc130;
 	static const uint16 addr_checkone = 0xc12c;
-	static const uint16 addr_printasprite = 0xc128;
-	static const uint16 addr_printsprites = 0xc124;
-	static const uint16 addr_spriteupdate = 0xc120;
 	static const uint16 addr_delsprite = 0xc11c;
-	static const uint16 addr_makesprite = 0xc118;
-	static const uint16 addr_clearsprites = 0xc114;
 	static const uint16 addr_checkspeed = 0xc110;
 	static const uint16 addr_showgamereel = 0xc10c;
 	static const uint16 addr_addtopeoplelist = 0xc108;
@@ -892,7 +886,7 @@ public:
 	const static uint16 kSavex = 178;
 	const static uint16 kSavey = 179;
 	const static uint16 kCurrentob = 180;
-	const static uint16 kPriority = 181;
+	const static uint16 kPrioritydep = 181;
 	const static uint16 kDestpos = 182;
 	const static uint16 kReallocation = 183;
 	const static uint16 kRoomnum = 184;
@@ -1328,7 +1322,6 @@ public:
 	void drawitall();
 	void clearstartpal();
 	void femalefan();
-	void greyscalesum();
 	void showgamereel();
 	void identifyob();
 	void trysoundalloc();
@@ -1464,6 +1457,7 @@ public:
 	//void convertkey();
 	void outofopen();
 	void dealwithspecial();
+	//void eraseoldobs();
 	void dircom();
 	void liftsprite();
 	void dumpkeypad();
@@ -1526,7 +1520,7 @@ public:
 	void hotelbell();
 	void loadspeech();
 	//void cls();
-	void printsprites();
+	//void printsprites();
 	void dumptimedtext();
 	void showallobs();
 	void getnumber();
@@ -1558,7 +1552,7 @@ public:
 	void usekey();
 	void locklighton();
 	void useladderb();
-	void spriteupdate();
+	//void spriteupdate();
 	void usetempcharset();
 	void discops();
 	void printdirect();
@@ -1873,7 +1867,7 @@ public:
 	void finalframe();
 	void plotreel();
 	void swapwithopen();
-	void makesprite();
+	//void makesprite();
 	void dreamweb();
 	void droperror();
 	void openfilenocheck();
@@ -1916,12 +1910,12 @@ public:
 	void gettingshot();
 	void settopleft();
 	void searchforstring();
-	void clearsprites();
+	//void clearsprites();
 	void obpicture();
 	void selectopenob();
 	void widedoor();
 	void security();
-	void printasprite();
+	//void printasprite();
 	void buttonfive();
 	void soundonreels();
 	void usegun();
@@ -1949,7 +1943,7 @@ public:
 	//void width160();
 	void incryanpage();
 	void dodoor();
-	void eraseoldobs();
+	void greyscalesum();
 	void buttoneight();
 	void opensarters();
 	void findexobject();

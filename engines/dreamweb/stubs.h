@@ -5,7 +5,7 @@
 	void multiget();
 	void convertkey();
 	void cls();
-	//void printsprites();
+	void printsprites();
 	void quickquit();
 	void readoneblock();
 	void printundermon();
@@ -17,11 +17,11 @@
 	void printasprite(const Sprite* sprite);
 	void width160();
 	void multiput();
-	//void eraseoldobs();
-	//void clearsprites();
-	//void makesprite();
+	void eraseoldobs();
+	void clearsprites();
+	void makesprite();
 	Sprite* makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 somethingInDx, uint16 somethingInDi);
-	//void spriteupdate();
+	void spriteupdate();
 	void mainmanCPP(Sprite* sprite);
 	void backobjectCPP(Sprite* sprite);
 	void modifychar();

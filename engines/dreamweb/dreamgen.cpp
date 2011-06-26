@@ -2170,152 +2170,12 @@ forcenext:
 	_cmp(al, al);
 }
 
-void DreamGenContext::clearsprites() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-	al = 255;
-	cx = (32)*16;
-	_stosb(cx, true);
-}
-
-void DreamGenContext::makesprite() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-_tmp17:
-	_cmp(es.byte(bx+15), 255);
-	if (flags.z())
-		goto _tmp17a;
-	_add(bx, (32));
-	goto _tmp17;
-_tmp17a:
-	es.word(bx) = cx;
-	es.word(bx+10) = si;
-	es.word(bx+6) = dx;
-	es.word(bx+8) = di;
-	es.word(bx+2) = 0x0ffff;
-	es.byte(bx+15) = 0;
-	es.byte(bx+18) = 0;
-}
-
 void DreamGenContext::delsprite() {
 	STACK_CHECK;
 	di = bx;
 	cx = (32);
 	al = 255;
 	_stosb(cx, true);
-}
-
-void DreamGenContext::spriteupdate() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-	al = data.byte(kRyanon);
-	es.byte(bx+31) = al;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-	cx = 16;
-_tmp18:
-	push(cx);
-	push(bx);
-	ax = es.word(bx);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto _tmp18a;
-	push(es);
-	push(ds);
-	cx = es.word(bx+2);
-	es.word(bx+24) = cx;
-	__dispatch_call(ax);
-	ds = pop();
-	es = pop();
-_tmp18a:
-	bx = pop();
-	cx = pop();
-	_cmp(data.byte(kNowinnewroom), 1);
-	if (flags.z())
-		return /* ($18b) */;
-	_add(bx, (32));
-	if (--cx)
-		goto _tmp18;
-}
-
-void DreamGenContext::printsprites() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	cx = 0;
-priorityloop:
-	push(cx);
-	data.byte(kPriority) = cl;
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-	cx = 16;
-prtspriteloop:
-	push(cx);
-	push(bx);
-	ax = es.word(bx);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto skipsprite;
-	al = data.byte(kPriority);
-	_cmp(al, es.byte(bx+23));
-	if (!flags.z())
-		goto skipsprite;
-	_cmp(es.byte(bx+31), 1);
-	if (flags.z())
-		goto skipsprite;
-	printasprite();
-skipsprite:
-	bx = pop();
-	cx = pop();
-	_add(bx, (32));
-	if (--cx)
-		goto prtspriteloop;
-	cx = pop();
-	_inc(cx);
-	_cmp(cx, 7);
-	if (!flags.z())
-		goto priorityloop;
-}
-
-void DreamGenContext::printasprite() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	si = bx;
-	ds = es.word(si+6);
-	al = es.byte(si+11);
-	ah = 0;
-	_cmp(al, 220);
-	if (flags.c())
-		goto notnegative1;
-	ah = 255;
-notnegative1:
-	bx = ax;
-	_add(bx, data.word(kMapady));
-	al = es.byte(si+10);
-	ah = 0;
-	_cmp(al, 220);
-	if (flags.c())
-		goto notnegative2;
-	ah = 255;
-notnegative2:
-	di = ax;
-	_add(di, data.word(kMapadx));
-	al = es.byte(si+15);
-	ah = 0;
-	_cmp(es.byte(si+30), 0);
-	if (flags.z())
-		goto steadyframe;
-	ah = 8;
-steadyframe:
-	_cmp(data.byte(kPriority), 6);
-	if (!flags.z())
-		goto notquickp;
-notquickp:
-	showframe();
-	bx = pop();
-	es = pop();
 }
 
 void DreamGenContext::checkone() {
@@ -8499,33 +8359,6 @@ _tmp28a:
 	cx = pop();
 	if (--cx)
 		goto _tmp28;
-}
-
-void DreamGenContext::eraseoldobs() {
-	STACK_CHECK;
-	_cmp(data.byte(kNewobs), 0);
-	if (flags.z())
-		return /* (donterase) */;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-	cx = 16;
-oberase:
-	push(cx);
-	push(bx);
-	ax = es.word(bx+20);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto notthisob;
-	di = bx;
-	al = 255;
-	cx = (32);
-	_stosb(cx, true);
-notthisob:
-	bx = pop();
-	cx = pop();
-	_add(bx, (32));
-	if (--cx)
-		goto oberase;
 }
 
 void DreamGenContext::showallobs() {
@@ -22131,12 +21964,7 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_addtopeoplelist: addtopeoplelist(); break;
 		case addr_showgamereel: showgamereel(); break;
 		case addr_checkspeed: checkspeed(); break;
-		case addr_clearsprites: clearsprites(); break;
-		case addr_makesprite: makesprite(); break;
 		case addr_delsprite: delsprite(); break;
-		case addr_spriteupdate: spriteupdate(); break;
-		case addr_printsprites: printsprites(); break;
-		case addr_printasprite: printasprite(); break;
 		case addr_checkone: checkone(); break;
 		case addr_findsource: findsource(); break;
 		case addr_initman: initman(); break;
@@ -22323,7 +22151,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_addalong: addalong(); break;
 		case addr_addlength: addlength(); break;
 		case addr_drawflags: drawflags(); break;
-		case addr_eraseoldobs: eraseoldobs(); break;
 		case addr_showallobs: showallobs(); break;
 		case addr_makebackob: makebackob(); break;
 		case addr_showallfree: showallfree(); break;

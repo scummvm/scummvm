@@ -532,11 +532,16 @@ void DreamGenContext::frameoutv() {
 	uint16 pitch = dx;
 	uint16 width = cx & 0xff;
 	uint16 height = cx >> 8;
-	uint16 stride = pitch - width;
 
 	const uint8* src = ds.ptr(si, width * height);
-	uint8* base = es.ptr(di, stride * height);
-	uint8* dst = base + pitch * bx;
+	uint8* dst = es.ptr(di, pitch * height);
+
+	frameoutv(dst, src, pitch, width, height);
+}
+
+void DreamGenContext::frameoutv(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height) {
+	uint16 stride = pitch - width;
+	dst += pitch * bx;
 
 	// NB: Original code assumes non-zero width and height, "for" are unneeded, do-while would suffice but would be less readable
 	for (uint16 y = 0; y < height; ++y) {
@@ -548,6 +553,165 @@ void DreamGenContext::frameoutv() {
 		}
 		dst += stride;
 	}
+}
+
+Sprite* DreamGenContext::spritetable() {
+	push(es);
+	push(bx);
+
+	es = data.word(kBuffers);
+	bx = kSpritetable;
+	Sprite *sprite = (Sprite*)es.ptr(bx, 16*sizeof(Sprite));
+
+	bx = pop();
+	es = pop();
+
+	return sprite;
+}
+
+void DreamGenContext::printsprites() {
+	for (size_t priority = 0; priority < 7; ++priority) {
+		Sprite *sprites = spritetable();
+		for (size_t j = 0; j < 16; ++j) {
+			const Sprite &sprite = sprites[j];
+			if (READ_LE_UINT16(&sprite.updateCallback) == 0x0ffff)
+				continue;
+			if (priority != sprite.priority)
+				continue;
+			if (sprite.hidden == 1)
+				continue;
+			printasprite(&sprite);
+		}
+	}
+}
+
+void DreamGenContext::printasprite(const Sprite* sprite) {
+	push(es);
+	push(bx);
+	ds = READ_LE_UINT16(&sprite->w6);
+	ax = sprite->y;
+	if (al >= 220) {
+		bx = data.word(kMapady) - (256 - al);
+	} else {
+		bx = ax + data.word(kMapady);
+	}
+
+	ax = sprite->x;
+	if (al >= 220) {
+		di = data.word(kMapadx) - (256 - al);
+	} else {
+		di = ax + data.word(kMapadx);
+	}
+	
+	ax = sprite->b15;
+	if (sprite->type != 0)
+		ah = 8;
+	showframe(); // NB: Params in ax, bx, di,  ds:dx
+
+	bx = pop();
+	es = pop();
+}
+
+void DreamGenContext::eraseoldobs() {
+	if (data.byte(kNewobs) == 0)
+		return;
+
+	Sprite *sprites = spritetable();
+	for (size_t i=0; i<16; ++i) {
+		Sprite &sprite = sprites[i];
+		if (READ_LE_UINT16(&sprite.obj_data) != 0xffff) {
+			memset(&sprite, 0xff, sizeof(Sprite));
+		}
+	}
+}
+
+void DreamGenContext::clearsprites() {
+	memset(spritetable(), 0xff, sizeof(Sprite)*16);
+}
+
+Sprite* DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 somethingInDx, uint16 somethingInDi) {
+	Sprite *sprite = spritetable();
+	while (sprite->b15 != 0xff) { // NB: No boundchecking in the original code either
+		++sprite;
+	}
+
+	WRITE_LE_UINT16(&sprite->updateCallback, updateCallback);
+	sprite->x = x;
+	sprite->y = y;
+	WRITE_LE_UINT16(&sprite->w6, somethingInDx);
+	WRITE_LE_UINT16(&sprite->w8, somethingInDi);
+	sprite->w2 = 0xffff;
+	sprite->b15 = 0;
+	sprite->b18 = 0;
+	return sprite;
+}
+
+void DreamGenContext::makesprite() { // NB: returns new sprite in es:bx 
+	Sprite *sprite = makesprite(si & 0xff, si >> 8, cx, dx, di);
+
+	// Recover es:bx from sprite
+	es = data.word(kBuffers);
+	bx = kSpritetable;
+	Sprite *sprites = (Sprite*)es.ptr(bx, sizeof(Sprite)*16);
+	bx += sizeof(Sprite)*(sprite-sprites);
+	//
+}
+
+void DreamGenContext::spriteupdate() {
+	Sprite *sprites = spritetable();
+	sprites[0].hidden = data.byte(kRyanon);
+
+	Sprite *sprite = sprites;
+	for (size_t i=0; i<16; ++i) {
+		uint16 updateCallback = READ_LE_UINT16(&sprite->updateCallback);
+		if (updateCallback != 0xffff) {
+			sprite->w24 = sprite->w2;
+			if (updateCallback == addr_mainman) // NB : Let's consider the callback as an enum while more code is not ported to C++
+				mainmanCPP(sprite);
+			else {
+				assert(updateCallback == addr_backobject);
+				backobjectCPP(sprite);
+			}
+		}
+	
+		if (data.byte(kNowinnewroom) == 1)
+			break;
+		++sprite;
+	}
+}
+
+void DreamGenContext::mainmanCPP(Sprite* sprite) {
+	push(es);
+	push(ds);
+
+	// Recover es:bx from sprite
+	es = data.word(kBuffers);
+	bx = kSpritetable;
+	Sprite *sprites = (Sprite*)es.ptr(bx, sizeof(Sprite)*16);
+	bx += 32*(sprite-sprites);
+	//
+
+	mainman();
+
+	ds = pop();
+	es = pop();
+}
+
+void DreamGenContext::backobjectCPP(Sprite* sprite) {
+	push(es);
+	push(ds);
+
+	// Recover es:bx from sprite
+	es = data.word(kBuffers);
+	bx = kSpritetable;
+	Sprite *sprites = (Sprite*)es.ptr(bx, sizeof(Sprite)*16);
+	bx += 32*(sprite-sprites);
+	//
+
+	backobject();
+
+	ds = pop();
+	es = pop();
 }
 
 void DreamGenContext::modifychar() {

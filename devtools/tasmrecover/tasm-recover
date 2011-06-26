@@ -23,6 +23,12 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'convertkey',
 	'readabyte',
 	'readoneblock',
+	'printsprites',
+	'printasprite',
+	'eraseoldobs',
+	'clearsprites',
+	'makesprite',
+	'spriteupdate',
 	'frameoutv',
 	'modifychar',
 	'lockmon'
