@@ -31,6 +31,7 @@ namespace tSage {
 
 static SoundManager *_soundManager = NULL;
 
+#if 0
 static void dumpVoiceStruct() {
 	VoiceTypeStruct *vt = _soundManager->_voiceTypeStructPtrs[1]; 
 	if (!vt) {
@@ -41,12 +42,13 @@ static void dumpVoiceStruct() {
 	assert(vt->_voiceType == VOICETYPE_1);
 	for (uint idx = 0; idx < vt->_entries.size(); ++idx) {
 		VoiceStructEntryType1 &vte = vt->_entries[idx]._type1;
-		debug("#%d - s=%x, ch=%x, pr=%x | s2=%x, ch2=%x, pr2=%x | s3=%x, ch3=%x, pr3=%x",
-			idx, vte._sound, vte._channelNum, vte._priority,
-			vte._sound2, vte._channelNum2, vte._priority2,
-			vte._sound3, vte._channelNum3, vte._priority3);
+		debug("#%d - s=%p, ch=%x, pr=%x | s2=%p, ch2=%x, pr2=%x | s3=%p, ch3=%x, pr3=%x",
+			idx, (void *)vte._sound, vte._channelNum, vte._priority,
+			(void *)vte._sound2, vte._channelNum2, vte._priority2,
+			(void *)vte._sound3, vte._channelNum3, vte._priority3);
 	}
 }
+#endif
 
 /*--------------------------------------------------------------------------*/
 
