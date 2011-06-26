@@ -34,23 +34,45 @@
 
 namespace CGE {
 
-#ifdef VOL_UPD
-BTFILE      VFILE::Cat(CAT_NAME, UPD, CRP);
-VOLBASE     DAT::File(DAT_NAME, UPD, CRP);
-#else
-BTFILE      VFILE::Cat(CAT_NAME, REA, CRP);
-VOLBASE     DAT::File(DAT_NAME, REA, CRP);
-#endif
-DAT      VFILE::Dat;
-VFILE   *VFILE::Recent           = NULL;
+DAT *VFILE::_Dat = NULL;
+BTFILE *VFILE::_Cat = NULL;
+VFILE *VFILE::_Recent = NULL;
 
+/*-----------------------------------------------------------------------*/
+
+DAT::DAT():
+#ifdef VOL_UPD
+	_File(DAT_NAME, UPD, CRP)
+#else
+	_File(DAT_NAME, REA, CRP)
+#endif
+{
+}
+
+/*-----------------------------------------------------------------------*/
+
+void VFILE::init() {
+	_Dat = new DAT();
+#ifdef VOL_UPD
+	_Cat = new BTFILE(CAT_NAME, UPD, CRP);
+#else
+	_Cat = new BTFILE(CAT_NAME, REA, CRP);
+#endif
+
+	_Recent = NULL;
+}
+
+void VFILE::deinit() {
+	delete _Dat;
+	delete _Cat;
+}
 
 VFILE::VFILE(const char *name, IOMODE mode)
 	: IOBUF(mode) {
 	if (mode == REA) {
-		if (Dat.File.Error || Cat.Error)
+		if (_Dat->_File.Error || _Cat->Error)
 			error("Bad volume data");
-		BT_KEYPACK *kp = Cat.Find(name);
+		BT_KEYPACK *kp = _Cat->Find(name);
 		if (scumm_stricmp(kp->Key, name) != 0)
 			Error = 1;
 		EndMark = (BufMark = BegMark = kp->Mark) + kp->Size;
@@ -63,26 +85,26 @@ VFILE::VFILE(const char *name, IOMODE mode)
 
 
 VFILE::~VFILE(void) {
-	if (Recent == this)
-		Recent = NULL;
+	if (_Recent == this)
+		_Recent = NULL;
 }
 
 
 bool VFILE::Exist(const char *name) {
-	return scumm_stricmp(Cat.Find(name)->Key, name) == 0;
+	return scumm_stricmp(_Cat->Find(name)->Key, name) == 0;
 }
 
 
 void VFILE::ReadBuff(void) {
-	if (Recent != this) {
-		Dat.File.Seek(BufMark + Lim);
-		Recent = this;
+	if (_Recent != this) {
+		_Dat->_File.Seek(BufMark + Lim);
+		_Recent = this;
 	}
-	BufMark = Dat.File.Mark();
+	BufMark = _Dat->_File.Mark();
 	long n = EndMark - BufMark;
 	if (n > IOBUF_SIZE)
 		n = IOBUF_SIZE;
-	Lim = Dat.File.Read(Buff, (uint16) n);
+	Lim = _Dat->_File.Read(Buff, (uint16) n);
 	Ptr = 0;
 }
 

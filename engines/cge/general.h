@@ -29,6 +29,7 @@
 #define __GENERAL__
 
 #include "common/system.h"
+#include "common/file.h"
 #include "common/random.h"
 #include "common/textconsole.h"
 #include "common/str.h"
@@ -183,7 +184,7 @@ inline uint16 XRead(XFILE *xf, T *t) {
 
 class IOHAND : public XFILE {
 protected:
-	int Handle;
+	Common::File _file;
 	uint16 Seed;
 	CRYPT *Crypt;
 public:
