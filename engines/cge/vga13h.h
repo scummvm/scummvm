@@ -301,7 +301,7 @@ uint8 Closest(CBLK *pal, CBLK x) {
 	if (!L)
 		++L;
 	uint16 R = f(x.R, L), G = f(x.G, L), B = f(x.B, L);
-	for (i = 0; i < 256; i ++) {
+	for (i = 0; i < 256; i++) {
 		uint16 l = pal[i].R + pal[i].G + pal[i].B;
 		if (! l)
 			++l;

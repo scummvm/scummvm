@@ -126,7 +126,7 @@ uint16 IOBUF::Read(uint8 *buf) {
 			Ptr += n;
 			if (eol) {
 				++ Ptr;
-				* (buf ++) = '\n';
+				*(buf++) = '\n';
 				++ total;
 				if (Ptr >= Lim)
 					ReadBuff();
@@ -186,14 +186,14 @@ int IOBUF::Read(void) {
 		if (Lim == 0)
 			return -1;
 	}
-	return Buff[Ptr ++];
+	return Buff[Ptr++];
 }
 
 
 void IOBUF::Write(uint8 b) {
 	if (Lim >= IOBUF_SIZE)
 		WriteBuff();
-	Buff[Lim ++] = b;
+	Buff[Lim++] = b;
 }
 
 

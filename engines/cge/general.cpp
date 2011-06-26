@@ -127,6 +127,7 @@ char *ForceExt(char *buf, const char *nam, const char *ext) {
 //  fnsplit(nam, dr, di, na, ex);
 //  fnmerge(buf, dr, di, na, ext);
 //  return buf;
+	warning("ForceExt");
 	strcpy(buf, nam);
 	char *dot = strrchr(buf, '.');
 	if (dot)
@@ -148,24 +149,23 @@ unsigned FastRand(unsigned s) {
 }
 
 uint16 RCrypt(void *buf, uint16 siz, uint16 seed) {
-	/*
-	    if (buf && siz) {
-	      uint8 * q = BUF + (siz-1);
-	      seed = FastRand(seed);
-	      * (BUF ++) ^= seed;
-	      while (buf < q) * (BUF ++) ^= FastRand();
-	      if (buf == q) * BUF ^= (seed = FastRand());
-	    }
-	  return seed;
-	*/
-	warning("STUB: RCrypt");
-	return 0;
+	if (buf && siz) {
+		byte *b = static_cast<byte *>(buf);
+		byte *q = b + (siz - 1);
+		seed = FastRand(seed);
+		*b++ ^= seed;
+		while (buf < q)
+			*b++ ^= FastRand();
+		if (buf == q)
+			*b ^= (seed = FastRand());
+	}
+	return seed;
 }
 
 uint16 XCrypt(void *buf, uint16 siz, uint16 seed) {
 	byte *b = static_cast<byte *>(buf);
 
-	for (uint16 i = 0; i < siz; i ++)
+	for (uint16 i = 0; i < siz; i++)
 		*b++ ^= seed;
 	
 	return seed;
@@ -175,7 +175,7 @@ uint16 atow(const char *a) {
 	uint16 w = 0;
 	if (a)
 		while (IsDigit(*a))
-			w = (10 * w) + (*(a ++) & 0xF);
+			w = (10 * w) + (*(a++) & 0xF);
 	return w;
 }
 
@@ -183,7 +183,7 @@ uint16 xtow(const char *x) {
 	uint16 w = 0;
 	if (x) {
 		while (IsHxDig(*x)) {
-			register uint16 d = * (x ++);
+			register uint16 d = *(x++);
 			if (d > '9')
 				d -= 'A' - ('9' + 1);
 			w = (w << 4) | (d & 0xF);
@@ -332,7 +332,7 @@ DATACK *LoadWave(XFILE *file, EMM *emm) {
 int TakeEnum(const char **tab, const char *txt) {
 	const char **e;
 	if (txt) {
-		for (e = tab; *e; e ++) {
+		for (e = tab; *e; e++) {
 			if (scumm_stricmp(txt, *e) == 0) {
 				return e - tab;
 			}

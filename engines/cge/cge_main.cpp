@@ -252,7 +252,7 @@ static void LoadGame(XFILE &file, bool tiny = false) {
 	SPRITE *spr;
 	int i;
 
-	for (st = SavTab; st->Ptr; st ++) {
+	for (st = SavTab; st->Ptr; st++) {
 		if (file.Error)
 			error("Bad SVG");
 		file.Read((uint8 *)((tiny || st->Flg) ? st->Ptr : &i), st->Len);
@@ -288,7 +288,7 @@ static void LoadGame(XFILE &file, bool tiny = false) {
 			Vga->SpareQ->Append(spr);
 		}
 
-		for (i = 0; i < POCKET_NX; i ++) {
+		for (i = 0; i < POCKET_NX; i++) {
 			register int r = pocref[i];
 			Pocket[i] = (r < 0) ? NULL : Vga->SpareQ->Locate(r);
 		}
@@ -307,7 +307,7 @@ static void SaveGame(XFILE &file) {
 	SPRITE *spr;
 	int i;
 
-	for (i = 0; i < POCKET_NX; i ++) {
+	for (i = 0; i < POCKET_NX; i++) {
 		register SPRITE *s = Pocket[i];
 		pocref[i] = (s) ? s->Ref : -1;
 	}
@@ -315,7 +315,7 @@ static void SaveGame(XFILE &file) {
 	volume[0] = SNDDrvInfo.VOL2.D;
 	volume[1] = SNDDrvInfo.VOL2.M;
 
-	for (st = SavTab; st->Ptr; st ++) {
+	for (st = SavTab; st->Ptr; st++) {
 		if (file.Error)
 			error("Bad SVG");
 		file.Write((uint8 *) st->Ptr, st->Len);
@@ -449,7 +449,7 @@ int WALK::Distance(SPRITE *spr) {
 		dz = - dz;
 
 	dx = dx * dx + dz * dz;
-	for (dz = 1; dz * dz < dx; dz ++)
+	for (dz = 1; dz * dz < dx; dz++)
 		;
 
 	return dz - 1;
@@ -484,7 +484,7 @@ void WALK::FindWay(CLUSTER c) {
 	extern uint16 Target;
 
 	if (c != Here) {
-		for (FindLevel = 1; FindLevel <= MAX_FIND_LEVEL; FindLevel ++) {
+		for (FindLevel = 1; FindLevel <= MAX_FIND_LEVEL; FindLevel++) {
 			signed char x, z;
 			Here.Split(x, z);
 			Target = (z << 8) | x;
@@ -652,7 +652,7 @@ static void PostMiniStep(int stp) {
 void SYSTEM::SetPal(void) {
 	int i;
 	DAC *p = VGA::SysPal + 256 - ArrayCount(StdPal);
-	for (i = 0; i < ArrayCount(StdPal); i ++) {
+	for (i = 0; i < ArrayCount(StdPal); i++) {
 		p[i].R = StdPal[i].R >> 2;
 		p[i].G = StdPal[i].G >> 2;
 		p[i].B = StdPal[i].B >> 2;
@@ -1083,9 +1083,9 @@ static void TakeName(void) {
 static void SwitchMapping(void) {
 	if (HorzLine->Flags.Hide) {
 		int i;
-		for (i = 0; i < MAP_ZCNT; i ++) {
+		for (i = 0; i < MAP_ZCNT; i++) {
 			int j;
-			for (j = 0; j < MAP_XCNT; j ++) {
+			for (j = 0; j < MAP_XCNT; j++) {
 				if (CLUSTER::Map[i][j])
 					SetMapBrick(j, i);
 			}
@@ -1310,7 +1310,7 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 		if ((mask & L_UP) && Snail->Idle()) {
 			if (Flags.Kept) {
 				int n;
-				for (n = 0; n < POCKET_NX; n ++) {
+				for (n = 0; n < POCKET_NX; n++) {
 					if (Pocket[n] == this) {
 						SelectPocket(n);
 						break;
@@ -1435,7 +1435,7 @@ static void LoadSprite(const char *fname, int ref, int cav, int col = 0, int row
 		   l->By = 13;
 		   l->Cx = 300;
 		   l->Cy = 500;
-		   * (long *) &l->Dx = 0; // movex * cnt
+		   *(long *) &l->Dx = 0; // movex * cnt
 		   l->Goto(col, row);
 		 }
 		     Sprite = l;
