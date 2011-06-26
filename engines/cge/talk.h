@@ -75,20 +75,24 @@ protected:
 	BITMAP *Box(uint16 w, uint16 h);
 public:
 	FONT *Font;
-	TALK(const char *tx, TBOX_STYLE mode = PURE);
-	TALK(void);
+	TALK(CGEEngine *vm, const char *tx, TBOX_STYLE mode = PURE);
+	TALK(CGEEngine *vm);
 	//~TALK (void);
 	virtual void Update(const char *tx);
 	virtual void Update(void) {}
 	void PutLine(int line, const char *text);
+private:
+	CGEEngine *_vm;
 };
 
 
 class INFO_LINE : public TALK {
 	const char *OldTxt;
 public:
-	INFO_LINE(uint16 wid);
+	INFO_LINE(CGEEngine *vm, uint16 wid);
 	void Update(const char *tx);
+private:
+	CGEEngine *_vm;
 };
 
 } // End of namespace CGE

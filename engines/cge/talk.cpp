@@ -97,8 +97,8 @@ void FONT::Save(void) {
 */
 
 
-TALK::TALK(const char *tx, TBOX_STYLE mode)
-	: SPRITE(NULL), Mode(mode) {
+TALK::TALK(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
+	: SPRITE(vm, NULL), Mode(mode), _vm(vm) {
 	TS[0] = TS[1] = NULL;
 	Flags.Syst = true;
 	Update(tx);
@@ -106,8 +106,8 @@ TALK::TALK(const char *tx, TBOX_STYLE mode)
 }
 
 
-TALK::TALK(void)
-	: SPRITE(NULL), Mode(PURE) {
+TALK::TALK(CGEEngine *vm)
+	: SPRITE(vm, NULL), Mode(PURE), _vm(vm) {
 	TS[0] = TS[1] = NULL;
 	Flags.Syst = true;
 }
@@ -275,7 +275,7 @@ void TALK::PutLine(int line, const char *text) {
 }
 
 
-INFO_LINE::INFO_LINE(uint16 w) : OldTxt(NULL) {
+INFO_LINE::INFO_LINE(CGEEngine *vm, uint16 w) : TALK(vm), OldTxt(NULL), _vm(vm) {
 	TS[0] = new BITMAP(w, FONT_HIG, TEXT_BG);
 	SetShapeList(TS);
 }

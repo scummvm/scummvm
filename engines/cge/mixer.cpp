@@ -40,7 +40,7 @@ extern MOUSE *Mouse;
 bool   MIXER::Appear = false;
 
 
-MIXER::MIXER(int x, int y) : SPRITE(NULL), Fall(MIX_FALL) {
+MIXER::MIXER(CGEEngine *vm, int x, int y) : SPRITE(vm, NULL), Fall(MIX_FALL), _vm(vm) {
 	Appear = true;
 	mb[0] = new BITMAP("VOLUME");
 	mb[1] = NULL;
@@ -65,7 +65,7 @@ MIXER::MIXER(int x, int y) : SPRITE(NULL), Fall(MIX_FALL) {
 	lb[i] = NULL;
 
 	for (i = 0; i < ArrayCount(Led); i++) {
-		register SPRITE *spr = new SPRITE(lb);
+		register SPRITE *spr = new SPRITE(_vm, lb);
 		spr->SetSeq(ls);
 		spr->Goto(x + 2 + 12 * i, y + 8);
 		spr->Flags.Tran = true;

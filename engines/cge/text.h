@@ -61,11 +61,14 @@ class TEXT {
 	char *Load(int idx, int ref);
 	int Find(int ref);
 public:
-	TEXT(const char *fname, int size);
+	TEXT(CGEEngine *vm, const char *fname, int size);
 	~TEXT(void);
 	void Clear(int from = 1, int upto = 0x7FFF);
 	void Preload(int from = 1, int upto = 0x7FFF);
 	char *getText(int ref);
+	void Say(const char *txt, SPRITE *spr);
+private:
+	CGEEngine *_vm;
 };
 
 

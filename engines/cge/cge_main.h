@@ -35,11 +35,11 @@
 namespace CGE {
 
 #define TSEQ           96
-#define HTALK          (TSEQ+4)
-#define TOO_FAR        (TSEQ+5)
-#define NO_WAY         (TSEQ+5)
-#define POC_FUL        (TSEQ+5)
-#define OFF_USE        (TSEQ+6)
+#define HTALK          (TSEQ + 4)
+#define TOO_FAR        (TSEQ + 5)
+#define NO_WAY         (TSEQ + 5)
+#define POC_FUL        (TSEQ + 5)
+#define OFF_USE        (TSEQ + 6)
 #define EXIT_OK_TEXT   40
 #define NOMUSIC_TEXT   98
 #define BADSVG_TEXT    99
@@ -57,25 +57,21 @@ namespace CGE {
 #define DEMO_TEXT      300
 #define NOSOUND_TEXT   310
 #define PAN_HIG        40
-#define WORLD_HIG      (SCR_HIG-PAN_HIG)
+#define WORLD_HIG      (SCR_HIG - PAN_HIG)
 #define INFO_X         177
 #define INFO_Y         164
 #define INFO_W         140
-
-#if defined(DEMO)
 #define CAVE_X         4
 #define CAVE_Y         166
 #define CAVE_SX        0
 #define CAVE_SY        0
+
+#ifdef DEMO
 #define CAVE_DX        23
 #define CAVE_DY        29
 #define CAVE_NX        3
 #define CAVE_NY        1
 #else
-#define CAVE_X         4
-#define CAVE_Y         166
-#define CAVE_SX        0
-#define CAVE_SY        0
 #define CAVE_DX        9
 #define CAVE_DY        10
 #define CAVE_NX        8
@@ -101,7 +97,7 @@ namespace CGE {
 #define SHP_MAX        1024
 #define STD_DELAY      3
 #define LEV_MAX        5
-#define CAVE_MAX       (CAVE_NX*CAVE_NY)
+#define CAVE_MAX       (CAVE_NX * CAVE_NY)
 #define MAX_FIND_LEVEL 3
 #define MAX_DISTANCE   3
 #define INI_EXT        ".INI"
@@ -111,8 +107,8 @@ namespace CGE {
 #define WALKSIDE       10
 #define BUSY_REF       500
 #define SYSTIMERATE    6   // 12 Hz
-#define HEROFUN0       (40*12)
-#define HEROFUN1       ( 2*12)
+#define HEROFUN0       (40 * 12)
+#define HEROFUN1       ( 2 * 12)
 #define PAIN           (Flag[0])
 #define FINIS          (Flag[3])
 
@@ -122,12 +118,14 @@ class SYSTEM : public SPRITE {
 public:
 	int FunDel;
 
-	SYSTEM();
+	SYSTEM(CGEEngine *vm);
 
 	void SetPal();
 	void FunTouch();
 	void Touch(uint16 mask, int x, int y);
 	void Tick();
+private:
+	CGEEngine *_vm;
 };
 
 
@@ -144,9 +142,10 @@ public:
 class WALK : public SPRITE {
 public:
 	CLUSTER Here;
-	enum DIR { NO_DIR = -1, NN, EE, SS, WW } Dir;
 	int TracePtr;
-	WALK(BMP_PTR *shpl);
+
+	enum DIR { NO_DIR = -1, NN, EE, SS, WW } Dir;
+	WALK(CGEEngine *vm, BMP_PTR *shpl);
 	void Tick(void);
 	void FindWay(CLUSTER c);
 	void FindWay(SPRITE *spr);
@@ -155,6 +154,9 @@ public:
 	void Park(void);
 	bool Lower(SPRITE *spr);
 	void Reach(SPRITE *spr, int mode = -1);
+private:
+	CGEEngine *_vm;
+
 };
 
 
@@ -163,7 +165,6 @@ CLUSTER XZ(COUPLE xy);
 
 void ExpandSprite(SPRITE *spr);
 void ContractSprite(SPRITE *spr);
-void cge_main(void);
 
 extern WALK *Hero;
 extern VGA *Vga;

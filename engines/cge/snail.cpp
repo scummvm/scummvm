@@ -423,10 +423,10 @@ const char *SNAIL::ComTxt[] = {
 };
 
 
-SNAIL::SNAIL(bool turbo)
+SNAIL::SNAIL(CGEEngine *vm, bool turbo)
 	: Turbo(turbo), Busy(false), TextDelay(false),
 	  Pause(0), TalkEnable(true),
-	  Head(0), Tail(0), SNList(farnew(COM, 256)) {
+	  Head(0), Tail(0), SNList(farnew(COM, 256)), _vm(vm) {
 }
 
 
@@ -906,7 +906,6 @@ static void SNMouse(bool on) {
 
 void SNAIL::RunCom(void) {
 	static int count = 1;
-//	extern void SwitchCave(int);
 	if (! Busy) {
 		Busy = true;
 		uint8 tmphea = Head;
@@ -954,13 +953,13 @@ void SNAIL::RunCom(void) {
 				if (sprel && TalkEnable) {
 					if (sprel == Hero && sprel->SeqTest(-1))
 						sprel->Step(HTALK);
-					Say(Text->getText(snc->Val), sprel);
+					Text->Say(Text->getText(snc->Val), sprel);
 					Sys->FunDel = HEROFUN0;
 				}
 				break;
 			case SNINF      :
 				if (TalkEnable) {
-					Inf(Text->getText(snc->Val));
+					_vm->Inf(Text->getText(snc->Val));
 					Sys->FunDel = HEROFUN0;
 				}
 				break;
