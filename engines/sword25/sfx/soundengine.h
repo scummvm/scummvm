@@ -58,13 +58,13 @@ namespace Sword25 {
 
 enum sndHandleType {
 	kFreeHandle,
-	kEffectHandle,
-	kVoiceHandle
+	kAllocatedHandle
 };
 
 struct SndHandle {
 	Audio::SoundHandle handle;
 	sndHandleType type;
+	uint32 id;
 };
 
 
@@ -244,10 +244,13 @@ public:
 private:
 	bool registerScriptBindings();
 	SndHandle *getHandle(uint *id);
+	SndHandle *findHandle(uint id);
 
 private:
 	Audio::Mixer *_mixer;
 	SndHandle _handles[SOUND_HANDLES];
+
+	uint32 _maxHandleId;
 };
 
 } // End of namespace Sword25

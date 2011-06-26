@@ -232,6 +232,28 @@ Common::String Win32TaskbarManager::getIconPath(Common::String target) {
 	return "";
 }
 
+// VerSetConditionMask and VerifyVersionInfo didn't appear until Windows 2000,
+// so we need to check for them at runtime
+LONGLONG VerSetConditionMaskFunc(ULONGLONG conditionMask, DWORD typeMask, BYTE condition) {
+	typedef BOOL (WINAPI *VerSetConditionMaskFunction)(ULONGLONG ConditionMask, DWORD TypeMask, BYTE Condition);
+
+	VerSetConditionMaskFunction verSetConditionMask = (VerSetConditionMaskFunction)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "VerSetConditionMask");
+	if (verSetConditionMask == NULL)
+		return 0;
+
+	return verSetConditionMask(conditionMask, typeMask, condition);
+}
+
+BOOL VerifyVersionInfoFunc(LPOSVERSIONINFOEXA lpVersionInformation, DWORD dwTypeMask, DWORDLONG dwlConditionMask) {
+   typedef BOOL (WINAPI *VerifyVersionInfoFunction)(LPOSVERSIONINFOEXA lpVersionInformation, DWORD dwTypeMask, DWORDLONG dwlConditionMask);
+
+   VerifyVersionInfoFunction verifyVersionInfo = (VerifyVersionInfoFunction)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "VerifyVersionInfoA");
+   if (verifyVersionInfo == NULL)
+      return FALSE;
+
+   return verifyVersionInfo(lpVersionInformation, dwTypeMask, dwlConditionMask);
+}
+
 bool Win32TaskbarManager::isWin7OrLater() {
 	OSVERSIONINFOEX versionInfo;
 	DWORDLONG conditionMask = 0;
@@ -241,10 +263,10 @@ bool Win32TaskbarManager::isWin7OrLater() {
 	versionInfo.dwMajorVersion = 6;
 	versionInfo.dwMinorVersion = 1;
 
-	VER_SET_CONDITION(conditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
-	VER_SET_CONDITION(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
+	conditionMask = VerSetConditionMaskFunc(conditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
+	conditionMask = VerSetConditionMaskFunc(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
 
-	return VerifyVersionInfo(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask);
+	return VerifyVersionInfoFunc(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask);
 }
 
 LPWSTR Win32TaskbarManager::ansiToUnicode(const char *s) {
