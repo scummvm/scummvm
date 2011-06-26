@@ -29,6 +29,7 @@
 #define __SNAIL__
 
 #include "cge/jbw.h"
+#include "cge/cge.h"
 
 namespace CGE {
 
@@ -89,12 +90,14 @@ public:
 	uint16 Pause;
 	static const char *ComTxt[];
 	bool TalkEnable;
-	SNAIL(bool turbo = false);
-	~SNAIL(void);
+	SNAIL(CGEEngine *vm, bool turbo = false);
+	~SNAIL();
 	void RunCom(void);
 	void AddCom(SNCOM com, int ref = 0, int val = 0, void *ptr = NULL);
 	void InsCom(SNCOM com, int ref = 0, int val = 0, void *ptr = NULL);
 	bool Idle(void);
+private:
+	CGEEngine *_vm;
 };
 
 

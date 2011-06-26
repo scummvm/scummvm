@@ -34,7 +34,6 @@ namespace CGE {
 
 // Defines found in cge.mak
 #define VOL
-//#define DEMO
 #define INI_FILE VFILE // Or is it CFILE?
 #define PIC_FILE VFILE
 #define BMP_MODE 0
@@ -56,7 +55,7 @@ namespace CGE {
 #define IsAlNum(c)  (IsAlpha(c) || IsDigit(c))
 #define IsHxDig(c)  (IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
 
-#define farnew(t,n) ((t *) malloc(sizeof(t) * (n)))
+#define farnew(t, n) ((t *) malloc(sizeof(t) * (n)))
 #define ArrayCount(a)   (sizeof(a) / sizeof((a)[0]))
 #define MAX_TIMER   0x1800B0L
 
@@ -140,12 +139,6 @@ struct  KeyStatStruct {
 #define BreakFlag   (*((volatile uint8 *) ((void _seg *) 0x40 + (void *) 0x71)))
 #define PostFlag    (*((volatile uint16 *) ((void _seg *) 0x40 + (void *) 0x72)))
 #define POST        ((void (*)(void)) ((void _seg *) 0xF000 + (void *) 0xFFF0))
-
-#ifdef      DEMO
-#define   Demo(x)     x
-#else
-#define   Demo(x)
-#endif
 
 
 #ifdef  __cplusplus

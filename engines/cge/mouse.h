@@ -69,12 +69,14 @@ public:
 	int Buttons;
 	SPRITE *Busy;
 	//SPRITE * Touched;
-	MOUSE(BITMAP **shpl = MC);
-	~MOUSE(void);
-	void On(void);
-	void Off(void);
+	MOUSE(CGEEngine *vm, BITMAP **shpl = MC);
+	~MOUSE();
+	void On();
+	void Off();
 	static void ClrEvt(SPRITE *spr = NULL);
-	void Tick(void);
+	void Tick();
+private:
+	CGEEngine *_vm;
 };
 
 } // End of namespace CGE

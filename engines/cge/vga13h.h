@@ -32,6 +32,7 @@
 #include <stddef.h>
 #include "cge/bitmap.h"
 #include "cge/snail.h"
+#include "cge/cge.h"
 
 namespace CGE {
 
@@ -197,7 +198,7 @@ public:
 	inline bool Active(void) {
 		return Ext != NULL;
 	}
-	SPRITE(BMP_PTR *shp);
+	SPRITE(CGEEngine *vm, BMP_PTR *shp);
 	virtual ~SPRITE(void);
 	BMP_PTR Shp(void);
 	BMP_PTR *SetShapeList(BMP_PTR *shp);
@@ -222,6 +223,8 @@ public:
 	SNAIL::COM *SnList(SNLIST type);
 	virtual void Touch(uint16 mask, int x, int y);
 	virtual void Tick(void);
+private:
+	CGEEngine *_vm;
 };
 
 

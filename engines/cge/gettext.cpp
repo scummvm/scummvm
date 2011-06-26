@@ -36,9 +36,9 @@ namespace CGE {
 GET_TEXT *GET_TEXT::Ptr = NULL;
 
 
-GET_TEXT::GET_TEXT(const char *info, char *text, int size, void (*click)(void))
-	: Text(text), Size(min<int>(size, GTMAX)), Len(min<int>(Size, strlen(text))),
-	  Cntr(GTBLINK), Click(click), OldKeybClient(KEYBOARD::SetClient(this)) {
+GET_TEXT::GET_TEXT(CGEEngine *vm, const char *info, char *text, int size, void (*click)(void))
+	: TALK(vm), Text(text), Size(min<int>(size, GTMAX)), Len(min<int>(Size, strlen(text))),
+	  Cntr(GTBLINK), Click(click), OldKeybClient(KEYBOARD::SetClient(this)), _vm(vm) {
 	int i = 2 * TEXT_HM + Font->Width(info);
 	Ptr = this;
 	Mode = RECT;
