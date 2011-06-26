@@ -72,7 +72,7 @@ void BTFILE::PutPage(int lev, bool hard) {
 
 BT_PAGE *BTFILE::GetPage(int lev, uint16 pgn) {
 	if (Buff[lev].PgNo != pgn) {
-		uint32 pos = pgn * sizeof(BT_PAGE);
+		int32 pos = pgn * sizeof(BT_PAGE);
 		PutPage(lev);
 		Buff[lev].PgNo = pgn;
 		if (Size() > pos) {
@@ -90,9 +90,6 @@ BT_PAGE *BTFILE::GetPage(int lev, uint16 pgn) {
 	return Buff[lev].Page;
 }
 
-// Does this work, or does it have to compare the entire buffer?
-#define memicmp(s1, s2, n) scumm_strnicmp((const char *)s1, (const char *)s2, n)
- 
 BT_KEYPACK *BTFILE::Find(const char *key) {
 	int lev = 0;
 	uint16 nxt = BT_ROOT;
@@ -102,7 +99,8 @@ BT_KEYPACK *BTFILE::Find(const char *key) {
 		if (pg->Hea.Down != BT_NONE) {
 			int i;
 			for (i = 0; i < pg->Hea.Count; i++) {
-				if (memicmp(key, pg->Inn[i].Key, BT_KEYLEN) < 0)
+				// Does this work, or does it have to compare the entire buffer?
+				if (scumm_strnicmp((const char *) key, (const char*)pg->Inn[i].Key, BT_KEYLEN) < 0)
 					break;
 			}
 			nxt = (i) ? pg->Inn[i - 1].Down : pg->Hea.Down;
@@ -110,9 +108,10 @@ BT_KEYPACK *BTFILE::Find(const char *key) {
 			++ lev;
 		} else {
 			int i;
-			for (i = 0; i < pg->Hea.Count - 1; i++)
+			for (i = 0; i < pg->Hea.Count - 1; i++) {
 				if (scumm_stricmp((const char *)key, (const char *)pg->Lea[i].Key) <= 0)
 					break;
+			}
 			Buff[lev].Indx = i;
 			return &pg->Lea[i];
 		}
@@ -122,7 +121,7 @@ BT_KEYPACK *BTFILE::Find(const char *key) {
 
 
 int keycomp(const void *k1, const void *k2) {
-	return memicmp(k1, k2, BT_KEYLEN);
+	return scumm_strnicmp((const char *) k1, (const char*) k2, BT_KEYLEN);
 }
 
 
