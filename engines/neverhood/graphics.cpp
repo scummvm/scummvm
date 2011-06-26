@@ -24,6 +24,39 @@
 
 namespace Neverhood {
 
+BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height)
+	: _vm(vm), _priority(priority), _visible(true) {
+	
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = width;
+	_drawRect.height = height;
+	_sysRect.x = 0;
+	_sysRect.y = 0;
+	_sysRect.width = (width + 3) & 0xFFFC; // align by 4 bytes
+	_sysRect.height = height;
+	_clipRect.x1 = 0;
+	_clipRect.y1 = 0;
+	_clipRect.x2 = 640;
+	_clipRect.y2 = 480;
+	_surface = new Graphics::Surface();
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+}
+
+BaseSurface::~BaseSurface() {
+	delete _surface;
+}
+
+void BaseSurface::draw() {
+	// TODO
+}
+
+void BaseSurface::addDirtyRect() {
+	// TODO
+}
+
+// Misc
+
 void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NUnknown *unknown, byte **palette, byte **pixels) {
 
 	uint16 flags;

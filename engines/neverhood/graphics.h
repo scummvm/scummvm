@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/file.h"
+#include "graphics/surface.h"
 #include "neverhood/neverhood.h"
 
 namespace Neverhood {
@@ -36,6 +37,36 @@ struct NDimensions {
 struct NUnknown {
 	int16 unk1, unk2;
 };
+
+struct NRect {
+	int16 x1, y1, x2, y2;
+	NRect() : x1(0), y1(0), x2(0), y2(0) {}
+};
+
+struct NDrawRect {
+	int16 x, y, width, height;
+	NDrawRect() : x(0), y(0), width(0), height(0) {}
+};
+
+// NOTE: "Restore" methods aren't need in the reimplementation as they're DirectDraw-specific
+
+class BaseSurface {
+public:
+	BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height);
+	virtual ~BaseSurface();
+	virtual void draw();
+	virtual void addDirtyRect();
+protected:
+	NeverhoodEngine *_vm;
+	int _priority;
+	bool _visible;
+	Graphics::Surface *_surface;
+	NDrawRect _drawRect;
+	NDrawRect _sysRect;
+	NRect _clipRect;
+};
+
+// Misc
 
 void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NUnknown *unknown, byte **palette, byte **pixels);
 void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
