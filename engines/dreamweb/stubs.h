@@ -1,6 +1,6 @@
 	void multidump();
-	void frameoutv();
-	void frameoutv(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height);
+	void frameoutv(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
+	void frameoutnm(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void worktoscreen();
 	void multiget();
 	void convertkey();
@@ -10,10 +10,11 @@
 	void readoneblock();
 	void printundermon();
 	void seecommandtail();
-	void frameoutnm();
 	void randomnumber();
 	void quickquit2();
 	Sprite* spritetable();
+	void showframe();
+	uint16 showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag);
 	void printasprite(const Sprite* sprite);
 	void width160();
 	void multiput();

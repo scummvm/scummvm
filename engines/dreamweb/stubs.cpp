@@ -83,21 +83,14 @@ void DreamGenContext::cls() {
 	engine->cls();
 }
 
-void DreamGenContext::frameoutnm() {
-	unsigned w = (uint8)cl, h = (uint8)ch;
-	unsigned pitch = (uint16)dx;
-	unsigned src = (uint16)si;
-	int x = (uint16)di, y = (uint16)bx;
-	unsigned dst = x + y * pitch;
-	//debug(1, "framenm %ux%u[pitch: %u]-> %d,%d, segment: %04x->%04x", w, h, pitch, x, y, (uint16)ds, (uint16)es);
-	for(unsigned l = 0; l < h; ++l) {
-		uint8 *src_p = ds.ptr(src + w * l, w);
-		uint8 *dst_p = es.ptr(dst + pitch * l, w);
-		memcpy(dst_p, src_p, w);
+void DreamGenContext::frameoutnm(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+	dst += pitch * y + x;
+
+	for (uint16 j = 0; j < height; ++j) {
+		memcpy(dst, src, width);
+		dst += pitch;
+		src += width;
 	}
-	di += dst + pitch * h;
-	si += w * h;
-	cx = 0;
 }
 
 void DreamGenContext::seecommandtail() {
@@ -528,24 +521,26 @@ void DreamGenContext::showpcx() {
 	pcxFile.close();
 }
 
+/*
 void DreamGenContext::frameoutv() {
 	uint16 pitch = dx;
 	uint16 width = cx & 0xff;
 	uint16 height = cx >> 8;
 
 	const uint8* src = ds.ptr(si, width * height);
-	uint8* dst = es.ptr(di, pitch * height);
+	uint8* dst = es.ptr(0, pitch * height);
 
-	frameoutv(dst, src, pitch, width, height);
+	frameoutv(dst, src, pitch, width, height, di, bx);
 }
+*/
 
-void DreamGenContext::frameoutv(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height) {
+void DreamGenContext::frameoutv(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	uint16 stride = pitch - width;
-	dst += pitch * bx;
+	dst += pitch * y + x;
 
 	// NB: Original code assumes non-zero width and height, "for" are unneeded, do-while would suffice but would be less readable
-	for (uint16 y = 0; y < height; ++y) {
-		for (uint16 x = 0; x < width; ++x) {
+	for (uint16 j = 0; j < height; ++j) {
+		for (uint16 i = 0; i < width; ++i) {
 			uint8 pixel = *src++;
 			if (pixel)
 				*dst = pixel;
@@ -567,6 +562,78 @@ Sprite* DreamGenContext::spritetable() {
 	es = pop();
 
 	return sprite;
+}
+
+uint16 DreamGenContext::showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag) {
+	es = dst;
+	ds = src;
+	di = x;
+	bx = y;
+	al = frameNumber;
+	ah = effectsFlag;
+
+	si = (ax & 0x1ff) * 6;
+	if (ds.word(si) == 0) {
+		return 0;
+	}
+
+//notblankshow:
+	if ((effectsFlag & 128) == 0) {
+		di += ds.byte(si+4);
+		bx += ds.byte(si+5);
+	}
+//skipoffsets:
+	cx = ds.word(si+0);
+	uint8 width = cl;
+	uint8 height = ch;
+	uint16 written = cx;
+	si = ds.word(si+2) + 2080;
+
+	if (effectsFlag) {
+		if (effectsFlag & 128) { //centred
+			di -= width / 2;
+			bx -= height / 2;
+		}
+		if (effectsFlag & 64) { //diffdest
+			frameoutfx();
+			return written;
+		}
+		if (effectsFlag & 8) { //printlist
+			push(ax);
+			ax = di - data.word(kMapadx);
+			push(bx);
+			bx -= data.word(kMapady);
+			ah = bl;
+			bx = pop();
+			//addtoprintlist(); // NB: Commented in the original asm
+			ax = pop();
+		}
+		if (effectsFlag & 4) { //flippedx
+			dx = (320);
+			es = data.word(kWorkspace);
+			frameoutfx();
+			return written;
+		}
+		if (effectsFlag & 2) { //nomask
+			es = data.word(kWorkspace);
+			frameoutnm(es.ptr(0, 320 * height), ds.ptr(si, width * height), 320, width, height, di, bx);
+			return written;
+		}
+		if (effectsFlag & 32) {
+			dx = (320);
+			es = data.word(kWorkspace);
+			frameoutbh();
+			return written;
+		}
+	}
+//noeffects:
+	es = data.word(kWorkspace);
+	frameoutv(es.ptr(0, 320 * height), ds.ptr(si, width * height), 320, width, height, di, bx);
+	return written;
+}
+
+void DreamGenContext::showframe() {
+	cx = showframeCPP(es, ds, di, bx, al, ah);
 }
 
 void DreamGenContext::printsprites() {
@@ -606,7 +673,7 @@ void DreamGenContext::printasprite(const Sprite* sprite) {
 	ax = sprite->b15;
 	if (sprite->type != 0)
 		ah = 8;
-	showframe(); // NB: Params in ax, bx, di,  ds:dx
+	showframe();
 
 	bx = pop();
 	es = pop();

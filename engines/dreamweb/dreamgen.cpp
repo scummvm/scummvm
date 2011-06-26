@@ -4090,114 +4090,6 @@ zeroblock:
 		goto loop120;
 }
 
-void DreamGenContext::showframe() {
-	STACK_CHECK;
-	push(dx);
-	push(ax);
-	cx = ax;
-	_and(cx, 511);
-	_add(cx, cx);
-	si = cx;
-	_add(cx, cx);
-	_add(si, cx);
-	_cmp(ds.word(si), 0);
-	if (!flags.z())
-		goto notblankshow;
-	ax = pop();
-	dx = pop();
-	cx = 0;
-	return;
-notblankshow:
-	_test(ah, 128);
-	if (!flags.z())
-		goto skipoffsets;
-	al = ds.byte(si+4);
-	ah = 0;
-	_add(di, ax);
-	al = ds.byte(si+5);
-	ah = 0;
-	_add(bx, ax);
-skipoffsets:
-	cx = ds.word(si+0);
-	ax = ds.word(si+2);
-	_add(ax, 2080);
-	si = ax;
-	ax = pop();
-	dx = pop();
-	_cmp(ah, 0);
-	if (flags.z())
-		goto noeffects;
-	_test(ah, 128);
-	if (flags.z())
-		goto notcentred;
-	push(ax);
-	al = cl;
-	ah = 0;
-	_shr(ax, 1);
-	_sub(di, ax);
-	al = ch;
-	ah = 0;
-	_shr(ax, 1);
-	_sub(bx, ax);
-	ax = pop();
-notcentred:
-	_test(ah, 64);
-	if (flags.z())
-		goto notdiffdest;
-	push(cx);
-	frameoutfx();
-	cx = pop();
-	return;
-notdiffdest:
-	_test(ah, 8);
-	if (flags.z())
-		goto notprintlist;
-	push(ax);
-	ax = di;
-	_sub(ax, data.word(kMapadx));
-	push(bx);
-	_sub(bx, data.word(kMapady));
-	ah = bl;
-	bx = pop();
-	ax = pop();
-notprintlist:
-	_test(ah, 4);
-	if (flags.z())
-		goto notflippedx;
-	dx = (320);
-	es = data.word(kWorkspace);
-	push(cx);
-	frameoutfx();
-	cx = pop();
-	return;
-notflippedx:
-	_test(ah, 2);
-	if (flags.z())
-		goto notnomask;
-	dx = (320);
-	es = data.word(kWorkspace);
-	push(cx);
-	frameoutnm();
-	cx = pop();
-	return;
-notnomask:
-	_test(ah, 32);
-	if (flags.z())
-		goto noeffects;
-	dx = (320);
-	es = data.word(kWorkspace);
-	push(cx);
-	frameoutbh();
-	cx = pop();
-	return;
-noeffects:
-	dx = (320);
-	es = data.word(kWorkspace);
-	push(cx);
-	frameoutv();
-	cx = pop();
-}
-
 void DreamGenContext::frameoutbh() {
 	STACK_CHECK;
 	push(dx);
@@ -22020,7 +21912,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_zoom: zoom(); break;
 		case addr_delthisone: delthisone(); break;
 		case addr_doblocks: doblocks(); break;
-		case addr_showframe: showframe(); break;
 		case addr_frameoutbh: frameoutbh(); break;
 		case addr_frameoutfx: frameoutfx(); break;
 		case addr_transferinv: transferinv(); break;

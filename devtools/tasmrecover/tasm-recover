@@ -28,6 +28,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'eraseoldobs',
 	'clearsprites',
 	'makesprite',
+	'showframe',
 	'spriteupdate',
 	'frameoutv',
 	'modifychar',

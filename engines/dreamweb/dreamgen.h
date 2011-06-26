@@ -620,7 +620,6 @@ public:
 	static const uint16 addr_transferinv = 0xc240;
 	static const uint16 addr_frameoutfx = 0xc23c;
 	static const uint16 addr_frameoutbh = 0xc238;
-	static const uint16 addr_showframe = 0xc22c;
 	static const uint16 addr_doblocks = 0xc228;
 	static const uint16 addr_delthisone = 0xc214;
 	static const uint16 addr_zoom = 0xc210;
@@ -1679,7 +1678,7 @@ public:
 	void walking();
 	void diarykeyp();
 	//void readabyte();
-	void showframe();
+	//void showframe();
 	void random();
 	void obicons();
 	void frameoutbh();
