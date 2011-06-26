@@ -157,6 +157,12 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
 	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
 
+	// Init palette with black :
+	// SDL 1.2 palettes default to all black,
+	// SDL 1.3 palettes default to all white,
+	// thus we have to set our own default.
+	memset(_currentPalette, 0, sizeof(SDL_Color) * 256);
+
 	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
@@ -751,6 +757,9 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	if (_screen == NULL)
 		error("allocating _screen failed");
 #endif
+
+	// Set a default palette. SDL_SetColors does nothing for non indexed surfaces.
+	SDL_SetColors(_screen, _currentPalette, 0, 256);
 
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
