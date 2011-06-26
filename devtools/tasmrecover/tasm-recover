@@ -130,5 +130,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'backobject',
 	'mainman',
 	'madman',
+	'loadgame',
+	'savegame',
+	'doload'
 	])
 generator.generate('dreamweb') #start routine

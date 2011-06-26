@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	dreamweb.o \
 	dreamgen.o \
 	print.o \
+	saveload.o \
 	sprite.o \
 	stubs.o \
 	vgagrafx.o
