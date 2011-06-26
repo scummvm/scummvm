@@ -39,6 +39,7 @@ namespace CGE {
 #define BT_NONE     0xFFFF
 #define BT_ROOT     0
 
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct BT_KEYPACK {
 	char Key[BT_KEYLEN];
@@ -65,6 +66,8 @@ struct BT_PAGE {
 		BT_KEYPACK Lea[(BT_SIZE - sizeof(HEA)) / sizeof(BT_KEYPACK)];
 	};
 };
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 
 class BTFILE : public IOHAND {
