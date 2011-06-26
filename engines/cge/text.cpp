@@ -48,7 +48,7 @@ TEXT::TEXT(const char *fname, int size) {
 	if (!INI_FILE::Exist(FileName))
 		error("No talk (%s)\n", FileName);
 
-	for (Size = 0; Size < size; Size ++) {
+	for (Size = 0; Size < size; Size++) {
 		Cache[Size].Ref = 0;
 		Cache[Size].Txt = NULL;
 	}
@@ -63,7 +63,7 @@ TEXT::~TEXT(void) {
 
 void TEXT::Clear(int from, int upto) {
 	HAN *p, * q;
-	for (p = Cache, q = p + Size; p < q; p ++) {
+	for (p = Cache, q = p + Size; p < q; p++) {
 		if (p->Ref && p->Ref >= from && p->Ref < upto) {
 			p->Ref = 0;
 			delete p->Txt;
@@ -76,7 +76,7 @@ void TEXT::Clear(int from, int upto) {
 int TEXT::Find(int ref) {
 	HAN *p, * q;
 	int i = 0;
-	for (p = Cache, q = p + Size; p < q; p ++) {
+	for (p = Cache, q = p + Size; p < q; p++) {
 		if (p->Ref == ref)
 			break;
 		else

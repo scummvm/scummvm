@@ -42,7 +42,7 @@ namespace CGE {
 
 BTFILE::BTFILE(const char *name, IOMODE mode, CRYPT *crpt)
 	: IOHAND(name, mode, crpt) {
-	for (int i = 0; i < BT_LEVELS; i ++) {
+	for (int i = 0; i < BT_LEVELS; i++) {
 		Buff[i].Page = new BT_PAGE;
 		Buff[i].PgNo = BT_NONE;
 		Buff[i].Indx = -1;
@@ -54,7 +54,7 @@ BTFILE::BTFILE(const char *name, IOMODE mode, CRYPT *crpt)
 
 
 BTFILE::~BTFILE(void) {
-	for (int i = 0; i < BT_LEVELS; i ++) {
+	for (int i = 0; i < BT_LEVELS; i++) {
 		PutPage(i);
 		delete Buff[i].Page;
 	}
@@ -101,7 +101,7 @@ BT_KEYPACK *BTFILE::Find(const char *key) {
 		// search
 		if (pg->Hea.Down != BT_NONE) {
 			int i;
-			for (i = 0; i < pg->Hea.Count; i ++) {
+			for (i = 0; i < pg->Hea.Count; i++) {
 				if (memicmp(key, pg->Inn[i].Key, BT_KEYLEN) < 0)
 					break;
 			}
@@ -110,7 +110,7 @@ BT_KEYPACK *BTFILE::Find(const char *key) {
 			++ lev;
 		} else {
 			int i;
-			for (i = 0; i < pg->Hea.Count - 1; i ++)
+			for (i = 0; i < pg->Hea.Count - 1; i++)
 				if (scumm_stricmp((const char *)key, (const char *)pg->Lea[i].Key) <= 0)
 					break;
 			Buff[lev].Indx = i;
@@ -136,15 +136,15 @@ void BTFILE::Make(BT_KEYPACK *keypack, uint16 count) {
 	        *Leaf = GetPage(1, n);
 	Root->Hea.Down = n;
 	PutPage(0, true);
-	while (count --) {
+	while (count--) {
 		if (Leaf->Hea.Count >= ArrayCount(Leaf->Lea)) {
 			PutPage(1, true);     // save filled page
 			Leaf = GetPage(1, ++n);   // take empty page
 			memcpy(Root->Inn[Root->Hea.Count].Key, keypack->Key, BT_KEYLEN);
-			Root->Inn[Root->Hea.Count ++].Down = n;
+			Root->Inn[Root->Hea.Count++].Down = n;
 			Buff[0].Updt = true;
 		}
-		Leaf->Lea[Leaf->Hea.Count ++] = * (keypack ++);
+		Leaf->Lea[Leaf->Hea.Count++] = *(keypack++);
 		Buff[1].Updt = true;
 	}
 }

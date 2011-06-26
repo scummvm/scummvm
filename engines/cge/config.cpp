@@ -161,7 +161,7 @@ void SelectSound(void) {
 		SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 	Inf(Text->getText(STYPE_TEXT));
 	Talk->Goto(Talk->X, FONT_HIG / 2);
-	for (i = 0; i < ArrayCount(DevName); i ++)
+	for (i = 0; i < ArrayCount(DevName); i++)
 		DevMenu[i].Text = Text->getText(DevName[i]);
 	(new VMENU(DevMenu, SCR_WID / 2, Talk->Y + Talk->H + TEXT_VM + FONT_HIG))->SetName(Text->getText(MENU_TEXT));
 }

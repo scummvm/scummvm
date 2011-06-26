@@ -288,7 +288,7 @@ void ContractSprite(SPRITE *spr) {
 }
 
 int FindPocket(SPRITE *spr) {
-	for (int i = 0; i < POCKET_NX; i ++)
+	for (int i = 0; i < POCKET_NX; i++)
 	if (Pocket[i] == spr)
 		return i;
 	return -1;
@@ -346,7 +346,7 @@ void FeedSnail(SPRITE *spr, SNLIST snq) {
 
 				if (FindPocket(NULL) < 0) {                 // no empty pockets?
 					SNAIL::COM *p;
-					for (p = c; p->Com != SNNEXT; p ++) {     // find KEEP command
+					for (p = c; p->Com != SNNEXT; p++) {     // find KEEP command
 						if (p->Com == SNKEEP) {
 							PocFul();
 							return;
@@ -439,7 +439,7 @@ SNAIL::~SNAIL(void) {
 
 void SNAIL::AddCom(SNCOM com, int ref, int val, void *ptr) {
 	_disable();
-	COM *snc = &SNList[Head ++];
+	COM *snc = &SNList[Head++];
 	snc->Com = com;
 	snc->Ref = ref;
 	snc->Val = val;
@@ -850,7 +850,7 @@ void SNFlash(bool on) {
 		DAC *pal = farnew(DAC, PAL_CNT);
 		if (pal) {
 			memcpy(pal, SysPal, PAL_SIZ);
-			for (int i = 0; i < PAL_CNT; i ++) {
+			for (int i = 0; i < PAL_CNT; i++) {
 				register int c;
 				c = pal[i].R << 1;
 				pal[i].R = (c < 64) ? c : 63;

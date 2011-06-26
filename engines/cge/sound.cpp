@@ -82,7 +82,7 @@ void SOUND::Stop(void) {
 
 FX::FX(int size) : Emm(0L), Current(NULL) {
 	Cache = new HAN[size];
-	for (Size = 0; Size < size; Size ++) {
+	for (Size = 0; Size < size; Size++) {
 		Cache[Size].Ref = 0;
 		Cache[Size].Wav = NULL;
 	}
@@ -97,7 +97,7 @@ FX::~FX(void) {
 
 void FX::Clear(void) {
 	HAN *p, * q;
-	for (p = Cache, q = p + Size; p < q; p ++) {
+	for (p = Cache, q = p + Size; p < q; p++) {
 		if (p->Ref) {
 			p->Ref = 0;
 			delete p->Wav;
@@ -112,7 +112,7 @@ void FX::Clear(void) {
 int FX::Find(int ref) {
 	HAN *p, * q;
 	int i = 0;
-	for (p = Cache, q = p + Size; p < q; p ++) {
+	for (p = Cache, q = p + Size; p < q; p++) {
 		if (p->Ref == ref)
 			break;
 		else
@@ -126,7 +126,7 @@ void FX::Preload(int ref0) {
 	HAN *CacheLim = Cache + Size;
 	int ref;
 
-	for (ref = ref0; ref < ref0 + 10; ref ++) {
+	for (ref = ref0; ref < ref0 + 10; ref++) {
 		static char fname[] = "FX00000.WAV";
 		wtom(ref, fname + 2, 10, 5);
 		INI_FILE file = INI_FILE(fname);
