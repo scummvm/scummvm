@@ -65,7 +65,7 @@ public:
 	void setShakePos(int shakeOffset) {}
 	void setFocusRectangle(const Common::Rect& rect) {}
 	void clearFocusRectangle() {}
-
+  void resetGraphicsScale() {}
 	void showOverlay() {}
 	void hideOverlay() {}
 	Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(); }

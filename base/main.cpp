@@ -111,7 +111,7 @@ static const EnginePlugin *detectPlugin() {
 		printf("failed\n");
 		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
 	} else {
-		printf("%s\n", plugin->getName());
+    //		printf("%s\n", plugin->getName());
 
 		// FIXME: Do we really need this one?
 		printf("  Starting '%s'\n", game.description().c_str());

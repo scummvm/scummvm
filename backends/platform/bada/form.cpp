@@ -35,7 +35,7 @@ using namespace Osp::Ui::Controls;
 //
 // BadaAppForm
 //
-BadaAppForm::BadaAppForm() : pThread(0) {
+BadaAppForm::BadaAppForm() : gameThread(0) {
   eventQueueLock = new Mutex();
   eventQueueLock->Create();
 }
@@ -47,7 +47,7 @@ result BadaAppForm::Construct() {
   }
 
   BadaSystem* badaSystem = null;
-  pThread = null;
+  gameThread = null;
 
   badaSystem = new BadaSystem(this);
   r = badaSystem != null ? E_SUCCESS : E_OUT_OF_MEMORY;
@@ -57,21 +57,21 @@ result BadaAppForm::Construct() {
   }
 
   if (!IsFailed(r)) {
-    pThread = new Thread();
-    r = pThread != null ? E_SUCCESS : E_OUT_OF_MEMORY;
+    gameThread = new Thread();
+    r = gameThread != null ? E_SUCCESS : E_OUT_OF_MEMORY;
   }
 
   if (!IsFailed(r)) {
-    r = pThread->Construct(*this);
+    r = gameThread->Construct(*this);
   }
 
   if (IsFailed(r)) {
     if (badaSystem != null) {
       delete badaSystem;
     }
-    if (pThread != null) {
-      delete pThread;
-      pThread = null;
+    if (gameThread != null) {
+      delete gameThread;
+      gameThread = null;
     }
   }
   else {
@@ -84,20 +84,19 @@ result BadaAppForm::Construct() {
 BadaAppForm::~BadaAppForm() {
   logEntered();
 
-  if (pThread) {
-    pThread->Stop();
-    delete pThread;
-    pThread = null;
+  if (g_system) {
+    ((BadaSystem*) g_system)->closeAudio();
+  }
+
+  if (gameThread) {
+    gameThread->Stop();
+    delete gameThread;
+    gameThread = null;
   }
 
   if (eventQueueLock) {
     delete eventQueueLock;
     eventQueueLock = null;
-  }
-
-  if (g_system) {
-    delete (BadaSystem*) g_system;
-    g_system = null;
   }
 }
 
@@ -149,7 +148,7 @@ void BadaAppForm::pushEvent(Common::EventType type,
 void BadaAppForm::OnOrientationChanged(const Control& source, 
                                        OrientationStatus orientationStatus) {
   logEntered();
-  pThread->Start();
+  gameThread->Start();
 }
 
 Object* BadaAppForm::Run(void) {

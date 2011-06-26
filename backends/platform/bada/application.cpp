@@ -44,6 +44,7 @@ BadaScummVM::BadaScummVM() : appForm(0) {
 }
 
 BadaScummVM::~BadaScummVM() {
+  logEntered();
 }
 
 bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {

@@ -135,7 +135,8 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 BadaSystem::BadaSystem(BadaAppForm* appForm) : 
   appForm(appForm),
   audioThread(0), 
-  epoch(0) {
+  epoch(0),
+  graphicsOpen(true) {
 }
 
 result BadaSystem::Construct(void) {
@@ -150,11 +151,8 @@ result BadaSystem::Construct(void) {
 }
 
 BadaSystem::~BadaSystem() {
-  if (audioThread) {
-    audioThread->Stop();
-    delete audioThread;
-    audioThread = null;
-  }
+  logEntered();
+  closeAudio();
 }
 
 result BadaSystem::initModules() {
@@ -197,7 +195,7 @@ result BadaSystem::initModules() {
   }
 
   _audiocdManager = (AudioCDManager*) new DefaultAudioCDManager();
-  if (!_audiocdManager) {
+  if (!_audiocdManager) { // dtor in base
     return E_OUT_OF_MEMORY;
   }
 
@@ -214,10 +212,10 @@ void BadaSystem::initBackend() {
   logEntered();
 
   // allow translations to be found
-  ConfMan.set("themepath", "/Res/scummmobile");
+  ConfMan.set("themepath", "/Res");
 
   // use the mobile device theme
-  ConfMan.set("gui_theme", "mobile");
+  ConfMan.set("gui_theme", "/Res/scummmobile");
 
   // allow virtual keypad pack to be found
   ConfMan.set("vkeybdpath", "/Res/vkeybd_default");
@@ -258,7 +256,7 @@ void BadaSystem::delayMillis(uint msecs) {
 }
 
 void BadaSystem::updateScreen() {
-  if (_graphicsManager) {
+  if (graphicsOpen && _graphicsManager != null) {
     _graphicsManager->updateScreen();
   }
 }
@@ -280,7 +278,7 @@ void BadaSystem::fatalError() {
   systemError("ScummVM: Fatal internal error.");
 }
 
-void BadaSystem::logMessage(LogMessageType::Type /*type*/, const char *message) {
+void BadaSystem::logMessage(LogMessageType::Type /*type*/, const char* message) {
   AppLog(message);
 }
 
@@ -294,11 +292,16 @@ Common::WriteStream* BadaSystem::createConfigWriteStream() {
   return file.createWriteStream();
 }
 
-void BadaSystem::closeGraphics() {
-  if (_graphicsManager) {
-    delete _graphicsManager;
-    _graphicsManager = null;
+void BadaSystem::closeAudio() {
+  if (audioThread) {
+    audioThread->Stop();
+    delete audioThread;
+    audioThread = null;
   }
+}
+
+void BadaSystem::closeGraphics() {
+  graphicsOpen = false;
 }
 
 //

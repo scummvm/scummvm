@@ -82,7 +82,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
                  const Osp::Graphics::Point& currentPosition);
 
   // event handling
-  Osp::Base::Runtime::Thread* pThread;
+  Osp::Base::Runtime::Thread* gameThread;
   Osp::Base::Runtime::Mutex* eventQueueLock;
   Common::Queue<Common::Event> eventQueue;
 };

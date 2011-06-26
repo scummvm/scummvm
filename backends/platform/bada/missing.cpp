@@ -65,8 +65,9 @@ void stderr_vfprintf(void*, const char* format, va_list ap) {
 }
 
 int printf(const char* format, ...) {
+  int result = 0;
+  /*
   va_list ap;
-  int result;
   char buffer[BUF_SIZE];
 
   va_start(ap, format);
@@ -75,6 +76,7 @@ int printf(const char* format, ...) {
 
   AppLog(buffer);
 
+  */
   return result;
 }
 
