@@ -55,6 +55,8 @@ public:
 
 private:
 	CGEConsole *_console;
+
+	void setup();
 };
 
 // Example console class
