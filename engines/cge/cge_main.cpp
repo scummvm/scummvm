@@ -44,6 +44,7 @@
 #include    "cge/gettext.h"
 #include    "cge/mixer.h"
 #include    "cge/cge_main.h"
+#include    "cge/cge.h"
 #include    <stdio.h>
 #include    <stdlib.h>
 #include    <string.h>
@@ -54,7 +55,7 @@
 namespace CGE {
 
 #define     STACK_SIZ   (K(2))
-#define     SVGCHKSUM   (1956+Now+OldLev+Game+Music+DemoText)
+#define     SVGCHKSUM   (1956 + Now + OldLev + Game + Music + DemoText)
 
 #define   SVG0NAME    ("{{INIT}}" SVG_EXT)
 #define   SVG0FILE    CFILE
@@ -141,7 +142,6 @@ static  bool      Finis       = false;
 static  int       Startup     = 1;
 int	OffUseCount;
 uint16 *intStackPtr = false;
-
 
 HXY     HeroXY[CAVE_MAX] = {{0, 0}};
 BAR     Barriers[1 + CAVE_MAX] = { { 0xFF, 0xFF } };
@@ -248,7 +248,7 @@ struct  SAVTAB {
 };
 
 
-static void LoadGame(XFILE &file, bool tiny = false) {
+void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 	SAVTAB *st;
 	SPRITE *spr;
 	int i;
@@ -274,15 +274,15 @@ static void LoadGame(XFILE &file, bool tiny = false) {
 
 	if (! tiny) { // load sprites & pocket
 		while (! file.Error) {
-			SPRITE S(NULL);
+			SPRITE S(this, NULL);
 			uint16 n = file.Read((uint8 *) &S, sizeof(S));
 
 			if (n != sizeof(S))
 				break;
 
 			S.Prev = S.Next = NULL;
-			spr = (scumm_stricmp(S.File + 2, "MUCHA") == 0) ? new FLY(NULL)
-			      : new SPRITE(NULL);
+			spr = (scumm_stricmp(S.File + 2, "MUCHA") == 0) ? new FLY(this, NULL)
+			      : new SPRITE(this, NULL);
 			if (spr == NULL)
 				error("No core");
 			*spr = S;
@@ -385,8 +385,8 @@ CLUSTER Trace[MAX_FIND_LEVEL];
 int FindLevel;
 
 
-WALK::WALK(BMP_PTR *shpl)
-	: SPRITE(shpl), Dir(NO_DIR), TracePtr(-1) {
+WALK::WALK(CGEEngine *vm, BMP_PTR *shpl)
+	: SPRITE(vm, shpl), Dir(NO_DIR), TracePtr(-1), _vm(vm) {
 }
 
 
@@ -545,13 +545,15 @@ void WALK::Reach(SPRITE *spr, int mode) {
 
 class SQUARE : public SPRITE {
 public:
-	SQUARE(void);
+	SQUARE(CGEEngine *vm);
 	void Touch(uint16 mask, int x, int y);
+private:
+	CGEEngine *_vm;
 };
 
 
-SQUARE::SQUARE(void)
-	: SPRITE(MB) {
+SQUARE::SQUARE(CGEEngine *vm)
+	: SPRITE(vm, MB), _vm(vm) {
 	Flags.Kill = true;
 	Flags.BDel = false;
 }
@@ -566,8 +568,8 @@ void SQUARE::Touch(uint16 mask, int x, int y) {
 }
 
 
-static void SetMapBrick(int x, int z) {
-	SQUARE *s = new SQUARE;
+void CGEEngine::SetMapBrick(int x, int z) {
+	SQUARE *s = new SQUARE(this);
 	if (s) {
 		static char n[] = "00:00";
 		s->Goto(x * MAP_XGRID, MAP_TOP + z * MAP_ZGRID);
@@ -579,10 +581,9 @@ static void SetMapBrick(int x, int z) {
 	}
 }
 
-void   dummy(void) {}
-static void SwitchMapping(void);
+//static void SwitchMapping(void);
 static void SwitchColorMode(void);
-static void StartCountDown(void);
+//static void StartCountDown(void);
 static void SwitchDebug(void);
 static void SwitchMusic(void);
 static void KillSprite(void);
@@ -597,16 +598,17 @@ static void KeyClick(void) {
 }
 
 
-static void ResetQSwitch(void) {
+void CGEEngine::ResetQSwitch() {
 	SNPOST_(SNSEQ, 123,  0, NULL);
 	KeyClick();
 }
 
 
-static void Quit(void) {
-	static CHOICE QuitMenu[] = { { NULL, StartCountDown },
-		{ NULL, ResetQSwitch   },
-		{ NULL, dummy          }
+void CGEEngine::Quit() {
+	static CHOICE QuitMenu[] = { 
+		{ NULL, &CGEEngine::StartCountDown },
+		{ NULL, &CGEEngine::ResetQSwitch   },
+		{ NULL, &CGEEngine::dummy          }
 	};
 
 	if (Snail->Idle() && ! Hero->Flags.Hide) {
@@ -616,7 +618,7 @@ static void Quit(void) {
 		} else {
 			QuitMenu[0].Text = Text->getText(QUIT_TEXT);
 			QuitMenu[1].Text = Text->getText(NOQUIT_TEXT);
-			(new VMENU(QuitMenu, -1, -1))->SetName(Text->getText(QUIT_TITLE));
+			(new VMENU(this, QuitMenu, -1, -1))->SetName(Text->getText(QUIT_TITLE));
 			SNPOST_(SNSEQ, 123, 1, NULL);
 			KeyClick();
 		}
@@ -744,7 +746,7 @@ static void CaveUp(void) {
 }
 
 
-static void CaveDown(void) {
+void CGEEngine::CaveDown() {
 	SPRITE *spr;
 	if (! HorzLine->Flags.Hide)
 		SwitchMapping();
@@ -762,13 +764,13 @@ static void CaveDown(void) {
 }
 
 
-static void XCave(void) {
+void CGEEngine::XCave() {
 	CaveDown();
 	CaveUp();
 }
 
 
-static void QGame(void) {
+void CGEEngine::QGame() {
 	CaveDown();
 	OldLev = Lev;
 	SaveSound();
@@ -779,7 +781,7 @@ static void QGame(void) {
 }
 
 
-void SwitchCave(int cav) {
+void CGEEngine::SwitchCave(int cav) {
 	if (cav != Now) {
 		Heart->Enable = false;
 		if (cav < 0) {
@@ -793,11 +795,10 @@ void SwitchCave(int cav) {
 			if (Hero) {
 				Hero->Park();
 				Hero->Step(0);
-#ifndef DEMO
+				if (!_isDemo)
 				///// protection: auto-destruction on! ----------------------
-				Vga->SpareQ->Show = STARTUP::Summa * (cav <= CAVE_MAX);
+					Vga->SpareQ->Show = STARTUP::Summa * (cav <= CAVE_MAX);
 				/////--------------------------------------------------------
-#endif
 			}
 			CavLight->Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
 			              CAVE_Y + ((Now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
@@ -812,7 +813,7 @@ void SwitchCave(int cav) {
 	}
 }
 
-SYSTEM::SYSTEM() : SPRITE(NULL) {
+SYSTEM::SYSTEM(CGEEngine *vm) : SPRITE(vm, NULL), _vm(vm) {
 	FunDel = HEROFUN0;
 	SetPal();
 	Tick();
@@ -820,7 +821,6 @@ SYSTEM::SYSTEM() : SPRITE(NULL) {
 
 void SYSTEM::Touch(uint16 mask, int x, int y) {
 	static int pp = 0;
-	void SwitchCave(int cav);
 
 	FunTouch();
 
@@ -862,7 +862,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			if (KEYBOARD::Key[ALT])
 				SaveMapping();
 			else
-				SwitchMapping();
+				_vm->SwitchMapping();
 			break;
 		case F1:
 			SwitchDebug();
@@ -911,7 +911,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			break;
 		case F10          :
 			if (Snail->Idle() && ! Hero->Flags.Hide)
-				StartCountDown();
+				_vm->StartCountDown();
 			break;
 		case 'J':
 			if (pp == 0)
@@ -956,14 +956,14 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 
 		if (mask & L_UP) {
 			if (cav && Snail->Idle() && Hero->TracePtr < 0)
-				SwitchCave(cav);
+				_vm->SwitchCave(cav);
 
 			if (!HorzLine->Flags.Hide) {
 				if (y >= MAP_TOP && y < MAP_TOP + MAP_HIG) {
 					int8 x1, z1;
 					XZ(x, y).Split(x1, z1);
 					CLUSTER::Map[z1][x1] = 1;
-					SetMapBrick(x1, z1);
+					_vm->SetMapBrick(x1, z1);
 				}
 			} else
 			{
@@ -1057,18 +1057,17 @@ static void SwitchMusic(void) {
 }
 
 
-static void StartCountDown(void) {
+void CGEEngine::StartCountDown() {
 	//SNPOST(SNSEQ, 123, 0, NULL);
 	SwitchCave(-1);
 }
 
 
-#ifndef DEMO
-static void TakeName(void) {
+void CGEEngine::TakeName() {
 	if (GET_TEXT::Ptr)
 		SNPOST_(SNKILL, -1, 0, GET_TEXT::Ptr);
 	else {
-		GET_TEXT *tn = new GET_TEXT(Text->getText(GETNAME_PROMPT), UsrFnam, 8, KeyClick);
+		GET_TEXT *tn = new GET_TEXT(this, Text->getText(GETNAME_PROMPT), UsrFnam, 8, KeyClick);
 		if (tn) {
 			tn->SetName(Text->getText(GETNAME_TITLE));
 			tn->Center();
@@ -1078,10 +1077,9 @@ static void TakeName(void) {
 		}
 	}
 }
-#endif
 
 
-static void SwitchMapping(void) {
+void CGEEngine::SwitchMapping() {
 	if (HorzLine->Flags.Hide) {
 		int i;
 		for (i = 0; i < MAP_ZCNT; i++) {
@@ -1228,7 +1226,7 @@ static void SwitchDebug(void) {
 }
 
 
-static void OptionTouch(int opt, uint16 mask) {
+void CGEEngine::OptionTouch(int opt, uint16 mask) {
 	switch (opt) {
 	case 1 :
 		if (mask & L_UP)
@@ -1240,7 +1238,7 @@ static void OptionTouch(int opt, uint16 mask) {
 		else if (mask & R_UP)
 			if (! MIXER::Appear) {
 				MIXER::Appear = true;
-				new MIXER(BUTTON_X, BUTTON_Y);
+				new MIXER(this, BUTTON_X, BUTTON_Y);
 			}
 		break;
 	case 3 :
@@ -1259,7 +1257,7 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 		if (mask & (R_DN | L_DN))
 			Sprite = this;
 		if (Ref / 10 == 12) {
-			OptionTouch(Ref % 10, mask);
+			_vm->OptionTouch(Ref % 10, mask);
 			return;
 		}
 		if (Flags.Syst)
@@ -1324,7 +1322,7 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 }
 
 
-static void LoadSprite(const char *fname, int ref, int cav, int col = 0, int row = 0, int pos = 0) {
+void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int row = 0, int pos = 0) {
 	static const char *Comd[] = { "Name", "Type", "Phase", "East",
 	                              "Left", "Right", "Top", "Bottom",
 	                              "Seq", "Near", "Take",
@@ -1391,7 +1389,7 @@ static void LoadSprite(const char *fname, int ref, int cav, int col = 0, int row
 	// make sprite of choosen type
 	switch (type) {
 	case 1 : { // AUTO
-		Sprite = new SPRITE(NULL);
+		Sprite = new SPRITE(this, NULL);
 		if (Sprite) {
 			Sprite->Goto(col, row);
 			//Sprite->Time = 1;//-----------$$$$$$$$$$$$$$$$
@@ -1399,7 +1397,7 @@ static void LoadSprite(const char *fname, int ref, int cav, int col = 0, int row
 		break;
 	}
 	case 2 : { // WALK
-		WALK *w = new WALK(NULL);
+		WALK *w = new WALK(this, NULL);
 		if (w && ref == 1) {
 			w->Goto(col, row);
 			if (Hero)
@@ -1444,13 +1442,13 @@ static void LoadSprite(const char *fname, int ref, int cav, int col = 0, int row
 		break;
 	}
 	case 5 : { // FLY
-		FLY *f = new FLY(NULL);
+		FLY *f = new FLY(this, NULL);
 		Sprite = f;
 		//////Sprite->Time = 1;//-----------$$$$$$$$$$$$$$
 		break;
 	}
 	default: { // DEAD
-		Sprite = new SPRITE(NULL);
+		Sprite = new SPRITE(this, NULL);
 		if (Sprite)
 			Sprite->Goto(col, row);
 		break;
@@ -1474,7 +1472,7 @@ static void LoadSprite(const char *fname, int ref, int cav, int col = 0, int row
 }
 
 
-static void LoadScript(const char *fname) {
+void CGEEngine::LoadScript(const char *fname) {
 	char line[LINE_MAX];
 	char *SpN;
 	int SpI, SpA, SpX, SpY, SpZ;
@@ -1534,30 +1532,29 @@ static void LoadScript(const char *fname) {
 }
 
 
-static void MainLoop(void) {
+void CGEEngine::MainLoop() {
 	SayDebug();
 
-#ifdef DEMO
-	static uint32 tc = 0;
-	if (/* FIXME: TimerCount - tc >= ((182L*6L) * 5L) && */ Talk == NULL && Snail.Idle()) {
-		if (Text->getText(DemoText)) {
-			SNPOST(SNSOUND,  -1, 4, NULL); // drumla
-			SNPOST(SNINF,  -1, DemoText, NULL);
-			SNPOST(SNLABEL, -1, -1, NULL);
-			if (Text->getText(++ DemoText) == NULL)
-				DemoText = DEMO_TEXT + 1;
+	if (_isDemo) {
+		static uint32 tc = 0;
+		if (/* FIXME: TimerCount - tc >= ((182L * 6L) * 5L) && */ Talk == NULL && Snail->Idle()) {
+			if (Text->getText(DemoText)) {
+				SNPOST(SNSOUND,  -1, 4, NULL); // drumla
+				SNPOST(SNINF,  -1, DemoText, NULL);
+				SNPOST(SNLABEL, -1, -1, NULL);
+				if (Text->getText(++ DemoText) == NULL)
+					DemoText = DEMO_TEXT + 1;
+			}
+			//FIXME: tc = TimerCount;
 		}
-		//FIXME: tc = TimerCount;
 	}
-#endif
-
 	Vga->Show();
 	Snail_->RunCom();
 	Snail->RunCom();
 }
 
 
-void LoadUser(void) {
+void CGEEngine::LoadUser() {
 	// set scene
 	if (STARTUP::Mode == 0) { // user .SVG file found
 		CFILE cfile = CFILE(UsrPath(UsrFnam), REA, RCrypt);
@@ -1578,7 +1575,7 @@ void LoadUser(void) {
 }
 
 
-static void RunGame(void) {
+void CGEEngine::RunGame() {
 	Text->Clear();
 	Text->Preload(100, 1000);
 	LoadHeroXY();
@@ -1689,7 +1686,7 @@ static void RunGame(void) {
 }
 
 
-void Movie(const char *ext) {
+void CGEEngine::Movie(const char *ext) {
 	const char *fn = ProgName(ext);
 	if (INI_FILE::Exist(fn)) {
 		LoadScript(fn);
@@ -1711,13 +1708,13 @@ void Movie(const char *ext) {
 }
 
 
-bool ShowTitle(const char *name) {
+bool CGEEngine::ShowTitle(const char *name) {
 	BITMAP::Pal = SysPal;
 	BMP_PTR LB[] =  { new BITMAP(name), NULL };
 	BITMAP::Pal = NULL;
 	bool usr_ok = false;
 
-	SPRITE D(LB);
+	SPRITE D(this, LB);
 	D.Flags.Kill = true;
 	D.Flags.BDel = true;
 	D.Center();
@@ -1752,42 +1749,43 @@ bool ShowTitle(const char *name) {
 	}
 
 	if (STARTUP::Mode < 2) {
-#ifdef    DEMO
-		strcpy(UsrFnam, ProgName(SVG_EXT));
-		usr_ok = true;
-#else
-		//-----------------------------------------
+		if (_isDemo) {
+			strcpy(UsrFnam, ProgName(SVG_EXT));
+			usr_ok = true;
+		} else {
+			//-----------------------------------------
 #ifndef EVA
 #ifdef CD
-		STARTUP::Summa |= (0xC0 + (DriveCD(0) << 6)) & 0xFF;
+			STARTUP::Summa |= (0xC0 + (DriveCD(0) << 6)) & 0xFF;
 #else
-//	  Boot * b = ReadBoot(getdisk());
-		warning("ShowTitle: FIXME ReadBoot");
-		Boot *b = ReadBoot(0);
-		uint32 sn = (b->XSign == 0x29) ? b->Serial : b->lTotSecs;
-		free(b);
-		sn -= ((IDENT *)Copr)->disk;
-		STARTUP::Summa |= Lo(sn) | Hi(sn);
+//			Boot * b = ReadBoot(getdisk());
+			warning("ShowTitle: FIXME ReadBoot");
+			Boot *b = ReadBoot(0);
+			uint32 sn = (b->XSign == 0x29) ? b->Serial : b->lTotSecs;
+			free(b);
+			sn -= ((IDENT *)Copr)->disk;
+			STARTUP::Summa |= Lo(sn) | Hi(sn);
 #endif
+			//-----------------------------------------
+			Movie("X00"); // paylist
+			Vga->CopyPage(1, 2);
+			Vga->CopyPage(0, 1);
+			Vga->ShowQ->Append(Mouse);
+			//Mouse.On();
+			Heart->Enable = true;
+			for (TakeName(); GET_TEXT::Ptr;)
+				MainLoop();
+			Heart->Enable = false;
+			if (KEYBOARD::Last() == Enter && *UsrFnam)
+				usr_ok = true;
+			if (usr_ok)
+				strcat(UsrFnam, SVG_EXT);
+			//Mouse.Off();
+			Vga->ShowQ->Clear();
+			Vga->CopyPage(0, 2);
 #endif
-		//-----------------------------------------
-		Movie("X00"); // paylist
-		Vga->CopyPage(1, 2);
-		Vga->CopyPage(0, 1);
-		Vga->ShowQ->Append(Mouse);
-		//Mouse.On();
-		Heart->Enable = true;
-		for (TakeName(); GET_TEXT::Ptr;)
-			MainLoop();
-		Heart->Enable = false;
-		if (KEYBOARD::Last() == Enter && *UsrFnam)
-			usr_ok = true;
-		if (usr_ok)
-			strcat(UsrFnam, SVG_EXT);
-		//Mouse.Off();
-		Vga->ShowQ->Clear();
-		Vga->CopyPage(0, 2);
-#endif
+		}
+
 		if (usr_ok && STARTUP::Mode == 0) {
 			const char *n = UsrPath(UsrFnam);
 			if (CFILE::Exist(n)) {
@@ -1809,11 +1807,10 @@ bool ShowTitle(const char *name) {
 
 	Vga->CopyPage(0, 2);
 
-#ifdef DEMO
-	return true;
-#else
-	return (STARTUP::Mode == 2 || usr_ok);
-#endif
+	if (_isDemo)
+		return true;
+	else
+		return (STARTUP::Mode == 2 || usr_ok);
 }
 
 
@@ -1825,7 +1822,7 @@ void StkDump (void) {
 */
 
 
-void cge_main(void) {
+void CGEEngine::cge_main(void) {
 	uint16 intStack[STACK_SIZ / 2];
 	intStackPtr = intStack;
 
@@ -1842,17 +1839,15 @@ void cge_main(void) {
 	HorzLine->Flags.Hide = true;
 
 	//srand((uint16) Timer());
-	Sys = new SYSTEM;
+	Sys = new SYSTEM(this);
 
 	if (Music && STARTUP::SoundOk)
 		LoadMIDI(0);
 	if (STARTUP::Mode < 2)
 		Movie(LGO_EXT);
 	if (ShowTitle("WELCOME")) {
-#ifndef   DEMO
-		if (STARTUP::Mode == 1)
+		if ((!_isDemo) && (STARTUP::Mode == 1))
 			Movie("X02"); // intro
-#endif
 		RunGame();
 		Startup = 2;
 		if (FINIS)

@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include "cge/cge.h"
 
 namespace CGE {
 
@@ -345,10 +346,10 @@ void HEART::SetXTimer(uint16 *ptr, uint16 time) {
 }
 
 
-SPRITE::SPRITE(BMP_PTR *shp)
+SPRITE::SPRITE(CGEEngine *vm, BMP_PTR *shp)
 	: X(0), Y(0), Z(0), NearPtr(0), TakePtr(0),
 	  Next(NULL), Prev(NULL), SeqPtr(NO_SEQ), Time(0), //Delay(0),
-	  Ext(NULL), Ref(-1), Cave(0) {
+	  Ext(NULL), Ref(-1), Cave(0), _vm(vm) {
 	memset(File, 0, sizeof(File));
 	*((uint16 *)&Flags) = 0;
 	SetShapeList(shp);

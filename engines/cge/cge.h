@@ -23,6 +23,7 @@
 #ifndef CGE_H
 #define CGE_H
 
+#include "cge/general.h"
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
@@ -47,15 +48,51 @@ public:
 	~CGEEngine();
 
 	const ADGameDescription *_gameDescription;
+	bool _isDemo;
 
 	virtual Common::Error run();
 	GUI::Debugger *getDebugger() {
 		return _console;
 	}
 
+	void cge_main();
+	void SwitchCave(int cav);
+	void StartCountDown();
+	void Quit();
+	void ResetQSwitch();
+	void OptionTouch(int opt, uint16 mask);
+	void LoadGame(XFILE &file, bool tiny);
+	void SetMapBrick(int x, int z);
+	void SwitchMapping();
+	void LoadSprite(const char *fname, int ref, int cav, int col, int row, int pos);
+	void LoadScript(const char *fname);
+	void LoadUser();
+	void RunGame();
+	bool ShowTitle(const char *name);
+	void Movie(const char *ext);
+	void TakeName();
+	void Inf(const char *txt);
+	void SelectSound();
+	void SNSelect();
+	void dummy() {}
+	void NONE();
+	void SB();
+	void CaveDown();
+	void XCave();
+	void QGame();
+	void SBM();
+	void GUS();
+	void GUSM();
+	void MIDI();
+	void AUTO();
+	void SetPortD();
+	void SetPortM();
+	void SetIRQ();
+	void SetDMA();
+	void MainLoop();
+
 private:
 	CGEConsole *_console;
-
 	void setup();
 };
 

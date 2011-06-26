@@ -39,7 +39,7 @@ MOUSE_FUN *MOUSE::OldMouseFun  = NULL;
 uint16     MOUSE::OldMouseMask = 0;
 
 
-MOUSE::MOUSE(BITMAP **shpl) : SPRITE(shpl), Busy(NULL), Hold(NULL), hx(0) {
+MOUSE::MOUSE(CGEEngine *vm, BITMAP **shpl) : SPRITE(vm, shpl), Busy(NULL), Hold(NULL), hx(0), _vm(vm) {
 	static SEQ ms[] = {
 		{ 0, 0, 0, 0, 1 },
 		{ 1, 1, 0, 0, 1 }

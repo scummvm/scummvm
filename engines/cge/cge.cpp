@@ -45,7 +45,8 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	// Debug/console setup
 	DebugMan.addDebugChannel(kCGEDebug, "general", "CGE general debug channel");
 
-	debug("CGEEngine::CGEEngine");
+	_isDemo = _gameDescription->flags & ADGF_DEMO;
+
 }
 
 void CGEEngine::setup() {
@@ -56,22 +57,22 @@ void CGEEngine::setup() {
 	VFILE::init();
 
 	// Initialise engine objects
-	Text = new TEXT(ProgName(), 128);
+	Text = new TEXT(this, ProgName(), 128);
 	Vga = new VGA(M13H);
 	Heart = new HEART;
-	Hero = new WALK(NULL);
-	Sys = new SYSTEM();
-	PocLight = new SPRITE(LI);
-	Mouse = new MOUSE;
+	Hero = new WALK(this, NULL);
+	Sys = new SYSTEM(this);
+	PocLight = new SPRITE(this, LI);
+	Mouse = new MOUSE(this);
 	for (int i = 0; i < POCKET_NX; i++)
-		Pocket[i] = new SPRITE(NULL);
-	Sprite = new SPRITE(NULL);
-	MiniCave = new SPRITE(NULL);
-	Shadow = new SPRITE(NULL);
-	HorzLine = new SPRITE(HL);
-	InfoLine = new INFO_LINE(INFO_W);
-	CavLight = new SPRITE(PR);
-	DebugLine = new INFO_LINE(SCR_WID);
+		Pocket[i] = new SPRITE(this, NULL);
+	Sprite = new SPRITE(this, NULL);
+	MiniCave = new SPRITE(this, NULL);
+	Shadow = new SPRITE(this, NULL);
+	HorzLine = new SPRITE(this, HL);
+	InfoLine = new INFO_LINE(this, INFO_W);
+	CavLight = new SPRITE(this, PR);
+	DebugLine = new INFO_LINE(this, SCR_WID);
 	MB[0] = new BITMAP("BRICK");
 	MB[1] = NULL;
 	HL[0] = new BITMAP("HLINE");
@@ -89,8 +90,8 @@ void CGEEngine::setup() {
 	LI[2] = new BITMAP("LITE2");
 	LI[3] = new BITMAP("LITE3");
 	LI[4] = NULL;
-	Snail = new SNAIL(false);
-	Snail_ = new SNAIL(true);
+	Snail = new SNAIL(this, false);
+	Snail_ = new SNAIL(this, true);
 
 	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
 }
