@@ -355,9 +355,9 @@ void drawError(char *error) {
 }
 
 // ********************************************************************************************
-static DefaultTimerManager *_int_timer = NULL;
 static Uint32 timer_handler_wrapper(Uint32 interval) {
-	_int_timer->handler();
+	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
+	tm->handler();
 	return interval;
 }
 
@@ -381,14 +381,15 @@ void OSystem_WINCE3::initBackend() {
 
 	((WINCESdlEventSource *)_eventSource)->init((WINCESdlGraphicsManager *)_graphicsManager);
 
-	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
+	// Create the timer (but remove the timer manager from the SDL backend first).
+	// CE SDL does not support multiple timers (SDL_AddTimer).
 	// We work around this by using the SetTimer function, since we only use
 	// one timer in scummvm (for the time being)
-	_timer = _int_timer = new DefaultTimerManager();
-	//_timerID = NULL;  // OSystem_SDL will call removetimer with this, it's ok
+	delete _timerManager;
+	_timerManager = new DefaultTimerManager();
 	SDL_SetTimer(10, &timer_handler_wrapper);
 
-	// Chain init
+	// Call parent implementation of this method
 	OSystem_SDL::initBackend();
 
 	// Initialize global key mapping
@@ -398,9 +399,6 @@ void OSystem_WINCE3::initBackend() {
 		warning("Setting default action mappings");
 		GUI_Actions::Instance()->saveMapping(); // write defaults
 	}
-
-	// Call parent implementation of this method
-	//OSystem_SDL::initBackend();
 
 	_inited = true;
 }
