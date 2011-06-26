@@ -142,8 +142,8 @@ EMS *EMM::Alloc(uint16 siz) {
 	  if (cnt > 4)
 	    {
 	      top = (top + PAGE_MASK) & 0xFFFFC000L;
-	      ++ pgn;
-	      -- cnt;
+	      pgn++;
+	      cnt--;
 	    }
 
 	  if (size <= Lim - top)

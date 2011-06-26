@@ -82,7 +82,7 @@ void GET_TEXT::Touch(uint16 mask, int x, int y) {
 		case Enter :
 			Buff[Len] = '\0';
 			strcpy(Text, Buff);
-			for (p = Text; *p; p ++) {
+			for (p = Text; *p; p++) {
 				char *q = strchr(ogon, *p);
 				if (q)
 					*p = bezo[q - ogon];
@@ -110,7 +110,7 @@ void GET_TEXT::Touch(uint16 mask, int x, int y) {
 				if (Len < Size && 2 * TEXT_HM + Font->Width(Buff) + Font->Wid[x] <= W) {
 					Buff[Len + 2] = Buff[Len + 1];
 					Buff[Len + 1] = Buff[Len];
-					Buff[Len ++] = x;
+					Buff[Len++] = x;
 				}
 			}
 			break;

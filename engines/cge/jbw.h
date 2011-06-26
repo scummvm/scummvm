@@ -57,7 +57,7 @@ namespace CGE {
 #define IsHxDig(c)  (IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
 
 #define farnew(t,n) ((t *) malloc(sizeof(t) * (n)))
-#define ArrayCount(a)   (sizeof(a)/sizeof((a)[0]))
+#define ArrayCount(a)   (sizeof(a) / sizeof((a)[0]))
 #define MAX_TIMER   0x1800B0L
 
 typedef void (MouseFunType)(void);
@@ -66,8 +66,8 @@ typedef void (MouseFunType)(void);
 #define Hi(d)       (((int *) &d)[1])
 #define LoWord(d)   ((uint16) Lo(d))
 #define HiWord(d)   ((uint16) Hi(d))
-#define K(n)        (1024*(n))
-#define MASK(n)     ((1<<n)-1)
+#define K(n)        (1024 * (n))
+#define MASK(n)     ((1 << n) - 1)
 
 typedef enum {
     NoKey   = 0, CtrlA, CtrlB, CtrlC, CtrlD, CtrlE, CtrlF, CtrlG, CtrlH,
@@ -135,10 +135,10 @@ struct  KeyStatStruct {
 #define CGA_Cursor  0x0607
 #define OFF_Cursor  0x2000
 
-#define TimerCount  (* ((volatile long *) ((void _seg *) 0x40 + (void *) 0x6C)))
-#define KeyStat     (* ((volatile struct KeyStatStruct *) ((void _seg *) 0x40 + (void *) 0x17)))
-#define BreakFlag   (* ((volatile uint8 *) ((void _seg *) 0x40 + (void *) 0x71)))
-#define PostFlag    (* ((volatile uint16 *) ((void _seg *) 0x40 + (void *) 0x72)))
+#define TimerCount  (*((volatile long *) ((void _seg *) 0x40 + (void *) 0x6C)))
+#define KeyStat     (*((volatile struct KeyStatStruct *) ((void _seg *) 0x40 + (void *) 0x17)))
+#define BreakFlag   (*((volatile uint8 *) ((void _seg *) 0x40 + (void *) 0x71)))
+#define PostFlag    (*((volatile uint16 *) ((void _seg *) 0x40 + (void *) 0x72)))
 #define POST        ((void (*)(void)) ((void _seg *) 0xF000 + (void *) 0xFFF0))
 
 #ifdef      DEMO

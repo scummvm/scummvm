@@ -54,7 +54,7 @@ MENU_BAR::MENU_BAR(uint16 w) {
 	memset(p + i - w, MB_RB, w);
 	p1 = p;
 	p2 = p + i - 1;
-	for (i = 0; i < h; i ++) {
+	for (i = 0; i < h; i++) {
 		*p1 = MB_LT;
 		*p2 = MB_RB;
 		p1 += w;
@@ -76,14 +76,14 @@ char *VMGather(CHOICE *list) {
 	CHOICE *cp;
 	int len = 0, h = 0;
 
-	for (cp = list; cp->Text; cp ++) {
+	for (cp = list; cp->Text; cp++) {
 		len += strlen(cp->Text);
 		++h;
 	}
 	vmgt = new char[len + h];
 	if (vmgt) {
 		*vmgt = '\0';
-		for (cp = list; cp->Text; cp ++) {
+		for (cp = list; cp->Text; cp++) {
 			if (*vmgt)
 				strcat(vmgt, "|");
 			strcat(vmgt, cp->Text);
@@ -105,7 +105,7 @@ VMENU::VMENU(CHOICE *list, int x, int y)
 	Addr = this;
 	delete[] vmgt;
 	Items = 0;
-	for (cp = list; cp->Text; cp ++)
+	for (cp = list; cp->Text; cp++)
 		++Items;
 	Flags.BDel = true;
 	Flags.Kill = true;

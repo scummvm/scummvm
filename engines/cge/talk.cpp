@@ -66,7 +66,7 @@ void FONT::Load(void) {
 		f.Read(Wid, WID_SIZ);
 		if (! f.Error) {
 			uint16 i, p = 0;
-			for (i = 0; i < POS_SIZ; i ++) {
+			for (i = 0; i < POS_SIZ; i++) {
 				Pos[i] = p;
 				p += Wid[i];
 			}
@@ -80,7 +80,7 @@ uint16 FONT::Width(const char *text) {
 	uint16 w = 0;
 	if (text)
 		while (* text)
-			w += Wid[*(text ++)];
+			w += Wid[*(text++)];
 	return w;
 }
 
@@ -91,7 +91,7 @@ void FONT::Save(void) {
 	if (! f.Error) {
 		f.Write(Wid, WID_SIZ);
 		if (! f.Error)
-			f.Write(Map, Pos[POS_SIZ-1] + Wid[WID_SIZ-1]);
+			f.Write(Map, Pos[POS_SIZ - 1] + Wid[WID_SIZ - 1]);
 	}
 }
 */
@@ -115,7 +115,7 @@ TALK::TALK(void)
 
 /*
 TALK::~TALK (void) {
-	for (uint16 i = 0; i < ShpCnt; i ++) {
+	for (uint16 i = 0; i < ShpCnt; i++) {
 		if (FP_SEG(ShpList[i]) != _DS) { // small model: always false
 			delete ShpList[i];
 			ShpList[i] = NULL;
@@ -135,7 +135,7 @@ void TALK::Update(const char *tx) {
 	if (!TS[0]) {
 		uint16 k = 2 * hmarg;
 		mh = 2 * vmarg + FONT_HIG;
-		for (p = tx; *p; p ++) {
+		for (p = tx; *p; p++) {
 			if (*p == '|' || *p == '\n') {
 				mh += FONT_HIG + TEXT_LS;
 				if (k > mw)
@@ -203,9 +203,9 @@ BITMAP *TALK::Box(uint16 w, uint16 h) {
 			*p = LGRAY;
 		}
 		p = b;
-		for (int i = 0; i < r; i ++) {
+		for (int i = 0; i < r; i++) {
 			int j;
-			for (j = 0; j < r - i; j ++) {
+			for (j = 0; j < r - i; j++) {
 				p[j] = TRANS;
 				p[w - j - 1] = TRANS;
 				q[j] = TRANS;
@@ -256,10 +256,10 @@ void TALK::PutLine(int line, const char *text) {
 			uint16 cw = Font->Wid[*text], i;
 			uint8 *fp = Font->Map + Font->Pos[*text];
 
-			for (i = 0; i < cw; i ++) {
+			for (i = 0; i < cw; i++) {
 				register uint16 b = fp[i];
 				uint16 n;
-				for (n = 0; n < FONT_HIG; n ++) {
+				for (n = 0; n < FONT_HIG; n++) {
 					if (b & 1)
 						*p = TEXT_FG;
 					b >>= 1;
@@ -293,7 +293,7 @@ void INFO_LINE::Update(const char *tx) {
 		// claer whole rectangle
 		memset(v + 2, TEXT_BG, dsiz);                   // data bytes
 		memcpy(v + lsiz, v, psiz - lsiz);               // tricky replicate lines
-		* (uint16 *)(v + psiz - 2) = EOI;               // plane trailer uint16
+		*(uint16 *)(v + psiz - 2) = EOI;               // plane trailer uint16
 		memcpy(v + psiz, v, 3 * psiz);                  // tricky replicate planes
 
 		// paint text line
@@ -306,7 +306,7 @@ void INFO_LINE::Update(const char *tx) {
 
 				for (uint16 i = 0; i < cw; i++) {
 					register uint16 b = fp[i];
-					for (uint16 n = 0; n < FONT_HIG; n ++) {
+					for (uint16 n = 0; n < FONT_HIG; n++) {
 						if (b & 1)
 							*p = TEXT_FG;
 						b >>= 1;
