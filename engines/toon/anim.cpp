@@ -271,6 +271,18 @@ void Animation::applyPalette(int32 offset, int32 srcOffset, int32 numEntries) {
 	_vm->setPaletteEntries(_palette + srcOffset, offset, numEntries);
 }
 
+Common::Rect Animation::getFrameRect(int32 frame) {
+	debugC(4, kDebugAnim, "getFrameRect(%d)", frame);
+	if ((frame < 0) || (frame >= _numFrames)) {
+		return Common::Rect();
+	}
+
+	if (_frames[frame]._ref != -1)
+		frame = _frames[frame]._ref;
+
+	return Common::Rect(_frames[frame]._x1, _frames[frame]._y1, _frames[frame]._x2, _frames[frame]._y2);
+}
+
 int32 Animation::getFrameWidth(int32 frame) {
 	debugC(4, kDebugAnim, "getFrameWidth(%d)", frame);
 	if ((frame < 0) || (frame >= _numFrames))
