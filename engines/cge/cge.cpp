@@ -34,6 +34,7 @@
 #include "cge/cge_main.h"
 #include "cge/text.h"
 #include "cge/bitmaps.h"
+#include "cge/vol.h"
 
 
 namespace CGE {
@@ -41,9 +42,20 @@ namespace CGE {
 CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription) {
 
+	// Debug/console setup
 	DebugMan.addDebugChannel(kCGEDebug, "general", "CGE general debug channel");
 
+	debug("CGEEngine::CGEEngine");
+}
+
+void CGEEngine::setup() {
+	// Create debugger console
 	_console = new CGEConsole(this);
+
+	// Initialise classes that have static members
+	VFILE::init();
+
+	// Initialise engine objects
 	Text = new TEXT(ProgName(), 128);
 	Vga = new VGA(M13H);
 	Heart = new HEART;
@@ -81,18 +93,20 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	Snail_ = new SNAIL(true);
 
 	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
-
-	debug("CGEEngine::CGEEngine");
 }
 
 CGEEngine::~CGEEngine() {
 	debug("CGEEngine::~CGEEngine");
+
+	// Call classes with static members to clear them up
+	VFILE::deinit();
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 
 	_console = new CGEConsole(this);
 
+	// Delete engine objects
 	delete Text;
 	delete Vga;
 	delete Heart;
@@ -128,8 +142,8 @@ Common::Error CGEEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);
 
-	// Create debugger console. It requires GFX to be initialized
-	_console = new CGEConsole(this);
+	// Setup necessary game objects
+	setup();
 
 	// Additional setup.
 	debug("CGEEngine::init");

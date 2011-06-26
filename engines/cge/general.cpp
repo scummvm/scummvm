@@ -158,9 +158,11 @@ uint16 RCrypt(void *buf, uint16 siz, uint16 seed) {
 }
 
 uint16 XCrypt(void *buf, uint16 siz, uint16 seed) {
-//  for (uint16 i = 0; i < siz; i ++)
-//	  *(BUF ++) ^= seed;
-	warning("STUB: XCrypt");
+	byte *b = static_cast<byte *>(buf);
+
+	for (uint16 i = 0; i < siz; i ++)
+		*b++ ^= seed;
+	
 	return seed;
 }
 
@@ -208,45 +210,32 @@ char *dwtom(uint32 val, char *str, int radix, int len) {
 }
 
 IOHAND::IOHAND(IOMODE mode, CRYPT *crpt)
-	: XFILE(mode), Handle(-1), Crypt(crpt), Seed(SEED) {
+	: XFILE(mode), Crypt(crpt), Seed(SEED) {
 }
 
 IOHAND::IOHAND(const char *name, IOMODE mode, CRYPT *crpt)
-	: XFILE(mode), Crypt(crpt), Seed(SEED) {
-	/*  switch (mode)
-	    {
-	      case REA : Error = _dos_open(name, O_RDONLY | O_DENYNONE, &Handle); break;
-	      case WRI : Error = _dos_creat(name, FA_ARCH, &Handle); break;
-	      case UPD : Error = _dos_open(name, O_RDWR | O_DENYALL, &Handle); break;
-	    }
-	  if (Error) Handle = -1;
-	*/
-	warning("STUB: IOHAND::IOHAND");
+		: XFILE(mode), Crypt(crpt), Seed(SEED) {
+	// TODO: Check if WRI and/or UPD modes are needed, and map to a save file
+	assert(mode == REA);
+
+	_file.open(name);
 }
 
 IOHAND::~IOHAND(void) {
-	/*
-	    if (Handle != -1)
-	    {
-	      Error = _dos_close(Handle);
-	      Handle = -1;
-	    }
-	*/
-	warning("STUB: IOHAND::~IOHAND");
+	_file.close();
 }
 
 uint16 IOHAND::Read(void *buf, uint16 len) {
-	/*
-	  if (Mode == WRI || Handle < 0) return 0;
-	  if (len) Error = _dos_read(Handle, buf, len, &len);
-	  if (Crypt) Seed = Crypt(buf, len, Seed);
-	  return len;
-	*/
-	warning("STUB: IOHAND::Read");
-	return 0;
+	if (Mode == WRI || !_file.isOpen())
+		return 0;
+
+	uint16 bytesRead = _file.read(buf, len);
+	if (Crypt) Seed = Crypt(buf, len, Seed);
+	return bytesRead;
 }
 
 uint16 IOHAND::Write(void *buf, uint16 len) {
+	error("IOHAND::Write not supported");
 /*
 	if (len) {
 		if (Mode == REA || Handle < 0)
@@ -259,45 +248,24 @@ uint16 IOHAND::Write(void *buf, uint16 len) {
 	}
 	return len;
 */
-	warning("STUB: IOHAND::Write");
-	return 0;
 }
 
 long IOHAND::Mark(void) {
-/*
- 	return (Handle < 0) ? 0 : tell(Handle);
-*/
-	warning("STUB: IOHAND::Mark");
-	return 0;
+	return _file.pos();
 }
 
 long IOHAND::Seek(long pos) {
-/*
- 	if (Handle < 0)
-		return 0;
- 	lseek(Handle, pos, SEEK_SET);
- 	return tell(Handle);
-*/
-	warning("STUB: IOHAND::Seek");
-	return 0;
+	_file.seek(pos, SEEK_SET);
+	return _file.pos();
 }
 
 long IOHAND::Size(void) {
-/*
-	if (Handle < 0)
-		return 0;
-	return filelength(Handle);
-*/
-	warning("STUB: IOHAND::Size");
-	return 0;
+	return _file.size();
 }
 
 bool IOHAND::Exist(const char *name) {
-/*
-	return access(name, 0) == 0;
-*/
-	warning("STUB: IOHAND::Exist");
-	return 0;
+	Common::File f;
+	return f.exists(name);
 }
 
 //#define       EMS_ADR(a)  (FP_SEG(a) > 0xA000)

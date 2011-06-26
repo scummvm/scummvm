@@ -51,18 +51,22 @@ namespace CGE {
 
 class DAT {
 	friend class VFILE;
-	static VOLBASE File;
+	VOLBASE _File;
 public:
-	static bool Append(uint8 *buf, uint16 len);
-	static bool Write(CFILE &f);
-	static bool Read(long org, uint16 len, uint8 *buf);
+	DAT();
+
+	bool Append(uint8 *buf, uint16 len);
+	bool Write(CFILE &f);
+	bool Read(long org, uint16 len, uint8 *buf);
 };
 
 
 class   VFILE : public IOBUF {
-	static DAT Dat;
-	static BTFILE Cat;
-	static VFILE *Recent;
+private:
+	static DAT *_Dat;
+	static BTFILE *_Cat;
+	static VFILE *_Recent;
+
 	long BegMark, EndMark;
 	void ReadBuff(void);
 	void WriteBuff(void) { }
@@ -70,6 +74,9 @@ class   VFILE : public IOBUF {
 public:
 	VFILE(const char *name, IOMODE mode = REA);
 	~VFILE(void);
+	static void init();
+	static void deinit();
+
 	static bool Exist(const char *name);
 	static const char *Next(void);
 	long Mark(void) {
@@ -79,7 +86,7 @@ public:
 		return EndMark - BegMark;
 	}
 	long Seek(long pos) {
-		Recent = NULL;
+		_Recent = NULL;
 		Lim = 0;
 		return (BufMark = BegMark + pos);
 	}
