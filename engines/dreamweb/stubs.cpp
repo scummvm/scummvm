@@ -93,6 +93,39 @@ void DreamGenContext::frameoutnm(uint8* dst, const uint8* src, uint16 pitch, uin
 	}
 }
 
+void DreamGenContext::frameoutbh(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+	uint16 stride = pitch - width;
+	dst += y * pitch + x;
+
+	for (uint16 i = 0; i < height; ++i) {
+		for (uint16 j = 0; j < width; ++j) {
+			if (*dst == 0xff) {
+				*dst = *src;
+			}
+			++src;
+			++dst;
+		}
+		dst += stride;
+	}
+}
+
+void DreamGenContext::frameoutfx(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+	uint16 stride = pitch - width;
+	dst += y * pitch + x;
+	dst -= width;
+
+	for (uint16 j = 0; j < height; ++j) {
+		for (uint16 i = 0; i < width; ++i) {
+			uint8 pixel = src[width - i - 1];
+			if (pixel)
+				*dst = pixel;
+			++dst;
+		}
+		src += width;
+		dst += stride;
+	}
+}
+
 void DreamGenContext::seecommandtail() {
 	data.word(kSoundbaseadd) = 0x220;
 	data.byte(kSoundint) = 5;
@@ -595,7 +628,7 @@ uint16 DreamGenContext::showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y,
 			bx -= height / 2;
 		}
 		if (effectsFlag & 64) { //diffdest
-			frameoutfx();
+			frameoutfx(es.ptr(0, dx * height), ds.ptr(si, width * height), dx, width, height, di, bx);
 			return written;
 		}
 		if (effectsFlag & 8) { //printlist
@@ -609,9 +642,8 @@ uint16 DreamGenContext::showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y,
 			ax = pop();
 		}
 		if (effectsFlag & 4) { //flippedx
-			dx = (320);
 			es = data.word(kWorkspace);
-			frameoutfx();
+			frameoutfx(es.ptr(0, 320 * height), ds.ptr(si, width * height), 320, width, height, di, bx);
 			return written;
 		}
 		if (effectsFlag & 2) { //nomask
@@ -620,9 +652,8 @@ uint16 DreamGenContext::showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y,
 			return written;
 		}
 		if (effectsFlag & 32) {
-			dx = (320);
 			es = data.word(kWorkspace);
-			frameoutbh();
+			frameoutbh(es.ptr(0, 320 * height), ds.ptr(si, width * height), 320, width, height, di, bx);
 			return written;
 		}
 	}

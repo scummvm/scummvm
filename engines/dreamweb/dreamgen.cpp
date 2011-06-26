@@ -4090,90 +4090,6 @@ zeroblock:
 		goto loop120;
 }
 
-void DreamGenContext::frameoutbh() {
-	STACK_CHECK;
-	push(dx);
-	ax = bx;
-	bx = dx;
-	_mul(bx);
-	_add(di, ax);
-	dx = pop();
-	push(cx);
-	ch = 0;
-	_sub(dx, cx);
-	cx = pop();
-bhloop2:
-	push(cx);
-	ch = 0;
-	ah = 255;
-bhloop1:
-	_cmp(es.byte(di), ah);
-	if (!flags.z())
-		goto nofill;
-	_movsb();
-	if (--cx)
-		goto bhloop1;
-	goto nextline;
-nofill:
-	_inc(di);
-	_inc(si);
-	if (--cx)
-		goto bhloop1;
-nextline:
-	_add(di, dx);
-	cx = pop();
-	_dec(ch);
-	if (!flags.z())
-		goto bhloop2;
-}
-
-void DreamGenContext::frameoutfx() {
-	STACK_CHECK;
-	push(dx);
-	ax = bx;
-	bx = dx;
-	_mul(bx);
-	_add(di, ax);
-	dx = pop();
-	push(cx);
-	ch = 0;
-	_add(dx, cx);
-	cx = pop();
-frameloopfx1:
-	push(cx);
-	ch = 0;
-frameloopfx2:
-	_lodsb();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto backtosolidfx;
-backtootherfx:
-	_dec(di);
-	if (--cx)
-		goto frameloopfx2;
-	cx = pop();
-	_add(di, dx);
-	_dec(ch);
-	if (!flags.z())
-		goto frameloopfx1;
-	return;
-frameloopfx3:
-	_lodsb();
-	_cmp(al, 0);
-	if (flags.z())
-		goto backtootherfx;
-backtosolidfx:
-	es.byte(di) = al;
-	_dec(di);
-	if (--cx)
-		goto frameloopfx3;
-	cx = pop();
-	_add(di, dx);
-	_dec(ch);
-	if (!flags.z())
-		goto frameloopfx1;
-}
-
 void DreamGenContext::transferinv() {
 	STACK_CHECK;
 	di = data.word(kExframepos);
@@ -21912,8 +21828,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_zoom: zoom(); break;
 		case addr_delthisone: delthisone(); break;
 		case addr_doblocks: doblocks(); break;
-		case addr_frameoutbh: frameoutbh(); break;
-		case addr_frameoutfx: frameoutfx(); break;
 		case addr_transferinv: transferinv(); break;
 		case addr_transfermap: transfermap(); break;
 		case addr_fadedos: fadedos(); break;

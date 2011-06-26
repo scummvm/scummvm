@@ -618,8 +618,6 @@ public:
 	static const uint16 addr_fadedos = 0xc248;
 	static const uint16 addr_transfermap = 0xc244;
 	static const uint16 addr_transferinv = 0xc240;
-	static const uint16 addr_frameoutfx = 0xc23c;
-	static const uint16 addr_frameoutbh = 0xc238;
 	static const uint16 addr_doblocks = 0xc228;
 	static const uint16 addr_delthisone = 0xc214;
 	static const uint16 addr_zoom = 0xc210;
@@ -1341,7 +1339,7 @@ public:
 	void channel0only();
 	void worktoscreenm();
 	void removeemm();
-	void mansatstill();
+	//void frameoutbh();
 	void getobtextstart();
 	void loadfolder();
 	void decide();
@@ -1589,7 +1587,7 @@ public:
 	void openhoteldoor();
 	void removesetobject();
 	void checkifperson();
-	void frameoutfx();
+	//void frameoutfx();
 	void blank();
 	void drinker();
 	void nextcolon();
@@ -1681,7 +1679,7 @@ public:
 	//void showframe();
 	void random();
 	void obicons();
-	void frameoutbh();
+	void mansatstill();
 	void channel1only();
 	void playguitar();
 	void lastfolder();

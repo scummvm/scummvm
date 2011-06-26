@@ -1,6 +1,8 @@
 	void multidump();
 	void frameoutv(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void frameoutnm(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
+	void frameoutbh(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
+	void frameoutfx(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void worktoscreen();
 	void multiget();
 	void convertkey();
