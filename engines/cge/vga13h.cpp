@@ -1064,9 +1064,9 @@ void VGA::pal2DAC(const byte *palData, DAC *tab) {
 
 void VGA::DAC2pal(const DAC *tab, byte *palData) {
 	for (int idx = 0; idx < PAL_CNT; ++idx, palData += 3) {
-		*palData = tab[idx].R;
-		*(palData + 1) = tab[idx].G;
-		*(palData + 2) = tab[idx].B;
+		*palData = tab[idx].R << 2;
+		*(palData + 1) = tab[idx].G << 2;
+		*(palData + 2) = tab[idx].B << 2;
 	}
 }
 
@@ -1247,53 +1247,63 @@ void BITMAP::XShow(int x, int y) {
 
 
 void BITMAP::Show(int x, int y) {
+	// Create a temporary surface to hold the unpacked bitmap data
+	Graphics::Surface rawSurface;
+	rawSurface.create(W, H, Graphics::PixelFormat::createFormatCLUT8());
+
 	const byte *srcP = (const byte *)V;
-	byte *destP = (byte *)VGA::Page[1]->getBasePtr(x, y);
+	byte *destP = (byte *)rawSurface.pixels;
+	byte *destEndP = destP + (W * H);
+	Common::set_to(destP, destEndP, 0);
 
-	int yc = 0, xc = 0;
-	
-	for (;;) {
-		uint16 v = READ_LE_UINT16(srcP);
-		srcP += 2;
-		int cmd = v >> 14;
-		int count = v & 0x3FFF;
+	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
+	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
+	// must be decompressed and inserted into the surface
+	for (int planeCtr = 0; planeCtr < 4; ++planeCtr) {
+		destP = (byte *)rawSurface.getBasePtr(planeCtr, 0);
+		
+		while (destP < destEndP) {
+			uint16 v = READ_LE_UINT16(srcP);
+			srcP += 2;
+			int cmd = v >> 14;
+			int count = v & 0x3FFF;
 
-		if (cmd == 0)
-			// End of image
-			break;
-
-		// Handle a set of pixels
-		while (count-- > 0) {
-			// Transfer operation
-			switch (cmd) {
-			case 1:
-				// SKIP
-				break;
-			case 2:
-				// REPEAT
-				*destP = *srcP;
-				break;
-			case 3:
-				// COPY
-				*destP = *srcP++;
+			if (cmd == 0) {
+				// End of image
 				break;
 			}
 
-			// Move to next dest position
-			++destP; 
-			++xc;
-			if (xc == W) {
-				xc = 0;
-				++yc;
-				if (yc == H)
-					return;
+			// Handle a set of pixels
+			while (count-- > 0) {
+				// Transfer operation
+				switch (cmd) {
+				case 1:
+					// SKIP
+					break;
+				case 2:
+					// REPEAT
+					*destP = *srcP;
+					break;
+				case 3:
+					// COPY
+					*destP = *srcP++;
+					break;
+				}
 
-				destP = (byte *)VGA::Page[1]->getBasePtr(x, y + yc);
+				// Move to next dest position
+				destP += 4; 
 			}
+
+			if (cmd == 2)
+				++srcP;
 		}
+	}
 
-		if (cmd == 2)
-			++srcP;
+	// Copy the decompressed buffer to the specified x/y position on Page #1
+	for (int yc = 0; yc < rawSurface.h; ++yc) {
+		srcP = (const byte *)rawSurface.getBasePtr(0, yc);
+		destP = (byte *)VGA::Page[1]->getBasePtr(x, y + yc);
+		Common::copy(srcP, srcP + rawSurface.w, destP);
 	}
 
 	// Temporary
