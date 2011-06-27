@@ -42,7 +42,7 @@ namespace CGE {
 
 BTFILE::BTFILE(const char *name, IOMODE mode, CRYPT *crpt)
 	: IOHAND(name, mode, crpt) {
-	for (int i = 0; i < BT_LEVELS; i ++) {
+	for (int i = 0; i < BT_LEVELS; i++) {
 		Buff[i].Page = new BT_PAGE;
 		Buff[i].PgNo = BT_NONE;
 		Buff[i].Indx = -1;
@@ -54,7 +54,7 @@ BTFILE::BTFILE(const char *name, IOMODE mode, CRYPT *crpt)
 
 
 BTFILE::~BTFILE(void) {
-	for (int i = 0; i < BT_LEVELS; i ++) {
+	for (int i = 0; i < BT_LEVELS; i++) {
 		PutPage(i);
 		delete Buff[i].Page;
 	}
@@ -72,7 +72,7 @@ void BTFILE::PutPage(int lev, bool hard) {
 
 BT_PAGE *BTFILE::GetPage(int lev, uint16 pgn) {
 	if (Buff[lev].PgNo != pgn) {
-		uint32 pos = pgn * sizeof(BT_PAGE);
+		int32 pos = pgn * sizeof(BT_PAGE);
 		PutPage(lev);
 		Buff[lev].PgNo = pgn;
 		if (Size() > pos) {
@@ -90,9 +90,6 @@ BT_PAGE *BTFILE::GetPage(int lev, uint16 pgn) {
 	return Buff[lev].Page;
 }
 
-// Does this work, or does it have to compare the entire buffer?
-#define memicmp(s1, s2, n) scumm_strnicmp((const char *)s1, (const char *)s2, n)
- 
 BT_KEYPACK *BTFILE::Find(const char *key) {
 	int lev = 0;
 	uint16 nxt = BT_ROOT;
@@ -101,8 +98,9 @@ BT_KEYPACK *BTFILE::Find(const char *key) {
 		// search
 		if (pg->Hea.Down != BT_NONE) {
 			int i;
-			for (i = 0; i < pg->Hea.Count; i ++) {
-				if (memicmp(key, pg->Inn[i].Key, BT_KEYLEN) < 0)
+			for (i = 0; i < pg->Hea.Count; i++) {
+				// Does this work, or does it have to compare the entire buffer?
+				if (scumm_strnicmp((const char *) key, (const char*)pg->Inn[i].Key, BT_KEYLEN) < 0)
 					break;
 			}
 			nxt = (i) ? pg->Inn[i - 1].Down : pg->Hea.Down;
@@ -110,9 +108,10 @@ BT_KEYPACK *BTFILE::Find(const char *key) {
 			++ lev;
 		} else {
 			int i;
-			for (i = 0; i < pg->Hea.Count - 1; i ++)
+			for (i = 0; i < pg->Hea.Count - 1; i++) {
 				if (scumm_stricmp((const char *)key, (const char *)pg->Lea[i].Key) <= 0)
 					break;
+			}
 			Buff[lev].Indx = i;
 			return &pg->Lea[i];
 		}
@@ -122,7 +121,7 @@ BT_KEYPACK *BTFILE::Find(const char *key) {
 
 
 int keycomp(const void *k1, const void *k2) {
-	return memicmp(k1, k2, BT_KEYLEN);
+	return scumm_strnicmp((const char *) k1, (const char*) k2, BT_KEYLEN);
 }
 
 
@@ -136,15 +135,15 @@ void BTFILE::Make(BT_KEYPACK *keypack, uint16 count) {
 	        *Leaf = GetPage(1, n);
 	Root->Hea.Down = n;
 	PutPage(0, true);
-	while (count --) {
+	while (count--) {
 		if (Leaf->Hea.Count >= ArrayCount(Leaf->Lea)) {
 			PutPage(1, true);     // save filled page
 			Leaf = GetPage(1, ++n);   // take empty page
 			memcpy(Root->Inn[Root->Hea.Count].Key, keypack->Key, BT_KEYLEN);
-			Root->Inn[Root->Hea.Count ++].Down = n;
+			Root->Inn[Root->Hea.Count++].Down = n;
 			Buff[0].Updt = true;
 		}
-		Leaf->Lea[Leaf->Hea.Count ++] = * (keypack ++);
+		Leaf->Lea[Leaf->Hea.Count++] = *(keypack++);
 		Buff[1].Updt = true;
 	}
 }

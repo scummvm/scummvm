@@ -287,7 +287,7 @@ void ContractSprite(SPRITE *spr) {
 }
 
 int FindPocket(SPRITE *spr) {
-	for (int i = 0; i < POCKET_NX; i ++)
+	for (int i = 0; i < POCKET_NX; i++)
 	if (Pocket[i] == spr)
 		return i;
 	return -1;
@@ -345,7 +345,7 @@ void FeedSnail(SPRITE *spr, SNLIST snq) {
 
 				if (FindPocket(NULL) < 0) {                 // no empty pockets?
 					SNAIL::COM *p;
-					for (p = c; p->Com != SNNEXT; p ++) {     // find KEEP command
+					for (p = c; p->Com != SNNEXT; p++) {     // find KEEP command
 						if (p->Com == SNKEEP) {
 							PocFul();
 							return;
@@ -423,10 +423,10 @@ const char *SNAIL::ComTxt[] = {
 };
 
 
-SNAIL::SNAIL(bool turbo)
+SNAIL::SNAIL(CGEEngine *vm, bool turbo)
 	: Turbo(turbo), Busy(false), TextDelay(false),
 	  Pause(0), TalkEnable(true),
-	  Head(0), Tail(0), SNList(farnew(COM, 256)) {
+	  Head(0), Tail(0), SNList(farnew(COM, 256)), _vm(vm) {
 }
 
 
@@ -438,7 +438,7 @@ SNAIL::~SNAIL(void) {
 
 void SNAIL::AddCom(SNCOM com, int ref, int val, void *ptr) {
 	_disable();
-	COM *snc = &SNList[Head ++];
+	COM *snc = &SNList[Head++];
 	snc->Com = com;
 	snc->Ref = ref;
 	snc->Val = val;
@@ -849,7 +849,7 @@ void SNFlash(bool on) {
 		DAC *pal = farnew(DAC, PAL_CNT);
 		if (pal) {
 			memcpy(pal, VGA::SysPal, PAL_SIZ);
-			for (int i = 0; i < PAL_CNT; i ++) {
+			for (int i = 0; i < PAL_CNT; i++) {
 				register int c;
 				c = pal[i].R << 1;
 				pal[i].R = (c < 64) ? c : 63;
@@ -906,7 +906,6 @@ static void SNMouse(bool on) {
 
 void SNAIL::RunCom(void) {
 	static int count = 1;
-//	extern void SwitchCave(int);
 	if (! Busy) {
 		Busy = true;
 		uint8 tmphea = Head;
@@ -954,13 +953,13 @@ void SNAIL::RunCom(void) {
 				if (sprel && TalkEnable) {
 					if (sprel == Hero && sprel->SeqTest(-1))
 						sprel->Step(HTALK);
-					Say(Text->getText(snc->Val), sprel);
+					Text->Say(Text->getText(snc->Val), sprel);
 					Sys->FunDel = HEROFUN0;
 				}
 				break;
 			case SNINF      :
 				if (TalkEnable) {
-					Inf(Text->getText(snc->Val));
+					_vm->Inf(Text->getText(snc->Val));
 					Sys->FunDel = HEROFUN0;
 				}
 				break;

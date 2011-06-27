@@ -38,13 +38,15 @@ namespace CGE {
 
 typedef struct  {
 	char *Text;
-	void (* Proc)(void);
+	void (CGEEngine::*Proc)();
 } CHOICE;
 
 
 class MENU_BAR : public TALK {
 public:
-	MENU_BAR(uint16 w);
+	MENU_BAR(CGEEngine *vm, uint16 w);
+private:
+	CGEEngine *_vm;
 };
 
 
@@ -55,9 +57,11 @@ public:
 	static VMENU *Addr;
 	static int Recent;
 	MENU_BAR *Bar;
-	VMENU(CHOICE *list, int x, int y);
-	~VMENU(void);
+	VMENU(CGEEngine *vm, CHOICE *list, int x, int y);
+	~VMENU();
 	void Touch(uint16 mask, int x, int y);
+private:
+	CGEEngine *_vm;
 };
 
 } // End of namespace CGE

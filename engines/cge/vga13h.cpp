@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include "cge/cge.h"
 
 namespace CGE {
 
@@ -235,14 +236,16 @@ extern "C" void TimerProc (void)
 
   // decrement external timer uint16
   if (Heart->XTimer)
-    if (*Heart->XTimer) -- *Heart->XTimer;
-    else Heart->XTimer = NULL;
+    if (*Heart->XTimer)
+       *Heart->XTimer--;
+    else 
+       Heart->XTimer = NULL;
 
   if (! run && Heart->Enable)       // check overrun flag
     {
       static uint16 oldSP, oldSS;
 
-      ++ run;           // disable 2nd call until current lasts
+     run++;           // disable 2nd call until current lasts
       asm   mov ax,ds
       asm   mov oldSS,ss
       asm   mov oldSP,sp
@@ -258,7 +261,7 @@ extern "C" void TimerProc (void)
     }
       asm   mov ss,oldSS
       asm   mov sp,oldSP
-      -- run;
+      run--;
     }
 }
 */
@@ -299,14 +302,16 @@ void ENGINE::NewTimer(...) {
 
 	// decrement external timer uint16
 	if (Heart->XTimer)
-	  if (*Heart->XTimer) -- *Heart->XTimer;
-	  else Heart->XTimer = NULL;
+	  if (*Heart->XTimer)
+	     *Heart->XTimer--;
+	  else
+	     Heart->XTimer = NULL;
 
 	if (! run && Heart->Enable)   // check overrun flag
 	  {
 	    static uint16 oldSP, oldSS;
 
-	    ++ run;           // disable 2nd call until current lasts
+	   run++;           // disable 2nd call until current lasts
 	    asm   mov ax,ds
 	    asm   mov oldSS,ss
 	    asm   mov oldSP,sp
@@ -322,7 +327,7 @@ void ENGINE::NewTimer(...) {
 	}
 	    asm   mov ss,oldSS
 	    asm   mov sp,oldSP
-	    -- run;
+	    run--;
 	  }
 
 	*/
@@ -343,10 +348,10 @@ void HEART::SetXTimer(uint16 *ptr, uint16 time) {
 }
 
 
-SPRITE::SPRITE(BMP_PTR *shp)
+SPRITE::SPRITE(CGEEngine *vm, BMP_PTR *shp)
 	: X(0), Y(0), Z(0), NearPtr(0), TakePtr(0),
 	  Next(NULL), Prev(NULL), SeqPtr(NO_SEQ), Time(0), //Delay(0),
-	  Ext(NULL), Ref(-1), Cave(0) {
+	  Ext(NULL), Ref(-1), Cave(0), _vm(vm) {
 	memset(File, 0, sizeof(File));
 	*((uint16 *)&Flags) = 0;
 	SetShapeList(shp);
@@ -404,7 +409,7 @@ BMP_PTR *SPRITE::SetShapeList(BMP_PTR *shp) {
 
 void SPRITE::MoveShapes(uint8 *buf) {
 	BMP_PTR *p;
-	for (p = Ext->ShpList; *p; p ++) {
+	for (p = Ext->ShpList; *p; p++) {
 		buf += (*p)->MoveVmap(buf);
 	}
 }
@@ -509,14 +514,14 @@ SPRITE *SPRITE::Expand(void) {
 						break;
 					}
 					case 1 : { // Phase
-						shplist[shpcnt ++] = new BITMAP(strtok(NULL, " \t,;/"));
+						shplist[shpcnt++] = new BITMAP(strtok(NULL, " \t,;/"));
 						break;
 					}
 					case 2 : { // Seq
 						seq = (SEQ *) realloc(seq, (seqcnt + 1) * sizeof(*seq));
 						if (seq == NULL)
 							error("No core [%s]", fname);
-						SEQ *s = &seq[seqcnt ++];
+						SEQ *s = &seq[seqcnt++];
 						s->Now  = atoi(strtok(NULL, " \t,;/"));
 						if (s->Now > maxnow)
 							maxnow = s->Now;
@@ -542,7 +547,7 @@ SPRITE *SPRITE::Expand(void) {
 							if (nea == NULL)
 								error("No core [%s]", fname);
 							else {
-								SNAIL::COM *c = &nea[neacnt ++];
+								SNAIL::COM *c = &nea[neacnt++];
 								if ((c->Com = (SNCOM) TakeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
 									error("%s [%s]", NumStr("Bad NEAR in ######", lcnt), fname);
 								c->Ref = atoi(strtok(NULL, " \t,;/"));
@@ -558,7 +563,7 @@ SPRITE *SPRITE::Expand(void) {
 							if (tak == NULL)
 								error("No core [%s]", fname);
 							else {
-								SNAIL::COM *c = &tak[takcnt ++];
+								SNAIL::COM *c = &tak[takcnt++];
 								if ((c->Com = (SNCOM) TakeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
 									error("%s [%s]", NumStr("Bad NEAR in ######", lcnt), fname);
 								c->Ref = atoi(strtok(NULL, " \t,;/"));
@@ -571,7 +576,7 @@ SPRITE *SPRITE::Expand(void) {
 					}
 				}
 			} else { // no sprite description: try to read immediately from .BMP
-				shplist[shpcnt ++] = new BITMAP(File);
+				shplist[shpcnt++] = new BITMAP(File);
 			}
 			shplist[shpcnt] = NULL;
 			if (seq) {
@@ -608,7 +613,7 @@ SPRITE *SPRITE::Contract(void) {
 			delete[] e->Name;
 		if (Flags.BDel && e->ShpList) {
 			int i;
-			for (i = 0; e->ShpList[i]; i ++)
+			for (i = 0; e->ShpList[i]; i++)
 			delete e->ShpList[i];
 			if (MemType(e->ShpList) == NEAR_MEM)
 				delete[] e->ShpList;
@@ -664,7 +669,7 @@ void SPRITE::MakeXlat(uint8 *x) {
 
 		if (Flags.Xlat)
 			KillXlat();
-		for (b = Ext->ShpList; *b; b ++)
+		for (b = Ext->ShpList; *b; b++)
 			(*b)->M = x;
 		Flags.Xlat = true;
 	}
@@ -684,7 +689,7 @@ void SPRITE::KillXlat(void) {
 			free(m);
 			break;
 		}
-		for (b = Ext->ShpList; *b; b ++)
+		for (b = Ext->ShpList; *b; b++)
 			(*b)->M = NULL;
 		Flags.Xlat = false;
 	}
@@ -918,7 +923,7 @@ VGA::VGA(int mode)
 
 	bool std = true;
 	int i;
-	for (i = 10; i < 20; i ++) {
+	for (i = 10; i < 20; i++) {
 		char *txt = Text->getText(i);
 		if (txt) {
 //	  puts(txt);
@@ -1163,9 +1168,9 @@ void BITMAP::XShow(int x, int y) {
 	/*
 	  uint8 rmsk = x % 4,
 	       mask = 1 << rmsk,
-	       * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
-	  uint8 * m = (char *) M;
-	  uint8  * v = V;
+	       *scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
+	  uint8 *m = (char *) M;
+	  uint8  *v = V;
 
 	    asm push    bx
 	    asm push    si
@@ -1304,9 +1309,9 @@ void BITMAP::Show(int x, int y) {
 
 void BITMAP::Hide(int x, int y) {
 	/*
-	  uint8 * scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
+	  uint8 *scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
 	  uint16 d = FP_OFF(VGA::Page[2]) - FP_OFF(VGA::Page[1]);
-	  HideDesc * b = B;
+	  HideDesc *b = B;
 	  uint16 extra = ((x & 3) != 0);
 	  uint16 h = H;
 

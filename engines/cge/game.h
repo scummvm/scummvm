@@ -48,8 +48,10 @@ class FLY : public SPRITE {
 	static int L, T, R, B;
 public:
 	int Tx, Ty;
-	FLY(BITMAP **shpl);
+	FLY(CGEEngine *vm, BITMAP **shpl);
 	void Tick(void);
+private:
+	CGEEngine *_vm;
 };
 
 } // End of namespace CGE

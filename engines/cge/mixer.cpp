@@ -40,7 +40,7 @@ extern MOUSE *Mouse;
 bool   MIXER::Appear = false;
 
 
-MIXER::MIXER(int x, int y) : SPRITE(NULL), Fall(MIX_FALL) {
+MIXER::MIXER(CGEEngine *vm, int x, int y) : SPRITE(vm, NULL), Fall(MIX_FALL), _vm(vm) {
 	Appear = true;
 	mb[0] = new BITMAP("VOLUME");
 	mb[1] = NULL;
@@ -55,7 +55,7 @@ MIXER::MIXER(int x, int y) : SPRITE(NULL), Fall(MIX_FALL) {
 	// slaves
 
 	int i;
-	for (i = 0; i < MIX_MAX; i ++) {
+	for (i = 0; i < MIX_MAX; i++) {
 		static char fn[] = "V00";
 		wtom(i, fn + 1, 10, 2);
 		lb[i] = new BITMAP(fn);
@@ -64,8 +64,8 @@ MIXER::MIXER(int x, int y) : SPRITE(NULL), Fall(MIX_FALL) {
 	}
 	lb[i] = NULL;
 
-	for (i = 0; i < ArrayCount(Led); i ++) {
-		register SPRITE *spr = new SPRITE(lb);
+	for (i = 0; i < ArrayCount(Led); i++) {
+		register SPRITE *spr = new SPRITE(_vm, lb);
 		spr->SetSeq(ls);
 		spr->Goto(x + 2 + 12 * i, y + 8);
 		spr->Flags.Tran = true;
@@ -77,7 +77,7 @@ MIXER::MIXER(int x, int y) : SPRITE(NULL), Fall(MIX_FALL) {
 	Led[ArrayCount(Led) - 1]->Flags.BDel = true;
 
 	Vga->ShowQ->Insert(this);
-	for (i = 0; i < ArrayCount(Led); i ++)
+	for (i = 0; i < ArrayCount(Led); i++)
 		Vga->ShowQ->Insert(Led[i]);
 
 	//--- reset balance
@@ -124,7 +124,7 @@ void MIXER::Tick(void) {
 		if (Fall)
 			--Fall;
 		else {
-			for (int i = 0; i < ArrayCount(Led); i ++)
+			for (int i = 0; i < ArrayCount(Led); i++)
 				SNPOST_(SNKILL, -1, 0, Led[i]);
 			SNPOST_(SNKILL, -1, 0, this);
 		}

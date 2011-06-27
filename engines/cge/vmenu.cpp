@@ -45,7 +45,7 @@ namespace CGE {
 
 
 
-MENU_BAR::MENU_BAR(uint16 w) {
+MENU_BAR::MENU_BAR(CGEEngine *vm, uint16 w) : TALK(vm), _vm(vm) {
 	int h = FONT_HIG + 2 * MB_VM, i = (w += 2 * MB_HM) * h;
 	uint8 *p = farnew(uint8, i), * p1, * p2;
 
@@ -54,7 +54,7 @@ MENU_BAR::MENU_BAR(uint16 w) {
 	memset(p + i - w, MB_RB, w);
 	p1 = p;
 	p2 = p + i - 1;
-	for (i = 0; i < h; i ++) {
+	for (i = 0; i < h; i++) {
 		*p1 = MB_LT;
 		*p2 = MB_RB;
 		p1 += w;
@@ -76,14 +76,14 @@ char *VMGather(CHOICE *list) {
 	CHOICE *cp;
 	int len = 0, h = 0;
 
-	for (cp = list; cp->Text; cp ++) {
+	for (cp = list; cp->Text; cp++) {
 		len += strlen(cp->Text);
 		++h;
 	}
 	vmgt = new char[len + h];
 	if (vmgt) {
 		*vmgt = '\0';
-		for (cp = list; cp->Text; cp ++) {
+		for (cp = list; cp->Text; cp++) {
 			if (*vmgt)
 				strcat(vmgt, "|");
 			strcat(vmgt, cp->Text);
@@ -98,14 +98,14 @@ VMENU *VMENU::Addr = NULL;
 int    VMENU::Recent   = -1;
 
 
-VMENU::VMENU(CHOICE *list, int x, int y)
-	: TALK(VMGather(list), RECT), Menu(list), Bar(NULL) {
+VMENU::VMENU(CGEEngine *vm, CHOICE *list, int x, int y)
+	: TALK(vm, VMGather(list), RECT), Menu(list), Bar(NULL), _vm(vm) {
 	CHOICE *cp;
 
 	Addr = this;
 	delete[] vmgt;
 	Items = 0;
-	for (cp = list; cp->Text; cp ++)
+	for (cp = list; cp->Text; cp++)
 		++Items;
 	Flags.BDel = true;
 	Flags.Kill = true;
@@ -114,7 +114,7 @@ VMENU::VMENU(CHOICE *list, int x, int y)
 	else
 		Goto(x - W / 2, y - (TEXT_VM + FONT_HIG / 2));
 	Vga->ShowQ->Insert(this, Vga->ShowQ->Last());
-	Bar = new MENU_BAR(W - 2 * TEXT_HM);
+	Bar = new MENU_BAR(_vm, W - 2 * TEXT_HM);
 	Bar->Goto(X + TEXT_HM - MB_HM, Y + TEXT_VM - MB_VM);
 	Vga->ShowQ->Insert(Bar, Vga->ShowQ->Last());
 }
@@ -126,7 +126,7 @@ VMENU::~VMENU(void) {
 
 
 void VMENU::Touch(uint16 mask, int x, int y) {
-#define h (FONT_HIG + TEXT_LS)
+	uint16 h = FONT_HIG + TEXT_LS;
 	bool ok = false;
 
 	if (Items) {
@@ -147,10 +147,10 @@ void VMENU::Touch(uint16 mask, int x, int y) {
 		if (ok && (mask & L_UP)) {
 			Items = 0;
 			SNPOST_(SNKILL, -1, 0, this);
-			Menu[Recent = n].Proc();
+			//Menu[Recent = n].Proc();
+			warning("Missing call to proc()");
 		}
 	}
-#undef h
 }
 
 } // End of namespace CGE

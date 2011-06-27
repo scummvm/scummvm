@@ -64,7 +64,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "75d385a6074c58b69f7730481f256051", 1796710},
 			AD_LISTEND
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO, GUIO_NONE
 	},
 	{
 		"soltys", "Soltys Demo",
@@ -73,7 +73,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "c5d9b15863cab61dc125551576dece04", 1075272},
 			AD_LISTEND
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO, GUIO_NONE
 	},
 	AD_TABLE_END_MARKER
 };
@@ -160,7 +160,7 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	int slotNum = 0;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
+	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); filename++) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(filename->c_str() + filename->size() - 3);
 

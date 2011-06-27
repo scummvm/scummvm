@@ -150,7 +150,7 @@ const char *UsrPath(const char *nam) {
 				if (j)
 					if (buf[--j] == '\n')
 						buf[j] = '\0';
-				if (memicmp(buf, key, i) == 0)
+				if (scumm_strnicmp((const char *) buf, (const char*) key, i) == 0)
 					ok = true;
 			}
 			if (ok) {

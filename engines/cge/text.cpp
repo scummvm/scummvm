@@ -42,20 +42,20 @@ namespace CGE {
 TEXT *Text;
 TALK *Talk = NULL;
 
-TEXT::TEXT(const char *fname, int size) {
+TEXT::TEXT(CGEEngine *vm, const char *fname, int size) : _vm(vm) {
 	Cache = new HAN[size];
 	MergeExt(FileName, fname, SAY_EXT);
 	if (!INI_FILE::Exist(FileName))
 		error("No talk (%s)\n", FileName);
 
-	for (Size = 0; Size < size; Size ++) {
+	for (Size = 0; Size < size; Size++) {
 		Cache[Size].Ref = 0;
 		Cache[Size].Txt = NULL;
 	}
 }
 
 
-TEXT::~TEXT(void) {
+TEXT::~TEXT() {
 	Clear();
 	delete[] Cache;
 }
@@ -63,7 +63,7 @@ TEXT::~TEXT(void) {
 
 void TEXT::Clear(int from, int upto) {
 	HAN *p, * q;
-	for (p = Cache, q = p + Size; p < q; p ++) {
+	for (p = Cache, q = p + Size; p < q; p++) {
 		if (p->Ref && p->Ref >= from && p->Ref < upto) {
 			p->Ref = 0;
 			delete p->Txt;
@@ -76,7 +76,7 @@ void TEXT::Clear(int from, int upto) {
 int TEXT::Find(int ref) {
 	HAN *p, * q;
 	int i = 0;
-	for (p = Cache, q = p + Size; p < q; p ++) {
+	for (p = Cache, q = p + Size; p < q; p++) {
 		if (p->Ref == ref)
 			break;
 		else
@@ -180,14 +180,14 @@ char *TEXT::getText(int ref) {
 }
 
 
-void Say(const char *txt, SPRITE *spr) {
+void TEXT::Say(const char *txt, SPRITE *spr) {
 	KillText();
-	Talk = new TALK(txt, ROUND);
+	Talk = new TALK(_vm, txt, ROUND);
 	if (Talk) {
 		bool east = spr->Flags.East;
 		int x = (east) ? (spr->X + spr->W - 2) : (spr->X + 2);
 		int y = spr->Y + 2;
-		SPRITE *spike = new SPRITE(SP);
+		SPRITE *spike = new SPRITE(_vm, SP);
 		uint16 sw = spike->W;
 
 		if (east) {
@@ -221,9 +221,9 @@ void Say(const char *txt, SPRITE *spr) {
 	}
 }
 
-void Inf(const char *txt) {
+void CGEEngine::Inf(const char *txt) {
 	KillText();
-	Talk = new TALK(txt, RECT);
+	Talk = new TALK(this, txt, RECT);
 	if (Talk) {
 		Talk->Flags.Kill = true;
 		Talk->Flags.BDel = true;

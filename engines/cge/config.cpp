@@ -78,92 +78,92 @@ static int DevName[] = {
 };
 
 static CHOICE DevMenu[] = {
-	{ NULL, NONE  },
-	{ NULL, SB    },
-	{ NULL, SBM   },
-	{ NULL, GUS   },
-	{ NULL, GUSM  },
-	{ NULL, MIDI  },
-	{ NULL, AUTO  },
-	{ NULL, NULL  }
+	{ NULL, &CGEEngine::NONE  },
+	{ NULL, &CGEEngine::SB    },
+	{ NULL, &CGEEngine::SBM   },
+	{ NULL, &CGEEngine::GUS   },
+	{ NULL, &CGEEngine::GUSM  },
+	{ NULL, &CGEEngine::MIDI  },
+	{ NULL, &CGEEngine::AUTO  },
+	{ NULL, NULL              }
 };
 
 
 static CHOICE DigiPorts[] = {
-	{ " 210h", SetPortD },
-	{ " 220h", SetPortD },
-	{ " 230h", SetPortD },
-	{ " 240h", SetPortD },
-	{ " 250h", SetPortD },
-	{ " 260h", SetPortD },
-	{ "AUTO ", SetPortD },
+	{ " 210h", &CGEEngine::SetPortD },
+	{ " 220h", &CGEEngine::SetPortD },
+	{ " 230h", &CGEEngine::SetPortD },
+	{ " 240h", &CGEEngine::SetPortD },
+	{ " 250h", &CGEEngine::SetPortD },
+	{ " 260h", &CGEEngine::SetPortD },
+	{ "AUTO ", &CGEEngine::SetPortD },
 	{ NULL,   NULL     }
 };
 
 static CHOICE MIDIPorts[] = {
-	{ " 220h", SetPortM },
-	{ " 230h", SetPortM },
-	{ " 240h", SetPortM },
-	{ " 250h", SetPortM },
-	{ " 300h", SetPortM },
-	{ " 320h", SetPortM },
-	{ " 330h", SetPortM },
-	{ " 340h", SetPortM },
-	{ " 350h", SetPortM },
-	{ " 360h", SetPortM },
-	{ "AUTO ", SetPortM },
+	{ " 220h", &CGEEngine::SetPortM },
+	{ " 230h", &CGEEngine::SetPortM },
+	{ " 240h", &CGEEngine::SetPortM },
+	{ " 250h", &CGEEngine::SetPortM },
+	{ " 300h", &CGEEngine::SetPortM },
+	{ " 320h", &CGEEngine::SetPortM },
+	{ " 330h", &CGEEngine::SetPortM },
+	{ " 340h", &CGEEngine::SetPortM },
+	{ " 350h", &CGEEngine::SetPortM },
+	{ " 360h", &CGEEngine::SetPortM },
+	{ "AUTO ", &CGEEngine::SetPortM },
 	{ NULL,   NULL     }
 };
 
 static CHOICE BlsterIRQ[] = {
-	{ "IRQ  2", SetIRQ },
-	{ "IRQ  5", SetIRQ },
-	{ "IRQ  7", SetIRQ },
-	{ "IRQ 10", SetIRQ },
-	{ "AUTO  ", SetIRQ },
+	{ "IRQ  2", &CGEEngine::SetIRQ },
+	{ "IRQ  5", &CGEEngine::SetIRQ },
+	{ "IRQ  7", &CGEEngine::SetIRQ },
+	{ "IRQ 10", &CGEEngine::SetIRQ },
+	{ "AUTO  ", &CGEEngine::SetIRQ },
 	{ NULL,   NULL     }
 };
 
 static CHOICE GravisIRQ[] = {
-	{ "IRQ  2", SetIRQ },
-	{ "IRQ  5", SetIRQ },
-	{ "IRQ  7", SetIRQ },
-	{ "IRQ 11", SetIRQ },
-	{ "IRQ 12", SetIRQ },
-	{ "IRQ 15", SetIRQ },
-	{ "AUTO  ", SetIRQ },
+	{ "IRQ  2", &CGEEngine::SetIRQ },
+	{ "IRQ  5", &CGEEngine::SetIRQ },
+	{ "IRQ  7", &CGEEngine::SetIRQ },
+	{ "IRQ 11", &CGEEngine::SetIRQ },
+	{ "IRQ 12", &CGEEngine::SetIRQ },
+	{ "IRQ 15", &CGEEngine::SetIRQ },
+	{ "AUTO  ", &CGEEngine::SetIRQ },
 	{ NULL,   NULL     }
 };
 
 static CHOICE GravisDMA[] = {
-	{ "DMA 1", SetDMA },
-	{ "DMA 3", SetDMA },
-	{ "DMA 5", SetDMA },
-	{ "DMA 6", SetDMA },
-	{ "DMA 7", SetDMA },
-	{ "AUTO ", SetDMA },
+	{ "DMA 1", &CGEEngine::SetDMA },
+	{ "DMA 3", &CGEEngine::SetDMA },
+	{ "DMA 5", &CGEEngine::SetDMA },
+	{ "DMA 6", &CGEEngine::SetDMA },
+	{ "DMA 7", &CGEEngine::SetDMA },
+	{ "AUTO ", &CGEEngine::SetDMA },
 	{ NULL,   NULL    }
 };
 
 static CHOICE BlsterDMA[] = {
-	{ "DMA 0", SetDMA },
-	{ "DMA 1", SetDMA },
-	{ "DMA 3", SetDMA },
-	{ "AUTO ", SetDMA },
+	{ "DMA 0", &CGEEngine::SetDMA },
+	{ "DMA 1", &CGEEngine::SetDMA },
+	{ "DMA 3", &CGEEngine::SetDMA },
+	{ "AUTO ", &CGEEngine::SetDMA },
 	{ NULL,   NULL    }
 };
 
 
-void SelectSound(void) {
+void CGEEngine::SelectSound() {
 	int i;
 	Sound.Close();
 	if (VMENU::Addr)
 		SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 	Inf(Text->getText(STYPE_TEXT));
 	Talk->Goto(Talk->X, FONT_HIG / 2);
-	for (i = 0; i < ArrayCount(DevName); i ++)
+	for (i = 0; i < ArrayCount(DevName); i++)
 		DevMenu[i].Text = Text->getText(DevName[i]);
-	(new VMENU(DevMenu, SCR_WID / 2, Talk->Y + Talk->H + TEXT_VM + FONT_HIG))->SetName(Text->getText(MENU_TEXT));
+	(new VMENU(this, DevMenu, SCR_WID / 2, Talk->Y + Talk->H + TEXT_VM + FONT_HIG))->SetName(Text->getText(MENU_TEXT));
 }
 
 
@@ -195,10 +195,10 @@ static uint16 xdeco(const char *str) {
 static CHOICE *Cho;
 static int     Hlp;
 
-static void SNSelect(void) {
+void CGEEngine::SNSelect() {
 	Inf(Text->getText(Hlp));
 	Talk->Goto(Talk->X, FONT_HIG / 2);
-	(new VMENU(Cho, SCR_WID / 2, Talk->Y + Talk->H + TEXT_VM + FONT_HIG))->SetName(Text->getText(MENU_TEXT));
+	(new VMENU(this, Cho, SCR_WID / 2, Talk->Y + Talk->H + TEXT_VM + FONT_HIG))->SetName(Text->getText(MENU_TEXT));
 }
 
 
@@ -211,14 +211,14 @@ static void Select(CHOICE *cho, int hlp) {
 }
 
 
-static void NONE(void) {
+void CGEEngine::NONE() {
 	SNDDrvInfo.DDEV = DEV_QUIET;
 	SNDDrvInfo.MDEV = DEV_QUIET;
 	Sound.Open();
 }
 
 
-static void SB(void) {
+void CGEEngine::SB() {
 	SNDDrvInfo.DDEV = DEV_SB;
 	SNDDrvInfo.MDEV = DEV_SB;
 	Reset();
@@ -226,7 +226,7 @@ static void SB(void) {
 }
 
 
-static void SBM(void) {
+void CGEEngine::SBM() {
 	SNDDrvInfo.DDEV = DEV_SB;
 	SNDDrvInfo.MDEV = DEV_GM;
 	Reset();
@@ -234,7 +234,7 @@ static void SBM(void) {
 }
 
 
-static void GUS(void) {
+void CGEEngine::GUS() {
 	SNDDrvInfo.DDEV = DEV_GUS;
 	SNDDrvInfo.MDEV = DEV_GUS;
 	Reset();
@@ -242,7 +242,7 @@ static void GUS(void) {
 }
 
 
-static void GUSM(void) {
+void CGEEngine::GUSM() {
 	SNDDrvInfo.DDEV = DEV_GUS;
 	SNDDrvInfo.MDEV = DEV_GM;
 	Reset();
@@ -250,7 +250,7 @@ static void GUSM(void) {
 }
 
 
-static void MIDI(void) {
+void CGEEngine::MIDI() {
 	SNDDrvInfo.DDEV = DEV_QUIET;
 	SNDDrvInfo.MDEV = DEV_GM;
 	SNDDrvInfo.MBASE = DETECT;
@@ -258,7 +258,7 @@ static void MIDI(void) {
 }
 
 
-static void AUTO(void) {
+void CGEEngine::AUTO() {
 	SNDDrvInfo.DDEV = DEV_AUTO;
 	SNDDrvInfo.MDEV = DEV_AUTO;
 	Reset();
@@ -266,25 +266,25 @@ static void AUTO(void) {
 }
 
 
-static void SetPortD(void) {
+void CGEEngine::SetPortD() {
 	SNDDrvInfo.DBASE = xdeco(DigiPorts[VMENU::Recent].Text);
 	Select((SNDDrvInfo.DDEV == DEV_SB) ? BlsterIRQ : GravisIRQ, SIRQ_TEXT);
 }
 
 
-static void SetPortM(void) {
+void CGEEngine::SetPortM() {
 	SNDDrvInfo.MBASE = xdeco(MIDIPorts[VMENU::Recent].Text);
 	Sound.Open();
 }
 
 
-static void SetIRQ(void) {
+void CGEEngine::SetIRQ() {
 	SNDDrvInfo.DIRQ = ddeco(((SNDDrvInfo.DDEV == DEV_SB) ? BlsterIRQ : GravisIRQ)[VMENU::Recent].Text);
 	Select((SNDDrvInfo.DDEV == DEV_SB) ? BlsterDMA : GravisDMA, SDMA_TEXT);
 }
 
 
-static void SetDMA(void) {
+void CGEEngine::SetDMA() {
 	SNDDrvInfo.DDMA = ddeco(((SNDDrvInfo.DDEV == DEV_SB) ? BlsterDMA : GravisDMA)[VMENU::Recent].Text);
 	if (SNDDrvInfo.MDEV != SNDDrvInfo.DDEV)
 		Select(MIDIPorts, MPORT_TEXT);
