@@ -137,6 +137,7 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_tinsel = (gameid == "tinsel");
 	bool is_cruise = (gameid == "cruise");
 	bool is_made = (gameid == "made");
+	bool is_sci = (gameid == "sci");
 
 	GUI_Actions::initInstanceGame();
 
@@ -219,7 +220,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Key bind method
 	_action_enabled[POCKET_ACTION_BINDKEYS] = true;
 	// Disable double-tap right-click for convenience
-	if (is_tinsel || is_cruise)
+	if (is_tinsel || is_cruise || is_sci)
 		if (!ConfMan.hasKey("no_doubletap_rightclick")) {
 			ConfMan.setBool("no_doubletap_rightclick", true);
 			ConfMan.flushToDisk();
