@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/mutex.h"
+#include "common/queue.h"
 #include "audio/audiostream.h"
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
@@ -65,6 +66,15 @@ struct GroupData {
 	const byte *pData;
 };
 
+struct RegisterValue {
+	uint8 _regNum;
+	uint8 _value;
+
+	RegisterValue(int regNum, int value) { 
+		_regNum = regNum; _value = value;
+	}
+};
+
 class SoundDriver {
 public:
 	Common::String _shortDescription, _longDescription;
@@ -73,10 +83,6 @@ public:
 	uint32 _groupMask;
 	const GroupData *_groupOffset;
 	int _driverResID;
-
-	typedef void (*UpdateCallback)(void *);
-	UpdateCallback _upCb;
-	void *_upRef;
 public:
 	SoundDriver();
 	virtual ~SoundDriver() {};
@@ -106,8 +112,6 @@ public:
 	virtual void proc38(int channel, int cmd, int value) {}			// Method #19
 	virtual void setPitch(int channel, int pitchBlend) {}			// Method #20
 	virtual void proc42(int channel, int v0, int v1) {}				// Method #21
-
-	virtual void setUpdateCallback(UpdateCallback upCb, void *ref) {}
 };
 
 struct VoiceStructEntryType0 {
@@ -405,6 +409,7 @@ private:
 	byte _portContents[256];
 	const byte *_patchData;
 	int _masterVolume;
+	Common::Queue<RegisterValue> _queue;
 
 	bool _channelVoiced[ADLIB_CHANNEL_COUNT];
 	int _channelVolume[ADLIB_CHANNEL_COUNT];
@@ -418,6 +423,7 @@ private:
 
 
 	void write(byte reg, byte value);
+	void flush();
 	void updateChannelVolume(int channel);
 	void setVoice(int channel);
 	void clearVoice(int channel);
@@ -437,7 +443,6 @@ public:
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void setPitch(int channel, int pitchBlend);
-	virtual void setUpdateCallback(UpdateCallback upCb, void *ref);
 
 	// AudioStream interface
 	virtual int readBuffer(int16 *buffer, const int numSamples);
@@ -447,6 +452,60 @@ public:
 
 	void update(int16 *buf, int len);
 };
+
+class AdlibFxSoundDriver: public SoundDriver, Audio::AudioStream {
+private:
+	GroupData _groupData;
+	Audio::Mixer *_mixer;
+	FM_OPL *_opl;
+	Audio::SoundHandle _soundHandle;
+	int _sampleRate;
+	byte _portContents[256];
+	int _masterVolume;
+	Common::Queue<RegisterValue> _queue;
+
+	bool _channelVoiced[ADLIB_CHANNEL_COUNT];
+	int _channelVolume[ADLIB_CHANNEL_COUNT];
+	int _v4405E[ADLIB_CHANNEL_COUNT];
+	int _v44067[ADLIB_CHANNEL_COUNT];
+	int _v44070[ADLIB_CHANNEL_COUNT];
+	int _v44079[ADLIB_CHANNEL_COUNT];
+	int _v44082[ADLIB_CHANNEL_COUNT + 1];
+	int _pitchBlend[ADLIB_CHANNEL_COUNT];
+	int _v4409E[ADLIB_CHANNEL_COUNT];
+
+
+	void write(byte reg, byte value);
+	void flush();
+	void updateChannelVolume(int channel);
+	void setVoice(int channel);
+	void clearVoice(int channel);
+	void updateChannel(int channel);
+	void setFrequency(int channel);
+public:
+	AdlibFxSoundDriver();
+	virtual ~AdlibFxSoundDriver();
+
+	virtual bool open();
+	virtual void close();
+	virtual bool reset();
+	virtual const GroupData *getGroupData();
+	virtual void installPatch(const byte *data, int size) {}
+	virtual int setMasterVolume(int volume);
+	virtual void proc32(int channel, int program, int v0, int v1);
+	virtual void updateVoice(int channel);
+	virtual void proc38(int channel, int cmd, int value);
+	virtual void setPitch(int channel, int pitchBlend);
+
+	// AudioStream interface
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo() const { return false; }
+	virtual bool endOfData() const { return false; }
+	virtual int getRate() const { return _sampleRate; }
+
+	void update(int16 *buf, int len);
+};
+
 
 } // End of namespace tSage
 

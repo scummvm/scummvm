@@ -37,6 +37,7 @@ enum EventType {EVENT_NONE = 0, EVENT_BUTTON_DOWN = 1, EVENT_BUTTON_UP = 2, EVEN
 enum ButtonShiftFlags {BTNSHIFT_LEFT = 0, BTNSHIFT_RIGHT = 3, BTNSHIFT_MIDDLE = 4};
 
 // Intrinisc game delay between execution frames. This runs at 60Hz
+#define GAME_FRAME_RATE 60
 #define GAME_FRAME_TIME (1000 / 60)
 
 class GfxManager;
