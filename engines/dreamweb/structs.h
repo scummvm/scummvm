@@ -32,6 +32,16 @@ struct ObjData {
 	uint8 b6;
 	uint8 delay;
 	uint8 type;
+	uint8 b9;
+	uint8 b10;
+	uint8 b11;
+	uint8 b12;
+	uint8 b13;
+	uint8 b14;
+	uint8 b15;
+	uint8 b16;
+	uint8 b17;
+	uint8 b18[256]; // NB: Don't know the size yet
 };
 
 

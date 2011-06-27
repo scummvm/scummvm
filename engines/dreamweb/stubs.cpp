@@ -829,12 +829,28 @@ void DreamGenContext::backobject(Sprite* sprite) {
 	else if (objData->type == 2)
 		doorway();
 	else if (objData->type == 1)
-		constant();
+		constant(sprite, objData);
 	else
-		steady();
+		steady(sprite, objData);
 
 	ds = pop();
 	es = pop();
+}
+
+void DreamGenContext::constant(Sprite* sprite, ObjData* objData) {
+	++sprite->b19;
+	if (objData->b18[sprite->b19] == 255) {
+		sprite->b19 = 0;
+	}
+	uint8 b18 = objData->b18[sprite->b19];
+	objData->b17 = b18;
+	sprite->b15 = b18;
+}
+
+void DreamGenContext::steady(Sprite* sprite, ObjData* objData) {
+	uint8 b18 = objData->b18[0];
+	objData->b17 = b18;
+	sprite->b15 = b18;
 }
 
 void DreamGenContext::modifychar() {
