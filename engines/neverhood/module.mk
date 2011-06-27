@@ -4,7 +4,9 @@ MODULE_OBJS = \
 	blbarchive.o \
 	detection.o \
 	entity.o \
+	gamemodule.o \
 	graphics.o \
+	module.o \
 	neverhood.o \
 	palette.o \
 	resource.o \

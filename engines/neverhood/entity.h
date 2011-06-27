@@ -32,29 +32,36 @@ struct MessageParam {
 		uint32 _integer;
 		// TODO: Other types...
 	};
+	MessageParam(uint32 value) { _integer = value; }
 	// TODO: Constructors for the param types...
 };
 
 #define SetUpdateHandler(handler) _updateHandlerCb = static_cast <void (Entity::*)(void)> (handler)
-#define SetMessageHandler(handler) _messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, MessageParam &param, Entity *sender)> (handler)
+#define SetMessageHandler(handler) _messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler)
 
 class Entity {
 public:
 	Entity(NeverhoodEngine *vm, int priority)
 		: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority) {
 	}
-	~Entity() {
+	virtual ~Entity() {
+	}
+	virtual void draw() {
 	}
 	void handleUpdate() {
 		if (_updateHandlerCb)
 			(this->*_updateHandlerCb)();
 	}
-	uint32 handleMessage(int messageNum, MessageParam &param, Entity *sender) {
+	uint32 sendMessage(int messageNum, const MessageParam &param, Entity *sender) {
 		return _messageHandlerCb ? (this->*_messageHandlerCb)(messageNum, param, sender) : 0;
+	}
+	// Overloaded for various message parameter types
+	uint32 sendMessage(int messageNum, uint32 param, Entity *sender) {
+		return sendMessage(messageNum, MessageParam(param), sender);
 	}
 protected:
 	void (Entity::*_updateHandlerCb)();
-	uint32 (Entity::*_messageHandlerCb)(int messageNum, MessageParam &param, Entity *sender);
+	uint32 (Entity::*_messageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);
 	NeverhoodEngine *_vm;
 	int _priority;
 };

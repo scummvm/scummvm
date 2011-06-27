@@ -45,6 +45,10 @@ struct NeverhoodGameDescription;
 
 class ResourceMan;
 
+struct GameState {
+	int field1;
+};
+
 class NeverhoodEngine : public ::Engine {
 protected:
 
@@ -68,6 +72,7 @@ public:
 	Common::KeyCode _keyState;
 	uint16 _buttonState;
 
+	GameState _gameState;
 	ResourceMan *_res;
 
 	void updateEvents();
