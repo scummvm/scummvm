@@ -48,6 +48,8 @@ struct NDrawRect {
 	NDrawRect() : x(0), y(0), width(0), height(0) {}
 };
 
+class SpriteResource;
+
 // NOTE: "Restore" methods aren't need in the reimplementation as they're DirectDraw-specific
 
 class BaseSurface {
@@ -56,6 +58,8 @@ public:
 	virtual ~BaseSurface();
 	virtual void draw();
 	virtual void addDirtyRect();
+	void clear();
+	void drawSpriteResource(SpriteResource &spriteResource);
 protected:
 	NeverhoodEngine *_vm;
 	int _priority;
@@ -66,10 +70,21 @@ protected:
 	NRect _clipRect;
 };
 
+/*
+class Palette {
+public:
+	Palette();
+	~Palette();
+protected:
+	
+};
+*/
+
 // Misc
 
 void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NUnknown *unknown, byte **palette, byte **pixels);
 void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
+void unpackSpriteNormal(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
 
 } // End of namespace Neverhood
 

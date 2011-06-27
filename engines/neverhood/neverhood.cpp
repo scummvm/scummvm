@@ -40,6 +40,7 @@
 #include "neverhood/blbarchive.h"
 #include "neverhood/graphics.h"
 #include "neverhood/resourceman.h"
+#include "neverhood/resource.h"
 
 namespace Neverhood {
 
@@ -109,6 +110,17 @@ Common::Error NeverhoodEngine::run() {
 	delete[] rawpixels;
 	_res->unloadResource(resourceHandle);
 	_res->unuseResource(resourceHandle);
+#endif
+	
+#if 1
+	{ // Create a new scope
+		SpriteResource r(this);
+		BaseSurface *surf = new BaseSurface(this, 0, 640, 480);
+		r.load(0x0CA04202);
+		debug("r: width = %d; height = %d", r.dimensions().width, r.dimensions().height);
+		surf->drawSpriteResource(r);
+		delete surf;
+	}
 #endif
 	
 	delete _res;

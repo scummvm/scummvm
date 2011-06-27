@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/graphics.h"
+#include "neverhood/resource.h"
 
 namespace Neverhood {
 
@@ -53,6 +54,18 @@ void BaseSurface::draw() {
 
 void BaseSurface::addDirtyRect() {
 	// TODO
+}
+
+void BaseSurface::clear() {
+	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), 0);
+}
+
+void BaseSurface::drawSpriteResource(SpriteResource &spriteResource) {
+	if (spriteResource.dimensions().width <= _drawRect.width && 
+		spriteResource.dimensions().height <= _drawRect.height) {
+		clear();
+		spriteResource.draw((byte*)_surface->pixels, _surface->pitch, false, false);
+	}
 }
 
 // Misc
@@ -135,6 +148,20 @@ void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPi
 		chunks = READ_LE_UINT16(source + 2);
 		source += 4;
 	} while (rows > 0);
+
+}
+
+void unpackSpriteNormal(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY) {
+
+	// TODO: Flip
+
+	int sourcePitch = (width + 3) & 0xFFFC;
+
+	while (height-- > 0) {
+		memcpy(dest, source, width);
+		source += sourcePitch;
+		dest += destPitch;
+	}
 
 }
 
