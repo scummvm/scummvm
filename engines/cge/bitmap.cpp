@@ -202,18 +202,18 @@ BMP_PTR BITMAP::Code(void) {
 			int bpl;
 
 			if (V) {                                      // 2nd pass - fill the hide table
-				for (i = 0; i < H; i ++) {
+				for (i = 0; i < H; i++) {
 					B[i].skip = 0xFFFF;
 					B[i].hide = 0x0000;
 				}
 			}
-			for (bpl = 0; bpl < 4; bpl ++) {              // once per each bitplane
+			for (bpl = 0; bpl < 4; bpl++) {              // once per each bitplane
 				uint8 *bm = M;
 				bool skip = (bm[bpl] == TRANS);
 				uint16 j;
 
 				cnt = 0;
-				for (i = 0; i < H; i ++) {                  // once per each line
+				for (i = 0; i < H; i++) {                  // once per each line
 					uint8 pix;
 					for (j = bpl; j < W; j += 4) {
 						pix = bm[j];
@@ -282,7 +282,7 @@ BMP_PTR BITMAP::Code(void) {
 			B = (HideDesc *)(V + sizV);
 		}
 		cnt = 0;
-		for (i = 0; i < H; i ++) {
+		for (i = 0; i < H; i++) {
 			if (B[i].skip == 0xFFFF) {                    // whole line is skipped
 				B[i].skip = (cnt + SCR_WID) >> 2;
 				cnt = 0;
@@ -334,7 +334,7 @@ bool BITMAP::SolidAt(int x, int y) {
 	while (true) {
 		uint16 w, t;
 
-		w = * (uint16 *) m;
+		w = *(uint16 *) m;
 		m += 2;
 		t = w & 0xC000;
 		w &= 0x3FFF;

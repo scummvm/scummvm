@@ -48,10 +48,12 @@ class MIXER : public SPRITE {
 	void Update(void);
 public:
 	static bool Appear;
-	MIXER(int x, int y);
-	~MIXER(void);
+	MIXER(CGEEngine *vm, int x, int y);
+	~MIXER();
 	void Touch(uint16 mask, int x, int y);
-	void Tick(void);
+	void Tick();
+private:
+	CGEEngine *_vm;
 };
 
 } // End of namespace CGE

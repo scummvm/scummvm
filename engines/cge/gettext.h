@@ -42,13 +42,16 @@ class GET_TEXT : public TALK {
 	uint16 Size, Len;
 	uint16 Cntr;
 	SPRITE *OldKeybClient;
-	void (*Click)(void);
+	void (*Click)();
 public:
 	static GET_TEXT *Ptr;
-	GET_TEXT(const char *info, char *text, int size, void (*click)(void) = NULL);
-	~GET_TEXT(void);
+	GET_TEXT(CGEEngine *vm, const char *info, char *text, int size, void (*click)(void) = NULL);
+	~GET_TEXT();
 	void Touch(uint16 mask, int x, int y);
-	void Tick(void);
+	void Tick();
+
+private:
+	CGEEngine *_vm;
 };
 
 } // End of namespace CGE
