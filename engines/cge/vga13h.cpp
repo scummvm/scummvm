@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
+#include "common/rect.h"
+#include "graphics/palette.h"
 #include "cge/general.h"
 #include "cge/vga13h.h"
 #include "cge/bitmap.h"
@@ -737,7 +739,7 @@ void SPRITE::Show(void) {
 
 
 void SPRITE::Show(uint16 pg) {
-	uint8 *a = VGA::Page[1];
+	Graphics::Surface *a = VGA::Page[1];
 	VGA::Page[1] = VGA::Page[pg & 3];
 	Shp()->Show(X, Y);
 	VGA::Page[1] = a;
@@ -886,17 +888,25 @@ SPRITE *QUEUE::Locate(int ref) {
 }
 
 
-// TODO: Was direct mapping to VGA buffers.. need to create scummvm surfaces for that
-uint8  *VGA::Page[4] = { 0, 0, 0, 0 };
-
-/*
-uint8 * VGA::Page[4] = { (uint8 *) MK_FP(SCR_SEG, 0x0000),
-                 (uint8 *) MK_FP(SCR_SEG, 0x4000),
-                 (uint8 *) MK_FP(SCR_SEG, 0x8000),
-                 (uint8 *) MK_FP(SCR_SEG, 0xC000) };
-*/
-
 //extern const char Copr[];
+Graphics::Surface *VGA::Page[4];
+DAC *VGA::SysPal;
+
+void VGA::init() {
+	for (int idx = 0; idx < 4; ++idx) {
+		Page[idx] = new Graphics::Surface();
+		Page[idx]->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	}
+
+	SysPal = new DAC[PAL_CNT];
+}
+
+void VGA::deinit() {
+	for (int idx = 0; idx < 4; ++idx) {
+		delete Page[idx];
+	}
+	delete[] SysPal;
+}
 
 VGA::VGA(int mode)
 	: FrmCnt(0), OldMode(0), OldScreen(NULL), StatAdr(VGAST1_), 
@@ -977,21 +987,9 @@ void VGA::SetStatAdr(void) {
 
 #pragma argsused
 void VGA::WaitVR(bool on) {
-	/*
-	  _DX = StatAdr;
-	  _AH = (on) ? 0x00 : 0x08;
-
-	  asm   mov cx,2
-	  // wait for vertical retrace on (off)
-	  wait:
-	  asm   in  al,dx
-	  asm   xor al,ah
-	  asm   test    al,0x08
-	  asm   jnz wait
-	  asm   xor ah,0x08
-	  asm   loop    wait
-	  */
-	warning("STUB: VGA::WaitVR");
+	// Since some of the game parts rely on using vertical sync as a delay mechanism, 
+	// we're introducing a short delay to simulate it
+	g_system->delayMillis(10);
 }
 
 
@@ -1039,102 +1037,54 @@ void VGA::Setup(VgaRegBlk *vrb) {
 
 
 int VGA::SetMode(int mode) {
-	/*
-	  Clear();
-	  // get current mode
-	  asm   mov ah,0x0F
-	  Video();          // BIOS video service
-	  asm   xor ah,ah
-	  asm   push    ax
-
-	  // wait for v-retrace
-	  WaitVR();
-
-	  // set mode
-	  asm   xor ah,ah
-	  asm   mov al,byte ptr mode
-	  Video();          // BIOS video service
-	  SetStatAdr();
-	  // return previous mode
-	  asm   pop ax
-	  return _AX;
-	  */
-	warning("STUB: VGA::SetMode");
+	// ScummVM provides it's own vieo services
 	return 0;
 }
 
 
 void VGA::GetColors(DAC *tab) {
-	/*
-	  asm   cld
-	  asm   les di,tab      // color table
-	  asm   mov dx,0x3C7    // PEL address read mode register
-	  asm   xor al,al       // start from address 0
-	  asm   out dx,al       // put address
-	  asm   mov cx,256*3    // # of colors
-	  asm   mov dl,0xC9     // PEL data register
-
-	//  asm rep insb        // very fast!
-
-	  gc:               // much slower:
-	  asm   in  al,dx       // take 1 color
-	  asm   jmp sto     // little delay
-	  sto:
-	  asm   stosb           // store 1 color
-	  asm   loop    gc      // next one?
-	  */
-	warning("STUB: VGA::GetColors");
+	byte palData[PAL_SIZ];
+	g_system->getPaletteManager()->grabPalette(palData, 0, PAL_CNT);
+	pal2DAC(palData, tab);
 }
 
+void VGA::pal2DAC(const byte *palData, DAC *tab) {
+	const byte *colP = palData;
+	for (int idx = 0; idx < PAL_CNT; ++idx, colP += 3) {
+		tab[idx].R = *colP;
+		tab[idx].G = *(colP + 1);
+		tab[idx].B = *(colP + 2);
+	}
+}
+
+void VGA::DAC2pal(const DAC *tab, byte *palData) {
+	for (int idx = 0; idx < PAL_CNT; ++idx, palData += 3) {
+		*palData = tab[idx].R;
+		*(palData + 1) = tab[idx].G;
+		*(palData + 2) = tab[idx].B;
+	}
+}
 
 void VGA::SetColors(DAC *tab, int lum) {
-	/*
-	  DAC * des = NewColors;
-	  asm   push    ds
+	DAC *palP = tab;
+	for (int idx = 0; idx < PAL_CNT; ++idx, ++palP) {
+		palP->R = (palP->R * lum) >> 6;
+		palP->G = (palP->G * lum) >> 6;
+		palP->B = (palP->B * lum) >> 6;
+	}
 
-	  asm   les di,des
-	  asm   lds si,tab
-	  asm   mov cx,256*3
-	  asm   xor bx,bx
-	  asm   mov dx,lum
+	if (Mono) {
+		palP = tab;
+		for (int idx = 0; idx < PAL_CNT; ++idx, ++palP) {
+			// Form a greyscalce colour from 30% R, 59% G, 11% B
+			uint8 intensity = (palP->R * 77) + (palP->G * 151) + (palP->B * 28);
+			palP->R = intensity;
+			palP->G = intensity;
+			palP->B = intensity;
+		}
+	}
 
-	  copcol:
-	  asm   mov al,[si+bx]
-	  asm   mul dl
-	  asm   shr ax,6
-	  asm   mov es:[di+bx],al
-	  asm   inc bx
-	  asm   cmp bx,cx
-	  asm   jb  copcol
-
-	  asm   pop ds
-
-	  if (Mono)
-	    {
-	      asm   add cx,di
-	      mono:
-	      asm   xor dx,dx
-	      asm   mov al,77   // 30% R
-	      asm   mul byte ptr es:[di].0
-	      asm   add dx,ax
-	      asm   mov al,151  // 59% G
-	      asm   mul byte ptr es:[di].1
-	      asm   add dx,ax
-	      asm   mov al,28   // 11% B
-	      asm   mul byte ptr es:[di].2
-	      asm   add dx,ax
-
-	      asm   mov es:[di].0,dh
-	      asm   mov es:[di].1,dh
-	      asm   mov es:[di].2,dh
-
-	      asm   add di,3
-	      asm   cmp di,cx
-	      asm   jb  mono
-	    }
-	    */
 	SetPal = true;
-	warning("STUB: VGA::SetColors");
 }
 
 
@@ -1178,113 +1128,33 @@ void VGA::Show(void) {
 
 
 void VGA::UpdateColors(void) {
-	/*
-	  DAC * tab = NewColors;
-
-	  asm   push    ds
-	  asm   cld
-	  asm   lds si,tab      // color table
-	  asm   mov dx,0x3C8    // PEL address write mode register
-	  asm   xor al,al       // start from address 0
-	  asm   out dx,al       // put address
-	  asm   mov cx,256*3    // # of colors
-	  asm   mov dl,0xC9     // PEL data register
-
-	//  asm rep outsb       // very fast!
-
-	 // the slower version of above:
-	  sc:
-	  asm   lodsb           // take 1/3 color
-	  asm   out dx,al       // put 1/3 color
-	  asm   jmp loop        // little delay
-	  loop:
-	  asm   loop    sc      // next one?
-
-
-	  asm   pop ds
-	  */
-	warning("STUB: VGA::UpdateColors");
+	byte palData[PAL_SIZ];
+	DAC2pal(NewColors, palData);
+	g_system->getPaletteManager()->setPalette(palData, 0, 256);
 }
 
 
 void VGA::Update(void) {
-	/*
-	  uint8 * p = Page[1];
-	  Page[1] = Page[0];
-	  Page[0] = p;
-
-	  asm   mov dx,VGACRT_
-	  asm   mov al,0x0D
-	  asm   mov ah,byte ptr p
-	  asm   out dx,ax
-	  asm   dec al
-	  asm   mov ah,byte ptr p+1
-	  asm   out dx,ax
-	*/
-	if (! SpeedTest)
-		WaitVR(true);
+	SWAP(VGA::Page[0], VGA::Page[1]);
 
 	if (SetPal) {
 		UpdateColors();
 		SetPal = false;
 	}
-	warning("STUB: VGA::Update");
+
+	g_system->copyRectToScreen((const byte *)VGA::Page[0]->getBasePtr(0, 0), SCR_WID, 0, 0, SCR_WID, SCR_HIG);
+	g_system->updateScreen();
 }
 
 
 void VGA::Clear(uint8 color) {
-	/*
-	  uint8 * a = (uint8 *) MK_FP(SCR_SEG, 0);
-
-	  asm   mov dx,VGASEQ_
-	  asm   mov ax,0x0F02   // map mask register - enable all planes
-	  asm   out dx,ax
-	  asm   les di,a
-	  asm   cld
-
-	  asm   mov cx,0xFFFF
-	  asm   mov al,color
-	  asm   rep stosb
-	  asm   stosb
-	  */
-	warning("STUB: VGA::Clear");
+	for (int paneNum = 0; paneNum < 4; ++paneNum)
+		Page[paneNum]->fillRect(Common::Rect(0, 0, SCR_WID, SCR_HIG), color);
 }
 
 
 void VGA::CopyPage(uint16 d, uint16 s) {
-	/*
-	  uint8 * S = Page[s & 3], * D = Page[d & 3];
-
-	  asm   mov dx,VGAGRA_
-	  asm   mov al,0x05     // R/W mode
-	  asm   out dx,al
-	  asm   inc dx
-	  asm   in  al,dx
-	  asm   and al,0xF4
-	  asm   push    ax
-	  asm   push    dx
-	  asm   or  al,0x01
-	  asm   out dx,al
-
-	  asm   mov dx,VGASEQ_
-	  asm   mov ax,0x0F02   // map mask register - enable all planes
-	  asm   out dx,ax
-
-	  asm   push    ds
-
-	  asm   les di,D
-	  asm   lds si,S
-	  asm   cld
-	  asm   mov cx,0x4000
-	  asm   rep movsb
-
-	  asm   pop ds
-
-	  asm   pop dx
-	  asm   pop ax
-	  asm   out dx,al       // end of copy mode
-	  */
-	warning("STUB: VGA::CopyPage");
+	Page[d]->copyFrom(*Page[s]);
 }
 
 //--------------------------------------------------------------------------
@@ -1372,72 +1242,63 @@ void BITMAP::XShow(int x, int y) {
 
 
 void BITMAP::Show(int x, int y) {
-	/*
-	uint8 mask = 1 << (x & 3),
-	   * scr = VGA::Page[1] + y * (SCR_WID >> 2) + (x >> 2);
-	uint8 * v = V;
+	const byte *srcP = (const byte *)V;
+	byte *destP = (byte *)VGA::Page[1]->getBasePtr(x, y);
 
-	asm push    ds      // preserve DS
+	int yc = 0, xc = 0;
+	
+	for (;;) {
+		uint16 v = READ_LE_UINT16(srcP);
+		srcP += 2;
+		int cmd = v >> 14;
+		int count = v & 0x3FFF;
 
-	asm cld         // normal direction
-	asm les di,scr      // screen address
-	asm lds si,v        // picture address
-	asm mov dx,VGASEQ_  // VGA reg
-	asm mov al,0x02
-	asm mov ah,mask
+		if (cmd == 0)
+			// End of image
+			break;
 
-	plane:
-	asm out dx,ax
-	asm push    ax
-	asm push    di
+		// Handle a set of pixels
+		while (count-- > 0) {
+			// Transfer operation
+			switch (cmd) {
+			case 1:
+				// SKIP
+				break;
+			case 2:
+				// REPEAT
+				*destP = *srcP;
+				break;
+			case 3:
+				// COPY
+				*destP = *srcP++;
+				break;
+			}
 
-	block:
-	asm mov cx,[si]     // with ADD faster then LODSW
-	asm add si,2
-	asm test    ch,0xC0
-	asm jns skip        // 1 (SKP) or 0 (EOI)
-	asm jpo repeat      // 2 (REP)
+			// Move to next dest position
+			++destP; 
+			++xc;
+			if (xc == W) {
+				xc = 0;
+				++yc;
+				if (yc == H)
+					return;
 
-	copy:                  // 3 (CPY)
-	asm and ch,0x3F
-	asm shr cx,1
-	asm rep movsw
-	asm jnc block
-	asm movsb
-	asm jmp block
+				destP = (byte *)VGA::Page[1]->getBasePtr(x, y + yc);
+			}
+		}
 
-	repeat:
-	asm and ch,0x3F
-	asm mov al,[si]
-	asm inc si
-	asm mov ah,al
-	asm shr cx,1
-	asm rep stosw
-	asm jnc block
-	asm mov es:[di],al
-	asm inc di
-	asm jmp block
+		if (cmd == 2)
+			++srcP;
+	}
 
-	skip:
-	asm jz  endpl
-	asm and ch,0x3F
-	asm add di,cx
-	asm jmp block
+	// Temporary
+	g_system->copyRectToScreen((const byte *)VGA::Page[1]->getBasePtr(0, 0), SCR_WID, 0, 0, SCR_WID, SCR_HIG);
+	byte palData[PAL_SIZ];
+	VGA::DAC2pal(VGA::SysPal, palData);
+	g_system->getPaletteManager()->setPalette(palData, 0, PAL_CNT);
 
-	endpl:
-	asm pop di
-	asm pop ax
-	asm shl ah,1
-	asm test    ah,0x10
-	asm jz  x_chk
-	asm mov ah,0x01
-	asm inc di
-	x_chk:
-	asm cmp ah,mask
-	asm jne plane
-	asm pop ds
-	*/
-	warning("STUB: BITMAP::Show");
+	g_system->updateScreen();
+	g_system->delayMillis(5000);
 }
 
 

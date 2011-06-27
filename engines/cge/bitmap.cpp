@@ -30,12 +30,20 @@
 #include "cge/jbw.h"
 #include "cge/vol.h"
 #include "cge/cfile.h"
+#include "cge/vga13h.h"
 #include "common/system.h"
 
 namespace CGE {
 
 DAC *BITMAP::Pal = NULL;
 #define MAXPATH  128
+
+void BITMAP::init() {
+	Pal = NULL;
+}
+
+void BITMAP::deinit() {
+}
 
 #pragma argsused
 BITMAP::BITMAP(const char *fname, bool rem) : M(NULL), V(NULL) {
@@ -369,7 +377,7 @@ bool BITMAP::VBMSave(XFILE *f) {
 
 	if (f->Error == 0)
 		if (p)
-			f->Write((uint8 *)Pal, 256 * sizeof(DAC));
+			f->Write((uint8 *)Pal, 256 * 3);
 
 	if (f->Error == 0)
 		f->Write(V, n);
@@ -394,10 +402,12 @@ bool BITMAP::VBMLoad(XFILE *f) {
 
 	if (f->Error == 0) {
 		if (p) {
-			if (Pal)
-				f->Read((uint8 *)Pal, 256 * sizeof(DAC));
-			else
-				f->Seek(f->Mark() + 256 * sizeof(DAC));
+			if (Pal) {
+				byte palData[PAL_SIZ];
+				f->Read(palData, PAL_SIZ);
+				VGA::pal2DAC(palData, Pal);
+			} else
+				f->Seek(f->Mark() + PAL_SIZ);
 		}
 	}
 	if ((V = farnew(uint8, n)) == NULL)
