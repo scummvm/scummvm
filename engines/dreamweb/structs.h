@@ -10,7 +10,7 @@ struct Sprite {
 	uint8  b14;
 	uint8  b15;
 	uint16 w16;
-	uint8  b18;
+	uint8  delay;
 	uint8  b19;
 	uint16 obj_data;
 	uint8  b22;
@@ -21,4 +21,17 @@ struct Sprite {
 	uint8  type;
 	uint8  hidden;
 };
+
+struct ObjData {
+	uint8 b0;
+	uint8 b1;
+	uint8 b2;
+	uint8 b3;
+	uint8 b4;
+	uint8 b5;
+	uint8 b6;
+	uint8 delay;
+	uint8 type;
+};
+
 

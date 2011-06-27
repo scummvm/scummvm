@@ -740,7 +740,7 @@ Sprite* DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uin
 	WRITE_LE_UINT16(&sprite->w8, somethingInDi);
 	sprite->w2 = 0xffff;
 	sprite->b15 = 0;
-	sprite->b18 = 0;
+	sprite->delay = 0;
 	return sprite;
 }
 
@@ -768,7 +768,7 @@ void DreamGenContext::spriteupdate() {
 				mainmanCPP(sprite);
 			else {
 				assert(updateCallback == addr_backobject);
-				backobjectCPP(sprite);
+				backobject(sprite);
 			}
 		}
 	
@@ -795,7 +795,7 @@ void DreamGenContext::mainmanCPP(Sprite* sprite) {
 	es = pop();
 }
 
-void DreamGenContext::backobjectCPP(Sprite* sprite) {
+void DreamGenContext::backobject(Sprite* sprite) {
 	push(es);
 	push(ds);
 
@@ -806,7 +806,32 @@ void DreamGenContext::backobjectCPP(Sprite* sprite) {
 	bx += 32*(sprite-sprites);
 	//
 
-	backobject();
+	ds = data.word(kSetdat);
+	di = READ_LE_UINT16(&sprite->obj_data);
+	ObjData* objData = (ObjData*)ds.ptr(di, 0);
+
+	if (sprite->delay != 0) {
+		--sprite->delay;
+		ds = pop();
+		es = pop();
+		return;
+	}
+
+	sprite->delay = objData->delay;
+	if (objData->type == 6)
+		widedoor();
+	else if (objData->type == 5)
+		random();
+	else if (objData->type == 4)
+		lockeddoorway();
+	else if (objData->type == 3)
+		liftsprite();
+	else if (objData->type == 2)
+		doorway();
+	else if (objData->type == 1)
+		constant();
+	else
+		steady();
 
 	ds = pop();
 	es = pop();

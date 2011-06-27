@@ -26,7 +26,7 @@
 	Sprite* makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 somethingInDx, uint16 somethingInDi);
 	void spriteupdate();
 	void mainmanCPP(Sprite* sprite);
-	void backobjectCPP(Sprite* sprite);
+	void backobject(Sprite* sprite);
 	void modifychar();
 	void lockmon();
 
