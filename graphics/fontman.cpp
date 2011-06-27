@@ -23,7 +23,9 @@
 #include "graphics/fontman.h"
 #include "common/translation.h"
 
+namespace Common {
 DECLARE_SINGLETON(Graphics::FontManager);
+}
 
 namespace Graphics {
 
