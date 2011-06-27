@@ -47,7 +47,7 @@
 
 WINCESdlGraphicsManager::WINCESdlGraphicsManager(SdlEventSource *sdlEventSource)
 	: SdlGraphicsManager(sdlEventSource),
-	  _panelInitialized(false), _noDoubleTapRMB(false),
+	  _panelInitialized(false), _noDoubleTapRMB(false), _noDoubleTapPT(false),
 	  _toolbarHighDrawn(false), _newOrientation(0), _orientationLandscape(0),
 	  _panelVisible(true), _saveActiveToolbar(NAME_MAIN_PANEL), _panelStateForced(false),
 	  _canBeAspectScaled(false), _scalersChanged(false), _saveToolbarState(false),
@@ -481,6 +481,9 @@ void WINCESdlGraphicsManager::update_game_settings() {
 
 	if (ConfMan.hasKey("no_doubletap_rightclick"))
 		_noDoubleTapRMB = ConfMan.getBool("no_doubletap_rightclick");
+
+	if (ConfMan.hasKey("no_doubletap_paneltoggle"))
+		_noDoubleTapPT = ConfMan.getBool("no_doubletap_paneltoggle");
 }
 
 void WINCESdlGraphicsManager::internUpdateScreen() {

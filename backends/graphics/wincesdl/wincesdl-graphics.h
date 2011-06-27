@@ -120,6 +120,7 @@ public:
 
 	bool _panelInitialized; // only initialize the toolbar once
 	bool _noDoubleTapRMB;   // disable double tap -> rmb click
+	bool _noDoubleTapPT;    // disable double tap for toolbar toggling
 
 	CEGUI::ToolbarHandler _toolbarHandler;
 
