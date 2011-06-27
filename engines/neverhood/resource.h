@@ -52,7 +52,8 @@ public:
 	~PaletteResource();
 	bool load(uint32 fileHash);
 	void unload();
-	void getPalette(byte *palette);
+	void copyPalette(byte *destPalette);
+	byte *palette() { return _palette; }
 protected:
 	NeverhoodEngine *_vm;
 	int _resourceHandle;

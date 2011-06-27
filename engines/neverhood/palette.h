@@ -32,11 +32,26 @@ class Palette : public Entity {
 public:
 	// Default constructor with black palette
 	Palette(NeverhoodEngine *vm);
+	// Create from existing palette
+	Palette(NeverhoodEngine *vm, byte *palette);
+	// Create from resource with filename
+	Palette(NeverhoodEngine *vm, const char *filename);
+	// Create from resource with fileHash
+	Palette(NeverhoodEngine *vm, uint32 fileHash);
 	~Palette();
+	void usePalette();
+	void addPalette(const char *filename, int toIndex, int count, int fromIndex);
+	void addPalette(uint32 fileHash, int toIndex, int count, int fromIndex);
+	void startFadeToBlack(int counter);
+	void startFadeToWhite(int counter);
 protected:
 	int _status;
 	byte *_palette;
+	int _palCounter;
+	byte _fadeToR, _fadeToG, _fadeToB;
+	int _fadeStep;
 	void update();
+	void fadeColor(byte *rgb, byte toR, byte toG, byte toB);
 };
 
 } // End of namespace Neverhood

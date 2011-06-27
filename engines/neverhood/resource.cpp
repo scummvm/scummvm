@@ -126,9 +126,9 @@ void PaletteResource::unload() {
 	}
 }
 
-void PaletteResource::getPalette(byte *palette) {
+void PaletteResource::copyPalette(byte *destPalette) {
 	if (_palette) {
-		memcpy(palette, _palette, 1024);
+		memcpy(destPalette, _palette, 1024);
 	} else {
 		// TODO?: buildDefaultPalette(palette);
 	}
