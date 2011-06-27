@@ -28,12 +28,6 @@
 namespace Sci {
 
 
-enum {
-	DEFAULT_SCRIPTS = 32,
-	DEFAULT_OBJECTS = 8,			///< default number of objects per script
-	DEFAULT_OBJECTS_INCREMENT = 4	///< Number of additional objects to instantiate if we're running out of them
-};
-
 SegManager::SegManager(ResourceManager *resMan) {
 	_heap.push_back(0);
 
