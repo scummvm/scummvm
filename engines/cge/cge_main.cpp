@@ -128,7 +128,6 @@ static int  DemoText    = DEMO_TEXT;
 //--------------------------------------------------------------------------
 
 bool JBW = false;
-DAC *SysPal = farnew(DAC, PAL_CNT);
 
 //-------------------------------------------------------------------------
 int     PocPtr      =  0;
@@ -652,7 +651,7 @@ static void PostMiniStep(int stp) {
 
 void SYSTEM::SetPal(void) {
 	int i;
-	DAC *p = SysPal + 256 - ArrayCount(StdPal);
+	DAC *p = VGA::SysPal + 256 - ArrayCount(StdPal);
 	for (i = 0; i < ArrayCount(StdPal); i ++) {
 		p[i].R = StdPal[i].R >> 2;
 		p[i].G = StdPal[i].G >> 2;
@@ -671,7 +670,7 @@ void SYSTEM::FunTouch(void) {
 static void ShowBak(int ref) {
 	SPRITE *spr = Vga->SpareQ->Locate(ref);
 	if (spr) {
-		BITMAP::Pal = SysPal;
+		BITMAP::Pal = VGA::SysPal;
 		spr->Expand();
 		BITMAP::Pal = NULL;
 		spr->Show(2);
@@ -727,7 +726,7 @@ static void CaveUp(void) {
 
 	if (Shadow) {
 		Vga->ShowQ->Remove(Shadow);
-		Shadow->MakeXlat(Glass(SysPal, 204, 204, 204));
+		Shadow->MakeXlat(Glass(VGA::SysPal, 204, 204, 204));
 		Vga->ShowQ->Insert(Shadow, Hero);
 		Shadow->Z = Hero->Z;
 	}
@@ -735,7 +734,7 @@ static void CaveUp(void) {
 	Vga->Show();
 	Vga->CopyPage(1, 0);
 	Vga->Show();
-	Vga->Sunrise(SysPal);
+	Vga->Sunrise(VGA::SysPal);
 	Dark = false;
 	if (! Startup)
 		Mouse->On();
@@ -1027,7 +1026,7 @@ static void SpkClose(void) {
 static void SwitchColorMode(void) {
 	SNPOST_(SNSEQ, 121, Vga->Mono = !Vga->Mono, NULL);
 	KeyClick();
-	Vga->SetColors(SysPal, 64);
+	Vga->SetColors(VGA::SysPal, 64);
 }
 
 
@@ -1712,7 +1711,7 @@ void Movie(const char *ext) {
 
 
 bool ShowTitle(const char *name) {
-	BITMAP::Pal = SysPal;
+	BITMAP::Pal = VGA::SysPal;
 	BMP_PTR LB[] =  { new BITMAP(name), NULL };
 	BITMAP::Pal = NULL;
 	bool usr_ok = false;
@@ -1732,7 +1731,7 @@ bool ShowTitle(const char *name) {
 	Vga->CopyPage(1, 2);
 	Vga->CopyPage(0, 1);
 	SelectPocket(-1);
-	Vga->Sunrise(SysPal);
+	Vga->Sunrise(VGA::SysPal);
 
 	if (STARTUP::Mode < 2 && !STARTUP::SoundOk) {
 		Vga->CopyPage(1, 2);
@@ -1793,7 +1792,7 @@ bool ShowTitle(const char *name) {
 			if (CFILE::Exist(n)) {
 				CFILE file = CFILE(n, REA, RCrypt);
 				LoadGame(file, true); // only system vars
-				Vga->SetColors(SysPal, 64);
+				Vga->SetColors(VGA::SysPal, 64);
 				Vga->Update();
 				if (FINIS) {
 					++ STARTUP::Mode;

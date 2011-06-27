@@ -39,6 +39,7 @@ namespace CGE {
 
 #define TRANS   0xFE
 
+#include "common/pack-start.h"
 
 typedef struct  {
 	uint16 b : 2;
@@ -56,6 +57,7 @@ typedef struct  {
 	uint16 hide;
 } HideDesc;
 
+#include "common/pack-end.h"
 
 class BITMAP {
 	bool BMPLoad(XFILE *f);
@@ -70,6 +72,9 @@ public:
 	BITMAP(uint16 w, uint16 h, uint8 fill);
 	BITMAP(const BITMAP &bmp);
 	~BITMAP(void);
+	static void init();
+	static void deinit();
+
 	BITMAP *FlipH(void);
 	BITMAP *Code();
 	BITMAP &operator = (const BITMAP &bmp);

@@ -53,7 +53,9 @@ void CGEEngine::setup() {
 	_console = new CGEConsole(this);
 
 	// Initialise classes that have static members
+	BITMAP::init();
 	VFILE::init();
+	VGA::init();
 
 	// Initialise engine objects
 	Text = new TEXT(ProgName(), 128);
@@ -99,7 +101,9 @@ CGEEngine::~CGEEngine() {
 	debug("CGEEngine::~CGEEngine");
 
 	// Call classes with static members to clear them up
+	BITMAP::deinit();
 	VFILE::deinit();
+	VGA::deinit();
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();

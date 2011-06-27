@@ -28,6 +28,7 @@
 #ifndef __VGA13H__
 #define __VGA13H__
 
+#include "graphics/surface.h"
 #include "cge/general.h"
 #include <stddef.h>
 #include "cge/bitmap.h"
@@ -111,7 +112,7 @@ extern  SEQ Seq2[];
 
 
 #define PAL_CNT  256
-#define PAL_SIZ (PAL_CNT * sizeof(DAC))
+#define PAL_SIZ (PAL_CNT * 3)
 #define VGAATR_ 0x3C0
 #define VGAMIw_ 0x3C0
 #define VGASEQ_ 0x3C4
@@ -265,10 +266,13 @@ public:
 	uint32 FrmCnt;
 	QUEUE *ShowQ, *SpareQ;
 	int Mono;
-	static uint8 *Page[4];
+	static Graphics::Surface *Page[4];
+	static DAC *VGA::SysPal;
 
 	VGA(int mode);
 	~VGA(void);
+	static void init();
+	static void deinit();
 
 	void Setup(VgaRegBlk *vrb);
 	void GetColors(DAC *tab);
@@ -279,6 +283,9 @@ public:
 	void Sunset(void);
 	void Show(void);
 	void Update(void);
+
+	static void pal2DAC(const byte *palData, DAC *tab);
+	static void DAC2pal(const DAC *tab, byte *palData);
 };
 
 
