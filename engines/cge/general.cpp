@@ -127,7 +127,12 @@ char *ForceExt(char *buf, const char *nam, const char *ext) {
 //  fnsplit(nam, dr, di, na, ex);
 //  fnmerge(buf, dr, di, na, ext);
 //  return buf;
-	warning("STUB: ForceExt");
+	strcpy(buf, nam);
+	char *dot = strrchr(buf, '.');
+	if (dot)
+		*dot = '\0';
+	strcat(buf, ext);
+
 	return buf;
 }
 

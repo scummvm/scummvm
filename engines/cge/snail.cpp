@@ -65,7 +65,6 @@ extern  SPRITE *PocLight;
 //-------------------------------------------------------------------------
 extern  SPRITE     *Pocket[];
 extern  int     PocPtr;
-extern  DAC    *SysPal;
 
 static void SNGame(SPRITE *spr, int num) {
 	switch (num) {
@@ -576,7 +575,7 @@ void SNSend(SPRITE *spr, int val) {
 				spr->Flags.Slav = false;
 			} else {
 				if (spr->Ref % 1000 == 0)
-					BITMAP::Pal = SysPal;
+					BITMAP::Pal = VGA::SysPal;
 				if (spr->Flags.Back)
 					spr->BackShow(true);
 				else
@@ -849,7 +848,7 @@ void SNFlash(bool on) {
 	if (on) {
 		DAC *pal = farnew(DAC, PAL_CNT);
 		if (pal) {
-			memcpy(pal, SysPal, PAL_SIZ);
+			memcpy(pal, VGA::SysPal, PAL_SIZ);
 			for (int i = 0; i < PAL_CNT; i ++) {
 				register int c;
 				c = pal[i].R << 1;
@@ -862,14 +861,14 @@ void SNFlash(bool on) {
 			Vga->SetColors(pal, 64);
 		}
 	} else
-		Vga->SetColors(SysPal, 64);
+		Vga->SetColors(VGA::SysPal, 64);
 	Dark = false;
 }
 
 
 static void SNLight(bool in) {
 	if (in)
-		Vga->Sunrise(SysPal);
+		Vga->Sunrise(VGA::SysPal);
 	else
 		Vga->Sunset();
 	Dark = ! in;
