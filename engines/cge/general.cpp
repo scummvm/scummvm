@@ -216,6 +216,7 @@ char *dwtom(uint32 val, char *str, int radix, int len) {
 
 IOHAND::IOHAND(IOMODE mode, CRYPT *crpt)
 	: XFILE(mode), Crypt(crpt), Seed(SEED) {
+	_file = new Common::File();
 }
 
 IOHAND::IOHAND(const char *name, IOMODE mode, CRYPT *crpt)
@@ -223,18 +224,20 @@ IOHAND::IOHAND(const char *name, IOMODE mode, CRYPT *crpt)
 	// TODO: Check if WRI and/or UPD modes are needed, and map to a save file
 	assert(mode == REA);
 
-	_file.open(name);
+	_file = new Common::File();
+	_file->open(name);
 }
 
 IOHAND::~IOHAND(void) {
-	_file.close();
+	_file->close();
+	delete _file;
 }
 
 uint16 IOHAND::Read(void *buf, uint16 len) {
-	if (Mode == WRI || !_file.isOpen())
+	if (Mode == WRI || !_file->isOpen())
 		return 0;
 
-	uint16 bytesRead = _file.read(buf, len);
+	uint16 bytesRead = _file->read(buf, len);
 	if (Crypt) Seed = Crypt(buf, len, Seed);
 	return bytesRead;
 }
@@ -256,16 +259,16 @@ uint16 IOHAND::Write(void *buf, uint16 len) {
 }
 
 long IOHAND::Mark(void) {
-	return _file.pos();
+	return _file->pos();
 }
 
 long IOHAND::Seek(long pos) {
-	_file.seek(pos, SEEK_SET);
-	return _file.pos();
+	_file->seek(pos, SEEK_SET);
+	return _file->pos();
 }
 
 long IOHAND::Size(void) {
-	return _file.size();
+	return _file->size();
 }
 
 bool IOHAND::Exist(const char *name) {

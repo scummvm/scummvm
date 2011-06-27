@@ -652,7 +652,7 @@ static void PostMiniStep(int stp) {
 }
 
 void SYSTEM::SetPal(void) {
-	int i;
+	uint i;
 	DAC *p = VGA::SysPal + 256 - ArrayCount(StdPal);
 	for (i = 0; i < ArrayCount(StdPal); i++) {
 		p[i].R = StdPal[i].R >> 2;

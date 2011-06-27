@@ -54,7 +54,7 @@ MIXER::MIXER(CGEEngine *vm, int x, int y) : SPRITE(vm, NULL), Fall(MIX_FALL), _v
 
 	// slaves
 
-	int i;
+	uint i;
 	for (i = 0; i < MIX_MAX; i++) {
 		static char fn[] = "V00";
 		wtom(i, fn + 1, 10, 2);
@@ -124,7 +124,7 @@ void MIXER::Tick(void) {
 		if (Fall)
 			--Fall;
 		else {
-			for (int i = 0; i < ArrayCount(Led); i++)
+			for (uint i = 0; i < ArrayCount(Led); i++)
 				SNPOST_(SNKILL, -1, 0, Led[i]);
 			SNPOST_(SNKILL, -1, 0, this);
 		}
