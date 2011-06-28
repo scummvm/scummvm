@@ -1247,20 +1247,14 @@ void BITMAP::XShow(int x, int y) {
 
 
 void BITMAP::Show(int x, int y) {
-	// Create a temporary surface to hold the unpacked bitmap data
-	Graphics::Surface rawSurface;
-	rawSurface.create(W, H, Graphics::PixelFormat::createFormatCLUT8());
-
 	const byte *srcP = (const byte *)V;
-	byte *destP = (byte *)rawSurface.pixels;
-	byte *destEndP = destP + (W * H);
-	Common::set_to(destP, destEndP, 0);
+	byte *destEndP = (byte *)VGA::Page[1]->pixels + (SCR_WID * SCR_HIG);
 
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
 	// must be decompressed and inserted into the surface
 	for (int planeCtr = 0; planeCtr < 4; ++planeCtr) {
-		destP = (byte *)rawSurface.getBasePtr(planeCtr, 0);
+		byte *destP = (byte *)VGA::Page[1]->getBasePtr(x + planeCtr, y);
 
 		for (;;) {
 			uint16 v = READ_LE_UINT16(srcP);
@@ -1299,13 +1293,6 @@ void BITMAP::Show(int x, int y) {
 			if (cmd == 2)
 				++srcP;
 		}
-	}
-
-	// Copy the decompressed buffer to the specified x/y position on Page #1
-	for (int yc = 0; yc < rawSurface.h; ++yc) {
-		srcP = (const byte *)rawSurface.getBasePtr(0, yc);
-		destP = (byte *)VGA::Page[1]->getBasePtr(x, y + yc);
-		Common::copy(srcP, srcP + rawSurface.w, destP);
 	}
 
 	// Temporary
