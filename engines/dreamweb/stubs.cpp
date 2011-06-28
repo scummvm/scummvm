@@ -838,11 +838,11 @@ void DreamGenContext::backobject(Sprite* sprite) {
 }
 
 void DreamGenContext::constant(Sprite* sprite, ObjData* objData) {
-	++sprite->b19;
-	if (objData->b18[sprite->b19] == 255) {
-		sprite->b19 = 0;
+	++sprite->frame;
+	if (objData->b18[sprite->frame] == 255) {
+		sprite->frame = 0;
 	}
-	uint8 b18 = objData->b18[sprite->b19];
+	uint8 b18 = objData->b18[sprite->frame];
 	objData->b17 = b18;
 	sprite->b15 = b18;
 }
