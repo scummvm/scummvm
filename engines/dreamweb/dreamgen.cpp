@@ -2955,98 +2955,6 @@ steadyob:
 	steady();
 }
 
-void DreamGenContext::liftsprite() {
-	STACK_CHECK;
-	al = data.byte(kLiftflag);
-	_cmp(al, 0);
-	if (flags.z())
-		goto liftclosed;
-	_cmp(al, 1);
-	if (flags.z())
-		goto liftopen;
-	_cmp(al, 3);
-	if (flags.z())
-		goto openlift;
-	al = es.byte(bx+19);
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishclose;
-	_dec(al);
-	_cmp(al, 11);
-	if (!flags.z())
-		goto pokelift;
-	push(ax);
-	al = 3;
-	liftnoise();
-	ax = pop();
-	goto pokelift;
-finishclose:
-	data.byte(kLiftflag) = 0;
-	return;
-openlift:
-	al = es.byte(bx+19);
-	_cmp(al, 12);
-	if (flags.z())
-		goto endoflist;
-	_inc(al);
-	_cmp(al, 1);
-	if (!flags.z())
-		goto pokelift;
-	push(ax);
-	al = 2;
-	liftnoise();
-	ax = pop();
-pokelift:
-	es.byte(bx+19) = al;
-	ah = 0;
-	push(di);
-	_add(di, ax);
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	return;
-endoflist:
-	data.byte(kLiftflag) = 1;
-	return;
-liftopen:
-	al = data.byte(kLiftpath);
-	push(es);
-	push(bx);
-	turnpathon();
-	bx = pop();
-	es = pop();
-	_cmp(data.byte(kCounttoclose), 0);
-	if (flags.z())
-		goto nocountclose;
-	_dec(data.byte(kCounttoclose));
-	_cmp(data.byte(kCounttoclose), 0);
-	if (!flags.z())
-		goto nocountclose;
-	data.byte(kLiftflag) = 2;
-nocountclose:
-	al = 12;
-	goto pokelift;
-liftclosed:
-	al = data.byte(kLiftpath);
-	push(es);
-	push(bx);
-	turnpathoff();
-	bx = pop();
-	es = pop();
-	_cmp(data.byte(kCounttoopen), 0);
-	if (flags.z())
-		goto nocountopen;
-	_dec(data.byte(kCounttoopen));
-	_cmp(data.byte(kCounttoopen), 0);
-	if (!flags.z())
-		goto nocountopen;
-	data.byte(kLiftflag) = 3;
-nocountopen:
-	al = 0;
-	goto pokelift;
-}
-
 void DreamGenContext::liftnoise() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 5);
@@ -21687,7 +21595,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_getblockofpixel: getblockofpixel(); break;
 		case addr_showrain: showrain(); break;
 		case addr_backobject: backobject(); break;
-		case addr_liftsprite: liftsprite(); break;
 		case addr_liftnoise: liftnoise(); break;
 		case addr_random: random(); break;
 		case addr_steady: steady(); break;

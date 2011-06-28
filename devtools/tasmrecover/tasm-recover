@@ -33,6 +33,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showframe',
 	'spriteupdate',
 	'dodoor',
+	'liftsprite',
 	'frameoutv',
 	'modifychar',
 	'lockmon'

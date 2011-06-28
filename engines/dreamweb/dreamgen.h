@@ -653,7 +653,6 @@ public:
 	static const uint16 addr_steady = 0xc180;
 	static const uint16 addr_random = 0xc17c;
 	static const uint16 addr_liftnoise = 0xc178;
-	static const uint16 addr_liftsprite = 0xc174;
 	static const uint16 addr_backobject = 0xc170;
 	static const uint16 addr_showrain = 0xc16c;
 	static const uint16 addr_getblockofpixel = 0xc168;
@@ -1455,7 +1454,7 @@ public:
 	void dealwithspecial();
 	//void eraseoldobs();
 	void dircom();
-	void liftsprite();
+	//void liftsprite();
 	void dumpkeypad();
 	void dumpzoom();
 	void endgameseq();

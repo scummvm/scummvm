@@ -31,6 +31,10 @@
 	void steady(Sprite* sprite, ObjData* objData);
 	void dodoor();
 	void dodoor(Sprite* sprite, ObjData* objData);
+	void liftsprite();
+	void liftsprite(Sprite* sprite, ObjData* objData);
+	void turnpathonCPP(uint8 param);
+	void turnpathoffCPP(uint8 param);
 	void modifychar();
 	void lockmon();
 

@@ -825,7 +825,7 @@ void DreamGenContext::backobject(Sprite* sprite) {
 	else if (objData->type == 4)
 		lockeddoorway();
 	else if (objData->type == 3)
-		liftsprite();
+		liftsprite(sprite, objData);
 	else if (objData->type == 2)
 		doorway();
 	else if (objData->type == 1)
@@ -911,6 +911,80 @@ void DreamGenContext::steady(Sprite* sprite, ObjData* objData) {
 	uint8 b18 = objData->b18[0];
 	objData->b17 = b18;
 	sprite->b15 = b18;
+}
+
+void DreamGenContext::turnpathonCPP(uint8 param) {
+	al = param;
+	push(es);
+	push(bx);
+	turnpathon();
+	bx = pop();
+	es = pop();
+}
+
+void DreamGenContext::turnpathoffCPP(uint8 param) {
+	al = param;
+	push(es);
+	push(bx);
+	turnpathoff();
+	bx = pop();
+	es = pop();
+}
+
+void DreamGenContext::liftsprite() {
+	Sprite *sprite = (Sprite*)es.ptr(bx, sizeof(Sprite));
+	ObjData *objData = (ObjData*)ds.ptr(di, 0);
+	liftsprite(sprite, objData);
+}
+
+void DreamGenContext::liftsprite(Sprite* sprite, ObjData* objData) {
+	uint8 liftFlag = data.byte(kLiftflag);
+	if (liftFlag == 0) { //liftclosed
+		turnpathoffCPP(data.byte(kLiftpath));
+
+		if (data.byte(kCounttoopen) != 0) {
+			_dec(data.byte(kCounttoopen));
+			if (data.byte(kCounttoopen) == 0)
+				data.byte(kLiftflag) = 3;
+		}
+		sprite->frame = 0;
+		sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	}
+	else if (liftFlag == 1) {  //liftopen
+		turnpathonCPP(data.byte(kLiftpath));
+
+		if (data.byte(kCounttoclose) != 0) {
+			_dec(data.byte(kCounttoclose));
+			if (data.byte(kCounttoclose) == 0)
+				data.byte(kLiftflag) = 2;
+		}
+		sprite->frame = 12;
+		sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	}	
+	else if (liftFlag == 3) { //openlift
+		if (sprite->frame == 12) {
+			data.byte(kLiftflag) = 1;
+			return;
+		}
+		++sprite->frame;
+		if (sprite->frame == 1) {
+			al = 2;
+			liftnoise();
+		}
+		sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	} else { //closeLift
+		assert(liftFlag == 2);
+		if (sprite->frame == 0) {
+			data.byte(kLiftflag) = 0;
+			return;
+		}
+		--sprite->frame;
+		if (sprite->frame == 11) {
+			al = 3;
+			liftnoise();
+		}
+		sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	}
 }
 
 void DreamGenContext::modifychar() {
