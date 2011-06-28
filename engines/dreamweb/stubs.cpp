@@ -817,7 +817,7 @@ void DreamGenContext::mainmanCPP(Sprite* sprite) {
 	}
 	sprite->b22 = 0;
 	if (data.byte(kTurntoface) != data.byte(kFacing)) {
-		aboutturn();
+		aboutturn(sprite);
 	} else {
 		if ((data.byte(kTurndirection) != 0) && (data.byte(kLinepointer) == 254)) {
 			data.byte(kReasseschanges) = 1;
@@ -885,6 +885,37 @@ void DreamGenContext::walking() {
 	autosetwalk();
 	bx = pop();
 	es = pop();
+}
+
+void DreamGenContext::aboutturn(Sprite* sprite) {
+	if (data.byte(kTurndirection) == 1)
+		goto incdir;
+	else if ((int8)data.byte(kTurndirection) == -1)
+		goto decdir;
+	else {
+		if (data.byte(kFacing) < data.byte(kTurntoface)) {
+			uint8 delta = data.byte(kTurntoface) - data.byte(kFacing);
+			if (delta >= 4)
+				goto decdir;
+			else
+				goto incdir;
+		} else {
+			uint8 delta = data.byte(kFacing) - data.byte(kTurntoface);
+			if (delta >= 4)
+				goto incdir;
+			else
+				goto decdir;
+		}
+	}
+incdir:
+	data.byte(kTurndirection) = 1;
+	data.byte(kFacing) = (data.byte(kFacing) + 1) & 7;
+	sprite->b29 = 0;
+	return;
+decdir:
+	data.byte(kTurndirection) = -1;
+	data.byte(kFacing) = (data.byte(kFacing) - 1) & 7;
+	sprite->b29 = 0;
 }
 
 void DreamGenContext::backobject(Sprite* sprite) {
