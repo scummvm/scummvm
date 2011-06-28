@@ -74,10 +74,14 @@ protected:
 	BITMAP *TS[2];
 	BITMAP *Box(uint16 w, uint16 h);
 public:
-	FONT *Font;
 	TALK(CGEEngine *vm, const char *tx, TBOX_STYLE mode = PURE);
 	TALK(CGEEngine *vm);
 	//~TALK (void);
+
+	static FONT *_Font;
+	static void init();
+	static void deinit();
+
 	virtual void Update(const char *tx);
 	virtual void Update(void) {}
 	void PutLine(int line, const char *text);
