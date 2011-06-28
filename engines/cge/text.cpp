@@ -180,14 +180,14 @@ char *TEXT::getText(int ref) {
 }
 
 
-void TEXT::Say(const char *txt, SPRITE *spr) {
+void TEXT::Say(const char *txt, Sprite *spr) {
 	KillText();
 	Talk = new TALK(_vm, txt, ROUND);
 	if (Talk) {
 		bool east = spr->Flags.East;
 		int x = (east) ? (spr->X + spr->W - 2) : (spr->X + 2);
 		int y = spr->Y + 2;
-		SPRITE *spike = new SPRITE(_vm, SP);
+		Sprite *spike = new Sprite(_vm, SP);
 		uint16 sw = spike->W;
 
 		if (east) {
@@ -198,7 +198,7 @@ void TEXT::Say(const char *txt, SPRITE *spr) {
 				east = true;
 		}
 		x = (east) ? (spr->X + spr->W - 2) : (spr->X + 2 - sw);
-		if (spr->Ref == 1)
+		if (spr->_ref == 1)
 			x += ((east) ? -10 : 10); // Hero
 
 		Talk->Flags.Kill = true;
@@ -206,7 +206,7 @@ void TEXT::Say(const char *txt, SPRITE *spr) {
 		Talk->SetName(Text->getText(SAY_NAME));
 		Talk->Goto(x - (Talk->W - sw) / 2 - 3 + 6 * east, y - spike->H - Talk->H + 1);
 		Talk->Z = 125;
-		Talk->Ref = SAY_REF;
+		Talk->_ref = SAY_REF;
 
 		spike->Goto(x, Talk->Y + Talk->H - 1);
 		spike->Z = 126;
@@ -214,7 +214,7 @@ void TEXT::Say(const char *txt, SPRITE *spr) {
 		spike->Flags.Kill = true;
 		spike->SetName(Text->getText(SAY_NAME));
 		spike->Step(east);
-		spike->Ref = SAY_REF;
+		spike->_ref = SAY_REF;
 
 		Vga->ShowQ->Insert(Talk, Vga->ShowQ->Last());
 		Vga->ShowQ->Insert(spike, Vga->ShowQ->Last());
@@ -231,13 +231,13 @@ void CGEEngine::Inf(const char *txt) {
 		Talk->Center();
 		Talk->Goto(Talk->X, Talk->Y - 20);
 		Talk->Z = 126;
-		Talk->Ref = INF_REF;
+		Talk->_ref = INF_REF;
 		Vga->ShowQ->Insert(Talk, Vga->ShowQ->Last());
 	}
 }
 
 
-void SayTime(SPRITE *spr) {
+void SayTime(Sprite *spr) {
 	/*
 	  static char t[] = "00:00";
 	  struct time ti;

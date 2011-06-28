@@ -63,19 +63,19 @@ void CGEEngine::setup() {
 	// Initialise engine objects
 	Text = new TEXT(this, ProgName(), 128);
 	Vga = new VGA(M13H);
-	Heart = new HEART;
+	_heart = new Heart;
 	Hero = new WALK(this, NULL);
 	Sys = new SYSTEM(this);
-	PocLight = new SPRITE(this, LI);
+	_pocLight = new Sprite(this, LI);
 	Mouse = new MOUSE(this);
 	for (int i = 0; i < POCKET_NX; i++)
-		Pocket[i] = new SPRITE(this, NULL);
-	Sprite = new SPRITE(this, NULL);
-	MiniCave = new SPRITE(this, NULL);
-	Shadow = new SPRITE(this, NULL);
-	HorzLine = new SPRITE(this, HL);
+		_pocket[i] = new Sprite(this, NULL);
+	_sprite = new Sprite(this, NULL);
+	_miniCave = new Sprite(this, NULL);
+	_shadow = new Sprite(this, NULL);
+	_horzLine = new Sprite(this, HL);
 	InfoLine = new INFO_LINE(this, INFO_W);
-	CavLight = new SPRITE(this, PR);
+	_cavLight = new Sprite(this, PR);
 	DebugLine = new INFO_LINE(this, SCR_WID);
 	MB[0] = new BITMAP("BRICK");
 	MB[1] = NULL;
@@ -117,19 +117,19 @@ CGEEngine::~CGEEngine() {
 	// Delete engine objects
 	delete Text;
 	delete Vga;
-	delete Heart;
+	delete _heart;
 	delete Hero;
 	delete Sys;
-	delete PocLight;
+	delete _pocLight;
 	delete Mouse;
 	for (int i = 0; i < POCKET_NX; i++)
-		delete Pocket[i];
-	delete Sprite;
-	delete MiniCave;
-	delete Shadow;
-	delete HorzLine;
+		delete _pocket[i];
+	delete _sprite;
+	delete _miniCave;
+	delete _shadow;
+	delete _horzLine;
 	delete InfoLine;
-	delete CavLight;
+	delete _cavLight;
 	delete DebugLine;
 	delete MB[0];
 	delete HL[0];

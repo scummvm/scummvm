@@ -41,7 +41,7 @@ namespace CGE {
 
 #include "common/pack-start.h"
 
-typedef struct  {
+struct BGR4 {
 	uint16 b : 2;
 	uint16 B : 6;
 	uint16 g : 2;
@@ -49,13 +49,13 @@ typedef struct  {
 	uint16 r : 2;
 	uint16 R : 6;
 	uint16 Z : 8;
-} BGR4;
+};
 
 
-typedef struct  {
+struct HideDesc {
 	uint16 skip;
 	uint16 hide;
-} HideDesc;
+};
 
 #include "common/pack-end.h"
 

@@ -98,7 +98,7 @@ void FONT::Save(void) {
 
 
 TALK::TALK(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
-	: SPRITE(vm, NULL), Mode(mode), _vm(vm) {
+	: Sprite(vm, NULL), Mode(mode), _vm(vm) {
 	TS[0] = TS[1] = NULL;
 	Flags.Syst = true;
 	Update(tx);
@@ -106,7 +106,7 @@ TALK::TALK(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
 
 
 TALK::TALK(CGEEngine *vm)
-	: SPRITE(vm, NULL), Mode(PURE), _vm(vm) {
+	: Sprite(vm, NULL), Mode(PURE), _vm(vm) {
 	TS[0] = TS[1] = NULL;
 	Flags.Syst = true;
 }

@@ -116,7 +116,7 @@ void GET_TEXT::Touch(uint16 mask, int x, int y) {
 			break;
 		}
 	} else
-		SPRITE::Touch(mask, x, y);
+		Sprite::Touch(mask, x, y);
 }
 
 } // End of namespace CGE

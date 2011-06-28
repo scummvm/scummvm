@@ -39,11 +39,11 @@ namespace CGE {
 #define MIX_BHIG    6                               // mixer button high
 #define MIX_NAME    105                             // sprite name
 
-class MIXER : public SPRITE {
+class MIXER : public Sprite {
 	BMP_PTR mb[2];
 	BMP_PTR lb[MIX_MAX + 1];
-	SEQ ls[MIX_MAX];
-	SPRITE *Led[2];
+	Seq ls[MIX_MAX];
+	Sprite *Led[2];
 	int Fall;
 	void Update(void);
 public:
