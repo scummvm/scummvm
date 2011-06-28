@@ -43,12 +43,14 @@ bool FilePack::open(const Common::String &filename) {
 	if (!file.exists(filename) || !file.open(filename))
 		return false;
 
+// FIXME: No sanity checking on _fileCount at all? Ouch.
 	_fileCount = file.readUint32LE();
 	debug(0, "opened %s, found %u entries", filename.c_str(), _fileCount);
 	offsets = new uint32[_fileCount + 1];
 	for (uint32 i = 0; i <= _fileCount; ++i) {
 		offsets[i] = file.readUint32LE();
 	}
+// FIXME: No checking whether an eof or error occurred? ouch
 	return true;
 }
 
@@ -187,6 +189,8 @@ uint32 MemoryPack::read(uint32 id, byte *dst, uint32 size) const {
 	if (id >= chunks.size())
 		return 0;
 	const Chunk &c = chunks[id];
+// FIXME: This method ignore the "size" parameter completely
+// Luckily the class is unused
 	memcpy(dst, c.data, c.size);
 	return c.size;
 }

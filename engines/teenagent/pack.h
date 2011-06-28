@@ -29,6 +29,7 @@
 namespace TeenAgent {
 
 class Pack {
+// FIXME: This class has no support for error checking whatsoever.
 protected:
 	uint32 _fileCount;
 public:
@@ -45,7 +46,12 @@ public:
 
 ///FilePack keeps opened file and returns substream for each request.
 class FilePack : public Pack {
-	mutable Common::File file;
+	mutable Common::File file;	/* FIXME: This is mutable because read() and other
+				methods are declared 'const'. Why is that so?
+				of course "read" will modify
+				the state of a file (or any other data source which does
+				*sequential* reading), so why is it const in the first place??
+				*/
 	uint32 *offsets;
 
 public:
