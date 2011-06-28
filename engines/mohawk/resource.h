@@ -148,6 +148,9 @@ public:
 	uint16 findResourceID(uint32 tag, const Common::String &resName) const;
 	Common::String getName(uint32 tag, uint16 id) const;
 
+	Common::Array<uint32> getResourceTypeList() const;
+	Common::Array<uint16> getResourceIDList(uint32 type) const;
+
 protected:
 	Common::SeekableReadStream *_stream;
 

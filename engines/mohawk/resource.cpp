@@ -131,6 +131,28 @@ Common::String Archive::getName(uint32 tag, uint16 id) const {
 	return resMap[id].name;
 }
 
+Common::Array<uint32> Archive::getResourceTypeList() const {
+	Common::Array<uint32> typeList;
+
+	for (TypeMap::const_iterator it = _types.begin(); it != _types.end(); it++)
+		typeList.push_back(it->_key);
+
+	return typeList;
+}
+
+Common::Array<uint16> Archive::getResourceIDList(uint32 type) const {
+	Common::Array<uint16> idList;
+
+	if (!_types.contains(type))
+		return idList;
+
+	const ResourceMap &resMap = _types[type];
+
+	for (ResourceMap::const_iterator it = resMap.begin(); it != resMap.end(); it++)
+		idList.push_back(it->_key);
+
+	return idList;
+}
 
 // Mohawk Archive code
 
