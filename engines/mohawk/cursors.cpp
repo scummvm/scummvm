@@ -234,7 +234,7 @@ LivingBooksCursorManager_v2::LivingBooksCursorManager_v2() {
 	// Try to open the system archive if we have it
 	_sysArchive = new MohawkArchive();
 
-	if (!_sysArchive->open("system.mhk")) {
+	if (!_sysArchive->openFile("system.mhk")) {
 		delete _sysArchive;
 		_sysArchive = 0;
 	}

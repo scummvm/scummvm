@@ -628,7 +628,7 @@ public:
 	LBPage(MohawkEngine_LivingBooks *vm);
 	~LBPage();
 
-	void open(MohawkArchive *mhk, uint16 baseId);
+	void open(Archive *mhk, uint16 baseId);
 	uint16 getResourceVersion();
 
 	void itemDestroyed(LBItem *item);
@@ -638,7 +638,7 @@ public:
 protected:
 	MohawkEngine_LivingBooks *_vm;
 
-	MohawkArchive *_mhk;
+	Archive *_mhk;
 	Common::Array<LBItem *> _items;
 
 	uint16 _baseId;
@@ -667,8 +667,8 @@ public:
 	Common::Rect readRect(Common::ReadStreamEndian *stream);
 	GUI::Debugger *getDebugger() { return _console; }
 
-	void addArchive(MohawkArchive *archive);
-	void removeArchive(MohawkArchive *Archive);
+	void addArchive(Archive *archive);
+	void removeArchive(Archive *Archive);
 	void addItem(LBItem *item);
 	void removeItems(const Common::Array<LBItem *> &items);
 
@@ -697,7 +697,7 @@ public:
 
 	// helper functions, also used by LBProxyItem
 	Common::String getFileNameFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover);
-	MohawkArchive *createMohawkArchive() const;
+	Archive *createArchive() const;
 
 private:
 	LivingBooksConsole *_console;

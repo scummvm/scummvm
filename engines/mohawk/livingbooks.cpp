@@ -82,7 +82,7 @@ LBPage::LBPage(MohawkEngine_LivingBooks *vm) : _vm(vm) {
 	_cascade = false;
 }
 
-void LBPage::open(MohawkArchive *mhk, uint16 baseId) {
+void LBPage::open(Archive *mhk, uint16 baseId) {
 	_mhk = mhk;
 	_baseId = baseId;
 
@@ -385,8 +385,8 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 		warning("ignoring 'killgag' for filename '%s'", filename.c_str());
 	}
 
-	MohawkArchive *pageArchive = createMohawkArchive();
-	if (!filename.empty() && pageArchive->open(filename)) {
+	Archive *pageArchive = createArchive();
+	if (!filename.empty() && pageArchive->openFile(filename)) {
 		_page = new LBPage(this);
 		_page->open(pageArchive, 1000);
 	} else {
@@ -590,11 +590,11 @@ void MohawkEngine_LivingBooks::updatePage() {
 	}
 }
 
-void MohawkEngine_LivingBooks::addArchive(MohawkArchive *archive) {
+void MohawkEngine_LivingBooks::addArchive(Archive *archive) {
 	_mhk.push_back(archive);
 }
 
-void MohawkEngine_LivingBooks::removeArchive(MohawkArchive *archive) {
+void MohawkEngine_LivingBooks::removeArchive(Archive *archive) {
 	for (uint i = 0; i < _mhk.size(); i++) {
 		if (archive != _mhk[i])
 			continue;
@@ -863,8 +863,11 @@ Common::String MohawkEngine_LivingBooks::convertWinFileName(const Common::String
 	return filename;
 }
 
-MohawkArchive *MohawkEngine_LivingBooks::createMohawkArchive() const {
-	return isPreMohawk() ? new LivingBooksArchive_v1() : new MohawkArchive();
+Archive *MohawkEngine_LivingBooks::createArchive() const {
+	if (isPreMohawk())
+		return new LivingBooksArchive_v1();
+
+	return new MohawkArchive();
 }
 
 bool MohawkEngine_LivingBooks::isPreMohawk() const {
@@ -3855,8 +3858,8 @@ void LBProxyItem::init() {
 	}
 
 	debug(1, "LBProxyItem loading archive '%s' with id %d", filename.c_str(), baseId);
-	MohawkArchive *pageArchive = _vm->createMohawkArchive();
-	if (!pageArchive->open(filename))
+	Archive *pageArchive = _vm->createArchive();
+	if (!pageArchive->openFile(filename))
 		error("failed to open archive '%s' (for proxy '%s')", filename.c_str(), _desc.c_str());
 	_page = new LBPage(_vm);
 	_page->open(pageArchive, baseId);

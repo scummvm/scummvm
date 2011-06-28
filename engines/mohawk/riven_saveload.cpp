@@ -100,7 +100,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 
 	MohawkArchive *mhk = new MohawkArchive();
 
-	if (!mhk->open(loadFile)) {
+	if (!mhk->openStream(loadFile)) {
 		warning("Save file is not a Mohawk archive");
 		delete mhk;
 		return false;
