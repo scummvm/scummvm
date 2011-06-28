@@ -39,7 +39,7 @@ GET_TEXT *GET_TEXT::Ptr = NULL;
 GET_TEXT::GET_TEXT(CGEEngine *vm, const char *info, char *text, int size, void (*click)(void))
 	: TALK(vm), Text(text), Size(min<int>(size, GTMAX)), Len(min<int>(Size, strlen(text))),
 	  Cntr(GTBLINK), Click(click), OldKeybClient(KEYBOARD::SetClient(this)), _vm(vm) {
-	int i = 2 * TEXT_HM + Font->Width(info);
+	int i = 2 * TEXT_HM + _Font->Width(info);
 	Ptr = this;
 	Mode = RECT;
 	TS[0] = Box((i + 3) & ~3, 2 * TEXT_VM + 2 * FONT_HIG + TEXT_LS);
@@ -107,7 +107,7 @@ void GET_TEXT::Touch(uint16 mask, int x, int y) {
 					if (p)
 						x = ogon[p - bezo];
 				}
-				if (Len < Size && 2 * TEXT_HM + Font->Width(Buff) + Font->Wid[x] <= W) {
+				if (Len < Size && 2 * TEXT_HM + _Font->Width(Buff) + _Font->Wid[x] <= W) {
 					Buff[Len + 2] = Buff[Len + 1];
 					Buff[Len + 1] = Buff[Len];
 					Buff[Len++] = x;
