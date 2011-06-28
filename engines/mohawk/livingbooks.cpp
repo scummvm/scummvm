@@ -42,7 +42,7 @@
 namespace Mohawk {
 
 // read a null-terminated string from a stream
-Common::String MohawkEngine_LivingBooks::readString(Common::SeekableSubReadStreamEndian *stream) {
+Common::String MohawkEngine_LivingBooks::readString(Common::ReadStream *stream) {
 	Common::String ret;
 	while (!stream->eos()) {
 		byte in = stream->readByte();
@@ -54,7 +54,7 @@ Common::String MohawkEngine_LivingBooks::readString(Common::SeekableSubReadStrea
 }
 
 // read a rect from a stream
-Common::Rect MohawkEngine_LivingBooks::readRect(Common::SeekableSubReadStreamEndian *stream) {
+Common::Rect MohawkEngine_LivingBooks::readRect(Common::ReadStreamEndian *stream) {
 	Common::Rect rect;
 
 	// the V1 mac games have their rects in QuickDraw order

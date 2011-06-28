@@ -655,8 +655,8 @@ public:
 	void addNotifyEvent(NotifyEvent event);
 
 	Common::SeekableSubReadStreamEndian *wrapStreamEndian(uint32 tag, uint16 id);
-	Common::String readString(Common::SeekableSubReadStreamEndian *stream);
-	Common::Rect readRect(Common::SeekableSubReadStreamEndian *stream);
+	Common::String readString(Common::ReadStream *stream);
+	Common::Rect readRect(Common::ReadStreamEndian *stream);
 	GUI::Debugger *getDebugger() { return _console; }
 
 	void addArchive(MohawkArchive *archive);
