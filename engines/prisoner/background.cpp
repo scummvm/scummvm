@@ -121,7 +121,7 @@ void PrisonerEngine::setBackgroundCameraLocked(bool value) {
 
 void PrisonerEngine::updateBackground(bool fullRedraw) {
 
-	if (!_updateScreenValue && _backgroundNoScrollFlag2 || _backgroundNoScrollFlag1)
+	if ((!_updateScreenValue && _backgroundNoScrollFlag2) || _backgroundNoScrollFlag1)
 		fullRedraw = true;
 
 	if (_backgroundResourceCacheSlot == -1) {
