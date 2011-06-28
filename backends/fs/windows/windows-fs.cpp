@@ -54,13 +54,17 @@ bool WindowsFilesystemNode::isWritable() const {
 	return _access(_path.c_str(), W_OK) == 0;
 }
 
-void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
+void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data) {
 	WindowsFilesystemNode entry;
 	char *asciiName = toAscii(find_data->cFileName);
 	bool isDirectory;
 
 	// Skip local directory (.) and parent (..)
 	if (!strcmp(asciiName, ".") || !strcmp(asciiName, ".."))
+		return;
+
+	// Skip hidden files if asked
+	if ((find_data->dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) && !hidden)
 		return;
 
 	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
@@ -163,8 +167,6 @@ AbstractFSNode *WindowsFilesystemNode::getChild(const Common::String &n) const {
 bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
 
-	//TODO: honor the hidden flag
-
 	if (_isPseudoRoot) {
 #ifndef _WIN32_WCE
 		// Drives enumeration
@@ -200,10 +202,10 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		if (handle == INVALID_HANDLE_VALUE)
 			return false;
 
-		addFile(myList, mode, _path.c_str(), &desc);
+		addFile(myList, mode, _path.c_str(), hidden, &desc);
 
 		while (FindNextFile(handle, &desc))
-			addFile(myList, mode, _path.c_str(), &desc);
+			addFile(myList, mode, _path.c_str(), hidden, &desc);
 
 		FindClose(handle);
 	}
