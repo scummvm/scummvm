@@ -58,7 +58,7 @@ namespace CGE {
 #define     SVGCHKSUM   (1956 + Now + OldLev + Game + Music + DemoText)
 
 #define   SVG0NAME    ("{{INIT}}" SVG_EXT)
-#define   SVG0FILE    CFILE
+#define   SVG0FILE    INI_FILE
 
 extern  uint16  _stklen = (STACK_SIZ * 2);
 
