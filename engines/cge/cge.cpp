@@ -32,6 +32,7 @@
 #include "cge/cge.h"
 #include "cge/vga13h.h"
 #include "cge/cge_main.h"
+#include "cge/talk.h"
 #include "cge/text.h"
 #include "cge/bitmaps.h"
 #include "cge/vol.h"
@@ -54,9 +55,10 @@ void CGEEngine::setup() {
 	_console = new CGEConsole(this);
 
 	// Initialise classes that have static members
-	BITMAP::init();
-	VFILE::init();
 	VGA::init();
+	VFILE::init();
+	BITMAP::init();
+	TALK::init();
 
 	// Initialise engine objects
 	Text = new TEXT(this, ProgName(), 128);
@@ -102,6 +104,7 @@ CGEEngine::~CGEEngine() {
 	debug("CGEEngine::~CGEEngine");
 
 	// Call classes with static members to clear them up
+	TALK::deinit();
 	BITMAP::deinit();
 	VFILE::deinit();
 	VGA::deinit();
