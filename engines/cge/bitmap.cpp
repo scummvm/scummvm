@@ -139,6 +139,7 @@ BITMAP::~BITMAP(void) {
 		break;
 	case FAR_MEM  :
 		free(V);
+	default:
 		break;
 	}
 }
@@ -419,4 +420,59 @@ bool BITMAP::VBMLoad(XFILE *f) {
 	B = (HideDesc *)(V + n - H * sizeof(HideDesc));
 	return (f->Error == 0);
 }
+
+bool BITMAP::BMPLoad (XFILE * f) {
+  struct {
+	   char BM[2];
+	   union { int16 len; int32 len_; };
+	   union { int16 _06; int32 _06_; };
+	   union { int16 hdr; int32 hdr_; };
+	   union { int16 _0E; int32 _0E_; };
+	   union { int16 wid; int32 wid_; };
+	   union { int16 hig; int32 hig_; };
+	   union { int16 _1A; int32 _1A_; };
+	   union { int16 _1E; int32 _1E_; };
+	   union { int16 _22; int32 _22_; };
+	   union { int16 _26; int32 _26_; };
+	   union { int16 _2A; int32 _2A_; };
+	   union { int16 _2E; int32 _2E_; };
+	   union { int16 _32; int32 _32_; };
+	 } hea;
+  BGR4 bpal[256];
+
+  f->Read((byte *)&hea, sizeof(hea));
+  if (f->Error == 0) {
+      if (hea.hdr == 0x436L) {
+	  int16 i = (hea.hdr - sizeof(hea)) / sizeof(BGR4);
+	  f->Read((byte *)&bpal, sizeof(bpal));
+	  if (f->Error == 0) {
+	      if (Pal) {
+		  for (i = 0; i < 256; i ++) {
+		      Pal[i].R = bpal[i].R;
+		      Pal[i].G = bpal[i].G;
+		      Pal[i].B = bpal[i].B;
+		    }
+		  Pal = NULL;
+		}
+	      H = hea.hig;
+	      W = hea.wid;
+	      if ((M = farnew(byte, H * W)) != NULL) {
+		  int16 r = (4 - (hea.wid & 3)) % 4;
+		  byte buf[3]; int i;
+		  for (i = H-1; i >= 0; i --) {
+		      f->Read(M + (W * i), W);
+		      if (r && f->Error == 0)
+				  f->Read(buf, r);
+		      if (f->Error)
+				  break;
+		  }
+		  if (i < 0)
+			  return true;
+		}
+	    }
+	}
+    }
+  return false;
+}
+
 } // End of namespace CGE

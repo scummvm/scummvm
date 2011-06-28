@@ -81,36 +81,39 @@ namespace CGE {
 
 
 
-typedef struct {
+struct Rgb {
 	uint16 r : 2;
 	uint16 R : 6;
 	uint16 g : 2;
 	uint16 G : 6;
 	uint16 b : 2;
 	uint16 B : 6;
-} RGB;
+};
 
 typedef union {
 	DAC dac;
-	RGB rgb;
+	Rgb rgb;
 } TRGB;
 
-typedef struct {
-	uint8 idx, adr;
-	uint8 clr, set;
-} VgaRegBlk;
+struct VgaRegBlk {
+	uint8 idx;
+	uint8 adr;
+	uint8 clr;
+	uint8 set;
+};
 
-typedef struct {
-	uint8 Now, Next;
-	signed char Dx, Dy;
+struct Seq {
+	uint8 Now;
+	uint8 Next;
+	int8 Dx;
+	int8 Dy;
 	int Dly;
-} SEQ;
+};
 
-extern  SEQ Seq1[];
-extern  SEQ Seq2[];
+extern Seq _seq1[];
+extern Seq _seq2[];
 //extern    SEQ *   Compass[];
 //extern    SEQ TurnToS[];
-
 
 #define PAL_CNT  256
 #define PAL_SIZ (PAL_CNT * 3)
@@ -130,43 +133,44 @@ extern  SEQ Seq2[];
 #define VGAST1  (VGAST1_ & 0xFF)
 
 
-class HEART : public ENGINE {
+class Heart : public ENGINE {
 	friend class ENGINE;
 public:
-	HEART();
+	Heart();
 
-	bool Enable;
-	uint16 *XTimer;
-	void SetXTimer(uint16 *ptr);
-	void SetXTimer(uint16 *ptr, uint16 time);
+	bool _enable;
+	uint16 *_xTimer;
+
+	void setXTimer(uint16 *ptr);
+	void setXTimer(uint16 *ptr, uint16 time);
 };
 
 
-class SPREXT {
+class SprExt {
 public:
-	int x0, y0;
-	int x1, y1;
-	BMP_PTR b0, b1;
-	BMP_PTR *ShpList;
-	SEQ *Seq;
-	char *Name;
-	SNAIL::COM *Near, * Take;
-	SPREXT(void) :
-		x0(0), y0(0),
-		x1(0), y1(0),
-		b0(NULL), b1(NULL),
-		ShpList(NULL), Seq(NULL),
-		Name(NULL), Near(NULL), Take(NULL)
+	int _x0, _y0;
+	int _x1, _y1;
+	BMP_PTR _b0, _b1;
+	BMP_PTR *_shpList;
+	Seq *_seq;
+	char *_name;
+	SNAIL::COM *_near, *_take;
+	SprExt() :
+		_x0(0), _y0(0),
+		_x1(0), _y1(0),
+		_b0(NULL), _b1(NULL),
+		_shpList(NULL), _seq(NULL),
+		_name(NULL), _near(NULL), _take(NULL)
 	{}
 };
 
 
-class SPRITE {
+class Sprite {
 protected:
-	SPREXT *Ext;
+	SprExt *_ext;
 public:
-	int Ref;
-	signed char Cave;
+	int _ref;
+	signed char _cave;
 	struct FLAGS {
 		uint16 Hide : 1;       // general visibility switch
 		uint16 Near : 1;       // Near action lock
@@ -193,23 +197,23 @@ public:
 	int SeqPtr;
 	int ShpCnt;
 	char File[MAXFILE];
-	SPRITE *Prev, * Next;
-	bool Works(SPRITE *spr);
+	Sprite *Prev, * Next;
+	bool Works(Sprite *spr);
 	bool SeqTest(int n);
 	inline bool Active(void) {
-		return Ext != NULL;
+		return _ext != NULL;
 	}
-	SPRITE(CGEEngine *vm, BMP_PTR *shp);
-	virtual ~SPRITE(void);
+	Sprite(CGEEngine *vm, BMP_PTR *shp);
+	virtual ~Sprite(void);
 	BMP_PTR Shp(void);
 	BMP_PTR *SetShapeList(BMP_PTR *shp);
 	void MoveShapes(uint8 *buf);
-	SPRITE *Expand(void);
-	SPRITE *Contract(void);
-	SPRITE *BackShow(bool fast = false);
+	Sprite *Expand(void);
+	Sprite *Contract(void);
+	Sprite *BackShow(bool fast = false);
 	void SetName(char *n);
 	inline char *Name(void) {
-		return (Ext) ? Ext->Name : NULL;
+		return (_ext) ? _ext->_name : NULL;
 	}
 	void Goto(int x, int y);
 	void Center(void);
@@ -220,7 +224,7 @@ public:
 	void MakeXlat(uint8 *x);
 	void KillXlat(void);
 	void Step(int nr = -1);
-	SEQ *SetSeq(SEQ *seq);
+	Seq *SetSeq(Seq *seq);
 	SNAIL::COM *SnList(SNLIST type);
 	virtual void Touch(uint16 mask, int x, int y);
 	virtual void Tick(void);
@@ -230,23 +234,23 @@ private:
 
 
 class QUEUE {
-	SPRITE *Head, * Tail;
+	Sprite *Head, * Tail;
 public:
 	bool Show;
 	QUEUE(bool show);
 	~QUEUE(void);
-	void Append(SPRITE *spr);
-	void Insert(SPRITE *spr, SPRITE *nxt);
-	void Insert(SPRITE *spr);
-	SPRITE *Remove(SPRITE *spr);
-	void ForAll(void (*fun)(SPRITE *));
-	SPRITE *First(void) {
+	void Append(Sprite *spr);
+	void Insert(Sprite *spr, Sprite *nxt);
+	void Insert(Sprite *spr);
+	Sprite *Remove(Sprite *spr);
+	void ForAll(void (*fun)(Sprite *));
+	Sprite *First(void) {
 		return Head;
 	}
-	SPRITE *Last(void) {
+	Sprite *Last(void) {
 		return Tail;
 	}
-	SPRITE *Locate(int ref);
+	Sprite *Locate(int ref);
 	void Clear(void);
 };
 
@@ -292,8 +296,8 @@ public:
 };
 
 
-DAC     MkDAC(uint8 r, uint8 g, uint8 b);
-RGB     MkRGB(uint8 r, uint8 g, uint8 b);
+DAC MkDAC(uint8 r, uint8 g, uint8 b);
+Rgb MkRGB(uint8 r, uint8 g, uint8 b);
 
 
 template <class CBLK>
@@ -331,12 +335,12 @@ uint8 Closest(CBLK *pal, CBLK x) {
 
 
 
-char       *NumStr(char *str, int num);
+char   *NumStr(char *str, int num);
 //static void       Video       (void);
-uint16     *SaveScreen(void);
-void        RestoreScreen(uint16 * &sav);
-SPRITE     *SpriteAt(int x, int y);
-SPRITE     *Locate(int ref);
+uint16 *SaveScreen(void);
+void    RestoreScreen(uint16 * &sav);
+Sprite *SpriteAt(int x, int y);
+Sprite *Locate(int ref);
 
 extern      bool        SpeedTest;
 

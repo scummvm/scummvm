@@ -113,7 +113,7 @@ namespace CGE {
 #define FINIS          (Flag[3])
 
 
-class SYSTEM : public SPRITE {
+class SYSTEM : public Sprite {
 	int lum;
 public:
 	int FunDel;
@@ -139,7 +139,7 @@ public:
 };
 
 
-class WALK : public SPRITE {
+class WALK : public Sprite {
 public:
 	CLUSTER Here;
 	int TracePtr;
@@ -148,12 +148,12 @@ public:
 	WALK(CGEEngine *vm, BMP_PTR *shpl);
 	void Tick(void);
 	void FindWay(CLUSTER c);
-	void FindWay(SPRITE *spr);
-	int Distance(SPRITE *spr);
+	void FindWay(Sprite *spr);
+	int Distance(Sprite *spr);
 	void Turn(DIR d);
 	void Park(void);
-	bool Lower(SPRITE *spr);
-	void Reach(SPRITE *spr, int mode = -1);
+	bool Lower(Sprite *spr);
+	void Reach(Sprite *spr, int mode = -1);
 private:
 	CGEEngine *_vm;
 
@@ -163,23 +163,23 @@ private:
 CLUSTER XZ(int x, int y);
 CLUSTER XZ(COUPLE xy);
 
-void ExpandSprite(SPRITE *spr);
-void ContractSprite(SPRITE *spr);
+void ExpandSprite(Sprite *spr);
+void ContractSprite(Sprite *spr);
 
 extern WALK *Hero;
 extern VGA *Vga;
-extern HEART *Heart;
+extern Heart *_heart;
 extern SYSTEM *Sys;
 extern int OffUseCount;
-extern SPRITE *PocLight;
+extern Sprite *_pocLight;
 extern MOUSE *Mouse;
-extern SPRITE *Pocket[];
-extern SPRITE *Sprite;
-extern SPRITE *MiniCave;
-extern SPRITE *Shadow;
-extern SPRITE *HorzLine;
+extern Sprite *_pocket[];
+extern Sprite *_sprite;
+extern Sprite *_miniCave;
+extern Sprite *_shadow;
+extern Sprite *_horzLine;
 extern INFO_LINE *InfoLine;
-extern SPRITE *CavLight;
+extern Sprite *_cavLight;
 extern INFO_LINE *DebugLine;
 extern BMP_PTR MB[2];
 extern BMP_PTR MB[2];

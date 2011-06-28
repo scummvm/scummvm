@@ -41,7 +41,7 @@ class GET_TEXT : public TALK {
 	char Buff[GTMAX + 2], * Text;
 	uint16 Size, Len;
 	uint16 Cntr;
-	SPRITE *OldKeybClient;
+	Sprite *OldKeybClient;
 	void (*Click)();
 public:
 	static GET_TEXT *Ptr;

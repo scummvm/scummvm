@@ -30,8 +30,8 @@
 
 namespace CGE {
 
-SPRITE *KEYBOARD::Client = NULL;
-uint8  KEYBOARD::Key[0x60] = { 0 };
+Sprite *KEYBOARD::Client = NULL;
+uint8   KEYBOARD::Key[0x60] = { 0 };
 uint16  KEYBOARD::Current = 0;
 uint16  KEYBOARD::Code[0x60] = {
 	0,               Esc,      '1',         '2',       '3',
@@ -78,7 +78,7 @@ KEYBOARD::~KEYBOARD(void) {
 }
 
 
-SPRITE *KEYBOARD::SetClient(SPRITE *spr) {
+Sprite *KEYBOARD::SetClient(Sprite *spr) {
 	Swap(Client, spr);
 	return spr;
 }

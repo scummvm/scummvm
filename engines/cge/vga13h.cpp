@@ -51,7 +51,6 @@ static char Report[] = "NearHeap=.....  FarHeap=......\n";
 #define FREP        24
 
 static  VgaRegBlk VideoMode[] = {
-
 	{ 0x04, VGASEQ, 0x08, 0x04 },   // memory mode
 	{ 0x03, VGAGRA, 0xFF, 0x00 },   // data rotate = 0
 	{ 0x05, VGAGRA, 0x03, 0x00 },   // R/W mode = 0
@@ -69,9 +68,9 @@ static  VgaRegBlk VideoMode[] = {
 };
 
 
-bool        SpeedTest   = false;
-SEQ     Seq1[] = { { 0, 0, 0, 0, 0 } };
-SEQ     Seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
+bool SpeedTest   = false;
+Seq _seq1[] = { { 0, 0, 0, 0, 0 } };
+Seq _seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
 
 extern "C"  void    SNDMIDIPlay(void);
 
@@ -83,8 +82,7 @@ char *NumStr(char *str, int num) {
 }
 
 
-static void Video(void)
-{
+static void Video() {
 /*
   static uint16 SP_S;
 
@@ -206,7 +204,7 @@ DAC MkDAC(uint8 r, uint8 g, uint8 b) {
 }
 
 
-RGB MkRGB(uint8 r, uint8 g, uint8 b) {
+Rgb MkRGB(uint8 r, uint8 g, uint8 b) {
 	static TRGB x;
 	x.dac.R = r;
 	x.dac.G = g;
@@ -215,54 +213,60 @@ RGB MkRGB(uint8 r, uint8 g, uint8 b) {
 }
 
 
-SPRITE *Locate(int ref) {
-	SPRITE *spr = Vga->ShowQ->Locate(ref);
+Sprite *Locate(int ref) {
+	Sprite *spr = Vga->ShowQ->Locate(ref);
 	return (spr) ? spr : Vga->SpareQ->Locate(ref);
 }
 
 
-HEART::HEART(void)
+Heart::Heart(void)
 	: ENGINE(TMR_DIV) {
-	Enable = false;
-	XTimer = NULL;
+	_enable = false;
+	_xTimer = NULL;
 }
 
 
 /*
-extern "C" void TimerProc (void)
-{
-  static SPRITE * spr;
-  static uint8 run = 0;
+extern "C" void TimerProc() {
+	static SPRITE * spr;
+	static uint8 run = 0;
 
-  // decrement external timer uint16
-  if (Heart->XTimer)
-    if (*Heart->XTimer)
-       *Heart->XTimer--;
-    else 
-       Heart->XTimer = NULL;
+	// decrement external timer uint16
+	if (_heart->_xTimer) {
+		if (*_heart->_xTimer)
+			*_heart->_xTimer--;
+		else 
+			_heart->_xTimer = NULL;
+	}
 
-  if (! run && Heart->Enable)       // check overrun flag
-    {
-      static uint16 oldSP, oldSS;
+	if (!run && _heart->_enable) {       // check overrun flag
+		static uint16 oldSP, oldSS;
+		run++;           // disable 2nd call until current lasts
+		asm   mov ax,ds
+		asm   mov oldSS,ss
+		asm   mov oldSP,sp
+		asm   mov ss,ax
+		asm   mov sp,0xFF80
 
-     run++;           // disable 2nd call until current lasts
-      asm   mov ax,ds
-      asm   mov oldSS,ss
-      asm   mov oldSP,sp
-      asm   mov ss,ax
-      asm   mov sp,0xFF80
-
-      // system pseudo-sprite
-      if (Sys) if (Sys->Time) if (-- Sys->Time == 0) Sys->Tick();
-
-      for (spr = VGA::ShowQ.First(); spr; spr = spr->Next)
-    {
-      if (spr->Time) if (!spr->Flags.Hide) if (-- spr->Time == 0) spr->Tick();
-    }
-      asm   mov ss,oldSS
-      asm   mov sp,oldSP
-      run--;
-    }
+		// system pseudo-sprite
+		if (Sys) {
+			if (Sys->Time) {
+				if (--Sys->Time == 0)
+					Sys->Tick();
+			}
+		}
+		for (spr = VGA::ShowQ.First(); spr; spr = spr->Next) {
+			if (spr->Time) {
+				if (!spr->Flags.Hide) {
+					if (-- spr->Time == 0)
+						spr->Tick();
+				}
+			}
+		}
+		asm   mov ss,oldSS
+		asm   mov sp,oldSP
+		run--;
+	}
 }
 */
 
@@ -301,17 +305,17 @@ void ENGINE::NewTimer(...) {
 	my_int: //------72Hz-------//
 
 	// decrement external timer uint16
-	if (Heart->XTimer)
-	  if (*Heart->XTimer)
-	     *Heart->XTimer--;
+	if (_heart->XTimer) {
+	  if (*_heart->XTimer)
+	     *_heart->XTimer--;
 	  else
-	     Heart->XTimer = NULL;
+	     _heart->XTimer = NULL;
+	}
 
-	if (! run && Heart->Enable)   // check overrun flag
-	  {
+	if (! run && _heart->Enable) {  // check overrun flag
 	    static uint16 oldSP, oldSS;
 
-	   run++;           // disable 2nd call until current lasts
+	    run++;           // disable 2nd call until current lasts
 	    asm   mov ax,ds
 	    asm   mov oldSS,ss
 	    asm   mov oldSP,sp
@@ -319,12 +323,21 @@ void ENGINE::NewTimer(...) {
 	    asm   mov sp,0xFF80
 
 	    // system pseudo-sprite
-	    if (Sys) if (Sys->Time) if (-- Sys->Time == 0) Sys->Tick();
+	    if (Sys) {
+			if (Sys->Time) {
+				if (--Sys->Time == 0)
+					Sys->Tick();
+			}
+		}
 
-	    for (spr = VGA::ShowQ.First(); spr; spr = spr->Next)
-	{
-	  if (spr->Time) if (!spr->Flags.Hide) if (-- spr->Time == 0) spr->Tick();
-	}
+	    for (spr = VGA::ShowQ.First(); spr; spr = spr->Next) {
+			if (spr->Time) { 
+				if (!spr->Flags.Hide) {
+					if (--spr->Time == 0) 
+						spr->Tick();
+				}
+			}
+		}
 	    asm   mov ss,oldSS
 	    asm   mov sp,oldSP
 	    run--;
@@ -335,39 +348,39 @@ void ENGINE::NewTimer(...) {
 }
 
 
-void HEART::SetXTimer(uint16 *ptr) {
-	if (XTimer && ptr != XTimer)
-		*XTimer = 0;
-	XTimer = ptr;
+void Heart::setXTimer(uint16 *ptr) {
+	if (_xTimer && ptr != _xTimer)
+		*_xTimer = 0;
+	_xTimer = ptr;
 }
 
 
-void HEART::SetXTimer(uint16 *ptr, uint16 time) {
-	SetXTimer(ptr);
+void Heart::setXTimer(uint16 *ptr, uint16 time) {
+	setXTimer(ptr);
 	*ptr = time;
 }
 
 
-SPRITE::SPRITE(CGEEngine *vm, BMP_PTR *shp)
+Sprite::Sprite(CGEEngine *vm, BMP_PTR *shp)
 	: X(0), Y(0), Z(0), NearPtr(0), TakePtr(0),
 	  Next(NULL), Prev(NULL), SeqPtr(NO_SEQ), Time(0), //Delay(0),
-	  Ext(NULL), Ref(-1), Cave(0), _vm(vm) {
+	  _ext(NULL), _ref(-1), _cave(0), _vm(vm) {
 	memset(File, 0, sizeof(File));
 	*((uint16 *)&Flags) = 0;
 	SetShapeList(shp);
 }
 
 
-SPRITE::~SPRITE(void) {
+Sprite::~Sprite() {
 	Contract();
 }
 
 
-BMP_PTR SPRITE::Shp(void) {
-	register SPREXT *e = Ext;
+BMP_PTR Sprite::Shp() {
+	register SprExt *e = _ext;
 	if (e)
-		if (e->Seq) {
-			int i = e->Seq[SeqPtr].Now;
+		if (e->_seq) {
+			int i = e->_seq[SeqPtr].Now;
 			if (i >= ShpCnt) {
 				//char s[256];
 				//sprintf(s, "Seq=%p ShpCnt=%d SeqPtr=%d Now=%d Next=%d",
@@ -375,14 +388,14 @@ BMP_PTR SPRITE::Shp(void) {
 				//VGA::Exit(s, File);
 				error("Invalid PHASE in SPRITE::Shp() %s", File);
 			}
-			return e->ShpList[i];
+			return e->_shpList[i];
 		}
 	return NULL;
 }
 
 
-BMP_PTR *SPRITE::SetShapeList(BMP_PTR *shp) {
-	BMP_PTR *r = (Ext) ? Ext->ShpList : NULL;
+BMP_PTR *Sprite::SetShapeList(BMP_PTR *shp) {
+	BMP_PTR *r = (_ext) ? _ext->_shpList : NULL;
 
 	ShpCnt = 0;
 	W = 0;
@@ -399,29 +412,29 @@ BMP_PTR *SPRITE::SetShapeList(BMP_PTR *shp) {
 			++ShpCnt;
 		}
 		Expand();
-		Ext->ShpList = shp;
-		if (! Ext->Seq)
-			SetSeq((ShpCnt < 2) ? Seq1 : Seq2);
+		_ext->_shpList = shp;
+		if (!_ext->_seq)
+			SetSeq((ShpCnt < 2) ? _seq1 : _seq2);
 	}
 	return r;
 }
 
 
-void SPRITE::MoveShapes(uint8 *buf) {
+void Sprite::MoveShapes(uint8 *buf) {
 	BMP_PTR *p;
-	for (p = Ext->ShpList; *p; p++) {
+	for (p = _ext->_shpList; *p; p++) {
 		buf += (*p)->MoveVmap(buf);
 	}
 }
 
 
-bool SPRITE::Works(SPRITE *spr) {
+bool Sprite::Works(Sprite *spr) {
 	if (spr)
-		if (spr->Ext) {
-			SNAIL::COM *c = spr->Ext->Take;
+		if (spr->_ext) {
+			SNAIL::COM *c = spr->_ext->_take;
 			if (c != NULL) {
 				c += spr->TakePtr;
-				if (c->Ref == Ref)
+				if (c->Ref == _ref)
 					if (c->Com != SNLABEL || (c->Val == 0 || c->Val == Now))
 						return true;
 			}
@@ -430,10 +443,10 @@ bool SPRITE::Works(SPRITE *spr) {
 }
 
 
-SEQ *SPRITE::SetSeq(SEQ *seq) {
+Seq *Sprite::SetSeq(Seq *seq) {
 	Expand();
-	register SEQ *s = Ext->Seq;
-	Ext->Seq = seq;
+	register Seq *s = _ext->_seq;
+	_ext->_seq = seq;
 	if (SeqPtr == NO_SEQ)
 		Step(0);
 	else if (Time == 0)
@@ -442,32 +455,32 @@ SEQ *SPRITE::SetSeq(SEQ *seq) {
 }
 
 
-bool SPRITE::SeqTest(int n) {
+bool Sprite::SeqTest(int n) {
 	if (n >= 0)
 		return (SeqPtr == n);
-	if (Ext)
-		return (Ext->Seq[SeqPtr].Next == SeqPtr);
+	if (_ext)
+		return (_ext->_seq[SeqPtr].Next == SeqPtr);
 	return true;
 }
 
 
-SNAIL::COM *SPRITE::SnList(SNLIST type) {
-	register SPREXT *e = Ext;
+SNAIL::COM *Sprite::SnList(SNLIST type) {
+	register SprExt *e = _ext;
 	if (e)
-		return (type == NEAR) ? e->Near : e->Take;
+		return (type == NEAR) ? e->_near : e->_take;
 	return NULL;
 }
 
 
-void SPRITE::SetName(char *n) {
-	if (Ext) {
-		if (Ext->Name) {
-			delete[] Ext->Name;
-			Ext->Name = NULL;
+void Sprite::SetName(char *n) {
+	if (_ext) {
+		if (_ext->_name) {
+			delete[] _ext->_name;
+			_ext->_name = NULL;
 		}
 		if (n) {
-			if ((Ext->Name = new char[strlen(n) + 1]) != NULL)
-				strcpy(Ext->Name, n);
+			if ((_ext->_name = new char[strlen(n) + 1]) != NULL)
+				strcpy(_ext->_name, n);
 			else
 				error("No core [%s]", n);
 		}
@@ -475,17 +488,17 @@ void SPRITE::SetName(char *n) {
 }
 
 
-SPRITE *SPRITE::Expand(void) {
-	if (! Ext) {
-		bool enbl = Heart->Enable;
-		Heart->Enable = false;
-		if ((Ext = new SPREXT) == NULL)
+Sprite *Sprite::Expand(void) {
+	if (!_ext) {
+		bool enbl = _heart->_enable;
+		_heart->_enable = false;
+		if ((_ext = new SprExt) == NULL)
 			error("No core");
 		if (*File) {
 			static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
 			char line[LINE_MAX], fname[MAXPATH];
 			BMP_PTR *shplist = new BMP_PTR [ShpCnt + 1];
-			SEQ *seq = NULL;
+			Seq *seq = NULL;
 			int shpcnt = 0,
 			    seqcnt = 0,
 			    neacnt = 0,
@@ -518,10 +531,10 @@ SPRITE *SPRITE::Expand(void) {
 						break;
 					}
 					case 2 : { // Seq
-						seq = (SEQ *) realloc(seq, (seqcnt + 1) * sizeof(*seq));
+						seq = (Seq *) realloc(seq, (seqcnt + 1) * sizeof(*seq));
 						if (seq == NULL)
 							error("No core [%s]", fname);
-						SEQ *s = &seq[seqcnt++];
+						Seq *s = &seq[seqcnt++];
 						s->Now  = atoi(strtok(NULL, " \t,;/"));
 						if (s->Now > maxnow)
 							maxnow = s->Now;
@@ -586,52 +599,52 @@ SPRITE *SPRITE::Expand(void) {
 					error("Bad JUMP in SEQ [%s]", fname);
 				SetSeq(seq);
 			} else
-				SetSeq((ShpCnt == 1) ? Seq1 : Seq2);
+				SetSeq((ShpCnt == 1) ? _seq1 : _seq2);
 			//disable();  // disable interupt
 
 			SetShapeList(shplist);
 			//enable();  // enable interupt
 			if (nea)
-				nea[neacnt - 1].Ptr = Ext->Near = nea;
+				nea[neacnt - 1].Ptr = _ext->_near = nea;
 			else
 				NearPtr = NO_PTR;
 			if (tak)
-				tak[takcnt - 1].Ptr = Ext->Take = tak;
+				tak[takcnt - 1].Ptr = _ext->_take = tak;
 			else
 				TakePtr = NO_PTR;
 		}
-		Heart->Enable = enbl;
+		_heart->_enable = enbl;
 	}
 	return this;
 }
 
 
-SPRITE *SPRITE::Contract(void) {
-	register SPREXT *e = Ext;
+Sprite *Sprite::Contract(void) {
+	register SprExt *e = _ext;
 	if (e) {
-		if (e->Name)
-			delete[] e->Name;
-		if (Flags.BDel && e->ShpList) {
+		if (e->_name)
+			delete[] e->_name;
+		if (Flags.BDel && e->_shpList) {
 			int i;
-			for (i = 0; e->ShpList[i]; i++)
-			delete e->ShpList[i];
-			if (MemType(e->ShpList) == NEAR_MEM)
-				delete[] e->ShpList;
+			for (i = 0; e->_shpList[i]; i++)
+			delete e->_shpList[i];
+			if (MemType(e->_shpList) == NEAR_MEM)
+				delete[] e->_shpList;
 		}
-		if (MemType(e->Seq) == NEAR_MEM)
-			free(e->Seq);
-		if (e->Near)
-			free(e->Near);
-		if (e->Take)
-			free(e->Take);
+		if (MemType(e->_seq) == NEAR_MEM)
+			free(e->_seq);
+		if (e->_near)
+			free(e->_near);
+		if (e->_take)
+			free(e->_take);
 		delete e;
-		Ext = NULL;
+		_ext = NULL;
 	}
 	return this;
 }
 
 
-SPRITE *SPRITE::BackShow(bool fast) {
+Sprite *Sprite::BackShow(bool fast) {
 	Expand();
 	Show(2);
 	Show(1);
@@ -642,14 +655,14 @@ SPRITE *SPRITE::BackShow(bool fast) {
 }
 
 
-void SPRITE::Step(int nr) {
+void Sprite::Step(int nr) {
 	if (nr >= 0)
 		SeqPtr = nr;
-	if (Ext) {
-		SEQ *seq;
+	if (_ext) {
+		Seq *seq;
 		if (nr < 0)
-			SeqPtr = Ext->Seq[SeqPtr].Next;
-		seq = Ext->Seq + SeqPtr;
+			SeqPtr = _ext->_seq[SeqPtr].Next;
+		seq = _ext->_seq + SeqPtr;
 		if (seq->Dly >= 0) {
 			Goto(X + (seq->Dx), Y + (seq->Dy));
 			Time = seq->Dly;
@@ -658,28 +671,28 @@ void SPRITE::Step(int nr) {
 }
 
 
-void SPRITE::Tick(void) {
+void Sprite::Tick(void) {
 	Step();
 }
 
 
-void SPRITE::MakeXlat(uint8 *x) {
-	if (Ext) {
+void Sprite::MakeXlat(uint8 *x) {
+	if (_ext) {
 		BMP_PTR *b;
 
 		if (Flags.Xlat)
 			KillXlat();
-		for (b = Ext->ShpList; *b; b++)
+		for (b = _ext->_shpList; *b; b++)
 			(*b)->M = x;
 		Flags.Xlat = true;
 	}
 }
 
 
-void SPRITE::KillXlat(void) {
-	if (Flags.Xlat && Ext) {
+void Sprite::KillXlat(void) {
+	if (Flags.Xlat && _ext) {
 		BMP_PTR *b;
-		uint8 *m = (*Ext->ShpList)->M;
+		uint8 *m = (*_ext->_shpList)->M;
 
 		switch (MemType(m)) {
 		case NEAR_MEM :
@@ -689,14 +702,14 @@ void SPRITE::KillXlat(void) {
 			free(m);
 			break;
 		}
-		for (b = Ext->ShpList; *b; b++)
+		for (b = _ext->_shpList; *b; b++)
 			(*b)->M = NULL;
 		Flags.Xlat = false;
 	}
 }
 
 
-void SPRITE::Goto(int x, int y) {
+void Sprite::Goto(int x, int y) {
 	int xo = X, yo = Y;
 	if (W < SCR_WID) {
 		if (x < 0)
@@ -720,30 +733,32 @@ void SPRITE::Goto(int x, int y) {
 }
 
 
-void SPRITE::Center(void) {
+void Sprite::Center(void) {
 	Goto((SCR_WID - W) / 2, (SCR_HIG - H) / 2);
 }
 
 
-void SPRITE::Show(void) {
-	register SPREXT *e;
+void Sprite::Show(void) {
+	register SprExt *e;
 // asm cli     // critic section...
-	e = Ext;
-	e->x0 = e->x1;
-	e->y0 = e->y1;
-	e->b0 = e->b1;
-	e->x1 = X;
-	e->y1 = Y;
-	e->b1 = Shp();
+	e = _ext;
+	e->_x0 = e->_x1;
+	e->_y0 = e->_y1;
+	e->_b0 = e->_b1;
+	e->_x1 = X;
+	e->_y1 = Y;
+	e->_b1 = Shp();
 //  asm sti     // ...done!
 	if (! Flags.Hide) {
-		if (Flags.Xlat) e->b1->XShow(e->x1, e->y1);
-		else e->b1->Show(e->x1, e->y1);
+		if (Flags.Xlat)
+			e->_b1->XShow(e->_x1, e->_y1);
+		else
+			e->_b1->Show(e->_x1, e->_y1);
 	}
 }
 
 
-void SPRITE::Show(uint16 pg) {
+void Sprite::Show(uint16 pg) {
 	Graphics::Surface *a = VGA::Page[1];
 	VGA::Page[1] = VGA::Page[pg & 3];
 	Shp()->Show(X, Y);
@@ -751,24 +766,24 @@ void SPRITE::Show(uint16 pg) {
 }
 
 
-void SPRITE::Hide(void) {
-	register SPREXT *e = Ext;
-	if (e->b0)
-		e->b0->Hide(e->x0, e->y0);
+void Sprite::Hide(void) {
+	register SprExt *e = _ext;
+	if (e->_b0)
+		e->_b0->Hide(e->_x0, e->_y0);
 }
 
 
-BMP_PTR SPRITE::Ghost(void) {
-	register SPREXT *e = Ext;
-	if (e->b1) {
+BMP_PTR Sprite::Ghost(void) {
+	register SprExt *e = _ext;
+	if (e->_b1) {
 		BMP_PTR bmp = new BITMAP(0, 0, (uint8 *)NULL);
 		if (bmp == NULL)
 			error("No core");
-		bmp->W = e->b1->W;
-		bmp->H = e->b1->H;
+		bmp->W = e->_b1->W;
+		bmp->H = e->_b1->H;
 		if ((bmp->B = farnew(HideDesc, bmp->H)) == NULL)
 			error("No Core");
-		bmp->V = (uint8 *) memcpy(bmp->B, e->b1->B, sizeof(HideDesc) * bmp->H);
+		bmp->V = (uint8 *) memcpy(bmp->B, e->_b1->B, sizeof(HideDesc) * bmp->H);
 		// TODO offset correctly in the surface using y1 pitch and x1 and not via offset segment
 		//bmp->M = (uint8 *) MK_FP(e->y1, e->x1);
 		warning("FIXME: SPRITE::Ghost");
@@ -778,8 +793,8 @@ BMP_PTR SPRITE::Ghost(void) {
 }
 
 
-SPRITE *SpriteAt(int x, int y) {
-	SPRITE *spr = NULL, * tail = Vga->ShowQ->Last();
+Sprite *SpriteAt(int x, int y) {
+	Sprite *spr = NULL, * tail = Vga->ShowQ->Last();
 	if (tail) {
 		for (spr = tail->Prev; spr; spr = spr->Prev)
 			if (! spr->Flags.Hide && ! spr->Flags.Tran)
@@ -801,24 +816,24 @@ QUEUE::~QUEUE(void) {
 
 void QUEUE::Clear(void) {
 	while (Head) {
-		SPRITE *s = Remove(Head);
+		Sprite *s = Remove(Head);
 		if (s->Flags.Kill)
 			delete s;
 	}
 }
 
 
-void QUEUE::ForAll(void (*fun)(SPRITE *)) {
-	SPRITE *s = Head;
+void QUEUE::ForAll(void (*fun)(Sprite *)) {
+	Sprite *s = Head;
 	while (s) {
-		SPRITE *n = s->Next;
+		Sprite *n = s->Next;
 		fun(s);
 		s = n;
 	}
 }
 
 
-void QUEUE::Append(SPRITE *spr) {
+void QUEUE::Append(Sprite *spr) {
 	if (Tail) {
 		spr->Prev = Tail;
 		Tail->Next = spr;
@@ -832,7 +847,7 @@ void QUEUE::Append(SPRITE *spr) {
 }
 
 
-void QUEUE::Insert(SPRITE *spr, SPRITE *nxt) {
+void QUEUE::Insert(Sprite *spr, Sprite *nxt) {
 	if (nxt == Head) {
 		spr->Next = Head;
 		Head = spr;
@@ -853,8 +868,8 @@ void QUEUE::Insert(SPRITE *spr, SPRITE *nxt) {
 }
 
 
-void QUEUE::Insert(SPRITE *spr) {
-	SPRITE *s;
+void QUEUE::Insert(Sprite *spr) {
+	Sprite *s;
 	for (s = Head; s; s = s->Next)
 		if (s->Z > spr->Z)
 			break;
@@ -869,7 +884,7 @@ void QUEUE::Insert(SPRITE *spr) {
 }
 
 
-SPRITE *QUEUE::Remove(SPRITE *spr) {
+Sprite *QUEUE::Remove(Sprite *spr) {
 	if (spr == Head)
 		Head = spr->Next;
 	if (spr == Tail)
@@ -884,11 +899,12 @@ SPRITE *QUEUE::Remove(SPRITE *spr) {
 }
 
 
-SPRITE *QUEUE::Locate(int ref) {
-	SPRITE *spr;
-	for (spr = Head; spr; spr = spr->Next)
-		if (spr->Ref == ref)
+Sprite *QUEUE::Locate(int ref) {
+	Sprite *spr;
+	for (spr = Head; spr; spr = spr->Next) {
+		if (spr->_ref == ref)
 			return spr;
+	}
 	return NULL;
 }
 
@@ -907,9 +923,9 @@ void VGA::init() {
 }
 
 void VGA::deinit() {
-	for (int idx = 0; idx < 4; ++idx) {
+	for (int idx = 0; idx < 4; ++idx)
 		delete Page[idx];
-	}
+
 	delete[] SysPal;
 }
 
@@ -1120,7 +1136,7 @@ void VGA::Sunset(void) {
 
 
 void VGA::Show(void) {
-	SPRITE *spr = ShowQ->First();
+	Sprite *spr = ShowQ->First();
 
 	for (spr = ShowQ->First(); spr; spr = spr->Next)
 		spr->Show();

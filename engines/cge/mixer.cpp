@@ -40,7 +40,7 @@ extern MOUSE *Mouse;
 bool   MIXER::Appear = false;
 
 
-MIXER::MIXER(CGEEngine *vm, int x, int y) : SPRITE(vm, NULL), Fall(MIX_FALL), _vm(vm) {
+MIXER::MIXER(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), Fall(MIX_FALL), _vm(vm) {
 	Appear = true;
 	mb[0] = new BITMAP("VOLUME");
 	mb[1] = NULL;
@@ -65,7 +65,7 @@ MIXER::MIXER(CGEEngine *vm, int x, int y) : SPRITE(vm, NULL), Fall(MIX_FALL), _v
 	lb[i] = NULL;
 
 	for (i = 0; i < ArrayCount(Led); i++) {
-		register SPRITE *spr = new SPRITE(_vm, lb);
+		register Sprite *spr = new Sprite(_vm, lb);
 		spr->SetSeq(ls);
 		spr->Goto(x + 2 + 12 * i, y + 8);
 		spr->Flags.Tran = true;
@@ -98,7 +98,7 @@ MIXER::~MIXER(void) {
 
 #pragma argsused
 void MIXER::Touch(uint16 mask, int x, int y) {
-	SPRITE::Touch(mask, x, y);
+	Sprite::Touch(mask, x, y);
 	if (mask & L_UP) {
 		uint8 *vol = (&SNDDrvInfo.VOL2.D) + (x < W / 2);
 		if (y < MIX_BHIG) {

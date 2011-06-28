@@ -66,7 +66,7 @@ public:
 	void Clear(int from = 1, int upto = 0x7FFF);
 	void Preload(int from = 1, int upto = 0x7FFF);
 	char *getText(int ref);
-	void Say(const char *txt, SPRITE *spr);
+	void Say(const char *txt, Sprite *spr);
 private:
 	CGEEngine *_vm;
 };
@@ -76,8 +76,8 @@ extern TALK       *Talk;
 extern TEXT       *Text;
 
 
-void Say(const char *txt, SPRITE *spr);
-void SayTime(SPRITE *spr);
+void Say(const char *txt, Sprite *spr);
+void SayTime(Sprite *spr);
 void Inf(const char *txt);
 void KillText(void);
 
