@@ -32,6 +32,7 @@
 #include "common/archive.h"
 #include "common/textconsole.h"
 #include "common/system.h"
+#include "common/memstream.h"
 
 #include "graphics/palette.h"
 
@@ -1873,6 +1874,7 @@ uint16 LBAnimation::getParentId() {
 
 LBScriptEntry::LBScriptEntry() {
 	state = 0;
+	data = NULL;
 	argvParam = NULL;
 	argvTarget = NULL;
 }
@@ -1880,6 +1882,7 @@ LBScriptEntry::LBScriptEntry() {
 LBScriptEntry::~LBScriptEntry() {
 	delete[] argvParam;
 	delete[] argvTarget;
+	delete[] data;
 
 	for (uint i = 0; i < subentries.size(); i++)
 		delete subentries[i];
@@ -1943,7 +1946,10 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 		uint16 dataSize = stream->readUint16();
 
 		debug(4, "Data type %04x, size %d", dataType, dataSize);
-		readData(dataType, dataSize, stream);
+		byte *buf = new byte[dataSize];
+		stream->read(buf, dataSize);
+		readData(dataType, dataSize, buf);
+		delete[] buf;
 
 		if ((uint)stream->pos() != oldPos + 4 + (uint)dataSize)
 			error("Failed to read correct number of bytes (off by %d) for data type %04x (size %d)",
@@ -1956,7 +1962,7 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 	}
 }
 
-LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::SeekableSubReadStreamEndian *stream, bool isSubentry) {
+LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::MemoryReadStreamEndian *stream, bool isSubentry) {
 	if (size < 6)
 		error("Script entry of type 0x%04x was too small (%d)", type, size);
 
@@ -2081,37 +2087,33 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		debug(4, "kLBOpSendExpression: offset %08x", entry->offset);
 		size -= 4;
 	}
-	if (entry->opcode == 0xffff) {
+	if (entry->opcode == kLBOpRunData) {
 		if (size < 4)
-			error("didn't get enough bytes (%d) to read message in script entry", size);
-		uint16 msgId = stream->readUint16();
-		uint16 msgLen = stream->readUint16();
+			error("didn't get enough bytes (%d) to read data header in script entry", size);
+		entry->dataType = stream->readUint16();
+		entry->dataLen = stream->readUint16();
 		size -= 4;
 
-		if (msgId == kLBSetPlayInfo) {
-			if (size != 20)
-				error("wah, more than just the kLBSetPlayInfo in here");
-			// FIXME
-			warning("ignoring kLBSetPlayInfo");
-			size -= 20;
-			stream->skip(20);
-			return entry;
+		if (size < entry->dataLen)
+			error("didn't get enough bytes (%d) to read data in script entry", size);
+
+		if (entry->dataType == kLBCommand) {
+			Common::String command = _vm->readString(stream);
+			uint commandSize = command.size() + 1;
+			if (commandSize > entry->dataLen)
+				error("failed to read command in script entry: dataLen %d, command '%s' (%d chars)",
+					 entry->dataLen, command.c_str(), commandSize);
+			entry->dataLen = commandSize;
+			entry->data = new byte[commandSize];
+			memcpy(entry->data, command.c_str(), commandSize);
+			size -= commandSize;
+		} else {
+			if (conditionTag)
+				error("kLBOpRunData had unexpected conditionTag");
+			entry->data = new byte[entry->dataLen];
+			stream->read(entry->data, entry->dataLen);
+			size -= entry->dataLen;
 		}
-		if (msgId != kLBCommand)
-			error("expected a command in script entry, got 0x%04x", msgId);
-
-		if (msgLen != size - (entry->event == kLBEventNotified ? 4 : 0) && !conditionTag)
-			error("script entry msgLen %d is not equal to size %d", msgLen, size);
-
-		Common::String command = _vm->readString(stream);
-		if (command.size() + 1 > size) {
-			error("failed to read command in script entry: msgLen %d, command '%s' (%d chars)",
-				msgLen, command.c_str(), command.size());
-		}
-		size -= command.size() + 1;
-
-		entry->command = command;
-		debug(4, "script entry command '%s'", command.c_str());
 	}
 	if (entry->event == kLBEventNotified) {
 		if (size < 4)
@@ -2162,7 +2164,12 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 	return entry;
 }
 
-void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
+void LBItem::readData(uint16 type, uint16 size, byte *data) {
+	Common::MemoryReadStreamEndian stream(data, size, _vm->isBigEndian());
+	readData(type, size, &stream);
+}
+
+void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
 	case kLBMsgListScript:
 	case kLBNotifyScript:
@@ -2831,8 +2838,8 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			}
 			break;
 
-		case kLBOpRunCommand:
-			runCommand(entry->command);
+		case kLBOpRunData:
+			readData(entry->dataType, entry->dataLen, entry->data);
 			break;
 
 		case kLBOpJumpUnlessExpression:
@@ -3168,7 +3175,7 @@ LBGroupItem::LBGroupItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rec
 	_starting = false;
 }
 
-void LBGroupItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
+void LBGroupItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
 	case kLBGroupData:
 		{
@@ -3289,7 +3296,7 @@ LBPaletteItem::~LBPaletteItem() {
 	delete[] _palette;
 }
 
-void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
+void LBPaletteItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
 	case kLBPaletteXData:
 		{
@@ -3369,7 +3376,7 @@ LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, LBPage *page, Commo
 	debug(3, "new LBLiveTextItem");
 }
 
-void LBLiveTextItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
+void LBLiveTextItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
 	case kLBLiveTextData:
 		{
@@ -3614,7 +3621,7 @@ LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common:
 	debug(3, "new LBPictureItem");
 }
 
-void LBPictureItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
+void LBPictureItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
 	case kLBSetDrawMode:
 		{
