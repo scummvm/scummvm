@@ -173,6 +173,7 @@ public:
 	virtual long Mark(void) = 0;
 	virtual long Size(void) = 0;
 	virtual long Seek(long pos) = 0;
+	virtual ~XFILE() { }
 };
 
 
@@ -184,7 +185,7 @@ inline uint16 XRead(XFILE *xf, T *t) {
 
 class IOHAND : public XFILE {
 protected:
-	Common::File _file;
+	Common::File *_file;
 	uint16 Seed;
 	CRYPT *Crypt;
 public:

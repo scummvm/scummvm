@@ -270,7 +270,7 @@ public:
 	QUEUE *ShowQ, *SpareQ;
 	int Mono;
 	static Graphics::Surface *Page[4];
-	static DAC *VGA::SysPal;
+	static DAC *SysPal;
 
 	VGA(int mode);
 	~VGA(void);
