@@ -37,7 +37,7 @@ namespace CGE {
 
 
 typedef struct  {
-	char *Text;
+	const char *Text;
 	void (CGEEngine::*Proc)();
 } CHOICE;
 

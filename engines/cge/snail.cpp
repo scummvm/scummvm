@@ -92,7 +92,7 @@ static void SNGame(SPRITE *spr, int num) {
 			++ Stage;
 			if (hand && Stage > DRESSED)
 				++hand;
-			if (i >= 0 || dup[i] == spr && new_random(3) == 0) {
+			if (i >= 0 || (dup[i] == spr && new_random(3) == 0)) {
 				SNPOST(SNSEQ, -1, 3, dup[0]);               // yes
 				SNPOST(SNSEQ, -1, 3, dup[1]);               // yes
 				SNPOST(SNSEQ, -1, 3, dup[2]);               // yes
