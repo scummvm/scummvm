@@ -667,7 +667,6 @@ public:
 	static const uint16 addr_facerightway = 0xc144;
 	static const uint16 addr_aboutturn = 0xc13c;
 	static const uint16 addr_mainman = 0xc138;
-	static const uint16 addr_initman = 0xc134;
 	static const uint16 addr_findsource = 0xc130;
 	static const uint16 addr_checkone = 0xc12c;
 	static const uint16 addr_delsprite = 0xc11c;
@@ -1891,7 +1890,7 @@ public:
 	void read();
 	void fadescreenups();
 	void checkdest();
-	void initman();
+	//void initman();
 	void loadpalfromiff();
 	void facerightway();
 	void startup1();

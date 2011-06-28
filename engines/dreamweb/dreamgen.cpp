@@ -2234,20 +2234,6 @@ over1001:
 	data.word(kTakeoff) = 320;
 }
 
-void DreamGenContext::initman() {
-	STACK_CHECK;
-	al = data.byte(kRyanx);
-	ah = data.byte(kRyany);
-	si = ax;
-	cx = 49464;
-	dx = data.word(kMainsprites);
-	di = 0;
-	makesprite();
-	es.byte(bx+23) = 4;
-	es.byte(bx+22) = 0;
-	es.byte(bx+29) = 0;
-}
-
 void DreamGenContext::mainman() {
 	STACK_CHECK;
 	_cmp(data.byte(kResetmanxy), 1);
@@ -21527,7 +21513,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_delsprite: delsprite(); break;
 		case addr_checkone: checkone(); break;
 		case addr_findsource: findsource(); break;
-		case addr_initman: initman(); break;
 		case addr_mainman: mainman(); break;
 		case addr_aboutturn: aboutturn(); break;
 		case addr_facerightway: facerightway(); break;

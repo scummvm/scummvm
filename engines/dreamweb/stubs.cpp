@@ -778,6 +778,20 @@ void DreamGenContext::spriteupdate() {
 	}
 }
 
+void DreamGenContext::initman() {
+	Sprite *sprite = makesprite(data.byte(kRyanx), data.byte(kRyany), addr_mainman, data.word(kMainsprites), 0);
+	sprite->priority = 4;
+	sprite->b22 = 0;
+	sprite->b29 = 0;
+
+	// Recover es:bx from sprite
+	es = data.word(kBuffers);
+	bx = kSpritetable;
+	Sprite *sprites = (Sprite*)es.ptr(bx, sizeof(Sprite)*16);
+	bx += 32*(sprite-sprites);
+	//
+}
+
 void DreamGenContext::mainmanCPP(Sprite* sprite) {
 	push(es);
 	push(ds);

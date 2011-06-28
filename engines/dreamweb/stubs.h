@@ -25,6 +25,7 @@
 	void makesprite();
 	Sprite* makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 somethingInDx, uint16 somethingInDi);
 	void spriteupdate();
+	void initman();
 	void mainmanCPP(Sprite* sprite);
 	void walking();
 	void backobject(Sprite* sprite);
