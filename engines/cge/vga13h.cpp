@@ -1261,8 +1261,8 @@ void BITMAP::Show(int x, int y) {
 	// must be decompressed and inserted into the surface
 	for (int planeCtr = 0; planeCtr < 4; ++planeCtr) {
 		destP = (byte *)rawSurface.getBasePtr(planeCtr, 0);
-		
-		while (destP < destEndP) {
+
+		for (;;) {
 			uint16 v = READ_LE_UINT16(srcP);
 			srcP += 2;
 			int cmd = v >> 14;
@@ -1272,6 +1272,8 @@ void BITMAP::Show(int x, int y) {
 				// End of image
 				break;
 			}
+
+			assert(destP < destEndP);
 
 			// Handle a set of pixels
 			while (count-- > 0) {
