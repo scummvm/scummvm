@@ -913,7 +913,7 @@ void DreamGenContext::backobject(Sprite* sprite) {
 	if (objData->type == 6)
 		widedoor();
 	else if (objData->type == 5)
-		random();
+		random(sprite, objData);
 	else if (objData->type == 4)
 		lockeddoorway();
 	else if (objData->type == 3)
@@ -939,6 +939,11 @@ void DreamGenContext::constant(Sprite* sprite, ObjData* objData) {
 	sprite->b15 = b18;
 }
 
+void DreamGenContext::random(Sprite* sprite, ObjData* objData) {
+	randomnum1();
+	uint16 r = ax;
+	sprite->b15 = objData->b18[r&7];
+}
 
 void DreamGenContext::dodoor() {
 	Sprite *sprite = (Sprite*)es.ptr(bx, sizeof(Sprite));
