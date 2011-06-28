@@ -2016,6 +2016,8 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 			if (targetingType == kTargetTypeCode)
 				error("encountered kTargetTypeCode");
 
+			if (size < 2)
+				error("not enough bytes (%d) reading special targeting", size);
 			uint16 count = stream->readUint16();
 			size -= 2;
 
@@ -2026,6 +2028,8 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 				Common::String target = _vm->readString(stream);
 				debug(4, "target '%s'", target.c_str());
 				entry->targets.push_back(target);
+				if (target.size() + 1 > size)
+					error("failed to read target (ran out of stream)");
 				size -= target.size() + 1;
 			}
 			entry->argc = entry->targets.size();
@@ -2134,6 +2138,8 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 	}
 
 	if (conditionTag == 1) {
+		if (!size)
+			error("failed to read condition (empty stream)");
 		Common::String condition = _vm->readString(stream);
 		if (condition.size() == 0) {
 			size--;
@@ -2148,6 +2154,8 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 		entry->conditions.push_back(condition);
 		debug(4, "script entry condition '%s'", condition.c_str());
 	} else if (conditionTag == 2) {
+		if (size < 4)
+			error("expected more than %d bytes for conditionTag 2", size);
 		// FIXME
 		stream->skip(4);
 		size -= 4;
