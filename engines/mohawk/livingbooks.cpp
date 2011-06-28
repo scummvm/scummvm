@@ -768,6 +768,8 @@ void LBPage::loadBITL(uint16 resourceId) {
 		if (bitlStream->size() == bitlStream->pos())
 			break;
 	}
+
+	delete bitlStream;
 }
 
 Common::SeekableSubReadStreamEndian *MohawkEngine_LivingBooks::wrapStreamEndian(uint32 tag, uint16 id) {
