@@ -702,7 +702,7 @@ void DreamGenContext::printasprite(const Sprite* sprite) {
 	}
 	
 	ax = sprite->b15;
-	if (sprite->type != 0)
+	if (sprite->b29 != 0)
 		ah = 8;
 	showframe();
 
@@ -789,7 +789,54 @@ void DreamGenContext::mainmanCPP(Sprite* sprite) {
 	bx += 32*(sprite-sprites);
 	//
 
-	mainman();
+	if (data.byte(kResetmanxy) == 1) {
+		data.byte(kResetmanxy) = 0;
+		sprite->x = data.byte(kRyanx);
+		sprite->y = data.byte(kRyany);
+		sprite->b29 = 0;
+	}
+	--sprite->b22;
+	if (sprite->b22 != 0xff) {
+		ds = pop();
+		es = pop();
+		return;
+	}
+	sprite->b22 = 0;
+	if (data.byte(kTurntoface) != data.byte(kFacing)) {
+		aboutturn();
+	} else {
+		if ((data.byte(kTurndirection) != 0) && (data.byte(kLinepointer) == 254)) {
+			data.byte(kReasseschanges) = 1;
+			if (data.byte(kFacing) == data.byte(kLeavedirection))
+				checkforexit();
+		}
+		data.byte(kTurndirection) = 0;
+		if (data.byte(kLinepointer) == 254) {
+			sprite->b29 = 0;
+		} else {
+			++sprite->b29;
+			if (sprite->b29 == 11)
+				sprite->b29 = 1;
+			walking();
+			if (data.byte(kLinepointer) != 254) {
+				if ((data.byte(kFacing) & 1) == 0)
+					walking();
+				else if ((sprite->b29 != 2) && (sprite->b29 != 7))
+					walking();
+			}
+			if (data.byte(kLinepointer) == 254) {
+				if (data.byte(kTurntoface) == data.byte(kFacing)) {
+					data.byte(kReasseschanges) = 1;
+					if (data.byte(kFacing) == data.byte(kLeavedirection))
+						checkforexit();
+				}
+			}
+		}
+	}
+	static const uint8 facelist[] = { 0,60,33,71,11,82,22,93 };
+	sprite->b15 = sprite->b29 + facelist[data.byte(kFacing)];
+	data.byte(kRyanx) = sprite->x;
+	data.byte(kRyany) = sprite->y;
 
 	ds = pop();
 	es = pop();
@@ -1018,3 +1065,4 @@ void DreamGenContext::lockmon() {
 }
 
 } /*namespace dreamgen */
+

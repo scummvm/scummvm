@@ -17,7 +17,8 @@ struct Sprite {
 	uint8  priority;
 	uint16 w24;
 	uint16 w26;
-	uint16 w28;
+	uint8  b28;
+	uint8  b29;
 	uint8  type;
 	uint8  hidden;
 };
