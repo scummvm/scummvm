@@ -842,6 +842,37 @@ void DreamGenContext::mainmanCPP(Sprite* sprite) {
 	es = pop();
 }
 
+void DreamGenContext::walking() {
+	Sprite *sprite = (Sprite*)es.ptr(bx, sizeof(Sprite));
+
+	uint8 comp;
+	if (data.byte(kLinedirection) != 0) {
+		--data.byte(kLinepointer);
+		comp = 200;
+	} else {
+		++data.byte(kLinepointer);
+		comp = data.byte(kLinelength);
+	}
+	if (data.byte(kLinepointer) < comp) {
+		sprite->x = data.byte(kLinedata + data.byte(kLinepointer) * 2 + 0);
+		sprite->y = data.byte(kLinedata + data.byte(kLinepointer) * 2 + 1);
+		return;
+	}
+
+	data.byte(kLinepointer) = 254;
+	data.byte(kManspath) = data.byte(kDestination);
+	if (data.byte(kDestination) == data.byte(kFinaldest)) {
+		facerightway();
+		return;
+	}
+	data.byte(kDestination) = data.byte(kFinaldest);
+	push(es);
+	push(bx);
+	autosetwalk();
+	bx = pop();
+	es = pop();
+}
+
 void DreamGenContext::backobject(Sprite* sprite) {
 	push(es);
 	push(ds);

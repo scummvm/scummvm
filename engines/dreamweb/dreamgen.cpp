@@ -2385,58 +2385,6 @@ decdir:
 	es.byte(bx+29) = 0;
 }
 
-void DreamGenContext::walking() {
-	STACK_CHECK;
-	_cmp(data.byte(kLinedirection), 0);
-	if (flags.z())
-		goto normalwalk;
-	al = data.byte(kLinepointer);
-	_dec(al);
-	data.byte(kLinepointer) = al;
-	_cmp(al, 200);
-	if (!flags.c())
-		goto endofline;
-	goto continuewalk;
-normalwalk:
-	al = data.byte(kLinepointer);
-	_inc(al);
-	data.byte(kLinepointer) = al;
-	_cmp(al, data.byte(kLinelength));
-	if (!flags.c())
-		goto endofline;
-continuewalk:
-	ah = 0;
-	_add(ax, ax);
-	push(es);
-	push(bx);
-	dx = data;
-	es = dx;
-	bx = 8173;
-	_add(bx, ax);
-	ax = es.word(bx);
-	bx = pop();
-	es = pop();
-	es.word(bx+10) = ax;
-	return;
-endofline:
-	data.byte(kLinepointer) = 254;
-	al = data.byte(kDestination);
-	data.byte(kManspath) = al;
-	_cmp(al, data.byte(kFinaldest));
-	if (flags.z())
-		goto finishedwalk;
-	al = data.byte(kFinaldest);
-	data.byte(kDestination) = al;
-	push(es);
-	push(bx);
-	autosetwalk();
-	bx = pop();
-	es = pop();
-	return;
-finishedwalk:
-	facerightway();
-}
-
 void DreamGenContext::facerightway() {
 	STACK_CHECK;
 	push(es);
@@ -21582,7 +21530,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_initman: initman(); break;
 		case addr_mainman: mainman(); break;
 		case addr_aboutturn: aboutturn(); break;
-		case addr_walking: walking(); break;
 		case addr_facerightway: facerightway(); break;
 		case addr_checkforexit: checkforexit(); break;
 		case addr_adjustdown: adjustdown(); break;

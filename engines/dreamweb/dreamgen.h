@@ -665,7 +665,6 @@ public:
 	static const uint16 addr_adjustdown = 0xc14c;
 	static const uint16 addr_checkforexit = 0xc148;
 	static const uint16 addr_facerightway = 0xc144;
-	static const uint16 addr_walking = 0xc140;
 	static const uint16 addr_aboutturn = 0xc13c;
 	static const uint16 addr_mainman = 0xc138;
 	static const uint16 addr_initman = 0xc134;
@@ -1671,7 +1670,7 @@ public:
 	void zoom();
 	void outofinv();
 	void viewfolder();
-	void walking();
+	//void walking();
 	void diarykeyp();
 	//void readabyte();
 	//void showframe();
