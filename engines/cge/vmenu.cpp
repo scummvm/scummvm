@@ -130,7 +130,7 @@ void VMENU::Touch(uint16 mask, int x, int y) {
 	bool ok = false;
 
 	if (Items) {
-		SPRITE::Touch(mask, x, y);
+		Sprite::Touch(mask, x, y);
 
 		y -= TEXT_VM - 1;
 		int n = 0;

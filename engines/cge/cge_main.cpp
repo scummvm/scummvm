@@ -25,56 +25,55 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include    "cge/general.h"
-#include    "cge/boot.h"
-#include    "cge/ident.h"
-#include    "cge/sound.h"
-#include    "cge/startup.h"
-#include    "cge/config.h"
-#include    "cge/vga13h.h"
-#include    "cge/snail.h"
-#include    "cge/text.h"
-#include    "cge/game.h"
-#include    "cge/mouse.h"
-#include    "cge/keybd.h"
-#include    "cge/cfile.h"
-#include    "cge/vol.h"
-#include    "cge/talk.h"
-#include    "cge/vmenu.h"
-#include    "cge/gettext.h"
-#include    "cge/mixer.h"
-#include    "cge/cge_main.h"
-#include    "cge/cge.h"
-#include    <stdio.h>
-#include    <stdlib.h>
-#include    <string.h>
-#include    <fcntl.h>
-
+#include "cge/general.h"
+#include "cge/boot.h"
+#include "cge/ident.h"
+#include "cge/sound.h"
+#include "cge/startup.h"
+#include "cge/config.h"
+#include "cge/vga13h.h"
+#include "cge/snail.h"
+#include "cge/text.h"
+#include "cge/game.h"
+#include "cge/mouse.h"
+#include "cge/keybd.h"
+#include "cge/cfile.h"
+#include "cge/vol.h"
+#include "cge/talk.h"
+#include "cge/vmenu.h"
+#include "cge/gettext.h"
+#include "cge/mixer.h"
+#include "cge/cge_main.h"
+#include "cge/cge.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
 #include "common/str.h"
 
 namespace CGE {
 
-#define     STACK_SIZ   (K(2))
-#define     SVGCHKSUM   (1956 + Now + OldLev + Game + Music + DemoText)
+#define STACK_SIZ   (K(2))
+#define SVGCHKSUM   (1956 + Now + OldLev + Game + Music + DemoText)
 
-#define   SVG0NAME    ("{{INIT}}" SVG_EXT)
-#define   SVG0FILE    INI_FILE
+#define SVG0NAME    ("{{INIT}}" SVG_EXT)
+#define SVG0FILE    INI_FILE
 
 extern  uint16  _stklen = (STACK_SIZ * 2);
 
 VGA *Vga;
-HEART *Heart;
+Heart *_heart;
 WALK *Hero;
 SYSTEM *Sys;
-SPRITE *PocLight;
+Sprite *_pocLight;
 MOUSE *Mouse;
-SPRITE *Pocket[POCKET_NX];
-SPRITE *Sprite;
-SPRITE *MiniCave;
-SPRITE *Shadow;
-SPRITE *HorzLine;
+Sprite *_pocket[POCKET_NX];
+Sprite *_sprite;
+Sprite *_miniCave;
+Sprite *_shadow;
+Sprite *_horzLine;
 INFO_LINE *InfoLine;
-SPRITE *CavLight;
+Sprite *_cavLight;
 INFO_LINE *DebugLine;
 
 BMP_PTR MB[2];
@@ -146,11 +145,11 @@ HXY     HeroXY[CAVE_MAX] = {{0, 0}};
 BAR     Barriers[1 + CAVE_MAX] = { { 0xFF, 0xFF } };
 
 
-extern  int FindPocket(SPRITE *);
+extern  int FindPocket(Sprite *);
 
 extern  DAC StdPal[58];
 
-void    FeedSnail(SPRITE *spr, SNLIST snq);         // defined in SNAIL
+void    FeedSnail(Sprite *spr, SNLIST snq);         // defined in SNAIL
 uint8   CLUSTER::Map[MAP_ZCNT][MAP_XCNT];
 
 
@@ -223,11 +222,13 @@ CLUSTER XZ(COUPLE xy) {
 int pocref[POCKET_NX];
 uint8   volume[2];
 
-struct  SAVTAB {
+struct SavTab {
 	void *Ptr;
 	int Len;
 	uint8 Flg;
-} SavTab[] = {
+};
+
+SavTab _savTab[] = {
 	{ &Now,           sizeof(Now),          1 },
 	{ &OldLev,        sizeof(OldLev),       1 },
 	{ &DemoText,      sizeof(DemoText),     1 },
@@ -248,11 +249,11 @@ struct  SAVTAB {
 
 
 void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
-	SAVTAB *st;
-	SPRITE *spr;
+	SavTab *st;
+	Sprite *spr;
 	int i;
 
-	for (st = SavTab; st->Ptr; st++) {
+	for (st = _savTab; st->Ptr; st++) {
 		if (file.Error)
 			error("Bad SVG");
 		file.Read((uint8 *)((tiny || st->Flg) ? st->Ptr : &i), st->Len);
@@ -273,7 +274,7 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 
 	if (! tiny) { // load sprites & pocket
 		while (! file.Error) {
-			SPRITE S(this, NULL);
+			Sprite S(this, NULL);
 			uint16 n = file.Read((uint8 *) &S, sizeof(S));
 
 			if (n != sizeof(S))
@@ -281,7 +282,7 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 
 			S.Prev = S.Next = NULL;
 			spr = (scumm_stricmp(S.File + 2, "MUCHA") == 0) ? new FLY(this, NULL)
-			      : new SPRITE(this, NULL);
+			      : new Sprite(this, NULL);
 			if (spr == NULL)
 				error("No core");
 			*spr = S;
@@ -290,7 +291,7 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 
 		for (i = 0; i < POCKET_NX; i++) {
 			register int r = pocref[i];
-			Pocket[i] = (r < 0) ? NULL : Vga->SpareQ->Locate(r);
+			_pocket[i] = (r < 0) ? NULL : Vga->SpareQ->Locate(r);
 		}
 	}
 }
@@ -303,19 +304,19 @@ static void SaveSound(void) {
 
 
 static void SaveGame(XFILE &file) {
-	SAVTAB *st;
-	SPRITE *spr;
+	SavTab *st;
+	Sprite *spr;
 	int i;
 
 	for (i = 0; i < POCKET_NX; i++) {
-		register SPRITE *s = Pocket[i];
-		pocref[i] = (s) ? s->Ref : -1;
+		register Sprite *s = _pocket[i];
+		pocref[i] = (s) ? s->_ref : -1;
 	}
 
 	volume[0] = SNDDrvInfo.VOL2.D;
 	volume[1] = SNDDrvInfo.VOL2.M;
 
-	for (st = SavTab; st->Ptr; st++) {
+	for (st = _savTab; st->Ptr; st++) {
 		if (file.Error)
 			error("Bad SVG");
 		file.Write((uint8 *) st->Ptr, st->Len);
@@ -324,7 +325,7 @@ static void SaveGame(XFILE &file) {
 	file.Write((uint8 *) & (i = SVGCHKSUM), sizeof(i));
 
 	for (spr = Vga->SpareQ->First(); spr; spr = spr->Next)
-		if (spr->Ref >= 1000)
+		if (spr->_ref >= 1000)
 			if (!file.Error)
 				file.Write((uint8 *)spr, sizeof(*spr));
 }
@@ -385,7 +386,7 @@ int FindLevel;
 
 
 WALK::WALK(CGEEngine *vm, BMP_PTR *shpl)
-	: SPRITE(vm, shpl), Dir(NO_DIR), TracePtr(-1), _vm(vm) {
+	: Sprite(vm, shpl), Dir(NO_DIR), TracePtr(-1), _vm(vm) {
 }
 
 
@@ -396,7 +397,7 @@ void WALK::Tick(void) {
 	Here = XZ(X + W / 2, Y + H);
 
 	if (Dir != NO_DIR) {
-		SPRITE *spr;
+		Sprite *spr;
 		Sys->FunTouch();
 		for (spr = Vga->ShowQ->First(); spr; spr = spr->Next) {
 				if (Distance(spr) < 2) {
@@ -434,7 +435,7 @@ void WALK::Tick(void) {
 }
 
 
-int WALK::Distance(SPRITE *spr) {
+int WALK::Distance(Sprite *spr) {
 	int dx, dz;
 	dx = spr->X - (X + W - WALKSIDE);
 	if (dx < 0)
@@ -502,7 +503,7 @@ void WALK::FindWay(CLUSTER c) {
 }
 
 
-void WALK::FindWay(SPRITE *spr) {
+void WALK::FindWay(Sprite *spr) {
 	if (spr && spr != this) {
 		int x = spr->X, z = spr->Z;
 		if (spr->Flags.East)
@@ -516,12 +517,12 @@ void WALK::FindWay(SPRITE *spr) {
 }
 
 
-bool WALK::Lower(SPRITE *spr) {
+bool WALK::Lower(Sprite *spr) {
 	return (spr->Y > Y + (H * 3) / 5);
 }
 
 
-void WALK::Reach(SPRITE *spr, int mode) {
+void WALK::Reach(Sprite *spr, int mode) {
 	if (spr) {
 		Hero->FindWay(spr);
 		if (mode < 0) {
@@ -542,7 +543,7 @@ void WALK::Reach(SPRITE *spr, int mode) {
 }
 
 
-class SQUARE : public SPRITE {
+class SQUARE : public Sprite {
 public:
 	SQUARE(CGEEngine *vm);
 	void Touch(uint16 mask, int x, int y);
@@ -552,14 +553,14 @@ private:
 
 
 SQUARE::SQUARE(CGEEngine *vm)
-	: SPRITE(vm, MB), _vm(vm) {
+	: Sprite(vm, MB), _vm(vm) {
 	Flags.Kill = true;
 	Flags.BDel = false;
 }
 
 
 void SQUARE::Touch(uint16 mask, int x, int y) {
-	SPRITE::Touch(mask, x, y);
+	Sprite::Touch(mask, x, y);
 	if (mask & L_UP) {
 		XZ(X + x, Y + y).Cell() = 0;
 		SNPOST_(SNKILL, -1, 0, this);
@@ -632,14 +633,14 @@ static void AltCtrlDel(void) {
 
 static void MiniStep(int stp) {
 	if (stp < 0)
-		MiniCave->Flags.Hide = true;
+		_miniCave->Flags.Hide = true;
 	else {
 		&*Mini;
 		*MiniShp[0] = *MiniShpList[stp];
 		if (Fx.Current)
 			&*(Fx.Current->EAddr());
 
-		MiniCave->Flags.Hide = false;
+		_miniCave->Flags.Hide = false;
 	}
 }
 
@@ -670,7 +671,7 @@ void SYSTEM::FunTouch(void) {
 
 
 static void ShowBak(int ref) {
-	SPRITE *spr = Vga->SpareQ->Locate(ref);
+	Sprite *spr = Vga->SpareQ->Locate(ref);
 	if (spr) {
 		BITMAP::Pal = VGA::SysPal;
 		spr->Expand();
@@ -691,11 +692,11 @@ static void CaveUp(void) {
 	ShowBak(BakRef);
 	LoadMapping();
 	Text->Preload(BakRef, BakRef + 1000);
-	SPRITE *spr = Vga->SpareQ->First();
+	Sprite *spr = Vga->SpareQ->First();
 	while (spr) {
-		SPRITE *n = spr->Next;
-		if (spr->Cave == Now || spr->Cave == 0)
-			if (spr->Ref != BakRef) {
+		Sprite *n = spr->Next;
+		if (spr->_cave == Now || spr->_cave == 0)
+			if (spr->_ref != BakRef) {
 				if (spr->Flags.Back)
 					spr->BackShow();
 				else
@@ -726,11 +727,11 @@ static void CaveUp(void) {
 	if (Hero)
 		Vga->ShowQ->Insert(Vga->ShowQ->Remove(Hero));
 
-	if (Shadow) {
-		Vga->ShowQ->Remove(Shadow);
-		Shadow->MakeXlat(Glass(VGA::SysPal, 204, 204, 204));
-		Vga->ShowQ->Insert(Shadow, Hero);
-		Shadow->Z = Hero->Z;
+	if (_shadow) {
+		Vga->ShowQ->Remove(_shadow);
+		_shadow->MakeXlat(Glass(VGA::SysPal, 204, 204, 204));
+		Vga->ShowQ->Insert(_shadow, Hero);
+		_shadow->Z = Hero->Z;
 	}
 	FeedSnail(Vga->ShowQ->Locate(BakRef + 999), TAKE);
 	Vga->Show();
@@ -741,19 +742,19 @@ static void CaveUp(void) {
 	if (! Startup)
 		Mouse->On();
 
-	Heart->Enable = true;
+	_heart->_enable = true;
 }
 
 
 void CGEEngine::CaveDown() {
-	SPRITE *spr;
-	if (! HorzLine->Flags.Hide)
+	Sprite *spr;
+	if (!_horzLine->Flags.Hide)
 		SwitchMapping();
 
 	for (spr = Vga->ShowQ->First(); spr;) {
-		SPRITE *n = spr->Next;
-		if (spr->Ref >= 1000 /*&& spr->Cave*/) {
-			if (spr->Ref % 1000 == 999)
+		Sprite *n = spr->Next;
+		if (spr->_ref >= 1000 /*&& spr->_cave*/) {
+			if (spr->_ref % 1000 == 999)
 				FeedSnail(spr, TAKE);
 			Vga->SpareQ->Append(Vga->ShowQ->Remove(spr));
 		}
@@ -782,7 +783,7 @@ void CGEEngine::QGame() {
 
 void CGEEngine::SwitchCave(int cav) {
 	if (cav != Now) {
-		Heart->Enable = false;
+		_heart->_enable = false;
 		if (cav < 0) {
 			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
 			//TODO Change the SNPOST message send to a special way to send function pointer
@@ -799,7 +800,7 @@ void CGEEngine::SwitchCave(int cav) {
 					Vga->SpareQ->Show = STARTUP::Summa * (cav <= CAVE_MAX);
 				/////--------------------------------------------------------
 			}
-			CavLight->Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
+			_cavLight->Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
 			              CAVE_Y + ((Now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
 			KillText();
 			if (! Startup)
@@ -812,7 +813,7 @@ void CGEEngine::SwitchCave(int cav) {
 	}
 }
 
-SYSTEM::SYSTEM(CGEEngine *vm) : SPRITE(vm, NULL), _vm(vm) {
+SYSTEM::SYSTEM(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	FunDel = HEROFUN0;
 	SetPal();
 	Tick();
@@ -841,7 +842,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			break;
 		case 'F':
 			if (KEYBOARD::Key[ALT]) {
-				SPRITE *m = Vga->ShowQ->Locate(17001);
+				Sprite *m = Vga->ShowQ->Locate(17001);
 				if (m) {
 					m->Step(1);
 					m->Time = 216; // 3s
@@ -905,8 +906,8 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 		case '7':
 		case '8':
 		case '9':
-			if (Sprite)
-				Sprite->Step(x - '0');
+			if (_sprite)
+				_sprite->Step(x - '0');
 			break;
 		case F10          :
 			if (Snail->Idle() && ! Hero->Flags.Hide)
@@ -957,7 +958,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			if (cav && Snail->Idle() && Hero->TracePtr < 0)
 				_vm->SwitchCave(cav);
 
-			if (!HorzLine->Flags.Hide) {
+			if (!_horzLine->Flags.Hide) {
 				if (y >= MAP_TOP && y < MAP_TOP + MAP_HIG) {
 					int8 x1, z1;
 					XZ(x, y).Split(x1, z1);
@@ -1079,7 +1080,7 @@ void CGEEngine::TakeName() {
 
 
 void CGEEngine::SwitchMapping() {
-	if (HorzLine->Flags.Hide) {
+	if (_horzLine->Flags.Hide) {
 		int i;
 		for (i = 0; i < MAP_ZCNT; i++) {
 			int j;
@@ -1089,29 +1090,29 @@ void CGEEngine::SwitchMapping() {
 			}
 		}
 	} else {
-		SPRITE *s;
+		Sprite *s;
 		for (s = Vga->ShowQ->First(); s; s = s->Next)
 			if (s->W == MAP_XGRID && s->H == MAP_ZGRID)
 				SNPOST_(SNKILL, -1, 0, s);
 	}
-	HorzLine->Flags.Hide = ! HorzLine->Flags.Hide;
+	_horzLine->Flags.Hide = !_horzLine->Flags.Hide;
 }
 
 
 static void KillSprite(void) {
-	Sprite->Flags.Kill = true;
-	Sprite->Flags.BDel = true;
-	SNPOST_(SNKILL, -1, 0, Sprite);
-	Sprite = NULL;
+	_sprite->Flags.Kill = true;
+	_sprite->Flags.BDel = true;
+	SNPOST_(SNKILL, -1, 0, _sprite);
+	_sprite = NULL;
 }
 
 
 static void PushSprite(void) {
-	SPRITE *spr = Sprite->Prev;
+	Sprite *spr = _sprite->Prev;
 	if (spr) {
-		Vga->ShowQ->Insert(Vga->ShowQ->Remove(Sprite), spr);
-		while (Sprite->Z > Sprite->Next->Z)
-			--Sprite->Z;
+		Vga->ShowQ->Insert(Vga->ShowQ->Remove(_sprite), spr);
+		while (_sprite->Z > _sprite->Next->Z)
+			--_sprite->Z;
 	} else
 		SNPOST_(SNSOUND, -1, 2, NULL);
 }
@@ -1119,24 +1120,24 @@ static void PushSprite(void) {
 
 static void PullSprite(void) {
 	bool ok = false;
-	SPRITE *spr = Sprite->Next;
+	Sprite *spr = _sprite->Next;
 	if (spr) {
 		spr = spr->Next;
 		if (spr)
 			ok = (!spr->Flags.Slav);
 	}
 	if (ok) {
-		Vga->ShowQ->Insert(Vga->ShowQ->Remove(Sprite), spr);
-		if (Sprite->Prev)
-			while (Sprite->Z < Sprite->Prev->Z)
-				++Sprite->Z;
+		Vga->ShowQ->Insert(Vga->ShowQ->Remove(_sprite), spr);
+		if (_sprite->Prev)
+			while (_sprite->Z < _sprite->Prev->Z)
+				++_sprite->Z;
 	} else
 		SNPOST_(SNSOUND, -1, 2, NULL);
 }
 
 
 static void NextStep(void) {
-	SNPOST_(SNSTEP, 0, 0, Sprite);
+	SNPOST_(SNSTEP, 0, 0, _sprite);
 }
 
 
@@ -1199,18 +1200,18 @@ static void SayDebug(void) {
 
 		// sprite queue size
 		uint16 n = 0;
-		SPRITE *spr;
+		Sprite *spr;
 		for (spr = Vga->ShowQ->First(); spr; spr = spr->Next) {
 			++ n;
-			if (spr == Sprite) {
+			if (spr == _sprite) {
 				*XSPR = ' ';
 				dwtom(n, SP_N, 10, 2);
-				dwtom(Sprite->X, SP_X, 10, 3);
-				dwtom(Sprite->Y, SP_Y, 10, 3);
-				dwtom(Sprite->Z, SP_Z, 10, 3);
-				dwtom(Sprite->W, SP_W, 10, 3);
-				dwtom(Sprite->H, SP_H, 10, 3);
-				dwtom(*(uint16 *)(&Sprite->Flags), SP_F, 16, 2);
+				dwtom(_sprite->X, SP_X, 10, 3);
+				dwtom(_sprite->Y, SP_Y, 10, 3);
+				dwtom(_sprite->Z, SP_Z, 10, 3);
+				dwtom(_sprite->W, SP_W, 10, 3);
+				dwtom(_sprite->H, SP_H, 10, 3);
+				dwtom(*(uint16 *)(&_sprite->Flags), SP_F, 16, 2);
 			}
 		}
 		dwtom(n, SP_S, 10, 2);
@@ -1249,14 +1250,14 @@ void CGEEngine::OptionTouch(int opt, uint16 mask) {
 
 
 #pragma argsused
-void SPRITE::Touch(uint16 mask, int x, int y) {
+void Sprite::Touch(uint16 mask, int x, int y) {
 	Sys->FunTouch();
 	if ((mask & ATTN) == 0) {
 		InfoLine->Update(Name());
 		if (mask & (R_DN | L_DN))
-			Sprite = this;
-		if (Ref / 10 == 12) {
-			_vm->OptionTouch(Ref % 10, mask);
+			_sprite = this;
+		if (_ref / 10 == 12) {
+			_vm->OptionTouch(_ref % 10, mask);
 			return;
 		}
 		if (Flags.Syst)
@@ -1266,7 +1267,7 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 				mask |= R_UP;
 			}
 		if ((mask & R_UP) && Snail->Idle()) {
-			SPRITE *ps = (PocLight->SeqPtr) ? Pocket[PocPtr] : NULL;
+			Sprite *ps = (_pocLight->SeqPtr) ? _pocket[PocPtr] : NULL;
 			if (ps) {
 				if (Flags.Kept || Hero->Distance(this) < MAX_DISTANCE) {
 					if (Works(ps)) {
@@ -1309,7 +1310,7 @@ void SPRITE::Touch(uint16 mask, int x, int y) {
 			if (Flags.Kept) {
 				int n;
 				for (n = 0; n < POCKET_NX; n++) {
-					if (Pocket[n] == this) {
+					if (_pocket[n] == this) {
 						SelectPocket(n);
 						break;
 					}
@@ -1388,9 +1389,9 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 	// make sprite of choosen type
 	switch (type) {
 	case 1 : { // AUTO
-		Sprite = new SPRITE(this, NULL);
-		if (Sprite) {
-			Sprite->Goto(col, row);
+		_sprite = new Sprite(this, NULL);
+		if (_sprite) {
+			_sprite->Goto(col, row);
 			//Sprite->Time = 1;//-----------$$$$$$$$$$$$$$$$
 		}
 		break;
@@ -1403,7 +1404,7 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 				error("2nd HERO [%s]", fname);
 			Hero = w;
 		}
-		Sprite = w;
+		_sprite = w;
 		break;
 	}
 	/*
@@ -1418,7 +1419,7 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 	   n->Cx = 3;
 	   n->Goto(col, row);
 	 }
-	     Sprite = n;
+	     _sprite = n;
 	     break;
 	     */
 	case 4 : { // LISSAJOUS
@@ -1436,37 +1437,37 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 		   *(long *) &l->Dx = 0; // movex * cnt
 		   l->Goto(col, row);
 		 }
-		     Sprite = l;
+		     _sprite = l;
 		     */
 		break;
 	}
 	case 5 : { // FLY
 		FLY *f = new FLY(this, NULL);
-		Sprite = f;
+		_sprite = f;
 		//////Sprite->Time = 1;//-----------$$$$$$$$$$$$$$
 		break;
 	}
 	default: { // DEAD
-		Sprite = new SPRITE(this, NULL);
-		if (Sprite)
-			Sprite->Goto(col, row);
+		_sprite = new Sprite(this, NULL);
+		if (_sprite)
+			_sprite->Goto(col, row);
 		break;
 	}
 	}
-	if (Sprite) {
-		Sprite->Ref = ref;
-		Sprite->Cave = cav;
-		Sprite->Z = pos;
-		Sprite->Flags.East = east;
-		Sprite->Flags.Port = port;
-		Sprite->Flags.Tran = tran;
-		Sprite->Flags.Kill = true;
-		Sprite->Flags.BDel = true;
-		//fnsplit(fname, NULL, NULL, Sprite->File, NULL);
+	if (_sprite) {
+		_sprite->_ref = ref;
+		_sprite->_cave = cav;
+		_sprite->Z = pos;
+		_sprite->Flags.East = east;
+		_sprite->Flags.Port = port;
+		_sprite->Flags.Tran = tran;
+		_sprite->Flags.Kill = true;
+		_sprite->Flags.BDel = true;
+		//fnsplit(fname, NULL, NULL, _sprite->File, NULL);
 		warning("LoadSprite: use of fnsplit");
 
-		Sprite->ShpCnt = shpcnt;
-		Vga->SpareQ->Append(Sprite);
+		_sprite->ShpCnt = shpcnt;
+		Vga->SpareQ->Append(_sprite);
 	}
 }
 
@@ -1521,10 +1522,10 @@ void CGEEngine::LoadScript(const char *fname) {
 
 		ok = true;    // no break: OK
 
-		Sprite = NULL;
+		_sprite = NULL;
 		LoadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
-		if (Sprite && BkG)
-			Sprite->Flags.Back = true;
+		if (_sprite && BkG)
+			_sprite->Flags.Back = true;
 	}
 	if (! ok)
 		error("%s [%s]", NumStr("Bad INI line ######", lcnt), fname);
@@ -1579,11 +1580,11 @@ void CGEEngine::RunGame() {
 	Text->Preload(100, 1000);
 	LoadHeroXY();
 
-	CavLight->Flags.Tran = true;
-	Vga->ShowQ->Append(CavLight);
-	CavLight->Flags.Hide = true;
+	_cavLight->Flags.Tran = true;
+	Vga->ShowQ->Append(_cavLight);
+	_cavLight->Flags.Hide = true;
 
-	static SEQ PocSeq[] = { { 0, 0, 0, 0, 20 },
+	static Seq pocSeq[] = { { 0, 0, 0, 0, 20 },
 		{ 1, 2, 0, 0,  4 },
 		{ 2, 3, 0, 0,  4 },
 		{ 3, 4, 0, 0, 16 },
@@ -1591,11 +1592,11 @@ void CGEEngine::RunGame() {
 		{ 1, 6, 0, 0,  4 },
 		{ 0, 1, 0, 0, 16 },
 	};
-	PocLight->SetSeq(PocSeq);
-	PocLight->Flags.Tran = true;
-	PocLight->Time = 1;
-	PocLight->Z = 120;
-	Vga->ShowQ->Append(PocLight);
+	_pocLight->SetSeq(pocSeq);
+	_pocLight->Flags.Tran = true;
+	_pocLight->Time = 1;
+	_pocLight->Z = 120;
+	Vga->ShowQ->Append(_pocLight);
 	SelectPocket(-1);
 
 	Vga->ShowQ->Append(Mouse);
@@ -1604,11 +1605,11 @@ void CGEEngine::RunGame() {
 	LoadUser();
 //    ~~~~~~~~~~~
 
-	if ((Sprite = Vga->SpareQ->Locate(121)) != NULL)
-		SNPOST_(SNSEQ, -1, Vga->Mono, Sprite);
-	if ((Sprite = Vga->SpareQ->Locate(122)) != NULL)
-		Sprite->Step(Music);
-	SNPOST_(SNSEQ, -1, Music, Sprite);
+	if ((_sprite = Vga->SpareQ->Locate(121)) != NULL)
+		SNPOST_(SNSEQ, -1, Vga->Mono, _sprite);
+	if ((_sprite = Vga->SpareQ->Locate(122)) != NULL)
+		_sprite->Step(Music);
+	SNPOST_(SNSEQ, -1, Music, _sprite);
 	if (! Music)
 		KillMIDI();
 
@@ -1616,12 +1617,12 @@ void CGEEngine::RunGame() {
 		uint8 *ptr = (uint8 *) &*Mini;
 		if (ptr != NULL) {
 			LoadSprite("MINI", -1, 0, MINI_X, MINI_Y);
-			ExpandSprite(MiniCave = Sprite);  // NULL is ok
-			if (MiniCave) {
-				MiniCave->Flags.Hide = true;
-				MiniCave->MoveShapes(ptr);
-				MiniShp[0] = new BITMAP(*MiniCave->Shp());
-				MiniShpList = MiniCave->SetShapeList(MiniShp);
+			ExpandSprite(_miniCave = _sprite);  // NULL is ok
+			if (_miniCave) {
+				_miniCave->Flags.Hide = true;
+				_miniCave->MoveShapes(ptr);
+				MiniShp[0] = new BITMAP(*_miniCave->Shp());
+				MiniShpList = _miniCave->SetShapeList(MiniShp);
 				PostMiniStep(-1);
 			}
 		}
@@ -1632,11 +1633,11 @@ void CGEEngine::RunGame() {
 		Hero->Goto(HeroXY[Now - 1].X, HeroXY[Now - 1].Y);
 		if (INI_FILE::Exist("00SHADOW.SPR")) {
 			LoadSprite("00SHADOW", -1, 0, Hero->X + 14, Hero->Y + 51);
-			if ((Shadow = Sprite) != NULL) {
-				Shadow->Ref = 2;
-				Shadow->Flags.Tran = true;
+			if ((_shadow = _sprite) != NULL) {
+				_shadow->_ref = 2;
+				_shadow->Flags.Tran = true;
 				Hero->Flags.Shad = true;
-				Vga->ShowQ->Insert(Vga->SpareQ->Remove(Shadow), Hero);
+				Vga->ShowQ->Insert(Vga->SpareQ->Remove(_shadow), Hero);
 			}
 		}
 	}
@@ -1649,9 +1650,9 @@ void CGEEngine::RunGame() {
 	DebugLine->Z = 126;
 	Vga->ShowQ->Insert(DebugLine);
 
-	HorzLine->Y = MAP_TOP - (MAP_TOP > 0);
-	HorzLine->Z = 126;
-	Vga->ShowQ->Insert(HorzLine);
+	_horzLine->Y = MAP_TOP - (MAP_TOP > 0);
+	_horzLine->Z = 126;
+	Vga->ShowQ->Insert(_horzLine);
 
 	Mouse->Busy = Vga->SpareQ->Locate(BUSY_REF);
 	if (Mouse->Busy)
@@ -1659,8 +1660,8 @@ void CGEEngine::RunGame() {
 
 	Startup = 0;
 
-	SNPOST(SNLEVEL, -1, OldLev, &CavLight);
-	CavLight->Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
+	SNPOST(SNLEVEL, -1, OldLev, &_cavLight);
+	_cavLight->Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
 	              CAVE_Y + ((Now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
 	CaveUp();
 
@@ -1674,14 +1675,14 @@ void CGEEngine::RunGame() {
 	}
 
 	KEYBOARD::SetClient(NULL);
-	Heart->Enable = false;
+	_heart->_enable = false;
 	SNPOST(SNCLEAR, -1, 0, NULL);
 	SNPOST_(SNCLEAR, -1, 0, NULL);
 	Mouse->Off();
 	Vga->ShowQ->Clear();
 	Vga->SpareQ->Clear();
 	Hero = NULL;
-	Shadow = NULL;
+	_shadow = NULL;
 }
 
 
@@ -1692,13 +1693,13 @@ void CGEEngine::Movie(const char *ext) {
 		ExpandSprite(Vga->SpareQ->Locate(999));
 		FeedSnail(Vga->ShowQ->Locate(999), TAKE);
 		Vga->ShowQ->Append(Mouse);
-		Heart->Enable = true;
+		_heart->_enable = true;
 		KEYBOARD::SetClient(Sys);
 		while (!Snail->Idle())
 			MainLoop();
 
 		KEYBOARD::SetClient(NULL);
-		Heart->Enable = false;
+		_heart->_enable = false;
 		SNPOST(SNCLEAR, -1, 0, NULL);
 		SNPOST_(SNCLEAR, -1, 0, NULL);
 		Vga->ShowQ->Clear();
@@ -1713,7 +1714,7 @@ bool CGEEngine::ShowTitle(const char *name) {
 	BITMAP::Pal = NULL;
 	bool usr_ok = false;
 
-	SPRITE D(this, LB);
+	Sprite D(this, LB);
 	D.Flags.Kill = true;
 	D.Flags.BDel = true;
 	D.Center();
@@ -1734,12 +1735,12 @@ bool CGEEngine::ShowTitle(const char *name) {
 		Vga->CopyPage(1, 2);
 		Vga->CopyPage(0, 1);
 		Vga->ShowQ->Append(Mouse);
-		Heart->Enable = true;
+		_heart->_enable = true;
 		Mouse->On();
 		for (SelectSound(); !Snail->Idle() || VMENU::Addr;)
 			MainLoop();
 		Mouse->Off();
-		Heart->Enable = false;
+		_heart->_enable = false;
 		Vga->ShowQ->Clear();
 		Vga->CopyPage(0, 2);
 		STARTUP::SoundOk = 2;
@@ -1771,10 +1772,10 @@ bool CGEEngine::ShowTitle(const char *name) {
 			Vga->CopyPage(0, 1);
 			Vga->ShowQ->Append(Mouse);
 			//Mouse.On();
-			Heart->Enable = true;
+			_heart->_enable = true;
 			for (TakeName(); GET_TEXT::Ptr;)
 				MainLoop();
-			Heart->Enable = false;
+			_heart->_enable = false;
 			if (KEYBOARD::Last() == Enter && *UsrFnam)
 				usr_ok = true;
 			if (usr_ok)
@@ -1831,11 +1832,12 @@ void CGEEngine::cge_main(void) {
 
 	if (!Mouse->Exist)
 		error("%s", Text->getText(NO_MOUSE_TEXT));
+
 	if (!SVG0FILE::Exist(SVG0NAME))
 		STARTUP::Mode = 2;
 
 	DebugLine->Flags.Hide = true;
-	HorzLine->Flags.Hide = true;
+	_horzLine->Flags.Hide = true;
 
 	//srand((uint16) Timer());
 	Sys = new SYSTEM(this);

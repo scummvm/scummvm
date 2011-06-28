@@ -68,7 +68,7 @@ int FLY::L = 20,
 
 
 FLY::FLY(CGEEngine *vm, BITMAP **shpl)
-	: SPRITE(vm, shpl), Tx(0), Ty(0), _vm(vm) {
+	: Sprite(vm, shpl), Tx(0), Ty(0), _vm(vm) {
 	Step(new_random(2));
 	Goto(L + new_random(R - L - W), T + new_random(B - T - H));
 }

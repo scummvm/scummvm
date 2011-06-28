@@ -44,7 +44,7 @@ int    Sinus(long x);
 uint8 *Glass(DAC *pal, uint8 r, uint8 g, uint8 b);
 uint8 *Mark(DAC *pal);
 
-class FLY : public SPRITE {
+class FLY : public Sprite {
 	static int L, T, R, B;
 public:
 	int Tx, Ty;

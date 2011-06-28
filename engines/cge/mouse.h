@@ -48,7 +48,7 @@ extern TALK *Talk;
 struct EVENT {
 	uint16 Msk;
 	uint16 X, Y;
-	SPRITE *Ptr;
+	Sprite *Ptr;
 };
 
 extern EVENT  Evt[EVT_MAX];
@@ -56,24 +56,24 @@ extern uint16 EvtHead, EvtTail;
 typedef void (MOUSE_FUN)(void);
 
 
-class MOUSE : public SPRITE {
+class MOUSE : public Sprite {
 	static MOUSE_FUN *OldMouseFun;
 	static MOUSE_FUN NewMouseFun;
 	static uint16 OldMouseMask;
-	SPRITE *Hold;
+	Sprite *Hold;
 	int hx, hy;
 	//void SetFun (void);
 	//void ResetFun (void);
 public:
 	bool Exist;
 	int Buttons;
-	SPRITE *Busy;
-	//SPRITE * Touched;
+	Sprite *Busy;
+	//Sprite *Touched;
 	MOUSE(CGEEngine *vm, BITMAP **shpl = MC);
 	~MOUSE();
 	void On();
 	void Off();
-	static void ClrEvt(SPRITE *spr = NULL);
+	static void ClrEvt(Sprite *spr = NULL);
 	void Tick();
 private:
 	CGEEngine *_vm;

@@ -68,7 +68,7 @@ public:
 enum    TBOX_STYLE  { PURE, RECT, ROUND };
 
 
-class TALK : public SPRITE {
+class TALK : public Sprite {
 protected:
 	TBOX_STYLE Mode;
 	BITMAP *TS[2];

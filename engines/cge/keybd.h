@@ -46,14 +46,14 @@ public:
 	static void NewKeyboard(...);
 	static uint16 Code[0x60];
 	static uint16 Current;
-	static SPRITE *Client;
+	static Sprite *Client;
 	static uint8 Key[0x60];
 	static uint16 Last(void) {
 		uint16 cur = Current;
 		Current = 0;
 		return cur;
 	}
-	static SPRITE *SetClient(SPRITE *spr);
+	static Sprite *SetClient(Sprite *spr);
 	KEYBOARD(void);
 	~KEYBOARD(void);
 };

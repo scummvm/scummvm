@@ -39,8 +39,8 @@ MOUSE_FUN *MOUSE::OldMouseFun  = NULL;
 uint16     MOUSE::OldMouseMask = 0;
 
 
-MOUSE::MOUSE(CGEEngine *vm, BITMAP **shpl) : SPRITE(vm, shpl), Busy(NULL), Hold(NULL), hx(0), _vm(vm) {
-	static SEQ ms[] = {
+MOUSE::MOUSE(CGEEngine *vm, BITMAP **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(NULL), hx(0), _vm(vm) {
+	static Seq ms[] = {
 		{ 0, 0, 0, 0, 1 },
 		{ 1, 1, 0, 0, 1 }
 	};
@@ -58,6 +58,7 @@ MOUSE::MOUSE(CGEEngine *vm, BITMAP **shpl) : SPRITE(vm, shpl), Busy(NULL), Hold(
 	Z = 127;
 	Step(1);
 	*/
+	Exist = true;
 	warning("STUB: MOUSE::MOUSE");
 }
 
@@ -131,7 +132,7 @@ void MOUSE::Off(void) {
 }
 
 
-void MOUSE::ClrEvt(SPRITE *spr) {
+void MOUSE::ClrEvt(Sprite *spr) {
 	if (spr) {
 		uint16 e;
 		for (e = EvtTail; e != EvtHead; e = (e + 1) % EVT_MAX)

@@ -136,8 +136,6 @@ char *ForceExt(char *buf, const char *nam, const char *ext) {
 	return buf;
 }
 
-
-#define     BUF ((uint8 *) buf)
 static  unsigned    Seed = 1;
 
 unsigned FastRand(void) {
@@ -237,7 +235,10 @@ uint16 IOHAND::Read(void *buf, uint16 len) {
 		return 0;
 
 	uint16 bytesRead = _file->read(buf, len);
-	if (Crypt) Seed = Crypt(buf, len, Seed);
+	if (!bytesRead)
+		error("Read %s - %d bytes", _file->getName(), len);
+	if (Crypt)
+		Seed = Crypt(buf, len, Seed);
 	return bytesRead;
 }
 
