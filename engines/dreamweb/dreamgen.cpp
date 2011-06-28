@@ -3118,110 +3118,6 @@ void DreamGenContext::widedoor() {
 	dodoor();
 }
 
-void DreamGenContext::dodoor() {
-	STACK_CHECK;
-	al = data.byte(kRyanx);
-	ah = data.byte(kRyany);
-	cl = es.byte(bx+10);
-	ch = es.byte(bx+11);
-	_cmp(al, cl);
-	if (!flags.c())
-		goto rtofdoor;
-	_sub(al, cl);
-	_cmp(al, data.byte(kDoorcheck1));
-	if (!flags.c())
-		goto upordown;
-	goto shutdoor;
-rtofdoor:
-	_sub(al, cl);
-	_cmp(al, data.byte(kDoorcheck2));
-	if (!flags.c())
-		goto shutdoor;
-upordown:
-	_cmp(ah, ch);
-	if (!flags.c())
-		goto botofdoor;
-	_sub(ah, ch);
-	_cmp(ah, data.byte(kDoorcheck3));
-	if (flags.c())
-		goto shutdoor;
-	goto opendoor;
-botofdoor:
-	_sub(ah, ch);
-	_cmp(ah, data.byte(kDoorcheck4));
-	if (!flags.c())
-		goto shutdoor;
-opendoor:
-	cl = es.byte(bx+19);
-	_cmp(data.byte(kThroughdoor), 1);
-	if (!flags.z())
-		goto notthrough;
-	_cmp(cl, 0);
-	if (!flags.z())
-		goto notthrough;
-	cl = 6;
-notthrough:
-	_inc(cl);
-	_cmp(cl, 1);
-	if (!flags.z())
-		goto notdoorsound2;
-	al = 0;
-	_cmp(data.byte(kReallocation), 5);
-	if (!flags.z())
-		goto nothoteldoor2;
-	al = 13;
-nothoteldoor2:
-	playchannel1();
-notdoorsound2:
-	ch = 0;
-	push(di);
-	_add(di, cx);
-	al = ds.byte(di+18);
-	_cmp(al, 255);
-	if (!flags.z())
-		goto atlast1;
-	_dec(di);
-	_dec(cl);
-atlast1:
-	es.byte(bx+19) = cl;
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	data.byte(kThroughdoor) = 1;
-	return;
-shutdoor:
-	cl = es.byte(bx+19);
-	_cmp(cl, 5);
-	if (!flags.z())
-		goto notdoorsound1;
-	al = 1;
-	_cmp(data.byte(kReallocation), 5);
-	if (!flags.z())
-		goto nothoteldoor1;
-	al = 13;
-nothoteldoor1:
-	playchannel1();
-notdoorsound1:
-	_cmp(cl, 0);
-	if (flags.z())
-		goto atlast2;
-	_dec(cl);
-	es.byte(bx+19) = cl;
-atlast2:
-	ch = 0;
-	push(di);
-	_add(di, cx);
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	_cmp(cl, 5);
-	if (!flags.z())
-		return /* (notnearly) */;
-	data.byte(kThroughdoor) = 0;
-}
-
 void DreamGenContext::lockeddoorway() {
 	STACK_CHECK;
 	al = data.byte(kRyanx);
@@ -21798,7 +21694,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_constant: constant(); break;
 		case addr_doorway: doorway(); break;
 		case addr_widedoor: widedoor(); break;
-		case addr_dodoor: dodoor(); break;
 		case addr_lockeddoorway: lockeddoorway(); break;
 		case addr_updatepeople: updatepeople(); break;
 		case addr_getreelframeax: getreelframeax(); break;

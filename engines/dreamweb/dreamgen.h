@@ -647,7 +647,6 @@ public:
 	static const uint16 addr_getreelframeax = 0xc19c;
 	static const uint16 addr_updatepeople = 0xc198;
 	static const uint16 addr_lockeddoorway = 0xc194;
-	static const uint16 addr_dodoor = 0xc190;
 	static const uint16 addr_widedoor = 0xc18c;
 	static const uint16 addr_doorway = 0xc188;
 	static const uint16 addr_constant = 0xc184;
@@ -1939,7 +1938,7 @@ public:
 	void addalong();
 	//void width160();
 	void incryanpage();
-	void dodoor();
+	//void dodoor();
 	void greyscalesum();
 	void buttoneight();
 	void opensarters();

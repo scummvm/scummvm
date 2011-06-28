@@ -29,6 +29,8 @@
 	void backobject(Sprite* sprite);
 	void constant(Sprite* sprite, ObjData* objData);
 	void steady(Sprite* sprite, ObjData* objData);
+	void dodoor();
+	void dodoor(Sprite* sprite, ObjData* objData);
 	void modifychar();
 	void lockmon();
 

@@ -847,6 +847,66 @@ void DreamGenContext::constant(Sprite* sprite, ObjData* objData) {
 	sprite->b15 = b18;
 }
 
+
+void DreamGenContext::dodoor() {
+	Sprite *sprite = (Sprite*)es.ptr(bx, sizeof(Sprite));
+	ObjData *objData = (ObjData*)ds.ptr(di, 0);
+	dodoor(sprite, objData);
+}
+
+void DreamGenContext::dodoor(Sprite* sprite, ObjData* objData) {
+	uint8 ryanx = data.byte(kRyanx);
+	uint8 ryany = data.byte(kRyany);
+	int8 deltax = ryanx - sprite->x;
+	int8 deltay = ryany - sprite->y;
+	if (ryanx < sprite->x) {
+		if (deltax < (int8)data.byte(kDoorcheck1))
+			goto shutdoor;
+	} else {
+		if (deltax >= data.byte(kDoorcheck2))
+			goto shutdoor;
+	}
+	if (ryany < sprite->y) {
+		if (deltay < (int8)data.byte(kDoorcheck3))
+			goto shutdoor;
+	} else {
+		if (deltay >= data.byte(kDoorcheck4))
+			goto shutdoor;
+	}
+//opendoor:
+	if ((data.byte(kThroughdoor) == 1) && (sprite->frame == 0))
+		sprite->frame = 6;
+
+	++sprite->frame;
+	if (sprite->frame == 1) { //doorsound2
+		if (data.byte(kReallocation) == 5) //hoteldoor2
+			al = 13;
+		else
+			al = 0;
+		playchannel1();
+	}
+	if (objData->b18[sprite->frame] == 255) {
+		--sprite->frame;
+	}
+	sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	data.byte(kThroughdoor) = 1;
+	return;
+shutdoor:
+	if (sprite->frame == 5) { //doorsound1;
+		if (data.byte(kReallocation) == 5) //hoteldoor1
+			al = 13;
+		else
+			al = 1;
+		playchannel1();
+	}
+	if (sprite->frame != 0) {
+		--sprite->frame;
+	}
+	sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	if (sprite->frame == 5) //nearly
+		data.byte(kThroughdoor) = 0;
+}
+
 void DreamGenContext::steady(Sprite* sprite, ObjData* objData) {
 	uint8 b18 = objData->b18[0];
 	objData->b17 = b18;
