@@ -46,7 +46,7 @@ public:
 		OUT_OF_SYNC
 	};
 
-	InputPersistenceBlock(const void *data, uint dataLength);
+	InputPersistenceBlock(const void *data, uint dataLength, int version);
 	virtual ~InputPersistenceBlock();
 
 	void read(int16 &value);
@@ -64,6 +64,8 @@ public:
 		return _errorState;
 	}
 
+	int getVersion() const { return _version; }
+
 private:
 	bool checkMarker(byte marker);
 	bool checkBlockSize(int size);
@@ -72,6 +74,8 @@ private:
 	Common::Array<byte> _data;
 	Common::Array<byte>::const_iterator _iter;
 	ErrorState _errorState;
+
+	int _version;
 };
 
 } // End of namespace Sword25

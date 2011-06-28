@@ -33,6 +33,8 @@
 #include "sword25/sfx/soundengine.h"
 #include "sword25/package/packagemanager.h"
 #include "sword25/kernel/resource.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
 #include "audio/decoders/vorbis.h"
 
@@ -202,17 +204,29 @@ bool SoundEngine::playSound(const Common::String &fileName, SOUND_TYPES type, fl
 	return true;
 }
 
-uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
+uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer, uint handleId) {
 	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
 #ifdef USE_VORBIS
 	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
 #endif
 	uint id;
-	SndHandle *handle = getHandle(&id);
+	SndHandle *handle;
+
+	if (handleId == 0x1337)
+		handle = getHandle(&id);
+	else
+		handle = &_handles[handleId];
+
+	handle->fileName = fileName;
+	handle->sndType = type;
+	handle->volume = volume;
+	handle->pan = pan;
+	handle->loop = loop;
+	handle->loopStart = loopStart;
+	handle->loopEnd = loopEnd;
+	handle->layer = layer;
 
 	debugC(1, kDebugSound, "SoundEngine::playSoundEx(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
-
-	handle->type = kAllocatedHandle;
 
 #ifdef USE_VORBIS
 	_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
@@ -311,16 +325,61 @@ bool SoundEngine::canLoadResource(const Common::String &fileName) {
 }
 
 
-bool SoundEngine::persist(OutputPersistenceBlock &writer) {
-	warning("STUB: SoundEngine::persist()");
+	bool SoundEngine::persist(OutputPersistenceBlock &writer) {
+	writer.write(_maxHandleId);
+
+	for (uint i = 0; i < SOUND_HANDLES; i++) {
+		writer.write(_handles[i].id);
+
+		writer.writeString(_handles[i].fileName);
+		writer.write((int)_handles[i].sndType);
+		writer.write(_handles[i].volume);
+		writer.write(_handles[i].pan);
+		writer.write(_handles[i].loop);
+		writer.write(_handles[i].loopStart);
+		writer.write(_handles[i].loopEnd);
+		writer.write(_handles[i].layer);
+	}
 
 	return true;
 }
 
 bool SoundEngine::unpersist(InputPersistenceBlock &reader) {
-	warning("STUB: SoundEngine::unpersist()");
+	_mixer->stopAll();
 
-	return true;
+	if (reader.getVersion() < 2)
+		return true;
+
+	reader.read(_maxHandleId);
+
+	for (uint i = 0; i < SOUND_HANDLES; i++) {
+		reader.read(_handles[i].id);
+
+		Common::String fileName;
+		int sndType;
+		float volume;
+		float pan;
+		bool loop;
+		int loopStart;
+		int loopEnd;
+		uint layer;
+		
+		reader.readString(fileName);
+		reader.read(sndType);
+		reader.read(volume);
+		reader.read(pan);
+		reader.read(loop);
+		reader.read(loopStart);
+		reader.read(loopEnd);
+		reader.read(layer);
+
+		if (reader.isGood()) {
+			playSoundEx(fileName, (SOUND_TYPES)sndType, volume, pan, loop, loopStart, loopEnd, layer, i);
+		} else
+			return false;
+	}
+
+	return reader.isGood();
 }
 
 
