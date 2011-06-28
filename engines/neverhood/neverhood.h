@@ -46,7 +46,7 @@ struct NeverhoodGameDescription;
 class ResourceMan;
 
 struct GameState {
-	int field1;
+	int sceneNum;
 };
 
 class NeverhoodEngine : public ::Engine {
@@ -110,6 +110,8 @@ public:
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
 #endif
+
+	GameState& gameState() { return _gameState; }
 
 public:
 

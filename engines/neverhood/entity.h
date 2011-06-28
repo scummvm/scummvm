@@ -52,6 +52,7 @@ public:
 		if (_updateHandlerCb)
 			(this->*_updateHandlerCb)();
 	}
+	bool hasMessageHandler() const { return _messageHandlerCb != NULL; } 
 	uint32 sendMessage(int messageNum, const MessageParam &param, Entity *sender) {
 		return _messageHandlerCb ? (this->*_messageHandlerCb)(messageNum, param, sender) : 0;
 	}

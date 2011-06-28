@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	gamemodule.o \
 	graphics.o \
 	module.o \
+	module1500.o \
 	neverhood.o \
 	palette.o \
 	resource.o \
