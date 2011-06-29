@@ -25,7 +25,7 @@
 
 #include "lastexpress/shared.h"
 
-#include "lastexpress/game/sound.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 

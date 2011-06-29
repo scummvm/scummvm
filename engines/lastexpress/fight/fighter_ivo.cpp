@@ -24,9 +24,8 @@
 
 #include "lastexpress/data/sequence.h"
 
-#include "lastexpress/game/sound.h"
-
 #include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"

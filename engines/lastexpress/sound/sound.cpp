@@ -20,7 +20,7 @@
  *
  */
 
-#include "lastexpress/game/sound.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
