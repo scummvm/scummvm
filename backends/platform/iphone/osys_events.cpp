@@ -335,9 +335,9 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			const char *dialogMsg;
 			if (_mouseClickAndDragEnabled) {
 				_touchpadModeEnabled = false;
-				dialogMsg = "Mouse-click-and-drag mode enabled.";
+				dialogMsg = _("Mouse-click-and-drag mode enabled.");
 			} else
-				dialogMsg = "Mouse-click-and-drag mode disabled.";
+				dialogMsg = _("Mouse-click-and-drag mode disabled.");
 			GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 			dialog.runModal();
 			return false;

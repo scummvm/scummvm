@@ -198,7 +198,7 @@ bool ButtonPad::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &
 	uint32 curButtonState = PSP_ALL_BUTTONS & pad.Buttons;	// we only care about these
 
 	if (_combosEnabled)
-		modifyButtonsForCombos(pad);						// change buttons for combos	
+		modifyButtonsForCombos(pad);						// change buttons for combos
 
 	return getEventFromButtonState(event, pspEvent, curButtonState);
 }
@@ -460,7 +460,7 @@ bool InputHandler::handlePspEvent(Common::Event &event, PspEvent &pspEvent) {
 	/*case PSP_EVENT_CHANGE_SPEED:
 		handleSpeedChange(pspEvent.data);
 		break;*/
-	case PSP_EVENT_IMAGE_VIEWER:	
+	case PSP_EVENT_IMAGE_VIEWER:
 		_imageViewer->handleEvent(pspEvent.data);
 		break;
 	case PSP_EVENT_IMAGE_VIEWER_SET_BUTTONS:
@@ -530,7 +530,7 @@ void InputHandler::setImageViewerMode(bool active) {
 		_nub.init();
 		_buttonPad.enableCombos(true);	// re-enable combos
 		_buttonPad.initButtons();
-	} 	
+	}
 }
 
 void InputHandler::setButtonsForImageViewer() {
@@ -538,32 +538,32 @@ void InputHandler::setButtonsForImageViewer() {
 
 	// Dpad
 	_buttonPad.clearButtons();
-	_buttonPad.getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_ZOOM_IN, 
+	_buttonPad.getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_ZOOM_IN,
 		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_ZOOM_OUT, 
+	_buttonPad.getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_ZOOM_OUT,
 		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_LAST_IMAGE, 
+	_buttonPad.getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_LAST_IMAGE,
 		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_NEXT_IMAGE, 
-		PSP_EVENT_NONE, false);	
-	_buttonPad.getButton(ButtonPad::BTN_LTRIGGER, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, 
+	_buttonPad.getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_NEXT_IMAGE,
 		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_RTRIGGER, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, 
+	_buttonPad.getButton(ButtonPad::BTN_LTRIGGER, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE,
 		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_START, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, 
+	_buttonPad.getButton(ButtonPad::BTN_RTRIGGER, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE,
 		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_SELECT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, 
+	_buttonPad.getButton(ButtonPad::BTN_START, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE,
+		PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_SELECT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE,
 		PSP_EVENT_NONE, false);
 
 	//Nub
 	_nub.getPad().clearButtons();
-	_nub.getPad().getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_UP, 
+	_nub.getPad().getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_UP,
 		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
-	_nub.getPad().getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_DOWN, 
+	_nub.getPad().getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_DOWN,
 		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
-	_nub.getPad().getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_LEFT, 
+	_nub.getPad().getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_LEFT,
 		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
-	_nub.getPad().getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_RIGHT, 
+	_nub.getPad().getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_RIGHT,
 		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
 }
 

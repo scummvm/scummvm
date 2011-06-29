@@ -23,15 +23,15 @@
 #ifndef BACKENDS_GRAPHICS_GPH_H
 #define BACKENDS_GRAPHICS_GPH_H
 
-#include "backends/graphics/sdl/sdl-graphics.h"
-#include "graphics/scaler/aspect.h"	// for aspect2Real 
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+#include "graphics/scaler/aspect.h"	// for aspect2Real
 #include "graphics/scaler/downscaler.h"
 
 enum {
 	GFX_HALF = 12
 };
 
-class GPHGraphicsManager : public SdlGraphicsManager {
+class GPHGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	GPHGraphicsManager(SdlEventSource *boss);
 
@@ -40,7 +40,7 @@ public:
 	bool getFeatureState(OSystem::Feature f);
 	int getDefaultGraphicsMode() const;
 
-	void initSize(uint w, uint h);
+	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	bool setGraphicsMode(const char *name);
 	bool setGraphicsMode(int mode);
@@ -53,8 +53,8 @@ public:
 	void undrawMouse();
 	virtual void warpMouse(int x, int y);
 
-	SdlGraphicsManager::MousePos *getMouseCurState();
-	SdlGraphicsManager::VideoState *getVideoMode();
+	SurfaceSdlGraphicsManager::MousePos *getMouseCurState();
+	SurfaceSdlGraphicsManager::VideoState *getVideoMode();
 
 	virtual void adjustMouseEvent(const Common::Event &event);
 };

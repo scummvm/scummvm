@@ -26,15 +26,13 @@
 
 #include "backends/graphics/openpandora/op-graphics.h"
 #include "backends/events/openpandora/op-events.h"
-#include "backends/platform/openpandora/op-sdl.h"
-#include "common/mutex.h"
-#include "common/util.h"
-
+//#include "backends/platform/openpandora/op-sdl.h"
 #include "graphics/scaler/aspect.h"
-#include "graphics/surface.h"
+#include "common/mutex.h"
+#include "common/textconsole.h"
 
-OPGraphicsManager::OPGraphicsManager(SdlEventSource *boss)
-	: SdlGraphicsManager(boss) {
+OPGraphicsManager::OPGraphicsManager(SdlEventSource *sdlEventSource)
+	: SurfaceSdlGraphicsManager(sdlEventSource) {
 }
 
 bool OPGraphicsManager::loadGFXMode() {
@@ -49,7 +47,7 @@ bool OPGraphicsManager::loadGFXMode() {
 	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
 		_videoMode.aspectRatioCorrection = false;
 
-	return SdlGraphicsManager::loadGFXMode();
+	return SurfaceSdlGraphicsManager::loadGFXMode();
 }
 
 #endif

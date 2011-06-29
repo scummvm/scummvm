@@ -228,7 +228,7 @@ static int g_iofile (lua_State *L, int f, const char *mode) {
     }
     lua_rawseti(L, LUA_ENVIRONINDEX, f);
   }
-  // return current value 
+  // return current value
   lua_rawgeti(L, LUA_ENVIRONINDEX, f);
   return 1;
 }
@@ -315,7 +315,7 @@ static int read_line (lua_State *L, Sword25::Sword25FileProxy *f) {
   for (;;) {
     size_t l;
     char *p = luaL_prepbuffer(&b);
-    if (fgets(p, LUAL_BUFFERSIZE, f) == NULL) {  // eof? 
+    if (fgets(p, LUAL_BUFFERSIZE, f) == NULL) {  // eof?
       luaL_pushresult(&b);  // close buffer
       return (lua_objlen(L, -1) > 0);  // check whether read something
     }
@@ -332,19 +332,19 @@ static int read_line (lua_State *L, Sword25::Sword25FileProxy *f) {
 
 
 static int read_chars (lua_State *L, Sword25::Sword25FileProxy *f, size_t n) {
-  size_t rlen;  // how much to read 
-  size_t nr;  // number of chars actually read 
+  size_t rlen;  // how much to read
+  size_t nr;  // number of chars actually read
   luaL_Buffer b;
   luaL_buffinit(L, &b);
-  rlen = LUAL_BUFFERSIZE;  // try to read that much each time 
+  rlen = LUAL_BUFFERSIZE;  // try to read that much each time
   do {
     char *p = luaL_prepbuffer(&b);
-    if (rlen > n) rlen = n;  // cannot read more than asked 
+    if (rlen > n) rlen = n;  // cannot read more than asked
     nr = fread(p, sizeof(char), rlen, f);
     luaL_addsize(&b, nr);
-    n -= nr;  // still have to read `n' chars 
-  } while (n > 0 && nr == rlen);  // until end of count or eof 
-  luaL_pushresult(&b);  // close buffer 
+    n -= nr;  // still have to read `n' chars
+  } while (n > 0 && nr == rlen);  // until end of count or eof
+  luaL_pushresult(&b);  // close buffer
   return (n == 0 || lua_objlen(L, -1) > 0);
 }
 
@@ -354,11 +354,11 @@ static int g_read (lua_State *L, Sword25::Sword25FileProxy *f, int first) {
   int success;
   int n;
   clearerr(f);
-  if (nargs == 0) {  // no arguments? 
+  if (nargs == 0) {  // no arguments?
     success = read_line(L, f);
-    n = first+1;  // to return 1 result 
+    n = first+1;  // to return 1 result
   }
-  else {  // ensure stack space for all results and for auxlib's buffer 
+  else {  // ensure stack space for all results and for auxlib's buffer
     luaL_checkstack(L, nargs+LUA_MINSTACK, "too many arguments");
     success = 1;
     for (n = first; nargs-- && success; n++) {
@@ -370,15 +370,15 @@ static int g_read (lua_State *L, Sword25::Sword25FileProxy *f, int first) {
         const char *p = lua_tostring(L, n);
         luaL_argcheck(L, p && p[0] == '*', n, "invalid option");
         switch (p[1]) {
-          case 'n':  // number 
+          case 'n':  // number
             success = read_number(L, f);
             break;
-          case 'l':  // line 
+          case 'l':  // line
             success = read_line(L, f);
             break;
-          case 'a':  // file 
-            read_chars(L, f, ~((size_t)0));  // read MAX_SIZE_T chars 
-            success = 1; // always success 
+          case 'a':  // file
+            read_chars(L, f, ~((size_t)0));  // read MAX_SIZE_T chars
+            success = 1; // always success
             break;
           default:
             return luaL_argerror(L, n, "invalid format");
@@ -389,8 +389,8 @@ static int g_read (lua_State *L, Sword25::Sword25FileProxy *f, int first) {
   if (ferror(f))
     return pushresult(L, 0, NULL);
   if (!success) {
-    lua_pop(L, 1);  // remove last result 
-    lua_pushnil(L);  // push nil instead 
+    lua_pop(L, 1);  // remove last result
+    lua_pushnil(L);  // push nil instead
   }
   return n - first;
 }
@@ -419,8 +419,8 @@ static int io_readline (lua_State *L) {
   if (ferror(f))
     return luaL_error(L, "%s", "LUA I/O error descriptions have been removed in ScummVM");
   if (sucess) return 1;
-  else {  // EOF 
-    if (lua_toboolean(L, lua_upvalueindex(2))) {  // generator created file? 
+  else {  // EOF
+    if (lua_toboolean(L, lua_upvalueindex(2))) {  // generator created file?
       lua_settop(L, 0);
       lua_pushvalue(L, lua_upvalueindex(1));
       aux_close(L);  // close it

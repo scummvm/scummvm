@@ -107,14 +107,17 @@ bool MacResManager::open(String filename) {
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
 	String fullPath = ConfMan.get("path") + "/" + filename + "/..namedfork/rsrc";
-	SeekableReadStream *macResForkRawStream = FSNode(fullPath).createReadStream();;
+	FSNode resFsNode = FSNode(fullPath);
+	if (resFsNode.exists()) {
+		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();;
 
-	if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
-		_baseFileName = filename;
-		return true;
+		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
+			_baseFileName = filename;
+			return true;
+		}
+
+		delete macResForkRawStream;
 	}
-
-	delete macResForkRawStream;
 #endif
 
 	File *file = new File();
@@ -167,14 +170,17 @@ bool MacResManager::open(FSNode path, String filename) {
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer
 	String fullPath = path.getPath() + "/" + filename + "/..namedfork/rsrc";
-	SeekableReadStream *macResForkRawStream = FSNode(fullPath).createReadStream();
+	FSNode resFsNode = FSNode(fullPath);
+	if (resFsNode.exists()) {
+		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();;
 
-	if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
-		_baseFileName = filename;
-		return true;
+		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
+			_baseFileName = filename;
+			return true;
+		}
+
+		delete macResForkRawStream;
 	}
-
-	delete macResForkRawStream;
 #endif
 
 	// First, let's try to see if the Mac converted name exists

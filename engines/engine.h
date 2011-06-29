@@ -82,6 +82,13 @@ private:
 	 */
 	int32 _engineStartTime;
 
+	/**
+	 * Save slot selected via global main menu.
+	 * This slot will be loaded after main menu execution (not from inside
+	 * the menu loop, to avoid bugs like #2822778).
+	 */
+	int _saveSlotToLoad;
+
 public:
 
 
@@ -186,6 +193,15 @@ public:
 	virtual Common::Error loadGameState(int slot);
 
 	/**
+	 * Sets the game slot for a savegame to be loaded after global
+	 * main menu execution. This is to avoid loading a savegame from
+	 * inside the menu loop which causes bugs like #2822778.
+	 *
+	 * @param slot	the slot from which a savestate should be loaded.
+	 */
+	void setGameToLoadSlot(int slot);
+
+	/**
 	 * Indicates whether a game state can be loaded.
 	 */
 	virtual bool canLoadGameStateCurrently();
@@ -250,6 +266,13 @@ public:
 	 * Run the Global Main Menu Dialog
 	 */
 	void openMainMenuDialog();
+
+	/**
+	 * Display a warning to the user that the game is not fully supported.
+	 *
+	 * @return true if the user chose to start anyway, false otherwise
+	 */
+	static bool warnUserAboutUnsupportedGame();
 
 	/**
 	 * Get the total play time.

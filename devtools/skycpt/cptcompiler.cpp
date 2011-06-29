@@ -503,7 +503,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 		fwrite(&tmp, 2, 1, debOutf);
 		tmp = 0;
 		fwrite(&tmp, 2, 1, debOutf);
-		
+
 		printf("DEBUG Output File Position: 0x%08lX\r\n", ftell(debOutf));
 		printf("reset destination: %ld\n", ftell(debOutf));
 		for (int cnt = 0; cnt < 6; cnt++) {

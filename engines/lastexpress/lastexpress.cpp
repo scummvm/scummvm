@@ -26,10 +26,13 @@
 #include "lastexpress/data/font.h"
 
 #include "lastexpress/game/logic.h"
-#include "lastexpress/game/menu.h"
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
-#include "lastexpress/game/sound.h"
+
+#include "lastexpress/menu/menu.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
@@ -37,6 +40,8 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/error.h"
+#include "common/fs.h"
 
 #include "engines/util.h"
 
@@ -148,8 +153,8 @@ Common::Error LastExpressEngine::run() {
 	_menu->show(false, kSavegameTypeIndex, 0);
 
 	while (!shouldQuit()) {
-		_soundMan->updateQueue();
-		_soundMan->updateSubtitles();
+		_soundMan->getQueue()->updateQueue();
+		_soundMan->getQueue()->updateSubtitles();
 
 		if (handleEvents())
 			continue;
@@ -180,7 +185,7 @@ void LastExpressEngine::pollEvents() {
 bool LastExpressEngine::handleEvents() {
 	// Make sure all the subsystems have been initialized
 	if (!_debugger || !_graphicsMan)
-		error("LastExpressEngine::handleEvents: called before the required subsystems have been initialized!");
+		error("[LastExpressEngine::handleEvents] Called before the required subsystems have been initialized");
 
 	// Execute stored commands
 	if (_debugger->hasCommand()) {
@@ -277,7 +282,7 @@ void LastExpressEngine::soundTimer(void *refCon) {
 void LastExpressEngine::handleSoundTimer() {
 	if (_frameCounter & 1)
 		if (_soundMan)
-			_soundMan->handleTimer();
+			_soundMan->getQueue()->handleTimer();
 
 	_frameCounter++;
 }
@@ -286,22 +291,34 @@ void LastExpressEngine::handleSoundTimer() {
 /// Event Handling
 ///////////////////////////////////////////////////////////////////////////////////
 void LastExpressEngine::backupEventHandlers() {
+	if (_eventMouseBackup != NULL || _eventTickBackup != NULL)
+		error("[LastExpressEngine::backupEventHandlers] backup event handlers are already set");
+
 	_eventMouseBackup = _eventMouse;
 	_eventTickBackup = _eventTick;
 }
 
 void LastExpressEngine::restoreEventHandlers() {
 	if (_eventMouseBackup == NULL || _eventTickBackup == NULL)
-		error("LastExpressEngine::restoreEventHandlers: restore called before backing up the event handlers!");
+		error("[LastExpressEngine::restoreEventHandlers] restore called before backing up the event handlers");
+
+	// Cleanup previous event handlers
+	SAFE_DELETE(_eventMouse);
+	SAFE_DELETE(_eventTick);
 
 	_eventMouse = _eventMouseBackup;
 	_eventTick = _eventTickBackup;
+
+	_eventMouseBackup = NULL;
+	_eventTickBackup = NULL;
 }
 
 void LastExpressEngine::setEventHandlers(EventHandler::EventFunction *mouse, EventHandler::EventFunction *tick) {
-	// Cleanup previous event handlers
-	delete _eventMouse;
-	delete _eventTick;
+	if (_eventMouse != _eventMouseBackup)
+		SAFE_DELETE(_eventMouse);
+
+	if (_eventTick != _eventTickBackup)
+		SAFE_DELETE(_eventTick);
 
 	_eventMouse = mouse;
 	_eventTick = tick;

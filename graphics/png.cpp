@@ -100,7 +100,7 @@ enum PNGFilters {
 	kFilterPaeth   = 4
 };
 
-PNG::PNG() : _compressedBuffer(0), _compressedBufferSize(0), 
+PNG::PNG() : _compressedBuffer(0), _compressedBufferSize(0),
 			_unfilteredSurface(0), _transparentColorSpecified(false) {
 }
 
@@ -116,75 +116,76 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 	output->create(_unfilteredSurface->w, _unfilteredSurface->h, format);
 	byte *src = (byte *)_unfilteredSurface->pixels;
 	byte a = 0xFF;
+	byte bpp = _unfilteredSurface->format.bytesPerPixel;
 
 	if (_header.colorType != kIndexed) {
-		if (_header.colorType == kTrueColor || _header.colorType == kTrueColorWithAlpha) {
-			if (_unfilteredSurface->format.bytesPerPixel != 3 && _unfilteredSurface->format.bytesPerPixel != 4)
+		if (_header.colorType == kTrueColor || 
+			_header.colorType == kTrueColorWithAlpha) {
+			if (bpp != 3 && bpp != 4)
 				error("Unsupported truecolor PNG format");
-		} else if (_header.colorType == kGrayScale || _header.colorType == kGrayScaleWithAlpha) {
-			if (_unfilteredSurface->format.bytesPerPixel != 1 && _unfilteredSurface->format.bytesPerPixel != 2)
+		} else if (_header.colorType == kGrayScale ||
+				   _header.colorType == kGrayScaleWithAlpha) {
+			if (bpp != 1 && bpp != 2)
 				error("Unsupported grayscale PNG format");
 		}
 
 		for (uint16 i = 0; i < output->h; i++) {
 			for (uint16 j = 0; j < output->w; j++) {
-				if (format.bytesPerPixel == 2) {	// 2bpp
-					uint16 *dest = ((uint16 *)output->getBasePtr(j, i));
-					if (_unfilteredSurface->format.bytesPerPixel == 1) {		// Grayscale
-						if (_transparentColorSpecified)
-							a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
-						*dest = format.ARGBToColor(    a, src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 2) {	// Grayscale + alpha
-						*dest = format.ARGBToColor(src[1], src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 3) {	// RGB
-						if (_transparentColorSpecified) {
-							bool isTransparentColor = (src[0] == _transparentColor[0] &&
-													   src[1] == _transparentColor[1] &&
-													   src[2] == _transparentColor[2]);
-							a = isTransparentColor ? 0 : 0xFF;
-						}
-						*dest = format.ARGBToColor(     a, src[0], src[1], src[2]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 4) {	// RGBA
-						*dest = format.ARGBToColor(src[3], src[0], src[1], src[2]);
+				uint32 result = 0;
+
+				switch (bpp) {
+				case 1:	// Grayscale
+					if (_transparentColorSpecified)
+						a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
+					result = format.ARGBToColor(    a, src[0], src[0], src[0]);
+					break;
+				case 2: // Grayscale + alpha
+					result = format.ARGBToColor(src[1], src[0], src[0], src[0]);
+					break;
+				case 3: // RGB
+					if (_transparentColorSpecified) {
+						bool isTransparentColor = (src[0] == _transparentColor[0] &&
+												   src[1] == _transparentColor[1] &&
+												   src[2] == _transparentColor[2]);
+						a = isTransparentColor ? 0 : 0xFF;
 					}
-				} else {	// 4bpp
-					uint32 *dest = ((uint32 *)output->getBasePtr(j, i));
-					if (_unfilteredSurface->format.bytesPerPixel == 1) {		// Grayscale
-						if (_transparentColorSpecified)
-							a = (src[0] == _transparentColor[0]) ? 0 : 0xFF;
-						*dest = format.ARGBToColor(     a, src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 2) {	// Grayscale + alpha
-						*dest = format.ARGBToColor(src[1], src[0], src[0], src[0]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 3) {	// RGB
-						if (_transparentColorSpecified) {
-							bool isTransparentColor = (src[0] == _transparentColor[0] &&
-													   src[1] == _transparentColor[1] &&
-													   src[2] == _transparentColor[2]);
-							a = isTransparentColor ? 0 : 0xFF;
-						}
-						*dest = format.ARGBToColor(     a, src[0], src[1], src[2]);
-					} else if (_unfilteredSurface->format.bytesPerPixel == 4) {	// RGBA
-						*dest = format.ARGBToColor(src[3], src[0], src[1], src[2]);
-					}
+					result = format.ARGBToColor(     a, src[0], src[1], src[2]);
+					break;
+				case 4: // RGBA
+					result = format.ARGBToColor(src[3], src[0], src[1], src[2]);
+					break;
 				}
 
-				src += _unfilteredSurface->format.bytesPerPixel;
+				if (format.bytesPerPixel == 2) 	// 2bpp
+					*((uint16 *)output->getBasePtr(j, i)) = (uint16)result;
+				else	// 4bpp
+					*((uint32 *)output->getBasePtr(j, i)) = result;
+
+				src += bpp;
 			}
 		}
 	} else {
 		byte index, r, g, b;
+		uint32 mask = (0xff >> (8 - _header.bitDepth)) << (8 - _header.bitDepth);
 
 		// Convert the indexed surface to the target pixel format
 		for (uint16 i = 0; i < output->h; i++) {
-			bool otherPixel = false;
+			int data = 0;
+			int bitCount = 8;
+			byte *src1 = src;
 
 			for (uint16 j = 0; j < output->w; j++) {
-				if (_header.bitDepth != 4)
-					index = *src;
-				else if (!otherPixel)
-					index = (*src) >> 4;
-				else
-					index = (*src) & 0xf;
+				if (bitCount == 8) {
+					data = *src;
+					src++;
+				}
+
+				index = (data & mask) >> (8 - _header.bitDepth);
+				data = (data << _header.bitDepth) & 0xff;
+				bitCount -= _header.bitDepth;
+
+				if (bitCount == 0)
+					bitCount = 8;
 
 				r = _palette[index * 4 + 0];
 				g = _palette[index * 4 + 1];
@@ -195,14 +196,8 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 					*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(a, r, g, b);
 				else
 					*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(a, r, g, b);
-
-				if (_header.bitDepth != 4 || otherPixel)
-					src++;
-				otherPixel = !otherPixel;
 			}
-			// The surface is a whole scanline wide, skip the rest of it.
-			if (_header.bitDepth == 4)
-				src += output->w / 2;
+			src = src1 + output->w;
 		}
 	}
 
@@ -236,7 +231,7 @@ bool PNG::read(Common::SeekableReadStream *str) {
 		case kChunkIDAT:
 			if (_compressedBufferSize == 0) {
 				_compressedBufferSize += chunkLength;
-				_compressedBuffer = new byte[_compressedBufferSize];
+				_compressedBuffer = (byte *)malloc(_compressedBufferSize);
 				_stream->read(_compressedBuffer, chunkLength);
 			} else {
 				// Expand the buffer
@@ -244,8 +239,8 @@ bool PNG::read(Common::SeekableReadStream *str) {
 				_compressedBufferSize += chunkLength;
 				byte *tmp = new byte[prevSize];
 				memcpy(tmp, _compressedBuffer, prevSize);
-				delete[] _compressedBuffer;
-				_compressedBuffer = new byte[_compressedBufferSize];
+				free(_compressedBuffer);
+				_compressedBuffer = (byte *)malloc(_compressedBufferSize);
 				memcpy(_compressedBuffer, tmp, prevSize);
 				delete[] tmp;
 				_stream->read(_compressedBuffer + prevSize, chunkLength);
@@ -282,7 +277,7 @@ bool PNG::read(Common::SeekableReadStream *str) {
 	// Unpack the compressed buffer
 	Common::MemoryReadStream *compData = new Common::MemoryReadStream(_compressedBuffer, _compressedBufferSize, DisposeAfterUse::YES);
 	_imageData = Common::wrapCompressedReadStream(compData);
-	
+
 	// Construct the final image
 	constructImage();
 
@@ -306,7 +301,7 @@ byte PNG::paethPredictor(int16 a, int16 b, int16 c) {
   int16 pa = ABS<int16>(b - c);
   int16 pb = ABS<int16>(a - c);
   int16 pc = ABS<int16>(a + b - c - c);
-    
+
   if (pa <= MIN<int16>(pb, pc))
 	  return (byte)a;
   else if (pb <= pc)

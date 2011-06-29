@@ -204,7 +204,7 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 		}
 		ptr += 320 - width;
 	}
-		
+
 }
 
 void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer) {
@@ -354,7 +354,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 		print_abc(msg, x, y);
 		return;
 	}
-	
+
 	// Message doesn't fit on screen, split it
 
 	// Get a word from the message

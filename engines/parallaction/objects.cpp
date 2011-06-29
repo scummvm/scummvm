@@ -264,7 +264,7 @@ bool Answer::textIsNull() {
 int Answer::speakerMood() {
 	return _mood & 0xF;
 }
-	
+
 Question::Question(const Common::String &name) : _name(name), _mood(0) {
 	memset(_answers, 0, sizeof(_answers));
 }
@@ -278,16 +278,16 @@ Question::~Question() {
 bool Question::textIsNull() {
 	return (_text.equalsIgnoreCase("NULL"));
 }
-	
+
 int Question::speakerMood() {
 	return _mood & 0xF;
 }
 
 int Question::balloonWinding() {
-	return _mood & 0x10;	
+	return _mood & 0x10;
 }
 
-	
+
 Instruction::Instruction() {
 	_index = 0;
 	_flags = 0;

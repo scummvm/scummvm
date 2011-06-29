@@ -5,6 +5,33 @@ For a more comprehensive changelog of the latest experimental code, see:
  SDL ports:
    - Added support for OpenGL (GSoC Task).
 
+1.3.1 (????-??-??)
+ General:
+   - Improved audio device detection and fallback.
+     There should be no more silent errors due to invalid audio devices.
+     Instead ScummVM should pick up a suitable alternative device.
+
+ Mohawk:
+   - Added detection entries for more variants of some Living Books
+     games.
+
+ Tinsel:
+   - Fixed a regression that made Discworld uncompletable.
+
+ SAGA:
+   - Fixed a regression in Inherit the Earth's dragon walk code which
+     was causing crashes there.
+   - Fixed a regression causing various crashes in I Have No Mouth and
+     I Must Scream.
+
+ SCI:
+   - Added detection entries for some Macintosh game versions.
+   - Audio settings are now stored correctly for the CD version of EcoQuest 1.
+
+ SCUMM:
+   - Fixed graphics bug in FM-TOWNS versions of games on ARM devices
+     (Android, iPhone, etc.).
+
 1.3.0 (2011-05-28)
  New Games:
    - Added support for Backyard Baseball.

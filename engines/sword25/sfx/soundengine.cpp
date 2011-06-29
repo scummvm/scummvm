@@ -37,6 +37,7 @@
 #include "audio/decoders/vorbis.h"
 
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace Sword25 {
 
@@ -60,13 +61,13 @@ SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
 
 	_mixer = g_system->getMixer();
 
+	_maxHandleId = 1;
+
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		_handles[i].type = kFreeHandle;
 }
 
 bool SoundEngine::init(uint sampleRate, uint channels) {
-	warning("STUB: SoundEngine::init(%d, %d)", sampleRate, channels);
-
 	return true;
 }
 
@@ -74,12 +75,44 @@ void SoundEngine::update() {
 }
 
 void SoundEngine::setVolume(float volume, SOUND_TYPES type) {
-	warning("STUB: SoundEngine::setVolume(%f, %d)", volume, type);
+	int val = (int)(255 * volume);
+
+	switch (type) {
+	case SoundEngine::MUSIC:
+		ConfMan.setInt("music_volume", val);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, val);
+		break;
+	case SoundEngine::SPEECH:
+		ConfMan.setInt("speech_volume", val);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, val);
+		break;
+	case SoundEngine::SFX:
+		ConfMan.setInt("sfx_volume", val);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, val);
+		break;
+	default:
+		error("Unknown SOUND_TYPE");
+	}
 }
 
 float SoundEngine::getVolume(SOUND_TYPES type) {
-	warning("STUB: SoundEngine::getVolume(%d)", type);
-	return 0;
+	int val = 0;
+
+	switch (type) {
+	case SoundEngine::MUSIC:
+		val = ConfMan.getInt("music_volume");
+		break;
+	case SoundEngine::SPEECH:
+		val = ConfMan.getInt("speech_volume");
+		break;
+	case SoundEngine::SFX:
+		val = ConfMan.getInt("sfx_volume");
+		break;
+	default:
+		error("Unknown SOUND_TYPE");
+	}
+
+	return (float)val / 255.0;
 }
 
 void SoundEngine::pauseAll() {
@@ -95,33 +128,53 @@ void SoundEngine::resumeAll() {
 }
 
 void SoundEngine::pauseLayer(uint layer) {
-	warning("STUB: SoundEngine::pauseLayer(%d)", layer);
+	// Not used in the game
+
+	warning("SoundEngine::pauseLayer(%d)", layer);
 }
 
 void SoundEngine::resumeLayer(uint layer) {
-	warning("STUB: SoundEngine::resumeLayer(%d)", layer);
+	// Not used in the game
+
+	warning("SoundEngine::resumeLayer(%d)", layer);
 }
 
 SndHandle *SoundEngine::getHandle(uint *id) {
 
-	// NOTE: Index 0 means error. Thus we're not using it
-	for (uint i = 1; i < SOUND_HANDLES; i++) {
+	for (uint i = 0; i < SOUND_HANDLES; i++) {
 		if (_handles[i].type != kFreeHandle && !_mixer->isSoundHandleActive(_handles[i].handle)) {
-			debugC(kDebugSound, 5, "Handle %d has finished playing", i);
+			debugC(1, kDebugSound, "Handle %d has finished playing", _handles[i].id);
 			_handles[i].type = kFreeHandle;
 		}
 	}
 
-	for (uint i = 1; i < SOUND_HANDLES; i++) {
+	for (uint i = 0; i < SOUND_HANDLES; i++) {
 		if (_handles[i].type == kFreeHandle) {
-			debugC(kDebugSound, 5, "Allocated handle %d", i);
+			debugC(1, kDebugSound, "Allocated handle %d", _handles[i].id);
+			_handles[i].id = _maxHandleId;
+			_handles[i].type = kAllocatedHandle;
+
 			if (id)
-				*id = i;
+				*id = _maxHandleId;
+
+			_maxHandleId++;
+
 			return &_handles[i];
 		}
 	}
 
 	error("Sound::getHandle(): Too many sound handles");
+
+	return NULL;
+}
+
+SndHandle *SoundEngine::findHandle(uint id) {
+	for (uint i = 0; i < SOUND_HANDLES; i++) {
+		if (_handles[i].id == id)
+			return &_handles[i];
+	}
+
+	warning("Sound::findHandle(): Unknown handle");
 
 	return NULL;
 }
@@ -159,6 +212,8 @@ uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, 
 
 	debugC(1, kDebugSound, "SoundEngine::playSoundEx(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
+	handle->type = kAllocatedHandle;
+
 #ifdef USE_VORBIS
 	_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
 #endif
@@ -167,74 +222,81 @@ uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, 
 }
 
 void SoundEngine::setSoundVolume(uint handle, float volume) {
-	assert(handle < SOUND_HANDLES);
-
 	debugC(1, kDebugSound, "SoundEngine::setSoundVolume(%d, %f)", handle, volume);
 
-	_mixer->setChannelVolume(_handles[handle].handle, (byte)(volume * 255));
+	SndHandle* sndHandle = findHandle(handle);
+	if (sndHandle != NULL)
+		_mixer->setChannelVolume(sndHandle->handle, (byte)(volume * 255));
 }
 
 void SoundEngine::setSoundPanning(uint handle, float pan) {
-	assert(handle < SOUND_HANDLES);
-
 	debugC(1, kDebugSound, "SoundEngine::setSoundPanning(%d, %f)", handle, pan);
 
-	_mixer->setChannelBalance(_handles[handle].handle, (int8)(pan * 127));
+	SndHandle* sndHandle = findHandle(handle);
+	if (sndHandle != NULL)
+		_mixer->setChannelBalance(sndHandle->handle, (int8)(pan * 127));
 }
 
 void SoundEngine::pauseSound(uint handle) {
-	assert(handle < SOUND_HANDLES);
-
 	debugC(1, kDebugSound, "SoundEngine::pauseSound(%d)", handle);
 
-	_mixer->pauseHandle(_handles[handle].handle, true);
+	SndHandle* sndHandle = findHandle(handle);
+	if (sndHandle != NULL)
+		_mixer->pauseHandle(sndHandle->handle, true);
 }
 
 void SoundEngine::resumeSound(uint handle) {
-	assert(handle < SOUND_HANDLES);
-
 	debugC(1, kDebugSound, "SoundEngine::resumeSound(%d)", handle);
 
-	_mixer->pauseHandle(_handles[handle].handle, false);
+	SndHandle* sndHandle = findHandle(handle);
+	if (sndHandle != NULL)
+		_mixer->pauseHandle(sndHandle->handle, false);
 }
 
 void SoundEngine::stopSound(uint handle) {
-	assert(handle < SOUND_HANDLES);
-
 	debugC(1, kDebugSound, "SoundEngine::stopSound(%d)", handle);
 
-	_mixer->stopHandle(_handles[handle].handle);
+	SndHandle* sndHandle = findHandle(handle);
+	if (sndHandle != NULL)
+		_mixer->stopHandle(sndHandle->handle);
 }
 
 bool SoundEngine::isSoundPaused(uint handle) {
-	warning("STUB: SoundEngine::isSoundPaused(%d)", handle);
+	// Not used in the game
+
+	warning("SoundEngine::isSoundPaused(%d)", handle);
 
 	return false;
 }
 
 bool SoundEngine::isSoundPlaying(uint handle) {
-	assert(handle < SOUND_HANDLES);
-
 	debugC(1, kDebugSound, "SoundEngine::isSoundPlaying(%d)", handle);
 
-	return _mixer->isSoundHandleActive(_handles[handle].handle);
+	SndHandle* sndHandle = findHandle(handle);
+	if (sndHandle == NULL)
+		return false;
+	return _mixer->isSoundHandleActive(sndHandle->handle);
 }
 
 float SoundEngine::getSoundVolume(uint handle) {
-	warning("STUB: SoundEngine::getSoundVolume(%d)", handle);
+	debugC(1, kDebugSound, "SoundEngine::getSoundVolume(%d)", handle);
 
-	return 0;
+	SndHandle* sndHandle = findHandle(handle);
+	if (sndHandle == NULL)
+		return 0.f;
+	return (float)_mixer->getChannelVolume(sndHandle->handle) / 255.0;
 }
 
 float SoundEngine::getSoundPanning(uint handle) {
-	warning("STUB: SoundEngine::getSoundPanning(%d)", handle);
+	debugC(1, kDebugSound, "SoundEngine::getSoundPanning(%d)", handle);
 
-	return 0;
+	SndHandle* sndHandle = findHandle(handle);
+	if (sndHandle == NULL)
+		return 0.f;
+	return (float)_mixer->getChannelBalance(sndHandle->handle) / 127.0;
 }
 
 Resource *SoundEngine::loadResource(const Common::String &fileName) {
-	warning("STUB: SoundEngine::loadResource(%s)", fileName.c_str());
-
 	return new SoundResource(fileName);
 }
 

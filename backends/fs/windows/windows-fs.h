@@ -93,12 +93,13 @@ private:
 	 * Adds a single WindowsFilesystemNode to a given list.
 	 * This method is used by getChildren() to populate the directory entries list.
 	 *
-	 * @param list List to put the file entry node in.
-	 * @param mode Mode to use while adding the file entry to the list.
-	 * @param base Common::String with the directory being listed.
-	 * @param find_data Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
+	 * @param list         List to put the file entry node in.
+	 * @param mode         Mode to use while adding the file entry to the list.
+	 * @param base         Common::String with the directory being listed.
+	 * @param hidden       true if hidden files should be added, false otherwise
+	 * @param find_data    Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
 	 */
-	static void addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
+	static void addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data);
 
 	/**
 	 * Converts a Unicode string to Ascii format.

@@ -54,6 +54,10 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	SDL_ShowCursor(SDL_DISABLE);
 
 	// Get desktop resolution
+	// TODO: In case the OpenGL manager is created *after* a plain SDL manager
+	// has been used, this will return the last setup graphics mode rather
+	// than the desktop resolution. We should really look into a way to
+	// properly retrieve the desktop resolution.
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 	if (videoInfo->current_w > 0 && videoInfo->current_h > 0) {
 		_desktopWidth = videoInfo->current_w;
@@ -110,16 +114,16 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 	// use.
 	const Graphics::PixelFormat RGBList[] = {
 #if defined(ENABLE_32BIT)
-		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),	// RGBA8888
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), // RGBA8888
 #ifndef USE_GLES
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), // ARGB8888
 #endif
-		Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),	// RGB888
+		Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  // RGB888
 #endif
-		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),	// RGB565
-		Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),	// RGB5551
-		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
-		Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),	// RGBA4444
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  // RGB565
+		Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),  // RGB5551
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),  // RGB555
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  // RGBA4444
 #ifndef USE_GLES
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)   // ARGB4444
 #endif
@@ -302,7 +306,7 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 
 		int screenAspectRatio = _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
 		int desiredAspectRatio = getAspectRatio();
-	
+
 		// Do not downscale dimensions, only enlarge them if needed
 		if (screenAspectRatio > desiredAspectRatio)
 			_videoMode.hardwareHeight = (_videoMode.overlayWidth * 10000  + 5000) / desiredAspectRatio;
@@ -385,7 +389,7 @@ void OpenGLSdlGraphicsManager::internUpdateScreen() {
 	OpenGLGraphicsManager::internUpdateScreen();
 
 	// Swap OpenGL buffers
-	SDL_GL_SwapBuffers(); 
+	SDL_GL_SwapBuffers();
 }
 
 #ifdef USE_OSD
@@ -394,27 +398,27 @@ void OpenGLSdlGraphicsManager::displayModeChangedMsg() {
 	if (newModeName) {
 		const int scaleFactor = getScale();
 
-		char buffer[128];
-		sprintf(buffer, "%s: %s\n%d x %d -> %d x %d",
+		Common::String osdMessage = Common::String::format(
+			"%s: %s\n%d x %d -> %d x %d",
 			_("Current display mode"),
 			newModeName,
 			_videoMode.screenWidth * scaleFactor,
 			_videoMode.screenHeight * scaleFactor,
 			_hwscreen->w, _hwscreen->h
 			);
-		displayMessageOnOSD(buffer);
+		displayMessageOnOSD(osdMessage.c_str());
 	}
 }
 void OpenGLSdlGraphicsManager::displayScaleChangedMsg() {
-	char buffer[128];
 	const int scaleFactor = getScale();
-	sprintf(buffer, "%s: x%d\n%d x %d -> %d x %d",
+	Common::String osdMessage = Common::String::format(
+		"%s: x%d\n%d x %d -> %d x %d",
 		_("Current scale"),
 		scaleFactor,
 		_videoMode.screenWidth, _videoMode.screenHeight,
 		_videoMode.overlayWidth, _videoMode.overlayHeight
 		);
-	displayMessageOnOSD(buffer);
+	displayMessageOnOSD(osdMessage.c_str());
 }
 #endif
 
@@ -450,18 +454,18 @@ void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 	_ignoreResizeFrames = 10;
 
 #ifdef USE_OSD
-	char buffer[128];
+	Common::String osdMessage;
 	if (getFullscreenMode())
-		sprintf(buffer, "%s\n%d x %d",
+		osdMessage = Common::String::format("%s\n%d x %d",
 			_("Fullscreen mode"),
 			_hwscreen->w, _hwscreen->h
 			);
 	else
-		sprintf(buffer, "%s\n%d x %d",
+		osdMessage = Common::String::format("%s\n%d x %d",
 			_("Windowed mode"),
 			_hwscreen->w, _hwscreen->h
 			);
-	displayMessageOnOSD(buffer);
+	displayMessageOnOSD(osdMessage.c_str());
 #endif
 }
 
@@ -478,19 +482,19 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 			// Alt-S create a screenshot
 			if (event.kbd.keycode == 's') {
-				char filename[20];
+				Common::String filename;
 
 				for (int n = 0;; n++) {
 					SDL_RWops *file;
 
-					sprintf(filename, "scummvm%05d.bmp", n);
-					file = SDL_RWFromFile(filename, "r");
+					filename = Common::String::format("scummvm%05d.bmp", n);
+					file = SDL_RWFromFile(filename.c_str(), "r");
 					if (!file)
 						break;
 					SDL_RWclose(file);
 				}
-				if (saveScreenshot(filename))
-					debug("Saved screenshot '%s'", filename);
+				if (saveScreenshot(filename.c_str()))
+					debug("Saved screenshot '%s'", filename.c_str());
 				else
 					warning("Could not save screenshot");
 				return true;
@@ -511,18 +515,18 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
 				endGFXTransaction();
 #ifdef USE_OSD
-			char buffer[128];
+			Common::String osdMessage;
 			if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
-				sprintf(buffer, "%s\n%d x %d -> %d x %d",
-						_("Enabled aspect ratio correction"),
+				osdMessage = Common::String::format("%s\n%d x %d -> %d x %d",
+				        _("Enabled aspect ratio correction"),
 				        _videoMode.screenWidth, _videoMode.screenHeight,
 				        _hwscreen->w, _hwscreen->h);
 			else
-				sprintf(buffer, "%s\n%d x %d -> %d x %d",
-						_("Disabled aspect ratio correction"),
+				osdMessage = Common::String::format("%s\n%d x %d -> %d x %d",
+				        _("Disabled aspect ratio correction"),
 				        _videoMode.screenWidth, _videoMode.screenHeight,
 				        _hwscreen->w, _hwscreen->h);
-			displayMessageOnOSD(buffer);
+			displayMessageOnOSD(osdMessage.c_str());
 #endif
 				internUpdateScreen();
 				return true;
@@ -557,7 +561,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					// Check if the desktop resolution has been detected
 					if (_desktopWidth > 0 && _desktopHeight > 0)
 						// If the new scale factor is too big, do not scale
-						if (_videoMode.screenWidth * factor > _desktopWidth || 
+						if (_videoMode.screenWidth * factor > _desktopWidth ||
 							_videoMode.screenHeight * factor > _desktopHeight)
 							return false;
 
@@ -607,7 +611,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		break;
 	case Common::EVENT_KEYUP:
 		return isHotkey(event);
-	// HACK: Handle special SDL event 
+	// HACK: Handle special SDL event
 	// The new screen size is saved on the mouse event as part of HACK,
 	// there is no common resize event.
 	case OSystem_SDL::kSdlEventResize:

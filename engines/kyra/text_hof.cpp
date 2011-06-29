@@ -436,15 +436,16 @@ void KyraEngine_HoF::updateDlgBuffer() {
 	_npcTalkChpIndex = _currentChapter;
 	_npcTalkDlgIndex = _mainCharacter.dlgIndex;
 
-	char filename[13];
-	snprintf(filename, 13, "CH%.02d-S%.02d.DLG", _currentChapter, _npcTalkDlgIndex);
+	Common::String filename = Common::String::format("CH%.02d-S%.02d.DL", _currentChapter, _npcTalkDlgIndex);
 
 	const char *suffix = _flags.isTalkie ? suffixTalkie : suffixTowns;
 	if (_flags.platform != Common::kPlatformPC || _flags.isTalkie)
-		filename[11] = suffix[_lang];
+		filename += suffix[_lang];
+	else
+		filename += 'G';
 
 	delete[] _dlgBuffer;
-	_dlgBuffer = _res->fileData(filename, 0);
+	_dlgBuffer = _res->fileData(filename.c_str(), 0);
 }
 
 void KyraEngine_HoF::loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2) {

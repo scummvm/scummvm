@@ -28,8 +28,8 @@
 #include "backends/base-backend.h"
 #include "backends/platform/sdl/sdl.h"
 #include "backends/platform/sdl/posix/posix.h"
-#include "backends/graphics/gph/gph-graphics.h"
 #include "backends/events/gph/gph-events.h"
+#include "backends/graphics/gph/gph-graphics.h"
 
 #define __GP2XWIZ__
 
@@ -39,6 +39,8 @@
 
 class OSystem_GPH : public OSystem_POSIX {
 public:
+	OSystem_GPH();
+
 	/* Platform Setup Stuff */
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 	void initBackend();

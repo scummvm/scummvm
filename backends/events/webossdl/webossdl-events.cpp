@@ -89,7 +89,7 @@ void WebOSSdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod,
 		event.kbd.flags |= Common::KBD_SHIFT;
 	if (mod & KMOD_CTRL)
 		event.kbd.flags |= Common::KBD_CTRL;
-		
+
 	// Holding down the gesture area emulates the ALT key
 	if (gestureDown)
 		event.kbd.flags |= Common::KBD_ALT;

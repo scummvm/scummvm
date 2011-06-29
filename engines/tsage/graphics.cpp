@@ -326,7 +326,7 @@ void GfxSurface::synchronize(Serializer &s) {
 			s.syncAsSint16LE(zero);
 		}
 	} else {
-		int w, h;
+		int w = 0, h = 0;
 		s.syncAsSint16LE(w);
 		s.syncAsSint16LE(h);
 
@@ -846,7 +846,7 @@ void GfxButton::setDefaults() {
 	gfxManager._font.getStringBounds(_message.c_str(), tempRect, 240);
 	tempRect.right = ((tempRect.right + 15) / 16) * 16;
 
-	// Set the button bounds 
+	// Set the button bounds
 	tempRect.collapse(-_globals->_gfxEdgeAdjust, -_globals->_gfxEdgeAdjust);
 	if (_vm->getFeatures() & GF_CD)
 		--tempRect.top;
@@ -866,7 +866,7 @@ void GfxButton::draw() {
 	// Set the font and color
 	gfxManager._font.setFontNumber(_fontNumber);
 
-	// 
+	//
 	gfxManager._font._colors.foreground = this->_unkColor1;
 	gfxManager._font._colors2.background = this->_unkColor2;
 	gfxManager._font._colors2.foreground = this->_unkColor3;
@@ -895,7 +895,7 @@ bool GfxButton::process(Event &event) {
 
 	case EVENT_KEYPRESS:
 		if (!event.handled && (event.kbd.keycode == _keycode)) {
-			// TODO: Ensure momentary click operation displays
+			// Highlight the button momentarily
 			highlight();
 			g_system->delayMillis(20);
 			highlight();

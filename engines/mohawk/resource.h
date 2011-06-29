@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/hashmap.h"
 #include "common/file.h"
 #include "common/str.h"
 
@@ -128,127 +129,64 @@ namespace Mohawk {
 #define ID_BBOX MKTAG('B','B','O','X') // Boxes? (CSWorld, CSAmtrak)
 #define ID_SYSX MKTAG('S','Y','S','X') // MIDI Sysex
 
-struct FileTable {
-	uint32 offset;
-	uint32 dataSize; // Really 27 bits
-	byte flags; // Mostly useless except for the bottom 3 bits which are part of the size
-	uint16 unk; // Always 0
-};
 
-struct Type {
-	Type() { resTable.entries = NULL; nameTable.entries = NULL; }
-	~Type() { delete[] resTable.entries; delete[] nameTable.entries; }
-
-	//Type Table
-	uint32 tag;
-	uint16 resource_table_offset;
-	uint16 name_table_offset;
-
-	struct ResourceTable {
-		uint16 resources;
-		struct Entries {
-			uint16 id;
-			uint16 index;
-		} *entries;
-	} resTable;
-
-	struct NameTable {
-		uint16 num;
-		struct Entries {
-			uint16 offset;
-			uint16 index;
-			// Name List
-			Common::String name;
-		} *entries;
-	} nameTable;
-};
-
-struct TypeTable {
-	uint16 name_offset;
-	uint16 resource_types;
-};
-
-struct RSRC_Header {
-	uint16 version;
-	uint16 compaction;
-	uint32 filesize;
-	uint32 abs_offset;
-	uint16 file_table_offset;
-	uint16 file_table_size;
-};
-
-class MohawkArchive {
+class Archive {
 public:
-	MohawkArchive();
-	virtual ~MohawkArchive() { close(); }
+	Archive();
+	virtual ~Archive();
 
-	bool open(const Common::String &filename);
-	virtual bool open(Common::SeekableReadStream *stream);
+	bool openFile(const Common::String &fileName);
+	virtual bool openStream(Common::SeekableReadStream *stream) = 0;
 	void close();
 
-	virtual bool hasResource(uint32 tag, uint16 id);
-	virtual bool hasResource(uint32 tag, const Common::String &resName);
-	virtual Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
-	virtual uint32 getOffset(uint32 tag, uint16 id);
-	virtual uint16 findResourceID(uint32 type, const Common::String &resName);
-	Common::String getName(uint32 tag, uint16 id);
+	bool isOpen() const { return _stream != 0; }
+
+	bool hasResource(uint32 tag, uint16 id) const;
+	bool hasResource(uint32 tag, const Common::String &resName) const;
+	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
+	uint32 getOffset(uint32 tag, uint16 id) const;
+	uint16 findResourceID(uint32 tag, const Common::String &resName) const;
+	Common::String getName(uint32 tag, uint16 id) const;
+
+	Common::Array<uint32> getResourceTypeList() const;
+	Common::Array<uint16> getResourceIDList(uint32 type) const;
 
 protected:
-	Common::SeekableReadStream *_mhk;
-	TypeTable _typeTable;
-	Common::String _curFile;
+	Common::SeekableReadStream *_stream;
 
-private:
-	RSRC_Header _rsrc;
-	Type *_types;
-	FileTable *_fileTable;
-	uint16 _nameTableAmount;
-	uint16 _resourceTableAmount;
-	uint16 _fileTableAmount;
+	struct Resource {
+		uint32 offset;
+		uint32 size;
+		Common::String name;
+	};
 
-	int getTypeIndex(uint32 tag);
-	int getIDIndex(int typeIndex, uint16 id);
-	int getIDIndex(int typeIndex, const Common::String &resName);
+	typedef Common::HashMap<uint16, Resource> ResourceMap;
+	typedef Common::HashMap<uint32, ResourceMap> TypeMap;
+	TypeMap _types;
 };
 
-class LivingBooksArchive_v1 : public MohawkArchive {
+class MohawkArchive : public Archive {
 public:
-	LivingBooksArchive_v1() : MohawkArchive() {}
+	MohawkArchive() : Archive() {}
+	~MohawkArchive() {}
+
+	bool openStream(Common::SeekableReadStream *stream);
+};
+
+class LivingBooksArchive_v1 : public Archive {
+public:
+	LivingBooksArchive_v1() : Archive() {}
 	~LivingBooksArchive_v1() {}
 
-	bool hasResource(uint32 tag, uint16 id);
-	bool hasResource(uint32 tag, const Common::String &resName) { return false; }
-	virtual bool open(Common::SeekableReadStream *stream);
-	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
-	Common::SeekableReadStream *getResource(uint32 tag, const Common::String &resName) { return 0; }
-	uint32 getOffset(uint32 tag, uint16 id);
-	uint16 findResourceID(uint32 type, const Common::String &resName) { return 0xFFFF; }
-
-protected:
-	struct OldType {
-		uint32 tag;
-		uint16 resource_table_offset;
-		struct ResourceTable {
-			uint16 resources;
-			struct Entries {
-				uint16 id;
-				uint32 offset;
-				uint32 size;
-			} *entries;
-		} resTable;
-	} *_types;
-
-private:
-	int getTypeIndex(uint32 tag);
-	int getIDIndex(int typeIndex, uint16 id);
+	bool openStream(Common::SeekableReadStream *stream);
 };
 
-class DOSArchive_v2 : public LivingBooksArchive_v1 {
+class DOSArchive_v2 : public Archive {
 public:
-	DOSArchive_v2() : LivingBooksArchive_v1() {}
+	DOSArchive_v2() : Archive() {}
 	~DOSArchive_v2() {}
 
-	virtual bool open(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream);
 };
 
 } // End of namespace Mohawk

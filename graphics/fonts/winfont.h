@@ -88,7 +88,7 @@ private:
 		uint16 charWidth;
 		uint32 offset;
 		byte *bitmap;
-	} *_glyphs;	
+	} *_glyphs;
 };
 
 } // End of namespace Graphics

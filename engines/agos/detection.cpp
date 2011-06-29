@@ -23,6 +23,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -48,7 +49,7 @@ struct AGOSGameDescription {
  * corresponding new target and platform combination.
  *
  */
-static const ADObsoleteGameID obsoleteGameIDsTable[] = {
+static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"simon1acorn", "simon1", Common::kPlatformAcorn},
 	{"simon1amiga", "simon1", Common::kPlatformAmiga},
 	{"simon1cd32", "simon1", Common::kPlatformAmiga},
@@ -63,7 +64,7 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{0, 0, Common::kPlatformUnknown}
 };
 
-static const PlainGameDescriptor simonGames[] = {
+static const PlainGameDescriptor agosGames[] = {
 	{"pn", "Personal Nightmare"},
 	{"elvira1", "Elvira - Mistress of the Dark"},
 	{"elvira2", "Elvira II - The Jaws of Cerberus"},
@@ -87,36 +88,19 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)AGOS::gameDescriptions,
-	// Size of that superset structure
-	sizeof(AGOS::AGOSGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	simonGames,
-	// Structure for autoupgrading obsolete targets
-	obsoleteGameIDsTable,
-	// Name of single gameid (optional)
-	0,
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOLAUNCHLOAD,
-	// Maximum directory depth
-	2,
-	// List of directory globs
-	directoryGlobs
-};
-
 using namespace AGOS;
 
 class AgosMetaEngine : public AdvancedMetaEngine {
 public:
-	AgosMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	AgosMetaEngine() : AdvancedMetaEngine(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
+		_guioptions = Common::GUIO_NOLAUNCHLOAD;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
+	}
+
+	virtual GameDescriptor findGame(const char *gameid) const {
+		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	}
 
 	virtual const char *getName() const {
 		return "AGOS";
@@ -127,7 +111,13 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
+
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngine::createInstance(syst, engine);
+	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 };

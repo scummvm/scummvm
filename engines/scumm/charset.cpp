@@ -50,6 +50,7 @@ void ScummEngine::loadCJKFont() {
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 #ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
+		GUIErrorMessage("FM-Towns Kanji font drawing requires dual graphics layer support which is disabled in this build");
 		error("FM-Towns Kanji font drawing requires dual graphics layer support which is disabled in this build");
 #else
 		// use FM-TOWNS font rom, since game files don't have kanji font resources
@@ -788,8 +789,10 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		else if (_vm->_cjkFont)
 			_vm->_cjkFont->drawChar(_vm->_textSurface, chr, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, _color, _shadowColor);
 #endif
-		if (is2byte)
+		if (is2byte) {
 			origWidth /= _vm->_textSurfaceMultiplier;
+			height /= _vm->_textSurfaceMultiplier;
+		}
 	}
 
 	if (_str.left > _left)
@@ -803,8 +806,8 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 			_str.right++;
 	}
 
-	if (_str.bottom < _top + height / _vm->_textSurfaceMultiplier)
-		_str.bottom = _top + height / _vm->_textSurfaceMultiplier;
+	if (_str.bottom < _top + height)
+		_str.bottom = _top + height;
 }
 
 void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
@@ -1067,7 +1070,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		Graphics::Surface backSurface;
 		if ((ignoreCharsetMask || !vs->hasTwoBuffers)
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-			&& (_vm->_game.platform != Common::kPlatformFMTowns) 
+			&& (_vm->_game.platform != Common::kPlatformFMTowns)
 #endif
 			) {
 			dstSurface = *vs;

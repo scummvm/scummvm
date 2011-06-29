@@ -23,9 +23,9 @@
 #ifndef BACKENDS_GRAPHICS_SYMBIAN_SDL_H
 #define BACKENDS_GRAPHICS_SYMBIAN_SDL_H
 
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
-class SymbianSdlGraphicsManager : public SdlGraphicsManager {
+class SymbianSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource);
 

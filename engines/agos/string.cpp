@@ -517,8 +517,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 			y -= textHeight;
 		} else
 			pos = stringLength;
-		padding = (lettersPerRow - pos) % 2 ?
-			(lettersPerRow - pos) / 2 + 1 : (lettersPerRow - pos) / 2;
+		padding = ((lettersPerRow - pos) % 2) ? (lettersPerRow - pos) / 2 + 1 : (lettersPerRow - pos) / 2;
 		while (padding--)
 			*convertedString2++ = ' ';
 		stringLength -= pos;
@@ -621,7 +620,7 @@ void AGOSEngine_PuzzlePack::printInfoText(const char *itemText) {
 					itemName = " Gem: ";
 			}
 			break;
-			
+
 		case 82:
 			if (_variableArray[flag]) {
 				if (_variableArray[flag] == 201 || _variableArray[flag] == 211)
@@ -723,11 +722,9 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 	const char *string2 = string;
 	int16 height, talkDelay;
 	int stringLength = strlen(string);
-	int lettersPerRow;
 	const int textHeight = 15;
 
 	height = textHeight;
-	lettersPerRow = width / 6;
 
 	talkDelay = (stringLength + 3) / 3;
 		if (_variableArray[86] == 0)
@@ -840,13 +837,12 @@ void AGOSEngine_Feeble::printInteractText(uint16 num, const char *string) {
 
 void AGOSEngine_Feeble::sendInteractText(uint16 num, const char *fmt, ...) {
 	va_list arglist;
-	char string[256];
 
 	va_start(arglist, fmt);
-	vsprintf(string, fmt, arglist);
+	Common::String string = Common::String::vformat(fmt, arglist);
 	va_end(arglist);
 
-	printInteractText(num, string);
+	printInteractText(num, string.c_str());
 }
 #endif
 

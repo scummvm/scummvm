@@ -24,7 +24,7 @@
 
 namespace Testbed {
 
-Common::String MiscTests::getHumanReadableFormat(TimeDate &td) {
+Common::String MiscTests::getHumanReadableFormat(const TimeDate &td) {
 	return Common::String::format("%d:%d:%d on %d/%d/%d (dd/mm/yyyy)", td.tm_hour, td.tm_min, td.tm_sec, td.tm_mday, td.tm_mon + 1, td.tm_year + 1900);
 }
 

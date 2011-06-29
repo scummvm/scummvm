@@ -169,7 +169,7 @@ void MadsScene::loadScene(int sceneNumber) {
 	}
 	_abortTimers = 0;
 	_abortTimersMode2 = ABORTMODE_1;
-	
+
 
 	// Do any scene specific setup
 	if (_vm->getGameType() == GType_RexNebular)
@@ -376,7 +376,7 @@ void MadsScene::updateState() {
 
 	if (_madsVm->globals()->_config.easyMouse)
 		_action.refresh();
-	
+
 	if ((_activeAnimation) && !_abortTimers) {
 		_activeAnimation->update();
 		if (((MadsAnimation *) _activeAnimation)->freeFlag() || freeFlag) {
@@ -598,7 +598,7 @@ void MadsScene::loadAnimation(const Common::String &animName, int abortTimers) {
 
 bool MadsScene::getDepthHighBit(const Common::Point &pt) {
 	const byte *p = _depthSurface->getBasePtr(pt.x, pt.y);
-	if (_sceneResources._depthStyle == 2) 
+	if (_sceneResources._depthStyle == 2)
 		return ((*p << 4) & 0x80) != 0;
 
 	return (*p & 0x80) != 0;
@@ -653,7 +653,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	_depthStyle = stream->readUint16LE();
 	_width = stream->readUint16LE();
 	_height = stream->readUint16LE();
-	
+
 	stream->skip(24);
 
 	int nodeCount = stream->readUint16LE();
@@ -771,7 +771,7 @@ void MadsSceneResources::setRouteNode(int nodeIndex, const Common::Point &pt, M4
 			if (hypotenuse >= 0x3FFF)
 				// Shouldn't ever be this large
 				hypotenuse = 0x3FFF;
-			
+
 			entry = hypotenuse | flags;
 			_nodes[idx].indexes[nodeIndex] = entry;
 			_nodes[nodeIndex].indexes[idx] = entry;
@@ -794,7 +794,7 @@ int MadsSceneResources::getRouteFlags(const Common::Point &src, const Common::Po
 	++yDiff;
 
 	byte *srcP = depthSurface->getBasePtr(src.x, src.y);
-	
+
 	int totalCtr = majorDiff;
 	for (int xCtr = 0; xCtr < xDiff; ++xCtr, srcP += xDirection) {
 		totalCtr += yDiff;
@@ -837,7 +837,7 @@ int MadsSceneResources::getRouteFlags(const Common::Point &src, const Common::Po
  *--------------------------------------------------------------------------
  */
 
-MadsInterfaceView::MadsInterfaceView(MadsM4Engine *vm): GameInterfaceView(vm, 
+MadsInterfaceView::MadsInterfaceView(MadsM4Engine *vm): GameInterfaceView(vm,
 		Common::Rect(0, MADS_SURFACE_HEIGHT, vm->_screen->width(), vm->_screen->height())) {
 	_screenType = VIEWID_INTERFACE;
 	_highlightedElement = -1;
@@ -1078,7 +1078,7 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int 
 				// A standard action was selected
 				int verbId = kVerbLook + (_highlightedElement - ACTIONS_START);
 				warning("Selected action #%d", verbId);
-				
+
 			} else if ((_highlightedElement >= VOCAB_START) && (_highlightedElement < (VOCAB_START + 5))) {
 				// A vocab action was selected
 				MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
@@ -1259,8 +1259,8 @@ void MadsInterfaceView::leaveScene() {
 
 //--------------------------------------------------------------------------
 
-int getActiveAnimationBool() { 
-	return (_madsVm->scene()->activeAnimation()) ? 1 : 0; 
+int getActiveAnimationBool() {
+	return (_madsVm->scene()->activeAnimation()) ? 1 : 0;
 }
 
 int getAnimationCurrentFrame() {

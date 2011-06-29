@@ -321,7 +321,7 @@ public:
 		_screenDepth = in->readSint32LE();
 		_screenScale = in->readSint32LE();
 	}
-	
+
 	CommonObjectData() {
 		_index = 0;
 		_id = 0;
@@ -463,7 +463,7 @@ public:
 	void cmdActorWalkTo(int argc, const char **argv);
 
 	bool validActorId(uint16 id) {
-		return (id == ID_PROTAG) || ((id >= objectIndexToId(kGameObjectActor, 0)) && (id < objectIndexToId(kGameObjectActor, _actors.size()))); 
+		return (id == ID_PROTAG) || ((id >= objectIndexToId(kGameObjectActor, 0)) && (id < objectIndexToId(kGameObjectActor, _actors.size())));
 	}
 	int actorIdToIndex(uint16 id) { return (id == ID_PROTAG) ? 0 : objectIdToIndex(id); }
 	uint16 actorIndexToId(int index) { return (index == 0) ? ID_PROTAG : objectIndexToId(kGameObjectActor, index); }

@@ -37,6 +37,7 @@ private:
 	uint _readPos;
 	Common::String _settings;
 
+	Common::String formatDouble(double value);
 	void setupConfigFile();
 	Common::String getLanguage();
 	void setLanguage(const Common::String &lang);

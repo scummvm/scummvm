@@ -47,67 +47,64 @@ namespace Sword1 {
 // These functions are only called from Music, so I'm just going to
 // assume that if locking is needed it has already been taken care of.
 
-bool MusicHandle::play(const char *fileBase, bool loop) {
-	char fileName[30];
+bool MusicHandle::play(const Common::String &filename, bool loop) {
 	stop();
 
 	// FIXME: How about using AudioStream::openStreamFile instead of the code below?
 	// I.e.:
 	//_audioSource = Audio::AudioStream::openStreamFile(fileBase, 0, 0, loop ? 0 : 1);
 
+	Audio::RewindableAudioStream *stream = 0;
+
 #ifdef USE_FLAC
-	if (!_audioSource) {
-		sprintf(fileName, "%s.flac", fileBase);
-		if (_file.open(fileName)) {
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeFLACStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
-			if (!_audioSource)
+	if (!stream) {
+		if (_file.open(filename + ".flac")) {
+			stream = Audio::makeFLACStream(&_file, DisposeAfterUse::NO);
+			if (!stream)
 				_file.close();
 		}
 	}
 
-	if (!_audioSource) {
-		sprintf(fileName, "%s.fla", fileBase);
-		if (_file.open(fileName)) {
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeFLACStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
-			if (!_audioSource)
+	if (!stream) {
+		if (_file.open(filename + ".fla")) {
+			stream = Audio::makeFLACStream(&_file, DisposeAfterUse::NO);
+			if (!stream)
 				_file.close();
 		}
 	}
 #endif
 #ifdef USE_VORBIS
-	if (!_audioSource) {
-		sprintf(fileName, "%s.ogg", fileBase);
-		if (_file.open(fileName)) {
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeVorbisStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
-			if (!_audioSource)
+	if (!stream) {
+		if (_file.open(filename + ".ogg")) {
+			stream = Audio::makeVorbisStream(&_file, DisposeAfterUse::NO);
+			if (!stream)
 				_file.close();
 		}
 	}
 #endif
 #ifdef USE_MAD
-	if (!_audioSource) {
-		sprintf(fileName, "%s.mp3", fileBase);
-		if (_file.open(fileName)) {
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeMP3Stream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
-			if (!_audioSource)
+	if (!stream) {
+		if (_file.open(filename + ".mp3")) {
+			stream = Audio::makeMP3Stream(&_file, DisposeAfterUse::NO);
+			if (!stream)
 				_file.close();
 		}
 	}
 #endif
-	if (!_audioSource) {
-		sprintf(fileName, "%s.wav", fileBase);
-		if (_file.open(fileName))
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeWAVStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
+	if (!stream) {
+		if (_file.open(filename + ".wav"))
+			stream = Audio::makeWAVStream(&_file, DisposeAfterUse::NO);
 	}
 
-	if (!_audioSource) {
-		sprintf(fileName, "%s.aif", fileBase);
-		if (_file.open(fileName))
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeAIFFStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
+	if (!stream) {
+		if (_file.open(filename + ".aif"))
+			stream = Audio::makeAIFFStream(&_file, DisposeAfterUse::NO);
 	}
 
-	if (!_audioSource)
+	if (!stream)
 		return false;
+
+	_audioSource = Audio::makeLoopingAudioStream(stream, loop ? 0 : 1);
 
 	fadeUp();
 	return true;
@@ -219,12 +216,9 @@ int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 void MusicHandle::stop() {
-	if (_audioSource) {
-		delete _audioSource;
-		_audioSource = NULL;
-	}
-	if (_file.isOpen())
-		_file.close();
+	delete _audioSource;
+	_audioSource = NULL;
+	_file.close();
 	_fading = 0;
 }
 

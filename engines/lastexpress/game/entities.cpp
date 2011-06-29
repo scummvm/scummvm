@@ -68,8 +68,10 @@
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
@@ -200,7 +202,7 @@ Entity *Entities::get(EntityIndex entity) {
 	assert((uint)entity < _entities.size());
 
 	if (entity == kEntityPlayer)
-		error("Cannot get entity for index == 0!");
+		error("[Entities::get] Cannot get entity for kEntityPlayer");
 
 	return _entities[entity];
 }
@@ -218,24 +220,24 @@ int Entities::getPosition(CarIndex car, Position position) const {
 	int index = 100 * car + position;
 
 	if (car > 10)
-		error("Entities::getPosition: trying to access an invalid car (was: %d, valid:0-9)", car);
+		error("[Entities::getPosition] Trying to access an invalid car (was: %d, valid:0-9)", car);
 
 	if (position > 100)
-		error("Entities::getPosition: trying to access an invalid position (was: %d, valid:0-100)", position);
+		error("[Entities::getPosition] Trying to access an invalid position (was: %d, valid:0-100)", position);
 
 	return _positions[index];
 }
 
 int Entities::getCompartments(int index) const {
 	if (index >= _compartmentsCount)
-		error("Entities::getCompartments: trying to access an invalid compartment (was: %d, valid:0-15)", index);
+		error("[Entities::getCompartments] Trying to access an invalid compartment (was: %d, valid:0-15)", index);
 
 	return _compartments[index];
 }
 
 int Entities::getCompartments1(int index) const {
 	if (index >= _compartmentsCount)
-		error("Entities::getCompartments: trying to access an invalid compartment (was: %d, valid:0-15)", index);
+		error("[Entities::getCompartments] Trying to access an invalid compartment (was: %d, valid:0-15)", index);
 
 	return _compartments1[index];
 }
@@ -299,7 +301,7 @@ void Entities::setupChapter(ChapterIndex chapter) {
 		memset(&_compartments1, 0, sizeof(_compartments1));
 		memset(&_positions, 0, sizeof(_positions));
 
-		getSound()->resetQueue(SoundManager::kSoundType13);
+		getSoundQueue()->resetQueue(kSoundType13);
 	}
 
 	// we skip the header when doing entity setup
@@ -369,8 +371,8 @@ void Entities::resetState(EntityIndex entityIndex) {
 	getData(entityIndex)->currentCall = 0;
 	getData(entityIndex)->inventoryItem = kItemNone;
 
-	if (getSound()->isBuffered(entityIndex))
-		getSound()->removeFromQueue(entityIndex);
+	if (getSoundQueue()->isBuffered(entityIndex))
+		getSoundQueue()->removeFromQueue(entityIndex);
 
 	clearSequences(entityIndex);
 
@@ -1780,7 +1782,7 @@ void Entities::enterCompartment(EntityIndex entity, ObjectIndex compartment, boo
 	// Update compartments
 	int index = (compartment < 32 ? compartment - 1 : compartment - 24);
 	if (index >= 16)
-		error("Entities::exitCompartment: invalid compartment index!");
+		error("[Entities::enterCompartment] Invalid compartment index");
 
 	if (useCompartment1)
 		_compartments1[index] |= STORE_VALUE(entity);
@@ -1866,7 +1868,7 @@ void Entities::exitCompartment(EntityIndex entity, ObjectIndex compartment, bool
 	// Update compartments
 	int index = (compartment < 32 ? compartment - 1 : compartment - 24);
 	if (index >= 16)
-		error("Entities::exitCompartment: invalid compartment index!");
+		error("[Entities::exitCompartment] Invalid compartment index");
 
 	if (useCompartment1)
 		_compartments1[index] &= ~STORE_VALUE(entity);
@@ -2355,7 +2357,7 @@ bool Entities::changeCar(EntityData::EntityCallData *data, EntityIndex entity, C
 	if (data->car == newCar) {
 		if (isInGreenCarEntrance(kEntityPlayer)) {
 			getSound()->playSoundEvent(kEntityPlayer, 14);
-			getSound()->excuseMe(entity, kEntityPlayer, SoundManager::kFlagDefault);
+			getSound()->excuseMe(entity, kEntityPlayer, kFlagDefault);
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 1);
 			getSound()->playSound(kEntityPlayer, "CAT1127A");
 			getSound()->playSoundEvent(kEntityPlayer, 15);
@@ -2374,7 +2376,7 @@ bool Entities::changeCar(EntityData::EntityCallData *data, EntityIndex entity, C
 	if (data->car == newCar) {
 		if (isInKronosCarEntrance(kEntityPlayer)) {
 			getSound()->playSoundEvent(kEntityPlayer, 14);
-			getSound()->excuseMe(entity, kEntityPlayer, SoundManager::kFlagDefault);
+			getSound()->excuseMe(entity, kEntityPlayer, kFlagDefault);
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 62);
 			getSound()->playSound(kEntityPlayer, "CAT1127A");
 			getSound()->playSoundEvent(kEntityPlayer, 15);

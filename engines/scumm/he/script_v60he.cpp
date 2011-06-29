@@ -744,7 +744,7 @@ void ScummEngine_v60he::o60_closeFile() {
 			_hOutFileTable[slot] = 0;
 		}
 
-		delete _hInFileTable[slot];		
+		delete _hInFileTable[slot];
 		_hInFileTable[slot] = 0;
 	}
 }

@@ -1088,32 +1088,26 @@ int LoLEngine::olol_playAttackSound(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_characterJoinsParty(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_characterJoinsParty(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+int LoLEngine::olol_addRemoveCharacter(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_addRemoveCharacter(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 
 	int16 id = stackPos(0);
-	if (id < 0)
+	if (id < 0) {
 		id = -id;
+		for (int i = 0; i < 4; i++) {
+			if (!(_characters[i].flags & 1) || _characters[i].id != id)
+				continue;
 
-	for (int i = 0; i < 4; i++) {
-		if (!(_characters[i].flags & 1) || _characters[i].id != id)
-			continue;
+			_characters[i].flags &= 0xfffe;
+			calcCharPortraitXpos();
 
-		_characters[i].flags &= 0xfffe;
-		calcCharPortraitXpos();
-
-		if (!_updateFlags) {
-			gui_enableDefaultPlayfieldButtons();
-			gui_drawPlayField();
+			if (_selectedCharacter == i)
+				_selectedCharacter = 0;
+			break;
 		}
-
-		if (_selectedCharacter == i)
-			_selectedCharacter = 0;
-
-		return 1;
+	} else {
+		addCharacter(id);
 	}
-
-	addCharacter(id);
 
 	if (!_updateFlags) {
 		gui_enableDefaultPlayfieldButtons();
@@ -1136,9 +1130,8 @@ int LoLEngine::olol_loadTimScript(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadTimScript(%p) (%d, %s)", (const void *)script, stackPos(0), stackPosString(1));
 	if (_activeTim[stackPos(0)])
 		return 1;
-	char file[13];
-	snprintf(file, sizeof(file), "%s.TIM", stackPosString(1));
-	_activeTim[stackPos(0)] = _tim->load(file, &_timIngameOpcodes);
+	Common::String file = Common::String::format("%s.TIM", stackPosString(1));
+	_activeTim[stackPos(0)] = _tim->load(file.c_str(), &_timIngameOpcodes);
 	return 1;
 }
 
@@ -1185,10 +1178,9 @@ int LoLEngine::olol_giveItemToMonster(EMCState *script) {
 
 int LoLEngine::olol_loadLangFile(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLangFile(%p) (%s)", (const void *)script, stackPosString(0));
-	char filename[13];
-	snprintf(filename, sizeof(filename), "%s.%s", stackPosString(0), _languageExt[_lang]);
+	Common::String filename = Common::String::format("%s.%s", stackPosString(0), _languageExt[_lang]);
 	delete[] _levelLangFile;
-	_levelLangFile = _res->fileData(filename, 0);
+	_levelLangFile = _res->fileData(filename.c_str(), 0);
 	return 1;
 }
 
@@ -2825,7 +2817,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_setScriptTimer);
 	Opcode(olol_createHandItem);
 	Opcode(olol_playAttackSound);
-	Opcode(olol_characterJoinsParty);
+	Opcode(olol_addRemoveCharacter);
 
 	// 0x4C
 	Opcode(olol_giveItem);

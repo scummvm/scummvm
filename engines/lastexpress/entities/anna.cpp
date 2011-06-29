@@ -22,16 +22,19 @@
 
 #include "lastexpress/entities/anna.h"
 
+#include "lastexpress/fight/fight.h"
+
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
-#include "lastexpress/game/fight.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -311,7 +314,7 @@ IMPLEMENT_FUNCTION(12, Anna, function12)
 			params->param4 = 0;
 			params->param5 = 0;
 		} else {
-			getSound()->removeFromQueue(kEntityAnna);
+			getSoundQueue()->removeFromQueue(kEntityAnna);
 
 			getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorNormal, kCursorNormal);
 			getObjects()->update(kObject53, kEntityAnna, kObjectLocation1, kCursorNormal, kCursorNormal);
@@ -322,7 +325,7 @@ IMPLEMENT_FUNCTION(12, Anna, function12)
 		break;
 
 	case kActionOpenDoor:
-		getSound()->removeFromQueue(kEntityAnna);
+		getSoundQueue()->removeFromQueue(kEntityAnna);
 		setCallback(3);
 		setup_playSound("LIB013");
 		break;
@@ -338,8 +341,8 @@ IMPLEMENT_FUNCTION(12, Anna, function12)
 
 		getEntities()->drawSequenceLeft(kEntityAnna, "418C");
 
-		if (getSound()->isBuffered(kEntityAnna))
-			getSound()->processEntry(kEntityAnna);
+		if (getSoundQueue()->isBuffered(kEntityAnna))
+			getSoundQueue()->processEntry(kEntityAnna);
 
 		getSound()->playSound(kEntityAnna, "ANN2135A");
 		break;
@@ -378,7 +381,7 @@ IMPLEMENT_FUNCTION(12, Anna, function12)
 			break;
 
 		case 3:
-			if (!getSound()->isBuffered(kEntityMax)) {
+			if (!getSoundQueue()->isBuffered(kEntityMax)) {
 				setCallback(4);
 				setup_playSound("MAX1120");
 				break;
@@ -502,7 +505,7 @@ IMPLEMENT_FUNCTION_IS(15, Anna, function15, TimeValue)
 			break;
 
 		case 1:
-			if (!getSound()->isBuffered(kEntityMax)) {
+			if (!getSoundQueue()->isBuffered(kEntityMax)) {
 				setCallback(2);
 				setup_playSound("MAX1120");
 				break;
@@ -1455,7 +1458,7 @@ label_callback_1:
 
 		case 2:
 		case 3:
-			if (!getSound()->isBuffered(kEntityMax)) {
+			if (!getSoundQueue()->isBuffered(kEntityMax)) {
 				setCallback(4);
 				setup_playSound("MAX1120");
 				break;
@@ -1520,8 +1523,8 @@ IMPLEMENT_FUNCTION(35, Anna, function35)
 
 	case kActionKnock:
 	case kActionOpenDoor:
-		if (getSound()->isBuffered(kEntityAnna))
-			getSound()->processEntry(kEntityAnna);
+		if (getSoundQueue()->isBuffered(kEntityAnna))
+			getSoundQueue()->processEntry(kEntityAnna);
 
 		if (savepoint.action == kActionKnock)
 			getSound()->playSound(kEntityPlayer, "LIB012");
@@ -1563,8 +1566,8 @@ IMPLEMENT_FUNCTION(35, Anna, function35)
 		break;
 
 	case kAction226031488:
-		if (getSound()->isBuffered(kEntityAnna))
-			getSound()->processEntry(kEntityAnna);
+		if (getSoundQueue()->isBuffered(kEntityAnna))
+			getSoundQueue()->processEntry(kEntityAnna);
 
 		getSavePoints()->push(kEntityAnna, kEntityMax, kAction71277948);
 		break;
@@ -1843,7 +1846,7 @@ IMPLEMENT_FUNCTION(41, Anna, function41)
 
 		case 1:
 		case 2:
-			if (!getSound()->isBuffered(kEntityMax)) {
+			if (!getSoundQueue()->isBuffered(kEntityMax)) {
 				setCallback(3);
 				setup_playSound("MAX1120");
 				break;
@@ -2062,7 +2065,7 @@ IMPLEMENT_FUNCTION(47, Anna, function47)
 			break;
 
 		case 4:
-			getSound()->playSound(kEntityAnna, getEvent(kEventAugustLunch) ? "Ann3136" : "Ann3136A", SoundManager::kFlagInvalid, 30);
+			getSound()->playSound(kEntityAnna, getEvent(kEventAugustLunch) ? "Ann3136" : "Ann3136A", kFlagInvalid, 30);
 			getSavePoints()->push(kEntityAnna, kEntityAugust, kAction122358304);
 
 			setCallback(5);
@@ -2089,7 +2092,7 @@ IMPLEMENT_FUNCTION(48, Anna, function48)
 			break;
 
 		if (params->param3 != kTimeInvalid && getState()->time > kTime1969200) {
-			UPDATE_PARAM_PROC_TIME(kTime1983600, (!getEntities()->isInRestaurant(kEntityPlayer) || getSound()->isBuffered(kEntityBoutarel)), params->param3, 150)
+			UPDATE_PARAM_PROC_TIME(kTime1983600, (!getEntities()->isInRestaurant(kEntityPlayer) || getSoundQueue()->isBuffered(kEntityBoutarel)), params->param3, 150)
 				setCallback(3);
 				setup_playSound("Aug3007A");
 				break;
@@ -2257,7 +2260,7 @@ IMPLEMENT_FUNCTION(51, Anna, function51)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityAnna, "Aug3142", SoundManager::kFlagInvalid, 30);
+		getSound()->playSound(kEntityAnna, "Aug3142", kFlagInvalid, 30);
 		getEntities()->updatePositionEnter(kEntityAnna, kCarRestaurant, 57);
 		getEntities()->drawSequenceRight(kEntityAnna, "112A");
 		if (getEntities()->isInRestaurant(kEntityPlayer))
@@ -2480,7 +2483,7 @@ IMPLEMENT_FUNCTION(53, Anna, function53)
 			break;
 
 		case 1:
-			if (!getSound()->isBuffered(kEntityMax)) {
+			if (!getSoundQueue()->isBuffered(kEntityMax)) {
 				setCallback(2);
 				setup_playSound("MAX1120");
 				break;
@@ -2619,7 +2622,7 @@ IMPLEMENT_FUNCTION(54, Anna, function54)
 			break;
 
 		case 1:
-			if (!getSound()->isBuffered(kEntityMax)) {
+			if (!getSoundQueue()->isBuffered(kEntityMax)) {
 				setCallback(2);
 				setup_playSound("MAX1120");
 				break;
@@ -2788,7 +2791,7 @@ IMPLEMENT_FUNCTION(57, Anna, function57)
 			break;
 
 		case 4:
-			if (getSound()->isBuffered(kEntityAugust)) {
+			if (getSoundQueue()->isBuffered(kEntityAugust)) {
 				setCallback(4);
 				setup_updateFromTime(75);
 			} else {
@@ -2816,7 +2819,7 @@ IMPLEMENT_FUNCTION(57, Anna, function57)
 	case kAction123712592:
 		getEntities()->drawSequenceLeft(kEntityAnna, "628Af");
 
-		if (getSound()->isBuffered(kEntityAugust)) {
+		if (getSoundQueue()->isBuffered(kEntityAugust)) {
 			setCallback(4);
 			setup_updateFromTime(75);
 		} else {
@@ -3157,8 +3160,8 @@ IMPLEMENT_FUNCTION(63, Anna, function63)
 
 	// Anna will get killed...
 	case kAction272177921:
-		if (getSound()->isBuffered("MUS012"))
-			getSound()->processEntry("MUS012");
+		if (getSoundQueue()->isBuffered("MUS012"))
+			getSoundQueue()->processEntry("MUS012");
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventAnnaKilled);
@@ -3840,7 +3843,7 @@ IMPLEMENT_FUNCTION(78, Anna, function78)
 		case 2:
 			getAction()->playAnimation(kEventKronosHostageAnna);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 61);
-			getSound()->playSound(kEntityAnna, "Mus024", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityAnna, "Mus024", kFlagDefault);
 			setup_function79();
 			break;
 		}
@@ -3910,11 +3913,11 @@ IMPLEMENT_FUNCTION(80, Anna, function80)
 	case kActionNone:
 		UPDATE_PARAM(params->param1, getState()->timeTicks, 450);
 
-		getSound()->playSound(kEntityPlayer, "Kro5001", SoundManager::kFlagDefault);
+		getSound()->playSound(kEntityPlayer, "Kro5001", kFlagDefault);
 		break;
 
 	case kActionEndSound:
-		getSound()->playSound(kEntityPlayer, "Kro5002", SoundManager::kFlagDefault);
+		getSound()->playSound(kEntityPlayer, "Kro5002", kFlagDefault);
 		getState()->time = kTime4923000;
 
 		setCallback(1);
@@ -3934,12 +3937,12 @@ IMPLEMENT_FUNCTION(80, Anna, function80)
 			break;
 
 		case 1:
-			if (getSound()->isBuffered(kEntityAnna))
-				getSound()->processEntry(kEntityAnna);
+			if (getSoundQueue()->isBuffered(kEntityAnna))
+				getSoundQueue()->processEntry(kEntityAnna);
 
 			getAction()->playAnimation(kEventKronosBringFirebird);
 			getScenes()->loadSceneFromItem(kItemFirebird);
-			getSound()->playSound(kEntityAnna, "Mus025", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityAnna, "Mus025", kFlagDefault);
 			break;
 
 		case 2:
@@ -3950,8 +3953,8 @@ IMPLEMENT_FUNCTION(80, Anna, function80)
 		case 3:
 			getProgress().isEggOpen = true;
 
-			if (getSound()->isBuffered(kEntityAnna))
-				getSound()->processEntry(kEntityAnna);
+			if (getSoundQueue()->isBuffered(kEntityAnna))
+				getSoundQueue()->processEntry(kEntityAnna);
 
 			getAction()->playAnimation(kEventKronosOpenFirebird);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 3);

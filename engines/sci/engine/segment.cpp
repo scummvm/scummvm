@@ -255,7 +255,7 @@ SegmentRef ArrayTable::dereference(reg_t pointer) {
 	return ret;
 }
 
-void ArrayTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) { 
+void ArrayTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	_table[sub_addr.offset].destroy();
 	freeEntry(sub_addr.offset);
 }

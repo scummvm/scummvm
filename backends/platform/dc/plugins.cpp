@@ -51,7 +51,7 @@ static void drawPluginProgress(const Common::String &filename)
   ta_begin_frame();
   draw_solid_quad(80.0, 270.0, 560.0, 300.0,
 		  0xff808080, 0xff808080, 0xff808080, 0xff808080);
-  draw_solid_quad(85.0, 275.0, 555.0, 295.0, 
+  draw_solid_quad(85.0, 275.0, 555.0, 295.0,
 		  0xff202020, 0xff202020, 0xff202020, 0xff202020);
   draw_solid_quad(85.0, 275.0, 85.0+470.0*ffree, 295.0,
 		  fcol, fcol, fcol, fcol);

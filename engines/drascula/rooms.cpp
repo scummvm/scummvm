@@ -1675,7 +1675,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	if (!stream) {
 		error("missing data file %s", fileName);
 	}
-	
+
 	TextResourceParser p(stream, DisposeAfterUse::YES);
 
 	p.parseInt(roomNumber);

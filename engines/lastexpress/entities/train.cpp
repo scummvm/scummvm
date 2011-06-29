@@ -30,7 +30,9 @@
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
-#include "lastexpress/game/sound.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -90,7 +92,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 
 	switch (params->param1) {
 	default:
-		error("Train::harem: Invalid value for parameter 1: %d", params->param1);
+		error("[Train::harem] Invalid value for parameter 1: %d", params->param1);
 		break;
 
 	case kObjectCompartment5:
@@ -118,7 +120,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 	getObjects()->update((ObjectIndex)params->param1, kEntityTrain, kObjectLocation3, kCursorNormal, kCursorNormal);
 
 	// Knock / closed door sound
-	getSound()->playSound(kEntityTables5, (params->param2 == 8) ? "LIB012" : "LIB013", SoundManager::kFlagDefault);
+	getSound()->playSound(kEntityTables5, (params->param2 == 8) ? "LIB012" : "LIB013", kFlagDefault);
 
 	if (params->param4 && params->param5) {
 
@@ -130,17 +132,17 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 			break;
 
 		case 1:
-			getSound()->playSound(kEntityTables5, "Har1014", SoundManager::kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1014", kFlagDefault, 15);
 			break;
 
 		case 2:
-			getSound()->playSound(kEntityTables5, "Har1013", SoundManager::kFlagDefault, 15);
-			getSound()->playSound(kEntityTables5, "Har1016", SoundManager::kFlagDefault, 150);
+			getSound()->playSound(kEntityTables5, "Har1013", kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1016", kFlagDefault, 150);
 			break;
 
 		case 3:
-			getSound()->playSound(kEntityTables5, "Har1015A", SoundManager::kFlagDefault, 15);
-			getSound()->playSound(kEntityTables5, "Har1015", SoundManager::kFlagDefault, 150);
+			getSound()->playSound(kEntityTables5, "Har1015A", kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1015", kFlagDefault, 150);
 			break;
 		}
 
@@ -164,15 +166,15 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 			break;
 
 		case 1:
-			getSound()->playSound(kEntityTables5, "Har1014", SoundManager::kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1014", kFlagDefault, 15);
 			break;
 
 		case 2:
-			getSound()->playSound(kEntityTables5, "Har1013", SoundManager::kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1013", kFlagDefault, 15);
 			break;
 
 		case 3:
-			getSound()->playSound(kEntityTables5, "Har1013A", SoundManager::kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1013A", kFlagDefault, 15);
 			break;
 		}
 
@@ -191,11 +193,11 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 				break;
 
 			case 1:
-				getSound()->playSound(kEntityTables5, "Har1012", SoundManager::kFlagDefault, 15);
+				getSound()->playSound(kEntityTables5, "Har1012", kFlagDefault, 15);
 				break;
 
 			case 2:
-				getSound()->playSound(kEntityTables5, "Har1012A", SoundManager::kFlagDefault, 15);
+				getSound()->playSound(kEntityTables5, "Har1012A", kFlagDefault, 15);
 				break;
 			}
 
@@ -207,7 +209,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 				ENTITY_PARAM(0, 1)++;
 
 				if (ENTITY_PARAM(0, 1) <= 1)
-					getSound()->playSound(kEntityTables5, "Har1014", SoundManager::kFlagDefault, 15);
+					getSound()->playSound(kEntityTables5, "Har1014", kFlagDefault, 15);
 				else
 					params->param8 = 1;
 
@@ -221,7 +223,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 				ENTITY_PARAM(0, 4)++;
 
 				if (ENTITY_PARAM(0, 4) <= 1) {
-					getSound()->playSound(kEntityTables5, "Har1011", SoundManager::kFlagDefault, 15);
+					getSound()->playSound(kEntityTables5, "Har1011", kFlagDefault, 15);
 					handleCompartmentAction();
 					return;
 				}
@@ -241,11 +243,11 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 		break;
 
 	case 1:
-		getSound()->playSound(kEntityTables5, "Har1013", SoundManager::kFlagDefault, 15);
+		getSound()->playSound(kEntityTables5, "Har1013", kFlagDefault, 15);
 		break;
 
 	case 2:
-		getSound()->playSound(kEntityTables5, "Har1013A", SoundManager::kFlagDefault, 15);
+		getSound()->playSound(kEntityTables5, "Har1013A", kFlagDefault, 15);
 		break;
 	}
 
@@ -300,13 +302,13 @@ label_process:
 		}
 
 		// Update object
-		if (ENTITY_PARAM(0, 8) && !getSound()->isBuffered(kEntityTables5)) {
+		if (ENTITY_PARAM(0, 8) && !getSoundQueue()->isBuffered(kEntityTables5)) {
 			getObjects()->update((ObjectIndex)ENTITY_PARAM(0, 8), getObjects()->get((ObjectIndex)ENTITY_PARAM(0, 8)).entity, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			ENTITY_PARAM(0, 8) = 0;
 		}
 
 		// Play clock sound
-		if (params->param6 && !getSound()->isBuffered("ZFX1001", true))
+		if (params->param6 && !getSoundQueue()->isBuffered("ZFX1001", true))
 			getSound()->playSound(kEntityPlayer, "ZFX1001");
 
 		break;
@@ -339,12 +341,12 @@ label_process:
 		// Play clock sound
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 81)) {
 			params->param6 = 1;
-			if (!getSound()->isBuffered("ZFX1001"))
+			if (!getSoundQueue()->isBuffered("ZFX1001"))
 				getSound()->playSound(kEntityPlayer, "ZFX1001");
 		} else {
 			params->param6 = 0;
-			if (getSound()->isBuffered("ZFX1001", true))
-				getSound()->removeFromQueue("ZFX1001");
+			if (getSoundQueue()->isBuffered("ZFX1001", true))
+				getSoundQueue()->removeFromQueue("ZFX1001");
 		}
 
 		// Draw moving background behind windows
@@ -562,8 +564,8 @@ void Train::resetParam8() {
 	 && !getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params1->param1, (EntityPosition)params1->param2)
 	 && !getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params1->param1, (EntityPosition)params1->param3)) {
 
-		if (getSound()->isBuffered((const char *)&params1->seq))
-			getSound()->processEntry((const char *)&params1->seq);
+		if (getSoundQueue()->isBuffered((const char *)&params1->seq))
+			getSoundQueue()->processEntry((const char *)&params1->seq);
 
 		params->param8 = 0;
 	}

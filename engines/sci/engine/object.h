@@ -79,7 +79,7 @@ public:
 	}
 
 	reg_t getSpeciesSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1) 
+		if (getSciVersion() <= SCI_VERSION_2_1)
 			return _variables[_offset];
 		else	// SCI3
 			return _speciesSelectorSci3;
@@ -93,7 +93,7 @@ public:
 	}
 
 	reg_t getSuperClassSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1) 
+		if (getSciVersion() <= SCI_VERSION_2_1)
 			return _variables[_offset + 1];
 		else	// SCI3
 			return _superClassPosSci3;

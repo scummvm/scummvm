@@ -131,11 +131,11 @@ class DosSoundMan_ns : public SoundMan_ns {
 
 	MidiPlayer	*_midiPlayer;
 	bool		_playing;
-	
+
 	bool isLocationSilent(const char *locationName);
 	bool locationHasOwnSoftMusic(const char *locationName);
 
-	
+
 public:
 	DosSoundMan_ns(Parallaction_ns *vm);
 	~DosSoundMan_ns();

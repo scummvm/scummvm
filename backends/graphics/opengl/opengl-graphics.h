@@ -185,7 +185,7 @@ protected:
 
 	/**
 	 * Set the scale factor.
-	 * 
+	 *
 	 * This can only be used in a GFX transaction.
 	 *
 	 * @param newScale New scale factor.
@@ -332,7 +332,7 @@ protected:
 	GLTexture *_osdTexture;
 	Graphics::Surface _osdSurface;
 	uint8 _osdAlpha;
-	uint32 _osdFadeStartTime; 
+	uint32 _osdFadeStartTime;
 	bool _requireOSDUpdate;
 	enum {
 		kOSDFadeOutDelay = 2 * 1000,

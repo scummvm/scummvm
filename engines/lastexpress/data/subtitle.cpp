@@ -168,13 +168,13 @@ bool SubtitleManager::load(Common::SeekableReadStream *stream) {
 	// Read header to get the number of subtitles
 	uint32 numSubtitles = stream->readUint16LE();
 	if (stream->eos())
-		error("Cannot read from subtitle file");
+		error("[SubtitleManager::load] Cannot read from subtitle file");
 
 	debugC(3, kLastExpressDebugSubtitle, "Number of subtitles in file: %d", numSubtitles);
 
 	// TODO: Check that stream contain enough data
 	//if (stream->size() < (signed)(numSubtitles * sizeof(SubtitleData))) {
-		//debugC(2, kLastExpressDebugSubtitle, "Subtitle file does not contain valid data!");
+		//debugC(2, kLastExpressDebugSubtitle, "Subtitle file does not contain valid data");
 		//return false;
 	//}
 

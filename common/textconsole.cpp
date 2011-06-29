@@ -46,14 +46,14 @@ void setErrorHandler(ErrorHandler handler) {
 #ifndef DISABLE_TEXT_CONSOLE
 
 void warning(const char *s, ...) {
-	char buf[STRINGBUFLEN];
+	Common::String output;
 	va_list va;
 
 	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
+	output = Common::String::vformat(s, va);
 	va_end(va);
 
-	Common::String output = Common::String::format("WARNING: %s!\n", buf);
+	output = "WARNING: " + output + "!\n";
 
 	if (g_system)
 		g_system->logMessage(LogMessageType::kWarning, output.c_str());
@@ -64,6 +64,9 @@ void warning(const char *s, ...) {
 #endif
 
 void NORETURN_PRE error(const char *s, ...) {
+	// We don't use String::vformat here, as that require
+	// using the heap, and that might be impossible at this
+	// point, e.g. if the error was an "out-of-memory" error.
 	char buf_input[STRINGBUFLEN];
 	char buf_output[STRINGBUFLEN];
 	va_list va;

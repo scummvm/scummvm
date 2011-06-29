@@ -100,7 +100,7 @@ DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 void ELFPlugin::trackSize() {
 	// All we need to do is create our object, track its size, then delete it
 	DLObject *obj = makeDLObject();
-	
+
 	obj->trackSize(_filename.c_str());
 	delete obj;
 }
@@ -180,7 +180,7 @@ void ELFPlugin::unloadPlugin() {
 PluginList ELFPluginProvider::getPlugins() {
 	PluginList pl = FilePluginProvider::getPlugins();
 
-#if defined(UNCACHED_PLUGINS) && !defined(ELF_NO_MEM_MANAGER) 	
+#if defined(UNCACHED_PLUGINS) && !defined(ELF_NO_MEM_MANAGER)
 	// This static downcast is safe because all of the plugins must
 	// be ELF plugins
 	for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
@@ -190,8 +190,8 @@ PluginList ELFPluginProvider::getPlugins() {
 	// The Memory Manager should now allocate space based on the information
 	// it collected
 	ELFMemMan.allocateHeap();
-#endif	
-	
+#endif
+
 	return pl;
 }
 

@@ -253,7 +253,7 @@ bool Mouse::setCursorNum(int cursorIndex) {
 	_cursor = _cursorSprites->getFrame(cursorIndex);
 
 	// Set the cursor to the sprite
-	CursorMan.replaceCursor((const byte *)_cursor->getBasePtr(), _cursor->width(), _cursor->height(), 
+	CursorMan.replaceCursor((const byte *)_cursor->getBasePtr(), _cursor->width(), _cursor->height(),
 		_cursor->xOffset, _cursor->yOffset, TRANSPARENT_COLOR_INDEX);
 
 	return true;

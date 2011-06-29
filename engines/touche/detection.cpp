@@ -24,6 +24,7 @@
 #include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "base/plugins.h"
 
@@ -126,34 +127,31 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Touche::gameDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	4096,
-	// List of all engine targets
-	toucheGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"touche",
-	// List of files for file-based fallback detection (optional)
-	Touche::fileBasedFallback,
-	// Flags
-	kADFlagPrintWarningOnFileBasedFallback,
-	// Additional GUI options (for every game}
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	2,
-	// List of directory globs
-	directoryGlobs
-};
-
 class ToucheMetaEngine : public AdvancedMetaEngine {
 public:
-	ToucheMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	ToucheMetaEngine() : AdvancedMetaEngine(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
+		_md5Bytes = 4096;
+		_singleid = "touche";
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
+	}
+
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		const ADGameDescription *matchedDesc = detectGameFilebased(allFiles, Touche::fileBasedFallback);
+
+		if (matchedDesc) { // We got a match
+			Common::String report = Common::String::format(_("Your game version has been detected using "
+				"filename matching as a variant of %s."), matchedDesc->gameid);
+			report += "\n";
+			report += _("If this is an original and unmodified version, please report any");
+			report += "\n";
+			report += _("information previously printed by ScummVM to the team.");
+			report += "\n";
+			g_system->logMessage(LogMessageType::kInfo, report.c_str());
+		}
+
+		return matchedDesc;
+	}
 
 	virtual const char *getName() const {
 		return "Touche";

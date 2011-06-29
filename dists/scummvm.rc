@@ -5,6 +5,7 @@
 #endif
 
 #define FILE 256
+#define IDI_ICON 1001
 
 IDI_ICON               ICON    DISCARDABLE     "icons/scummvm.ico"
 

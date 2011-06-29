@@ -28,11 +28,14 @@
 #include "tsage/dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/events.h"
+#include "tsage/sound.h"
 #include "tsage/saveload.h"
 
 namespace tSage {
 
 class Globals : public SavedObject {
+private:
+	static void dispatchSound(ASound *obj);
 public:
 	GfxSurface _screenSurface;
 	GfxManager _gfxManagerInstance;
@@ -55,10 +58,10 @@ public:
 	SoundManager _soundManager;
 	Common::Point _dialogCenter;
 	WalkRegions _walkRegions;
-	SynchronizedList<EventHandler *> _sceneListeners;
+	SynchronizedList<ASound *> _sounds;
 	bool _flags[256];
 	Player _player;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 	InvObjectList *_inventory;
 	Region _paneRegions[2];
 	int _paneRefreshFlag[2];
@@ -90,6 +93,7 @@ public:
 	GfxManager &gfxManager() { return **_gfxManagers.begin(); }
 	virtual Common::String getClassName() { return "Globals"; }
 	virtual void synchronize(Serializer &s);
+	void dispatchSounds();
 };
 
 extern Globals *_globals;

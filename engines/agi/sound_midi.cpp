@@ -33,7 +33,7 @@
 // Timing is not perfect, yet. It plays correct, when I use the
 // Gravis-Midiplayer, but the songs are too fast when I use playmidi on
 // Linux.
-// 
+//
 // Original program developed by Jens. Christian Restemeier
 //
 
@@ -114,7 +114,7 @@ void SoundGenMIDI::endOfTrack() {
 
 void SoundGenMIDI::play(int resnum) {
 	MIDISound *track;
- 
+
 	stop();
 
 	_isGM = true;
@@ -153,7 +153,7 @@ unsigned char instr[] = {50, 51, 19};
 static void writeDelta(Common::MemoryWriteStreamDynamic *st, int32 delta) {
 	int32 i;
 
-	i = delta >> 21; if (i > 0) st->writeByte((i & 127) | 128); 
+	i = delta >> 21; if (i > 0) st->writeByte((i & 127) | 128);
 	i = delta >> 14; if (i > 0) st->writeByte((i & 127) | 128);
 	i = delta >> 7;  if (i > 0) st->writeByte((i & 127) | 128);
 	st->writeByte(delta & 127);
@@ -196,7 +196,7 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 				int note;
 				/* I don't know,  what frequency equals midi note 0 ... */
 				/* This moves the song 4 octaves down: */
-				fr = (log10(111860.0 / (double)freq) / ll) - 48; 
+				fr = (log10(111860.0 / (double)freq) / ll) - 48;
 				note = (int)floor(fr + 0.5);
 				if (note < 0) note = 0;
 				if (note > 127) note = 127;
@@ -222,7 +222,7 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 				st.writeByte(0);
 				st.writeByte(0);
 			}
-		}       
+		}
 		writeDelta(&st, 0);
 		st.writeByte(0xff);
 		st.writeByte(0x2f);

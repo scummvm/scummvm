@@ -41,8 +41,8 @@ void Scene5000::Action1::signal() {
 		setDelay(10);
 		break;
 	case 1:
-		scene->_soundHandler.startSound(190);
-		scene->_soundHandler.proc5(true);
+		scene->_soundHandler.play(190);
+		scene->_soundHandler.holdAt(true);
 		ADD_MOVER(scene->_hotspot1, 283, 12);
 		break;
 	case 2:
@@ -55,7 +55,7 @@ void Scene5000::Action1::signal() {
 		setDelay(15);
 		break;
 	case 4:
-		scene->_soundHandler.proc4();
+		scene->_soundHandler.release();
 		ADD_MOVER(scene->_hotspot1, 233, 80);
 		break;
 	case 5:
@@ -561,7 +561,7 @@ void Scene5000::postInit(SceneObjectList *OwnerList) {
 		break;
 	}
 
-	_globals->_soundHandler.startSound(190);
+	_globals->_soundHandler.play(190);
 }
 
 void Scene5000::signal() {
@@ -639,7 +639,7 @@ void Scene5100::Action1::signal() {
 		}
 		break;
 	case 4:
-		scene->_soundHandler.startSound(206);
+		scene->_soundHandler.play(206);
 
 		scene->_hotspot5.postInit();
 		scene->_hotspot5.setVisage(5362);
@@ -740,7 +740,7 @@ void Scene5100::Action3::signal() {
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		scene->_soundHandler.startSound(28);
+		scene->_soundHandler.play(28);
 		if (static_cast<SceneObject *>(_owner)->_position.x < _globals->_player._position.x) {
 			scene->_hotspot2.setVisage(5130);
 			scene->_hotspot2._strip = 1;
@@ -786,7 +786,7 @@ void Scene5100::Action4::signal() {
 	switch (_actionIndex++) {
 	case 0: {
 		_globals->_player.disableControl();
-		scene->_soundHandler.startSound(208);
+		scene->_soundHandler.play(208);
 		SceneItem::display2(5100, 15);
 
 		ObjectMover3 *mover = new ObjectMover3();
@@ -1289,7 +1289,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 
 	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position);
 	loadScene(5100);
-	_globals->_soundHandler.startSound(205);
+	_globals->_soundHandler.play(205);
 }
 
 void Scene5100::signal() {
@@ -1385,7 +1385,7 @@ void Scene5100::dispatch() {
 		_globals->_player.disableControl();
 		_globals->_player.addMover(NULL);
 
-		_soundHandler.startSound(207);
+		_soundHandler.play(207);
 		_sceneMode = 5103;
 		setAction(&_sequenceManager, this, (_globals->_player._position.x >= 966) ? 5104 : 5103,
 				&_globals->_player, &_hotspot15, NULL);
@@ -1396,7 +1396,7 @@ void Scene5100::dispatch() {
 			(_globals->_sceneManager._previousScene != 5200) && (_sceneMode != 5150)) {
 		setAction(NULL);
 		_sceneMode = 5150;
-		_soundHandler.startSound(208);
+		_soundHandler.play(208);
 
 		if (RING_INVENTORY._vial._sceneNumber == 5100) {
 			_globals->_player.addMover(NULL);
@@ -1471,7 +1471,7 @@ void Scene5200::Action2::signal() {
 		_globals->_player.animate(ANIM_MODE_4, 3, 1, this);
 		break;
 	case 2:
-		scene->_soundHandler.proc3();
+		scene->_soundHandler.stop();
 		scene->_hotspot14.remove();
 
 		RING_INVENTORY._stasisBox._sceneNumber = 1;
@@ -1486,7 +1486,7 @@ void Scene5200::Action2::signal() {
 		ADD_MOVER(scene->_hotspot8, 141, 77);
 		break;
 	case 4:
-		scene->_soundHandler.startSound(303);
+		scene->_soundHandler.play(303);
 
 		scene->_hotspot8._strip = 2;
 		scene->_hotspot8._frame = 1;
@@ -1523,7 +1523,7 @@ void Scene5200::Action4::signal() {
 		setDelay(120);
 		break;
 	case 1:
-		_globals->_soundHandler.startSound(209);
+		_globals->_soundHandler.play(209);
 		scene->_stripManager.start(5202, this, scene);
 		break;
 	case 2:
@@ -1622,8 +1622,8 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 	_speakerQText._textPos.x = 20;
 
 	if (RING_INVENTORY._stasisBox._sceneNumber == 5200) {
-		_soundHandler.startSound(216);
-		_soundHandler.proc5(true);
+		_soundHandler.play(216);
+		_soundHandler.holdAt(true);
 
 		_hotspot14.postInit();
 		_hotspot14.setVisage(5202);
@@ -1643,7 +1643,7 @@ void Scene5200::postInit(SceneObjectList *OwnerList) {
 		// Happens when the player enters the throne room via the secret passage,
 		// after talking with the bat. No NPCs are around and the player can
 		// obtain the stasis box.
-		_globals->_soundHandler.startSound(205);
+		_globals->_soundHandler.play(205);
 		_globals->_player.disableControl();
 
 		_globals->_player.postInit();
@@ -2131,7 +2131,7 @@ void Scene5300::postInit(SceneObjectList *OwnerList) {
 	_hotspot8._sceneRegionId = 8;
 
 	_globals->_sceneItems.addItems(&_hotspot8, &_hotspot2, &_hotspot6, &_hotspot3, &_hotspot7, NULL);
-	_globals->_soundHandler.startSound(212);
+	_globals->_soundHandler.play(212);
 }
 
 void Scene5300::signal() {
@@ -2141,7 +2141,7 @@ void Scene5300::signal() {
 		_globals->_sceneManager.changeScene(5100);
 		break;
 	case 5307:
-		_soundHandler.proc1(NULL);
+		_soundHandler.fadeOut(NULL);
 	// No break on purpose
 	case 5302:
 	case 5308:

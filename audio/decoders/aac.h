@@ -46,13 +46,16 @@ namespace Audio {
 class AudioStream;
 
 /**
- * Create a new AudioStream from the AAC data in the given stream.
+ * Create a new AudioStream from the AAC data of an MPEG-4 file in the given stream.
  *
- * @param stream			the SeekableReadStream from which to read the AAC data
+ * @note This should *only* be called by our QuickTime/MPEG-4 decoder since it relies
+ *       on the MPEG-4 extra data. If you want to decode a file using AAC, go use
+ *       makeQuickTimeStream() instead!
+ * @param stream            the SeekableReadStream from which to read the AAC data
  * @param disposeStream     whether to delete the stream after use
  * @param extraData         the SeekableReadStream from which to read the AAC extra data
  * @param disposeExtraData  whether to delete the extra data stream after use
- * @return	a new AudioStream, or NULL, if an error occurred
+ * @return  a new AudioStream, or NULL, if an error occurred
  */
 AudioStream *makeAACStream(
 	Common::SeekableReadStream *stream,

@@ -549,11 +549,16 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 }
 
 bool Debugger::cmd_saveStrings(int argc, const char **argv) {
-	StringData &strings = StringData::getReference();
-	char buffer[32768];
-
 	if (argc != 2) {
 		DebugPrintf("strings <stringId>\n");
+		return true;
+	}
+
+	StringData &strings = StringData::getReference();
+
+	char *buffer = (char *)malloc(32768);
+	if (!buffer) {
+		DebugPrintf("Cannot allocate strings buffer\n");
 		return true;
 	}
 
@@ -577,6 +582,9 @@ bool Debugger::cmd_saveStrings(int argc, const char **argv) {
 
 	DebugPrintf("Done\n");
 */
+
+	free(buffer);
+
 	return true;
 }
 

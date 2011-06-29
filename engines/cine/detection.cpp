@@ -23,6 +23,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -52,7 +53,7 @@ static const PlainGameDescriptor cineGames[] = {
 	{0, 0}
 };
 
-static const ADObsoleteGameID obsoleteGameIDsTable[] = {
+static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"fw", "cine", Common::kPlatformUnknown},
 	{"os", "cine", Common::kPlatformUnknown},
 	{0, 0, Common::kPlatformUnknown}
@@ -60,34 +61,16 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 
 #include "cine/detection_tables.h"
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Cine::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Cine::CINEGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	cineGames,
-	// Structure for autoupgrading obsolete targets
-	obsoleteGameIDsTable,
-	// Name of single gameid (optional)
-	"cine",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
-	CineMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
+		_singleid = "cine";
+		_guioptions = Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI;
+	}
+
+	virtual GameDescriptor findGame(const char *gameid) const {
+		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	}
 
 	virtual const char *getName() const {
 		return "Cine";
@@ -97,7 +80,12 @@ public:
 		return "Future Wars & Operation Stealth (C) Delphine Software";
 	}
 
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngine::createInstance(syst, engine);
+	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
@@ -153,7 +141,7 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 		for (file = filenames.begin(); file != filenames.end(); ++file) {
 			// Jump over savegame files that don't end with a digit (e.g. "fw.3" is ok, "fw.a" is not).
-			if (!isdigit(file->lastChar()))
+			if (!isdigit(static_cast<unsigned char>(file->lastChar())))
 				continue;
 
 			// Obtain the last digit of the filename, since they correspond to the save slot

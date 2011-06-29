@@ -58,7 +58,7 @@ Inventory::Inventory(TeenAgentEngine *engine) {
 	for (byte i = 0; i < offsets; ++i) {
 		_offset[i] = READ_LE_UINT16(_items + i * 2 + 1);
 	}
-	_offset[92] = items_size; 
+	_offset[92] = items_size;
 
 	Resources *res = Resources::instance();
 	for (byte i = 0; i <= 92; ++i) {

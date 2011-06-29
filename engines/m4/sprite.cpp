@@ -182,7 +182,7 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 				}
 			}
 		}
-		
+
 		// Check if we need to scan forward to find the end of the line
 		if (!newLine) {
 			do {

@@ -128,17 +128,17 @@ void SavePoints::addData(EntityIndex entity, ActionIndex action, uint32 param) {
 //////////////////////////////////////////////////////////////////////////
 void SavePoints::setCallback(EntityIndex index, Entity::Callback *callback) {
 	if (index >= 40)
-		error("SavePoints::setCallback - attempting to use an invalid entity index. Valid values 0-39, was %d", index);
+		error("[SavePoints::setCallback] Attempting to use an invalid entity index. Valid values 0-39, was %d", index);
 
 	if (!callback || !callback->isValid())
-		error("SavePoints::setCallback - attempting to set an invalid callback for entity %s", ENTITY_NAME(index));
+		error("[SavePoints::setCallback] Attempting to set an invalid callback for entity %s", ENTITY_NAME(index));
 
 	_callbacks[index] = callback;
 }
 
 Entity::Callback *SavePoints::getCallback(EntityIndex index) const {
 	if (index >= 40)
-		error("SavePoints::getCallback - attempting to use an invalid entity index. Valid values 0-39, was %d", index);
+		error("[SavePoints::getCallback] Attempting to use an invalid entity index. Valid values 0-39, was %d", index);
 
 	return _callbacks[index];
 }

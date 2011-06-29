@@ -199,7 +199,7 @@ Common::String PersistenceService::getSavegameDirectory() {
 	// Try and return the path using the savegame subfolder. But if doesn't exist, fall back on the data directory
 	if (childNode.exists())
 		return childNode.getPath();
-	
+
 	return node.getPath();
 }
 

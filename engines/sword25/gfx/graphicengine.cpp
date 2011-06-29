@@ -365,7 +365,7 @@ void  GraphicEngine::updateLastFrameDuration() {
 }
 
 bool GraphicEngine::saveThumbnailScreenshot(const Common::String &filename) {
-	// Note: In ScumMVM, rather than saivng the thumbnail to a file, we store it in memory 
+	// Note: In ScumMVM, rather than saivng the thumbnail to a file, we store it in memory
 	// until needed when creating savegame files
 	delete _thumbnail;
 

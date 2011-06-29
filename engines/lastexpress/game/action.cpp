@@ -39,8 +39,10 @@
 #include "lastexpress/game/savegame.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -405,7 +407,7 @@ SceneIndex Action::processHotspot(const SceneHotspot &hotspot) {
 //////////////////////////////////////////////////////////////////////////
 // Action 0
 IMPLEMENT_ACTION(dummy)
-	warning("Action::action_dummy: Dummy action function called (hotspot action: %d)!", hotspot.action);
+	warning("[Action::action_dummy] Dummy action function called (hotspot action: %d)", hotspot.action);
 
 	return kSceneInvalid;
 }
@@ -453,7 +455,7 @@ IMPLEMENT_ACTION(savePoint)
 IMPLEMENT_ACTION(playSound)
 
 	// Check that the file is not already buffered
-	if (hotspot.param2 || !getSound()->isBuffered(Common::String::format("LIB%03d", hotspot.param1), true))
+	if (hotspot.param2 || !getSoundQueue()->isBuffered(Common::String::format("LIB%03d", hotspot.param1), true))
 		getSound()->playSoundEvent(kEntityPlayer, hotspot.param1, hotspot.param2);
 
 	return kSceneInvalid;
@@ -465,8 +467,8 @@ IMPLEMENT_ACTION(playMusic)
 	// Check that the file is not already buffered
 	Common::String filename = Common::String::format("MUS%03d", hotspot.param1);
 
-	if (!getSound()->isBuffered(filename) && (hotspot.param1 != 50 || getProgress().chapter == kChapter5))
-		getSound()->playSound(kEntityPlayer, filename, SoundManager::kFlagDefault, hotspot.param2);
+	if (!getSoundQueue()->isBuffered(filename) && (hotspot.param1 != 50 || getProgress().chapter == kChapter5))
+		getSound()->playSound(kEntityPlayer, filename, kFlagDefault, hotspot.param2);
 
 	return kSceneInvalid;
 }
@@ -481,7 +483,7 @@ IMPLEMENT_ACTION(knock)
 	if (getObjects()->get(object).entity) {
 		getSavePoints()->push(kEntityPlayer, getObjects()->get(object).entity, kActionKnock, object);
 	} else {
-		if (!getSound()->isBuffered("LIB012", true))
+		if (!getSoundQueue()->isBuffered("LIB012", true))
 			getSound()->playSoundEvent(kEntityPlayer, 12);
 	}
 
@@ -516,7 +518,7 @@ IMPLEMENT_ACTION(compartment)
 		 && (compartment != kObjectCompartment1
 		  || !getInventory()->hasItem(kItemKey)
 		  || (getInventory()->getSelectedItem() != kItemFirebird && getInventory()->getSelectedItem() != kItemBriefcase)))) {
-			if (!getSound()->isBuffered("LIB13"))
+			if (!getSoundQueue()->isBuffered("LIB13"))
 				getSound()->playSoundEvent(kEntityPlayer, 13);
 
 			// Stop processing further
@@ -621,7 +623,7 @@ IMPLEMENT_ACTION(updateObjetLocation2)
 
 	getObjects()->updateLocation2(object, location);
 
-	if (object != kObject112 || getSound()->isBuffered("LIB096")) {
+	if (object != kObject112 || getSoundQueue()->isBuffered("LIB096")) {
 		if (object == 1)
 			getSound()->playSoundEvent(kEntityPlayer, 73);
 	} else {
@@ -805,8 +807,8 @@ IMPLEMENT_ACTION(enterCompartment)
 		getSound()->playSoundEvent(kEntityPlayer, 14);
 		getSound()->playSoundEvent(kEntityPlayer, 15, 22);
 
-		if (getProgress().field_78 && !getSound()->isBuffered("MUS003")) {
-			getSound()->playSound(kEntityPlayer, "MUS003", SoundManager::kFlagDefault);
+		if (getProgress().field_78 && !getSoundQueue()->isBuffered("MUS003")) {
+			getSound()->playSound(kEntityPlayer, "MUS003", kFlagDefault);
 			getProgress().field_78 = 0;
 		}
 
@@ -1083,8 +1085,8 @@ IMPLEMENT_ACTION(25)
 		break;
 
 	case 2:
-		if (!getSound()->isBuffered("MUS021"))
-			getSound()->playSound(kEntityPlayer, "MUS021", SoundManager::kFlagDefault);
+		if (!getSoundQueue()->isBuffered("MUS021"))
+			getSound()->playSound(kEntityPlayer, "MUS021", kFlagDefault);
 		break;
 
 	case 3:
@@ -1134,7 +1136,7 @@ IMPLEMENT_ACTION(26)
 //////////////////////////////////////////////////////////////////////////
 // Action 27
 IMPLEMENT_ACTION(27)
-	if (!getSound()->isBuffered("LIB031", true))
+	if (!getSoundQueue()->isBuffered("LIB031", true))
 		getSound()->playSoundEvent(kEntityPlayer, 31);
 
 	switch (getEntityData(kEntityPlayer)->car) {
@@ -1182,8 +1184,8 @@ IMPLEMENT_ACTION(29)
 	getSound()->playSoundEvent(kEntityPlayer, hotspot.param1, hotspot.param2);
 
 	Common::String filename = Common::String::format("MUS%03d", hotspot.param3);
-	if (!getSound()->isBuffered(filename))
-		getSound()->playSound(kEntityPlayer, filename, SoundManager::kFlagDefault);
+	if (!getSoundQueue()->isBuffered(filename))
+		getSound()->playSound(kEntityPlayer, filename, kFlagDefault);
 
 	return kSceneInvalid;
 }
@@ -1345,7 +1347,7 @@ IMPLEMENT_ACTION(openBed)
 //////////////////////////////////////////////////////////////////////////
 // Action 37
 IMPLEMENT_ACTION(dialog)
-	getSound()->playDialog(kEntityTables4, (EntityIndex)hotspot.param1, SoundManager::kFlagDefault, 0);
+	getSound()->playDialog(kEntityTables4, (EntityIndex)hotspot.param1, kFlagDefault, 0);
 
 	return kSceneInvalid;
 }
@@ -1354,8 +1356,8 @@ IMPLEMENT_ACTION(dialog)
 // Action 38
 IMPLEMENT_ACTION(eggBox)
 	getSound()->playSoundEvent(kEntityPlayer, 43);
-	if (getProgress().field_7C && !getSound()->isBuffered("MUS003")) {
-		getSound()->playSound(kEntityPlayer, "MUS003", SoundManager::kFlagDefault);
+	if (getProgress().field_7C && !getSoundQueue()->isBuffered("MUS003")) {
+		getSound()->playSound(kEntityPlayer, "MUS003", kFlagDefault);
 		getProgress().field_7C = 0;
 	}
 
@@ -1366,8 +1368,8 @@ IMPLEMENT_ACTION(eggBox)
 // Action 39
 IMPLEMENT_ACTION(39)
 	getSound()->playSoundEvent(kEntityPlayer, 24);
-	if (getProgress().field_80 && !getSound()->isBuffered("MUS003")) {
-		getSound()->playSound(kEntityPlayer, "MUS003", SoundManager::kFlagDefault);
+	if (getProgress().field_80 && !getSoundQueue()->isBuffered("MUS003")) {
+		getSound()->playSound(kEntityPlayer, "MUS003", kFlagDefault);
 		getProgress().field_80 = 0;
 	}
 
@@ -1408,8 +1410,8 @@ IMPLEMENT_ACTION(playMusicChapter)
 	if (id) {
 		Common::String filename = Common::String::format("MUS%03d", id);
 
-		if (!getSound()->isBuffered(filename))
-			getSound()->playSound(kEntityPlayer, filename, SoundManager::kFlagDefault);
+		if (!getSoundQueue()->isBuffered(filename))
+			getSound()->playSound(kEntityPlayer, filename, kFlagDefault);
 	}
 
 	return kSceneInvalid;
@@ -1440,8 +1442,8 @@ IMPLEMENT_ACTION(playMusicChapterSetupTrain)
 
 	Common::String filename = Common::String::format("MUS%03d", hotspot.param1);
 
-	if (!getSound()->isBuffered(filename) && hotspot.param3 & id) {
-		getSound()->playSound(kEntityPlayer, filename, SoundManager::kFlagDefault);
+	if (!getSoundQueue()->isBuffered(filename) && hotspot.param3 & id) {
+		getSound()->playSound(kEntityPlayer, filename, kFlagDefault);
 
 		getSavePoints()->call(kEntityPlayer, kEntityTrain, kAction203863200, filename.c_str());
 		getSavePoints()->push(kEntityPlayer, kEntityTrain, kAction222746496, hotspot.param2);
@@ -1612,7 +1614,7 @@ bool Action::handleOtherCompartment(ObjectIndex object, bool doPlaySound, bool d
 				if (doPlaySound)
 					playCompartmentSoundEvents(object);
 
-				if (!getSound()->isBuffered(kEntityMertens))
+				if (!getSoundQueue()->isBuffered(kEntityMertens))
 					getSound()->playWarningCompartment(kEntityMertens, object);
 
 				getSavePoints()->push(kEntityPlayer, kEntityMertens, kAction305159806);
@@ -1628,7 +1630,7 @@ bool Action::handleOtherCompartment(ObjectIndex object, bool doPlaySound, bool d
 				if (doPlaySound)
 					playCompartmentSoundEvents(object);
 
-				if (!getSound()->isBuffered(kEntityMertens))
+				if (!getSoundQueue()->isBuffered(kEntityMertens))
 					getSound()->playSound(kEntityMertens, (rnd(2)) ? "JAC1000" : "JAC1000A");
 
 				if (doLoadScene)
@@ -1640,7 +1642,7 @@ bool Action::handleOtherCompartment(ObjectIndex object, bool doPlaySound, bool d
 				if (doPlaySound)
 					playCompartmentSoundEvents(object);
 
-				if (!getSound()->isBuffered(kEntityMertens))
+				if (!getSoundQueue()->isBuffered(kEntityMertens))
 					getSound()->playSound(kEntityMertens, (rnd(2)) ? "JAC1000" : "JAC1000A");
 
 				if (doLoadScene)
@@ -1667,7 +1669,7 @@ bool Action::handleOtherCompartment(ObjectIndex object, bool doPlaySound, bool d
 			if (doPlaySound)
 				playCompartmentSoundEvents(object);
 
-			if (!getSound()->isBuffered(kEntityCoudert))
+			if (!getSoundQueue()->isBuffered(kEntityCoudert))
 				getSound()->playWarningCompartment(kEntityCoudert, object);
 
 			getSavePoints()->push(kEntityPlayer, kEntityCoudert, kAction305159806);
@@ -1684,7 +1686,7 @@ bool Action::handleOtherCompartment(ObjectIndex object, bool doPlaySound, bool d
 			if (doPlaySound)
 				playCompartmentSoundEvents(object);
 
-			if (!getSound()->isBuffered(kEntityCoudert))
+			if (!getSoundQueue()->isBuffered(kEntityCoudert))
 				getSound()->playSound(kEntityCoudert, (rnd(2)) ? "JAC1000" : "JAC1000A");
 
 			if (doLoadScene)
@@ -1699,7 +1701,7 @@ bool Action::handleOtherCompartment(ObjectIndex object, bool doPlaySound, bool d
 			if (doPlaySound)
 				playCompartmentSoundEvents(object);
 
-			if (!getSound()->isBuffered(kEntityCoudert))
+			if (!getSoundQueue()->isBuffered(kEntityCoudert))
 				getSound()->playSound(kEntityCoudert, (rnd(2)) ? "JAC1000" : "JAC1000A");
 
 			if (doLoadScene)
@@ -1908,7 +1910,7 @@ LABEL_KEY:
 // Play an animation and add delta time to global game time
 void Action::playAnimation(EventIndex index, bool debugMode) const {
 	if (index >= _animationListSize)
-		error("Action::playAnimation: invalid event index (value=%i, max=%i)", index, _animationListSize);
+		error("[Action::playAnimation] Invalid event index (value=%i, max=%i)", index, _animationListSize);
 
 	// In debug mode, just show the animation
 	if (debugMode) {
@@ -1930,8 +1932,8 @@ void Action::playAnimation(EventIndex index, bool debugMode) const {
 	if (!getFlags()->mouseRightClick) {
 
 		if (getGlobalTimer()) {
-			if (getSound()->isBuffered("TIMER")) {
-				getSound()->processEntry("TIMER");
+			if (getSoundQueue()->isBuffered("TIMER")) {
+				getSoundQueue()->processEntry("TIMER");
 				setGlobalTimer(105);
 			}
 		}
@@ -1948,8 +1950,8 @@ void Action::playAnimation(EventIndex index, bool debugMode) const {
 		if (animation.load(getArchive(Common::String(_animationList[index].filename) + ".nis") , processSound ? Animation::kFlagDefault : Animation::kFlagProcess))
 			animation.play();
 
-		if (getSound()->isBuffered("TIMER"))
-			getSound()->removeFromQueue("TIMER");
+		if (getSoundQueue()->isBuffered("TIMER"))
+			getSoundQueue()->removeFromQueue("TIMER");
 	}
 
 	// Show cursor

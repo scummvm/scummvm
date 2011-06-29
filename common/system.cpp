@@ -21,25 +21,30 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fputs
-#define FORBIDDEN_SYMBOL_EXCEPTION_fflush
-#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 
 #include "common/system.h"
 #include "common/events.h"
 #include "common/fs.h"
+#include "common/savefile.h"
 #include "common/str.h"
+#include "common/taskbar.h"
 #include "common/textconsole.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/fs/fs-factory.h"
+#include "backends/timer/default/default-timer.h"
 
 OSystem *g_system = 0;
 
 OSystem::OSystem() {
 	_audiocdManager = 0;
 	_eventManager = 0;
+	_timerManager = 0;
+	_savefileManager = 0;
+#if defined(USE_TASKBAR)
+	_taskbarManager = 0;
+#endif
+	_fsFactory = 0;
 }
 
 OSystem::~OSystem() {
@@ -48,20 +53,42 @@ OSystem::~OSystem() {
 
 	delete _eventManager;
 	_eventManager = 0;
+
+	delete _timerManager;
+	_timerManager = 0;
+
+#if defined(USE_TASKBAR)
+	delete _taskbarManager;
+	_taskbarManager = 0;
+#endif
+
+	delete _savefileManager;
+	_savefileManager = 0;
+
+	delete _fsFactory;
+	_fsFactory = 0;
 }
 
 void OSystem::initBackend() {
-	// Init AudioCD manager
-#ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
+	// Verify all managers has been set
 	if (!_audiocdManager)
-		_audiocdManager = new DefaultAudioCDManager();
-#endif
-	if (!_audiocdManager)
-		error("Backend failed to instantiate AudioCD manager");
-
-	// Verify Event manager has been set
+		error("Backend failed to instantiate audio CD manager");
 	if (!_eventManager)
-		error("Backend failed to instantiate Event manager");
+		error("Backend failed to instantiate event manager");
+	if (!_timerManager)
+		error("Backend failed to instantiate timer manager");
+
+	// TODO: We currently don't check _savefileManager, because at least
+	// on the Nintendo DS, it is possible that none is set. That should
+	// probably be treated as "saving is not possible". Or else the NDS
+	// port needs to be changed to always set a _savefileManager
+// 	if (!_savefileManager)
+// 		error("Backend failed to instantiate savefile manager");
+
+	// TODO: We currently don't check _fsFactory because not all ports
+	// set it.
+// 	if (!_fsFactory)
+// 		error("Backend failed to instantiate fs factory");
 }
 
 bool OSystem::setGraphicsMode(const char *name) {
@@ -90,6 +117,11 @@ void OSystem::fatalError() {
 	exit(1);
 }
 
+FilesystemFactory *OSystem::getFilesystemFactory() {
+	assert(_fsFactory);
+	return _fsFactory;
+}
+
 Common::SeekableReadStream *OSystem::createConfigReadStream() {
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.createReadStream();
@@ -106,20 +138,6 @@ Common::WriteStream *OSystem::createConfigWriteStream() {
 
 Common::String OSystem::getDefaultConfigFileName() {
 	return "scummvm.ini";
-}
-
-void OSystem::logMessage(LogMessageType::Type type, const char *message) {
-#if !defined(__PLAYSTATION2__) && !defined(__DS__)
-	FILE *output = 0;
-
-	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
-		output = stdout;
-	else
-		output = stderr;
-
-	fputs(message, output);
-	fflush(output);
-#endif
 }
 
 Common::String OSystem::getSystemLanguage() const {

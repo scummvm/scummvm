@@ -57,7 +57,7 @@ private:
 	void updateOutputChannels();
 
 	TownsMidiOutputChannel *allocateOutputChannel(uint8 pri);
-		
+
 	int randomValue(int para);
 
 	TownsMidiInputChannel **_channels;
@@ -72,11 +72,11 @@ private:
 	uint32 _tickCounter;
 	uint8 _allocCurPos;
 	uint8 _rand;
-	
+
 	bool _isOpen;
 
 	uint8 *_operatorLevelTable;
-	
+
 	const uint16 _baseTempo;
 };
 

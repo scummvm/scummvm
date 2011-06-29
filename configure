@@ -65,8 +65,12 @@ get_var() {
 # Add an engine: id name build subengines
 add_engine() {
 	_engines="${_engines} ${1}"
+	if test "${3}" = "no" ; then
+		set_var _wip_engines "${_wip_engines} ${1}"
+	fi
 	set_var _engine_${1}_name "${2}"
 	set_var _engine_${1}_build "${3}"
+	set_var _engine_${1}_build_default "${3}"
 	set_var _engine_${1}_subengines "${4}"
 	for sub in ${4}; do
 		set_var _engine_${sub}_sub "yes"
@@ -84,6 +88,7 @@ add_engine cine "Cinematique evo 1" yes
 add_engine cruise "Cinematique evo 2" yes
 add_engine draci "Dragon History" yes
 add_engine drascula "Drascula: The Vampire Strikes Back" yes
+add_engine dreamweb "Dreamweb" no
 add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes "groovie2"
 add_engine groovie2 "Groovie 2 games" no
@@ -138,6 +143,8 @@ _fluidsynth=auto
 _opengl=auto
 _opengles=auto
 _readline=auto
+_taskbar=yes
+_libunity=auto
 # Default option behaviour yes/no
 _debug_build=auto
 _release_build=auto
@@ -176,6 +183,7 @@ _sdlpath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
+_tainted_build=no
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -423,6 +431,11 @@ get_engine_build() {
 	get_var _engine_$1_build
 }
 
+# Was this engine set to be built by default?
+get_engine_build_default() {
+	get_var _engine_$1_build_default
+}
+
 # Get the subengines
 get_engine_subengines() {
 	get_var _engine_$1_subengines
@@ -542,12 +555,19 @@ prepare_engine_build_strings() {
 	if test -n "$string" ; then
 		_engines_skipped="${_engines_skipped}#$string@"
 	fi
+
+	string=`get_engine_build_string $1 wip`
+	if test -n "$string" ; then
+		_engines_built_wip="${_engines_built_wip}#$string@"
+	fi
+
 }
 
 # Get the string about building an engine
 get_engine_build_string() {
 	engine_string=""
 	engine_build=`get_engine_build $1`
+	engine_build_default=`get_engine_build_default $1`
 	show=no
 
 	# Check if the current engine should be shown for the current status
@@ -563,6 +583,14 @@ get_engine_build_string() {
 				fi
 			done
 		fi
+		# Test for enabled wip sub-engines
+		if test $2 = wip ; then
+			for subeng in `get_engine_subengines $1` ; do
+				if test `get_engine_build $subeng` != no -a `get_engine_build_default $subeng` = no ; then
+					show=yes
+				fi
+			done
+		fi
 	fi
 
 	# Convert static/dynamic to yes to ease the check of subengines
@@ -570,13 +598,18 @@ get_engine_build_string() {
 		engine_build=yes
 	fi
 
+	# Check if it is a wip engine
+	if test "$2" = "wip" -a "$engine_build" != "no" -a  "$engine_build_default" = no; then
+		show=yes
+	fi
+
 	# The engine should be shown, build the string
 	if test $show = yes ; then
 		build_string_func=get_${1}_build_string
 		if ( type $build_string_func | grep function ) 2> /dev/null > /dev/null ; then
-			engine_string=`$build_string_func $1 $engine_build`
+			engine_string=`$build_string_func $1 $engine_build $2`
 		else
-			engine_string=`get_subengines_build_string $1 $engine_build`
+			engine_string=`get_subengines_build_string $1 $engine_build "" $2`
 		fi
 
 		engine_string="`get_engine_name $1` $engine_string"
@@ -588,14 +621,29 @@ get_engine_build_string() {
 # Get the string about building subengines
 get_subengines_build_string() {
 	all=yes
+	parent_engine=$1
 	subengine_string=$3
-	for subeng in `get_engine_subengines $1` ; do
-		if test `get_engine_build $subeng` = $2 ; then
+	parent_status=$4
+	parent_engine_build_default=`get_engine_build_default $parent_engine`
+
+	for subeng in `get_engine_subengines $parent_engine` ; do
+		subengine_build=`get_engine_build $subeng`
+		subengine_build_default=`get_engine_build_default $subeng`
+		if test \( $subengine_build = $2 -a "$parent_status" != wip \) -o \( "$parent_status" = wip -a $subengine_build != no -a "$subengine_build_default" = no \) ; then
 			subengine_string="$subengine_string [`get_engine_name $subeng`]"
 		else
 			all=no
 		fi
+
+		# handle engines that are on by default and have a single subengine that is off by default
+		if test "$parent_status" = wip ; then
+			if test $parent_engine_build_default = yes -a subengine ; then
+				all=no
+			fi
+		fi
+
 	done
+
 	if test $2 != no ; then
 		if test -n "$subengine_string" ; then
 			if test $all = yes ; then
@@ -610,19 +658,19 @@ get_subengines_build_string() {
 # Engine specific build strings
 get_scumm_build_string() {
 	if test `get_engine_build $1` != no ; then
-		if test $2 != no ; then
+		if test $2 != no -a "$3" != wip ; then
 			base="[v0-v6 games]"
 		fi
-		get_subengines_build_string $1 $2 "$base"
+		get_subengines_build_string $1 $2 "$base" $3
 	fi
 }
 
 get_saga_build_string() {
 	if test `get_engine_build $1` != no ; then
-		if test $2 != no ; then
+		if test $2 != no -a "$3" != wip; then
 			base="[ITE]"
 		fi
-		get_subengines_build_string $1 $2 "$base"
+		get_subengines_build_string $1 $2 "$base" $3
 	fi
 }
 
@@ -698,6 +746,7 @@ Special configuration feature:
                                            n64 for Nintendo 64
                                            openpandora for OpenPandora
                                            ps2 for PlayStation 2
+                                           ps3 for PlayStation 3
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
                                            webos for HP Palm WebOS
@@ -722,6 +771,7 @@ Optional Features:
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
+  --disable-taskbar        don't build support for taskbar and launcher integration
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
                            process
@@ -771,6 +821,9 @@ Optional Libraries:
   --with-readline-prefix=DIR    Prefix where readline is installed (optional)
   --disable-readline       disable readline support in text console [autodetect]
 
+  --with-libunity-prefix=DIR   Prefix where libunity is installed (optional)
+  --disable-libunity           disable Unity launcher integration [autodetect]
+
 Some influential environment variables:
   LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
                  nonstandard directory <lib dir>
@@ -818,6 +871,10 @@ for ac_option in $@; do
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
+	--enable-taskbar)         _taskbar=yes    ;;
+	--disable-taskbar)        _taskbar=no     ;;
+	--enable-libunity)        _libunity=yes   ;;
+	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
@@ -892,6 +949,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		READLINE_CFLAGS="-I$arg/include"
 		READLINE_LIBS="-L$arg/lib"
+		;;
+	--with-libunity-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		LIBUNITY_CFLAGS="-I$arg/include"
+		LIBUNITY_LIBS="-L$arg/lib"
 		;;
 	--with-opengl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1072,6 +1134,22 @@ ps2)
 	_host_cpu=mips64r5900el
 	_host_alias=ee
 	;;
+ps3)
+	_host_os=ps3
+	_host_cpu=ppc
+	_host_alias=powerpc64-ps3-elf
+	
+	# The prefix is always the same on PS3 so we hardcode the default
+	# here. It is still possible to define a custom prefix which is
+	# needed when packaging the app with a user-specific app ID.
+	test "x$prefix" = xNONE && prefix=/dev_hdd0/game/SCUM12000/USRDIR
+	# PS3 apps are installed into app-specific directories. The 
+	# default directory structure of ScummVM makes no sense here so we
+	# hardcode PS3 specific directories here.
+	datarootdir='${prefix}/data'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
+	;;
 psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
@@ -1210,6 +1288,12 @@ n64)
 ps2)
 	if test -z "$PS2SDK"; then
 		echo "Please set PS2SDK in your environment. export PS2SDK=<path to ps2 sdk>"
+		exit 1
+	fi
+	;;
+ps3)
+	if test -z "$PS3DEV"; then
+		echo "Please set PS3DEV in your environment. export PS3DEV=<path to ps3 toolchain>"
 		exit 1
 	fi
 	;;
@@ -1405,7 +1489,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | wii | wince )
+		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | wii | wince )
 			;;
 		*)
 			CXXFLAGS="$CXXFLAGS -ansi"
@@ -1794,6 +1878,16 @@ case $_host_os in
 		DEFINES="$DEFINES -D_EE"
 		DEFINES="$DEFINES -D__PLAYSTATION2__"
 		;;
+	ps3)
+		# Force use of SDL from the ps3 toolchain
+		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
+	
+		DEFINES="$DEFINES -DPLAYSTATION3"
+		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
+		LDFLAGS="$LDFLAGS -L$PS3DEV/psl1ght/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
+		add_line_to_config_mk 'PLAYSTATION3 = 1'
+		add_line_to_config_h "#define PREFIX \"${prefix}\""
+		;;
 	psp)
 		if test -d "$PSPDEV/psp/lib"; then
 			LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
@@ -2151,6 +2245,11 @@ if test -n "$_host"; then
 				CXXFLAGS="$CXXFLAGS -s"
 			fi
 			;;
+		ps3)
+			_mt32emu=no
+			_timidity=no
+			_vkeybd=yes
+			;;
 		psp)
 			_backend="psp"
 			_build_scalers=no
@@ -2193,6 +2292,7 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -Wl,--stack,65536"
 			_tremolo=yes
 			_backend="wince"
+			_detectlang=yes
 			_mt32emu=no
 			_port_mk="backends/platform/wince/wince.mk"
 			;;
@@ -2207,16 +2307,9 @@ fi
 #
 case $_backend in
 	android)
-		# ssp at this point so the cxxtests link
-		if test "$_debug_build" = yes; then
-			CXXFLAGS="$CXXFLAGS -fstack-protector"
-		else
-			CXXFLAGS="$CXXFLAGS -fno-stack-protector"
-		fi
+		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
-
-		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc'
@@ -2340,6 +2433,15 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
+
+		_sdlversion=`$_sdlconfig --version`
+		case $_sdlversion in
+			1.3.*)
+				add_line_to_config_mk "USE_SDL13 = 1"
+				;;
+			*)
+				;;
+		esac
 		;;
 esac
 
@@ -2371,7 +2473,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | psp | wii | wince)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
 	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
@@ -2927,6 +3029,43 @@ define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE_FOR_DEBUGGER'
 
 #
+# Check for Unity if taskbar integration is enabled
+#
+echocheck "libunity"
+if test "$_unix" = no || test "$_taskbar" = no; then
+	_libunity=no
+else
+if test "$_libunity" = auto ; then
+	case $_host_os in
+		mingw*)
+			# pkgconfig and unity are not supported on mingw
+			_libunity=no
+			;;
+		*)
+			# Unity has a lots of dependencies, update the libs and cflags var with them
+			LIBUNITY_LIBS="$LIBUNITY_LIBS $(pkg-config --libs unity = 3.8.4 2>> "$TMPLOG")"
+			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS $(pkg-config --cflags unity = 3.8.4 2>> "$TMPLOG")"
+			_libunity=no
+			cat > $TMPC << EOF
+#include <unity.h>
+int main(void) {
+	unity_launcher_entry_get_for_desktop_id("scummvm.desktop");
+	return 0;
+}
+EOF
+			cc_check $LIBUNITY_CFLAGS $LIBUNITY_LIBS && _libunity=yes
+			;;
+	esac
+fi
+if test "$_libunity" = yes ; then
+	LIBS="$LIBS $LIBUNITY_LIBS"
+	INCLUDES="$INCLUDES $LIBUNITY_CFLAGS"
+fi
+define_in_config_h_if_yes "$_libunity" 'USE_TASKBAR_UNITY'
+fi
+echo "$_libunity"
+
+#
 # Check for OpenGL (ES)
 #
 echocheck "OpenGL"
@@ -3084,12 +3223,14 @@ if test "$_translation" = no ; then
 else
 	echo_n "yes ("
 
-	cat > $TMPC << EOF
+	if test "$_detectlang" != yes ; then
+		cat > $TMPC << EOF
 #include <locale.h>
 int main(void) { setlocale(LC_ALL, ""); return 0; }
 EOF
-	_detectlang=no
-	cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+		_detectlang=no
+		cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+	fi
 
 	define_in_config_h_if_yes $_detectlang 'USE_DETECTLANG'
 	if test "$_detectlang" = yes ; then
@@ -3097,6 +3238,29 @@ EOF
 	else
 		echo "without runtime language detection)"
 	fi
+fi
+
+#
+# Check whether to build taskbar integration support
+#
+echo_n "Building taskbar integration support... "
+define_in_config_if_yes $_taskbar 'USE_TASKBAR'
+if test "$_taskbar" = yes; then
+	case $_host_os in
+	mingw*)
+		LIBS="$LIBS -lole32 -luuid"
+		echo "win32"
+		;;
+	*)
+		if test "$_libunity" = yes; then
+			echo "unity"
+		else
+			echo "$_taskbar"
+		fi
+		;;
+	esac
+else
+	echo "$_taskbar"
 fi
 
 #
@@ -3134,6 +3298,10 @@ fi
 
 echo_n "Backend... "
 echo_n "$_backend"
+
+if test "$_backend" = "sdl" -a -n "$_sdlversion"; then
+	echo_n " ($_sdlversion)"
+fi
 
 if test "$_nasm" = yes ; then
 	echo_n ", assembly routines"
@@ -3175,6 +3343,13 @@ fi
 #
 case $_backend in
 	android)
+		# ssp at this point so the cxxtests link
+		if test "$_debug_build" = yes; then
+			CXXFLAGS="$CXXFLAGS -fstack-protector"
+		else
+			CXXFLAGS="$CXXFLAGS -fno-stack-protector"
+		fi
+
 		static_libs=''
 		system_libs=''
 		for lib in $LIBS; do
@@ -3256,6 +3431,23 @@ for engine in $_engines; do
 done
 
 #
+# Detection of WIP/unstable engines
+#
+for engine in $_engines; do
+	engine_build=`get_engine_build $engine`
+	engine_build_default=`get_engine_build_default $engine`
+	engine_wip=false
+	if test $engine_build != no -a $engine_build_default = no ; then
+		engine_wip=true
+		set_var _tainted_build "yes"
+	fi
+	engine_wip_defname="ENGINE_WIP_`echo $engine | tr '[a-z]' '[A-Z]'`"
+	add_line_to_config_h "#define $engine_wip_defname $engine_wip"
+done
+
+add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'
+
+#
 # Show which engines ("frontends") are to be built
 #
 echo
@@ -3280,6 +3472,12 @@ if test -n "$_engines_skipped" ; then
 s/#/    /g'
 fi
 
+if test -n "$_engines_built_wip" ; then
+	echo "WARNING: This ScummVM build contains the following UNSTABLE engines:"
+	echo $_engines_built_wip | sed 's/@/\
+/g
+s/#/    /g'
+fi
 
 echo
 echo "Creating config.h"

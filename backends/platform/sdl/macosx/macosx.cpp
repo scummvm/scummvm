@@ -74,7 +74,7 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 }
 
 void OSystem_MacOSX::setupIcon() {
-	// Don't set icon on OS X, as we use a nicer external icon there. 
+	// Don't set icon on OS X, as we use a nicer external icon there.
 }
 
 bool OSystem_MacOSX::hasFeature(Feature f) {

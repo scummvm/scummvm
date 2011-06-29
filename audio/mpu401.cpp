@@ -33,7 +33,10 @@ void MidiChannel_MPU401::init(MidiDriver *owner, byte channel) {
 bool MidiChannel_MPU401::allocate() {
 	if (_allocated)
 		return false;
-	return (_allocated = true);
+
+	_allocated = true;
+
+	return true;
 }
 
 MidiDriver *MidiChannel_MPU401::device() {

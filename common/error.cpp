@@ -67,6 +67,9 @@ static String errorToString(ErrorCode errorCode) {
 	case kEnginePluginNotSupportSaves:
 		return _s("Engine plugin does not support save states");
 
+	case kUserCanceled:
+		return _s("User canceled");
+
 	case kUnknownError:
 	default:
 		return _s("Unknown error");

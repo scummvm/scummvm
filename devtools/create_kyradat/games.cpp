@@ -107,7 +107,7 @@ const Game lolGames[] = {
 
 	// DOS CD (multi language version, with no language specific strings)
 	{ kLol, { EN_ANY, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "263998ec600afca1cc7b935c473df670" } },
-
+	{ kLol, { IT_ITA, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "f2af366e00f79dbf832fa19701d71ed9" } }, // Italian fan translation
 	GAME_DUMMY_ENTRY
 };
 

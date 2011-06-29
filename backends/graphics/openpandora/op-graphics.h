@@ -23,7 +23,7 @@
 #ifndef BACKENDS_GRAPHICS_OP_H
 #define BACKENDS_GRAPHICS_OP_H
 
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "graphics/scaler/aspect.h"	// for aspect2Real
 #include "graphics/scaler/downscaler.h"
 
@@ -31,32 +31,32 @@ enum {
 	GFX_HALF = 12
 };
 
-class OPGraphicsManager : public SdlGraphicsManager {
+class OPGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	OPGraphicsManager(SdlEventSource *boss);
+	OPGraphicsManager(SdlEventSource *sdlEventSource);
 
-	bool hasFeature(OSystem::Feature f);
-	void setFeatureState(OSystem::Feature f, bool enable);
-	bool getFeatureState(OSystem::Feature f);
-	int getDefaultGraphicsMode() const;
+//	bool hasFeature(OSystem::Feature f);
+//	void setFeatureState(OSystem::Feature f, bool enable);
+//	bool getFeatureState(OSystem::Feature f);
+//	int getDefaultGraphicsMode() const;
 
-	void initSize(uint w, uint h);
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	bool setGraphicsMode(const char *name);
-	bool setGraphicsMode(int mode);
-	void setGraphicsModeIntern();
-	void internUpdateScreen();
-	void showOverlay();
-	void hideOverlay();
+//	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
+//	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+//	bool setGraphicsMode(const char *name);
+//	bool setGraphicsMode(int mode);
+//	void setGraphicsModeIntern();
+//	void internUpdateScreen();
+//	void showOverlay();
+//	void hideOverlay();
 	bool loadGFXMode();
-	void drawMouse();
-	void undrawMouse();
-	virtual void warpMouse(int x, int y);
+//	void drawMouse();
+//	void undrawMouse();
+//	virtual void warpMouse(int x, int y);
 
-	SdlGraphicsManager::MousePos *getMouseCurState();
-	SdlGraphicsManager::VideoState *getVideoMode();
+//	SurfaceSdlGraphicsManager::MousePos *getMouseCurState();
+//	SurfaceSdlGraphicsManager::VideoState *getVideoMode();
 
-	virtual void adjustMouseEvent(const Common::Event &event);
+//	virtual void adjustMouseEvent(const Common::Event &event);
 };
 
 #endif /* BACKENDS_GRAPHICS_OP_H */

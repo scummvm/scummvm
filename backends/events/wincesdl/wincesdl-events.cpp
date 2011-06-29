@@ -35,7 +35,7 @@
 
 WINCESdlEventSource::WINCESdlEventSource()
 	: _tapTime(0), _closeClick(false), _rbutton(false),
-	  _freeLook(false), _graphicsMan(0) {
+	  _graphicsMan(0) {
 }
 
 void WINCESdlEventSource::init(WINCESdlGraphicsManager *graphicsMan) {
@@ -64,6 +64,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 	ev.type = SDL_NOEVENT;
 	DWORD currentTime;
 	bool keyEvent = false;
+	bool freeLookActive = _graphicsMan->getFreeLookState();
 	int deltaX, deltaY;
 
 	memset(&event, 0, sizeof(Common::Event));
@@ -182,7 +183,8 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				if (_tapTime) {     // second tap
 					if (_closeClick && (GetTickCount() - _tapTime < 1000)) {
 						if (event.mouse.y <= 20 &&
-						        _graphicsMan->_panelInitialized) {
+						        _graphicsMan->_panelInitialized &&
+						        !_graphicsMan->_noDoubleTapPT) {
 							// top of screen (show panel)
 							_graphicsMan->swap_panel_visibility();
 						} else if (!_graphicsMan->_noDoubleTapRMB) {
@@ -199,7 +201,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				}
 			}
 
-			if (_freeLook && !_closeClick) {
+			if (freeLookActive && !_closeClick) {
 				_rbutton = false;
 				_tapTime = 0;
 				_tapX = event.mouse.x;
@@ -241,7 +243,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 
 			fillMouseEvent(event, ev.button.x, ev.button.y);
 
-			if (_freeLook && !_closeClick) {
+			if (freeLookActive && !_closeClick) {
 				_tapX = event.mouse.x;
 				_tapY = event.mouse.y;
 				event.type = Common::EVENT_MOUSEMOVE;
@@ -320,10 +322,6 @@ int WINCESdlEventSource::mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool u
 		return 0;
 	}
 	return key;
-}
-
-void WINCESdlEventSource::swap_freeLook() {
-	_freeLook = !_freeLook;
 }
 
 #endif /* _WIN32_WCE */

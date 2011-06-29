@@ -36,6 +36,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/macresman.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 
@@ -413,7 +414,7 @@ void Script::savegame(uint slot) {
 
 	if (!file) {
 		debugC(9, kGroovieDebugScript, "Save file pointer is null");
-		GUI::MessageDialog dialog("Failed to save game", "OK");
+		GUI::MessageDialog dialog(_("Failed to save game"), _("OK"));
 		dialog.runModal();
 		return;
 	}

@@ -57,7 +57,7 @@ char *GetExecutablePath() {
 OSystem_SDL_Symbian::OSystem_SDL_Symbian()
 	:
 	_RFs(0) {
-	
+
 }
 
 void OSystem_SDL_Symbian::init() {
@@ -171,7 +171,7 @@ Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 }
 
 void OSystem_SDL_Symbian::setupIcon() {
-	// Don't for Symbian: it uses the EScummVM.aif file for the icon. 
+	// Don't for Symbian: it uses the EScummVM.aif file for the icon.
 }
 
 RFs& OSystem_SDL_Symbian::FsSession() {

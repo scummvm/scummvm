@@ -27,7 +27,7 @@
 
 #ifndef VIDEO_CODECS_TRUEMOTION1_H
 #define VIDEO_CODECS_TRUEMOTION1_H
- 
+
 #include "video/codecs/codec.h"
 
 namespace Video {
@@ -51,7 +51,7 @@ private:
 
 	uint16 _width, _height;
 	int _flags;
-	
+
 	struct PredictorTableEntry {
 		uint32 color;
 		bool getNextIndex;

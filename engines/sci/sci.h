@@ -38,7 +38,7 @@ struct ADGameDescription;
  * Status of this engine: ???
  *
  * Games using this engine:
- * - Newer Sierra adventure games (based on FreeSCI) 
+ * - Newer Sierra adventure games (based on FreeSCI)
  *
  * @todo give a concrete list of supported games. Could also
  * list future games, with status for each.
@@ -176,7 +176,7 @@ enum SciGameId {
 	GID_FANMADE	// FIXME: Do we really need/want this?
 };
 
-/** 
+/**
  * SCI versions
  * For more information, check here:
  * http://wiki.scummvm.org/index.php/Sierra_Game_Versions#SCI_Games

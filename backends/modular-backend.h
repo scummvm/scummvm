@@ -23,30 +23,28 @@
 #ifndef BACKENDS_MODULAR_BACKEND_H
 #define BACKENDS_MODULAR_BACKEND_H
 
-#include "common/system.h"
-#include "common/timer.h"
-#include "common/savefile.h"
+#include "backends/base-backend.h"
 
 class GraphicsManager;
 class MutexManager;
 
 /**
  * Base class for modular backends.
- * 
+ *
  * It wraps most functions to their manager equivalent, but not
  * all OSystem functions are implemented here.
- * 
+ *
  * A backend derivated from this class, will need to implement
  * these functions on its own:
  *   OSystem::pollEvent()
  *   OSystem::getMillis()
  *   OSystem::delayMillis()
  *   OSystem::getTimeAndDate()
- * 
+ *
  * And, it should also initialize all the managers variables
  * declared in this class, or override their related functions.
  */
-class ModularBackend : public OSystem {
+class ModularBackend : public BaseBackend {
 public:
 	ModularBackend();
 	virtual ~ModularBackend();
@@ -109,12 +107,11 @@ public:
 
 	/** @name Events and Time */
 	//@{
-	
-	virtual Common::TimerManager *getTimerManager();
+
 	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
 
 	//@}
-	
+
 	/** @name Mutex handling */
 	//@{
 
@@ -135,8 +132,6 @@ public:
 	/** @name Miscellaneous */
 	//@{
 
-	virtual Common::SaveFileManager *getSavefileManager();
-	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void quit();
 	virtual void displayMessageOnOSD(const char *msg);
 
@@ -146,9 +141,6 @@ protected:
 	/** @name Managers variables */
 	//@{
 
-	FilesystemFactory *_fsFactory;
-	Common::SaveFileManager *_savefileManager;
-	Common::TimerManager *_timerManager;
 	MutexManager *_mutexManager;
 	GraphicsManager *_graphicsManager;
 	Audio::Mixer *_mixer;
