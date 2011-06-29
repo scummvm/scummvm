@@ -41,12 +41,8 @@
 
 namespace CGE {
 
-#define     FADE_STEP   2
-#define     TMR_DIV     ((0x8000/TMR_RATE)*2)
-
-//--------------------------------------------------------------------------
-
-static char Report[] = "NearHeap=.....  FarHeap=......\n";
+#define FADE_STEP   2
+#define TMR_DIV     ((0x8000/TMR_RATE)*2)
 #define NREP         9
 #define FREP        24
 
@@ -64,9 +60,8 @@ static  VgaRegBlk VideoMode[] = {
 //		    { 0x12, VGACRT, 0xFF, 0x6E },   // vert display end
 //		    { 0x15, VGACRT, 0xFF, 0x7F },   // start vb
 //		    { 0x10, VGACRT, 0xFF, 0x94 },   // start vr
-	{ 0x00                     }
+	{ 0x00,   0x00, 0x00, 0x00 }
 };
-
 
 bool SpeedTest   = false;
 Seq _seq1[] = { { 0, 0, 0, 0, 0 } };
@@ -82,8 +77,8 @@ char *NumStr(char *str, int num) {
 }
 
 
-static void Video() {
 /*
+static void Video() {
   static uint16 SP_S;
 
   asm   push    bx
@@ -100,9 +95,8 @@ static void Video() {
   asm   pop si
   asm   pop bp
   asm   pop bx
-*/
-	warning("STUB: Video");
 }
+*/
 
 
 uint16 *SaveScreen(void) {
@@ -562,7 +556,7 @@ Sprite *Sprite::Expand(void) {
 							else {
 								SNAIL::COM *c = &nea[neacnt++];
 								if ((c->Com = (SNCOM) TakeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
-									error("%s [%s]", NumStr("Bad NEAR in ######", lcnt), fname);
+									error("%s [%s]", (const char*)NumStr("Bad NEAR in ######", lcnt), (const char*)fname);
 								c->Ref = atoi(strtok(NULL, " \t,;/"));
 								c->Val = atoi(strtok(NULL, " \t,;/"));
 								c->Ptr = NULL;
@@ -578,7 +572,7 @@ Sprite *Sprite::Expand(void) {
 							else {
 								SNAIL::COM *c = &tak[takcnt++];
 								if ((c->Com = (SNCOM) TakeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
-									error("%s [%s]", NumStr("Bad NEAR in ######", lcnt), fname);
+									error("%s [%s]", NumStr("Bad NEAR in ######", lcnt), (const char *)fname);
 								c->Ref = atoi(strtok(NULL, " \t,;/"));
 								c->Val = atoi(strtok(NULL, " \t,;/"));
 								c->Ptr = NULL;
@@ -700,6 +694,9 @@ void Sprite::KillXlat(void) {
 			break;
 		case FAR_MEM  :
 			free(m);
+			break;
+		default:
+			warning("Unhandled MemType in Sprite::KillXlat()");
 			break;
 		}
 		for (b = _ext->_shpList; *b; b++)
@@ -942,8 +939,7 @@ VGA::VGA(int mode)
 	for (i = 10; i < 20; i++) {
 		char *txt = Text->getText(i);
 		if (txt) {
-//	  puts(txt);
-			warning(txt);
+			warning("%s", txt);
 			std = false;
 		}
 	}
@@ -986,7 +982,7 @@ VGA::~VGA(void) {
 		if (Nam)
 			buffer = buffer + " [" + Nam + "]";
 
-		warning(buffer.c_str());
+		warning("%s", buffer.c_str());
 	}
 }
 

@@ -167,14 +167,14 @@ void TALK::Update(const char *tx) {
 			int cw = _Font->Wid[*tx], i;
 			uint8 *f = _Font->Map + _Font->Pos[*tx];
 			for (i = 0; i < cw; i++) {
-				uint8 *p = m;
+				uint8 *pp = m;
 				uint16 n;
 				register uint16 b = *(f++);
 				for (n = 0; n < FONT_HIG; n++) {
 					if (b & 1)
-						*p = TEXT_FG;
+						*pp = TEXT_FG;
 					b >>= 1;
-					p += mw;
+					pp += mw;
 				}
 				++m;
 			}

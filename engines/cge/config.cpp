@@ -59,19 +59,6 @@ namespace CGE {
 #define DETECT      0xFFFF
 
 
-static void NONE(void);
-static void SB(void);
-static void SBM(void);
-static void GUS(void);
-static void GUSM(void);
-static void MIDI(void);
-static void AUTO(void);
-static void SetPortD(void);
-static void SetPortM(void);
-static void SetIRQ(void);
-static void SetDMA(void);
-
-
 static int DevName[] = {
 	NONE_TEXT, SB_TEXT, SBM_TEXT, GUS_TEXT, GUSM_TEXT,
 	MIDI_TEXT, AUTO_TEXT
