@@ -98,16 +98,11 @@ public:
 
 	void open(Common::String name, SoundFlag flag, int priority);
 	void close();
-
-	void setStatus(SoundFlag flag);
-	void setType(SoundFlag flag);
-	void setInCache();
-	void loadSoundData(Common::String name);
+	void play();
+	void reset();
+	bool isFinished();
 	void update(uint val);
 	void updateState();
-	void reset();
-
-	void loadStream();
 
 	// Subtitles
 	void showSubtitle(Common::String filename);
@@ -129,8 +124,7 @@ public:
 	Common::String   getName2()    { return _name2; }
 
 	// Streams
-	Common::SeekableReadStream *getStream() { return _stream; }
-	StreamedSound              *getStreamedSound() { return _soundStream; }
+	SimpleSound                *getSoundStream() { return _soundStream; }
 	byte                       *getSoundBuffer() { return _soundBuffer; }
 
 private:
@@ -146,7 +140,7 @@ private:
 	uint32 _time;
 	//int _size;
 	//int _field_28;
-	Common::SeekableReadStream *_stream;    // int
+	Common::SeekableReadStream *_stream;    // The file stream
 	//int _field_30;
 	int _field_34;
 	int _field_38;
@@ -161,10 +155,17 @@ private:
 	SubtitleEntry *_subtitle;
 
 	// Sound buffer & stream
+	bool _queued;
 	byte *_soundBuffer;
-	StreamedSound *_soundStream;
+	StreamedSound *_soundStream;    // the filtered sound stream
 
+	void setType(SoundFlag flag);
+	void setupStatus(SoundFlag flag);
 	void setupCache();
+	void setInCache();
+	void loadSoundData(Common::String name);
+
+	void applyFilter(int16 *buffer);
 };
 
 //////////////////////////////////////////////////////////////////////////

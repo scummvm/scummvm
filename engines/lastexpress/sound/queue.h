@@ -113,8 +113,6 @@ private:
 	Common::List<SubtitleEntry *> _subtitles;
 	SubtitleEntry *_currentSubtitle;
 
-	void applyFilter(SoundEntry *entry, int16 *buffer);
-
 	friend class Debugger;
 };
 
