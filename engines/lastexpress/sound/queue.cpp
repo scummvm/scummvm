@@ -76,15 +76,13 @@ void SoundQueue::handleTimer() {
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		SoundEntry *entry = (*i);
-		if (entry->_stream == NULL) {
+		if (entry->getStream() == NULL) {
 			SAFE_DELETE(*i);
 			i = _soundList.reverse_erase(i);
 			continue;
-		} else if (!entry->_soundStream) {
-			entry->_soundStream = new StreamedSound();
-
+		} else if (!entry->getStreamedSound()) {
 			// TODO: stream any sound in the queue after filtering
-			entry->_soundStream->load(entry->_stream);
+			entry->loadStream();
 		}
 	}
 }
@@ -180,7 +178,7 @@ void SoundQueue::clearStatus() {
 	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		(*i)->_status.status |= kSoundStatusClear3;
+		(*i)->setStatus((*i)->getStatus().status | kSoundStatusClear3);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -243,7 +241,7 @@ SoundEntry *SoundQueue::getEntry(Common::String name) {
 		name += ".SND";
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
-		if ((*i)->_name2 == name)
+		if ((*i)->getName2() == name)
 			return *i;
 	}
 
@@ -264,7 +262,7 @@ uint32 SoundQueue::getEntryTime(EntityIndex index) {
 
 	SoundEntry *entry = getEntry(index);
 	if (entry)
-		return entry->_time;
+		return entry->getTime();
 
 	return 0;
 }
@@ -298,16 +296,16 @@ void SoundQueue::updateSubtitles() {
 	for (Common::List<SubtitleEntry *>::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
 		uint32 current_index = 0;
 		SoundEntry *soundEntry = (*i)->getSoundEntry();
-		SoundStatus status = (SoundStatus)soundEntry->_status.status;
+		SoundStatus status = (SoundStatus)soundEntry->getStatus().status;
 
 		if (!(status & kSoundStatus_40)
 		 || status & kSoundStatus_180
-		 || soundEntry->_time == 0
+		 || soundEntry->getTime() == 0
 		 || (status & kSoundStatusClear1) < 6
-		 || ((getFlags()->nis & 0x8000) && soundEntry->_priority < 90)) {
+		 || ((getFlags()->nis & 0x8000) && soundEntry->getPriority() < 90)) {
 			 current_index = 0;
 		} else {
-			current_index = soundEntry->_priority + (status & kSoundStatusClear1);
+			current_index = soundEntry->getPriority() + (status & kSoundStatusClear1);
 
 			if (_currentSubtitle == (*i))
 				current_index += 4;
@@ -348,8 +346,8 @@ bool SoundQueue::setupCache(SoundEntry *entry) {
 		uint32 size = 1000;
 
 		for (Common::List<SoundEntry *>::iterator i = _soundCache.begin(); i != _soundCache.end(); ++i) {
-			if (!((*i)->_status.status & kSoundStatus_180)) {
-				uint32 newSize = (*i)->_priority + ((*i)->_status.status & kSoundStatusClear1);
+			if (!((*i)->getStatus().status & kSoundStatus_180)) {
+				uint32 newSize = (*i)->getPriority() + ((*i)->getStatus().status & kSoundStatusClear1);
 
 				if (newSize < size) {
 					cacheEntry = (*i);
@@ -358,7 +356,7 @@ bool SoundQueue::setupCache(SoundEntry *entry) {
 			}
 		}
 
-		if (entry->_priority <= size)
+		if (entry->getPriority() <= size)
 			return false;
 
 		if (!cacheEntry)
@@ -367,7 +365,7 @@ bool SoundQueue::setupCache(SoundEntry *entry) {
 		cacheEntry->setInCache();
 
 		// TODO: Wait until the cache entry is ready to be removed
-		while (!(cacheEntry->_status.status1 & 1))
+		while (!(cacheEntry->getStatus().status1 & 1))
 			;
 
 		if (cacheEntry->_soundData)
@@ -427,7 +425,7 @@ uint32 SoundQueue::count() {
 
 	uint32 numEntries = 0;
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		if ((*i)->_name2.matchString("NISSND?"))
+		if ((*i)->getName2().matchString("NISSND?"))
 			++numEntries;
 
 	return numEntries;
@@ -749,9 +747,9 @@ static void soundFilter(byte *data, int16 *buffer, int p1, int p2);
 
 void SoundQueue::applyFilter(SoundEntry *entry, int16 *buffer) {
 	if ((((byte *)entry->_soundData)[1] << 6) > 0x1600) {
-		entry->_status.status |= 0x20000000;
+		entry->setStatus(entry->getStatus().status | kSoundStatus_20000000);
 	} else {
-		int variant = entry->_status.status & 0x1f;
+		int variant = entry->getStatus().status & 0x1f;
 
 		soundFilter((byte *)entry->_soundData, buffer, p1s[variant], p2s[variant]);
 	}
@@ -789,7 +787,7 @@ void SoundQueue::stopAllSound() {
 	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		(*i)->_soundStream->stop();
+		(*i)->getStreamedSound()->stop();
 }
 
 } // End of namespace LastExpress

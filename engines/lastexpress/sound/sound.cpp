@@ -155,11 +155,11 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, SoundFlag fla
 	SoundEntry *entry = new SoundEntry(_engine);
 
 	entry->open(filename, flag, 30);
-	entry->_entity = entity;
+	entry->setEntity(entity);
 
 	if (a4) {
-		entry->_field_48 = _data2 + 2 * a4;
-		entry->_status.status |= kSoundStatus_8000;
+		entry->setField48(_data2 + 2 * a4);
+		entry->setStatus(entry->getStatus().status | kSoundStatus_8000);
 	} else {
 		// Get subtitles name
 		while (filename.size() > 4)
@@ -1359,7 +1359,7 @@ void SoundManager::playLoopingSound(int param) {
 		if (getFlags()->flag_3)
 			fnameLen = 5;
 
-		if (!entry || scumm_strnicmp(entry->_name2.c_str(), tmp, fnameLen)) {
+		if (!entry || scumm_strnicmp(entry->getName2().c_str(), tmp, fnameLen)) {
 			_loopingSoundDuration = _engine->getRandom().getRandomNumber(319) + 260;
 
 			if (partNumber != 99) {

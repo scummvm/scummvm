@@ -86,6 +86,7 @@ enum SoundStatus {
 	kSoundStatus_8000     = 0x8000,
 	kSoundStatus_20000    = 0x20000,
 	kSoundStatus_100000   = 0x100000,
+	kSoundStatus_20000000 = 0x20000000,
 	kSoundStatus_40000000 = 0x40000000,
 
 	kSoundStatusClear0    = 0x10,
@@ -127,6 +128,8 @@ public:
 	void updateState();
 	void reset();
 
+	void loadStream();
+
 	// Subtitles
 	void showSubtitle(Common::String filename);
 
@@ -134,22 +137,34 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser);
 
 	// Accessors
-	void setType(SoundType type) { _type = type; }
-	SoundType getType() { return _type; }
-
+	void setStatus(int status)         { _status.status = status; }
+	void setType(SoundType type)       { _type = type; }
 	void setEntity(EntityIndex entity) { _entity = entity; }
-	EntityIndex getEntity() { return _entity; }
+	void setField48(int val)           { _field_48 = val; }
+
+	SoundStatusUnion getStatus()   { return _status; }
+	SoundType        getType()     { return _type; }
+	uint32           getTime()     { return _time; }
+	EntityIndex      getEntity()   { return _entity; }
+	uint32           getPriority() { return _priority; }
+	Common::String   getName2()    { return _name2; }
+
+	// Streams
+	Common::SeekableReadStream *getStream() { return _stream; }
+	StreamedSound              *getStreamedSound() { return _soundStream; }
+
+public:
+	// TODO replace by on-the-fly allocated buffer
+	void *_soundData;
 
 private:
 	LastExpressEngine *_engine;
 
-public:
 	SoundStatusUnion _status;
 	SoundType _type;    // int
 	//int _data;
 	//int _endOffset;
 	int _currentDataPtr;
-	void *_soundData;
 	//int _currentBufferPtr;
 	int _blockCount;
 	uint32 _time;

@@ -307,6 +307,13 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 }
 
+void SoundEntry::loadStream() {
+	if (!_soundStream)
+		_soundStream = new StreamedSound();
+
+	_soundStream->load(_stream);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // SubtitleEntry
 //////////////////////////////////////////////////////////////////////////
@@ -352,10 +359,10 @@ void SubtitleEntry::setupAndDraw() {
 		_data->load(getArchive(_filename));
 	}
 
-	if (_data->getMaxTime() > _sound->_time) {
+	if (_data->getMaxTime() > _sound->getTime()) {
 		_status.status = kSoundStatus_400;
 	} else {
-		_data->setTime((uint16)_sound->_time);
+		_data->setTime((uint16)_sound->getTime());
 
 		if (getSoundQueue()->getSubtitleFlag() & 1)
 			drawOnScreen();
