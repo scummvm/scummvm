@@ -304,7 +304,7 @@ EC void SNDInit() {
 }
 
 EC void SNDDone() {
-	warning("STUB: SNDDone");
+	// FIXME: STUB: SNDDone
 }
 
 EC void SNDSetVolume() {
@@ -324,7 +324,7 @@ EC void SNDMIDIStart(uint8 *MIDFile) {
 }
 
 EC void SNDMIDIStop() {
-	warning("STUB: SNDMIDIStop");
+	// FIXME: STUB: SNDMIDIStop
 }
 
 DATACK *LoadWave(XFILE *file, EMM *emm) {

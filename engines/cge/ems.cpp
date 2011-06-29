@@ -83,7 +83,7 @@ EMM::EMM(long size): Han(-1), Top(0), Lim(0), List(NULL) {
 
 
 EMM::~EMM(void) {
-	/*
+	/* FIXME
 	  Release();
 	  if (Han >= 0)
 	    {
@@ -94,7 +94,6 @@ EMM::~EMM(void) {
 	      asm   int EMS_INT
 	    }
 	*/
-	warning("STUB: EMM::~EMM");
 }
 
 

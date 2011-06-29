@@ -262,7 +262,7 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 
 	file.Read((uint8 *) &i, sizeof(i));
 	if (i != SVGCHKSUM)
-		error(Text->getText(BADSVG_TEXT));
+		error("%s", Text->getText(BADSVG_TEXT));
 
 	if (STARTUP::Core < CORE_HIG)
 		Music = false;
@@ -357,6 +357,7 @@ static void TooFar(void) {
 }
 
 
+// Used in stubbed function, do not remove!
 static void NoWay(void) {
 	Trouble(NO_WAY, NO_WAY_TEXT);
 }
@@ -582,15 +583,12 @@ void CGEEngine::SetMapBrick(int x, int z) {
 	}
 }
 
-//static void SwitchMapping(void);
 static void SwitchColorMode(void);
-//static void StartCountDown(void);
 static void SwitchDebug(void);
 static void SwitchMusic(void);
 static void KillSprite(void);
 static void PushSprite(void);
 static void PullSprite(void);
-static void BackPaint(void);
 static void NextStep(void);
 static void SaveMapping(void);
 
@@ -631,7 +629,7 @@ static void AltCtrlDel(void) {
 		SNPOST_(SNSAY,  -1, A_C_D_TEXT, Hero);
 }
 
-
+// Used in stubbed function, do not remove!
 static void MiniStep(int stp) {
 	if (stp < 0)
 		_miniCave->Flags.Hide = true;
@@ -1357,7 +1355,7 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 				continue;
 
 			if ((i = TakeEnum(Comd, strtok(line, " =\t"))) < 0)
-				error("%s [%s]", NumStr("Bad line ######", lcnt), fname);
+				error("%s [%s]", NumStr("Bad line ######", lcnt), (const char *)fname);
 
 
 			switch (i) {
@@ -1365,7 +1363,7 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 				break;
 			case  1 : // Type
 				if ((type = TakeEnum(Type, strtok(NULL, " \t,;/"))) < 0)
-					error("%s [%s]", NumStr("Bad line ######", lcnt), fname);
+					error("%s [%s]", NumStr("Bad line ######", lcnt), (const char *)fname);
 				break;
 			case  2 : // Phase
 				++ shpcnt;
@@ -1541,7 +1539,7 @@ void CGEEngine::MainLoop() {
 	SayDebug();
 
 	if (_isDemo) {
-		static uint32 tc = 0;
+//		static uint32 tc = 0;
 		if (/* FIXME: TimerCount - tc >= ((182L * 6L) * 5L) && */ Talk == NULL && Snail->Idle()) {
 			if (Text->getText(DemoText)) {
 				SNPOST(SNSOUND,  -1, 4, NULL); // drumla

@@ -74,7 +74,7 @@ KEYBOARD::~KEYBOARD(void) {
 	/* TODO replace totally by scummvm handling
 	setvect(KEYBD_INT, OldKeyboard);
 	*/
-	warning("STUB: KEYBOARD::~KEYBOARD");
+	// FIXME: STUB: KEYBOARD::~KEYBOARD
 }
 
 
