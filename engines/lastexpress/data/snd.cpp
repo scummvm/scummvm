@@ -103,7 +103,8 @@ void SimpleSound::play(Audio::AudioStream *as) {
 //////////////////////////////////////////////////////////////////////////
 // StreamedSound
 //////////////////////////////////////////////////////////////////////////
-StreamedSound::StreamedSound() {}
+StreamedSound::StreamedSound() : _loaded(false) {}
+
 StreamedSound::~StreamedSound() {}
 
 bool StreamedSound::load(Common::SeekableReadStream *stream) {
@@ -120,7 +121,16 @@ bool StreamedSound::load(Common::SeekableReadStream *stream) {
 	// Start playing the decoded audio stream
 	play(as);
 
+	_loaded = true;
+
 	return true;
+}
+
+bool StreamedSound::isFinished() {
+	if (!_loaded)
+		return false;
+
+	return !g_system->getMixer()->isSoundHandleActive(_handle);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -170,6 +180,10 @@ void AppendableSound::finish() {
 		_as->finish();
 
 	_finished = true;
+}
+
+bool AppendableSound::isFinished() {
+	return _as->endOfStream();
 }
 
 } // End of namespace LastExpress

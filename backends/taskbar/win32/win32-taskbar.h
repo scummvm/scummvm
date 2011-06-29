@@ -41,10 +41,15 @@ public:
 	virtual void setOverlayIcon(const Common::String &name, const Common::String &description);
 	virtual void setProgressValue(int completed, int total);
 	virtual void setProgressState(TaskbarProgressState state);
+	virtual void setCount(int count);
 	virtual void addRecent(const Common::String &name, const Common::String &description);
 
 private:
 	ITaskbarList3 *_taskbar;
+
+	// Count handling
+	HICON _icon;
+	int   _count;
 
 	/**
 	 * 	Get the path to an icon for the game

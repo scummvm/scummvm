@@ -169,6 +169,9 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, SoundFlag fla
 		entry->updateState();
 	}
 
+	// Add entry to sound list
+	_queue->addToQueue(entry);
+
 	return (entry->getType() != kSoundTypeNone);
 }
 
