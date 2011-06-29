@@ -185,7 +185,7 @@ void LastExpressEngine::pollEvents() {
 bool LastExpressEngine::handleEvents() {
 	// Make sure all the subsystems have been initialized
 	if (!_debugger || !_graphicsMan)
-		error("LastExpressEngine::handleEvents: called before the required subsystems have been initialized!");
+		error("[LastExpressEngine::handleEvents] Called before the required subsystems have been initialized");
 
 	// Execute stored commands
 	if (_debugger->hasCommand()) {

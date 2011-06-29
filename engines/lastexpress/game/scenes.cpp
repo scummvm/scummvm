@@ -81,12 +81,12 @@ void SceneManager::loadSceneDataFile(ArchiveIndex archive) {
 	case kArchiveCd2:
 	case kArchiveCd3:
 		if (!_sceneLoader->load(getArchive(Common::String::format("CD%iTRAIN.DAT", archive))))
-			error("SceneManager::loadSceneDataFile: cannot load data file CD%iTRAIN.DAT", archive);
+			error("[SceneManager::loadSceneDataFile] Cannot load data file CD%iTRAIN.DAT", archive);
 		break;
 
 	default:
 	case kArchiveAll:
-		error("SceneManager::loadSceneDataFile: Invalid archive index (must be [1-3], was %d", archive);
+		error("[SceneManager::loadSceneDataFile] Invalid archive index (must be [1-3], was %d", archive);
 		break;
 	}
 }
@@ -464,7 +464,7 @@ bool SceneManager::checkPosition(SceneIndex index, CheckPositionType type) const
 
 	switch (type) {
 	default:
-		error("SceneManager::checkPosition: Invalid position type: %d", type);
+		error("[SceneManager::checkPosition] Invalid position type: %d", type);
 
 	case kCheckPositionLookingUp:
 		return isInSleepingCar && (position >= 1 && position <= 19);

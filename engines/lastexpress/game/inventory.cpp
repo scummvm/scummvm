@@ -439,7 +439,7 @@ void Inventory::showHourGlass(){
 //////////////////////////////////////////////////////////////////////////
 Inventory::InventoryEntry *Inventory::get(InventoryItem item) {
 	if (item >= kPortraitOriginal)
-		error("Inventory::getEntry: Invalid inventory item!");
+		error("[Inventory::get] Invalid inventory item");
 
 	return &_entries[item];
 }
@@ -623,7 +623,7 @@ void Inventory::drawEgg() {
 // Blinking egg: we need to blink the egg for delta time, with the blinking getting faster until it's always lit.
 void Inventory::drawBlinkingEgg() {
 
-	warning("Inventory::drawEgg - blinking not implemented!");
+	warning("[Inventory::drawBlinkingEgg] Blinking not implemented");
 
 	//// TODO show egg (with or without mouseover)
 

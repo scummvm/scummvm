@@ -62,7 +62,7 @@ void Clock::draw(uint32 time) {
 
 	// Check that sequences have been loaded
 	if (!_frameMinutes || !_frameHour || !_frameSun || !_frameDate)
-		error("Clock::process: clock sequences have not been loaded correctly!");
+		error("[Clock::draw] Clock sequences have not been loaded correctly");
 
 	// Clear existing frames
 	clear();

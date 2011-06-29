@@ -413,7 +413,7 @@ void Logic::eventTick(const Common::Event &) {
 void Logic::resetState() {
 	getState()->scene = kSceneDefault;
 
-	warning("Logic::resetState: not implemented! You need to restart the engine until this is implemented.");
+	warning("[Logic::resetState] Not implemented! You need to restart the engine until this is implemented.");
 }
 
 /**
@@ -506,7 +506,7 @@ void Logic::playFinalSequence() const {
 }
 
 void Logic::showCredits() const {
-	error("Logic::showCredits: not implemented!");
+	error("[Logic::showCredits] Not implemented");
 }
 
 //////////////////////////////////////////////////////////////////////////

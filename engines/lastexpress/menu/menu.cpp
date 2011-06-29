@@ -860,7 +860,7 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 			useSameIndex = false;
 
 			// TODO remove existing savegame and reset index & savegame name
-			warning("Menu::initGame: not implemented!");
+			warning("[Menu::initGame] Not implemented");
 		}
 
 		doSavegame = false;

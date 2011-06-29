@@ -97,7 +97,7 @@ void TrainLine::draw(uint32 time) {
 
 	// Check that sequences have been loaded
 	if (!_frameLine1 || !_frameLine2)
-		error("TrainLine::process: Line sequences have not been loaded correctly!");
+		error("[TrainLine::draw] Line sequences have not been loaded correctly");
 
 	// Clear existing frames
 	clear();

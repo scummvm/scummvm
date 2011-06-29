@@ -407,7 +407,7 @@ SceneIndex Action::processHotspot(const SceneHotspot &hotspot) {
 //////////////////////////////////////////////////////////////////////////
 // Action 0
 IMPLEMENT_ACTION(dummy)
-	warning("Action::action_dummy: Dummy action function called (hotspot action: %d)!", hotspot.action);
+	warning("[Action::action_dummy] Dummy action function called (hotspot action: %d)", hotspot.action);
 
 	return kSceneInvalid;
 }
@@ -1910,7 +1910,7 @@ LABEL_KEY:
 // Play an animation and add delta time to global game time
 void Action::playAnimation(EventIndex index, bool debugMode) const {
 	if (index >= _animationListSize)
-		error("Action::playAnimation: invalid event index (value=%i, max=%i)", index, _animationListSize);
+		error("[Action::playAnimation] Invalid event index (value=%i, max=%i)", index, _animationListSize);
 
 	// In debug mode, just show the animation
 	if (debugMode) {

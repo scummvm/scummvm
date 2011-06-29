@@ -115,7 +115,7 @@ void SoundQueue::removeFromQueue(Common::String filename) {
 void SoundQueue::updateQueue() {
 	Common::StackLock locker(_mutex);
 
-	warning("Sound::updateQueue: not implemented!");
+	warning("[Sound::updateQueue] Not implemented");
 }
 
 void SoundQueue::resetQueue() {
@@ -413,7 +413,7 @@ void SoundQueue::saveLoadWithSerializer(Common::Serializer &s) {
 		for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
 			(*i)->saveLoadWithSerializer(s);
 	} else {
-		warning("Sound::saveLoadWithSerializer: loading not implemented");
+		warning("[Sound::saveLoadWithSerializer] Loading not implemented");
 		s.skip(numEntries * 64);
 	}
 }

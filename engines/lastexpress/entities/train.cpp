@@ -92,7 +92,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 
 	switch (params->param1) {
 	default:
-		error("Train::harem: Invalid value for parameter 1: %d", params->param1);
+		error("[Train::harem] Invalid value for parameter 1: %d", params->param1);
 		break;
 
 	case kObjectCompartment5:

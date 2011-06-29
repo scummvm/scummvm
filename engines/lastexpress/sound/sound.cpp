@@ -300,7 +300,7 @@ void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
 
 void SoundManager::playSteam(CityIndex index) {
 	if (index >= ARRAYSIZE(cities))
-		error("SoundManager::playSteam: invalid city index (was %d, max %d)", index, ARRAYSIZE(cities));
+		error("[SoundManager::playSteam] Invalid city index (was %d, max %d)", index, ARRAYSIZE(cities));
 
 	_queue->resetState(kSoundState2);
 
@@ -676,7 +676,7 @@ void SoundManager::readText(int id){
 		return;
 
 	if (id < 0 || (id > 8 && id < 50) || id > 64)
-		error("Sound::readText - attempting to use invalid id. Valid values [1;8] - [50;64], was %d", id);
+		error("[Sound::readText] Attempting to use invalid id. Valid values [1;8] - [50;64], was %d", id);
 
 	// Get proper message file (names are stored in sequence in the array but id is [1;8] - [50;64])
 	const char *text = messages[id <= 8 ? id : id - 41];

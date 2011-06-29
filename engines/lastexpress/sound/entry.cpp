@@ -211,7 +211,7 @@ void SoundEntry::loadSoundData(Common::String name) {
 		_stream = getArchive("DEFAULT.SND");
 
 	if (_stream) {
-		warning("Sound::loadSoundData: not implemented!");
+		warning("[Sound::loadSoundData] Not implemented");
 	} else {
 		_status.status = kSoundStatusRemoved;
 	}

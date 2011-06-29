@@ -162,7 +162,7 @@ void Fight::handleTick(const Common::Event &ev, bool isProcessing) {
 
 	// Blink egg
 	if (getGlobalTimer()) {
-		warning("Fight::handleMouseMove - egg blinking not implemented!");
+		warning("[Fight::handleTick] Egg blinking not implemented");
 	}
 
 	if (!_data || _data->index)
@@ -197,7 +197,7 @@ void Fight::handleTick(const Common::Event &ev, bool isProcessing) {
 //////////////////////////////////////////////////////////////////////////
 Fight::FightEndType Fight::setup(FightType type) {
 	if (_data)
-		error("Fight::setup - calling fight setup again while a fight is already in progress!");
+		error("[Fight::setup] Calling fight setup again while a fight is already in progress");
 
 	//////////////////////////////////////////////////////////////////////////
 	// Prepare UI & state
@@ -320,7 +320,7 @@ void Fight::clearData() {
 //////////////////////////////////////////////////////////////////////////
 void Fight::loadData(FightType type) {
 	if (!_data)
-		error("Fight::loadData - invalid data!");
+		error("[Fight::loadData] Data not initialized");
 
 	switch (type) {
 	default:
@@ -353,7 +353,7 @@ void Fight::loadData(FightType type) {
 	}
 
 	if (!_data->player || !_data->opponent)
-		error("Fight::loadData - error loading fight data (type=%d)", type);
+		error("[Fight::loadData] Error loading fight data (type=%d)", type);
 
 	// Setup opponent pointers
 	setOpponents();
