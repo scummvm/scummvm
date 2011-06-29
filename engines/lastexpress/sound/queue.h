@@ -78,9 +78,6 @@ public:
 	void setCurrentSubtitle(SubtitleEntry *entry) { _currentSubtitle = entry; }
 	SubtitleEntry *getCurrentSubtitle() { return _currentSubtitle; }
 
-	// Cache
-	bool setupCache(SoundEntry *entry);
-
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	uint32 count();
@@ -109,7 +106,6 @@ private:
 
 	// Entries
 	Common::List<SoundEntry *> _soundList;    ///< List of all sound entries
-	Common::List<SoundEntry *> _soundCache;   ///< List of entries with a data buffer
 	void *_soundCacheData;
 
 	// Subtitles
@@ -117,10 +113,6 @@ private:
 	Common::List<SubtitleEntry *> _subtitles;
 	SubtitleEntry *_currentSubtitle;
 
-	// Filters
-	int32 _buffer[2940];    ///< Static sound buffer
-
-	void removeFromCache(SoundEntry *entry);
 	void applyFilter(SoundEntry *entry, int16 *buffer);
 
 	friend class Debugger;

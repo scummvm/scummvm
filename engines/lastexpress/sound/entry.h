@@ -152,10 +152,7 @@ public:
 	// Streams
 	Common::SeekableReadStream *getStream() { return _stream; }
 	StreamedSound              *getStreamedSound() { return _soundStream; }
-
-public:
-	// TODO replace by on-the-fly allocated buffer
-	void *_soundData;
+	byte                       *getSoundBuffer() { return _soundBuffer; }
 
 private:
 	LastExpressEngine *_engine;
@@ -184,8 +181,11 @@ private:
 	// original has pointer to the next structure in the list (not used)
 	SubtitleEntry *_subtitle;
 
-	// Sound stream
+	// Sound buffer & stream
+	byte *_soundBuffer;
 	StreamedSound *_soundStream;
+
+	void setupCache();
 };
 
 //////////////////////////////////////////////////////////////////////////

@@ -32,17 +32,10 @@
 
 namespace LastExpress {
 
-#define SOUNDCACHE_ENTRY_SIZE 92160
-#define SOUNDCACHE_MAX_SIZE   6
-
 SoundQueue::SoundQueue(LastExpressEngine *engine) : _engine(engine) {
 	 _state = 0;
 	 _currentType = kSoundType16;
 	 _flag = 0;
-
-	// Cache and filter buffers
-	memset(&_buffer, 0, sizeof(_buffer));
-	_soundCacheData = malloc(6 * SOUNDCACHE_ENTRY_SIZE);
 
 	_subtitlesFlag = 0;
 	_currentSubtitle = NULL;
@@ -53,16 +46,11 @@ SoundQueue::~SoundQueue() {
 		SAFE_DELETE(*i);
 	_soundList.clear();
 
-	// Entries in the cache are just pointers to sound list entries
-	_soundCache.clear();
-
 	for (Common::List<SubtitleEntry *>::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i)
 		SAFE_DELETE(*i);
 	_subtitles.clear();
 
 	_currentSubtitle = NULL;
-
-	free(_soundCacheData);
 
 	// Zero passed pointers
 	_engine = NULL;
@@ -330,66 +318,6 @@ void SoundQueue::updateSubtitles() {
 	if (subtitle) {
 		subtitle->loadData();
 		subtitle->setupAndDraw();
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Cache
-//////////////////////////////////////////////////////////////////////////
-bool SoundQueue::setupCache(SoundEntry *entry) {
-	if (entry->_soundData)
-		return true;
-
-	if (_soundCache.size() >= SOUNDCACHE_MAX_SIZE) {
-
-		SoundEntry *cacheEntry = NULL;
-		uint32 size = 1000;
-
-		for (Common::List<SoundEntry *>::iterator i = _soundCache.begin(); i != _soundCache.end(); ++i) {
-			if (!((*i)->getStatus().status & kSoundStatus_180)) {
-				uint32 newSize = (*i)->getPriority() + ((*i)->getStatus().status & kSoundStatusClear1);
-
-				if (newSize < size) {
-					cacheEntry = (*i);
-					size = newSize;
-				}
-			}
-		}
-
-		if (entry->getPriority() <= size)
-			return false;
-
-		if (!cacheEntry)
-			error("[SoundManager::setupCache] Cannot find a valid entry");
-
-		cacheEntry->setInCache();
-
-		// TODO: Wait until the cache entry is ready to be removed
-		while (!(cacheEntry->getStatus().status1 & 1))
-			;
-
-		if (cacheEntry->_soundData)
-			removeFromCache(cacheEntry);
-
-		_soundCache.push_back(entry);
-		entry->_soundData = (char *)_soundCacheData + SOUNDCACHE_ENTRY_SIZE * (_soundCache.size() - 1);
-	} else {
-		_soundCache.push_back(entry);
-		entry->_soundData = (char *)_soundCacheData + SOUNDCACHE_ENTRY_SIZE * (_soundCache.size() - 1);
-	}
-
-	return true;
-}
-
-void SoundQueue::removeFromCache(SoundEntry *entry) {
-	for (Common::List<SoundEntry *>::iterator i = _soundCache.begin(); i != _soundCache.end(); ++i) {
-		if ((*i) == entry) {
-			// Remove sound buffer
-			entry->_soundData = NULL;
-
-			// Remove entry from sound cache
-			i = _soundCache.reverse_erase(i);
-		}
 	}
 }
 
@@ -746,12 +674,12 @@ static const int p2s[17] = { 0, 1, 1, 3, 1, 5, 3, 7, 1, 9, 5, 11, 3, 13, 7, 15, 
 static void soundFilter(byte *data, int16 *buffer, int p1, int p2);
 
 void SoundQueue::applyFilter(SoundEntry *entry, int16 *buffer) {
-	if ((((byte *)entry->_soundData)[1] << 6) > 0x1600) {
+	if ((((byte *)entry->getSoundBuffer())[1] << 6) > 0x1600) {
 		entry->setStatus(entry->getStatus().status | kSoundStatus_20000000);
 	} else {
 		int variant = entry->getStatus().status & 0x1f;
 
-		soundFilter((byte *)entry->_soundData, buffer, p1s[variant], p2s[variant]);
+		soundFilter((byte *)entry->getSoundBuffer(), buffer, p1s[variant], p2s[variant]);
 	}
 }
 

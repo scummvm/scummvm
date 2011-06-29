@@ -38,6 +38,8 @@
 
 namespace LastExpress {
 
+#define SOUNDCACHE_ENTRY_SIZE 92160
+
 //////////////////////////////////////////////////////////////////////////
 // SoundEntry
 //////////////////////////////////////////////////////////////////////////
@@ -45,7 +47,7 @@ SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	_type = kSoundTypeNone;
 
 	_currentDataPtr = 0;
-	_soundData = NULL;
+	_soundBuffer = NULL;
 
 	_blockCount = 0;
 	_time = 0;
@@ -66,11 +68,12 @@ SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 }
 
 SoundEntry::~SoundEntry() {
-	// Entries that have been queued would have their streamed disposed automatically
+	// Entries that have been queued will have their streamed disposed automatically
 	if (!_soundStream)
 		SAFE_DELETE(_stream);
-
 	delete _soundStream;
+
+	free(_soundBuffer);
 
 	// Zero passed pointers
 	_engine = NULL;
@@ -85,7 +88,7 @@ void SoundEntry::open(Common::String name, SoundFlag flag, int priority) {
 	getSoundQueue()->addToQueue(this);
 
 	// Add entry to cache and load sound data
-	getSoundQueue()->setupCache(this);
+	setupCache();
 	loadSoundData(name);
 }
 
@@ -195,6 +198,16 @@ void SoundEntry::setStatus(SoundFlag flag) {
 		_status.status = (uint32)statusFlag;
 	else
 		_status.status = (statusFlag | kSoundStatusClear4);
+}
+
+void SoundEntry::setupCache() {
+	if (_soundBuffer)
+		return;
+
+	// Original has a priority-based shared buffer (of 6 entries)
+	// We simply allocate a new buffer for each sound entry that needs it
+	_soundBuffer = (byte *)malloc(SOUNDCACHE_ENTRY_SIZE);
+	memset(_soundBuffer, 0, SOUNDCACHE_ENTRY_SIZE);
 }
 
 void SoundEntry::setInCache() {
