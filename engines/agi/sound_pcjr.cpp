@@ -219,6 +219,7 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 // return 0 if it's passing more data
 // return -1 if it's passing nothing (end of data)
 int SoundGenPCJr::getNextNote(int ch, Tone *tone) {
+	ToneChan *tpcm;
 	SndGenChan *chan;
 	const byte *data;
 
@@ -228,6 +229,7 @@ int SoundGenPCJr::getNextNote(int ch, Tone *tone) {
 	if (!_vm->getflag(fSoundOn))
 		return -1;
 
+	tpcm = &_tchannel[ch];
 	chan = &_channel[ch];
 	if (!chan->avail)
 		return -1;
@@ -241,6 +243,9 @@ int SoundGenPCJr::getNextNote(int ch, Tone *tone) {
 		// if it's 0 then it's not going to be played
 		// if it's 0xFFFF then the channel data has finished.
 		if ((chan->duration != 0) && (chan->duration != 0xFFFF)) {
+			tpcm->genTypePrev = -1;
+			tpcm->freqCountPrev = -1;
+
 			// only tone channels dissolve
 			if ((ch != 3) && (_dissolveMethod != 0))	// != noise??
 				chan->dissolveCount = 0;

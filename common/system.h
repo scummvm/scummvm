@@ -42,6 +42,9 @@ struct Rect;
 class SaveFileManager;
 class SearchSet;
 class String;
+#if defined(USE_TASKBAR)
+class TaskbarManager;
+#endif
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
@@ -98,36 +101,79 @@ protected:
 
 protected:
 	/**
-	 * For backend authors only, this pointer may be set by OSystem
-	 * subclasses to an AudioCDManager instance. This is only useful
-	 * if your backend does not want to use the DefaultAudioCDManager.
+	 * @name Module slots
 	 *
-	 * This instance is returned by OSystem::getAudioCDManager(),
-	 * and it is deleted by the OSystem destructor.
+	 * For backend authors only, the following pointers (= "slots) to various
+	 * subsystem managers / factories / etc. can and should be set to
+	 * a suitable instance of the respective type.
 	 *
-	 * A backend may set this pointer in its initBackend() method,
-	 * its constructor or somewhere in between; but it must
-	 * set it no later than in its initBackend() implementation, because
-	 * OSystem::initBackend() will by default create a DefaultAudioCDManager
-	 * instance if _audiocdManager has not yet been set.
+	 * For some of the slots, a default instance is set if your backend
+	 * does not do so. For details, please look at the documentation of
+	 * each slot.
+	 *
+	 * A backend may setup slot values in its initBackend() method,
+	 * its constructor or somewhere in between. But it must a slot's value
+	 * no later than in its initBackend() implementation, because
+	 * OSystem::initBackend() will create any default instances if
+	 * none has been set yet (and for other slots, will verify that
+	 * one has been set; if not, an error may be generated).
+	 */
+	//@{
+
+	/**
+	 * No default value is provided for _audiocdManager by OSystem.
+	 * However, BaseBackend::initBackend() does set a default value
+	 * if none has been set before.
+	 *
+	 * @note _audiocdManager is deleted by the OSystem destructor.
 	 */
 	AudioCDManager *_audiocdManager;
 
 	/**
-	 * For backend authors only, this pointer may be set by OSystem
-	 * subclasses to an EventManager instance. This is only useful
-	 * if your backend does not want to use the DefaultEventManager.
+	 * No default value is provided for _eventManager by OSystem.
+	 * However, BaseBackend::initBackend() does set a default value
+	 * if none has been set before.
 	 *
-	 * This instance is returned by OSystem::getEventManager(),
-	 * and it is deleted by the OSystem destructor.
-	 *
-	 * A backend may set this pointer in its initBackend() method,
-	 * its constructor or somewhere in between; but it must
-	 * set it no later than in its initBackend() implementation, because
-	 * OSystem::initBackend() will by default create a DefaultEventManager
-	 * instance if _eventManager has not yet been set.
+	 * @note _eventManager is deleted by the OSystem destructor.
 	 */
 	Common::EventManager *_eventManager;
+
+	/**
+	 * No default value is provided for _timerManager by OSystem.
+	 *
+	 * @note _timerManager is deleted by the OSystem destructor.
+	 */
+	Common::TimerManager *_timerManager;
+
+	/**
+	 * No default value is provided for _savefileManager by OSystem.
+	 *
+	 * @note _savefileManager is deleted by the OSystem destructor.
+	 */
+	Common::SaveFileManager *_savefileManager;
+
+#if defined(USE_TASKBAR)
+	/**
+	 * No default value is provided for _savefileManager by OSystem.
+	 *
+	 * @note _savefileManager is deleted by the OSystem destructor.
+	 */
+	Common::TaskbarManager *_taskbarManager;
+#endif
+
+	/**
+	 * No default value is provided for _fsFactory by OSystem.
+	 *
+	 * Note that _fsFactory is typically required very early on,
+	 * so it usually should be set in the backends constructor or shortly
+	 * thereafter, and before initBackend() is called.
+	 *
+	 * @note _fsFactory is deleted by the OSystem destructor.
+	 */
+	FilesystemFactory *_fsFactory;
+
+	//@}
+
 public:
 
 	/**
@@ -423,7 +469,7 @@ public:
 	 * reset the scale to x1 so the screen will not be too big when starting
 	 * the game.
 	 */
-	virtual void resetGraphicsScale() = 0;
+	virtual void resetGraphicsScale() {}
 
 #ifdef USE_RGB_COLOR
 	/**
@@ -857,7 +903,9 @@ public:
 	 * Return the timer manager singleton. For more information, refer
 	 * to the TimerManager documentation.
 	 */
-	virtual Common::TimerManager *getTimerManager() = 0;
+	inline Common::TimerManager *getTimerManager() {
+		return _timerManager;
+	}
 
 	/**
 	 * Return the event manager singleton. For more information, refer
@@ -1007,14 +1055,28 @@ public:
 	 * and other modifiable persistent game data. For more information,
 	 * refer to the SaveFileManager documentation.
 	 */
-	virtual Common::SaveFileManager *getSavefileManager() = 0;
+	inline Common::SaveFileManager *getSavefileManager() {
+		return _savefileManager;
+	}
+
+#if defined(USE_TASKBAR)
+	/**
+	 * Returns the TaskbarManager, used to handle progress bars,
+	 * icon overlay, tasks and recent items list on the taskbar.
+	 *
+	 * @return the TaskbarManager for the current architecture
+	 */
+	virtual Common::TaskbarManager *getTaskbarManager() {
+		return _taskbarManager;
+	}
+#endif
 
 	/**
 	 * Returns the FilesystemFactory object, depending on the current architecture.
 	 *
 	 * @return the FSNode factory for the current architecture
 	 */
-	virtual FilesystemFactory *getFilesystemFactory() = 0;
+	virtual FilesystemFactory *getFilesystemFactory();
 
 	/**
 	 * Add system specific Common::Archive objects to the given SearchSet.
@@ -1063,7 +1125,7 @@ public:
 	 * @param type    the type of the message
 	 * @param message the message itself
 	 */
-	virtual void logMessage(LogMessageType::Type type, const char *message);
+	virtual void logMessage(LogMessageType::Type type, const char *message) = 0;
 
 	/**
 	 * Open the log file in a way that allows the user to review it,

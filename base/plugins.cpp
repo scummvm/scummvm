@@ -109,6 +109,9 @@ public:
 		#if PLUGIN_ENABLED_STATIC(DRASCULA)
 		LINK_PLUGIN(DRASCULA)
 		#endif
+		#if PLUGIN_ENABLED_STATIC(DREAMWEB)
+		LINK_PLUGIN(DREAMWEB)
+		#endif
 		#if PLUGIN_ENABLED_STATIC(GOB)
 		LINK_PLUGIN(GOB)
 		#endif
@@ -313,7 +316,7 @@ PluginManager &PluginManager::instance() {
 	if (_instance)
 		return *_instance;
 
-#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)		
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 		_instance = new PluginManagerUncached();
 #else
 		_instance = new PluginManager();
@@ -348,7 +351,7 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 void PluginManagerUncached::init() {
 	unloadAllPlugins();
 	_allEnginePlugins.clear();
-	
+
 	// Resize our pluginsInMem list to prevent fragmentation
 	_pluginsInMem[PLUGIN_TYPE_ENGINE].resize(2);
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);	// empty the engine plugins
@@ -357,7 +360,7 @@ void PluginManagerUncached::init() {
 	                            pp != _providers.end();
 	                            ++pp) {
 		PluginList pl((*pp)->getPlugins());
-		
+
 		for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
 			// This is a 'hack' based on the assumption that we have no sound
 			// file plugins. Currently this is the case. If it changes, we
@@ -365,15 +368,15 @@ void PluginManagerUncached::init() {
 			// music or an engine plugin.
 			if ((*pp)->isFilePluginProvider()) {
 				_allEnginePlugins.push_back(*p);
-			} else if ((*p)->loadPlugin()) { // and this is the proper method 
+			} else if ((*p)->loadPlugin()) { // and this is the proper method
 				if ((*p)->getType() == PLUGIN_TYPE_ENGINE) {
 					(*p)->unloadPlugin();
 					_allEnginePlugins.push_back(*p);
 				} else {	// add non-engine plugins to the 'in-memory' list
 							// these won't ever get unloaded
-					addToPluginsInMemList(*p);			
+					addToPluginsInMemList(*p);
 				}
-			}	
+			}
  		}
  	}
 }
@@ -403,7 +406,7 @@ bool PluginManagerUncached::loadPluginFromGameId(const Common::String &gameId) {
 bool PluginManagerUncached::loadPluginByFileName(const Common::String &filename) {
 	if (filename.empty())
 		return false;
-	
+
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 
 	PluginList::iterator i;
@@ -417,7 +420,7 @@ bool PluginManagerUncached::loadPluginByFileName(const Common::String &filename)
 	return false;
 }
 
-/** 
+/**
  * Update the config manager with a plugin file name that we found can handle
  * the game.
  **/
@@ -435,7 +438,7 @@ void PluginManagerUncached::updateConfigWithFileName(const Common::String &gameI
 	}
 }
 
-void PluginManagerUncached::loadFirstPlugin() { 
+void PluginManagerUncached::loadFirstPlugin() {
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 
 	// let's try to find one we can load
@@ -517,7 +520,7 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 	bool found = false;
 	// The plugin is valid, see if it provides the same module as an
 	// already loaded one and should replace it.
-		
+
 	PluginList::iterator pl = _pluginsInMem[plugin->getType()].begin();
 	while (!found && pl != _pluginsInMem[plugin->getType()].end()) {
 		if (!strcmp(plugin->getName(), (*pl)->getName())) {
@@ -542,7 +545,7 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 
 DECLARE_SINGLETON(EngineManager);
 
-/** 
+/**
  * This function works for both cached and uncached PluginManagers.
  * For the cached version, most of the logic here will short circuit.
  *
@@ -554,24 +557,24 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 
 	// First look for the game using the plugins in memory. This is critical
 	// for calls coming from inside games
-	result = findGameInLoadedPlugins(gameName, plugin); 
+	result = findGameInLoadedPlugins(gameName, plugin);
 	if (!result.gameid().empty()) {
 		return result;
 	}
-	
+
 	// Now look for the game using the gameId. This is much faster than scanning plugin
 	// by plugin
 	if (PluginMan.loadPluginFromGameId(gameName))  {
-		result = findGameInLoadedPlugins(gameName, plugin); 
+		result = findGameInLoadedPlugins(gameName, plugin);
 		if (!result.gameid().empty()) {
 			return result;
 		}
 	}
-	
+
 	// We failed to find it using the gameid. Scan the list of plugins
 	PluginMan.loadFirstPlugin();
 	do {
-		result = findGameInLoadedPlugins(gameName, plugin); 
+		result = findGameInLoadedPlugins(gameName, plugin);
 		if (!result.gameid().empty()) {
 			// Update with new plugin file name
 			PluginMan.updateConfigWithFileName(gameName);
@@ -582,7 +585,7 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 	return result;
 }
 
-/** 
+/**
  * Find the game within the plugins loaded in memory
  **/
 GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const EnginePlugin **plugin) const {
@@ -594,7 +597,7 @@ GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &game
 		*plugin = 0;
 
 	EnginePlugin::List::const_iterator iter;
-	
+
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (**iter)->findGame(gameName.c_str());
 		if (!result.gameid().empty()) {

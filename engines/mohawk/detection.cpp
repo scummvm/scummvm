@@ -158,34 +158,17 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Mohawk::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Mohawk::MohawkGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	mohawkGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"mohawk",
-	// List of files for file-based fallback detection (optional)
-	Mohawk::fileBased,
-	// Flags
-	0,
-	// Additional GUI options (for every game)
-	Common::GUIO_NONE,
-	// Maximum directory depth
-	2,
-	// List of directory globs
-	directoryGlobs
-};
-
 class MohawkMetaEngine : public AdvancedMetaEngine {
 public:
-	MohawkMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	MohawkMetaEngine() : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames) {
+		_singleid = "mohawk";
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
+	}
+
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		return detectGameFilebased(allFiles, Mohawk::fileBased);
+	}
 
 	virtual const char *getName() const {
 		return "Mohawk";

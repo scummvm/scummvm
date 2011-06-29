@@ -79,7 +79,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Burger,
@@ -95,7 +95,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Burger,
@@ -111,7 +111,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Burger,
@@ -127,7 +127,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Burger,
@@ -143,7 +143,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Burger,
@@ -159,7 +159,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Riddle,
@@ -175,7 +175,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Riddle,
@@ -191,7 +191,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Riddle,
@@ -207,7 +207,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Riddle,
@@ -223,7 +223,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Riddle,
@@ -239,7 +239,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Riddle,
@@ -255,7 +255,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NOSPEECH
 		},
 		GType_RexNebular,
@@ -271,7 +271,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_RexNebular,
@@ -287,7 +287,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NOSPEECH
 		},
 		GType_DragonSphere,
@@ -304,7 +304,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_DragonSphere,
@@ -320,7 +320,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_DragonSphere,
@@ -336,7 +336,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NOSPEECH
 		},
 		GType_Phantom,
@@ -352,7 +352,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Phantom,
@@ -368,7 +368,7 @@ static const M4GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GType_Phantom,
@@ -384,34 +384,14 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)M4::gameDescriptions,
-	// Size of that superset structure
-	sizeof(M4::M4GameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	m4Games,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"m4",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOMIDI,
-	// Maximum directory depth
-	2,
-	// List of directory globs
-	directoryGlobs
-};
-
 class M4MetaEngine : public AdvancedMetaEngine {
 public:
-	M4MetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	M4MetaEngine() : AdvancedMetaEngine(M4::gameDescriptions, sizeof(M4::M4GameDescription), m4Games) {
+		_singleid = "m4";
+		_guioptions = Common::GUIO_NOMIDI;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
+	}
 
 	virtual const char *getName() const {
 		return "MADS/M4";

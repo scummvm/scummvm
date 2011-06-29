@@ -424,6 +424,12 @@ bool TheoraDecoder::queueAudio() {
 	if (!_audStream)
 		return false;
 
+	// An audio buffer should have been allocated (either in the constructor or after queuing the current buffer)
+	if (!_audiobuf) {
+		warning("[TheoraDecoder::queueAudio] Invalid audio buffer");
+		return false;
+	}
+
 	bool queuedAudio = false;
 
 	for (;;) {
@@ -454,6 +460,11 @@ bool TheoraDecoder::queueAudio() {
 				// The audio mixer is now responsible for the old audio buffer.
 				// We need to create a new one.
 				_audiobuf = (ogg_int16_t *)malloc(AUDIOFD_FRAGSIZE * sizeof(ogg_int16_t));
+				if (!_audiobuf) {
+					warning("[TheoraDecoder::queueAudio] Cannot allocate memory for audio buffer");
+					return false;
+				}
+
 				_audiobufFill = 0;
 				queuedAudio = true;
 			}
@@ -478,12 +489,6 @@ void TheoraDecoder::reset() {
 
 	if (_fileStream)
 		_fileStream->seek(0);
-
-#if ENABLE_THEORA_SEEKING
-	_videobufGranulePos = -1;
-	_audiobufGranulePos = 0;
-	_videobufTime = 0;
-#endif
 
 	_audiobufFill = 0;
 	_audiobufReady = false;

@@ -192,8 +192,8 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
 {
   unsigned int t = Timer();
 
-  if (_timer != NULL)
-    _timer->handler();
+  if (_timerManager != NULL)
+    ((DefaultTimerManager *)_timerManager)->handler();
 
   if (((int)(t-_devpoll))<0)
     return false;

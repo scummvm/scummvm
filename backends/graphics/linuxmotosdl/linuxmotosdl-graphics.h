@@ -23,9 +23,9 @@
 #ifndef BACKENDS_GRAPHICS_SDL_LINUXMOTO_H
 #define BACKENDS_GRAPHICS_SDL_LINUXMOTO_H
 
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
-class LinuxmotoSdlGraphicsManager : public SdlGraphicsManager {
+class LinuxmotoSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource);
 

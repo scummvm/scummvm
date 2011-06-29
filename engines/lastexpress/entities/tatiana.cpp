@@ -32,8 +32,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -420,7 +422,7 @@ IMPLEMENT_FUNCTION(19, Tatiana, chapter1Handler)
 		break;
 
 	case kActionNone:
-		if (getSound()->isBuffered(kEntityTatiana) || !params->param4 || params->param3 == 2 || getSound()->isBuffered("TAT1066"))
+		if (getSoundQueue()->isBuffered(kEntityTatiana) || !params->param4 || params->param3 == 2 || getSoundQueue()->isBuffered("TAT1066"))
 			goto label_tatiana_chapter1_2;
 
 		UPDATE_PARAM_PROC(params->param5, getState()->timeTicks, 450)
@@ -568,7 +570,7 @@ IMPLEMENT_FUNCTION(21, Tatiana, function21)
 			// Fallback to next case
 
 		case 3:
-			if (getSound()->isBuffered(kEntityTatiana)) {
+			if (getSoundQueue()->isBuffered(kEntityTatiana)) {
 				setCallback(3);
 				setup_updateFromTime(75);
 			} else {
@@ -1858,7 +1860,7 @@ IMPLEMENT_FUNCTION(46, Tatiana, function46)
 			parameters->param3 = 1;
 
 			if (parameters->param2) {
-				getSound()->removeFromQueue(kEntityTatiana);
+				getSoundQueue()->removeFromQueue(kEntityTatiana);
 				getSavePoints()->call(kEntityTatiana, kEntityTatiana, kActionEndSound);
 			}
 		} else {
@@ -1947,12 +1949,12 @@ IMPLEMENT_FUNCTION(48, Tatiana, function48)
 			params->param1 = 0;
 		}
 
-		if (!params->param1 || getSound()->isBuffered(kEntityTatiana))
+		if (!params->param1 || getSoundQueue()->isBuffered(kEntityTatiana))
 			goto label_end;
 
 		UPDATE_PARAM_GOTO(params->param2, getState()->timeTicks, 5 * (3 * rnd(5) + 30), label_end);
 
-		getSound()->playSound(kEntityTatiana, "LIB012", SoundManager::kFlagDefault);
+		getSound()->playSound(kEntityTatiana, "LIB012", kFlagDefault);
 		params->param2 = 0;
 
 label_end:
@@ -2086,7 +2088,7 @@ IMPLEMENT_FUNCTION(50, Tatiana, function50)
 		break;
 
 	case kActionKnock:
-		if (!getSound()->isBuffered("LIB012", true))
+		if (!getSoundQueue()->isBuffered("LIB012", true))
 			getSound()->playSound(kEntityPlayer, "LIB012");
 		break;
 
@@ -2107,14 +2109,14 @@ IMPLEMENT_FUNCTION(50, Tatiana, function50)
 		getObjects()->update(kObject48, kEntityTatiana, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObjectCompartmentA, kEntityTatiana, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
-		if (!getSound()->isBuffered(kEntityTatiana))
+		if (!getSoundQueue()->isBuffered(kEntityTatiana))
 			getSound()->playSound(kEntityTatiana, "Tat4166");
 		break;
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			if (getSound()->isBuffered("MUS013"))
-				getSound()->processEntry("MUS013");
+			if (getSoundQueue()->isBuffered("MUS013"))
+				getSoundQueue()->processEntry("MUS013");
 
 			getAction()->playAnimation(kEventVassiliDeadAlexei);
 			getSavePoints()->push(kEntityTatiana, kEntityAbbot, kAction104060776);
@@ -2223,11 +2225,11 @@ IMPLEMENT_FUNCTION(54, Tatiana, function54)
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			if (getSound()->isBuffered("MUS050"))
-				getSound()->processEntry("MUS050");
+			if (getSoundQueue()->isBuffered("MUS050"))
+				getSoundQueue()->processEntry("MUS050");
 
-			if (getSound()->isBuffered(kEntityTatiana))
-				getSound()->processEntry(kEntityTatiana);
+			if (getSoundQueue()->isBuffered(kEntityTatiana))
+				getSoundQueue()->processEntry(kEntityTatiana);
 
 			getAction()->playAnimation(isNight() ? kEventTatianaVassiliTalkNight : kEventTatianaVassiliTalk);
 			getScenes()->processScene();

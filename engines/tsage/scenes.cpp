@@ -55,7 +55,7 @@ void SceneManager::checkScene() {
 		_nextSceneNumber = -1;
 	}
 
-	Common::for_each(_globals->_sceneListeners.begin(), _globals->_sceneListeners.end(), SceneHandler::dispatchObject);
+	_globals->dispatchSounds();
 }
 
 void SceneManager::sceneChange() {
@@ -104,8 +104,6 @@ void SceneManager::sceneChange() {
 
 	// Set the next scene to be active
 	_sceneNumber = _nextSceneNumber;
-
-	// TODO: Unknown check of word_45CD3 / call to saver method
 
 	// Free any regions
 	disposeRegions();
@@ -208,7 +206,6 @@ void SceneManager::setBackSurface() {
 }
 
 void SceneManager::saveListener(int saveMode) {
-	warning("TODO: SceneManager::saveLIstener");
 }
 
 void SceneManager::loadNotifier(bool postFlag) {
@@ -238,7 +235,11 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 
 	if (s.isLoading()) {
 		changeScene(_sceneNumber);
-		checkScene();
+		
+		if (_nextSceneNumber != -1) {
+			sceneChange();
+			_nextSceneNumber = -1;
+		}
 	}
 
 	_globals->_sceneManager._scrollerRect.synchronize(s);

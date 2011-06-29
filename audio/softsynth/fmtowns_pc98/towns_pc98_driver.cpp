@@ -1265,7 +1265,7 @@ void TownsPC98_AudioDriver::fadeStep() {
 void TownsPC98_AudioDriver::pause() {
 	_musicPlaying = false;
 }
-	
+
 void TownsPC98_AudioDriver::cont() {
 	_musicPlaying = true;
 }

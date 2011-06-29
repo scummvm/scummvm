@@ -25,9 +25,9 @@
 
 #if defined(SAMSUNGTV)
 
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
-class SamsungTVSdlGraphicsManager : public SdlGraphicsManager {
+class SamsungTVSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource);
 

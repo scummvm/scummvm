@@ -72,7 +72,7 @@ private:
 		// Result image for this component
 		Surface surface;
 	};
-	
+
 	Component *_components;
 
 	// Scan components

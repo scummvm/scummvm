@@ -64,7 +64,7 @@ AnimationResource::AnimationResource(const Common::String &filename) :
 	char *xmlData = _pPackage->getXmlFile(getFileName(), &fileSize);
 	if (!xmlData) {
 		error("Could not read \"%s\".", getFileName().c_str());
-		return; 
+		return;
 	}
 
 	// Parse the contents
@@ -118,7 +118,7 @@ bool AnimationResource::parserCallback_animation(ParserNode *node) {
 
 	// Loop type value
 	const char *loopTypeString = node->values["type"].c_str();
-	
+
 	if (strcmp(loopTypeString, "oneshot") == 0) {
 		_animationType = Animation::AT_ONESHOT;
 	} else if (strcmp(loopTypeString, "loop") == 0) {
@@ -148,7 +148,7 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 	}
 	frame.fileName = _pPackage->getAbsolutePath(fileString);
 	if (frame.fileName.empty()) {
-		error("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".", 
+		error("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".",
 			getFileName().c_str(), fileString);
 		return false;
 	}

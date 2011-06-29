@@ -63,7 +63,7 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("Usage: %s <scene number> [prior scene #]\n", argv[0]);
 		return true;
-	} 
+	}
 
 	if (argc == 3)
 		_globals->_sceneManager._sceneNumber = strToInt(argv[2]);
@@ -222,7 +222,7 @@ bool Debugger::Cmd_ListObjects(int argc, const char **argv) {
 		DebugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
-	
+
 	DebugPrintf("Available objects for this game are:\n");
 	DebugPrintf("0 - Stunner\n");
 	DebugPrintf("1 - Scanner\n");
@@ -393,7 +393,7 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 
 	// Lock the background surface for access
 	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
-	
+
 	// Iterate through the scene items
 	SynchronizedList<SceneItem *>::iterator i;
 	for (i = _globals->_sceneItems.reverse_begin(); i != _globals->_sceneItems.end(); --i, ++colIndex) {
@@ -418,7 +418,7 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 					LineSliceSet set = r.getLineSlices(y);
 
 					for (uint p = 0; p < set.items.size(); ++p)
-						destSurface.hLine(set.items[p].xs - sceneBounds.left, y - sceneBounds.top, 
+						destSurface.hLine(set.items[p].xs - sceneBounds.left, y - sceneBounds.top,
 							set.items[p].xe - sceneBounds.left - 1, colIndex);
 				}
 			}

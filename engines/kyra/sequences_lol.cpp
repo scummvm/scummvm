@@ -202,7 +202,7 @@ void LoLEngine::setupPrologueData(bool load) {
 void LoLEngine::showIntro() {
 	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
-	
+
 	if (_flags.platform == Common::kPlatformPC98)
 		showStarcraftLogo();
 
@@ -306,9 +306,8 @@ int LoLEngine::chooseCharacter() {
 
 			Screen::FontId old = _screen->setFont(Screen::FID_SJIS_FNT);
 			for (int j = 0; j < 3; ++j) {
-				char buffer[3];
-				snprintf(buffer, sizeof(buffer), "%2d", _charPreviews[i].attrib[j]);
-				_screen->printText(buffer, _charPosXPC98[i] + 16, 176 + j * 8, 0x81, 0x00);
+				Common::String attribString = Common::String::format("%2d", _charPreviews[i].attrib[j]);
+				_screen->printText(attribString.c_str(), _charPosXPC98[i] + 16, 176 + j * 8, 0x81, 0x00);
 			}
 			_screen->setFont(old);
 		}
@@ -1116,7 +1115,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 		showCredits();
 
 	_eventList.clear();
-	
+
 	if (!shouldQuit()) {
 		switch (character) {
 		case 0:

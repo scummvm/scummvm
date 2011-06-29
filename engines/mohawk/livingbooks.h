@@ -29,7 +29,6 @@
 #include "mohawk/sound.h"
 
 #include "common/config-file.h"
-#include "common/substream.h"
 #include "common/rect.h"
 #include "common/queue.h"
 #include "common/random.h"
@@ -37,6 +36,11 @@
 #include "audio/mixer.h"
 
 #include "livingbooks_code.h"
+
+namespace Common {
+	class SeekableSubReadStreamEndian;
+	class MemoryReadStreamEndian;
+}
 
 namespace Mohawk {
 
@@ -218,7 +222,7 @@ enum {
 	kLBOpBreakExpression = 0xfffc,
 	kLBOpJumpToExpression = 0xfffd,
 	kLBOpRunSubentries = 0xfffe,
-	kLBOpRunCommand = 0xffff
+	kLBOpRunData = 0xffff
 };
 
 enum {
@@ -231,6 +235,12 @@ enum {
 	kLBNotifyCursorChange = 7,
 	kLBNotifyPrintPage = 0xc,
 	kLBNotifyQuit = 0xd
+};
+
+enum {
+	kTargetTypeExpression = 0x3f3f,
+	kTargetTypeCode = 0xfffe,
+	kTargetTypeName = 0xffff
 };
 
 class MohawkEngine_LivingBooks;
@@ -253,6 +263,9 @@ struct LBScriptEntry {
 	uint16 *argvParam;
 	uint16 *argvTarget;
 
+	uint16 targetingType;
+	Common::Array<Common::String> targets;
+
 	// kLBNotifyChangeMode
 	uint16 newUnknown;
 	uint16 newMode;
@@ -268,7 +281,10 @@ struct LBScriptEntry {
 	// kLBOpJumpUnlessExpression
 	uint16 target;
 
-	Common::String command;
+	uint16 dataType;
+	uint16 dataLen;
+	byte *data;
+
 	Common::Array<Common::String> conditions;
 	Common::Array<LBScriptEntry *> subentries;
 };
@@ -359,7 +375,8 @@ public:
 	virtual ~LBItem();
 
 	void readFrom(Common::SeekableSubReadStreamEndian *stream);
-	virtual void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
+	void readData(uint16 type, uint16 size, byte *data);
+	virtual void readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream);
 
 	virtual void destroySelf(); // 0x2
 	virtual void setEnabled(bool enabled); // 0x3
@@ -421,7 +438,7 @@ protected:
 	void runCommand(const Common::String &command);
 	bool checkCondition(const Common::String &condition);
 
-	LBScriptEntry *parseScriptEntry(uint16 type, uint16 &size, Common::SeekableSubReadStreamEndian *stream, bool isSubentry = false);
+	LBScriptEntry *parseScriptEntry(uint16 type, uint16 &size, Common::MemoryReadStreamEndian *stream, bool isSubentry = false);
 };
 
 class LBSoundItem : public LBItem {
@@ -446,7 +463,7 @@ class LBGroupItem : public LBItem {
 public:
 	LBGroupItem(MohawkEngine_LivingBooks *_vm, LBPage *page, Common::Rect rect);
 
-	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
+	void readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream);
 
 	void destroySelf();
 	void setEnabled(bool enabled);
@@ -459,7 +476,7 @@ public:
 	void setGlobalVisible(bool visible);
 	void startPhase(uint phase);
 	void stop();
-	
+
 protected:
 	bool _starting;
 
@@ -471,7 +488,7 @@ public:
 	LBPaletteItem(MohawkEngine_LivingBooks *_vm, LBPage *page, Common::Rect rect);
 	~LBPaletteItem();
 
-	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
+	void readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream);
 
 	bool togglePlaying(bool playing, bool restart);
 	void update();
@@ -497,7 +514,7 @@ class LBLiveTextItem : public LBItem {
 public:
 	LBLiveTextItem(MohawkEngine_LivingBooks *_vm, LBPage *page, Common::Rect rect);
 
-	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
+	void readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream);
 
 	bool contains(Common::Point point);
 	void update();
@@ -526,7 +543,7 @@ class LBPictureItem : public LBItem {
 public:
 	LBPictureItem(MohawkEngine_LivingBooks *_vm, LBPage *page, Common::Rect rect);
 
-	void readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream);
+	void readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream);
 
 	bool contains(Common::Point point);
 	void draw();
@@ -611,7 +628,7 @@ public:
 	LBPage(MohawkEngine_LivingBooks *vm);
 	~LBPage();
 
-	void open(MohawkArchive *mhk, uint16 baseId);
+	void open(Archive *mhk, uint16 baseId);
 	uint16 getResourceVersion();
 
 	void itemDestroyed(LBItem *item);
@@ -621,7 +638,7 @@ public:
 protected:
 	MohawkEngine_LivingBooks *_vm;
 
-	MohawkArchive *_mhk;
+	Archive *_mhk;
 	Common::Array<LBItem *> _items;
 
 	uint16 _baseId;
@@ -646,12 +663,12 @@ public:
 	void addNotifyEvent(NotifyEvent event);
 
 	Common::SeekableSubReadStreamEndian *wrapStreamEndian(uint32 tag, uint16 id);
-	Common::String readString(Common::SeekableSubReadStreamEndian *stream);
-	Common::Rect readRect(Common::SeekableSubReadStreamEndian *stream);
+	Common::String readString(Common::ReadStream *stream);
+	Common::Rect readRect(Common::ReadStreamEndian *stream);
 	GUI::Debugger *getDebugger() { return _console; }
 
-	void addArchive(MohawkArchive *archive);
-	void removeArchive(MohawkArchive *Archive);
+	void addArchive(Archive *archive);
+	void removeArchive(Archive *Archive);
 	void addItem(LBItem *item);
 	void removeItems(const Common::Array<LBItem *> &items);
 
@@ -680,7 +697,7 @@ public:
 
 	// helper functions, also used by LBProxyItem
 	Common::String getFileNameFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover);
-	MohawkArchive *createMohawkArchive() const;
+	Archive *createArchive() const;
 
 private:
 	LivingBooksConsole *_console;

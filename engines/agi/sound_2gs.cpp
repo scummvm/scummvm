@@ -167,12 +167,12 @@ uint SoundGen2GS::generateOutput() {
 					g->seg++;
 				}
 			}
-			
+
 			// TODO: Advance vibrato here. The Apple IIGS uses a LFO with
 			// triangle wave to modulate the frequency of both oscillators.
 			// In Apple IIGS the vibrato and the envelope are updated at the
 			// same time, so the vibrato speed depends on ENVELOPE_COEF.
-			
+
 			// Advance oscillators
 			int s0 = 0;
 			int s1 = 0;
@@ -202,12 +202,12 @@ uint SoundGen2GS::generateOutput() {
 					}
 				}
 			}
-			
+
 			// Take envelope and MIDI volume information into account.
 			// Also amplify.
 			s0 *= vol * g->vel / 127 * 80 / 256;
 			s1 *= vol * g->vel / 127 * 80 / 256;
-			
+
 			// Select output channel.
 			if (g->osc[0].chn)
 				outl += s0;
@@ -375,7 +375,7 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 	IIgsGenerator* g = allocateGenerator();
 	g->ins = _channels[channel].getInstrument();
 	const IIgsInstrumentHeader* i = g->ins;
-	
+
 	// Pass information from the MIDI channel to the generator. Take
 	// velocity into account, although simplistically.
 	velocity *= 5 / 3;
@@ -385,7 +385,7 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 	g->key = note;
 	g->vel = velocity * _channels[channel].getVolume() / 127;
 	g->chn = channel;
-	
+
 	// Instruments can define different samples to be used based on
 	// what the key is. Find the correct samples for our key.
 	int wa = 0;

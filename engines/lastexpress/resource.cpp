@@ -52,7 +52,7 @@ bool ResourceManager::isArchivePresent(ArchiveIndex type) {
 	switch (type) {
 	default:
 	case kArchiveAll:
-		error("ResourceManager::isArchivePresent: Only checks for single CDs are valid!");
+		error("[ResourceManager::isArchivePresent] Only checks for single CDs are valid");
 
 	case kArchiveCd1:
 		return Common::File::exists(archiveCD1Path);
@@ -134,7 +134,7 @@ Common::SeekableReadStream *ResourceManager::getFileStream(const Common::String 
 	// Check if the file exits in the archive
 	if (!hasFile(name)) {
 //#ifdef _DEBUG
-//		error("ResourceManager::getFileStream: cannot open file: %s", name.c_str());
+//		error("[ResourceManager::getFileStream] Cannot open file: %s", name.c_str());
 //#endif
 		debugC(2, kLastExpressDebugResource, "Error opening file: %s", name.c_str());
 		return NULL;

@@ -29,10 +29,11 @@
 #include "common/random.h"
 #include "common/timer.h"
 
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
 #include "graphics/pixelformat.h"
+
+struct ADGameDescription;
 
 /**
  * This is the namespace of the LastExpress engine.
@@ -101,7 +102,7 @@ public:
 	void restoreEventHandlers();
 	void setEventHandlers(EventHandler::EventFunction *eventMouse, EventHandler::EventFunction *eventTick);
 
-	bool isDemo() const { return (bool)(_gameDescription->flags & ADGF_DEMO); }
+	bool isDemo() const;
 
 	// Frame Counter
 	uint32 getFrameCounter() { return _frameCounter; }

@@ -162,7 +162,7 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	uint16 newButtons = 0;
 	if (_controllerPort >= 0)
 		newButtons = _ctrlData.c[_controllerPort].buttons; // Read from controller
-	
+
 	uint16 newMouseButtons = 0;
 	if (_mousePort >= 0)
 		newMouseButtons = _ctrlData.c[_mousePort].buttons;

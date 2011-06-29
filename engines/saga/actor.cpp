@@ -340,7 +340,7 @@ void Actor::loadActorSpriteList(ActorData *actor) {
 	uint lastFrame = 0;
 	uint curFrameIndex;
 	int resourceId = actor->_spriteListResourceId;
-	
+
 	if (actor->_frames != NULL) {
 		for (ActorFrameSequences::const_iterator i = actor->_frames->begin(); i != actor->_frames->end(); ++i) {
 			for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
@@ -385,6 +385,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 
 	ByteArrayReadStreamEndian actorS(actorListData);
 
+	_actors.clear();
 	_actors.resize(actorCount);
 	i = 0;
 	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor, i++) {

@@ -112,7 +112,7 @@ TrueMotion1Decoder::~TrueMotion1Decoder() {
 void TrueMotion1Decoder::selectDeltaTables(int deltaTableIndex) {
 	if (deltaTableIndex > 3)
 		return;
-   
+
 	for (byte i = 0; i < 8; i++) {
 		_ydt[i] = ydts[deltaTableIndex][i];
 		_cdt[i] = cdts[deltaTableIndex][i];

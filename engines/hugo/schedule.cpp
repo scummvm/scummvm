@@ -1040,7 +1040,7 @@ void Scheduler::saveActions(Common::WriteStream *f) const {
 * Find the index in the action list to be able to serialize the action to save game
 */
 void Scheduler::findAction(const act* action, int16* index, int16* subElem) {
-	
+
 	assert(index && subElem);
 	if (!action) {
 		*index = -1;
@@ -1106,7 +1106,7 @@ void Scheduler::restoreEvents(Common::ReadStream *f) {
 		else
 			_events[i].action = (act*)&_actListArr[index][subElem];
 
-		_events[i].localActionFl = (f->readByte() == 1) ? true : false; 
+		_events[i].localActionFl = (f->readByte() == 1) ? true : false;
 		_events[i].time = f->readUint32BE();
 
 		int16 prevIndex = f->readSint16BE();

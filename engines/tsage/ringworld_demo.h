@@ -28,6 +28,7 @@
 #include "tsage/core.h"
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
+#include "tsage/sound.h"
 
 namespace tSage {
 
@@ -46,7 +47,7 @@ public:
 	SequenceManager _sequenceManager;
 	SceneObject _actor1, _actor2, _actor3;
 	SceneObject _actor4, _actor5, _actor6;
-	SoundHandler _soundHandler;
+	ASound _soundHandler;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);

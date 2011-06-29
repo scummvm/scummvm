@@ -47,13 +47,13 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 	int dp2 = _townsScreen->getLayerPitch(1) - width * m * _townsScreen->getLayerBpp(1);
 	int sp1 = vs->pitch - (width * vs->format.bytesPerPixel);
 	int sp2 = _textSurface.pitch - width * m;
-				
+
 	if (vs->number == kMainVirtScreen || _game.id == GID_INDY3 || _game.id == GID_ZAK) {
 		for (int h = 0; h < height; ++h) {
-			if (_bytesPerPixelOutput == 2) {
+			if (_outputPixelFormat.bytesPerPixel == 2) {
 				for (int w = 0; w < width; ++w) {
 					*(uint16*)dst1 = _16BitPalette[*src1++];
-					dst1 += _bytesPerPixelOutput;
+					dst1 += _outputPixelFormat.bytesPerPixel;
 				}
 
 				src1 += sp1;
@@ -63,13 +63,13 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 				src1 += vs->pitch;
 				dst1 += _townsScreen->getLayerPitch(0);
 			}
-			
+
 			for (int sH = 0; sH < m; ++sH) {
 				memcpy(dst2, src2, width * m);
 				src2 += _textSurface.pitch;
 				dst2 += _townsScreen->getLayerPitch(1);
 			}
-		}					
+		}
 	} else {
 		dst1 = dst2;
 		for (int h = 0; h < height; ++h) {
@@ -81,7 +81,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 
 			dst1 = dst2;
 			uint8 *src3 = src2;
-			
+
 			if (m == 2) {
 				dst2 += _townsScreen->getLayerPitch(1);
 				src3 += _townsScreen->getLayerPitch(1);
@@ -95,7 +95,7 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 				dst1++;
 			}
 
-			src1 += sp1;			
+			src1 += sp1;
 			src2 = src3 + sp2;
 			dst1 = dst2 + dp2;
 			dst2 += dp2;
@@ -197,8 +197,8 @@ const uint8 ScummEngine::_townsLayer2Mask[] = {
 #define DIRTY_RECTS_MAX 20
 #define FULL_REDRAW (DIRTY_RECTS_MAX + 1)
 
-TownsScreen::TownsScreen(OSystem *system, int width, int height, int bpp) :
-	_system(system), _width(width), _height(height), _bpp(bpp), _pitch(width * bpp) {
+TownsScreen::TownsScreen(OSystem *system, int width, int height, Graphics::PixelFormat &format) :
+	_system(system), _width(width), _height(height), _pixelFormat(format), _pitch(width * format.bytesPerPixel) {
 	memset(&_layers[0], 0, sizeof(TownsScreenLayer));
 	memset(&_layers[1], 0, sizeof(TownsScreenLayer));
 	_outBuffer = new byte[_pitch * _height];
@@ -231,7 +231,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 
 	if (width > _width || height > _height)
 		error("TownsScreen::setupLayer(): Layer width/height must be equal or less than screen width/height");
-	
+
 	l->scaleW = _width / width;
 	l->scaleH = _height / height;
 
@@ -247,8 +247,8 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 	l->pitch = width * l->bpp;
 	l->palette = (uint8*)pal;
 
-	if (l->palette && _bpp == 1)
-		warning("TownsScreen::setupLayer(): Layer palette usage requires 15 bit graphics setting.\nLayer palette will be ignored.");
+	if (l->palette && _pixelFormat.bytesPerPixel == 1)
+		warning("TownsScreen::setupLayer(): Layer palette usage requires 16 bit graphics setting.\nLayer palette will be ignored.");
 
 	delete[] l->pixels;
 	l->pixels = new uint8[l->pitch * l->height];
@@ -267,13 +267,14 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 		l->bltInternY[i] = l->pixels + (i / l->scaleH) * l->pitch;
 
 	delete[] l->bltTmpPal;
-	l->bltTmpPal = (l->bpp == 1 && _bpp == 2) ? new uint16[l->numCol] : 0;
-	
+	l->bltTmpPal = (l->bpp == 1 && _pixelFormat.bytesPerPixel == 2) ? new uint16[l->numCol] : 0;
+
 	l->enabled = true;
-	l->onBottom = (!layer || !_layers[0].enabled);
+	_layers[0].onBottom = true;
+	_layers[1].onBottom = _layers[0].enabled ? false : true;
 	l->ready = true;
 }
-	
+
 void TownsScreen::clearLayer(int layer) {
 	if (layer < 0 || layer > 1)
 		return;
@@ -299,10 +300,10 @@ void TownsScreen::fillLayerRect(int layer, int x, int y, int w, int h, int col) 
 	assert(x >= 0 && y >= 0 && ((x + w) * l->bpp) <= (l->pitch) && (y + h) <= (l->height));
 
 	uint8 *pos = l->pixels + y * l->pitch + x * l->bpp;
-	
+
 	for (int i = 0; i < h; ++i) {
 		if (l->bpp == 2) {
-			for (int ii = 0; ii < w; ++ii) {			
+			for (int ii = 0; ii < w; ++ii) {
 				*(uint16*)pos = col;
 				pos += 2;
 			}
@@ -358,8 +359,8 @@ int TownsScreen::getLayerScaleH(int layer) {
 
 void TownsScreen::addDirtyRect(int x, int y, int w, int h) {
 	if (w <= 0 || h <= 0 || _numDirtyRects > DIRTY_RECTS_MAX)
-		return;	
-	
+		return;
+
 	if (_numDirtyRects == DIRTY_RECTS_MAX) {
 		// full redraw
 		_dirtyRects.clear();
@@ -382,25 +383,25 @@ void TownsScreen::addDirtyRect(int x, int y, int w, int h) {
 			y = r->top;
 			skip = true;
 		}
-		
+
 		if (x2 > r->left && x2 < r->right && y > r->top && y < r->bottom) {
 			x2 = r->right;
 			y = r->top;
 			skip = true;
 		}
-		
+
 		if (x2 > r->left && x2 < r->right && y2 > r->top && y2 < r->bottom) {
 			x2 = r->right;
 			y2 = r->bottom;
 			skip = true;
 		}
-		
+
 		if (x > r->left && x < r->right && y2 > r->top && y2 < r->bottom) {
 			x = r->left;
 			y2 = r->bottom;
 			skip = true;
-		}		
-				
+		}
+
 		if (skip) {
 			r->left = x;
 			r->top = y;
@@ -420,10 +421,10 @@ void TownsScreen::toggleLayers(int flag) {
 	if (flag < 0 || flag > 3)
 		return;
 
-	for (int i = 0; i < 2; ++i) {
-		_layers[i].enabled = (flag & (i + 1)) ? true : false;
-		_layers[i].onBottom = (!i || !_layers[0].enabled);
-	}
+	_layers[0].enabled = (flag & 1) ? true : false;
+	_layers[0].onBottom = true;
+	_layers[1].enabled = (flag & 2) ? true : false;
+	_layers[1].onBottom = _layers[0].enabled ? false : true;
 
 	_dirtyRects.clear();
 	_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));
@@ -448,22 +449,24 @@ void TownsScreen::updateOutputBuffer() {
 			if (!l->enabled || !l->ready)
 				continue;
 
-			uint8 *dst = _outBuffer + r->top * _pitch + r->left * _bpp;
-			int ptch = _pitch - (r->right - r->left + 1) * _bpp;
+			uint8 *dst = _outBuffer + r->top * _pitch + r->left * _pixelFormat.bytesPerPixel;
+			int ptch = _pitch - (r->right - r->left + 1) * _pixelFormat.bytesPerPixel;
 
-			if (_bpp == 2 && l->bpp == 1) {
+			if (_pixelFormat.bytesPerPixel == 2 && l->bpp == 1) {
+				if (!l->palette)
+					error("void TownsScreen::updateOutputBuffer(): No palette assigned to 8 bit layer %d", i);
 				for (int ic = 0; ic < l->numCol; ic++)
 					l->bltTmpPal[ic] = calc16BitColor(&l->palette[ic * 3]);
 			}
 
 			for (int y = r->top; y <= r->bottom; ++y) {
-				if (l->bpp == _bpp && l->scaleW == 1 && l->onBottom) {
-					memcpy(dst, l->bltInternY[y] + l->bltInternX[r->left], (r->right + 1 - r->left) * _bpp);
+				if (l->bpp == _pixelFormat.bytesPerPixel && l->scaleW == 1 && l->onBottom && l->numCol & 0xff00) {
+					memcpy(dst, &l->bltInternY[y][l->bltInternX[r->left]], (r->right + 1 - r->left) * _pixelFormat.bytesPerPixel);
 					dst += _pitch;
 
-				} else if (_bpp == 2) {
+				} else if (_pixelFormat.bytesPerPixel == 2) {
 					for (int x = r->left; x <= r->right; ++x) {
-						uint8 *src = l->bltInternY[y] + l->bltInternX[x];
+						uint8 *src = &l->bltInternY[y][l->bltInternX[x]];
 						if (l->bpp == 1) {
 							uint8 col = *src;
 							if (col || l->onBottom) {
@@ -480,16 +483,16 @@ void TownsScreen::updateOutputBuffer() {
 
 				} else {
 					for (int x = r->left; x <= r->right; ++x) {
-						uint8 col = *(l->bltInternY[y] + l->bltInternX[x]);
+						uint8 col = l->bltInternY[y][l->bltInternX[x]];
 						if (col || l->onBottom) {
 							if (l->numCol == 16)
-								col = (col >> 4) & (col & 0x0f);						
+								col = (col >> 4) & (col & 0x0f);
 							*dst = col;
 						}
 						dst++;
 					}
 					dst += ptch;
-				}				
+				}
 			}
 		}
 	}
@@ -497,17 +500,13 @@ void TownsScreen::updateOutputBuffer() {
 
 void TownsScreen::outputToScreen() {
 	for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i)
-		_system->copyRectToScreen(_outBuffer + i->top * _pitch + i->left * _bpp, _pitch, i->left, i->top, i->right - i->left + 1, i->bottom - i->top + 1);
+		_system->copyRectToScreen(_outBuffer + i->top * _pitch + i->left * _pixelFormat.bytesPerPixel, _pitch, i->left, i->top, i->right - i->left + 1, i->bottom - i->top + 1);
 	_dirtyRects.clear();
 	_numDirtyRects = 0;
 }
 
 uint16 TownsScreen::calc16BitColor(const uint8 *palEntry) {
-	uint16 ar = (palEntry[0] & 0xf8) << 7;
-	uint16 ag = (palEntry[1] & 0xf8) << 2;
-	uint16 ab = (palEntry[2] >> 3);
-	uint16 col = ar | ag | ab;
-	return col;
+	return _pixelFormat.RGBToColor(palEntry[0], palEntry[1], palEntry[2]);
 }
 
 #undef DIRTY_RECTS_MAX

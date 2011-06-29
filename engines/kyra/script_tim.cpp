@@ -482,17 +482,16 @@ int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y
 			wsaOpenFlags = 1;
 	}
 
-	char file[32];
-	snprintf(file, 32, "%s.WSA", filename);
+	Common::String file = Common::String::format("%s.WSA", filename);
 
-	if (_vm->resource()->exists(file)) {
+	if (_vm->resource()->exists(file.c_str())) {
 		if (isLoLDemo)
 			wsa = new WSAMovie_v1(_vm);
 		else
 			wsa = new WSAMovie_v2(_vm);
 		assert(wsa);
 
-		wsa->open(file, wsaOpenFlags, (index == 1) ? &_screen->getPalette(0) : 0);
+		wsa->open(file.c_str(), wsaOpenFlags, (index == 1) ? &_screen->getPalette(0) : 0);
 	}
 
 	if (wsa && wsa->opened()) {
@@ -526,10 +525,10 @@ int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y
 		}
 
 		if (wsaFlags & 4) {
-			snprintf(file, 32, "%s.CPS", filename);
+			file = Common::String::format("%s.CPS", filename);
 
-			if (_vm->resource()->exists(file)) {
-				_screen->loadBitmap(file, 3, 3, &_screen->getPalette(0));
+			if (_vm->resource()->exists(file.c_str())) {
+				_screen->loadBitmap(file.c_str(), 3, 3, &_screen->getPalette(0));
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
 				if (_drawPage2)
 					_screen->checkedPageUpdate(8, 4);
@@ -550,10 +549,10 @@ int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y
 			_screen->updateScreen();
 		}
 
-		snprintf(file, 32, "%s.CPS", filename);
+		file = Common::String::format("%s.CPS", filename);
 
-		if (_vm->resource()->exists(file)) {
-			_screen->loadBitmap(file, 3, 3, &_screen->getPalette(0));
+		if (_vm->resource()->exists(file.c_str())) {
+			_screen->loadBitmap(file.c_str(), 3, 3, &_screen->getPalette(0));
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
 			if (_drawPage2)
 				_screen->checkedPageUpdate(8, 4);
@@ -922,13 +921,12 @@ int TIMInterpreter_LoL::initAnimStruct(int index, const char *filename, int x, i
 	if (wsaFlags & 8)
 		wsaOpenFlags |= 1;
 
-	char file[32];
-	snprintf(file, 32, "%s.WSA", filename);
+	Common::String file = Common::String::format("%s.WSA", filename);
 
-	if (_vm->resource()->exists(file)) {
+	if (_vm->resource()->exists(file.c_str())) {
 		wsa = new WSAMovie_v2(_vm);
 		assert(wsa);
-		wsa->open(file, wsaOpenFlags, &_screen->getPalette(3));
+		wsa->open(file.c_str(), wsaOpenFlags, &_screen->getPalette(3));
 	}
 
 	if (!_vm->_flags.use16ColorMode) {

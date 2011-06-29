@@ -143,7 +143,7 @@ Common::Error MohawkEngine_Riven::run() {
 	_extrasFile = new MohawkArchive();
 
 	// We need extras.mhk for inventory images, marble images, and credits images
-	if (!_extrasFile->open("extras.mhk")) {
+	if (!_extrasFile->openFile("extras.mhk")) {
 		Common::String message = "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.";
 		GUIErrorMessage(message);
 		warning("%s", message.c_str());
@@ -178,7 +178,7 @@ Common::Error MohawkEngine_Riven::run() {
 		changeToCard(1);
 	}
 
-	
+
 	while (!_gameOver && !shouldQuit())
 		handleEvents();
 
@@ -317,7 +317,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 		Common::String filename = Common::String(prefix) + endings[i];
 
 		MohawkArchive *mhk = new MohawkArchive();
-		if (mhk->open(filename))
+		if (mhk->openFile(filename))
 			_mhk.push_back(mhk);
 		else
 			delete mhk;
@@ -436,7 +436,7 @@ void MohawkEngine_Riven::loadCard(uint16 id) {
 void MohawkEngine_Riven::loadHotspots(uint16 id) {
 	// Clear old hotspots
 	delete[] _hotspots;
-	
+
 	// NOTE: The hotspot scripts are cleared by the RivenScriptManager automatically.
 
 	Common::SeekableReadStream *inStream = getResource(ID_HSPT, id);
@@ -460,8 +460,8 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 		// - tspit 371 (DVD: 377), hotspot 4
 		if (left >= right || top >= bottom) {
 			warning("%s %d hotspot %d is invalid: (%d, %d, %d, %d)", getStackName(_curStack).c_str(), _curCard, i, left, top, right, bottom);
-			left = top = right = bottom = 0; 	 
-			_hotspots[i].enabled = 0; 	 
+			left = top = right = bottom = 0;
+			_hotspots[i].enabled = 0;
 		}
 
 		_hotspots[i].rect = Common::Rect(left, top, right, bottom);
@@ -831,6 +831,19 @@ void MohawkEngine_Riven::installCardTimer() {
 		// TODO: Background Sunner videos
 		break;
 	}
+}
+
+void MohawkEngine_Riven::doVideoTimer(VideoHandle handle, bool force) {
+	assert(handle != NULL_VID_HANDLE);
+
+	uint16 id = _scriptMan->getStoredMovieOpcodeID();
+
+	if (handle != _video->findVideoHandleRiven(id)) // Check if we've got a video match
+		return;
+
+	// Run the opcode if we can at this point
+	if (force || _video->getElapsedTime(handle) >= _scriptMan->getStoredMovieOpcodeTime())
+		_scriptMan->runStoredMovieOpcode();
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

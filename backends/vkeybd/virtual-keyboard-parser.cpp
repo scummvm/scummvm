@@ -205,6 +205,9 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 
 		evt->type = VirtualKeyboard::kVKEventModifier;
 		byte *flags = (byte*) malloc(sizeof(byte));
+		if (!flags)
+			error("[VirtualKeyboardParser::parserCallback_event] Cannot allocate memory");
+
 		*(flags) = parseFlags(node->values["modifiers"]);
 		evt->data = flags;
 
@@ -217,6 +220,9 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 		evt->type = VirtualKeyboard::kVKEventSwitchMode;
 		String& mode = node->values["mode"];
 		char *str = (char*) malloc(sizeof(char) * mode.size() + 1);
+		if (!str)
+			error("[VirtualKeyboardParser::parserCallback_event] Cannot allocate memory");
+
 		memcpy(str, mode.c_str(), sizeof(char) * mode.size());
 		str[mode.size()] = 0;
 		evt->data = str;

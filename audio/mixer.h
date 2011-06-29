@@ -211,6 +211,14 @@ public:
 	virtual void setChannelVolume(SoundHandle handle, byte volume) = 0;
 
 	/**
+	 * Get the channel volume for the given handle.
+	 *
+	 * @param handle the sound to affect
+	 * @return channel volume
+	 */
+	virtual byte getChannelVolume(SoundHandle handle) = 0;
+
+	/**
 	 * Set the channel balance for the given handle.
 	 *
 	 * @param handle the sound to affect
@@ -218,6 +226,14 @@ public:
 	 *        (-127 ... 0 ... 127) corresponds to (left ... center ... right)
 	 */
 	virtual void setChannelBalance(SoundHandle handle, int8 balance) = 0;
+
+	/**
+	 * Get the channel balance for the given handle.
+	 *
+	 * @param handle the sound to affect
+	 * @return channel balance
+	 */
+	virtual int8 getChannelBalance(SoundHandle handle) = 0;
 
 	/**
 	 * Get approximation of for how long the channel has been playing.

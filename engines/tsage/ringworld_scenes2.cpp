@@ -117,6 +117,7 @@ void Scene1000::Action3::signal() {
 			// First time being played, so show the introduction
 			ConfMan.setBool(SEEN_INTRO, true);
 			ConfMan.flushToDisk();
+
 			setDelay(1);
 		} else {
 			// Prompt user for whether to start play or watch introduction
@@ -124,7 +125,7 @@ void Scene1000::Action3::signal() {
 
 			if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
 				_actionIndex = 20;
-				_globals->_soundHandler.proc1(this);
+				_globals->_soundHandler.fadeOut(this);
 			} else {
 				setDelay(1);
 			}
@@ -214,7 +215,7 @@ void Scene1000::Action3::signal() {
 	case 18:
 		zoom(false);
 		_globals->_scenePalette.clearListeners();
-		_globals->_soundHandler.proc1(this);
+		_globals->_soundHandler.fadeOut(this);
 		break;
 	case 19:
 		_globals->_sceneManager.changeScene(10);
@@ -267,7 +268,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
 
 		_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
-		_globals->_soundHandler.startSound(114);
+		_globals->_soundHandler.play(114);
 	} else if (_globals->_sceneManager._previousScene == 2222) {
 		setZoomPercents(150, 10, 180, 100);
 		_object1.postInit();
@@ -283,7 +284,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 
 		setAction(&_action1);
 	} else {
-		_globals->_soundHandler.startSound(4);
+		_globals->_soundHandler.play(4);
 		setZoomPercents(0, 10, 30, 100);
 		_object3.postInit();
 		_object3.setVisage(1050);
@@ -429,7 +430,7 @@ void Scene1001::Action1::signal() {
 		setDelay(10);
 		break;
 	case 16: {
-		scene->_soundHandler1.startSound(90);
+		scene->_soundHandler1.play(90);
 
 		scene->_object6.postInit();
 		scene->_object6.setVisage(16);
@@ -446,7 +447,7 @@ void Scene1001::Action1::signal() {
 		break;
 	}
 	case 17: {
-		scene->_soundHandler1.startSound(90);
+		scene->_soundHandler1.play(90);
 		scene->_object6.remove();
 
 		scene->_object7.postInit();
@@ -475,7 +476,7 @@ void Scene1001::Action1::signal() {
 		setDelay(30);
 		break;
 	case 19: {
-		_globals->_soundHandler.startSound(91);
+		_globals->_soundHandler.play(91);
 		byte adjustData[4] = {0xff, 0xff, 0xff, 0};
 		_globals->_scenePalette.fade(adjustData, false, 0);
 
@@ -496,7 +497,7 @@ void Scene1001::Action1::signal() {
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 22:
-		_globals->_soundHandler.startSound(92);
+		_globals->_soundHandler.play(92);
 		scene->_stripManager.start(111, this);
 		break;
 	case 23:
@@ -526,7 +527,7 @@ void Scene1001::postInit(SceneObjectList *OwnerList) {
 	_object3.setStrip2(4);
 	_object3.setPosition(Common::Point(61, 177));
 
-	_globals->_soundHandler.startSound(85);
+	_globals->_soundHandler.play(85);
 	setAction(&_action1);
 }
 
@@ -647,7 +648,7 @@ void Scene1250::postInit(SceneObjectList *OwnerList) {
 		setAction(&_action4);
 	} else {
 		setAction(&_action3);
-		_globals->_soundHandler.startSound(114);
+		_globals->_soundHandler.play(114);
 	}
 }
 
@@ -734,7 +735,7 @@ void Scene1400::Action1::signal() {
 		_globals->_sceneManager._scrollerRect = Rect(40, 20, 280, 180);
 		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
 		_globals->_stripNum = 1500;
-		_globals->_soundHandler.proc3();
+		_globals->_soundHandler.stop();
 
 		_globals->_sceneManager.changeScene(1500);
 		break;
@@ -779,7 +780,7 @@ void Scene1400::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneOffset.y = (_globals->_sceneManager._scene->_sceneBounds.top / 100) * 100;
 
 	setAction(&_action1);
-	_globals->_soundHandler.startSound(118);
+	_globals->_soundHandler.play(118);
 }
 
 /*--------------------------------------------------------------------------
@@ -842,7 +843,7 @@ void Scene1500::Action1::signal() {
 		setDelay(30);
 		break;
 	case 6:
-		scene->_soundHandler.startSound(123);
+		scene->_soundHandler.play(123);
 		scene->_object1.setStrip2(4);
 		scene->_object1.setFrame(1);
 		scene->_object1.animate(ANIM_MODE_5, this);
@@ -850,13 +851,13 @@ void Scene1500::Action1::signal() {
 	case 7:
 		scene->_object1.setStrip2(5);
 		scene->_object1.animate(ANIM_MODE_2, NULL);
-		scene->_soundHandler.startSound(124, this);
+		scene->_soundHandler.play(124, this);
 		break;
 	case 8:
-		_globals->_soundHandler.startSound(126, this);
+		_globals->_soundHandler.play(126, this);
 		break;
 	case 9:
-		_globals->_soundHandler.startSound(127);
+		_globals->_soundHandler.play(127);
 		_globals->_sceneManager.changeScene(2000);
 		break;
 	}
@@ -893,7 +894,7 @@ void Scene1500::Action2::signal() {
 		break;
 	}
 	case 3:
-		scene->_soundHandler.proc4();
+		scene->_soundHandler.release();
 		_globals->_stripNum = 1505;
 		_globals->_sceneManager.changeScene(2400);
 		break;
@@ -907,7 +908,7 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 
 	if ((_globals->_stripNum == 1500) || ((_globals->_stripNum != 1504) && (_globals->_stripNum != 2751))) {
-		_globals->_soundHandler.startSound(120);
+		_globals->_soundHandler.play(120);
 		setZoomPercents(105, 20, 145, 100);
 
 		setAction(&_action1);

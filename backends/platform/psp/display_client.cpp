@@ -389,31 +389,31 @@ void Buffer::copyToArray(byte *dst, int pitch) {
 
 void Buffer::setSize(uint32 width, uint32 height, HowToSize textureOrSource/*=kSizeByTextureSize*/) {
 	DEBUG_ENTER_FUNC();
-	
+
 	// We can size the buffer either by texture size (multiple of 2^n) or source size.
 	// At higher sizes, increasing the texture size to 2^n is a waste of space. At these sizes kSizeBySourceSize should be used.
-	
+
 	_sourceSize.width = width;
 	_sourceSize.height = height;
 
 	_textureSize.width = scaleUpToPowerOfTwo(width);		// can only scale up to 512
 	_textureSize.height = scaleUpToPowerOfTwo(height);
-	
+
 	if (textureOrSource == kSizeByTextureSize) {
 		_width = _textureSize.width;
 		_height = _textureSize.height;
 	} else { // sizeBySourceSize
 		_width =  _sourceSize.width;
 		_height = _sourceSize.height;
-		
-		// adjust allocated width to be divisible by 32. 
+
+		// adjust allocated width to be divisible by 32.
 		// The GU can only handle multiples of 16 bytes. A 4 bit image x 32 will give us 16 bytes
 		// We don't necessarily know the depth of the pixels here. So just make it divisible by 32.
 		uint32 checkDiv = _width & 31;
 		if (checkDiv)
 			_width += 32 - checkDiv;
 	}
-	
+
 	PSP_DEBUG_PRINT("width[%u], height[%u], texW[%u], texH[%u], sourceW[%d], sourceH[%d] %s\n", _width, _height, _textureSize.width, _textureSize.height, _sourceSize.width, _sourceSize.height, textureOrSource ? "size by source" : "size by texture");
 }
 
@@ -558,10 +558,10 @@ void GuRenderer::render() {
 	// Loop over patches of 512x512 pixel textures and draw them
 	for (uint32 j = 0; j < _buffer->getSourceHeight(); j += 512) {
 		_textureLoadOffset.y = j;
-		
+
 		for (uint32 i = 0; i < _buffer->getSourceWidth(); i += 512) {
 			_textureLoadOffset.x = i;
-			
+
 			guLoadTexture();
 			Vertex *vertices = guGetVertices();
 			fillVertices(vertices);
@@ -573,8 +573,8 @@ void GuRenderer::render() {
 
 inline void GuRenderer::guProgramDrawBehavior() {
 	DEBUG_ENTER_FUNC();
-	PSP_DEBUG_PRINT("blending[%s] colorTest[%s] reverseAlpha[%s] keyColor[%u]\n", 
-		_blending ? "on" : "off", _colorTest ? "on" : "off", 
+	PSP_DEBUG_PRINT("blending[%s] colorTest[%s] reverseAlpha[%s] keyColor[%u]\n",
+		_blending ? "on" : "off", _colorTest ? "on" : "off",
 		_alphaReverse ? "on" : "off", _keyColor);
 
 	if (_blending) {
@@ -591,7 +591,7 @@ inline void GuRenderer::guProgramDrawBehavior() {
 	if (_colorTest) {
 		sceGuEnable(GU_COLOR_TEST);
 		sceGuColorFunc(GU_NOTEQUAL, 	// show only colors not equal to this color
-					   _keyColor, 
+					   _keyColor,
 					   0x00ffffff);		// match everything but alpha
 	} else
 		sceGuDisable(GU_COLOR_TEST);
@@ -663,10 +663,10 @@ inline void GuRenderer::guLoadTexture() {
 	byte *startPoint = _buffer->getPixels();
 	if (_textureLoadOffset.x)
 		startPoint += _buffer->_pixelFormat.pixelsToBytes(_textureLoadOffset.x);
-	if (_textureLoadOffset.y) 
+	if (_textureLoadOffset.y)
 		startPoint += _buffer->getWidthInBytes() * _textureLoadOffset.y;
-	
-	sceGuTexImage(0, 
+
+	sceGuTexImage(0,
 				_buffer->getTextureWidth(), 	// texture width (must be power of 2)
 				_buffer->getTextureHeight(), 	// texture height (must be power of 2)
 				_buffer->getWidth(),			// width of a line of the image (to get to the next line)
@@ -698,7 +698,7 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 	// These coordinates describe an area within the texture. ie. we already loaded a square of texture,
 	// now the coordinates within it are 0 to the edge of the area of the texture we want to draw
 	float textureStartX = textureFix + _offsetInBuffer.x;
-	float textureStartY = textureFix + _offsetInBuffer.y;	
+	float textureStartY = textureFix + _offsetInBuffer.y;
 
 	int textureLeftX = _drawSize.width - _textureLoadOffset.x;
 	if (textureLeftX > 512)
@@ -720,7 +720,7 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 	float imageStartY = gapY + scaledOffsetOnScreenY + (scaleSourceToOutput(false, stretch(false, _textureLoadOffset.y)));
 
 	float imageEndX, imageEndY;
-	
+
 	imageEndX = imageStartX + scaleSourceToOutput(true, stretch(true, textureLeftX));
 	imageEndY = imageStartY + scaleSourceToOutput(false, stretch(false, textureLeftY));
 

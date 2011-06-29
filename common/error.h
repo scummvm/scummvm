@@ -62,6 +62,8 @@ enum ErrorCode {
 	kEnginePluginNotFound,		///< Failed to find plugin to handle target
 	kEnginePluginNotSupportSaves,	///< Failed if plugin does not support listing save states
 
+	kUserCanceled,			///< User has canceled the launching of the game
+
 	kUnknownError				///< Catch-all error, used if no other error code matches
 };
 

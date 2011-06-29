@@ -23,7 +23,7 @@
 #ifndef BACKENDS_GRAPHICS_WINCE_SDL_H
 #define BACKENDS_GRAPHICS_WINCE_SDL_H
 
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/platform/wince/CEgui/CEGUI.h"
 
 // Internal GUI names
@@ -39,7 +39,7 @@
 
 extern bool _hasSmartphoneResolution;
 
-class WINCESdlGraphicsManager : public SdlGraphicsManager {
+class WINCESdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	WINCESdlGraphicsManager(SdlEventSource *sdlEventSource);
 
@@ -55,6 +55,8 @@ public:
 	bool loadGFXMode();
 	void unloadGFXMode();
 	bool hotswapGFXMode();
+
+	void update_game_settings();
 
 	// Overloaded from SDL backend (toolbar handling)
 	void drawMouse();
@@ -88,7 +90,10 @@ public:
 	void swap_zoom_up();
 	void swap_zoom_down();
 	void swap_mouse_visibility();
-
+	void init_panel();
+	void reset_panel();
+	void swap_freeLook();
+	bool getFreeLookState();
 
 //#ifdef WIN32_PLATFORM_WFSP
 	void move_cursor_up();
@@ -96,7 +101,6 @@ public:
 	void move_cursor_left();
 	void move_cursor_right();
 
-	void retrieve_mouse_location(int &x, int &y);
 	void switch_zone();
 
 	void add_right_click(bool pushed);
@@ -106,8 +110,14 @@ public:
 	void smartphone_rotate_display();
 //#endif
 
+	bool hasPocketPCResolution();
+	bool hasDesktopResolution();
+	bool hasSquareQVGAResolution();
+	bool hasWideResolution() const;
+
 	bool _panelInitialized; // only initialize the toolbar once
 	bool _noDoubleTapRMB;   // disable double tap -> rmb click
+	bool _noDoubleTapPT;    // disable double tap for toolbar toggling
 
 	CEGUI::ToolbarHandler _toolbarHandler;
 
@@ -121,11 +131,6 @@ public:
 	int _scaleFactorYd;     // scaler Y /
 
 	bool _hasfocus;         // scummvm has the top window
-
-	bool hasPocketPCResolution();
-	bool hasDesktopResolution();
-	bool hasSquareQVGAResolution();
-	bool hasWideResolution() const;
 
 	MousePos _mouseCurState;
 
@@ -158,8 +163,8 @@ protected:
 
 private:
 	bool update_scalers();
-	void update_game_settings();
 	void drawToolbarMouse(SDL_Surface *surf, bool draw);
+	void retrieve_mouse_location(int &x, int &y);
 
 	void create_toolbar();
 	bool _panelVisible;         // panel visibility
@@ -186,6 +191,7 @@ private:
 	uint16 _mouseBackupDim;
 
 	bool _forceHideMouse;       // force invisible mouse cursor
+	bool _freeLook;             // freeLook mode (do not send mouse button events)
 
 	// Smartphone specific variables
 	void loadDeviceConfigurationElement(Common::String element, int &value, int defaultValue);

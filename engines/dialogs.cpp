@@ -143,9 +143,9 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kHelpCmd: {
 		GUI::MessageDialog dialog(
-					"Sorry, this engine does not currently provide in-game help. "
+					_("Sorry, this engine does not currently provide in-game help. "
 					"Please consult the README for basic information, and for "
-					"instructions on how to obtain further assistance.");
+					"instructions on how to obtain further assistance."));
 		dialog.runModal();
 		}
 		break;
@@ -173,7 +173,7 @@ void MainMenuDialog::reflowLayout() {
 		_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
 	if (_engine->hasFeature(Engine::kSupportsSavingDuringRuntime))
 		_saveButton->setEnabled(_engine->canSaveGameStateCurrently());
-	
+
 	// Overlay size might have changed since the construction of the dialog.
 	// Update labels when it might be needed
 	// FIXME: it might be better to declare GUI::StaticTextWidget::setLabel() virtual
@@ -246,14 +246,10 @@ void MainMenuDialog::load() {
 
 	int slot = _loadDialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 
-	if (slot >= 0) {
-		// FIXME: For now we just ignore the return
-		// value, which is quite bad since it could
-		// be a fatal loading error, which renders
-		// the engine unusable.
-		_engine->loadGameState(slot);
+	_engine->setGameToLoadSlot(slot);
+
+	if (slot >= 0)		
 		close();
-	}
 }
 
 enum {

@@ -107,18 +107,13 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel) {
 #ifndef DISABLE_TEXT_CONSOLE
 
 static void debugHelper(const char *s, va_list va, bool caret = true) {
-	char buf[STRINGBUFLEN];
+	Common::String buf = Common::String::vformat(s, va);
 
-	vsnprintf(buf, STRINGBUFLEN, s, va);
-	buf[STRINGBUFLEN-1] = '\0';
-
-	if (caret) {
-		buf[STRINGBUFLEN-2] = '\0';
-		strcat(buf, "\n");
-	}
+	if (caret)
+		buf += '\n';
 
 	if (g_system)
-		g_system->logMessage(LogMessageType::kDebug, buf);
+		g_system->logMessage(LogMessageType::kDebug, buf.c_str());
 	// TODO: Think of a good fallback in case we do not have
 	// any OSystem yet.
 }

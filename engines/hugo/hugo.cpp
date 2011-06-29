@@ -299,7 +299,7 @@ Common::Error HugoEngine::run() {
 			_status.helpFl = false;
 			_file->instructions();
 		}
-	
+
 		_mouse->mouseHandler();                     // Mouse activity - adds to display list
 		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
 		_status.doQuitFl |= shouldQuit();           // update game quit flag
@@ -315,7 +315,7 @@ void HugoEngine::initMachine() {
 	_object->readObjectImages();                    // Read all object images
 	if (_platform == Common::kPlatformWindows)
 		_file->readUIFImages();                     // Read all uif images (only in Win versions)
-	
+
 	_sound->initPcspkrPlayer();
 }
 
@@ -463,7 +463,7 @@ bool HugoEngine::loadHugoDat() {
 		if (varnt == _gameVariant) {
 			_numStates = numElem;
 			_screenStates = (byte *)malloc(sizeof(byte) * numElem);
-			memset(_screenStates, 0, sizeof(_screenStates));
+			memset(_screenStates, 0, sizeof(byte) * numElem);
 		}
 	}
 

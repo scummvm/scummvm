@@ -44,7 +44,7 @@ enum CharCode {
 };
 
 enum TokenCode {
-	NO_TOKEN, WORD, NUMBER, IDENTIFIER, END_OF_FILE, END_OF_LINE, 
+	NO_TOKEN, WORD, NUMBER, IDENTIFIER, END_OF_FILE, END_OF_LINE,
 	RW_DEFINE, RW_COLON, RW_SUB, RW_END, RW_OPCODE,
 	ERROR
 };
@@ -58,7 +58,7 @@ struct Literal {
 	union {
 		int integer;
 	} value;
-};	
+};
 
 struct SymbolEntry {
 	char symbol[MAX_TOKEN_STRING_LENGTH];
@@ -109,12 +109,12 @@ struct OpcodeEntry {
 };
 
 OpcodeEntry OpcodeList[OP_DUP + 1] = {
-	{"HALT", OP_NO_PARAM}, {"IMM", OP_IMM_PARAM}, {"ZERO", OP_NO_PARAM}, {"ONE", OP_NO_PARAM}, 
-	{"MINUSONE", OP_NO_PARAM}, {"STR", OP_IMM_PARAM}, {"DLOAD", OP_IMM_PARAM}, {"DSTORE", OP_IMM_PARAM}, 
+	{"HALT", OP_NO_PARAM}, {"IMM", OP_IMM_PARAM}, {"ZERO", OP_NO_PARAM}, {"ONE", OP_NO_PARAM},
+	{"MINUSONE", OP_NO_PARAM}, {"STR", OP_IMM_PARAM}, {"DLOAD", OP_IMM_PARAM}, {"DSTORE", OP_IMM_PARAM},
 	{"PAL", OP_IMM_PARAM}, {"LOAD", OP_IMM_PARAM}, {"GLOAD", OP_IMM_PARAM}, {"STORE", OP_IMM_PARAM},
 	{"GSTORE", OP_IMM_PARAM}, {"CALL", OP_IMM_PARAM}, {"LIBCALL", OP_IMM_PARAM}, {"RET", OP_NO_PARAM},
 	{"ALLOC", OP_IMM_PARAM}, {"JUMP", OP_TRANSFER_PARAM}, {"JMPFALSE", OP_TRANSFER_PARAM},
-	{"JMPTRUE", OP_TRANSFER_PARAM}, {"EQUAL", OP_NO_PARAM}, {"LESS", OP_NO_PARAM}, 
+	{"JMPTRUE", OP_TRANSFER_PARAM}, {"EQUAL", OP_NO_PARAM}, {"LESS", OP_NO_PARAM},
 	{"LEQUAL", OP_NO_PARAM}, {"NEQUAL", OP_NO_PARAM}, {"GEQUAL", OP_NO_PARAM},
 	{"GREAT", OP_NO_PARAM}, {"PLUS", OP_NO_PARAM}, {"MINUS", OP_NO_PARAM},
 	{"LOR", OP_NO_PARAM}, {"MULT", OP_NO_PARAM}, {"DIV", OP_IMM_PARAM}, {"MOD", OP_NO_PARAM},
@@ -418,7 +418,7 @@ void handle_define() {
 		printf("Duplicate symbol encountered.\n");
 		token = ERROR;
 		return;
-	} 
+	}
 
 	// Store the new symbol name
 	strcpy(symbolTable[symbolCount].symbol, token_string);
@@ -529,7 +529,7 @@ void handle_instruction() {
 			printf("Incorrect opcode parameter encountered\n");
 			token = ERROR;
 			return;
-		} 
+		}
 
 		// Apply the correct opcode size to the previously stored opcode and save the byte(s)
 		if (literal.value.integer <= 0xff) {
@@ -559,7 +559,7 @@ void handle_instruction() {
 			printf("Incorrect opcode parameter encountered\n");
 			token = ERROR;
 			return;
-		} 
+		}
 
 		// Check to see if it's a backward jump to an existing label
 		int idx = jumpIndexOf(token_string);
@@ -641,7 +641,7 @@ void handle_sub() {
 		token = ERROR;
 		return;
 	}
-	
+
 	// If this is the first subroutine, start writing out the data
 	if (subroutinesCount == 0)
 		write_header();
@@ -681,7 +681,7 @@ void handle_sub() {
 			// Save identifier, it's hopefully a jump symbol
 			strcpy(jumpDests[jumpDestCount].name, token_string);
 			get_token();
-			if (token != RW_COLON) 
+			if (token != RW_COLON)
 				token = ERROR;
 			else {
 				// Save the jump point
@@ -863,7 +863,7 @@ void get_special() {
 	strToUpper(token_string);
 	if (token_string[0] == '@')
 		token = IDENTIFIER;
-	else if (!is_reserved_word()) 
+	else if (!is_reserved_word())
 		token = ERROR;
 }
 

@@ -557,7 +557,7 @@ int Events::handleInterval(Event *event) {
 }
 
 EventColumns *Events::chain(EventColumns *eventColumns, const Event &event) {
-	
+
 	if (eventColumns == NULL) {
 		EventColumns tmp;
 

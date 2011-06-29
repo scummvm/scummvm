@@ -415,7 +415,7 @@ bool extractKyraForestSeqData(PAKFile &out, const ExtractInformation *info, cons
 	const uint8 *src = data;
 	uint8 *dst = buffer;
 	const PatchEntry *patchPos = patchData;
-	
+
 	while (dst < (buffer + outsize)) {
 		if ((dst - buffer) == patchPos->pos) {
 			*dst++ = patchPos->val;

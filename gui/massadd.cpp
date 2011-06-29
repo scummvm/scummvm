@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/system.h"
+#include "common/taskbar.h"
 #include "common/translation.h"
 
 #include "gui/launcher.h"	// For addGameToConf()
@@ -60,6 +61,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	: Dialog("MassAdd"),
 	_dirsScanned(0),
 	_oldGamesCount(0),
+	_dirTotal(0),
 	_okButton(0),
 	_dirProgressText(0),
 	_gameProgressText(0) {
@@ -69,14 +71,14 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	// The dir we start our scan at
 	_scanStack.push(startDir);
 
-//	Removed for now... Why would you put a title on mass add dialog called "Mass Add Dialog"?
-//	new StaticTextWidget(this, "massadddialog_caption",	"Mass Add Dialog");
+	// Removed for now... Why would you put a title on mass add dialog called "Mass Add Dialog"?
+	// new StaticTextWidget(this, "massadddialog_caption", "Mass Add Dialog");
 
 	_dirProgressText = new StaticTextWidget(this, "MassAdd.DirProgressText",
-											_("... progress ..."));
+	                                       _("... progress ..."));
 
 	_gameProgressText = new StaticTextWidget(this, "MassAdd.GameProgressText",
-											 _("... progress ..."));
+	                                         _("... progress ..."));
 
 	_dirProgressText->setAlign(Graphics::kTextAlignCenter);
 	_gameProgressText->setAlign(Graphics::kTextAlignCenter);
@@ -130,6 +132,12 @@ struct GameDescLess {
 
 
 void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+#if defined(USE_TASKBAR)
+	// Remove progress bar and count from taskbar
+	g_system->getTaskbarManager()->setProgressState(Common::TaskbarManager::kTaskbarNoProgress);
+	g_system->getTaskbarManager()->setCount(0);
+#endif
+
 	// FIXME: It's a really bad thing that we use two arbitrary constants
 	if (cmd == kOkCmd) {
 		// Sort the detected games. This is not strictly necessary, but nice for
@@ -226,10 +234,17 @@ void MassAddDialog::handleTickle() {
 		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
 			if (file->isDirectory()) {
 				_scanStack.push(*file);
+
+				_dirTotal++;
 			}
 		}
 
 		_dirsScanned++;
+
+#if defined(USE_TASKBAR)
+		g_system->getTaskbarManager()->setProgressValue(_dirsScanned, _dirTotal);
+		g_system->getTaskbarManager()->setCount(_games.size());
+#endif
 	}
 
 

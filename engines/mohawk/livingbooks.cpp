@@ -32,6 +32,7 @@
 #include "common/archive.h"
 #include "common/textconsole.h"
 #include "common/system.h"
+#include "common/memstream.h"
 
 #include "graphics/palette.h"
 
@@ -42,7 +43,7 @@
 namespace Mohawk {
 
 // read a null-terminated string from a stream
-Common::String MohawkEngine_LivingBooks::readString(Common::SeekableSubReadStreamEndian *stream) {
+Common::String MohawkEngine_LivingBooks::readString(Common::ReadStream *stream) {
 	Common::String ret;
 	while (!stream->eos()) {
 		byte in = stream->readByte();
@@ -54,7 +55,7 @@ Common::String MohawkEngine_LivingBooks::readString(Common::SeekableSubReadStrea
 }
 
 // read a rect from a stream
-Common::Rect MohawkEngine_LivingBooks::readRect(Common::SeekableSubReadStreamEndian *stream) {
+Common::Rect MohawkEngine_LivingBooks::readRect(Common::ReadStreamEndian *stream) {
 	Common::Rect rect;
 
 	// the V1 mac games have their rects in QuickDraw order
@@ -81,7 +82,7 @@ LBPage::LBPage(MohawkEngine_LivingBooks *vm) : _vm(vm) {
 	_cascade = false;
 }
 
-void LBPage::open(MohawkArchive *mhk, uint16 baseId) {
+void LBPage::open(Archive *mhk, uint16 baseId) {
 	_mhk = mhk;
 	_baseId = baseId;
 
@@ -384,8 +385,8 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 		warning("ignoring 'killgag' for filename '%s'", filename.c_str());
 	}
 
-	MohawkArchive *pageArchive = createMohawkArchive();
-	if (!filename.empty() && pageArchive->open(filename)) {
+	Archive *pageArchive = createArchive();
+	if (!filename.empty() && pageArchive->openFile(filename)) {
 		_page = new LBPage(this);
 		_page->open(pageArchive, 1000);
 	} else {
@@ -589,11 +590,11 @@ void MohawkEngine_LivingBooks::updatePage() {
 	}
 }
 
-void MohawkEngine_LivingBooks::addArchive(MohawkArchive *archive) {
+void MohawkEngine_LivingBooks::addArchive(Archive *archive) {
 	_mhk.push_back(archive);
 }
 
-void MohawkEngine_LivingBooks::removeArchive(MohawkArchive *archive) {
+void MohawkEngine_LivingBooks::removeArchive(Archive *archive) {
 	for (uint i = 0; i < _mhk.size(); i++) {
 		if (archive != _mhk[i])
 			continue;
@@ -767,6 +768,8 @@ void LBPage::loadBITL(uint16 resourceId) {
 		if (bitlStream->size() == bitlStream->pos())
 			break;
 	}
+
+	delete bitlStream;
 }
 
 Common::SeekableSubReadStreamEndian *MohawkEngine_LivingBooks::wrapStreamEndian(uint32 tag, uint16 id) {
@@ -862,8 +865,11 @@ Common::String MohawkEngine_LivingBooks::convertWinFileName(const Common::String
 	return filename;
 }
 
-MohawkArchive *MohawkEngine_LivingBooks::createMohawkArchive() const {
-	return isPreMohawk() ? new LivingBooksArchive_v1() : new MohawkArchive();
+Archive *MohawkEngine_LivingBooks::createArchive() const {
+	if (isPreMohawk())
+		return new LivingBooksArchive_v1();
+
+	return new MohawkArchive();
 }
 
 bool MohawkEngine_LivingBooks::isPreMohawk() const {
@@ -1873,6 +1879,7 @@ uint16 LBAnimation::getParentId() {
 
 LBScriptEntry::LBScriptEntry() {
 	state = 0;
+	data = NULL;
 	argvParam = NULL;
 	argvTarget = NULL;
 }
@@ -1880,6 +1887,7 @@ LBScriptEntry::LBScriptEntry() {
 LBScriptEntry::~LBScriptEntry() {
 	delete[] argvParam;
 	delete[] argvTarget;
+	delete[] data;
 
 	for (uint i = 0; i < subentries.size(); i++)
 		delete subentries[i];
@@ -1943,7 +1951,10 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 		uint16 dataSize = stream->readUint16();
 
 		debug(4, "Data type %04x, size %d", dataType, dataSize);
-		readData(dataType, dataSize, stream);
+		byte *buf = new byte[dataSize];
+		stream->read(buf, dataSize);
+		readData(dataType, dataSize, buf);
+		delete[] buf;
 
 		if ((uint)stream->pos() != oldPos + 4 + (uint)dataSize)
 			error("Failed to read correct number of bytes (off by %d) for data type %04x (size %d)",
@@ -1956,7 +1967,7 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 	}
 }
 
-LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::SeekableSubReadStreamEndian *stream, bool isSubentry) {
+LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::MemoryReadStreamEndian *stream, bool isSubentry) {
 	if (size < 6)
 		error("Script entry of type 0x%04x was too small (%d)", type, size);
 
@@ -1999,30 +2010,40 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		entry->argc = stream->readUint16();
 		size -= 2;
 
-		uint16 targetingType = entry->argc;
-		if (targetingType == 0x3f3f || targetingType == 0xffff) {
-			entry->argc = 0;
+		entry->targetingType = 0;
 
+		uint16 targetingType = entry->argc;
+		if (targetingType == kTargetTypeExpression || targetingType == kTargetTypeCode
+			|| targetingType == kTargetTypeName) {
+			entry->targetingType = targetingType;
+
+			// FIXME
+			if (targetingType == kTargetTypeCode)
+				error("encountered kTargetTypeCode");
+
+			if (size < 2)
+				error("not enough bytes (%d) reading special targeting", size);
 			uint16 count = stream->readUint16();
 			size -= 2;
 
 			debug(4, "%d targets with targeting type %04x", count, targetingType);
 
-			// FIXME: targeting by name
 			uint oldAlign = size % 2;
 			for (uint i = 0; i < count; i++) {
 				Common::String target = _vm->readString(stream);
-				warning("ignoring target '%s' in script entry", target.c_str());
+				debug(4, "target '%s'", target.c_str());
+				entry->targets.push_back(target);
+				if (target.size() + 1 > size)
+					error("failed to read target (ran out of stream)");
 				size -= target.size() + 1;
 			}
+			entry->argc = entry->targets.size();
 
 			if ((uint)(size % 2) != oldAlign) {
 				stream->skip(1);
 				size--;
 			}
-		}
-
-		if (entry->argc) {
+		} else if (entry->argc) {
 			entry->argvParam = new uint16[entry->argc];
 			entry->argvTarget = new uint16[entry->argc];
 			debug(4, "With %d targets:", entry->argc);
@@ -2075,37 +2096,33 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		debug(4, "kLBOpSendExpression: offset %08x", entry->offset);
 		size -= 4;
 	}
-	if (entry->opcode == 0xffff) {
+	if (entry->opcode == kLBOpRunData) {
 		if (size < 4)
-			error("didn't get enough bytes (%d) to read message in script entry", size);
-		uint16 msgId = stream->readUint16();
-		uint16 msgLen = stream->readUint16();
+			error("didn't get enough bytes (%d) to read data header in script entry", size);
+		entry->dataType = stream->readUint16();
+		entry->dataLen = stream->readUint16();
 		size -= 4;
 
-		if (msgId == kLBSetPlayInfo) {
-			if (size != 20)
-				error("wah, more than just the kLBSetPlayInfo in here");
-			// FIXME
-			warning("ignoring kLBSetPlayInfo");
-			size -= 20;
-			stream->skip(20);
-			return entry;
+		if (size < entry->dataLen)
+			error("didn't get enough bytes (%d) to read data in script entry", size);
+
+		if (entry->dataType == kLBCommand) {
+			Common::String command = _vm->readString(stream);
+			uint commandSize = command.size() + 1;
+			if (commandSize > entry->dataLen)
+				error("failed to read command in script entry: dataLen %d, command '%s' (%d chars)",
+					 entry->dataLen, command.c_str(), commandSize);
+			entry->dataLen = commandSize;
+			entry->data = new byte[commandSize];
+			memcpy(entry->data, command.c_str(), commandSize);
+			size -= commandSize;
+		} else {
+			if (conditionTag)
+				error("kLBOpRunData had unexpected conditionTag");
+			entry->data = new byte[entry->dataLen];
+			stream->read(entry->data, entry->dataLen);
+			size -= entry->dataLen;
 		}
-		if (msgId != kLBCommand)
-			error("expected a command in script entry, got 0x%04x", msgId);
-
-		if (msgLen != size - (entry->event == kLBEventNotified ? 4 : 0) && !conditionTag)
-			error("script entry msgLen %d is not equal to size %d", msgLen, size);
-
-		Common::String command = _vm->readString(stream);
-		if (command.size() + 1 > size) {
-			error("failed to read command in script entry: msgLen %d, command '%s' (%d chars)",
-				msgLen, command.c_str(), command.size());
-		}
-		size -= command.size() + 1;
-
-		entry->command = command;
-		debug(4, "script entry command '%s'", command.c_str());
 	}
 	if (entry->event == kLBEventNotified) {
 		if (size < 4)
@@ -2126,6 +2143,8 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 	}
 
 	if (conditionTag == 1) {
+		if (!size)
+			error("failed to read condition (empty stream)");
 		Common::String condition = _vm->readString(stream);
 		if (condition.size() == 0) {
 			size--;
@@ -2140,6 +2159,8 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 		entry->conditions.push_back(condition);
 		debug(4, "script entry condition '%s'", condition.c_str());
 	} else if (conditionTag == 2) {
+		if (size < 4)
+			error("expected more than %d bytes for conditionTag 2", size);
 		// FIXME
 		stream->skip(4);
 		size -= 4;
@@ -2156,7 +2177,12 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Seeka
 	return entry;
 }
 
-void LBItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
+void LBItem::readData(uint16 type, uint16 size, byte *data) {
+	Common::MemoryReadStreamEndian stream(data, size, _vm->isBigEndian());
+	readData(type, size, &stream);
+}
+
+void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
 	case kLBMsgListScript:
 	case kLBNotifyScript:
@@ -2612,15 +2638,59 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			entry->type, entry->event, entry->opcode, entry->param);
 
 		if (entry->argc) {
-			uint16 targetId = entry->argvTarget[n];
-			// TODO: is this type, perhaps?
-			uint16 param = entry->argvParam[n];
-			target = _vm->getItemById(targetId);
-			if (!target) {
-				debug(2, "Target %04x (%04x) doesn't exist, skipping", targetId, param);
-				continue;
+			switch (entry->targetingType) {
+			case kTargetTypeExpression:
+				{
+				// FIXME: this should be EVALUATED
+				LBValue &tgt = _vm->_variables[entry->targets[n]];
+				switch (tgt.type) {
+				case kLBValueItemPtr:
+					target = tgt.item;
+					break;
+				case kLBValueString:
+					// FIXME: handle 'self', at least
+					// TODO: correct otherwise? or only self?
+					target = _vm->getItemByName(tgt.string);
+					break;
+				case kLBValueInteger:
+					target = _vm->getItemById(tgt.integer);
+					break;
+				default:
+					// FIXME: handle list
+					warning("Target '%s' (by expression) resulted in unknown type, skipping", entry->targets[n].c_str());
+					continue;
+				}
+				}
+				if (!target) {
+					debug(2, "Target '%s' (by expression) doesn't exist, skipping", entry->targets[n].c_str());
+					continue;
+				}
+				debug(2, "Target: '%s' (expression '%s')", target->_desc.c_str(), entry->targets[n].c_str());
+				break;
+			case kTargetTypeCode:
+				// FIXME
+				error("encountered kTargetTypeCode");
+				break;
+			case kTargetTypeName:
+				// FIXME: handle 'self'
+				target = _vm->getItemByName(entry->targets[n]);
+				if (!target) {
+					debug(2, "Target '%s' (by name) doesn't exist, skipping", entry->targets[n].c_str());
+					continue;
+				}
+				debug(2, "Target: '%s' (by name)", target->_desc.c_str());
+				break;
+			default:
+				uint16 targetId = entry->argvTarget[n];
+				// TODO: is this type, perhaps?
+				uint16 param = entry->argvParam[n];
+				target = _vm->getItemById(targetId);
+				if (!target) {
+					debug(2, "Target %04x (%04x) doesn't exist, skipping", targetId, param);
+					continue;
+				}
+				debug(2, "Target: %04x (%04x) '%s'", targetId, param, target->_desc.c_str());
 			}
-			debug(2, "Target: %04x (%04x) '%s'", targetId, param, target->_desc.c_str());
 		} else {
 			target = this;
 			debug(2, "Self-target on '%s'", _desc.c_str());
@@ -2781,8 +2851,8 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			}
 			break;
 
-		case kLBOpRunCommand:
-			runCommand(entry->command);
+		case kLBOpRunData:
+			readData(entry->dataType, entry->dataLen, entry->data);
 			break;
 
 		case kLBOpJumpUnlessExpression:
@@ -3118,7 +3188,7 @@ LBGroupItem::LBGroupItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rec
 	_starting = false;
 }
 
-void LBGroupItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
+void LBGroupItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
 	case kLBGroupData:
 		{
@@ -3239,7 +3309,7 @@ LBPaletteItem::~LBPaletteItem() {
 	delete[] _palette;
 }
 
-void LBPaletteItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
+void LBPaletteItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
 	case kLBPaletteXData:
 		{
@@ -3319,7 +3389,7 @@ LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, LBPage *page, Commo
 	debug(3, "new LBLiveTextItem");
 }
 
-void LBLiveTextItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
+void LBLiveTextItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
 	case kLBLiveTextData:
 		{
@@ -3564,7 +3634,7 @@ LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common:
 	debug(3, "new LBPictureItem");
 }
 
-void LBPictureItem::readData(uint16 type, uint16 size, Common::SeekableSubReadStreamEndian *stream) {
+void LBPictureItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
 	case kLBSetDrawMode:
 		{
@@ -3790,8 +3860,8 @@ void LBProxyItem::init() {
 	}
 
 	debug(1, "LBProxyItem loading archive '%s' with id %d", filename.c_str(), baseId);
-	MohawkArchive *pageArchive = _vm->createMohawkArchive();
-	if (!pageArchive->open(filename))
+	Archive *pageArchive = _vm->createArchive();
+	if (!pageArchive->openFile(filename))
 		error("failed to open archive '%s' (for proxy '%s')", filename.c_str(), _desc.c_str());
 	_page = new LBPage(_vm);
 	_page->open(pageArchive, baseId);

@@ -27,8 +27,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -141,15 +143,15 @@ IMPLEMENT_FUNCTION(8, Pascale, welcomeSophieAndRebecca)
 				break;
 
 			case kChapter1:
-				getSound()->playSound(kEntityPascale, "REB1198", SoundManager::kFlagInvalid, 30);
+				getSound()->playSound(kEntityPascale, "REB1198", kFlagInvalid, 30);
 				break;
 
 			case kChapter3:
-				getSound()->playSound(kEntityPascale, "REB3001", SoundManager::kFlagInvalid, 30);
+				getSound()->playSound(kEntityPascale, "REB3001", kFlagInvalid, 30);
 				break;
 
 			case kChapter4:
-				getSound()->playSound(kEntityPascale, "REB4001", SoundManager::kFlagInvalid, 30);
+				getSound()->playSound(kEntityPascale, "REB4001", kFlagInvalid, 30);
 				break;
 			}
 
@@ -201,7 +203,7 @@ IMPLEMENT_FUNCTION(10, Pascale, welcomeCath)
 		break;
 
 	case kActionNone:
-		if (params->param1 && !getSound()->isBuffered(kEntityPascale))
+		if (params->param1 && !getSoundQueue()->isBuffered(kEntityPascale))
 			getEntities()->updatePositionExit(kEntityPascale, kCarRestaurant, 64);
 		break;
 
@@ -462,10 +464,10 @@ IMPLEMENT_FUNCTION(16, Pascale, serveTatianaVassili)
 			getEntities()->drawSequenceLeft(kEntityPascale, "014B");
 			getEntities()->updatePositionEnter(kEntityPascale, kCarRestaurant, 67);
 
-			if (getSound()->isBuffered("TAT1069A"))
-				getSound()->processEntry("TAT1069A");
-			else if (getSound()->isBuffered("TAT1069B"))
-				getSound()->processEntry("TAT1069B");
+			if (getSoundQueue()->isBuffered("TAT1069A"))
+				getSoundQueue()->processEntry("TAT1069A");
+			else if (getSoundQueue()->isBuffered("TAT1069B"))
+				getSoundQueue()->processEntry("TAT1069B");
 
 			setCallback(2);
 			setup_playSound("TAT1066");
@@ -754,7 +756,7 @@ IMPLEMENT_FUNCTION(24, Pascale, welcomeAbbot)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityPascale, "ABB3015", SoundManager::kFlagInvalid, 105);
+		getSound()->playSound(kEntityPascale, "ABB3015", kFlagInvalid, 105);
 		getEntities()->drawSequenceRight(kEntityPascale, "029A1");
 		getEntities()->drawSequenceRight(kEntityAbbot, "029A2");
 		break;
@@ -1213,7 +1215,7 @@ label_callback1:
 		break;
 
 	case kAction169750080:
-		if (getSound()->isBuffered(kEntityPascale)) {
+		if (getSoundQueue()->isBuffered(kEntityPascale)) {
 			params->param4 = 1;
 		} else {
 			setCallback(7);

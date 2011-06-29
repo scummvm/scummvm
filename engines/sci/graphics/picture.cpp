@@ -330,7 +330,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		if (!_addToFlag && _resourceType != SCI_PICTURE_TYPE_SCI32)
 			clearColor = _screen->getColorWhite();
 
-		byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY;
+		byte drawMask = priority > 15 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY;
 
 		ptr = celBitmap;
 		ptr += skipCelBitmapPixels;
@@ -357,7 +357,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 				curByte = *ptr++;
 				if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
 					_screen->putPixel(x, y, drawMask, curByte, priority, 0);
-			
+
 				if (x == leftX) {
 					ptr += sourcePixelSkipPerRow;
 					x = rightX;
@@ -515,7 +515,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 				icemanDrawFix = true;
 		}
 		if (g_sci->getGameId() == GID_KQ5) {
-			// WORKAROUND: ignore the seemingly broken priority of picture 48 
+			// WORKAROUND: ignore the seemingly broken priority of picture 48
 			// (island overview). Fixes bug #3041044.
 			if (_resourceId == 48)
 				ignoreBrokenPriority = true;
@@ -551,7 +551,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 
 		case PIC_OP_SET_PRIORITY:
 			pic_priority = data[curPos++] & 0x0F;
-			if (isEGA) 
+			if (isEGA)
 				pic_priority = EGApriority[pic_priority];
 			if (ignoreBrokenPriority)
 				pic_priority = 255;

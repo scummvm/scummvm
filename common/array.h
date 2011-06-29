@@ -252,6 +252,13 @@ public:
 		_size = newSize;
 	}
 
+	void assign(const_iterator first, const_iterator last) {
+		resize(distance(first, last)); // FIXME: ineffective?
+		T *dst = _storage;
+		while (first != last)
+			*dst++ = *first++;
+	}
+
 protected:
 	static uint roundUpCapacity(uint capacity) {
 		// Round up capacity to the next power of 2;

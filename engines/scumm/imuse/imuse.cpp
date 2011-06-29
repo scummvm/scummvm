@@ -26,6 +26,7 @@
 
 #include "common/util.h"
 #include "common/system.h"
+#include "common/endian.h"
 
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse/imuse_internal.h"
@@ -99,9 +100,15 @@ IMuseInternal::~IMuseInternal() {
 	}
 }
 
-byte *IMuseInternal::findStartOfSound(int sound, int ct) {	
+byte *IMuseInternal::findStartOfSound(int sound, int ct) {
 	int32 size, pos;
-	static uint32 id[] = { 'MThd', 'FORM', 'MDhd', 'MDpg' };
+
+	static const uint32 id[] = {
+		MKTAG('M', 'T', 'h', 'd'),
+		MKTAG('F', 'O', 'R', 'M'),
+		MKTAG('M', 'D', 'h', 'd'),
+		MKTAG('M', 'D', 'p', 'g')
+	};
 
 	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
 
@@ -945,7 +952,7 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 	_trigger_count--;
 	_queue_cleared = false;
 	_queue_end = (_queue_end + 1) % ARRAYSIZE(_cmd_queue);
-	
+
 	while (_queue_end != _queue_pos && _cmd_queue[_queue_end].array[0] == COMMAND_ID && !_queue_cleared) {
 		p = _cmd_queue[_queue_end].array;
 		doCommand_internal(p[1], p[2], p[3], p[4], p[5], p[6], p[7], 0);

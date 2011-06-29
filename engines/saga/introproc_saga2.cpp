@@ -113,7 +113,7 @@ void Scene::playMovie(const char *filename) {
 				_vm->_system->updateScreen();
 			}
 		}
-	
+
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)

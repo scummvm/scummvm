@@ -451,7 +451,7 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const ByteArray &string
 			error("SagaEngine::loadStrings() Wrong offset");
 		}
 		stringsTable.strings[ui] = &stringsTable.buffer[offset];
-		
+
 		debug(9, "string[%i]=%s", ui, stringsTable.strings[ui]);
 	}
 }

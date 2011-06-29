@@ -42,6 +42,7 @@
 #include "common/list_intern.h"
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "gui/debugger.h"
 #include "gui/dialog.h"
@@ -95,6 +96,7 @@ Engine::Engine(OSystem *syst)
 		_targetName(ConfMan.getActiveDomainName()),
 		_pauseLevel(0),
 		_pauseStartTime(0),
+		_saveSlotToLoad(-1),
 		_engineStartTime(_system->getMillis()),
 		_mainMenuDialog(NULL) {
 
@@ -216,7 +218,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 	// Just show warnings then these occur:
 #ifdef USE_RGB_COLOR
 	if (gfxError & OSystem::kTransactionFormatNotSupported) {
-		Common::String message = "Could not initialize color format.";
+		Common::String message = _("Could not initialize color format.");
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -224,7 +226,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 #endif
 
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
-		Common::String message = "Could not switch to video mode: '";
+		Common::String message = _("Could not switch to video mode: '");
 		message += ConfMan.get("gfx_mode");
 		message += "'.";
 
@@ -233,12 +235,12 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 	}
 
 	if (gfxError & OSystem::kTransactionAspectRatioFailed) {
-		GUI::MessageDialog dialog("Could not apply aspect ratio setting.");
+		GUI::MessageDialog dialog(_("Could not apply aspect ratio setting."));
 		dialog.runModal();
 	}
 
 	if (gfxError & OSystem::kTransactionFullscreenFailed) {
-		GUI::MessageDialog dialog("Could not apply fullscreen setting.");
+		GUI::MessageDialog dialog(_("Could not apply fullscreen setting."));
 		dialog.runModal();
 	}
 }
@@ -338,22 +340,22 @@ void Engine::checkCD() {
 
 	if (GetDriveType(buffer) == DRIVE_CDROM) {
 		GUI::MessageDialog dialog(
-			"You appear to be playing this game directly\n"
+			_("You appear to be playing this game directly\n"
 			"from the CD. This is known to cause problems,\n"
 			"and it is therefore recommended that you copy\n"
 			"the data files to your hard disk instead.\n"
-			"See the README file for details.", "OK");
+			"See the README file for details."), _("OK"));
 		dialog.runModal();
 	} else {
 		// If we reached here, the game has audio tracks,
 		// it's not ran from the CD and the tracks have not
 		// been ripped.
 		GUI::MessageDialog dialog(
-			"This game has audio tracks in its disk. These\n"
+			_("This game has audio tracks in its disk. These\n"
 			"tracks need to be ripped from the disk using\n"
 			"an appropriate CD audio extracting tool in\n"
 			"order to listen to the game's music.\n"
-			"See the README file for details.", "OK");
+			"See the README file for details."), _("OK"));
 		dialog.runModal();
 	}
 #endif
@@ -395,8 +397,34 @@ void Engine::pauseEngineIntern(bool pause) {
 void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
+
+	setGameToLoadSlot(-1);
+
 	runDialog(*_mainMenuDialog);
+
+	// Load savegame after main menu execution
+	// (not from inside the menu loop to avoid
+	// mouse cursor glitches and simliar bugs,
+	// e.g. #2822778).
+	// FIXME: For now we just ignore the return
+	// value, which is quite bad since it could
+	// be a fatal loading error, which renders
+	// the engine unusable.
+	if (_saveSlotToLoad > 0)
+		loadGameState(_saveSlotToLoad);
+
 	syncSoundSettings();
+}
+
+bool Engine::warnUserAboutUnsupportedGame() {
+	if (ConfMan.getBool("enable_unsupported_game_warning")) {
+		GUI::MessageDialog alert(_("WARNING: The game you are about to start is"
+			" not yet fully supported by ScummVM. As such, it is likely to be"
+			" unstable, and any saves you make might not work in future"
+			" versions of ScummVM."), _("Start anyway"), _("Cancel"));
+		return alert.runModal() == GUI::kMessageOK;
+	}
+	return true;
 }
 
 uint32 Engine::getTotalPlayTime() const {
@@ -423,6 +451,10 @@ int Engine::runDialog(GUI::Dialog &dialog) {
 	pauseEngine(false);
 
 	return result;
+}
+
+void Engine::setGameToLoadSlot(int slot) {
+	_saveSlotToLoad = slot;
 }
 
 void Engine::syncSoundSettings() {

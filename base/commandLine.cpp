@@ -25,6 +25,8 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
+#include <limits.h>
+
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
@@ -186,6 +188,8 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("cdrom", 0);
 
+	ConfMan.registerDefault("enable_unsupported_game_warning", true);
+
 	// Game specific
 	ConfMan.registerDefault("path", "");
 	ConfMan.registerDefault("platform", Common::kPlatformPC);
@@ -262,17 +266,19 @@ void registerDefaults() {
 	if (!option) usage("Option '%s' requires an argument", argv[isLongCmd ? i : i-1]);
 
 // Use this for options which have a required integer value
+// (we don't check ERANGE because WinCE doesn't support errno, so we're stuck just rejecting LONG_MAX/LONG_MIN..)
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION(shortCmd, longCmd) \
-	char *endptr = 0; \
-	strtol(option, &endptr, 0); \
-	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
+	char *endptr; \
+	long int retval = strtol(option, &endptr, 0); \
+	if (*endptr != '\0' || retval == LONG_MAX || retval == LONG_MIN) \
+		usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".
 #define DO_OPTION_BOOL(shortCmd, longCmd) \
 	if (isLongCmd ? (!strcmp(s+2, longCmd) || !strcmp(s+2, "no-"longCmd)) : (tolower(s[1]) == shortCmd)) { \
-		bool boolValue = (islower(s[1]) != 0); \
+		bool boolValue = (islower(static_cast<unsigned char>(s[1])) != 0); \
 		s += 2; \
 		if (isLongCmd) { \
 			boolValue = !strcmp(s, longCmd); \

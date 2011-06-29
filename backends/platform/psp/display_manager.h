@@ -72,7 +72,7 @@ private:
  */
 class MasterGuRenderer : public PspThreadable {
 public:
-	MasterGuRenderer() : _lastRenderTime(0), _renderFinished(true), 
+	MasterGuRenderer() : _lastRenderTime(0), _renderFinished(true),
 		_renderSema(1, 1), _callbackId(-1) {}
 	void guInit();
 	void guPreRender();
@@ -108,7 +108,7 @@ public:
 		KEEP_ASPECT_RATIO,
 		STRETCHED_FULL_SCREEN
 	};
-	DisplayManager() : _screen(0), _cursor(0), _overlay(0), _keyboard(0), 
+	DisplayManager() : _screen(0), _cursor(0), _overlay(0), _keyboard(0),
 					  _imageViewer(0), _lastUpdateTime(0), _graphicsMode(0) {}
 	~DisplayManager();
 
@@ -127,7 +127,7 @@ public:
 	void setOverlay(Overlay *overlay) { _overlay = overlay; }
 	void setKeyboard(PSPKeyboard *keyboard) { _keyboard = keyboard; }
 	void setImageViewer(ImageViewer *imageViewer) { _imageViewer = imageViewer; }
-	
+
 	void setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat *format);
 
 	// Getters

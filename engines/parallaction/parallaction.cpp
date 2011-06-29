@@ -627,7 +627,7 @@ bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 			return false;
 		}
 	}
-	
+
 	// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
 	// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 	// but we need to check it separately here. The same workaround is applied in freeZones.
@@ -659,14 +659,14 @@ bool Parallaction::checkZoneType(ZonePtr z, uint32 type) {
 
 	if (_gameType == GType_BRA) {
 		if (type == 0) {
-			if (ITEMTYPE(z) == 0) {			
+			if (ITEMTYPE(z) == 0) {
 				if (ACTIONTYPE(z) != kZonePath) {
 					return true;
 				}
-			} 
+			}
 			if (ACTIONTYPE(z) == kZoneDoor) {
 				return true;
-			}	
+			}
 		}
 	}
 
@@ -751,7 +751,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		AnimationPtr a = *ait;
 
 		_a = (a->_flags & kFlagsActive) ? 1 : 0;	// _a: active Animation
-		
+
 		if (!_a) {
 			if (_gameType == GType_BRA && ACTIONTYPE(a) != kZoneTrap) {
 				continue;

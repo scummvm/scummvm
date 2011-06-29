@@ -239,7 +239,7 @@ reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
 
 		client_step--;
 		if (!client_step)
-			error("kInitBresen failed");		
+			error("kInitBresen failed");
 		client_xStep--;
 	}
 
@@ -440,7 +440,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 			invokeSelector(s, clientLooper, SELECTOR(doit), argc, argv, 2, params);
 		}
 		s->r_acc = SIGNAL_REG;
-		
+
 	} else {
 		// is blocked
 		if (avoiderHeading == -1)

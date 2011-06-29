@@ -175,34 +175,17 @@ static const LureGameDescription gameDescriptions[] = {
 
 } // End of namespace Lure
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Lure::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Lure::LureGameDescription),
-	// Number of bytes to compute MD5 sum for
-	1024,
-	// List of all engine targets
-	lureGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"lure",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	kADFlagUseExtraAsHint,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOSPEECH,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class LureMetaEngine : public AdvancedMetaEngine {
 public:
-	LureMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
+		_md5Bytes = 1024;
+		_singleid = "lure";
+
+		// Use kADFlagUseExtraAsHint to distinguish between EGA and VGA versions
+		// of italian Lure when their datafiles sit in the same directory.
+		_flags = kADFlagUseExtraAsHint;
+		_guioptions = Common::GUIO_NOSPEECH;
+	}
 
 	virtual const char *getName() const {
 		return "Lure";

@@ -133,6 +133,7 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 					break;
 				case Common::KEYCODE_ESCAPE:
 					continuePlaying = false;
+					_vm->doVideoTimer(videoHandle, true);
 					break;
 				default:
 					break;
@@ -208,14 +209,20 @@ bool VideoManager::updateMovies() {
 			if (_videoStreams[i].loop) {
 				_videoStreams[i]->seekToTime(_videoStreams[i].start);
 			} else {
+				// Check the video time one last time before deleting it
+				_vm->doVideoTimer(i, true);
 				delete _videoStreams[i].video;
 				_videoStreams[i].clear();
 				continue;
 			}
 		}
 
+		// Nothing more to do if we're paused
+		if (_videoStreams[i]->isPaused())
+			continue;
+
 		// Check if we need to draw a frame
-		if (!_videoStreams[i]->isPaused() && _videoStreams[i]->needsUpdate()) {
+		if (_videoStreams[i]->needsUpdate()) {
 			const Graphics::Surface *frame = _videoStreams[i]->decodeNextFrame();
 			Graphics::Surface *convertedFrame = 0;
 
@@ -266,6 +273,9 @@ bool VideoManager::updateMovies() {
 				}
 			}
 		}
+
+		// Check the video time
+		_vm->doVideoTimer(i, false);
 	}
 
 	// Return true if we need to update the screen
@@ -426,22 +436,22 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 	entry.filename = filename;
 	entry.loop = loop;
 	entry.enabled = true;
-	
+
 	Common::File *file = new Common::File();
 	if (!file->open(filename)) {
 		delete file;
 		return NULL_VID_HANDLE;
 	}
-	
+
 	entry->loadStream(file);
-	
+
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
 		if (!_videoStreams[i].video) {
 			_videoStreams[i] = entry;
 			return i;
 		}
-			
+
 	// Otherwise, just add it to the list
 	_videoStreams.push_back(entry);
 	return _videoStreams.size() - 1;

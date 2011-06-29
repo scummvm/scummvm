@@ -96,7 +96,7 @@ static const char * const sci2Selectors[] = {
 	   "center",         "all",        "show",     "textLeft",    "textTop", // 115 - 119
 	"textRight",  "textBottom", "borderColor",    "titleFore",  "titleBack", // 120 - 124
 	"titleFont",      "dimmed",    "frameOut",      "lastKey",  "magnifier", // 125 - 129
-	 "magPower",    "mirrored",       "pitch",         "roll",        "yaw", // 130 - 134 
+	 "magPower",    "mirrored",       "pitch",         "roll",        "yaw", // 130 - 134
 	     "left",       "right",         "top",       "bottom",   "numLines"  // 135 - 139
 };
 #endif
@@ -265,8 +265,8 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 		if (targetClass) {
 			if (classReferences[i].selectorType == kSelectorMethod) {
 				if (targetClass->getMethodCount() < selectorOffset + 1)
-					error("The %s class has less than %d methods (%d)", 
-							classReferences[i].className, selectorOffset + 1, 
+					error("The %s class has less than %d methods (%d)",
+							classReferences[i].className, selectorOffset + 1,
 							targetClass->getMethodCount());
 
 				targetSelectorPos = targetClass->getFuncSelector(selectorOffset);
@@ -275,7 +275,7 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 				selectorOffset += (getSciVersion() <= SCI_VERSION_1_LATE) ? 3 : 8;
 
 				if (targetClass->getVarCount() < selectorOffset + 1)
-					error("The %s class has less than %d variables (%d)", 
+					error("The %s class has less than %d variables (%d)",
 							classReferences[i].className, selectorOffset + 1,
 							targetClass->getVarCount());
 

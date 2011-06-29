@@ -34,8 +34,11 @@
 #undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 #include <shellapi.h>
 
+#include <SDL_syswm.h> // For setting the icon
+
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/fs/windows/windows-fs-factory.h"
+#include "backends/taskbar/win32/win32-taskbar.h"
 
 #include "common/memstream.h"
 
@@ -81,8 +84,13 @@ void OSystem_Win32::init() {
 	}
 #endif
 
-	// Initialze File System Factory
+	// Initialize File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
+
+#if defined(USE_TASKBAR)
+	// Initialize taskbar manager
+	_taskbarManager = new Win32TaskbarManager();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
@@ -131,6 +139,28 @@ bool OSystem_Win32::displayLogFile() {
 	return false;
 }
 
+void OSystem_Win32::setupIcon() {
+	HMODULE handle = GetModuleHandle(NULL);
+	HICON   ico    = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
+	if (ico) {
+		SDL_SysWMinfo  wminfo;
+		SDL_VERSION(&wminfo.version);
+		if (SDL_GetWMInfo(&wminfo)) {
+			// Replace the handle to the icon associated with the window class by our custom icon
+			SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
+
+			// Since there wasn't any default icon, we can't use the return value from SetClassLong
+			// to check for errors (it would be 0 in both cases: error or no previous value for the
+			// icon handle). Instead we check for the last-error code value.
+			if (GetLastError() == ERROR_SUCCESS)
+				return;
+		}
+	}
+
+	// If no icon has been set, fallback to default path
+	OSystem_SDL::setupIcon();
+}
+
 Common::String OSystem_Win32::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 
@@ -149,18 +179,31 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 				error("Unable to access user profile directory");
 
 			strcat(configFile, "\\Application Data");
-			CreateDirectory(configFile, NULL);
+
+			// If the directory already exists (as it should in most cases),
+			// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
+			if (!CreateDirectory(configFile, NULL)) {
+				if (GetLastError() != ERROR_ALREADY_EXISTS)
+					error("Cannot create Application data folder");
+			}
 		}
 
 		strcat(configFile, "\\ScummVM");
-		CreateDirectory(configFile, NULL);
+		if (!CreateDirectory(configFile, NULL)) {
+			if (GetLastError() != ERROR_ALREADY_EXISTS)
+				error("Cannot create ScummVM application data folder");
+		}
+
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 
 		FILE *tmp = NULL;
 		if ((tmp = fopen(configFile, "r")) == NULL) {
 			// Check windows directory
 			char oldConfigFile[MAXPATHLEN];
-			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
+			uint ret = GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
+			if (ret == 0 || ret > MAXPATHLEN)
+				error("Cannot retrieve the path of the Windows directory");
+
 			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
 			if ((tmp = fopen(oldConfigFile, "r"))) {
 				strcpy(configFile, oldConfigFile);
@@ -172,7 +215,10 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 		}
 	} else {
 		// Check windows directory
-		GetWindowsDirectory(configFile, MAXPATHLEN);
+		uint ret = GetWindowsDirectory(configFile, MAXPATHLEN);
+		if (ret == 0 || ret > MAXPATHLEN)
+			error("Cannot retrieve the path of the Windows directory");
+
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 	}
 
@@ -300,7 +346,7 @@ Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(cons
 } // End of anonymous namespace
 
 void OSystem_Win32::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
-	s.add("Win32Res", new Win32ResourceArchive());
+	s.add("Win32Res", new Win32ResourceArchive(), priority);
 
 	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
 }

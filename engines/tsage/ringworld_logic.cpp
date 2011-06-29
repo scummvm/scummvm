@@ -268,7 +268,7 @@ void SceneArea::setup(int resNum, int rlbNum, int subNum, int actionId) {
 }
 
 void SceneArea::draw2() {
-	_surface.draw(Common::Point(_bounds.left, _bounds.top));	
+	_surface.draw(Common::Point(_bounds.left, _bounds.top));
 }
 
 void SceneArea::display() {
@@ -619,7 +619,7 @@ void SpeakerSKL::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(203, 120));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(7013);
 	_object2.setStrip2(1);
@@ -651,7 +651,7 @@ void SpeakerQL::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(128, 146));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2612);
 	_object2.setStrip2(1);
@@ -667,7 +667,6 @@ void SpeakerQL::setText(const Common::String &msg) {
 /*--------------------------------------------------------------------------*/
 
 SpeakerSR::SpeakerSR() {
-	// TODO: check initialization of object3
 	_speakerName = "SR";
 	_newSceneNumber = 2811;
 	_textPos = Common::Point(10, 30);
@@ -684,7 +683,7 @@ void SpeakerSR::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(224, 198));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2813);
 	_object2.setStrip2(1);
@@ -725,7 +724,7 @@ void SpeakerSL::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(95, 198));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2812);
 	_object2.setStrip2(1);
@@ -757,7 +756,7 @@ void SpeakerQR::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(191, 146));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2613);
 	_object2.setStrip2(1);
@@ -789,7 +788,7 @@ void SpeakerQU::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(116, 120));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(7021);
 	_object2.setStrip2(1);
@@ -818,7 +817,7 @@ void SpeakerCR::setText(const Common::String &msg) {
 	_object1.fixPriority(255);
 	_object1.setPosition(Common::Point(219, 168));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(9011);
 	_object2.setStrip2(1);
@@ -847,7 +846,7 @@ void SpeakerMR::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(220, 143));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2713);
 	_object2.setStrip2(1);
@@ -879,7 +878,7 @@ void SpeakerSAL::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(185, 200));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2853);
 	_object2.setStrip2(1);
@@ -910,7 +909,7 @@ void SpeakerML::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(99, 143));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(2712);
 	_object2.setStrip2(1);
@@ -941,7 +940,7 @@ void SpeakerCHFL::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(205, 116));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4113);
 	_object2.setStrip2(1);
@@ -972,7 +971,7 @@ void SpeakerCHFR::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(103, 116));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4112);
 	_object2.setStrip2(1);
@@ -1003,7 +1002,7 @@ void SpeakerPL::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(107, 117));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4062);
 	_object2.setStrip2(1);
@@ -1048,7 +1047,7 @@ void SpeakerPR::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(212, 117));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4063);
 	_object2.setStrip2(2);
@@ -1093,7 +1092,7 @@ void SpeakerCDR::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(208, 97));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4163);
 	_object2.setStrip2(2);
@@ -1124,7 +1123,7 @@ void SpeakerCDL::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(112, 97));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(4162);
 	_object2.setStrip2(2);
@@ -1155,7 +1154,7 @@ void SpeakerFLL::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(216, 129));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(5223);
 	_object2.setStrip2(1);
@@ -1186,7 +1185,7 @@ void SpeakerBatR::setText(const Common::String &msg) {
 	_object1._frame = 1;
 	_object1.setPosition(Common::Point(137, 122));
 	_object1.animate(ANIM_MODE_7, 0, NULL);
-	
+
 	_object2.postInit(&_objectList);
 	_object2.setVisage(5361);
 	_object2.setStrip2(1);
@@ -1334,9 +1333,20 @@ void RingworldGame::start() {
 	RING_INVENTORY._scanner._sceneNumber = 1;
 	RING_INVENTORY._ring._sceneNumber = 1;
 
+	int slot = -1;
 
-	if (ConfMan.hasKey("save_slot"))
-		_globals->_sceneHandler._loadGameSlot = ConfMan.getInt("save_slot");
+	if (ConfMan.hasKey("save_slot")) {
+		slot = ConfMan.getInt("save_slot");
+		Common::String file = _vm->generateSaveName(slot);
+		Common::InSaveFile *in = _vm->_system->getSavefileManager()->openForLoading(file);
+		if (in)
+			delete in;
+		else
+			slot = -1;
+	}
+
+	if (slot >= 0)
+		_globals->_sceneHandler._loadGameSlot = slot;
 	else
 		// Switch to the title screen
 		_globals->_sceneManager.setNewScene(1000);
@@ -1346,7 +1356,7 @@ void RingworldGame::start() {
 
 void RingworldGame::restart() {
 	_globals->_scenePalette.clearListeners();
-	_globals->_soundHandler.proc3();
+	_globals->_soundHandler.stop();
 
 	// Reset the flags
 	_globals->reset();
@@ -1441,6 +1451,7 @@ void RingworldGame::processEvent(Event &event) {
 			ConfigDialog *dlg = new ConfigDialog();
 			dlg->runModal();
 			delete dlg;
+			_globals->_soundManager.syncSounds();
 			_globals->_events.setCursorFromFlag();
 			break;
 		}

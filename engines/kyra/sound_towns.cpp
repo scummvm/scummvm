@@ -107,11 +107,11 @@ void SoundTowns::haltTrack() {
 	g_system->getAudioCDManager()->stop();
 	g_system->getAudioCDManager()->updateCD();
 	_cdaPlaying = false;
-	
+
 	for (int i = 0; i < 6; i++)
 		_driver->chanVolume(i, 0);
 	for (int i = 0x40; i < 0x46; i++)
-		_driver->chanVolume(i, 0);	
+		_driver->chanVolume(i, 0);
 	for (int i = 0; i < 32; i++)
 		_driver->configChan_enable(i, 0);
 	_driver->stopParser();
@@ -128,7 +128,7 @@ void SoundTowns::loadSoundFile(uint file) {
 void SoundTowns::playSoundEffect(uint8 track) {
 	if (!_sfxEnabled || !_sfxFileData)
 		return;
-	
+
 	if (track == 0 || track == 10) {
 		stopAllSoundEffects();
 		return;
@@ -258,13 +258,13 @@ void SoundTowns::beginFadeOut() {
 
 		uint16 fadeVolCur[12];
 		uint16 fadeVolStep[12];
-		
+
 		for (int i = 0; i < 6; i++) {
 			fadeVolCur[i] = READ_LE_UINT16(&_musicFadeTable[(_lastTrack * 12 + i) * 2]);
 			fadeVolStep[i] = fadeVolCur[i] / 50;
 			fadeVolCur[i + 6] = READ_LE_UINT16(&_musicFadeTable[(_lastTrack * 12 + 6 + i) * 2]);
 			fadeVolStep[i + 6] = fadeVolCur[i + 6] / 30;
-		}	
+		}
 
 		for (int i = 0; i < 12; i++) {
 			for (int ii = 0; ii < 6; ii++)
@@ -344,7 +344,7 @@ void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
 
 	uint32 trackSize = READ_LE_UINT32(_musicTrackData + 2048);
 	uint8 startTick = _musicTrackData[2052];
-	
+
 	_driver->setMusicTempo(_musicTrackData[2053]);
 
 	src = _musicTrackData + 2054;

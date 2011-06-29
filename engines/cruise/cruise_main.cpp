@@ -1882,7 +1882,7 @@ void CruiseEngine::mainLoop() {
 
 		while (numIterations-- > 0) {
 			bgChanged = backgroundChanged[masterScreen];
-		
+
 			manageScripts(&relHead);
 			manageScripts(&procHead);
 

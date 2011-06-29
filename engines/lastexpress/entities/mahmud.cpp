@@ -31,8 +31,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -157,7 +159,7 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 
 	case kActionEndSound:
 	case kActionDrawScene:
-		if (!getSound()->isBuffered(kEntityMahmud)) {
+		if (!getSoundQueue()->isBuffered(kEntityMahmud)) {
 			EntityPosition position = getEntityData(kEntityPlayer)->entityPosition;
 			if (position < kPosition_1500 || position >= kPosition_5790 || (position > kPosition_4455 && params->param5 != 5)) {
 				getObjects()->update(kObjectCompartment5, kEntityTrain, kObjectLocation3, kCursorHandKnock, kCursorHand);
@@ -173,12 +175,12 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 
 	case kActionKnock:
 	case kActionOpenDoor:
-		if (!getSound()->isBuffered((savepoint.action == kActionKnock) ? "LIB012" : "LIB013", true))
+		if (!getSoundQueue()->isBuffered((savepoint.action == kActionKnock) ? "LIB012" : "LIB013", true))
 			getSound()->playSound(kEntityPlayer, (savepoint.action == kActionKnock) ? "LIB012" : "LIB013");
 
 		params->param5 = savepoint.param.intValue;
 
-		if (!getSound()->isBuffered(kEntityMahmud)) {
+		if (!getSoundQueue()->isBuffered(kEntityMahmud)) {
 			params->param3++;
 
 			switch(params->param3) {
@@ -204,7 +206,7 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 			if (getState()->time >= kTimeCityGalanta) {
 				params->param3 = 0;
 			} else {
-				getSound()->playSound(kEntityTrain, "LIB050", SoundManager::kFlagDefault);
+				getSound()->playSound(kEntityTrain, "LIB050", kFlagDefault);
 				getLogic()->gameOver(kSavegameTypeIndex, 0, (getProgress().chapter == kChapter1) ? kSceneGameOverPolice1 : kSceneGameOverPolice2, true);
 			}
 			break;
@@ -235,7 +237,7 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityMahmud, params->param2 ? "MAH1170A" : "MAH1173", SoundManager::kFlagInvalid, 45);
+		getSound()->playSound(kEntityMahmud, params->param2 ? "MAH1170A" : "MAH1173", kFlagInvalid, 45);
 		getProgress().field_C4 = 1;
 
 		setCallback(1);
@@ -282,7 +284,7 @@ IMPLEMENT_FUNCTION(11, Mahmud, function11)
 	case kActionOpenDoor: {
 		getSound()->playSound(kEntityPlayer, (savepoint.action == kActionKnock ? "LIB012" : "LIB013"));
 
-		if (!getSound()->isBuffered(kEntityMahmud)) {
+		if (!getSoundQueue()->isBuffered(kEntityMahmud)) {
 			params->param1++;
 
 			getSound()->playSound(kEntityMahmud, (params->param1 == 1 ? "MAH1170E" : (params->param1 == 2 ? "MAH1173B" : "MAH1174")));
@@ -396,8 +398,8 @@ IMPLEMENT_FUNCTION(11, Mahmud, function11)
 		break;
 
 	case kAction123852928:
-		if (getSound()->isBuffered(kEntityMahmud))
-			getSound()->processEntry(kEntityMahmud);
+		if (getSoundQueue()->isBuffered(kEntityMahmud))
+			getSoundQueue()->processEntry(kEntityMahmud);
 
 		getObjects()->update(kObjectCompartment5, kEntityTrain, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObjectCompartment6, kEntityTrain, kObjectLocation3, kCursorHandKnock, kCursorHand);
@@ -560,7 +562,7 @@ IMPLEMENT_FUNCTION(14, Mahmud, chaptersHandler)
 
 			TIME_CHECK_CALLBACK(kTime1098000, params->param6, 1, setup_function13);
 
-			if (!getSound()->isBuffered("HAR1104") && getState()->time > kTime1167300 && !params->param7) {
+			if (!getSoundQueue()->isBuffered("HAR1104") && getState()->time > kTime1167300 && !params->param7) {
 				params->param7 = 1;
 
 				setCallback(2);
@@ -636,7 +638,7 @@ IMPLEMENT_FUNCTION(14, Mahmud, chaptersHandler)
 			params->param4 = 0;
 			params->param5 = 0;
 
-			if (!getSound()->isBuffered("HAR1104") && getState()->time > kTime1167300 && !params->param7) {
+			if (!getSoundQueue()->isBuffered("HAR1104") && getState()->time > kTime1167300 && !params->param7) {
 				params->param7 = 1;
 				setCallback(2);
 				setup_function12();

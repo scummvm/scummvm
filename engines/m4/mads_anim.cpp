@@ -536,7 +536,7 @@ void AnimviewView::updateState() {
 		// Clear up current background and sprites
 		_backgroundSurface.reset();
 		clearLists();
-		
+
 		// Reset flags
 		_startFrame = -1;
 

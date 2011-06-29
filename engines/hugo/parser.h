@@ -81,9 +81,9 @@ public:
 	virtual ~Parser();
 
 	bool isWordPresent(char **wordArr) const;
-	
+
 	uint16 getCmdDefaultVerbIdx(const uint16 index) const;
-	
+
 	void charHandler();
 	void command(const char *format, ...);
 	void freeParser();

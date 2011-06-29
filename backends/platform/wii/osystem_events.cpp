@@ -35,6 +35,7 @@
 #endif
 
 #include "common/config-manager.h"
+#include "backends/timer/default/default-timer.h"
 
 #define TIMER_THREAD_STACKSIZE (1024 * 32)
 #define TIMER_THREAD_PRIO 64

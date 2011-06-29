@@ -372,7 +372,7 @@ int32 RncDecoder::unpackM1(const void *input, uint16 inputSize, void *output) {
 				_dstPtr += inputLength;
 				_srcPtr += inputLength;
 				_inputByteLeft -= inputLength;
-				uint16 a; 
+				uint16 a;
 				if (_inputByteLeft <= 0)
 					a = 0;
 				else if (_inputByteLeft == 1)

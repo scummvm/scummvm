@@ -281,7 +281,7 @@ Common::Error MohawkEngine_Myst::run() {
 	// Load Help System (Masterpiece Edition Only)
 	if (getFeatures() & GF_ME) {
 		MohawkArchive *mhk = new MohawkArchive();
-		if (!mhk->open("help.dat"))
+		if (!mhk->openFile("help.dat"))
 			error("Could not load help.dat");
 		_mhk.push_back(mhk);
 	}
@@ -488,7 +488,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		_mhk[0] = new MohawkArchive();
 	}
 
-	if (!_mhk[0]->open(mystFiles[_curStack]))
+	if (!_mhk[0]->openFile(mystFiles[_curStack]))
 		error("Could not open %s", mystFiles[_curStack]);
 
 	if (getPlatform() == Common::kPlatformMacintosh)

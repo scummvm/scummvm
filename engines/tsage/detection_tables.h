@@ -24,7 +24,7 @@ namespace tSage {
 
 static const tSageGameDescription gameDescriptions[] = {
 
-	// Ringworld English CD version
+	// Ringworld CD and First Wave versions
 	{
 		{
 			"ring",
@@ -32,22 +32,8 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ring.rlb", "466f0e6492d9d0f34d35c5cd088de90f", 37847618),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		GType_Ringworld,
-		GF_CD | GF_ALT_REGIONS
-	},
-	// Ringworld First Wave English CD version
-	{
-		{
-			"ring",
-			"CD",
-			AD_ENTRY1s("ring.rlb", "0a25b4ee58d44a54425c0b47e5096bbc", 37847618),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			ADGF_UNSTABLE,
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
 		GF_CD | GF_ALT_REGIONS
@@ -57,11 +43,11 @@ static const tSageGameDescription gameDescriptions[] = {
 		{
 			"ring",
 			"Floppy",
-			AD_ENTRY1s("ring.rlb", "61f78f68a56832ae95fe06748c403234", 8438770),
+			AD_ENTRY1s("ring.rlb", "7b7f0c5b37b58fa5ec06ebb2ca0d0d9d", 8438770),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			ADGF_UNSTABLE,
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
 		GF_FLOPPY
@@ -71,44 +57,32 @@ static const tSageGameDescription gameDescriptions[] = {
 		{
 			"ring",
 			"Floppy Demo",
-			AD_ENTRY1s("tsage.rlb", "bf4e8525d0cab84b08b57126092eeacd", 833453),
+			AD_ENTRY1s("tsage.rlb", "3b3604a97c06c91f3735d3e9d341f63f", 833453),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO
 	},
+
 	// Ringworld English Floppy Demo #2 version
 	{
 		{
 			"ring",
 			"Floppy Demo",
-			AD_ENTRY1s("demoring.rlb", "9ecf48e088a0d475778fab480b3dbdd0", 832206),
+			AD_ENTRY1s("demoring.rlb", "64050e1806203b15bb03876140eb4f56", 832206),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
 	},
-
-	// Blue Force
-	{
-		{
-			"blueforce",
-			"",
-			AD_ENTRY1s("blue.rlb", "467da43c848cc0e800b547c59d84ccb1", 10032614),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		GType_BlueForce,
-		GF_FLOPPY
-	},
+#if 0
+	// FIXME: Compute new MD5s based on 5000 bytes instead of 0 (unlimited)
 	// Blue Force floppy
 	{
 		{
@@ -117,8 +91,23 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "17c3993415e8a2cf93040eef7e88ec93", 1156508),
 			Common::EN_ANY,
 			Common::kPlatformPC,
+			ADGF_UNSTABLE,
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
+		},
+		GType_BlueForce,
+		GF_FLOPPY
+	},
+#endif
+	// Blue Force
+	{
+		{
+			"blueforce",
+			"",
+			AD_ENTRY1s("blue.rlb", "17eabb456cb1546c66baf1aff387ba6a", 10032614),
+			Common::EN_ANY,
+			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
 		GF_FLOPPY
@@ -128,11 +117,11 @@ static const tSageGameDescription gameDescriptions[] = {
 		{
 			"blueforce",
 			"CD",
-			AD_ENTRY1s("blue.rlb", "ac29f38184cb3b874ea18523059872ba", 63863322),
+			AD_ENTRY1s("blue.rlb", "99983f48cb218f1f3760cf2f9a7ef11d", 63863322),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
 		GF_CD

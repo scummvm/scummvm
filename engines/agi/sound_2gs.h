@@ -33,7 +33,7 @@ namespace Agi {
 // Apple IIGS to halt the corresponding oscillator immediately. We preprocess
 // the sample data by converting it to signed values and the instruments by
 // detecting prematurely stopping samples beforehand.
-// 
+//
 // Note: None of the tested SIERRASTANDARD files have zeroes in them. So in
 // practice there is no need to check for them. However, they still do exist
 // in the sample resources.
@@ -263,7 +263,7 @@ private:
 	uint _ticks;										///< MIDI ticks (60Hz)
 	int16 *_out;										///< Output buffer
 	uint _outSize;										///< Output buffer size
-	
+
 	static const int kSfxMidiChannel = 15; ///< MIDI channel used for playing sample resources
 };
 

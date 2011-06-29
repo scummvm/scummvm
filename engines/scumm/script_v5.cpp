@@ -1611,7 +1611,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		foo = getVarOrDirectByte(PARAM_2);
 		bar = fetchScriptByte();
 		if (_townsPlayer)
-			_townsPlayer->setSoundVolume(resid, foo, bar);		
+			_townsPlayer->setSoundVolume(resid, foo, bar);
 		break;
 	case 37:
 		if (_townsPlayer)
@@ -2319,7 +2319,7 @@ void ScummEngine_v5::o5_verbOps() {
 
 			if (_game.platform == Common::kPlatformFMTowns && _game.version == 3 && slot)
 				continue;
-			
+
 			if (slot == 0) {
 				for (slot = 1; slot < _numVerbs; slot++) {
 					if (_verbs[slot].verbid == 0)

@@ -42,6 +42,7 @@
 #include "backends/fs/ds/ds-fs-factory.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/timer/default/default-timer.h"
 
 #ifdef ENABLE_AGI
 #include "wordcompletion.h"
@@ -81,7 +82,7 @@
 OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
-	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _timer(NULL), _frameBufferExists(false),
+	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _frameBufferExists(false),
 	_disableCursorPalette(true), _graphicsEnable(true), _gammaValue(0)
 {
 //	eventNum = 0;
@@ -89,13 +90,17 @@ OSystem_DS::OSystem_DS()
 //	queuePos = 0;
 	_instance = this;
 //	_mixer = NULL;
-  //  _timer = NULL;
 	//_frameBufferExists = false;
 }
 
 OSystem_DS::~OSystem_DS() {
 	delete _mixer;
-	delete _timer;
+	_mixer = 0;
+
+	// If _savefileManager is not 0, then it points to the OSystem_DS
+	// member variable mpSaveManager. Hence we set _savefileManager to
+	// 0, to prevent the OSystem destructor from trying to delete it.
+	_savefileManager = 0;
 }
 
 int OSystem_DS::timerHandler(int t) {
@@ -108,7 +113,11 @@ void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_medium_quality", true);
 
-	_timer = new DefaultTimerManager();
+	if (DS::isGBAMPAvailable()) {
+		_savefileManager = &mpSaveManager;
+	}
+
+	_timerManager = new DefaultTimerManager();
     DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
 
 	if (ConfMan.hasKey("22khzaudio", "ds") && ConfMan.getBool("22khzaudio", "ds")) {
@@ -125,7 +134,7 @@ void OSystem_DS::initBackend() {
 		_audiocdManager = new DSAudioCDManager();
 	*/
 
-	BaseBackend::initBackend();
+	EventsBaseBackend::initBackend();
 }
 
 bool OSystem_DS::hasFeature(Feature f) {
@@ -746,14 +755,6 @@ void OSystem_DS::quit() {
 	asm("swi 0x26\n");
 	swiSoftReset();*/
 }
-
-Common::SaveFileManager *OSystem_DS::getSavefileManager() {
-	if (DS::isGBAMPAvailable()) {
-		return &mpSaveManager;
-	}
-	return NULL;
-}
-
 
 Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
 

@@ -373,17 +373,23 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 
 				default: // alpha blending
 #if defined(SCUMM_LITTLE_ENDIAN)
-					if (cb != 255)
+					if (cb == 0)
+						*out = 0;
+					else if (cb != 255)
 						*out += ((b - *out) * a * cb) >> 16;
 					else
 						*out += ((b - *out) * a) >> 8;
 					out++;
-					if (cg != 255)
+					if (cg == 0)
+						*out = 0;
+					else if (cg != 255)
 						*out += ((g - *out) * a * cg) >> 16;
 					else
 						*out += ((g - *out) * a) >> 8;
 					out++;
-					if (cr != 255)
+					if (cr == 0)
+						*out = 0;
+					else if (cr != 255)
 						*out += ((r - *out) * a * cr) >> 16;
 					else
 						*out += ((r - *out) * a) >> 8;
@@ -393,17 +399,23 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 #else
 					*out = 255;
 					out++;
-					if (cr != 255)
+					if (cr == 0)
+						*out = 0;
+					else if (cr != 255)
 						*out += ((r - *out) * a * cr) >> 16;
 					else
 						*out += ((r - *out) * a) >> 8;
 					out++;
-					if (cg != 255)
+					if (cg == 0)
+						*out = 0;
+					else if (cg != 255)
 						*out += ((g - *out) * a * cg) >> 16;
 					else
 						*out += ((g - *out) * a) >> 8;
 					out++;
-					if (cb != 255)
+					if (cb == 0)
+						*out = 0;
+					else if (cb != 255)
 						*out += ((b - *out) * a * cb) >> 16;
 					else
 						*out += ((b - *out) * a) >> 8;

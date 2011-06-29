@@ -26,12 +26,12 @@
 #if defined(OPENPANDORA)
 
 #include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl.h"
+#include "backends/platform/sdl/sdl-sys.h"
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/events/openpandora/op-events.h"
 #include "backends/graphics/openpandora/op-graphics.h"
 
-#define __OPENPANDORA__
+//#define MIXER_DOUBLE_BUFFERING 1
 
 #ifndef PATH_MAX
 	#define PATH_MAX 255
@@ -39,16 +39,22 @@
 
 class OSystem_OP : public OSystem_POSIX {
 public:
-	OSystem_OP() {}
+	OSystem_OP();
 
 	/* Platform Setup Stuff */
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 	void initBackend();
-	void initSDL();
 	void quit();
 
 protected:
+	bool _inited;
+	bool _initedSDL;
 
+	/**
+	 * Initialse the SDL library
+	 * with an OpenPandora workaround.
+	 */
+	virtual void initSDL();
 };
 #endif
 #endif //OP_SDL_H

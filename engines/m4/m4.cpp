@@ -259,7 +259,7 @@ void MadsM4Engine::dumpFile(const char *filename, bool uncompress) {
 	Common::DumpFile f;
 	byte buffer[DUMP_BUFFER_SIZE];
 	Common::SeekableReadStream *fileS = res()->get(filename);
-	
+
 	if (!f.open(filename))
 		error("Could not open '%s' for writing", filename);
 

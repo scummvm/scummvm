@@ -298,6 +298,9 @@ public:
 			_bufferSize = osamp;
 		}
 
+		if (!_buffer)
+			error("[CopyRateConverter::flow] Cannot allocate memory for temp buffer");
+
 		// Read up to 'osamp' samples into our temporary buffer
 		len = input.readBuffer(_buffer, osamp);
 

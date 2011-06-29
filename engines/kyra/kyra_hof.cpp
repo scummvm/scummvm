@@ -503,14 +503,6 @@ void KyraEngine_HoF::runLoop() {
 		int inputFlag = checkInput(_buttonList, true);
 		removeInputTop();
 
-		if (_updateHandItemCursor) {
-			// This works around an issue which would occur when setHandItem(_itemInHand)
-			// was called from inside loadGameState(). When loading via GMM the
-			// mouse cursor would not be set correctly.
-			_updateHandItemCursor = false;
-			setHandItem(_itemInHand);
-		}
-
 		update();
 
 		if (inputFlag == 198 || inputFlag == 199) {

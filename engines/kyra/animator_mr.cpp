@@ -449,11 +449,10 @@ void KyraEngine_MR::showIdleAnim() {
 			"A", "R", "R", "FR", "FX", "FL", "L", "L"
 		};
 
-		char filename[14];
-		snprintf(filename, 14, "MI0%s%.02d.EMC", facingTable[_mainCharacter.facing], _characterShapeFile);
+		Common::String filename = Common::String::format( "MI0%s%.02d.EMC", facingTable[_mainCharacter.facing], _characterShapeFile);
 
-		if (_res->exists(filename))
-			runAnimationScript(filename, 1, 1, 1, 1);
+		if (_res->exists(filename.c_str()))
+			runAnimationScript(filename.c_str(), 1, 1, 1, 1);
 	}
 
 	_nextIdleType = !_nextIdleType;

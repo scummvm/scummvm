@@ -152,7 +152,7 @@ void ScummEngine_v0::setNewKidVerbs() {
 
 void ScummEngine_v0::switchActor(int slot) {
 	resetSentence(false);
-	
+
 	if (_currentRoom == 45)
 		return;
 
@@ -728,7 +728,7 @@ void ScummEngine_v0::runObject(int obj, int entry) {
 			entry = 0x0F;
 		}
 	}
-	
+
 	_v0ObjectInInventory = prev;
 
 	if (getVerbEntrypoint(obj, entry) != 0) {
@@ -830,7 +830,7 @@ bool ScummEngine_v0::verbObtain(int obj, int objIndex) {
 		} else {
 			_verbPickup = false;
 		}
-		
+
 		// Ignore verbs?
 		Actor *a = derefActor(VAR(VAR_EGO), "verbObtain");
 		if (((ActorC64 *)a)->_miscflags & 0x40) {
@@ -989,7 +989,7 @@ bool ScummEngine_v0::verbExec() {
 		runObject(_activeObjectIndex, entry);
 		_v0ObjectIndex = false;
 	} else if (_activeInventory) {
-		// Not sure this is the correct way to do this, 
+		// Not sure this is the correct way to do this,
 		// however its working for most situations - segra
 		if (verbExecutes(_activeInventory, true) == false) {
 			if (_activeObject2 && _activeObject2Inv && verbExecutes(_activeObject2, true)) {
@@ -1001,7 +1001,7 @@ bool ScummEngine_v0::verbExec() {
 				runObject(_activeObject, _activeVerb);
 			} else {
 				_v0ObjectInInventory = true;
-					
+
 				if (_activeObject2) {
 					_activeObject = _activeObject2;
 
@@ -1085,7 +1085,7 @@ void ScummEngine_v0::checkExecVerbs() {
 
 			// Click into V2 inventory
 			checkV2Inventory(_mouse.x, _mouse.y);
-			
+
 			// Did the Inventory position changed (arrows pressed, do nothing)
 			if (invOff != _inventoryOffset)
 				return;
@@ -1143,7 +1143,7 @@ void ScummEngine_v0::checkExecVerbs() {
 				obj = 0;
 				objIdx = 0;
 			}
-			
+
 			if (a->_miscflags & 0x80) {
 				if (_activeVerb != 7 && over != 7) {
 					_activeVerb = 0;
@@ -1444,9 +1444,9 @@ void ScummEngine::restoreVerbBG(int verb) {
 	VerbSlot *vs;
 
 	vs = &_verbs[verb];
-	uint8 col = 
+	uint8 col =
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-		((_game.platform == Common::kPlatformFMTowns) && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && (vs->bkcolor == _townsOverrideShadowColor)) ? 0 : 
+		((_game.platform == Common::kPlatformFMTowns) && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && (vs->bkcolor == _townsOverrideShadowColor)) ? 0 :
 #endif
 		vs->bkcolor;
 

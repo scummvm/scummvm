@@ -126,7 +126,7 @@ struct SceneDescription {
 	uint16 sceneScriptEntrypointNumber;
 	uint16 startScriptEntrypointNumber;
 	int16 musicResourceId;
-	
+
 	void reset()  {
 		flags = resourceListResourceId = endSlope = beginSlope = scriptModuleNumber = sceneScriptEntrypointNumber = startScriptEntrypointNumber = musicResourceId = 0;
 	}
