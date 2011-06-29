@@ -1310,7 +1310,8 @@ void BITMAP::Show(int x, int y) {
 				++srcP;
 		}
 	}
-
+/*
+	DEBUG code to display image immediately 
 	// Temporary
 	g_system->copyRectToScreen((const byte *)VGA::Page[1]->getBasePtr(0, 0), SCR_WID, 0, 0, SCR_WID, SCR_HIG);
 	byte palData[PAL_SIZ];
@@ -1319,6 +1320,7 @@ void BITMAP::Show(int x, int y) {
 
 	g_system->updateScreen();
 	g_system->delayMillis(5000);
+*/
 }
 
 
