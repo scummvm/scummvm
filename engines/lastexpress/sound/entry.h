@@ -24,30 +24,30 @@
 #define LASTEXPRESS_SOUND_ENTRY_H
 
 /*
-	Sound entry: 68 bytes (this is what appears in the savegames)
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
+	Sound entry: 68 bytes (this is what appears in savegames)
+	    uint32 {4}      - status
+	    uint32 {4}      - type
+	    uint32 {4}      - blockCount
+	    uint32 {4}      - time
 	    uint32 {4}      - ??
 	    uint32 {4}      - ??
 	    uint32 {4}      - entity
 	    uint32 {4}      - ??
-	    uint32 {4}      - ??
+	    uint32 {4}      - priority
 	    char {16}       - name 1
 	    char {16}       - name 2
 
 	Sound queue entry: 120 bytes
 	    uint16 {2}      - status
+	    byte {1}        - type
 	    byte {1}        - ??
-	    byte {1}        - ??
 	    uint32 {4}      - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - file data pointer
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
+	    uint32 {4}      - currentDataPtr
+	    uint32 {4}      - soundData
+	    uint32 {4}      - currentBufferPtr
+	    uint32 {4}      - blockCount
+	    uint32 {4}      - time
+	    uint32 {4}      - size
 	    uint32 {4}      - ??
 	    uint32 {4}      - archive structure pointer
 	    uint32 {4}      - ??
@@ -57,7 +57,7 @@
 	    uint32 {4}      - ??
 	    uint32 {4}      - entity
 	    uint32 {4}      - ??
-	    uint32 {4}      - ??
+	    uint32 {4}      - priority
 	    char {16}       - name 1
 	    char {16}       - name 2
 	    uint32 {4}      - pointer to next entry in the queue
@@ -68,6 +68,8 @@
 #include "lastexpress/data/subtitle.h"
 
 #include "lastexpress/shared.h"
+
+#include "common/serializer.h"
 
 namespace LastExpress {
 
@@ -109,13 +111,18 @@ union SoundStatusUnion {
 //////////////////////////////////////////////////////////////////////////
 // SoundEntry
 //////////////////////////////////////////////////////////////////////////
-class SoundEntry {
+class SoundEntry : Common::Serializable {
 public:
 	SoundEntry(LastExpressEngine *engine);
 	~SoundEntry();
 
+	void open(Common::String name, SoundFlag flag, int priority);
+	void close();
+
 	void setStatus(SoundFlag flag);
+	void setType(SoundFlag flag);
 	void setInCache();
+	void loadSoundData(Common::String name);
 	void update(uint val);
 	void updateState();
 	void reset();
@@ -123,37 +130,47 @@ public:
 	// Subtitles
 	void showSubtitle(Common::String filename);
 
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &ser);
+
+	// Accessors
+	void setType(SoundType type) { _type = type; }
+	SoundType getType() { return _type; }
+
+	void setEntity(EntityIndex entity) { _entity = entity; }
+	EntityIndex getEntity() { return _entity; }
+
 private:
 	LastExpressEngine *_engine;
 
 public:
-	SoundStatusUnion status;
-	SoundType type;    // int
-	//int data;
-	//int endOffset;
-	int currentDataPtr;
-	void *soundData;
-	//int currentBufferPtr;
-	int blockCount;
-	uint32 time;
-	//int size;
-	//int field_28;
-	Common::SeekableReadStream *stream;	// int
-	//int field_30;
-	int field_34;
-	int field_38;
-	int field_3C;
-	int field_40;
-	EntityIndex entity;
-	int field_48;
-	uint32 priority;
-	Common::String name1; //char[16];
-	Common::String name2; //char[16];
-	//int next; // offset to the next structure in the list (not used)
-	SubtitleEntry *subtitle;
+	SoundStatusUnion _status;
+	SoundType _type;    // int
+	//int _data;
+	//int _endOffset;
+	int _currentDataPtr;
+	void *_soundData;
+	//int _currentBufferPtr;
+	int _blockCount;
+	uint32 _time;
+	//int _size;
+	//int _field_28;
+	Common::SeekableReadStream *_stream;    // int
+	//int _field_30;
+	int _field_34;
+	int _field_38;
+	int _field_3C;
+	int _field_40;
+	EntityIndex _entity;
+	int _field_48;
+	uint32 _priority;
+	Common::String _name1;    //char[16];
+	Common::String _name2;    //char[16];
+	// original has pointer to the next structure in the list (not used)
+	SubtitleEntry *_subtitle;
 
 	// Sound stream
-	StreamedSound *soundStream;
+	StreamedSound *_soundStream;
 };
 
 //////////////////////////////////////////////////////////////////////////

@@ -161,15 +161,15 @@ void SoundManager::handleTimer() {
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		SoundEntry *entry = (*i);
-		if (entry->stream == NULL) {
+		if (entry->_stream == NULL) {
 			SAFE_DELETE(*i);
 			i = _soundList.reverse_erase(i);
 			continue;
-		} else if (!entry->soundStream) {
-			entry->soundStream = new StreamedSound();
+		} else if (!entry->_soundStream) {
+			entry->_soundStream = new StreamedSound();
 
 			// TODO: stream any sound in the queue after filtering
-			entry->soundStream->load(entry->stream);
+			entry->_soundStream->load(entry->_stream);
 		}
 	}
 }
@@ -189,7 +189,7 @@ void SoundManager::resetQueue(SoundType type1, SoundType type2) {
 	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
-		if ((*i)->type != type1 && (*i)->type != type2)
+		if ((*i)->getType() != type1 && (*i)->getType() != type2)
 			(*i)->reset();
 	}
 }
@@ -226,7 +226,7 @@ void SoundManager::clearQueue() {
 		SoundEntry *entry = (*i);
 
 		// Delete entry
-		removeEntry(entry);
+		entry->close();
 		SAFE_DELETE(entry);
 
 		i = _soundList.reverse_erase(i);
@@ -247,7 +247,7 @@ bool SoundManager::isBuffered(Common::String filename, bool testForEntity) {
 	SoundEntry *entry = getEntry(filename);
 
 	if (testForEntity)
-		return entry != NULL && !entry->entity;
+		return entry != NULL && entry->getEntity() != kEntityPlayer;
 
 	return (entry != NULL);
 }
@@ -255,96 +255,8 @@ bool SoundManager::isBuffered(Common::String filename, bool testForEntity) {
 //////////////////////////////////////////////////////////////////////////
 // Entry
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::setupEntry(SoundEntry *entry, Common::String name, SoundFlag flag, int priority) {
-	if (!entry)
-		error("SoundManager::setupEntry: Invalid entry!");
-
-	entry->priority = priority;
-	setEntryType(entry, flag);
-	entry->setStatus(flag);
-
-	// Add entry to sound list
-	_soundList.push_back(entry);
-
-	// TODO Add entry to cache and load sound data
-	//setupCache(entry);
-	loadSoundData(entry, name);
-}
-
-void SoundManager::setEntryType(SoundEntry *entry, SoundFlag flag) {
-	switch (flag & kFlagType9) {
-	default:
-	case kFlagNone:
-		entry->type = _currentType;
-		_currentType = (SoundType)(_currentType + 1);
-		break;
-
-	case kFlagType1_2: {
-		SoundEntry *previous2 = getEntry(kSoundType2);
-		if (previous2)
-			previous2->update(0);
-
-		SoundEntry *previous = getEntry(kSoundType1);
-		if (previous) {
-			previous->type = kSoundType2;
-			previous->update(0);
-		}
-
-		entry->type = kSoundType1;
-		}
-		break;
-
-	case kFlagType3: {
-		SoundEntry *previous = getEntry(kSoundType3);
-		if (previous) {
-			previous->type = kSoundType4;
-			previous->update(0);
-		}
-
-		entry->type = kSoundType11;
-		}
-		break;
-
-	case kFlagType7: {
-		SoundEntry *previous = getEntry(kSoundType7);
-		if (previous)
-			previous->type = kSoundType8;
-
-		entry->type = kSoundType7;
-		}
-		break;
-
-	case kFlagType9: {
-		SoundEntry *previous = getEntry(kSoundType9);
-		if (previous)
-			previous->type = kSoundType10;
-
-		entry->type = kSoundType9;
-		}
-		break;
-
-	case kFlagType11: {
-		SoundEntry *previous = getEntry(kSoundType11);
-		if (previous)
-			previous->type = kSoundType14;
-
-		entry->type = kSoundType11;
-		}
-		break;
-
-	case kFlagType13: {
-		SoundEntry *previous = getEntry(kSoundType13);
-		if (previous)
-			previous->type = kSoundType14;
-
-		entry->type = kSoundType13;
-		}
-		break;
-	}
-}
-
 bool SoundManager::setupCache(SoundEntry *entry) {
-	if (entry->soundData)
+	if (entry->_soundData)
 		return true;
 
 	if (_soundCache.size() >= SOUNDCACHE_MAX_SIZE) {
@@ -353,8 +265,8 @@ bool SoundManager::setupCache(SoundEntry *entry) {
 		uint32 size = 1000;
 
 		for (Common::List<SoundEntry *>::iterator i = _soundCache.begin(); i != _soundCache.end(); ++i) {
-			if (!((*i)->status.status & kSoundStatus_180)) {
-				uint32 newSize = (*i)->priority + ((*i)->status.status & kSoundStatusClear1);
+			if (!((*i)->_status.status & kSoundStatus_180)) {
+				uint32 newSize = (*i)->_priority + ((*i)->_status.status & kSoundStatusClear1);
 
 				if (newSize < size) {
 					cacheEntry = (*i);
@@ -363,7 +275,7 @@ bool SoundManager::setupCache(SoundEntry *entry) {
 			}
 		}
 
-		if (entry->priority <= size)
+		if (entry->_priority <= size)
 			return false;
 
 		if (!cacheEntry)
@@ -372,17 +284,17 @@ bool SoundManager::setupCache(SoundEntry *entry) {
 		cacheEntry->setInCache();
 
 		// TODO: Wait until the cache entry is ready to be removed
-		while (!(cacheEntry->status.status1 & 1))
+		while (!(cacheEntry->_status.status1 & 1))
 			;
 
-		if (cacheEntry->soundData)
+		if (cacheEntry->_soundData)
 			removeFromCache(cacheEntry);
 
 		_soundCache.push_back(entry);
-		entry->soundData = (char *)_soundCacheData + SOUNDCACHE_ENTRY_SIZE * (_soundCache.size() - 1);
+		entry->_soundData = (char *)_soundCacheData + SOUNDCACHE_ENTRY_SIZE * (_soundCache.size() - 1);
 	} else {
 		_soundCache.push_back(entry);
-		entry->soundData = (char *)_soundCacheData + SOUNDCACHE_ENTRY_SIZE * (_soundCache.size() - 1);
+		entry->_soundData = (char *)_soundCacheData + SOUNDCACHE_ENTRY_SIZE * (_soundCache.size() - 1);
 	}
 
 	return true;
@@ -392,7 +304,7 @@ void SoundManager::removeFromCache(SoundEntry *entry) {
 	for (Common::List<SoundEntry *>::iterator i = _soundCache.begin(); i != _soundCache.end(); ++i) {
 		if ((*i) == entry) {
 			// Remove sound buffer
-			entry->soundData = NULL;
+			entry->_soundData = NULL;
 
 			// Remove entry from sound cache
 			i = _soundCache.reverse_erase(i);
@@ -404,48 +316,7 @@ void SoundManager::clearStatus() {
 	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		(*i)->status.status |= kSoundStatusClear3;
-}
-
-void SoundManager::loadSoundData(SoundEntry *entry, Common::String name) {
-	entry->name2 = name;
-
-	// Load sound data
-	entry->stream = getArchive(name);
-
-	if (!entry->stream)
-		entry->stream = getArchive("DEFAULT.SND");
-
-	if (entry->stream) {
-		warning("Sound::loadSoundData: not implemented!");
-	} else {
-		entry->status.status = kSoundStatusRemoved;
-	}
-}
-
-void SoundManager::removeEntry(SoundEntry *entry) {
-	entry->status.status |= kSoundStatusRemoved;
-
-	// Loop until ready
-	while (!(entry->status.status1 & 4) && !(_flag & 8) && (_flag & 1))
-		;	// empty loop body
-
-	// The original game remove the entry from the cache here,
-	// but since we are called from within an iterator loop
-	// we will remove the entry there
-	// removeFromCache(entry);
-
-	if (entry->subtitle) {
-		entry->subtitle->draw();
-		SAFE_DELETE(entry->subtitle);
-	}
-
-	if (entry->entity) {
-		if (entry->entity == kEntitySteam)
-			playLoopingSound(2);
-		else if (entry->entity != kEntityTrain)
-			getSavePoints()->push(kEntityPlayer, entry->entity, kActionEndSound);
-	}
+		(*i)->_status.status |= kSoundStatusClear3;
 }
 
 void SoundManager::processEntry(EntityIndex entity) {
@@ -454,7 +325,7 @@ void SoundManager::processEntry(EntityIndex entity) {
 	SoundEntry *entry = getEntry(entity);
 	if (entry) {
 		entry->update(0);
-		entry->entity = kEntityPlayer;
+		entry->setEntity(kEntityPlayer);
 	}
 }
 
@@ -471,7 +342,7 @@ void SoundManager::setupEntry(SoundType type, EntityIndex index) {
 
 	SoundEntry *entry = getEntry(type);
 	if (entry)
-		entry->entity = index;
+		entry->setEntity(index);
 }
 
 void SoundManager::processEntry(Common::String filename) {
@@ -480,7 +351,7 @@ void SoundManager::processEntry(Common::String filename) {
 	SoundEntry *entry = getEntry(filename);
 	if (entry) {
 		entry->update(0);
-		entry->entity = kEntityPlayer;
+		entry->setEntity(kEntityPlayer);
 	}
 }
 
@@ -496,7 +367,7 @@ uint32 SoundManager::getEntryTime(EntityIndex index) {
 
 	SoundEntry *entry = getEntry(index);
 	if (entry)
-		return entry->time;
+		return entry->_time;
 
 	return 0;
 }
@@ -515,7 +386,7 @@ void SoundManager::unknownFunction4() {
 //////////////////////////////////////////////////////////////////////////
 SoundEntry *SoundManager::getEntry(EntityIndex index) {
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
-		if ((*i)->entity == index)
+		if ((*i)->getEntity() == index)
 			return *i;
 	}
 
@@ -527,7 +398,7 @@ SoundEntry *SoundManager::getEntry(Common::String name) {
 		name += ".SND";
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
-		if ((*i)->name2 == name)
+		if ((*i)->_name2 == name)
 			return *i;
 	}
 
@@ -536,7 +407,7 @@ SoundEntry *SoundManager::getEntry(Common::String name) {
 
 SoundEntry *SoundManager::getEntry(SoundType type) {
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
-		if ((*i)->type == type)
+		if ((*i)->getType() == type)
 			return *i;
 	}
 
@@ -547,6 +418,8 @@ SoundEntry *SoundManager::getEntry(SoundType type) {
 // Savegame
 //////////////////////////////////////////////////////////////////////////
 void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
+	Common::StackLock locker(_mutex);
+
 	s.syncAsUint32LE(_state);
 	s.syncAsUint32LE(_currentType);
 
@@ -554,39 +427,12 @@ void SoundManager::saveLoadWithSerializer(Common::Serializer &s) {
 	uint32 numEntries = count();
 	s.syncAsUint32LE(numEntries);
 
-	Common::StackLock locker(_mutex);
-
 	// Save or load each entry data
 	if (s.isSaving()) {
-		for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
-			SoundEntry *entry = *i;
-			if (entry->name2.matchString("NISSND?") && (entry->status.status & kFlagType7) != kFlag3) {
-				s.syncAsUint32LE(entry->status.status); // status;
-				s.syncAsUint32LE(entry->type); // type;
-				s.syncAsUint32LE(entry->blockCount); // field_8;
-				s.syncAsUint32LE(entry->time); // time;
-				s.syncAsUint32LE(entry->field_34); // field_10;
-				s.syncAsUint32LE(entry->field_38); // field_14;
-				s.syncAsUint32LE(entry->entity); // entity;
-
-				uint32 blockCount = (uint32)entry->field_48 - _data2;
-				if (blockCount > kFlag8)
-					blockCount = 0;
-				s.syncAsUint32LE(blockCount); // blockCount;
-
-				s.syncAsUint32LE(entry->priority); // field_20;
-
-				char name1[16];
-				strcpy((char *)&name1, entry->name1.c_str());
-				s.syncBytes((byte *)&name1, 16);
-
-				char name2[16];
-				strcpy((char *)&name2, entry->name2.c_str());
-				s.syncBytes((byte *)&name2, 16);
-			}
-		}
+		for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
+			(*i)->saveLoadWithSerializer(s);
 	} else {
-		warning("Sound::saveLoadWithSerializer: not implemented!");
+		warning("Sound::saveLoadWithSerializer: loading not implemented");
 		s.skip(numEntries * 64);
 	}
 }
@@ -600,7 +446,7 @@ uint32 SoundManager::count() {
 
 	uint32 numEntries = 0;
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		if ((*i)->name2.matchString("NISSND?"))
+		if ((*i)->_name2.matchString("NISSND?"))
 			++numEntries;
 
 	return numEntries;
@@ -629,12 +475,12 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, SoundFlag fla
 
 	Common::StackLock locker(_mutex);
 
-	setupEntry(entry, filename, flag, 30);
-	entry->entity = entity;
+	entry->open(filename, flag, 30);
+	entry->_entity = entity;
 
 	if (a4) {
-		entry->field_48 = _data2 + 2 * a4;
-		entry->status.status |= kSoundStatus_8000;
+		entry->_field_48 = _data2 + 2 * a4;
+		entry->_status.status |= kSoundStatus_8000;
 	} else {
 		// Get subtitles name
 		while (filename.size() > 4)
@@ -644,7 +490,7 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, SoundFlag fla
 		entry->updateState();
 	}
 
-	return (entry->type != kSoundTypeNone);
+	return (entry->getType() != kSoundTypeNone);
 }
 
 void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
@@ -1763,16 +1609,16 @@ void SoundManager::updateSubtitles() {
 	for (Common::List<SubtitleEntry *>::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
 		uint32 current_index = 0;
 		SoundEntry *soundEntry = (*i)->getSoundEntry();
-		SoundStatus status = (SoundStatus)soundEntry->status.status;
+		SoundStatus status = (SoundStatus)soundEntry->_status.status;
 
 		if (!(status & kSoundStatus_40)
-		 || status & 0x180
-		 || soundEntry->time == 0
-		 || (status & 0x1F) < 6
-		 || ((getFlags()->nis & 0x8000) && soundEntry->priority < 90)) {
+		 || status & kSoundStatus_180
+		 || soundEntry->_time == 0
+		 || (status & kSoundStatusClear1) < 6
+		 || ((getFlags()->nis & 0x8000) && soundEntry->_priority < 90)) {
 			 current_index = 0;
 		} else {
-			current_index = soundEntry->priority + (status & 0x1F);
+			current_index = soundEntry->_priority + (status & kSoundStatusClear1);
 
 			if (_currentSubtitle == (*i))
 				current_index += 4;
@@ -1808,15 +1654,15 @@ void SoundManager::playLoopingSound(int param) {
 	char tmp[80];
 
 	for (snd = _soundList.begin(); snd != _soundList.end(); ++snd) {
-		if ((*snd)->type == kSoundType1)
+		if ((*snd)->getType() == kSoundType1)
 			break;
 	}
 
 	byte numLoops[8];
 	static const EntityPosition positions[8] = { kPosition_8200, kPosition_7500,
-												 kPosition_6470, kPosition_5790,
-												 kPosition_4840, kPosition_4070,
-												 kPosition_3050, kPosition_2740 };
+	                                             kPosition_6470, kPosition_5790,
+	                                             kPosition_4840, kPosition_4070,
+	                                             kPosition_3050, kPosition_2740 };
 
 	numLoops[1] = 4;
 	numLoops[2] = 2;
@@ -1889,7 +1735,7 @@ void SoundManager::playLoopingSound(int param) {
 		if (getFlags()->flag_3)
 			fnameLen = 5;
 
-		if (!*snd || scumm_strnicmp((*snd)->name2.c_str(), tmp, fnameLen)) {
+		if (!*snd || scumm_strnicmp((*snd)->_name2.c_str(), tmp, fnameLen)) {
 			_loopingSoundDuration = _engine->getRandom().getRandomNumber(319) + 260;
 
 			if (partNumber != 99) {
@@ -1899,7 +1745,7 @@ void SoundManager::playLoopingSound(int param) {
 					(*snd)->update(0);
 
 				for (snd = _soundList.begin(); snd != _soundList.end(); ++snd) {
-					if ((*snd)->type == kSoundType1) {
+					if ((*snd)->getType() == kSoundType1) {
 						(*snd)->update(7);
 						break;
 					}
@@ -1913,7 +1759,7 @@ void SoundManager::stopAllSound() {
 	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		(*i)->soundStream->stop();
+		(*i)->_soundStream->stop();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2232,12 +2078,12 @@ static const int p2s[17] = { 0, 1, 1, 3, 1, 5, 3, 7, 1, 9, 5, 11, 3, 13, 7, 15, 
 static void soundFilter(byte *data, int16 *buffer, int p1, int p2);
 
 void SoundManager::applyFilter(SoundEntry *entry, int16 *buffer) {
-	if ((((byte *)entry->soundData)[1] << 6) > 0x1600) {
-    entry->status.status |= 0x20000000;
+	if ((((byte *)entry->_soundData)[1] << 6) > 0x1600) {
+    entry->_status.status |= 0x20000000;
   } else {
-	  int variant = entry->status.status & 0x1f;
+	  int variant = entry->_status.status & 0x1f;
 
-	  soundFilter((byte *)entry->soundData, buffer, p1s[variant], p2s[variant]);
+	  soundFilter((byte *)entry->_soundData, buffer, p1s[variant], p2s[variant]);
   }
 }
 

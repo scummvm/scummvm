@@ -84,6 +84,8 @@ public:
 	void playLocomotiveSound();
 	void playWarningCompartment(EntityIndex entity, ObjectIndex compartment);
 
+	void playLoopingSound(int param);
+
 	// Dialog & Letters
 	void readText(int id);
 	const char *getDialogName(EntityIndex entity) const;
@@ -109,12 +111,21 @@ public:
 	uint32 getFlag() { return _flag; }
 	int getSubtitleFlag() { return _subtitlesFlag; }
 	void setSubtitleFlag(int flag) { _subtitlesFlag = flag; }
+	SoundType getCurrentType() { return _currentType; }
+	void setCurrentType(SoundType type) { _currentType = type; }
+	uint32 getData2() { return _data2; }
 
 	// Subtitles
 	void addSubtitle(SubtitleEntry *entry) { _subtitles.push_back(entry); }
 	void removeSubtitle(SubtitleEntry *entry) { _subtitles.remove(entry); }
 	void setCurrentSubtitle(SubtitleEntry *entry) { _currentSubtitle = entry; }
 	SubtitleEntry *getCurrentSubtitle() { return _currentSubtitle; }
+
+	// Queue
+	bool setupCache(SoundEntry *entry);
+	void addToQueue(SoundEntry *entry) { _soundList.push_back(entry); }
+
+	SoundEntry *getEntry(SoundType type);
 
 private:
 	typedef int32 *SoundBuffer;
@@ -149,7 +160,6 @@ private:
 	uint32 _lastWarning[12];
 
 	// Looping sound
-	void playLoopingSound(int param);
 	int _loopingSoundDuration;
 
 	// Sound entries
@@ -159,14 +169,8 @@ private:
 
 	SoundEntry *getEntry(EntityIndex index);
 	SoundEntry *getEntry(Common::String name);
-	SoundEntry *getEntry(SoundType type);
 
-	void setupEntry(SoundEntry *entry, Common::String name, SoundFlag flag, int priority);
-	void setEntryType(SoundEntry *entry, SoundFlag flag);
-	bool setupCache(SoundEntry *entry);
 	void removeFromCache(SoundEntry *entry);
-	void loadSoundData(SoundEntry *entry, Common::String name);
-	void removeEntry(SoundEntry *entry);
 
 	// Subtitles
 	int _subtitlesFlag;
