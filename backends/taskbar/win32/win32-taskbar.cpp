@@ -234,18 +234,18 @@ Common::String Win32TaskbarManager::getIconPath(Common::String target) {
 
 // VerSetConditionMask and VerifyVersionInfo didn't appear until Windows 2000,
 // so we need to check for them at runtime
-LONGLONG VerSetConditionMaskFunc(ULONGLONG conditionMask, DWORD typeMask, BYTE condition) {
-	typedef BOOL (WINAPI *VerSetConditionMaskFunction)(ULONGLONG ConditionMask, DWORD TypeMask, BYTE Condition);
+LONGLONG VerSetConditionMaskFunc(ULONGLONG dwlConditionMask, DWORD dwTypeMask, BYTE dwConditionMask) {
+	typedef BOOL (WINAPI *VerSetConditionMaskFunction)(ULONGLONG conditionMask, DWORD typeMask, BYTE conditionOperator);
 
 	VerSetConditionMaskFunction verSetConditionMask = (VerSetConditionMaskFunction)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "VerSetConditionMask");
 	if (verSetConditionMask == NULL)
 		return 0;
 
-	return verSetConditionMask(conditionMask, typeMask, condition);
+	return verSetConditionMask(dwlConditionMask, dwTypeMask, dwConditionMask);
 }
 
 BOOL VerifyVersionInfoFunc(LPOSVERSIONINFOEXA lpVersionInformation, DWORD dwTypeMask, DWORDLONG dwlConditionMask) {
-   typedef BOOL (WINAPI *VerifyVersionInfoFunction)(LPOSVERSIONINFOEXA lpVersionInformation, DWORD dwTypeMask, DWORDLONG dwlConditionMask);
+   typedef BOOL (WINAPI *VerifyVersionInfoFunction)(LPOSVERSIONINFOEXA versionInformation, DWORD typeMask, DWORDLONG conditionMask);
 
    VerifyVersionInfoFunction verifyVersionInfo = (VerifyVersionInfoFunction)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "VerifyVersionInfoA");
    if (verifyVersionInfo == NULL)
