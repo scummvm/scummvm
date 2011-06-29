@@ -30,6 +30,8 @@
 
 #include "lastexpress/menu/menu.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/debug.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -125,7 +127,7 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 		while (_savegame->pos() < _savegame->size() && !_savegame->eos() && !_savegame->err()) {
 
 			// Update sound queue while we go through the savegame
-			getSound()->updateQueue();
+			getSoundQueue()->updateQueue();
 
 			SavegameEntryHeader *entry = new SavegameEntryHeader();
 			entry->saveLoadWithSerializer(ser);
@@ -217,7 +219,7 @@ void SaveLoad::loadGame(GameId id) {
 	_gameTicksLastSavegame = getState()->timeTicks;
 
 	if (header.keepIndex) {
-		getSound()->clearQueue();
+		getSoundQueue()->clearQueue();
 
 		readEntry(&type, &entity, &val, false);
 	}
@@ -377,7 +379,7 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	WRITE_ENTRY("inventory", getInventory()->saveLoadWithSerializer(ser), 7 * 32);
 	WRITE_ENTRY("objects", getObjects()->saveLoadWithSerializer(ser), 5 * 128);
 	WRITE_ENTRY("entities", getEntities()->saveLoadWithSerializer(ser), 1262 * 40);
-	WRITE_ENTRY("sound", getSound()->saveLoadWithSerializer(ser), 3 * 4 + getSound()->count() * 64);
+	WRITE_ENTRY("sound", getSoundQueue()->saveLoadWithSerializer(ser), 3 * 4 + getSoundQueue()->count() * 64);
 	WRITE_ENTRY("savepoints", getSavePoints()->saveLoadWithSerializer(ser), 128 * 16 + 4 + getSavePoints()->count() * 16);
 
 	header.offset = (uint32)_savegame->pos() - (originalPosition + 32);
@@ -452,7 +454,7 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 	LOAD_ENTRY("inventory", getInventory()->saveLoadWithSerializer(ser), 7 * 32);
 	LOAD_ENTRY("objects", getObjects()->saveLoadWithSerializer(ser), 5 * 128);
 	LOAD_ENTRY("entities", getEntities()->saveLoadWithSerializer(ser), 1262 * 40);
-	LOAD_ENTRY_ONLY("sound", getSound()->saveLoadWithSerializer(ser));
+	LOAD_ENTRY_ONLY("sound", getSoundQueue()->saveLoadWithSerializer(ser));
 	LOAD_ENTRY_ONLY("savepoints", getSavePoints()->saveLoadWithSerializer(ser));
 
 	// Update chapter

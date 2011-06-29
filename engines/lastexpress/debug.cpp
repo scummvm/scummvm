@@ -44,6 +44,8 @@
 #include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -793,7 +795,7 @@ bool Debugger::cmdFight(int argc, const char **argv) {
 			restoreArchive();
 
 			// Stop audio and restore scene
-			getSound()->stopAllSound();
+			getSoundQueue()->stopAllSound();
 
 			clearBg(GraphicsManager::kBackgroundAll);
 
@@ -925,7 +927,7 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
 			restoreArchive();
 
 			// Stop audio and restore scene
-			getSound()->stopAllSound();
+			getSoundQueue()->stopAllSound();
 
 			clearBg(GraphicsManager::kBackgroundAll);
 

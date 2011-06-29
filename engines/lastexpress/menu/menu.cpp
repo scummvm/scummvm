@@ -41,6 +41,8 @@
 #include "lastexpress/menu/clock.h"
 #include "lastexpress/menu/trainline.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -336,7 +338,7 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 					if (getFlags()->mouseRightClick)
 						break;
 
-					getSound()->updateQueue();
+					getSoundQueue()->updateQueue();
 				}
 			}
 		}
@@ -348,10 +350,10 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 	init(doSavegame, type, value);
 
 	// Setup sound
-	getSound()->unknownFunction4();
-	getSound()->resetQueue(kSoundType11, kSoundType13);
-	if (getSound()->isBuffered("TIMER"))
-		getSound()->removeFromQueue("TIMER");
+	getSoundQueue()->resetQueue();
+	getSoundQueue()->resetQueue(kSoundType11, kSoundType13);
+	if (getSoundQueue()->isBuffered("TIMER"))
+		getSoundQueue()->removeFromQueue("TIMER");
 
 	// Init flags & misc
 	_isShowingCredits = false;
@@ -411,13 +413,13 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 		if (clicked) {
 			showFrame(kOverlayButtons, kButtonQuitPushed, true);
 
-			getSound()->clearStatus();
-			getSound()->updateQueue();
+			getSoundQueue()->clearStatus();
+			getSoundQueue()->updateQueue();
 			getSound()->playSound(kEntityPlayer, "LIB046");
 
 			// FIXME uncomment when sound queue is properly implemented
-			/*while (getSound()->isBuffered("LIB046"))
-				getSound()->updateQueue();*/
+			/*while (getSoundQueue()->isBuffered("LIB046"))
+				getSoundQueue()->updateQueue();*/
 
 			getFlags()->shouldRedraw = false;
 
@@ -484,7 +486,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 		setLogicEventHandlers();
 
 		if (_index) {
-			getSound()->processEntry(kSoundType11);
+			getSoundQueue()->processEntry(kSoundType11);
 		} else {
 			if (!getFlags()->mouseRightClick) {
 				getScenes()->loadScene((SceneIndex)(5 * _gameId + 3));
@@ -496,7 +498,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 						getScenes()->loadScene((SceneIndex)(5 * _gameId + 5));
 
 						if (!getFlags()->mouseRightClick) {
-							getSound()->processEntry(kSoundType11);
+							getSoundQueue()->processEntry(kSoundType11);
 
 							// Show intro
 							Animation animation;
@@ -512,7 +514,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 			if (!getEvent(kEventIntro))	{
 				getEvent(kEventIntro) = 1;
 
-				getSound()->processEntry(kSoundType11);
+				getSoundQueue()->processEntry(kSoundType11);
 			}
 		}
 
@@ -707,7 +709,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 			while (nextFrameCount > getFrameCount()) {
 				_engine->pollEvents();
 
-				getSound()->updateQueue();
+				getSoundQueue()->updateQueue();
 			}
 		} else {
 			showFrame(kOverlayButtons, kButtonVolumeDown, true);
@@ -742,7 +744,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 			while (nextFrameCount > getFrameCount()) {
 				_engine->pollEvents();
 
-				getSound()->updateQueue();
+				getSoundQueue()->updateQueue();
 			}
 		} else {
 			showFrame(kOverlayButtons, kButtonVolumeUp, true);
@@ -1117,8 +1119,8 @@ void Menu::updateTime(uint32 time) {
 	_currentTime = time;
 
 	if (_time != time) {
-		if (getSound()->isBuffered(kEntityChapters))
-			getSound()->removeFromQueue(kEntityChapters);
+		if (getSoundQueue()->isBuffered(kEntityChapters))
+			getSoundQueue()->removeFromQueue(kEntityChapters);
 
 		getSound()->playSoundWithSubtitles((_currentTime >= _time) ? "LIB042" : "LIB041", kFlagMenuClock, kEntityChapters);
 		adjustIndex(_currentTime, _time, false);
@@ -1249,8 +1251,8 @@ void Menu::adjustTime() {
 			_time = _currentTime;
 	}
 
-	if (_currentTime == _time && getSound()->isBuffered(kEntityChapters))
-		getSound()->removeFromQueue(kEntityChapters);
+	if (_currentTime == _time && getSoundQueue()->isBuffered(kEntityChapters))
+		getSoundQueue()->removeFromQueue(kEntityChapters);
 
 	_clock->draw(_time);
 	_trainLine->draw(_time);

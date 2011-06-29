@@ -32,6 +32,8 @@
 
 #include "lastexpress/menu/menu.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
 #include "lastexpress/resource.h"
@@ -151,8 +153,8 @@ Common::Error LastExpressEngine::run() {
 	_menu->show(false, kSavegameTypeIndex, 0);
 
 	while (!shouldQuit()) {
-		_soundMan->updateQueue();
-		_soundMan->updateSubtitles();
+		_soundMan->getQueue()->updateQueue();
+		_soundMan->getQueue()->updateSubtitles();
 
 		if (handleEvents())
 			continue;
@@ -280,7 +282,7 @@ void LastExpressEngine::soundTimer(void *refCon) {
 void LastExpressEngine::handleSoundTimer() {
 	if (_frameCounter & 1)
 		if (_soundMan)
-			_soundMan->handleTimer();
+			_soundMan->getQueue()->handleTimer();
 
 	_frameCounter++;
 }

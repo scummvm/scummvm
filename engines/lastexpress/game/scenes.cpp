@@ -34,6 +34,8 @@
 #include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -1057,9 +1059,9 @@ void SceneManager::preProcessScene(SceneIndex *index) {
 
 	// Sound processing
 	Scene *newScene = getScenes()->get(*index);
-	if (getSound()->isBuffered(kEntityTables4)) {
+	if (getSoundQueue()->isBuffered(kEntityTables4)) {
 		if (newScene->type != Scene::kTypeReadText || newScene->param1)
-			getSound()->processEntry(kEntityTables4);
+			getSoundQueue()->processEntry(kEntityTables4);
 	}
 
 	// Cleanup beetle sequences
@@ -1089,8 +1091,8 @@ void SceneManager::postProcessScene() {
 				if (getFlags()->mouseRightClick)
 					break;
 
-				getSound()->updateQueue();
-				getSound()->updateSubtitles();
+				getSoundQueue()->updateQueue();
+				getSoundQueue()->updateSubtitles();
 			}
 		}
 
@@ -1157,7 +1159,7 @@ void SceneManager::postProcessScene() {
 		if (getState()->time >= kTimeCityGalanta || getProgress().field_18 == 4)
 			break;
 
-		getSound()->processEntry(kSoundType7);
+		getSoundQueue()->processEntry(kSoundType7);
 		getSound()->playSound(kEntityTrain, "LIB050", kFlagDefault);
 
 		switch (getProgress().chapter) {

@@ -30,6 +30,8 @@
 #include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
 
@@ -201,7 +203,7 @@ IMPLEMENT_FUNCTION(10, Pascale, welcomeCath)
 		break;
 
 	case kActionNone:
-		if (params->param1 && !getSound()->isBuffered(kEntityPascale))
+		if (params->param1 && !getSoundQueue()->isBuffered(kEntityPascale))
 			getEntities()->updatePositionExit(kEntityPascale, kCarRestaurant, 64);
 		break;
 
@@ -462,10 +464,10 @@ IMPLEMENT_FUNCTION(16, Pascale, serveTatianaVassili)
 			getEntities()->drawSequenceLeft(kEntityPascale, "014B");
 			getEntities()->updatePositionEnter(kEntityPascale, kCarRestaurant, 67);
 
-			if (getSound()->isBuffered("TAT1069A"))
-				getSound()->processEntry("TAT1069A");
-			else if (getSound()->isBuffered("TAT1069B"))
-				getSound()->processEntry("TAT1069B");
+			if (getSoundQueue()->isBuffered("TAT1069A"))
+				getSoundQueue()->processEntry("TAT1069A");
+			else if (getSoundQueue()->isBuffered("TAT1069B"))
+				getSoundQueue()->processEntry("TAT1069B");
 
 			setCallback(2);
 			setup_playSound("TAT1066");
@@ -1213,7 +1215,7 @@ label_callback1:
 		break;
 
 	case kAction169750080:
-		if (getSound()->isBuffered(kEntityPascale)) {
+		if (getSoundQueue()->isBuffered(kEntityPascale)) {
 			params->param4 = 1;
 		} else {
 			setCallback(7);

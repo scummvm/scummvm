@@ -71,6 +71,8 @@
 #include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -299,7 +301,7 @@ void Entities::setupChapter(ChapterIndex chapter) {
 		memset(&_compartments1, 0, sizeof(_compartments1));
 		memset(&_positions, 0, sizeof(_positions));
 
-		getSound()->resetQueue(kSoundType13);
+		getSoundQueue()->resetQueue(kSoundType13);
 	}
 
 	// we skip the header when doing entity setup
@@ -369,8 +371,8 @@ void Entities::resetState(EntityIndex entityIndex) {
 	getData(entityIndex)->currentCall = 0;
 	getData(entityIndex)->inventoryItem = kItemNone;
 
-	if (getSound()->isBuffered(entityIndex))
-		getSound()->removeFromQueue(entityIndex);
+	if (getSoundQueue()->isBuffered(entityIndex))
+		getSoundQueue()->removeFromQueue(entityIndex);
 
 	clearSequences(entityIndex);
 

@@ -32,6 +32,8 @@
 #include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
 
@@ -139,7 +141,7 @@ IMPLEMENT_FUNCTION_END
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Verges, updateEntity, CarIndex, EntityPosition)
 	if (savepoint.action == kActionExcuseMeCath) {
-		if (!getSound()->isBuffered(kEntityVerges))
+		if (!getSoundQueue()->isBuffered(kEntityVerges))
 			getSound()->playSound(kEntityPlayer, "TRA1113", getSound()->getSoundFlag(kEntityVerges));
 
 		return;
@@ -187,7 +189,7 @@ switch (savepoint.action) {
 			break;
 
 		case 2:
-			if (!getSound()->isBuffered(kEntityVerges))
+			if (!getSoundQueue()->isBuffered(kEntityVerges))
 				getSound()->playSound(kEntityVerges, (char *)&params->seq1);
 
 			getEntities()->drawSequenceRight(kEntityVerges, "813DS");
@@ -232,7 +234,7 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
 
 	case kActionNone:
 		if (!params->param7) {
-			if (!getSound()->isBuffered(kEntityVerges)) {
+			if (!getSoundQueue()->isBuffered(kEntityVerges)) {
 				getSound()->playSound(kEntityVerges, (char *)&params->seq);
 				params->param7 = 1;
 			}
@@ -258,7 +260,7 @@ IMPLEMENT_FUNCTION_IIS(10, Verges, function10, CarIndex, EntityPosition)
 		break;
 
 	case kActionDefault:
-		if (!getSound()->isBuffered(kEntityVerges)) {
+		if (!getSoundQueue()->isBuffered(kEntityVerges)) {
 			getSound()->playSound(kEntityVerges, (char *)&params->seq);
 			params->param7 = 1;
 		}
@@ -704,7 +706,7 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			getSound()->processEntry(kEntityVerges);
+			getSoundQueue()->processEntry(kEntityVerges);
 			getAction()->playAnimation(kEventGendarmesArrestation);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverPolice1, true);
 		}
@@ -1314,7 +1316,7 @@ IMPLEMENT_FUNCTION(32, Verges, function32)
 			break;
 
 		case 2:
-			if (!getSound()->isBuffered(kEntityVerges))
+			if (!getSoundQueue()->isBuffered(kEntityVerges))
 				getSound()->playSound(kEntityVerges, "TRA3004");
 
 			getEntities()->drawSequenceRight(kEntityVerges, "813DS");
@@ -1752,16 +1754,16 @@ IMPLEMENT_FUNCTION(40, Verges, chapter5Handler)
 		break;
 
 	case kActionNone:
-		if (getEntities()->isInSalon(kEntityPlayer) && !getSound()->isBuffered(kEntityVerges))
+		if (getEntities()->isInSalon(kEntityPlayer) && !getSoundQueue()->isBuffered(kEntityVerges))
 			getSound()->playSound(kEntityVerges, "WAT5000");
 		break;
 
 	case kActionOpenDoor:
-		if (getSound()->isBuffered(kEntityVerges))
-			getSound()->processEntry(kEntityVerges);
+		if (getSoundQueue()->isBuffered(kEntityVerges))
+			getSoundQueue()->processEntry(kEntityVerges);
 
-		if (getSound()->isBuffered("MUS050"))
-			getSound()->processEntry("MUS050");
+		if (getSoundQueue()->isBuffered("MUS050"))
+			getSoundQueue()->processEntry("MUS050");
 
 		getObjects()->update(kObject65, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
 
@@ -1811,7 +1813,7 @@ IMPLEMENT_FUNCTION(41, Verges, function41)
 			// Fallback to next case
 
 		case 2:
-			if (getSound()->isBuffered(kEntityVerges)) {
+			if (getSoundQueue()->isBuffered(kEntityVerges)) {
 				setCallback(2);
 				setup_updateFromTime(225);
 			} else {

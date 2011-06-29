@@ -27,6 +27,8 @@
 
 #include "lastexpress/game/sound.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
@@ -107,7 +109,7 @@ void FighterPlayerMilos::update() {
 			setSequenceAndDraw(5, kFightSequenceType1);
 			_opponent->setSequenceAndDraw(6, kFightSequenceType1);
 
-			getSound()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->removeFromQueue(kEntityTables0);
 			getSound()->playSound(kEntityTrain, "MUS029", kFlagDefault);
 
 			handleAction(kFightActionWin);
@@ -210,7 +212,7 @@ void FighterOpponentMilos::update() {
 			_opponent->handleAction((FightAction)_sequenceIndex);
 
 		if (_opponent->getCountdown() <= 0) {
-			getSound()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->removeFromQueue(kEntityTables0);
 			handleAction(kFightActionLost);
 		}
 	}

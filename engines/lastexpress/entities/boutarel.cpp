@@ -32,6 +32,8 @@
 #include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
@@ -941,7 +943,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 
 		if (getEntities()->isInRestaurant(kEntityAnna)
 		 && getEntities()->isInRestaurant(kEntityAugust)
-		 && !getSound()->isBuffered(kEntityBoutarel)
+		 && !getSoundQueue()->isBuffered(kEntityBoutarel)
 		 && params->param3 != kTimeInvalid) {
 
 			if (getState()->time <= kTime1998000)

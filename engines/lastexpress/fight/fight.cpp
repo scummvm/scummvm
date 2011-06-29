@@ -37,6 +37,8 @@
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -86,7 +88,7 @@ void Fight::eventMouse(const Common::Event &ev) {
 
 		// Handle right button click
 		if (ev.type == Common::EVENT_RBUTTONUP) {
-			getSound()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->removeFromQueue(kEntityTables0);
 			setStopped();
 
 			getGlobalTimer() ? _state = 0 : ++_state;
@@ -133,15 +135,15 @@ void Fight::eventMouse(const Common::Event &ev) {
 		// Stop fight if clicked
 		if (ev.type == Common::EVENT_LBUTTONUP) {
 			_handleTimer = false;
-			getSound()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->removeFromQueue(kEntityTables0);
 			bailout(kFightEndExit);
 		}
 
 		// Reset timer on right click
 		if (ev.type == Common::EVENT_RBUTTONUP) {
 			if (getGlobalTimer()) {
-				if (getSound()->isBuffered("TIMER"))
-					getSound()->removeFromQueue("TIMER");
+				if (getSoundQueue()->isBuffered("TIMER"))
+					getSoundQueue()->removeFromQueue("TIMER");
 
 				setGlobalTimer(900);
 			}
@@ -277,7 +279,7 @@ Fight::FightEndType Fight::setup(FightType type) {
 		if (_engine->handleEvents())
 			continue;
 
-		getSound()->updateQueue();
+		getSoundQueue()->updateQueue();
 	}
 
 	// Cleanup after fight is over

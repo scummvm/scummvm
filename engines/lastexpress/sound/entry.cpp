@@ -27,6 +27,8 @@
 #include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -70,6 +72,7 @@ SoundEntry::~SoundEntry() {
 
 	delete _soundStream;
 
+	// Zero passed pointers
 	_engine = NULL;
 }
 
@@ -79,10 +82,10 @@ void SoundEntry::open(Common::String name, SoundFlag flag, int priority) {
 	setStatus(flag);
 
 	// Add entry to sound list
-	getSound()->addToQueue(this);
+	getSoundQueue()->addToQueue(this);
 
 	// Add entry to cache and load sound data
-	getSound()->setupCache(this);
+	getSoundQueue()->setupCache(this);
 	loadSoundData(name);
 }
 
@@ -90,7 +93,7 @@ void SoundEntry::close() {
 	_status.status |= kSoundStatusRemoved;
 
 	// Loop until ready
-	while (!(_status.status1 & 4) && !(getSound()->getFlag() & 8) && (getSound()->getFlag() & 1))
+	while (!(_status.status1 & 4) && !(getSoundQueue()->getFlag() & 8) && (getSoundQueue()->getFlag() & 1))
 		;	// empty loop body
 
 	// The original game remove the entry from the cache here,
@@ -115,16 +118,16 @@ void SoundEntry::setType(SoundFlag flag) {
 	switch (flag & kFlagType9) {
 	default:
 	case kFlagNone:
-		_type = getSound()->getCurrentType();
-		getSound()->setCurrentType((SoundType)(_type + 1));
+		_type = getSoundQueue()->getCurrentType();
+		getSoundQueue()->setCurrentType((SoundType)(_type + 1));
 		break;
 
 	case kFlagType1_2: {
-		SoundEntry *previous2 = getSound()->getEntry(kSoundType2);
+		SoundEntry *previous2 = getSoundQueue()->getEntry(kSoundType2);
 		if (previous2)
 			previous2->update(0);
 
-		SoundEntry *previous = getSound()->getEntry(kSoundType1);
+		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType1);
 		if (previous) {
 			previous->setType(kSoundType2);
 			previous->update(0);
@@ -135,7 +138,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		break;
 
 	case kFlagType3: {
-		SoundEntry *previous = getSound()->getEntry(kSoundType3);
+		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType3);
 		if (previous) {
 			previous->setType(kSoundType4);
 			previous->update(0);
@@ -146,7 +149,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		break;
 
 	case kFlagType7: {
-		SoundEntry *previous = getSound()->getEntry(kSoundType7);
+		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType7);
 		if (previous)
 			previous->setType(kSoundType8);
 
@@ -155,7 +158,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		break;
 
 	case kFlagType9: {
-		SoundEntry *previous = getSound()->getEntry(kSoundType9);
+		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType9);
 		if (previous)
 			previous->setType(kSoundType10);
 
@@ -164,7 +167,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		break;
 
 	case kFlagType11: {
-		SoundEntry *previous = getSound()->getEntry(kSoundType11);
+		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType11);
 		if (previous)
 			previous->setType(kSoundType14);
 
@@ -173,7 +176,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		break;
 
 	case kFlagType13: {
-		SoundEntry *previous = getSound()->getEntry(kSoundType13);
+		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType13);
 		if (previous)
 			previous->setType(kSoundType14);
 
@@ -221,7 +224,7 @@ void SoundEntry::update(uint val) {
 		_status.status |= kSoundStatus_100000;
 
 		if (val) {
-			if (getSound()->getFlag() & 32) {
+			if (getSoundQueue()->getFlag() & 32) {
 				_field_40 = val;
 				value2 = val * 2 + 1;
 			}
@@ -235,7 +238,7 @@ void SoundEntry::update(uint val) {
 }
 
 void SoundEntry::updateState() {
-	if (getSound()->getFlag() & 32) {
+	if (getSoundQueue()->getFlag() & 32) {
 		if (_type != kSoundType9 && _type != kSoundType7 && _type != kSoundType5) {
 			uint32 newStatus = _status.status & kSoundStatusClear1;
 
@@ -318,7 +321,7 @@ SubtitleEntry::~SubtitleEntry() {
 
 void SubtitleEntry::load(Common::String filename, SoundEntry *soundEntry) {
 	// Add ourselves to the list of active subtitles
-	getSound()->addSubtitle(this);
+	getSoundQueue()->addSubtitle(this);
 
 	// Set sound entry and filename
 	_filename = filename + ".SBE";
@@ -326,7 +329,7 @@ void SubtitleEntry::load(Common::String filename, SoundEntry *soundEntry) {
 
 	// Load subtitle data
 	if (_engine->getResourceManager()->hasFile(filename)) {
-		if (getSound()->getSubtitleFlag() & 2)
+		if (getSoundQueue()->getSubtitleFlag() & 2)
 			return;
 
 		loadData();
@@ -339,8 +342,8 @@ void SubtitleEntry::loadData() {
 	_data = new SubtitleManager(_engine->getFont());
 	_data->load(getArchive(_filename));
 
-	getSound()->setSubtitleFlag(getSound()->getSubtitleFlag() | 2);
-	getSound()->setCurrentSubtitle(this);
+	getSoundQueue()->setSubtitleFlag(getSoundQueue()->getSubtitleFlag() | 2);
+	getSoundQueue()->setCurrentSubtitle(this);
 }
 
 void SubtitleEntry::setupAndDraw() {
@@ -354,32 +357,32 @@ void SubtitleEntry::setupAndDraw() {
 	} else {
 		_data->setTime((uint16)_sound->_time);
 
-		if (getSound()->getSubtitleFlag() & 1)
+		if (getSoundQueue()->getSubtitleFlag() & 1)
 			drawOnScreen();
 	}
 
-	getSound()->setCurrentSubtitle(this);
+	getSoundQueue()->setCurrentSubtitle(this);
 }
 
 void SubtitleEntry::draw() {
 	// Remove ourselves from the queue
-	getSound()->removeSubtitle(this);
+	getSoundQueue()->removeSubtitle(this);
 
-	if (this == getSound()->getCurrentSubtitle()) {
+	if (this == getSoundQueue()->getCurrentSubtitle()) {
 		drawOnScreen();
 
-		getSound()->setCurrentSubtitle(NULL);
-		getSound()->setSubtitleFlag(0);
+		getSoundQueue()->setCurrentSubtitle(NULL);
+		getSoundQueue()->setSubtitleFlag(0);
 	}
 }
 
 void SubtitleEntry::drawOnScreen() {
-	getSound()->setSubtitleFlag(getSound()->getSubtitleFlag() & -1);
+	getSoundQueue()->setSubtitleFlag(getSoundQueue()->getSubtitleFlag() & -1);
 
 	if (_data == NULL)
 		return;
 
-	if (getSound()->getSubtitleFlag() & 1)
+	if (getSoundQueue()->getSubtitleFlag() & 1)
 		_engine->getGraphicsManager()->draw(_data, GraphicsManager::kBackgroundOverlay);
 }
 

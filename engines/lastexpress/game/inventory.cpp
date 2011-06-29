@@ -33,6 +33,8 @@
 
 #include "lastexpress/menu/menu.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -162,8 +164,8 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 		} else if (ev.type == Common::EVENT_RBUTTONDOWN) {
 			if (getGlobalTimer()) {
-				if (getSound()->isBuffered("TIMER"))
-					getSound()->removeFromQueue("TIMER");
+				if (getSoundQueue()->isBuffered("TIMER"))
+					getSoundQueue()->removeFromQueue("TIMER");
 
 				setGlobalTimer(900);
 			}
@@ -630,7 +632,7 @@ void Inventory::drawBlinkingEgg() {
 	//	if (getGlobalTimer() + ticks >= 90)
 	//		getSound()->playSoundWithSubtitles("TIMER.SND", 50331664, kEntityPlayer);
 
-	//	if (getSound()->isBuffered("TIMER"))
+	//	if (getSoundQueue()->isBuffered("TIMER"))
 	//		setGlobalTimer(0);
 	//}
 

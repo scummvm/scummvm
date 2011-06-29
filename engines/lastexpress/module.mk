@@ -67,6 +67,7 @@ MODULE_OBJS := \
 	menu/menu.o \
 	menu/trainline.o \
 	sound/entry.o \
+	sound/queue.o \
 	debug.o \
 	detection.o \
 	graphics.o \

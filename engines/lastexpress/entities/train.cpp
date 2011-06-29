@@ -32,6 +32,8 @@
 #include "lastexpress/game/state.h"
 #include "lastexpress/game/sound.h"
 
+#include "lastexpress/sound/queue.h"
+
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
 
@@ -300,13 +302,13 @@ label_process:
 		}
 
 		// Update object
-		if (ENTITY_PARAM(0, 8) && !getSound()->isBuffered(kEntityTables5)) {
+		if (ENTITY_PARAM(0, 8) && !getSoundQueue()->isBuffered(kEntityTables5)) {
 			getObjects()->update((ObjectIndex)ENTITY_PARAM(0, 8), getObjects()->get((ObjectIndex)ENTITY_PARAM(0, 8)).entity, kObjectLocation3, kCursorHandKnock, kCursorHand);
 			ENTITY_PARAM(0, 8) = 0;
 		}
 
 		// Play clock sound
-		if (params->param6 && !getSound()->isBuffered("ZFX1001", true))
+		if (params->param6 && !getSoundQueue()->isBuffered("ZFX1001", true))
 			getSound()->playSound(kEntityPlayer, "ZFX1001");
 
 		break;
@@ -339,12 +341,12 @@ label_process:
 		// Play clock sound
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 81)) {
 			params->param6 = 1;
-			if (!getSound()->isBuffered("ZFX1001"))
+			if (!getSoundQueue()->isBuffered("ZFX1001"))
 				getSound()->playSound(kEntityPlayer, "ZFX1001");
 		} else {
 			params->param6 = 0;
-			if (getSound()->isBuffered("ZFX1001", true))
-				getSound()->removeFromQueue("ZFX1001");
+			if (getSoundQueue()->isBuffered("ZFX1001", true))
+				getSoundQueue()->removeFromQueue("ZFX1001");
 		}
 
 		// Draw moving background behind windows
@@ -562,8 +564,8 @@ void Train::resetParam8() {
 	 && !getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params1->param1, (EntityPosition)params1->param2)
 	 && !getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params1->param1, (EntityPosition)params1->param3)) {
 
-		if (getSound()->isBuffered((const char *)&params1->seq))
-			getSound()->processEntry((const char *)&params1->seq);
+		if (getSoundQueue()->isBuffered((const char *)&params1->seq))
+			getSoundQueue()->processEntry((const char *)&params1->seq);
 
 		params->param8 = 0;
 	}

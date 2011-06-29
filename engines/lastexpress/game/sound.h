@@ -25,54 +25,17 @@
 
 #include "lastexpress/shared.h"
 
-#include "lastexpress/helpers.h"
-
-#include "common/list.h"
-#include "common/mutex.h"
-#include "common/system.h"
-#include "common/serializer.h"
+#include "common/str.h"
 
 namespace LastExpress {
 
 class LastExpressEngine;
-class SubtitleManager;
-class SoundEntry;
-class SubtitleEntry;
+class SoundQueue;
 
-class SoundManager : Common::Serializable {
+class SoundManager {
 public:
 	SoundManager(LastExpressEngine *engine);
 	~SoundManager();
-
-	// Timer
-	void handleTimer();
-
-	// State
-	void resetState() { _state |= kSoundType1; }
-
-	// Sound queue
-	void updateQueue();
-	void resetQueue(SoundType type1, SoundType type2 = kSoundTypeNone);
-	void clearQueue();
-
-	// Subtitles
-	void updateSubtitles();
-
-	// Entry
-	bool isBuffered(Common::String filename, bool testForEntity = false);
-	bool isBuffered(EntityIndex entity);
-	void setupEntry(SoundType type, EntityIndex index);
-	void processEntry(EntityIndex entity);
-	void processEntry(SoundType type);
-	void processEntry(Common::String filename);
-	void processEntries();
-	void removeFromQueue(Common::String filename);
-	void removeFromQueue(EntityIndex entity);
-	uint32 getEntryTime(EntityIndex index);
-
-	// Misc
-	void unknownFunction4();
-	void clearStatus();
 
 	// Sound playing
 	void playSound(EntityIndex entity, Common::String filename, SoundFlag flag = kFlagInvalid, byte a4 = 0);
@@ -83,7 +46,6 @@ public:
 	void playFightSound(byte action, byte a4);
 	void playLocomotiveSound();
 	void playWarningCompartment(EntityIndex entity, ObjectIndex compartment);
-
 	void playLoopingSound(int param);
 
 	// Dialog & Letters
@@ -97,64 +59,16 @@ public:
 	const char *wrongDoorCath() const;
 	const char *justAMinuteCath() const;
 
-	// FLags
+	// Flags
 	SoundFlag getSoundFlag(EntityIndex index) const;
 
-	// Debug
-	void stopAllSound();
-
-	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &ser);
-	uint32 count();
-
 	// Accessors
-	uint32 getFlag() { return _flag; }
-	int getSubtitleFlag() { return _subtitlesFlag; }
-	void setSubtitleFlag(int flag) { _subtitlesFlag = flag; }
-	SoundType getCurrentType() { return _currentType; }
-	void setCurrentType(SoundType type) { _currentType = type; }
+	SoundQueue *getQueue() { return _queue; }
 	uint32 getData2() { return _data2; }
 
-	// Subtitles
-	void addSubtitle(SubtitleEntry *entry) { _subtitles.push_back(entry); }
-	void removeSubtitle(SubtitleEntry *entry) { _subtitles.remove(entry); }
-	void setCurrentSubtitle(SubtitleEntry *entry) { _currentSubtitle = entry; }
-	SubtitleEntry *getCurrentSubtitle() { return _currentSubtitle; }
-
-	// Queue
-	bool setupCache(SoundEntry *entry);
-	void addToQueue(SoundEntry *entry) { _soundList.push_back(entry); }
-
-	SoundEntry *getEntry(SoundType type);
-
 private:
-	typedef int32 *SoundBuffer;
-
-	enum SoundState {
-		kSoundState0 = 0,
-		kSoundState1 = 1,
-		kSoundState2 = 2
-	};
-
-	// Engine
 	LastExpressEngine *_engine;
-
-	// State flag
-	int _state;
-	SoundType _currentType;
-
-	Common::Mutex _mutex;
-
-	// Unknown data
-	uint32 _data0;
-	uint32 _data1;
-	uint32 _data2;
-
-	// TODO: this seems to be a synchronization flag for the sound timer
-	uint32 _flag;
-
-	// Filters
-	int32 _buffer[2940];    ///< Static sound buffer
+	SoundQueue *_queue;
 
 	// Compartment warnings by Mertens or Coudert
 	uint32 _lastWarning[12];
@@ -162,23 +76,10 @@ private:
 	// Looping sound
 	int _loopingSoundDuration;
 
-	// Sound entries
-	Common::List<SoundEntry *> _soundList;    ///< List of all sound entries
-	Common::List<SoundEntry *> _soundCache;   ///< List of entries with a data buffer
-	void *_soundCacheData;
-
-	SoundEntry *getEntry(EntityIndex index);
-	SoundEntry *getEntry(Common::String name);
-
-	void removeFromCache(SoundEntry *entry);
-
-	// Subtitles
-	int _subtitlesFlag;
-	Common::List<SubtitleEntry *> _subtitles;
-	SubtitleEntry *_currentSubtitle;
-
-	// Sound filter
-	void applyFilter(SoundEntry *entry, int16 *buffer);
+	// Unknown data
+	uint32 _data0;
+	uint32 _data1;
+	uint32 _data2;
 };
 
 } // End of namespace LastExpress
