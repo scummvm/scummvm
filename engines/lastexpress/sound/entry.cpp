@@ -752,7 +752,7 @@ void SubtitleEntry::load(Common::String filename, SoundEntry *soundEntry) {
 	_sound = soundEntry;
 
 	// Load subtitle data
-	if (_engine->getResourceManager()->hasFile(filename)) {
+	if (_engine->getResourceManager()->hasFile(_filename)) {
 		if (getSoundQueue()->getSubtitleFlag() & 2)
 			return;
 
@@ -786,6 +786,8 @@ void SubtitleEntry::setupAndDraw() {
 	}
 
 	getSoundQueue()->setCurrentSubtitle(this);
+
+	// TODO Missing code
 }
 
 void SubtitleEntry::draw() {
@@ -801,13 +803,11 @@ void SubtitleEntry::draw() {
 }
 
 void SubtitleEntry::drawOnScreen() {
-	getSoundQueue()->setSubtitleFlag(getSoundQueue()->getSubtitleFlag() & -1);
-
 	if (_data == NULL)
 		return;
 
-	if (getSoundQueue()->getSubtitleFlag() & 1)
-		_engine->getGraphicsManager()->draw(_data, GraphicsManager::kBackgroundOverlay);
+	getSoundQueue()->setSubtitleFlag(getSoundQueue()->getSubtitleFlag() & -2);
+	_engine->getGraphicsManager()->draw(_data, GraphicsManager::kBackgroundOverlay);
 }
 
 } // End of namespace LastExpress

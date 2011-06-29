@@ -162,7 +162,8 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, SoundFlag fla
 		entry->setStatus(entry->getStatus().status | kSoundStatus_8000);
 	} else {
 		// Get subtitles name
-		while (filename.size() > 4)
+		uint32 size = filename.size();
+		while (filename.size() > size - 4)
 			filename.deleteLastChar();
 
 		entry->showSubtitle(filename);
