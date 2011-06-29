@@ -140,6 +140,8 @@ BITMAP::~BITMAP(void) {
 	case FAR_MEM  :
 		free(V);
 	default:
+		warning("Unhandled MemType in Bitmap destructor");
+		break;
 		break;
 	}
 }
@@ -192,6 +194,9 @@ BMP_PTR BITMAP::Code(void) {
 				break;
 			case FAR_MEM  :
 				free(V);
+				break;
+			default:
+				warning("Unhandled MemType in Bitmap::Code()");
 				break;
 			}
 			V = NULL;

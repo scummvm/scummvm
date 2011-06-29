@@ -344,6 +344,6 @@ Sprite *Locate(int ref);
 
 extern      bool        SpeedTest;
 
-} // End if namespace CGE
+} // End of namespace CGE
 
 #endif

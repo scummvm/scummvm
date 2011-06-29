@@ -819,7 +819,6 @@ static void SNLevel(Sprite *spr, int lev) {
 	static int maxcav[] = { 1, 8, 16, 23, 24 };
 #endif
 	while (Lev < lev) {
-		Sprite *spr;
 		++Lev;
 		spr = Vga->SpareQ->Locate(100 + Lev);
 		if (spr) {
@@ -1113,6 +1112,9 @@ void SNAIL::RunCom(void) {
 				break;
 			case SNGHOST    :
 				SNGhost((BITMAP *) snc->Ptr);
+				break;
+			default :
+				warning("Unhandled snc->Com in SNMouse(bool)");
 				break;
 			}
 			++Tail;
