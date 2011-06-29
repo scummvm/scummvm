@@ -25,6 +25,7 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
+#include "common/scummsys.h"
 #include "cge/general.h"
 #include "cge/boot.h"
 #include "cge/ident.h"
@@ -1463,8 +1464,12 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 		_sprite->Flags.Tran = tran;
 		_sprite->Flags.Kill = true;
 		_sprite->Flags.BDel = true;
-		//fnsplit(fname, NULL, NULL, _sprite->File, NULL);
-		warning("LoadSprite: use of fnsplit");
+
+		// Extract the filename, without the extension
+		strcpy(_sprite->File, fname);
+		char *p = strchr(_sprite->File, '.');
+		if (p)
+			*p = '\0';
 
 		_sprite->ShpCnt = shpcnt;
 		Vga->SpareQ->Append(_sprite);
@@ -1551,6 +1556,9 @@ void CGEEngine::MainLoop() {
 	Vga->Show();
 	Snail_->RunCom();
 	Snail->RunCom();
+
+	// Delay to slow things down
+	g_system->delayMillis(10);
 }
 
 
@@ -1599,7 +1607,8 @@ void CGEEngine::RunGame() {
 	Vga->ShowQ->Append(_pocLight);
 	SelectPocket(-1);
 
-	Vga->ShowQ->Append(Mouse);
+	// FIXME: Allow ScummVM to handle mouse display
+//	Vga->ShowQ->Append(Mouse);
 
 //    ___________
 	LoadUser();
@@ -1692,7 +1701,10 @@ void CGEEngine::Movie(const char *ext) {
 		LoadScript(fn);
 		ExpandSprite(Vga->SpareQ->Locate(999));
 		FeedSnail(Vga->ShowQ->Locate(999), TAKE);
-		Vga->ShowQ->Append(Mouse);
+
+		// FIXME: Allow ScummVM to handle mouse display
+		//Vga->ShowQ->Append(Mouse);
+
 		_heart->_enable = true;
 		KEYBOARD::SetClient(Sys);
 		while (!Snail->Idle())
