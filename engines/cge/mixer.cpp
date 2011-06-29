@@ -42,15 +42,15 @@ bool   MIXER::Appear = false;
 
 MIXER::MIXER(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), Fall(MIX_FALL), _vm(vm) {
 	Appear = true;
-	mb[0] = new BITMAP("VOLUME");
+	mb[0] = new Bitmap("VOLUME");
 	mb[1] = NULL;
 	SetShapeList(mb);
 	SetName(Text->getText(MIX_NAME));
-	Flags.Syst = true;
-	Flags.Kill = true;
-	Flags.BDel = true;
+	_flags._syst = true;
+	_flags._kill = true;
+	_flags._bDel = true;
 	Goto(x, y);
-	Z = MIX_Z;
+	_z = MIX_Z;
 
 	// slaves
 
@@ -58,7 +58,7 @@ MIXER::MIXER(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), Fall(MIX_FALL), _v
 	for (i = 0; i < MIX_MAX; i++) {
 		static char fn[] = "V00";
 		wtom(i, fn + 1, 10, 2);
-		lb[i] = new BITMAP(fn);
+		lb[i] = new Bitmap(fn);
 		ls[i].Now = ls[i].Next = i;
 		ls[i].Dx = ls[i].Dy = ls[i].Dly = 0;
 	}
@@ -68,13 +68,13 @@ MIXER::MIXER(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), Fall(MIX_FALL), _v
 		register Sprite *spr = new Sprite(_vm, lb);
 		spr->SetSeq(ls);
 		spr->Goto(x + 2 + 12 * i, y + 8);
-		spr->Flags.Tran = true;
-		spr->Flags.Kill = true;
-		spr->Flags.BDel = false;
-		spr->Z = MIX_Z;
+		spr->_flags._tran = true;
+		spr->_flags._kill = true;
+		spr->_flags._bDel = false;
+		spr->_z = MIX_Z;
 		Led[i] = spr;
 	}
-	Led[ArrayCount(Led) - 1]->Flags.BDel = true;
+	Led[ArrayCount(Led) - 1]->_flags._bDel = true;
 
 	Vga->ShowQ->Insert(this);
 	for (i = 0; i < ArrayCount(Led); i++)
@@ -88,7 +88,7 @@ MIXER::MIXER(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), Fall(MIX_FALL), _v
 	SNDDrvInfo.VOL4.DL = i;
 	SNDDrvInfo.VOL4.DR = i;
 	Update();
-	Time = MIX_DELAY;
+	_time = MIX_DELAY;
 }
 
 MIXER::~MIXER(void) {
@@ -100,11 +100,11 @@ MIXER::~MIXER(void) {
 void MIXER::Touch(uint16 mask, int x, int y) {
 	Sprite::Touch(mask, x, y);
 	if (mask & L_UP) {
-		uint8 *vol = (&SNDDrvInfo.VOL2.D) + (x < W / 2);
+		uint8 *vol = (&SNDDrvInfo.VOL2.D) + (x < _w / 2);
 		if (y < MIX_BHIG) {
 			if (*vol < 0xFF)
 				*vol += 0x11;
-		} else if (y >= H - MIX_BHIG) {
+		} else if (y >= _h - MIX_BHIG) {
 			if (*vol > 0x00)
 				*vol -= 0x11;
 		}
@@ -114,12 +114,12 @@ void MIXER::Touch(uint16 mask, int x, int y) {
 
 
 void MIXER::Tick(void) {
-	int x = Mouse->X;
-	int y = Mouse->Y;
+	int x = Mouse->_x;
+	int y = Mouse->_y;
 	if (SpriteAt(x, y) == this) {
 		Fall = MIX_FALL;
-		if (Flags.Hold)
-			Touch(L_UP, x - X, y - Y);
+		if (_flags._hold)
+			Touch(L_UP, x - _x, y - _y);
 	} else {
 		if (Fall)
 			--Fall;
@@ -129,7 +129,7 @@ void MIXER::Tick(void) {
 			SNPOST_(SNKILL, -1, 0, this);
 		}
 	}
-	Time = MIX_DELAY;
+	_time = MIX_DELAY;
 }
 
 

@@ -31,7 +31,7 @@
 
 namespace CGE {
 
-EVENT Evt[EVT_MAX];
+Event Evt[EVT_MAX];
 
 uint16 EvtHead = 0, EvtTail = 0;
 
@@ -39,7 +39,7 @@ MOUSE_FUN *MOUSE::OldMouseFun  = NULL;
 uint16     MOUSE::OldMouseMask = 0;
 
 
-MOUSE::MOUSE(CGEEngine *vm, BITMAP **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(NULL), hx(0), _vm(vm) {
+MOUSE::MOUSE(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(NULL), hx(0), _vm(vm) {
 	static Seq ms[] = {
 		{ 0, 0, 0, 0, 1 },
 		{ 1, 1, 0, 0, 1 }
@@ -136,8 +136,8 @@ void MOUSE::ClrEvt(Sprite *spr) {
 	if (spr) {
 		uint16 e;
 		for (e = EvtTail; e != EvtHead; e = (e + 1) % EVT_MAX)
-			if (Evt[e].Ptr == spr)
-				Evt[e].Msk = 0;
+			if (Evt[e]._ptr == spr)
+				Evt[e]._msk = 0;
 	} else
 		EvtTail = EvtHead;
 }
@@ -146,49 +146,49 @@ void MOUSE::ClrEvt(Sprite *spr) {
 void MOUSE::Tick(void) {
 	Step();
 	while (EvtTail != EvtHead) {
-		EVENT e = Evt[EvtTail];
-		if (e.Msk) {
-			if (Hold && e.Ptr != Hold)
-				Hold->Touch(e.Msk | ATTN, e.X - Hold->X, e.Y - Hold->Y);
+		Event e = Evt[EvtTail];
+		if (e._msk) {
+			if (Hold && e._ptr != Hold)
+				Hold->Touch(e._msk | ATTN, e._x - Hold->_x, e._y - Hold->_y);
 
 			// update mouse cursor position
-			if (e.Msk & ROLL)
-				Goto(e.X, e.Y);
+			if (e._msk & ROLL)
+				Goto(e._x, e._y);
 
 			// activate current touched SPRITE
-			if (e.Ptr) {
-				if (e.Msk & KEYB)
-					e.Ptr->Touch(e.Msk, e.X, e.Y);
+			if (e._ptr) {
+				if (e._msk & KEYB)
+					e._ptr->Touch(e._msk, e._x, e._y);
 				else
-					e.Ptr->Touch(e.Msk, e.X - e.Ptr->X, e.Y - e.Ptr->Y);
+					e._ptr->Touch(e._msk, e._x - e._ptr->_x, e._y - e._ptr->_y);
 			} else if (Sys)
-					Sys->Touch(e.Msk, e.X, e.Y);
+					Sys->Touch(e._msk, e._x, e._y);
 
-			if (e.Msk & L_DN) {
-				Hold = e.Ptr;
+			if (e._msk & L_DN) {
+				Hold = e._ptr;
 				if (Hold) {
-					Hold->Flags.Hold = true;
-					hx = e.X - Hold->X;
-					hy = e.Y - Hold->Y;
+					Hold->_flags._hold = true;
+					hx = e._x - Hold->_x;
+					hy = e._y - Hold->_y;
 				}
 			}
 
-			if (e.Msk & L_UP) {
+			if (e._msk & L_UP) {
 				if (Hold) {
-					Hold->Flags.Hold = false;
+					Hold->_flags._hold = false;
 					Hold = NULL;
 				}
 			}
 			///Touched = e.Ptr;
 
 			// discard Text if button released
-			if (e.Msk & (L_UP | R_UP))
+			if (e._msk & (L_UP | R_UP))
 				KillText();
 		}
 		EvtTail = (EvtTail + 1) % EVT_MAX;
 	}
 	if (Hold)
-		Hold->Goto(X - hx, Y - hy);
+		Hold->Goto(_x - hx, _y - hy);
 }
 
 } // End of namespace CGE

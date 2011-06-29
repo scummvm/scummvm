@@ -172,32 +172,35 @@ public:
 	int _ref;
 	signed char _cave;
 	struct FLAGS {
-		uint16 Hide : 1;       // general visibility switch
-		uint16 Near : 1;       // Near action lock
-		uint16 Drag : 1;       // sprite is moveable
-		uint16 Hold : 1;       // sprite is held with mouse
-		uint16 ____ : 1;       // intrrupt driven animation
-		uint16 Slav : 1;       // slave object
-		uint16 Syst : 1;       // system object
-		uint16 Kill : 1;       // dispose memory after remove
-		uint16 Xlat : 1;       // 2nd way display: xlat table
-		uint16 Port : 1;       // portable
-		uint16 Kept : 1;       // kept in pocket
-		uint16 East : 1;       // talk to east (in opposite to west)
-		uint16 Shad : 1;       // shadow
-		uint16 Back : 1;       // 'send to background' request
-		uint16 BDel : 1;       // delete bitmaps in ~SPRITE
-		uint16 Tran : 1;       // transparent (untouchable)
-	} Flags;
-	int X, Y;
-	signed char Z;
-	uint16 W, H;
-	uint16 Time;
+		uint16 _hide : 1;       // general visibility switch
+		uint16 _near : 1;       // Near action lock
+		uint16 _drag : 1;       // sprite is moveable
+		uint16 _hold : 1;       // sprite is held with mouse
+		uint16 _____ : 1;       // intrrupt driven animation
+		uint16 _slav : 1;       // slave object
+		uint16 _syst : 1;       // system object
+		uint16 _kill : 1;       // dispose memory after remove
+		uint16 _xlat : 1;       // 2nd way display: xlat table
+		uint16 _port : 1;       // portable
+		uint16 _kept : 1;       // kept in pocket
+		uint16 _east : 1;       // talk to east (in opposite to west)
+		uint16 _shad : 1;       // shadow
+		uint16 _back : 1;       // 'send to background' request
+		uint16 _bDel : 1;       // delete bitmaps in ~SPRITE
+		uint16 _tran : 1;       // transparent (untouchable)
+	} _flags;
+	int _x;
+	int _y;
+	signed char _z;
+	uint16 _w;
+	uint16 _h;
+	uint16 _time;
 	uint8 NearPtr, TakePtr;
-	int SeqPtr;
-	int ShpCnt;
+	int _seqPtr;
+	int _shpCnt;
 	char File[MAXFILE];
-	Sprite *Prev, * Next;
+	Sprite *_prev;
+	Sprite *_next;
 	bool Works(Sprite *spr);
 	bool SeqTest(int n);
 	inline bool Active(void) {
@@ -328,12 +331,6 @@ uint8 Closest(CBLK *pal, CBLK x) {
 	return found;
 #undef f
 }
-
-
-
-
-
-
 
 char   *NumStr(char *str, int num);
 //static void       Video       (void);

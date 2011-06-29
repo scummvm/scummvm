@@ -59,25 +59,28 @@ struct HideDesc {
 
 #include "common/pack-end.h"
 
-class BITMAP {
+class Bitmap {
 	bool BMPLoad(XFILE *f);
 	bool VBMLoad(XFILE *f);
 public:
 	static DAC *Pal;
-	uint16 W, H;
-	uint8 *M, * V;
-	HideDesc *B;
-	BITMAP(const char *fname, bool rem = true);
-	BITMAP(uint16 w, uint16 h, uint8 *map);
-	BITMAP(uint16 w, uint16 h, uint8 fill);
-	BITMAP(const BITMAP &bmp);
-	~BITMAP(void);
+	uint16 _w;
+	uint16 _h;
+	uint8 *_m;
+	uint8 *_v;
+	HideDesc *_b;
+
+	Bitmap(const char *fname, bool rem = true);
+	Bitmap(uint16 w, uint16 h, uint8 *map);
+	Bitmap(uint16 w, uint16 h, uint8 fill);
+	Bitmap(const Bitmap &bmp);
+	~Bitmap(void);
 	static void init();
 	static void deinit();
 
-	BITMAP *FlipH(void);
-	BITMAP *Code();
-	BITMAP &operator = (const BITMAP &bmp);
+	Bitmap *FlipH(void);
+	Bitmap *Code();
+	Bitmap &operator = (const Bitmap &bmp);
 	void Hide(int x, int y);
 	void Show(int x, int y);
 	void XShow(int x, int y);
@@ -87,7 +90,7 @@ public:
 };
 
 
-typedef BITMAP     *BMP_PTR;
+typedef Bitmap *BMP_PTR;
 
 } // End of namespace CGE
 

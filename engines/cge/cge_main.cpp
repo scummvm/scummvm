@@ -281,7 +281,7 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 			if (n != sizeof(S))
 				break;
 
-			S.Prev = S.Next = NULL;
+			S._prev = S._next = NULL;
 			spr = (scumm_stricmp(S.File + 2, "MUCHA") == 0) ? new FLY(this, NULL)
 			      : new Sprite(this, NULL);
 			if (spr == NULL)
@@ -325,7 +325,7 @@ static void SaveGame(XFILE &file) {
 
 	file.Write((uint8 *) & (i = SVGCHKSUM), sizeof(i));
 
-	for (spr = Vga->SpareQ->First(); spr; spr = spr->Next)
+	for (spr = Vga->SpareQ->First(); spr; spr = spr->_next)
 		if (spr->_ref >= 1000)
 			if (!file.Error)
 				file.Write((uint8 *)spr, sizeof(*spr));
@@ -393,29 +393,31 @@ WALK::WALK(CGEEngine *vm, BMP_PTR *shpl)
 
 
 void WALK::Tick(void) {
-	if (Flags.Hide)
+	if (_flags._hide)
 		return;
 
-	Here = XZ(X + W / 2, Y + H);
+	Here = XZ(_x + _w / 2, _y + _h);
 
 	if (Dir != NO_DIR) {
 		Sprite *spr;
 		Sys->FunTouch();
-		for (spr = Vga->ShowQ->First(); spr; spr = spr->Next) {
-				if (Distance(spr) < 2) {
-				if (! spr->Flags.Near) {
+		for (spr = Vga->ShowQ->First(); spr; spr = spr->_next) {
+			if (Distance(spr) < 2) {
+				if (!spr->_flags._near) {
 					FeedSnail(spr, NEAR);
-					spr->Flags.Near = true;
+					spr->_flags._near = true;
 				}
-			} else spr->Flags.Near = false;
+			} else {
+				spr->_flags._near = false;
+			}
 		}
 	}
 
-	if (Flags.Hold || TracePtr < 0)
+	if (_flags._hold || TracePtr < 0)
 		Park();
 	else {
 		if (Here == Trace[TracePtr]) {
-			if (-- TracePtr < 0)
+			if (--TracePtr < 0)
 				Park();
 		} else {
 			signed char dx, dz;
@@ -425,13 +427,13 @@ void WALK::Tick(void) {
 		}
 	}
 	Step();
-	if ((Dir == WW && X <= 0)           ||
-	    (Dir == EE && X + W >= SCR_WID) ||
-	    (Dir == SS && Y + W >= WORLD_HIG - 2))
+	if ((Dir == WW && _x <= 0)           ||
+	    (Dir == EE && _x + _w >= SCR_WID) ||
+	    (Dir == SS && _y + _w >= WORLD_HIG - 2))
 		Park();
 	else {
 		signed char x;            // dummy var
-		Here.Split(x, Z);         // take current Z position
+		Here.Split(x, _z);         // take current Z position
 		SNPOST_(SNZTRIM, -1, 0, this);    // update Hero's pos in show queue
 	}
 }
@@ -439,15 +441,15 @@ void WALK::Tick(void) {
 
 int WALK::Distance(Sprite *spr) {
 	int dx, dz;
-	dx = spr->X - (X + W - WALKSIDE);
+	dx = spr->_x - (_x + _w - WALKSIDE);
 	if (dx < 0)
-		dx = (X + WALKSIDE) - (spr->X + spr->W);
+		dx = (_x + WALKSIDE) - (spr->_x + spr->_w);
 
 	if (dx < 0)
 		dx = 0;
 
 	dx /= MAP_XGRID;
-	dz = spr->Z - Z;
+	dz = spr->_z - _z;
 	if (dz < 0)
 		dz = - dz;
 
@@ -469,8 +471,8 @@ void WALK::Turn(DIR d) {
 
 
 void WALK::Park(void) {
-	if (Time == 0)
-		++Time;
+	if (_time == 0)
+		++_time;
 
 	if (Dir != NO_DIR) {
 		Step(9 + 4 * Dir + Dir);
@@ -507,11 +509,12 @@ void WALK::FindWay(CLUSTER c) {
 
 void WALK::FindWay(Sprite *spr) {
 	if (spr && spr != this) {
-		int x = spr->X, z = spr->Z;
-		if (spr->Flags.East)
-			x += spr->W + W / 2 - WALKSIDE;
+		int x = spr->_x;
+		int z = spr->_z;
+		if (spr->_flags._east)
+			x += spr->_w + _w / 2 - WALKSIDE;
 		else
-			x -= W / 2 - WALKSIDE;
+			x -= _w / 2 - WALKSIDE;
 		FindWay(CLUSTER((x / MAP_XGRID),
 		                ((z < MAP_ZCNT - MAX_DISTANCE) ? (z + 1)
 		                 : (z - 1))));
@@ -520,7 +523,7 @@ void WALK::FindWay(Sprite *spr) {
 
 
 bool WALK::Lower(Sprite *spr) {
-	return (spr->Y > Y + (H * 3) / 5);
+	return (spr->_y > _y + (_h * 3) / 5);
 }
 
 
@@ -528,7 +531,7 @@ void WALK::Reach(Sprite *spr, int mode) {
 	if (spr) {
 		Hero->FindWay(spr);
 		if (mode < 0) {
-			mode = spr->Flags.East;
+			mode = spr->_flags._east;
 			if (Lower(spr))
 				mode += 2;
 		}
@@ -556,15 +559,15 @@ private:
 
 SQUARE::SQUARE(CGEEngine *vm)
 	: Sprite(vm, MB), _vm(vm) {
-	Flags.Kill = true;
-	Flags.BDel = false;
+	_flags._kill = true;
+	_flags._bDel = false;
 }
 
 
 void SQUARE::Touch(uint16 mask, int x, int y) {
 	Sprite::Touch(mask, x, y);
 	if (mask & L_UP) {
-		XZ(X + x, Y + y).Cell() = 0;
+		XZ(_x + x, _y + y).Cell() = 0;
 		SNPOST_(SNKILL, -1, 0, this);
 	}
 }
@@ -610,7 +613,7 @@ void CGEEngine::Quit() {
 		{ NULL, &CGEEngine::dummy          }
 	};
 
-	if (Snail->Idle() && ! Hero->Flags.Hide) {
+	if (Snail->Idle() && ! Hero->_flags._hide) {
 		if (VMENU::Addr) {
 			SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 			ResetQSwitch();
@@ -632,14 +635,14 @@ static void AltCtrlDel(void) {
 // Used in stubbed function, do not remove!
 static void MiniStep(int stp) {
 	if (stp < 0)
-		_miniCave->Flags.Hide = true;
+		_miniCave->_flags._hide = true;
 	else {
 		&*Mini;
 		*MiniShp[0] = *MiniShpList[stp];
 		if (Fx.Current)
 			&*(Fx.Current->EAddr());
 
-		_miniCave->Flags.Hide = false;
+		_miniCave->_flags._hide = false;
 	}
 }
 
@@ -672,9 +675,9 @@ void SYSTEM::FunTouch(void) {
 static void ShowBak(int ref) {
 	Sprite *spr = Vga->SpareQ->Locate(ref);
 	if (spr) {
-		BITMAP::Pal = VGA::SysPal;
+		Bitmap::Pal = VGA::SysPal;
 		spr->Expand();
-		BITMAP::Pal = NULL;
+		Bitmap::Pal = NULL;
 		spr->Show(2);
 		Vga->CopyPage(1, 2);
 		Sys->SetPal();
@@ -693,10 +696,10 @@ static void CaveUp(void) {
 	Text->Preload(BakRef, BakRef + 1000);
 	Sprite *spr = Vga->SpareQ->First();
 	while (spr) {
-		Sprite *n = spr->Next;
+		Sprite *n = spr->_next;
 		if (spr->_cave == Now || spr->_cave == 0)
 			if (spr->_ref != BakRef) {
-				if (spr->Flags.Back)
+				if (spr->_flags._back)
 					spr->BackShow();
 				else
 					ExpandSprite(spr);
@@ -711,11 +714,11 @@ static void CaveUp(void) {
 	}
 
 	if (Hero) {
-		Hero->Goto(HeroXY[Now - 1].X, HeroXY[Now - 1].Y);
+		Hero->Goto(HeroXY[Now - 1]._x, HeroXY[Now - 1]._y);
 		// following 2 lines trims Hero's Z position!
 		Hero->Tick();
-		Hero->Time = 1;
-		Hero->Flags.Hide = false;
+		Hero->_time = 1;
+		Hero->_flags._hide = false;
 	}
 
 	if (! Dark)
@@ -730,7 +733,7 @@ static void CaveUp(void) {
 		Vga->ShowQ->Remove(_shadow);
 		_shadow->MakeXlat(Glass(VGA::SysPal, 204, 204, 204));
 		Vga->ShowQ->Insert(_shadow, Hero);
-		_shadow->Z = Hero->Z;
+		_shadow->_z = Hero->_z;
 	}
 	FeedSnail(Vga->ShowQ->Locate(BakRef + 999), TAKE);
 	Vga->Show();
@@ -747,11 +750,11 @@ static void CaveUp(void) {
 
 void CGEEngine::CaveDown() {
 	Sprite *spr;
-	if (!_horzLine->Flags.Hide)
+	if (!_horzLine->_flags._hide)
 		SwitchMapping();
 
 	for (spr = Vga->ShowQ->First(); spr;) {
-		Sprite *n = spr->Next;
+		Sprite *n = spr->_next;
 		if (spr->_ref >= 1000 /*&& spr->_cave*/) {
 			if (spr->_ref % 1000 == 999)
 				FeedSnail(spr, TAKE);
@@ -844,7 +847,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 				Sprite *m = Vga->ShowQ->Locate(17001);
 				if (m) {
 					m->Step(1);
-					m->Time = 216; // 3s
+					m->_time = 216; // 3s
 				}
 			}
 			break;
@@ -909,7 +912,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 				_sprite->Step(x - '0');
 			break;
 		case F10          :
-			if (Snail->Idle() && ! Hero->Flags.Hide)
+			if (Snail->Idle() && ! Hero->_flags._hide)
 				_vm->StartCountDown();
 			break;
 		case 'J':
@@ -957,7 +960,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			if (cav && Snail->Idle() && Hero->TracePtr < 0)
 				_vm->SwitchCave(cav);
 
-			if (!_horzLine->Flags.Hide) {
+			if (!_horzLine->_flags._hide) {
 				if (y >= MAP_TOP && y < MAP_TOP + MAP_HIG) {
 					int8 x1, z1;
 					XZ(x, y).Split(x1, z1);
@@ -985,7 +988,7 @@ void SYSTEM::Tick(void) {
 				else if (STARTUP::Core >= CORE_MID) {
 					int n = new_random(100);
 					if (n > 96)
-						HeroCover(6 + (Hero->X + Hero->W / 2 < SCR_WID / 2));
+						HeroCover(6 + (Hero->_x + Hero->_w / 2 < SCR_WID / 2));
 					else {
 						if (n > 90)
 							HeroCover(5);
@@ -1000,7 +1003,7 @@ void SYSTEM::Tick(void) {
 			}
 			FunTouch();
 		}
-	Time = SYSTIMERATE;
+	_time = SYSTIMERATE;
 }
 
 
@@ -1070,8 +1073,8 @@ void CGEEngine::TakeName() {
 		if (tn) {
 			tn->SetName(Text->getText(GETNAME_TITLE));
 			tn->Center();
-			tn->Goto(tn->X, tn->Y - 10);
-			tn->Z = 126;
+			tn->Goto(tn->_x, tn->_y - 10);
+			tn->_z = 126;
 			Vga->ShowQ->Insert(tn);
 		}
 	}
@@ -1079,7 +1082,7 @@ void CGEEngine::TakeName() {
 
 
 void CGEEngine::SwitchMapping() {
-	if (_horzLine->Flags.Hide) {
+	if (_horzLine->_flags._hide) {
 		int i;
 		for (i = 0; i < MAP_ZCNT; i++) {
 			int j;
@@ -1090,28 +1093,28 @@ void CGEEngine::SwitchMapping() {
 		}
 	} else {
 		Sprite *s;
-		for (s = Vga->ShowQ->First(); s; s = s->Next)
-			if (s->W == MAP_XGRID && s->H == MAP_ZGRID)
+		for (s = Vga->ShowQ->First(); s; s = s->_next)
+			if (s->_w == MAP_XGRID && s->_h == MAP_ZGRID)
 				SNPOST_(SNKILL, -1, 0, s);
 	}
-	_horzLine->Flags.Hide = !_horzLine->Flags.Hide;
+	_horzLine->_flags._hide = !_horzLine->_flags._hide;
 }
 
 
 static void KillSprite(void) {
-	_sprite->Flags.Kill = true;
-	_sprite->Flags.BDel = true;
+	_sprite->_flags._kill = true;
+	_sprite->_flags._bDel = true;
 	SNPOST_(SNKILL, -1, 0, _sprite);
 	_sprite = NULL;
 }
 
 
 static void PushSprite(void) {
-	Sprite *spr = _sprite->Prev;
+	Sprite *spr = _sprite->_prev;
 	if (spr) {
 		Vga->ShowQ->Insert(Vga->ShowQ->Remove(_sprite), spr);
-		while (_sprite->Z > _sprite->Next->Z)
-			--_sprite->Z;
+		while (_sprite->_z > _sprite->_next->_z)
+			_sprite->_z--;
 	} else
 		SNPOST_(SNSOUND, -1, 2, NULL);
 }
@@ -1119,17 +1122,17 @@ static void PushSprite(void) {
 
 static void PullSprite(void) {
 	bool ok = false;
-	Sprite *spr = _sprite->Next;
+	Sprite *spr = _sprite->_next;
 	if (spr) {
-		spr = spr->Next;
+		spr = spr->_next;
 		if (spr)
-			ok = (!spr->Flags.Slav);
+			ok = (!spr->_flags._slav);
 	}
 	if (ok) {
 		Vga->ShowQ->Insert(Vga->ShowQ->Remove(_sprite), spr);
-		if (_sprite->Prev)
-			while (_sprite->Z < _sprite->Prev->Z)
-				++_sprite->Z;
+		if (_sprite->_prev)
+			while (_sprite->_z < _sprite->_prev->_z)
+				_sprite->_z++;
 	} else
 		SNPOST_(SNSOUND, -1, 2, NULL);
 }
@@ -1151,8 +1154,8 @@ static void SaveMapping(void) {
 	{
 		IOHAND cf(ProgName(".HXY"), WRI);
 			if (!cf.Error) {
-				HeroXY[Now - 1].X = Hero->X;
-				HeroXY[Now - 1].Y = Hero->Y;
+				HeroXY[Now - 1]._x = Hero->_x;
+				HeroXY[Now - 1]._y = Hero->_y;
 				cf.Write((uint8 *) HeroXY, sizeof(HeroXY));
 		}
 	}
@@ -1180,7 +1183,7 @@ static  char    DebugText[] = " N=00000 F=000000 X=000 Y=000 FPS=0000\0S=00:00 0
 #define SP__    (DebugText + 70)
 
 static void SayDebug(void) {
-	if (!DebugLine->Flags.Hide) {
+	if (!DebugLine->_flags._hide) {
 		static long t = -1L;
 		long t1 = Timer();
 
@@ -1192,25 +1195,25 @@ static void SayDebug(void) {
 			t = t1;
 		}
 
-		dwtom(Mouse->X, ABSX, 10, 3);
-		dwtom(Mouse->Y, ABSY, 10, 3);
+		dwtom(Mouse->_x, ABSX, 10, 3);
+		dwtom(Mouse->_y, ABSY, 10, 3);
 //		dwtom(coreleft(), NFRE, 10, 5);
 //		dwtom(farcoreleft(), FFRE, 10, 6);
 
 		// sprite queue size
 		uint16 n = 0;
 		Sprite *spr;
-		for (spr = Vga->ShowQ->First(); spr; spr = spr->Next) {
+		for (spr = Vga->ShowQ->First(); spr; spr = spr->_next) {
 			++ n;
 			if (spr == _sprite) {
 				*XSPR = ' ';
 				dwtom(n, SP_N, 10, 2);
-				dwtom(_sprite->X, SP_X, 10, 3);
-				dwtom(_sprite->Y, SP_Y, 10, 3);
-				dwtom(_sprite->Z, SP_Z, 10, 3);
-				dwtom(_sprite->W, SP_W, 10, 3);
-				dwtom(_sprite->H, SP_H, 10, 3);
-				dwtom(*(uint16 *)(&_sprite->Flags), SP_F, 16, 2);
+				dwtom(_sprite->_x, SP_X, 10, 3);
+				dwtom(_sprite->_y, SP_Y, 10, 3);
+				dwtom(_sprite->_z, SP_Z, 10, 3);
+				dwtom(_sprite->_w, SP_W, 10, 3);
+				dwtom(_sprite->_h, SP_H, 10, 3);
+				dwtom(*(uint16 *)(&_sprite->_flags), SP_F, 16, 2);
 			}
 		}
 		dwtom(n, SP_S, 10, 2);
@@ -1221,7 +1224,7 @@ static void SayDebug(void) {
 
 
 static void SwitchDebug(void) {
-	DebugLine->Flags.Hide = ! DebugLine->Flags.Hide;
+	DebugLine->_flags._hide = ! DebugLine->_flags._hide;
 }
 
 
@@ -1259,16 +1262,16 @@ void Sprite::Touch(uint16 mask, int x, int y) {
 			_vm->OptionTouch(_ref % 10, mask);
 			return;
 		}
-		if (Flags.Syst)
+		if (_flags._syst)
 			return;       // cannot access system sprites
 		if (Game) if (mask & L_UP) {
 				mask &= ~L_UP;
 				mask |= R_UP;
 			}
 		if ((mask & R_UP) && Snail->Idle()) {
-			Sprite *ps = (_pocLight->SeqPtr) ? _pocket[PocPtr] : NULL;
+			Sprite *ps = (_pocLight->_seqPtr) ? _pocket[PocPtr] : NULL;
 			if (ps) {
-				if (Flags.Kept || Hero->Distance(this) < MAX_DISTANCE) {
+				if (_flags._kept || Hero->Distance(this) < MAX_DISTANCE) {
 					if (Works(ps)) {
 						FeedSnail(ps, TAKE);
 					} else
@@ -1277,18 +1280,18 @@ void Sprite::Touch(uint16 mask, int x, int y) {
 				} else
 					TooFar();
 			} else {
-				if (Flags.Kept)
+				if (_flags._kept)
 					mask |= L_UP;
 				else {
 					if (Hero->Distance(this) < MAX_DISTANCE) {
 						///
-						if (Flags.Port) {
+						if (_flags._port) {
 							if (FindPocket(NULL) < 0)
 								PocFul();
 							else {
 								SNPOST(SNREACH, -1, -1, this);
 								SNPOST(SNKEEP, -1, -1, this);
-								Flags.Port = false;
+								_flags._port = false;
 							}
 						} else {
 							if (TakePtr != NO_PTR) {
@@ -1306,7 +1309,7 @@ void Sprite::Touch(uint16 mask, int x, int y) {
 			}
 		}
 		if ((mask & L_UP) && Snail->Idle()) {
-			if (Flags.Kept) {
+			if (_flags._kept) {
 				int n;
 				for (n = 0; n < POCKET_NX; n++) {
 					if (_pocket[n] == this) {
@@ -1456,12 +1459,12 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 	if (_sprite) {
 		_sprite->_ref = ref;
 		_sprite->_cave = cav;
-		_sprite->Z = pos;
-		_sprite->Flags.East = east;
-		_sprite->Flags.Port = port;
-		_sprite->Flags.Tran = tran;
-		_sprite->Flags.Kill = true;
-		_sprite->Flags.BDel = true;
+		_sprite->_z = pos;
+		_sprite->_flags._east = east;
+		_sprite->_flags._port = port;
+		_sprite->_flags._tran = tran;
+		_sprite->_flags._kill = true;
+		_sprite->_flags._bDel = true;
 
 		// Extract the filename, without the extension
 		strcpy(_sprite->File, fname);
@@ -1469,7 +1472,7 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 		if (p)
 			*p = '\0';
 
-		_sprite->ShpCnt = shpcnt;
+		_sprite->_shpCnt = shpcnt;
 		Vga->SpareQ->Append(_sprite);
 	}
 }
@@ -1528,7 +1531,7 @@ void CGEEngine::LoadScript(const char *fname) {
 		_sprite = NULL;
 		LoadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
 		if (_sprite && BkG)
-			_sprite->Flags.Back = true;
+			_sprite->_flags._back = true;
 	}
 	if (! ok)
 		error("%s [%s]", NumStr("Bad INI line ######", lcnt), fname);
@@ -1586,9 +1589,9 @@ void CGEEngine::RunGame() {
 	Text->Preload(100, 1000);
 	LoadHeroXY();
 
-	_cavLight->Flags.Tran = true;
+	_cavLight->_flags._tran = true;
 	Vga->ShowQ->Append(_cavLight);
-	_cavLight->Flags.Hide = true;
+	_cavLight->_flags._hide = true;
 
 	static Seq pocSeq[] = { { 0, 0, 0, 0, 20 },
 		{ 1, 2, 0, 0,  4 },
@@ -1599,9 +1602,9 @@ void CGEEngine::RunGame() {
 		{ 0, 1, 0, 0, 16 },
 	};
 	_pocLight->SetSeq(pocSeq);
-	_pocLight->Flags.Tran = true;
-	_pocLight->Time = 1;
-	_pocLight->Z = 120;
+	_pocLight->_flags._tran = true;
+	_pocLight->_time = 1;
+	_pocLight->_z = 120;
 	Vga->ShowQ->Append(_pocLight);
 	SelectPocket(-1);
 
@@ -1626,9 +1629,9 @@ void CGEEngine::RunGame() {
 			LoadSprite("MINI", -1, 0, MINI_X, MINI_Y);
 			ExpandSprite(_miniCave = _sprite);  // NULL is ok
 			if (_miniCave) {
-				_miniCave->Flags.Hide = true;
+				_miniCave->_flags._hide = true;
 				_miniCave->MoveShapes(ptr);
-				MiniShp[0] = new BITMAP(*_miniCave->Shp());
+				MiniShp[0] = new Bitmap(*_miniCave->Shp());
 				MiniShpList = _miniCave->SetShapeList(MiniShp);
 				PostMiniStep(-1);
 			}
@@ -1637,28 +1640,28 @@ void CGEEngine::RunGame() {
 
 	if (Hero) {
 		ExpandSprite(Hero);
-		Hero->Goto(HeroXY[Now - 1].X, HeroXY[Now - 1].Y);
+		Hero->Goto(HeroXY[Now - 1]._x, HeroXY[Now - 1]._y);
 		if (INI_FILE::Exist("00SHADOW.SPR")) {
-			LoadSprite("00SHADOW", -1, 0, Hero->X + 14, Hero->Y + 51);
+			LoadSprite("00SHADOW", -1, 0, Hero->_x + 14, Hero->_y + 51);
 			if ((_shadow = _sprite) != NULL) {
 				_shadow->_ref = 2;
-				_shadow->Flags.Tran = true;
-				Hero->Flags.Shad = true;
+				_shadow->_flags._tran = true;
+				Hero->_flags._shad = true;
 				Vga->ShowQ->Insert(Vga->SpareQ->Remove(_shadow), Hero);
 			}
 		}
 	}
 
 	InfoLine->Goto(INFO_X, INFO_Y);
-	InfoLine->Flags.Tran = true;
+	InfoLine->_flags._tran = true;
 	InfoLine->Update(NULL);
 	Vga->ShowQ->Insert(InfoLine);
 
-	DebugLine->Z = 126;
+	DebugLine->_z = 126;
 	Vga->ShowQ->Insert(DebugLine);
 
-	_horzLine->Y = MAP_TOP - (MAP_TOP > 0);
-	_horzLine->Z = 126;
+	_horzLine->_y = MAP_TOP - (MAP_TOP > 0);
+	_horzLine->_z = 126;
 	Vga->ShowQ->Insert(_horzLine);
 
 	Mouse->Busy = Vga->SpareQ->Locate(BUSY_REF);
@@ -1719,14 +1722,14 @@ void CGEEngine::Movie(const char *ext) {
 
 
 bool CGEEngine::ShowTitle(const char *name) {
-	BITMAP::Pal = VGA::SysPal;
-	BMP_PTR LB[] =  { new BITMAP(name), NULL };
-	BITMAP::Pal = NULL;
+	Bitmap::Pal = VGA::SysPal;
+	BMP_PTR LB[] =  { new Bitmap(name), NULL };
+	Bitmap::Pal = NULL;
 	bool usr_ok = false;
 
 	Sprite D(this, LB);
-	D.Flags.Kill = true;
-	D.Flags.BDel = true;
+	D._flags._kill = true;
+	D._flags._bDel = true;
 	D.Center();
 	D.Show(2);
 
@@ -1846,8 +1849,8 @@ void CGEEngine::cge_main(void) {
 	if (!SVG0FILE::Exist(SVG0NAME))
 		STARTUP::Mode = 2;
 
-	DebugLine->Flags.Hide = true;
-	_horzLine->Flags.Hide = true;
+	DebugLine->_flags._hide = true;
+	_horzLine->_flags._hide = true;
 
 	//srand((uint16) Timer());
 	Sys = new SYSTEM(this);
