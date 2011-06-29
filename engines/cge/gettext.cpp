@@ -44,8 +44,8 @@ GET_TEXT::GET_TEXT(CGEEngine *vm, const char *info, char *text, int size, void (
 	Mode = RECT;
 	TS[0] = Box((i + 3) & ~3, 2 * TEXT_VM + 2 * FONT_HIG + TEXT_LS);
 	SetShapeList(TS);
-	Flags.BDel = true;
-	Flags.Kill = true;
+	_flags._bDel = true;
+	_flags._kill = true;
 	memcpy(Buff, text, Len);
 	Buff[Len] = ' ';
 	Buff[Len + 1] = '\0';
@@ -66,7 +66,7 @@ void GET_TEXT::Tick(void) {
 		Cntr = 0;
 	}
 	PutLine(1, Buff);
-	Time = GTTIME;
+	_time = GTTIME;
 }
 
 
@@ -107,7 +107,7 @@ void GET_TEXT::Touch(uint16 mask, int x, int y) {
 					if (p)
 						x = ogon[p - bezo];
 				}
-				if (Len < Size && 2 * TEXT_HM + _Font->Width(Buff) + _Font->Wid[x] <= W) {
+				if (Len < Size && 2 * TEXT_HM + _Font->Width(Buff) + _Font->Wid[x] <= _w) {
 					Buff[Len + 2] = Buff[Len + 1];
 					Buff[Len + 1] = Buff[Len];
 					Buff[Len++] = x;

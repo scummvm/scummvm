@@ -100,7 +100,7 @@ void FONT::Save(void) {
 TALK::TALK(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
 	: Sprite(vm, NULL), Mode(mode), _vm(vm) {
 	TS[0] = TS[1] = NULL;
-	Flags.Syst = true;
+	_flags._syst = true;
 	Update(tx);
 }
 
@@ -108,7 +108,7 @@ TALK::TALK(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
 TALK::TALK(CGEEngine *vm)
 	: Sprite(vm, NULL), Mode(PURE), _vm(vm) {
 	TS[0] = TS[1] = NULL;
-	Flags.Syst = true;
+	_flags._syst = true;
 }
 
 
@@ -158,11 +158,11 @@ void TALK::Update(const char *tx) {
 		TS[0] = Box(mw, mh);
 	}
 
-	m = TS[0]->M + ln * mw + hmarg;
+	m = TS[0]->_m + ln * mw + hmarg;
 
 	while (* tx) {
 		if (*tx == '|' || *tx == '\n')
-			m = TS[0]->M + (ln += FONT_HIG + TEXT_LS) * mw + hmarg;
+			m = TS[0]->_m + (ln += FONT_HIG + TEXT_LS) * mw + hmarg;
 		else {
 			int cw = _Font->Wid[*tx], i;
 			uint8 *f = _Font->Map + _Font->Pos[*tx];
@@ -176,10 +176,10 @@ void TALK::Update(const char *tx) {
 					b >>= 1;
 					pp += mw;
 				}
-				++m;
+				m++;
 			}
 		}
-		++tx;
+		tx++;
 	}
 	TS[0]->Code();
 	SetShapeList(TS);
@@ -188,7 +188,7 @@ void TALK::Update(const char *tx) {
 
 
 
-BITMAP *TALK::Box(uint16 w, uint16 h) {
+Bitmap *TALK::Box(uint16 w, uint16 h) {
 	uint8 *b, * p, * q;
 	uint16 n, r = (Mode == ROUND) ? TEXT_RD : 0;
 
@@ -228,14 +228,14 @@ BITMAP *TALK::Box(uint16 w, uint16 h) {
 			q -= w;
 		}
 	}
-	return new BITMAP(w, h, b);
+	return new Bitmap(w, h, b);
 }
 
 
 void TALK::PutLine(int line, const char *text) {
 // Note: (TS[0].W % 4) have to be 0
-	uint16 w = TS[0]->W, h = TS[0]->H;
-	uint8 *v = TS[0]->V, * p;
+	uint16 w = TS[0]->_w, h = TS[0]->_h;
+	uint8 *v = TS[0]->_v, * p;
 	uint16 dsiz = w >> 2;     // data size (1 plane line size)
 	uint16 lsiz = 2 + dsiz + 2;   // uint16 for line header, uint16 for gap
 	uint16 psiz = h * lsiz;       // - last gap, but + plane trailer
@@ -278,22 +278,22 @@ void TALK::PutLine(int line, const char *text) {
 				if (p >= q)
 					p = p - size + 1;
 			}
-			++text;
+			text++;
 		}
 	}
 }
 
 
 INFO_LINE::INFO_LINE(CGEEngine *vm, uint16 w) : TALK(vm), OldTxt(NULL), _vm(vm) {
-	TS[0] = new BITMAP(w, FONT_HIG, TEXT_BG);
+	TS[0] = new Bitmap(w, FONT_HIG, TEXT_BG);
 	SetShapeList(TS);
 }
 
 
 void INFO_LINE::Update(const char *tx) {
 	if (tx != OldTxt) {
-		uint16 w = TS[0]->W, h = TS[0]->H;
-		uint8 *v = (uint8 *) TS[0]->V;
+		uint16 w = TS[0]->_w, h = TS[0]->_h;
+		uint8 *v = (uint8 *) TS[0]->_v;
 		uint16 dsiz = w >> 2;                           // data size (1 plane line size)
 		uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
 		uint16 psiz = h * lsiz;                         // - last gape, but + plane trailer
@@ -324,7 +324,7 @@ void INFO_LINE::Update(const char *tx) {
 					if (p >= q)
 						p = p - size + 1;
 				}
-				++tx;
+				tx++;
 			}
 		}
 		OldTxt = tx;

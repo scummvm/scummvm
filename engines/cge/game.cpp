@@ -67,25 +67,25 @@ int FLY::L = 20,
     FLY::B = 100;
 
 
-FLY::FLY(CGEEngine *vm, BITMAP **shpl)
+FLY::FLY(CGEEngine *vm, Bitmap **shpl)
 	: Sprite(vm, shpl), Tx(0), Ty(0), _vm(vm) {
 	Step(new_random(2));
-	Goto(L + new_random(R - L - W), T + new_random(B - T - H));
+	Goto(L + new_random(R - L - _w), T + new_random(B - T - _h));
 }
 
 
 void FLY::Tick(void) {
 	Step();
-	if (! Flags.Kept) {
+	if (!_flags._kept) {
 		if (new_random(10) < 1) {
 			Tx = new_random(3) - 1;
 			Ty = new_random(3) - 1;
 		}
-		if (X + Tx < L || X + Tx + W > R)
+		if (_x + Tx < L || _x + Tx + _w > R)
 			Tx = -Tx;
-		if (Y + Ty < T || Y + Ty + H > B)
+		if (_y + Ty < T || _y + Ty + _h > B)
 			Ty = -Ty;
-		Goto(X + Tx, Y + Ty);
+		Goto(_x + Tx, _y + Ty);
 	}
 }
 

@@ -184,11 +184,11 @@ void TEXT::Say(const char *txt, Sprite *spr) {
 	KillText();
 	Talk = new TALK(_vm, txt, ROUND);
 	if (Talk) {
-		bool east = spr->Flags.East;
-		int x = (east) ? (spr->X + spr->W - 2) : (spr->X + 2);
-		int y = spr->Y + 2;
+		bool east = spr->_flags._east;
+		int x = (east) ? (spr->_x + spr->_w - 2) : (spr->_x + 2);
+		int y = spr->_y + 2;
 		Sprite *spike = new Sprite(_vm, SP);
-		uint16 sw = spike->W;
+		uint16 sw = spike->_w;
 
 		if (east) {
 			if (x + sw + TEXT_RD + 5 >= SCR_WID)
@@ -197,21 +197,21 @@ void TEXT::Say(const char *txt, Sprite *spr) {
 			if (x <= 5 + TEXT_RD + sw)
 				east = true;
 		}
-		x = (east) ? (spr->X + spr->W - 2) : (spr->X + 2 - sw);
+		x = (east) ? (spr->_x + spr->_w - 2) : (spr->_x + 2 - sw);
 		if (spr->_ref == 1)
 			x += ((east) ? -10 : 10); // Hero
 
-		Talk->Flags.Kill = true;
-		Talk->Flags.BDel = true;
+		Talk->_flags._kill = true;
+		Talk->_flags._bDel = true;
 		Talk->SetName(Text->getText(SAY_NAME));
-		Talk->Goto(x - (Talk->W - sw) / 2 - 3 + 6 * east, y - spike->H - Talk->H + 1);
-		Talk->Z = 125;
+		Talk->Goto(x - (Talk->_w - sw) / 2 - 3 + 6 * east, y - spike->_h - Talk->_h + 1);
+		Talk->_z = 125;
 		Talk->_ref = SAY_REF;
 
-		spike->Goto(x, Talk->Y + Talk->H - 1);
-		spike->Z = 126;
-		spike->Flags.Slav = true;
-		spike->Flags.Kill = true;
+		spike->Goto(x, Talk->_y + Talk->_h - 1);
+		spike->_z = 126;
+		spike->_flags._slav = true;
+		spike->_flags._kill = true;
 		spike->SetName(Text->getText(SAY_NAME));
 		spike->Step(east);
 		spike->_ref = SAY_REF;
@@ -225,12 +225,12 @@ void CGEEngine::Inf(const char *txt) {
 	KillText();
 	Talk = new TALK(this, txt, RECT);
 	if (Talk) {
-		Talk->Flags.Kill = true;
-		Talk->Flags.BDel = true;
+		Talk->_flags._kill = true;
+		Talk->_flags._bDel = true;
 		Talk->SetName(Text->getText(INF_NAME));
 		Talk->Center();
-		Talk->Goto(Talk->X, Talk->Y - 20);
-		Talk->Z = 126;
+		Talk->Goto(Talk->_x, Talk->_y - 20);
+		Talk->_z = 126;
 		Talk->_ref = INF_REF;
 		Vga->ShowQ->Insert(Talk, Vga->ShowQ->Last());
 	}

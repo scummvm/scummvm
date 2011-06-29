@@ -71,8 +71,8 @@ enum    TBOX_STYLE  { PURE, RECT, ROUND };
 class TALK : public Sprite {
 protected:
 	TBOX_STYLE Mode;
-	BITMAP *TS[2];
-	BITMAP *Box(uint16 w, uint16 h);
+	Bitmap *TS[2];
+	Bitmap *Box(uint16 w, uint16 h);
 public:
 	TALK(CGEEngine *vm, const char *tx, TBOX_STYLE mode = PURE);
 	TALK(CGEEngine *vm);

@@ -117,8 +117,8 @@ extern  int MaxCave;
 extern  int PocPtr;
 extern  BAR Barriers[];
 extern  struct HXY {
-	int X;
-	int Y;
+	int _x;
+	int _y;
 } HeroXY[];
 
 } // End of namespace CGE

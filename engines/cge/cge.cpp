@@ -57,7 +57,7 @@ void CGEEngine::setup() {
 	// Initialise classes that have static members
 	VGA::init();
 	VFILE::init();
-	BITMAP::init();
+	Bitmap::init();
 	TALK::init();
 
 	// Initialise engine objects
@@ -77,22 +77,22 @@ void CGEEngine::setup() {
 	InfoLine = new INFO_LINE(this, INFO_W);
 	_cavLight = new Sprite(this, PR);
 	DebugLine = new INFO_LINE(this, SCR_WID);
-	MB[0] = new BITMAP("BRICK");
+	MB[0] = new Bitmap("BRICK");
 	MB[1] = NULL;
-	HL[0] = new BITMAP("HLINE");
+	HL[0] = new Bitmap("HLINE");
 	HL[1] = NULL;
-	MC[0] = new BITMAP("MOUSE");
-	MC[1] = new BITMAP("DUMMY");
+	MC[0] = new Bitmap("MOUSE");
+	MC[1] = new Bitmap("DUMMY");
 	MC[2] = NULL;
-	PR[0] = new BITMAP("PRESS");
+	PR[0] = new Bitmap("PRESS");
 	PR[1] = NULL;
-	SP[0] = new BITMAP("SPK_L");
-	SP[1] = new BITMAP("SPK_R");
+	SP[0] = new Bitmap("SPK_L");
+	SP[1] = new Bitmap("SPK_R");
 	SP[2] = NULL;
-	LI[0] = new BITMAP("LITE0");
-	LI[1] = new BITMAP("LITE1");
-	LI[2] = new BITMAP("LITE2");
-	LI[3] = new BITMAP("LITE3");
+	LI[0] = new Bitmap("LITE0");
+	LI[1] = new Bitmap("LITE1");
+	LI[2] = new Bitmap("LITE2");
+	LI[3] = new Bitmap("LITE3");
 	LI[4] = NULL;
 	Snail = new SNAIL(this, false);
 	Snail_ = new SNAIL(this, true);
@@ -105,7 +105,7 @@ CGEEngine::~CGEEngine() {
 
 	// Call classes with static members to clear them up
 	TALK::deinit();
-	BITMAP::deinit();
+	Bitmap::deinit();
 	VFILE::deinit();
 	VGA::deinit();
 

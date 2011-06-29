@@ -32,12 +32,12 @@
 
 namespace CGE {
 
-extern BITMAP  *MB[];
-extern BITMAP  *HL[];
-extern BITMAP  *MC[];
-extern BITMAP  *PR[];
-extern BITMAP  *SP[];
-extern BITMAP  *LI[];
+extern Bitmap *MB[];
+extern Bitmap *HL[];
+extern Bitmap *MC[];
+extern Bitmap *PR[];
+extern Bitmap *SP[];
+extern Bitmap *LI[];
 
 } // End of namespace CGE
 
