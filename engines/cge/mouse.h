@@ -45,13 +45,14 @@ namespace CGE {
 
 extern TALK *Talk;
 
-struct EVENT {
-	uint16 Msk;
-	uint16 X, Y;
-	Sprite *Ptr;
+struct Event {
+	uint16 _msk;
+	uint16 _x;
+	uint16 _y;
+	Sprite *_ptr;
 };
 
-extern EVENT  Evt[EVT_MAX];
+extern Event Evt[EVT_MAX];
 extern uint16 EvtHead, EvtTail;
 typedef void (MOUSE_FUN)(void);
 
@@ -69,7 +70,7 @@ public:
 	int Buttons;
 	Sprite *Busy;
 	//Sprite *Touched;
-	MOUSE(CGEEngine *vm, BITMAP **shpl = MC);
+	MOUSE(CGEEngine *vm, Bitmap **shpl = MC);
 	~MOUSE();
 	void On();
 	void Off();

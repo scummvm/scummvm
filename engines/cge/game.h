@@ -48,7 +48,7 @@ class FLY : public Sprite {
 	static int L, T, R, B;
 public:
 	int Tx, Ty;
-	FLY(CGEEngine *vm, BITMAP **shpl);
+	FLY(CGEEngine *vm, Bitmap **shpl);
 	void Tick(void);
 private:
 	CGEEngine *_vm;

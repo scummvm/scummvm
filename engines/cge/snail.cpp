@@ -75,7 +75,7 @@ static void SNGame(Sprite *spr, int num) {
 		int buref = 0;
 		int Stage = 0;
 
-		for (dup[0] = Vga->ShowQ->First(); dup[0]; dup[0] = dup[0]->Next) {
+		for (dup[0] = Vga->ShowQ->First(); dup[0]; dup[0] = dup[0]->_next) {
 			buref = dup[0]->_ref;
 			if (buref / 1000 == 16 && buref % 100 == 6) {
 				Stage = (buref / 100) % 10;
@@ -88,8 +88,8 @@ static void SNGame(Sprite *spr, int num) {
 		}
 
 		if (Game) { // continue game
-			int i = new_random(3), hand = (dup[0]->ShpCnt == 6);
-			++ Stage;
+			int i = new_random(3), hand = (dup[0]->_shpCnt == 6);
+			Stage++;
 			if (hand && Stage > DRESSED)
 				++hand;
 			if (i >= 0 || (dup[i] == spr && new_random(3) == 0)) {
@@ -188,7 +188,7 @@ static void SNGame(Sprite *spr, int num) {
 			}
 			///--------------------
 			SNPOST(SNSETZ, 20700, 0, NULL);
-			bool hit = (k1->SeqPtr + k2->SeqPtr + k3->SeqPtr == 15);
+			bool hit = (k1->_seqPtr + k2->_seqPtr + k3->_seqPtr == 15);
 			if (hit) {
 				if (spr->_ref == 1) {
 					SNPOST(SNSAY,      1, 20003, NULL);       // hura!
@@ -295,7 +295,7 @@ int FindPocket(Sprite *spr) {
 
 
 void SelectPocket(int n) {
-	if (n < 0 || (_pocLight->SeqPtr && PocPtr == n)) {
+	if (n < 0 || (_pocLight->_seqPtr && PocPtr == n)) {
 		_pocLight->Step(0);
 		n = FindPocket(NULL);
 		if (n >= 0)
@@ -325,10 +325,10 @@ void Hide1(Sprite *spr) {
 }
 
 
-void SNGhost(BITMAP *bmp) {
+void SNGhost(Bitmap *bmp) {
 	// TODO : Get x and y from M but not using segment / offset
-	//bmp->Hide(FP_OFF(bmp->M), FP_SEG(bmp->M));
-	bmp->M = NULL;
+	//bmp->Hide(FP_OFF(bmp->_m), FP_SEG(bmp->_m));
+	bmp->_m = NULL;
 	delete bmp;
 	warning("STUB: SNGhost");
 }
@@ -509,10 +509,10 @@ static void SNZTrim(Sprite *spr) {
 			bool en = _heart->_enable;
 			Sprite *s;
 			_heart->_enable = false;
-			s = (spr->Flags.Shad) ? spr->Prev : NULL;
+			s = (spr->_flags._shad) ? spr->_prev : NULL;
 			Vga->ShowQ->Insert(Vga->ShowQ->Remove(spr));
 			if (s) {
-				s->Z = spr->Z;
+				s->_z = spr->_z;
 				Vga->ShowQ->Insert(Vga->ShowQ->Remove(s), spr);
 			}
 			_heart->_enable = en;
@@ -522,9 +522,9 @@ static void SNZTrim(Sprite *spr) {
 
 static void SNHide(Sprite *spr, int val) {
 	if (spr) {
-		spr->Flags.Hide = (val >= 0) ? (val != 0) : (! spr->Flags.Hide);
-		if (spr->Flags.Shad)
-			spr->Prev->Flags.Hide = spr->Flags.Hide;
+		spr->_flags._hide = (val >= 0) ? (val != 0) : (!spr->_flags._hide);
+		if (spr->_flags._shad)
+			spr->_prev->_flags._hide = spr->_flags._hide;
 	}
 }
 
@@ -553,7 +553,7 @@ void SNSeq(Sprite *spr, int val) {
 
 void SNRSeq(Sprite *spr, int val) {
 	if (spr)
-		SNSeq(spr, spr->SeqPtr + val);
+		SNSeq(spr, spr->_seqPtr + val);
 }
 
 
@@ -565,22 +565,22 @@ void SNSend(Sprite *spr, int val) {
 		spr->_cave = val;
 		if (val1 != was1) {
 			if (was1) {
-				if (spr->Flags.Kept) {
+				if (spr->_flags._kept) {
 					int n = FindPocket(spr);
 					if (n >= 0)
 						_pocket[n] = NULL;
 				}
 				Hide1(spr);
 				ContractSprite(spr);
-				spr->Flags.Slav = false;
+				spr->_flags._slav = false;
 			} else {
 				if (spr->_ref % 1000 == 0)
-					BITMAP::Pal = VGA::SysPal;
-				if (spr->Flags.Back)
+					Bitmap::Pal = VGA::SysPal;
+				if (spr->_flags._back)
 					spr->BackShow(true);
 				else
 					ExpandSprite(spr);
-				BITMAP::Pal = NULL;
+				Bitmap::Pal = NULL;
 			}
 		}
 	}
@@ -596,15 +596,15 @@ void SNSwap(Sprite *spr, int xref) {
 		bool xwas1 = (xwas == 0 || xwas == Now);
 
 		Swap(spr->_cave, xspr->_cave);
-		Swap(spr->X, xspr->X);
-		Swap(spr->Y, xspr->Y);
-		Swap(spr->Z, xspr->Z);
-		if (spr->Flags.Kept) {
+		Swap(spr->_x, xspr->_x);
+		Swap(spr->_y, xspr->_y);
+		Swap(spr->_z, xspr->_z);
+		if (spr->_flags._kept) {
 			int n = FindPocket(spr);
 			if (n >= 0)
 				_pocket[n] = xspr;
-			xspr->Flags.Kept = true;
-			xspr->Flags.Port = false;
+			xspr->_flags._kept = true;
+			xspr->_flags._port = false;
 		}
 		if (xwas1 != was1) {
 			if (was1) {
@@ -625,14 +625,14 @@ void SNSwap(Sprite *spr, int xref) {
 void SNCover(Sprite *spr, int xref) {
 	Sprite *xspr = Locate(xref);
 	if (spr && xspr) {
-		spr->Flags.Hide = true;
-		xspr->Z = spr->Z;
+		spr->_flags._hide = true;
+		xspr->_z = spr->_z;
 		xspr->_cave = spr->_cave;
-		xspr->Goto(spr->X, spr->Y);
+		xspr->Goto(spr->_x, spr->_y);
 		ExpandSprite(xspr);
-		if ((xspr->Flags.Shad = spr->Flags.Shad) == 1) {
-			Vga->ShowQ->Insert(Vga->ShowQ->Remove(spr->Prev), xspr);
-			spr->Flags.Shad = false;
+		if ((xspr->_flags._shad = spr->_flags._shad) == 1) {
+			Vga->ShowQ->Insert(Vga->ShowQ->Remove(spr->_prev), xspr);
+			spr->_flags._shad = false;
 		}
 		FeedSnail(xspr, NEAR);
 	}
@@ -641,28 +641,28 @@ void SNCover(Sprite *spr, int xref) {
 
 void SNUncover(Sprite *spr, Sprite *xspr) {
 	if (spr && xspr) {
-		spr->Flags.Hide = false;
+		spr->_flags._hide = false;
 		spr->_cave = xspr->_cave;
-		spr->Goto(xspr->X, xspr->Y);
-		if ((spr->Flags.Shad = xspr->Flags.Shad) == 1) {
-			Vga->ShowQ->Insert(Vga->ShowQ->Remove(xspr->Prev), spr);
-			xspr->Flags.Shad = false;
+		spr->Goto(xspr->_x, xspr->_y);
+		if ((spr->_flags._shad = xspr->_flags._shad) == 1) {
+			Vga->ShowQ->Insert(Vga->ShowQ->Remove(xspr->_prev), spr);
+			xspr->_flags._shad = false;
 		}
-		spr->Z = xspr->Z;
+		spr->_z = xspr->_z;
 		SNSend(xspr, -1);
-		if (spr->Time == 0)
-			++spr->Time;
+		if (spr->_time == 0)
+			++spr->_time;
 	}
 }
 
 
 void SNSetX0(int cav, int x0) {
-	HeroXY[cav - 1].X = x0;
+	HeroXY[cav - 1]._x = x0;
 }
 
 
 void SNSetY0(int cav, int y0) {
-	HeroXY[cav - 1].Y = y0;
+	HeroXY[cav - 1]._y = y0;
 }
 
 
@@ -674,19 +674,19 @@ void SNSetXY(Sprite *spr, uint16 xy) {
 
 void SNRelX(Sprite *spr, int x) {
 	if (spr && Hero)
-		spr->Goto(Hero->X + x, spr->Y);
+		spr->Goto(Hero->_x + x, spr->_y);
 }
 
 
 void SNRelY(Sprite *spr, int y) {
 	if (spr && Hero)
-		spr->Goto(spr->X, Hero->Y + y);
+		spr->Goto(spr->_x, Hero->_y + y);
 }
 
 
 void SNRelZ(Sprite *spr, int z) {
 	if (spr && Hero) {
-		spr->Z = Hero->Z + z;
+		spr->_z = Hero->_z + z;
 		SNZTrim(spr);
 	}
 }
@@ -694,19 +694,19 @@ void SNRelZ(Sprite *spr, int z) {
 
 void SNSetX(Sprite *spr, int x) {
 	if (spr)
-		spr->Goto(x, spr->Y);
+		spr->Goto(x, spr->_y);
 }
 
 
 void SNSetY(Sprite *spr, int y) {
 	if (spr)
-		spr->Goto(spr->X, y);
+		spr->Goto(spr->_x, y);
 }
 
 
 void SNSetZ(Sprite *spr, int z) {
 	if (spr) {
-		spr->Z = z;
+		spr->_z = z;
 		//SNPOST_(SNZTRIM, -1, 0, spr);
 		SNZTrim(spr);
 	}
@@ -718,9 +718,9 @@ void SNSlave(Sprite *spr, int ref) {
 	if (spr && slv) {
 		if (spr->Active()) {
 			SNSend(slv, spr->_cave);
-			slv->Flags.Slav = true;
-			slv->Z = spr->Z;
-			Vga->ShowQ->Insert(Vga->ShowQ->Remove(slv), spr->Next);
+			slv->_flags._slav = true;
+			slv->_z = spr->_z;
+			Vga->ShowQ->Insert(Vga->ShowQ->Remove(slv), spr->_next);
 		}
 	}
 }
@@ -728,36 +728,37 @@ void SNSlave(Sprite *spr, int ref) {
 
 void SNTrans(Sprite *spr, int trans) {
 	if (spr)
-		spr->Flags.Tran = (trans < 0) ? !spr->Flags.Tran : (trans != 0);
+		spr->_flags._tran = (trans < 0) ? !spr->_flags._tran : (trans != 0);
 }
 
 
 void SNPort(Sprite *spr, int port) {
 	if (spr)
-		spr->Flags.Port = (port < 0) ? !spr->Flags.Port : (port != 0);
+		spr->_flags._port = (port < 0) ? !spr->_flags._port : (port != 0);
 }
 
 
 void SNKill(Sprite *spr) {
 	if (spr) {
-		if (spr->Flags.Kept) {
+		if (spr->_flags._kept) {
 			int n = FindPocket(spr);
 			if (n >= 0)
 				_pocket[n] = NULL;
 		}
-		Sprite *nx = spr->Next;
+		Sprite *nx = spr->_next;
 		Hide1(spr);
 		Vga->ShowQ->Remove(spr);
 		MOUSE::ClrEvt(spr);
-		if (spr->Flags.Kill)
+		if (spr->_flags._kill)
 			delete spr;
 		else {
 			spr->_cave = -1;
 			Vga->SpareQ->Append(spr);
 		}
-		if (nx)
-			if (nx->Flags.Slav)
+		if (nx) {
+			if (nx->_flags._slav)
 				SNKill(nx);
+		}
 	}
 }
 
@@ -767,20 +768,20 @@ static void SNSound(Sprite *spr, int wav, int cnt) {
 		if (wav == -1)
 			Sound.Stop();
 		else
-			Sound.Play(Fx[wav], (spr) ? ((spr->X + spr->W / 2) / (SCR_WID / 16)) : 8, cnt);
+			Sound.Play(Fx[wav], (spr) ? ((spr->_x + spr->_w / 2) / (SCR_WID / 16)) : 8, cnt);
 	}
 }
 
 
 void SNKeep(Sprite *spr, int stp) {
 	SelectPocket(-1);
-	if (spr && ! spr->Flags.Kept && _pocket[PocPtr] == NULL) {
+	if (spr && ! spr->_flags._kept && _pocket[PocPtr] == NULL) {
 		SNSound(spr, 3, 1);
 		_pocket[PocPtr] = spr;
 		spr->_cave = 0;
-		spr->Flags.Kept = true;
-		spr->Goto(POCKET_X + POCKET_DX * PocPtr + POCKET_DX / 2 - spr->W / 2,
-		          POCKET_Y + POCKET_DY / 2 - spr->H / 2);
+		spr->_flags._kept = true;
+		spr->Goto(POCKET_X + POCKET_DX * PocPtr + POCKET_DX / 2 - spr->_w / 2,
+		          POCKET_Y + POCKET_DY / 2 - spr->_h / 2);
 		if (stp >= 0)
 			spr->Step(stp);
 	}
@@ -794,7 +795,7 @@ void SNGive(Sprite *spr, int stp) {
 		if (p >= 0) {
 			_pocket[p] = NULL;
 			spr->_cave = Now;
-			spr->Flags.Kept = false;
+			spr->_flags._kept = false;
 			if (stp >= 0)
 				spr->Step(stp);
 		}
@@ -828,7 +829,7 @@ static void SNLevel(Sprite *spr, int lev) {
 	}
 	MaxCave = maxcav[Lev];
 	if (spr)
-		spr->Flags.Hide = false;
+		spr->_flags._hide = false;
 }
 
 
@@ -937,7 +938,7 @@ void SNAIL::RunCom(void) {
 				if (sprel) {
 					if (sprel->SeqTest(snc->Val) &&
 					        (snc->Val >= 0 || sprel != Hero || Hero->TracePtr < 0)) {
-						_heart->setXTimer(&Pause, sprel->Time);
+						_heart->setXTimer(&Pause, sprel->_time);
 					} else
 						goto xit;
 				}
@@ -1111,13 +1112,13 @@ void SNAIL::RunCom(void) {
 				SNZTrim(sprel);
 				break;
 			case SNGHOST    :
-				SNGhost((BITMAP *) snc->Ptr);
+				SNGhost((Bitmap *) snc->Ptr);
 				break;
 			default :
 				warning("Unhandled snc->Com in SNMouse(bool)");
 				break;
 			}
-			++Tail;
+			Tail++;
 			if (!Turbo)
 				break;
 		}

@@ -35,18 +35,18 @@
 
 namespace CGE {
 
-DAC *BITMAP::Pal = NULL;
+DAC *Bitmap::Pal = NULL;
 #define MAXPATH  128
 
-void BITMAP::init() {
+void Bitmap::init() {
 	Pal = NULL;
 }
 
-void BITMAP::deinit() {
+void Bitmap::deinit() {
 }
 
 #pragma argsused
-BITMAP::BITMAP(const char *fname, bool rem) : M(NULL), V(NULL) {
+Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL) {
 	char pat[MAXPATH];
 	ForceExt(pat, fname, ".VBM");
 
@@ -65,8 +65,8 @@ BITMAP::BITMAP(const char *fname, bool rem) : M(NULL), V(NULL) {
 			if (BMPLoad(&file)) {
 				Code();
 				if (rem) {
-					free(M);
-					M = NULL;
+					free(_m);
+					_m = NULL;
 				}
 			} else
 				error("Bad BMP [%s]", fname);
@@ -78,7 +78,7 @@ BITMAP::BITMAP(const char *fname, bool rem) : M(NULL), V(NULL) {
 }
 
 
-BITMAP::BITMAP(uint16 w, uint16 h, uint8 *map) : W(w), H(h), M(map), V(NULL) {
+Bitmap::Bitmap(uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL) {
 	if (map)
 		Code();
 }
@@ -87,14 +87,14 @@ BITMAP::BITMAP(uint16 w, uint16 h, uint8 *map) : W(w), H(h), M(map), V(NULL) {
 // following routine creates filled rectangle
 // immediately as VGA video chunks, in near memory as fast as possible,
 // especially for text line real time display
-BITMAP::BITMAP(uint16 w, uint16 h, uint8 fill)
-	: W((w + 3) & ~3),                              // only full uint32 allowed!
-	  H(h),
-	  M(NULL) {
-	uint16 dsiz = W >> 2;                           // data size (1 plane line size)
+Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
+	: _w((w + 3) & ~3),                              // only full uint32 allowed!
+	  _h(h),
+	  _m(NULL) {
+	uint16 dsiz = _w >> 2;                           // data size (1 plane line size)
 	uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
-	uint16 psiz = H * lsiz;                         // - last gape, but + plane trailer
-	uint8 *v = new uint8[4 * psiz + H * sizeof(*B)];// the same for 4 planes
+	uint16 psiz = _h * lsiz;                         // - last gape, but + plane trailer
+	uint8 *v = new uint8[4 * psiz + _h * sizeof(*_b)];// the same for 4 planes
 	                                                // + room for wash table
 	if (v == NULL)
 		error("No core");
@@ -106,39 +106,39 @@ BITMAP::BITMAP(uint16 w, uint16 h, uint8 fill)
 	*(uint16 *)(v + psiz - 2) = EOI;                // plane trailer uint16
 	memcpy(v + psiz, v, 3 * psiz);                  // tricky replicate planes
 	HideDesc *b = (HideDesc *)(v + 4 * psiz);
-	b->skip = (SCR_WID - W) >> 2;
-	b->hide = W >> 2;
-	memcpy(b + 1, b, (H - 1) * sizeof(*b));         // tricky fill entire table
+	b->skip = (SCR_WID - _w) >> 2;
+	b->hide = _w >> 2;
+	memcpy(b + 1, b, (_h - 1) * sizeof(*b));         // tricky fill entire table
 	b->skip = 0;                                    // fix the first entry
-	V = v;
-	B = b;
+	_v = v;
+	_b = b;
 }
 
 
-BITMAP::BITMAP(const BITMAP &bmp) : W(bmp.W), H(bmp.H), M(NULL), V(NULL) {
-	uint8 *v0 = bmp.V;
+Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL) {
+	uint8 *v0 = bmp._v;
 	if (v0) {
-		uint16 vsiz = (uint8 *)(bmp.B) - (uint8 *)(v0);
-		uint16 siz = vsiz + H * sizeof(HideDesc);
+		uint16 vsiz = (uint8 *)(bmp._b) - (uint8 *)(v0);
+		uint16 siz = vsiz + _h * sizeof(HideDesc);
 		uint8 *v1 = farnew(uint8, siz);
 		if (v1 == NULL)
 			error("No core");
 		memcpy(v1, v0, siz);
-		B = (HideDesc *)((V = v1) + vsiz);
+		_b = (HideDesc *)((_v = v1) + vsiz);
 	}
 }
 
 
-BITMAP::~BITMAP(void) {
-	if (MemType(M) == FAR_MEM)
-		free(M);
+Bitmap::~Bitmap(void) {
+	if (MemType(_m) == FAR_MEM)
+		free(_m);
 
-	switch (MemType(V)) {
+	switch (MemType(_v)) {
 	case NEAR_MEM :
-		delete[](uint8 *) V;
+		delete[](uint8 *) _v;
 		break;
 	case FAR_MEM  :
-		free(V);
+		free(_v);
 	default:
 		warning("Unhandled MemType in Bitmap destructor");
 		break;
@@ -147,92 +147,92 @@ BITMAP::~BITMAP(void) {
 }
 
 
-BITMAP &BITMAP::operator = (const BITMAP &bmp) {
-	uint8 *v0 = bmp.V;
-	W = bmp.W;
-	H = bmp.H;
-	M = NULL;
-	if (MemType(V) == FAR_MEM)
-		free(V);
+Bitmap &Bitmap::operator = (const Bitmap &bmp) {
+	uint8 *v0 = bmp._v;
+	_w = bmp._w;
+	_h = bmp._h;
+	_m = NULL;
+	if (MemType(_v) == FAR_MEM)
+		free(_v);
 	if (v0 == NULL)
-		V = NULL;
+		_v = NULL;
 	else {
-		uint16 vsiz = (uint8 *)bmp.B - (uint8 *)v0;
-		uint16 siz = vsiz + H * sizeof(HideDesc);
+		uint16 vsiz = (uint8 *)bmp._b - (uint8 *)v0;
+		uint16 siz = vsiz + _h * sizeof(HideDesc);
 		uint8 *v1 = farnew(uint8, siz);
 		if (v1 == NULL)
 			error("No core");
 		memcpy(v1, v0, siz);
-		B = (HideDesc *)((V = v1) + vsiz);
+		_b = (HideDesc *)((_v = v1) + vsiz);
 	}
 	return *this;
 }
 
 
-uint16 BITMAP::MoveVmap(uint8 *buf) {
-	if (V) {
-		uint16 vsiz = (uint8 *)B - (uint8 *)V;
-		uint16 siz = vsiz + H * sizeof(HideDesc);
-		memcpy(buf, V, siz);
-		if (MemType(V) == FAR_MEM)
-			free(V);
-		B = (HideDesc *)((V = buf) + vsiz);
+uint16 Bitmap::MoveVmap(uint8 *buf) {
+	if (_v) {
+		uint16 vsiz = (uint8 *)_b - (uint8 *)_v;
+		uint16 siz = vsiz + _h * sizeof(HideDesc);
+		memcpy(buf, _v, siz);
+		if (MemType(_v) == FAR_MEM)
+			free(_v);
+		_b = (HideDesc *)((_v = buf) + vsiz);
 		return siz;
 	}
 	return 0;
 }
 
 
-BMP_PTR BITMAP::Code(void) {
-	if (M) {
+BMP_PTR Bitmap::Code(void) {
+	if (_m) {
 		uint16 i, cnt;
 
-		if (V) {                                        // old X-map exists, so remove it
-			switch (MemType(V)) {
+		if (_v) {                                        // old X-map exists, so remove it
+			switch (MemType(_v)) {
 			case NEAR_MEM :
-				delete[](uint8 *) V;
+				delete[](uint8 *) _v;
 				break;
 			case FAR_MEM  :
-				free(V);
+				free(_v);
 				break;
 			default:
 				warning("Unhandled MemType in Bitmap::Code()");
 				break;
 			}
-			V = NULL;
+			_v = NULL;
 		}
 
 		while (true) {                                  // at most 2 times: for (V == NULL) & for allocated block;
-			uint8 *im = V + 2;
-			uint16 *cp = (uint16 *) V;
+			uint8 *im = _v + 2;
+			uint16 *cp = (uint16 *) _v;
 			int bpl;
 
-			if (V) {                                      // 2nd pass - fill the hide table
-				for (i = 0; i < H; i++) {
-					B[i].skip = 0xFFFF;
-					B[i].hide = 0x0000;
+			if (_v) {                                      // 2nd pass - fill the hide table
+				for (i = 0; i < _h; i++) {
+					_b[i].skip = 0xFFFF;
+					_b[i].hide = 0x0000;
 				}
 			}
 			for (bpl = 0; bpl < 4; bpl++) {              // once per each bitplane
-				uint8 *bm = M;
+				uint8 *bm = _m;
 				bool skip = (bm[bpl] == TRANS);
 				uint16 j;
 
 				cnt = 0;
-				for (i = 0; i < H; i++) {                  // once per each line
+				for (i = 0; i < _h; i++) {                  // once per each line
 					uint8 pix;
-					for (j = bpl; j < W; j += 4) {
+					for (j = bpl; j < _w; j += 4) {
 						pix = bm[j];
-						if (V && pix != TRANS) {
-							if (j < B[i].skip)
-								B[i].skip = j;
+						if (_v && pix != TRANS) {
+							if (j < _b[i].skip)
+								_b[i].skip = j;
 
-							if (j >= B[i].hide)
-								B[i].hide = j + 1;
+							if (j >= _b[i].hide)
+								_b[i].hide = j + 1;
 						}
 						if ((pix == TRANS) != skip || cnt >= 0x3FF0) { // end of block
 							cnt |= (skip) ? SKP : CPY;
-							if (V)
+							if (_v)
 								*cp = cnt;                          // store block description uint16
 
 							cp = (uint16 *) im;
@@ -241,20 +241,20 @@ BMP_PTR BITMAP::Code(void) {
 							cnt = 0;
 						}
 						if (! skip) {
-							if (V)
+							if (_v)
 								*im = pix;
 							++ im;
 						}
 						++ cnt;
 					}
 
-					bm += W;
-					if (W < SCR_WID) {
+					bm += _w;
+					if (_w < SCR_WID) {
 						if (skip) {
 							cnt += (SCR_WID - j + 3) / 4;
 						} else {
 							cnt |= CPY;
-							if (V)
+							if (_v)
 								*cp = cnt;
 
 							cp = (uint16 *) im;
@@ -266,37 +266,37 @@ BMP_PTR BITMAP::Code(void) {
 				}
 				if (cnt && ! skip) {
 					cnt |= CPY;
-					if (V)
+					if (_v)
 						*cp = cnt;
 
 					cp = (uint16 *) im;
 					im += 2;
 				}
-				if (V)
+				if (_v)
 					*cp = EOI;
 				cp = (uint16 *) im;
 				im += 2;
 			}
-			if (V)
+			if (_v)
 				break;
 
-			uint16 sizV = (uint16)(im - 2 - V);
-			V = farnew(uint8, sizV + H * sizeof(*B));
-			if (! V)
+			uint16 sizV = (uint16)(im - 2 - _v);
+			_v = farnew(uint8, sizV + _h * sizeof(*_b));
+			if (!_v)
 				error("No core");
 
-			B = (HideDesc *)(V + sizV);
+			_b = (HideDesc *)(_v + sizV);
 		}
 		cnt = 0;
-		for (i = 0; i < H; i++) {
-			if (B[i].skip == 0xFFFF) {                    // whole line is skipped
-				B[i].skip = (cnt + SCR_WID) >> 2;
+		for (i = 0; i < _h; i++) {
+			if (_b[i].skip == 0xFFFF) {                    // whole line is skipped
+				_b[i].skip = (cnt + SCR_WID) >> 2;
 				cnt = 0;
 			} else {
-				uint16 s = B[i].skip & ~3;
-				uint16 h = (B[i].hide + 3) & ~3;
-				B[i].skip = (cnt + s) >> 2;
-				B[i].hide = (h - s) >> 2;
+				uint16 s = _b[i].skip & ~3;
+				uint16 h = (_b[i].hide + 3) & ~3;
+				_b[i].skip = (cnt + s) >> 2;
+				_b[i].hide = (h - s) >> 2;
 				cnt = SCR_WID - h;
 			}
 		}
@@ -305,14 +305,14 @@ BMP_PTR BITMAP::Code(void) {
 }
 
 
-bool BITMAP::SolidAt(int x, int y) {
+bool Bitmap::SolidAt(int x, int y) {
 	uint8 *m;
 	uint16 r, n, n0;
 
-	if ((x >= W) || (y >= H))
+	if ((x >= _w) || (y >= _h))
 		return false;
 
-	m = V;
+	m = _v;
 	r = x % 4;
 	n0 = (SCR_WID * y + x) / 4, n = 0;
 
@@ -326,7 +326,7 @@ bool BITMAP::SolidAt(int x, int y) {
 
 		switch (t) {
 		case EOI :
-			-- r;
+			r--;
 		case SKP :
 			w = 0;
 			break;
@@ -366,9 +366,9 @@ bool BITMAP::SolidAt(int x, int y) {
 }
 
 
-bool BITMAP::VBMSave(XFILE *f) {
+bool Bitmap::VBMSave(XFILE *f) {
 	uint16 p = (Pal != NULL),
-	       n = ((uint16)(((uint8 *)B) - V)) + H * sizeof(HideDesc);
+	       n = ((uint16)(((uint8 *)_b) - _v)) + _h * sizeof(HideDesc);
 	if (f->Error == 0)
 		f->Write((uint8 *)&p, sizeof(p));
 
@@ -376,23 +376,23 @@ bool BITMAP::VBMSave(XFILE *f) {
 		f->Write((uint8 *)&n, sizeof(n));
 
 	if (f->Error == 0)
-		f->Write((uint8 *)&W, sizeof(W));
+		f->Write((uint8 *)&_w, sizeof(_w));
 
 	if (f->Error == 0)
-		f->Write((uint8 *)&H, sizeof(H));
+		f->Write((uint8 *)&_h, sizeof(_h));
 
 	if (f->Error == 0)
 		if (p)
 			f->Write((uint8 *)Pal, 256 * 3);
 
 	if (f->Error == 0)
-		f->Write(V, n);
+		f->Write(_v, n);
 
 	return (f->Error == 0);
 }
 
 
-bool BITMAP::VBMLoad(XFILE *f) {
+bool Bitmap::VBMLoad(XFILE *f) {
 	uint16 p = 0, n = 0;
 	if (f->Error == 0)
 		f->Read((uint8 *)&p, sizeof(p));
@@ -401,10 +401,10 @@ bool BITMAP::VBMLoad(XFILE *f) {
 		f->Read((uint8 *)&n, sizeof(n));
 
 	if (f->Error == 0)
-		f->Read((uint8 *)&W, sizeof(W));
+		f->Read((uint8 *)&_w, sizeof(_w));
 
 	if (f->Error == 0)
-		f->Read((uint8 *)&H, sizeof(H));
+		f->Read((uint8 *)&_h, sizeof(_h));
 
 	if (f->Error == 0) {
 		if (p) {
@@ -416,17 +416,17 @@ bool BITMAP::VBMLoad(XFILE *f) {
 				f->Seek(f->Mark() + PAL_SIZ);
 		}
 	}
-	if ((V = farnew(uint8, n)) == NULL)
+	if ((_v = farnew(uint8, n)) == NULL)
 		return false;
 
 	if (f->Error == 0)
-		f->Read(V, n);
+		f->Read(_v, n);
 
-	B = (HideDesc *)(V + n - H * sizeof(HideDesc));
+	_b = (HideDesc *)(_v + n - _h * sizeof(HideDesc));
 	return (f->Error == 0);
 }
 
-bool BITMAP::BMPLoad (XFILE * f) {
+bool Bitmap::BMPLoad (XFILE * f) {
   struct {
 	   char BM[2];
 	   union { int16 len; int32 len_; };
@@ -459,13 +459,13 @@ bool BITMAP::BMPLoad (XFILE * f) {
 		    }
 		  Pal = NULL;
 		}
-	      H = hea.hig;
-	      W = hea.wid;
-	      if ((M = farnew(byte, H * W)) != NULL) {
+	      _h = hea.hig;
+	      _w = hea.wid;
+	      if ((_m = farnew(byte, _h * _w)) != NULL) {
 		  int16 r = (4 - (hea.wid & 3)) % 4;
 		  byte buf[3]; int i;
-		  for (i = H-1; i >= 0; i --) {
-		      f->Read(M + (W * i), W);
+		  for (i = _h - 1; i >= 0; i--) {
+		      f->Read(_m + (_w * i), _w);
 		      if (r && f->Error == 0)
 				  f->Read(buf, r);
 		      if (f->Error)

@@ -60,12 +60,12 @@ MENU_BAR::MENU_BAR(CGEEngine *vm, uint16 w) : TALK(vm), _vm(vm) {
 		p1 += w;
 		p2 -= w;
 	}
-	TS[0] = new BITMAP(w, h, p);
+	TS[0] = new Bitmap(w, h, p);
 	SetShapeList(TS);
-	Flags.Slav = true;
-	Flags.Tran = true;
-	Flags.Kill = true;
-	Flags.BDel = true;
+	_flags._slav = true;
+	_flags._tran = true;
+	_flags._kill = true;
+	_flags._bDel = true;
 }
 
 
@@ -78,7 +78,7 @@ char *VMGather(CHOICE *list) {
 
 	for (cp = list; cp->Text; cp++) {
 		len += strlen(cp->Text);
-		++h;
+		h++;
 	}
 	vmgt = new char[len + h];
 	if (vmgt) {
@@ -87,7 +87,7 @@ char *VMGather(CHOICE *list) {
 			if (*vmgt)
 				strcat(vmgt, "|");
 			strcat(vmgt, cp->Text);
-			++ h;
+			h++;
 		}
 	}
 	return vmgt;
@@ -106,16 +106,16 @@ VMENU::VMENU(CGEEngine *vm, CHOICE *list, int x, int y)
 	delete[] vmgt;
 	Items = 0;
 	for (cp = list; cp->Text; cp++)
-		++Items;
-	Flags.BDel = true;
-	Flags.Kill = true;
+		Items++;
+	_flags._bDel = true;
+	_flags._kill = true;
 	if (x < 0 || y < 0)
 		Center();
 	else
-		Goto(x - W / 2, y - (TEXT_VM + FONT_HIG / 2));
+		Goto(x - _w / 2, y - (TEXT_VM + FONT_HIG / 2));
 	Vga->ShowQ->Insert(this, Vga->ShowQ->Last());
-	Bar = new MENU_BAR(_vm, W - 2 * TEXT_HM);
-	Bar->Goto(X + TEXT_HM - MB_HM, Y + TEXT_VM - MB_VM);
+	Bar = new MENU_BAR(_vm, _w - 2 * TEXT_HM);
+	Bar->Goto(_x + TEXT_HM - MB_HM, _y + TEXT_VM - MB_VM);
 	Vga->ShowQ->Insert(Bar, Vga->ShowQ->Last());
 }
 
@@ -137,12 +137,12 @@ void VMENU::Touch(uint16 mask, int x, int y) {
 		if (y >= 0) {
 			n = y / h;
 			if (n < Items)
-				ok = (x >= TEXT_HM && x < W - TEXT_HM/* && y % h < FONT_HIG*/);
+				ok = (x >= TEXT_HM && x < _w - TEXT_HM/* && y % h < FONT_HIG*/);
 			else
 				n = Items - 1;
 		}
 
-		Bar->Goto(X + TEXT_HM - MB_HM, Y + TEXT_VM + n * h - MB_VM);
+		Bar->Goto(_x + TEXT_HM - MB_HM, _y + TEXT_VM + n * h - MB_VM);
 
 		if (ok && (mask & L_UP)) {
 			Items = 0;
