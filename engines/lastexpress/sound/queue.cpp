@@ -102,9 +102,9 @@ void SoundQueue::removeFromQueue(Common::String filename) {
 }
 
 void SoundQueue::updateQueue() {
-	Common::StackLock locker(_mutex);
+	//Common::StackLock locker(_mutex);
 
-	warning("[Sound::updateQueue] Not implemented");
+	//warning("[Sound::updateQueue] Not implemented");
 }
 
 void SoundQueue::resetQueue() {
@@ -292,11 +292,11 @@ void SoundQueue::updateSubtitles() {
 		if (!(status & kSoundStatus_40)
 		 || status & kSoundStatus_180
 		 || soundEntry->getTime() == 0
-		 || (status & kSoundStatusClear1) < 6
+		 || (status & kSoundStatusFilterVariant) < 6
 		 || ((getFlags()->nis & 0x8000) && soundEntry->getPriority() < 90)) {
 			 current_index = 0;
 		} else {
-			current_index = soundEntry->getPriority() + (status & kSoundStatusClear1);
+			current_index = soundEntry->getPriority() + (status & kSoundStatusFilterVariant);
 
 			if (_currentSubtitle == (*i))
 				current_index += 4;

@@ -47,7 +47,7 @@ namespace LastExpress {
 SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	_type = kSoundTypeNone;
 
-	_currentDataPtr = 0;
+	_currentDataPtr = NULL;
 	_soundBuffer = NULL;
 
 	_blockCount = 0;
@@ -58,7 +58,7 @@ SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	_field_34 = 0;
 	_field_38 = 0;
 	_field_3C = 0;
-	_field_40 = 0;
+	_variant = 0;
 	_entity = kEntityPlayer;
 	_field_48 = 0;
 	_priority = 0;
@@ -118,32 +118,37 @@ void SoundEntry::close() {
 }
 
 void SoundEntry::play() {
-	if (!_soundStream)
-		_soundStream = new StreamedSound();
-
-	if (_queued)
-		return;
-
 	if (!_stream) {
 		warning("[SoundEntry::play] stream has been disposed");
 		return;
 	}
 
-	// Stream the contents of the sound buffer
-	/*int16 *buffer = (int16 *)malloc(FILTER_BUFFER_SIZE);
+	if (_queued)
+		return;
+
+	// Apply filter
+	int16 *buffer = (int16 *)malloc(FILTER_BUFFER_SIZE);
 	memset(buffer, 0, FILTER_BUFFER_SIZE);
 
 	applyFilter(buffer);
 
-	_soundStream->queueBuffer((const byte *)buffer, FILTER_BUFFER_SIZE, true);
+	// Queue the filtered data
+#if 0
+	if (!_soundStream)
+		_soundStream = new AppendableSound();
 
+	// FIXME: make sure the filtered sound buffer is disposed
+	_soundStream->queueBuffer((const byte *)buffer, FILTER_BUFFER_SIZE /* true */);
+#else
+	free(buffer);
 
-	// Skip header
-	_stream->seek(12, SEEK_SET);
-	*/
+	// DEBUG: unfiltered stream
+	if (!_soundStream)
+		_soundStream = new StreamedSound();
 
 	_stream->seek(0);
 	_soundStream->load(_stream);
+#endif
 
 	_queued = true;
 }
@@ -233,7 +238,7 @@ void SoundEntry::setType(SoundFlag flag) {
 
 void SoundEntry::setupStatus(SoundFlag flag) {
 	SoundStatus statusFlag = (SoundStatus)flag;
-	if (!((statusFlag & 0xFF) & kSoundStatusClear1))
+	if (!((statusFlag & 0xFF) & kSoundStatusFilterVariant))
 		statusFlag = (SoundStatus)(statusFlag | kSoundStatusClear2);
 
 	if (((statusFlag & 0xFF00) >> 8) & kSoundStatusClear0)
@@ -269,6 +274,7 @@ void SoundEntry::loadSoundData(Common::String name) {
 
 	if (_stream) {
 		_stream->read(_soundBuffer, MIN(SOUNDCACHE_ENTRY_SIZE, _stream->size()));
+		_currentDataPtr = _soundBuffer + 6;
 	} else {
 		_status.status = kSoundStatusRemoved;
 	}
@@ -282,7 +288,7 @@ void SoundEntry::update(uint val) {
 
 		if (val) {
 			if (getSoundQueue()->getFlag() & 32) {
-				_field_40 = val;
+				_variant = val;
 				value2 = val * 2 + 1;
 			}
 
@@ -297,12 +303,12 @@ void SoundEntry::update(uint val) {
 void SoundEntry::updateState() {
 	if (getSoundQueue()->getFlag() & 32) {
 		if (_type != kSoundType9 && _type != kSoundType7 && _type != kSoundType5) {
-			uint32 newStatus = _status.status & kSoundStatusClear1;
+			uint32 variant = _status.status & kSoundStatusFilterVariant;
 
 			_status.status &= kSoundStatusClearAll;
 
-			_field_40 = newStatus;
-			_status.status |= newStatus * 2 + 1;
+			_variant = variant;
+			_status.status |= variant * 2 + 1;
 		}
 	}
 
@@ -680,15 +686,15 @@ static const int p2s[17] = { 0, 1, 1, 3, 1, 5, 3, 7, 1, 9, 5, 11, 3, 13, 7, 15, 
 static void soundFilter(byte *data, int16 *buffer, int p1, int p2);
 
 void SoundEntry::applyFilter(int16 *buffer) {
-	if ((_soundBuffer[1] << 6) > 5632) {
+	if ((READ_UINT16((int16 *)(_currentDataPtr + 2)) << 6) > 5632) {
 		_status.status |= kSoundStatus_20000000;
 	} else {
-		int variant = _status.status & 0x1f;
+		int variant = _status.status & kSoundStatusFilterVariant;
 
-		soundFilter(_soundBuffer, buffer, p1s[variant], p2s[variant]);
+		soundFilter(_currentDataPtr, buffer, p1s[variant], p2s[variant]);
+		_currentDataPtr += 739;
 	}
 }
-
 
 static void soundFilter(byte *data, int16 *buffer, int p1, int p2) {
 	int data1, data2, data1p, data2p;
@@ -701,12 +707,23 @@ static void soundFilter(byte *data, int16 *buffer, int p1, int p2) {
 
 	for (int count = 0; count < 735; count++) {
 		idx = data[count] >> 4;
+
+		if ((idx + data1) > ARRAYSIZE(filterData)) {
+			warning("Error in sound filter, aborting...");
+			return;
+		}
+
 		data1p = filterData[idx + data1];
 		data2p = CLIP(filterData2[idx + data1] + data2, -32767, 32767);
 
 		buffer[2 * count] = (p2 * data2p) >> p1;
 
 		idx = data[count] & 0xF;
+
+		if ((idx + data1p) > ARRAYSIZE(filterData)) {
+			warning("Error in sound filter, aborting...");
+			return;
+		}
 
 		data1 = filterData[idx + data1p];
 		data2 = CLIP(filterData2[idx + data1p] + data2p, -32767, 32767);

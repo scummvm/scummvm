@@ -134,7 +134,7 @@ private:
 	SoundType _type;    // int
 	//int _data;
 	//int _endOffset;
-	int _currentDataPtr;
+	byte * _currentDataPtr;
 	//int _currentBufferPtr;
 	int _blockCount;
 	uint32 _time;
@@ -145,7 +145,7 @@ private:
 	int _field_34;
 	int _field_38;
 	int _field_3C;
-	int _field_40;
+	int _variant;
 	EntityIndex _entity;
 	int _field_48;
 	uint32 _priority;
