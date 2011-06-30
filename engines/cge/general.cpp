@@ -212,13 +212,13 @@ char *dwtom(uint32 val, char *str, int radix, int len) {
 	return str;
 }
 
-IOHAND::IOHAND(IOMODE mode, CRYPT *crpt)
-	: XFILE(mode), Crypt(crpt), Seed(SEED) {
+IoHand::IoHand(IOMODE mode, CRYPT *crpt)
+	: XFILE(mode), _crypt(crpt), _seed(SEED) {
 	_file = new Common::File();
 }
 
-IOHAND::IOHAND(const char *name, IOMODE mode, CRYPT *crpt)
-		: XFILE(mode), Crypt(crpt), Seed(SEED) {
+IoHand::IoHand(const char *name, IOMODE mode, CRYPT *crpt)
+		: XFILE(mode), _crypt(crpt), _seed(SEED) {
 	// TODO: Check if WRI and/or UPD modes are needed, and map to a save file
 	assert(mode == REA);
 
@@ -226,24 +226,24 @@ IOHAND::IOHAND(const char *name, IOMODE mode, CRYPT *crpt)
 	_file->open(name);
 }
 
-IOHAND::~IOHAND(void) {
+IoHand::~IoHand(void) {
 	_file->close();
 	delete _file;
 }
 
-uint16 IOHAND::Read(void *buf, uint16 len) {
+uint16 IoHand::read(void *buf, uint16 len) {
 	if (Mode == WRI || !_file->isOpen())
 		return 0;
 
 	uint16 bytesRead = _file->read(buf, len);
 	if (!bytesRead)
 		error("Read %s - %d bytes", _file->getName(), len);
-	if (Crypt)
-		Seed = Crypt(buf, len, Seed);
+	if (_crypt)
+		_seed = _crypt(buf, len, Seed);
 	return bytesRead;
 }
 
-uint16 IOHAND::Write(void *buf, uint16 len) {
+uint16 IoHand::write(void *buf, uint16 len) {
 	error("IOHAND::Write not supported");
 /*
 	if (len) {
@@ -259,20 +259,20 @@ uint16 IOHAND::Write(void *buf, uint16 len) {
 */
 }
 
-long IOHAND::Mark(void) {
+long IoHand::mark(void) {
 	return _file->pos();
 }
 
-long IOHAND::Seek(long pos) {
+long IoHand::seek(long pos) {
 	_file->seek(pos, SEEK_SET);
 	return _file->pos();
 }
 
-long IOHAND::Size(void) {
+long IoHand::size(void) {
 	return _file->size();
 }
 
-bool IOHAND::Exist(const char *name) {
+bool IoHand::exist(const char *name) {
 	Common::File f;
 	return f.exists(name);
 }

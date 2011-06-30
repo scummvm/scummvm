@@ -45,7 +45,7 @@ namespace CGE {
 #ifdef  VOL_UPD
 #define VOLBASE     IOHAND
 #else
-#define VOLBASE     CFILE
+#define VOLBASE     CFile
 #endif
 
 
@@ -55,40 +55,42 @@ class DAT {
 public:
 	DAT();
 
-	bool Append(uint8 *buf, uint16 len);
-	bool Write(CFILE &f);
-	bool Read(long org, uint16 len, uint8 *buf);
+	bool append(uint8 *buf, uint16 len);
+	bool write(CFile &f);
+	bool read(long org, uint16 len, uint8 *buf);
 };
 
 
-class   VFILE : public IOBUF {
+class   VFILE : public IoBuf {
 private:
-	static DAT *_Dat;
-	static BTFILE *_Cat;
-	static VFILE *_Recent;
+	static DAT *_dat;
+	static BtFile *_cat;
+	static VFILE *_recent;
 
-	long BegMark, EndMark;
-	void ReadBuff(void);
-	void WriteBuff(void) { }
-	void Make(const char *fspec);
+	long _begMark;
+	long _endMark;
+
+	void readBuff(void);
+	void writeBuff(void) { }
+	void make(const char *fspec);
 public:
 	VFILE(const char *name, IOMODE mode = REA);
 	~VFILE(void);
 	static void init();
 	static void deinit();
 
-	static bool Exist(const char *name);
-	static const char *Next(void);
-	long Mark(void) {
-		return (BufMark + Ptr) - BegMark;
+	static bool exist(const char *name);
+	static const char *next(void);
+	long mark(void) {
+		return (_bufMark + _ptr) - _begMark;
 	}
-	long Size(void) {
-		return EndMark - BegMark;
+	long size(void) {
+		return _endMark - _begMark;
 	}
-	long Seek(long pos) {
-		_Recent = NULL;
-		Lim = 0;
-		return (BufMark = BegMark + pos);
+	long seek(long pos) {
+		_recent = NULL;
+		_lim = 0;
+		return (_bufMark = _begMark + pos);
 	}
 };
 

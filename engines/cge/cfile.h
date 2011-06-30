@@ -38,40 +38,41 @@ namespace CGE {
 #define IOBUF_SIZE  K(2)
 #endif
 
-#define CFREAD(x)   Read((uint8 *)(x),sizeof(*(x)))
+#define CFREAD(x)   read((uint8 *)(x),sizeof(*(x)))
 
 
-class IOBUF : public IOHAND {
+class IoBuf : public IoHand {
 protected:
-	uint8 *Buff;
-	uint16 Ptr, Lim;
-	long BufMark;
-	uint16 Seed;
-	CRYPT *Crypt;
-	virtual void ReadBuff(void);
-	virtual void WriteBuff(void);
+	uint8 *_buff;
+	uint16 _ptr;
+	uint16 _lim;
+	long _bufMark;
+	uint16 _seed;
+	CRYPT *_crypt;
+	virtual void readBuff();
+	virtual void writeBuff();
 public:
-	IOBUF(IOMODE mode, CRYPT *crpt = NULL);
-	IOBUF(const char *name, IOMODE mode, CRYPT *crpt = NULL);
-	virtual ~IOBUF(void);
-	uint16 Read(void *buf, uint16 len);
-	uint16 Read(uint8 *buf);
-	int Read(void);
-	uint16 Write(void *buf, uint16 len);
-	uint16 Write(uint8 *buf);
-	void Write(uint8 b);
+	IoBuf(IOMODE mode, CRYPT *crpt = NULL);
+	IoBuf(const char *name, IOMODE mode, CRYPT *crpt = NULL);
+	virtual ~IoBuf();
+	uint16 read(void *buf, uint16 len);
+	uint16 read(uint8 *buf);
+	int read();
+	uint16 write(void *buf, uint16 len);
+	uint16 write(uint8 *buf);
+	void write(uint8 b);
 };
 
 
-class CFILE : public IOBUF {
+class CFile : public IoBuf {
 public:
-	static uint16 MaxLineLen;
-	CFILE(const char *name, IOMODE mode = REA, CRYPT *crpt = NULL);
-	virtual ~CFILE(void);
-	void Flush(void);
-	long Mark(void);
-	long Seek(long pos);
-	void Append(CFILE &f);
+	static uint16 _maxLineLen;
+	CFile(const char *name, IOMODE mode = REA, CRYPT *crpt = NULL);
+	virtual ~CFile();
+	void flush();
+	long mark();
+	long seek(long pos);
+	void append(CFile &f);
 };
 
 } // End of namespace CGE

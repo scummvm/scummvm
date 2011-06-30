@@ -42,7 +42,7 @@ bool   MIXER::Appear = false;
 
 MIXER::MIXER(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), Fall(MIX_FALL), _vm(vm) {
 	Appear = true;
-	mb[0] = new Bitmap("VOLUME");
+	mb[0] = new Bitmap("VOLUME", true);
 	mb[1] = NULL;
 	SetShapeList(mb);
 	SetName(Text->getText(MIX_NAME));
@@ -58,7 +58,7 @@ MIXER::MIXER(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), Fall(MIX_FALL), _v
 	for (i = 0; i < MIX_MAX; i++) {
 		static char fn[] = "V00";
 		wtom(i, fn + 1, 10, 2);
-		lb[i] = new Bitmap(fn);
+		lb[i] = new Bitmap(fn, true);
 		ls[i].Now = ls[i].Next = i;
 		ls[i].Dx = ls[i].Dy = ls[i].Dly = 0;
 	}

@@ -257,10 +257,10 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 	for (st = _savTab; st->Ptr; st++) {
 		if (file.Error)
 			error("Bad SVG");
-		file.Read((uint8 *)((tiny || st->Flg) ? st->Ptr : &i), st->Len);
+		file.read((uint8 *)((tiny || st->Flg) ? st->Ptr : &i), st->Len);
 	}
 
-	file.Read((uint8 *) &i, sizeof(i));
+	file.read((uint8 *) &i, sizeof(i));
 	if (i != SVGCHKSUM)
 		error("%s", Text->getText(BADSVG_TEXT));
 
@@ -276,7 +276,7 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 	if (! tiny) { // load sprites & pocket
 		while (! file.Error) {
 			Sprite S(this, NULL);
-			uint16 n = file.Read((uint8 *) &S, sizeof(S));
+			uint16 n = file.read((uint8 *) &S, sizeof(S));
 
 			if (n != sizeof(S))
 				break;
@@ -299,8 +299,9 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 
 
 static void SaveSound(void) {
-	CFILE cfg(UsrPath(ProgName(CFG_EXT)), WRI);
-	if (! cfg.Error) cfg.Write(&SNDDrvInfo, sizeof(SNDDrvInfo) - sizeof(SNDDrvInfo.VOL2));
+	CFile cfg(UsrPath(ProgName(CFG_EXT)), WRI);
+	if (! cfg.Error)
+		cfg.write(&SNDDrvInfo, sizeof(SNDDrvInfo) - sizeof(SNDDrvInfo.VOL2));
 }
 
 
@@ -320,15 +321,15 @@ static void SaveGame(XFILE &file) {
 	for (st = _savTab; st->Ptr; st++) {
 		if (file.Error)
 			error("Bad SVG");
-		file.Write((uint8 *) st->Ptr, st->Len);
+		file.write((uint8 *) st->Ptr, st->Len);
 	}
 
-	file.Write((uint8 *) & (i = SVGCHKSUM), sizeof(i));
+	file.write((uint8 *) & (i = SVGCHKSUM), sizeof(i));
 
 	for (spr = Vga->SpareQ->First(); spr; spr = spr->_next)
 		if (spr->_ref >= 1000)
 			if (!file.Error)
-				file.Write((uint8 *)spr, sizeof(*spr));
+				file.write((uint8 *)spr, sizeof(*spr));
 }
 
 
@@ -376,8 +377,8 @@ static void LoadMapping(void) {
 		INI_FILE cf(ProgName(".TAB"));
 		if (! cf.Error) {
 			memset(CLUSTER::Map, 0, sizeof(CLUSTER::Map));
-			cf.Seek((Now - 1) * sizeof(CLUSTER::Map));
-			cf.Read((uint8 *) CLUSTER::Map, sizeof(CLUSTER::Map));
+			cf.seek((Now - 1) * sizeof(CLUSTER::Map));
+			cf.read((uint8 *) CLUSTER::Map, sizeof(CLUSTER::Map));
 		}
 	}
 }
@@ -675,9 +676,9 @@ void SYSTEM::FunTouch(void) {
 static void ShowBak(int ref) {
 	Sprite *spr = Vga->SpareQ->Locate(ref);
 	if (spr) {
-		Bitmap::Pal = VGA::SysPal;
+		Bitmap::_pal = VGA::SysPal;
 		spr->Expand();
-		Bitmap::Pal = NULL;
+		Bitmap::_pal = NULL;
 		spr->Show(2);
 		Vga->CopyPage(1, 2);
 		Sys->SetPal();
@@ -776,7 +777,7 @@ void CGEEngine::QGame() {
 	CaveDown();
 	OldLev = Lev;
 	SaveSound();
-	CFILE file = CFILE(UsrPath(UsrFnam), WRI, RCrypt);
+	CFile file = CFile(UsrPath(UsrFnam), WRI, RCrypt);
 	SaveGame(file);
 	Vga->Sunset();
 	Finis = true;
@@ -1145,18 +1146,18 @@ static void NextStep(void) {
 
 static void SaveMapping(void) {
 	{
-		IOHAND cf(ProgName(".TAB"), UPD);
+		IoHand cf(ProgName(".TAB"), UPD);
 		if (!cf.Error) {
-			cf.Seek((Now - 1) * sizeof(CLUSTER::Map));
-			cf.Write((uint8 *) CLUSTER::Map, sizeof(CLUSTER::Map));
+			cf.seek((Now - 1) * sizeof(CLUSTER::Map));
+			cf.write((uint8 *) CLUSTER::Map, sizeof(CLUSTER::Map));
 		}
 	}
 	{
-		IOHAND cf(ProgName(".HXY"), WRI);
+		IoHand cf(ProgName(".HXY"), WRI);
 			if (!cf.Error) {
 				HeroXY[Now - 1]._x = Hero->_x;
 				HeroXY[Now - 1]._y = Hero->_y;
-				cf.Write((uint8 *) HeroXY, sizeof(HeroXY));
+				cf.write((uint8 *) HeroXY, sizeof(HeroXY));
 		}
 	}
 }
@@ -1345,12 +1346,12 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 	uint16 len;
 
 	MergeExt(line, fname, SPR_EXT);
-	if (INI_FILE::Exist(line)) {      // sprite description file exist
+	if (INI_FILE::exist(line)) {      // sprite description file exist
 		INI_FILE sprf(line);
 		if (sprf.Error)
 			error("Bad SPR [%s]", line);
 
-		while ((len = sprf.Read((uint8 *)line)) != 0) {
+		while ((len = sprf.read((uint8 *)line)) != 0) {
 			++ lcnt;
 			if (len && line[len - 1] == '\n')
 				line[-- len] = '\0';
@@ -1490,7 +1491,7 @@ void CGEEngine::LoadScript(const char *fname) {
 	if (scrf.Error)
 		return;
 
-	while (scrf.Read((uint8 *)line) != 0) {
+	while (scrf.read((uint8 *)line) != 0) {
 		char *p;
 
 		++lcnt;
@@ -1566,7 +1567,7 @@ void CGEEngine::MainLoop() {
 void CGEEngine::LoadUser() {
 	// set scene
 	if (STARTUP::Mode == 0) { // user .SVG file found
-		CFILE cfile = CFILE(UsrPath(UsrFnam), REA, RCrypt);
+		CFile cfile = CFile(UsrPath(UsrFnam), REA, RCrypt);
 		LoadGame(cfile);
 	} else {
 		if (STARTUP::Mode == 1) {
@@ -1575,7 +1576,7 @@ void CGEEngine::LoadUser() {
 		} else {
 			LoadScript(ProgName(INI_EXT));
 			Music = true;
-			CFILE file = CFILE(SVG0NAME, WRI);
+			CFile file = CFile(SVG0NAME, WRI);
 			SaveGame(file);
 			error("Ok [%s]", SVG0NAME);
 		}
@@ -1623,7 +1624,7 @@ void CGEEngine::RunGame() {
 	if (! Music)
 		KillMIDI();
 
-	if (Mini && INI_FILE::Exist("MINI.SPR")) {
+	if (Mini && INI_FILE::exist("MINI.SPR")) {
 		uint8 *ptr = (uint8 *) &*Mini;
 		if (ptr != NULL) {
 			LoadSprite("MINI", -1, 0, MINI_X, MINI_Y);
@@ -1641,7 +1642,7 @@ void CGEEngine::RunGame() {
 	if (Hero) {
 		ExpandSprite(Hero);
 		Hero->Goto(HeroXY[Now - 1]._x, HeroXY[Now - 1]._y);
-		if (INI_FILE::Exist("00SHADOW.SPR")) {
+		if (INI_FILE::exist("00SHADOW.SPR")) {
 			LoadSprite("00SHADOW", -1, 0, Hero->_x + 14, Hero->_y + 51);
 			if ((_shadow = _sprite) != NULL) {
 				_shadow->_ref = 2;
@@ -1698,7 +1699,7 @@ void CGEEngine::RunGame() {
 
 void CGEEngine::Movie(const char *ext) {
 	const char *fn = ProgName(ext);
-	if (INI_FILE::Exist(fn)) {
+	if (INI_FILE::exist(fn)) {
 		LoadScript(fn);
 		ExpandSprite(Vga->SpareQ->Locate(999));
 		FeedSnail(Vga->ShowQ->Locate(999), TAKE);
@@ -1722,9 +1723,9 @@ void CGEEngine::Movie(const char *ext) {
 
 
 bool CGEEngine::ShowTitle(const char *name) {
-	Bitmap::Pal = VGA::SysPal;
-	BMP_PTR LB[] =  { new Bitmap(name), NULL };
-	Bitmap::Pal = NULL;
+	Bitmap::_pal = VGA::SysPal;
+	BMP_PTR LB[] =  { new Bitmap(name, true), NULL };
+	Bitmap::_pal = NULL;
 	bool usr_ok = false;
 
 	Sprite D(this, LB);
@@ -1774,7 +1775,7 @@ bool CGEEngine::ShowTitle(const char *name) {
 //			Boot * b = ReadBoot(getdisk());
 			warning("ShowTitle: FIXME ReadBoot");
 			Boot *b = ReadBoot(0);
-			uint32 sn = (b->XSign == 0x29) ? b->Serial : b->lTotSecs;
+			uint32 sn = (b->_xSign == 0x29) ? b->_serial : b->_lTotSecs;
 			free(b);
 			sn -= ((IDENT *)Copr)->disk;
 			STARTUP::Summa |= Lo(sn) | Hi(sn);
@@ -1801,8 +1802,8 @@ bool CGEEngine::ShowTitle(const char *name) {
 
 		if (usr_ok && STARTUP::Mode == 0) {
 			const char *n = UsrPath(UsrFnam);
-			if (CFILE::Exist(n)) {
-				CFILE file = CFILE(n, REA, RCrypt);
+			if (CFile::exist(n)) {
+				CFile file = CFile(n, REA, RCrypt);
 				LoadGame(file, true); // only system vars
 				Vga->SetColors(VGA::SysPal, 64);
 				Vga->Update();
@@ -1846,7 +1847,7 @@ void CGEEngine::cge_main(void) {
 	if (!Mouse->Exist)
 		error("%s", Text->getText(NO_MOUSE_TEXT));
 
-	if (!SVG0FILE::Exist(SVG0NAME))
+	if (!SVG0FILE::exist(SVG0NAME))
 		STARTUP::Mode = 2;
 
 	DebugLine->_flags._hide = true;

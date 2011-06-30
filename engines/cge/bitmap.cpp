@@ -35,11 +35,11 @@
 
 namespace CGE {
 
-DAC *Bitmap::Pal = NULL;
+DAC *Bitmap::_pal = NULL;
 #define MAXPATH  128
 
 void Bitmap::init() {
-	Pal = NULL;
+	_pal = NULL;
 }
 
 void Bitmap::deinit() {
@@ -51,9 +51,9 @@ Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL) {
 	ForceExt(pat, fname, ".VBM");
 
 #if (BMP_MODE < 2)
-	if (rem && PIC_FILE::Exist(pat)) {
+	if (rem && PIC_FILE::exist(pat)) {
 		PIC_FILE file(pat);
-		if ((file.Error == 0) && (!VBMLoad(&file)))
+		if ((file.Error == 0) && (!loadVBM(&file)))
 			error("Bad VBM [%s]", fname);
 	} else
 #endif
@@ -62,7 +62,7 @@ Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL) {
 		ForceExt(pat, fname, ".BMP");
 		PIC_FILE file(pat);
 		if (file.Error == 0) {
-			if (BMPLoad(&file)) {
+			if (loadBMP(&file)) {
 				Code();
 				if (rem) {
 					free(_m);
@@ -80,7 +80,7 @@ Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL) {
 
 Bitmap::Bitmap(uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL) {
 	if (map)
-		Code();
+		code();
 }
 
 
@@ -169,7 +169,7 @@ Bitmap &Bitmap::operator = (const Bitmap &bmp) {
 }
 
 
-uint16 Bitmap::MoveVmap(uint8 *buf) {
+uint16 Bitmap::moveVmap(uint8 *buf) {
 	if (_v) {
 		uint16 vsiz = (uint8 *)_b - (uint8 *)_v;
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
@@ -183,7 +183,7 @@ uint16 Bitmap::MoveVmap(uint8 *buf) {
 }
 
 
-BMP_PTR Bitmap::Code(void) {
+BMP_PTR Bitmap::code(void) {
 	if (_m) {
 		uint16 i, cnt;
 
@@ -305,7 +305,7 @@ BMP_PTR Bitmap::Code(void) {
 }
 
 
-bool Bitmap::SolidAt(int x, int y) {
+bool Bitmap::solidAt(int x, int y) {
 	uint8 *m;
 	uint16 r, n, n0;
 
@@ -366,67 +366,67 @@ bool Bitmap::SolidAt(int x, int y) {
 }
 
 
-bool Bitmap::VBMSave(XFILE *f) {
-	uint16 p = (Pal != NULL),
+bool Bitmap::saveVBM(XFILE *f) {
+	uint16 p = (_pal != NULL),
 	       n = ((uint16)(((uint8 *)_b) - _v)) + _h * sizeof(HideDesc);
 	if (f->Error == 0)
-		f->Write((uint8 *)&p, sizeof(p));
+		f->write((uint8 *)&p, sizeof(p));
 
 	if (f->Error == 0)
-		f->Write((uint8 *)&n, sizeof(n));
+		f->write((uint8 *)&n, sizeof(n));
 
 	if (f->Error == 0)
-		f->Write((uint8 *)&_w, sizeof(_w));
+		f->write((uint8 *)&_w, sizeof(_w));
 
 	if (f->Error == 0)
-		f->Write((uint8 *)&_h, sizeof(_h));
+		f->write((uint8 *)&_h, sizeof(_h));
 
 	if (f->Error == 0)
 		if (p)
-			f->Write((uint8 *)Pal, 256 * 3);
+			f->write((uint8 *)_pal, 256 * 3);
 
 	if (f->Error == 0)
-		f->Write(_v, n);
+		f->write(_v, n);
 
 	return (f->Error == 0);
 }
 
 
-bool Bitmap::VBMLoad(XFILE *f) {
+bool Bitmap::loadVBM(XFILE *f) {
 	uint16 p = 0, n = 0;
 	if (f->Error == 0)
-		f->Read((uint8 *)&p, sizeof(p));
+		f->read((uint8 *)&p, sizeof(p));
 
 	if (f->Error == 0)
-		f->Read((uint8 *)&n, sizeof(n));
+		f->read((uint8 *)&n, sizeof(n));
 
 	if (f->Error == 0)
-		f->Read((uint8 *)&_w, sizeof(_w));
+		f->read((uint8 *)&_w, sizeof(_w));
 
 	if (f->Error == 0)
-		f->Read((uint8 *)&_h, sizeof(_h));
+		f->read((uint8 *)&_h, sizeof(_h));
 
 	if (f->Error == 0) {
 		if (p) {
-			if (Pal) {
+			if (_pal) {
 				byte palData[PAL_SIZ];
-				f->Read(palData, PAL_SIZ);
-				VGA::pal2DAC(palData, Pal);
+				f->read(palData, PAL_SIZ);
+				VGA::pal2DAC(palData, _pal);
 			} else
-				f->Seek(f->Mark() + PAL_SIZ);
+				f->seek(f->mark() + PAL_SIZ);
 		}
 	}
 	if ((_v = farnew(uint8, n)) == NULL)
 		return false;
 
 	if (f->Error == 0)
-		f->Read(_v, n);
+		f->read(_v, n);
 
 	_b = (HideDesc *)(_v + n - _h * sizeof(HideDesc));
 	return (f->Error == 0);
 }
 
-bool Bitmap::BMPLoad (XFILE * f) {
+bool Bitmap::loadBMP(XFILE * f) {
   struct {
 	   char BM[2];
 	   union { int16 len; int32 len_; };
@@ -445,19 +445,19 @@ bool Bitmap::BMPLoad (XFILE * f) {
 	 } hea;
   BGR4 bpal[256];
 
-  f->Read((byte *)&hea, sizeof(hea));
+  f->read((byte *)&hea, sizeof(hea));
   if (f->Error == 0) {
       if (hea.hdr == 0x436L) {
 	  int16 i = (hea.hdr - sizeof(hea)) / sizeof(BGR4);
-	  f->Read((byte *)&bpal, sizeof(bpal));
+	  f->read((byte *)&bpal, sizeof(bpal));
 	  if (f->Error == 0) {
-	      if (Pal) {
-		  for (i = 0; i < 256; i ++) {
-		      Pal[i].R = bpal[i].R;
-		      Pal[i].G = bpal[i].G;
-		      Pal[i].B = bpal[i].B;
-		    }
-		  Pal = NULL;
+		if (_pal) {
+			for (i = 0; i < 256; i ++) {
+				_pal[i].R = bpal[i].R;
+				_pal[i].G = bpal[i].G;
+				_pal[i].B = bpal[i].B;
+			}
+			_pal = NULL;
 		}
 	      _h = hea.hig;
 	      _w = hea.wid;
@@ -465,9 +465,9 @@ bool Bitmap::BMPLoad (XFILE * f) {
 		  int16 r = (4 - (hea.wid & 3)) % 4;
 		  byte buf[3]; int i;
 		  for (i = _h - 1; i >= 0; i--) {
-		      f->Read(_m + (_w * i), _w);
+		      f->read(_m + (_w * i), _w);
 		      if (r && f->Error == 0)
-				  f->Read(buf, r);
+				  f->read(buf, r);
 		      if (f->Error)
 				  break;
 		  }
