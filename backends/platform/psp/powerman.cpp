@@ -30,7 +30,9 @@
 //#define __PSP_DEBUG_PRINT__
 #include "backends/platform/psp/trace.h"
 
+namespace Common {
 DECLARE_SINGLETON(PowerManager);
+}
 
 // Function to debug the Power Manager (we have no output to screen)
 inline void PowerManager::debugPM() {

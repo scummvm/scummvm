@@ -189,7 +189,9 @@ const YUVToRGBLookup *YUVToRGBManager::getLookup(Graphics::PixelFormat format) {
 
 } // End of namespace Graphics
 
+namespace Common {
 DECLARE_SINGLETON(Graphics::YUVToRGBManager);
+}
 
 #define YUVToRGBMan (Graphics::YUVToRGBManager::instance())
 
