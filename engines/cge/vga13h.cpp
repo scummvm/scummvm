@@ -417,7 +417,7 @@ BMP_PTR *Sprite::SetShapeList(BMP_PTR *shp) {
 void Sprite::MoveShapes(uint8 *buf) {
 	BMP_PTR *p;
 	for (p = _ext->_shpList; *p; p++) {
-		buf += (*p)->MoveVmap(buf);
+		buf += (*p)->moveVmap(buf);
 	}
 }
 
@@ -503,12 +503,12 @@ Sprite *Sprite::Expand(void) {
 			SNAIL::COM *nea = NULL;
 			SNAIL::COM *tak = NULL;
 			MergeExt(fname, File, SPR_EXT);
-			if (INI_FILE::Exist(fname)) { // sprite description file exist
+			if (INI_FILE::exist(fname)) { // sprite description file exist
 				INI_FILE sprf(fname);
 				if (! (sprf.Error==0))
 					error("Bad SPR [%s]", fname);
 				int len = 0, lcnt = 0;
-				while ((len = sprf.Read((uint8 *)line)) != 0) {
+				while ((len = sprf.read((uint8 *)line)) != 0) {
 					++lcnt;
 					if (len && line[len - 1] == '\n')
 						line[-- len] = '\0';
@@ -521,7 +521,7 @@ Sprite *Sprite::Expand(void) {
 						break;
 					}
 					case 1 : { // Phase
-						shplist[shpcnt++] = new Bitmap(strtok(NULL, " \t,;/"));
+						shplist[shpcnt++] = new Bitmap(strtok(NULL, " \t,;/"), true);
 						break;
 					}
 					case 2 : { // Seq
@@ -583,7 +583,7 @@ Sprite *Sprite::Expand(void) {
 					}
 				}
 			} else { // no sprite description: try to read immediately from .BMP
-				shplist[shpcnt++] = new Bitmap(File);
+				shplist[shpcnt++] = new Bitmap(File, true);
 			}
 			shplist[shpcnt] = NULL;
 			if (seq) {
@@ -748,9 +748,9 @@ void Sprite::Show(void) {
 //  asm sti     // ...done!
 	if (!_flags._hide) {
 		if (_flags._xlat)
-			e->_b1->XShow(e->_x1, e->_y1);
+			e->_b1->xShow(e->_x1, e->_y1);
 		else
-			e->_b1->Show(e->_x1, e->_y1);
+			e->_b1->show(e->_x1, e->_y1);
 	}
 }
 
@@ -758,7 +758,7 @@ void Sprite::Show(void) {
 void Sprite::Show(uint16 pg) {
 	Graphics::Surface *a = VGA::Page[1];
 	VGA::Page[1] = VGA::Page[pg & 3];
-	Shp()->Show(_x, _y);
+	Shp()->show(_x, _y);
 	VGA::Page[1] = a;
 }
 
@@ -766,7 +766,7 @@ void Sprite::Show(uint16 pg) {
 void Sprite::Hide(void) {
 	register SprExt *e = _ext;
 	if (e->_b0)
-		e->_b0->Hide(e->_x0, e->_y0);
+		e->_b0->hide(e->_x0, e->_y0);
 }
 
 
@@ -795,7 +795,7 @@ Sprite *SpriteAt(int x, int y) {
 	if (tail) {
 		for (spr = tail->_prev; spr; spr = spr->_prev) {
 			if (! spr->_flags._hide && ! spr->_flags._tran) {
-				if (spr->Shp()->SolidAt(x - spr->_x, y - spr->_y))
+				if (spr->Shp()->solidAt(x - spr->_x, y - spr->_y))
 					break;
 			}
 		}
@@ -1178,7 +1178,7 @@ void VGA::CopyPage(uint16 d, uint16 s) {
 
 //--------------------------------------------------------------------------
 
-void Bitmap::XShow(int x, int y) {
+void Bitmap::xShow(int x, int y) {
 	/*
 	  uint8 rmsk = x % 4,
 	       mask = 1 << rmsk,
@@ -1256,11 +1256,11 @@ void Bitmap::XShow(int x, int y) {
 	    asm pop si
 	    asm pop bx
 	    */
-	warning("STUB: BITMAP::XShow");
+	warning("STUB: BITMAP::xShow");
 }
 
 
-void Bitmap::Show(int x, int y) {
+void Bitmap::show(int x, int y) {
 	const byte *srcP = (const byte *)_v;
 	byte *destEndP = (byte *)VGA::Page[1]->pixels + (SCR_WID * SCR_HIG);
 
@@ -1322,7 +1322,7 @@ void Bitmap::Show(int x, int y) {
 }
 
 
-void Bitmap::Hide(int x, int y) {
+void Bitmap::hide(int x, int y) {
 	/*
 	  uint8 *scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
 	  uint16 d = FP_OFF(VGA::Page[2]) - FP_OFF(VGA::Page[1]);
@@ -1385,7 +1385,7 @@ void Bitmap::Hide(int x, int y) {
 	    asm pop si
 	//  asm pop bx
 	*/
-	warning("STUB: Bitmap::Hide");
+	warning("STUB: Bitmap::hide");
 }
 
 } // End of namespace CGE

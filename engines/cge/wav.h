@@ -58,7 +58,7 @@ public:
 		Id = d;
 	}
 	CKID(XFILE *xf) {
-		(ckFile = xf)->Read(Tx, sizeof(Tx));
+		(ckFile = xf)->read(Tx, sizeof(Tx));
 	}
 	bool operator !=(CKID &X) {
 		return Id != X.Id;

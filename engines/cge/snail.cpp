@@ -575,12 +575,12 @@ void SNSend(Sprite *spr, int val) {
 				spr->_flags._slav = false;
 			} else {
 				if (spr->_ref % 1000 == 0)
-					Bitmap::Pal = VGA::SysPal;
+					Bitmap::_pal = VGA::SysPal;
 				if (spr->_flags._back)
 					spr->BackShow(true);
 				else
 					ExpandSprite(spr);
-				Bitmap::Pal = NULL;
+				Bitmap::_pal = NULL;
 			}
 		}
 	}

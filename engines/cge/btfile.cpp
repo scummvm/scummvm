@@ -40,80 +40,80 @@ namespace CGE {
 #define BT_KEYLEN   13
 #endif
 
-BTFILE::BTFILE(const char *name, IOMODE mode, CRYPT *crpt)
-	: IOHAND(name, mode, crpt) {
+BtFile::BtFile(const char *name, IOMODE mode, CRYPT *crpt)
+	: IoHand(name, mode, crpt) {
 	for (int i = 0; i < BT_LEVELS; i++) {
-		Buff[i].Page = new BT_PAGE;
-		Buff[i].PgNo = BT_NONE;
-		Buff[i].Indx = -1;
-		Buff[i].Updt = false;
-		if (Buff[i].Page == NULL)
+		_buff[i]._page = new BtPage;
+		_buff[i]._pgNo = BT_NONE;
+		_buff[i]._indx = -1;
+		_buff[i]._updt = false;
+		if (_buff[i]._page == NULL)
 			error("No core");
 	}
 }
 
 
-BTFILE::~BTFILE(void) {
+BtFile::~BtFile(void) {
 	for (int i = 0; i < BT_LEVELS; i++) {
-		PutPage(i);
-		delete Buff[i].Page;
+		putPage(i);
+		delete _buff[i]._page;
 	}
 }
 
 
-void BTFILE::PutPage(int lev, bool hard) {
-	if (hard || Buff[lev].Updt) {
-		Seek(Buff[lev].PgNo * sizeof(BT_PAGE));
-		Write((uint8 *) Buff[lev].Page, sizeof(BT_PAGE));
-		Buff[lev].Updt = false;
+void BtFile::putPage(int lev, bool hard) {
+	if (hard || _buff[lev]._updt) {
+		seek(_buff[lev]._pgNo * sizeof(BtPage));
+		write((uint8 *) _buff[lev]._page, sizeof(BtPage));
+		_buff[lev]._updt = false;
 	}
 }
 
 
-BT_PAGE *BTFILE::GetPage(int lev, uint16 pgn) {
-	if (Buff[lev].PgNo != pgn) {
-		int32 pos = pgn * sizeof(BT_PAGE);
-		PutPage(lev);
-		Buff[lev].PgNo = pgn;
-		if (Size() > pos) {
-			Seek((uint32) pgn * sizeof(BT_PAGE));
-			Read((uint8 *) Buff[lev].Page, sizeof(BT_PAGE));
-			Buff[lev].Updt = false;
+BtPage *BtFile::getPage(int lev, uint16 pgn) {
+	if (_buff[lev]._pgNo != pgn) {
+		int32 pos = pgn * sizeof(BtPage);
+		putPage(lev);
+		_buff[lev]._pgNo = pgn;
+		if (size() > pos) {
+			seek((uint32) pgn * sizeof(BtPage));
+			read((uint8 *) _buff[lev]._page, sizeof(BtPage));
+			_buff[lev]._updt = false;
 		} else {
-			Buff[lev].Page->Hea.Count = 0;
-			Buff[lev].Page->Hea.Down = BT_NONE;
-			memset(Buff[lev].Page->Data, '\0', sizeof(Buff[lev].Page->Data));
-			Buff[lev].Updt = true;
+			_buff[lev]._page->_hea._count = 0;
+			_buff[lev]._page->_hea._down = BT_NONE;
+			memset(_buff[lev]._page->_data, '\0', sizeof(_buff[lev]._page->_data));
+			_buff[lev]._updt = true;
 		}
-		Buff[lev].Indx = -1;
+		_buff[lev]._indx = -1;
 	}
-	return Buff[lev].Page;
+	return _buff[lev]._page;
 }
 
-BT_KEYPACK *BTFILE::Find(const char *key) {
+BtKeypack *BtFile::find(const char *key) {
 	int lev = 0;
 	uint16 nxt = BT_ROOT;
 	while (! Error) {
-		BT_PAGE *pg = GetPage(lev, nxt);
+		BtPage *pg = getPage(lev, nxt);
 		// search
-		if (pg->Hea.Down != BT_NONE) {
+		if (pg->_hea._down != BT_NONE) {
 			int i;
-			for (i = 0; i < pg->Hea.Count; i++) {
+			for (i = 0; i < pg->_hea._count; i++) {
 				// Does this work, or does it have to compare the entire buffer?
-				if (scumm_strnicmp((const char *) key, (const char*)pg->Inn[i].Key, BT_KEYLEN) < 0)
+				if (scumm_strnicmp((const char *)key, (const char*)pg->_inn[i]._key, BT_KEYLEN) < 0)
 					break;
 			}
-			nxt = (i) ? pg->Inn[i - 1].Down : pg->Hea.Down;
-			Buff[lev].Indx = i - 1;
-			++ lev;
+			nxt = (i) ? pg->_inn[i - 1]._down : pg->_hea._down;
+			_buff[lev]._indx = i - 1;
+			lev++;
 		} else {
 			int i;
-			for (i = 0; i < pg->Hea.Count - 1; i++) {
-				if (scumm_stricmp((const char *)key, (const char *)pg->Lea[i].Key) <= 0)
+			for (i = 0; i < pg->_hea._count - 1; i++) {
+				if (scumm_stricmp((const char *)key, (const char *)pg->_lea[i]._key) <= 0)
 					break;
 			}
-			Buff[lev].Indx = i;
-			return &pg->Lea[i];
+			_buff[lev]._indx = i;
+			return &pg->_lea[i];
 		}
 	}
 	return NULL;
@@ -125,26 +125,26 @@ int keycomp(const void *k1, const void *k2) {
 }
 
 
-void BTFILE::Make(BT_KEYPACK *keypack, uint16 count) {
+void BtFile::make(BtKeypack *keypack, uint16 count) {
 #if BT_LEVELS != 2
 #error This tiny BTREE implementation works with exactly 2 levels!
 #endif
 	_fqsort(keypack, count, sizeof(*keypack), keycomp);
 	uint16 n = 0;
-	BT_PAGE *Root = GetPage(0, n++),
-	        *Leaf = GetPage(1, n);
-	Root->Hea.Down = n;
-	PutPage(0, true);
+	BtPage *Root = getPage(0, n++);
+	BtPage *Leaf = getPage(1, n);
+	Root->_hea._down = n;
+	putPage(0, true);
 	while (count--) {
-		if (Leaf->Hea.Count >= ArrayCount(Leaf->Lea)) {
-			PutPage(1, true);     // save filled page
-			Leaf = GetPage(1, ++n);   // take empty page
-			memcpy(Root->Inn[Root->Hea.Count].Key, keypack->Key, BT_KEYLEN);
-			Root->Inn[Root->Hea.Count++].Down = n;
-			Buff[0].Updt = true;
+		if (Leaf->_hea._count >= ArrayCount(Leaf->_lea)) {
+			putPage(1, true);     // save filled page
+			Leaf = getPage(1, ++n);   // take empty page
+			memcpy(Root->_inn[Root->_hea._count]._key, keypack->_key, BT_KEYLEN);
+			Root->_inn[Root->_hea._count++]._down = n;
+			_buff[0]._updt = true;
 		}
-		Leaf->Lea[Leaf->Hea.Count++] = *(keypack++);
-		Buff[1].Updt = true;
+		Leaf->_lea[Leaf->_hea._count++] = *(keypack++);
+		_buff[1]._updt = true;
 	}
 }
 

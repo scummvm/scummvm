@@ -41,50 +41,53 @@ namespace CGE {
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
-struct BT_KEYPACK {
-	char Key[BT_KEYLEN];
-	uint32 Mark;
-	uint16 Size;
+struct BtKeypack {
+	char _key[BT_KEYLEN];
+	uint32 _mark;
+	uint16 _size;
 };
 
-typedef struct {
-	uint8 Key[BT_KEYLEN];
-	uint16 Down;
-} INNER;
+struct Inner {
+	uint8 _key[BT_KEYLEN];
+	uint16 _down;
+};
 
-struct BT_PAGE {
-	struct HEA {
-		uint16 Count;
-		uint16 Down;
-	} Hea;
+struct Hea {
+	uint16 _count;
+	uint16 _down;
+};
+
+struct BtPage {
+	Hea _hea;
 	union {
 		// dummy filler to make proper size of union
-		uint8 Data[BT_SIZE - sizeof(HEA)];
+		uint8 _data[BT_SIZE - sizeof(Hea)];
 		// inner version of data: key + word-sized page link
-		INNER Inn[(BT_SIZE - sizeof(HEA)) / sizeof(INNER)];
+		Inner _inn[(BT_SIZE - sizeof(Hea)) / sizeof(Inner)];
 		// leaf version of data: key + all user data
-		BT_KEYPACK Lea[(BT_SIZE - sizeof(HEA)) / sizeof(BT_KEYPACK)];
+		BtKeypack _lea[(BT_SIZE - sizeof(Hea)) / sizeof(BtKeypack)];
 	};
 };
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 
-class BTFILE : public IOHAND {
+class BtFile : public IoHand {
 	struct {
-		BT_PAGE *Page;
-		uint16 PgNo;
-		int Indx;
-		bool Updt;
-	} Buff[BT_LEVELS];
-	void PutPage(int lev, bool hard = false);
-	BT_PAGE *GetPage(int lev, uint16 pgn);
+		BtPage *_page;
+		uint16 _pgNo;
+		int _indx;
+		bool _updt;
+	} _buff[BT_LEVELS];
+
+	void putPage(int lev, bool hard = false);
+	BtPage *getPage(int lev, uint16 pgn);
 public:
-	BTFILE(const char *name, IOMODE mode = REA, CRYPT *crpt = NULL);
-	virtual ~BTFILE(void);
-	BT_KEYPACK *Find(const char *key);
-	BT_KEYPACK *Next(void);
-	void Make(BT_KEYPACK *keypack, uint16 count);
+	BtFile(const char *name, IOMODE mode = REA, CRYPT *crpt = NULL);
+	virtual ~BtFile();
+	BtKeypack *find(const char *key);
+	BtKeypack *next();
+	void make(BtKeypack *keypack, uint16 count);
 };
 
 } // End of namespace CGE

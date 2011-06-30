@@ -168,36 +168,36 @@ public:
 	uint16 Error;
 	XFILE(void) : Mode(REA), Error(0) { }
 	XFILE(IOMODE mode) : Mode(mode), Error(0) { }
-	virtual uint16 Read(void *buf, uint16 len) = 0;
-	virtual uint16 Write(void *buf, uint16 len) = 0;
-	virtual long Mark(void) = 0;
-	virtual long Size(void) = 0;
-	virtual long Seek(long pos) = 0;
+	virtual uint16 read(void *buf, uint16 len) = 0;
+	virtual uint16 write(void *buf, uint16 len) = 0;
+	virtual long mark(void) = 0;
+	virtual long size(void) = 0;
+	virtual long seek(long pos) = 0;
 	virtual ~XFILE() { }
 };
 
 
 template <class T>
 inline uint16 XRead(XFILE *xf, T *t) {
-	return xf->Read((uint8 *) t, sizeof(*t));
+	return xf->read((uint8 *) t, sizeof(*t));
 }
 
 
-class IOHAND : public XFILE {
+class IoHand : public XFILE {
 protected:
 	Common::File *_file;
-	uint16 Seed;
-	CRYPT *Crypt;
+	uint16 _seed;
+	CRYPT *_crypt;
 public:
-	IOHAND(const char *name, IOMODE mode = REA, CRYPT crypt = NULL);
-	IOHAND(IOMODE mode = REA, CRYPT *crpt = NULL);
-	virtual ~IOHAND(void);
-	static bool Exist(const char *name);
-	uint16 Read(void *buf, uint16 len);
-	uint16 Write(void *buf, uint16 len);
-	long Mark(void);
-	long Size(void);
-	long Seek(long pos);
+	IoHand(const char *name, IOMODE mode = REA, CRYPT crypt = NULL);
+	IoHand(IOMODE mode = REA, CRYPT *crpt = NULL);
+	virtual ~IoHand();
+	static bool exist(const char *name);
+	uint16 read(void *buf, uint16 len);
+	uint16 write(void *buf, uint16 len);
+	long mark();
+	long size();
+	long seek(long pos);
 	//timeb  Time (void);
 // void SetTime (timeb  t);
 };
