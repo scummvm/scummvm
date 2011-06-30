@@ -145,10 +145,8 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 
 	SaveHeader header;
 	Common::InSaveFile *saveFile = openSaveForReading(fileName, header);
-	if (!saveFile) {
-		//_txt->printMessage(2, "%s", getLangString(0x425d));
-		return Common::kNoError;
-	}
+	if (!saveFile)
+		return Common::Error(Common::kReadingFailed);
 
 	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, DisposeAfterUse::YES);
 

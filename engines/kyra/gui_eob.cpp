@@ -1435,6 +1435,15 @@ GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_menuStringsPrefsTemp = new char*[4];
 	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char*));
 
+	_saveSlotStringsTemp = new char*[6];
+	for (int i = 0; i < 6; i++) {
+		_saveSlotStringsTemp[i] = new char[20];
+		memset(_saveSlotStringsTemp[i], 0, 20);
+	}
+	_saveSlotIdTemp = new int16[6];
+	_savegameOffset = 0;
+	_saveSlotX = _saveSlotY = 0;
+
 	_specialProcessButton = _backupButtonList = 0;
 	_flagsMouseLeft = _flagsMouseRight = _flagsModifier = 0;
 	_backupButtonList = 0;
@@ -1468,6 +1477,14 @@ GUI_Eob::~GUI_Eob() {
 			delete _menuStringsPrefsTemp[i];
 		delete[] _menuStringsPrefsTemp;
 	}
+
+	if (_saveSlotStringsTemp) {
+		for (int i = 0; i < 6; i++)
+			delete[] _saveSlotStringsTemp[i];
+		delete[] _saveSlotStringsTemp;
+	}
+
+	delete[] _saveSlotIdTemp;
 
 	delete[] _numAssignedSpellsOfType;
 }
@@ -2285,11 +2302,9 @@ void GUI_Eob::runCampMenu() {
 		}
 	}
 
-	releaseButtons(buttonList);
-	
-	_vm->writeSettings();
-	
 	_screen->setFont(of);
+	releaseButtons(buttonList);
+	_vm->writeSettings();
 }
 
 bool GUI_Eob::runLoadMenu(int x, int y) {
@@ -2299,13 +2314,27 @@ bool GUI_Eob::runLoadMenu(int x, int y) {
 	bool result = false;
 	_savegameListUpdateNeeded = true;
 	
-	_screen->modifyScreenDim(11, dm->sx + (x >> 8), dm->sy + y, dm->w, dm->sy);
+	_screen->modifyScreenDim(11, dm->sx + (x >> 3), dm->sy + y, dm->w, dm->h);
 	
 	updateSavegameList();
-	setupSaveMenuSlots();
 
-	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->sy);
+	for (bool runLoop = true; runLoop; ) {	
+		int slot = selectSaveSlotDialogue(x, y, 1);
+		if (slot > 5) {
+			runLoop = result = false;
+		} else if (slot >= 0) {
+			if (_saveSlotIdTemp[slot] == -1) {
+				messageDialogue(11, 65, 6);
+			} else {
+				if (_vm->loadGameState(_saveSlotIdTemp[slot]).getCode() != Common::kNoError)
+					messageDialogue(11, 16, 6);
+				runLoop = false;
+				result = true;
+			}
+		}
+	}
 
+	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
 	return result;
 }
 
@@ -2479,7 +2508,95 @@ void GUI_Eob::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuIt
 }
 
 bool GUI_Eob::runSaveMenu(int x, int y) {
-	return true;
+	const ScreenDim *dm = _screen->getScreenDim(11);
+	int xo = dm->sx;
+	int yo = dm->sy;
+	bool result = false;
+	_savegameListUpdateNeeded = true;
+	
+	_screen->modifyScreenDim(11, dm->sx + (x >> 3), dm->sy + y, dm->w, dm->h);
+	
+	updateSavegameList();
+
+	/*for (bool runLoop = true; runLoop; ) {	
+		int slot = selectSaveSlotDialogue(x, y, 1);
+		if (slot > 5) {
+			runLoop = result = false;
+		} else if (slot >= 0) {
+			if (_saveSlotIdTemp[slot] == -1) {
+				messageDialogue(11, 65, 6);
+			} else {
+				if (_vm->loadGameState(_saveSlotIdTemp[slot]).getCode() != Common::kNoError)
+					messageDialogue(11, 16, 6);
+				runLoop = false;
+				result = true;
+			}
+		}
+	}*/
+
+	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
+	return result;
+}
+
+int GUI_Eob::selectSaveSlotDialogue(int x, int y, int id) {
+	assert (id < 2);
+
+	_saveSlotX = _saveSlotY = 0;
+	_screen->setCurPage(2);
+	
+	setupSaveMenuSlots();
+	drawMenuButtonBox(0, 0, 176, 144, false, false);
+	_screen->printShadedText(_vm->_saveLoadStrings[2 + id], 52, 5, 15, 0);
+	
+	for (int i = 0; i < 7; i++)
+		drawSaveSlotButton(i, 1, 15);
+
+	_screen->copyRegion(0, 0, x, y, 176, 144, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->setCurPage(0);
+	_screen->updateScreen();
+
+	_saveSlotX = x;
+	_saveSlotY = y;
+	int lastHighlight = -1;
+	int newHighlight = 0;
+	int slot = -1;
+
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {		
+		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
+		_vm->removeInputTop();
+
+		if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+			runLoop = false;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP2]) {
+			if (++newHighlight > 6)
+				newHighlight = 0;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP8]) {
+			if (--newHighlight < 0)
+				newHighlight = 6;
+		} else {
+			slot = getHighlightSlot();
+			if (slot != -1) {
+				newHighlight = slot;
+				if (inputFlag == 199)
+					runLoop = false;
+			}
+		}
+
+		if (lastHighlight != newHighlight) {
+			drawSaveSlotButton(lastHighlight, 0, 15);
+			drawSaveSlotButton(newHighlight, 0, 6);
+			_screen->updateScreen();
+			lastHighlight = newHighlight;
+		}
+	}
+
+	drawSaveSlotButton(newHighlight, 2, 6);
+	_screen->updateScreen();
+	_vm->_system->delayMillis(80);
+	drawSaveSlotButton(newHighlight, 1, 6);
+	_screen->updateScreen();
+
+	return newHighlight;
 }
 
 void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
@@ -2674,7 +2791,7 @@ void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
 				updateDesc = true;
 			}
 
-		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP_MINUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_MINUS] /*|| inputFlag == _vm->_keyMap[Common::KEYCODE_*/) {
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP_MINUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_MINUS]) {
 			if (np[lastHighLightButton] && _numAssignedSpellsOfType[menuSpellMap[lastHighLightButton * 11 + lastHighLightText + 1] * 2 - 2]) {
 				_numAssignedSpellsOfType[menuSpellMap[lastHighLightButton * 11 + lastHighLightText + 1] * 2 - 2]--;
 				numAssignedSpellsPerBookPage[lastHighLightButton]--;
@@ -2824,6 +2941,47 @@ bool GUI_Eob::confirmDialogue(int id) {
 	_screen->setScreenDim(od);
 
 	return result;
+}
+
+void GUI_Eob::messageDialogue(int dim, int id, int buttonTextCol) {
+	static const char buttonText[] = "OK";
+
+	int od = _screen->curDimIndex();
+	_screen->setScreenDim(dim);
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+
+	drawTextBox(dim, id);
+	const ScreenDim *dm = _screen->getScreenDim(dim);
+	
+	int bx = ((dm->sx + dm->w) << 3) - ((strlen(buttonText) << 3) + 16);
+	int by = dm->sy + dm->h - 19;
+	int bw = (strlen(buttonText) << 3) + 7;
+
+	drawMenuButtonBox(bx, by, bw, 14, false, false);
+	_screen->printShadedText(buttonText, bx + 4, by + 3, buttonTextCol, 0);
+	_screen->updateScreen();
+
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
+		_vm->removeInputTop();
+
+		if (inputFlag == 199 || inputFlag == 201) {
+			Common::Point p = _vm->getMousePos();
+				if (_vm->posWithinRect(p.x, p.y, bx, by, bx + bw, by + 14))
+					runLoop = false;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_o]) {
+			runLoop = false;
+		}
+	}
+
+	drawMenuButtonBox(bx, by, bw, 14, true, true);
+	_screen->updateScreen();
+	_vm->_system->delayMillis(80);
+	drawMenuButtonBox(bx, by, bw, 14, false, true);
+	_screen->updateScreen();
+
+	_screen->setScreenDim(od);
+	_screen->setFont(of);
 }
 
 int GUI_Eob::selectCharacterDialogue(int id) {
@@ -3084,6 +3242,48 @@ void GUI_Eob::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool n
 	_vm->gui_drawBox(x + 1, y + 1, w - 2, h - 2, _vm->_color1_1, _vm->_color2_1, noFill ? -1 : _vm->_bkgColor_1);
 }
 
+void GUI_Eob::drawTextBox(int dim, int id) {
+	int od = _screen->curDimIndex();
+	_screen->setScreenDim(dim);
+	const ScreenDim *dm = _screen->getScreenDim(dim);
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+
+	if (dm->w <= 22 && dm->h <= 84)
+		_screen->copyRegion(dm->sx << 3, dm->sy, 0, dm->h, dm->w << 3, dm->h, 0, 2, Screen::CR_NO_P_CHECK);
+
+	_screen->setCurPage(2);
+
+	drawMenuButtonBox(0, 0, dm->w << 3, dm->h, false, false);
+	_screen->printShadedText(getMenuString(id), 5, 5, 15, 0);
+
+	_screen->setCurPage(0);
+	_screen->copyRegion(0, 0, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+	_screen->setScreenDim(od);
+	_screen->setFont(of);
+}
+
+void GUI_Eob::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
+	if (slot < 0)
+		return;
+
+	int x = _saveSlotX + 4;
+	int y = _saveSlotY + slot * 17 + 20;	
+	int w = 167;
+	const char *s = (slot < 6) ?_saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0];
+
+	if (slot >= 6 ) {
+		x = _saveSlotX + 118;
+		y = _saveSlotY + 126;
+		w = 53;
+	} 
+	
+	if (redrawBox)
+		drawMenuButtonBox(x, y, w, 14, (redrawBox - 1) ? true : false, false);
+
+	_screen->printShadedText(s, x + 4, y + 3, textCol, 0);
+}
+
 void GUI_Eob::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight) {
 	if (bookPageIndex < 0)
 		return;
@@ -3121,6 +3321,10 @@ const char *GUI_Eob::getMenuString(int id) {
 		return _vm->_menuStringsTransfer[id - 69];
 	else if (id >= 67)
 		return _vm->_menuStringsDefeat[id - 67];
+	else if (id == 66)
+		return _vm->_errorSlotEmptyString;
+	else if (id == 65)
+		return _vm->_errorSlotEmptyString;
 	else if (id >= 63)
 		return _vm->_menuStringsSpec[id - 63];
 	else if (id >= 60)
@@ -3181,7 +3385,35 @@ void GUI_Eob::releaseButtons(Button *list) {
 }
 
 void GUI_Eob::setupSaveMenuSlots() {
+	for (int i = 0; i < 6; ++i) {
+		if (_savegameOffset + i < _savegameListSize) {
+			if (_savegameList[i + _savegameOffset]) {
+				Common::strlcpy(_saveSlotStringsTemp[i], _savegameList[i + _savegameOffset], 20);
+				_saveSlotIdTemp[i] = i + _savegameOffset;
+				continue;
+			}
+		}
+		Common::strlcpy(_saveSlotStringsTemp[i], _vm->_saveLoadStrings[1], 20);
+		_saveSlotIdTemp[i] = -1;
+	}
+}
 
+int GUI_Eob::getHighlightSlot() {
+	int res = -1;
+	Common::Point p = _vm->getMousePos();
+	
+	for (int i = 0; i < 6; i++) {
+		int y = _saveSlotY + i * 17 + 20;
+		if (_vm->posWithinRect(p.x, p.y, _saveSlotX + 4, y, _saveSlotX + 167, y + 14)) {
+			res = i;
+			break;
+		}
+	}
+
+	if (_vm->posWithinRect(p.x, p.y, _saveSlotX + 118, _saveSlotY + 126, _saveSlotX + 171, _saveSlotY + 140))
+		res = 6;
+
+	return res;
 }
 
 #endif // ENABLE_EOB

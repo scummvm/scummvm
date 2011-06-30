@@ -359,8 +359,11 @@ Common::Error EobCoreEngine::go() {
 
 		if (action == -1) {
 			// load game
-			_saveLoadMode = -1;
-			startupLoad();
+			repeatLoop = _gui->runLoadMenu(72, 14);
+			if (repeatLoop && !shouldQuit()) {
+				_saveLoadMode = -1;
+				startupLoad();
+			}
 		} else if (action == -2) {
 			// new game
 			repeatLoop = startCharacterGeneration();
@@ -368,6 +371,7 @@ Common::Error EobCoreEngine::go() {
 				startupNew();
 		} else if (action == -3) {
 			// transfer party
+			repeatLoop = false;
 		}
 	}
 
