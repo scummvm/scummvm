@@ -24,6 +24,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
+#include "common/config-manager.h"
 #include "common/error.h"
 #include "common/textconsole.h"
 
@@ -44,46 +45,7 @@
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
-//#define	HIDE_CONSOLE
-
-#ifdef HIDE_CONSOLE
-struct SdlConsoleHidingWin32 {
-	DWORD myPid;
-	DWORD myTid;
-	HWND consoleHandle;
-};
-
-// console hiding for win32
-static BOOL CALLBACK initBackendFindConsoleWin32Proc(HWND hWnd, LPARAM lParam) {
-	DWORD pid, tid;
-	SdlConsoleHidingWin32 *variables = (SdlConsoleHidingWin32 *)lParam;
-	tid = GetWindowThreadProcessId(hWnd, &pid);
-	if ((tid == variables->myTid) && (pid == variables->myPid)) {
-		variables->consoleHandle = hWnd;
-		return FALSE;
-	}
-	return TRUE;
-}
-
-#endif
-
 void OSystem_Win32::init() {
-#ifdef HIDE_CONSOLE
-	// console hiding for win32
-	SdlConsoleHidingWin32 consoleHidingWin32;
-	consoleHidingWin32.consoleHandle = 0;
-	consoleHidingWin32.myPid = GetCurrentProcessId();
-	consoleHidingWin32.myTid = GetCurrentThreadId();
-	EnumWindows (initBackendFindConsoleWin32Proc, (LPARAM)&consoleHidingWin32);
-
-	if (!ConfMan.getBool("show_console")) {
-		if (consoleHidingWin32.consoleHandle) {
-			// We won't find a window with our TID/PID in case we were started from command-line
-			ShowWindow(consoleHidingWin32.consoleHandle, SW_HIDE);
-		}
-	}
-#endif
-
 	// Initialize File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
 
@@ -94,6 +56,26 @@ void OSystem_Win32::init() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
+}
+
+void OSystem_Win32::initBackend() {
+	// Console window is enabled by default on Windows
+	ConfMan.registerDefault("console", true);
+
+	// Enable or disable the window console window
+	if (ConfMan.getBool("console")) {
+		if (AllocConsole()) {
+			freopen("CONIN$","r",stdin);
+			freopen("CONOUT$","w",stdout);
+			freopen("CONOUT$","w",stderr);
+		}
+		SetConsoleTitle("ScummVM Status Window");
+	} else {
+		FreeConsole();
+	}
+
+	// Invoke parent implementation of this method
+	OSystem_SDL::initBackend();
 }
 
 
