@@ -34,9 +34,9 @@
 
 namespace CGE {
 
-DAT *VFILE::_Dat = NULL;
-BTFILE *VFILE::_Cat = NULL;
-VFILE *VFILE::_Recent = NULL;
+DAT *VFILE::_dat = NULL;
+BtFile *VFILE::_cat = NULL;
+VFILE *VFILE::_recent = NULL;
 
 /*-----------------------------------------------------------------------*/
 
@@ -52,30 +52,30 @@ DAT::DAT():
 /*-----------------------------------------------------------------------*/
 
 void VFILE::init() {
-	_Dat = new DAT();
+	_dat = new DAT();
 #ifdef VOL_UPD
-	_Cat = new BTFILE(CAT_NAME, UPD, CRP);
+	_cat = new BtFile(CAT_NAME, UPD, CRP);
 #else
-	_Cat = new BTFILE(CAT_NAME, REA, CRP);
+	_cat = new BtFile(CAT_NAME, REA, CRP);
 #endif
 
-	_Recent = NULL;
+	_recent = NULL;
 }
 
 void VFILE::deinit() {
-	delete _Dat;
-	delete _Cat;
+	delete _dat;
+	delete _cat;
 }
 
 VFILE::VFILE(const char *name, IOMODE mode)
-	: IOBUF(mode) {
+	: IoBuf(mode) {
 	if (mode == REA) {
-		if (_Dat->_File.Error || _Cat->Error)
+		if (_dat->_File.Error || _cat->Error)
 			error("Bad volume data");
-		BT_KEYPACK *kp = _Cat->Find(name);
-		if (scumm_stricmp(kp->Key, name) != 0)
+		BtKeypack *kp = _cat->find(name);
+		if (scumm_stricmp(kp->_key, name) != 0)
 			Error = 1;
-		EndMark = (BufMark = BegMark = kp->Mark) + kp->Size;
+		_endMark = (_bufMark = _begMark = kp->_mark) + kp->_size;
 	}
 #ifdef VOL_UPD
 	else
@@ -85,27 +85,27 @@ VFILE::VFILE(const char *name, IOMODE mode)
 
 
 VFILE::~VFILE(void) {
-	if (_Recent == this)
-		_Recent = NULL;
+	if (_recent == this)
+		_recent = NULL;
 }
 
 
-bool VFILE::Exist(const char *name) {
-	return scumm_stricmp(_Cat->Find(name)->Key, name) == 0;
+bool VFILE::exist(const char *name) {
+	return scumm_stricmp(_cat->find(name)->_key, name) == 0;
 }
 
 
-void VFILE::ReadBuff(void) {
-	if (_Recent != this) {
-		_Dat->_File.Seek(BufMark + Lim);
-		_Recent = this;
+void VFILE::readBuff(void) {
+	if (_recent != this) {
+		_dat->_File.seek(_bufMark + _lim);
+		_recent = this;
 	}
-	BufMark = _Dat->_File.Mark();
-	long n = EndMark - BufMark;
+	_bufMark = _dat->_File.mark();
+	long n = _endMark - _bufMark;
 	if (n > IOBUF_SIZE)
 		n = IOBUF_SIZE;
-	Lim = _Dat->_File.Read(Buff, (uint16) n);
-	Ptr = 0;
+	_lim = _dat->_File.read(_buff, (uint16) n);
+	_ptr = 0;
 }
 
 } // End of namespace CGE

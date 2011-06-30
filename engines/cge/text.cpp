@@ -45,7 +45,7 @@ TALK *Talk = NULL;
 TEXT::TEXT(CGEEngine *vm, const char *fname, int size) : _vm(vm) {
 	Cache = new HAN[size];
 	MergeExt(FileName, fname, SAY_EXT);
-	if (!INI_FILE::Exist(FileName))
+	if (!INI_FILE::exist(FileName))
 		error("No talk (%s)\n", FileName);
 
 	for (Size = 0; Size < size; Size++) {
@@ -93,7 +93,7 @@ void TEXT::Preload(int from, int upto) {
 		char line[LINE_MAX + 1];
 		int n;
 
-		while ((n = tf.Read((uint8 *)line)) != 0) {
+		while ((n = tf.read((uint8 *)line)) != 0) {
 			char *s;
 			int ref;
 
@@ -135,7 +135,7 @@ char *TEXT::Load(int idx, int ref) {
 		char line[LINE_MAX + 1];
 		int n;
 
-		while ((n = tf.Read((uint8 *)line)) != 0) {
+		while ((n = tf.read((uint8 *)line)) != 0) {
 			char *s;
 
 			if (line[n - 1] == '\n')

@@ -187,14 +187,14 @@ void KillMIDI(void) {
 void LoadMIDI(int ref) {
 	static char fn[] = "00.MID";
 	wtom(ref, fn, 10, 2);
-	if (INI_FILE::Exist(fn)) {
+	if (INI_FILE::exist(fn)) {
 		KillMIDI();
 		INI_FILE mid = fn;
 		if (mid.Error == 0) {
-			uint16 siz = (uint16) mid.Size();
+			uint16 siz = (uint16) mid.size();
 			midi = new uint8[siz];
 			if (midi) {
-				mid.Read(midi, siz);
+				mid.read(midi, siz);
 				if (mid.Error)
 					KillMIDI();
 				else
@@ -212,10 +212,10 @@ EC void *Patch(int pat) {
 	wtom(pat, fn + 5, 10, 3);
 	INI_FILE snd = fn;
 	if (! snd.Error) {
-		uint16 siz = (uint16) snd.Size();
+		uint16 siz = (uint16) snd.size();
 		p = (uint8 *) malloc(siz);
 		if (p) {
-			snd.Read(p, siz);
+			snd.read(p, siz);
 			if (snd.Error) {
 				free(p);
 				p = NULL;

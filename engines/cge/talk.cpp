@@ -53,24 +53,24 @@ FONT::FONT(const char *name) {
 }
 
 
-FONT::~FONT(void) {
+FONT::~FONT() {
 	free(Map);
 	free(Pos);
 	free(Wid);
 }
 
 
-void FONT::Load(void) {
+void FONT::Load() {
 	INI_FILE f(Path);
 	if (! f.Error) {
-		f.Read(Wid, WID_SIZ);
+		f.read(Wid, WID_SIZ);
 		if (! f.Error) {
 			uint16 i, p = 0;
 			for (i = 0; i < POS_SIZ; i++) {
 				Pos[i] = p;
 				p += Wid[i];
 			}
-			f.Read(Map, p);
+			f.read(Map, p);
 		}
 	}
 }
@@ -181,7 +181,7 @@ void TALK::Update(const char *tx) {
 		}
 		tx++;
 	}
-	TS[0]->Code();
+	TS[0]->code();
 	SetShapeList(TS);
 }
 
