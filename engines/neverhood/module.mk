@@ -11,7 +11,9 @@ MODULE_OBJS = \
 	neverhood.o \
 	palette.o \
 	resource.o \
-	resourceman.o
+	resourceman.o \
+	scene.o \
+	sprite.o
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS

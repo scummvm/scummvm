@@ -61,8 +61,8 @@ void BaseSurface::clear() {
 }
 
 void BaseSurface::drawSpriteResource(SpriteResource &spriteResource) {
-	if (spriteResource.dimensions().width <= _drawRect.width && 
-		spriteResource.dimensions().height <= _drawRect.height) {
+	if (spriteResource.getDimensions().width <= _drawRect.width && 
+		spriteResource.getDimensions().height <= _drawRect.height) {
 		clear();
 		spriteResource.draw((byte*)_surface->pixels, _surface->pitch, false, false);
 	}
@@ -70,7 +70,7 @@ void BaseSurface::drawSpriteResource(SpriteResource &spriteResource) {
 
 // Misc
 
-void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NUnknown *unknown, byte **palette, byte **pixels) {
+void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels) {
 
 	uint16 flags;
 	
@@ -92,14 +92,14 @@ void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NUnkn
 	}
 
 	if (flags & 4) {
-		if (unknown) {
-			unknown->unk1 = READ_LE_UINT16(sprite);
-			unknown->unk2 = READ_LE_UINT16(sprite + 2);
+		if (position) {
+			position->x = READ_LE_UINT16(sprite);
+			position->y = READ_LE_UINT16(sprite + 2);
 		}
 		sprite += 4;
-	} else if (unknown) {
-		unknown->unk1 = 0;
-		unknown->unk2 = 0;
+	} else if (position) {
+		position->x = 0;
+		position->y = 0;
 	}
 
 	if (flags & 8) {

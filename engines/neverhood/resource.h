@@ -36,12 +36,13 @@ public:
 	bool load(uint32 fileHash);
 	bool load2(uint32 fileHash);
 	void unload();
-	const NDimensions& dimensions() { return _dimensions; };
+	const NDimensions& getDimensions() { return _dimensions; }
+	const NPoint& getPosition() { return _position; }
 protected:
 	NeverhoodEngine *_vm;
 	int _resourceHandle;
 	NDimensions _dimensions;
-	NUnknown _unknown;
+	NPoint _position;
 	byte *_pixels;
 	bool _rle;
 };

@@ -24,15 +24,18 @@
 #define NEVERHOOD_ENTITY_H
 
 #include "neverhood/neverhood.h"
+#include "neverhood/graphics.h"
 
 namespace Neverhood {
 
 struct MessageParam {
 	union {
 		uint32 _integer;
+		NPoint _point;
 		// TODO: Other types...
 	};
 	MessageParam(uint32 value) { _integer = value; }
+	MessageParam(NPoint value) { _point = value; }
 	// TODO: Constructors for the param types...
 };
 
@@ -60,6 +63,10 @@ public:
 	uint32 sendMessage(int messageNum, uint32 param, Entity *sender) {
 		return sendMessage(messageNum, MessageParam(param), sender);
 	}
+	uint32 sendMessage(int messageNum, NPoint param, Entity *sender) {
+		return sendMessage(messageNum, MessageParam(param), sender);
+	}
+	int getPriority() const { return _priority; }
 protected:
 	void (Entity::*_updateHandlerCb)();
 	uint32 (Entity::*_messageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);

@@ -30,12 +30,12 @@
 
 namespace Neverhood {
 
-struct NDimensions {
-	int16 width, height;
+struct NPoint {
+	int16 x, y;
 };
 
-struct NUnknown {
-	int16 unk1, unk2;
+struct NDimensions {
+	int16 width, height;
 };
 
 struct NRect {
@@ -60,6 +60,8 @@ public:
 	virtual void addDirtyRect();
 	void clear();
 	void drawSpriteResource(SpriteResource &spriteResource);
+	int getPriority() const { return _priority; }
+	void setPriority(int priority) { _priority = priority; }
 protected:
 	NeverhoodEngine *_vm;
 	int _priority;
@@ -70,19 +72,9 @@ protected:
 	NRect _clipRect;
 };
 
-/*
-class Palette {
-public:
-	Palette();
-	~Palette();
-protected:
-	
-};
-*/
-
 // Misc
 
-void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NUnknown *unknown, byte **palette, byte **pixels);
+void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels);
 void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
 void unpackSpriteNormal(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
 

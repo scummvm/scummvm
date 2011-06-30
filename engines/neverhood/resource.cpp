@@ -66,7 +66,7 @@ bool SpriteResource::load2(uint32 fileHash) {
 	if (_resourceHandle != -1) {
 		if (_vm->_res->getResourceType(_resourceHandle) == 2) {
 			byte *spriteData = _vm->_res->loadResource(_resourceHandle, true);
-			parseBitmapResource(spriteData, &_rle, &_dimensions, &_unknown, NULL, &_pixels);
+			parseBitmapResource(spriteData, &_rle, &_dimensions, &_position, NULL, &_pixels);
 		} else {
 			_vm->_res->unuseResource(_resourceHandle);
 			_resourceHandle = -1;

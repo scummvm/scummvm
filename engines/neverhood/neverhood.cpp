@@ -117,7 +117,7 @@ Common::Error NeverhoodEngine::run() {
 		SpriteResource r(this);
 		BaseSurface *surf = new BaseSurface(this, 0, 640, 480);
 		r.load(0x0CA04202);
-		debug("r: width = %d; height = %d", r.dimensions().width, r.dimensions().height);
+		debug("r: width = %d; height = %d", r.getDimensions().width, r.getDimensions().height);
 		surf->drawSpriteResource(r);
 		delete surf;
 	}
