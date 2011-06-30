@@ -109,7 +109,12 @@ void GUI::updateSavegameList() {
 	_savegameListSize = _saveSlots.size();
 
 	if (_savegameListSize) {
-		Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Greater<int>());
+		if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2) {
+			Common::sort(_saveSlots.begin(), _saveSlots.end(),  Common::Less<int>());
+			_savegameListSize = _saveSlots.back() + 1;
+		} else {
+			Common::sort(_saveSlots.begin(), _saveSlots.end(),  Common::Greater<int>());
+		}
 
 		KyraEngine_v1::SaveHeader header;
 		Common::InSaveFile *in;
@@ -125,7 +130,6 @@ void GUI::updateSavegameList() {
 				delete in;
 			} else {
 				_savegameList[i] = 0;
-				error("GUI::updateSavegameList(): Unexpected missing save file for slot: %d.", i);
 			}
 		}
 

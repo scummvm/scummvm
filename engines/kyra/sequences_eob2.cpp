@@ -131,7 +131,7 @@ int DarkMoonEngine::mainMenu() {
 
 			case 3:
 				// transfer party
-				seq_playFinale();
+				//seq_playFinale();
 				menuChoice = -3;
 				break;
 
@@ -1030,7 +1030,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 			break;
 
 		case 1:
-			// draw shape, then restore beackground
+			// draw shape, then restore background
 			shapeW = _shapes[s->obj][2];
 			shapeH = _shapes[s->obj][3];
 
@@ -1107,7 +1107,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 			break;
 
 		case 5:
-			// copyregion
+			// copy region
 			if (_mode == DarkmoonSequenceHelper::kFinale && s->pal)
 				setPaletteWithoutTextColor(palIndex);
 

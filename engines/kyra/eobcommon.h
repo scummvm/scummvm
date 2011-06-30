@@ -786,7 +786,9 @@ protected:
 	void releaseMonsterTempData(LevelTempData *tmp);
 
 	int _saveLoadMode;
-	
+
+	const char * const *_saveLoadStrings;
+
 	Screen_Eob *_screen;
 	GUI_Eob *_gui;
 
@@ -999,6 +1001,7 @@ protected:
 	const char *const *_menuStringsRest3;
 	const char *const *_menuStringsRest4;
 	const char *const *_menuStringsDefeat;
+	const char *_errorSlotEmptyString;
 
 	const char *const *_menuStringsTransfer;
 	const char *const *_menuStringsSpec;

@@ -506,6 +506,23 @@ void EobCoreEngine::initStaticResource() {
 	_sparkEffectOfX = _staticres->loadRawData(kEobBaseSparkOfX, temp);
 	_sparkEffectOfY = _staticres->loadRawData(kEobBaseSparkOfY, temp);
 	_magicFlightObjectProperties = _staticres->loadRawData(kEobBaseMagicFlightProps, temp);
+
+	// Hard code these strings, since EOB 1 doesn't have them in the original
+	// (because there is only one single save slot)
+	static const char *saveLoadStrings[3][4] = {
+		{	"Cancel",	"Empty Slot",	"Save Game",	"Load Game"		},
+		{	"Abbr.",	"Leerer Slot",	"Speichern",	"  Laden"		},
+		{	0,			0,				0,				0				}
+	};
+
+	static const char *errorSlotEmptyString[3] = {
+		"There is no game\rsaved in that slot!",
+		"Hier ist noch kein\rSpiel gespeichert!",
+		0
+	};
+	
+	_saveLoadStrings = saveLoadStrings[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
+	_errorSlotEmptyString = errorSlotEmptyString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 }
 
 void EobCoreEngine::initButtonData() {

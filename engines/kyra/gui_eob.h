@@ -79,16 +79,20 @@ private:
 	void simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk);
 
 	bool runSaveMenu(int x, int y);
+	int selectSaveSlotDialogue(int x, int y, int id);
 	void runMemorizePrayMenu(int charIndex, int spellType);
 	void scribeScrollDialogue();
 
 	bool confirmDialogue(int id);
+	void messageDialogue(int dim, int id, int buttonTextCol);
 	int selectCharacterDialogue(int id);
 	void displayTextBox(int id);
 	
 	Button *initMenu(int id);	
 	void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill);
 	void drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill);
+	void drawTextBox(int dim, int id);
+	void drawSaveSlotButton(int slot, int redrawBox, int textCol);
 	void memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight);
 	void updateOptionsStrings();
 	const char *getMenuString(int id);
@@ -97,11 +101,17 @@ private:
 	void releaseButtons(Button *list);
 
 	void setupSaveMenuSlots();
+	int getHighlightSlot();
 
 	Button _scrollUpButton;//////////////////77
 	Button _scrollDownButton;
 
 	char **_menuStringsPrefsTemp;
+	char **_saveSlotStringsTemp;
+	int16 *_saveSlotIdTemp;
+	int _savegameOffset;
+	int16 _saveSlotX;
+	int16 _saveSlotY;
 
 	EobCoreEngine *_vm;
 	Screen_Eob *_screen;
