@@ -14,9 +14,10 @@ DisableStartupPrompt=true
 AppendDefaultDirName=false
 SolidCompression=true
 DirExistsWarning=no
-SetupIconFile=scummvm.ico
+SetupIconFile=graphics\scummvm-install.ico
 ShowLanguageDialog=yes
 LanguageDetectionMethod=uilanguage
+WizardImageFile=graphics\left.bmp
 
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl

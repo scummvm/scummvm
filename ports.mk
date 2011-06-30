@@ -165,6 +165,7 @@ scummvmwinres.o: $(srcdir)/icons/scummvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_E
 # Special target to create a win32 snapshot binary (for Inno Setup)
 win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
+	mkdir -p $(WIN32PATH)/graphics
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 ifdef DIST_FILES_ENGINEDATA
@@ -178,7 +179,8 @@ endif
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
-	cp $(srcdir)/icons/scummvm.ico $(WIN32PATH)
+	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
+	cp $(srcdir)/dists/win32/graphics/scummvm-install.ico $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
 
@@ -199,7 +201,7 @@ ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(srcdir)/$(WIN32BUILD)
 endif
 	cp /usr/local/bin/SDL.dll $(srcdir)/$(WIN32BUILD)
-	makensis -V2 -Dtop_srcdir="../.." -Dtext_dir="../../$(WIN32BUILD)" -Dbuild_dir="../../$(WIN32BUILD)" $(srcdir)/dists/nsis/scummvm.nsi
+	makensis -V2 -Dtop_srcdir="../.." -Dtext_dir="../../$(WIN32BUILD)" -Dbuild_dir="../../$(WIN32BUILD)" $(srcdir)/dists/win32/scummvm.nsi
 
 #
 # AmigaOS specific
