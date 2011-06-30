@@ -270,4 +270,77 @@ void Surface::move(int dx, int dy, int height) {
 	}
 }
 
+Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *palette) const {
+	assert(pixels);
+
+	Graphics::Surface *surface = new Graphics::Surface();
+
+	// If the target format is the same, just copy
+	if (format == dstFormat) {
+		surface->copyFrom(*this);
+		return surface;
+	}
+
+	if (dstFormat.bytesPerPixel != 2 && dstFormat.bytesPerPixel != 4)
+		error("Surface::convertTo(): Only 2Bpp and 4Bpp supported");
+
+	surface->create(w, h, dstFormat);
+
+	if (format.bytesPerPixel == 1) {
+		// Converting from paletted to high color
+		assert(palette);
+
+		for (int y = 0; y < h; y++) {
+			const byte *srcRow = (byte *)getBasePtr(0, y);
+			byte *dstRow = (byte *)surface->getBasePtr(0, y);
+
+			for (int x = 0; x < w; x++) {
+				byte index = *srcRow++;
+				byte r = palette[index * 3];
+				byte g = palette[index * 3 + 1];
+				byte b = palette[index * 3 + 2];
+
+				uint32 color = dstFormat.RGBToColor(r, g, b);
+
+				if (dstFormat.bytesPerPixel == 2)
+					*((uint16 *)dstRow) = color;
+				else
+					*((uint32 *)dstRow) = color;
+
+				dstRow += dstFormat.bytesPerPixel;
+			}
+		}
+	} else {
+		// Converting from high color to high color
+		for (int y = 0; y < h; y++) {
+			const byte *srcRow = (byte *)getBasePtr(0, y);
+			byte *dstRow = (byte *)surface->getBasePtr(0, y);
+
+			for (int x = 0; x < w; x++) {
+				uint32 srcColor;
+				if (format.bytesPerPixel == 2)
+					srcColor = *((uint16 *)srcRow);
+				else
+					srcColor = *((uint32 *)srcRow);
+
+				srcRow += format.bytesPerPixel;
+
+				// Convert that color to the new format
+				byte r, g, b, a;
+				format.colorToARGB(srcColor, a, r, g, b);
+				uint32 color = dstFormat.ARGBToColor(a, r, g, b);
+
+				if (dstFormat.bytesPerPixel == 2)
+					*((uint16 *)dstRow) = color;
+				else
+					*((uint32 *)dstRow) = color;
+
+				dstRow += dstFormat.bytesPerPixel;
+			}
+		}
+	}
+
+	return surface;
+}
+
 } // End of namespace Graphics
