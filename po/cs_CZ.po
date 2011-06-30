@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-06-20 23:09+0100\n"
-"PO-Revision-Date: 2011-06-14 15:04+0100\n"
+"PO-Revision-Date: 2011-06-24 06:44+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1082,7 +1082,7 @@ msgstr "Zás. modul jádra nepodporuje ulo¾ené stavy"
 
 #: common/error.cpp:71
 msgid "User canceled"
-msgstr ""
+msgstr "Zru¹eno u¾ivatelem"
 
 #: common/error.cpp:75
 msgid "Unknown error"
@@ -1241,10 +1241,13 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
 "not work in future versions of ScummVM."
 msgstr ""
+"VAROVÁNÍ: Hra, kterou se chystáte spustit, není je¹tì plnì podporována "
+"ScummVM. Proto je mo¾né, ¾e bude nestabilní a jakékoli ulo¾ené hry nemusí "
+"fungovat v budoucích verzích ScummVM."
 
 #: engines/engine.cpp:408
 msgid "Start anyway"
-msgstr ""
+msgstr "Pøesto spustit"
 
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"

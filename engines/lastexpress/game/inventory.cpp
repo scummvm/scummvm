@@ -28,10 +28,12 @@
 
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/menu/menu.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
@@ -162,8 +164,8 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 		} else if (ev.type == Common::EVENT_RBUTTONDOWN) {
 			if (getGlobalTimer()) {
-				if (getSound()->isBuffered("TIMER"))
-					getSound()->removeFromQueue("TIMER");
+				if (getSoundQueue()->isBuffered("TIMER"))
+					getSoundQueue()->removeFromQueue("TIMER");
 
 				setGlobalTimer(900);
 			}
@@ -437,7 +439,7 @@ void Inventory::showHourGlass(){
 //////////////////////////////////////////////////////////////////////////
 Inventory::InventoryEntry *Inventory::get(InventoryItem item) {
 	if (item >= kPortraitOriginal)
-		error("Inventory::getEntry: Invalid inventory item!");
+		error("[Inventory::get] Invalid inventory item");
 
 	return &_entries[item];
 }
@@ -621,7 +623,7 @@ void Inventory::drawEgg() {
 // Blinking egg: we need to blink the egg for delta time, with the blinking getting faster until it's always lit.
 void Inventory::drawBlinkingEgg() {
 
-	warning("Inventory::drawEgg - blinking not implemented!");
+	warning("[Inventory::drawBlinkingEgg] Blinking not implemented");
 
 	//// TODO show egg (with or without mouseover)
 
@@ -630,7 +632,7 @@ void Inventory::drawBlinkingEgg() {
 	//	if (getGlobalTimer() + ticks >= 90)
 	//		getSound()->playSoundWithSubtitles("TIMER.SND", 50331664, kEntityPlayer);
 
-	//	if (getSound()->isBuffered("TIMER"))
+	//	if (getSoundQueue()->isBuffered("TIMER"))
 	//		setGlobalTimer(0);
 	//}
 

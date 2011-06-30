@@ -24,6 +24,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
+#include "common/config-manager.h"
 #include "common/error.h"
 #include "common/textconsole.h"
 
@@ -34,6 +35,8 @@
 #undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 #include <shellapi.h>
 
+#include <SDL_syswm.h> // For setting the icon
+
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
@@ -42,46 +45,7 @@
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
-//#define	HIDE_CONSOLE
-
-#ifdef HIDE_CONSOLE
-struct SdlConsoleHidingWin32 {
-	DWORD myPid;
-	DWORD myTid;
-	HWND consoleHandle;
-};
-
-// console hiding for win32
-static BOOL CALLBACK initBackendFindConsoleWin32Proc(HWND hWnd, LPARAM lParam) {
-	DWORD pid, tid;
-	SdlConsoleHidingWin32 *variables = (SdlConsoleHidingWin32 *)lParam;
-	tid = GetWindowThreadProcessId(hWnd, &pid);
-	if ((tid == variables->myTid) && (pid == variables->myPid)) {
-		variables->consoleHandle = hWnd;
-		return FALSE;
-	}
-	return TRUE;
-}
-
-#endif
-
 void OSystem_Win32::init() {
-#ifdef HIDE_CONSOLE
-	// console hiding for win32
-	SdlConsoleHidingWin32 consoleHidingWin32;
-	consoleHidingWin32.consoleHandle = 0;
-	consoleHidingWin32.myPid = GetCurrentProcessId();
-	consoleHidingWin32.myTid = GetCurrentThreadId();
-	EnumWindows (initBackendFindConsoleWin32Proc, (LPARAM)&consoleHidingWin32);
-
-	if (!ConfMan.getBool("show_console")) {
-		if (consoleHidingWin32.consoleHandle) {
-			// We won't find a window with our TID/PID in case we were started from command-line
-			ShowWindow(consoleHidingWin32.consoleHandle, SW_HIDE);
-		}
-	}
-#endif
-
 	// Initialize File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
 
@@ -92,6 +56,26 @@ void OSystem_Win32::init() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
+}
+
+void OSystem_Win32::initBackend() {
+	// Console window is enabled by default on Windows
+	ConfMan.registerDefault("console", true);
+
+	// Enable or disable the window console window
+	if (ConfMan.getBool("console")) {
+		if (AllocConsole()) {
+			freopen("CONIN$","r",stdin);
+			freopen("CONOUT$","w",stdout);
+			freopen("CONOUT$","w",stderr);
+		}
+		SetConsoleTitle("ScummVM Status Window");
+	} else {
+		FreeConsole();
+	}
+
+	// Invoke parent implementation of this method
+	OSystem_SDL::initBackend();
 }
 
 
@@ -135,6 +119,28 @@ bool OSystem_Win32::displayLogFile() {
 		return true;
 
 	return false;
+}
+
+void OSystem_Win32::setupIcon() {
+	HMODULE handle = GetModuleHandle(NULL);
+	HICON   ico    = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
+	if (ico) {
+		SDL_SysWMinfo  wminfo;
+		SDL_VERSION(&wminfo.version);
+		if (SDL_GetWMInfo(&wminfo)) {
+			// Replace the handle to the icon associated with the window class by our custom icon
+			SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
+
+			// Since there wasn't any default icon, we can't use the return value from SetClassLong
+			// to check for errors (it would be 0 in both cases: error or no previous value for the
+			// icon handle). Instead we check for the last-error code value.
+			if (GetLastError() == ERROR_SUCCESS)
+				return;
+		}
+	}
+
+	// If no icon has been set, fallback to default path
+	OSystem_SDL::setupIcon();
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {

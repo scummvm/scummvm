@@ -1879,11 +1879,11 @@ Usecashcard	proc	near
 	call	showman
 
 	mov	di,114
-	if	foreign
-	mov	bx,120-3
-	else
 	mov	bx,120
-	endif
+	cmp	foreignrelease, 0
+	jz $1
+	mov	bx,120-3
+$1:
 	mov	ds,tempgraphics
 	mov	al,39
 	mov	ah,0
@@ -3189,9 +3189,10 @@ notinlouiss:	ret
 Getundertimed	proc	near
 
 	mov	al,timedy
-	if	foreign
+	cmp	foreignrelease, 0
+	jz $1
 	sub	al,3
-	endif
+$1:
 	mov	ah,0
 	mov	bx,ax
 	mov	al,timedx
@@ -3212,9 +3213,10 @@ Getundertimed	proc	near
 Putundertimed	proc	near
 
 	mov	al,timedy
-	if	foreign
+	cmp	foreignrelease, 0
+	jz $1
 	sub	al,3
-	endif
+$1:
 	mov	ah,0
 	mov	bx,ax
 	mov	al,timedx
@@ -3239,9 +3241,10 @@ Dumptimedtext	proc	near
 	cmp	needtodumptimed,1
 	jnz	nodumptimed
 	mov	al,timedy
-	if	foreign
+	cmp	foreignrelease, 0
+	jz $1
 	sub	al,3
-	endif
+$1:
 	mov	ah,0
 	mov	bx,ax
 	mov	al,timedx

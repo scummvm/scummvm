@@ -27,8 +27,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -511,7 +513,7 @@ IMPLEMENT_FUNCTION_I(20, Rebecca, function20, TimeValue)
 		if (getProgress().chapter == kChapter1 && !ENTITY_PARAM(0, 3)) {
 			if (params->param7 != kTimeInvalid && getState()->time > kTime1174500) {
 				if (getState()->time <= kTime1183500) {
-					if (!getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntityPlayer, 2000) || getSound()->isBuffered("CON1210") || !params->param7)
+					if (!getEntities()->isDistanceBetweenEntities(kEntityRebecca, kEntityPlayer, 2000) || getSoundQueue()->isBuffered("CON1210") || !params->param7)
 						params->param7 = (uint)(getState()->time);
 
 					if (params->param7 >= getState()->time)

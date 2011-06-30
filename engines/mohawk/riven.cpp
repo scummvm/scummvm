@@ -143,7 +143,7 @@ Common::Error MohawkEngine_Riven::run() {
 	_extrasFile = new MohawkArchive();
 
 	// We need extras.mhk for inventory images, marble images, and credits images
-	if (!_extrasFile->open("extras.mhk")) {
+	if (!_extrasFile->openFile("extras.mhk")) {
 		Common::String message = "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.";
 		GUIErrorMessage(message);
 		warning("%s", message.c_str());
@@ -317,7 +317,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 		Common::String filename = Common::String(prefix) + endings[i];
 
 		MohawkArchive *mhk = new MohawkArchive();
-		if (mhk->open(filename))
+		if (mhk->openFile(filename))
 			_mhk.push_back(mhk);
 		else
 			delete mhk;

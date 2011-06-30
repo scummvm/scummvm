@@ -239,6 +239,15 @@ void DreamGenContext::removeemm() {
 }
 
 void DreamGenContext::setupemm() {
+	//good place for early initialization
+	switch(engine->getLanguage()) {
+	case Common::EN_ANY:
+	case Common::EN_GRB:
+	case Common::EN_USA:
+		return;
+	default:
+		data.byte(kForeignrelease) = 1;
+	}
 }
 
 void DreamGenContext::pitinterupt() {
@@ -425,7 +434,23 @@ void DreamGenContext::doshake() {
 }
 
 void DreamGenContext::vsync() {
+	push(ax);
+	push(bx);
+	push(cx);
+	push(dx);
+	push(si);
+	push(di);
+	push(es);
+	push(ds);
 	engine->waitForVSync();
+	ds = pop();
+	es = pop();
+	di = pop();
+	si = pop();
+	dx = pop();
+	cx = pop();
+	bx = pop();
+	ax = pop();
 }
 
 void DreamGenContext::setmode() {
@@ -523,6 +548,10 @@ void DreamGenContext::frameoutv() {
 		}
 		dst += stride;
 	}
+}
+
+void DreamGenContext::modifychar() {
+	al = engine->modifyChar(al);
 }
 
 } /*namespace dreamgen */

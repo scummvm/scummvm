@@ -2695,7 +2695,7 @@ int32 ToonEngine::showInventory() {
 		}
 
 		renderInventory();
-
+		_system->delayMillis(10);
 	}
 
 	_gameState->_currentScrollValue = oldScrollValue;

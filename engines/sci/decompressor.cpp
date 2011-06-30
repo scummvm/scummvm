@@ -257,7 +257,8 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
 	init(src, dest, nPacked, nUnpacked);
 
 	byte *stak = (byte *)malloc(0x1014);
-	Tokenlist *tokens = (Tokenlist *)malloc(0x1004 * sizeof(Tokenlist));
+	unsigned int tokensSize = 0x1004 * sizeof(Tokenlist);
+	Tokenlist *tokens = (Tokenlist *)malloc(tokensSize);
 	if (!stak || !tokens) {
 		free(stak);
 		free(tokens);
@@ -265,7 +266,7 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
 		error("[DecompressorLZW::unpackLZW1] Cannot allocate decompression buffers");
 	}
 
-	memset(tokens, 0, sizeof(tokens));
+	memset(tokens, 0, tokensSize);
 
 	byte lastchar = 0;
 	uint16 stakptr = 0, lastbits = 0;

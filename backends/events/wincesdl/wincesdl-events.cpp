@@ -183,7 +183,8 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				if (_tapTime) {     // second tap
 					if (_closeClick && (GetTickCount() - _tapTime < 1000)) {
 						if (event.mouse.y <= 20 &&
-						        _graphicsMan->_panelInitialized) {
+						        _graphicsMan->_panelInitialized &&
+						        !_graphicsMan->_noDoubleTapPT) {
 							// top of screen (show panel)
 							_graphicsMan->swap_panel_visibility();
 						} else if (!_graphicsMan->_noDoubleTapRMB) {

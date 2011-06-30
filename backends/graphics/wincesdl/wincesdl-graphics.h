@@ -90,6 +90,8 @@ public:
 	void swap_zoom_up();
 	void swap_zoom_down();
 	void swap_mouse_visibility();
+	void init_panel();
+	void reset_panel();
 	void swap_freeLook();
 	bool getFreeLookState();
 
@@ -115,6 +117,7 @@ public:
 
 	bool _panelInitialized; // only initialize the toolbar once
 	bool _noDoubleTapRMB;   // disable double tap -> rmb click
+	bool _noDoubleTapPT;    // disable double tap for toolbar toggling
 
 	CEGUI::ToolbarHandler _toolbarHandler;
 

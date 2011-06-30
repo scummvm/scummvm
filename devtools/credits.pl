@@ -467,7 +467,7 @@ begin_credits("Credits");
 		  add_person("Jonathan Gray", "khalek", "(retired)");
 		  add_person("Vincent Hamm", "yaz0r", "(retired)");
 		  add_person("Max Horn", "Fingolfin", "(retired)");
-		  add_person("Travis Howell", "Kirben", "(retired)");
+		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Codecs, iMUSE, Smush, etc.");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Eugene Sandulenko", "sev", "FT INSANE, MM NES, MM C64, game detection, Herc/CGA");
@@ -476,7 +476,7 @@ begin_credits("Credits");
 
 	  begin_section("HE");
 		  add_person("Jonathan Gray", "khalek", "(retired)");
-		  add_person("Travis Howell", "Kirben", "(retired)");
+		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
@@ -495,7 +495,7 @@ begin_credits("Credits");
 	  begin_section("AGOS");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Paul Gilbert", "dreammaster", "");
-		  add_person("Travis Howell", "Kirben", "(retired)");
+		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Oliver Kiehl", "olki", "(retired)");
 		  add_person("Ludvig Strigeus", "ludde", "(retired)");
 	  end_section();
@@ -878,7 +878,7 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Win32");
-		  add_person("Travis Howell", "Kirben", "(retired)");
+		  add_person("Travis Howell", "Kirben", "");
 	  end_section();
 
 	  begin_section("Win64");

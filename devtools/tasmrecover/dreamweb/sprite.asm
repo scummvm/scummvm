@@ -4785,12 +4785,12 @@ Reconstruct	proc	near
 	call	drawfloor
 	call	spriteupdate
 	call	printsprites
-	if	foreign
+	cmp	foreignrelease, 0
+	jz notfudge
 	cmp	reallocation,20
 	jnz	notfudge
 	call	undertextline
 notfudge:
-	endif
 	mov	havedoneobs,0
 noneedtorecon:	ret
 

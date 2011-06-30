@@ -24,7 +24,8 @@
 
 #include "lastexpress/data/sequence.h"
 
-#include "lastexpress/game/sound.h"
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -110,7 +111,7 @@ void FighterPlayerIvo::update() {
 		if (_opponent->getCountdown() <= 0) {
 			setSequenceAndDraw(9, kFightSequenceType1);
 			_opponent->setSequenceAndDraw(8, kFightSequenceType1);
-			getSound()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->removeFromQueue(kEntityTables0);
 
 			handleAction(kFightActionWin);
 			return;
@@ -227,7 +228,7 @@ void FighterOpponentIvo::update() {
 		if (_opponent->getCountdown() <= 0) {
 			setSequenceAndDraw(7, kFightSequenceType1);
 			_opponent->setSequenceAndDraw(8, kFightSequenceType1);
-			getSound()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->removeFromQueue(kEntityTables0);
 
 			_opponent->handleAction(kFightActionWin);
 

@@ -83,6 +83,33 @@ enum SoundFlag {
 	kFlagType9       = 0x7000000
 };
 
+enum SoundState {
+	kSoundState0 = 0,
+	kSoundState1 = 1,
+	kSoundState2 = 2
+};
+
+enum SoundStatus {
+	kSoundStatus_20            = 0x20,
+	kSoundStatus_40            = 0x40,
+	kSoundStatus_180           = 0x180,
+	kSoundStatusRemoved        = 0x200,
+	kSoundStatus_400           = 0x400,
+
+	kSoundStatus_8000          = 0x8000,
+	kSoundStatus_20000         = 0x20000,
+	kSoundStatus_100000        = 0x100000,
+	kSoundStatus_20000000      = 0x20000000,
+	kSoundStatus_40000000      = 0x40000000,
+
+	kSoundStatusClear0         = 0x10,
+	kSoundStatusFilterVariant  = 0x1F,
+	kSoundStatusClear2         = 0x80,
+	kSoundStatusClear3         = 0x200,
+	kSoundStatusClear4         = 0x800,
+	kSoundStatusClearAll       = 0xFFFFFFE0
+};
+
 //////////////////////////////////////////////////////////////////////////
 // Time values
 //////////////////////////////////////////////////////////////////////////

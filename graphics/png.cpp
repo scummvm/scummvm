@@ -166,18 +166,26 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 		}
 	} else {
 		byte index, r, g, b;
+		uint32 mask = (0xff >> (8 - _header.bitDepth)) << (8 - _header.bitDepth);
 
 		// Convert the indexed surface to the target pixel format
 		for (uint16 i = 0; i < output->h; i++) {
-			bool otherPixel = false;
+			int data = 0;
+			int bitCount = 8;
+			byte *src1 = src;
 
 			for (uint16 j = 0; j < output->w; j++) {
-				if (_header.bitDepth != 4)
-					index = *src;
-				else if (!otherPixel)
-					index = (*src) >> 4;
-				else
-					index = (*src) & 0xf;
+				if (bitCount == 8) {
+					data = *src;
+					src++;
+				}
+
+				index = (data & mask) >> (8 - _header.bitDepth);
+				data = (data << _header.bitDepth) & 0xff;
+				bitCount -= _header.bitDepth;
+
+				if (bitCount == 0)
+					bitCount = 8;
 
 				r = _palette[index * 4 + 0];
 				g = _palette[index * 4 + 1];
@@ -188,14 +196,8 @@ Graphics::Surface *PNG::getSurface(const PixelFormat &format) {
 					*((uint16 *)output->getBasePtr(j, i)) = format.ARGBToColor(a, r, g, b);
 				else
 					*((uint32 *)output->getBasePtr(j, i)) = format.ARGBToColor(a, r, g, b);
-
-				if (_header.bitDepth != 4 || otherPixel)
-					src++;
-				otherPixel = !otherPixel;
 			}
-			// The surface is a whole scanline wide, skip the rest of it.
-			if (_header.bitDepth == 4)
-				src += output->w / 2 + output->w % 2;
+			src = src1 + output->w;
 		}
 	}
 

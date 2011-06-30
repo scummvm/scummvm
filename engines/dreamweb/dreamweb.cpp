@@ -65,6 +65,8 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_oldMouseState = 0;
 	_channel0 = 0;
 	_channel1 = 0;
+
+	_language = gameDesc->desc.language;
 }
 
 DreamWebEngine::~DreamWebEngine() {
@@ -214,6 +216,7 @@ void DreamWebEngine::processEvents() {
 
 
 Common::Error DreamWebEngine::run() {
+	syncSoundSettings();
 	_console = new DreamWebConsole(this);
 
 	_loadSavefile = Common::ConfigManager::instance().getInt("save_slot");
@@ -417,17 +420,21 @@ void DreamWebEngine::cls() {
 
 void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	debug(1, "playSound(%u, %u, %u)", channel, id, loops);
-	const SoundData &data = _soundData[id >= 12? 1: 0];
 
-	Audio::Mixer::SoundType type;
-	bool speech = id == 62; //actually 50
+	int bank = 0;
+	bool speech = false;
+	Audio::Mixer::SoundType type = channel == 0?
+		Audio::Mixer::kMusicSoundType: Audio::Mixer::kSFXSoundType;
+
 	if (id >= 12) {
 		id -= 12;
-		type = Audio::Mixer::kSFXSoundType;
-	} else if (speech)
-		type = Audio::Mixer::kSpeechSoundType;
-	else
-		type = Audio::Mixer::kMusicSoundType;
+		bank = 1;
+		if (id == 50) {
+			speech = true;
+			type = Audio::Mixer::kSpeechSoundType;
+		}
+	}
+	const SoundData &data = _soundData[bank];
 
 	Audio::SeekableAudioStream *raw;
 	if (!speech) {
@@ -568,6 +575,60 @@ void DreamWebEngine::loadSounds(uint bank, const Common::String &filename) {
 	file.close();
 }
 
+uint8 DreamWebEngine::modifyChar(uint8 c) const {
+	if (c < 128)
+		return c;
+
+	switch(_language) {
+	case Common::DE_DEU:
+		switch(c)
+		{
+		case 129:
+			return 'Z' + 3;
+		case 132:
+			return 'Z' + 1;
+		case 142:
+			return 'Z' + 4;
+		case 154:
+			return 'Z' + 6;
+		case 255:
+			return 'A' - 1;
+		case 153:
+			return 'Z' + 5;
+		case 148:
+			return 'Z' + 2;
+		default:
+			return c;
+		}
+	case Common::ES_ESP:
+		switch(c) {
+		case 160:
+			return 'Z' + 1;
+		case 130:
+			return 'Z' + 2;
+		case 161:
+			return 'Z' + 3;
+		case 162:
+			return 'Z' + 4;
+		case 163:
+			return 'Z' + 5;
+		case 164:
+			return 'Z' + 6;
+		case 165:
+			return ',' - 1;
+		case 168:
+			return 'A' - 1;
+		case 173:
+			return 'A' - 4;
+		case 129:
+			return 'A' - 5;
+		default:
+			return c;
+		}
+	default:
+		return c;
+	}
+}
 
 } // End of namespace DreamWeb
 

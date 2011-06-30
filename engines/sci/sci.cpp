@@ -870,6 +870,7 @@ void SciEngine::syncIngameAudioOptions() {
 			// Is it a game that supports simultaneous speech and subtitles?
 			if (getGameId() == GID_SQ4
 				|| getGameId() == GID_FREDDYPHARKAS
+				|| getGameId() == GID_ECOQUEST
 				// TODO: The following need script patches for simultaneous speech and subtitles
 				//|| getGameId() == GID_KQ6
 				//|| getGameId() == GID_LAURABOW2

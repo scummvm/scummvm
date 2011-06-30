@@ -250,8 +250,10 @@ LBValue LBCode::runCode(byte terminator) {
 		parseStatement();
 		if (_stack.size())
 			result = _stack.pop();
-		if (_currToken == terminator || _currToken == kTokenEndOfFile)
+		if (_currToken == terminator || _currToken == kTokenEndOfFile) {
+			debugN("\n");
 			break;
+		}
 		if (_currToken != kTokenEndOfStatement && _currToken != kTokenEndOfFile)
 			error("missing EOS (got %02x)", _currToken);
 		debugN("\n");

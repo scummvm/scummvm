@@ -174,7 +174,8 @@ _strip=strip
 _ar="ar cru"
 _as="as"
 _windres=windres
-_win32path="build/x86"
+_win32build="build/x86"
+_win32path="c:/scummvm"
 _aos4path="Games:ScummVM"
 _staticlibpath=/sw
 _sdlconfig=sdl-config
@@ -1880,7 +1881,7 @@ case $_host_os in
 	mingw*)
 		DEFINES="$DEFINES -DWIN32"
 		DEFINES="$DEFINES -D__USE_MINGW_ANSI_STDIO=0"
-		LIBS="$LIBS -lmingw32 -lwinmm"
+		LIBS="$LIBS -lmingw32 -lwinmm -lgdi32"
 		OBJS="$OBJS scummvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
 		;;
@@ -1909,7 +1910,7 @@ case $_host_os in
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 	
 		DEFINES="$DEFINES -DPLAYSTATION3"
-		CXXFLAGS="$CXXFLAGS -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
+		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
 		LDFLAGS="$LDFLAGS -L$PS3DEV/psl1ght/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
 		add_line_to_config_mk 'PLAYSTATION3 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
@@ -3681,6 +3682,7 @@ AS := $_as
 ASFLAGS := $ASFLAGS
 WINDRES := $_windres
 WINDRESFLAGS := $WINDRESFLAGS
+WIN32BUILD=$_win32build
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
 STATICLIBPATH=$_staticlibpath

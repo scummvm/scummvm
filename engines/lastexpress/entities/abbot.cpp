@@ -31,8 +31,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -1409,7 +1411,7 @@ IMPLEMENT_FUNCTION(43, Abbot, function43)
 				setup_playSound("Abb4002");
 				break;
 			} else {
-				if (!getEntities()->isDistanceBetweenEntities(kEntityAbbot, kEntityPlayer, 1000) || getSound()->isBuffered(kEntityBoutarel) || !params->param4)
+				if (!getEntities()->isDistanceBetweenEntities(kEntityAbbot, kEntityPlayer, 1000) || getSoundQueue()->isBuffered(kEntityBoutarel) || !params->param4)
 					params->param4 = (uint)getState()->time + 450;
 
 				if (params->param4 < getState()->time) {
@@ -1754,7 +1756,7 @@ IMPLEMENT_FUNCTION(49, Abbot, pickBomb)
 		break;
 
 	case kActionKnock:
-		if (!getSound()->isBuffered("LIB012", true))
+		if (!getSoundQueue()->isBuffered("LIB012", true))
 			getSound()->playSound(kEntityPlayer, "LIB012");
 		break;
 

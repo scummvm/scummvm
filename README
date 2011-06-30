@@ -219,6 +219,7 @@ AGI Games by Sierra:
 AGOS Games by Adventuresoft/Horrorsoft:
      Elvira - Mistress of the Dark               [elvira1]
      Elvira II - The Jaws of Cerberus            [elvira2]
+     Personal Nightmare                          [pn]
      Waxworks                                    [waxworks]
      Simon the Sorcerer 1                        [simon1]
      Simon the Sorcerer 2                        [simon2]
@@ -942,6 +943,7 @@ arguments -- see the next section.
   -z, --list-games         Display list of supported games and exit
   -t, --list-targets       Display list of configured targets and exit
   --list-saves=TARGET      Display a list of savegames for the game (TARGET) specified
+  --console                Enable the console window (default: enabled) (Windows only)
 
   -c, --config=CONFIG      Use alternate configuration file
   -p, --path=PATH          Path to where the game is installed
@@ -1974,6 +1976,7 @@ The following keywords are recognized:
 
     confirm_exit       bool     Ask for confirmation by the user before quitting
                                 (SDL backend only).
+    console            bool     Enable the console window (default: enabled) (Windows only).
     cdrom              number   Number of CD-ROM unit to use for audio. If
                                 negative, don't even try to access the CD-ROM.
     joystick_num       number   Number of joystick device to use for input

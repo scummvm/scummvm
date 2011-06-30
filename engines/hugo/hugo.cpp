@@ -463,7 +463,7 @@ bool HugoEngine::loadHugoDat() {
 		if (varnt == _gameVariant) {
 			_numStates = numElem;
 			_screenStates = (byte *)malloc(sizeof(byte) * numElem);
-			memset(_screenStates, 0, sizeof(_screenStates));
+			memset(_screenStates, 0, sizeof(byte) * numElem);
 		}
 	}
 

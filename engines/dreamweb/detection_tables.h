@@ -81,6 +81,23 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// German floppy release
+	{
+		{
+			"dreamweb",
+			"",
+			{
+				{"dreamweb.r00", 0, "9960dc3baddabc6ad2a6fd75292b149c", 155886},
+				{"dreamweb.r02", 0, "48e1f42a53402f963ca2d1ed969f4084", 212823},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_UNSTABLE,
+			GUIO_NONE
+		},
+	},
+
 	// German CD release
 	{
 		{
@@ -94,6 +111,40 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_CD | ADGF_UNSTABLE,
+			GUIO_NONE
+		},
+	},
+
+	// Spanish floppy release
+	{
+		{
+			"dreamweb",
+			"",
+			{
+				{"dreamweb.r00", 0, "2df07174321de39c4f17c9ff654b268a", 153608},
+				{"dreamweb.r02", 0, "f97d435ad5da08fb1bcf6ea3dd6e0b9e", 199499},
+				AD_LISTEND
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			ADGF_UNSTABLE,
+			GUIO_NONE
+		},
+	},
+
+	// Italian floppy release
+	{
+		{
+			"dreamweb",
+			"",
+			{
+				{"dreamweb.r00", 0, "66dcab08354232f423c590156335f819", 155448},
+				{"dreamweb.r02", 0, "87a026e9f80ed4f94169381f871ee305", 199676},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 	},

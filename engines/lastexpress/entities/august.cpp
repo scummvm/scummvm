@@ -33,8 +33,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -1427,7 +1429,7 @@ IMPLEMENT_FUNCTION(29, August, function29)
 		if (getState()->time < kTime1134000) {
 
 			if (!getEntities()->isInRestaurant(kEntityPlayer)
-			 || getSound()->isBuffered("MRB1076") || getSound()->isBuffered("MRB1078") || getSound()->isBuffered("MRB1078A"))
+			 || getSoundQueue()->isBuffered("MRB1076") || getSoundQueue()->isBuffered("MRB1078") || getSoundQueue()->isBuffered("MRB1078A"))
 				params->param3 = (uint)getState()->time + 225;
 
 			if (params->param3 > getState()->time)
@@ -1762,7 +1764,7 @@ IMPLEMENT_FUNCTION(34, August, function34)
 		break;
 
 	case kActionNone:
-		if (!getSound()->isBuffered(kEntityAugust) && getProgress().field_18 != 4)
+		if (!getSoundQueue()->isBuffered(kEntityAugust) && getProgress().field_18 != 4)
 			getSound()->playSound(kEntityAugust, "AUG1057");    // August snoring
 		break;
 
@@ -2183,7 +2185,7 @@ IMPLEMENT_FUNCTION_III(42, August, function42, CarIndex, EntityPosition, bool)
 		break;
 
 	case kActionExcuseMe:
-		if (!getSound()->isBuffered(kEntityAugust))
+		if (!getSoundQueue()->isBuffered(kEntityAugust))
 			getSound()->excuseMe(kEntityAugust);
 		break;
 
@@ -3343,7 +3345,7 @@ IMPLEMENT_FUNCTION(65, August, function65)
 
 		getObjects()->update(kObjectCompartment3, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
-		if (!getSound()->isBuffered(kEntityAugust))
+		if (!getSoundQueue()->isBuffered(kEntityAugust))
 			getSound()->playSound(kEntityAugust, "AUG1057");   // August snoring
 		break;
 	}
@@ -3504,9 +3506,9 @@ IMPLEMENT_FUNCTION(69, August, unhookCars)
 		break;
 
 	case kActionDefault:
-		getSound()->processEntries();
-		if (getSound()->isBuffered("ARRIVE"))
-			getSound()->removeFromQueue("ARRIVE");
+		getSoundQueue()->processEntries();
+		if (getSoundQueue()->isBuffered("ARRIVE"))
+			getSoundQueue()->removeFromQueue("ARRIVE");
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventAugustUnhookCarsBetrayal);
@@ -3516,7 +3518,7 @@ IMPLEMENT_FUNCTION(69, August, unhookCars)
 		if (getCallback() == 1) {
 			getAction()->playAnimation(getProgress().field_C ? kEventAugustUnhookCarsBetrayal : kEventAugustUnhookCars);
 			getEntities()->clearSequences(kEntityAugust);
-			getSound()->resetState();
+			getSoundQueue()->resetState();
 			getSound()->playSound(kEntityPlayer, "MUS050");
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 85, 1);
 			getSavePoints()->pushAll(kEntityAugust, kActionProceedChapter5);

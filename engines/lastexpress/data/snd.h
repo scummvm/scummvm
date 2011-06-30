@@ -55,6 +55,7 @@ public:
 	virtual ~SimpleSound();
 
 	void stop() const;
+	virtual bool isFinished() = 0;
 
 protected:
 	void loadHeader(Common::SeekableReadStream *in);
@@ -76,6 +77,11 @@ public:
 	~StreamedSound();
 
 	bool load(Common::SeekableReadStream *stream);
+
+	virtual bool isFinished();
+
+private:
+	bool _loaded;
 };
 
 class AppendableSound : public SimpleSound {
@@ -86,6 +92,8 @@ public:
 	void queueBuffer(const byte *data, uint32 size);
 	void queueBuffer(Common::SeekableReadStream *bufferIn);
 	void finish();
+
+	virtual bool isFinished();
 
 private:
 	Audio::QueuingAudioStream *_as;

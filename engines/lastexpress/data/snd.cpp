@@ -103,7 +103,8 @@ void SimpleSound::play(Audio::AudioStream *as) {
 //////////////////////////////////////////////////////////////////////////
 // StreamedSound
 //////////////////////////////////////////////////////////////////////////
-StreamedSound::StreamedSound() {}
+StreamedSound::StreamedSound() : _loaded(false) {}
+
 StreamedSound::~StreamedSound() {}
 
 bool StreamedSound::load(Common::SeekableReadStream *stream) {
@@ -120,7 +121,16 @@ bool StreamedSound::load(Common::SeekableReadStream *stream) {
 	// Start playing the decoded audio stream
 	play(as);
 
+	_loaded = true;
+
 	return true;
+}
+
+bool StreamedSound::isFinished() {
+	if (!_loaded)
+		return false;
+
+	return !g_system->getMixer()->isSoundHandleActive(_handle);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,7 +162,7 @@ void AppendableSound::queueBuffer(const byte *data, uint32 size) {
 
 void AppendableSound::queueBuffer(Common::SeekableReadStream *bufferIn) {
 	if (!_as)
-		error("AppendableSound::queueBuffer - internal error: the audio stream is invalid!");
+		error("[AppendableSound::queueBuffer] Audio stream is invalid");
 
 	// Setup the ADPCM decoder
 	uint32 sizeIn = (uint32)bufferIn->size();
@@ -164,12 +174,16 @@ void AppendableSound::queueBuffer(Common::SeekableReadStream *bufferIn) {
 
 void AppendableSound::finish() {
 	if (!_as)
-		error("AppendableSound::queueBuffer - internal error: the audio stream is invalid!");
+		error("[AppendableSound::finish] Audio stream is invalid");
 
 	if (!_finished)
 		_as->finish();
 
 	_finished = true;
+}
+
+bool AppendableSound::isFinished() {
+	return _as->endOfStream();
 }
 
 } // End of namespace LastExpress

@@ -26,7 +26,7 @@
 #include "lastexpress/entities/entity.h"
 #include "lastexpress/entities/entity_intern.h"
 
-#include "lastexpress/game/sound.h"
+#include "lastexpress/sound/sound.h"
 
 namespace LastExpress {
 

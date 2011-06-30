@@ -24,7 +24,8 @@
 
 #include "lastexpress/data/sequence.h"
 
-#include "lastexpress/game/sound.h"
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -107,7 +108,7 @@ void FighterPlayerAnna::handleAction(FightAction action) {
 	}
 
 	if (_field_34 > 4) {
-		getSound()->removeFromQueue(kEntityTables0);
+		getSoundQueue()->removeFromQueue(kEntityTables0);
 		_fight->bailout(Fight::kFightEndWin);
 	}
 }
@@ -175,7 +176,7 @@ void FighterOpponentAnna::update() {
 			_opponent->handleAction((FightAction)_sequenceIndex);
 
 		if (_opponent->getCountdown() <= 0) {
-			getSound()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->removeFromQueue(kEntityTables0);
 			handleAction(kFightActionLost);
 		}
 	}

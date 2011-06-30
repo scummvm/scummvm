@@ -464,11 +464,9 @@ public:
 
 	inline void _movsb(uint size, bool clear_cx = false) {
 		assert(size != 0xffff);
-		uint8 *dst = es.ptr(di, size);
-		uint8 *src = ds.ptr(si, size);
-		memcpy(dst, src, size);
-		di += size;
-		si += size;
+		//fixme: add overlap and segment boundary check and rewrite
+		while(size--)
+			_movsb();
 		if (clear_cx)
 			cx = 0;
 	}

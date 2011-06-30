@@ -32,8 +32,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -295,7 +297,7 @@ IMPLEMENT_FUNCTION(9, Vassili, function9)
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 41)) {
 
 			if (savepoint.action == kActionDrawScene)
-				getSound()->processEntry(kEntityVassili);
+				getSoundQueue()->processEntry(kEntityVassili);
 
 			setup_seizure();
 		} else {

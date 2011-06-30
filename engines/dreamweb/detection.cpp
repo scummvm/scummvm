@@ -30,16 +30,6 @@
 
 #include "dreamweb/dreamweb.h"
 
-#include "engines/advancedDetector.h"
-
-namespace DreamWeb {
-
-struct DreamWebGameDescription {
-	ADGameDescription desc;
-};
-
-} // End of namespace DreamWeb
-
 static const PlainGameDescriptor dreamWebGames[] = {
 	{ "dreamweb", "DreamWeb" },
 	{ 0, 0 }

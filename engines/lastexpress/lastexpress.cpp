@@ -28,9 +28,11 @@
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
-#include "lastexpress/game/sound.h"
 
 #include "lastexpress/menu/menu.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
@@ -151,8 +153,8 @@ Common::Error LastExpressEngine::run() {
 	_menu->show(false, kSavegameTypeIndex, 0);
 
 	while (!shouldQuit()) {
-		_soundMan->updateQueue();
-		_soundMan->updateSubtitles();
+		_soundMan->getQueue()->updateQueue();
+		_soundMan->getQueue()->updateSubtitles();
 
 		if (handleEvents())
 			continue;
@@ -183,7 +185,7 @@ void LastExpressEngine::pollEvents() {
 bool LastExpressEngine::handleEvents() {
 	// Make sure all the subsystems have been initialized
 	if (!_debugger || !_graphicsMan)
-		error("LastExpressEngine::handleEvents: called before the required subsystems have been initialized!");
+		error("[LastExpressEngine::handleEvents] Called before the required subsystems have been initialized");
 
 	// Execute stored commands
 	if (_debugger->hasCommand()) {
@@ -280,7 +282,7 @@ void LastExpressEngine::soundTimer(void *refCon) {
 void LastExpressEngine::handleSoundTimer() {
 	if (_frameCounter & 1)
 		if (_soundMan)
-			_soundMan->handleTimer();
+			_soundMan->getQueue()->handleTimer();
 
 	_frameCounter++;
 }

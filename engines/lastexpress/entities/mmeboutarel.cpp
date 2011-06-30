@@ -28,8 +28,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -399,7 +401,7 @@ IMPLEMENT_FUNCTION(13, MmeBoutarel, function13)
 		break;
 
 	case kActionNone:
-		if (!getSound()->isBuffered(kEntityMmeBoutarel) && params->param6 != kTimeInvalid) {
+		if (!getSoundQueue()->isBuffered(kEntityMmeBoutarel) && params->param6 != kTimeInvalid) {
 			UPDATE_PARAM_PROC_TIME(params->param1, !getEntities()->isDistanceBetweenEntities(kEntityMmeBoutarel, kEntityPlayer, 2000), params->param6, 0)
 				getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
 				getObjects()->update(kObject51, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
@@ -883,8 +885,8 @@ IMPLEMENT_FUNCTION(21, MmeBoutarel, chapter3Handler)
 			if (getState()->time <= kTime2038500) {
 				if (!getEntities()->isPlayerInCar(kCarRedSleeping)
 				 || !params->param1
-				 || getSound()->isBuffered("FRA2012")
-				 || getSound()->isBuffered("FRA2010")
+				 || getSoundQueue()->isBuffered("FRA2012")
+				 || getSoundQueue()->isBuffered("FRA2010")
 				 ||!params->param2)
 					params->param2 = (uint)getState()->time;
 

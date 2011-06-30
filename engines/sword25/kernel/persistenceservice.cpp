@@ -50,7 +50,9 @@ static const char *SAVEGAME_DIRECTORY = "saves";
 static const char *FILE_MARKER = "BS25SAVEGAME";
 static const uint  SLOT_COUNT = 18;
 static const uint  FILE_COPY_BUFFER_SIZE = 1024 * 10;
-static const char *VERSIONID = "SCUMMVM1";
+static const char *VERSIONIDOLD = "SCUMMVM1";
+static const char *VERSIONID = "SCUMMVM2";
+static const int   VERSIONNUM = 2;
 
 #define MAX_SAVEGAME_SIZE 100
 
@@ -99,6 +101,7 @@ struct SavegameInformation {
 	bool isOccupied;
 	bool isCompatible;
 	Common::String description;
+	int  version;
 	uint gamedataLength;
 	uint gamedataOffset;
 	uint gamedataUncompressedLength;
@@ -147,9 +150,15 @@ struct PersistenceService::Impl {
 			// Read in the header
 			Common::String storedMarker = loadString(file);
 			Common::String storedVersionID = loadString(file);
+			if (storedVersionID == VERSIONIDOLD) {
+				curSavegameInfo.version = 1;
+			} else {
+				Common::String versionNum = loadString(file);
+				curSavegameInfo.version = atoi(versionNum.c_str());
+			}
 			Common::String gameDescription = loadString(file);
-			Common::String gameDataLength = loadString(file);
-			curSavegameInfo.gamedataLength = atoi(gameDataLength.c_str());
+			Common::String gamedataLength = loadString(file);
+			curSavegameInfo.gamedataLength = atoi(gamedataLength.c_str());
 			Common::String gamedataUncompressedLength = loadString(file);
 			curSavegameInfo.gamedataUncompressedLength = atoi(gamedataUncompressedLength.c_str());
 
@@ -158,7 +167,7 @@ struct PersistenceService::Impl {
 				// The slot is marked as occupied.
 				curSavegameInfo.isOccupied = true;
 				// Check if the saved game is compatible with the current engine version.
-				curSavegameInfo.isCompatible = (storedVersionID == Common::String(VERSIONID));
+				curSavegameInfo.isCompatible = (curSavegameInfo.version <= VERSIONNUM);
 				// Load the save game description.
 				curSavegameInfo.description = gameDescription;
 				// The offset to the stored save game data within the file.
@@ -242,6 +251,12 @@ Common::String &PersistenceService::getSavegameFilename(uint slotID) {
 	return result;
 }
 
+int PersistenceService::getSavegameVersion(uint slotID) {
+	if (!checkslotID(slotID))
+		return -1;
+	return _impl->_savegameInformations[slotID].version;
+}
+
 bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotFilename) {
 	// FIXME: This code is a hack which bypasses the savefile API,
 	// and should eventually be removed.
@@ -262,6 +277,11 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 	file->writeString(FILE_MARKER);
 	file->writeByte(0);
 	file->writeString(VERSIONID);
+	file->writeByte(0);
+
+	char buf[20];
+	snprintf(buf, 20, "%d", VERSIONNUM);
+	file->writeString(buf);
 	file->writeByte(0);
 
 	TimeDate dt;
@@ -385,7 +405,7 @@ bool PersistenceService::loadGame(uint slotID) {
 		memcpy(uncompressedDataBuffer, compressedDataBuffer, uncompressedBufferSize);
 	}
 
-	InputPersistenceBlock reader(&uncompressedDataBuffer[0], curSavegameInfo.gamedataUncompressedLength);
+	InputPersistenceBlock reader(&uncompressedDataBuffer[0], curSavegameInfo.gamedataUncompressedLength, curSavegameInfo.version);
 
 	// Einzelne Engine-Module depersistieren.
 	bool success = true;

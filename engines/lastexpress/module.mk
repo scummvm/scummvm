@@ -61,12 +61,13 @@ MODULE_OBJS := \
 	game/savegame.o \
 	game/savepoint.o \
 	game/scenes.o \
-	game/sound.o \
 	game/state.o \
 	menu/clock.o \
 	menu/menu.o \
 	menu/trainline.o \
 	sound/entry.o \
+	sound/queue.o \
+	sound/sound.o \
 	debug.o \
 	detection.o \
 	graphics.o \

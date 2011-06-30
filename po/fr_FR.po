@@ -1836,7 +1836,7 @@ msgstr "Mode ~Z~ip Activé"
 
 #: engines/mohawk/dialogs.cpp:91
 msgid "~T~ransitions Enabled"
-msgstr "T~r~ansitions activé"
+msgstr "T~r~ansitions activées"
 
 #: engines/mohawk/dialogs.cpp:92
 msgid "~D~rop Page"

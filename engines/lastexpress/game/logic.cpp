@@ -42,10 +42,12 @@
 #include "lastexpress/game/savegame.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/menu/menu.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
@@ -152,7 +154,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 		_engine->getCursor()->setStyle(getInventory()->get(kItemWhistle)->cursor);
 
 		// Check if clicked
-		if (ev.type == Common::EVENT_LBUTTONUP && !getSound()->isBuffered("LIB045")) {
+		if (ev.type == Common::EVENT_LBUTTONUP && !getSoundQueue()->isBuffered("LIB045")) {
 
 			getSound()->playSoundEvent(kEntityPlayer, 45);
 
@@ -411,7 +413,7 @@ void Logic::eventTick(const Common::Event &) {
 void Logic::resetState() {
 	getState()->scene = kSceneDefault;
 
-	warning("Logic::resetState: not implemented! You need to restart the engine until this is implemented.");
+	warning("[Logic::resetState] Not implemented! You need to restart the engine until this is implemented.");
 }
 
 /**
@@ -424,7 +426,7 @@ void Logic::resetState() {
  */
 void Logic::gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, bool showScene) const {
 
-	getSound()->processEntries();
+	getSoundQueue()->processEntries();
 	getEntities()->reset();
 	getFlags()->isGameRunning = false;
 	getSavePoints()->reset();
@@ -432,16 +434,16 @@ void Logic::gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, boo
 
 	if (showScene) {
 
-		getSound()->processEntry(kSoundType11);
+		getSoundQueue()->processEntry(kSoundType11);
 
 		if (sceneIndex && !getFlags()->mouseRightClick) {
 			getScenes()->loadScene(sceneIndex);
 
-			while (getSound()->isBuffered(kEntityTables4)) {
+			while (getSoundQueue()->isBuffered(kEntityTables4)) {
 				if (getFlags()->mouseRightClick)
 					break;
 
-				getSound()->updateQueue();
+				getSoundQueue()->updateQueue();
 			}
 		}
 	}
@@ -451,7 +453,7 @@ void Logic::gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, boo
 }
 
 void Logic::switchChapter() const {
-	getSound()->clearStatus();
+	getSoundQueue()->clearStatus();
 
 	switch(getState()->progress.chapter) {
 	default:
@@ -491,7 +493,7 @@ void Logic::switchChapter() const {
 }
 
 void Logic::playFinalSequence() const {
-	getSound()->processEntries();
+	getSoundQueue()->processEntries();
 
 	_action->playAnimation(kEventFinalSequence);
 	showCredits();
@@ -504,7 +506,7 @@ void Logic::playFinalSequence() const {
 }
 
 void Logic::showCredits() const {
-	error("Logic::showCredits: not implemented!");
+	error("[Logic::showCredits] Not implemented");
 }
 
 //////////////////////////////////////////////////////////////////////////
