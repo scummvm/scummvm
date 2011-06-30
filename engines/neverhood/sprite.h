@@ -76,8 +76,8 @@ protected:
 class StaticSprite : public Sprite {
 public:
 	StaticSprite(NeverhoodEngine *vm, int objectPriority);
-	StaticSprite(NeverhoodEngine *vm, const char *filename, int surfacePriority, int16 x, int16 y, int16 width, int16 height);
-	StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y, int16 width, int16 height);
+	StaticSprite(NeverhoodEngine *vm, const char *filename, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition, int16 width = 0, int16 height = 0);
+	StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition, int16 width = 0, int16 height = 0);
 	void load(uint32 fileHash, bool dimensions, bool position);
 protected:
 	SpriteResource _spriteResource;
