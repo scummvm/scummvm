@@ -85,7 +85,6 @@ class AsylumEngine: public Engine, public Common::Serializable {
 protected:
 	// Engine APIs
 	virtual Common::Error run();
-	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual GUI::Debugger *getDebugger() { return _console; }
 

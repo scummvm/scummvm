@@ -123,11 +123,13 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 class AsylumMetaEngine : public AdvancedMetaEngine {
 public:
 	AsylumMetaEngine() : AdvancedMetaEngine(Asylum::gameDescriptions, sizeof(ADGameDescription), asylumGames) {
-		params.singleid = "asylum";
-		params.md5Bytes = 0;
-		params.guioptions = Common::GUIO_NONE;
-		params.fileBasedFallback = Asylum::fileBasedFallback;
-		params.flags = kADFlagPrintWarningOnFileBasedFallback;
+		_singleid = "asylum";
+		_md5Bytes = 0;
+		_guioptions = Common::GUIO_NONE;
+	}
+
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		return detectGameFilebased(allFiles, Asylum::fileBasedFallback);
 	}
 
 	virtual const char *getName() const {
@@ -156,10 +158,6 @@ bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
 	       (f == kSupportsLoadingDuringRuntime) ||
 	       (f == kSupportsSavingDuringRuntime) ||
 	       (f == kSupportsSubtitleOptions);
-}
-
-void Asylum::AsylumEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
-	snprintf(buf_output, (uint)buf_output_size, "%s", buf_input);
 }
 
 bool AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
