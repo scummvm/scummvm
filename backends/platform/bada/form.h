@@ -85,6 +85,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   Osp::Base::Runtime::Thread* gameThread;
   Osp::Base::Runtime::Mutex* eventQueueLock;
   Common::Queue<Common::Event> eventQueue;
+  bool gameActive;
 };
 
 #endif

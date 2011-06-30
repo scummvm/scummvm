@@ -57,6 +57,7 @@ struct BadaGraphicsManager : public OpenGLGraphicsManager {
   EGLSurface eglSurface;
   EGLConfig  eglConfig;
   EGLContext eglContext;
+  bool startup;
 };
 
 #endif

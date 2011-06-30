@@ -23,6 +23,8 @@
 #include "audio.h"
 #include "system.h"
 
+#include <FSysSettingInfo.h>
+
 AudioThread::AudioThread() : 
   mixer(0),
   timer(0),
@@ -93,8 +95,12 @@ bool AudioThread::OnStart(void) {
     return false;
   }
 
+  bool silentMode;
+  String key(L"SilentMode");
+  Osp::System::SettingInfo::GetValue(key, silentMode);
+
   mixer->setReady(true);
-  audioOut->SetVolume(99);
+  audioOut->SetVolume(silentMode ? 0 : 50);
   audioOut->Start();
   return true;
 }

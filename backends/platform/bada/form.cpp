@@ -35,7 +35,7 @@ using namespace Osp::Ui::Controls;
 //
 // BadaAppForm
 //
-BadaAppForm::BadaAppForm() : gameThread(0) {
+BadaAppForm::BadaAppForm() : gameThread(0), gameActive(false) {
   eventQueueLock = new Mutex();
   eventQueueLock->Create();
 }
@@ -148,7 +148,10 @@ void BadaAppForm::pushEvent(Common::EventType type,
 void BadaAppForm::OnOrientationChanged(const Control& source, 
                                        OrientationStatus orientationStatus) {
   logEntered();
-  gameThread->Start();
+  if (!gameActive) {
+    gameActive = true;
+    gameThread->Start();
+  }
 }
 
 Object* BadaAppForm::Run(void) {

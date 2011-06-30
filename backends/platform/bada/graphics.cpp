@@ -32,7 +32,8 @@ BadaGraphicsManager::BadaGraphicsManager(BadaAppForm* appForm) :
   eglDisplay(EGL_DEFAULT_DISPLAY),
   eglSurface(EGL_NO_SURFACE),
   eglConfig(0),
-  eglContext(EGL_NO_CONTEXT) {
+  eglContext(EGL_NO_CONTEXT),
+  startup(true) {
   assert(appForm != null);
   _videoMode.fullscreen = true;
   _videoMode.antialiasing = true;
@@ -161,6 +162,10 @@ bool BadaGraphicsManager::loadGFXMode() {
   _videoMode.scaleFactor = 3; // for proportional sized cursor in the launcher
 
   AppLog("screen size: %dx%d", _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+  if (startup) {
+    displayMessageOnOSD("Wait!");
+    startup = false;
+  }
   return OpenGLGraphicsManager::loadGFXMode();
 }
 
