@@ -443,8 +443,8 @@ bool FontSjisSVM::loadData() {
 		assert(_fontData8x16);
 		data->read(_fontData8x16, _fontData8x16Size);
 	} else {
-		data->skip(_fontData16x16Size);
-		data->skip(_fontData8x16Size);
+		data->skip(numChars16x16 * 32);
+		data->skip(numChars8x16 * 16);
 
 		_fontData12x12Size = numChars12x12 * 24;
 		_fontData12x12 = new uint8[_fontData12x12Size];
