@@ -98,6 +98,15 @@ protected:
 	Common::Array<AnimFrameInfo> _frames;
 };
 
+// TODO: Dummy class atm
+
+class SoundResource {
+public:
+	SoundResource(NeverhoodEngine *vm) : _vm(vm) {}
+	bool isPlaying() const { return false; }
+protected:
+	NeverhoodEngine *_vm;	
+};
 
 } // End of namespace Neverhood
 

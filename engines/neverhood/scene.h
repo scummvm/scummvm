@@ -71,7 +71,7 @@ protected:
 	// TODO 00000090 playerSprite		dd ?
 	// TODO 00000094 mouseSprite	 dd ?
 	Palette *_palette;
-	// TODO 0000009C class300		dd ?
+	// TODO Background *_background;
 	bool _surfaceFlag;
 	bool _messageListFlag;
 	MessageListItem *_messageList2;

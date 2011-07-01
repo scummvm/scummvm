@@ -22,20 +22,22 @@
 
 #include "neverhood/gamemodule.h"
 
+#include "neverhood/module1500.h"
+
 namespace Neverhood {
 
 GameModule::GameModule(NeverhoodEngine *vm)
-	: Module(_vm, NULL) {
+	: Module(vm, NULL) {
 	
 	// Other initializations moved to actual engine class
 	
 	// TODO
 
 	// TODO Sound1ChList_sub_407F70(0x2D0031, 0x8861079);
-
-	
 	
 	SetMessageHandler(&GameModule::handleMessage);
+
+	startup();
 	
 }
 
@@ -49,6 +51,8 @@ GameModule::~GameModule() {
 	// TODO: Set palette to black but probably not neccessary
 	
 	// TODO Sound1ChList_sub_408480();
+	
+	// TODO Set debug vars (maybe)
 
 }
 
@@ -84,15 +88,24 @@ void GameModule::startup() {
 }
 
 void GameModule::createModule1500(int which) {
-	// TODO
 	_someFlag1 = false;
 	// TODO *getGlobalGameVarValuePtr(0x91080831) = 0x0F10114;
-	// TODO _childObject = new Module1500(this, which, true);
+	_childObject = new Module1500(_vm, this, which, true);
 	SetUpdateHandler(&GameModule::updateModule1500);
 }
 
 void GameModule::updateModule1500() {
-	// TODO
+	if (!_childObject)
+		return;
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		debug("Done...");
+		// TODO createModule1000();
+		// TODO _childObject->handleUpdate();
+	}
 }
 
 } // End of namespace Neverhood

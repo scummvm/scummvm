@@ -38,6 +38,7 @@
 
 #include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/graphics.h"
 #include "neverhood/resourceman.h"
 #include "neverhood/resource.h"
@@ -123,55 +124,65 @@ Common::Error NeverhoodEngine::run() {
 	}
 #endif
 	
-#if 1
+#if 0
 	{ // Create a new scope
 		AnimResource r(this);
 		r.load(0x000540B0);
 	}
 #endif
+
+	_gameModule = new GameModule(this);
+
+	while (1) {
+		Common::Event event;
+		Common::EventManager *eventMan = _system->getEventManager();
+	
+		while (eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				_keyState = event.kbd.keycode;
+				break;
+			case Common::EVENT_KEYUP:
+				_keyState = Common::KEYCODE_INVALID;
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+				break;
+			/*			
+			case Common::EVENT_LBUTTONDOWN:
+				_buttonState |= kLeftButton;
+				break;
+			case Common::EVENT_LBUTTONUP:
+				_buttonState &= ~kLeftButton;
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				_buttonState |= kRightButton;
+				break;
+			case Common::EVENT_RBUTTONUP:
+				_buttonState &= ~kRightButton;
+				break;
+			case Common::EVENT_QUIT:
+				_system->quit();
+				break;
+			*/			
+			default:
+				break;
+			}
+		}
+		
+		_gameModule->handleUpdate();
+		_system->updateScreen();
+	
+	}
+	
+	delete _gameModule;
 	
 	delete _res;
+	
+	debug("Ok.");
 
 	return Common::kNoError;
-}
-
-void NeverhoodEngine::updateEvents() {
-	Common::Event event;
-	Common::EventManager *eventMan = _system->getEventManager();
-
-	while (eventMan->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			_keyState = event.kbd.keycode;
-			break;
-		case Common::EVENT_KEYUP:
-			_keyState = Common::KEYCODE_INVALID;
-			break;
-		case Common::EVENT_MOUSEMOVE:
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
-			break;
-		/*			
-		case Common::EVENT_LBUTTONDOWN:
-			_buttonState |= kLeftButton;
-			break;
-		case Common::EVENT_LBUTTONUP:
-			_buttonState &= ~kLeftButton;
-			break;
-		case Common::EVENT_RBUTTONDOWN:
-			_buttonState |= kRightButton;
-			break;
-		case Common::EVENT_RBUTTONUP:
-			_buttonState &= ~kRightButton;
-			break;
-		case Common::EVENT_QUIT:
-			_system->quit();
-			break;
-		*/			
-		default:
-			break;
-		}
-	}
 }
 
 } // End of namespace Neverhood

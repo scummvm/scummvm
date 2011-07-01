@@ -25,7 +25,7 @@
 namespace Neverhood {
 
 Module::Module(NeverhoodEngine *vm, Module *parentModule)
-	: Entity(_vm, 0), _parentModule(parentModule), _childObject(NULL),
+	: Entity(vm, 0), _parentModule(parentModule), _childObject(NULL),
 	_done(false), _field24(-1), _field26(-1), _field28(-1) {
 	
 	SetMessageHandler(&Module::handleMessage);

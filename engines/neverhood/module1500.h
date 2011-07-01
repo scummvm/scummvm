@@ -27,6 +27,9 @@
 
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/scene.h"
+#include "neverhood/graphics.h"
+#include "neverhood/palette.h"
 
 namespace Neverhood {
 
@@ -40,6 +43,19 @@ protected:
 	void createScene1502();
 	void createScene1503();
 	void createScene1504();
+};
+
+class Scene1501 : public Scene {
+public:
+	Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 soundFileHash, int countdown2, int countdown3);
+protected:
+	SoundResource _soundResource;
+	int _countdown1;
+	int _countdown2;
+	int _countdown3;
+	bool _flag;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood

@@ -44,6 +44,7 @@ enum NeverhoodGameFeatures {
 struct NeverhoodGameDescription;
 
 class ResourceMan;
+class GameModule;
 
 struct GameState {
 	int sceneNum;
@@ -74,8 +75,7 @@ public:
 
 	GameState _gameState;
 	ResourceMan *_res;
-
-	void updateEvents();
+	GameModule *_gameModule;
 
 public:
 	
