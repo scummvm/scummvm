@@ -72,10 +72,9 @@ Sub CreateInstaller()
 	' Build command line
 	Dim commandLine : commandLine = """" & nsisPath & "\makensis.exe"" /V2" & _
 	                                " /Dtop_srcdir=""" & rootFolder & """" & _
-	                                " /Dbuild_dir=""" & targetFolder & """" & _
-	                                " /Dtext_dir=""" & rootFolder & """" & _
+	                                " /Dstaging_dir=""" & targetFolder & """" & _
 	                                " /DARCH=""" & arch & """" & _
-	                                " """ & rootFolder & "\dists\nsis\scummvm.nsi"""
+	                                " """ & rootFolder & "\dists\win32\scummvm.nsi"""
 
 	Dim oExec: Set oExec = WshShell.Exec(commandline)
 	If Err.Number <> 0 Then
