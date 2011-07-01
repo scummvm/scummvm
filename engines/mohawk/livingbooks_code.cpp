@@ -172,12 +172,8 @@ LBValue LBCode::runCode(LBItem *src, uint32 offset) {
 }
 
 void LBCode::nextToken() {
-	if (_currOffset + 1 >= _size) {
-		// TODO
-		warning("went off the end of code");
-		_currToken = kTokenEndOfFile;
-		_currValue = LBValue();
-		return;
+	if (_currOffset >= _size) {
+		error("went off the end of code");
 	}
 
 	_currToken = _data[_currOffset++];
@@ -186,6 +182,8 @@ void LBCode::nextToken() {
 	switch (_currToken) {
 	case kTokenIdentifier:
 		{
+		if (_currOffset + 2 > _size)
+			error("went off the end of code reading identifier");
 		uint16 offset = READ_BE_UINT16(_data + _currOffset);
 		// TODO: check string exists
 		_currValue = _strings[offset];
@@ -195,9 +193,13 @@ void LBCode::nextToken() {
 
 	case kTokenLiteral:
 		{
+		if (_currOffset + 1 > _size)
+			error("went off the end of code reading literal");
 		byte literalType = _data[_currOffset++];
 		switch (literalType) {
 		case kLBCodeLiteralInteger:
+			if (_currOffset + 2 > _size)
+				error("went off the end of code reading literal integer");
 			_currValue = READ_BE_UINT16(_data + _currOffset);
 			_currOffset += 2;
 			break;
@@ -211,6 +213,8 @@ void LBCode::nextToken() {
 	case kTokenConstEventId:
 	case 0x5e: // TODO: ??
 	case kTokenKeycode:
+		if (_currOffset + 2 > _size)
+			error("went off the end of code reading immediate");
 		_currValue = READ_BE_UINT16(_data + _currOffset);
 		_currOffset += 2;
 		break;
@@ -227,6 +231,8 @@ void LBCode::nextToken() {
 
 	case kTokenString:
 		{
+		if (_currOffset + 2 > _size)
+			error("went off the end of code reading string");
 		uint16 offset = READ_BE_UINT16(_data + _currOffset);
 		// TODO: check string exists
 		_currValue = _strings[offset];
