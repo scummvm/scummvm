@@ -638,8 +638,8 @@ struct CodeCommandInfo {
 
 #define NUM_GENERAL_COMMANDS 129
 CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
-	{ "eval", 0 },
-	{ "random", 0 },
+	{ "eval", &LBCode::cmdEval },
+	{ "random", &LBCode::cmdRandom },
 	{ "stringLen", 0 },
 	{ "substring", 0 },
 	{ "max", 0 },
@@ -795,6 +795,26 @@ void LBCode::cmdUnimplemented(const Common::Array<LBValue> &params) {
 	warning("unimplemented command called");
 }
 
+void LBCode::cmdEval(const Common::Array<LBValue> &params) {
+	// FIXME: v4 eval is different?
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to eval", params.size());
+
+	LBCode tempCode(_vm, 0);
+
+	uint offset = tempCode.parseCode(params[0].toString());
+	_stack.push(tempCode.runCode(_currSource, offset));
+}
+
+void LBCode::cmdRandom(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to random", params.size());
+
+	int min = params[0].toInt();
+	int max = params[1].toInt();
+	_stack.push(_vm->_rnd->getRandomNumberRng(min, max));
+}
+
 void LBCode::cmdGetRect(const Common::Array<LBValue> &params) {
 	if (params.size() < 2) {
 		_stack.push(getRectFromParams(params));
@@ -937,7 +957,7 @@ CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
 	{ "moveTo", &LBCode::itemMoveTo },
 	{ "mute", 0 },
 	{ "play", 0 },
-	{ "seek", 0 },
+	{ "seek", &LBCode::itemSeek },
 	{ "seekToFrame", 0 },
 	{ "setParent", &LBCode::itemSetParent },
 	{ "setZOrder", 0 },
@@ -971,6 +991,17 @@ void LBCode::itemIsPlaying(const Common::Array<LBValue> &params) {
 
 void LBCode::itemMoveTo(const Common::Array<LBValue> &params) {
 	warning("ignoring moveTo");
+}
+
+void LBCode::itemSeek(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to seek", params.size());
+
+	LBItem *item = resolveItem(params[0]);
+	if (!item)
+		error("attempted seek on invalid item (%s)", params[0].toString().c_str());
+	uint seekTo = params[1].toInt();
+	item->seek(seekTo);
 }
 
 void LBCode::itemSetParent(const Common::Array<LBValue> &params) {

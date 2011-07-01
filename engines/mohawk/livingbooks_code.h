@@ -220,6 +220,8 @@ protected:
 
 public:
 	void cmdUnimplemented(const Common::Array<LBValue> &params);
+	void cmdEval(const Common::Array<LBValue> &params);
+	void cmdRandom(const Common::Array<LBValue> &params);
 	void cmdGetRect(const Common::Array<LBValue> &params);
 	void cmdTopLeft(const Common::Array<LBValue> &params);
 	void cmdBottomRight(const Common::Array<LBValue> &params);
@@ -233,9 +235,10 @@ public:
 	void cmdSetHitTest(const Common::Array<LBValue> &params);
 	void cmdKey(const Common::Array<LBValue> &params);
 
-	void itemSetParent(const Common::Array<LBValue> &params);
-	void itemMoveTo(const Common::Array<LBValue> &params);
 	void itemIsPlaying(const Common::Array<LBValue> &params);
+	void itemMoveTo(const Common::Array<LBValue> &params);
+	void itemSeek(const Common::Array<LBValue> &params);
+	void itemSetParent(const Common::Array<LBValue> &params);
 };
 
 } // End of namespace Mohawk
