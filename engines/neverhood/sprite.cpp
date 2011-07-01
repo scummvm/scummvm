@@ -30,7 +30,6 @@ Sprite::Sprite(NeverhoodEngine *vm, int objectPriority)
 	: Entity(vm, objectPriority), _x(0), _y(0),
 	_spriteUpdateCb(NULL), _filterXCb(NULL), _filterYCb(NULL),   
 	_doDeltaX(false), _doDeltaY(false), _needRedraw(false),
-	_deltaX1(0), _deltaY1(0), _deltaX2(0), _deltaY2(0),
 	_flags(0) {
 
 	SetMessageHandler(&Sprite::handleMessage);
@@ -43,18 +42,18 @@ Sprite::~Sprite() {
 
 void Sprite::processDelta() {
 	if (_doDeltaX) {
-		_rect.x1 = _x - _deltaX1 - _deltaX2 + 1;
-		_rect.x2 = _x - _deltaX1;
+		_rect.x1 = _x - _deltaRect.x - _deltaRect.width + 1;
+		_rect.x2 = _x - _deltaRect.x;
 	} else {
-		_rect.x1 = _x + _deltaX1;
-		_rect.x2 = _x + _deltaX1 + _deltaX2 - 1;
+		_rect.x1 = _x + _deltaRect.x;
+		_rect.x2 = _x + _deltaRect.x + _deltaRect.width - 1;
 	}
 	if (_doDeltaY) {
-		_rect.y1 = _y - _deltaY1 - _deltaY2 + 1;
-		_rect.y2 = _y - _deltaY1;
+		_rect.y1 = _y - _deltaRect.y - _deltaRect.height + 1;
+		_rect.y2 = _y - _deltaRect.y;
 	} else {
-		_rect.y1 = _y + _deltaY1;
-		_rect.y2 = _y + _deltaY1 + _deltaY2 - 1;
+		_rect.y1 = _y + _deltaRect.y;
+		_rect.y2 = _y + _deltaRect.y + _deltaRect.height - 1;
 	}
 }
 
@@ -175,5 +174,275 @@ void StaticSprite::load(uint32 fileHash, bool dimensions, bool position) {
 	_needRedraw = true;
 
 }
+
+// AnimatedSprite
+
+AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, int objectPriority)
+	: Sprite(vm, objectPriority), _animResource(vm) {
+
+	init();
+}
+
+AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y)
+	: Sprite(vm, 1100), _animResource(vm) {
+
+	init();
+	SetUpdateHandler(&AnimatedSprite::update);
+	createSurface1(fileHash, surfacePriority);
+	_x = x;
+	_y = y;
+	setFileHash(fileHash, 0, -1);
+	
+}
+
+void AnimatedSprite::init() {
+	_counter = 0;
+	_fileHash1 = 0;
+	_deltaX = 0;
+	_deltaY = 0;
+	_fileHash2 = 0;
+	// TODO _callbackList = 0;
+	_frameIndex3 = 0;
+	// TODO _callback3 = 0;
+	_frameIndex = 0;
+	_hashListIndex = -1;
+	// TODO _callback2 = 0;
+	_newHashListIndex = -1;
+	// TODO _callback1 = 0;
+	_fileHash4 = 0;
+	_flag = false;
+	_replOldByte = 0;
+	_replNewByte = 0;
+	// TODO _animResource.replEnabled = 0;
+	_playBackwards = 0;
+}
+
+void AnimatedSprite::update() {
+	updateAnim();
+	handleSpriteUpdate();
+	updatePosition();
+}
+
+void AnimatedSprite::updateDeltaXY() {
+	if (_doDeltaX) {
+		_x -= _deltaX;
+	} else {
+		_x += _deltaX;
+	}
+	if (_doDeltaY) {
+		_y -= _deltaY;
+	} else {
+		_y += _deltaY;
+	}
+	_deltaX = 0;
+	_deltaY = 0;
+	processDelta();
+}
+
+void AnimatedSprite::updateAnim() {
+
+	_flag = false;
+
+	if (_fileHash1 == 0) {
+		if (_newHashListIndex != -1) {
+			_hashListIndex = _newHashListIndex == -2 ? _animResource.getFrameCount() - 1 : _newHashListIndex;
+			_newHashListIndex = -1;
+		} else if (_fileHash4 != 0) {
+			_hashListIndex = MAX<int16>(0, _animResource.getFrameIndex(_fileHash4));
+			_fileHash4 = 0;
+		}
+		if (_fileHash1 == 0 && _frameIndex != _hashListIndex) {
+			if (_counter != 0)
+				_counter--;
+			if (_counter == 0 && _animResource.getFrameCount() != 0) {
+				
+				if (_fileHash2 != 0) {
+					if (_animResource.loadInternal(_fileHash2)) {
+						_fileHash3 = _fileHash2;
+					} else {
+						// TODO _animResource.loadInternal(calcHash("sqDefault"));
+						_fileHash3 = 0;
+					}
+					// loc_43831D
+					if (_replNewByte != _replOldByte) {
+						// TODO _animResource.setRepl(_replOldByte, _replNewByte);
+					}
+					_fileHash2 = 0;
+					if (_status != 0) {
+						_frameIndex = _fileHash6 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash6)) : 0;
+						_frameIndex2 = _fileHash5 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash5)) : _animResource.getFrameCount() - 1;
+					} else {
+						_frameIndex = _frameIndex3 != -1 ? _frameIndex3 : _animResource.getFrameCount() - 1;
+						_frameIndex2 = _frameIndex4 != -1 ? _frameIndex4 : _animResource.getFrameCount() - 1; 
+					}
+				} else {
+					// TODO updateFrameIndex();
+				}
+				if (_fileHash1 == 0)
+					updateFrameInfo();
+			}				
+		}
+	}
+	
+	if (_fileHash1 != 0) {
+		if (_status == 2) {
+			_hashListIndex = _frameIndex;
+		} else {
+			if (_status == 1) {
+				if (_animResource.loadInternal(_fileHash1)) {
+					_fileHash3 = _fileHash1;
+				} else {
+					// TODO _animResource.loadInternal(calcHash("sqDefault"));
+					_fileHash3 = 0;
+				}
+				if (_replNewByte != _replOldByte) {
+					// TODO _animResource.setRepl(_replOldByte, _replNewByte);
+				}
+				_fileHash1 = 0;
+				_frameIndex = _fileHash6 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash6)) : 0;
+				_frameIndex2 = _fileHash5 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash5)) : _animResource.getFrameCount() - 1;
+			} else {
+				if (_animResource.loadInternal(_fileHash1)) {
+					_fileHash3 = _fileHash1;
+				} else {
+					// TODO _animResource.loadInternal(calcHash("sqDefault"));
+					_fileHash3 = 0;
+				}
+				if (_replNewByte != _replOldByte) {
+					// TODO _animResource.setRepl(_replOldByte, _replNewByte);
+				}
+				_fileHash1 = 0;
+				_frameIndex = _frameIndex3 != -1 ? _frameIndex3 : _animResource.getFrameCount() - 1;
+				_frameIndex2 = _frameIndex4 != -1 ? _frameIndex4 : _animResource.getFrameCount() - 1;
+			}
+			updateFrameInfo();
+		}
+
+		if (_newHashListIndex != -1) {
+			_hashListIndex = _newHashListIndex == -2 ? _animResource.getFrameCount() - 1 : _newHashListIndex;
+			_newHashListIndex = -1;
+		} else if (_fileHash4 != 0) {
+			_hashListIndex = MAX<int16>(0, _animResource.getFrameIndex(_fileHash4));
+			_fileHash4 = 0;
+		}
+
+	}
+
+}
+
+void AnimatedSprite::updatePosition() {
+
+	if (!_surface)
+		return;
+
+	if (_doDeltaX) {
+		_surface->getDrawRect().x = filterX(_x - _rect1.x1 - _rect1.x2 + 1);
+	} else {
+		_surface->getDrawRect().x = filterX(_x + _rect1.x1);
+	}
+
+	if (_doDeltaY) {
+		_surface->getDrawRect().y = filterY(_y - _rect1.y1 - _rect1.y2 + 1);
+	} else {
+		_surface->getDrawRect().y = filterY(_y + _rect1.y1);
+	}
+
+	if (_needRedraw) {
+		// TODO _surface->drawAnimResource(_animResource, _frameIndex, _doDeltaX, _doDeltaY, _rect1.x2, _rect1.y2);
+		_needRedraw = false;
+	}
+
+}
+
+void AnimatedSprite::updateFrameIndex() {
+	if (!_playBackwards) {
+		if (_frameIndex < _frameIndex2) {
+			_frameIndex++;
+		} else {
+			// Inform self about end of current animation
+			// The caller can then e.g. set a new animation fileHash
+			sendMessage(0x3002, 0, this);
+			if (_fileHash1 == 0)
+				_frameIndex = 0;
+		}
+	} else {
+		if (_frameIndex > 0) {
+			_frameIndex--;
+		} else {
+			sendMessage(0x3002, 0, this);
+			if (_fileHash1 == 0)
+				_frameIndex = _frameIndex2;
+		}
+	}
+}
+
+void AnimatedSprite::updateFrameInfo() {
+
+	const AnimFrameInfo &frameInfo = _animResource.getFrameInfo(_frameIndex);
+	
+	_flag = true;
+	_rect1 = frameInfo.rect;
+	_deltaX = frameInfo.deltaX;
+	_deltaY = frameInfo.deltaY;
+	_deltaRect = frameInfo.deltaRect;
+	_counter = frameInfo.counter;
+
+	processDelta();
+
+	_needRedraw = true;
+
+	if (frameInfo.frameHash != 0) {
+		sendMessage(0x100D, frameInfo.frameHash, this);
+	}
+
+}
+
+void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {
+	NDimensions dimensions;
+	// TODO dimensions = getAnimatedSpriteDimensions(fileHash);
+	dimensions.width = 640;
+	dimensions.height = 480;
+	_surface = new BaseSurface(_vm, surfacePriority, dimensions.width, dimensions.height);
+}
+
+void AnimatedSprite::setFileHash(uint32 fileHash, int16 frameIndex3, int16 frameIndex4) {
+	_fileHash1 = fileHash;
+	_frameIndex3 = frameIndex3;
+	_frameIndex4 = frameIndex4;
+	_fileHash4 = 0;
+	_status = 0;
+	_playBackwards = false;
+	_newHashListIndex = -1;
+	_hashListIndex = -1;
+}
+
+void AnimatedSprite::setFileHash1() {
+	_fileHash1 = 1;
+	_status = 2;
+}
+
+void AnimatedSprite::setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5) {
+	_fileHash1 = fileHash;
+	_fileHash6 = fileHash6;
+	_fileHash5 = fileHash5;
+	_fileHash4 = 0;
+	_status = 1;
+	_playBackwards = false;
+	_newHashListIndex = -1;
+	_hashListIndex = -1;
+}
+
+void AnimatedSprite::setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fileHash5) {
+	_fileHash2 = fileHash2;
+	_fileHash6 = fileHash6;
+	_fileHash5 = fileHash5;
+	_fileHash4 = 0;
+	_status = 1;
+	_playBackwards = false;
+	_newHashListIndex = -1;
+	_hashListIndex = -1;
+}
+
+
 
 } // End of namespace Neverhood

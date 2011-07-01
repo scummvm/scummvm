@@ -62,6 +62,9 @@ public:
 	void drawSpriteResource(SpriteResource &spriteResource);
 	int getPriority() const { return _priority; }
 	void setPriority(int priority) { _priority = priority; }
+	NDrawRect& getDrawRect() { return _drawRect; }
+	NDrawRect& getSysRect() { return _sysRect; }
+	NRect& getClipRect() { return _clipRect; }
 protected:
 	NeverhoodEngine *_vm;
 	int _priority;

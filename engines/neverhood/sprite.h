@@ -56,8 +56,7 @@ protected:
 	//0000002B field_2B		db ?
 	//0000002C field2C		dd ? // unused
 	NRect _rect1;
-	int16 _deltaX1, _deltaY1;
-	int16 _deltaX2, _deltaY2;
+	NDrawRect _deltaRect;
 	NRect _rect;
 	uint16 _flags;
 	//0000004A field4A		dw ? // seems to be unused except in ctor
@@ -65,6 +64,10 @@ protected:
 	//void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createSurface(int surfacePriority, int16 width, int16 height);
+	void handleSpriteUpdate() {
+		if (_spriteUpdateCb)
+			(this->*_spriteUpdateCb)();
+	}
 	int16 filterX(int16 x) {
 		return _filterXCb ? (this->*_filterXCb)(x) : x;
 	}
@@ -83,6 +86,54 @@ protected:
 	SpriteResource _spriteResource;
 	void init(uint32 fileHash, int surfacePriority, int16 x, int16 y, int16 width, int16 height);
 	void update();
+};
+
+class AnimatedSprite : public Sprite {
+public:
+	AnimatedSprite(NeverhoodEngine *vm, int objectPriority);
+	AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y);
+protected:
+	AnimResource _animResource;
+	uint32 _fileHash1;
+	uint32 _fileHash2;
+	uint32 _fileHash3;
+	int16 _frameIndex;
+	int16 _frameIndex3;
+	int16 _frameIndex2;
+	int16 _frameIndex4;
+	uint32 _fileHash6;
+	uint32 _fileHash5;
+	int16 _status;
+	int16 _counter;
+	int _hashListIndex;
+	int _newHashListIndex;
+	uint32 _fileHash4;
+	int16 _deltaX, _deltaY;
+	byte _replOldByte;
+	byte _replNewByte;
+	bool _playBackwards;
+	bool _flag;
+	/* TODO
+	callbackListIndex dw ?
+	callbackListCount dw ?
+	callbackList	dd ?
+	callback3	   dd ?
+	callback2	   dd ?
+	callback1	   dd ?
+	*/
+	void init();
+	void update();
+	void updateDeltaXY();
+	void updateAnim();
+	void updatePosition();
+	void updateFrameIndex();
+	void updateFrameInfo();
+	void createSurface1(uint32 fileHash, int surfacePriority);
+	void setFileHash(uint32 fileHash, int16 frameIndex3, int16 frameIndex4);
+	void setFileHash1();
+	void setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5);
+	void setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fileHash5);
+	int16 getHashListIndex(uint32 fileHash) { return 0; } // TODO !!!
 };
 
 } // End of namespace Neverhood

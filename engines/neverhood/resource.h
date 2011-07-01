@@ -61,6 +61,44 @@ protected:
 	byte *_palette;
 };
 
+struct AnimFrameInfo {
+	uint32 frameHash;
+	int16 counter;
+	NRect rect;
+	int16 deltaX, deltaY;
+	NDrawRect deltaRect;
+	uint16 field_1A; 
+	uint32 spriteDataOffs;
+};
+
+class AnimResource {
+public:
+	AnimResource(NeverhoodEngine *vm);
+	~AnimResource();
+	bool load(uint32 fileHash);
+	void unload();
+	void clear();
+	void clear2();
+	bool loadInternal(uint32 fileHash);
+	void unloadInternal();
+	uint getFrameCount() const { return _frames.size(); }
+	const AnimFrameInfo& getFrameInfo(int16 index) const { return _frames[index]; }
+	int16 getFrameIndex(uint32 frameHash);
+protected:
+	NeverhoodEngine *_vm;
+	int _resourceHandle;
+	int16 _width, _height;
+	byte *_currSpriteData;
+	uint32 _fileHash;
+	byte *_paletteData;
+	byte *_spriteData;
+	bool _replEnabled;
+	byte _replOldByte;
+	byte _replNewByte;
+	Common::Array<AnimFrameInfo> _frames;
+};
+
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_RESOURCE_H */

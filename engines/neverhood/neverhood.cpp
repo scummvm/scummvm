@@ -112,7 +112,7 @@ Common::Error NeverhoodEngine::run() {
 	_res->unuseResource(resourceHandle);
 #endif
 	
-#if 1
+#if 0
 	{ // Create a new scope
 		SpriteResource r(this);
 		BaseSurface *surf = new BaseSurface(this, 0, 640, 480);
@@ -120,6 +120,13 @@ Common::Error NeverhoodEngine::run() {
 		debug("r: width = %d; height = %d", r.getDimensions().width, r.getDimensions().height);
 		surf->drawSpriteResource(r);
 		delete surf;
+	}
+#endif
+	
+#if 1
+	{ // Create a new scope
+		AnimResource r(this);
+		r.load(0x000540B0);
 	}
 #endif
 	
