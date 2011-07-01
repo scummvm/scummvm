@@ -434,7 +434,6 @@ protected:
 	void runScript(uint event, uint16 data = 0, uint16 from = 0);
 	int runScriptEntry(LBScriptEntry *entry);
 
-	LBValue parseValue(const Common::String &command, uint &pos);
 	void runCommand(const Common::String &command);
 	bool checkCondition(const Common::String &condition);
 
