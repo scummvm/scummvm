@@ -311,7 +311,7 @@ void SelectPocket(int n) {
 
 
 void PocFul(void) {
-	Hero->Park();
+	Hero->park();
 	SNPOST(SNWAIT, -1, -1, Hero);
 	SNPOST(SNSEQ, -1, POC_FUL, Hero);
 	SNPOST(SNSOUND, -1, 2, Hero);
@@ -544,7 +544,7 @@ static void SNRmTake(Sprite *spr) {
 void SNSeq(Sprite *spr, int val) {
 	if (spr) {
 		if (spr == Hero && val == 0)
-			Hero->Park();
+			Hero->park();
 		else
 			spr->Step(val);
 	}
@@ -846,17 +846,17 @@ static void SNSetRef(Sprite *spr, int nr) {
 
 void SNFlash(bool on) {
 	if (on) {
-		DAC *pal = farnew(DAC, PAL_CNT);
+		Dac *pal = farnew(Dac, PAL_CNT);
 		if (pal) {
 			memcpy(pal, VGA::SysPal, PAL_SIZ);
 			for (int i = 0; i < PAL_CNT; i++) {
 				register int c;
-				c = pal[i].R << 1;
-				pal[i].R = (c < 64) ? c : 63;
-				c = pal[i].G << 1;
-				pal[i].G = (c < 64) ? c : 63;
-				c = pal[i].B << 1;
-				pal[i].B = (c < 64) ? c : 63;
+				c = pal[i]._r << 1;
+				pal[i]._r = (c < 64) ? c : 63;
+				c = pal[i]._g << 1;
+				pal[i]._g = (c < 64) ? c : 63;
+				c = pal[i]._b << 1;
+				pal[i]._b = (c < 64) ? c : 63;
 			}
 			Vga->SetColors(pal, 64);
 		}
@@ -883,16 +883,16 @@ static void SNBarrier(int cav, int bar, bool horz) {
 static void SNWalk(Sprite *spr, int x, int y) {
 	if (Hero) {
 		if (spr && y < 0)
-			Hero->FindWay(spr);
+			Hero->findWay(spr);
 		else
-			Hero->FindWay(XZ(x, y));
+			Hero->findWay(XZ(x, y));
 	}
 }
 
 
 static void SNReach(Sprite *spr, int mode) {
 	if (Hero)
-		Hero->Reach(spr, mode);
+		Hero->reach(spr, mode);
 }
 
 
@@ -937,7 +937,7 @@ void SNAIL::RunCom(void) {
 			case SNWAIT     :
 				if (sprel) {
 					if (sprel->SeqTest(snc->Val) &&
-					        (snc->Val >= 0 || sprel != Hero || Hero->TracePtr < 0)) {
+					        (snc->Val >= 0 || sprel != Hero || Hero->_tracePtr < 0)) {
 						_heart->setXTimer(&Pause, sprel->_time);
 					} else
 						goto xit;
@@ -959,7 +959,7 @@ void SNAIL::RunCom(void) {
 				break;
 			case SNINF      :
 				if (TalkEnable) {
-					_vm->Inf(Text->getText(snc->Val));
+					_vm->inf(Text->getText(snc->Val));
 					Sys->FunDel = HEROFUN0;
 				}
 				break;

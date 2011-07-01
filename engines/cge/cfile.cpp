@@ -54,7 +54,7 @@ IoBuf::IoBuf(const char *name, IOMODE mode, CRYPT *crpt)
 }
 
 IoBuf::~IoBuf(void) {
-	if (Mode > REA)
+	if (_mode > REA)
 		writeBuff();
 	if (_buff)
 		free(_buff);
@@ -210,7 +210,7 @@ CFile::~CFile(void) {
 
 
 void CFile::flush(void) {
-	if (Mode > REA)
+	if (_mode > REA)
 		writeBuff();
 	else
 		_lim = 0;
@@ -225,16 +225,16 @@ void CFile::flush(void) {
 
 
 long CFile::mark(void) {
-	return _bufMark + ((Mode > REA) ? _lim : _ptr);
+	return _bufMark + ((_mode > REA) ? _lim : _ptr);
 }
 
 
 long CFile::seek(long pos) {
 	if (pos >= _bufMark && pos < _bufMark + _lim) {
-		((Mode == REA) ? _ptr : _lim) = (uint16)(pos - _bufMark);
+		((_mode == REA) ? _ptr : _lim) = (uint16)(pos - _bufMark);
 		return pos;
 	} else {
-		if (Mode > REA)
+		if (_mode > REA)
 			writeBuff();
 		else
 			_lim = 0;
@@ -247,13 +247,13 @@ long CFile::seek(long pos) {
 
 void CFile::append(CFile &f) {
 	seek(size());
-	if (f.Error == 0) {
+	if (f._error == 0) {
 		while (true) {
 			if ((_lim = f.IoHand::read(_buff, IOBUF_SIZE)) == IOBUF_SIZE)
 				writeBuff();
 			else
 				break;
-			if ((Error = f.Error) != 0)
+			if ((_error = f._error) != 0)
 				break;
 		}
 	}

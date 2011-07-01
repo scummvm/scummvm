@@ -30,7 +30,7 @@
 
 namespace CGE {
 
-void SelectSound(void);
+void selectSound();
 
 } // End of namespace CGE
 

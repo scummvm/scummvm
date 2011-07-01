@@ -129,39 +129,39 @@ private:
 };
 
 
-class CLUSTER : public COUPLE {
+class Cluster : public Couple {
 public:
-	static uint8 Map[MAP_ZCNT][MAP_XCNT];
-	uint8 &Cell(void);
-	CLUSTER(void) : COUPLE() { }
-	CLUSTER(int a, int b) : COUPLE(a, b) { }
+	static uint8 _map[MAP_ZCNT][MAP_XCNT];
+	uint8 &cell(void);
+	Cluster(void) : Couple() { }
+	Cluster(int a, int b) : Couple(a, b) { }
 	bool Protected(void);
 };
 
 
 class WALK : public Sprite {
 public:
-	CLUSTER Here;
-	int TracePtr;
+	Cluster _here;
+	int _tracePtr;
 
 	enum DIR { NO_DIR = -1, NN, EE, SS, WW } Dir;
 	WALK(CGEEngine *vm, BMP_PTR *shpl);
-	void Tick(void);
-	void FindWay(CLUSTER c);
-	void FindWay(Sprite *spr);
-	int Distance(Sprite *spr);
-	void Turn(DIR d);
-	void Park(void);
-	bool Lower(Sprite *spr);
-	void Reach(Sprite *spr, int mode = -1);
+	void tick();
+	void findWay(Cluster c);
+	void findWay(Sprite *spr);
+	int distance(Sprite *spr);
+	void turn(DIR d);
+	void park();
+	bool lower(Sprite *spr);
+	void reach(Sprite *spr, int mode = -1);
 private:
 	CGEEngine *_vm;
 
 };
 
 
-CLUSTER XZ(int x, int y);
-CLUSTER XZ(COUPLE xy);
+Cluster XZ(int x, int y);
+Cluster XZ(Couple xy);
 
 void ExpandSprite(Sprite *spr);
 void ContractSprite(Sprite *spr);

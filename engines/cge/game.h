@@ -34,22 +34,25 @@
 namespace CGE {
 
 
-#define PAN_HIG     40
-#define LBound(s)   (s->X <= 0)
-#define RBound(s)   (s->X+s->W >= SCR_WID)
-#define TBound(s)   (s->Y <= 0)
-#define BBound(s)   (s->Y+s->H >= SCR_HIG - PAN_HIG)
+//#define PAN_HIG     40
+//#define LBound(s)   (s->X <= 0)
+//#define RBound(s)   (s->X+s->W >= SCR_WID)
+//#define TBound(s)   (s->Y <= 0)
+//#define BBound(s)   (s->Y+s->H >= SCR_HIG - PAN_HIG)
 
-int    Sinus(long x);
-uint8 *Glass(DAC *pal, uint8 r, uint8 g, uint8 b);
-uint8 *Mark(DAC *pal);
+//int    sinus(long x);
+uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b);
+//uint8 *mark(DAC *pal);
 
-class FLY : public Sprite {
-	static int L, T, R, B;
+class Fly : public Sprite {
+	static int _l;
+	static int _t;
+	static int _r;
+	static int _b;
 public:
-	int Tx, Ty;
-	FLY(CGEEngine *vm, Bitmap **shpl);
-	void Tick(void);
+	int _tx, _ty;
+	Fly(CGEEngine *vm, Bitmap **shpl);
+	void tick();
 private:
 	CGEEngine *_vm;
 };

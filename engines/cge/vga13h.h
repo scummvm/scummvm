@@ -91,7 +91,7 @@ struct Rgb {
 };
 
 typedef union {
-	DAC dac;
+	Dac dac;
 	Rgb rgb;
 } TRGB;
 
@@ -133,8 +133,8 @@ extern Seq _seq2[];
 #define VGAST1  (VGAST1_ & 0xFF)
 
 
-class Heart : public ENGINE {
-	friend class ENGINE;
+class Heart : public Engine_ {
+	friend class Engine_;
 public:
 	Heart();
 
@@ -263,7 +263,8 @@ class VGA {
 	uint16 *OldScreen;
 	uint16 StatAdr;
 	bool SetPal;
-	DAC *OldColors, *NewColors;
+	Dac *OldColors;
+	Dac *NewColors;
 	const char *Msg;
 	const char *Nam;
 
@@ -277,7 +278,7 @@ public:
 	QUEUE *ShowQ, *SpareQ;
 	int Mono;
 	static Graphics::Surface *Page[4];
-	static DAC *SysPal;
+	static Dac *SysPal;
 
 	VGA(int mode);
 	~VGA(void);
@@ -285,21 +286,21 @@ public:
 	static void deinit();
 
 	void Setup(VgaRegBlk *vrb);
-	void GetColors(DAC *tab);
-	void SetColors(DAC *tab, int lum);
+	void GetColors(Dac *tab);
+	void SetColors(Dac *tab, int lum);
 	void Clear(uint8 color);
 	void CopyPage(uint16 d, uint16 s);
-	void Sunrise(DAC *tab);
+	void Sunrise(Dac *tab);
 	void Sunset(void);
 	void Show(void);
 	void Update(void);
 
-	static void pal2DAC(const byte *palData, DAC *tab);
-	static void DAC2pal(const DAC *tab, byte *palData);
+	static void pal2DAC(const byte *palData, Dac *tab);
+	static void DAC2pal(const Dac *tab, byte *palData);
 };
 
 
-DAC MkDAC(uint8 r, uint8 g, uint8 b);
+Dac MkDAC(uint8 r, uint8 g, uint8 b);
 Rgb MkRGB(uint8 r, uint8 g, uint8 b);
 
 
@@ -307,15 +308,15 @@ template <class CBLK>
 uint8 Closest(CBLK *pal, CBLK x) {
 #define f(col, lum) ((((uint16)(col)) << 8) / lum)
 	uint16 i, dif = 0xFFFF, found = 0;
-	uint16 L = x.R + x.G + x.B;
+	uint16 L = x._r + x._g + x._b;
 	if (!L)
 		++L;
-	uint16 R = f(x.R, L), G = f(x.G, L), B = f(x.B, L);
+	uint16 R = f(x._r, L), G = f(x._g, L), B = f(x._b, L);
 	for (i = 0; i < 256; i++) {
-		uint16 l = pal[i].R + pal[i].G + pal[i].B;
+		uint16 l = pal[i]._r + pal[i]._g + pal[i]._b;
 		if (! l)
 			++l;
-		int  r = f(pal[i].R, l), g = f(pal[i].G, l), b = f(pal[i].B, l);
+		int  r = f(pal[i]._r, l), g = f(pal[i]._g, l), b = f(pal[i]._b, l);
 		uint16 D = ((r > R) ? (r - R) : (R - r)) +
 		           ((g > G) ? (g - G) : (G - g)) +
 		           ((b > B) ? (b - B) : (B - b)) +

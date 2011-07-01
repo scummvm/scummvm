@@ -41,10 +41,10 @@ enum EMM_FUN {
 };
 
 
-void *EMM::Frame = NULL;
+void *EMM::_frame = NULL;
 
 
-EMM::EMM(long size): Han(-1), Top(0), Lim(0), List(NULL) {
+EMM::EMM(long size): _han(-1), _top(0), _lim(0), _list(NULL) {
 	/*
 	    if (Test())
 	    {
@@ -97,7 +97,7 @@ EMM::~EMM(void) {
 }
 
 
-bool EMM::Test(void) {
+bool EMM::test() {
 	/*
 	  static char e[] = "EMMXXXX0";
 
@@ -130,7 +130,7 @@ bool EMM::Test(void) {
 }
 
 
-EMS *EMM::Alloc(uint16 siz) {
+EMS *EMM::alloc(uint16 siz) {
 	/*
 	  long size = SIZ(siz),
 	       top = Top;
@@ -167,22 +167,22 @@ EMS *EMM::Alloc(uint16 siz) {
 	    }
 	  fail: return NULL;
 	*/
-	warning("STUB: EMM::Alloc");
+	warning("STUB: EMM::alloc");
 	return NULL;
 }
 
 
-void EMM::Release(void) {
-	while (List) {
-		EMS *e = List;
-		List = e->Nxt;
+void EMM::release() {
+	while (_list) {
+		EMS *e = _list;
+		_list = e->_next;
 		delete e;
 	}
-	Top = 0;
+	_top = 0;
 }
 
 
-EMS::EMS(void) : Ptr(0), Siz(0), Nxt(NULL) {
+EMS::EMS(void) : _ptr(0), _size(0), _next(NULL) {
 }
 
 
@@ -193,7 +193,7 @@ void *EMS::operator & () const {
 	       cnt = (uint16) ((Ptr + SIZ(Siz) + PAGE_MASK) >> 14) - pgn,
 	       cmd = MAP_PAGE << 8;
 
-	  _DX = Emm->Han;       // take EMM handle
+	  _DX = Emm->_han;       // take EMM handle
 	  asm   dec cnt     // prapare for deferred checking
 	  asm   or  dx,dx       // see if valid
 	  asm   jns more        // negative handle = unavailable
@@ -218,8 +218,8 @@ void *EMS::operator & () const {
 }
 
 
-uint16 EMS::Size(void) {
-	return Siz;
+uint16 EMS::size() {
+	return _size;
 }
 
 } // End of namespace CGE

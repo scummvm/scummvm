@@ -31,20 +31,20 @@
 
 namespace CGE {
 
-uint8 *Glass(DAC *pal, uint8 r, uint8 g, uint8 b) {
+uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b) {
 	uint8 *x = new uint8[256];
 	if (x) {
 		uint16 i;
 		for (i = 0; i < 256; i++) {
-			x[i] = Closest(pal, MkDAC(((uint16)(pal[i].R) * r) / 255,
-			                          ((uint16)(pal[i].G) * g) / 255,
-			                          ((uint16)(pal[i].B) * b) / 255));
+			x[i] = Closest(pal, MkDAC(((uint16)(pal[i]._r) * r) / 255,
+			                          ((uint16)(pal[i]._g) * g) / 255,
+			                          ((uint16)(pal[i]._b) * b) / 255));
 		}
 	}
 	return x;
 }
 
-
+/* Useless?
 uint8 *Mark(DAC *pal) {
 #define f(c) (c ^ 63)
 	uint8 *x = new uint8[256];
@@ -59,33 +59,33 @@ uint8 *Mark(DAC *pal) {
 	return x;
 #undef f
 }
+*/
+
+int Fly::_l = 20,
+    Fly::_t = 40,
+    Fly::_r = 110,
+    Fly::_b = 100;
 
 
-int FLY::L = 20,
-    FLY::T = 40,
-    FLY::R = 110,
-    FLY::B = 100;
-
-
-FLY::FLY(CGEEngine *vm, Bitmap **shpl)
-	: Sprite(vm, shpl), Tx(0), Ty(0), _vm(vm) {
+Fly::Fly(CGEEngine *vm, Bitmap **shpl)
+	: Sprite(vm, shpl), _tx(0), _ty(0), _vm(vm) {
 	Step(new_random(2));
-	Goto(L + new_random(R - L - _w), T + new_random(B - T - _h));
+	Goto(_l + new_random(_r - _l - _w), _t + new_random(_b - _t - _h));
 }
 
 
-void FLY::Tick(void) {
+void Fly::tick() {
 	Step();
 	if (!_flags._kept) {
 		if (new_random(10) < 1) {
-			Tx = new_random(3) - 1;
-			Ty = new_random(3) - 1;
+			_tx = new_random(3) - 1;
+			_ty = new_random(3) - 1;
 		}
-		if (_x + Tx < L || _x + Tx + _w > R)
-			Tx = -Tx;
-		if (_y + Ty < T || _y + Ty + _h > B)
-			Ty = -Ty;
-		Goto(_x + Tx, _y + Ty);
+		if (_x + _tx < _l || _x + _tx + _w > _r)
+			_tx = -_tx;
+		if (_y + _ty < _t || _y + _ty + _h > _b)
+			_ty = -_ty;
+		Goto(_x + _tx, _y + _ty);
 	}
 }
 

@@ -189,20 +189,20 @@ void RestoreScreen(uint16 * &sav) {
 }
 
 
-DAC MkDAC(uint8 r, uint8 g, uint8 b) {
-	static DAC x;
-	x.R = r;
-	x.G = g;
-	x.B = b;
+Dac MkDAC(uint8 r, uint8 g, uint8 b) {
+	static Dac x;
+	x._r = r;
+	x._g = g;
+	x._b = b;
 	return x;
 }
 
 
 Rgb MkRGB(uint8 r, uint8 g, uint8 b) {
 	static TRGB x;
-	x.dac.R = r;
-	x.dac.G = g;
-	x.dac.B = b;
+	x.dac._r = r;
+	x.dac._g = g;
+	x.dac._b = b;
 	return x.rgb;
 }
 
@@ -214,7 +214,7 @@ Sprite *Locate(int ref) {
 
 
 Heart::Heart(void)
-	: ENGINE(TMR_DIV) {
+	: Engine_(TMR_DIV) {
 	_enable = false;
 	_xTimer = NULL;
 }
@@ -265,7 +265,7 @@ extern "C" void TimerProc() {
 */
 
 
-void ENGINE::NewTimer(...) {
+void Engine_::newTimer(...) {
 	/*
 	static SPRITE *spr;
 	static uint8 run = 0, cntr1 = TMR_RATE1, cntr2 = TMR_RATE2;
@@ -338,7 +338,7 @@ void ENGINE::NewTimer(...) {
 	  }
 
 	*/
-	warning("STUB: ENGINE::NewTimer");
+	warning("STUB: Engine_::NewTimer");
 }
 
 
@@ -505,7 +505,7 @@ Sprite *Sprite::Expand(void) {
 			MergeExt(fname, File, SPR_EXT);
 			if (INI_FILE::exist(fname)) { // sprite description file exist
 				INI_FILE sprf(fname);
-				if (! (sprf.Error==0))
+				if (!(sprf._error==0))
 					error("Bad SPR [%s]", fname);
 				int len = 0, lcnt = 0;
 				while ((len = sprf.read((uint8 *)line)) != 0) {
@@ -910,7 +910,7 @@ Sprite *QUEUE::Locate(int ref) {
 
 //extern const char Copr[];
 Graphics::Surface *VGA::Page[4];
-DAC *VGA::SysPal;
+Dac *VGA::SysPal;
 
 void VGA::init() {
 	for (int idx = 0; idx < 4; ++idx) {
@@ -918,7 +918,7 @@ void VGA::init() {
 		Page[idx]->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
-	SysPal = new DAC[PAL_CNT];
+	SysPal = new Dac[PAL_CNT];
 }
 
 void VGA::deinit() {
@@ -953,8 +953,8 @@ VGA::VGA(int mode)
 	if (StatAdr != VGAST1_)
 		++Mono;
 	if (IsVga()) {
-		OldColors = farnew(DAC, 256);
-		NewColors = farnew(DAC, 256);
+		OldColors = farnew(Dac, 256);
+		NewColors = farnew(Dac, 256);
 		OldScreen = SaveScreen();
 		GetColors(OldColors);
 		Sunset();
@@ -1061,45 +1061,45 @@ int VGA::SetMode(int mode) {
 }
 
 
-void VGA::GetColors(DAC *tab) {
+void VGA::GetColors(Dac *tab) {
 	byte palData[PAL_SIZ];
 	g_system->getPaletteManager()->grabPalette(palData, 0, PAL_CNT);
 	pal2DAC(palData, tab);
 }
 
-void VGA::pal2DAC(const byte *palData, DAC *tab) {
+void VGA::pal2DAC(const byte *palData, Dac *tab) {
 	const byte *colP = palData;
 	for (int idx = 0; idx < PAL_CNT; ++idx, colP += 3) {
-		tab[idx].R = *colP;
-		tab[idx].G = *(colP + 1);
-		tab[idx].B = *(colP + 2);
+		tab[idx]._r = *colP;
+		tab[idx]._g = *(colP + 1);
+		tab[idx]._b = *(colP + 2);
 	}
 }
 
-void VGA::DAC2pal(const DAC *tab, byte *palData) {
+void VGA::DAC2pal(const Dac *tab, byte *palData) {
 	for (int idx = 0; idx < PAL_CNT; ++idx, palData += 3) {
-		*palData = tab[idx].R << 2;
-		*(palData + 1) = tab[idx].G << 2;
-		*(palData + 2) = tab[idx].B << 2;
+		*palData = tab[idx]._r << 2;
+		*(palData + 1) = tab[idx]._g << 2;
+		*(palData + 2) = tab[idx]._b << 2;
 	}
 }
 
-void VGA::SetColors(DAC *tab, int lum) {
-	DAC *palP = tab;
+void VGA::SetColors(Dac *tab, int lum) {
+	Dac *palP = tab;
 	for (int idx = 0; idx < PAL_CNT; ++idx, ++palP) {
-		palP->R = (palP->R * lum) >> 6;
-		palP->G = (palP->G * lum) >> 6;
-		palP->B = (palP->B * lum) >> 6;
+		palP->_r = (palP->_r * lum) >> 6;
+		palP->_g = (palP->_g * lum) >> 6;
+		palP->_b = (palP->_b * lum) >> 6;
 	}
 
 	if (Mono) {
 		palP = tab;
 		for (int idx = 0; idx < PAL_CNT; ++idx, ++palP) {
 			// Form a greyscalce colour from 30% R, 59% G, 11% B
-			uint8 intensity = (palP->R * 77) + (palP->G * 151) + (palP->B * 28);
-			palP->R = intensity;
-			palP->G = intensity;
-			palP->B = intensity;
+			uint8 intensity = (palP->_r * 77) + (palP->_g * 151) + (palP->_b * 28);
+			palP->_r = intensity;
+			palP->_g = intensity;
+			palP->_b = intensity;
 		}
 	}
 
@@ -1113,7 +1113,7 @@ void VGA::SetColors(void) {
 }
 
 
-void VGA::Sunrise(DAC *tab) {
+void VGA::Sunrise(Dac *tab) {
 	for (int i = 0; i <= 64; i += FADE_STEP) {
 		SetColors(tab, i);
 		WaitVR(true);
@@ -1123,7 +1123,7 @@ void VGA::Sunrise(DAC *tab) {
 
 
 void VGA::Sunset(void) {
-	DAC tab[256];
+	Dac tab[256];
 	GetColors(tab);
 	for (int i = 64; i >= 0; i -= FADE_STEP) {
 		SetColors(tab, i);
