@@ -425,7 +425,7 @@ const char *SNAIL::ComTxt[] = {
 
 SNAIL::SNAIL(CGEEngine *vm, bool turbo)
 	: Turbo(turbo), Busy(false), TextDelay(false),
-	  Pause(0), TalkEnable(true),
+	  _timerExpiry(0), TalkEnable(true),
 	  Head(0), Tail(0), SNList(farnew(COM, 256)), _vm(vm) {
 }
 
@@ -446,7 +446,7 @@ void SNAIL::AddCom(SNCOM com, int ref, int val, void *ptr) {
 	if (com == SNCLEAR) {
 		Tail = Head;
 		KillText();
-		Pause = 0;
+		_timerExpiry = 0;
 	}
 	_enable();
 }
@@ -469,7 +469,7 @@ void SNAIL::InsCom(SNCOM com, int ref, int val, void *ptr) {
 	if (com == SNCLEAR) {
 		Tail = Head;
 		KillText();
-		Pause = 0;
+		_timerExpiry = 0;
 	}
 	_enable();
 }
@@ -913,7 +913,7 @@ void SNAIL::RunCom(void) {
 			COM *snc = &SNList[Tail];
 
 			if (! Turbo) { // only for the slower one
-				if (Pause)
+				if (_timerExpiry && (_timerExpiry > g_system->getMillis()))
 					break;
 				else {
 					if (TextDelay) {
@@ -930,7 +930,7 @@ void SNAIL::RunCom(void) {
 			case SNLABEL    :
 				break;
 			case SNPAUSE    :
-				_heart->setXTimer(&Pause, snc->Val);
+				_timerExpiry = g_system->getMillis() + snc->Val * SNAIL_FRAME_DELAY;
 				if (Talk)
 					TextDelay = true;
 				break;
@@ -938,7 +938,7 @@ void SNAIL::RunCom(void) {
 				if (sprel) {
 					if (sprel->SeqTest(snc->Val) &&
 					        (snc->Val >= 0 || sprel != Hero || Hero->_tracePtr < 0)) {
-						_heart->setXTimer(&Pause, sprel->_time);
+						_timerExpiry = g_system->getMillis() + sprel->_time * SNAIL_FRAME_DELAY;
 					} else
 						goto xit;
 				}
