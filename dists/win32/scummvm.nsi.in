@@ -31,8 +31,7 @@ Name ScummVM
 #########################################################################################
 
 #!define top_srcdir   ""
-#!define build_dir    ""
-#!define text_dir     ""
+#!define staging_dir  ""
 #!define ARCH         ""    ;(optional, defaults to win32)
 
 # Check parameters
@@ -40,17 +39,19 @@ Name ScummVM
 	!error "Top source folder has not been passed to command line!"
 !endif
 
-!ifndef build_dir
-	!error "Build folder has not been passed to command line (this folder should contain the executable and linked DLLs)!"
-!endif
-
-!ifndef text_dir
-	!error "Text folder has not been passed to command line (this folder should contain all the text files used by the installer)!"
+!ifndef staging_dir
+	!error "Staging folder has not been passed to command line (this folder should contain the executable and linked DLLs)!"
 !endif
 
 !ifndef ARCH
 	!warning "ARCH has not been defined, defaulting to 'win32'"
 	!define ARCH         "win32"
+!else
+	!if "${ARCH}" == ""
+		!warning "ARCH was empty, defaulting to 'win32'"
+		!undef ARCH
+		!define ARCH         "win32"
+	!endif
 !endif
 
 #########################################################################################
@@ -72,7 +73,7 @@ Name ScummVM
 #########################################################################################
 # Installer configuration
 #########################################################################################
-OutFile          ${build_dir}\scummvm-${VERSION}-${ARCH}.exe
+OutFile          ${staging_dir}\scummvm-${VERSION}-${ARCH}.exe
 InstallDir       $PROGRAMFILES\ScummVM                            ; Default installation folder
 InstallDirRegKey HKCU "Software\ScummVM\ScummVM" "InstallPath"    ; Get installation folder from registry if available
                                                                   ; The application name needs to be refered directly instead of through ${REGKEY}
@@ -224,13 +225,26 @@ Section "ScummVM" SecMain
 	SetOverwrite on
 
 	# Text files
-	File /oname=AUTHORS.txt      "${text_dir}\AUTHORS"
-	File /oname=COPYING.LGPL.txt "${text_dir}\COPYING.LGPL"
-	File /oname=COPYING.txt      "${text_dir}\COPYING"
-	File /oname=COPYRIGHT.txt    "${text_dir}\COPYRIGHT"
-	File /oname=NEWS.txt         "${text_dir}\NEWS"
-	File /oname=README.txt       "${text_dir}\README"
-	File /oname=README-SDL.txt   "${build_dir}\README-SDL"
+	File /oname=AUTHORS.txt      "${top_srcdir}\AUTHORS"
+	File /oname=COPYING.LGPL.txt "${top_srcdir}\COPYING.LGPL"
+	File /oname=COPYING.txt      "${top_srcdir}\COPYING"
+	File /oname=COPYRIGHT.txt    "${top_srcdir}\COPYRIGHT"
+	File /oname=NEWS.txt         "${top_srcdir}\NEWS"
+	File /oname=README.txt       "${top_srcdir}\README"
+	
+	# Convert line endings
+	Push "$INSTDIR\AUTHORS.txt"
+	Call unix2dos
+	Push "$INSTDIR\COPYING.LGPL.txt"
+	Call unix2dos
+	Push "$INSTDIR\COPYING.txt"
+	Call unix2dos
+	Push "$INSTDIR\COPYRIGHT.txt"
+	Call unix2dos
+	Push "$INSTDIR\NEWS.txt"
+	Call unix2dos
+	Push "$INSTDIR\README.txt"
+	Call unix2dos
 
 !ifdef _INCLUDE_DATA_FILES
 	# Engine data
@@ -253,8 +267,8 @@ Section "ScummVM" SecMain
 !endif
 
 	# Main exe and dlls
-	File "${build_dir}\scummvm.exe"
-	File "${build_dir}\SDL.dll"
+	File "${staging_dir}\scummvm.exe"
+	File "${staging_dir}\SDL.dll"
 
 	WriteRegStr HKCU "${REGKEY}" InstallPath "$INSTDIR"    ; Store installation folder
 SectionEnd
@@ -353,4 +367,62 @@ Function un.onInit
 	!insertmacro MUI_UNGETLANGUAGE
 	ReadRegStr   $INSTDIR HKCU "${REGKEY}" InstallPath
 	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
+FunctionEnd
+
+
+#########################################################################################
+# Helper functions
+#########################################################################################
+
+;-------------------------------------------------------------------------------
+; strips all CRs and then converts all LFs into CRLFs
+; (this is roughly equivalent to "cat file | dos2unix | unix2dos")
+;
+; Usage:
+;	Push "infile"
+;	Call unix2dos
+;
+; Note: this function destroys $0 $1 $2
+Function unix2dos
+	ClearErrors
+
+	Pop $2
+	Rename $2 $2.U2D
+	FileOpen $1 $2 w
+
+	FileOpen $0 $2.U2D r
+
+	Push $2 ; save name for deleting
+
+	IfErrors unix2dos_done
+
+	; $0 = file input (opened for reading)
+	; $1 = file output (opened for writing)
+
+unix2dos_loop:
+	; read a byte (stored in $2)
+	FileReadByte $0 $2
+	IfErrors unix2dos_done ; EOL
+	; skip CR
+	StrCmp $2 13 unix2dos_loop
+	; if LF write an extra CR
+	StrCmp $2 10 unix2dos_cr unix2dos_write
+
+unix2dos_cr:
+	FileWriteByte $1 13
+
+unix2dos_write:
+	; write byte
+	FileWriteByte $1 $2
+	; read next byte
+	Goto unix2dos_loop
+
+unix2dos_done:
+	; close files
+	FileClose $0
+	FileClose $1
+
+	; delete original
+	Pop $0
+	Delete $0.U2D
 FunctionEnd
