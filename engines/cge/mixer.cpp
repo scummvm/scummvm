@@ -37,19 +37,19 @@ namespace CGE {
 
 extern MOUSE *Mouse;
 
-bool   MIXER::Appear = false;
+bool Mixer::_appear = false;
 
 
-MIXER::MIXER(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), Fall(MIX_FALL), _vm(vm) {
-	Appear = true;
-	mb[0] = new Bitmap("VOLUME", true);
-	mb[1] = NULL;
-	SetShapeList(mb);
-	SetName(Text->getText(MIX_NAME));
+Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(MIX_FALL), _vm(vm) {
+	_appear = true;
+	_mb[0] = new Bitmap("VOLUME", true);
+	_mb[1] = NULL;
+	setShapeList(_mb);
+	setName(Text->getText(MIX_NAME));
 	_flags._syst = true;
 	_flags._kill = true;
 	_flags._bDel = true;
-	Goto(x, y);
+	gotoxy(x, y);
 	_z = MIX_Z;
 
 	// slaves
@@ -58,27 +58,27 @@ MIXER::MIXER(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), Fall(MIX_FALL), _v
 	for (i = 0; i < MIX_MAX; i++) {
 		static char fn[] = "V00";
 		wtom(i, fn + 1, 10, 2);
-		lb[i] = new Bitmap(fn, true);
-		ls[i].Now = ls[i].Next = i;
-		ls[i].Dx = ls[i].Dy = ls[i].Dly = 0;
+		_lb[i] = new Bitmap(fn, true);
+		_ls[i].Now = _ls[i].Next = i;
+		_ls[i].Dx = _ls[i].Dy = _ls[i].Dly = 0;
 	}
-	lb[i] = NULL;
+	_lb[i] = NULL;
 
-	for (i = 0; i < ArrayCount(Led); i++) {
-		register Sprite *spr = new Sprite(_vm, lb);
-		spr->SetSeq(ls);
-		spr->Goto(x + 2 + 12 * i, y + 8);
+	for (i = 0; i < ArrayCount(_led); i++) {
+		register Sprite *spr = new Sprite(_vm, _lb);
+		spr->setSeq(_ls);
+		spr->gotoxy(x + 2 + 12 * i, y + 8);
 		spr->_flags._tran = true;
 		spr->_flags._kill = true;
 		spr->_flags._bDel = false;
 		spr->_z = MIX_Z;
-		Led[i] = spr;
+		_led[i] = spr;
 	}
-	Led[ArrayCount(Led) - 1]->_flags._bDel = true;
+	_led[ArrayCount(_led) - 1]->_flags._bDel = true;
 
 	Vga->ShowQ->Insert(this);
-	for (i = 0; i < ArrayCount(Led); i++)
-		Vga->ShowQ->Insert(Led[i]);
+	for (i = 0; i < ArrayCount(_led); i++)
+		Vga->ShowQ->Insert(_led[i]);
 
 	//--- reset balance
 	i = (SNDDrvInfo.VOL4.ML + SNDDrvInfo.VOL4.MR) / 2;
@@ -87,18 +87,18 @@ MIXER::MIXER(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), Fall(MIX_FALL), _v
 	i = (SNDDrvInfo.VOL4.DL + SNDDrvInfo.VOL4.DR) / 2;
 	SNDDrvInfo.VOL4.DL = i;
 	SNDDrvInfo.VOL4.DR = i;
-	Update();
+	update();
 	_time = MIX_DELAY;
 }
 
-MIXER::~MIXER(void) {
-	Appear = false;
+Mixer::~Mixer() {
+	_appear = false;
 }
 
 
 #pragma argsused
-void MIXER::Touch(uint16 mask, int x, int y) {
-	Sprite::Touch(mask, x, y);
+void Mixer::touch(uint16 mask, int x, int y) {
+	Sprite::touch(mask, x, y);
 	if (mask & L_UP) {
 		uint8 *vol = (&SNDDrvInfo.VOL2.D) + (x < _w / 2);
 		if (y < MIX_BHIG) {
@@ -108,24 +108,24 @@ void MIXER::Touch(uint16 mask, int x, int y) {
 			if (*vol > 0x00)
 				*vol -= 0x11;
 		}
-		Update();
+		update();
 	}
 }
 
 
-void MIXER::Tick(void) {
+void Mixer::tick() {
 	int x = Mouse->_x;
 	int y = Mouse->_y;
 	if (SpriteAt(x, y) == this) {
-		Fall = MIX_FALL;
+		_fall = MIX_FALL;
 		if (_flags._hold)
-			Touch(L_UP, x - _x, y - _y);
+			touch(L_UP, x - _x, y - _y);
 	} else {
-		if (Fall)
-			--Fall;
+		if (_fall)
+			_fall--;
 		else {
-			for (uint i = 0; i < ArrayCount(Led); i++)
-				SNPOST_(SNKILL, -1, 0, Led[i]);
+			for (uint i = 0; i < ArrayCount(_led); i++)
+				SNPOST_(SNKILL, -1, 0, _led[i]);
 			SNPOST_(SNKILL, -1, 0, this);
 		}
 	}
@@ -133,13 +133,13 @@ void MIXER::Tick(void) {
 }
 
 
-void MIXER::Update(void) {
-	Led[0]->Step(SNDDrvInfo.VOL4.ML);
-	Led[1]->Step(SNDDrvInfo.VOL4.DL);
+void Mixer::update(void) {
+	_led[0]->step(SNDDrvInfo.VOL4.ML);
+	_led[1]->step(SNDDrvInfo.VOL4.DL);
 
 	//TODO Change the SNPOST message send to a special way to send function pointer
 	//SNPOST_(SNEXEC, -1, 0, (void*)&SNDSetVolume);
-	warning("STUB: MIXER::Update");
+	warning("STUB: Mixer::Update");
 }
 
 } // End of namespace CGE

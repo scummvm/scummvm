@@ -33,56 +33,56 @@
 
 namespace CGE {
 
-GET_TEXT *GET_TEXT::Ptr = NULL;
+GetText *GetText::_ptr = NULL;
 
 
-GET_TEXT::GET_TEXT(CGEEngine *vm, const char *info, char *text, int size, void (*click)(void))
-	: TALK(vm), Text(text), Size(min<int>(size, GTMAX)), Len(min<int>(Size, strlen(text))),
-	  Cntr(GTBLINK), Click(click), OldKeybClient(KEYBOARD::SetClient(this)), _vm(vm) {
+GetText::GetText(CGEEngine *vm, const char *info, char *text, int size, void (*click)())
+	: TALK(vm), _text(text), _size(min<int>(size, GTMAX)), _len(min<int>(_size, strlen(text))),
+	  _cntr(GTBLINK), _click(click), _oldKeybClient(Keyboard::setClient(this)), _vm(vm) {
 	int i = 2 * TEXT_HM + _Font->Width(info);
-	Ptr = this;
+	_ptr = this;
 	Mode = RECT;
 	TS[0] = Box((i + 3) & ~3, 2 * TEXT_VM + 2 * FONT_HIG + TEXT_LS);
-	SetShapeList(TS);
+	setShapeList(TS);
 	_flags._bDel = true;
 	_flags._kill = true;
-	memcpy(Buff, text, Len);
-	Buff[Len] = ' ';
-	Buff[Len + 1] = '\0';
+	memcpy(_buff, text, _len);
+	_buff[_len] = ' ';
+	_buff[_len + 1] = '\0';
 	PutLine(0, info);
-	Tick();
+	tick();
 }
 
 
-GET_TEXT::~GET_TEXT(void) {
-	KEYBOARD::SetClient(OldKeybClient);
-	Ptr = NULL;
+GetText::~GetText() {
+	Keyboard::setClient(_oldKeybClient);
+	_ptr = NULL;
 }
 
 
-void GET_TEXT::Tick(void) {
-	if (++ Cntr >= GTBLINK) {
-		Buff[Len] ^= (' ' ^ '_');
-		Cntr = 0;
+void GetText::tick() {
+	if (++_cntr >= GTBLINK) {
+		_buff[_len] ^= (' ' ^ '_');
+		_cntr = 0;
 	}
-	PutLine(1, Buff);
+	PutLine(1, _buff);
 	_time = GTTIME;
 }
 
 
-void GET_TEXT::Touch(uint16 mask, int x, int y) {
+void GetText::touch(uint16 mask, int x, int y) {
 	static char ogon[] = "èïêú•£ò†°";
 	static char bezo[] = "ACELNOSXZ";
 	char *p;
 
 	if (mask & KEYB) {
-		if (Click)
-			Click();
+		if (_click)
+			_click();
 		switch (x) {
 		case Enter :
-			Buff[Len] = '\0';
-			strcpy(Text, Buff);
-			for (p = Text; *p; p++) {
+			_buff[_len] = '\0';
+			strcpy(_text, _buff);
+			for (p = _text; *p; p++) {
 				char *q = strchr(ogon, *p);
 				if (q)
 					*p = bezo[q - ogon];
@@ -91,32 +91,32 @@ void GET_TEXT::Touch(uint16 mask, int x, int y) {
 			SNPOST_(SNKILL, -1, 0, this);
 			break;
 		case BSp   :
-			if (Len) {
-				--Len;
-				Buff[Len] = Buff[Len + 1];
-				Buff[Len + 1] = Buff[Len + 2];
+			if (_len) {
+				_len--;
+				_buff[_len] = _buff[_len + 1];
+				_buff[_len + 1] = _buff[_len + 2];
 			}
 			break;
 		default    :
 			if (x < 'A' || x > 'Z') {
-				if (OldKeybClient)
-					OldKeybClient->Touch(mask, x, y);
+				if (_oldKeybClient)
+					_oldKeybClient->touch(mask, x, y);
 			} else {
-				if (KEYBOARD::Key[ALT]) {
+				if (Keyboard::_key[ALT]) {
 					p = strchr(bezo, x);
 					if (p)
 						x = ogon[p - bezo];
 				}
-				if (Len < Size && 2 * TEXT_HM + _Font->Width(Buff) + _Font->Wid[x] <= _w) {
-					Buff[Len + 2] = Buff[Len + 1];
-					Buff[Len + 1] = Buff[Len];
-					Buff[Len++] = x;
+				if (_len < _size && 2 * TEXT_HM + _Font->Width(_buff) + _Font->Wid[x] <= _w) {
+					_buff[_len + 2] = _buff[_len + 1];
+					_buff[_len + 1] = _buff[_len];
+					_buff[_len++] = x;
 				}
 			}
 			break;
 		}
 	} else
-		Sprite::Touch(mask, x, y);
+		Sprite::touch(mask, x, y);
 }
 
 } // End of namespace CGE

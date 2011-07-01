@@ -30,11 +30,11 @@
 
 namespace CGE {
 
-struct IDENT {
-	char            copr[83];
-	char            fill[8];
-	unsigned long   disk;
-	unsigned char   cork;
+struct Ident {
+	char            _copr[83];
+	char            _fill[8];
+	unsigned long   _disk;
+	unsigned char   _cork;
 };
 
 } // End of namespace CGE

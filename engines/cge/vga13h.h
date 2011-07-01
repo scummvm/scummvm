@@ -195,42 +195,43 @@ public:
 	uint16 _w;
 	uint16 _h;
 	uint16 _time;
-	uint8 NearPtr, TakePtr;
+	uint8 _nearPtr;
+	uint8 _takePtr;
 	int _seqPtr;
 	int _shpCnt;
-	char File[MAXFILE];
+	char _file[MAXFILE];
 	Sprite *_prev;
 	Sprite *_next;
-	bool Works(Sprite *spr);
-	bool SeqTest(int n);
-	inline bool Active(void) {
+	bool works(Sprite *spr);
+	bool seqTest(int n);
+	inline bool active() {
 		return _ext != NULL;
 	}
 	Sprite(CGEEngine *vm, BMP_PTR *shp);
 	virtual ~Sprite(void);
-	BMP_PTR Shp(void);
-	BMP_PTR *SetShapeList(BMP_PTR *shp);
-	void MoveShapes(uint8 *buf);
-	Sprite *Expand(void);
-	Sprite *Contract(void);
-	Sprite *BackShow(bool fast = false);
-	void SetName(char *n);
-	inline char *Name(void) {
+	BMP_PTR shp();
+	BMP_PTR *setShapeList(BMP_PTR *shp);
+	void moveShapes(uint8 *buf);
+	Sprite *expand();
+	Sprite *contract();
+	Sprite *backShow(bool fast = false);
+	void setName(char *n);
+	inline char *name() {
 		return (_ext) ? _ext->_name : NULL;
 	}
-	void Goto(int x, int y);
-	void Center(void);
-	void Show(void);
-	void Hide(void);
-	BMP_PTR Ghost(void);
-	void Show(uint16 pg);
-	void MakeXlat(uint8 *x);
-	void KillXlat(void);
-	void Step(int nr = -1);
-	Seq *SetSeq(Seq *seq);
-	SNAIL::COM *SnList(SNLIST type);
-	virtual void Touch(uint16 mask, int x, int y);
-	virtual void Tick(void);
+	void gotoxy(int x, int y);
+	void center();
+	void show();
+	void hide();
+	BMP_PTR ghost();
+	void show(uint16 pg);
+	void makeXlat(uint8 *x);
+	void killXlat();
+	void step(int nr = -1);
+	Seq *setSeq(Seq *seq);
+	SNAIL::COM *snList(SNLIST type);
+	virtual void touch(uint16 mask, int x, int y);
+	virtual void tick();
 private:
 	CGEEngine *_vm;
 };
@@ -291,9 +292,9 @@ public:
 	void Clear(uint8 color);
 	void CopyPage(uint16 d, uint16 s);
 	void Sunrise(Dac *tab);
-	void Sunset(void);
-	void Show(void);
-	void Update(void);
+	void Sunset();
+	void Show();
+	void Update();
 
 	static void pal2DAC(const byte *palData, Dac *tab);
 	static void DAC2pal(const Dac *tab, byte *palData);

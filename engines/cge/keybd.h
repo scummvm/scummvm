@@ -40,22 +40,22 @@ namespace CGE {
 #define ALT         56
 
 
-class KEYBOARD {
+class Keyboard {
 public:
 	static void (* OldKeyboard)(...);
 	static void NewKeyboard(...);
-	static uint16 Code[0x60];
-	static uint16 Current;
-	static Sprite *Client;
-	static uint8 Key[0x60];
-	static uint16 Last(void) {
-		uint16 cur = Current;
-		Current = 0;
+	static uint16 _code[0x60];
+	static uint16 _current;
+	static Sprite *_client;
+	static uint8 _key[0x60];
+	static uint16 last() {
+		uint16 cur = _current;
+		_current = 0;
 		return cur;
 	}
-	static Sprite *SetClient(Sprite *spr);
-	KEYBOARD(void);
-	~KEYBOARD(void);
+	static Sprite *setClient(Sprite *spr);
+	Keyboard();
+	~Keyboard();
 };
 
 } // End of namespace CGE

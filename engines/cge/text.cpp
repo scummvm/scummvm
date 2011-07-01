@@ -44,7 +44,7 @@ TALK *Talk = NULL;
 
 TEXT::TEXT(CGEEngine *vm, const char *fname, int size) : _vm(vm) {
 	Cache = new HAN[size];
-	MergeExt(FileName, fname, SAY_EXT);
+	mergeExt(FileName, fname, SAY_EXT);
 	if (!INI_FILE::exist(FileName))
 		error("No talk (%s)\n", FileName);
 
@@ -203,17 +203,17 @@ void TEXT::Say(const char *txt, Sprite *spr) {
 
 		Talk->_flags._kill = true;
 		Talk->_flags._bDel = true;
-		Talk->SetName(Text->getText(SAY_NAME));
-		Talk->Goto(x - (Talk->_w - sw) / 2 - 3 + 6 * east, y - spike->_h - Talk->_h + 1);
+		Talk->setName(Text->getText(SAY_NAME));
+		Talk->gotoxy(x - (Talk->_w - sw) / 2 - 3 + 6 * east, y - spike->_h - Talk->_h + 1);
 		Talk->_z = 125;
 		Talk->_ref = SAY_REF;
 
-		spike->Goto(x, Talk->_y + Talk->_h - 1);
+		spike->gotoxy(x, Talk->_y + Talk->_h - 1);
 		spike->_z = 126;
 		spike->_flags._slav = true;
 		spike->_flags._kill = true;
-		spike->SetName(Text->getText(SAY_NAME));
-		spike->Step(east);
+		spike->setName(Text->getText(SAY_NAME));
+		spike->step(east);
 		spike->_ref = SAY_REF;
 
 		Vga->ShowQ->Insert(Talk, Vga->ShowQ->Last());
@@ -227,9 +227,9 @@ void CGEEngine::inf(const char *txt) {
 	if (Talk) {
 		Talk->_flags._kill = true;
 		Talk->_flags._bDel = true;
-		Talk->SetName(Text->getText(INF_NAME));
-		Talk->Center();
-		Talk->Goto(Talk->_x, Talk->_y - 20);
+		Talk->setName(Text->getText(INF_NAME));
+		Talk->center();
+		Talk->gotoxy(Talk->_x, Talk->_y - 20);
 		Talk->_z = 126;
 		Talk->_ref = INF_REF;
 		Vga->ShowQ->Insert(Talk, Vga->ShowQ->Last());

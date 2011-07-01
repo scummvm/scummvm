@@ -45,7 +45,7 @@ MOUSE::MOUSE(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(
 		{ 1, 1, 0, 0, 1 }
 	};
 
-	SetSeq(ms);
+	setSeq(ms);
 
 	/* TODO Mouse handling
 	// Mouse reset
@@ -54,9 +54,9 @@ MOUSE::MOUSE(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(
 	Exist = (_AX != 0);
 	Buttons = _BX;
 */
-	Goto(SCR_WID/2, SCR_HIG/2);
+	gotoxy(SCR_WID/2, SCR_HIG/2);
 	_z = 127;
-	Step(1);
+	step(1);
 
 	Exist = true;
 	warning("STUB: MOUSE::MOUSE");
@@ -144,25 +144,25 @@ void MOUSE::ClrEvt(Sprite *spr) {
 
 
 void MOUSE::Tick(void) {
-	Step();
+	step();
 	while (EvtTail != EvtHead) {
 		Event e = Evt[EvtTail];
 		if (e._msk) {
 			if (Hold && e._ptr != Hold)
-				Hold->Touch(e._msk | ATTN, e._x - Hold->_x, e._y - Hold->_y);
+				Hold->touch(e._msk | ATTN, e._x - Hold->_x, e._y - Hold->_y);
 
 			// update mouse cursor position
 			if (e._msk & ROLL)
-				Goto(e._x, e._y);
+				gotoxy(e._x, e._y);
 
 			// activate current touched SPRITE
 			if (e._ptr) {
 				if (e._msk & KEYB)
-					e._ptr->Touch(e._msk, e._x, e._y);
+					e._ptr->touch(e._msk, e._x, e._y);
 				else
-					e._ptr->Touch(e._msk, e._x - e._ptr->_x, e._y - e._ptr->_y);
+					e._ptr->touch(e._msk, e._x - e._ptr->_x, e._y - e._ptr->_y);
 			} else if (Sys)
-					Sys->Touch(e._msk, e._x, e._y);
+					Sys->touch(e._msk, e._x, e._y);
 
 			if (e._msk & L_DN) {
 				Hold = e._ptr;
@@ -188,7 +188,7 @@ void MOUSE::Tick(void) {
 		EvtTail = (EvtTail + 1) % EVT_MAX;
 	}
 	if (Hold)
-		Hold->Goto(_x - hx, _y - hy);
+		Hold->gotoxy(_x - hx, _y - hy);
 }
 
 } // End of namespace CGE

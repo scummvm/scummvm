@@ -69,13 +69,13 @@ int Fly::_l = 20,
 
 Fly::Fly(CGEEngine *vm, Bitmap **shpl)
 	: Sprite(vm, shpl), _tx(0), _ty(0), _vm(vm) {
-	Step(new_random(2));
-	Goto(_l + new_random(_r - _l - _w), _t + new_random(_b - _t - _h));
+	step(new_random(2));
+	gotoxy(_l + new_random(_r - _l - _w), _t + new_random(_b - _t - _h));
 }
 
 
 void Fly::tick() {
-	Step();
+	step();
 	if (!_flags._kept) {
 		if (new_random(10) < 1) {
 			_tx = new_random(3) - 1;
@@ -85,7 +85,7 @@ void Fly::tick() {
 			_tx = -_tx;
 		if (_y + _ty < _t || _y + _ty + _h > _b)
 			_ty = -_ty;
-		Goto(_x + _tx, _y + _ty);
+		gotoxy(_x + _tx, _y + _ty);
 	}
 }
 

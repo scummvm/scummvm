@@ -41,14 +41,14 @@ namespace CGE {
 
 #include "common/pack-start.h"
 
-struct BGR4 {
-	uint16 b : 2;
-	uint16 B : 6;
-	uint16 g : 2;
-	uint16 G : 6;
-	uint16 r : 2;
-	uint16 R : 6;
-	uint16 Z : 8;
+struct Bgr4 {
+	uint16 _b : 2;
+	uint16 _B : 6;
+	uint16 _g : 2;
+	uint16 _G : 6;
+	uint16 _r : 2;
+	uint16 _R : 6;
+	uint16 _Z : 8;
 };
 
 

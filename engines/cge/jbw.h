@@ -59,7 +59,7 @@ namespace CGE {
 #define ArrayCount(a)   (sizeof(a) / sizeof((a)[0]))
 #define MAX_TIMER   0x1800B0L
 
-typedef void (MouseFunType)(void);
+typedef void (MouseFunType)();
 
 #define Lo(d)       (((int *) &d)[0])
 #define Hi(d)       (((int *) &d)[1])
@@ -68,7 +68,7 @@ typedef void (MouseFunType)(void);
 #define K(n)        (1024 * (n))
 #define MASK(n)     ((1 << n) - 1)
 
-typedef enum {
+enum Keys {
     NoKey   = 0, CtrlA, CtrlB, CtrlC, CtrlD, CtrlE, CtrlF, CtrlG, CtrlH,
     CtrlI, CtrlJ, CtrlK, CtrlL, CtrlM, CtrlN, CtrlO, CtrlP,
     CtrlQ, CtrlR, CtrlS, CtrlT, CtrlU, CtrlV, CtrlW, CtrlX,
@@ -112,40 +112,16 @@ typedef enum {
     MouseRight,
     TwiceLeft   = 512 + 256 + 1,
     TwiceRight
-}  Keys;
-
-struct  KeyStatStruct {
-	int RShift      : 1;
-	int LShift      : 1;
-	int Ctrl        : 1;
-	int Alt         : 1;
-
-	int ScrollLock  : 1;
-	int NumLock     : 1;
-	int CapsLock    : 1;
-	int Ins         : 1;
-
-	int LeftCtrl    : 1;
-	int LeftAlt     : 1;
-	int Unused      : 6;
 };
 
 #define HGC_Cursor  0x0B0C
 #define CGA_Cursor  0x0607
 #define OFF_Cursor  0x2000
 
-#define TimerCount  (*((volatile long *) ((void _seg *) 0x40 + (void *) 0x6C)))
-#define KeyStat     (*((volatile struct KeyStatStruct *) ((void _seg *) 0x40 + (void *) 0x17)))
-#define BreakFlag   (*((volatile uint8 *) ((void _seg *) 0x40 + (void *) 0x71)))
-#define PostFlag    (*((volatile uint16 *) ((void _seg *) 0x40 + (void *) 0x72)))
-#define POST        ((void (*)(void)) ((void _seg *) 0xF000 + (void *) 0xFFF0))
-
-
-#ifdef  __cplusplus
-#define   EC      extern "C"
-#else
-#define   EC
-#endif
+//#define TimerCount  (*((volatile long *) ((void _seg *) 0x40 + (void *) 0x6C)))
+//#define BreakFlag   (*((volatile uint8 *) ((void _seg *) 0x40 + (void *) 0x71)))
+//#define PostFlag    (*((volatile uint16 *) ((void _seg *) 0x40 + (void *) 0x72)))
+//#define POST        ((void (*)(void)) ((void _seg *) 0xF000 + (void *) 0xFFF0))
 
 
 extern  uint16  _stklen;
