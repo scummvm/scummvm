@@ -292,6 +292,7 @@ Section "ScummVM" SecMain
 	# This is for Vista only, for 7 the tasks are defined in the gdf xml
 	${If} $0 != "0"
 	${AndIf} $0 != ""
+	${AndIf} $0 != "$INSTDIR\scummvm.exe"
 		CreateDirectory "$0\PlayTasks\0"
 		CreateShortcut "$0\PlayTasks\0\Play.lnk" "$INSTDIR\scummvm.exe" "--no-console"
 		CreateDirectory "$0\PlayTasks\1"
