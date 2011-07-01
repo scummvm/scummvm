@@ -146,7 +146,7 @@ public:
 
 	virtual uint getCharWidth(uint16 ch) const;
 
-	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW = -1, int maxH = -1) const;
+	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const;
 private:
 	template<typename Color>
 	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const;
