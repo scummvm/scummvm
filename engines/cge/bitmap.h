@@ -60,10 +60,10 @@ struct HideDesc {
 #include "common/pack-end.h"
 
 class Bitmap {
-	bool loadBMP(XFILE *f);
-	bool loadVBM(XFILE *f);
+	bool loadBMP(XFile *f);
+	bool loadVBM(XFile *f);
 public:
-	static DAC *_pal;
+	static Dac *_pal;
 	uint16 _w;
 	uint16 _h;
 	uint8 *_m;
@@ -85,7 +85,7 @@ public:
 	void show(int x, int y);
 	void xShow(int x, int y);
 	bool solidAt(int x, int y);
-	bool saveVBM(XFILE *f);
+	bool saveVBM(XFile *f);
 	uint16 moveVmap(uint8 *buf);
 };
 

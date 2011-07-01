@@ -55,7 +55,7 @@ BtFile::BtFile(const char *name, IOMODE mode, CRYPT *crpt)
 
 BtFile::~BtFile(void) {
 	for (int i = 0; i < BT_LEVELS; i++) {
-		putPage(i);
+		putPage(i, false);
 		delete _buff[i]._page;
 	}
 }
@@ -73,7 +73,7 @@ void BtFile::putPage(int lev, bool hard) {
 BtPage *BtFile::getPage(int lev, uint16 pgn) {
 	if (_buff[lev]._pgNo != pgn) {
 		int32 pos = pgn * sizeof(BtPage);
-		putPage(lev);
+		putPage(lev, false);
 		_buff[lev]._pgNo = pgn;
 		if (size() > pos) {
 			seek((uint32) pgn * sizeof(BtPage));
@@ -93,7 +93,7 @@ BtPage *BtFile::getPage(int lev, uint16 pgn) {
 BtKeypack *BtFile::find(const char *key) {
 	int lev = 0;
 	uint16 nxt = BT_ROOT;
-	while (! Error) {
+	while (!_error) {
 		BtPage *pg = getPage(lev, nxt);
 		// search
 		if (pg->_hea._down != BT_NONE) {

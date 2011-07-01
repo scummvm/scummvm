@@ -62,9 +62,9 @@ FONT::~FONT() {
 
 void FONT::Load() {
 	INI_FILE f(Path);
-	if (! f.Error) {
+	if (!f._error) {
 		f.read(Wid, WID_SIZ);
-		if (! f.Error) {
+		if (!f._error) {
 			uint16 i, p = 0;
 			for (i = 0; i < POS_SIZ; i++) {
 				Pos[i] = p;

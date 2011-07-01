@@ -133,7 +133,7 @@ bool JBW = false;
 //-------------------------------------------------------------------------
 int     PocPtr      =  0;
 
-static  EMS      *Mini        = MiniEmm.Alloc((uint16)MINI_EMM_SIZE);
+static  EMS      *Mini        = MiniEmm.alloc((uint16)MINI_EMM_SIZE);
 static  BMP_PTR  *MiniShpList = NULL;
 static  BMP_PTR   MiniShp[]   = { NULL, NULL };
 static  KEYBOARD  Keyboard;
@@ -148,18 +148,18 @@ BAR     Barriers[1 + CAVE_MAX] = { { 0xFF, 0xFF } };
 
 extern  int FindPocket(Sprite *);
 
-extern  DAC StdPal[58];
+extern  Dac _stdPal[58];
 
 void    FeedSnail(Sprite *spr, SNLIST snq);         // defined in SNAIL
-uint8   CLUSTER::Map[MAP_ZCNT][MAP_XCNT];
+uint8   Cluster::_map[MAP_ZCNT][MAP_XCNT];
 
 
-uint8  &CLUSTER::Cell(void) {
-	return Map[B][A];
+uint8  &Cluster::cell(void) {
+	return _map[_b][_a];
 }
 
 
-bool CLUSTER::Protected(void) {
+bool Cluster::Protected(void) {
 /*
 	if (A == Barriers[Now].Vert || B == Barriers[Now].Horz)
 		return true;
@@ -202,20 +202,20 @@ bool CLUSTER::Protected(void) {
 }
 
 
-CLUSTER XZ(int x, int y) {
+Cluster XZ(int x, int y) {
 	if (y < MAP_TOP)
 		y = MAP_TOP;
 
 	if (y > MAP_TOP + MAP_HIG - MAP_ZGRID)
 		y = MAP_TOP + MAP_HIG - MAP_ZGRID;
 
-	return CLUSTER(x / MAP_XGRID, (y - MAP_TOP) / MAP_ZGRID);
+	return Cluster(x / MAP_XGRID, (y - MAP_TOP) / MAP_ZGRID);
 }
 
 
-CLUSTER XZ(COUPLE xy) {
+Cluster XZ(Couple xy) {
 	signed char x, y;
-	xy.Split(x, y);
+	xy.split(x, y);
 	return XZ(x, y);
 }
 
@@ -249,13 +249,13 @@ SavTab _savTab[] = {
 };
 
 
-void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
+void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 	SavTab *st;
 	Sprite *spr;
 	int i;
 
 	for (st = _savTab; st->Ptr; st++) {
-		if (file.Error)
+		if (file._error)
 			error("Bad SVG");
 		file.read((uint8 *)((tiny || st->Flg) ? st->Ptr : &i), st->Len);
 	}
@@ -274,7 +274,7 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 	}
 
 	if (! tiny) { // load sprites & pocket
-		while (! file.Error) {
+		while (!file._error) {
 			Sprite S(this, NULL);
 			uint16 n = file.read((uint8 *) &S, sizeof(S));
 
@@ -282,7 +282,7 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 				break;
 
 			S._prev = S._next = NULL;
-			spr = (scumm_stricmp(S.File + 2, "MUCHA") == 0) ? new FLY(this, NULL)
+			spr = (scumm_stricmp(S.File + 2, "MUCHA") == 0) ? new Fly(this, NULL)
 			      : new Sprite(this, NULL);
 			if (spr == NULL)
 				error("No core");
@@ -300,12 +300,12 @@ void CGEEngine::LoadGame(XFILE &file, bool tiny = false) {
 
 static void SaveSound(void) {
 	CFile cfg(UsrPath(ProgName(CFG_EXT)), WRI);
-	if (! cfg.Error)
+	if (!cfg._error)
 		cfg.write(&SNDDrvInfo, sizeof(SNDDrvInfo) - sizeof(SNDDrvInfo.VOL2));
 }
 
 
-static void SaveGame(XFILE &file) {
+static void SaveGame(XFile &file) {
 	SavTab *st;
 	Sprite *spr;
 	int i;
@@ -319,7 +319,7 @@ static void SaveGame(XFILE &file) {
 	volume[1] = SNDDrvInfo.VOL2.M;
 
 	for (st = _savTab; st->Ptr; st++) {
-		if (file.Error)
+		if (file._error)
 			error("Bad SVG");
 		file.write((uint8 *) st->Ptr, st->Len);
 	}
@@ -328,7 +328,7 @@ static void SaveGame(XFILE &file) {
 
 	for (spr = Vga->SpareQ->First(); spr; spr = spr->_next)
 		if (spr->_ref >= 1000)
-			if (!file.Error)
+			if (!file._error)
 				file.write((uint8 *)spr, sizeof(*spr));
 }
 
@@ -339,7 +339,7 @@ static void HeroCover(int cvr) {
 
 
 static void Trouble(int seq, int txt) {
-	Hero->Park();
+	Hero->park();
 	SNPOST(SNWAIT, -1, -1, Hero);
 	SNPOST(SNSEQ, -1, seq, Hero);
 	SNPOST(SNSOUND, -1, 2, Hero);
@@ -359,7 +359,7 @@ static void TooFar(void) {
 
 
 // Used in stubbed function, do not remove!
-static void NoWay(void) {
+static void noWay() {
 	Trouble(NO_WAY, NO_WAY_TEXT);
 }
 
@@ -367,7 +367,7 @@ static void NoWay(void) {
 static void LoadHeroXY(void) {
 	INI_FILE cf(ProgName(".HXY"));
 	memset(HeroXY, 0, sizeof(HeroXY));
-	if (! cf.Error)
+	if (!cf._error)
 		cf.CFREAD(&HeroXY);
 }
 
@@ -375,35 +375,35 @@ static void LoadHeroXY(void) {
 static void LoadMapping(void) {
 	if (Now <= CAVE_MAX) {
 		INI_FILE cf(ProgName(".TAB"));
-		if (! cf.Error) {
-			memset(CLUSTER::Map, 0, sizeof(CLUSTER::Map));
-			cf.seek((Now - 1) * sizeof(CLUSTER::Map));
-			cf.read((uint8 *) CLUSTER::Map, sizeof(CLUSTER::Map));
+		if (!cf._error) {
+			memset(Cluster::_map, 0, sizeof(Cluster::_map));
+			cf.seek((Now - 1) * sizeof(Cluster::_map));
+			cf.read((uint8 *) Cluster::_map, sizeof(Cluster::_map));
 		}
 	}
 }
 
 
-CLUSTER Trace[MAX_FIND_LEVEL];
+Cluster Trace[MAX_FIND_LEVEL];
 int FindLevel;
 
 
 WALK::WALK(CGEEngine *vm, BMP_PTR *shpl)
-	: Sprite(vm, shpl), Dir(NO_DIR), TracePtr(-1), _vm(vm) {
+	: Sprite(vm, shpl), Dir(NO_DIR), _tracePtr(-1), _vm(vm) {
 }
 
 
-void WALK::Tick(void) {
+void WALK::tick() {
 	if (_flags._hide)
 		return;
 
-	Here = XZ(_x + _w / 2, _y + _h);
+	_here = XZ(_x + _w / 2, _y + _h);
 
 	if (Dir != NO_DIR) {
 		Sprite *spr;
 		Sys->FunTouch();
 		for (spr = Vga->ShowQ->First(); spr; spr = spr->_next) {
-			if (Distance(spr) < 2) {
+			if (distance(spr) < 2) {
 				if (!spr->_flags._near) {
 					FeedSnail(spr, NEAR);
 					spr->_flags._near = true;
@@ -414,33 +414,33 @@ void WALK::Tick(void) {
 		}
 	}
 
-	if (_flags._hold || TracePtr < 0)
-		Park();
+	if (_flags._hold || _tracePtr < 0)
+		park();
 	else {
-		if (Here == Trace[TracePtr]) {
-			if (--TracePtr < 0)
-				Park();
+		if (_here == Trace[_tracePtr]) {
+			if (--_tracePtr < 0)
+				park();
 		} else {
 			signed char dx, dz;
-			(Trace[TracePtr] - Here).Split(dx, dz);
+			(Trace[_tracePtr] - _here).split(dx, dz);
 			DIR d = (dx) ? ((dx > 0) ? EE : WW) : ((dz > 0) ? SS : NN);
-			Turn(d);
+			turn(d);
 		}
 	}
 	Step();
 	if ((Dir == WW && _x <= 0)           ||
 	    (Dir == EE && _x + _w >= SCR_WID) ||
 	    (Dir == SS && _y + _w >= WORLD_HIG - 2))
-		Park();
+		park();
 	else {
 		signed char x;            // dummy var
-		Here.Split(x, _z);         // take current Z position
+		_here.split(x, _z);         // take current Z position
 		SNPOST_(SNZTRIM, -1, 0, this);    // update Hero's pos in show queue
 	}
 }
 
 
-int WALK::Distance(Sprite *spr) {
+int WALK::distance(Sprite *spr) {
 	int dx, dz;
 	dx = spr->_x - (_x + _w - WALKSIDE);
 	if (dx < 0)
@@ -462,7 +462,7 @@ int WALK::Distance(Sprite *spr) {
 }
 
 
-void WALK::Turn(DIR d) {
+void WALK::turn(DIR d) {
 	DIR dir = (Dir == NO_DIR) ? SS : Dir;
 	if (d != Dir) {
 		Step((d == dir) ? (1 + dir + dir) : (9 + 4 * dir + d));
@@ -471,20 +471,20 @@ void WALK::Turn(DIR d) {
 }
 
 
-void WALK::Park(void) {
+void WALK::park(void) {
 	if (_time == 0)
 		++_time;
 
 	if (Dir != NO_DIR) {
 		Step(9 + 4 * Dir + Dir);
 		Dir = NO_DIR;
-		TracePtr = -1;
+		_tracePtr = -1;
 	}
 }
 
 
-void WALK::FindWay(CLUSTER c) {
-	warning("STUB: Find1Way");
+void WALK::findWay(Cluster c) {
+	warning("STUB: WALK::findWay");
 	/*
 	bool Find1Way(void);
 	extern uint16 Target;
@@ -508,7 +508,7 @@ void WALK::FindWay(CLUSTER c) {
 }
 
 
-void WALK::FindWay(Sprite *spr) {
+void WALK::findWay(Sprite *spr) {
 	if (spr && spr != this) {
 		int x = spr->_x;
 		int z = spr->_z;
@@ -516,24 +516,24 @@ void WALK::FindWay(Sprite *spr) {
 			x += spr->_w + _w / 2 - WALKSIDE;
 		else
 			x -= _w / 2 - WALKSIDE;
-		FindWay(CLUSTER((x / MAP_XGRID),
+		findWay(Cluster((x / MAP_XGRID),
 		                ((z < MAP_ZCNT - MAX_DISTANCE) ? (z + 1)
 		                 : (z - 1))));
 	}
 }
 
 
-bool WALK::Lower(Sprite *spr) {
+bool WALK::lower(Sprite *spr) {
 	return (spr->_y > _y + (_h * 3) / 5);
 }
 
 
-void WALK::Reach(Sprite *spr, int mode) {
+void WALK::reach(Sprite *spr, int mode) {
 	if (spr) {
-		Hero->FindWay(spr);
+		Hero->findWay(spr);
 		if (mode < 0) {
 			mode = spr->_flags._east;
-			if (Lower(spr))
+			if (lower(spr))
 				mode += 2;
 		}
 	}
@@ -568,20 +568,20 @@ SQUARE::SQUARE(CGEEngine *vm)
 void SQUARE::Touch(uint16 mask, int x, int y) {
 	Sprite::Touch(mask, x, y);
 	if (mask & L_UP) {
-		XZ(_x + x, _y + y).Cell() = 0;
+		XZ(_x + x, _y + y).cell() = 0;
 		SNPOST_(SNKILL, -1, 0, this);
 	}
 }
 
 
-void CGEEngine::SetMapBrick(int x, int z) {
+void CGEEngine::setMapBrick(int x, int z) {
 	SQUARE *s = new SQUARE(this);
 	if (s) {
 		static char n[] = "00:00";
 		s->Goto(x * MAP_XGRID, MAP_TOP + z * MAP_ZGRID);
 		wtom(x, n + 0, 10, 2);
 		wtom(z, n + 3, 10, 2);
-		CLUSTER::Map[z][x] = 1;
+		Cluster::_map[z][x] = 1;
 		s->SetName(n);
 		Vga->ShowQ->Insert(s, Vga->ShowQ->First());
 	}
@@ -601,23 +601,23 @@ static void KeyClick(void) {
 }
 
 
-void CGEEngine::ResetQSwitch() {
+void CGEEngine::resetQSwitch() {
 	SNPOST_(SNSEQ, 123,  0, NULL);
 	KeyClick();
 }
 
 
-void CGEEngine::Quit() {
+void CGEEngine::quit() {
 	static CHOICE QuitMenu[] = { 
-		{ NULL, &CGEEngine::StartCountDown },
-		{ NULL, &CGEEngine::ResetQSwitch   },
+		{ NULL, &CGEEngine::startCountDown },
+		{ NULL, &CGEEngine::resetQSwitch   },
 		{ NULL, &CGEEngine::dummy          }
 	};
 
 	if (Snail->Idle() && ! Hero->_flags._hide) {
 		if (VMENU::Addr) {
 			SNPOST_(SNKILL, -1, 0, VMENU::Addr);
-			ResetQSwitch();
+			resetQSwitch();
 		} else {
 			QuitMenu[0].Text = Text->getText(QUIT_TEXT);
 			QuitMenu[1].Text = Text->getText(NOQUIT_TEXT);
@@ -634,7 +634,7 @@ static void AltCtrlDel(void) {
 }
 
 // Used in stubbed function, do not remove!
-static void MiniStep(int stp) {
+static void miniStep(int stp) {
 	if (stp < 0)
 		_miniCave->_flags._hide = true;
 	else {
@@ -657,11 +657,11 @@ static void PostMiniStep(int stp) {
 
 void SYSTEM::SetPal(void) {
 	uint i;
-	DAC *p = VGA::SysPal + 256 - ArrayCount(StdPal);
-	for (i = 0; i < ArrayCount(StdPal); i++) {
-		p[i].R = StdPal[i].R >> 2;
-		p[i].G = StdPal[i].G >> 2;
-		p[i].B = StdPal[i].B >> 2;
+	Dac *p = VGA::SysPal + 256 - ArrayCount(_stdPal);
+	for (i = 0; i < ArrayCount(_stdPal); i++) {
+		p[i]._r = _stdPal[i]._r >> 2;
+		p[i]._g = _stdPal[i]._g >> 2;
+		p[i]._b = _stdPal[i]._b >> 2;
 	}
 }
 
@@ -687,7 +687,7 @@ static void ShowBak(int ref) {
 }
 
 
-static void CaveUp(void) {
+static void caveUp() {
 	int BakRef = 1000 * Now;
 	if (Music)
 		LoadMIDI(Now);
@@ -732,7 +732,7 @@ static void CaveUp(void) {
 
 	if (_shadow) {
 		Vga->ShowQ->Remove(_shadow);
-		_shadow->MakeXlat(Glass(VGA::SysPal, 204, 204, 204));
+		_shadow->MakeXlat(glass(VGA::SysPal, 204, 204, 204));
 		Vga->ShowQ->Insert(_shadow, Hero);
 		_shadow->_z = Hero->_z;
 	}
@@ -749,10 +749,10 @@ static void CaveUp(void) {
 }
 
 
-void CGEEngine::CaveDown() {
+void CGEEngine::caveDown() {
 	Sprite *spr;
 	if (!_horzLine->_flags._hide)
-		SwitchMapping();
+		switchMapping();
 
 	for (spr = Vga->ShowQ->First(); spr;) {
 		Sprite *n = spr->_next;
@@ -767,14 +767,14 @@ void CGEEngine::CaveDown() {
 }
 
 
-void CGEEngine::XCave() {
-	CaveDown();
-	CaveUp();
+void CGEEngine::xCave() {
+	caveDown();
+	caveUp();
 }
 
 
-void CGEEngine::QGame() {
-	CaveDown();
+void CGEEngine::qGame() {
+	caveDown();
 	OldLev = Lev;
 	SaveSound();
 	CFile file = CFile(UsrPath(UsrFnam), WRI, RCrypt);
@@ -784,7 +784,7 @@ void CGEEngine::QGame() {
 }
 
 
-void CGEEngine::SwitchCave(int cav) {
+void CGEEngine::switchCave(int cav) {
 	if (cav != Now) {
 		_heart->_enable = false;
 		if (cav < 0) {
@@ -796,7 +796,7 @@ void CGEEngine::SwitchCave(int cav) {
 			Now = cav;
 			Mouse->Off();
 			if (Hero) {
-				Hero->Park();
+				Hero->park();
 				Hero->Step(0);
 				if (!_isDemo)
 				///// protection: auto-destruction on! ----------------------
@@ -865,7 +865,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			if (KEYBOARD::Key[ALT])
 				SaveMapping();
 			else
-				_vm->SwitchMapping();
+				_vm->switchMapping();
 			break;
 		case F1:
 			SwitchDebug();
@@ -914,7 +914,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			break;
 		case F10          :
 			if (Snail->Idle() && ! Hero->_flags._hide)
-				_vm->StartCountDown();
+				_vm->startCountDown();
 			break;
 		case 'J':
 			if (pp == 0)
@@ -958,21 +958,21 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 		PostMiniStep(cav - 1);
 
 		if (mask & L_UP) {
-			if (cav && Snail->Idle() && Hero->TracePtr < 0)
-				_vm->SwitchCave(cav);
+			if (cav && Snail->Idle() && Hero->_tracePtr < 0)
+				_vm->switchCave(cav);
 
 			if (!_horzLine->_flags._hide) {
 				if (y >= MAP_TOP && y < MAP_TOP + MAP_HIG) {
 					int8 x1, z1;
-					XZ(x, y).Split(x1, z1);
-					CLUSTER::Map[z1][x1] = 1;
-					_vm->SetMapBrick(x1, z1);
+					XZ(x, y).split(x1, z1);
+					Cluster::_map[z1][x1] = 1;
+					_vm->setMapBrick(x1, z1);
 				}
 			} else
 			{
 				if (! Talk && Snail->Idle() && Hero
 				        && y >= MAP_TOP && y < MAP_TOP + MAP_HIG && ! Game) {
-					Hero->FindWay(XZ(x, y));
+					Hero->findWay(XZ(x, y));
 				}
 			}
 		}
@@ -1042,7 +1042,7 @@ static void SwitchMusic(void) {
 		else {
 			SNPOST_(SNSEQ, 122, (Music = false), NULL);
 			//TODO Change the SNPOST message send to a special way to send function pointer
-			// SNPOST(SNEXEC, -1, 0, (void *)&SelectSound);
+			// SNPOST(SNEXEC, -1, 0, (void *)&selectSound);
 			warning("SwitchMusic() - SNPOST");
 		}
 	} else {
@@ -1060,13 +1060,13 @@ static void SwitchMusic(void) {
 }
 
 
-void CGEEngine::StartCountDown() {
+void CGEEngine::startCountDown() {
 	//SNPOST(SNSEQ, 123, 0, NULL);
-	SwitchCave(-1);
+	switchCave(-1);
 }
 
 
-void CGEEngine::TakeName() {
+void CGEEngine::takeName() {
 	if (GET_TEXT::Ptr)
 		SNPOST_(SNKILL, -1, 0, GET_TEXT::Ptr);
 	else {
@@ -1082,14 +1082,14 @@ void CGEEngine::TakeName() {
 }
 
 
-void CGEEngine::SwitchMapping() {
+void CGEEngine::switchMapping() {
 	if (_horzLine->_flags._hide) {
 		int i;
 		for (i = 0; i < MAP_ZCNT; i++) {
 			int j;
 			for (j = 0; j < MAP_XCNT; j++) {
-				if (CLUSTER::Map[i][j])
-					SetMapBrick(j, i);
+				if (Cluster::_map[i][j])
+					setMapBrick(j, i);
 			}
 		}
 	} else {
@@ -1144,17 +1144,17 @@ static void NextStep(void) {
 }
 
 
-static void SaveMapping(void) {
+static void SaveMapping() {
 	{
 		IoHand cf(ProgName(".TAB"), UPD);
-		if (!cf.Error) {
-			cf.seek((Now - 1) * sizeof(CLUSTER::Map));
-			cf.write((uint8 *) CLUSTER::Map, sizeof(CLUSTER::Map));
+		if (!cf._error) {
+			cf.seek((Now - 1) * sizeof(Cluster::_map));
+			cf.write((uint8 *) Cluster::_map, sizeof(Cluster::_map));
 		}
 	}
 	{
 		IoHand cf(ProgName(".HXY"), WRI);
-			if (!cf.Error) {
+			if (!cf._error) {
 				HeroXY[Now - 1]._x = Hero->_x;
 				HeroXY[Now - 1]._y = Hero->_y;
 				cf.write((uint8 *) HeroXY, sizeof(HeroXY));
@@ -1229,7 +1229,7 @@ static void SwitchDebug(void) {
 }
 
 
-void CGEEngine::OptionTouch(int opt, uint16 mask) {
+void CGEEngine::optionTouch(int opt, uint16 mask) {
 	switch (opt) {
 	case 1 :
 		if (mask & L_UP)
@@ -1246,7 +1246,7 @@ void CGEEngine::OptionTouch(int opt, uint16 mask) {
 		break;
 	case 3 :
 		if (mask & L_UP)
-			Quit();
+			quit();
 		break;
 	}
 }
@@ -1260,7 +1260,7 @@ void Sprite::Touch(uint16 mask, int x, int y) {
 		if (mask & (R_DN | L_DN))
 			_sprite = this;
 		if (_ref / 10 == 12) {
-			_vm->OptionTouch(_ref % 10, mask);
+			_vm->optionTouch(_ref % 10, mask);
 			return;
 		}
 		if (_flags._syst)
@@ -1272,7 +1272,7 @@ void Sprite::Touch(uint16 mask, int x, int y) {
 		if ((mask & R_UP) && Snail->Idle()) {
 			Sprite *ps = (_pocLight->_seqPtr) ? _pocket[PocPtr] : NULL;
 			if (ps) {
-				if (_flags._kept || Hero->Distance(this) < MAX_DISTANCE) {
+				if (_flags._kept || Hero->distance(this) < MAX_DISTANCE) {
 					if (Works(ps)) {
 						FeedSnail(ps, TAKE);
 					} else
@@ -1284,7 +1284,7 @@ void Sprite::Touch(uint16 mask, int x, int y) {
 				if (_flags._kept)
 					mask |= L_UP;
 				else {
-					if (Hero->Distance(this) < MAX_DISTANCE) {
+					if (Hero->distance(this) < MAX_DISTANCE) {
 						///
 						if (_flags._port) {
 							if (FindPocket(NULL) < 0)
@@ -1325,7 +1325,7 @@ void Sprite::Touch(uint16 mask, int x, int y) {
 }
 
 
-void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int row = 0, int pos = 0) {
+void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int row = 0, int pos = 0) {
 	static const char *Comd[] = { "Name", "Type", "Phase", "East",
 	                              "Left", "Right", "Top", "Bottom",
 	                              "Seq", "Near", "Take",
@@ -1348,7 +1348,7 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 	MergeExt(line, fname, SPR_EXT);
 	if (INI_FILE::exist(line)) {      // sprite description file exist
 		INI_FILE sprf(line);
-		if (sprf.Error)
+		if (sprf._error)
 			error("Bad SPR [%s]", line);
 
 		while ((len = sprf.read((uint8 *)line)) != 0) {
@@ -1445,7 +1445,7 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 		break;
 	}
 	case 5 : { // FLY
-		FLY *f = new FLY(this, NULL);
+		Fly *f = new Fly(this, NULL);
 		_sprite = f;
 		//////Sprite->Time = 1;//-----------$$$$$$$$$$$$$$
 		break;
@@ -1479,7 +1479,7 @@ void CGEEngine::LoadSprite(const char *fname, int ref, int cav, int col = 0, int
 }
 
 
-void CGEEngine::LoadScript(const char *fname) {
+void CGEEngine::loadScript(const char *fname) {
 	char line[LINE_MAX];
 	char *SpN;
 	int SpI, SpA, SpX, SpY, SpZ;
@@ -1488,13 +1488,13 @@ void CGEEngine::LoadScript(const char *fname) {
 	int lcnt = 0;
 	bool ok = true;
 
-	if (scrf.Error)
+	if (scrf._error)
 		return;
 
 	while (scrf.read((uint8 *)line) != 0) {
 		char *p;
 
-		++lcnt;
+		lcnt++;
 		if (*line == 0 || *line == '\n' || *line == '.')
 			continue;
 
@@ -1530,7 +1530,7 @@ void CGEEngine::LoadScript(const char *fname) {
 		ok = true;    // no break: OK
 
 		_sprite = NULL;
-		LoadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
+		loadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
 		if (_sprite && BkG)
 			_sprite->_flags._back = true;
 	}
@@ -1539,7 +1539,7 @@ void CGEEngine::LoadScript(const char *fname) {
 }
 
 
-void CGEEngine::MainLoop() {
+void CGEEngine::mainLoop() {
 	SayDebug();
 
 	if (_isDemo) {
@@ -1564,28 +1564,28 @@ void CGEEngine::MainLoop() {
 }
 
 
-void CGEEngine::LoadUser() {
+void CGEEngine::loadUser() {
 	// set scene
 	if (STARTUP::Mode == 0) { // user .SVG file found
 		CFile cfile = CFile(UsrPath(UsrFnam), REA, RCrypt);
-		LoadGame(cfile);
+		loadGame(cfile);
 	} else {
 		if (STARTUP::Mode == 1) {
 			SVG0FILE file = SVG0FILE(SVG0NAME);
-			LoadGame(file);
+			loadGame(file);
 		} else {
-			LoadScript(ProgName(INI_EXT));
+			loadScript(ProgName(INI_EXT));
 			Music = true;
 			CFile file = CFile(SVG0NAME, WRI);
 			SaveGame(file);
 			error("Ok [%s]", SVG0NAME);
 		}
 	}
-	LoadScript(ProgName(IN0_EXT));
+	loadScript(ProgName(IN0_EXT));
 }
 
 
-void CGEEngine::RunGame() {
+void CGEEngine::runGame() {
 	Text->Clear();
 	Text->Preload(100, 1000);
 	LoadHeroXY();
@@ -1613,7 +1613,7 @@ void CGEEngine::RunGame() {
 //	Vga->ShowQ->Append(Mouse);
 
 //    ___________
-	LoadUser();
+	loadUser();
 //    ~~~~~~~~~~~
 
 	if ((_sprite = Vga->SpareQ->Locate(121)) != NULL)
@@ -1627,7 +1627,7 @@ void CGEEngine::RunGame() {
 	if (Mini && INI_FILE::exist("MINI.SPR")) {
 		uint8 *ptr = (uint8 *) &*Mini;
 		if (ptr != NULL) {
-			LoadSprite("MINI", -1, 0, MINI_X, MINI_Y);
+			loadSprite("MINI", -1, 0, MINI_X, MINI_Y);
 			ExpandSprite(_miniCave = _sprite);  // NULL is ok
 			if (_miniCave) {
 				_miniCave->_flags._hide = true;
@@ -1643,7 +1643,7 @@ void CGEEngine::RunGame() {
 		ExpandSprite(Hero);
 		Hero->Goto(HeroXY[Now - 1]._x, HeroXY[Now - 1]._y);
 		if (INI_FILE::exist("00SHADOW.SPR")) {
-			LoadSprite("00SHADOW", -1, 0, Hero->_x + 14, Hero->_y + 51);
+			loadSprite("00SHADOW", -1, 0, Hero->_x + 14, Hero->_y + 51);
 			if ((_shadow = _sprite) != NULL) {
 				_shadow->_ref = 2;
 				_shadow->_flags._tran = true;
@@ -1674,7 +1674,7 @@ void CGEEngine::RunGame() {
 	SNPOST(SNLEVEL, -1, OldLev, &_cavLight);
 	_cavLight->Goto(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
 	              CAVE_Y + ((Now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
-	CaveUp();
+	caveUp();
 
 	KEYBOARD::SetClient(Sys);
 	// main loop
@@ -1682,7 +1682,7 @@ void CGEEngine::RunGame() {
 		//TODO Change the SNPOST message send to a special way to send function pointer
 		// if (FINIS) SNPOST(SNEXEC,  -1, 0, (void *)&QGame);
 		warning("RunGame: problematic use of SNPOST");
-		MainLoop();
+		mainLoop();
 	}
 
 	KEYBOARD::SetClient(NULL);
@@ -1697,10 +1697,10 @@ void CGEEngine::RunGame() {
 }
 
 
-void CGEEngine::Movie(const char *ext) {
+void CGEEngine::movie(const char *ext) {
 	const char *fn = ProgName(ext);
 	if (INI_FILE::exist(fn)) {
-		LoadScript(fn);
+		loadScript(fn);
 		ExpandSprite(Vga->SpareQ->Locate(999));
 		FeedSnail(Vga->ShowQ->Locate(999), TAKE);
 
@@ -1710,7 +1710,7 @@ void CGEEngine::Movie(const char *ext) {
 		_heart->_enable = true;
 		KEYBOARD::SetClient(Sys);
 		while (!Snail->Idle())
-			MainLoop();
+			mainLoop();
 
 		KEYBOARD::SetClient(NULL);
 		_heart->_enable = false;
@@ -1722,7 +1722,7 @@ void CGEEngine::Movie(const char *ext) {
 }
 
 
-bool CGEEngine::ShowTitle(const char *name) {
+bool CGEEngine::showTitle(const char *name) {
 	Bitmap::_pal = VGA::SysPal;
 	BMP_PTR LB[] =  { new Bitmap(name, true), NULL };
 	Bitmap::_pal = NULL;
@@ -1735,7 +1735,7 @@ bool CGEEngine::ShowTitle(const char *name) {
 	D.Show(2);
 
 	if (STARTUP::Mode == 2) {
-		Inf(SVG0NAME);
+		inf(SVG0NAME);
 		Talk->Show(2);
 	}
 
@@ -1751,8 +1751,8 @@ bool CGEEngine::ShowTitle(const char *name) {
 		Vga->ShowQ->Append(Mouse);
 		_heart->_enable = true;
 		Mouse->On();
-		for (SelectSound(); !Snail->Idle() || VMENU::Addr;)
-			MainLoop();
+		for (selectSound(); !Snail->Idle() || VMENU::Addr;)
+			mainLoop();
 		Mouse->Off();
 		_heart->_enable = false;
 		Vga->ShowQ->Clear();
@@ -1781,14 +1781,14 @@ bool CGEEngine::ShowTitle(const char *name) {
 			STARTUP::Summa |= Lo(sn) | Hi(sn);
 #endif
 			//-----------------------------------------
-			Movie("X00"); // paylist
+			movie("X00"); // paylist
 			Vga->CopyPage(1, 2);
 			Vga->CopyPage(0, 1);
 			Vga->ShowQ->Append(Mouse);
 			//Mouse.On();
 			_heart->_enable = true;
-			for (TakeName(); GET_TEXT::Ptr;)
-				MainLoop();
+			for (takeName(); GET_TEXT::Ptr;)
+				mainLoop();
 			_heart->_enable = false;
 			if (KEYBOARD::Last() == Enter && *UsrFnam)
 				usr_ok = true;
@@ -1804,7 +1804,7 @@ bool CGEEngine::ShowTitle(const char *name) {
 			const char *n = UsrPath(UsrFnam);
 			if (CFile::exist(n)) {
 				CFile file = CFile(n, REA, RCrypt);
-				LoadGame(file, true); // only system vars
+				loadGame(file, true); // only system vars
 				Vga->SetColors(VGA::SysPal, 64);
 				Vga->Update();
 				if (FINIS) {
@@ -1817,7 +1817,7 @@ bool CGEEngine::ShowTitle(const char *name) {
 	}
 
 	if (STARTUP::Mode < 2)
-		Movie("X01"); // wink
+		movie("X01"); // wink
 
 	Vga->CopyPage(0, 2);
 
@@ -1859,14 +1859,14 @@ void CGEEngine::cge_main(void) {
 	if (Music && STARTUP::SoundOk)
 		LoadMIDI(0);
 	if (STARTUP::Mode < 2)
-		Movie(LGO_EXT);
-	if (ShowTitle("WELCOME")) {
+		movie(LGO_EXT);
+	if (showTitle("WELCOME")) {
 		if ((!_isDemo) && (STARTUP::Mode == 1))
-			Movie("X02"); // intro
-		RunGame();
+			movie("X02"); // intro
+		runGame();
 		Startup = 2;
 		if (FINIS)
-			Movie("X03");
+			movie("X03");
 	} else
 		Vga->Sunset();
 	error("%s", Text->getText(EXIT_OK_TEXT + FINIS));

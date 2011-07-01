@@ -70,11 +70,11 @@ void VFILE::deinit() {
 VFILE::VFILE(const char *name, IOMODE mode)
 	: IoBuf(mode) {
 	if (mode == REA) {
-		if (_dat->_File.Error || _cat->Error)
+		if (_dat->_File._error || _cat->_error)
 			error("Bad volume data");
 		BtKeypack *kp = _cat->find(name);
 		if (scumm_stricmp(kp->_key, name) != 0)
-			Error = 1;
+			_error = 1;
 		_endMark = (_bufMark = _begMark = kp->_mark) + kp->_size;
 	}
 #ifdef VOL_UPD
