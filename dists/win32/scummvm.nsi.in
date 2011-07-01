@@ -20,11 +20,19 @@
 
 #!define _DEBUG
 #!define _INCLUDE_DATA_FILES
+!define _ENABLE_GAME_EXPLORER
+#!define _LOG_BUILD
+!define _CONVERT_TEXT
 
 Name ScummVM
 
 # Included files
 !include MUI2.nsh
+
+# Plugins
+!ifdef _ENABLE_GAME_EXPLORER
+!AddPluginDir "./plugins"
+!endif
 
 #########################################################################################
 # Command line options
@@ -221,6 +229,9 @@ Var StartMenuGroup
 # Installer sections
 #########################################################################################
 Section "ScummVM" SecMain
+!ifdef _LOG_BUILD
+	LogSet on
+!endif
 	SetOutPath $INSTDIR
 	SetOverwrite on
 
@@ -232,6 +243,7 @@ Section "ScummVM" SecMain
 	File /oname=NEWS.txt         "${top_srcdir}\NEWS"
 	File /oname=README.txt       "${top_srcdir}\README"
 	
+!ifdef _CONVERT_TEXT
 	# Convert line endings
 	Push "$INSTDIR\AUTHORS.txt"
 	Call unix2dos
@@ -245,6 +257,7 @@ Section "ScummVM" SecMain
 	Call unix2dos
 	Push "$INSTDIR\README.txt"
 	Call unix2dos
+!endif
 
 !ifdef _INCLUDE_DATA_FILES
 	# Engine data
@@ -271,6 +284,22 @@ Section "ScummVM" SecMain
 	File "${staging_dir}\SDL.dll"
 
 	WriteRegStr HKCU "${REGKEY}" InstallPath "$INSTDIR"    ; Store installation folder
+	
+	#Register with game explorer
+!ifdef _ENABLE_GAME_EXPLORER
+	Games::registerGame "$INSTDIR\scummvm.exe"
+	pop $0
+	# This is for Vista only, for 7 the tasks are defined in the gdf xml
+	${If} $0 != "0"
+	${AndIf} $0 != ""
+		CreateDirectory "$0\PlayTasks\0"
+		CreateShortcut "$0\PlayTasks\0\Play.lnk" "$INSTDIR\scummvm.exe" "--no-console"
+		CreateDirectory "$0\PlayTasks\1"
+		CreateShortcut "$0\PlayTasks\1\Play (console).lnk" "$INSTDIR\scummvm.exe"
+		CreateDirectory "$0\SupportTasks\0"
+		CreateShortcut "$0\SupportTasks\0\Home Page.lnk" "${URL}"
+	${EndIf}
+!endif
 SectionEnd
 
 # Write Start menu entries and uninstaller
@@ -280,7 +309,8 @@ Section -post SecMainPost
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 	SetShellVarContext all     ; Create shortcuts in the all-users folder
 	CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-	CreateShortCut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk"           $INSTDIR\$(^Name).exe "" "$INSTDIR\$(^Name).exe" 0    ; Create shortcut with icon
+	CreateShortCut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk"              $INSTDIR\$(^Name).exe "" "$INSTDIR\$(^Name).exe" 0    ; Create shortcut with icon
+	CreateShortCut "$SMPROGRAMS\$StartMenuGroup\$(^Name) (No console).lnk" $INSTDIR\$(^Name).exe "--no-console" "$INSTDIR\$(^Name).exe" 0
 	CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Readme.lnk"             $INSTDIR\README.txt
 	CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
 	!insertmacro MUI_STARTMENU_WRITE_END
@@ -334,6 +364,10 @@ Section -un.Main SecUninstall
 	Delete /REBOOTOK $INSTDIR\translations.dat
 !endif
 
+!ifdef _ENABLE_GAME_EXPLORER
+	Games::unregisterGame "$INSTDIR\scummvm.exe"
+!endif
+
 	Delete /REBOOTOK $INSTDIR\scummvm.exe
 	Delete /REBOOTOK $INSTDIR\SDL.dll
 SectionEnd
@@ -374,6 +408,7 @@ FunctionEnd
 # Helper functions
 #########################################################################################
 
+!ifdef _CONVERT_TEXT
 ;-------------------------------------------------------------------------------
 ; strips all CRs and then converts all LFs into CRLFs
 ; (this is roughly equivalent to "cat file | dos2unix | unix2dos")
@@ -426,3 +461,4 @@ unix2dos_done:
 	Pop $0
 	Delete $0.U2D
 FunctionEnd
+!endif

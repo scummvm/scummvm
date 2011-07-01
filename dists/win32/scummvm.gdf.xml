@@ -24,8 +24,11 @@
             <GameTasks>
                 <Play>
                     <Primary>
-                        <FileTask path="scummvm.exe" arguments="-noconsole" />
+                        <FileTask path="scummvm.exe" arguments="--no-console" />
                     </Primary>
+                    <Task index="1" name="Play (console)">
+                        <FileTask path="scummvm.exe" arguments="" />
+                    </Task>
                 </Play>
                 <Support>
                     <Task index="0" name="View README">
