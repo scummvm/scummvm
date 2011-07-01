@@ -1474,6 +1474,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		{
+			"arthurrace",
+			"",
+			AD_ENTRY1("BookOutline", "f0a9251824a648fce1b49cb7c1a0ba67"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	// From zerep in bug #3287894
 	{
 		{
