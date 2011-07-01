@@ -96,7 +96,7 @@ OSystem_PS2 *g_systemPs2;
 #define FOREVER 2147483647
 
 namespace Graphics {
-	extern const NewFont g_sysfont;
+	extern const BdfFont g_sysfont;
 };
 
 PS2Device detectBootPath(const char *elfPath, char *bootPath);
