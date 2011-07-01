@@ -101,29 +101,29 @@ extern uint16 MIDIEndFlag;
 // *  Driver Code                                       *
 // ******************************************************
 // Init Digi Device
-EC void SNDInit(void);
+void SNDInit();
 
 // Close Digi Device
-EC void SNDDone(void);
+void SNDDone();
 
 // Set Volume
-EC void SNDSetVolume(void);
+void SNDSetVolume();
 
 // Start Digi
-EC void SNDDigiStart(SMPINFO *PSmpInfo);
+void SNDDigiStart(SMPINFO *PSmpInfo);
 
 // Stop Digi
-EC void SNDDigiStop(SMPINFO *PSmpInfo);
+void SNDDigiStop(SMPINFO *PSmpInfo);
 
 // Start MIDI File
-EC void SNDMIDIStart(uint8 *MIDFile);
+void SNDMIDIStart(uint8 *MIDFile);
 
 // Stop MIDI File
-EC void SNDMIDIStop(void);
+void SNDMIDIStop();
 
 // Play MIDI File (to be called while interrupting)
 // WARNING: Uses ALL registers!
-EC void SNDMIDIPlay(void);
+void SNDMIDIPlay();
 
 } // End of namespace CGE
 

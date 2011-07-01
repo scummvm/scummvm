@@ -61,7 +61,7 @@ void CGEEngine::setup() {
 	TALK::init();
 
 	// Initialise engine objects
-	Text = new TEXT(this, ProgName(), 128);
+	Text = new TEXT(this, progName(), 128);
 	Vga = new VGA(M13H);
 	_heart = new Heart;
 	Hero = new WALK(this, NULL);

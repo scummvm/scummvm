@@ -208,35 +208,35 @@ public:
 
 CRYPT     XCrypt;
 CRYPT     RCrypt;
-MEM_TYPE  MemType(void *mem);
+MEM_TYPE  memType(void *mem);
 uint16    atow(const char *a);
 uint16    xtow(const char *x);
 char     *wtom(uint16 val, char *str, int radix, int len);
 char     *dwtom(uint32 val, char *str, int radix, int len);
-int       TakeEnum(const char **tab, const char *txt);
-uint16    ChkSum(void *m, uint16 n);
-long      Timer(void);
-char     *MergeExt(char *buf, const char *nam, const char *ext);
-char     *ForceExt(char *buf, const char *nam, const char *ext);
-int       DriveCD(unsigned drv);
-bool      IsVga(void);
+int       takeEnum(const char **tab, const char *txt);
+uint16    chkSum(void *m, uint16 n);
+long      timer();
+char     *mergeExt(char *buf, const char *nam, const char *ext);
+char     *forceExt(char *buf, const char *nam, const char *ext);
+int       driveCD(unsigned drv);
+bool      isVga();
 
 
 // MISSING FUNCTIONS
-EC void     _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *));
-const char *ProgName(const char *ext = NULL);
-char *MergeExt(char *buf, const char *nam, const char *ext);
-char *ForceExt(char *buf, const char *nam, const char *ext);
-unsigned FastRand(void);
-unsigned FastRand(unsigned s);
-uint16 RCrypt(void *buf, uint16 siz, uint16 seed);
+void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *));
+const char *progName(const char *ext = NULL);
+char *mergeExt(char *buf, const char *nam, const char *ext);
+char *forceExt(char *buf, const char *nam, const char *ext);
+unsigned fastRand(void);
+unsigned fastRand(unsigned s);
+uint16 rCrypt(void *buf, uint16 siz, uint16 seed);
 uint16 atow(const char *a);
 uint16 xtow(const char *x);
 char *wtom(uint16 val, char *str, int radix, int len);
 char *dwtom(uint32 val, char * str, int radix, int len);
-int TakeEnum(const char **tab, const char *txt);
-Boot *ReadBoot(int drive);
-long Timer(void);
+int takeEnum(const char **tab, const char *txt);
+Boot *readBoot(int drive);
+long timer(void);
 int new_random(int range);
 } // End of namespace CGE
 

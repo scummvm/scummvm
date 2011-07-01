@@ -30,10 +30,10 @@
 
 namespace CGE {
 
-Sprite *KEYBOARD::Client = NULL;
-uint8   KEYBOARD::Key[0x60] = { 0 };
-uint16  KEYBOARD::Current = 0;
-uint16  KEYBOARD::Code[0x60] = {
+Sprite *Keyboard::_client = NULL;
+uint8   Keyboard::_key[0x60] = { 0 };
+uint16  Keyboard::_current = 0;
+uint16  Keyboard::_code[0x60] = {
 	0,               Esc,      '1',         '2',       '3',
 	'4',             '5',      '6',         '7',       '8',
 	'9',             '0',      '-',         '+',       BSp,
@@ -56,20 +56,20 @@ uint16  KEYBOARD::Code[0x60] = {
 	0 * 0x5F
 };
 
-void (* KEYBOARD::OldKeyboard)(...);
+void (* Keyboard::OldKeyboard)(...);
 
 
-KEYBOARD::KEYBOARD(void) {
+Keyboard::Keyboard() {
 	// steal keyboard interrupt
 	/* TODO replace totally by scummvm handling
 	OldKeyboard = getvect(KEYBD_INT);
 	setvect(KEYBD_INT, NewKeyboard);
 	*/
-	warning("STUB: KEYBOARD::KEYBOARD");
+	warning("STUB: Keyboard::Keyboard");
 }
 
 
-KEYBOARD::~KEYBOARD(void) {
+Keyboard::~Keyboard() {
 	// bring back keyboard interrupt
 	/* TODO replace totally by scummvm handling
 	setvect(KEYBD_INT, OldKeyboard);
@@ -78,13 +78,13 @@ KEYBOARD::~KEYBOARD(void) {
 }
 
 
-Sprite *KEYBOARD::SetClient(Sprite *spr) {
-	Swap(Client, spr);
+Sprite *Keyboard::setClient(Sprite *spr) {
+	Swap(_client, spr);
 	return spr;
 }
 
 
-void KEYBOARD::NewKeyboard(...) {
+void Keyboard::NewKeyboard(...) {
 	// table address
 	/*
 	_SI = (uint16) Key;
@@ -145,7 +145,7 @@ void KEYBOARD::NewKeyboard(...) {
 	asm    mov al,20h      // send End-Of-Interrupt
 	asm    out 20h,al      // to the 8259 IC
 	*/
-	warning("STUB: KEYBOARD::NewKeyboard");
+	warning("STUB: Keyboard::NewKeyboard");
 }
 
 } // End of namespace CGE

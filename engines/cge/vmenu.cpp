@@ -61,7 +61,7 @@ MENU_BAR::MENU_BAR(CGEEngine *vm, uint16 w) : TALK(vm), _vm(vm) {
 		p2 -= w;
 	}
 	TS[0] = new Bitmap(w, h, p);
-	SetShapeList(TS);
+	setShapeList(TS);
 	_flags._slav = true;
 	_flags._tran = true;
 	_flags._kill = true;
@@ -110,12 +110,12 @@ VMENU::VMENU(CGEEngine *vm, CHOICE *list, int x, int y)
 	_flags._bDel = true;
 	_flags._kill = true;
 	if (x < 0 || y < 0)
-		Center();
+		center();
 	else
-		Goto(x - _w / 2, y - (TEXT_VM + FONT_HIG / 2));
+		gotoxy(x - _w / 2, y - (TEXT_VM + FONT_HIG / 2));
 	Vga->ShowQ->Insert(this, Vga->ShowQ->Last());
 	Bar = new MENU_BAR(_vm, _w - 2 * TEXT_HM);
-	Bar->Goto(_x + TEXT_HM - MB_HM, _y + TEXT_VM - MB_VM);
+	Bar->gotoxy(_x + TEXT_HM - MB_HM, _y + TEXT_VM - MB_VM);
 	Vga->ShowQ->Insert(Bar, Vga->ShowQ->Last());
 }
 
@@ -130,7 +130,7 @@ void VMENU::Touch(uint16 mask, int x, int y) {
 	bool ok = false;
 
 	if (Items) {
-		Sprite::Touch(mask, x, y);
+		Sprite::touch(mask, x, y);
 
 		y -= TEXT_VM - 1;
 		int n = 0;
@@ -142,7 +142,7 @@ void VMENU::Touch(uint16 mask, int x, int y) {
 				n = Items - 1;
 		}
 
-		Bar->Goto(_x + TEXT_HM - MB_HM, _y + TEXT_VM + n * h - MB_VM);
+		Bar->gotoxy(_x + TEXT_HM - MB_HM, _y + TEXT_VM + n * h - MB_VM);
 
 		if (ok && (mask & L_UP)) {
 			Items = 0;

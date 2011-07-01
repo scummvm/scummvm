@@ -356,21 +356,21 @@ void Heart::setXTimer(uint16 *ptr, uint16 time) {
 
 
 Sprite::Sprite(CGEEngine *vm, BMP_PTR *shp)
-	: _x(0), _y(0), _z(0), NearPtr(0), TakePtr(0),
+	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(NO_SEQ), _time(0), //Delay(0),
 	  _ext(NULL), _ref(-1), _cave(0), _vm(vm) {
-	memset(File, 0, sizeof(File));
+	memset(_file, 0, sizeof(_file));
 	*((uint16 *)&_flags) = 0;
-	SetShapeList(shp);
+	setShapeList(shp);
 }
 
 
 Sprite::~Sprite() {
-	Contract();
+	contract();
 }
 
 
-BMP_PTR Sprite::Shp() {
+BMP_PTR Sprite::shp() {
 	register SprExt *e = _ext;
 	if (e)
 		if (e->_seq) {
@@ -380,7 +380,7 @@ BMP_PTR Sprite::Shp() {
 				//sprintf(s, "Seq=%p ShpCnt=%d SeqPtr=%d Now=%d Next=%d",
 				//      Seq, ShpCnt, SeqPtr, Seq[SeqPtr].Now, Seq[SeqPtr].Next);
 				//VGA::Exit(s, File);
-				error("Invalid PHASE in SPRITE::Shp() %s", File);
+				error("Invalid PHASE in SPRITE::Shp() %s", _file);
 			}
 			return e->_shpList[i];
 		}
@@ -388,7 +388,7 @@ BMP_PTR Sprite::Shp() {
 }
 
 
-BMP_PTR *Sprite::SetShapeList(BMP_PTR *shp) {
+BMP_PTR *Sprite::setShapeList(BMP_PTR *shp) {
 	BMP_PTR *r = (_ext) ? _ext->_shpList : NULL;
 
 	_shpCnt = 0;
@@ -405,16 +405,16 @@ BMP_PTR *Sprite::SetShapeList(BMP_PTR *shp) {
 				_h = b->_h;
 			_shpCnt++;
 		}
-		Expand();
+		expand();
 		_ext->_shpList = shp;
 		if (!_ext->_seq)
-			SetSeq((_shpCnt < 2) ? _seq1 : _seq2);
+			setSeq((_shpCnt < 2) ? _seq1 : _seq2);
 	}
 	return r;
 }
 
 
-void Sprite::MoveShapes(uint8 *buf) {
+void Sprite::moveShapes(uint8 *buf) {
 	BMP_PTR *p;
 	for (p = _ext->_shpList; *p; p++) {
 		buf += (*p)->moveVmap(buf);
@@ -422,12 +422,12 @@ void Sprite::MoveShapes(uint8 *buf) {
 }
 
 
-bool Sprite::Works(Sprite *spr) {
+bool Sprite::works(Sprite *spr) {
 	if (spr)
 		if (spr->_ext) {
 			SNAIL::COM *c = spr->_ext->_take;
 			if (c != NULL) {
-				c += spr->TakePtr;
+				c += spr->_takePtr;
 				if (c->Ref == _ref)
 					if (c->Com != SNLABEL || (c->Val == 0 || c->Val == Now))
 						return true;
@@ -437,19 +437,19 @@ bool Sprite::Works(Sprite *spr) {
 }
 
 
-Seq *Sprite::SetSeq(Seq *seq) {
-	Expand();
+Seq *Sprite::setSeq(Seq *seq) {
+	expand();
 	register Seq *s = _ext->_seq;
 	_ext->_seq = seq;
 	if (_seqPtr == NO_SEQ)
-		Step(0);
+		step(0);
 	else if (_time == 0)
-		Step(_seqPtr);
+		step(_seqPtr);
 	return s;
 }
 
 
-bool Sprite::SeqTest(int n) {
+bool Sprite::seqTest(int n) {
 	if (n >= 0)
 		return (_seqPtr == n);
 	if (_ext)
@@ -458,7 +458,7 @@ bool Sprite::SeqTest(int n) {
 }
 
 
-SNAIL::COM *Sprite::SnList(SNLIST type) {
+SNAIL::COM *Sprite::snList(SNLIST type) {
 	register SprExt *e = _ext;
 	if (e)
 		return (type == NEAR) ? e->_near : e->_take;
@@ -466,7 +466,7 @@ SNAIL::COM *Sprite::SnList(SNLIST type) {
 }
 
 
-void Sprite::SetName(char *n) {
+void Sprite::setName(char *n) {
 	if (_ext) {
 		if (_ext->_name) {
 			delete[] _ext->_name;
@@ -482,13 +482,13 @@ void Sprite::SetName(char *n) {
 }
 
 
-Sprite *Sprite::Expand(void) {
+Sprite *Sprite::expand() {
 	if (!_ext) {
 		bool enbl = _heart->_enable;
 		_heart->_enable = false;
 		if ((_ext = new SprExt) == NULL)
 			error("No core");
-		if (*File) {
+		if (*_file) {
 			static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
 			char line[LINE_MAX], fname[MAXPATH];
 			BMP_PTR *shplist = new BMP_PTR [_shpCnt + 1];
@@ -502,7 +502,7 @@ Sprite *Sprite::Expand(void) {
 
 			SNAIL::COM *nea = NULL;
 			SNAIL::COM *tak = NULL;
-			MergeExt(fname, File, SPR_EXT);
+			mergeExt(fname, _file, SPR_EXT);
 			if (INI_FILE::exist(fname)) { // sprite description file exist
 				INI_FILE sprf(fname);
 				if (!(sprf._error==0))
@@ -515,9 +515,9 @@ Sprite *Sprite::Expand(void) {
 					if (len == 0 || *line == '.')
 						continue;
 
-					switch (TakeEnum(Comd, strtok(line, " =\t"))) {
+					switch (takeEnum(Comd, strtok(line, " =\t"))) {
 					case 0 : { // Name
-						SetName(strtok(NULL, ""));
+						setName(strtok(NULL, ""));
 						break;
 					}
 					case 1 : { // Phase
@@ -549,13 +549,13 @@ Sprite *Sprite::Expand(void) {
 						break;
 					}
 					case 3 : { // Near
-						if (NearPtr != NO_PTR) {
+						if (_nearPtr != NO_PTR) {
 							nea = (SNAIL::COM *) realloc(nea, (neacnt + 1) * sizeof(*nea));
 							if (nea == NULL)
 								error("No core [%s]", fname);
 							else {
 								SNAIL::COM *c = &nea[neacnt++];
-								if ((c->Com = (SNCOM) TakeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
+								if ((c->Com = (SNCOM) takeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
 									error("%s [%s]", (const char*)NumStr("Bad NEAR in ######", lcnt), (const char*)fname);
 								c->Ref = atoi(strtok(NULL, " \t,;/"));
 								c->Val = atoi(strtok(NULL, " \t,;/"));
@@ -565,13 +565,13 @@ Sprite *Sprite::Expand(void) {
 					}
 					break;
 					case 4 : { // Take
-						if (TakePtr != NO_PTR) {
+						if (_takePtr != NO_PTR) {
 							tak = (SNAIL::COM *) realloc(tak, (takcnt + 1) * sizeof(*tak));
 							if (tak == NULL)
 								error("No core [%s]", fname);
 							else {
 								SNAIL::COM *c = &tak[takcnt++];
-								if ((c->Com = (SNCOM) TakeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
+								if ((c->Com = (SNCOM) takeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
 									error("%s [%s]", NumStr("Bad NEAR in ######", lcnt), (const char *)fname);
 								c->Ref = atoi(strtok(NULL, " \t,;/"));
 								c->Val = atoi(strtok(NULL, " \t,;/"));
@@ -583,7 +583,7 @@ Sprite *Sprite::Expand(void) {
 					}
 				}
 			} else { // no sprite description: try to read immediately from .BMP
-				shplist[shpcnt++] = new Bitmap(File, true);
+				shplist[shpcnt++] = new Bitmap(_file, true);
 			}
 			shplist[shpcnt] = NULL;
 			if (seq) {
@@ -591,21 +591,21 @@ Sprite *Sprite::Expand(void) {
 					error("Bad PHASE in SEQ [%s]", fname);
 				if (maxnxt >= seqcnt)
 					error("Bad JUMP in SEQ [%s]", fname);
-				SetSeq(seq);
+				setSeq(seq);
 			} else
-				SetSeq((_shpCnt == 1) ? _seq1 : _seq2);
+				setSeq((_shpCnt == 1) ? _seq1 : _seq2);
 			//disable();  // disable interupt
 
-			SetShapeList(shplist);
+			setShapeList(shplist);
 			//enable();  // enable interupt
 			if (nea)
 				nea[neacnt - 1].Ptr = _ext->_near = nea;
 			else
-				NearPtr = NO_PTR;
+				_nearPtr = NO_PTR;
 			if (tak)
 				tak[takcnt - 1].Ptr = _ext->_take = tak;
 			else
-				TakePtr = NO_PTR;
+				_takePtr = NO_PTR;
 		}
 		_heart->_enable = enbl;
 	}
@@ -613,7 +613,7 @@ Sprite *Sprite::Expand(void) {
 }
 
 
-Sprite *Sprite::Contract(void) {
+Sprite *Sprite::contract() {
 	register SprExt *e = _ext;
 	if (e) {
 		if (e->_name)
@@ -622,10 +622,10 @@ Sprite *Sprite::Contract(void) {
 			int i;
 			for (i = 0; e->_shpList[i]; i++)
 			delete e->_shpList[i];
-			if (MemType(e->_shpList) == NEAR_MEM)
+			if (memType(e->_shpList) == NEAR_MEM)
 				delete[] e->_shpList;
 		}
-		if (MemType(e->_seq) == NEAR_MEM)
+		if (memType(e->_seq) == NEAR_MEM)
 			free(e->_seq);
 		if (e->_near)
 			free(e->_near);
@@ -638,18 +638,18 @@ Sprite *Sprite::Contract(void) {
 }
 
 
-Sprite *Sprite::BackShow(bool fast) {
-	Expand();
-	Show(2);
-	Show(1);
+Sprite *Sprite::backShow(bool fast) {
+	expand();
+	show(2);
+	show(1);
 	if (fast)
-		Show(0);
-	Contract();
+		show(0);
+	contract();
 	return this;
 }
 
 
-void Sprite::Step(int nr) {
+void Sprite::step(int nr) {
 	if (nr >= 0)
 		_seqPtr = nr;
 	if (_ext) {
@@ -658,24 +658,24 @@ void Sprite::Step(int nr) {
 			_seqPtr = _ext->_seq[_seqPtr].Next;
 		seq = _ext->_seq + _seqPtr;
 		if (seq->Dly >= 0) {
-			Goto(_x + (seq->Dx), _y + (seq->Dy));
+			gotoxy(_x + (seq->Dx), _y + (seq->Dy));
 			_time = seq->Dly;
 		}
 	}
 }
 
 
-void Sprite::Tick(void) {
-	Step();
+void Sprite::tick() {
+	step();
 }
 
 
-void Sprite::MakeXlat(uint8 *x) {
+void Sprite::makeXlat(uint8 *x) {
 	if (_ext) {
 		BMP_PTR *b;
 
 		if (_flags._xlat)
-			KillXlat();
+			killXlat();
 		for (b = _ext->_shpList; *b; b++)
 			(*b)->_m = x;
 		_flags._xlat = true;
@@ -683,12 +683,12 @@ void Sprite::MakeXlat(uint8 *x) {
 }
 
 
-void Sprite::KillXlat(void) {
+void Sprite::killXlat() {
 	if (_flags._xlat && _ext) {
 		BMP_PTR *b;
 		uint8 *m = (*_ext->_shpList)->_m;
 
-		switch (MemType(m)) {
+		switch (memType(m)) {
 		case NEAR_MEM :
 			delete[](uint8 *) m;
 			break;
@@ -706,7 +706,7 @@ void Sprite::KillXlat(void) {
 }
 
 
-void Sprite::Goto(int x, int y) {
+void Sprite::gotoxy(int x, int y) {
 	int xo = _x, yo = _y;
 	if (_x < SCR_WID) {
 		if (x < 0)
@@ -724,18 +724,18 @@ void Sprite::Goto(int x, int y) {
 	}
 	if (_next)
 		if (_next->_flags._slav)
-			_next->Goto(_next->_x - xo + _x, _next->_y - yo + _y);
+			_next->gotoxy(_next->_x - xo + _x, _next->_y - yo + _y);
 	if (_flags._shad)
-		_prev->Goto(_prev->_x - xo + _x, _prev->_y - yo + _y);
+		_prev->gotoxy(_prev->_x - xo + _x, _prev->_y - yo + _y);
 }
 
 
-void Sprite::Center(void) {
-	Goto((SCR_WID - _w) / 2, (SCR_HIG - _h) / 2);
+void Sprite::center() {
+	gotoxy((SCR_WID - _w) / 2, (SCR_HIG - _h) / 2);
 }
 
 
-void Sprite::Show(void) {
+void Sprite::show() {
 	register SprExt *e;
 // asm cli     // critic section...
 	e = _ext;
@@ -744,7 +744,7 @@ void Sprite::Show(void) {
 	e->_b0 = e->_b1;
 	e->_x1 = _x;
 	e->_y1 = _y;
-	e->_b1 = Shp();
+	e->_b1 = shp();
 //  asm sti     // ...done!
 	if (!_flags._hide) {
 		if (_flags._xlat)
@@ -755,22 +755,22 @@ void Sprite::Show(void) {
 }
 
 
-void Sprite::Show(uint16 pg) {
+void Sprite::show(uint16 pg) {
 	Graphics::Surface *a = VGA::Page[1];
 	VGA::Page[1] = VGA::Page[pg & 3];
-	Shp()->show(_x, _y);
+	shp()->show(_x, _y);
 	VGA::Page[1] = a;
 }
 
 
-void Sprite::Hide(void) {
+void Sprite::hide() {
 	register SprExt *e = _ext;
 	if (e->_b0)
 		e->_b0->hide(e->_x0, e->_y0);
 }
 
 
-BMP_PTR Sprite::Ghost(void) {
+BMP_PTR Sprite::ghost() {
 	register SprExt *e = _ext;
 	if (e->_b1) {
 		BMP_PTR bmp = new Bitmap(0, 0, (uint8 *)NULL);
@@ -795,7 +795,7 @@ Sprite *SpriteAt(int x, int y) {
 	if (tail) {
 		for (spr = tail->_prev; spr; spr = spr->_prev) {
 			if (! spr->_flags._hide && ! spr->_flags._tran) {
-				if (spr->Shp()->solidAt(x - spr->_x, y - spr->_y))
+				if (spr->shp()->solidAt(x - spr->_x, y - spr->_y))
 					break;
 			}
 		}
@@ -840,9 +840,9 @@ void QUEUE::Append(Sprite *spr) {
 		Head = spr;
 	Tail = spr;
 	if (Show)
-		spr->Expand();
+		spr->expand();
 	else
-		spr->Contract();
+		spr->contract();
 }
 
 
@@ -861,9 +861,9 @@ void QUEUE::Insert(Sprite *spr, Sprite *nxt) {
 	if (spr->_next)
 		spr->_next->_prev = spr;
 	if (Show)
-		spr->Expand();
+		spr->expand();
 	else
-		spr->Contract();
+		spr->contract();
 }
 
 
@@ -877,9 +877,9 @@ void QUEUE::Insert(Sprite *spr) {
 	else
 		Append(spr);
 	if (Show)
-		spr->Expand();
+		spr->expand();
 	else
-		spr->Contract();
+		spr->contract();
 }
 
 
@@ -952,7 +952,7 @@ VGA::VGA(int mode)
 	SetStatAdr();
 	if (StatAdr != VGAST1_)
 		++Mono;
-	if (IsVga()) {
+	if (isVga()) {
 		OldColors = farnew(Dac, 256);
 		NewColors = farnew(Dac, 256);
 		OldScreen = SaveScreen();
@@ -968,7 +968,7 @@ VGA::VGA(int mode)
 
 VGA::~VGA(void) {
 	Mono = 0;
-	if (IsVga()) {
+	if (isVga()) {
 		Common::String buffer = "";
 		Clear(0);
 		SetMode(OldMode);
@@ -1137,10 +1137,10 @@ void VGA::Show(void) {
 	Sprite *spr = ShowQ->First();
 
 	for (spr = ShowQ->First(); spr; spr = spr->_next)
-		spr->Show();
+		spr->show();
 	Update();
 	for (spr = ShowQ->First(); spr; spr = spr->_next)
-		spr->Hide();
+		spr->hide();
 
 	++ FrmCnt;
 }
