@@ -47,6 +47,8 @@ namespace CGE {
 #define SNPOST(c,r,v,p)     Snail->AddCom(c,r,v,p)
 #define SNPOST_(c,r,v,p)    Snail_->AddCom(c,r,v,p)
 
+#define SNAIL_FRAME_RATE 62
+#define SNAIL_FRAME_DELAY (1000 / SNAIL_FRAME_RATE)
 
 typedef struct  {
 	uint8 Horz, Vert;
@@ -87,7 +89,7 @@ public:
 	} *SNList;
 	uint8 Head, Tail;
 	bool Turbo, Busy, TextDelay;
-	uint16 Pause;
+	uint32 _timerExpiry;
 	static const char *ComTxt[];
 	bool TalkEnable;
 	SNAIL(CGEEngine *vm, bool turbo = false);
