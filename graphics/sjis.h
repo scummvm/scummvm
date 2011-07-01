@@ -134,19 +134,19 @@ public:
  */
 class FontSJISBase : public FontSJIS {
 public:
-	FontSJISBase() : _drawMode(kDefaultMode), _flippedMode(false) {}
+	FontSJISBase();
 
-	void setDrawingMode(DrawingMode mode) { _drawMode = mode; }
+	virtual void setDrawingMode(DrawingMode mode);
 
-	void toggleFlippedMode(bool enable) { _flippedMode = enable; }
+	virtual void toggleFlippedMode(bool enable);
 
-	uint getFontHeight() const { return (_drawMode == kOutlineMode) ? 18 : (_drawMode == kDefaultMode ? 16 : 17); }
+	virtual uint getFontHeight() const;
 
-	uint getMaxFontWidth() const { return (_drawMode == kOutlineMode) ? 18 : (_drawMode == kDefaultMode ? 16 : 17); }
+	virtual uint getMaxFontWidth() const;
 
-	uint getCharWidth(uint16 ch) const;
+	virtual uint getCharWidth(uint16 ch) const;
 
-	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW = -1, int maxH = -1) const;
+	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW = -1, int maxH = -1) const;
 private:
 	template<typename Color>
 	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const;
@@ -162,10 +162,9 @@ protected:
 	DrawingMode _drawMode;
 	bool _flippedMode;
 
-	bool is8x16(uint16 ch) const;
+	bool isASCII(uint16 ch) const;
 
 	virtual const uint8 *getCharData(uint16 c) const = 0;
-	virtual const uint8 *getCharData8x16(uint16 c) const = 0;
 };
 
 /**
@@ -188,8 +187,7 @@ private:
 	uint8 _fontData16x16[kFont16x16Chars * 32];
 	uint8 _fontData8x16[kFont8x16Chars * 32];
 
-	const uint8 *getCharData(uint16 c) const;
-	const uint8 *getCharData8x16(uint16 c) const;
+	virtual const uint8 *getCharData(uint16 c) const;
 };
 
 /**
@@ -197,8 +195,8 @@ private:
  */
 class FontSjisSVM : public FontSJISBase {
 public:
-	FontSjisSVM() : _fontData16x16(0), _fontData16x16Size(0), _fontData8x16(0), _fontData8x16Size(0) {}
-	~FontSjisSVM() { delete[] _fontData16x16; delete[] _fontData8x16; }
+	FontSjisSVM();
+	~FontSjisSVM();
 
 	/**
 	 * Load the font data from "SJIS.FNT".
@@ -211,8 +209,7 @@ private:
 	uint8 *_fontData8x16;
 	uint _fontData8x16Size;
 
-	const uint8 *getCharData(uint16 c) const;
-	const uint8 *getCharData8x16(uint16 c) const;
+	virtual const uint8 *getCharData(uint16 c) const;
 };
 
 // TODO: Consider adding support for PC98 ROM
