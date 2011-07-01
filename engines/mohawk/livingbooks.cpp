@@ -87,8 +87,14 @@ void LBPage::open(Archive *mhk, uint16 baseId) {
 	_baseId = baseId;
 
 	_vm->addArchive(_mhk);
-	if (_vm->hasResource(ID_BCOD, baseId))
+	if (!_vm->hasResource(ID_BCOD, baseId)) {
+		// assume that BCOD is mandatory for v4/v5
+		if (_vm->getGameType() == GType_LIVINGBOOKSV4 || _vm->getGameType() == GType_LIVINGBOOKSV5)
+			error("missing BCOD resource (id %d)", baseId);
+		_code = new LBCode(_vm, 0);
+	} else {
 		_code = new LBCode(_vm, baseId);
+	}
 
 	loadBITL(baseId);
 	for (uint i = 0; i < _items.size(); i++)
@@ -2300,8 +2306,6 @@ void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *
 		{
 		assert(size == 4);
 		uint offset = stream->readUint32();
-		if (!_page->_code)
-			error("no BCOD?");
 		_page->_code->runCode(this, offset);
 		}
 		break;
@@ -2823,8 +2827,6 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpSendExpression:
-			if (!_page->_code)
-				error("no BCOD?");
 			_page->_code->runCode(this, entry->offset);
 			break;
 
@@ -2858,8 +2860,6 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 		case kLBOpJumpUnlessExpression:
 		case kLBOpBreakExpression:
 		case kLBOpJumpToExpression:
-			if (!_page->_code)
-				error("no BCOD?");
 			{
 			LBValue r = _page->_code->runCode(this, entry->offset);
 			// FIXME
