@@ -46,7 +46,7 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 	}
 
 	// Try ScummVM's font.
-	ret = new FontSjisSVM();
+	ret = new FontSjisSVM(platform);
 	if (ret && ret->loadData())
 		return ret;
 	delete ret;
@@ -58,7 +58,8 @@ void FontSJIS::drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 
 	drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.format.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
 }
 
-FontSJISBase::FontSJISBase() : _drawMode(kDefaultMode), _flippedMode(false) {
+FontSJISBase::FontSJISBase()
+	: _drawMode(kDefaultMode), _flippedMode(false), _fontWidth(16), _fontHeight(16) {
 }
 
 void FontSJISBase::setDrawingMode(DrawingMode mode) {
@@ -72,27 +73,34 @@ void FontSJISBase::toggleFlippedMode(bool enable) {
 uint FontSJISBase::getFontHeight() const {
 	switch (_drawMode) {
 	case kOutlineMode:
-		return 18;
+		return _fontHeight + 2;
 
 	case kDefaultMode:
-		return 16;
+		return _fontHeight;
 
 	default:
-		return 17;
+		return _fontHeight + 1;
 	}
 }
 
 uint FontSJISBase::getMaxFontWidth() const {
 	switch (_drawMode) {
 	case kOutlineMode:
-		return 18;
+		return _fontWidth + 2;
 
 	case kDefaultMode:
-		return 16;
+		return _fontWidth;
 
 	default:
-		return 17;
+		return _fontWidth + 1;
 	}
+}
+
+uint FontSJISBase::getCharWidth(uint16 ch) const {
+	if (isASCII(ch))
+		return (_drawMode == kOutlineMode) ? 10 : (_drawMode == kDefaultMode ? 8 : 9);
+	else
+		return getMaxFontWidth();
 }
 
 template<typename Color>
@@ -189,11 +197,11 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 	if (isASCII(ch)) {
 		glyphSource = getCharData(ch);
 		width = 8;
-		height = 16;
+		height = _fontHeight;
 	} else {
 		glyphSource = getCharData(ch);
-		width = 16;
-		height = 16;
+		width = _fontWidth;
+		height = _fontHeight;
 	}
 
 	if (maxW != -1 && maxW < width) {
@@ -261,13 +269,6 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 	} else {
 		error("FontSJISBase::drawChar: unsupported bpp: %d", bpp);
 	}
-}
-
-uint FontSJISBase::getCharWidth(uint16 ch) const {
-	if (isASCII(ch))
-		return (_drawMode == kOutlineMode) ? 10 : (_drawMode == kDefaultMode ? 8 : 9);
-	else
-		return getMaxFontWidth();
 }
 
 bool FontSJISBase::isASCII(uint16 ch) const {
@@ -393,13 +394,20 @@ const uint8 *FontTowns::getCharData(uint16 ch) const {
 
 // ScummVM SJIS font
 
-FontSjisSVM::FontSjisSVM()
-	: _fontData16x16(0), _fontData16x16Size(0), _fontData8x16(0), _fontData8x16Size(0) {
+FontSjisSVM::FontSjisSVM(const Common::Platform platform)
+	: _fontData16x16(0), _fontData16x16Size(0), _fontData8x16(0), _fontData8x16Size(0),
+	  _fontData12x12(0), _fontData12x12Size(0) {
+
+	if (platform == Common::kPlatformPCEngine) {
+		_fontWidth = 12;
+		_fontHeight = 12;
+	}
 }
 
 FontSjisSVM::~FontSjisSVM() {
 	delete[] _fontData16x16;
 	delete[] _fontData8x16;
+	delete[] _fontData12x12;
 }
 
 bool FontSjisSVM::loadData() {
@@ -416,23 +424,33 @@ bool FontSjisSVM::loadData() {
 	}
 
 	uint32 version = data->readUint32BE();
-	if (version != 2) {
+	if (version != 3) {
 		delete data;
 		return false;
 	}
 	uint numChars16x16 = data->readUint16BE();
 	uint numChars8x16 = data->readUint16BE();
+	uint numChars12x12 = data->readUint16BE();
 
-	_fontData16x16Size = numChars16x16 * 32;
-	_fontData16x16 = new uint8[_fontData16x16Size];
-	assert(_fontData16x16);
-	data->read(_fontData16x16, _fontData16x16Size);
+	if (_fontWidth == 16) {
+		_fontData16x16Size = numChars16x16 * 32;
+		_fontData16x16 = new uint8[_fontData16x16Size];
+		assert(_fontData16x16);
+		data->read(_fontData16x16, _fontData16x16Size);
 
-	_fontData8x16Size = numChars8x16 * 16;
-	_fontData8x16 = new uint8[numChars8x16 * 16];
-	assert(_fontData8x16);
+		_fontData8x16Size = numChars8x16 * 16;
+		_fontData8x16 = new uint8[numChars8x16 * 16];
+		assert(_fontData8x16);
+		data->read(_fontData8x16, _fontData8x16Size);
+	} else {
+		data->skip(_fontData16x16Size);
+		data->skip(_fontData8x16Size);
 
-	data->read(_fontData8x16, _fontData8x16Size);
+		_fontData12x12Size = numChars12x12 * 24;
+		_fontData12x12 = new uint8[_fontData12x12Size];
+		assert(_fontData12x12);
+		data->read(_fontData12x12, _fontData12x12Size);
+	}
 
 	bool retValue = !data->err();
 	delete data;
@@ -440,6 +458,31 @@ bool FontSjisSVM::loadData() {
 }
 
 const uint8 *FontSjisSVM::getCharData(uint16 c) const {
+	if (_fontWidth == 12)
+		return getCharDataPCE(c);
+	else
+		return getCharDataDefault(c);
+}
+
+const uint8 *FontSjisSVM::getCharDataPCE(uint16 c) const {
+	if (isASCII(c))
+		return 0;
+
+	const uint8 fB = c & 0xFF;
+	const uint8 sB = c >> 8;
+
+	int base, index;
+	mapKANJIChar(fB, sB, base, index);
+
+	if (base == -1)
+		return 0;
+
+	const uint offset = (base * 0xBC + index) * 24;
+	assert(offset + 16 <= _fontData12x12Size);
+	return _fontData12x12 + offset;
+}
+
+const uint8 *FontSjisSVM::getCharDataDefault(uint16 c) const {
 	const uint8 fB = c & 0xFF;
 	const uint8 sB = c >> 8;
 
@@ -454,29 +497,37 @@ const uint8 *FontSjisSVM::getCharData(uint16 c) const {
 		assert(offset <= _fontData8x16Size);
 		return _fontData8x16 + offset;
 	} else {
-		// We only allow 2 byte SJIS characters.
-		if (fB <= 0x80 || fB >= 0xF0 || (fB >= 0xA0 && fB <= 0xDF) || sB == 0x7F)
-			return 0;
+		int base, index;
+		mapKANJIChar(fB, sB, base, index);
 
-		int base = fB;
-		base -= 0x81;
-		if (base >= 0x5F)
-			base -= 0x40;
-
-		int index = sB;
-		index -= 0x40;
-		if (index >= 0x3F)
-			--index;
-
-		// Another check if the passed character was an
-		// correctly encoded SJIS character.
-		if (index < 0 || index >= 0xBC || base < 0)
+		if (base == -1)
 			return 0;
 
 		const uint offset = (base * 0xBC + index) * 32;
 		assert(offset + 16 <= _fontData16x16Size);
 		return _fontData16x16 + offset;
 	}
+}
+
+void FontSjisSVM::mapKANJIChar(const uint8 fB, const uint8 sB, int &base, int &index) const {
+	base = index = -1;
+
+	// We only allow 2 byte SJIS characters.
+	if (fB <= 0x80 || fB >= 0xF0 || (fB >= 0xA0 && fB <= 0xDF) || sB == 0x7F)
+		return;
+
+	base = fB - 0x81;
+	if (base >= 0x5F)
+		base -= 0x40;
+
+	index = sB - 0x40;
+	if (index >= 0x3F)
+		--index;
+
+	// Another check if the passed character was an
+	// correctly encoded SJIS character.
+	if (index < 0 || index >= 0xBC || base < 0)
+		base = index = -1;
 }
 
 } // End of namespace Graphics

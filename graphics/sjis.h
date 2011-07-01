@@ -130,7 +130,7 @@ public:
 };
 
 /**
- * A base class to render 16x16 (2 byte chars), 8x16 (1 byte chars) monochrome SJIS fonts.
+ * A base class to render monochrome SJIS fonts.
  */
 class FontSJISBase : public FontSJIS {
 public:
@@ -161,6 +161,7 @@ private:
 protected:
 	DrawingMode _drawMode;
 	bool _flippedMode;
+	int _fontWidth, _fontHeight;
 
 	bool isASCII(uint16 ch) const;
 
@@ -195,7 +196,7 @@ private:
  */
 class FontSjisSVM : public FontSJISBase {
 public:
-	FontSjisSVM();
+	FontSjisSVM(const Common::Platform platform);
 	~FontSjisSVM();
 
 	/**
@@ -209,7 +210,15 @@ private:
 	uint8 *_fontData8x16;
 	uint _fontData8x16Size;
 
+	uint8 *_fontData12x12;
+	uint _fontData12x12Size;
+
 	virtual const uint8 *getCharData(uint16 c) const;
+
+	const uint8 *getCharDataPCE(uint16 c) const;
+	const uint8 *getCharDataDefault(uint16 c) const;
+
+	void mapKANJIChar(const uint8 fB, const uint8 sB, int &base, int &index) const;
 };
 
 // TODO: Consider adding support for PC98 ROM
