@@ -35,7 +35,7 @@
 
 namespace CGE {
 
-DAC *Bitmap::_pal = NULL;
+Dac *Bitmap::_pal = NULL;
 #define MAXPATH  128
 
 void Bitmap::init() {
@@ -53,7 +53,7 @@ Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL) {
 #if (BMP_MODE < 2)
 	if (rem && PIC_FILE::exist(pat)) {
 		PIC_FILE file(pat);
-		if ((file.Error == 0) && (!loadVBM(&file)))
+		if ((file._error == 0) && (!loadVBM(&file)))
 			error("Bad VBM [%s]", fname);
 	} else
 #endif
@@ -61,7 +61,7 @@ Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL) {
 #if (BMP_MODE)
 		ForceExt(pat, fname, ".BMP");
 		PIC_FILE file(pat);
-		if (file.Error == 0) {
+		if (file._error == 0) {
 			if (loadBMP(&file)) {
 				Code();
 				if (rem) {
@@ -366,47 +366,47 @@ bool Bitmap::solidAt(int x, int y) {
 }
 
 
-bool Bitmap::saveVBM(XFILE *f) {
+bool Bitmap::saveVBM(XFile *f) {
 	uint16 p = (_pal != NULL),
 	       n = ((uint16)(((uint8 *)_b) - _v)) + _h * sizeof(HideDesc);
-	if (f->Error == 0)
+	if (f->_error == 0)
 		f->write((uint8 *)&p, sizeof(p));
 
-	if (f->Error == 0)
+	if (f->_error == 0)
 		f->write((uint8 *)&n, sizeof(n));
 
-	if (f->Error == 0)
+	if (f->_error == 0)
 		f->write((uint8 *)&_w, sizeof(_w));
 
-	if (f->Error == 0)
+	if (f->_error == 0)
 		f->write((uint8 *)&_h, sizeof(_h));
 
-	if (f->Error == 0)
+	if (f->_error == 0)
 		if (p)
 			f->write((uint8 *)_pal, 256 * 3);
 
-	if (f->Error == 0)
+	if (f->_error == 0)
 		f->write(_v, n);
 
-	return (f->Error == 0);
+	return (f->_error == 0);
 }
 
 
-bool Bitmap::loadVBM(XFILE *f) {
+bool Bitmap::loadVBM(XFile *f) {
 	uint16 p = 0, n = 0;
-	if (f->Error == 0)
+	if (f->_error == 0)
 		f->read((uint8 *)&p, sizeof(p));
 
-	if (f->Error == 0)
+	if (f->_error == 0)
 		f->read((uint8 *)&n, sizeof(n));
 
-	if (f->Error == 0)
+	if (f->_error == 0)
 		f->read((uint8 *)&_w, sizeof(_w));
 
-	if (f->Error == 0)
+	if (f->_error == 0)
 		f->read((uint8 *)&_h, sizeof(_h));
 
-	if (f->Error == 0) {
+	if (f->_error == 0) {
 		if (p) {
 			if (_pal) {
 				byte palData[PAL_SIZ];
@@ -419,14 +419,14 @@ bool Bitmap::loadVBM(XFILE *f) {
 	if ((_v = farnew(uint8, n)) == NULL)
 		return false;
 
-	if (f->Error == 0)
+	if (f->_error == 0)
 		f->read(_v, n);
 
 	_b = (HideDesc *)(_v + n - _h * sizeof(HideDesc));
-	return (f->Error == 0);
+	return (f->_error == 0);
 }
 
-bool Bitmap::loadBMP(XFILE * f) {
+bool Bitmap::loadBMP(XFile *f) {
   struct {
 	   char BM[2];
 	   union { int16 len; int32 len_; };
@@ -446,16 +446,16 @@ bool Bitmap::loadBMP(XFILE * f) {
   BGR4 bpal[256];
 
   f->read((byte *)&hea, sizeof(hea));
-  if (f->Error == 0) {
+  if (f->_error == 0) {
       if (hea.hdr == 0x436L) {
 	  int16 i = (hea.hdr - sizeof(hea)) / sizeof(BGR4);
 	  f->read((byte *)&bpal, sizeof(bpal));
-	  if (f->Error == 0) {
+	  if (f->_error == 0) {
 		if (_pal) {
 			for (i = 0; i < 256; i ++) {
-				_pal[i].R = bpal[i].R;
-				_pal[i].G = bpal[i].G;
-				_pal[i].B = bpal[i].B;
+				_pal[i]._r = bpal[i].R;
+				_pal[i]._g = bpal[i].G;
+				_pal[i]._b = bpal[i].B;
 			}
 			_pal = NULL;
 		}
@@ -466,9 +466,9 @@ bool Bitmap::loadBMP(XFILE * f) {
 		  byte buf[3]; int i;
 		  for (i = _h - 1; i >= 0; i--) {
 		      f->read(_m + (_w * i), _w);
-		      if (r && f->Error == 0)
+		      if (r && f->_error == 0)
 				  f->read(buf, r);
-		      if (f->Error)
+		      if (f->_error)
 				  break;
 		  }
 		  if (i < 0)

@@ -56,40 +56,40 @@ public:
 	}
 
 	void cge_main();
-	void SwitchCave(int cav);
-	void StartCountDown();
-	void Quit();
-	void ResetQSwitch();
-	void OptionTouch(int opt, uint16 mask);
-	void LoadGame(XFILE &file, bool tiny);
-	void SetMapBrick(int x, int z);
-	void SwitchMapping();
-	void LoadSprite(const char *fname, int ref, int cav, int col, int row, int pos);
-	void LoadScript(const char *fname);
-	void LoadUser();
-	void RunGame();
-	bool ShowTitle(const char *name);
-	void Movie(const char *ext);
-	void TakeName();
-	void Inf(const char *txt);
-	void SelectSound();
+	void switchCave(int cav);
+	void startCountDown();
+	void quit();
+	void resetQSwitch();
+	void optionTouch(int opt, uint16 mask);
+	void loadGame(XFile &file, bool tiny);
+	void setMapBrick(int x, int z);
+	void switchMapping();
+	void loadSprite(const char *fname, int ref, int cav, int col, int row, int pos);
+	void loadScript(const char *fname);
+	void loadUser();
+	void runGame();
+	bool showTitle(const char *name);
+	void movie(const char *ext);
+	void takeName();
+	void inf(const char *txt);
+	void selectSound();
 	void SNSelect();
 	void dummy() {}
 	void NONE();
 	void SB();
-	void CaveDown();
-	void XCave();
-	void QGame();
+	void caveDown();
+	void xCave();
+	void qGame();
 	void SBM();
 	void GUS();
 	void GUSM();
 	void MIDI();
 	void AUTO();
-	void SetPortD();
-	void SetPortM();
-	void SetIRQ();
-	void SetDMA();
-	void MainLoop();
+	void setPortD();
+	void setPortM();
+	void setIRQ();
+	void setDMA();
+	void mainLoop();
 
 private:
 	CGEConsole *_console;

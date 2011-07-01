@@ -32,7 +32,7 @@
 
 namespace CGE {
 
-DAC StdPal[] =  {// R    G   B
+Dac _stdPal[] =  {// R    G   B
 	{   0,  60,  0},    // 198
 	{   0, 104,  0},    // 199
 	{  20, 172,  0},    // 200
@@ -212,12 +212,12 @@ char *dwtom(uint32 val, char *str, int radix, int len) {
 }
 
 IoHand::IoHand(IOMODE mode, CRYPT *crpt)
-	: XFILE(mode), _crypt(crpt), _seed(SEED) {
+	: XFile(mode), _crypt(crpt), _seed(SEED) {
 	_file = new Common::File();
 }
 
 IoHand::IoHand(const char *name, IOMODE mode, CRYPT *crpt)
-		: XFILE(mode), _crypt(crpt), _seed(SEED) {
+		: XFile(mode), _crypt(crpt), _seed(SEED) {
 	// TODO: Check if WRI and/or UPD modes are needed, and map to a save file
 	assert(mode == REA);
 
@@ -231,7 +231,7 @@ IoHand::~IoHand(void) {
 }
 
 uint16 IoHand::read(void *buf, uint16 len) {
-	if (Mode == WRI || !_file->isOpen())
+	if (_mode == WRI || !_file->isOpen())
 		return 0;
 
 	uint16 bytesRead = _file->read(buf, len);
@@ -327,7 +327,7 @@ EC void SNDMIDIStop() {
 	// FIXME: STUB: SNDMIDIStop
 }
 
-DATACK *LoadWave(XFILE *file, EMM *emm) {
+DATACK *LoadWave(XFile *file, EMM *emm) {
 	warning("STUB: LoadWave");
 	return NULL;
 }
@@ -377,10 +377,9 @@ int new_random(int range) {
 }
 
 #define		TIMER_INT	0x08
-//void interrupt	(* ENGINE::OldTimer) (...) = NULL;
+//void interrupt	(* Engine_::oldTimer) (...) = NULL;
 
-ENGINE::ENGINE (uint16 tdiv)
-{
+Engine_::Engine_(uint16 tdiv) {
 /*
   // steal timer interrupt
   OldTimer = getvect(TIMER_INT);
@@ -394,11 +393,10 @@ ENGINE::ENGINE (uint16 tdiv)
   asm	mov	al,ah
   asm	out	0x40,al
 */
-	warning("STUB: ENGINE::ENGINE");
+	warning("STUB: Engine_::Engine_");
 }
 
-ENGINE::~ENGINE (void)
-{
+Engine_::~Engine_() {
 /*
   // reset timer
   asm	mov	al,0x36
@@ -409,12 +407,12 @@ ENGINE::~ENGINE (void)
   // bring back timer interrupt
   setvect(TIMER_INT, OldTimer);
 */
-	warning("STUB: ENGINE::~ENGINE");
+	warning("STUB: Engine_::~Engine_");
 }
 
-DATACK::~DATACK (void)
-{
-  if (!e && Buf) free(Buf);
+DATACK::~DATACK () {
+  if (!e && Buf)
+	  free(Buf);
 }
 } // End of namespace CGE
 

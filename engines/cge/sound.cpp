@@ -104,7 +104,7 @@ void FX::Clear(void) {
 			p->Wav = NULL;
 		}
 	}
-	Emm.Release();
+	Emm.release();
 	Current = NULL;
 }
 
@@ -190,12 +190,12 @@ void LoadMIDI(int ref) {
 	if (INI_FILE::exist(fn)) {
 		KillMIDI();
 		INI_FILE mid = fn;
-		if (mid.Error == 0) {
+		if (mid._error == 0) {
 			uint16 siz = (uint16) mid.size();
 			midi = new uint8[siz];
 			if (midi) {
 				mid.read(midi, siz);
-				if (mid.Error)
+				if (mid._error)
 					KillMIDI();
 				else
 					SNDMIDIStart(midi);
@@ -211,12 +211,12 @@ EC void *Patch(int pat) {
 
 	wtom(pat, fn + 5, 10, 3);
 	INI_FILE snd = fn;
-	if (! snd.Error) {
+	if (!snd._error) {
 		uint16 siz = (uint16) snd.size();
 		p = (uint8 *) malloc(siz);
 		if (p) {
 			snd.read(p, siz);
-			if (snd.Error) {
+			if (snd._error) {
 				free(p);
 				p = NULL;
 			}

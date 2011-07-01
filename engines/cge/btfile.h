@@ -80,10 +80,10 @@ class BtFile : public IoHand {
 		bool _updt;
 	} _buff[BT_LEVELS];
 
-	void putPage(int lev, bool hard = false);
+	void putPage(int lev, bool hard);
 	BtPage *getPage(int lev, uint16 pgn);
 public:
-	BtFile(const char *name, IOMODE mode = REA, CRYPT *crpt = NULL);
+	BtFile(const char *name, IOMODE mode, CRYPT *crpt);
 	virtual ~BtFile();
 	BtKeypack *find(const char *key);
 	BtKeypack *next();

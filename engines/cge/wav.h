@@ -49,7 +49,7 @@ class CKID { // Chunk type identifier
 		uint32 Id;
 	};
 protected:
-	static XFILE *ckFile;
+	static XFile *ckFile;
 public:
 	CKID(FOURCC t) {
 		memcpy(Tx, t, sizeof(Tx));
@@ -57,7 +57,7 @@ public:
 	CKID(uint32 d) {
 		Id = d;
 	}
-	CKID(XFILE *xf) {
+	CKID(XFile *xf) {
 		(ckFile = xf)->read(Tx, sizeof(Tx));
 	}
 	bool operator !=(CKID &X) {
@@ -74,7 +74,7 @@ class CKHEA : public CKID {
 protected:
 	CKSIZE ckSize;        // Chunk size field (size of ckData)
 public:
-	CKHEA(XFILE *xf) : CKID(xf) {
+	CKHEA(XFile *xf) : CKID(xf) {
 		XRead(xf, &ckSize);
 	}
 	CKHEA(char id[]) : CKID(id), ckSize(0) { }
@@ -145,7 +145,7 @@ extern  CKID    FMT;
 extern  CKID    DATA;
 
 
-DATACK     *LoadWave(XFILE *file, EMM *emm = NULL);
+DATACK     *LoadWave(XFile *file, EMM *emm = NULL);
 
 } // End of namespace CGE
 

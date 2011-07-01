@@ -54,59 +54,59 @@ enum    MEM_TYPE    { BAD_MEM, EMS_MEM, NEAR_MEM, FAR_MEM };
 enum    ALLOC_MODE  { FIRST_FIT, BEST_FIT, LAST_FIT };
 enum    IOMODE      { REA, WRI, UPD };
 
-typedef struct  {
-	uint8 R, G, B;
-} DAC;
+struct Dac {
+	uint8 _r, _g, _b;
+};
 
 typedef uint16  CRYPT(void *buf, uint16 siz, uint16 seed);
 
-class COUPLE {
+class Couple {
 protected:
-	signed char A;
-	signed char B;
+	signed char _a;
+	signed char _b;
 public:
-	COUPLE(void) { }
-	COUPLE(const signed char a, const signed char b) : A(a), B(b) { }
-	COUPLE operator + (COUPLE c) {
-		return COUPLE(A + c.A, B + c.B);
+	Couple() { }
+	Couple(const signed char a, const signed char b) : _a(a), _b(b) { }
+	Couple operator + (Couple c) {
+		return Couple(_a + c._a, _b + c._b);
 	}
 
-	void operator += (COUPLE c) {
-		A += c.A;
-		B += c.B;
+	void operator += (Couple c) {
+		_a += c._a;
+		_b += c._b;
 	}
 
-	COUPLE operator - (COUPLE c) {
-		return COUPLE(A - c.A, B - c.B);
+	Couple operator - (Couple c) {
+		return Couple(_a - c._a, _b - c._b);
 	}
 
-	void operator -= (COUPLE c) {
-		A -= c.A;
-		B -= c.B;
+	void operator -= (Couple c) {
+		_a -= c._a;
+		_b -= c._b;
 	}
 
-	bool operator == (COUPLE c) {
-		return ((A - c.A) | (B - c.B)) == 0;
+	bool operator == (Couple c) {
+		return ((_a - c._a) | (_b - c._b)) == 0;
 	}
 
-	bool operator != (COUPLE c) {
+	bool operator != (Couple c) {
 		return !(operator == (c));
 	}
 
-	void Split(signed char &a, signed char &b) {
-		a = A;
-		b = B;
+	void split(signed char &a, signed char &b) {
+		a = _a;
+		b = _b;
 	}
 };
 
 
-class ENGINE {
+class Engine_ {
 protected:
-	static void (* OldTimer)(...);
-	static void NewTimer(...);
+	static void (* oldTimer)(...);
+	static void newTimer(...);
 public:
-	ENGINE(uint16 tdiv);
-	~ENGINE(void);
+	Engine_(uint16 tdiv);
+	~Engine_(void);
 };
 
 
@@ -115,29 +115,31 @@ class EMS;
 
 class EMM {
 	friend class EMS;
-	bool Test(void);
-	long Top, Lim;
-	EMS *List;
-	int Han;
-	static void *Frame;
+	bool test();
+
+	long _top;
+	long _lim;
+	EMS *_list;
+	int _han;
+	static void *_frame;
 public:
 	EMM(long size = 0);
-	~EMM(void);
-	EMS *Alloc(uint16 siz);
-	void Release(void);
+	~EMM();
+	EMS *alloc(uint16 siz);
+	void release();
 };
 
 
 class EMS {
 	friend class EMM;
-	EMM *Emm;
-	long Ptr;
-	uint16 Siz;
-	EMS *Nxt;
+	EMM *_emm;
+	long _ptr;
+	uint16 _size;
+	EMS *_next;
 public:
-	EMS(void);
+	EMS();
 	void *operator & () const;
-	uint16 Size(void);
+	uint16 size(void);
 };
 
 
@@ -162,28 +164,29 @@ T min(T A, T B) {
 #endif
 
 
-class XFILE {
+class XFile {
 public:
-	IOMODE Mode;
-	uint16 Error;
-	XFILE(void) : Mode(REA), Error(0) { }
-	XFILE(IOMODE mode) : Mode(mode), Error(0) { }
+	IOMODE _mode;
+	uint16 _error;
+
+	XFile() : _mode(REA), _error(0) { }
+	XFile(IOMODE mode) : _mode(mode), _error(0) { }
+	virtual ~XFile() { }
 	virtual uint16 read(void *buf, uint16 len) = 0;
 	virtual uint16 write(void *buf, uint16 len) = 0;
-	virtual long mark(void) = 0;
-	virtual long size(void) = 0;
+	virtual long mark() = 0;
+	virtual long size() = 0;
 	virtual long seek(long pos) = 0;
-	virtual ~XFILE() { }
 };
 
 
 template <class T>
-inline uint16 XRead(XFILE *xf, T *t) {
+inline uint16 XRead(XFile *xf, T *t) {
 	return xf->read((uint8 *) t, sizeof(*t));
 }
 
 
-class IoHand : public XFILE {
+class IoHand : public XFile {
 protected:
 	Common::File *_file;
 	uint16 _seed;

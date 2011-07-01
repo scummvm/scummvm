@@ -88,7 +88,7 @@ int TEXT::Find(int ref) {
 
 void TEXT::Preload(int from, int upto) {
 	INI_FILE tf = FileName;
-	if (! tf.Error) {
+	if (!tf._error) {
 		HAN *CacheLim = Cache + Size;
 		char line[LINE_MAX + 1];
 		int n;
@@ -130,7 +130,7 @@ void TEXT::Preload(int from, int upto) {
 
 char *TEXT::Load(int idx, int ref) {
 	INI_FILE tf = FileName;
-	if (! tf.Error) {
+	if (!tf._error) {
 		HAN *p = &Cache[idx];
 		char line[LINE_MAX + 1];
 		int n;
@@ -221,7 +221,7 @@ void TEXT::Say(const char *txt, Sprite *spr) {
 	}
 }
 
-void CGEEngine::Inf(const char *txt) {
+void CGEEngine::inf(const char *txt) {
 	KillText();
 	Talk = new TALK(this, txt, RECT);
 	if (Talk) {
