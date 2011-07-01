@@ -181,6 +181,7 @@ public:
 	~LBCode();
 
 	LBValue runCode(LBItem *src, uint32 offset);
+	uint parseCode(const Common::String &source);
 
 protected:
 	MohawkEngine_LivingBooks *_vm;
@@ -213,6 +214,9 @@ protected:
 	void runGeneralCommand();
 	void runItemCommand();
 	void runNotifyCommand();
+
+	uint nextFreeString();
+	bool parseCodeSymbol(const Common::String &name, uint &pos, Common::Array<byte> &code);
 
 public:
 	void cmdUnimplemented(const Common::Array<LBValue> &params);
