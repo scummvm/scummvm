@@ -67,7 +67,6 @@ void CGEEngine::setup() {
 	Hero = new WALK(this, NULL);
 	Sys = new SYSTEM(this);
 	_pocLight = new Sprite(this, LI);
-	Mouse = new MOUSE(this);
 	for (int i = 0; i < POCKET_NX; i++)
 		_pocket[i] = new Sprite(this, NULL);
 	_sprite = new Sprite(this, NULL);
@@ -97,6 +96,7 @@ void CGEEngine::setup() {
 	Snail = new SNAIL(this, false);
 	Snail_ = new SNAIL(this, true);
 
+	Mouse = new MOUSE(this);
 	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
 }
 
