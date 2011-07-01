@@ -123,10 +123,10 @@ public:
 	 * @param bpp   bytes per pixel of the destination buffer
 	 * @param c1    forground color
 	 * @param c2    outline color
-	 * @param maxW  max draw width (to ensure that character drawing takes place within surface boundaries)
-	 * @param maxH  max draw height (to ensure that character drawing takes place within surface boundaries)
+	 * @param maxW  max draw width (to ensure that character drawing takes place within surface boundaries), -1 = no check
+	 * @param maxH  max draw height (to ensure that character drawing takes place within surface boundaries), -1 = no check
 	 */
-	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW = -1, int maxH = -1) const = 0;
+	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const = 0;
 };
 
 /**

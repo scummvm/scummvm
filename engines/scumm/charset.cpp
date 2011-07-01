@@ -779,7 +779,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 			drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->format.bytesPerPixel);
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		else if (_vm->_cjkFont)
-			_vm->_cjkFont->drawChar(vs, chr, _left, drawTop, _color, _shadowColor);
+			_vm->_cjkFont->drawChar(*vs, chr, _left, drawTop, _color, _shadowColor);
 #endif
 	} else {
 		dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier);
