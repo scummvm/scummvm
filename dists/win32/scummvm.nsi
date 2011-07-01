@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-!define _DEBUG
+#!define _DEBUG
 #!define _INCLUDE_DATA_FILES
 
 Name ScummVM
@@ -31,7 +31,7 @@ Name ScummVM
 #########################################################################################
 
 #!define top_srcdir   ""
-#!define staging_dir    ""
+#!define staging_dir  ""
 #!define ARCH         ""    ;(optional, defaults to win32)
 
 # Check parameters
@@ -46,6 +46,12 @@ Name ScummVM
 !ifndef ARCH
 	!warning "ARCH has not been defined, defaulting to 'win32'"
 	!define ARCH         "win32"
+!else
+	!if "${ARCH}" == ""
+		!warning "ARCH was empty, defaulting to 'win32'"
+		!undef ARCH
+		!define ARCH         "win32"
+	!endif
 !endif
 
 #########################################################################################
@@ -219,7 +225,7 @@ Section "ScummVM" SecMain
 	SetOverwrite on
 
 	# Text files
-	File /oname=AUTHORS.txt      "${top_srcdir}\AUTHORS"	
+	File /oname=AUTHORS.txt      "${top_srcdir}\AUTHORS"
 	File /oname=COPYING.LGPL.txt "${top_srcdir}\COPYING.LGPL"
 	File /oname=COPYING.txt      "${top_srcdir}\COPYING"
 	File /oname=COPYRIGHT.txt    "${top_srcdir}\COPYRIGHT"
@@ -228,15 +234,15 @@ Section "ScummVM" SecMain
 	
 	# Convert line endings
 	Push "$INSTDIR\AUTHORS.txt"
-	Call unix2dos	
+	Call unix2dos
 	Push "$INSTDIR\COPYING.LGPL.txt"
-	Call unix2dos	
+	Call unix2dos
 	Push "$INSTDIR\COPYING.txt"
-	Call unix2dos	
+	Call unix2dos
 	Push "$INSTDIR\COPYRIGHT.txt"
-	Call unix2dos	
+	Call unix2dos
 	Push "$INSTDIR\NEWS.txt"
-	Call unix2dos	
+	Call unix2dos
 	Push "$INSTDIR\README.txt"
 	Call unix2dos
 

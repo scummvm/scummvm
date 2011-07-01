@@ -189,7 +189,7 @@ win32setup: $(EXECUTABLE)
 	mkdir -p $(srcdir)/$(STAGINGPATH)
 	$(STRIP) $(EXECUTABLE) -o $(srcdir)/$(STAGINGPATH)/$(EXECUTABLE)
 	cp /usr/local/bin/SDL.dll $(srcdir)/$(STAGINGPATH)
-	makensis -V2 -Dtop_srcdir="../.." -Dstaging_dir="../../$(STAGINGPATH)" $(srcdir)/dists/win32/scummvm.nsi
+	makensis -V2 -Dtop_srcdir="../.." -Dstaging_dir="../../$(STAGINGPATH)" -Darch=$(ARCH) $(srcdir)/dists/win32/scummvm.nsi
 
 #
 # AmigaOS specific
