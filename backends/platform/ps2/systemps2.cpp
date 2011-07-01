@@ -66,7 +66,7 @@
 
 #include "engines/engine.h"
 
-#include "graphics/font.h"
+#include "graphics/fonts/bdf.h"
 #include "graphics/surface.h"
 
 #include "icon.h"
