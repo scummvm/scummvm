@@ -53,11 +53,11 @@ MOUSE::MOUSE(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(
 	__int__(0x33);
 	Exist = (_AX != 0);
 	Buttons = _BX;
-
+*/
 	Goto(SCR_WID/2, SCR_HIG/2);
-	Z = 127;
+	_z = 127;
 	Step(1);
-	*/
+
 	Exist = true;
 	warning("STUB: MOUSE::MOUSE");
 }

@@ -136,7 +136,7 @@ char *ForceExt(char *buf, const char *nam, const char *ext) {
 	return buf;
 }
 
-static  unsigned    Seed = 1;
+static  unsigned    Seed = 0xA5;
 
 unsigned FastRand(void) {
 	return Seed = 257 * Seed + 817;

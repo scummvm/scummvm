@@ -1070,9 +1070,9 @@ void VGA::GetColors(Dac *tab) {
 void VGA::pal2DAC(const byte *palData, Dac *tab) {
 	const byte *colP = palData;
 	for (int idx = 0; idx < PAL_CNT; ++idx, colP += 3) {
-		tab[idx]._r = *colP;
-		tab[idx]._g = *(colP + 1);
-		tab[idx]._b = *(colP + 2);
+		tab[idx]._r = *colP >> 2;
+		tab[idx]._g = *(colP + 1) >> 2;
+		tab[idx]._b = *(colP + 2) >> 2;
 	}
 }
 
@@ -1085,21 +1085,21 @@ void VGA::DAC2pal(const Dac *tab, byte *palData) {
 }
 
 void VGA::SetColors(Dac *tab, int lum) {
-	Dac *palP = tab;
-	for (int idx = 0; idx < PAL_CNT; ++idx, ++palP) {
-		palP->_r = (palP->_r * lum) >> 6;
-		palP->_g = (palP->_g * lum) >> 6;
-		palP->_b = (palP->_b * lum) >> 6;
+	Dac *palP = tab, *destP = NewColors;
+	for (int idx = 0; idx < PAL_CNT; ++idx, ++palP, ++destP) {
+		destP->_r = (palP->_r * lum) >> 6;
+		destP->_g = (palP->_g * lum) >> 6;
+		destP->_b = (palP->_b * lum) >> 6;
 	}
 
 	if (Mono) {
-		palP = tab;
+		destP = NewColors;
 		for (int idx = 0; idx < PAL_CNT; ++idx, ++palP) {
 			// Form a greyscalce colour from 30% R, 59% G, 11% B
-			uint8 intensity = (palP->_r * 77) + (palP->_g * 151) + (palP->_b * 28);
-			palP->_r = intensity;
-			palP->_g = intensity;
-			palP->_b = intensity;
+			uint8 intensity = (destP->_r * 77) + (destP->_g * 151) + (destP->_b * 28);
+			destP->_r = intensity;
+			destP->_g = intensity;
+			destP->_b = intensity;
 		}
 	}
 
