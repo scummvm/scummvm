@@ -913,9 +913,15 @@ void SNAIL::RunCom(void) {
 			COM *snc = &SNList[Tail];
 
 			if (! Turbo) { // only for the slower one
-				if (_timerExpiry && (_timerExpiry > g_system->getMillis()))
-					break;
-				else {
+				if (_timerExpiry) {
+					// Delay in progress
+					if (_timerExpiry > g_system->getMillis())
+						// Delay not yet ended
+						break;
+
+					// Delay is finished
+					_timerExpiry = 0;
+				} else {
 					if (TextDelay) {
 						KillText();
 						TextDelay = false;
