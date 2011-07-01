@@ -1854,6 +1854,7 @@ case $_host_os in
 	mingw*)
 		DEFINES="$DEFINES -DWIN32"
 		DEFINES="$DEFINES -D__USE_MINGW_ANSI_STDIO=0"
+		LDFLAGS="$LDFLAGS -static-libgcc -static-libstdc++"
 		LIBS="$LIBS -lmingw32 -lwinmm -lgdi32"
 		OBJS="$OBJS scummvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
