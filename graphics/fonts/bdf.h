@@ -44,19 +44,19 @@ struct BBX {
 /* builtin C-based proportional/fixed font structure */
 /* based on The Microwindows Project http://microwindows.org */
 struct FontDesc {
-	const char *	name;		/* font name*/
-	int		maxwidth;	/* max width in pixels*/
-	int		height;		/* height in pixels*/
-	int	fbbw, fbbh, fbbx, fbby;	/* max bounding box */
-	int		ascent;		/* ascent (baseline) height*/
-	int		firstchar;	/* first character in bitmap*/
-	int		size;		/* font size in glyphs*/
-	const bitmap_t*	bits;		/* 16-bit right-padded bitmap data*/
-	const unsigned long* offset;	/* offsets into bitmap data*/
-	const unsigned char* width;	/* character widths or NULL if fixed*/
-	const BBX* bbx;			/* character bounding box or NULL if fixed */
-	int		defaultchar;	/* default char (not glyph index)*/
-	long	bits_size;	/* # words of bitmap_t bits*/
+	const char          *name;                  /* font name */
+	int                 maxwidth;               /* max width in pixels */
+	int                 height;                 /* height in pixels */
+	int                 fbbw, fbbh, fbbx, fbby; /* max bounding box */
+	int                 ascent;                 /* ascent (baseline) height */
+	int                 firstchar;              /* first character in bitmap */
+	int                 size;                   /* font size in glyphs */
+	const bitmap_t      *bits;                  /* 16-bit right-padded bitmap data */
+	const unsigned long *offset;                /* offsets into bitmap data */
+	const unsigned char *width;                 /* character widths or NULL if fixed */
+	const BBX           *bbx;                   /* character bounding box or NULL if fixed */
+	int                 defaultchar;            /* default char (not glyph index) */
+	long                bits_size;              /* # words of bitmap_t bits */
 };
 
 struct NewFontData;
@@ -70,8 +70,8 @@ public:
 	NewFont(const FontDesc &desc, NewFontData *font = 0) : _desc(desc), _font(font) {}
 	~NewFont();
 
-	virtual int getFontHeight() const { return _desc.height; }
-	virtual int getMaxCharWidth() const { return _desc.maxwidth; }
+	virtual int getFontHeight() const;
+	virtual int getMaxCharWidth() const;
 
 	virtual int getCharWidth(byte chr) const;
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
@@ -82,17 +82,17 @@ public:
 };
 
 #define DEFINE_FONT(n) \
-		const NewFont *n = 0;	\
-		void create_##n() {	\
-			n = new NewFont(desc);	\
-		}
+	const NewFont *n = 0;   \
+	void create_##n() { \
+		n = new NewFont(desc);  \
+	}
 
 #define FORWARD_DECLARE_FONT(n) \
-		extern const NewFont *n; \
-		extern void create_##n()
+	extern const NewFont *n; \
+	extern void create_##n()
 
 #define INIT_FONT(n) \
-		create_##n()
+	create_##n()
 
 } // End of namespace Graphics
 

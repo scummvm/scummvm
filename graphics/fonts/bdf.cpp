@@ -37,6 +37,14 @@ NewFont::~NewFont() {
 	}
 }
 
+int NewFont::getFontHeight() const {
+	return _desc.height;
+}
+
+int NewFont::getMaxCharWidth() const {
+	return _desc.maxwidth;
+}
+
 int NewFont::getCharWidth(byte chr) const {
 	// If no width table is specified, return the maximum width
 	if (!_desc.width)
@@ -49,9 +57,9 @@ int NewFont::getCharWidth(byte chr) const {
 }
 
 
-template <typename PixelType>
+template<typename PixelType>
 void drawCharIntern(byte *ptr, uint pitch, const bitmap_t *src, int h, int minX, int maxX, const PixelType color) {
-	const bitmap_t maxXMask = ~((1 << (16-maxX)) - 1);
+	const bitmap_t maxXMask = ~((1 << (16 - maxX)) - 1);
 	while (h-- > 0) {
 		bitmap_t buffer = READ_UINT16(src);
 		src++;
@@ -117,54 +125,54 @@ void NewFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const
 
 /* BEGIN font.h*/
 /* bitmap_t helper macros*/
-#define BITMAP_WORDS(x)			(((x)+15)/16)	/* image size in words*/
-#define BITMAP_BYTES(x)			(BITMAP_WORDS(x)*sizeof(bitmap_t))
-#define BITMAP_BITSPERIMAGE		(sizeof(bitmap_t) * 8)
-#define BITMAP_BITVALUE(n)		((bitmap_t) (((bitmap_t) 1) << (n)))
-#define BITMAP_FIRSTBIT			(BITMAP_BITVALUE(BITMAP_BITSPERIMAGE - 1))
-#define BITMAP_TESTBIT(m)	((m) & BITMAP_FIRSTBIT)
-#define BITMAP_SHIFTBIT(m)	((bitmap_t) ((m) << 1))
+#define BITMAP_WORDS(x)         (((x)+15)/16)   /* image size in words*/
+#define BITMAP_BYTES(x)         (BITMAP_WORDS(x)*sizeof(bitmap_t))
+#define BITMAP_BITSPERIMAGE     (sizeof(bitmap_t) * 8)
+#define BITMAP_BITVALUE(n)      ((bitmap_t) (((bitmap_t) 1) << (n)))
+#define BITMAP_FIRSTBIT         (BITMAP_BITVALUE(BITMAP_BITSPERIMAGE - 1))
+#define BITMAP_TESTBIT(m)       ((m) & BITMAP_FIRSTBIT)
+#define BITMAP_SHIFTBIT(m)      ((bitmap_t) ((m) << 1))
 
 /* builtin C-based proportional/fixed font structure */
 /* based on The Microwindows Project http://microwindows.org */
 struct NewFontData {
-	char *	name;		/* font name*/
-	int		maxwidth;	/* max width in pixels*/
-	int		height;		/* height in pixels*/
-	int		ascent;		/* ascent (baseline) height*/
-	int		firstchar;	/* first character in bitmap*/
-	int		size;		/* font size in glyphs*/
-	bitmap_t*	bits;		/* 16-bit right-padded bitmap data*/
-	unsigned long* offset;	/* offsets into bitmap data*/
-	unsigned char* width;	/* character widths or NULL if fixed*/
-	BBX*		bbx;	/* character bounding box or NULL if fixed */
-	int		defaultchar;	/* default char (not glyph index)*/
-	long	bits_size;	/* # words of bitmap_t bits*/
+	char          *name;       /* font name */
+	int           maxwidth;    /* max width in pixels */
+	int           height;      /* height in pixels */
+	int           ascent;      /* ascent (baseline) height */
+	int           firstchar;   /* first character in bitmap */
+	int           size;        /* font size in glyphs */
+	bitmap_t      *bits;       /* 16-bit right-padded bitmap data */
+	unsigned long *offset;     /* offsets into bitmap data */
+	unsigned char *width;      /* character widths or NULL if fixed */
+	BBX           *bbx;        /* character bounding box or NULL if fixed */
+	int           defaultchar; /* default char (not glyph index) */
+	long          bits_size;   /* # words of bitmap_t bits */
 
-	/* unused by runtime system, read in by convbdf*/
-	char *	facename;	/* facename of font*/
-	char *	copyright;	/* copyright info for loadable fonts*/
-	int		pixel_size;
-	int		descent;
-	int		fbbw, fbbh, fbbx, fbby;
+	/* unused by runtime system, read in by convbdf */
+	char          *facename;   /* facename of font */
+	char          *copyright;  /* copyright info for loadable fonts */
+	int           pixel_size;
+	int           descent;
+	int           fbbw, fbbh, fbbx, fbby;
 };
-/* END font.h*/
+/* END font.h */
 
-#define isprefix(buf,str)	(!strncmp(buf, str, strlen(str)))
-#define strequal(s1,s2)		(!strcmp(s1, s2))
+#define isprefix(buf,str)   (!strncmp(buf, str, strlen(str)))
+#define strequal(s1,s2)     (!strcmp(s1, s2))
 
-#define EXTRA	300
+#define EXTRA   300
 
 int start_char = 0;
 int limit_char = 255;
 
-NewFontData* bdf_read_font(Common::SeekableReadStream &fp);
-int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf);
-int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf);
-char * bdf_getline(Common::SeekableReadStream &fp, char *buf, int len);
+NewFontData *bdf_read_font(Common::SeekableReadStream &fp);
+int bdf_read_header(Common::SeekableReadStream &fp, NewFontData *pf);
+int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData *pf);
+char *bdf_getline(Common::SeekableReadStream &fp, char *buf, int len);
 bitmap_t bdf_hexval(unsigned char *buf);
 
-void free_font(NewFontData* pf) {
+void free_font(NewFontData *pf) {
 	if (!pf)
 		return;
 	free(pf->name);
@@ -177,11 +185,11 @@ void free_font(NewFontData* pf) {
 }
 
 /* build incore structure from .bdf file*/
-NewFontData* bdf_read_font(Common::SeekableReadStream &fp) {
-	NewFontData* pf;
+NewFontData *bdf_read_font(Common::SeekableReadStream &fp) {
+	NewFontData *pf;
 	uint32 pos = fp.pos();
 
-	pf = (NewFontData*)calloc(1, sizeof(NewFontData));
+	pf = (NewFontData *)calloc(1, sizeof(NewFontData));
 	if (!pf)
 		goto errout;
 
@@ -199,13 +207,13 @@ NewFontData* bdf_read_font(Common::SeekableReadStream &fp) {
 
 	return pf;
 
- errout:
+errout:
 	free_font(pf);
 	return NULL;
 }
 
 /* read bdf font header information, return 0 on error*/
-int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
+int bdf_read_header(Common::SeekableReadStream &fp, NewFontData *pf) {
 	int encoding = 0;
 	int nchars = 0, maxwidth, maxheight;
 	int firstchar = 65535;
@@ -231,7 +239,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 		   character is automatically added. Refer to:
 		   http://pubs.opengroup.org/onlinepubs/009695399/functions/fscanf.html */
 
-		if (isprefix(buf, "FONT ")) {		/* not required*/
+		if (isprefix(buf, "FONT ")) {       /* not required*/
 			if (sscanf(buf, "FONT %[^\n]", facename) != 1) {
 				warning("Error: bad 'FONT'");
 				return 0;
@@ -240,7 +248,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 			pf->facename = strdup(facename);
 			continue;
 		}
-		if (isprefix(buf, "COPYRIGHT ")) {	/* not required*/
+		if (isprefix(buf, "COPYRIGHT ")) {  /* not required*/
 			if (sscanf(buf, "COPYRIGHT \"%[^\"]", copyright) != 1) {
 				warning("Error: bad 'COPYRIGHT'");
 				return 0;
@@ -249,7 +257,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 			pf->copyright = strdup(copyright);
 			continue;
 		}
-		if (isprefix(buf, "DEFAULT_CHAR ")) {	/* not required*/
+		if (isprefix(buf, "DEFAULT_CHAR ")) {   /* not required*/
 			if (sscanf(buf, "DEFAULT_CHAR %d", &pf->defaultchar) != 1) {
 				warning("Error: bad 'DEFAULT_CHAR'");
 				return 0;
@@ -271,7 +279,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 		}
 		if (isprefix(buf, "FONTBOUNDINGBOX ")) {
 			if (sscanf(buf, "FONTBOUNDINGBOX %d %d %d %d",
-					   &pf->fbbw, &pf->fbbh, &pf->fbbx, &pf->fbby) != 4) {
+			           &pf->fbbw, &pf->fbbh, &pf->fbbx, &pf->fbby) != 4) {
 				warning("Error: bad 'FONTBOUNDINGBOX'");
 				return 0;
 			}
@@ -296,8 +304,8 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 				return 0;
 			}
 			if (encoding >= 0 &&
-				encoding <= limit_char &&
-				encoding >= start_char) {
+			        encoding <= limit_char &&
+			        encoding >= start_char) {
 
 				if (firstchar > encoding)
 					firstchar = encoding;
@@ -319,8 +327,8 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 
 	/* calc default char*/
 	if (pf->defaultchar < 0 ||
-		pf->defaultchar < firstchar ||
-		pf->defaultchar > limit_char )
+	        pf->defaultchar < firstchar ||
+	        pf->defaultchar > limit_char)
 		pf->defaultchar = firstchar;
 
 	/* calc font size (offset/width entries)*/
@@ -350,7 +358,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 }
 
 /* read bdf font bitmaps, return 0 on error*/
-int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
+int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData *pf) {
 	long ofs = 0;
 	int maxwidth = 0;
 	int i, k, encoding = 0, width = 0;
@@ -408,18 +416,18 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 				continue;
 
 			/* set bits offset in encode map*/
-			if (pf->offset[encoding-pf->firstchar] != (unsigned long)-1) {
+			if (pf->offset[encoding - pf->firstchar] != (unsigned long)-1) {
 				warning("Error: duplicate encoding for character %d (0x%02x), ignoring duplicate",
-						encoding, encoding);
+				        encoding, encoding);
 				continue;
 			}
-			pf->offset[encoding-pf->firstchar] = ofs;
-			pf->width[encoding-pf->firstchar] = width;
+			pf->offset[encoding - pf->firstchar] = ofs;
+			pf->width[encoding - pf->firstchar] = width;
 
-			pf->bbx[encoding-pf->firstchar].w = bbw;
-			pf->bbx[encoding-pf->firstchar].h = bbh;
-			pf->bbx[encoding-pf->firstchar].x = bbx;
-			pf->bbx[encoding-pf->firstchar].y = bby;
+			pf->bbx[encoding - pf->firstchar].w = bbw;
+			pf->bbx[encoding - pf->firstchar].h = bbh;
+			pf->bbx[encoding - pf->firstchar].x = bbx;
+			pf->bbx[encoding - pf->firstchar].y = bby;
 
 			if (width > maxwidth)
 				maxwidth = width;
@@ -521,11 +529,10 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 		else
 			error("bdf_read_bitmaps: Error while reallocating memory");
 		pf->bits_size = ofs;
-	}
-	else {
+	} else {
 		if (ofs > pf->bits_size) {
 			warning("Warning: DWIDTH spec > max FONTBOUNDINGBOX");
-			if (ofs > pf->bits_size+EXTRA) {
+			if (ofs > pf->bits_size + EXTRA) {
 				warning("Error: Not enough bits initially allocated");
 				return 0;
 			}
