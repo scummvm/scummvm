@@ -206,6 +206,7 @@ protected:
 	void parseArithmetic2();
 	void parseMain();
 
+	LBItem *resolveItem(const LBValue &value);
 	Common::Array<LBValue> readParams();
 	Common::Rect getRectFromParams(const Common::Array<LBValue> &params);
 

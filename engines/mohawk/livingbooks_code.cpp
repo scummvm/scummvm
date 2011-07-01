@@ -555,6 +555,16 @@ void LBCode::parseMain() {
 	}
 }
 
+LBItem *LBCode::resolveItem(const LBValue &value) {
+	if (value.type == kLBValueItemPtr)
+		return value.item;
+	if (value.type == kLBValueString)
+		return _vm->getItemByName(value.string);
+	if (value.type == kLBValueInteger)
+		return _vm->getItemById(value.integer);
+	return NULL;
+}
+
 Common::Array<LBValue> LBCode::readParams() {
 	Common::Array<LBValue> params;
 
