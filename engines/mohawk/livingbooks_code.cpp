@@ -128,7 +128,7 @@ Common::Rect LBValue::toRect() const {
 
 LBCode::LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId) : _vm(vm) {
 	if (!baseId) {
-		_data = new byte[0];
+		_data = NULL;
 		_size = 0;
 		return;
 	}
