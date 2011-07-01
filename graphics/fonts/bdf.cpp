@@ -177,6 +177,7 @@ void free_font(BdfFontData *pf) {
 		return;
 	free(pf->name);
 	free(pf->facename);
+	free(pf->copyright);
 	free(pf->bits);
 	free(pf->offset);
 	free(pf->width);
