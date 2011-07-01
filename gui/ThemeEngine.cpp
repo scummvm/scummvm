@@ -33,6 +33,7 @@
 #include "graphics/imagedec.h"
 #include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
+#include "graphics/fonts/bdf.h"
 
 #include "gui/widget.h"
 #include "gui/ThemeEngine.h"
