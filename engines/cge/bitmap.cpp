@@ -409,9 +409,16 @@ bool Bitmap::loadVBM(XFile *f) {
 	if (f->_error == 0) {
 		if (p) {
 			if (_pal) {
+				// Read in the palette
 				byte palData[PAL_SIZ];
 				f->read(palData, PAL_SIZ);
-				VGA::pal2DAC(palData, _pal);
+				
+				const byte *srcP = palData;
+				for (int idx = 0; idx < PAL_CNT; ++idx, srcP += 3) {
+					_pal[idx]._r = *srcP;
+					_pal[idx]._g = *(srcP + 1);
+					_pal[idx]._b = *(srcP + 2);
+				}
 			} else
 				f->seek(f->mark() + PAL_SIZ);
 		}
