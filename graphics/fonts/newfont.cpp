@@ -7419,7 +7419,7 @@ static const unsigned long _sysfont_offset[] = {
 };
 
 /* Exported structure definition. */
-static const FontDesc desc = {
+static const BdfFontDesc desc = {
 	"clR6x12-L1",
 	6,
 	12,

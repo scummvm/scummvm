@@ -29,23 +29,23 @@
 
 namespace Graphics {
 
-void free_font(NewFontData *pf);
+void free_font(BdfFontData *pf);
 
-NewFont::~NewFont() {
+BdfFont::~BdfFont() {
 	if (_font) {
 		free_font(_font);
 	}
 }
 
-int NewFont::getFontHeight() const {
+int BdfFont::getFontHeight() const {
 	return _desc.height;
 }
 
-int NewFont::getMaxCharWidth() const {
+int BdfFont::getMaxCharWidth() const {
 	return _desc.maxwidth;
 }
 
-int NewFont::getCharWidth(byte chr) const {
+int BdfFont::getCharWidth(byte chr) const {
 	// If no width table is specified, return the maximum width
 	if (!_desc.width)
 		return _desc.maxwidth;
@@ -78,7 +78,7 @@ void drawCharIntern(byte *ptr, uint pitch, const bitmap_t *src, int h, int minX,
 	}
 }
 
-void NewFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const uint32 color) const {
+void BdfFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const uint32 color) const {
 	assert(dst != 0);
 
 	assert(_desc.bits != 0 && _desc.maxwidth <= 16);
@@ -135,7 +135,7 @@ void NewFont::drawChar(Surface *dst, byte chr, const int tx, const int ty, const
 
 /* builtin C-based proportional/fixed font structure */
 /* based on The Microwindows Project http://microwindows.org */
-struct NewFontData {
+struct BdfFontData {
 	char          *name;       /* font name */
 	int           maxwidth;    /* max width in pixels */
 	int           height;      /* height in pixels */
@@ -166,13 +166,13 @@ struct NewFontData {
 int start_char = 0;
 int limit_char = 255;
 
-NewFontData *bdf_read_font(Common::SeekableReadStream &fp);
-int bdf_read_header(Common::SeekableReadStream &fp, NewFontData *pf);
-int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData *pf);
+BdfFontData *bdf_read_font(Common::SeekableReadStream &fp);
+int bdf_read_header(Common::SeekableReadStream &fp, BdfFontData *pf);
+int bdf_read_bitmaps(Common::SeekableReadStream &fp, BdfFontData *pf);
 char *bdf_getline(Common::SeekableReadStream &fp, char *buf, int len);
 bitmap_t bdf_hexval(unsigned char *buf);
 
-void free_font(NewFontData *pf) {
+void free_font(BdfFontData *pf) {
 	if (!pf)
 		return;
 	free(pf->name);
@@ -185,11 +185,11 @@ void free_font(NewFontData *pf) {
 }
 
 /* build incore structure from .bdf file*/
-NewFontData *bdf_read_font(Common::SeekableReadStream &fp) {
-	NewFontData *pf;
+BdfFontData *bdf_read_font(Common::SeekableReadStream &fp) {
+	BdfFontData *pf;
 	uint32 pos = fp.pos();
 
-	pf = (NewFontData *)calloc(1, sizeof(NewFontData));
+	pf = (BdfFontData *)calloc(1, sizeof(BdfFontData));
 	if (!pf)
 		goto errout;
 
@@ -213,7 +213,7 @@ errout:
 }
 
 /* read bdf font header information, return 0 on error*/
-int bdf_read_header(Common::SeekableReadStream &fp, NewFontData *pf) {
+int bdf_read_header(Common::SeekableReadStream &fp, BdfFontData *pf) {
 	int encoding = 0;
 	int nchars = 0, maxwidth, maxheight;
 	int firstchar = 65535;
@@ -358,7 +358,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData *pf) {
 }
 
 /* read bdf font bitmaps, return 0 on error*/
-int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData *pf) {
+int bdf_read_bitmaps(Common::SeekableReadStream &fp, BdfFontData *pf) {
 	long ofs = 0;
 	int maxwidth = 0;
 	int i, k, encoding = 0, width = 0;
@@ -590,14 +590,14 @@ bitmap_t bdf_hexval(unsigned char *buf) {
 	return val;
 }
 
-NewFont *NewFont::loadFont(Common::SeekableReadStream &stream) {
-	NewFontData *data = bdf_read_font(stream);
+BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
+	BdfFontData *data = bdf_read_font(stream);
 	if (!data || stream.err()) {
 		free_font(data);
 		return 0;
 	}
 
-	FontDesc desc;
+	BdfFontDesc desc;
 	desc.name = data->name;
 	desc.maxwidth = data->maxwidth;
 	desc.height = data->height;
@@ -615,10 +615,10 @@ NewFont *NewFont::loadFont(Common::SeekableReadStream &stream) {
 	desc.defaultchar = data->defaultchar;
 	desc.bits_size = data->bits_size;
 
-	return new NewFont(desc, data);
+	return new BdfFont(desc, data);
 }
 
-bool NewFont::cacheFontData(const NewFont &font, const Common::String &filename) {
+bool BdfFont::cacheFontData(const BdfFont &font, const Common::String &filename) {
 	Common::DumpFile cacheFile;
 	if (!cacheFile.open(filename)) {
 		warning("Couldn't open file '%s' for writing", filename.c_str());
@@ -674,14 +674,14 @@ bool NewFont::cacheFontData(const NewFont &font, const Common::String &filename)
 	return !cacheFile.err();
 }
 
-NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
-	NewFont *font = 0;
+BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
+	BdfFont *font = 0;
 
-	NewFontData *data = (NewFontData *)malloc(sizeof(NewFontData));
+	BdfFontData *data = (BdfFontData *)malloc(sizeof(BdfFontData));
 	if (!data)
 		return 0;
 
-	memset(data, 0, sizeof(NewFontData));
+	memset(data, 0, sizeof(BdfFontData));
 
 	data->maxwidth = stream.readUint16BE();
 	data->height = stream.readUint16BE();
@@ -761,7 +761,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 		return 0;
 	}
 
-	FontDesc desc;
+	BdfFontDesc desc;
 	desc.name = data->name;
 	desc.maxwidth = data->maxwidth;
 	desc.height = data->height;
@@ -779,7 +779,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 	desc.defaultchar = data->defaultchar;
 	desc.bits_size = data->bits_size;
 
-	font = new NewFont(desc, data);
+	font = new BdfFont(desc, data);
 	if (!font) {
 		free(data->bits);
 		free(data->offset);

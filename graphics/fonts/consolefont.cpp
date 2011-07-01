@@ -5635,7 +5635,7 @@ static const unsigned long _sysfont_offset[] = {
 };
 
 /* Exported structure definition. */
-static const FontDesc desc = {
+static const BdfFontDesc desc = {
 	"5x8-L1",
 	5,
 	8,

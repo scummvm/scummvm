@@ -43,7 +43,7 @@ struct BBX {
 
 /* builtin C-based proportional/fixed font structure */
 /* based on The Microwindows Project http://microwindows.org */
-struct FontDesc {
+struct BdfFontDesc {
 	const char          *name;                  /* font name */
 	int                 maxwidth;               /* max width in pixels */
 	int                 height;                 /* height in pixels */
@@ -59,16 +59,16 @@ struct FontDesc {
 	long                bits_size;              /* # words of bitmap_t bits */
 };
 
-struct NewFontData;
+struct BdfFontData;
 
-class NewFont : public Font {
+class BdfFont : public Font {
 protected:
-	FontDesc _desc;
-	NewFontData *_font;
+	BdfFontDesc _desc;
+	BdfFontData *_font;
 
 public:
-	NewFont(const FontDesc &desc, NewFontData *font = 0) : _desc(desc), _font(font) {}
-	~NewFont();
+	BdfFont(const BdfFontDesc &desc, BdfFontData *font = 0) : _desc(desc), _font(font) {}
+	~BdfFont();
 
 	virtual int getFontHeight() const;
 	virtual int getMaxCharWidth() const;
@@ -76,19 +76,19 @@ public:
 	virtual int getCharWidth(byte chr) const;
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
 
-	static NewFont *loadFont(Common::SeekableReadStream &stream);
-	static bool cacheFontData(const NewFont &font, const Common::String &filename);
-	static NewFont *loadFromCache(Common::SeekableReadStream &stream);
+	static BdfFont *loadFont(Common::SeekableReadStream &stream);
+	static bool cacheFontData(const BdfFont &font, const Common::String &filename);
+	static BdfFont *loadFromCache(Common::SeekableReadStream &stream);
 };
 
 #define DEFINE_FONT(n) \
-	const NewFont *n = 0;   \
+	const BdfFont *n = 0;   \
 	void create_##n() { \
-		n = new NewFont(desc);  \
+		n = new BdfFont(desc);  \
 	}
 
 #define FORWARD_DECLARE_FONT(n) \
-	extern const NewFont *n; \
+	extern const BdfFont *n; \
 	extern void create_##n()
 
 #define INIT_FONT(n) \

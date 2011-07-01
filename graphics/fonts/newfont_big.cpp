@@ -5523,7 +5523,7 @@ static const BBX _sysfont_bbx[] = {
 };
 
 /* Exported structure definition. */
-static const FontDesc desc = {
+static const BdfFontDesc desc = {
 	"helvB12-L1",
 	13,
 	14,
