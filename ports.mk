@@ -187,17 +187,9 @@ endif
 # Special target to create a win32 NSIS installer
 win32setup: $(EXECUTABLE)
 	mkdir -p $(srcdir)/$(STAGINGPATH)
-	cp $(srcdir)/AUTHORS          $(srcdir)/$(STAGINGPATH)
-	cp $(srcdir)/COPYING          $(srcdir)/$(STAGINGPATH)
-	cp $(srcdir)/COPYING.LGPL     $(srcdir)/$(STAGINGPATH)
-	cp $(srcdir)/COPYRIGHT        $(srcdir)/$(STAGINGPATH)
-	cp $(srcdir)/NEWS             $(srcdir)/$(STAGINGPATH)
-	cp $(srcdir)/README           $(srcdir)/$(STAGINGPATH)
-	cp /usr/local/README-SDL.txt  $(srcdir)/$(STAGINGPATH)/README-SDL
-	unix2dos $(srcdir)/$(STAGINGPATH)/*.*
 	$(STRIP) $(EXECUTABLE) -o $(srcdir)/$(STAGINGPATH)/$(EXECUTABLE)
 	cp /usr/local/bin/SDL.dll $(srcdir)/$(STAGINGPATH)
-	makensis -V2 -Dtop_srcdir="../.." -Dtext_dir="../../$(STAGINGPATH)" -Dbuild_dir="../../$(STAGINGPATH)" $(srcdir)/dists/win32/scummvm.nsi
+	makensis -V2 -Dtop_srcdir="../.." -Dstaging_dir="../../$(STAGINGPATH)" $(srcdir)/dists/win32/scummvm.nsi
 
 #
 # AmigaOS specific
