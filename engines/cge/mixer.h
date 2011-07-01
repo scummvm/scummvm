@@ -39,19 +39,19 @@ namespace CGE {
 #define MIX_BHIG    6                               // mixer button high
 #define MIX_NAME    105                             // sprite name
 
-class MIXER : public Sprite {
-	BMP_PTR mb[2];
-	BMP_PTR lb[MIX_MAX + 1];
-	Seq ls[MIX_MAX];
-	Sprite *Led[2];
-	int Fall;
-	void Update(void);
+class Mixer : public Sprite {
+	BMP_PTR _mb[2];
+	BMP_PTR _lb[MIX_MAX + 1];
+	Seq _ls[MIX_MAX];
+	Sprite *_led[2];
+	int _fall;
+	void update();
 public:
-	static bool Appear;
-	MIXER(CGEEngine *vm, int x, int y);
-	~MIXER();
-	void Touch(uint16 mask, int x, int y);
-	void Tick();
+	static bool _appear;
+	Mixer(CGEEngine *vm, int x, int y);
+	~Mixer();
+	void touch(uint16 mask, int x, int y);
+	void tick();
 private:
 	CGEEngine *_vm;
 };

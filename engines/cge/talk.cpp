@@ -48,7 +48,7 @@ FONT::FONT(const char *name) {
 	Wid = farnew(uint8, WID_SIZ);
 	if ((Map == NULL) || (Pos == NULL) || (Wid == NULL))
 		error("No core");
-	MergeExt(Path, name, FONT_EXT);
+	mergeExt(Path, name, FONT_EXT);
 	Load();
 }
 
@@ -126,7 +126,7 @@ TALK::~TALK (void) {
 FONT *TALK::_Font;
 
 void TALK::init() {
-	_Font = new FONT(ProgName());
+	_Font = new FONT(progName());
 }
 
 void TALK::deinit() {
@@ -182,7 +182,7 @@ void TALK::Update(const char *tx) {
 		tx++;
 	}
 	TS[0]->code();
-	SetShapeList(TS);
+	setShapeList(TS);
 }
 
 
@@ -286,7 +286,7 @@ void TALK::PutLine(int line, const char *text) {
 
 INFO_LINE::INFO_LINE(CGEEngine *vm, uint16 w) : TALK(vm), OldTxt(NULL), _vm(vm) {
 	TS[0] = new Bitmap(w, FONT_HIG, TEXT_BG);
-	SetShapeList(TS);
+	setShapeList(TS);
 }
 
 

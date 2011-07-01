@@ -39,7 +39,7 @@ namespace CGE {
 
 extern char Copr[];
 
-#define id (*(IDENT*)Copr)
+#define id (*(Ident*)Copr)
 
 
 EMM MiniEmm = MINI_EMM_SIZE;
@@ -65,7 +65,7 @@ bool STARTUP::get_parms(void) {
 	    {
 	      static char *PrmTab[] = { "NEW", "MK0SVG", "QUIET", "SB", "GUS", "MIDI",
 	                "P", "D", "I", "M" };
-	      int n = TakeEnum(PrmTab, strtok(_argv[--i], " =:("));
+	      int n = takeEnum(PrmTab, strtok(_argv[--i], " =:("));
 	      uint16 p = xtow(strtok(NULL, " h,)"));
 	      switch (n)
 	    {
@@ -99,7 +99,7 @@ bool STARTUP::get_parms(void) {
 	      Summa = 0;
 	    #else
 	      // disk signature checksum
-	      Summa = ChkSum(Copr, sizeof(IDENT));
+	      Summa = ChkSum(Copr, sizeof(Ident));
 	    #endif
 	  #endif
 	  if (SNDDrvInfo.MDEV != DEV_GM) SNDDrvInfo.MDEV = SNDDrvInfo.DDEV;
@@ -112,26 +112,31 @@ bool STARTUP::get_parms(void) {
 
 STARTUP::STARTUP(void) {
 	/*
-	  uint32 m = farcoreleft() >> 10;
-	  if (m < 0x7FFF) Core = (int) m; else Core = 0x7FFF;
+	uint32 m = farcoreleft() >> 10;
+	if (m < 0x7FFF)
+		Core = (int) m; 
+	else
+		Core = 0x7FFF;
 
-	  if (! IsVga()) quit_now(NOT_VGA_TEXT);
-	  if (Cpu() < _80286) quit_now(BAD_CHIP_TEXT);
-	  if (100 * _osmajor + _osminor < 330) quit_now(BAD_DOS_TEXT);
-
-	  if (! get_parms()) quit_now(BAD_ARG_TEXT);
-	  //--- load sound configuration
-	  const char * fn = UsrPath(ProgName(CFG_EXT));
-	  if (! STARTUP::SoundOk && CFILE::Exist(fn))
-	    {
-	      CFILE cfg(fn, REA);
-	      if (! cfg.Error)
-	    {
-	      cfg.Read(&SNDDrvInfo, sizeof(SNDDrvInfo)-sizeof(SNDDrvInfo.VOL2));
-	      if (! cfg.Error) STARTUP::SoundOk = 1;
-	    }
-	    }
-	    */
+	if (! IsVga())
+		quit_now(NOT_VGA_TEXT);
+	if (Cpu() < _80286)
+		quit_now(BAD_CHIP_TEXT);
+	if (100 * _osmajor + _osminor < 330)
+		quit_now(BAD_DOS_TEXT);
+	if (! get_parms())
+		quit_now(BAD_ARG_TEXT);
+	//--- load sound configuration
+	const char * fn = UsrPath(ProgName(CFG_EXT));
+	if (! STARTUP::SoundOk && CFILE::Exist(fn)) {
+		CFILE cfg(fn, REA);
+		if (! cfg.Error) {
+			cfg.Read(&SNDDrvInfo, sizeof(SNDDrvInfo)-sizeof(SNDDrvInfo.VOL2));
+			if (! cfg.Error)
+				STARTUP::SoundOk = 1;
+		}
+	}
+	*/
 	warning("STUB: STARTUP::STARTUP");
 }
 

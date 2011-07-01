@@ -205,7 +205,7 @@ void LoadMIDI(int ref) {
 }
 
 
-EC void *Patch(int pat) {
+void *Patch(int pat) {
 	void *p = NULL;
 	static char fn[] = "PATCH000.SND";
 

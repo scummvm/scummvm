@@ -147,10 +147,10 @@ void CGEEngine::selectSound() {
 	if (VMENU::Addr)
 		SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 	inf(Text->getText(STYPE_TEXT));
-	Talk->Goto(Talk->_x, FONT_HIG / 2);
+	Talk->gotoxy(Talk->_x, FONT_HIG / 2);
 	for (i = 0; i < ArrayCount(DevName); i++)
 		DevMenu[i].Text = Text->getText(DevName[i]);
-	(new VMENU(this, DevMenu, SCR_WID / 2, Talk->_y + Talk->_h + TEXT_VM + FONT_HIG))->SetName(Text->getText(MENU_TEXT));
+	(new VMENU(this, DevMenu, SCR_WID / 2, Talk->_y + Talk->_h + TEXT_VM + FONT_HIG))->setName(Text->getText(MENU_TEXT));
 }
 
 
@@ -184,8 +184,8 @@ static int     Hlp;
 
 void CGEEngine::SNSelect() {
 	inf(Text->getText(Hlp));
-	Talk->Goto(Talk->_x, FONT_HIG / 2);
-	(new VMENU(this, Cho, SCR_WID / 2, Talk->_y + Talk->_h + TEXT_VM + FONT_HIG))->SetName(Text->getText(MENU_TEXT));
+	Talk->gotoxy(Talk->_x, FONT_HIG / 2);
+	(new VMENU(this, Cho, SCR_WID / 2, Talk->_y + Talk->_h + TEXT_VM + FONT_HIG))->setName(Text->getText(MENU_TEXT));
 }
 
 

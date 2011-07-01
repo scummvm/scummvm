@@ -37,18 +37,21 @@ namespace CGE {
 #define GTBLINK      6
 #define GTTIME       6
 
-class GET_TEXT : public TALK {
-	char Buff[GTMAX + 2], * Text;
-	uint16 Size, Len;
-	uint16 Cntr;
-	Sprite *OldKeybClient;
-	void (*Click)();
+class GetText : public TALK {
+	char   _buff[GTMAX + 2];
+	char  *_text;
+	uint16 _size;
+	uint16 _len;
+	uint16 _cntr;
+	Sprite *_oldKeybClient;
+	void (*_click)();
+
 public:
-	static GET_TEXT *Ptr;
-	GET_TEXT(CGEEngine *vm, const char *info, char *text, int size, void (*click)(void) = NULL);
-	~GET_TEXT();
-	void Touch(uint16 mask, int x, int y);
-	void Tick();
+	static GetText *_ptr;
+	GetText(CGEEngine *vm, const char *info, char *text, int size, void (*click)(void) = NULL);
+	~GetText();
+	void touch(uint16 mask, int x, int y);
+	void tick();
 
 private:
 	CGEEngine *_vm;

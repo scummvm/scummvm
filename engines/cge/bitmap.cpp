@@ -48,7 +48,7 @@ void Bitmap::deinit() {
 #pragma argsused
 Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL) {
 	char pat[MAXPATH];
-	ForceExt(pat, fname, ".VBM");
+	forceExt(pat, fname, ".VBM");
 
 #if (BMP_MODE < 2)
 	if (rem && PIC_FILE::exist(pat)) {
@@ -130,10 +130,10 @@ Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL) {
 
 
 Bitmap::~Bitmap(void) {
-	if (MemType(_m) == FAR_MEM)
+	if (memType(_m) == FAR_MEM)
 		free(_m);
 
-	switch (MemType(_v)) {
+	switch (memType(_v)) {
 	case NEAR_MEM :
 		delete[](uint8 *) _v;
 		break;
@@ -152,7 +152,7 @@ Bitmap &Bitmap::operator = (const Bitmap &bmp) {
 	_w = bmp._w;
 	_h = bmp._h;
 	_m = NULL;
-	if (MemType(_v) == FAR_MEM)
+	if (memType(_v) == FAR_MEM)
 		free(_v);
 	if (v0 == NULL)
 		_v = NULL;
@@ -174,7 +174,7 @@ uint16 Bitmap::moveVmap(uint8 *buf) {
 		uint16 vsiz = (uint8 *)_b - (uint8 *)_v;
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
 		memcpy(buf, _v, siz);
-		if (MemType(_v) == FAR_MEM)
+		if (memType(_v) == FAR_MEM)
 			free(_v);
 		_b = (HideDesc *)((_v = buf) + vsiz);
 		return siz;
@@ -188,7 +188,7 @@ BMP_PTR Bitmap::code(void) {
 		uint16 i, cnt;
 
 		if (_v) {                                        // old X-map exists, so remove it
-			switch (MemType(_v)) {
+			switch (memType(_v)) {
 			case NEAR_MEM :
 				delete[](uint8 *) _v;
 				break;
@@ -450,19 +450,20 @@ bool Bitmap::loadBMP(XFile *f) {
 	   union { int16 _2E; int32 _2E_; };
 	   union { int16 _32; int32 _32_; };
 	 } hea;
-  BGR4 bpal[256];
+
+  Bgr4 bpal[256];
 
   f->read((byte *)&hea, sizeof(hea));
   if (f->_error == 0) {
       if (hea.hdr == 0x436L) {
-	  int16 i = (hea.hdr - sizeof(hea)) / sizeof(BGR4);
+	  int16 i = (hea.hdr - sizeof(hea)) / sizeof(Bgr4);
 	  f->read((byte *)&bpal, sizeof(bpal));
 	  if (f->_error == 0) {
 		if (_pal) {
 			for (i = 0; i < 256; i ++) {
-				_pal[i]._r = bpal[i].R;
-				_pal[i]._g = bpal[i].G;
-				_pal[i]._b = bpal[i].B;
+				_pal[i]._r = bpal[i]._R;
+				_pal[i]._g = bpal[i]._G;
+				_pal[i]._b = bpal[i]._B;
 			}
 			_pal = NULL;
 		}

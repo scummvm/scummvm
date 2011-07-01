@@ -95,12 +95,12 @@ Dac _stdPal[] =  {// R    G   B
 
 DRVINFO SNDDrvInfo;
 
-EC void     _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *)) {
+void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *)) {
 	warning("STUB: _fqsort");
 }
 
-const char *ProgName(const char *ext) {
-	warning("ProgName");
+const char *progName(const char *ext) {
+	warning("progName");
 
 	static Common::String buf = "CGE";
 	if (ext)
@@ -108,11 +108,11 @@ const char *ProgName(const char *ext) {
 	return buf.c_str();
 }
 
-char *MergeExt(char *buf, const char *nam, const char *ext) {
+char *mergeExt(char *buf, const char *nam, const char *ext) {
 //  char dr[MAXDRIVE], di[MAXDIR], na[MAXFILE], ex[MAXEXT];
 //  fnmerge(buf, dr, di, na, (fnsplit(nam, dr, di, na, ex) & EXTENSION) ? ex : ext);
 //  return buf;
-	warning("MergeExt");
+	warning("mergeExt");
 
 	strcpy(buf, nam);
 	char *dot = strrchr(buf, '.');
@@ -122,7 +122,7 @@ char *MergeExt(char *buf, const char *nam, const char *ext) {
 	return buf;
 }
 
-char *ForceExt(char *buf, const char *nam, const char *ext) {
+char *forceExt(char *buf, const char *nam, const char *ext) {
 //  char dr[MAXDRIVE], di[MAXDIR], na[MAXFILE], ex[MAXEXT];
 //  fnsplit(nam, dr, di, na, ex);
 //  fnmerge(buf, dr, di, na, ext);
@@ -280,7 +280,7 @@ bool IoHand::exist(const char *name) {
 //#define       EMS_ADR(a)  (FP_SEG(a) > 0xA000)
 //#define       HNODE_OK(p) (heapchecknode(p)==4)
 
-MEM_TYPE MemType(void *mem) {
+MEM_TYPE memType(void *mem) {
 	/*  if (FP_SEG(mem) == _DS) {
 	      if (heapchecknode((void *)mem)==4)
 	          return NEAR_MEM;
@@ -292,39 +292,39 @@ MEM_TYPE MemType(void *mem) {
 	    }
 	  return BAD_MEM;
 	*/
-	warning("STUB: MemType");
+	warning("STUB: memType");
 	return FAR_MEM;
 }
 
-bool IsVga() {
+bool isVga() {
 	return true;
 }
 
-EC void SNDInit() {
+void SNDInit() {
 	warning("STUB: SNDInit");
 }
 
-EC void SNDDone() {
+void SNDDone() {
 	// FIXME: STUB: SNDDone
 }
 
-EC void SNDSetVolume() {
+void SNDSetVolume() {
 	warning("STUB: SNDSetVolume");
 }
 
-EC void SNDDigiStart(SMPINFO *PSmpInfo) {
+void SNDDigiStart(SMPINFO *PSmpInfo) {
 	warning("STUB: SNDDigitStart");
 }
 
-EC void SNDDigiStop(SMPINFO *PSmpInfo) {
+void SNDDigiStop(SMPINFO *PSmpInfo) {
 	warning("STUB: SNDDigiStop");
 }
 
-EC void SNDMIDIStart(uint8 *MIDFile) {
+void SNDMIDIStart(uint8 *MIDFile) {
 	warning("STUB: SNDMIDIStart");
 }
 
-EC void SNDMIDIStop() {
+void SNDMIDIStop() {
 	// FIXME: STUB: SNDMIDIStop
 }
 
@@ -333,7 +333,7 @@ DATACK *LoadWave(XFile *file, EMM *emm) {
 	return NULL;
 }
 
-int TakeEnum(const char **tab, const char *txt) {
+int takeEnum(const char **tab, const char *txt) {
 	const char **e;
 	if (txt) {
 		for (e = tab; *e; e++) {
@@ -345,22 +345,25 @@ int TakeEnum(const char **tab, const char *txt) {
 	return -1;
 }
 
-Boot *ReadBoot(int drive) {
+Boot *readBoot(int drive) {
 	/*
-	  struct fatinfo fi; Boot *b;
-	  getfat(drive+1, &fi);
-	  if (fi.fi_sclus & 0x80) return NULL;
-	  if ((b = malloc(fi.fi_bysec)) == NULL) return NULL;
-	  // read boot sector
-	  if (absread(drive, 1, 0L, b) == 0) return b;
-	  free(b);
-	  return NULL;
+	struct fatinfo fi; Boot *b;
+	getfat(drive+1, &fi);
+	if (fi.fi_sclus & 0x80)
+		return NULL;
+	if ((b = malloc(fi.fi_bysec)) == NULL)
+		return NULL;
+	// read boot sector
+	if (absread(drive, 1, 0L, b) == 0)
+		return b;
+	free(b);
+	return NULL;
 	*/
-	warning("STUB: ReadBoot");
+	warning("STUB: readBoot");
 	return NULL;
 }
 
-long Timer(void) {
+long timer(void) {
 /*
   asm	mov	ax,0x40
   asm	mov	es,ax
@@ -368,7 +371,7 @@ long Timer(void) {
   asm	mov	dx,es:[0x6E]
   return  ((long) _DX << 16) | _CX;
 */
-	warning("STUB: Timer");
+	warning("STUB: timer");
 	return 0;
 }
 
