@@ -54,7 +54,7 @@
 namespace CGE {
 
 #define STACK_SIZ   (K(2))
-#define SVGCHKSUM   (1956 + Now + OldLev + Game + Music + DemoText)
+#define SVGCHKSUM   (1956 + _now + _oldLev + _game + _music + _demoText)
 
 #define SVG0NAME    ("{{INIT}}" SVG_EXT)
 #define SVG0FILE    INI_FILE
@@ -85,8 +85,8 @@ BMP_PTR PR[2];
 BMP_PTR SP[3];
 BMP_PTR LI[5];
 
-SNAIL *Snail;
-SNAIL *Snail_;
+Snail *_snail;
+Snail *_snail_;
 
 // 0.75 - 17II95  - full sound support
 // 0.76 - 18II95  - small MiniEMS in DEMO,
@@ -124,8 +124,8 @@ SNAIL *Snail_;
 char Copr[] = "To be fixed - Copr[]";
 
 static char UsrFnam[15] = "\0É±%^þúÈ¼´ ÇÉ";
-static int  OldLev      = 0;
-static int  DemoText    = DEMO_TEXT;
+static int _oldLev      = 0;
+static int _demoText    = DEMO_TEXT;
 
 //--------------------------------------------------------------------------
 
@@ -142,16 +142,14 @@ static  int       Startup     = 1;
 int	OffUseCount;
 uint16 *intStackPtr = false;
 
-HXY     HeroXY[CAVE_MAX] = {{0, 0}};
-BAR     Barriers[1 + CAVE_MAX] = { { 0xFF, 0xFF } };
+Hxy _heroXY[CAVE_MAX] = {{0, 0}};
+Bar _barriers[1 + CAVE_MAX] = { { 0xFF, 0xFF } };
 
+extern int findPocket(Sprite *);
+extern Dac _stdPal[58];
 
-extern  int FindPocket(Sprite *);
-
-extern  Dac _stdPal[58];
-
-void    FeedSnail(Sprite *spr, SNLIST snq);         // defined in SNAIL
-uint8   Cluster::_map[MAP_ZCNT][MAP_XCNT];
+void   feedSnail(Sprite *spr, SNLIST snq);         // defined in SNAIL
+uint8  Cluster::_map[MAP_ZCNT][MAP_XCNT];
 
 
 uint8  &Cluster::cell(void) {
@@ -161,7 +159,7 @@ uint8  &Cluster::cell(void) {
 
 bool Cluster::Protected(void) {
 /*
-	if (A == Barriers[Now].Vert || B == Barriers[Now].Horz)
+	if (A == Barriers[Now]._vert || B == Barriers[Now]._horz)
 		return true;
 
 	_DX = (MAP_ZCNT << 8) + MAP_XCNT;
@@ -220,8 +218,8 @@ Cluster XZ(Couple xy) {
 }
 
 
-int pocref[POCKET_NX];
-uint8   volume[2];
+int    _pocref[POCKET_NX];
+uint8  _volume[2];
 
 struct SavTab {
 	void *Ptr;
@@ -230,21 +228,21 @@ struct SavTab {
 };
 
 SavTab _savTab[] = {
-	{ &Now,           sizeof(Now),          1 },
-	{ &OldLev,        sizeof(OldLev),       1 },
-	{ &DemoText,      sizeof(DemoText),     1 },
-	{ &Game,          sizeof(Game),         1 },
-	{ &Game,          sizeof(Game),         1 },      // spare 1
-	{ &Game,          sizeof(Game),         1 },      // spare 2
-	{ &Game,          sizeof(Game),         1 },      // spare 3
-	{ &Game,          sizeof(Game),         1 },      // spare 4
+	{ &_now,           sizeof(_now),          1 },
+	{ &_oldLev,        sizeof(_oldLev),       1 },
+	{ &_demoText,      sizeof(_demoText),     1 },
+	{ &_game,          sizeof(_game),         1 },
+	{ &_game,          sizeof(_game),         1 },      // spare 1
+	{ &_game,          sizeof(_game),         1 },      // spare 2
+	{ &_game,          sizeof(_game),         1 },      // spare 3
+	{ &_game,          sizeof(_game),         1 },      // spare 4
 //	{ &VGA::Mono,     sizeof(VGA::Mono),    0 },
-	{ &Music,         sizeof(Music),        1 },
-	{ volume,         sizeof(volume),       1 },
-	{ Flag,           sizeof(Flag),         1 },
-	{ HeroXY,         sizeof(HeroXY),       1 },
-	{ Barriers,       sizeof(Barriers),     1 },
-	{ pocref,         sizeof(pocref),       1 },
+	{ &_music,         sizeof(_music),        1 },
+	{ _volume,         sizeof(_volume),       1 },
+	{ _flag,           sizeof(_flag),         1 },
+	{ _heroXY,         sizeof(_heroXY),       1 },
+	{ _barriers,       sizeof(_barriers),     1 },
+	{ _pocref,         sizeof(_pocref),       1 },
 	{ NULL,           0,                    0 }
 };
 
@@ -265,11 +263,11 @@ void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 		error("%s", Text->getText(BADSVG_TEXT));
 
 	if (STARTUP::Core < CORE_HIG)
-		Music = false;
+		_music = false;
 
 	if (STARTUP::SoundOk == 1 && STARTUP::Mode == 0) {
-		SNDDrvInfo.VOL2.D = volume[0];
-		SNDDrvInfo.VOL2.M = volume[1];
+		SNDDrvInfo.VOL2.D = _volume[0];
+		SNDDrvInfo.VOL2.M = _volume[1];
 		SNDSetVolume();
 	}
 
@@ -291,7 +289,7 @@ void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 		}
 
 		for (i = 0; i < POCKET_NX; i++) {
-			register int r = pocref[i];
+			register int r = _pocref[i];
 			_pocket[i] = (r < 0) ? NULL : Vga->SpareQ->Locate(r);
 		}
 	}
@@ -312,11 +310,11 @@ static void SaveGame(XFile &file) {
 
 	for (i = 0; i < POCKET_NX; i++) {
 		register Sprite *s = _pocket[i];
-		pocref[i] = (s) ? s->_ref : -1;
+		_pocref[i] = (s) ? s->_ref : -1;
 	}
 
-	volume[0] = SNDDrvInfo.VOL2.D;
-	volume[1] = SNDDrvInfo.VOL2.M;
+	_volume[0] = SNDDrvInfo.VOL2.D;
+	_volume[1] = SNDDrvInfo.VOL2.M;
 
 	for (st = _savTab; st->Ptr; st++) {
 		if (file._error)
@@ -366,18 +364,18 @@ static void noWay() {
 
 static void LoadHeroXY(void) {
 	INI_FILE cf(progName(".HXY"));
-	memset(HeroXY, 0, sizeof(HeroXY));
+	memset(_heroXY, 0, sizeof(_heroXY));
 	if (!cf._error)
-		cf.CFREAD(&HeroXY);
+		cf.CFREAD(&_heroXY);
 }
 
 
 static void LoadMapping(void) {
-	if (Now <= CAVE_MAX) {
+	if (_now <= CAVE_MAX) {
 		INI_FILE cf(progName(".TAB"));
 		if (!cf._error) {
 			memset(Cluster::_map, 0, sizeof(Cluster::_map));
-			cf.seek((Now - 1) * sizeof(Cluster::_map));
+			cf.seek((_now - 1) * sizeof(Cluster::_map));
 			cf.read((uint8 *) Cluster::_map, sizeof(Cluster::_map));
 		}
 	}
@@ -405,7 +403,7 @@ void WALK::tick() {
 		for (spr = Vga->ShowQ->First(); spr; spr = spr->_next) {
 			if (distance(spr) < 2) {
 				if (!spr->_flags._near) {
-					FeedSnail(spr, NEAR);
+					feedSnail(spr, NEAR);
 					spr->_flags._near = true;
 				}
 			} else {
@@ -614,7 +612,7 @@ void CGEEngine::quit() {
 		{ NULL, &CGEEngine::dummy          }
 	};
 
-	if (Snail->Idle() && ! Hero->_flags._hide) {
+	if (_snail->idle() && ! Hero->_flags._hide) {
 		if (VMENU::Addr) {
 			SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 			resetQSwitch();
@@ -640,8 +638,8 @@ static void miniStep(int stp) {
 	else {
 		&*Mini;
 		*MiniShp[0] = *MiniShpList[stp];
-		if (Fx.Current)
-			&*(Fx.Current->EAddr());
+		if (_fx.Current)
+			&*(_fx.Current->EAddr());
 
 		_miniCave->_flags._hide = false;
 	}
@@ -688,9 +686,9 @@ static void ShowBak(int ref) {
 
 
 static void caveUp() {
-	int BakRef = 1000 * Now;
-	if (Music)
-		LoadMIDI(Now);
+	int BakRef = 1000 * _now;
+	if (_music)
+		LoadMIDI(_now);
 
 	ShowBak(BakRef);
 	LoadMapping();
@@ -698,7 +696,7 @@ static void caveUp() {
 	Sprite *spr = Vga->SpareQ->First();
 	while (spr) {
 		Sprite *n = spr->_next;
-		if (spr->_cave == Now || spr->_cave == 0)
+		if (spr->_cave == _now || spr->_cave == 0)
 			if (spr->_ref != BakRef) {
 				if (spr->_flags._back)
 					spr->backShow();
@@ -708,25 +706,25 @@ static void caveUp() {
 		spr = n;
 	}
 	if (SNDDrvInfo.DDEV) {
-		Sound.Stop();
-		Fx.Clear();
-		Fx.Preload(0);
-		Fx.Preload(BakRef);
+		_sound.Stop();
+		_fx.Clear();
+		_fx.Preload(0);
+		_fx.Preload(BakRef);
 	}
 
 	if (Hero) {
-		Hero->gotoxy(HeroXY[Now - 1]._x, HeroXY[Now - 1]._y);
+		Hero->gotoxy(_heroXY[_now - 1]._x, _heroXY[_now - 1]._y);
 		// following 2 lines trims Hero's Z position!
 		Hero->tick();
 		Hero->_time = 1;
 		Hero->_flags._hide = false;
 	}
 
-	if (! Dark)
+	if (!_dark)
 		Vga->Sunset();
 
 	Vga->CopyPage(0, 1);
-	SelectPocket(-1);
+	selectPocket(-1);
 	if (Hero)
 		Vga->ShowQ->Insert(Vga->ShowQ->Remove(Hero));
 
@@ -736,12 +734,12 @@ static void caveUp() {
 		Vga->ShowQ->Insert(_shadow, Hero);
 		_shadow->_z = Hero->_z;
 	}
-	FeedSnail(Vga->ShowQ->Locate(BakRef + 999), TAKE);
+	feedSnail(Vga->ShowQ->Locate(BakRef + 999), TAKE);
 	Vga->Show();
 	Vga->CopyPage(1, 0);
 	Vga->Show();
 	Vga->Sunrise(VGA::SysPal);
-	Dark = false;
+	_dark = false;
 	if (! Startup)
 		_mouse->On();
 
@@ -758,7 +756,7 @@ void CGEEngine::caveDown() {
 		Sprite *n = spr->_next;
 		if (spr->_ref >= 1000 /*&& spr->_cave*/) {
 			if (spr->_ref % 1000 == 999)
-				FeedSnail(spr, TAKE);
+				feedSnail(spr, TAKE);
 			Vga->SpareQ->Append(Vga->ShowQ->Remove(spr));
 		}
 		spr = n;
@@ -775,7 +773,7 @@ void CGEEngine::xCave() {
 
 void CGEEngine::qGame() {
 	caveDown();
-	OldLev = Lev;
+	_oldLev = _lev;
 	SaveSound();
 	CFile file = CFile(UsrPath(UsrFnam), WRI, RCrypt);
 	SaveGame(file);
@@ -785,7 +783,7 @@ void CGEEngine::qGame() {
 
 
 void CGEEngine::switchCave(int cav) {
-	if (cav != Now) {
+	if (cav != _now) {
 		_heart->_enable = false;
 		if (cav < 0) {
 			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
@@ -793,7 +791,7 @@ void CGEEngine::switchCave(int cav) {
 			//SNPOST(SNEXEC,  -1, 0, (void *)&QGame); // switch cave
 			warning("SwitchCave() - SNPOST");
 		} else {
-			Now = cav;
+			_now = cav;
 			_mouse->Off();
 			if (Hero) {
 				Hero->park();
@@ -803,8 +801,8 @@ void CGEEngine::switchCave(int cav) {
 					Vga->SpareQ->Show = STARTUP::Summa * (cav <= CAVE_MAX);
 				/////--------------------------------------------------------
 			}
-			_cavLight->gotoxy(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
-			              CAVE_Y + ((Now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
+			_cavLight->gotoxy(CAVE_X + ((_now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
+			              CAVE_Y + ((_now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
 			KillText();
 			if (! Startup)
 				KeyClick();
@@ -913,7 +911,7 @@ void SYSTEM::touch(uint16 mask, int x, int y) {
 				_sprite->step(x - '0');
 			break;
 		case F10          :
-			if (Snail->Idle() && ! Hero->_flags._hide)
+			if (_snail->idle() && ! Hero->_flags._hide)
 				_vm->startCountDown();
 			break;
 		case 'J':
@@ -939,9 +937,9 @@ void SYSTEM::touch(uint16 mask, int x, int y) {
 		if (y >= WORLD_HIG) {
 			if (x < BUTTON_X) {                           // select cave?
 				if (y >= CAVE_Y && y < CAVE_Y + CAVE_NY * CAVE_DY &&
-				        x >= CAVE_X && x < CAVE_X + CAVE_NX * CAVE_DX && ! Game) {
+				        x >= CAVE_X && x < CAVE_X + CAVE_NX * CAVE_DX && !_game) {
 					cav = ((y - CAVE_Y) / CAVE_DY) * CAVE_NX + (x - CAVE_X) / CAVE_DX + 1;
-					if (cav > MaxCave)
+					if (cav > _maxCave)
 						cav = 0;
 				} else {
 					cav = 0;
@@ -950,7 +948,7 @@ void SYSTEM::touch(uint16 mask, int x, int y) {
 				if (y >= POCKET_Y && y < POCKET_Y + POCKET_NY * POCKET_DY &&
 				        x >= POCKET_X && x < POCKET_X + POCKET_NX * POCKET_DX) {
 					int n = ((y - POCKET_Y) / POCKET_DY) * POCKET_NX + (x - POCKET_X) / POCKET_DX;
-					SelectPocket(n);
+					selectPocket(n);
 				}
 			}
 		}
@@ -958,7 +956,7 @@ void SYSTEM::touch(uint16 mask, int x, int y) {
 		PostMiniStep(cav - 1);
 
 		if (mask & L_UP) {
-			if (cav && Snail->Idle() && Hero->_tracePtr < 0)
+			if (cav && _snail->idle() && Hero->_tracePtr < 0)
 				_vm->switchCave(cav);
 
 			if (!_horzLine->_flags._hide) {
@@ -970,8 +968,8 @@ void SYSTEM::touch(uint16 mask, int x, int y) {
 				}
 			} else
 			{
-				if (! Talk && Snail->Idle() && Hero
-				        && y >= MAP_TOP && y < MAP_TOP + MAP_HIG && ! Game) {
+				if (! Talk && _snail->idle() && Hero
+				        && y >= MAP_TOP && y < MAP_TOP + MAP_HIG && !_game) {
 					Hero->findWay(XZ(x, y));
 				}
 			}
@@ -983,7 +981,7 @@ void SYSTEM::touch(uint16 mask, int x, int y) {
 void SYSTEM::Tick(void) {
 	if (! Startup) if (-- FunDel == 0) {
 			KillText();
-			if (Snail->Idle()) {
+			if (_snail->idle()) {
 				if (PAIN)
 					HeroCover(9);
 				else if (STARTUP::Core >= CORE_MID) {
@@ -1040,7 +1038,7 @@ static void SwitchMusic(void) {
 		if (VMENU::Addr)
 			SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 		else {
-			SNPOST_(SNSEQ, 122, (Music = false), NULL);
+			SNPOST_(SNSEQ, 122, (_music = false), NULL);
 			//TODO Change the SNPOST message send to a special way to send function pointer
 			// SNPOST(SNEXEC, -1, 0, (void *)&selectSound);
 			warning("SwitchMusic() - SNPOST");
@@ -1049,12 +1047,12 @@ static void SwitchMusic(void) {
 		if (STARTUP::Core < CORE_HIG)
 			SNPOST(SNINF, -1, NOMUSIC_TEXT, NULL);
 		else {
-			SNPOST_(SNSEQ, 122, (Music = ! Music), NULL);
+			SNPOST_(SNSEQ, 122, (_music = !_music), NULL);
 			KeyClick();
 		}
 	}
-	if (Music)
-		LoadMIDI(Now);
+	if (_music)
+		LoadMIDI(_now);
 	else
 		KillMIDI();
 }
@@ -1148,16 +1146,16 @@ static void SaveMapping() {
 	{
 		IoHand cf(progName(".TAB"), UPD);
 		if (!cf._error) {
-			cf.seek((Now - 1) * sizeof(Cluster::_map));
+			cf.seek((_now - 1) * sizeof(Cluster::_map));
 			cf.write((uint8 *) Cluster::_map, sizeof(Cluster::_map));
 		}
 	}
 	{
 		IoHand cf(progName(".HXY"), WRI);
 			if (!cf._error) {
-				HeroXY[Now - 1]._x = Hero->_x;
-				HeroXY[Now - 1]._y = Hero->_y;
-				cf.write((uint8 *) HeroXY, sizeof(HeroXY));
+				_heroXY[_now - 1]._x = Hero->_x;
+				_heroXY[_now - 1]._y = Hero->_y;
+				cf.write((uint8 *) _heroXY, sizeof(_heroXY));
 		}
 	}
 }
@@ -1265,19 +1263,19 @@ void Sprite::touch(uint16 mask, int x, int y) {
 		}
 		if (_flags._syst)
 			return;       // cannot access system sprites
-		if (Game) if (mask & L_UP) {
+		if (_game) if (mask & L_UP) {
 				mask &= ~L_UP;
 				mask |= R_UP;
 			}
-		if ((mask & R_UP) && Snail->Idle()) {
+		if ((mask & R_UP) && _snail->idle()) {
 			Sprite *ps = (_pocLight->_seqPtr) ? _pocket[PocPtr] : NULL;
 			if (ps) {
 				if (_flags._kept || Hero->distance(this) < MAX_DISTANCE) {
 					if (works(ps)) {
-						FeedSnail(ps, TAKE);
+						feedSnail(ps, TAKE);
 					} else
 						OffUse();
-					SelectPocket(-1);
+					selectPocket(-1);
 				} else
 					TooFar();
 			} else {
@@ -1287,8 +1285,8 @@ void Sprite::touch(uint16 mask, int x, int y) {
 					if (Hero->distance(this) < MAX_DISTANCE) {
 						///
 						if (_flags._port) {
-							if (FindPocket(NULL) < 0)
-								PocFul();
+							if (findPocket(NULL) < 0)
+								pocFul();
 							else {
 								SNPOST(SNREACH, -1, -1, this);
 								SNPOST(SNKEEP, -1, -1, this);
@@ -1296,10 +1294,10 @@ void Sprite::touch(uint16 mask, int x, int y) {
 							}
 						} else {
 							if (_takePtr != NO_PTR) {
-								if (snList(TAKE)[_takePtr].Com == SNNEXT)
+								if (snList(TAKE)[_takePtr]._com == SNNEXT)
 									OffUse();
 								else
-									FeedSnail(this, TAKE);
+									feedSnail(this, TAKE);
 							} else
 								OffUse();
 						}
@@ -1309,12 +1307,12 @@ void Sprite::touch(uint16 mask, int x, int y) {
 				}
 			}
 		}
-		if ((mask & L_UP) && Snail->Idle()) {
+		if ((mask & L_UP) && _snail->idle()) {
 			if (_flags._kept) {
 				int n;
 				for (n = 0; n < POCKET_NX; n++) {
 					if (_pocket[n] == this) {
-						SelectPocket(n);
+						selectPocket(n);
 						break;
 					}
 				}
@@ -1545,20 +1543,20 @@ void CGEEngine::mainLoop() {
 
 	if (_isDemo) {
 //		static uint32 tc = 0;
-		if (/* FIXME: TimerCount - tc >= ((182L * 6L) * 5L) && */ Talk == NULL && Snail->Idle()) {
-			if (Text->getText(DemoText)) {
+		if (/* FIXME: TimerCount - tc >= ((182L * 6L) * 5L) && */ Talk == NULL && _snail->idle()) {
+			if (Text->getText(_demoText)) {
 				SNPOST(SNSOUND,  -1, 4, NULL); // drumla
-				SNPOST(SNINF,  -1, DemoText, NULL);
+				SNPOST(SNINF,  -1, _demoText, NULL);
 				SNPOST(SNLABEL, -1, -1, NULL);
-				if (Text->getText(++ DemoText) == NULL)
-					DemoText = DEMO_TEXT + 1;
+				if (Text->getText(++_demoText) == NULL)
+					_demoText = DEMO_TEXT + 1;
 			}
 			//FIXME: tc = TimerCount;
 		}
 	}
 	Vga->Show();
-	Snail_->RunCom();
-	Snail->RunCom();
+	_snail_->runCom();
+	_snail->runCom();
 
 	// Game frame delay
 	uint32 millis = g_system->getMillis();
@@ -1585,7 +1583,7 @@ void CGEEngine::loadUser() {
 			loadGame(file);
 		} else {
 			loadScript(progName(INI_EXT));
-			Music = true;
+			_music = true;
 			CFile file = CFile(SVG0NAME, WRI);
 			SaveGame(file);
 			error("Ok [%s]", SVG0NAME);
@@ -1620,7 +1618,7 @@ void CGEEngine::runGame() {
 	_pocLight->_time = 1;
 	_pocLight->_z = 120;
 	Vga->ShowQ->Append(_pocLight);
-	SelectPocket(-1);
+	selectPocket(-1);
 
 	// FIXME: Allow ScummVM to handle mouse display
 //	Vga->ShowQ->Append(Mouse);
@@ -1632,9 +1630,9 @@ void CGEEngine::runGame() {
 	if ((_sprite = Vga->SpareQ->Locate(121)) != NULL)
 		SNPOST_(SNSEQ, -1, Vga->Mono, _sprite);
 	if ((_sprite = Vga->SpareQ->Locate(122)) != NULL)
-		_sprite->step(Music);
-	SNPOST_(SNSEQ, -1, Music, _sprite);
-	if (! Music)
+		_sprite->step(_music);
+	SNPOST_(SNSEQ, -1, _music, _sprite);
+	if (!_music)
 		KillMIDI();
 
 	if (Mini && INI_FILE::exist("MINI.SPR")) {
@@ -1654,7 +1652,7 @@ void CGEEngine::runGame() {
 
 	if (Hero) {
 		ExpandSprite(Hero);
-		Hero->gotoxy(HeroXY[Now - 1]._x, HeroXY[Now - 1]._y);
+		Hero->gotoxy(_heroXY[_now - 1]._x, _heroXY[_now - 1]._y);
 		if (INI_FILE::exist("00SHADOW.SPR")) {
 			loadSprite("00SHADOW", -1, 0, Hero->_x + 14, Hero->_y + 51);
 			if ((_shadow = _sprite) != NULL) {
@@ -1684,9 +1682,9 @@ void CGEEngine::runGame() {
 
 	Startup = 0;
 
-	SNPOST(SNLEVEL, -1, OldLev, &_cavLight);
-	_cavLight->gotoxy(CAVE_X + ((Now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
-	              CAVE_Y + ((Now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
+	SNPOST(SNLEVEL, -1, _oldLev, &_cavLight);
+	_cavLight->gotoxy(CAVE_X + ((_now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
+	              CAVE_Y + ((_now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
 	caveUp();
 
 	_keyboard->setClient(Sys);
@@ -1718,14 +1716,14 @@ void CGEEngine::movie(const char *ext) {
 	if (INI_FILE::exist(fn)) {
 		loadScript(fn);
 		ExpandSprite(Vga->SpareQ->Locate(999));
-		FeedSnail(Vga->ShowQ->Locate(999), TAKE);
+		feedSnail(Vga->ShowQ->Locate(999), TAKE);
 
 		// FIXME: Allow ScummVM to handle mouse display
 		//Vga->ShowQ->Append(Mouse);
 
 		_heart->_enable = true;
 		_keyboard->setClient(Sys);
-		while (!Snail->Idle() && !_eventManager->_quitFlag)
+		while (!_snail->idle() && !_eventManager->_quitFlag)
 			mainLoop();
 
 		_keyboard->setClient(NULL);
@@ -1761,7 +1759,7 @@ bool CGEEngine::showTitle(const char *name) {
 	Vga->Sunset();
 	Vga->CopyPage(1, 2);
 	Vga->CopyPage(0, 1);
-	SelectPocket(-1);
+	selectPocket(-1);
 	Vga->Sunrise(VGA::SysPal);
 
 	if (STARTUP::Mode < 2 && !STARTUP::SoundOk) {
@@ -1770,7 +1768,7 @@ bool CGEEngine::showTitle(const char *name) {
 		Vga->ShowQ->Append(_mouse);
 		_heart->_enable = true;
 		_mouse->On();
-		for (selectSound(); !Snail->Idle() || VMENU::Addr;) {
+		for (selectSound(); !_snail->idle() || VMENU::Addr;) {
 			mainLoop();
 			if (_eventManager->_quitFlag)
 				return false;
@@ -1781,7 +1779,7 @@ bool CGEEngine::showTitle(const char *name) {
 		Vga->ShowQ->Clear();
 		Vga->CopyPage(0, 2);
 		STARTUP::SoundOk = 2;
-		if (Music)
+		if (_music)
 			LoadMIDI(0);
 	}
 
@@ -1868,7 +1866,7 @@ void CGEEngine::cge_main(void) {
 
 	//Debug( memset((void *) (-K(2)), 0, K(1)); )
 	//Debug( memset((void *) (-K(4)), 0, K(1)); )
-	memset(Barriers, 0xFF, sizeof(Barriers));
+	memset(_barriers, 0xFF, sizeof(_barriers));
 
 	if (!_mouse->Exist)
 		error("%s", Text->getText(NO_MOUSE_TEXT));
@@ -1882,7 +1880,7 @@ void CGEEngine::cge_main(void) {
 	//srand((uint16) Timer());
 	Sys = new SYSTEM(this);
 
-	if (Music && STARTUP::SoundOk)
+	if (_music && STARTUP::SoundOk)
 		LoadMIDI(0);
 	if (STARTUP::Mode < 2)
 		movie(LGO_EXT);

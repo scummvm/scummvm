@@ -39,7 +39,7 @@ namespace CGE {
 
 class SOUND {
 public:
-	SMPINFO smpinf;
+	SmpInfo smpinf;
 	SOUND(void);
 	~SOUND(void);
 	void Open(void);
@@ -68,13 +68,13 @@ public:
 };
 
 
-extern  bool    Music;
-extern  SOUND   Sound;
-extern  FX  Fx;
+extern  bool   _music;
+extern  SOUND  _sound;
+extern  FX     _fx;
 
 
 void        LoadMIDI(int ref);
-void        KillMIDI(void);
+void        KillMIDI();
 
 } // End of namespace CGE
 

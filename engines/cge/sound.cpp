@@ -35,9 +35,9 @@
 
 namespace CGE {
 
-bool  Music       = true;
-FX    Fx          = 16;   // must precede SOUND!!
-SOUND Sound;
+bool  _music  = true;
+FX    _fx     = 16;   // must precede SOUND!!
+SOUND _sound;
 
 
 SOUND::SOUND(void) {
@@ -59,7 +59,7 @@ void SOUND::Close(void) {
 
 void SOUND::Open(void) {
 	SNDInit();
-	Play(Fx[30000], 8);
+	Play(_fx[30000], 8);
 }
 
 
