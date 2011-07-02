@@ -26,12 +26,17 @@
 #include "scumm/he/intern_he.h"
 
 #include "audio/audiostream.h"
+#include "video/bink_decoder.h"
 #include "video/smk_decoder.h"
 
 namespace Scumm {
 
 MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer) : _vm(vm) {
-	_video = new Video::SmackerDecoder(mixer);
+	if (_vm->_game.heversion >= 100 && (_vm->_game.features & GF_16BIT_COLOR))
+		_video = new Video::BinkDecoder();
+	else
+		_video = new Video::SmackerDecoder(mixer);
+
 	_flags = 0;
 	_wizResNum = 0;
 }
@@ -71,30 +76,55 @@ void MoviePlayer::copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint
 	uint w = _video->getWidth();
 
 	const Graphics::Surface *surface = _video->decodeNextFrame();
+
+	if (!surface)
+		return;
+
 	byte *src = (byte *)surface->pixels;
 
 	if (_video->hasDirtyPalette())
 		_vm->setPaletteFromPtr(_video->getPalette(), 256);
 
 	if (_vm->_game.features & GF_16BIT_COLOR) {
-		dst += y * pitch + x * 2;
-		do {
-			for (uint i = 0; i < w; i++) {
-				uint16 color = READ_LE_UINT16(_vm->_hePalettes + _vm->_hePaletteSlot + 768 + src[i] * 2);
-				switch (dstType) {
-				case kDstScreen:
-					WRITE_UINT16(dst + i * 2, color);
-					break;
-				case kDstResource:
-					WRITE_LE_UINT16(dst + i * 2, color);
-					break;
-				default:
-					error("copyFrameToBuffer: Unknown dstType %d", dstType);
+		if (surface->format.bytesPerPixel == 1) {
+			dst += y * pitch + x * 2;
+			do {
+				for (uint i = 0; i < w; i++) {
+					uint16 color = READ_LE_UINT16(_vm->_hePalettes + _vm->_hePaletteSlot + 768 + src[i] * 2);
+					switch (dstType) {
+					case kDstScreen:
+						WRITE_UINT16(dst + i * 2, color);
+						break;
+					case kDstResource:
+						WRITE_LE_UINT16(dst + i * 2, color);
+						break;
+					default:
+						error("copyFrameToBuffer: Unknown dstType %d", dstType);
+					}
 				}
-			}
-			dst += pitch;
-			src += w;
-		} while (--h);
+				dst += pitch;
+				src += w;
+			} while (--h);
+		} else {
+			dst += y * pitch + x * 2;
+			do {
+				for (uint i = 0; i < w; i++) {
+					uint16 color = *((uint16 *)src + i);
+					switch (dstType) {
+					case kDstScreen:
+						WRITE_UINT16(dst + i * 2, color);
+						break;
+					case kDstResource:
+						WRITE_LE_UINT16(dst + i * 2, color);
+						break;
+					default:
+						error("copyFrameToBuffer: Unknown dstType %d", dstType);
+					}
+				}
+				dst += pitch;
+				src += surface->pitch;
+			} while (--h);
+		}
 	} else {
 		dst += y * pitch + x;
 		do {

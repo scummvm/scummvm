@@ -704,8 +704,8 @@ void ScummEngine_v99he::resetScummVars() {
 	VAR(VAR_NUM_UNK) = _numUnk;
 
 	if (_game.heversion >= 100 && (_game.features & GF_16BIT_COLOR)) {
-		// Disable Bink and Smacker video in 16bit color games
-		VAR(140) = 0;
+		// Enable Bink and Smacker video in 16bit color games
+		VAR(140) = 1;
 	}
 }
 #endif
