@@ -59,7 +59,7 @@ public:
 	MENU_BAR *Bar;
 	VMENU(CGEEngine *vm, CHOICE *list, int x, int y);
 	~VMENU();
-	void Touch(uint16 mask, int x, int y);
+	virtual void touch(uint16 mask, int x, int y);
 private:
 	CGEEngine *_vm;
 };

@@ -552,7 +552,7 @@ void WALK::reach(Sprite *spr, int mode) {
 class SQUARE : public Sprite {
 public:
 	SQUARE(CGEEngine *vm);
-	void Touch(uint16 mask, int x, int y);
+	virtual void touch(uint16 mask, int x, int y);
 private:
 	CGEEngine *_vm;
 };
@@ -565,7 +565,7 @@ SQUARE::SQUARE(CGEEngine *vm)
 }
 
 
-void SQUARE::Touch(uint16 mask, int x, int y) {
+void SQUARE::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
 	if (mask & L_UP) {
 		XZ(_x + x, _y + y).cell() = 0;
@@ -822,7 +822,7 @@ SYSTEM::SYSTEM(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	Tick();
 }
 
-void SYSTEM::Touch(uint16 mask, int x, int y) {
+void SYSTEM::touch(uint16 mask, int x, int y) {
 	static int pp = 0;
 
 	FunTouch();
