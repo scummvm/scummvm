@@ -28,7 +28,7 @@
 #include "cge/mixer.h"
 #include "cge/text.h"
 #include "cge/snail.h"
-#include "cge/mouse.h"
+#include "cge/events.h"
 #include "cge/snddrv.h"
 #include "cge/cge_main.h"
 #include <string.h>

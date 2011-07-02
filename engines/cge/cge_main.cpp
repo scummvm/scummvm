@@ -36,8 +36,7 @@
 #include "cge/snail.h"
 #include "cge/text.h"
 #include "cge/game.h"
-#include "cge/mouse.h"
-#include "cge/keybd.h"
+#include "cge/events.h"
 #include "cge/cfile.h"
 #include "cge/vol.h"
 #include "cge/talk.h"
@@ -1857,8 +1856,10 @@ void CGEEngine::cge_main(void) {
 
 	if (Music && STARTUP::SoundOk)
 		LoadMIDI(0);
+/** *****DEBUG*****
 	if (STARTUP::Mode < 2)
 		movie(LGO_EXT);
+*/
 	if (showTitle("WELCOME")) {
 		if ((!_isDemo) && (STARTUP::Mode == 1))
 			movie("X02"); // intro
