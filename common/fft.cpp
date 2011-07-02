@@ -26,6 +26,7 @@
 // Copyright (c) 2002 Fabrice Bellard
 // Partly based on libdjbfft by D. J. Bernstein
 
+#include "common/cosinetables.h"
 #include "common/fft.h"
 #include "common/util.h"
 

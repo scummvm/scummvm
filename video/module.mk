@@ -2,6 +2,7 @@ MODULE := video
 
 MODULE_OBJS := \
 	avi_decoder.o \
+	bink_decoder.o \
 	coktel_decoder.o \
 	dxa_decoder.o \
 	flic_decoder.o \
