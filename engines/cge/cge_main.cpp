@@ -66,6 +66,7 @@ Heart *_heart;
 WALK *Hero;
 SYSTEM *Sys;
 Sprite *_pocLight;
+EventManager *_eventManager;
 Keyboard *_keyboard;
 MOUSE *_mouse;
 Sprite *_pocket[POCKET_NX];
@@ -1537,6 +1538,7 @@ void CGEEngine::loadScript(const char *fname) {
 		error("%s [%s]", NumStr("Bad INI line ######", lcnt), fname);
 }
 
+#define GAME_FRAME_DELAY (1000 / 50)
 
 void CGEEngine::mainLoop() {
 	SayDebug();
@@ -1558,8 +1560,17 @@ void CGEEngine::mainLoop() {
 	Snail_->RunCom();
 	Snail->RunCom();
 
-	// Delay to slow things down
-	g_system->delayMillis(10);
+	// Game frame delay
+	uint32 millis = g_system->getMillis();
+	while (!_eventManager->_quitFlag && (millis < (_lastFrame + GAME_FRAME_DELAY))) {
+		// Handle any pending events
+		_eventManager->poll();
+
+		// Slight delay
+		g_system->delayMillis(10);
+		millis = g_system->getMillis();
+	}
+	_lastFrame = millis;
 }
 
 
@@ -1585,6 +1596,9 @@ void CGEEngine::loadUser() {
 
 
 void CGEEngine::runGame() {
+	if (_eventManager->_quitFlag)
+		return;
+
 	Text->Clear();
 	Text->Preload(100, 1000);
 	LoadHeroXY();
@@ -1677,7 +1691,7 @@ void CGEEngine::runGame() {
 
 	_keyboard->setClient(Sys);
 	// main loop
-	while (! Finis) {
+	while (! Finis && !_eventManager->_quitFlag) {
 		//TODO Change the SNPOST message send to a special way to send function pointer
 		// if (FINIS) SNPOST(SNEXEC,  -1, 0, (void *)&QGame);
 		warning("RunGame: problematic use of SNPOST");
@@ -1697,6 +1711,9 @@ void CGEEngine::runGame() {
 
 
 void CGEEngine::movie(const char *ext) {
+	if (_eventManager->_quitFlag)
+		return;
+
 	const char *fn = progName(ext);
 	if (INI_FILE::exist(fn)) {
 		loadScript(fn);
@@ -1708,7 +1725,7 @@ void CGEEngine::movie(const char *ext) {
 
 		_heart->_enable = true;
 		_keyboard->setClient(Sys);
-		while (!Snail->Idle())
+		while (!Snail->Idle() && !_eventManager->_quitFlag)
 			mainLoop();
 
 		_keyboard->setClient(NULL);
@@ -1722,6 +1739,9 @@ void CGEEngine::movie(const char *ext) {
 
 
 bool CGEEngine::showTitle(const char *name) {
+	if (_eventManager->_quitFlag)
+		return false;
+
 	Bitmap::_pal = VGA::SysPal;
 	BMP_PTR LB[] =  { new Bitmap(name, true), NULL };
 	Bitmap::_pal = NULL;
@@ -1750,8 +1770,12 @@ bool CGEEngine::showTitle(const char *name) {
 		Vga->ShowQ->Append(_mouse);
 		_heart->_enable = true;
 		_mouse->On();
-		for (selectSound(); !Snail->Idle() || VMENU::Addr;)
+		for (selectSound(); !Snail->Idle() || VMENU::Addr;) {
 			mainLoop();
+			if (_eventManager->_quitFlag)
+				return false;
+		}
+
 		_mouse->Off();
 		_heart->_enable = false;
 		Vga->ShowQ->Clear();
@@ -1786,8 +1810,11 @@ bool CGEEngine::showTitle(const char *name) {
 			Vga->ShowQ->Append(_mouse);
 			//Mouse.On();
 			_heart->_enable = true;
-			for (takeName(); GetText::_ptr;)
+			for (takeName(); GetText::_ptr;) {
 				mainLoop();
+				if (_eventManager->_quitFlag)
+					return false;
+			}
 			_heart->_enable = false;
 			if (_keyboard->last() == Enter && *UsrFnam)
 				usr_ok = true;
@@ -1857,10 +1884,9 @@ void CGEEngine::cge_main(void) {
 
 	if (Music && STARTUP::SoundOk)
 		LoadMIDI(0);
-/** *****DEBUG*****
 	if (STARTUP::Mode < 2)
 		movie(LGO_EXT);
-*/
+
 	if (showTitle("WELCOME")) {
 		if ((!_isDemo) && (STARTUP::Mode == 1))
 			movie("X02"); // intro

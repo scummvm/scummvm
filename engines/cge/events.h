@@ -28,6 +28,7 @@
 #ifndef __CGE_CGE_EVENTS__
 #define __CGE_CGE_EVENTS__
 
+#include "common/events.h"
 #include "cge/game.h"
 #include "cge/talk.h"
 #include "cge/jbw.h"
@@ -45,13 +46,17 @@ namespace CGE {
 
 
 class Keyboard {
+private:
+	bool getKey(uint16 keycode, int &cgeCode);
 public:
 	static const uint16 _code[0x60];
+	static const uint16 _scummVmCodes[0x60];
 
-	void NewKeyboard(...);
 	uint16 _current;
 	Sprite *_client;
-	uint8 _key[0x60];
+	bool _key[0x60];
+
+	void NewKeyboard(Common::Event &event);
 	uint16 last() {
 		uint16 cur = _current;
 		_current = 0;
@@ -77,14 +82,14 @@ public:
 
 extern TALK *Talk;
 
-struct Event {
+struct CGEEvent {
 	uint16 _msk;
 	uint16 _x;
 	uint16 _y;
 	Sprite *_ptr;
 };
 
-extern Event Evt[EVT_MAX];
+extern CGEEvent Evt[EVT_MAX];
 extern uint16 EvtHead, EvtTail;
 typedef void (MOUSE_FUN)(void);
 
@@ -112,8 +117,17 @@ private:
 	CGEEngine *_vm;
 };
 
-/*----------------- Access variables -----------------*/
-// TODO: Move this into either the CGEEngine class or a suitable 'globals'
+/*----------------- EventManager interface -----------------*/
+
+class EventManager {
+private:
+	Common::Event _event;
+public:
+	bool _quitFlag;
+
+	EventManager();
+	void poll();	
+};
 
 } // End of namespace CGE
 
