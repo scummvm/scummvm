@@ -140,31 +140,23 @@ CGEEvent Evt[EVT_MAX];
 
 uint16 EvtHead = 0, EvtTail = 0;
 
-MOUSE_FUN *MOUSE::OldMouseFun  = NULL;
-uint16     MOUSE::OldMouseMask = 0;
-
-
 MOUSE::MOUSE(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(NULL), hx(0), _vm(vm) {
 	static Seq ms[] = {
 		{ 0, 0, 0, 0, 1 },
 		{ 1, 1, 0, 0, 1 }
 	};
 
+	Hold = NULL;
+	hx = 0; hy = 0;
+	Exist = true;
+	Buttons = 0;
+	Busy = NULL;
+
 	setSeq(ms);
 
-	/* TODO Mouse handling
-	// Mouse reset
-	_AX = 0x0000; // soft & hard reset (0x0021 soft reset does not work)
-	__int__(0x33);
-	Exist = (_AX != 0);
-	Buttons = _BX;
-*/
 	gotoxy(SCR_WID/2, SCR_HIG/2);
 	_z = 127;
 	step(1);
-
-	Exist = true;
-	warning("STUB: MOUSE::MOUSE");
 }
 
 
@@ -236,15 +228,33 @@ void MOUSE::Off(void) {
 	warning("STUB: MOUSE::Off");
 }
 
+void MOUSE::NewMouse(Common::Event &event) {
+	CGEEvent &evt = Evt[EvtHead++];
+	evt._x = event.mouse.x;
+	evt._y = event.mouse.y;
+	evt._ptr = SpriteAt(evt._x, evt._y);
 
-void MOUSE::ClrEvt(Sprite *spr) {
-	if (spr) {
-		uint16 e;
-		for (e = EvtTail; e != EvtHead; e = (e + 1) % EVT_MAX)
-			if (Evt[e]._ptr == spr)
-				Evt[e]._msk = 0;
-	} else
-		EvtTail = EvtHead;
+	switch (event.type) {
+	case Common::EVENT_MOUSEMOVE:
+		evt._msk = ROLL;
+		break;
+	case Common::EVENT_LBUTTONDOWN:
+		evt._msk = L_DN;
+		Buttons |= 1;
+		break;
+	case Common::EVENT_LBUTTONUP:
+		evt._msk = L_UP;
+		Buttons &= ~1;
+		break;
+	case Common::EVENT_RBUTTONDOWN:
+		evt._msk = R_DN;
+		Buttons |= 2;
+		break;
+	case Common::EVENT_RBUTTONUP:
+		evt._msk = R_UP;
+		Buttons &= ~2;
+		break;
+	}
 }
 
 /*----------------- EventManager interface -----------------*/
@@ -257,10 +267,12 @@ void EventManager::poll() {
 	while (g_system->getEventManager()->pollEvent(_event)) {
 		switch (_event.type) {
 		case Common::EVENT_QUIT:
+			// Signal to quit
 			_quitFlag = true;
 			return;
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
+			// Handle keyboard events
 			_keyboard->NewKeyboard(_event);
 			handleEvents();
 			break;
@@ -269,8 +281,8 @@ void EventManager::poll() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
-			// TODO: Handle mouse events
-			//_mouse->NewMouse(event);
+			// Handle mouse events
+			_mouse->NewMouse(_event);
 			handleEvents();
 			break;
 		}
@@ -322,6 +334,16 @@ void EventManager::handleEvents(void) {
 	}
 	if (_mouse->Hold)
 		_mouse->Hold->gotoxy(_mouse->_x - _mouse->hx, _mouse->_y - _mouse->hy);
+}
+
+void EventManager::ClrEvt(Sprite *spr) {
+	if (spr) {
+		uint16 e;
+		for (e = EvtTail; e != EvtHead; e = (e + 1) % EVT_MAX)
+			if (Evt[e]._ptr == spr)
+				Evt[e]._msk = 0;
+	} else
+		EvtTail = EvtHead;
 }
 
 } // End of namespace CGE
