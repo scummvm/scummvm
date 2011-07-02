@@ -313,7 +313,7 @@ bool Bitmap::solidAt(int x, int y) {
 		return false;
 
 	m = _v;
-	r = x % 4;
+	r = static_cast<uint16>(x) % 4;
 	n0 = (SCR_WID * y + x) / 4, n = 0;
 
 	while (r) {
