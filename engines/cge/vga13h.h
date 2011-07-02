@@ -334,7 +334,6 @@ uint8 Closest(CBLK *pal, CBLK x) {
 #undef f
 }
 
-char   *NumStr(char *str, int num);
 //static void       Video       (void);
 uint16 *SaveScreen(void);
 void    RestoreScreen(uint16 * &sav);
