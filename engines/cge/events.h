@@ -96,6 +96,7 @@ extern uint16 EvtHead, EvtTail;
 class MOUSE : public Sprite {
 public:
 	Sprite *Hold;
+	bool _active;
 	int hx, hy;
 	bool Exist;
 	int Buttons;
