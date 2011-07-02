@@ -66,7 +66,8 @@ Heart *_heart;
 WALK *Hero;
 SYSTEM *Sys;
 Sprite *_pocLight;
-MOUSE *Mouse;
+Keyboard *_keyboard;
+MOUSE *_mouse;
 Sprite *_pocket[POCKET_NX];
 Sprite *_sprite;
 Sprite *_miniCave;
@@ -741,7 +742,7 @@ static void caveUp() {
 	Vga->Sunrise(VGA::SysPal);
 	Dark = false;
 	if (! Startup)
-		Mouse->On();
+		_mouse->On();
 
 	_heart->_enable = true;
 }
@@ -792,7 +793,7 @@ void CGEEngine::switchCave(int cav) {
 			warning("SwitchCave() - SNPOST");
 		} else {
 			Now = cav;
-			Mouse->Off();
+			_mouse->Off();
 			if (Hero) {
 				Hero->park();
 				Hero->step(0);
@@ -836,13 +837,13 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 		pp0 = pp;
 		switch (x) {
 		case Del:
-			if (Keyboard::_key[ALT] && Keyboard::_key[CTRL])
+			if (_keyboard->_key[ALT] && _keyboard->_key[CTRL])
 				AltCtrlDel();
 			else 
 				KillSprite();
 			break;
 		case 'F':
-			if (Keyboard::_key[ALT]) {
+			if (_keyboard->_key[ALT]) {
 				Sprite *m = Vga->ShowQ->Locate(17001);
 				if (m) {
 					m->step(1);
@@ -860,7 +861,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			NextStep();
 			break;
 		case '`':
-			if (Keyboard::_key[ALT])
+			if (_keyboard->_key[ALT])
 				SaveMapping();
 			else
 				_vm->switchMapping();
@@ -890,7 +891,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 			Sys->FunDel = 1;
 			break;
 		case 'X':
-			if (Keyboard::_key[ALT])
+			if (_keyboard->_key[ALT])
 				Finis = true;
 			break;
 		case '0':
@@ -898,7 +899,7 @@ void SYSTEM::Touch(uint16 mask, int x, int y) {
 		case '2':
 		case '3':
 		case '4':
-			if (Keyboard::_key[ALT]) {
+			if (_keyboard->_key[ALT]) {
 				SNPOST(SNLEVEL, -1, x - '0', NULL);
 				break;
 			}
@@ -1034,7 +1035,7 @@ static void SwitchColorMode(void) {
 
 
 static void SwitchMusic(void) {
-	if (Keyboard::_key[ALT]) {
+	if (_keyboard->_key[ALT]) {
 		if (VMENU::Addr)
 			SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 		else {
@@ -1194,8 +1195,8 @@ static void SayDebug(void) {
 			t = t1;
 		}
 
-		dwtom(Mouse->_x, ABSX, 10, 3);
-		dwtom(Mouse->_y, ABSY, 10, 3);
+		dwtom(_mouse->_x, ABSX, 10, 3);
+		dwtom(_mouse->_y, ABSY, 10, 3);
 //		dwtom(coreleft(), NFRE, 10, 5);
 //		dwtom(farcoreleft(), FFRE, 10, 6);
 
@@ -1663,9 +1664,9 @@ void CGEEngine::runGame() {
 	_horzLine->_z = 126;
 	Vga->ShowQ->Insert(_horzLine);
 
-	Mouse->Busy = Vga->SpareQ->Locate(BUSY_REF);
-	if (Mouse->Busy)
-		ExpandSprite(Mouse->Busy);
+	_mouse->Busy = Vga->SpareQ->Locate(BUSY_REF);
+	if (_mouse->Busy)
+		ExpandSprite(_mouse->Busy);
 
 	Startup = 0;
 
@@ -1674,7 +1675,7 @@ void CGEEngine::runGame() {
 	              CAVE_Y + ((Now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
 	caveUp();
 
-	Keyboard::setClient(Sys);
+	_keyboard->setClient(Sys);
 	// main loop
 	while (! Finis) {
 		//TODO Change the SNPOST message send to a special way to send function pointer
@@ -1683,11 +1684,11 @@ void CGEEngine::runGame() {
 		mainLoop();
 	}
 
-	Keyboard::setClient(NULL);
+	_keyboard->setClient(NULL);
 	_heart->_enable = false;
 	SNPOST(SNCLEAR, -1, 0, NULL);
 	SNPOST_(SNCLEAR, -1, 0, NULL);
-	Mouse->Off();
+	_mouse->Off();
 	Vga->ShowQ->Clear();
 	Vga->SpareQ->Clear();
 	Hero = NULL;
@@ -1706,11 +1707,11 @@ void CGEEngine::movie(const char *ext) {
 		//Vga->ShowQ->Append(Mouse);
 
 		_heart->_enable = true;
-		Keyboard::setClient(Sys);
+		_keyboard->setClient(Sys);
 		while (!Snail->Idle())
 			mainLoop();
 
-		Keyboard::setClient(NULL);
+		_keyboard->setClient(NULL);
 		_heart->_enable = false;
 		SNPOST(SNCLEAR, -1, 0, NULL);
 		SNPOST_(SNCLEAR, -1, 0, NULL);
@@ -1746,12 +1747,12 @@ bool CGEEngine::showTitle(const char *name) {
 	if (STARTUP::Mode < 2 && !STARTUP::SoundOk) {
 		Vga->CopyPage(1, 2);
 		Vga->CopyPage(0, 1);
-		Vga->ShowQ->Append(Mouse);
+		Vga->ShowQ->Append(_mouse);
 		_heart->_enable = true;
-		Mouse->On();
+		_mouse->On();
 		for (selectSound(); !Snail->Idle() || VMENU::Addr;)
 			mainLoop();
-		Mouse->Off();
+		_mouse->Off();
 		_heart->_enable = false;
 		Vga->ShowQ->Clear();
 		Vga->CopyPage(0, 2);
@@ -1782,13 +1783,13 @@ bool CGEEngine::showTitle(const char *name) {
 			movie("X00"); // paylist
 			Vga->CopyPage(1, 2);
 			Vga->CopyPage(0, 1);
-			Vga->ShowQ->Append(Mouse);
+			Vga->ShowQ->Append(_mouse);
 			//Mouse.On();
 			_heart->_enable = true;
 			for (takeName(); GetText::_ptr;)
 				mainLoop();
 			_heart->_enable = false;
-			if (Keyboard::last() == Enter && *UsrFnam)
+			if (_keyboard->last() == Enter && *UsrFnam)
 				usr_ok = true;
 			if (usr_ok)
 				strcat(UsrFnam, SVG_EXT);
@@ -1842,7 +1843,7 @@ void CGEEngine::cge_main(void) {
 	//Debug( memset((void *) (-K(4)), 0, K(1)); )
 	memset(Barriers, 0xFF, sizeof(Barriers));
 
-	if (!Mouse->Exist)
+	if (!_mouse->Exist)
 		error("%s", Text->getText(NO_MOUSE_TEXT));
 
 	if (!SVG0FILE::exist(SVG0NAME))

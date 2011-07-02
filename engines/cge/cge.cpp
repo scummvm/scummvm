@@ -96,7 +96,8 @@ void CGEEngine::setup() {
 	Snail = new SNAIL(this, false);
 	Snail_ = new SNAIL(this, true);
 
-	Mouse = new MOUSE(this);
+	_mouse = new MOUSE(this);
+	_keyboard = new Keyboard();
 	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
 }
 
@@ -121,7 +122,8 @@ CGEEngine::~CGEEngine() {
 	delete Hero;
 	delete Sys;
 	delete _pocLight;
-	delete Mouse;
+	delete _keyboard;
+	delete _mouse;
 	for (int i = 0; i < POCKET_NX; i++)
 		delete _pocket[i];
 	delete _sprite;
