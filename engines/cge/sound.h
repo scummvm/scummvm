@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __SOUND__
-#define __SOUND__
+#ifndef __CGE_SOUND__
+#define __CGE_SOUND__
 
 #include "cge/wav.h"
 #include "cge/snddrv.h"

@@ -26,7 +26,7 @@
  */
 
 #include "cge/game.h"
-#include "cge/mouse.h"
+#include "cge/events.h"
 #include <stdlib.h>
 
 namespace CGE {

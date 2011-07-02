@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __BITMAP__
-#define __BITMAP__
+#ifndef __CGE_BITMAP__
+#define __CGE_BITMAP__
 
 #include "cge/general.h"
 

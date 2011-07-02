@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __STARTUP__
-#define __STARTUP__
+#ifndef __CGE_STARTUP__
+#define __CGE_STARTUP__
 
 
 #include "cge/general.h"

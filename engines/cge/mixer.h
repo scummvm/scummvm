@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __MIXER__
-#define __MIXER__
+#ifndef __CGE_MIXER__
+#define __CGE_MIXER__
 
 #include "cge/vga13h.h"
 

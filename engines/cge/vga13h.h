@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __VGA13H__
-#define __VGA13H__
+#ifndef __CGE_VGA13H__
+#define __CGE_VGA13H__
 
 #include "graphics/surface.h"
 #include "cge/general.h"

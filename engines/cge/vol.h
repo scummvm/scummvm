@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __VOL__
-#define __VOL__
+#ifndef __CGE_VOL__
+#define __CGE_VOL__
 
 #include "cge/btfile.h"
 #include "cge/cfile.h"
