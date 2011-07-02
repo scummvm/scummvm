@@ -69,14 +69,6 @@ Seq _seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
 
 extern "C"  void    SNDMIDIPlay(void);
 
-char *NumStr(char *str, int num) {
-	char *p = strchr(str, '#');
-	if (p)
-		wtom(num, p, 10, 5);
-	return str;
-}
-
-
 /*
 static void Video() {
   static uint16 SP_S;
