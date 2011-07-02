@@ -98,11 +98,11 @@ class MOUSE : public Sprite {
 	static MOUSE_FUN *OldMouseFun;
 	static MOUSE_FUN NewMouseFun;
 	static uint16 OldMouseMask;
-	Sprite *Hold;
-	int hx, hy;
 	//void SetFun (void);
 	//void ResetFun (void);
 public:
+	Sprite *Hold;
+	int hx, hy;
 	bool Exist;
 	int Buttons;
 	Sprite *Busy;
@@ -122,6 +122,7 @@ private:
 class EventManager {
 private:
 	Common::Event _event;
+	void handleEvents();
 public:
 	bool _quitFlag;
 

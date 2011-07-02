@@ -247,55 +247,6 @@ void MOUSE::ClrEvt(Sprite *spr) {
 		EvtTail = EvtHead;
 }
 
-
-void MOUSE::Tick(void) {
-	step();
-	while (EvtTail != EvtHead) {
-		CGEEvent e = Evt[EvtTail];
-		if (e._msk) {
-			if (Hold && e._ptr != Hold)
-				Hold->touch(e._msk | ATTN, e._x - Hold->_x, e._y - Hold->_y);
-
-			// update mouse cursor position
-			if (e._msk & ROLL)
-				gotoxy(e._x, e._y);
-
-			// activate current touched SPRITE
-			if (e._ptr) {
-				if (e._msk & KEYB)
-					e._ptr->touch(e._msk, e._x, e._y);
-				else
-					e._ptr->touch(e._msk, e._x - e._ptr->_x, e._y - e._ptr->_y);
-			} else if (Sys)
-					Sys->touch(e._msk, e._x, e._y);
-
-			if (e._msk & L_DN) {
-				Hold = e._ptr;
-				if (Hold) {
-					Hold->_flags._hold = true;
-					hx = e._x - Hold->_x;
-					hy = e._y - Hold->_y;
-				}
-			}
-
-			if (e._msk & L_UP) {
-				if (Hold) {
-					Hold->_flags._hold = false;
-					Hold = NULL;
-				}
-			}
-			///Touched = e.Ptr;
-
-			// discard Text if button released
-			if (e._msk & (L_UP | R_UP))
-				KillText();
-		}
-		EvtTail = (EvtTail + 1) % EVT_MAX;
-	}
-	if (Hold)
-		Hold->gotoxy(_x - hx, _y - hy);
-}
-
 /*----------------- EventManager interface -----------------*/
 
 EventManager::EventManager() {
@@ -311,9 +262,66 @@ void EventManager::poll() {
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
 			_keyboard->NewKeyboard(_event);
+			handleEvents();
+			break;
+		case Common::EVENT_MOUSEMOVE:
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONUP:
+			// TODO: Handle mouse events
+			//_mouse->NewMouse(event);
+			handleEvents();
 			break;
 		}
 	}
+}
+
+void EventManager::handleEvents(void) {
+	while (EvtTail != EvtHead) {
+		CGEEvent e = Evt[EvtTail];
+		if (e._msk) {
+			if (_mouse->Hold && e._ptr != _mouse->Hold)
+				_mouse->Hold->touch(e._msk | ATTN, e._x - _mouse->Hold->_x, e._y - _mouse->Hold->_y);
+
+			// update mouse cursor position
+			if (e._msk & ROLL)
+				_mouse->gotoxy(e._x, e._y);
+
+			// activate current touched SPRITE
+			if (e._ptr) {
+				if (e._msk & KEYB)
+					e._ptr->touch(e._msk, e._x, e._y);
+				else
+					e._ptr->touch(e._msk, e._x - e._ptr->_x, e._y - e._ptr->_y);
+			} else if (Sys)
+					Sys->touch(e._msk, e._x, e._y);
+
+			if (e._msk & L_DN) {
+				_mouse->Hold = e._ptr;
+				if (_mouse->Hold) {
+					_mouse->Hold->_flags._hold = true;
+					_mouse->hx = e._x - _mouse->Hold->_x;
+					_mouse->hy = e._y - _mouse->Hold->_y;
+				}
+			}
+
+			if (e._msk & L_UP) {
+				if (_mouse->Hold) {
+					_mouse->Hold->_flags._hold = false;
+					_mouse->Hold = NULL;
+				}
+			}
+			///Touched = e.Ptr;
+
+			// discard Text if button released
+			if (e._msk & (L_UP | R_UP))
+				KillText();
+		}
+		EvtTail = (EvtTail + 1) % EVT_MAX;
+	}
+	if (_mouse->Hold)
+		_mouse->Hold->gotoxy(_mouse->_x - _mouse->hx, _mouse->_y - _mouse->hy);
 }
 
 } // End of namespace CGE

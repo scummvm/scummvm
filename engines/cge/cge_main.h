@@ -122,7 +122,7 @@ public:
 
 	void SetPal();
 	void FunTouch();
-	void Touch(uint16 mask, int x, int y);
+	virtual void touch(uint16 mask, int x, int y);
 	void Tick();
 private:
 	CGEEngine *_vm;
