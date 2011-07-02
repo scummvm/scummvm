@@ -45,7 +45,6 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	//_runLoopTimerUnk = 0;
 	_playFinale = false;
 	_runFlag = true;
-	_saveLoadMode = 0;
 	_configMouse = true;
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = _itemIconShapes =
@@ -360,10 +359,8 @@ Common::Error EobCoreEngine::go() {
 		if (action == -1) {
 			// load game
 			repeatLoop = _gui->runLoadMenu(72, 14);
-			if (repeatLoop && !shouldQuit()) {
-				_saveLoadMode = -1;
+			if (repeatLoop && !shouldQuit())
 				startupLoad();
-			}
 		} else if (action == -2) {
 			// new game
 			repeatLoop = startCharacterGeneration();

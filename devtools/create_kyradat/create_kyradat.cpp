@@ -272,6 +272,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseMenuStringsTransfer, kTypeStringList, true },
 	{ kEobBaseMenuStringsSpec, kTypeStringList, true },
 	{ kEobBaseMenuStringsSpellNo, kTypeStringList, false },
+	{ kEobBaseMenuYesNoStrings, kTypeStringList, true },
 
 	{ kEobBaseSpellLevelsMage, kTypeRawData, false },
 	{ kEobBaseSpellLevelsCleric, kTypeRawData, false },
@@ -1363,6 +1364,8 @@ const char *getIdString(const int id) {
 		return "kEobBaseMenuStringsSpec";
 	case kEobBaseMenuStringsSpellNo:
 		return "kEobBaseMenuStringsSpellNo";
+	case kEobBaseMenuYesNoStrings:
+		return "kEobBaseMenuYesNoStrings";
 	case kEobBaseSpellLevelsMage:
 		return "kEobBaseSpellLevelsMage";
 	case kEobBaseSpellLevelsCleric:

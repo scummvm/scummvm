@@ -77,12 +77,6 @@ void DarkMoonEngine::startupNew() {
 	EobCoreEngine::startupNew();
 }
 
-void DarkMoonEngine::startupLoad() {
-	setHandItem(_itemInHand);
-	loadLevel(_currentLevel, _currentSub);
-	_saveLoadMode = 0;
-}
-
 void DarkMoonEngine::npcSequence(int npcIndex) {
 	_screen->loadEobBitmap("OUTTAKE", 5, 3);
 	_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);

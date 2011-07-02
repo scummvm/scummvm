@@ -247,6 +247,7 @@ enum kExtractID {
 	kEobBaseMenuStringsTransfer,
 	kEobBaseMenuStringsSpec,
 	kEobBaseMenuStringsSpellNo,
+	kEobBaseMenuYesNoStrings,
 
 	kEobBaseSpellLevelsMage,
 	kEobBaseSpellLevelsCleric,

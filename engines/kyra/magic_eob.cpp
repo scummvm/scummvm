@@ -694,11 +694,11 @@ void EobCoreEngine::spellCallback_start_removeParalysis() {
 }
 
 void EobCoreEngine::spellCallback_start_causeSeriousWounds() {
-	modifyCharacterHitpoints(_activeSpellCaster, rollDice(2, 8, 1));
+	
 }
 
 void EobCoreEngine::spellCallback_start_cureSeriousWounds() {
-
+	modifyCharacterHitpoints(_activeSpellCaster, rollDice(2, 8, 1));
 }
 
 void EobCoreEngine::spellCallback_start_neutralizePoison() {

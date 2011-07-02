@@ -67,11 +67,7 @@ public:
 	int getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor);
 
 	// utilities for thumbnail creation
-	void createScreenThumbnail(Graphics::Surface &dst) {}
-
-	// unused
-	int redrawShadedButtonCallback(Button *button) { return 0; }
-	int redrawButtonCallback(Button *button) { return 0; }
+	void createScreenThumbnail(Graphics::Surface &dst);
 
 private:
 	int simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffset);
@@ -84,6 +80,7 @@ private:
 	void scribeScrollDialogue();
 
 	bool confirmDialogue(int id);
+	bool confirmDialogue2(int dim, int id, int deflt);
 	void messageDialogue(int dim, int id, int buttonTextCol);
 	int selectCharacterDialogue(int id);
 	void displayTextBox(int id);
@@ -127,8 +124,8 @@ private:
 	uint16 _prcButtonUnk3;
 	uint16 _cflag;
 
-	Button::Callback _scrollUpFunctor;
-	Button::Callback _scrollDownFunctor;
+	//Button::Callback _scrollUpFunctor;
+	//Button::Callback _scrollDownFunctor;
 
 	int _menuLineSpacing;
 	int _menuLastInFlags;

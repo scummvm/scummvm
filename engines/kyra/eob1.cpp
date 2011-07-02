@@ -77,12 +77,6 @@ void EobEngine::startupNew() {
 	EobCoreEngine::startupNew();
 }
 
-void EobEngine::startupLoad() {
-	setHandItem(_itemInHand);
-	loadLevel(_currentLevel, _currentSub);
-	_saveLoadMode = 0;
-}
-
 void EobEngine::npcSequence(int npcIndex) {
 
 

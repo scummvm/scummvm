@@ -785,8 +785,6 @@ protected:
 	void restoreMonsterTempData(LevelTempData *tmp);
 	void releaseMonsterTempData(LevelTempData *tmp);
 
-	int _saveLoadMode;
-
 	const char * const *_saveLoadStrings;
 
 	Screen_Eob *_screen;
@@ -1006,6 +1004,7 @@ protected:
 	const char *const *_menuStringsTransfer;
 	const char *const *_menuStringsSpec;
 	const char *const *_menuStringsSpellNo;
+	const char *const *_menuYesNoStrings;
 
 	const uint8 *_spellLevelsMage;
 	int _spellLevelsMageSize;

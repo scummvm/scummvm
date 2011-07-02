@@ -387,6 +387,7 @@ void EobCoreEngine::initStaticResource() {
 	_menuStringsTransfer = _staticres->loadStrings(kEobBaseMenuStringsTransfer, temp);
 	_menuStringsSpec = _staticres->loadStrings(kEobBaseMenuStringsSpec, temp);
 	_menuStringsSpellNo = _staticres->loadStrings(kEobBaseMenuStringsSpellNo, temp);
+	_menuYesNoStrings = _staticres->loadStrings(kEobBaseMenuYesNoStrings, temp);
 
 	_spellLevelsMage = _staticres->loadRawData(kEobBaseSpellLevelsMage, _spellLevelsMageSize);
 	_spellLevelsCleric = _staticres->loadRawData(kEobBaseSpellLevelsCleric, _spellLevelsClericSize);
