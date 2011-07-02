@@ -252,7 +252,7 @@ void BinkDecoder::audioPacket(AudioTrack &audio) {
 		audioBlock(audio, out);
 
 		byte flags = Audio::FLAG_16BITS;
-		if (audio.channels == 2)
+		if (audio.outChannels == 2)
 			flags |= Audio::FLAG_STEREO;
 
 #ifdef SCUMM_LITTLE_ENDIAN
