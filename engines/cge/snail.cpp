@@ -747,7 +747,7 @@ void SNKill(Sprite *spr) {
 		Sprite *nx = spr->_next;
 		Hide1(spr);
 		Vga->ShowQ->Remove(spr);
-		MOUSE::ClrEvt(spr);
+		EventManager::ClrEvt(spr);
 		if (spr->_flags._kill)
 			delete spr;
 		else {

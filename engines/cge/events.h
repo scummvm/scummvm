@@ -91,15 +91,9 @@ struct CGEEvent {
 
 extern CGEEvent Evt[EVT_MAX];
 extern uint16 EvtHead, EvtTail;
-typedef void (MOUSE_FUN)(void);
 
 
 class MOUSE : public Sprite {
-	static MOUSE_FUN *OldMouseFun;
-	static MOUSE_FUN NewMouseFun;
-	static uint16 OldMouseMask;
-	//void SetFun (void);
-	//void ResetFun (void);
 public:
 	Sprite *Hold;
 	int hx, hy;
@@ -111,8 +105,8 @@ public:
 	~MOUSE();
 	void On();
 	void Off();
-	static void ClrEvt(Sprite *spr = NULL);
 	void Tick();
+	void NewMouse(Common::Event &event);
 private:
 	CGEEngine *_vm;
 };
@@ -128,6 +122,7 @@ public:
 
 	EventManager();
 	void poll();	
+	static void ClrEvt(Sprite *spr = NULL);
 };
 
 } // End of namespace CGE
