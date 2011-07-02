@@ -120,6 +120,8 @@ BinkDecoder::~BinkDecoder() {
 }
 
 void BinkDecoder::close() {
+	reset();
+
 	if (_audioStream) {
 		// Stop audio
 		g_system->getMixer()->stopHandle(_audioHandle);
