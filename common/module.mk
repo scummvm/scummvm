@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	config-file.o \
 	config-manager.o \
 	dcl.o \
+	dct.o \
 	debug.o \
 	error.o \
 	EventDispatcher.o \
