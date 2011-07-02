@@ -151,6 +151,7 @@ MOUSE::MOUSE(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(
 	Exist = true;
 	Buttons = 0;
 	Busy = NULL;
+	_active = false;
 
 	setSeq(ms);
 
@@ -171,64 +172,29 @@ MOUSE::~MOUSE(void) {
 
 
 void MOUSE::On(void) {
-	/*
-	  if (SeqPtr && Exist)
-	    {
-	      _CX = X + X;  // horizontal position
-	      _DX = Y;      // vertical position
-	      _AX = 0x0004; // Set Mouse Position
-	      __int__(0x33);
-	      // set new mouse fun
-	      _ES = FP_SEG(NewMouseFun);
-	      _DX = FP_OFF(NewMouseFun);
-	      _CX = 0x001F; // 11111b = all events
-	      _AX = 0x0014; // Swap User-Interrupt Vector
-	      __int__(0x33);
-	      // save old mouse fun
-	      OldMouseMask = _CX;
-	      OldMouseFun = (MOUSE_FUN *) MK_FP(_ES, _DX);
-
-	      // set X bounds
-	      _DX = (SCR_WID - W) * 2;      // right limit
-	      _CX = 0;              // left limit
-	      _AX = 0x0007;         // note: each pixel = 2
-	      __int__(0x33);
-
-	      // set Y bounds
-	      _DX = SCR_HIG - H;        // bottom limit
-	      _CX = 0;              // top limit
-	      _AX = 0x0008;
-	      __int__(0x33);
-
-	      Step(0);
-	      if (Busy) Busy->Step(0);
-	    }
-	*/
-	warning("STUB: MOUSE::On");
+	if (_seqPtr && Exist) {
+		_active = true;
+		step(0);
+		if (Busy) Busy->step(0);
+    }
 }
 
 
 void MOUSE::Off(void) {
-/*
-	if (SeqPtr == 0)
-	{
-	  if (Exist)
-	{
-	  // bring back old mouse fun
-	  _ES = FP_SEG(OldMouseFun);
-	  _DX = FP_OFF(OldMouseFun);
-	  _CX = OldMouseMask;
-	  _AX = 0x0014;     // Swap User-Interrupt Vector
-	  __int__(0x33);
+	if (_seqPtr == 0) {
+		if (Exist) {
+			_active = false;
+		}
+
+		step(1);
+		if (Busy) Busy->step(1);
 	}
-	  Step(1);
-	  if (Busy) Busy->Step(1);
-	}
-	*/
-	warning("STUB: MOUSE::Off");
 }
 
 void MOUSE::NewMouse(Common::Event &event) {
+	if (!_active)
+		return;
+
 	CGEEvent &evt = Evt[EvtHead++];
 	evt._x = event.mouse.x;
 	evt._y = event.mouse.y;
