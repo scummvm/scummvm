@@ -30,7 +30,7 @@
 
 #include "cge/wav.h"
 #include "cge/vga13h.h"
-#include "cge/mouse.h"
+#include "cge/events.h"
 
 namespace CGE {
 

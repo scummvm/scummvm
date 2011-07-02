@@ -26,8 +26,7 @@
  */
 
 #include "cge/gettext.h"
-#include "cge/keybd.h"
-#include "cge/mouse.h"
+#include "cge/events.h"
 #include "cge/cge_main.h"
 #include <string.h>
 
