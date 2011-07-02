@@ -3105,10 +3105,10 @@ void Scene6100::Object::synchronize(Serializer &s) {
 	SceneObject::synchronize(s);
 
 	// Save the double fields of the FloatSet
-	s.syncBytes((byte *)&_floats._float1, sizeof(double));
-	s.syncBytes((byte *)&_floats._float2, sizeof(double));
-	s.syncBytes((byte *)&_floats._float3, sizeof(double));
-	s.syncBytes((byte *)&_floats._float4, sizeof(double));
+	s.syncAsDouble(_floats._float1);
+	s.syncAsDouble(_floats._float2);
+	s.syncAsDouble(_floats._float3);
+	s.syncAsDouble(_floats._float4);
 }
 
 /*--------------------------------------------------------------------------*/

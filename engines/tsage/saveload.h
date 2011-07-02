@@ -77,6 +77,7 @@ public:
 		Common::Serializer::Version maxVersion = kLastVersion);
 	void validate(int v, Common::Serializer::Version minVersion = 0,
 		Common::Serializer::Version maxVersion = kLastVersion);
+	void syncAsDouble(double &v);
 };
 
 /*--------------------------------------------------------------------------*/
