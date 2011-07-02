@@ -155,7 +155,9 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 
 void SoundManager::installConfigDrivers() {
 	installDriver(ADLIB_DRIVER_NUM);
+#ifdef DEBUG
 	installDriver(SBLASTER_DRIVER_NUM);
+#endif
 }
 
 Common::List<SoundDriverEntry> &SoundManager::getDriverList(bool detectFlag) {
@@ -220,8 +222,14 @@ void SoundManager::installDriver(int driverNum) {
  * Instantiate a driver class for the specified driver number
  */
 SoundDriver *SoundManager::instantiateDriver(int driverNum) {
-	assert(driverNum == ADLIB_DRIVER_NUM);
-	return new AdlibSoundDriver();
+	switch (driverNum) {
+	case ADLIB_DRIVER_NUM:
+		return new AdlibSoundDriver();
+	case SBLASTER_DRIVER_NUM:
+		return new AdlibFxSoundDriver();
+	default:
+		error("Unknown sound driver - %d", driverNum);
+	}
 }
 
 /**
@@ -2779,7 +2787,6 @@ AdlibFxSoundDriver::AdlibFxSoundDriver(): SoundDriver() {
 
 	_mixer = _vm->_mixer;
 	_sampleRate = _mixer->getOutputRate();
-	_opl = makeAdLibOPL(_sampleRate);
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 /*
 	Common::set_to(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
@@ -2798,7 +2805,6 @@ AdlibFxSoundDriver::AdlibFxSoundDriver(): SoundDriver() {
 
 AdlibFxSoundDriver::~AdlibFxSoundDriver() {
 	_mixer->stopHandle(_soundHandle);
-	OPLDestroy(_opl);
 }
 
 bool AdlibFxSoundDriver::open() {
@@ -2900,10 +2906,7 @@ void AdlibFxSoundDriver::write(int v) {
 void AdlibFxSoundDriver::flush() {
 	Common::StackLock slock(SoundManager::sfManager()._serverDisabledMutex);
 
-	while (!_queue.empty()) {
-		RegisterValue v = _queue.pop();
-		OPLWriteReg(_opl, v._regNum, v._value);
-	}
+	// No data output yet
 }
 
 
@@ -2914,6 +2917,7 @@ int AdlibFxSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 void AdlibFxSoundDriver::update(int16 *buf, int len) {
+/*
 	static int samplesLeft = 0;
 	while (len != 0) {
 		int count = samplesLeft;
@@ -2929,6 +2933,7 @@ void AdlibFxSoundDriver::update(int16 *buf, int len) {
 		}
 		buf += count;
 	}
+*/
 }
 
 void AdlibFxSoundDriver::write209() {

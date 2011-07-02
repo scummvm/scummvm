@@ -459,7 +459,6 @@ private:
 	Common::Queue<RegisterValue> _queue;
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
-	FM_OPL *_opl;
 	Audio::SoundHandle _soundHandle;
 	int _sampleRate;
 
