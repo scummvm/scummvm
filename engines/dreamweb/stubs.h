@@ -35,6 +35,8 @@
 	void random(Sprite* sprite, ObjData* objData);
 	void dodoor();
 	void dodoor(Sprite* sprite, ObjData* objData);
+	void doorway(Sprite* sprite, ObjData* objData);
+	void widedoor(Sprite* sprite, ObjData* objData);
 	void liftsprite();
 	void liftsprite(Sprite* sprite, ObjData* objData);
 	void turnpathonCPP(uint8 param);

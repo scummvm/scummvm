@@ -942,7 +942,7 @@ void DreamGenContext::backobject(Sprite* sprite) {
 
 	sprite->delay = objData->delay;
 	if (objData->type == 6)
-		widedoor();
+		widedoor(sprite, objData);
 	else if (objData->type == 5)
 		random(sprite, objData);
 	else if (objData->type == 4)
@@ -950,7 +950,7 @@ void DreamGenContext::backobject(Sprite* sprite) {
 	else if (objData->type == 3)
 		liftsprite(sprite, objData);
 	else if (objData->type == 2)
-		doorway();
+		doorway(sprite, objData);
 	else if (objData->type == 1)
 		constant(sprite, objData);
 	else
@@ -974,6 +974,22 @@ void DreamGenContext::random(Sprite* sprite, ObjData* objData) {
 	randomnum1();
 	uint16 r = ax;
 	sprite->b15 = objData->b18[r&7];
+}
+
+void DreamGenContext::doorway(Sprite* sprite, ObjData* objData) {
+	data.byte(kDoorcheck1) = -24;
+	data.byte(kDoorcheck2) = 10;
+	data.byte(kDoorcheck3) = -30;
+	data.byte(kDoorcheck4) = 10;
+	dodoor(sprite, objData);
+}
+
+void DreamGenContext::widedoor(Sprite* sprite, ObjData* objData) {
+	data.byte(kDoorcheck1) = -24;
+	data.byte(kDoorcheck2) = 24;
+	data.byte(kDoorcheck3) = -30;
+	data.byte(kDoorcheck4) = 24;
+	dodoor(sprite, objData);
 }
 
 void DreamGenContext::dodoor() {
