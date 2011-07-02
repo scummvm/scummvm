@@ -129,22 +129,21 @@ void BinkDecoder::close() {
 	_audioStarted = false;
 
 	for (int i = 0; i < 4; i++) {
-		delete[] _curPlanes[i];
-		delete[] _oldPlanes[i];
+		delete[] _curPlanes[i]; _curPlanes[i] = 0;
+		delete[] _oldPlanes[i]; _oldPlanes[i] = 0;
 	}
 
 	deinitBundles();
 
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 16; i++) {
 		delete _huffman[i];
+		_huffman[i] = 0;
+	}
 
 	delete _bink; _bink = 0;
 	_surface.free();
 
 	_audioTrack = 0;
-
-	for (int i = 0; i < 16; i++)
-		_huffman[i] = 0;
 
 	for (int i = 0; i < kSourceMAX; i++) {
 		_bundles[i].countLength = 0;
@@ -165,10 +164,8 @@ void BinkDecoder::close() {
 			_colHighHuffman[i].symbols[j] = j;
 	}
 
-	for (int i = 0; i < 4; i++) {
-		_curPlanes[i] = 0;
-		_oldPlanes[i] = 0;
-	}
+	_audioTracks.clear();
+	_frames.clear();
 }
 
 uint32 BinkDecoder::getElapsedTime() const {
@@ -1423,7 +1420,7 @@ void BinkDecoder::audioBlock(AudioTrack &audio, int16 *out) {
 		for (uint32 j = 0; j < audio.frameLen; j++)
 			audio.coeffsPtr[i][j] = 385.0 + audio.coeffsPtr[i][j] * (1.0 / 32767.0);
 
-	floatToInt16Interleave(out, (const float **)audio.coeffsPtr, audio.frameLen, audio.channels);
+	floatToInt16Interleave(out, const_cast<const float **>(audio.coeffsPtr), audio.frameLen, audio.channels);
 
 	if (!audio.first) {
 		int count = audio.overlapLen * audio.channels;
