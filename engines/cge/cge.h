@@ -43,6 +43,8 @@ enum {
 };
 
 class CGEEngine : public Engine {
+private:
+	uint32 _lastFrame;
 public:
 	CGEEngine(OSystem *syst, const ADGameDescription *gameDescription);
 	~CGEEngine();
