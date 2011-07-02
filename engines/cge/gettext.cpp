@@ -37,7 +37,7 @@ GetText *GetText::_ptr = NULL;
 
 GetText::GetText(CGEEngine *vm, const char *info, char *text, int size, void (*click)())
 	: TALK(vm), _text(text), _size(min<int>(size, GTMAX)), _len(min<int>(_size, strlen(text))),
-	  _cntr(GTBLINK), _click(click), _oldKeybClient(Keyboard::setClient(this)), _vm(vm) {
+	  _cntr(GTBLINK), _click(click), _oldKeybClient(_keyboard->setClient(this)), _vm(vm) {
 	int i = 2 * TEXT_HM + _Font->Width(info);
 	_ptr = this;
 	Mode = RECT;
@@ -54,7 +54,7 @@ GetText::GetText(CGEEngine *vm, const char *info, char *text, int size, void (*c
 
 
 GetText::~GetText() {
-	Keyboard::setClient(_oldKeybClient);
+	_keyboard->setClient(_oldKeybClient);
 	_ptr = NULL;
 }
 
@@ -101,7 +101,7 @@ void GetText::touch(uint16 mask, int x, int y) {
 				if (_oldKeybClient)
 					_oldKeybClient->touch(mask, x, y);
 			} else {
-				if (Keyboard::_key[ALT]) {
+				if (_keyboard->_key[ALT]) {
 					p = strchr(bezo, x);
 					if (p)
 						x = ogon[p - bezo];

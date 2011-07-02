@@ -180,7 +180,7 @@ static void SNGame(Sprite *spr, int num) {
 			k2->step(new_random(6));
 			k3->step(new_random(6));
 			///--------------------
-			if (spr->_ref == 1 && Keyboard::_key[ALT]) {
+			if (spr->_ref == 1 && _keyboard->_key[ALT]) {
 				k1->step(5);
 				k2->step(5);
 				k3->step(5);
@@ -897,9 +897,9 @@ static void SNReach(Sprite *spr, int mode) {
 
 static void SNMouse(bool on) {
 	if (on)
-		Mouse->On();
+		_mouse->On();
 	else
-		Mouse->Off();
+		_mouse->Off();
 }
 
 
