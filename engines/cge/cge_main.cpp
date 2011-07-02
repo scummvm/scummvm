@@ -1896,7 +1896,6 @@ void CGEEngine::cge_main(void) {
 			movie("X03");
 	} else
 		Vga->Sunset();
-	error("%s", Text->getText(EXIT_OK_TEXT + FINIS));
 }
 
 } // End of namespace CGE

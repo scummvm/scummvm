@@ -119,17 +119,7 @@ CGEEngine::~CGEEngine() {
 
 	_console = new CGEConsole(this);
 
-	// Delete engine objects
-	delete Text;
-	delete Vga;
-	delete _heart;
-	delete Hero;
-	delete Sys;
-	delete _pocLight;
-	delete _keyboard;
-	delete _mouse;
-	for (int i = 0; i < POCKET_NX; i++)
-		delete _pocket[i];
+	// Delete engine objects 
 	delete _sprite;
 	delete _miniCave;
 	delete _shadow;
@@ -148,8 +138,18 @@ CGEEngine::~CGEEngine() {
 	delete LI[1];
 	delete LI[2];
 	delete LI[3];
+	delete Text;
+	delete _heart;
+	delete _pocLight;
+	delete _keyboard;
+	delete _mouse;
+	for (int i = 0; i < POCKET_NX; i++)
+		delete _pocket[i];
 	delete Snail;
 	delete Snail_;
+	delete Hero;
+	delete Vga;
+	delete Sys;
 }
 
 Common::Error CGEEngine::run() {
