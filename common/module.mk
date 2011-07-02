@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	error.o \
 	EventDispatcher.o \
 	EventRecorder.o \
+	fft.o \
 	file.o \
 	fs.o \
 	hashmap.o \
