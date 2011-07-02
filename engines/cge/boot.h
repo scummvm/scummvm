@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __BOOT__
-#define __BOOT__
+#ifndef __CGE_BOOT__
+#define __CGE_BOOT__
 
 #include "cge/jbw.h"
 

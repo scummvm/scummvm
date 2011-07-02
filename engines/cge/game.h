@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __GAME__
-#define __GAME__
+#ifndef __CGE_GAME__
+#define __CGE_GAME__
 
 #include "cge/vga13h.h"
 #include "cge/bitmaps.h"
