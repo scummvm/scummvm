@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	quicktime.o \
 	random.o \
 	rational.o \
+	rdft.o \
 	str.o \
 	stream.o \
 	system.o \
