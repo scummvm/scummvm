@@ -251,7 +251,7 @@ extern "C" void TimerProc() {
 		}
 		for (spr = VGA::ShowQ.First(); spr; spr = spr->Next) {
 			if (spr->Time) {
-				if (!spr->Flags.Hide) {
+				if (!spr->_flags.Hide) {
 					if (-- spr->Time == 0)
 						spr->Tick();
 				}
@@ -326,7 +326,7 @@ void Engine_::newTimer(...) {
 
 	    for (spr = VGA::ShowQ.First(); spr; spr = spr->Next) {
 			if (spr->Time) { 
-				if (!spr->Flags.Hide) {
+				if (!spr->_flags.Hide) {
 					if (--spr->Time == 0) 
 						spr->Tick();
 				}
@@ -427,11 +427,11 @@ void Sprite::moveShapes(uint8 *buf) {
 bool Sprite::works(Sprite *spr) {
 	if (spr)
 		if (spr->_ext) {
-			SNAIL::COM *c = spr->_ext->_take;
+			Snail::Com *c = spr->_ext->_take;
 			if (c != NULL) {
 				c += spr->_takePtr;
-				if (c->Ref == _ref)
-					if (c->Com != SNLABEL || (c->Val == 0 || c->Val == Now))
+				if (c->_ref == _ref)
+					if (c->_com != SNLABEL || (c->_val == 0 || c->_val == _now))
 						return true;
 			}
 		}
@@ -460,7 +460,7 @@ bool Sprite::seqTest(int n) {
 }
 
 
-SNAIL::COM *Sprite::snList(SNLIST type) {
+Snail::Com *Sprite::snList(SNLIST type) {
 	register SprExt *e = _ext;
 	if (e)
 		return (type == NEAR) ? e->_near : e->_take;
@@ -493,7 +493,7 @@ Sprite *Sprite::expand() {
 		if (*_file) {
 			static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
 			char line[LINE_MAX], fname[MAXPATH];
-			BMP_PTR *shplist = new BMP_PTR [_shpCnt + 1];
+			BMP_PTR *shplist = new BMP_PTR[_shpCnt + 1];
 			Seq *seq = NULL;
 			int shpcnt = 0,
 			    seqcnt = 0,
@@ -502,8 +502,8 @@ Sprite *Sprite::expand() {
 			    maxnow = 0,
 			    maxnxt = 0;
 
-			SNAIL::COM *nea = NULL;
-			SNAIL::COM *tak = NULL;
+			Snail::Com *nea = NULL;
+			Snail::Com *tak = NULL;
 			mergeExt(fname, _file, SPR_EXT);
 			if (INI_FILE::exist(fname)) { // sprite description file exist
 				INI_FILE sprf(fname);
@@ -552,32 +552,32 @@ Sprite *Sprite::expand() {
 					}
 					case 3 : { // Near
 						if (_nearPtr != NO_PTR) {
-							nea = (SNAIL::COM *) realloc(nea, (neacnt + 1) * sizeof(*nea));
+							nea = (Snail::Com *) realloc(nea, (neacnt + 1) * sizeof(*nea));
 							if (nea == NULL)
 								error("No core [%s]", fname);
 							else {
-								SNAIL::COM *c = &nea[neacnt++];
-								if ((c->Com = (SNCOM) takeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
+								Snail::Com *c = &nea[neacnt++];
+								if ((c->_com = (SNCOM)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
 									error("%s [%s]", (const char*)NumStr("Bad NEAR in ######", lcnt), (const char*)fname);
-								c->Ref = atoi(strtok(NULL, " \t,;/"));
-								c->Val = atoi(strtok(NULL, " \t,;/"));
-								c->Ptr = NULL;
+								c->_ref = atoi(strtok(NULL, " \t,;/"));
+								c->_val = atoi(strtok(NULL, " \t,;/"));
+								c->_ptr = NULL;
 							}
 						}
 					}
 					break;
 					case 4 : { // Take
 						if (_takePtr != NO_PTR) {
-							tak = (SNAIL::COM *) realloc(tak, (takcnt + 1) * sizeof(*tak));
+							tak = (Snail::Com *) realloc(tak, (takcnt + 1) * sizeof(*tak));
 							if (tak == NULL)
 								error("No core [%s]", fname);
 							else {
-								SNAIL::COM *c = &tak[takcnt++];
-								if ((c->Com = (SNCOM) takeEnum(SNAIL::ComTxt, strtok(NULL, " \t,;/"))) < 0)
+								Snail::Com *c = &tak[takcnt++];
+								if ((c->_com = (SNCOM)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
 									error("%s [%s]", NumStr("Bad NEAR in ######", lcnt), (const char *)fname);
-								c->Ref = atoi(strtok(NULL, " \t,;/"));
-								c->Val = atoi(strtok(NULL, " \t,;/"));
-								c->Ptr = NULL;
+								c->_ref = atoi(strtok(NULL, " \t,;/"));
+								c->_val = atoi(strtok(NULL, " \t,;/"));
+								c->_ptr = NULL;
 							}
 						}
 						break;
@@ -601,11 +601,11 @@ Sprite *Sprite::expand() {
 			setShapeList(shplist);
 			//enable();  // enable interupt
 			if (nea)
-				nea[neacnt - 1].Ptr = _ext->_near = nea;
+				nea[neacnt - 1]._ptr = _ext->_near = nea;
 			else
 				_nearPtr = NO_PTR;
 			if (tak)
-				tak[takcnt - 1].Ptr = _ext->_take = tak;
+				tak[takcnt - 1]._ptr = _ext->_take = tak;
 			else
 				_takePtr = NO_PTR;
 		}

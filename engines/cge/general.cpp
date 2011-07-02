@@ -93,7 +93,7 @@ Dac _stdPal[] =  {// R    G   B
 	{ 255, 255, 255},   // 255
 };
 
-DRVINFO SNDDrvInfo;
+DrvInfo SNDDrvInfo;
 
 void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *)) {
 	warning("STUB: _fqsort");
@@ -311,11 +311,11 @@ void SNDSetVolume() {
 	warning("STUB: SNDSetVolume");
 }
 
-void SNDDigiStart(SMPINFO *PSmpInfo) {
+void SNDDigiStart(SmpInfo *PSmpInfo) {
 	warning("STUB: SNDDigitStart");
 }
 
-void SNDDigiStop(SMPINFO *PSmpInfo) {
+void SNDDigiStop(SmpInfo *PSmpInfo) {
 	warning("STUB: SNDDigiStop");
 }
 
