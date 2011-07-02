@@ -320,6 +320,7 @@ enum KyraResources {
 	kEobBaseMenuStringsTransfer,
 	kEobBaseMenuStringsSpec,
 	kEobBaseMenuStringsSpellNo,
+	kEobBaseMenuYesNoStrings,
 
 	kEobBaseSpellLevelsMage,
 	kEobBaseSpellLevelsCleric,

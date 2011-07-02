@@ -1094,6 +1094,7 @@ const int eob1FloppyNeed[] = {
 	kEobBaseMenuStringsRest2,
 	kEobBaseMenuStringsRest4,
 	kEobBaseMenuStringsDefeat,
+	kEobBaseMenuYesNoStrings,
 
 	kEobBaseSpellLevelsMage,
 	kEobBaseSpellLevelsCleric,
@@ -1282,6 +1283,7 @@ const int eob2FloppyNeed[] = {
 	kEobBaseMenuStringsTransfer,
 	kEobBaseMenuStringsSpec,
 	kEobBaseMenuStringsSpellNo,
+	kEobBaseMenuYesNoStrings,
 
 	kEobBaseSpellLevelsMage,
 	kEobBaseSpellLevelsCleric,

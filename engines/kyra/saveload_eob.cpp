@@ -349,17 +349,14 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		}
 	}
 
-	if (_saveLoadMode != -1) {
-		if (_flags.gameID == GI_EOB1)
-			_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
-		loadLevel(_currentLevel, _currentSub);
-		_sceneUpdateRequired = true;
-		_screen->setFont(Screen::FID_6_FNT);
-		_saveLoadMode = 1;
-	}
+	if (_flags.gameID == GI_EOB1)
+		_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
+	loadLevel(_currentLevel, _currentSub);
+	_sceneUpdateRequired = true;
+	_screen->setFont(Screen::FID_6_FNT);
 
 	_screen->setCurPage(0);
-	gui_drawPlayField(0);
+	gui_drawPlayField(0);	
 
 	if (_currentControlMode)
 		_screen->copyRegion(176, 0, 0, 0, 144, 168, 0, 5, Screen::CR_NO_P_CHECK);
@@ -372,6 +369,8 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		_updateFlags = 0;
 		useMagicBookOrSymbol(_openBookChar, _openBookType);
 	}
+
+	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 14, Screen::CR_NO_P_CHECK);
 
 	gui_toggleButtons();
 	setHandItem(_itemInHand);

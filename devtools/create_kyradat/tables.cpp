@@ -1675,6 +1675,12 @@ const ExtractEntrySearchData kEobBaseMenuStringsSpellNoProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
+const ExtractEntrySearchData kEobBaseMenuYesNoStringsProvider[] = {
+	{ EN_ANY, kPlatformUnknown, { 0x00000007, 0x000001EE, { { 0x8C, 0xF1, 0x35, 0x1F, 0xD6, 0x1F, 0xA4, 0xA1, 0xD6, 0xD6, 0x0A, 0x27, 0xB9, 0xFC, 0x9E, 0x62 } } } },
+	{ DE_DEU, kPlatformUnknown, { 0x00000008, 0x00000235, { { 0xC7, 0x06, 0xCF, 0xA8, 0xC0, 0xDE, 0xD4, 0x8C, 0x7F, 0xA2, 0x3A, 0xD3, 0x48, 0x51, 0x36, 0x89 } } } },
+	EXTRACT_END_ENTRY
+};
+
 const ExtractEntrySearchData kEobBaseSpellLevelsMageProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000001A, 0x00000042, { { 0x4F, 0xA3, 0x70, 0x0F, 0x6D, 0xB4, 0xC2, 0xAF, 0x12, 0xB4, 0x2E, 0x26, 0xEF, 0x0B, 0x37, 0x92 } } } }, // EOB1
 	{ UNK_LANG, kPlatformUnknown, { 0x00000023, 0x00000074, { { 0xBE, 0x10, 0xFA, 0xD9, 0xB3, 0xB0, 0x4E, 0x73, 0xC9, 0xA1, 0xE2, 0xCE, 0xE8, 0xEC, 0x85, 0x0F } } } }, // EOB2
@@ -3434,7 +3440,8 @@ const ExtractEntry extractProviders[] = {
 	{ kEobBaseMenuStringsTransfer, kEobBaseMenuStringsTransferProvider },
 	{ kEobBaseMenuStringsSpec, kEobBaseMenuStringsSpecProvider },
 	{ kEobBaseMenuStringsSpellNo, kEobBaseMenuStringsSpellNoProvider },
-
+	{ kEobBaseMenuYesNoStrings, kEobBaseMenuYesNoStringsProvider },
+	
 	{ kEobBaseSpellLevelsMage, kEobBaseSpellLevelsMageProvider },
 	{ kEobBaseSpellLevelsCleric, kEobBaseSpellLevelsClericProvider },
 	{ kEobBaseNumSpellsCleric, kEobBaseNumSpellsClericProvider },
