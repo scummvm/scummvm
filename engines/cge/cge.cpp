@@ -96,8 +96,8 @@ void CGEEngine::setup() {
 	LI[2] = new Bitmap("LITE2", true);
 	LI[3] = new Bitmap("LITE3", true);
 	LI[4] = NULL;
-	Snail = new SNAIL(this, false);
-	Snail_ = new SNAIL(this, true);
+	_snail = new Snail(this, false);
+	_snail_ = new Snail(this, true);
 
 	_mouse = new MOUSE(this);
 	_keyboard = new Keyboard();
@@ -145,8 +145,8 @@ CGEEngine::~CGEEngine() {
 	delete _mouse;
 	for (int i = 0; i < POCKET_NX; i++)
 		delete _pocket[i];
-	delete Snail;
-	delete Snail_;
+	delete _snail;
+	delete _snail_;
 	delete Hero;
 	delete Vga;
 	delete Sys;

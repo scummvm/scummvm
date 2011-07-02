@@ -43,22 +43,16 @@ namespace CGE {
 #define POCKET_SX   8
 #define POCKET_SY   3
 
-#define SNINSERT(c,r,v,p)   Snail->InsCom(c,r,v,p)
-#define SNPOST(c,r,v,p)     Snail->AddCom(c,r,v,p)
-#define SNPOST_(c,r,v,p)    Snail_->AddCom(c,r,v,p)
+#define SNINSERT(c, r, v, p)   _snail->insCom(c, r, v, p)
+#define SNPOST(c, r, v, p)     _snail->addCom(c, r, v, p)
+#define SNPOST_(c, r, v, p)    _snail_->addCom(c, r, v, p)
 
 #define SNAIL_FRAME_RATE 62
 #define SNAIL_FRAME_DELAY (1000 / SNAIL_FRAME_RATE)
 
-typedef struct  {
-	uint8 Horz, Vert;
-} BAR;
-
-
-struct SCB {
-	uint8  *Ptr;
-	uint16  Siz;
-	SCB    *Nxt;
+struct Bar {
+	uint8 _horz;
+	uint8 _vert;
 };
 
 
@@ -79,49 +73,49 @@ enum SNCOM {
 
 enum SNLIST { NEAR, TAKE };
 
-class SNAIL {
+class Snail {
 public:
-	struct COM {
-		SNCOM Com;
-		int Ref;
-		int Val;
-		void *Ptr;
-	} *SNList;
-	uint8 Head, Tail;
-	bool Turbo, Busy, TextDelay;
+	struct Com {
+		SNCOM _com;
+		int _ref;
+		int _val;
+		void *_ptr;
+	} *_snList;
+	uint8 _head;
+	uint8 _tail;
+	bool _turbo;
+	bool _busy;
+	bool _textDelay;
 	uint32 _timerExpiry;
-	static const char *ComTxt[];
-	bool TalkEnable;
-	SNAIL(CGEEngine *vm, bool turbo = false);
-	~SNAIL();
-	void RunCom(void);
-	void AddCom(SNCOM com, int ref = 0, int val = 0, void *ptr = NULL);
-	void InsCom(SNCOM com, int ref = 0, int val = 0, void *ptr = NULL);
-	bool Idle(void);
+	static const char *_comTxt[];
+	bool _talkEnable;
+	Snail(CGEEngine *vm, bool turbo);
+	~Snail();
+	void runCom();
+	void addCom(SNCOM com, int ref, int val, void *ptr);
+	void insCom(SNCOM com, int ref, int val, void *ptr);
+	bool idle();
 private:
 	CGEEngine *_vm;
 };
 
 
-void    SelectPocket(int n);
-void    PocFul(void);
+void selectPocket(int n);
+void pocFul();
 
 
-extern  SCB Scb;
-extern  bool Flag[4];
-extern  bool Game;
-extern  bool Dark;
-//extern  SNAIL *Snail;
-//extern  SNAIL *Snail_;
-extern  int Now;
-extern  int Lev;
-extern  int MaxCave;
-extern  int PocPtr;
-extern  BAR Barriers[];
-extern  struct HXY {
+extern  bool _flag[4];
+extern  bool _game;
+extern  bool _dark;
+extern  int _now;
+extern  int _lev;
+extern  int _maxCave;
+extern  int _pocPtr;
+extern  Bar _barriers[];
+extern  struct Hxy {
 	int _x;
 	int _y;
-} HeroXY[];
+} _heroXY[];
 
 } // End of namespace CGE
 

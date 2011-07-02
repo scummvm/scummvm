@@ -109,8 +109,8 @@ namespace CGE {
 #define SYSTIMERATE    6   // 12 Hz
 #define HEROFUN0       (40 * 12)
 #define HEROFUN1       ( 2 * 12)
-#define PAIN           (Flag[0])
-#define FINIS          (Flag[3])
+#define PAIN           (_flag[0])
+#define FINIS          (_flag[3])
 
 
 class SYSTEM : public Sprite {
@@ -190,8 +190,8 @@ extern BMP_PTR MC[3];
 extern BMP_PTR PR[2];
 extern BMP_PTR SP[3];
 extern BMP_PTR LI[5];
-extern SNAIL *Snail;
-extern SNAIL *Snail_;
+extern Snail *_snail;
+extern Snail *_snail_;
 
 } // End of namespace CGE
 

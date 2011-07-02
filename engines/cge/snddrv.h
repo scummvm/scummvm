@@ -56,7 +56,7 @@ enum  DEV_TYPE  { DEV_AUTO = -1,                    // auto-detect mode
 #define SERR_BADDDEV      128                       // bad device
 
 // driver info
-struct DRVINFO {
+struct DrvInfo {
 	DEV_TYPE DDEV;                                    // digi device
 	DEV_TYPE MDEV;                                    // midi device
 	uint16   DBASE;                                   // digi base port
@@ -78,7 +78,7 @@ struct DRVINFO {
 };
 
 // sample info
-struct SMPINFO {
+struct SmpInfo {
 	uint8  *saddr;                                    // address
 	uint16  slen;                                     // length
 	uint16  span;                                     // left/right pan (0-15)
@@ -89,7 +89,7 @@ struct SMPINFO {
 // *  Data                                              *
 // ******************************************************
 // driver info
-extern DRVINFO SNDDrvInfo;
+extern DrvInfo SNDDrvInfo;
 
 // midi player flag (1 means we are playing)
 extern uint16 MIDIPlayFlag;
@@ -110,10 +110,10 @@ void SNDDone();
 void SNDSetVolume();
 
 // Start Digi
-void SNDDigiStart(SMPINFO *PSmpInfo);
+void SNDDigiStart(SmpInfo *PSmpInfo);
 
 // Stop Digi
-void SNDDigiStop(SMPINFO *PSmpInfo);
+void SNDDigiStop(SmpInfo *PSmpInfo);
 
 // Start MIDI File
 void SNDMIDIStart(uint8 *MIDFile);
