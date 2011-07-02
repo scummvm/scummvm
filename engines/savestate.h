@@ -24,7 +24,7 @@
 #define ENGINES_SAVESTATE_H
 
 #include "common/array.h"
-#include "common/hash-str.h"
+#include "common/str.h"
 #include "common/ptr.h"
 
 
@@ -33,65 +33,60 @@ struct Surface;
 }
 
 /**
- * A hashmap describing details about a given save state.
- * TODO
- * Guaranteed to contain save_slot and description values.
- * Additional ideas: Playtime, creation date, thumbnail, ...
+ * Object describing a save state.
+ *
+ * This at least includes the save slot number and a human readable
+ * description of the save state.
+ *
+ * Further possibilites are a thumbnail, play time, creation date,
+ * creation time, delete protected, write protection.
  */
-class SaveStateDescriptor : public Common::StringMap {
-protected:
-	Common::SharedPtr<Graphics::Surface> _thumbnail; // can be 0
-
+class SaveStateDescriptor {
 public:
-	SaveStateDescriptor() : _thumbnail() {
-		setVal("save_slot", "-1");	// FIXME: default to 0 (first slot) or to -1 (invalid slot) ?
-		setVal("description", "");
-	}
+	SaveStateDescriptor();
+	SaveStateDescriptor(int s, const Common::String &d);
 
-	SaveStateDescriptor(int s, const Common::String &d) : _thumbnail() {
-		setVal("save_slot", Common::String::format("%d", s));
-		setVal("description", d);
-	}
+	/**
+	 * @param slot The saveslot id, as it would be passed to the "-x" command line switch.
+	 */
+	void setSaveSlot(int slot) { _slot = slot; }
 
-	SaveStateDescriptor(const Common::String &s, const Common::String &d) : _thumbnail() {
-		setVal("save_slot", s);
-		setVal("description", d);
-	}
+	/**
+	 * @return The saveslot id, as it would be passed to the "-x" command line switch.
+	 */
+	int getSaveSlot() const { return _slot; }
 
-	/** The saveslot id, as it would be passed to the "-x" command line switch. */
-	Common::String &save_slot() { return getVal("save_slot"); }
+	/**
+	 * @param desc A human readable description of the save state.
+	 */
+	void setDescription(const Common::String &desc) { _description = desc; }
 
-	/** The saveslot id, as it would be passed to the "-x" command line switch (read-only variant). */
-	const Common::String &save_slot() const { return getVal("save_slot"); }
-
-	/** A human readable description of the save state. */
-	Common::String &description() { return getVal("description"); }
-
-	/** A human readable description of the save state (read-only variant). */
-	const Common::String &description() const { return getVal("description"); }
+	/**
+	 * @return A human readable description of the save state.
+	 */
+	const Common::String &getDescription() const { return _description; }
 
 	/** Optional entries only included when querying via MetaEngine::querySaveMetaInfo */
 
 	/**
-	 * Returns the value of a given key as boolean.
-	 * It accepts 'true', 'yes' and '1' for true and
-	 * 'false', 'no' and '0' for false.
-	 * (FIXME:) On unknown value it errors out ScummVM.
-	 * On unknown key it returns false as default.
+	 * Defines whether the save state is allowed to be deleted.
 	 */
-	bool getBool(const Common::String &key) const;
+	void setDeletableFlag(bool state) { _isDeletable = state; }
 
 	/**
-	 * Sets the 'is_deletable' key, which indicates if the
-	 * given savestate is safe for deletion.
+	 * Queries whether the save state is allowed to be deleted.
 	 */
-	void setDeletableFlag(bool state);
+	bool getDeletableFlag() const { return _isDeletable; }
 
 	/**
-	 * Sets the 'is_write_protected' key, which indicates if the
-	 * given savestate can be overwritten or not
+	 * Defines whether the save state is write protected.
 	 */
-	void setWriteProtectedFlag(bool state);
+	void setWriteProtectedFlag(bool state) { _isWriteProtected = state; }
+
+	/**
+	 * Queries whether the save state is write protected.
+	 */
+	bool getWriteProtectedFlag() const { return _isWriteProtected; }
 
 	/**
 	 * Return a thumbnail graphics surface representing the savestate visually.
@@ -109,24 +104,100 @@ public:
 	void setThumbnail(Graphics::Surface *t);
 
 	/**
-	 * Sets the 'save_date' key properly, based on the given values.
+	 * Sets the date the save state was created.
+	 *
+	 * @param year  Year of creation.
+	 * @param month Month of creation.
+	 * @param day   Day of creation.
 	 */
 	void setSaveDate(int year, int month, int day);
 
 	/**
-	 * Sets the 'save_time' key properly, based on the given values.
+	 * Queries a human readable description of the date the save state was created.
+	 *
+	 * This will return an empty string in case the value is not set.
+	 */
+	const Common::String &getSaveDate() const { return _saveDate; }
+
+	/**
+	 * Sets the time the save state was created.
+	 *
+	 * @param hour  Hour of creation.
+	 * @param min   Minute of creation.
 	 */
 	void setSaveTime(int hour, int min);
 
 	/**
-	 * Sets the 'play_time' key properly, based on the given values.
+	 * Queries a human readable description of the time the save state was created.
+	 *
+	 * This will return an empty string in case the value is not set.
+	 */
+	const Common::String &getSaveTime() const { return _saveTime; }
+
+	/**
+	 * Sets the time the game was played before the save state was created.
+	 *
+	 * @param hours How many hours the user played the game so far.
+	 * @param min   How many minutes the user played the game so far.
 	 */
 	void setPlayTime(int hours, int minutes);
 
 	/**
-	 * Sets the 'play_time' key properly, based on the given value.
+	 * Sets the time the game was played before the save state was created.
+	 *
+	 * @param msecs How many milliseconds the user played the game so far.
 	 */
 	void setPlayTime(uint32 msecs);
+
+	/**
+	 * Queries a human readable description of the time the game was played
+	 * before the save state was created.
+	 *
+	 * This will return an empty string in case the value is not set.
+	 */
+	const Common::String &getPlayTime() const { return _playTime; }
+
+private:
+	/**
+	 * The saveslot id, as it would be passed to the "-x" command line switch.
+	 */
+	int _slot;
+
+	/**
+	 * A human readable description of the save state.
+	 */
+	Common::String _description;
+
+	/**
+	 * Whether the save state can be deleted.
+	 */
+	bool _isDeletable;
+
+	/**
+	 * Whether the save state is write protected.
+	 */
+	bool _isWriteProtected;
+
+	/**
+	 * Human readable description of the date the save state was created.
+	 */
+	Common::String _saveDate;
+
+	/**
+	 * Human readable description of the time the save state was created.
+	 */
+	Common::String _saveTime;
+
+	/**
+	 * Human readable description of the time the game was played till the
+	 * save state was created.
+	 */
+	Common::String _playTime;
+
+	/**
+	 * The thumbnail of the save state.
+	 */
+	Common::SharedPtr<Graphics::Surface> _thumbnail;
 };
 
 /** List of savestates. */
