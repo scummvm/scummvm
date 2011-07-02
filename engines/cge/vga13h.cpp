@@ -558,7 +558,7 @@ Sprite *Sprite::expand() {
 							else {
 								Snail::Com *c = &nea[neacnt++];
 								if ((c->_com = (SNCOM)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
-									error("%s [%s]", (const char*)NumStr("Bad NEAR in ######", lcnt), (const char*)fname);
+									error("Bad NEAR in %d [%s]", lcnt, fname);
 								c->_ref = atoi(strtok(NULL, " \t,;/"));
 								c->_val = atoi(strtok(NULL, " \t,;/"));
 								c->_ptr = NULL;
@@ -574,7 +574,7 @@ Sprite *Sprite::expand() {
 							else {
 								Snail::Com *c = &tak[takcnt++];
 								if ((c->_com = (SNCOM)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
-									error("%s [%s]", NumStr("Bad NEAR in ######", lcnt), (const char *)fname);
+									error("Bad NEAR in %d [%s]", lcnt, fname);
 								c->_ref = atoi(strtok(NULL, " \t,;/"));
 								c->_val = atoi(strtok(NULL, " \t,;/"));
 								c->_ptr = NULL;
