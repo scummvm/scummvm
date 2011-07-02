@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	file.o \
 	fs.o \
 	hashmap.o \
+	huffman.o \
 	iff_container.o \
 	macresman.o \
 	math.o \
