@@ -1357,7 +1357,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 				continue;
 
 			if ((i = takeEnum(Comd, strtok(line, " =\t"))) < 0)
-				error("%s [%s]", NumStr("Bad line ######", lcnt), (const char *)fname);
+				error("Bad line %d [%s]", lcnt, fname);
 
 
 			switch (i) {
@@ -1365,7 +1365,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 				break;
 			case  1 : // Type
 				if ((type = takeEnum(Type, strtok(NULL, " \t,;/"))) < 0)
-					error("%s [%s]", NumStr("Bad line ######", lcnt), (const char *)fname);
+					error("Bad line %d [%s]", lcnt, fname);
 				break;
 			case  2 : // Phase
 				++ shpcnt;
@@ -1533,7 +1533,7 @@ void CGEEngine::loadScript(const char *fname) {
 			_sprite->_flags._back = true;
 	}
 	if (! ok)
-		error("%s [%s]", NumStr("Bad INI line ######", lcnt), fname);
+		error("Bad INI line %d [%s]", lcnt, fname);
 }
 
 #define GAME_FRAME_DELAY (1000 / 50)
