@@ -243,7 +243,7 @@ void BinkDecoder::audioPacket(AudioTrack &audio) {
 
 	int outSize = audio.frameLen * audio.channels;
 	while (audio.bits->pos() < audio.bits->size()) {
-		int16 *out = new int16[outSize];
+		int16 *out = (int16 *)malloc(outSize * 2);
 		memset(out, 0, outSize * 2);
 
 		audioBlock(audio, out);
