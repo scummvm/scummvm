@@ -31,11 +31,10 @@
 #include "cge/vga13h.h"
 #include "cge/bitmaps.h"
 #include "cge/text.h"
-#include "cge/mouse.h"
 #include "cge/cge_main.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "cge/keybd.h"
+#include "cge/events.h"
 
 namespace CGE {
 

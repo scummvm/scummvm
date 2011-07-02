@@ -11,12 +11,11 @@ MODULE_OBJS := \
 	console.o \
 	detection.o \
 	ems.o \
+	events.o \
 	game.o \
 	general.o \
 	gettext.o \
-	keybd.o \
 	mixer.o \
-	mouse.o \
 	snail.o \
 	sound.o \
 	startup.o \

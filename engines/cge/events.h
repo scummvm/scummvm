@@ -25,13 +25,44 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __MOUSE__
-#define __MOUSE__
+#ifndef __CGE_EVENTS__
+#define __CGE_EVENTS__
 
 #include "cge/game.h"
 #include "cge/talk.h"
+#include "cge/jbw.h"
+#include "cge/vga13h.h"
 
 namespace CGE {
+
+/*----------------- KEYBOARD interface -----------------*/
+
+#define KEYBD_INT   9
+#define LSHIFT      42
+#define RSHIFT      54
+#define CTRL        29
+#define ALT         56
+
+
+class Keyboard {
+public:
+	static void (* OldKeyboard)(...);
+	static void NewKeyboard(...);
+	static uint16 _code[0x60];
+	static uint16 _current;
+	static Sprite *_client;
+	static uint8 _key[0x60];
+	static uint16 last() {
+		uint16 cur = _current;
+		_current = 0;
+		return cur;
+	}
+	static Sprite *setClient(Sprite *spr);
+	Keyboard();
+	~Keyboard();
+};
+
+/*----------------- MOUSE interface -----------------*/
 
 #define EVT_MAX     256
 #define ROLL        0x01
