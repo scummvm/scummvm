@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __CFILE__
-#define __CFILE__
+#ifndef __CGE_CFILE__
+#define __CGE_CFILE__
 
 #include "cge/general.h"
 

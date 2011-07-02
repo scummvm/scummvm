@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __BITMAPS__
-#define __BITMAPS__
+#ifndef __CGE_BITMAPS__
+#define __CGE_BITMAPS__
 
 #include "cge/vga13h.h"
 

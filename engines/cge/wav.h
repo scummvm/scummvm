@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __WAV__
-#define __WAV__
+#ifndef __CGE_WAV__
+#define __CGE_WAV__
 
 #include "cge/general.h"
 #include <string.h>

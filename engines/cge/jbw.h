@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __JBW__
-#define __JBW__
+#ifndef __CGE_JBW__
+#define __CGE_JBW__
 
 #include "common/scummsys.h"
 

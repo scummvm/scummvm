@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __GETTEXT__
-#define __GETTEXT__
+#ifndef __CGE_GETTEXT__
+#define __CGE_GETTEXT__
 
 #include "cge/general.h"
 #include "cge/talk.h"

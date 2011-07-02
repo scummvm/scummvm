@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __CONFIG__
-#define __CONFIG__
+#ifndef __CGE_CONFIG__
+#define __CGE_CONFIG__
 
 namespace CGE {
 

@@ -34,8 +34,8 @@
 // *  Ver 1.40: 11-Mar-95                               *
 // ******************************************************
 
-#ifndef __SNDDRV__
-#define __SNDDRV__
+#ifndef __CGE_SNDDRV__
+#define __CGE_SNDDRV__
 
 namespace CGE {
 

@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __SNAIL__
-#define __SNAIL__
+#ifndef __CGE_SNAIL__
+#define __CGE_SNAIL__
 
 #include "cge/jbw.h"
 #include "cge/cge.h"

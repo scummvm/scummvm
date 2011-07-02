@@ -29,7 +29,7 @@
 #include "cge/talk.h"
 #include "cge/vol.h"
 #include "cge/game.h"
-#include "cge/mouse.h"
+#include "cge/events.h"
 
 namespace CGE {
 

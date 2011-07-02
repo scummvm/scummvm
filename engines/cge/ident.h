@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __IDENT__
-#define __IDENT__
+#ifndef __CGE_IDENT__
+#define __CGE_IDENT__
 
 namespace CGE {
 
