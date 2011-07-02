@@ -51,6 +51,9 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 }
 
 void CGEEngine::setup() {
+	// Initialise fields
+	_lastFrame = 0;
+
 	// Create debugger console
 	_console = new CGEConsole(this);
 
@@ -98,6 +101,7 @@ void CGEEngine::setup() {
 
 	_mouse = new MOUSE(this);
 	_keyboard = new Keyboard();
+	_eventManager = new EventManager();
 	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
 }
 

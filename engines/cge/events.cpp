@@ -25,6 +25,7 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
+#include "common/events.h"
 #include "cge/events.h"
 #include "cge/events.h"
 #include "cge/text.h"
@@ -57,103 +58,85 @@ const uint16 Keyboard::_code[0x60] = {
 	0 * 0x5F
 };
 
+const uint16 Keyboard::_scummVmCodes[0x60] = {
+	0,					Common::KEYCODE_ESCAPE,	Common::KEYCODE_1,	Common::KEYCODE_2,	Common::KEYCODE_3,
+	Common::KEYCODE_4,	Common::KEYCODE_5,	Common::KEYCODE_6,	Common::KEYCODE_7,	Common::KEYCODE_8,
+	Common::KEYCODE_9,	Common::KEYCODE_0,	Common::KEYCODE_MINUS, Common::KEYCODE_PLUS,	Common::KEYCODE_BACKSPACE,
+	Common::KEYCODE_TAB,	Common::KEYCODE_q,	Common::KEYCODE_w,	Common::KEYCODE_e,	Common::KEYCODE_r,
+	Common::KEYCODE_t,	Common::KEYCODE_y,	Common::KEYCODE_u,	Common::KEYCODE_i,	Common::KEYCODE_o,
+	Common::KEYCODE_p,	Common::KEYCODE_LEFTBRACKET,	Common::KEYCODE_RIGHTBRACKET,	Common::KEYCODE_RETURN,	0/*Ctrl*/,
+	Common::KEYCODE_a,	Common::KEYCODE_s,	Common::KEYCODE_d,	Common::KEYCODE_f,	Common::KEYCODE_g,
+	Common::KEYCODE_h,	Common::KEYCODE_j,	Common::KEYCODE_k,	Common::KEYCODE_l,	Common::KEYCODE_SEMICOLON,
+	Common::KEYCODE_BACKSLASH,	Common::KEYCODE_TILDE,	Common::KEYCODE_LSHIFT,	Common::KEYCODE_BACKSLASH,	Common::KEYCODE_z,
+	Common::KEYCODE_x,	Common::KEYCODE_c,	Common::KEYCODE_v,	Common::KEYCODE_b,	Common::KEYCODE_n,
+	Common::KEYCODE_m,	Common::KEYCODE_COMMA,	Common::KEYCODE_PERIOD,	Common::KEYCODE_SLASH,	Common::KEYCODE_RSHIFT,
+	Common::KEYCODE_KP_MULTIPLY,	0 /*Alt*/,	Common::KEYCODE_SPACE,	Common::KEYCODE_CAPSLOCK,	Common::KEYCODE_F1,
+	Common::KEYCODE_F2,	Common::KEYCODE_F3,	Common::KEYCODE_F4,	Common::KEYCODE_F5,	Common::KEYCODE_F6,
+	Common::KEYCODE_F7,	Common::KEYCODE_F8,	Common::KEYCODE_F9,	Common::KEYCODE_F10,	Common::KEYCODE_NUMLOCK,
+	Common::KEYCODE_SCROLLOCK,	Common::KEYCODE_KP7,	Common::KEYCODE_KP8,	Common::KEYCODE_KP9,	Common::KEYCODE_KP_MINUS,
+	Common::KEYCODE_KP4,	Common::KEYCODE_KP5,	Common::KEYCODE_KP6,	Common::KEYCODE_KP_PLUS,	Common::KEYCODE_KP1,
+	Common::KEYCODE_KP2,	Common::KEYCODE_KP3,	Common::KEYCODE_KP0,	Common::KEYCODE_KP_PERIOD,	0,
+	0,					0,					Common::KEYCODE_F11,	Common::KEYCODE_F12,	0,
+	0,					0,					0,						0,						0,
+	0
+};
 
 Keyboard::Keyboard() {
 	_client = NULL;
-	Common::set_to(&_key[0], &_key[0x60], 0);
+	Common::set_to(&_key[0], &_key[0x60], false);
 	_current = 0;
-
-	// steal keyboard interrupt
-	/* TODO replace totally by scummvm handling
-	OldKeyboard = getvect(KEYBD_INT);
-	setvect(KEYBD_INT, NewKeyboard);
-	*/
-	warning("STUB: Keyboard::Keyboard");
 }
-
 
 Keyboard::~Keyboard() {
-	// bring back keyboard interrupt
-	/* TODO replace totally by scummvm handling
-	setvect(KEYBD_INT, OldKeyboard);
-	*/
-	// FIXME: STUB: KEYBOARD::~KEYBOARD
 }
-
 
 Sprite *Keyboard::setClient(Sprite *spr) {
 	Swap(_client, spr);
 	return spr;
 }
 
+bool Keyboard::getKey(uint16 keycode, int &cgeCode) {
+	if ((keycode == Common::KEYCODE_LCTRL) || (keycode == Common::KEYCODE_RCTRL)) {
+		cgeCode = 29;
+		return true;
+	}
 
-void Keyboard::NewKeyboard(...) {
-	// table address
-	/*
-	_SI = (uint16) Key;
+	// Scan through the ScummVM mapping list
+	for (int idx = 0; idx < 0x60; ++idx) {
+		if (_scummVmCodes[idx] == keycode) {
+			cgeCode = idx;
+			return true;
+		}
+	}
 
-	// take keyboard code
-	asm    in  al,60h
-	asm    mov bl,al
-	asm    and bx,007Fh
-	asm    cmp bl,60h
-	asm    jae xit
-	asm    cmp al,bl
-	asm    je  ok      // key pressed
+	return false;
+}
 
-	// key released...
-	asm    cmp [si+bx],bh  // BH == 0
-	asm    jne ok
-	// ...but not pressed: call the original service
-	OldKeyboard();
-	return;
+void Keyboard::NewKeyboard(Common::Event &event) {
+	int keycode;
+	if (!getKey(event.kbd.keycode, keycode))
+		return;
 
-	ok:
-	asm    shl ax,1
-	asm    and ah,1
-	asm    xor ah,1
-	asm    mov [si+bx],ah
-	asm    jz  xit     // released: exit
+	if (event.type == Common::EVENT_KEYUP) {
+		// Key release
+		_key[event.kbd.keycode] = false;
+	} else if (event.type == Common::EVENT_KEYDOWN) {
+		// Key press
+		_key[event.kbd.keycode] = true;
+		_current = Keyboard::_code[event.kbd.keycode];
 
-	// pressed: lock ASCII code
-	_SI = (uint16) Code;
-	asm    add bx,bx       // uint16 size
-	asm    mov ax,[si+bx]
-	asm    or  ax,ax
-	asm    jz  xit     // zero means NO KEY
-	Current = _AX;
-
-	_SI = (uint16) Client;
-	asm    or  si,si
-	asm    jz  xit             // if (Client) ...
-	//--- fill current event entry with mask, key code and sprite
-	asm    mov bx,EvtHead          // take queue head pointer
-	asm    inc byte ptr EvtHead        // update queue head pointer
-	asm    shl bx,3                // * 8
-	_AX = Current;
-	asm    mov Evt[bx].(struct EVENT)X,ax  // key code
-	asm    mov ax,KEYB             // event mask
-	asm    mov Evt[bx].(struct EVENT)Msk,ax    // event mask
-	//asm  mov Evt[bx].(struct EVENT)Y,dx  // row
-	asm    mov Evt[bx].(struct EVENT)Ptr,si    // SPRITE pointer
-
-	xit:
-
-	asm    in  al,61h      // kbd control lines
-	asm    push    ax      // save it
-	asm    or  al,80h      // set the "enable kbd" bit
-	asm    out 61h,al      // and write it out
-	asm    pop ax      // original control port value
-	asm    out 61h,al      // write it back
-	asm    mov al,20h      // send End-Of-Interrupt
-	asm    out 20h,al      // to the 8259 IC
-	*/
-	warning("STUB: Keyboard::NewKeyboard");
+		if (_client) {
+			CGEEvent &evt = Evt[EvtHead++];
+			evt._x = _current;	// Keycode
+			evt._msk = KEYB;	// Event mask
+			evt._ptr = _client;	// Sprite pointer
+		}
+	}
 }
 
 /*----------------- MOUSE interface -----------------*/
 
-Event Evt[EVT_MAX];
+CGEEvent Evt[EVT_MAX];
 
 uint16 EvtHead = 0, EvtTail = 0;
 
@@ -268,7 +251,7 @@ void MOUSE::ClrEvt(Sprite *spr) {
 void MOUSE::Tick(void) {
 	step();
 	while (EvtTail != EvtHead) {
-		Event e = Evt[EvtTail];
+		CGEEvent e = Evt[EvtTail];
 		if (e._msk) {
 			if (Hold && e._ptr != Hold)
 				Hold->touch(e._msk | ATTN, e._x - Hold->_x, e._y - Hold->_y);
@@ -313,5 +296,24 @@ void MOUSE::Tick(void) {
 		Hold->gotoxy(_x - hx, _y - hy);
 }
 
+/*----------------- EventManager interface -----------------*/
+
+EventManager::EventManager() {
+	_quitFlag = false;
+}
+
+void EventManager::poll() {
+	while (g_system->getEventManager()->pollEvent(_event)) {
+		switch (_event.type) {
+		case Common::EVENT_QUIT:
+			_quitFlag = true;
+			return;
+		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYUP:
+			_keyboard->NewKeyboard(_event);
+			break;
+		}
+	}
+}
 
 } // End of namespace CGE
