@@ -2,6 +2,7 @@ MODULE := common
 
 MODULE_OBJS := \
 	archive.o \
+	bitstream.o \
 	config-file.o \
 	config-manager.o \
 	dcl.o \
