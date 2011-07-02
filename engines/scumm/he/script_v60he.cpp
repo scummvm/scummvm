@@ -94,6 +94,12 @@ int ScummEngine_v60he::convertFilePath(byte *dst, int dstSize) {
 	debug(1, "convertFilePath: original filePath is %s", dst);
 
 	int len = resStrLen(dst);
+
+	// Switch all \ to / for portablity
+	for (int i = 0; i < len; i++)
+		if (dst[i] == '\\')
+			dst[i] = '/';
+
 	if (_game.platform == Common::kPlatformMacintosh) {
 		// Remove : prefix in HE71 games
 		if (dst[0] == ':') {
@@ -105,12 +111,6 @@ int ScummEngine_v60he::convertFilePath(byte *dst, int dstSize) {
 		// Switch all : to / for portablity
 		for (int i = 0; i < len; i++) {
 			if (dst[i] == ':')
-				dst[i] = '/';
-		}
-	} else {
-		// Switch all \ to / for portablity
-		for (int i = 0; i < len; i++) {
-			if (dst[i] == '\\')
 				dst[i] = '/';
 		}
 	}
