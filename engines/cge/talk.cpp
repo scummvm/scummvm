@@ -80,7 +80,7 @@ uint16 FONT::Width(const char *text) {
 	uint16 w = 0;
 	if (text)
 		while (* text)
-			w += Wid[*(text++)];
+			w += Wid[(unsigned char)*(text++)];
 	return w;
 }
 
@@ -151,7 +151,7 @@ void TALK::Update(const char *tx) {
 					mw = k;
 				k = 2 * hmarg;
 			} else
-				k += _Font->Wid[*p];
+				k += _Font->Wid[(unsigned char)*p];
 		}
 		if (k > mw)
 			mw = k;
@@ -164,8 +164,8 @@ void TALK::Update(const char *tx) {
 		if (*tx == '|' || *tx == '\n')
 			m = TS[0]->_m + (ln += FONT_HIG + TEXT_LS) * mw + hmarg;
 		else {
-			int cw = _Font->Wid[*tx], i;
-			uint8 *f = _Font->Map + _Font->Pos[*tx];
+			int cw = _Font->Wid[(unsigned char)*tx], i;
+			uint8 *f = _Font->Map + _Font->Pos[(unsigned char)*tx];
 			for (i = 0; i < cw; i++) {
 				uint8 *pp = m;
 				uint16 n;
@@ -262,8 +262,8 @@ void TALK::PutLine(int line, const char *text) {
 		q = v + size;
 
 		while (* text) {
-			uint16 cw = _Font->Wid[*text], i;
-			uint8 *fp = _Font->Map + _Font->Pos[*text];
+			uint16 cw = _Font->Wid[(unsigned char)*text], i;
+			uint8 *fp = _Font->Map + _Font->Pos[(unsigned char)*text];
 
 			for (i = 0; i < cw; i++) {
 				register uint16 b = fp[i];
@@ -310,8 +310,8 @@ void INFO_LINE::Update(const char *tx) {
 			uint8 *p = v + 2, * q = p + size;
 
 			while (*tx) {
-				uint16 cw = _Font->Wid[*tx];
-				uint8 *fp = _Font->Map + _Font->Pos[*tx];
+				uint16 cw = _Font->Wid[(unsigned char)*tx];
+				uint8 *fp = _Font->Map + _Font->Pos[(unsigned char)*tx];
 
 				for (uint16 i = 0; i < cw; i++) {
 					register uint16 b = fp[i];
