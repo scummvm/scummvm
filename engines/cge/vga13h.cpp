@@ -366,6 +366,8 @@ Sprite::Sprite(CGEEngine *vm, BMP_PTR *shp)
 
 
 Sprite::~Sprite() {
+	if (_sprite == this)
+		_sprite = NULL;
 	contract();
 }
 
@@ -970,11 +972,13 @@ VGA::~VGA(void) {
 	Mono = 0;
 	if (isVga()) {
 		Common::String buffer = "";
+/*
 		Clear(0);
 		SetMode(OldMode);
 		SetColors();
 		RestoreScreen(OldScreen);
 		Sunrise(OldColors);
+*/
 		if (OldColors)
 			free(OldColors);
 		if (NewColors)
