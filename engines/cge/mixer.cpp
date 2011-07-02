@@ -114,8 +114,8 @@ void Mixer::touch(uint16 mask, int x, int y) {
 
 
 void Mixer::tick() {
-	int x = Mouse->_x;
-	int y = Mouse->_y;
+	int x = _mouse->_x;
+	int y = _mouse->_y;
 	if (SpriteAt(x, y) == this) {
 		_fall = MIX_FALL;
 		if (_flags._hold)

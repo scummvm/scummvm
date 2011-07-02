@@ -34,10 +34,7 @@ namespace CGE {
 
 /*----------------- KEYBOARD interface -----------------*/
 
-Sprite *Keyboard::_client = NULL;
-uint8   Keyboard::_key[0x60] = { 0 };
-uint16  Keyboard::_current = 0;
-uint16  Keyboard::_code[0x60] = {
+const uint16 Keyboard::_code[0x60] = {
 	0,               Esc,      '1',         '2',       '3',
 	'4',             '5',      '6',         '7',       '8',
 	'9',             '0',      '-',         '+',       BSp,
@@ -60,10 +57,12 @@ uint16  Keyboard::_code[0x60] = {
 	0 * 0x5F
 };
 
-void (* Keyboard::OldKeyboard)(...);
-
 
 Keyboard::Keyboard() {
+	_client = NULL;
+	Common::set_to(&_key[0], &_key[0x60], 0);
+	_current = 0;
+
 	// steal keyboard interrupt
 	/* TODO replace totally by scummvm handling
 	OldKeyboard = getvect(KEYBD_INT);
