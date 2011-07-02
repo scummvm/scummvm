@@ -2300,7 +2300,6 @@ void Sound::_soServiceTrackType1(int trackIndex, const byte *channelData) {
 							&v1, &v2);
 					}
 				} else {
-					int channel = 0; // Is this correct?!
 					for (uint entryIndex = 0; entryIndex < vtStruct->_entries.size(); ++entryIndex) {
 						VoiceStructEntry &vte = vtStruct->_entries[entryIndex];
 						VoiceStructEntryType1 &vse = vte._type1;
