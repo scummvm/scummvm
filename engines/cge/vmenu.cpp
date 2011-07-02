@@ -125,7 +125,7 @@ VMENU::~VMENU(void) {
 }
 
 
-void VMENU::Touch(uint16 mask, int x, int y) {
+void VMENU::touch(uint16 mask, int x, int y) {
 	uint16 h = FONT_HIG + TEXT_LS;
 	bool ok = false;
 
