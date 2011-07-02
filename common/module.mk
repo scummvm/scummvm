@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	hashmap.o \
 	iff_container.o \
 	macresman.o \
+	math.o \
 	memorypool.o \
 	md5.o \
 	mutex.o \
