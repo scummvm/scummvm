@@ -49,12 +49,14 @@ BitStreamBE::BitStreamBE(SeekableReadStream &stream, uint32 bitCount) : _value(0
 	// Read the number of bytes of the stream
 
 	uint32 byteSize = bitCount / 8;
-	byte *data = new byte[byteSize];
+	byte *data = (byte *)malloc(byteSize);
 
 	if (stream.read(data, byteSize) != byteSize) {
-		delete[] data;
+		free(data);
 		error("Bad BitStreamBE size");
 	}
+
+	_stream = new MemoryReadStream(data, byteSize, DisposeAfterUse::YES);
 }
 
 BitStreamBE::BitStreamBE(const byte *data, uint32 bitCount) : _value(0), _inValue(0) {
@@ -64,7 +66,7 @@ BitStreamBE::BitStreamBE(const byte *data, uint32 bitCount) : _value(0), _inValu
 	// Copy the number of bytes from the data array
 
 	uint32 byteSize = bitCount / 8;
-	byte *dataN = new byte[byteSize];
+	byte *dataN = (byte *)malloc(byteSize);
 
 	memcpy(dataN, data, byteSize);
 
@@ -133,10 +135,10 @@ BitStream32LE::BitStream32LE(SeekableReadStream &stream, uint32 bitCount) : _val
 	// Read the number of bytes of the stream
 
 	uint32 byteSize = bitCount / 8;
-	byte  *data     = new byte[byteSize];
+	byte *data = (byte *)malloc(byteSize);
 
 	if (stream.read(data, byteSize) != byteSize) {
-		delete[] data;
+		free(data);
 		error("Bad BitStream32LE size");
 	}
 
@@ -150,7 +152,7 @@ BitStream32LE::BitStream32LE(const byte *data, uint32 bitCount) : _value(0), _in
 	// Copy the number of bytes from the data array
 
 	uint32 byteSize = bitCount / 8;
-	byte  *dataN    = new byte[byteSize];
+	byte *dataN = (byte *)malloc(byteSize);
 
 	memcpy(dataN, data, byteSize);
 
