@@ -33,6 +33,10 @@
 
 namespace CGE {
 
+CGEEvent Evt[EVT_MAX];
+
+uint16 EvtHead = 0, EvtTail = 0;
+
 /*----------------- KEYBOARD interface -----------------*/
 
 const uint16 Keyboard::_code[0x60] = {
@@ -126,7 +130,8 @@ void Keyboard::NewKeyboard(Common::Event &event) {
 		_current = Keyboard::_code[event.kbd.keycode];
 
 		if (_client) {
-			CGEEvent &evt = Evt[EvtHead++];
+			CGEEvent &evt = Evt[EvtHead];
+			EvtHead = (EvtHead + 1) % EVT_MAX;
 			evt._x = _current;	// Keycode
 			evt._msk = KEYB;	// Event mask
 			evt._ptr = _client;	// Sprite pointer
@@ -135,10 +140,6 @@ void Keyboard::NewKeyboard(Common::Event &event) {
 }
 
 /*----------------- MOUSE interface -----------------*/
-
-CGEEvent Evt[EVT_MAX];
-
-uint16 EvtHead = 0, EvtTail = 0;
 
 MOUSE::MOUSE(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(NULL), hx(0), _vm(vm) {
 	static Seq ms[] = {
@@ -195,7 +196,8 @@ void MOUSE::NewMouse(Common::Event &event) {
 	if (!_active)
 		return;
 
-	CGEEvent &evt = Evt[EvtHead++];
+	CGEEvent &evt = Evt[EvtHead];
+	EvtHead = (EvtHead + 1) % EVT_MAX;
 	evt._x = event.mouse.x;
 	evt._y = event.mouse.y;
 	evt._ptr = SpriteAt(evt._x, evt._y);
