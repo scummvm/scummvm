@@ -343,13 +343,13 @@ void Heart::setXTimer(uint16 *ptr, uint16 time) {
 }
 
 
-Sprite::Sprite(CGEEngine *vm, BMP_PTR *shp)
+Sprite::Sprite(CGEEngine *vm, BMP_PTR *shpP)
 	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(NO_SEQ), _time(0), //Delay(0),
 	  _ext(NULL), _ref(-1), _cave(0), _vm(vm) {
 	memset(_file, 0, sizeof(_file));
 	*((uint16 *)&_flags) = 0;
-	setShapeList(shp);
+	setShapeList(shpP);
 }
 
 
@@ -378,16 +378,16 @@ BMP_PTR Sprite::shp() {
 }
 
 
-BMP_PTR *Sprite::setShapeList(BMP_PTR *shp) {
+BMP_PTR *Sprite::setShapeList(BMP_PTR *shpP) {
 	BMP_PTR *r = (_ext) ? _ext->_shpList : NULL;
 
 	_shpCnt = 0;
 	_w = 0;
 	_h = 0;
 
-	if (shp) {
+	if (shpP) {
 		BMP_PTR *p;
-		for (p = shp; *p; p++) {
+		for (p = shpP; *p; p++) {
 			BMP_PTR b = (*p); // ->Code();
 			if (b->_w > _w)
 				_w = b->_w;
@@ -396,7 +396,7 @@ BMP_PTR *Sprite::setShapeList(BMP_PTR *shp) {
 			_shpCnt++;
 		}
 		expand();
-		_ext->_shpList = shp;
+		_ext->_shpList = shpP;
 		if (!_ext->_seq)
 			setSeq((_shpCnt < 2) ? _seq1 : _seq2);
 	}

@@ -53,7 +53,7 @@ namespace CGE {
 #define SVG0NAME    ("{{INIT}}" SVG_EXT)
 #define SVG0FILE    INI_FILE
 
-extern  uint16  _stklen = (STACK_SIZ * 2);
+uint16  _stklen = (STACK_SIZ * 2);
 
 VGA *Vga;
 Heart *_heart;
