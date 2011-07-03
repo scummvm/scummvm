@@ -300,7 +300,7 @@ void EventManager::handleEvents(void) {
 
 			// discard Text if button released
 			if (e._msk & (L_UP | R_UP))
-				KillText();
+				killText();
 		}
 		EvtTail = (EvtTail + 1) % EVT_MAX;
 	}

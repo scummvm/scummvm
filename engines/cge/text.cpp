@@ -36,57 +36,57 @@
 
 namespace CGE {
 
-TEXT *Text;
-TALK *Talk = NULL;
+Text *_text;
+Talk *_talk = NULL;
 
-TEXT::TEXT(CGEEngine *vm, const char *fname, int size) : _vm(vm) {
-	Cache = new HAN[size];
-	mergeExt(FileName, fname, SAY_EXT);
-	if (!INI_FILE::exist(FileName))
-		error("No talk (%s)\n", FileName);
+Text::Text(CGEEngine *vm, const char *fname, int size) : _vm(vm) {
+	_cache = new Han[size];
+	mergeExt(_fileName, fname, SAY_EXT);
+	if (!INI_FILE::exist(_fileName))
+		error("No talk (%s)\n", _fileName);
 
-	for (Size = 0; Size < size; Size++) {
-		Cache[Size].Ref = 0;
-		Cache[Size].Txt = NULL;
+	for (_size = 0; _size < size; _size++) {
+		_cache[_size]._ref = 0;
+		_cache[_size]._txt = NULL;
 	}
 }
 
 
-TEXT::~TEXT() {
-	Clear();
-	delete[] Cache;
+Text::~Text() {
+	clear();
+	delete[] _cache;
 }
 
 
-void TEXT::Clear(int from, int upto) {
-	HAN *p, * q;
-	for (p = Cache, q = p + Size; p < q; p++) {
-		if (p->Ref && p->Ref >= from && p->Ref < upto) {
-			p->Ref = 0;
-			delete[] p->Txt;
-			p->Txt = NULL;
+void Text::clear(int from, int upto) {
+	Han *p, * q;
+	for (p = _cache, q = p + _size; p < q; p++) {
+		if (p->_ref && p->_ref >= from && p->_ref < upto) {
+			p->_ref = 0;
+			delete[] p->_txt;
+			p->_txt = NULL;
 		}
 	}
 }
 
 
-int TEXT::Find(int ref) {
-	HAN *p, * q;
+int Text::find(int ref) {
+	Han *p, * q;
 	int i = 0;
-	for (p = Cache, q = p + Size; p < q; p++) {
-		if (p->Ref == ref)
+	for (p = _cache, q = p + _size; p < q; p++) {
+		if (p->_ref == ref)
 			break;
 		else
-			++i;
+			i++;
 	}
 	return i;
 }
 
 
-void TEXT::Preload(int from, int upto) {
-	INI_FILE tf = FileName;
+void Text::preload(int from, int upto) {
+	INI_FILE tf = _fileName;
 	if (!tf._error) {
-		HAN *CacheLim = Cache + Size;
+		Han *CacheLim = _cache + _size;
 		char line[LINE_MAX + 1];
 		int n;
 
@@ -102,33 +102,33 @@ void TEXT::Preload(int from, int upto) {
 				continue;
 			ref = atoi(s);
 			if (ref && ref >= from && ref < upto) {
-				HAN *p;
+				Han *p;
 
-				p = &Cache[Find(ref)];
+				p = &_cache[find(ref)];
 				if (p < CacheLim) {
-					delete[] p->Txt;
-					p->Txt = NULL;
+					delete[] p->_txt;
+					p->_txt = NULL;
 				} else
-					p = &Cache[Find(0)];
+					p = &_cache[find(0)];
 				if (p >= CacheLim)
 					break;
 				s += strlen(s);
 				if (s < line + n)
 					++s;
-				if ((p->Txt = new char[strlen(s) + 1]) == NULL)
+				if ((p->_txt = new char[strlen(s) + 1]) == NULL)
 					break;
-				p->Ref = ref;
-				strcpy(p->Txt, s);
+				p->_ref = ref;
+				strcpy(p->_txt, s);
 			}
 		}
 	}
 }
 
 
-char *TEXT::Load(int idx, int ref) {
-	INI_FILE tf = FileName;
+char *Text::load(int idx, int ref) {
+	INI_FILE tf = _fileName;
 	if (!tf._error) {
-		HAN *p = &Cache[idx];
+		Han *p = &_cache[idx];
 		char line[LINE_MAX + 1];
 		int n;
 
@@ -151,36 +151,36 @@ char *TEXT::Load(int idx, int ref) {
 			s += strlen(s);
 			if (s < line + n)
 				++s;
-			p->Ref = ref;
-			if ((p->Txt = new char[strlen(s) + 1]) == NULL)
+			p->_ref = ref;
+			if ((p->_txt = new char[strlen(s) + 1]) == NULL)
 				return NULL;
-			return strcpy(p->Txt, s);
+			return strcpy(p->_txt, s);
 		}
 	}
 	return NULL;
 }
 
 
-char *TEXT::getText(int ref) {
+char *Text::getText(int ref) {
 	int i;
-	if ((i = Find(ref)) < Size)
-		return Cache[i].Txt;
+	if ((i = find(ref)) < _size)
+		return _cache[i]._txt;
 
-	if ((i = Find(0)) >= Size) {
-		Clear(SYSTXT_MAX);            // clear non-system
-		if ((i = Find(0)) >= Size) {
-			Clear();              // clear all
+	if ((i = find(0)) >= _size) {
+		clear(SYSTXT_MAX);            // clear non-system
+		if ((i = find(0)) >= _size) {
+			clear();              // clear all
 			i = 0;
 		}
 	}
-	return Load(i, ref);
+	return load(i, ref);
 }
 
 
-void TEXT::Say(const char *txt, Sprite *spr) {
-	KillText();
-	Talk = new TALK(_vm, txt, ROUND);
-	if (Talk) {
+void Text::say(const char *txt, Sprite *spr) {
+	killText();
+	_talk = new Talk(_vm, txt, ROUND);
+	if (_talk) {
 		bool east = spr->_flags._east;
 		int x = (east) ? (spr->_x + spr->_w - 2) : (spr->_x + 2);
 		int y = spr->_y + 2;
@@ -198,43 +198,43 @@ void TEXT::Say(const char *txt, Sprite *spr) {
 		if (spr->_ref == 1)
 			x += ((east) ? -10 : 10); // Hero
 
-		Talk->_flags._kill = true;
-		Talk->_flags._bDel = true;
-		Talk->setName(Text->getText(SAY_NAME));
-		Talk->gotoxy(x - (Talk->_w - sw) / 2 - 3 + 6 * east, y - spike->_h - Talk->_h + 1);
-		Talk->_z = 125;
-		Talk->_ref = SAY_REF;
+		_talk->_flags._kill = true;
+		_talk->_flags._bDel = true;
+		_talk->setName(_text->getText(SAY_NAME));
+		_talk->gotoxy(x - (_talk->_w - sw) / 2 - 3 + 6 * east, y - spike->_h - _talk->_h + 1);
+		_talk->_z = 125;
+		_talk->_ref = SAY_REF;
 
-		spike->gotoxy(x, Talk->_y + Talk->_h - 1);
+		spike->gotoxy(x, _talk->_y + _talk->_h - 1);
 		spike->_z = 126;
 		spike->_flags._slav = true;
 		spike->_flags._kill = true;
-		spike->setName(Text->getText(SAY_NAME));
+		spike->setName(_text->getText(SAY_NAME));
 		spike->step(east);
 		spike->_ref = SAY_REF;
 
-		Vga->ShowQ->Insert(Talk, Vga->ShowQ->Last());
-		Vga->ShowQ->Insert(spike, Vga->ShowQ->Last());
+		Vga->_showQ->insert(_talk, Vga->_showQ->last());
+		Vga->_showQ->insert(spike, Vga->_showQ->last());
 	}
 }
 
 void CGEEngine::inf(const char *txt) {
-	KillText();
-	Talk = new TALK(this, txt, RECT);
-	if (Talk) {
-		Talk->_flags._kill = true;
-		Talk->_flags._bDel = true;
-		Talk->setName(Text->getText(INF_NAME));
-		Talk->center();
-		Talk->gotoxy(Talk->_x, Talk->_y - 20);
-		Talk->_z = 126;
-		Talk->_ref = INF_REF;
-		Vga->ShowQ->Insert(Talk, Vga->ShowQ->Last());
+	killText();
+	_talk = new Talk(this, txt, RECT);
+	if (_talk) {
+		_talk->_flags._kill = true;
+		_talk->_flags._bDel = true;
+		_talk->setName(_text->getText(INF_NAME));
+		_talk->center();
+		_talk->gotoxy(_talk->_x, _talk->_y - 20);
+		_talk->_z = 126;
+		_talk->_ref = INF_REF;
+		Vga->_showQ->insert(_talk, Vga->_showQ->last());
 	}
 }
 
 
-void SayTime(Sprite *spr) {
+void sayTime(Sprite *spr) {
 	/*
 	  static char t[] = "00:00";
 	  struct time ti;
@@ -243,13 +243,13 @@ void SayTime(Sprite *spr) {
 	  wtom(ti.ti_min,  t+3, 10, 2);
 	  Say((*t == '0') ? (t+1) : t, spr);
 	  */
-	warning("STUB: SayTime");
+	warning("STUB: sayTime");
 }
 
-void KillText(void) {
-	if (Talk) {
-		SNPOST_(SNKILL, -1, 0, Talk);
-		Talk = NULL;
+void killText() {
+	if (_talk) {
+		SNPOST_(SNKILL, -1, 0, _talk);
+		_talk = NULL;
 	}
 }
 

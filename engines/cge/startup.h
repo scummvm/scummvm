@@ -59,20 +59,20 @@ namespace CGE {
 #define CORE_LOW        (CORE_MID - 20)
 
 
-class STARTUP {
-	static bool get_parms(void);
+class Startup {
+	static bool getParms();
 public:
-	static int Mode;
-	static int Core;
-	static int SoundOk;
-	static uint16 Summa;
-	STARTUP(void);
+	static int _mode;
+	static int _core;
+	static int _soundOk;
+	static uint16 _summa;
+	Startup();
 };
 
 
-extern  EMM MiniEmm;
+extern EMM _miniEmm;
 
-const char *UsrPath(const char *nam);
+const char *usrPath(const char *nam);
 
 } // End of namespace CGE
 

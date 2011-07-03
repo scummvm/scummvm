@@ -51,35 +51,33 @@ namespace CGE {
 #define SAY_REF         302
 
 
-class TEXT {
-	struct HAN {
-		int Ref;
-		char *Txt;
-	} *Cache;
-	int Size;
-	char FileName[MAXPATH];
-	char *Load(int idx, int ref);
-	int Find(int ref);
+class Text {
+	struct Han {
+		int _ref;
+		char *_txt;
+	} *_cache;
+	int _size;
+	char _fileName[MAXPATH];
+	char *load(int idx, int ref);
+	int find(int ref);
 public:
-	TEXT(CGEEngine *vm, const char *fname, int size);
-	~TEXT(void);
-	void Clear(int from = 1, int upto = 0x7FFF);
-	void Preload(int from = 1, int upto = 0x7FFF);
+	Text(CGEEngine *vm, const char *fname, int size);
+	~Text();
+	void clear(int from = 1, int upto = 0x7FFF);
+	void preload(int from = 1, int upto = 0x7FFF);
 	char *getText(int ref);
-	void Say(const char *txt, Sprite *spr);
+	void say(const char *txt, Sprite *spr);
 private:
 	CGEEngine *_vm;
 };
 
+extern Talk *_talk;
+extern Text *_text;
 
-extern TALK       *Talk;
-extern TEXT       *Text;
-
-
-void Say(const char *txt, Sprite *spr);
-void SayTime(Sprite *spr);
-void Inf(const char *txt);
-void KillText(void);
+void say(const char *txt, Sprite *spr);
+void sayTime(Sprite *spr);
+void inf(const char *txt);
+void killText();
 
 } // End of namespace CGE
 

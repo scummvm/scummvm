@@ -44,7 +44,7 @@ namespace CGE {
 
 
 
-MENU_BAR::MENU_BAR(CGEEngine *vm, uint16 w) : TALK(vm), _vm(vm) {
+MENU_BAR::MENU_BAR(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 	int h = FONT_HIG + 2 * MB_VM, i = (w += 2 * MB_HM) * h;
 	uint8 *p = farnew(uint8, i), * p1, * p2;
 
@@ -59,8 +59,8 @@ MENU_BAR::MENU_BAR(CGEEngine *vm, uint16 w) : TALK(vm), _vm(vm) {
 		p1 += w;
 		p2 -= w;
 	}
-	TS[0] = new Bitmap(w, h, p);
-	setShapeList(TS);
+	_ts[0] = new Bitmap(w, h, p);
+	setShapeList(_ts);
 	_flags._slav = true;
 	_flags._tran = true;
 	_flags._kill = true;
@@ -98,7 +98,7 @@ int    VMENU::Recent   = -1;
 
 
 VMENU::VMENU(CGEEngine *vm, CHOICE *list, int x, int y)
-	: TALK(vm, VMGather(list), RECT), Menu(list), Bar(NULL), _vm(vm) {
+	: Talk(vm, VMGather(list), RECT), Menu(list), Bar(NULL), _vm(vm) {
 	CHOICE *cp;
 
 	Addr = this;
@@ -112,10 +112,10 @@ VMENU::VMENU(CGEEngine *vm, CHOICE *list, int x, int y)
 		center();
 	else
 		gotoxy(x - _w / 2, y - (TEXT_VM + FONT_HIG / 2));
-	Vga->ShowQ->Insert(this, Vga->ShowQ->Last());
+	Vga->_showQ->insert(this, Vga->_showQ->last());
 	Bar = new MENU_BAR(_vm, _w - 2 * TEXT_HM);
 	Bar->gotoxy(_x + TEXT_HM - MB_HM, _y + TEXT_VM - MB_VM);
-	Vga->ShowQ->Insert(Bar, Vga->ShowQ->Last());
+	Vga->_showQ->insert(Bar, Vga->_showQ->last());
 }
 
 

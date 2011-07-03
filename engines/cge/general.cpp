@@ -92,7 +92,7 @@ Dac _stdPal[] =  {// R    G   B
 	{ 255, 255, 255},   // 255
 };
 
-DrvInfo SNDDrvInfo;
+DrvInfo _sndDrvInfo;
 
 void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *)) {
 	warning("STUB: _fqsort");
@@ -298,32 +298,32 @@ bool isVga() {
 	return true;
 }
 
-void SNDInit() {
+void sndInit() {
 	warning("STUB: SNDInit");
 }
 
-void SNDDone() {
+void sndDone() {
 	// FIXME: STUB: SNDDone
 }
 
-void SNDSetVolume() {
+void sndSetVolume() {
 	warning("STUB: SNDSetVolume");
 }
 
-void SNDDigiStart(SmpInfo *PSmpInfo) {
+void sndDigiStart(SmpInfo *PSmpInfo) {
 	warning("STUB: SNDDigitStart");
 }
 
-void SNDDigiStop(SmpInfo *PSmpInfo) {
+void sndDigiStop(SmpInfo *PSmpInfo) {
 	warning("STUB: SNDDigiStop");
 }
 
-void SNDMIDIStart(uint8 *MIDFile) {
+void sndMidiStart(uint8 *MIDFile) {
 	warning("STUB: SNDMIDIStart");
 }
 
-void SNDMIDIStop() {
-	// FIXME: STUB: SNDMIDIStop
+void sndMidiStop() {
+	// FIXME: STUB: sndMIDIStop
 }
 
 DATACK *LoadWave(XFile *file, EMM *emm) {
