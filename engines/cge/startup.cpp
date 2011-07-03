@@ -33,29 +33,28 @@
 
 namespace CGE {
 
-extern char Copr[];
+extern char _copr[];
 
-#define id (*(Ident*)Copr)
-
-
-EMM MiniEmm = MINI_EMM_SIZE;
-
-static STARTUP StartUp;
+#define id (*(Ident*)_copr)
 
 
-int    STARTUP::Mode = 0;
-int    STARTUP::Core;
-int    STARTUP::SoundOk = 0;
-uint16 STARTUP::Summa;
+EMM _miniEmm = MINI_EMM_SIZE;
+
+// static Startup _startUp;
+
+int    Startup::_mode = 0;
+int    Startup::_core;
+int    Startup::_soundOk = 0;
+uint16 Startup::_summa;
 
 
-void quit_now(int ref) {
-	error("%s", Text->getText(ref));
+void quitNow(int ref) {
+	error("%s", _text->getText(ref));
 }
 
 
-bool STARTUP::get_parms(void) {
-	Summa = 0;
+bool Startup::getParms() {
+	_summa = 0;
 
 	/*
 	  int i = _argc;
@@ -103,12 +102,12 @@ bool STARTUP::get_parms(void) {
 	  if (SNDDrvInfo.MDEV != DEV_GM) SNDDrvInfo.MDEV = SNDDrvInfo.DDEV;
 	return true;
 	  */
-	warning("STUB: STARTUP::get_parms");
+	warning("STUB: Startup::get_parms");
 	return true;
 }
 
 
-STARTUP::STARTUP(void) {
+Startup::Startup() {
 	/*
 	uint32 m = farcoreleft() >> 10;
 	if (m < 0x7FFF)
@@ -125,21 +124,21 @@ STARTUP::STARTUP(void) {
 	if (! get_parms())
 		quit_now(BAD_ARG_TEXT);
 	//--- load sound configuration
-	const char * fn = UsrPath(ProgName(CFG_EXT));
-	if (! STARTUP::SoundOk && CFILE::Exist(fn)) {
+	const char * fn = usrPath(ProgName(CFG_EXT));
+	if (!Startup::_soundOk && CFILE::Exist(fn)) {
 		CFILE cfg(fn, REA);
 		if (! cfg.Error) {
 			cfg.Read(&SNDDrvInfo, sizeof(SNDDrvInfo)-sizeof(SNDDrvInfo.VOL2));
 			if (! cfg.Error)
-				STARTUP::SoundOk = 1;
+				Startup::_soundOk = 1;
 		}
 	}
 	*/
-	warning("STUB: STARTUP::STARTUP");
+	warning("STUB: Startup::Startup");
 }
 
 
-const char *UsrPath(const char *nam) {
+const char *usrPath(const char *nam) {
 	static char buf[MAXPATH] = ".\\", *p = buf + 2;
 #if defined(CD)
 	if (DriveCD(0)) {

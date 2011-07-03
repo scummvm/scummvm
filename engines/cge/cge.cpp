@@ -61,10 +61,10 @@ void CGEEngine::setup() {
 	VGA::init();
 	VFILE::init();
 	Bitmap::init();
-	TALK::init();
+	Talk::init();
 
 	// Initialise engine objects
-	Text = new TEXT(this, progName(), 128);
+	_text = new Text(this, progName(), 128);
 	Vga = new VGA(M13H);
 	_heart = new Heart;
 	Hero = new WALK(this, NULL);
@@ -76,9 +76,9 @@ void CGEEngine::setup() {
 	_miniCave = new Sprite(this, NULL);
 	_shadow = new Sprite(this, NULL);
 	_horzLine = new Sprite(this, HL);
-	InfoLine = new INFO_LINE(this, INFO_W);
+	_infoLine = new InfoLine(this, INFO_W);
 	_cavLight = new Sprite(this, PR);
-	DebugLine = new INFO_LINE(this, SCR_WID);
+	_debugLine = new InfoLine(this, SCR_WID);
 	MB[0] = new Bitmap("BRICK", true);
 	MB[1] = NULL;
 	HL[0] = new Bitmap("HLINE", true);
@@ -102,14 +102,14 @@ void CGEEngine::setup() {
 	_mouse = new MOUSE(this);
 	_keyboard = new Keyboard();
 	_eventManager = new EventManager();
-	OffUseCount = atoi(Text->getText(OFF_USE_COUNT));
+	_offUseCount = atoi(_text->getText(OFF_USE_COUNT));
 }
 
 CGEEngine::~CGEEngine() {
 	debug("CGEEngine::~CGEEngine");
 
 	// Call classes with static members to clear them up
-	TALK::deinit();
+	Talk::deinit();
 	Bitmap::deinit();
 	VFILE::deinit();
 	VGA::deinit();
@@ -124,9 +124,9 @@ CGEEngine::~CGEEngine() {
 	delete _miniCave;
 	delete _shadow;
 	delete _horzLine;
-	delete InfoLine;
+	delete _infoLine;
 	delete _cavLight;
-	delete DebugLine;
+	delete _debugLine;
 	delete MB[0];
 	delete HL[0];
 	delete MC[0];
@@ -138,7 +138,7 @@ CGEEngine::~CGEEngine() {
 	delete LI[1];
 	delete LI[2];
 	delete LI[3];
-	delete Text;
+	delete _text;
 	delete _heart;
 	delete _pocLight;
 	delete _keyboard;

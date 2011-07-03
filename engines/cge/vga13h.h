@@ -81,32 +81,32 @@ namespace CGE {
 
 
 struct Rgb {
-	uint16 r : 2;
-	uint16 R : 6;
-	uint16 g : 2;
-	uint16 G : 6;
-	uint16 b : 2;
-	uint16 B : 6;
+	uint16 _r : 2;
+	uint16 _R : 6;
+	uint16 _g : 2;
+	uint16 _G : 6;
+	uint16 _b : 2;
+	uint16 _B : 6;
 };
 
 typedef union {
-	Dac dac;
-	Rgb rgb;
-} TRGB;
+	Dac _dac;
+	Rgb _rgb;
+} Trgb;
 
 struct VgaRegBlk {
-	uint8 idx;
-	uint8 adr;
-	uint8 clr;
-	uint8 set;
+	uint8 _idx;
+	uint8 _adr;
+	uint8 _clr;
+	uint8 _set;
 };
 
 struct Seq {
-	uint8 Now;
-	uint8 Next;
-	int8 Dx;
-	int8 Dy;
-	int Dly;
+	uint8 _now;
+	uint8 _next;
+	int8 _dx;
+	int8 _dy;
+	int _dly;
 };
 
 extern Seq _seq1[];
@@ -236,25 +236,27 @@ private:
 };
 
 
-class QUEUE {
-	Sprite *Head, * Tail;
+class Queue {
+	Sprite *_head, *_tail;
 public:
-	bool Show;
-	QUEUE(bool show);
-	~QUEUE(void);
-	void Append(Sprite *spr);
-	void Insert(Sprite *spr, Sprite *nxt);
-	void Insert(Sprite *spr);
-	Sprite *Remove(Sprite *spr);
-	void ForAll(void (*fun)(Sprite *));
-	Sprite *First(void) {
-		return Head;
+	Queue(bool show);
+	~Queue();
+
+	bool _show;
+
+	void append(Sprite *spr);
+	void insert(Sprite *spr, Sprite *nxt);
+	void insert(Sprite *spr);
+	Sprite *remove(Sprite *spr);
+	void forAll(void (*fun)(Sprite *));
+	Sprite *first() {
+		return _head;
 	}
-	Sprite *Last(void) {
-		return Tail;
+	Sprite *last() {
+		return _tail;
 	}
-	Sprite *Locate(int ref);
-	void Clear(void);
+	Sprite *locate(int ref);
+	void clear();
 };
 
 
@@ -275,7 +277,8 @@ class VGA {
 	void WaitVR(bool on);
 public:
 	uint32 FrmCnt;
-	QUEUE *ShowQ, *SpareQ;
+	Queue *_showQ;
+	Queue *_spareQ;
 	int Mono;
 	static Graphics::Surface *Page[4];
 	static Dac *SysPal;

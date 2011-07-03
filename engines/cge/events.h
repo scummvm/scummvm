@@ -80,7 +80,7 @@ public:
 #define KEYB        0x80
 
 
-extern TALK *Talk;
+extern Talk *_talk;
 
 struct CGEEvent {
 	uint16 _msk;

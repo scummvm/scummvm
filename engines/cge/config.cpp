@@ -146,16 +146,16 @@ void CGEEngine::selectSound() {
 	_sound.Close();
 	if (VMENU::Addr)
 		SNPOST_(SNKILL, -1, 0, VMENU::Addr);
-	inf(Text->getText(STYPE_TEXT));
-	Talk->gotoxy(Talk->_x, FONT_HIG / 2);
+	inf(_text->getText(STYPE_TEXT));
+	_talk->gotoxy(_talk->_x, FONT_HIG / 2);
 	for (i = 0; i < (int)ArrayCount(DevName); i++)
-		DevMenu[i].Text = Text->getText(DevName[i]);
-	(new VMENU(this, DevMenu, SCR_WID / 2, Talk->_y + Talk->_h + TEXT_VM + FONT_HIG))->setName(Text->getText(MENU_TEXT));
+		DevMenu[i].Text = _text->getText(DevName[i]);
+	(new VMENU(this, DevMenu, SCR_WID / 2, _talk->_y + _talk->_h + TEXT_VM + FONT_HIG))->setName(_text->getText(MENU_TEXT));
 }
 
 
 static void Reset(void) {
-	SNDDrvInfo.DBASE = SNDDrvInfo.DIRQ = SNDDrvInfo.DDMA = SNDDrvInfo.MBASE = DETECT;
+	_sndDrvInfo._dBase = _sndDrvInfo._dIrq = _sndDrvInfo._dDma = _sndDrvInfo._mBase = DETECT;
 }
 
 
@@ -183,9 +183,9 @@ static CHOICE *Cho;
 static int     Hlp;
 
 void CGEEngine::SNSelect() {
-	inf(Text->getText(Hlp));
-	Talk->gotoxy(Talk->_x, FONT_HIG / 2);
-	(new VMENU(this, Cho, SCR_WID / 2, Talk->_y + Talk->_h + TEXT_VM + FONT_HIG))->setName(Text->getText(MENU_TEXT));
+	inf(_text->getText(Hlp));
+	_talk->gotoxy(_talk->_x, FONT_HIG / 2);
+	(new VMENU(this, Cho, SCR_WID / 2, _talk->_y + _talk->_h + TEXT_VM + FONT_HIG))->setName(_text->getText(MENU_TEXT));
 }
 
 
@@ -199,81 +199,81 @@ static void Select(CHOICE *cho, int hlp) {
 
 
 void CGEEngine::NONE() {
-	SNDDrvInfo.DDEV = DEV_QUIET;
-	SNDDrvInfo.MDEV = DEV_QUIET;
+	_sndDrvInfo._dDev = DEV_QUIET;
+	_sndDrvInfo._mDev = DEV_QUIET;
 	_sound.Open();
 }
 
 
 void CGEEngine::SB() {
-	SNDDrvInfo.DDEV = DEV_SB;
-	SNDDrvInfo.MDEV = DEV_SB;
+	_sndDrvInfo._dDev = DEV_SB;
+	_sndDrvInfo._mDev = DEV_SB;
 	Reset();
 	Select(DigiPorts, SPORT_TEXT);
 }
 
 
 void CGEEngine::SBM() {
-	SNDDrvInfo.DDEV = DEV_SB;
-	SNDDrvInfo.MDEV = DEV_GM;
+	_sndDrvInfo._dDev = DEV_SB;
+	_sndDrvInfo._mDev = DEV_GM;
 	Reset();
 	Select(DigiPorts, SPORT_TEXT);
 }
 
 
 void CGEEngine::GUS() {
-	SNDDrvInfo.DDEV = DEV_GUS;
-	SNDDrvInfo.MDEV = DEV_GUS;
+	_sndDrvInfo._dDev = DEV_GUS;
+	_sndDrvInfo._mDev = DEV_GUS;
 	Reset();
 	Select(DigiPorts, SPORT_TEXT);
 }
 
 
 void CGEEngine::GUSM() {
-	SNDDrvInfo.DDEV = DEV_GUS;
-	SNDDrvInfo.MDEV = DEV_GM;
+	_sndDrvInfo._dDev = DEV_GUS;
+	_sndDrvInfo._mDev = DEV_GM;
 	Reset();
 	Select(DigiPorts, SPORT_TEXT);
 }
 
 
 void CGEEngine::MIDI() {
-	SNDDrvInfo.DDEV = DEV_QUIET;
-	SNDDrvInfo.MDEV = DEV_GM;
-	SNDDrvInfo.MBASE = DETECT;
+	_sndDrvInfo._dDev = DEV_QUIET;
+	_sndDrvInfo._mDev = DEV_GM;
+	_sndDrvInfo._mBase = DETECT;
 	Select(MIDIPorts, MPORT_TEXT);
 }
 
 
 void CGEEngine::AUTO() {
-	SNDDrvInfo.DDEV = DEV_AUTO;
-	SNDDrvInfo.MDEV = DEV_AUTO;
+	_sndDrvInfo._dDev = DEV_AUTO;
+	_sndDrvInfo._mDev = DEV_AUTO;
 	Reset();
 	_sound.Open();
 }
 
 
 void CGEEngine::setPortD() {
-	SNDDrvInfo.DBASE = xdeco(DigiPorts[VMENU::Recent].Text);
-	Select((SNDDrvInfo.DDEV == DEV_SB) ? BlsterIRQ : GravisIRQ, SIRQ_TEXT);
+	_sndDrvInfo._dBase = xdeco(DigiPorts[VMENU::Recent].Text);
+	Select((_sndDrvInfo._dDev == DEV_SB) ? BlsterIRQ : GravisIRQ, SIRQ_TEXT);
 }
 
 
 void CGEEngine::setPortM() {
-	SNDDrvInfo.MBASE = xdeco(MIDIPorts[VMENU::Recent].Text);
+	_sndDrvInfo._mBase = xdeco(MIDIPorts[VMENU::Recent].Text);
 	_sound.Open();
 }
 
 
 void CGEEngine::setIRQ() {
-	SNDDrvInfo.DIRQ = ddeco(((SNDDrvInfo.DDEV == DEV_SB) ? BlsterIRQ : GravisIRQ)[VMENU::Recent].Text);
-	Select((SNDDrvInfo.DDEV == DEV_SB) ? BlsterDMA : GravisDMA, SDMA_TEXT);
+	_sndDrvInfo._dIrq = ddeco(((_sndDrvInfo._dDev == DEV_SB) ? BlsterIRQ : GravisIRQ)[VMENU::Recent].Text);
+	Select((_sndDrvInfo._dDev == DEV_SB) ? BlsterDMA : GravisDMA, SDMA_TEXT);
 }
 
 
 void CGEEngine::setDMA() {
-	SNDDrvInfo.DDMA = ddeco(((SNDDrvInfo.DDEV == DEV_SB) ? BlsterDMA : GravisDMA)[VMENU::Recent].Text);
-	if (SNDDrvInfo.MDEV != SNDDrvInfo.DDEV)
+	_sndDrvInfo._dDma = ddeco(((_sndDrvInfo._dDev == DEV_SB) ? BlsterDMA : GravisDMA)[VMENU::Recent].Text);
+	if (_sndDrvInfo._mDev != _sndDrvInfo._dDev)
 		Select(MIDIPorts, MPORT_TEXT);
 	else
 		_sound.Open();

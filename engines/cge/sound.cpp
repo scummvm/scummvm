@@ -41,7 +41,7 @@ SOUND _sound;
 
 
 SOUND::SOUND(void) {
-	if (STARTUP::SoundOk)
+	if (Startup::_soundOk)
 		Open();
 }
 
@@ -53,12 +53,12 @@ SOUND::~SOUND(void) {
 
 void SOUND::Close(void) {
 	KillMIDI();
-	SNDDone();
+	sndDone();
 }
 
 
 void SOUND::Open(void) {
-	SNDInit();
+	sndInit();
 	Play(_fx[30000], 8);
 }
 
@@ -66,17 +66,17 @@ void SOUND::Open(void) {
 void SOUND::Play(DATACK *wav, int pan, int cnt) {
 	if (wav) {
 		Stop();
-		smpinf.saddr = (uint8 *) &*(wav->EAddr());
-		smpinf.slen = (uint16)wav->Size();
-		smpinf.span = pan;
-		smpinf.sflag = cnt;
-		SNDDigiStart(&smpinf);
+		smpinf._saddr = (uint8 *) &*(wav->EAddr());
+		smpinf._slen = (uint16)wav->Size();
+		smpinf._span = pan;
+		smpinf._sflag = cnt;
+		sndDigiStart(&smpinf);
 	}
 }
 
 
 void SOUND::Stop(void) {
-	SNDDigiStop(&smpinf);
+	sndDigiStop(&smpinf);
 }
 
 
@@ -176,7 +176,7 @@ static  uint8  *midi    = NULL;
 
 
 void KillMIDI(void) {
-	SNDMIDIStop();
+	sndMidiStop();
 	if (midi) {
 		delete[] midi;
 		midi = NULL;
@@ -198,7 +198,7 @@ void LoadMIDI(int ref) {
 				if (mid._error)
 					KillMIDI();
 				else
-					SNDMIDIStart(midi);
+					sndMidiStart(midi);
 			}
 		}
 	}

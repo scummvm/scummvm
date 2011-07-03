@@ -48,53 +48,53 @@ namespace CGE {
 
 #define MAXPATH  128
 
-class   FONT {
-	char Path[MAXPATH];
-	void Load(void);
+class Font {
+	char _path[MAXPATH];
+	void load();
 public:
-//  static uint8 Wid[256];
-//  static uint16 Pos[256];
-//  static uint8 Map[256*8];
-	uint8  *Wid;
-	uint16 *Pos;
-	uint8  *Map;
-	FONT(const char *name);
-	~FONT(void);
-	uint16 Width(const char *text);
-	void Save(void);
+//  static uint8 _wid[256];
+//  static uint16 _pos[256];
+//  static uint8 _map[256*8];
+	uint8  *_wid;
+	uint16 *_pos;
+	uint8  *_map;
+	Font(const char *name);
+	~Font();
+	uint16 width(const char *text);
+	void save();
 };
 
 
 enum    TBOX_STYLE  { PURE, RECT, ROUND };
 
 
-class TALK : public Sprite {
+class Talk : public Sprite {
 protected:
-	TBOX_STYLE Mode;
-	Bitmap *TS[2];
-	Bitmap *Box(uint16 w, uint16 h);
+	TBOX_STYLE _mode;
+	Bitmap *_ts[2];
+	Bitmap *box(uint16 w, uint16 h);
 public:
-	TALK(CGEEngine *vm, const char *tx, TBOX_STYLE mode = PURE);
-	TALK(CGEEngine *vm);
-	//~TALK (void);
+	Talk(CGEEngine *vm, const char *tx, TBOX_STYLE mode);
+	Talk(CGEEngine *vm);
+	//~TALK();
 
-	static FONT *_Font;
+	static Font *_font;
 	static void init();
 	static void deinit();
 
-	virtual void Update(const char *tx);
-	virtual void Update(void) {}
-	void PutLine(int line, const char *text);
+	virtual void update(const char *tx);
+	virtual void update() {}
+	void putLine(int line, const char *text);
 private:
 	CGEEngine *_vm;
 };
 
 
-class INFO_LINE : public TALK {
-	const char *OldTxt;
+class InfoLine : public Talk {
+	const char *_oldTxt;
 public:
-	INFO_LINE(CGEEngine *vm, uint16 wid);
-	void Update(const char *tx);
+	InfoLine(CGEEngine *vm, uint16 wid);
+	void update(const char *tx);
 private:
 	CGEEngine *_vm;
 };

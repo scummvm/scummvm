@@ -35,19 +35,19 @@ GetText *GetText::_ptr = NULL;
 
 
 GetText::GetText(CGEEngine *vm, const char *info, char *text, int size, void (*click)())
-	: TALK(vm), _text(text), _size(min<int>(size, GTMAX)), _len(min<int>(_size, strlen(text))),
+	: Talk(vm), _text(text), _size(min<int>(size, GTMAX)), _len(min<int>(_size, strlen(text))),
 	  _cntr(GTBLINK), _click(click), _oldKeybClient(_keyboard->setClient(this)), _vm(vm) {
-	int i = 2 * TEXT_HM + _Font->Width(info);
+	int i = 2 * TEXT_HM + _font->width(info);
 	_ptr = this;
-	Mode = RECT;
-	TS[0] = Box((i + 3) & ~3, 2 * TEXT_VM + 2 * FONT_HIG + TEXT_LS);
-	setShapeList(TS);
+	_mode = RECT;
+	_ts[0] = box((i + 3) & ~3, 2 * TEXT_VM + 2 * FONT_HIG + TEXT_LS);
+	setShapeList(_ts);
 	_flags._bDel = true;
 	_flags._kill = true;
 	memcpy(_buff, text, _len);
 	_buff[_len] = ' ';
 	_buff[_len + 1] = '\0';
-	PutLine(0, info);
+	putLine(0, info);
 	tick();
 }
 
@@ -63,7 +63,7 @@ void GetText::tick() {
 		_buff[_len] ^= (' ' ^ '_');
 		_cntr = 0;
 	}
-	PutLine(1, _buff);
+	putLine(1, _buff);
 	_time = GTTIME;
 }
 
@@ -105,7 +105,7 @@ void GetText::touch(uint16 mask, int x, int y) {
 					if (p)
 						x = ogon[p - bezo];
 				}
-				if (_len < _size && 2 * TEXT_HM + _Font->Width(_buff) + _Font->Wid[x] <= _w) {
+				if (_len < _size && 2 * TEXT_HM + _font->width(_buff) + _font->_wid[x] <= _w) {
 					_buff[_len + 2] = _buff[_len + 1];
 					_buff[_len + 1] = _buff[_len];
 					_buff[_len++] = x;

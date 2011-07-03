@@ -57,73 +57,73 @@ enum  DEV_TYPE  { DEV_AUTO = -1,                    // auto-detect mode
 
 // driver info
 struct DrvInfo {
-	DEV_TYPE DDEV;                                    // digi device
-	DEV_TYPE MDEV;                                    // midi device
-	uint16   DBASE;                                   // digi base port
-	uint16   DDMA;                                    // digi dma no
-	uint16   DIRQ;                                    // digi irq no
-	uint16   MBASE;                                   // midi base port
+	DEV_TYPE _dDev;                                    // digi device
+	DEV_TYPE _mDev;                                    // midi device
+	uint16   _dBase;                                   // digi base port
+	uint16   _dDma;                                    // digi dma no
+	uint16   _dIrq;                                    // digi irq no
+	uint16   _mBase;                                   // midi base port
 	union {
 		struct {
-			uint16 DR : 4;
-			uint16 DL : 4;
-			uint16 MR : 4;
-			uint16 ML : 4;
-		} VOL4;
+			uint16 _dr : 4;
+			uint16 _dl : 4;
+			uint16 _mr : 4;
+			uint16 _ml : 4;
+		} Vol4;
 		struct {
-			uint8  D;                                     // digi volume
-			uint8  M;                                     // midi volume
-		} VOL2;
+			uint8  _d;                                     // digi volume
+			uint8  _m;                                     // midi volume
+		} Vol2;
 	};
 };
 
 // sample info
 struct SmpInfo {
-	uint8  *saddr;                                    // address
-	uint16  slen;                                     // length
-	uint16  span;                                     // left/right pan (0-15)
-	int     sflag;                                    // flag
+	uint8  *_saddr;                                    // address
+	uint16  _slen;                                     // length
+	uint16  _span;                                     // left/right pan (0-15)
+	int     _sflag;                                    // flag
 };
 
 // ******************************************************
 // *  Data                                              *
 // ******************************************************
 // driver info
-extern DrvInfo SNDDrvInfo;
+extern DrvInfo _sndDrvInfo;
 
 // midi player flag (1 means we are playing)
-extern uint16 MIDIPlayFlag;
+extern uint16 _midiPlayFlag;
 
 // midi song end flag (1 means we have crossed end mark)
-extern uint16 MIDIEndFlag;
+extern uint16 _midiEndFlag;
 
 // ******************************************************
 // *  Driver Code                                       *
 // ******************************************************
 // Init Digi Device
-void SNDInit();
+void sndInit();
 
 // Close Digi Device
-void SNDDone();
+void sndDone();
 
 // Set Volume
-void SNDSetVolume();
+void sndSetVolume();
 
 // Start Digi
-void SNDDigiStart(SmpInfo *PSmpInfo);
+void sndDigiStart(SmpInfo *PSmpInfo);
 
 // Stop Digi
-void SNDDigiStop(SmpInfo *PSmpInfo);
+void sndDigiStop(SmpInfo *PSmpInfo);
 
 // Start MIDI File
-void SNDMIDIStart(uint8 *MIDFile);
+void sndMidiStart(uint8 *MIDFile);
 
 // Stop MIDI File
-void SNDMIDIStop();
+void sndMidiStop();
 
 // Play MIDI File (to be called while interrupting)
 // WARNING: Uses ALL registers!
-void SNDMIDIPlay();
+void sndMidiPlay();
 
 } // End of namespace CGE
 

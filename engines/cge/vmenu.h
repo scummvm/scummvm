@@ -42,7 +42,7 @@ typedef struct  {
 } CHOICE;
 
 
-class MENU_BAR : public TALK {
+class MENU_BAR : public Talk {
 public:
 	MENU_BAR(CGEEngine *vm, uint16 w);
 private:
@@ -50,7 +50,7 @@ private:
 };
 
 
-class VMENU : public TALK {
+class VMENU : public Talk {
 	uint16 Items;
 	CHOICE *Menu;
 public:
