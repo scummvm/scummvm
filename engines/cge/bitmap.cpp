@@ -117,6 +117,11 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 	HideDesc *b = (HideDesc *)(v + 4 * psiz);
 	b->skip = (SCR_WID - _w) >> 2;
 	b->hide = _w >> 2;
+
+	// Replicate across the entire table
+	for (HideDesc *hdP = b + 1; hdP < (b + _h); ++hdP)
+		*hdP = *b;
+	
 	memcpy(b + 1, b, (_h - 1) * sizeof(*b));         // tricky fill entire table
 	b->skip = 0;                                    // fix the first entry
 	_v = v;
