@@ -117,7 +117,7 @@ CGEEngine::~CGEEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 
-	_console = new CGEConsole(this);
+	delete _console;
 
 	// Delete engine objects 
 	delete _sprite;

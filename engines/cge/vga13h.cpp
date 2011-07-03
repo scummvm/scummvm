@@ -912,8 +912,10 @@ void VGA::init() {
 }
 
 void VGA::deinit() {
-	for (int idx = 0; idx < 4; ++idx)
+	for (int idx = 0; idx < 4; ++idx) {
+		Page[idx]->free();
 		delete Page[idx];
+	}
 
 	delete[] SysPal;
 }
@@ -931,7 +933,7 @@ VGA::VGA(int mode)
 	for (i = 10; i < 20; i++) {
 		char *txt = Text->getText(i);
 		if (txt) {
-			warning("%s", txt);
+			debugN("%s", txt);
 			std = false;
 		}
 	}
@@ -976,8 +978,11 @@ VGA::~VGA(void) {
 		if (Nam)
 			buffer = buffer + " [" + Nam + "]";
 
-		warning("%s", buffer.c_str());
+		debugN("%s", buffer.c_str());
 	}
+
+	delete ShowQ;
+	delete SpareQ;
 }
 
 
