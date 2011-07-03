@@ -36,29 +36,29 @@ namespace CGE {
 #define MB_HM       3
 
 
-typedef struct  {
-	const char *Text;
+struct Choice {
+	const char *_text;
 	void (CGEEngine::*Proc)();
-} CHOICE;
+};
 
 
-class MENU_BAR : public Talk {
+class MenuBar : public Talk {
 public:
-	MENU_BAR(CGEEngine *vm, uint16 w);
+	MenuBar(CGEEngine *vm, uint16 w);
 private:
 	CGEEngine *_vm;
 };
 
 
-class VMENU : public Talk {
-	uint16 Items;
-	CHOICE *Menu;
+class Vmenu : public Talk {
+	uint16 _items;
+	Choice *_menu;
 public:
-	static VMENU *Addr;
-	static int Recent;
-	MENU_BAR *Bar;
-	VMENU(CGEEngine *vm, CHOICE *list, int x, int y);
-	~VMENU();
+	static Vmenu *_addr;
+	static int _recent;
+	MenuBar *_bar;
+	Vmenu(CGEEngine *vm, Choice *list, int x, int y);
+	~Vmenu();
 	virtual void touch(uint16 mask, int x, int y);
 private:
 	CGEEngine *_vm;

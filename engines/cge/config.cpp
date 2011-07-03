@@ -64,7 +64,7 @@ static int DevName[] = {
 	MIDI_TEXT, AUTO_TEXT
 };
 
-static CHOICE DevMenu[] = {
+static Choice DevMenu[] = {
 	{ NULL, &CGEEngine::NONE  },
 	{ NULL, &CGEEngine::SB    },
 	{ NULL, &CGEEngine::SBM   },
@@ -76,7 +76,7 @@ static CHOICE DevMenu[] = {
 };
 
 
-static CHOICE DigiPorts[] = {
+static Choice DigiPorts[] = {
 	{ " 210h", &CGEEngine::setPortD },
 	{ " 220h", &CGEEngine::setPortD },
 	{ " 230h", &CGEEngine::setPortD },
@@ -87,7 +87,7 @@ static CHOICE DigiPorts[] = {
 	{ NULL,   NULL     }
 };
 
-static CHOICE MIDIPorts[] = {
+static Choice MIDIPorts[] = {
 	{ " 220h", &CGEEngine::setPortM },
 	{ " 230h", &CGEEngine::setPortM },
 	{ " 240h", &CGEEngine::setPortM },
@@ -102,7 +102,7 @@ static CHOICE MIDIPorts[] = {
 	{ NULL,   NULL     }
 };
 
-static CHOICE BlsterIRQ[] = {
+static Choice BlsterIRQ[] = {
 	{ "IRQ  2", &CGEEngine::setIRQ },
 	{ "IRQ  5", &CGEEngine::setIRQ },
 	{ "IRQ  7", &CGEEngine::setIRQ },
@@ -111,7 +111,7 @@ static CHOICE BlsterIRQ[] = {
 	{ NULL,   NULL     }
 };
 
-static CHOICE GravisIRQ[] = {
+static Choice GravisIRQ[] = {
 	{ "IRQ  2", &CGEEngine::setIRQ },
 	{ "IRQ  5", &CGEEngine::setIRQ },
 	{ "IRQ  7", &CGEEngine::setIRQ },
@@ -122,7 +122,7 @@ static CHOICE GravisIRQ[] = {
 	{ NULL,   NULL     }
 };
 
-static CHOICE GravisDMA[] = {
+static Choice GravisDMA[] = {
 	{ "DMA 1", &CGEEngine::setDMA },
 	{ "DMA 3", &CGEEngine::setDMA },
 	{ "DMA 5", &CGEEngine::setDMA },
@@ -132,7 +132,7 @@ static CHOICE GravisDMA[] = {
 	{ NULL,   NULL    }
 };
 
-static CHOICE BlsterDMA[] = {
+static Choice BlsterDMA[] = {
 	{ "DMA 0", &CGEEngine::setDMA },
 	{ "DMA 1", &CGEEngine::setDMA },
 	{ "DMA 3", &CGEEngine::setDMA },
@@ -144,17 +144,17 @@ static CHOICE BlsterDMA[] = {
 void CGEEngine::selectSound() {
 	int i;
 	_sound.Close();
-	if (VMENU::Addr)
-		SNPOST_(SNKILL, -1, 0, VMENU::Addr);
+	if (Vmenu::_addr)
+		SNPOST_(SNKILL, -1, 0, Vmenu::_addr);
 	inf(_text->getText(STYPE_TEXT));
 	_talk->gotoxy(_talk->_x, FONT_HIG / 2);
 	for (i = 0; i < (int)ArrayCount(DevName); i++)
-		DevMenu[i].Text = _text->getText(DevName[i]);
-	(new VMENU(this, DevMenu, SCR_WID / 2, _talk->_y + _talk->_h + TEXT_VM + FONT_HIG))->setName(_text->getText(MENU_TEXT));
+		DevMenu[i]._text = _text->getText(DevName[i]);
+	(new Vmenu(this, DevMenu, SCR_WID / 2, _talk->_y + _talk->_h + TEXT_VM + FONT_HIG))->setName(_text->getText(MENU_TEXT));
 }
 
 
-static void Reset(void) {
+static void reset(void) {
 	_sndDrvInfo._dBase = _sndDrvInfo._dIrq = _sndDrvInfo._dDma = _sndDrvInfo._mBase = DETECT;
 }
 
@@ -179,22 +179,22 @@ static uint16 xdeco(const char *str) {
 }
 
 
-static CHOICE *Cho;
-static int     Hlp;
+static Choice *_cho;
+static int     _hlp;
 
 void CGEEngine::SNSelect() {
-	inf(_text->getText(Hlp));
+	inf(_text->getText(_hlp));
 	_talk->gotoxy(_talk->_x, FONT_HIG / 2);
-	(new VMENU(this, Cho, SCR_WID / 2, _talk->_y + _talk->_h + TEXT_VM + FONT_HIG))->setName(_text->getText(MENU_TEXT));
+	(new Vmenu(this, _cho, SCR_WID / 2, _talk->_y + _talk->_h + TEXT_VM + FONT_HIG))->setName(_text->getText(MENU_TEXT));
 }
 
 
-static void Select(CHOICE *cho, int hlp) {
-	Cho = cho;
-	Hlp = hlp;
+static void select(Choice *cho, int hlp) {
+	_cho = cho;
+	_hlp = hlp;
 	//TODO Change the SNPOST message send to a special way to send function pointer
 	//SNPOST(SNEXEC, -1, 0, (void *)&SNSelect);
-	warning("STUB: Select");
+	warning("STUB: select");
 }
 
 
@@ -208,32 +208,32 @@ void CGEEngine::NONE() {
 void CGEEngine::SB() {
 	_sndDrvInfo._dDev = DEV_SB;
 	_sndDrvInfo._mDev = DEV_SB;
-	Reset();
-	Select(DigiPorts, SPORT_TEXT);
+	reset();
+	select(DigiPorts, SPORT_TEXT);
 }
 
 
 void CGEEngine::SBM() {
 	_sndDrvInfo._dDev = DEV_SB;
 	_sndDrvInfo._mDev = DEV_GM;
-	Reset();
-	Select(DigiPorts, SPORT_TEXT);
+	reset();
+	select(DigiPorts, SPORT_TEXT);
 }
 
 
 void CGEEngine::GUS() {
 	_sndDrvInfo._dDev = DEV_GUS;
 	_sndDrvInfo._mDev = DEV_GUS;
-	Reset();
-	Select(DigiPorts, SPORT_TEXT);
+	reset();
+	select(DigiPorts, SPORT_TEXT);
 }
 
 
 void CGEEngine::GUSM() {
 	_sndDrvInfo._dDev = DEV_GUS;
 	_sndDrvInfo._mDev = DEV_GM;
-	Reset();
-	Select(DigiPorts, SPORT_TEXT);
+	reset();
+	select(DigiPorts, SPORT_TEXT);
 }
 
 
@@ -241,40 +241,40 @@ void CGEEngine::MIDI() {
 	_sndDrvInfo._dDev = DEV_QUIET;
 	_sndDrvInfo._mDev = DEV_GM;
 	_sndDrvInfo._mBase = DETECT;
-	Select(MIDIPorts, MPORT_TEXT);
+	select(MIDIPorts, MPORT_TEXT);
 }
 
 
 void CGEEngine::AUTO() {
 	_sndDrvInfo._dDev = DEV_AUTO;
 	_sndDrvInfo._mDev = DEV_AUTO;
-	Reset();
+	reset();
 	_sound.Open();
 }
 
 
 void CGEEngine::setPortD() {
-	_sndDrvInfo._dBase = xdeco(DigiPorts[VMENU::Recent].Text);
-	Select((_sndDrvInfo._dDev == DEV_SB) ? BlsterIRQ : GravisIRQ, SIRQ_TEXT);
+	_sndDrvInfo._dBase = xdeco(DigiPorts[Vmenu::_recent]._text);
+	select((_sndDrvInfo._dDev == DEV_SB) ? BlsterIRQ : GravisIRQ, SIRQ_TEXT);
 }
 
 
 void CGEEngine::setPortM() {
-	_sndDrvInfo._mBase = xdeco(MIDIPorts[VMENU::Recent].Text);
+	_sndDrvInfo._mBase = xdeco(MIDIPorts[Vmenu::_recent]._text);
 	_sound.Open();
 }
 
 
 void CGEEngine::setIRQ() {
-	_sndDrvInfo._dIrq = ddeco(((_sndDrvInfo._dDev == DEV_SB) ? BlsterIRQ : GravisIRQ)[VMENU::Recent].Text);
-	Select((_sndDrvInfo._dDev == DEV_SB) ? BlsterDMA : GravisDMA, SDMA_TEXT);
+	_sndDrvInfo._dIrq = ddeco(((_sndDrvInfo._dDev == DEV_SB) ? BlsterIRQ : GravisIRQ)[Vmenu::_recent]._text);
+	select((_sndDrvInfo._dDev == DEV_SB) ? BlsterDMA : GravisDMA, SDMA_TEXT);
 }
 
 
 void CGEEngine::setDMA() {
-	_sndDrvInfo._dDma = ddeco(((_sndDrvInfo._dDev == DEV_SB) ? BlsterDMA : GravisDMA)[VMENU::Recent].Text);
+	_sndDrvInfo._dDma = ddeco(((_sndDrvInfo._dDev == DEV_SB) ? BlsterDMA : GravisDMA)[Vmenu::_recent]._text);
 	if (_sndDrvInfo._mDev != _sndDrvInfo._dDev)
-		Select(MIDIPorts, MPORT_TEXT);
+		select(MIDIPorts, MPORT_TEXT);
 	else
 		_sound.Open();
 }
