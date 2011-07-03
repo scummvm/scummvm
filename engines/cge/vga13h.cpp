@@ -33,10 +33,6 @@
 #include "cge/vol.h"
 #include "cge/text.h"
 #include "cge/cge_main.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
 #include "cge/cge.h"
 
 namespace CGE {

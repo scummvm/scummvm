@@ -31,7 +31,6 @@
 #include "cge/events.h"
 #include "cge/snddrv.h"
 #include "cge/cge_main.h"
-#include <string.h>
 
 namespace CGE {
 

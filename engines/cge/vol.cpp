@@ -28,9 +28,6 @@
 #include "cge/vol.h"
 #include "common/system.h"
 #include "common/str.h"
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
 
 namespace CGE {
 

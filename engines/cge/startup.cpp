@@ -30,9 +30,6 @@
 #include "cge/sound.h"
 #include "cge/cfile.h"
 #include "cge/snddrv.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 namespace CGE {
 
