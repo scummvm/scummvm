@@ -29,7 +29,7 @@
 #include "common/textconsole.h"
 #include "engines/util.h"
 #include "graphics/jpeg.h"
-#include "graphics/pict.h"
+#include "graphics/decoders/pict.h"
 
 namespace Mohawk {
 
@@ -51,10 +51,8 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 
 	if (_vm->getFeatures() & GF_ME) {
 		_jpegDecoder = new Graphics::JPEG();
-		_pictDecoder = new Graphics::PictDecoder(_pixelFormat);
 	} else {
 		_jpegDecoder = NULL;
-		_pictDecoder = NULL;
 	}
 
 	_pictureFile.entries = NULL;
@@ -70,7 +68,6 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 MystGraphics::~MystGraphics() {
 	delete _bmpDecoder;
 	delete _jpegDecoder;
-	delete _pictDecoder;
 	delete[] _pictureFile.entries;
 
 	_backBuffer->free();
@@ -138,7 +135,13 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 					mhkSurface = new MohawkSurface(_jpegDecoder->getSurface(_pixelFormat));
 					delete stream;
 				} else if (_pictureFile.entries[i].type == 1) {
-					mhkSurface = new MohawkSurface(_pictDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size)));
+					Graphics::PICTDecoder pict;
+					Common::SeekableSubReadStream subStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size);
+
+					if (!pict.loadStream(subStream))
+						error("Could not decode Myst ME Mac PICT");
+
+					mhkSurface = new MohawkSurface(pict.getSurface()->convertTo(_pixelFormat));
 				} else
 					error ("Unknown Picture File type %d", _pictureFile.entries[i].type);
 				break;
@@ -170,9 +173,14 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 			dataStream->seek(0);
 		}
 
-		if (isPict)
-			mhkSurface = new MohawkSurface(_pictDecoder->decodeImage(dataStream));
-		else {
+		if (isPict) {
+			Graphics::PICTDecoder pict;
+
+			if (!pict.loadStream(*dataStream))
+				error("Could not decode Myst ME PICT");
+
+			mhkSurface = new MohawkSurface(pict.getSurface()->convertTo(_pixelFormat));
+		} else {
 			mhkSurface = _bmpDecoder->decodeImage(dataStream);
 			mhkSurface->convertToTrueColor();
 		}

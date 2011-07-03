@@ -29,7 +29,6 @@
 
 namespace Graphics {
 class JPEG;
-class PictDecoder;
 }
 
 namespace Mohawk {
@@ -70,7 +69,6 @@ protected:
 private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
-	Graphics::PictDecoder *_pictDecoder;
 	Graphics::JPEG *_jpegDecoder;
 
 	struct PictureFile {

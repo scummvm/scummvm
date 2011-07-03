@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 
+#include "graphics/decoders/image_decoder.h"
 #include "graphics/pixelformat.h"
 
 namespace Common {
@@ -35,16 +36,20 @@ class SeekableReadStream;
 
 namespace Graphics {
 
-class JPEG;
 struct Surface;
 
-#define DECLARE_OPCODE(x) void x(Common::SeekableReadStream *stream)
+#define DECLARE_OPCODE(x) void x(Common::SeekableReadStream &stream)
 
-class PictDecoder {
+class PICTDecoder : public ImageDecoder {
 public:
-	PictDecoder(Graphics::PixelFormat pixelFormat);
-	~PictDecoder();
-	Surface *decodeImage(Common::SeekableReadStream *stream, byte *palette = 0);
+	PICTDecoder();
+	~PICTDecoder();
+
+	// ImageDecoder API
+	bool loadStream(Common::SeekableReadStream &stream);
+	void destroy();
+	const Surface *getSurface() const { return _outputSurface; }
+	const byte *getPalette() const { return _palette; }
 
 	struct PixMap {
 		uint32 baseAddr;
@@ -64,26 +69,23 @@ public:
 		uint32 pmReserved;
 	};
 
-	static PixMap readPixMap(Common::SeekableReadStream *stream, bool hasBaseAddr = true);
+	static PixMap readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr = true);
 
 private:
 	Common::Rect _imageRect;
-	PixelFormat _pixelFormat;
-	JPEG *_jpeg;
 	byte _palette[256 * 3];
-	bool _isPaletted;
 	Graphics::Surface *_outputSurface;
 	bool _continueParsing;
 
 	// Utility Functions
-	void unpackBitsRect(Common::SeekableReadStream *stream, bool hasPalette);
-	void unpackBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bitsPerPixel, byte bytesPerPixel);
-	void skipBitsRect(Common::SeekableReadStream *stream, bool hasPalette);
-	void decodeCompressedQuickTime(Common::SeekableReadStream *stream);
+	void unpackBitsRect(Common::SeekableReadStream &stream, bool hasPalette);
+	void unpackBitsLine(byte *out, uint32 length, Common::SeekableReadStream *stream, byte bitsPerPixel, byte bytesPerPixel);
+	void skipBitsRect(Common::SeekableReadStream &stream, bool hasPalette);
+	void decodeCompressedQuickTime(Common::SeekableReadStream &stream);
 	void outputPixelBuffer(byte *&out, byte value, byte bitsPerPixel);
 
 	// Opcodes
-	typedef void (PictDecoder::*OpcodeProcPICT)(Common::SeekableReadStream *stream);
+	typedef void (PICTDecoder::*OpcodeProcPICT)(Common::SeekableReadStream &stream);
 	struct PICTOpcode {
 		PICTOpcode() { op = 0; proc = 0; desc = 0; }
 		PICTOpcode(uint16 o, OpcodeProcPICT p, const char *d) { op = o; proc = p; desc = d; }

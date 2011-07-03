@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	iff.o \
 	jpeg.o \
 	maccursor.o \
-	pict.o \
 	png.o \
 	primitives.o \
 	scaler.o \
@@ -26,7 +25,8 @@ MODULE_OBJS := \
 	VectorRendererSpec.o \
 	wincursor.o \
 	yuv_to_rgb.o \
-	decoders/bmp.o
+	decoders/bmp.o \
+	decoders/pict.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \
