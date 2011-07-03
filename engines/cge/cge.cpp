@@ -58,17 +58,17 @@ void CGEEngine::setup() {
 	_console = new CGEConsole(this);
 
 	// Initialise classes that have static members
-	VGA::init();
-	VFILE::init();
+	Vga::init();
+	VFile::init();
 	Bitmap::init();
 	Talk::init();
 
 	// Initialise engine objects
 	_text = new Text(this, progName(), 128);
-	Vga = new VGA(M13H);
+	_vga = new Vga(M13H);
 	_heart = new Heart;
-	Hero = new WALK(this, NULL);
-	Sys = new SYSTEM(this);
+	_hero = new WALK(this, NULL);
+	_sys = new SYSTEM(this);
 	_pocLight = new Sprite(this, LI);
 	for (int i = 0; i < POCKET_NX; i++)
 		_pocket[i] = new Sprite(this, NULL);
@@ -111,8 +111,8 @@ CGEEngine::~CGEEngine() {
 	// Call classes with static members to clear them up
 	Talk::deinit();
 	Bitmap::deinit();
-	VFILE::deinit();
-	VGA::deinit();
+	VFile::deinit();
+	Vga::deinit();
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -147,9 +147,9 @@ CGEEngine::~CGEEngine() {
 		delete _pocket[i];
 	delete _snail;
 	delete _snail_;
-	delete Hero;
-	delete Vga;
-	delete Sys;
+	delete _hero;
+	delete _vga;
+	delete _sys;
 }
 
 Common::Error CGEEngine::run() {

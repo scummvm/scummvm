@@ -35,7 +35,7 @@ uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b) {
 	if (x) {
 		uint16 i;
 		for (i = 0; i < 256; i++) {
-			x[i] = Closest(pal, MkDAC(((uint16)(pal[i]._r) * r) / 255,
+			x[i] = closest(pal, mkDac(((uint16)(pal[i]._r) * r) / 255,
 			                          ((uint16)(pal[i]._g) * g) / 255,
 			                          ((uint16)(pal[i]._b) * b) / 255));
 		}
@@ -50,9 +50,9 @@ uint8 *Mark(DAC *pal) {
 	if (x) {
 		uint16 i;
 		for (i = 0; i < 256; i++) {
-			x[i] = Closest(pal, MkDAC(f(pal[i].R),
-			                          f(pal[i].G),
-			                          f(pal[i].B)));
+			x[i] = closest(pal, mkDax(f(pal[i]._R),
+			                          f(pal[i]._G),
+			                          f(pal[i]._B)));
 		}
 	}
 	return x;

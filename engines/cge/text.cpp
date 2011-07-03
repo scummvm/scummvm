@@ -213,8 +213,8 @@ void Text::say(const char *txt, Sprite *spr) {
 		spike->step(east);
 		spike->_ref = SAY_REF;
 
-		Vga->_showQ->insert(_talk, Vga->_showQ->last());
-		Vga->_showQ->insert(spike, Vga->_showQ->last());
+		_vga->_showQ->insert(_talk, _vga->_showQ->last());
+		_vga->_showQ->insert(spike, _vga->_showQ->last());
 	}
 }
 
@@ -229,7 +229,7 @@ void CGEEngine::inf(const char *txt) {
 		_talk->gotoxy(_talk->_x, _talk->_y - 20);
 		_talk->_z = 126;
 		_talk->_ref = INF_REF;
-		Vga->_showQ->insert(_talk, Vga->_showQ->last());
+		_vga->_showQ->insert(_talk, _vga->_showQ->last());
 	}
 }
 

@@ -177,7 +177,7 @@ void RestoreScreen(uint16 * &sav) {
 }
 
 
-Dac MkDAC(uint8 r, uint8 g, uint8 b) {
+Dac mkDac(uint8 r, uint8 g, uint8 b) {
 	static Dac x;
 	x._r = r;
 	x._g = g;
@@ -186,7 +186,7 @@ Dac MkDAC(uint8 r, uint8 g, uint8 b) {
 }
 
 
-Rgb MkRGB(uint8 r, uint8 g, uint8 b) {
+Rgb mkRgb(uint8 r, uint8 g, uint8 b) {
 	static Trgb x;
 	x._dac._r = r;
 	x._dac._g = g;
@@ -195,9 +195,9 @@ Rgb MkRGB(uint8 r, uint8 g, uint8 b) {
 }
 
 
-Sprite *Locate(int ref) {
-	Sprite *spr = Vga->_showQ->locate(ref);
-	return (spr) ? spr : Vga->_spareQ->locate(ref);
+Sprite *locate(int ref) {
+	Sprite *spr = _vga->_showQ->locate(ref);
+	return (spr) ? spr : _vga->_spareQ->locate(ref);
 }
 
 
@@ -746,10 +746,10 @@ void Sprite::show() {
 
 
 void Sprite::show(uint16 pg) {
-	Graphics::Surface *a = VGA::Page[1];
-	VGA::Page[1] = VGA::Page[pg & 3];
+	Graphics::Surface *a = Vga::_page[1];
+	Vga::_page[1] = Vga::_page[pg & 3];
 	shp()->show(_x, _y);
-	VGA::Page[1] = a;
+	Vga::_page[1] = a;
 }
 
 
@@ -780,8 +780,8 @@ BMP_PTR Sprite::ghost() {
 }
 
 
-Sprite *SpriteAt(int x, int y) {
-	Sprite *spr = NULL, * tail = Vga->_showQ->last();
+Sprite *spriteAt(int x, int y) {
+	Sprite *spr = NULL, * tail = _vga->_showQ->last();
 	if (tail) {
 		for (spr = tail->_prev; spr; spr = spr->_prev) {
 			if (! spr->_flags._hide && ! spr->_flags._tran) {
@@ -899,32 +899,32 @@ Sprite *Queue::locate(int ref) {
 
 
 //extern const char Copr[];
-Graphics::Surface *VGA::Page[4];
-Dac *VGA::SysPal;
+Graphics::Surface *Vga::_page[4];
+Dac *Vga::_sysPal;
 
-void VGA::init() {
+void Vga::init() {
 	for (int idx = 0; idx < 4; ++idx) {
-		Page[idx] = new Graphics::Surface();
-		Page[idx]->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+		_page[idx] = new Graphics::Surface();
+		_page[idx]->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
-	SysPal = new Dac[PAL_CNT];
+	_sysPal = new Dac[PAL_CNT];
 }
 
-void VGA::deinit() {
+void Vga::deinit() {
 	for (int idx = 0; idx < 4; ++idx) {
-		Page[idx]->free();
-		delete Page[idx];
+		_page[idx]->free();
+		delete _page[idx];
 	}
 
-	delete[] SysPal;
+	delete[] _sysPal;
 }
 
-VGA::VGA(int mode)
-	: FrmCnt(0), OldMode(0), OldScreen(NULL), StatAdr(VGAST1_), 
-	  Msg(NULL), Nam(NULL), SetPal(false), Mono(0) {
-	OldColors = NULL;
-	NewColors = NULL;
+Vga::Vga(int mode)
+	: _frmCnt(0), _oldMode(0), _oldScreen(NULL), _statAdr(VGAST1_), 
+	  _msg(NULL), _nam(NULL), _setPal(false), _mono(0) {
+	_oldColors = NULL;
+	_newColors = NULL;
 	_showQ = new Queue(true);
 	_spareQ = new Queue(false);
 
@@ -941,42 +941,42 @@ VGA::VGA(int mode)
 //		warning(Copr);
 		warning("TODO: Fix Copr");
 
-	SetStatAdr();
-	if (StatAdr != VGAST1_)
-		++Mono;
+	setStatAdr();
+	if (_statAdr != VGAST1_)
+		_mono++;
 	if (isVga()) {
-		OldColors = farnew(Dac, 256);
-		NewColors = farnew(Dac, 256);
-		OldScreen = SaveScreen();
-		GetColors(OldColors);
-		Sunset();
-		OldMode = SetMode(mode);
-		SetColors();
-		Setup(VideoMode);
-		Clear(0);
+		_oldColors = farnew(Dac, 256);
+		_newColors = farnew(Dac, 256);
+		_oldScreen = SaveScreen();
+		getColors(_oldColors);
+		sunset();
+		_oldMode = setMode(mode);
+		setColors();
+		setup(VideoMode);
+		clear(0);
 	}
 }
 
 
-VGA::~VGA(void) {
-	Mono = 0;
+Vga::~Vga() {
+	_mono = 0;
 	if (isVga()) {
 		Common::String buffer = "";
 /*
-		Clear(0);
-		SetMode(OldMode);
-		SetColors();
-		RestoreScreen(OldScreen);
-		Sunrise(OldColors);
+		clear(0);
+		setMode(_oldMode);
+		setColors();
+		restoreScreen(_oldScreen);
+		sunrise(_oldColors);
 */
-		if (OldColors)
-			free(OldColors);
-		if (NewColors)
-			free(NewColors);
-		if (Msg)
-			buffer = Common::String(Msg);
-		if (Nam)
-			buffer = buffer + " [" + Nam + "]";
+		if (_oldColors)
+			free(_oldColors);
+		if (_newColors)
+			free(_newColors);
+		if (_msg)
+			buffer = Common::String(_msg);
+		if (_nam)
+			buffer = buffer + " [" + _nam + "]";
 
 		debugN("%s", buffer.c_str());
 	}
@@ -986,7 +986,7 @@ VGA::~VGA(void) {
 }
 
 
-void VGA::SetStatAdr(void) {
+void Vga::setStatAdr() {
 	/*
 	asm    mov dx,VGAMIr_
 	asm    in  al,dx
@@ -997,21 +997,21 @@ void VGA::SetStatAdr(void) {
 	set_mode_adr:
 	StatAdr = _AX;
 	*/
-	warning("STUB: VGA::SetStatADR");
+	warning("STUB: VGA::setStatADR");
 }
 
 
 #pragma argsused
-void VGA::WaitVR(bool on) {
+void Vga::waitVR(bool on) {
 	// Since some of the game parts rely on using vertical sync as a delay mechanism, 
 	// we're introducing a short delay to simulate it
 	g_system->delayMillis(10);
 }
 
 
-void VGA::Setup(VgaRegBlk *vrb) {
+void Vga::setup(VgaRegBlk *vrb) {
 	/*
-	  WaitVR();         // *--LOOK!--* resets VGAATR logic
+	  waitVR();         // *--LOOK!--* resets VGAATR logic
 	  asm   cld
 	  asm   mov si, vrb     // take address of parameter table
 	  asm   mov dh,0x03     // higher byte of I/O address is always 3
@@ -1048,23 +1048,23 @@ void VGA::Setup(VgaRegBlk *vrb) {
 
 	  xit:
 	  */
-	warning("STUB: VGA::Setup");
+	warning("STUB: VGA::setup");
 }
 
 
-int VGA::SetMode(int mode) {
+int Vga::setMode(int mode) {
 	// ScummVM provides it's own vieo services
 	return 0;
 }
 
 
-void VGA::GetColors(Dac *tab) {
+void Vga::getColors(Dac *tab) {
 	byte palData[PAL_SIZ];
 	g_system->getPaletteManager()->grabPalette(palData, 0, PAL_CNT);
-	pal2DAC(palData, tab);
+	palToDac(palData, tab);
 }
 
-void VGA::pal2DAC(const byte *palData, Dac *tab) {
+void Vga::palToDac(const byte *palData, Dac *tab) {
 	const byte *colP = palData;
 	for (int idx = 0; idx < PAL_CNT; ++idx, colP += 3) {
 		tab[idx]._r = *colP >> 2;
@@ -1073,7 +1073,7 @@ void VGA::pal2DAC(const byte *palData, Dac *tab) {
 	}
 }
 
-void VGA::DAC2pal(const Dac *tab, byte *palData) {
+void Vga::dacToPal(const Dac *tab, byte *palData) {
 	for (int idx = 0; idx < PAL_CNT; ++idx, palData += 3) {
 		*palData = tab[idx]._r << 2;
 		*(palData + 1) = tab[idx]._g << 2;
@@ -1081,16 +1081,16 @@ void VGA::DAC2pal(const Dac *tab, byte *palData) {
 	}
 }
 
-void VGA::SetColors(Dac *tab, int lum) {
-	Dac *palP = tab, *destP = NewColors;
+void Vga::setColors(Dac *tab, int lum) {
+	Dac *palP = tab, *destP = _newColors;
 	for (int idx = 0; idx < PAL_CNT; ++idx, ++palP, ++destP) {
 		destP->_r = (palP->_r * lum) >> 6;
 		destP->_g = (palP->_g * lum) >> 6;
 		destP->_b = (palP->_b * lum) >> 6;
 	}
 
-	if (Mono) {
-		destP = NewColors;
+	if (_mono) {
+		destP = _newColors;
 		for (int idx = 0; idx < PAL_CNT; ++idx, ++palP) {
 			// Form a greyscalce colour from 30% R, 59% G, 11% B
 			uint8 intensity = (destP->_r * 77) + (destP->_g * 151) + (destP->_b * 28);
@@ -1100,77 +1100,77 @@ void VGA::SetColors(Dac *tab, int lum) {
 		}
 	}
 
-	SetPal = true;
+	_setPal = true;
 }
 
 
-void VGA::SetColors(void) {
-	memset(NewColors, 0, PAL_SIZ);
-	UpdateColors();
+void Vga::setColors(void) {
+	memset(_newColors, 0, PAL_SIZ);
+	updateColors();
 }
 
 
-void VGA::Sunrise(Dac *tab) {
+void Vga::sunrise(Dac *tab) {
 	for (int i = 0; i <= 64; i += FADE_STEP) {
-		SetColors(tab, i);
-		WaitVR(true);
-		UpdateColors();
+		setColors(tab, i);
+		waitVR(true);
+		updateColors();
 	}
 }
 
 
-void VGA::Sunset(void) {
+void Vga::sunset() {
 	Dac tab[256];
-	GetColors(tab);
+	getColors(tab);
 	for (int i = 64; i >= 0; i -= FADE_STEP) {
-		SetColors(tab, i);
-		WaitVR(true);
-		UpdateColors();
+		setColors(tab, i);
+		waitVR(true);
+		updateColors();
 	}
 }
 
 
-void VGA::Show(void) {
+void Vga::show() {
 	Sprite *spr = _showQ->first();
 
 	for (spr = _showQ->first(); spr; spr = spr->_next)
 		spr->show();
-	Update();
+	update();
 	for (spr = _showQ->first(); spr; spr = spr->_next)
 		spr->hide();
 
-	++ FrmCnt;
+	_frmCnt++;
 }
 
 
-void VGA::UpdateColors(void) {
+void Vga::updateColors() {
 	byte palData[PAL_SIZ];
-	DAC2pal(NewColors, palData);
+	dacToPal(_newColors, palData);
 	g_system->getPaletteManager()->setPalette(palData, 0, 256);
 }
 
 
-void VGA::Update(void) {
-	SWAP(VGA::Page[0], VGA::Page[1]);
+void Vga::update() {
+	SWAP(Vga::_page[0], Vga::_page[1]);
 
-	if (SetPal) {
-		UpdateColors();
-		SetPal = false;
+	if (_setPal) {
+		updateColors();
+		_setPal = false;
 	}
 
-	g_system->copyRectToScreen((const byte *)VGA::Page[0]->getBasePtr(0, 0), SCR_WID, 0, 0, SCR_WID, SCR_HIG);
+	g_system->copyRectToScreen((const byte *)Vga::_page[0]->getBasePtr(0, 0), SCR_WID, 0, 0, SCR_WID, SCR_HIG);
 	g_system->updateScreen();
 }
 
 
-void VGA::Clear(uint8 color) {
+void Vga::clear(uint8 color) {
 	for (int paneNum = 0; paneNum < 4; ++paneNum)
-		Page[paneNum]->fillRect(Common::Rect(0, 0, SCR_WID, SCR_HIG), color);
+		_page[paneNum]->fillRect(Common::Rect(0, 0, SCR_WID, SCR_HIG), color);
 }
 
 
-void VGA::CopyPage(uint16 d, uint16 s) {
-	Page[d]->copyFrom(*Page[s]);
+void Vga::copyPage(uint16 d, uint16 s) {
+	_page[d]->copyFrom(*_page[s]);
 }
 
 //--------------------------------------------------------------------------
@@ -1259,13 +1259,13 @@ void Bitmap::xShow(int x, int y) {
 
 void Bitmap::show(int x, int y) {
 	const byte *srcP = (const byte *)_v;
-	byte *destEndP = (byte *)VGA::Page[1]->pixels + (SCR_WID * SCR_HIG);
+	byte *destEndP = (byte *)Vga::_page[1]->pixels + (SCR_WID * SCR_HIG);
 
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
 	// must be decompressed and inserted into the surface
 	for (int planeCtr = 0; planeCtr < 4; ++planeCtr) {
-		byte *destP = (byte *)VGA::Page[1]->getBasePtr(x + planeCtr, y);
+		byte *destP = (byte *)Vga::_page[1]->getBasePtr(x + planeCtr, y);
 
 		for (;;) {
 			uint16 v = READ_LE_UINT16(srcP);
@@ -1321,8 +1321,8 @@ void Bitmap::show(int x, int y) {
 
 void Bitmap::hide(int x, int y) {
 	for (int yp = y; yp < y + _h; ++yp) {
-		const byte *srcP = (const byte *)VGA::Page[2]->getBasePtr(x, yp);
-		byte *destP = (byte *)VGA::Page[1]->getBasePtr(x, yp);
+		const byte *srcP = (const byte *)Vga::_page[2]->getBasePtr(x, yp);
+		byte *destP = (byte *)Vga::_page[1]->getBasePtr(x, yp);
 
 		Common::copy(srcP, srcP + _w, destP);
 	}

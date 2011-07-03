@@ -200,7 +200,7 @@ void MOUSE::NewMouse(Common::Event &event) {
 	EvtHead = (EvtHead + 1) % EVT_MAX;
 	evt._x = event.mouse.x;
 	evt._y = event.mouse.y;
-	evt._ptr = SpriteAt(evt._x, evt._y);
+	evt._ptr = spriteAt(evt._x, evt._y);
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
@@ -278,8 +278,8 @@ void EventManager::handleEvents(void) {
 					e._ptr->touch(e._msk, e._x, e._y);
 				else
 					e._ptr->touch(e._msk, e._x - e._ptr->_x, e._y - e._ptr->_y);
-			} else if (Sys)
-					Sys->touch(e._msk, e._x, e._y);
+			} else if (_sys)
+					_sys->touch(e._msk, e._x, e._y);
 
 			if (e._msk & L_DN) {
 				_mouse->Hold = e._ptr;

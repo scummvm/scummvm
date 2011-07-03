@@ -49,11 +49,11 @@ namespace CGE {
 #endif
 
 
-class DAT {
-	friend class VFILE;
-	VOLBASE _File;
+class Dat {
+	friend class VFile;
+	VOLBASE _file;
 public:
-	DAT();
+	Dat();
 
 	bool append(uint8 *buf, uint16 len);
 	bool write(CFile &f);
@@ -61,11 +61,11 @@ public:
 };
 
 
-class   VFILE : public IoBuf {
+class VFile : public IoBuf {
 private:
-	static DAT *_dat;
+	static Dat *_dat;
 	static BtFile *_cat;
-	static VFILE *_recent;
+	static VFile *_recent;
 
 	long _begMark;
 	long _endMark;
@@ -74,17 +74,17 @@ private:
 	void writeBuff(void) { }
 	void make(const char *fspec);
 public:
-	VFILE(const char *name, IOMODE mode = REA);
-	~VFILE(void);
+	VFile(const char *name, IOMODE mode = REA);
+	~VFile();
 	static void init();
 	static void deinit();
 
 	static bool exist(const char *name);
-	static const char *next(void);
-	long mark(void) {
+	static const char *next();
+	long mark() {
 		return (_bufMark + _ptr) - _begMark;
 	}
-	long size(void) {
+	long size() {
 		return _endMark - _begMark;
 	}
 	long seek(long pos) {

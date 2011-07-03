@@ -170,7 +170,7 @@ protected:
 public:
 	int _ref;
 	signed char _cave;
-	struct FLAGS {
+	struct Flags {
 		uint16 _hide : 1;       // general visibility switch
 		uint16 _near : 1;       // Near action lock
 		uint16 _drag : 1;       // sprite is moveable
@@ -237,7 +237,8 @@ private:
 
 
 class Queue {
-	Sprite *_head, *_tail;
+	Sprite *_head;
+	Sprite *_tail;
 public:
 	Queue(bool show);
 	~Queue();
@@ -260,55 +261,55 @@ public:
 };
 
 
-class VGA {
-	uint16 OldMode;
-	uint16 *OldScreen;
-	uint16 StatAdr;
-	bool SetPal;
-	Dac *OldColors;
-	Dac *NewColors;
-	const char *Msg;
-	const char *Nam;
+class Vga {
+	uint16 _oldMode;
+	uint16 *_oldScreen;
+	uint16 _statAdr;
+	bool _setPal;
+	Dac *_oldColors;
+	Dac *_newColors;
+	const char *_msg;
+	const char *_nam;
 
-	int SetMode(int mode);
-	void UpdateColors(void);
-	void SetColors(void);
-	void SetStatAdr(void);
-	void WaitVR(bool on);
+	int setMode(int mode);
+	void updateColors();
+	void setColors();
+	void setStatAdr();
+	void waitVR(bool on);
 public:
-	uint32 FrmCnt;
+	uint32 _frmCnt;
 	Queue *_showQ;
 	Queue *_spareQ;
-	int Mono;
-	static Graphics::Surface *Page[4];
-	static Dac *SysPal;
+	int _mono;
+	static Graphics::Surface *_page[4];
+	static Dac *_sysPal;
 
-	VGA(int mode);
-	~VGA(void);
+	Vga(int mode);
+	~Vga(void);
 	static void init();
 	static void deinit();
 
-	void Setup(VgaRegBlk *vrb);
-	void GetColors(Dac *tab);
-	void SetColors(Dac *tab, int lum);
-	void Clear(uint8 color);
-	void CopyPage(uint16 d, uint16 s);
-	void Sunrise(Dac *tab);
-	void Sunset();
-	void Show();
-	void Update();
+	void setup(VgaRegBlk *vrb);
+	void getColors(Dac *tab);
+	void setColors(Dac *tab, int lum);
+	void clear(uint8 color);
+	void copyPage(uint16 d, uint16 s);
+	void sunrise(Dac *tab);
+	void sunset();
+	void show();
+	void update();
 
-	static void pal2DAC(const byte *palData, Dac *tab);
-	static void DAC2pal(const Dac *tab, byte *palData);
+	static void palToDac(const byte *palData, Dac *tab);
+	static void dacToPal(const Dac *tab, byte *palData);
 };
 
 
-Dac MkDAC(uint8 r, uint8 g, uint8 b);
-Rgb MkRGB(uint8 r, uint8 g, uint8 b);
+Dac mkDac(uint8 r, uint8 g, uint8 b);
+Rgb mkRgb(uint8 r, uint8 g, uint8 b);
 
 
 template <class CBLK>
-uint8 Closest(CBLK *pal, CBLK x) {
+uint8 closest(CBLK *pal, CBLK x) {
 #define f(col, lum) ((((uint16)(col)) << 8) / lum)
 	uint16 i, dif = 0xFFFF, found = 0;
 	uint16 L = x._r + x._g + x._b;
@@ -337,12 +338,12 @@ uint8 Closest(CBLK *pal, CBLK x) {
 }
 
 //static void       Video       (void);
-uint16 *SaveScreen(void);
-void    RestoreScreen(uint16 * &sav);
-Sprite *SpriteAt(int x, int y);
-Sprite *Locate(int ref);
+uint16 *saveScreen();
+void    restoreScreen(uint16 * &sav);
+Sprite *spriteAt(int x, int y);
+Sprite *locate(int ref);
 
-extern      bool        SpeedTest;
+extern bool _speedTest;
 
 } // End of namespace CGE
 

@@ -75,9 +75,9 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(MIX_FALL), _
 	}
 	_led[ArrayCount(_led) - 1]->_flags._bDel = true;
 
-	Vga->_showQ->insert(this);
+	_vga->_showQ->insert(this);
 	for (i = 0; i < ArrayCount(_led); i++)
-		Vga->_showQ->insert(_led[i]);
+		_vga->_showQ->insert(_led[i]);
 
 	//--- reset balance
 	i = (_sndDrvInfo.Vol4._ml + _sndDrvInfo.Vol4._mr) / 2;
@@ -115,7 +115,7 @@ void Mixer::touch(uint16 mask, int x, int y) {
 void Mixer::tick() {
 	int x = _mouse->_x;
 	int y = _mouse->_y;
-	if (SpriteAt(x, y) == this) {
+	if (spriteAt(x, y) == this) {
 		_fall = MIX_FALL;
 		if (_flags._hold)
 			touch(L_UP, x - _x, y - _y);
