@@ -1319,69 +1319,12 @@ void Bitmap::show(int x, int y) {
 
 
 void Bitmap::hide(int x, int y) {
-	/*
-	  uint8 *scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
-	  uint16 d = FP_OFF(VGA::Page[2]) - FP_OFF(VGA::Page[1]);
-	  HideDesc *b = B;
-	  uint16 extra = ((x & 3) != 0);
-	  uint16 h = H;
+	for (int yp = y; yp < y + _h; ++yp) {
+		const byte *srcP = (const byte *)VGA::Page[2]->getBasePtr(x, yp);
+		byte *destP = (byte *)VGA::Page[1]->getBasePtr(x, yp);
 
-	//  asm push    bx
-	    asm push    si
-	    asm push    ds
-
-	    asm cld
-	    asm les di,scr
-	    asm mov si,di
-	    asm add si,d        // take bytes from background page
-	    asm lds bx,b
-
-	    asm mov dx,VGAGRA_
-	    asm mov al,0x05     // R/W mode
-	    asm out dx,al
-	    asm inc dx
-	    asm in  al,dx
-	    asm and al,0xF4
-	    asm push    ax
-	    asm push    dx
-	    asm or  al,0x01
-	    asm out dx,al
-
-	    asm mov dx,VGASEQ_
-	    asm mov ax,0x0F02   // enable all planes
-	    asm out dx,ax
-
-	    asm mov dx,ds       // save DS
-
-	  row:
-	// skip block
-	    asm mov cx,[bx]
-	    asm add si,cx
-	    asm add di,cx
-	    asm mov cx,[bx+2]
-	    asm add bx,4
-	    asm add cx,extra
-
-	    asm push    es
-	    asm pop ds      // set DS to video seg
-	    asm rep movsb       // move bytes fast
-	    asm sub si,extra
-	    asm sub di,extra
-	    asm mov ds,dx       // restore DS
-
-	    asm dec h
-	    asm jnz row
-
-	    asm pop dx
-	    asm pop ax
-	    asm out dx,al       // end of copy mode
-
-
-	    asm pop ds
-	    asm pop si
-	//  asm pop bx
-	*/
-	warning("STUB: Bitmap::hide");
+		Common::copy(srcP, srcP + _w, destP);
+	}
 }
 
 } // End of namespace CGE
