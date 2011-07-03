@@ -39,7 +39,6 @@ public:
 	virtual void send(MidiChannel *mc) = 0;
 	virtual void copy_to(Instrument *dest) = 0;
 	virtual bool is_valid() = 0;
-	virtual operator int() { return 255; }
 };
 
 class Instrument {
