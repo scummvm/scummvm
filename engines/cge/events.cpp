@@ -126,8 +126,8 @@ void Keyboard::NewKeyboard(Common::Event &event) {
 		_key[event.kbd.keycode] = false;
 	} else if (event.type == Common::EVENT_KEYDOWN) {
 		// Key press
-		_key[event.kbd.keycode] = true;
-		_current = Keyboard::_code[event.kbd.keycode];
+		_key[keycode] = true;
+		_current = Keyboard::_code[keycode];
 
 		if (_client) {
 			CGEEvent &evt = Evt[EvtHead];
