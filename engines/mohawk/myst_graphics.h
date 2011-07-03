@@ -27,10 +27,6 @@
 
 #include "common/file.h"
 
-namespace Graphics {
-class JPEG;
-}
-
 namespace Mohawk {
 
 class MystBitmap;
@@ -69,7 +65,6 @@ protected:
 private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
-	Graphics::JPEG *_jpegDecoder;
 
 	struct PictureFile {
 		uint32 pictureCount;

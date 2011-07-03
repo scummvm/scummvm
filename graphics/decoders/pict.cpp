@@ -27,7 +27,7 @@
 #include "common/textconsole.h"
 
 #include "graphics/surface.h"
-#include "graphics/jpeg.h"
+#include "graphics/decoders/jpeg.h"
 #include "graphics/decoders/pict.h"
 
 namespace Graphics {
@@ -512,20 +512,20 @@ void PICTDecoder::skipBitsRect(Common::SeekableReadStream &stream, bool hasPalet
 // http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
 // http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
 void PICTDecoder::decodeCompressedQuickTime(Common::SeekableReadStream &stream) {
-	JPEG jpeg;
+	JPEGDecoder jpeg;
 
 	uint32 dataSize = stream.readUint32BE();
 	uint32 startPos = stream.pos();
 
-	Common::SeekableReadStream *jpegStream = new Common::SeekableSubReadStream(&stream, stream.pos() + 156, stream.pos() + dataSize);
+	Common::SeekableSubReadStream jpegStream(&stream, stream.pos() + 156, stream.pos() + dataSize);
 
-	if (!jpeg.read(jpegStream))
+	if (!jpeg.loadStream(jpegStream))
 		error("PICTDecoder::decodeCompressedQuickTime(): Could not decode JPEG data");
 
-	_outputSurface = jpeg.getSurface(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	_outputSurface = new Graphics::Surface();
+	_outputSurface->copyFrom(*jpeg.getSurface());
 
 	stream.seek(startPos + dataSize);
-	delete jpegStream;
 }
 
 } // End of namespace Graphics

@@ -24,6 +24,7 @@
 #define GRAPHICS_JPEG_H
 
 #include "graphics/surface.h"
+#include "graphics/decoders/image_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -36,25 +37,30 @@ struct PixelFormat;
 #define JPEG_MAX_QUANT_TABLES 4
 #define JPEG_MAX_HUFF_TABLES 2
 
-class JPEG {
+class JPEGDecoder : public ImageDecoder {
 public:
-	JPEG();
-	~JPEG();
+	JPEGDecoder();
+	~JPEGDecoder();
 
-	bool read(Common::SeekableReadStream *str);
+	// ImageDecoder API
+	void destroy();
+	bool loadStream(Common::SeekableReadStream &str);
+	const Surface *getSurface() const;
+
 	bool isLoaded() const { return _numComp && _w && _h; }
 	uint16 getWidth() const { return _w; }
 	uint16 getHeight() const { return _h; }
-
-	Surface *getComponent(uint c);
-	Surface *getSurface(const PixelFormat &format);
+	const Surface *getComponent(uint c) const;
 
 private:
-	void reset();
-
 	Common::SeekableReadStream *_stream;
 	uint16 _w, _h;
 	uint16 _restartInterval;
+
+	// mutable so that we can convert to RGB only during
+	// a getSurface() call while still upholding the
+	// const requirement in other ImageDecoders
+	mutable Graphics::Surface *_rgbSurface;
 
 	// Image components
 	uint8 _numComp;

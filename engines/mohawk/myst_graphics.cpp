@@ -28,7 +28,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
-#include "graphics/jpeg.h"
+#include "graphics/decoders/jpeg.h"
 #include "graphics/decoders/pict.h"
 
 namespace Mohawk {
@@ -49,12 +49,6 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	if (_pixelFormat.bytesPerPixel == 1)
 		error("Myst requires greater than 256 colors to run");
 
-	if (_vm->getFeatures() & GF_ME) {
-		_jpegDecoder = new Graphics::JPEG();
-	} else {
-		_jpegDecoder = NULL;
-	}
-
 	_pictureFile.entries = NULL;
 
 	// Initialize our buffer
@@ -67,7 +61,6 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 
 MystGraphics::~MystGraphics() {
 	delete _bmpDecoder;
-	delete _jpegDecoder;
 	delete[] _pictureFile.entries;
 
 	_backBuffer->free();
@@ -127,13 +120,13 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 		for (uint32 i = 0; i < _pictureFile.pictureCount; i++)
 			if (_pictureFile.entries[i].id == id) {
 				if (_pictureFile.entries[i].type == 0) {
-					Common::SeekableReadStream *stream = new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size);
+					Graphics::JPEGDecoder jpeg;
+					Common::SeekableSubReadStream subStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size);
 
-					if (!_jpegDecoder->read(stream))
+					if (!jpeg.loadStream(subStream))
 						error("Could not decode Myst ME Mac JPEG");
 
-					mhkSurface = new MohawkSurface(_jpegDecoder->getSurface(_pixelFormat));
-					delete stream;
+					mhkSurface = new MohawkSurface(jpeg.getSurface()->convertTo(_pixelFormat));
 				} else if (_pictureFile.entries[i].type == 1) {
 					Graphics::PICTDecoder pict;
 					Common::SeekableSubReadStream subStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size);
