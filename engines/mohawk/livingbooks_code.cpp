@@ -405,8 +405,55 @@ void LBCode::parseArithmetic1() {
 }
 
 void LBCode::parseArithmetic2() {
-	// FIXME: other math operators
 	parseMain();
+
+	while (true) {
+		byte op = _currToken;
+		switch (op) {
+		case kTokenMultiply:
+			debugN(" * ");
+			break;
+		case kTokenDivide:
+			debugN(" / ");
+			break;
+		case kTokenIntDivide:
+			debugN(" div ");
+			break;
+		case kTokenModulo:
+			debugN(" %% ");
+			break;
+		default:
+			return;
+		}
+
+		nextToken();
+		parseMain();
+
+		LBValue val2 = _stack.pop();
+		LBValue val1 = _stack.pop();
+		LBValue result;
+		// TODO: cope with non-integers
+		if (op == kTokenMultiply) {
+			result = val1.toInt() * val2.toInt();
+		} else if (val2.toInt() == 0) {
+			result = 1;
+		} else {
+			switch (op) {
+			case kTokenDivide:
+				// TODO: fp divide
+				result = val1.toInt() / val2.toInt();
+				break;
+			case kTokenIntDivide:
+				result = val1.toInt() / val2.toInt();
+				break;
+			case kTokenModulo:
+				result = val1.toInt() % val2.toInt();
+				break;
+			}
+		}
+
+		_stack.push(result);
+	}
 }
 
 void LBCode::parseMain() {
