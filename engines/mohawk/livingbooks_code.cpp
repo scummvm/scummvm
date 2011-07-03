@@ -277,27 +277,27 @@ LBValue LBCode::runCode(byte terminator) {
 void LBCode::parseStatement() {
 	parseComparisons();
 
-	if (_currToken != kTokenAnd && _currToken != kTokenOr)
-		return;
-	byte op = _currToken;
-	if (op == kTokenAnd)
-		debugN(" && ");
-	else
-		debugN(" || ");
+	while (_currToken == kTokenAnd || _currToken == kTokenOr) {
+		byte op = _currToken;
+		if (op == kTokenAnd)
+			debugN(" && ");
+		else
+			debugN(" || ");
 
-	nextToken();
-	parseComparisons();
+		nextToken();
+		parseComparisons();
 
-	LBValue val2 = _stack.pop();
-	LBValue val1 = _stack.pop();
-	bool result;
-	if (op == kTokenAnd)
-		result = !val1.isZero() && !val2.isZero();
-	else
-		result = !val1.isZero() || !val2.isZero();
+		LBValue val2 = _stack.pop();
+		LBValue val1 = _stack.pop();
+		bool result;
+		if (op == kTokenAnd)
+			result = !val1.isZero() && !val2.isZero();
+		else
+			result = !val1.isZero() || !val2.isZero();
 
-	debugN(" [--> %s]", result ? "true" : "false");
-	_stack.push(result);
+		debugN(" [--> %s]", result ? "true" : "false");
+		_stack.push(result);
+	}
 }
 
 void LBCode::parseComparisons() {
@@ -365,44 +365,43 @@ void LBCode::parseComparisons() {
 void LBCode::parseConcat() {
 	parseArithmetic1();
 
-	if (_currToken != kTokenConcat)
-		return;
+	while (_currToken == kTokenConcat) {
+		debugN(" & ");
+		nextToken();
+		parseArithmetic1();
 
-	debugN(" & ");
-	nextToken();
-	parseArithmetic1();
-
-	LBValue val2 = _stack.pop();
-	LBValue val1 = _stack.pop();
-	Common::String result = val1.toString() + val2.toString();
-	debugN(" [--> \"%s\"]", result.c_str());
-	_stack.push(result);
+		LBValue val2 = _stack.pop();
+		LBValue val1 = _stack.pop();
+		Common::String result = val1.toString() + val2.toString();
+		debugN(" [--> \"%s\"]", result.c_str());
+		_stack.push(result);
+	}
 }
 
 void LBCode::parseArithmetic1() {
 	parseArithmetic2();
 
-	if (_currToken != kTokenMinus && _currToken != kTokenPlus)
-		return;
+	while (_currToken == kTokenMinus || _currToken == kTokenPlus) {
+		byte op = _currToken;
+		if (op == kTokenMinus)
+			debugN(" - ");
+		else if (op == kTokenPlus)
+			debugN(" + ");
 
-	byte op = _currToken;
-	if (op == kTokenMinus)
-		debugN(" - ");
-	else if (op == kTokenPlus)
-		debugN(" + ");
+		nextToken();
+		parseArithmetic2();
 
-	nextToken();
-	parseArithmetic2();
-
-	LBValue val2 = _stack.pop();
-	LBValue val1 = _stack.pop();
-	LBValue result;
-	// TODO: cope with non-integers
-	if (op == kTokenMinus)
-		result = val1.toInt() - val2.toInt();
-	else
-		result = val1.toInt() + val2.toInt();
-	_stack.push(result);
+		LBValue val2 = _stack.pop();
+		LBValue val1 = _stack.pop();
+		LBValue result;
+		// TODO: cope with non-integers
+		if (op == kTokenMinus)
+			result = val1.toInt() - val2.toInt();
+		else
+			result = val1.toInt() + val2.toInt();
+		debugN(" [--> %d]", result.toInt());
+		_stack.push(result);
+	}
 }
 
 void LBCode::parseArithmetic2() {
