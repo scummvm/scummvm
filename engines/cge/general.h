@@ -34,7 +34,6 @@
 #include "common/textconsole.h"
 #include "common/str.h"
 #include "cge/jbw.h"
-#include "cge/boot.h"
 
 namespace CGE {
 
@@ -235,7 +234,6 @@ uint16 xtow(const char *x);
 char *wtom(uint16 val, char *str, int radix, int len);
 char *dwtom(uint32 val, char * str, int radix, int len);
 int takeEnum(const char **tab, const char *txt);
-Boot *readBoot(int drive);
 long timer(void);
 int new_random(int range);
 } // End of namespace CGE

@@ -28,7 +28,6 @@
 #include "cge/startup.h"
 #include "cge/text.h"
 #include "cge/sound.h"
-#include "cge/ident.h"
 #include "cge/cfile.h"
 #include "cge/snddrv.h"
 #include <stdio.h>
@@ -59,6 +58,8 @@ void quit_now(int ref) {
 
 
 bool STARTUP::get_parms(void) {
+	Summa = 0;
+
 	/*
 	  int i = _argc;
 	  while (i > 1)

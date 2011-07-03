@@ -25,7 +25,6 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "cge/boot.h"
 #include "cge/general.h"
 #include "cge/snddrv.h"
 #include "cge/wav.h"
@@ -342,24 +341,6 @@ int takeEnum(const char **tab, const char *txt) {
 		}
 	}
 	return -1;
-}
-
-Boot *readBoot(int drive) {
-	/*
-	struct fatinfo fi; Boot *b;
-	getfat(drive+1, &fi);
-	if (fi.fi_sclus & 0x80)
-		return NULL;
-	if ((b = malloc(fi.fi_bysec)) == NULL)
-		return NULL;
-	// read boot sector
-	if (absread(drive, 1, 0L, b) == 0)
-		return b;
-	free(b);
-	return NULL;
-	*/
-	warning("STUB: readBoot");
-	return NULL;
 }
 
 long timer(void) {
