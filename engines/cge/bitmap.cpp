@@ -102,9 +102,18 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 	*(uint16 *) v = CPY | dsiz;                     // data chunk hader
 	memset(v + 2, fill, dsiz);                      // data bytes
 	*(uint16 *)(v + lsiz - 2) = SKP | ((SCR_WID / 4) - dsiz);  // gap
-	memcpy(v + lsiz, v, psiz - lsiz);               // tricky replicate lines
+
+	// Replicate lines
+	byte *destP;
+	for (destP = v + lsiz; destP < (v + psiz); destP += lsiz)
+		Common::copy(v, v + lsiz, destP);
+
 	*(uint16 *)(v + psiz - 2) = EOI;                // plane trailer uint16
-	memcpy(v + psiz, v, 3 * psiz);                  // tricky replicate planes
+
+	// Repliccate planes
+	for (destP = v + psiz; destP < (v + 4 * psiz); destP += psiz)
+		Common::copy(v, v + psiz, destP);
+
 	HideDesc *b = (HideDesc *)(v + 4 * psiz);
 	b->skip = (SCR_WID - _w) >> 2;
 	b->hide = _w >> 2;

@@ -63,7 +63,7 @@ void TEXT::Clear(int from, int upto) {
 	for (p = Cache, q = p + Size; p < q; p++) {
 		if (p->Ref && p->Ref >= from && p->Ref < upto) {
 			p->Ref = 0;
-			delete p->Txt;
+			delete[] p->Txt;
 			p->Txt = NULL;
 		}
 	}
