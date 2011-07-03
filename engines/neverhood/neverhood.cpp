@@ -20,28 +20,19 @@
  *
  */
 
-#include "common/events.h"
-#include "common/keyboard.h"
 #include "common/file.h"
-#include "common/random.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
-
 #include "base/plugins.h"
 #include "base/version.h"
-
 #include "graphics/cursorman.h"
-
 #include "engines/util.h"
-
-#include "audio/mixer.h"
-
 #include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/graphics.h"
 #include "neverhood/resourceman.h"
 #include "neverhood/resource.h"
+#include "neverhood/screen.h"
 
 namespace Neverhood {
 
@@ -70,6 +61,8 @@ Common::Error NeverhoodEngine::run() {
 	_system->endGFXTransaction();
 
 	_isSaveAllowed = false;
+
+	_screen = new Screen(this);
 
 	_res = new ResourceMan();
 	_res->addArchive("a.blb");
@@ -179,6 +172,7 @@ Common::Error NeverhoodEngine::run() {
 	delete _gameModule;
 	
 	delete _res;
+	delete _screen;
 	
 	debug("Ok.");
 

@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	resource.o \
 	resourceman.o \
 	scene.o \
+	screen.o \
 	sprite.o
 
 # This module can be built as a plugin

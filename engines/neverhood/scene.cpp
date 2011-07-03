@@ -39,13 +39,13 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	// TODO _playerSprite = NULL;
 	// TODO _mouseSprite = NULL;
 	_palette = NULL;
-	// TODO _class300 = NULL;
+	// TODO _background = NULL;
 	// TODO _field_8E = -1;
 	if (clearHitRects) {
 		// TODO g_Class700->setHitRects(NULL, 0);
 		// TODO g_Class700->clear();
 	}
-	// TODO g_screen->setFps(24);
+	_vm->_screen->setFps(24);
 	// TODO g_screen->hSmack = NULL;	
 	// TODO g_screen->field_24 = 0;
 	// TODO g_screen->field_26 = 0;
@@ -292,7 +292,7 @@ void Scene::smackerUpdate() {
 		_messageHandlerCb = _savedMessageHandlerCb;
 		if (_palette)
 			_palette->usePalette();
-		// TODO class300->restore();
+		// TODO _background->restore();
 		// TODO g_screen->smackerPlayer = NULL;		
 	}
 #endif	

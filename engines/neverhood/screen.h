@@ -20,33 +20,35 @@
  *
  */
 
-// TODO: I couldn't come up with a better name than 'Module' so far
+#ifndef NEVERHOOD_SCREEN_H
+#define NEVERHOOD_SCREEN_H
 
-#ifndef NEVERHOOD_MODULE_H
-#define NEVERHOOD_MODULE_H
-
+#include "graphics/surface.h"
 #include "neverhood/neverhood.h"
-#include "neverhood/entity.h"
-#include "neverhood/graphics.h"
-#include "neverhood/palette.h"
-#include "neverhood/screen.h"
 
 namespace Neverhood {
 
-class Module : public Entity {
+class Screen {
 public:
-	Module(NeverhoodEngine *vm, Module *parentModule);
-	virtual ~Module();
-	virtual void draw();
+	Screen(NeverhoodEngine *vm);
+	~Screen();
+	void wait();
+	void setFps(int fps);
+	int getFps();
+	void setPaletteData(byte *paletteData);
+	void unsetPaletteData(byte *paletteData);
+	void testPalette(byte *paletteData);
+	void updatePalette();
+	void clear();
 protected:
-	Module *_parentModule;
-	Entity *_childObject;
-	bool _done;
-	int16 _field24, _field26, _field28;
-	uint32 _field20;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	NeverhoodEngine *_vm;
+	Graphics::Surface *_backScreen;
+	uint32 _ticks;
+	uint32 _frameDelay;
+	byte *_paletteData;
+	bool _paletteChanged;
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULE_H */
+#endif /* NEVERHOOD_SCREEN_H */

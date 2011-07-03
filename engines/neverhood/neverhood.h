@@ -29,11 +29,7 @@
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
-
 #include "audio/mixer.h"
-
-#include "graphics/surface.h"
-
 #include "engines/engine.h"
 
 namespace Neverhood {
@@ -43,8 +39,9 @@ enum NeverhoodGameFeatures {
 
 struct NeverhoodGameDescription;
 
-class ResourceMan;
 class GameModule;
+class ResourceMan;
+class Screen;
 
 struct GameState {
 	int sceneNum;
@@ -74,6 +71,7 @@ public:
 	uint16 _buttonState;
 
 	GameState _gameState;
+	Screen *_screen;
 	ResourceMan *_res;
 	GameModule *_gameModule;
 

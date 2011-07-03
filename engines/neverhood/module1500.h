@@ -28,8 +28,6 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
-#include "neverhood/graphics.h"
-#include "neverhood/palette.h"
 
 namespace Neverhood {
 

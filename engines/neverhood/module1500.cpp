@@ -147,7 +147,7 @@ void Scene1501::update() {
 	if (_countdown1 != 0) {
 		_countdown1--;
 		if (_countdown1 == 0) {
-			// TODO g_screen->clear(0);
+			_vm->_screen->clear();
 			_parentModule->sendMessage(0x1009, 0, this);
 		}
 	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) || !_soundResource.isPlaying()) {
