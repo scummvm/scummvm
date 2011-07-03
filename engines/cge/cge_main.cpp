@@ -1537,8 +1537,21 @@ void CGEEngine::mainLoop() {
 		millis = g_system->getMillis();
 	}
 	_lastFrame = millis;
+
+	// Dispatch the tick to any active objects
+	tick();
 }
 
+void CGEEngine::tick() {
+	for (Sprite *spr = Vga->ShowQ->First(); spr; spr = spr->_next) {
+		if (spr->_time) {
+			if (!spr->_flags._hide) {
+				if (--spr->_time == 0)
+					spr->tick();
+			}
+		}
+	}
+}
 
 void CGEEngine::loadUser() {
 	// set scene
