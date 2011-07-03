@@ -20,34 +20,37 @@
  *
  */
 
-// TODO: I couldn't come up with a better name than 'Module' so far
-
-#ifndef NEVERHOOD_MODULE_H
-#define NEVERHOOD_MODULE_H
+#ifndef NEVERHOOD_BACKGROUND_H
+#define NEVERHOOD_BACKGROUND_H
 
 #include "neverhood/neverhood.h"
-#include "neverhood/background.h"
 #include "neverhood/entity.h"
 #include "neverhood/graphics.h"
-#include "neverhood/palette.h"
-#include "neverhood/screen.h"
+#include "neverhood/resource.h"
 
 namespace Neverhood {
 
-class Module : public Entity {
+class Background : public Entity {
 public:
-	Module(NeverhoodEngine *vm, Module *parentModule);
-	virtual ~Module();
-	virtual void draw();
+	Background(NeverhoodEngine *vm, int objectPriority);
+	Background(NeverhoodEngine *vm, uint32 fileHash, int objectPriority, int surfacePriority);
+	virtual ~Background();
+	BaseSurface *getSurface() { return _surface; }
+	void createSurface(int surfacePriority, int16 width, int16 height);
+	void load(uint32 fileHash);
 protected:
-	Module *_parentModule;
-	Entity *_childObject;
-	bool _done;
-	int16 _field24, _field26, _field28;
-	uint32 _field20;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	BaseSurface *_surface;
+	SpriteResource _spriteResource;
+};
+
+class DirtyBackground : public Background {
+public:
+	DirtyBackground(NeverhoodEngine *vm, const char *fileName, int objectPriority, int surfacePriority);
+	DirtyBackground(NeverhoodEngine *vm, uint32 fileHash, int objectPriority, int surfacePriority);
+	void createSurface(int surfacePriority, int16 width, int16 height);
+
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULE_H */
+#endif /* NEVERHOOD_BACKGROUND_H */

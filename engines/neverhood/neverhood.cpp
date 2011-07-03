@@ -126,6 +126,7 @@ Common::Error NeverhoodEngine::run() {
 
 	_gameModule = new GameModule(this);
 
+	// Preliminary main loop, needs some more work but works for testing
 	while (1) {
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
@@ -165,6 +166,7 @@ Common::Error NeverhoodEngine::run() {
 		}
 		
 		_gameModule->handleUpdate();
+		_gameModule->draw();
 		_system->updateScreen();
 	
 	}

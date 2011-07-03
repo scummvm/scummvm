@@ -37,7 +37,7 @@ public:
 	bool load2(uint32 fileHash);
 	void unload();
 	const NDimensions& getDimensions() { return _dimensions; }
-	const NPoint& getPosition() { return _position; }
+	NPoint& getPosition() { return _position; }
 protected:
 	NeverhoodEngine *_vm;
 	int _resourceHandle;

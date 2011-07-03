@@ -1,6 +1,7 @@
 MODULE := engines/neverhood
 
 MODULE_OBJS = \
+	background.o \
 	blbarchive.o \
 	detection.o \
 	entity.o \

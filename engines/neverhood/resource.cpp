@@ -46,6 +46,7 @@ void SpriteResource::draw(byte *dest, int destPitch, bool flipX, bool flipY) {
 }
 
 bool SpriteResource::load(uint32 fileHash) {
+	debug("SpriteResource::load(%08X)", fileHash);
 	// TODO: Later merge with load2 and make the mode a parameter
 	unload();
 	_resourceHandle = _vm->_res->useResource(fileHash);
@@ -100,6 +101,7 @@ PaletteResource::~PaletteResource() {
 }
 
 bool PaletteResource::load(uint32 fileHash) {
+	debug("PaletteResource::load(%08X)", fileHash);
 	unload();
 	_resourceHandle = _vm->_res->useResource(fileHash);
 	if (_resourceHandle != -1) {
@@ -152,6 +154,7 @@ AnimResource::~AnimResource() {
 }
 
 bool AnimResource::load(uint32 fileHash) {
+	debug("AnimResource::load(%08X)", fileHash);
 
 	if (fileHash == _fileHash)
 		return true;

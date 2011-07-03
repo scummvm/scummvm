@@ -39,7 +39,7 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	// TODO _playerSprite = NULL;
 	// TODO _mouseSprite = NULL;
 	_palette = NULL;
-	// TODO _background = NULL;
+	_background = NULL;
 	// TODO _field_8E = -1;
 	if (clearHitRects) {
 		// TODO g_Class700->setHitRects(NULL, 0);
@@ -53,7 +53,7 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	_messageListFlag = true;
 	_surfaceFlag = false;
 	_messageList2 = NULL;
-	// TODO _smackerPlayer = NULL;
+	_smackerPlayer = NULL;
 	_smkFileHash = 0;
 	_messageListFlag2 = false;
 	_messageValue = -1;
@@ -78,26 +78,25 @@ Scene::~Scene() {
 }
 
 void Scene::draw() {
+	debug("Scene::draw()");
 	//**ALL TODO
-#if 0
 	if (_smackerPlayer) {
 		if (_surfaceFlag) {
-			g_screen->resetDirtyRects();
-			g_screen->copyDirtyRects();
-			g_screen->addDirtyRects();
+			// TODO g_screen->resetDirtyRects();
+			// TODO g_screen->copyDirtyRects();
+			// TODO g_screen->addDirtyRects();
 		}
-		_smackerPlayer->_surface->draw();
+		// TODO _smackerPlayer->_surface->draw();
 	} else {
 		if (_surfaceFlag) {
-			g_screen->copyDirtyRects();
+			// TODO g_screen->copyDirtyRects();
 			for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
 				(*iter)->addDirtyRect();
-			g_screen->addDirtyRects();
+			// TODO g_screen->addDirtyRects();
 		}
 		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
 			(*iter)->draw();
 	}	
-#endif
 }
 
 void Scene::addEntity(Entity *entity) {
@@ -168,6 +167,12 @@ void Scene::deleteSprite(Sprite **sprite) {
 	removeEntity(*sprite);
 	delete *sprite;
 	*sprite = NULL;
+}
+
+Background *Scene::addBackground(Background *background) {
+	addEntity(background);
+	addSurface(background->getSurface());
+	return background;
 }
 
 void Scene::update() {

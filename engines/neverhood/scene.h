@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "neverhood/neverhood.h"
+#include "neverhood/background.h"
 #include "neverhood/entity.h"
 #include "neverhood/graphics.h"
 #include "neverhood/module.h"
@@ -36,6 +37,9 @@ namespace Neverhood {
 struct MessageListItem {
 	uint32 messageNum;
 	uint32 messageValue;
+};
+
+class SmackerPlayer { // DUMMY!
 };
 
 class Scene : public Entity {
@@ -50,6 +54,7 @@ public:
 	Sprite *addSprite(Sprite *sprite);
 	void setSurfacePriority(BaseSurface *surface, int priority);
 	void deleteSprite(Sprite **sprite);
+	Background *addBackground(Background *background);
 protected:
 	Module *_parentModule;
 	Common::Array<Entity*> _entities;
@@ -71,12 +76,12 @@ protected:
 	// TODO 00000090 playerSprite		dd ?
 	// TODO 00000094 mouseSprite	 dd ?
 	Palette *_palette;
-	// TODO Background *_background;
+	Background *_background;
 	bool _surfaceFlag;
 	bool _messageListFlag;
 	MessageListItem *_messageList2;
 	int _messageListStatus;
-	// TODO 000000B0 smackerPlayer   dd ?
+	SmackerPlayer *_smackerPlayer;
 	void (Entity::*_savedUpdateHandlerCb)();
 	uint32 (Entity::*_savedMessageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);
 	bool _smackerDone;
