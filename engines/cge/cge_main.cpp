@@ -27,8 +27,6 @@
 
 #include "common/scummsys.h"
 #include "cge/general.h"
-#include "cge/boot.h"
-#include "cge/ident.h"
 #include "cge/sound.h"
 #include "cge/startup.h"
 #include "cge/config.h"
@@ -95,33 +93,6 @@ Snail *_snail_;
 //		    keyclick on key service in: SYSTEM, GET_TEXT
 // 1.01 - 17VII95 - default savegame with sound ON
 //		    coditionals EVA for 2-month evaluation version
-
-/*
-    char    Copr[] = "Common Game Engine "
-                      #ifdef EVA
-                        "ú"
-                      #else
-                       #ifdef CD
-                        "ù"
-                       #else
-                        " "
-                       #endif
-                      #endif
-                         "  version 1.05 ["
-                               #if sizeof(INI_FILE) == sizeof(VFILE)
-                            "I"
-                               #else
-                            "i"
-                               #endif
-                               #if sizeof(PIC_FILE) == sizeof(VFILE)
-                            "B"
-                               #else
-                            "b"
-                               #endif
-                                "]\n"
-             "Copyright (c) 1994 by Janusz B. Wi$niewski";
-*/
-char Copr[] = "To be fixed - Copr[]";
 
 static char UsrFnam[15] = "\0É±%^þúÈ¼´ ÇÉ";
 static int _oldLev      = 0;
@@ -1793,12 +1764,9 @@ bool CGEEngine::showTitle(const char *name) {
 #ifdef CD
 			STARTUP::Summa |= (0xC0 + (DriveCD(0) << 6)) & 0xFF;
 #else
-//			Boot * b = ReadBoot(getdisk());
-			warning("ShowTitle: FIXME ReadBoot");
-			Boot *b = readBoot(0);
-			uint32 sn = (b->_xSign == 0x29) ? b->_serial : b->_lTotSecs;
-			free(b);
-			sn -= ((Ident *)Copr)->_disk;
+			// At this point the game originally read the boot sector to get
+			// the serial number for it's copy protection check
+			uint32 sn = 0;
 			STARTUP::Summa |= Lo(sn) | Hi(sn);
 #endif
 			//-----------------------------------------
