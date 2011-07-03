@@ -43,10 +43,6 @@
 #include "cge/mixer.h"
 #include "cge/cge_main.h"
 #include "cge/cge.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
 #include "common/str.h"
 
 namespace CGE {
@@ -1766,8 +1762,6 @@ bool CGEEngine::showTitle(const char *name) {
 #else
 			// At this point the game originally read the boot sector to get
 			// the serial number for it's copy protection check
-			uint32 sn = 0;
-			STARTUP::Summa |= Lo(sn) | Hi(sn);
 #endif
 			//-----------------------------------------
 			movie("X00"); // paylist

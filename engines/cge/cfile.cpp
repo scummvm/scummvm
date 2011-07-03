@@ -26,8 +26,6 @@
  */
 
 #include "cge/cfile.h"
-#include <fcntl.h>
-#include <string.h>
 #include "common/system.h"
 
 namespace CGE {

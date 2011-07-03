@@ -28,7 +28,6 @@
 #include "cge/gettext.h"
 #include "cge/events.h"
 #include "cge/cge_main.h"
-#include <string.h>
 
 namespace CGE {
 
