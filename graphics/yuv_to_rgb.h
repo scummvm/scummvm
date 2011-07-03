@@ -26,6 +26,7 @@
 /**
  * @file
  * YUV to RGB conversion used in engines:
+ * - scumm (he)
  * - sword25
  */
 
