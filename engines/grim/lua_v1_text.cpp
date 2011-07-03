@@ -194,7 +194,11 @@ void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			textObject->setX((int)lua_getnumber(keyObj));
+			float num = lua_getnumber(keyObj);
+			if (g_grim->getGameType() == GType_MONKEY4)
+				textObject->setX(num * 640);
+			else
+				textObject->setX((int)num);
 		}
 	}
 
@@ -203,7 +207,11 @@ void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			textObject->setY((int)lua_getnumber(keyObj));
+			float num = lua_getnumber(keyObj);
+			if (g_grim->getGameType() == GType_MONKEY4)
+				textObject->setY(num * 480);
+			else
+				textObject->setY((int)num);
 		}
 	}
 
@@ -212,7 +220,7 @@ void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (g_grim->getGameType() == GType_MONKEY4 && lua_isstring(keyObj)) {
-			textObject->setFont(g_resourceloader->getFont(lua_getstring(keyObj)));
+			textObject->setFont(g_resourceloader->loadFont(lua_getstring(keyObj)));
 		} else if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
 			textObject->setFont(getfont(keyObj));
 		}

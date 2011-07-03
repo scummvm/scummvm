@@ -168,6 +168,12 @@ void TextObject::setupText() {
 		return;
 	}
 
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		if (_x == 0)
+			_x = 320;
+		if (_y == 0)
+			_y = 240;
+	}
 
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
