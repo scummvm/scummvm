@@ -44,7 +44,7 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(MIX_FALL), _
 	_mb[0] = new Bitmap("VOLUME", true);
 	_mb[1] = NULL;
 	setShapeList(_mb);
-	setName(Text->getText(MIX_NAME));
+	setName(_text->getText(MIX_NAME));
 	_flags._syst = true;
 	_flags._kill = true;
 	_flags._bDel = true;
@@ -58,8 +58,8 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(MIX_FALL), _
 		static char fn[] = "V00";
 		wtom(i, fn + 1, 10, 2);
 		_lb[i] = new Bitmap(fn, true);
-		_ls[i].Now = _ls[i].Next = i;
-		_ls[i].Dx = _ls[i].Dy = _ls[i].Dly = 0;
+		_ls[i]._now = _ls[i]._next = i;
+		_ls[i]._dx = _ls[i]._dy = _ls[i]._dly = 0;
 	}
 	_lb[i] = NULL;
 
@@ -75,17 +75,17 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(MIX_FALL), _
 	}
 	_led[ArrayCount(_led) - 1]->_flags._bDel = true;
 
-	Vga->ShowQ->Insert(this);
+	Vga->_showQ->insert(this);
 	for (i = 0; i < ArrayCount(_led); i++)
-		Vga->ShowQ->Insert(_led[i]);
+		Vga->_showQ->insert(_led[i]);
 
 	//--- reset balance
-	i = (SNDDrvInfo.VOL4.ML + SNDDrvInfo.VOL4.MR) / 2;
-	SNDDrvInfo.VOL4.ML = i;
-	SNDDrvInfo.VOL4.MR = i;
-	i = (SNDDrvInfo.VOL4.DL + SNDDrvInfo.VOL4.DR) / 2;
-	SNDDrvInfo.VOL4.DL = i;
-	SNDDrvInfo.VOL4.DR = i;
+	i = (_sndDrvInfo.Vol4._ml + _sndDrvInfo.Vol4._mr) / 2;
+	_sndDrvInfo.Vol4._ml = i;
+	_sndDrvInfo.Vol4._mr = i;
+	i = (_sndDrvInfo.Vol4._dl + _sndDrvInfo.Vol4._dr) / 2;
+	_sndDrvInfo.Vol4._dl = i;
+	_sndDrvInfo.Vol4._dr = i;
 	update();
 	_time = MIX_DELAY;
 }
@@ -99,7 +99,7 @@ Mixer::~Mixer() {
 void Mixer::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
 	if (mask & L_UP) {
-		uint8 *vol = (&SNDDrvInfo.VOL2.D) + (x < _w / 2);
+		uint8 *vol = (&_sndDrvInfo.Vol2._d) + (x < _w / 2);
 		if (y < MIX_BHIG) {
 			if (*vol < 0xFF)
 				*vol += 0x11;
@@ -133,11 +133,11 @@ void Mixer::tick() {
 
 
 void Mixer::update(void) {
-	_led[0]->step(SNDDrvInfo.VOL4.ML);
-	_led[1]->step(SNDDrvInfo.VOL4.DL);
+	_led[0]->step(_sndDrvInfo.Vol4._ml);
+	_led[1]->step(_sndDrvInfo.Vol4._dl);
 
 	//TODO Change the SNPOST message send to a special way to send function pointer
-	//SNPOST_(SNEXEC, -1, 0, (void*)&SNDSetVolume);
+	//SNPOST_(SNEXEC, -1, 0, (void*)&sndSetVolume);
 	warning("STUB: Mixer::Update");
 }
 

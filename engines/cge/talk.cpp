@@ -42,106 +42,106 @@ namespace CGE {
 //uint8 FONT::Map[MAP_SIZ];
 
 
-FONT::FONT(const char *name) {
-	Map = farnew(uint8, MAP_SIZ);
-	Pos = farnew(uint16, POS_SIZ);
-	Wid = farnew(uint8, WID_SIZ);
-	if ((Map == NULL) || (Pos == NULL) || (Wid == NULL))
+Font::Font(const char *name) {
+	_map = farnew(uint8, MAP_SIZ);
+	_pos = farnew(uint16, POS_SIZ);
+	_wid = farnew(uint8, WID_SIZ);
+	if ((_map == NULL) || (_pos == NULL) || (_wid == NULL))
 		error("No core");
-	mergeExt(Path, name, FONT_EXT);
-	Load();
+	mergeExt(_path, name, FONT_EXT);
+	load();
 }
 
 
-FONT::~FONT() {
-	free(Map);
-	free(Pos);
-	free(Wid);
+Font::~Font() {
+	free(_map);
+	free(_pos);
+	free(_wid);
 }
 
 
-void FONT::Load() {
-	INI_FILE f(Path);
+void Font::load() {
+	INI_FILE f(_path);
 	if (!f._error) {
-		f.read(Wid, WID_SIZ);
+		f.read(_wid, WID_SIZ);
 		if (!f._error) {
 			uint16 i, p = 0;
 			for (i = 0; i < POS_SIZ; i++) {
-				Pos[i] = p;
-				p += Wid[i];
+				_pos[i] = p;
+				p += _wid[i];
 			}
-			f.read(Map, p);
+			f.read(_map, p);
 		}
 	}
 }
 
 
-uint16 FONT::Width(const char *text) {
+uint16 Font::width(const char *text) {
 	uint16 w = 0;
 	if (text)
 		while (* text)
-			w += Wid[(unsigned char)*(text++)];
+			w += _wid[(unsigned char)*(text++)];
 	return w;
 }
 
 
 /*
-void FONT::Save(void) {
-	CFILE f((const char *) Path, WRI);
-	if (! f.Error) {
-		f.Write(Wid, WID_SIZ);
-		if (! f.Error)
-			f.Write(Map, Pos[POS_SIZ - 1] + Wid[WID_SIZ - 1]);
+void Font::save() {
+	CFILE f((const char *) _path, WRI);
+	if (!f._error) {
+		f.Write(_wid, WID_SIZ);
+		if (!f._error)
+			f.Write(_map, _pos[POS_SIZ - 1] + _wid[WID_SIZ - 1]);
 	}
 }
 */
 
 
-TALK::TALK(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
-	: Sprite(vm, NULL), Mode(mode), _vm(vm) {
-	TS[0] = TS[1] = NULL;
+Talk::Talk(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
+	: Sprite(vm, NULL), _mode(mode), _vm(vm) {
+	_ts[0] = _ts[1] = NULL;
 	_flags._syst = true;
-	Update(tx);
+	update(tx);
 }
 
 
-TALK::TALK(CGEEngine *vm)
-	: Sprite(vm, NULL), Mode(PURE), _vm(vm) {
-	TS[0] = TS[1] = NULL;
+Talk::Talk(CGEEngine *vm)
+	: Sprite(vm, NULL), _mode(PURE), _vm(vm) {
+	_ts[0] = _ts[1] = NULL;
 	_flags._syst = true;
 }
 
 
 /*
-TALK::~TALK (void) {
+Talk::~Talk() {
 	for (uint16 i = 0; i < ShpCnt; i++) {
-		if (FP_SEG(ShpList[i]) != _DS) { // small model: always false
-			delete ShpList[i];
+		if (FP_SEG(_shpList[i]) != _DS) { // small model: always false
+			delete _shpList[i];
 			ShpList[i] = NULL;
 		}
 	}
 }
 */
 
-FONT *TALK::_Font;
+Font *Talk::_font;
 
-void TALK::init() {
-	_Font = new FONT(progName());
+void Talk::init() {
+	_font = new Font(progName());
 }
 
-void TALK::deinit() {
-	delete _Font;
+void Talk::deinit() {
+	delete _font;
 }
 
 
-void TALK::Update(const char *tx) {
-	uint16 vmarg = (Mode) ? TEXT_VM : 0;
-	uint16 hmarg = (Mode) ? TEXT_HM : 0;
+void Talk::update(const char *tx) {
+	uint16 vmarg = (_mode) ? TEXT_VM : 0;
+	uint16 hmarg = (_mode) ? TEXT_HM : 0;
 	uint16 mw = 0, mh, ln = vmarg;
 	const char *p;
 	uint8 *m;
 
-	if (!TS[0]) {
+	if (!_ts[0]) {
 		uint16 k = 2 * hmarg;
 		mh = 2 * vmarg + FONT_HIG;
 		for (p = tx; *p; p++) {
@@ -151,21 +151,21 @@ void TALK::Update(const char *tx) {
 					mw = k;
 				k = 2 * hmarg;
 			} else
-				k += _Font->Wid[(unsigned char)*p];
+				k += _font->_wid[(unsigned char)*p];
 		}
 		if (k > mw)
 			mw = k;
-		TS[0] = Box(mw, mh);
+		_ts[0] = box(mw, mh);
 	}
 
-	m = TS[0]->_m + ln * mw + hmarg;
+	m = _ts[0]->_m + ln * mw + hmarg;
 
 	while (* tx) {
 		if (*tx == '|' || *tx == '\n')
-			m = TS[0]->_m + (ln += FONT_HIG + TEXT_LS) * mw + hmarg;
+			m = _ts[0]->_m + (ln += FONT_HIG + TEXT_LS) * mw + hmarg;
 		else {
-			int cw = _Font->Wid[(unsigned char)*tx], i;
-			uint8 *f = _Font->Map + _Font->Pos[(unsigned char)*tx];
+			int cw = _font->_wid[(unsigned char)*tx], i;
+			uint8 *f = _font->_map + _font->_pos[(unsigned char)*tx];
 			for (i = 0; i < cw; i++) {
 				uint8 *pp = m;
 				uint16 n;
@@ -181,16 +181,16 @@ void TALK::Update(const char *tx) {
 		}
 		tx++;
 	}
-	TS[0]->code();
-	setShapeList(TS);
+	_ts[0]->code();
+	setShapeList(_ts);
 }
 
 
 
 
-Bitmap *TALK::Box(uint16 w, uint16 h) {
+Bitmap *Talk::box(uint16 w, uint16 h) {
 	uint8 *b, * p, * q;
-	uint16 n, r = (Mode == ROUND) ? TEXT_RD : 0;
+	uint16 n, r = (_mode == ROUND) ? TEXT_RD : 0;
 
 	if (w < 8)
 		w = 8;
@@ -201,7 +201,7 @@ Bitmap *TALK::Box(uint16 w, uint16 h) {
 		error("No core");
 	memset(b, TEXT_BG, n);
 
-	if (Mode) {
+	if (_mode) {
 		p = b;
 		q = b + n - w;
 		memset(p, LGRAY, w);
@@ -232,10 +232,11 @@ Bitmap *TALK::Box(uint16 w, uint16 h) {
 }
 
 
-void TALK::PutLine(int line, const char *text) {
+void Talk::putLine(int line, const char *text) {
 // Note: (TS[0].W % 4) have to be 0
-	uint16 w = TS[0]->_w, h = TS[0]->_h;
-	uint8 *v = TS[0]->_v, * p;
+	uint16 w = _ts[0]->_w;
+	uint16 h = _ts[0]->_h;
+	uint8 *v = _ts[0]->_v, * p;
 	uint16 dsiz = w >> 2;     // data size (1 plane line size)
 	uint16 lsiz = 2 + dsiz + 2;   // uint16 for line header, uint16 for gap
 	uint16 psiz = h * lsiz;       // - last gap, but + plane trailer
@@ -262,8 +263,8 @@ void TALK::PutLine(int line, const char *text) {
 		q = v + size;
 
 		while (* text) {
-			uint16 cw = _Font->Wid[(unsigned char)*text], i;
-			uint8 *fp = _Font->Map + _Font->Pos[(unsigned char)*text];
+			uint16 cw = _font->_wid[(unsigned char)*text], i;
+			uint8 *fp = _font->_map + _font->_pos[(unsigned char)*text];
 
 			for (i = 0; i < cw; i++) {
 				register uint16 b = fp[i];
@@ -284,22 +285,23 @@ void TALK::PutLine(int line, const char *text) {
 }
 
 
-INFO_LINE::INFO_LINE(CGEEngine *vm, uint16 w) : TALK(vm), OldTxt(NULL), _vm(vm) {
-	TS[0] = new Bitmap(w, FONT_HIG, TEXT_BG);
-	setShapeList(TS);
+InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldTxt(NULL), _vm(vm) {
+	_ts[0] = new Bitmap(w, FONT_HIG, TEXT_BG);
+	setShapeList(_ts);
 }
 
 
-void INFO_LINE::Update(const char *tx) {
-	if (tx != OldTxt) {
-		uint16 w = TS[0]->_w, h = TS[0]->_h;
-		uint8 *v = (uint8 *) TS[0]->_v;
+void InfoLine::update(const char *tx) {
+	if (tx != _oldTxt) {
+		uint16 w = _ts[0]->_w;
+		uint16 h = _ts[0]->_h;
+		uint8 *v = (uint8 *) _ts[0]->_v;
 		uint16 dsiz = w >> 2;                           // data size (1 plane line size)
 		uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
 		uint16 psiz = h * lsiz;                         // - last gape, but + plane trailer
 		uint16 size = 4 * psiz;                         // whole map size
 
-		// claer whole rectangle
+		// clear whole rectangle
 		memset(v + 2, TEXT_BG, dsiz);                   // data bytes
 		memcpy(v + lsiz, v, psiz - lsiz);               // tricky replicate lines
 		*(uint16 *)(v + psiz - 2) = EOI;               // plane trailer uint16
@@ -310,8 +312,8 @@ void INFO_LINE::Update(const char *tx) {
 			uint8 *p = v + 2, * q = p + size;
 
 			while (*tx) {
-				uint16 cw = _Font->Wid[(unsigned char)*tx];
-				uint8 *fp = _Font->Map + _Font->Pos[(unsigned char)*tx];
+				uint16 cw = _font->_wid[(unsigned char)*tx];
+				uint8 *fp = _font->_map + _font->_pos[(unsigned char)*tx];
 
 				for (uint16 i = 0; i < cw; i++) {
 					register uint16 b = fp[i];
@@ -327,7 +329,7 @@ void INFO_LINE::Update(const char *tx) {
 				tx++;
 			}
 		}
-		OldTxt = tx;
+		_oldTxt = tx;
 	}
 }
 

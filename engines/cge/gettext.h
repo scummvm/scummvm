@@ -37,7 +37,7 @@ namespace CGE {
 #define GTBLINK      6
 #define GTTIME       6
 
-class GetText : public TALK {
+class GetText : public Talk {
 	char   _buff[GTMAX + 2];
 	char  *_text;
 	uint16 _size;

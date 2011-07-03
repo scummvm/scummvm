@@ -187,17 +187,17 @@ Dac MkDAC(uint8 r, uint8 g, uint8 b) {
 
 
 Rgb MkRGB(uint8 r, uint8 g, uint8 b) {
-	static TRGB x;
-	x.dac._r = r;
-	x.dac._g = g;
-	x.dac._b = b;
-	return x.rgb;
+	static Trgb x;
+	x._dac._r = r;
+	x._dac._g = g;
+	x._dac._b = b;
+	return x._rgb;
 }
 
 
 Sprite *Locate(int ref) {
-	Sprite *spr = Vga->ShowQ->Locate(ref);
-	return (spr) ? spr : Vga->SpareQ->Locate(ref);
+	Sprite *spr = Vga->_showQ->locate(ref);
+	return (spr) ? spr : Vga->_spareQ->locate(ref);
 }
 
 
@@ -364,7 +364,7 @@ BMP_PTR Sprite::shp() {
 	register SprExt *e = _ext;
 	if (e)
 		if (e->_seq) {
-			int i = e->_seq[_seqPtr].Now;
+			int i = e->_seq[_seqPtr]._now;
 			if (i >= _shpCnt) {
 				//char s[256];
 				//sprintf(s, "Seq=%p ShpCnt=%d SeqPtr=%d Now=%d Next=%d",
@@ -443,7 +443,7 @@ bool Sprite::seqTest(int n) {
 	if (n >= 0)
 		return (_seqPtr == n);
 	if (_ext)
-		return (_ext->_seq[_seqPtr].Next == _seqPtr);
+		return (_ext->_seq[_seqPtr]._next == _seqPtr);
 	return true;
 }
 
@@ -519,23 +519,23 @@ Sprite *Sprite::expand() {
 						if (seq == NULL)
 							error("No core [%s]", fname);
 						Seq *s = &seq[seqcnt++];
-						s->Now  = atoi(strtok(NULL, " \t,;/"));
-						if (s->Now > maxnow)
-							maxnow = s->Now;
-						s->Next = atoi(strtok(NULL, " \t,;/"));
-						switch (s->Next) {
+						s->_now  = atoi(strtok(NULL, " \t,;/"));
+						if (s->_now > maxnow)
+							maxnow = s->_now;
+						s->_next = atoi(strtok(NULL, " \t,;/"));
+						switch (s->_next) {
 						case 0xFF :
-							s->Next = seqcnt;
+							s->_next = seqcnt;
 							break;
 						case 0xFE :
-							s->Next = seqcnt - 1;
+							s->_next = seqcnt - 1;
 							break;
 						}
-						if (s->Next > maxnxt)
-							maxnxt = s->Next;
-						s->Dx   = atoi(strtok(NULL, " \t,;/"));
-						s->Dy   = atoi(strtok(NULL, " \t,;/"));
-						s->Dly  = atoi(strtok(NULL, " \t,;/"));
+						if (s->_next > maxnxt)
+							maxnxt = s->_next;
+						s->_dx   = atoi(strtok(NULL, " \t,;/"));
+						s->_dy   = atoi(strtok(NULL, " \t,;/"));
+						s->_dly  = atoi(strtok(NULL, " \t,;/"));
 						break;
 					}
 					case 3 : { // Near
@@ -645,11 +645,11 @@ void Sprite::step(int nr) {
 	if (_ext) {
 		Seq *seq;
 		if (nr < 0)
-			_seqPtr = _ext->_seq[_seqPtr].Next;
+			_seqPtr = _ext->_seq[_seqPtr]._next;
 		seq = _ext->_seq + _seqPtr;
-		if (seq->Dly >= 0) {
-			gotoxy(_x + (seq->Dx), _y + (seq->Dy));
-			_time = seq->Dly;
+		if (seq->_dly >= 0) {
+			gotoxy(_x + (seq->_dx), _y + (seq->_dy));
+			_time = seq->_dly;
 		}
 	}
 }
@@ -781,7 +781,7 @@ BMP_PTR Sprite::ghost() {
 
 
 Sprite *SpriteAt(int x, int y) {
-	Sprite *spr = NULL, * tail = Vga->ShowQ->Last();
+	Sprite *spr = NULL, * tail = Vga->_showQ->last();
 	if (tail) {
 		for (spr = tail->_prev; spr; spr = spr->_prev) {
 			if (! spr->_flags._hide && ! spr->_flags._tran) {
@@ -794,26 +794,26 @@ Sprite *SpriteAt(int x, int y) {
 }
 
 
-QUEUE::QUEUE(bool show) : Head(NULL), Tail(NULL), Show(show) {
+Queue::Queue(bool show) : _head(NULL), _tail(NULL), _show(show) {
 }
 
 
-QUEUE::~QUEUE(void) {
-	Clear();
+Queue::~Queue() {
+	clear();
 }
 
 
-void QUEUE::Clear(void) {
-	while (Head) {
-		Sprite *s = Remove(Head);
+void Queue::clear() {
+	while (_head) {
+		Sprite *s = remove(_head);
 		if (s->_flags._kill)
 			delete s;
 	}
 }
 
 
-void QUEUE::ForAll(void (*fun)(Sprite *)) {
-	Sprite *s = Head;
+void Queue::forAll(void (*fun)(Sprite *)) {
+	Sprite *s = _head;
 	while (s) {
 		Sprite *n = s->_next;
 		fun(s);
@@ -822,26 +822,26 @@ void QUEUE::ForAll(void (*fun)(Sprite *)) {
 }
 
 
-void QUEUE::Append(Sprite *spr) {
-	if (Tail) {
-		spr->_prev = Tail;
-		Tail->_next = spr;
+void Queue::append(Sprite *spr) {
+	if (_tail) {
+		spr->_prev = _tail;
+		_tail->_next = spr;
 	} else
-		Head = spr;
-	Tail = spr;
-	if (Show)
+		_head = spr;
+	_tail = spr;
+	if (_show)
 		spr->expand();
 	else
 		spr->contract();
 }
 
 
-void QUEUE::Insert(Sprite *spr, Sprite *nxt) {
-	if (nxt == Head) {
-		spr->_next = Head;
-		Head = spr;
-		if (! Tail)
-			Tail = spr;
+void Queue::insert(Sprite *spr, Sprite *nxt) {
+	if (nxt == _head) {
+		spr->_next = _head;
+		_head = spr;
+		if (!_tail)
+			_tail = spr;
 	} else {
 		spr->_next = nxt;
 		spr->_prev = nxt->_prev;
@@ -850,34 +850,34 @@ void QUEUE::Insert(Sprite *spr, Sprite *nxt) {
 	}
 	if (spr->_next)
 		spr->_next->_prev = spr;
-	if (Show)
+	if (_show)
 		spr->expand();
 	else
 		spr->contract();
 }
 
 
-void QUEUE::Insert(Sprite *spr) {
+void Queue::insert(Sprite *spr) {
 	Sprite *s;
-	for (s = Head; s; s = s->_next)
+	for (s = _head; s; s = s->_next)
 		if (s->_z > spr->_z)
 			break;
 	if (s)
-		Insert(spr, s);
+		insert(spr, s);
 	else
-		Append(spr);
-	if (Show)
+		append(spr);
+	if (_show)
 		spr->expand();
 	else
 		spr->contract();
 }
 
 
-Sprite *QUEUE::Remove(Sprite *spr) {
-	if (spr == Head)
-		Head = spr->_next;
-	if (spr == Tail)
-		Tail = spr->_prev;
+Sprite *Queue::remove(Sprite *spr) {
+	if (spr == _head)
+		_head = spr->_next;
+	if (spr == _tail)
+		_tail = spr->_prev;
 	if (spr->_next)
 		spr->_next->_prev = spr->_prev;
 	if (spr->_prev)
@@ -888,9 +888,9 @@ Sprite *QUEUE::Remove(Sprite *spr) {
 }
 
 
-Sprite *QUEUE::Locate(int ref) {
+Sprite *Queue::locate(int ref) {
 	Sprite *spr;
-	for (spr = Head; spr; spr = spr->_next) {
+	for (spr = _head; spr; spr = spr->_next) {
 		if (spr->_ref == ref)
 			return spr;
 	}
@@ -925,13 +925,13 @@ VGA::VGA(int mode)
 	  Msg(NULL), Nam(NULL), SetPal(false), Mono(0) {
 	OldColors = NULL;
 	NewColors = NULL;
-	ShowQ = new QUEUE(true);
-	SpareQ = new QUEUE(false);
+	_showQ = new Queue(true);
+	_spareQ = new Queue(false);
 
 	bool std = true;
 	int i;
 	for (i = 10; i < 20; i++) {
-		char *txt = Text->getText(i);
+		char *txt = _text->getText(i);
 		if (txt) {
 			debugN("%s", txt);
 			std = false;
@@ -981,8 +981,8 @@ VGA::~VGA(void) {
 		debugN("%s", buffer.c_str());
 	}
 
-	delete ShowQ;
-	delete SpareQ;
+	delete _showQ;
+	delete _spareQ;
 }
 
 
@@ -1131,12 +1131,12 @@ void VGA::Sunset(void) {
 
 
 void VGA::Show(void) {
-	Sprite *spr = ShowQ->First();
+	Sprite *spr = _showQ->first();
 
-	for (spr = ShowQ->First(); spr; spr = spr->_next)
+	for (spr = _showQ->first(); spr; spr = spr->_next)
 		spr->show();
 	Update();
-	for (spr = ShowQ->First(); spr; spr = spr->_next)
+	for (spr = _showQ->first(); spr; spr = spr->_next)
 		spr->hide();
 
 	++ FrmCnt;
