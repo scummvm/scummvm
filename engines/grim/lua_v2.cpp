@@ -33,7 +33,7 @@
 
 namespace Grim {
 
-void L2_UndimRegion() {
+static void L2_UndimRegion() {
 	lua_Object regionObj = lua_getparam(1);
 
 	if (lua_isnumber(regionObj)) {
@@ -45,7 +45,7 @@ void L2_UndimRegion() {
 	}
 }
 
-void L2_SleepFor() {
+static void L2_SleepFor() {
 	lua_Object msObj = lua_getparam(1);
 
 	if (lua_isnumber(msObj)) {
@@ -55,7 +55,7 @@ void L2_SleepFor() {
 	}
 }
 
-void L2_DimScreen() {
+static void L2_DimScreen() {
 	lua_Object dimObj = lua_getparam(1);
 	float dim = 0.6999f;
 
@@ -66,7 +66,7 @@ void L2_DimScreen() {
 	warning("L2_DimScreen: dim: %f", dim);
 }
 
-void L2_MakeCurrentSetup() {
+static void L2_MakeCurrentSetup() {
 	lua_Object setupObj = lua_getparam(1);
 	if (lua_isnumber(setupObj)) {
 		int num = (int)lua_getnumber(setupObj);
@@ -77,7 +77,7 @@ void L2_MakeCurrentSetup() {
 	}
 }
 
-void L2_SetActorGlobalAlpha() {
+static void L2_SetActorGlobalAlpha() {
 	lua_Object actorObj = lua_getparam(1);
 //	lua_Object alphaModeObj = lua_getparam(2);
 //	lua_Object valueObj = lua_getparam(3);
@@ -104,7 +104,7 @@ void L2_SetActorGlobalAlpha() {
 	*/
 }
 
-void L2_ImGetMillisecondPosition() {
+static void L2_ImGetMillisecondPosition() {
 	lua_Object soundObj = lua_getparam(1);
 
 	if (lua_isnumber(soundObj)) {
@@ -117,7 +117,7 @@ void L2_ImGetMillisecondPosition() {
 	}
 }
 
-void L2_RemoveActorFromOverworld() {
+static void L2_RemoveActorFromOverworld() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -131,7 +131,7 @@ void L2_RemoveActorFromOverworld() {
 	// FIXME actor->func();
 }
 
-void L2_UnloadActor() {
+static void L2_UnloadActor() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -145,7 +145,7 @@ void L2_UnloadActor() {
 	// FIXME actor->func();
 }
 
-void L2_SetActorWalkRate() {
+static void L2_SetActorWalkRate() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object rateObj = lua_getparam(2);
 
@@ -170,7 +170,7 @@ void L2_GetActorWalkRate() {
 	lua_pushnumber(actor->getWalkRate() * 0.3048780560493469);
 }
 
-void L2_SetReverb() {
+static void L2_SetReverb() {
 	lua_Object eaxObj = lua_getparam(1);
 	lua_Object decayObj = lua_getparam(2);
 	lua_Object mixObj = lua_getparam(3);
@@ -211,7 +211,7 @@ void L2_SetReverb() {
 	// FIXME: func(param, decay, mix, predelay, damping);
 }
 
-void L2_LockBackground() {
+static void L2_LockBackground() {
 	lua_Object filenameObj = lua_getparam(1);
 
 	if (!lua_isstring(filenameObj)) {
@@ -223,7 +223,7 @@ void L2_LockBackground() {
 	// FIXME: implement missing rest part of code
 }
 
-void L2_LockChore() {
+static void L2_LockChore() {
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object filenameObj = lua_getparam(2);
 
@@ -238,7 +238,7 @@ void L2_LockChore() {
 	// FIXME: implement missing rest part of code
 }
 
-void L2_SetActorSortOrder() {
+static void L2_SetActorSortOrder() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object modeObj = lua_getparam(2);
 
@@ -254,7 +254,7 @@ void L2_SetActorSortOrder() {
 	// FIXME: actor->func(mode);
 }
 
-void L2_ActorActivateShadow() {
+static void L2_ActorActivateShadow() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object qualityObj = lua_getparam(2);
 	lua_Object planeObj = lua_getparam(3);
@@ -273,7 +273,7 @@ void L2_ActorActivateShadow() {
 	// FIXME: implement missing rest part of code
 }
 
-void L2_ActorStopMoving() {
+static void L2_ActorStopMoving() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -285,7 +285,7 @@ void L2_ActorStopMoving() {
 	// FIXME: implement missing rest part of code
 }
 
-void L2_PutActorInOverworld() {
+static void L2_PutActorInOverworld() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -298,7 +298,7 @@ void L2_PutActorInOverworld() {
 	//actor->func();
 }
 
-void L2_MakeScreenTextures() {
+static void L2_MakeScreenTextures() {
 	lua_Object indexObj = lua_getparam(1);
 
 	if (!lua_isnil(indexObj) && lua_isnumber(indexObj)) {
@@ -313,7 +313,7 @@ void L2_MakeScreenTextures() {
 	lua_pushnil();
 }
 
-void L2_PutActorInSet() {
+static void L2_PutActorInSet() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object setObj = lua_getparam(2);
 
@@ -353,12 +353,12 @@ static void L2_LoadBundle() {
 	}
 }
 
-void L2_AreWeInternational() {
+static void L2_AreWeInternational() {
 	if (g_grim->getGameLanguage() != Common::EN_ANY)
 		lua_pushnumber(1.0);
 }
 
-void L2_ImSetState() {
+static void L2_ImSetState() {
 	lua_Object stateObj = lua_getparam(1);
 	if (!lua_isnumber(stateObj))
 		return;
@@ -367,7 +367,7 @@ void L2_ImSetState() {
 	warning("L2_ImSetState: stub, state: %d", state);
 }
 
-void L2_EnableVoiceFX() {
+static void L2_EnableVoiceFX() {
 	lua_Object stateObj = lua_getparam(1);
 
 	bool state = false;
@@ -378,7 +378,7 @@ void L2_EnableVoiceFX() {
 	warning("L2_EnableVoiceFX: implement opcode, state: %d", (int)state);
 }
 
-void L2_SetGroupVolume() {
+static void L2_SetGroupVolume() {
 	lua_Object groupObj = lua_getparam(1);
 	lua_Object volumeObj = lua_getparam(2);
 
@@ -394,7 +394,7 @@ void L2_SetGroupVolume() {
 	warning("L2_SetGroupVolume: implement opcode, group: %d, volume %d", group, volume);
 }
 
-void L2_EnableAudioGroup() {
+static void L2_EnableAudioGroup() {
 	lua_Object groupObj = lua_getparam(1);
 	lua_Object stateObj = lua_getparam(2);
 
@@ -410,7 +410,7 @@ void L2_EnableAudioGroup() {
 	warning("L2_EnableAudioGroup: implement opcode, group: %d, state %d", group, (int)state);
 }
 
-void L2_ImSelectSet() {
+static void L2_ImSelectSet() {
 	lua_Object qualityObj = lua_getparam(1);
 
 	if (lua_isnumber(qualityObj)) {
@@ -420,7 +420,7 @@ void L2_ImSelectSet() {
 	}
 }
 
-void L2_PlayActorChore() {
+static void L2_PlayActorChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
