@@ -45,7 +45,12 @@ namespace Common {
 
 namespace Video {
 
-/** A decoder for RAD Game Tools' Bink videos. */
+/**
+ * Decoder for Bink videos.
+ *
+ * Video decoder used in engines:
+ *  - scumm (he)
+ */
 class BinkDecoder : public FixedRateVideoDecoder {
 public:
 	BinkDecoder();
