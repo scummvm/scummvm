@@ -148,7 +148,7 @@ void CGEEngine::selectSound() {
 		SNPOST_(SNKILL, -1, 0, VMENU::Addr);
 	inf(Text->getText(STYPE_TEXT));
 	Talk->gotoxy(Talk->_x, FONT_HIG / 2);
-	for (i = 0; i < ArrayCount(DevName); i++)
+	for (i = 0; i < (int)ArrayCount(DevName); i++)
 		DevMenu[i].Text = Text->getText(DevName[i]);
 	(new VMENU(this, DevMenu, SCR_WID / 2, Talk->_y + Talk->_h + TEXT_VM + FONT_HIG))->setName(Text->getText(MENU_TEXT));
 }

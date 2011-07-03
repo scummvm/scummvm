@@ -222,6 +222,8 @@ void MOUSE::NewMouse(Common::Event &event) {
 		evt._msk = R_UP;
 		Buttons &= ~2;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -252,6 +254,8 @@ void EventManager::poll() {
 			// Handle mouse events
 			_mouse->NewMouse(_event);
 			handleEvents();
+			break;
+		default:
 			break;
 		}
 	}
