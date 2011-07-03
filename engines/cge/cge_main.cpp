@@ -1543,7 +1543,7 @@ void CGEEngine::mainLoop() {
 }
 
 void CGEEngine::tick() {
-	for (Sprite *spr = Vga->ShowQ->First(); spr; spr = spr->_next) {
+	for (Sprite *spr = Vga->_showQ->first(); spr; spr = spr->_next) {
 		if (spr->_time) {
 			if (!spr->_flags._hide) {
 				if (--spr->_time == 0)
