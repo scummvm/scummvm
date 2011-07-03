@@ -166,10 +166,10 @@ Cluster XZ(Couple xy);
 void ExpandSprite(Sprite *spr);
 void ContractSprite(Sprite *spr);
 
-extern WALK *Hero;
-extern VGA *Vga;
+extern WALK *_hero;
+extern Vga *_vga;
 extern Heart *_heart;
-extern SYSTEM *Sys;
+extern SYSTEM *_sys;
 extern int _offUseCount;
 extern Sprite *_pocLight;
 extern Keyboard *_keyboard;

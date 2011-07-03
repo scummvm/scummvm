@@ -44,7 +44,7 @@ namespace CGE {
 
 
 
-MENU_BAR::MENU_BAR(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
+MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 	int h = FONT_HIG + 2 * MB_VM, i = (w += 2 * MB_HM) * h;
 	uint8 *p = farnew(uint8, i), * p1, * p2;
 
@@ -71,21 +71,21 @@ MENU_BAR::MENU_BAR(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 static  char   *vmgt;
 
 
-char *VMGather(CHOICE *list) {
-	CHOICE *cp;
+char *VMGather(Choice *list) {
+	Choice *cp;
 	int len = 0, h = 0;
 
-	for (cp = list; cp->Text; cp++) {
-		len += strlen(cp->Text);
+	for (cp = list; cp->_text; cp++) {
+		len += strlen(cp->_text);
 		h++;
 	}
 	vmgt = new char[len + h];
 	if (vmgt) {
 		*vmgt = '\0';
-		for (cp = list; cp->Text; cp++) {
+		for (cp = list; cp->_text; cp++) {
 			if (*vmgt)
 				strcat(vmgt, "|");
-			strcat(vmgt, cp->Text);
+			strcat(vmgt, cp->_text);
 			h++;
 		}
 	}
@@ -93,60 +93,60 @@ char *VMGather(CHOICE *list) {
 }
 
 
-VMENU *VMENU::Addr = NULL;
-int    VMENU::Recent   = -1;
+Vmenu *Vmenu::_addr = NULL;
+int    Vmenu::_recent   = -1;
 
 
-VMENU::VMENU(CGEEngine *vm, CHOICE *list, int x, int y)
-	: Talk(vm, VMGather(list), RECT), Menu(list), Bar(NULL), _vm(vm) {
-	CHOICE *cp;
+Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
+	: Talk(vm, VMGather(list), RECT), _menu(list), _bar(NULL), _vm(vm) {
+	Choice *cp;
 
-	Addr = this;
+	_addr = this;
 	delete[] vmgt;
-	Items = 0;
-	for (cp = list; cp->Text; cp++)
-		Items++;
+	_items = 0;
+	for (cp = list; cp->_text; cp++)
+		_items++;
 	_flags._bDel = true;
 	_flags._kill = true;
 	if (x < 0 || y < 0)
 		center();
 	else
 		gotoxy(x - _w / 2, y - (TEXT_VM + FONT_HIG / 2));
-	Vga->_showQ->insert(this, Vga->_showQ->last());
-	Bar = new MENU_BAR(_vm, _w - 2 * TEXT_HM);
-	Bar->gotoxy(_x + TEXT_HM - MB_HM, _y + TEXT_VM - MB_VM);
-	Vga->_showQ->insert(Bar, Vga->_showQ->last());
+	_vga->_showQ->insert(this, _vga->_showQ->last());
+	_bar = new MenuBar(_vm, _w - 2 * TEXT_HM);
+	_bar->gotoxy(_x + TEXT_HM - MB_HM, _y + TEXT_VM - MB_VM);
+	_vga->_showQ->insert(_bar, _vga->_showQ->last());
 }
 
 
-VMENU::~VMENU(void) {
-	Addr = NULL;
+Vmenu::~Vmenu(void) {
+	_addr = NULL;
 }
 
 
-void VMENU::touch(uint16 mask, int x, int y) {
+void Vmenu::touch(uint16 mask, int x, int y) {
 	uint16 h = FONT_HIG + TEXT_LS;
 	bool ok = false;
 
-	if (Items) {
+	if (_items) {
 		Sprite::touch(mask, x, y);
 
 		y -= TEXT_VM - 1;
 		int n = 0;
 		if (y >= 0) {
 			n = y / h;
-			if (n < Items)
+			if (n < _items)
 				ok = (x >= TEXT_HM && x < _w - TEXT_HM/* && y % h < FONT_HIG*/);
 			else
-				n = Items - 1;
+				n = _items - 1;
 		}
 
-		Bar->gotoxy(_x + TEXT_HM - MB_HM, _y + TEXT_VM + n * h - MB_VM);
+		_bar->gotoxy(_x + TEXT_HM - MB_HM, _y + TEXT_VM + n * h - MB_VM);
 
 		if (ok && (mask & L_UP)) {
-			Items = 0;
+			_items = 0;
 			SNPOST_(SNKILL, -1, 0, this);
-			//Menu[Recent = n].Proc();
+			//_menu[_recent = n].Proc();
 			warning("Missing call to proc()");
 		}
 	}

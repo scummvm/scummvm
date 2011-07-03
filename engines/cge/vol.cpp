@@ -31,25 +31,25 @@
 
 namespace CGE {
 
-DAT *VFILE::_dat = NULL;
-BtFile *VFILE::_cat = NULL;
-VFILE *VFILE::_recent = NULL;
+Dat *VFile::_dat = NULL;
+BtFile *VFile::_cat = NULL;
+VFile *VFile::_recent = NULL;
 
 /*-----------------------------------------------------------------------*/
 
-DAT::DAT():
+Dat::Dat():
 #ifdef VOL_UPD
-	_File(DAT_NAME, UPD, CRP)
+	_file(DAT_NAME, UPD, CRP)
 #else
-	_File(DAT_NAME, REA, CRP)
+	_file(DAT_NAME, REA, CRP)
 #endif
 {
 }
 
 /*-----------------------------------------------------------------------*/
 
-void VFILE::init() {
-	_dat = new DAT();
+void VFile::init() {
+	_dat = new Dat();
 #ifdef VOL_UPD
 	_cat = new BtFile(CAT_NAME, UPD, CRP);
 #else
@@ -59,15 +59,15 @@ void VFILE::init() {
 	_recent = NULL;
 }
 
-void VFILE::deinit() {
+void VFile::deinit() {
 	delete _dat;
 	delete _cat;
 }
 
-VFILE::VFILE(const char *name, IOMODE mode)
+VFile::VFile(const char *name, IOMODE mode)
 	: IoBuf(mode) {
 	if (mode == REA) {
-		if (_dat->_File._error || _cat->_error)
+		if (_dat->_file._error || _cat->_error)
 			error("Bad volume data");
 		BtKeypack *kp = _cat->find(name);
 		if (scumm_stricmp(kp->_key, name) != 0)
@@ -81,27 +81,27 @@ VFILE::VFILE(const char *name, IOMODE mode)
 }
 
 
-VFILE::~VFILE(void) {
+VFile::~VFile() {
 	if (_recent == this)
 		_recent = NULL;
 }
 
 
-bool VFILE::exist(const char *name) {
+bool VFile::exist(const char *name) {
 	return scumm_stricmp(_cat->find(name)->_key, name) == 0;
 }
 
 
-void VFILE::readBuff(void) {
+void VFile::readBuff() {
 	if (_recent != this) {
-		_dat->_File.seek(_bufMark + _lim);
+		_dat->_file.seek(_bufMark + _lim);
 		_recent = this;
 	}
-	_bufMark = _dat->_File.mark();
+	_bufMark = _dat->_file.mark();
 	long n = _endMark - _bufMark;
 	if (n > IOBUF_SIZE)
 		n = IOBUF_SIZE;
-	_lim = _dat->_File.read(_buff, (uint16) n);
+	_lim = _dat->_file.read(_buff, (uint16) n);
 	_ptr = 0;
 }
 

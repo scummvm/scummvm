@@ -71,7 +71,7 @@ static void SNGame(Sprite *spr, int num) {
 		int buref = 0;
 		int Stage = 0;
 
-		for (dup[0] = Vga->_showQ->first(); dup[0]; dup[0] = dup[0]->_next) {
+		for (dup[0] = _vga->_showQ->first(); dup[0]; dup[0] = dup[0]->_next) {
 			buref = dup[0]->_ref;
 			if (buref / 1000 == 16 && buref % 100 == 6) {
 				Stage = (buref / 100) % 10;
@@ -79,8 +79,8 @@ static void SNGame(Sprite *spr, int num) {
 			}
 		}
 		if (dup[1] == NULL) {
-			dup[1] = Vga->_showQ->locate(16003);    // pan
-			dup[2] = Vga->_showQ->locate(16004);    // pani
+			dup[1] = _vga->_showQ->locate(16003);    // pan
+			dup[2] = _vga->_showQ->locate(16004);    // pani
 		}
 
 		if (_game) { // continue game
@@ -163,10 +163,10 @@ static void SNGame(Sprite *spr, int num) {
 		static int count = 0;
 
 		if (k == NULL) {
-			k  = Vga->_showQ->locate(20700);
-			k1 = Vga->_showQ->locate(20701);
-			k2 = Vga->_showQ->locate(20702);
-			k3 = Vga->_showQ->locate(20703);
+			k  = _vga->_showQ->locate(20700);
+			k1 = _vga->_showQ->locate(20701);
+			k2 = _vga->_showQ->locate(20702);
+			k3 = _vga->_showQ->locate(20703);
 		}
 
 		if (!_game) { // init
@@ -217,7 +217,7 @@ static void SNGame(Sprite *spr, int num) {
 					SNPOST(SNSAY, 20003, 20022, NULL);
 					break;
 				}
-				++ count;
+				count++;
 			}
 			switch (spr->_ref) {
 			case     1 :
@@ -273,13 +273,13 @@ static void SNGame(Sprite *spr, int num) {
 
 void ExpandSprite(Sprite *spr) {
 	if (spr)
-		Vga->_showQ->insert(Vga->_spareQ->remove(spr));
+		_vga->_showQ->insert(_vga->_spareQ->remove(spr));
 }
 
 
 void ContractSprite(Sprite *spr) {
 	if (spr)
-		Vga->_spareQ->append(Vga->_showQ->remove(spr));
+		_vga->_spareQ->append(_vga->_showQ->remove(spr));
 }
 
 int findPocket(Sprite *spr) {
@@ -307,12 +307,12 @@ void selectPocket(int n) {
 
 
 void pocFul() {
-	Hero->park();
-	SNPOST(SNWAIT, -1, -1, Hero);
-	SNPOST(SNSEQ, -1, POC_FUL, Hero);
-	SNPOST(SNSOUND, -1, 2, Hero);
-	SNPOST(SNWAIT, -1, -1, Hero);
-	SNPOST(SNSAY,  1, POC_FUL_TEXT, Hero);
+	_hero->park();
+	SNPOST(SNWAIT, -1, -1, _hero);
+	SNPOST(SNSEQ, -1, POC_FUL, _hero);
+	SNPOST(SNSOUND, -1, 2, _hero);
+	SNPOST(SNWAIT, -1, -1, _hero);
+	SNPOST(SNSAY,  1, POC_FUL_TEXT, _hero);
 }
 
 
@@ -356,7 +356,7 @@ void feedSnail(Sprite *spr, SNLIST snq) {
 							killText();
 					}
 					if (c->_com == SNNEXT) {
-						Sprite *s = (c->_ref < 0) ? spr : Locate(c->_ref);
+						Sprite *s = (c->_ref < 0) ? spr : locate(c->_ref);
 						if (s) {
 							uint8 *idx = (snq == TAKE) ? &s->_takePtr : &s->_nearPtr;
 							if (*idx != NO_PTR) {
@@ -383,7 +383,7 @@ void feedSnail(Sprite *spr, SNLIST snq) {
 							break;
 					}
 					if (c->_com == SNIF) {
-						Sprite *s = (c->_ref < 0) ? spr : Locate(c->_ref);
+						Sprite *s = (c->_ref < 0) ? spr : locate(c->_ref);
 						if (s) { // sprite extsts
 							if (! s->seqTest(-1))
 								c = comtab + c->_val;                // not parked
@@ -506,10 +506,10 @@ static void SNZTrim(Sprite *spr) {
 			Sprite *s;
 			_heart->_enable = false;
 			s = (spr->_flags._shad) ? spr->_prev : NULL;
-			Vga->_showQ->insert(Vga->_showQ->remove(spr));
+			_vga->_showQ->insert(_vga->_showQ->remove(spr));
 			if (s) {
 				s->_z = spr->_z;
-				Vga->_showQ->insert(Vga->_showQ->remove(s), spr);
+				_vga->_showQ->insert(_vga->_showQ->remove(s), spr);
 			}
 			_heart->_enable = en;
 		}
@@ -539,8 +539,8 @@ static void SNRmTake(Sprite *spr) {
 
 void SNSeq(Sprite *spr, int val) {
 	if (spr) {
-		if (spr == Hero && val == 0)
-			Hero->park();
+		if (spr == _hero && val == 0)
+			_hero->park();
 		else
 			spr->step(val);
 	}
@@ -571,7 +571,7 @@ void SNSend(Sprite *spr, int val) {
 				spr->_flags._slav = false;
 			} else {
 				if (spr->_ref % 1000 == 0)
-					Bitmap::_pal = VGA::SysPal;
+					Bitmap::_pal = Vga::_sysPal;
 				if (spr->_flags._back)
 					spr->backShow(true);
 				else
@@ -584,7 +584,7 @@ void SNSend(Sprite *spr, int val) {
 
 
 void SNSwap(Sprite *spr, int xref) {
-	Sprite *xspr = Locate(xref);
+	Sprite *xspr = locate(xref);
 	if (spr && xspr) {
 		int was = spr->_cave;
 		int xwas = xspr->_cave;
@@ -619,7 +619,7 @@ void SNSwap(Sprite *spr, int xref) {
 
 
 void SNCover(Sprite *spr, int xref) {
-	Sprite *xspr = Locate(xref);
+	Sprite *xspr = locate(xref);
 	if (spr && xspr) {
 		spr->_flags._hide = true;
 		xspr->_z = spr->_z;
@@ -627,7 +627,7 @@ void SNCover(Sprite *spr, int xref) {
 		xspr->gotoxy(spr->_x, spr->_y);
 		ExpandSprite(xspr);
 		if ((xspr->_flags._shad = spr->_flags._shad) == 1) {
-			Vga->_showQ->insert(Vga->_showQ->remove(spr->_prev), xspr);
+			_vga->_showQ->insert(_vga->_showQ->remove(spr->_prev), xspr);
 			spr->_flags._shad = false;
 		}
 		feedSnail(xspr, NEAR);
@@ -641,13 +641,13 @@ void SNUncover(Sprite *spr, Sprite *xspr) {
 		spr->_cave = xspr->_cave;
 		spr->gotoxy(xspr->_x, xspr->_y);
 		if ((spr->_flags._shad = xspr->_flags._shad) == 1) {
-			Vga->_showQ->insert(Vga->_showQ->remove(xspr->_prev), spr);
+			_vga->_showQ->insert(_vga->_showQ->remove(xspr->_prev), spr);
 			xspr->_flags._shad = false;
 		}
 		spr->_z = xspr->_z;
 		SNSend(xspr, -1);
 		if (spr->_time == 0)
-			++spr->_time;
+			spr->_time++;
 	}
 }
 
@@ -669,20 +669,20 @@ void SNSetXY(Sprite *spr, uint16 xy) {
 
 
 void SNRelX(Sprite *spr, int x) {
-	if (spr && Hero)
-		spr->gotoxy(Hero->_x + x, spr->_y);
+	if (spr && _hero)
+		spr->gotoxy(_hero->_x + x, spr->_y);
 }
 
 
 void SNRelY(Sprite *spr, int y) {
-	if (spr && Hero)
-		spr->gotoxy(spr->_x, Hero->_y + y);
+	if (spr && _hero)
+		spr->gotoxy(spr->_x, _hero->_y + y);
 }
 
 
 void SNRelZ(Sprite *spr, int z) {
-	if (spr && Hero) {
-		spr->_z = Hero->_z + z;
+	if (spr && _hero) {
+		spr->_z = _hero->_z + z;
 		SNZTrim(spr);
 	}
 }
@@ -710,13 +710,13 @@ void SNSetZ(Sprite *spr, int z) {
 
 
 void SNSlave(Sprite *spr, int ref) {
-	Sprite *slv = Locate(ref);
+	Sprite *slv = locate(ref);
 	if (spr && slv) {
 		if (spr->active()) {
 			SNSend(slv, spr->_cave);
 			slv->_flags._slav = true;
 			slv->_z = spr->_z;
-			Vga->_showQ->insert(Vga->_showQ->remove(slv), spr->_next);
+			_vga->_showQ->insert(_vga->_showQ->remove(slv), spr->_next);
 		}
 	}
 }
@@ -743,13 +743,13 @@ void SNKill(Sprite *spr) {
 		}
 		Sprite *nx = spr->_next;
 		Hide1(spr);
-		Vga->_showQ->remove(spr);
+		_vga->_showQ->remove(spr);
 		EventManager::ClrEvt(spr);
 		if (spr->_flags._kill)
 			delete spr;
 		else {
 			spr->_cave = -1;
-			Vga->_spareQ->append(spr);
+			_vga->_spareQ->append(spr);
 		}
 		if (nx) {
 			if (nx->_flags._slav)
@@ -817,7 +817,7 @@ static void SNLevel(Sprite *spr, int lev) {
 #endif
 	while (_lev < lev) {
 		_lev++;
-		spr = Vga->_spareQ->locate(100 + _lev);
+		spr = _vga->_spareQ->locate(100 + _lev);
 		if (spr) {
 			spr->backShow(true);
 			spr->_cave = 0;
@@ -844,7 +844,7 @@ void SNFlash(bool on) {
 	if (on) {
 		Dac *pal = farnew(Dac, PAL_CNT);
 		if (pal) {
-			memcpy(pal, VGA::SysPal, PAL_SIZ);
+			memcpy(pal, Vga::_sysPal, PAL_SIZ);
 			for (int i = 0; i < PAL_CNT; i++) {
 				register int c;
 				c = pal[i]._r << 1;
@@ -854,19 +854,19 @@ void SNFlash(bool on) {
 				c = pal[i]._b << 1;
 				pal[i]._b = (c < 64) ? c : 63;
 			}
-			Vga->SetColors(pal, 64);
+			_vga->setColors(pal, 64);
 		}
 	} else
-		Vga->SetColors(VGA::SysPal, 64);
+		_vga->setColors(Vga::_sysPal, 64);
 	_dark = false;
 }
 
 
 static void SNLight(bool in) {
 	if (in)
-		Vga->Sunrise(VGA::SysPal);
+		_vga->sunrise(Vga::_sysPal);
 	else
-		Vga->Sunset();
+		_vga->sunset();
 	_dark = ! in;
 }
 
@@ -877,18 +877,18 @@ static void SNBarrier(int cav, int bar, bool horz) {
 
 
 static void SNWalk(Sprite *spr, int x, int y) {
-	if (Hero) {
+	if (_hero) {
 		if (spr && y < 0)
-			Hero->findWay(spr);
+			_hero->findWay(spr);
 		else
-			Hero->findWay(XZ(x, y));
+			_hero->findWay(XZ(x, y));
 	}
 }
 
 
 static void SNReach(Sprite *spr, int mode) {
-	if (Hero)
-		Hero->reach(spr, mode);
+	if (_hero)
+		_hero->reach(spr, mode);
 }
 
 
@@ -927,7 +927,7 @@ void Snail::runCom() {
 					break;
 			}
 
-			Sprite *sprel = ((snc->_ref >= 0) ? Locate(snc->_ref) : ((Sprite *) snc->_ptr));
+			Sprite *sprel = ((snc->_ref >= 0) ? locate(snc->_ref) : ((Sprite *) snc->_ptr));
 			switch (snc->_com) {
 			case SNLABEL    :
 				break;
@@ -939,7 +939,7 @@ void Snail::runCom() {
 			case SNWAIT     :
 				if (sprel) {
 					if (sprel->seqTest(snc->_val) &&
-					        (snc->_val >= 0 || sprel != Hero || Hero->_tracePtr < 0)) {
+					        (snc->_val >= 0 || sprel != _hero || _hero->_tracePtr < 0)) {
 						_timerExpiry = g_system->getMillis() + sprel->_time * SNAIL_FRAME_DELAY;
 					} else
 						goto xit;
@@ -953,21 +953,21 @@ void Snail::runCom() {
 				break;
 			case SNSAY      :
 				if (sprel && _talkEnable) {
-					if (sprel == Hero && sprel->seqTest(-1))
+					if (sprel == _hero && sprel->seqTest(-1))
 						sprel->step(HTALK);
 					_text->say(_text->getText(snc->_val), sprel);
-					Sys->FunDel = HEROFUN0;
+					_sys->FunDel = HEROFUN0;
 				}
 				break;
 			case SNINF      :
 				if (_talkEnable) {
 					_vm->inf(_text->getText(snc->_val));
-					Sys->FunDel = HEROFUN0;
+					_sys->FunDel = HEROFUN0;
 				}
 				break;
 			case SNTIME     :
 				if (sprel && _talkEnable) {
-					if (sprel == Hero && sprel->seqTest(-1))
+					if (sprel == _hero && sprel->seqTest(-1))
 						sprel->step(HTALK);
 					sayTime(sprel);
 				}
@@ -995,7 +995,7 @@ void Snail::runCom() {
 				SNCover(sprel, snc->_val);
 				break;
 			case SNUNCOVER  :
-				SNUncover(sprel, (snc->_val >= 0) ? Locate(snc->_val) : ((Sprite *) snc->_ptr));
+				SNUncover(sprel, (snc->_val >= 0) ? locate(snc->_val) : ((Sprite *) snc->_ptr));
 				break;
 			case SNKEEP     :
 				SNKeep(sprel, snc->_val);
