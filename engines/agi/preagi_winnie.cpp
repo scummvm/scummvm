@@ -96,17 +96,20 @@ uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 		sprintf(szFile, IDS_WTP_ROOM_C64, iRoom);
 	else if (_vm->getPlatform() == Common::kPlatformApple2GS)
 		sprintf(szFile, IDS_WTP_ROOM_APPLE, iRoom);
+
 	Common::File file;
 	if (!file.open(szFile)) {
 		warning ("Could not open file \'%s\'", szFile);
 		return 0;
 	}
+
 	uint32 filelen = file.size();
-	if (_vm->getPlatform() == Common::kPlatformC64) { //Skip the loading address
+	if (_vm->getPlatform() == Common::kPlatformC64) { // Skip the loading address
 		filelen -= 2;
 		file.seek(2, SEEK_CUR);
 	}
-	memset(buffer, 0, sizeof(buffer));
+
+	memset(buffer, 0, 4096);
 	file.read(buffer, filelen);
 	file.close();
 
@@ -117,6 +120,7 @@ uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 
 uint32 Winnie::readObj(int iObj, uint8 *buffer) {
 	char szFile[256] = {0};
+
 	if (_vm->getPlatform() == Common::kPlatformPC)
 		sprintf(szFile, IDS_WTP_OBJ_DOS, iObj);
 	else if (_vm->getPlatform() == Common::kPlatformAmiga)
@@ -125,17 +129,20 @@ uint32 Winnie::readObj(int iObj, uint8 *buffer) {
 		sprintf(szFile, IDS_WTP_OBJ_C64, iObj);
 	else if (_vm->getPlatform() == Common::kPlatformApple2GS)
 		sprintf(szFile, IDS_WTP_OBJ_APPLE, iObj);
+
 	Common::File file;
 	if (!file.open(szFile)) {
 		warning ("Could not open file \'%s\'", szFile);
 		return 0;
 	}
+
 	uint32 filelen = file.size();
-	if (_vm->getPlatform() == Common::kPlatformC64) { //Skip the loading address
+	if (_vm->getPlatform() == Common::kPlatformC64) { // Skip the loading address
 		filelen -= 2;
 		file.seek(2, SEEK_CUR);
 	}
-	memset(buffer, 0, sizeof(buffer));
+
+	memset(buffer, 0, 2048);
 	file.read(buffer, filelen);
 	file.close();
 	return filelen;
