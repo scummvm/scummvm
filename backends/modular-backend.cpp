@@ -26,6 +26,7 @@
 
 #include "backends/graphics/graphics.h"
 #include "backends/mutex/mutex.h"
+#include "common/updates.h"
 
 #include "audio/mixer.h"
 #include "graphics/pixelformat.h"
@@ -34,7 +35,8 @@ ModularBackend::ModularBackend()
 	:
 	_mutexManager(0),
 	_graphicsManager(0),
-	_mixer(0) {
+	_mixer(0),
+	_updateManager(0) {
 
 }
 
@@ -43,6 +45,8 @@ ModularBackend::~ModularBackend() {
 	_graphicsManager = 0;
 	delete _mixer;
 	_mixer = 0;
+	delete _updateManager;
+	_updateManager = 0;
 	delete _mutexManager;
 	_mutexManager = 0;
 }

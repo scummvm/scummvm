@@ -134,6 +134,7 @@ _alsa=auto
 _seq_midi=auto
 _timidity=auto
 _zlib=auto
+_sparkle=auto
 _png=auto
 _theoradec=auto
 _faad=auto
@@ -813,6 +814,9 @@ Optional Libraries:
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
+  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (MacOSX only - optional)
+  --disable-sparkle        disable sparkle automatic update support [MacOSX only - autodetect]
+
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
 
@@ -861,6 +865,8 @@ for ac_option in $@; do
 	--disable-mad)            _mad=no         ;;
 	--enable-zlib)            _zlib=yes       ;;
 	--disable-zlib)           _zlib=no        ;;
+	--enable-sparkle)         _sparkle=yes    ;;
+	--disable-sparkle)        _sparkle=no     ;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
 	--disable-png)            _png=no         ;;
@@ -947,6 +953,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		ZLIB_CFLAGS="-I$arg/include"
 		ZLIB_LIBS="-L$arg/lib"
+		;;
+	--with-sparkle-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		SPARKLE_CFLAGS="-F$arg"
+		SPARKLE_LIBS="-F$arg"
 		;;
 	--with-readline-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2969,6 +2980,26 @@ if test `get_engine_build sword25` = yes && test ! "$_zlib" = yes ; then
 	echo "...disabling Broken Sword 2.5 engine. ZLib is required"
 	engine_disable sword25
 fi
+
+#
+# Check for Sparkle
+#
+echocheck "Sparkle"
+if test "$_sparkle" = auto ; then
+	_sparkle=no
+	cat > $TMPC << EOF
+#include <Cocoa/Cocoa.h>
+#include <Sparkle/Sparkle.h>
+int main(void) { SUUpdater *updater = [SUUpdater sharedUpdater]; return 0; }
+EOF
+	cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
+fi
+if test "$_sparkle" = yes ; then
+	LIBS="$LIBS $SPARKLE_LIBS -framework Sparkle"
+	INCLUDES="$INCLUDES $SPARKLE_CFLAGS"
+fi
+define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
+echo "$_sparkle"
 
 #
 # Check for libfluidsynth
