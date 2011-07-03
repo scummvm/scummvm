@@ -20,8 +20,8 @@
  *
  */
 
-#include "graphics/conversion.h"
 #include "graphics/pixelformat.h"
+#include "graphics/yuv_to_rgb.h"
 #include "graphics/decoders/jpeg.h"
 
 #include "common/debug.h"
@@ -81,13 +81,7 @@ const Surface *JPEGDecoder::getSurface() const {
 	const Graphics::Surface *uComponent = getComponent(2);
 	const Graphics::Surface *vComponent = getComponent(3);
 
-	for (uint16 i = 0; i < _h; i++) {
-		for (uint16 j = 0; j < _w; j++) {
-			byte r = 0, g = 0, b = 0;
-			YUV2RGB(*((const byte *)yComponent->getBasePtr(j, i)), *((const byte *)uComponent->getBasePtr(j, i)), *((const byte *)vComponent->getBasePtr(j, i)), r, g, b);
-			*((uint32 *)_rgbSurface->getBasePtr(j, i)) = _rgbSurface->format.RGBToColor(r, g, b);
-		}
-	}
+	convertYUV444ToRGB(_rgbSurface, (byte *)yComponent->pixels, (byte *)uComponent->pixels, (byte *)vComponent->pixels, yComponent->w, yComponent->h, yComponent->pitch, uComponent->pitch);
 
 	return _rgbSurface;
 }
