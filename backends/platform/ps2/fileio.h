@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef __PS2FILE_IO__
@@ -33,13 +30,13 @@
 #include "common/stream.h"
 
 enum {
-	CACHE_SIZE				= 2048 * 32,
-	MAX_READ_STEP			= 2048 * 16,
-	MAX_CACHED_FILES		= 6,
+	CACHE_SIZE		= 2048 * 32,
+	MAX_READ_STEP		= 2048 * 16,
+	MAX_CACHED_FILES	= 6,
 	CACHE_READ_THRESHOLD	= 16 * 2048,
-	CACHE_FILL_MIN			= 2048 * 24,
-	READ_ALIGN				= 64,   // align all reads to the size of an EE cache line
-	READ_ALIGN_MASK			= READ_ALIGN - 1
+	CACHE_FILL_MIN		= 2048 * 24,
+	READ_ALIGN		= 64,   // align all reads to the size of an EE cache line
+	READ_ALIGN_MASK		= READ_ALIGN - 1
 };
 
 // TODO: Make this a subclass of SeekableReadStream & WriteStream
