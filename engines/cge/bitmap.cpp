@@ -471,7 +471,7 @@ bool Bitmap::loadBMP(XFile *f) {
 	      _w = hea.wid;
 	      if ((_m = farnew(byte, _h * _w)) != NULL) {
 		  int16 r = (4 - (hea.wid & 3)) % 4;
-		  byte buf[3]; int i;
+		  byte buf[3];
 		  for (i = _h - 1; i >= 0; i--) {
 		      f->read(_m + (_w * i), _w);
 		      if (r && f->_error == 0)

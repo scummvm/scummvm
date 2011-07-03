@@ -30,7 +30,6 @@
 
 #include "graphics/surface.h"
 #include "cge/general.h"
-#include <stddef.h>
 #include "cge/bitmap.h"
 #include "cge/snail.h"
 #include "cge/cge.h"

@@ -33,9 +33,6 @@
 #include "cge/game.h"
 #include "cge/snail.h"
 #include "cge/cge_main.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 namespace CGE {
 

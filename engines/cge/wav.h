@@ -29,7 +29,6 @@
 #define __CGE_WAV__
 
 #include "cge/general.h"
-#include <string.h>
 
 namespace CGE {
 

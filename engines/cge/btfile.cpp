@@ -28,7 +28,6 @@
 #include "cge/btfile.h"
 #include "common/system.h"
 #include "common/str.h"
-#include <string.h>
 
 namespace CGE {
 
