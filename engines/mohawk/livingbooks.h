@@ -688,6 +688,7 @@ public:
 	LBMode getCurMode() { return _curMode; }
 
 	bool tryLoadPageStart(LBMode mode, uint page);
+	bool loadPage(LBMode mode, uint page, uint subpage);
 	void prevPage();
 	void nextPage();
 
@@ -716,7 +717,6 @@ private:
 	Common::Queue<DelayedEvent> _eventQueue;
 	LBItem *_focus;
 	void destroyPage();
-	bool loadPage(LBMode mode, uint page, uint subpage);
 	void updatePage();
 
 	uint16 _lastSoundOwner, _lastSoundId;
