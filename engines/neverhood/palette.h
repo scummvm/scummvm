@@ -54,6 +54,19 @@ protected:
 	void fadeColor(byte *rgb, byte toR, byte toG, byte toB);
 };
 
+class Palette2 : public Palette {
+public:
+	Palette2(NeverhoodEngine *vm);
+	// TODO: Other ctors
+	Palette2(NeverhoodEngine *vm, uint32 fileHash);
+	~Palette2();
+	void addPalette(uint32 fileHash, int toIndex, int count, int fromIndex);
+	void startFadeToPalette(int counter);
+public:
+	byte *_basePalette;
+	void update();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_PALETTE_H */

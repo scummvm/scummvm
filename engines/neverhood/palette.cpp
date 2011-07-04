@@ -22,8 +22,11 @@
 
 #include "neverhood/palette.h"
 #include "neverhood/resource.h"
+#include "neverhood/screen.h"
 
 namespace Neverhood {
+
+// Palette
 
 Palette::Palette(NeverhoodEngine *vm) : Entity(vm, 0) {
 	_status = 0;
@@ -58,12 +61,12 @@ Palette::Palette(NeverhoodEngine *vm, uint32 fileHash) : Entity(vm, 0) {
 }
 
 Palette::~Palette() {
-	// TODO: _vm->_screen->unsetPaletteData(_palette);
+	_vm->_screen->unsetPaletteData(_palette);
 	delete[] _palette;
 }
 
 void Palette::usePalette() {
-	// TODO: _vm->_screen->setPaletteData(_palette);
+	_vm->_screen->setPaletteData(_palette);
 }
 
 void Palette::addPalette(const char *filename, int toIndex, int count, int fromIndex) {
@@ -76,10 +79,11 @@ void Palette::addPalette(uint32 fileHash, int toIndex, int count, int fromIndex)
 		count = 256 - toIndex;
 	paletteResource.load(fileHash);
 	memcpy(_palette + toIndex * 4, paletteResource.palette() + fromIndex * 4, count * 4);		
-	// TODO: _vm->_screen->testPalette(_palette);
+	_vm->_screen->testPalette(_palette);
 }
 
 void Palette::startFadeToBlack(int counter) {
+	debug("Palette::startFadeToBlack(%d)", counter);
 	if (counter == 0)
 		counter = 1;
 	_fadeToR = 0;
@@ -91,6 +95,7 @@ void Palette::startFadeToBlack(int counter) {
 }
 
 void Palette::startFadeToWhite(int counter) {
+	debug("Palette::startFadeToWhite(%d)", counter);
 	if (counter == 0)
 		counter = 1;
 	_fadeToR = 255;
@@ -102,15 +107,18 @@ void Palette::startFadeToWhite(int counter) {
 }
 
 void Palette::update() {
+	debug("Palette::update() _status = %d", _status);
 	if (_status == 1) {
-		memset(_palette, 0, 1024);
-		_status = 0;
-	} else {
-		for (int i = 0; i < 256; i++) {
-			fadeColor(_palette + i * 4, _fadeToR, _fadeToG, _fadeToB);
+		if (_palCounter > 1) {
+			for (int i = 0; i < 256; i++) {
+				fadeColor(_palette + i * 4, _fadeToR, _fadeToG, _fadeToB);
+			}
+			_vm->_screen->testPalette(_palette);
+			_palCounter--;
+		} else {
+			memset(_palette, 0, 1024);
+			_status = 0;
 		}
-		// TODO: _vm->_screen->testPalette(_palette);
-		_palCounter--;
 	}
 }
 
@@ -120,6 +128,60 @@ void Palette::fadeColor(byte *rgb, byte toR, byte toG, byte toB) {
 	FADE(rgb[1], toG);
 	FADE(rgb[2], toB);
 	#undef FADE
+}
+
+// Palette2
+
+Palette2::Palette2(NeverhoodEngine *vm)
+	: Palette(vm) {
+	_basePalette = new byte[1024];
+	SetUpdateHandler(&Palette2::update);
+}
+
+Palette2::Palette2(NeverhoodEngine *vm, uint32 fileHash)
+	: Palette(vm, fileHash) {
+	_basePalette = new byte[1024];
+	SetUpdateHandler(&Palette2::update);
+}
+
+Palette2::~Palette2() {
+	delete _basePalette;
+}
+
+void Palette2::update() {
+	debug("Palette2::update() _status = %d", _status);
+	if (_status == 1) {
+		Palette::update();
+	} else if (_status == 2) {
+	debug("... _palCounter = %d", _palCounter);
+		if (_palCounter > 1) {
+			for (int i = 0; i < 256; i++) {
+				fadeColor(_palette + i * 4, _basePalette[i * 4 + 0], _basePalette[i * 4 + 1], _basePalette[i * 4 + 2]);
+			}
+			_vm->_screen->testPalette(_palette);
+			_palCounter--;
+		} else {
+			memcpy(_palette, _basePalette, 256 * 4);
+			_status = 0;
+		}
+	}
+}
+
+void Palette2::addPalette(uint32 fileHash, int toIndex, int count, int fromIndex) {
+	PaletteResource paletteResource(_vm);
+	if (toIndex + count > 256)
+		count = 256 - toIndex;
+	paletteResource.load(fileHash);
+	memcpy(_basePalette + toIndex * 4, paletteResource.palette() + fromIndex * 4, count * 4);		
+}
+
+void Palette2::startFadeToPalette(int counter) {
+	debug("Palette2::startFadeToPalette(%d)", counter);
+	if (counter == 0)
+		counter = 1;
+	_palCounter = counter;
+	_fadeStep = 255 / counter;
+	_status = 2;			
 }
 
 } // End of namespace Neverhood

@@ -164,10 +164,14 @@ Common::Error NeverhoodEngine::run() {
 				break;
 			}
 		}
-		
+
+		debug("millis %d", _system->getMillis());		
 		_gameModule->handleUpdate();
 		_gameModule->draw();
-		_system->updateScreen();
+		_screen->wait();
+		_screen->update();
+		
+		debug("---------------------------------------");
 	
 	}
 	

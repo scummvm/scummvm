@@ -22,6 +22,7 @@
 
 #include "neverhood/graphics.h"
 #include "neverhood/resource.h"
+#include "neverhood/screen.h"
 
 namespace Neverhood {
 
@@ -51,7 +52,10 @@ BaseSurface::~BaseSurface() {
 
 void BaseSurface::draw() {
 	debug("BaseSurface::draw()");
-	// TODO
+	if (_surface && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
+		// TODO: _sysRect alternate drawing code (is that used?)
+		_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect);
+	}
 }
 
 void BaseSurface::addDirtyRect() {

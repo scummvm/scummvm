@@ -110,6 +110,8 @@ Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroun
 	_countdown3(countdown3), _countdown2(countdown2), _countdown1(0), _flag(false) {
 
 	debug("Create Scene1501(%08X, %08X, %d, %d)", backgroundFileHash, soundFileHash, countdown2, countdown3);
+	
+	Palette2 *palette2;
 
 	SetUpdateHandler(&Scene1501::update);
 	SetMessageHandler(&Scene1501::handleMessage);
@@ -118,16 +120,14 @@ Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroun
 
 	_background = addBackground(new DirtyBackground(_vm, backgroundFileHash, 0, 0));
 
-	_palette = new Palette(_vm);//DUMMY!
-
-	/* TODO	
-	
-	_palette = new Palette2(_vm);
-	_palette->usePalette();
+	palette2 = new Palette2(_vm);
+	palette2->usePalette();
+	_palette = palette2; 
 	addEntity(_palette);
-	Palette2_sub_47BF00(backgroundFileHash, 0, 256, 0);
-	Palette2_sub_47C060(12);
-	
+	palette2->addPalette(backgroundFileHash, 0, 256, 0);
+	palette2->startFadeToPalette(12);
+
+	/*	
 	if (soundFileHash != 0) {
 		_soundResource.set(soundFileHash);
 		_soundResource.load();
@@ -150,7 +150,7 @@ void Scene1501::update() {
 			_vm->_screen->clear();
 			_parentModule->sendMessage(0x1009, 0, this);
 		}
-	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) || !_soundResource.isPlaying()) {
+	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) /*|| !_soundResource.isPlaying()*/) {
 		_countdown1 = 12;
 		_palette->startFadeToBlack(11);
 	}

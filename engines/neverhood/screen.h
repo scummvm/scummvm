@@ -25,6 +25,7 @@
 
 #include "graphics/surface.h"
 #include "neverhood/neverhood.h"
+#include "neverhood/graphics.h"
 
 namespace Neverhood {
 
@@ -32,6 +33,7 @@ class Screen {
 public:
 	Screen(NeverhoodEngine *vm);
 	~Screen();
+	void update();
 	void wait();
 	void setFps(int fps);
 	int getFps();
@@ -40,6 +42,7 @@ public:
 	void testPalette(byte *paletteData);
 	void updatePalette();
 	void clear();
+	void drawSurface2(Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect);
 protected:
 	NeverhoodEngine *_vm;
 	Graphics::Surface *_backScreen;

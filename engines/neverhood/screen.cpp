@@ -39,7 +39,16 @@ Screen::~Screen() {
 	delete _backScreen;
 }
 
+void Screen::update() {
+	updatePalette();
+	// TODO: Implement actual code
+	_vm->_system->copyRectToScreen((const byte*)_backScreen->pixels, _backScreen->pitch, 0, 0, 640, 480);
+	_vm->_system->updateScreen();
+}
+
 void Screen::wait() {
+	// TODO
+	_vm->_system->delayMillis(40);
 }
 
 void Screen::setFps(int fps) {
@@ -69,6 +78,7 @@ void Screen::testPalette(byte *paletteData) {
 
 void Screen::updatePalette() {
 	if (_paletteChanged && _paletteData) {
+		debug("Screen::updatePalette() Set palette");
 		byte *tempPalette = new byte[768];
 		for (int i = 0; i < 256; i++) {
 			tempPalette[i * 3 + 0] = _paletteData[i * 4 + 0];
@@ -84,5 +94,68 @@ void Screen::updatePalette() {
 void Screen::clear() {
 	memset(_backScreen->pixels, 0, _backScreen->pitch * _backScreen->h);
 }
+
+void Screen::drawSurface2(Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect) {
+
+	int16 destX, destY;
+	NRect ddRect;
+	
+	if (drawRect.x + drawRect.width >= clipRect.x2)
+		ddRect.x2 = clipRect.x2 - drawRect.x;
+	else
+		ddRect.x2 = drawRect.width;
+		
+	if (drawRect.x <= clipRect.x1) {
+		destX = clipRect.x1;
+		ddRect.x1 = clipRect.x1 - drawRect.x;
+	} else {
+		destX = drawRect.x;
+		ddRect.x1 = 0;
+	}
+	
+	if (drawRect.y + drawRect.height >= clipRect.y2)
+		ddRect.y2 = clipRect.y2 - drawRect.y;
+	else
+		ddRect.y2 = drawRect.height;
+	
+	if (drawRect.y <= clipRect.y1) {
+		destY = clipRect.y1;
+		ddRect.y1 = clipRect.y1 - drawRect.y;
+	} else {
+		destY = drawRect.y;
+		ddRect.y1 = 0;
+	}
+	
+	debug("draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
+	
+	byte *source = (byte*)surface->getBasePtr(ddRect.x1, ddRect.y1);
+	byte *dest = (byte*)_backScreen->getBasePtr(destX, destY);
+	int width = ddRect.x2 - ddRect.x1;
+	int height = ddRect.y2 - ddRect.y1;
+	
+	while (height--) {
+		memcpy(dest, source, width);
+		source += surface->pitch;
+		dest += _backScreen->pitch;
+	}
+	
+	#if 0
+	if ( ddRect.right > ddRect.left )
+	{
+	if ( ddRect.top < ddRect.bottom )
+	{
+	(*(int (__stdcall **)(_DWORD, _DWORD, _DWORD, LPDIRECTDRAWSURFACE, struct tagRECT *, unsigned int))(**(_DWORD **)(this + 8) + 28))(
+	*(_DWORD *)(this + 8),
+	destX,
+	destY,
+	ddSurface,
+	&ddRect,
+	blitFlags | (unsigned int)DDBLTFAST_WAIT);
+	}
+	}
+	#endif
+	
+}
+
 
 } // End of namespace Neverhood
