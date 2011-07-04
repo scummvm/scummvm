@@ -207,7 +207,7 @@ bool PNG::read(Common::SeekableReadStream *str) {
 	_stream = str;
 
 	// First, check the PNG signature
-	if (_stream->readUint32BE() != MKTAG(0x89, 0x50, 0x4e, 0x47)) {
+	if (_stream->readUint32BE() != MKTAG(0x89, 'P', 'N', 'G')) {
 		delete _stream;
 		return false;
 	}
