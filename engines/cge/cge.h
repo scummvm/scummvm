@@ -36,10 +36,19 @@
 namespace CGE {
 
 class Console;
+class Sprite;
 
 // our engine debug channels
 enum {
     kCGEDebug = 1 << 0
+};
+
+#define POCKET_NX   8
+
+struct SavTab {
+	void *Ptr;
+	int Len;
+	uint8 Flg;
 };
 
 class CGEEngine : public Engine {
@@ -50,8 +59,17 @@ public:
 	CGEEngine(OSystem *syst, const ADGameDescription *gameDescription);
 	~CGEEngine();
 
-	const ADGameDescription *_gameDescription;
-	bool _isDemo;
+	const   ADGameDescription *_gameDescription;
+	bool   _isDemo;
+	int    _startupMode;
+	int    _demoText;
+	int    _oldLev;
+	bool   _jbw;
+	int    _pocPtr;
+	SavTab _savTab[16];
+	bool   _music;
+	int    _pocref[POCKET_NX];
+	uint8  _volume[2];
 
 	virtual Common::Error run();
 	GUI::Debugger *getDebugger() {
@@ -81,6 +99,7 @@ public:
 	void NONE();
 	void SB();
 	void caveDown();
+	void caveUp();
 	void xCave();
 	void qGame();
 	void SBM();
@@ -93,6 +112,11 @@ public:
 	void setIRQ();
 	void setDMA();
 	void mainLoop();
+	void SaveGame(XFile &file);
+	void switchMusic();
+	void selectPocket(int n);
+	void SNKeep(Sprite *spr, int stp);
+	void SNGive(Sprite *spr, int stp);
 
 private:
 	CGEConsole *_console;

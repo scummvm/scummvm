@@ -37,7 +37,6 @@ namespace CGE {
 #define POCKET_Y    176
 #define POCKET_DX   18
 #define POCKET_DY   22
-#define POCKET_NX   8
 #define POCKET_NY   1
 
 #define POCKET_SX   8
@@ -100,7 +99,6 @@ private:
 };
 
 
-void selectPocket(int n);
 void pocFul();
 
 
@@ -110,7 +108,6 @@ extern  bool _dark;
 extern  int _now;
 extern  int _lev;
 extern  int _maxCave;
-extern  int _pocPtr;
 extern  Bar _barriers[];
 extern  struct Hxy {
 	int _x;

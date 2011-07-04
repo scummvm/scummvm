@@ -46,7 +46,12 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	// Debug/console setup
 	DebugMan.addDebugChannel(kCGEDebug, "general", "CGE general debug channel");
 
-	_isDemo = _gameDescription->flags & ADGF_DEMO;
+	_isDemo      = _gameDescription->flags & ADGF_DEMO;
+	_startupMode = 1;
+	_demoText    = DEMO_TEXT;
+	_oldLev      = 0;
+	_jbw         = false;
+	_pocPtr      = 0;
 
 }
 
@@ -68,7 +73,7 @@ void CGEEngine::setup() {
 	_vga = new Vga(M13H);
 	_heart = new Heart;
 	_hero = new WALK(this, NULL);
-	_sys = new SYSTEM(this);
+	_sys = new System(this);
 	_pocLight = new Sprite(this, LI);
 	for (int i = 0; i < POCKET_NX; i++)
 		_pocket[i] = new Sprite(this, NULL);
@@ -103,6 +108,63 @@ void CGEEngine::setup() {
 	_keyboard = new Keyboard();
 	_eventManager = new EventManager();
 	_offUseCount = atoi(_text->getText(OFF_USE_COUNT));
+	_music = true;
+
+	for (int i = 0; i < POCKET_NX; i++)
+		_pocref[i] = -1;
+	_volume[0] = 0;
+	_volume[1] = 0;
+
+	_savTab[0].Ptr = &_now;
+	_savTab[0].Len = sizeof(_now);
+	_savTab[0].Flg = 1;
+	_savTab[1].Ptr = &_oldLev;
+	_savTab[1].Len = sizeof(_oldLev);
+	_savTab[1].Flg = 1;
+	_savTab[2].Ptr = &_demoText;
+	_savTab[2].Len = sizeof(_demoText);
+	_savTab[2].Flg = 1;
+	_savTab[3].Ptr = &_game;
+	_savTab[3].Len = sizeof(_game);
+	_savTab[3].Flg = 1;
+	_savTab[4].Ptr = &_game;
+	_savTab[4].Len = sizeof(_game);
+	_savTab[4].Flg = 1;
+	_savTab[5].Ptr = &_game;
+	_savTab[5].Len = sizeof(_game);
+	_savTab[5].Flg = 1;
+	_savTab[6].Ptr = &_game;
+	_savTab[6].Len = sizeof(_game);
+	_savTab[6].Flg = 1;
+	_savTab[7].Ptr = &_game;
+	_savTab[7].Len = sizeof(_game);
+	_savTab[7].Flg = 1;
+	_savTab[8].Ptr = &_vga->_mono;
+	_savTab[8].Len = sizeof(_vga->_mono);
+	_savTab[8].Flg = 0;
+	_savTab[9].Ptr = &_music;
+	_savTab[9].Len = sizeof(_music);
+	_savTab[9].Flg = 1;
+	_savTab[10].Ptr = _volume;
+	_savTab[10].Len = sizeof(_volume);
+	_savTab[10].Flg = 1;
+	_savTab[11].Ptr = _flag;
+	_savTab[11].Len = sizeof(_flag);
+	_savTab[11].Flg = 1;
+	_savTab[12].Ptr = _heroXY;
+//	_savTab[12].Len = sizeof(_heroXY); FIXME: illegal sizeof
+	_savTab[12].Len = 0;
+	_savTab[12].Flg = 1;
+	_savTab[13].Ptr = _barriers;
+//	_savTab[13].Len = sizeof(_barriers); FIXME: illegal sizeof
+	_savTab[13].Len = 0;
+	_savTab[13].Flg = 1;
+	_savTab[14].Ptr = _pocref;
+	_savTab[14].Len = sizeof(_pocref);
+	_savTab[14].Flg = 1;
+	_savTab[15].Ptr = NULL;
+	_savTab[15].Len = 0;
+	_savTab[15].Flg = 0;
 }
 
 CGEEngine::~CGEEngine() {

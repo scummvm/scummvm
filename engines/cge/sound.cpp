@@ -35,85 +35,84 @@
 
 namespace CGE {
 
-bool  _music  = true;
-FX    _fx     = 16;   // must precede SOUND!!
-SOUND _sound;
+Fx    _fx     = 16;   // must precede SOUND!!
+Sound _sound;
 
 
-SOUND::SOUND(void) {
+Sound::Sound() {
 	if (Startup::_soundOk)
-		Open();
+		open();
 }
 
 
-SOUND::~SOUND(void) {
-	Close();
+Sound::~Sound() {
+	close();
 }
 
 
-void SOUND::Close(void) {
-	KillMIDI();
+void Sound::close() {
+	killMidi();
 	sndDone();
 }
 
 
-void SOUND::Open(void) {
+void Sound::open() {
 	sndInit();
-	Play(_fx[30000], 8);
+	play(_fx[30000], 8);
 }
 
 
-void SOUND::Play(DATACK *wav, int pan, int cnt) {
+void Sound::play(DataCk *wav, int pan, int cnt) {
 	if (wav) {
-		Stop();
-		smpinf._saddr = (uint8 *) &*(wav->EAddr());
-		smpinf._slen = (uint16)wav->Size();
-		smpinf._span = pan;
-		smpinf._sflag = cnt;
-		sndDigiStart(&smpinf);
+		stop();
+		_smpinf._saddr = (uint8 *) &*(wav->eAddr());
+		_smpinf._slen = (uint16)wav->size();
+		_smpinf._span = pan;
+		_smpinf._sflag = cnt;
+		sndDigiStart(&_smpinf);
 	}
 }
 
 
-void SOUND::Stop(void) {
-	sndDigiStop(&smpinf);
+void Sound::stop() {
+	sndDigiStop(&_smpinf);
 }
 
 
-FX::FX(int size) : Emm(0L), Current(NULL) {
-	Cache = new HAN[size];
-	for (Size = 0; Size < size; Size++) {
-		Cache[Size].Ref = 0;
-		Cache[Size].Wav = NULL;
+Fx::Fx(int size) : _emm(0L), _current(NULL) {
+	_cache = new Han[size];
+	for (_size = 0; _size < size; _size++) {
+		_cache[_size]._ref = 0;
+		_cache[_size]._wav = NULL;
 	}
 }
 
 
-FX::~FX(void) {
-	Clear();
-	delete[] Cache;
+Fx::~Fx() {
+	clear();
+	delete[] _cache;
 }
 
 
-void FX::Clear(void) {
-	HAN *p, * q;
-	for (p = Cache, q = p + Size; p < q; p++) {
-		if (p->Ref) {
-			p->Ref = 0;
-			delete p->Wav;
-			p->Wav = NULL;
+void Fx::clear() {
+	Han *p, * q;
+	for (p = _cache, q = p + _size; p < q; p++) {
+		if (p->_ref) {
+			p->_ref = 0;
+			delete p->_wav;
+			p->_wav = NULL;
 		}
 	}
-	Emm.release();
-	Current = NULL;
+	_emm.release();
+	_current = NULL;
 }
 
 
-int FX::Find(int ref) {
-	HAN *p, * q;
+int Fx::find(int ref) {
+	Han *p, * q;
 	int i = 0;
-	for (p = Cache, q = p + Size; p < q; p++) {
-		if (p->Ref == ref)
+	for (p = _cache, q = p + _size; p < q; p++) {
+		if (p->_ref == ref)
 			break;
 		else
 			++i;
@@ -122,60 +121,60 @@ int FX::Find(int ref) {
 }
 
 
-void FX::Preload(int ref0) {
-	HAN *CacheLim = Cache + Size;
+void Fx::preload(int ref0) {
+	Han *cacheLim = _cache + _size;
 	int ref;
 
 	for (ref = ref0; ref < ref0 + 10; ref++) {
 		static char fname[] = "FX00000.WAV";
 		wtom(ref, fname + 2, 10, 5);
 		INI_FILE file = INI_FILE(fname);
-		DATACK *wav = LoadWave(&file, &Emm);
+		DataCk *wav = loadWave(&file, &_emm);
 		if (wav) {
-			HAN *p = &Cache[Find(0)];
-			if (p >= CacheLim)
+			Han *p = &_cache[find(0)];
+			if (p >= cacheLim)
 				break;
-			p->Wav = wav;
-			p->Ref = ref;
+			p->_wav = wav;
+			p->_ref = ref;
 		}
 	}
 }
 
 
-DATACK *FX::Load(int idx, int ref) {
+DataCk *Fx::load(int idx, int ref) {
 	static char fname[] = "FX00000.WAV";
 	wtom(ref, fname + 2, 10, 5);
 
 	INI_FILE file = INI_FILE(fname);
-	DATACK *wav = LoadWave(&file, &Emm);
+	DataCk *wav = loadWave(&file, &_emm);
 	if (wav) {
-		HAN *p = &Cache[idx];
-		p->Wav = wav;
-		p->Ref = ref;
+		Han *p = &_cache[idx];
+		p->_wav = wav;
+		p->_ref = ref;
 	}
 	return wav;
 }
 
 
-DATACK *FX::operator [](int ref) {
+DataCk *Fx::operator [](int ref) {
 	int i;
-	if ((i = Find(ref)) < Size)
-		Current = Cache[i].Wav;
+	if ((i = find(ref)) < _size)
+		_current = _cache[i]._wav;
 	else {
-		if ((i = Find(0)) >= Size) {
-			Clear();
+		if ((i = find(0)) >= _size) {
+			clear();
 			i = 0;
 		}
-		Current = Load(i, ref);
+		_current = load(i, ref);
 	}
-	return Current;
+	return _current;
 }
 
 
-static  uint8  *midi    = NULL;
+static uint8 *midi = NULL;
 
 
-void KillMIDI(void) {
+void killMidi() {
 	sndMidiStop();
 	if (midi) {
 		delete[] midi;
@@ -184,11 +183,11 @@ void KillMIDI(void) {
 }
 
 
-void LoadMIDI(int ref) {
+void loadMidi(int ref) {
 	static char fn[] = "00.MID";
 	wtom(ref, fn, 10, 2);
 	if (INI_FILE::exist(fn)) {
-		KillMIDI();
+		killMidi();
 		INI_FILE mid = fn;
 		if (mid._error == 0) {
 			uint16 siz = (uint16) mid.size();
@@ -196,7 +195,7 @@ void LoadMIDI(int ref) {
 			if (midi) {
 				mid.read(midi, siz);
 				if (mid._error)
-					KillMIDI();
+					killMidi();
 				else
 					sndMidiStart(midi);
 			}

@@ -37,44 +37,42 @@ namespace CGE {
 #define BAD_MIDI_TEXT   98
 
 
-class SOUND {
+class Sound {
 public:
-	SmpInfo smpinf;
-	SOUND(void);
-	~SOUND(void);
-	void Open(void);
-	void Close(void);
-	void Play(DATACK *wav, int pan, int cnt = 1);
-	void Stop(void);
+	SmpInfo _smpinf;
+	Sound();
+	~Sound();
+	void open();
+	void close();
+	void play(DataCk *wav, int pan, int cnt = 1);
+	void stop();
 };
 
 
-class FX {
-	EMM Emm;
-	struct HAN {
-		int Ref;
-		DATACK *Wav;
-	} *Cache;
-	int Size;
-	DATACK *Load(int idx, int ref);
-	int Find(int ref);
+class Fx {
+	Emm _emm;
+	struct Han {
+		int _ref;
+		DataCk *_wav;
+	} *_cache;
+	int _size;
+	DataCk *load(int idx, int ref);
+	int find(int ref);
 public:
-	DATACK *Current;
-	FX(int size = 16);
-	~FX(void);
-	void Clear(void);
-	void Preload(int ref0);
-	DATACK *operator[](int ref);
+	DataCk *_current;
+	Fx(int size = 16);
+	~Fx();
+	void clear();
+	void preload(int ref0);
+	DataCk *operator[](int ref);
 };
 
-
-extern  bool   _music;
-extern  SOUND  _sound;
-extern  FX     _fx;
+extern  Sound  _sound;
+extern  Fx     _fx;
 
 
-void        LoadMIDI(int ref);
-void        KillMIDI();
+void loadMidi(int ref);
+void killMidi();
 
 } // End of namespace CGE
 
