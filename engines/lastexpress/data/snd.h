@@ -59,7 +59,7 @@ public:
 
 protected:
 	void loadHeader(Common::SeekableReadStream *in);
-	Audio::AudioStream *makeDecoder(Common::SeekableReadStream *in, uint32 size) const;
+	Audio::AudioStream *makeDecoder(Common::SeekableReadStream *in, uint32 size, int32 filterId = -1) const;
 	void play(Audio::AudioStream *as);
 
 	uint32 _size;   ///< data size
@@ -76,11 +76,13 @@ public:
 	StreamedSound();
 	~StreamedSound();
 
-	bool load(Common::SeekableReadStream *stream);
-
+	bool load(Common::SeekableReadStream *stream, int32 filterId = -1);
 	virtual bool isFinished();
 
+	void setFilterId(int32 filterId);
+
 private:
+	Audio::AudioStream *_as;
 	bool _loaded;
 };
 
