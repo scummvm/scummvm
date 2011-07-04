@@ -128,7 +128,8 @@ Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType
 
 MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// Query the selected music device (defaults to MT_AUTO device).
-	DeviceHandle hdl = getDeviceHandle(ConfMan.get("music_driver"));
+	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
+	DeviceHandle hdl = getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
 	DeviceHandle reslt = 0;
 
 	_forceTypeMT32 = false;
@@ -200,7 +201,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	if (getMusicType(hdl) == MT_INVALID) {
 		// If the expressly selected driver or device cannot be found (no longer compiled in, turned off, etc.)
 		// we display a warning and continue.
-		failedDevStr = ConfMan.get("music_driver");
+		failedDevStr = selDevStr;
 		Common::String warningMsg = Common::String::format(_("The selected audio device '%s' was not found (e.g. might be turned off or disconnected). Attempting to fall back to the next available device..."), failedDevStr.c_str());
 		GUI::MessageDialog dialog(warningMsg);
 		dialog.runModal();
@@ -230,13 +231,15 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			// If a preferred MT32 or GM device has been selected that device gets returned if available.
 			Common::String devStr;
 			if (flags & MDT_PREFER_MT32)
-				devStr = ConfMan.get("mt32_device");
+				devStr = ConfMan.hasKey("mt32_device") ? ConfMan.get("mt32_device") : Common::String("null");
 			else if (flags & MDT_PREFER_GM)
-				devStr = ConfMan.get("gm_device");
+				devStr = ConfMan.hasKey("gm_device") ? ConfMan.get("gm_device") : Common::String("null");
 			else
 				devStr = "auto";
-
-			hdl = getDeviceHandle(devStr);
+			
+			// Default to Null device here, since we also register a default null setting for
+			// the MT32 or GM device in the config manager.
+			hdl = getDeviceHandle(devStr.empty() ? Common::String("null") : devStr);
 			const MusicType type = getMusicType(hdl);
 
 			// If we have a "Don't use GM/MT-32" setting we skip this part and jump
