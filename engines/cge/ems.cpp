@@ -41,10 +41,10 @@ enum EMM_FUN {
 };
 
 
-void *EMM::_frame = NULL;
+void *Emm::_frame = NULL;
 
 
-EMM::EMM(long size): _han(-1), _top(0), _lim(0), _list(NULL) {
+Emm::Emm(long size): _han(-1), _top(0), _lim(0), _list(NULL) {
 	/*
 	    if (Test())
 	    {
@@ -82,7 +82,7 @@ EMM::EMM(long size): _han(-1), _top(0), _lim(0), _list(NULL) {
 }
 
 
-EMM::~EMM(void) {
+Emm::~Emm(void) {
 	/* FIXME
 	  Release();
 	  if (Han >= 0)
@@ -97,7 +97,7 @@ EMM::~EMM(void) {
 }
 
 
-bool EMM::test() {
+bool Emm::test() {
 	/*
 	  static char e[] = "EMMXXXX0";
 
@@ -130,7 +130,7 @@ bool EMM::test() {
 }
 
 
-EMS *EMM::alloc(uint16 siz) {
+Ems *Emm::alloc(uint16 siz) {
 	/*
 	  long size = SIZ(siz),
 	       top = Top;
@@ -167,14 +167,14 @@ EMS *EMM::alloc(uint16 siz) {
 	    }
 	  fail: return NULL;
 	*/
-	warning("STUB: EMM::alloc");
+	warning("STUB: Emm::alloc");
 	return NULL;
 }
 
 
-void EMM::release() {
+void Emm::release() {
 	while (_list) {
-		EMS *e = _list;
+		Ems *e = _list;
 		_list = e->_next;
 		delete e;
 	}
@@ -182,11 +182,11 @@ void EMM::release() {
 }
 
 
-EMS::EMS(void) : _ptr(0), _size(0), _next(NULL) {
+Ems::Ems() : _ptr(0), _size(0), _next(NULL) {
 }
 
 
-void *EMS::operator & () const {
+void *Ems::operator & () const {
 	/*
 	  uint16 pgn = (uint16) (Ptr >> 14),
 	       off = (uint16) Ptr & PAGE_MASK,
@@ -213,12 +213,12 @@ void *EMS::operator & () const {
 
 	  return (void *) (EMM::Frame + (void *) off);
 	*/
-	warning("STUB: EMS::operator &");
+	warning("STUB: Ems::operator &");
 	return NULL;
 }
 
 
-uint16 EMS::size() {
+uint16 Ems::size() {
 	return _size;
 }
 

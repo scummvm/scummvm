@@ -60,7 +60,6 @@ extern  Sprite *_pocLight;
 //	int      _pocPtr      =  0;
 //-------------------------------------------------------------------------
 extern  Sprite *_pocket[];
-extern  int     _pocPtr;
 
 static void SNGame(Sprite *spr, int num) {
 	switch (num) {
@@ -290,7 +289,7 @@ int findPocket(Sprite *spr) {
 }
 
 
-void selectPocket(int n) {
+void CGEEngine::selectPocket(int n) {
 	if (n < 0 || (_pocLight->_seqPtr && _pocPtr == n)) {
 		_pocLight->step(0);
 		n = findPocket(NULL);
@@ -591,10 +590,10 @@ void SNSwap(Sprite *spr, int xref) {
 		bool was1 = (was == 0 || was == _now);
 		bool xwas1 = (xwas == 0 || xwas == _now);
 
-		Swap(spr->_cave, xspr->_cave);
-		Swap(spr->_x, xspr->_x);
-		Swap(spr->_y, xspr->_y);
-		Swap(spr->_z, xspr->_z);
+		swap(spr->_cave, xspr->_cave);
+		swap(spr->_x, xspr->_x);
+		swap(spr->_y, xspr->_y);
+		swap(spr->_z, xspr->_z);
 		if (spr->_flags._kept) {
 			int n = findPocket(spr);
 			if (n >= 0)
@@ -762,14 +761,14 @@ void SNKill(Sprite *spr) {
 static void SNSound(Sprite *spr, int wav, int cnt) {
 	if (_sndDrvInfo._dDev) {
 		if (wav == -1)
-			_sound.Stop();
+			_sound.stop();
 		else
-			_sound.Play(_fx[wav], (spr) ? ((spr->_x + spr->_w / 2) / (SCR_WID / 16)) : 8, cnt);
+			_sound.play(_fx[wav], (spr) ? ((spr->_x + spr->_w / 2) / (SCR_WID / 16)) : 8, cnt);
 	}
 }
 
 
-void SNKeep(Sprite *spr, int stp) {
+void CGEEngine::SNKeep(Sprite *spr, int stp) {
 	selectPocket(-1);
 	if (spr && ! spr->_flags._kept && _pocket[_pocPtr] == NULL) {
 		SNSound(spr, 3, 1);
@@ -785,7 +784,7 @@ void SNKeep(Sprite *spr, int stp) {
 }
 
 
-void SNGive(Sprite *spr, int stp) {
+void CGEEngine::SNGive(Sprite *spr, int stp) {
 	if (spr) {
 		int p = findPocket(spr);
 		if (p >= 0) {
@@ -956,13 +955,13 @@ void Snail::runCom() {
 					if (sprel == _hero && sprel->seqTest(-1))
 						sprel->step(HTALK);
 					_text->say(_text->getText(snc->_val), sprel);
-					_sys->FunDel = HEROFUN0;
+					_sys->_funDel = HEROFUN0;
 				}
 				break;
 			case SNINF      :
 				if (_talkEnable) {
 					_vm->inf(_text->getText(snc->_val));
-					_sys->FunDel = HEROFUN0;
+					_sys->_funDel = HEROFUN0;
 				}
 				break;
 			case SNTIME     :
@@ -998,10 +997,10 @@ void Snail::runCom() {
 				SNUncover(sprel, (snc->_val >= 0) ? locate(snc->_val) : ((Sprite *) snc->_ptr));
 				break;
 			case SNKEEP     :
-				SNKeep(sprel, snc->_val);
+				_vm->SNKeep(sprel, snc->_val);
 				break;
 			case SNGIVE     :
-				SNGive(sprel, snc->_val);
+				_vm->SNGive(sprel, snc->_val);
 				break;
 			case SNGAME     :
 				SNGame(sprel, snc->_val);

@@ -70,7 +70,7 @@ public:
 };
 
 
-extern EMM _miniEmm;
+extern Emm _miniEmm;
 
 const char *usrPath(const char *nam);
 
