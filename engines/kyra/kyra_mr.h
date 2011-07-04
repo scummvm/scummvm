@@ -105,8 +105,6 @@ private:
 	void updateWithText();
 	void updateMouse();
 
-	void pauseEngineIntern(bool pause);
-
 	// sound specific
 private:
 	void playMenuAudioFile();

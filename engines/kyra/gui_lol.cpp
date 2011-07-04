@@ -2580,7 +2580,7 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 
 			// Trim long GMM save descriptions to fit our save slots
 			int fC = _screen->getTextWidth(s);
-			while (strlen(s) && fC >= saveSlotMaxLen) {
+			while (s[0] && fC >= saveSlotMaxLen) {
 				s[strlen(s) - 1]  = 0;
 				fC = _screen->getTextWidth(s);
 			}

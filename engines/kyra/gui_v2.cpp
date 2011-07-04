@@ -460,7 +460,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 			// Trim long GMM save descriptions to fit our save slots
 			_screen->_charWidth = -2;
 			int fC = _screen->getTextWidth(s);
-			while (strlen(s) && fC > 240) {
+			while (s[0] && fC > 240) {
 				s[strlen(s) - 1]  = 0;
 				fC = _screen->getTextWidth(s);
 			}
