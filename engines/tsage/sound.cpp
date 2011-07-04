@@ -2485,7 +2485,10 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 
 	_mixer = _vm->_mixer;
 	_sampleRate = _mixer->getOutputRate();
-	_opl = makeAdLibOPL(_sampleRate);
+	_opl = OPL::Config::create();
+	assert(_opl);
+	_opl->init(_sampleRate);
+		
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	Common::set_to(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
@@ -2504,7 +2507,7 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 AdlibSoundDriver::~AdlibSoundDriver() {
 	DEALLOCATE(_patchData);
 	_mixer->stopHandle(_soundHandle);
-	OPLDestroy(_opl);
+	delete _opl;
 }
 
 bool AdlibSoundDriver::open() {
@@ -2622,7 +2625,7 @@ void AdlibSoundDriver::flush() {
 
 	while (!_queue.empty()) {
 		RegisterValue v = _queue.pop();
-		OPLWriteReg(_opl, v._regNum, v._value);
+		_opl->writeReg(v._regNum, v._value);
 	}
 }
 
@@ -2760,7 +2763,7 @@ void AdlibSoundDriver::update(int16 *buf, int len) {
 		}
 		samplesLeft -= count;
 		len -= count;
-		YM3812UpdateOne(_opl, buf, count);
+		_opl->readBuffer(buf, count);
 		if (samplesLeft == 0) {
 			flush();
 			samplesLeft = _sampleRate / 50;
