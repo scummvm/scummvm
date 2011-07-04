@@ -251,9 +251,9 @@ void TextObject::setupText() {
 
 	for (int j = 0; j < _numberLines; j++) {
 		int nextLinePos, cutLen;
-		const char *pos = strchr(message.c_str(), '\n');
-		if (pos) {
-			nextLinePos = pos - message.c_str();
+		const char *breakPos = strchr(message.c_str(), '\n');
+		if (breakPos) {
+			nextLinePos = breakPos - message.c_str();
 			cutLen = nextLinePos + 1;
 		} else {
 			nextLinePos = message.size();
