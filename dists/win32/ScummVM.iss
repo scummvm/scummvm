@@ -1,8 +1,12 @@
 [Setup]
-DefaultDirName={pf}\ScummVM
 AppCopyright=2011
 AppName=ScummVM
 AppVerName=ScummVM Git
+AppPublisher=The ScummVM Team
+AppPublisherURL=http://www.scummvm.org/
+AppSupportURL=http://www.scummvm.org/
+AppUpdatesURL=http://www.scummvm.org/
+DefaultDirName={pf}\ScummVM
 DefaultGroupName=ScummVM
 AllowNoIcons=true
 AlwaysUsePersonalGroup=false
@@ -14,7 +18,8 @@ DisableStartupPrompt=true
 AppendDefaultDirName=false
 SolidCompression=true
 DirExistsWarning=no
-SetupIconFile=scummvm.ico
+SetupIconFile=graphics\scummvm-install.ico
+WizardImageFile=graphics\left.bmp
 ShowLanguageDialog=yes
 LanguageDetectionMethod=uilanguage
 
@@ -73,7 +78,6 @@ Source: drascula.dat; DestDir: {app}; Flags: ignoreversion
 Source: hugo.dat; DestDir: {app}; Flags: ignoreversion
 Source: kyra.dat; DestDir: {app}; Flags: ignoreversion
 Source: lure.dat; DestDir: {app}; Flags: ignoreversion
-Source: m4.dat; DestDir: {app}; Flags: ignoreversion
 Source: pred.dic; DestDir: {app}; Flags: ignoreversion
 Source: queen.tbl; DestDir: {app}; Flags: ignoreversion
 Source: sky.cpt; DestDir: {app}; Flags: ignoreversion
