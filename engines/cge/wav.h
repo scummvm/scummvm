@@ -37,114 +37,111 @@ namespace CGE {
 #define IBM_FORMAT_ALAW     0x0102
 #define IBM_FORMAT_ADPCM    0x0103
 
+typedef char FourCC[4];             // Four-character code
 
-typedef char FOURCC[4];             // Four-character code
-typedef uint32 CKSIZE;              // 32-bit unsigned size
-
-
-class CKID { // Chunk type identifier
+class ChunkId { // Chunk type identifier
 	union {
-		FOURCC Tx;
-		uint32 Id;
+		FourCC _tx;
+		uint32 _id;
 	};
 protected:
 	static XFile *ckFile;
 public:
-	CKID(FOURCC t) {
-		memcpy(Tx, t, sizeof(Tx));
+	ChunkId(FourCC t) {
+		memcpy(_tx, t, sizeof(_tx));
 	}
-	CKID(uint32 d) {
-		Id = d;
+	ChunkId(uint32 d) {
+		_id = d;
 	}
-	CKID(XFile *xf) {
-		(ckFile = xf)->read(Tx, sizeof(Tx));
+	ChunkId(XFile *xf) {
+		(ckFile = xf)->read(_tx, sizeof(_tx));
 	}
-	bool operator !=(CKID &X) {
-		return Id != X.Id;
+	bool operator !=(ChunkId &X) {
+		return _id != X._id;
 	}
-	bool operator ==(CKID &X) {
-		return Id == X.Id;
+	bool operator ==(ChunkId &X) {
+		return _id == X._id;
 	}
-	const char *Name(void);
+	const char *name();
 };
 
 
-class CKHEA : public CKID {
+class CkHea : public ChunkId {
 protected:
-	CKSIZE ckSize;        // Chunk size field (size of ckData)
+	uint32 _ckSize;        // Chunk size field (size of ckData)
 public:
-	CKHEA(XFile *xf) : CKID(xf) {
-		XRead(xf, &ckSize);
+	CkHea(XFile *xf) : ChunkId(xf) {
+		XRead(xf, &_ckSize);
 	}
-	CKHEA(char id[]) : CKID(id), ckSize(0) { }
-	void Skip(void);
-	CKSIZE Size(void) {
-		return ckSize;
+	CkHea(char id[]) : ChunkId(id), _ckSize(0) { }
+	void skip();
+	uint32 size() {
+		return _ckSize;
 	}
 };
 
 
-class FMTCK : public CKHEA {
-	struct WAV {
-		uint16 wFormatTag;         // Format category
-		uint16 wChannels;          // Number of channels
-		uint32 dwSamplesPerSec;    // Sampling rate
-		uint32 dwAvgBytesPerSec;   // For buffer estimation
-		uint16 wBlockAlign;        // Data block size
-	} Wav;
+class FmtCk : public CkHea {
+	struct Wav {
+		uint16 _wFormatTag;         // Format category
+		uint16 _wChannels;          // Number of channels
+		uint32 _dwSamplesPerSec;    // Sampling rate
+		uint32 _dwAvgBytesPerSec;   // For buffer estimation
+		uint16 _wBlockAlign;        // Data block size
+	} _wav;
 
 	union {
 		struct {
-			uint16 wBitsPerSample;      // Sample size
-		} Pcm;
+			uint16 _wBitsPerSample;      // Sample size
+		} _pcm;
 	};
 public:
-	FMTCK(CKHEA &hea);
-	inline  uint16 Channels(void) {
-		return Wav.wChannels;
+	FmtCk(CkHea &hea);
+	inline  uint16 channels() {
+		return _wav._wChannels;
 	}
-	inline uint32 SmplRate(void) {
-		return Wav.dwSamplesPerSec;
+	inline uint32 smplRate() {
+		return _wav._dwSamplesPerSec;
 	}
-	inline uint32 ByteRate(void) {
-		return Wav.dwAvgBytesPerSec;
+	inline uint32 byteRate() {
+		return _wav._dwAvgBytesPerSec;
 	}
-	inline  uint16 BlckSize(void) {
-		return Wav.wBlockAlign;
+	inline uint16 blckSize() {
+		return _wav._wBlockAlign;
 	}
-	inline  uint16 SmplSize(void) {
-		return Pcm.wBitsPerSample;
+	inline uint16 smplSize() {
+		return _pcm._wBitsPerSample;
 	}
 };
 
 
-class DATACK : public CKHEA {
-	bool e;
+class DataCk : public CkHea {
+	bool _e;
 	union {
-		uint8 *Buf;
-		EMS *EBuf;
+		uint8 *_buf;
+		Ems *_eBuf;
 	};
 public:
-	DATACK(CKHEA &hea);
-	DATACK(CKHEA &hea, EMM *emm);
-	DATACK(int first, int last);
-	~DATACK(void);
-	inline uint8 *Addr(void) {
-		return Buf;
+	DataCk(CkHea &hea);
+	DataCk(CkHea &hea, Emm *emm);
+	DataCk(int first, int last);
+	~DataCk();
+	inline uint8 *addr() {
+		return _buf;
 	}
-	inline EMS *EAddr(void) {
-		return EBuf;
+	inline Ems *eAddr() {
+		return _eBuf;
 	}
 };
 
 
-extern  CKID    RIFF;
-extern  CKID    WAVE;
-extern  CKID    FMT;
-extern  CKID    DATA;
+extern ChunkId _riff;
+extern ChunkId _wave;
+extern ChunkId _fmt;
+extern ChunkId _data;
 
 
-DATACK     *LoadWave(XFile *file, EMM *emm = NULL);
+DataCk *loadWave(XFile *file, Emm *emm = NULL);
 
 } // End of namespace CGE
 

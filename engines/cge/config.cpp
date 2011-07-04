@@ -143,7 +143,7 @@ static Choice BlsterDMA[] = {
 
 void CGEEngine::selectSound() {
 	int i;
-	_sound.Close();
+	_sound.close();
 	if (Vmenu::_addr)
 		SNPOST_(SNKILL, -1, 0, Vmenu::_addr);
 	inf(_text->getText(STYPE_TEXT));
@@ -201,7 +201,7 @@ static void select(Choice *cho, int hlp) {
 void CGEEngine::NONE() {
 	_sndDrvInfo._dDev = DEV_QUIET;
 	_sndDrvInfo._mDev = DEV_QUIET;
-	_sound.Open();
+	_sound.open();
 }
 
 
@@ -249,7 +249,7 @@ void CGEEngine::AUTO() {
 	_sndDrvInfo._dDev = DEV_AUTO;
 	_sndDrvInfo._mDev = DEV_AUTO;
 	reset();
-	_sound.Open();
+	_sound.open();
 }
 
 
@@ -261,7 +261,7 @@ void CGEEngine::setPortD() {
 
 void CGEEngine::setPortM() {
 	_sndDrvInfo._mBase = xdeco(MIDIPorts[Vmenu::_recent]._text);
-	_sound.Open();
+	_sound.open();
 }
 
 
@@ -276,7 +276,7 @@ void CGEEngine::setDMA() {
 	if (_sndDrvInfo._mDev != _sndDrvInfo._dDev)
 		select(MIDIPorts, MPORT_TEXT);
 	else
-		_sound.Open();
+		_sound.open();
 }
 
 } // End of namespace CGE

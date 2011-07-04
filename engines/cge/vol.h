@@ -70,28 +70,20 @@ private:
 	long _begMark;
 	long _endMark;
 
-	void readBuff(void);
-	void writeBuff(void) { }
+	void readBuff();
+	void writeBuff() { }
 	void make(const char *fspec);
 public:
 	VFile(const char *name, IOMODE mode = REA);
 	~VFile();
+
 	static void init();
 	static void deinit();
-
 	static bool exist(const char *name);
 	static const char *next();
-	long mark() {
-		return (_bufMark + _ptr) - _begMark;
-	}
-	long size() {
-		return _endMark - _begMark;
-	}
-	long seek(long pos) {
-		_recent = NULL;
-		_lim = 0;
-		return (_bufMark = _begMark + pos);
-	}
+	long mark();
+	long size();
+	long seek(long pos);
 };
 
 

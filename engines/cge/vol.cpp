@@ -105,4 +105,18 @@ void VFile::readBuff() {
 	_ptr = 0;
 }
 
+long VFile::mark() {
+	return (_bufMark + _ptr) - _begMark;
+}
+
+long VFile::size() {
+	return _endMark - _begMark;
+}
+
+long VFile::seek(long pos) {
+	_recent = NULL;
+	_lim = 0;
+	return (_bufMark = _begMark + pos);
+}
+
 } // End of namespace CGE

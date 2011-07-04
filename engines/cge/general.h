@@ -109,41 +109,41 @@ public:
 };
 
 
-class EMS;
+class Ems;
 
 
-class EMM {
-	friend class EMS;
+class Emm {
+	friend class Ems;
 	bool test();
 
 	long _top;
 	long _lim;
-	EMS *_list;
+	Ems *_list;
 	int _han;
 	static void *_frame;
 public:
-	EMM(long size = 0);
-	~EMM();
-	EMS *alloc(uint16 siz);
+	Emm(long size = 0);
+	~Emm();
+	Ems *alloc(uint16 siz);
 	void release();
 };
 
 
-class EMS {
-	friend class EMM;
-	EMM *_emm;
+class Ems {
+	friend class Emm;
+	Emm *_emm;
 	long _ptr;
 	uint16 _size;
-	EMS *_next;
+	Ems *_next;
 public:
-	EMS();
+	Ems();
 	void *operator & () const;
 	uint16 size(void);
 };
 
 
 template <class T>
-void Swap(T &A, T &B) {
+void swap(T &A, T &B) {
 	T a = A;
 	A = B;
 	B = a;

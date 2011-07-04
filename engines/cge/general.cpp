@@ -326,7 +326,7 @@ void sndMidiStop() {
 	// FIXME: STUB: sndMIDIStop
 }
 
-DATACK *LoadWave(XFile *file, EMM *emm) {
+DataCk *loadWave(XFile *file, Emm *emm) {
 	warning("STUB: LoadWave");
 	return NULL;
 }
@@ -394,9 +394,9 @@ Engine_::~Engine_() {
 	warning("STUB: Engine_::~Engine_");
 }
 
-DATACK::~DATACK () {
-  if (!e && Buf)
-	  free(Buf);
+DataCk::~DataCk() {
+  if (!_e && _buf)
+	  free(_buf);
 }
 } // End of namespace CGE
 

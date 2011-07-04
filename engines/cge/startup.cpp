@@ -38,7 +38,7 @@ extern char _copr[];
 #define id (*(Ident*)_copr)
 
 
-EMM _miniEmm = MINI_EMM_SIZE;
+Emm _miniEmm = MINI_EMM_SIZE;
 
 // static Startup _startUp;
 

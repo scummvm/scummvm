@@ -113,17 +113,17 @@ namespace CGE {
 #define FINIS          (_flag[3])
 
 
-class SYSTEM : public Sprite {
-	int lum;
+class System : public Sprite {
+	int _lum;
 public:
-	int FunDel;
+	int _funDel;
 
-	SYSTEM(CGEEngine *vm);
+	System(CGEEngine *vm);
 
-	void SetPal();
-	void FunTouch();
+	void setPal();
+	void funTouch();
 	virtual void touch(uint16 mask, int x, int y);
-	void Tick();
+	void tick();
 private:
 	CGEEngine *_vm;
 };
@@ -159,7 +159,6 @@ private:
 
 };
 
-
 Cluster XZ(int x, int y);
 Cluster XZ(Couple xy);
 
@@ -169,7 +168,7 @@ void ContractSprite(Sprite *spr);
 extern WALK *_hero;
 extern Vga *_vga;
 extern Heart *_heart;
-extern SYSTEM *_sys;
+extern System *_sys;
 extern int _offUseCount;
 extern Sprite *_pocLight;
 extern Keyboard *_keyboard;
