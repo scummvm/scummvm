@@ -1195,6 +1195,11 @@ void KyraEngine_MR::updateMouse() {
 	}
 }
 
+void KyraEngine_MR::pauseEngineIntern(bool pause) {
+	_mixer->pauseAll(pause);
+	_timer->pause(pause);
+}
+
 #pragma mark -
 
 void KyraEngine_MR::makeCharFacingMouse() {
