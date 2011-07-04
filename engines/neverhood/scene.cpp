@@ -78,15 +78,14 @@ Scene::~Scene() {
 }
 
 void Scene::draw() {
-	debug("Scene::draw()");
-	//**ALL TODO
 	if (_smackerPlayer) {
 		if (_surfaceFlag) {
 			// TODO g_screen->resetDirtyRects();
 			// TODO g_screen->copyDirtyRects();
 			// TODO g_screen->addDirtyRects();
 		}
-		// TODO _smackerPlayer->_surface->draw();
+		if (_smackerPlayer->getSurface())
+			_smackerPlayer->getSurface()->draw();
 	} else {
 		if (_surfaceFlag) {
 			// TODO g_screen->copyDirtyRects();

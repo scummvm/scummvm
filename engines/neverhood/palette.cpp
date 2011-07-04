@@ -82,6 +82,13 @@ void Palette::addPalette(uint32 fileHash, int toIndex, int count, int fromIndex)
 	_vm->_screen->testPalette(_palette);
 }
 
+void Palette::copyPalette(const byte *palette, int toIndex, int count, int fromIndex) {
+	if (toIndex + count > 256)
+		count = 256 - toIndex;
+	memcpy(_palette + toIndex * 4, palette + fromIndex * 4, count * 4);		
+	_vm->_screen->testPalette(_palette);
+}
+
 void Palette::startFadeToBlack(int counter) {
 	debug("Palette::startFadeToBlack(%d)", counter);
 	if (counter == 0)

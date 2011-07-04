@@ -15,6 +15,8 @@ MODULE_OBJS = \
 	resourceman.o \
 	scene.o \
 	screen.o \
+	smackerscene.o \
+	smackerplayer.o \
 	sprite.o
 
 # This module can be built as a plugin

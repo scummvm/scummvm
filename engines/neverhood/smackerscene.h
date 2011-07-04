@@ -20,43 +20,35 @@
  *
  */
 
-// TODO: I couldn't come up with a better name than 'Module' so far
-
-#ifndef NEVERHOOD_MODULE1500_H
-#define NEVERHOOD_MODULE1500_H
+#ifndef NEVERHOOD_SMACKERSCENE_H
+#define NEVERHOOD_SMACKERSCENE_H
 
 #include "neverhood/neverhood.h"
-#include "neverhood/module.h"
+#include "neverhood/resourceman.h"
 #include "neverhood/scene.h"
-#include "neverhood/smackerscene.h"
 
 namespace Neverhood {
 
-class Module1500 : public Module {
+class SmackerScene : public Scene {
 public:
-	Module1500(NeverhoodEngine *vm, Module *parentModule, int which, bool flag);
+	SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubleSurface, bool flag1, bool canAbort);
+	virtual ~SmackerScene();
+	void setFileHash(uint32 fileHash);
+	void setFileHashList(uint32 *fileHashList);
+	void nextVideo();
 protected:
-	bool _flag;
-	void update();
-	void createScene1501();			
-	void createScene1502();
-	void createScene1503();
-	void createScene1504();
-};
-
-class Scene1501 : public Scene {
-public:
-	Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 soundFileHash, int countdown2, int countdown3);
-protected:
-	SoundResource _soundResource;
-	int _countdown1;
-	int _countdown2;
-	int _countdown3;
-	bool _flag;
+	bool _doubleSurface;
+	bool _flag1;
+	bool _canAbort;
+	bool _fieldDF;
+	bool _playNextVideoFlag;
+	int _fileHashListIndex;
+	uint32 *_fileHashList;
+	uint32 _fileHash[2];
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULE1500_H */
+#endif /* NEVERHOOD_SMACKERSCENE_H */

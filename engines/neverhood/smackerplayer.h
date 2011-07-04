@@ -20,43 +20,56 @@
  *
  */
 
-// TODO: I couldn't come up with a better name than 'Module' so far
+#ifndef NEVERHOOD_SMACKERPLAYER_H
+#define NEVERHOOD_SMACKERPLAYER_H
 
-#ifndef NEVERHOOD_MODULE1500_H
-#define NEVERHOOD_MODULE1500_H
-
+#include "video/smk_decoder.h"
 #include "neverhood/neverhood.h"
-#include "neverhood/module.h"
-#include "neverhood/scene.h"
-#include "neverhood/smackerscene.h"
+#include "neverhood/entity.h"
 
 namespace Neverhood {
 
-class Module1500 : public Module {
+class Scene;
+class Palette;
+
+class SmackerSurface : public BaseSurface {
 public:
-	Module1500(NeverhoodEngine *vm, Module *parentModule, int which, bool flag);
+	SmackerSurface(NeverhoodEngine *vm);
+	virtual void draw();
+	void setSmackerFrame(const Graphics::Surface *smackerFrame);
 protected:
-	bool _flag;
-	void update();
-	void createScene1501();			
-	void createScene1502();
-	void createScene1503();
-	void createScene1504();
+	const Graphics::Surface *_smackerFrame;
 };
 
-class Scene1501 : public Scene {
+class SmackerDoubleSurface : public SmackerSurface {
 public:
-	Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 soundFileHash, int countdown2, int countdown3);
+	SmackerDoubleSurface(NeverhoodEngine *vm);
+	virtual void draw();
+};
+
+class SmackerPlayer : public Entity {
+public:
+	SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag);
+	~SmackerPlayer();
+	BaseSurface *getSurface() { return _smackerSurface; }
+	void open(uint32 fileHash, bool flag1);
+	void close();
+	void gotoFrame(uint frameNumber);
+	uint getStatus();
 protected:
-	SoundResource _soundResource;
-	int _countdown1;
-	int _countdown2;
-	int _countdown3;
-	bool _flag;
+	Scene *_scene;
+	Palette *_palette;
+	Video::SmackerDecoder *_smackerDecoder;
+	SmackerSurface *_smackerSurface;
+	bool _doubleSurface;
+	Common::SeekableReadStream *_stream;
+	bool _flag1;
+	bool _flag2;
+	bool _dirtyFlag;
 	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void updatePalette();
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULE1500_H */
+#endif /* NEVERHOOD_SMACKERPLAYER_H */

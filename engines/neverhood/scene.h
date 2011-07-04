@@ -30,6 +30,7 @@
 #include "neverhood/graphics.h"
 #include "neverhood/module.h"
 #include "neverhood/palette.h"
+#include "neverhood/smackerplayer.h"
 #include "neverhood/sprite.h"
 
 namespace Neverhood {
@@ -37,9 +38,6 @@ namespace Neverhood {
 struct MessageListItem {
 	uint32 messageNum;
 	uint32 messageValue;
-};
-
-class SmackerPlayer { // DUMMY!
 };
 
 class Scene : public Entity {

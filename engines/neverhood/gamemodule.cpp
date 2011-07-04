@@ -102,7 +102,7 @@ void GameModule::updateModule1500() {
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;
-		debug("Done...");
+		error("Done...");
 		// TODO createModule1000();
 		// TODO _childObject->handleUpdate();
 	}

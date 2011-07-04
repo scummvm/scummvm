@@ -78,7 +78,6 @@ void Screen::testPalette(byte *paletteData) {
 
 void Screen::updatePalette() {
 	if (_paletteChanged && _paletteData) {
-		debug("Screen::updatePalette() Set palette");
 		byte *tempPalette = new byte[768];
 		for (int i = 0; i < 256; i++) {
 			tempPalette[i * 3 + 0] = _paletteData[i * 4 + 0];
@@ -95,7 +94,7 @@ void Screen::clear() {
 	memset(_backScreen->pixels, 0, _backScreen->pitch * _backScreen->h);
 }
 
-void Screen::drawSurface2(Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect) {
+void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect) {
 
 	int16 destX, destY;
 	NRect ddRect;
@@ -128,7 +127,7 @@ void Screen::drawSurface2(Graphics::Surface *surface, NDrawRect &drawRect, NRect
 	
 	debug("draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
 	
-	byte *source = (byte*)surface->getBasePtr(ddRect.x1, ddRect.y1);
+	const byte *source = (const byte*)surface->getBasePtr(ddRect.x1, ddRect.y1);
 	byte *dest = (byte*)_backScreen->getBasePtr(destX, destY);
 	int width = ddRect.x2 - ddRect.x1;
 	int height = ddRect.y2 - ddRect.y1;
@@ -157,5 +156,22 @@ void Screen::drawSurface2(Graphics::Surface *surface, NDrawRect &drawRect, NRect
 	
 }
 
+void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect) {
+
+	const byte *source = (const byte*)surface->getBasePtr(0, 0);
+	byte *dest = (byte*)_backScreen->getBasePtr(drawRect.x, drawRect.y);
+	
+	for (int16 yc = 0; yc < surface->h; yc++) {
+		byte *row = dest;
+		for (int16 xc = 0; xc < surface->w; xc++) {
+			*row++ = *source;
+			*row++ = *source++;
+		}
+		memcpy(dest + _backScreen->pitch, dest, surface->w * 2);
+		dest += _backScreen->pitch;
+		dest += _backScreen->pitch;
+	}
+
+}
 
 } // End of namespace Neverhood

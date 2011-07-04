@@ -67,6 +67,7 @@ public:
 	byte *loadResource(int resourceHandle, bool moveToFront = false);
 	void unloadResource(int resourceHandle);
 	void freeResource(Resource *resource);
+	Common::SeekableReadStream *createStream(uint32 fileHash);
 private:
 	Common::Array<BlbArchive*> _archives;
 	Common::Array<ResourceFileEntry> _entries;

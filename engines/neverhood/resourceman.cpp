@@ -164,4 +164,9 @@ void ResourceMan::freeResource(Resource *resource) {
 	resource->data = NULL;
 }
 
+Common::SeekableReadStream *ResourceMan::createStream(uint32 fileHash) {
+	ResourceFileEntry *entry = findEntry(fileHash);
+	return _archives[entry->archiveIndex]->createStream(entry->entryIndex);
+}
+
 } // End of namespace Neverhood

@@ -92,8 +92,14 @@ void Module1500::createScene1502() {
 
 void Module1500::createScene1503() {
 	debug("createScene1503");
-	// TODO: This uses the MultiSmackerPlayer
-	// Game will crash now...
+	SmackerScene *smackerScene;
+	_parentModule->sendMessage(0x0800, 0, this);
+	_vm->gameState().sceneNum = 2;
+	smackerScene = new SmackerScene(_vm, this, true, true, true);
+	smackerScene->setFileHash(0x001A0005);
+	smackerScene->nextVideo();
+	_childObject = smackerScene;
+	SetUpdateHandler(&Module1500::update);
 }
 
 void Module1500::createScene1504() {

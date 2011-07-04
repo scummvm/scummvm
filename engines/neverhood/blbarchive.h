@@ -25,6 +25,8 @@
 
 #include "common/array.h"
 #include "common/file.h"
+#include "common/stream.h"
+#include "common/substream.h"
 #include "neverhood/neverhood.h"
 
 namespace Neverhood {
@@ -58,6 +60,7 @@ public:
 	uint32 getSize(uint index) { return _entries[index].size; }
 	BlbArchiveEntry *getEntry(uint index) { return &_entries[index]; }
 	uint getCount() { return _entries.size(); }
+	Common::SeekableReadStream *createStream(uint index);
 private:
 	Common::File _fd;
 	Common::Array<BlbArchiveEntry> _entries;

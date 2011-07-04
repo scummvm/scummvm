@@ -42,7 +42,8 @@ public:
 	void testPalette(byte *paletteData);
 	void updatePalette();
 	void clear();
-	void drawSurface2(Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect);
+	void drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect);
+	void drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect);
 protected:
 	NeverhoodEngine *_vm;
 	Graphics::Surface *_backScreen;

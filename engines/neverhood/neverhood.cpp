@@ -165,13 +165,13 @@ Common::Error NeverhoodEngine::run() {
 			}
 		}
 
-		debug("millis %d", _system->getMillis());		
+		//debug("millis %d", _system->getMillis());		
 		_gameModule->handleUpdate();
 		_gameModule->draw();
 		_screen->wait();
 		_screen->update();
 		
-		debug("---------------------------------------");
+		//debug("---------------------------------------");
 	
 	}
 	

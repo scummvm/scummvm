@@ -42,6 +42,7 @@ public:
 	void usePalette();
 	void addPalette(const char *filename, int toIndex, int count, int fromIndex);
 	void addPalette(uint32 fileHash, int toIndex, int count, int fromIndex);
+	void copyPalette(const byte *palette, int toIndex, int count, int fromIndex);
 	void startFadeToBlack(int counter);
 	void startFadeToWhite(int counter);
 protected:
