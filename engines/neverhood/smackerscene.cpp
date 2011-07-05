@@ -32,12 +32,10 @@ SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubl
 
 	// NOTE: Merged from SmackerScene::init, maybe split again if needed (incl. parameter flags)
 	
-	/* TODO
-	if (_vm->getGlobalVarValue(0x06C02850)) {
+	if (_vm->getGlobalVar(0x06C02850)) {
 		_flag1 = true;
 		_canAbort = true;
 	}
-	*/
 	
 	if (_doubleSurface) {
 		_vm->_screen->clear();
@@ -78,9 +76,9 @@ void SmackerScene::nextVideo() {
 			_parentModule->sendMessage(0x1009, 0, this);
 			return;
 		}
-		// TODO _fieldDF = getGlobalSubVarValue(0x00800410, smackerFileHash);
+		_fieldDF = _vm->getSubVar(0x00800410, smackerFileHash);
 		if (!_fieldDF) {
-			// TODO setGlobalSubVarValue(0x00800410, smackerFileHash) = 1;
+			_vm->setSubVar(0x00800410, smackerFileHash, 1);
 		}
 		if (_fileHashListIndex == 0) {
 			_smackerPlayer = new SmackerPlayer(_vm, this, smackerFileHash, _doubleSurface, false);

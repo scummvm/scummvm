@@ -185,4 +185,22 @@ Common::Error NeverhoodEngine::run() {
 	return Common::kNoError;
 }
 
+uint32 NeverhoodEngine::getGlobalVar(uint32 nameHash) {
+	// TODO
+	return 0;
+}
+
+void NeverhoodEngine::setGlobalVar(uint32 nameHash, uint32 value) {
+	// TODO
+}
+
+uint32 NeverhoodEngine::getSubVar(uint32 nameHash, uint32 subNameHash) {
+	// TODO
+	return 0;
+}
+
+void NeverhoodEngine::setSubVar(uint32 nameHash, uint32 subNameHash, uint32 value) {
+	// TODO
+}
+
 } // End of namespace Neverhood

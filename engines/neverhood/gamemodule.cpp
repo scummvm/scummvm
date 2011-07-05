@@ -22,6 +22,7 @@
 
 #include "neverhood/gamemodule.h"
 
+#include "neverhood/module1000.h"
 #include "neverhood/module1500.h"
 
 namespace Neverhood {
@@ -84,12 +85,14 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 
 void GameModule::startup() {
 	// TODO: Displaying of error text probably not needed in ScummVM
-	createModule1500(0);
+//	createModule1500(0); // Logos and intro video
+
+	createModule1000(0);
 }
 
 void GameModule::createModule1500(int which) {
 	_someFlag1 = false;
-	// TODO *getGlobalGameVarValuePtr(0x91080831) = 0x0F10114;
+	_vm->setGlobalVar(0x91080831, 0x00F10114);
 	_childObject = new Module1500(_vm, this, which, true);
 	SetUpdateHandler(&GameModule::updateModule1500);
 }
@@ -102,8 +105,28 @@ void GameModule::updateModule1500() {
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;
+		createModule1000(0);
+		_childObject->handleUpdate();
+	}
+}
+
+void GameModule::createModule1000(int which) {
+	_vm->setGlobalVar(0x91080831, 0x03294419);
+	_childObject = new Module1000(_vm, this, which);
+	SetUpdateHandler(&GameModule::updateModule1000);
+}
+
+void GameModule::updateModule1000() {
+	if (!_childObject)
+		return;
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		// TODO _resourceTable3.load();
+		delete _childObject;
+		_childObject = NULL;
 		error("Done...");
-		// TODO createModule1000();
+		// TODO createModule2300();
 		// TODO _childObject->handleUpdate();
 	}
 }

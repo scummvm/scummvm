@@ -110,6 +110,10 @@ public:
 #endif
 
 	GameState& gameState() { return _gameState; }
+	uint32 getGlobalVar(uint32 nameHash);
+	void setGlobalVar(uint32 nameHash, uint32 value);
+	uint32 getSubVar(uint32 nameHash, uint32 subNameHash);
+	void setSubVar(uint32 nameHash, uint32 subNameHash, uint32 value);
 
 public:
 

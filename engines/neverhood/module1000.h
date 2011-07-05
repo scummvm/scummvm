@@ -20,39 +20,52 @@
  *
  */
 
-// TODO: I couldn't come up with a better name than 'Module' so far
-
-#ifndef NEVERHOOD_GAMEMODULE_H
-#define NEVERHOOD_GAMEMODULE_H
+#ifndef NEVERHOOD_MODULE1000_H
+#define NEVERHOOD_MODULE1000_H
 
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/scene.h"
 
 namespace Neverhood {
 
-class GameModule : public Module {
+class Module1000 : public Module {
 public:
-	GameModule(NeverhoodEngine *vm);
-	virtual ~GameModule();
+	Module1000(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Module1000();
 protected:
-	Entity *_prevChildObject;
-	bool _someFlag1;
-	bool _field2C;
-	uint32 _counter;
-	/* TODO
-	ResourceTable _resourceTable1;
-	ResourceTable _resourceTable2;
-	ResourceTable _resourceTable3;
-	ResourceTable _resourceTable4;
-	*/
+	uint32 _musicFileHash;
+	// TODO ResourceTable _resourceTable1;
+	// TODO ResourceTable _resourceTable2;
+	// TODO ResourceTable _resourceTable3;
+	// TODO ResourceTable _resourceTable4;
+	void createScene1001(int which);			
+	void createScene1002(int which);			
+	void createScene1003(int which);			
+	void createScene1004(int which);			
+	void createScene1005(int which);			
+	void updateScene1001();			
+	void updateScene1002();			
+	void updateScene1003();			
+	void updateScene1004();			
+	void updateScene1005();			
+};
+
+class Scene1001 : public Scene {
+public:
+	Scene1001(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_class511;
+	Sprite *_class508;
+	Sprite *_class509;
+	Sprite *_class608;
+	Sprite *_class510;
+	int16 _fieldE4;
+	int16 _fieldE6;
+	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void startup();
-	void createModule1500(int which);
-	void updateModule1500();
-	void createModule1000(int which);
-	void updateModule1000();
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULE_H */
+#endif /* NEVERHOOD_MODULE1000_H */
