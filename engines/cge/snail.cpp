@@ -44,14 +44,6 @@ static void _disable() {
 	warning("STUB: _disable");
 }
 
-int     _maxCave  =  0;
-
-bool    _flag[4];
-bool    _dark     = false;
-bool    _game     = false;
-int     _now      =  1;
-int     _lev      = -1;
-
 extern  Sprite *_pocLight;
 
 //-------------------------------------------------------------------------
@@ -61,7 +53,7 @@ extern  Sprite *_pocLight;
 //-------------------------------------------------------------------------
 extern  Sprite *_pocket[];
 
-static void SNGame(Sprite *spr, int num) {
+void CGEEngine::snGame(Sprite *spr, int num) {
 	switch (num) {
 	case 1 : {
 #define STAGES 8
@@ -270,18 +262,18 @@ static void SNGame(Sprite *spr, int num) {
 }
 
 
-void ExpandSprite(Sprite *spr) {
+void CGEEngine::expandSprite(Sprite *spr) {
 	if (spr)
 		_vga->_showQ->insert(_vga->_spareQ->remove(spr));
 }
 
 
-void ContractSprite(Sprite *spr) {
+void CGEEngine::contractSprite(Sprite *spr) {
 	if (spr)
 		_vga->_spareQ->append(_vga->_showQ->remove(spr));
 }
 
-int findPocket(Sprite *spr) {
+int CGEEngine::findPocket(Sprite *spr) {
 	for (int i = 0; i < POCKET_NX; i++)
 	if (_pocket[i] == spr)
 		return i;
@@ -304,8 +296,7 @@ void CGEEngine::selectPocket(int n) {
 	_pocLight->gotoxy(POCKET_X + _pocPtr * POCKET_DX + POCKET_SX, POCKET_Y + POCKET_SY);
 }
 
-
-void pocFul() {
+void CGEEngine::pocFul() {
 	_hero->park();
 	SNPOST(SNWAIT, -1, -1, _hero);
 	SNPOST(SNSEQ, -1, POC_FUL, _hero);
@@ -314,13 +305,11 @@ void pocFul() {
 	SNPOST(SNSAY,  1, POC_FUL_TEXT, _hero);
 }
 
-
-void Hide1(Sprite *spr) {
+void CGEEngine::hide1(Sprite *spr) {
 	SNPOST_(SNGHOST, -1, 0, spr->ghost());
 }
 
-
-void SNGhost(Bitmap *bmp) {
+void CGEEngine::snGhost(Bitmap *bmp) {
 	// TODO : Get x and y from M but not using segment / offset
 	//bmp->Hide(FP_OFF(bmp->_m), FP_SEG(bmp->_m));
 	bmp->_m = NULL;
@@ -328,8 +317,7 @@ void SNGhost(Bitmap *bmp) {
 	warning("STUB: SNGhost");
 }
 
-
-void feedSnail(Sprite *spr, SNLIST snq) {
+void CGEEngine::feedSnail(Sprite *spr, SNLIST snq) {
 	if (spr)
 		if (spr->active()) {
 			uint8 ptr = (snq == TAKE) ? spr->_takePtr : spr->_nearPtr;
@@ -402,7 +390,6 @@ void feedSnail(Sprite *spr, SNLIST snq) {
 		}
 }
 
-
 const char *Snail::_comTxt[] = {
 	"LABEL",  "PAUSE",  "WAIT",    "LEVEL",   "HIDE",
 	"SAY",    "INF",    "TIME",    "CAVE",    "KILL",
@@ -424,12 +411,10 @@ Snail::Snail(CGEEngine *vm, bool turbo)
 	  _head(0), _tail(0), _snList(farnew(Com, 256)), _vm(vm) {
 }
 
-
 Snail::~Snail() {
 	if (_snList)
 		free(_snList);
 }
-
 
 void Snail::addCom(SNCOM com, int ref, int val, void *ptr) {
 	_disable();
@@ -445,7 +430,6 @@ void Snail::addCom(SNCOM com, int ref, int val, void *ptr) {
 	}
 	_enable();
 }
-
 
 void Snail::insCom(SNCOM com, int ref, int val, void *ptr) {
 	Com *snc;
@@ -469,36 +453,32 @@ void Snail::insCom(SNCOM com, int ref, int val, void *ptr) {
 	_enable();
 }
 
-
-static void SNNNext(Sprite *sprel, int p) {
+void CGEEngine::snNNext(Sprite *sprel, int p) {
 	if (sprel)
 		if (sprel->_nearPtr != NO_PTR)
 			sprel->_nearPtr = p;
 }
 
-
-static void SNTNext(Sprite *sprel, int p) {
+void CGEEngine::snTNext(Sprite *sprel, int p) {
 	if (sprel)
 		if (sprel->_takePtr != NO_PTR)
 			sprel->_takePtr = p;
 }
 
-
-static void SNRNNext(Sprite *sprel, int p) {
+void CGEEngine::snRNNext(Sprite *sprel, int p) {
 	if (sprel)
 		if (sprel->_nearPtr != NO_PTR)
 			sprel->_nearPtr += p;
 }
 
 
-static void SNRTNext(Sprite *sprel, int p) {
+void CGEEngine::snRTNext(Sprite *sprel, int p) {
 	if (sprel)
 		if (sprel->_takePtr != NO_PTR)
 			sprel->_takePtr += p;
 }
 
-
-static void SNZTrim(Sprite *spr) {
+void CGEEngine::snZTrim(Sprite *spr) {
 	if (spr)
 		if (spr->active()) {
 			bool en = _heart->_enable;
@@ -514,8 +494,7 @@ static void SNZTrim(Sprite *spr) {
 		}
 }
 
-
-static void SNHide(Sprite *spr, int val) {
+void CGEEngine::snHide(Sprite *spr, int val) {
 	if (spr) {
 		spr->_flags._hide = (val >= 0) ? (val != 0) : (!spr->_flags._hide);
 		if (spr->_flags._shad)
@@ -523,20 +502,17 @@ static void SNHide(Sprite *spr, int val) {
 	}
 }
 
-
-static void SNRmNear(Sprite *spr) {
+void CGEEngine::snRmNear(Sprite *spr) {
 	if (spr)
 		spr->_nearPtr = NO_PTR;
 }
 
-
-static void SNRmTake(Sprite *spr) {
+void CGEEngine::snRmTake(Sprite *spr) {
 	if (spr)
 		spr->_takePtr = NO_PTR;
 }
 
-
-void SNSeq(Sprite *spr, int val) {
+void CGEEngine::snSeq(Sprite *spr, int val) {
 	if (spr) {
 		if (spr == _hero && val == 0)
 			_hero->park();
@@ -545,14 +521,12 @@ void SNSeq(Sprite *spr, int val) {
 	}
 }
 
-
-void SNRSeq(Sprite *spr, int val) {
+void CGEEngine::snRSeq(Sprite *spr, int val) {
 	if (spr)
-		SNSeq(spr, spr->_seqPtr + val);
+		snSeq(spr, spr->_seqPtr + val);
 }
 
-
-void SNSend(Sprite *spr, int val) {
+void CGEEngine::snSend(Sprite *spr, int val) {
 	if (spr) {
 		int was = spr->_cave;
 		bool was1 = (was == 0 || was == _now);
@@ -565,8 +539,8 @@ void SNSend(Sprite *spr, int val) {
 					if (n >= 0)
 						_pocket[n] = NULL;
 				}
-				Hide1(spr);
-				ContractSprite(spr);
+				hide1(spr);
+				contractSprite(spr);
 				spr->_flags._slav = false;
 			} else {
 				if (spr->_ref % 1000 == 0)
@@ -574,7 +548,7 @@ void SNSend(Sprite *spr, int val) {
 				if (spr->_flags._back)
 					spr->backShow(true);
 				else
-					ExpandSprite(spr);
+					expandSprite(spr);
 				Bitmap::_pal = NULL;
 			}
 		}
@@ -582,7 +556,7 @@ void SNSend(Sprite *spr, int val) {
 }
 
 
-void SNSwap(Sprite *spr, int xref) {
+void CGEEngine::snSwap(Sprite *spr, int xref) {
 	Sprite *xspr = locate(xref);
 	if (spr && xspr) {
 		int was = spr->_cave;
@@ -603,28 +577,28 @@ void SNSwap(Sprite *spr, int xref) {
 		}
 		if (xwas1 != was1) {
 			if (was1) {
-				Hide1(spr);
-				ContractSprite(spr);
+				hide1(spr);
+				contractSprite(spr);
 			} else
-				ExpandSprite(spr);
+				expandSprite(spr);
 			if (xwas1) {
-				Hide1(xspr);
-				ContractSprite(xspr);
+				hide1(xspr);
+				contractSprite(xspr);
 			} else
-				ExpandSprite(xspr);
+				expandSprite(xspr);
 		}
 	}
 }
 
 
-void SNCover(Sprite *spr, int xref) {
+void CGEEngine::snCover(Sprite *spr, int xref) {
 	Sprite *xspr = locate(xref);
 	if (spr && xspr) {
 		spr->_flags._hide = true;
 		xspr->_z = spr->_z;
 		xspr->_cave = spr->_cave;
 		xspr->gotoxy(spr->_x, spr->_y);
-		ExpandSprite(xspr);
+		expandSprite(xspr);
 		if ((xspr->_flags._shad = spr->_flags._shad) == 1) {
 			_vga->_showQ->insert(_vga->_showQ->remove(spr->_prev), xspr);
 			spr->_flags._shad = false;
@@ -634,7 +608,7 @@ void SNCover(Sprite *spr, int xref) {
 }
 
 
-void SNUncover(Sprite *spr, Sprite *xspr) {
+void CGEEngine::snUncover(Sprite *spr, Sprite *xspr) {
 	if (spr && xspr) {
 		spr->_flags._hide = false;
 		spr->_cave = xspr->_cave;
@@ -644,75 +618,71 @@ void SNUncover(Sprite *spr, Sprite *xspr) {
 			xspr->_flags._shad = false;
 		}
 		spr->_z = xspr->_z;
-		SNSend(xspr, -1);
+		snSend(xspr, -1);
 		if (spr->_time == 0)
 			spr->_time++;
 	}
 }
 
 
-void SNSetX0(int cav, int x0) {
+void CGEEngine::snSetX0(int cav, int x0) {
 	_heroXY[cav - 1]._x = x0;
 }
 
-
-void SNSetY0(int cav, int y0) {
+void CGEEngine::snSetY0(int cav, int y0) {
 	_heroXY[cav - 1]._y = y0;
 }
 
-
-void SNSetXY(Sprite *spr, uint16 xy) {
+void CGEEngine::snSetXY(Sprite *spr, uint16 xy) {
 	if (spr)
 		spr->gotoxy(xy % SCR_WID, xy / SCR_WID);
 }
 
-
-void SNRelX(Sprite *spr, int x) {
+void CGEEngine::snRelX(Sprite *spr, int x) {
 	if (spr && _hero)
 		spr->gotoxy(_hero->_x + x, spr->_y);
 }
 
-
-void SNRelY(Sprite *spr, int y) {
+void CGEEngine::snRelY(Sprite *spr, int y) {
 	if (spr && _hero)
 		spr->gotoxy(spr->_x, _hero->_y + y);
 }
 
 
-void SNRelZ(Sprite *spr, int z) {
+void CGEEngine::snRelZ(Sprite *spr, int z) {
 	if (spr && _hero) {
 		spr->_z = _hero->_z + z;
-		SNZTrim(spr);
+		snZTrim(spr);
 	}
 }
 
 
-void SNSetX(Sprite *spr, int x) {
+void CGEEngine::snSetX(Sprite *spr, int x) {
 	if (spr)
 		spr->gotoxy(x, spr->_y);
 }
 
 
-void SNSetY(Sprite *spr, int y) {
+void CGEEngine::snSetY(Sprite *spr, int y) {
 	if (spr)
 		spr->gotoxy(spr->_x, y);
 }
 
 
-void SNSetZ(Sprite *spr, int z) {
+void CGEEngine::snSetZ(Sprite *spr, int z) {
 	if (spr) {
 		spr->_z = z;
 		//SNPOST_(SNZTRIM, -1, 0, spr);
-		SNZTrim(spr);
+		snZTrim(spr);
 	}
 }
 
 
-void SNSlave(Sprite *spr, int ref) {
+void CGEEngine::snSlave(Sprite *spr, int ref) {
 	Sprite *slv = locate(ref);
 	if (spr && slv) {
 		if (spr->active()) {
-			SNSend(slv, spr->_cave);
+			snSend(slv, spr->_cave);
 			slv->_flags._slav = true;
 			slv->_z = spr->_z;
 			_vga->_showQ->insert(_vga->_showQ->remove(slv), spr->_next);
@@ -721,19 +691,17 @@ void SNSlave(Sprite *spr, int ref) {
 }
 
 
-void SNTrans(Sprite *spr, int trans) {
+void CGEEngine::snTrans(Sprite *spr, int trans) {
 	if (spr)
 		spr->_flags._tran = (trans < 0) ? !spr->_flags._tran : (trans != 0);
 }
 
-
-void SNPort(Sprite *spr, int port) {
+void CGEEngine::snPort(Sprite *spr, int port) {
 	if (spr)
 		spr->_flags._port = (port < 0) ? !spr->_flags._port : (port != 0);
 }
 
-
-void SNKill(Sprite *spr) {
+void CGEEngine::snKill(Sprite *spr) {
 	if (spr) {
 		if (spr->_flags._kept) {
 			int n = findPocket(spr);
@@ -741,7 +709,7 @@ void SNKill(Sprite *spr) {
 				_pocket[n] = NULL;
 		}
 		Sprite *nx = spr->_next;
-		Hide1(spr);
+		hide1(spr);
 		_vga->_showQ->remove(spr);
 		EventManager::ClrEvt(spr);
 		if (spr->_flags._kill)
@@ -752,13 +720,13 @@ void SNKill(Sprite *spr) {
 		}
 		if (nx) {
 			if (nx->_flags._slav)
-				SNKill(nx);
+				snKill(nx);
 		}
 	}
 }
 
 
-static void SNSound(Sprite *spr, int wav, int cnt) {
+void CGEEngine::snSound(Sprite *spr, int wav, int cnt) {
 	if (_sndDrvInfo._dDev) {
 		if (wav == -1)
 			_sound.stop();
@@ -768,10 +736,10 @@ static void SNSound(Sprite *spr, int wav, int cnt) {
 }
 
 
-void CGEEngine::SNKeep(Sprite *spr, int stp) {
+void CGEEngine::snKeep(Sprite *spr, int stp) {
 	selectPocket(-1);
 	if (spr && ! spr->_flags._kept && _pocket[_pocPtr] == NULL) {
-		SNSound(spr, 3, 1);
+		snSound(spr, 3, 1);
 		_pocket[_pocPtr] = spr;
 		spr->_cave = 0;
 		spr->_flags._kept = true;
@@ -784,7 +752,7 @@ void CGEEngine::SNKeep(Sprite *spr, int stp) {
 }
 
 
-void CGEEngine::SNGive(Sprite *spr, int stp) {
+void CGEEngine::snGive(Sprite *spr, int stp) {
 	if (spr) {
 		int p = findPocket(spr);
 		if (p >= 0) {
@@ -799,7 +767,7 @@ void CGEEngine::SNGive(Sprite *spr, int stp) {
 }
 
 
-static void SNBackPt(Sprite *spr, int stp) {
+void CGEEngine::snBackPt(Sprite *spr, int stp) {
 	if (spr) {
 		if (stp >= 0)
 			spr->step(stp);
@@ -807,13 +775,7 @@ static void SNBackPt(Sprite *spr, int stp) {
 	}
 }
 
-
-static void SNLevel(Sprite *spr, int lev) {
-#ifdef    DEMO
-	static int maxcav[] = { CAVE_MAX };
-#else
-	static int maxcav[] = { 1, 8, 16, 23, 24 };
-#endif
+void CGEEngine::snLevel(Sprite *spr, int lev) {
 	while (_lev < lev) {
 		_lev++;
 		spr = _vga->_spareQ->locate(100 + _lev);
@@ -822,24 +784,22 @@ static void SNLevel(Sprite *spr, int lev) {
 			spr->_cave = 0;
 		}
 	}
-	_maxCave = maxcav[_lev];
+	_maxCave = _maxCaveArr[_lev];
 	if (spr)
 		spr->_flags._hide = false;
 }
 
 
-static void SNFlag(int fn, bool v) {
+void CGEEngine::snFlag(int fn, bool v) {
 	_flag[fn] = v;
 }
 
-
-static void SNSetRef(Sprite *spr, int nr) {
+void CGEEngine::snSetRef(Sprite *spr, int nr) {
 	if (spr)
 		spr->_ref = nr;
 }
 
-
-void SNFlash(bool on) {
+void CGEEngine::snFlash(bool on) {
 	if (on) {
 		Dac *pal = farnew(Dac, PAL_CNT);
 		if (pal) {
@@ -861,7 +821,7 @@ void SNFlash(bool on) {
 }
 
 
-static void SNLight(bool in) {
+void CGEEngine::snLight(bool in) {
 	if (in)
 		_vga->sunrise(Vga::_sysPal);
 	else
@@ -869,13 +829,11 @@ static void SNLight(bool in) {
 	_dark = ! in;
 }
 
-
-static void SNBarrier(int cav, int bar, bool horz) {
+void CGEEngine::snBarrier(int cav, int bar, bool horz) {
 	((uint8 *)(_barriers + ((cav > 0) ? cav : _now)))[horz] = bar;
 }
 
-
-static void SNWalk(Sprite *spr, int x, int y) {
+void CGEEngine::snWalk(Sprite *spr, int x, int y) {
 	if (_hero) {
 		if (spr && y < 0)
 			_hero->findWay(spr);
@@ -884,14 +842,12 @@ static void SNWalk(Sprite *spr, int x, int y) {
 	}
 }
 
-
-static void SNReach(Sprite *spr, int mode) {
+void CGEEngine::snReach(Sprite *spr, int mode) {
 	if (_hero)
 		_hero->reach(spr, mode);
 }
 
-
-static void SNMouse(bool on) {
+void CGEEngine::snMouse(bool on) {
 	if (on)
 		_mouse->On();
 	else
@@ -945,10 +901,10 @@ void Snail::runCom() {
 				}
 				break;
 			case SNLEVEL    :
-				SNLevel(sprel, snc->_val);
+				_vm->snLevel(sprel, snc->_val);
 				break;
 			case SNHIDE     :
-				SNHide(sprel, snc->_val);
+				_vm->snHide(sprel, snc->_val);
 				break;
 			case SNSAY      :
 				if (sprel && _talkEnable) {
@@ -976,125 +932,125 @@ void Snail::runCom() {
 				warning("Problematic call of SwitchCave in SNAIL::runCom");
 				break;
 			case SNKILL     :
-				SNKill(sprel);
+				_vm->snKill(sprel);
 				break;
 			case SNSEQ      :
-				SNSeq(sprel, snc->_val);
+				_vm->snSeq(sprel, snc->_val);
 				break;
 			case SNRSEQ     :
-				SNRSeq(sprel, snc->_val);
+				_vm->snRSeq(sprel, snc->_val);
 				break;
 			case SNSEND     :
-				SNSend(sprel, snc->_val);
+				_vm->snSend(sprel, snc->_val);
 				break;
 			case SNSWAP     :
-				SNSwap(sprel, snc->_val);
+				_vm->snSwap(sprel, snc->_val);
 				break;
 			case SNCOVER    :
-				SNCover(sprel, snc->_val);
+				_vm->snCover(sprel, snc->_val);
 				break;
 			case SNUNCOVER  :
-				SNUncover(sprel, (snc->_val >= 0) ? locate(snc->_val) : ((Sprite *) snc->_ptr));
+				_vm->snUncover(sprel, (snc->_val >= 0) ? locate(snc->_val) : ((Sprite *) snc->_ptr));
 				break;
 			case SNKEEP     :
-				_vm->SNKeep(sprel, snc->_val);
+				_vm->snKeep(sprel, snc->_val);
 				break;
 			case SNGIVE     :
-				_vm->SNGive(sprel, snc->_val);
+				_vm->snGive(sprel, snc->_val);
 				break;
 			case SNGAME     :
-				SNGame(sprel, snc->_val);
+				_vm->snGame(sprel, snc->_val);
 				break;
 			case SNSETX0    :
-				SNSetX0(snc->_ref, snc->_val);
+				_vm->snSetX0(snc->_ref, snc->_val);
 				break;
 			case SNSETY0    :
-				SNSetY0(snc->_ref, snc->_val);
+				_vm->snSetY0(snc->_ref, snc->_val);
 				break;
 			case SNSETXY    :
-				SNSetXY(sprel, snc->_val);
+				_vm->snSetXY(sprel, snc->_val);
 				break;
 			case SNRELX     :
-				SNRelX(sprel, snc->_val);
+				_vm->snRelX(sprel, snc->_val);
 				break;
 			case SNRELY     :
-				SNRelY(sprel, snc->_val);
+				_vm->snRelY(sprel, snc->_val);
 				break;
 			case SNRELZ     :
-				SNRelZ(sprel, snc->_val);
+				_vm->snRelZ(sprel, snc->_val);
 				break;
 			case SNSETX     :
-				SNSetX(sprel, snc->_val);
+				_vm->snSetX(sprel, snc->_val);
 				break;
 			case SNSETY     :
-				SNSetY(sprel, snc->_val);
+				_vm->snSetY(sprel, snc->_val);
 				break;
 			case SNSETZ     :
-				SNSetZ(sprel, snc->_val);
+				_vm->snSetZ(sprel, snc->_val);
 				break;
 			case SNSLAVE    :
-				SNSlave(sprel, snc->_val);
+				_vm->snSlave(sprel, snc->_val);
 				break;
 			case SNTRANS    :
-				SNTrans(sprel, snc->_val);
+				_vm->snTrans(sprel, snc->_val);
 				break;
 			case SNPORT     :
-				SNPort(sprel, snc->_val);
+				_vm->snPort(sprel, snc->_val);
 				break;
 			case SNNEXT     :
 			case SNIF       :
 			case SNTALK     :
 				break;
 			case SNMOUSE    :
-				SNMouse(snc->_val != 0);
+				_vm->snMouse(snc->_val != 0);
 				break;
 			case SNNNEXT    :
-				SNNNext(sprel, snc->_val);
+				_vm->snNNext(sprel, snc->_val);
 				break;
 			case SNTNEXT    :
-				SNTNext(sprel, snc->_val);
+				_vm->snTNext(sprel, snc->_val);
 				break;
 			case SNRNNEXT   :
-				SNRNNext(sprel, snc->_val);
+				_vm->snRNNext(sprel, snc->_val);
 				break;
 			case SNRTNEXT   :
-				SNRTNext(sprel, snc->_val);
+				_vm->snRTNext(sprel, snc->_val);
 				break;
 			case SNRMNEAR   :
-				SNRmNear(sprel);
+				_vm->snRmNear(sprel);
 				break;
 			case SNRMTAKE   :
-				SNRmTake(sprel);
+				_vm->snRmTake(sprel);
 				break;
 			case SNFLAG     :
-				SNFlag(snc->_ref & 3, snc->_val != 0);
+				_vm->snFlag(snc->_ref & 3, snc->_val != 0);
 				break;
 			case SNSETREF   :
-				SNSetRef(sprel, snc->_val);
+				_vm->snSetRef(sprel, snc->_val);
 				break;
 			case SNBACKPT   :
-				SNBackPt(sprel, snc->_val);
+				_vm->snBackPt(sprel, snc->_val);
 				break;
 			case SNFLASH    :
-				SNFlash(snc->_val != 0);
+				_vm->snFlash(snc->_val != 0);
 				break;
 			case SNLIGHT    :
-				SNLight(snc->_val != 0);
+				_vm->snLight(snc->_val != 0);
 				break;
 			case SNSETHB    :
-				SNBarrier(snc->_ref, snc->_val, true);
+				_vm->snBarrier(snc->_ref, snc->_val, true);
 				break;
 			case SNSETVB    :
-				SNBarrier(snc->_ref, snc->_val, false);
+				_vm->snBarrier(snc->_ref, snc->_val, false);
 				break;
 			case SNWALK     :
-				SNWalk(sprel, snc->_ref, snc->_val);
+				_vm->snWalk(sprel, snc->_ref, snc->_val);
 				break;
 			case SNREACH    :
-				SNReach(sprel, snc->_val);
+				_vm->snReach(sprel, snc->_val);
 				break;
 			case SNSOUND    :
-				SNSound(sprel, snc->_val, count);
+				_vm->snSound(sprel, snc->_val, count);
 				count = 1;
 				break;
 			case SNCOUNT    :
@@ -1109,10 +1065,10 @@ void Snail::runCom() {
 				sprel->step();
 				break;
 			case SNZTRIM    :
-				SNZTrim(sprel);
+				_vm->snZTrim(sprel);
 				break;
 			case SNGHOST    :
-				SNGhost((Bitmap *) snc->_ptr);
+				_vm->snGhost((Bitmap *) snc->_ptr);
 				break;
 			default :
 				warning("Unhandled snc->_com in SNMouse(bool)");

@@ -209,7 +209,7 @@ public:
 		return _ext != NULL;
 	}
 	Sprite(CGEEngine *vm, BMP_PTR *shp);
-	virtual ~Sprite(void);
+	virtual ~Sprite();
 	BMP_PTR shp();
 	BMP_PTR *setShapeList(BMP_PTR *shp);
 	void moveShapes(uint8 *buf);
@@ -288,7 +288,7 @@ public:
 	static Dac *_sysPal;
 
 	Vga(int mode);
-	~Vga(void);
+	~Vga();
 	static void init();
 	static void deinit();
 
@@ -340,7 +340,6 @@ uint8 closest(CBLK *pal, CBLK x) {
 #undef f
 }
 
-//static void       Video       (void);
 uint16 *saveScreen();
 void    restoreScreen(uint16 * &sav);
 Sprite *spriteAt(int x, int y);

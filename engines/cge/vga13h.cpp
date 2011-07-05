@@ -63,7 +63,7 @@ bool SpeedTest   = false;
 Seq _seq1[] = { { 0, 0, 0, 0, 0 } };
 Seq _seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
 
-extern "C"  void    SNDMIDIPlay(void);
+extern "C"  void    SNDMIDIPlay();
 
 /*
 static void Video() {
@@ -87,7 +87,7 @@ static void Video() {
 */
 
 
-uint16 *SaveScreen(void) {
+uint16 *SaveScreen() {
 	/*
 	  uint16 cxy, cur, siz, * scr = NULL, * sav;
 
@@ -201,7 +201,7 @@ Sprite *locate(int ref) {
 }
 
 
-Heart::Heart(void)
+Heart::Heart()
 	: Engine_(TMR_DIV) {
 	_enable = false;
 	_xTimer = NULL;
@@ -427,7 +427,7 @@ bool Sprite::works(Sprite *spr) {
 			if (c != NULL) {
 				c += spr->_takePtr;
 				if (c->_ref == _ref)
-					if (c->_com != SNLABEL || (c->_val == 0 || c->_val == _now))
+					if (c->_com != SNLABEL || (c->_val == 0 || c->_val == _vm->_now))
 						return true;
 			}
 		}
@@ -1136,7 +1136,7 @@ void Vga::setColors(Dac *tab, int lum) {
 }
 
 
-void Vga::setColors(void) {
+void Vga::setColors() {
 	memset(_newColors, 0, PAL_SIZ);
 	updateColors();
 }

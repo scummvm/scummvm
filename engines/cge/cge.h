@@ -30,6 +30,7 @@
 #include "graphics/surface.h"
 #include "engines/advancedDetector.h"
 #include "cge/console.h"
+#include "cge/bitmap.h"
 
 #define CGE_SAVEGAME_VERSION 1
 
@@ -42,6 +43,8 @@ class Sprite;
 enum {
     kCGEDebug = 1 << 0
 };
+
+enum SNLIST { NEAR, TAKE };
 
 #define POCKET_NX   8
 
@@ -70,6 +73,15 @@ public:
 	bool   _music;
 	int    _pocref[POCKET_NX];
 	uint8  _volume[2];
+	int    _maxCaveArr[5];
+
+	int    _maxCave;
+	bool   _flag[4];
+	bool   _dark;
+	bool   _game;
+	int    _now;
+	int    _lev;
+
 	Common::RandomSource _randomSource;
 
 	virtual Common::Error run();
@@ -95,7 +107,6 @@ public:
 	void takeName();
 	void inf(const char *txt);
 	void selectSound();
-	void SNSelect();
 	void dummy() {}
 	void NONE();
 	void SB();
@@ -116,8 +127,58 @@ public:
 	void SaveGame(XFile &file);
 	void switchMusic();
 	void selectPocket(int n);
-	void SNKeep(Sprite *spr, int stp);
-	void SNGive(Sprite *spr, int stp);
+	void expandSprite(Sprite *spr);
+	void contractSprite(Sprite *spr);
+	int  findPocket(Sprite *spr);
+	void feedSnail(Sprite *spr, SNLIST snq);
+	void pocFul();
+	void hide1(Sprite *spr);
+	void loadMapping();
+	void saveMapping();
+
+	void snBackPt(Sprite *spr, int stp);
+	void snBarrier(int cav, int bar, bool horz);
+	void snCover(Sprite *spr, int xref);
+	void snFlag(int fn, bool v);
+	void snFlash(bool on);
+	void snGame(Sprite *spr, int num);
+	void snGhost(Bitmap *bmp);
+	void snGive(Sprite *spr, int stp);
+	void snHide(Sprite *spr, int val);
+	void snKeep(Sprite *spr, int stp);
+	void snKill(Sprite *spr);
+	void snLevel(Sprite *spr, int lev);
+	void snLight(bool in);
+	void snMouse(bool on);
+	void snNNext(Sprite *sprel, int p);
+	void snPort(Sprite *spr, int port);
+	void snReach(Sprite *spr, int mode);
+	void snRelZ(Sprite *spr, int z);
+	void snRNNext(Sprite *sprel, int p);
+	void snRTNext(Sprite *sprel, int p);
+	void snSelect();
+	void snSend(Sprite *spr, int val);
+	void snRelX(Sprite *spr, int x);
+	void snRelY(Sprite *spr, int y);
+	void snRmNear(Sprite *spr);
+	void snRmTake(Sprite *spr);
+	void snRSeq(Sprite *spr, int val);
+	void snSeq(Sprite *spr, int val);
+	void snSetRef(Sprite *spr, int nr);
+	void snSetX(Sprite *spr, int x);
+	void snSetX0(int cav, int x0);
+	void snSetXY(Sprite *spr, uint16 xy);
+	void snSetY(Sprite *spr, int y);
+	void snSetY0(int cav, int y0);
+	void snSetZ(Sprite *spr, int z);
+	void snSlave(Sprite *spr, int ref);
+	void snSound(Sprite *spr, int wav, int cnt);
+	void snSwap(Sprite *spr, int xref);
+	void snTNext(Sprite *sprel, int p);
+	void snTrans(Sprite *spr, int trans);
+	void snUncover(Sprite *spr, Sprite *xspr);
+	void snWalk(Sprite *spr, int x, int y);
+	void snZTrim(Sprite *spr);
 
 private:
 	CGEConsole *_console;
@@ -128,7 +189,7 @@ private:
 class Console : public GUI::Debugger {
 public:
 	Console(CGEEngine *vm) {}
-	virtual ~Console(void) {}
+	virtual ~Console() {}
 };
 
 } // End of namespace CGE

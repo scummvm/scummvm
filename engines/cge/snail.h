@@ -70,8 +70,6 @@ enum SNCOM {
 	SNZTRIM,  SNGHOST
 };
 
-enum SNLIST { NEAR, TAKE };
-
 class Snail {
 public:
 	struct Com {
@@ -99,15 +97,8 @@ private:
 };
 
 
-void pocFul();
-
-
-extern  bool _flag[4];
-extern  bool _game;
 extern  bool _dark;
-extern  int _now;
 extern  int _lev;
-extern  int _maxCave;
 extern  Bar _barriers[];
 extern  struct Hxy {
 	int _x;

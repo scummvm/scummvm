@@ -100,17 +100,14 @@ static  Ems      *_mini        = _miniEmm.alloc((uint16)MINI_EMM_SIZE);
 static  BMP_PTR  *_miniShpList = NULL;
 static  BMP_PTR   _miniShp[]   = { NULL, NULL };
 static  bool      _finis       = false;
-//static  int       _startup    = 1;
 int	_offUseCount;
 uint16 *_intStackPtr = false;
 
 Hxy _heroXY[CAVE_MAX] = {{0, 0}};
 Bar _barriers[1 + CAVE_MAX] = { { 0xFF, 0xFF } };
 
-extern int findPocket(Sprite *);
 extern Dac _stdPal[58];
 
-void  feedSnail(Sprite *spr, SNLIST snq);         // defined in SNAIL
 uint8 Cluster::_map[MAP_ZCNT][MAP_XCNT];
 
 
@@ -119,7 +116,7 @@ uint8 &Cluster::cell() {
 }
 
 
-bool Cluster::Protected(void) {
+bool Cluster::Protected() {
 /*
 	if (A == Barriers[Now]._vert || B == Barriers[Now]._horz)
 		return true;
@@ -250,7 +247,7 @@ void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 }
 
 
-static void SaveSound(void) {
+static void SaveSound() {
 	CFile cfg(usrPath(progName(CFG_EXT)), WRI);
 	if (!cfg._error)
 		cfg.write(&_sndDrvInfo, sizeof(_sndDrvInfo) - sizeof(_sndDrvInfo.Vol2));
@@ -324,7 +321,7 @@ static void loadHeroXY() {
 }
 
 
-static void loadMapping() {
+void CGEEngine::loadMapping() {
 	if (_now <= CAVE_MAX) {
 		INI_FILE cf(progName(".TAB"));
 		if (!cf._error) {
@@ -357,7 +354,7 @@ void WALK::tick() {
 		for (spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 			if (distance(spr) < 2) {
 				if (!spr->_flags._near) {
-					feedSnail(spr, NEAR);
+					_vm->feedSnail(spr, NEAR);
 					spr->_flags._near = true;
 				}
 			} else {
@@ -423,7 +420,7 @@ void WALK::turn(DIR d) {
 }
 
 
-void WALK::park(void) {
+void WALK::park() {
 	if (_time == 0)
 		++_time;
 
@@ -438,7 +435,7 @@ void WALK::park(void) {
 void WALK::findWay(Cluster c) {
 	warning("STUB: WALK::findWay");
 	/*
-	bool Find1Way(void);
+	bool Find1Way();
 	extern uint16 Target;
 
 	if (c != Here) {
@@ -539,15 +536,14 @@ void CGEEngine::setMapBrick(int x, int z) {
 	}
 }
 
-static void SwitchColorMode(void);
+static void SwitchColorMode();
 static void switchDebug();
-static void KillSprite(void);
-static void PushSprite(void);
-static void PullSprite(void);
-static void NextStep(void);
-static void SaveMapping(void);
+static void KillSprite();
+static void PushSprite();
+static void PullSprite();
+static void NextStep();
 
-static void KeyClick(void) {
+static void KeyClick() {
 	SNPOST_(SNSOUND, -1, 5, NULL);
 }
 
@@ -654,7 +650,7 @@ void CGEEngine::caveUp() {
 				if (spr->_flags._back)
 					spr->backShow();
 				else
-					ExpandSprite(spr);
+					expandSprite(spr);
 			}
 		spr = n;
 	}
@@ -814,7 +810,7 @@ void System::touch(uint16 mask, int x, int y) {
 			break;
 		case '`':
 			if (_keyboard->_key[ALT])
-				SaveMapping();
+				_vm->saveMapping();
 			else
 				_vm->switchMapping();
 			break;
@@ -890,9 +886,9 @@ void System::touch(uint16 mask, int x, int y) {
 		if (y >= WORLD_HIG) {
 			if (x < BUTTON_X) {                           // select cave?
 				if (y >= CAVE_Y && y < CAVE_Y + CAVE_NY * CAVE_DY &&
-				        x >= CAVE_X && x < CAVE_X + CAVE_NX * CAVE_DX && !_game) {
+				        x >= CAVE_X && x < CAVE_X + CAVE_NX * CAVE_DX && !_vm->_game) {
 					cav = ((y - CAVE_Y) / CAVE_DY) * CAVE_NX + (x - CAVE_X) / CAVE_DX + 1;
-					if (cav > _maxCave)
+					if (cav > _vm->_maxCave)
 						cav = 0;
 				} else {
 					cav = 0;
@@ -922,7 +918,7 @@ void System::touch(uint16 mask, int x, int y) {
 			} else
 			{
 				if (!_talk && _snail->idle() && _hero
-				        && y >= MAP_TOP && y < MAP_TOP + MAP_HIG && !_game) {
+				        && y >= MAP_TOP && y < MAP_TOP + MAP_HIG && !_vm->_game) {
 					_hero->findWay(XZ(x, y));
 				}
 			}
@@ -961,7 +957,7 @@ void System::tick() {
 
 
 /*
-static void SpkOpen(void) {
+static void SpkOpen() {
   asm   in  al,0x61
   asm   or  al,0x03
   asm   out 0x61,al
@@ -970,7 +966,7 @@ static void SpkOpen(void) {
 }
 
 
-static void SpkClose(void) {
+static void SpkClose() {
   asm   in  al,0x61
   asm   and al,0xFC
   asm   out 0x61,al
@@ -979,7 +975,7 @@ static void SpkClose(void) {
 */
 
 
-static void SwitchColorMode(void) {
+static void SwitchColorMode() {
 	SNPOST_(SNSEQ, 121, _vga->_mono = !_vga->_mono, NULL);
 	KeyClick();
 	_vga->setColors(Vga::_sysPal, 64);
@@ -1054,7 +1050,7 @@ void CGEEngine::switchMapping() {
 }
 
 
-static void KillSprite(void) {
+static void KillSprite() {
 	_sprite->_flags._kill = true;
 	_sprite->_flags._bDel = true;
 	SNPOST_(SNKILL, -1, 0, _sprite);
@@ -1062,7 +1058,7 @@ static void KillSprite(void) {
 }
 
 
-static void PushSprite(void) {
+static void PushSprite() {
 	Sprite *spr = _sprite->_prev;
 	if (spr) {
 		_vga->_showQ->insert(_vga->_showQ->remove(_sprite), spr);
@@ -1073,7 +1069,7 @@ static void PushSprite(void) {
 }
 
 
-static void PullSprite(void) {
+static void PullSprite() {
 	bool ok = false;
 	Sprite *spr = _sprite->_next;
 	if (spr) {
@@ -1091,12 +1087,12 @@ static void PullSprite(void) {
 }
 
 
-static void NextStep(void) {
+static void NextStep() {
 	SNPOST_(SNSTEP, 0, 0, _sprite);
 }
 
 
-static void SaveMapping() {
+void CGEEngine::saveMapping() {
 	{
 		IoHand cf(progName(".TAB"), UPD);
 		if (!cf._error) {
@@ -1217,7 +1213,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 		}
 		if (_flags._syst)
 			return;       // cannot access system sprites
-		if (_game) if (mask & L_UP) {
+		if (_vm->_game) if (mask & L_UP) {
 				mask &= ~L_UP;
 				mask |= R_UP;
 			}
@@ -1226,7 +1222,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 			if (ps) {
 				if (_flags._kept || _hero->distance(this) < MAX_DISTANCE) {
 					if (works(ps)) {
-						feedSnail(ps, TAKE);
+						_vm->feedSnail(ps, TAKE);
 					} else
 						offUse();
 					_vm->selectPocket(-1);
@@ -1239,8 +1235,8 @@ void Sprite::touch(uint16 mask, int x, int y) {
 					if (_hero->distance(this) < MAX_DISTANCE) {
 						///
 						if (_flags._port) {
-							if (findPocket(NULL) < 0)
-								pocFul();
+							if (_vm->findPocket(NULL) < 0)
+								_vm->pocFul();
 							else {
 								SNPOST(SNREACH, -1, -1, this);
 								SNPOST(SNKEEP, -1, -1, this);
@@ -1251,7 +1247,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 								if (snList(TAKE)[_takePtr]._com == SNNEXT)
 									offUse();
 								else
-									feedSnail(this, TAKE);
+									_vm->feedSnail(this, TAKE);
 							} else
 								offUse();
 						}
@@ -1606,7 +1602,7 @@ void CGEEngine::runGame() {
 		uint8 *ptr = (uint8 *) &*_mini;
 		if (ptr != NULL) {
 			loadSprite("MINI", -1, 0, MINI_X, MINI_Y);
-			ExpandSprite(_miniCave = _sprite);  // NULL is ok
+			expandSprite(_miniCave = _sprite);  // NULL is ok
 			if (_miniCave) {
 				_miniCave->_flags._hide = true;
 				_miniCave->moveShapes(ptr);
@@ -1618,7 +1614,7 @@ void CGEEngine::runGame() {
 	}
 
 	if (_hero) {
-		ExpandSprite(_hero);
+		expandSprite(_hero);
 		_hero->gotoxy(_heroXY[_now - 1]._x, _heroXY[_now - 1]._y);
 		if (INI_FILE::exist("00SHADOW.SPR")) {
 			loadSprite("00SHADOW", -1, 0, _hero->_x + 14, _hero->_y + 51);
@@ -1645,7 +1641,7 @@ void CGEEngine::runGame() {
 
 	_mouse->Busy = _vga->_spareQ->locate(BUSY_REF);
 	if (_mouse->Busy)
-		ExpandSprite(_mouse->Busy);
+		expandSprite(_mouse->Busy);
 
 	_startupMode = 0;
 
@@ -1682,7 +1678,7 @@ void CGEEngine::movie(const char *ext) {
 	const char *fn = progName(ext);
 	if (INI_FILE::exist(fn)) {
 		loadScript(fn);
-		ExpandSprite(_vga->_spareQ->locate(999));
+		expandSprite(_vga->_spareQ->locate(999));
 		feedSnail(_vga->_showQ->locate(999), TAKE);
 
 		// FIXME: Allow ScummVM to handle mouse display
@@ -1793,9 +1789,9 @@ bool CGEEngine::showTitle(const char *name) {
 				loadGame(file, true); // only system vars
 				_vga->setColors(Vga::_sysPal, 64);
 				_vga->update();
-				if (FINIS) {
+				if (_flag[3]) { //flag FINIS
 					Startup::_mode++;
-					FINIS = false;
+					_flag[3] = false;
 				}
 			} else
 				Startup::_mode++;
@@ -1815,14 +1811,14 @@ bool CGEEngine::showTitle(const char *name) {
 
 
 /*
-void StkDump (void) {
+void StkDump () {
   CFILE f("!STACK.DMP", BFW);
   f.Write((uint8 *) (intStackPtr-STACK_SIZ/2), STACK_SIZ*2);
 }
 */
 
 
-void CGEEngine::cge_main(void) {
+void CGEEngine::cge_main() {
 	uint16 intStack[STACK_SIZ / 2];
 	_intStackPtr = intStack;
 
@@ -1852,7 +1848,7 @@ void CGEEngine::cge_main(void) {
 			movie("X02"); // intro
 		runGame();
 		_startupMode = 2;
-		if (FINIS)
+		if (_flag[3]) // Flag FINIS
 			movie("X03");
 	} else
 		_vga->sunset();

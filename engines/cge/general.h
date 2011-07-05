@@ -105,7 +105,7 @@ protected:
 	static void newTimer(...);
 public:
 	Engine_(uint16 tdiv);
-	~Engine_(void);
+	~Engine_();
 };
 
 
@@ -138,7 +138,7 @@ class Ems {
 public:
 	Ems();
 	void *operator & () const;
-	uint16 size(void);
+	uint16 size();
 };
 
 
@@ -200,7 +200,7 @@ public:
 	long mark();
 	long size();
 	long seek(long pos);
-	//timeb  Time (void);
+	//timeb  Time ();
 // void SetTime (timeb  t);
 };
 
@@ -226,7 +226,7 @@ void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, c
 const char *progName(const char *ext = NULL);
 char *mergeExt(char *buf, const char *nam, const char *ext);
 char *forceExt(char *buf, const char *nam, const char *ext);
-unsigned fastRand(void);
+unsigned fastRand();
 unsigned fastRand(unsigned s);
 uint16 rCrypt(void *buf, uint16 siz, uint16 seed);
 uint16 atow(const char *a);
@@ -234,7 +234,7 @@ uint16 xtow(const char *x);
 char *wtom(uint16 val, char *str, int radix, int len);
 char *dwtom(uint32 val, char * str, int radix, int len);
 int takeEnum(const char **tab, const char *txt);
-long timer(void);
+long timer();
 int new_random(int range);
 } // End of namespace CGE
 

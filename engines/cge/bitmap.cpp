@@ -142,7 +142,7 @@ Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL) {
 }
 
 
-Bitmap::~Bitmap(void) {
+Bitmap::~Bitmap() {
 	if (memType(_m) == FAR_MEM)
 		free(_m);
 
@@ -196,7 +196,7 @@ uint16 Bitmap::moveVmap(uint8 *buf) {
 }
 
 
-BMP_PTR Bitmap::code(void) {
+BMP_PTR Bitmap::code() {
 	if (_m) {
 		uint16 i, cnt;
 
