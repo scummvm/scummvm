@@ -99,12 +99,12 @@ void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, c
 }
 
 const char *progName(const char *ext) {
-	warning("progName");
-
-	static Common::String buf = "CGE";
+	static char buf[MAXFILE];
+	strcpy(buf, "CGE");
 	if (ext)
-		buf += ext;
-	return buf.c_str();
+		strcat(buf, ext);
+
+	return buf;
 }
 
 char *mergeExt(char *buf, const char *nam, const char *ext) {
@@ -239,10 +239,6 @@ uint16 IoHand::read(void *buf, uint16 len) {
 		error("Read %s - %d bytes", _file->getName(), len);
 	if (_crypt)
 		_seed = _crypt(buf, len, Seed);
-
-	if (_file->eos())
-		_error = 1;
-
 	return bytesRead;
 }
 
