@@ -133,7 +133,7 @@ public:
 	int32 field_E8490;
 	int32 field_E8494;
 	int32 field_E8498;
-	int32 field_E849C;
+	int32 field_E849C; // ActorIndex???
 	int32 tickValueArray[30];
 	int32 field_E8518;
 	int32 field_E851C[30];
