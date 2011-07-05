@@ -167,6 +167,27 @@ void CGEEngine::setup() {
 	_savTab[15].Ptr = NULL;
 	_savTab[15].Len = 0;
 	_savTab[15].Flg = 0;
+
+	if (_isDemo) {
+		_maxCaveArr[0] = CAVE_MAX;
+		_maxCaveArr[1] = -1;
+		_maxCaveArr[2] = -1;
+		_maxCaveArr[3] = -1;
+		_maxCaveArr[4] = -1;
+	} else {
+		_maxCaveArr[0] = 1;
+		_maxCaveArr[1] = 8;
+		_maxCaveArr[2] = 16;
+		_maxCaveArr[3] = 23;
+		_maxCaveArr[4] = 24;
+	};
+	_maxCave  =  0;
+	_dark     = false;
+	_game     = false;
+	_now      =  1;
+	_lev      = -1;
+
+
 }
 
 CGEEngine::~CGEEngine() {

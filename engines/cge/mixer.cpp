@@ -132,7 +132,7 @@ void Mixer::tick() {
 }
 
 
-void Mixer::update(void) {
+void Mixer::update() {
 	_led[0]->step(_sndDrvInfo.Vol4._ml);
 	_led[1]->step(_sndDrvInfo.Vol4._dl);
 
