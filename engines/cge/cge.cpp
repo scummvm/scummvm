@@ -41,7 +41,7 @@
 namespace CGE {
 
 CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
-	: Engine(syst), _gameDescription(gameDescription) {
+	: Engine(syst), _gameDescription(gameDescription), _randomSource("cge") {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(kCGEDebug, "general", "CGE general debug channel");

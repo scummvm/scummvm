@@ -25,6 +25,7 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
+#include "cge/cge.h"
 #include "cge/general.h"
 #include "cge/snddrv.h"
 #include "cge/wav.h"
@@ -356,8 +357,7 @@ long timer(void) {
 }
 
 int new_random(int range) {
-	warning("STUB: new_random(a)");
-	return 0;
+	return ((CGEEngine *)g_engine)->_randomSource.getRandomNumber(range - 1);
 }
 
 #define		TIMER_INT	0x08
