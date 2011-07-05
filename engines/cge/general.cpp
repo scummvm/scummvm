@@ -239,6 +239,10 @@ uint16 IoHand::read(void *buf, uint16 len) {
 		error("Read %s - %d bytes", _file->getName(), len);
 	if (_crypt)
 		_seed = _crypt(buf, len, Seed);
+
+	if (_file->eos())
+		_error = 1;
+
 	return bytesRead;
 }
 
