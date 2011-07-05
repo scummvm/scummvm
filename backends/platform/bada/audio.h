@@ -39,10 +39,10 @@ using namespace Osp::Base::Runtime;
 using namespace Osp::Media;
 using namespace Osp::Io;
 
-#define TIMER_INCREMENT    5
-#define TIMER_INTERVAL     90
+#define TIMER_INCREMENT    10
+#define TIMER_INTERVAL     80
 #define MIN_TIMER_INTERVAL 20
-#define NUM_AUDIO_BUFFERS  2
+#define NUM_AUDIO_BUFFERS  6
 
 class AudioThread: public Osp::Media::IAudioOutEventListener,
                    public Osp::Base::Runtime::ITimerEventListener, 
@@ -67,6 +67,7 @@ public:
 	Osp::Media::AudioOut* audioOut;
 	Osp::Base::ByteBuffer audioBuffer[NUM_AUDIO_BUFFERS];
   int head, tail, ready, interval;
+  bool playing;
 };
 
 #endif

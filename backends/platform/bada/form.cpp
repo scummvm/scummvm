@@ -171,10 +171,6 @@ Object* BadaAppForm::Run(void) {
   return null;
 }
 
-// TODO: use touchEventInfo, eg Flicked() to map commonly used keycodes
-// such as the escape key, long press could be EVENT_MAINMENU etc.
-// Can't experiment with this until the code is running on the device
-
 void BadaAppForm::OnTouchDoublePressed(const Control& source, 
                                        const Point& currentPosition, 
                                        const TouchEventInfo& touchInfo) {
@@ -194,7 +190,7 @@ void BadaAppForm::OnTouchFocusOut(const Control& source,
 void BadaAppForm::OnTouchLongPressed(const Control& source, 
                                      const Point& currentPosition, 
                                      const TouchEventInfo& touchInfo) {
-  pushKey(leftButton ? Common::KEYCODE_RETURN : Common::KEYCODE_F7);
+  pushKey(leftButton ? Common::KEYCODE_RETURN : Common::KEYCODE_ESCAPE);
 }
 
 void BadaAppForm::OnTouchMoved(const Control& source, 
@@ -218,7 +214,7 @@ void BadaAppForm::OnTouchReleased(const Control& source,
       pushKey(Common::KEYCODE_F7);
     }
     else {
-      pushKey(Common::KEYCODE_F5);
+      pushKey(Common::KEYCODE_ESCAPE);
     }
   }
   else {

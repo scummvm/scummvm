@@ -32,7 +32,8 @@ AudioThread::AudioThread() :
   head(0),
   tail(0),
   ready(0),
-  interval(TIMER_INTERVAL) {
+  interval(TIMER_INTERVAL),
+  playing(false) {
 }
 
 Audio::MixerImpl* AudioThread::Construct(OSystem* system) {
@@ -43,7 +44,7 @@ Audio::MixerImpl* AudioThread::Construct(OSystem* system) {
     return null;
   }
 
-  mixer = new Audio::MixerImpl(system, 22050);
+  mixer = new Audio::MixerImpl(system, 44100);
   return mixer;
 }
 
@@ -130,12 +131,14 @@ void AudioThread::OnAudioOutReleased(Osp::Media::AudioOut& src) {
 
 void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut& src) {
   if (ready > 0) {
+    playing = true;
     audioOut->WriteBuffer(audioBuffer[tail]);
     tail = (tail + 1 == NUM_AUDIO_BUFFERS ? 0 : tail + 1);
     ready--;
   }
   else {
     // audio buffer empty: decrease timer inverval
+    playing = false;
     interval -= TIMER_INCREMENT;
     if (interval < MIN_TIMER_INTERVAL) {
       interval = MIN_TIMER_INTERVAL;
@@ -157,7 +160,7 @@ void AudioThread::OnTimerExpired(Timer& timer) {
     interval += TIMER_INCREMENT;
   }
 
-  if (ready == NUM_AUDIO_BUFFERS) {
+  if (ready && !playing) {
     OnAudioOutBufferEndReached(*audioOut);
   }
   
