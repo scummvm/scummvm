@@ -2162,7 +2162,34 @@ bool Actor::checkAllActions(const Common::Point &pt, Common::Array<ActionArea *>
 }
 
 bool Actor::isInActionArea(const Common::Point &pt, ActionArea *area) {
-	error("[Actor::isInActionArea] Not implemented!");
+	Common::Rect rect = getWorld()->sceneRects[getWorld()->sceneRectIdx];
+
+	if (!rect.contains(pt))
+		return false;
+
+	if (area->flags & 1)
+		return false;
+
+	// Check flags
+	bool found = false;
+	for (uint32 i = 0; i < 10; i++) {
+		int32 flag = area->flagNums[i];
+		bool state = (flag <= 0) ? _vm->isGameFlagNotSet((GameFlag)-flag) : _vm->isGameFlagSet((GameFlag)flag);
+
+		if (!state) {
+			found = true;
+			break;
+		}
+	}
+
+	if (found)
+		return false;
+
+	PolyDefinitions poly = getScene()->polygons()->entries[area->polygonIndex];
+	if (!poly.contains(pt))
+		return false;
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
