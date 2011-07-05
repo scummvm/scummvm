@@ -3141,6 +3141,9 @@ atlast2:
 void DreamGenContext::updatepeople() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
+	// di = offset to "peoplelist"
+	// only two places access it (updatepeople + checkifperson),
+	// good candidate for conversion to C
 	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
 	data.word(kListpos) = di;
 	cx = 12*5;
@@ -5834,6 +5837,12 @@ doopeninv:
 	goto waitexam;
 	return;
 /*continuing to unbounded code: examineagain from examineob:3-66*/
+
+// FIXME: The following duplicates the code from examineob().
+// So we could just invoke examineob() here, if we had a way to
+// tell it that it should skip right to "waitexam".
+// But wait, we can do this by converting these functions to
+// code.
 examineagain:
 	data.byte(kInmaparea) = 0;
 	data.byte(kExamagain) = 0;
@@ -7662,7 +7671,7 @@ void DreamGenContext::makebackob() {
 	bx = data.word(kObjecty);
 	ah = bl;
 	si = ax;
-	cx = 49520;
+	cx = addr_backobject;	// = 0xc170: backobject()
 	dx = data.word(kSetframes);
 	di = (0);
 	makesprite();
@@ -17426,6 +17435,9 @@ nothingund:
 void DreamGenContext::checkifperson() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
+	// di = offset to "peoplelist"
+	// only two places access it (updatepeople + checkifperson),
+	// good candidate for conversion to C
 	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
 	cx = 12;
 identifyreel:
@@ -20216,7 +20228,9 @@ transfer:
 
 
 
-void DreamGenContext::__start() { 
+void DreamGenContext::__start() {
+// FIXME: Get rid of this nasty single opaque data table,
+// replace it with many smaller named "tables"
 	static const uint8 src[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x13, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 
@@ -20786,11 +20800,28 @@ void DreamGenContext::__start() {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, };
 	ds.assign(src, src + sizeof(src));
-dreamweb(); 
+dreamweb();
 }
 
 void DreamGenContext::__dispatch_call(uint16 addr) {
+// FIXME: Get rid of this function!
+// It is only called from a handful of places:
+// 1) spriteupdate() called 10x  (DONE: This has been resolved recently)
+// 2) updatepeople():  Given an index, look up a function pointer in the
+//    table "reelcalls" in sprite.asm and invokes that function.
+//    Called 1x by reelsonscreen(), no need to touch the called.
+// 3) useroutine(): This method uses a table ("Uselist" in use.asm) that contains
+//     pairs of strings + func pointers. It matches the string
+//    against input and then invokes the matching function.
+//    -> perfect candidate for manual conversion.
+//    Called 2x, but calling sites probably do not need to be touched
+// 4) checkcoords(): This receives a pointer to a list of rectangles + function pointers,
+//    terminated by 0xffff. It finds the first rect containing the mouse cursor,
+//    and if found, invokes the relevant function.
+//    Called 19x, each calling site needs to  be treated.
+
 	switch(addr) {
+	// FIXME: wrong indention
 		case addr_alleybarksound: alleybarksound(); break;
 		case addr_intromusic: intromusic(); break;
 		case addr_foghornsound: foghornsound(); break;
