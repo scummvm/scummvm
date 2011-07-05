@@ -28,6 +28,7 @@
 
 #include "asylum/shared.h"
 
+#include "common/array.h"
 #include "common/rect.h"
 #include "common/stream.h"
 
@@ -437,6 +438,11 @@ private:
 	void updateFinish();
 
 	//////////////////////////////////////////////////////////////////////////
+	// Helper functions
+	//////////////////////////////////////////////////////////////////////////
+	bool checkAllActions(const Common::Point &pt, Common::Array<ActionArea *> *actions);
+
+	//////////////////////////////////////////////////////////////////////////
 	// Misc
 	//////////////////////////////////////////////////////////////////////////
 
@@ -480,7 +486,7 @@ private:
 	 * @param pt 			The point.
 	 * @param [in,out] area If non-null, the area.
 	 *
-	 * @return
+	 * @return true if in the action area, false otherwise
 	 */
 	bool isInActionArea(const Common::Point &pt, ActionArea *area);
 
