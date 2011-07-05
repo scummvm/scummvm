@@ -1669,7 +1669,24 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 }
 
 bool Actor::updateStatus15_Chapter2_Actor11_Helper(ActorIndex actorIndex1, ActorIndex actorIndex2) {
-	error("[Actor::updateStatus15_Chapter2_Actor11_Helper] not implemented!");
+	Actor *actor1 = getScene()->getActor(actorIndex1);
+	Actor *actor2 = getScene()->getActor(actorIndex2);
+
+	if (actor1->getField944())
+		return false;
+
+	if (actor2->getField944())
+		return false;
+
+	int16 actor2_x = actor2->getPoint1()->x + actor2->getPoint2()->x;
+	int16 actor2_y = actor2->getPoint1()->y + actor2->getPoint2()->y;
+
+	Common::Point pt1(actor2_x -     actor1->getField948() - 10, actor2_y -     actor1->getField94C() - 10);
+	Common::Point pt2(actor2_x + 2 * actor1->getField948() + 10, actor2_y + 2 * actor1->getField94C() + 10);
+	Common::Point pt3(actor2_x -     actor2->getField948() - 25, actor2_y -     actor2->getField94C() - 20);
+	Common::Point pt4(actor2_x + 2 * actor2->getField948() + 25, actor2_y + 2 * actor2->getField94C() + 20);
+
+	return getScene()->rectIntersect(pt1.x, pt1.y, pt2.x, pt2.y, pt3.x, pt3.y, pt4.x, pt4.y);
 }
 
 void Actor::updateStatus15_Chapter11() {
