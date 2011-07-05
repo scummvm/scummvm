@@ -154,7 +154,7 @@ void CGEEngine::selectSound() {
 }
 
 
-static void reset(void) {
+static void reset() {
 	_sndDrvInfo._dBase = _sndDrvInfo._dIrq = _sndDrvInfo._dDma = _sndDrvInfo._mBase = DETECT;
 }
 
@@ -182,7 +182,7 @@ static uint16 xdeco(const char *str) {
 static Choice *_cho;
 static int     _hlp;
 
-void CGEEngine::SNSelect() {
+void CGEEngine::snSelect() {
 	inf(_text->getText(_hlp));
 	_talk->gotoxy(_talk->_x, FONT_HIG / 2);
 	(new Vmenu(this, _cho, SCR_WID / 2, _talk->_y + _talk->_h + TEXT_VM + FONT_HIG))->setName(_text->getText(MENU_TEXT));

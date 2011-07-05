@@ -109,8 +109,8 @@ namespace CGE {
 #define SYSTIMERATE    6   // 12 Hz
 #define HEROFUN0       (40 * 12)
 #define HEROFUN1       ( 2 * 12)
-#define PAIN           (_flag[0])
-#define FINIS          (_flag[3])
+#define PAIN           (_vm->_flag[0])
+//#define FINIS          (_vm->_flag[3])
 
 
 class System : public Sprite {
@@ -132,10 +132,10 @@ private:
 class Cluster : public Couple {
 public:
 	static uint8 _map[MAP_ZCNT][MAP_XCNT];
-	uint8 &cell(void);
-	Cluster(void) : Couple() { }
+	uint8 &cell();
+	Cluster() : Couple() { }
 	Cluster(int a, int b) : Couple(a, b) { }
-	bool Protected(void);
+	bool Protected();
 };
 
 
@@ -161,9 +161,6 @@ private:
 
 Cluster XZ(int x, int y);
 Cluster XZ(Couple xy);
-
-void ExpandSprite(Sprite *spr);
-void ContractSprite(Sprite *spr);
 
 extern WALK *_hero;
 extern Vga *_vga;

@@ -82,7 +82,7 @@ Emm::Emm(long size): _han(-1), _top(0), _lim(0), _list(NULL) {
 }
 
 
-Emm::~Emm(void) {
+Emm::~Emm() {
 	/* FIXME
 	  Release();
 	  if (Han >= 0)

@@ -119,7 +119,7 @@ Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
 }
 
 
-Vmenu::~Vmenu(void) {
+Vmenu::~Vmenu() {
 	_addr = NULL;
 }
 

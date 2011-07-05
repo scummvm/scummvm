@@ -52,7 +52,7 @@ BtFile::BtFile(const char *name, IOMODE mode, CRYPT *crpt)
 }
 
 
-BtFile::~BtFile(void) {
+BtFile::~BtFile() {
 	for (int i = 0; i < BT_LEVELS; i++) {
 		putPage(i, false);
 		delete _buff[i]._page;

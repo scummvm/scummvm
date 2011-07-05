@@ -51,7 +51,7 @@ IoBuf::IoBuf(const char *name, IOMODE mode, CRYPT *crpt)
 		error("No core for I/O [%s]", name);
 }
 
-IoBuf::~IoBuf(void) {
+IoBuf::~IoBuf() {
 	if (_mode > REA)
 		writeBuff();
 	if (_buff)
@@ -59,14 +59,14 @@ IoBuf::~IoBuf(void) {
 }
 
 
-void IoBuf::readBuff(void) {
+void IoBuf::readBuff() {
 	_bufMark = IoHand::mark();
 	_lim = IoHand::read(_buff, IOBUF_SIZE);
 	_ptr = 0;
 }
 
 
-void IoBuf::writeBuff(void) {
+void IoBuf::writeBuff() {
 	if (_lim) {
 		IoHand::write(_buff, _lim);
 		_bufMark = IoHand::mark();
@@ -203,11 +203,11 @@ CFile::CFile(const char *name, IOMODE mode, CRYPT *crpt)
 }
 
 
-CFile::~CFile(void) {
+CFile::~CFile() {
 }
 
 
-void CFile::flush(void) {
+void CFile::flush() {
 	if (_mode > REA)
 		writeBuff();
 	else
@@ -222,7 +222,7 @@ void CFile::flush(void) {
 }
 
 
-long CFile::mark(void) {
+long CFile::mark() {
 	return _bufMark + ((_mode > REA) ? _lim : _ptr);
 }
 

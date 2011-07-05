@@ -162,17 +162,17 @@ MOUSE::MOUSE(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(
 }
 
 
-MOUSE::~MOUSE(void) {
+MOUSE::~MOUSE() {
 	Off();
 }
 
 
-//void MOUSE::SetFun (void)
+//void MOUSE::SetFun()
 //{
 //}
 
 
-void MOUSE::On(void) {
+void MOUSE::On() {
 	if (_seqPtr && Exist) {
 		_active = true;
 		step(0);
@@ -181,7 +181,7 @@ void MOUSE::On(void) {
 }
 
 
-void MOUSE::Off(void) {
+void MOUSE::Off() {
 	if (_seqPtr == 0) {
 		if (Exist) {
 			_active = false;
@@ -261,7 +261,7 @@ void EventManager::poll() {
 	}
 }
 
-void EventManager::handleEvents(void) {
+void EventManager::handleEvents() {
 	while (EvtTail != EvtHead) {
 		CGEEvent e = Evt[EvtTail];
 		if (e._msk) {

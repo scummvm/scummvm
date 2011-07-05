@@ -139,10 +139,10 @@ char *forceExt(char *buf, const char *nam, const char *ext) {
 
 static  unsigned    Seed = 0xA5;
 
-unsigned FastRand(void) {
+unsigned fastRand() {
 	return Seed = 257 * Seed + 817;
 }
-unsigned FastRand(unsigned s) {
+unsigned fastRand(unsigned s) {
 	return Seed = 257 * s + 817;
 }
 
@@ -150,12 +150,12 @@ uint16 RCrypt(void *buf, uint16 siz, uint16 seed) {
 	if (buf && siz) {
 		byte *b = static_cast<byte *>(buf);
 		byte *q = b + (siz - 1);
-		seed = FastRand(seed);
+		seed = fastRand(seed);
 		*b++ ^= seed;
 		while (buf < q)
-			*b++ ^= FastRand();
+			*b++ ^= fastRand();
 		if (buf == q)
-			*b ^= (seed = FastRand());
+			*b ^= (seed = fastRand());
 	}
 	return seed;
 }
@@ -226,7 +226,7 @@ IoHand::IoHand(const char *name, IOMODE mode, CRYPT *crpt)
 	_file->open(name);
 }
 
-IoHand::~IoHand(void) {
+IoHand::~IoHand() {
 	_file->close();
 	delete _file;
 }
@@ -259,7 +259,7 @@ uint16 IoHand::write(void *buf, uint16 len) {
 */
 }
 
-long IoHand::mark(void) {
+long IoHand::mark() {
 	return _file->pos();
 }
 
@@ -268,7 +268,7 @@ long IoHand::seek(long pos) {
 	return _file->pos();
 }
 
-long IoHand::size(void) {
+long IoHand::size() {
 	return _file->size();
 }
 
@@ -345,7 +345,7 @@ int takeEnum(const char **tab, const char *txt) {
 	return -1;
 }
 
-long timer(void) {
+long timer() {
 /*
   asm	mov	ax,0x40
   asm	mov	es,ax

@@ -32,7 +32,7 @@ class CGEEngine;
 class CGEConsole : public GUI::Debugger {
 public:
 	CGEConsole(CGEEngine *vm);
-	virtual ~CGEConsole(void);
+	virtual ~CGEConsole();
 
 private:
 	CGEEngine *_vm;
