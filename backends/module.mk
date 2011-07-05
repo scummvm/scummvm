@@ -147,6 +147,11 @@ MODULE_OBJS += \
 	graphics/linuxmotosdl/linuxmotosdl-graphics.o
 endif
 
+ifeq ($(BACKEND),maemo)
+MODULE_OBJS += \
+	events/maemosdl/maemosdl-events.o
+endif
+
 ifeq ($(BACKEND),n64)
 MODULE_OBJS += \
 	fs/n64/n64-fs.o \

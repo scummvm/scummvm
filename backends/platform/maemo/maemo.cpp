@@ -22,32 +22,35 @@
 
 #include "common/scummsys.h"
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3)
+#if defined(MAEMO)
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+#include "backends/platform/maemo/maemo.h"
+#include "backends/events/maemosdl/maemosdl-events.h"
+#include "common/textconsole.h"
 
-int main(int argc, char *argv[]) {
+OSystem_SDL_Maemo::OSystem_SDL_Maemo()
+	:
+	OSystem_POSIX() {
+}
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
+void OSystem_SDL_Maemo::initBackend() {
+	// Create the events manager
+	if (_eventSource == 0)
+		_eventSource = new MaemoSdlEventSource();
 
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
+	// Call parent implementation of this method
+	OSystem_POSIX::initBackend();
+}
 
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
+void OSystem_SDL_Maemo::quit() {
+	delete this;
+}
 
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
+void OSystem_SDL_Maemo::fatalError() {
+	delete this;
+	// FIXME
+	warning("fatal error");
+	for (;;) {}
 }
 
 #endif
