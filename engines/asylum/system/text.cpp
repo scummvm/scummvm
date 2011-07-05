@@ -104,12 +104,13 @@ int32 Text::getWidth(const char *text, uint32 length) {
 
 	int32 width = 0;
 	char character = *text;
-	while (character) {
+	while (character && length > 0) {
 		GraphicFrame *font = _fontResource->getFrame((uint8)character);
 		width += font->surface.w + font->x - _curFontFlags;
 
 		text++;
 		character = *text;
+		length--;
 	}
 	return width;
 }
