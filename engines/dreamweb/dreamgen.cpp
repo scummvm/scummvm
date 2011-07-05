@@ -388,7 +388,7 @@ soldierwait:
 	if (!flags.z())
 		goto gotsoldframe;
 	_inc(es.word(bx+3));
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	data.byte(kCombatcount) = 0;
 gotsoldframe:
 	showgamereel();
@@ -422,7 +422,7 @@ notbeforedead:
 	_cmp(data.byte(kLastweapon), 1);
 	if (!flags.z())
 		goto notgunonrock;
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	ax = 123;
 	goto gotrockframe;
 notgunonrock:
@@ -484,7 +484,7 @@ notbeforehdead:
 	_cmp(data.byte(kLastweapon), 1);
 	if (!flags.z())
 		goto notgunonheli;
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	ax = 55;
 	goto gotheliframe;
 notgunonheli:
@@ -645,7 +645,7 @@ notbeforedeadb:
 	_cmp(data.byte(kLastweapon), 3);
 	if (!flags.z())
 		goto notshieldonbus;
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	data.byte(kCombatcount) = 0;
 	ax = 51;
 	goto gotbusframe;
@@ -727,7 +727,7 @@ notfirstpool:
 	_cmp(data.byte(kLastweapon), 2);
 	if (!flags.z())
 		goto notaxeonpool;
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	ax = 122;
 	goto gotguardframe;
 notaxeonpool:
@@ -746,7 +746,7 @@ notendguard1:
 	_cmp(data.byte(kLastweapon), 1);
 	if (!flags.z())
 		goto notgunonpool;
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	ax = 147;
 	goto gotguardframe;
 notgunonpool:
@@ -821,7 +821,7 @@ securwait:
 	_cmp(data.byte(kFacing), 0);
 	if (!flags.z())
 		goto gotsecurframe;
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	_inc(es.word(bx+3));
 gotsecurframe:
 	showgamereel();
@@ -862,7 +862,7 @@ heavywait:
 	_cmp(data.byte(kFacing), 4);
 	if (!flags.z())
 		goto gotheavyframe;
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	_inc(es.word(bx+3));
 	data.byte(kCombatcount) = 0;
 gotheavyframe:
@@ -1203,7 +1203,7 @@ waitstep:
 	intro2text();
 	bx = pop();
 	es = pop();
-	es.byte(bx+6) = -20;
+	es.byte(bx+6) = (byte)-20;
 intromonk1fin:
 	showgamereel();
 	al = data.byte(kMapy);
@@ -1577,7 +1577,7 @@ void DreamGenContext::rollendcredits() {
 	playchannel0();
 	data.byte(kVolume) = 7;
 	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumedirection) = (byte)-1;
 	cl = 160;
 	ch = 160;
 	di = 75;
@@ -1715,7 +1715,7 @@ void DreamGenContext::madman() {
 	ax = pop();
 	bx = pop();
 	es = pop();
-	data.byte(kCombatcount) = -1;
+	data.byte(kCombatcount) = (byte)-1;
 	data.byte(kSpeechcount) = 0;
 notfirstmad:
 	_inc(ax);
@@ -1742,7 +1742,7 @@ notfirstmad:
 	if (!flags.z())
 		goto nomadspeak;
 	data.byte(kCombatcount) = 72;
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	data.byte(kMadmanflag) = 1;
 	ax = 67;
 	goto nomadspeak;
@@ -2387,7 +2387,7 @@ incdir:
 	es.byte(bx+29) = 0;
 	return;
 decdir:
-	data.byte(kTurndirection) = -1;
+	data.byte(kTurndirection) = (byte)-1;
 	al = data.byte(kFacing);
 	_dec(al);
 	_and(al, 7);
@@ -2968,18 +2968,18 @@ gotconst:
 
 void DreamGenContext::doorway() {
 	STACK_CHECK;
-	data.byte(kDoorcheck1) = -24;
+	data.byte(kDoorcheck1) = (byte)-24;
 	data.byte(kDoorcheck2) = 10;
-	data.byte(kDoorcheck3) = -30;
+	data.byte(kDoorcheck3) = (byte)-30;
 	data.byte(kDoorcheck4) = 10;
 	dodoor();
 }
 
 void DreamGenContext::widedoor() {
 	STACK_CHECK;
-	data.byte(kDoorcheck1) = -24;
+	data.byte(kDoorcheck1) = (byte)-24;
 	data.byte(kDoorcheck2) = 24;
-	data.byte(kDoorcheck3) = -30;
+	data.byte(kDoorcheck3) = (byte)-30;
 	data.byte(kDoorcheck4) = 24;
 	dodoor();
 }
@@ -4565,7 +4565,7 @@ void DreamGenContext::monkspeaking() {
 	showmonk();
 	worktoscreen();
 	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumedirection) = (byte)-1;
 	data.byte(kVolumeto) = 5;
 	al = 12;
 	ah = 255;
@@ -4618,7 +4618,7 @@ void DreamGenContext::gettingshot() {
 	loadintroroom();
 	fadescreenups();
 	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumedirection) = (byte)-1;
 	runendseq();
 	clearbeforeload();
 }
@@ -4679,7 +4679,7 @@ void DreamGenContext::intro() {
 	clearpalette();
 	loadintroroom();
 	data.byte(kVolume) = 7;
-	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumedirection) = (byte)-1;
 	data.byte(kVolumeto) = 4;
 	al = 12;
 	ah = 255;
@@ -5436,7 +5436,7 @@ alreadyincryan:
 doincryan:
 	ax = data.word(kMousex);
 	_sub(ax, (80)+167);
-	data.byte(kRyanpage) = -1;
+	data.byte(kRyanpage) = (byte)-1;
 findnewpage:
 	_inc(data.byte(kRyanpage));
 	_sub(ax, 18);
@@ -8152,7 +8152,7 @@ notnexttalk:
 	if (!flags.z())
 		return /* (nospeech) */;
 	cancelch1();
-	data.byte(kVolumedirection) = -1;
+	data.byte(kVolumedirection) = (byte)-1;
 	data.byte(kVolumeto) = 0;
 }
 
@@ -8511,7 +8511,7 @@ void DreamGenContext::newplace() {
 isautoloc:
 	al = data.byte(kAutolocation);
 	data.byte(kNewlocation) = al;
-	data.byte(kAutolocation) = -1;
+	data.byte(kAutolocation) = (byte)-1;
 	return;
 istravel:
 	data.byte(kNeedtotravel) = 0;
@@ -14338,7 +14338,7 @@ alreadytopl:
 	_cmp(data.word(kMousebutton), 0);
 	if (flags.z())
 		return /* (notopleft) */;
-	data.byte(kSymboltopdir) = -1;
+	data.byte(kSymboltopdir) = (byte)-1;
 }
 
 void DreamGenContext::settopright() {
@@ -14374,7 +14374,7 @@ alreadybotl:
 	_cmp(data.word(kMousebutton), 0);
 	if (flags.z())
 		return /* (nobotleft) */;
-	data.byte(kSymbolbotdir) = -1;
+	data.byte(kSymbolbotdir) = (byte)-1;
 }
 
 void DreamGenContext::setbotright() {
@@ -16436,7 +16436,7 @@ notedenlob:
 void DreamGenContext::entryanims() {
 	STACK_CHECK;
 	data.word(kReeltowatch) = -1;
-	data.byte(kWatchmode) = -1;
+	data.byte(kWatchmode) = (byte)-1;
 	_cmp(data.byte(kLocation), 33);
 	if (!flags.z())
 		goto notinthebeach;
@@ -16969,7 +16969,7 @@ notwatchpath:
 	if (!flags.z())
 		goto showwatchreel;
 	data.word(kReeltowatch) = -1;
-	data.byte(kWatchmode) = -1;
+	data.byte(kWatchmode) = (byte)-1;
 	_cmp(data.word(kReeltohold), -1);
 	if (flags.z())
 		return /* (nomorereel) */;
@@ -17010,7 +17010,7 @@ notlastspeed2:
 	if (!flags.z())
 		goto ismorereel2;
 	data.word(kReeltohold) = -1;
-	data.byte(kWatchmode) = -1;
+	data.byte(kWatchmode) = (byte)-1;
 	al = data.byte(kDestafterhold);
 	data.byte(kDestination) = al;
 	data.byte(kFinaldest) = al;
@@ -17030,7 +17030,7 @@ void DreamGenContext::checkforshake() {
 	_cmp(ax, 104);
 	if (!flags.z())
 		return /* (notstartshake) */;
-	data.byte(kShakecounter) = -1;
+	data.byte(kShakecounter) = (byte)-1;
 }
 
 void DreamGenContext::watchcount() {
@@ -17274,71 +17274,6 @@ void DreamGenContext::walkandexamine() {
 		return /* (noobselect) */;
 	examineob();
 	return;
-wantstowalk:
-	setwalk();
-	data.byte(kReasseschanges) = 1;
-	return;
-diff:
-	data.byte(kCommand) = al;
-	data.byte(kCommandtype) = ah;
-	_cmp(data.byte(kLinepointer), 254);
-	if (!flags.z())
-		goto middleofwalk;
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		goto middleofwalk;
-	al = data.byte(kFacing);
-	_cmp(al, data.byte(kTurntoface));
-	if (!flags.z())
-		goto middleofwalk;
-	_cmp(data.byte(kCommandtype), 3);
-	if (!flags.z())
-		goto notblock;
-	bl = data.byte(kManspath);
-	_cmp(bl, data.byte(kPointerspath));
-	if (!flags.z())
-		goto dontcheck;
-	cl = data.byte(kRyanx);
-	_add(cl, 12);
-	ch = data.byte(kRyany);
-	_add(ch, 12);
-	checkone();
-	_cmp(cl, 2);
-	if (flags.c())
-		goto isblock;
-dontcheck:
-	getflagunderp();
-	_cmp(data.byte(kLastflag), 2);
-	if (flags.c())
-		goto isblock;
-	_cmp(data.byte(kLastflag), 128);
-	if (!flags.c())
-		goto isblock;
-	goto toofaraway;
-notblock:
-	bl = data.byte(kManspath);
-	_cmp(bl, data.byte(kPointerspath));
-	if (!flags.z())
-		goto toofaraway;
-	_cmp(data.byte(kCommandtype), 3);
-	if (flags.z())
-		goto isblock;
-	_cmp(data.byte(kCommandtype), 5);
-	if (flags.z())
-		goto isaperson;
-	examineobtext();
-	return;
-middleofwalk:
-	blocknametext();
-	return;
-isblock:
-	blocknametext();
-	return;
-isaperson:
-	personnametext();
-	return;
-toofaraway:
-	walktotext();
 }
 
 void DreamGenContext::mainscreen() {
@@ -19965,7 +19900,7 @@ void DreamGenContext::startloading() {
 	data.byte(kLiftpath) = al;
 	al = cs.byte(bx+25);
 	data.byte(kDoorpath) = al;
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	al = cs.byte(bx+27);
 	push(ax);
 	al = cs.byte(bx+31);
@@ -20060,7 +19995,7 @@ void DreamGenContext::startloading() {
 	autoappear();
 	al = data.byte(kNewlocation);
 	getroomdata();
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (byte)-1;
 	data.byte(kMandead) = 0;
 	data.word(kLookcounter) = 160;
 	data.byte(kNewlocation) = 255;
