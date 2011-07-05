@@ -1625,11 +1625,15 @@ void Actor::updateStatus15_Chapter2() {
 	error("[Actor::updateStatus15_Chapter2] not implemented!");
 }
 
+void Actor::updateStatus15_Chapter2_Helper() {
+	error("[Actor::updateStatus15_Chapter2_Helper] not implemented!");
+}
+
 void Actor::updateStatus15_Chapter2_Player() {
 	error("[Actor::updateStatus15_Chapter2_Player] not implemented!");
 }
 
-void Actor::updateStatus15_Chapter2_Helper() {
+void Actor::updateStatus15_Chapter2_Player_Helper() {
 	// we are the current player
 	Actor *actor11 = getScene()->getActor(11);
 	Actor *actor40 = getScene()->getActor(40);
@@ -1662,6 +1666,10 @@ bool Actor::updateStatus15_isNoVisibleOrStatus17() {
 
 void Actor::updateStatus15_Chapter2_Actor11() {
 	error("[Actor::updateStatus15_Chapter2_Actor11] not implemented!");
+}
+
+bool Actor::updateStatus15_Chapter2_Actor11_Helper(ActorIndex actorIndex1, ActorIndex actorIndex2) {
+	error("[Actor::updateStatus15_Chapter2_Actor11_Helper] not implemented!");
 }
 
 void Actor::updateStatus15_Chapter11() {
