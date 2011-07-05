@@ -212,9 +212,11 @@ void VideoPlayer::loadSubtitles() {
 
 	Common::File subsFile;
 	subsFile.open("vids.cap");
-	char *buffer = new char[(uint)subsFile.size()];
-	subsFile.read(buffer, (uint32)subsFile.size());
+	uint32 fileSize = subsFile.size();
+	char *buffer = new char[fileSize + 1];
+	subsFile.read(buffer, fileSize);
 	subsFile.close();
+	buffer[fileSize] = 0;
 
 	char *start = strstr(buffer, movieToken);
 	char *line = 0;
