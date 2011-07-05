@@ -26,6 +26,8 @@
  */
 
 #include "common/scummsys.h"
+#include "common/memstream.h"
+#include "common/serializer.h"
 #include "cge/general.h"
 #include "cge/sound.h"
 #include "cge/startup.h"
@@ -182,14 +184,39 @@ void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 	Sprite *spr;
 	int i;
 
-	for (st = _savTab; st->Ptr; st++) {
-		if (file._error)
-			error("Bad SVG");
-		file.read((uint8 *)((tiny || st->Flg) ? st->Ptr : &i), st->Len);
-	}
+	// Read the data into a data buffer
+	int size = file.size() - file.mark();
+	byte *dataBuffer = new byte[size];
+	file.read(dataBuffer, size);
+	Common::MemoryReadStream readStream(dataBuffer, size, DisposeAfterUse::YES);
+	Common::Serializer s(&readStream, NULL);
 
-	file.read((uint8 *) &i, sizeof(i));
-	if (i != SVGCHKSUM)
+	// Synchronise header data
+	s.syncAsUint16LE(_now);
+	s.syncAsUint16LE(_oldLev);
+	s.syncAsUint16LE(_demoText);
+	for (i = 0; i < 5; ++i)
+		s.syncAsUint16LE(_game);
+	s.syncAsSint16LE(i);		// unused VGA::Mono variable
+	s.syncAsUint16LE(_music);
+	s.syncBytes(_volume, 2);
+	for (i = 0; i < 4; ++i)
+		s.syncAsUint16LE(_flag[i]);
+
+	for (i = 0; i < CAVE_MAX; ++i) {
+		s.syncAsSint16LE(_heroXY[i]._x);
+		s.syncAsUint16LE(_heroXY[i]._y);
+	}
+	for (i = 0; i < 1 + CAVE_MAX; ++i) {
+		s.syncAsByte(_barriers[i]._horz);
+		s.syncAsByte(_barriers[i]._vert);
+	}
+	for (i = 0; i < POCKET_NX; ++i)
+		s.syncAsUint16LE(_pocref[i]);
+
+	uint16 checksum;
+	s.syncAsUint16LE(checksum);
+	if (checksum != SVGCHKSUM)
 		error("%s", _text->getText(BADSVG_TEXT));
 
 	if (Startup::_core < CORE_HIG)
@@ -202,12 +229,9 @@ void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 	}
 
 	if (! tiny) { // load sprites & pocket
-		while (!file._error) {
+		while (!readStream.eos()) {
 			Sprite S(this, NULL);
-			uint16 n = file.read((uint8 *) &S, sizeof(S));
-
-			if (n != sizeof(S))
-				break;
+			S.sync(s);
 
 			S._prev = S._next = NULL;
 			spr = (scumm_stricmp(S._file + 2, "MUCHA") == 0) ? new Fly(this, NULL)

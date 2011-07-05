@@ -779,6 +779,30 @@ BMP_PTR Sprite::ghost() {
 	return NULL;
 }
 
+void Sprite::sync(Common::Serializer &s) {
+	uint16 unused;
+
+	s.syncAsUint16LE(unused);
+	s.syncAsUint16LE(unused);	// _ext
+	s.syncAsUint16LE(_ref);
+	s.syncAsByte(_cave);
+	s.syncBytes((byte *)&_flags, 2);
+	s.syncAsUint16LE(_x);
+	s.syncAsUint16LE(_y);
+	s.syncAsByte(_z);
+	s.syncAsUint16LE(_w);
+	s.syncAsUint16LE(_h);
+	s.syncAsUint16LE(_time);
+	s.syncAsByte(_nearPtr);
+	s.syncAsByte(_takePtr);
+	s.syncAsUint16LE(_seqPtr);
+	s.syncAsUint16LE(_shpCnt);
+	s.syncBytes((byte *)&_file[0], 9);
+	_file[8] = '\0';
+
+	s.syncAsUint16LE(unused);	// _prev
+	s.syncAsUint16LE(unused);	// _next
+}
 
 Sprite *spriteAt(int x, int y) {
 	Sprite *spr = NULL, * tail = _vga->_showQ->last();
