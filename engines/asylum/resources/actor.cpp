@@ -1626,7 +1626,63 @@ void Actor::updateStatus15_Chapter2() {
 }
 
 void Actor::updateStatus15_Chapter2_Helper() {
-	error("[Actor::updateStatus15_Chapter2_Helper] not implemented!");
+	Actor *actor39 = getScene()->getActor(39);
+
+	actor39->getPoint1()->x = _point1.x;
+	actor39->getPoint1()->y = _point1.y;
+
+	if (_vm->isGameFlagSet(kGameFlag169))
+		actor39->getPoint1()->y += 80;
+
+	switch (getSharedData()->getData(40)) {
+	default:
+		break;
+
+	case 0:
+		_vm->setGameFlag(kGameFlag369);
+
+		if (getSound()->isPlaying(getWorld()->soundResourceIds[5]))
+			getSound()->stop(getWorld()->soundResourceIds[5]);
+
+		if (!getSound()->isPlaying(getWorld()->soundResourceIds[6]))
+			getSound()->playSound(getWorld()->soundResourceIds[6], true, Config.sfxVolume - 10);
+		break;
+
+	case 1:
+		_vm->setGameFlag(kGameFlag370);
+
+		if (getSound()->isPlaying(getWorld()->soundResourceIds[6]))
+			getSound()->stop(getWorld()->soundResourceIds[6]);
+
+		if (!getSound()->isPlaying(getWorld()->soundResourceIds[7]))
+			getSound()->playSound(getWorld()->soundResourceIds[7], true, Config.sfxVolume - 10);
+		break;
+
+	case 2:
+		if (getSound()->isPlaying(getWorld()->soundResourceIds[7]))
+			getSound()->stop(getWorld()->soundResourceIds[7]);
+		break;
+	}
+
+	getSharedData()->setData(40, getSharedData()->getData(40) + 1);
+
+	switch (getSharedData()->getData(40)) {
+	default:
+		break;
+
+	case 0:
+		enableActorsChapter2(_vm);
+		getCursor()->hide();
+		break;
+
+	case 1:
+		_vm->setGameFlag(kGameFlag369);
+		break;
+
+	case 2:
+		_vm->setGameFlag(kGameFlag370);
+		break;
+	}
 }
 
 void Actor::updateStatus15_Chapter2_Player() {
