@@ -131,7 +131,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 			if (_list->isEditable() || !_list->getSelectedString().empty()) {
 				_list->endEditMode();
 				if (!_saveList.empty()) {
-					setResult(atoi(_saveList[selItem].save_slot().c_str()));
+					setResult(_saveList[selItem].getSaveSlot());
 					_resultString = _list->getSelectedString();
 				}
 				close();
@@ -141,7 +141,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	case kChooseCmd:
 		_list->endEditMode();
 		if (!_saveList.empty()) {
-			setResult(atoi(_saveList[selItem].save_slot().c_str()));
+			setResult(_saveList[selItem].getSaveSlot());
 			_resultString = _list->getSelectedString();
 		}
 		close();
@@ -154,7 +154,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 			MessageDialog alert(_("Do you really want to delete this savegame?"),
 								_("Delete"), _("Cancel"));
 			if (alert.runModal() == GUI::kMessageOK) {
-				(*_plugin)->removeSaveState(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
+				(*_plugin)->removeSaveState(_target.c_str(), _saveList[selItem].getSaveSlot());
 
 				setResult(-1);
 				_list->setSelected(-1);
@@ -241,10 +241,10 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 	_playtime->setLabel(_("No playtime saved"));
 
 	if (selItem >= 0 && !_list->getSelectedString().empty() && _metaInfoSupport) {
-		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
+		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot());
 
-		isDeletable = desc.getBool("is_deletable") && _delSupport;
-		isWriteProtected = desc.getBool("is_write_protected");
+		isDeletable = desc.getDeletableFlag() && _delSupport;
+		isWriteProtected = desc.getWriteProtectedFlag();
 
 		// Don't allow the user to change the description of write protected games
 		if (isWriteProtected)
@@ -259,16 +259,19 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 		}
 
 		if (_saveDateSupport) {
-			if (desc.contains("save_date"))
-				_date->setLabel(_("Date: ") + desc.getVal("save_date"));
+			const Common::String &saveDate = desc.getSaveDate();
+			if (!saveDate.empty())
+				_date->setLabel(_("Date: ") + saveDate);
 
-			if (desc.contains("save_time"))
-				_time->setLabel(_("Time: ") + desc.getVal("save_time"));
+			const Common::String &saveTime = desc.getSaveTime();
+			if (!saveTime.empty())
+				_time->setLabel(_("Time: ") + saveTime);
 		}
 
 		if (_playTimeSupport) {
-			if (desc.contains("play_time"))
-				_playtime->setLabel(_("Playtime: ") + desc.getVal("play_time"));
+			const Common::String &playTime = desc.getPlayTime();
+			if (!playTime.empty())
+				_playtime->setLabel(_("Playtime: ") + playTime);
 		}
 	}
 
@@ -326,25 +329,25 @@ void SaveLoadChooser::updateSaveList() {
 	ListWidget::ColorList colors;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
 		// Handle gaps in the list of save games
-		saveSlot = atoi(x->save_slot().c_str());
+		saveSlot = x->getSaveSlot();
 		if (curSlot < saveSlot) {
 			while (curSlot < saveSlot) {
 				SaveStateDescriptor dummySave(curSlot, "");
 				_saveList.insert_at(curSlot, dummySave);
-				saveNames.push_back(dummySave.description());
+				saveNames.push_back(dummySave.getDescription());
 				colors.push_back(ThemeEngine::kFontColorNormal);
 				curSlot++;
 			}
 
 			// Sync the save list iterator
 			for (x = _saveList.begin(); x != _saveList.end(); ++x) {
-				if (atoi(x->save_slot().c_str()) == saveSlot)
+				if (x->getSaveSlot() == saveSlot)
 					break;
 			}
 		}
 
 		// Show "Untitled savestate" for empty/whitespace savegame descriptions
-		Common::String description = x->description();
+		Common::String description = x->getDescription();
 		Common::String trimmedDescription = description;
 		trimmedDescription.trim();
 		if (trimmedDescription.empty()) {

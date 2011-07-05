@@ -123,30 +123,30 @@ public:
 	 * @param bpp   bytes per pixel of the destination buffer
 	 * @param c1    forground color
 	 * @param c2    outline color
-	 * @param maxW  max draw width (to ensure that character drawing takes place within surface boundaries)
-	 * @param maxH  max draw height (to ensure that character drawing takes place within surface boundaries)
+	 * @param maxW  max draw width (to ensure that character drawing takes place within surface boundaries), -1 = no check
+	 * @param maxH  max draw height (to ensure that character drawing takes place within surface boundaries), -1 = no check
 	 */
-	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW = -1, int maxH = -1) const = 0;
+	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const = 0;
 };
 
 /**
- * A base class to render 16x16 (2 byte chars), 8x16 (1 byte chars) monochrome SJIS fonts.
+ * A base class to render monochrome SJIS fonts.
  */
 class FontSJISBase : public FontSJIS {
 public:
-	FontSJISBase() : _drawMode(kDefaultMode), _flippedMode(false) {}
+	FontSJISBase();
 
-	void setDrawingMode(DrawingMode mode) { _drawMode = mode; }
+	virtual void setDrawingMode(DrawingMode mode);
 
-	void toggleFlippedMode(bool enable) { _flippedMode = enable; }
+	virtual void toggleFlippedMode(bool enable);
 
-	uint getFontHeight() const { return (_drawMode == kOutlineMode) ? 18 : (_drawMode == kDefaultMode ? 16 : 17); }
+	virtual uint getFontHeight() const;
 
-	uint getMaxFontWidth() const { return (_drawMode == kOutlineMode) ? 18 : (_drawMode == kDefaultMode ? 16 : 17); }
+	virtual uint getMaxFontWidth() const;
 
-	uint getCharWidth(uint16 ch) const;
+	virtual uint getCharWidth(uint16 ch) const;
 
-	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW = -1, int maxH = -1) const;
+	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const;
 private:
 	template<typename Color>
 	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const;
@@ -161,11 +161,11 @@ private:
 protected:
 	DrawingMode _drawMode;
 	bool _flippedMode;
+	int _fontWidth, _fontHeight;
 
-	bool is8x16(uint16 ch) const;
+	bool isASCII(uint16 ch) const;
 
 	virtual const uint8 *getCharData(uint16 c) const = 0;
-	virtual const uint8 *getCharData8x16(uint16 c) const = 0;
 };
 
 /**
@@ -188,8 +188,7 @@ private:
 	uint8 _fontData16x16[kFont16x16Chars * 32];
 	uint8 _fontData8x16[kFont8x16Chars * 32];
 
-	const uint8 *getCharData(uint16 c) const;
-	const uint8 *getCharData8x16(uint16 c) const;
+	virtual const uint8 *getCharData(uint16 c) const;
 };
 
 /**
@@ -197,8 +196,8 @@ private:
  */
 class FontSjisSVM : public FontSJISBase {
 public:
-	FontSjisSVM() : _fontData16x16(0), _fontData16x16Size(0), _fontData8x16(0), _fontData8x16Size(0) {}
-	~FontSjisSVM() { delete[] _fontData16x16; delete[] _fontData8x16; }
+	FontSjisSVM(const Common::Platform platform);
+	~FontSjisSVM();
 
 	/**
 	 * Load the font data from "SJIS.FNT".
@@ -211,8 +210,15 @@ private:
 	uint8 *_fontData8x16;
 	uint _fontData8x16Size;
 
-	const uint8 *getCharData(uint16 c) const;
-	const uint8 *getCharData8x16(uint16 c) const;
+	uint8 *_fontData12x12;
+	uint _fontData12x12Size;
+
+	virtual const uint8 *getCharData(uint16 c) const;
+
+	const uint8 *getCharDataPCE(uint16 c) const;
+	const uint8 *getCharDataDefault(uint16 c) const;
+
+	void mapKANJIChar(const uint8 fB, const uint8 sB, int &base, int &index) const;
 };
 
 // TODO: Consider adding support for PC98 ROM

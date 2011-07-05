@@ -2572,9 +2572,19 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 		slotOffs = 1;
 	}
 
+	int saveSlotMaxLen = ((_screen->getScreenDim(8))->w << 3)  - _screen->getCharWidth('W');	
+			
 	for (int i = startSlot; i < num && _savegameOffset + i - slotOffs < _savegameListSize; ++i) {
 		if (_savegameList[_saveSlots[i + _savegameOffset - slotOffs]]) {
 			Common::strlcpy(s, _savegameList[_saveSlots[i + _savegameOffset - slotOffs]], 80);
+
+			// Trim long GMM save descriptions to fit our save slots
+			int fC = _screen->getTextWidth(s);
+			while (s[0] && fC >= saveSlotMaxLen) {
+				s[strlen(s) - 1]  = 0;
+				fC = _screen->getTextWidth(s);
+			}
+
 			menu.item[i].itemString = s;
 			s += (strlen(s) + 1);
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset - slotOffs];

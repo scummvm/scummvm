@@ -560,6 +560,7 @@ void MystScriptParser::o_playSoundBlocking(uint16 op, uint16 var, uint16 argc, u
 	debugC(kDebugScript, "Opcode %d: playSoundBlocking", op);
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
+	_vm->_sound->stopSound();
 	_vm->_sound->playSoundBlocking(soundId);
 }
 

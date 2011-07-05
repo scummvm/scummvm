@@ -87,8 +87,14 @@ void LBPage::open(Archive *mhk, uint16 baseId) {
 	_baseId = baseId;
 
 	_vm->addArchive(_mhk);
-	if (_vm->hasResource(ID_BCOD, baseId))
+	if (!_vm->hasResource(ID_BCOD, baseId)) {
+		// assume that BCOD is mandatory for v4/v5
+		if (_vm->getGameType() == GType_LIVINGBOOKSV4 || _vm->getGameType() == GType_LIVINGBOOKSV5)
+			error("missing BCOD resource (id %d)", baseId);
+		_code = new LBCode(_vm, 0);
+	} else {
 		_code = new LBCode(_vm, baseId);
+	}
 
 	loadBITL(baseId);
 	for (uint i = 0; i < _items.size(); i++)
@@ -2300,8 +2306,6 @@ void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *
 		{
 		assert(size == 4);
 		uint offset = stream->readUint32();
-		if (!_page->_code)
-			error("no BCOD?");
 		_page->_code->runCode(this, offset);
 		}
 		break;
@@ -2823,8 +2827,6 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpSendExpression:
-			if (!_page->_code)
-				error("no BCOD?");
 			_page->_code->runCode(this, entry->offset);
 			break;
 
@@ -2858,8 +2860,6 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 		case kLBOpJumpUnlessExpression:
 		case kLBOpBreakExpression:
 		case kLBOpJumpToExpression:
-			if (!_page->_code)
-				error("no BCOD?");
 			{
 			LBValue r = _page->_code->runCode(this, entry->offset);
 			// FIXME
@@ -2884,257 +2884,24 @@ void LBItem::setNextTime(uint16 min, uint16 max, uint32 start) {
 	debug(9, "nextTime is now %d frames away", _nextTime - (uint)(_vm->_system->getMillis() / 16));
 }
 
-enum LBTokenType {
-	kLBNoToken,
-	kLBNameToken,
-	kLBStringToken,
-	kLBOperatorToken,
-	kLBIntegerToken,
-	kLBEndToken
-};
-
-static Common::String readToken(const Common::String &source, uint &pos, LBTokenType &type) {
-	Common::String token;
-	type = kLBNoToken;
-
-	bool done = false;
-	while (pos < source.size() && !done) {
-		if (type == kLBStringToken) {
-			if (source[pos] == '"') {
-				pos++;
-				return token;
-			}
-
-			token += source[pos];
-			pos++;
-			continue;
-		}
-
-		switch (source[pos]) {
-		case ' ':
-			pos++;
-			done = true;
-			break;
-
-		case ')':
-			if (type == kLBNoToken) {
-				type = kLBEndToken;
-				return Common::String();
-			}
-			done = true;
-			break;
-
-		case ';':
-			if (type == kLBNoToken) {
-				pos++;
-				type = kLBEndToken;
-				return Common::String();
-			}
-			done = true;
-			break;
-
-		case '@':
-			// FIXME
-			error("found @ in string '%s', not supported yet", source.c_str());
-
-		case '+':
-		case '-':
-		case '!':
-		case '=':
-		case '>':
-		case '<':
-			if (type == kLBNoToken)
-				type = kLBOperatorToken;
-			if (type == kLBOperatorToken)
-				token += source[pos];
-			else
-				done = true;
-			break;
-
-		case '"':
-			if (type == kLBNoToken)
-				type = kLBStringToken;
-			else
-				done = true;
-			break;
-
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-			if (type == kLBNoToken)
-				type = kLBIntegerToken;
-			if (type == kLBNameToken || type == kLBIntegerToken)
-				token += source[pos];
-			else
-				done = true;
-			break;
-
-		default:
-			if (type == kLBNoToken)
-				type = kLBNameToken;
-			if (type == kLBNameToken)
-				token += source[pos];
-			else
-				done = true;
-			break;
-		}
-
-		if (!done)
-			pos++;
-	}
-
-	if (type == kLBStringToken)
-		error("readToken: ran out of input while parsing string from '%s'", source.c_str());
-
-	if (!token.size()) {
-		assert(type == kLBNoToken);
-		type = kLBEndToken;
-	}
-
-	return token;
-}
-
-LBValue LBItem::parseValue(const Common::String &source, uint &pos) {
-	LBTokenType type, postOpType;
-	Common::String preOp, postOp;
-
-	Common::String str = readToken(source, pos, type);
-	if (type == kLBOperatorToken) {
-		preOp = str;
-		str = readToken(source, pos, type);
-	}
-
-	LBValue value;
-	if (type == kLBStringToken) {
-		value.type = kLBValueString;
-		value.string = str;
-	} else if (type == kLBIntegerToken) {
-		value.type = kLBValueInteger;
-		value.integer = atoi(str.c_str());
-	} else if (type == kLBNameToken) {
-		value = _vm->_variables[str];
-	} else {
-		error("expected string/integer as value in '%s', got '%s'", source.c_str(), str.c_str());
-	}
-
-	uint readAheadPos = pos;
-	postOp = readToken(source, readAheadPos, postOpType);
-	if (postOpType != kLBEndToken) {
-		if (postOpType != kLBOperatorToken)
-			error("expected operator after '%s' in '%s', got '%s'", str.c_str(), source.c_str(), postOp.c_str());
-		// might be a comparison operator, caller will handle other cases if valid
-		if (postOp == "-" || postOp == "+") {
-			pos = readAheadPos;
-			LBValue nextValue = parseValue(source, pos);
-			if (value.type != kLBValueInteger || nextValue.type != kLBValueInteger)
-				error("expected integer for arthmetic operator in '%s'", source.c_str());
-			if (postOp == "+")
-				value.integer += nextValue.integer;
-			else if (postOp == "-")
-				value.integer -= nextValue.integer;
-		}
-	}
-
-	if (preOp.size()) {
-		if (preOp == "!") {
-			if (value.type == kLBValueInteger)
-				value.integer = !value.integer;
-			else
-				error("expected integer after ! operator in '%s'", source.c_str());
-		} else {
-			error("expected valid operator before '%s' in '%s', got '%s'", str.c_str(), source.c_str(), preOp.c_str());
-		}
-	}
-
-	return value;
-}
-
 void LBItem::runCommand(const Common::String &command) {
-	uint pos = 0;
-	LBTokenType type;
+	LBCode tempCode(_vm, 0);
 
 	debug(2, "running command '%s'", command.c_str());
 
-	while (pos < command.size()) {
-		Common::String varname = readToken(command, pos, type);
-		if (type != kLBNameToken)
-			error("expected name as lvalue of command '%s', got '%s'", command.c_str(), varname.c_str());
-		Common::String op = readToken(command, pos, type);
-		if (type != kLBOperatorToken || (op != "=" && op != "++" && op != "--"))
-			error("expected assignment/postincrement/postdecrement operator for command '%s', got '%s'", command.c_str(), op.c_str());
-
-		if (op == "=") {
-			LBValue value = parseValue(command, pos);
-			_vm->_variables[varname] = value;
-		} else {
-			if (_vm->_variables[varname].type != kLBValueInteger)
-				error("expected integer after postincrement/postdecrement operator in '%s'", command.c_str());
-			if (op == "++")
-				_vm->_variables[varname].integer++;
-			else if (op == "--")
-				_vm->_variables[varname].integer--;
-		}
-
-		if (pos < command.size() && command[pos] == ';')
-			pos++;
-	}
+	uint offset = tempCode.parseCode(command);
+	tempCode.runCode(this, offset);
 }
 
 bool LBItem::checkCondition(const Common::String &condition) {
-	uint pos = 0;
-	LBTokenType type;
+	LBCode tempCode(_vm, 0);
 
 	debug(3, "checking condition '%s'", condition.c_str());
 
-	if (condition.size() <= pos || condition[pos] != '(')
-		error("bad condition '%s' (started wrong)", condition.c_str());
-	pos++;
+	uint offset = tempCode.parseCode(condition);
+	LBValue result = tempCode.runCode(this, offset);
 
-	LBValue value1 = parseValue(condition, pos);
-
-	Common::String op = readToken(condition, pos, type);
-	if (type == kLBEndToken) {
-		if (condition.size() != pos + 1 || condition[pos] != ')')
-			error("bad condition '%s' (ended wrong)", condition.c_str());
-
-		if (value1.type == kLBValueInteger)
-			return value1.integer;
-		else
-			error("expected comparison operator for condition '%s'", condition.c_str());
-	}
-	if (type != kLBOperatorToken || (op != "!=" && op != "==" && op != ">" && op != "<" && op != ">=" && op != "<="))
-		error("expected comparison operator for condition '%s', got '%s'", condition.c_str(), op.c_str());
-
-	LBValue value2 = parseValue(condition, pos);
-
-	if (condition.size() != pos + 1 || condition[pos] != ')')
-		error("bad condition '%s' (ended wrong)", condition.c_str());
-
-	if (op == "!=")
-		return (value1 != value2);
-	else if (op == "==")
-		return (value1 == value2);
-
-	if (value1.type != kLBValueInteger || value2.type != kLBValueInteger)
-		error("evaluation operator %s in condition '%s' expected two integer operands!", op.c_str(), condition.c_str());
-
-	if (op == ">")
-		return (value1.integer > value2.integer);
-	else if (op == ">=")
-		return (value1.integer >= value2.integer);
-	else if (op == "<")
-		return (value1.integer < value2.integer);
-	else if (op == "<=")
-		return (value1.integer <= value2.integer);
-
-	return false; // unreachable
+	return result.toInt();
 }
 
 LBSoundItem::LBSoundItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {

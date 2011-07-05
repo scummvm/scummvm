@@ -49,6 +49,7 @@ struct BadaGraphicsManager : public OpenGLGraphicsManager {
   void setFeatureState(OSystem::Feature f, bool enable);
   void setInternalMousePosition(int x, int y);
   void unloadGFXMode();
+  void fillScreen(uint32 col);
 
  private:
   bool loadEgl();

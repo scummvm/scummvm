@@ -67,8 +67,7 @@ DefaultTimerManager::DefaultTimerManager() :
 }
 
 DefaultTimerManager::~DefaultTimerManager() {
-  //	Common::StackLock lock(_mutex);
-  // TODO: ??? this calls into g_system which is in the process of being deleted
+  Common::StackLock lock(_mutex);
 
 	TimerSlot *slot = _head;
 	while (slot) {

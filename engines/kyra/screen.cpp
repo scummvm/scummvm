@@ -3359,7 +3359,7 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch) const {
 		color2 = _colorMap[0];
 	}
 
-	_font->drawChar(dst, c, 640, 1, color1, color2);
+	_font->drawChar(dst, c, 640, 1, color1, color2, 640, 400);
 }
 
 #pragma mark -

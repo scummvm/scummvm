@@ -1,10 +1,26 @@
 ScummVM Windows CE FAQ
-Last updated: 2011-05-27
-Release version: 1.3.0
+Last updated: 2011-07-01
+Release version: 1.3.1
 ------------------------------------------------------------------------
 
 New in this version
 -------------------
+1.3.1:
+- Fix for Normal2xAspect scaler which was causing screen update issues in some
+  games.
+- Fix for Normal1xAspect scaler which caused problems in the bottom part of the
+  screen when toolbar was hidden.
+- Fix for freelook mode.
+- Fix for timer manager, caused timing issues in some games.
+- Activated runtime language detection for ScummVM gui.
+- Toolbar is now hidden when returning to the game list.
+- Double-tap right-click emulation is now turned off for SCI games by default.
+- Added a new option "no_doubletap_paneltoggle" for scummvm.ini to disable
+  toolbar toggling when double-tapping on the top part of the screen.
+- SDL library related fixes:
+  * Fix for screen/mouse-cursor rotation issues (fixes erratic touchscreen
+    behaviour)
+  * Fix for hardware keyboard on some devices (HTC Touch Pro, etc.)
 
 1.3.0:
 This is the first official Windows CE release since 1.1.1.

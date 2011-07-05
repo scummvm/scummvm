@@ -1,8 +1,12 @@
 [Setup]
-DefaultDirName={pf}\ScummVM
 AppCopyright=2011
 AppName=ScummVM
 AppVerName=ScummVM Git
+AppPublisher=The ScummVM Team
+AppPublisherURL=http://www.scummvm.org/
+AppSupportURL=http://www.scummvm.org/
+AppUpdatesURL=http://www.scummvm.org/
+DefaultDirName={pf}\ScummVM
 DefaultGroupName=ScummVM
 AllowNoIcons=true
 AlwaysUsePersonalGroup=false
@@ -15,9 +19,9 @@ AppendDefaultDirName=false
 SolidCompression=true
 DirExistsWarning=no
 SetupIconFile=graphics\scummvm-install.ico
+WizardImageFile=graphics\left.bmp
 ShowLanguageDialog=yes
 LanguageDetectionMethod=uilanguage
-WizardImageFile=graphics\left.bmp
 
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl

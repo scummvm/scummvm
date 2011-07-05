@@ -29,7 +29,9 @@
 #include "common/util.h"
 #include <malloc.h>
 
+namespace Common {
 DECLARE_SINGLETON(ELFMemoryManager);
+}
 
 ELFMemoryManager::ELFMemoryManager() :
 	_heap(0), _heapSize(0), _heapAlign(0),

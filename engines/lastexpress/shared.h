@@ -93,7 +93,7 @@ enum SoundStatus {
 	kSoundStatus_20            = 0x20,
 	kSoundStatus_40            = 0x40,
 	kSoundStatus_180           = 0x180,
-	kSoundStatusRemoved        = 0x200,
+	kSoundStatusClosed         = 0x200,
 	kSoundStatus_400           = 0x400,
 
 	kSoundStatus_8000          = 0x8000,
@@ -103,8 +103,8 @@ enum SoundStatus {
 	kSoundStatus_40000000      = 0x40000000,
 
 	kSoundStatusClear0         = 0x10,
-	kSoundStatusFilterVariant  = 0x1F,
-	kSoundStatusClear2         = 0x80,
+	kSoundStatusFilter         = 0x1F,
+	kSoundStatusCached         = 0x80,
 	kSoundStatusClear3         = 0x200,
 	kSoundStatusClear4         = 0x800,
 	kSoundStatusClearAll       = 0xFFFFFFE0

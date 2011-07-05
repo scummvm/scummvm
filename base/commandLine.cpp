@@ -184,8 +184,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("native_mt32", false);
 	ConfMan.registerDefault("enable_gs", false);
 	ConfMan.registerDefault("midi_gain", 100);
-//	ConfMan.registerDefault("music_driver", ???);
 
+	ConfMan.registerDefault("music_driver", "auto");
 	ConfMan.registerDefault("mt32_device", "null");
 	ConfMan.registerDefault("gm_device", "null");
 
@@ -662,7 +662,7 @@ static Common::Error listSaves(const char *target) {
 				   "  ---- ------------------------------------------------------\n");
 
 			for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
-				printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
+				printf("  %-4d %s\n", x->getSaveSlot(), x->getDescription().c_str());
 				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
 			}
 		} else {

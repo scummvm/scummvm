@@ -292,11 +292,11 @@ void SoundQueue::updateSubtitles() {
 		if (!(status & kSoundStatus_40)
 		 || status & kSoundStatus_180
 		 || soundEntry->getTime() == 0
-		 || (status & kSoundStatusFilterVariant) < 6
+		 || (status & kSoundStatusFilter) < 6
 		 || ((getFlags()->nis & 0x8000) && soundEntry->getPriority() < 90)) {
 			 current_index = 0;
 		} else {
-			current_index = soundEntry->getPriority() + (status & kSoundStatusFilterVariant);
+			current_index = soundEntry->getPriority() + (status & kSoundStatusFilter);
 
 			if (_currentSubtitle == (*i))
 				current_index += 4;

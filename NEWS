@@ -5,7 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  SDL ports:
    - Added support for OpenGL (GSoC Task).
 
-1.3.1 (????-??-??)
+1.3.1 (2011-07-12)
  General:
    - Improved audio device detection and fallback.
      There should be no more silent errors due to invalid audio devices.

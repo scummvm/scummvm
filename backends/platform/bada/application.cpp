@@ -45,6 +45,9 @@ BadaScummVM::BadaScummVM() : appForm(0) {
 
 BadaScummVM::~BadaScummVM() {
   logEntered();
+  if (g_system) {
+    delete ((BadaSystem*) g_system);
+  }
 }
 
 bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {
@@ -71,7 +74,9 @@ void BadaScummVM::OnForeground(void) {
 }
 
 void BadaScummVM::OnBackground(void) {
-
+  if (g_engine) {
+    g_engine->pauseEngine(true);
+  }
 }
 
 void BadaScummVM::OnBatteryLevelChanged(BatteryLevel batteryLevel) {
@@ -85,9 +90,6 @@ void BadaScummVM::OnLowMemory(void) {
 }
 
 void BadaScummVM::OnScreenOn(void) {
-  if (g_engine) {
-    g_engine->pauseEngine(false);
-  }
 }
 
 void BadaScummVM::OnScreenOff(void) {

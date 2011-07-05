@@ -40,6 +40,7 @@ class Sound;
 #define SOUND_ARR_SIZE 16
 #define ROLAND_DRIVER_NUM 2
 #define ADLIB_DRIVER_NUM 3
+#define SBLASTER_DRIVER_NUM 4
 
 struct trackInfoStruct {
 	int _numTracks;
@@ -106,12 +107,12 @@ public:
 	virtual void setProgram(int channel, int program) {}			// Method #13
 	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
 	virtual void setPitchBlend(int channel, int pitchBlend) {}		// Method #15
-	virtual void proc32(int channel, int program, int v0, int v1) {}// Method #16
+	virtual void proc32(Sound *sound, int channel, int program, int v0, int v1) {}// Method #16
 	virtual void updateVoice(int channel) {}						// Method #17
 	virtual void proc36() {}										// Method #18
 	virtual void proc38(int channel, int cmd, int value) {}			// Method #19
 	virtual void setPitch(int channel, int pitchBlend) {}			// Method #20
-	virtual void proc42(int channel, int v0, int v1) {}				// Method #21
+	virtual void proc42(int channel, int cmd, int value, int *v1, int *v2) {}	// Method #21
 };
 
 struct VoiceStructEntryType0 {
@@ -439,7 +440,7 @@ public:
 	virtual const GroupData *getGroupData();
 	virtual void installPatch(const byte *data, int size);
 	virtual int setMasterVolume(int volume);
-	virtual void proc32(int channel, int program, int v0, int v1);
+	virtual void proc32(Sound *sound, int channel, int program, int v0, int v1);
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void setPitch(int channel, int pitchBlend);
@@ -455,33 +456,27 @@ public:
 
 class AdlibFxSoundDriver: public SoundDriver, Audio::AudioStream {
 private:
+	Common::Queue<RegisterValue> _queue;
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
-	FM_OPL *_opl;
 	Audio::SoundHandle _soundHandle;
 	int _sampleRate;
-	byte _portContents[256];
-	int _masterVolume;
-	Common::Queue<RegisterValue> _queue;
 
-	bool _channelVoiced[ADLIB_CHANNEL_COUNT];
-	int _channelVolume[ADLIB_CHANNEL_COUNT];
-	int _v4405E[ADLIB_CHANNEL_COUNT];
-	int _v44067[ADLIB_CHANNEL_COUNT];
-	int _v44070[ADLIB_CHANNEL_COUNT];
-	int _v44079[ADLIB_CHANNEL_COUNT];
-	int _v44082[ADLIB_CHANNEL_COUNT + 1];
-	int _pitchBlend[ADLIB_CHANNEL_COUNT];
-	int _v4409E[ADLIB_CHANNEL_COUNT];
+	int _v45062;
+	int _v45066;
+	int _v45068;
+	int _v4506A;
+	int _v4506B;
+	bool _v45046;
+	byte _masterVolume;
+	byte _channelVolume;
+	Sound *_sound;
 
-
-	void write(byte reg, byte value);
+	void write(int v);
 	void flush();
-	void updateChannelVolume(int channel);
-	void setVoice(int channel);
-	void clearVoice(int channel);
-	void updateChannel(int channel);
-	void setFrequency(int channel);
+	void sub_4556E();
+	void write209();
+	void write211();
 public:
 	AdlibFxSoundDriver();
 	virtual ~AdlibFxSoundDriver();
@@ -490,12 +485,12 @@ public:
 	virtual void close();
 	virtual bool reset();
 	virtual const GroupData *getGroupData();
-	virtual void installPatch(const byte *data, int size) {}
+	virtual void poll();
 	virtual int setMasterVolume(int volume);
-	virtual void proc32(int channel, int program, int v0, int v1);
+	virtual void proc32(Sound *sound, int channel, int program, int v0, int v1);
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
-	virtual void setPitch(int channel, int pitchBlend);
+	virtual void proc42(int channel, int cmd, int value, int *v1, int *v2);
 
 	// AudioStream interface
 	virtual int readBuffer(int16 *buffer, const int numSamples);

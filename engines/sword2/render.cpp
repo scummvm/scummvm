@@ -699,8 +699,6 @@ int32 Screen::initializePsxBackgroundLayer(byte *parallax) {
  */
 
 int32 Screen::initializePsxParallaxLayer(byte *parallax) {
-	uint16 plxXres, plxYres;
-	uint16 xTiles, yTiles;
 	uint16 i, j, k;
 	byte *data;
 	byte *dst;
@@ -714,10 +712,10 @@ int32 Screen::initializePsxParallaxLayer(byte *parallax) {
 		return RD_OK;
 	}
 
-	plxXres = READ_LE_UINT16(parallax);
-	plxYres = READ_LE_UINT16(parallax + 2);
-	xTiles = READ_LE_UINT16(parallax + 4);
-	yTiles = READ_LE_UINT16(parallax + 6);
+	// uint16 plxXres = READ_LE_UINT16(parallax);
+	// uint16 plxYres = READ_LE_UINT16(parallax + 2);
+	uint16 xTiles = READ_LE_UINT16(parallax + 4);
+	uint16 yTiles = READ_LE_UINT16(parallax + 6);
 
 	// Beginning of parallax table composed by uint32,
 	// if word is 0, corresponding tile contains no data and must be skipped,

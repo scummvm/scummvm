@@ -152,7 +152,6 @@ result BadaSystem::Construct(void) {
 
 BadaSystem::~BadaSystem() {
   logEntered();
-  closeAudio();
 }
 
 result BadaSystem::initModules() {
@@ -195,7 +194,7 @@ result BadaSystem::initModules() {
   }
 
   _audiocdManager = (AudioCDManager*) new DefaultAudioCDManager();
-  if (!_audiocdManager) { // dtor in base
+  if (!_audiocdManager) {
     return E_OUT_OF_MEMORY;
   }
 
@@ -227,6 +226,7 @@ void BadaSystem::initBackend() {
 
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.setInt("autosave_period", 0);
 
   Osp::System::SystemTime::GetTicks(epoch);
 
@@ -294,7 +294,7 @@ Common::WriteStream* BadaSystem::createConfigWriteStream() {
 
 void BadaSystem::closeAudio() {
   if (audioThread) {
-    audioThread->Stop();
+    audioThread->close();
     delete audioThread;
     audioThread = null;
   }

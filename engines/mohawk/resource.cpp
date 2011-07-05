@@ -294,7 +294,7 @@ bool MohawkArchive::openStream(Common::SeekableReadStream *stream) {
 			// We need to do this because of the way Mohawk is set up (this is much more "proper"
 			// than passing _stream at the right offset). We may want to do that in the future, though.
 			if (tag == ID_TMOV) {
-				if (index == fileTable.size() - 1)
+				if (index == fileTable.size())
 					res.size = stream->size() - fileTable[index - 1].offset;
 				else
 					res.size = fileTable[index].offset - fileTable[index - 1].offset;
@@ -303,7 +303,6 @@ bool MohawkArchive::openStream(Common::SeekableReadStream *stream) {
 
 			debug(4, "Entry[%02x]: ID = %04x (%d) Index = %04x", j, id, id, index);
 		}
-
 
 		// Return to next TypeTable entry
 		stream->seek(absOffset + (i + 1) * 8 + 4);

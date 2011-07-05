@@ -103,6 +103,19 @@ void Serializer::validate(int v, Common::Serializer::Version minVersion,
 		error("Savegame is corrupt");
 }
 
+#define DOUBLE_PRECISION 1000000000
+
+void Serializer::syncAsDouble(double &v) {
+	int32 num = (int32)(v);
+	uint32 fraction = (uint32)((v - (int32)v) * DOUBLE_PRECISION);
+
+	syncAsSint32LE(num);
+	syncAsUint32LE(fraction);
+
+	if (isLoading())
+		v = num + (double)fraction / DOUBLE_PRECISION;
+}
+
 /*--------------------------------------------------------------------------*/
 
 Common::Error Saver::save(int slot, const Common::String &saveName) {

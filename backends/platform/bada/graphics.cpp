@@ -147,6 +147,10 @@ bool BadaGraphicsManager::loadEgl() {
   return true;
 }
 
+void BadaGraphicsManager::fillScreen(uint32 col) {
+  OpenGLGraphicsManager::fillScreen(col == 0 ? 22512 : col);
+}
+
 bool BadaGraphicsManager::loadGFXMode() {
   logEntered();
 
@@ -163,7 +167,7 @@ bool BadaGraphicsManager::loadGFXMode() {
 
   AppLog("screen size: %dx%d", _videoMode.hardwareWidth, _videoMode.hardwareHeight);
   if (startup) {
-    displayMessageOnOSD("Wait!");
+    //    displayMessageOnOSD("Wait!");
     startup = false;
   }
   return OpenGLGraphicsManager::loadGFXMode();

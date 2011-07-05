@@ -174,7 +174,7 @@ _strip=strip
 _ar="ar cru"
 _as="as"
 _windres=windres
-_win32build="build/x86"
+_stagingpath="staging"
 _win32path="c:/scummvm"
 _aos4path="Games:ScummVM"
 _staticlibpath=/sw
@@ -1881,6 +1881,7 @@ case $_host_os in
 	mingw*)
 		DEFINES="$DEFINES -DWIN32"
 		DEFINES="$DEFINES -D__USE_MINGW_ANSI_STDIO=0"
+		LDFLAGS="$LDFLAGS -static-libgcc -static-libstdc++"
 		LIBS="$LIBS -lmingw32 -lwinmm -lgdi32"
 		OBJS="$OBJS scummvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
@@ -3682,7 +3683,7 @@ AS := $_as
 ASFLAGS := $ASFLAGS
 WINDRES := $_windres
 WINDRESFLAGS := $WINDRESFLAGS
-WIN32BUILD=$_win32build
+STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
 STATICLIBPATH=$_staticlibpath
