@@ -2909,7 +2909,125 @@ void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
 
 
 void GUI_Eob::scribeScrollDialogue() {
-	
+	int16 *scrollInvSlot = new int16[32];
+	int16 *scrollCharacter = new int16[32];
+	int16 *menuItems = new int16[6];
+	int numScrolls = 0;
+
+	for (int i = 0; i < 32; i++) {
+		for (int ii = 0; ii < 6; ii++) {
+			scrollInvSlot[i] = _vm->checkCharacterInventoryForItem(ii, 34, i + 1) + 1;
+			if (scrollInvSlot[i] > 0) {
+				numScrolls++;
+				scrollCharacter[i] = ii;
+				break;
+			}
+		}
+	}
+
+	if (numScrolls) {
+		int csel = selectCharacterDialogue(49);
+		if (csel != -1) {
+			
+			EobCharacter *c = &_vm->_characters[csel];
+			int s = 0;
+
+			for (int i = 0; i < 32 && s < 6; i++) {
+				if (!scrollInvSlot[i])
+					continue;
+
+				if (c->mageSpellsAvailabilityFlags & (1 << i))
+					scrollInvSlot[i] = 0;
+				else
+					menuItems[s++] = i + 1;
+			}
+
+			if (s) {
+				Button *buttonList = 0;
+				bool redraw = true;
+				int lastHighLight = -1;
+				int newHighLight = 0;
+
+				while (s && !_vm->shouldQuit()) {
+					if (redraw) {
+						s = 0;
+						for (int i = 0; i < 32 && s < 6; i++) {
+							if (!scrollInvSlot[i])
+								continue;
+							menuItems[s++] = i + 1;
+						}
+
+						if (!s)
+							break;
+
+						releaseButtons(buttonList);
+						buttonList = initMenu(6);
+
+						for (int i = 0; i < s; i++)
+							_screen->printShadedText(_vm->_mageSpellList[menuItems[i]], 8, 9 * i + 50, 15, 0);
+
+						redraw = false;
+						lastHighLight = -1;
+						newHighLight = 0;
+					}					
+
+					if (lastHighLight != newHighLight) {
+						if (lastHighLight >= 0)
+							_screen->printText(_vm->_mageSpellList[menuItems[lastHighLight]], 8, 9 * lastHighLight + 50, 15, 0);
+						lastHighLight = newHighLight;
+						_screen->printText(_vm->_mageSpellList[menuItems[lastHighLight]], 8, 9 * lastHighLight + 50, 6, 0);
+						_screen->updateScreen();
+					}
+
+					int inputFlag = _vm->checkInput(buttonList, false, 0);
+					_vm->removeInputTop();
+
+					if (inputFlag == 0) {
+						Common::Point p = _vm->getMousePos();
+						if (_vm->posWithinRect(p.x, p.y, 8, 50, 176, s * 9 + 49))
+							newHighLight = (p.y - 50) / 9;
+					} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP2] || inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN]) {
+						newHighLight = (newHighLight + 1) % s;
+					} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP8] || inputFlag == _vm->_keyMap[Common::KEYCODE_UP]) {
+						newHighLight = (newHighLight + s - 1) % s;
+					} else if (inputFlag == 0x8023 || inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
+						s = 0;
+					} else if (inputFlag == 0x8024) {
+						newHighLight = (_vm->_mouseY - 50) / 9;						
+						if (newHighLight >= 0 && newHighLight < s) {
+							inputFlag = _vm->_keyMap[Common::KEYCODE_SPACE];
+						} else {
+							inputFlag = 0;
+							newHighLight = lastHighLight;
+						}
+					}
+
+					if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5])  {
+						int t = menuItems[newHighLight] - 1;
+						Item scItem = _vm->_characters[scrollCharacter[t]].inventory[scrollInvSlot[t] - 1];
+						c->mageSpellsAvailabilityFlags |= (1 << t);
+						_vm->_characters[scrollCharacter[t]].inventory[scrollInvSlot[t] - 1] = 0;
+						_vm->gui_drawCharPortraitWithStats(_vm->_characters[scrollCharacter[t]].id);
+						scrollInvSlot[t] = 0;
+						_vm->_items[scItem].block = -1;
+						redraw = true;
+						s--;
+					}
+				}
+
+				releaseButtons(buttonList);
+
+			} else {
+				displayTextBox(51);
+			}
+		}
+	} else {
+		displayTextBox(50);
+	}
+
+	delete[] menuItems;
+	delete[] scrollCharacter;
+	delete[] scrollInvSlot;
 }
 
 bool GUI_Eob::confirmDialogue(int id) {
