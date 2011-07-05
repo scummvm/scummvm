@@ -838,12 +838,125 @@ bool Actor::isResourcePresent() const {
 	return (index >= 15);
 }
 
-bool Actor::process(int32 actorX, int32 actorY) {
-	error("[Actor::process] not implemented!");
+bool Actor::process(const Common::Point &point) {
+	// Compute point and delta
+	Common::Point sum(_point1.x + _point2.x, _point1.y + _point2.y);
+	Common::Point delta = point - sum;
+
+	// Compute modifiers
+	int a1 = 0;
+	int a2 = 0;
+	int a3 = 0;
+
+	if (delta.x <= 0) {
+		if (delta.y >= 0) {
+			a1 = -1;
+			a2 = 1;
+			a3 = 3;
+		} else {
+			a1 = -1;
+			a2 = -1;
+			a3 = 0;
+		}
+	} else {
+		if (delta.y >= 0) {
+			a1 = 1;
+			a2 = 1;
+			a3 = 2;
+		} else {
+			a1 = 1;
+			a2 = -1;
+			a3 = 1;
+		}
+	}
+
+	if (point == sum) {
+		if (process_408B20(&sum, a3 >= 2 ? kDirectionS : kDirectionN, abs(delta.y), false)) {
+			_data.field_8[0] = point.x;
+			_data.field_8[1] = point.y;
+			_data.field_4    = 0;
+			_data.count      = 1;
+
+			return true;
+		}
+	}
+
+	if (point.x == sum.x) {
+		ActorDirection direction = a3 >= 2 ? kDirectionS : kDirectionN;
+		if (process_408B20(&sum, direction, abs(delta.y), false)) {
+			_data.field_8[0] = point.x;
+			_data.field_8[1] = point.y;
+			_data.field_4    = 0;
+			_data.count      = 1;
+
+			updateFromDirection(direction);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	if (point.y == sum.y) {
+		ActorDirection direction = (a3 != 0 || a3 != 3) ? kDirectionE : kDirectionO;
+
+		if (process_408B20(&sum, direction, abs(delta.x), true)) {
+			_data.field_8[0] = point.x;
+			_data.field_8[1] = point.y;
+			_data.field_4    = 0;
+			_data.count      = 1;
+
+			updateFromDirection(direction);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	if (abs(delta.x) != abs(delta.y)) {
+		error("[Actor::process] not implemented (deltas)!");
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Last case: abs(delta.x) == abs(delta.y)
+
+	// Compute direction
+	ActorDirection direction = kDirectionSO;
+	switch (a3) {
+	default:
+		break;
+
+	case 0:
+		direction = kDirectionNO;
+		break;
+
+	case 1:
+		direction = kDirectionNE;
+		break;
+
+	case 2:
+		direction = kDirectionSE;
+		break;
+	}
+
+	if (!process_408B20(&sum, direction, abs(delta.y), true))
+		return false;
+
+	// Update actor data
+	_data.field_8[0] = point.x;
+	_data.field_8[1] = point.y;
+	_data.field_4    = 0;
+	_data.count      = 1;
+
+	// Update actor from direction
+	updateFromDirection(direction);
+
+	return true;
 }
 
 void Actor::processStatus(int32 actorX, int32 actorY, bool doSpeech) {
-	if (process(actorX, actorY)) {
+	if (process(Common::Point(actorX, actorY))) {
 		if (_status <= kActorStatus11)
 			updateStatus(kActorStatus2);
 		else
