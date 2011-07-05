@@ -2146,11 +2146,13 @@ int32 Actor::getGraphicsFlags() {
 		int res = strcmp((char *)&_name, "Dead Sarah");
 
 		if (res == 0)
-			return res;
+			return 0;
 	}
 
-	// TODO replace by readable version
-	return ((_direction < kDirectionSE) - 1) & 2;
+	if (_direction < kDirectionSE)
+		return 0;
+
+	return 2;
 }
 
 int32 Actor::getDistance() const {
