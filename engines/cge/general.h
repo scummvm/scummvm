@@ -176,12 +176,6 @@ public:
 	virtual long mark() = 0;
 	virtual long size() = 0;
 	virtual long seek(long pos) = 0;
-
-	uint16 readWord() {
-		uint16 v;
-		read(&v, sizeof(uint16));
-		return FROM_LE_32(v);
-	}
 };
 
 

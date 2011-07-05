@@ -28,6 +28,7 @@
 #ifndef __CGE_VGA13H__
 #define __CGE_VGA13H__
 
+#include "common/serializer.h"
 #include "graphics/surface.h"
 #include "cge/general.h"
 #include "cge/bitmap.h"
@@ -201,6 +202,7 @@ public:
 	char _file[MAXFILE];
 	Sprite *_prev;
 	Sprite *_next;
+
 	bool works(Sprite *spr);
 	bool seqTest(int n);
 	inline bool active() {
@@ -231,6 +233,7 @@ public:
 	Snail::Com *snList(SNLIST type);
 	virtual void touch(uint16 mask, int x, int y);
 	virtual void tick();
+	void sync(Common::Serializer &s);
 private:
 	CGEEngine *_vm;
 };
