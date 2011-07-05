@@ -418,10 +418,12 @@ private:
 	void updateStatus14_Chapter11();
 
 	void updateStatus15_Chapter2();
-	void updateStatus15_Chapter2_Player();
 	void updateStatus15_Chapter2_Helper();
+	void updateStatus15_Chapter2_Player();
+	void updateStatus15_Chapter2_Player_Helper();
 	bool updateStatus15_isNoVisibleOrStatus17();
 	void updateStatus15_Chapter2_Actor11();
+	bool updateStatus15_Chapter2_Actor11_Helper(ActorIndex actorIndex1, ActorIndex actorIndex2);
 	void updateStatus15_Chapter11();
 	void updateStatus15_Chapter11_Player();
 
