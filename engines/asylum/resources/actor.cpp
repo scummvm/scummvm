@@ -1434,7 +1434,7 @@ void Actor::updateStatusEnabled() {
 						                 poly->boundingRect.top + rnd(poly->boundingRect.height()));
 
 						if (!getSharedData()->actorUpdateEnabledCheck) {
-							if (isInActionArea(pt, area)) {
+							if (!isInActionArea(pt, area)) {
 								Common::Point *polyPoint = &poly->points[rnd(poly->count())];
 								processStatus(polyPoint->x, polyPoint->y, false);
 							} else {
@@ -1896,6 +1896,22 @@ void Actor::updateNumbers(int32 reaction, int32 x, int32 y) {
 	sprintf(_numberString01, "%d", _numberValue01);
 
 	_numberFlag01 = 1;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers functions
+//////////////////////////////////////////////////////////////////////////
+bool Actor::checkAllActions(const Common::Point &pt, Common::Array<ActionArea *> *actions) {
+	if (actions->size() == 0)
+		return false;
+
+	for (Common::Array<ActionArea *>::iterator it = actions->begin(); it != actions->end(); it++) {
+		if (isInActionArea(pt, *it))
+			return true;
+	}
+
+	return false;
+
 }
 
 bool Actor::isInActionArea(const Common::Point &pt, ActionArea *area) {
