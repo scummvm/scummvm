@@ -744,6 +744,7 @@ Special configuration feature:
                                            gp2xwiz for GP2X Wiz
                                            iphone for Apple iPhone
                                            linupy for Yopy PDA
+                                           maemo for Nokia Maemo
                                            motoezx for MotoEZX
                                            motomagx for MotoMAGX
                                            n64 for Nintendo 64
@@ -1129,6 +1130,22 @@ iphone)
 linupy)
 	_host_os=linux
 	_host_cpu=arm
+	;;
+maemo)
+	_host_os=maemo
+	_host_cpu=arm
+	_host_alias=arm-linux
+
+	# The prefix is always the same on Maemo so we hardcode the default
+	# here. It is still possible to define a custom prefix which is
+	# needed when packaging the app with a user-specific app ID.
+	test "x$prefix" = xNONE && prefix=/opt/scummvm
+	# Maemo apps are installed into app-specific directories. The
+	# default directory structure of ScummVM makes no sense here so we
+	# hardcode Maemo specific directories here.
+	datarootdir='${prefix}/share'
+	datadir=/opt/scummvm/share
+	docdir='${datarootdir}/doc/scummvm'
 	;;
 motoezx)
 	_host_os=linux
@@ -1898,6 +1915,9 @@ case $_host_os in
 			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
 		fi
 		;;
+	maemo)
+		DEFINES="$DEFINES -DMAEMO"
+		;;
 	mingw*)
 		DEFINES="$DEFINES -DWIN32"
 		DEFINES="$DEFINES -D__USE_MINGW_ANSI_STDIO=0"
@@ -2189,6 +2209,22 @@ if test -n "$_host"; then
 			_ar="m68k-atari-mint-ar cru"
 			_seq_midi=no
 			;;
+		maemo)
+			CXXFLAGS="$CXXFLAGS -Os"
+			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
+			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
+			INCLUDES="$INCLUDES -I/usr/X11R6/include"
+			LIBS="$LIBS -lpthread"
+			LIBS="$LIBS -L/usr/lib"
+			
+			_backend="maemo"
+			_build_hq_scalers=no
+			_mt32emu=no
+			_alsa=no
+			_mad=yes
+			_tremor=yes
+			_zlib=yes
+			;;
 		*mingw32*)
 			_sdlconfig=$_host-sdl-config
 			_windres=$_host-windres
@@ -2439,6 +2475,9 @@ case $_backend in
 	linuxmoto)
 		DEFINES="$DEFINES -DLINUXMOTO"
 		;;
+	maemo)
+		DEFINES="$DEFINES -DMAEMO"
+		;;
 	n64)
 		INCLUDES="$INCLUDES "'-I$(N64SDK)/include'
 		INCLUDES="$INCLUDES "'-I$(N64SDK)/mips64/include'
@@ -2521,7 +2560,7 @@ MODULES="$MODULES backends/platform/$_backend"
 # Setup SDL specifics for SDL based backends
 #
 case $_backend in
-	dingux | gp2x | gph | linuxmoto | openpandora | samsungtv | sdl)
+	dingux | gp2x | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
@@ -2544,7 +2583,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | bada | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | webos | wii)
+	android | bada | dingux | dreamcast | gph | maemo | openpandora | psp | samsungtv | sdl | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2570,7 +2609,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -3426,8 +3465,8 @@ case $_backend in
 		# Add ../plugins as a path so plugins can be found when running from a .PND.
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
 		;;
-	webos)
-		# The WebOS app wants the plugins in the "lib" directory
+	maemo | webos)
+		# The WebOS and Maemo apps want the plugins in the "lib" directory
 		# without a scummvm sub directory.
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir\\\""
 		;;
