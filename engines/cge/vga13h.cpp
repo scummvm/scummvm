@@ -349,6 +349,14 @@ Sprite::Sprite(CGEEngine *vm, BMP_PTR *shpP)
 	  _ext(NULL), _ref(-1), _cave(0), _vm(vm) {
 	memset(_file, 0, sizeof(_file));
 	*((uint16 *)&_flags) = 0;
+	_ref = 0;
+	_x = _y = 0;
+	_w = _h = 0;
+	_time = 0;
+	_seqPtr = 0;
+	_shpCnt = 0;
+	_prev = _next = NULL;
+
 	setShapeList(shpP);
 }
 
