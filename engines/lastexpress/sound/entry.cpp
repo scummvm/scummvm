@@ -262,6 +262,56 @@ void SoundEntry::update(uint val) {
 	}
 }
 
+bool SoundEntry::updateSound() {
+	bool result;
+	char sub[16];
+
+	if (_status.status2 & 4) {
+		result = false;
+	} else {
+		if (_status.status2 & 0x80) {
+			if (_field_48 <= getSound()->getData2()) {
+				_status.status |= 0x20;
+				_status.status &= ~0x8000;
+				strcpy(sub, _name2.c_str());
+
+				int l = strlen(sub) + 1;
+				if (l - 1 > 4)
+					sub[l - 1 - 4] = 0;
+				showSubtitle(sub);
+			}
+		} else {
+			if (!(getSoundQueue()->getFlag() & 0x20)) {
+				if (!(_status.status3 & 8)) {
+					if (_entity) {
+						if (_entity < 0x80) {
+							updateEntryFlag(getSound()->getSoundFlag(_entity));
+						}
+					}
+				}
+			}
+			//if (status.status2 & 0x40 && !((uint32)_status.status & 0x180) && v1->soundBuffer) 
+			//	Sound_FillSoundBuffer(v1);
+		}
+		result = true;
+	}
+
+	return result;
+}
+
+void SoundEntry::updateEntryFlag(SoundFlag flag) {
+	if (flag) {
+		if (getSoundQueue()->getFlag() & 0x20 && _type != kSoundType9 && _type != kSoundType7)
+			update(flag);
+		else
+			_status.status = flag + (_status.status & ~0x1F);
+	} else {
+		_variant = 0;
+		_status.status |= 0x80u;
+		_status.status &= ~0x10001F;
+	}
+}
+
 void SoundEntry::updateState() {
 	if (getSoundQueue()->getFlag() & 32) {
 		if (_type != kSoundType9 && _type != kSoundType7 && _type != kSoundType5) {
