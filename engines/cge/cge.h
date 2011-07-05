@@ -70,6 +70,7 @@ public:
 	bool   _music;
 	int    _pocref[POCKET_NX];
 	uint8  _volume[2];
+	Common::RandomSource _randomSource;
 
 	virtual Common::Error run();
 	GUI::Debugger *getDebugger() {
