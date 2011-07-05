@@ -46,7 +46,10 @@ BadaScummVM::BadaScummVM() : appForm(0) {
 BadaScummVM::~BadaScummVM() {
   logEntered();
   if (g_system) {
-    delete ((BadaSystem*) g_system);
+    BadaSystem* system = (BadaSystem*) g_system;
+    system->destroyBackend();
+    delete system;
+    g_system = 0;
   }
 }
 

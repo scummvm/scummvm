@@ -47,30 +47,8 @@ Audio::MixerImpl* AudioThread::Construct(OSystem* system) {
   return mixer;
 }
 
-void AudioThread::close() {
-  mixer->setReady(false);
-
-  if (timer) {
-    timer->Cancel();
-  }
-
-  if (audioOut) {
-    audioOut->Reset();
-  }
-
-  Stop();
-  Join();
-}
-
 AudioThread::~AudioThread() {
   logEntered();
-
-  if (audioOut) {
-    //delete audioOut;
-  }
-  if (timer) {
-    //    delete timer;
-  }
 }
 
 bool AudioThread::OnStart(void) {
@@ -124,6 +102,18 @@ bool AudioThread::OnStart(void) {
 
 void AudioThread::OnStop(void) {
   logEntered();
+
+  mixer->setReady(false);
+
+  if (timer) {
+    timer->Cancel();    
+    delete timer;
+  }
+
+  if (audioOut) {
+    audioOut->Reset();
+    delete audioOut;
+  }
 }
 
 void AudioThread::OnAudioOutErrorOccurred(Osp::Media::AudioOut& src, result r) {

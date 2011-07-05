@@ -38,7 +38,8 @@ using namespace Osp::Graphics;
 using namespace Osp::Graphics::Opengl;
 using namespace Osp::App;
 
-struct BadaGraphicsManager : public OpenGLGraphicsManager {
+class BadaGraphicsManager : public OpenGLGraphicsManager {
+ public:
   BadaGraphicsManager(BadaAppForm* appForm);
 
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const;
@@ -49,7 +50,6 @@ struct BadaGraphicsManager : public OpenGLGraphicsManager {
   void setFeatureState(OSystem::Feature f, bool enable);
   void setInternalMousePosition(int x, int y);
   void unloadGFXMode();
-  void fillScreen(uint32 col);
 
  private:
   bool loadEgl();
@@ -58,7 +58,6 @@ struct BadaGraphicsManager : public OpenGLGraphicsManager {
   EGLSurface eglSurface;
   EGLConfig  eglConfig;
   EGLContext eglContext;
-  bool startup;
 };
 
 #endif

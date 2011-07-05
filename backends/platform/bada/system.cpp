@@ -135,8 +135,7 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 BadaSystem::BadaSystem(BadaAppForm* appForm) : 
   appForm(appForm),
   audioThread(0), 
-  epoch(0),
-  graphicsOpen(true) {
+  epoch(0) {
 }
 
 result BadaSystem::Construct(void) {
@@ -240,6 +239,41 @@ void BadaSystem::initBackend() {
   logLeaving();
 }
 
+void BadaSystem::destroyBackend() {
+  if (audioThread) {
+    audioThread->Stop();
+    audioThread->Join();
+    delete audioThread;
+    audioThread = 0;
+  }
+
+  if (_graphicsManager) {
+    delete _graphicsManager;
+    _graphicsManager = 0;
+  }
+
+  delete _savefileManager;
+  _savefileManager = 0;
+
+  delete _fsFactory;
+  _fsFactory = 0;
+
+  delete _mixer;
+  _mixer = 0;
+
+  delete _audiocdManager;
+  _audiocdManager = 0;
+
+  delete _timerManager;
+  _timerManager = 0;
+
+  delete _eventManager;
+  _eventManager = 0;
+
+  delete _mutexManager;
+  _mutexManager = 0;
+}
+
 bool BadaSystem::pollEvent(Common::Event& event) {
   return appForm->pollEvent(event);
 }
@@ -256,7 +290,7 @@ void BadaSystem::delayMillis(uint msecs) {
 }
 
 void BadaSystem::updateScreen() {
-  if (graphicsOpen && _graphicsManager != null) {
+  if (_graphicsManager != null) {
     _graphicsManager->updateScreen();
   }
 }
@@ -292,16 +326,11 @@ Common::WriteStream* BadaSystem::createConfigWriteStream() {
   return file.createWriteStream();
 }
 
-void BadaSystem::closeAudio() {
-  if (audioThread) {
-    audioThread->close();
-    delete audioThread;
-    audioThread = null;
-  }
-}
-
 void BadaSystem::closeGraphics() {
-  graphicsOpen = false;
+  if (_graphicsManager) {
+    delete _graphicsManager;
+    _graphicsManager = 0;
+  }
 }
 
 //

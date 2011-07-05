@@ -70,14 +70,12 @@ protected:
   BadaFilesystemNode(const Common::String& root,
                      const Common::String& p);
   void init(const Common::String& nodePath);
-  void addRootPath(AbstractFSList &myList, 
-                   const Common::String& path) const;
 
 	Common::String displayName;
 	Common::String path;
   String unicodePath;
 	bool isValid;
-  bool isRoot;
+  bool isVirtualDir;
   FileAttributes attr;
 };
 

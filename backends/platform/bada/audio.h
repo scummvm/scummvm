@@ -52,7 +52,6 @@ public:
   ~AudioThread(void);
 
   Audio::MixerImpl* Construct(OSystem* system);
-  void close();
 
   bool OnStart(void);
   void OnStop(void);

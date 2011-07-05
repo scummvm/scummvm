@@ -80,12 +80,14 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
 
   void pushEvent(Common::EventType type,
                  const Osp::Graphics::Point& currentPosition);
+  void pushKey(Common::KeyCode keycode);
 
   // event handling
   Osp::Base::Runtime::Thread* gameThread;
   Osp::Base::Runtime::Mutex* eventQueueLock;
   Common::Queue<Common::Event> eventQueue;
   bool gameActive;
+  bool leftButton;
 };
 
 #endif

@@ -39,12 +39,20 @@ ModularBackend::ModularBackend()
 }
 
 ModularBackend::~ModularBackend() {
-	delete _graphicsManager;
-	_graphicsManager = 0;
-	delete _mixer;
-	_mixer = 0;
-	delete _mutexManager;
-	_mutexManager = 0;
+  if (_graphicsManager) {
+    delete _graphicsManager;
+    _graphicsManager = 0;
+  }
+  
+  if (_mixer) {
+    delete _mixer;
+    _mixer = 0;
+  }
+
+  if (_mutexManager) {
+    delete _mutexManager;
+    _mutexManager = 0;
+  }
 }
 
 bool ModularBackend::hasFeature(Feature f) {

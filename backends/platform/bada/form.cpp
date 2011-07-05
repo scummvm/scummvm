@@ -35,7 +35,10 @@ using namespace Osp::Ui::Controls;
 //
 // BadaAppForm
 //
-BadaAppForm::BadaAppForm() : gameThread(0), gameActive(false) {
+BadaAppForm::BadaAppForm() : 
+  gameThread(0), 
+  gameActive(false),
+  leftButton(true) {
   eventQueueLock = new Mutex();
   eventQueueLock->Create();
 }
@@ -84,10 +87,6 @@ result BadaAppForm::Construct() {
 BadaAppForm::~BadaAppForm() {
   logEntered();
 
-  if (g_system) {
-    ((BadaSystem*) g_system)->closeAudio();
-  }
-
   if (gameThread) {
     gameThread->Stop();
     delete gameThread;
@@ -132,13 +131,23 @@ bool BadaAppForm::pollEvent(Common::Event& event) {
   return result;
 }
 
-void BadaAppForm::pushEvent(Common::EventType type, 
+void BadaAppForm::pushEvent(Common::EventType type,
                             const Point& currentPosition) {
   Common::Event e;
   e.type = type;
   e.mouse.x = currentPosition.x;
   e.mouse.y = currentPosition.y;
   g_system->warpMouse(currentPosition.x, currentPosition.y);
+
+  eventQueueLock->Acquire();
+  eventQueue.push(e);
+  eventQueueLock->Release();
+}
+
+void BadaAppForm::pushKey(Common::KeyCode keycode) {
+  Common::Event e;
+  e.type = Common::EVENT_KEYDOWN;
+  e.kbd.keycode = keycode;
 
   eventQueueLock->Acquire();
   eventQueue.push(e);
@@ -169,14 +178,7 @@ Object* BadaAppForm::Run(void) {
 void BadaAppForm::OnTouchDoublePressed(const Control& source, 
                                        const Point& currentPosition, 
                                        const TouchEventInfo& touchInfo) {
-  // display the virtual keypad
-  Common::Event e;
-  e.type = Common::EVENT_KEYDOWN;
-  e.kbd.keycode = Common::KEYCODE_F7;
-
-  eventQueueLock->Acquire();
-  eventQueue.push(e);
-  eventQueueLock->Release();
+  leftButton = !leftButton;
 }
 
 void BadaAppForm::OnTouchFocusIn(const Control& source, 
@@ -192,6 +194,7 @@ void BadaAppForm::OnTouchFocusOut(const Control& source,
 void BadaAppForm::OnTouchLongPressed(const Control& source, 
                                      const Point& currentPosition, 
                                      const TouchEventInfo& touchInfo) {
+  pushKey(leftButton ? Common::KEYCODE_RETURN : Common::KEYCODE_F7);
 }
 
 void BadaAppForm::OnTouchMoved(const Control& source, 
@@ -203,13 +206,25 @@ void BadaAppForm::OnTouchMoved(const Control& source,
 void BadaAppForm::OnTouchPressed(const Control& source, 
                                  const Point& currentPosition, 
                                  const TouchEventInfo& touchInfo) {
-  pushEvent(Common::EVENT_LBUTTONDOWN, currentPosition);
+  pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+            currentPosition);
 }
 
 void BadaAppForm::OnTouchReleased(const Control& source, 
                                   const Point& currentPosition, 
                                   const TouchEventInfo& touchInfo) {
-  pushEvent(Common::EVENT_LBUTTONUP, currentPosition);
+  if (touchInfo.IsFlicked()) {
+    if (currentPosition.x < g_system->getWidth() / 2) {
+      pushKey(Common::KEYCODE_F7);
+    }
+    else {
+      pushKey(Common::KEYCODE_F5);
+    }
+  }
+  else {
+    pushEvent(leftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
+              currentPosition);
+  }
 }
 
 //

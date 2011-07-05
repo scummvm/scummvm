@@ -72,7 +72,7 @@ class BadaSystem : public ModularBackend,
 
   result Construct();
   void closeGraphics();
-  void closeAudio();
+  void destroyBackend();
 
  private:
   void initBackend();
@@ -93,7 +93,6 @@ class BadaSystem : public ModularBackend,
   BadaAppForm* appForm;
   AudioThread* audioThread;
   long long epoch;
-  bool graphicsOpen;
 };
 
 #endif

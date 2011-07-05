@@ -231,19 +231,8 @@ void BadaFilesystemNode::init(const Common::String& nodePath) {
   displayName = Common::lastPathComponent(path, '/');
 
   StringUtil::Utf8ToString(path.c_str(), unicodePath);
-  isRoot = (path == "/");
-  isValid = isRoot || !IsFailed(File::GetAttributes(unicodePath, attr));
-}
-
-void BadaFilesystemNode::addRootPath(AbstractFSList &myList,
-                                     const Common::String& path) const {
-  FileAttributes at;
-  String badaPath;
-
-  StringUtil::Utf8ToString(path.c_str(), badaPath);
-  if (!IsFailed(File::GetAttributes(badaPath, at)) && at.IsDirectory()) {
-    myList.push_back(new BadaFilesystemNode(path));
-  }
+  isVirtualDir = (path == "/" || path == "/Storagecard");
+  isValid = isVirtualDir || !IsFailed(File::GetAttributes(unicodePath, attr));
 }
 
 bool BadaFilesystemNode::exists() const {
@@ -251,15 +240,15 @@ bool BadaFilesystemNode::exists() const {
 }
 
 bool BadaFilesystemNode::isReadable() const {
-  return isRoot || isValid;
+  return isVirtualDir || isValid;
 }
 
 bool BadaFilesystemNode::isDirectory() const {
-  return isRoot || (isValid && attr.IsDirectory());
+  return isVirtualDir || (isValid && attr.IsDirectory());
 }
 
 bool BadaFilesystemNode::isWritable() const {
-  return (isValid && !isRoot && !attr.IsDirectory() && !attr.IsReadOnly());
+  return (isValid && !isVirtualDir && !attr.IsDirectory() && !attr.IsReadOnly());
 }
 
 AbstractFSNode* BadaFilesystemNode::getChild(const Common::String &n) const {
@@ -274,16 +263,18 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
 
   bool result = false;
 
-  if (isRoot) {
+  if (isVirtualDir) {
     if (mode != Common::FSNode::kListFilesOnly) {
       // present well known BADA file system areas
-      addRootPath(myList, "/Home");
-      addRootPath(myList, "/HomeExt");
-      addRootPath(myList, "/Media");
-      addRootPath(myList, "/Storagecard/Media");
-      addRootPath(myList, "/Share");
-      addRootPath(myList, "/Share2");
-      addRootPath(myList, "/SystemFS");
+      if (path == "/") {
+        myList.push_back(new BadaFilesystemNode("/Home"));
+        myList.push_back(new BadaFilesystemNode("/HomeExt"));
+        myList.push_back(new BadaFilesystemNode("/Media"));
+        myList.push_back(new BadaFilesystemNode("/Storagecard"));
+      }
+      else {
+        myList.push_back(new BadaFilesystemNode("/Storagecard/Media"));
+      }
       result = true;
     }
   }
