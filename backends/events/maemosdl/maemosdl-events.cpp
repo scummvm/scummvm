@@ -28,7 +28,29 @@
 
 bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 
-	//FIXME: Implement this
+	// List of special N810 keys:
+	// SDLK_F4 -> menu
+	// SDLK_F5 -> home
+	// SDLK_F6 -> fullscreen
+	// SDLK_F7 -> zoom +
+	// SDLK_F8 -> zoom -
+
+	switch (ev.type) {
+		case SDL_KEYDOWN:{
+			if (ev.key.keysym.sym == SDLK_F4) {
+				event.type = Common::EVENT_MAINMENU;
+				return true;
+			}
+			break;
+		}
+		case SDL_KEYUP: {
+			if (ev.key.keysym.sym == SDLK_F4) {
+				event.type = Common::EVENT_MAINMENU;
+				return true;
+			}
+			break;
+		}
+	}
 
 	// Invoke parent implementation of this method
 	return SdlEventSource::remapKey(ev, event);
