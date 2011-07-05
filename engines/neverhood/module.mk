@@ -3,6 +3,7 @@ MODULE := engines/neverhood
 MODULE_OBJS = \
 	background.o \
 	blbarchive.o \
+	collisionman.o \
 	detection.o \
 	entity.o \
 	gamemodule.o \

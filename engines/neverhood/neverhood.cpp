@@ -28,6 +28,7 @@
 #include "engines/util.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
+#include "neverhood/collisionman.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/graphics.h"
 #include "neverhood/resourceman.h"
@@ -128,6 +129,7 @@ Common::Error NeverhoodEngine::run() {
 	}
 #endif
 
+	_collisionMan = new CollisionMan(this);
 	_gameModule = new GameModule(this);
 
 	// Preliminary main loop, needs some more work but works for testing
@@ -180,6 +182,8 @@ Common::Error NeverhoodEngine::run() {
 	}
 	
 	delete _gameModule;
+	delete _collisionMan;
+	
 	delete _res;
 	delete _screen;
 
