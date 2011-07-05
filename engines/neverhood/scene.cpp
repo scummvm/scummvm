@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/scene.h"
+#include "neverhood/collisionman.h"
 
 namespace Neverhood {
 
@@ -42,8 +43,8 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	_background = NULL;
 	// TODO _field_8E = -1;
 	if (clearHitRects) {
-		// TODO g_Class700->setHitRects(NULL, 0);
-		// TODO g_Class700->clear();
+		_vm->_collisionMan->clearHitRects();
+		_vm->_collisionMan->clearSprites();
 	}
 	_vm->_screen->setFps(24);
 	// TODO g_screen->hSmack = NULL;	
@@ -161,7 +162,7 @@ void Scene::setSurfacePriority(BaseSurface *surface, int priority) {
 }
 
 void Scene::deleteSprite(Sprite **sprite) {
-	// TODO g_Class700->removeSprite(*sprite);
+	_vm->_collisionMan->removeSprite(*sprite);
 	removeSurface((*sprite)->getSurface());
 	removeEntity(*sprite);
 	delete *sprite;

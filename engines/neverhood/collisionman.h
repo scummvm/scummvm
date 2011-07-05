@@ -35,6 +35,7 @@ public:
 	~CollisionMan();
 	void setHitRects(uint32 id);
 	void setHitRects(HitRectList *hitRects);
+	void clearHitRects();
 	HitRect *findHitRectAtPos(int16 x, int16 y);
 	void addSprite(Sprite *sprite);
 	void removeSprite(Sprite *sprite);

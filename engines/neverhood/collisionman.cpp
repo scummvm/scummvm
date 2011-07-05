@@ -24,6 +24,8 @@
 
 namespace Neverhood {
 
+static HitRect defaultHitRect = {NRect(), 0x5000};
+
 CollisionMan::CollisionMan(NeverhoodEngine *vm)
 	: _vm(vm), _hitRects(NULL) {
 }
@@ -39,13 +41,34 @@ void CollisionMan::setHitRects(HitRectList *hitRects) {
 	_hitRects = hitRects;
 }
 
+void CollisionMan::clearHitRects() {
+	_hitRects = 0;
+}
+
 HitRect *CollisionMan::findHitRectAtPos(int16 x, int16 y) {
-	// TODO
-	return NULL;
+	if (_hitRects) {
+		for (HitRectList::iterator it = _hitRects->begin(); it != _hitRects->end(); it++) {
+			HitRect *hitRect = &(*it);
+			if (x >= hitRect->rect.x1 && x <= hitRect->rect.x2 && y >= hitRect->rect.y1 && y <= hitRect->rect.y2)
+				return hitRect;
+		}
+	}
+	return &defaultHitRect; 
 }
 
 void CollisionMan::addSprite(Sprite *sprite) {
-	_sprites.push_back(sprite);
+	int index = 0, insertIndex = -1;
+	for (Common::Array<Sprite*>::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++) {
+		if ((*iter)->getPriority() > sprite->getPriority()) {
+			insertIndex = index;
+			break;
+		}
+		index++;
+	}
+	if (insertIndex >= 0)
+		_sprites.insert_at(insertIndex, sprite);
+	else
+		_sprites.push_back(sprite);		
 }
 
 void CollisionMan::removeSprite(Sprite *sprite) {

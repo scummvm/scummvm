@@ -41,11 +41,13 @@ struct NDimensions {
 struct NRect {
 	int16 x1, y1, x2, y2;
 	NRect() : x1(0), y1(0), x2(0), y2(0) {}
+	NRect(int16 x01, int16 y01, int16 x02, int16 y02) : x1(x01), y1(y01), x2(x02), y2(y02) {}
 };
 
 struct NDrawRect {
 	int16 x, y, width, height;
 	NDrawRect() : x(0), y(0), width(0), height(0) {}
+	NDrawRect(int16 x0, int16 y0, int16 width0, int16 height0) : x(x0), y(y0), width(width0), height(height0) {}
 };
 
 class SpriteResource;
@@ -60,11 +62,13 @@ public:
 	virtual void addDirtyRect();
 	void clear();
 	void drawSpriteResource(SpriteResource &spriteResource);
+	void drawSpriteResourceEx(SpriteResource &spriteResource, bool flipX, bool flipY, int16 width, int16 height);
 	int getPriority() const { return _priority; }
 	void setPriority(int priority) { _priority = priority; }
 	NDrawRect& getDrawRect() { return _drawRect; }
 	NDrawRect& getSysRect() { return _sysRect; }
 	NRect& getClipRect() { return _clipRect; }
+	void setClipRect(NRect clipRect) { _clipRect = clipRect; }
 protected:
 	NeverhoodEngine *_vm;
 	int _priority;

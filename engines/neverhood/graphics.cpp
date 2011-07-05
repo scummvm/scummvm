@@ -74,6 +74,20 @@ void BaseSurface::drawSpriteResource(SpriteResource &spriteResource) {
 	}
 }
 
+void BaseSurface::drawSpriteResourceEx(SpriteResource &spriteResource, bool flipX, bool flipY, int16 width, int16 height) {
+	if (spriteResource.getDimensions().width <= _sysRect.width && 
+		spriteResource.getDimensions().height <= _sysRect.height) {
+		if (width > 0 && width <= _sysRect.width)
+			_drawRect.width = width;
+		if (height > 0 && height <= _sysRect.height)
+			_drawRect.height = height;
+		if (_surface) {
+			clear();
+			spriteResource.draw((byte*)_surface->pixels, _surface->pitch, flipX, flipY);
+		}
+	}
+}
+
 // Misc
 
 void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels) {

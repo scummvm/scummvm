@@ -55,7 +55,7 @@ protected:
 	bool _needRedraw;
 	//0000002B field_2B		db ?
 	//0000002C field2C		dd ? // unused
-	NRect _rect1;
+	NDrawRect _drawRect;
 	NDrawRect _deltaRect;
 	NRect _rect;
 	uint16 _flags;

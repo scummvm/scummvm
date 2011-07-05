@@ -103,7 +103,95 @@ void Module1000::updateScene1005() {
 // Scene1001			
 				
 Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true) {
+	: Scene(vm, parentModule, true), _fieldE4(-1), _fieldE6(-1) {
+
+	// TODO: Implement Sprite classes
+
+	Sprite *staticSprite1;
+
+	SetMessageHandler(&Scene1001::handleMessage);
+	
+	_vm->_collisionMan->setHitRects(0x004B4858);
+	_surfaceFlag = false;
+	_background = addBackground(new DirtyBackground(_vm, 0x4086520E, 0, 0));
+	_palette = new Palette(_vm, 0x4086520E);
+	_palette->usePalette();
+	
+	// TODO Mouse
+
+#if 0
+	// TODO: Player sprites...	
+	if (which < 0) {
+		setRectList(0x004B49F0);
+		_playerSprite = new Class572(_vm, this, 200, 433, 1000, 1000);
+		setMessageList(0x004B4888);
+	} else if (which == 1) {
+		setRectList(0x004B49F0);
+		_playerSprite = new Class572(_vm, this, 640, 433, 1000, 1000);
+		setMessageList(0x004B4898);
+	} else if (which == 2) {
+		setRectList(0x004B49F0);
+		if (_vm->getGlobalVar(0xC0418A02)) {
+			_playerSprite = new Class572(_vm, this, 390, 433, 1000, 1000);
+			_playerSprite->setDoDeltaX(1);
+		} else {
+			_playerSprite = new Class572(_vm, this, 300, 433, 1000, 1000);
+		}
+		setMessageList(0x004B4970);
+	} else {
+		setRectList(0x004B4A00);
+		_playerSprite = new Class572(_vm, this, 200, 433, 1000, 1000);
+		setMessageList(0x004B4890);
+	}
+	addSprite(_playerSprite);
+#endif
+
+	staticSprite1 = addSprite(new StaticSprite(_vm, 0x2080A3A8, 1300));
+
+#if 0
+	// TODO: This sucks somehow, find a better way
+	_playerSprite->getSurface()->getClipRect().x1 = 0;
+	_playerSprite->getSurface()->getClipRect().y1 = 0;
+	_playerSprite->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
+	_playerSprite->getSurface()->getClipRect().y2 = 480;
+	
+	if (_vm->getGlobalVar(0xD217189D) == 0) {
+		_class509 = addSprite(new Class509(_vm));
+		_class509->getSurface()->getClipRect().x1 = 0;
+		_class509->getSurface()->getClipRect().y1 = 0;
+		_class509->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
+		_class509->getSurface()->getClipRect().y2 = 480;
+	} else {
+		_class509 = NULL;
+	}
+
+	_class511 = addSprite(new Class511(_vm, this, 150, 433, 1));
+#endif
+
+	addSprite(new StaticSprite(_vm, 0x809861A6, 950));
+	addSprite(new StaticSprite(_vm, 0x89C03848, 1100));
+
+#if 0
+	_class608 = addSprite(new Class608(_vm, 0x15288120, 100, 0));
+#endif
+
+	if (_vm->getGlobalVar(0x03C698DA) == 0) {
+		staticSprite1 = addSprite(new StaticSprite(_vm, 0x8C066150, 200));
+#if 0
+		_class510 = addSprite(new Class510(_vm));
+		_class510->getSurface()->getClipRect().x1 = staticSprite1->getSurface()->getDrawRect().x;
+		_class510->getSurface()->getClipRect().y1 = staticSprite1->getSurface()->getDrawRect().y;
+		_class510->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
+		_class510->getSurface()->getClipRect().y2 = staticSprite1->getSurface()->getDrawRect().y + staticSprite1->getSurface()->getDrawRect().height;
+#endif
+	} else {
+		_class510= NULL;
+	}
+
+#if 0
+	_class508 = addSprite(new Class508(_vm, _class509));
+#endif
+
 }
 
 void Scene1001::update() {

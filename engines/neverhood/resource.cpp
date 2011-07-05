@@ -220,10 +220,10 @@ bool AnimResource::load(uint32 fileHash) {
 		AnimFrameInfo frameInfo;
 		frameInfo.frameHash = READ_LE_UINT32(frameList);
 		frameInfo.counter = READ_LE_UINT16(frameList + 4);
-		frameInfo.rect.x1 = READ_LE_UINT16(frameList + 6);
-		frameInfo.rect.y1 = READ_LE_UINT16(frameList + 8);
-		frameInfo.rect.x2 = READ_LE_UINT16(frameList + 10);
-		frameInfo.rect.y2 = READ_LE_UINT16(frameList + 12);
+		frameInfo.rect.x = READ_LE_UINT16(frameList + 6);
+		frameInfo.rect.y = READ_LE_UINT16(frameList + 8);
+		frameInfo.rect.width = READ_LE_UINT16(frameList + 10);
+		frameInfo.rect.height = READ_LE_UINT16(frameList + 12);
 		frameInfo.deltaX = READ_LE_UINT16(frameList + 14);
 		frameInfo.deltaY = READ_LE_UINT16(frameList + 16);
 		frameInfo.deltaRect.x = READ_LE_UINT16(frameList + 18); 
@@ -234,7 +234,7 @@ bool AnimResource::load(uint32 fileHash) {
 		frameInfo.spriteDataOffs = READ_LE_UINT32(frameList + 28);
 		debug("frameHash = %08X; counter = %d; rect = (%d,%d,%d,%d); deltaX = %d; deltaY = %d; deltaRect = (%d,%d,%d,%d); field_1A = %04X; spriteDataOffs = %08X", 
 			frameInfo.frameHash, frameInfo.counter, 
-			frameInfo.rect.x1, frameInfo.rect.y1, frameInfo.rect.x2, frameInfo.rect.y2,
+			frameInfo.rect.x, frameInfo.rect.y, frameInfo.rect.width, frameInfo.rect.height,
 			frameInfo.deltaX, frameInfo.deltaY,
 			frameInfo.deltaRect.x, frameInfo.deltaRect.y, frameInfo.deltaRect.width, frameInfo.deltaRect.height,
 			frameInfo.field_1A, frameInfo.spriteDataOffs);
