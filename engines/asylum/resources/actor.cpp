@@ -1721,7 +1721,60 @@ void Actor::updateStatus15_Chapter11() {
 }
 
 void Actor::updateStatus15_Chapter11_Player() {
-	error("[Actor::updateStatus15_Chapter11_Player] not implemented!");
+	_frameIndex++;
+
+	if (_frameIndex == 17) {
+		getSpeech()->playPlayer(130);
+
+		if (getWorld()->field_E849C >= 666) {
+			if (_vm->isGameFlagSet(kGameFlag583)) {
+				_vm->setGameFlag(kGameFlag582);
+				_vm->clearGameFlag(kGameFlag565);
+				++getWorld()->field_E8518;
+				getSound()->playSound(getWorld()->soundResourceIds[2]);
+			}
+		} else {
+			Actor *actor2 = getScene()->getActor(getWorld()->field_E849C);
+
+			double diffX = (actor2->getPoint1()->x + actor2->getPoint2()->x) - (_point1.x + _point2.x);
+			double diffY = (actor2->getPoint1()->y + actor2->getPoint2()->y) - (_point1.y + _point2.y);
+
+			if (sqrt(diffX * diffX + diffY * diffY) < 75.0f
+			 && (actor2->getStatus() == kActorStatus14 || actor2->getStatus() == kActorStatus15)) {
+				getSound()->playSound(getWorld()->soundResourceIds[2]);
+
+				switch (getWorld()->field_E849C) {
+				default:
+					break;
+
+				case 10:
+					_vm->setGameFlag(kGameFlag563);
+					break;
+
+				case 11:
+					_vm->setGameFlag(kGameFlag724);
+					break;
+
+				case 12:
+					_vm->setGameFlag(kGameFlag727);
+					break;
+
+				case 13:
+					_vm->setGameFlag(kGameFlag730);
+					break;
+				}
+
+				actor2->updateStatus(kActorStatus17);
+			}
+		}
+	}
+
+	if (_frameIndex >= _frameCount) {
+		getCursor()->show();
+		getSharedData()->setFlag(kFlag1, false);
+		_frameIndex = 0;
+		updateStatus(kActorStatus14);
+	}
 }
 
 void Actor::updateStatus16_Chapter2() {
