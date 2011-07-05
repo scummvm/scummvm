@@ -58,6 +58,7 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 void CGEEngine::setup() {
 	// Initialise fields
 	_lastFrame = 0;
+	_hero = NULL;
 
 	// Create debugger console
 	_console = new CGEConsole(this);
@@ -72,7 +73,6 @@ void CGEEngine::setup() {
 	_text = new Text(this, progName(), 128);
 	_vga = new Vga(M13H);
 	_heart = new Heart;
-	_hero = new WALK(this, NULL);
 	_sys = new System(this);
 	_pocLight = new Sprite(this, LI);
 	for (int i = 0; i < POCKET_NX; i++)
