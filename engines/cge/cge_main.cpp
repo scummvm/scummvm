@@ -229,7 +229,7 @@ void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 	}
 
 	if (! tiny) { // load sprites & pocket
-		while (!readStream.eos()) {
+		while (readStream.pos() < readStream.size()) {
 			Sprite S(this, NULL);
 			S.sync(s);
 
