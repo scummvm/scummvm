@@ -108,6 +108,8 @@ public:
 		cdNumber = 0;
 		actorEnableForStatus7 = false;
 		_flag1 = false;
+		_flag2 = false;
+		_flag3 = false;
 		matteBarHeight = 0;
 		matteVar2 = 0;
 		sceneCounter = 0;
