@@ -32,13 +32,9 @@
 #include "neverhood/palette.h"
 #include "neverhood/smackerplayer.h"
 #include "neverhood/sprite.h"
+#include "neverhood/staticdata.h"
 
 namespace Neverhood {
-
-struct MessageListItem {
-	uint32 messageNum;
-	uint32 messageValue;
-};
 
 class Scene : public Entity {
 public:
@@ -58,7 +54,7 @@ protected:
 	Common::Array<Entity*> _entities;
 	Common::Array<BaseSurface*> _surfaces;
 	bool _systemCallbackFlag;
-	MessageListItem *_messageList;
+	MessageList *_messageList;
 	int _messageListIndex;
 	int _messageListCount;
 	bool _messageListFlag1;
@@ -77,7 +73,7 @@ protected:
 	Background *_background;
 	bool _surfaceFlag;
 	bool _messageListFlag;
-	MessageListItem *_messageList2;
+	MessageList *_messageList2;
 	int _messageListStatus;
 	SmackerPlayer *_smackerPlayer;
 	void (Entity::*_savedUpdateHandlerCb)();

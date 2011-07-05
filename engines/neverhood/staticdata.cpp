@@ -1,0 +1,121 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "neverhood/staticdata.h"
+
+namespace Neverhood {
+
+StaticData::StaticData() {
+}
+
+StaticData::~StaticData() {
+}
+
+void StaticData::load(const char *filename) {
+
+	Common::File fd;
+	
+	if (!fd.open(filename))
+		error("StaticData::load() Could not open %s", filename);
+		
+	fd.readUint32LE(); // magic		
+	fd.readUint32LE(); // version
+	
+	// Load message lists
+	uint32 messageListsCount = fd.readUint32LE();
+	debug("messageListsCount: %d", messageListsCount);
+	for (uint32 i = 0; i < messageListsCount; i++) {
+		MessageList *messageList = new MessageList();
+		uint32 id = fd.readUint32LE();
+		uint32 itemCount = fd.readUint32LE();
+		for (uint32 itemIndex = 0; itemIndex < itemCount; itemIndex++) {
+			MessageItem messageItem;
+			messageItem.messageNum = fd.readUint16LE();
+			messageItem.messageValue = fd.readUint32LE();
+			messageList->push_back(messageItem);
+		}
+		_messageLists[id] = messageList;
+	}
+
+	// Load rect lists
+	uint32 rectListsCount = fd.readUint32LE();
+	debug("rectListsCount: %d", rectListsCount);
+	for (uint32 i = 0; i < rectListsCount; i++) {
+		RectList *rectList = new RectList();
+		uint32 id = fd.readUint32LE();
+		uint32 itemCount = fd.readUint32LE();
+		for (uint32 itemIndex = 0; itemIndex < itemCount; itemIndex++) {
+			RectItem rectItem;
+			rectItem.rect.x1 = fd.readUint16LE();
+			rectItem.rect.y1 = fd.readUint16LE();
+			rectItem.rect.x2 = fd.readUint16LE();
+			rectItem.rect.y2 = fd.readUint16LE();
+			uint32 subItemCount = fd.readUint32LE();
+			rectItem.subRects.reserve(subItemCount);
+			for (uint32 subItemIndex = 0; subItemIndex < subItemCount; subItemIndex++) {
+				SubRectItem subRectItem;
+				subRectItem.rect.x1 = fd.readUint16LE();
+				subRectItem.rect.y1 = fd.readUint16LE();
+				subRectItem.rect.x2 = fd.readUint16LE();
+				subRectItem.rect.y2 = fd.readUint16LE();
+				subRectItem.messageListId = fd.readUint32LE();
+				rectItem.subRects.push_back(subRectItem);
+			}
+			rectList->push_back(rectItem);
+		}
+		_rectLists[id] = rectList;
+	}
+	
+	// Load hit rects
+	uint32 hitRectListsCount = fd.readUint32LE();
+	debug("hitRectListsCount: %d", hitRectListsCount);
+	for (uint32 i = 0; i < hitRectListsCount; i++) {
+		HitRectList *hitRectList = new HitRectList();
+		uint32 id = fd.readUint32LE();
+		uint32 itemCount = fd.readUint32LE();
+		for (uint32 itemIndex = 0; itemIndex < itemCount; itemIndex++) {
+			HitRect hitRect;
+			hitRect.rect.x1 = fd.readUint16LE();
+			hitRect.rect.y1 = fd.readUint16LE();
+			hitRect.rect.x2 = fd.readUint16LE();
+			hitRect.rect.y2 = fd.readUint16LE();
+			hitRect.type = fd.readUint16LE();
+			hitRectList->push_back(hitRect);
+		}
+		_hitRectLists[id] = hitRectList;
+	}
+
+}
+
+HitRectList *StaticData::getHitRectList(uint32 id) {
+	return _hitRectLists[id];
+}
+
+RectList *StaticData::getRectList(uint32 id) {
+	return _rectLists[id];
+}
+
+MessageList *StaticData::getMessageList(uint32 id) {
+	return _messageLists[id];
+}
+
+} // End of namespace Neverhood

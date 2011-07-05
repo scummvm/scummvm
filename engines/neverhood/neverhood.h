@@ -42,6 +42,7 @@ struct NeverhoodGameDescription;
 class GameModule;
 class ResourceMan;
 class Screen;
+class StaticData;
 
 struct GameState {
 	int sceneNum;
@@ -74,6 +75,7 @@ public:
 	Screen *_screen;
 	ResourceMan *_res;
 	GameModule *_gameModule;
+	StaticData *_staticData;
 
 public:
 	

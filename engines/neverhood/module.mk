@@ -18,7 +18,8 @@ MODULE_OBJS = \
 	screen.o \
 	smackerscene.o \
 	smackerplayer.o \
-	sprite.o
+	sprite.o \
+	staticdata.o
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS

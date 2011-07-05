@@ -33,6 +33,7 @@
 #include "neverhood/resourceman.h"
 #include "neverhood/resource.h"
 #include "neverhood/screen.h"
+#include "neverhood/staticdata.h"
 
 namespace Neverhood {
 
@@ -61,6 +62,9 @@ Common::Error NeverhoodEngine::run() {
 	_system->endGFXTransaction();
 
 	_isSaveAllowed = false;
+
+	_staticData = new StaticData();
+	_staticData->load("neverhood.dat");
 
 	_screen = new Screen(this);
 
@@ -176,9 +180,10 @@ Common::Error NeverhoodEngine::run() {
 	}
 	
 	delete _gameModule;
-	
 	delete _res;
 	delete _screen;
+
+	delete _staticData;
 	
 	debug("Ok.");
 
