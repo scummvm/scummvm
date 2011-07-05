@@ -258,7 +258,7 @@ public:
 	void clearFields() { memset(&_field_970, 0, 52); }
 
 	// Unknown methods
-	bool process(int32 actorX, int32 actorY);
+	bool process(const Common::Point &point);
 	void processStatus(int32 actorX, int32 actorY, bool doSpeech);
 	void process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 field984, int32 field988);
 	bool process_4069B0(int32 *x, int32 *y);

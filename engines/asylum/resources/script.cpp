@@ -637,7 +637,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpActorSpeech)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	if (actor->process(cmd->param2, cmd->param3))
+	if (actor->process(Common::Point(cmd->param2, cmd->param3)))
 		return;
 
 	_currentQueueEntry->currentLine = cmd->param4;
