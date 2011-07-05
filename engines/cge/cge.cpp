@@ -69,21 +69,7 @@ void CGEEngine::setup() {
 	Bitmap::init();
 	Talk::init();
 
-	// Initialise engine objects
-	_text = new Text(this, progName(), 128);
-	_vga = new Vga(M13H);
-	_heart = new Heart;
-	_sys = new System(this);
-	_pocLight = new Sprite(this, LI);
-	for (int i = 0; i < POCKET_NX; i++)
-		_pocket[i] = new Sprite(this, NULL);
-	_sprite = new Sprite(this, NULL);
-	_miniCave = new Sprite(this, NULL);
-	_shadow = new Sprite(this, NULL);
-	_horzLine = new Sprite(this, HL);
-	_infoLine = new InfoLine(this, INFO_W);
-	_cavLight = new Sprite(this, PR);
-	_debugLine = new InfoLine(this, SCR_WID);
+	// Initialise sprite arrays used by game objects
 	MB[0] = new Bitmap("BRICK", true);
 	MB[1] = NULL;
 	HL[0] = new Bitmap("HLINE", true);
@@ -101,6 +87,22 @@ void CGEEngine::setup() {
 	LI[2] = new Bitmap("LITE2", true);
 	LI[3] = new Bitmap("LITE3", true);
 	LI[4] = NULL;
+
+	// Initialise engine objects
+	_text = new Text(this, progName(), 128);
+	_vga = new Vga(M13H);
+	_heart = new Heart;
+	_sys = new System(this);
+	_pocLight = new Sprite(this, LI);
+	for (int i = 0; i < POCKET_NX; i++)
+		_pocket[i] = new Sprite(this, NULL);
+	_sprite = new Sprite(this, NULL);
+	_miniCave = new Sprite(this, NULL);
+	_shadow = new Sprite(this, NULL);
+	_horzLine = new Sprite(this, HL);
+	_infoLine = new InfoLine(this, INFO_W);
+	_cavLight = new Sprite(this, PR);
+	_debugLine = new InfoLine(this, SCR_WID);
 	_snail = new Snail(this, false);
 	_snail_ = new Snail(this, true);
 
