@@ -795,7 +795,7 @@ void Sprite::sync(Common::Serializer &s) {
 	s.syncAsUint16LE(_time);
 	s.syncAsByte(_nearPtr);
 	s.syncAsByte(_takePtr);
-	s.syncAsUint16LE(_seqPtr);
+	s.syncAsSint16LE(_seqPtr);
 	s.syncAsUint16LE(_shpCnt);
 	s.syncBytes((byte *)&_file[0], 9);
 	_file[8] = '\0';
