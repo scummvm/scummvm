@@ -263,7 +263,7 @@ public:
 	void process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 field984, int32 field988);
 	bool process_4069B0(int32 *x, int32 *y);
 	bool process_408B20(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
-	void process_408D00(ActorDirection dir, uint32 count);
+	void playSounds(ActorDirection dir, uint32 distance);
 	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
 	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
 	bool process_41BDB0(int32 reactionIndex, int32 testNumberValue01);
@@ -343,12 +343,12 @@ private:
 	// TODO field_68 till field_617
 	int32  _reaction[8];
 	int32  _field_638;
-	int32  _walkingSound1;
-	int32  _walkingSound2;
-	int32  _walkingSound3;
-	int32  _walkingSound4;
-	int32  _field_64C;
-	int32  _field_650;
+	ResourceId _walkingSound1;
+	ResourceId _walkingSound2;
+	ResourceId _walkingSound3;
+	ResourceId _walkingSound4;
+	uint32  _field_64C;
+	uint32  _field_650;
 	ResourceId  _graphicResourceIds[55];
 	char   _name[256];
 	int32  _field_830[20];

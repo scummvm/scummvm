@@ -171,8 +171,8 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_walkingSound2 = stream->readSint32LE();
 	_walkingSound3 = stream->readSint32LE();
 	_walkingSound4 = stream->readSint32LE();
-	_field_64C     = stream->readSint32LE();
-	_field_650     = stream->readSint32LE();
+	_field_64C     = stream->readUint32LE();
+	_field_650     = stream->readUint32LE();
 
 	for (int32 i = 0; i < 55; i++)
 		_graphicResourceIds[i] = (ResourceId)stream->readSint32LE();
@@ -478,15 +478,15 @@ void Actor::update() {
 		Common::Point point(_point1.x + _point2.x, _point1.y + _point2.y);
 
 		if (process_408B20(&point, _direction, dist, false)) {
-			process_408D00(_direction, dist);
+			playSounds(_direction, dist);
 		} else if (process_408B20(&point, (ActorDirection)((dir + 1) % 7), dist, false)) {
-			process_408D00((ActorDirection)((dir + 1) % 7), dist);
+			playSounds((ActorDirection)((dir + 1) % 7), dist);
 		} else if (process_408B20(&point, (ActorDirection)((dir + 7) % 7), dist, false)) {
-			process_408D00((ActorDirection)((dir + 7) % 7), dist);
+			playSounds((ActorDirection)((dir + 7) % 7), dist);
 		} else if (process_408B20(&point, (ActorDirection)((dir + 2) % 7), dist, false)) {
-			process_408D00((ActorDirection)((dir + 2) % 7), dist);
+			playSounds((ActorDirection)((dir + 2) % 7), dist);
 		} else if (process_408B20(&point, (ActorDirection)((dir + 6) % 7), dist, false)) {
-			process_408D00((ActorDirection)((dir + 6) % 7), dist);
+			playSounds((ActorDirection)((dir + 6) % 7), dist);
 		}
 
 		}
@@ -1122,8 +1122,91 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 coun
 	return true;
 }
 
-void Actor::process_408D00(ActorDirection dir, uint32 count) {
-	error("[Actor::process_408D00] Not implemented!");
+void Actor::playSounds(ActorDirection direction, uint32 distance) {
+	_lastScreenUpdate = _vm->screenUpdateCount;
+
+	Common::Point sum(_point1.x + _point2.x, _point1.x + _point2.x);
+	int32 panning = getSound()->calculatePanningAtPoint(sum.x, sum.y);
+
+	switch (_status) {
+	default:
+		break;
+
+	case kActorStatus1:
+	case kActorStatus2:
+	case kActorStatus12:
+	case kActorStatus13:
+		updateCoordinatesForDirection(direction, distance, &_point1);
+
+		_frameIndex = (++_frameIndex) % _frameCount;
+
+		if (_walkingSound1 != kResourceNone) {
+
+			// Compute volume
+			int32 vol = sqrt((double)-Config.sfxVolume);
+			if (_index != getScene()->getPlayerIndex())
+				vol += sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum.x, sum.y, 10, 0)));
+
+			int32 volume = (Config.sfxVolume + vol) * (Config.sfxVolume + vol);
+			if (volume > 10000)
+				volume = 10000;
+
+			if (_field_944 != 1 && _field_944 != 4) {
+				// Compute resource Id
+				ResourceId resourceId = kResourceNone;
+				if (getWorld()->actions[_actionIdx3]->soundResourceIdFrame != kResourceNone && strcmp((char *)&_name, "Crow") && strcmp((char *)&_name, "Big Crow")) {
+					if (_frameIndex == _field_64C)
+						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + rnd(1));
+					else if (_frameIndex == _field_650)
+						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + rnd(1));
+				} else {
+					if (_frameIndex == _field_64C)
+						resourceId = (ResourceId)(_walkingSound1 + rnd(1));
+					else if (_frameIndex == _field_650)
+						resourceId = (ResourceId)(_walkingSound3 + rnd(1));
+				}
+
+				// Play sound
+				getSound()->playSound(resourceId, false, -volume, panning);
+			}
+		}
+		break;
+
+	case kActorStatus18:
+		if (getWorld()->chapter == kChapter2) {
+			updateCoordinatesForDirection(direction, distance, &_point1);
+
+			if (_walkingSound1 == kResourceNone)
+				break;
+
+			// Compute volume
+			int32 vol = getWorld()->actions[_actionIdx3]->volume;
+			if (_index != getScene()->getPlayerIndex())
+				vol += sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum.x, sum.y, 10, 0)));
+
+			int32 volume = (Config.sfxVolume + vol) * (Config.sfxVolume + vol);
+			if (volume > 10000)
+				volume = 10000;
+
+			// Compute resource Id
+			ResourceId resourceId = kResourceNone;
+			if (getWorld()->actions[_actionIdx3]->soundResourceIdFrame != kResourceNone && strcmp((char *)&_name, "Crow") && strcmp((char *)&_name, "Big Crow")) {
+				if (_frameIndex == _field_64C)
+					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + rnd(1));
+				else if (_frameIndex == _field_650)
+					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + rnd(1));
+			} else {
+				if (_frameIndex == _field_64C)
+					resourceId = (ResourceId)(_walkingSound1 + rnd(1));
+				else if (_frameIndex == _field_650)
+					resourceId = (ResourceId)(_walkingSound3 + rnd(1));
+			}
+
+			// Play sound
+			getSound()->playSound(resourceId, false, -volume, panning);
+		}
+		break;
+	}
 }
 
 void Actor::process_41BC00(int32 reactionIndex, int32 numberValue01Add) {
