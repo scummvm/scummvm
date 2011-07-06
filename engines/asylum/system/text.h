@@ -28,6 +28,7 @@
 
 #include "asylum/shared.h"
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 
 namespace Asylum {
@@ -79,8 +80,7 @@ private:
 
 	int32 _transTableNum;
 
-	int32 _posX;
-	int32 _posY;
+	Common::Point _position;
 	uint8 _curFontFlags;
 
 };
