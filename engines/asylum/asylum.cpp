@@ -314,7 +314,7 @@ void AsylumEngine::handleEvents() {
 	_console->onFrame();
 
 	AsylumEvent ev;
-	if (_eventMan->pollEvent(ev)) {
+	while (_eventMan->pollEvent(ev)) {
 		switch (ev.type) {
 		default:
 			break;
