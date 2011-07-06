@@ -55,9 +55,9 @@ protected:
 
 // Scene1001
 
-class Class509 : public AnimatedSprite {
+class AsScene1001Door : public AnimatedSprite {
 public:
-	Class509(NeverhoodEngine *vm);
+	AsScene1001Door(NeverhoodEngine *vm);
 protected:
 	SoundResource _soundResource1;	
 	SoundResource _soundResource2;	
@@ -68,12 +68,41 @@ protected:
 	void callback3();
 };
 
-class Class511 : public AnimatedSprite {
+class AsScene1001Hammer : public AnimatedSprite {
 public:
-	Class511(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int deltaXType);
+	AsScene1001Hammer(NeverhoodEngine *vm, Sprite *asDoor);
+protected:
+	Sprite *_asDoor;
+	SoundResource _soundResource;	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene1001Window : public AnimatedSprite {
+public:
+	AsScene1001Window(NeverhoodEngine *vm);
+protected:
+	SoundResource _soundResource;	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene1001Lever : public AnimatedSprite {
+public:
+	AsScene1001Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int deltaXType);
 protected:
 	Scene *_parentScene;
 	SoundResource _soundResource;	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class SsCommonButtonSprite : public StaticSprite {
+public:
+	SsCommonButtonSprite(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, int surfacePriority, uint32 soundFileHash);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource;
+	uint32 _soundFileHash;
+	int16 _countdown;
+	void update();	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -81,11 +110,11 @@ class Scene1001 : public Scene {
 public:
 	Scene1001(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Sprite *_class508;
-	Sprite *_class509;
-	Sprite *_class510;
-	Sprite *_class511;
-	Sprite *_class608;
+	Sprite *_asHammer;
+	Sprite *_asDoor;
+	Sprite *_asWindow;
+	Sprite *_asLever;
+	Sprite *_ssButton;
 	int16 _fieldE4;
 	int16 _fieldE6;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

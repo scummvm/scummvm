@@ -133,7 +133,7 @@ Common::Error NeverhoodEngine::run() {
 	_gameModule = new GameModule(this);
 
 	// Preliminary main loop, needs some more work but works for testing
-	while (1) {
+	while (!shouldQuit()) {
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
 	
@@ -141,6 +141,9 @@ Common::Error NeverhoodEngine::run() {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				_keyState = event.kbd.keycode;
+				
+				// DEBUG gameModule->sendMessage(0x480F, 0, NULL);
+				
 				break;
 			case Common::EVENT_KEYUP:
 				_keyState = Common::KEYCODE_INVALID;

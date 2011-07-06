@@ -132,30 +132,23 @@ void Module1000::updateScene1005() {
 			
 // Scene1001			
 
-Class509::Class509(NeverhoodEngine *vm)
+AsScene1001Door::AsScene1001Door(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm) {
 	
-	_name = "Class509";
-	
 	createSurface(800, 137, 242);
-
 	_x = 726;
 	_y = 440;
-
 	callback1();
-
 #if 0
 	_soundResource2.set(0xED403E03);
 	_soundResource2.load();
 	_soundResource2.createSoundBuffer();
 #endif
-
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class509::handleMessage);
-
+	SetMessageHandler(&AsScene1001Door::handleMessage);
 }
 
-uint32 Class509::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1001Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2000:
@@ -168,18 +161,9 @@ uint32 Class509::handleMessage(int messageNum, const MessageParam &param, Entity
 	return 0;
 }
 
-void Class509::handleMessage2000h() {
-
+void AsScene1001Door::handleMessage2000h() {
 	switch (_vm->getGlobalVar(0x52371C95)) {
 	case 0:
-#if 0	
-		_soundResource1.set(0x65482F03);
-		_soundResource1.load();
-		_soundResource1.play(false);
-#endif
-		setFileHash(0x624C0498, 1, 3);
-		SetAnimationCallback3(&Class509::callback1);		
-		break;
 	case 1:
 #if 0	
 		_soundResource1.set(0x65482F03);
@@ -187,25 +171,23 @@ void Class509::handleMessage2000h() {
 		_soundResource1.play(false);
 #endif
 		setFileHash(0x624C0498, 1, 3);
-		SetAnimationCallback3(&Class509::callback1);		
+		SetAnimationCallback3(&AsScene1001Door::callback1);		
 		break;
 	case 2:
 #if 0	
 		_soundResource2.play(false);
 #endif
 		setFileHash(0x624C0498, 6, 6);
-		SetAnimationCallback3(&Class509::callback2);		
+		SetAnimationCallback3(&AsScene1001Door::callback2);		
 		break;
 	default:
 		// Nothing
 		break;		
 	}
-
 	_vm->incGlobalVar(0x52371C95, 1);
-
 }
 
-void Class509::callback1() {
+void AsScene1001Door::callback1() {
 	switch (_vm->getGlobalVar(0x52371C95)) {
 	case 1:
 		setFileHash(0x624C0498, 4, -1);
@@ -226,14 +208,14 @@ void Class509::callback1() {
 	}
 }
 
-void Class509::callback2() {
+void AsScene1001Door::callback2() {
 	_vm->setGlobalVar(0xD217189D, 1);
 	setFileHash(0x624C0498, 6, 6);
-	SetAnimationCallback3(&Class509::callback3);
+	SetAnimationCallback3(&AsScene1001Door::callback3);
 	_x = 30;
 }
 
-void Class509::callback3() {
+void AsScene1001Door::callback3() {
 #if 0
 	_soundResource1.play(false);
 #endif
@@ -241,7 +223,84 @@ void Class509::callback3() {
 	_surface->setVisible(false);	
 }
 	
-Class511::Class511(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int deltaXType)
+AsScene1001Hammer::AsScene1001Hammer(NeverhoodEngine *vm, Sprite *asDoor)
+	: AnimatedSprite(vm, 1100), _soundResource(vm), _asDoor(asDoor) {
+
+	_x = 547;
+	_y = 206;
+	createSurface(900, 177, 192);
+	setFileHash(0x022C90D4, -1, -1);
+	_newHashListIndex = -2;
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene1001Hammer::handleMessage);
+}
+
+uint32 AsScene1001Hammer::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param._integer == 0x00352100) {
+			if (_asDoor) {
+				_asDoor->sendMessage(0x2000, 0, this);
+			}
+		} else if (param._integer == 0x0A1A0109) {
+#if 0		
+			_soundResource.set(0x66410886);
+			_soundResource.load();
+			_soundResource.play(false);
+#endif			
+		}
+		break;
+	case 0x2000:
+		setFileHash(0x022C90D4, 1, -1);
+#if 0		
+		_soundResource.set(0xE741020A);
+		_soundResource.load();
+		_soundResource.play(false);
+#endif			
+		_newHashListIndex = -2;
+		break;
+	}
+	return 0;
+}
+
+AsScene1001Window::AsScene1001Window(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1200), _soundResource(vm) {
+
+	_x = 320;
+	_y = 240;
+	createSurface(100, 66, 129);
+	setFileHash(0xC68C2299, 0, -1);
+	_newHashListIndex = 0;
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene1001Window::handleMessage);
+}
+
+uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param._integer == 0x0E0A1410) {
+#if 0		
+			_soundResource.set(0x60803F10);
+			_soundResource.load();
+			_soundResource.play(false);
+#endif			
+		}
+		break;
+	case 0x2001:
+		setFileHash(0xC68C2299, 0, -1);
+		break;
+	case 0x3002:
+		SetMessageHandler(NULL);
+		_vm->setGlobalVar(0x03C698DA, 1);
+		_surface->setVisible(false);
+		break;
+	}
+	return 0;
+}
+
+AsScene1001Lever::AsScene1001Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int deltaXType)
 	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene) {
 	
 	createSurface(1010, 71, 73);
@@ -251,10 +310,10 @@ Class511::Class511(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, in
 	_x = x;
 	_y = y;
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class511::handleMessage);
+	SetMessageHandler(&AsScene1001Lever::handleMessage);
 }
 
-uint32 Class511::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1001Lever::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -288,7 +347,40 @@ uint32 Class511::handleMessage(int messageNum, const MessageParam &param, Entity
 	}
 	return messageResult;
 }
-			
+	
+SsCommonButtonSprite::SsCommonButtonSprite(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, int surfacePriority, uint32 soundFileHash)
+	: StaticSprite(vm, fileHash, surfacePriority), _parentScene(parentScene), _soundResource(vm), _countdown(0) {
+
+	_priority = 1100;
+	_soundFileHash = soundFileHash != 0 ? soundFileHash : 0x44141000; 
+	_surface->setVisible(false);
+	SetUpdateHandler(&SsCommonButtonSprite::update);
+	SetMessageHandler(&SsCommonButtonSprite::handleMessage);
+}
+	
+void SsCommonButtonSprite::update() {
+	if (_countdown != 0 && (--_countdown) == 0) {
+		_surface->setVisible(false);
+	}
+}
+	
+uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x480B:
+		_parentScene->sendMessage(0x480B, 0, this);
+		_surface->setVisible(true);
+		_countdown = 8;
+#if 0		
+		_soundResource.set(_soundFileHash);
+		_soundResource.load();
+		_soundResource.play(false);
+#endif		
+		break;
+	}
+	return messageResult;
+}
+		
 Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _fieldE4(-1), _fieldE6(-1) {
 
@@ -346,47 +438,90 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 #endif
 	
 	if (_vm->getGlobalVar(0xD217189D) == 0) {
-		_class509 = addSprite(new Class509(_vm));
-		_class509->getSurface()->getClipRect().x1 = 0;
-		_class509->getSurface()->getClipRect().y1 = 0;
-		_class509->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
-		_class509->getSurface()->getClipRect().y2 = 480;
+		_asDoor = addSprite(new AsScene1001Door(_vm));
+		_asDoor->getSurface()->getClipRect().x1 = 0;
+		_asDoor->getSurface()->getClipRect().y1 = 0;
+		_asDoor->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
+		_asDoor->getSurface()->getClipRect().y2 = 480;
 	} else {
-		_class509 = NULL;
+		_asDoor = NULL;
 	}
 
-	_class511 = addSprite(new Class511(_vm, this, 150, 433, 1));
+	_asLever = addSprite(new AsScene1001Lever(_vm, this, 150, 433, 1));
 
 	addSprite(new StaticSprite(_vm, 0x809861A6, 950));
 	addSprite(new StaticSprite(_vm, 0x89C03848, 1100));
 
-#if 0
-	_class608 = addSprite(new Class608(_vm, 0x15288120, 100, 0));
-#endif
+	_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0x15288120, 100, 0));
 
 	if (_vm->getGlobalVar(0x03C698DA) == 0) {
 		staticSprite1 = addSprite(new StaticSprite(_vm, 0x8C066150, 200));
-#if 0
-		_class510 = addSprite(new Class510(_vm));
-		_class510->getSurface()->getClipRect().x1 = staticSprite1->getSurface()->getDrawRect().x;
-		_class510->getSurface()->getClipRect().y1 = staticSprite1->getSurface()->getDrawRect().y;
-		_class510->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
-		_class510->getSurface()->getClipRect().y2 = staticSprite1->getSurface()->getDrawRect().y + staticSprite1->getSurface()->getDrawRect().height;
-#endif
+		_asWindow = addSprite(new AsScene1001Window(_vm));
+		_asWindow->getSurface()->getClipRect().x1 = staticSprite1->getSurface()->getDrawRect().x;
+		_asWindow->getSurface()->getClipRect().y1 = staticSprite1->getSurface()->getDrawRect().y;
+		_asWindow->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
+		_asWindow->getSurface()->getClipRect().y2 = staticSprite1->getSurface()->getDrawRect().y + staticSprite1->getSurface()->getDrawRect().height;
 	} else {
-		_class510= NULL;
+		_asWindow = NULL;
 	}
 
-#if 0
-	_class508 = addSprite(new Class508(_vm, _class509));
-#endif
-
-	_class511->sendMessage(0x480F, 0, this);
+	_asHammer = addSprite(new AsScene1001Hammer(_vm, _asDoor));
 
 }
 
 uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	return 0;
+	uint32 messageResult = 0;
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param._point.x == 0 && _vm->getGlobalVar(0xA4014072)) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
+		break;
+	case 0x000D:
+		if (param._integer == 0x188B2105) {
+			_parentModule->sendMessage(0x1009, 0, this);
+			messageResult = 1;
+		}
+		break;
+	case 0x100D:
+		if (param._integer == 0x00342624) {
+			// TODO _playerSprite->sendMessage(0x1014, _asLever, this);
+			// TODO setMessageList2(0x004B4910, true, false);
+			messageResult = 1;
+		} else if (param._integer == 0x21E64A00) {
+			if (_vm->getGlobalVar(0xD217189D)) {
+				// TODO setMessageList(0x004B48A8, true, false);
+				messageResult = 1;
+			} else {
+				// TODO setMessageList(0x004B48C8, true, false);
+				messageResult = 1;
+			}
+		} else if (param._integer == 0x040424D0) {
+			// TODO _playerSprite->sendMessage(0x1014, _ssButton, this);
+		} else if (param._integer == 0x80006358) {
+			if (_vm->getGlobalVar(0x03C698DA)) {
+				// TODO setMessageList(0x004B4938, true, false);
+			} else {
+				// TODO setMessageList(0x004B4960, true, false);
+			}
+		}
+		break;
+	case 0x2002:
+		// TODO setRectList(0x004B49F0);
+		break;
+	case 0x480B:
+		if (_asWindow) {
+			_asWindow->sendMessage(0x2001, 0, this);
+		}
+		break;
+	case 0x480F:
+		if (_asHammer) {
+			_asHammer->sendMessage(0x2000, 0, this);
+		}
+		break;
+	}
+	return messageResult;
 }
 
 } // End of namespace Neverhood
