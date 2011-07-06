@@ -75,6 +75,7 @@ class AnimResource {
 public:
 	AnimResource(NeverhoodEngine *vm);
 	~AnimResource();
+	void draw(uint frameIndex, byte *dest, int destPitch, bool flipX, bool flipY);
 	bool load(uint32 fileHash);
 	void unload();
 	void clear();

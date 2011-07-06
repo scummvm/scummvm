@@ -51,7 +51,7 @@ BaseSurface::~BaseSurface() {
 }
 
 void BaseSurface::draw() {
-	debug("BaseSurface::draw()");
+	debug(8, "BaseSurface::draw()");
 	if (_surface && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
 		// TODO: _sysRect alternate drawing code (is that used?)
 		_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect);
@@ -84,6 +84,19 @@ void BaseSurface::drawSpriteResourceEx(SpriteResource &spriteResource, bool flip
 		if (_surface) {
 			clear();
 			spriteResource.draw((byte*)_surface->pixels, _surface->pitch, flipX, flipY);
+		}
+	}
+}
+
+void BaseSurface::drawAnimResource(AnimResource &animResource, uint frameIndex, bool flipX, bool flipY, int16 width, int16 height) {
+	if (width > 0 && width <= _sysRect.width)
+		_drawRect.width = width;
+	if (height > 0 && height <= _sysRect.height)
+		_drawRect.height = height;
+	if (_surface) {
+		clear();
+		if (frameIndex < animResource.getFrameCount()) {
+			animResource.draw(frameIndex, (byte*)_surface->pixels, _surface->pitch, flipX, flipY);
 		}
 	}
 }

@@ -52,7 +52,7 @@ protected:
 	BaseSurface *_surface;
 	int16 _x, _y;
 	bool _doDeltaX, _doDeltaY;
-	bool _needRedraw;
+	bool _needRefresh;
 	//0000002B field_2B		db ?
 	//0000002C field2C		dd ? // unused
 	NDrawRect _drawRect;
@@ -88,11 +88,17 @@ protected:
 	void update();
 };
 
+#define SetAnimationCallback1(callback) _callback1Cb = static_cast <void (AnimatedSprite::*)(void)> (callback)
+#define SetAnimationCallback2(callback) _callback2Cb = static_cast <void (AnimatedSprite::*)(void)> (callback)
+#define SetAnimationCallback3(callback) _callback3Cb = static_cast <void (AnimatedSprite::*)(void)> (callback)
+
 class AnimatedSprite : public Sprite {
 public:
 	AnimatedSprite(NeverhoodEngine *vm, int objectPriority);
 	AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y);
+	void update();
 protected:
+	typedef void (AnimatedSprite::*AnimationCallback)();
 	AnimResource _animResource;
 	uint32 _fileHash1;
 	uint32 _fileHash2;
@@ -117,12 +123,11 @@ protected:
 	callbackListIndex dw ?
 	callbackListCount dw ?
 	callbackList	dd ?
-	callback3	   dd ?
-	callback2	   dd ?
-	callback1	   dd ?
 	*/
+	AnimationCallback _callback1Cb;
+	AnimationCallback _callback2Cb;
+	AnimationCallback _callback3Cb;
 	void init();
-	void update();
 	void updateDeltaXY();
 	void updateAnim();
 	void updatePosition();
@@ -134,6 +139,7 @@ protected:
 	void setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5);
 	void setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fileHash5);
 	int16 getHashListIndex(uint32 fileHash) { return 0; } // TODO !!!
+	void removeCallbacks();
 };
 
 } // End of namespace Neverhood

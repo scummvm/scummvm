@@ -29,6 +29,8 @@
 
 namespace Neverhood {
 
+// Module1000
+
 class Module1000 : public Module {
 public:
 	Module1000(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -51,18 +53,32 @@ protected:
 	void updateScene1005();			
 };
 
+// Scene1001
+
+class Class509 : public AnimatedSprite {
+public:
+	Class509(NeverhoodEngine *vm);
+protected:
+	SoundResource _soundResource1;	
+	SoundResource _soundResource2;	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void handleMessage2000h();
+	void callback1();
+	void callback2();
+	void callback3();
+};
+
 class Scene1001 : public Scene {
 public:
 	Scene1001(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Sprite *_class511;
 	Sprite *_class508;
 	Sprite *_class509;
-	Sprite *_class608;
 	Sprite *_class510;
+	Sprite *_class511;
+	Sprite *_class608;
 	int16 _fieldE4;
 	int16 _fieldE6;
-	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

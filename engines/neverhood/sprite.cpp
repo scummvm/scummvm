@@ -29,9 +29,10 @@ namespace Neverhood {
 Sprite::Sprite(NeverhoodEngine *vm, int objectPriority)
 	: Entity(vm, objectPriority), _x(0), _y(0),
 	_spriteUpdateCb(NULL), _filterXCb(NULL), _filterYCb(NULL),   
-	_doDeltaX(false), _doDeltaY(false), _needRedraw(false),
+	_doDeltaX(false), _doDeltaY(false), _needRefresh(false),
 	_flags(0) {
 
+	_name = "Sprite"; 
 	SetMessageHandler(&Sprite::handleMessage);
 	
 }
@@ -88,12 +89,15 @@ void Sprite::createSurface(int surfacePriority, int16 width, int16 height) {
 
 StaticSprite::StaticSprite(NeverhoodEngine *vm, int objectPriority)
 	: Sprite(vm, objectPriority), _spriteResource(vm) {
-	
+
+	_name = "StaticSprite"; 
+
 }
 
 StaticSprite::StaticSprite(NeverhoodEngine *vm, const char *filename, int surfacePriority, int16 x, int16 y, int16 width, int16 height)
 	: Sprite(vm, 0), _spriteResource(vm) {
 
+	_name = "StaticSprite"; 
 	// TODO init(calcHash(filename), surfacePriority, x, y, width, height);
 
 }
@@ -101,6 +105,7 @@ StaticSprite::StaticSprite(NeverhoodEngine *vm, const char *filename, int surfac
 StaticSprite::StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y, int16 width, int16 height)
 	: Sprite(vm, 0), _spriteResource(vm) {
 
+	_name = "StaticSprite"; 
 	init(fileHash, surfacePriority, x, y, width, height);
 	
 }
@@ -127,7 +132,7 @@ void StaticSprite::init(uint32 fileHash, int surfacePriority, int16 x, int16 y, 
 	_drawRect.width = width;
 	_drawRect.width = height; 
 
-	_needRedraw = true;
+	_needRefresh = true;
 
 	update();
 	
@@ -150,9 +155,9 @@ void StaticSprite::update() {
 		_surface->getDrawRect().y = filterY(_y + _drawRect.y);
 	}
 
-	if (_needRedraw) {
+	if (_needRefresh) {
 		_surface->drawSpriteResourceEx(_spriteResource, _doDeltaX, _doDeltaY, _drawRect.width, _drawRect.height);
-		_needRedraw = false;
+		_needRefresh = false;
 	}
 
 }
@@ -173,7 +178,7 @@ void StaticSprite::load(uint32 fileHash, bool dimensions, bool position) {
 		_y = _spriteResource.getPosition().y;
 	}
 
-	_needRedraw = true;
+	_needRefresh = true;
 
 }
 
@@ -198,6 +203,7 @@ AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surface
 }
 
 void AnimatedSprite::init() {
+	_name = "AnimatedSprite"; 
 	_counter = 0;
 	_fileHash1 = 0;
 	_deltaX = 0;
@@ -205,18 +211,18 @@ void AnimatedSprite::init() {
 	_fileHash2 = 0;
 	// TODO _callbackList = 0;
 	_frameIndex3 = 0;
-	// TODO _callback3 = 0;
 	_frameIndex = 0;
 	_hashListIndex = -1;
-	// TODO _callback2 = 0;
+	_callback1Cb = NULL;
+	_callback2Cb = NULL;
+	_callback3Cb = NULL;
 	_newHashListIndex = -1;
-	// TODO _callback1 = 0;
 	_fileHash4 = 0;
 	_flag = false;
 	_replOldByte = 0;
 	_replNewByte = 0;
 	// TODO _animResource.replEnabled = 0;
-	_playBackwards = 0;
+	_playBackwards = false;
 }
 
 void AnimatedSprite::update() {
@@ -265,7 +271,6 @@ void AnimatedSprite::updateAnim() {
 						// TODO _animResource.loadInternal(calcHash("sqDefault"));
 						_fileHash3 = 0;
 					}
-					// loc_43831D
 					if (_replNewByte != _replOldByte) {
 						// TODO _animResource.setRepl(_replOldByte, _replNewByte);
 					}
@@ -349,10 +354,9 @@ void AnimatedSprite::updatePosition() {
 		_surface->getDrawRect().y = filterY(_y + _drawRect.y);
 	}
 
-	if (_needRedraw) {
-		debug("TODO: drawAnimResource");
-		// TODO _surface->drawAnimResource(_animResource, _frameIndex, _doDeltaX, _doDeltaY, _drawRect.width, _drawRect.height);
-		_needRedraw = false;
+	if (_needRefresh) {
+		_surface->drawAnimResource(_animResource, _frameIndex, _doDeltaX, _doDeltaY, _drawRect.width, _drawRect.height);
+		_needRefresh = false;
 	}
 
 }
@@ -380,6 +384,7 @@ void AnimatedSprite::updateFrameIndex() {
 }
 
 void AnimatedSprite::updateFrameInfo() {
+	debug("AnimatedSprite::updateFrameInfo()");
 
 	const AnimFrameInfo &frameInfo = _animResource.getFrameInfo(_frameIndex);
 	
@@ -392,7 +397,7 @@ void AnimatedSprite::updateFrameInfo() {
 
 	processDelta();
 
-	_needRedraw = true;
+	_needRefresh = true;
 
 	if (frameInfo.frameHash != 0) {
 		sendMessage(0x100D, frameInfo.frameHash, this);
@@ -409,6 +414,7 @@ void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {
 }
 
 void AnimatedSprite::setFileHash(uint32 fileHash, int16 frameIndex3, int16 frameIndex4) {
+	debug("AnimatedSprite::setFileHash(%08X, %d, %d)", fileHash, frameIndex3, frameIndex4);
 	_fileHash1 = fileHash;
 	_frameIndex3 = frameIndex3;
 	_frameIndex4 = frameIndex4;
@@ -446,6 +452,29 @@ void AnimatedSprite::setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fil
 	_hashListIndex = -1;
 }
 
+void AnimatedSprite::removeCallbacks() {
 
+	if (_callback1Cb) {
+		// _callback1Cb has to be cleared before it's called
+		AnimationCallback cb = _callback1Cb;
+		_callback1Cb = NULL;
+		debug("Fire _callback1Cb");
+		(this->*cb)();
+	}
+
+	if (_callback3Cb) {
+		_callback2Cb = _callback3Cb;
+		_callback3Cb = NULL;
+		debug("Fire _callback3Cb");
+		(this->*_callback2Cb)();
+#if 0 // TODO		
+	} else if (_callbackList) {
+		removeCallbackList();
+#endif		
+	} else {
+		_callback2Cb = NULL;
+	}
+
+}
 
 } // End of namespace Neverhood

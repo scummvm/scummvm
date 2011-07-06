@@ -86,6 +86,36 @@ void Module1000::createScene1005(int which) {
 }
 
 void Module1000::updateScene1001() {
+	_childObject->handleUpdate();
+
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 2) {
+			// TODO createScene1003();
+			// TODO _childObject->handleUpdate();
+		} else {
+			// TODO createScene1002();
+			// TODO _childObject->handleUpdate();
+		}
+	}
+
+	if (_field24 >= 0) {
+		if (_field24 == 2) {
+			// TODO ResourceTable_multiLoad(&_resourceTable2, &_resourceTable1, &_resourceTable3);
+			_field24 = -1;
+		} else {
+			// TODO ResourceTable_multiLoad(&_resourceTable3, &_resourceTable1);
+			_field24 = -1;
+		}
+	}
+
+	if (_field26 >= 0) {
+		// TODO ResourceTable_multiLoad(&_resourceTable1, &_resourceTable2, &_resourceTable3);
+		_field26 = -1;
+	}
+
 }
 
 void Module1000::updateScene1002() {
@@ -101,9 +131,120 @@ void Module1000::updateScene1005() {
 }
 			
 // Scene1001			
+
+Class509::Class509(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm) {
+	
+	_name = "Class509";
+	
+	createSurface(800, 137, 242);
+
+	_x = 726;
+	_y = 440;
+
+	callback1();
+
+#if 0
+	_soundResource2.set(0xED403E03);
+	_soundResource2.load();
+	_soundResource2.createSoundBuffer();
+#endif
+
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&Class509::handleMessage);
+
+}
+
+uint32 Class509::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		handleMessage2000h();
+		break;
+	case 0x3002:
+		removeCallbacks();
+		break;
+	}
+	return 0;
+}
+
+void Class509::handleMessage2000h() {
+
+	switch (_vm->getGlobalVar(0x52371C95)) {
+	case 0:
+#if 0	
+		_soundResource1.set(0x65482F03);
+		_soundResource1.load();
+		_soundResource1.play(false);
+#endif
+		setFileHash(0x624C0498, 1, 3);
+		SetAnimationCallback3(&Class509::callback1);		
+		break;
+	case 1:
+#if 0	
+		_soundResource1.set(0x65482F03);
+		_soundResource1.load();
+		_soundResource1.play(false);
+#endif
+		setFileHash(0x624C0498, 1, 3);
+		SetAnimationCallback3(&Class509::callback1);		
+		break;
+	case 2:
+#if 0	
+		_soundResource2.play(false);
+#endif
+		setFileHash(0x624C0498, 6, 6);
+		SetAnimationCallback3(&Class509::callback2);		
+		break;
+	default:
+		// Nothing
+		break;		
+	}
+
+	_vm->incGlobalVar(0x52371C95, 1);
+
+}
+
+void Class509::callback1() {
+	switch (_vm->getGlobalVar(0x52371C95)) {
+	case 1:
+		setFileHash(0x624C0498, 4, -1);
+		_newHashListIndex = 4;
+		break;
+	case 2:
+		setFileHash(0x624C0498, 1, -1);
+		_newHashListIndex = 1;
+		break;
+	case 3:
+		setFileHash1();
+		_surface->setVisible(false);
+		break;
+	default:
+		setFileHash(0x624C0498, 0, -1);
+		_newHashListIndex = 0;
+		break;
+	}
+}
+
+void Class509::callback2() {
+	_vm->setGlobalVar(0xD217189D, 1);
+	setFileHash(0x624C0498, 6, 6);
+	SetAnimationCallback3(&Class509::callback3);
+	_x = 30;
+}
+
+void Class509::callback3() {
+#if 0
+	_soundResource1.play(false);
+#endif
+	setFileHash1();
+	_surface->setVisible(false);	
+}
 				
 Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _fieldE4(-1), _fieldE6(-1) {
+
+	_name = "Scene1001";
 
 	// TODO: Implement Sprite classes
 
@@ -154,6 +295,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	_playerSprite->getSurface()->getClipRect().y1 = 0;
 	_playerSprite->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
 	_playerSprite->getSurface()->getClipRect().y2 = 480;
+#endif
 	
 	if (_vm->getGlobalVar(0xD217189D) == 0) {
 		_class509 = addSprite(new Class509(_vm));
@@ -165,6 +307,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 		_class509 = NULL;
 	}
 
+#if 0
 	_class511 = addSprite(new Class511(_vm, this, 150, 433, 1));
 #endif
 
@@ -192,9 +335,6 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	_class508 = addSprite(new Class508(_vm, _class509));
 #endif
 
-}
-
-void Scene1001::update() {
 }
 
 uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {

@@ -203,6 +203,10 @@ void NeverhoodEngine::setGlobalVar(uint32 nameHash, uint32 value) {
 	// TODO
 }
 
+void NeverhoodEngine::incGlobalVar(uint32 nameHash, int incrValue) {
+	setGlobalVar(nameHash, getGlobalVar(nameHash) - incrValue);
+}
+
 uint32 NeverhoodEngine::getSubVar(uint32 nameHash, uint32 subNameHash) {
 	// TODO
 	return 0;

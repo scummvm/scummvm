@@ -125,7 +125,7 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 		ddRect.y1 = 0;
 	}
 	
-	debug("draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
+	debug(8, "draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
 	
 	const byte *source = (const byte*)surface->getBasePtr(ddRect.x1, ddRect.y1);
 	byte *dest = (byte*)_backScreen->getBasePtr(destX, destY);

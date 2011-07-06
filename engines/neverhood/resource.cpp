@@ -153,6 +153,15 @@ AnimResource::~AnimResource() {
 	unloadInternal();
 }
 
+void AnimResource::draw(uint frameIndex, byte *dest, int destPitch, bool flipX, bool flipY) {
+	const AnimFrameInfo frameInfo = _frames[frameIndex];
+	_currSpriteData = _spriteData + frameInfo.spriteDataOffs;
+	_width = frameInfo.rect.width;
+	_height = frameInfo.rect.height;
+	// TODO: Repl stuff
+	unpackSpriteRle(_currSpriteData, _width, _height, dest, destPitch, flipX, flipY);	
+}
+
 bool AnimResource::load(uint32 fileHash) {
 	debug("AnimResource::load(%08X)", fileHash);
 

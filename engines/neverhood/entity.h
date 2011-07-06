@@ -44,14 +44,16 @@ struct MessageParam {
 
 class Entity {
 public:
+	Common::String _name; // Entity name for debugging purposes
 	Entity(NeverhoodEngine *vm, int priority)
-		: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority) {
+		: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority), _name("Entity") {
 	}
 	virtual ~Entity() {
 	}
 	virtual void draw() {
 	}
 	void handleUpdate() {
+		//debug("Entity(%s).handleUpdate", _name.c_str());
 		if (_updateHandlerCb)
 			(this->*_updateHandlerCb)();
 	}

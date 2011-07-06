@@ -50,6 +50,7 @@ struct NDrawRect {
 	NDrawRect(int16 x0, int16 y0, int16 width0, int16 height0) : x(x0), y(y0), width(width0), height(height0) {}
 };
 
+class AnimResource;
 class SpriteResource;
 
 // NOTE: "Restore" methods aren't need in the reimplementation as they're DirectDraw-specific
@@ -63,12 +64,15 @@ public:
 	void clear();
 	void drawSpriteResource(SpriteResource &spriteResource);
 	void drawSpriteResourceEx(SpriteResource &spriteResource, bool flipX, bool flipY, int16 width, int16 height);
+	void drawAnimResource(AnimResource &animResource, uint frameIndex, bool flipX, bool flipY, int16 width, int16 height);
 	int getPriority() const { return _priority; }
 	void setPriority(int priority) { _priority = priority; }
 	NDrawRect& getDrawRect() { return _drawRect; }
 	NDrawRect& getSysRect() { return _sysRect; }
 	NRect& getClipRect() { return _clipRect; }
 	void setClipRect(NRect clipRect) { _clipRect = clipRect; }
+	bool getVisible() const { return _visible; }
+	void setVisible(bool value) { _visible = value; }
 protected:
 	NeverhoodEngine *_vm;
 	int _priority;
