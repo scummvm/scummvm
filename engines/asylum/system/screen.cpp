@@ -59,23 +59,23 @@ Screen::~Screen() {
 // Drawing
 //////////////////////////////////////////////////////////////////////////
 void Screen::draw(ResourceId resourceId) {
-	draw(resourceId, 0, 0, 0, 0, kResourceNone, 0, 0, false);
+	draw(resourceId, 0, 0, 0, kDrawFlagNone, kResourceNone, 0, 0, false);
 }
 
-void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, bool colorKey) {
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, DrawFlags flags, bool colorKey) {
 	draw(resourceId, frameIndex, x, y, flags, kResourceNone, 0, 0, colorKey);
 }
 
-void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, int32 transTableNum) {
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, DrawFlags flags, int32 transTableNum) {
 	byte *index = _transTableIndex;
 	selectTransTable(transTableNum);
 
-	draw(resourceId, frameIndex, x, y, flags | 0x90000000);
+	draw(resourceId, frameIndex, x, y, (DrawFlags)(flags | 0x90000000));
 
 	_transTableIndex = index;
 }
 
-void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, ResourceId resourceIdDestination, int32 destX, int32 destY, bool colorKey) {
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, DrawFlags flags, ResourceId resourceIdDestination, int32 destX, int32 destY, bool colorKey) {
 	// Get the frame to draw
 	GraphicResource *resource = new GraphicResource(_vm, resourceId);
 	GraphicFrame *frame = resource->getFrame(frameIndex);
@@ -85,7 +85,7 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, in
 	Common::Rect destination;
 	destination.left = x + frame->x;
 
-	if (flags & 2) {
+	if (flags & kDrawFlagMirrorLeftRight) {
 		if (_flag == -1) {
 			if ((resource->getData().flags & 15) >= 2) {
 				destination.left = x + resource->getData().maxWidth - frame->getWidth() - frame->x;
@@ -318,7 +318,7 @@ void Screen::selectTransTable(uint32 index) {
 //////////////////////////////////////////////////////////////////////////
 // Graphic queue
 //////////////////////////////////////////////////////////////////////////
-void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 transTableNum, int32 priority) {
+void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, DrawFlags flags, int32 transTableNum, int32 priority) {
 	GraphicQueueItem item;
 	item.priority = priority;
 
@@ -332,7 +332,7 @@ void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common:
 	_queueItems.push_back(item);
 }
 
-void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point source, int32 resourceIdDestination, Common::Point destination, int32 flags, int32 priority) {
+void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point source, int32 resourceIdDestination, Common::Point destination, DrawFlags flags, int32 priority) {
 	GraphicQueueItem item;
 	item.priority = priority;
 
@@ -424,6 +424,7 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 
 void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey) {
 	// TODO adjust destination rect
+	// TODO handle mirror flag
 	if (useColorKey) {
 		copyToBackBufferWithTransparency((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
@@ -436,8 +437,8 @@ void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, 
 		                 frame->surface.w,
 		                 dest->left,
 		                 dest->top,
-						 source->width(),
-						 source->height());
+		                 source->width(),
+		                 source->height());
 	}
 }
 

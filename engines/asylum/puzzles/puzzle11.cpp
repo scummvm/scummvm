@@ -75,11 +75,11 @@ bool Puzzle11::init(const AsylumEvent &evt)  {
 bool Puzzle11::update(const AsylumEvent &evt)  {
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[11]);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], _frameIndexes[0], Common::Point(122, 269), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[16], _frameIndexes[1], Common::Point(524, 175), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], _frameIndexes[2], Common::Point(359,  61), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[14], _frameIndexes[3], Common::Point(115,  80), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[17], _frameIndexes[4], Common::Point(238,  94), 0, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], _frameIndexes[0], Common::Point(122, 269), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[16], _frameIndexes[1], Common::Point(524, 175), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], _frameIndexes[2], Common::Point(359,  61), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[14], _frameIndexes[3], Common::Point(115,  80), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[17], _frameIndexes[4], Common::Point(238,  94), kDrawFlagNone, 0, 1);
 
 	getScreen()->drawGraphicsInQueue();
 	getScreen()->copyBackBufferToScreen();

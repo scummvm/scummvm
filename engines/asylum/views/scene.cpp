@@ -2362,7 +2362,7 @@ bool Scene::drawScene() {
 	}
 
 	// Draw scene background
-	getScreen()->draw(_ws->backgroundImage, 0, -_ws->xLeft, -_ws->yTop, 0, false);
+	getScreen()->draw(_ws->backgroundImage, 0, -_ws->xLeft, -_ws->yTop, kDrawFlagNone, false);
 
 	// Draw actors on the update list
 	buildUpdateList();
@@ -2608,7 +2608,7 @@ void Scene::drawRain() {
 
 	for (uint y = 0; y < 512; y = y + 64) {
 		for (uint x = 0; x < 704; x = x + 64) {
-			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 58), _chapter5RainFrameIndex, x + (_ws->xLeft % 64) / 8, y + (_ws->yTop % 64) / 8, 0);
+			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 58), _chapter5RainFrameIndex, x + (_ws->xLeft % 64) / 8, y + (_ws->yTop % 64) / 8);
 		}
 	}
 
