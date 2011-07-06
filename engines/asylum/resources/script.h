@@ -72,7 +72,7 @@ struct ActionArea {
 	int32 flagNums[10];
 	int32 field_7C;
 	int32 polygonIndex;
-	int32 field_84;
+	ResourceId soundResourceIdFrame;
 	int32 field_88;
 	ResourceId soundResourceId;
 	int32 field_90;
@@ -94,7 +94,7 @@ struct ActionArea {
 		memset(&flagNums, 0, sizeof(flagNums));
 		field_7C = 0;
 		polygonIndex = 0;
-		field_84 = 0;
+		soundResourceIdFrame = kResourceNone;
 		field_88 = 0;
 		soundResourceId = kResourceNone;
 		field_90 = 0;
@@ -112,7 +112,7 @@ struct ActionArea {
 		output += Common::String::format("           flags=%d      scriptIndex=%d      scriptIndex2=%d   type=%d\n", flags, scriptIndex, actionType, polygonIndex);
 		output += Common::String::format("           sound=%d      polygon=%d          palette=%d        volume=%d\n", soundResourceId, scriptIndex2, paletteResourceId, volume);
 		output += Common::String::format("           field01=%d    field02=%d          field40=%d        field44=%d\n", field01, field02, field_40, field_44);
-		output += Common::String::format("           field7C=%d    field84=%d          field88=%d        field90=%d\n", field_7C, field_84, field_88, field_90);
+		output += Common::String::format("           field7C=%d    field84=%d          field88=%d        field90=%d\n", field_7C, soundResourceIdFrame, field_88, field_90);
 
 		return output;
 	}
