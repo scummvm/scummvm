@@ -108,12 +108,12 @@ bool PuzzleClock::update(const AsylumEvent &evt) {
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[5]);
 
-	getScreen()->draw(getWorld()->graphicResourceIds[2], _frameIndexes[0], puzzleClockPoints[0].x, puzzleClockPoints[0].y);
+	getScreen()->draw(getWorld()->graphicResourceIds[2], _frameIndexes[0], puzzleClockPoints[0]);
 	_frameIndexes[0]++;
 	_frameIndexes[0] %= GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[2]);
 
-	getScreen()->draw(getWorld()->graphicResourceIds[4], _frameIndexes[1], puzzleClockPoints[1].x, puzzleClockPoints[1].y);
-	getScreen()->draw(getWorld()->graphicResourceIds[3], _frameIndexes[2], puzzleClockPoints[2].x, puzzleClockPoints[2].y);
+	getScreen()->draw(getWorld()->graphicResourceIds[4], _frameIndexes[1], puzzleClockPoints[1]);
+	getScreen()->draw(getWorld()->graphicResourceIds[3], _frameIndexes[2], puzzleClockPoints[2]);
 
 	if (_currentFrameIndex == _frameIndexes[2]) {
 		if (_showCursor) {

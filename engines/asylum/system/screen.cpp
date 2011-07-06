@@ -59,52 +59,53 @@ Screen::~Screen() {
 // Drawing
 //////////////////////////////////////////////////////////////////////////
 void Screen::draw(ResourceId resourceId) {
-	draw(resourceId, 0, 0, 0, kDrawFlagNone, kResourceNone, 0, 0, false);
+	draw(resourceId, 0, Common::Point(0, 0), kDrawFlagNone, kResourceNone, Common::Point(0, 0), false);
 }
 
-void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, DrawFlags flags, bool colorKey) {
-	draw(resourceId, frameIndex, x, y, flags, kResourceNone, 0, 0, colorKey);
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, bool colorKey) {
+	draw(resourceId, frameIndex, source, flags, kResourceNone, Common::Point(0, 0), colorKey);
 }
 
-void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, DrawFlags flags, int32 transTableNum) {
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, int32 transTableNum) {
 	byte *index = _transTableIndex;
 	selectTransTable(transTableNum);
 
-	draw(resourceId, frameIndex, x, y, (DrawFlags)(flags | 0x90000000));
+	draw(resourceId, frameIndex, source, (DrawFlags)(flags | 0x90000000));
 
 	_transTableIndex = index;
 }
 
-void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, DrawFlags flags, ResourceId resourceIdDestination, int32 destX, int32 destY, bool colorKey) {
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, ResourceId resourceIdDestination, const Common::Point &destination, bool colorKey) {
 	// Get the frame to draw
 	GraphicResource *resource = new GraphicResource(_vm, resourceId);
 	GraphicFrame *frame = resource->getFrame(frameIndex);
 
 	// Compute coordinates
-	Common::Rect source;
-	Common::Rect destination;
-	destination.left = x + frame->x;
+	Common::Rect src;
+	Common::Rect dest;
+	dest.left = source.x + frame->x;
 
+	// FIXME destination is never used
 	if (flags & kDrawFlagMirrorLeftRight) {
 		if (_flag == -1) {
 			if ((resource->getData().flags & 15) >= 2) {
-				destination.left = x + resource->getData().maxWidth - frame->getWidth() - frame->x;
+				dest.left = source.x + resource->getData().maxWidth - frame->getWidth() - frame->x;
 			}
 		} else {
-			destination.left += 2 * (_flag - (frame->getHeight() * 2 - frame->x));
+			dest.left += 2 * (_flag - (frame->getHeight() * 2 - frame->x));
 		}
 	}
 
-	destination.top = y + frame->y;
-	destination.right = destination.left + frame->getWidth();
-	destination.bottom = destination.top + frame->getHeight();
+	dest.top = source.y + frame->y;
+	dest.right = dest.left + frame->getWidth();
+	dest.bottom = dest.top + frame->getHeight();
 
-	source.left = 0;
-	source.top = 0;
-	source.right = frame->getWidth();
-	source.bottom = frame->getHeight();
+	src.left = 0;
+	src.top = 0;
+	src.right = frame->getWidth();
+	src.bottom = frame->getHeight();
 
-	clip(&source, &destination, flags);
+	clip(&src, &dest, flags);
 
 	bool masked = false;
 	if (resourceIdDestination) {
@@ -122,7 +123,7 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, Dr
 	// Set the color key (always 0 if set)
 	_useColorKey = colorKey;
 
-	blit(frame, &source, &destination, flags, colorKey);
+	blit(frame, &src, &dest, flags, colorKey);
 
 	delete resource;
 }
@@ -364,11 +365,11 @@ void Screen::drawGraphicsInQueue() {
 
 		if (item->type == kGraphicItemNormal) {
 			if (item->transTableNum <= 0 || Config.performance <= 1)
-				draw(item->resourceId, item->frameIndex, item->source.x, item->source.y, item->flags);
+				draw(item->resourceId, item->frameIndex, item->source, item->flags);
 			else
-				draw(item->resourceId, item->frameIndex, item->source.x, item->source.y, item->flags, item->transTableNum - 1);
+				draw(item->resourceId, item->frameIndex, item->source, item->flags, item->transTableNum - 1);
 		} else if (item->type == kGraphicItemMasked) {
-			draw(item->resourceId, item->frameIndex, item->source.x, item->source.y,  item->flags, item->resourceIdDestination, item->destination.x, item->destination.y);
+			draw(item->resourceId, item->frameIndex, item->source,  item->flags, item->resourceIdDestination, item->destination);
 		}
 	}
 }

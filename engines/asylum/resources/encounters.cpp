@@ -850,7 +850,7 @@ bool Encounter::drawBackground() {
 			                                        _background.transTableNum);
 		}
 	} else {
-		getScreen()->draw(_background.resourceId, _background.frameIndex, _point.x, _point.y);
+		getScreen()->draw(_background.resourceId, _background.frameIndex, _point);
 	}
 
 	if (_data_455BE4) {
@@ -885,13 +885,11 @@ bool Encounter::drawPortraits() {
 	if (_portrait1.transTableNum == 3 )
 		getScreen()->draw(_portrait1.resourceId,
 		                  _portrait1.frameIndex,
-		                  _point.x + 5,
-		                  _point.y + 5);
+		                  _point + Common::Point(5, 5));
 	else
 		getScreen()->draw(_portrait1.resourceId,
 		                  _portrait1.frameIndex,
-		                  _point.x + 5,
-		                  _point.y + 5,
+		                  _point + Common::Point(5, 5),
 		                  kDrawFlagNone,
 		                  _portrait1.transTableNum);
 
@@ -919,13 +917,11 @@ bool Encounter::drawPortraits() {
 	if (_portrait2.transTableNum == 3)
 		getScreen()->draw(_portrait2.resourceId,
 		                  _portrait2.frameIndex,
-		                  _point.x - frameRect.width() + _background.rect.width() - 6,
-		                  _point.y + 5);
+		                  Common::Point(_point.x - frameRect.width() + _background.rect.width() - 6, _point.y + 5));
 	else
 		getScreen()->draw(_portrait2.resourceId,
 		                  _portrait2.frameIndex,
-		                  _point.x - frameRect.width() + _background.rect.width() - 6,
-		                  _point.y + 5,
+		                  Common::Point(_point.x - frameRect.width() + _background.rect.width() - 6, _point.y + 5),
 		                  kDrawFlagNone,
 		                  _portrait2.transTableNum);
 
@@ -978,8 +974,7 @@ void Encounter::drawStructs() {
 		case -1:
 			getScreen()->draw(_drawingStructs[0].resourceId,
 			                  _drawingStructs[0].frameIndex,
-			                  _drawingStructs[0].point2.x,
-			                  _drawingStructs[0].point2.y,
+			                  _drawingStructs[0].point2,
 			                  kDrawFlagNone,
 			                  0);
 
@@ -991,8 +986,7 @@ void Encounter::drawStructs() {
 		case 2:
 			getScreen()->draw(_drawingStructs[0].resourceId,
 			                  _drawingStructs[0].frameIndex,
-			                  _drawingStructs[0].point2.x,
-			                  _drawingStructs[0].point2.y,
+			                  _drawingStructs[0].point2,
 			                  kDrawFlagNone,
 			                  val);
 
@@ -1006,8 +1000,7 @@ void Encounter::drawStructs() {
 		case 3:
 			getScreen()->draw(_drawingStructs[0].resourceId,
 			                  _drawingStructs[0].frameIndex,
-			                  _drawingStructs[0].point2.x,
-			                  _drawingStructs[0].point2.y);
+			                  _drawingStructs[0].point2);
 
 			_drawingStructs[0].status = 0;
 			break;
@@ -1036,8 +1029,7 @@ void Encounter::drawStructs() {
 		case -1:
 			getScreen()->draw(_drawingStructs[1].resourceId,
 			                  _drawingStructs[1].frameIndex,
-			                  _drawingStructs[1].point2.x,
-			                  _drawingStructs[1].point2.y,
+			                  _drawingStructs[1].point2,
 			                  kDrawFlagNone,
 			                  0);
 
@@ -1049,8 +1041,7 @@ void Encounter::drawStructs() {
 		case 2:
 			getScreen()->draw(_drawingStructs[1].resourceId,
 			                  _drawingStructs[1].frameIndex,
-			                  _drawingStructs[1].point2.x,
-			                  _drawingStructs[1].point2.y,
+			                  _drawingStructs[1].point2,
 			                  kDrawFlagNone,
 			                  val);
 
@@ -1064,8 +1055,7 @@ void Encounter::drawStructs() {
 		case 3:
 			getScreen()->draw(_drawingStructs[1].resourceId,
 			                  _drawingStructs[1].frameIndex,
-			                  _drawingStructs[1].point2.x,
-			                  _drawingStructs[1].point2.y);
+			                  _drawingStructs[1].point2);
 
 			_drawingStructs[1].status = 0;
 			break;

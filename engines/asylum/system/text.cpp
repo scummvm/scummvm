@@ -37,8 +37,6 @@
 namespace Asylum {
 
 Text::Text(AsylumEngine *engine) : _vm(engine) {
-	_posX = 0;
-	_posY = 0;
 	_curFontFlags = 0;
 	_fontResource = 0;
 	_transTableNum = 0;
@@ -69,8 +67,8 @@ ResourceId Text::loadFont(ResourceId resourceId) {
 }
 
 void Text::setPosition(int32 x, int32 y) {
-	_posX = x;
-	_posY = y;
+	_position.x = x;
+	_position.y = y;
 }
 
 int32 Text::getWidth(char c) {
@@ -129,13 +127,13 @@ void Text::drawChar(char character) {
 		error("[Text::drawChar] font resource hasn't been loaded yet!");
 
 	if (_transTableNum) {
-		getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _posX, _posY, kDrawFlagNone, _transTableNum);
+		getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _position, kDrawFlagNone, _transTableNum);
 	} else {
-		getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _posX, _posY);
+		getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _position);
 	}
 
 	GraphicFrame *fontLetter = _fontResource->getFrame((uint8)character);
-	_posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
+	_position.x += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 
 void Text::draw(const char *text) {

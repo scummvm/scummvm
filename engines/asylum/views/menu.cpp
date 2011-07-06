@@ -413,7 +413,7 @@ bool Menu::update() {
 		//getScreen()->fillRect(260, 229, 119, 16, 0);
 
 		// Draw background
-		getScreen()->draw(kBackground, (_activeScreen == kMenuNone) ? 1 : 0, 0, 0);
+		getScreen()->draw(kBackground, (_activeScreen == kMenuNone) ? 1 : 0, Common::Point(0, 0));
 
 		uint32 frameIndex = 0;
 
@@ -429,13 +429,13 @@ bool Menu::update() {
 
 		if (_activeScreen == kMenuNone) {
 			// Draw eye
-			getScreen()->draw(kEye, frameIndex, 0, 0);
+			getScreen()->draw(kEye, frameIndex, Common::Point(0, 0));
 
 			// Find mouse position
 			MenuScreen icon = findMousePosition();
 			if (icon != kMenuNone) {
 				// Draw icon
-				getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, icon + 4), _iconFrames[icon], 0, 0);
+				getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, icon + 4), _iconFrames[icon], Common::Point(0, 0));
 				_iconFrames[icon] = (_iconFrames[icon] + 1) % GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, icon + 4));
 
 				// Draw text
@@ -459,10 +459,10 @@ bool Menu::update() {
 				_dword_455C74 = 0;
 			}
 		} else {
-			getScreen()->draw(kEye, frameIndex, 0, 0, kDrawFlagNone, 3);
+			getScreen()->draw(kEye, frameIndex, Common::Point(0, 0), kDrawFlagNone, 3);
 
 			// Draw icon
-			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, _activeScreen + 4), _iconFrames[_activeScreen], 0, 0);
+			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, _activeScreen + 4), _iconFrames[_activeScreen], Common::Point(0, 0));
 			_iconFrames[_activeScreen] = (_iconFrames[_activeScreen] + 1) % GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, _activeScreen + 4));
 		}
 
@@ -1532,7 +1532,7 @@ void Menu::updateShowCredits() {
 		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 33));
 	} else {
 		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 23));
-		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 24), _creditsFrameIndex++ / 2, 0, 0, kDrawFlagNone, false);
+		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 24), _creditsFrameIndex++ / 2, Common::Point(0, 0), kDrawFlagNone, false);
 
 		_creditsFrameIndex %= 2 * GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, 24));
 	}
