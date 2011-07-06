@@ -252,6 +252,17 @@ void LivingBooksCursorManager_v2::setCursor(uint16 id) {
 	}
 }
 
+void LivingBooksCursorManager_v2::setCursor(const Common::String &name) {
+	if (!_sysArchive)
+		return;
+
+	uint16 id = _sysArchive->findResourceID(ID_TCUR, name);
+	if (id == 0xffff)
+		error("Could not find cursor '%s'", name.c_str());
+	else
+		setCursor(id);
+}
+
 PECursorManager::PECursorManager(const Common::String &appName) {
 	_exe = new Common::PEResources();
 

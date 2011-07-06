@@ -102,7 +102,9 @@ public:
 	void reset();
 	bool isFinished();
 	void update(uint val);
+	bool updateSound();
 	void updateState();
+	void updateEntryFlag(SoundFlag flag);
 
 	// Subtitles
 	void showSubtitle(Common::String filename);
@@ -140,7 +142,7 @@ private:
 	//int _size;
 	//int _field_28;
 	Common::SeekableReadStream *_stream;    // The file stream
-	//int _field_30;
+	//int _archive;
 	int _field_34;
 	int _field_38;
 	int _field_3C;

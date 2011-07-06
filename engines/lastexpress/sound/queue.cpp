@@ -105,6 +105,77 @@ void SoundQueue::updateQueue() {
 	//Common::StackLock locker(_mutex);
 
 	//warning("[Sound::updateQueue] Not implemented");
+
+	int maxPriority = 0;
+	Common::List<SoundEntry *>::iterator lsnd;
+	SoundEntry *msnd;
+
+	bool loopedPlaying;
+
+	loopedPlaying = 0;
+	//++g_sound_flag;
+
+	for (lsnd = _soundList.begin(); lsnd != _soundList.end(); ++lsnd) {
+		if ((*lsnd)->getType() == kSoundType1)
+			break;
+	}
+
+	if (getSoundState() & 1) {
+		if (!(*lsnd) || getFlags()->flag_3 || (*lsnd && (*lsnd)->getTime() > getSound()->getLoopingSoundDuration())) {
+			getSound()->playLoopingSound(0x45);
+		} else {
+			if (getSound()->getData1() && getSound()->getData2() >= getSound()->getData1()) {
+				(*lsnd)->update(getSound()->getData0());
+				getSound()->setData1(0);
+			}
+		}
+	}
+
+	msnd = NULL;
+
+	for (lsnd = _soundList.begin(); lsnd != _soundList.end(); ++lsnd) {
+		if ((*lsnd)->getStatus().status2 & 0x1) { // Sound is stopped
+			// original code
+			//if ((*lsnd)->soundBuffer)
+			//	Sound_RemoveSoundDataFromCache(*lsnd);
+			//if ((*lsnd)->archive) {
+			//	Archive_SetStatusNotLoaded((*lsnd)->archive);
+			//	(*lsnd)->archive = 0;
+			//	(*lsnd)->field_28 = 3;
+			//}
+
+			if (_soundList.size() < 6) {
+				if ((*lsnd)->getStatus().status1 & 0x1F) {
+					int pri = (*lsnd)->getPriority() + ((*lsnd)->getStatus().status1 & 0x1F);
+
+					if (pri > maxPriority) {
+						msnd = *lsnd;
+						maxPriority = pri;
+					}
+				}
+			}
+		}
+
+		if (!(*lsnd)->updateSound() && !((*lsnd)->getStatus().status3 & 0x8)) {
+			if (msnd == *lsnd) {
+				maxPriority = 0;
+				msnd = 0;
+			}
+			if (*lsnd) {
+				(*lsnd)->close();
+				SAFE_DELETE(*lsnd);
+				lsnd = _soundList.reverse_erase(lsnd);
+			}
+		}
+	}
+
+	
+	// We don't need this
+	//if (msnd)
+	//	msnd->updateEntryInternal();
+
+	getFlags()->flag_3 = 0;
+	//--g_sound_flag;
 }
 
 void SoundQueue::resetQueue() {
