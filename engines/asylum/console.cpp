@@ -525,7 +525,7 @@ bool Console::cmdDrawResource(int32 argc, const char **argv) {
 
 	// Draw resource
 	getScreen()->clear();
-	getScreen()->draw(MAKE_RESOURCE(pack, index), frame, 0, 0, 0);
+	getScreen()->draw(MAKE_RESOURCE(pack, index), frame, 0, 0);
 	getScreen()->copyBackBufferToScreen();
 
 	g_system->updateScreen();

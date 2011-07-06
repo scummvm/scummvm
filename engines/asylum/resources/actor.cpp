@@ -2337,18 +2337,18 @@ void Actor::adjustCoordinates(Common::Point *point) {
 	point->y = _point1.y - getWorld()->yTop;
 }
 
-int32 Actor::getGraphicsFlags() {
+DrawFlags Actor::getGraphicsFlags() {
 	if (getWorld()->chapter == kChapter11) {
 		int res = strcmp((char *)&_name, "Dead Sarah");
 
 		if (res == 0)
-			return 0;
+			return kDrawFlagNone;
 	}
 
 	if (_direction < kDirectionSE)
-		return 0;
+		return kDrawFlagNone;
 
-	return 2;
+	return kDrawFlagMirrorLeftRight;
 }
 
 int32 Actor::getDistance() const {

@@ -308,8 +308,8 @@ void PuzzleVCR::updateScreen(const AsylumEvent &evt) {
 	updateStopButton();
 
 	if (_buttonsState[kPowerButton] == kON) {
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[22], _tvScreenFrameIndex, Common::Point(0, 37), 0, 0, 1);
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[23], _tvScreenFrameIndex++, Common::Point(238, 22), 0, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[22], _tvScreenFrameIndex, Common::Point(0, 37), kDrawFlagNone, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[23], _tvScreenFrameIndex++, Common::Point(238, 22), kDrawFlagNone, 0, 1);
 
 		_tvScreenFrameIndex %= GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[22]);
 	}

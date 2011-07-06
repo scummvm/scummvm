@@ -71,7 +71,7 @@ void SceneTitle::update(int32 tick) {
 		return;
 
 	getScreen()->draw(getWorld()->sceneTitleGraphicResourceId);
-	getScreen()->draw(MAKE_RESOURCE(kResourcePackSound, 17), _spinnerFrameIndex, (_spinnerProgress / 590.0 * 580) - 290 , 0, 0, false);
+	getScreen()->draw(MAKE_RESOURCE(kResourcePackSound, 17), _spinnerFrameIndex, (_spinnerProgress / 590.0 * 580) - 290 , 0, kDrawFlagNone, false);
 	getText()->drawCentered(320, 30, 24, MAKE_RESOURCE(kResourcePackText, 1811 + getWorld()->chapter));
 
 	// This is not from the original. It's just some arbitrary math to throttle the progress indicator.

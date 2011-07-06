@@ -120,15 +120,15 @@ bool PuzzleTimeMachine::update(const AsylumEvent &evt)  {
 	// Draw screen elements
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[34]);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[35], _frameIndexes[0], Common::Point(23, 215), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[36], _frameIndexes[1], Common::Point(70, 217), 0, 0, 2);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[37], _frameIndexes[2], Common::Point(189, 217), 0, 0, 3);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[38], _frameIndexes[3], Common::Point(309, 218), 0, 0, 4);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[39], _frameIndexes[4], Common::Point(429, 212), 0, 0, 5);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[35], _frameIndexes[0], Common::Point(23, 215),  kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[36], _frameIndexes[1], Common::Point(70, 217),  kDrawFlagNone, 0, 2);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[37], _frameIndexes[2], Common::Point(189, 217), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[38], _frameIndexes[3], Common::Point(309, 218), kDrawFlagNone, 0, 4);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[39], _frameIndexes[4], Common::Point(429, 212), kDrawFlagNone, 0, 5);
 
 	if (_frameIndexes[0] != 28 || _frameIndexes[1] || _frameIndexes[2] || _frameIndexes[3] || _frameIndexes[4]) {
 		_leftButtonClicked = true;
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[43], 0, Common::Point(599, 220), 0, 0, 5);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[43], 0, Common::Point(599, 220), kDrawFlagNone, 0, 5);
 	} else {
 		getSound()->stop(getWorld()->soundResourceIds[17]);
 		getSound()->stop(getWorld()->soundResourceIds[16]);
@@ -141,18 +141,18 @@ bool PuzzleTimeMachine::update(const AsylumEvent &evt)  {
 		++_counter;
 	}
 
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], _frameIndexes[5], _point, 0, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], _frameIndexes[5], _point, kDrawFlagNone, 0, 1);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Show all buttons
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTimeMachineRects); i += 2) {
 		if (_state[i / 2] != -1)
-			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[44 + i], 0, Common::Point(puzzleTimeMachineRects[i].left, puzzleTimeMachineRects[i].top), 0, 0, 5);
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[44 + i], 0, Common::Point(puzzleTimeMachineRects[i].left, puzzleTimeMachineRects[i].top), kDrawFlagNone, 0, 5);
 	}
 
 	for (uint32 i = 1; i < ARRAYSIZE(puzzleTimeMachineRects); i += 2) {
 		if (_state[i / 2] != 1)
-			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[45 + i], 0, Common::Point(puzzleTimeMachineRects[i].left, puzzleTimeMachineRects[i].top), 0, 0, 5);
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[45 + i], 0, Common::Point(puzzleTimeMachineRects[i].left, puzzleTimeMachineRects[i].top), kDrawFlagNone, 0, 5);
 	}
 
 	// Draw to screen

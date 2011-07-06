@@ -56,7 +56,7 @@ typedef struct GraphicQueueItem {
 	Common::Point source;
 	ResourceId resourceIdDestination;
 	Common::Point destination;
-	int32 flags;
+	DrawFlags flags;
 	int32 transTableNum;
 
 	GraphicQueueItem() {
@@ -66,7 +66,7 @@ typedef struct GraphicQueueItem {
 		resourceId = kResourceNone;
 		frameIndex = 0;
 		resourceIdDestination = kResourceNone;
-		flags = 0;
+		flags = kDrawFlagNone;
 		transTableNum = 0;
 	}
 } GraphicQueueItem;
@@ -78,9 +78,9 @@ public:
 
 	// Drawing
 	void draw(ResourceId resourceId);
-	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, bool colorKey = true);
-	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, int32 transTableNum);
-	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, int32 flags, ResourceId resourceId2, int32 destX, int32 destY, bool colorKey = true);
+	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, DrawFlags flags = kDrawFlagNone, bool colorKey = true);
+	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, DrawFlags flags, int32 transTableNum);
+	void draw(ResourceId resourceId, uint32 frameIndex, int32 x, int32 y, DrawFlags flags, ResourceId resourceId2, int32 destX, int32 destY, bool colorKey = true);
 
 	// Misc
 	void clear();
@@ -114,9 +114,9 @@ public:
 	byte *getTransTableIndex() { return _transTableIndex; }
 
 	// Graphic queue
-	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 flags, int32 transTableNum, int32 priority);
+	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, DrawFlags flags, int32 transTableNum, int32 priority);
 	void addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point source, int32 objectResourceId, Common::Point destination, int32 transTableNum);
-	void addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point destination, int32 flags, int32 priority);
+	void addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point destination, DrawFlags flags, int32 priority);
 	void addGraphicToQueue(GraphicQueueItem const &item);
 	void drawGraphicsInQueue();
 	void clearGraphicsInQueue();

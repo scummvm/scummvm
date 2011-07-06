@@ -94,23 +94,23 @@ bool PuzzleMorgueDoor::update(const AsylumEvent &evt)  {
 	// Draw elements
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[19]);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[21], _frameIndexes[kTopLever], Common::Point(47, 0), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[22], _frameIndexes[kBottomLever], Common::Point(51, 236), 0, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[21], _frameIndexes[kTopLever], Common::Point(47, 0), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[22], _frameIndexes[kBottomLever], Common::Point(51, 236), kDrawFlagNone, 0, 1);
 
 	if (_topLeverOpen)
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[23], _frameIndexes[kTopLeverOpened], Common::Point(80, 0), 0, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[23], _frameIndexes[kTopLeverOpened], Common::Point(80, 0), kDrawFlagNone, 0, 1);
 
 	if (_bottomLeverOpen)
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[24], _frameIndexes[kBottomLeverOpened], Common::Point(89, 230), 0, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[24], _frameIndexes[kBottomLeverOpened], Common::Point(89, 230), kDrawFlagNone, 0, 1);
 
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[25], _frameIndexes[kTopRightValve], Common::Point(515, 41), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[26], _frameIndexes[kCenterValve], Common::Point(267, 190), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[27], _frameIndexes[kRightGear], Common::Point(388, 105), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[28], _frameIndexes[kTopRightLever], Common::Point(491, 143), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[29], _frameIndexes[kTopSmallLever], Common::Point(347, 124), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[30], _frameIndexes[kBottomSmallLever], Common::Point(346, 339), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[31], _frameIndexes[kTopGear], Common::Point(276, 67), 0, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[32], _frameIndexes[kBottomGear], Common::Point(278, 378), 0, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[25], _frameIndexes[kTopRightValve], Common::Point(515, 41), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[26], _frameIndexes[kCenterValve], Common::Point(267, 190), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[27], _frameIndexes[kRightGear], Common::Point(388, 105), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[28], _frameIndexes[kTopRightLever], Common::Point(491, 143), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[29], _frameIndexes[kTopSmallLever], Common::Point(347, 124), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[30], _frameIndexes[kBottomSmallLever], Common::Point(346, 339), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[31], _frameIndexes[kTopGear], Common::Point(276, 67), kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[32], _frameIndexes[kBottomGear], Common::Point(278, 378), kDrawFlagNone, 0, 1);
 
 	getScreen()->drawGraphicsInQueue();
 	getScreen()->copyBackBufferToScreen();

@@ -202,7 +202,7 @@ void Object::draw() {
 	adjustCoordinates(&point);
 
 	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1) {
-		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, point, (flags >> 11) & kObjectFlag2, _field_67C - 3, _priority);
+		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, point, (DrawFlags)((flags >> 11) & kDrawFlagMirrorLeftRight), _field_67C - 3, _priority);
 	} else {
 		getScreen()->addGraphicToQueueCrossfade(_resourceId, _frameIndex, point, getWorld()->backgroundImage, Common::Point(getWorld()->xLeft, getWorld()->yTop), _field_67C - 1);
 	}

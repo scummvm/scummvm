@@ -103,8 +103,8 @@ bool PuzzleWritings::update(const AsylumEvent &evt)  {
 
 		// The original blits part of the background onto the surface (9) and then adds it to the queue
 
-		getScreen()->addGraphicToQueueMasked(getWorld()->graphicResourceIds[9], 0, mousePos, getWorld()->graphicResourceIds[8], mousePos, 0, 2);
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[7], _frameIndex, mousePos, 0, 0, 1);
+		getScreen()->addGraphicToQueueMasked(getWorld()->graphicResourceIds[9], 0, mousePos, getWorld()->graphicResourceIds[8], mousePos, kDrawFlagNone, 2);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[7], _frameIndex, mousePos, kDrawFlagNone, 0, 1);
 	}
 
 	getScreen()->drawGraphicsInQueue();

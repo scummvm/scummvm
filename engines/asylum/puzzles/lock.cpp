@@ -89,16 +89,16 @@ bool PuzzleLock::update(const AsylumEvent &evt)  {
 	getScreen()->draw(getWorld()->graphicResourceIds[13]);
 
 	if (_frameIndexes[0] != 32 || _frameIndexes[1] != 28 || _frameIndexes[2] != 0) {
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], _frameIndexes[0], Common::Point(145, 292), 0, 0, 1);
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], _frameIndexes[1], Common::Point(173, 297), 0, 0, 1);
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], _frameIndexes[2], Common::Point(201, 302), 0, 0, 1);
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], _frameIndexes[3], Common::Point(337, 127), 0, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], _frameIndexes[0], Common::Point(145, 292), kDrawFlagNone, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], _frameIndexes[1], Common::Point(173, 297), kDrawFlagNone, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], _frameIndexes[2], Common::Point(201, 302), kDrawFlagNone, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], _frameIndexes[3], Common::Point(337, 127), kDrawFlagNone, 0, 1);
 
 		if (_frameIndexes[4] != -1)
-			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[42], _frameIndexes[4], Common::Point(318, 102), 0, 0, 1);
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[42], _frameIndexes[4], Common::Point(318, 102), kDrawFlagNone, 0, 1);
 
 		if (_frameIndexes[5] != -1)
-			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[43], _frameIndexes[5], Common::Point(318, 99), 0, 0, 1);
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[43], _frameIndexes[5], Common::Point(318, 99), kDrawFlagNone, 0, 1);
 
 		getScreen()->drawGraphicsInQueue();
 		getScreen()->copyBackBufferToScreen();
@@ -106,7 +106,7 @@ bool PuzzleLock::update(const AsylumEvent &evt)  {
 		if (_frameIndexes[6] == 5)
 			getSound()->playSound(getWorld()->soundResourceIds[15], false, Config.sfxVolume - 10);
 
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[16], _frameIndexes[6], Common::Point(0, 264), 0, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[16], _frameIndexes[6], Common::Point(0, 264), kDrawFlagNone, 0, 1);
 
 		++_counter;
 

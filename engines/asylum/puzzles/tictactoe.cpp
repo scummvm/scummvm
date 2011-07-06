@@ -227,9 +227,9 @@ void PuzzleTicTacToe::drawField() {
 
 		if (_lastMarkedField == i) {
 			if (mark == 'O')
-				getScreen()->draw(getWorld()->graphicResourceIds[2], _frameIndex, point.x, point.y, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[2], _frameIndex, point.x, point.y);
 			else if (mark == 'X')
-				getScreen()->draw(getWorld()->graphicResourceIds[1], _frameIndex, point.x, point.y, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[1], _frameIndex, point.x, point.y);
 
 			// Update _frameIndex
 			++_frameIndex;
@@ -251,9 +251,9 @@ void PuzzleTicTacToe::drawField() {
 			}
 		} else {
 			if (mark == 'O')
-				getScreen()->draw(getWorld()->graphicResourceIds[2], 12, point.x, point.y, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[2], 12, point.x, point.y);
 			else if (mark == 'X')
-				getScreen()->draw(getWorld()->graphicResourceIds[1], 14, point.x, point.y, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[1], 14, point.x, point.y);
 		}
 	}
 
@@ -267,98 +267,98 @@ void PuzzleTicTacToe::drawField() {
 			break;
 
 		case 1:
-			getScreen()->draw(getWorld()->graphicResourceIds[5], _frameIndex, 38, 345, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[5], _frameIndex, 38, 345);
 			break;
 
 		case 2:
-			getScreen()->draw(getWorld()->graphicResourceIds[5], _frameIndex, 17, 226, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[5], _frameIndex, 17, 226);
 			break;
 
 		case 3:
-			getScreen()->draw(getWorld()->graphicResourceIds[5], _frameIndex, 1, 104, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[5], _frameIndex, 1, 104);
 			break;
 
 		case 4:
-			getScreen()->draw(getWorld()->graphicResourceIds[6], _frameIndex, 43, 117, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[6], _frameIndex, 43, 117);
 			break;
 
 		case 5:
-			getScreen()->draw(getWorld()->graphicResourceIds[6], _frameIndex, 176, 104, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[6], _frameIndex, 176, 104);
 			break;
 
 		case 6:
-			getScreen()->draw(getWorld()->graphicResourceIds[6], _frameIndex, 299, 85, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[6], _frameIndex, 299, 85);
 			break;
 
 		case 7:
 			if (_counter2 == 0)
-				getScreen()->draw(getWorld()->graphicResourceIds[8], _frameIndex, 30, 149, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[8], _frameIndex, 30, 149);
 			else if (_counter2 == 1)
-				getScreen()->draw(getWorld()->graphicResourceIds[8], _frameIndex, 180, 249, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[8], _frameIndex, 180, 249);
 			else {
-				getScreen()->draw(getWorld()->graphicResourceIds[8], 6,  30, 149, 0);
-				getScreen()->draw(getWorld()->graphicResourceIds[8], 6, 180, 249, 0);
-				getScreen()->draw(getWorld()->graphicResourceIds[8], _frameIndex, 330, 349, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[8], 6,  30, 149);
+				getScreen()->draw(getWorld()->graphicResourceIds[8], 6, 180, 249);
+				getScreen()->draw(getWorld()->graphicResourceIds[8], _frameIndex, 330, 349);
 			}
 			break;
 
 		case 8:
 			if (_counter2 == 0)
-				getScreen()->draw(getWorld()->graphicResourceIds[10], _frameIndex, 69, 66, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[10], _frameIndex, 69, 66);
 			else if (_counter2 == 1)
-				getScreen()->draw(getWorld()->graphicResourceIds[10], _frameIndex, -22, 220, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[10], _frameIndex, -22, 220);
 			else {
-				getScreen()->draw(getWorld()->graphicResourceIds[10], 6,  69, 66, 0);
-				getScreen()->draw(getWorld()->graphicResourceIds[10], 6, -22, 220, 0);
-				getScreen()->draw(getWorld()->graphicResourceIds[10], _frameIndex, -110, 370, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[10], 6,  69, 66);
+				getScreen()->draw(getWorld()->graphicResourceIds[10], 6, -22, 220);
+				getScreen()->draw(getWorld()->graphicResourceIds[10], _frameIndex, -110, 370);
 			}
 			break;
 
 		case 9:
-			getScreen()->draw(getWorld()->graphicResourceIds[4], _frameIndex, 38, 345, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[4], _frameIndex, 38, 345);
 			break;
 
 		case 10:
-			getScreen()->draw(getWorld()->graphicResourceIds[4], _frameIndex, 17, 226, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[4], _frameIndex, 17, 226);
 			break;
 
 		case 11:
-			getScreen()->draw(getWorld()->graphicResourceIds[4], _frameIndex, 1, 104, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[4], _frameIndex, 1, 104);
 			break;
 
 		case 12:
-			getScreen()->draw(getWorld()->graphicResourceIds[11], _frameIndex, 43, 117, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[11], _frameIndex, 43, 117);
 			break;
 
 		case 13:
-			getScreen()->draw(getWorld()->graphicResourceIds[11], _frameIndex, 176, 104, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[11], _frameIndex, 176, 104);
 			break;
 
 		case 14:
-			getScreen()->draw(getWorld()->graphicResourceIds[11], _frameIndex, 299, 85, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[11], _frameIndex, 299, 85);
 			break;
 
 		case 15:
 			if (_counter2 == 0)
-				getScreen()->draw(getWorld()->graphicResourceIds[7], _frameIndex, 30, 149, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[7], _frameIndex, 30, 149);
 			else if (_counter2 == 1)
-				getScreen()->draw(getWorld()->graphicResourceIds[7], _frameIndex, 180, 249, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[7], _frameIndex, 180, 249);
 			else {
-				getScreen()->draw(getWorld()->graphicResourceIds[7], 6,  30, 149, 0);
-				getScreen()->draw(getWorld()->graphicResourceIds[7], 6, 180, 249, 0);
-				getScreen()->draw(getWorld()->graphicResourceIds[7], _frameIndex, 330, 349, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[7], 6,  30, 149);
+				getScreen()->draw(getWorld()->graphicResourceIds[7], 6, 180, 249);
+				getScreen()->draw(getWorld()->graphicResourceIds[7], _frameIndex, 330, 349);
 			}
 			break;
 
 		case 16:
 			if (_counter2 == 0)
-				getScreen()->draw(getWorld()->graphicResourceIds[9], _frameIndex, 69, 66, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[9], _frameIndex, 69, 66);
 			else if (_counter2 == 1)
-				getScreen()->draw(getWorld()->graphicResourceIds[9], _frameIndex, -22, 220, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[9], _frameIndex, -22, 220);
 			else {
-				getScreen()->draw(getWorld()->graphicResourceIds[9], 6,  69, 66, 0);
-				getScreen()->draw(getWorld()->graphicResourceIds[9], 6, -22, 220, 0);
-				getScreen()->draw(getWorld()->graphicResourceIds[9], _frameIndex, -110, 370, 0);
+				getScreen()->draw(getWorld()->graphicResourceIds[9], 6,  69, 66);
+				getScreen()->draw(getWorld()->graphicResourceIds[9], 6, -22, 220);
+				getScreen()->draw(getWorld()->graphicResourceIds[9], _frameIndex, -110, 370);
 			}
 			break;
 		}
@@ -378,7 +378,7 @@ void PuzzleTicTacToe::drawField() {
 			_counter = 30;
 	}
 
-	getScreen()->draw(getWorld()->graphicResourceIds[17], 0, 0, 0, 0);
+	getScreen()->draw(getWorld()->graphicResourceIds[17], 0, 0, 0);
 }
 
 void PuzzleTicTacToe::updatePositions(uint32 field1, uint32 field2, uint32 field3) {

@@ -504,11 +504,11 @@ private:
 	void updateGraphicData(uint32 offset);
 
 	/**
-	 * Gets the graphics flags for queuing the actor graphics
+	 * Gets the graphics flag for queuing the actor graphics (mirrored or normal)
 	 *
-	 * @return The graphics flags.
+	 * @return The graphics flag.
 	 */
-	int32 getGraphicsFlags();
+	DrawFlags getGraphicsFlags();
 
 	/**
 	 * Gets a distance depending on actor direction

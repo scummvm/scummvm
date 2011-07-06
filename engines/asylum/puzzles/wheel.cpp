@@ -201,17 +201,17 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 	getScreen()->draw(getWorld()->graphicResourceIds[0]);
 
 	// Blinking red light
-	getScreen()->draw(getWorld()->graphicResourceIds[12], _frameIndexes[11], puzzleWheelPoints[12].x, puzzleWheelPoints[12].y, 0);
+	getScreen()->draw(getWorld()->graphicResourceIds[12], _frameIndexes[11], puzzleWheelPoints[12].x, puzzleWheelPoints[12].y);
 	_frameIndexes[11] = (_frameIndexes[11] + 1 ) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[12]);
 
 	// Clock
 	if (_showTurnedClock)
-		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexClock], _frameIndexes[9], 342, 87, 0);
+		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexClock], _frameIndexes[9], 342, 87);
 	else
-		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndex + 22], 0, 342, 87, 0);
+		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndex + 22], 0, 342, 87);
 
 	// Chain
-	getScreen()->draw(getWorld()->graphicResourceIds[3], _frameIndexes[0], puzzleWheelPoints[3].x, puzzleWheelPoints[3].y, 0);
+	getScreen()->draw(getWorld()->graphicResourceIds[3], _frameIndexes[0], puzzleWheelPoints[3].x, puzzleWheelPoints[3].y);
 
 	// Update chain frame index
 	if (_moveChain) {
@@ -243,7 +243,7 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 			pointIndex = 4 + i;
 		}
 
-		getScreen()->draw(getWorld()->graphicResourceIds[resourceIndex], _frameIndexes[frameIndex], puzzleWheelPoints[pointIndex].x, puzzleWheelPoints[pointIndex].y, 0);
+		getScreen()->draw(getWorld()->graphicResourceIds[resourceIndex], _frameIndexes[frameIndex], puzzleWheelPoints[pointIndex].x, puzzleWheelPoints[pointIndex].y);
 
 		if (_frameIndexes[frameIndex] != (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[resourceIndex]) - 1)
 			++_frameIndexes[frameIndex];
@@ -254,7 +254,7 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 	// Sparks
 	for (uint32 i = 0; i < 8; i++) {
 		if (_frameIndexesSparks[i] >= 0) {
-			getScreen()->draw(getWorld()->graphicResourceIds[57 + i], _frameIndexesSparks[i], puzzleWheelPoints[48 + i].x, puzzleWheelPoints[48 + i].y, 0);
+			getScreen()->draw(getWorld()->graphicResourceIds[57 + i], _frameIndexesSparks[i], puzzleWheelPoints[48 + i].x, puzzleWheelPoints[48 + i].y);
 
 			if (_frameIndexesSparks[i] == (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[57 + i]) - 1)
 				_frameIndexesSparks[i] = -1;
@@ -265,9 +265,9 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 
 	// Lever
 	if (_resourceIndexLever == 13)
-		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], _frameIndexes[10], puzzleWheelPoints[13].x, puzzleWheelPoints[13].y, 0);
+		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], _frameIndexes[10], puzzleWheelPoints[13].x, puzzleWheelPoints[13].y);
 	else if (_resourceIndexLever == 54)
-		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], _frameIndexes[10], puzzleWheelPoints[47].x, puzzleWheelPoints[47].y, 0);
+		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], _frameIndexes[10], puzzleWheelPoints[47].x, puzzleWheelPoints[47].y);
 
 	// Update lever frame index
 	if (_moveLever) {
@@ -291,7 +291,7 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 	}
 
 	// Wheel
-	getScreen()->draw(getWorld()->graphicResourceIds[30], _frameIndexWheel, puzzleWheelPoints[30].x, puzzleWheelPoints[30].y, 0);
+	getScreen()->draw(getWorld()->graphicResourceIds[30], _frameIndexWheel, puzzleWheelPoints[30].x, puzzleWheelPoints[30].y);
 
 	// Update wheel frame index
 	if (_showTurnedClock) {

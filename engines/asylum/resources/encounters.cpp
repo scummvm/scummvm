@@ -850,7 +850,7 @@ bool Encounter::drawBackground() {
 			                                        _background.transTableNum);
 		}
 	} else {
-		getScreen()->draw(_background.resourceId, _background.frameIndex, _point.x, _point.y, 0);
+		getScreen()->draw(_background.resourceId, _background.frameIndex, _point.x, _point.y);
 	}
 
 	if (_data_455BE4) {
@@ -886,14 +886,13 @@ bool Encounter::drawPortraits() {
 		getScreen()->draw(_portrait1.resourceId,
 		                  _portrait1.frameIndex,
 		                  _point.x + 5,
-		                  _point.y + 5,
-		                  0);
+		                  _point.y + 5);
 	else
 		getScreen()->draw(_portrait1.resourceId,
 		                  _portrait1.frameIndex,
 		                  _point.x + 5,
 		                  _point.y + 5,
-		                  0,
+		                  kDrawFlagNone,
 		                  _portrait1.transTableNum);
 
 	if (_portrait1.transTableNum != _portrait1.transTableMax) {
@@ -921,14 +920,13 @@ bool Encounter::drawPortraits() {
 		getScreen()->draw(_portrait2.resourceId,
 		                  _portrait2.frameIndex,
 		                  _point.x - frameRect.width() + _background.rect.width() - 6,
-		                  _point.y + 5,
-		                  0);
+		                  _point.y + 5);
 	else
 		getScreen()->draw(_portrait2.resourceId,
 		                  _portrait2.frameIndex,
 		                  _point.x - frameRect.width() + _background.rect.width() - 6,
 		                  _point.y + 5,
-		                  0,
+		                  kDrawFlagNone,
 		                  _portrait2.transTableNum);
 
 	if (_portrait2.transTableNum != _portrait2.transTableMax) {
@@ -982,7 +980,7 @@ void Encounter::drawStructs() {
 			                  _drawingStructs[0].frameIndex,
 			                  _drawingStructs[0].point2.x,
 			                  _drawingStructs[0].point2.y,
-			                  0,
+			                  kDrawFlagNone,
 			                  0);
 
 			_drawingStructs[0].status = 0;
@@ -995,7 +993,7 @@ void Encounter::drawStructs() {
 			                  _drawingStructs[0].frameIndex,
 			                  _drawingStructs[0].point2.x,
 			                  _drawingStructs[0].point2.y,
-			                  0,
+			                  kDrawFlagNone,
 			                  val);
 
 			if (_drawingStructs[0].status == 1)
@@ -1009,8 +1007,7 @@ void Encounter::drawStructs() {
 			getScreen()->draw(_drawingStructs[0].resourceId,
 			                  _drawingStructs[0].frameIndex,
 			                  _drawingStructs[0].point2.x,
-			                  _drawingStructs[0].point2.y,
-			                  0);
+			                  _drawingStructs[0].point2.y);
 
 			_drawingStructs[0].status = 0;
 			break;
@@ -1041,7 +1038,7 @@ void Encounter::drawStructs() {
 			                  _drawingStructs[1].frameIndex,
 			                  _drawingStructs[1].point2.x,
 			                  _drawingStructs[1].point2.y,
-			                  0,
+			                  kDrawFlagNone,
 			                  0);
 
 			_drawingStructs[1].status = 0;
@@ -1054,7 +1051,7 @@ void Encounter::drawStructs() {
 			                  _drawingStructs[1].frameIndex,
 			                  _drawingStructs[1].point2.x,
 			                  _drawingStructs[1].point2.y,
-			                  0,
+			                  kDrawFlagNone,
 			                  val);
 
 			if (_drawingStructs[1].status == 1)
@@ -1068,8 +1065,7 @@ void Encounter::drawStructs() {
 			getScreen()->draw(_drawingStructs[1].resourceId,
 			                  _drawingStructs[1].frameIndex,
 			                  _drawingStructs[1].point2.x,
-			                  _drawingStructs[1].point2.y,
-			                  0);
+			                  _drawingStructs[1].point2.y);
 
 			_drawingStructs[1].status = 0;
 			break;

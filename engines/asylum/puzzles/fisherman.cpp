@@ -111,7 +111,7 @@ bool PuzzleFisherman::update(const AsylumEvent &evt)  {
 	// Draw 7 graphics
 	for (uint32 i = 0; i < 6; i++) {
 		if (_state[i])
-			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40 + i], 0, puzzleFishermanPolygons[i], 0, 0, 1);
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40 + i], 0, puzzleFishermanPolygons[i], kDrawFlagNone, 0, 1);
 	}
 
 	getScreen()->drawGraphicsInQueue();
