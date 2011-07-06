@@ -68,6 +68,15 @@ protected:
 	void callback3();
 };
 
+class Class511 : public AnimatedSprite {
+public:
+	Class511(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int deltaXType);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource;	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 class Scene1001 : public Scene {
 public:
 	Scene1001(NeverhoodEngine *vm, Module *parentModule, int which);

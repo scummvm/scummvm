@@ -73,6 +73,7 @@ public:
 	void setClipRect(NRect clipRect) { _clipRect = clipRect; }
 	bool getVisible() const { return _visible; }
 	void setVisible(bool value) { _visible = value; }
+	void setTransparent(bool value) { _transparent = value; }
 protected:
 	NeverhoodEngine *_vm;
 	int _priority;
@@ -81,6 +82,7 @@ protected:
 	NDrawRect _drawRect;
 	NDrawRect _sysRect;
 	NRect _clipRect;
+	bool _transparent;
 };
 
 // Misc

@@ -94,7 +94,7 @@ void Screen::clear() {
 	memset(_backScreen->pixels, 0, _backScreen->pitch * _backScreen->h);
 }
 
-void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect) {
+void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent) {
 
 	int16 destX, destY;
 	NRect ddRect;
@@ -131,12 +131,22 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 	byte *dest = (byte*)_backScreen->getBasePtr(destX, destY);
 	int width = ddRect.x2 - ddRect.x1;
 	int height = ddRect.y2 - ddRect.y1;
-	
-	while (height--) {
-		memcpy(dest, source, width);
-		source += surface->pitch;
-		dest += _backScreen->pitch;
-	}
+
+	if (!transparent) {
+		while (height--) {
+			memcpy(dest, source, width);
+			source += surface->pitch;
+			dest += _backScreen->pitch;
+		}
+	} else {
+		while (height--) {
+			for (int xc = 0; xc < width; xc++)
+				if (source[xc] != 0)
+					dest[xc] = source[xc];
+			source += surface->pitch;
+			dest += _backScreen->pitch;
+		}
+	} 
 	
 	#if 0
 	if ( ddRect.right > ddRect.left )

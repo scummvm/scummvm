@@ -46,6 +46,7 @@ Background::~Background() {
 
 void Background::createSurface(int surfacePriority, int16 width, int16 height) {
 	_surface = new BaseSurface(_vm, surfacePriority, width, height);
+	_surface->setTransparent(false);
 	_spriteResource.getPosition().x = width;
 	_spriteResource.getPosition().y = height;
 }
@@ -80,6 +81,7 @@ void DirtyBackground::createSurface(int surfacePriority, int16 width, int16 heig
 
 	// TODO: Later use a DirtySurface once it is implemented
 	_surface = new BaseSurface(_vm, surfacePriority, width, height);
+	_surface->setTransparent(false);
 	_spriteResource.getPosition().x = width;
 	_spriteResource.getPosition().y = height;
 

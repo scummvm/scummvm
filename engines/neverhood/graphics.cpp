@@ -27,7 +27,7 @@
 namespace Neverhood {
 
 BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height)
-	: _vm(vm), _priority(priority), _visible(true) {
+	: _vm(vm), _priority(priority), _visible(true), _transparent(true) {
 	
 	_drawRect.x = 0;
 	_drawRect.y = 0;
@@ -54,7 +54,7 @@ void BaseSurface::draw() {
 	debug(8, "BaseSurface::draw()");
 	if (_surface && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
 		// TODO: _sysRect alternate drawing code (is that used?)
-		_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect);
+		_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect, _transparent);
 	}
 }
 
@@ -152,7 +152,7 @@ void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoin
 
 void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY) {
 
-	// TODO: Flip
+	// TODO: Flip Y
 
 	int16 rows, chunks;
 	int16 skip, copy;
@@ -171,7 +171,14 @@ void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPi
 					skip = READ_LE_UINT16(source);
 					copy = READ_LE_UINT16(source + 2);
 					source += 4;
-					memcpy(dest + skip, source, copy);
+					if (!flipX)
+						memcpy(dest + skip, source, copy);
+					else {
+						byte *flipDest = dest + width - skip - 1;
+						for (int xc = 0; xc < copy; xc++) {
+							*flipDest-- = source[xc];
+						}
+					}
 					source += copy;
 				}
 				dest += destPitch;
@@ -186,14 +193,24 @@ void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPi
 
 void unpackSpriteNormal(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY) {
 
-	// TODO: Flip
+	// TODO: Flip Y
 
 	int sourcePitch = (width + 3) & 0xFFFC;
 
-	while (height-- > 0) {
-		memcpy(dest, source, width);
-		source += sourcePitch;
-		dest += destPitch;
+	if (!flipX) {
+		while (height-- > 0) {
+			memcpy(dest, source, width);
+			source += sourcePitch;
+			dest += destPitch;
+		}
+	} else {
+		while (height-- > 0) {
+			dest += width - 1;
+			for (int xc = 0; xc < width; xc++)
+				*dest-- = source[xc];
+			source += sourcePitch;
+			dest += destPitch;
+		}
 	}
 
 }

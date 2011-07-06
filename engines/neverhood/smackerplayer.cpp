@@ -35,7 +35,7 @@ SmackerSurface::SmackerSurface(NeverhoodEngine *vm)
 
 void SmackerSurface::draw() {
 	if (_smackerFrame && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
-		_vm->_screen->drawSurface2(_smackerFrame, _drawRect, _clipRect);
+		_vm->_screen->drawSurface2(_smackerFrame, _drawRect, _clipRect, false);
 	}
 }
 

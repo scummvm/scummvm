@@ -240,7 +240,55 @@ void Class509::callback3() {
 	setFileHash1();
 	_surface->setVisible(false);	
 }
-				
+	
+Class511::Class511(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int deltaXType)
+	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene) {
+	
+	createSurface(1010, 71, 73);
+	setDoDeltaX(deltaXType);
+	setFileHash(0x04A98C36, 0, -1);
+	_newHashListIndex = 0;
+	_x = x;
+	_y = y;
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&Class511::handleMessage);
+}
+
+uint32 Class511::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param._integer == 0x00C0C444) {
+			_parentScene->sendMessage(0x480F, 0, this);
+		} else if (param._integer == 0xC41A02C0) {
+#if 0		
+			_soundResource.set(0x40581882);
+			_soundResource.load();
+			_soundResource.play(false);
+#endif			
+		}
+		break;
+	case 0x1011:
+		_parentScene->sendMessage(0x4826, 0, this);
+		messageResult = 1;
+		break;
+	case 0x3002:
+		setFileHash(0x04A98C36, 0, -1);
+		_newHashListIndex = 0;
+		break;
+	case 0x480F:
+		setFileHash(0x04A98C36, 0, -1);
+		break;
+	case 0x482A:
+		_parentScene->sendMessage(0x1022, 0x3DE, this);
+		break;
+	case 0x482B:
+		_parentScene->sendMessage(0x1022, 0x3F2, this);
+		break;
+	}
+	return messageResult;
+}
+			
 Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _fieldE4(-1), _fieldE6(-1) {
 
@@ -307,9 +355,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 		_class509 = NULL;
 	}
 
-#if 0
 	_class511 = addSprite(new Class511(_vm, this, 150, 433, 1));
-#endif
 
 	addSprite(new StaticSprite(_vm, 0x809861A6, 950));
 	addSprite(new StaticSprite(_vm, 0x89C03848, 1100));
@@ -334,6 +380,8 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 #if 0
 	_class508 = addSprite(new Class508(_vm, _class509));
 #endif
+
+	_class511->sendMessage(0x480F, 0, this);
 
 }
 
