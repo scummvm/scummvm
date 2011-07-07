@@ -222,6 +222,8 @@ public:
 	void cmdUnimplemented(const Common::Array<LBValue> &params);
 	void cmdEval(const Common::Array<LBValue> &params);
 	void cmdRandom(const Common::Array<LBValue> &params);
+	void cmdStringLen(const Common::Array<LBValue> &params);
+	void cmdSubstring(const Common::Array<LBValue> &params);
 	void cmdGetRect(const Common::Array<LBValue> &params);
 	void cmdTopLeft(const Common::Array<LBValue> &params);
 	void cmdBottomRight(const Common::Array<LBValue> &params);
