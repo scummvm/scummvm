@@ -30,7 +30,7 @@
 
 namespace Neverhood {
 
-#define SetSpriteCallback(callback) _spriteCallbackCb = static_cast <void (Sprite::*)(void)> (callback)
+#define SetSpriteCallback(callback) _spriteUpdateCb = static_cast <void (Sprite::*)(void)> (callback)
 #define SetFilterX(callback) _filterXCb = static_cast <int16 (Sprite::*)(int16)> (callback)
 #define SetFilterY(callback) _filterYCb = static_cast <int16 (Sprite::*)(int16)> (callback)
 
@@ -91,6 +91,7 @@ protected:
 #define SetAnimationCallback1(callback) _callback1Cb = static_cast <void (AnimatedSprite::*)(void)> (callback)
 #define SetAnimationCallback2(callback) _callback2Cb = static_cast <void (AnimatedSprite::*)(void)> (callback)
 #define SetAnimationCallback3(callback) _callback3Cb = static_cast <void (AnimatedSprite::*)(void)> (callback)
+#define AnimationCallback(callback) static_cast <void (AnimatedSprite::*)()> (callback)
 
 class AnimatedSprite : public Sprite {
 public:
@@ -98,7 +99,7 @@ public:
 	AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y);
 	void update();
 protected:
-	typedef void (AnimatedSprite::*AnimationCallback)();
+	typedef void (AnimatedSprite::*AnimationCb)();
 	AnimResource _animResource;
 	uint32 _fileHash1;
 	uint32 _fileHash2;
@@ -124,9 +125,9 @@ protected:
 	callbackListCount dw ?
 	callbackList	dd ?
 	*/
-	AnimationCallback _callback1Cb;
-	AnimationCallback _callback2Cb;
-	AnimationCallback _callback3Cb;
+	AnimationCb _callback1Cb;
+	AnimationCb _callback2Cb;
+	AnimationCb _callback3Cb;
 	void init();
 	void updateDeltaXY();
 	void updateAnim();

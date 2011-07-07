@@ -469,6 +469,10 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 
 }
 
+Scene1001::~Scene1001() {
+	// TODO _vm->setGlobalVar(0xC0418A02, _playerSprite->_doDeltaX);
+}
+
 uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = 0;
 	Scene::handleMessage(messageNum, param, sender);

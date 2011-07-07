@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	entity.o \
 	gamemodule.o \
 	graphics.o \
+	klayman.o \
 	module.o \
 	module1000.o \
 	module1500.o \

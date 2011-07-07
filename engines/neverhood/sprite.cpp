@@ -456,7 +456,7 @@ void AnimatedSprite::removeCallbacks() {
 
 	if (_callback1Cb) {
 		// _callback1Cb has to be cleared before it's called
-		AnimationCallback cb = _callback1Cb;
+		AnimationCb cb = _callback1Cb;
 		_callback1Cb = NULL;
 		debug("Fire _callback1Cb");
 		(this->*cb)();

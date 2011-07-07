@@ -28,14 +28,18 @@
 
 namespace Neverhood {
 
+class Entity;
+
 struct MessageParam {
 	union {
 		uint32 _integer;
 		NPoint _point;
+		Entity *_entity;
 		// TODO: Other types...
 	};
 	MessageParam(uint32 value) { _integer = value; }
 	MessageParam(NPoint value) { _point = value; }
+	MessageParam(Entity *entity) { _entity = entity; }
 	// TODO: Constructors for the param types...
 };
 
@@ -61,12 +65,16 @@ public:
 	uint32 sendMessage(int messageNum, const MessageParam &param, Entity *sender) {
 		return _messageHandlerCb ? (this->*_messageHandlerCb)(messageNum, param, sender) : 0;
 	}
-	// Overloaded for various message parameter types
+	// NOTE: These were overloaded before for the various message parameter types
+	// it caused some problems so each type gets its own sendMessage variant now
 	uint32 sendMessage(int messageNum, uint32 param, Entity *sender) {
 		return sendMessage(messageNum, MessageParam(param), sender);
 	}
-	uint32 sendMessage(int messageNum, NPoint param, Entity *sender) {
+	uint32 sendPointMessage(int messageNum, NPoint param, Entity *sender) {
 		return sendMessage(messageNum, MessageParam(param), sender);
+	}
+	uint32 sendEntityMessage(int messageNum, Entity *param, Entity *sender) {
+		return sendMessage(messageNum, MessageParam((Entity*)param), sender);
 	}
 	int getPriority() const { return _priority; }
 protected:

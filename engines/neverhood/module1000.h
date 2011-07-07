@@ -109,6 +109,7 @@ protected:
 class Scene1001 : public Scene {
 public:
 	Scene1001(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Scene1001();
 protected:
 	Sprite *_asHammer;
 	Sprite *_asDoor;
