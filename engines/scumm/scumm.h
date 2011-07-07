@@ -46,9 +46,10 @@
 /* This disables the dual layer mode which is used in FM-Towns versions
  * of SCUMM games and which emulates the behavior of the original code.
  * The only purpose is code size reduction for certain backends.
- * SCUMM 3 (FM-Towns) games will run in normal (DOS VGA) mode, which should
- * work just fine in most situations. Some glitches might occur. SCUMM 5 games
- * will not work without dual layer (and 16 bit color) support.
+ * SCUMM 3 (FM-Towns) games will run in English in normal (DOS VGA) mode,
+ * which should work just fine in most situations. Some glitches might
+ * occur. Japanese mode and SCUMM 5 FM-Towns games will not work without
+ * dual layer (and 16 bit color) support.
  */
 #define DISABLE_TOWNS_DUAL_LAYER_MODE
 #endif
@@ -345,6 +346,7 @@ class ResourceManager;
 class ScummEngine : public Engine {
 	friend class ScummDebugger;
 	friend class CharsetRenderer;
+	friend class CharsetRendererTownsClassic;
 	friend class ResourceManager;
 
 public:
@@ -1333,7 +1335,6 @@ public:
 	byte _townsPaletteFlags;
 	byte _townsCharsetColorMap[16];
 	Graphics::FontSJIS *_cjkFont;
-	uint16 _cjkChar;
 
 protected:
 	void towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int w, int h);

@@ -284,7 +284,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	_townsScreen = 0;
 	_cjkFont = 0;
-	_cjkChar = 0;
 #endif
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
@@ -1350,13 +1349,23 @@ void ScummEngine::setupCharsetRenderer() {
 			_charset = new CharsetRendererPCE(this);
 		else
 #endif
+		if (_game.platform == Common::kPlatformFMTowns)
+			_charset = new CharsetRendererTownsV3(this);
+		else
 			_charset = new CharsetRendererV3(this);
 #ifdef ENABLE_SCUMM_7_8
 	} else if (_game.version == 8) {
 		_charset = new CharsetRendererNut(this);
 #endif
 	} else {
-		_charset = new CharsetRendererClassic(this);
+#ifdef USE_RGB_COLOR
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns)
+			_charset = new CharsetRendererTownsClassic(this);
+		else
+#endif
+#endif
+			_charset = new CharsetRendererClassic(this);
 	}
 }
 
