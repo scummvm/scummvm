@@ -115,6 +115,9 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
 	// Instance data
 	_tickCount = -1;
 	_updateCounter = 0;
+
+	// Path finding
+	_frameNumber = 0;
 }
 
 Actor::~Actor() {
@@ -915,7 +918,131 @@ bool Actor::process(const Common::Point &point) {
 	}
 
 	if (abs(delta.x) != abs(delta.y)) {
-		error("[Actor::process] not implemented (deltas)!");
+		Common::Array<int> actions;
+		Common::Point point1;
+		Common::Point point2;
+		uint32 count1 = 0;
+		uint32 count2 = 0;
+		ActorDirection direction1 = kDirectionInvalid;
+		ActorDirection direction2 = kDirectionInvalid;
+
+		// Compute coordinates, directions and counts
+		if (abs(delta.x) < abs(delta.y)) {
+			point1 = Common::Point(sum.x + abs(delta.x) * a1, sum.y + abs(delta.x) * a2);
+			point2 = Common::Point(sum.x                    , sum.y + abs(abs(delta.x) - abs(delta.y)) * a2);
+			count1 = abs(point1.x - sum.x);
+			count2 = abs(point1.y - point.y);
+
+			switch (a3) {
+			default:
+				error("[Actor::process] Invalid value for a3");
+				break;
+
+			case 0:
+				direction1 = kDirectionNO;
+				direction2 = kDirectionN;
+				break;
+
+			case 1:
+				direction1 = kDirectionNE;
+				direction2 = kDirectionN;
+				break;
+
+			case 2:
+				direction1 = kDirectionSE;
+				direction2 = kDirectionS;
+				break;
+
+			case 3:
+				direction1 = kDirectionSO;
+				direction2 = kDirectionS;
+				break;
+			}
+		} else {
+			point1 = Common::Point(sum.x + abs(delta.y) * a1,                      sum.y + abs(delta.y) * a2);
+			point2 = Common::Point(sum.x + abs(abs(delta.y) - abs(delta.x)) * a1 , sum.y);
+			count1 = abs(abs(delta.y) * a2);
+			count2 = abs(point1.y - point.x);
+
+			switch (a3) {
+			default:
+				error("[Actor::process] Invalid value for a3");
+				break;
+
+			case 0:
+				direction1 = kDirectionNO;
+				direction2 = kDirectionO;
+				break;
+
+			case 1:
+				direction1 = kDirectionNE;
+				direction2 = kDirectionE;
+				break;
+
+			case 2:
+				direction1 = kDirectionSE;
+				direction2 = kDirectionE;
+				break;
+
+			case 3:
+				direction1 = kDirectionSO;
+				direction2 = kDirectionO;
+				break;
+			}
+		}
+
+		// Check scene rects
+		if (getWorld()->chapter != kChapter2 || strcmp(_name, "Big Crow")) {
+			error("[Actor::process] not implemented (scene rects checks)!");
+		}
+
+		if (process_408B20(&sum,    direction1, count1, true)
+		 && process_408B20(&point1, direction2, count2, true)) {
+			error("[Actor::process] not implemented (process actor data 1)!");
+		}
+
+		if (process_408B20(&sum,    direction2, count2, true)
+		 && process_408B20(&point1, direction1, count1, true)) {
+			error("[Actor::process] not implemented (process actor data 2)!");
+		}
+
+		error("[Actor::process] not implemented (compute actions)!");
+
+		//////////////////////////////////////////////////////////////////////////
+		// Process actions
+
+		_frameNumber = 0;
+
+		if (abs(sum.x - point.x) > abs(sum.y - point.y)) {
+			if (sum.x <= point.x) {
+				if (!processAction1(sum, point, &actions))
+					return false;
+			} else {
+				if (!processAction2(sum, point, &actions))
+					return false;
+			}
+
+			updateFromDirection((ActorDirection)_data.field_3C8[0]);
+
+			return true;
+		}
+
+		if (sum.y > point.y) {
+			if (!processAction3(sum, point, &actions))
+				return false;
+
+			updateFromDirection((ActorDirection)_data.field_3C8[0]);
+
+			return true;
+		}
+
+		// last case: sum.y < point.y
+		if (!processAction4(sum, point, &actions))
+			return false;
+
+		updateFromDirection((ActorDirection)_data.field_3C8[0]);
+
+		return true;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2229,8 +2356,24 @@ void Actor::updateNumbers(int32 reaction, int32 x, int32 y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Helpers functions
+// Path finding functions
 //////////////////////////////////////////////////////////////////////////
+bool Actor::processAction1(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions) {
+	error("[Actor::processAction1] Not implemented");
+}
+
+bool Actor::processAction2(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions) {
+	error("[Actor::processAction2] Not implemented");
+}
+
+bool Actor::processAction3(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions) {
+	error("[Actor::processAction3] Not implemented");
+}
+
+bool Actor::processAction4(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions) {
+	error("[Actor::processAction4] Not implemented");
+}
+
 bool Actor::checkAllActions(const Common::Point &pt, Common::Array<ActionArea *> *actions) {
 	if (actions->size() == 0)
 		return false;
