@@ -46,7 +46,7 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 	}
 
 	// Try ScummVM's font.
-	ret = new FontSjisSVM();
+	ret = new FontSjisSVM(platform);
 	if (ret && ret->loadData())
 		return ret;
 	delete ret;
@@ -56,6 +56,51 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 
 void FontSJIS::drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const {
 	drawChar(dst.getBasePtr(x, y), ch, dst.pitch, dst.format.bytesPerPixel, c1, c2, dst.w - x, dst.h - y);
+}
+
+FontSJISBase::FontSJISBase()
+	: _drawMode(kDefaultMode), _flippedMode(false), _fontWidth(16), _fontHeight(16) {
+}
+
+void FontSJISBase::setDrawingMode(DrawingMode mode) {
+	_drawMode = mode;
+}
+
+void FontSJISBase::toggleFlippedMode(bool enable) {
+	_flippedMode = enable;
+}
+
+uint FontSJISBase::getFontHeight() const {
+	switch (_drawMode) {
+	case kOutlineMode:
+		return _fontHeight + 2;
+
+	case kDefaultMode:
+		return _fontHeight;
+
+	default:
+		return _fontHeight + 1;
+	}
+}
+
+uint FontSJISBase::getMaxFontWidth() const {
+	switch (_drawMode) {
+	case kOutlineMode:
+		return _fontWidth + 2;
+
+	case kDefaultMode:
+		return _fontWidth;
+
+	default:
+		return _fontWidth + 1;
+	}
+}
+
+uint FontSJISBase::getCharWidth(uint16 ch) const {
+	if (isASCII(ch))
+		return (_drawMode == kOutlineMode) ? 10 : (_drawMode == kDefaultMode ? 8 : 9);
+	else
+		return getMaxFontWidth();
 }
 
 template<typename Color>
@@ -131,6 +176,9 @@ const uint8 *FontSJISBase::flipCharacter(const uint8 *glyph, const int w) const 
 		0x0F, 0x8F, 0x4F, 0xC7, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x97, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
 	};
 
+	// TODO: This code looks like it will only work with 16 pixel wide
+	// characters we should really take care that we only call it on these
+	// or we fix this to support a generic width.
 	for (int i = 0; i < w; i++) {
 		_tempGlyph[i] = flipData[glyph[(w * 2 - 1) - i]];
 		_tempGlyph[(w * 2 - 1) - i] = flipData[glyph[i]];
@@ -146,14 +194,14 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 	int outlineExtraWidth = 2, outlineExtraHeight = 2;
 	int outlineXOffset = 0, outlineYOffset = 0;
 
-	if (is8x16(ch)) {
-		glyphSource = getCharData8x16(ch);
+	if (isASCII(ch)) {
+		glyphSource = getCharData(ch);
 		width = 8;
-		height = 16;
+		height = _fontHeight;
 	} else {
 		glyphSource = getCharData(ch);
-		width = 16;
-		height = 16;
+		width = _fontWidth;
+		height = _fontHeight;
 	}
 
 	if (maxW != -1 && maxW < width) {
@@ -177,6 +225,9 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 	}
 
 #ifndef DISABLE_FLIPPED_MODE
+	// TODO: This code inside flopCharater looks like it will only work with
+	// 16 pixel wide characters we should really take care that we only call
+	// it on these or we fix it to support a generic width.
 	if (_flippedMode)
 		glyphSource = flipCharacter(glyphSource, width);
 #endif
@@ -220,14 +271,7 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 	}
 }
 
-uint FontSJISBase::getCharWidth(uint16 ch) const {
-	if (is8x16(ch))
-		return (_drawMode == kOutlineMode) ? 10 : (_drawMode == kDefaultMode ? 8 : 9);
-	else
-		return getMaxFontWidth();
-}
-
-bool FontSJISBase::is8x16(uint16 ch) const {
+bool FontSJISBase::isASCII(uint16 ch) const {
 	if (ch >= 0xFF)
 		return false;
 	else if (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))
@@ -253,104 +297,118 @@ bool FontTowns::loadData() {
 }
 
 const uint8 *FontTowns::getCharData(uint16 ch) const {
-	uint8 f = ch & 0xFF;
-	uint8 s = ch >> 8;
+	if (ch < kFont8x16Chars) {
+		return _fontData8x16 + ch * 16;
+	} else {
+		uint8 f = ch & 0xFF;
+		uint8 s = ch >> 8;
 
-	// copied from scumm\charset.cpp
-	enum {
-		KANA = 0,
-		KANJI = 1,
-		EKANJI = 2
-	};
+		// copied from scumm\charset.cpp
+		enum {
+			KANA = 0,
+			KANJI = 1,
+			EKANJI = 2
+		};
 
-	int base = s - ((s + 1) % 32);
-	int c = 0, p = 0, chunk_f = 0, chunk = 0, cr = 0, kanjiType = KANA;
+		int base = s - ((s + 1) % 32);
+		int c = 0, p = 0, chunk_f = 0, chunk = 0, cr = 0, kanjiType = KANA;
 
-	if (f >= 0x81 && f <= 0x84) kanjiType = KANA;
-	if (f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
-	if (f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
+		if (f >= 0x81 && f <= 0x84) kanjiType = KANA;
+		if (f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
+		if (f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
 
-	if ((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
-		c = 48; //correction
-		p = -8; //correction
+		if ((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
+			c = 48; //correction
+			p = -8; //correction
+		}
+
+		if (kanjiType == KANA) {//Kana
+			chunk_f = (f - 0x81) * 2;
+		} else if (kanjiType == KANJI) {//Standard Kanji
+			p += f - 0x88;
+			chunk_f = c + 2 * p;
+		} else if (kanjiType == EKANJI) {//Enhanced Kanji
+			p += f - 0xe0;
+			chunk_f = c + 2 * p;
+		}
+
+		// Base corrections
+		if (base == 0x7f && s == 0x7f)
+			base -= 0x20;
+		if (base == 0x9f && s == 0xbe)
+			base += 0x20;
+		if (base == 0xbf && s == 0xde)
+			base += 0x20;
+		//if (base == 0x7f && s == 0x9e)
+		//	base += 0x20;
+
+		switch (base) {
+		case 0x3f:
+			cr = 0; //3f
+			if (kanjiType == KANA) chunk = 1;
+			else if (kanjiType == KANJI) chunk = 31;
+			else if (kanjiType == EKANJI) chunk = 111;
+			break;
+		case 0x5f:
+			cr = 0; //5f
+			if (kanjiType == KANA) chunk = 17;
+			else if (kanjiType == KANJI) chunk = 47;
+			else if (kanjiType == EKANJI) chunk = 127;
+			break;
+		case 0x7f:
+			cr = -1; //80
+			if (kanjiType == KANA) chunk = 9;
+			else if (kanjiType == KANJI) chunk = 63;
+			else if (kanjiType == EKANJI) chunk = 143;
+			break;
+		case 0x9f:
+			cr = 1; //9e
+			if (kanjiType == KANA) chunk = 2;
+			else if (kanjiType == KANJI) chunk = 32;
+			else if (kanjiType == EKANJI) chunk = 112;
+			break;
+		case 0xbf:
+			cr = 1; //be
+			if (kanjiType == KANA) chunk = 18;
+			else if (kanjiType == KANJI) chunk = 48;
+			else if (kanjiType == EKANJI) chunk = 128;
+			break;
+		case 0xdf:
+			cr = 1; //de
+			if (kanjiType == KANA) chunk = 10;
+			else if (kanjiType == KANJI) chunk = 64;
+			else if (kanjiType == EKANJI) chunk = 144;
+			break;
+		default:
+			debug(4, "Invalid Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
+		}
+
+		debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
+		const int chunkNum = (((chunk_f + chunk) * 32 + (s - base)) + cr);
+		if (chunkNum < 0 || chunkNum >= kFont16x16Chars)
+			return 0;
+		else
+			return _fontData16x16 + chunkNum * 32;
 	}
-
-	if (kanjiType == KANA) {//Kana
-		chunk_f = (f - 0x81) * 2;
-	} else if (kanjiType == KANJI) {//Standard Kanji
-		p += f - 0x88;
-		chunk_f = c + 2 * p;
-	} else if (kanjiType == EKANJI) {//Enhanced Kanji
-		p += f - 0xe0;
-		chunk_f = c + 2 * p;
-	}
-
-	// Base corrections
-	if (base == 0x7f && s == 0x7f)
-		base -= 0x20;
-	if (base == 0x9f && s == 0xbe)
-		base += 0x20;
-	if (base == 0xbf && s == 0xde)
-		base += 0x20;
-	//if (base == 0x7f && s == 0x9e)
-	//	base += 0x20;
-
-	switch (base) {
-	case 0x3f:
-		cr = 0; //3f
-		if (kanjiType == KANA) chunk = 1;
-		else if (kanjiType == KANJI) chunk = 31;
-		else if (kanjiType == EKANJI) chunk = 111;
-		break;
-	case 0x5f:
-		cr = 0; //5f
-		if (kanjiType == KANA) chunk = 17;
-		else if (kanjiType == KANJI) chunk = 47;
-		else if (kanjiType == EKANJI) chunk = 127;
-		break;
-	case 0x7f:
-		cr = -1; //80
-		if (kanjiType == KANA) chunk = 9;
-		else if (kanjiType == KANJI) chunk = 63;
-		else if (kanjiType == EKANJI) chunk = 143;
-		break;
-	case 0x9f:
-		cr = 1; //9e
-		if (kanjiType == KANA) chunk = 2;
-		else if (kanjiType == KANJI) chunk = 32;
-		else if (kanjiType == EKANJI) chunk = 112;
-		break;
-	case 0xbf:
-		cr = 1; //be
-		if (kanjiType == KANA) chunk = 18;
-		else if (kanjiType == KANJI) chunk = 48;
-		else if (kanjiType == EKANJI) chunk = 128;
-		break;
-	case 0xdf:
-		cr = 1; //de
-		if (kanjiType == KANA) chunk = 10;
-		else if (kanjiType == KANJI) chunk = 64;
-		else if (kanjiType == EKANJI) chunk = 144;
-		break;
-	default:
-		debug(4, "Invalid Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
-	}
-
-	debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
-	const int chunkNum = (((chunk_f + chunk) * 32 + (s - base)) + cr);
-	if (chunkNum < 0 || chunkNum >= kFont16x16Chars)
-		return 0;
-	else
-		return _fontData16x16 + chunkNum * 32;
-}
-
-const uint8 *FontTowns::getCharData8x16(uint16 c) const {
-	if (c >= kFont8x16Chars)
-		return 0;
-	return _fontData8x16 + c * 16;
 }
 
 // ScummVM SJIS font
+
+FontSjisSVM::FontSjisSVM(const Common::Platform platform)
+	: _fontData16x16(0), _fontData16x16Size(0), _fontData8x16(0), _fontData8x16Size(0),
+	  _fontData12x12(0), _fontData12x12Size(0) {
+
+	if (platform == Common::kPlatformPCEngine) {
+		_fontWidth = 12;
+		_fontHeight = 12;
+	}
+}
+
+FontSjisSVM::~FontSjisSVM() {
+	delete[] _fontData16x16;
+	delete[] _fontData8x16;
+	delete[] _fontData12x12;
+}
 
 bool FontSjisSVM::loadData() {
 	Common::SeekableReadStream *data = SearchMan.createReadStreamForMember("SJIS.FNT");
@@ -366,23 +424,33 @@ bool FontSjisSVM::loadData() {
 	}
 
 	uint32 version = data->readUint32BE();
-	if (version != 2) {
+	if (version != 3) {
 		delete data;
 		return false;
 	}
 	uint numChars16x16 = data->readUint16BE();
 	uint numChars8x16 = data->readUint16BE();
+	uint numChars12x12 = data->readUint16BE();
 
-	_fontData16x16Size = numChars16x16 * 32;
-	_fontData16x16 = new uint8[_fontData16x16Size];
-	assert(_fontData16x16);
-	data->read(_fontData16x16, _fontData16x16Size);
+	if (_fontWidth == 16) {
+		_fontData16x16Size = numChars16x16 * 32;
+		_fontData16x16 = new uint8[_fontData16x16Size];
+		assert(_fontData16x16);
+		data->read(_fontData16x16, _fontData16x16Size);
 
-	_fontData8x16Size = numChars8x16 * 16;
-	_fontData8x16 = new uint8[numChars8x16 * 16];
-	assert(_fontData8x16);
+		_fontData8x16Size = numChars8x16 * 16;
+		_fontData8x16 = new uint8[numChars8x16 * 16];
+		assert(_fontData8x16);
+		data->read(_fontData8x16, _fontData8x16Size);
+	} else {
+		data->skip(numChars16x16 * 32);
+		data->skip(numChars8x16 * 16);
 
-	data->read(_fontData8x16, _fontData8x16Size);
+		_fontData12x12Size = numChars12x12 * 24;
+		_fontData12x12 = new uint8[_fontData12x12Size];
+		assert(_fontData12x12);
+		data->read(_fontData12x12, _fontData12x12Size);
+	}
 
 	bool retValue = !data->err();
 	delete data;
@@ -390,49 +458,76 @@ bool FontSjisSVM::loadData() {
 }
 
 const uint8 *FontSjisSVM::getCharData(uint16 c) const {
+	if (_fontWidth == 12)
+		return getCharDataPCE(c);
+	else
+		return getCharDataDefault(c);
+}
+
+const uint8 *FontSjisSVM::getCharDataPCE(uint16 c) const {
+	if (isASCII(c))
+		return 0;
+
 	const uint8 fB = c & 0xFF;
 	const uint8 sB = c >> 8;
 
-	// We only allow 2 byte SJIS characters.
-	if (fB <= 0x80 || fB >= 0xF0 || (fB >= 0xA0 && fB <= 0xDF) || sB == 0x7F)
+	int base, index;
+	mapKANJIChar(fB, sB, base, index);
+
+	if (base == -1)
 		return 0;
 
-	int base = fB;
-	base -= 0x81;
+	const uint offset = (base * 0xBC + index) * 24;
+	assert(offset + 16 <= _fontData12x12Size);
+	return _fontData12x12 + offset;
+}
+
+const uint8 *FontSjisSVM::getCharDataDefault(uint16 c) const {
+	const uint8 fB = c & 0xFF;
+	const uint8 sB = c >> 8;
+
+	if (isASCII(c)) {
+		int index = fB;
+
+		// half-width katakana
+		if (fB >= 0xA1 && fB <= 0xDF)
+			index -= 0x21;
+
+		const uint offset = index * 16;
+		assert(offset <= _fontData8x16Size);
+		return _fontData8x16 + offset;
+	} else {
+		int base, index;
+		mapKANJIChar(fB, sB, base, index);
+
+		if (base == -1)
+			return 0;
+
+		const uint offset = (base * 0xBC + index) * 32;
+		assert(offset + 16 <= _fontData16x16Size);
+		return _fontData16x16 + offset;
+	}
+}
+
+void FontSjisSVM::mapKANJIChar(const uint8 fB, const uint8 sB, int &base, int &index) const {
+	base = index = -1;
+
+	// We only allow 2 byte SJIS characters.
+	if (fB <= 0x80 || fB >= 0xF0 || (fB >= 0xA0 && fB <= 0xDF) || sB == 0x7F)
+		return;
+
+	base = fB - 0x81;
 	if (base >= 0x5F)
 		base -= 0x40;
 
-	int index = sB;
-	index -= 0x40;
+	index = sB - 0x40;
 	if (index >= 0x3F)
 		--index;
 
 	// Another check if the passed character was an
 	// correctly encoded SJIS character.
 	if (index < 0 || index >= 0xBC || base < 0)
-		return 0;
-
-	const uint offset = (base * 0xBC + index) * 32;
-	assert(offset + 16 <= _fontData16x16Size);
-	return _fontData16x16 + offset;
-}
-
-const uint8 *FontSjisSVM::getCharData8x16(uint16 c) const {
-	const uint8 fB = c & 0xFF;
-	const uint8 sB = c >> 8;
-
-	if (!is8x16(c) || sB)
-		return 0;
-
-	int index = fB;
-
-	// half-width katakana
-	if (fB >= 0xA1 && fB <= 0xDF)
-		index -= 0x21;
-
-	const uint offset = index * 16;
-	assert(offset <= _fontData8x16Size);
-	return _fontData8x16 + offset;
+		base = index = -1;
 }
 
 } // End of namespace Graphics

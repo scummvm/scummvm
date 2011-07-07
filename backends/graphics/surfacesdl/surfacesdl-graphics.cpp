@@ -752,6 +752,12 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		error("allocating _screen failed");
 #endif
 
+	// SDL 1.2 palettes default to all black,
+	// SDL 1.3 palettes default to all white,
+	// Thus set our own default palette to all black.
+	// SDL_SetColors does nothing for non indexed surfaces.
+	SDL_SetColors(_screen, _currentPalette, 0, 256);
+
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//

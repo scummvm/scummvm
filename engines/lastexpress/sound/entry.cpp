@@ -38,14 +38,14 @@
 
 namespace LastExpress {
 
+#define SOUNDCACHE_ENTRY_SIZE 92160
+#define FILTER_BUFFER_SIZE 2940
+
 //////////////////////////////////////////////////////////////////////////
 // SoundEntry
 //////////////////////////////////////////////////////////////////////////
 SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	_type = kSoundTypeNone;
-
-	_currentDataPtr = 0;
-	_soundData = NULL;
 
 	_blockCount = 0;
 	_time = 0;
@@ -55,7 +55,7 @@ SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	_field_34 = 0;
 	_field_38 = 0;
 	_field_3C = 0;
-	_field_40 = 0;
+	_variant = 0;
 	_entity = kEntityPlayer;
 	_field_48 = 0;
 	_priority = 0;
@@ -63,13 +63,14 @@ SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	_subtitle = NULL;
 
 	_soundStream = NULL;
+
+	_queued = false;
 }
 
 SoundEntry::~SoundEntry() {
-	// Entries that have been queued would have their streamed disposed automatically
+	// Entries that have been queued will have their streamed disposed automatically
 	if (!_soundStream)
 		SAFE_DELETE(_stream);
-
 	delete _soundStream;
 
 	// Zero passed pointers
@@ -79,18 +80,12 @@ SoundEntry::~SoundEntry() {
 void SoundEntry::open(Common::String name, SoundFlag flag, int priority) {
 	_priority = priority;
 	setType(flag);
-	setStatus(flag);
-
-	// Add entry to sound list
-	getSoundQueue()->addToQueue(this);
-
-	// Add entry to cache and load sound data
-	getSoundQueue()->setupCache(this);
-	loadSoundData(name);
+	setupStatus(flag);
+	loadStream(name);
 }
 
 void SoundEntry::close() {
-	_status.status |= kSoundStatusRemoved;
+	_status.status |= kSoundStatusClosed;
 
 	// Loop until ready
 	while (!(_status.status1 & 4) && !(getSoundQueue()->getFlag() & 8) && (getSoundQueue()->getFlag() & 1))
@@ -112,6 +107,43 @@ void SoundEntry::close() {
 		else if (_entity != kEntityTrain)
 			getSavePoints()->push(kEntityPlayer, _entity, kActionEndSound);
 	}
+}
+
+void SoundEntry::play() {
+	if (!_stream) {
+		warning("[SoundEntry::play] stream has been disposed");
+		return;
+	}
+
+	// Prepare sound stream
+	if (!_soundStream)
+		_soundStream = new StreamedSound();
+
+	// Compute current filter id
+	int32 filterId = _status.status & kSoundStatusFilter;
+	// TODO adjust status (based on stepIndex)
+
+	if (_queued) {
+		_soundStream->setFilterId(filterId);
+	} else {
+		_stream->seek(0);
+
+		// Load the stream and start playing
+		_soundStream->load(_stream, filterId);
+
+		_queued = true;
+	}
+}
+
+bool SoundEntry::isFinished() {
+	if (!_stream)
+		return true;
+
+	if (!_soundStream || !_queued)
+		return false;
+
+	// TODO check that all data has been queued
+	return _soundStream->isFinished();
 }
 
 void SoundEntry::setType(SoundFlag flag) {
@@ -186,10 +218,10 @@ void SoundEntry::setType(SoundFlag flag) {
 	}
 }
 
-void SoundEntry::setStatus(SoundFlag flag) {
+void SoundEntry::setupStatus(SoundFlag flag) {
 	SoundStatus statusFlag = (SoundStatus)flag;
-	if (!((statusFlag & 0xFF) & kSoundStatusClear1))
-		statusFlag = (SoundStatus)(statusFlag | kSoundStatusClear2);
+	if (!((statusFlag & 0xFF) & kSoundStatusFilter))
+		statusFlag = (SoundStatus)(statusFlag | kSoundStatusCached);
 
 	if (((statusFlag & 0xFF00) >> 8) & kSoundStatusClear0)
 		_status.status = (uint32)statusFlag;
@@ -197,11 +229,7 @@ void SoundEntry::setStatus(SoundFlag flag) {
 		_status.status = (statusFlag | kSoundStatusClear4);
 }
 
-void SoundEntry::setInCache() {
-	_status.status |= kSoundStatusClear2;
-}
-
-void SoundEntry::loadSoundData(Common::String name) {
+void SoundEntry::loadStream(Common::String name) {
 	_name2 = name;
 
 	// Load sound data
@@ -210,11 +238,8 @@ void SoundEntry::loadSoundData(Common::String name) {
 	if (!_stream)
 		_stream = getArchive("DEFAULT.SND");
 
-	if (_stream) {
-		warning("[Sound::loadSoundData] Not implemented");
-	} else {
-		_status.status = kSoundStatusRemoved;
-	}
+	if (!_stream)
+		_status.status = kSoundStatusClosed;
 }
 
 void SoundEntry::update(uint val) {
@@ -225,7 +250,7 @@ void SoundEntry::update(uint val) {
 
 		if (val) {
 			if (getSoundQueue()->getFlag() & 32) {
-				_field_40 = val;
+				_variant = val;
 				value2 = val * 2 + 1;
 			}
 
@@ -237,15 +262,65 @@ void SoundEntry::update(uint val) {
 	}
 }
 
+bool SoundEntry::updateSound() {
+	bool result;
+	char sub[16];
+
+	if (_status.status2 & 4) {
+		result = false;
+	} else {
+		if (_status.status2 & 0x80) {
+			if (_field_48 <= getSound()->getData2()) {
+				_status.status |= 0x20;
+				_status.status &= ~0x8000;
+				strcpy(sub, _name2.c_str());
+
+				int l = strlen(sub) + 1;
+				if (l - 1 > 4)
+					sub[l - 1 - 4] = 0;
+				showSubtitle(sub);
+			}
+		} else {
+			if (!(getSoundQueue()->getFlag() & 0x20)) {
+				if (!(_status.status3 & 8)) {
+					if (_entity) {
+						if (_entity < 0x80) {
+							updateEntryFlag(getSound()->getSoundFlag(_entity));
+						}
+					}
+				}
+			}
+			//if (status.status2 & 0x40 && !((uint32)_status.status & 0x180) && v1->soundBuffer) 
+			//	Sound_FillSoundBuffer(v1);
+		}
+		result = true;
+	}
+
+	return result;
+}
+
+void SoundEntry::updateEntryFlag(SoundFlag flag) {
+	if (flag) {
+		if (getSoundQueue()->getFlag() & 0x20 && _type != kSoundType9 && _type != kSoundType7)
+			update(flag);
+		else
+			_status.status = flag + (_status.status & ~0x1F);
+	} else {
+		_variant = 0;
+		_status.status |= 0x80u;
+		_status.status &= ~0x10001F;
+	}
+}
+
 void SoundEntry::updateState() {
 	if (getSoundQueue()->getFlag() & 32) {
 		if (_type != kSoundType9 && _type != kSoundType7 && _type != kSoundType5) {
-			uint32 newStatus = _status.status & kSoundStatusClear1;
+			uint32 variant = _status.status & kSoundStatusFilter;
 
 			_status.status &= kSoundStatusClearAll;
 
-			_field_40 = newStatus;
-			_status.status |= newStatus * 2 + 1;
+			_variant = variant;
+			_status.status |= variant * 2 + 1;
 		}
 	}
 
@@ -253,13 +328,14 @@ void SoundEntry::updateState() {
 }
 
 void SoundEntry::reset() {
-	_status.status |= kSoundStatusRemoved;
+	_status.status |= kSoundStatusClosed;
 	_entity = kEntityPlayer;
 
 	if (_stream) {
 		if (!_soundStream) {
 			SAFE_DELETE(_stream);
 		} else {
+			// the original stream will be disposed
 			_soundStream->stop();
 			SAFE_DELETE(_soundStream);
 		}
@@ -307,13 +383,6 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 }
 
-void SoundEntry::loadStream() {
-	if (!_soundStream)
-		_soundStream = new StreamedSound();
-
-	_soundStream->load(_stream);
-}
-
 //////////////////////////////////////////////////////////////////////////
 // SubtitleEntry
 //////////////////////////////////////////////////////////////////////////
@@ -335,7 +404,7 @@ void SubtitleEntry::load(Common::String filename, SoundEntry *soundEntry) {
 	_sound = soundEntry;
 
 	// Load subtitle data
-	if (_engine->getResourceManager()->hasFile(filename)) {
+	if (_engine->getResourceManager()->hasFile(_filename)) {
 		if (getSoundQueue()->getSubtitleFlag() & 2)
 			return;
 
@@ -369,6 +438,8 @@ void SubtitleEntry::setupAndDraw() {
 	}
 
 	getSoundQueue()->setCurrentSubtitle(this);
+
+	// TODO Missing code
 }
 
 void SubtitleEntry::draw() {
@@ -384,13 +455,11 @@ void SubtitleEntry::draw() {
 }
 
 void SubtitleEntry::drawOnScreen() {
-	getSoundQueue()->setSubtitleFlag(getSoundQueue()->getSubtitleFlag() & -1);
-
 	if (_data == NULL)
 		return;
 
-	if (getSoundQueue()->getSubtitleFlag() & 1)
-		_engine->getGraphicsManager()->draw(_data, GraphicsManager::kBackgroundOverlay);
+	getSoundQueue()->setSubtitleFlag(getSoundQueue()->getSubtitleFlag() & -2);
+	_engine->getGraphicsManager()->draw(_data, GraphicsManager::kBackgroundOverlay);
 }
 
 } // End of namespace LastExpress

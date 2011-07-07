@@ -57,6 +57,7 @@ public:
 	void            reloadSlots();
 	bool            isSlotOccupied(uint slotID);
 	bool            isSavegameCompatible(uint slotID);
+	int             getSavegameVersion(uint slotID);
 	Common::String &getSavegameDescription(uint slotID);
 	Common::String &getSavegameFilename(uint slotID);
 

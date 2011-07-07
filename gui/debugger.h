@@ -26,6 +26,7 @@
 #include "common/ptr.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/array.h"
 
 namespace GUI {
 

@@ -65,6 +65,15 @@ struct SndHandle {
 	Audio::SoundHandle handle;
 	sndHandleType type;
 	uint32 id;
+
+	Common::String fileName;
+	int sndType;
+	float volume;
+	float pan;
+	bool loop;
+	int loopStart;
+	int loopEnd;
+	uint layer;
 };
 
 
@@ -176,7 +185,7 @@ public:
 	 * @remark              If more control is needed over the playing, eg. changing the sound parameters
 	 * for Volume and Panning, then PlaySoundEx should be used.
 	 */
-	uint playSoundEx(const Common::String &fileName, SOUND_TYPES type, float volume = 1.0f, float pan = 0.0f, bool loop = false, int loopStart = -1, int loopEnd = -1, uint layer = 0);
+	uint playSoundEx(const Common::String &fileName, SOUND_TYPES type, float volume = 1.0f, float pan = 0.0f, bool loop = false, int loopStart = -1, int loopEnd = -1, uint layer = 0, uint handleId = 0x1337);
 
 	/**
 	 * Sets the volume of a playing sound

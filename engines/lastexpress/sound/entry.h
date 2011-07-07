@@ -76,27 +76,6 @@ namespace LastExpress {
 class LastExpressEngine;
 class SubtitleEntry;
 
-enum SoundStatus {
-	kSoundStatus_20       = 0x20,
-	kSoundStatus_40       = 0x40,
-	kSoundStatus_180      = 0x180,
-	kSoundStatusRemoved   = 0x200,
-	kSoundStatus_400      = 0x400,
-
-	kSoundStatus_8000     = 0x8000,
-	kSoundStatus_20000    = 0x20000,
-	kSoundStatus_100000   = 0x100000,
-	kSoundStatus_20000000 = 0x20000000,
-	kSoundStatus_40000000 = 0x40000000,
-
-	kSoundStatusClear0    = 0x10,
-	kSoundStatusClear1    = 0x1F,
-	kSoundStatusClear2    = 0x80,
-	kSoundStatusClear3    = 0x200,
-	kSoundStatusClear4    = 0x800,
-	kSoundStatusClearAll  = 0xFFFFFFE0
-};
-
 union SoundStatusUnion {
 	uint32 status;
 	byte status1;
@@ -119,16 +98,13 @@ public:
 
 	void open(Common::String name, SoundFlag flag, int priority);
 	void close();
-
-	void setStatus(SoundFlag flag);
-	void setType(SoundFlag flag);
-	void setInCache();
-	void loadSoundData(Common::String name);
-	void update(uint val);
-	void updateState();
+	void play();
 	void reset();
-
-	void loadStream();
+	bool isFinished();
+	void update(uint val);
+	bool updateSound();
+	void updateState();
+	void updateEntryFlag(SoundFlag flag);
 
 	// Subtitles
 	void showSubtitle(Common::String filename);
@@ -150,12 +126,7 @@ public:
 	Common::String   getName2()    { return _name2; }
 
 	// Streams
-	Common::SeekableReadStream *getStream() { return _stream; }
-	StreamedSound              *getStreamedSound() { return _soundStream; }
-
-public:
-	// TODO replace by on-the-fly allocated buffer
-	void *_soundData;
+	SimpleSound *getSoundStream() { return _soundStream; }
 
 private:
 	LastExpressEngine *_engine;
@@ -164,18 +135,18 @@ private:
 	SoundType _type;    // int
 	//int _data;
 	//int _endOffset;
-	int _currentDataPtr;
+	byte * _currentDataPtr;
 	//int _currentBufferPtr;
 	int _blockCount;
 	uint32 _time;
 	//int _size;
 	//int _field_28;
-	Common::SeekableReadStream *_stream;    // int
-	//int _field_30;
+	Common::SeekableReadStream *_stream;    // The file stream
+	//int _archive;
 	int _field_34;
 	int _field_38;
 	int _field_3C;
-	int _field_40;
+	int _variant;
 	EntityIndex _entity;
 	int _field_48;
 	uint32 _priority;
@@ -184,8 +155,13 @@ private:
 	// original has pointer to the next structure in the list (not used)
 	SubtitleEntry *_subtitle;
 
-	// Sound stream
-	StreamedSound *_soundStream;
+	// Sound buffer & stream
+	bool _queued;
+	StreamedSound *_soundStream;    // the filtered sound stream
+
+	void setType(SoundFlag flag);
+	void setupStatus(SoundFlag flag);
+	void loadStream(Common::String name);
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -204,7 +180,7 @@ public:
 
 	// Accessors
 	SoundStatusUnion getStatus() { return _status; }
-	SoundEntry *getSoundEntry() { return _sound; }
+	SoundEntry *getSoundEntry()  { return _sound; }
 
 private:
 	LastExpressEngine *_engine;

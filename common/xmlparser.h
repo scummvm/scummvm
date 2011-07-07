@@ -31,6 +31,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stack.h"
+#include "common/memorypool.h"
 
 
 namespace Common {

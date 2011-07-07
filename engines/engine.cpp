@@ -410,7 +410,7 @@ void Engine::openMainMenuDialog() {
 	// value, which is quite bad since it could
 	// be a fatal loading error, which renders
 	// the engine unusable.
-	if (_saveSlotToLoad > 0)
+	if (_saveSlotToLoad >= 0)
 		loadGameState(_saveSlotToLoad);
 
 	syncSoundSettings();

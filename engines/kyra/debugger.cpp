@@ -71,7 +71,7 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 	}
 
 	if (_vm->game() != GI_KYRA1 && _vm->resource()->getFileSize(argv[1]) != 768) {
-		uint8 *buffer = (uint8 *)malloc(320 * 200 * sizeof(uint8));
+		uint8 *buffer = new uint8[320 * 200 * sizeof(uint8)];
 		if (!buffer) {
 			DebugPrintf("ERROR: Cannot allocate buffer for screen region!\n");
 			return true;
@@ -82,7 +82,7 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 		palette.copy(_vm->screen()->getCPagePtr(5), 0, 256);
 		_vm->screen()->copyBlockToPage(5, 0, 0, 320, 200, buffer);
 
-		free(buffer);
+		delete[] buffer;
 	} else if (!_vm->screen()->loadPalette(argv[1], palette)) {
 		DebugPrintf("ERROR: Palette '%s' not found!\n", argv[1]);
 		return true;
