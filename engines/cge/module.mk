@@ -2,7 +2,6 @@ MODULE := engines/cge
 
 MODULE_OBJS := \
 	bitmap.o \
-	bitmaps.o \
 	btfile.o \
 	cfile.o \
 	cge.o \

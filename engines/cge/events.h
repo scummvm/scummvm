@@ -91,6 +91,7 @@ struct CGEEvent {
 
 extern CGEEvent Evt[EVT_MAX];
 extern uint16 EvtHead, EvtTail;
+extern Bitmap *MC[];
 
 
 class MOUSE : public Sprite {

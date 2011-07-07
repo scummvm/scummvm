@@ -29,7 +29,6 @@
 #define __CGE_GAME__
 
 #include "cge/vga13h.h"
-#include "cge/bitmaps.h"
 
 namespace CGE {
 
