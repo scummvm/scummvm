@@ -26,6 +26,8 @@
 #include "lastexpress/data/archive.h"
 #include "lastexpress/shared.h"
 
+#include "common/array.h"
+
 namespace LastExpress {
 
 class Background;

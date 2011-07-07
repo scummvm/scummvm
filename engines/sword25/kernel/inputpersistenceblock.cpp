@@ -35,9 +35,10 @@
 
 namespace Sword25 {
 
-InputPersistenceBlock::InputPersistenceBlock(const void *data, uint dataLength) :
+InputPersistenceBlock::InputPersistenceBlock(const void *data, uint dataLength, int version) :
 	_data(static_cast<const byte *>(data), dataLength),
-	_errorState(NONE) {
+	_errorState(NONE),
+	_version(version) {
 	_iter = _data.begin();
 }
 

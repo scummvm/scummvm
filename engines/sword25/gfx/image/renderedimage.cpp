@@ -72,7 +72,10 @@ static byte *readSavegameThumbnail(const Common::String &filename, uint &fileSiz
 
 	// Seek to the actual PNG image
 	loadString(*file);		// Marker (BS25SAVEGAME)
-	loadString(*file);		// Version
+	Common::String storedVersionID = loadString(*file);		// Version
+	if (storedVersionID != "SCUMMVM1")
+		loadString(*file);
+
 	loadString(*file);		// Description
 	uint32 compressedGamedataSize = atoi(loadString(*file).c_str());
 	loadString(*file);		// Uncompressed game data size

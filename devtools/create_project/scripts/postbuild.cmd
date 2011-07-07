@@ -23,23 +23,7 @@ if "%~5"=="" goto error_installer
 echo Copying data files
 echo.
 
-REM xcopy /F /Y "%~1/AUTHORS" %~2       1>NUL 2>&1
-REM xcopy /F /Y "%~1/COPYING.GPL" %~2   1>NUL 2>&1
-REM xcopy /F /Y "%~1/COPYING" %~2       1>NUL 2>&1
-REM xcopy /F /Y "%~1/COPYING.LGPL" %~2  1>NUL 2>&1
-REM xcopy /F /Y "%~1/COPYRIGHT" %~2     1>NUL 2>&1
-REM xcopy /F /Y "%~1/NEWS" %~2          1>NUL 2>&1
-REM xcopy /F /Y "%~1/README" %~2        1>NUL 2>&1
-
-REM xcopy /F /Y "%~1/dists/engine-data/*.dat" %~2     1>NUL 2>&1
-REM xcopy /F /Y "%~1/dists/engine-data/*.tbl" %~2     1>NUL 2>&1
-REM xcopy /F /Y "%~1/dists/engine-data/*.cpt" %~2     1>NUL 2>&1
-REM xcopy /F /Y "%~1/gui/themes/*.zip" %~2            1>NUL 2>&1
-REM xcopy /F /Y "%~1/gui/themes/translations.dat" %~2 1>NUL 2>&1
-
-xcopy /F /Y "%~4/lib/%~3/SDL.dll" "%~2"             1>NUL 2>&1
-xcopy /F /Y "%~4/README-SDL" "%~2"                  1>NUL 2>&1
-
+xcopy /F /Y "%~4/lib/%~3/SDL.dll"                          "%~2" 1>NUL 2>&1
 xcopy /F /Y "%~1/backends/vkeybd/packs/vkeybd_default.zip" "%~2" 1>NUL 2>&1
 
 if "%~5"=="0" goto done

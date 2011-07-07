@@ -141,6 +141,19 @@ Audio::SoundHandle *Sound::replaceSoundMyst(uint16 id, byte volume, bool loop) {
 				&& name.equals(_vm->getResourceName(ID_MSND, convertMystID(_handles[i].id))))
 			return &_handles[i].handle;
 
+	// The original engine also forces looping for those sounds
+	switch (id) {
+	case 2205:
+	case 2207:
+	case 5378:
+	case 7220:
+	case 9119: 	// Elevator engine sound in mechanical age is looping.
+	case 9120:
+	case 9327:
+		loop = true;
+		break;
+	}
+
 	stopSound();
 	return playSound(id, volume, loop);
 }

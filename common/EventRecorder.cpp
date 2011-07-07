@@ -27,9 +27,9 @@
 #include "common/savefile.h"
 #include "common/textconsole.h"
 
-DECLARE_SINGLETON(Common::EventRecorder);
-
 namespace Common {
+
+DECLARE_SINGLETON(EventRecorder);
 
 #define RECORD_SIGNATURE 0x54455354
 #define RECORD_VERSION 1

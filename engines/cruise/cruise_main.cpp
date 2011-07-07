@@ -902,18 +902,8 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 						if (!obj2Ovl)  obj2Ovl = j;
 
 						char verbe_name[80];
-						char obj1_name[80];
-						char obj2_name[80];
-						char r_verbe_name[80];
-						char r_obj1_name[80];
-						char r_obj2_name[80];
 
 						verbe_name[0]	= 0;
-						obj1_name[0]	= 0;
-						obj2_name[0]	= 0;
-						r_verbe_name[0] = 0;
-						r_obj1_name[0]	= 0;
-						r_obj2_name[0]	= 0;
 
 						ovlDataStruct *ovl2 = NULL;
 						ovlDataStruct *ovl3 = NULL;

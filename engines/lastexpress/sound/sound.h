@@ -64,7 +64,13 @@ public:
 
 	// Accessors
 	SoundQueue *getQueue() { return _queue; }
-	uint32 getData2() { return _data2; }
+	uint32 getData0() { return _data0; }
+	int32 getData1() { return _data1; }
+	int32 getData2() { return _data2; }
+	uint32 getLoopingSoundDuration() { return _loopingSoundDuration; }
+
+	// Setters
+	void setData1(int32 data) { _data1 = data; }
 
 private:
 	LastExpressEngine *_engine;
@@ -78,8 +84,8 @@ private:
 
 	// Unknown data
 	uint32 _data0;
-	uint32 _data1;
-	uint32 _data2;
+	int32 _data1;
+	int32 _data2;
 };
 
 } // End of namespace LastExpress

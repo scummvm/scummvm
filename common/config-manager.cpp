@@ -27,8 +27,6 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-DECLARE_SINGLETON(Common::ConfigManager);
-
 static bool isValidDomainName(const Common::String &domName) {
 	const char *p = domName.c_str();
 	while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_'))
@@ -37,6 +35,8 @@ static bool isValidDomainName(const Common::String &domName) {
 }
 
 namespace Common {
+
+DECLARE_SINGLETON(ConfigManager);
 
 const char *ConfigManager::kApplicationDomain = "scummvm";
 const char *ConfigManager::kTransientDomain = "__TRANSIENT";

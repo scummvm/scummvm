@@ -434,7 +434,6 @@ protected:
 	void runScript(uint event, uint16 data = 0, uint16 from = 0);
 	int runScriptEntry(LBScriptEntry *entry);
 
-	LBValue parseValue(const Common::String &command, uint &pos);
 	void runCommand(const Common::String &command);
 	bool checkCondition(const Common::String &condition);
 
@@ -689,6 +688,7 @@ public:
 	LBMode getCurMode() { return _curMode; }
 
 	bool tryLoadPageStart(LBMode mode, uint page);
+	bool loadPage(LBMode mode, uint page, uint subpage);
 	void prevPage();
 	void nextPage();
 
@@ -717,7 +717,6 @@ private:
 	Common::Queue<DelayedEvent> _eventQueue;
 	LBItem *_focus;
 	void destroyPage();
-	bool loadPage(LBMode mode, uint page, uint subpage);
 	void updatePage();
 
 	uint16 _lastSoundOwner, _lastSoundId;

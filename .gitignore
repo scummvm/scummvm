@@ -28,6 +28,7 @@ lib*.a
 /Icon.*
 
 /build
+/staging
 
 /backends/platform/dc/gui
 /backends/platform/dc/graphics

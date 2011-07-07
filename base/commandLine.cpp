@@ -65,6 +65,9 @@ static const char HELP_STRING[] =
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-saves=TARGET      Display a list of savegames for the game (TARGET) specified\n"
+#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+	"  --console                Enable the console window (default:enabled)\n"
+#endif
 	"\n"
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
@@ -181,8 +184,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("native_mt32", false);
 	ConfMan.registerDefault("enable_gs", false);
 	ConfMan.registerDefault("midi_gain", 100);
-//	ConfMan.registerDefault("music_driver", ???);
 
+	ConfMan.registerDefault("music_driver", "auto");
 	ConfMan.registerDefault("mt32_device", "null");
 	ConfMan.registerDefault("gm_device", "null");
 
@@ -231,13 +234,6 @@ void registerDefaults() {
 	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
 	ConfMan.registerDefault("record_time_file_name", "record.time");
 
-#if 0
-	// NEW CODE TO HIDE CONSOLE FOR WIN32
-#ifdef WIN32
-	// console hiding for win32
-	ConfMan.registerDefault("show_console", false);
-#endif
-#endif
 }
 
 //
@@ -554,13 +550,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
-#if 0
-	// NEW CODE TO HIDE CONSOLE FOR WIN32
-#ifdef WIN32
-			// console hiding for win32
-			DO_LONG_OPTION_BOOL("show-console")
+#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+			// Optional console window on Windows (default: enabled)
+			DO_LONG_OPTION_BOOL("console")
 			END_OPTION
-#endif
 #endif
 
 unknownOption:
@@ -669,7 +662,7 @@ static Common::Error listSaves(const char *target) {
 				   "  ---- ------------------------------------------------------\n");
 
 			for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
-				printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
+				printf("  %-4d %s\n", x->getSaveSlot(), x->getDescription().c_str());
 				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
 			}
 		} else {

@@ -19,11 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/font.h"
+#include "graphics/fonts/bdf.h"
+
 #include "common/translation.h"
 
+namespace Common {
 DECLARE_SINGLETON(Graphics::FontManager);
+}
 
 namespace Graphics {
 

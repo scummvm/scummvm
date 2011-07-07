@@ -247,9 +247,6 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 		return;
 	}
 
-	// readout SWF size
-	Common::Rect movieRect = flashRectToBSRect(bs);
-
 	// Get frame rate and frame count
 	/* uint32 frameRate = */
 	bs.getUInt16();
