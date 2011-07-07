@@ -57,49 +57,70 @@ bool Startup::getParms() {
 	_summa = 0;
 
 	/*
-	  int i = _argc;
-	  while (i > 1)
-	    {
-	      static char *PrmTab[] = { "NEW", "MK0SVG", "QUIET", "SB", "GUS", "MIDI",
-	                "P", "D", "I", "M" };
-	      int n = takeEnum(PrmTab, strtok(_argv[--i], " =:("));
-	      uint16 p = xtow(strtok(NULL, " h,)"));
-	      switch (n)
-	    {
-	      case 0 : if (Mode != 2) Mode = 1; break;
-	      case 1 : Mode = 2; break;
-	      case 2 : SNDDrvInfo.DDEV = DEV_QUIET; break;
-	      case 3 : SNDDrvInfo.DDEV = DEV_SB; break;
-	      case 4 : SNDDrvInfo.DDEV = DEV_GUS; break;
-	      case 5 : SNDDrvInfo.MDEV = DEV_GM; break;
-	      case 6 : SNDDrvInfo.DBASE = p; break;
-	      case 7 : SNDDrvInfo.DDMA = p; break;
-	      case 8 : SNDDrvInfo.DIRQ = p; break;
-	      case 9 : SNDDrvInfo.MBASE = p;
-	           SNDDrvInfo.MDEV = DEV_GM; break;
-	      default: return false;
-	    }
-	      if (n >= 2) SoundOk = 2;
-	    }
-	  #ifdef DEMO
-	      // protection disabled
-	      Summa = 0;
-	  #else
-	    #ifdef EVA
-	      {
-	    union { dosdate_t d; uint32 n; } today;
-	    _dos_getdate(&today.d);
-	    id.disk += (id.disk < today.n);
-	      }
-	    #endif
-	    #ifdef CD
-	      Summa = 0;
-	    #else
-	      // disk signature checksum
-	      Summa = ChkSum(Copr, sizeof(Ident));
-	    #endif
-	  #endif
-	  if (SNDDrvInfo.MDEV != DEV_GM) SNDDrvInfo.MDEV = SNDDrvInfo.DDEV;
+	int i = _argc;
+	while (i > 1) {
+		static char *PrmTab[] = { "NEW", "MK0SVG", "QUIET", "SB", "GUS", "MIDI", "P", "D", "I", "M" };
+		int n = takeEnum(PrmTab, strtok(_argv[--i], " =:("));
+		uint16 p = xtow(strtok(NULL, " h,)"));
+		switch (n) {
+		case 0 : 
+			if (Mode != 2)
+			Mode = 1;
+			break;
+		case 1 :
+			Mode = 2;
+			break;
+		case 2 :
+			SNDDrvInfo.DDEV = DEV_QUIET;
+			break;
+		case 3 :
+			SNDDrvInfo.DDEV = DEV_SB;
+			break;
+		case 4 :
+			SNDDrvInfo.DDEV = DEV_GUS;
+			break;
+		case 5 :
+			SNDDrvInfo.MDEV = DEV_GM;
+			break;
+		case 6 :
+			SNDDrvInfo.DBASE = p;
+			break;
+		case 7 :
+			SNDDrvInfo.DDMA = p;
+			break;
+		case 8 :
+			SNDDrvInfo.DIRQ = p;
+			break;
+		case 9 :
+			SNDDrvInfo.MBASE = p;
+			SNDDrvInfo.MDEV = DEV_GM;
+			break;
+		default:
+			return false;
+		}
+
+		if (n >= 2)
+			SoundOk = 2;
+	}
+	if (_vm->_isDemo)
+		// protection disabled
+		Summa = 0;
+	else {
+#ifdef EVA
+		union { dosdate_t d; uint32 n; } today;
+		_dos_getdate(&today.d);
+		id.disk += (id.disk < today.n);
+#endif
+#ifdef CD
+		Summa = 0;
+#else
+	// disk signature checksum
+		Summa = ChkSum(Copr, sizeof(Ident));
+#endif
+	}
+	
+	if (SNDDrvInfo.MDEV != DEV_GM)
+		SNDDrvInfo.MDEV = SNDDrvInfo.DDEV;
 	return true;
 	  */
 	warning("STUB: Startup::get_parms");

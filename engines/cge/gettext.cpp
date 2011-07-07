@@ -34,9 +34,9 @@ namespace CGE {
 GetText *GetText::_ptr = NULL;
 
 
-GetText::GetText(CGEEngine *vm, const char *info, char *text, int size, void (*click)())
+GetText::GetText(CGEEngine *vm, const char *info, char *text, int size)
 	: Talk(vm), _text(text), _size(min<int>(size, GTMAX)), _len(min<int>(_size, strlen(text))),
-	  _cntr(GTBLINK), _click(click), _oldKeybClient(_keyboard->setClient(this)), _vm(vm) {
+	_cntr(GTBLINK), _oldKeybClient(_keyboard->setClient(this)), _vm(vm) {
 	int i = 2 * TEXT_HM + _font->width(info);
 	_ptr = this;
 	_mode = RECT;
@@ -74,8 +74,7 @@ void GetText::touch(uint16 mask, int x, int y) {
 	char *p;
 
 	if (mask & KEYB) {
-		if (_click)
-			_click();
+		_vm->keyClick();
 		switch (x) {
 		case Enter :
 			_buff[_len] = '\0';

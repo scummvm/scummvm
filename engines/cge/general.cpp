@@ -109,11 +109,6 @@ const char *progName(const char *ext) {
 }
 
 char *mergeExt(char *buf, const char *nam, const char *ext) {
-//  char dr[MAXDRIVE], di[MAXDIR], na[MAXFILE], ex[MAXEXT];
-//  fnmerge(buf, dr, di, na, (fnsplit(nam, dr, di, na, ex) & EXTENSION) ? ex : ext);
-//  return buf;
-	warning("mergeExt");
-
 	strcpy(buf, nam);
 	char *dot = strrchr(buf, '.');
 	if (!dot)
@@ -123,11 +118,6 @@ char *mergeExt(char *buf, const char *nam, const char *ext) {
 }
 
 char *forceExt(char *buf, const char *nam, const char *ext) {
-//  char dr[MAXDRIVE], di[MAXDIR], na[MAXFILE], ex[MAXEXT];
-//  fnsplit(nam, dr, di, na, ex);
-//  fnmerge(buf, dr, di, na, ext);
-//  return buf;
-	warning("ForceExt");
 	strcpy(buf, nam);
 	char *dot = strrchr(buf, '.');
 	if (dot)
