@@ -29,7 +29,6 @@
 #include "cge/text.h"
 #include "cge/talk.h"
 #include "cge/vol.h"
-#include "cge/bitmaps.h"
 #include "cge/game.h"
 #include "cge/snail.h"
 #include "cge/cge_main.h"

@@ -29,7 +29,6 @@
 #include "cge/sound.h"
 #include "cge/snail.h"
 #include "cge/vga13h.h"
-#include "cge/bitmaps.h"
 #include "cge/text.h"
 #include "cge/cge_main.h"
 #include "cge/events.h"
