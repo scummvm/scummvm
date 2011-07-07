@@ -74,6 +74,8 @@ uint32 Klayman::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 void Klayman::update() {
+	AnimatedSprite::update();
+	xUpdate();
 }
 
 void Klayman::setKlaymanTable(const KlaymanTableItem *table, int tableCount) {
