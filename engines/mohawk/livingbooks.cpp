@@ -1327,8 +1327,13 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 		if (getGameType() == GType_LIVINGBOOKSV1) {
 			debug(2, "kLBNotifyChangeMode: %d", event.param);
 			quitGame();
-		} else {
-			debug(2, "kLBNotifyChangeMode: mode %d, page %d.%d",
+			break;
+		}
+
+		debug(2, "kLBNotifyChangeMode: v2 type %d", event.param);
+		switch (event.param) {
+		case 1:
+			debug(2, "kLBNotifyChangeMode:, mode %d, page %d.%d",
 				event.newMode, event.newPage, event.newSubpage);
 			// TODO: what is entry.newUnknown?
 			if (!event.newMode)
@@ -1339,6 +1344,13 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 						error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
 							event.newMode, event.newPage, event.newSubpage);
 			}
+			break;
+		case 3:
+			debug(2, "kLBNotifyChangeMode: new cursor '%s'", event.newCursor.c_str());
+			_cursor->setCursor(event.newCursor);
+			break;
+		default:
+			error("unknown v2 kLBNotifyChangeMode type %d", event.param);
 		}
 		break;
 
@@ -2092,16 +2104,32 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 	}
 
 	if (type == kLBNotifyScript && entry->opcode == kLBNotifyChangeMode && _vm->getGameType() != GType_LIVINGBOOKSV1) {
-		if (size < 8) {
-			error("%d unknown bytes in notify entry kLBNotifyChangeMode", size);
+		switch (entry->param) {
+		case 1:
+			if (size < 8)
+				error("%d unknown bytes in notify entry kLBNotifyChangeMode", size);
+			entry->newUnknown = stream->readUint16();
+			entry->newMode = stream->readUint16();
+			entry->newPage = stream->readUint16();
+			entry->newSubpage = stream->readUint16();
+			debug(4, "kLBNotifyChangeMode: unknown %04x, mode %d, page %d.%d",
+				entry->newUnknown, entry->newMode, entry->newPage, entry->newSubpage);
+			size -= 8;
+			break;
+		case 3:
+			{
+			Common::String newCursor = _vm->readString(stream);
+			entry->newCursor = newCursor;
+			if (size < newCursor.size() + 1)
+				error("failed to read newCursor in notify entry");
+			size -= newCursor.size() + 1;
+			debug(4, "kLBNotifyChangeMode: new cursor '%s'", newCursor.c_str());
+			}
+			break;
+		default:
+			// the original engine also does something when param==2 (but not a notify)
+			error("unknown v2 kLBNotifyChangeMode type %d", entry->param);
 		}
-		entry->newUnknown = stream->readUint16();
-		entry->newMode = stream->readUint16();
-		entry->newPage = stream->readUint16();
-		entry->newSubpage = stream->readUint16();
-		debug(4, "kLBNotifyChangeMode: unknown %04x, mode %d, page %d.%d",
-			entry->newUnknown, entry->newMode, entry->newPage, entry->newSubpage);
-		size -= 8;
 	}
 	if (entry->opcode == kLBOpSendExpression) {
 		if (size < 4)
@@ -2585,6 +2613,7 @@ void LBItem::runScript(uint event, uint16 data, uint16 from) {
 				notifyEvent.newMode = entry->newMode;
 				notifyEvent.newPage = entry->newPage;
 				notifyEvent.newSubpage = entry->newSubpage;
+				notifyEvent.newCursor = entry->newCursor;
 				_vm->addNotifyEvent(notifyEvent);
 			} else
 				_vm->addNotifyEvent(NotifyEvent(entry->opcode, entry->param));

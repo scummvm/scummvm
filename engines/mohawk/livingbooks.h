@@ -133,7 +133,9 @@ enum {
 	kLBEventMouseUp = 5,
 	kLBEventPhaseMain = 6,
 	kLBEventNotified = 7,
+	kLBEventDragStart = 8,
 	kLBEventDragMove = 9,
+	kLBEventDragEnd = 0xa,
 	kLBEventRolloverBegin = 0xb,
 	kLBEventRolloverMove = 0xc,
 	kLBEventRolloverEnd = 0xd,
@@ -271,6 +273,7 @@ struct LBScriptEntry {
 	uint16 newMode;
 	uint16 newPage;
 	uint16 newSubpage;
+	Common::String newCursor;
 
 	// kLBEventNotified
 	uint16 matchFrom;
@@ -610,6 +613,7 @@ struct NotifyEvent {
 	uint16 newMode;
 	uint16 newPage;
 	uint16 newSubpage;
+	Common::String newCursor;
 };
 
 enum DelayedEventType {
