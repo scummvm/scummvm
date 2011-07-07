@@ -405,6 +405,8 @@ public:
 	uint16 getSoundPriority() { return _soundMode; }
 	bool isAmbient() { return _isAmbient; }
 
+	Common::List<LBItem *>::iterator _iterator;
+
 protected:
 	MohawkEngine_LivingBooks *_vm;
 	LBPage *_page;
@@ -714,6 +716,7 @@ private:
 	uint16 _phase;
 	LBPage *_page;
 	Common::Array<LBItem *> _items;
+	Common::List<LBItem *> _orderedItems;
 	Common::Queue<DelayedEvent> _eventQueue;
 	LBItem *_focus;
 	void destroyPage();

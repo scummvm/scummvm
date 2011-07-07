@@ -204,9 +204,12 @@ Common::Error MohawkEngine_LivingBooks::run() {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				for (uint16 i = 0; i < _items.size(); i++)
-					if (_items[i]->contains(event.mouse))
-						found = _items[i];
+				for (Common::List<LBItem *>::const_iterator i = _orderedItems.begin(); i != _orderedItems.end(); ++i) {
+					if ((*i)->contains(event.mouse)) {
+						found = *i;
+						break;
+					}
+				}
 
 				if (found)
 					found->handleMouseDown(event.mouse);
@@ -341,6 +344,7 @@ void MohawkEngine_LivingBooks::destroyPage() {
 
 	delete _page;
 	assert(_items.empty());
+	assert(_orderedItems.empty());
 	_page = NULL;
 
 	_notifyEvents.clear();
@@ -567,6 +571,7 @@ void MohawkEngine_LivingBooks::updatePage() {
 			case kLBDelayedEventDestroy:
 				_items.remove_at(i);
 				i--;
+				_orderedItems.remove(delayedEvent.item);
 				delete delayedEvent.item;
 				_page->itemDestroyed(delayedEvent.item);
 				if (_focus == delayedEvent.item)
@@ -613,6 +618,8 @@ void MohawkEngine_LivingBooks::removeArchive(Archive *archive) {
 
 void MohawkEngine_LivingBooks::addItem(LBItem *item) {
 	_items.push_back(item);
+	_orderedItems.push_front(item);
+	item->_iterator = _orderedItems.begin();
 }
 
 void MohawkEngine_LivingBooks::removeItems(const Common::Array<LBItem *> &items) {
@@ -626,6 +633,7 @@ void MohawkEngine_LivingBooks::removeItems(const Common::Array<LBItem *> &items)
 			break;
 		}
 		assert(found);
+		_orderedItems.erase(items[i]->_iterator);
 	}
 }
 
