@@ -23,6 +23,8 @@
 #ifndef BACKENDS_UPDATES_ABSTRACT_H
 #define BACKENDS_UPDATES_ABSTRACT_H
 
+#if defined(USE_UPDATES)
+
 namespace Common {
 
 /**
@@ -94,5 +96,7 @@ public:
 };
 
 }	// End of namespace Common
+
+#endif
 
 #endif // BACKENDS_UPDATES_ABSTRACT_H

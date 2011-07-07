@@ -143,6 +143,7 @@ _opengl=auto
 _opengles=auto
 _readline=auto
 _taskbar=yes
+_updates=yes
 _libunity=auto
 # Default option behaviour yes/no
 _debug_build=auto
@@ -773,6 +774,7 @@ Optional Features:
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
+  --disable-updates        don't build support for updates
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
                            process
@@ -880,6 +882,8 @@ for ac_option in $@; do
 	--disable-readline)       _readline=no    ;;
 	--enable-taskbar)         _taskbar=yes    ;;
 	--disable-taskbar)        _taskbar=no     ;;
+	--enable-updates)         _updates=yes    ;;
+	--disable-updates)        _updates=no     ;;
 	--enable-libunity)        _libunity=yes   ;;
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
@@ -2982,9 +2986,12 @@ if test `get_engine_build sword25` = yes && test ! "$_zlib" = yes ; then
 fi
 
 #
-# Check for Sparkle
+# Check for Sparkle if updates support is enabled
 #
 echocheck "Sparkle"
+if test "$_updates" = no; then
+	_sparkle=no
+else
 if test "$_sparkle" = auto ; then
 	_sparkle=no
 	cat > $TMPC << EOF
@@ -2999,6 +3006,7 @@ if test "$_sparkle" = yes ; then
 	INCLUDES="$INCLUDES $SPARKLE_CFLAGS"
 fi
 define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
+fi
 echo "$_sparkle"
 
 #
@@ -3306,6 +3314,21 @@ fi
 echo_n "Building Bink video support... "
 define_in_config_if_yes $_bink 'USE_BINK'
 echo "$_bink"
+
+#
+# Check whether to build updates support
+#
+echo_n "Building updates support... "
+define_in_config_if_yes $_updates 'USE_UPDATES'
+if test "$_updates" = yes; then
+	if test "$_sparkle" = yes; then
+		echo "Sparkle"
+	else
+		echo "$_updates"
+	fi
+else
+	echo "$_updates"
+fi
 
 #
 # Figure out installation directories

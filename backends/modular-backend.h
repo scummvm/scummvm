@@ -24,7 +24,6 @@
 #define BACKENDS_MODULAR_BACKEND_H
 
 #include "backends/base-backend.h"
-#include "common/updates.h"
 
 class GraphicsManager;
 class MutexManager;
@@ -142,10 +141,9 @@ protected:
 	/** @name Managers variables */
 	//@{
 
-	MutexManager            *_mutexManager;
-	GraphicsManager         *_graphicsManager;
-	Audio::Mixer            *_mixer;
-	Common::UpdateManager   *_updateManager;
+	MutexManager *_mutexManager;
+	GraphicsManager *_graphicsManager;
+	Audio::Mixer *_mixer;
 
 	//@}
 };
