@@ -49,9 +49,9 @@ enum SNLIST { NEAR, TAKE };
 #define POCKET_NX   8
 
 struct SavTab {
-	void *Ptr;
-	int Len;
-	uint8 Flg;
+	void *_ptr;
+	int32 _len;
+	bool  _flag;
 };
 
 class CGEEngine : public Engine {
@@ -124,7 +124,7 @@ public:
 	void setIRQ();
 	void setDMA();
 	void mainLoop();
-	void SaveGame(XFile &file);
+	void saveGame(XFile &file);
 	void switchMusic();
 	void selectPocket(int n);
 	void expandSprite(Sprite *spr);
@@ -135,6 +135,21 @@ public:
 	void hide1(Sprite *spr);
 	void loadMapping();
 	void saveMapping();
+	void saveSound();
+	void heroCover(int cvr);
+	void trouble(int seq, int txt);
+	void offUse();
+	void tooFar();
+	void noWay();
+	void loadHeroXY();
+	void keyClick();
+	void switchColorMode();
+	void killSprite();
+	void pushSprite();
+	void pullSprite();
+	void sayDebug();
+	void nextStep();
+	void switchDebug();
 
 	void snBackPt(Sprite *spr, int stp);
 	void snBarrier(int cav, int bar, bool horz);

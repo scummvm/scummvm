@@ -247,14 +247,14 @@ void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 }
 
 
-static void SaveSound() {
+void CGEEngine::saveSound() {
 	CFile cfg(usrPath(progName(CFG_EXT)), WRI);
 	if (!cfg._error)
 		cfg.write(&_sndDrvInfo, sizeof(_sndDrvInfo) - sizeof(_sndDrvInfo.Vol2));
 }
 
 
-void CGEEngine::SaveGame(XFile &file) {
+void CGEEngine::saveGame(XFile &file) {
 	SavTab *st;
 	Sprite *spr;
 	int i;
@@ -267,10 +267,10 @@ void CGEEngine::SaveGame(XFile &file) {
 	_volume[0] = _sndDrvInfo.Vol2._d;
 	_volume[1] = _sndDrvInfo.Vol2._m;
 
-	for (st = _savTab; st->Ptr; st++) {
+	for (st = _savTab; st->_ptr; st++) {
 		if (file._error)
 			error("Bad SVG");
-		file.write((uint8 *) st->Ptr, st->Len);
+		file.write((uint8 *) st->_ptr, st->_len);
 	}
 
 	file.write((uint8 *) & (i = SVGCHKSUM), sizeof(i));
@@ -281,13 +281,11 @@ void CGEEngine::SaveGame(XFile &file) {
 				file.write((uint8 *)spr, sizeof(*spr));
 }
 
-
-static void HeroCover(int cvr) {
+void CGEEngine::heroCover(int cvr) {
 	SNPOST(SNCOVER, 1, cvr, NULL);
 }
 
-
-static void trouble(int seq, int txt) {
+void CGEEngine::trouble(int seq, int txt) {
 	_hero->park();
 	SNPOST(SNWAIT, -1, -1, _hero);
 	SNPOST(SNSEQ, -1, seq, _hero);
@@ -296,30 +294,26 @@ static void trouble(int seq, int txt) {
 	SNPOST(SNSAY,  1, txt, _hero);
 }
 
-
-static void offUse() {
+void CGEEngine::offUse() {
 	trouble(OFF_USE, OFF_USE_TEXT + new_random(_offUseCount));
 }
 
-
-static void tooFar() {
+void CGEEngine::tooFar() {
 	trouble(TOO_FAR, TOO_FAR_TEXT);
 }
 
-
 // Used in stubbed function, do not remove!
-static void noWay() {
+void CGEEngine::noWay() {
 	trouble(NO_WAY, NO_WAY_TEXT);
 }
 
 
-static void loadHeroXY() {
+void CGEEngine::loadHeroXY() {
 	INI_FILE cf(progName(".HXY"));
 	memset(_heroXY, 0, sizeof(_heroXY));
 	if (!cf._error)
 		cf.CFREAD(&_heroXY);
 }
-
 
 void CGEEngine::loadMapping() {
 	if (_now <= CAVE_MAX) {
@@ -536,21 +530,19 @@ void CGEEngine::setMapBrick(int x, int z) {
 	}
 }
 
-static void SwitchColorMode();
-static void switchDebug();
-static void KillSprite();
-static void PushSprite();
-static void PullSprite();
-static void NextStep();
+//static void switchColorMode();
+//static void switchDebug();
+//static void pullSprite();
+//static void NextStep();
 
-static void KeyClick() {
+void CGEEngine::keyClick() {
 	SNPOST_(SNSOUND, -1, 5, NULL);
 }
 
 
 void CGEEngine::resetQSwitch() {
 	SNPOST_(SNSEQ, 123,  0, NULL);
-	KeyClick();
+	keyClick();
 }
 
 
@@ -570,7 +562,7 @@ void CGEEngine::quit() {
 			QuitMenu[1]._text = _text->getText(NOQUIT_TEXT);
 			(new Vmenu(this, QuitMenu, -1, -1))->setName(_text->getText(QUIT_TITLE));
 			SNPOST_(SNSEQ, 123, 1, NULL);
-			KeyClick();
+			keyClick();
 		}
 	}
 }
@@ -723,9 +715,9 @@ void CGEEngine::xCave() {
 void CGEEngine::qGame() {
 	caveDown();
 	_oldLev = _lev;
-	SaveSound();
+	saveSound();
 	CFile file = CFile(usrPath(_usrFnam), WRI, RCrypt);
-	SaveGame(file);
+	saveGame(file);
 	_vga->sunset();
 	_finis = true;
 }
@@ -754,7 +746,7 @@ void CGEEngine::switchCave(int cav) {
 			              CAVE_Y + ((_now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
 			killText();
 			if (!_startupMode)
-				KeyClick();
+				keyClick();
 			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
 			//TODO Change the SNPOST message send to a special way to send function pointer
 			//SNPOST(SNEXEC,   0, 0, (void *)&XCave); // switch cave
@@ -776,7 +768,7 @@ void System::touch(uint16 mask, int x, int y) {
 
 	if (mask & KEYB) {
 		int pp0;
-		KeyClick();
+		_vm->keyClick();
 		killText();
 		if (_vm->_startupMode == 1) {
 			SNPOST(SNCLEAR, -1, 0, NULL);
@@ -788,7 +780,7 @@ void System::touch(uint16 mask, int x, int y) {
 			if (_keyboard->_key[ALT] && _keyboard->_key[CTRL])
 				AltCtrlDel();
 			else 
-				KillSprite();
+				_vm->killSprite();
 			break;
 		case 'F':
 			if (_keyboard->_key[ALT]) {
@@ -800,13 +792,13 @@ void System::touch(uint16 mask, int x, int y) {
 			}
 			break;
 		case PgUp:
-			PushSprite();
+			_vm->pushSprite();
 			break;
 		case PgDn:
-			PullSprite();
+			_vm->pullSprite();
 			break;
 		case '+':
-			NextStep();
+			_vm->nextStep();
 			break;
 		case '`':
 			if (_keyboard->_key[ALT])
@@ -815,7 +807,7 @@ void System::touch(uint16 mask, int x, int y) {
 				_vm->switchMapping();
 			break;
 		case F1:
-			switchDebug();
+			_vm->switchDebug();
 			break;
 		case F3:
 			_hero->step(TSEQ + 4);
@@ -933,19 +925,19 @@ void System::tick() {
 			killText();
 			if (_snail->idle()) {
 				if (PAIN)
-					HeroCover(9);
+					_vm->heroCover(9);
 				else if (Startup::_core >= CORE_MID) {
 					int n = new_random(100);
 					if (n > 96)
-						HeroCover(6 + (_hero->_x + _hero->_w / 2 < SCR_WID / 2));
+						_vm->heroCover(6 + (_hero->_x + _hero->_w / 2 < SCR_WID / 2));
 					else {
 						if (n > 90)
-							HeroCover(5);
+							_vm->heroCover(5);
 						else {
 							if (n > 60)
-								HeroCover(4);
+								_vm->heroCover(4);
 							else
-								HeroCover(3);
+								_vm->heroCover(3);
 						}
 					}
 				}
@@ -975,9 +967,9 @@ static void SpkClose() {
 */
 
 
-static void SwitchColorMode() {
+void CGEEngine::switchColorMode() {
 	SNPOST_(SNSEQ, 121, _vga->_mono = !_vga->_mono, NULL);
-	KeyClick();
+	keyClick();
 	_vga->setColors(Vga::_sysPal, 64);
 }
 
@@ -998,7 +990,7 @@ void CGEEngine::switchMusic() {
 			SNPOST(SNINF, -1, NOMUSIC_TEXT, NULL);
 		else {
 			SNPOST_(SNSEQ, 122, (_music = !_music), NULL);
-			KeyClick();
+			keyClick();
 		}
 	}
 	if (_music)
@@ -1018,7 +1010,7 @@ void CGEEngine::takeName() {
 	if (GetText::_ptr)
 		SNPOST_(SNKILL, -1, 0, GetText::_ptr);
 	else {
-		GetText *tn = new GetText(this, _text->getText(GETNAME_PROMPT), _usrFnam, 8, KeyClick);
+		GetText *tn = new GetText(this, _text->getText(GETNAME_PROMPT), _usrFnam, 8);
 		if (tn) {
 			tn->setName(_text->getText(GETNAME_TITLE));
 			tn->center();
@@ -1049,16 +1041,14 @@ void CGEEngine::switchMapping() {
 	_horzLine->_flags._hide = !_horzLine->_flags._hide;
 }
 
-
-static void KillSprite() {
+void CGEEngine::killSprite() {
 	_sprite->_flags._kill = true;
 	_sprite->_flags._bDel = true;
 	SNPOST_(SNKILL, -1, 0, _sprite);
 	_sprite = NULL;
 }
 
-
-static void PushSprite() {
+void CGEEngine::pushSprite() {
 	Sprite *spr = _sprite->_prev;
 	if (spr) {
 		_vga->_showQ->insert(_vga->_showQ->remove(_sprite), spr);
@@ -1068,8 +1058,7 @@ static void PushSprite() {
 		SNPOST_(SNSOUND, -1, 2, NULL);
 }
 
-
-static void PullSprite() {
+void CGEEngine::pullSprite() {
 	bool ok = false;
 	Sprite *spr = _sprite->_next;
 	if (spr) {
@@ -1086,11 +1075,9 @@ static void PullSprite() {
 		SNPOST_(SNSOUND, -1, 2, NULL);
 }
 
-
-static void NextStep() {
+void CGEEngine::nextStep() {
 	SNPOST_(SNSTEP, 0, 0, _sprite);
 }
-
 
 void CGEEngine::saveMapping() {
 	{
@@ -1131,7 +1118,7 @@ static  char    DebugText[] = " N=00000 F=000000 X=000 Y=000 FPS=0000\0S=00:00 0
 #define SP_F    (DebugText + 67)
 #define SP__    (DebugText + 70)
 
-static void sayDebug() {
+void CGEEngine::sayDebug() {
 	if (!_debugLine->_flags._hide) {
 		static long t = -1L;
 		long t1 = timer();
@@ -1172,7 +1159,7 @@ static void sayDebug() {
 }
 
 
-static void switchDebug() {
+void CGEEngine::switchDebug() {
 	_debugLine->_flags._hide = !_debugLine->_flags._hide;
 }
 
@@ -1181,7 +1168,7 @@ void CGEEngine::optionTouch(int opt, uint16 mask) {
 	switch (opt) {
 	case 1 :
 		if (mask & L_UP)
-			SwitchColorMode();
+			switchColorMode();
 		break;
 	case 2 :
 		if (mask & L_UP)
@@ -1224,10 +1211,10 @@ void Sprite::touch(uint16 mask, int x, int y) {
 					if (works(ps)) {
 						_vm->feedSnail(ps, TAKE);
 					} else
-						offUse();
+						_vm->offUse();
 					_vm->selectPocket(-1);
 				} else
-					tooFar();
+					_vm->tooFar();
 			} else {
 				if (_flags._kept)
 					mask |= L_UP;
@@ -1245,15 +1232,15 @@ void Sprite::touch(uint16 mask, int x, int y) {
 						} else {
 							if (_takePtr != NO_PTR) {
 								if (snList(TAKE)[_takePtr]._com == SNNEXT)
-									offUse();
+									_vm->offUse();
 								else
 									_vm->feedSnail(this, TAKE);
 							} else
-								offUse();
+								_vm->offUse();
 						}
 					}///
 					else
-						tooFar();
+						_vm->tooFar();
 				}
 			}
 		}
@@ -1548,7 +1535,7 @@ void CGEEngine::loadUser() {
 			loadScript(progName(INI_EXT));
 			_music = true;
 			CFile file = CFile(SVG0NAME, WRI);
-			SaveGame(file);
+			saveGame(file);
 			error("Ok [%s]", SVG0NAME);
 		}
 	}

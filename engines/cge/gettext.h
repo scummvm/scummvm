@@ -44,11 +44,10 @@ class GetText : public Talk {
 	uint16 _len;
 	uint16 _cntr;
 	Sprite *_oldKeybClient;
-	void (*_click)();
 
 public:
 	static GetText *_ptr;
-	GetText(CGEEngine *vm, const char *info, char *text, int size, void (*click)(void) = NULL);
+	GetText(CGEEngine *vm, const char *info, char *text, int size);
 	~GetText();
 	void touch(uint16 mask, int x, int y);
 	void tick();
