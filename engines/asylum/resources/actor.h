@@ -440,8 +440,13 @@ private:
 	void updateFinish();
 
 	//////////////////////////////////////////////////////////////////////////
-	// Helper functions
+	// Path finding functions
 	//////////////////////////////////////////////////////////////////////////
+	uint32 _frameNumber;
+	bool processAction1(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions);
+	bool processAction2(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions);
+	bool processAction3(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions);
+	bool processAction4(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions);
 	bool checkAllActions(const Common::Point &pt, Common::Array<ActionArea *> *actions);
 
 	//////////////////////////////////////////////////////////////////////////
