@@ -177,7 +177,6 @@ Cluster XZ(Couple xy) {
 }
 
 void CGEEngine::loadGame(XFile &file, bool tiny = false) {
-	SavTab *st;
 	Sprite *spr;
 	int i;
 
