@@ -152,14 +152,18 @@ Common::Error NeverhoodEngine::run() {
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 				break;
-			/*			
+
 			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+				_gameModule->handleMouseDown(event.mouse.x, event.mouse.y);
+				break;
+
+			/*			
 				_buttonState |= kLeftButton;
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_buttonState &= ~kLeftButton;
 				break;
-			case Common::EVENT_RBUTTONDOWN:
 				_buttonState |= kRightButton;
 				break;
 			case Common::EVENT_RBUTTONUP:

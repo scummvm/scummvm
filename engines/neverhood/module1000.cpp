@@ -400,41 +400,45 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	// TODO Mouse
 
+	//DEBUG so he's here at least
+	_klayman = new Klayman(_vm, this, 200, 433, 1000, 1000);
+	addSprite(_klayman);
+
 #if 0
 	// TODO: Player sprites...	
 	if (which < 0) {
 		setRectList(0x004B49F0);
-		_playerSprite = new Class572(_vm, this, 200, 433, 1000, 1000);
+		_klayman = new Class572(_vm, this, 200, 433, 1000, 1000);
 		setMessageList(0x004B4888);
 	} else if (which == 1) {
 		setRectList(0x004B49F0);
-		_playerSprite = new Class572(_vm, this, 640, 433, 1000, 1000);
+		_klayman = new Class572(_vm, this, 640, 433, 1000, 1000);
 		setMessageList(0x004B4898);
 	} else if (which == 2) {
 		setRectList(0x004B49F0);
 		if (_vm->getGlobalVar(0xC0418A02)) {
-			_playerSprite = new Class572(_vm, this, 390, 433, 1000, 1000);
-			_playerSprite->setDoDeltaX(1);
+			_klayman = new Class572(_vm, this, 390, 433, 1000, 1000);
+			_klayman->setDoDeltaX(1);
 		} else {
-			_playerSprite = new Class572(_vm, this, 300, 433, 1000, 1000);
+			_klayman = new Class572(_vm, this, 300, 433, 1000, 1000);
 		}
 		setMessageList(0x004B4970);
 	} else {
 		setRectList(0x004B4A00);
-		_playerSprite = new Class572(_vm, this, 200, 433, 1000, 1000);
+		_klayman = new Class572(_vm, this, 200, 433, 1000, 1000);
 		setMessageList(0x004B4890);
 	}
-	addSprite(_playerSprite);
+	addSprite(_klayman);
 #endif
 
 	staticSprite1 = addSprite(new StaticSprite(_vm, 0x2080A3A8, 1300));
 
 #if 0
 	// TODO: This sucks somehow, find a better way
-	_playerSprite->getSurface()->getClipRect().x1 = 0;
-	_playerSprite->getSurface()->getClipRect().y1 = 0;
-	_playerSprite->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
-	_playerSprite->getSurface()->getClipRect().y2 = 480;
+	_klayman->getSurface()->getClipRect().x1 = 0;
+	_klayman->getSurface()->getClipRect().y1 = 0;
+	_klayman->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
+	_klayman->getSurface()->getClipRect().y2 = 480;
 #endif
 	
 	if (_vm->getGlobalVar(0xD217189D) == 0) {
@@ -470,7 +474,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene1001::~Scene1001() {
-	// TODO _vm->setGlobalVar(0xC0418A02, _playerSprite->_doDeltaX);
+	// TODO _vm->setGlobalVar(0xC0418A02, _klayman->_doDeltaX);
 }
 
 uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -490,7 +494,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x100D:
 		if (param._integer == 0x00342624) {
-			// TODO _playerSprite->sendMessage(0x1014, _asLever, this);
+			// TODO _klayman->sendMessage(0x1014, _asLever, this);
 			// TODO setMessageList2(0x004B4910, true, false);
 			messageResult = 1;
 		} else if (param._integer == 0x21E64A00) {
@@ -502,7 +506,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 				messageResult = 1;
 			}
 		} else if (param._integer == 0x040424D0) {
-			// TODO _playerSprite->sendMessage(0x1014, _ssButton, this);
+			// TODO _klayman->sendMessage(0x1014, _ssButton, this);
 		} else if (param._integer == 0x80006358) {
 			if (_vm->getGlobalVar(0x03C698DA)) {
 				// TODO setMessageList(0x004B4938, true, false);

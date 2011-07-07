@@ -28,6 +28,7 @@
 #include "neverhood/background.h"
 #include "neverhood/entity.h"
 #include "neverhood/graphics.h"
+#include "neverhood/klayman.h"
 #include "neverhood/module.h"
 #include "neverhood/palette.h"
 #include "neverhood/smackerplayer.h"
@@ -67,8 +68,8 @@ protected:
 	// TODO 00000088 someRects	   dd ?
 	// TODO 0000008C someRectsCount  dw ?
 	// TODO 0000008E field_8E		dw ?
-	// TODO 00000090 playerSprite		dd ?
 	// TODO 00000094 mouseSprite	 dd ?
+	Klayman *_klayman;
 	Palette *_palette;
 	Background *_background;
 	bool _surfaceFlag;

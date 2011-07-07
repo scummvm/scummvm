@@ -67,9 +67,22 @@ Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int
 }
 
 void Klayman::xUpdate() {
+	// Empty
 }
 
 uint32 Klayman::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param._point.x, false);
+		break;
+	case 0x4004:
+		// TODO AnimatedSprite_setCallback2(AnimationCallback(&sub41FC80));
+		break;
+	case 0x4818:
+		// TODO sub41C930(_rectResource.getRectangle1(param._integer).x, false);
+		break;
+	}
 	return 0;
 }
 
@@ -455,5 +468,57 @@ void Klayman::sub41FCF0() {
 	SetSpriteCallback(NULL);
 }
 
+uint32 Klayman::handleMessage41F140(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param._integer == 0x271AA210) {
+#if 0		
+			_soundResource1.set(0x4924AAC4);
+			_soundResource1.load();
+			_soundResource1.play(false);
+#endif			
+		} else if (param._integer == 0x2B22AA81) {
+#if 0		
+			_soundResource1.set(0x0A2AA8E0);
+			_soundResource1.load();
+			_soundResource1.play(false);
+#endif			
+		}
+		break;
+	}
+	return messageResult;
+}
+
+
+void Klayman::sub41C930(int16 x, bool flag) {
+	int16 xdiff = ABS(x - _x);
+	if (xdiff == 0) {
+		_x4 = x;
+		if (_flagE1 || _flagE2 || _flagE3) {
+			// TODO AnimatedSprite_setCallback2(NULL);
+			sub41C7B0();
+		}
+	} else if (xdiff <= 36 && !_flagE1 && !_flagE2 && !_flagE3) {
+		_x4 = x;
+		// TODO AnimatedSprite_setCallback2(NULL);
+		sub41C7B0();
+	} else if (xdiff <= 42 && _status != 3) {
+		if (_flagE2 && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0)) && ABS(_x4 - _x) > xdiff) {
+			_x4 = x;
+		} else {
+			_x4 = x;
+			// TODO AnimatedSprite_setCallback2(AnimationCallback(&Klayman::sub41FB40));
+		}
+	} else if (_flagE1 && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0))) {
+		_x4 = x;
+	} else if (flag) {
+		_x4 = x;
+		// TODO AnimatedSprite_setCallback2(AnimationCallback(&Klayman::sub421550));
+	} else {
+		_x4 = x;
+		// TODO AnimatedSprite_setCallback2(AnimationCallback(&Klayman::sub41F950));
+	}
+}
 
 } // End of namespace Neverhood

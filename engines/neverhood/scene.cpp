@@ -37,7 +37,7 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	_mouseClicked = false;
 	// TODO _rectList = NULL;
 	// TODO _someRects = NULL;
-	// TODO _playerSprite = NULL;
+	_klayman = NULL;
 	// TODO _mouseSprite = NULL;
 	_palette = NULL;
 	_background = NULL;
@@ -193,15 +193,15 @@ void Scene::update() {
 		if (_mouseClicked) {
 			//** ALL TODO
 #if 0			
-			if (_playerSprite) {
+			if (_klayman) {
 				// TODO: Merge later
-				if (_playerSprite->hasMessageHandler() && 
-					_playerSprite->sendMessage(0x1008, 0, this) != 0 &&
+				if (_klayman->hasMessageHandler() && 
+					_klayman->sendMessage(0x1008, 0, this) != 0 &&
 					_messageListFlag &&
 					queryPositionClass400(_mouseClickPos.x, _mouseClickPos.y)) {
 					_mouseClicked = false;
-				} else if (_playerSprite->hasMessageHandler() && 
-					_playerSprite->sendMessage(0x1008, 0, this) != 0 &&
+				} else if (_klayman->hasMessageHandler() && 
+					_klayman->sendMessage(0x1008, 0, this) != 0 &&
 					_messageListFlag) {
 					_mouseClicked = !queryPositionRectList(_mouseClickPos.x, _mouseClickPos.y);
 				}
@@ -223,12 +223,13 @@ void Scene::update() {
 
 uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	// TODO
-#if 0	
 	switch (messageNum) {
 	case 0: // mouse moved
+#if 0	
 		if (_mouseSprite && _mouseSprite->hasMessageHandler())
 			_mouseSprite->sendMessage(0x4002, param, this);
 		queryPositionSomeRects(param._point.x, param._point.y);			
+#endif	
 		break;
 	case 1: // mouse clicked
 		_mouseClicked = true;
@@ -245,7 +246,9 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		break;
 	*/		
 	case 5:
+#if 0	
 		broadcastObjectMessage5();		
+#endif	
 		break;
 	case 6:
 		_parentModule->sendMessage(0x1009, param, this);		
@@ -254,35 +257,39 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		if (_messageListFlag1) {
 			_messageListFlag1 = false;
 			if (_messageListIndex == _messageListCount)
-				_playerSprite->sendMessage(0x4004, 0, this);
-			else
-				runMessageList();
+				_klayman->sendMessage(0x4004, 0, this);
+			else {
+				// TODO runMessageList();
+			}
 		}
 		break;
 	case 0x1007:
 		if (_messageListFlag1) {
 			_messageListFlag1 = false;
 			_messageList = NULL;
-			_playerSprite->sendMessage(0x4004, 0, this);
+			_klayman->sendMessage(0x4004, 0, this);
 		}
 		break;
 	case 0x101D:
+#if 0	
 		if (_mouseSprite) {
 			_prevVisible = _mouseSprite->_drawSurface->_visible;
 			_mouseSprite->_drawSurface->_visible = false;
 		}
+#endif	
 		break;
 	case 0x101E:
+#if 0	
 		if (_prevVisible && _mouseSprite) {
 			_mouseSprite->_drawSurface->_visible = true;
 			_mouseSprite->sendMessage(0x4002, g_Screen->_mousePos, this);
 		}
+#endif	
 		break;
 	case 0x1022:
-		setSurfacePriority(((Sprite*)sender)->_surface, param._integer);
+		setSurfacePriority(((Sprite*)sender)->getSurface(), param._integer);
 		break;
 	}
-#endif	
 	return 0;
 }
 

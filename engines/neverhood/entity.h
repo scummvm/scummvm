@@ -70,7 +70,7 @@ public:
 	uint32 sendMessage(int messageNum, uint32 param, Entity *sender) {
 		return sendMessage(messageNum, MessageParam(param), sender);
 	}
-	uint32 sendPointMessage(int messageNum, NPoint param, Entity *sender) {
+	uint32 sendPointMessage(int messageNum, const NPoint &param, Entity *sender) {
 		return sendMessage(messageNum, MessageParam(param), sender);
 	}
 	uint32 sendEntityMessage(int messageNum, Entity *param, Entity *sender) {

@@ -22,6 +22,7 @@
 
 #include "neverhood/gamemodule.h"
 
+#include "neverhood/graphics.h"
 #include "neverhood/module1000.h"
 #include "neverhood/module1500.h"
 
@@ -55,6 +56,16 @@ GameModule::~GameModule() {
 	
 	// TODO Set debug vars (maybe)
 
+}
+
+void GameModule::handleMouseDown(int16 x, int16 y) {
+	if (_childObject) {
+		NPoint mousePos;
+		mousePos.x = x;
+		mousePos.y = y;
+		debug("GameModule::handleMouseDown(%d, %d)", x, y);
+		_childObject->sendPointMessage(1, mousePos, this);
+	}				
 }
 
 uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {

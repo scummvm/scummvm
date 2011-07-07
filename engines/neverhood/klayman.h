@@ -124,6 +124,8 @@ protected:
 	void sub41FCF0();
 	
 	uint32 handleMessage41F140(int messageNum, const MessageParam &param, Entity *sender);
+
+	void sub41C930(int16 x, bool flag);
 	
 };
 
