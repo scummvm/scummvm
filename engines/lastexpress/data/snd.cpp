@@ -38,7 +38,7 @@ namespace LastExpress {
 
 #pragma region Sound filters tables
 
-static const int filterData[1424] = {
+static const int stepTable[1424] = {
 	0, 0, 0, 0, 128, 256, 384, 512, 0, 0, 0, 0, 128, 256,
 	384, 512, 0, 0, 0, 0, 192, 320, 448, 576, 0, 0, 0, 0,
 	192, 320, 448, 576, 64, 64, 64, 64, 256, 384, 512, 640,
@@ -195,7 +195,7 @@ static const int filterData[1424] = {
 	5632
 };
 
-static const int filterData2[1424] = {
+static const int imaTable[1424] = {
 	0, 2, 4, 6, 7, 9, 11, 13, 0, -2, -4, -6, -7, -9, -11,
 	-13, 1, 3, 5, 7, 9, 11, 13, 15, -1, -3, -5, -7, -9,
 	-11, -13, -15, 1, 3, 5, 7, 10, 12, 14, 16, -1, -3, -5,
@@ -362,6 +362,10 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples) {
 		int samples = 0;
+		// Temporary data
+		int step = 0;
+		int sample = 0;
+		byte idx = 0;
 
 		assert(numSamples % 2 == 0);
 
@@ -369,15 +373,37 @@ public:
 			if (_blockPos[0] == _blockAlign) {
 				// read block header
 				_status.ima_ch[0].last = _stream->readSint16LE();
-				_status.ima_ch[0].stepIndex = _stream->readSint16LE();
+				_status.ima_ch[0].stepIndex = _stream->readSint16LE() << 6;
 				_blockPos[0] = 4;
+
+				// Get current filter
+				_currentFilterId = _nextFilterId;
+				_nextFilterId = -1;
+
+				// No filter: skip decoding
+				if (_currentFilterId == -1)
+					break;
+
+				// Compute step adjustment
+				_stepAdjust1 = p1s[_currentFilterId];
+				_stepAdjust2 = p2s[_currentFilterId];
 			}
 
 			for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 				byte data = _stream->readByte();
 				_blockPos[0]++;
-				buffer[samples] = decodeIMA((data >> 4) & 0x0f);
-				buffer[samples + 1] = decodeIMA(data & 0x0f);
+
+				// First nibble
+				idx = data >> 4;
+				step = stepTable[idx + _status.ima_ch[0].stepIndex / 4];
+				sample = CLIP(imaTable[idx + _status.ima_ch[0].stepIndex / 4] + _status.ima_ch[0].last, -32767, 32767);
+				buffer[samples] = (_stepAdjust2 * sample) >> _stepAdjust1;
+
+				// Second nibble
+				idx = data & 0xF;
+				_status.ima_ch[0].stepIndex = stepTable[idx + step / 4];
+				_status.ima_ch[0].last = CLIP(imaTable[idx + step / 4] + sample, -32767, 32767);
+				buffer[samples + 1] = (_stepAdjust2 * _status.ima_ch[0].last) >> _stepAdjust1;
 			}
 		}
 
@@ -387,41 +413,10 @@ public:
 	void setFilterId(int32 filterId) { _nextFilterId = filterId; }
 
 private:
-	int32  _currentFilterId;
-	int32  _nextFilterId;    // the sound filter id, -1 for none
-
-	/**
-	 * Sound filter
-	 *
-	 * @param [in]      data    If non-null, the input data
-	 * @param [in,out]  buffer  If non-null, the output buffer.
-	 * @param           p1      The first filter input.
-	 * @param           p2      The second filter input.
-	 */
-	static void soundFilter(byte *data, int16 *buffer, int p1, int p2) {
-		int data1, data2, data1p, data2p;
-		byte idx;
-
-		data2 = data[0];
-		data1 = data[1] << 6;
-
-		data += 2;
-
-		for (int count = 0; count < 735; count++) {
-			idx = data[count] >> 4;
-
-			data1p = filterData[idx + data1];
-			data2p = CLIP(filterData2[idx + data1] + data2, -32767, 32767);
-
-			buffer[2 * count] = (p2 * data2p) >> p1;
-
-			idx = data[count] & 0xF;
-
-			data1 = filterData[idx + data1p];
-			data2 = CLIP(filterData2[idx + data1p] + data2p, -32767, 32767);
-			buffer[2 * count + 1] = (p2 * data2) >> p1;
-		}
-	}
+	int32 _currentFilterId;
+	int32 _nextFilterId;    // the sound filter id, -1 for none
+	int32 _stepAdjust1;
+	int32 _stepAdjust2;
 };
 
 //////////////////////////////////////////////////////////////////////////
