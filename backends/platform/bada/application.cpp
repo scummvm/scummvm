@@ -61,6 +61,7 @@ bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {
 bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry, 
                                    bool forcedTermination) {
   logEntered();
+  systemHalt(appForm);
 	return true;
 }
 

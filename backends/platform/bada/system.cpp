@@ -23,6 +23,7 @@
 #include <FUiCtrlMessageBox.h>
 
 #include "common/config-manager.h"
+#include "engines/engine.h"
 #include <stdarg.h>
 
 #include "form.h"
@@ -130,6 +131,30 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 }
 
 //
+// BadaEventManager
+//
+struct BadaEventManager : public DefaultEventManager {
+  BadaEventManager(Common::EventSource *boss);
+  void init();
+};
+
+BadaEventManager::BadaEventManager(Common::EventSource *boss) :
+  DefaultEventManager(boss) {
+}
+
+void BadaEventManager::init() {
+  DefaultEventManager::init();
+
+  // theme and vkbd should have now loaded - clear the splash screen
+  BadaSystem* system = (BadaSystem*) g_system;
+  BadaGraphicsManager* graphics = system->getGraphics();
+  if (graphics) {
+    graphics->setReady();
+    graphics->updateScreen();
+  }
+}
+
+//
 // BadaSystem
 //
 BadaSystem::BadaSystem(BadaAppForm* appForm) : 
@@ -177,7 +202,7 @@ result BadaSystem::initModules() {
   }
 
   // depends on _graphicsManager when ENABLE_VKEYBD enabled
-  _eventManager = new DefaultEventManager(this); 
+  _eventManager = new BadaEventManager(this); 
   if (!_eventManager) {
     return E_OUT_OF_MEMORY;
   }
@@ -353,6 +378,32 @@ BadaAppForm* systemStart(Osp::App::Application* app) {
   }
 
   return appForm;
+}
+
+//
+// abort the game thread
+//
+void systemHalt(BadaAppForm* appForm) {
+  ConfMan.setBool("confirm_exit", false);
+
+  if (g_engine) {
+    g_engine->quitGame();
+  }
+  else {
+    Common::Event event;
+    event.type = Common::EVENT_QUIT;
+    g_system->getEventManager()->pushEvent(event);
+  }
+
+  int maxWait = 500;
+  int timeout = 0;
+  int wait = 50;
+  
+  while (timeout < maxWait && appForm->isActive()) {
+    AppLog("waiting for shutdown");
+    Thread::Sleep(wait);
+    timeout += wait;
+  }
 }
 
 //

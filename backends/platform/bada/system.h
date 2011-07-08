@@ -45,6 +45,7 @@
 #include "fs.h"
 #include "form.h"
 #include "audio.h"
+#include "graphics.h"
 
 #if defined(_DEBUG)
 #define logEntered() AppLog("%s entered (%s %d)", \
@@ -58,6 +59,7 @@
 
 BadaAppForm* systemStart(Osp::App::Application* app);
 void systemError(const char* format, ...);
+void systemHalt(BadaAppForm* appForm);
 
 #define USER_MESSAGE_EXIT 1000
 
@@ -73,6 +75,10 @@ class BadaSystem : public ModularBackend,
   result Construct();
   void closeGraphics();
   void destroyBackend();
+
+  BadaGraphicsManager* getGraphics() {
+    return (BadaGraphicsManager*) _graphicsManager;
+  }
 
  private:
   void initBackend();

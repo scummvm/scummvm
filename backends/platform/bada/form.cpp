@@ -37,7 +37,7 @@ using namespace Osp::Ui::Controls;
 //
 BadaAppForm::BadaAppForm() : 
   gameThread(0), 
-  gameActive(false),
+  activeState(false),
   leftButton(true) {
   eventQueueLock = new Mutex();
   eventQueueLock->Create();
@@ -111,9 +111,28 @@ result BadaAppForm::OnInitializing(void) {
 
 result BadaAppForm::OnDraw(void) {
   logEntered();
+
+  bool displaySplash = false;
   if (g_system) {
-    g_system->updateScreen();
+    BadaSystem* system = (BadaSystem*) g_system;
+    BadaGraphicsManager* graphics = system->getGraphics();
+    if (graphics && graphics->isReady()) {
+      g_system->updateScreen();
+    }
+    else {
+      displaySplash = true;
+    }
   }
+
+  if (displaySplash) {
+    Frame* pFrame = Application::GetInstance()->GetAppFrame()->GetFrame();
+    Canvas* pCanvas = pFrame->GetCanvasN();
+    pCanvas->SetBackgroundColor(Color(0x1c, 0x23, 0x1c));
+    pCanvas->Clear();
+    pCanvas->Show();
+    delete pCanvas;
+  }
+
   return E_SUCCESS;
 }
 
@@ -137,7 +156,6 @@ void BadaAppForm::pushEvent(Common::EventType type,
   e.type = type;
   e.mouse.x = currentPosition.x;
   e.mouse.y = currentPosition.y;
-  g_system->warpMouse(currentPosition.x, currentPosition.y);
 
   eventQueueLock->Acquire();
   eventQueue.push(e);
@@ -157,8 +175,8 @@ void BadaAppForm::pushKey(Common::KeyCode keycode) {
 void BadaAppForm::OnOrientationChanged(const Control& source, 
                                        OrientationStatus orientationStatus) {
   logEntered();
-  if (!gameActive) {
-    gameActive = true;
+  if (!activeState) {
+    activeState = true;
     gameThread->Start();
   }
 }
@@ -167,13 +185,18 @@ Object* BadaAppForm::Run(void) {
   scummvm_main(0, 0);
 
   AppLog("scummvm_main completed");
-  Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, null);
+
+  if (activeState) {
+    //    Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, null);
+  }
+  activeState = false;
   return null;
 }
 
 void BadaAppForm::OnTouchDoublePressed(const Control& source, 
                                        const Point& currentPosition, 
                                        const TouchEventInfo& touchInfo) {
+  g_system->displayMessageOnOSD("double !");
   leftButton = !leftButton;
 }
 
@@ -202,6 +225,7 @@ void BadaAppForm::OnTouchMoved(const Control& source,
 void BadaAppForm::OnTouchPressed(const Control& source, 
                                  const Point& currentPosition, 
                                  const TouchEventInfo& touchInfo) {
+  AppLog("pressed %d %d %d", currentPosition.x, currentPosition.y, touchInfo.IsFlicked());
   pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
             currentPosition);
 }
@@ -210,14 +234,16 @@ void BadaAppForm::OnTouchReleased(const Control& source,
                                   const Point& currentPosition, 
                                   const TouchEventInfo& touchInfo) {
   if (touchInfo.IsFlicked()) {
+    AppLog("flicked %d %d", currentPosition.x, currentPosition.y);
     if (currentPosition.x < g_system->getWidth() / 2) {
       pushKey(Common::KEYCODE_F7);
     }
     else {
-      pushKey(Common::KEYCODE_ESCAPE);
+      pushKey(Common::KEYCODE_RETURN);
     }
   }
   else {
+    AppLog("touched %d %d", currentPosition.x, currentPosition.y);
     pushEvent(leftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
               currentPosition);
   }

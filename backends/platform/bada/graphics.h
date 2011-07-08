@@ -50,6 +50,9 @@ class BadaGraphicsManager : public OpenGLGraphicsManager {
   void setFeatureState(OSystem::Feature f, bool enable);
   void setInternalMousePosition(int x, int y);
   void unloadGFXMode();
+  void refreshGameScreen();
+  void setReady() {initState=false;}
+  bool isReady() {return !initState;}
 
  private:
   bool loadEgl();
@@ -58,6 +61,7 @@ class BadaGraphicsManager : public OpenGLGraphicsManager {
   EGLSurface eglSurface;
   EGLConfig  eglConfig;
   EGLContext eglContext;
+  bool initState;
 };
 
 #endif

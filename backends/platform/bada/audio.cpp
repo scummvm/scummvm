@@ -96,7 +96,7 @@ bool AudioThread::OnStart(void) {
   Osp::System::SettingInfo::GetValue(key, silentMode);
 
   mixer->setReady(true);
-  audioOut->SetVolume(silentMode ? 0 : 50);
+  audioOut->SetVolume(silentMode ? 0 : 45);
   audioOut->Start();
   return true;
 }

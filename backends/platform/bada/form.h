@@ -49,6 +49,8 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
 
   result Construct();
   bool pollEvent(Common::Event& event);
+  bool isActive() {return activeState;}
+  void setInactive() {activeState = false;}
 
  private:
   Object* Run();
@@ -86,7 +88,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   Osp::Base::Runtime::Thread* gameThread;
   Osp::Base::Runtime::Mutex* eventQueueLock;
   Common::Queue<Common::Event> eventQueue;
-  bool gameActive;
+  bool activeState;
   bool leftButton;
 };
 
