@@ -199,6 +199,12 @@ void Part::set_instrument(byte * data) {
 		_instrument.send(_mc);
 }
 
+void Part::set_instrument_pcspk(byte *data) {
+	_instrument.pcspk(data);
+	if (clearToTransmit())
+		_instrument.send(_mc);
+}
+
 void Part::load_global_instrument(byte slot) {
 	_player->_se->copyGlobalAdLibInstrument(slot, &_instrument);
 	if (clearToTransmit())

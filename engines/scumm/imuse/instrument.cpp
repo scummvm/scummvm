@@ -259,6 +259,19 @@ public:
 	bool is_valid() { return (_native_mt32 ? true : (_instrument_name[0] != '\0')); }
 };
 
+class Instrument_PcSpk : public InstrumentInternal {
+public:
+	Instrument_PcSpk(const byte *data);
+	Instrument_PcSpk(Serializer *s);
+	void saveOrLoad(Serializer *s);
+	void send(MidiChannel *mc);
+	void copy_to(Instrument *dest) { dest->pcspk((byte *)&_instrument); }
+	bool is_valid() { return true; }
+
+private:
+	byte _instrument[23];
+};
+
 ////////////////////////////////////////
 //
 // Instrument class members
@@ -299,6 +312,14 @@ void Instrument::roland(const byte *instrument) {
 	_instrument = new Instrument_Roland(instrument);
 }
 
+void Instrument::pcspk(const byte *instrument) {
+	clear();
+	if (!instrument)
+		return;
+	_type = itPcSpk;
+	_instrument = new Instrument_PcSpk(instrument);
+}
+
 void Instrument::saveOrLoad (Serializer *s) {
 	if (s->isSaving()) {
 		s->saveByte(_type);
@@ -318,6 +339,9 @@ void Instrument::saveOrLoad (Serializer *s) {
 			break;
 		case itRoland:
 			_instrument = new Instrument_Roland(s);
+			break;
+		case itPcSpk:
+			_instrument = new Instrument_PcSpk(s);
 			break;
 		default:
 			warning("No known instrument classification #%d", (int)_type);
@@ -468,6 +492,34 @@ uint8 Instrument_Roland::getEquivalentGM() {
 			return roland_to_gm_map[i].program;
 	}
 	return 255;
+}
+
+////////////////////////////////////////
+//
+// Instrument_PcSpk class members
+//
+////////////////////////////////////////
+
+Instrument_PcSpk::Instrument_PcSpk(const byte *data) {
+	memcpy(_instrument, data, sizeof(_instrument));
+}
+
+Instrument_PcSpk::Instrument_PcSpk(Serializer *s) {
+	if (!s->isSaving())
+		saveOrLoad(s);
+	else
+		memset(_instrument, 0, sizeof(_instrument));
+}
+
+void Instrument_PcSpk::saveOrLoad(Serializer *s) {
+	if (s->isSaving())
+		s->saveBytes(_instrument, sizeof(_instrument));
+	else
+		s->loadBytes(_instrument, sizeof(_instrument));
+}
+
+void Instrument_PcSpk::send(MidiChannel *mc) {
+	mc->sysEx_customInstrument('SPK ', (byte *)&_instrument);
 }
 
 } // End of namespace Scumm

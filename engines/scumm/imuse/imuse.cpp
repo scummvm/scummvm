@@ -1674,6 +1674,12 @@ void IMuseInternal::setGlobalAdLibInstrument(byte slot, byte *data) {
 	}
 }
 
+void IMuseInternal::setGlobalPcSpkInstrument(byte slot, byte *data) {
+	if (slot < 32) {
+		_global_adlib_instruments[slot].pcspk(data);
+	}
+}
+
 void IMuseInternal::copyGlobalAdLibInstrument(byte slot, Instrument *dest) {
 	if (slot >= 32)
 		return;

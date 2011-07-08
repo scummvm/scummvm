@@ -51,7 +51,8 @@ public:
 		itNone = 0,
 		itProgram = 1,
 		itAdLib = 2,
-		itRoland = 3
+		itRoland = 3,
+		itPcSpk = 4
 	};
 
 	Instrument() : _type (0), _instrument (0) { }
@@ -70,6 +71,7 @@ public:
 	void program(byte program, bool mt32);
 	void adlib(const byte *instrument);
 	void roland(const byte *instrument);
+	void pcspk(const byte *instrument);
 
 	byte getType() { return _type; }
 	bool isValid() { return (_instrument ? _instrument->is_valid() : false); }

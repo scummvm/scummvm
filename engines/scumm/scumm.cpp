@@ -71,6 +71,7 @@
 #include "scumm/he/cup_player_he.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
+#include "scumm/imuse/pcspk.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -1857,7 +1858,7 @@ void ScummEngine::setupMusic(int midi) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
 
-		if (_musicType != MDT_ADLIB && _musicType != MDT_TOWNS)
+		if (_musicType != MDT_ADLIB && _musicType != MDT_TOWNS && _musicType != MDT_PCSPK)
 			nativeMidiDriver = MidiDriver::createMidi(dev);
 		if (nativeMidiDriver != NULL && _native_mt32)
 			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
@@ -1865,6 +1866,9 @@ void ScummEngine::setupMusic(int midi) {
 		if (_musicType == MDT_ADLIB || _musicType == MDT_TOWNS || multi_midi) {
 			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
+		} else if (_musicType == MDT_PCSPK) {
+			// HACK
+			adlibMidiDriver = new PcSpkDriver(_mixer);
 		}
 
 		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);

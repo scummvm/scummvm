@@ -342,6 +342,7 @@ struct Part : public Serializable {
 	void off();
 	void set_instrument(uint b);
 	void set_instrument(byte *data);
+	void set_instrument_pcspk(byte *data);
 	void load_global_instrument(byte b);
 
 	void set_transpose(int8 transpose);
@@ -499,6 +500,7 @@ protected:
 
 	void reallocateMidiChannels(MidiDriver *midi);
 	void setGlobalAdLibInstrument(byte slot, byte *data);
+	void setGlobalPcSpkInstrument(byte slot, byte *data);
 	void copyGlobalAdLibInstrument(byte slot, Instrument *dest);
 	bool isNativeMT32() { return _native_mt32; }
 
