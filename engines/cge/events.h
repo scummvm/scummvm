@@ -94,21 +94,22 @@ extern uint16 EvtHead, EvtTail;
 extern Bitmap *MC[];
 
 
-class MOUSE : public Sprite {
+class Mouse : public Sprite {
 public:
-	Sprite *Hold;
+	Sprite *_hold;
 	bool _active;
-	int hx, hy;
-	bool Exist;
-	int Buttons;
-	Sprite *Busy;
+	int _hx;
+	int _hy;
+	bool _exist;
+	int _buttons;
+	Sprite *_busy;
 	//Sprite *Touched;
-	MOUSE(CGEEngine *vm, Bitmap **shpl = MC);
-	~MOUSE();
-	void On();
-	void Off();
-	void Tick();
-	void NewMouse(Common::Event &event);
+	Mouse(CGEEngine *vm, Bitmap **shpl = MC);
+	~Mouse();
+	void on();
+	void off();
+	void tick();
+	void newMouse(Common::Event &event);
 private:
 	CGEEngine *_vm;
 };

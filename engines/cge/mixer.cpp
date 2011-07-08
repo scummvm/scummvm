@@ -34,7 +34,7 @@
 
 namespace CGE {
 
-extern MOUSE *Mouse;
+extern Mouse *Mouse;
 
 bool Mixer::_appear = false;
 
