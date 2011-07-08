@@ -108,7 +108,6 @@ public:
 	~Mouse();
 	void on();
 	void off();
-	void tick();
 	void newMouse(Common::Event &event);
 private:
 	CGEEngine *_vm;
