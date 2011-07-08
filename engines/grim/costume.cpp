@@ -603,7 +603,9 @@ void MainModelComponent::update() {
 }
 
 void MainModelComponent::reset() {
-	_visible = true;
+	// Set _visible to false or else after speaking to Sal's head there will be two Olivias.
+	// https://github.com/residual/residual/issues/229
+	_visible = false;
 	_hier->_hierVisible = _visible;
 }
 
