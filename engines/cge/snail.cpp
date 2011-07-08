@@ -710,7 +710,7 @@ void CGEEngine::snKill(Sprite *spr) {
 		Sprite *nx = spr->_next;
 		hide1(spr);
 		_vga->_showQ->remove(spr);
-		EventManager::ClrEvt(spr);
+		EventManager::clrEvt(spr);
 		if (spr->_flags._kill)
 			delete spr;
 		else {

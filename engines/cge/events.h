@@ -56,7 +56,7 @@ public:
 	Sprite *_client;
 	bool _key[0x60];
 
-	void NewKeyboard(Common::Event &event);
+	void newKeyboard(Common::Event &event);
 	uint16 last() {
 		uint16 cur = _current;
 		_current = 0;
@@ -89,8 +89,6 @@ struct CGEEvent {
 	Sprite *_ptr;
 };
 
-extern CGEEvent Evt[EVT_MAX];
-extern uint16 EvtHead, EvtTail;
 extern Bitmap *MC[];
 
 
@@ -124,7 +122,7 @@ public:
 
 	EventManager();
 	void poll();	
-	static void ClrEvt(Sprite *spr = NULL);
+	static void clrEvt(Sprite *spr = NULL);
 };
 
 } // End of namespace CGE

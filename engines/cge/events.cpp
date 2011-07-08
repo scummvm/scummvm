@@ -116,7 +116,7 @@ bool Keyboard::getKey(uint16 keycode, int &cgeCode) {
 	return false;
 }
 
-void Keyboard::NewKeyboard(Common::Event &event) {
+void Keyboard::newKeyboard(Common::Event &event) {
 	int keycode;
 	if (!getKey(event.kbd.keycode, keycode))
 		return;
@@ -246,7 +246,7 @@ void EventManager::poll() {
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
 			// Handle keyboard events
-			_keyboard->NewKeyboard(_event);
+			_keyboard->newKeyboard(_event);
 			handleEvents();
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -311,7 +311,7 @@ void EventManager::handleEvents() {
 		_mouse->_hold->gotoxy(_mouse->_x - _mouse->_hx, _mouse->_y - _mouse->_hy);
 }
 
-void EventManager::ClrEvt(Sprite *spr) {
+void EventManager::clrEvt(Sprite *spr) {
 	if (spr) {
 		uint16 e;
 		for (e = EvtTail; e != EvtHead; e = (e + 1) % EVT_MAX)
