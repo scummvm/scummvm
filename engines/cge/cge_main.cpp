@@ -64,7 +64,7 @@ System *_sys;
 Sprite *_pocLight;
 EventManager *_eventManager;
 Keyboard *_keyboard;
-MOUSE *_mouse;
+Mouse *_mouse;
 Sprite *_pocket[POCKET_NX];
 Sprite *_sprite;
 Sprite *_miniCave;
@@ -681,7 +681,7 @@ void CGEEngine::caveUp() {
 	_vga->sunrise(Vga::_sysPal);
 	_dark = false;
 	if (!_startupMode)
-		_mouse->On();
+		_mouse->on();
 
 	_heart->_enable = true;
 }
@@ -732,7 +732,7 @@ void CGEEngine::switchCave(int cav) {
 			warning("SwitchCave() - SNPOST");
 		} else {
 			_now = cav;
-			_mouse->Off();
+			_mouse->off();
 			if (_hero) {
 				_hero->park();
 				_hero->step(0);
@@ -1625,9 +1625,9 @@ void CGEEngine::runGame() {
 	_horzLine->_z = 126;
 	_vga->_showQ->insert(_horzLine);
 
-	_mouse->Busy = _vga->_spareQ->locate(BUSY_REF);
-	if (_mouse->Busy)
-		expandSprite(_mouse->Busy);
+	_mouse->_busy = _vga->_spareQ->locate(BUSY_REF);
+	if (_mouse->_busy)
+		expandSprite(_mouse->_busy);
 
 	_startupMode = 0;
 
@@ -1649,7 +1649,7 @@ void CGEEngine::runGame() {
 	_heart->_enable = false;
 	SNPOST(SNCLEAR, -1, 0, NULL);
 	SNPOST_(SNCLEAR, -1, 0, NULL);
-	_mouse->Off();
+	_mouse->off();
 	_vga->_showQ->clear();
 	_vga->_spareQ->clear();
 	_hero = NULL;
@@ -1716,14 +1716,14 @@ bool CGEEngine::showTitle(const char *name) {
 		_vga->copyPage(0, 1);
 		_vga->_showQ->append(_mouse);
 		_heart->_enable = true;
-		_mouse->On();
+		_mouse->on();
 		for (selectSound(); !_snail->idle() || Vmenu::_addr;) {
 			mainLoop();
 			if (_eventManager->_quitFlag)
 				return false;
 		}
 
-		_mouse->Off();
+		_mouse->off();
 		_heart->_enable = false;
 		_vga->_showQ->clear();
 		_vga->copyPage(0, 2);
@@ -1812,7 +1812,7 @@ void CGEEngine::cge_main() {
 	//Debug( memset((void *) (-K(4)), 0, K(1)); )
 	memset(_barriers, 0xFF, sizeof(_barriers));
 
-	if (!_mouse->Exist)
+	if (!_mouse->_exist)
 		error("%s", _text->getText(NO_MOUSE_TEXT));
 
 	if (!SVG0FILE::exist(SVG0NAME))

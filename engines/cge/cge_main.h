@@ -169,7 +169,7 @@ extern System *_sys;
 extern int _offUseCount;
 extern Sprite *_pocLight;
 extern Keyboard *_keyboard;
-extern MOUSE *_mouse;
+extern Mouse *_mouse;
 extern EventManager *_eventManager;
 extern Sprite *_pocket[];
 extern Sprite *_sprite;

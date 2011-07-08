@@ -141,17 +141,18 @@ void Keyboard::NewKeyboard(Common::Event &event) {
 
 /*----------------- MOUSE interface -----------------*/
 
-MOUSE::MOUSE(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(NULL), hx(0), _vm(vm) {
+Mouse::Mouse(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), _busy(NULL), _hold(NULL), _hx(0), _vm(vm) {
 	static Seq ms[] = {
 		{ 0, 0, 0, 0, 1 },
 		{ 1, 1, 0, 0, 1 }
 	};
 
-	Hold = NULL;
-	hx = 0; hy = 0;
-	Exist = true;
-	Buttons = 0;
-	Busy = NULL;
+	_hold = NULL;
+	_hx = 0; 
+	_hy = 0;
+	_exist = true;
+	_buttons = 0;
+	_busy = NULL;
 	_active = false;
 
 	setSeq(ms);
@@ -162,37 +163,39 @@ MOUSE::MOUSE(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), Busy(NULL), Hold(
 }
 
 
-MOUSE::~MOUSE() {
-	Off();
+Mouse::~Mouse() {
+	off();
 }
 
 
-//void MOUSE::SetFun()
+//void Mouse::setFun()
 //{
 //}
 
 
-void MOUSE::On() {
-	if (_seqPtr && Exist) {
+void Mouse::on() {
+	if (_seqPtr && _exist) {
 		_active = true;
 		step(0);
-		if (Busy) Busy->step(0);
+		if (_busy)
+			_busy->step(0);
     }
 }
 
 
-void MOUSE::Off() {
+void Mouse::off() {
 	if (_seqPtr == 0) {
-		if (Exist) {
+		if (_exist) {
 			_active = false;
 		}
 
 		step(1);
-		if (Busy) Busy->step(1);
+		if (_busy)
+			_busy->step(1);
 	}
 }
 
-void MOUSE::NewMouse(Common::Event &event) {
+void Mouse::newMouse(Common::Event &event) {
 	if (!_active)
 		return;
 
@@ -208,19 +211,19 @@ void MOUSE::NewMouse(Common::Event &event) {
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 		evt._msk = L_DN;
-		Buttons |= 1;
+		_buttons |= 1;
 		break;
 	case Common::EVENT_LBUTTONUP:
 		evt._msk = L_UP;
-		Buttons &= ~1;
+		_buttons &= ~1;
 		break;
 	case Common::EVENT_RBUTTONDOWN:
 		evt._msk = R_DN;
-		Buttons |= 2;
+		_buttons |= 2;
 		break;
 	case Common::EVENT_RBUTTONUP:
 		evt._msk = R_UP;
-		Buttons &= ~2;
+		_buttons &= ~2;
 		break;
 	default:
 		break;
@@ -252,7 +255,7 @@ void EventManager::poll() {
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
 			// Handle mouse events
-			_mouse->NewMouse(_event);
+			_mouse->newMouse(_event);
 			handleEvents();
 			break;
 		default:
@@ -265,8 +268,8 @@ void EventManager::handleEvents() {
 	while (EvtTail != EvtHead) {
 		CGEEvent e = Evt[EvtTail];
 		if (e._msk) {
-			if (_mouse->Hold && e._ptr != _mouse->Hold)
-				_mouse->Hold->touch(e._msk | ATTN, e._x - _mouse->Hold->_x, e._y - _mouse->Hold->_y);
+			if (_mouse->_hold && e._ptr != _mouse->_hold)
+				_mouse->_hold->touch(e._msk | ATTN, e._x - _mouse->_hold->_x, e._y - _mouse->_hold->_y);
 
 			// update mouse cursor position
 			if (e._msk & ROLL)
@@ -282,18 +285,18 @@ void EventManager::handleEvents() {
 					_sys->touch(e._msk, e._x, e._y);
 
 			if (e._msk & L_DN) {
-				_mouse->Hold = e._ptr;
-				if (_mouse->Hold) {
-					_mouse->Hold->_flags._hold = true;
-					_mouse->hx = e._x - _mouse->Hold->_x;
-					_mouse->hy = e._y - _mouse->Hold->_y;
+				_mouse->_hold = e._ptr;
+				if (_mouse->_hold) {
+					_mouse->_hold->_flags._hold = true;
+					_mouse->_hx = e._x - _mouse->_hold->_x;
+					_mouse->_hy = e._y - _mouse->_hold->_y;
 				}
 			}
 
 			if (e._msk & L_UP) {
-				if (_mouse->Hold) {
-					_mouse->Hold->_flags._hold = false;
-					_mouse->Hold = NULL;
+				if (_mouse->_hold) {
+					_mouse->_hold->_flags._hold = false;
+					_mouse->_hold = NULL;
 				}
 			}
 			///Touched = e.Ptr;
@@ -304,8 +307,8 @@ void EventManager::handleEvents() {
 		}
 		EvtTail = (EvtTail + 1) % EVT_MAX;
 	}
-	if (_mouse->Hold)
-		_mouse->Hold->gotoxy(_mouse->_x - _mouse->hx, _mouse->_y - _mouse->hy);
+	if (_mouse->_hold)
+		_mouse->_hold->gotoxy(_mouse->_x - _mouse->_hx, _mouse->_y - _mouse->_hy);
 }
 
 void EventManager::ClrEvt(Sprite *spr) {
