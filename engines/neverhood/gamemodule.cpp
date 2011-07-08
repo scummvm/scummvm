@@ -78,17 +78,17 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 		_field24 = -1;
 		_field26 = -1;
 		_field28 = -1;
-		_field20 = param._integer;
+		_field20 = param.asInteger();
 		_done = true;
 		return messageResult;
 	case 0x100A:
-		_field24 = (int16)param._integer;
+		_field24 = (int16)param.asInteger();
 		return messageResult;
 	case 0x101F:
 		_field2C = true;		
 		return messageResult;
 	case 0x1023:
-		_field26 = (int16)param._integer;
+		_field26 = (int16)param.asInteger();
 		return messageResult;
 	}
 	return messageResult;

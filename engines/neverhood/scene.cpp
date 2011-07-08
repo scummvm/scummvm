@@ -31,11 +31,11 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	_messageListFlag1 = false;
 	_systemCallbackFlag = false;
 	_messageList = NULL;
-	// TODO _rectType = 0;
+	_rectType = 0;
 	_mouseClickPos.x = 0;
 	_mouseClickPos.y = 0;
 	_mouseClicked = false;
-	// TODO _rectList = NULL;
+	_rectList = NULL;
 	// TODO _someRects = NULL;
 	_klayman = NULL;
 	// TODO _mouseSprite = NULL;
@@ -191,27 +191,24 @@ void Scene::update() {
 		_smkFileHash = 0;
 	} else {
 		if (_mouseClicked) {
-			//** ALL TODO
-#if 0			
 			if (_klayman) {
 				// TODO: Merge later
 				if (_klayman->hasMessageHandler() && 
 					_klayman->sendMessage(0x1008, 0, this) != 0 &&
 					_messageListFlag &&
-					queryPositionClass400(_mouseClickPos.x, _mouseClickPos.y)) {
+					queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {
 					_mouseClicked = false;
 				} else if (_klayman->hasMessageHandler() && 
 					_klayman->sendMessage(0x1008, 0, this) != 0 &&
 					_messageListFlag) {
 					_mouseClicked = !queryPositionRectList(_mouseClickPos.x, _mouseClickPos.y);
 				}
-			} else if (queryPositionClass400(_mouseClickPos.x, _mouseClickPos.y)) {
+			} else if (queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {
 				_mouseClicked = false;
 			}
-#endif			
 		}
-	
-		// TODO runMessageList();
+
+		runMessageList();
 
 		// Update all entities		
 		for (Common::Array<Entity*>::iterator iter = _entities.begin(); iter != _entities.end(); iter++)
@@ -228,12 +225,13 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 #if 0	
 		if (_mouseSprite && _mouseSprite->hasMessageHandler())
 			_mouseSprite->sendMessage(0x4002, param, this);
-		queryPositionSomeRects(param._point.x, param._point.y);			
+		queryPositionSomeRects(param.asPoint().x, param.asPoint().y);			
 #endif	
 		break;
 	case 1: // mouse clicked
+		debug("mouse clicked");
 		_mouseClicked = true;
-		_mouseClickPos = param._point;
+		_mouseClickPos = param.asPoint();
 		break;
 	/* ORIGINAL DEBUG		
 	case 3:
@@ -259,7 +257,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 			if (_messageListIndex == _messageListCount)
 				_klayman->sendMessage(0x4004, 0, this);
 			else {
-				// TODO runMessageList();
+				runMessageList();
 			}
 		}
 		break;
@@ -287,7 +285,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 #endif	
 		break;
 	case 0x1022:
-		setSurfacePriority(((Sprite*)sender)->getSurface(), param._integer);
+		setSurfacePriority(((Sprite*)sender)->getSurface(), param.asInteger());
 		break;
 	}
 	return 0;
@@ -311,9 +309,187 @@ void Scene::smackerUpdate() {
 }
 
 uint32 Scene::smackerHandleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	if (messageNum == 0x3002)
+	switch (messageNum) {
+	case 0x3002:
 		_smackerDone = true;
+		break;
+	}
 	return 0;
+}
+
+bool Scene::queryPositionSprite(int16 mouseX, int16 mouseY) {
+	debug("Scene::queryPositionSprite(%d, %d)", mouseX, mouseY);
+	for (uint i = 0; i < _vm->_collisionMan->getSpriteCount(); i++) {
+		Sprite *sprite = _vm->_collisionMan->getSprite(i);
+		if (sprite->hasMessageHandler() && sprite->isPointInside(mouseX, mouseY) && 
+			sprite->sendPointMessage(0x1011, _mouseClickPos, this) != 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Scene::queryPositionRectList(int16 mouseX, int16 mouseY) {
+	if (_rectType == 1) {
+		RectList &rectList = *_rectList;
+		int16 klaymanX = _klayman->getX();
+		int16 klaymanY = _klayman->getY();
+		for (uint i = 0; i < rectList.size(); i++) {
+			debug("(%d, %d) ? (%d, %d, %d, %d)", klaymanX, klaymanY, rectList[i].rect.x1, rectList[i].rect.y1, rectList[i].rect.x2, rectList[i].rect.y2);
+			if (klaymanX >= rectList[i].rect.x1 && klaymanX <= rectList[i].rect.x2 && 
+				klaymanY >= rectList[i].rect.y1 && klaymanY <= rectList[i].rect.y2) {
+				for (uint j = 0; j < rectList[i].subRects.size(); j++) {
+					debug("  (%d, %d) ? (%d, %d, %d, %d)", mouseX, mouseY, rectList[i].subRects[j].rect.x1, rectList[i].subRects[j].rect.y1, rectList[i].subRects[j].rect.x2, rectList[i].subRects[j].rect.y2);
+					if (mouseX >= rectList[i].subRects[j].rect.x1 && mouseX <= rectList[i].subRects[j].rect.x2 && 
+						mouseY >= rectList[i].subRects[j].rect.y1 && mouseY <= rectList[i].subRects[j].rect.y2) {
+						debug("Scene::queryPositionRectList() -> %08X", rectList[i].subRects[j].messageListId);
+						return setMessageList2(rectList[i].subRects[j].messageListId);
+					}
+				}
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+void Scene::setMessageList(uint32 id, bool messageListFlag, bool systemCallbackFlag) {
+	setMessageList(_vm->_staticData->getMessageList(id), messageListFlag, systemCallbackFlag);
+}
+
+void Scene::setMessageList(MessageList *messageList, bool messageListFlag, bool systemCallbackFlag) {
+	_messageList = messageList;
+	_messageListCount = _messageList ? _messageList->size() : 0;
+	_messageListIndex = 0;
+	_messageListFlag1 = false;
+	_messageListFlag = messageListFlag;
+	_systemCallbackFlag = systemCallbackFlag;
+	_messageListStatus = 1;
+	_klayman->sendMessage(0x101C, 0, this);
+}
+
+bool Scene::setMessageList2(uint32 id, bool messageListFlag, bool systemCallbackFlag) {
+	return setMessageList2(_vm->_staticData->getMessageList(id), messageListFlag, systemCallbackFlag);
+}
+
+bool Scene::setMessageList2(MessageList *messageList, bool messageListFlag, bool systemCallbackFlag) {
+	bool result = false;
+	
+	debug("Scene::setMessageList2(%p)", (void*)messageList);
+	
+	if (_messageListStatus == 1) {
+		if (messageList != _messageList2) {
+			if (_messageValue >= 0) {
+				_parentModule->sendMessage(0x1023, _messageValue, this);
+				_messageValue = -1;
+			}
+			_messageList2 = messageList;
+			setMessageList(messageList, messageListFlag, systemCallbackFlag);
+			result = true;
+		}
+	} else if (_messageListStatus == 2) {
+		if (messageList == _messageList2) {
+			if (_messageValue >= 0) {
+				_parentModule->sendMessage(0x1023, _messageValue, this);
+				_messageValue = -1;
+			}
+			_messageList2 = messageList;
+			setMessageList(messageList, messageListFlag, systemCallbackFlag);
+			result = true;
+		}
+	} else {
+		if (_messageValue >= 0) {
+			_parentModule->sendMessage(0x1023, _messageValue, this);
+			_messageValue = -1;
+		}
+		_messageList2 = messageList;
+		setMessageList(messageList, messageListFlag, systemCallbackFlag);
+	}
+	return result;
+}
+
+void Scene::runMessageList() {
+
+	//debug("_messageListFlag2 = %d", _messageListFlag2);
+
+	if (_messageListFlag2)
+		return;
+
+	_messageListFlag2 = true;
+
+	if (_messageListFlag1) {
+		_messageListFlag2 = false;
+		return;
+	}
+
+	if (!_messageList) {
+		_messageList2 = NULL;
+		_messageListStatus = 0;
+	}
+	
+	if (_messageList && _klayman) {
+	
+		while (_messageList && _messageListIndex < _messageListCount && !_messageListFlag1) {
+			int messageNum = (*_messageList)[_messageListIndex].messageNum;
+			uint32 messageParam = (*_messageList)[_messageListIndex].messageValue;
+			
+			debug("$$$$$$$$$$$ Scene::runMessageList() %04X, %08X", messageNum, messageParam);
+			
+			_messageListIndex++;
+			if (_messageListIndex == _messageListCount) {
+				_klayman->sendMessage(0x1021, 0, this);
+			}
+			if (_systemCallbackFlag) {
+				// TODO messageNum = systemConvertMessageCb(messageNum);
+			}
+			if (messageNum != 0x4003) {
+				if (messageNum == 0x1009 || messageNum == 0x1024) {
+					_parentModule->sendMessage(messageNum, messageParam, this);
+				} else if (messageNum == 0x100A) {
+					_messageValue = messageParam;
+					_parentModule->sendMessage(messageNum, messageParam, this);
+				} else if (messageNum == 0x4001) {
+					_messageListFlag1 = true;
+					_klayman->sendPointMessage(0x4001, _mouseClickPos, this);
+				} else if (messageNum == 0x100D) {
+					if (this->hasMessageHandler() && this->sendMessage(0x100D, messageParam, this) != 0)
+						continue;
+				} else if (messageNum == 0x101A) {
+					_messageListStatus = 0;
+				} else if (messageNum == 0x101B) {
+					_messageListStatus = 2;
+				} else if (messageNum == 0x1020) {
+					_messageListFlag = false;
+				} else if (messageNum >= 0x2000 && messageNum <= 0x2FFF) {
+					if (this->hasMessageHandler() && this->sendMessage(messageNum, messageParam, this) != 0) {
+						_messageListFlag2 = false;
+						return;
+					}
+				} else {
+					_messageListFlag1 = true;
+					if (_klayman->hasMessageHandler() && _klayman->sendMessage(messageNum, messageParam, this) != 0) {
+						_messageListFlag1 = false;
+					}
+				} 
+			}
+			if (_messageListIndex == _messageListCount) {
+				_messageListFlag = true;
+				_messageList = NULL;
+			}
+		}
+	}
+
+	_messageListFlag2 = false;
+	
+}
+
+void Scene::setRectList(uint32 id) {
+	setRectList(_vm->_staticData->getRectList(id));
+}
+
+void Scene::setRectList(RectList *rectList) {
+	_rectList = rectList;
+	_rectType = 1;
 }
 
 } // End of namespace Neverhood

@@ -41,13 +41,21 @@ struct KlaymanTableItem {
 
 class Klayman : public AnimatedSprite {
 public:
-	Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority);
+	Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority = 1000, int objectPriority = 1000);
+
+	void update();
 
 	void sub41FD30();
 	void sub41FDA0();
 	void sub41FDF0();
 	void sub41FE60();
 	void sub41FEB0();
+	void sub41FC80();
+	void sub4211F0();
+	void sub4211B0();
+	
+	void spriteUpdate41F250();
+	void spriteUpdate41F5F0();
 
 protected:
 	Entity *_parentScene;
@@ -74,15 +82,14 @@ protected:
 	const KlaymanTableItem *_table;
 	int _tableCount;
 	int _tableMaxValue;
+	uint32 _field114;
 	/*
-	00000114 field114		dd ?
 	00000118 field118		dw ?
 	*/
 	bool _soundFlag;
 	int _resourceHandle;
 	virtual void xUpdate();
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void update();
 
 	void setKlaymanTable(const KlaymanTableItem *table, int tableCount);
 	void setKlaymanTable1();
@@ -114,7 +121,6 @@ protected:
 	void sub41C770();
 	void sub41C790();
 	
-	void sub41FC80();
 	void update41D0F0();
 	uint32 handleMessage41D360(int messageNum, const MessageParam &param, Entity *sender);
 
@@ -126,6 +132,24 @@ protected:
 	uint32 handleMessage41F140(int messageNum, const MessageParam &param, Entity *sender);
 
 	void sub41C930(int16 x, bool flag);
+
+	uint32 handleMessage41E920(int messageNum, const MessageParam &param, Entity *sender);
+	
+	bool sub41CEB0(AnimationCb callback3);
+	
+	void sub41FB40();
+	void sub41FBB0();
+	uint32 handleMessage41DD80(int messageNum, const MessageParam &param, Entity *sender);
+	void sub41CD70(int16 x);
+	void sub41F950();
+	void sub41FB30();
+	uint32 handleMessage41EC70(int messageNum, const MessageParam &param, Entity *sender);
+	void sub41F9E0();
+	void spriteUpdate41F300();
+	uint32 handleMessage41EB70(int messageNum, const MessageParam &param, Entity *sender);
+	void sub41FA40();
+
+	void spriteUpdate41F320();
 	
 };
 

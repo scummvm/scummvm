@@ -198,7 +198,7 @@ bool AnimResource::load(uint32 fileHash) {
 	
 	animList = resourceData + 12;
 	for (animListIndex = 0; animListIndex < animListCount; animListIndex++) {
-		debug("hash: %08X", READ_LE_UINT32(animList));
+		debug(8, "hash: %08X", READ_LE_UINT32(animList));
 		if (READ_LE_UINT32(animList) == fileHash)
 			break;
 		animList += 8;				
@@ -218,7 +218,7 @@ bool AnimResource::load(uint32 fileHash) {
 	frameCount = READ_LE_UINT16(animList + 4);
 	frameListStartOfs = READ_LE_UINT16(animList + 6);
 	
-	debug("frameCount = %d; frameListStartOfs = %04X; animInfoStartOfs = %04X", frameCount, frameListStartOfs, animInfoStartOfs);
+	debug(8, "frameCount = %d; frameListStartOfs = %04X; animInfoStartOfs = %04X", frameCount, frameListStartOfs, animInfoStartOfs);
 	
 	frameList = resourceData + animInfoStartOfs + frameListStartOfs;
 
@@ -241,7 +241,7 @@ bool AnimResource::load(uint32 fileHash) {
 		frameInfo.deltaRect.height = READ_LE_UINT16(frameList + 24);
 		frameInfo.field_1A = READ_LE_UINT16(frameList + 26); 
 		frameInfo.spriteDataOffs = READ_LE_UINT32(frameList + 28);
-		debug("frameHash = %08X; counter = %d; rect = (%d,%d,%d,%d); deltaX = %d; deltaY = %d; deltaRect = (%d,%d,%d,%d); field_1A = %04X; spriteDataOffs = %08X", 
+		debug(8, "frameHash = %08X; counter = %d; rect = (%d,%d,%d,%d); deltaX = %d; deltaY = %d; deltaRect = (%d,%d,%d,%d); field_1A = %04X; spriteDataOffs = %08X", 
 			frameInfo.frameHash, frameInfo.counter, 
 			frameInfo.rect.x, frameInfo.rect.y, frameInfo.rect.width, frameInfo.rect.height,
 			frameInfo.deltaX, frameInfo.deltaY,
@@ -297,6 +297,20 @@ int16 AnimResource::getFrameIndex(uint32 frameHash) {
 		if (_frames[i].frameHash == frameHash)
 			return (int16)i;
 	return -1;			
+}
+
+SoundResource::SoundResource(NeverhoodEngine *vm)
+	: _vm(vm) {
+}
+
+bool SoundResource::isPlaying() { 
+	return false; 
+}
+
+void SoundResource::play(uint32 fileHash, bool looping) {
+}
+
+void SoundResource::play() {
 }
 
 } // End of namespace Neverhood

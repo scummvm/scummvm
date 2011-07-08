@@ -52,17 +52,17 @@ uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *
 		_field24 = -1;
 		_field26 = -1;
 		_field28 = -1;
-		_field20 = param._integer;
+		_field20 = param.asInteger();
 		_done = true;
 		return 0;
 	case 0x100A:
-		_field24 = (int16)param._integer;
+		_field24 = (int16)param.asInteger();
 		return 0;
 	case 0x1023:
-		_field26 = (int16)param._integer;
+		_field26 = (int16)param.asInteger();
 		return 0;
 	case 0x1024:
-		_field28 = (int16)param._integer;
+		_field28 = (int16)param.asInteger();
 		return 0;
 	default:
 		if (_childObject && sender == _parentModule)

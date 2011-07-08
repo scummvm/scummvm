@@ -56,15 +56,15 @@ protected:
 	Common::Array<BaseSurface*> _surfaces;
 	bool _systemCallbackFlag;
 	MessageList *_messageList;
-	int _messageListIndex;
-	int _messageListCount;
+	uint _messageListCount;
+	uint _messageListIndex;
 	bool _messageListFlag1;
 	NPoint _mouseClickPos;
 	bool _mouseClicked;
 	// TODO RectResource _rectResource;
-	// TODO 00000080 rectList		dd ?
-	// TODO 00000084 rectType		dw ?
-	// TODO 00000086 rectListCount   dw ?
+	RectList *_rectList;
+	int _rectType;
+	// rectListCount
 	// TODO 00000088 someRects	   dd ?
 	// TODO 0000008C someRectsCount  dw ?
 	// TODO 0000008E field_8E		dw ?
@@ -93,6 +93,15 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void smackerUpdate();
 	uint32 smackerHandleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	bool queryPositionSprite(int16 mouseX, int16 mouseY);
+	bool queryPositionRectList(int16 mouseX, int16 mouseY);
+	void setMessageList(uint32 id, bool messageListFlag = true, bool systemCallbackFlag = false);
+	void setMessageList(MessageList *messageList, bool messageListFlag = true, bool systemCallbackFlag = false);
+	bool setMessageList2(uint32 id, bool messageListFlag = true, bool systemCallbackFlag = false);
+	bool setMessageList2(MessageList *messageList, bool messageListFlag = true, bool systemCallbackFlag = false);
+	void runMessageList();
+	void setRectList(uint32 id);
+	void setRectList(RectList *rectList);
 };
 
 } // End of namespace Neverhood

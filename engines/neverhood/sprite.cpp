@@ -384,7 +384,7 @@ void AnimatedSprite::updateFrameIndex() {
 }
 
 void AnimatedSprite::updateFrameInfo() {
-	debug("AnimatedSprite::updateFrameInfo()");
+	debug(8, "AnimatedSprite::updateFrameInfo()");
 
 	const AnimFrameInfo &frameInfo = _animResource.getFrameInfo(_frameIndex);
 	
@@ -452,20 +452,44 @@ void AnimatedSprite::setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fil
 	_hashListIndex = -1;
 }
 
+void AnimatedSprite::setCallback1(AnimationCb callback1) {
+	if (_callback1Cb) {
+		(this->*_callback1Cb)();
+	}
+	SetAnimationCallback1(callback1);
+}
+
+void AnimatedSprite::setCallback2(AnimationCb callback2) {
+
+	if (_callback1Cb) {
+		// _callback1Cb has to be cleared before it's called
+		AnimationCb cb = _callback1Cb;
+		_callback1Cb = NULL;
+		(this->*cb)();
+	}
+
+	// TODO _callbackList = NULL;
+	_callback3Cb = NULL;
+	_callback2Cb = callback2;
+	
+	if (_callback2Cb) {
+		(this->*_callback2Cb)();
+	}
+
+}
+
 void AnimatedSprite::removeCallbacks() {
 
 	if (_callback1Cb) {
 		// _callback1Cb has to be cleared before it's called
 		AnimationCb cb = _callback1Cb;
 		_callback1Cb = NULL;
-		debug("Fire _callback1Cb");
 		(this->*cb)();
 	}
 
 	if (_callback3Cb) {
 		_callback2Cb = _callback3Cb;
 		_callback3Cb = NULL;
-		debug("Fire _callback3Cb");
 		(this->*_callback2Cb)();
 #if 0 // TODO		
 	} else if (_callbackList) {

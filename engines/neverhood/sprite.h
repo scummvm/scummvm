@@ -45,6 +45,8 @@ public:
 	void setDoDeltaX(int type);
 	void setDoDeltaY(int type);
 	bool isPointInside(int16 x, int16 y);
+	int16 getX() const { return _x; }
+	int16 getY() const { return _y; }
 protected:
 	void (Sprite::*_spriteUpdateCb)();
 	int16 (Sprite::*_filterXCb)(int16);
@@ -98,6 +100,7 @@ public:
 	AnimatedSprite(NeverhoodEngine *vm, int objectPriority);
 	AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y);
 	void update();
+	void updateDeltaXY();
 protected:
 	typedef void (AnimatedSprite::*AnimationCb)();
 	AnimResource _animResource;
@@ -129,7 +132,6 @@ protected:
 	AnimationCb _callback2Cb;
 	AnimationCb _callback3Cb;
 	void init();
-	void updateDeltaXY();
 	void updateAnim();
 	void updatePosition();
 	void updateFrameIndex();
@@ -139,6 +141,8 @@ protected:
 	void setFileHash1();
 	void setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5);
 	void setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fileHash5);
+	void setCallback1(AnimationCb callback1);
+	void setCallback2(AnimationCb callback2);
 	int16 getHashListIndex(uint32 fileHash) { return 0; } // TODO !!!
 	void removeCallbacks();
 };

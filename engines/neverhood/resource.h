@@ -103,8 +103,10 @@ protected:
 
 class SoundResource {
 public:
-	SoundResource(NeverhoodEngine *vm) : _vm(vm) {}
-	bool isPlaying() const { return false; }
+	SoundResource(NeverhoodEngine *vm);
+	bool isPlaying();
+	void play(uint32 fileHash, bool looping = false);
+	void play();
 protected:
 	NeverhoodEngine *_vm;	
 };

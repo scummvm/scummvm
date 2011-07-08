@@ -42,6 +42,8 @@ public:
 	void clearSprites();
 	void save();
 	void restore();
+	uint getSpriteCount() const { return _sprites.size(); }
+	Sprite *getSprite(uint index) const { return _sprites[index]; }
 protected:
 	NeverhoodEngine *_vm;
 	HitRectList *_hitRects;

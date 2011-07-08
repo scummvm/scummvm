@@ -78,6 +78,8 @@ Common::Error NeverhoodEngine::run() {
 	_res->addArchive("s.blb");
 	_res->addArchive("t.blb");
 
+	CursorMan.showMouse(true);
+
 #if 0
 	BlbArchive *blb = new BlbArchive();
 	blb->open("m.blb");

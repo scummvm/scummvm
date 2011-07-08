@@ -30,16 +30,43 @@ namespace Neverhood {
 
 class Entity;
 
+enum MessageParamType {
+	mptInteger,
+	mptPoint,
+	mptEntity
+};
+
 struct MessageParam {
+public:
+	MessageParam(uint32 value) : _type(mptInteger), _integer(value) {}
+	MessageParam(NPoint value) : _type(mptPoint), _point(value) {}
+	MessageParam(Entity *entity) : _type(mptEntity), _entity(entity) {}
+	uint32 asInteger() const { 
+		assert(_type == mptInteger); 
+		return _integer; 
+	}
+	NPoint asPoint() const { 
+		assert(_type == mptInteger || _type == mptPoint);
+		if (_type == mptInteger) {
+			NPoint pt;
+			pt.x = (_integer >> 16) & 0xFFFF; 
+			pt.y = _integer & 0xFFFF;
+			return pt;
+		} 
+		return _point; 
+	}
+	Entity *asEntity() const {
+		assert(_type == mptEntity); 
+		return _entity; 
+	}
+protected:
 	union {
 		uint32 _integer;
 		NPoint _point;
 		Entity *_entity;
 		// TODO: Other types...
 	};
-	MessageParam(uint32 value) { _integer = value; }
-	MessageParam(NPoint value) { _point = value; }
-	MessageParam(Entity *entity) { _entity = entity; }
+	MessageParamType _type;
 	// TODO: Constructors for the param types...
 };
 
