@@ -105,7 +105,7 @@ void CGEEngine::setup() {
 	_snail = new Snail(this, false);
 	_snail_ = new Snail(this, true);
 
-	_mouse = new MOUSE(this);
+	_mouse = new Mouse(this);
 	_keyboard = new Keyboard();
 	_eventManager = new EventManager();
 	_offUseCount = atoi(_text->getText(OFF_USE_COUNT));

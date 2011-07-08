@@ -234,14 +234,14 @@ extern "C" void TimerProc() {
 		if (Sys) {
 			if (Sys->Time) {
 				if (--Sys->Time == 0)
-					Sys->Tick();
+					Sys->tick();
 			}
 		}
 		for (spr = VGA::ShowQ.First(); spr; spr = spr->Next) {
 			if (spr->Time) {
 				if (!spr->_flags.Hide) {
 					if (-- spr->Time == 0)
-						spr->Tick();
+						spr->tick();
 				}
 			}
 		}
@@ -308,7 +308,7 @@ void Engine_::newTimer(...) {
 	    if (Sys) {
 			if (Sys->Time) {
 				if (--Sys->Time == 0)
-					Sys->Tick();
+					Sys->tick();
 			}
 		}
 
@@ -316,7 +316,7 @@ void Engine_::newTimer(...) {
 			if (spr->Time) { 
 				if (!spr->_flags.Hide) {
 					if (--spr->Time == 0) 
-						spr->Tick();
+						spr->tick();
 				}
 			}
 		}

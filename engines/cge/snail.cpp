@@ -848,9 +848,9 @@ void CGEEngine::snReach(Sprite *spr, int mode) {
 
 void CGEEngine::snMouse(bool on) {
 	if (on)
-		_mouse->On();
+		_mouse->on();
 	else
-		_mouse->Off();
+		_mouse->off();
 }
 
 
