@@ -78,7 +78,7 @@ protected:
 	bool _flagFA;
 	SoundResource _soundResource1;
 	SoundResource _soundResource2;
-	int _status;
+	int _status3;
 	const KlaymanTableItem *_table;
 	int _tableCount;
 	int _tableMaxValue;
@@ -150,6 +150,8 @@ protected:
 	void sub41FA40();
 
 	void spriteUpdate41F320();
+	
+	uint32 handleMessage41E210(int messageNum, const MessageParam &param, Entity *sender);
 	
 };
 

@@ -73,10 +73,12 @@ bool Sprite::isPointInside(int16 x, int16 y) {
 }
 
 uint32 Sprite::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	if (messageNum == 5) {
+	switch (messageNum) {
+	case 0x0005:
 		// TODO: Draw debug marker (?)
 		// TODO g_Screen->drawLine(_x - 5, _y, _x + 6, _y);
 		// TODO g_Screen->drawLine(_x, _y - 5, _x, _y + 6);
+		break;
 	}
 	return 0;
 }
@@ -268,14 +270,16 @@ void AnimatedSprite::updateAnim() {
 					if (_animResource.loadInternal(_fileHash2)) {
 						_fileHash3 = _fileHash2;
 					} else {
+						debug("TODO");
 						// TODO _animResource.loadInternal(calcHash("sqDefault"));
 						_fileHash3 = 0;
 					}
 					if (_replNewByte != _replOldByte) {
+						debug("TODO");
 						// TODO _animResource.setRepl(_replOldByte, _replNewByte);
 					}
 					_fileHash2 = 0;
-					if (_status != 0) {
+					if (_animStatus != 0) {
 						_frameIndex = _fileHash6 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash6)) : 0;
 						_frameIndex2 = _fileHash5 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash5)) : _animResource.getFrameCount() - 1;
 					} else {
@@ -292,17 +296,19 @@ void AnimatedSprite::updateAnim() {
 	}
 	
 	if (_fileHash1 != 0) {
-		if (_status == 2) {
+		if (_animStatus == 2) {
 			_hashListIndex = _frameIndex;
 		} else {
-			if (_status == 1) {
+			if (_animStatus == 1) {
 				if (_animResource.loadInternal(_fileHash1)) {
 					_fileHash3 = _fileHash1;
 				} else {
+					debug("TODO");
 					// TODO _animResource.loadInternal(calcHash("sqDefault"));
 					_fileHash3 = 0;
 				}
 				if (_replNewByte != _replOldByte) {
+					debug("TODO");
 					// TODO _animResource.setRepl(_replOldByte, _replNewByte);
 				}
 				_fileHash1 = 0;
@@ -312,10 +318,12 @@ void AnimatedSprite::updateAnim() {
 				if (_animResource.loadInternal(_fileHash1)) {
 					_fileHash3 = _fileHash1;
 				} else {
+					debug("TODO");
 					// TODO _animResource.loadInternal(calcHash("sqDefault"));
 					_fileHash3 = 0;
 				}
 				if (_replNewByte != _replOldByte) {
+					debug("TODO");
 					// TODO _animResource.setRepl(_replOldByte, _replNewByte);
 				}
 				_fileHash1 = 0;
@@ -419,7 +427,7 @@ void AnimatedSprite::setFileHash(uint32 fileHash, int16 frameIndex3, int16 frame
 	_frameIndex3 = frameIndex3;
 	_frameIndex4 = frameIndex4;
 	_fileHash4 = 0;
-	_status = 0;
+	_animStatus = 0;
 	_playBackwards = false;
 	_newHashListIndex = -1;
 	_hashListIndex = -1;
@@ -427,7 +435,7 @@ void AnimatedSprite::setFileHash(uint32 fileHash, int16 frameIndex3, int16 frame
 
 void AnimatedSprite::setFileHash1() {
 	_fileHash1 = 1;
-	_status = 2;
+	_animStatus = 2;
 }
 
 void AnimatedSprite::setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5) {
@@ -435,7 +443,7 @@ void AnimatedSprite::setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 file
 	_fileHash6 = fileHash6;
 	_fileHash5 = fileHash5;
 	_fileHash4 = 0;
-	_status = 1;
+	_animStatus = 1;
 	_playBackwards = false;
 	_newHashListIndex = -1;
 	_hashListIndex = -1;
@@ -446,7 +454,7 @@ void AnimatedSprite::setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fil
 	_fileHash6 = fileHash6;
 	_fileHash5 = fileHash5;
 	_fileHash4 = 0;
-	_status = 1;
+	_animStatus = 1;
 	_playBackwards = false;
 	_newHashListIndex = -1;
 	_hashListIndex = -1;
@@ -456,13 +464,12 @@ void AnimatedSprite::setCallback1(AnimationCb callback1) {
 	if (_callback1Cb) {
 		(this->*_callback1Cb)();
 	}
-	SetAnimationCallback1(callback1);
+	_callback1Cb = callback1;
 }
 
 void AnimatedSprite::setCallback2(AnimationCb callback2) {
 
 	if (_callback1Cb) {
-		// _callback1Cb has to be cleared before it's called
 		AnimationCb cb = _callback1Cb;
 		_callback1Cb = NULL;
 		(this->*cb)();
@@ -481,7 +488,6 @@ void AnimatedSprite::setCallback2(AnimationCb callback2) {
 void AnimatedSprite::removeCallbacks() {
 
 	if (_callback1Cb) {
-		// _callback1Cb has to be cleared before it's called
 		AnimationCb cb = _callback1Cb;
 		_callback1Cb = NULL;
 		(this->*cb)();

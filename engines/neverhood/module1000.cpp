@@ -152,14 +152,17 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;
 	case 0x480D:
-		debug("########### A");				
-		// TODO setCallback2(AnimationCallback(&Klayman::sub44FA50));
+		setCallback2(AnimationCallback(&KmScene1001::sub44FA50));
 		break;
 	case 0x4812:
 		debug("########### B");				
 		// TODO setCallback2(AnimationCallback(&Klayman::sub41FF80));
 		break;
-		
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;		
+
 	case 0x4836:
 		if (param.asInteger() == 1) {
 			_parentScene->sendMessage(0x2002, 0, this);
@@ -169,7 +172,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 
 	case 0x4840:
 		sub41CD70(param.asInteger());
-		break;		
+		break;
 	}
 
 	// TODO
@@ -189,7 +192,8 @@ void KmScene1001::sub44FA50() {
 }
 
 uint32 KmScene1001::handleMessage44FA00(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Klayman::handleMessage(messageNum, param, sender);
+	debug("KmScene1001::handleMessage44FA00(%04X)", messageNum);
+	uint32 messageResult = Klayman::handleMessage41E210(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x4AB28209) {
@@ -372,7 +376,6 @@ uint32 AsScene1001Lever::handleMessage(int messageNum, const MessageParam &param
 		}
 		break;
 	case 0x1011:
-		debug("Click lever");
 		_parentScene->sendMessage(0x4826, 0, this);
 		messageResult = 1;
 		break;
@@ -531,11 +534,10 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x21E64A00) {
 			if (_vm->getGlobalVar(0xD217189D)) {
 				setMessageList(0x004B48A8);
-				messageResult = 1;
 			} else {
 				setMessageList(0x004B48C8);
-				messageResult = 1;
 			}
+			messageResult = 1;
 		} else if (param.asInteger() == 0x040424D0) {
 			_klayman->sendMessage(0x1014, _ssButton, this);
 		} else if (param.asInteger() == 0x80006358) {
@@ -547,7 +549,6 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x2002:
-		debug("########## setRectList(0x004B49F0);");
 		setRectList(0x004B49F0);
 		break;
 	case 0x480B:

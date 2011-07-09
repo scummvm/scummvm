@@ -180,13 +180,13 @@ void Scene::update() {
 	if (_smkFileHash != 0) {
 		// TODO
 		//**** ALL TODO
-		//_smackerPlayer = new SmackerPlayer(this, _smkFileHash, true, 0);
+		_smackerPlayer = new SmackerPlayer(_vm, this, _smkFileHash, true, 0);
 		_savedUpdateHandlerCb = _updateHandlerCb;
 		_savedMessageHandlerCb = _messageHandlerCb;
 		SetUpdateHandler(&Scene::smackerUpdate);  
 		SetMessageHandler(&Scene::smackerHandleMessage);
 		_smackerDone = false;
-		// smackerUpdate();
+		smackerUpdate();
 		// g_screen->smackerPlayer = _smackerPlayer;  
 		_smkFileHash = 0;
 	} else {
@@ -219,7 +219,6 @@ void Scene::update() {
 }
 
 uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	// TODO
 	switch (messageNum) {
 	case 0: // mouse moved
 #if 0	
@@ -348,9 +347,8 @@ bool Scene::queryPositionRectList(int16 mouseX, int16 mouseY) {
 				}
 			}
 		}
-		return true;
 	}
-	return false;
+	return true;
 }
 
 void Scene::setMessageList(uint32 id, bool messageListFlag, bool systemCallbackFlag) {
@@ -358,6 +356,7 @@ void Scene::setMessageList(uint32 id, bool messageListFlag, bool systemCallbackF
 }
 
 void Scene::setMessageList(MessageList *messageList, bool messageListFlag, bool systemCallbackFlag) {
+	debug("Scene::setMessageList(%p)", (void*)messageList);
 	_messageList = messageList;
 	_messageListCount = _messageList ? _messageList->size() : 0;
 	_messageListIndex = 0;
@@ -366,6 +365,13 @@ void Scene::setMessageList(MessageList *messageList, bool messageListFlag, bool 
 	_systemCallbackFlag = systemCallbackFlag;
 	_messageListStatus = 1;
 	_klayman->sendMessage(0x101C, 0, this);
+	
+	// DEBUG: Show message list
+	for (uint i = 0; i < messageList->size(); i++) {
+		debug("%02d: %04X, %08X", i, (*messageList)[i].messageNum, (*messageList)[i].messageValue);
+	}
+	debug("================================================================");
+	
 }
 
 bool Scene::setMessageList2(uint32 id, bool messageListFlag, bool systemCallbackFlag) {
@@ -404,23 +410,18 @@ bool Scene::setMessageList2(MessageList *messageList, bool messageListFlag, bool
 		}
 		_messageList2 = messageList;
 		setMessageList(messageList, messageListFlag, systemCallbackFlag);
+		result = true;
 	}
 	return result;
 }
 
 void Scene::runMessageList() {
+	debug("Scene::runMessageList() _messageListFlag2 = %d; _messageListFlag1 = %d", _messageListFlag2, _messageListFlag1);
 
-	//debug("_messageListFlag2 = %d", _messageListFlag2);
-
-	if (_messageListFlag2)
+	if (_messageListFlag2 || _messageListFlag1)
 		return;
 
 	_messageListFlag2 = true;
-
-	if (_messageListFlag1) {
-		_messageListFlag2 = false;
-		return;
-	}
 
 	if (!_messageList) {
 		_messageList2 = NULL;
@@ -433,7 +434,7 @@ void Scene::runMessageList() {
 			int messageNum = (*_messageList)[_messageListIndex].messageNum;
 			uint32 messageParam = (*_messageList)[_messageListIndex].messageValue;
 			
-			debug("$$$$$$$$$$$ Scene::runMessageList() %04X, %08X", messageNum, messageParam);
+			//debug("Scene::runMessageList() %04X, %08X", messageNum, messageParam);
 			
 			_messageListIndex++;
 			if (_messageListIndex == _messageListCount) {

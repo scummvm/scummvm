@@ -49,8 +49,8 @@ public:
 		assert(_type == mptInteger || _type == mptPoint);
 		if (_type == mptInteger) {
 			NPoint pt;
-			pt.x = (_integer >> 16) & 0xFFFF; 
-			pt.y = _integer & 0xFFFF;
+			pt.x = _integer & 0xFFFF;
+			pt.y = (_integer >> 16) & 0xFFFF; 
 			return pt;
 		} 
 		return _point; 

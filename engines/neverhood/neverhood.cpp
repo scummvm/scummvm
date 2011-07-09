@@ -79,6 +79,11 @@ Common::Error NeverhoodEngine::run() {
 	_res->addArchive("t.blb");
 
 	CursorMan.showMouse(true);
+	{
+		byte buffer[2*2];
+		memset(buffer, 255, 4);
+		CursorMan.replaceCursor(buffer, 2, 2, 0, 0, 0);
+	}
 
 #if 0
 	BlbArchive *blb = new BlbArchive();
@@ -143,9 +148,6 @@ Common::Error NeverhoodEngine::run() {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				_keyState = event.kbd.keycode;
-				
-				// DEBUG gameModule->sendMessage(0x480F, 0, NULL);
-				
 				break;
 			case Common::EVENT_KEYUP:
 				_keyState = Common::KEYCODE_INVALID;
@@ -186,7 +188,7 @@ Common::Error NeverhoodEngine::run() {
 		_screen->wait();
 		_screen->update();
 		
-		//debug("---------------------------------------");
+		debug("---------------------------------------");
 	
 	}
 	

@@ -53,7 +53,7 @@ Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int
 	: AnimatedSprite(vm, objectPriority), _soundResource1(vm), _soundResource2(vm),
 	_counterMax(0), _counter(0), _flagE4(false), _counter3Max(0), _flagF8(false), _counter1(0),
 	_counter2(0), /*_field118(0), */_status2(0), _flagE5(true), _attachedSprite(NULL), _flagE1(false),
-	_status(1), _parentScene(parentScene), _flagE2(false), _flagE3(false), _flagF6(false), _flagF7(false),
+	_status3(1), _parentScene(parentScene), _flagE2(false), _flagE3(false), _flagF6(false), _flagF7(false),
 	_flagFA(false), _statusE0(0), _field114(0), _resourceHandle(-1), _soundFlag(false) {
 	
 	// TODO
@@ -289,22 +289,24 @@ void Klayman::update41D2B0() {
 }
 
 bool Klayman::sub41CF10(AnimationCb callback) {
-	if (_status2 != 2)
-		return false;
-	_status2 = 1;
-	setFileHash(0x9A7020B8, 0, -1);
-	SetUpdateHandler(&Klayman::update);
-	SetMessageHandler(&Klayman::handleMessage41F140);
-	SetSpriteCallback(NULL);
-	SetAnimationCallback3(callback);
-	_flagE5 = false; 
-	return true;
+	if (_status2 == 2) {
+		_status2 = 1;
+		_flagE5 = false; 
+		setFileHash(0x9A7020B8, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetMessageHandler(&Klayman::handleMessage41F140);
+		SetSpriteCallback(NULL);
+		SetAnimationCallback3(callback);
+		return true;
+	}
+	return false;
 }
 
-void Klayman::sub41C7B0() {
+ void Klayman::sub41C7B0() {
 	if (_callback1Cb) {
-		(this->*_callback1Cb)();
+		AnimationCb cb = _callback1Cb;
 		_callback1Cb = NULL;
+		(this->*cb)();
 	}
 	if (_callback3Cb) {
 		AnimationCb cb = _callback3Cb;
@@ -321,16 +323,18 @@ void Klayman::sub41C7B0() {
 
 void Klayman::sub41C770() {
 	_flagFA = false;
-	_status = 1;
+	_status3 = 1;
 }
 
 void Klayman::sub41C790() {
 	if (_flagFA)
-		_status = 0;
+		_status3 = 0;
 }
 
 void Klayman::sub41FC80() {
 	if (!sub41CF10(AnimationCallback(&Klayman::sub41FC80))) {
+		_status2 = 1;
+		_flagE5 = true;
 		setFileHash(0x5420E254, 0, -1);
 		_counter = 0;
 		_counter3 = 0;
@@ -387,7 +391,7 @@ uint32 Klayman::handleMessage41D360(int messageNum, const MessageParam &param, E
 		sub41C790();
 		break;
 	case 0x481C:
-		_status = param.asInteger();
+		_status3 = param.asInteger();
 		_flagFA = true;
 		messageResult = 1;
 		break;
@@ -413,6 +417,7 @@ void Klayman::sub41FF00() {
 }
 
 uint32 Klayman::handleMessage41D480(int messageNum, const MessageParam &param, Entity *sender) {
+	debug("Klayman::handleMessage41D480(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
@@ -432,6 +437,7 @@ void Klayman::sub41FCF0() {
 }
 
 uint32 Klayman::handleMessage41F140(int messageNum, const MessageParam &param, Entity *sender) {
+	debug("Klayman::handleMessage41F140(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -449,9 +455,9 @@ uint32 Klayman::handleMessage41F140(int messageNum, const MessageParam &param, E
 void Klayman::sub41C930(int16 x, bool flag) {
 	debug("Klayman::sub41C930(%d, %d)", x, flag);
 	int16 xdiff = ABS(x - _x);
-	if (xdiff == 0) {
+	if (x == _x) {
 		_x4 = x;
-		if (_flagE1 || _flagE2 || _flagE3) {
+		if (!_flagE1 && !_flagE2 && !_flagE3) {
 			setCallback2(NULL);
 			sub41C7B0();
 		}
@@ -459,7 +465,7 @@ void Klayman::sub41C930(int16 x, bool flag) {
 		_x4 = x;
 		setCallback2(NULL);
 		sub41C7B0();
-	} else if (xdiff <= 42 && _status != 3) {
+	} else if (xdiff <= 42 && _status3 != 3) {
 		if (_flagE2 && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0)) && ABS(_x4 - _x) > xdiff) {
 			_x4 = x;
 		} else {
@@ -470,7 +476,6 @@ void Klayman::sub41C930(int16 x, bool flag) {
 		_x4 = x;
 	} else if (flag) {
 		_x4 = x;
-		debug("#### 1");
 		// TODO AnimatedSprite_setCallback2(AnimationCallback(&Klayman::sub421550));
 	} else {
 		_x4 = x;
@@ -497,6 +502,7 @@ void Klayman::sub4211B0() {
 }
 
 uint32 Klayman::handleMessage41E920(int messageNum, const MessageParam &param, Entity *sender) {
+	debug("Klayman::handleMessage41E920(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -526,10 +532,82 @@ bool Klayman::sub41CEB0(AnimationCb callback3) {
 
 void Klayman::spriteUpdate41F250() {
 	debug("Klayman::spriteUpdate41F250()");
+
+	int16 xdiff = _x4 - _x;
+
+	if (_doDeltaX) {
+		_x -= _deltaX;
+	} else {
+		_x += _deltaX;
+	}
+	_deltaX = 0;
+	
+	if (_doDeltaY) {
+		_y -= _deltaY;
+	} else {
+		_y += _deltaY;
+	}
+	_deltaY = 0;
+	
+	if (_flag) {
+		if (xdiff > 6)
+			_x += 6;
+		else if (xdiff < -6)
+			_x -= 6;
+		else
+			_x = _x4;				
+	}
+	
+	processDelta();
+	
 }
 
 void Klayman::spriteUpdate41F5F0() {
 	debug("Klayman::spriteUpdate41F5F0()");
+	
+	int16 xdiff = _x4 - _x;
+	
+	if (_frameIndex == 9) {
+		if (xdiff > 26)
+			_deltaX += xdiff - 26;
+		else if (xdiff < -26)			
+			_deltaX -= xdiff + 26;
+	}
+
+	if (xdiff > _deltaX)
+		xdiff = _deltaX;
+	else if (xdiff < -_deltaX)
+		xdiff = -_deltaX;
+	_deltaX = 0;				
+
+	if (_x4 != _x) {
+		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
+		_x += xdiff;
+		if (_field114) {
+			// TODO KlaymanSprite_sub_41CF70
+		} else {
+			HitRect *hitRectNext = _vm->_collisionMan->findHitRectAtPos(_x, _y);
+			if (hitRectNext->type == 0x5002) {
+				_y = MAX<int16>(hitRectNext->rect.y1, hitRectNext->rect.y2 - (hitRectNext->rect.x2 - _x) / 2);
+			} else if (hitRectNext->type == 0x5003) {
+				_y = MAX<int16>(hitRectNext->rect.y1, hitRectNext->rect.y2 - (_x - hitRectNext->rect.x1) / 2);
+			} else if (hitRectPrev->type == 0x5002) {
+				if (xdiff > 0) {
+					_y = hitRectPrev->rect.y2;
+				} else {
+					_y = hitRectPrev->rect.y1;
+				}
+			} else if (hitRectPrev->type == 0x5003) {
+				if (xdiff < 0) {
+					_y = hitRectPrev->rect.y2;
+				} else {
+					_y = hitRectPrev->rect.y1;
+				}
+			}
+		}
+		processDelta();
+	}
+	
 }
 
 void Klayman::sub41FB40() {
@@ -549,6 +627,7 @@ void Klayman::sub41FBB0() {
 }
 
 uint32 Klayman::handleMessage41DD80(int messageNum, const MessageParam &param, Entity *sender) {
+	debug("Klayman::handleMessage41DD80(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -579,6 +658,7 @@ uint32 Klayman::handleMessage41DD80(int messageNum, const MessageParam &param, E
 }
 
 void Klayman::sub41CD70(int16 x) {
+	debug("Klayman::sub41CD70(%d)", x);
 	if (x > _x) {
 		if (ABS(x - _x) <= 105) {
 			debug("// TODO sub41CAC0(x);");
@@ -615,7 +695,8 @@ void Klayman::sub41FB30() {
 }
 
 uint32 Klayman::handleMessage41EC70(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
+	debug("Klayman::handleMessage41EC70(%04X)", messageNum);
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x32180101) {
@@ -654,6 +735,7 @@ void Klayman::spriteUpdate41F300() {
 }
 
 uint32 Klayman::handleMessage41EB70(int messageNum, const MessageParam &param, Entity *sender) {
+	debug("Klayman::handleMessage41EB70(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -676,15 +758,16 @@ uint32 Klayman::handleMessage41EB70(int messageNum, const MessageParam &param, E
 }
 
 void Klayman::sub41FA40() {
-	if (_status == 2) {
+	if (_status3 == 2) {
 		sub41C7B0();
-	} else if (_status == 3) {
-		debug("// TODO sub420F20();");
+	} else if (_status3 == 3) {
+		debug("/////////////////////////////////////////////////// TODO sub420F20();");
 		// TODO sub420F20();
 	} else {
 		_flagE2 = true;
+		_flagE5 = true;
 		if (ABS(_x4 - _x) <= 42 && _frameIndex >= 5 && _frameIndex <= 11) {
-			if (_status == 0) {
+			if (_status3 == 0) {
 				_status2 = 1;
 				setFileHash(0xF234EE31, 0, -1);
 			} else {
@@ -692,7 +775,7 @@ void Klayman::sub41FA40() {
 				setFileHash(0xF135CC21, 0, -1);
 			}
 		} else if (ABS(_x4 - _x) <= 10 && (_frameIndex >= 12 || _frameIndex <= 4)) {
-			if (_status == 0) {
+			if (_status3 == 0) {
 				_status2 = 1;
 				setFileHash(0x8604A152, 0, -1);
 			} else {
@@ -700,7 +783,6 @@ void Klayman::sub41FA40() {
 				setFileHash(0xA246A132, 0, -1);
 			}
 		}
-		_flagE5 = true;
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::handleMessage41DD80);
 		SetSpriteCallback(&Klayman::spriteUpdate41F5F0);
@@ -714,20 +796,20 @@ void Klayman::spriteUpdate41F320() {
 	
 	if (xdelta > _deltaX)
 		xdelta = _deltaX;
-	else if (xdelta < _deltaX)
+	else if (xdelta < -_deltaX)
 		xdelta = -_deltaX;
 		
 	_deltaX = 0;		
 
 	if (xdiff == 0) {
 		sendMessage(0x1019, 0, this);
-	} else if (_status != 2 && _status != 3 && xdiff <= 42 && _frameIndex >= 5 && _frameIndex <= 11) {
+	} else if (_status3 != 2 && _status3 != 3 && xdiff <= 42 && _frameIndex >= 5 && _frameIndex <= 11) {
 		sendMessage(0x1019, 0, this);
-	} else if (_status != 2 && _status != 3 && xdiff <= 10 && (_frameIndex >= 12 || _frameIndex <= 4)) {
+	} else if (_status3 != 2 && _status3 != 3 && xdiff <= 10 && (_frameIndex >= 12 || _frameIndex <= 4)) {
 		sendMessage(0x1019, 0, this);
-	} else if (_status == 3 && xdiff < 30) {
+	} else if (_status3 == 3 && xdiff < 30) {
 		sendMessage(0x1019, 0, this);
-	} else if (_status == 3 && xdiff < 150 && _frameIndex >= 6) {
+	} else if (_status3 == 3 && xdiff < 150 && _frameIndex >= 6) {
 		sendMessage(0x1019, 0, this);
 	} else {
 		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
@@ -764,6 +846,20 @@ void Klayman::spriteUpdate41F320() {
 		processDelta();
 	}
 	
+}
+
+uint32 Klayman::handleMessage41E210(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4AB28209) {
+			_attachedSprite->sendMessage(0x482A, 0, this);
+		} else if (param.asInteger() == 0x88001184) {
+			_attachedSprite->sendMessage(0x482B, 0, this);
+		}
+		break;
+	}
+	return messageResult;
 }
 
 } // End of namespace Neverhood

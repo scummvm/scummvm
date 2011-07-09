@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	blbarchive.o \
 	collisionman.o \
 	detection.o \
-	entity.o \
 	gamemodule.o \
 	graphics.o \
 	klayman.o \

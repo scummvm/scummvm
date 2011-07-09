@@ -267,8 +267,6 @@ void AnimResource::unload() {
 
 void AnimResource::clear() {
 	_resourceHandle = -1;
-	// _count = 0;
-	// _infoStructs = NULL;
 	_currSpriteData = NULL;
 	_fileHash = 0;
 	_paletteData = NULL;

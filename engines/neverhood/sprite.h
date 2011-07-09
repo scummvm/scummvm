@@ -113,7 +113,7 @@ protected:
 	int16 _frameIndex4;
 	uint32 _fileHash6;
 	uint32 _fileHash5;
-	int16 _status;
+	int16 _animStatus;
 	int16 _counter;
 	int _hashListIndex;
 	int _newHashListIndex;
@@ -143,7 +143,6 @@ protected:
 	void setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fileHash5);
 	void setCallback1(AnimationCb callback1);
 	void setCallback2(AnimationCb callback2);
-	int16 getHashListIndex(uint32 fileHash) { return 0; } // TODO !!!
 	void removeCallbacks();
 };
 
