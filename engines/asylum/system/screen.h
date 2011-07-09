@@ -123,7 +123,7 @@ public:
 	void deleteGraphicFromQueue(ResourceId resourceId);
 
 	// Used by Video
-	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height);
+	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height, bool mirrored = false);
 
 	// Debug
 	void drawLine(int x0, int y0, int x1, int y1);
@@ -156,9 +156,9 @@ private:
 	// Screen blitting
 	void blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags, bool useColorKey);
 	void blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey);
-	void bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, bool useColorKey);
+	void bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey);
 
-	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
+	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height, bool mirrored = false);
 };
 
 } // end of namespace Asylum

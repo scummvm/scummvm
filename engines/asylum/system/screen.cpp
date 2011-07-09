@@ -369,7 +369,7 @@ void Screen::drawGraphicsInQueue() {
 			else
 				draw(item->resourceId, item->frameIndex, item->source, item->flags, item->transTableNum - 1);
 		} else if (item->type == kGraphicItemMasked) {
-			draw(item->resourceId, item->frameIndex, item->source,  item->flags, item->resourceIdDestination, item->destination);
+			draw(item->resourceId, item->frameIndex, item->source, item->flags, item->resourceIdDestination, item->destination);
 		}
 	}
 }
@@ -413,65 +413,71 @@ void Screen::deleteGraphicFromQueue(ResourceId resourceId) {
 // Graphic Data
 //////////////////////////////////////////////////////////////////////////
 void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags, bool useColorKey) {
-
-	if (flags & 0x8000000) {
+	if (flags & 0x80000000) {
 		error("[Screen::blit] not implemented");
 	} else if (flags) {
 		blt(destination, frame, source, flags, useColorKey);
 	} else {
-		bltFast(destination->left, destination->top, frame, source, useColorKey);
+		bltFast(destination->left, destination->top, frame, source, flags, useColorKey);
 	}
 }
 
 void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey) {
 	// TODO adjust destination rect
-	// TODO handle mirror flag
 	if (useColorKey) {
 		copyToBackBufferWithTransparency((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
 		                                 dest->left,
 		                                 dest->top,
 		                                 source->width(),
-		                                 source->height());
+		                                 source->height(),
+		                                 flags & kDrawFlagMirrorLeftRight);
 	} else {
 		copyToBackBuffer((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                 frame->surface.w,
 		                 dest->left,
 		                 dest->top,
 		                 source->width(),
-		                 source->height());
+		                 source->height(),
+		                 flags & kDrawFlagMirrorLeftRight);
 	}
 }
 
-void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, bool useColorKey) {
+void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey) {
 	if (useColorKey) {
 		copyToBackBufferWithTransparency((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
 		                                 dX,
 		                                 dY,
 		                                 source->width(),
-		                                 source->height());
+		                                 source->height(),
+		                                 flags & kDrawFlagMirrorLeftRight);
 	} else {
 		copyToBackBuffer((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                 frame->surface.w,
 		                 dX,
 		                 dY,
 		                 source->width(),
-		                 source->height());
+		                 source->height(),
+		                 flags & kDrawFlagMirrorLeftRight);
 	}
 }
 
-void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height) {
+void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height, bool mirrored) {
 	byte *dest = (byte *)_backBuffer.pixels;
 
-	while (height--) {
-		memcpy(dest + y * _backBuffer.pitch + x, buffer, width);
-		dest += 640;
-		buffer += pitch;
+	if (!mirrored) {
+		while (height--) {
+			memcpy(dest + y * _backBuffer.pitch + x, buffer, width);
+			dest += 640;
+			buffer += pitch;
+		}
+	} else {
+		error("[Screen::copyToBackBuffer] Mirrored drawing not implemented");
 	}
 }
 
-void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
+void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height, bool mirrored) {
 	byte *dest = (byte *)_backBuffer.pixels;
 
 	int32 left = (x < 0) ? -x : 0;
@@ -482,7 +488,7 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x
 	for (int32 curY = top; curY < bottom; curY++) {
 		for (int32 curX = left; curX < right; curX++) {
 			if (buffer[curX + curY * pitch] != 0 ) {
-				dest[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
+				dest[x + curX + (y + curY) * 640] = buffer[(mirrored ? right - curX : curX) + curY * pitch];
 			}
 		}
 	}
