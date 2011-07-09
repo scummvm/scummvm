@@ -673,7 +673,7 @@ public:
 	GUI::Debugger *getDebugger() { return _console; }
 
 	void addArchive(Archive *archive);
-	void removeArchive(Archive *Archive);
+	void removeArchive(Archive *archive);
 	void addItem(LBItem *item);
 	void removeItems(const Common::Array<LBItem *> &items);
 

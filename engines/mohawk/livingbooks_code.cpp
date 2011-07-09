@@ -1181,8 +1181,8 @@ bool LBCode::parseCodeSymbol(const Common::String &name, uint &pos, Common::Arra
 	// first, check whether the name matches a known function
 	for (uint i = 0; i < 2; i++) {
 		byte cmdToken;
-		CodeCommandInfo *cmdInfo;
-		uint cmdCount;
+		CodeCommandInfo *cmdInfo = NULL;
+		uint cmdCount = 0;
 
 		switch (i) {
 		case 0:
