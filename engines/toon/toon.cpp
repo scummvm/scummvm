@@ -690,6 +690,11 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 				}
 			}
 
+			if (_needPaletteFlush) {
+				flushPalette(false);
+				_needPaletteFlush = false;
+			}
+
 			parseInput();
 			copyToVirtualScreen(true);
 			_system->delayMillis(17);
