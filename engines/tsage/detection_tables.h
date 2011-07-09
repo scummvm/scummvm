@@ -24,13 +24,27 @@ namespace tSage {
 
 static const tSageGameDescription gameDescriptions[] = {
 
-	// Ringworld CD and First Wave versions
+	// Ringworld English CD and First Wave versions
 	{
 		{
 			"ring",
 			"CD",
 			AD_ENTRY1s("ring.rlb", "466f0e6492d9d0f34d35c5cd088de90f", 37847618),
 			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_UNSTABLE,
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
+		},
+		GType_Ringworld,
+		GF_CD | GF_ALT_REGIONS
+	},
+	// Ringworld Spanish CD
+	{
+		{
+			"ring",
+			"CD",
+			AD_ENTRY1s("ring.rlb", "cb8bba91b30cd172712371d7123bd763", 7427980),
+			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX

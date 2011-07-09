@@ -591,7 +591,7 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 			return 'Z' + 4;
 		case 154:
 			return 'Z' + 6;
-		case 255:
+		case 225:
 			return 'A' - 1;
 		case 153:
 			return 'Z' + 5;

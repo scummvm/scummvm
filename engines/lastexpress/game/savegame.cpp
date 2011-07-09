@@ -45,12 +45,12 @@ namespace LastExpress {
 static const struct {
 	const char *saveFile;
 } gameInfo[6] = {
-	{"blue.egg"},
-	{"red.egg"},
-	{"green.egg"},
-	{"purple.egg"},
-	{"teal.egg"},
-	{"gold.egg"}
+	{"lastexpress-blue.egg"},
+	{"lastexpress-red.egg"},
+	{"lastexpress-green.egg"},
+	{"lastexpress-purple.egg"},
+	{"lastexpress-teal.egg"},
+	{"lastexpress-gold.egg"}
 };
 
 //////////////////////////////////////////////////////////////////////////

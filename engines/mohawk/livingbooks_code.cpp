@@ -686,8 +686,8 @@ struct CodeCommandInfo {
 CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "eval", &LBCode::cmdEval },
 	{ "random", &LBCode::cmdRandom },
-	{ "stringLen", 0 },
-	{ "substring", 0 },
+	{ "stringLen", &LBCode::cmdStringLen },
+	{ "substring", &LBCode::cmdSubstring },
 	{ "max", 0 },
 	{ "min", 0 },
 	{ "abs", 0 },
@@ -859,6 +859,31 @@ void LBCode::cmdRandom(const Common::Array<LBValue> &params) {
 	int min = params[0].toInt();
 	int max = params[1].toInt();
 	_stack.push(_vm->_rnd->getRandomNumberRng(min, max));
+}
+
+void LBCode::cmdStringLen(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to stringLen", params.size());
+
+	const Common::String &string = params[0].toString();
+	_stack.push(string.size());
+}
+
+void LBCode::cmdSubstring(const Common::Array<LBValue> &params) {
+	if (params.size() != 3)
+		error("incorrect number of parameters (%d) to substring", params.size());
+
+	const Common::String &string = params[0].toString();
+	uint begin = params[1].toInt();
+	uint end = params[2].toInt();
+	if (begin == 0)
+		error("invalid substring call (%d to %d)", begin, end);
+	if (begin > end || end > string.size()) {
+		_stack.push(Common::String());
+		return;
+	}
+	Common::String substring(string.c_str() + (begin - 1), end - begin + 1);
+	_stack.push(substring);
 }
 
 void LBCode::cmdGetRect(const Common::Array<LBValue> &params) {
@@ -1156,8 +1181,8 @@ bool LBCode::parseCodeSymbol(const Common::String &name, uint &pos, Common::Arra
 	// first, check whether the name matches a known function
 	for (uint i = 0; i < 2; i++) {
 		byte cmdToken;
-		CodeCommandInfo *cmdInfo;
-		uint cmdCount;
+		CodeCommandInfo *cmdInfo = NULL;
+		uint cmdCount = 0;
 
 		switch (i) {
 		case 0:
