@@ -25,6 +25,7 @@
 
 #include "cge/general.h"
 #include "common/random.h"
+#include "common/serializer.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "graphics/surface.h"
@@ -58,6 +59,7 @@ class CGEEngine : public Engine {
 private:
 	uint32 _lastFrame;
 	void tick();
+	void syncHeader(Common::Serializer &s);
 public:
 	CGEEngine(OSystem *syst, const ADGameDescription *gameDescription);
 	~CGEEngine();
@@ -69,7 +71,6 @@ public:
 	int    _oldLev;
 	bool   _jbw;
 	int    _pocPtr;
-	SavTab _savTab[16];
 	bool   _music;
 	int    _pocref[POCKET_NX];
 	uint8  _volume[2];
@@ -124,7 +125,7 @@ public:
 	void setIRQ();
 	void setDMA();
 	void mainLoop();
-	void saveGame(XFile &file);
+	void saveGame(Common::WriteStream *file);
 	void switchMusic();
 	void selectPocket(int n);
 	void expandSprite(Sprite *spr);
