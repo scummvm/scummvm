@@ -352,10 +352,10 @@ static const int p2s[17] = { 0, 1, 1, 3, 1, 5, 3, 7, 1, 9, 5, 11, 3, 13, 7, 15, 
 // Last Express ADPCM is similar to MS IMA mono, but inverts its nibbles
 // and does not have the 4 byte per channel requirement
 
-class LastExpress_ADPCMStream : public Audio::Ima_ADPCMStream {
+class LastExpress_ADPCMStream : public Audio::ADPCMStream {
 public:
 	LastExpress_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, uint32 blockSize, int32 filterId) :
-			Audio::Ima_ADPCMStream(stream, disposeAfterUse, size, 44100, 1, blockSize) {
+			Audio::ADPCMStream(stream, disposeAfterUse, size, 44100, 1, blockSize) {
 		_currentFilterId = -1;
 		_nextFilterId = filterId;
 	}
