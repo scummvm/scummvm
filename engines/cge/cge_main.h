@@ -179,8 +179,6 @@ extern Sprite *_horzLine;
 extern InfoLine *_infoLine;
 extern Sprite *_cavLight;
 extern InfoLine *_debugLine;
-extern BMP_PTR MB[2];
-extern BMP_PTR MB[2];
 extern BMP_PTR HL[2];
 extern BMP_PTR MC[3];
 extern BMP_PTR PR[2];
