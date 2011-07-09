@@ -2450,7 +2450,7 @@ void Scene::processUpdateList() {
 
 			// Process objects
 			for (uint32 j = 0; j < _ws->objects.size(); j++) {
-				Object *object = _ws->objects[i];
+				Object *object = _ws->objects[j];
 
 				// Skip hidden objects
 				if (!object->isOnScreen())
