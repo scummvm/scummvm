@@ -27,6 +27,7 @@
 
 #include "common/scummsys.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 #include "common/serializer.h"
 #include "cge/general.h"
 #include "cge/sound.h"
@@ -176,18 +177,9 @@ Cluster XZ(Couple xy) {
 	return XZ(x, y);
 }
 
-void CGEEngine::loadGame(XFile &file, bool tiny = false) {
-	Sprite *spr;
+void CGEEngine::syncHeader(Common::Serializer &s) {
 	int i;
 
-	// Read the data into a data buffer
-	int size = file.size() - file.mark();
-	byte *dataBuffer = new byte[size];
-	file.read(dataBuffer, size);
-	Common::MemoryReadStream readStream(dataBuffer, size, DisposeAfterUse::YES);
-	Common::Serializer s(&readStream, NULL);
-
-	// Synchronise header data
 	s.syncAsUint16LE(_now);
 	s.syncAsUint16LE(_oldLev);
 	s.syncAsUint16LE(_demoText);
@@ -210,10 +202,32 @@ void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 	for (i = 0; i < POCKET_NX; ++i)
 		s.syncAsUint16LE(_pocref[i]);
 
-	uint16 checksum;
-	s.syncAsUint16LE(checksum);
-	if (checksum != SVGCHKSUM)
-		error("%s", _text->getText(BADSVG_TEXT));
+	if (s.isSaving()) {
+		// Write checksum
+		int checksum = SVGCHKSUM;
+		s.syncAsUint16LE(checksum);
+	} else {
+		// Read checksum and validate it
+		uint16 checksum;
+		s.syncAsUint16LE(checksum);
+		if (checksum != SVGCHKSUM)
+			error("%s", _text->getText(BADSVG_TEXT));
+	}
+}
+
+void CGEEngine::loadGame(XFile &file, bool tiny = false) {
+	Sprite *spr;
+	int i;
+
+	// Read the data into a data buffer
+	int size = file.size() - file.mark();
+	byte *dataBuffer = new byte[size];
+	file.read(dataBuffer, size);
+	Common::MemoryReadStream readStream(dataBuffer, size, DisposeAfterUse::YES);
+	Common::Serializer s(&readStream, NULL);
+
+	// Synchronise header data
+	syncHeader(s);
 
 	if (Startup::_core < CORE_HIG)
 		_music = false;
@@ -253,7 +267,7 @@ void CGEEngine::saveSound() {
 }
 
 
-void CGEEngine::saveGame(XFile &file) {
+void CGEEngine::saveGame(Common::WriteStream *file) {
 	SavTab *st;
 	Sprite *spr;
 	int i;
@@ -266,18 +280,19 @@ void CGEEngine::saveGame(XFile &file) {
 	_volume[0] = _sndDrvInfo.Vol2._d;
 	_volume[1] = _sndDrvInfo.Vol2._m;
 
-	for (st = _savTab; st->_ptr; st++) {
-		if (file._error)
-			error("Bad SVG");
-		file.write((uint8 *) st->_ptr, st->_len);
+	Common::Serializer s(NULL, file);
+
+	// Synchronise header data
+	syncHeader(s);
+
+	// Loop through saving the sprite data
+	for (spr = _vga->_spareQ->first(); spr; spr = spr->_next) {
+		if ((spr->_ref >= 1000) && !s.err())
+			spr->sync(s);
 	}
 
-	file.write((uint8 *) & (i = SVGCHKSUM), sizeof(i));
-
-	for (spr = _vga->_spareQ->first(); spr; spr = spr->_next)
-		if (spr->_ref >= 1000)
-			if (!file._error)
-				file.write((uint8 *)spr, sizeof(*spr));
+	// Finish writing out game data
+	file->finalize();
 }
 
 void CGEEngine::heroCover(int cvr) {
@@ -715,8 +730,12 @@ void CGEEngine::qGame() {
 	caveDown();
 	_oldLev = _lev;
 	saveSound();
-	CFile file = CFile(usrPath(_usrFnam), WRI, RCrypt);
-	saveGame(file);
+
+	// Write out the user's progress
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(Common::String(_usrFnam));
+	saveGame(saveFile);
+	delete saveFile;
+
 	_vga->sunset();
 	_finis = true;
 }
@@ -1531,10 +1550,16 @@ void CGEEngine::loadUser() {
 			SVG0FILE file = SVG0FILE(SVG0NAME);
 			loadGame(file);
 		} else {
+			// TODO: I think this was only used by the original developers to create the initial
+			// game state savegame. Verify this is the case, and if so remove this block
 			loadScript(progName(INI_EXT));
 			_music = true;
-			CFile file = CFile(SVG0NAME, WRI);
-			saveGame(file);
+
+			Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
+				Common::String(SVG0NAME));
+			saveGame(saveFile);
+			delete saveFile;
+
 			error("Ok [%s]", SVG0NAME);
 		}
 	}
