@@ -1328,13 +1328,17 @@ public:
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;
 
+#ifdef USE_RGB_COLOR
+	// FM-Towns / PC-Engine specific
+	Graphics::FontSJIS *_cjkFont;
+#endif
+
 	// FM-Towns specific
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 public:
 	bool towns_isRectInStringBox(int x1, int y1, int x2, int y2);
 	byte _townsPaletteFlags;
-	byte _townsCharsetColorMap[16];
-	Graphics::FontSJIS *_cjkFont;
+	byte _townsCharsetColorMap[16];	
 
 protected:
 	void towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int w, int h);
