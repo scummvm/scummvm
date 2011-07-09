@@ -205,14 +205,17 @@ private:
 
 #ifdef USE_RGB_COLOR
 class CharsetRendererPCE : public CharsetRendererV3 {
-protected:
+private:
 	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
 
 	int getDrawWidthIntern(uint16 chr);
 	int getDrawHeightIntern(uint16 chr);
+	void setDrawCharIntern(uint16 chr);
+
+	uint16 _sjisCurChar;
 
 public:
-	CharsetRendererPCE(ScummEngine *vm) : CharsetRendererV3(vm) {}
+	CharsetRendererPCE(ScummEngine *vm) : CharsetRendererV3(vm), _sjisCurChar(0) {}
 
 	void setColor(byte color);
 };

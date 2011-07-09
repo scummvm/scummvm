@@ -75,7 +75,7 @@ public:
 	virtual bool loadData() = 0;
 
 	/**
-	 * Enable drawing with outline or shadow.
+	 * Enable drawing with outline or shadow if supported by the Font.
 	 *
 	 * After changing outline state, getFontHeight and getMaxFontWidth / getCharWidth might return
 	 * different values!
@@ -90,9 +90,15 @@ public:
 	virtual void setDrawingMode(DrawingMode mode) {}
 
 	/**
-	 * Enable flipped character drawing (e.g. in the MI1 circus scene after Guybrush gets shot out of the cannon).
+	 * Enable flipped character drawing if supported by the Font (e.g. in the MI1 circus scene after Guybrush gets shot out of the cannon).
 	 */
 	virtual void toggleFlippedMode(bool enable) {}
+
+	/**
+	 * Set spacing between characters and lines. This affects font height / char width
+	 */
+	virtual void setCharSpacing(int spacing) {}
+	virtual void setLineSpacing(int spacing) {}
 
 	/**
 	 * Returns the height of the font.
@@ -140,6 +146,10 @@ public:
 
 	virtual void toggleFlippedMode(bool enable);
 
+	virtual void setCharSpacing(int spacing);
+
+	virtual void setLineSpacing(int spacing);
+
 	virtual uint getFontHeight() const;
 
 	virtual uint getMaxFontWidth() const;
@@ -162,16 +172,28 @@ protected:
 	DrawingMode _drawMode;
 	bool _flippedMode;
 	int _fontWidth, _fontHeight;
-
+	int _charSpacing, _lineSpacing;
+	uint8 _bitPosNewLineMask;
+	
 	bool isASCII(uint16 ch) const;
 
 	virtual const uint8 *getCharData(uint16 c) const = 0;
+
+	enum DrawingFeature {
+		kFeatDefault		= 1 << 0,
+		kFeatOutline		= 1 << 1,
+		kFeatShadow			= 1 << 2,
+		kFeatFMTownsShadow	= 1 << 3,
+		kFeatFlipped		= 1 << 4
+	};
+
+	virtual bool hasFeature(int feat) const = 0;
 };
 
 /**
  * FM-TOWNS ROM based SJIS compatible font.
  *
- * This is used in KYRA and SCI.
+ * This is used in KYRA, SCUMM and SCI.
  */
 class FontTowns : public FontSJISBase {
 public:
@@ -189,6 +211,31 @@ private:
 	uint8 _fontData8x16[kFont8x16Chars * 32];
 
 	virtual const uint8 *getCharData(uint16 c) const;
+
+	bool hasFeature(int feat) const;
+};
+
+/**
+ * PC-Engine System Card based SJIS compatible font.
+ *
+ * This is used in LOOM.
+ */
+class FontPCEngine : public FontSJISBase {
+public:
+	/**
+	 * Loads the ROM data from "pce.cdbios".
+	 */
+	bool loadData();
+private:
+	enum {
+		kFont12x12Chars = 3418
+	};
+
+	uint8 _fontData12x12[kFont12x12Chars * 18];
+
+	virtual const uint8 *getCharData(uint16 c) const;
+
+	bool hasFeature(int feat) const;
 };
 
 /**
@@ -214,6 +261,8 @@ private:
 	uint _fontData12x12Size;
 
 	virtual const uint8 *getCharData(uint16 c) const;
+
+	bool hasFeature(int feat) const;
 
 	const uint8 *getCharDataPCE(uint16 c) const;
 	const uint8 *getCharDataDefault(uint16 c) const;
