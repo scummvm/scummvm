@@ -248,22 +248,13 @@ void Talk::putLine(int line, const char *text) {
 
 	// clear whole rectangle
 	p = v;                // assume blanked line above text
-
-	byte *tmpBuf = new byte[rsiz];
-
-	memcpy(tmpBuf, p - lsiz, rsiz);
-	memcpy(p, tmpBuf, rsiz);
+	memmove(p, p - lsiz, rsiz);
 	p += psiz;   // tricky replicate lines for plane 0
-	memcpy(tmpBuf, p - lsiz, rsiz);
-	memcpy(p, tmpBuf, rsiz);
+	memmove(p, p - lsiz, rsiz);
 	p += psiz;   // same for plane 1
-	memcpy(tmpBuf, p - lsiz, rsiz);
-	memcpy(p, tmpBuf, rsiz);
+	memmove(p, p - lsiz, rsiz);
 	p += psiz;   // same for plane 2
-	memcpy(tmpBuf, p - lsiz, rsiz);
-	memcpy(p, tmpBuf, rsiz);
-
-	delete[] tmpBuf;
+	memmove(p, p - lsiz, rsiz);
 
 	// paint text line
 	if (text) {
@@ -311,18 +302,10 @@ void InfoLine::update(const char *tx) {
 		uint16 size = 4 * psiz;                         // whole map size
 
 		// clear whole rectangle
-		byte *tmpBuf = new byte[size];
 		memset(v + 2, TEXT_BG, dsiz);                   // data bytes
-
-		memcpy(tmpBuf, v, psiz - lsiz);
-		memcpy(v + lsiz, tmpBuf, psiz - lsiz);
-
+		memmove(v + lsiz, v, psiz - lsiz);
 		*(uint16 *)(v + psiz - 2) = EOI;               // plane trailer uint16
-
-		memcpy(tmpBuf, v, 3 * psiz);
-		memcpy(v + psiz, tmpBuf, 3 * psiz);
-
-		delete[] tmpBuf;
+		memmove(v + psiz, v, 3 * psiz);
 
 		// paint text line
 		if (tx) {
