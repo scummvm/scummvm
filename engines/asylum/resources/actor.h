@@ -482,10 +482,9 @@ private:
 	 * Updates the actor "number" data if the reaction is "1".
 	 *
 	 * @param reaction The reaction.
-	 * @param x 	   The second int32.
-	 * @param y 	   The third int32.
+	 * @param point    The coordinates
 	 */
-	void updateNumbers(int32 reaction, int32 x, int32 y);
+	void updateNumbers(int32 reaction, const Common::Point &point);
 
 	/**
 	 * Determine if the supplied point is in the action area

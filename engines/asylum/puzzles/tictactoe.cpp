@@ -213,10 +213,10 @@ void PuzzleTicTacToe::drawField() {
 
 	if (g_debugPolygons) {
 		for (uint32 p = 0; p < ARRAYSIZE(puzzleTicTacToePolygons); p += 4) {
-			getScreen()->drawLine(puzzleTicTacToePolygons[p].x, puzzleTicTacToePolygons[p].y, puzzleTicTacToePolygons[p + 1].x, puzzleTicTacToePolygons[p + 1].y);
-			getScreen()->drawLine(puzzleTicTacToePolygons[p + 1].x, puzzleTicTacToePolygons[p + 1].y, puzzleTicTacToePolygons[p + 2].x, puzzleTicTacToePolygons[p + 2].y);
-			getScreen()->drawLine(puzzleTicTacToePolygons[p + 2].x, puzzleTicTacToePolygons[p + 2].y, puzzleTicTacToePolygons[p + 3].x, puzzleTicTacToePolygons[p + 3].y);
-			getScreen()->drawLine(puzzleTicTacToePolygons[p + 3].x, puzzleTicTacToePolygons[p + 3].y, puzzleTicTacToePolygons[p].x, puzzleTicTacToePolygons[p].y);
+			getScreen()->drawLine(puzzleTicTacToePolygons[p],     puzzleTicTacToePolygons[p + 1]);
+			getScreen()->drawLine(puzzleTicTacToePolygons[p + 1], puzzleTicTacToePolygons[p + 2]);
+			getScreen()->drawLine(puzzleTicTacToePolygons[p + 2], puzzleTicTacToePolygons[p + 3]);
+			getScreen()->drawLine(puzzleTicTacToePolygons[p + 3], puzzleTicTacToePolygons[p]);
 		}
 	}
 

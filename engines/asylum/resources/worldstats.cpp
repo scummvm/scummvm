@@ -178,8 +178,8 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		for (int32 i = 0; i < 6; i++)
 			ambientSounds[s].flagNum[i] = (GameFlag)stream->readSint32LE();
 
-		ambientSounds[s].x = stream->readSint32LE();
-		ambientSounds[s].y = stream->readSint32LE();
+		ambientSounds[s].point.x = stream->readSint32LE();
+		ambientSounds[s].point.y = stream->readSint32LE();
 	}
 
 	numAmbientSounds          = stream->readSint32LE();

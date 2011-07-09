@@ -114,9 +114,9 @@ public:
 	byte *getTransTableIndex() { return _transTableIndex; }
 
 	// Graphic queue
-	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, DrawFlags flags, int32 transTableNum, int32 priority);
+	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, const Common::Point &point, DrawFlags flags, int32 transTableNum, int32 priority);
 	void addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point source, int32 objectResourceId, Common::Point destination, int32 transTableNum);
-	void addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point destination, DrawFlags flags, int32 priority);
+	void addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, int32 objectResourceId, const Common::Point &destination, DrawFlags flags, int32 priority);
 	void addGraphicToQueue(GraphicQueueItem const &item);
 	void drawGraphicsInQueue();
 	void clearGraphicsInQueue();
@@ -126,7 +126,7 @@ public:
 	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height, bool mirrored = false);
 
 	// Debug
-	void drawLine(int x0, int y0, int x1, int y1);
+	void drawLine(const Common::Point &origin, const Common::Point &destination);
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
 private:

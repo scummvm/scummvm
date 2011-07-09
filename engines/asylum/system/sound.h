@@ -31,6 +31,7 @@
 #include "asylum/shared.h"
 
 #include "common/array.h"
+#include "common/rect.h"
 
 #include "audio/mixer.h"
 
@@ -80,8 +81,7 @@ struct AmbientSoundItem {
 	int32 attenuation;
 	int32 nextTick;
 	GameFlag flagNum[6];
-	int32 x;
-	int32 y;
+	Common::Point point;
 
 	AmbientSoundItem() {
 		field_0 = 0;
@@ -91,8 +91,6 @@ struct AmbientSoundItem {
 		attenuation = 0;
 		nextTick = 0;
 		memset(&flagNum, 0, sizeof(flagNum));
-		x = 0;
-		y = 0;
 	}
 };
 
@@ -188,14 +186,13 @@ public:
 	/**
 	 * Determine the amount to increase the supplied sound sample's volume based on the position.
 	 *
-	 * @param x 		  The x coordinate.
-	 * @param y 		  The y coordinate.
+	 * @param point       The coordinates
 	 * @param attenuation The attenuation.
-	 * @param delta 	  The delta.
+	 * @param delta       The delta.
 	 *
 	 * @return The calculated volume adjustement.
 	 */
-	int32 calculateVolumeAdjustement(int32 x, int32 y, int32 attenuation, int32 delta);
+	int32 calculateVolumeAdjustement(const Common::Point &point, int32 attenuation, int32 delta);
 
 	/**
 	 * Gets an adjusted volume.
@@ -209,12 +206,11 @@ public:
 	/**
 	 * Calculates the panning at point.
 	 *
-	 * @param x The x coordinate.
-	 * @param y The y coordinate.
+	 * @param point The coordinates.
 	 *
 	 * @return The calculated panning at point.
 	 */
-	int32 calculatePanningAtPoint(int32 x, int32 y);
+	int32 calculatePanningAtPoint(const Common::Point &point);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Stopping sounds

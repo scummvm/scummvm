@@ -360,24 +360,23 @@ void Object::setNextFrame(int32 targetFlags) {
 // Misc
 /////////////////////////////////////////////////////////////////////////
 void Object::playSounds() {
-	int32 soundX = 0;
-	int32 soundY = 0;
+	Common::Point point;
 
 	if (_soundX || _soundY) {
-		soundX = _soundX;
-		soundY = _soundY;
+		point.x = _soundX;
+		point.y = _soundY;
 	} else {
 		if (LOBYTE(flags) & kObjectFlag4) {
 			// Get object resource
 			ResourceEntry *resource = getResource()->get(_resourceId);
 
-			soundX = x + Common::Rational(resource->getData(1), 2).toInt();
-			soundY = y + Common::Rational(resource->getData(0), 2).toInt();
+			point.x = x + Common::Rational(resource->getData(1), 2).toInt();
+			point.y = y + Common::Rational(resource->getData(0), 2).toInt();
 		} else {
 			Common::Rect rect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
 
-			soundX = x + (rect.width() * 2);
-			soundY = x + (rect.height() * 2);
+			point.x = x + (rect.width() * 2);
+			point.y = x + (rect.height() * 2);
 		}
 	}
 
@@ -388,20 +387,20 @@ void Object::playSounds() {
 			continue;
 
 		if (item->field_4 && !getSound()->isPlaying(item->resourceId)) {
-			int32 volume = Config.sfxVolume + getSound()->calculateVolumeAdjustement(soundX, soundY, item->field_8, item->field_C);
+			int32 volume = Config.sfxVolume + getSound()->calculateVolumeAdjustement(point, item->field_8, item->field_C);
 
 			if (volume > -5000)
-				getSound()->playSound(item->resourceId, true, volume, getSound()->calculatePanningAtPoint(soundX, soundY));
+				getSound()->playSound(item->resourceId, true, volume, getSound()->calculatePanningAtPoint(point));
 		}
 
 		if (getSound()->isPlaying(item->resourceId)) {
-			int32 volume = Config.sfxVolume + getSound()->calculateVolumeAdjustement(soundX, soundY, item->field_8, item->field_C);
+			int32 volume = Config.sfxVolume + getSound()->calculateVolumeAdjustement(point, item->field_8, item->field_C);
 
 			if (volume > -5000) {
 				if (volume > 0)
 					volume = 0;
 
-				getSound()->setPanning(item->resourceId, getSound()->calculatePanningAtPoint(soundX, soundY));
+				getSound()->setPanning(item->resourceId, getSound()->calculatePanningAtPoint(point));
 				getSound()->setVolume(item->resourceId, volume);
 			} else {
 				getSound()->stop(item->resourceId);
@@ -449,7 +448,8 @@ void Object::setVolume() {
 	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
 
 	// Compute volume
-	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement(Common::Rational(frameRect.width(), 2).toInt() + x, Common::Rational(frameRect.height(), 2).toInt() + y, _field_6A4, 0);
+	Common::Point coords(Common::Rational(frameRect.width(), 2).toInt() + x, Common::Rational(frameRect.height(), 2).toInt() + y);
+	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement(coords, _field_6A4, 0);
 	if (volume < -10000)
 		volume = -10000;
 

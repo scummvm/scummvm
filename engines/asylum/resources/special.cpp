@@ -425,8 +425,8 @@ void Special::chapter6(Object *object, ActorIndex actorIndex) {
 	if (actorIndex == 2  || actorIndex == 3) {
 		Actor *actor = getScene()->getActor(actorIndex);
 
-		getWorld()->ambientSounds[0].x = actor->getPoint2()->x + actor->getPoint1()->x;
-		getWorld()->ambientSounds[0].y = actor->getPoint2()->y + actor->getPoint1()->y;
+		getWorld()->ambientSounds[0].point.x = actor->getPoint2()->x + actor->getPoint1()->x;
+		getWorld()->ambientSounds[0].point.y = actor->getPoint2()->y + actor->getPoint1()->y;
 	}
 }
 
@@ -1287,44 +1287,43 @@ void Special::setPaletteGamma(ResourceId palette1, ResourceId palette2) {
 
 void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, Object *object) {
 	int32 adjustedVolume = Config.voiceVolume;
-	int32 x = 0;
-	int32 y = 0;
+	Common::Point point;
 
 	switch (object->getId()) {
 	default: {
 		Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-		x = Common::Rational(frameRect.width(), 2).toInt() + object->x;
-		y = Common::Rational(frameRect.height(), 2).toInt() + object->y;
+		point.x = Common::Rational(frameRect.width(), 2).toInt() + object->x;
+		point.y = Common::Rational(frameRect.height(), 2).toInt() + object->y;
 		}
 		break;
 
 	case kObjectDennisStatusQuo:
-		x = 1382;
-		y = 1041;
+		point.x = 1382;
+		point.y = 1041;
 		break;
 
 	case kObjectSailorBoy:
-		x = 1646;
-		y = 1220;
+		point.x = 1646;
+		point.y = 1220;
 		break;
 
 	case kObjectSuckerSittingStatusQuo:
-		x = 1376;
-		y = 1148;
+		point.x = 1376;
+		point.y = 1148;
 		break;
 
 	case kObjectDennisStatus2:
-		x = 175;
-		y = 617;
+		point.x = 175;
+		point.y = 617;
 		break;
 	}
 
 	// Calculate volume adjustment
-	adjustedVolume += getSound()->calculateVolumeAdjustement(x, y, attenuation, 0);
+	adjustedVolume += getSound()->calculateVolumeAdjustement(point, attenuation, 0);
 
 	// Calculate panning
-	int32 panning = getSound()->calculatePanningAtPoint(x, y);
+	int32 panning = getSound()->calculatePanningAtPoint(point);
 
 	// Adjust object properties
 	object->setSoundResourceId(resourceId);
@@ -1338,10 +1337,10 @@ void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, ActorIn
 
 	// Calculate volume adjustment
 	int32 adjustedVolume = Config.voiceVolume;
-	adjustedVolume += getSound()->calculateVolumeAdjustement(actor->getPoint1()->x, actor->getPoint1()->y, attenuation, 0);
+	adjustedVolume += getSound()->calculateVolumeAdjustement(*actor->getPoint1(), attenuation, 0);
 
 	// Calculate panning
-	int32 panning = getSound()->calculatePanningAtPoint(actor->getPoint1()->x + actor->getPoint2()->x, actor->getPoint1()->y + actor->getPoint2()->y);
+	int32 panning = getSound()->calculatePanningAtPoint(*actor->getPoint1() + *actor->getPoint2());
 
 	getSound()->playSound(resourceId, false, adjustedVolume, panning);
 }

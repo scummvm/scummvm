@@ -861,7 +861,7 @@ void Scene::updateAmbientSounds() {
 			if (_vm->sound()->isPlaying(snd->resourceId)) {
 
 				if (snd->field_0) {
-					int32 volume = Config.ambientVolume + getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
+					int32 volume = Config.ambientVolume + getSound()->calculateVolumeAdjustement(snd->point, snd->attenuation, snd->delta);
 
 					if (volume <= 0) {
 						if (volume < -10000)
@@ -874,11 +874,11 @@ void Scene::updateAmbientSounds() {
 				}
 
 			} else {
-				int32 panning = (snd->field_0) ? getSound()->calculatePanningAtPoint(snd->x, snd->y) : 0;
+				int32 panning = (snd->field_0) ? getSound()->calculatePanningAtPoint(snd->point) : 0;
 
 				int32 volume = 0;
 				if (snd->field_0)
-					volume = getSound()->calculateVolumeAdjustement(snd->x, snd->y, snd->attenuation, snd->delta);
+					volume = getSound()->calculateVolumeAdjustement(snd->point, snd->attenuation, snd->delta);
 				else
 					volume = -pow((double)snd->delta, 2);
 

@@ -158,20 +158,21 @@ void Sound::setPanning(ResourceId resourceId, int32 panning) {
 	_mixer->setChannelBalance(item->handle, (int8)panning);
 }
 
-int32 Sound::calculateVolumeAdjustement(int32 x, int32 y, int32 attenuation, int32 delta) {
+int32 Sound::calculateVolumeAdjustement(const Common::Point &point, int32 attenuation, int32 delta) {
 	if (!attenuation)
 		return -(delta * delta);
 
+	Common::Point adjusted(point);
 	Actor *player = getScene()->getActor();
 	if (getSharedData()->point.x == -1) {
-		x -= (player->getPoint1()->x + player->getPoint2()->x);
-		y -= (player->getPoint1()->y + player->getPoint2()->y);
+		adjusted.x -= (player->getPoint1()->x + player->getPoint2()->x);
+		adjusted.y -= (player->getPoint1()->y + player->getPoint2()->y);
 	} else {
-		x -= getSharedData()->point.x;
-		y -= getSharedData()->point.y;
+		adjusted.x -= getSharedData()->point.x;
+		adjusted.y -= getSharedData()->point.y;
 	}
 
-	int32 adjustedVolume = getAdjustedVolume(x * x + y * y);
+	int32 adjustedVolume = getAdjustedVolume(adjusted.x * adjusted.x + adjusted.y * adjusted.y);
 
 	Common::Rational invAtt(100, attenuation);
 	Common::Rational v;
@@ -215,10 +216,10 @@ int32 Sound::getAdjustedVolume(int32 volume) {
 	return adjustedVolume;
 }
 
-int32 Sound::calculatePanningAtPoint(int32 x, int32) {
-	// y does not seem to be used at all :S
+int32 Sound::calculatePanningAtPoint(const Common::Point &point) {
+	// point.y does not seem to be used at all :S
 
-	int delta = x - getWorld()->xLeft;
+	int delta = point.x - getWorld()->xLeft;
 
 	if (delta < 0)
 		return (getWorld()->reverseStereo ? 10000 : -10000);
