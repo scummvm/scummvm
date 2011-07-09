@@ -69,8 +69,6 @@ void CGEEngine::setup() {
 	Talk::init();
 
 	// Initialise sprite arrays used by game objects
-	MB[0] = new Bitmap("BRICK", true);
-	MB[1] = NULL;
 	HL[0] = new Bitmap("HLINE", true);
 	HL[1] = NULL;
 	MC[0] = new Bitmap("MOUSE", true);
@@ -162,7 +160,6 @@ CGEEngine::~CGEEngine() {
 	delete _infoLine;
 	delete _cavLight;
 	delete _debugLine;
-	delete MB[0];
 	delete HL[0];
 	delete MC[0];
 	delete MC[1];

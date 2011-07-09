@@ -75,7 +75,6 @@ InfoLine *_infoLine;
 Sprite *_cavLight;
 InfoLine *_debugLine;
 
-BMP_PTR MB[2];
 BMP_PTR HL[2];
 BMP_PTR MC[3];
 BMP_PTR PR[2];
@@ -516,9 +515,14 @@ private:
 
 
 SQUARE::SQUARE(CGEEngine *vm)
-	: Sprite(vm, MB), _vm(vm) {
+	: Sprite(vm, NULL), _vm(vm) {
 	_flags._kill = true;
 	_flags._bDel = false;
+
+	BMP_PTR *MB = new BMP_PTR[2];
+	MB[0] = new Bitmap("BRICK", true);
+	MB[1] = NULL;
+	setShapeList(MB);
 }
 
 
