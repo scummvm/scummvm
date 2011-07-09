@@ -68,10 +68,7 @@ void ScummEngine::loadCJKFont() {
 			error("SCUMM::Font: Could not open file 'pce.cdbios'");
 
 		_cjkFont->setDrawingMode(Graphics::FontSJIS::kShadowMode);
-		_cjkFont->setCharSpacing(-1);
-		_cjkFont->setLineSpacing(-1);
-		_2byteWidth = _cjkFont->getMaxFontWidth();
-		_2byteHeight = _cjkFont->getFontHeight();
+		_2byteWidth = _2byteHeight = 12;
 		_useCJKMode = true;		
 #endif
 	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::JA_JPN) {
@@ -1127,18 +1124,14 @@ void CharsetRendererPCE::drawBits1(const Graphics::Surface &s, byte *dst, const 
 }
 
 int CharsetRendererPCE::getDrawWidthIntern(uint16 chr) {
-	if (_vm->_useCJKMode && chr > 127) {
-		assert(_vm->_cjkFont);
-		return _vm->_cjkFont->getCharWidth(chr);
-	}
+	if (_vm->_useCJKMode && chr > 127)
+		return _vm->_2byteWidth;
 	return CharsetRendererV3::getDrawWidthIntern(chr);
 }
 
 int CharsetRendererPCE::getDrawHeightIntern(uint16 chr) {
-	if (_vm->_useCJKMode && chr > 127) {
-		assert(_vm->_cjkFont);
-		return _vm->_cjkFont->getFontHeight();
-	}
+	if (_vm->_useCJKMode && chr > 127)
+		return _vm->_2byteHeight;
 	return CharsetRendererV3::getDrawHeightIntern(chr);
 }
 

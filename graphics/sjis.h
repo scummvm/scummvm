@@ -146,10 +146,6 @@ public:
 
 	virtual void toggleFlippedMode(bool enable);
 
-	virtual void setCharSpacing(int spacing);
-
-	virtual void setLineSpacing(int spacing);
-
 	virtual uint getFontHeight() const;
 
 	virtual uint getMaxFontWidth() const;
@@ -172,7 +168,6 @@ protected:
 	DrawingMode _drawMode;
 	bool _flippedMode;
 	int _fontWidth, _fontHeight;
-	int _charSpacing, _lineSpacing;
 	uint8 _bitPosNewLineMask;
 	
 	bool isASCII(uint16 ch) const;

@@ -76,7 +76,7 @@ void FontSJIS::drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 
 }
 
 FontSJISBase::FontSJISBase()
-	: _drawMode(kDefaultMode), _flippedMode(false), _fontWidth(16), _fontHeight(16), _charSpacing(0), _lineSpacing(0), _bitPosNewLineMask(0) {
+	: _drawMode(kDefaultMode), _flippedMode(false), _fontWidth(16), _fontHeight(16), _bitPosNewLineMask(0) {
 }
 
 void FontSJISBase::setDrawingMode(DrawingMode mode) {
@@ -93,43 +93,35 @@ void FontSJISBase::toggleFlippedMode(bool enable) {
 		warning("Flipped mode unsupported by this font");	
 }
 
-void FontSJISBase::setCharSpacing(int spacing) {
-	_charSpacing = spacing;
-}
-
-void FontSJISBase::setLineSpacing(int spacing) {
-	_lineSpacing = spacing;
-}
-
 uint FontSJISBase::getFontHeight() const {
 	switch (_drawMode) {
 	case kOutlineMode:
-		return _fontHeight + _lineSpacing + 2;
+		return _fontHeight + 2;
 
 	case kDefaultMode:
-		return _fontHeight + _lineSpacing;
+		return _fontHeight;
 
 	default:
-		return _fontHeight + _lineSpacing + 1;
+		return _fontHeight + 1;
 	}
 }
 
 uint FontSJISBase::getMaxFontWidth() const {
 	switch (_drawMode) {
 	case kOutlineMode:
-		return _fontWidth + _charSpacing + 2;
+		return _fontWidth + 2;
 
 	case kDefaultMode:
-		return _fontWidth + _charSpacing;
+		return _fontWidth;
 
 	default:
-		return _fontWidth + _charSpacing + 1;
+		return _fontWidth + 1;
 	}
 }
 
 uint FontSJISBase::getCharWidth(uint16 ch) const {
 	if (isASCII(ch))
-		return ((_drawMode == kOutlineMode) ? 10 : (_drawMode == kDefaultMode ? 8 : 9)) + _charSpacing;
+		return ((_drawMode == kOutlineMode) ? 10 : (_drawMode == kDefaultMode ? 8 : 9));
 	else
 		return getMaxFontWidth();
 }
