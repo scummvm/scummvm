@@ -1253,7 +1253,7 @@ void Actor::playSounds(ActorDirection direction, uint32 distance) {
 	_lastScreenUpdate = _vm->screenUpdateCount;
 
 	Common::Point sum(_point1.x + _point2.x, _point1.x + _point2.x);
-	int32 panning = getSound()->calculatePanningAtPoint(sum.x, sum.y);
+	int32 panning = getSound()->calculatePanningAtPoint(sum);
 
 	switch (_status) {
 	default:
@@ -1272,7 +1272,7 @@ void Actor::playSounds(ActorDirection direction, uint32 distance) {
 			// Compute volume
 			int32 vol = sqrt((double)-Config.sfxVolume);
 			if (_index != getScene()->getPlayerIndex())
-				vol += sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum.x, sum.y, 10, 0)));
+				vol += sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum, 10, 0)));
 
 			int32 volume = (Config.sfxVolume + vol) * (Config.sfxVolume + vol);
 			if (volume > 10000)
@@ -1309,7 +1309,7 @@ void Actor::playSounds(ActorDirection direction, uint32 distance) {
 			// Compute volume
 			int32 vol = getWorld()->actions[_actionIdx3]->volume;
 			if (_index != getScene()->getPlayerIndex())
-				vol += sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum.x, sum.y, 10, 0)));
+				vol += sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum, 10, 0)));
 
 			int32 volume = (Config.sfxVolume + vol) * (Config.sfxVolume + vol);
 			if (volume > 10000)
@@ -2340,16 +2340,13 @@ void Actor::resetActors() {
 	getWorld()->tickCount1 = _vm->getTick() + 3000;
 }
 
-void Actor::updateNumbers(int32 reaction, int32 x, int32 y) {
+void Actor::updateNumbers(int32 reaction, const Common::Point &point) {
 	if (reaction != 1)
 		return;
 
-	_numberStringX = x;
-	_numberStringY = y + 8;
+	_numberStringX = point.x;
+	_numberStringY = point.y + 8;
 	_numberStringWidth = 40;
-
-	// XXX use sprintf instead of itoa as itoa isn't part of standard
-	// C++ and therefore isn't available in GCC
 	sprintf(_numberString01, "%d", _numberValue01);
 
 	_numberFlag01 = 1;
@@ -2444,7 +2441,7 @@ void Actor::setVolume() {
 		return;
 
 	// Compute volume
-	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement(_point1.x + _point2.x, _point1.y + _point2.y, _field_968, 0);
+	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement(_point1 + _point2, _field_968, 0);
 	if (volume < -10000)
 		volume = -10000;
 

@@ -319,7 +319,7 @@ void Screen::selectTransTable(uint32 index) {
 //////////////////////////////////////////////////////////////////////////
 // Graphic queue
 //////////////////////////////////////////////////////////////////////////
-void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common::Point point, DrawFlags flags, int32 transTableNum, int32 priority) {
+void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, const Common::Point &point, DrawFlags flags, int32 transTableNum, int32 priority) {
 	GraphicQueueItem item;
 	item.priority = priority;
 
@@ -333,7 +333,7 @@ void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, Common:
 	_queueItems.push_back(item);
 }
 
-void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, Common::Point source, int32 resourceIdDestination, Common::Point destination, DrawFlags flags, int32 priority) {
+void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, int32 resourceIdDestination, const Common::Point &destination, DrawFlags flags, int32 priority) {
 	GraphicQueueItem item;
 	item.priority = priority;
 
@@ -497,8 +497,8 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x
 //////////////////////////////////////////////////////////////////////////
 // Debug
 //////////////////////////////////////////////////////////////////////////
-void Screen::drawLine(int x0, int y0, int x1, int y1) {
-	_backBuffer.drawLine(x0, y0, x1, y1, 0xFF);
+void Screen::drawLine(const Common::Point &source, const Common::Point &destination) {
+	_backBuffer.drawLine(source.x, source.y, destination.x, destination.y, 0xFF);
 }
 
 void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
@@ -507,7 +507,7 @@ void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 	animRect.clip(screenRect);
 
 	if (!animRect.isEmpty()) {
-		// Translate anim rectangle
+		// Translate animation rectangle
 		animRect.translate(-(int16)getWorld()->xLeft, -(int16)getWorld()->yTop);
 
 		int startX = animRect.right  == 640 ? 0 : surface->w - animRect.width();
