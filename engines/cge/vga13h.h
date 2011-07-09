@@ -306,6 +306,10 @@ public:
 	static void dacToPal(const Dac *tab, byte *palData);
 };
 
+class HorizLine: public Sprite {
+public:
+	HorizLine(CGEEngine *vm);
+};
 
 Dac mkDac(uint8 r, uint8 g, uint8 b);
 Rgb mkRgb(uint8 r, uint8 g, uint8 b);

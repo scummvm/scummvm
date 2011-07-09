@@ -70,12 +70,11 @@ Sprite *_pocket[POCKET_NX];
 Sprite *_sprite;
 Sprite *_miniCave;
 Sprite *_shadow;
-Sprite *_horzLine;
+HorizLine *_horzLine;
 InfoLine *_infoLine;
 Sprite *_cavLight;
 InfoLine *_debugLine;
 
-BMP_PTR HL[2];
 BMP_PTR MC[3];
 BMP_PTR PR[2];
 BMP_PTR SP[3];
