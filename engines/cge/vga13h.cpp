@@ -1360,4 +1360,15 @@ void Bitmap::hide(int x, int y) {
 	}
 }
 
+/*--------------------------------------------------------------------------*/
+
+HorizLine::HorizLine(CGEEngine *vm): Sprite(vm, NULL) {
+	// Set the sprite list
+	BMP_PTR *HL = new BMP_PTR[2];
+	HL[0] = new Bitmap("HLINE", true);
+	HL[1] = NULL;
+
+	setShapeList(HL);
+}
+
 } // End of namespace CGE

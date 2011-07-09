@@ -69,8 +69,6 @@ void CGEEngine::setup() {
 	Talk::init();
 
 	// Initialise sprite arrays used by game objects
-	HL[0] = new Bitmap("HLINE", true);
-	HL[1] = NULL;
 	MC[0] = new Bitmap("MOUSE", true);
 	MC[1] = new Bitmap("DUMMY", true);
 	MC[2] = NULL;
@@ -96,7 +94,7 @@ void CGEEngine::setup() {
 	_sprite = new Sprite(this, NULL);
 	_miniCave = new Sprite(this, NULL);
 	_shadow = new Sprite(this, NULL);
-	_horzLine = new Sprite(this, HL);
+	_horzLine = new HorizLine(this);
 	_infoLine = new InfoLine(this, INFO_W);
 	_cavLight = new Sprite(this, PR);
 	_debugLine = new InfoLine(this, SCR_WID);
@@ -160,7 +158,6 @@ CGEEngine::~CGEEngine() {
 	delete _infoLine;
 	delete _cavLight;
 	delete _debugLine;
-	delete HL[0];
 	delete MC[0];
 	delete MC[1];
 	delete PR[0];
