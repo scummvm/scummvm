@@ -162,12 +162,6 @@ bool Resource::createContexts() {
 		uint16 voiceFileAddType;
 	};
 
-
-	// If the Wyrmkeep credits file is found, set the Wyrmkeep version flag to true
-	if (Common::File::exists("credit3n.dlt")) {
-		_vm->_gf_wyrmkeep = true;
-	}
-
 	for (const ADGameFileDescription *gameFileDescription = _vm->getFilesDescriptions();
 		gameFileDescription->fileName; gameFileDescription++) {
 		addContext(gameFileDescription->fileName, gameFileDescription->fileType);

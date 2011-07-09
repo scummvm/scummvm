@@ -67,9 +67,6 @@ int SagaEngine::getGameId() const { return _gameDescription->gameId; }
 uint32 SagaEngine::getFeatures() const {
 	uint32 result = _gameDescription->features;
 
-	if (_gf_wyrmkeep)
-		result |= GF_WYRMKEEP;
-
 	return result;
 }
 
