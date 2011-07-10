@@ -368,9 +368,9 @@ void Scene::setMessageList(MessageList *messageList, bool messageListFlag, bool 
 	
 	// DEBUG: Show message list
 	for (uint i = 0; i < messageList->size(); i++) {
-		debug("%02d: %04X, %08X", i, (*messageList)[i].messageNum, (*messageList)[i].messageValue);
+		debug("A: %02d: %04X, %08X", i, (*messageList)[i].messageNum, (*messageList)[i].messageValue);
 	}
-	debug("================================================================");
+	debug("A: ================================================================");
 	
 }
 
@@ -382,6 +382,12 @@ bool Scene::setMessageList2(MessageList *messageList, bool messageListFlag, bool
 	bool result = false;
 	
 	debug("Scene::setMessageList2(%p)", (void*)messageList);
+
+	// DEBUG: Show message list
+	for (uint i = 0; i < messageList->size(); i++) {
+		debug("B: %02d: %04X, %08X", i, (*messageList)[i].messageNum, (*messageList)[i].messageValue);
+	}
+	debug("B: ================================================================");
 	
 	if (_messageListStatus == 1) {
 		if (messageList != _messageList2) {

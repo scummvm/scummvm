@@ -155,19 +155,41 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		setCallback2(AnimationCallback(&KmScene1001::sub44FA50));
 		break;
 	case 0x4812:
-		debug("########### B");				
-		// TODO setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub420120));
+		} else if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420170));
+		}else {
+			setCallback2(AnimationCallback(&Klayman::sub4200D0));
+		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		sub41C7B0();
 		break;		
 
+	case 0x481B:
+		// TODO: It's not really a point but an x1/x2 pair
+		if (param.asPoint().x != 0) {
+			sub41CC40(param.asPoint().x, param.asPoint().y);
+		} else {
+			error("// TODO sub41CCE0(param.asPoint().y);");
+			// TODO sub41CCE0(param.asPoint().y);
+		}
+		break;
+
 	case 0x4836:
 		if (param.asInteger() == 1) {
 			_parentScene->sendMessage(0x2002, 0, this);
 			setCallback2(AnimationCallback(&Klayman::sub4211F0));
 		}
+		break;		
+
+	case 0x483F:
+		sub41CD00(param.asInteger());
 		break;		
 
 	case 0x4840:

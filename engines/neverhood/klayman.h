@@ -53,9 +53,15 @@ public:
 	void sub41FC80();
 	void sub4211F0();
 	void sub4211B0();
+	void sub41FF80();
+	void sub420120();
+	void sub420170();
+	void sub4200D0();
+	void sub41FBC0();
 	
 	void spriteUpdate41F250();
 	void spriteUpdate41F5F0();
+	void spriteUpdate41F780();
 
 protected:
 	Entity *_parentScene;
@@ -152,6 +158,17 @@ protected:
 	void spriteUpdate41F320();
 	
 	uint32 handleMessage41E210(int messageNum, const MessageParam &param, Entity *sender);
+
+	uint32 handleMessage41D4C0(int messageNum, const MessageParam &param, Entity *sender);
+	
+	uint32 handleMessage41DAD0(int messageNum, const MessageParam &param, Entity *sender);
+	
+	void sub41CD00(int16 x);
+	void sub41CC40(int16 x1, int16 x2);
+	void sub41CAC0(int16 x);
+	void sub41FC30();
+	
+	uint32 handleMessage41DF10(int messageNum, const MessageParam &param, Entity *sender);
 	
 };
 
