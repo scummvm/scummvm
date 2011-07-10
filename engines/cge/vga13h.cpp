@@ -619,7 +619,7 @@ Sprite *Sprite::contract() {
 		if (_flags._bDel && e->_shpList) {
 			int i;
 			for (i = 0; e->_shpList[i]; i++)
-			delete e->_shpList[i];
+				delete e->_shpList[i];
 			delete[] e->_shpList;
 		}
 		if (memType(e->_seq) == NEAR_MEM)

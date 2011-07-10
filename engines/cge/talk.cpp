@@ -99,7 +99,8 @@ void Font::save() {
 
 Talk::Talk(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
 	: Sprite(vm, NULL), _mode(mode), _vm(vm) {
-	_ts[0] = _ts[1] = NULL;
+	
+	_ts = NULL;
 	_flags._syst = true;
 	update(tx);
 }
@@ -107,7 +108,7 @@ Talk::Talk(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
 
 Talk::Talk(CGEEngine *vm)
 	: Sprite(vm, NULL), _mode(PURE), _vm(vm) {
-	_ts[0] = _ts[1] = NULL;
+	_ts = NULL;
 	_flags._syst = true;
 }
 
@@ -141,7 +142,7 @@ void Talk::update(const char *tx) {
 	const char *p;
 	uint8 *m;
 
-	if (!_ts[0]) {
+	if (!_ts) {
 		uint16 k = 2 * hmarg;
 		mh = 2 * vmarg + FONT_HIG;
 		for (p = tx; *p; p++) {
@@ -155,7 +156,10 @@ void Talk::update(const char *tx) {
 		}
 		if (k > mw)
 			mw = k;
+
+		_ts = new BMP_PTR[2];
 		_ts[0] = box(mw, mh);
+		_ts[1] = NULL;
 	}
 
 	m = _ts[0]->_m + ln * mw + hmarg;
@@ -286,6 +290,11 @@ void Talk::putLine(int line, const char *text) {
 
 
 InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldTxt(NULL), _vm(vm) {
+	if (!_ts) {
+		_ts = new BMP_PTR[2];
+		_ts[1] = NULL;
+	}
+
 	_ts[0] = new Bitmap(w, FONT_HIG, TEXT_BG);
 	setShapeList(_ts);
 }
