@@ -1402,6 +1402,8 @@ PocLight::PocLight(CGEEngine *vm): Sprite(vm, NULL) {
 	LI[4] = NULL;
 
 	setShapeList(LI);
+
+	_flags._kill = false;
 }
 
 } // End of namespace CGE
