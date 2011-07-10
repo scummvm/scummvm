@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "asylum/puzzles/pipes.h"
@@ -35,11 +32,243 @@
 
 #include "asylum/asylum.h"
 
+#include <math.h>
+
 namespace Asylum {
 
+const Common::Point connectorPoints[] = {
+	Common::Point(158,  59),
+	Common::Point(202,  59),
+	Common::Point(271,  60),
+	Common::Point(380,  72),
+	Common::Point(205, 132),
+	Common::Point(272, 131),
+	Common::Point(469, 119),
+	Common::Point(163, 172),
+	Common::Point(206, 172),
+	Common::Point(318, 169),
+	Common::Point(360, 171),
+	Common::Point(428, 172),
+	Common::Point(466, 171),
+	Common::Point(319, 206),
+	Common::Point(360, 206),
+	Common::Point(168, 272),
+	Common::Point(273, 262),
+	Common::Point(318, 261),
+	Common::Point(401, 242),
+	Common::Point(399, 295),
+	Common::Point(460, 294)
+};
+
+const Common::Point peepholePoints[] = {
+	Common::Point(140,  65),
+	Common::Point(311,  44),
+	Common::Point(387,  48),
+	Common::Point(475,  72),
+	Common::Point(189,  67),
+	Common::Point(246,  66),
+	Common::Point(169, 113),
+	Common::Point(215, 106),
+	Common::Point(280, 105),
+	Common::Point(336,  95),
+	Common::Point(434,  80),
+	Common::Point(248, 136),
+	Common::Point(303, 154),
+	Common::Point(407, 125),
+	Common::Point(470, 151),
+	Common::Point(193, 180),
+	Common::Point(347, 176),
+	Common::Point(401, 177),
+	Common::Point(245, 201),
+	Common::Point(325, 196),
+	Common::Point(347, 212),
+	Common::Point(406, 213),
+	Common::Point(431, 218),
+	Common::Point(174, 228),
+	Common::Point(217, 234),
+	Common::Point(280, 227),
+	Common::Point(325, 239),
+	Common::Point(370, 244),
+	Common::Point(467, 239),
+	Common::Point(303, 267),
+	Common::Point(405, 273),
+	Common::Point(356, 293),
+	Common::Point(436, 294),
+	Common::Point(182, 317),
+	Common::Point(277, 299),
+	Common::Point(324, 291),
+	Common::Point(461, 323)
+};
+
+const uint32 peepholeResources[] = {15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 32, 32, 15,
+                                    15, 32, 32, 15, 15, 15, 15,15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15};
+
+//////////////////////////////////////////////////////////////////////////
+// Peephole
+//////////////////////////////////////////////////////////////////////////
+bool Peephole::marks[peepholesCount];
+
+void Peephole::connect(Connector *connector) {
+	_connectors.push_back(connector);
+}
+
+void Peephole::disconnect(Connector *connector) {
+	_connectors.remove(connector);
+}
+
+void Peephole::startUpWater(bool flag) {
+	if (flag)
+		memset(marks, false, sizeof(marks));
+
+	marks[_id] = true;
+
+	for (Common::List<Connector *>::iterator iter = _connectors.begin(); iter != _connectors.end(); ++iter) {
+		for (Common::List<Peephole *>::iterator iter1 = (*iter)->_connectedNodes.begin(); iter1 != (*iter)->_connectedNodes.end(); ++iter1) {
+			if (!marks[(*iter1)->getId()]) {
+
+				for (uint32 i = 0; i < 4; ++i) {
+					if (isConnected(i) && (*iter1)->getId() > 3)
+						(*iter1)->_flowValues[i] += _flowValues[i];
+				}
+
+				(*iter1)->startUpWater();
+			}
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Connector
+//////////////////////////////////////////////////////////////////////////
+void Connector::init(Peephole *n, Peephole *e, Peephole *s, Peephole *w, BinNum state, Connector *nextConnector, Direction nextConnectorPosition) {
+	_nodes[0] = n;
+	_nodes[1] = e;
+	_nodes[2] = s;
+	_nodes[3] = w;
+
+	_state = state;
+	_nextConnector = nextConnector;
+	_nextConnectorPosition = nextConnectorPosition;
+	_isConnected = false;
+
+	for (uint32 i = 0; i < 4; ++i) {
+		if (_state & (1 << i) && _nodes[i]) {
+			_nodes[i]->connect(this);
+			_connectedNodes.push_back(_nodes[i]);
+		}
+	}
+}
+
+void Connector::initGroup() {
+	if (!_isConnected && isReadyForConnection() && _nextConnector->isReadyForConnection())
+		connect(_nextConnector);
+}
+
+void Connector::turn() {
+	BinNum newState = BinNum(_state >> 1 | (_state & 1) << 3);
+
+	uint32 delta = _state ^ newState;
+	uint32 newIndex[2], oldIndex[2];
+
+	if (delta == kBinNum1111) {
+		if (newState == kBinNum0101) {
+			newIndex[0] = 0;
+			newIndex[1] = 2;
+			oldIndex[0] = 1;
+			oldIndex[1] = 3;
+		} else {
+			newIndex[0] = 1;
+			newIndex[1] = 3;
+			oldIndex[0] = 0;
+			oldIndex[1] = 2;
+		}
+	} else {
+		newIndex[0] = log((double)(newState & delta)) / log((double)2);
+		oldIndex[0] = log((double)(_state & delta)) / log((double)2);
+	}
+
+	for (uint32 i = 0; i < (uint32)(delta == kBinNum1111 ? 2 : 1); ++i) {
+		if (_nodes[oldIndex[i]]) {
+			_nodes[oldIndex[i]]->disconnect(this);
+			_connectedNodes.remove(_nodes[oldIndex[i]]);
+		}
+
+		if (_nodes[newIndex[i]]) {
+			_nodes[newIndex[i]]->connect(this);
+			_connectedNodes.push_back(_nodes[newIndex[i]]);
+		}
+	}
+
+	_state = newState;
+
+	if (_nextConnector) {
+		if (_isConnected) {
+			if(!(_nextConnectorPosition & _state))
+				disconnect(_nextConnector);
+		} else if (_nextConnectorPosition & _state && _nextConnector->isReadyForConnection()) {
+			connect(_nextConnector);
+		}
+	}
+}
+
+void Connector::connect(Connector *connector) {
+	for (Common::List<Peephole *>::iterator iter = _connectedNodes.begin(); iter != _connectedNodes.end(); ++iter) {
+		(*iter)->connect(connector);
+		connector->_connectedNodes.push_back(*iter);
+	}
+
+	for (Common::List<Peephole *>::iterator iter = connector->_connectedNodes.begin(); iter != connector->_connectedNodes.end(); ++iter) {
+		(*iter)->connect(this);
+		_connectedNodes.push_back(*iter);
+	}
+
+	_isConnected = connector->_isConnected = true;
+
+}
+
+void Connector::disconnect(Connector *connector) {
+	uint32 i;
+	Common::List<Common::List<Peephole *>::iterator> markedForDeletion;
+	bool flag;
+
+	for (i = 0; i < 4; ++i)
+		if (_nodes[i]) {
+			_nodes[i]->disconnect(connector);
+			connector->_connectedNodes.remove(_nodes[i]);
+		}
+
+	for (Common::List<Peephole *>::iterator iter = _connectedNodes.begin(); iter != _connectedNodes.end(); ++iter) {
+		flag = true;
+
+		for (i = 0; i < 4; ++i) {
+			if (*iter == _nodes[i]) {
+				flag = false;
+				break;
+			}
+		}
+
+		if (flag)
+			markedForDeletion.push_back(iter);
+	}
+
+	for (Common::List<Common::List<Peephole *>::iterator>::iterator iter1 = markedForDeletion.begin(); iter1 != markedForDeletion.end(); ++iter1) {
+		(*(*iter1))->disconnect(this);
+		_connectedNodes.remove(*(*iter1));
+	}
+
+	_isConnected = connector->_isConnected = false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// PuzzlePipes
+//////////////////////////////////////////////////////////////////////////
 PuzzlePipes::PuzzlePipes(AsylumEngine *engine) : Puzzle(engine) {
 	_previousMusicVolume = 0;
 	_rectIndex = -2;
+
+	_frameIndex = _frameIndexLever = 0;
+	memset(&_levelFlags, false, sizeof(_levelFlags));
+	_levelFlags[4] = true;
 }
 
 PuzzlePipes::~PuzzlePipes() {
@@ -64,19 +293,88 @@ bool PuzzlePipes::init(const AsylumEvent &evt) {
 
 	_rectIndex = -2;
 
-	updateCursor();
 	initResources();
-	setup(true);
+	setup();
 
 	return true;
 }
 
 bool PuzzlePipes::update(const AsylumEvent &evt) {
-	error("[PuzzlePipes::update] Not implemented!");
+	getScreen()->clear();
+	getScreen()->clearGraphicsInQueue();
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[1], 0, Common::Point(0, 0), kDrawFlagNone, 0, 4);
+
+	for (uint32 i = 0; i < ARRAYSIZE(_connectors); ++i)
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[_connectorResources[_connectors[i].getState()]], 0, connectorPoints[i], kDrawFlagNone, 0, 1);
+
+	// TODO: continuous progressbars
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(210, 444 - uint32(_levelValues[0] * 52)), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(276, 455 - uint32(_levelValues[1] * 52)), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(376, 448 - uint32(_levelValues[2] * 52)), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(458, 442 - uint32(_levelValues[3] * 52)), kDrawFlagNone, 0, 3);
+
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[33], 0, Common::Point(204, 377), kDrawFlagNone, 0, 1);
+
+	_frameIndex = (_frameIndex + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[15]);
+	for (uint32 i = 0; i < ARRAYSIZE(_peepholes); ++i)
+		if (_peepholes[i].isConnected())
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[peepholeResources[i]], _frameIndex, peepholePoints[i], kDrawFlagNone, 0, 1);
+
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[2], _frameIndexLever, Common::Point(540, 90), kDrawFlagNone, 0, 1);
+	_isLeverReady = false;
+	if (_frameIndexLever) {
+		_frameIndexLever = (_frameIndexLever + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[2]);
+		if (!_frameIndexLever)
+			_isLeverReady = true;
+	}
+
+	// TODO: turn the fountain on
+	if (_levelFlags[0])
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(233, 416), kDrawFlagNone, 0, 1);
+	else if (_levelFlags[1])
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(299, 431), kDrawFlagNone, 0, 1);
+	else if (_levelFlags[2])
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(398, 421), kDrawFlagNone, 0, 1);
+	else if (_levelFlags[3])
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(481, 417), kDrawFlagNone, 0, 1);
+	if (!_levelFlags[4])
+		 getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[45], 0, Common::Point(518, 108), kDrawFlagNone, 0, 2);
+
+	getScreen()->drawGraphicsInQueue();
+	getScreen()->copyBackBufferToScreen();
+	updateCursor();
+
+	if (_isLeverReady && !_levelFlags[4]) {
+		getScreen()->clear();
+		getSound()->stop(getWorld()->graphicResourceIds[41]);
+		getSound()->setMusicVolume(_previousMusicVolume);
+
+		_vm->switchEventHandler(getScene());
+	}
+
+	return true;
 }
 
 bool PuzzlePipes::mouseLeftDown(const AsylumEvent &evt) {
-	error("[PuzzlePipes::mouseLeftDown] Not implemented!");
+	Common::Point mousePos = getCursor()->position();
+
+	if (Common::Rect(540, 90, 590, 250).contains(mousePos)) {
+		if (!_frameIndexLever)
+			++_frameIndexLever;
+
+		getSound()->playSound(getWorld()->graphicResourceIds[43], false, Config.sfxVolume - 10);
+	} else {
+		if (_rectIndex != -1) {
+			getSound()->playSound(getWorld()->graphicResourceIds[42], false, Config.sfxVolume - 10);
+
+			_connectors[_rectIndex].turn();
+			startUpWater();
+			memset(_levelFlags, false, sizeof(_levelFlags));
+			_levelFlags[checkFlags()] = true;
+		}
+	}
+
+	return true;
 }
 
 bool PuzzlePipes::mouseRightDown(const AsylumEvent &evt) {
@@ -93,11 +391,63 @@ bool PuzzlePipes::mouseRightDown(const AsylumEvent &evt) {
 // Helpers
 //////////////////////////////////////////////////////////////////////////
 void PuzzlePipes::initResources() {
-	error("[PuzzlePipes::initResources] Not implemented!");
+	_connectorResources[kBinNum0011] =  4;
+	_connectorResources[kBinNum0110] =  3;
+	_connectorResources[kBinNum1100] =  6;
+	_connectorResources[kBinNum1001] =  5;
+
+	_connectorResources[kBinNum0111] =  7;
+	_connectorResources[kBinNum1110] = 10;
+	_connectorResources[kBinNum1101] =  9;
+	_connectorResources[kBinNum1011] =  8;
+
+	_connectorResources[kBinNum0101] = 11;
+	_connectorResources[kBinNum1010] = 12;
 }
 
-void PuzzlePipes::setup(bool val) {
-	error("[PuzzlePipes::setup] Not implemented!");
+void PuzzlePipes::setup() {
+	memset(&_levelValues, 0.0, sizeof(_levelValues));
+
+	for (uint32 i = 0; i < peepholesCount; ++i)
+		_peepholes[i].setId(i);
+
+	for (uint32 i = 0; i < connectorsCount; ++i)
+		_connectors[i].setId(i);
+
+	for (uint32 i = 0; i < 4; ++i) {
+		_sinks[i] = &_peepholes[peepholesCount - 4 + i];
+		_sources[i] = &_peepholes[i];
+		memset(&_sources[i]->_flowValues, 0, sizeof(_sources[i]->_flowValues));
+		_sources[i]->_flowValues[i] = 1;
+	}
+
+	_connectors[ 0].init(           NULL,  _peepholes + 4,  _peepholes + 6,  _peepholes + 0, kBinNum0110);
+	_connectors[ 1].init(           NULL,  _peepholes + 5,  _peepholes + 7,  _peepholes + 4, kBinNum0110);
+	_connectors[ 2].init(           NULL,  _peepholes + 1,  _peepholes + 8,  _peepholes + 5, kBinNum0110);
+	_connectors[ 3].init(_peepholes +  2, _peepholes + 10,            NULL,  _peepholes + 9, kBinNum0011);
+	_connectors[ 4].init(_peepholes +  7, _peepholes + 11,            NULL,            NULL, kBinNum0011,  _connectors + 8, kDirectionSh);
+	_connectors[ 5].init(_peepholes +  8, _peepholes + 12, _peepholes + 25, _peepholes + 11, kBinNum0111);
+	_connectors[ 6].init(_peepholes +  3,            NULL, _peepholes + 14, _peepholes + 13, kBinNum1100);
+	_connectors[ 7].init(_peepholes +  6, _peepholes + 15, _peepholes + 23,            NULL, kBinNum0110);
+	_connectors[ 8].init(           NULL, _peepholes + 18, _peepholes + 24, _peepholes + 15, kBinNum0111,  _connectors + 4, kDirectionNh);
+	_connectors[ 9].init(_peepholes +  9, _peepholes + 16, _peepholes + 19, _peepholes + 12, kBinNum1110);
+	_connectors[10].init(_peepholes + 13, _peepholes + 17,            NULL, _peepholes + 16, kBinNum0111, _connectors + 14, kDirectionSh);
+	_connectors[11].init(_peepholes + 10,            NULL, _peepholes + 22, _peepholes + 17, kBinNum0101, _connectors + 12, kDirectionEt);
+	_connectors[12].init(_peepholes + 14,            NULL, _peepholes + 28,            NULL, kBinNum1001, _connectors + 11, kDirectionWt);
+	_connectors[13].init(_peepholes + 19, _peepholes + 20, _peepholes + 26,            NULL, kBinNum0011);
+	_connectors[14].init(           NULL, _peepholes + 21, _peepholes + 27, _peepholes + 20, kBinNum1110, _connectors + 10, kDirectionNh);
+	_connectors[15].init(_peepholes + 23, _peepholes + 24, _peepholes + 33,            NULL, kBinNum0011);
+	_connectors[16].init(_peepholes + 25, _peepholes + 29, _peepholes + 34, _peepholes + 18, kBinNum1011);
+	_connectors[17].init(_peepholes + 26, _peepholes + 31, _peepholes + 35, _peepholes + 29, kBinNum1011);
+	_connectors[18].init(_peepholes + 21, _peepholes + 22, _peepholes + 30, _peepholes + 27, kBinNum1011);
+	_connectors[19].init(_peepholes + 30, _peepholes + 32,            NULL, _peepholes + 31, kBinNum0011);
+	_connectors[20].init(_peepholes + 28,            NULL, _peepholes + 36, _peepholes + 32, kBinNum1001);
+
+	_connectors[ 4].initGroup();
+	_connectors[10].initGroup();
+	_connectors[11].initGroup();
+
+	startUpWater();
 }
 
 void PuzzlePipes::updateCursor() {
@@ -107,18 +457,47 @@ void PuzzlePipes::updateCursor() {
 		return;
 
 	_rectIndex = index;
-	if (index == -1)
-		getCursor()->set(getWorld()->graphicResourceIds[16], 0, kCursorAnimationNone);
-	else
+	// FIXME
+	if (index > -1 || Common::Rect(540, 90, 590, 250).contains(getCursor()->position()))
 		getCursor()->set(getWorld()->graphicResourceIds[16]);
+	else
+		getCursor()->set(getWorld()->graphicResourceIds[16], 0, kCursorAnimationNone);
 }
 
 int32 PuzzlePipes::findRect() {
-	error("[PuzzlePipes::findRect] Not implemented!");
+	for (uint32 i = 0; i < ARRAYSIZE(connectorPoints); ++i)
+		if (Common::Rect(connectorPoints[i].x - 5, connectorPoints[i].y - 5, connectorPoints[i].x + 30, connectorPoints[i].y + 30).contains(getCursor()->position()))
+			return i;
+
+	return -1;
 }
 
-void PuzzlePipes::checkFlags() {
-	error("[PuzzlePipes::checkFlags] Not implemented!");
+uint32 PuzzlePipes::checkFlags() {
+	uint32 total = _sinks[0]->getLevel1() + _sinks[1]->getLevel1() +_sinks[2]->getLevel1() + _sinks[3]->getLevel1();
+	float temp;
+	uint32 val = 4;
+
+	if (total)
+		for (uint32 i = 0; i < 4; ++i) {
+			temp = _sinks[i]->getLevel1() / float(total);
+			_levelValues[i] = temp * _sinks[i]->getLevel() / 4;
+			if (_levelValues[i] == 1.0)
+				val = i;
+		}
+	else
+		memset(_levelValues, 0, sizeof(_levelValues));
+
+	return val;
+}
+
+void PuzzlePipes::startUpWater() {
+	for (uint32 i = 4; i < peepholesCount; ++i)
+		memset(_peepholes[i]._flowValues, 0, sizeof(_peepholes[i]._flowValues));
+
+	_sources[0]->startUpWater(true);
+	_sources[1]->startUpWater(true);
+	_sources[2]->startUpWater(true);
+	_sources[3]->startUpWater(true);
 }
 
 } // End of namespace Asylum
