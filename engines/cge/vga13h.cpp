@@ -356,12 +356,14 @@ Sprite::Sprite(CGEEngine *vm, BMP_PTR *shpP)
 	_seqPtr = 0;
 	_shpCnt = 0;
 	_prev = _next = NULL;
-
+static int ctr = 1;
+debug("create %d %x", ctr++, this);
 	setShapeList(shpP);
 }
 
 
 Sprite::~Sprite() {
+debug("destroy %x", this);
 	if (_sprite == this)
 		_sprite = NULL;
 	contract();
@@ -775,7 +777,7 @@ BMP_PTR Sprite::ghost() {
 			error("No core");
 		bmp->_w = e->_b1->_w;
 		bmp->_h = e->_b1->_h;
-		if ((bmp->_b = farnew(HideDesc, bmp->_h)) == NULL)
+		if ((bmp->_b = new HideDesc[bmp->_h]) == NULL)
 			error("No Core");
 		bmp->_v = (uint8 *) memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc) * bmp->_h);
 		// TODO offset correctly in the surface using y1 pitch and x1 and not via offset segment
@@ -903,8 +905,18 @@ void Queue::insert(Sprite *spr) {
 		spr->contract();
 }
 
+template<typename T>
+inline bool contains(const Common::List<T> &l, const T &v) {
+	return (Common::find(l.begin(), l.end(), v) != l.end());
+}
+Common::List<Sprite *> l;
 
 Sprite *Queue::remove(Sprite *spr) {
+	if (contains(l, spr)) {
+		debug("N");
+	}
+	l.push_back(spr);
+
 	if (spr == _head)
 		_head = spr->_next;
 	if (spr == _tail)

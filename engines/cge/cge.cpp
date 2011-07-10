@@ -136,6 +136,8 @@ CGEEngine::~CGEEngine() {
 	delete _console;
 
 	// Delete engine objects 
+	delete _vga;
+	delete _sys;
 	delete _sprite;
 	delete _miniCave;
 	delete _shadow;
@@ -153,8 +155,6 @@ CGEEngine::~CGEEngine() {
 	delete _snail;
 	delete _snail_;
 	delete _hero;
-	delete _vga;
-	delete _sys;
 }
 
 Common::Error CGEEngine::run() {
