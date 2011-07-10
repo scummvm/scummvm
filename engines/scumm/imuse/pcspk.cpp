@@ -21,8 +21,6 @@
 
 #include "scumm/imuse/pcspk.h"
 
-#include "common/debug.h"
-#include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Scumm {
@@ -107,7 +105,7 @@ void PcSpkDriver::onTimer() {
 			if (out.unkB && out.unkC) {
 				out.unkA += out.unkB;
 				if (out.instrument)
-					out.unkE = (out.instrument[out.unkA] * out.unkC) >> 4;
+					out.unkE = ((int8)out.instrument[out.unkA] * out.unkC) >> 4;
 			}
 
 			++_effectTimer;
@@ -515,7 +513,7 @@ void PcSpkDriver::updateEffectGenerator(MidiChannel_PcSpk &chan, EffectEnvelope 
 			break;
 
 		case 3:
-			chan._out.unkC = (def.phase & 0xFF) + chan._instrument[1];
+			chan._out.unkC = (def.phase & 0xFF) + chan._instrument[2];
 			break;
 
 		case 4:
@@ -540,10 +538,10 @@ void PcSpkDriver::updateEffectGenerator(MidiChannel_PcSpk &chan, EffectEnvelope 
 }
 
 uint8 PcSpkDriver::advanceEffectEnvelope(EffectEnvelope &env, EffectDefinition &def) {
-	if (env.duration > 0) {
+	if (env.duration != 0) {
 		env.duration -= 17;
 		if (env.duration <= 0) {
-			env.duration = 0;
+			env.state = 0;
 			return 0;
 		}
 	}

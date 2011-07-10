@@ -62,7 +62,7 @@ private:
 	struct EffectEnvelope {
 		uint8 state;
 		int16 currentLevel;
-		uint16 duration;
+		int16 duration;
 		int16 maxLevel;
 		int16 startLevel;
 		uint8 loop;
@@ -80,7 +80,7 @@ private:
 	};
 
 	struct EffectDefinition {
-		uint16 phase;
+		int16 phase;
 		uint8 type;
 		uint8 useModWheel;
 		EffectEnvelope *envelope;
@@ -95,12 +95,12 @@ private:
 		uint8 unkA;
 		uint8 unkB;
 		uint8 unkC;
-		uint16 unkE;
+		int16 unkE;
 		EffectEnvelope effectEnvelopeA;
 		EffectDefinition effectDefA;
 		EffectEnvelope effectEnvelopeB;
 		EffectDefinition effectDefB;
-		uint16 unk60;
+		int16 unk60;
 	};
 
 	struct MidiChannel_PcSpk : public MidiChannel {
