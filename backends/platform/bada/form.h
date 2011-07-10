@@ -89,6 +89,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   Osp::Base::Runtime::Mutex* eventQueueLock;
   Common::Queue<Common::Event> eventQueue;
   enum {InitState, ActiveState, ClosingState, DoneState} state;
+  int setupIndex;
   bool leftButton;
 };
 

@@ -173,15 +173,17 @@ void BadaGraphicsManager::internUpdateScreen() {
   else {
     Canvas canvas;
     canvas.Construct();
-    canvas.SetBackgroundColor(Color(0x1c, 0x23, 0x1c));
-    canvas.SetForegroundColor(Color::COLOR_RED);
+    canvas.SetBackgroundColor(Color::COLOR_BLACK);
+    canvas.SetForegroundColor(Color::COLOR_CYAN);
     canvas.Clear();
 
     Font* pFont = new Font();
-    pFont->Construct(FONT_STYLE_PLAIN | FONT_STYLE_BOLD, 50);
+    pFont->Construct(FONT_STYLE_ITALIC | FONT_STYLE_BOLD, 45);
     canvas.SetFont(*pFont);
 
-    canvas.DrawText(Point(0,0), L"Welcome to ScummVM. Loading, please wait...");
+    int x = _videoMode.hardwareWidth / 3;
+    int y = _videoMode.hardwareHeight / 3;
+    canvas.DrawText(Point(x, y), L"Loading ...");
     canvas.Show();
     delete pFont;
   }

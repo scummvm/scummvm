@@ -74,7 +74,7 @@ class BadaSystem : public ModularBackend,
   result Construct();
   void closeGraphics();
   void destroyBackend();
-  bool isClosing() { appForm->isClosing(); }
+  bool isClosing() { return appForm->isClosing(); }
 
   BadaGraphicsManager* getGraphics() {
     return (BadaGraphicsManager*) _graphicsManager;

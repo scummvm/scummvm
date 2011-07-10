@@ -38,6 +38,7 @@ using namespace Osp::Ui::Controls;
 BadaAppForm::BadaAppForm() : 
   gameThread(0), 
   state(InitState),
+  setupIndex(-1),
   leftButton(true) {
   eventQueueLock = new Mutex();
   eventQueueLock->Create();
@@ -90,6 +91,7 @@ BadaAppForm::~BadaAppForm() {
   if (gameThread) {
     terminate();
     gameThread->Stop();
+    gameThread->Join();
     delete gameThread;
     gameThread = null;
   }
@@ -167,6 +169,7 @@ void BadaAppForm::pushEvent(Common::EventType type,
   e.type = type;
   e.mouse.x = currentPosition.x;
   e.mouse.y = currentPosition.y;
+  g_system->warpMouse(currentPosition.x, currentPosition.y);
 
   eventQueueLock->Acquire();
   eventQueue.push(e);
@@ -207,8 +210,10 @@ Object* BadaAppForm::Run(void) {
 void BadaAppForm::OnTouchDoublePressed(const Control& source, 
                                        const Point& currentPosition, 
                                        const TouchEventInfo& touchInfo) {
-  g_system->displayMessageOnOSD("double !");
-  leftButton = !leftButton;
+  setupIndex = (setupIndex == -1 ? 0 : -1);
+  if (setupIndex == 0) {
+    g_system->displayMessageOnOSD("<- Keypad | Escape ->");
+  }
 }
 
 void BadaAppForm::OnTouchFocusIn(const Control& source, 
@@ -224,39 +229,65 @@ void BadaAppForm::OnTouchFocusOut(const Control& source,
 void BadaAppForm::OnTouchLongPressed(const Control& source, 
                                      const Point& currentPosition, 
                                      const TouchEventInfo& touchInfo) {
-  pushKey(leftButton ? Common::KEYCODE_RETURN : Common::KEYCODE_ESCAPE);
+  if (setupIndex == -1) {
+    pushKey(Common::KEYCODE_RETURN);
+  }
 }
 
 void BadaAppForm::OnTouchMoved(const Control& source, 
                                const Point& currentPosition, 
                                const TouchEventInfo& touchInfo) {
-  pushEvent(Common::EVENT_MOUSEMOVE, currentPosition);
+  if (setupIndex == -1) {
+    pushEvent(Common::EVENT_MOUSEMOVE, currentPosition);
+  }
 }
 
 void BadaAppForm::OnTouchPressed(const Control& source, 
                                  const Point& currentPosition, 
                                  const TouchEventInfo& touchInfo) {
-  AppLog("pressed %d %d %d", currentPosition.x, currentPosition.y, touchInfo.IsFlicked());
-  pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
-            currentPosition);
+  switch (setupIndex) {
+  case -1:
+    pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+              currentPosition);
+    break;
+  case 0:
+    g_system->displayMessageOnOSD("<- Left Button | Right Button ->");
+    setupIndex++;
+    break;
+  case 1:
+    g_system->displayMessageOnOSD("<- Volume ->");
+    setupIndex++;
+    break;
+  default:
+    setupIndex = -1;
+    break;
+  }
 }
 
 void BadaAppForm::OnTouchReleased(const Control& source, 
                                   const Point& currentPosition, 
                                   const TouchEventInfo& touchInfo) {
-  if (touchInfo.IsFlicked()) {
-    AppLog("flicked %d %d", currentPosition.x, currentPosition.y);
-    if (currentPosition.x < g_system->getWidth() / 2) {
-      pushKey(Common::KEYCODE_F7);
-    }
-    else {
-      pushKey(Common::KEYCODE_RETURN);
-    }
-  }
-  else {
-    AppLog("touched %d %d", currentPosition.x, currentPosition.y);
+  if (setupIndex == -1) {
     pushEvent(leftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
               currentPosition);
+  }
+  else if (touchInfo.IsFlicked()) {
+    bool left = (currentPosition.x < g_system->getWidth() / 2);
+    switch (setupIndex) {
+    case 0:
+      // keypad | escape
+      pushKey(left ? Common::KEYCODE_F7 : Common::KEYCODE_ESCAPE);
+      break;
+    case 1:
+      // toggle left/right button
+      leftButton = !leftButton;
+      break;
+    case 2:
+      // volume up/down
+      break;
+    default:
+      break;
+    }
   }
 }
 
