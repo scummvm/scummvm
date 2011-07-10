@@ -123,7 +123,7 @@ void Keyboard::newKeyboard(Common::Event &event) {
 
 	if (event.type == Common::EVENT_KEYUP) {
 		// Key release
-		_key[event.kbd.keycode] = false;
+		_key[keycode] = false;
 	} else if (event.type == Common::EVENT_KEYDOWN) {
 		// Key press
 		_key[keycode] = true;
