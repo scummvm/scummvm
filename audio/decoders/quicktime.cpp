@@ -347,11 +347,6 @@ AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::S
 	} else if (_codecTag == MKTAG('i', 'm', 'a', '4')) {
 		// Riven uses this codec (as do some Myst ME videos)
 		return makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), kADPCMApple, _sampleRate, _channels, 34);
-#ifdef AUDIO_QDM2_H
-	} else if (_codecTag == MKTAG('Q', 'D', 'M', '2')) {
-		// Myst ME uses this codec for many videos
-		return makeQDM2Stream(stream, _parentTrack->extraData);
-#endif
 	}
 
 	error("Unsupported audio codec");
@@ -362,6 +357,11 @@ void QuickTimeAudioDecoder::AudioSampleDesc::initCodec() {
 	delete _codec; _codec = 0;
 
 	switch (_codecTag) {
+	case MKTAG('Q', 'D', 'M', '2'):
+#ifdef AUDIO_QDM2_H
+		_codec = makeQDM2Decoder(_parentTrack->extraData);
+#endif
+		break;
 	case MKTAG('m', 'p', '4', 'a'):
 #ifdef USE_FAAD
 		if (_parentTrack->objectTypeMP4 == 0x40)
