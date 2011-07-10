@@ -69,7 +69,6 @@ public:
 private:
 	bool checkMarker(byte marker);
 	bool checkBlockSize(int size);
-	void rawRead(void *destPtr, size_t size);
 
 	Common::Array<byte> _data;
 	Common::Array<byte>::const_iterator _iter;
