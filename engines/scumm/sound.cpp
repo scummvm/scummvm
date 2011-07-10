@@ -1137,8 +1137,8 @@ int ScummEngine::readSoundResource(ResId idx) {
 				break;
 			case MKTAG('S','P','K',' '):
 				pri = -1;
-//				if (_musicType == MDT_PCSPK || _musicType == MDT_PCJR)
-//					pri = 11;
+				if (_musicType == MDT_PCSPK || _musicType == MDT_PCJR)
+					pri = 11;
 				break;
 			}
 

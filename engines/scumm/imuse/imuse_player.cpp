@@ -371,11 +371,13 @@ void Player::sysEx(const byte *p, uint16 len) {
 	if (a != IMUSE_SYSEX_ID) {
 		if (a == ROLAND_SYSEX_ID) {
 			// Roland custom instrument definition.
-			part = getPart(p[0] & 0x0F);
-			if (part) {
-				part->_instrument.roland(p - 1);
-				if (part->clearToTransmit())
-					part->_instrument.send(part->_mc);
+			if (_isMIDI || _isMT32) {
+				part = getPart(p[0] & 0x0F);
+				if (part) {
+					part->_instrument.roland(p - 1);
+					if (part->clearToTransmit())
+						part->_instrument.send(part->_mc);
+				}
 			}
 		} else if (a == YM2612_SYSEX_ID) {
 			// FM-TOWNS custom instrument definition

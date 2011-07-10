@@ -64,7 +64,8 @@ _queue_cleared(0),
 _master_volume(0),
 _music_volume(0),
 _trigger_count(0),
-_snm_trigger_index(0) {
+_snm_trigger_index(0),
+_pcSpeaker(false) {
 	memset(_channel_volume,0,sizeof(_channel_volume));
 	memset(_channel_volume_eff,0,sizeof(_channel_volume_eff));
 	memset(_volchan_table,0,sizeof(_volchan_table));
@@ -466,6 +467,10 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 
 	case IMuse::PROP_GAME_ID:
 		_game_id = value;
+		break;
+
+	case IMuse::PROP_PC_SPEAKER:
+		_pcSpeaker = (value != 0);
 		break;
 	}
 
@@ -1668,16 +1673,19 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 	}
 }
 
-void IMuseInternal::setGlobalAdLibInstrument(byte slot, byte *data) {
+void IMuseInternal::setGlobalInstrument(byte slot, byte *data) {
 	if (slot < 32) {
-		_global_adlib_instruments[slot].adlib(data);
+		if (_pcSpeaker)
+			_global_instruments[slot].pcspk(data);
+		else
+			_global_instruments[slot].adlib(data);
 	}
 }
 
-void IMuseInternal::copyGlobalAdLibInstrument(byte slot, Instrument *dest) {
+void IMuseInternal::copyGlobalInstrument(byte slot, Instrument *dest) {
 	if (slot >= 32)
 		return;
-	_global_adlib_instruments[slot].copy_to(dest);
+	_global_instruments[slot].copy_to(dest);
 }
 
 
