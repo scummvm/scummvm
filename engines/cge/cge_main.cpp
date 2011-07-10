@@ -261,7 +261,6 @@ void CGEEngine::saveSound() {
 
 
 void CGEEngine::saveGame(Common::WriteStream *file) {
-	SavTab *st;
 	Sprite *spr;
 	int i;
 
