@@ -69,9 +69,6 @@ void CGEEngine::setup() {
 	Talk::init();
 
 	// Initialise sprite arrays used by game objects
-	MC[0] = new Bitmap("MOUSE", true);
-	MC[1] = new Bitmap("DUMMY", true);
-	MC[2] = NULL;
 	PR[0] = new Bitmap("PRESS", true);
 	PR[1] = NULL;
 	SP[0] = new Bitmap("SPK_L", true);
@@ -158,8 +155,6 @@ CGEEngine::~CGEEngine() {
 	delete _infoLine;
 	delete _cavLight;
 	delete _debugLine;
-	delete MC[0];
-	delete MC[1];
 	delete PR[0];
 	delete SP[0];
 	delete SP[1];
