@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "asylum/views/video.h"
@@ -83,7 +80,7 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 
 			if (_subtitleIndex >= 0) {
 				char *text1 = getText()->get((ResourceId)_currentMovie);
-				
+
 				int32 y = 10 * (44 - getText()->draw(0, 99, kTextCalculate, 10, 400, 20, 620, text1));
 				if (y <= 400)
 					y = 405;
@@ -94,7 +91,7 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 
 			--_subtitleCounter;
 		}
-		
+
 		return true;
 		}
 
@@ -160,7 +157,7 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 
 		if (_smkDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
-			
+
 			if (!frame)
 				continue;
 
@@ -171,7 +168,7 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 
 			if (showSubtitles) {
 				int32 currentFrame = _smkDecoder->getCurFrame() + 1;
-				
+
 				// Check for next frame
 				if (currentFrame > frameEnd) {
 					if (index < _subtitles.size()) {
@@ -181,16 +178,16 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 						++index;
 					}
 				}
-				
+
 				if (currentFrame < frameStart || currentFrame > frameEnd)
 					_vm->notify(EVENT_ASYLUM_SUBTITLE, 0, 0);
 				else
-					_vm->notify(EVENT_ASYLUM_SUBTITLE, currentSubtitle, 1);				
+					_vm->notify(EVENT_ASYLUM_SUBTITLE, currentSubtitle, 1);
 			}
 
 			getScreen()->copyBackBufferToScreen();
 
-			g_system->updateScreen();			
+			g_system->updateScreen();
 		}
 		g_system->delayMillis(10);
 	}
@@ -206,7 +203,7 @@ void VideoPlayer::setupPalette() {
 	//getScreen()->setupPalette(0, 0, 0);
 }
 
-void VideoPlayer::loadSubtitles() {	
+void VideoPlayer::loadSubtitles() {
 	char movieToken[10];
 	sprintf(movieToken, "[MOV%03d]", _currentMovie);
 

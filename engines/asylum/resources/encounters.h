@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef ASYLUM_ENCOUNTERS_H
@@ -238,7 +235,7 @@ private:
 	bool drawPortraits();
 	void drawStructs();
 	void drawDialog();
-	void drawText(char *text, ResourceId font, int32 y);	
+	void drawText(char *text, ResourceId font, int32 y);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc
