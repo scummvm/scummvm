@@ -1287,8 +1287,6 @@ void Actor::undraw(bool /*visible*/) {
 		shutUp();
 }
 
-#define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
-
 void Actor::setShadowPlane(const char *n) {
 	assert(_activeShadowSlot != -1);
 
