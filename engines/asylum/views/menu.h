@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef ASYLUM_MENU_H
@@ -190,9 +187,9 @@ private:
 	void adjustPerformance();
 
 	/**
-	 * Gets the chapter name. 
+	 * Gets the chapter name.
 	 *
-	 * @return The chapter name. 
+	 * @return The chapter name.
 	 */
 	Common::String getChapterName();
 
