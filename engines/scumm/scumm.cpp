@@ -1867,7 +1867,6 @@ void ScummEngine::setupMusic(int midi) {
 			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 		} else if (_musicType == MDT_PCSPK) {
-			// HACK
 			adlibMidiDriver = new PcSpkDriver(_mixer);
 		}
 
@@ -1897,6 +1896,8 @@ void ScummEngine::setupMusic(int midi) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
+			if (_musicType == MDT_PCSPK)
+				_imuse->property(IMuse::PROP_PC_SPEAKER, 1);
 		}
 	}
 }

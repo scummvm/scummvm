@@ -434,7 +434,8 @@ protected:
 	Player _players[8];
 	Part _parts[32];
 
-	Instrument _global_adlib_instruments[32];
+	bool _pcSpeaker;
+	Instrument _global_instruments[32];
 	CommandQueue _cmd_queue[64];
 	DeferredCommand _deferredCommands[4];
 
@@ -501,7 +502,7 @@ protected:
 	void reallocateMidiChannels(MidiDriver *midi);
 	void setGlobalAdLibInstrument(byte slot, byte *data);
 	void setGlobalPcSpkInstrument(byte slot, byte *data);
-	void copyGlobalAdLibInstrument(byte slot, Instrument *dest);
+	void copyGlobalInstrument(byte slot, Instrument *dest);
 	bool isNativeMT32() { return _native_mt32; }
 
 protected:

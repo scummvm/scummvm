@@ -93,9 +93,9 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 				// anyway.
 				if (player->_isMIDI) {
 					part->_instrument.program((p[15] & 0x0F) << 4 |(p[16] & 0x0F), player->_isMT32);
-				} else {
+				} else if (se->_pcSpeaker) {
 					// FIXME/HACK: This is only needed here, since when we use the following line:
-					// se->copyGlobalAdLibInstrument((p[15] & 0x0F) << 4 |(p[16] & 0x0F), &part->_instrument);
+					// se->copyGlobalInstrument((p[15] & 0x0F) << 4 |(p[16] & 0x0F), &part->_instrument);
 					// We would not get any instrument for PC Speaker. Because we don't default to an
 					// "empty" instrument in case the global instrument specified is not set up.
 					byte empty[23] = {0};
