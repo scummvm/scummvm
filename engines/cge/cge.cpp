@@ -69,8 +69,6 @@ void CGEEngine::setup() {
 	Talk::init();
 
 	// Initialise sprite arrays used by game objects
-	PR[0] = new Bitmap("PRESS", true);
-	PR[1] = NULL;
 	SP[0] = new Bitmap("SPK_L", true);
 	SP[1] = new Bitmap("SPK_R", true);
 	SP[2] = NULL;
@@ -93,7 +91,7 @@ void CGEEngine::setup() {
 	_shadow = new Sprite(this, NULL);
 	_horzLine = new HorizLine(this);
 	_infoLine = new InfoLine(this, INFO_W);
-	_cavLight = new Sprite(this, PR);
+	_cavLight = new CavLight(this);
 	_debugLine = new InfoLine(this, SCR_WID);
 	_snail = new Snail(this, false);
 	_snail_ = new Snail(this, true);
@@ -155,7 +153,6 @@ CGEEngine::~CGEEngine() {
 	delete _infoLine;
 	delete _cavLight;
 	delete _debugLine;
-	delete PR[0];
 	delete SP[0];
 	delete SP[1];
 	delete LI[0];

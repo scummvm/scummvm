@@ -75,7 +75,6 @@ InfoLine *_infoLine;
 Sprite *_cavLight;
 InfoLine *_debugLine;
 
-BMP_PTR PR[2];
 BMP_PTR SP[3];
 BMP_PTR LI[5];
 
