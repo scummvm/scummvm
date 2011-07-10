@@ -1380,4 +1380,14 @@ CavLight::CavLight(CGEEngine *vm): Sprite(vm, NULL) {
 	setShapeList(PR);
 }
 
+Spike::Spike(CGEEngine *vm): Sprite(vm, NULL) {
+	// Set the sprite list
+	BMP_PTR *SP = new BMP_PTR[2];
+	SP[0] = new Bitmap("SPK_L", true);
+	SP[1] = new Bitmap("SPK_R", true);
+	SP[2] = NULL;
+
+	setShapeList(SP);
+}
+
 } // End of namespace CGE

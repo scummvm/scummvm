@@ -69,9 +69,6 @@ void CGEEngine::setup() {
 	Talk::init();
 
 	// Initialise sprite arrays used by game objects
-	SP[0] = new Bitmap("SPK_L", true);
-	SP[1] = new Bitmap("SPK_R", true);
-	SP[2] = NULL;
 	LI[0] = new Bitmap("LITE0", true);
 	LI[1] = new Bitmap("LITE1", true);
 	LI[2] = new Bitmap("LITE2", true);
@@ -153,8 +150,6 @@ CGEEngine::~CGEEngine() {
 	delete _infoLine;
 	delete _cavLight;
 	delete _debugLine;
-	delete SP[0];
-	delete SP[1];
 	delete LI[0];
 	delete LI[1];
 	delete LI[2];
