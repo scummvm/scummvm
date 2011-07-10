@@ -53,7 +53,11 @@ int PcSpkDriver::open() {
 	_lastActiveChannel = 0;
 	_lastActiveOut = 0;
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	// We set the output sound type to music here to allow sound volume
+	// adjustment. The drawback here is that we can not control the music and
+	// sfx separately here. But the AdLib output has the same issue so it
+	// should not be that bad.
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
 
