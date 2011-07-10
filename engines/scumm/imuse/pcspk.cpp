@@ -307,8 +307,15 @@ void PcSpkDriver::MidiChannel_PcSpk::controlChange(byte control, byte value) {
 
 	case 7:
 		_tl = value;
-		// TODO: Properly implement this
-		_owner->updateNote();
+		if (_owner->_activeChannel == this) {
+			if (_tl == 0) {
+				_owner->_lastActiveChannel = 0;
+				_owner->_lastActiveOut = 0;
+				_owner->_pcSpk.stop();
+			} else {
+				_owner->output((_out.note << 7) + _pitchBend + _out.unk60 + _out.unkE);
+			}
+		}
 		break;
 
 	case 64:
