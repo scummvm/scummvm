@@ -40,8 +40,12 @@ GetText::GetText(CGEEngine *vm, const char *info, char *text, int size)
 	int i = 2 * TEXT_HM + _font->width(info);
 	_ptr = this;
 	_mode = RECT;
+
+	_ts = new BMP_PTR[2];
 	_ts[0] = box((i + 3) & ~3, 2 * TEXT_VM + 2 * FONT_HIG + TEXT_LS);
+	_ts[1] = NULL;
 	setShapeList(_ts);
+
 	_flags._bDel = true;
 	_flags._kill = true;
 	memcpy(_buff, text, _len);
