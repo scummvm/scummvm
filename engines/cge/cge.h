@@ -49,12 +49,6 @@ enum SNLIST { NEAR, TAKE };
 
 #define POCKET_NX   8
 
-struct SavTab {
-	void *_ptr;
-	int32 _len;
-	bool  _flag;
-};
-
 class CGEEngine : public Engine {
 private:
 	uint32 _lastFrame;
