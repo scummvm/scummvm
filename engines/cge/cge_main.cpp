@@ -1524,6 +1524,9 @@ void CGEEngine::mainLoop() {
 
 	// Dispatch the tick to any active objects
 	tick();
+
+	// Handle any pending events
+	_eventManager->poll();
 }
 
 void CGEEngine::tick() {
