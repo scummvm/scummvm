@@ -1715,7 +1715,9 @@ bool CGEEngine::showTitle(const char *name) {
 		return false;
 
 	Bitmap::_pal = Vga::_sysPal;
-	BMP_PTR LB[] =  { new Bitmap(name, true), NULL };
+	BMP_PTR *LB = new BMP_PTR[2];
+	LB[0] = new Bitmap(name, true);
+	LB[1] = NULL;
 	Bitmap::_pal = NULL;
 	bool usr_ok = false;
 
