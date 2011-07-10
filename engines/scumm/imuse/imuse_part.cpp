@@ -194,13 +194,11 @@ void Part::set_onoff(bool on) {
 }
 
 void Part::set_instrument(byte * data) {
-	_instrument.adlib(data);
-	if (clearToTransmit())
-		_instrument.send(_mc);
-}
+	if (_se->_pcSpeaker)
+		_instrument.pcspk(data);
+	else
+		_instrument.adlib(data);
 
-void Part::set_instrument_pcspk(byte *data) {
-	_instrument.pcspk(data);
 	if (clearToTransmit())
 		_instrument.send(_mc);
 }

@@ -1673,15 +1673,12 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 	}
 }
 
-void IMuseInternal::setGlobalAdLibInstrument(byte slot, byte *data) {
+void IMuseInternal::setGlobalInstrument(byte slot, byte *data) {
 	if (slot < 32) {
-		_global_instruments[slot].adlib(data);
-	}
-}
-
-void IMuseInternal::setGlobalPcSpkInstrument(byte slot, byte *data) {
-	if (slot < 32) {
-		_global_instruments[slot].pcspk(data);
+		if (_pcSpeaker)
+			_global_instruments[slot].pcspk(data);
+		else
+			_global_instruments[slot].adlib(data);
 	}
 }
 

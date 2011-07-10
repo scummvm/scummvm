@@ -121,12 +121,9 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		++p; // Skip hardware type
 		part = player->getPart(a);
 		if (part) {
-			if (len == 62) {
+			if (len == 62 || len == 48) {
 				player->decode_sysex_bytes(p, buf, len - 2);
 				part->set_instrument((byte *)buf);
-			} else if (len == 48) {
-				player->decode_sysex_bytes(p, buf, len - 2);
-				part->set_instrument_pcspk((byte *)buf);
 			} else { 
 				part->programChange(254); // Must be invalid, but not 255 (which is reserved)
 			}
@@ -137,10 +134,8 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		p += 2; // Skip hardware type and... whatever came right before it
 		a = *p++;
 		player->decode_sysex_bytes(p, buf, len - 3);
-		if (len == 63)
-			se->setGlobalAdLibInstrument(a, buf);
-		else if (len == 49)
-			se->setGlobalPcSpkInstrument(a, buf);
+		if (len == 63 || len == 49)
+			se->setGlobalInstrument(a, buf);
 		break;
 
 	case 33: // Parameter adjust
