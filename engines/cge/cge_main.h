@@ -179,7 +179,6 @@ extern HorizLine *_horzLine;
 extern InfoLine *_infoLine;
 extern Sprite *_cavLight;
 extern InfoLine *_debugLine;
-extern BMP_PTR MC[3];
 extern Snail *_snail;
 extern Snail *_snail_;
 
