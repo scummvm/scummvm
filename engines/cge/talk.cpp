@@ -249,16 +249,14 @@ void Talk::putLine(int line, const char *text) {
 
 	// set desired line pointer
 	v += (TEXT_VM + (FONT_HIG + TEXT_LS) * line) * lsiz;
+	p = v;                // assume blanked line above text
 
 	// clear whole rectangle
-	p = v;                // assume blanked line above text
-	memmove(p, p - lsiz, rsiz);
-	p += psiz;   // tricky replicate lines for plane 0
-	memmove(p, p - lsiz, rsiz);
-	p += psiz;   // same for plane 1
-	memmove(p, p - lsiz, rsiz);
-	p += psiz;   // same for plane 2
-	memmove(p, p - lsiz, rsiz);
+	assert((rsiz % lsiz) == 0);
+	for (int planeCtr = 0; planeCtr < 4; ++planeCtr, p += psiz) {
+		for (byte *pDest = p; pDest < (p + (rsiz - lsiz)); pDest += lsiz)
+			Common::copy(p - lsiz, p, pDest);
+	}
 
 	// paint text line
 	if (text) {
