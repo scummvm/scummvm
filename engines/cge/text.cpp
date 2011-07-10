@@ -183,7 +183,7 @@ void Text::say(const char *txt, Sprite *spr) {
 		bool east = spr->_flags._east;
 		int x = (east) ? (spr->_x + spr->_w - 2) : (spr->_x + 2);
 		int y = spr->_y + 2;
-		Sprite *spike = new Sprite(_vm, SP);
+		Sprite *spike = new Spike(_vm);
 		uint16 sw = spike->_w;
 
 		if (east) {

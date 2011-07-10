@@ -316,6 +316,12 @@ public:
 	CavLight(CGEEngine *vm);
 };
 
+class Spike: public Sprite {
+public:
+	Spike(CGEEngine *vm);
+};
+
+
 Dac mkDac(uint8 r, uint8 g, uint8 b);
 Rgb mkRgb(uint8 r, uint8 g, uint8 b);
 
