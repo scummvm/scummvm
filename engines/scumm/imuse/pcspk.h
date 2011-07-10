@@ -49,45 +49,49 @@ protected:
 
 private:
 	Audio::PCSpeaker _pcSpk;
+	int _effectTimer;
+	uint8 _randBase;
 
 	void updateNote();
 	void output(uint16 out);
 
+	static uint8 getEffectModifier(uint16 level);
+	int16 getEffectModLevel(int16 level, int8 mod);
+	int16 getRandMultipy(int16 input);
+
 	struct EffectEnvelope {
 		uint8 state;
-		uint16 currentLevel;
+		int16 currentLevel;
 		uint16 duration;
-		uint16 maxLevel;
-		uint16 startLevel;
+		int16 maxLevel;
+		int16 startLevel;
 		uint8 loop;
 		uint8 stateTargetLevels[4];
 		uint8 stateModWheelLevels[4];
 		uint8 modWheelSensitivity;
 		uint8 modWheelState;
 		uint8 modWheelLast;
-		uint16 stateNumSteps;
-		uint16 stateStepCounter;
-		uint16 changePerStep;
-		uint16 dir;
-		uint16 changePerStepRem;
-		uint16 changeCountRem;
+		int16 stateNumSteps;
+		int16 stateStepCounter;
+		int16 changePerStep;
+		int8 dir;
+		int16 changePerStepRem;
+		int16 changeCountRem;
 	};
 
 	struct EffectDefinition {
 		uint16 phase;
 		uint8 type;
-		uint8 enabled;
+		uint8 useModWheel;
 		EffectEnvelope *envelope;
 	};
-
-	struct MidiChannel_PcSpk;
 
 	struct OutputChannel {
 		uint8 active;
 		uint8 note;
 		uint8 sustainNoteOff;
 		uint8 length;
-		//const uint8 *instrument;
+		const uint8 *instrument;
 		uint8 unkA;
 		uint8 unkB;
 		uint8 unkC;
@@ -132,12 +136,19 @@ private:
 		int16 _pitchBend;
 	};
 
+	void setupEffects(MidiChannel_PcSpk &chan, EffectEnvelope &env, EffectDefinition &def, byte flags, const byte *data);
+	void startEffect(EffectEnvelope &env, const byte *data);
+	void initNextEnvelopeState(EffectEnvelope &env);
+	void updateEffectGenerator(MidiChannel_PcSpk &chan, EffectEnvelope &env, EffectDefinition &def);
+	uint8 advanceEffectEnvelope(EffectEnvelope &env, EffectDefinition &def);
+
 	MidiChannel_PcSpk _channels[6];
 	MidiChannel_PcSpk *_activeChannel;
 
-	//static const byte _outInstrumentData[];
+	static const byte _outInstrumentData[1024];
 	static const byte _outputTable1[];
 	static const byte _outputTable2[];
+	static const uint16 _effectEnvStepTable[];
 	static const uint16 _frequencyTable[];
 };
 
