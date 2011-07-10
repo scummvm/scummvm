@@ -145,6 +145,9 @@ private:
 	MidiChannel_PcSpk _channels[6];
 	MidiChannel_PcSpk *_activeChannel;
 
+	MidiChannel_PcSpk *_lastActiveChannel;
+	uint16 _lastActiveOut;
+
 	static const byte _outInstrumentData[1024];
 	static const byte _outputTable1[];
 	static const byte _outputTable2[];

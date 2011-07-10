@@ -47,6 +47,12 @@ int PcSpkDriver::open() {
 	_effectTimer = 0;
 	_randBase = 1;
 
+	// We need to take care we only send note frequencies, when the internal
+	// settings actually changed, thus we need some extra state to keep track
+	// of that.
+	_lastActiveChannel = 0;
+	_lastActiveOut = 0;
+
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
@@ -120,6 +126,8 @@ void PcSpkDriver::onTimer() {
 		output((_activeChannel->_out.note << 7) + _activeChannel->_pitchBend + _activeChannel->_out.unk60 + _activeChannel->_out.unkE);
 	} else {
 		_pcSpk.stop();
+		_lastActiveChannel = 0;
+		_lastActiveOut = 0;
 	}
 }
 
@@ -135,6 +143,8 @@ void PcSpkDriver::updateNote() {
 
 	if (_activeChannel == 0 || _activeChannel->_tl == 0) {
 		_pcSpk.stop();
+		_lastActiveChannel = 0;
+		_lastActiveOut = 0;
 	} else {
 		output(_activeChannel->_pitchBend + (_activeChannel->_out.note << 7));
 	}
@@ -147,7 +157,15 @@ void PcSpkDriver::output(uint16 out) {
 	byte shift = _outputTable1[v1];
 	uint16 indexBase = _outputTable2[v1] << 5;
 	uint16 frequency = _frequencyTable[(indexBase + v2) / 2] >> shift;
-	_pcSpk.play(Audio::PCSpeaker::kWaveFormSquare, 1193180 / frequency, -1);
+
+	// Only output in case the active channel changed or the frequency changed.
+	// This is not faithful to the original. Since our timings differ we would
+	// get distorted sound otherwise though.
+	if (_lastActiveChannel != _activeChannel || _lastActiveOut != out) {
+		_pcSpk.play(Audio::PCSpeaker::kWaveFormSquare, 1193180 / frequency, -1);
+		_lastActiveChannel = _activeChannel;
+		_lastActiveOut = out;
+	}
 }
 
 void PcSpkDriver::MidiChannel_PcSpk::init(PcSpkDriver *owner, byte channel) {
@@ -249,6 +267,13 @@ void PcSpkDriver::MidiChannel_PcSpk::noteOn(byte note, byte velocity) {
 	_out.unk60 = 0;
 	_out.active = 1;
 
+	// In case we get a note on event on the last active channel, we reset the
+	// last active channel, thus we assure the frequency is correctly set, even
+	// when the same note was sent.
+	if (_owner->_lastActiveChannel == this) {
+		_owner->_lastActiveChannel = 0;
+		_owner->_lastActiveOut = 0;
+	}
 	_owner->updateNote();
 
 	_out.unkC += PcSpkDriver::getEffectModifier(_instrument[3] + ((velocity & 0xFE) << 4));
