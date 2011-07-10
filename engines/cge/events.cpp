@@ -141,7 +141,7 @@ void Keyboard::newKeyboard(Common::Event &event) {
 
 /*----------------- MOUSE interface -----------------*/
 
-Mouse::Mouse(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), _busy(NULL), _hold(NULL), _hx(0), _vm(vm) {
+Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0), _vm(vm) {
 	static Seq ms[] = {
 		{ 0, 0, 0, 0, 1 },
 		{ 1, 1, 0, 0, 1 }
@@ -156,6 +156,12 @@ Mouse::Mouse(CGEEngine *vm, Bitmap **shpl) : Sprite(vm, shpl), _busy(NULL), _hol
 	_active = false;
 
 	setSeq(ms);
+
+	BMP_PTR *MC = new BMP_PTR[3];
+	MC[0] = new Bitmap("MOUSE", true);
+	MC[1] = new Bitmap("DUMMY", true);
+	MC[2] = NULL;
+	setShapeList(MC);
 
 	gotoxy(SCR_WID/2, SCR_HIG/2);
 	_z = 127;
