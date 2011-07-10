@@ -464,9 +464,10 @@ int TownsMidiOutputChannel::advanceEffectEnvelope(EffectEnvelope *s, EffectDef *
 		s->currentLevel = t;
 		s->modWheelLast = s->modWheelState;
 		t = getEffectModLevel(t, s->modWheelState);
-		if (t != d->phase)
+		if (t != d->phase) {
 			d->phase = t;
-		retFlags |= 1;
+			retFlags |= 1;
+		}
 	}
 
 	if (--s->stepCounter)
