@@ -723,7 +723,7 @@ void L1_GetCurrentSetup() {
 	const char *name = lua_getstring(nameObj);
 
 	// FIXME there are some big difference here !
-	Scene *scene = g_grim->findScene(name);
+	Scene *scene = g_grim->loadScene(name);
 	if (!scene) {
 		warning("GetCurrentSetup() Requested scene (%s) is not loaded", name);
 		lua_pushnil();

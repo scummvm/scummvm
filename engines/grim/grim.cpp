@@ -1448,32 +1448,28 @@ void GrimEngine::setSceneLock(const char *name, bool lockStatus) {
 	scene->_locked = lockStatus;
 }
 
-void GrimEngine::setScene(const char *name) {
-	Scene *scene = findScene(name);
-	Scene *lastScene = _currScene;
+Scene *GrimEngine::loadScene(const Common::String &name) {
+	Scene *s = findScene(name);
 
-	// If the scene already exists then use the existing data
-	if (scene) {
-		setScene(scene);
-		return;
+	if (!s) {
+		Common::String filename(name);
+		// EMI-scripts refer to their .setb files as .set
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			filename += "b";
+		}
+		Block *b = g_resourceloader->getFileBlock(filename);
+		if (!b)
+			warning("Could not find scene file %s", name.c_str());
+		s = new Scene(name, b->getData(), b->getLen());
+		registerScene(s);
+		delete b;
 	}
-	Common::String filename(name);
-	// EMI-scripts refer to their .setb files as .set
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		filename += "b";
-	}
-	Block *b = g_resourceloader->getFileBlock(filename);
-	if (!b)
-		warning("Could not find scene file %s", name);
-	_currScene = new Scene(name, b->getData(), b->getLen());
-	registerScene(_currScene);
-	_currScene->setSoundParameters(20, 127);
-	// should delete the old scene after creating the new one
-	if (lastScene && !lastScene->_locked) {
-		removeScene(lastScene);
-		delete lastScene;
-	}
-	delete b;
+
+	return s;
+}
+
+void GrimEngine::setScene(const char *name) {
+	setScene(loadScene(name));
 }
 
 void GrimEngine::setScene(Scene *scene) {

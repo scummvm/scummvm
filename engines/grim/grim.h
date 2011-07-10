@@ -141,6 +141,7 @@ public:
 
 	Scene *findScene(const Common::String &name);
 	void setSceneLock(const char *name, bool lockStatus);
+	Scene *loadScene(const Common::String &name);
 	void setScene(const char *name);
 	void setScene(Scene *scene);
 	Scene *getCurrScene() { return _currScene; }
