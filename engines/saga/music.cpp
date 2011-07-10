@@ -373,10 +373,12 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 void Music::pause() {
 	_player->pause();
+	_player->setVolume(0);
 }
 
 void Music::resume() {
 	_player->resume();
+	_player->setVolume(_vm->_musicVolume);
 }
 
 void Music::stop() {
