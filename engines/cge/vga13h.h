@@ -311,6 +311,11 @@ public:
 	HorizLine(CGEEngine *vm);
 };
 
+class CavLight: public Sprite {
+public:
+	CavLight(CGEEngine *vm);
+};
+
 Dac mkDac(uint8 r, uint8 g, uint8 b);
 Rgb mkRgb(uint8 r, uint8 g, uint8 b);
 
