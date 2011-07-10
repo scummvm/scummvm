@@ -362,8 +362,6 @@ Sprite::Sprite(CGEEngine *vm, BMP_PTR *shpP)
 
 
 Sprite::~Sprite() {
-	if (_sprite == this)
-		_sprite = NULL;
 	contract();
 }
 
@@ -405,6 +403,7 @@ BMP_PTR *Sprite::setShapeList(BMP_PTR *shpP) {
 		}
 		expand();
 		_ext->_shpList = shpP;
+		_flags._bDel = true;
 		if (!_ext->_seq)
 			setSeq((_shpCnt < 2) ? _seq1 : _seq2);
 	}
@@ -907,14 +906,8 @@ template<typename T>
 inline bool contains(const Common::List<T> &l, const T &v) {
 	return (Common::find(l.begin(), l.end(), v) != l.end());
 }
-Common::List<Sprite *> l;
 
 Sprite *Queue::remove(Sprite *spr) {
-	if (contains(l, spr)) {
-		debug("N");
-	}
-	l.push_back(spr);
-
 	if (spr == _head)
 		_head = spr->_next;
 	if (spr == _tail)
