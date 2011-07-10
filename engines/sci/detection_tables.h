@@ -3153,6 +3153,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+
+	// Slater & Charlie Go Camping - English DOS/Windows (Sierra Originals)
+	{"slater", "", {
+		{"resource.000", 0, "d7b4cc8e2c0b3a4768f8dfb5de27f206", 2256126},
+		{"resource.map", 0, "21f85414124dc23e54544a5536dc35cd", 4044},
+		{"resource.msg", 0, "c44f51fb955eae266fecf360ebcd5ad2", 1132},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 1.000.510 (just a guess)
 	{"sq1sci", "SCI", {
