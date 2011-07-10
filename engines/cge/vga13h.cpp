@@ -620,8 +620,7 @@ Sprite *Sprite::contract() {
 			int i;
 			for (i = 0; e->_shpList[i]; i++)
 			delete e->_shpList[i];
-			if (memType(e->_shpList) == NEAR_MEM)
-				delete[] e->_shpList;
+			delete[] e->_shpList;
 		}
 		if (memType(e->_seq) == NEAR_MEM)
 			free(e->_seq);
