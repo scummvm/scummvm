@@ -214,7 +214,7 @@ void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 
 	// Read the data into a data buffer
 	int size = file.size() - file.mark();
-	byte *dataBuffer = new byte[size];
+	byte *dataBuffer = (byte *)malloc(size);
 	file.read(dataBuffer, size);
 	Common::MemoryReadStream readStream(dataBuffer, size, DisposeAfterUse::YES);
 	Common::Serializer s(&readStream, NULL);
