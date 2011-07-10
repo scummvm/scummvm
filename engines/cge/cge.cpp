@@ -78,7 +78,9 @@ void CGEEngine::setup() {
 		_pocket[i] = new Sprite(this, NULL);
 	_sprite = new Sprite(this, NULL);
 	_miniCave = new Sprite(this, NULL);
+	_miniCave->_flags._kill = false;
 	_shadow = new Sprite(this, NULL);
+	_shadow->_flags._kill = false;
 	_horzLine = new HorizLine(this);
 	_infoLine = new InfoLine(this, INFO_W);
 	_cavLight = new CavLight(this);
@@ -138,7 +140,7 @@ CGEEngine::~CGEEngine() {
 	// Delete engine objects 
 	delete _vga;
 	delete _sys;
-	delete _sprite;
+	//delete _sprite;	Sprite is destroyed by the queue it's added to
 	delete _miniCave;
 	delete _shadow;
 	delete _horzLine;
