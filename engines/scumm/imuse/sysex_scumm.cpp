@@ -54,7 +54,8 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		//   BYTE 00: Channel #
 		//   BYTE 02: BIT 01(0x01): Part on?(1 = yes)
 		//            BIT 02(0x02): Reverb? (1 = yes) [bug #1088045]
-		//   BYTE 04: Priority adjustment [guessing]
+		//   BYTE 03: Priority adjustment(upper 4 bits)
+		//   BYTE 04: Priority adjustment(lower 4 bits)
 		//   BYTE 05: Volume(upper 4 bits) [guessing]
 		//   BYTE 06: Volume(lower 4 bits) [guessing]
 		//   BYTE 07: Pan(upper 4 bits) [bug #1088045]
@@ -73,7 +74,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		if (part) {
 			part->set_onoff(p[2] & 0x01);
 			part->effectLevel((p[2] & 0x02) ? 127 : 0);
-			part->set_pri(p[4]);
+			part->set_pri((p[3] << 4) | p[4]);
 			part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
 			part->set_pan((p[7] & 0x0F) << 4 | (p[8] & 0x0F));
 			part->_percussion = player->_isMIDI ? ((p[9] & 0x08) > 0) : false;
