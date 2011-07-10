@@ -1371,4 +1371,13 @@ HorizLine::HorizLine(CGEEngine *vm): Sprite(vm, NULL) {
 	setShapeList(HL);
 }
 
+CavLight::CavLight(CGEEngine *vm): Sprite(vm, NULL) {
+	// Set the sprite list
+	BMP_PTR *PR = new BMP_PTR[2];
+	PR[0] = new Bitmap("PRESS", true);
+	PR[1] = NULL;
+
+	setShapeList(PR);
+}
+
 } // End of namespace CGE
