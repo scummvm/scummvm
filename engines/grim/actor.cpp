@@ -829,9 +829,6 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 	assert(msg);
 	assert(msgId);
 
-	Common::String textName(msgId);
-	textName += ".txt";
-
 	if (msgId[0] == 0) {
 		error("Actor::sayLine: No message ID for text");
 		return;
@@ -1290,8 +1287,6 @@ void Actor::undraw(bool /*visible*/) {
 		shutUp();
 }
 
-#define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
-
 void Actor::setShadowPlane(const char *n) {
 	assert(_activeShadowSlot != -1);
 
@@ -1309,7 +1304,7 @@ void Actor::addShadowPlane(const char *n, Scene *scene, int shadowId) {
 		// Naranja is dead, because the scene changes back and forth few times and so
 		// the scenes' sectors are deleted while they are still keeped by the actors.
 		Sector *sector = scene->getSectorBase(i);
-		if (strmatch(sector->getName(), n)) {
+		if (!strcmp(sector->getName(), n)) {
 			Plane p = { scene->getName(), new Sector(*sector) };
 			_shadowArray[shadowId].planeList.push_back(p);
 			g_grim->flagRefreshShadowMask(true);
