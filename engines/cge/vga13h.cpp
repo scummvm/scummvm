@@ -356,14 +356,12 @@ Sprite::Sprite(CGEEngine *vm, BMP_PTR *shpP)
 	_seqPtr = 0;
 	_shpCnt = 0;
 	_prev = _next = NULL;
-static int ctr = 1;
-debug("create %d %x", ctr++, this);
+
 	setShapeList(shpP);
 }
 
 
 Sprite::~Sprite() {
-debug("destroy %x", this);
 	if (_sprite == this)
 		_sprite = NULL;
 	contract();
