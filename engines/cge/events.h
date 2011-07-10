@@ -89,8 +89,6 @@ struct CGEEvent {
 	Sprite *_ptr;
 };
 
-extern Bitmap *MC[];
-
 
 class Mouse : public Sprite {
 public:
@@ -102,7 +100,7 @@ public:
 	int _buttons;
 	Sprite *_busy;
 	//Sprite *Touched;
-	Mouse(CGEEngine *vm, Bitmap **shpl = MC);
+	Mouse(CGEEngine *vm);
 	~Mouse();
 	void on();
 	void off();
