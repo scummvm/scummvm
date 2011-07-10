@@ -1594,8 +1594,7 @@ void CGEEngine::runGame() {
 	_vga->_showQ->append(_pocLight);
 	selectPocket(-1);
 
-	// FIXME: Allow ScummVM to handle mouse display
-//	Vga->ShowQ->Append(Mouse);
+	_vga->_showQ->append(_mouse);
 
 //    ___________
 	loadUser();
