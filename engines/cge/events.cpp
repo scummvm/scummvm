@@ -154,7 +154,7 @@ Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0)
 	_buttons = 0;
 	_busy = NULL;
 	_active = false;
-	_flags._kill = true;
+	_flags._kill = false;
 	setSeq(ms);
 
 	BMP_PTR *MC = new BMP_PTR[3];
