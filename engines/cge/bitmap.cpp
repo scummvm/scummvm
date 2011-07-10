@@ -151,7 +151,7 @@ Bitmap::~Bitmap() {
 		delete[](uint8 *) _v;
 		break;
 	case FAR_MEM  :
-		free(_v);
+		delete[] _v;
 	default:
 		warning("Unhandled MemType in Bitmap destructor");
 		break;
@@ -206,7 +206,7 @@ BMP_PTR Bitmap::code() {
 				delete[](uint8 *) _v;
 				break;
 			case FAR_MEM  :
-				free(_v);
+				delete[] _v;
 				break;
 			default:
 				warning("Unhandled MemType in Bitmap::Code()");
@@ -294,7 +294,7 @@ BMP_PTR Bitmap::code() {
 				break;
 
 			uint16 sizV = (uint16)(im - 2 - _v);
-			_v = farnew(uint8, sizV + _h * sizeof(*_b));
+			_v = new uint8[sizV + _h * sizeof(*_b)];
 			if (!_v)
 				error("No core");
 
@@ -436,7 +436,7 @@ bool Bitmap::loadVBM(XFile *f) {
 				f->seek(f->mark() + PAL_SIZ);
 		}
 	}
-	if ((_v = farnew(uint8, n)) == NULL)
+	if ((_v = new uint8[n]) == NULL)
 		return false;
 
 	if (f->_error == 0)
