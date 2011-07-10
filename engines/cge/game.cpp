@@ -31,7 +31,7 @@
 namespace CGE {
 
 uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b) {
-	uint8 *x = new uint8[256];
+	uint8 *x = (uint8 *)malloc(256);
 	if (x) {
 		uint16 i;
 		for (i = 0; i < 256; i++) {
