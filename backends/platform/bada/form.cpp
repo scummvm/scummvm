@@ -37,7 +37,7 @@ using namespace Osp::Ui::Controls;
 //
 BadaAppForm::BadaAppForm() : 
   gameThread(0), 
-  activeState(false),
+  state(InitState),
   leftButton(true) {
   eventQueueLock = new Mutex();
   eventQueueLock->Create();
@@ -88,6 +88,7 @@ BadaAppForm::~BadaAppForm() {
   logEntered();
 
   if (gameThread) {
+    terminate();
     gameThread->Stop();
     delete gameThread;
     gameThread = null;
@@ -96,6 +97,30 @@ BadaAppForm::~BadaAppForm() {
   if (eventQueueLock) {
     delete eventQueueLock;
     eventQueueLock = null;
+  }
+
+  logLeaving();
+}
+
+//
+// abort the game thread
+//
+void BadaAppForm::terminate() {
+  if (state == ActiveState) {
+    eventQueueLock->Acquire();
+
+    Common::Event e;
+    e.type = Common::EVENT_QUIT;
+    eventQueue.push(e);
+    state = ClosingState;
+
+    eventQueueLock->Release();
+    
+    // block while thread ends
+    AppLog("waiting for shutdown");
+    for (int i = 0; i < 10 && state == ClosingState; i++) {
+      Thread::Sleep(250);
+    }
   }
 }
 
@@ -112,25 +137,12 @@ result BadaAppForm::OnInitializing(void) {
 result BadaAppForm::OnDraw(void) {
   logEntered();
 
-  bool displaySplash = false;
   if (g_system) {
     BadaSystem* system = (BadaSystem*) g_system;
     BadaGraphicsManager* graphics = system->getGraphics();
     if (graphics && graphics->isReady()) {
       g_system->updateScreen();
     }
-    else {
-      displaySplash = true;
-    }
-  }
-
-  if (displaySplash) {
-    Frame* pFrame = Application::GetInstance()->GetAppFrame()->GetFrame();
-    Canvas* pCanvas = pFrame->GetCanvasN();
-    pCanvas->SetBackgroundColor(Color(0x1c, 0x23, 0x1c));
-    pCanvas->Clear();
-    pCanvas->Show();
-    delete pCanvas;
   }
 
   return E_SUCCESS;
@@ -140,13 +152,12 @@ bool BadaAppForm::pollEvent(Common::Event& event) {
   bool result = false;
 
   eventQueueLock->Acquire();
-
   if (!eventQueue.empty()) {
     event = eventQueue.pop();
     result = true;
   }
-
   eventQueueLock->Release();
+
   return result;
 }
 
@@ -175,8 +186,8 @@ void BadaAppForm::pushKey(Common::KeyCode keycode) {
 void BadaAppForm::OnOrientationChanged(const Control& source, 
                                        OrientationStatus orientationStatus) {
   logEntered();
-  if (!activeState) {
-    activeState = true;
+  if (state == InitState) {
+    state = ActiveState;
     gameThread->Start();
   }
 }
@@ -186,10 +197,10 @@ Object* BadaAppForm::Run(void) {
 
   AppLog("scummvm_main completed");
 
-  if (activeState) {
-    //    Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, null);
+  if (state == ActiveState) {
+    Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, null);
   }
-  activeState = false;
+  state = DoneState;
   return null;
 }
 

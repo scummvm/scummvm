@@ -59,7 +59,6 @@
 
 BadaAppForm* systemStart(Osp::App::Application* app);
 void systemError(const char* format, ...);
-void systemHalt(BadaAppForm* appForm);
 
 #define USER_MESSAGE_EXIT 1000
 
@@ -75,6 +74,7 @@ class BadaSystem : public ModularBackend,
   result Construct();
   void closeGraphics();
   void destroyBackend();
+  bool isClosing() { appForm->isClosing(); }
 
   BadaGraphicsManager* getGraphics() {
     return (BadaGraphicsManager*) _graphicsManager;

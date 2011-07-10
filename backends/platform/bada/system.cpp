@@ -36,6 +36,7 @@ using namespace Osp::Base::Runtime;
 using namespace Osp::Ui::Controls;
 
 #define DEFAULT_CONFIG_FILE "/Home/scummvm.ini"
+#define MUTEX_BUFFER_SIZE 5
 
 //
 // BadaFilesystemFactory
@@ -103,15 +104,41 @@ bool BadaSaveFileManager::removeSavefile(const Common::String &filename) {
 // BadaMutexManager
 //
 struct BadaMutexManager : public MutexManager {
+  BadaMutexManager();
+  ~BadaMutexManager();
   OSystem::MutexRef createMutex();
   void lockMutex(OSystem::MutexRef mutex);
   void unlockMutex(OSystem::MutexRef mutex);
   void deleteMutex(OSystem::MutexRef mutex);
+private:
+  Mutex* buffer[MUTEX_BUFFER_SIZE];
 };
+
+BadaMutexManager::BadaMutexManager() {
+  for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
+    buffer[i] = null;
+  }
+}
+
+BadaMutexManager::~BadaMutexManager() {
+  for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
+    if (buffer[i] != null) {
+      delete buffer[i];
+    }
+  }
+}
 
 OSystem::MutexRef BadaMutexManager::createMutex() {
   Mutex* mutex = new Mutex();
   mutex->Create();
+
+  for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
+    if (buffer[i] == null) {
+      buffer[i] = mutex;
+      break;
+    }
+  }
+
   return (OSystem::MutexRef) mutex;
 }
 
@@ -127,6 +154,13 @@ void BadaMutexManager::unlockMutex(OSystem::MutexRef mutex) {
 
 void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
   Mutex* m = (Mutex*) mutex;
+
+  for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
+    if (buffer[i] == m) {
+      buffer[i] = null;
+    }
+  }
+
   delete m;
 }
 
@@ -136,6 +170,7 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 struct BadaEventManager : public DefaultEventManager {
   BadaEventManager(Common::EventSource *boss);
   void init();
+	int shouldQuit() const;
 };
 
 BadaEventManager::BadaEventManager(Common::EventSource *boss) :
@@ -152,6 +187,11 @@ void BadaEventManager::init() {
     graphics->setReady();
     graphics->updateScreen();
   }
+}
+
+int BadaEventManager::shouldQuit() const {
+  BadaSystem* system = (BadaSystem*) g_system;
+  return system->isClosing();
 }
 
 //
@@ -251,6 +291,7 @@ void BadaSystem::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.setInt("autosave_period", 0);
+  ConfMan.setBool("confirm_exit", false);
 
   Osp::System::SystemTime::GetTicks(epoch);
 
@@ -297,6 +338,10 @@ void BadaSystem::destroyBackend() {
 
   delete _mutexManager;
   _mutexManager = 0;
+
+  if (g_engine) {
+    delete g_engine;
+  }
 }
 
 bool BadaSystem::pollEvent(Common::Event& event) {
@@ -311,7 +356,9 @@ uint32 BadaSystem::getMillis() {
 }
 
 void BadaSystem::delayMillis(uint msecs) {
-  Thread::Sleep(msecs);
+  if (!appForm->isClosing()) {
+    Thread::Sleep(msecs);
+  }
 }
 
 void BadaSystem::updateScreen() {
@@ -378,32 +425,6 @@ BadaAppForm* systemStart(Osp::App::Application* app) {
   }
 
   return appForm;
-}
-
-//
-// abort the game thread
-//
-void systemHalt(BadaAppForm* appForm) {
-  ConfMan.setBool("confirm_exit", false);
-
-  if (g_engine) {
-    g_engine->quitGame();
-  }
-  else {
-    Common::Event event;
-    event.type = Common::EVENT_QUIT;
-    g_system->getEventManager()->pushEvent(event);
-  }
-
-  int maxWait = 500;
-  int timeout = 0;
-  int wait = 50;
-  
-  while (timeout < maxWait && appForm->isActive()) {
-    AppLog("waiting for shutdown");
-    Thread::Sleep(wait);
-    timeout += wait;
-  }
 }
 
 //

@@ -170,6 +170,21 @@ void BadaGraphicsManager::internUpdateScreen() {
     OpenGLGraphicsManager::internUpdateScreen();
     eglSwapBuffers(eglDisplay, eglSurface);
   }
+  else {
+    Canvas canvas;
+    canvas.Construct();
+    canvas.SetBackgroundColor(Color(0x1c, 0x23, 0x1c));
+    canvas.SetForegroundColor(Color::COLOR_RED);
+    canvas.Clear();
+
+    Font* pFont = new Font();
+    pFont->Construct(FONT_STYLE_PLAIN | FONT_STYLE_BOLD, 50);
+    canvas.SetFont(*pFont);
+
+    canvas.DrawText(Point(0,0), L"Welcome to ScummVM. Loading, please wait...");
+    canvas.Show();
+    delete pFont;
+  }
 }
 
 void BadaGraphicsManager::unloadGFXMode() {

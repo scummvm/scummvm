@@ -549,6 +549,7 @@
 <listOptionValue builtIn="false" value="c:/src/scummvm"/>
 <listOptionValue builtIn="false" value="C:/bada/1.2.1/Include"/>
 </option>
+<option id="osp.gnu.target.cpp.compiler.exe.debug.option.other.other.1834931612" superClass="osp.gnu.target.cpp.compiler.exe.debug.option.other.other" value="-c -Wno-psabi" valueType="string"/>
 <inputType id="cdt.managedbuild.tool.osp.gnu.cpp.compiler.input.936307304" superClass="cdt.managedbuild.tool.osp.gnu.cpp.compiler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.osp.gnu.target.c.compiler.exe.debug.1510313770" name="bada C Compiler" superClass="cdt.managedbuild.tool.osp.gnu.target.c.compiler.exe.debug">
@@ -572,7 +573,7 @@
 <listOptionValue builtIn="false" value="c:/cygwin/usr/local/lib"/>
 <listOptionValue builtIn="false" value="c:/src/scummvm"/>
 </option>
-<option id="osp.gnu.target.cpp.link.debug.exe.option.userobjs.1661040739" superClass="osp.gnu.target.cpp.link.debug.exe.option.userobjs" valueType="userObjs">
+<option id="osp.gnu.target.cpp.link.debug.exe.option.userobjs.1661040739" name="Other objects" superClass="osp.gnu.target.cpp.link.debug.exe.option.userobjs" valueType="userObjs">
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/FGraphicsOpengl.so&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/FGraphicsEgl.so&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/osp_rt0.a&quot;"/>
@@ -1072,7 +1073,7 @@
 <listOptionValue builtIn="false" value="vorbis"/>
 <listOptionValue builtIn="false" value="ogg"/>
 </option>
-<option id="osp.gnu.target.cpp.link.release.exe.option.userobjs.509686024" superClass="osp.gnu.target.cpp.link.release.exe.option.userobjs" valueType="userObjs">
+<option id="osp.gnu.target.cpp.link.release.exe.option.userobjs.509686024" name="Other objects" superClass="osp.gnu.target.cpp.link.release.exe.option.userobjs" valueType="userObjs">
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/FGraphicsOpengl.so&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/FGraphicsEgl.so&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/osp_rt0.a&quot;"/>

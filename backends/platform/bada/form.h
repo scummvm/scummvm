@@ -49,8 +49,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
 
   result Construct();
   bool pollEvent(Common::Event& event);
-  bool isActive() {return activeState;}
-  void setInactive() {activeState = false;}
+  bool isClosing() { return state == ClosingState; }
 
  private:
   Object* Run();
@@ -83,12 +82,13 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   void pushEvent(Common::EventType type,
                  const Osp::Graphics::Point& currentPosition);
   void pushKey(Common::KeyCode keycode);
+  void terminate();
 
   // event handling
   Osp::Base::Runtime::Thread* gameThread;
   Osp::Base::Runtime::Mutex* eventQueueLock;
   Common::Queue<Common::Event> eventQueue;
-  bool activeState;
+  enum {InitState, ActiveState, ClosingState, DoneState} state;
   bool leftButton;
 };
 
