@@ -75,8 +75,6 @@ InfoLine *_infoLine;
 Sprite *_cavLight;
 InfoLine *_debugLine;
 
-BMP_PTR LI[5];
-
 Snail *_snail;
 Snail *_snail_;
 

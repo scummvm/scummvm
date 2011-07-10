@@ -68,19 +68,12 @@ void CGEEngine::setup() {
 	Bitmap::init();
 	Talk::init();
 
-	// Initialise sprite arrays used by game objects
-	LI[0] = new Bitmap("LITE0", true);
-	LI[1] = new Bitmap("LITE1", true);
-	LI[2] = new Bitmap("LITE2", true);
-	LI[3] = new Bitmap("LITE3", true);
-	LI[4] = NULL;
-
 	// Initialise engine objects
 	_text = new Text(this, progName(), 128);
 	_vga = new Vga(M13H);
 	_heart = new Heart;
 	_sys = new System(this);
-	_pocLight = new Sprite(this, LI);
+	_pocLight = new PocLight(this);
 	for (int i = 0; i < POCKET_NX; i++)
 		_pocket[i] = new Sprite(this, NULL);
 	_sprite = new Sprite(this, NULL);
@@ -150,10 +143,6 @@ CGEEngine::~CGEEngine() {
 	delete _infoLine;
 	delete _cavLight;
 	delete _debugLine;
-	delete LI[0];
-	delete LI[1];
-	delete LI[2];
-	delete LI[3];
 	delete _text;
 	delete _heart;
 	delete _pocLight;

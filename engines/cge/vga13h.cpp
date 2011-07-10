@@ -1390,4 +1390,16 @@ Spike::Spike(CGEEngine *vm): Sprite(vm, NULL) {
 	setShapeList(SP);
 }
 
+PocLight::PocLight(CGEEngine *vm): Sprite(vm, NULL) {
+	// Set the sprite list
+	BMP_PTR *LI = new BMP_PTR[5];
+	LI[0] = new Bitmap("LITE0", true);
+	LI[1] = new Bitmap("LITE1", true);
+	LI[2] = new Bitmap("LITE2", true);
+	LI[3] = new Bitmap("LITE3", true);
+	LI[4] = NULL;
+
+	setShapeList(LI);
+}
+
 } // End of namespace CGE

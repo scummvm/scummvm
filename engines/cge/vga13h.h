@@ -321,6 +321,11 @@ public:
 	Spike(CGEEngine *vm);
 };
 
+class PocLight: public Sprite {
+public:
+	PocLight(CGEEngine *vm);
+};
+
 
 Dac mkDac(uint8 r, uint8 g, uint8 b);
 Rgb mkRgb(uint8 r, uint8 g, uint8 b);
