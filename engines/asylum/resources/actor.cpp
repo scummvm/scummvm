@@ -1262,7 +1262,7 @@ void Actor::playSounds(ActorDirection actorDir, uint32 dist) {
 	case kActorStatus13:
 		updateCoordinatesForDirection(actorDir, dist, &_point1);
 
-		_frameIndex = (++_frameIndex) % _frameCount;
+		_frameIndex = (_frameIndex + 1) % _frameCount;
 
 		if (_walkingSound1 != kResourceNone) {
 
