@@ -65,7 +65,6 @@ DirtyBackground::DirtyBackground(NeverhoodEngine *vm, const char *fileName, int 
 	// TODO _spriteResource.load(calcHash(fileName));
 	createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_surface->drawSpriteResource(_spriteResource);
-	
 }
 
 DirtyBackground::DirtyBackground(NeverhoodEngine *vm, uint32 fileHash, int objectPriority, int surfacePriority)
@@ -74,7 +73,6 @@ DirtyBackground::DirtyBackground(NeverhoodEngine *vm, uint32 fileHash, int objec
 	_spriteResource.load(fileHash);
 	createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_surface->drawSpriteResource(_spriteResource);
-
 }
 
 void DirtyBackground::createSurface(int surfacePriority, int16 width, int16 height) {

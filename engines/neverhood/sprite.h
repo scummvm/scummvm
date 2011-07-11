@@ -47,6 +47,8 @@ public:
 	bool isPointInside(int16 x, int16 y);
 	int16 getX() const { return _x; }
 	int16 getY() const { return _y; }
+	bool isDoDeltaX() const { return _doDeltaX; }
+	bool isDoDeltaY() const { return _doDeltaY; }
 protected:
 	void (Sprite::*_spriteUpdateCb)();
 	int16 (Sprite::*_filterXCb)(int16);

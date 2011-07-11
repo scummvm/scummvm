@@ -48,6 +48,7 @@ class StaticData;
 
 struct GameState {
 	int sceneNum;
+	int field2;
 };
 
 class NeverhoodEngine : public ::Engine {

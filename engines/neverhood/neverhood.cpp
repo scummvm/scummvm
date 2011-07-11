@@ -65,6 +65,12 @@ Common::Error NeverhoodEngine::run() {
 
 	_isSaveAllowed = false;
 
+	_mouseX = 0;
+	_mouseY = 0;
+
+	_gameState.sceneNum = 0;
+	_gameState.field2 = 0;
+
 	_staticData = new StaticData();
 	_staticData->load("neverhood.dat");
 

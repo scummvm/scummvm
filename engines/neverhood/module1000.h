@@ -55,15 +55,6 @@ protected:
 
 // Scene1001
 
-class KmScene1001 : public Klayman {
-public:
-	KmScene1001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
-protected:	
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void sub44FA50();
-	uint32 handleMessage44FA00(int messageNum, const MessageParam &param, Entity *sender);
-};
-
 class AsScene1001Door : public AnimatedSprite {
 public:
 	AsScene1001Door(NeverhoodEngine *vm);
@@ -139,6 +130,64 @@ protected:
 	// TODO: Are these used?
 	int16 _fieldD0;	
 	int16 _fieldD2;	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+// Scene1002
+
+class SsScene1002LadderArch : public StaticSprite {
+public:
+	SsScene1002LadderArch(NeverhoodEngine *vm, Scene *parentScene);
+protected:
+	Scene *_parentScene;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Class599 : public StaticSprite {
+public:
+	Class599(NeverhoodEngine *vm, Scene *parentScene);
+protected:
+	Scene *_parentScene;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene1002 : public Scene {
+public:
+	Scene1002(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Scene1002();
+protected:
+	// TODO ResourceTable _resourceTable1;
+	// TODO ResourceTable _resourceTable2;
+	// TODO ResourceTable _resourceTable3;
+	// TODO ResourceTable _resourceTable4;
+	// TODO ResourceTable _resourceTable5;
+	// TODO ResourceTable _resourceTable6;
+	// TODO ResourceTable _resourceTable7;
+	// TODO ResourceTable _resourceTable8;
+	Sprite *_class502_1;
+	Sprite *_class502_2;
+	Sprite *_class502_3;
+	Sprite *_class502_4;
+	Sprite *_class502_5;
+	Sprite *_class431;
+	Sprite *_class504;
+	Sprite *_class503;
+	Sprite *_ssLadderArch;
+	Sprite *_ssLadderArchPart1;
+	Sprite *_ssLadderArchPart2;
+	Sprite *_ssLadderArchPart3;
+	Sprite *_class599;
+	Sprite *_class478;
+	Sprite *_class479;
+	Sprite *_class506;
+	Sprite *_class426;
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	SoundResource _soundResource3;
+	bool _flag1B4;
+	bool _flag1BE;
+	bool _flag;
+	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
