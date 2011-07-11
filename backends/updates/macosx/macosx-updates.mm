@@ -20,6 +20,9 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/updates/sparkle-updates.h"
 
 #if defined(MACOSX) && defined(USE_SPARKLE)
@@ -43,7 +46,7 @@ MacOSXUpdateManager::MacOSXUpdateManager() {
 	[sparkleUpdater setFeedURL:[NSURL URLWithString:[NSString stringWithCString:getAppcastUrl().c_str()]]];
 
 	// Get current encoding
-	NSStringEncoding *stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[NSString stringWithCString:(TransMan.getCurrentCharset()).c_str() encoding:NSASCIIStringEncoding]));
+	NSStringEncoding stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[NSString stringWithCString:(TransMan.getCurrentCharset()).c_str() encoding:NSASCIIStringEncoding]));
 
 	// Add "Check for Updates..." menu item
 	NSMenuItem *updateMenuItem = [applicationMenu insertItemWithTitle:[NSString stringWithCString:_("Check for Updates...") encoding:stringEncoding] action:@selector(checkForUpdates:) keyEquivalent:@"" atIndex:1];
