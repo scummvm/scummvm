@@ -42,7 +42,7 @@ using namespace Osp::Io;
 #define TIMER_INCREMENT    10
 #define TIMER_INTERVAL     80
 #define MIN_TIMER_INTERVAL 20
-#define NUM_AUDIO_BUFFERS  6
+#define NUM_AUDIO_BUFFERS  4
 
 class AudioThread: public Osp::Media::IAudioOutEventListener,
                    public Osp::Base::Runtime::ITimerEventListener, 
@@ -52,6 +52,7 @@ public:
   ~AudioThread(void);
 
   Audio::MixerImpl* Construct(OSystem* system);
+  void setVolume(bool up);
 
   bool OnStart(void);
   void OnStop(void);

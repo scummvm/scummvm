@@ -174,7 +174,6 @@ void BadaGraphicsManager::internUpdateScreen() {
     Canvas canvas;
     canvas.Construct();
     canvas.SetBackgroundColor(Color::COLOR_BLACK);
-    canvas.SetForegroundColor(Color::COLOR_CYAN);
     canvas.Clear();
 
     Font* pFont = new Font();
@@ -183,7 +182,11 @@ void BadaGraphicsManager::internUpdateScreen() {
 
     int x = _videoMode.hardwareWidth / 3;
     int y = _videoMode.hardwareHeight / 3;
-    canvas.DrawText(Point(x, y), L"Loading ...");
+    canvas.SetForegroundColor(Color::COLOR_GREEN);
+    canvas.DrawText(Point(x, y), L"ScummVM");
+    canvas.SetForegroundColor(Color::COLOR_WHITE);
+    canvas.DrawText(Point(x + 30, y + 35), L"Loading ...");
+
     canvas.Show();
     delete pFont;
   }

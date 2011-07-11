@@ -83,6 +83,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
                  const Osp::Graphics::Point& currentPosition);
   void pushKey(Common::KeyCode keycode);
   void terminate();
+  int getSetupIndex();
 
   // event handling
   Osp::Base::Runtime::Thread* gameThread;
@@ -90,6 +91,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   Common::Queue<Common::Event> eventQueue;
   enum {InitState, ActiveState, ClosingState, DoneState} state;
   int setupIndex;
+  uint32 setupTimer;
   bool leftButton;
 };
 

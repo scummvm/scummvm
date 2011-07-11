@@ -52,6 +52,18 @@ AudioThread::~AudioThread() {
   logEntered();
 }
 
+void AudioThread::setVolume(bool up) {
+  if (audioOut) {
+    int volume = audioOut->GetVolume();
+    if (volume) {
+      volume += up ? 10 : -10;
+      if (volume > 0 && volume < 90) {
+        audioOut->SetVolume(volume);
+      }
+    }
+  }
+}
+
 bool AudioThread::OnStart(void) {
   logEntered();
 
@@ -96,7 +108,7 @@ bool AudioThread::OnStart(void) {
   Osp::System::SettingInfo::GetValue(key, silentMode);
 
   mixer->setReady(true);
-  audioOut->SetVolume(silentMode ? 0 : 45);
+  audioOut->SetVolume(silentMode ? 0 : 40);
   audioOut->Start();
   return true;
 }

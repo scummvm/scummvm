@@ -79,6 +79,9 @@ class BadaSystem : public ModularBackend,
   BadaGraphicsManager* getGraphics() {
     return (BadaGraphicsManager*) _graphicsManager;
   }
+  void setVolume(bool up) {
+    audioThread->setVolume(up);
+  }
 
  private:
   void initBackend();
