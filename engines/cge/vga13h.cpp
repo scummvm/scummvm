@@ -60,6 +60,8 @@ static  VgaRegBlk VideoMode[] = {
 };
 
 bool SpeedTest   = false;
+Seq _seq1[] = { { 0, 0, 0, 0, 0 } };
+Seq _seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
 
 extern "C"  void    SNDMIDIPlay();
 
@@ -381,23 +383,6 @@ BMP_PTR Sprite::shp() {
 	return NULL;
 }
 
-Seq *Sprite::getConstantSeq(bool seqFlag) {
-	Seq seq1[] = { { 0, 0, 0, 0, 0 } };
-	Seq seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
-
-	// Make a copy of the given seq list and return it
-	Seq *seq;
-	if (seqFlag) {
-		 seq = (Seq *)malloc(sizeof(Seq));
-		seq[0] = seq1[0];
-	} else {
-		seq = (Seq *)malloc(2 * sizeof(Seq));
-		seq[0] = seq2[0];
-		seq[1] = seq2[1];
-	}
-
-	return seq;
-}
 
 BMP_PTR *Sprite::setShapeList(BMP_PTR *shpP) {
 	BMP_PTR *r = (_ext) ? _ext->_shpList : NULL;
@@ -420,7 +405,7 @@ BMP_PTR *Sprite::setShapeList(BMP_PTR *shpP) {
 		_ext->_shpList = shpP;
 		_flags._bDel = true;
 		if (!_ext->_seq)
-			setSeq(getConstantSeq(_shpCnt < 2));
+			setSeq((_shpCnt < 2) ? _seq1 : _seq2);
 	}
 	return r;
 }
@@ -605,7 +590,7 @@ Sprite *Sprite::expand() {
 					error("Bad JUMP in SEQ [%s]", fname);
 				setSeq(seq);
 			} else
-				setSeq(getConstantSeq(_shpCnt == 1));
+				setSeq((_shpCnt == 1) ? _seq1 : _seq2);
 			//disable();  // disable interupt
 
 			setShapeList(shplist);
@@ -636,8 +621,8 @@ Sprite *Sprite::contract() {
 				delete e->_shpList[i];
 			delete[] e->_shpList;
 		}
-		free(e->_seq);
-
+		if (memType(e->_seq) == NEAR_MEM)
+			free(e->_seq);
 		if (e->_near)
 			free(e->_near);
 		if (e->_take)
@@ -1399,7 +1384,7 @@ CavLight::CavLight(CGEEngine *vm): Sprite(vm, NULL) {
 
 Spike::Spike(CGEEngine *vm): Sprite(vm, NULL) {
 	// Set the sprite list
-	BMP_PTR *SP = new BMP_PTR[3];
+	BMP_PTR *SP = new BMP_PTR[2];
 	SP[0] = new Bitmap("SPK_L", true);
 	SP[1] = new Bitmap("SPK_R", true);
 	SP[2] = NULL;
