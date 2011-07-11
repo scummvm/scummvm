@@ -882,14 +882,14 @@ bool Actor::process(const Common::Point &point) {
 	}
 
 	if (point.x == sum.x) {
-		ActorDirection direction = a3 >= 2 ? kDirectionS : kDirectionN;
-		if (process_408B20(&sum, direction, abs(delta.y), false)) {
+		ActorDirection actorDir = a3 >= 2 ? kDirectionS : kDirectionN;
+		if (process_408B20(&sum, actorDir, abs(delta.y), false)) {
 			_data.field_8[0] = point.x;
 			_data.field_8[1] = point.y;
 			_data.field_4    = 0;
 			_data.count      = 1;
 
-			updateFromDirection(direction);
+			updateFromDirection(actorDir);
 
 			return true;
 		}
@@ -898,15 +898,15 @@ bool Actor::process(const Common::Point &point) {
 	}
 
 	if (point.y == sum.y) {
-		ActorDirection direction = (a3 != 0 || a3 != 3) ? kDirectionE : kDirectionO;
+		ActorDirection actorDir = (a3 != 0 || a3 != 3) ? kDirectionE : kDirectionO;
 
-		if (process_408B20(&sum, direction, abs(delta.x), true)) {
+		if (process_408B20(&sum, actorDir, abs(delta.x), true)) {
 			_data.field_8[0] = point.x;
 			_data.field_8[1] = point.y;
 			_data.field_4    = 0;
 			_data.count      = 1;
 
-			updateFromDirection(direction);
+			updateFromDirection(actorDir);
 
 			return true;
 		}
@@ -1046,25 +1046,25 @@ bool Actor::process(const Common::Point &point) {
 	// Last case: abs(delta.x) == abs(delta.y)
 
 	// Compute direction
-	ActorDirection direction = kDirectionSO;
+	ActorDirection actorDir = kDirectionSO;
 	switch (a3) {
 	default:
 		break;
 
 	case 0:
-		direction = kDirectionNO;
+		actorDir = kDirectionNO;
 		break;
 
 	case 1:
-		direction = kDirectionNE;
+		actorDir = kDirectionNE;
 		break;
 
 	case 2:
-		direction = kDirectionSE;
+		actorDir = kDirectionSE;
 		break;
 	}
 
-	if (!process_408B20(&sum, direction, abs(delta.y), true))
+	if (!process_408B20(&sum, actorDir, abs(delta.y), true))
 		return false;
 
 	// Update actor data
@@ -1074,7 +1074,7 @@ bool Actor::process(const Common::Point &point) {
 	_data.count      = 1;
 
 	// Update actor from direction
-	updateFromDirection(direction);
+	updateFromDirection(actorDir);
 
 	return true;
 }
@@ -1246,7 +1246,7 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 coun
 	return true;
 }
 
-void Actor::playSounds(ActorDirection direction, uint32 distance) {
+void Actor::playSounds(ActorDirection actorDir, uint32 dist) {
 	_lastScreenUpdate = _vm->screenUpdateCount;
 
 	Common::Point sum(_point1.x + _point2.x, _point1.x + _point2.x);
@@ -1260,7 +1260,7 @@ void Actor::playSounds(ActorDirection direction, uint32 distance) {
 	case kActorStatus2:
 	case kActorStatus12:
 	case kActorStatus13:
-		updateCoordinatesForDirection(direction, distance, &_point1);
+		updateCoordinatesForDirection(actorDir, dist, &_point1);
 
 		_frameIndex = (++_frameIndex) % _frameCount;
 
@@ -1298,7 +1298,7 @@ void Actor::playSounds(ActorDirection direction, uint32 distance) {
 
 	case kActorStatus18:
 		if (getWorld()->chapter == kChapter2) {
-			updateCoordinatesForDirection(direction, distance, &_point1);
+			updateCoordinatesForDirection(actorDir, dist, &_point1);
 
 			if (_walkingSound1 == kResourceNone)
 				break;
@@ -2382,9 +2382,9 @@ bool Actor::checkAllActions(const Common::Point &pt, Common::Array<ActionArea *>
 }
 
 bool Actor::isInActionArea(const Common::Point &pt, ActionArea *area) {
-	Common::Rect rect = getWorld()->sceneRects[getWorld()->sceneRectIdx];
+	Common::Rect sceneRect = getWorld()->sceneRects[getWorld()->sceneRectIdx];
 
-	if (!rect.contains(pt))
+	if (!sceneRect.contains(pt))
 		return false;
 
 	if (area->flags & 1)
