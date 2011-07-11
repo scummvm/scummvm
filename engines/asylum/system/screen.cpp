@@ -76,13 +76,15 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 	// Get the frame to draw
 	GraphicResource *resource = new GraphicResource(_vm, resourceId);
 	GraphicFrame *frame = resource->getFrame(frameIndex);
+	ResourceEntry *resourceMask = NULL;
 
 	// Compute coordinates
 	Common::Rect src;
 	Common::Rect dest;
-	dest.left = source.x + frame->x;
+	Common::Rect srcMask;
+	Common::Rect destMask;
 
-	// FIXME destination is never used
+	dest.left = source.x + frame->x;
 	if (flags & kDrawFlagMirrorLeftRight) {
 		if (_flag == -1) {
 			if ((resource->getData().flags & 15) >= 2) {
@@ -108,19 +110,32 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 	if (resourceIdDestination) {
 		masked = true;
 
-		error("[Screen::draw] Not implemented (masked)!");
-	}
+		// Get the resource to use as a mask
+		resourceMask = getResource()->get(resourceIdDestination);
 
-	if (masked) {
-		error("[Screen::draw] Not implemented!");
+		// Adjust masked rectangles
+		srcMask = Common::Rect(0, 0, resourceMask->getData(0), resourceMask->getData(4));
 
-		return;
+		destMask = Common::Rect(destination.y,
+		                        destination.x,
+		                        destination.y + resourceMask->getData(0),
+		                        destination.x + resourceMask->getData(4));
+
+		clip(&srcMask, &destMask, 0);
+
+		if (dest.intersects(destMask))
+			masked = false;
 	}
 
 	// Set the color key (always 0 if set)
 	_useColorKey = colorKey;
 
-	blit(frame, &src, &dest, flags, colorKey);
+	if (masked) {
+		blitMasked(frame, &src, resourceMask->data + 8, &srcMask, &destMask, resourceMask->getData(4), &dest, flags);
+	} else {
+		// Normal blit
+		blit(frame, &src, &dest, flags, colorKey);
+	}
 
 	delete resource;
 }
@@ -419,6 +434,11 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 	}
 }
 
+void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, int maskHeight, Common::Rect *destination, int32 flags) {
+	// TODO
+	blit(frame, source, destination, flags, _useColorKey);
+}
+
 void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey) {
 	// TODO adjust destination rect
 	if (useColorKey) {
@@ -470,7 +490,7 @@ void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint3
 			buffer += pitch;
 		}
 	} else {
-		error("[Screen::copyToBackBuffer] Mirrored drawing not implemented");
+		warning("[Screen::copyToBackBuffer] Mirrored drawing not implemented");
 	}
 }
 
