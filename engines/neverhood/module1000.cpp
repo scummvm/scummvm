@@ -629,7 +629,7 @@ Class152::Class152(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundF
 	_background = addBackground(new DirtyBackground(_vm, backgroundFileHash, 0, 0));
 	_palette = new Palette(_vm, backgroundFileHash);
 	_palette->usePalette();
-	// TODO _mouseCursor = addSprite(new Class435(_vm, cursorFileHash, 20, 620));
+	_mouseCursor = addSprite(new Mouse435(_vm, cursorFileHash, 20, 620));
 	
 }
 

@@ -43,6 +43,20 @@ protected:
 	void updateCursor();
 };
 
+class Mouse435 : public StaticSprite {
+public:
+	Mouse435(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2);
+	void load(uint32 fileHash);
+protected:
+	MouseCursorResource _mouseCursorResource;
+	int _frameNum;
+	int16 _x1;
+	int16 _x2;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void updateCursor();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MOUSE_H */
