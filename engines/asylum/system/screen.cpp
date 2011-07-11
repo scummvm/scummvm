@@ -484,9 +484,10 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x
 
 	for (int32 curY = top; curY < bottom; curY++) {
 		for (int32 curX = left; curX < right; curX++) {
-			if (buffer[curX + curY * pitch] != 0 ) {
-				dest[x + curX + (y + curY) * 640] = buffer[(mirrored ? right - curX : curX) + curY * pitch];
-			}
+			uint32 offset = (mirrored ? right - curX - 1 : curX) + curY * pitch;
+
+			if (buffer[offset] != 0 )
+				dest[x + curX + (y + curY) * 640] = buffer[offset];
 		}
 	}
 }
