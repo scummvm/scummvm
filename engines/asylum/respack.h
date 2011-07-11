@@ -45,7 +45,10 @@ struct ResourceEntry {
 	}
 
 	uint32 getData(uint32 off) {
-		return READ_UINT32((byte *)this + off);
+		if (data == NULL)
+			error("[ResourceEntry::getData] Invalid data");
+
+		return READ_UINT32(data + off);
 	}
 };
 

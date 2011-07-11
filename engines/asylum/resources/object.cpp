@@ -367,7 +367,7 @@ void Object::playSounds() {
 			// Get object resource
 			ResourceEntry *resource = getResource()->get(_resourceId);
 
-			point.x = x + Common::Rational(resource->getData(1), 2).toInt();
+			point.x = x + Common::Rational(resource->getData(4), 2).toInt();
 			point.y = y + Common::Rational(resource->getData(0), 2).toInt();
 		} else {
 			Common::Rect rect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);

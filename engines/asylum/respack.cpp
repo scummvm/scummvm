@@ -107,7 +107,7 @@ void ResourcePack::init(Common::String filename) {
 		// Read the offset of the next entry to determine the size of this one
 		nextOffset = (i < entryCount - 1) ? _packFile.readUint32LE() : (uint32)_packFile.size();
 		entry.size = (nextOffset > 0) ? nextOffset - prevOffset : (uint32)_packFile.size() - prevOffset;
-		entry.data = 0;
+		entry.data = NULL;
 
 		_resources[i] = entry;
 
