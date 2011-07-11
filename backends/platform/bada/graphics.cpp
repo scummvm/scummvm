@@ -64,6 +64,13 @@ void BadaGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 void BadaGraphicsManager::setInternalMousePosition(int x, int y) {
 }
 
+void BadaGraphicsManager::setReady() {
+  if (initState) {
+    initEventObserver();
+    initState = false;
+  }
+}
+
 void BadaGraphicsManager::updateScreen() {
   if (_transactionMode == kTransactionNone) {
     internUpdateScreen();
@@ -180,7 +187,7 @@ void BadaGraphicsManager::internUpdateScreen() {
     pFont->Construct(FONT_STYLE_ITALIC | FONT_STYLE_BOLD, 45);
     canvas.SetFont(*pFont);
 
-    int x = _videoMode.hardwareWidth / 3;
+    int x = 20 + (_videoMode.hardwareWidth / 3);
     int y = _videoMode.hardwareHeight / 3;
     canvas.SetForegroundColor(Color::COLOR_GREEN);
     canvas.DrawText(Point(x, y), L"ScummVM");
@@ -232,7 +239,7 @@ void BadaGraphicsManager::refreshGameScreen() {
     int sw = w;
     int sh = h;
 
-    if (_videoMode.screenWidth == w) {
+    if (_videoMode.screenWidth == w && _videoMode.screenHeight == h) {
       // The extra border prevents random pixels from appearing in the right and bottom
       // screen column/row. Not sure whether this should be applied to opengl-graphics.cpp
       sw = w + 1;

@@ -51,7 +51,7 @@ class BadaGraphicsManager : public OpenGLGraphicsManager {
   void setInternalMousePosition(int x, int y);
   void unloadGFXMode();
   void refreshGameScreen();
-  void setReady() {initState=false;}
+  void setReady();
   bool isReady() {return !initState;}
 
  private:
