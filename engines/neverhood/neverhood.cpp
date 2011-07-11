@@ -30,6 +30,7 @@
 #include "neverhood/blbarchive.h"
 #include "neverhood/collisionman.h"
 #include "neverhood/gamemodule.h"
+#include "neverhood/gamevars.h"
 #include "neverhood/graphics.h"
 #include "neverhood/resourceman.h"
 #include "neverhood/resource.h"
@@ -66,6 +67,8 @@ Common::Error NeverhoodEngine::run() {
 
 	_staticData = new StaticData();
 	_staticData->load("neverhood.dat");
+
+	_gameVars = new GameVars();
 
 	_screen = new Screen(this);
 
@@ -198,33 +201,12 @@ Common::Error NeverhoodEngine::run() {
 	delete _res;
 	delete _screen;
 
+	delete _gameVars;
 	delete _staticData;
 	
 	debug("Ok.");
 
 	return Common::kNoError;
-}
-
-uint32 NeverhoodEngine::getGlobalVar(uint32 nameHash) {
-	// TODO
-	return 0;
-}
-
-void NeverhoodEngine::setGlobalVar(uint32 nameHash, uint32 value) {
-	// TODO
-}
-
-void NeverhoodEngine::incGlobalVar(uint32 nameHash, int incrValue) {
-	setGlobalVar(nameHash, getGlobalVar(nameHash) - incrValue);
-}
-
-uint32 NeverhoodEngine::getSubVar(uint32 nameHash, uint32 subNameHash) {
-	// TODO
-	return 0;
-}
-
-void NeverhoodEngine::setSubVar(uint32 nameHash, uint32 subNameHash, uint32 value) {
-	// TODO
 }
 
 } // End of namespace Neverhood

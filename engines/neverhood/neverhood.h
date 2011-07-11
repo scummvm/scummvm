@@ -41,6 +41,7 @@ struct NeverhoodGameDescription;
 
 class CollisionMan;
 class GameModule;
+class GameVars;
 class ResourceMan;
 class Screen;
 class StaticData;
@@ -73,6 +74,7 @@ public:
 	uint16 _buttonState;
 
 	GameState _gameState;
+	GameVars *_gameVars;
 	Screen *_screen;
 	ResourceMan *_res;
 	GameModule *_gameModule;
@@ -114,11 +116,6 @@ public:
 #endif
 
 	GameState& gameState() { return _gameState; }
-	uint32 getGlobalVar(uint32 nameHash);
-	void setGlobalVar(uint32 nameHash, uint32 value);
-	void incGlobalVar(uint32 nameHash, int incrValue);
-	uint32 getSubVar(uint32 nameHash, uint32 subNameHash);
-	void setSubVar(uint32 nameHash, uint32 subNameHash, uint32 value);
 
 public:
 

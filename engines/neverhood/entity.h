@@ -24,6 +24,7 @@
 #define NEVERHOOD_ENTITY_H
 
 #include "neverhood/neverhood.h"
+#include "neverhood/gamevars.h"
 #include "neverhood/graphics.h"
 
 namespace Neverhood {
@@ -104,6 +105,22 @@ public:
 		return sendMessage(messageNum, MessageParam((Entity*)param), sender);
 	}
 	int getPriority() const { return _priority; }
+	// Shortcuts for game variable access
+	uint32 getGlobalVar(uint32 nameHash) {
+		return _vm->_gameVars->getGlobalVar(nameHash);
+	}
+	void setGlobalVar(uint32 nameHash, uint32 value) {
+		_vm->_gameVars->setGlobalVar(nameHash, value);
+	}
+	uint32 getSubVar(uint32 nameHash, uint32 subNameHash) {
+		return _vm->_gameVars->getSubVar(nameHash, subNameHash);
+	}
+	void setSubVar(uint32 nameHash, uint32 subNameHash, uint32 value) {
+		_vm->_gameVars->setSubVar(nameHash, subNameHash, value);
+	}
+	void incGlobalVar(uint32 nameHash, int incrValue) {
+		setGlobalVar(nameHash, getGlobalVar(nameHash) + incrValue);
+	}
 protected:
 	void (Entity::*_updateHandlerCb)();
 	uint32 (Entity::*_messageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);

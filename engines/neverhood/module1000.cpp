@@ -29,7 +29,7 @@ Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	debug("Create Module1000(%d)", which);
 
-	_musicFileHash = _vm->getGlobalVar(0xD0A14D10) ? 0x81106480 : 0x00103144;		
+	_musicFileHash = getGlobalVar(0xD0A14D10) ? 0x81106480 : 0x00103144;		
 
 	// TODO Music18hList_add(0x03294419, 0x061880C6);
 	// TODO Music18hList_add(0x03294419, _musicFileHash);
@@ -256,7 +256,7 @@ uint32 AsScene1001Door::handleMessage(int messageNum, const MessageParam &param,
 }
 
 void AsScene1001Door::handleMessage2000h() {
-	switch (_vm->getGlobalVar(0x52371C95)) {
+	switch (getGlobalVar(0x52371C95)) {
 	case 0:
 	case 1:
 		_soundResource1.play(0x65482F03);
@@ -272,11 +272,11 @@ void AsScene1001Door::handleMessage2000h() {
 		// Nothing
 		break;		
 	}
-	_vm->incGlobalVar(0x52371C95, 1);
+	incGlobalVar(0x52371C95, 1);
 }
 
 void AsScene1001Door::callback1() {
-	switch (_vm->getGlobalVar(0x52371C95)) {
+	switch (getGlobalVar(0x52371C95)) {
 	case 1:
 		setFileHash(0x624C0498, 4, -1);
 		_newHashListIndex = 4;
@@ -297,7 +297,7 @@ void AsScene1001Door::callback1() {
 }
 
 void AsScene1001Door::callback2() {
-	_vm->setGlobalVar(0xD217189D, 1);
+	setGlobalVar(0xD217189D, 1);
 	setFileHash(0x624C0498, 6, 6);
 	SetAnimationCallback3(&AsScene1001Door::callback3);
 	_x = 30;
@@ -367,7 +367,7 @@ uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &para
 		break;
 	case 0x3002:
 		SetMessageHandler(NULL);
-		_vm->setGlobalVar(0x03C698DA, 1);
+		setGlobalVar(0x03C698DA, 1);
 		_surface->setVisible(false);
 		break;
 	}
@@ -474,7 +474,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B4898);
 	} else if (which == 2) {
 		setRectList(0x004B49F0);
-		if (_vm->getGlobalVar(0xC0418A02)) {
+		if (getGlobalVar(0xC0418A02)) {
 			_klayman = new KmScene1001(_vm, this, 390, 433);
 			_klayman->setDoDeltaX(1);
 		} else {
@@ -496,7 +496,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->getSurface()->getClipRect().x2 = staticSprite1->getSurface()->getDrawRect().x + staticSprite1->getSurface()->getDrawRect().width;
 	_klayman->getSurface()->getClipRect().y2 = 480;
 	
-	if (_vm->getGlobalVar(0xD217189D) == 0) {
+	if (getGlobalVar(0xD217189D) == 0) {
 		_asDoor = addSprite(new AsScene1001Door(_vm));
 		_asDoor->getSurface()->getClipRect().x1 = 0;
 		_asDoor->getSurface()->getClipRect().y1 = 0;
@@ -513,7 +513,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0x15288120, 100, 0));
 
-	if (_vm->getGlobalVar(0x03C698DA) == 0) {
+	if (getGlobalVar(0x03C698DA) == 0) {
 		staticSprite1 = addSprite(new StaticSprite(_vm, 0x8C066150, 200));
 		_asWindow = addSprite(new AsScene1001Window(_vm));
 		_asWindow->getSurface()->getClipRect().x1 = staticSprite1->getSurface()->getDrawRect().x;
@@ -529,7 +529,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene1001::~Scene1001() {
-	// TODO _vm->setGlobalVar(0xC0418A02, _klayman->_doDeltaX);
+	// TODO setGlobalVar(0xC0418A02, _klayman->_doDeltaX);
 }
 
 uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -538,7 +538,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		if (param.asPoint().x == 0 && _vm->getGlobalVar(0xA4014072)) {
+		if (param.asPoint().x == 0 && getGlobalVar(0xA4014072)) {
 			_parentModule->sendMessage(0x1009, 0, this);
 		}
 		break;
@@ -554,7 +554,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList2(0x004B4910);
 			messageResult = 1;
 		} else if (param.asInteger() == 0x21E64A00) {
-			if (_vm->getGlobalVar(0xD217189D)) {
+			if (getGlobalVar(0xD217189D)) {
 				setMessageList(0x004B48A8);
 			} else {
 				setMessageList(0x004B48C8);
@@ -563,7 +563,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x040424D0) {
 			_klayman->sendMessage(0x1014, _ssButton, this);
 		} else if (param.asInteger() == 0x80006358) {
-			if (_vm->getGlobalVar(0x03C698DA)) {
+			if (getGlobalVar(0x03C698DA)) {
 				setMessageList(0x004B4938);
 			} else {
 				setMessageList(0x004B4960);

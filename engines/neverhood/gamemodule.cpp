@@ -103,7 +103,7 @@ void GameModule::startup() {
 
 void GameModule::createModule1500(int which) {
 	_someFlag1 = false;
-	_vm->setGlobalVar(0x91080831, 0x00F10114);
+	setGlobalVar(0x91080831, 0x00F10114);
 	_childObject = new Module1500(_vm, this, which, true);
 	SetUpdateHandler(&GameModule::updateModule1500);
 }
@@ -122,7 +122,7 @@ void GameModule::updateModule1500() {
 }
 
 void GameModule::createModule1000(int which) {
-	_vm->setGlobalVar(0x91080831, 0x03294419);
+	setGlobalVar(0x91080831, 0x03294419);
 	_childObject = new Module1000(_vm, this, which);
 	SetUpdateHandler(&GameModule::updateModule1000);
 }
