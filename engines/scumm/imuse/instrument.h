@@ -55,7 +55,7 @@ public:
 		itPcSpk = 4
 	};
 
-	Instrument() : _type (0), _instrument (0) { }
+	Instrument() : _type(0), _instrument(0) { }
 	~Instrument() { delete _instrument; }
 	static void nativeMT32(bool native);
 	static const byte _gmRhythmMap[35];

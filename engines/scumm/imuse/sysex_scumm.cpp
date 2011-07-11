@@ -75,7 +75,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 			part->set_onoff(p[2] & 0x01);
 			part->effectLevel((p[2] & 0x02) ? 127 : 0);
 			part->set_pri((p[3] << 4) | p[4]);
-			part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
+			part->volume((p[5] & 0x0F) << 4 | (p[6] & 0x0F));
 			part->set_pan((p[7] & 0x0F) << 4 | (p[8] & 0x0F));
 			part->_percussion = player->_isMIDI ? ((p[9] & 0x08) > 0) : false;
 			part->set_transpose((p[9] & 0x0F) << 4 | (p[10] & 0x0F));
@@ -93,7 +93,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 				// cases, a regular program change message always seems to follow
 				// anyway.
 				if (player->_isMIDI) {
-					part->_instrument.program((p[15] & 0x0F) << 4 |(p[16] & 0x0F), player->_isMT32);
+					part->_instrument.program((p[15] & 0x0F) << 4 | (p[16] & 0x0F), player->_isMT32);
 				} else if (se->_pcSpeaker) {
 					// FIXME/HACK: This is only needed here, since when we use the following line:
 					// se->copyGlobalInstrument((p[15] & 0x0F) << 4 |(p[16] & 0x0F), &part->_instrument);
@@ -125,7 +125,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 			if (len == 62 || len == 48) {
 				player->decode_sysex_bytes(p, buf, len - 2);
 				part->set_instrument((byte *)buf);
-			} else { 
+			} else {
 				part->programChange(254); // Must be invalid, but not 255 (which is reserved)
 			}
 		}
@@ -194,10 +194,9 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 
 	case 80: // Loop
 		player->decode_sysex_bytes(p + 1, buf, len - 1);
-		player->setLoop
-			(READ_BE_UINT16(buf), READ_BE_UINT16(buf + 2),
-			 READ_BE_UINT16(buf + 4), READ_BE_UINT16(buf + 6),
-			 READ_BE_UINT16(buf + 8));
+		player->setLoop(READ_BE_UINT16(buf), READ_BE_UINT16(buf + 2),
+		                READ_BE_UINT16(buf + 4), READ_BE_UINT16(buf + 6),
+		                READ_BE_UINT16(buf + 8));
 		break;
 
 	case 81: // End loop
