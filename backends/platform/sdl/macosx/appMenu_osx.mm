@@ -22,10 +22,20 @@
 
 #if defined(MACOSX)
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/platform/sdl/macosx/appMenu_osx.h"
 #include "common/translation.h"
 
 #include <Cocoa/Cocoa.h>
+
+// Apple removed setAppleMenu from the header files in 10.4,
+// but as the method still exists we declare it ourselves here.
+// Yes, this works :)
+@interface NSApplication(MissingFunction)
+- (void)setAppleMenu:(NSMenu *)menu;
+@end
 
 void replaceApplicationMenuItems() {
 
@@ -43,7 +53,7 @@ void replaceApplicationMenuItems() {
 	appleMenu = [[NSMenu alloc] initWithTitle:@""];
 
 	// Get current encoding
-	NSStringEncoding *stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[NSString stringWithCString:(TransMan.getCurrentCharset()).c_str() encoding:NSASCIIStringEncoding]));
+	NSStringEncoding stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[NSString stringWithCString:(TransMan.getCurrentCharset()).c_str() encoding:NSASCIIStringEncoding]));
 	
 	// Add "About ScummVM" menu item
 	[appleMenu addItemWithTitle:[NSString stringWithCString:_("About ScummVM") encoding:stringEncoding] action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
