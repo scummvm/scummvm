@@ -1587,7 +1587,10 @@ void CGEEngine::runGame() {
 		{ 1, 6, 0, 0,  4 },
 		{ 0, 1, 0, 0, 16 },
 	};
-	_pocLight->setSeq(pocSeq);
+	Seq *seq = (Seq *)malloc(7 * sizeof(Seq));
+	Common::copy(&pocSeq[0], &pocSeq[7], seq);
+	_pocLight->setSeq(seq);
+
 	_pocLight->_flags._tran = true;
 	_pocLight->_time = 1;
 	_pocLight->_z = 120;

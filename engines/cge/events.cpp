@@ -142,11 +142,6 @@ void Keyboard::newKeyboard(Common::Event &event) {
 /*----------------- MOUSE interface -----------------*/
 
 Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0), _vm(vm) {
-	static Seq ms[] = {
-		{ 0, 0, 0, 0, 1 },
-		{ 1, 1, 0, 0, 1 }
-	};
-
 	_hold = NULL;
 	_hx = 0; 
 	_hy = 0;
@@ -155,7 +150,14 @@ Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0)
 	_busy = NULL;
 	_active = false;
 	_flags._kill = false;
-	setSeq(ms);
+
+	static Seq ms[] = {
+		{ 0, 0, 0, 0, 1 },
+		{ 1, 1, 0, 0, 1 }
+	};
+	Seq *seq = (Seq *)malloc(2 * sizeof(Seq));
+	Common::copy(&ms[0], &ms[2], seq);
+	setSeq(seq);
 
 	BMP_PTR *MC = new BMP_PTR[3];
 	MC[0] = new Bitmap("MOUSE", true);
