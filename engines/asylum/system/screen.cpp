@@ -430,7 +430,7 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 	} else if (flags) {
 		blt(destination, frame, source, flags, useColorKey);
 	} else {
-		bltFast(destination->left, destination->top, frame, source, flags, useColorKey);
+		bltFast(destination->left, destination->top, frame, source, useColorKey);
 	}
 }
 
@@ -460,7 +460,7 @@ void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, 
 	}
 }
 
-void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey) {
+void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, bool useColorKey) {
 	if (useColorKey) {
 		copyToBackBufferWithTransparency((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
@@ -468,7 +468,7 @@ void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *sour
 		                                 dY,
 		                                 source->width(),
 		                                 source->height(),
-		                                 flags & kDrawFlagMirrorLeftRight);
+		                                 kDrawFlagNone);
 	} else {
 		copyToBackBuffer((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                 frame->surface.w,
@@ -476,7 +476,7 @@ void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *sour
 		                 dY,
 		                 source->width(),
 		                 source->height(),
-		                 flags & kDrawFlagMirrorLeftRight);
+		                 kDrawFlagNone);
 	}
 }
 
