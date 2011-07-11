@@ -166,6 +166,8 @@ public:
 
 
 class Sprite {
+private:
+	Seq *getConstantSeq(bool seqFlag);
 protected:
 	SprExt *_ext;
 public:
