@@ -68,7 +68,7 @@ protected:
 	// TODO 00000088 someRects	   dd ?
 	// TODO 0000008C someRectsCount  dw ?
 	// TODO 0000008E field_8E		dw ?
-	// TODO 00000094 mouseSprite	 dd ?
+	Sprite *_mouseCursor;
 	Klayman *_klayman;
 	Palette *_palette;
 	Background *_background;

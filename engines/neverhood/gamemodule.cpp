@@ -58,6 +58,16 @@ GameModule::~GameModule() {
 
 }
 
+void GameModule::handleMouseMove(int16 x, int16 y) {
+	if (_childObject) {
+		NPoint mousePos;
+		mousePos.x = x;
+		mousePos.y = y;
+		debug("GameModule::handleMouseMove(%d, %d)", x, y);
+		_childObject->sendPointMessage(0, mousePos, this);
+	}				
+}
+
 void GameModule::handleMouseDown(int16 x, int16 y) {
 	if (_childObject) {
 		NPoint mousePos;

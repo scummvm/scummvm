@@ -20,36 +20,29 @@
  *
  */
 
-// TODO: I couldn't come up with a better name than 'Module' so far
-
-#ifndef NEVERHOOD_MODULE_H
-#define NEVERHOOD_MODULE_H
+#ifndef NEVERHOOD_MOUSE_H
+#define NEVERHOOD_MOUSE_H
 
 #include "neverhood/neverhood.h"
-#include "neverhood/background.h"
-#include "neverhood/collisionman.h"
-#include "neverhood/entity.h"
+#include "neverhood/sprite.h"
 #include "neverhood/graphics.h"
-#include "neverhood/mouse.h"
-#include "neverhood/palette.h"
-#include "neverhood/screen.h"
+#include "neverhood/resource.h"
 
 namespace Neverhood {
 
-class Module : public Entity {
+class Mouse433 : public StaticSprite {
 public:
-	Module(NeverhoodEngine *vm, Module *parentModule);
-	virtual ~Module();
-	virtual void draw();
+	Mouse433(NeverhoodEngine *vm, uint32 fileHash, NRect *mouseRect);
+	void load(uint32 fileHash);
 protected:
-	Module *_parentModule;
-	Entity *_childObject;
-	bool _done;
-	int16 _field24, _field26, _field28;
-	uint32 _field20;
+	MouseCursorResource _mouseCursorResource;
+	int _frameNum;
+	NRect _mouseRect;	
+	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void updateCursor();
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULE_H */
+#endif /* NEVERHOOD_MOUSE_H */

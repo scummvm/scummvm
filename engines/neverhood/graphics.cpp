@@ -101,6 +101,12 @@ void BaseSurface::drawAnimResource(AnimResource &animResource, uint frameIndex, 
 	}
 }
 
+void BaseSurface::drawMouseCursorResource(MouseCursorResource &mouseCursorResource, int frameNum) {
+	if (frameNum < 3) {
+		mouseCursorResource.draw(frameNum, (byte*)_surface->pixels, _surface->pitch);
+	}
+}
+
 // Misc
 
 void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels) {

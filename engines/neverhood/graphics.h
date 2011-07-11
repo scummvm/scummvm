@@ -52,6 +52,7 @@ struct NDrawRect {
 
 class AnimResource;
 class SpriteResource;
+class MouseCursorResource;
 
 // NOTE: "Restore" methods aren't need in the reimplementation as they're DirectDraw-specific
 
@@ -65,6 +66,7 @@ public:
 	void drawSpriteResource(SpriteResource &spriteResource);
 	void drawSpriteResourceEx(SpriteResource &spriteResource, bool flipX, bool flipY, int16 width, int16 height);
 	void drawAnimResource(AnimResource &animResource, uint frameIndex, bool flipX, bool flipY, int16 width, int16 height);
+	void drawMouseCursorResource(MouseCursorResource &mouseCursorResource, int frameNum);
 	int getPriority() const { return _priority; }
 	void setPriority(int priority) { _priority = priority; }
 	NDrawRect& getDrawRect() { return _drawRect; }

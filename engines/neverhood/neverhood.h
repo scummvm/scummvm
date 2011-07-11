@@ -69,7 +69,7 @@ public:
 
 	Common::RandomSource *_rnd;
 
-	int _mouseX, _mouseY;
+	int16 _mouseX, _mouseY;
 	Common::KeyCode _keyState;
 	uint16 _buttonState;
 
@@ -116,6 +116,8 @@ public:
 #endif
 
 	GameState& gameState() { return _gameState; }
+	int16 getMouseX() const { return _mouseX; }
+	int16 getMouseY() const { return _mouseY; }
 
 public:
 

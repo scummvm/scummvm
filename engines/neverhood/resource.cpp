@@ -297,6 +297,58 @@ int16 AnimResource::getFrameIndex(uint32 frameHash) {
 	return -1;			
 }
 
+MouseCursorResource::MouseCursorResource(NeverhoodEngine *vm) 
+	: _cursorSprite(vm), _cursorNum(4), _currFileHash(0) {
+
+	_rect.width = 32;
+	_rect.height = 32;
+}
+
+void MouseCursorResource::load(uint32 fileHash) {
+	if (_currFileHash != fileHash) {
+		if (_cursorSprite.load(fileHash) && !_cursorSprite.isRle() &&
+			_cursorSprite.getDimensions().width == 96 && _cursorSprite.getDimensions().height == 224) {
+			debug("load ok");
+			_currFileHash = fileHash; 
+		} else {
+			unload();
+		}
+	}
+}
+
+void MouseCursorResource::unload() {
+	_cursorSprite.unload();
+	_currFileHash = 0;
+	_cursorNum = 4;
+}
+
+NDrawRect& MouseCursorResource::getRect() {
+	static const NPoint kCursorHotSpots[] = {
+		{-15, -5},
+		{-17, -25},
+		{-17, -30},
+		{-14, -1},
+		{-3, -7},
+		{-30, -18},
+		{-1, -18}
+	};
+	_rect.x = kCursorHotSpots[_cursorNum].x;
+	_rect.y = kCursorHotSpots[_cursorNum].y;
+	return _rect;
+}
+
+void MouseCursorResource::draw(int frameNum, byte *dest, int destPitch) {
+	if (_cursorSprite.getPixels()) {
+		int sourcePitch = (_cursorSprite.getDimensions().width + 3) & 0xFFFC; // 4 byte alignment
+		byte *source = _cursorSprite.getPixels() + _cursorNum * (sourcePitch * 32) + frameNum * 32;
+		for (int16 yc = 0; yc < 32; yc++) {
+			memcpy(dest, source, 32);
+			source += sourcePitch;
+			dest += destPitch;
+		}	
+	}
+}
+
 SoundResource::SoundResource(NeverhoodEngine *vm)
 	: _vm(vm) {
 }

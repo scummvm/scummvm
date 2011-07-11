@@ -492,7 +492,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	_background = addBackground(new DirtyBackground(_vm, 0x4086520E, 0, 0));
 	_palette = new Palette(_vm, 0x4086520E);
 	_palette->usePalette();
-	// TODO _mouseCursor = addSprite(new Class433(_vm, 6520A400, 0));
+	_mouseCursor = addSprite(new Mouse433(_vm, 0x6520A400, NULL));
 	
 	if (which < 0) {
 		setRectList(0x004B49F0);

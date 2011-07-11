@@ -38,7 +38,7 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	_rectList = NULL;
 	// TODO _someRects = NULL;
 	_klayman = NULL;
-	// TODO _mouseSprite = NULL;
+	_mouseCursor = NULL;
 	_palette = NULL;
 	_background = NULL;
 	// TODO _field_8E = -1;
@@ -221,11 +221,9 @@ void Scene::update() {
 uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
 	case 0: // mouse moved
-#if 0	
-		if (_mouseSprite && _mouseSprite->hasMessageHandler())
-			_mouseSprite->sendMessage(0x4002, param, this);
-		queryPositionSomeRects(param.asPoint().x, param.asPoint().y);			
-#endif	
+		if (_mouseCursor && _mouseCursor->hasMessageHandler())
+			_mouseCursor->sendMessage(0x4002, param, this);
+		// TODO queryPositionSomeRects(param.asPoint().x, param.asPoint().y);			
 		break;
 	case 1: // mouse clicked
 		debug("mouse clicked");
@@ -268,20 +266,16 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		}
 		break;
 	case 0x101D:
-#if 0	
-		if (_mouseSprite) {
-			_prevVisible = _mouseSprite->_drawSurface->_visible;
-			_mouseSprite->_drawSurface->_visible = false;
+		if (_mouseCursor) {
+			_prevVisible = _mouseCursor->getSurface()->getVisible();
+			_mouseCursor->getSurface()->setVisible(false);
 		}
-#endif	
 		break;
 	case 0x101E:
-#if 0	
-		if (_prevVisible && _mouseSprite) {
-			_mouseSprite->_drawSurface->_visible = true;
-			_mouseSprite->sendMessage(0x4002, g_Screen->_mousePos, this);
+		if (_prevVisible && _mouseCursor) {
+			_mouseCursor->getSurface()->setVisible(false);
+			// TODO _mouseCursor->sendMessage(0x4002, g_Screen->_mousePos, this);
 		}
-#endif	
 		break;
 	case 0x1022:
 		setSurfacePriority(((Sprite*)sender)->getSurface(), param.asInteger());

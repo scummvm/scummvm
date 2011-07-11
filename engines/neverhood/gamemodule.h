@@ -34,6 +34,7 @@ class GameModule : public Module {
 public:
 	GameModule(NeverhoodEngine *vm);
 	virtual ~GameModule();
+	void handleMouseMove(int16 x, int16 y);
 	void handleMouseDown(int16 x, int16 y);
 protected:
 	Entity *_prevChildObject;

@@ -38,6 +38,8 @@ public:
 	void unload();
 	const NDimensions& getDimensions() { return _dimensions; }
 	NPoint& getPosition() { return _position; }
+	bool isRle() const { return _rle; }
+	byte *getPixels() const { return _pixels; }
 protected:
 	NeverhoodEngine *_vm;
 	int _resourceHandle;
@@ -97,6 +99,22 @@ protected:
 	byte _replOldByte;
 	byte _replNewByte;
 	Common::Array<AnimFrameInfo> _frames;
+};
+
+class MouseCursorResource {
+public:
+	MouseCursorResource(NeverhoodEngine *vm);
+	void load(uint32 fileHash);
+	void unload();
+	NDrawRect& getRect();
+	void draw(int frameNum, byte *dest, int destPitch);
+	int getCursorNum() const { return _cursorNum; }
+	void setCursorNum(int value) { _cursorNum = value; }
+protected:
+	int _cursorNum;
+	SpriteResource _cursorSprite;
+	NDrawRect _rect;
+	uint32 _currFileHash;
 };
 
 // TODO: Dummy class atm
