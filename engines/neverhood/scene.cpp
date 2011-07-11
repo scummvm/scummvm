@@ -178,7 +178,7 @@ Background *Scene::addBackground(Background *background) {
 void Scene::update() {
 
 	if (_smkFileHash != 0) {
-		// TODO
+		// TODO .text:0040138D
 		//**** ALL TODO
 		_smackerPlayer = new SmackerPlayer(_vm, this, _smkFileHash, true, 0);
 		_savedUpdateHandlerCb = _updateHandlerCb;

@@ -148,22 +148,6 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 		}
 	} 
 	
-	#if 0
-	if ( ddRect.right > ddRect.left )
-	{
-	if ( ddRect.top < ddRect.bottom )
-	{
-	(*(int (__stdcall **)(_DWORD, _DWORD, _DWORD, LPDIRECTDRAWSURFACE, struct tagRECT *, unsigned int))(**(_DWORD **)(this + 8) + 28))(
-	*(_DWORD *)(this + 8),
-	destX,
-	destY,
-	ddSurface,
-	&ddRect,
-	blitFlags | (unsigned int)DDBLTFAST_WAIT);
-	}
-	}
-	#endif
-	
 }
 
 void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect) {

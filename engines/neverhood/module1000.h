@@ -151,6 +151,31 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class AsScene1002Ring : public AnimatedSprite {
+public:
+	AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool flag1, int16 x, int16 y, int16 clipY1, bool flag2);
+protected:
+	Scene *_parentScene;
+	bool _flag1;
+	SoundResource _soundResource;
+	void update();
+	uint32 handleMessage4475E0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage447760(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage447890(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage447930(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage447A00(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene1002Door : public StaticSprite {
+public:
+	AsScene1002Door(NeverhoodEngine *vm, NRect &clipRect);
+protected:
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void spriteUpdate447D10();
+	void spriteUpdate447D40();
+};
+
 class Scene1002 : public Scene {
 public:
 	Scene1002(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -164,12 +189,12 @@ protected:
 	// TODO ResourceTable _resourceTable6;
 	// TODO ResourceTable _resourceTable7;
 	// TODO ResourceTable _resourceTable8;
-	Sprite *_class502_1;
-	Sprite *_class502_2;
-	Sprite *_class502_3;
-	Sprite *_class502_4;
-	Sprite *_class502_5;
-	Sprite *_class431;
+	Sprite *_asRing1;
+	Sprite *_asRing2;
+	Sprite *_asRing3;
+	Sprite *_asRing4;
+	Sprite *_asRing5;
+	Sprite *_asDoor;
 	Sprite *_class504;
 	Sprite *_class503;
 	Sprite *_ssLadderArch;
