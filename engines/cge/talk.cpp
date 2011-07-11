@@ -310,7 +310,12 @@ void InfoLine::update(const char *tx) {
 
 		// clear whole rectangle
 		memset(v + 2, TEXT_BG, dsiz);                   // data bytes
-		memmove(v + lsiz, v, psiz - lsiz);
+		
+		for (byte *pDest = v + lsiz; pDest < (v + psiz); pDest += lsiz)
+			*pDest = 0;
+//			Common::set_to(pDest, pDest + lsiz, 0);
+			//Common::copy(v, v + lsiz, pDest);
+
 		*(uint16 *)(v + psiz - 2) = EOI;               // plane trailer uint16
 		memmove(v + psiz, v, 3 * psiz);
 
