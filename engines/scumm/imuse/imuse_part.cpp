@@ -194,13 +194,17 @@ void Part::set_onoff(bool on) {
 }
 
 void Part::set_instrument(byte * data) {
-	_instrument.adlib(data);
+	if (_se->_pcSpeaker)
+		_instrument.pcspk(data);
+	else
+		_instrument.adlib(data);
+
 	if (clearToTransmit())
 		_instrument.send(_mc);
 }
 
 void Part::load_global_instrument(byte slot) {
-	_player->_se->copyGlobalAdLibInstrument(slot, &_instrument);
+	_player->_se->copyGlobalInstrument(slot, &_instrument);
 	if (clearToTransmit())
 		_instrument.send(_mc);
 }

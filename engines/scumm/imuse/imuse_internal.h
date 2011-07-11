@@ -342,6 +342,7 @@ struct Part : public Serializable {
 	void off();
 	void set_instrument(uint b);
 	void set_instrument(byte *data);
+	void set_instrument_pcspk(byte *data);
 	void load_global_instrument(byte b);
 
 	void set_transpose(int8 transpose);
@@ -433,7 +434,8 @@ protected:
 	Player _players[8];
 	Part _parts[32];
 
-	Instrument _global_adlib_instruments[32];
+	bool _pcSpeaker;
+	Instrument _global_instruments[32];
 	CommandQueue _cmd_queue[64];
 	DeferredCommand _deferredCommands[4];
 
@@ -498,8 +500,8 @@ protected:
 	int setImuseMasterVolume(uint vol);
 
 	void reallocateMidiChannels(MidiDriver *midi);
-	void setGlobalAdLibInstrument(byte slot, byte *data);
-	void copyGlobalAdLibInstrument(byte slot, Instrument *dest);
+	void setGlobalInstrument(byte slot, byte *data);
+	void copyGlobalInstrument(byte slot, Instrument *dest);
 	bool isNativeMT32() { return _native_mt32; }
 
 protected:
