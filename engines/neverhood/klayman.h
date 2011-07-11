@@ -58,6 +58,11 @@ public:
 	void sub420170();
 	void sub4200D0();
 	void sub41FBC0();
+	void sub420870();
+	void sub4208B0();
+	void sub4208F0();
+	void sub420930();
+	void sub420830();
 	
 	void spriteUpdate41F250();
 	void spriteUpdate41F5F0();
@@ -169,6 +174,8 @@ protected:
 	void sub41FC30();
 	
 	uint32 handleMessage41DF10(int messageNum, const MessageParam &param, Entity *sender);
+	
+	uint32 handleMessage41EEF0(int messageNum, const MessageParam &param, Entity *sender);
 	
 };
 

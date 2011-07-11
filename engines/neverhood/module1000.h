@@ -130,6 +130,18 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+// TODO: Move this to some common file since it's used several times
+
+class Class152 : public Scene {
+public:
+	Class152(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash);
+protected:
+	// TODO: Are these used?
+	int16 _fieldD0;	
+	int16 _fieldD2;	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE1000_H */

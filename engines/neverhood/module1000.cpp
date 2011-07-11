@@ -65,7 +65,6 @@ Module1000::~Module1000() {
 }
 
 void Module1000::createScene1001(int which) {
-	debug("createScene1501");
 	_vm->gameState().sceneNum = 0;
 	_childObject = new Scene1001(_vm, this, which);
 	// TODO ResourceTable_multiLoad(&_resourceTable1, &_resourceTable2, &_resourceTable3);
@@ -77,6 +76,10 @@ void Module1000::createScene1002(int which) {
 }
 
 void Module1000::createScene1003(int which) {
+	_vm->gameState().sceneNum = 2;
+	_childObject = new Class152(_vm, this, 0xC084110C, 0x41108C00);
+	SetUpdateHandler(&Module1000::updateScene1003);
+	// TODO Music18hList_play(0x061880C6, 0, 0);
 }
 
 void Module1000::createScene1004(int which) {
@@ -89,12 +92,15 @@ void Module1000::updateScene1001() {
 	_childObject->handleUpdate();
 
 	if (_done) {
+	
+		debug("SCENE 1001 DONE; _field20 = %d", _field20);
+	
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;
 		if (_field20 == 2) {
-			// TODO createScene1003();
-			// TODO _childObject->handleUpdate();
+			createScene1003(0);
+			_childObject->handleUpdate();
 		} else {
 			// TODO createScene1002();
 			// TODO _childObject->handleUpdate();
@@ -122,6 +128,14 @@ void Module1000::updateScene1002() {
 }
 			
 void Module1000::updateScene1003() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene1001(2);
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module1000::updateScene1004() {
@@ -181,6 +195,25 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;
 
+	case 0x481F:
+		if (param.asInteger() == 0) {
+			setCallback2(AnimationCallback(&Klayman::sub420870));
+		} else if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub4208B0));
+		} else if (param.asInteger() == 3) {
+			setCallback2(AnimationCallback(&Klayman::sub4208F0));
+		} else if (param.asInteger() == 4) {
+			setCallback2(AnimationCallback(&Klayman::sub420930));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub420830));
+		}
+		break;
+
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger());
+		sub41C7B0();
+		break;
+
 	case 0x4836:
 		if (param.asInteger() == 1) {
 			_parentScene->sendMessage(0x2002, 0, this);
@@ -196,8 +229,6 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		sub41CD70(param.asInteger());
 		break;
 	}
-
-	// TODO
 
 	return 0;
 }
@@ -461,9 +492,8 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	_background = addBackground(new DirtyBackground(_vm, 0x4086520E, 0, 0));
 	_palette = new Palette(_vm, 0x4086520E);
 	_palette->usePalette();
+	// TODO _mouseCursor = addSprite(new Class433(_vm, 6520A400, 0));
 	
-	// TODO Mouse
-
 	if (which < 0) {
 		setRectList(0x004B49F0);
 		_klayman = new KmScene1001(_vm, this, 200, 433);
@@ -585,6 +615,34 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return messageResult;
+}
+
+// Class152
+
+Class152::Class152(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash)
+	: Scene(vm, parentModule, true), _fieldD0(-1), _fieldD2(-1) {
+
+	_surfaceFlag = false;
+
+	SetMessageHandler(&Class152::handleMessage);
+	
+	_background = addBackground(new DirtyBackground(_vm, backgroundFileHash, 0, 0));
+	_palette = new Palette(_vm, backgroundFileHash);
+	_palette->usePalette();
+	// TODO _mouseCursor = addSprite(new Class435(_vm, cursorFileHash, 20, 620));
+	
+}
+
+uint32 Class152::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood

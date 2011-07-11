@@ -1102,4 +1102,64 @@ uint32 Klayman::handleMessage41DF10(int messageNum, const MessageParam &param, E
 	return messageResult;
 }
 
+void Klayman::sub420870() {
+	_status2 = 0;
+	_flagE5 = true;
+	setFileHash(0xD820A114, 0, 10);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+	SetSpriteCallback(NULL);
+}
+
+void Klayman::sub4208B0() {
+	_status2 = 1;
+	_flagE5 = true;
+	setFileHash(0xD820A114, 30, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+	SetSpriteCallback(NULL);
+}
+
+void Klayman::sub4208F0() {
+	_status2 = 0;
+	_flagE5 = true;
+	setFileHash(0x9B250AD2, 0, 7);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EEF0);
+	SetSpriteCallback(NULL);
+}
+
+uint32 Klayman::handleMessage41EEF0(int messageNum, const MessageParam &param, Entity *sender) {
+	debug("Klayman::handleMessage41EEF0(%04X)", messageNum);
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x32180101) {
+			_soundResource1.play(0x4924AAC4);
+		} else if (param.asInteger() == 0x0A2A9098) {
+			_soundResource1.play(0x0A2AA8E0);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void Klayman::sub420930() {
+	_status2 = 1;
+	_flagE5 = true;
+	setFileHash(0x98F88391, 4, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EEF0);
+	SetSpriteCallback(NULL);
+}
+
+void Klayman::sub420830() {
+	_status2 = 1;
+	_flagE5 = true;
+	setFileHash(0xD820A114, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+	SetSpriteCallback(NULL);
+}
+
 } // End of namespace Neverhood
