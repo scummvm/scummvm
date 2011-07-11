@@ -2032,7 +2032,7 @@ bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
 }
 
 bool Scene::rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3) {
-	return (x >= x3 && y >= y3 && x1 >= x2 && y1 >= y2);
+	return (x <= x3 && x1 >= x2) && (y <= y3 && y1 >= y2);
 }
 
 void Scene::adjustCoordinates(Common::Point *point) {
@@ -2434,10 +2434,9 @@ void Scene::processUpdateList() {
 		} else {
 			actor->setField938(1);
 			actor->setField934(0);
-			point.x = actor->getPoint1()->x + actor->getPoint2()->x;
-			point.y = actor->getPoint1()->y + actor->getPoint2()->y;
+			point = *actor->getPoint1() + *actor->getPoint2();
 
-			int32 bottomRight = actor->getBoundingRect()->bottom + actor->getPoint1()->y + 4;
+			int32 bottomRight = actor->getPoint1()->y + actor->getBoundingRect()->bottom + 4;
 
 			if (_ws->chapter == kChapter11 && _updateList[i].index != getPlayerIndex())
 				bottomRight += 20;
@@ -2456,9 +2455,9 @@ void Scene::processUpdateList() {
 				// Check that the rects are contained
 				if (!rectIntersect(object->x, object->y, object->x + object->getBoundingRect()->right, object->y + object->getBoundingRect()->bottom,
 				                   actor->getPoint1()->x, actor->getPoint1()->y, actor->getPoint1()->x + actor->getBoundingRect()->right, bottomRight)) {
-					if (BYTE1(object->flags) & kObjectFlag20)
-						if (!(BYTE1(object->flags) & kObjectFlag80))
-							object->flags = BYTE1(object->flags) | kObjectFlag40;
+
+					if (BYTE1(object->flags) & kObjectFlag20 && !(BYTE1(object->flags) & kObjectFlag80))
+						object->flags = BYTE1(object->flags) | kObjectFlag40;
 
 					continue;
 				}
@@ -2475,21 +2474,20 @@ void Scene::processUpdateList() {
 				// Adjust object flags
 				if (BYTE1(object->flags) & kObjectFlag80 || notIntersects) {
 					if (BYTE1(object->flags) & kObjectFlag20)
-						object->flags = (BYTE1(object->flags) & kObjectFlagBF) | kObjectFlag80;
+						object->flags = BYTE1(object->flags) & kObjectFlagBF | kObjectFlag80;
 				} else {
 					if (BYTE1(object->flags) & kObjectFlag20) {
 						object->flags = BYTE1(object->flags) | kObjectFlag40;
 					}
 				}
 
-				if (object->flags & kObjectFlag4) {
-					if (notIntersects && LOBYTE(actor->flags) & kActorFlagMasked) {
+				if (LOBYTE(object->flags) & kObjectFlag4) {
+					if (notIntersects && (actor->flags & kActorFlagMasked))
 						error("[Scene::processUpdateList] Assigning mask to masked character (%s)", actor->getName());
-					} else {
-						object->adjustCoordinates(&point);
-						actor->setObjectIndex(j);
-						actor->flags |= kActorFlagMasked;
-					}
+
+					object->adjustCoordinates(&point);
+					actor->setObjectIndex(j);
+					actor->flags |= kActorFlagMasked;
 				} else {
 					if (notIntersects) {
 						if (actor->getPriority() < object->getPriority()) {
