@@ -153,6 +153,7 @@ private:
 	// Screen blitting
 	void blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags, bool useColorKey);
 	void blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, int maskHeight, Common::Rect *destination, int32 flags);
+	void blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int widthHeight, uint32 srcPitch, uint32 dstPitch, uint32 objectPitch);
 	void blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey);
 	void bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, bool useColorKey);
 

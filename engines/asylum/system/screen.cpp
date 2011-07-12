@@ -127,7 +127,7 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 			masked = false;
 	}
 
-	// Set the color key (always 0 if set)
+	// Set the color key
 	_useColorKey = colorKey;
 
 	if (masked) {
@@ -198,6 +198,13 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 		source->bottom -= diffBottom;
 		destination->bottom -= diffBottom;
 	}
+
+	// Check validity
+	if (!source->isValidRect())
+		error("[Screen::clip] Invalid resulting source rectangle");
+
+	if (!destination->isValidRect())
+		error("[Screen::clip] Invalid resulting destination rectangle");
 }
 
 void Screen::takeScreenshot() {
@@ -361,7 +368,40 @@ void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, c
 }
 
 void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 transTableNum) {
-	error("[Screen::addGraphicToQueueCrossfade] not implemented");
+	// Save current transparency index
+	byte *transparencyIndex= _transTableIndex;
+	selectTransTable(transTableNum);
+
+	// Get graphic frames
+	GraphicResource *resource = new GraphicResource(_vm, resourceId);
+	GraphicFrame *frame = resource->getFrame(frameIndex);
+
+	GraphicResource *resourceObject = new GraphicResource(_vm, objectResourceId);
+	GraphicFrame *frameObject = resourceObject->getFrame(0);
+
+	// Compute rectangles
+	Common::Rect src(0, 0, frame->getWidth(), frame->getHeight());
+	Common::Rect dst = src;
+	dst.translate(point.x + frame->x, point.y + frame->y);
+
+	clip(&src, &dst, 0);
+
+	// Set the color key (always 0)
+	_useColorKey = true;
+
+	blitCrossfade((byte *)_backBuffer.pixels          + dst.top                   * _backBuffer.pitch          + dst.left,
+	              (byte *)frame->surface.pixels       + src.top                    * frame->surface.pitch       + src.left,
+	              (byte *)frameObject->surface.pixels + (objectPoint.y + dst.top) * frameObject->surface.pitch + (dst.left + objectPoint.x),
+	              dst.width() + (dst.height() << 16),
+	              frame->surface.pitch       - dst.width(),
+	              _backBuffer.pitch          - dst.width(),
+	              frameObject->surface.pitch - dst.width());
+
+	// Restore transparency table
+	_transTableIndex = transparencyIndex;
+
+	delete resource;
+	delete resourceObject;
 }
 
 void Screen::addGraphicToQueue(GraphicQueueItem const &item) {
@@ -369,7 +409,7 @@ void Screen::addGraphicToQueue(GraphicQueueItem const &item) {
 }
 
 void Screen::drawGraphicsInQueue() {
-	// sort by priority first
+	// Sort by priority first
 	graphicsSelectionSort();
 
 	for (Common::Array<GraphicQueueItem>::const_iterator i = _queueItems.begin(); i != _queueItems.end(); i++) {
@@ -426,6 +466,7 @@ void Screen::deleteGraphicFromQueue(ResourceId resourceId) {
 //////////////////////////////////////////////////////////////////////////
 void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags, bool useColorKey) {
 	if (flags & 0x80000000) {
+		// Used when closing from the menu (and more?)
 		error("[Screen::blit] not implemented");
 	} else if (flags) {
 		blt(destination, frame, source, flags, useColorKey);
@@ -439,8 +480,11 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	blit(frame, source, destination, flags, _useColorKey);
 }
 
+void Screen::blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int widthHeight, uint32 srcPitch, uint32 dstPitch, uint32 objectPitch) {
+	error("[Screen::blitCrossfade] Not implemented");
+}
+
 void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey) {
-	// TODO adjust destination rect
 	if (useColorKey) {
 		copyToBackBufferWithTransparency((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
@@ -490,7 +534,7 @@ void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint3
 			buffer += pitch;
 		}
 	} else {
-		warning("[Screen::copyToBackBuffer] Mirrored drawing not implemented");
+		error("[Screen::copyToBackBuffer] Mirrored drawing not implemented (no color key)");
 	}
 }
 
