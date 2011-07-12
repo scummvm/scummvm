@@ -74,8 +74,10 @@ void CGEEngine::setup() {
 	_heart = new Heart;
 	_sys = new System(this);
 	_pocLight = new PocLight(this);
-	for (int i = 0; i < POCKET_NX; i++)
+	for (int i = 0; i < POCKET_NX; i++) {
 		_pocket[i] = new Sprite(this, NULL);
+		_pocket[i]->_flags._kill = false;
+	}
 	_sprite = new Sprite(this, NULL);
 	_miniCave = new Sprite(this, NULL);
 	_miniCave->_flags._kill = false;
