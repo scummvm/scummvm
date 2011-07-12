@@ -36,6 +36,25 @@
 
 namespace Sword25 {
 
+// FIXME: The whole PersistenceBlock should probably be just replace
+// by using Common::Serializer instead. This breaks binary compatibility,
+// but then this is going to be broken anyway, due to floats being stored
+// in a non-portable way.
+//
+// One thing to be learned for Common::Serializer, though: It might
+// be useful to enhance it to store some metadata before each object
+// (akin to the FOO_MARKER enums used by PersistenceBlock). Stored
+// compactly in a single byte.
+// The only reason for this would be verification of integrity: If
+// somebody screws up with a non-backward compatible change, then
+// with some luck it might be caught by the serialization code.
+// However, implementing this in a backward compatible fashion is tough,
+// and might not be worth the effort.
+// And of course "manual" calls to skip() would have to be tweaked, too.
+
+
+// FIXME: Alternatively, the PersistenceBlock subclasses could be replaced
+// by simple Common::*Stream subclasses.
 class PersistenceBlock {
 public:
 	static uint getSInt32Size() {
@@ -65,6 +84,9 @@ protected:
 	};
 
 };
+
+// FIXME: Instead of the following crap, this code should simply be using
+// the ScummVm data types like uint32, uint16, etc
 
 #define CTASSERT(ex) typedef char ctassert_type[(ex) ? 1 : -1]
 CTASSERT(sizeof(byte) == 1);
