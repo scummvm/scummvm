@@ -683,18 +683,9 @@ void Sprite::killXlat() {
 	if (_flags._xlat && _ext) {
 		BMP_PTR *b;
 		uint8 *m = (*_ext->_shpList)->_m;
-
-		switch (memType(m)) {
-		case NEAR_MEM :
-			delete[](uint8 *) m;
-			break;
-		case FAR_MEM  :
+		if (m)
 			free(m);
-			break;
-		default:
-			warning("Unhandled MemType in Sprite::KillXlat()");
-			break;
-		}
+
 		for (b = _ext->_shpList; *b; b++)
 			(*b)->_m = NULL;
 		_flags._xlat = false;
@@ -777,9 +768,7 @@ BMP_PTR Sprite::ghost() {
 		if ((bmp->_b = new HideDesc[bmp->_h]) == NULL)
 			error("No Core");
 		bmp->_v = (uint8 *) memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc) * bmp->_h);
-		// TODO offset correctly in the surface using y1 pitch and x1 and not via offset segment
-		//bmp->_m = (uint8 *) MK_FP(e->y1, e->x1);
-		warning("FIXME: SPRITE::Ghost");
+		bmp->_map = (e->_y1 << 16) + e->_x1;
 		return bmp;
 	}
 	return NULL;
@@ -1209,7 +1198,7 @@ void Vga::copyPage(uint16 d, uint16 s) {
 
 //--------------------------------------------------------------------------
 
-void Bitmap::xShow(int x, int y) {
+void Bitmap::xShow(int16 x, int16 y) {
 	/*
 	  uint8 rmsk = x % 4,
 	       mask = 1 << rmsk,
@@ -1291,7 +1280,7 @@ void Bitmap::xShow(int x, int y) {
 }
 
 
-void Bitmap::show(int x, int y) {
+void Bitmap::show(int16 x, int16 y) {
 	const byte *srcP = (const byte *)_v;
 	byte *destEndP = (byte *)Vga::_page[1]->pixels + (SCR_WID * SCR_HIG);
 
@@ -1353,8 +1342,8 @@ void Bitmap::show(int x, int y) {
 }
 
 
-void Bitmap::hide(int x, int y) {
-	for (int yp = y; yp < y + _h; ++yp) {
+void Bitmap::hide(int16 x, int16 y) {
+	for (int yp = y; yp < y + _h; yp++) {
 		const byte *srcP = (const byte *)Vga::_page[2]->getBasePtr(x, yp);
 		byte *destP = (byte *)Vga::_page[1]->getBasePtr(x, yp);
 
