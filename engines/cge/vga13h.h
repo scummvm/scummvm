@@ -57,19 +57,11 @@ namespace CGE {
 #endif
 
 
-#if 0
-#define LIGHT       0xFF
-#define DARK        0x00
-#define DGRAY       0xF6
-#define GRAY        0xFC
-#define LGRAY       0xFF
-#else
 #define LIGHT       0xFF
 #define DARK        207
 #define DGRAY       225 /*219*/
 #define GRAY        231
 #define LGRAY       237
-#endif
 
 #define NO_SEQ      (-1)
 #define NO_PTR      ((uint8)-1)

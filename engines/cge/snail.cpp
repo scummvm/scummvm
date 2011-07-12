@@ -309,11 +309,10 @@ void CGEEngine::hide1(Sprite *spr) {
 }
 
 void CGEEngine::snGhost(Bitmap *bmp) {
-	// TODO : Get x and y from M but not using segment / offset
-	//bmp->Hide(FP_OFF(bmp->_m), FP_SEG(bmp->_m));
+	bmp->hide(bmp->_map & 0xFFFF, bmp->_map >> 16);
 	bmp->_m = NULL;
+	bmp->_map = 0;
 	delete bmp;
-	warning("STUB: SNGhost");
 }
 
 void CGEEngine::feedSnail(Sprite *spr, SNLIST snq) {
