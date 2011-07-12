@@ -112,7 +112,7 @@ class Emm {
 	int _han;
 	static void *_frame;
 public:
-	Emm(long size = 0);
+	Emm(long size);
 	~Emm();
 	Ems *alloc(uint16 siz);
 	void release();
