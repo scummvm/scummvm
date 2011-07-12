@@ -1696,8 +1696,7 @@ void CGEEngine::movie(const char *ext) {
 		expandSprite(_vga->_spareQ->locate(999));
 		feedSnail(_vga->_showQ->locate(999), TAKE);
 
-		// FIXME: Allow ScummVM to handle mouse display
-		//Vga->ShowQ->Append(Mouse);
+		_vga->_showQ->append(_mouse);
 
 		_heart->_enable = true;
 		_keyboard->setClient(_sys);
