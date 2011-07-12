@@ -612,10 +612,9 @@ Sprite *Sprite::expand() {
 				setSeq(seq);
 			} else
 				setSeq(getConstantSeq(_shpCnt == 1));
-			//disable();  // disable interupt
 
 			setShapeList(shplist);
-			//enable();  // enable interupt
+
 			if (nea)
 				nea[neacnt - 1]._ptr = _ext->_near = nea;
 			else

@@ -247,6 +247,7 @@ void CGEEngine::loadGame(XFile &file, bool tiny = false) {
 
 		for (i = 0; i < POCKET_NX; i++) {
 			register int r = _pocref[i];
+			delete _pocket[i];
 			_pocket[i] = (r < 0) ? NULL : _vga->_spareQ->locate(r);
 		}
 	}
