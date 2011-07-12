@@ -584,8 +584,7 @@ static void AltCtrlDel() {
 		SNPOST_(SNSAY,  -1, A_C_D_TEXT, _hero);
 }
 
-// Used in stubbed function, do not remove!
-static void miniStep(int stp) {
+void CGEEngine::miniStep(int stp) {
 	if (stp < 0)
 		_miniCave->_flags._hide = true;
 	else {
@@ -600,10 +599,9 @@ static void miniStep(int stp) {
 
 
 static void postMiniStep(int stp) {
-	//static int recent = -2;
-	//TODO Change the SNPOST message send to a special way to send function pointer
-	//if (MiniCave && stp != recent) SNPOST_(SNEXEC, -1, recent = stp, (void *)&MiniStep);
-	warning("STUB: PostMiniStep()");
+	static int recent = -2;
+	if (_miniCave && stp != recent)
+		SNPOST2_(SNEXEC, -1, recent = stp, MINISTEP);
 }
 
 void System::setPal() {
@@ -744,9 +742,7 @@ void CGEEngine::switchCave(int cav) {
 		_heart->_enable = false;
 		if (cav < 0) {
 			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
-			//TODO Change the SNPOST message send to a special way to send function pointer
-			//SNPOST(SNEXEC,  -1, 0, (void *)&QGame); // switch cave
-			warning("SwitchCave() - SNPOST");
+			SNPOST2(SNEXEC,  -1, 0, QGAME); // switch cave
 		} else {
 			_now = cav;
 			_mouse->off();
@@ -764,9 +760,7 @@ void CGEEngine::switchCave(int cav) {
 			if (!_startupMode)
 				keyClick();
 			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
-			//TODO Change the SNPOST message send to a special way to send function pointer
-			//SNPOST(SNEXEC,   0, 0, (void *)&XCave); // switch cave
-			warning("SwitchCave() - SNPOST");
+			SNPOST2(SNEXEC,   0, 0, XCAVE); // switch cave
 		}
 	}
 }
@@ -997,9 +991,7 @@ void CGEEngine::switchMusic() {
 			SNPOST_(SNKILL, -1, 0, Vmenu::_addr);
 		else {
 			SNPOST_(SNSEQ, 122, (_music = false), NULL);
-			//TODO Change the SNPOST message send to a special way to send function pointer
-			// SNPOST(SNEXEC, -1, 0, (void *)&selectSound);
-			warning("SwitchMusic() - SNPOST");
+			SNPOST2(SNEXEC, -1, 0, SELECTSOUND);
 		}
 	} else {
 		if (Startup::_core < CORE_HIG)
@@ -1580,7 +1572,8 @@ void CGEEngine::runGame() {
 	_vga->_showQ->append(_cavLight);
 	_cavLight->_flags._hide = true;
 
-	const Seq pocSeq[] = { { 0, 0, 0, 0, 20 },
+	const Seq pocSeq[] = {
+		{ 0, 0, 0, 0, 20 },
 		{ 1, 2, 0, 0,  4 },
 		{ 2, 3, 0, 0,  4 },
 		{ 3, 4, 0, 0, 16 },
@@ -1668,9 +1661,8 @@ void CGEEngine::runGame() {
 	_keyboard->setClient(_sys);
 	// main loop
 	while (!_finis && !_eventManager->_quitFlag) {
-		//TODO Change the SNPOST message send to a special way to send function pointer
-		// if (FINIS) SNPOST(SNEXEC,  -1, 0, (void *)&QGame);
-		warning("RunGame: problematic use of SNPOST");
+		if (_finis)
+			SNPOST2(SNEXEC,  -1, 0, QGAME);
 		mainLoop();
 	}
 
