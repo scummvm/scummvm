@@ -42,7 +42,6 @@ namespace CGE {
 class Mixer : public Sprite {
 	BMP_PTR _mb[2];
 	BMP_PTR _lb[MIX_MAX + 1];
-	Seq _ls[MIX_MAX];
 	Sprite *_led[2];
 	int _fall;
 	void update();
