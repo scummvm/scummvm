@@ -127,15 +127,13 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 			masked = false;
 	}
 
-	// Set the color key
+	// Set the color key (always 0 if set)
 	_useColorKey = colorKey;
 
-	if (masked) {
+	if (masked)
 		blitMasked(frame, &src, resourceMask->data + 8, &srcMask, &destMask, resourceMask->getData(4), &dest, flags);
-	} else {
-		// Normal blit
-		blit(frame, &src, &dest, flags, colorKey);
-	}
+	else
+		blit(frame, &src, &dest, flags);
 
 	delete resource;
 }
@@ -464,28 +462,28 @@ void Screen::deleteGraphicFromQueue(ResourceId resourceId) {
 //////////////////////////////////////////////////////////////////////////
 // Graphic Data
 //////////////////////////////////////////////////////////////////////////
-void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags, bool useColorKey) {
+void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags) {
 	if (flags & 0x80000000) {
 		// Used when closing from the menu (and more?)
 		error("[Screen::blit] not implemented");
 	} else if (flags) {
-		blt(destination, frame, source, flags, useColorKey);
+		blt(destination, frame, source, flags);
 	} else {
-		bltFast(destination->left, destination->top, frame, source, useColorKey);
+		bltFast(destination->left, destination->top, frame, source);
 	}
 }
 
 void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, int maskHeight, Common::Rect *destination, int32 flags) {
 	// TODO
-	blit(frame, source, destination, flags, _useColorKey);
+	blit(frame, source, destination, flags);
 }
 
 void Screen::blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int widthHeight, uint32 srcPitch, uint32 dstPitch, uint32 objectPitch) {
 	error("[Screen::blitCrossfade] Not implemented");
 }
 
-void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags, bool useColorKey) {
-	if (useColorKey) {
+void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags) {
+	if (_useColorKey) {
 		copyToBackBufferWithTransparency((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
 		                                 dest->left,
@@ -504,8 +502,8 @@ void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, 
 	}
 }
 
-void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source, bool useColorKey) {
-	if (useColorKey) {
+void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source) {
+	if (_useColorKey) {
 		copyToBackBufferWithTransparency((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
 		                                 dX,
