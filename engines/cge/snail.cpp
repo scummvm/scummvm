@@ -411,6 +411,21 @@ void Snail::addCom(SNCOM com, int ref, int val, void *ptr) {
 	snc->_ref = ref;
 	snc->_val = val;
 	snc->_ptr = ptr;
+	snc->_cbType = NULLCB;
+	if (com == SNCLEAR) {
+		_tail = _head;
+		killText();
+		_timerExpiry = 0;
+	}
+}
+
+void Snail::addCom2(SNCOM com, int ref, int val, CALLBACK cbType) {
+	Com *snc = &_snList[_head++];
+	snc->_com = com;
+	snc->_ref = ref;
+	snc->_val = val;
+	snc->_ptr = NULL;
+	snc->_cbType = cbType;
 	if (com == SNCLEAR) {
 		_tail = _head;
 		killText();
@@ -913,8 +928,7 @@ void Snail::runCom() {
 				}
 				break;
 			case SNCAVE     :
-				// SwitchCave(snc->_val);
-				warning("Problematic call of SwitchCave in SNAIL::runCom");
+				_vm->switchCave(snc->_val);
 				break;
 			case SNKILL     :
 				_vm->snKill(sprel);
@@ -1042,9 +1056,26 @@ void Snail::runCom() {
 				count = snc->_val;
 				break;
 			case SNEXEC     :
-			//	TODO: Handle correctly the execution of function pointer coming from Message send SNPOST
-			//	((void(*)(int)) (snc->_ptr))(snc->_val);
-				warning("STUB: SNEXEC code");
+				switch (snc->_cbType) {
+				case QGAME:
+					_vm->qGame();
+					break;
+				case MINISTEP:
+					_vm->miniStep(snc->_val);
+					break;
+				case XCAVE:
+					_vm->xCave();
+					break;
+				case SELECTSOUND:
+					_vm->selectSound();
+					break;
+				case SNSELECT:
+					_vm->snSelect();
+					break;
+				case SNDSETVOLUME:
+					sndSetVolume();
+					break;
+				}
 				break;
 			case SNSTEP     :
 				sprel->step();

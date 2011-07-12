@@ -46,6 +46,7 @@ enum {
 };
 
 enum SNLIST { NEAR, TAKE };
+enum CALLBACK { NULLCB = 0, QGAME, MINISTEP, XCAVE, SELECTSOUND, SNSELECT, SNDSETVOLUME };
 
 #define POCKET_NX   8
 
@@ -145,6 +146,7 @@ public:
 	void sayDebug();
 	void nextStep();
 	void switchDebug();
+	void miniStep(int stp);
 
 	void snBackPt(Sprite *spr, int stp);
 	void snBarrier(int cav, int bar, bool horz);

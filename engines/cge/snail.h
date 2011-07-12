@@ -44,7 +44,9 @@ namespace CGE {
 
 #define SNINSERT(c, r, v, p)   _snail->insCom(c, r, v, p)
 #define SNPOST(c, r, v, p)     _snail->addCom(c, r, v, p)
+#define SNPOST2(c, r, v, p)    _snail->addCom2(c, r, v, p)
 #define SNPOST_(c, r, v, p)    _snail_->addCom(c, r, v, p)
+#define SNPOST2_(c, r, v, p)   _snail_->addCom2(c, r, v, p)
 
 #define SNAIL_FRAME_RATE 62
 #define SNAIL_FRAME_DELAY (1000 / SNAIL_FRAME_RATE)
@@ -77,6 +79,7 @@ public:
 		int _ref;
 		int _val;
 		void *_ptr;
+		CALLBACK _cbType;
 	} *_snList;
 	uint8 _head;
 	uint8 _tail;
@@ -90,6 +93,7 @@ public:
 	~Snail();
 	void runCom();
 	void addCom(SNCOM com, int ref, int val, void *ptr);
+	void addCom2(SNCOM com, int ref, int val, CALLBACK cbType);
 	void insCom(SNCOM com, int ref, int val, void *ptr);
 	bool idle();
 private:

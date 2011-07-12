@@ -142,9 +142,7 @@ void Mixer::update() {
 	_led[0]->step(_sndDrvInfo.Vol4._ml);
 	_led[1]->step(_sndDrvInfo.Vol4._dl);
 
-	//TODO Change the SNPOST message send to a special way to send function pointer
-	//SNPOST_(SNEXEC, -1, 0, (void*)&sndSetVolume);
-	warning("STUB: Mixer::Update");
+	SNPOST2_(SNEXEC, -1, 0, SNDSETVOLUME);
 }
 
 } // End of namespace CGE

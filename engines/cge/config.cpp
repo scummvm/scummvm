@@ -192,9 +192,7 @@ void CGEEngine::snSelect() {
 static void select(Choice *cho, int hlp) {
 	_cho = cho;
 	_hlp = hlp;
-	//TODO Change the SNPOST message send to a special way to send function pointer
-	//SNPOST(SNEXEC, -1, 0, (void *)&SNSelect);
-	warning("STUB: select");
+	SNPOST2(SNEXEC, -1, 0, SNSELECT);
 }
 
 

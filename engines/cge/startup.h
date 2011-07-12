@@ -56,7 +56,6 @@ namespace CGE {
 #endif
 
 #define CORE_MID        (CORE_HIG - 20)
-#define CORE_LOW        (CORE_MID - 20)
 
 
 class Startup {
