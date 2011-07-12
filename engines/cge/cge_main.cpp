@@ -1631,6 +1631,7 @@ void CGEEngine::runGame() {
 		_hero->gotoxy(_heroXY[_now - 1]._x, _heroXY[_now - 1]._y);
 		if (INI_FILE::exist("00SHADOW.SPR")) {
 			loadSprite("00SHADOW", -1, 0, _hero->_x + 14, _hero->_y + 51);
+			delete _shadow;
 			if ((_shadow = _sprite) != NULL) {
 				_shadow->_ref = 2;
 				_shadow->_flags._tran = true;
@@ -1849,9 +1850,6 @@ void CGEEngine::cge_main() {
 
 	_debugLine->_flags._hide = true;
 	_horzLine->_flags._hide = true;
-
-	//srand((uint16) Timer());
-	_sys = new System(this);
 
 	if (_music && Startup::_soundOk)
 		loadMidi(0);
