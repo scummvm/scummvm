@@ -60,8 +60,24 @@ static  VgaRegBlk VideoMode[] = {
 };
 
 bool SpeedTest   = false;
-Seq _seq1[] = { { 0, 0, 0, 0, 0 } };
-Seq _seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
+
+Seq *getConstantSeq(bool seqFlag) {
+	const Seq seq1[] = { { 0, 0, 0, 0, 0 } };
+	const Seq seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
+
+	Seq *seq;
+	if (seqFlag) {
+		seq = (Seq *)malloc(1 * sizeof(Seq));
+		*seq = seq1[0];
+	} else {
+		seq = (Seq *)malloc(2 * sizeof(Seq));
+		seq[0] = seq2[0];
+		seq[1] = seq2[1];
+	}
+
+	return seq;
+}
+
 
 extern "C"  void    SNDMIDIPlay();
 
@@ -405,7 +421,7 @@ BMP_PTR *Sprite::setShapeList(BMP_PTR *shpP) {
 		_ext->_shpList = shpP;
 		_flags._bDel = true;
 		if (!_ext->_seq)
-			setSeq((_shpCnt < 2) ? _seq1 : _seq2);
+			setSeq(getConstantSeq(_shpCnt < 2));
 	}
 	return r;
 }
@@ -590,7 +606,7 @@ Sprite *Sprite::expand() {
 					error("Bad JUMP in SEQ [%s]", fname);
 				setSeq(seq);
 			} else
-				setSeq((_shpCnt == 1) ? _seq1 : _seq2);
+				setSeq(getConstantSeq(_shpCnt == 1));
 			//disable();  // disable interupt
 
 			setShapeList(shplist);
@@ -621,9 +637,11 @@ Sprite *Sprite::contract() {
 				delete e->_shpList[i];
 			delete[] e->_shpList;
 		}
-//		free(e->_seq);
+
+		free(e->_seq);
 		free(e->_near);
 		free(e->_take);
+
 		delete e;
 		_ext = NULL;
 	}

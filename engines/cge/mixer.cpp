@@ -54,18 +54,24 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(MIX_FALL), _
 	// slaves
 
 	uint i;
+	Seq ls[MIX_MAX]; 
+
 	for (i = 0; i < MIX_MAX; i++) {
 		static char fn[] = "V00";
 		wtom(i, fn + 1, 10, 2);
 		_lb[i] = new Bitmap(fn, true);
-		_ls[i]._now = _ls[i]._next = i;
-		_ls[i]._dx = _ls[i]._dy = _ls[i]._dly = 0;
+		ls[i]._now = ls[i]._next = i;
+		ls[i]._dx = ls[i]._dy = ls[i]._dly = 0;
 	}
 	_lb[i] = NULL;
 
 	for (i = 0; i < ArrayCount(_led); i++) {
 		register Sprite *spr = new Sprite(_vm, _lb);
-		spr->setSeq(_ls);
+
+		Seq *seq = (Seq *)malloc(MIX_MAX * sizeof(Seq));
+		Common::copy(ls, ls + MIX_MAX, seq);
+		spr->setSeq(seq);
+
 		spr->gotoxy(x + 2 + 12 * i, y + 8);
 		spr->_flags._tran = true;
 		spr->_flags._kill = true;
