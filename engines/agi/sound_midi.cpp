@@ -162,11 +162,12 @@ static void writeDelta(Common::MemoryWriteStreamDynamic *st, int32 delta) {
 static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 	int32 lp, ep;
 	int n;
-	double ll;
+//	double ll;
 
 	Common::MemoryWriteStreamDynamic st;
 
-	ll = log10(pow(2.0, 1.0 / 12.0));
+	//ll = log10(pow(2.0, 1.0 / 12.0));
+//	ll = log10(2.0) / 12.0;
 
 	/* Header */
 	st.write("MThd", 4);
@@ -196,7 +197,11 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 				int note;
 				/* I don't know,  what frequency equals midi note 0 ... */
 				/* This moves the song 4 octaves down: */
-				fr = (log10(111860.0 / (double)freq) / ll) - 48;
+//				fr = (log10(111860.0 / (double)freq) / ll) - 48;
+//				fr = 12.0 * (log10(111860.0) - log10((double)freq)) / log10(2.0) - 48;
+//				fr = 12.0 * (log2(111860.0) - log2((double)freq)) - 48;
+//				fr = 12.0 * (16.7713347099 - log2((double)freq)) - 48;
+				fr = 153.2560165185 - 12 * log2((double)freq);
 				note = (int)floor(fr + 0.5);
 				if (note < 0) note = 0;
 				if (note > 127) note = 127;
