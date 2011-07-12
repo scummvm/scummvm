@@ -68,6 +68,7 @@ public:
 	uint16 _h;
 	uint8 *_m;
 	uint8 *_v;
+	int32 _map;
 	HideDesc *_b;
 
 	Bitmap(const char *fname, bool rem);
@@ -81,10 +82,10 @@ public:
 	Bitmap *flipH();
 	Bitmap *code();
 	Bitmap &operator = (const Bitmap &bmp);
-	void hide(int x, int y);
-	void show(int x, int y);
-	void xShow(int x, int y);
-	bool solidAt(int x, int y);
+	void hide(int16 x, int16 y);
+	void show(int16 x, int16 y);
+	void xShow(int16 x, int16 y);
+	bool solidAt(int16 x, int16 y);
 	bool saveVBM(XFile *f);
 	uint16 moveVmap(uint8 *buf);
 };

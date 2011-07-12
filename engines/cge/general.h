@@ -39,22 +39,13 @@ namespace CGE {
 
 #define     SEED        0xA5
 
-#define     SCR_WID_    320
-#define     SCR_HIG_    200
-#define     SCR_WID     ((uint16)SCR_WID_)
-#define     SCR_HIG     ((uint16)SCR_HIG_)
-#define     SCR_SEG     0xA000
-#define     SCR_ADR     ((uint8 *) MK_FP(SCR_SEG, 0))
-
-
-
-//enum  CPU     { _8086, _80186, _80286, _80386, _80486 };
 enum    MEM_TYPE    { BAD_MEM, EMS_MEM, NEAR_MEM, FAR_MEM };
-enum    ALLOC_MODE  { FIRST_FIT, BEST_FIT, LAST_FIT };
 enum    IOMODE      { REA, WRI, UPD };
 
 struct Dac {
-	uint8 _r, _g, _b;
+	uint8 _r;
+	uint8 _g;
+	uint8 _b;
 };
 
 typedef uint16  CRYPT(void *buf, uint16 siz, uint16 seed);
