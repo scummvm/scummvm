@@ -621,12 +621,9 @@ Sprite *Sprite::contract() {
 				delete e->_shpList[i];
 			delete[] e->_shpList;
 		}
-		if (memType(e->_seq) == NEAR_MEM)
-			free(e->_seq);
-		if (e->_near)
-			free(e->_near);
-		if (e->_take)
-			free(e->_take);
+//		free(e->_seq);
+		free(e->_near);
+		free(e->_take);
 		delete e;
 		_ext = NULL;
 	}
@@ -683,8 +680,7 @@ void Sprite::killXlat() {
 	if (_flags._xlat && _ext) {
 		BMP_PTR *b;
 		uint8 *m = (*_ext->_shpList)->_m;
-		if (m)
-			free(m);
+		free(m);
 
 		for (b = _ext->_shpList; *b; b++)
 			(*b)->_m = NULL;
@@ -967,42 +963,37 @@ Vga::Vga(int mode)
 	setStatAdr();
 	if (_statAdr != VGAST1_)
 		_mono++;
-	if (isVga()) {
-		_oldColors = farnew(Dac, 256);
-		_newColors = farnew(Dac, 256);
-		_oldScreen = SaveScreen();
-		getColors(_oldColors);
-		sunset();
-		_oldMode = setMode(mode);
-		setColors();
-		setup(VideoMode);
-		clear(0);
-	}
+	_oldColors = farnew(Dac, 256);
+	_newColors = farnew(Dac, 256);
+	_oldScreen = SaveScreen();
+	getColors(_oldColors);
+	sunset();
+	_oldMode = setMode(mode);
+	setColors();
+	setup(VideoMode);
+	clear(0);
 }
 
 
 Vga::~Vga() {
 	_mono = 0;
-	if (isVga()) {
-		Common::String buffer = "";
-/*
-		clear(0);
-		setMode(_oldMode);
-		setColors();
-		restoreScreen(_oldScreen);
-		sunrise(_oldColors);
-*/
-		if (_oldColors)
-			free(_oldColors);
-		if (_newColors)
-			free(_newColors);
-		if (_msg)
-			buffer = Common::String(_msg);
-		if (_nam)
-			buffer = buffer + " [" + _nam + "]";
 
-		debugN("%s", buffer.c_str());
-	}
+	Common::String buffer = "";
+/*
+	clear(0);
+	setMode(_oldMode);
+	setColors();
+	restoreScreen(_oldScreen);
+	sunrise(_oldColors);
+*/
+	free(_oldColors);
+	free(_newColors);
+	if (_msg)
+		buffer = Common::String(_msg);
+	if (_nam)
+		buffer = buffer + " [" + _nam + "]";
+
+	debugN("%s", buffer.c_str());
 
 	delete _showQ;
 	delete _spareQ;

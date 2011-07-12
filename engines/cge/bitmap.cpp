@@ -144,8 +144,7 @@ Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), 
 
 
 Bitmap::~Bitmap() {
-	if (_m)
-		free(_m);
+	free(_m);
 	delete[] _v;
 }
 
@@ -156,8 +155,7 @@ Bitmap &Bitmap::operator = (const Bitmap &bmp) {
 	_h = bmp._h;
 	_m = NULL;
 	_map = 0;
-	if (memType(_v) == FAR_MEM)
-		free(_v);
+	free(_v);
 	if (v0 == NULL)
 		_v = NULL;
 	else {
@@ -178,8 +176,7 @@ uint16 Bitmap::moveVmap(uint8 *buf) {
 		uint16 vsiz = (uint8 *)_b - (uint8 *)_v;
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
 		memcpy(buf, _v, siz);
-		if (memType(_v) == FAR_MEM)
-			free(_v);
+		free(_v);
 		_b = (HideDesc *)((_v = buf) + vsiz);
 		return siz;
 	}
