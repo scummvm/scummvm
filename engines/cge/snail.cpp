@@ -35,14 +35,6 @@
 
 namespace CGE {
 
-static void _enable() {
-	warning("STUB: _enable");
-}
-
-static void _disable() {
-	warning("STUB: _disable");
-}
-
 extern  Sprite *_pocLight;
 
 //-------------------------------------------------------------------------
@@ -414,7 +406,6 @@ Snail::~Snail() {
 }
 
 void Snail::addCom(SNCOM com, int ref, int val, void *ptr) {
-	_disable();
 	Com *snc = &_snList[_head++];
 	snc->_com = com;
 	snc->_ref = ref;
@@ -425,13 +416,11 @@ void Snail::addCom(SNCOM com, int ref, int val, void *ptr) {
 		killText();
 		_timerExpiry = 0;
 	}
-	_enable();
 }
 
 void Snail::insCom(SNCOM com, int ref, int val, void *ptr) {
 	Com *snc;
 
-	_disable();
 	if (_busy) {
 		_snList[(_tail - 1) & 0xFF] = _snList[_tail];
 		snc = &_snList[_tail];
@@ -447,7 +436,6 @@ void Snail::insCom(SNCOM com, int ref, int val, void *ptr) {
 		killText();
 		_timerExpiry = 0;
 	}
-	_enable();
 }
 
 void CGEEngine::snNNext(Sprite *sprel, int p) {
