@@ -267,29 +267,6 @@ bool IoHand::exist(const char *name) {
 	return f.exists(name);
 }
 
-//#define       EMS_ADR(a)  (FP_SEG(a) > 0xA000)
-//#define       HNODE_OK(p) (heapchecknode(p)==4)
-
-MEM_TYPE memType(void *mem) {
-	/*  if (FP_SEG(mem) == _DS) {
-	      if (heapchecknode((void *)mem)==4)
-	          return NEAR_MEM;
-	    } else {
-	      if (FP_SEG(mem) > 0xA000)
-	          return EMS_MEM;
-	      else if (farheapchecknode(mem)==4)
-	          return FAR_MEM;
-	    }
-	  return BAD_MEM;
-	*/
-	warning("STUB: memType");
-	return FAR_MEM;
-}
-
-bool isVga() {
-	return true;
-}
-
 void sndInit() {
 	warning("STUB: SNDInit");
 }

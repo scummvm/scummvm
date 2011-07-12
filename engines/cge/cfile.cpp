@@ -54,8 +54,7 @@ IoBuf::IoBuf(const char *name, IOMODE mode, CRYPT *crpt)
 IoBuf::~IoBuf() {
 	if (_mode > REA)
 		writeBuff();
-	if (_buff)
-		free(_buff);
+	free(_buff);
 }
 
 
