@@ -451,6 +451,11 @@ bool Sprite::works(Sprite *spr) {
 
 
 Seq *Sprite::setSeq(Seq *seq) {
+	if (_ext) {
+		free(_ext->_seq);
+		_ext->_seq = NULL;
+	}
+
 	expand();
 	register Seq *s = _ext->_seq;
 	_ext->_seq = seq;
