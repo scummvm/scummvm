@@ -1579,7 +1579,7 @@ void CGEEngine::runGame() {
 	_vga->_showQ->append(_cavLight);
 	_cavLight->_flags._hide = true;
 
-	static Seq pocSeq[] = { { 0, 0, 0, 0, 20 },
+	const Seq pocSeq[] = { { 0, 0, 0, 0, 20 },
 		{ 1, 2, 0, 0,  4 },
 		{ 2, 3, 0, 0,  4 },
 		{ 3, 4, 0, 0, 16 },
@@ -1587,7 +1587,10 @@ void CGEEngine::runGame() {
 		{ 1, 6, 0, 0,  4 },
 		{ 0, 1, 0, 0, 16 },
 	};
-	_pocLight->setSeq(pocSeq);
+	Seq *seq = (Seq *)malloc(7 * sizeof(Seq));
+	Common::copy(pocSeq, pocSeq + 7, seq);
+	_pocLight->setSeq(seq);
+
 	_pocLight->_flags._tran = true;
 	_pocLight->_time = 1;
 	_pocLight->_z = 120;
