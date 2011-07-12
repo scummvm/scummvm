@@ -39,7 +39,6 @@ namespace CGE {
 
 #define     SEED        0xA5
 
-enum    MEM_TYPE    { BAD_MEM, EMS_MEM, NEAR_MEM, FAR_MEM };
 enum    IOMODE      { REA, WRI, UPD };
 
 struct Dac {
@@ -140,8 +139,6 @@ void swap(T &A, T &B) {
 	B = a;
 }
 
-
-#ifdef __cplusplus
 template <class T>
 T max(T A, T B) {
 	return (A > B) ? A : B;
@@ -151,8 +148,6 @@ template <class T>
 T min(T A, T B) {
 	return (A < B) ? A : B;
 }
-#endif
-
 
 class XFile {
 public:
@@ -195,10 +190,8 @@ public:
 // void SetTime (timeb  t);
 };
 
-
 CRYPT     XCrypt;
 CRYPT     RCrypt;
-MEM_TYPE  memType(void *mem);
 uint16    atow(const char *a);
 uint16    xtow(const char *x);
 char     *wtom(uint16 val, char *str, int radix, int len);
@@ -209,8 +202,6 @@ long      timer();
 char     *mergeExt(char *buf, const char *nam, const char *ext);
 char     *forceExt(char *buf, const char *nam, const char *ext);
 int       driveCD(unsigned drv);
-bool      isVga();
-
 
 // MISSING FUNCTIONS
 void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *));

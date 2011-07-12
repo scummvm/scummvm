@@ -381,7 +381,7 @@ void CGEEngine::feedSnail(Sprite *spr, SNLIST snq) {
 						if (c->_ptr)
 							break;
 						else
-							++c;
+							c++;
 					}
 				}
 			}
@@ -410,8 +410,7 @@ Snail::Snail(CGEEngine *vm, bool turbo)
 }
 
 Snail::~Snail() {
-	if (_snList)
-		free(_snList);
+	free(_snList);
 }
 
 void Snail::addCom(SNCOM com, int ref, int val, void *ptr) {
