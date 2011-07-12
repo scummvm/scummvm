@@ -464,13 +464,96 @@ void Screen::deleteGraphicFromQueue(ResourceId resourceId) {
 //////////////////////////////////////////////////////////////////////////
 void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags) {
 	if (flags & 0x80000000) {
-		// Used when closing from the menu (and more?)
-		error("[Screen::blit] not implemented");
+		// Used in the menu (and more?)
+
+		int32 flagSet = flags & 0x7FFFFFFF;
+		bool hasTransTableIndex = false;
+
+		if (flags & 0x10000000) {
+			flagSet = flags & 0x6FFFFFFF;
+			hasTransTableIndex = (_transTableIndex ? true : false);
+		}
+
+		bool isMirrored = (flagSet == kDrawFlagMirrorLeftRight);
+
+		if (hasTransTableIndex) {
+			if (isMirrored) {
+				blitTranstableMirrored((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
+				                       (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->right - 1,
+				                       destination->width() + (destination->height() << 16),
+				                       destination->width() + frame->surface.pitch,
+				                       frame->surface.pitch - destination->width());
+			} else {
+				blitTranstable((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
+				               (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->left,
+				               destination->width() + (destination->height() << 16),
+				               frame->surface.pitch - destination->width(),
+				               _backBuffer.pitch    - destination->width());
+			}
+		} else if (flagSet) {
+			if (isMirrored) {
+				if (_useColorKey) {
+					blitMirroredColorKey((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
+					                     (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->right,
+					                     destination->height(),
+					                     destination->width(),
+					                     frame->surface.pitch + destination->width(),
+					                     _backBuffer.pitch    - destination->width());
+				} else {
+					blitMirrored((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
+					             (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->right,
+					             destination->height(),
+					             destination->width(),
+					             frame->surface.pitch + destination->width(),
+					             _backBuffer.pitch    - destination->width());
+				}
+			}
+		} else {
+			if (_useColorKey) {
+				blitRawColorKey((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
+				                (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->left,
+				                destination->height(),
+				                destination->width(),
+				                frame->surface.pitch - destination->width(),
+				                _backBuffer.pitch    - destination->width());
+			} else {
+				blitRaw((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
+				        (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->left,
+				        destination->height(),
+				        destination->width(),
+				        frame->surface.pitch - destination->width(),
+				        _backBuffer.pitch    - destination->width());
+			}
+		}
 	} else if (flags) {
 		blt(destination, frame, source, flags);
 	} else {
 		bltFast(destination->left, destination->top, frame, source);
 	}
+}
+
+void Screen::blitTranstable(byte *dstBuffer, byte *srcBuffer, int32 widthHeight, int32 srcPitch, int32 dstPitch) {
+	error("[Screen::blitTranstable] Not implemented");
+}
+
+void Screen::blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int32 widthHeight, int32 srcPitch, int32 dstPitch) {
+	error("[Screen::blitTranstableMirrored] Not implemented");
+}
+
+void Screen::blitMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
+	error("[Screen::blitMirrored] Not implemented");
+}
+
+void Screen::blitMirroredColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
+	error("[Screen::blitMirroredColorKey] Not implemented");
+}
+
+void Screen::blitRaw(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
+	error("[Screen::blitRaw] Not implemented");
+}
+
+void Screen::blitRawColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
+	error("[Screen::blitRawColorKey] Not implemented");
 }
 
 void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, int maskHeight, Common::Rect *destination, int32 flags) {
