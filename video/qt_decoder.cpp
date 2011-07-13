@@ -575,6 +575,7 @@ QuickTimeDecoder::VideoSampleDesc::~VideoSampleDesc() {
 }
 
 void QuickTimeDecoder::VideoSampleDesc::initCodec() {
+// FIXME: Move this into a DecoderRegistry ?
 	switch (_codecTag) {
 	case MKTAG('c','v','i','d'):
 		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
