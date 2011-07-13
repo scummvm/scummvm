@@ -104,7 +104,7 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 	else
 		ddRect.x2 = drawRect.width;
 		
-	if (drawRect.x <= clipRect.x1) {
+	if (drawRect.x < clipRect.x1) {
 		destX = clipRect.x1;
 		ddRect.x1 = clipRect.x1 - drawRect.x;
 	} else {
@@ -117,7 +117,7 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 	else
 		ddRect.y2 = drawRect.height;
 	
-	if (drawRect.y <= clipRect.y1) {
+	if (drawRect.y < clipRect.y1) {
 		destY = clipRect.y1;
 		ddRect.y1 = clipRect.y1 - drawRect.y;
 	} else {
@@ -125,13 +125,16 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 		ddRect.y1 = 0;
 	}
 	
-	debug(8, "draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
-	
+	debug(2, "draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
+
 	const byte *source = (const byte*)surface->getBasePtr(ddRect.x1, ddRect.y1);
 	byte *dest = (byte*)_backScreen->getBasePtr(destX, destY);
 	int width = ddRect.x2 - ddRect.x1;
 	int height = ddRect.y2 - ddRect.y1;
 
+	if (width <= 0 || height <= 0)
+		return;
+	
 	if (!transparent) {
 		while (height--) {
 			memcpy(dest, source, width);
@@ -146,8 +149,13 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 			source += surface->pitch;
 			dest += _backScreen->pitch;
 		}
-	} 
-	
+	}
+
+	// Useful for debugging	
+	//_backScreen->frameRect(Common::Rect(clipRect.x1, clipRect.y1, clipRect.x2, clipRect.y2), 250); 
+	//_backScreen->frameRect(Common::Rect(destX, destY, destX + ddRect.x2, destY + ddRect.y2), 255); 
+	//_backScreen->frameRect(Common::Rect(drawRect.x, drawRect.y, drawRect.x + drawRect.width, drawRect.y + drawRect.height), 255);
+
 }
 
 void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect) {

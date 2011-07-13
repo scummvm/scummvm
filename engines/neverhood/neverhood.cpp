@@ -89,6 +89,7 @@ Common::Error NeverhoodEngine::run() {
 
 	CursorMan.showMouse(true);
 	{
+		// DEBUG: Dummy cursor
 		byte buffer[2*2];
 		memset(buffer, 255, 4);
 		CursorMan.replaceCursor(buffer, 2, 2, 0, 0, 0);
@@ -166,22 +167,13 @@ Common::Error NeverhoodEngine::run() {
 				_mouseY = event.mouse.y;
 				_gameModule->handleMouseMove(event.mouse.x, event.mouse.y);
 				break;
-
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 				_gameModule->handleMouseDown(event.mouse.x, event.mouse.y);
 				break;
-
 			/*			
-				_buttonState |= kLeftButton;
-				break;
 			case Common::EVENT_LBUTTONUP:
-				_buttonState &= ~kLeftButton;
-				break;
-				_buttonState |= kRightButton;
-				break;
 			case Common::EVENT_RBUTTONUP:
-				_buttonState &= ~kRightButton;
 				break;
 			case Common::EVENT_QUIT:
 				_system->quit();

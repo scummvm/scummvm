@@ -179,7 +179,6 @@ void Scene::update() {
 
 	if (_smkFileHash != 0) {
 		// TODO
-		//**** ALL TODO
 		_smackerPlayer = new SmackerPlayer(_vm, this, _smkFileHash, true, 0);
 		_savedUpdateHandlerCb = _updateHandlerCb;
 		_savedMessageHandlerCb = _messageHandlerCb;
