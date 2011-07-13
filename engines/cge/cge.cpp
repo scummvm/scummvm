@@ -35,7 +35,7 @@
 #include "cge/talk.h"
 #include "cge/text.h"
 #include "cge/vol.h"
-
+#include "cge/walk.h"
 
 namespace CGE {
 

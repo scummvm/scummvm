@@ -32,6 +32,7 @@
 #include "cge/text.h"
 #include "cge/cge_main.h"
 #include "cge/events.h"
+#include "cge/walk.h"
 
 namespace CGE {
 
