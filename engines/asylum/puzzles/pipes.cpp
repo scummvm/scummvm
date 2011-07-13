@@ -103,18 +103,12 @@ const Common::Point peepholePoints[] = {
 const uint32 peepholeResources[] = {15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 32, 32, 15,
                                     15, 32, 32, 15, 15, 15, 15,15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15};
 
+const double LOG2 = 0.6931471;
+
 //////////////////////////////////////////////////////////////////////////
 // Peephole
 //////////////////////////////////////////////////////////////////////////
 bool Peephole::marks[peepholesCount];
-
-void Peephole::connect(Connector *connector) {
-	_connectors.push_back(connector);
-}
-
-void Peephole::disconnect(Connector *connector) {
-	_connectors.remove(connector);
-}
 
 void Peephole::startUpWater(bool flag) {
 	if (flag)
@@ -183,8 +177,8 @@ void Connector::turn() {
 			oldIndex[1] = 2;
 		}
 	} else {
-		newIndex[0] = log((double)(newState & delta)) / log((double)2);
-		oldIndex[0] = log((double)(_state & delta)) / log((double)2);
+		newIndex[0] = log((double)(newState & delta)) / LOG2;
+		oldIndex[0] = log((double)(_state & delta)) / LOG2;
 	}
 
 	for (uint32 i = 0; i < (uint32)(delta == kBinNum1111 ? 2 : 1); ++i) {
@@ -260,6 +254,49 @@ void Connector::disconnect(Connector *connector) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+// Spider
+//////////////////////////////////////////////////////////////////////////
+Spider::Spider(Common::Rect rect, Common::String id) {
+	_boundingBox = rect;
+	_rnd = new Common::RandomSource(Common::String("pipes_spider") + id);
+	_isAlive = true;
+	_location.x = _rnd->getRandomNumber(_boundingBox.right - _boundingBox.left) + _boundingBox.left;
+	_location.y = _rnd->getRandomNumber(_boundingBox.bottom - _boundingBox.top) + _boundingBox.top;
+	_direction = Direction(1 << _rnd->getRandomNumber(3));
+
+	randomize();
+}
+
+void Spider::randomize(Direction excluded) {
+	if (_rnd->getRandomNumber(5) == 5)
+		_delta = Common::Point(0, 0);
+	else {
+		while (_direction == excluded)
+			_direction = Direction(1 << _rnd->getRandomNumber(3));
+		_delta = Common::Point((_direction & kBinNum0010 ? 1 : 0) - (_direction & kBinNum1000 ? 1 : 0), (_direction & kBinNum0100 ? 1 : 0) - (_direction & kBinNum0001 ? 1 : 0));
+	}
+
+	_stepsNumber = _rnd->getRandomNumber(maxStepsNumber - minStepsNumber) + minStepsNumber;
+	_steps = 0;
+}
+
+Common::Point Spider::move() {
+	Common::Point previousLocation(_location);
+
+	if (_isAlive) {
+		if (_steps++ > _stepsNumber)
+			randomize();
+
+		if (!_boundingBox.contains(_location + _delta))
+			randomize(_direction);
+		else
+			_location += _delta;
+	}
+
+	return previousLocation;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // PuzzlePipes
 //////////////////////////////////////////////////////////////////////////
 PuzzlePipes::PuzzlePipes(AsylumEngine *engine) : Puzzle(engine) {
@@ -272,6 +309,9 @@ PuzzlePipes::PuzzlePipes(AsylumEngine *engine) : Puzzle(engine) {
 }
 
 PuzzlePipes::~PuzzlePipes() {
+	for (uint32 i = 0; i < _spiders.size(); ++i)
+		delete _spiders[i];
+	delete [] _frameIndexSpider;
 }
 
 void PuzzlePipes::reset() {
@@ -324,8 +364,10 @@ bool PuzzlePipes::update(const AsylumEvent &evt) {
 	_isLeverReady = false;
 	if (_frameIndexLever) {
 		_frameIndexLever = (_frameIndexLever + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[2]);
-		if (!_frameIndexLever)
+		if (!_frameIndexLever) {
 			_isLeverReady = true;
+			getCursor()->show();
+		}
 	}
 
 	// TODO: turn the fountain on
@@ -339,6 +381,32 @@ bool PuzzlePipes::update(const AsylumEvent &evt) {
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(481, 417), kDrawFlagNone, 0, 1);
 	if (!_levelFlags[4])
 		 getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[45], 0, Common::Point(518, 108), kDrawFlagNone, 0, 2);
+
+	for (uint32 i = 0; i < _spiders.size(); ++i) {
+		uint32 spiderResourceId;
+
+		switch (_spiders[i]->getDirection()) {
+		case kDirectionNh:
+			spiderResourceId = _spiders[i]->isAlive() ? 34 : 37;
+			break;
+		case kDirectionEt:
+			spiderResourceId = _spiders[i]->isAlive() ? 35 : 38;	// FIXME
+			break;
+		case kDirectionSh:
+			spiderResourceId = _spiders[i]->isAlive() ? 36 : 39;
+			break;
+		case kDirectionWt:
+			spiderResourceId = _spiders[i]->isAlive() ? 35 : 38;
+			break;
+		default: ;
+		}
+
+		if (_spiders[i]->isVisible(Common::Rect(-10, -10, 650, 490))) {
+			uint32 frameCountSpider = GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[spiderResourceId]);
+			_frameIndexSpider[i] = _spiders[i]->isActive() ? (_frameIndexSpider[i] + 1) % frameCountSpider : 0;
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[spiderResourceId], _frameIndexSpider[i], _spiders[i]->move(), kDrawFlagNone, 0, 1);
+		}
+	}
 
 	getScreen()->drawGraphicsInQueue();
 	getScreen()->copyBackBufferToScreen();
@@ -361,16 +429,22 @@ bool PuzzlePipes::mouseLeftDown(const AsylumEvent &evt) {
 	if (Common::Rect(540, 90, 590, 250).contains(mousePos)) {
 		if (!_frameIndexLever)
 			++_frameIndexLever;
-
+		getCursor()->hide();
 		getSound()->playSound(getWorld()->graphicResourceIds[43], false, Config.sfxVolume - 10);
 	} else {
 		if (_rectIndex != -1) {
-			getSound()->playSound(getWorld()->graphicResourceIds[42], false, Config.sfxVolume - 10);
+			if (_rectIndex < ARRAYSIZE(connectorPoints)) {
+				getSound()->playSound(getWorld()->graphicResourceIds[42], false, Config.sfxVolume - 10);
 
-			_connectors[_rectIndex].turn();
-			startUpWater();
-			memset(_levelFlags, false, sizeof(_levelFlags));
-			_levelFlags[checkFlags()] = true;
+				_connectors[_rectIndex].turn();
+				startUpWater();
+				memset(_levelFlags, false, sizeof(_levelFlags));
+				_levelFlags[checkFlags()] = true;
+			} else {
+				getSound()->playSound(getWorld()->graphicResourceIds[44], false, Config.sfxVolume - 10);
+				_spiders[_rectIndex - ARRAYSIZE(connectorPoints)]->smash();
+				_frameIndexSpider[_rectIndex - ARRAYSIZE(connectorPoints)] = 0;
+			}
 		}
 	}
 
@@ -447,6 +521,17 @@ void PuzzlePipes::setup() {
 	_connectors[10].initGroup();
 	_connectors[11].initGroup();
 
+	uint32 i = rnd(7);
+	if (i & kBinNum0001)
+		_spiders.push_back(new Spider(Common::Rect(-10, 45, 92, 315), "1"));
+	if (i & kBinNum0010)
+		_spiders.push_back(new Spider(Common::Rect(-10, 389, 149, 476), "2"));
+	if (i & kBinNum0100)
+		_spiders.push_back(new Spider(Common::Rect(544, 225, 650, 490), "3"));
+
+	_frameIndexSpider = new uint32[_spiders.size()];
+	memset(_frameIndexSpider, 0, sizeof(_frameIndexSpider));
+
 	startUpWater();
 }
 
@@ -468,6 +553,10 @@ int32 PuzzlePipes::findRect() {
 	for (uint32 i = 0; i < ARRAYSIZE(connectorPoints); ++i)
 		if (Common::Rect(connectorPoints[i].x - 5, connectorPoints[i].y - 5, connectorPoints[i].x + 30, connectorPoints[i].y + 30).contains(getCursor()->position()))
 			return i;
+
+	for (uint32 i = 0; i < _spiders.size(); ++i)
+		if (_spiders[i]->getPolygon(Common::Rect(10, 10, 30, 30)).contains(getCursor()->position()))
+			return ARRAYSIZE(connectorPoints) + i;
 
 	return -1;
 }

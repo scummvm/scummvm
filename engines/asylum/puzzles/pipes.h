@@ -27,6 +27,9 @@
 
 #include "common/list.h"
 #include "common/hashmap.h"
+#include "common/array.h"
+#include "common/random.h"
+#include "common/str.h"
 
 namespace Asylum {
 
@@ -76,8 +79,8 @@ public:
 	uint32 getLevel1() { return _flowValues[0] + _flowValues[1] + _flowValues[2] + _flowValues[3]; }
 	bool isConnected() { return isConnected(0) || isConnected(1) || isConnected(2) || isConnected(3); }
 
-	void connect(Connector *connector);
-	void disconnect(Connector *connector);
+	void connect(Connector *connector) { _connectors.push_back(connector); }
+	void disconnect(Connector *connector) { _connectors.remove(connector); }
 	void startUpWater(bool flag = false);
 
 private:
@@ -118,6 +121,34 @@ private:
 	friend void Peephole::startUpWater(bool);
 };
 
+class Spider {
+public:
+	Spider(Common::Rect rect, Common::String id);
+	~Spider() { delete _rnd; }
+
+	bool isAlive() const { return _isAlive; }
+	bool isActive() const { return _delta != Common::Point(0, 0); }
+	bool isVisible(Common::Rect rect) const { return rect.contains(_location); }
+
+	Direction getDirection() const { return _direction; }
+	Common::Rect getPolygon(Common::Rect frame) const { return Common::Rect(_location.x - frame.left, _location.y - frame.top, _location.x + frame.right, _location.y + frame.bottom); }
+
+	Common::Point move();
+	void smash() { _isAlive = false; }
+private:
+	static const uint32 minStepsNumber = 20, maxStepsNumber = 200;
+	Common::RandomSource *_rnd;
+	bool _isAlive;
+	Common::Point _location;
+	Common::Point _delta;
+	Common::Rect _boundingBox;
+	Direction _direction;
+	uint32 _stepsNumber;
+	uint32 _steps;
+
+	void randomize(Direction excluded = kDirectionNowhere);
+};
+
 class PuzzlePipes : public Puzzle {
 public:
 	PuzzlePipes(AsylumEngine *engine);
@@ -136,6 +167,8 @@ private:
 	Connector _connectors[connectorsCount];
 	Peephole _peepholes[peepholesCount];
 	Peephole *_sinks[4], *_sources[4];
+	Common::Array<Spider *> _spiders;
+	uint32 *_frameIndexSpider;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
