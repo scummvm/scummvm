@@ -227,8 +227,11 @@ void Actor::loadData(Common::SeekableReadStream *stream) {
 
 	_data.field_4 = stream->readUint32LE();
 
-	for (int32 i = 0; i < 240; i++)
-		_data.field_8[i] = stream->readSint32LE();
+	_data.point.x = stream->readSint32LE();
+	_data.point.y = stream->readSint32LE();
+
+	for (int32 i = 0; i < 238; i++)
+		_data.field_10[i] = stream->readSint32LE();
 
 	for (int32 i = 0; i < 120; i++)
 		_data.field_3C8[i] = stream->readSint32LE();
@@ -872,8 +875,7 @@ bool Actor::process(const Common::Point &point) {
 
 	if (point == sum) {
 		if (process_408B20(&sum, a3 >= 2 ? kDirectionS : kDirectionN, abs(delta.y), false)) {
-			_data.field_8[0] = point.x;
-			_data.field_8[1] = point.y;
+			_data.point = point;
 			_data.field_4    = 0;
 			_data.count      = 1;
 
@@ -884,8 +886,7 @@ bool Actor::process(const Common::Point &point) {
 	if (point.x == sum.x) {
 		ActorDirection actorDir = a3 >= 2 ? kDirectionS : kDirectionN;
 		if (process_408B20(&sum, actorDir, abs(delta.y), false)) {
-			_data.field_8[0] = point.x;
-			_data.field_8[1] = point.y;
+			_data.point = point;
 			_data.field_4    = 0;
 			_data.count      = 1;
 
@@ -901,8 +902,7 @@ bool Actor::process(const Common::Point &point) {
 		ActorDirection actorDir = (a3 != 0 || a3 != 3) ? kDirectionE : kDirectionO;
 
 		if (process_408B20(&sum, actorDir, abs(delta.x), true)) {
-			_data.field_8[0] = point.x;
-			_data.field_8[1] = point.y;
+			_data.point = point;
 			_data.field_4    = 0;
 			_data.count      = 1;
 
@@ -1068,8 +1068,7 @@ bool Actor::process(const Common::Point &point) {
 		return false;
 
 	// Update actor data
-	_data.field_8[0] = point.x;
-	_data.field_8[1] = point.y;
+	_data.point = point;
 	_data.field_4    = 0;
 	_data.count      = 1;
 
@@ -1830,7 +1829,47 @@ void Actor::updateStatus9() {
 }
 
 void Actor::updateStatus12_Chapter2() {
-	error("[Actor::updateStatus12_Chapter2] not implemented!");
+	// Compute distance
+	uint32 frameIndex = _frameIndex;
+	if (_frameIndex >= _frameCount)
+		frameIndex = 2 * _frameCount - _frameIndex - 1;
+
+	int32 distance = getDistanceForFrame(_direction, frameIndex);
+
+	// Face actor
+	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
+
+	// FIXME
+	if (_data.field_10[_index + 10] > 0) {
+		_direction = (ActorDirection)(_direction + 4);
+		_data.field_10[_index + 10] -= 1;
+	}
+
+	// Compute coordinates and distance
+	Actor *player = getScene()->getActor();
+	Common::Point sumPlayer = *player->getPoint1() + *player->getPoint2();
+	Common::Point sum = _point1 + _point2;
+
+	uint32 absX = abs(sum.x - sumPlayer.x);
+	uint32 absY = abs(sum.y - sumPlayer.y);
+
+	// Adjust distance
+	if (absX <= absY)
+		absX = absY;
+
+	if (!distance)
+		distance = 0; // FIXME: get proper distance value
+
+	if (absX >= 50) {
+		playSounds(_direction, abs(distance));
+	} else {
+		_frameIndex = 0;
+		// FIXME
+		_data.field_10[2 * _index + 15] = player->getPoint1()->x - _point1.x;
+		_data.field_10[2 * _index + 16] = player->getPoint1()->y - _point1.y;
+
+		updateStatus(kActorStatus18);
+	}
 }
 
 void Actor::updateStatus12_Chapter2_Actor11() {
