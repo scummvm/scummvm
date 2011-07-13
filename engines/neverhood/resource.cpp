@@ -291,10 +291,14 @@ void AnimResource::unloadInternal() {
 }
 
 int16 AnimResource::getFrameIndex(uint32 frameHash) {
+	int16 frameIndex = -1;
 	for (uint i = 0; i < _frames.size(); i++)
-		if (_frames[i].frameHash == frameHash)
-			return (int16)i;
-	return -1;			
+		if (_frames[i].frameHash == frameHash) {
+			frameIndex = (int16)i;
+			break;
+		}
+	debug("AnimResource::getFrameIndex(%08X) -> %d", frameHash, frameIndex);
+	return frameIndex;			
 }
 
 MouseCursorResource::MouseCursorResource(NeverhoodEngine *vm) 

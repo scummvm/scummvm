@@ -176,6 +176,84 @@ protected:
 	void spriteUpdate447D40();
 };
 
+class Class505 : public AnimatedSprite {
+public:
+	Class505(NeverhoodEngine *vm);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene1002DoorSpy : public AnimatedSprite {
+public:
+	AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Scene *parentScene, Sprite *asDoor, Sprite *class505);
+protected:
+	Scene *_parentScene;
+	Sprite *_asDoor;
+	Sprite *_class505;
+	SoundResource _soundResource;
+	NRect _rect;
+	uint32 handleMessage4489D0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage448A60(int messageNum, const MessageParam &param, Entity *sender);
+	void spriteUpdate448AA0();
+	void sub448AC0();
+	void sub448B10();
+};
+
+class Class426 : public StaticSprite {
+public:
+	Class426(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
+	// TODO Class426_sub433660 (not used yet)
+protected:
+	Scene *_parentScene;
+	int _countdown;
+	uint32 _fileHashes[2];
+	int _status;
+	SoundResource _soundResource;
+	uint32 _soundFileHash;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene1002VenusFlyTrap : public AnimatedSprite {
+public:
+	AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, bool flag);
+protected:
+	Scene *_parentScene;
+	Sprite *_klayman;
+	int _countdown;
+	SoundResource _soundResource;
+	bool _flag;
+	void update();
+	void update447FB0();
+	uint32 handleMessage448000(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage4482E0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage448320(int messageNum, const MessageParam &param, Entity *sender);
+	void sub4484F0();
+	void sub448530();
+	void sub448560();
+	void sub4485B0();
+	void sub4485F0();
+	void sub448620();
+	void sub448660();
+	void sub448720();
+	void sub448750();
+	void sub448780();
+};
+
+class Class506 : public AnimatedSprite {
+public:
+	Class506(NeverhoodEngine *vm);
+protected:
+	int _countdown;
+	bool _flag;
+	void update();
+	uint32 handleMessage4491B0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage449210(int messageNum, const MessageParam &param, Entity *sender);
+	void sub449250();
+	void sub449280();
+	void sub4492C0();
+};
+
 class Scene1002 : public Scene {
 public:
 	Scene1002(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -195,8 +273,8 @@ protected:
 	Sprite *_asRing4;
 	Sprite *_asRing5;
 	Sprite *_asDoor;
-	Sprite *_class504;
-	Sprite *_class503;
+	Sprite *_asDoorSpy;
+	Sprite *_asVenusFlyTrap;
 	Sprite *_ssLadderArch;
 	Sprite *_ssLadderArchPart1;
 	Sprite *_ssLadderArchPart2;

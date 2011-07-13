@@ -40,6 +40,7 @@ public:
 	void addSprite(Sprite *sprite);
 	void removeSprite(Sprite *sprite);
 	void clearSprites();
+	void checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 messageParam);
 	void save();
 	void restore();
 	uint getSpriteCount() const { return _sprites.size(); }

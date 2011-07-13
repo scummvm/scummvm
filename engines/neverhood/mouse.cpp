@@ -29,7 +29,7 @@ namespace Neverhood {
 Mouse433::Mouse433(NeverhoodEngine *vm, uint32 fileHash, NRect *mouseRect)
 	: StaticSprite(vm, 2000), _mouseCursorResource(vm), _frameNum(0) {
 	
-	debug("Mouse433::Mouse433(%08X)", fileHash);
+	debug(7, "Mouse433::Mouse433(%08X)", fileHash);
 	
 	if (mouseRect) {
 		_mouseRect = *mouseRect;
@@ -70,7 +70,7 @@ void Mouse433::load(uint32 fileHash) {
 }
 
 void Mouse433::update() {
-	debug("Mouse433::update()");
+	debug(7, "Mouse433::update()");
 	updateCursor();
 	_frameNum++;
 	if (_frameNum >= 6)
@@ -79,7 +79,7 @@ void Mouse433::update() {
 }
 
 uint32 Mouse433::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Mouse433::handleMessage(%04X)", messageNum);
+	debug(7, "Mouse433::handleMessage(%04X)", messageNum);
 	uint32 messageResult = 0;
 	if (messageNum != 5) {
 		messageResult = Sprite::handleMessage(messageNum, param, sender);
@@ -103,7 +103,7 @@ uint32 Mouse433::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 void Mouse433::updateCursor() {
-	debug("Mouse433::updateCursor()");
+	debug(7, "Mouse433::updateCursor()");
 	
 	if (!_surface)
 		return;
@@ -131,7 +131,7 @@ void Mouse433::updateCursor() {
 Mouse435::Mouse435(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2)
 	: StaticSprite(vm, 2000), _mouseCursorResource(vm), _frameNum(0), _x1(x1), _x2(x2) {
 	
-	debug("Mouse435::Mouse435(%08X)", fileHash);
+	debug(7, "Mouse435::Mouse435(%08X)", fileHash);
 	
 	_mouseCursorResource.load(fileHash);
 	_x = _vm->getMouseX();	
@@ -165,7 +165,7 @@ void Mouse435::load(uint32 fileHash) {
 }
 
 void Mouse435::update() {
-	debug("Mouse435::update()");
+	debug(7, "Mouse435::update()");
 	updateCursor();
 	_frameNum++;
 	if (_frameNum >= 6)
@@ -174,7 +174,7 @@ void Mouse435::update() {
 }
 
 uint32 Mouse435::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Mouse435::handleMessage(%04X)", messageNum);
+	debug(7, "Mouse435::handleMessage(%04X)", messageNum);
 	uint32 messageResult = 0;
 	if (messageNum != 5) {
 		messageResult = Sprite::handleMessage(messageNum, param, sender);
@@ -199,7 +199,7 @@ uint32 Mouse435::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 void Mouse435::updateCursor() {
-	debug("Mouse435::updateCursor()");
+	debug(7, "Mouse435::updateCursor()");
 	
 	if (!_surface)
 		return;

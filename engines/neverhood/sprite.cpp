@@ -72,6 +72,10 @@ bool Sprite::isPointInside(int16 x, int16 y) {
 	return x >= _rect.x1 && x <= _rect.x2 && y >= _rect.y1 && y <= _rect.y2;
 }
 
+bool Sprite::checkCollision(NRect &rect) {
+	return (_rect.x1 < rect.x2) && (rect.x1 < _rect.x2) && (_rect.y1 < rect.y2) && (rect.y1 < _rect.y2);	
+}
+
 uint32 Sprite::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
 	case 0x0005:
@@ -373,6 +377,7 @@ void AnimatedSprite::updatePosition() {
 
 void AnimatedSprite::updateFrameIndex() {
 	if (!_playBackwards) {
+		debug("%08X ### _frameIndex = %d; _frameIndex2 = %d", _fileHash3, _frameIndex, _frameIndex2);
 		if (_frameIndex < _frameIndex2) {
 			_frameIndex++;
 		} else {
@@ -441,6 +446,7 @@ void AnimatedSprite::setFileHash1() {
 }
 
 void AnimatedSprite::setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5) {
+	debug("AnimatedSprite::setFileHash2(%08X, %08X, %08X)", fileHash, fileHash6, fileHash5);
 	_fileHash1 = fileHash;
 	_fileHash6 = fileHash6;
 	_fileHash5 = fileHash5;
@@ -498,6 +504,7 @@ void AnimatedSprite::removeCallbacks() {
 	if (_callback3Cb) {
 		_callback2Cb = _callback3Cb;
 		_callback3Cb = NULL;
+		debug("Fire _callback3Cb '%s'", _callback3CbName.c_str());
 		(this->*_callback2Cb)();
 #if 0 // TODO		
 	} else if (_callbackList) {

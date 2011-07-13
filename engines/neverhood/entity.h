@@ -23,6 +23,7 @@
 #ifndef NEVERHOOD_ENTITY_H
 #define NEVERHOOD_ENTITY_H
 
+#include "common/str.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/gamevars.h"
 #include "neverhood/graphics.h"
@@ -71,12 +72,16 @@ protected:
 	// TODO: Constructors for the param types...
 };
 
-#define SetUpdateHandler(handler) _updateHandlerCb = static_cast <void (Entity::*)(void)> (handler)
-#define SetMessageHandler(handler) _messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler)
+// TODO: Disable heavy debug stuff in release mode
+
+#define SetUpdateHandler(handler) _updateHandlerCb = static_cast <void (Entity::*)(void)> (handler); debug("SetUpdateHandler(" #handler ")"); _updateHandlerCbName = #handler
+#define SetMessageHandler(handler) _messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler); debug("SetMessageHandler(" #handler ")"); _messageHandlerCbName = #handler
 
 class Entity {
 public:
 	Common::String _name; // Entity name for debugging purposes
+	Common::String _updateHandlerCbName;
+	Common::String _messageHandlerCbName;
 	Entity(NeverhoodEngine *vm, int priority)
 		: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(NULL), _priority(priority), _name("Entity") {
 	}
@@ -86,11 +91,13 @@ public:
 	}
 	void handleUpdate() {
 		//debug("Entity(%s).handleUpdate", _name.c_str());
+		debug(2, "handleUpdate() -> [%s]", _updateHandlerCbName.c_str());
 		if (_updateHandlerCb)
 			(this->*_updateHandlerCb)();
 	}
 	bool hasMessageHandler() const { return _messageHandlerCb != NULL; } 
 	uint32 sendMessage(int messageNum, const MessageParam &param, Entity *sender) {
+		debug(2, "sendMessage(%04X) -> [%s]", messageNum, _messageHandlerCbName.c_str());
 		return _messageHandlerCb ? (this->*_messageHandlerCb)(messageNum, param, sender) : 0;
 	}
 	// NOTE: These were overloaded before for the various message parameter types

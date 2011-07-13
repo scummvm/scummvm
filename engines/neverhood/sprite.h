@@ -30,9 +30,9 @@
 
 namespace Neverhood {
 
-#define SetSpriteCallback(callback) _spriteUpdateCb = static_cast <void (Sprite::*)(void)> (callback)
-#define SetFilterX(callback) _filterXCb = static_cast <int16 (Sprite::*)(int16)> (callback)
-#define SetFilterY(callback) _filterYCb = static_cast <int16 (Sprite::*)(int16)> (callback)
+#define SetSpriteCallback(callback) _spriteUpdateCb = static_cast <void (Sprite::*)(void)> (callback); debug("SetSpriteCallback(" #callback ")"); _spriteUpdateCbName = #callback
+#define SetFilterX(callback) _filterXCb = static_cast <int16 (Sprite::*)(int16)> (callback); debug("SetFilterX(" #callback ")")
+#define SetFilterY(callback) _filterYCb = static_cast <int16 (Sprite::*)(int16)> (callback); debug("SetFilterY(" #callback ")")
 
 const int16 kDefPosition = -32768;
 
@@ -45,12 +45,16 @@ public:
 	void setDoDeltaX(int type);
 	void setDoDeltaY(int type);
 	bool isPointInside(int16 x, int16 y);
+	bool checkCollision(NRect &rect);
 	int16 getX() const { return _x; }
 	int16 getY() const { return _y; }
+	uint16 getFlags() const { return _flags; }
 	bool isDoDeltaX() const { return _doDeltaX; }
 	bool isDoDeltaY() const { return _doDeltaY; }
+	NRect& getRect() { return _rect; }
 protected:
 	void (Sprite::*_spriteUpdateCb)();
+	Common::String _spriteUpdateCbName; // For debugging purposes
 	int16 (Sprite::*_filterXCb)(int16);
 	int16 (Sprite::*_filterYCb)(int16);
 	BaseSurface *_surface;
@@ -92,9 +96,9 @@ protected:
 	void update();
 };
 
-#define SetAnimationCallback1(callback) _callback1Cb = static_cast <void (AnimatedSprite::*)(void)> (callback)
-#define SetAnimationCallback2(callback) _callback2Cb = static_cast <void (AnimatedSprite::*)(void)> (callback)
-#define SetAnimationCallback3(callback) _callback3Cb = static_cast <void (AnimatedSprite::*)(void)> (callback)
+#define SetAnimationCallback1(callback) _callback1Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug("SetAnimationCallback1(" #callback ")"); _callback1CbName = #callback
+#define SetAnimationCallback2(callback) _callback2Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug("SetAnimationCallback2(" #callback ")"); _callback2CbName = #callback
+#define SetAnimationCallback3(callback) _callback3Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug("SetAnimationCallback3(" #callback ")"); _callback3CbName = #callback
 #define AnimationCallback(callback) static_cast <void (AnimatedSprite::*)()> (callback)
 
 class AnimatedSprite : public Sprite {
@@ -133,6 +137,10 @@ protected:
 	AnimationCb _callback1Cb;
 	AnimationCb _callback2Cb;
 	AnimationCb _callback3Cb;
+	// For debugging purposes
+	Common::String _callback1CbName;
+	Common::String _callback2CbName;
+	Common::String _callback3CbName;
 	void init();
 	void updateAnim();
 	void updatePosition();

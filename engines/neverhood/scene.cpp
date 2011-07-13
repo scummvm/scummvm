@@ -416,7 +416,7 @@ bool Scene::setMessageList2(MessageList *messageList, bool messageListFlag, bool
 }
 
 void Scene::runMessageList() {
-	debug("Scene::runMessageList() _messageListFlag2 = %d; _messageListFlag1 = %d", _messageListFlag2, _messageListFlag1);
+	debug(7, "Scene::runMessageList() _messageListFlag2 = %d; _messageListFlag1 = %d", _messageListFlag2, _messageListFlag1);
 
 	if (_messageListFlag2 || _messageListFlag1)
 		return;
@@ -434,7 +434,7 @@ void Scene::runMessageList() {
 			int messageNum = (*_messageList)[_messageListIndex].messageNum;
 			uint32 messageParam = (*_messageList)[_messageListIndex].messageValue;
 			
-			//debug("Scene::runMessageList() %04X, %08X", messageNum, messageParam);
+			debug("Scene::runMessageList() %04X, %08X", messageNum, messageParam);
 			
 			_messageListIndex++;
 			if (_messageListIndex == _messageListCount) {

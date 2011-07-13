@@ -63,10 +63,32 @@ public:
 	void sub4208F0();
 	void sub420930();
 	void sub420830();
+	void sub41FC40();
+	void sub420210();
+	void sub4201C0();
+	void sub420340();
+	void sub420250();
+	void sub420290();
+	void sub420380();
+	void sub4203C0();
+	void sub420300();
+	void sub420970();
+	void sub4209D0();
+	void sub420BC0();
+	void sub420AD0();
+	void sub421030();
+	void sub420FE0();
+	void sub4210C0();
+	void sub421070();
+	void sub420420();
 	
 	void spriteUpdate41F250();
 	void spriteUpdate41F5F0();
 	void spriteUpdate41F780();
+	void spriteUpdate41F230();
+
+	uint32 handleMessage41D360(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41D480(int messageNum, const MessageParam &param, Entity *sender);
 
 protected:
 	Entity *_parentScene;
@@ -133,10 +155,8 @@ protected:
 	void sub41C790();
 	
 	void update41D0F0();
-	uint32 handleMessage41D360(int messageNum, const MessageParam &param, Entity *sender);
 
 	void sub41FF00();
-	uint32 handleMessage41D480(int messageNum, const MessageParam &param, Entity *sender);
 	
 	void sub41FCF0();
 	
@@ -171,11 +191,19 @@ protected:
 	void sub41CD00(int16 x);
 	void sub41CC40(int16 x1, int16 x2);
 	void sub41CAC0(int16 x);
+	void sub41CCE0(int16 x);
 	void sub41FC30();
 	
 	uint32 handleMessage41DF10(int messageNum, const MessageParam &param, Entity *sender);
-	
 	uint32 handleMessage41EEF0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41E3C0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41D790(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41D880(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41DAA0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41DFD0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41E0D0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41E490(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41E290(int messageNum, const MessageParam &param, Entity *sender);
 	
 };
 
@@ -186,6 +214,43 @@ protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	void sub44FA50();
 	uint32 handleMessage44FA00(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class KmScene1002 : public Klayman {
+public:
+	KmScene1002(NeverhoodEngine *vm, Entity *parentScene, Sprite *class599, Sprite *ssLadderArch, int16 x, int16 y);
+protected:
+	Sprite *_class599;
+	Sprite *_ssLadderArch;
+	Sprite *_otherSprite;
+	int _status;
+	void xUpdate();	
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	void update4497D0();
+	uint32 handleMessage449800(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage4498E0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage449990(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage449A30(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage449BA0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage449C90(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage449D60(int messageNum, const MessageParam &param, Entity *sender);
+	void spriteUpdate449DC0();
+	void sub449E20();
+	void sub449E90();
+	void sub449EF0();
+	void sub449F70();
+	void sub44A050();
+	void sub44A0D0();
+	void sub44A150();
+	void sub44A230();
+	void sub44A250();
+	void sub44A2C0();
+	void sub44A330();
+	void sub44A370();
+	void sub44A3C0();
+	void sub44A3E0();
+	void sub44A460();
+	void sub44A4B0();
 };
 
 } // End of namespace Neverhood

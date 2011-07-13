@@ -107,14 +107,20 @@ void StaticData::load(const char *filename) {
 }
 
 HitRectList *StaticData::getHitRectList(uint32 id) {
+	if (!_hitRectLists[id])
+		error("StaticData::getHitRectList() HitRectList with id %08X not found", id);
 	return _hitRectLists[id];
 }
 
 RectList *StaticData::getRectList(uint32 id) {
+	if (!_rectLists[id])
+		error("StaticData::getRectList() RectList with id %08X not found", id);
 	return _rectLists[id];
 }
 
 MessageList *StaticData::getMessageList(uint32 id) {
+	if (!_messageLists[id])
+		error("StaticData::getMessageList() MessageList with id %08X not found", id);
 	return _messageLists[id];
 }
 

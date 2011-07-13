@@ -39,6 +39,16 @@ void CollisionMan::setHitRects(uint32 id) {
 
 void CollisionMan::setHitRects(HitRectList *hitRects) {
 	_hitRects = hitRects;
+
+	// DEBUG
+	if (_hitRects) {
+		debug("CollisionMan::setHitRects() count = %d", _hitRects->size());
+		for (HitRectList::iterator it = _hitRects->begin(); it != _hitRects->end(); it++) {
+			HitRect *hitRect = &(*it);
+			debug("(%d, %d, %d, %d) -> %04X", hitRect->rect.x1, hitRect->rect.y1, hitRect->rect.x2, hitRect->rect.y2, hitRect->type);
+		}
+	}
+	
 }
 
 void CollisionMan::clearHitRects() {
@@ -77,6 +87,15 @@ void CollisionMan::removeSprite(Sprite *sprite) {
 
 void CollisionMan::clearSprites() {
 	_sprites.clear();
+}
+
+void CollisionMan::checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 messageParam) {
+	for (Common::Array<Sprite*>::iterator iter = _sprites.begin(); iter != _sprites.end(); iter++) {
+		Sprite *collSprite = *iter;
+		if ((sprite->getFlags() & flags) && collSprite->checkCollision(sprite->getRect())) {
+			collSprite->sendMessage(messageNum, messageParam, sprite);
+		}
+	}	
 }
 
 void CollisionMan::save() {
