@@ -161,7 +161,7 @@ private:
 	int32 _rectIndex;
 	uint32 _frameIndex, _frameIndexLever;
 	bool _levelFlags[5];
-	float _levelValues[4];
+	float _levelValues[4], _previousLevels[4];
 	bool _isLeverReady;
 	Common::HashMap<uint32, uint32> _connectorResources;
 	Connector _connectors[connectorsCount];
