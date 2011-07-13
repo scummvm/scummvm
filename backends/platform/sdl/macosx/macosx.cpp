@@ -29,7 +29,7 @@
 
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
-#include "backends/platform/sdl/macosx/appMenu_osx.h"
+#include "backends/platform/sdl/macosx/appmenu_osx.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
