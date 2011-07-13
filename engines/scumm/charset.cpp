@@ -721,7 +721,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	_vm->_charsetColorMap[1] = _color;
 
-	prepareDraw(chr);
+	if (!prepareDraw(chr))
+		return;
 
 	if (_firstChar) {
 		_str.left = 0;
@@ -875,11 +876,11 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 	}
 }
 
-void CharsetRendererClassic::prepareDraw(uint16 chr) {
+bool CharsetRendererClassic::prepareDraw(uint16 chr) {
 	uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
 	assert(charOffs < 0x14000);
 	if (!charOffs)
-		return;
+		return false;
 	_charPtr = _fontPtr + charOffs;
 
 	_width = _origWidth = _charPtr[0];
@@ -894,10 +895,12 @@ void CharsetRendererClassic::prepareDraw(uint16 chr) {
 	_offsY = (signed char)_charPtr[3];
 
 	_charPtr += 4;	// Skip over char header
+	return true;
 }
 
 void CharsetRendererClassic::drawChar(int chr, Graphics::Surface &s, int x, int y) {
-	prepareDraw(chr);
+	if (!prepareDraw(chr))
+		return;
 	byte *dst = (byte *)s.pixels + y * s.pitch + x;
 	drawBitsN(s, dst, _charPtr, *_fontPtr, y, _width, _height);
 }
@@ -1437,7 +1440,7 @@ void CharsetRendererTownsClassic::drawBitsN(const Graphics::Surface&, byte *dst,
 	}
 }
 
-void CharsetRendererTownsClassic::prepareDraw(uint16 chr) {
+bool CharsetRendererTownsClassic::prepareDraw(uint16 chr) {
 	processCharsetColors();
 	bool noSjis = false;
 
@@ -1475,8 +1478,9 @@ void CharsetRendererTownsClassic::prepareDraw(uint16 chr) {
 		}
 	} else {
 		_sjisCurChar = 0;
-		CharsetRendererClassic::prepareDraw(chr);
+		return CharsetRendererClassic::prepareDraw(chr);
 	}
+	return true;
 }
 
 void CharsetRendererTownsClassic::setupShadowMode() {
