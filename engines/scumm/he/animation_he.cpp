@@ -26,15 +26,20 @@
 #include "scumm/he/intern_he.h"
 
 #include "audio/audiostream.h"
-#include "video/bink_decoder.h"
 #include "video/smk_decoder.h"
+
+#ifdef USE_BINK
+#include "video/bink_decoder.h"
+#endif
 
 namespace Scumm {
 
 MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer) : _vm(vm) {
+#ifdef USE_BINK
 	if (_vm->_game.heversion >= 100 && (_vm->_game.features & GF_16BIT_COLOR))
 		_video = new Video::BinkDecoder();
 	else
+#endif
 		_video = new Video::SmackerDecoder(mixer);
 
 	_flags = 0;

@@ -24,6 +24,10 @@
 // based quite heavily on the Bink decoder found in FFmpeg.
 // Many thanks to Kostya Shishkov for doing the hard work.
 
+#include "common/scummsys.h"
+
+#ifdef USE_BINK
+
 #ifndef VIDEO_BINK_DECODER_H
 #define VIDEO_BINK_DECODER_H
 
@@ -325,4 +329,6 @@ private:
 
 } // End of namespace Video
 
-#endif
+#endif // VIDEO_BINK_DECODER_H
+
+#endif // USE_BINK

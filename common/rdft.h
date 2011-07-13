@@ -24,6 +24,14 @@
 // Based upon the (I)RDFT code in FFmpeg
 // Copyright (c) 2009 Alex Converse <alex dot converse at gmail dot com>
 
+#include "common/scummsys.h"
+
+#ifndef USE_BINK
+
+#error "RDFT support disabled because Bink support is disabled"
+
+#else
+
 #ifndef COMMON_RDFT_H
 #define COMMON_RDFT_H
 
@@ -62,3 +70,5 @@ private:
 } // End of namespace Common
 
 #endif // COMMON_RDFT_H
+
+#endif // USE_BINK

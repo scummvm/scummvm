@@ -22,6 +22,14 @@
 
 // Based on eos' Huffman code
 
+#include "common/scummsys.h"
+
+#ifndef USE_BINK
+
+#error "Huffman support disabled because Bink support is disabled"
+
+#else
+
 #ifndef COMMON_HUFFMAN_H
 #define COMMON_HUFFMAN_H
 
@@ -75,3 +83,5 @@ private:
 } // End of namespace Common
 
 #endif // COMMON_HUFFMAN_H
+
+#endif // USE_BINK

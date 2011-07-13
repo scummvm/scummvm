@@ -2,30 +2,24 @@ MODULE := common
 
 MODULE_OBJS := \
 	archive.o \
-	bitstream.o \
 	config-file.o \
 	config-manager.o \
 	dcl.o \
-	dct.o \
 	debug.o \
 	error.o \
 	EventDispatcher.o \
 	EventRecorder.o \
-	fft.o \
 	file.o \
 	fs.o \
 	hashmap.o \
-	huffman.o \
 	iff_container.o \
 	macresman.o \
-	math.o \
 	memorypool.o \
 	md5.o \
 	mutex.o \
 	quicktime.o \
 	random.o \
 	rational.o \
-	rdft.o \
 	str.o \
 	stream.o \
 	system.o \
@@ -40,6 +34,16 @@ MODULE_OBJS := \
 	winexe_pe.o \
 	xmlparser.o \
 	zlib.o
+
+ifdef USE_BINK
+MODULE_OBJS += \
+	bitstream.o \
+	dct.o \
+	fft.o \
+	huffman.o \
+	math.o \
+	rdft.o
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk

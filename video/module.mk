@@ -2,7 +2,6 @@ MODULE := video
 
 MODULE_OBJS := \
 	avi_decoder.o \
-	bink_decoder.o \
 	coktel_decoder.o \
 	dxa_decoder.o \
 	flic_decoder.o \
@@ -19,6 +18,11 @@ MODULE_OBJS := \
 	codecs/rpza.o \
 	codecs/smc.o \
 	codecs/truemotion1.o
+
+ifdef USE_BINK
+MODULE_OBJS += \
+	bink_decoder.o
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk

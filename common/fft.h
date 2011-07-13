@@ -26,6 +26,14 @@
 // Copyright (c) 2002 Fabrice Bellard
 // Partly based on libdjbfft by D. J. Bernstein
 
+#include "common/scummsys.h"
+
+#ifndef USE_BINK
+
+#error "FFT support disabled because Bink support is disabled"
+
+#else
+
 #ifndef COMMON_FFT_H
 #define COMMON_FFT_H
 
@@ -71,3 +79,5 @@ private:
 } // End of namespace Common
 
 #endif // COMMON_FFT_H
+
+#endif // USE_BINK

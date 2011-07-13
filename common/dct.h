@@ -26,6 +26,14 @@
 // Copyright (c) 2010 Alex Converse <alex.converse@gmail.com>
 // Copyright (c) 2010 Vitor Sessak
 
+#include "common/scummsys.h"
+
+#ifndef USE_BINK
+
+#error "DCT support disabled because Bink support is disabled"
+
+#else
+
 #ifndef COMMON_DCT_H
 #define COMMON_DCT_H
 
@@ -69,3 +77,5 @@ private:
 } // End of namespace Common
 
 #endif // COMMON_DCT_H
+
+#endif // USE_BINK
