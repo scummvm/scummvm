@@ -888,7 +888,7 @@ void GrimEngine::luaUpdate() {
 	// Run asynchronous tasks
 	lua_runtasks();
 
-	if (_mode == ENGINE_MODE_NORMAL) {
+	if (_mode == ENGINE_MODE_NORMAL || _mode == ENGINE_MODE_SMUSH) {
 		// Update the actors. Do it here so that we are sure to react asap to any change
 		// in the actors state caused by lua.
 		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
