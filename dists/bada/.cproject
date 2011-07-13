@@ -89,8 +89,8 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry excluding="scummvm" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="scummvm/backends/platform/bada"/>
+<entry excluding="zlib|scummvm" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 </sourceEntries>
 </configuration>
 </storageModule>
@@ -549,7 +549,7 @@
 <listOptionValue builtIn="false" value="c:/src/scummvm"/>
 <listOptionValue builtIn="false" value="C:/bada/1.2.1/Include"/>
 </option>
-<option id="osp.gnu.target.cpp.compiler.exe.debug.option.other.other.1834931612" superClass="osp.gnu.target.cpp.compiler.exe.debug.option.other.other" value="-c -Wno-psabi" valueType="string"/>
+<option id="osp.gnu.target.cpp.compiler.exe.debug.option.other.other.1834931612" name="Other flags" superClass="osp.gnu.target.cpp.compiler.exe.debug.option.other.other" value="-c -Wno-psabi" valueType="string"/>
 <inputType id="cdt.managedbuild.tool.osp.gnu.cpp.compiler.input.936307304" superClass="cdt.managedbuild.tool.osp.gnu.cpp.compiler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.osp.gnu.target.c.compiler.exe.debug.1510313770" name="bada C Compiler" superClass="cdt.managedbuild.tool.osp.gnu.target.c.compiler.exe.debug">
@@ -565,6 +565,7 @@
 <listOptionValue builtIn="false" value="vorbisfile"/>
 <listOptionValue builtIn="false" value="vorbis"/>
 <listOptionValue builtIn="false" value="ogg"/>
+<listOptionValue builtIn="false" value="z"/>
 </option>
 <option id="osp.gnu.target.cpp.link.debug.exe.option.libs.paths.2079923761" name="Library search path (-L)" superClass="osp.gnu.target.cpp.link.debug.exe.option.libs.paths" valueType="libPaths">
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}&quot;"/>
@@ -591,8 +592,8 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry excluding="scummvm" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="scummvm/backends/platform/bada"/>
+<entry excluding="zlib|scummvm" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 </sourceEntries>
 </configuration>
 </storageModule>
@@ -1072,6 +1073,7 @@
 <listOptionValue builtIn="false" value="vorbisfile"/>
 <listOptionValue builtIn="false" value="vorbis"/>
 <listOptionValue builtIn="false" value="ogg"/>
+<listOptionValue builtIn="false" value="z"/>
 </option>
 <option id="osp.gnu.target.cpp.link.release.exe.option.userobjs.509686024" name="Other objects" superClass="osp.gnu.target.cpp.link.release.exe.option.userobjs" valueType="userObjs">
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/FGraphicsOpengl.so&quot;"/>
@@ -1091,8 +1093,8 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry excluding="scummvm" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="scummvm/backends/platform/bada"/>
+<entry excluding="zlib|scummvm" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 </sourceEntries>
 </configuration>
 </storageModule>

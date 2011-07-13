@@ -86,5 +86,10 @@
 			<type>2</type>
 			<location>C:/src/scummvm</location>
 		</link>
+		<link>
+			<name>zlib</name>
+			<type>2</type>
+			<location>C:/src/dev-tools/zlib-1.2.5</location>
+		</link>
 	</linkedResources>
 </projectDescription>

@@ -109,6 +109,10 @@ bool BadaFileStream::seek(int32 offs, int whence) {
     }
     else {
       offs -= (bufferLength - bufferIndex);
+      if (offs < 0 && file->Tell() + offs < 0) {
+        // avoid negative positioning
+        offs = 0;
+      }
       result = (E_SUCCESS == file->Seek(FILESEEKPOSITION_CURRENT, offs));
     }
     break;

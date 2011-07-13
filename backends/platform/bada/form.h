@@ -42,6 +42,7 @@
 class BadaAppForm : public Osp::Ui::Controls::Form,
                     public Osp::Ui::IOrientationEventListener,
                     public Osp::Ui::ITouchEventListener,
+                    public Osp::Ui::IKeyEventListener,
                     public Osp::Base::Runtime::IRunnable {
  public:
   BadaAppForm();
@@ -78,6 +79,12 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   void OnTouchReleased(const Osp::Ui::Control& source, 
                        const Osp::Graphics::Point& currentPosition, 
                        const Osp::Ui::TouchEventInfo& touchInfo);
+  void OnKeyLongPressed(const Osp::Ui::Control& source, 
+                        Osp::Ui::KeyCode keyCode);
+  void OnKeyPressed(const Osp::Ui::Control& source, 
+                    Osp::Ui::KeyCode keyCode);
+  void OnKeyReleased(const Osp::Ui::Control& source, 
+                     Osp::Ui::KeyCode keyCode);
 
   void pushEvent(Common::EventType type,
                  const Osp::Graphics::Point& currentPosition);

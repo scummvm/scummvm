@@ -138,6 +138,7 @@ result BadaAppForm::OnInitializing(void) {
   SetOrientation(ORIENTATION_LANDSCAPE);
   AddOrientationEventListener(*this);
   AddTouchEventListener(*this);
+  AddKeyEventListener(*this);
 
   return E_SUCCESS;
 }
@@ -309,6 +310,18 @@ void BadaAppForm::OnTouchReleased(const Control& source,
     }
     setupIndex = -1;
   }
+}
+
+void BadaAppForm::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
+  logEntered();
+}
+
+void BadaAppForm::OnKeyPressed(const Control& source, KeyCode keyCode) {
+  logEntered();
+}
+
+void BadaAppForm::OnKeyReleased(const Control& source, KeyCode keyCode) {
+  logEntered();
 }
 
 //
