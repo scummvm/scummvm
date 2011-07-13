@@ -37,7 +37,7 @@ class Player;
 class ScummEngine;
 class Serializer;
 
-typedef void (*sysexfunc) (Player *, const byte *, uint16);
+typedef void (*sysexfunc)(Player *, const byte *, uint16);
 
 /**
  * iMuse implementation interface.
@@ -55,7 +55,8 @@ public:
 		PROP_GS,
 		PROP_LIMIT_PLAYERS,
 		PROP_RECYCLE_PLAYERS,
-		PROP_GAME_ID
+		PROP_GAME_ID,
+		PROP_PC_SPEAKER
 	};
 
 public:
@@ -66,7 +67,7 @@ public:
 	virtual int32 doCommand(int numargs, int args[]) = 0;
 	virtual int clear_queue() = 0;
 	virtual uint32 property(int prop, uint32 value) = 0;
-	virtual void addSysexHandler (byte mfgID, sysexfunc handler) = 0;
+	virtual void addSysexHandler(byte mfgID, sysexfunc handler) = 0;
 
 public:
 	virtual void startSoundWithNoteOffset(int sound, int offset) = 0;

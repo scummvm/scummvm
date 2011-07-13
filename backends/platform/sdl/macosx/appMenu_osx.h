@@ -20,33 +20,13 @@
  *
  */
 
-// Only compile if Mohawk is enabled or if we're building dynamic modules
-#if defined(ENABLE_MOHAWK) || defined(DYNAMIC_MODULES)
+#ifndef APPMENU_OSX_H
+#define APPMENU_OSX_H
 
-#ifndef AUDIO_QDM2_H
-#define AUDIO_QDM2_H
+#if defined(MACOSX)
 
-#include "common/types.h"
+void replaceApplicationMenuItems();
 
-namespace Common {
-class SeekableReadStream;
-}
+#endif // MACOSX
 
-namespace Audio {
-
-class Codec;
-
-/**
- * Create a new Codec from the QDM2 data in the given stream.
- *
- * @param extraData           the QuickTime extra data stream
- * @param disposeExtraData    the QuickTime extra data stream
- * @return   a new Codec, or NULL, if an error occurred
- */
-Codec *makeQDM2Decoder(Common::SeekableReadStream *extraData,
-                       DisposeAfterUse::Flag disposeExtraData = DisposeAfterUse::NO);
-
-} // End of namespace Audio
-
-#endif // AUDIO_QDM2_H
-#endif // Mohawk/Plugins guard
+#endif

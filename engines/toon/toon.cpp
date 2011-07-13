@@ -1552,7 +1552,7 @@ void ToonEngine::clickEvent() {
 					return;
 				}
 			} else {
-				if (!_drew->walkTo(_mouseX, _mouseY)) {
+				if (!_drew->walkTo(_mouseX + _gameState->_currentScrollValue, _mouseY)) {
 					// walk was canceled ?
 					return;
 				}

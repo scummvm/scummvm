@@ -8,34 +8,20 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-/**
- * @file
- * Sound decoder used in engines:
- *  - groovie
- */
-
-#ifndef SOUND_AAC_H
-#define SOUND_AAC_H
-
-#include "common/scummsys.h"
-#include "common/types.h"
-
-#ifdef USE_FAAD
+#ifndef AUDIO_DECODERS_CODEC_H
+#define AUDIO_DECODERS_CODEC_H
 
 namespace Common {
 	class SeekableReadStream;
@@ -43,23 +29,16 @@ namespace Common {
 
 namespace Audio {
 
-class Codec;
+class AudioStream;
 
-/**
- * Create a new Codec for decoding AAC data of an MPEG-4 file in the given stream.
- *
- * @note This should *only* be called by our QuickTime/MPEG-4 decoder since it relies
- *       on the MPEG-4 extra data. If you want to decode a file using AAC, go use
- *       makeQuickTimeStream() instead!
- * @param extraData         the SeekableReadStream from which to read the AAC extra data
- * @param disposeExtraData  whether to delete the extra data stream after use
- * @return  a new Codec, or NULL, if an error occurred
- */
-Codec *makeAACDecoder(
-	Common::SeekableReadStream *extraData,
-	DisposeAfterUse::Flag disposeExtraData = DisposeAfterUse::NO);
+class Codec {
+public:
+	Codec() {}
+	virtual ~Codec() {}
+
+	virtual AudioStream *decodeFrame(Common::SeekableReadStream &data) = 0;
+};
 
 } // End of namespace Audio
 
-#endif // #ifdef USE_FAAD
-#endif // #ifndef SOUND_AAC_H
+#endif
