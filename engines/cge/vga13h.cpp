@@ -1213,84 +1213,53 @@ void Vga::copyPage(uint16 d, uint16 s) {
 //--------------------------------------------------------------------------
 
 void Bitmap::xShow(int16 x, int16 y) {
-	/*
-	  uint8 rmsk = x % 4,
-	       mask = 1 << rmsk,
-	       *scr = VGA::Page[1] + y * (SCR_WID / 4) + x / 4;
-	  uint8 *m = (char *) M;
-	  uint8  *v = V;
+	const byte *srcP = (const byte *)_v;
+	byte *destEndP = (byte *)Vga::_page[1]->pixels + (SCR_WID * SCR_HIG);
+	byte *lookupTable = _m;
 
-	    asm push    bx
-	    asm push    si
-	    asm push    ds
+	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
+	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
+	// must be decompressed and inserted into the surface
+	for (int planeCtr = 0; planeCtr < 4; ++planeCtr) {
+		byte *destP = (byte *)Vga::_page[1]->getBasePtr(x + planeCtr, y);
 
-	    asm cld
-	    asm les di,scr
-	    asm lds si,v
-	    asm mov bx,m
+		for (;;) {
+			uint16 v = READ_LE_UINT16(srcP);
+			srcP += 2;
+			int cmd = v >> 14;
+			int count = v & 0x3FFF;
 
-	    asm mov al,0x02     // map mask register
-	    asm mov ah,mask
+			if (cmd == 0) {
+				// End of image
+				break;
+			}
 
-	  plane:
-	    // enable output plane
-	    asm mov dx,VGASEQ_
-	    asm out dx,ax
-	    asm push    ax
+			assert(destP < destEndP);
 
-	    // select input plane
-	    asm mov dx,VGAGRA_
-	    asm mov al,0x04     // read map select register
-	    asm mov ah,rmsk
-	    asm out dx,ax
+			if (cmd == 2)
+				++srcP;
+			else if (cmd == 3)
+				srcP += count;
 
-	    asm push    di
+			// Handle a set of pixels
+			while (count-- > 0) {
+				// Transfer operation
+				switch (cmd) {
+				case 1:
+					// SKIP
+					break;
+				case 2:
+				case 3:
+					// TINT
+					*destP = lookupTable[*destP];
+					break;
+				}
 
-	  block:
-	    asm lodsw
-	    asm mov cx,ax
-	    asm and ch,0x3F
-	    asm test    ah,0xC0
-	    asm jz  endpl
-	    asm jns skip
-	    asm jnp incsi       // replicate?
-	    asm add si,cx       // skip over data block
-	    asm dec si      // fix it before following inc
-
-	  incsi:
-	    asm inc si
-	  tint:
-	    asm mov al,es:[di]
-	    //-----------------------------------------------
-	    // asm  xlat    ss:0    // unsupported with BASM!
-	    __emit__(0x36, 0xD7);   // this stands for above!
-	    //-----------------------------------------------
-	    asm stosb
-	    asm loop    tint
-	    asm jmp block
-
-	  skip:
-	    asm add di,cx
-	    asm jmp block
-
-	  endpl:
-	    asm pop di
-	    asm pop ax
-	    asm inc rmsk
-	    asm shl ah,1
-	    asm test    ah,0x10
-	    asm jz  x_chk
-	    asm mov ah,0x01
-	    asm mov rmsk,0
-	    asm inc di
-	  x_chk:
-	    asm cmp ah,mask
-	    asm jne plane
-	    asm pop ds
-	    asm pop si
-	    asm pop bx
-	    */
-	warning("STUB: BITMAP::xShow");
+				// Move to next dest position
+				destP += 4; 
+			}
+		}
+	}
 }
 
 
