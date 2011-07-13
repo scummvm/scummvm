@@ -60,7 +60,7 @@ void OSystem_MacOSX::initBackend() {
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
 #endif // USE_TRANSLATION
 
-	// Replace the SDL generated menu items with our own translated ones on Mac-OSX
+	// Replace the SDL generated menu items with our own translated ones on Mac OS X
 	replaceApplicationMenuItems();
 
 	// Invoke parent implementation of this method
