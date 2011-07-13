@@ -563,6 +563,10 @@ void GfxTinyGL::drawHierachyNode(const Model::HierNode *node) {
 		node->_sibling->draw();
 }
 
+void GfxTinyGL::enableLights() {
+	tglEnable(TGL_LIGHTING);
+}
+
 void GfxTinyGL::disableLights() {
 	tglDisable(TGL_LIGHTING);
 }
