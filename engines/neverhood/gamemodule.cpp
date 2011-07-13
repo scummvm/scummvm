@@ -33,7 +33,7 @@ GameModule::GameModule(NeverhoodEngine *vm)
 	
 	// Other initializations moved to actual engine class
 	
-	// TODO .text:0048AD96
+	// TODO
 
 	// TODO Sound1ChList_sub_407F70(0x2D0031, 0x8861079);
 	

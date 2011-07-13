@@ -58,7 +58,7 @@ Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int
 	_status3(1), _parentScene(parentScene), _flagE2(false), _flagE3(false), _flagF6(false), _flagF7(false),
 	_flagFA(false), _statusE0(0), _field114(0), _resourceHandle(-1), _soundFlag(false) {
 	
-	// TODO .text:0041C4D3 DirtySurface
+	// TODO
 	createSurface(surfacePriority, 320, 200);
 	_x = x;
 	_y = y;

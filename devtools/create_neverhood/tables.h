@@ -22,10 +22,10 @@
 
 static const uint32 hitRectListOffsets[] = {
 	// Scene1001
-	0x004B4858,
+	1, 0x004B4860,
 	// Scene1002
-	0x004B4134,
-	0
+	1, 0x004B4138,
+	0, 0
 };
 
 static const uint32 rectListOffsets[] = {

@@ -146,7 +146,7 @@ void SmackerPlayer::update() {
 		}
 		
 		if (_doubleSurface) {
-			// TODO .text:0046422D				 mov	 byte ptr [eax+28h], 1
+			// TODO
 		}
 
 		// TODO _vm->_screen->_skipUpdate = true;

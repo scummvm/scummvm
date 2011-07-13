@@ -76,6 +76,7 @@ typedef std::vector<RectItem> RectItems;
 struct MessageItem {
 	uint16 messageNum;
 	uint32 messageParam;
+	MessageItem(uint16 msgNum, uint32 msgParam) : messageNum(msgNum), messageParam(msgParam) {}
 };
 
 typedef std::vector<MessageItem> MessageItems;
@@ -103,14 +104,10 @@ byte *getData(uint32 offset) {
 	return data + offset - dataStart + fileStart;
 }
 
-void addHitRect(uint32 offset) {
+void addHitRect(uint32 count, uint32 offset) {
 	HitRectList *hitRectList = new HitRectList();
 	hitRectList->id = offset;
 	byte *item = getData(offset);
-	uint32 count = READ_LE_UINT32(item);
-	//printf("count = %d\n", count);
-	// Align to 16 bytes
-	item = data + ((offset + 4 + 16) & 0xFFFFFFF0) - dataStart + fileStart;
 	for (uint32 i = 0; i < count; i++) {
 		HitRect hitRect;
 		hitRect.x1 = READ_LE_UINT16(item + 0);
@@ -128,15 +125,43 @@ void addHitRect(uint32 offset) {
 void addMessage(uint32 count, uint32 offset) {
 	MessageList *messageList = new MessageList();
 	messageList->id = offset;
-	byte *item = getData(offset);
-	for (uint32 i = 0; i < count; i++) {
-		MessageItem messageItem;
-		messageItem.messageNum = READ_LE_UINT16(item + 0);
-		messageItem.messageParam = READ_LE_UINT32(item + 4);
-		//printf("%04X, %08X\n", messageItem.messageNum, messageItem.messageParam);
-		item += 8;
-		messageList->messageItems.push_back(messageItem);
+	
+	// Special code for message lists which are set at runtime (but otherwise constant)
+	switch (offset) {
+	// Scene 1002 rings
+	case 0x004B4200:
+		messageList->messageItems.push_back(MessageItem(0x4800, 258));
+		messageList->messageItems.push_back(MessageItem(0x100D, 0x4A845A00));
+		messageList->messageItems.push_back(MessageItem(0x4805, 1));
+		break;
+	case 0x004B4218:
+		messageList->messageItems.push_back(MessageItem(0x4800, 297));
+		messageList->messageItems.push_back(MessageItem(0x100D, 0x43807801));
+		messageList->messageItems.push_back(MessageItem(0x4805, 2));
+		break;
+	case 0x004B4230:
+		messageList->messageItems.push_back(MessageItem(0x4800, 370));
+		messageList->messageItems.push_back(MessageItem(0x100D, 0x46C26A01));
+		break;
+	case 0x004B4240:
+		messageList->messageItems.push_back(MessageItem(0x4800, 334));
+		messageList->messageItems.push_back(MessageItem(0x100D, 0x468C7B11));
+		messageList->messageItems.push_back(MessageItem(0x4805, 1));
+		break;
+	case 0x004B4258:
+		messageList->messageItems.push_back(MessageItem(0x4800, 425));
+		messageList->messageItems.push_back(MessageItem(0x100D, 0x42845B19));
+		messageList->messageItems.push_back(MessageItem(0x4805, 1));
+		break;
+	default:
+		// Read message list from the exe
+		byte *item = getData(offset);
+		for (uint32 i = 0; i < count; i++) {
+			messageList->messageItems.push_back(MessageItem(READ_LE_UINT16(item + 0), READ_LE_UINT32(item + 4)));
+			item += 8;
+		}
 	}
+	
 	messageLists.push_back(messageList);	   
 }
 
@@ -180,8 +205,8 @@ int main(int argc, char *argv[]) {
 
 	loadExe("nhc.exe");
 
-	for (int i = 0; hitRectListOffsets[i] != 0; i++) {
-		addHitRect(hitRectListOffsets[i]);
+	for (int i = 0; hitRectListOffsets[i] != 0; i += 2) {
+		addHitRect(hitRectListOffsets[i], hitRectListOffsets[i + 1]);
 	}
 
 	for (int i = 0; rectListOffsets[i] != 0; i += 2) {
