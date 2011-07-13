@@ -22,7 +22,8 @@ MODULE_OBJS := \
 	text.o \
 	vga13h.o \
 	vmenu.o \
-	vol.o
+	vol.o \
+	walk.o
 
 MODULE_DIRS += \
 	engines/cge

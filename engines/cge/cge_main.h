@@ -86,12 +86,6 @@ namespace CGE {
 #define BUTTON_NY      3
 #define MINI_X         86
 #define MINI_Y         162
-#define MAP_XCNT       40
-#define MAP_ZCNT       20
-#define MAP_TOP        80
-#define MAP_HIG        80
-#define MAP_XGRID      (SCR_WID / MAP_XCNT)
-#define MAP_ZGRID      (MAP_HIG / MAP_ZCNT)
 #define LINE_MAX       512
 #define USER_MAX       100
 #define SHP_MAX        1024
@@ -129,40 +123,6 @@ private:
 };
 
 
-class Cluster : public Couple {
-public:
-	static uint8 _map[MAP_ZCNT][MAP_XCNT];
-	uint8 &cell();
-	Cluster() : Couple() { }
-	Cluster(int a, int b) : Couple(a, b) { }
-	bool Protected();
-};
-
-
-class WALK : public Sprite {
-public:
-	Cluster _here;
-	int _tracePtr;
-
-	enum DIR { NO_DIR = -1, NN, EE, SS, WW } Dir;
-	WALK(CGEEngine *vm, BMP_PTR *shpl);
-	void tick();
-	void findWay(Cluster c);
-	void findWay(Sprite *spr);
-	int distance(Sprite *spr);
-	void turn(DIR d);
-	void park();
-	bool lower(Sprite *spr);
-	void reach(Sprite *spr, int mode = -1);
-private:
-	CGEEngine *_vm;
-
-};
-
-Cluster XZ(int x, int y);
-Cluster XZ(Couple xy);
-
-extern WALK *_hero;
 extern Vga *_vga;
 extern Heart *_heart;
 extern System *_sys;
