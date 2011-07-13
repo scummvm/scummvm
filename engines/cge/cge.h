@@ -45,8 +45,14 @@ enum {
     kCGEDebug = 1 << 0
 };
 
-enum SNLIST { NEAR, TAKE };
-enum CALLBACK { NULLCB = 0, QGAME, MINISTEP, XCAVE, SELECTSOUND, SNSELECT, SNDSETVOLUME };
+enum SnList {
+	kNear, kTake
+};
+
+enum CallbackType {
+	kNullCB = 0, kQGame, kMiniStep, kXCave, kSelectSound,
+	kSnSelect,   kSndSetVolume
+};
 
 #define POCKET_NX   8
 
@@ -126,7 +132,7 @@ public:
 	void expandSprite(Sprite *spr);
 	void contractSprite(Sprite *spr);
 	int  findPocket(Sprite *spr);
-	void feedSnail(Sprite *spr, SNLIST snq);
+	void feedSnail(Sprite *spr, SnList snq);
 	void pocFul();
 	void hide1(Sprite *spr);
 	void loadMapping();

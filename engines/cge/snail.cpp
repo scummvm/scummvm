@@ -307,10 +307,10 @@ void CGEEngine::snGhost(Bitmap *bmp) {
 	delete bmp;
 }
 
-void CGEEngine::feedSnail(Sprite *spr, SNLIST snq) {
+void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 	if (spr)
 		if (spr->active()) {
-			uint8 ptr = (snq == TAKE) ? spr->_takePtr : spr->_nearPtr;
+			uint8 ptr = (snq == kTake) ? spr->_takePtr : spr->_nearPtr;
 
 			if (ptr != NO_PTR) {
 				Snail::Com *comtab = spr->snList(snq);
@@ -335,7 +335,7 @@ void CGEEngine::feedSnail(Sprite *spr, SNLIST snq) {
 					if (c->_com == SNNEXT) {
 						Sprite *s = (c->_ref < 0) ? spr : locate(c->_ref);
 						if (s) {
-							uint8 *idx = (snq == TAKE) ? &s->_takePtr : &s->_nearPtr;
+							uint8 *idx = (snq == kTake) ? &s->_takePtr : &s->_nearPtr;
 							if (*idx != NO_PTR) {
 								int v;
 								switch (c->_val) {
@@ -411,7 +411,7 @@ void Snail::addCom(SNCOM com, int ref, int val, void *ptr) {
 	snc->_ref = ref;
 	snc->_val = val;
 	snc->_ptr = ptr;
-	snc->_cbType = NULLCB;
+	snc->_cbType = kNullCB;
 	if (com == SNCLEAR) {
 		_tail = _head;
 		killText();
@@ -419,7 +419,7 @@ void Snail::addCom(SNCOM com, int ref, int val, void *ptr) {
 	}
 }
 
-void Snail::addCom2(SNCOM com, int ref, int val, CALLBACK cbType) {
+void Snail::addCom2(SNCOM com, int ref, int val, CallbackType cbType) {
 	Com *snc = &_snList[_head++];
 	snc->_com = com;
 	snc->_ref = ref;
@@ -603,7 +603,7 @@ void CGEEngine::snCover(Sprite *spr, int xref) {
 			_vga->_showQ->insert(_vga->_showQ->remove(spr->_prev), xspr);
 			spr->_flags._shad = false;
 		}
-		feedSnail(xspr, NEAR);
+		feedSnail(xspr, kNear);
 	}
 }
 
@@ -1057,24 +1057,26 @@ void Snail::runCom() {
 				break;
 			case SNEXEC     :
 				switch (snc->_cbType) {
-				case QGAME:
+				case kQGame:
 					_vm->qGame();
 					break;
-				case MINISTEP:
+				case kMiniStep:
 					_vm->miniStep(snc->_val);
 					break;
-				case XCAVE:
+				case kXCave:
 					_vm->xCave();
 					break;
-				case SELECTSOUND:
+				case kSelectSound:
 					_vm->selectSound();
 					break;
-				case SNSELECT:
+				case kSnSelect:
 					_vm->snSelect();
 					break;
-				case SNDSETVOLUME:
+				case kSndSetVolume:
 					sndSetVolume();
 					break;
+				default:
+					error("Unknown Callback Type in SNEXEC");
 				}
 				break;
 			case SNSTEP     :

@@ -142,7 +142,7 @@ void Mixer::update() {
 	_led[0]->step(_sndDrvInfo.Vol4._ml);
 	_led[1]->step(_sndDrvInfo.Vol4._dl);
 
-	SNPOST2_(SNEXEC, -1, 0, SNDSETVOLUME);
+	SNPOST2_(SNEXEC, -1, 0, kSndSetVolume);
 }
 
 } // End of namespace CGE
