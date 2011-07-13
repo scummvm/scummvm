@@ -53,7 +53,11 @@ void replaceApplicationMenuItems() {
 	appleMenu = [[NSMenu alloc] initWithTitle:@""];
 
 	// Get current encoding
+#ifdef USE_TRANSLATION
 	NSStringEncoding stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[NSString stringWithCString:(TransMan.getCurrentCharset()).c_str() encoding:NSASCIIStringEncoding]));
+#else
+	NSStringEncoding stringEncoding = NSASCIIStringEncoding;
+#endif
 	
 	// Add "About ScummVM" menu item
 	[appleMenu addItemWithTitle:[NSString stringWithCString:_("About ScummVM") encoding:stringEncoding] action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
