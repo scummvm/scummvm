@@ -476,10 +476,10 @@ bool Sprite::seqTest(int n) {
 }
 
 
-Snail::Com *Sprite::snList(SNLIST type) {
+Snail::Com *Sprite::snList(SnList type) {
 	register SprExt *e = _ext;
 	if (e)
-		return (type == NEAR) ? e->_near : e->_take;
+		return (type == kNear) ? e->_near : e->_take;
 	return NULL;
 }
 

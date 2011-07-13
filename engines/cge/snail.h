@@ -79,7 +79,7 @@ public:
 		int _ref;
 		int _val;
 		void *_ptr;
-		CALLBACK _cbType;
+		CallbackType _cbType;
 	} *_snList;
 	uint8 _head;
 	uint8 _tail;
@@ -93,7 +93,7 @@ public:
 	~Snail();
 	void runCom();
 	void addCom(SNCOM com, int ref, int val, void *ptr);
-	void addCom2(SNCOM com, int ref, int val, CALLBACK cbType);
+	void addCom2(SNCOM com, int ref, int val, CallbackType cbType);
 	void insCom(SNCOM com, int ref, int val, void *ptr);
 	bool idle();
 private:

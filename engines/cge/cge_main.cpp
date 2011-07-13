@@ -355,7 +355,7 @@ void WALK::tick() {
 		for (spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 			if (distance(spr) < 2) {
 				if (!spr->_flags._near) {
-					_vm->feedSnail(spr, NEAR);
+					_vm->feedSnail(spr, kNear);
 					spr->_flags._near = true;
 				}
 			} else {
@@ -601,7 +601,7 @@ void CGEEngine::miniStep(int stp) {
 static void postMiniStep(int stp) {
 	static int recent = -2;
 	if (_miniCave && stp != recent)
-		SNPOST2_(SNEXEC, -1, recent = stp, MINISTEP);
+		SNPOST2_(SNEXEC, -1, recent = stp, kMiniStep);
 }
 
 void System::setPal() {
@@ -685,7 +685,7 @@ void CGEEngine::caveUp() {
 		_vga->_showQ->insert(_shadow, _hero);
 		_shadow->_z = _hero->_z;
 	}
-	feedSnail(_vga->_showQ->locate(BakRef + 999), TAKE);
+	feedSnail(_vga->_showQ->locate(BakRef + 999), kTake);
 	_vga->show();
 	_vga->copyPage(1, 0);
 	_vga->show();
@@ -707,7 +707,7 @@ void CGEEngine::caveDown() {
 		Sprite *n = spr->_next;
 		if (spr->_ref >= 1000 /*&& spr->_cave*/) {
 			if (spr->_ref % 1000 == 999)
-				feedSnail(spr, TAKE);
+				feedSnail(spr, kTake);
 			_vga->_spareQ->append(_vga->_showQ->remove(spr));
 		}
 		spr = n;
@@ -742,7 +742,7 @@ void CGEEngine::switchCave(int cav) {
 		_heart->_enable = false;
 		if (cav < 0) {
 			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
-			SNPOST2(SNEXEC,  -1, 0, QGAME); // switch cave
+			SNPOST2(SNEXEC,  -1, 0, kQGame); // switch cave
 		} else {
 			_now = cav;
 			_mouse->off();
@@ -760,7 +760,7 @@ void CGEEngine::switchCave(int cav) {
 			if (!_startupMode)
 				keyClick();
 			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
-			SNPOST2(SNEXEC,   0, 0, XCAVE); // switch cave
+			SNPOST2(SNEXEC,   0, 0, kXCave); // switch cave
 		}
 	}
 }
@@ -991,7 +991,7 @@ void CGEEngine::switchMusic() {
 			SNPOST_(SNKILL, -1, 0, Vmenu::_addr);
 		else {
 			SNPOST_(SNSEQ, 122, (_music = false), NULL);
-			SNPOST2(SNEXEC, -1, 0, SELECTSOUND);
+			SNPOST2(SNEXEC, -1, 0, kSelectSound);
 		}
 	} else {
 		if (Startup::_core < CORE_HIG)
@@ -1217,7 +1217,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 			if (ps) {
 				if (_flags._kept || _hero->distance(this) < MAX_DISTANCE) {
 					if (works(ps)) {
-						_vm->feedSnail(ps, TAKE);
+						_vm->feedSnail(ps, kTake);
 					} else
 						_vm->offUse();
 					_vm->selectPocket(-1);
@@ -1239,10 +1239,10 @@ void Sprite::touch(uint16 mask, int x, int y) {
 							}
 						} else {
 							if (_takePtr != NO_PTR) {
-								if (snList(TAKE)[_takePtr]._com == SNNEXT)
+								if (snList(kTake)[_takePtr]._com == SNNEXT)
 									_vm->offUse();
 								else
-									_vm->feedSnail(this, TAKE);
+									_vm->feedSnail(this, kTake);
 							} else
 								_vm->offUse();
 						}
@@ -1662,7 +1662,7 @@ void CGEEngine::runGame() {
 	// main loop
 	while (!_finis && !_eventManager->_quitFlag) {
 		if (_finis)
-			SNPOST2(SNEXEC,  -1, 0, QGAME);
+			SNPOST2(SNEXEC,  -1, 0, kQGame);
 		mainLoop();
 	}
 
@@ -1686,7 +1686,7 @@ void CGEEngine::movie(const char *ext) {
 	if (INI_FILE::exist(fn)) {
 		loadScript(fn);
 		expandSprite(_vga->_spareQ->locate(999));
-		feedSnail(_vga->_showQ->locate(999), TAKE);
+		feedSnail(_vga->_showQ->locate(999), kTake);
 
 		_vga->_showQ->append(_mouse);
 

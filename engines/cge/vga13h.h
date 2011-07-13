@@ -222,7 +222,7 @@ public:
 	void killXlat();
 	void step(int nr = -1);
 	Seq *setSeq(Seq *seq);
-	Snail::Com *snList(SNLIST type);
+	Snail::Com *snList(SnList type);
 	virtual void touch(uint16 mask, int x, int y);
 	virtual void tick();
 	void sync(Common::Serializer &s);
