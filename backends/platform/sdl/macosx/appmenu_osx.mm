@@ -60,7 +60,7 @@ void replaceApplicationMenuItems() {
 	// Add "About ScummVM" menu item
 	[appleMenu addItemWithTitle:[NSString stringWithCString:_("About ScummVM") encoding:stringEncoding] action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
 
-	// Add seperator
+	// Add separator
 	[appleMenu addItem:[NSMenuItem separatorItem]];
 
 	// Add "Hide ScummVM" menu item
@@ -73,7 +73,7 @@ void replaceApplicationMenuItems() {
 	// Add "Show All" menu item
 	[appleMenu addItemWithTitle:[NSString stringWithCString:_("Show All") encoding:stringEncoding] action:@selector(unhideAllApplications:) keyEquivalent:@""];
 
-	// Add seperator
+	// Add separator
 	[appleMenu addItem:[NSMenuItem separatorItem]];
 
 	// Add "Quit ScummVM" menu item
