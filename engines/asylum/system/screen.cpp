@@ -480,13 +480,15 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 			if (isMirrored) {
 				blitTranstableMirrored((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
 				                       (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->right - 1,
-				                       destination->width() + (destination->height() << 16),
+				                       destination->height(),
+				                       destination->width(),
 				                       destination->width() + frame->surface.pitch,
 				                       frame->surface.pitch - destination->width());
 			} else {
 				blitTranstable((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
 				               (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->left,
-				               destination->width() + (destination->height() << 16),
+				               destination->height(),
+				               destination->width(),
 				               frame->surface.pitch - destination->width(),
 				               _backBuffer.pitch    - destination->width());
 			}
@@ -532,12 +534,34 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 	}
 }
 
-void Screen::blitTranstable(byte *dstBuffer, byte *srcBuffer, int32 widthHeight, int32 srcPitch, int32 dstPitch) {
-	error("[Screen::blitTranstable] Not implemented");
+void Screen::blitTranstable(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
+	while (height--) {
+		for (int16 i = 0; i < width; i++) {
+			if (*srcBuffer)
+				*dstBuffer = _transTableIndex[*srcBuffer]; // FIXME: is this the correct offset (total table size: 65535)
+
+			dstBuffer++;
+			srcBuffer++;
+		}
+
+		dstBuffer += dstPitch;
+		srcBuffer += srcPitch;
+	}
 }
 
-void Screen::blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int32 widthHeight, int32 srcPitch, int32 dstPitch) {
-	error("[Screen::blitTranstableMirrored] Not implemented");
+void Screen::blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
+	while (height--) {
+		for (int16 i = width; i; --i) {
+			if (*srcBuffer)
+				*dstBuffer = _transTableIndex[*srcBuffer]; // FIXME: is this the correct offset (total table size: 65535)
+
+			dstBuffer++;
+			srcBuffer--;
+		}
+
+		dstBuffer += dstPitch;
+		srcBuffer += srcPitch;
+	}
 }
 
 void Screen::blitMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {

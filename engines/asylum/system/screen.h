@@ -152,8 +152,8 @@ private:
 
 	// Screen blitting
 	void blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags);
-	void blitTranstable(byte *dstBuffer, byte *srcBuffer, int32 widthHeight, int32 srcPitch, int32 dstPitch);
-	void blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int32 widthHeight, int32 srcPitch, int32 dstPitch);
+	void blitTranstable(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch);
+	void blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch);
 	void blitMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch);
 	void blitMirroredColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch);
 	void blitRaw(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch);
