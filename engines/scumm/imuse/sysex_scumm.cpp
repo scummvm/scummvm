@@ -81,20 +81,19 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 					se->reallocateMidiChannels(player->_midi);
 				}
 			} else {
-				// Even in cases where a program does not seem to be specified,
-				// i.e. bytes 15 and 16 are 0, we send a program change because
-				// 0 is a valid program number. MI2 tests show that in such
-				// cases, a regular program change message always seems to follow
-				// anyway.
 				if (player->_isMIDI) {
+					// Even in cases where a program does not seem to be specified,
+					// i.e. bytes 15 and 16 are 0, we send a program change because
+					// 0 is a valid program number. MI2 tests show that in such
+					// cases, a regular program change message always seems to follow
+					// anyway.
 					part->_instrument.program(buf[8], player->_isMT32);
-				} else if (se->_pcSpeaker) {
-					// FIXME/HACK: This is only needed here, since when we use the following line:
-					// se->copyGlobalInstrument(buf[8], &part->_instrument);
-					// We would not get any instrument for PC Speaker. Because we don't default to an
-					// "empty" instrument in case the global instrument specified is not set up.
-					byte empty[23] = {0};
-					part->_instrument.pcspk(empty);
+				} else {
+					// Like the original we set up the instrument data of the
+					// specified program here too. In case the global
+					// instrument data is not loaded already, this will take
+					// care of setting a default instrument too.
+					se->copyGlobalInstrument(buf[8], &part->_instrument);
 				}
 				part->sendAll();
 			}
