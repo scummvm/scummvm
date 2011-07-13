@@ -880,6 +880,7 @@ void Queue::insert(Sprite *spr, Sprite *nxt) {
 		if (!_tail)
 			_tail = spr;
 	} else {
+		assert(nxt);
 		spr->_next = nxt;
 		spr->_prev = nxt->_prev;
 		if (spr->_prev)
