@@ -99,6 +99,18 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"Extracted",
+			AD_ENTRY1("GEMCUT.EMC", "689b62b7519215c1b2571d466c95624c"),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIPCSPK
+		},
+		KYRA1_FLOPPY_FLAGS
+	},
+	{
+		{
+			"kyra1",
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -965,6 +977,24 @@ const KYRAGameDescription adGameDescs[] = {
 				{ 0, 0, 0, 0 }
 			},
 			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
+				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
+				{ "VOC.PAK", 0, "eb398f09ba3321d872b6174a68a987d9", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::RU_RUS,
 			Common::kPlatformPC,
 			ADGF_DROPLANGUAGE | ADGF_CD,
 			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
