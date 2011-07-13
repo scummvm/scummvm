@@ -159,6 +159,7 @@ private:
 	void blitRaw(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch);
 	void blitRawColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch);
 	void blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, int maskHeight, Common::Rect *destination, int32 flags);
+	void bltMasked(byte *srcBuffer, byte *maskBuffer, int16 width, int16 height, int16 srcPitch, int16 maskPitch, char maskLeft, byte *dstBuffer, int16 dstPitch);
 	void blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int widthHeight, uint32 srcPitch, uint32 dstPitch, uint32 objectPitch);
 
 	// DirectDraw-equivalent functions
