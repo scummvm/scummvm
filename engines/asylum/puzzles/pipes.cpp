@@ -304,6 +304,7 @@ PuzzlePipes::PuzzlePipes(AsylumEngine *engine) : Puzzle(engine) {
 	_rectIndex = -2;
 
 	_frameIndex = _frameIndexLever = 0;
+	memset(_previousLevels, 0, sizeof(_previousLevels));
 	memset(&_levelFlags, false, sizeof(_levelFlags));
 	_levelFlags[4] = true;
 }
@@ -347,11 +348,15 @@ bool PuzzlePipes::update(const AsylumEvent &evt) {
 	for (uint32 i = 0; i < ARRAYSIZE(_connectors); ++i)
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[_connectorResources[_connectors[i].getState()]], 0, connectorPoints[i], kDrawFlagNone, 0, 1);
 
-	// TODO: continuous progressbars
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(210, 444 - uint32(_levelValues[0] * 52)), kDrawFlagNone, 0, 3);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(276, 455 - uint32(_levelValues[1] * 52)), kDrawFlagNone, 0, 3);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(376, 448 - uint32(_levelValues[2] * 52)), kDrawFlagNone, 0, 3);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(458, 442 - uint32(_levelValues[3] * 52)), kDrawFlagNone, 0, 3);
+	for (uint32 i = 0; i < 4; ++i) {
+		if (fabs(_levelValues[i] - _previousLevels[i]) > 0.005)
+			_previousLevels[i] += _levelValues[i] > _previousLevels[i] ? 0.01 : -0.01;
+	}
+
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(210, 444 - uint32(_previousLevels[0] * 52)), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(276, 455 - uint32(_previousLevels[1] * 52)), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(376, 448 - uint32(_previousLevels[2] * 52)), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(458, 442 - uint32(_previousLevels[3] * 52)), kDrawFlagNone, 0, 3);
 
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[33], 0, Common::Point(204, 377), kDrawFlagNone, 0, 1);
 
