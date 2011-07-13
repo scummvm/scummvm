@@ -58,6 +58,7 @@ void CGEEngine::setup() {
 	// Initialise fields
 	_lastFrame = 0;
 	_hero = NULL;
+	_shadow = NULL;
 
 	// Create debugger console
 	_console = new CGEConsole(this);
@@ -81,8 +82,6 @@ void CGEEngine::setup() {
 	_sprite = new Sprite(this, NULL);
 	_miniCave = new Sprite(this, NULL);
 	_miniCave->_flags._kill = false;
-	_shadow = new Sprite(this, NULL);
-	_shadow->_flags._kill = false;
 	_horzLine = new HorizLine(this);
 	_infoLine = new InfoLine(this, INFO_W);
 	_cavLight = new CavLight(this);

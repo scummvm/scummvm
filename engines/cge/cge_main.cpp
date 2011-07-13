@@ -1629,6 +1629,7 @@ void CGEEngine::runGame() {
 			if ((_shadow = _sprite) != NULL) {
 				_shadow->_ref = 2;
 				_shadow->_flags._tran = true;
+				_shadow->_flags._kill = false;
 				_hero->_flags._shad = true;
 				_vga->_showQ->insert(_vga->_spareQ->remove(_shadow), _hero);
 			}
