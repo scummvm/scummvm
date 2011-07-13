@@ -192,7 +192,7 @@ void CGEEngine::snSelect() {
 static void select(Choice *cho, int hlp) {
 	_cho = cho;
 	_hlp = hlp;
-	SNPOST2(SNEXEC, -1, 0, SNSELECT);
+	SNPOST2(SNEXEC, -1, 0, kSnSelect);
 }
 
 
