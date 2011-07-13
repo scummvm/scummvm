@@ -526,6 +526,10 @@ void GfxOpenGL::drawHierachyNode(const Model::HierNode *node) {
 		node->_sibling->draw();
 }
 
+void GfxOpenGL::enableLights() {
+	glEnable(GL_LIGHTING);
+}
+
 void GfxOpenGL::disableLights() {
 	glDisable(GL_LIGHTING);
 }

@@ -611,8 +611,14 @@ void Model::Mesh::draw() const {
 		g_winY2 = MAX(g_winY2, winY2);
 	}
 
+	if (_lightingMode == 0)
+		g_driver->disableLights();
+
 	for (int i = 0; i < _numFaces; i++)
 		_faces[i].draw(_vertices, _vertNormals, _textureVerts);
+
+	if (_lightingMode == 0)
+		g_driver->enableLights();
 }
 
 void Model::Face::draw(float *vertices, float *vertNormals, float *textureVerts) const {

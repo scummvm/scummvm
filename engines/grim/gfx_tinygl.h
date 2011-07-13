@@ -66,6 +66,7 @@ public:
 	void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts);
 	void drawSprite(const Sprite *sprite);
 
+	void enableLights();
 	void disableLights();
 	void setupLight(Scene::Light *light, int lightId);
 
