@@ -114,16 +114,16 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 		resourceMask = getResource()->get(resourceIdDestination);
 
 		// Adjust masked rectangles
-		srcMask = Common::Rect(0, 0, resourceMask->getData(0), resourceMask->getData(4));
+		srcMask = Common::Rect(0, 0, resourceMask->getData(4), resourceMask->getData(0));
 
-		destMask = Common::Rect(destination.y,
-		                        destination.x,
-		                        destination.y + resourceMask->getData(0),
-		                        destination.x + resourceMask->getData(4));
+		destMask = Common::Rect(destination.x,
+		                        destination.y,
+		                        destination.x + resourceMask->getData(4),
+		                        destination.y + resourceMask->getData(0));
 
 		clip(&srcMask, &destMask, 0);
 
-		if (dest.intersects(destMask))
+		if (!dest.intersects(destMask))
 			masked = false;
 	}
 
@@ -541,24 +541,155 @@ void Screen::blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int32 widt
 }
 
 void Screen::blitMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
-	error("[Screen::blitMirrored] Not implemented");
+	while (height--) {
+		for (int16 i = width; i; --i) {
+			*dstBuffer = *srcBuffer;
+
+			dstBuffer++;
+			srcBuffer--;
+		}
+
+		dstBuffer += dstPitch;
+		srcBuffer += srcPitch;
+	}
 }
 
 void Screen::blitMirroredColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
-	error("[Screen::blitMirroredColorKey] Not implemented");
+	while (height--) {
+		for (int16 i = width; i; --i) {
+			if (*srcBuffer != 0)
+				*dstBuffer = *srcBuffer;
+
+			dstBuffer++;
+			srcBuffer--;
+		}
+
+		dstBuffer += dstPitch;
+		srcBuffer += srcPitch;
+	}
 }
 
 void Screen::blitRaw(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
-	error("[Screen::blitRaw] Not implemented");
+	while (height--) {
+		memcpy(dstBuffer, srcBuffer, width);
+		dstBuffer += dstPitch;
+		srcBuffer += srcPitch;
+	}
 }
 
 void Screen::blitRawColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
-	error("[Screen::blitRawColorKey] Not implemented");
+	while (height--) {
+		for (int16 i = 0; i < width; i++) {
+			if (*srcBuffer != 0)
+				*dstBuffer = *srcBuffer;
+
+			dstBuffer++;
+			srcBuffer++;
+		}
+
+		dstBuffer += dstPitch;
+		srcBuffer += srcPitch;
+	}
 }
 
 void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, int maskHeight, Common::Rect *destination, int32 flags) {
-	// TODO
-	blit(frame, source, destination, flags);
+	byte *frameBuffer = (byte *)frame->surface.pixels;
+	byte *mirroredBuffer = NULL;
+	int16 frameRight = frame->surface.pitch;
+	int16 srcMaskLeft = abs(sourceMask->left);
+
+	// Prepare temporary source buffer if needed
+	if (flags & kDrawFlagMirrorLeftRight) {
+		mirroredBuffer = (byte *)malloc(source->right * source->bottom);
+		blitMirrored(mirroredBuffer,
+		             frameBuffer + source->right - 1,
+		             source->bottom,
+		             source->right,
+		             source->right + frame->surface.pitch,
+		             0);
+
+		frameBuffer = mirroredBuffer;
+		frameRight = source->right;
+
+		source->right -= source->left;
+		source->left = 0;
+	}
+
+	// Setup buffers and rectangles
+	byte *frameBufferPtr = frameBuffer + source->top     * frameRight       + source->left;
+	byte *maskBufferPtr  = maskData    + sourceMask->top * (maskHeight / 8) + sourceMask->left / 8;
+
+	// Check if we need to draw masked
+	if ((destMask->left    + sourceMask->width())  < destination->left
+	 || (destination->left + source->width())      < destMask->left
+	 || (destMask->top     + sourceMask->height()) < destination->top
+	 || (destination->top  + source->height())     < destMask->top) {
+
+		blitRawColorKey((byte *)_backBuffer.pixels + destination->top * _backBuffer.pitch + destination->left,
+		                frameBufferPtr,
+		                source->height(),
+		                source->width(),
+		                frameRight        - source->width(),
+		                _backBuffer.pitch - source->width());
+
+		// cleanup
+		delete mirroredBuffer;
+
+		return;
+	}
+
+	if (destination->left > destMask->left) {
+		sourceMask->setWidth(sourceMask->width() + destMask->left - destination->left);
+		maskBufferPtr += (destination->left - destMask->left) / 8 + abs(destination->left - destMask->left) / 8;
+		srcMaskLeft = abs(destination->left - destMask->left);
+	}
+
+	if (destination->top > destMask->top) {
+		maskBufferPtr += (destination->top - destMask->top) * maskHeight / 8;
+		destMask->top = destination->top;
+		sourceMask->setHeight(sourceMask->height() + destMask->top - destination->top);
+	}
+
+	if (destination->left < destMask->left) {
+		blitRawColorKey((byte *)_backBuffer.pixels + destination->top * _backBuffer.pitch + destination->left,
+		                frameBufferPtr,
+		                source->height(),
+		                destMask->left - destination->left,
+		                destination->left + frameRight - destMask->left,
+		                destination->left + _backBuffer.pitch - destMask->left);
+
+		destination->left = destMask->left;
+		frameBufferPtr += destMask->left - destination->left;
+		source->setWidth(source->width() + destination->left - destMask->left);
+	}
+
+	if ((source->width() + destination->left) > (destMask->left + sourceMask->width())) {
+		blitRawColorKey((byte *)_backBuffer.pixels + (destMask->top + sourceMask->height()) * _backBuffer.pitch + destination->left,
+		                frameBufferPtr + (destMask->top + sourceMask->height() - destination->top) * frameRight,
+		                destination->top + source->height() - sourceMask->height() - destMask->top,
+		                source->width(),
+		                frameRight - source->width(),
+		                _backBuffer.pitch - source->width());
+
+		source->setHeight(destMask->top + sourceMask->height() - destination->top);
+	}
+
+	bltMasked(frameBufferPtr,
+	          maskBufferPtr,
+	          source->width(),
+	          source->height(),
+	          frameRight - source->width(),
+	          (maskHeight - srcMaskLeft - source->width()) / 8,
+	          srcMaskLeft,
+	          (byte *)_backBuffer.pixels + _backBuffer.pitch * destination->top + destination->left,
+	          _backBuffer.pitch - source->width());
+
+	// Cleanup
+	delete mirroredBuffer;
+}
+
+void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 width, int16 height, int16 srcPitch, int16 maskPitch, char maskLeft, byte *dstBuffer, int16 dstPitch) {
+	error("[Screen::bltMasked] Not implemented");
 }
 
 void Screen::blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int widthHeight, uint32 srcPitch, uint32 dstPitch, uint32 objectPitch) {
