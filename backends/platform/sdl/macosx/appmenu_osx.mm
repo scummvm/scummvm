@@ -25,7 +25,7 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/platform/sdl/macosx/appMenu_osx.h"
+#include "backends/platform/sdl/macosx/appmenu_osx.h"
 #include "common/translation.h"
 
 #include <Cocoa/Cocoa.h>

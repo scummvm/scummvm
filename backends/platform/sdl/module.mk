@@ -15,7 +15,7 @@ ifdef MACOSX
 MODULE_OBJS += \
 	macosx/macosx-main.o \
 	macosx/macosx.o \
-	macosx/appMenu_osx.o
+	macosx/appmenu_osx.o
 endif
 
 ifdef WIN32
