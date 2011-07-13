@@ -20,8 +20,6 @@
  *
  */
 
-#if defined(MACOSX)
-
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
@@ -110,5 +108,3 @@ void replaceApplicationMenuItems() {
 	[windowMenu release];
 	[menuItem release];
 }
-
-#endif // MACOSX
