@@ -706,6 +706,9 @@ void Scene::addObjectState(ObjectState *s) {
 void Scene::moveObjectStateToFront(ObjectState *s) {
 	_states.remove(s);
 	_states.push_front(s);
+	// Make the state invisible. This hides the deadbolt when brennis closes the switcher door
+	// in the server room (tu), and therefore fixes https://github.com/residual/residual/issues/24
+	s->setNumber(0);
 }
 
 void Scene::moveObjectStateToBack(ObjectState *s) {
