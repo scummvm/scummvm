@@ -59,7 +59,10 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 	// Next four bytes are the type
 	_type = READ_LE_UINT32(data + 48);
 	// Next four bytes are the frames per second
-	_fps = get_float(data + 52);
+	// The fps value seems to be ignored and causes the animation the first time manny
+	// enters the kitchen of the Blue Casket to go out of sync. So we force it to 15.
+// 	_fps = get_float(data + 52);
+	_fps = 15.;
 	// Next four bytes are the number of frames
 	_numFrames = READ_LE_UINT32(data + 56);
 	// Next four bytes are the number of joints
