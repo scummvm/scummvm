@@ -2019,9 +2019,9 @@ bool Scene::speak(Common::KeyCode code) {
 
 bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
 	if (rect.top || rect.left || rect.bottom || rect.right) {
-		Common::Rational res((rect.bottom - rect.top) * (point.x - rect.left), rect.right - rect.left);
+		Common::Rational res(rect.height() * (point.x - rect.left), rect.width());
 
-		return (bool)(point.y > rect.top ? 1 + res.toInt() : res.toInt());
+		return (bool)(point.y > (rect.top + res.toInt()));
 	}
 
 	return true;
@@ -2425,7 +2425,6 @@ void Scene::processUpdateList() {
 	for (uint32 i = 0; i < _updateList.size(); i++) {
 		Actor *actor = getActor(_updateList[i].index);
 		int32 priority = _updateList[i].priority;
-		Common::Point point;
 
 		// Check priority
 		if (priority < 0) {
@@ -2440,7 +2439,7 @@ void Scene::processUpdateList() {
 		} else {
 			actor->setField938(1);
 			actor->setField934(0);
-			point = *actor->getPoint1() + *actor->getPoint2();
+			Common::Point sum = *actor->getPoint1() + *actor->getPoint2();
 
 			int32 bottomRight = actor->getPoint1()->y + actor->getBoundingRect()->bottom + 4;
 
@@ -2459,48 +2458,56 @@ void Scene::processUpdateList() {
 					continue;
 
 				// Check that the rects are contained
-				if (!rectIntersect(object->x, object->y, object->x + object->getBoundingRect()->right, object->y + object->getBoundingRect()->bottom,
-				                   actor->getPoint1()->x, actor->getPoint1()->y, actor->getPoint1()->x + actor->getBoundingRect()->right, bottomRight)) {
+				if (!rectIntersect(object->x,
+				                   object->y,
+				                   object->x + object->getBoundingRect()->right,
+				                   object->y + object->getBoundingRect()->bottom,
+				                   actor->getPoint1()->x,
+				                   actor->getPoint1()->y,
+				                   actor->getPoint1()->x + actor->getBoundingRect()->right,
+				                   bottomRight)) {
 
 					if (BYTE1(object->flags) & kObjectFlag20 && !(BYTE1(object->flags) & kObjectFlag80))
-						object->flags = BYTE1(object->flags) | kObjectFlag40;
+						BYTE1(object->flags) = BYTE1(object->flags) | kObjectFlag40;
 
 					continue;
 				}
 
 				// Check if it intersects with either the object rect or the related polygon
-				bool notIntersects = false;
+				bool isMasked = false;
 				if (object->flags & kObjectFlag2) {
-					notIntersects = !pointIntersectsRect(point, *object->getRect());
+					isMasked = !pointIntersectsRect(sum, *object->getRect());
 				} else if (object->flags & kObjectFlag40) {
 					PolyDefinitions *poly = &_polygons->entries[object->getPolygonIndex()];
-					notIntersects = poly->contains(point);
+					isMasked = poly->contains(sum);
 				}
 
 				// Adjust object flags
-				if (BYTE1(object->flags) & kObjectFlag80 || notIntersects) {
+				if (BYTE1(object->flags) & kObjectFlag80 || isMasked) {
 					if (BYTE1(object->flags) & kObjectFlag20)
-						object->flags = BYTE1(object->flags) & kObjectFlagBF | kObjectFlag80;
+						BYTE1(object->flags) = BYTE1(object->flags) & kObjectFlagBF | kObjectFlag80;
 				} else {
 					if (BYTE1(object->flags) & kObjectFlag20) {
-						object->flags = BYTE1(object->flags) | kObjectFlag40;
+						BYTE1(object->flags) = BYTE1(object->flags) | kObjectFlag40;
 					}
 				}
 
 				if (LOBYTE(object->flags) & kObjectFlag4) {
-					if (notIntersects && (actor->flags & kActorFlagMasked))
-						error("[Scene::processUpdateList] Assigning mask to masked character (%s)", actor->getName());
+					if (isMasked) {
+						if (actor->flags & kActorFlagMasked)
+							error("[Scene::processUpdateList] Assigning mask to masked character (%s)", actor->getName());
 
-					object->adjustCoordinates(&point);
-					actor->setObjectIndex(j);
-					actor->flags |= kActorFlagMasked;
+						// We are masked by the object!
+						actor->setObjectIndex(j);
+						actor->flags |= kActorFlagMasked;
+					}
 				} else {
-					if (notIntersects) {
+					if (isMasked) {
 						if (actor->getPriority() < object->getPriority()) {
 							actor->setField934(1);
 							actor->setPriority(object->getPriority() + 3);
 
-							if (_updateList[i].index > _updateList[0].index) {
+							if (i > 0) {
 								error("[Scene::processUpdateList] list update not implemented!");
 							}
 						}
@@ -2509,7 +2516,7 @@ void Scene::processUpdateList() {
 							actor->setField934(1);
 							actor->setPriority(object->getPriority() - 1);
 
-							if (_updateList[i].index > _updateList[0].index) {
+							if (i > 0) {
 								error("[Scene::processUpdateList] list update not implemented!");
 							}
 						}
