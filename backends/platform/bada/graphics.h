@@ -55,6 +55,8 @@ class BadaGraphicsManager : public OpenGLGraphicsManager {
   bool isReady() {return !initState;}
 
  private:
+  void showSplash();
+
   bool loadEgl();
   BadaAppForm* appForm;
   EGLDisplay eglDisplay;

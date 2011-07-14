@@ -178,24 +178,7 @@ void BadaGraphicsManager::internUpdateScreen() {
     eglSwapBuffers(eglDisplay, eglSurface);
   }
   else {
-    Canvas canvas;
-    canvas.Construct();
-    canvas.SetBackgroundColor(Color::COLOR_BLACK);
-    canvas.Clear();
-
-    Font* pFont = new Font();
-    pFont->Construct(FONT_STYLE_ITALIC | FONT_STYLE_BOLD, 45);
-    canvas.SetFont(*pFont);
-
-    int x = 20 + (_videoMode.hardwareWidth / 3);
-    int y = _videoMode.hardwareHeight / 3;
-    canvas.SetForegroundColor(Color::COLOR_GREEN);
-    canvas.DrawText(Point(x, y), L"ScummVM");
-    canvas.SetForegroundColor(Color::COLOR_WHITE);
-    canvas.DrawText(Point(x + 30, y + 35), L"Loading ...");
-
-    canvas.Show();
-    delete pFont;
+    showSplash();
   }
 }
 
@@ -276,6 +259,28 @@ void BadaGraphicsManager::refreshGameScreen() {
 
 	_screenNeedsRedraw = false;
 	_screenDirtyRect = Common::Rect();
+}
+
+// display a simple splash screen until launcher is ready
+void BadaGraphicsManager::showSplash() {
+  Canvas canvas;
+  canvas.Construct();
+  canvas.SetBackgroundColor(Color::COLOR_BLACK);
+  canvas.Clear();
+  
+  Font* pFont = new Font();
+  pFont->Construct(FONT_STYLE_ITALIC | FONT_STYLE_BOLD, 65);
+  canvas.SetFont(*pFont);
+  
+  int x = _videoMode.hardwareWidth / 3;
+  int y = _videoMode.hardwareHeight / 3;
+  canvas.SetForegroundColor(Color::COLOR_GREEN);
+  canvas.DrawText(Point(x, y), L"ScummVM");
+  canvas.SetForegroundColor(Color::COLOR_WHITE);
+  canvas.DrawText(Point(x + 50, y + 70), L"Loading ...");
+  
+  canvas.Show();
+  delete pFont;
 }
 
 //

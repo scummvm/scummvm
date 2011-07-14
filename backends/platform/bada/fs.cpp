@@ -121,6 +121,7 @@ bool BadaFileStream::seek(int32 offs, int whence) {
     result = (E_SUCCESS == file->Seek(FILESEEKPOSITION_END, offs));
     break;
   }
+  SetLastResult(result ? E_SUCCESS : E_SYSTEM);
   bufferIndex = bufferLength = 0;
   return result;
 }
@@ -167,7 +168,9 @@ uint32 BadaFileStream::read(void* ptr, uint32 len) {
 }
 
 uint32 BadaFileStream::write(const void *ptr, uint32 len) {
-  return (E_SUCCESS == file->Write(ptr, len));
+  result r = file->Write(ptr, len);
+  SetLastResult(r);
+  return (r == E_SUCCESS ? len : 0);
 }
 
 bool BadaFileStream::flush() {

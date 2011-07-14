@@ -73,12 +73,13 @@ void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
 }
 
 void BadaScummVM::OnForeground(void) {
-
+  logEntered();
 }
 
 void BadaScummVM::OnBackground(void) {
-  if (g_engine) {
-    g_engine->pauseEngine(true);
+  logEntered();
+  if (appForm) {
+    appForm->pushKey(Common::KEYCODE_SPACE);
   }
 }
 
@@ -87,8 +88,8 @@ void BadaScummVM::OnBatteryLevelChanged(BatteryLevel batteryLevel) {
 }
 
 void BadaScummVM::OnLowMemory(void) {
-  if (g_engine) {
-    g_engine->pauseEngine(true);
+  if (appForm) {
+    appForm->pushKey(Common::KEYCODE_SPACE);
   }
 }
 
@@ -96,8 +97,8 @@ void BadaScummVM::OnScreenOn(void) {
 }
 
 void BadaScummVM::OnScreenOff(void) {
-  if (g_engine) {
-    g_engine->pauseEngine(true);
+  if (appForm) {
+    appForm->pushKey(Common::KEYCODE_SPACE);
   }
 }
 
