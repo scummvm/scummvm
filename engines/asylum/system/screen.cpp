@@ -127,6 +127,9 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 
 		if (!dest.intersects(destMask))
 			masked = false;
+
+		if (g_debugDrawRects)
+			_backBuffer.frameRect(destMask, 0x125);
 	}
 
 	// Set the color key (always 0 if set)
@@ -534,6 +537,9 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 	} else {
 		bltFast(destination->left, destination->top, frame, source);
 	}
+
+	if (g_debugDrawRects)
+		_backBuffer.frameRect(*destination, 0x220);
 }
 
 void Screen::blitTranstable(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
@@ -660,6 +666,11 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 
 		// cleanup
 		delete mirroredBuffer;
+
+		// Draw debug rects
+		if (g_debugDrawRects) {
+			_backBuffer.frameRect(*destMask, 0x220);
+		}
 
 		return;
 	}
