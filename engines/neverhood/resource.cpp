@@ -158,8 +158,10 @@ void AnimResource::draw(uint frameIndex, byte *dest, int destPitch, bool flipX, 
 	_currSpriteData = _spriteData + frameInfo.spriteDataOffs;
 	_width = frameInfo.rect.width;
 	_height = frameInfo.rect.height;
-	// TODO: Repl stuff
-	unpackSpriteRle(_currSpriteData, _width, _height, dest, destPitch, flipX, flipY);	
+	if (_replEnabled && _replOldColor != _replNewColor)
+		unpackSpriteRleRepl(_currSpriteData, _width, _height, dest, destPitch, _replOldColor, _replNewColor, flipX, flipY);
+	else
+		unpackSpriteRle(_currSpriteData, _width, _height, dest, destPitch, flipX, flipY);
 }
 
 bool AnimResource::load(uint32 fileHash) {
@@ -276,8 +278,8 @@ void AnimResource::clear() {
 void AnimResource::clear2() {
 	clear();
 	_replEnabled = true;
-	_replOldByte = 0;
-	_replNewByte = 0;
+	_replOldColor = 0;
+	_replNewColor = 0;
 }
 
 bool AnimResource::loadInternal(uint32 fileHash) {
@@ -299,6 +301,11 @@ int16 AnimResource::getFrameIndex(uint32 frameHash) {
 		}
 	debug("AnimResource::getFrameIndex(%08X) -> %d", frameHash, frameIndex);
 	return frameIndex;			
+}
+
+void AnimResource::setRepl(byte oldColor, byte newColor) {
+	_replOldColor = oldColor;
+	_replNewColor = newColor;
 }
 
 MouseCursorResource::MouseCursorResource(NeverhoodEngine *vm) 

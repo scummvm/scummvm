@@ -227,9 +227,9 @@ void AnimatedSprite::init() {
 	_newHashListIndex = -1;
 	_fileHash4 = 0;
 	_flag = false;
-	_replOldByte = 0;
-	_replNewByte = 0;
-	// TODO _animResource.replEnabled = 0;
+	_replOldColor = 0;
+	_replNewColor = 0;
+	_animResource.setReplEnabled(false);
 	_playBackwards = false;
 }
 
@@ -253,6 +253,18 @@ void AnimatedSprite::updateDeltaXY() {
 	_deltaX = 0;
 	_deltaY = 0;
 	processDelta();
+}
+
+void AnimatedSprite::setRepl(byte oldColor, byte newColor) {
+	_replOldColor = oldColor;
+	_replNewColor = newColor;
+	_animResource.setReplEnabled(true);
+}
+
+void AnimatedSprite::clearRepl() {
+	_replOldColor = 0;
+	_replNewColor = 0;
+	_animResource.setReplEnabled(false);
 }
 
 void AnimatedSprite::updateAnim() {
@@ -280,9 +292,8 @@ void AnimatedSprite::updateAnim() {
 						// TODO _animResource.loadInternal(calcHash("sqDefault"));
 						_fileHash3 = 0;
 					}
-					if (_replNewByte != _replOldByte) {
-						debug("TODO");
-						// TODO _animResource.setRepl(_replOldByte, _replNewByte);
+					if (_replOldColor != _replNewColor) {
+						_animResource.setRepl(_replOldColor, _replNewColor);	
 					}
 					_fileHash2 = 0;
 					if (_animStatus != 0) {
@@ -313,9 +324,8 @@ void AnimatedSprite::updateAnim() {
 					// TODO _animResource.loadInternal(calcHash("sqDefault"));
 					_fileHash3 = 0;
 				}
-				if (_replNewByte != _replOldByte) {
-					debug("TODO");
-					// TODO _animResource.setRepl(_replOldByte, _replNewByte);
+				if (_replOldColor != _replNewColor) {
+					_animResource.setRepl(_replOldColor, _replNewColor);	
 				}
 				_fileHash1 = 0;
 				_frameIndex = _fileHash6 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash6)) : 0;
@@ -328,9 +338,8 @@ void AnimatedSprite::updateAnim() {
 					// TODO _animResource.loadInternal(calcHash("sqDefault"));
 					_fileHash3 = 0;
 				}
-				if (_replNewByte != _replOldByte) {
-					debug("TODO");
-					// TODO _animResource.setRepl(_replOldByte, _replNewByte);
+				if (_replOldColor != _replNewColor) {
+					_animResource.setRepl(_replOldColor, _replNewColor);	
 				}
 				_fileHash1 = 0;
 				_frameIndex = _frameIndex3 != -1 ? _frameIndex3 : _animResource.getFrameCount() - 1;
@@ -377,7 +386,7 @@ void AnimatedSprite::updatePosition() {
 
 void AnimatedSprite::updateFrameIndex() {
 	if (!_playBackwards) {
-		debug("%08X ### _frameIndex = %d; _frameIndex2 = %d", _fileHash3, _frameIndex, _frameIndex2);
+		//debug("%08X ### _frameIndex = %d; _frameIndex2 = %d", _fileHash3, _frameIndex, _frameIndex2);
 		if (_frameIndex < _frameIndex2) {
 			_frameIndex++;
 		} else {

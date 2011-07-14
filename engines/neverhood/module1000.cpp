@@ -924,10 +924,10 @@ Class426::Class426(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, ui
 
 	_fileHashes[0] = fileHash1;
 	_fileHashes[1] = fileHash2;
-	    
+	
 	_spriteResource.load2(fileHash1);
 	createSurface(surfacePriority, 40, 40);
-	    
+	
 	_surface->getDrawRect().x = 0;
 	_surface->getDrawRect().y = 0;
 	_surface->getDrawRect().width = _spriteResource.getDimensions().width;
@@ -1379,7 +1379,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 			//_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4270);
 			// TODO			
-			// TODO _klayman->setRepl(64, 0);
+			_klayman->setRepl(64, 0);
 		} else {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 379, 435);
 			//_class478 = addSprite(new Class478(_vm, _klayman));
@@ -1407,7 +1407,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 			// TODO
 			//_class479 = addSprite(new Class479(_vm, this, _klayman));
 			// TODO
-			// TODO _klayman->setRepl(64, 0);
+			_klayman->setRepl(64, 0);
 			_vm->_gameState.field2 = 0;
 		} 
 	}
@@ -1461,7 +1461,7 @@ void Scene1002::update() {
 	if (!_flag1B4 && _klayman->getY() > 230) {
 		// TODO
 		deleteSprite(&_ssLadderArchPart3);
-		// TODO _klayman->clearRepl();
+		_klayman->clearRepl();
 		_flag1B4 = true;
 		_vm->_gameState.field2 = 1;
 	}

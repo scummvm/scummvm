@@ -107,6 +107,8 @@ public:
 	AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y);
 	void update();
 	void updateDeltaXY();
+	void setRepl(byte oldColor, byte newColor);
+	void clearRepl();
 protected:
 	typedef void (AnimatedSprite::*AnimationCb)();
 	AnimResource _animResource;
@@ -125,8 +127,8 @@ protected:
 	int _newHashListIndex;
 	uint32 _fileHash4;
 	int16 _deltaX, _deltaY;
-	byte _replOldByte;
-	byte _replNewByte;
+	byte _replOldColor;
+	byte _replNewColor;
 	bool _playBackwards;
 	bool _flag;
 	/* TODO

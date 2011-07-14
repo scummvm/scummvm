@@ -197,6 +197,51 @@ void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPi
 
 }
 
+void unpackSpriteRleRepl(byte *source, int width, int height, byte *dest, int destPitch, byte oldColor, byte newColor, bool flipX, bool flipY) {
+
+	// TODO: Flip Y
+	
+	debug("unpackSpriteRleRepl(%d, %d)", oldColor, newColor);
+
+	int16 rows, chunks;
+	int16 skip, copy;
+
+	rows = READ_LE_UINT16(source);
+	chunks = READ_LE_UINT16(source + 2);
+	source += 4;
+
+	do {
+		if (chunks == 0) {
+			dest += rows * destPitch;
+		} else {
+			while (rows-- > 0) {
+				uint16 rowChunks = chunks;
+				while (rowChunks-- > 0) {
+					skip = READ_LE_UINT16(source);
+					copy = READ_LE_UINT16(source + 2);
+					source += 4;
+					if (!flipX) {
+						for (int xc = 0; xc < copy; xc++) {
+							dest[skip + xc] = source[xc] == oldColor ? newColor : source[xc];
+						}
+					} else {
+						byte *flipDest = dest + width - skip - 1;
+						for (int xc = 0; xc < copy; xc++) {
+							*flipDest-- = source[xc] == oldColor ? newColor : source[xc];
+						}
+					}
+					source += copy;
+				}
+				dest += destPitch;
+			}
+		}
+		rows = READ_LE_UINT16(source);
+		chunks = READ_LE_UINT16(source + 2);
+		source += 4;
+	} while (rows > 0);
+
+}
+
 void unpackSpriteNormal(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY) {
 
 	// TODO: Flip Y

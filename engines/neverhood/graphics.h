@@ -91,6 +91,7 @@ protected:
 
 void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels);
 void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
+void unpackSpriteRleRepl(byte *source, int width, int height, byte *dest, int destPitch, byte oldColor, byte newColor, bool flipX, bool flipY);
 void unpackSpriteNormal(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
 
 } // End of namespace Neverhood

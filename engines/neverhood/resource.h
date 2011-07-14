@@ -87,6 +87,8 @@ public:
 	uint getFrameCount() const { return _frames.size(); }
 	const AnimFrameInfo& getFrameInfo(int16 index) const { return _frames[index]; }
 	int16 getFrameIndex(uint32 frameHash);
+	void setReplEnabled(bool value) { _replEnabled = value; }
+	void setRepl(byte oldColor, byte newColor);
 protected:
 	NeverhoodEngine *_vm;
 	int _resourceHandle;
@@ -96,8 +98,8 @@ protected:
 	byte *_paletteData;
 	byte *_spriteData;
 	bool _replEnabled;
-	byte _replOldByte;
-	byte _replNewByte;
+	byte _replOldColor;
+	byte _replNewColor;
 	Common::Array<AnimFrameInfo> _frames;
 };
 
