@@ -23,6 +23,8 @@
 #ifndef ASYLUM_STATICRES_H
 #define ASYLUM_STATICRES_H
 
+#include "common/rect.h"
+
 namespace Asylum {
 
 /** This fixes the menu icons text x position on screen */
@@ -68,18 +70,15 @@ const int encounterPortrait2Index[80] = {50, 51, 52, 33, 34, 35, 36, 37, 38, 39,
                                           4,  5,  6, 53, 51, 52, 53, 54, 55, 54};
 
 // Delta array for points
-static const struct {
-	int x;
-	int y;
-} deltaPointsArray[8] = {
-	{0,          0xFFFFFFFF},
-	{0xFFFFFFFF, 0xFFFFFFFF},
-	{0xFFFFFFFF, 0},
-	{0xFFFFFFFF, 1},
-	{0,          1},
-	{1,          1},
-	{1,          0},
-	{1,          0xFFFFFFFF}
+static Common::Point deltaPointsArray[8] = {
+	Common::Point( 0, -1),
+	Common::Point(-1, -1),
+	Common::Point(-1,  0),
+	Common::Point(-1,  1),
+	Common::Point( 0,  1),
+	Common::Point( 1,  1),
+	Common::Point( 1,  0),
+	Common::Point( 1, -1)
 };
 
 // We hardcode all the text resources here. It makes the resulting code easier,
