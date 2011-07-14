@@ -512,21 +512,14 @@ private:
 	DrawFlags getGraphicsFlags();
 
 	/**
-	 * Gets a distance depending on actor direction
-	 *
-	 * @return The distance.
-	 */
-	int32 getDistance(ActorDirection direction, uint32 frameIndex) const;
-
-	/**
 	 * Gets the distance for a frame.
 	 *
 	 * @param direction  The direction.
 	 * @param frameIndex Zero-based index of the frame.
 	 *
-	 * @return The distance for frame.
+	 * @return The distance for the frame.
 	 */
-	int32 getDistanceForFrame(ActorDirection direction, uint32 frameIndex);
+	int32 getDistanceForFrame(ActorDirection direction, uint32 frameIndex) const;
 
 	/**
 	 * Updates the coordinates depending on the direction.
