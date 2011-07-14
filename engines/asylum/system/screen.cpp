@@ -203,11 +203,11 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 	}
 
 	// Check validity
-	if (!source->isValidRect())
+	/*if (!source->isValidRect())
 		error("[Screen::clip] Invalid resulting source rectangle");
 
 	if (!destination->isValidRect())
-		error("[Screen::clip] Invalid resulting destination rectangle");
+		error("[Screen::clip] Invalid resulting destination rectangle");*/
 }
 
 void Screen::takeScreenshot() {
@@ -668,39 +668,80 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 		delete mirroredBuffer;
 
 		// Draw debug rects
-		if (g_debugDrawRects) {
+		if (g_debugDrawRects)
 			_backBuffer.frameRect(*destMask, 0x220);
-		}
 
 		return;
 	}
 
 	if (destination->left > destMask->left) {
-		sourceMask->setWidth(sourceMask->width() + destMask->left - destination->left);
 		maskBufferPtr += (destination->left - destMask->left) / 8 + abs(destination->left - destMask->left) / 8;
+		sourceMask->setWidth(sourceMask->width() + destMask->left - destination->left);
 		srcMaskLeft = abs(destination->left - destMask->left);
+		destMask->left = destination->left;
 	}
 
 	if (destination->top > destMask->top) {
 		maskBufferPtr += (destination->top - destMask->top) * maskHeight / 8;
-		destMask->top = destination->top;
 		sourceMask->setHeight(sourceMask->height() + destMask->top - destination->top);
+		destMask->top = destination->top;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Left part
 	if (destination->left < destMask->left) {
 		blitRawColorKey((byte *)_backBuffer.pixels + destination->top * _backBuffer.pitch + destination->left,
 		                frameBufferPtr,
 		                source->height(),
 		                destMask->left - destination->left,
-		                destination->left + frameRight - destMask->left,
-		                destination->left + _backBuffer.pitch - destMask->left);
+		                frameRight        + destination->left - destMask->left,
+		                _backBuffer.pitch + destination->left - destMask->left);
 
-		destination->left = destMask->left;
+		if (g_debugDrawRects)
+			_backBuffer.frameRect(Common::Rect(destination->left, destination->top, destMask->left, destination->top + source->height()), 0x10);
+
 		frameBufferPtr += destMask->left - destination->left;
 		source->setWidth(source->width() + destination->left - destMask->left);
+		destination->left = destMask->left;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Right part
 	if ((source->width() + destination->left) > (destMask->left + sourceMask->width())) {
+		blitRawColorKey((byte *)_backBuffer.pixels + destination->top * _backBuffer.pitch + destMask->left + sourceMask->width(),
+		                frameBufferPtr + destMask->left + sourceMask->width() - destination->left,
+		                source->height(),
+		                source->width() + destination->left - destMask->left - sourceMask->width(),
+		                frameRight        + destMask->left + sourceMask->width() - destination->left - source->width(),
+		                _backBuffer.pitch + destMask->left + sourceMask->width() - destination->left - source->width());
+
+		if (g_debugDrawRects)
+			_backBuffer.frameRect(Common::Rect(destMask->left, destination->top, destMask->left + source->width(), destination->top + source->height()), 0x36);
+
+		source->setWidth(destMask->left + sourceMask->width() - destination->left);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Top part
+	if (destination->top < destMask->top) {
+		blitRawColorKey((byte *)_backBuffer.pixels + destination->top * _backBuffer.pitch + destination->left,
+		                frameBufferPtr,
+		                destMask->top - destination->top,
+		                source->width(),
+		                frameRight - source->width(),
+		                _backBuffer.pitch - source->width());
+
+		if (g_debugDrawRects)
+			_backBuffer.frameRect(Common::Rect(destination->left, destination->top, destination->left + abs(source->width()), destMask->top), 0x23);
+
+		frameBufferPtr += (destMask->top - destination->top) * frameRight;
+		source->setHeight(source->height() + destination->top - destMask->top);
+		destination->top = destMask->top;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Bottom part
+	if ((source->height() + destination->top) > (destMask->top + sourceMask->height())) {
 		blitRawColorKey((byte *)_backBuffer.pixels + (destMask->top + sourceMask->height()) * _backBuffer.pitch + destination->left,
 		                frameBufferPtr + (destMask->top + sourceMask->height() - destination->top) * frameRight,
 		                destination->top + source->height() - sourceMask->height() - destMask->top,
@@ -711,6 +752,8 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 		source->setHeight(destMask->top + sourceMask->height() - destination->top);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Masked part
 	bltMasked(frameBufferPtr,
 	          maskBufferPtr,
 	          source->width(),
@@ -721,12 +764,16 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	          (byte *)_backBuffer.pixels + _backBuffer.pitch * destination->top + destination->left,
 	          _backBuffer.pitch - source->width());
 
+	// Draw debug rects
+	if (g_debugDrawRects)
+		_backBuffer.frameRect(*destination, 0x128);
+
 	// Cleanup
 	delete mirroredBuffer;
 }
 
 void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 width, int16 height, int16 srcPitch, int16 maskPitch, char maskLeft, byte *dstBuffer, int16 dstPitch) {
-	error("[Screen::bltMasked] Not implemented");
+	warning("[Screen::bltMasked] Not implemented!");
 }
 
 void Screen::blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int widthHeight, uint32 srcPitch, uint32 dstPitch, uint32 objectPitch) {
