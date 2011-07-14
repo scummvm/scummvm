@@ -59,7 +59,11 @@ enum GameType {
 class Archive;
 class ComposerEngine;
 
-class Sprite {
+struct Sprite {
+	uint16 id;
+	uint16 animId;
+	uint16 zorder;
+	Common::Point pos;
 };
 
 struct AnimationEntry {
@@ -158,6 +162,8 @@ private:
 	Audio::QueuingAudioStream *_audioStream;
 
 	Graphics::Surface _surface;
+	Common::List<Sprite> _sprites;
+
 	Common::ConfigFile _bookIni;
 	Common::List<Library> _libraries;
 
@@ -187,8 +193,11 @@ private:
 	void playWaveForAnim(uint16 id, bool bufferingOnly);
 	void processAnimFrame();
 
+	void addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos);
+	void removeSprite(uint16 id, uint16 animId);
+
 	void loadCTBL(uint id, uint fadePercent);
-	void decompressBitmap(uint16 type, Common::SeekableReadStream *stream, byte *buffer, uint32 size);
+	void decompressBitmap(uint16 type, Common::SeekableReadStream *stream, byte *buffer, uint32 size, uint width, uint height);
 	void drawBMAP(uint id, uint x, uint y);
 };
 

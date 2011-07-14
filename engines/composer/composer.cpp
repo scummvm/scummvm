@@ -212,7 +212,7 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 	for (uint i = 0; i < res.entries.size(); i++)
 		size += res.entries[i].size;
 
-	byte *buffer = new byte[size];
+	byte *buffer = (byte *)malloc(size);
 	uint32 offset = 0;
 	for (uint i = 0; i < res.entries.size(); i++) {
 		_stream->seek(res.entries[i].offset, SEEK_SET);
@@ -397,15 +397,19 @@ void ComposerEngine::processAnimFrame() {
 						break;
 					case 4:
 						if (entry.word10 && (!data || data != entry.word10)) {
-							// TODO: erase old sprite
-							warning("ignoring anim sprite erase (%d)", entry.word10);
+							debug(4, "anim: erase sprite %d", entry.word10);
+							removeSprite(data, anim->_id);
 						}
 						if (data) {
 							uint16 x = anim->_stream->readUint16LE();
 							uint16 y = anim->_stream->readUint16LE();
+							Common::Point pos(x, y);
 							anim->_offset += 4;
-							// TODO: sprite change
-							warning("ignoring anim sprite draw (%d @ %d,%d)", data, x, y);
+							uint16 animId = anim->_id;
+							if (anim->_state == entry.dword0)
+								animId = 0;
+							debug(4, "anim: draw sprite %d at (relative) %d,%d", data, x, y);
+							addSprite(data, animId, entry.word6, anim->_basePos + pos);
 						}
 						break;
 					default:
@@ -421,6 +425,33 @@ void ComposerEngine::processAnimFrame() {
 	for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
 		Pipe *pipe = *j;
 		pipe->nextFrame();
+	}
+}
+
+void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos) {
+	Sprite sprite;
+	sprite.id = id;
+	sprite.animId = animId;
+	sprite.zorder = zorder;
+	sprite.pos = pos;
+
+	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+		if (sprite.zorder < i->zorder)
+			continue;
+		_sprites.insert(i, sprite);
+		return;
+	}
+	_sprites.push_back(sprite);
+}
+
+void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
+	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+		if (i->id != id)
+			continue;
+		if (animId && i->animId != animId)
+			continue;
+		i = _sprites.reverse_erase(i);
+		return;
 	}
 }
 
@@ -471,12 +502,6 @@ Common::Error ComposerEngine::run() {
 	uint frameTime = 1000 / fps;
 	uint32 lastDrawTime = 0;
 	while (!shouldQuit()) {
-		if (hasResource(ID_BMAP, 1000))
-			drawBMAP(1000, 0, 0);
-
-		_system->copyRectToScreen((byte *)_surface.pixels, _surface.pitch, 0, 0, _surface.w, _surface.h);
-		_system->updateScreen();
-
 		uint32 thisTime = _system->getMillis();
 		for (uint i = 0; i < _queuedScripts.size(); i++) {
 			QueuedScript &script = _queuedScripts[i];
@@ -493,6 +518,15 @@ Common::Error ComposerEngine::run() {
 		// _system->delayMillis(frameTime + lastDrawTime - thisTime);
 		if (lastDrawTime + frameTime <= thisTime) {
 			lastDrawTime += frameTime;
+
+			if (hasResource(ID_BMAP, 1000))
+				drawBMAP(1000, 0, 0);
+			for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+				drawBMAP(i->id, i->pos.x, i->pos.y);
+			}
+
+			_system->copyRectToScreen((byte *)_surface.pixels, _surface.pitch, 0, 0, _surface.w, _surface.h);
+			_system->updateScreen();
 
 			processAnimFrame();
 		}
@@ -853,11 +887,106 @@ void ComposerEngine::loadCTBL(uint id, uint fadePercent) {
 	_system->getPaletteManager()->setPalette(buffer, 0, numEntries);
 }
 
-void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *stream, byte *buffer, uint32 size) {
+static void decompressSLWM(byte *buffer, Common::SeekableReadStream *stream) {
+	uint bitsLeft = 0;
+	uint16 lastBits;
+	byte currBit;
+	while (true) {
+		if (bitsLeft == 0) { bitsLeft = 16; lastBits = stream->readUint16LE(); }
+		currBit = (lastBits & 1); lastBits >>= 1; bitsLeft--;
+
+		if (currBit) {
+			// single byte
+			*buffer++ = stream->readByte();
+			continue;
+		}
+
+		if (bitsLeft == 0) { bitsLeft = 16; lastBits = stream->readUint16LE(); }
+		currBit = (lastBits & 1); lastBits >>= 1; bitsLeft--;
+
+		uint start;
+		uint count;
+		if (currBit) {
+			uint orMask = stream->readByte();
+			uint in = stream->readByte();
+			count = in & 7;
+			start = ((in & ~7) << 5) | orMask;
+			if (!count) {
+				count = stream->readByte();
+				if (!count)
+					break;
+				count -= 2;
+			}
+		} else {
+			// count encoded in the next two bits
+			count = 0;
+
+			if (bitsLeft == 0) { bitsLeft = 16; lastBits = stream->readUint16LE(); }
+			currBit = (lastBits & 1); lastBits >>= 1; bitsLeft--;
+
+			count = (count << 1) | currBit;
+
+			if (bitsLeft == 0) { bitsLeft = 16; lastBits = stream->readUint16LE(); }
+			currBit = (lastBits & 1); lastBits >>= 1; bitsLeft--;
+
+			count = (count << 1) | currBit;
+
+			start = stream->readByte();
+		}
+
+		count += 2;
+		start++;
+		memcpy(buffer, buffer - start, count);
+		buffer += count;
+	}
+}
+
+void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *stream, byte *buffer, uint32 size, uint width, uint height) {
 	switch (type) {
 	case kBitmapUncompressed:
 		assert(stream->size() - (uint)stream->pos() == size);
+		assert(size == width * height);
 		stream->read(buffer, size);
+		break;
+	case kBitmapRLESLWM:
+		{
+		uint32 bufSize = stream->readUint32LE();
+		byte *tempBuf = new byte[bufSize];
+		decompressSLWM(tempBuf, stream);
+
+		uint instrPos = tempBuf[0] + 1;
+		instrPos += READ_LE_UINT16(tempBuf + instrPos) + 2;
+		byte *instr = tempBuf + instrPos;
+
+		uint line = 0;
+		while (line++ < height) {
+			uint pixels = 0;
+
+			while (pixels < width) {
+				byte data = *instr++;
+				byte color = tempBuf[(data & 0x7F) + 1];
+				if (!(data & 0x80)) {
+					*buffer++ = color;
+					pixels++;
+				} else {
+					byte count = *instr++;
+					if (!count) {
+						while (pixels++ < width)
+							*buffer++ = color;
+						break;
+					}
+					for (uint i = 0; i < count; i++) {
+						*buffer++ = color;
+						pixels++;
+					}
+				}
+			}
+		}
+		delete[] tempBuf;
+		}
+		break;
+	case kBitmapSLWM:
+		decompressSLWM(buffer, stream);
 		break;
 	default:
 		error("decompressBitmap can't handle type %d", type);
@@ -865,7 +994,23 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 }
 
 void ComposerEngine::drawBMAP(uint id, uint x, uint y) {
-	Common::SeekableReadStream *stream = getResource(ID_BMAP, id);
+	Common::SeekableReadStream *stream = NULL;
+	if (hasResource(ID_BMAP, id))
+		stream = getResource(ID_BMAP, id);
+	else
+		for (Common::List<Pipe *>::iterator k = _pipes.begin(); k != _pipes.end(); k++) {
+			Pipe *pipe = *k;
+			if (!pipe->hasResource(ID_BMAP, id))
+				continue;
+			stream = pipe->getResource(ID_BMAP, id, true);
+			break;
+		}
+
+	if (!stream) {
+		// FIXME
+		warning("couldn't find BMAP %d", id);
+		return;
+	}
 
 	uint16 type = stream->readUint16LE();
 	uint16 height = stream->readUint16LE();
@@ -874,12 +1019,18 @@ void ComposerEngine::drawBMAP(uint id, uint x, uint y) {
 	debug(1, "BMAP: type %d, width %d, height %d, size %d", type, width, height, size);
 
 	byte *buffer = new byte[width * height];
-	decompressBitmap(type, stream, buffer, size);
+	decompressBitmap(type, stream, buffer, size, width, height);
+
+	debug(1, "draw at %d,%d", x, y);
 
 	// incoming data is BMP-style (bottom-up), so flip it
 	byte *pixels = (byte *)_surface.pixels;
 	for (uint j = 0; j < height; j++) {
-		memcpy(pixels + (j * width), buffer + (height - j - 1) * width, width);
+		byte *in = buffer + (height - j - 1) * width;
+		byte *out = pixels + ((j + y) * _surface.w) + x;
+		for (uint i = 0; i < width; i++)
+			if (in[i])
+				out[i] = in[i];
 	}
 
 	delete[] buffer;
