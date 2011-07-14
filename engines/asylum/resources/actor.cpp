@@ -1085,10 +1085,10 @@ bool Actor::process(const Common::Point &point) {
 
 		if (abs(sum.x - point.x) > abs(sum.y - point.y)) {
 			if (sum.x <= point.x) {
-				if (!processAction1(sum, point, &actions))
+				if (!processActionLeft(sum, point, &actions))
 					return false;
 			} else {
-				if (!processAction2(sum, point, &actions))
+				if (!processActionAll(sum, point, &actions))
 					return false;
 			}
 
@@ -1098,7 +1098,7 @@ bool Actor::process(const Common::Point &point) {
 		}
 
 		if (sum.y > point.y) {
-			if (!processAction3(sum, point, &actions))
+			if (!processActionTop(sum, point, &actions))
 				return false;
 
 			updateFromDirection(_data.directions[0]);
@@ -1107,7 +1107,7 @@ bool Actor::process(const Common::Point &point) {
 		}
 
 		// last case: sum.y < point.y
-		if (!processAction4(sum, point, &actions))
+		if (!processActionDown(sum, point, &actions))
 			return false;
 
 		updateFromDirection(_data.directions[0]);
@@ -2508,20 +2508,137 @@ void Actor::updateNumbers(int32 reaction, const Common::Point &point) {
 //////////////////////////////////////////////////////////////////////////
 // Path finding functions
 //////////////////////////////////////////////////////////////////////////
-bool Actor::processAction1(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions) {
-	error("[Actor::processAction1] Not implemented");
+bool Actor::processActionLeft(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+	// Reset pathfinding data
+	_data.count = 0;
+	_data.current = 0;
+
+	bool flag = false;
+	Common::Point src = source;
+
+	for (uint32 i = 0; i < 60; i++) {
+
+		// Note: this is handled differently from other processAction functions
+		// as we break instead of checking the other actors
+		if (!processAction(source, actions, &src, kDirectionE,  destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionNE, destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionSE, destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionN,  destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionS,  destination, &flag))
+			break;
+
+		// Update source point after all processing
+		source = src;
+
+		if (flag)
+			return true;
+	}
+
+	return false;
 }
 
-bool Actor::processAction2(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions) {
-	error("[Actor::processAction2] Not implemented");
+bool Actor::processActionAll(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+	// Reset pathfinding data
+	_data.count = 0;
+	_data.current = 0;
+
+	bool flag = false;
+	Common::Point src = source;
+
+	for (uint32 i = 0; i < 60; i++) {
+		if (!processAction(source, actions, &src, kDirectionO,  destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionNO, destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionSO, destination, &flag)) {
+			if (src.y <= destination.y) {
+				if (!processAction(source, actions, &src, kDirectionS,  destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionN,  destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionSE, destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionE,  destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionNE, destination, &flag))
+					continue;
+			} else {
+				if (!processAction(source, actions, &src, kDirectionN,  destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionS,  destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionNE, destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionE,  destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionSE, destination, &flag))
+					continue;
+			}
+		}
+
+		// Update source point after all processing
+		source = src;
+
+		if (flag)
+			return true;
+	}
+
+	return false;
 }
 
-bool Actor::processAction3(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions) {
-	error("[Actor::processAction3] Not implemented");
+bool Actor::processActionTop(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+	// Reset pathfinding data
+	_data.count = 0;
+	_data.current = 0;
+
+	bool flag = false;
+	Common::Point src = source;
+
+	for (uint32 i = 0; i < 60; i++) {
+		if (!processAction(source, actions, &src, kDirectionN, destination, &flag)) {
+			if (src.x >= destination.x) {
+				if (!processAction(source, actions, &src, kDirectionNO, destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionO,  destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionNE, destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionE,  destination, &flag))
+					continue;
+			} else {
+				if (!processAction(source, actions, &src, kDirectionNE, destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionE,  destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionNO, destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionO,  destination, &flag))
+					continue;
+			}
+		}
+
+		// Update source point after all processing
+		source = src;
+
+		if (flag)
+			return true;
+	}
+
+	return false;
 }
 
-bool Actor::processAction4(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions) {
-	error("[Actor::processAction4] Not implemented");
+bool Actor::processActionDown(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+	// Reset pathfinding data
+	_data.count = 0;
+	_data.current = 0;
+
+	bool flag = false;
+	Common::Point src = source;
+
+	for (uint32 i = 0; i < 60; i++) {
+		if (!processAction(source, actions, &src, kDirectionS,  destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionSE, destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionSO, destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionE,  destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionO,  destination, &flag))
+			continue;
+
+		// Update source point after all processing
+		source = src;
+
+		if (flag)
+			return true;
+	}
+
+	return false;
+}
+
+bool Actor::processAction(const Common::Point &source, Common::Array<int> *actions, Common::Point *point, ActorDirection direction, const Common::Point &destination, bool *flag) {
+	error("[Actor::processAction] Not implemented");
 }
 
 bool Actor::checkPath(Common::Array<ActionArea *> *actions, const Common::Point &point, uint32 index, uint32 loopcount) {
