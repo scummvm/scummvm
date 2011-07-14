@@ -35,6 +35,8 @@
 
 namespace Asylum {
 
+extern int g_debugDrawRects;
+
 Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 	_useColorKey(false), _transTableCount(0), _transTableIndex(NULL), _transTableData(NULL), _transTableBuffer(NULL) {
 	_backBuffer.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());

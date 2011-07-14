@@ -42,9 +42,11 @@
 
 namespace Asylum {
 
-extern int32 g_debugPolygons;
-extern int32 g_debugObjects;
-extern int32 g_debugScrolling;
+extern int g_debugActors;
+extern int g_debugDrawRects;
+extern int g_debugObjects;
+extern int g_debugPolygons;
+extern int g_debugScrolling;
 
 const ResourcePackId puzzleToScenes[17] = {
 	kResourcePackTowerCells,           // VCR
@@ -91,8 +93,10 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 	DCmd_Register("toggle_flag",    WRAP_METHOD(Console, cmdToggleFlag));
 
 	// Variables
-	DVar_Register("show_polygons",  &g_debugPolygons, DVAR_INT, 0);
-	DVar_Register("show_objects",   &g_debugObjects, DVAR_INT, 0);
+	DVar_Register("show_actors",    &g_debugActors,    DVAR_INT, 0);
+	DVar_Register("show_objects",   &g_debugObjects,   DVAR_INT, 0);
+	DVar_Register("show_polygons",  &g_debugPolygons,  DVAR_INT, 0);
+	DVar_Register("show_drawrects", &g_debugDrawRects, DVAR_INT, 0);
 	DVar_Register("use_scrolling",  &g_debugScrolling, DVAR_INT, 0);
 }
 
@@ -112,8 +116,10 @@ bool Console::cmdHelp(int, const char **) {
 	DebugPrintf(" debugflag_list    - Lists the available debug flags and their status\n");
 	DebugPrintf(" debugflag_enable  - Enables a debug flag\n");
 	DebugPrintf(" debugflag_disable - Disables a debug flag\n");
+	DebugPrintf(" show_actors       - Show actors\n");
+	DebugPrintf(" show_objects      - Show objects\n");
 	DebugPrintf(" show_polygons     - Show polygons\n");
-	DebugPrintf(" show_objects     - Show objects\n");
+	DebugPrintf(" show_drawrects    - Show drawing rects\n");;
 	DebugPrintf(" use_scrolling     - Use scrolling\n");
 	DebugPrintf("\n");
 	DebugPrintf("Commands\n");

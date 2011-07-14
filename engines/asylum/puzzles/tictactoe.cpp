@@ -33,7 +33,7 @@
 
 namespace Asylum {
 
-extern int32 g_debugPolygons;
+extern int g_debugPolygons;
 
 const Common::Point puzzleTicTacToePolygons[36] = {
 	Common::Point( 27, 381), Common::Point(172, 368), Common::Point(190, 474), Common::Point( 36, 476),
