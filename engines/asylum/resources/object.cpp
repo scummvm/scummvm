@@ -185,7 +185,7 @@ void Object::adjustCoordinates(Common::Point *point) {
 // Update
 //////////////////////////////////////////////////////////////////////////
 void Object::draw() {
-	if (LOBYTE(flags) & kObjectFlag4)
+	if (flags & kObjectFlag4)
 		return;
 
 	if (BYTE1(flags) & kObjectFlag40)
