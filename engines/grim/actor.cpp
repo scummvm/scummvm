@@ -942,7 +942,7 @@ void Actor::shutUp() {
 	}
 	if (_lipSync) {
 		if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+			_talkCostume[_talkAnim]->cleanupChore(_talkChore[_talkAnim]);
 		_lipSync = NULL;
 	} else if (_mumbleChore >= 0 && _mumbleCostume->isChoring(_mumbleChore, false) >= 0) {
 		// Not using stopChore here, because it calls reset() on the components and
