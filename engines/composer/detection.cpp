@@ -56,6 +56,7 @@ Common::Language ComposerEngine::getLanguage() const {
 
 static const PlainGameDescriptor composerGames[] = {
 	{"darby", "Darby the Dragon"},
+	{"gregory", "Gregory and the Hot Air Balloon"},
 	{"demo1", "Magic Tales Demo 1"},
 	{0, 0}
 };
@@ -84,6 +85,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"darby",
 			0,
 			{{"install.inf", 0, "e83cc20ee18a2e138da1aadfc640dff2", -1},
+			 AD_LISTEND},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ComposerV2
+	},
+
+	{
+		{
+			"gregory",
+			0,
+			{{"install.inf", 0, "b7e9d6f7949d412dad0a183375069844", -1},
 			 AD_LISTEND},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
