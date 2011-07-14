@@ -475,7 +475,7 @@ void Actor::update() {
 	case kActorStatus1: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
-		uint32 dist = abs((double)getDistance(_direction, index));
+		uint32 dist = abs((double)getDistanceForFrame(_direction, index));
 		Common::Point point = _point1 + _point2;
 
 		if (process_408B20(&point, _direction, dist, false)) {
@@ -509,7 +509,7 @@ void Actor::update() {
 	case kActorStatus13: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
-		uint32 dist = abs((double)getDistance(_direction, index));
+		uint32 dist = abs((double)getDistanceForFrame(_direction, index));
 
 		Common::Point point = _point1 + _point2;
 		Common::Point current = _data.points[_data.current];
@@ -1954,7 +1954,7 @@ void Actor::updateStatus12_Chapter2() {
 	if (_frameIndex >= _frameCount)
 		frameIndex = 2 * _frameCount - _frameIndex - 1;
 
-	uint32 distance = abs((double)getDistance(_direction, frameIndex));
+	uint32 distance = abs((double)getDistanceForFrame(_direction, frameIndex));
 
 	// Face actor
 	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
@@ -2748,36 +2748,7 @@ DrawFlags Actor::getGraphicsFlags() {
 	return kDrawFlagMirrorLeftRight;
 }
 
-int32 Actor::getDistance(ActorDirection dir, uint32 frameIndex) const {
-	switch (_direction) {
-	default:
-		error("[Actor::getDistanceFromFrame] Invalid direction");
-
-	// The original return 0 and then checks the value and replaces it by the alternate value stored in EDX
-	// We skip that crap and directly returns the proper value
-	case kDirectionN:
-		return -_distancesNS[frameIndex];
-
-	case kDirectionS:
-		return _distancesNS[frameIndex];
-
-	case kDirectionNO:
-	case kDirectionSO:
-		return -_distancesNSEO[frameIndex];
-
-	case kDirectionO:
-		return -_distancesEO[frameIndex];
-
-	case kDirectionSE:
-	case kDirectionNE:
-		return _distancesNSEO[frameIndex];
-
-	case kDirectionE:
-		return _distancesEO[frameIndex];
-	}
-}
-
-int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) {
+int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
 	switch (dir) {
 	default:
 		error("[Actor::getDistanceForFrame] Invalid direction");
