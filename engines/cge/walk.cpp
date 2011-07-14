@@ -48,8 +48,10 @@
 namespace CGE {
 
 WALK *_hero;
-Cluster Trace[MAX_FIND_LEVEL];
-int FindLevel;
+
+struct TabDir {
+	int xd, yd;
+};
 
 uint8 Cluster::_map[MAP_ZCNT][MAP_XCNT];
 
@@ -58,6 +60,9 @@ uint8 &Cluster::cell() {
 	return _map[_b][_a];
 }
 
+bool Cluster::isValid() const {
+	return (_a >= 0) && (_a < MAP_XCNT) && (_b >= 0) && (_b < MAP_ZCNT);
+}
 
 bool Cluster::Protected() {
 /*
@@ -148,12 +153,12 @@ void WALK::tick() {
 	if (_flags._hold || _tracePtr < 0)
 		park();
 	else {
-		if (_here == Trace[_tracePtr]) {
+		if (_here == _trace[_tracePtr]) {
 			if (--_tracePtr < 0)
 				park();
 		} else {
 			signed char dx, dz;
-			(Trace[_tracePtr] - _here).split(dx, dz);
+			(_trace[_tracePtr] - _here).split(dx, dz);
 			DIR d = (dx) ? ((dx > 0) ? EE : WW) : ((dz > 0) ? SS : NN);
 			turn(d);
 		}
@@ -215,26 +220,23 @@ void WALK::park() {
 
 
 void WALK::findWay(Cluster c) {
-	/*
-	bool Find1Way();
-	extern uint16 Target;
-
 	if (c != _here) {
-		for (FindLevel = 1; FindLevel <= MAX_FIND_LEVEL; FindLevel++) {
+		_level = 0;
+
+		for (_findLevel = 1; _findLevel <= MAX_FIND_LEVEL; _findLevel++) {
 			signed char x, z;
 			_here.split(x, z);
-			Target = (z << 8) | x;
+			_target = (z << 8) | x;
 			c.split(x, z);
-			_CX = (z << 8) | x;
-			if (Find1Way())
+
+			if (find1Way(XZ(x, z)))
 				break;
 		}
-		_tracePtr = (FindLevel > MAX_FIND_LEVEL) ? -1 : (FindLevel - 1);
+		_tracePtr = (_findLevel > MAX_FIND_LEVEL) ? -1 : (_findLevel - 1);
 		if (_tracePtr < 0)
-			NoWay();
-		Time = 1;
+			noWay();
+		_time = 1;
 	}
-	*/
 }
 
 
@@ -276,6 +278,61 @@ void WALK::reach(Sprite *spr, int mode) {
 	}
 	// sequence is not finished,
 	// now it is just at sprite appear (disappear) point
+}
+
+void WALK::noWay() {
+	_vm->trouble(NO_WAY, NO_WAY_TEXT);
+}
+
+bool WALK::find1Way(Cluster c) {
+	Cluster start = c;
+	const Cluster tab[4] = { Cluster(-1, 0), Cluster(1, 0), Cluster(0, -1), Cluster(0, 1)};
+	const int tabLen = 4;
+
+	if (c == _here)
+		// Found destination
+		return true;
+
+	if (_level >= _findLevel)
+		// Nesting limit
+		return false;
+
+	// Look for barriers
+	if (c.Protected())
+		return false;
+
+	if (c.cell())
+		// Location is occupied
+		return false;
+
+
+	// Loop through each direction
+	for (int i = 0; i < tabLen; ++i) {
+		// Reset to starting position
+		c = start;
+
+		do {
+			c += tab[i];
+			if (!c.isValid())
+				// Break to check next direction
+				break;
+
+			// Recursively check for further paths
+			++_level;
+			++c.cell();
+			bool foundPath = find1Way(c);
+			--c.cell();
+			--_level;
+
+			if (foundPath) {
+				// Set route point
+				_trace[_level] = start;
+				return true;
+			}
+		} while (c.Protected() && !c.cell());
+	}
+
+	return false;
 }
 
 } // End of namespace CGE
