@@ -790,17 +790,17 @@ uint32 AsScene1002Door::handleMessage(int messageNum, const MessageParam &param,
 	switch (messageNum) {
 	case 0x4808:
 		setGlobalVar(0x8306F218, 1);
-		SetSpriteCallback(&AsScene1002Door::spriteUpdate447D10);
+		SetSpriteCallback(&AsScene1002Door::suOpenDoor);
 		break;
 	case 0x4809:
 		setGlobalVar(0x8306F218, 0);
-		SetSpriteCallback(&AsScene1002Door::spriteUpdate447D40);
+		SetSpriteCallback(&AsScene1002Door::suCloseDoor);
 		break;
 	}
 	return messageResult;
 }
 
-void AsScene1002Door::spriteUpdate447D10() {
+void AsScene1002Door::suOpenDoor() {
 	if (_y > 49) {
 		_y -= 8;
 		if (_y < 49) {
@@ -811,7 +811,7 @@ void AsScene1002Door::spriteUpdate447D10() {
 	}
 }
 
-void AsScene1002Door::spriteUpdate447D40() {
+void AsScene1002Door::suCloseDoor() {
 	if (_y < 239) {
 		_y += 8;
 		if (_y > 239) {
@@ -1332,6 +1332,36 @@ void Class506::sub4492C0() {
 	setFileHash1();
 }
 
+Class478::Class478(NeverhoodEngine *vm, Klayman *klayman)
+	: AnimatedSprite(vm, 1200), _klayman(klayman) {
+	
+	createSurface(1200, 40, 163);
+	SetUpdateHandler(&Class478::update);
+	SetMessageHandler(&Sprite::handleMessage);
+	_surface->setVisible(false);
+}
+
+void Class478::update() {
+	if (_klayman->getCurrAnimFileHash() == 0x3A292504) {
+		setFileHash(0xBA280522, _frameIndex, -1);
+		_newHashListIndex = _klayman->getFrameIndex();
+		_surface->setVisible(true);
+		_x = _klayman->getX(); 
+		_y = _klayman->getY(); 
+		setDoDeltaX(_klayman->isDoDeltaX() ? 1 : 0);
+	} else if (_klayman->getCurrAnimFileHash() == 0x122D1505) {
+		setFileHash(0x1319150C, _frameIndex, -1);
+		_newHashListIndex = _klayman->getFrameIndex();
+		_surface->setVisible(true);
+		_x = _klayman->getX(); 
+		_y = _klayman->getY(); 
+		setDoDeltaX(_klayman->isDoDeltaX() ? 1 : 0);
+	} else {
+		_surface->setVisible(false);
+	}
+	AnimatedSprite::update();
+}
+
 Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
 	_flag1B4(false), _flag1BE(false) {
@@ -1373,36 +1403,39 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_class599 = addSprite(new Class599(_vm, this));
 
+	// DEBUG/HACK!!!!
+	which = 1; setGlobalVar(0x8306F218, 1);
+
 	if (which < 0) {
 		if (_vm->_gameState.field2 == 0) {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 90, 226);
-			//_class478 = addSprite(new Class478(_vm, _klayman));
+			_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4270);
 			// TODO			
 			_klayman->setRepl(64, 0);
 		} else {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 379, 435);
-			//_class478 = addSprite(new Class478(_vm, _klayman));
+			_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4270);
 			// TODO			
 		}
 	} else {
 		if (which == 1) {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 650, 435);
-			//_class478 = addSprite(new Class478(_vm, _klayman));
+			_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4478);
 			// TODO			
 			_vm->_gameState.field2 = 1;
 		} else if (which == 2) {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 68, 645);
-			//_class478 = addSprite(new Class478(_vm, _klayman));
+			_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4298);
 			// TODO
 			_vm->_gameState.field2 = 1;
 			_klayman->sendMessage(0x4820, 0, this);
 		} else {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 90, 226);
-			//_class478 = addSprite(new Class478(_vm, _klayman));
+			_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4470);
 			// TODO
 			//_class479 = addSprite(new Class479(_vm, this, _klayman));

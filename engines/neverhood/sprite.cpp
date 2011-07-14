@@ -286,11 +286,11 @@ void AnimatedSprite::updateAnim() {
 				
 				if (_fileHash2 != 0) {
 					if (_animResource.loadInternal(_fileHash2)) {
-						_fileHash3 = _fileHash2;
+						_currAnimFileHash = _fileHash2;
 					} else {
 						debug("TODO");
 						// TODO _animResource.loadInternal(calcHash("sqDefault"));
-						_fileHash3 = 0;
+						_currAnimFileHash = 0;
 					}
 					if (_replOldColor != _replNewColor) {
 						_animResource.setRepl(_replOldColor, _replNewColor);	
@@ -318,11 +318,11 @@ void AnimatedSprite::updateAnim() {
 		} else {
 			if (_animStatus == 1) {
 				if (_animResource.loadInternal(_fileHash1)) {
-					_fileHash3 = _fileHash1;
+					_currAnimFileHash = _fileHash1;
 				} else {
 					debug("TODO");
 					// TODO _animResource.loadInternal(calcHash("sqDefault"));
-					_fileHash3 = 0;
+					_currAnimFileHash = 0;
 				}
 				if (_replOldColor != _replNewColor) {
 					_animResource.setRepl(_replOldColor, _replNewColor);	
@@ -332,11 +332,11 @@ void AnimatedSprite::updateAnim() {
 				_frameIndex2 = _fileHash5 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash5)) : _animResource.getFrameCount() - 1;
 			} else {
 				if (_animResource.loadInternal(_fileHash1)) {
-					_fileHash3 = _fileHash1;
+					_currAnimFileHash = _fileHash1;
 				} else {
 					debug("TODO");
 					// TODO _animResource.loadInternal(calcHash("sqDefault"));
-					_fileHash3 = 0;
+					_currAnimFileHash = 0;
 				}
 				if (_replOldColor != _replNewColor) {
 					_animResource.setRepl(_replOldColor, _replNewColor);	
@@ -386,7 +386,7 @@ void AnimatedSprite::updatePosition() {
 
 void AnimatedSprite::updateFrameIndex() {
 	if (!_playBackwards) {
-		//debug("%08X ### _frameIndex = %d; _frameIndex2 = %d", _fileHash3, _frameIndex, _frameIndex2);
+		//debug("%08X ### _frameIndex = %d; _frameIndex2 = %d", _currAnimFileHash, _frameIndex, _frameIndex2);
 		if (_frameIndex < _frameIndex2) {
 			_frameIndex++;
 		} else {

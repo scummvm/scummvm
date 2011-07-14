@@ -56,6 +56,18 @@ struct MessageItem {
 
 typedef Common::Array<MessageItem> MessageList;
 
+struct NavigationItem {
+	uint32 fileHash;
+	uint32 leftSmackerFileHash;
+	uint32 rightSmackerFileHash;
+	uint32 middleSmackerFileHash;
+	byte interactive;
+	byte middleFlag;
+	uint32 mouseCursorFileHash;
+};
+
+typedef Common::Array<NavigationItem> NavigationList;
+
 class StaticData {
 public:
 	StaticData();
@@ -64,10 +76,12 @@ public:
 	HitRectList *getHitRectList(uint32 id);
 	RectList *getRectList(uint32 id);
 	MessageList *getMessageList(uint32 id);
+	NavigationList *getNavigationList(uint32 id);
 protected:
 	Common::HashMap<uint32, HitRectList*> _hitRectLists;
 	Common::HashMap<uint32, RectList*> _rectLists;
 	Common::HashMap<uint32, MessageList*> _messageLists;
+	Common::HashMap<uint32, NavigationList*> _navigationLists;
 };
 
 } // End of namespace Neverhood

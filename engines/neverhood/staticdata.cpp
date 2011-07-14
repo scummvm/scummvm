@@ -104,6 +104,27 @@ void StaticData::load(const char *filename) {
 		_hitRectLists[id] = hitRectList;
 	}
 
+	// Load navigation lists
+	uint32 navigationListsCount = fd.readUint32LE();
+	debug("navigationListsCount: %d", navigationListsCount);
+	for (uint32 i = 0; i < navigationListsCount; i++) {
+		NavigationList *navigationList = new NavigationList();
+		uint32 id = fd.readUint32LE();
+		uint32 itemCount = fd.readUint32LE();
+		for (uint32 itemIndex = 0; itemIndex < itemCount; itemIndex++) {
+			NavigationItem navigationItem;
+			navigationItem.fileHash = fd.readUint32LE();
+			navigationItem.leftSmackerFileHash = fd.readUint32LE();
+			navigationItem.rightSmackerFileHash = fd.readUint32LE();
+			navigationItem.middleSmackerFileHash = fd.readUint32LE();
+			navigationItem.interactive = fd.readByte();
+			navigationItem.middleFlag = fd.readByte();
+			navigationItem.mouseCursorFileHash = fd.readUint32LE();
+			navigationList->push_back(navigationItem);
+		}
+		_navigationLists[id] = navigationList;
+	}
+
 }
 
 HitRectList *StaticData::getHitRectList(uint32 id) {
@@ -122,6 +143,12 @@ MessageList *StaticData::getMessageList(uint32 id) {
 	if (!_messageLists[id])
 		error("StaticData::getMessageList() MessageList with id %08X not found", id);
 	return _messageLists[id];
+}
+
+NavigationList *StaticData::getNavigationList(uint32 id) {
+	if (!_navigationLists[id])
+		error("StaticData::getNavigationList() NavigationList with id %08X not found", id);
+	return _navigationLists[id];
 }
 
 } // End of namespace Neverhood

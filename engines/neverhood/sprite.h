@@ -52,6 +52,7 @@ public:
 	bool isDoDeltaX() const { return _doDeltaX; }
 	bool isDoDeltaY() const { return _doDeltaY; }
 	NRect& getRect() { return _rect; }
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 protected:
 	void (Sprite::*_spriteUpdateCb)();
 	Common::String _spriteUpdateCbName; // For debugging purposes
@@ -70,7 +71,6 @@ protected:
 	//0000004A field4A		dw ? // seems to be unused except in ctor
 	//0000004C rectResource	RectResource ?
 	//void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createSurface(int surfacePriority, int16 width, int16 height);
 	void handleSpriteUpdate() {
 		if (_spriteUpdateCb)
@@ -109,12 +109,14 @@ public:
 	void updateDeltaXY();
 	void setRepl(byte oldColor, byte newColor);
 	void clearRepl();
+	uint32 getCurrAnimFileHash() const { return _currAnimFileHash; }
+	int16 getFrameIndex() const { return _frameIndex; }
 protected:
 	typedef void (AnimatedSprite::*AnimationCb)();
 	AnimResource _animResource;
+	uint32 _currAnimFileHash;
 	uint32 _fileHash1;
 	uint32 _fileHash2;
-	uint32 _fileHash3;
 	int16 _frameIndex;
 	int16 _frameIndex3;
 	int16 _frameIndex2;

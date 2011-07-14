@@ -172,8 +172,8 @@ public:
 protected:
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate447D10();
-	void spriteUpdate447D40();
+	void suOpenDoor();
+	void suCloseDoor();
 };
 
 class Class505 : public AnimatedSprite {
@@ -252,6 +252,14 @@ protected:
 	void sub449250();
 	void sub449280();
 	void sub4492C0();
+};
+
+class Class478 : public AnimatedSprite {
+public:
+	Class478(NeverhoodEngine *vm, Klayman *klayman);
+protected:
+	Klayman *_klayman;
+	void update();
 };
 
 class Scene1002 : public Scene {

@@ -224,4 +224,159 @@ void Mouse435::updateCursor() {
 
 }
 
+// NavigationMouse
+
+NavigationMouse::NavigationMouse(NeverhoodEngine *vm, uint32 fileHash, int type)
+	: StaticSprite(vm, 2000), _mouseCursorResource(vm), _type(type), _frameNum(0) {
+
+	_mouseCursorResource.load(fileHash);
+	_mouseCursorResource.setCursorNum(0);
+	_x = _vm->getMouseX();	
+	_y = _vm->getMouseY();
+	createSurface(2000, 32, 32);
+	SetUpdateHandler(&NavigationMouse::update);
+	SetMessageHandler(&NavigationMouse::handleMessage);
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = 32;
+	_drawRect.height = 32;
+	_deltaRect.x = 0;
+	_deltaRect.y = 0;
+	_deltaRect.width = 32;
+	_deltaRect.height = 32;
+	processDelta();
+	_needRefresh = true;
+	updateCursor();
+}
+
+void NavigationMouse::update() {
+	updateCursor();
+	_frameNum++;
+	if (_frameNum >= 6)
+		_frameNum = 0;
+	_needRefresh = _frameNum % 2 == 0;		
+}
+
+uint32 NavigationMouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = 0;
+	switch (messageNum) {
+	case 0x2064:
+		_x = param.asPoint().x;
+		_y = param.asPoint().y;
+		switch (_type) {
+		case 1:
+			if (_x >= 320)
+				messageResult = 1;
+			else				
+				messageResult = 0;
+			break;
+		case 2:
+		default:
+			if (_x < 100)
+				messageResult = 0;
+			else if (_x > 540)				
+				messageResult = 1;
+			else				
+				messageResult = 2;
+			break;
+		case 3:
+			if (_x < 100)
+				messageResult = 0;
+			else if (_x > 540)				
+				messageResult = 1;
+			else				
+				messageResult = 4;
+			break;
+		case 4:
+			if (_x < 100)
+				messageResult = 0;
+			else if (_x > 540)				
+				messageResult = 1;
+			else if (_y >= 150)				
+				messageResult = 2;
+			else				
+				messageResult = 3;
+			break;
+		case 5:
+			if (_y >= 240)
+				messageResult = 4;
+			else				
+				messageResult = 3;
+			break;
+		}
+		break;
+	case 0x4002:
+		_x = param.asPoint().x;
+		_y = param.asPoint().y;
+		switch (_type) {
+		case 1:
+			if (_x >= 320)
+				_mouseCursorResource.setCursorNum(6);
+			else				
+				_mouseCursorResource.setCursorNum(5);
+			break;
+		case 2:
+		default:
+			if (_x < 100)
+				_mouseCursorResource.setCursorNum(6);
+			else if (_x > 540)				
+				_mouseCursorResource.setCursorNum(5);
+			else				
+				_mouseCursorResource.setCursorNum(0);
+			break;
+		case 3:
+			if (_x < 100)
+				_mouseCursorResource.setCursorNum(1);
+			else if (_x > 540)				
+				_mouseCursorResource.setCursorNum(1);
+			break;
+		case 4:
+			if (_x < 100)
+				_mouseCursorResource.setCursorNum(6);
+			else if (_x > 540)				
+				_mouseCursorResource.setCursorNum(5);
+			else if (_y >= 150)				
+				_mouseCursorResource.setCursorNum(0);
+			else				
+				_mouseCursorResource.setCursorNum(3);
+			break;
+		case 5:
+			if (_y >= 240)
+				_mouseCursorResource.setCursorNum(2);
+			else				
+				_mouseCursorResource.setCursorNum(3);
+			break;
+		}
+		_needRefresh = true;
+		processDelta();
+		break;
+	}
+	return messageResult;
+}
+
+void NavigationMouse::updateCursor() {
+
+	if (!_surface)
+		return;
+
+	if (_doDeltaX) {
+		_surface->getDrawRect().x = filterX(_x - _drawRect.width - _drawRect.x + 1);
+	} else {
+		_surface->getDrawRect().x = filterX(_x + _drawRect.x);
+	}
+
+	if (_doDeltaY) {
+		_surface->getDrawRect().y = filterY(_y - _drawRect.height - _drawRect.y + 1);
+	} else {
+		_surface->getDrawRect().y = filterY(_y + _drawRect.y);
+	}
+
+	if (_needRefresh) {
+		_needRefresh = false;
+		_drawRect = _mouseCursorResource.getRect();
+		_surface->drawMouseCursorResource(_mouseCursorResource, _frameNum / 2);
+	}
+
+}
+
 } // End of namespace Neverhood
