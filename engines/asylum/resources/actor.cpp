@@ -229,11 +229,10 @@ void Actor::loadData(Common::SeekableReadStream *stream) {
 
 	_data.current = stream->readUint32LE();
 
-	_data.point.x = stream->readSint32LE();
-	_data.point.y = stream->readSint32LE();
-
-	for (int32 i = 0; i < 238; i++)
-		_data.field_10[i] = stream->readSint32LE();
+	for (int32 i = 0; i < 120; i++) {
+		_data.points[i].x = stream->readSint32LE();
+		_data.points[i].y = stream->readSint32LE();
+	}
 
 	for (int32 i = 0; i < 120; i++)
 		_data.directions[i] = (ActorDirection)stream->readSint32LE();
@@ -520,18 +519,19 @@ void Actor::update() {
 			error("[Actor::update] Invalid distance (kActorStatus2/kActorStatus13)");
 
 		Common::Point point = _point1 + _point2;
+		Common::Point current = _data.points[_data.current];
 
-		if (point.x < (int16)(_data.point.x - (dist - 1))
-		 || point.x > (int16)(_data.point.x + (dist - 1))
-		 || point.y < (int16)(_data.point.y - (dist - 1))
-		 || point.y > (int16)(_data.point.y + (dist - 1))) {
+		if (point.x < (int16)(current.x - (dist - 1))
+		 || point.x > (int16)(current.x + (dist - 1))
+		 || point.y < (int16)(current.y - (dist - 1))
+		 || point.y > (int16)(current.y + (dist - 1))) {
 			if (process_408B20(&point, _direction, dist, false)) {
 				playSounds(_direction, dist);
 			} else {
 				update_409230();
 			}
 		} else {
-			int32 area = getScene()->findActionArea(kActionAreaType1, _data.point);
+			int32 area = getScene()->findActionArea(kActionAreaType1, current);
 			if (_field_944 == 1 || _field_944 == 4)
 				area = 1;
 
@@ -540,9 +540,9 @@ void Actor::update() {
 			} else {
 				_frameIndex = (_frameIndex + 1) % _frameCount;
 
-				if (process_4103B0(&_data.point, _direction)) {
+				if (process_4103B0(&current, _direction)) {
 					_point1.x = dist - _point2.x;
-					_point1.y = _data.point.y - _point2.y;
+					_point1.y = current.y - _point2.y;
 
 					if (_data.current < (int32)(_data.count - 1)) {
 						_data.current++;
@@ -941,9 +941,9 @@ bool Actor::process(const Common::Point &point) {
 
 	if (point == sum) {
 		if (process_408B20(&sum, a3 >= 2 ? kDirectionS : kDirectionN, abs(delta.y), false)) {
-			_data.point = point;
-			_data.current    = 0;
-			_data.count      = 1;
+			_data.points[0] = point;
+			_data.current   = 0;
+			_data.count     = 1;
 
 			return true;
 		}
@@ -952,9 +952,9 @@ bool Actor::process(const Common::Point &point) {
 	if (point.x == sum.x) {
 		ActorDirection actorDir = a3 >= 2 ? kDirectionS : kDirectionN;
 		if (process_408B20(&sum, actorDir, abs(delta.y), false)) {
-			_data.point = point;
-			_data.current    = 0;
-			_data.count      = 1;
+			_data.points[0] = point;
+			_data.current   = 0;
+			_data.count     = 1;
 
 			updateFromDirection(actorDir);
 
@@ -968,9 +968,9 @@ bool Actor::process(const Common::Point &point) {
 		ActorDirection actorDir = (a3 != 0 || a3 != 3) ? kDirectionE : kDirectionO;
 
 		if (process_408B20(&sum, actorDir, abs(delta.x), true)) {
-			_data.point = point;
-			_data.current    = 0;
-			_data.count      = 1;
+			_data.points[0] = point;
+			_data.current   = 0;
+			_data.count     = 1;
 
 			updateFromDirection(actorDir);
 
@@ -1134,9 +1134,9 @@ bool Actor::process(const Common::Point &point) {
 		return false;
 
 	// Update actor data
-	_data.point = point;
-	_data.current    = 0;
-	_data.count      = 1;
+	_data.points[0] = point;
+	_data.current   = 0;
+	_data.count     = 1;
 
 	// Update actor from direction
 	updateFromDirection(actorDir);
@@ -1953,10 +1953,10 @@ void Actor::updateStatus12_Chapter2() {
 	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
 
 	// FIXME: another field is used (not _data!)
-	if (_data.field_10[_index + 10] > 0) {
-		_direction = (ActorDirection)(_direction + 4);
-		_data.field_10[_index + 10] -= 1;
-	}
+	//if (_data.field_10[_index + 10] > 0) {
+	//	_direction = (ActorDirection)(_direction + 4);
+	//	_data.field_10[_index + 10] -= 1;
+	//}
 
 	// Compute coordinates and distance
 	Actor *player = getScene()->getActor();
@@ -1978,8 +1978,8 @@ void Actor::updateStatus12_Chapter2() {
 	} else {
 		_frameIndex = 0;
 		// FIXME: another field is used (not _data!)
-		_data.field_10[2 * _index + 15] = player->getPoint1()->x - _point1.x;
-		_data.field_10[2 * _index + 16] = player->getPoint1()->y - _point1.y;
+		//_data.field_10[2 * _index + 15] = player->getPoint1()->x - _point1.x;
+		//_data.field_10[2 * _index + 16] = player->getPoint1()->y - _point1.y;
 
 		updateStatus(kActorStatus18);
 	}

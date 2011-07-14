@@ -41,8 +41,7 @@ struct GraphicFrame;
 struct ActorData {
 	uint32 count;
 	int32 current;
-	Common::Point point;
-	int32 field_10[238];
+	Common::Point points[120];
 	ActorDirection directions[120];
 };
 
