@@ -568,7 +568,7 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 			return true;
 		}
 
-		if (!hitTestPlayer() || player->getStatus() >= kActorStatus11 || !player->getReaction(0)) {
+		if (!hitTestPlayer() || player->getStatus() >= kActorStatus11 || !player->getReactionValue(0)) {
 			if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
 				playerReaction();
 			} else {
@@ -1178,7 +1178,7 @@ void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
 	}
 
 	if (mouse.x >= rect.left && mouse.x <= rightLimit && mouse.y >= rect.top  && mouse.y <= rect.bottom && hitTestPlayer()) {
-		if (player->getReaction(0)) {
+		if (player->getReactionValue(0)) {
 			if (getCursor()->graphicResourceId != _ws->cursorResources[kCursorResourceGrabPointer])
 				getCursor()->set(_ws->cursorResources[kCursorResourceGrabPointer]);
 
@@ -1641,7 +1641,7 @@ void Scene::playerReaction() {
 
 	uint32 maxIndex = 0;
 	for (maxIndex = 0; maxIndex < 8; maxIndex++) {
-		if (!player->getReaction(maxIndex))
+		if (!player->getReactionValue(maxIndex))
 			break;
 	}
 
@@ -1662,7 +1662,7 @@ void Scene::playerReaction() {
 				if (_ws->chapter == kChapter9) {
 					switch (i) {
 					default:
-						player->setField638(player->getReaction(i));
+						player->setField638(player->getReactionValue(i));
 						break;
 
 					case 0:
@@ -1678,7 +1678,7 @@ void Scene::playerReaction() {
 						break;
 					}
 				} else {
-					player->setField638(player->getReaction(i));
+					player->setField638(player->getReactionValue(i));
 				}
 				break;
 			}
@@ -2317,7 +2317,7 @@ void Scene::changePlayerUpdate(ActorIndex index) {
 	player->hide();
 
 	for (uint i = 0; i < 8; i++)
-		actor->setReaction(i, player->getReaction(i));
+		actor->setReaction(i, player->getReactionValue(i));
 }
 
 //////////////////////////////////////////////////////////////////////////

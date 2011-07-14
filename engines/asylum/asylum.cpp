@@ -24,6 +24,7 @@
 
 #include "asylum/resources/actor.h"
 #include "asylum/resources/encounters.h"
+#include "asylum/resources/reaction.h"
 #include "asylum/resources/script.h"
 #include "asylum/resources/special.h"
 #include "asylum/resources/worldstats.h"
@@ -70,7 +71,7 @@
 namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
-	_console(NULL), _cursor(NULL), _encounter(NULL), _menu(NULL), _resource(NULL), _savegame(NULL),
+	_console(NULL), _cursor(NULL), _encounter(NULL), _menu(NULL), _reaction(NULL), _resource(NULL), _savegame(NULL),
 	_scene(NULL), _screen(NULL), _script(NULL), _sound(NULL), _text(NULL), _video(NULL), _handler(NULL) {
 
 	// Init data
@@ -111,6 +112,7 @@ AsylumEngine::~AsylumEngine() {
 	delete _cursor;
 	delete _scene;
 	delete _encounter;
+	delete _reaction;
 	delete _savegame;
 	delete _screen;
 	delete _script;
@@ -143,6 +145,7 @@ Common::Error AsylumEngine::run() {
 	// Create all game classes
 	_encounter = new Encounter(this);
 	_cursor    = new Cursor(this);
+	_reaction  = new Reaction(this);
 	_savegame  = new Savegame(this);
 	_screen    = new Screen(this);
 	_script    = new ScriptManager(this);
