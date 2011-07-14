@@ -249,9 +249,9 @@ public:
 	Common::String toString(bool shortString = true);
 
 	/**
-	 * Clears actor data fields (TODO what are those fields?)
+	 * Clears actor data fields
 	 */
-	void clearFields() { memset(&_field_970, 0, 52); }
+	void clearFields();
 
 	// Unknown methods
 	bool process(const Common::Point &point);
