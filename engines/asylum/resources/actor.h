@@ -347,9 +347,9 @@ private:
 	uint32  _field_650;
 	ResourceId  _graphicResourceIds[55];
 	char   _name[256];
-	int32  _field_830[20];
-	int32  _field_880[20];
-	int32  _field_8D0[20];
+	int32  _distancesEO[20];
+	int32  _distancesNS[20];
+	int32  _distancesNSEO[20];
 	int32  _actionIdx2;
 	int32  _field_924;
 	uint32 _lastScreenUpdate;
