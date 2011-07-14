@@ -241,12 +241,6 @@ void CGEEngine::tooFar() {
 	trouble(TOO_FAR, TOO_FAR_TEXT);
 }
 
-// Used in stubbed function, do not remove!
-void CGEEngine::noWay() {
-	trouble(NO_WAY, NO_WAY_TEXT);
-}
-
-
 void CGEEngine::loadHeroXY() {
 	INI_FILE cf(progName(".HXY"));
 	memset(_heroXY, 0, sizeof(_heroXY));

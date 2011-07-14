@@ -49,46 +49,6 @@ struct Dac {
 
 typedef uint16  CRYPT(void *buf, uint16 siz, uint16 seed);
 
-class Couple {
-protected:
-	signed char _a;
-	signed char _b;
-public:
-	Couple() { }
-	Couple(const signed char a, const signed char b) : _a(a), _b(b) { }
-	Couple operator + (Couple c) {
-		return Couple(_a + c._a, _b + c._b);
-	}
-
-	void operator += (Couple c) {
-		_a += c._a;
-		_b += c._b;
-	}
-
-	Couple operator - (Couple c) {
-		return Couple(_a - c._a, _b - c._b);
-	}
-
-	void operator -= (Couple c) {
-		_a -= c._a;
-		_b -= c._b;
-	}
-
-	bool operator == (Couple c) {
-		return ((_a - c._a) | (_b - c._b)) == 0;
-	}
-
-	bool operator != (Couple c) {
-		return !(operator == (c));
-	}
-
-	void split(signed char &a, signed char &b) {
-		a = _a;
-		b = _b;
-	}
-};
-
-
 class Engine_ {
 protected:
 	static void (* oldTimer)(...);

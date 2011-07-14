@@ -142,7 +142,6 @@ public:
 	void trouble(int seq, int txt);
 	void offUse();
 	void tooFar();
-	void noWay();
 	void loadHeroXY();
 	void keyClick();
 	void switchColorMode();
