@@ -52,8 +52,10 @@ namespace Asylum {
 #define SCREEN_EDGES 40
 #define SCROLL_STEP 10
 
-int g_debugPolygons;
+int g_debugActors;
+int g_debugDrawRects;
 int g_debugObjects;
+int g_debugPolygons;
 int g_debugScrolling;
 
 Scene::Scene(AsylumEngine *engine): _vm(engine),
@@ -669,12 +671,6 @@ bool Scene::updateScene() {
 		MESURE_TICKS(updateAmbientSounds);
 		MESURE_TICKS(updateMusic);
 		MESURE_TICKS(updateAdjustScreen);
-
-		// Update Debug
-		if (g_debugPolygons)
-			debugShowPolygons();
-		if (g_debugObjects)
-			debugShowObjects();
 	}
 
 	return getScript()->process();
@@ -2383,6 +2379,16 @@ bool Scene::drawScene() {
 
 	_vm->screen()->drawGraphicsInQueue();
 
+	// Show debug information
+	if (g_debugScrolling)
+		debugScreenScrolling();
+	if (g_debugActors)
+		debugShowActors();
+	if (g_debugPolygons)
+		debugShowPolygons();
+	if (g_debugObjects)
+		debugShowObjects();
+
 	return false;
 }
 
@@ -2667,11 +2673,11 @@ void Scene::debugShowPolygons() {
 
 		// Draw all lines in Polygon
 		for (uint32 i = 0; i < poly.count(); i++) {
-			surface.drawLine(
-			    poly.points[i].x - poly.boundingRect.left,
-			    poly.points[i].y - poly.boundingRect.top,
-			    poly.points[(i+1) % poly.count()].x - poly.boundingRect.left,
-			    poly.points[(i+1) % poly.count()].y - poly.boundingRect.top, 0xFF);
+			surface.drawLine(poly.points[i].x - poly.boundingRect.left,
+			                 poly.points[i].y - poly.boundingRect.top,
+			                 poly.points[(i+1) % poly.count()].x - poly.boundingRect.left,
+			                 poly.points[(i+1) % poly.count()].y - poly.boundingRect.top,
+			                 0xFF);
 		}
 
 		getScreen()->copyToBackBufferClipped(&surface, poly.boundingRect.left, poly.boundingRect.top);
@@ -2689,7 +2695,7 @@ void Scene::debugShowObjects() {
 		Graphics::Surface surface;
 		Object *object = _ws->objects[p];
 
-		if (object->flags & 0x20) {
+		if (object->isOnScreen()) {
 			surface.create(object->getBoundingRect()->right - object->getBoundingRect()->left + 1,
 			               object->getBoundingRect()->bottom - object->getBoundingRect()->top + 1,
 			               Graphics::PixelFormat::createFormatCLUT8());
@@ -2707,12 +2713,12 @@ void Scene::debugShowActors() {
 		Graphics::Surface surface;
 		Actor *a = _ws->actors[p];
 
-		if (a->flags & 2) {
+		if (a->isOnScreen()) {
 			surface.create(a->getBoundingRect()->right - a->getBoundingRect()->left + 1,
 			               a->getBoundingRect()->bottom - a->getBoundingRect()->top + 1,
 			               Graphics::PixelFormat::createFormatCLUT8());
-			surface.frameRect(*a->getBoundingRect(), 0x22);
-			getScreen()->copyToBackBufferClipped(&surface, a->getPoint()->x, a->getPoint()->y);
+			surface.frameRect(*a->getBoundingRect(), 0x128);
+			getScreen()->copyToBackBufferClipped(&surface, a->getPoint1()->x, a->getPoint1()->y);
 		}
 
 		surface.free();
