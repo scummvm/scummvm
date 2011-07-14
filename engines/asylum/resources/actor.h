@@ -443,6 +443,7 @@ private:
 	bool processAction2(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions);
 	bool processAction3(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions);
 	bool processAction4(const Common::Point &source, const Common::Point &destination, Common::Array<int> *actions);
+	bool checkPath(Common::Array<ActionArea *> *actions, const Common::Point &point, uint32 index, uint32 loopcount);
 	bool checkAllActions(const Common::Point &pt, Common::Array<ActionArea *> *actions);
 
 	//////////////////////////////////////////////////////////////////////////

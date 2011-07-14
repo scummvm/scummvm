@@ -2534,6 +2534,27 @@ bool Actor::processAction4(const Common::Point &source, const Common::Point &des
 	error("[Actor::processAction4] Not implemented");
 }
 
+bool Actor::checkPath(Common::Array<ActionArea *> *actions, const Common::Point &point, uint32 index, uint32 loopcount) {
+	if (loopcount <= 1)
+		return true;
+
+	// Initialize base coordinates
+	Common::Point basePoint = deltaPointsArray[index] + point;
+	Common::Rect  rect      = getWorld()->sceneRects[getWorld()->sceneRectIdx];
+
+	for (uint32 i = 1; i < loopcount; i++) {
+		if (!checkAllActions(basePoint, actions))
+			break;
+
+		if (!rect.contains(basePoint))
+			return false;
+
+		basePoint += deltaPointsArray[index];
+	}
+
+	return true;
+}
+
 bool Actor::checkAllActions(const Common::Point &pt, Common::Array<ActionArea *> *actions) {
 	if (actions->size() == 0)
 		return false;
