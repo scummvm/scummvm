@@ -40,11 +40,10 @@ struct GraphicFrame;
 
 struct ActorData {
 	uint32 count;
-	int32 field_4;
+	int32 current;
 	Common::Point point;
 	int32 field_10[238];
-	int32 field_3C8[120];
-	// TODO add actor data fields
+	ActorDirection directions[120];
 };
 
 class Actor {
