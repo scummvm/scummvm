@@ -1966,11 +1966,11 @@ void Actor::updateStatus12_Chapter2() {
 	// Face actor
 	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
 
-	// FIXME: another field is used (not _data!)
-	//if (_data.field_10[_index + 10] > 0) {
-	//	_direction = (ActorDirection)(_direction + 4);
-	//	_data.field_10[_index + 10] -= 1;
-	//}
+	int32 data = getSharedData()->getData(_index + 14);
+	if (data > 0) {
+		_direction = (ActorDirection)(_direction + 4);
+		getSharedData()->setData(_index + 14, data - 1);
+	}
 
 	// Compute coordinates and distance
 	Actor *player = getScene()->getActor();
@@ -1985,15 +1985,15 @@ void Actor::updateStatus12_Chapter2() {
 		absX = absY;
 
 	if (!distance)
-		distance = 0; // FIXME: get proper distance value
+		error("[Actor::updateStatus12_Chapter2] Invalid distance");
 
 	if (absX >= 50) {
 		playSounds(_direction, abs(distance));
 	} else {
 		_frameIndex = 0;
-		// FIXME: another field is used (not _data!)
-		//_data.field_10[2 * _index + 15] = player->getPoint1()->x - _point1.x;
-		//_data.field_10[2 * _index + 16] = player->getPoint1()->y - _point1.y;
+
+		getSharedData()->setData(2 * _index + 19, player->getPoint1()->x - _point1.x);
+		getSharedData()->setData(2 * _index + 20, player->getPoint1()->y - _point1.y);
 
 		updateStatus(kActorStatus18);
 	}
