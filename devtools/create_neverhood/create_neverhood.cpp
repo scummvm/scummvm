@@ -81,6 +81,18 @@ struct MessageItem {
 
 typedef std::vector<MessageItem> MessageItems;
 
+struct NavigationItem {
+	uint32 fileHash;
+	uint32 leftSmackerFileHash;
+	uint32 rightSmackerFileHash;
+	uint32 middleSmackerFileHash;
+	byte interactive;
+	byte middleFlag;
+	uint32 mouseCursorFileHash;
+};
+
+typedef std::vector<NavigationItem> NavigationItems;
+
 struct HitRectList {
 	uint32 id;	
 	HitRects hitRects;
@@ -96,9 +108,15 @@ struct MessageList {
 	MessageItems messageItems;	
 };
 
+struct NavigationList {
+	uint32 id;
+	NavigationItems navigationItems;	
+};
+
 std::vector<HitRectList*> hitRectLists;
 std::vector<RectList*> rectLists;
 std::vector<MessageList*> messageLists;
+std::vector<NavigationList*> navigationLists;
 
 byte *getData(uint32 offset) {
 	return data + offset - dataStart + fileStart;
@@ -125,7 +143,6 @@ void addHitRect(uint32 count, uint32 offset) {
 void addMessage(uint32 count, uint32 offset) {
 	MessageList *messageList = new MessageList();
 	messageList->id = offset;
-	
 	// Special code for message lists which are set at runtime (but otherwise constant)
 	switch (offset) {
 	// Scene 1002 rings
@@ -161,7 +178,6 @@ void addMessage(uint32 count, uint32 offset) {
 			item += 8;
 		}
 	}
-	
 	messageLists.push_back(messageList);	   
 }
 
@@ -199,6 +215,25 @@ void addRect(uint32 count, uint32 offset) {
 	rectLists.push_back(rectList);
 }
 
+void addNavigation(uint32 count, uint32 offset) {
+	NavigationList *navigationList = new NavigationList();
+	navigationList->id = offset;
+	byte *item = getData(offset);
+	for (uint32 i = 0; i < count; i++) {
+		NavigationItem navigationItem;
+		navigationItem.fileHash = READ_LE_UINT32(item + 0); 
+		navigationItem.leftSmackerFileHash = READ_LE_UINT32(item + 4);
+		navigationItem.rightSmackerFileHash = READ_LE_UINT32(item + 8);
+		navigationItem.middleSmackerFileHash = READ_LE_UINT32(item + 12);
+		navigationItem.interactive = item[16];
+		navigationItem.middleFlag = item[17];
+		navigationItem.mouseCursorFileHash = READ_LE_UINT32(item + 20);
+		item += 24;
+		navigationList->navigationItems.push_back(navigationItem);
+	}
+	navigationLists.push_back(navigationList);
+}
+
 int main(int argc, char *argv[]) {
 
 	FILE *datFile;
@@ -215,6 +250,10 @@ int main(int argc, char *argv[]) {
 	
 	for (int i = 0; messageListOffsets[i] != 0; i += 2) {
 		addMessage(messageListOffsets[i], messageListOffsets[i + 1]);
+	}
+	
+	for (int i = 0; navigationListOffsets[i] != 0; i += 2) {
+		addNavigation(navigationListOffsets[i], navigationListOffsets[i + 1]);
 	}
 	
 	datFile = fopen("neverhood.dat", "wb");
@@ -274,6 +313,24 @@ int main(int argc, char *argv[]) {
 		}
 	}
 		
+	// Write all navigation lists
+	writeUint32LE(datFile, navigationLists.size());
+	for (std::vector<NavigationList*>::iterator it = navigationLists.begin(); it != navigationLists.end(); it++) {
+		NavigationList *navigationList = *it;
+		writeUint32LE(datFile, navigationList->id);
+		writeUint32LE(datFile, navigationList->navigationItems.size());
+		for (uint32 i = 0; i < navigationList->navigationItems.size(); i++) {
+			const NavigationItem &navigationItem = navigationList->navigationItems[i]; 
+			writeUint32LE(datFile, navigationItem.fileHash);
+			writeUint32LE(datFile, navigationItem.leftSmackerFileHash);
+			writeUint32LE(datFile, navigationItem.rightSmackerFileHash);
+			writeUint32LE(datFile, navigationItem.middleSmackerFileHash);
+			writeByte(datFile, navigationItem.interactive);
+			writeByte(datFile, navigationItem.middleFlag);
+			writeUint32LE(datFile, navigationItem.mouseCursorFileHash);
+		}
+	}
+
 	fclose(datFile);
 
 	printf("Done.\n");
