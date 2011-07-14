@@ -930,7 +930,7 @@ void L1_SendObjectToBack() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
 		ObjectState *state =  getobjectstate(param);
-		g_grim->getCurrScene()->moveObjectStateToFirst(state);
+		g_grim->getCurrScene()->moveObjectStateToBack(state);
 	}
 }
 
@@ -938,7 +938,7 @@ void L1_SendObjectToFront() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
 		ObjectState *state =  getobjectstate(param);
-		g_grim->getCurrScene()->moveObjectStateToLast(state);
+		g_grim->getCurrScene()->moveObjectStateToFront(state);
 	}
 }
 

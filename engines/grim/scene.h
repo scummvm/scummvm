@@ -92,16 +92,13 @@ public:
 	void shrinkBoxes(float radius);
 	void unshrinkBoxes();
 
-	void addObjectState(ObjectState *s) {
-		_states.push_back(s);
-	}
-
+	void addObjectState(ObjectState *s);
 	void deleteObjectState(ObjectState *s) {
 		_states.remove(s);
 	}
 
-	void moveObjectStateToFirst(ObjectState *s);
-	void moveObjectStateToLast(ObjectState *s);
+	void moveObjectStateToFront(ObjectState *s);
+	void moveObjectStateToBack(ObjectState *s);
 
 	ObjectState *findState(const char *filename);
 

@@ -524,7 +524,7 @@ void Scene::drawBackground() const {
 }
 
 void Scene::drawBitmaps(ObjectState::Position stage) {
-	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
+	for (StateList::iterator i = _states.reverse_begin(); i != _states.end(); --i) {
 		if ((*i)->getPos() == stage && _currSetup == _setups + (*i)->getSetupID())
 			(*i)->draw();
 	}
@@ -699,12 +699,16 @@ void Scene::getSoundParameters(int *minVolume, int *maxVolume) {
 	*maxVolume = _maxVolume;
 }
 
-void Scene::moveObjectStateToFirst(ObjectState *s) {
+void Scene::addObjectState(ObjectState *s) {
+	_states.push_front(s);
+}
+
+void Scene::moveObjectStateToFront(ObjectState *s) {
 	_states.remove(s);
 	_states.push_front(s);
 }
 
-void Scene::moveObjectStateToLast(ObjectState *s) {
+void Scene::moveObjectStateToBack(ObjectState *s) {
 	_states.remove(s);
 	_states.push_back(s);
 }
