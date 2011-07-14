@@ -92,7 +92,6 @@ namespace CGE {
 #define STD_DELAY      3
 #define LEV_MAX        5
 #define CAVE_MAX       (CAVE_NX * CAVE_NY)
-#define MAX_FIND_LEVEL 3
 #define MAX_DISTANCE   3
 #define INI_EXT        ".INI"
 #define IN0_EXT        ".IN0"

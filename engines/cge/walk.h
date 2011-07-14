@@ -40,7 +40,46 @@ namespace CGE {
 #define MAP_HIG        80
 #define MAP_XGRID      (SCR_WID / MAP_XCNT)
 #define MAP_ZGRID      (MAP_HIG / MAP_ZCNT)
+#define MAX_FIND_LEVEL 3
 
+class Couple {
+protected:
+	signed char _a;
+	signed char _b;
+public:
+	Couple() { }
+	Couple(const signed char a, const signed char b) : _a(a), _b(b) { }
+	Couple operator + (Couple c) {
+		return Couple(_a + c._a, _b + c._b);
+	}
+
+	void operator += (Couple c) {
+		_a += c._a;
+		_b += c._b;
+	}
+
+	Couple operator - (Couple c) {
+		return Couple(_a - c._a, _b - c._b);
+	}
+
+	void operator -= (Couple c) {
+		_a -= c._a;
+		_b -= c._b;
+	}
+
+	bool operator == (const Couple &c) {
+		return ((_a - c._a) | (_b - c._b)) == 0;
+	}
+
+	bool operator != (Couple c) {
+		return !(operator == (c));
+	}
+
+	void split(signed char &a, signed char &b) {
+		a = _a;
+		b = _b;
+	}
+};
 
 class Cluster : public Couple {
 public:
@@ -49,13 +88,21 @@ public:
 	Cluster() : Couple() { }
 	Cluster(int a, int b) : Couple(a, b) { }
 	bool Protected();
+	bool isValid() const;
+
 };
 
 
 class WALK : public Sprite {
+private:
+	CGEEngine *_vm;
 public:
 	Cluster _here;
 	int _tracePtr;
+	int _level;
+	int _findLevel;
+	int _target;
+	Cluster _trace[MAX_FIND_LEVEL];
 
 	enum DIR { NO_DIR = -1, NN, EE, SS, WW } Dir;
 	WALK(CGEEngine *vm, BMP_PTR *shpl);
@@ -67,9 +114,9 @@ public:
 	void park();
 	bool lower(Sprite *spr);
 	void reach(Sprite *spr, int mode = -1);
-private:
-	CGEEngine *_vm;
 
+	void noWay();
+	bool find1Way(Cluster c);
 };
 
 Cluster XZ(int x, int y);
