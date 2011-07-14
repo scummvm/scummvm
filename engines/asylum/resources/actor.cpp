@@ -75,9 +75,9 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_field_650 = 0;
  	memset(_graphicResourceIds, 0 , sizeof(_graphicResourceIds));
  	memset(&_name, 0, sizeof(_name));
- 	memset(&_field_830, 0, sizeof(_field_830));
- 	memset(&_field_880, 0, sizeof(_field_880));
- 	memset(&_field_8D0, 0, sizeof(_field_8D0));
+ 	memset(&_distancesEO, 0, sizeof(_distancesEO));
+ 	memset(&_distancesNS, 0, sizeof(_distancesNS));
+ 	memset(&_distancesNSEO, 0, sizeof(_distancesNSEO));
  	_actionIdx2 = 0;
  	_field_924 = 0;
  	_lastScreenUpdate = 0;
@@ -182,13 +182,13 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	stream->read(_name, sizeof(_name));
 
 	for (int32 i = 0; i < 20; i++)
-		_field_830[i] = stream->readSint32LE();
+		_distancesEO[i] = stream->readSint32LE();
 
 	for (int32 i = 0; i < 20; i++)
-		_field_880[i] = stream->readSint32LE();
+		_distancesNS[i] = stream->readSint32LE();
 
 	for (int32 i = 0; i < 20; i++)
-		_field_8D0[i] = stream->readSint32LE();
+		_distancesNSEO[i] = stream->readSint32LE();
 
 	_actionIdx2 = stream->readSint32LE();
 	_field_924  = stream->readSint32LE();
@@ -2772,36 +2772,38 @@ int32 Actor::getDistance() const {
 
 	case kDirectionNO:
 	case kDirectionSO:
-		return -_field_8D0[index];
+		return -_distancesNSEO[index];
 
 	case kDirectionO:
-		return -_field_830[index];
+		return -_distancesEO[index];
 
 	case kDirectionSE:
 	case kDirectionNE:
-		return _field_8D0[index];
+		return _distancesNSEO[index];
 
 	case kDirectionE:
-		return _field_830[index];
+		return _distancesEO[index];
 	}
 }
 
 int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) {
 	switch (dir) {
 	default:
+		error("[Actor::getDistanceForFrame] Invalid direction");
+
 	case kDirectionN:
 	case kDirectionS:
-		return _field_880[frameIndex];
+		return _distancesNS[frameIndex];
 
 	case kDirectionNO:
 	case kDirectionSO:
 	case kDirectionSE:
 	case kDirectionNE:
-		return _field_8D0[frameIndex];
+		return _distancesNSEO[frameIndex];
 
 	case kDirectionO:
 	case kDirectionE:
-		return _field_830[frameIndex];
+		return _distancesEO[frameIndex];
 	}
 }
 
