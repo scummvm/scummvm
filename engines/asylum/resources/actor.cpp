@@ -475,11 +475,7 @@ void Actor::update() {
 	case kActorStatus1: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
-		// FIXME the original tests for != 0 and sets to an unknown value (offset to actor in structure?)
-		uint32 dist = abs((double)getDistanceForFrame(_direction, index));
-		if (!dist)
-			error("[Actor::update] Invalid distance (kActorStatus1)");
-
+		uint32 dist = abs((double)getDistance(_direction, index));
 		Common::Point point = _point1 + _point2;
 
 		if (process_408B20(&point, _direction, dist, false)) {
@@ -513,10 +509,7 @@ void Actor::update() {
 	case kActorStatus13: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
-		// FIXME the original tests for != 0 and sets to an unknown value (offset to actor in structure?)
-		uint32 dist = abs((double)getDistanceForFrame(_direction, index));
-		if (!dist)
-			error("[Actor::update] Invalid distance (kActorStatus2/kActorStatus13)");
+		uint32 dist = abs((double)getDistance(_direction, index));
 
 		Common::Point point = _point1 + _point2;
 		Common::Point current = _data.points[_data.current];
@@ -1961,7 +1954,7 @@ void Actor::updateStatus12_Chapter2() {
 	if (_frameIndex >= _frameCount)
 		frameIndex = 2 * _frameCount - _frameIndex - 1;
 
-	int32 distance = getDistanceForFrame(_direction, frameIndex);
+	uint32 distance = abs((double)getDistance(_direction, frameIndex));
 
 	// Face actor
 	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
@@ -1984,11 +1977,8 @@ void Actor::updateStatus12_Chapter2() {
 	if (absX <= absY)
 		absX = absY;
 
-	if (!distance)
-		error("[Actor::updateStatus12_Chapter2] Invalid distance");
-
 	if (absX >= 50) {
-		playSounds(_direction, abs(distance));
+		playSounds(_direction, distance);
 	} else {
 		_frameIndex = 0;
 
@@ -2758,31 +2748,32 @@ DrawFlags Actor::getGraphicsFlags() {
 	return kDrawFlagMirrorLeftRight;
 }
 
-int32 Actor::getDistance() const {
-	int32 index = (_frameIndex >= _frameCount) ? (2 * _frameCount) - (_frameIndex + 1) : _frameIndex;
-
-	if (index >= 20)
-		error("[Actor::getDistance] Invalid index calculation (was: %d, max: 20)", index);
-
+int32 Actor::getDistance(ActorDirection dir, uint32 frameIndex) const {
 	switch (_direction) {
 	default:
+		error("[Actor::getDistanceFromFrame] Invalid direction");
+
+	// The original return 0 and then checks the value and replaces it by the alternate value stored in EDX
+	// We skip that crap and directly returns the proper value
 	case kDirectionN:
+		return -_distancesNS[frameIndex];
+
 	case kDirectionS:
-		return 0;
+		return _distancesNS[frameIndex];
 
 	case kDirectionNO:
 	case kDirectionSO:
-		return -_distancesNSEO[index];
+		return -_distancesNSEO[frameIndex];
 
 	case kDirectionO:
-		return -_distancesEO[index];
+		return -_distancesEO[frameIndex];
 
 	case kDirectionSE:
 	case kDirectionNE:
-		return _distancesNSEO[index];
+		return _distancesNSEO[frameIndex];
 
 	case kDirectionE:
-		return _distancesEO[index];
+		return _distancesEO[frameIndex];
 	}
 }
 

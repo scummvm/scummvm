@@ -516,7 +516,7 @@ private:
 	 *
 	 * @return The distance.
 	 */
-	int32 getDistance() const;
+	int32 getDistance(ActorDirection direction, uint32 frameIndex) const;
 
 	/**
 	 * Gets the distance for a frame.
