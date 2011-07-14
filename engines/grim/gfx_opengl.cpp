@@ -365,6 +365,7 @@ void GfxOpenGL::drawShadowPlanes() {
 	}
 */
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDepthMask(GL_FALSE);
 	glClearStencil(~0);
 	glClear(GL_STENCIL_BUFFER_BIT);
 
@@ -383,6 +384,7 @@ void GfxOpenGL::drawShadowPlanes() {
 		glEnd();
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDepthMask(GL_TRUE);
 
 	glStencilFunc(GL_EQUAL, 1, (GLuint)~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
