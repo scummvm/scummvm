@@ -446,7 +446,7 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 			Actor *player = getScene()->getActor();
 
 			if (_vm->isGameFlagSet(kGameFlag1021)) {
-				if (player->getReaction(0)) {
+				if (player->getReactionValue(0)) {
 
 					if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
 						getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 2));

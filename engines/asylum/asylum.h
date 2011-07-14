@@ -67,6 +67,7 @@ class Puzzle;
 class Cursor;
 class Encounter;
 class Menu;
+class Reaction;
 class ResourceManager;
 class Savegame;
 class Scene;
@@ -146,6 +147,7 @@ public:
 	Cursor          *cursor()    { return _cursor; }
 	Encounter       *encounter() { return _encounter; }
 	Menu            *menu()      { return _menu; }
+	Reaction        *reaction()  { return _reaction; }
 	ResourceManager *resource()  { return _resource; }
 	Savegame        *savegame()  { return _savegame; }
 	Scene           *scene()     { return _scene; }
@@ -226,6 +228,7 @@ private:
 	Cursor          *_cursor;
 	Encounter       *_encounter;
 	Menu            *_menu;
+	Reaction        *_reaction;
 	ResourceManager *_resource;
 	Savegame        *_savegame;
 	Scene           *_scene;

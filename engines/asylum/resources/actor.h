@@ -88,7 +88,7 @@ public:
 	Common::Point *getPoint() { return &_point; }
 	Common::Point *getPoint1() { return &_point1; }
 	Common::Point *getPoint2() { return &_point2; }
-	int32          getReaction(uint32 index) { return _reaction[index]; }
+	int32          getReactionValue(uint32 index) { return _reaction[index]; }
 	ResourceId     getResourceId() { return _resourceId; }
 	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
 	int32          getScriptIndex() { return _scriptIndex; }

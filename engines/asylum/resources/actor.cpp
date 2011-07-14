@@ -25,6 +25,7 @@
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/object.h"
 #include "asylum/resources/polygons.h"
+#include "asylum/resources/reaction.h"
 #include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
 
@@ -1493,7 +1494,54 @@ bool Actor::process_4103B0(Common::Point *point, ActorDirection dir) {
 }
 
 void Actor::updateAndDraw() {
-	error("[Actor::updateAndDraw] not implemented!");
+	Actor *player = getScene()->getActor();
+	Common::Point mouse = getCursor()->position();
+	bool keepField = false;
+
+	// Get reaction count
+	uint32 count = 0;
+	for (int i = 0; i < 8; i++)
+		if (_reaction[i])
+			count++;
+
+	for (uint32 i = 0; i < count; i++) {
+		// Compute points
+		Common::Point coords;
+		adjustCoordinates(&coords);
+
+		Common::Point sinCos = _vm->getSinCosValues(count, i);
+		Common::Point point = coords + Common::Point(player->getPoint2()->x + sinCos.x, player->getPoint2()->y / 2 - sinCos.y);
+
+		if (mouse.x < point.x || mouse.x > (point.x + 40) || mouse.y < point.y || mouse.y > (point.y + 40)) {
+			getScreen()->addGraphicToQueue(getWorld()->cursorResourcesAlternate[_reaction[i] + 15],
+			                               0,
+			                               point,
+			                               kDrawFlagNone,
+			                               0,
+			                               1);
+		} else {
+			if (getWorld()->field_120 != (int32)(i + 1)) {
+				getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 3));
+				getReaction()->run(_reaction[i] - 1);
+			}
+
+			getWorld()->field_120 = i + 1;
+			keepField = true;
+
+			getScreen()->addGraphicToQueue(getWorld()->cursorResourcesAlternate[_reaction[i]],
+			                               0,
+			                               point,
+			                               kDrawFlagNone,
+			                               0,
+			                               1);
+		}
+
+		if (getWorld()->chapter == kChapter4)
+			updateNumbers(_reaction[i] - 1, point);
+	}
+
+	if (!keepField)
+		getWorld()->field_120 = 0;
 }
 
 void Actor::update_409230() {
