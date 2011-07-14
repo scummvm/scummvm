@@ -26,6 +26,7 @@
 #include "asylum/resources/object.h"
 #include "asylum/resources/polygons.h"
 #include "asylum/resources/reaction.h"
+#include "asylum/resources/special.h"
 #include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
 
@@ -226,7 +227,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 void Actor::loadData(Common::SeekableReadStream *stream) {
 	_data.count = stream->readUint32LE();
 
-	_data.field_4 = stream->readUint32LE();
+	_data.current = stream->readUint32LE();
 
 	_data.point.x = stream->readSint32LE();
 	_data.point.y = stream->readSint32LE();
@@ -235,7 +236,7 @@ void Actor::loadData(Common::SeekableReadStream *stream) {
 		_data.field_10[i] = stream->readSint32LE();
 
 	for (int32 i = 0; i < 120; i++)
-		_data.field_3C8[i] = stream->readSint32LE();
+		_data.directions[i] = (ActorDirection)stream->readSint32LE();
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -475,35 +476,99 @@ void Actor::update() {
 	case kActorStatus1: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
-		uint32 dir = _direction;
+		// FIXME the original tests for != 0 and sets to an unknown value (offset to actor in structure?)
 		uint32 dist = abs((double)getDistanceForFrame(_direction, index));
-		// FIXME the original tests for != 0 and sets to an unknown value
+		if (!dist)
+			error("[Actor::update] Invalid distance (kActorStatus1)");
 
-		Common::Point point(_point1.x + _point2.x, _point1.y + _point2.y);
+		Common::Point point = _point1 + _point2;
 
 		if (process_408B20(&point, _direction, dist, false)) {
 			playSounds(_direction, dist);
-		} else if (process_408B20(&point, (ActorDirection)((dir + 1) % 7), dist, false)) {
-			playSounds((ActorDirection)((dir + 1) % 7), dist);
-		} else if (process_408B20(&point, (ActorDirection)((dir + 7) % 7), dist, false)) {
-			playSounds((ActorDirection)((dir + 7) % 7), dist);
-		} else if (process_408B20(&point, (ActorDirection)((dir + 2) % 7), dist, false)) {
-			playSounds((ActorDirection)((dir + 2) % 7), dist);
-		} else if (process_408B20(&point, (ActorDirection)((dir + 6) % 7), dist, false)) {
-			playSounds((ActorDirection)((dir + 6) % 7), dist);
+		} else if (process_408B20(&point, (ActorDirection)((_direction + 1) % 7), dist, false)) {
+			playSounds((ActorDirection)((_direction + 1) % 7), dist);
+		} else if (process_408B20(&point, (ActorDirection)((_direction + 7) % 7), dist, false)) {
+			playSounds((ActorDirection)((_direction + 7) % 7), dist);
+		} else if (process_408B20(&point, (ActorDirection)((_direction + 2) % 7), dist, false)) {
+			playSounds((ActorDirection)((_direction + 2) % 7), dist);
+		} else if (process_408B20(&point, (ActorDirection)((_direction + 6) % 7), dist, false)) {
+			playSounds((ActorDirection)((_direction + 6) % 7), dist);
 		}
+
+		// Finish
+		if (_soundResourceId != kResourceNone && getSound()->isPlaying(_soundResourceId))
+			setVolume();
+
+		if (_index != getScene()->getPlayerIndex() && getWorld()->chapter != kChapter9)
+			getSpecial()->run(NULL, _index);
+
+		updateDirection();
+
+		if (_field_944 != 5)
+			updateFinish();
 
 		}
 		break;
 
 	case kActorStatus2:
 	case kActorStatus13: {
-		/*int32 dist = getDistance();
-		if (!dist)
-		dist = _direction;
+		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
-		Common::Point point(_point1.x + _point2.x, */
-		error("[Actor::update] kActorStatus2 / kActorStatus13 case not implemented");
+		// FIXME the original tests for != 0 and sets to an unknown value (offset to actor in structure?)
+		uint32 dist = abs((double)getDistanceForFrame(_direction, index));
+		if (!dist)
+			error("[Actor::update] Invalid distance (kActorStatus2/kActorStatus13)");
+
+		Common::Point point = _point1 + _point2;
+
+		if (point.x < (int16)(_data.point.x - (dist - 1))
+		 || point.x > (int16)(_data.point.x + (dist - 1))
+		 || point.y < (int16)(_data.point.y - (dist - 1))
+		 || point.y > (int16)(_data.point.y + (dist - 1))) {
+			if (process_408B20(&point, _direction, dist, false)) {
+				playSounds(_direction, dist);
+			} else {
+				update_409230();
+			}
+		} else {
+			int32 area = getScene()->findActionArea(kActionAreaType1, _data.point);
+			if (_field_944 == 1 || _field_944 == 4)
+				area = 1;
+
+			if (area == -1  || _data.current >= (int32)(_data.count - 1)) {
+				update_409230();
+			} else {
+				_frameIndex = (_frameIndex + 1) % _frameCount;
+
+				if (process_4103B0(&_data.point, _direction)) {
+					_point1.x = dist - _point2.x;
+					_point1.y = _data.point.y - _point2.y;
+
+					if (_data.current < (int32)(_data.count - 1)) {
+						_data.current++;
+
+						updateFromDirection(_data.directions[_data.current]);
+					} else {
+						update_409230();
+					}
+				} else {
+					update_409230();
+				}
+			}
+		}
+
+		// Finish
+		if (_soundResourceId != kResourceNone && getSound()->isPlaying(_soundResourceId))
+			setVolume();
+
+		if (_index != getScene()->getPlayerIndex() && getWorld()->chapter != kChapter9)
+			getSpecial()->run(NULL, _index);
+
+		updateDirection();
+
+		if (_field_944 != 5)
+			updateFinish();
+
 		}
 		break;
 
@@ -877,7 +942,7 @@ bool Actor::process(const Common::Point &point) {
 	if (point == sum) {
 		if (process_408B20(&sum, a3 >= 2 ? kDirectionS : kDirectionN, abs(delta.y), false)) {
 			_data.point = point;
-			_data.field_4    = 0;
+			_data.current    = 0;
 			_data.count      = 1;
 
 			return true;
@@ -888,7 +953,7 @@ bool Actor::process(const Common::Point &point) {
 		ActorDirection actorDir = a3 >= 2 ? kDirectionS : kDirectionN;
 		if (process_408B20(&sum, actorDir, abs(delta.y), false)) {
 			_data.point = point;
-			_data.field_4    = 0;
+			_data.current    = 0;
 			_data.count      = 1;
 
 			updateFromDirection(actorDir);
@@ -904,7 +969,7 @@ bool Actor::process(const Common::Point &point) {
 
 		if (process_408B20(&sum, actorDir, abs(delta.x), true)) {
 			_data.point = point;
-			_data.field_4    = 0;
+			_data.current    = 0;
 			_data.count      = 1;
 
 			updateFromDirection(actorDir);
@@ -1020,7 +1085,7 @@ bool Actor::process(const Common::Point &point) {
 					return false;
 			}
 
-			updateFromDirection((ActorDirection)_data.field_3C8[0]);
+			updateFromDirection(_data.directions[0]);
 
 			return true;
 		}
@@ -1029,7 +1094,7 @@ bool Actor::process(const Common::Point &point) {
 			if (!processAction3(sum, point, &actions))
 				return false;
 
-			updateFromDirection((ActorDirection)_data.field_3C8[0]);
+			updateFromDirection(_data.directions[0]);
 
 			return true;
 		}
@@ -1038,7 +1103,7 @@ bool Actor::process(const Common::Point &point) {
 		if (!processAction4(sum, point, &actions))
 			return false;
 
-		updateFromDirection((ActorDirection)_data.field_3C8[0]);
+		updateFromDirection(_data.directions[0]);
 
 		return true;
 	}
@@ -1070,7 +1135,7 @@ bool Actor::process(const Common::Point &point) {
 
 	// Update actor data
 	_data.point = point;
-	_data.field_4    = 0;
+	_data.current    = 0;
 	_data.count      = 1;
 
 	// Update actor from direction
@@ -1546,7 +1611,7 @@ void Actor::updateAndDraw() {
 
 void Actor::update_409230() {
 	updateStatus(_status <= 11 ? kActorStatusEnabled : kActorStatus14);
-	_data.field_4 = 0;
+	_data.current = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1887,7 +1952,7 @@ void Actor::updateStatus12_Chapter2() {
 	// Face actor
 	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
 
-	// FIXME
+	// FIXME: another field is used (not _data!)
 	if (_data.field_10[_index + 10] > 0) {
 		_direction = (ActorDirection)(_direction + 4);
 		_data.field_10[_index + 10] -= 1;
@@ -1912,7 +1977,7 @@ void Actor::updateStatus12_Chapter2() {
 		playSounds(_direction, abs(distance));
 	} else {
 		_frameIndex = 0;
-		// FIXME
+		// FIXME: another field is used (not _data!)
 		_data.field_10[2 * _index + 15] = player->getPoint1()->x - _point1.x;
 		_data.field_10[2 * _index + 16] = player->getPoint1()->y - _point1.y;
 
