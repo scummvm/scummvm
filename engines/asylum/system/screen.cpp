@@ -108,6 +108,10 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 
 	clip(&src, &dest, flags);
 
+	// Check src rectangle
+	if (!src.isValidRect())
+		return;
+
 	bool masked = false;
 	if (resourceIdDestination) {
 		masked = true;
@@ -170,22 +174,21 @@ void Screen::copyBackBufferToScreen() {
 
 void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) {
 	int32 diffLeft = _clipRect.left - destination->left;
-
 	if (diffLeft > 0) {
 		destination->left = _clipRect.left;
 
 		if (flags & 2)
 			source->right -= diffLeft;
 		else
-			source->left += diffLeft;
+			source->left  += diffLeft;
 	}
 
-	int32 diffRight = destination->right - _clipRect.right;
+	int32 diffRight = destination->right - _clipRect.right - 1;
 	if (diffRight > 0) {
 		destination->right -= diffRight;
 
 		if (flags & 2)
-			source->left += diffRight;
+			source->left  += diffRight;
 		else
 			source->right -= diffRight;
 	}
@@ -196,18 +199,11 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 		source->top += diffTop;
 	}
 
-	int32 diffBottom = destination->bottom - _clipRect.bottom;
+	int32 diffBottom = destination->bottom - _clipRect.bottom - 1;
 	if (diffBottom > 0) {
 		source->bottom -= diffBottom;
 		destination->bottom -= diffBottom;
 	}
-
-	// Check validity
-	/*if (!source->isValidRect())
-		error("[Screen::clip] Invalid resulting source rectangle");
-
-	if (!destination->isValidRect())
-		error("[Screen::clip] Invalid resulting destination rectangle");*/
 }
 
 void Screen::takeScreenshot() {
@@ -732,7 +728,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 		                _backBuffer.pitch - source->width());
 
 		if (g_debugDrawRects)
-			_backBuffer.frameRect(Common::Rect(destination->left, destination->top, destination->left + abs(source->width()), destMask->top), 0x23);
+			_backBuffer.frameRect(Common::Rect(destination->left, destination->top, destination->left + source->width(), destMask->top), 0x23);
 
 		frameBufferPtr += (destMask->top - destination->top) * frameRight;
 		source->setHeight(source->height() + destination->top - destMask->top);
