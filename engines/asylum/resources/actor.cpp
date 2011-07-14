@@ -751,13 +751,11 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 //////////////////////////////////////////////////////////////////////////
 
 void Actor::updateDirection() {
-	if(_field_970) {
-		// TODO
-		// This update is only ever done if action script 0x5D is called, and
-		// the resulting switch sets field_970. Investigate 401A30 for further
-		// details
-		error("[Actor::updateDirection] logic not implemented");
-	}
+	// Called by Script::hideActor() / showActor() and process_401830()
+	if(!_field_970)
+		return;
+
+	error("[Actor::updateDirection] Not implemented");
 }
 
 void Actor::updateFromDirection(ActorDirection actorDirection) {
@@ -893,6 +891,22 @@ Common::String Actor::toString(bool shortString) {
 //////////////////////////////////////////////////////////////////////////
 // Unknown methods
 //////////////////////////////////////////////////////////////////////////
+
+void Actor::clearFields() {
+	_field_970 = 0;
+	_field_974 = 0;
+	_field_978 = 0;
+	_actionIdx1 = 0;
+	_field_980 = 0;
+	_field_984 = 0;
+	_field_988 = 0;
+	_field_98C = 0;
+	_field_990 = 0;
+	_field_994 = 0;
+	_field_998 = 0;
+	_field_99C = 0;
+	_field_9A0 = 0;
+}
 
 bool Actor::isResourcePresent() const {
 	if (_status != kActorStatus9)
