@@ -92,7 +92,6 @@ void SmackerScene::nextVideo() {
 		_parentModule->sendMessage(0x1009, 0, this);
 	}
 
-
 }
 
 void SmackerScene::update() {

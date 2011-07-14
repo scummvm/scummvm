@@ -208,4 +208,11 @@ Common::Error NeverhoodEngine::run() {
 	return Common::kNoError;
 }
 
+NPoint NeverhoodEngine::getMousePos() {
+	NPoint pt;
+	pt.x = _mouseX;
+	pt.y = _mouseY;
+	return pt;
+}
+	
 } // End of namespace Neverhood

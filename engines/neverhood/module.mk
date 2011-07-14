@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	module1000.o \
 	module1500.o \
 	mouse.o \
+	navigationscene.o \
 	neverhood.o \
 	palette.o \
 	resource.o \

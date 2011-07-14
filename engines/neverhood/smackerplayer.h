@@ -52,7 +52,7 @@ public:
 	SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag);
 	~SmackerPlayer();
 	BaseSurface *getSurface() { return _smackerSurface; }
-	void open(uint32 fileHash, bool flag1);
+	void open(uint32 fileHash, bool keepLastFrame);
 	void close();
 	void gotoFrame(uint frameNumber);
 	uint getStatus();
@@ -61,9 +61,10 @@ protected:
 	Palette *_palette;
 	Video::SmackerDecoder *_smackerDecoder;
 	SmackerSurface *_smackerSurface;
+	bool _smackerFirst;
 	bool _doubleSurface;
 	Common::SeekableReadStream *_stream;
-	bool _flag1;
+	bool _keepLastFrame;
 	bool _flag2;
 	bool _dirtyFlag;
 	void update();

@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/module1000.h"
+#include "neverhood/navigationscene.h"//###
 
 namespace Neverhood {
 
@@ -77,6 +78,7 @@ void Module1000::createScene1001(int which) {
 void Module1000::createScene1002(int which) {
 	_vm->gameState().sceneNum = 1;
 	_childObject = new Scene1002(_vm, this, which);
+	// DEBUG _childObject = new NavigationScene(_vm, this, 0x004B67B8, 0, NULL);
 	// TODO ResourceTable_multiLoad(&_resourceTable3, &_resourceTable4, &_resourceTable1);
 	// TODO Music18hList_play(0x061880C6, 0, 0, 1);
 	SetUpdateHandler(&Module1000::updateScene1002);

@@ -20,6 +20,7 @@
  *
  */
 
+#include "graphics/palette.h"
 #include "neverhood/smackerplayer.h"
 #include "neverhood/palette.h"
 #include "neverhood/resourceman.h"
@@ -68,26 +69,37 @@ void SmackerDoubleSurface::draw() {
 
 SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag)
 	: Entity(vm, 0), _scene(scene), _doubleSurface(doubleSurface), _dirtyFlag(false), _flag2(false),
-	_palette(NULL), _smackerDecoder(NULL), _smackerSurface(NULL), _stream(NULL) {
+	_palette(NULL), _smackerDecoder(NULL), _smackerSurface(NULL), _stream(NULL), _smackerFirst(true) {
+
+	debug("_smackerSurface = %p", (void*)_smackerSurface);
 
 	SetUpdateHandler(&SmackerPlayer::update);
+
 	open(fileHash, flag);
 }
 
 SmackerPlayer::~SmackerPlayer() {
 	close();
-}
+}   
 
-void SmackerPlayer::open(uint32 fileHash, bool flag1) {
+void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 	debug("SmackerPlayer::open(%08X)", fileHash);
 	
-	_flag1 = flag1;
+	_keepLastFrame = keepLastFrame;
 
 	close();
 
+	if (_doubleSurface) {
+		_smackerSurface = new SmackerDoubleSurface(_vm);
+	} else {
+		_smackerSurface = new SmackerSurface(_vm);
+	}
+
+	_smackerFirst = true;
+
 	_stream = _vm->_res->createStream(fileHash);
 
-	// TODO: _flag1 stuff
+	// TODO: _keepLastFrame stuff
 
 	_smackerDecoder = new Video::SmackerDecoder(_vm->_mixer);
 	_smackerDecoder->loadStream(_stream);
@@ -117,6 +129,8 @@ uint SmackerPlayer::getStatus() {
 
 void SmackerPlayer::update() {
 
+	debug(8, "SmackerPlayer::update()");
+
 	if (!_smackerDecoder)
 		return;
 
@@ -129,20 +143,17 @@ void SmackerPlayer::update() {
 
 		const Graphics::Surface *smackerFrame = _smackerDecoder->decodeNextFrame();
 
-		if (!_smackerSurface) {
+		if (_smackerFirst) {
 			if (_doubleSurface) {
-				// TODO: Use SmackerDoubleSurface
-				_smackerSurface = new SmackerDoubleSurface(_vm);
 				_smackerSurface->getDrawRect().x = 320 - _smackerDecoder->getWidth();
 				_smackerSurface->getDrawRect().y = 240 - _smackerDecoder->getHeight();
-				// TODO DoubleDrawSurface.field_28 = false;
 				_smackerSurface->setSmackerFrame(smackerFrame);
 			} else {
-				_smackerSurface = new SmackerSurface(_vm);
 				_smackerSurface->getDrawRect().x = (640 - _smackerDecoder->getWidth()) / 2;
 				_smackerSurface->getDrawRect().y = (480 - _smackerDecoder->getHeight()) / 2;
 				_smackerSurface->setSmackerFrame(smackerFrame);
 			}
+			_smackerFirst = false;
 		}
 		
 		if (_doubleSurface) {
@@ -153,10 +164,12 @@ void SmackerPlayer::update() {
 		_dirtyFlag = true;
 
 		if (_smackerDecoder->hasDirtyPalette()) {
+			debug("updatePalette()");
 			updatePalette();
 		}
 
-		if (_smackerDecoder->endOfVideo() && !_flag1) {
+		if (_smackerDecoder->endOfVideo() && !_keepLastFrame) {
+			// Inform the scene about the end of the video playback
 			if (_scene) {
 				_scene->sendMessage(0x3002, 0, this);
 			}

@@ -45,6 +45,7 @@ class GameVars;
 class ResourceMan;
 class Screen;
 class StaticData;
+struct NPoint;
 
 struct GameState {
 	int sceneNum;
@@ -119,6 +120,7 @@ public:
 	GameState& gameState() { return _gameState; }
 	int16 getMouseX() const { return _mouseX; }
 	int16 getMouseY() const { return _mouseY; }
+	NPoint getMousePos();
 
 public:
 
