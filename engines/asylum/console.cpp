@@ -200,8 +200,8 @@ bool Console::cmdListActions(int32 argc, const char **argv) {
 }
 
 bool Console::cmdListActors(int32 argc, const char **argv) {
-	if (argc != 1 && argc != 2) {
-		DebugPrintf("Syntax: %s <index> (use nothing for all)\n", argv[0]);
+	if (argc != 1 && argc != 2 && argc != 4) {
+		DebugPrintf("Syntax: %s <index> (use nothing for all) (<x>, <y>)\n", argv[0]);
 		return true;
 	}
 
@@ -209,7 +209,7 @@ bool Console::cmdListActors(int32 argc, const char **argv) {
 		for (uint32 i = 0; i < getWorld()->actors.size(); i++)
 			DebugPrintf("%s\n", getWorld()->actors[i]->toString().c_str());
 
-	} else {
+	} else if (argc == 2 || argc == 4) {
 		int index = atoi(argv[1]);
 		int maxIndex = getWorld()->actors.size() - 1;
 
@@ -218,7 +218,18 @@ bool Console::cmdListActors(int32 argc, const char **argv) {
 			return true;
 		}
 
-		DebugPrintf("%s\n", getWorld()->actors[index]->toString(false).c_str());
+		if (argc == 2) {
+			DebugPrintf("%s\n", getWorld()->actors[index]->toString(false).c_str());
+			return true;
+		}
+
+		// Adjust actor coordinates
+		int x = atoi(argv[2]);
+		int y = atoi(argv[3]);
+
+		// TODO add error handling
+
+		*getWorld()->actors[index]->getPoint1() = Common::Point(x, y);
 	}
 
 	return true;
