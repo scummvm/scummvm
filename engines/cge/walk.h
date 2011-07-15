@@ -84,10 +84,14 @@ public:
 class Cluster : public Couple {
 public:
 	static uint8 _map[MAP_ZCNT][MAP_XCNT];
+	static CGEEngine *_vm;
+
+	static void init(CGEEngine *vm);
+public:
 	uint8 &cell();
 	Cluster() : Couple() { }
 	Cluster(int a, int b) : Couple(a, b) { }
-	bool Protected();
+	bool chkBar() const;
 	bool isValid() const;
 
 };
@@ -101,7 +105,7 @@ public:
 	int _tracePtr;
 	int _level;
 	int _findLevel;
-	int _target;
+	Couple _target;
 	Cluster _trace[MAX_FIND_LEVEL];
 
 	enum DIR { NO_DIR = -1, NN, EE, SS, WW } Dir;
