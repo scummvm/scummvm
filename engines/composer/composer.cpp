@@ -421,7 +421,7 @@ void ComposerEngine::processAnimFrame() {
 					case 4:
 						if (entry.word10 && (!data || data != entry.word10)) {
 							debug(4, "anim: erase sprite %d", entry.word10);
-							removeSprite(data, anim->_id);
+							removeSprite(entry.word10, anim->_id);
 						}
 						if (data) {
 							uint16 x = anim->_stream->readUint16LE();
@@ -471,7 +471,7 @@ void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
 		if (i->id != id)
 			continue;
-		if (animId && i->animId != animId)
+		if (i->animId && animId && (i->animId != animId))
 			continue;
 		i = _sprites.reverse_erase(i);
 		return;
