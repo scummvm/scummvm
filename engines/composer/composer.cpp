@@ -457,9 +457,13 @@ void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Co
 	sprite.animId = animId;
 	sprite.zorder = zorder;
 	sprite.pos = pos;
+	if (!initSprite(sprite)) {
+		warning("ignoring addSprite on invalid sprite %d", id);
+		return;
+	}
 
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
-		if (sprite.zorder < i->zorder)
+		if (sprite.zorder > i->zorder)
 			continue;
 		_sprites.insert(i, sprite);
 		return;
@@ -473,6 +477,7 @@ void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
 			continue;
 		if (i->animId && animId && (i->animId != animId))
 			continue;
+		i->surface.free();
 		i = _sprites.reverse_erase(i);
 		return;
 	}
@@ -547,10 +552,8 @@ Common::Error ComposerEngine::run() {
 		if (lastDrawTime + frameTime <= thisTime) {
 			lastDrawTime += frameTime;
 
-			if (hasResource(ID_BMAP, 1000))
-				drawBMAP(1000, 0, 0);
 			for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
-				drawBMAP(i->id, i->pos.x, i->pos.y);
+				drawSprite(*i);
 			}
 
 			_system->copyRectToScreen((byte *)_surface.pixels, _surface.pitch, 0, 0, _surface.w, _surface.h);
@@ -662,7 +665,8 @@ void ComposerEngine::loadLibrary(uint id) {
 	delete stream;*/
 
 	// TODO: set background properly
-	//
+	addSprite(1000, 0, 0, Common::Point());
+
 	// TODO: better CTBL logic
 	loadCTBL(1000, 100);
 
@@ -1105,48 +1109,48 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 	}
 }
 
-void ComposerEngine::drawBMAP(uint id, uint x, uint y) {
+bool ComposerEngine::initSprite(Sprite &sprite) {
 	Common::SeekableReadStream *stream = NULL;
-	if (hasResource(ID_BMAP, id))
-		stream = getResource(ID_BMAP, id);
+	if (hasResource(ID_BMAP, sprite.id))
+		stream = getResource(ID_BMAP, sprite.id);
 	else
 		for (Common::List<Pipe *>::iterator k = _pipes.begin(); k != _pipes.end(); k++) {
 			Pipe *pipe = *k;
-			if (!pipe->hasResource(ID_BMAP, id))
+			if (!pipe->hasResource(ID_BMAP, sprite.id))
 				continue;
-			stream = pipe->getResource(ID_BMAP, id, true);
+			stream = pipe->getResource(ID_BMAP, sprite.id, true);
 			break;
 		}
 
-	if (!stream) {
-		// FIXME
-		warning("couldn't find BMAP %d", id);
-		return;
-	}
+	if (!stream)
+		return false;
 
 	uint16 type = stream->readUint16LE();
 	uint16 height = stream->readUint16LE();
 	uint16 width = stream->readUint16LE();
 	uint32 size = stream->readUint32LE();
-	debug(1, "BMAP: type %d, width %d, height %d, size %d", type, width, height, size);
+	debug(1, "loading BMAP: type %d, width %d, height %d, size %d", type, width, height, size);
 
-	byte *buffer = new byte[width * height];
-	decompressBitmap(type, stream, buffer, size, width, height);
+	sprite.surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	decompressBitmap(type, stream, (byte *)sprite.surface.pixels, size, width, height);
+	delete stream;
 
-	debug(1, "draw at %d,%d", x, y);
+	return true;
+}
+
+void ComposerEngine::drawSprite(const Sprite &sprite) {
+	int x = sprite.pos.x;
+	int y = sprite.pos.y;
 
 	// incoming data is BMP-style (bottom-up), so flip it
 	byte *pixels = (byte *)_surface.pixels;
-	for (uint j = 0; j < height; j++) {
-		byte *in = buffer + (height - j - 1) * width;
+	for (uint j = 0; j < sprite.surface.h; j++) {
+		byte *in = (byte *)sprite.surface.pixels + (sprite.surface.h - j - 1) * sprite.surface.w;
 		byte *out = pixels + ((j + y) * _surface.w) + x;
-		for (uint i = 0; i < width; i++)
+		for (uint i = 0; i < sprite.surface.w; i++)
 			if (in[i])
 				out[i] = in[i];
 	}
-
-	delete[] buffer;
-	delete stream;
 }
 
 } // End of namespace Composer

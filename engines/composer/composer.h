@@ -64,6 +64,7 @@ struct Sprite {
 	uint16 animId;
 	uint16 zorder;
 	Common::Point pos;
+	Graphics::Surface surface;
 };
 
 struct AnimationEntry {
@@ -199,7 +200,8 @@ private:
 
 	void loadCTBL(uint id, uint fadePercent);
 	void decompressBitmap(uint16 type, Common::SeekableReadStream *stream, byte *buffer, uint32 size, uint width, uint height);
-	void drawBMAP(uint id, uint x, uint y);
+	bool initSprite(Sprite &sprite);
+	void drawSprite(const Sprite &sprite);
 };
 
 } // End of namespace Composer
