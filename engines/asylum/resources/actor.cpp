@@ -816,10 +816,10 @@ void Actor::faceTarget(uint32 target, DirectionFrom from) {
 			return;
 		}
 
-		PolyDefinitions *polygon = &getScene()->polygons()->entries[getWorld()->actions[actionIndex]->polygonIndex];
+		Polygon polygon = getScene()->polygons()->get(getWorld()->actions[actionIndex]->polygonIndex);
 
-		point.x = polygon->boundingRect.left + (polygon->boundingRect.right  - polygon->boundingRect.left) / 2;
-		point.y = polygon->boundingRect.top  + (polygon->boundingRect.bottom - polygon->boundingRect.top)  / 2;
+		point.x = polygon.boundingRect.left + (polygon.boundingRect.right  - polygon.boundingRect.left) / 2;
+		point.y = polygon.boundingRect.top  + (polygon.boundingRect.bottom - polygon.boundingRect.top)  / 2;
 		}
 		break;
 
@@ -1177,15 +1177,15 @@ void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, i
 			field_984 = field984;
 			field_988 = field988;
 		} else {
-			PolyDefinitions *polygon = &getScene()->polygons()->entries[_actionIdx1];
+			Polygon polygon = getScene()->polygons()->get(_actionIdx1);
 
-			field_984 = polygon->points[0].x;
-			field_988 = polygon->points[0].y;
+			field_984 = polygon.points[0].x;
+			field_988 = polygon.points[0].y;
 
 			// Iterate through points
-			if (polygon->count() > 1) {
-				for (uint i = 1; i < polygon->count() - 1; i++) {
-					Common::Point point = polygon->points[i];
+			if (polygon.count() > 1) {
+				for (uint i = 1; i < polygon.count() - 1; i++) {
+					Common::Point point = polygon.points[i];
 
 					switch (field978) {
 					default:
@@ -1867,15 +1867,15 @@ void Actor::updateStatusEnabled() {
 					if (areaIndex != -1) {
 
 						ActionArea *area = getWorld()->actions[areaIndex];
-						PolyDefinitions *poly = &getScene()->polygons()->entries[area->polygonIndex];
+						Polygon poly = getScene()->polygons()->get(area->polygonIndex);
 
-						Common::Point pt(poly->boundingRect.left + rnd(poly->boundingRect.width()),
-						                 poly->boundingRect.top + rnd(poly->boundingRect.height()));
+						Common::Point pt(poly.boundingRect.left + rnd(poly.boundingRect.width()),
+						                 poly.boundingRect.top  + rnd(poly.boundingRect.height()));
 
 						if (!getSharedData()->actorUpdateEnabledCheck) {
 							if (!isInActionArea(pt, area)) {
-								Common::Point *polyPoint = &poly->points[rnd(poly->count())];
-								processStatus(polyPoint->x, polyPoint->y, false);
+								Common::Point polyPoint = poly.points[rnd(poly.count())];
+								processStatus(polyPoint.x, polyPoint.y, false);
 							} else {
 								processStatus(pt.x, pt.y, false);
 							}
@@ -2699,7 +2699,7 @@ bool Actor::isInActionArea(const Common::Point &pt, ActionArea *area) {
 	if (found)
 		return false;
 
-	PolyDefinitions poly = getScene()->polygons()->entries[area->polygonIndex];
+	Polygon poly = getScene()->polygons()->get(area->polygonIndex);
 	if (!poly.contains(pt))
 		return false;
 

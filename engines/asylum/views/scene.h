@@ -42,6 +42,7 @@ class Puzzle;
 class Cursor;
 class GraphicResource;
 class Polygons;
+class Polygon;
 class ResourcePack;
 class SceneTitle;
 class Screen;
@@ -56,7 +57,6 @@ struct ActionArea;
 struct AmbientSoundItem;
 struct GraphicFrame;
 struct ObjectItem;
-struct PolyDefinitions;
 
 enum HitType {
 	kHitNone       = -1,
@@ -467,7 +467,7 @@ private:
 	void debugShowPolygons();
 	void debugShowSceneRects();
 	void debugScreenScrolling();
-	void debugShowWalkRegion(PolyDefinitions *poly);
+	void debugShowWalkRegion(Polygon *poly);
 
 	friend class SceneTitle;
 };

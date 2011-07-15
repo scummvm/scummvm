@@ -31,55 +31,38 @@
 
 namespace Asylum {
 
-typedef struct PolyDefinitions {
+class Polygon {
+public:
 	Common::Array<Common::Point> points;
 	Common::Rect  boundingRect;
 
-	PolyDefinitions() {};
-	PolyDefinitions(Common::Point point1, Common::Point point2, Common::Point point3, Common::Point point4) {
+	Polygon() {};
+	Polygon(Common::Point point1, Common::Point point2, Common::Point point3, Common::Point point4) {
 		points.push_back(point1);
 		points.push_back(point2);
 		points.push_back(point3);
 		points.push_back(point4);
 	}
 
-	/**
-	 * Check if the x/y coordinates exist within
-	 * the current polygon definition
-	 *
-	 * (was pointInPoly())
-	 */
-	bool contains(int16 x, int16 y);
-
-	bool contains(Common::Point point) {
-		return contains(point.x, point.y);
-	}
-
-	uint32 count() {
-		return points.size();
-	}
-
-} PolyDefinitions;
+	bool contains(const Common::Point &point);
+	uint32 count() { return points.size(); }
+};
 
 class Polygons {
 public:
 	Polygons(Common::SeekableReadStream *stream);
 	virtual ~Polygons();
 
-	int32 size;
-	int32 numEntries; // TODO remove and use entries.size()
-
-	Common::Array<PolyDefinitions> entries;
-
-	static bool contains(Common::Point *points, uint32 count, Common::Point point, Common::Rect *boundingRect);
-	static bool contains(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, int32 x4, int32 y4);
+	Polygon get(uint32 index);
+	uint32 size() { return _entries.size(); }
 
 private:
+	int32 _size;
+	int32 _numEntries;
+
+	Common::Array<Polygon> _entries;
+
 	void load(Common::SeekableReadStream *stream);
-
-	static int32 compareDistance(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3);
-	static bool containsRect(Common::Point *points, uint32 count, Common::Point point, Common::Rect *boundingRect);
-
 }; // end of class Polygons
 
 } // end of namespace Asylum
