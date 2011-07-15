@@ -107,6 +107,17 @@ protected:
 
 	//@}
 
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+	/**
+	 * SDL 1.3 handles text input separately from keypresses. Typing a character
+	 * may require more than one keypress.
+	 * As such keypresses can't be associated with character codes anymore.
+	 * The SDL_TEXTINPUT event type handled by this method sends keypress
+	 * events with an ascii value but no keycode to reflect that behaviour.
+	 */
+	virtual bool handleTextInput(SDL_Event &ev, Common::Event &event);
+#endif
+
 	/**
 	 * Assigns the mouse coords to the mouse event
 	 */

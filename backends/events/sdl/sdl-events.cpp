@@ -220,6 +220,10 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleKeyDown(ev, event);
 	case SDL_KEYUP:
 		return handleKeyUp(ev, event);
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+	case SDL_TEXTINPUT:
+		return handleTextInput(ev, event);
+#endif
 	case SDL_MOUSEMOTION:
 		return handleMouseMotion(ev, event);
 	case SDL_MOUSEBUTTONDOWN:
@@ -303,7 +307,10 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
+
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
 	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, (Uint16)ev.key.keysym.unicode);
+#endif
 
 	return true;
 }
@@ -347,7 +354,10 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 	event.type = Common::EVENT_KEYUP;
 	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
+
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
 	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, (Uint16)ev.key.keysym.unicode);
+#endif
 
 	// Ctrl-Alt-<key> will change the GFX mode
 	SDLModToOSystemKeyFlags(mod, event);
@@ -358,6 +368,19 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 	return true;
 }
+
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+bool SdlEventSource::handleTextInput(SDL_Event &ev, Common::Event &event) {
+	uint16 *unicode = SDL_iconv_utf8_ucs2(ev.text.text);
+
+	event.type = Common::EVENT_KEYDOWN;
+	event.kbd.keycode = Common::KEYCODE_INVALID;
+	event.kbd.ascii = unicode[0];
+
+	SDL_free(unicode);
+	return true;
+}
+#endif
 
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
