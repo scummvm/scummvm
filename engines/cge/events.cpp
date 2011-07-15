@@ -296,8 +296,11 @@ void EventManager::handleEvents() {
 				_mouse->_hold = e._ptr;
 				if (_mouse->_hold) {
 					_mouse->_hold->_flags._hold = true;
-					_mouse->_hx = e._x - _mouse->_hold->_x;
-					_mouse->_hy = e._y - _mouse->_hold->_y;
+
+					if (_mouse->_hold->_flags._drag) {
+						_mouse->_hx = e._x - _mouse->_hold->_x;
+						_mouse->_hy = e._y - _mouse->_hold->_y;
+					}
 				}
 			}
 
@@ -315,8 +318,10 @@ void EventManager::handleEvents() {
 		}
 		EvtTail = (EvtTail + 1) % EVT_MAX;
 	}
-	if (_mouse->_hold)
-		_mouse->_hold->gotoxy(_mouse->_x - _mouse->_hx, _mouse->_y - _mouse->_hy);
+	if (_mouse->_hold) {
+		if (_mouse->_hold->_flags._drag)
+			_mouse->_hold->gotoxy(_mouse->_x - _mouse->_hx, _mouse->_y - _mouse->_hy);
+	}
 }
 
 void EventManager::clrEvt(Sprite *spr) {
