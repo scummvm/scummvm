@@ -90,7 +90,6 @@ static char _usrFnam[15] = "\0É±%^þúÈ¼´ ÇÉ";
 
 //--------------------------------------------------------------------------
 
-static  Ems      *_mini        = _miniEmm.alloc((uint16)MINI_EMM_SIZE);
 static  BMP_PTR  *_miniShpList = NULL;
 static  BMP_PTR   _miniShp[]   = { NULL, NULL };
 static  bool      _finis       = false;
@@ -348,7 +347,6 @@ void CGEEngine::miniStep(int stp) {
 	if (stp < 0)
 		_miniCave->_flags._hide = true;
 	else {
-		&*_mini;
 		*_miniShp[0] = *_miniShpList[stp];
 		if (_fx._current)
 			&*(_fx._current->eAddr());
