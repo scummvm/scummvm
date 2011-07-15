@@ -486,7 +486,12 @@ Common::Error ComposerEngine::run() {
 		_queuedScripts[i]._scriptId = 0;
 	}
 
-	_bookIni.loadFromFile("programs/book.ini");
+	_directoriesToStrip = 1;
+	if (!_bookIni.loadFromFile("book.ini")) {
+		_directoriesToStrip = 0;
+		if (!_bookIni.loadFromFile("programs/book.ini"))
+			error("failed to find book.ini");
+	}
 
 	uint width = 640;
 	if (_bookIni.hasKey("Width", "Common"))
@@ -595,6 +600,17 @@ Common::String ComposerEngine::getFilename(const Common::String &section, uint i
 	Common::String filename = getStringFromConfig(section, key);
 	while (filename.size() && (filename[0] == '~' || filename[0] == ':' || filename[0] == '\\'))
 		filename = filename.c_str() + 1;
+
+	uint slashesToStrip = _directoriesToStrip;
+	while (slashesToStrip--) {
+		for (uint i = 0; i < filename.size(); i++) {
+			if (filename[i] != '\\')
+				continue;
+			filename = filename.c_str() + i + 1;
+			break;
+		}
+	}
+
 	Common::String outFilename;
 	for (uint i = 0; i < filename.size(); i++) {
 		if (filename[i] == '\\')

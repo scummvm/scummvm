@@ -164,6 +164,7 @@ private:
 	Graphics::Surface _surface;
 	Common::List<Sprite> _sprites;
 
+	uint _directoriesToStrip;
 	Common::ConfigFile _bookIni;
 	Common::List<Library> _libraries;
 
