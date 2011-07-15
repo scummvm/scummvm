@@ -226,10 +226,15 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 
 	const PipeResource &res = resMap[id];
 
-	if (!buffering) {
-		assert(res.entries.size() == 1);
-		return new Common::SeekableSubReadStream(_stream, res.entries[0].offset, res.entries[0].offset + res.entries[0].size);
+	if (res.entries.size() == 1) {
+		Common::SeekableReadStream *stream = new Common::SeekableSubReadStream(_stream,
+			res.entries[0].offset, res.entries[0].offset + res.entries[0].size);
+		if (buffering)
+			_types[tag].erase(id);
+		return stream;
 	}
+
+	// If there are multiple entries in the pipe, we have to concaternate them together.
 
 	uint32 size = 0;
 	for (uint i = 0; i < res.entries.size(); i++)
@@ -242,7 +247,8 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 		_stream->read(buffer + offset, res.entries[i].size);
 		offset += res.entries[i].size;
 	}
-	_types[tag].erase(id);
+	if (buffering)
+		_types[tag].erase(id);
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }
 
