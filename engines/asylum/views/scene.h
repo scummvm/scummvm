@@ -462,10 +462,11 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Scene debugging
 	//////////////////////////////////////////////////////////////////////////
-	void debugScreenScrolling();
-	void debugShowPolygons();
-	void debugShowObjects();
 	void debugShowActors();
+	void debugShowObjects();
+	void debugShowPolygons();
+	void debugShowSceneRects();
+	void debugScreenScrolling();
 	void debugShowWalkRegion(PolyDefinitions *poly);
 
 	friend class SceneTitle;

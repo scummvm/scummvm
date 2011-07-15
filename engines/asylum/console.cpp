@@ -46,6 +46,7 @@ extern int g_debugActors;
 extern int g_debugDrawRects;
 extern int g_debugObjects;
 extern int g_debugPolygons;
+extern int g_debugSceneRects;
 extern int g_debugScrolling;
 
 const ResourcePackId puzzleToScenes[17] = {
@@ -93,11 +94,12 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 	DCmd_Register("toggle_flag",    WRAP_METHOD(Console, cmdToggleFlag));
 
 	// Variables
-	DVar_Register("show_actors",    &g_debugActors,    DVAR_INT, 0);
-	DVar_Register("show_objects",   &g_debugObjects,   DVAR_INT, 0);
-	DVar_Register("show_polygons",  &g_debugPolygons,  DVAR_INT, 0);
-	DVar_Register("show_drawrects", &g_debugDrawRects, DVAR_INT, 0);
-	DVar_Register("use_scrolling",  &g_debugScrolling, DVAR_INT, 0);
+	DVar_Register("show_actors",     &g_debugActors,     DVAR_INT, 0);
+	DVar_Register("show_drawrects",  &g_debugDrawRects,  DVAR_INT, 0);
+	DVar_Register("show_objects",    &g_debugObjects,    DVAR_INT, 0);
+	DVar_Register("show_polygons",   &g_debugPolygons,   DVAR_INT, 0);
+	DVar_Register("show_scenerects", &g_debugSceneRects, DVAR_INT, 0);
+	DVar_Register("use_scrolling",   &g_debugScrolling,  DVAR_INT, 0);
 }
 
 Console::~Console() {

@@ -123,7 +123,8 @@ public:
 	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height, bool mirrored = false);
 
 	// Debug
-	void drawLine(const Common::Point &origin, const Common::Point &destination);
+	void drawLine(const Common::Point &origin, const Common::Point &destination, uint32 color = 0xFF);
+	void drawRect(const Common::Rect &rect, uint32 color = 0xFF);
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
 private:
