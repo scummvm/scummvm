@@ -143,6 +143,8 @@ osxsnap: bundle
 	cp $(srcdir)/COPYRIGHT ./ScummVM-snapshot/Copyright\ Holders
 	cp $(srcdir)/NEWS ./ScummVM-snapshot/News
 	cp $(srcdir)/README ./ScummVM-snapshot/ScummVM\ ReadMe
+	cp $(srcdir)/doc/de/Liesmich.txt ./ScummVM-snapshot/ScummVM/doc/de/Liesmich
+	cp $(srcdir)/doc/fr/Lisezmoi.txt ./ScummVM-snapshot/ScummVM/doc/fr/Lisezmoi
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
 	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
@@ -166,6 +168,8 @@ scummvmwinres.o: $(srcdir)/icons/scummvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_E
 win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
 	mkdir -p $(WIN32PATH)/graphics
+	mkdir -p $(WIN32PATH)/doc/de
+	mkdir -p $(WIN32PATH)/doc/fr
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 ifdef DIST_FILES_ENGINEDATA
@@ -177,12 +181,16 @@ endif
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
+	cp $(srcdir)/doc/de/Liesmich.txt $(WIN32PATH)/doc/de/Liesmich.txt
+	cp $(srcdir)/doc/fr/Lisezmoi.txt $(WIN32PATH)/doc/fr/Lisezmoi.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/graphics/scummvm-install.ico $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
+	unix2dos $(WIN32PATH)/doc/de/*.txt
+	unix2dos $(WIN32PATH)/doc/fr/*.txt
 
 # Special target to create a win32 NSIS installer
 win32setup: $(EXECUTABLE)
