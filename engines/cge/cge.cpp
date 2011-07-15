@@ -68,6 +68,7 @@ void CGEEngine::setup() {
 	VFile::init();
 	Bitmap::init();
 	Talk::init();
+	Cluster::init(this);
 
 	// Initialise engine objects
 	_text = new Text(this, progName(), 128);
@@ -132,6 +133,7 @@ CGEEngine::~CGEEngine() {
 	Bitmap::deinit();
 	VFile::deinit();
 	Vga::deinit();
+	Cluster::init(this);
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();

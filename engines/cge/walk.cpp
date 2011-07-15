@@ -27,6 +27,7 @@
 
 #include "common/scummsys.h"
 #include "cge/walk.h"
+#include "cge/cge.h"
 #include "cge/sound.h"
 #include "cge/startup.h"
 #include "cge/config.h"
@@ -47,14 +48,16 @@
 
 namespace CGE {
 
+extern Bar _barriers[];
+
 WALK *_hero;
 
-struct TabDir {
-	int xd, yd;
-};
-
 uint8 Cluster::_map[MAP_ZCNT][MAP_XCNT];
+CGEEngine *Cluster::_vm;
 
+void Cluster::init(CGEEngine *vm) {
+	_vm = vm;
+}
 
 uint8 &Cluster::cell() {
 	return _map[_b][_a];
@@ -64,48 +67,10 @@ bool Cluster::isValid() const {
 	return (_a >= 0) && (_a < MAP_XCNT) && (_b >= 0) && (_b < MAP_ZCNT);
 }
 
-bool Cluster::Protected() {
-/*
-	if (A == Barriers[Now]._vert || B == Barriers[Now]._horz)
-		return true;
-
-	_DX = (MAP_ZCNT << 8) + MAP_XCNT;
-	_BX = (uint16) this;
-
-	asm   mov ax,1
-	asm   mov cl,[bx].(COUPLE)A
-	asm   mov ch,[bx].(COUPLE)B
-	asm   test    cx,0x8080       // (A < 0) || (B < 0)
-	asm   jnz xit
-
-	asm   cmp cl,dl
-	asm   jge xit
-	asm   cmp ch,dh
-	asm   jge xit
-
-	//  if (A < 0 || A >= MAP_XCNT || B < 0 || B >= MAP_ZCNT) return true;
-
-	asm   mov al,dl
-	asm   mul ch
-	asm   xor ch,ch
-	asm   add ax,cx
-	asm   mov bx,ax
-	_BX += (uint16) Map;
-	//asm add bx,offset CLUSTER::Map
-	asm   mov al,[bx]
-	asm   and ax,0xFF
-	asm   jz  xit
-	asm   mov ax,1
-
-	//  return Map[B][A] != 0;
-
-	xit: return _AX;
-	*/
-
-	warning("STUB: CLUSTER::Protected()");
-	return true;
+bool Cluster::chkBar() const {
+	assert(_vm->_now <= CAVE_MAX);
+	return (_a == _barriers[_vm->_now]._horz) && (_b == _barriers[_vm->_now]._vert);
 }
-
 
 Cluster XZ(int x, int y) {
 	if (y < MAP_TOP)
@@ -125,7 +90,7 @@ Cluster XZ(Couple xy) {
 }
 
 WALK::WALK(CGEEngine *vm, BMP_PTR *shpl)
-	: Sprite(vm, shpl), Dir(NO_DIR), _tracePtr(-1), _vm(vm) {
+	: Sprite(vm, shpl), Dir(NO_DIR), _tracePtr(-1), _level(0), _vm(vm) {
 }
 
 
@@ -221,15 +186,13 @@ void WALK::park() {
 
 void WALK::findWay(Cluster c) {
 	if (c != _here) {
-		_level = 0;
-
 		for (_findLevel = 1; _findLevel <= MAX_FIND_LEVEL; _findLevel++) {
 			signed char x, z;
 			_here.split(x, z);
-			_target = (z << 8) | x;
+			_target = Couple(x, z);
 			c.split(x, z);
 
-			if (find1Way(XZ(x, z)))
+			if (find1Way(Cluster(x, z)))
 				break;
 		}
 		_tracePtr = (_findLevel > MAX_FIND_LEVEL) ? -1 : (_findLevel - 1);
@@ -289,7 +252,7 @@ bool WALK::find1Way(Cluster c) {
 	const Cluster tab[4] = { Cluster(-1, 0), Cluster(1, 0), Cluster(0, -1), Cluster(0, 1)};
 	const int tabLen = 4;
 
-	if (c == _here)
+	if (c == _target)
 		// Found destination
 		return true;
 
@@ -298,7 +261,7 @@ bool WALK::find1Way(Cluster c) {
 		return false;
 
 	// Look for barriers
-	if (c.Protected())
+	if (c.chkBar())
 		return false;
 
 	if (c.cell())
@@ -329,7 +292,7 @@ bool WALK::find1Way(Cluster c) {
 				_trace[_level] = start;
 				return true;
 			}
-		} while (c.Protected() && !c.cell());
+		} while (c.chkBar() && !c.cell());
 	}
 
 	return false;
