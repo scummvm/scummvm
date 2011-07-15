@@ -57,7 +57,9 @@ Common::Language ComposerEngine::getLanguage() const {
 static const PlainGameDescriptor composerGames[] = {
 	{"darby", "Darby the Dragon"},
 	{"gregory", "Gregory and the Hot Air Balloon"},
-	{"demo1", "Magic Tales Demo 1"},
+	{"liam", "Liam Finds a Story"},
+	{"magictalesdemo1", "Magic Tales Demo 1"},
+	{"magictalesdemo2", "Magic Tales Demo 2"},
 	{0, 0}
 };
 
@@ -66,9 +68,10 @@ namespace Composer {
 using Common::GUIO_NONE;
 
 static const ComposerGameDescription gameDescriptions[] = {
+	// from Liam Finds a Story CD
 	{
 		{
-			"demo1",
+			"magictalesdemo1",
 			0,
 			{{"book.ini", 0, "dbc98c566f4ac61b544443524585dccb", -1},
 			 AD_LISTEND},
@@ -78,6 +81,35 @@ static const ComposerGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_ComposerV1
+	},
+
+	{
+		{
+			"liam",
+			0,
+			{{"install.inf", 0, "320d2f1d4f8dd96947676ae25d6688c6", -1},
+			 AD_LISTEND},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ComposerV2
+	},
+
+	// from Liam Finds a Story CD
+	{
+		{
+			"magictalesdemo2",
+			0,
+			{{"book.ini", 0, "3dede2522bb0886c95667b082987a87f", -1},
+			 AD_LISTEND},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ComposerV2
 	},
 
 	{
