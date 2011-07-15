@@ -35,7 +35,7 @@
 
 namespace Asylum {
 
-extern int g_debugDrawRects;
+int g_debugDrawRects;
 
 Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 	_useColorKey(false), _transTableCount(0), _transTableIndex(NULL), _transTableData(NULL), _transTableBuffer(NULL) {
@@ -43,6 +43,8 @@ Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 
 	_flag = -1;
 	_clipRect = Common::Rect(0, 0, 640, 480);
+
+	g_debugDrawRects = 0;
 }
 
 Screen::~Screen() {
@@ -865,8 +867,12 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x
 //////////////////////////////////////////////////////////////////////////
 // Debug
 //////////////////////////////////////////////////////////////////////////
-void Screen::drawLine(const Common::Point &source, const Common::Point &destination) {
-	_backBuffer.drawLine(source.x, source.y, destination.x, destination.y, 0xFF);
+void Screen::drawLine(const Common::Point &source, const Common::Point &destination, uint32 color) {
+	_backBuffer.drawLine(source.x, source.y, destination.x, destination.y, color);
+}
+
+void Screen::drawRect(const Common::Rect &rect, uint32 color) {
+	_backBuffer.frameRect(rect, color);
 }
 
 void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {

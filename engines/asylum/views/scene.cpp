@@ -53,9 +53,9 @@ namespace Asylum {
 #define SCROLL_STEP 10
 
 int g_debugActors;
-int g_debugDrawRects;
 int g_debugObjects;
 int g_debugPolygons;
+int g_debugSceneRects;
 int g_debugScrolling;
 
 Scene::Scene(AsylumEngine *engine): _vm(engine),
@@ -70,8 +70,10 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 
 	_musicVolume = 0;
 
-	g_debugPolygons  = 0;
+	g_debugActors = 0;
 	g_debugObjects  = 0;
+	g_debugPolygons  = 0;
+	g_debugSceneRects = 0;
 	g_debugScrolling = 0;
 }
 
@@ -2388,6 +2390,8 @@ bool Scene::drawScene() {
 		debugShowPolygons();
 	if (g_debugObjects)
 		debugShowObjects();
+	if (g_debugSceneRects)
+		debugShowSceneRects();
 
 	return false;
 }
@@ -2693,6 +2697,15 @@ void Scene::debugShowPolygons() {
 	}
 }
 
+// SCENE RECTS DEBUG
+void Scene::debugShowSceneRects() {
+	if (!_ws)
+		error("[Scene::debugShowObjects] WorldStats not initialized properly!");
+
+	for (uint32 i = 0; i < ARRAYSIZE(_ws->sceneRects); i++)
+		getScreen()->drawRect(_ws->sceneRects[i]);
+}
+
 // OBJECT DEBUGGING
 void Scene::debugShowObjects() {
 	if (!_ws)
@@ -2703,8 +2716,8 @@ void Scene::debugShowObjects() {
 		Object *object = _ws->objects[p];
 
 		if (object->isOnScreen()) {
-			surface.create(object->getBoundingRect()->right - object->getBoundingRect()->left + 1,
-			               object->getBoundingRect()->bottom - object->getBoundingRect()->top + 1,
+			surface.create(object->getBoundingRect()->width() + 1,
+			               object->getBoundingRect()->height() + 1,
 			               Graphics::PixelFormat::createFormatCLUT8());
 			surface.frameRect(*object->getBoundingRect(), 0x22);
 			getScreen()->copyToBackBufferClipped(&surface, object->x, object->y);
