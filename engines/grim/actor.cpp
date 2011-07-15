@@ -1241,7 +1241,7 @@ void Actor::draw() {
 		Costume *costume = _costumeStack.back();
 		if (!g_driver->isHardwareAccelerated()) {
 			for (int l = 0; l < 5; l++) {
-				if (!_shadowArray[l].active)
+				if (!shouldDrawShadow(l))
 					continue;
 				g_driver->setShadow(&_shadowArray[l]);
 				g_driver->setShadowMode();
@@ -1262,7 +1262,7 @@ void Actor::draw() {
 			g_driver->finishActorDraw();
 
 			for (int l = 0; l < 5; l++) {
-				if (!_shadowArray[l].active)
+				if (!shouldDrawShadow(l))
 					continue;
 				g_driver->setShadow(&_shadowArray[l]);
 				g_driver->setShadowMode();
@@ -1311,6 +1311,24 @@ void Actor::addShadowPlane(const char *n, Scene *scene, int shadowId) {
 			return;
 		}
 	}
+}
+
+bool Actor::shouldDrawShadow(int shadowId) {
+	Shadow *shadow = &_shadowArray[shadowId];
+	if (!shadow->active)
+		return false;
+
+	// Don't draw a shadow if the actor is behind the shadow plane.
+	Sector *sector = shadow->planeList.front().sector;
+	Graphics::Vector3d n = sector->getNormal();
+	Graphics::Vector3d p = sector->getVertices()[0];
+	float d = -(n.x() * p.x() + n.y() * p.y() + n.z() * p.z());
+
+	p = getPos();
+	if (n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f)
+		return true;
+	else
+		return false;
 }
 
 void Actor::addShadowPlane(const char *n) {
