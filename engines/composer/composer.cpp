@@ -355,7 +355,7 @@ void ComposerEngine::processAnimFrame() {
 		Animation *anim = *i;
 
 		anim->seekToCurrPos();
-		if (anim->_stream->pos() == anim->_stream->size()) {
+		if ((anim->_state > 1) && (anim->_stream->pos() == anim->_stream->size())) {
 			warning("anim with id %d ended too soon", anim->_id);
 			anim->_state = 0;
 		}
