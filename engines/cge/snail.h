@@ -48,7 +48,7 @@ namespace CGE {
 #define SNPOST_(c, r, v, p)    _snail_->addCom(c, r, v, p)
 #define SNPOST2_(c, r, v, p)   _snail_->addCom2(c, r, v, p)
 
-#define SNAIL_FRAME_RATE 62
+#define SNAIL_FRAME_RATE 80
 #define SNAIL_FRAME_DELAY (1000 / SNAIL_FRAME_RATE)
 
 struct Bar {

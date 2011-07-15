@@ -36,6 +36,7 @@
 #include "cge/text.h"
 #include "cge/vol.h"
 #include "cge/walk.h"
+#include "cge/startup.h"
 
 namespace CGE {
 
@@ -95,6 +96,7 @@ void CGEEngine::setup() {
 	_eventManager = new EventManager();
 	_offUseCount = atoi(_text->getText(OFF_USE_COUNT));
 	_music = true;
+	_mini = new byte[MINI_EMM_SIZE];
 
 	for (int i = 0; i < POCKET_NX; i++)
 		_pocref[i] = -1;
@@ -160,6 +162,7 @@ CGEEngine::~CGEEngine() {
 	delete _snail;
 	delete _snail_;
 	delete _hero;
+	delete[] _mini;
 }
 
 Common::Error CGEEngine::run() {

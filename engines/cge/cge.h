@@ -85,6 +85,7 @@ public:
 	int    _lev;
 
 	Common::RandomSource _randomSource;
+	byte *	_mini;
 
 	virtual Common::Error run();
 	GUI::Debugger *getDebugger() {
