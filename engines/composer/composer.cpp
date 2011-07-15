@@ -154,6 +154,9 @@ Pipe::Pipe(Common::SeekableReadStream *stream) {
 }
 
 void Pipe::nextFrame() {
+	if (_offset == _stream->size())
+		return;
+
 	_stream->seek(_offset, SEEK_SET);
 
 	uint32 tagCount = _stream->readUint32LE();
