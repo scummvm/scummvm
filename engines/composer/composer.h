@@ -62,7 +62,7 @@ class ComposerEngine;
 struct Sprite {
 	uint16 id;
 	uint16 animId;
-	uint16 zorder;
+	int16 zorder;
 	Common::Point pos;
 	Graphics::Surface surface;
 };
@@ -195,7 +195,7 @@ private:
 	void playWaveForAnim(uint16 id, bool bufferingOnly);
 	void processAnimFrame();
 
-	void addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos);
+	void addSprite(uint16 id, uint16 animId, int16 zorder, const Common::Point &pos);
 	void removeSprite(uint16 id, uint16 animId);
 
 	void loadCTBL(uint id, uint fadePercent);

@@ -457,7 +457,7 @@ void ComposerEngine::processAnimFrame() {
 	}
 }
 
-void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos) {
+void ComposerEngine::addSprite(uint16 id, uint16 animId, int16 zorder, const Common::Point &pos) {
 	Sprite sprite;
 	sprite.id = id;
 	sprite.animId = animId;
@@ -471,6 +471,7 @@ void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Co
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
 		if (sprite.zorder > i->zorder)
 			continue;
+		i++;
 		_sprites.insert(i, sprite);
 		return;
 	}
