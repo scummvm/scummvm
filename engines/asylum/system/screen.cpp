@@ -183,7 +183,7 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 			source->left  += diffLeft;
 	}
 
-	int32 diffRight = destination->right - _clipRect.right - 1;
+	int32 diffRight = destination->right - _clipRect.right;
 	if (diffRight > 0) {
 		destination->right -= diffRight;
 
@@ -199,7 +199,7 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 		source->top += diffTop;
 	}
 
-	int32 diffBottom = destination->bottom - _clipRect.bottom - 1;
+	int32 diffBottom = destination->bottom - _clipRect.bottom;
 	if (diffBottom > 0) {
 		source->bottom -= diffBottom;
 		destination->bottom -= diffBottom;
@@ -391,7 +391,8 @@ void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex
 	blitCrossfade((byte *)_backBuffer.pixels          + dst.top                   * _backBuffer.pitch          + dst.left,
 	              (byte *)frame->surface.pixels       + src.top                    * frame->surface.pitch       + src.left,
 	              (byte *)frameObject->surface.pixels + (objectPoint.y + dst.top) * frameObject->surface.pitch + (dst.left + objectPoint.x),
-	              dst.width() + (dst.height() << 16),
+	              dst.height(),
+	              dst.width(),
 	              frame->surface.pitch       - dst.width(),
 	              _backBuffer.pitch          - dst.width(),
 	              frameObject->surface.pitch - dst.width());
@@ -565,6 +566,23 @@ void Screen::blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int16 heig
 
 		dstBuffer += dstPitch;
 		srcBuffer += srcPitch;
+	}
+}
+
+void Screen::blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int16 height, int16 width, uint32 srcPitch, uint32 dstPitch, uint32 objectPitch) {
+	while (height--) {
+		for (int16 i = width; i; --i) {
+			if (*srcBuffer)
+				*dstBuffer = _transTableIndex[(*srcBuffer << 8) + *objectBuffer];
+
+			dstBuffer++;
+			srcBuffer++;
+			objectBuffer++;
+		}
+
+		dstBuffer    += dstPitch;
+		srcBuffer    += srcPitch;
+		objectBuffer += objectPitch;
 	}
 }
 
@@ -752,8 +770,8 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	// Masked part
 	bltMasked(frameBufferPtr,
 	          maskBufferPtr,
-	          source->width(),
 	          source->height(),
+	          source->width(),
 	          frameRight - source->width(),
 	          (maskHeight - srcMaskLeft - source->width()) / 8,
 	          srcMaskLeft,
@@ -768,12 +786,8 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	delete mirroredBuffer;
 }
 
-void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 width, int16 height, int16 srcPitch, int16 maskPitch, char maskLeft, byte *dstBuffer, int16 dstPitch) {
+void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 height, int16 width, int16 srcPitch, int16 maskPitch, char maskLeft, byte *dstBuffer, int16 dstPitch) {
 	warning("[Screen::bltMasked] Not implemented!");
-}
-
-void Screen::blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int widthHeight, uint32 srcPitch, uint32 dstPitch, uint32 objectPitch) {
-	error("[Screen::blitCrossfade] Not implemented");
 }
 
 void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags) {
