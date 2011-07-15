@@ -139,6 +139,14 @@ struct QueuedScript {
 	uint16 _scriptId;
 };
 
+struct PendingPageChange {
+	PendingPageChange() { }
+	PendingPageChange(uint16 id, bool remove) : _pageId(id), _remove(remove) { }
+
+	uint16 _pageId;
+	bool _remove;
+};
+
 class ComposerEngine : public Engine {
 protected:
 	Common::Error run();
@@ -168,6 +176,7 @@ private:
 	uint _directoriesToStrip;
 	Common::ConfigFile _bookIni;
 	Common::List<Library> _libraries;
+	Common::Array<PendingPageChange> _pendingPageChanges;
 
 	Common::Array<uint16> _stack;
 	Common::Array<uint16> _vars;
@@ -179,6 +188,7 @@ private:
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
 	Common::String getFilename(const Common::String &section, uint id);
 	void loadLibrary(uint id);
+	void unloadLibrary(uint id);
 
 	bool hasResource(uint32 tag, uint16 id);
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);

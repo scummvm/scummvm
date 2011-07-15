@@ -542,6 +542,14 @@ Common::Error ComposerEngine::run() {
 	uint frameTime = 1000 / fps;
 	uint32 lastDrawTime = 0;
 	while (!shouldQuit()) {
+		for (uint i = 0; i < _pendingPageChanges.size(); i++) {
+			if (_pendingPageChanges[i]._remove)
+				unloadLibrary(_pendingPageChanges[i]._pageId);
+			else
+				loadLibrary(_pendingPageChanges[i]._pageId);
+		}
+		_pendingPageChanges.clear();
+
 		uint32 thisTime = _system->getMillis();
 		for (uint i = 0; i < _queuedScripts.size(); i++) {
 			QueuedScript &script = _queuedScripts[i];
@@ -681,6 +689,37 @@ void ComposerEngine::loadLibrary(uint id) {
 	runScript(1000, 0, 0, 0);
 
 	runEvent(3, id, 0, 0);
+}
+
+void ComposerEngine::unloadLibrary(uint id) {
+	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++) {
+		if (i->_id != id)
+			continue;
+
+		for (Common::List<Animation *>::iterator j = _anims.begin(); j != _anims.end(); j++) {
+			delete *j;
+		}
+		_anims.clear();
+		for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
+			delete *j;
+		}
+		_pipes.clear();
+
+		for (Common::List<Sprite>::iterator j = _sprites.begin(); j != _sprites.end(); j++) {
+			j->surface.free();
+		}
+		_sprites.clear();
+
+		for (uint j = 0; j < _queuedScripts.size(); j++) {
+			_queuedScripts[j]._count = 0;
+			_queuedScripts[j]._scriptId = 0;
+		}
+
+		_libraries.erase(i);
+		return;
+	}
+
+	error("tried to unload library %d, which isn't loaded", id);
 }
 
 bool ComposerEngine::hasResource(uint32 tag, uint16 id) {
@@ -912,17 +951,17 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		warning("ignoring kFuncDeactivateButton(%d)", param1);
 		return 1;
 	case kFuncNewPage:
-		// TODO
-		warning("ignoring kFuncNewPage(%d, %d)", param1, param2);
+		debug(3, "kFuncNewPage(%d, %d)", param1, param2);
+		_pendingPageChanges.push_back(PendingPageChange(param1, true));
+		_pendingPageChanges.push_back(PendingPageChange(param2, false));
 		return 1;
 	case kFuncLoadPage:
-		// TODO
 		debug(3, "kFuncLoadPage(%d)", param1);
-		loadLibrary(param1);
+		_pendingPageChanges.push_back(PendingPageChange(param1, false));
 		return 1;
 	case kFuncUnloadPage:
-		// TODO
-		warning("ignoring kFuncUnloadPage(%d)", param1);
+		debug(3, "ignoring kFuncUnloadPage(%d)", param1);
+		_pendingPageChanges.push_back(PendingPageChange(param1, true));
 		return 1;
 	case kFuncSetPalette:
 		// TODO: return 0 if not disabling (0) and doesn't exist
