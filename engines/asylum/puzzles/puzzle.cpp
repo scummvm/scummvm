@@ -117,13 +117,13 @@ void Puzzle::exitPuzzle() {
 // Hit test functions
 //////////////////////////////////////////////////////////////////////////
 bool Puzzle::hitTest(const Common::Point *polygonPoint, Common::Point point, uint32 index) {
-	PolyDefinitions polygon(polygonPoint[index], polygonPoint[index + 1], polygonPoint[index + 2], polygonPoint[index + 3]);
+	Polygon polygon(polygonPoint[index], polygonPoint[index + 1], polygonPoint[index + 2], polygonPoint[index + 3]);
 
 	return polygon.contains(point);
 }
 
 bool Puzzle::hitTest(const Common::Point *polygonPoint, Common::Point point) {
-	PolyDefinitions polygon(polygonPoint[0], polygonPoint[1], polygonPoint[2], polygonPoint[3]);
+	Polygon polygon(polygonPoint[0], polygonPoint[1], polygonPoint[2], polygonPoint[3]);
 
 	return polygon.contains(point);
 }

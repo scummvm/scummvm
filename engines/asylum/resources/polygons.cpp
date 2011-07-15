@@ -24,15 +24,10 @@
 
 namespace Asylum {
 
-Polygons::Polygons(Common::SeekableReadStream *stream) : size(0), numEntries(0) {
-	load(stream);
-}
-
-Polygons::~Polygons() {
-	entries.clear();
-}
-
-bool PolyDefinitions::contains(int16 x, int16 y) {
+//////////////////////////////////////////////////////////////////////////
+// Contains
+//////////////////////////////////////////////////////////////////////////
+bool Polygon::contains(const Common::Point &point) {
 	// Copied from backends/vkeybd/polygon.cpp
 	bool  yflag0;
 	bool  yflag1;
@@ -41,11 +36,11 @@ bool PolyDefinitions::contains(int16 x, int16 y) {
 	Common::Point *vtx0 = &points[count() - 1];
 	Common::Point *vtx1 = &points[0];
 
-	yflag0 = (vtx0->y >= y);
+	yflag0 = (vtx0->y >= point.y);
 	for (uint32 pt = 0; pt < count(); pt++, vtx1++) {
-		yflag1 = (vtx1->y >= y);
+		yflag1 = (vtx1->y >= point.y);
 		if (yflag0 != yflag1) {
-			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >= (vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
+			if (((vtx1->y - point.y) * (vtx0->x - vtx1->x) >= (vtx1->x - point.x) * (vtx0->y - vtx1->y)) == yflag1) {
 				inside_flag = !inside_flag;
 			}
 		}
@@ -56,12 +51,30 @@ bool PolyDefinitions::contains(int16 x, int16 y) {
 	return inside_flag;
 }
 
-void Polygons::load(Common::SeekableReadStream *stream) {
-	size       = stream->readSint32LE();
-	numEntries = stream->readSint32LE();
+//////////////////////////////////////////////////////////////////////////
+// Polygons
+//////////////////////////////////////////////////////////////////////////
+Polygons::Polygons(Common::SeekableReadStream *stream) : _size(0), _numEntries(0) {
+	load(stream);
+}
 
-	for (int32 g = 0; g < numEntries; g++) {
-		PolyDefinitions poly;
+Polygons::~Polygons() {
+	_entries.clear();
+}
+
+Polygon Polygons::get(uint32 index) {
+	if (index >= _entries.size())
+		error("[Polygons::getEntry] Invalid polygon index (was: %d, max: %d)", index, _entries.size() - 1);
+
+	return _entries[index];
+}
+
+void Polygons::load(Common::SeekableReadStream *stream) {
+	_size       = stream->readSint32LE();
+	_numEntries = stream->readSint32LE();
+
+	for (int32 g = 0; g < _numEntries; g++) {
+		Polygon poly;
 
 		uint32 numPoints = stream->readUint32LE();
 
@@ -80,32 +93,8 @@ void Polygons::load(Common::SeekableReadStream *stream) {
 		poly.boundingRect.right  = (int16)(stream->readSint32LE() & 0xFFFF);
 		poly.boundingRect.bottom = (int16)(stream->readSint32LE() & 0xFFFF);
 
-		entries.push_back(poly);
+		_entries.push_back(poly);
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Contains
-//////////////////////////////////////////////////////////////////////////
-
-bool Polygons::contains(Common::Point *points, uint32 count, Common::Point point, Common::Rect *boundingRect) {
-	error("[Polygons::contains] Not implemented!");
-}
-
-bool Polygons::contains(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, int32 x4, int32 y4) {
-	return (compareDistance(x1, y1, x2, y2, x3, y3) * compareDistance(x1, y1, x2, y2, x4, y4)) <= 0
-	     && (compareDistance(x3, y3, x4, y4, x1, y1) * compareDistance(x3, y3, x4, y4, x2, y2) <= 0);
-}
-
-int32 Polygons::compareDistance(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3) {
-	uint32 d1 = (y3 - y1) * (x2 - x1);
-	uint32 d2 = (x3 - x1) * (y2 - y1);
-
-	return (d1 <= d2) ? -1 : 1;
-}
-
-bool Polygons::containsRect(Common::Point *points, uint32 count, Common::Point point, Common::Rect *boundingRect) {
-	error("[Polygons::containsHelper] Not implemented!");
 }
 
 } // end of namespace Asylum

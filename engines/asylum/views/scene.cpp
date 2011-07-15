@@ -2158,7 +2158,7 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt) {
 				}
 			}
 
-			if (!found && _polygons->entries[area->polygonIndex].contains(pt))
+			if (!found && _polygons->get(area->polygonIndex).contains(pt))
 				return i;
 		}
 		break;
@@ -2189,7 +2189,7 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt) {
 				}
 			}
 
-			if (!found && _polygons->entries[area->polygonIndex].contains(pt))
+			if (!found && _polygons->get(area->polygonIndex).contains(pt))
 				return i;
 		}
 		break;
@@ -2482,8 +2482,8 @@ void Scene::processUpdateList() {
 				if (object->flags & kObjectFlag2) {
 					isMasked = !pointIntersectsRect(sum, *object->getRect());
 				} else if (object->flags & kObjectFlag40) {
-					PolyDefinitions *poly = &_polygons->entries[object->getPolygonIndex()];
-					isMasked = poly->contains(sum);
+					Polygon poly = _polygons->get(object->getPolygonIndex());
+					isMasked = poly.contains(sum);
 				}
 
 				// Adjust object flags
@@ -2650,7 +2650,7 @@ void Scene::debugScreenScrolling() {
 }
 
 // WALK REGION DEBUG
-void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
+void Scene::debugShowWalkRegion(Polygon *poly) {
 	Graphics::Surface surface;
 	surface.create(poly->boundingRect.right - poly->boundingRect.left + 1,
 	               poly->boundingRect.bottom - poly->boundingRect.top + 1,
@@ -2675,9 +2675,9 @@ void Scene::debugShowPolygons() {
 	if (!_polygons)
 		error("[Scene::debugShowPolygons] Polygons not initialized properly!");
 
-	for (int32 p = 0; p < _polygons->numEntries; p++) {
+	for (uint32 p = 0; p < _polygons->size(); p++) {
 		Graphics::Surface surface;
-		PolyDefinitions poly = _polygons->entries[p];
+		Polygon poly = _polygons->get(p);
 		surface.create(poly.boundingRect.right - poly.boundingRect.left + 1,
 		               poly.boundingRect.bottom - poly.boundingRect.top + 1,
 		               Graphics::PixelFormat::createFormatCLUT8());
