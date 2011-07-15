@@ -138,6 +138,11 @@ protected:
 	 * Configures the key modifiers flags status
 	 */
 	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
+
+	/**
+	 * Translates SDL key codes to OSystem key codes
+	 */
+	Common::KeyCode SDLToOSystemKeycode(const SDLKey key);
 };
 
 #endif
