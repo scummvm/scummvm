@@ -282,9 +282,9 @@ bool WALK::find1Way(Cluster c) {
 
 			// Recursively check for further paths
 			++_level;
-			++c.cell();
+			++start.cell();
 			bool foundPath = find1Way(c);
-			--c.cell();
+			--start.cell();
 			--_level;
 
 			if (foundPath) {
@@ -292,7 +292,7 @@ bool WALK::find1Way(Cluster c) {
 				_trace[_level] = start;
 				return true;
 			}
-		} while (c.chkBar() && !c.cell());
+		} while (!c.chkBar() && !c.cell());
 	}
 
 	return false;
