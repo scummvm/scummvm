@@ -443,7 +443,7 @@ void Actor::update() {
 
 			return;
 		} else if (getWorld()->chapter == kChapter11) {
-			switch (_index)	{
+			switch (_index) {
 			default:
 				break;
 
@@ -1272,12 +1272,12 @@ bool Actor::process_4069B0(int32 *x, int32 *y) {
 	error("[Actor::process_4069B0] Not implemented!");
 }
 
-bool Actor::canMove(Common::Point *point, ActorDirection dir, uint32 count, bool hasDelta) {
+bool Actor::canMove(Common::Point *point, ActorDirection direction, uint32 distance, bool hasDelta) {
 	if (_field_944 == 1 || _field_944 == 4)
 		return true;
 
-	int16 x = (hasDelta ? point->x : point->x + deltaPointsArray[dir].x);
-	int16 y = (hasDelta ? point->y : point->y + deltaPointsArray[dir].y);
+	int16 x = (hasDelta ? point->x : point->x + deltaPointsArray[direction].x);
+	int16 y = (hasDelta ? point->y : point->y + deltaPointsArray[direction].y);
 
 	// Check scene rect
 	if (!_field_944) {
@@ -1295,20 +1295,20 @@ bool Actor::canMove(Common::Point *point, ActorDirection dir, uint32 count, bool
 		if (y > rct.bottom)
 			return false;
 
-		if (!canMoveCheckActors(point, dir))
+		if (!canMoveCheckActors(point, direction))
 			return false;
 	}
 
-	if (count > 0) {
-		uint32 index = 0;
+	if (distance > 0) {
+		uint32 allowed = 0;
 
-		while (getScene()->findActionArea(kActionAreaType1, Common::Point(x, y)) != -1) {
-			x += deltaPointsArray[dir].x;
-			y += deltaPointsArray[dir].y;
+		while (getScene()->findActionArea(kActionAreaType1, Common::Point(x, y), true) != -1) {
+			x += deltaPointsArray[direction].x;
+			y += deltaPointsArray[direction].y;
 
-			++index;
+			++allowed;
 
-			if (index >= count)
+			if (allowed >= distance)
 				return true;
 		}
 

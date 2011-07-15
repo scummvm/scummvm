@@ -174,13 +174,15 @@ public:
 	void drawRain();
 
 	/**
-	 * Determine if the supplied point intersects an action area's active region.
+	 * 	Determine if the supplied point intersects an action area's active region.
 	 *
-	 * @param pt The point.
+	 * @param	type	 	The type.
+	 * @param	pt		 	The point.
+	 * @param	highlight	(optional) whether to highlight the polygons as they are checked.
 	 *
-	 * @return The found action area.
+	 * @return	The found action area.
 	 */
-	int32 findActionArea(ActionAreaType type, const Common::Point pt);
+	int32 findActionArea(ActionAreaType type, const Common::Point pt, bool highlight = false);
 
 	/**
 	 * Check if rectangles intersect.
@@ -465,6 +467,8 @@ private:
 	void debugShowActors();
 	void debugShowObjects();
 	void debugShowPolygons();
+	void debugShowPolygon(uint32 index, uint32 color = 0xFF);
+	void debugHighlightPolygon(uint32 index);
 	void debugShowSceneRects();
 	void debugScreenScrolling();
 	void debugShowWalkRegion(Polygon *poly);
