@@ -2121,7 +2121,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 }
 
 
-int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt) {
+int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt, bool highlight) {
 	if (!_ws)
 		error("[Scene::findActionArea] WorldStats not initialized properly!");
 
@@ -2139,6 +2139,9 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt) {
 		for (int32 i = _ws->actions.size() - 1; i >= 0; i--) {
 			ActionArea *area = _ws->actions[i];
 
+			//if (g_debugPolygons && highlight)
+			//	debugHighlightPolygon(area->polygonIndex);
+
 			bool found = false;
 
 			// Iterate over flagNum
@@ -2150,7 +2153,7 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt) {
 				if (area->flagNums[j] <= 0)
 					flagSet = _vm->isGameFlagNotSet((GameFlag)-area->flagNums[j]);
 				else
-					flagSet = _vm->isGameFlagNotSet((GameFlag)area->flagNums[j]);
+					flagSet = _vm->isGameFlagSet((GameFlag)area->flagNums[j]);
 
 				if (!flagSet) {
 					found = true;
@@ -2181,7 +2184,7 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt) {
 				if (area->flagNums[j] <= 0)
 					flagSet = _vm->isGameFlagNotSet((GameFlag)-area->flagNums[j]);
 				else
-					flagSet = _vm->isGameFlagNotSet((GameFlag)area->flagNums[j]);
+					flagSet = _vm->isGameFlagSet((GameFlag)area->flagNums[j]);
 
 				if (!flagSet) {
 					found = true;
@@ -2675,26 +2678,38 @@ void Scene::debugShowPolygons() {
 	if (!_polygons)
 		error("[Scene::debugShowPolygons] Polygons not initialized properly!");
 
-	for (uint32 p = 0; p < _polygons->size(); p++) {
-		Graphics::Surface surface;
-		Polygon poly = _polygons->get(p);
-		surface.create(poly.boundingRect.right - poly.boundingRect.left + 1,
-		               poly.boundingRect.bottom - poly.boundingRect.top + 1,
-		               Graphics::PixelFormat::createFormatCLUT8());
+	for (uint32 p = 0; p < _polygons->size(); p++)
+		debugShowPolygon(p);
+}
 
-		// Draw all lines in Polygon
-		for (uint32 i = 0; i < poly.count(); i++) {
-			surface.drawLine(poly.points[i].x - poly.boundingRect.left,
-			                 poly.points[i].y - poly.boundingRect.top,
-			                 poly.points[(i+1) % poly.count()].x - poly.boundingRect.left,
-			                 poly.points[(i+1) % poly.count()].y - poly.boundingRect.top,
-			                 0xFF);
-		}
+void Scene::debugShowPolygon(uint32 index, uint32 color) {
+	if (index >= _polygons->size() - 1)
+		return;
 
-		getScreen()->copyToBackBufferClipped(&surface, poly.boundingRect.left, poly.boundingRect.top);
+	Graphics::Surface surface;
+	Polygon poly = _polygons->get(index);
+	surface.create(poly.boundingRect.right - poly.boundingRect.left + 1,
+		            poly.boundingRect.bottom - poly.boundingRect.top + 1,
+		            Graphics::PixelFormat::createFormatCLUT8());
 
-		surface.free();
+	// Draw all lines in Polygon
+	for (uint32 i = 0; i < poly.count(); i++) {
+		surface.drawLine(poly.points[i].x - poly.boundingRect.left,
+			                poly.points[i].y - poly.boundingRect.top,
+			                poly.points[(i+1) % poly.count()].x - poly.boundingRect.left,
+			                poly.points[(i+1) % poly.count()].y - poly.boundingRect.top,
+			                color);
 	}
+
+	getScreen()->copyToBackBufferClipped(&surface, poly.boundingRect.left, poly.boundingRect.top);
+
+	surface.free();
+}
+
+void Scene::debugHighlightPolygon(uint32 index) {
+	debugShowPolygon(index, 0x12);
+	getScreen()->copyBackBufferToScreen();
+	g_system->updateScreen();
 }
 
 // SCENE RECTS DEBUG
