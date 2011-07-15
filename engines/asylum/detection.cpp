@@ -40,7 +40,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		// Sanitarium - English Demo
 		"asylum",
-		"",
+		"Demo",
 		{
 			{"SNTRM.DAT", 0, "6a8079e0b49affc99d148624fbb584a1", 326},
 			{"RES.000", 0, "57446ce089c6f9decb7f3faf41d09edf", 9022},
