@@ -104,13 +104,33 @@ enum {
 enum {
 	kFuncPlayAnim = 35001,
 	kFuncStopAnim = 35002,
+	// (no 35003)
 	kFuncQueueScript = 35004,
 	kFuncDequeueScript = 35005,
-	kFuncHideMouse = 35009,
+	kFuncSetCursor = 35006,
+	kFuncGetCursor = 35007,
+	kFuncShowCursor = 35008,
+	kFuncHideCursor = 35009,
+	// (no 35010)
+	kFuncActivateButton = 35011,
+	kFuncDeactivateButton = 35012,
+	kFuncNewPage = 35013,
 	kFuncLoadPage = 35014,
 	kFuncUnloadPage = 35015,
 	kFuncSetPalette = 35016,
-	kFuncQueueScriptOnce = 35019
+	kFuncSaveVars = 35017,
+	kFuncLoadVars = 35018,
+	kFuncQueueScriptOnce = 35019,
+	kFuncGetMousePos = 35020,
+	kFuncChangeBackground = 35021,
+	kFuncSetBackgroundColor = 35022,
+	kFuncClearSprites = 35023,
+	kFuncAddSprite = 35024,
+	kFuncRemoveSprite = 35025,
+	kFuncQuit = 35026,
+	kFuncSaveData = 35027,
+	kFuncLoadData = 35028,
+	kFuncGetSpriteSize = 35029
 };
 
 // TODO: params: x, y, event param for done
@@ -154,7 +174,7 @@ Pipe::Pipe(Common::SeekableReadStream *stream) {
 }
 
 void Pipe::nextFrame() {
-	if (_offset == _stream->size())
+	if (_offset == (uint)_stream->size())
 		return;
 
 	_stream->seek(_offset, SEEK_SET);
@@ -839,11 +859,11 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	case kFuncPlayAnim:
 		debug(3, "kFuncPlayAnim(%d, %d, %d)", param1, param2, param3);
 		playAnimation(param1, param2, param3, 0);
-		break;
+		return 1; // TODO: return 0 on failure
 	case kFuncStopAnim:
 		// TODO
 		warning("ignoring kFuncStopAnim(%d)", param1);
-		break;
+		return 0;
 	case kFuncQueueScript:
 		debug(3, "kFuncQueueScript(%d, %d, %d)", param1, param2, param3);
 		_queuedScripts[param1]._baseTime = _system->getMillis();
@@ -856,12 +876,36 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		_queuedScripts[param1]._count = 0;
 		_queuedScripts[param1]._scriptId = 0;
 		return 0;
-	case kFuncHideMouse:
-		// TODO
-		warning("ignoring kFuncHideMouse(%d)", param1);
+	case kFuncSetCursor:
+		warning("ignoring kSetCursor(%d, %d, %d)", param1, param2, param3);
+		// TODO: return old cursor
 		return 0;
-		break;
+	case kFuncGetCursor:
+		warning("ignoring kFuncGetCursor()");
+		// TODO: return cursor
+		return 0;
+	case kFuncShowCursor:
+		// TODO
+		warning("ignoring kFuncShowCursor(%d)", param1);
+		return 0;
+	case kFuncHideCursor:
+		// TODO
+		warning("ignoring kFuncHideCursor(%d)", param1);
+		return 0;
+	case kFuncActivateButton:
+		// TODO
+		warning("ignoring kFuncActivateButton(%d)", param1);
+		return 1;
+	case kFuncDeactivateButton:
+		// TODO
+		warning("ignoring kFuncDeactivateButton(%d)", param1);
+		return 1;
+	case kFuncNewPage:
+		// TODO
+		warning("ignoring kFuncNewPage(%d, %d)", param1, param2);
+		return 1;
 	case kFuncLoadPage:
+		// TODO
 		debug(3, "kFuncLoadPage(%d)", param1);
 		loadLibrary(param1);
 		return 1;
@@ -870,17 +914,66 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		warning("ignoring kFuncUnloadPage(%d)", param1);
 		return 1;
 	case kFuncSetPalette:
-		// TODO: incomplete?
+		// TODO: return 0 if not disabling (0) and doesn't exist
 		debug(4, "kFuncSetPalette(%d, %d)", param1, param2);
 		loadCTBL(param1, param2);
+		// TODO: incomplete?
 		return 1;
-		break;
+	case kFuncSaveVars:
+		// TODO
+		warning("ignoring kFuncSaveVars(%d)", param1);
+		return 1;
+	case kFuncLoadVars:
+		// TODO
+		warning("ignoring kFuncLoadVars(%d, %d, %d)", param1, param2, param3);
+		return 1;
 	case kFuncQueueScriptOnce:
 		debug(3, "kFuncQueueScriptOnce(%d, %d, %d)", param1, param2, param3);
 		_queuedScripts[param1]._baseTime = _system->getMillis();
 		_queuedScripts[param1]._duration = 10 * param2;
 		_queuedScripts[param1]._count = 1;
 		_queuedScripts[param1]._scriptId = param3;
+		return 0;
+	case kFuncGetMousePos:
+		// TODO
+		warning("ignoring kFuncGetMousePos(%d, %d)", param1, param2);
+		return 0;
+	case kFuncChangeBackground:
+		// TODO
+		warning("ignoring kFuncChangeBackground(%d)", param1);
+		// TODO: return 1 if background existed, else 0
+		return 0;
+	case kFuncSetBackgroundColor:
+		// TODO
+		warning("ignoring kFuncSetBackgroundColor(%d)", param1);
+		return 0;
+	case kFuncClearSprites:
+		// TODO
+		warning("ignoring kFuncClearSprites()");
+		return 0;
+	case kFuncAddSprite:
+		// TODO
+		warning("ignoring kFuncAddSprite(%d, %d, %d)", param1, param2, param3);
+		return 0;
+	case kFuncRemoveSprite:
+		// TODO
+		warning("ignoring kFuncRemoveSprite(%d, %d)", param1, param2);
+		return 0;
+	case kFuncQuit:
+		// TODO
+		warning("ignoring kFuncQuit()");
+		return 0;
+	case kFuncSaveData:
+		// TODO
+		warning("ignoring kFuncSaveData(%d, %d, %d)", param1, param2, param3);
+		return 1;
+	case kFuncLoadData:
+		// TODO
+		warning("ignoring kFuncLoadData(%d, %d, %d)", param1, param2, param3);
+		return 1;
+	case kFuncGetSpriteSize:
+		// TODO
+		warning("ignoring kFuncGetSpriteSize(%d, %d, %d)", param1, param2, param3);
 		return 0;
 	default:
 		error("unknown scriptFuncCall %d(%d, %d, %d)", (uint32)id, param1, param2, param3);
