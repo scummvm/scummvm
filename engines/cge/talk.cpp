@@ -309,11 +309,22 @@ void InfoLine::update(const char *tx) {
 		uint16 size = 4 * psiz;                         // whole map size
 
 		// clear whole rectangle
+		byte *pDest;
+		memset(v + 2, TEXT_BG, dsiz);                   // data bytes
+		for (pDest = v + lsiz; pDest < (v + psiz); pDest += lsiz) {
+			Common::copy(v, v + lsiz, pDest);
+		}
+		*(uint16 *)(v + psiz - 2) = EOI;               // plane trailer uint16
+		for (pDest = v + psiz; pDest < (v + 4 * psiz); pDest += psiz) {
+			Common::copy(v, v + psiz, pDest);
+		}
+
+/*
 		memset(v + 2, TEXT_BG, dsiz);                   // data bytes
 		memmove(v + lsiz, v, psiz - lsiz);
 		*(uint16 *)(v + psiz - 2) = EOI;               // plane trailer uint16
 		memmove(v + psiz, v, 3 * psiz);
-
+*/
 		// paint text line
 		if (tx) {
 			uint8 *p = v + 2, * q = p + size;
