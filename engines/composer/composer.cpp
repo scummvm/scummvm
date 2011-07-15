@@ -296,6 +296,10 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 
 	// If we didn't find it, try the libraries.
 	if (!stream) {
+		if (!hasResource(ID_ANIM, animId)) {
+			warning("ignoring attempt to play invalid anim %d", animId);
+			return;
+		}
 		stream = getResource(ID_ANIM, animId);
 
 		uint32 type = 0;
@@ -350,6 +354,12 @@ void ComposerEngine::processAnimFrame() {
 	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
 		Animation *anim = *i;
 
+		anim->seekToCurrPos();
+		if (anim->_stream->pos() == anim->_stream->size()) {
+			warning("anim with id %d ended too soon", anim->_id);
+			anim->_state = 0;
+		}
+
 		if (anim->_state <= 1) {
 			if (anim->_state == 1) {
 				runEvent(2, anim->_id, anim->_eventParam, 0);
@@ -362,8 +372,6 @@ void ComposerEngine::processAnimFrame() {
 
 			continue;
 		}
-
-		anim->seekToCurrPos();
 
 		for (uint j = 0; j < anim->_entries.size(); j++) {
 			AnimationEntry &entry = anim->_entries[j];
@@ -679,8 +687,9 @@ void ComposerEngine::loadLibrary(uint id) {
 	Common::hexdump(buf, stream->size());
 	delete stream;*/
 
-	// TODO: set background properly
-	addSprite(1000, 0, 0, Common::Point());
+	// add background sprite, if it exists
+	if (hasResource(ID_BMAP, 1000))
+		addSprite(1000, 0, -1, Common::Point());
 
 	// TODO: better CTBL logic
 	loadCTBL(1000, 100);
