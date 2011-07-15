@@ -337,14 +337,22 @@ bool ScriptManager::process() {
 				// Run script
 				for (;;) {
 					ScriptEntry *cmd = NULL;
+					uint32 cmdIndex = 0;
 
 					if (_processNextEntry)
 						goto label_processNextEntry;
 
-					// TODO Check for bounds error
-
 					// Get the script command
-					cmd = &_currentScript->commands[_queue.entries[entryIndex].currentLine];
+					cmdIndex = _queue.entries[entryIndex].currentLine;
+					if (cmdIndex >= MAX_ACTION_COMMANDS)
+						error("[ScriptManager::process] Invalid command index (was: %d, max: %d)", cmdIndex, MAX_ACTION_COMMANDS);
+
+					cmd = &_currentScript->commands[cmdIndex];
+
+					// Check script opcode
+					if (cmd->opcode >= (int32)_opcodes.size())
+						error("[ScriptManager::process] Invalid opcode index (was: %d, max: %d)", cmd->opcode, _opcodes.size() - 1);
+
 					debugC(kDebugLevelScripts, "[0x%02X] %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
 						cmd->opcode, _opcodes[cmd->opcode]->name,
 						cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
