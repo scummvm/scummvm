@@ -258,12 +258,12 @@ public:
 	void processStatus(int32 actorX, int32 actorY, bool doSpeech);
 	void process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 field984, int32 field988);
 	bool process_4069B0(int32 *x, int32 *y);
-	bool process_408B20(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
-	void playSounds(ActorDirection dir, uint32 distance);
+	bool canMove(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
+	void move(ActorDirection dir, uint32 distance);
 	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
 	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
 	bool process_41BDB0(int32 reactionIndex, int32 testNumberValue01);
-	bool process_4103B0(Common::Point *point, ActorDirection direction);
+	bool canMoveCheckActors(Common::Point *point, ActorDirection direction);
 	void updateAndDraw();
 	void update_409230();
 

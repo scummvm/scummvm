@@ -478,16 +478,16 @@ void Actor::update() {
 		uint32 dist = abs((double)getDistanceForFrame(_direction, index));
 		Common::Point point = _point1 + _point2;
 
-		if (process_408B20(&point, _direction, dist, false)) {
-			playSounds(_direction, dist);
-		} else if (process_408B20(&point, (ActorDirection)((_direction + 1) % 7), dist, false)) {
-			playSounds((ActorDirection)((_direction + 1) % 7), dist);
-		} else if (process_408B20(&point, (ActorDirection)((_direction + 7) % 7), dist, false)) {
-			playSounds((ActorDirection)((_direction + 7) % 7), dist);
-		} else if (process_408B20(&point, (ActorDirection)((_direction + 2) % 7), dist, false)) {
-			playSounds((ActorDirection)((_direction + 2) % 7), dist);
-		} else if (process_408B20(&point, (ActorDirection)((_direction + 6) % 7), dist, false)) {
-			playSounds((ActorDirection)((_direction + 6) % 7), dist);
+		if (canMove(&point, _direction, dist, false)) {
+			move(_direction, dist);
+		} else if (canMove(&point, (ActorDirection)((_direction + 1) % 7), dist, false)) {
+			move((ActorDirection)((_direction + 1) % 7), dist);
+		} else if (canMove(&point, (ActorDirection)((_direction + 7) % 7), dist, false)) {
+			move((ActorDirection)((_direction + 7) % 7), dist);
+		} else if (canMove(&point, (ActorDirection)((_direction + 2) % 7), dist, false)) {
+			move((ActorDirection)((_direction + 2) % 7), dist);
+		} else if (canMove(&point, (ActorDirection)((_direction + 6) % 7), dist, false)) {
+			move((ActorDirection)((_direction + 6) % 7), dist);
 		}
 
 		// Finish
@@ -518,8 +518,8 @@ void Actor::update() {
 		 || point.x > (int16)(current.x + (dist - 1))
 		 || point.y < (int16)(current.y - (dist - 1))
 		 || point.y > (int16)(current.y + (dist - 1))) {
-			if (process_408B20(&point, _direction, dist, false)) {
-				playSounds(_direction, dist);
+			if (canMove(&point, _direction, dist, false)) {
+				move(_direction, dist);
 			} else {
 				update_409230();
 			}
@@ -533,7 +533,7 @@ void Actor::update() {
 			} else {
 				_frameIndex = (_frameIndex + 1) % _frameCount;
 
-				if (process_4103B0(&current, _direction)) {
+				if (canMoveCheckActors(&current, _direction)) {
 					_point1.x = dist - _point2.x;
 					_point1.y = current.y - _point2.y;
 
@@ -947,7 +947,7 @@ bool Actor::process(const Common::Point &point) {
 	}
 
 	if (point == sum) {
-		if (process_408B20(&sum, a3 >= 2 ? kDirectionS : kDirectionN, abs(delta.y), false)) {
+		if (canMove(&sum, a3 >= 2 ? kDirectionS : kDirectionN, abs(delta.y), false)) {
 			_data.points[0] = point;
 			_data.current   = 0;
 			_data.count     = 1;
@@ -958,7 +958,7 @@ bool Actor::process(const Common::Point &point) {
 
 	if (point.x == sum.x) {
 		ActorDirection actorDir = a3 >= 2 ? kDirectionS : kDirectionN;
-		if (process_408B20(&sum, actorDir, abs(delta.y), false)) {
+		if (canMove(&sum, actorDir, abs(delta.y), false)) {
 			_data.points[0] = point;
 			_data.current   = 0;
 			_data.count     = 1;
@@ -974,7 +974,7 @@ bool Actor::process(const Common::Point &point) {
 	if (point.y == sum.y) {
 		ActorDirection actorDir = (a3 != 0 || a3 != 3) ? kDirectionE : kDirectionO;
 
-		if (process_408B20(&sum, actorDir, abs(delta.x), true)) {
+		if (canMove(&sum, actorDir, abs(delta.x), true)) {
 			_data.points[0] = point;
 			_data.current   = 0;
 			_data.count     = 1;
@@ -1066,13 +1066,13 @@ bool Actor::process(const Common::Point &point) {
 			error("[Actor::process] not implemented (scene rects checks)!");
 		}
 
-		if (process_408B20(&sum,    direction1, count1, true)
-		 && process_408B20(&point1, direction2, count2, true)) {
+		if (canMove(&sum,    direction1, count1, true)
+		 && canMove(&point1, direction2, count2, true)) {
 			error("[Actor::process] not implemented (process actor data 1)!");
 		}
 
-		if (process_408B20(&sum,    direction2, count2, true)
-		 && process_408B20(&point1, direction1, count1, true)) {
+		if (canMove(&sum,    direction2, count2, true)
+		 && canMove(&point1, direction1, count1, true)) {
 			error("[Actor::process] not implemented (process actor data 2)!");
 		}
 
@@ -1137,7 +1137,7 @@ bool Actor::process(const Common::Point &point) {
 		break;
 	}
 
-	if (!process_408B20(&sum, actorDir, abs(delta.y), true))
+	if (!canMove(&sum, actorDir, abs(delta.y), true))
 		return false;
 
 	// Update actor data
@@ -1272,7 +1272,7 @@ bool Actor::process_4069B0(int32 *x, int32 *y) {
 	error("[Actor::process_4069B0] Not implemented!");
 }
 
-bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 count, bool hasDelta) {
+bool Actor::canMove(Common::Point *point, ActorDirection dir, uint32 count, bool hasDelta) {
 	if (_field_944 == 1 || _field_944 == 4)
 		return true;
 
@@ -1295,7 +1295,7 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 coun
 		if (y > rct.bottom)
 			return false;
 
-		if (!process_4103B0(point, dir))
+		if (!canMoveCheckActors(point, dir))
 			return false;
 	}
 
@@ -1318,7 +1318,7 @@ bool Actor::process_408B20(Common::Point *point, ActorDirection dir, uint32 coun
 	return true;
 }
 
-void Actor::playSounds(ActorDirection actorDir, uint32 dist) {
+void Actor::move(ActorDirection actorDir, uint32 dist) {
 	_lastScreenUpdate = _vm->screenUpdateCount;
 
 	Common::Point sum(_point1.x + _point2.x, _point1.x + _point2.x);
@@ -1473,7 +1473,7 @@ bool Actor::process_41BDB0(int32 reactionIndex, int32 testNumberValue01) {
 	return true;
 }
 
-bool Actor::process_4103B0(Common::Point *point, ActorDirection dir) {
+bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 	int32 dist = getDistanceForFrame(dir, (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex);
 
 	int32 x = point->x + deltaPointsArray[dir].x * dist - _field_948 - 10;
@@ -1978,7 +1978,7 @@ void Actor::updateStatus12_Chapter2() {
 		absX = absY;
 
 	if (absX >= 50) {
-		playSounds(_direction, distance);
+		move(_direction, distance);
 	} else {
 		_frameIndex = 0;
 
@@ -2481,7 +2481,7 @@ void Actor::updateCoordinates(Common::Point vec1, Common::Point vec2) {
 
 	ActorDirection dir = (diffY > 0) ? kDirectionS : kDirectionN;
 
-	if (process_408B20(&vec2, dir, diffY + 3, false))
+	if (canMove(&vec2, dir, diffY + 3, false))
 		updateCoordinatesForDirection(dir, diffY - 1, &_point);
 }
 

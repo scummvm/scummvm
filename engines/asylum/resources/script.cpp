@@ -930,7 +930,7 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub)
 		if (cmd->param1 == 2) {
 			Common::Point point(playerPoint);
 
-			if (player->process_408B20(&point, newDirection, 3, false)) {
+			if (player->canMove(&point, newDirection, 3, false)) {
 
 				point.x += (int16)(3 * deltaPointsArray[newDirection].x);
 				point.y += (int16)(3 * deltaPointsArray[newDirection].y);
@@ -939,7 +939,7 @@ IMPLEMENT_OPCODE(_unk2C_ActorSub)
 			}
 		}
 
-	} else if (cmd->param1 != 2 || player->process_408B20(&playerPoint, newDirection, 3, false)) {
+	} else if (cmd->param1 != 2 || player->canMove(&playerPoint, newDirection, 3, false)) {
 		ResourceId id = kResourceNone;
 		if (direction >= 5)
 			id = actor->getResourcesId((uint32)(5 * cmd->param1 - (direction - 38)));
