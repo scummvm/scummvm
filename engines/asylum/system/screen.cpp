@@ -540,9 +540,9 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 
 void Screen::blitTranstable(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
 	while (height--) {
-		for (int16 i = 0; i < width; i++) {
+		for (int16 i = width; i; --i) {
 			if (*srcBuffer)
-				*dstBuffer = _transTableIndex[*srcBuffer]; // FIXME: is this the correct offset (total table size: 65535)
+				*dstBuffer = _transTableIndex[(*srcBuffer << 8) + *dstBuffer];
 
 			dstBuffer++;
 			srcBuffer++;
@@ -557,7 +557,7 @@ void Screen::blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int16 heig
 	while (height--) {
 		for (int16 i = width; i; --i) {
 			if (*srcBuffer)
-				*dstBuffer = _transTableIndex[*srcBuffer]; // FIXME: is this the correct offset (total table size: 65535)
+				*dstBuffer = _transTableIndex[(*srcBuffer << 8) + *dstBuffer];
 
 			dstBuffer++;
 			srcBuffer--;
@@ -607,7 +607,7 @@ void Screen::blitRaw(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width
 
 void Screen::blitRawColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, int32 srcPitch, int32 dstPitch) {
 	while (height--) {
-		for (int16 i = 0; i < width; i++) {
+		for (int16 i = width; i; --i) {
 			if (*srcBuffer != 0)
 				*dstBuffer = *srcBuffer;
 
