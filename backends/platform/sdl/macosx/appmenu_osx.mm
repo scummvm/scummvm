@@ -20,12 +20,10 @@
  *
  */
 
-#if defined(MACOSX)
-
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/platform/sdl/macosx/appMenu_osx.h"
+#include "backends/platform/sdl/macosx/appmenu_osx.h"
 #include "common/translation.h"
 
 #include <Cocoa/Cocoa.h>
@@ -53,12 +51,16 @@ void replaceApplicationMenuItems() {
 	appleMenu = [[NSMenu alloc] initWithTitle:@""];
 
 	// Get current encoding
+#ifdef USE_TRANSLATION
 	NSStringEncoding stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[NSString stringWithCString:(TransMan.getCurrentCharset()).c_str() encoding:NSASCIIStringEncoding]));
+#else
+	NSStringEncoding stringEncoding = NSASCIIStringEncoding;
+#endif
 	
 	// Add "About ScummVM" menu item
 	[appleMenu addItemWithTitle:[NSString stringWithCString:_("About ScummVM") encoding:stringEncoding] action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
 
-	// Add seperator
+	// Add separator
 	[appleMenu addItem:[NSMenuItem separatorItem]];
 
 	// Add "Hide ScummVM" menu item
@@ -71,7 +73,7 @@ void replaceApplicationMenuItems() {
 	// Add "Show All" menu item
 	[appleMenu addItemWithTitle:[NSString stringWithCString:_("Show All") encoding:stringEncoding] action:@selector(unhideAllApplications:) keyEquivalent:@""];
 
-	// Add seperator
+	// Add separator
 	[appleMenu addItem:[NSMenuItem separatorItem]];
 
 	// Add "Quit ScummVM" menu item
@@ -106,5 +108,3 @@ void replaceApplicationMenuItems() {
 	[windowMenu release];
 	[menuItem release];
 }
-
-#endif // MACOSX

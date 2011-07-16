@@ -1682,7 +1682,23 @@ void IMuseInternal::setGlobalInstrument(byte slot, byte *data) {
 void IMuseInternal::copyGlobalInstrument(byte slot, Instrument *dest) {
 	if (slot >= 32)
 		return;
-	_global_instruments[slot].copy_to(dest);
+
+	// Both the AdLib code and the PC Speaker code use an all zero instrument
+	// as default in the original, thus we do the same.
+	// PC Speaker instrument size is 23, while AdLib instrument size is 30.
+	// Thus we just use a 30 byte instrument data array as default.
+	const byte defaultInstr[30] = { 0 };
+
+	if (_global_instruments[slot].isValid()) {
+		// In case we have an valid instrument set up, copy it to the part.
+		_global_instruments[slot].copy_to(dest);
+	} else if (_pcSpeaker) {
+		debug(0, "Trying to use non-existant global PC Speaker instrument %d", slot);
+		dest->pcspk(defaultInstr);
+	} else {
+		debug(0, "Trying to use non-existant global AdLib instrument %d", slot);
+		dest->adlib(defaultInstr);
+	}
 }
 
 
