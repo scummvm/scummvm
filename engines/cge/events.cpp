@@ -104,6 +104,10 @@ bool Keyboard::getKey(uint16 keycode, int &cgeCode) {
 		cgeCode = 29;
 		return true;
 	}
+	if (keycode == Common::KEYCODE_KP_ENTER) {
+		cgeCode = 28;
+		return true;
+	}
 
 	// Scan through the ScummVM mapping list
 	for (int idx = 0; idx < 0x60; ++idx) {
