@@ -641,13 +641,16 @@ Common::Error ComposerEngine::run() {
 					}*/
 					break;
 
-				case Common::KEYCODE_ESCAPE:
-					quitGame();
+				case Common::KEYCODE_q:
+					if (event.kbd.hasFlags(Common::KBD_CTRL))
+						quitGame();
 					break;
 
 				default:
 					break;
 				}
+
+				runEvent(5, event.kbd.keycode, 0, 0);
 				break;
 
 			case Common::EVENT_QUIT:
