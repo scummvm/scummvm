@@ -543,7 +543,7 @@ void Special::chapter8(Object *object, ActorIndex actorIndex) {
 
 			if (object->getFrameIndex() == 23) {
 				if (_vm->isGameFlagNotSet(kGameFlag815))
-					actor0->process_41BC00(1, 0);
+					actor0->addReactionHive(1, 0);
 
 				_vm->setGameFlag(kGameFlag815);
 			}

@@ -42,7 +42,7 @@ enum GameFlag {
 	kGameFlagCommentLeavingCell   = 214,
 	kGameFlag215                  = 215,
 	kGameFlag219                  = 219,
-	kGameFlagSolveVCRBlowUpPuzzle = 220,
+	kGameFlagSolveVCRPuzzle       = 220,
 	kGameFlag235                  = 235,
 	kGameFlag238                  = 238,
 	kGameFlag239                  = 239,
@@ -252,7 +252,6 @@ enum DrawFlags {
 //////////////////////////////////////////////////////////////////////////
 // Actions
 //////////////////////////////////////////////////////////////////////////
-
 enum ActionType {
 	kActionTypeNone = 0,
 	kActionTypeFind = 1,
@@ -260,6 +259,112 @@ enum ActionType {
 	kActionTypeGrab = 4,
 	kActionType8 = 8,
 	kActionType16 = 16
+};
+
+//////////////////////////////////////////////////////////////////////////
+// Script
+//////////////////////////////////////////////////////////////////////////
+enum OpcodeType {
+	kOpcodeReturn                        = 0,
+	kOpcodeSetGameFlag,
+	kOpcodeClearGameFlag,
+	kOpcodeToggleGameFlag,
+	kOpcodeJumpIfGameFlag,
+	kOpcodeHideCursor,                          // 5
+	kOpcodeShowCursor,
+	kOpcodePlayAnimation,
+	kOpcodeMoveScenePosition,
+	kOpcodeHideActor,
+	kOpcodeShowActor,                           // 10
+	kOpcodeSetActorPosition,
+	kOpcodeSetSceneMotionStatus,
+	kOpcodeDisableActor,
+	kOpcodeEnableActor,
+	kOpcodeEnableObjects,                       // 15
+	kOpcodeReturn1,
+	kOpcodeRemoveObject,
+	kOpcodeJumpActorSpeech,
+	kOpcodeJumpAndSetDirection,
+	kOpcodeJumpIfActorCoordinates,              // 20
+	kOpcodeNop,
+	kOpcodeResetAnimation,
+	kOpcodeDisableObject,
+	kOpcodeJumpIfSoundPlayingAndPlaySound,
+	kOpcodeJumpIfActionFind,                    // 25
+	kOpcodeSetActionFind,
+	kOpcodeClearActionFind,
+	kOpcodeJumpIfActionGrab,
+	kOpcodeSetActionGrab,
+	kOpcodeClearActionGrab,                     // 30
+	kOpcodeJumpIfActionTalk,
+	kOpcodeSetActionTalk,
+	kOpcodeClearActionTalk,
+	kOpcodeAddReactionHive,
+	kOpcodeRemoveReactionHive,                  // 35
+	kOpcodeHasMoreReactions,
+	kOpcodeRunEncounter,
+	kOpcodeJumpIfAction16,
+	kOpcodeSetAction16,
+	kOpcodeClearAction16,                       // 40
+	kOpcodeSetActorField638,
+	kOpcodeJumpIfActorField638,
+	kOpcodeChangeScene,
+	kOpcodeUpdateActor,
+	kOpcodePlayMovie,                           // 45
+	kOpcodeStopAllObjectsSounds,
+	kOpcodeStopProcessing,
+	kOpcodeResumeProcessing,
+	kOpcodeResetSceneRect,
+	kOpcodeChangeMusicById,                     // 50
+	kOpcodeStopMusic,
+	kOpcodeIncrementParam1,
+	kOpcodeSetVolume,
+	kOpcodeJump,
+	kOpcodeRunPuzzle,                           // 55
+	kOpcodeJumpIfAction8,
+	kOpcodeSetAction8,
+	kOpcodeClearAction8,
+	kOpcodeCreatePalette,
+	kOpcodeIncrementParam2,                     // 60
+	kOpcodeWaitUntilFramePlayed,
+	kOpcodeUpdateWideScreen,
+	kOpcodeJumpIfActor,
+	kOpcodePlaySpeechScene,
+	kOpcodePlaySpeech,                          // 65
+	kOpcodePlaySpeechScene2,
+	kOpcodeMoveScenePositionFromActor,
+	kOpcodePaletteFade,
+	kOpcodeStartPaletteFadeThread,
+	kOpcodePlaySoundUpdateObject,               // 70
+	kOpcodeActorFaceTarget,
+	kOpcodeHidMatteBars,
+	kOpcodeShowMatteBars,
+	kOpcodeJumpIfSoundPlaying,
+	kOpcodeChangePlayer,                         // 75
+	kOpcodeChangeActorStatus,
+	kOpcodeStopSound,
+	kOpcodeJumpRandom,
+	kOpcodeClearScreen,
+	kOpcodeQuit,                                // 80
+	kOpcodeJumpObjectFrame,
+	kOpcodeDeleteGraphics,
+	kOpcodeSetPlayerField944,
+	kOpcodeSetScriptField1BB0,
+	kOpcodeOnScriptField1BB0,                   // 85
+	kOpcodeInteract,
+	kOpcodeSetResourcePalette,
+	kOpcodeSetObjectFrameIndexAndFlags,
+	kOpcodeSetObjectFlags,
+	kOpcodeSetActorActionIndex2,                // 90
+	kOpcodeUpdateObjectFields,
+	kOpcodeQueueScript,
+	kOpcodeProcessActor,
+	kOpcodeClearActorFields,
+	kOpcodeSetObjectLastFrameIndex,             // 95
+	kOpcodeSetActionAreaFlags,
+	kOpcodeUpdatePlayerChapter9,
+	kOpcodeShowMenu,
+	kOpcodeUpdateGlobalFlags
 };
 
 //////////////////////////////////////////////////////////////////////////

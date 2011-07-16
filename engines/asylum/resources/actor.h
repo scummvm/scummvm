@@ -260,9 +260,9 @@ public:
 	bool process_4069B0(int32 *x, int32 *y);
 	bool canMove(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
 	void move(ActorDirection dir, uint32 distance);
-	void process_41BC00(int32 reactionIndex, int32 numberValue01Add);
-	void process_41BCC0(int32 reactionIndex, int32 numberValue01Substract);
-	bool process_41BDB0(int32 reactionIndex, int32 testNumberValue01);
+	void addReactionHive(int32 reactionIndex, int32 numberValue01Add);
+	void removeReactionHive(int32 reactionIndex, int32 numberValue01Substract);
+	bool hasMoreReactions(int32 reactionIndex, int32 testNumberValue01);
 	bool canMoveCheckActors(Common::Point *point, ActorDirection direction);
 	void updateAndDraw();
 	void update_409230();

@@ -1405,7 +1405,7 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 	}
 }
 
-void Actor::process_41BC00(int32 reactionIndex, int32 numberValue01Add) {
+void Actor::addReactionHive(int32 reactionIndex, int32 numberValue01Add) {
 	if (reactionIndex > 16)
 		return;
 
@@ -1417,7 +1417,7 @@ void Actor::process_41BC00(int32 reactionIndex, int32 numberValue01Add) {
 	if (count == 8)
 		return;
 
-	if (!process_41BDB0(reactionIndex, false))
+	if (!hasMoreReactions(reactionIndex, false))
 		_reaction[count] = reactionIndex;
 
 	if (numberValue01Add)
@@ -1426,7 +1426,7 @@ void Actor::process_41BC00(int32 reactionIndex, int32 numberValue01Add) {
 	getSound()->playSound(MAKE_RESOURCE(kResourcePackHive, 0));
 }
 
-void Actor::process_41BCC0(int32 reactionIndex, int32 numberValue01Substract) {
+void Actor::removeReactionHive(int32 reactionIndex, int32 numberValue01Substract) {
 	if (reactionIndex > 16)
 		return;
 
@@ -1455,7 +1455,7 @@ void Actor::process_41BCC0(int32 reactionIndex, int32 numberValue01Substract) {
 	}
 }
 
-bool Actor::process_41BDB0(int32 reactionIndex, int32 testNumberValue01) {
+bool Actor::hasMoreReactions(int32 reactionIndex, int32 testNumberValue01) {
 	if (reactionIndex > 16)
 		return false;
 

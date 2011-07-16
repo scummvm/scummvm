@@ -36,10 +36,10 @@ namespace Asylum {
 #define MAX_ACTION_COMMANDS 161
 
 #define DECLARE_OPCODE(name) \
-	void k##name(ScriptEntry *cmd)
+	void Op##name(ScriptEntry *cmd)
 
 #define IMPLEMENT_OPCODE(name) \
-	void ScriptManager::k##name(ScriptEntry *cmd) { \
+	void ScriptManager::Op##name(ScriptEntry *cmd) { \
 	if (!_currentScript) error("[" #name "] No current script set!"); \
 	if (!cmd) error("[" #name "] Invalid command parameter!");
 
@@ -47,7 +47,7 @@ namespace Asylum {
 
 
 #define ADD_OPCODE(name) { \
-	Opcode *func = new Opcode(#name, new Common::Functor1Mem<ScriptEntry *, void, ScriptManager>(this, &ScriptManager::k##name)); \
+	Opcode *func = new Opcode(#name, new Common::Functor1Mem<ScriptEntry *, void, ScriptManager>(this, &ScriptManager::Op##name)); \
 	_opcodes.push_back(func); \
 }
 
@@ -215,7 +215,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	struct ScriptEntry {
 		int32 numLines; // Only set on the first line of each script
-		int32 opcode;
+		OpcodeType opcode;
 		int32 param1;
 		int32 param2;
 		int32 param3;
@@ -228,7 +228,7 @@ private:
 
 		ScriptEntry() {
 			numLines = 0;
-			opcode = 0;
+			opcode = kOpcodeReturn;
 			param1 = 0;
 			param2 = 0;
 			param3 = 0;
@@ -333,9 +333,9 @@ private:
 	DECLARE_OPCODE(JumpIfActionTalk);
 	DECLARE_OPCODE(SetActionTalk);
 	DECLARE_OPCODE(ClearActionTalk);
-	DECLARE_OPCODE(_unk22);
-	DECLARE_OPCODE(_unk23);
-	DECLARE_OPCODE(_unk24);
+	DECLARE_OPCODE(AddReactionHive);
+	DECLARE_OPCODE(RemoveReactionHive);
+	DECLARE_OPCODE(HasMoreReaction);
 	DECLARE_OPCODE(RunEncounter);
 	DECLARE_OPCODE(JumpIfAction16);
 	DECLARE_OPCODE(SetAction16);
@@ -343,7 +343,7 @@ private:
 	DECLARE_OPCODE(SetActorField638);
 	DECLARE_OPCODE(JumpIfActorField638);
 	DECLARE_OPCODE(ChangeScene);
-	DECLARE_OPCODE(_unk2C_ActorSub);
+	DECLARE_OPCODE(UpdateActor);
 	DECLARE_OPCODE(PlayMovie);
 	DECLARE_OPCODE(StopAllObjectsSounds);
 	DECLARE_OPCODE(StopProcessing);
@@ -351,14 +351,14 @@ private:
 	DECLARE_OPCODE(ResetSceneRect);
 	DECLARE_OPCODE(ChangeMusicById);
 	DECLARE_OPCODE(StopMusic);
-	DECLARE_OPCODE(_unk34_Status);
+	DECLARE_OPCODE(IncrementParam1);
 	DECLARE_OPCODE(SetVolume);
 	DECLARE_OPCODE(Jump);
-	DECLARE_OPCODE(RunBlowUpPuzzle);
+	DECLARE_OPCODE(RunPuzzle);
 	DECLARE_OPCODE(JumpIfAction8);
 	DECLARE_OPCODE(SetAction8);
 	DECLARE_OPCODE(ClearAction8);
-	DECLARE_OPCODE(_unk3B_PALETTE_MOD);
+	DECLARE_OPCODE(CreatePalette);
 	DECLARE_OPCODE(IncrementParam2);
 	DECLARE_OPCODE(WaitUntilFramePlayed);
 	DECLARE_OPCODE(UpdateWideScreen);
@@ -369,12 +369,12 @@ private:
 	DECLARE_OPCODE(MoveScenePositionFromActor);
 	DECLARE_OPCODE(PaletteFade);
 	DECLARE_OPCODE(StartPaletteFadeThread);
-	DECLARE_OPCODE(_unk46);
-	DECLARE_OPCODE(ActorFaceObject);
-	DECLARE_OPCODE(_unk48_MATTE_01);
-	DECLARE_OPCODE(_unk49_MATTE_90);
+	DECLARE_OPCODE(PlaySoundUpdateObject);
+	DECLARE_OPCODE(ActorFaceTarget);
+	DECLARE_OPCODE(HideMatteBars);
+	DECLARE_OPCODE(ShowMatteBars);
 	DECLARE_OPCODE(JumpIfSoundPlaying);
-	DECLARE_OPCODE(ChangePlayerActorIndex);
+	DECLARE_OPCODE(ChangePlayer);
 	DECLARE_OPCODE(ChangeActorStatus);
 	DECLARE_OPCODE(StopSound);
 	DECLARE_OPCODE(JumpRandom);
@@ -383,22 +383,22 @@ private:
 	DECLARE_OPCODE(JumpObjectFrame);
 	DECLARE_OPCODE(DeleteGraphics);
 	DECLARE_OPCODE(SetActorField944);
-	DECLARE_OPCODE(_unk54_SET_ACTIONLIST_6EC);
-	DECLARE_OPCODE(_unk55);
-	DECLARE_OPCODE(_unk56);
+	DECLARE_OPCODE(SetScriptField1BB0);
+	DECLARE_OPCODE(OnScriptField1BB0);
+	DECLARE_OPCODE(Interact);
 	DECLARE_OPCODE(SetResourcePalette);
-	DECLARE_OPCODE(SetObjectFrameIdxFlaged);
-	DECLARE_OPCODE(_unk59);
-	DECLARE_OPCODE(_unk5A);
-	DECLARE_OPCODE(_unk5B);
+	DECLARE_OPCODE(SetObjectFrameIndexAndFlags);
+	DECLARE_OPCODE(SetObjectFlags);
+	DECLARE_OPCODE(SetActorActionIndex2);
+	DECLARE_OPCODE(UpdateObjectFields);
 	DECLARE_OPCODE(QueueScript);
-	DECLARE_OPCODE(_unk5D);
+	DECLARE_OPCODE(ProcessActor);
 	DECLARE_OPCODE(ClearActorFields);
-	DECLARE_OPCODE(SetObjectLastFrameIdx);
-	DECLARE_OPCODE(_unk60_SET_OR_CLR_ACTIONAREA_FLAG);
-	DECLARE_OPCODE(_unk61);
-	DECLARE_OPCODE(ShowOptionsScreen);
-	DECLARE_OPCODE(_unk63);
+	DECLARE_OPCODE(SetObjectLastFrameIndex);
+	DECLARE_OPCODE(SetActionAreaFlags);
+	DECLARE_OPCODE(UpdatePlayerChapter9);
+	DECLARE_OPCODE(ShowMenu);
+	DECLARE_OPCODE(UpdateGlobalFlags);
 
 	friend class Console;
 }; // end of class ActionList

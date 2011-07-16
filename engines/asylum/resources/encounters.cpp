@@ -1598,13 +1598,13 @@ void Encounter::runScript() {
 
 		case 18:
 			if (entry.param1)
-				getScene()->getActor()->process_41BCC0(getVariableInv(entry.param2), _scriptData.vars[1]);
+				getScene()->getActor()->removeReactionHive(getVariableInv(entry.param2), _scriptData.vars[1]);
 			else
-				getScene()->getActor()->process_41BC00(getVariableInv(entry.param2), _scriptData.vars[1]);
+				getScene()->getActor()->addReactionHive(getVariableInv(entry.param2), _scriptData.vars[1]);
 			break;
 
 		case 21:
-			_scriptData.counter = getScene()->getActor()->process_41BDB0(getVariableInv(entry.param2), _scriptData.vars[1]) ? 0 : 1;
+			_scriptData.counter = getScene()->getActor()->hasMoreReactions(getVariableInv(entry.param2), _scriptData.vars[1]) ? 0 : 1;
 			break;
 
 		case 23:
