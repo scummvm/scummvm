@@ -602,7 +602,6 @@ public:
 	void clearbuffers();
 	void neterror();
 	void storeit();
-	void lockeddoorway();
 	void isitworn();
 	void putundertimed();
 	void dumpmap();
@@ -958,9 +957,8 @@ public:
 	void showmonk();
 	void diarykeyn();
 	void set16colpalette();
-	void convicons();
-	void interviewer();
 	void sparky();
+	void interviewer();
 	void purgeanitem();
 	void madman();
 	void createpanel();
@@ -1255,12 +1253,14 @@ public:
 	void usechurchgate();
 	void monkandryan();
 	void allocatebuffers();
+	void convicons();
 	void swapwithinv();
 	void usecontrol();
 	void buttonseven();
 	void redrawmainscrn();
 	void finishedwalking();
 	void findallryan();
+	void lockeddoorway();
 	void channel0tran();
 	void buttonpress();
 	void parseblaster();

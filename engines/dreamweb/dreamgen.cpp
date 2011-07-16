@@ -11039,19 +11039,6 @@ void DreamGenContext::scrollmonitor() {
 	ax = pop();
 }
 
-void DreamGenContext::lockmon() {
-	STACK_CHECK;
-	_cmp(data.byte(kLasthardkey), 57);
-	if (!flags.z())
-		return /* (notlock) */;
-	locklighton();
-lockloop:
-	_cmp(data.byte(kLasthardkey), 57);
-	if (flags.z())
-		goto lockloop;
-	locklightoff();
-}
-
 void DreamGenContext::monitorlogo() {
 	STACK_CHECK;
 	al = data.byte(kLogonum);
@@ -22407,7 +22394,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case 0xc550: searchforstring(); break;
 		case 0xc554: parser(); break;
 		case 0xc558: scrollmonitor(); break;
-		case 0xc55c: lockmon(); break;
 		case 0xc560: monitorlogo(); break;
 		case 0xc564: printlogo(); break;
 		case 0xc568: showcurrentfile(); break;

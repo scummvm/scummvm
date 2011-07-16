@@ -24,6 +24,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'readabyte',
 	'readoneblock',
 	'frameoutv',
-	'modifychar'
+	'modifychar',
+	'lockmon'
 	])
 generator.generate('dreamweb') #start routine

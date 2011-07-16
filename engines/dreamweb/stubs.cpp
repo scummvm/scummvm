@@ -554,4 +554,30 @@ void DreamGenContext::modifychar() {
 	al = engine->modifyChar(al);
 }
 
+void DreamGenContext::lockmon() {
+	// Pressing space pauses text output in the monitor. We use the "hard"
+	// key because calling readkey() drains characters from the input
+	// buffer, we we want the user to be able to type ahead while the text
+	// is being printed.
+	if (data.byte(kLasthardkey) == 57) {
+		// Clear the keyboard buffer. Otherwise the space that caused
+		// the pause will be read immediately in the pause loop.
+		do {
+			readkey();
+		} while (data.byte(kCurrentkey) != 0);
+
+		locklighton();
+		while (!engine->shouldQuit()) {
+			engine->waitForVSync();
+			readkey();
+			if (data.byte(kCurrentkey) == ' ')
+				break;
+		}
+		// Forget the last "hard" key, otherwise the space that caused
+		// the unpausing will immediately re-pause the game.
+		data.byte(kLasthardkey) = 0;
+		locklightoff();
+	}
+}
+
 } /*namespace dreamgen */
