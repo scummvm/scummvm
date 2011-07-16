@@ -58,6 +58,7 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 void CGEEngine::setup() {
 	// Initialise fields
 	_lastFrame = 0;
+	_lastTick = 0;
 	_hero = NULL;
 	_shadow = NULL;
 	_miniCave = NULL;
