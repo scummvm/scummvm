@@ -103,6 +103,8 @@ public:
 		return "Soltys (c) 1994-1996 L.K. Avalon";
 	}
 
+
+
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual int getMaximumSaveSlot() const;
@@ -146,25 +148,26 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 		slotNum = atoi(filename->c_str() + filename->size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 99) {
+
 			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
 			if (file) {
-				int32 version = file->readSint32BE();
-				if (version != CGE_SAVEGAME_VERSION) {
-					delete file;
-					continue;
+				CGE::SavegameHeader header;
+
+				// Check to see if it's a ScummVM savegame or not
+				char buffer[SAVEGAME_STR_SIZE + 1];
+				file->read(buffer, SAVEGAME_STR_SIZE + 1);
+
+				if (!strncmp(buffer, CGE::SAVEGAME_STR, SAVEGAME_STR_SIZE + 1)) {
+					// Valid savegame
+					if (CGE::CGEEngine::readSavegameHeader(file, header)) {
+						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+						delete header.thumbnail;
+					}
+				} else {
+					// Must be an original format savegame
+					saveList.push_back(SaveStateDescriptor(slotNum, "Unknown"));
 				}
 
-				// read name
-				uint16 nameSize = file->readUint16BE();
-				if (nameSize >= 255) {
-					delete file;
-					continue;
-				}
-				char name[256];
-				file->read(name, nameSize);
-				name[nameSize] = 0;
-
-				saveList.push_back(SaveStateDescriptor(slotNum, name));
 				delete file;
 			}
 		}
@@ -175,53 +178,34 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 
 SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
+	assert(f);
 
-	if (file) {
+	CGE::SavegameHeader header;
 
-		int32 version = file->readSint32BE();
-		if (version != CGE_SAVEGAME_VERSION) {
-			delete file;
-			return SaveStateDescriptor();
-		}
+	// Check to see if it's a ScummVM savegame or not
+	char buffer[SAVEGAME_STR_SIZE + 1];
+	f->read(buffer, SAVEGAME_STR_SIZE + 1);
 
-		uint32 saveNameLength = file->readUint16BE();
-		char saveName[256];
-		file->read(saveName, saveNameLength);
-		saveName[saveNameLength] = 0;
+	bool hasHeader = !strncmp(buffer, CGE::SAVEGAME_STR, SAVEGAME_STR_SIZE + 1) &&
+		CGE::CGEEngine::readSavegameHeader(f, header);
+	delete f;
 
-		SaveStateDescriptor desc(slot, saveName);
-
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		assert(thumbnail);
-		if (!Graphics::loadThumbnail(*file, *thumbnail)) {
-			delete thumbnail;
-			thumbnail = 0;
-		}
-		desc.setThumbnail(thumbnail);
-
+	if (!hasHeader) {
+		// Original savegame perhaps?
+		SaveStateDescriptor desc(slot, "Unknown");
+		return desc;
+	} else {
+		// Create the return descriptor
+		SaveStateDescriptor desc(slot, header.saveName);
 		desc.setDeletableFlag(true);
 		desc.setWriteProtectedFlag(false);
+		desc.setThumbnail(header.thumbnail);
+		desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
+		desc.setSaveTime(header.saveHour, header.saveMinutes);
 
-		uint32 saveDate = file->readUint32BE();
-		uint16 saveTime = file->readUint16BE();
-
-		int day = (saveDate >> 24) & 0xFF;
-		int month = (saveDate >> 16) & 0xFF;
-		int year = saveDate & 0xFFFF;
-
-		desc.setSaveDate(year, month, day);
-
-		int hour = (saveTime >> 8) & 0xFF;
-		int minutes = saveTime & 0xFF;
-
-		desc.setSaveTime(hour, minutes);
-
-		delete file;
 		return desc;
 	}
-
-	return SaveStateDescriptor();
 }
 
 bool CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

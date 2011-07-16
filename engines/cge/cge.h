@@ -69,19 +69,26 @@ struct SavegameHeader {
 	int totalFrames;
 };
 
+extern const char *SAVEGAME_STR;
+#define SAVEGAME_STR_SIZE 11
+
 class CGEEngine : public Engine {
 private:
 	uint32 _lastFrame;
 	void tick();
 	void syncHeader(Common::Serializer &s);
-	bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
-	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
+	static void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
 	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream, bool tiny = false);
 	bool savegameExists(int slotNumber);
 	Common::String generateSaveName(int slot);
 public:
 	CGEEngine(OSystem *syst, const ADGameDescription *gameDescription);
 	~CGEEngine();
+	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool canLoadGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
+	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	const   ADGameDescription *_gameDescription;
 	bool   _isDemo;
@@ -107,6 +114,7 @@ public:
 	byte *		_mini;
 	BMP_PTR *	_miniShp;
 	BMP_PTR *	_miniShpList;
+	int		_startGameSlot;
 
 	virtual Common::Error run();
 	GUI::Debugger *getDebugger() {
@@ -149,6 +157,7 @@ public:
 	void setDMA();
 	void mainLoop();
 	void saveGame(int slotNumber, const Common::String &desc);
+	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
 	void switchMusic();
 	void selectPocket(int n);
 	void expandSprite(Sprite *spr);
