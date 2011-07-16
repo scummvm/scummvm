@@ -126,6 +126,7 @@ void CGEEngine::setup() {
 	for (int i = 0; i < 4; i++)
 		_flag[i] = false;
 
+	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }
 
 CGEEngine::~CGEEngine() {
@@ -173,12 +174,25 @@ Common::Error CGEEngine::run() {
 	// Setup necessary game objects
 	setup();
 
-	// Additional setup.
-	debug("CGEEngine::init");
-
+	// Run the game
 	cge_main();
 
 	return Common::kNoError;
+}
+
+bool CGEEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
+bool CGEEngine::canLoadGameStateCurrently() {
+	return (_startupMode == 0) && _mouse->_active;
+}
+
+bool CGEEngine::canSaveGameStateCurrently() {
+	return (_startupMode == 0) && _mouse->_active;
 }
 
 } // End of namespace CGE
