@@ -30,6 +30,9 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/str.h"
+#include "graphics/palette.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 #include "cge/general.h"
 #include "cge/sound.h"
 #include "cge/startup.h"
@@ -86,7 +89,8 @@ Snail *_snail_;
 // 1.01 - 17VII95 - default savegame with sound ON
 //		    coditionals EVA for 2-month evaluation version
 
-static char _usrFnam[15] = "\0É±%^þúÈ¼´ ÇÉ";
+const char *SAVEGAME_STR = "SCUMMVM_CGE";
+#define SAVEGAME_STR_SIZE 11
 
 //--------------------------------------------------------------------------
 
@@ -137,84 +141,237 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 	}
 }
 
-void CGEEngine::loadGame(XFile &file, bool tiny = false) {
-	Sprite *spr;
-	int i;
+bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
+	Common::MemoryReadStream *readStream;
+	SavegameHeader saveHeader;
 
-	// Read the data into a data buffer
-	int size = file.size() - file.mark();
-	byte *dataBuffer = (byte *)malloc(size);
-	file.read(dataBuffer, size);
-	Common::MemoryReadStream readStream(dataBuffer, size, DisposeAfterUse::YES);
-	Common::Serializer s(&readStream, NULL);
+	if (slotNumber == -1) {
+		// Loading the data for the initial game state
+		SVG0FILE file = SVG0FILE(SVG0NAME);
+		int size = file.size();
+		byte *dataBuffer = (byte *)malloc(size);
+		file.read(dataBuffer, size);
+		readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
 
-	// Synchronise header data
-	syncHeader(s);
+	} else {
+		// Open up the savgame file
+		Common::String slotName = generateSaveName(slotNumber);
+		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
 
-	if (Startup::_core < CORE_HIG)
-		_music = false;
-
-	if (Startup::_soundOk == 1 && Startup::_mode == 0) {
-		_sndDrvInfo.Vol2._d = _volume[0];
-		_sndDrvInfo.Vol2._m = _volume[1];
-		sndSetVolume();
+		// Read the data into a data buffer
+		int size = saveFile->size();
+		byte *dataBuffer = (byte *)malloc(size);
+		saveFile->read(dataBuffer, size);
+		readStream = new Common::MemoryReadStream(dataBuffer, size, DisposeAfterUse::YES);
 	}
 
-	if (! tiny) { // load sprites & pocket
-		while (readStream.pos() < readStream.size()) {
-			Sprite S(this, NULL);
-			S.sync(s);
+	// Check to see if it's a ScummVM savegame or not
+	char buffer[SAVEGAME_STR_SIZE + 1];
+	readStream->read(buffer, SAVEGAME_STR_SIZE + 1);
 
-			S._prev = S._next = NULL;
-			spr = (scumm_stricmp(S._file + 2, "MUCHA") == 0) ? new Fly(this, NULL)
-			      : new Sprite(this, NULL);
-			if (spr == NULL)
-				error("No core");
-			*spr = S;
-			_vga->_spareQ->append(spr);
+	if (strncmp(buffer, SAVEGAME_STR, SAVEGAME_STR_SIZE + 1) != 0) {
+		// It's not, so rewind back to the start
+		readStream->seek(0);
+
+		if (header)
+			// Header wanted where none exists, so return false
+			return false;
+	} else {
+		// Found header
+		if (!readSavegameHeader(readStream, saveHeader)) {
+			delete readStream;
+			return false;
 		}
 
-		for (i = 0; i < POCKET_NX; i++) {
-			register int r = _pocref[i];
-			delete _pocket[i];
-			_pocket[i] = (r < 0) ? NULL : _vga->_spareQ->locate(r);
+		if (header) {
+			*header = saveHeader;
+			delete readStream;
+			return true;
 		}
+
+		// Delete the thumbnail
+		delete saveHeader.thumbnail;
+
+		// If we're loading the auto-save slot, load the name
+		if (slotNumber == 0)
+			strncpy(_usrFnam, saveHeader.saveName.c_str(), 8);
 	}
+	
+	// Get in the savegame
+	syncGame(readStream, NULL, tiny);
+
+	delete readStream;
+	return true;
 }
 
+/**
+ * Returns true if a given savegame exists
+ */
+bool CGEEngine::savegameExists(int slotNumber) {
+	Common::String slotName = generateSaveName(slotNumber);
+
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
+	bool result = saveFile != NULL;
+	delete saveFile;
+	return result;
+}
+
+/**
+ * Support method that generates a savegame name
+ * @param slot		Slot number
+ */
+Common::String CGEEngine::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+}
 
 void CGEEngine::saveSound() {
+	warning("STUB: CGEEngine::saveSound");
+	/*  Convert to saving any such needed data in ScummVM configuration file
+
 	CFile cfg(usrPath(progName(CFG_EXT)), WRI);
 	if (!cfg._error)
 		cfg.write(&_sndDrvInfo, sizeof(_sndDrvInfo) - sizeof(_sndDrvInfo.Vol2));
+	*/
 }
 
+void CGEEngine::saveGame(int slotNumber, const Common::String &desc) {
+	// Set up the serializer
+	Common::String slotName = generateSaveName(slotNumber);
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(slotName);
 
-void CGEEngine::saveGame(Common::WriteStream *file) {
+	// Write out the ScummVM savegame header
+	SavegameHeader header;
+	header.saveName = desc;
+	header.version = CGE_SAVEGAME_VERSION;
+	writeSavegameHeader(saveFile, header);
+
+	// Write out the data of the savegame
+	syncGame(NULL, saveFile);
+
+	// Finish writing out game data
+	saveFile->finalize();
+	delete saveFile;
+}
+
+void CGEEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header) {
+	// Write out a savegame header
+	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
+
+	out->writeByte(CGE_SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->write(header.saveName.c_str(), header.saveName.size() + 1);
+
+	// Get the active palette
+	uint8 thumbPalette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(thumbPalette, 0, 256);
+
+	// Create a thumbnail and save it
+	Graphics::Surface *thumb = new Graphics::Surface();
+	Graphics::Surface *s = _vga->_page[1];
+	::createThumbnail(thumb, (const byte *)s->pixels, SCR_WID, SCR_HIG, thumbPalette);
+	Graphics::saveThumbnail(*out, *thumb);
+	delete thumb;
+
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	out->writeSint16LE(td.tm_year + 1900);
+	out->writeSint16LE(td.tm_mon + 1);
+	out->writeSint16LE(td.tm_mday);
+	out->writeSint16LE(td.tm_hour);
+	out->writeSint16LE(td.tm_min);
+}
+
+void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream, bool tiny) {
 	Sprite *spr;
 	int i;
 
-	for (i = 0; i < POCKET_NX; i++) {
-		register Sprite *s = _pocket[i];
-		_pocref[i] = (s) ? s->_ref : -1;
+	Common::Serializer s(readStream, writeStream);
+
+	if (s.isSaving()) {
+		for (i = 0; i < POCKET_NX; i++) {
+			register Sprite *s = _pocket[i];
+			_pocref[i] = (s) ? s->_ref : -1;
+		}
+
+		_volume[0] = _sndDrvInfo.Vol2._d;
+		_volume[1] = _sndDrvInfo.Vol2._m;
 	}
-
-	_volume[0] = _sndDrvInfo.Vol2._d;
-	_volume[1] = _sndDrvInfo.Vol2._m;
-
-	Common::Serializer s(NULL, file);
 
 	// Synchronise header data
 	syncHeader(s);
 
-	// Loop through saving the sprite data
-	for (spr = _vga->_spareQ->first(); spr; spr = spr->_next) {
-		if ((spr->_ref >= 1000) && !s.err())
-			spr->sync(s);
+	if (s.isSaving()) {
+		// Loop through saving the sprite data
+		for (spr = _vga->_spareQ->first(); spr; spr = spr->_next) {
+			if ((spr->_ref >= 1000) && !s.err())
+				spr->sync(s);
+		}
+	} else {
+		// Loading game
+		if (Startup::_core < CORE_HIG)
+			_music = false;
+
+		if (Startup::_soundOk == 1 && Startup::_mode == 0) {
+			_sndDrvInfo.Vol2._d = _volume[0];
+			_sndDrvInfo.Vol2._m = _volume[1];
+			sndSetVolume();
+		}
+
+		if (! tiny) { // load sprites & pocket
+			while (readStream->pos() < readStream->size()) {
+				Sprite S(this, NULL);
+				S.sync(s);
+
+				S._prev = S._next = NULL;
+				spr = (scumm_stricmp(S._file + 2, "MUCHA") == 0) ? new Fly(this, NULL)
+					  : new Sprite(this, NULL);
+				if (spr == NULL)
+					error("No core");
+				*spr = S;
+				_vga->_spareQ->append(spr);
+			}
+
+			for (i = 0; i < POCKET_NX; i++) {
+				register int r = _pocref[i];
+				delete _pocket[i];
+				_pocket[i] = (r < 0) ? NULL : _vga->_spareQ->locate(r);
+			}
+		}
+	}
+}
+
+bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
+	header.thumbnail = NULL;
+
+	// Get the savegame version
+	header.version = in->readByte();
+	if (header.version > CGE_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header.saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
+
+	// Get the thumbnail
+	header.thumbnail = new Graphics::Surface();
+	if (!Graphics::loadThumbnail(*in, *header.thumbnail)) {
+		delete header.thumbnail;
+		header.thumbnail = NULL;
+		return false;
 	}
 
-	// Finish writing out game data
-	file->finalize();
+	// Read in save date/time
+	header.saveYear = in->readSint16LE();
+	header.saveMonth = in->readSint16LE();
+	header.saveDay = in->readSint16LE();
+	header.saveHour = in->readSint16LE();
+	header.saveMinutes = in->readSint16LE();
+
+	return true;
+
 }
 
 void CGEEngine::heroCover(int cvr) {
@@ -483,9 +640,7 @@ void CGEEngine::qGame() {
 	saveSound();
 
 	// Write out the user's progress
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(Common::String(_usrFnam));
-	saveGame(saveFile);
-	delete saveFile;
+	saveGame(0, _usrFnam);
 
 	_vga->sunset();
 	_finis = true;
@@ -773,6 +928,7 @@ void CGEEngine::takeName() {
 	if (GetText::_ptr)
 		SNPOST_(SNKILL, -1, 0, GetText::_ptr);
 	else {
+		memset(_usrFnam, 0, 15);
 		GetText *tn = new GetText(this, _text->getText(GETNAME_PROMPT), _usrFnam, 8);
 		if (tn) {
 			tn->setName(_text->getText(GETNAME_TITLE));
@@ -1290,25 +1446,15 @@ void CGEEngine::tick() {
 
 void CGEEngine::loadUser() {
 	// set scene
-	if (Startup::_mode == 0) { // user .SVG file found
-		CFile cfile = CFile(usrPath(_usrFnam), REA, RCrypt);
-		loadGame(cfile);
+	if (Startup::_mode == 0) { 
+		// user .SVG file found - load it from slot 0
+		loadGame(0, NULL);
 	} else {
 		if (Startup::_mode == 1) {
-			SVG0FILE file = SVG0FILE(SVG0NAME);
-			loadGame(file);
+			// Load initial game state savegame
+			loadGame(-1, NULL);
 		} else {
-			// TODO: I think this was only used by the original developers to create the initial
-			// game state savegame. Verify this is the case, and if so remove this block
-			loadScript(progName(INI_EXT));
-			_music = true;
-
-			Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
-				Common::String(SVG0NAME));
-			saveGame(saveFile);
-			delete saveFile;
-
-			error("Ok [%s]", SVG0NAME);
+			error("Creating setup savegames not supported");
 		}
 	}
 	loadScript(progName(IN0_EXT));
@@ -1533,17 +1679,22 @@ bool CGEEngine::showTitle(const char *name) {
 			_vga->copyPage(0, 1);
 			_vga->_showQ->append(_mouse);
 			//Mouse.On();
-			_heart->_enable = true;
-			for (takeName(); GetText::_ptr;) {
-				mainLoop();
-				if (_eventManager->_quitFlag)
-					return false;
-			}
-			_heart->_enable = false;
-			if (_keyboard->last() == Enter && *_usrFnam)
+
+			// For ScummVM, skip prompting for name if a savegame in slot 0 already exists
+			if (savegameExists(0)) {
+				strcpy(_usrFnam, "User");
 				usr_ok = true;
-			if (usr_ok)
-				strcat(_usrFnam, SVG_EXT);
+			} else {
+				_heart->_enable = true;
+				for (takeName(); GetText::_ptr;) {
+					mainLoop();
+					if (_eventManager->_quitFlag)
+						return false;
+				}
+				_heart->_enable = false;
+				if (_keyboard->last() == Enter && *_usrFnam)
+					usr_ok = true;
+			}
 			//Mouse.Off();
 			_vga->_showQ->clear();
 			_vga->copyPage(0, 2);
@@ -1551,10 +1702,9 @@ bool CGEEngine::showTitle(const char *name) {
 		}
 
 		if (usr_ok && Startup::_mode == 0) {
-			const char *n = usrPath(_usrFnam);
-			if (CFile::exist(n)) {
-				CFile file = CFile(n, REA, RCrypt);
-				loadGame(file, true); // only system vars
+			if (savegameExists(0)) {
+				// Load the savegame
+				loadGame(0, NULL, true); // only system vars
 				_vga->setColors(Vga::_sysPal, 64);
 				_vga->update();
 				if (_flag[3]) { //flag FINIS
