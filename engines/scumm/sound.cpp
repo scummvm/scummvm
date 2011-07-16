@@ -1142,6 +1142,9 @@ int ScummEngine::readSoundResource(ResId idx) {
 				break;
 			}
 
+			// We only allow SPK resources for PC Speaker, PCJr and CMS here
+			// since other resource would sound horribly with their output
+			// drivers.
 			if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR || _musicType == MDT_CMS) && pri != 11)
 				pri = -1;
 
