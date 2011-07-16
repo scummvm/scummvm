@@ -255,7 +255,7 @@ bool PuzzleVCR::mouseLeftUp(const AsylumEvent &) {
 		 && _holesState[kRed] == kPluggedOnBlack
 		 && _holesState[kYellow] == kPluggedOnRed) {
 			getCursor()->hide();
-			_vm->setGameFlag(kGameFlagSolveVCRBlowUpPuzzle);
+			_vm->setGameFlag(kGameFlagSolveVCRPuzzle);
 			_isAccomplished = true;
 		}
 	} else if (_buttonsState[kPlayButton] == kDownON) {
