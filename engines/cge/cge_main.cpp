@@ -224,6 +224,24 @@ Common::String CGEEngine::generateSaveName(int slot) {
 	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
+Common::Error CGEEngine::loadGameState(int slot) {
+	// Clear current game activity
+	caveDown();
+
+	// Load the game
+	loadGame(slot, NULL, true);
+	caveUp();
+	loadGame(slot, NULL);
+
+	return Common::kNoError;
+}
+
+Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
+	saveGame(slot, desc);
+	return Common::kNoError;
+}
+
+
 void CGEEngine::saveSound() {
 	warning("STUB: CGEEngine::saveSound");
 	/*  Convert to saving any such needed data in ScummVM configuration file
@@ -268,7 +286,7 @@ void CGEEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &he
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
-	Graphics::Surface *s = _vga->_page[1];
+	Graphics::Surface *s = _vga->_page[0];
 	::createThumbnail(thumb, (const byte *)s->pixels, SCR_WID, SCR_HIG, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
 	delete thumb;
@@ -1451,8 +1469,8 @@ void CGEEngine::loadUser() {
 		loadGame(0, NULL);
 	} else {
 		if (Startup::_mode == 1) {
-			// Load initial game state savegame
-			loadGame(-1, NULL);
+			// Load either initial game state savegame or launcher specified savegame
+			loadGame(_startGameSlot, NULL);
 		} else {
 			error("Creating setup savegames not supported");
 		}
@@ -1681,7 +1699,7 @@ bool CGEEngine::showTitle(const char *name) {
 			//Mouse.On();
 
 			// For ScummVM, skip prompting for name if a savegame in slot 0 already exists
-			if (savegameExists(0)) {
+			if ((_startGameSlot == -1) && savegameExists(0)) {
 				strcpy(_usrFnam, "User");
 				usr_ok = true;
 			} else {
@@ -1755,18 +1773,29 @@ void CGEEngine::cge_main() {
 
 	if (_music && Startup::_soundOk)
 		loadMidi(0);
-	if (Startup::_mode < 2)
-		movie(LGO_EXT);
 
-	if (showTitle("WELCOME")) {
-		if ((!_isDemo) && (Startup::_mode == 1))
-			movie("X02"); // intro
+	if (_startGameSlot != -1) {
+		// Starting up a savegame from the launcher
+		Startup::_mode++;
 		runGame();
+
 		_startupMode = 2;
 		if (_flag[3]) // Flag FINIS
 			movie("X03");
-	} else
-		_vga->sunset();
+	} else {
+		if (Startup::_mode < 2)
+			movie(LGO_EXT);
+
+		if (showTitle("WELCOME")) {
+			if ((!_isDemo) && (Startup::_mode == 1))
+				movie("X02"); // intro
+			runGame();
+			_startupMode = 2;
+			if (_flag[3]) // Flag FINIS
+				movie("X03");
+		} else
+			_vga->sunset();
+	}
 }
 
 } // End of namespace CGE
