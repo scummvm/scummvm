@@ -299,7 +299,6 @@ void CGEEngine::setMapBrick(int x, int z) {
 	}
 }
 
-//static void switchColorMode();
 //static void switchDebug();
 //static void pullSprite();
 //static void NextStep();
