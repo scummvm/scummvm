@@ -493,6 +493,9 @@ void ComposerEngine::processAnimFrame() {
 }
 
 void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos) {
+	// TODO: re-use old sprite
+	removeSprite(id, animId);
+
 	Sprite sprite;
 	sprite.id = id;
 	sprite.animId = animId;
@@ -521,7 +524,6 @@ void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
 			continue;
 		i->surface.free();
 		i = _sprites.reverse_erase(i);
-		return;
 	}
 }
 
@@ -1457,8 +1459,10 @@ bool ComposerEngine::initSprite(Sprite &sprite) {
 	uint32 size = stream->readUint32LE();
 	debug(1, "loading BMAP: type %d, width %d, height %d, size %d", type, width, height, size);
 
-	sprite.surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	decompressBitmap(type, stream, (byte *)sprite.surface.pixels, size, width, height);
+	if (width && height) {
+		sprite.surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+		decompressBitmap(type, stream, (byte *)sprite.surface.pixels, size, width, height);
+	}
 	delete stream;
 
 	return true;
