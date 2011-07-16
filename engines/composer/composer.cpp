@@ -1392,6 +1392,50 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 		assert(size == width * height);
 		stream->read(buffer, size);
 		break;
+	case kBitmapSpp32:
+		byte lookup[16];
+		stream->read(lookup, 16);
+		while (size--) {
+			uint in = stream->readByte();
+			byte lowBits = in & 0xF;
+			byte highBits = (in & 0xF0) >> 4;
+			if (highBits == 0xf) {
+				// run of a single color
+				uint count = (uint)stream->readByte() + 3;
+				size--;
+				memset(buffer, lookup[lowBits], count);
+				buffer += count;
+			} else {
+				// two pixels
+				*buffer++ = lookup[highBits];
+				*buffer++ = lookup[lowBits];
+			}
+		}
+		break;
+	case kBitmapSLW8:
+		while (size--) {
+			byte val = stream->readByte();
+			if (val != 0xff) {
+				*buffer++ = val;
+				continue;
+			}
+			uint count = stream->readByte();
+			size--;
+
+			uint16 step;
+			if (!(count & 0x80)) {
+				step = stream->readByte();
+				size--;
+			} else {
+				count = (count ^ 0x80);
+				step = stream->readUint16LE();
+				size -= 2;
+			}
+			count += 4;
+			memcpy(buffer, buffer - step - 1, count);
+			buffer += count;
+		}
+		break;
 	case kBitmapRLESLWM:
 		{
 		uint32 bufSize = stream->readUint32LE();
