@@ -833,72 +833,313 @@ void ComposerEngine::runScript(uint16 id) {
 		uint arg3 = (script[pos] & 0xC000) >> 14; // 2 bits
 		switch (op) {
 		case kOpPlusPlus:
+			if (numParams != 1)
+				error("kOpPlusPlus had wrong number of params (%d)", numParams);
 			val1 = getArg(script[pos + 1], arg1);
 			debug(9, "[%d/%d]++ (now %d)", script[pos + 1], arg1, val1 + 1);
 			setArg(script[pos + 1], arg1, val1 + 1);
 			break;
+		case kOpMinusMinus:
+			if (numParams != 1)
+				error("kOpMinusMinus had wrong number of params (%d)", numParams);
+			val1 = getArg(script[pos + 1], arg1);
+			debug(9, "[%d/%d]-- (now %d)", script[pos + 1], arg1, val1 - 1);
+			setArg(script[pos + 1], arg1, val1 - 1);
+			break;
+		case kOpAssign:
+			if (numParams != 2)
+				error("kOpAssign had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] = [%d/%d] (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2);
+			setArg(script[pos + 1], arg1, val2);
+			break;
 		case kOpAdd:
+			if (numParams != 3)
+				error("kOpAdd had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
 			debug(9, "[%d/%d] = [%d/%d]=%d + [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 + val3);
 			setArg(script[pos + 1], arg1, val2 + val3);
 			break;
-		case kOpAssign:
+		case kOpSubtract:
+			if (numParams != 3)
+				error("kOpSubtract had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			debug(9, "[%d/%d] = [%d/%d]=%d - [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 - val3);
+			setArg(script[pos + 1], arg1, val2 - val3);
+			break;
+		case kOpMultiply:
+			if (numParams != 3)
+				error("kOpMultiply had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			debug(9, "[%d/%d] = [%d/%d]=%d * [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 * val3);
+			setArg(script[pos + 1], arg1, val2 * val3);
+			break;
+		case kOpDivide:
+			if (numParams != 3)
+				error("kOpDivide had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			if (val3 == 0)
+				error("script tried to divide by zero");
+			debug(9, "[%d/%d] = [%d/%d]=%d / [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 / val3);
+			setArg(script[pos + 1], arg1, val2 / val3);
+			break;
+		case kOpModulo:
+			if (numParams != 3)
+				error("kOpModulo had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			if (val3 == 0)
+				error("script tried to divide by zero (modulo)");
+			debug(9, "[%d/%d] = [%d/%d]=%d %% [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 % val3);
+			setArg(script[pos + 1], arg1, val2 % val3);
+			break;
+		case kOpMaybeAlsoAssign:
 			if (numParams != 2)
-				error("kOpAssign had wrong number of params (%d)", numParams);
-			debug(9, "[%d/%d] = [%d/%d] (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2);
+				error("kOpMaybeAlsoAssign had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] =(?) [%d/%d] (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2);
 			setArg(script[pos + 1], arg1, val2);
 			break;
-		case kOpCallFunc:
+		case kOpBooleanAssign:
+			if (numParams != 2)
+				error("kOpBooleanAssign had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] = [%d/%d] (%d) ? 1 : 0", script[pos + 1], arg1, script[pos + 2], arg2, val2);
+			setArg(script[pos + 1], arg1, val2 ? 1 : 0);
+			break;
+		case kOpNegate:
+			if (numParams != 2)
+				error("kOpNegate had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] = -[%d/%d] (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2);
+			setArg(script[pos + 1], arg1, -val2);
+			break;
+		case kOpAnd:
+			if (numParams != 3)
+				error("kOpAnd had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			debug(9, "[%d/%d] = [%d/%d]=%d & [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 & val3);
+			setArg(script[pos + 1], arg1, val2 & val3);
+			break;
+		case kOpOr:
+			if (numParams != 3)
+				error("kOpOr had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			debug(9, "[%d/%d] = [%d/%d]=%d | [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 | val3);
+			setArg(script[pos + 1], arg1, val2 | val3);
+			break;
+		case kOpXor:
+			if (numParams != 3)
+				error("kOpXor had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			debug(9, "[%d/%d] = [%d/%d]=%d ^ [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 ^ val3);
+			setArg(script[pos + 1], arg1, val2 ^ val3);
+			break;
+		case kOpNotPositive:
+			if (numParams != 2)
+				error("kOpNotPositive had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] = [%d/%d] (%d) < 1", script[pos + 1], arg1, script[pos + 2], arg2, val2);
+			setArg(script[pos + 1], arg1, (val2 < 1) ? 1 : 0);
+			break;
+		case kOpSqrt:
+			if (numParams != 2)
+				error("kOpSqrt had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] = sqrt([%d/%d] (%d))", script[pos + 1], arg1, script[pos + 2], arg2, val2);
+			setArg(script[pos + 1], arg1, (int16)sqrt((double)val2));
+			break;
+		case kOpRandom:
+			if (numParams != 3)
+				error("kOpRandom had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			val1 = _rnd->getRandomNumberRng(val2, val3);
+			debug(9, "[%d/%d] = rnd([%d/%d]=%d, [%d/%d]=%d) (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val1);
+			setArg(script[pos + 1], arg1, val1);
+			break;
+		case kOpExecuteScript:
+			if (numParams != 1)
+				error("kOpExecuteScript had wrong number of params (%d)", numParams);
 			val1 = getArg(script[pos + 1], arg1);
+			debug(8, "run script [%d/%d]=%d", script[pos + 1], arg1, val1);
+			runScript(val1);
+			debug(8, "done run script");
+			break;
+		case kOpCallFunc:
 			if (numParams != 1)
 				error("kOpCallFunc had wrong number of params (%d)", numParams);
+			val1 = getArg(script[pos + 1], arg1);
 			debug(8, "%d(%d, %d, %d)", (uint16)val1, _vars[1], _vars[2], _vars[3]);
 			_vars[0] = scriptFuncCall(val1, _vars[1], _vars[2], _vars[3]);
 			break;
-		/*case kOpBoolGreaterThan:
-			lastResult = (getArg(script[pos + 1], arg1) > getArg(script[pos + 2], arg2));
-			break;*/
-		case kOpBoolEqual:
+		case kOpBoolLessThanEq:
+			if (numParams != 2)
+				error("kOpBoolLessThanEq had wrong number of params (%d)", numParams);
 			val1 = getArg(script[pos + 1], arg1);
 			val2 = getArg(script[pos + 2], arg2);
-			debug(9, "[%d/%d] == [%d/%d]? (%d > %d)", script[pos + 1], arg1, script[pos + 2], arg2, val1, val2);
+			debug(9, "[%d/%d] <= [%d/%d]? (%d <= %d)", script[pos + 1], arg1, script[pos + 2], arg2, val1, val2);
+			lastResult = (val1 <= val2);
+			break;
+		case kOpBoolLessThan:
+			if (numParams != 2)
+				error("kOpBoolLessThan had wrong number of params (%d)", numParams);
+			val1 = getArg(script[pos + 1], arg1);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] < [%d/%d]? (%d < %d)", script[pos + 1], arg1, script[pos + 2], arg2, val1, val2);
+			lastResult = (val1 < val2);
+			break;
+		case kOpBoolGreaterThanEq:
+			if (numParams != 2)
+				error("kOpBoolGreaterThanEq had wrong number of params (%d)", numParams);
+			val1 = getArg(script[pos + 1], arg1);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] >= [%d/%d]? (%d >= %d)", script[pos + 1], arg1, script[pos + 2], arg2, val1, val2);
+			lastResult = (val1 >= val2);
+			break;
+		case kOpBoolGreaterThan:
+			if (numParams != 2)
+				error("kOpBoolGreaterThan had wrong number of params (%d)", numParams);
+			val1 = getArg(script[pos + 1], arg1);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] > [%d/%d]? (%d > %d)", script[pos + 1], arg1, script[pos + 2], arg2, val1, val2);
+			lastResult = (val1 > val2);
+			break;
+		case kOpBoolEqual:
+			if (numParams != 2)
+				error("kOpBoolEqual had wrong number of params (%d)", numParams);
+			val1 = getArg(script[pos + 1], arg1);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] == [%d/%d]? (%d == %d)", script[pos + 1], arg1, script[pos + 2], arg2, val1, val2);
 			lastResult = (val1 == val2);
 			break;
+		case kOpBoolNotEqual:
+			if (numParams != 2)
+				error("kOpBoolNotEqual had wrong number of params (%d)", numParams);
+			val1 = getArg(script[pos + 1], arg1);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "[%d/%d] != [%d/%d]? (%d != %d)", script[pos + 1], arg1, script[pos + 2], arg2, val1, val2);
+			lastResult = (val1 != val2);
+			break;
 		case kOpSaveArgs:
+			if (numParams != 0)
+				error("kOpSaveArgs had wrong number of params (%d)", numParams);
 			debug(9, "save args");
 			for (uint i = 1; i < 19; i++)
 				_stack[stackBase + i] = _vars[i];
 			break;
 		case kOpRestoreArgs:
+			if (numParams != 0)
+				error("kOpRestoreArgs had wrong number of params (%d)", numParams);
 			debug(9, "restore args");
 			for (uint i = 1; i < 19; i++)
 				_vars[i] = _stack[stackBase + i];
 			break;
+		case kOpSetReturnValue:
+			if (numParams != 1)
+				error("kOpSetReturnValue had wrong number of params (%d)", numParams);
+			val1 = getArg(script[pos + 1], arg1);
+			debug(9, "return [%d/%d]=%d", script[pos + 1], arg1, val1);
+			_vars[0] = val1;
+			break;
+		case kOpLessThanEq:
+			if (numParams != 3)
+				error("kOpLessThanEq had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			debug(9, "[%d/%d] = [%d/%d] <= [%d/%d]? (%d <= %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val2, val3);
+			setArg(script[pos + 1], arg1, (val3 <= val2) ? 1 : 0);
+			break;
+		case kOpLessThan:
+			if (numParams != 3)
+				error("kOpLessThan had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			debug(9, "[%d/%d] = [%d/%d] < [%d/%d]? (%d < %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val2, val3);
+			setArg(script[pos + 1], arg1, (val3 < val2) ? 1 : 0);
+			break;
+		case kOpGreaterThanEq:
+			if (numParams != 3)
+				error("kOpGreaterThanEq had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			debug(9, "[%d/%d] = [%d/%d] >= [%d/%d]? (%d >= %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val2, val3);
+			setArg(script[pos + 1], arg1, (val3 >= val2) ? 1 : 0);
+			break;
 		case kOpGreaterThan:
+			if (numParams != 3)
+				error("kOpGreaterThan had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
 			debug(9, "[%d/%d] = [%d/%d] > [%d/%d]? (%d > %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val2, val3);
 			setArg(script[pos + 1], arg1, (val3 > val2) ? 1 : 0);
 			break;
+		case kOpEqual:
+			if (numParams != 3)
+				error("kOpEqual had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			debug(9, "[%d/%d] = [%d/%d] == [%d/%d]? (%d == %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val2, val3);
+			setArg(script[pos + 1], arg1, (val3 == val2) ? 1 : 0);
+			break;
+		case kOpNotEqual:
+			if (numParams != 3)
+				error("kOpNotEqual had wrong number of params (%d)", numParams);
+			val2 = getArg(script[pos + 2], arg2);
+			val3 = getArg(script[pos + 3], arg3);
+			debug(9, "[%d/%d] = [%d/%d] != [%d/%d]? (%d != %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val2, val3);
+			setArg(script[pos + 1], arg1, (val3 != val2) ? 1 : 0);
+			break;
 		case kOpJump:
+			if (numParams != 1)
+				error("kOpJump had wrong number of params (%d)", numParams);
 			val1 = getArg(script[pos + 1], arg1);
 			debug(9, "jump by [%d/%d]=%d", script[pos + 1], arg1, val1);
 			pos += val1;
 			break;
 		case kOpJumpIfNot:
+			if (numParams != 1)
+				error("kOpJumpIfNot had wrong number of params (%d)", numParams);
 			if (lastResult)
 				break;
 			val1 = getArg(script[pos + 1], arg1);
 			debug(9, "jump if not, by [%d/%d]=%d", script[pos + 1], arg1, val1);
 			pos += val1;
 			break;
+		case kOpJumpIf:
+			if (numParams != 1)
+				error("kOpJumpIf had wrong number of params (%d)", numParams);
+			if (!lastResult)
+				break;
+			val1 = getArg(script[pos + 1], arg1);
+			debug(9, "jump if, by [%d/%d]=%d", script[pos + 1], arg1, val1);
+			pos += val1;
+			break;
 		case kOpJumpIfNotValue:
+			if (numParams != 2)
+				error("kOpJumpIfNotValue had wrong number of params (%d)", numParams);
 			val1 = getArg(script[pos + 1], arg1);
 			val2 = getArg(script[pos + 2], arg2);
 			debug(9, "jump if not [%d/%d]=%d", script[pos + 1], arg1, val1);
 			if (val1)
+				break;
+			debug(9, "--> jump by [%d/%d]=%d", script[pos + 2], arg2, val2);
+			pos += val2;
+			break;
+		case kOpJumpIfValue:
+			if (numParams != 2)
+				error("kOpJumpIfValue had wrong number of params (%d)", numParams);
+			val1 = getArg(script[pos + 1], arg1);
+			val2 = getArg(script[pos + 2], arg2);
+			debug(9, "jump if [%d/%d]=%d", script[pos + 1], arg1, val1);
+			if (!val1)
 				break;
 			debug(9, "--> jump by [%d/%d]=%d", script[pos + 2], arg2, val2);
 			pos += val2;
