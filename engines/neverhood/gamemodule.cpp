@@ -25,6 +25,7 @@
 #include "neverhood/graphics.h"
 #include "neverhood/module1000.h"
 #include "neverhood/module1500.h"
+#include "neverhood/module2300.h"
 
 namespace Neverhood {
 
@@ -63,7 +64,7 @@ void GameModule::handleMouseMove(int16 x, int16 y) {
 		NPoint mousePos;
 		mousePos.x = x;
 		mousePos.y = y;
-		debug("GameModule::handleMouseMove(%d, %d)", x, y);
+		debug(2, "GameModule::handleMouseMove(%d, %d)", x, y);
 		_childObject->sendPointMessage(0, mousePos, this);
 	}				
 }
@@ -73,7 +74,7 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 		NPoint mousePos;
 		mousePos.x = x;
 		mousePos.y = y;
-		debug("GameModule::handleMouseDown(%d, %d)", x, y);
+		debug(2, "GameModule::handleMouseDown(%d, %d)", x, y);
 		_childObject->sendPointMessage(1, mousePos, this);
 	}				
 }
@@ -106,9 +107,29 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 
 void GameModule::startup() {
 	// TODO: Displaying of error text probably not needed in ScummVM
-//	createModule1500(0); // Logos and intro video
+//	createModule1500(0); // Logos and intro video //Real
+//	createModule1000(0);
+	createModule2300(0);
+}
 
-	createModule1000(0);
+void GameModule::createModule1000(int which) {
+	setGlobalVar(0x91080831, 0x03294419);
+	_childObject = new Module1000(_vm, this, which);
+	SetUpdateHandler(&GameModule::updateModule1000);
+}
+
+void GameModule::updateModule1000() {
+	if (!_childObject)
+		return;
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		// TODO _resourceTable3.load();
+		delete _childObject;
+		_childObject = NULL;
+		createModule2300(0);
+		_childObject->handleUpdate();
+	}
 }
 
 void GameModule::createModule1500(int which) {
@@ -131,24 +152,47 @@ void GameModule::updateModule1500() {
 	}
 }
 
-void GameModule::createModule1000(int which) {
-	setGlobalVar(0x91080831, 0x03294419);
-	_childObject = new Module1000(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule1000);
+void GameModule::createModule2300(int which) {
+	setGlobalVar(0x91080831, 0x1A214010);
+	_childObject = new Module2300(_vm, this, which);
+	SetUpdateHandler(&GameModule::updateModule2300);
 }
 
-void GameModule::updateModule1000() {
+void GameModule::updateModule2300() {
 	if (!_childObject)
 		return;
 	_childObject->handleUpdate();
 	if (_done) {
 		_done = false;
-		// TODO _resourceTable3.load();
 		delete _childObject;
 		_childObject = NULL;
-		error("Done...");
-		// TODO createModule2300();
-		// TODO _childObject->handleUpdate();
+		if (_field20 == 1) {
+			// TODO createModule2200(0);
+			// TODO _childObject->handleUpdate();
+		} else if (_field20 == 2) {
+			// TODO createModule1200(0);
+			// TODO _childObject->handleUpdate();
+		} else if (_field20 == 3) {
+			// TODO createModule2400(0);
+			// TODO _childObject->handleUpdate();
+		} else if (_field20 == 4) {
+			// TODO createModule3000(0);
+			// TODO _childObject->handleUpdate();
+		} else {
+			createModule1000(1);
+			_childObject->handleUpdate();
+		}
+	}
+	if (_field24 >= 0) {
+		if (_field24 == 2) {
+			// TODO _resourceTable4.load();
+		} else if (_field24 == 0) {
+			// TODO _resourceTable3.load();
+		}
+		_field24 = -1;
+	}
+	if (_field26 >= 0) {
+		_field26 = -1;
 	}
 }
 

@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	module.o \
 	module1000.o \
 	module1500.o \
+	module2300.o \
 	mouse.o \
 	navigationscene.o \
 	neverhood.o \

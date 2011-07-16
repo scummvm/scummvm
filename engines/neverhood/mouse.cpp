@@ -258,6 +258,7 @@ void NavigationMouse::update() {
 }
 
 uint32 NavigationMouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	debug("NavigationMouse: _type = %d", _type);
 	uint32 messageResult = 0;
 	switch (messageNum) {
 	case 0x2064:
@@ -311,9 +312,9 @@ uint32 NavigationMouse::handleMessage(int messageNum, const MessageParam &param,
 		switch (_type) {
 		case 1:
 			if (_x >= 320)
-				_mouseCursorResource.setCursorNum(6);
-			else				
 				_mouseCursorResource.setCursorNum(5);
+			else				
+				_mouseCursorResource.setCursorNum(6);
 			break;
 		case 2:
 		default:

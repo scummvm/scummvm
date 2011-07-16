@@ -21,7 +21,6 @@
  */
 
 #include "neverhood/module1000.h"
-#include "neverhood/navigationscene.h"//###
 
 namespace Neverhood {
 
@@ -54,9 +53,10 @@ Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 			break;
 		}
 	} else if (which == 0) {
-		//createScene1001(0);
+		//createScene1001(0);//Real
 		// DEBUG: Jump to room
-		createScene1002(0);
+		setGlobalVar(0x8306F218, 1);
+		createScene1002(2);
 		//createScene1005(0);
 		//createScene1004(0);
 	} else if (which == 1) {
@@ -80,7 +80,6 @@ void Module1000::createScene1001(int which) {
 void Module1000::createScene1002(int which) {
 	_vm->gameState().sceneNum = 1;
 	_childObject = new Scene1002(_vm, this, which);
-	// DEBUG _childObject = new NavigationScene(_vm, this, 0x004B67B8, 0, NULL);
 	// TODO ResourceTable_multiLoad(&_resourceTable3, &_resourceTable4, &_resourceTable1);
 	// TODO Music18hList_play(0x061880C6, 0, 0, 1);
 	SetUpdateHandler(&Module1000::updateScene1002);

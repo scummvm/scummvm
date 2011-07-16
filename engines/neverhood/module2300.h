@@ -20,43 +20,38 @@
  *
  */
 
-// TODO: I couldn't come up with a better name than 'Module' so far
-
-#ifndef NEVERHOOD_GAMEMODULE_H
-#define NEVERHOOD_GAMEMODULE_H
+#ifndef NEVERHOOD_MODULE2300_H
+#define NEVERHOOD_MODULE2300_H
 
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/scene.h"
 
 namespace Neverhood {
 
-class GameModule : public Module {
+// Module2300
+
+class Module2300 : public Module {
 public:
-	GameModule(NeverhoodEngine *vm);
-	virtual ~GameModule();
-	void handleMouseMove(int16 x, int16 y);
-	void handleMouseDown(int16 x, int16 y);
+	Module2300(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Module2300();
 protected:
-	Entity *_prevChildObject;
-	bool _someFlag1;
-	bool _field2C;
-	uint32 _counter;
-	/* TODO
-	ResourceTable _resourceTable1;
-	ResourceTable _resourceTable2;
-	ResourceTable _resourceTable3;
-	ResourceTable _resourceTable4;
-	*/
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void startup();
-	void createModule1000(int which);
-	void updateModule1000();
-	void createModule1500(int which);
-	void updateModule1500();
-	void createModule2300(int which);
-	void updateModule2300();
+	// TODO ResourceTable _resourceTable1;
+	// TODO ResourceTable _resourceTable2;
+	bool _flag;
+	int _volume;
+	void createScene2301(int which);			
+	void createScene2302(int which);			
+	void createScene2303(int which);			
+	void createScene2304(int which);			
+	void createScene2305(int which);			
+	void updateScene2301();			
+	void updateScene2302();			
+	void updateScene2303();			
+	void updateScene2304();			
+	void updateScene2305();			
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_MODULE_H */
+#endif /* NEVERHOOD_MODULE2300_H */

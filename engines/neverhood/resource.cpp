@@ -51,11 +51,11 @@ void SpriteResource::draw(byte *dest, int destPitch, bool flipX, bool flipY) {
 }
 
 bool SpriteResource::load(uint32 fileHash) {
-	debug("SpriteResource::load(%08X)", fileHash);
+	debug(2, "SpriteResource::load(%08X)", fileHash);
 	// TODO: Later merge with load2 and make the mode a parameter
 	unload();
 	_resourceHandle = _vm->_res->useResource(fileHash);
-	debug("SpriteResource::load(0x%08X) _resourceHandle = %d", fileHash, _resourceHandle);
+	debug(2, "SpriteResource::load(0x%08X) _resourceHandle = %d", fileHash, _resourceHandle);
 	if (_resourceHandle != -1) {
 		if (_vm->_res->getResourceType(_resourceHandle) == 2) {
 			byte *spriteData = _vm->_res->loadResource(_resourceHandle, true);
@@ -106,7 +106,7 @@ PaletteResource::~PaletteResource() {
 }
 
 bool PaletteResource::load(uint32 fileHash) {
-	debug("PaletteResource::load(%08X)", fileHash);
+	debug(2, "PaletteResource::load(%08X)", fileHash);
 	unload();
 	_resourceHandle = _vm->_res->useResource(fileHash);
 	if (_resourceHandle != -1) {
@@ -170,7 +170,7 @@ void AnimResource::draw(uint frameIndex, byte *dest, int destPitch, bool flipX, 
 }
 
 bool AnimResource::load(uint32 fileHash) {
-	debug("AnimResource::load(%08X)", fileHash);
+	debug(2, "AnimResource::load(%08X)", fileHash);
 
 	if (fileHash == _fileHash)
 		return true;
@@ -304,7 +304,7 @@ int16 AnimResource::getFrameIndex(uint32 frameHash) {
 			frameIndex = (int16)i;
 			break;
 		}
-	debug("AnimResource::getFrameIndex(%08X) -> %d", frameHash, frameIndex);
+	debug(2, "AnimResource::getFrameIndex(%08X) -> %d", frameHash, frameIndex);
 	return frameIndex;			
 }
 
@@ -324,7 +324,6 @@ void MouseCursorResource::load(uint32 fileHash) {
 	if (_currFileHash != fileHash) {
 		if (_cursorSprite.load(fileHash) && !_cursorSprite.isRle() &&
 			_cursorSprite.getDimensions().width == 96 && _cursorSprite.getDimensions().height == 224) {
-			debug("load ok");
 			_currFileHash = fileHash; 
 		} else {
 			unload();
@@ -417,7 +416,7 @@ DataResource::~DataResource() {
 }
 
 void DataResource::load(uint32 fileHash) {
-	debug("DataResource::load(%08X)", fileHash);
+	debug(2, "DataResource::load(%08X)", fileHash);
 	byte *data = NULL;
 	uint32 dataSize = 0;
 	unload();
@@ -435,14 +434,14 @@ void DataResource::load(uint32 fileHash) {
 		Common::MemoryReadStream dataS(data, dataSize);
 		uint itemCount = dataS.readUint16LE();
 		uint32 itemStartOffs = 2 + itemCount * 8;
-		debug("itemCount = %d", itemCount);
+		debug(2, "itemCount = %d", itemCount);
 		for (uint i = 0; i < itemCount; i++) {
 			dataS.seek(2 + i * 8);
 			DRDirectoryItem drDirectoryItem;
 			drDirectoryItem.nameHash = dataS.readUint32LE();
 			drDirectoryItem.offset = dataS.readUint16LE(); 
 			drDirectoryItem.type = dataS.readUint16LE();
-			debug("%03d nameHash = %08X; offset = %04X; type = %d", i, drDirectoryItem.nameHash, drDirectoryItem.offset, drDirectoryItem.type);
+			debug(2, "%03d nameHash = %08X; offset = %04X; type = %d", i, drDirectoryItem.nameHash, drDirectoryItem.offset, drDirectoryItem.type);
 			dataS.seek(itemStartOffs + drDirectoryItem.offset);
 			switch (drDirectoryItem.type) {
 			case 1:

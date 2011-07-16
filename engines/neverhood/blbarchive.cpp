@@ -110,7 +110,8 @@ byte *BlbArchive::getEntryExtData(uint index) {
 
 Common::SeekableReadStream *BlbArchive::createStream(uint index) {
 	const BlbArchiveEntry &entry = _entries[index];
-	return new Common::SeekableSubReadStream(&_fd, entry.offset, entry.offset + entry.diskSize);
+	//debug("entry.offset = %08X; entry.offset + entry.diskSize = %08X", entry.offset, entry.offset + entry.diskSize);
+	return new Common::SafeSubReadStream(&_fd, entry.offset, entry.offset + entry.diskSize);
 }
 
 } // End of namespace Neverhood

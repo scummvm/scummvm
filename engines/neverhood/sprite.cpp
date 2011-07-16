@@ -385,7 +385,6 @@ void AnimatedSprite::updatePosition() {
 
 void AnimatedSprite::updateFrameIndex() {
 	if (!_playBackwards) {
-		//debug("%08X ### _frameIndex = %d; _frameIndex2 = %d", _currAnimFileHash, _frameIndex, _frameIndex2);
 		if (_frameIndex < _frameIndex2) {
 			_frameIndex++;
 		} else {
@@ -437,7 +436,7 @@ void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {
 }
 
 void AnimatedSprite::setFileHash(uint32 fileHash, int16 frameIndex3, int16 frameIndex4) {
-	debug("AnimatedSprite::setFileHash(%08X, %d, %d)", fileHash, frameIndex3, frameIndex4);
+	debug(2, "AnimatedSprite::setFileHash(%08X, %d, %d)", fileHash, frameIndex3, frameIndex4);
 	_fileHash1 = fileHash;
 	_frameIndex3 = frameIndex3;
 	_frameIndex4 = frameIndex4;
@@ -454,7 +453,7 @@ void AnimatedSprite::setFileHash1() {
 }
 
 void AnimatedSprite::setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5) {
-	debug("AnimatedSprite::setFileHash2(%08X, %08X, %08X)", fileHash, fileHash6, fileHash5);
+	debug(2, "AnimatedSprite::setFileHash2(%08X, %08X, %08X)", fileHash, fileHash6, fileHash5);
 	_fileHash1 = fileHash;
 	_fileHash6 = fileHash6;
 	_fileHash5 = fileHash5;

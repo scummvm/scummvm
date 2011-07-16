@@ -42,7 +42,6 @@ void Module::draw() {
 }
 
 uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-
 	switch (messageNum) {
 	case 0x0008:
 		if (_parentModule)
@@ -68,7 +67,6 @@ uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *
 		if (_childObject && sender == _parentModule)
 			return _childObject->sendMessage(messageNum, param, sender);
 	}
-
 	return 0;
 }
 
