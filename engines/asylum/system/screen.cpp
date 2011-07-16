@@ -31,14 +31,16 @@
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 
-#include <stdarg.h>	// For va_list etc.
+#include <stdarg.h>    // For va_list etc.
 
 namespace Asylum {
 
 int g_debugDrawRects;
 
+#define TRANSPARENCY_TABLE_SIZE 256 * 256
+
 Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
-	_useColorKey(false), _transTableCount(0), _transTableIndex(NULL), _transTableData(NULL), _transTableBuffer(NULL) {
+	_useColorKey(false), _transTableCount(0), _transTable(NULL), _transTableBuffer(NULL) {
 	_backBuffer.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
 	_flag = -1;
@@ -68,12 +70,12 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 }
 
 void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, int32 transTableNum) {
-	byte *index = _transTableIndex;
+	byte *index = _transTable;
 	selectTransTable(transTableNum);
 
 	draw(resourceId, frameIndex, source, (DrawFlags)(flags | 0x90000000));
 
-	_transTableIndex = index;
+	_transTable = index;
 }
 
 void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, ResourceId resourceIdDestination, const Common::Point &destination, bool colorKey) {
@@ -306,26 +308,24 @@ void Screen::setupTransTables(uint32 count, ...) {
 
 	_transTableCount = count;
 
-	if (!_transTableData) {
-		_transTableData = (byte *)malloc((count + 1) * 65536);
-		_transTableBuffer = _transTableData + 65536;
-		_transTableIndex = _transTableBuffer;
+	if (!_transTableBuffer) {
+		_transTableBuffer = (byte *)malloc(count * TRANSPARENCY_TABLE_SIZE);
+		_transTable = _transTableBuffer;
 	}
 
 	uint32 index = 0;
 	for (uint32 i = 0; i < _transTableCount; i++) {
 		ResourceId id = va_arg(va, ResourceId);
 
-		memcpy(&_transTableBuffer[index], getResource()->get(id)->data, 65536);
-		index += 65536;
+		memcpy(&_transTableBuffer[index], getResource()->get(id)->data, TRANSPARENCY_TABLE_SIZE);
+		index += TRANSPARENCY_TABLE_SIZE;
 	}
 }
 
 void Screen::clearTransTables() {
-	free(_transTableData);
-	_transTableData = NULL;
+	free(_transTableBuffer);
 	_transTableBuffer = NULL;
-	_transTableIndex = NULL;
+	_transTable = NULL;
 	_transTableCount = 0;
 }
 
@@ -333,7 +333,7 @@ void Screen::selectTransTable(uint32 index) {
 	if (index >= _transTableCount)
 		return;
 
-	_transTableIndex = &_transTableBuffer[65536 * index];
+	_transTable = &_transTableBuffer[TRANSPARENCY_TABLE_SIZE * index];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -370,7 +370,7 @@ void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, c
 
 void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 transTableNum) {
 	// Save current transparency index
-	byte *transparencyIndex= _transTableIndex;
+	byte *transparencyIndex= _transTable;
 	selectTransTable(transTableNum);
 
 	// Get graphic frames
@@ -400,7 +400,7 @@ void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex
 	              frameObject->surface.pitch - dst.width());
 
 	// Restore transparency table
-	_transTableIndex = transparencyIndex;
+	_transTable = transparencyIndex;
 
 	delete resource;
 	delete resourceObject;
@@ -475,7 +475,7 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 
 		if (flags & 0x10000000) {
 			flagSet = flags & 0x6FFFFFFF;
-			hasTransTableIndex = (_transTableIndex ? true : false);
+			hasTransTableIndex = (_transTable ? true : false);
 		}
 
 		bool isMirrored = (flagSet == kDrawFlagMirrorLeftRight);
@@ -545,7 +545,7 @@ void Screen::blitTranstable(byte *dstBuffer, byte *srcBuffer, int16 height, int1
 	while (height--) {
 		for (int16 i = width; i; --i) {
 			if (*srcBuffer)
-				*dstBuffer = _transTableIndex[(*srcBuffer << 8) + *dstBuffer];
+				*dstBuffer = _transTable[(*srcBuffer << 8) + *dstBuffer];
 
 			dstBuffer++;
 			srcBuffer++;
@@ -560,7 +560,7 @@ void Screen::blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int16 heig
 	while (height--) {
 		for (int16 i = width; i; --i) {
 			if (*srcBuffer)
-				*dstBuffer = _transTableIndex[(*srcBuffer << 8) + *dstBuffer];
+				*dstBuffer = _transTable[(*srcBuffer << 8) + *dstBuffer];
 
 			dstBuffer++;
 			srcBuffer--;
@@ -575,7 +575,7 @@ void Screen::blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer,
 	while (height--) {
 		for (int16 i = width; i; --i) {
 			if (*srcBuffer)
-				*dstBuffer = _transTableIndex[(*srcBuffer << 8) + *objectBuffer];
+				*dstBuffer = _transTable[(*srcBuffer << 8) + *objectBuffer];
 
 			dstBuffer++;
 			srcBuffer++;
@@ -819,7 +819,7 @@ void Screen::drawZoomedMask(byte *mask, int16 height, int16 width, uint16 maskPi
 void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 height, int16 width, uint16 srcPitch, uint16 maskPitch, byte maskLeft, byte *dstBuffer, uint16 dstPitch) {
 	// FIXME: Use mask
 	//warning("[Screen::bltMasked] Not implemented!");
-	
+
 	blitRawColorKey(dstBuffer, srcBuffer, height, width, srcPitch, dstPitch);
 }
 

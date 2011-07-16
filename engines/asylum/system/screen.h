@@ -108,7 +108,6 @@ public:
 	void setupTransTable(ResourceId resourceId);
 	void setupTransTables(uint32 count, ...);
 	void selectTransTable(uint32 index);
-	byte *getTransTableIndex() { return _transTableIndex; }
 
 	// Graphic queue
 	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, const Common::Point &point, DrawFlags flags, int32 transTableNum, int32 priority);
@@ -139,8 +138,7 @@ private:
 
 	// Transparency tables
 	uint32 _transTableCount;
-	byte *_transTableIndex;
-	byte *_transTableData;
+	byte *_transTable;
 	byte *_transTableBuffer;
 	void clearTransTables();
 
