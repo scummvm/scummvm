@@ -1128,9 +1128,9 @@ void Vga::setColors(Dac *tab, int lum) {
 
 	if (_mono) {
 		destP = _newColors;
-		for (int idx = 0; idx < PAL_CNT; ++idx, ++palP) {
+		for (int idx = 0; idx < PAL_CNT; ++idx, ++destP) {
 			// Form a greyscalce colour from 30% R, 59% G, 11% B
-			uint8 intensity = (destP->_r * 77) + (destP->_g * 151) + (destP->_b * 28);
+			uint8 intensity = (((int)destP->_r * 77) + ((int)destP->_g * 151) + ((int)destP->_b * 28)) >> 8;
 			destP->_r = intensity;
 			destP->_g = intensity;
 			destP->_b = intensity;
