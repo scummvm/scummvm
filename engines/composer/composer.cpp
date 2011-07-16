@@ -465,7 +465,7 @@ void ComposerEngine::processAnimFrame() {
 	}
 }
 
-void ComposerEngine::addSprite(uint16 id, uint16 animId, int16 zorder, const Common::Point &pos) {
+void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos) {
 	Sprite sprite;
 	sprite.id = id;
 	sprite.animId = animId;
@@ -477,9 +477,9 @@ void ComposerEngine::addSprite(uint16 id, uint16 animId, int16 zorder, const Com
 	}
 
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
-		if (sprite.zorder > i->zorder)
+		if (sprite.zorder <= i->zorder)
 			continue;
-		i++;
+		// insert *before* this sprite
 		_sprites.insert(i, sprite);
 		return;
 	}
@@ -689,7 +689,7 @@ void ComposerEngine::loadLibrary(uint id) {
 
 	// add background sprite, if it exists
 	if (hasResource(ID_BMAP, 1000))
-		addSprite(1000, 0, -1, Common::Point());
+		addSprite(1000, 0, 0xffff, Common::Point());
 
 	// TODO: better CTBL logic
 	loadCTBL(1000, 100);
