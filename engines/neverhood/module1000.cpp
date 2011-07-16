@@ -56,7 +56,8 @@ Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else if (which == 0) {
 		//createScene1001(0);
 		// DEBUG: Jump to room
-		createScene1002(0);
+		//createScene1002(0);
+		createScene1005(0);
 	} else if (which == 1) {
 		createScene1002(1);
 	}
@@ -95,6 +96,11 @@ void Module1000::createScene1004(int which) {
 }
 
 void Module1000::createScene1005(int which) {
+	_vm->gameState().sceneNum = 4;
+	_childObject = new Scene1005(_vm, this, which);
+	// TODO Music18hList_stop(0x061880C6, 0, 0);
+	// TODO Music18hList_play(_musicFileHash, 0, 0, 1);
+	SetUpdateHandler(&Module1000::updateScene1002);
 }
 
 void Module1000::updateScene1001() {
@@ -196,6 +202,16 @@ void Module1000::updateScene1004() {
 }
 			
 void Module1000::updateScene1005() {
+	_childObject->handleUpdate();
+	if (_done) {
+		debug("SCENE 1005 DONE");
+		// TODO Music18hList_stop(_musicFileHash, 0, 1);
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene1004(1);
+		_childObject->handleUpdate();
+	}
 }
 			
 // Scene1001			
@@ -1671,6 +1687,192 @@ uint32 Class152::handleMessage(int messageNum, const MessageParam &param, Entity
 		break;
 	}
 	return 0;
+}
+
+// Scene1005
+
+Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+
+	SetMessageHandler(&Scene1005::handleMessage);
+
+	_surfaceFlag = true;
+	
+	if (getGlobalVar(0xD0A14D10)) {
+		_background = addBackground(new DirtyBackground(_vm, 0x2800E011, 0, 0));
+		_palette = new Palette(_vm, 0x2800E011);
+		_palette->usePalette();
+		addSprite(new StaticSprite(_vm, 0x492D5AD7, 100));
+		_mouseCursor = addSprite(new Mouse435(_vm, 0x0E015288, 20, 620));
+	} else {
+		_background = addBackground(new DirtyBackground(_vm, 0x8870A546, 0, 0));
+		_palette = new Palette(_vm, 0x8870A546);
+		_palette->usePalette();
+		addSprite(new StaticSprite(_vm, 0x40D1E0A9, 100));
+		addSprite(new StaticSprite(_vm, 0x149C00A6, 100));
+		_mouseCursor = addSprite(new Mouse435(_vm, 0x0A54288F, 20, 620));
+	}
+
+	drawTextToBackground();
+	
+}
+
+Scene1005::~Scene1005() {
+}
+
+uint32 Scene1005::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
+		break;
+	}
+	return 0;
+}
+
+void Scene1005::drawTextToBackground() {
+	TextResource textResource(_vm);
+	const char *textStart, *textEnd;
+	int16 y = 36;
+	uint32 textIndex = getTextIndex();
+	FontSurface *fontSurface = createFontSurface();
+	textResource.load(0x80283101);
+	textStart = textResource.getString(textIndex, textEnd);
+	while (textStart < textEnd) {
+		fontSurface->drawString(_background->getSurface(), 188, y, (const byte*)textStart);
+		y += 36;
+		textStart += strlen(textStart) + 1;
+	}
+	delete fontSurface;
+}
+
+FontSurface *Scene1005::createFontSurface() {
+	FontSurface *fontSurface;
+	DataResource fontData(_vm);
+	SpriteResource fontSprite(_vm);
+	fontData.load(calcHash("asRecFont"));
+	uint16 numRows = fontData.getPoint(calcHash("meNumRows")).x;
+	uint16 firstChar = fontData.getPoint(calcHash("meFirstChar")).x;
+	uint16 charWidth = fontData.getPoint(calcHash("meCharWidth")).x;
+	uint16 charHeight = fontData.getPoint(calcHash("meCharHeight")).x;
+	NPointArray *tracking = fontData.getPointArray(calcHash("meTracking"));
+	fontSurface = new FontSurface(_vm, tracking, numRows, firstChar, charWidth, charHeight);	
+	if (getGlobalVar(0xD0A14D10)) {
+		fontSprite.load2(0x283CE401);
+	} else {
+		fontSprite.load2(0xC6604282);
+	}
+	fontSurface->drawSpriteResourceEx(fontSprite, false, false, 0, 0);
+	return fontSurface;
+}
+
+uint32 Scene1005::getTextIndex() {
+	uint32 textIndex;
+	textIndex = getTextIndex1();
+	if (getGlobalVar(0xD0A14D10)) {
+		textIndex = getTextIndex2();
+	}
+	if (getGlobalVar(0x8440001F) && getGlobalVar(0x01830201) == textIndex) {
+		textIndex = getTextIndex3();
+	} else {
+		setGlobalVar(0x8440001F, 1);
+		setGlobalVar(0x01830201, textIndex);
+	}
+	return textIndex;
+}
+
+uint32 Scene1005::getTextIndex1() {
+	uint32 textIndex;
+	if (getGlobalVar(0x98109F12)) {
+		if (!getGlobalVar(0x2090590C))
+			textIndex = 18;
+		else if (!getGlobalVar(0x610210B7))
+			textIndex = 19;
+		else if (getGlobalVar(0x0C0288F4)) {
+			if (!getGlobalVar(0xD0A14D10))
+				textIndex = 23;
+			else if (!getSubVar(0x0090EA95, 0) && !getSubVar(0x08D0AB11, 0))
+				textIndex = 24;
+			else if (!getGlobalVar(0xC0780812))			
+				textIndex = 26;
+			else if (!getSubVar(0x0090EA95, 1) && !getSubVar(0x08D0AB11, 1))
+				textIndex = 27;
+			else if (!getGlobalVar(0xC0780812)) 
+				textIndex = 28;
+			else				
+				textIndex = 29;
+		} else if (!getGlobalVar(0xE7498218))
+			textIndex = 20;
+		else if (!getGlobalVar(0x081890D14))
+			textIndex = 21;
+		else			
+			textIndex = 22;
+	} else if (getGlobalVar(0x00040153)) {
+		if (!getGlobalVar(0x10938830))
+			textIndex = 12;
+		else if (!getGlobalVar(0x2050861A))
+			textIndex = 13;
+		else if (!getGlobalVar(0x4DE80AC0))
+			textIndex = 50;
+		else if (!getGlobalVar(0x89C669AA))
+			textIndex = 14;
+		else if (!getGlobalVar(0x1C1B8A9A))
+			textIndex = 15;
+		else if (!getGlobalVar(0xCB45DE03))
+			textIndex = 16;
+		else 
+			textIndex = 17;
+	} else if (!getGlobalVar(0x2B514304)) {
+		textIndex = 0;
+	} else if (getGlobalVar(0x0A18CA33)) {
+		if (!getGlobalVar(0x404290D5))
+			textIndex = 4;
+		else if (!getGlobalVar(0x45080C38))
+			textIndex = 5;
+		else if (!getSubVar(0x14800353, 0x40119852))
+			textIndex = 6;
+		else if (!getGlobalVar(0x4E0BE910))
+			textIndex = 7;
+		else if (!getGlobalVar(0x86615030))
+			textIndex = 8;
+		else if (!getSubVar(0x14800353, 0x304008D2))
+			textIndex = 9;
+		else if (!getSubVar(0x14800353, 0x01180951))
+			textIndex = 10;
+		else 
+			textIndex = 11;
+	} else if (!getGlobalVar(0x0A310817)) {
+		textIndex = 1;
+	} else if (getGlobalVar(0x000CF819)) {
+		textIndex = 3;
+	} else {
+		textIndex = 2;
+	}
+	return textIndex;
+}
+
+uint32 Scene1005::getTextIndex2() {
+	uint32 textIndex = getGlobalVar(0x29408F00);
+	if (textIndex + 1 >= 10) {
+		setGlobalVar(0x29408F00, 0);
+		textIndex = 0;
+	} else {
+		setGlobalVar(0x29408F00, textIndex + 1);
+	}
+	return textIndex + 40;
+}
+
+uint32 Scene1005::getTextIndex3() {
+	uint32 textIndex = getGlobalVar(0x8A140C21);
+	if (textIndex + 1 >= 10) {
+		setGlobalVar(0x8A140C21, 0);
+		textIndex = 0;
+	} else {
+		setGlobalVar(0x8A140C21, textIndex + 1);
+	}
+	return textIndex + 30;
 }
 
 } // End of namespace Neverhood

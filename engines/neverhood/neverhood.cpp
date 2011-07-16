@@ -146,6 +146,16 @@ Common::Error NeverhoodEngine::run() {
 	}
 #endif
 
+#if 0
+	{ // Create a new scope
+		DataResource dataResource(this);
+		//dataResource.load(0x01801002);
+		//dataResource.load(0x84500132);
+		dataResource.load(0x81120132);
+	}
+#endif
+
+#if 1
 	_collisionMan = new CollisionMan(this);
 	_gameModule = new GameModule(this);
 
@@ -196,7 +206,9 @@ Common::Error NeverhoodEngine::run() {
 	
 	delete _gameModule;
 	delete _collisionMan;
-	
+#endif
+
+
 	delete _res;
 	delete _screen;
 

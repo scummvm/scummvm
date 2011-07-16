@@ -34,6 +34,8 @@ struct NPoint {
 	int16 x, y;
 };
 
+typedef Common::Array<NPoint> NPointArray;
+
 struct NDimensions {
 	int16 width, height;
 };
@@ -43,6 +45,8 @@ struct NRect {
 	NRect() : x1(0), y1(0), x2(0), y2(0) {}
 	NRect(int16 x01, int16 y01, int16 x02, int16 y02) : x1(x01), y1(y01), x2(x02), y2(y02) {}
 };
+
+typedef Common::Array<NRect> NRectArray;
 
 struct NDrawRect {
 	int16 x, y, width, height;
@@ -67,6 +71,7 @@ public:
 	void drawSpriteResourceEx(SpriteResource &spriteResource, bool flipX, bool flipY, int16 width, int16 height);
 	void drawAnimResource(AnimResource &animResource, uint frameIndex, bool flipX, bool flipY, int16 width, int16 height);
 	void drawMouseCursorResource(MouseCursorResource &mouseCursorResource, int frameNum);
+	void copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, NDrawRect &sourceRect, bool transparent);
 	int getPriority() const { return _priority; }
 	void setPriority(int priority) { _priority = priority; }
 	NDrawRect& getDrawRect() { return _drawRect; }
@@ -85,6 +90,19 @@ protected:
 	NDrawRect _sysRect;
 	NRect _clipRect;
 	bool _transparent;
+};
+
+class FontSurface : public BaseSurface {
+public:
+	FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight);
+	void drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr);
+	void drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string);
+protected:
+	NPointArray *_tracking;
+	uint16 _numRows;
+	byte _firstChar;
+	uint16 _charWidth;
+	uint16 _charHeight;
 };
 
 // Misc

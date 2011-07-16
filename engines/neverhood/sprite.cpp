@@ -104,7 +104,7 @@ StaticSprite::StaticSprite(NeverhoodEngine *vm, const char *filename, int surfac
 	: Sprite(vm, 0), _spriteResource(vm) {
 
 	_name = "StaticSprite"; 
-	// TODO init(calcHash(filename), surfacePriority, x, y, width, height);
+	init(calcHash(filename), surfacePriority, x, y, width, height);
 
 }
 
@@ -288,8 +288,7 @@ void AnimatedSprite::updateAnim() {
 					if (_animResource.loadInternal(_fileHash2)) {
 						_currAnimFileHash = _fileHash2;
 					} else {
-						debug("TODO");
-						// TODO _animResource.loadInternal(calcHash("sqDefault"));
+						_animResource.loadInternal(calcHash("sqDefault"));
 						_currAnimFileHash = 0;
 					}
 					if (_replOldColor != _replNewColor) {
@@ -320,8 +319,7 @@ void AnimatedSprite::updateAnim() {
 				if (_animResource.loadInternal(_fileHash1)) {
 					_currAnimFileHash = _fileHash1;
 				} else {
-					debug("TODO");
-					// TODO _animResource.loadInternal(calcHash("sqDefault"));
+					_animResource.loadInternal(calcHash("sqDefault"));
 					_currAnimFileHash = 0;
 				}
 				if (_replOldColor != _replNewColor) {
@@ -334,8 +332,7 @@ void AnimatedSprite::updateAnim() {
 				if (_animResource.loadInternal(_fileHash1)) {
 					_currAnimFileHash = _fileHash1;
 				} else {
-					debug("TODO");
-					// TODO _animResource.loadInternal(calcHash("sqDefault"));
+					_animResource.loadInternal(calcHash("sqDefault"));
 					_currAnimFileHash = 0;
 				}
 				if (_replOldColor != _replNewColor) {

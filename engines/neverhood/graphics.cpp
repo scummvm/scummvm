@@ -107,6 +107,52 @@ void BaseSurface::drawMouseCursorResource(MouseCursorResource &mouseCursorResour
 	}
 }
 
+void BaseSurface::copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, NDrawRect &sourceRect, bool transparent) {
+	// TODO: Clipping
+	byte *source = (byte*)sourceSurface->getBasePtr(sourceRect.x, sourceRect.y);
+	byte *dest = (byte*)_surface->getBasePtr(x, y);
+	int height = sourceRect.height;
+	if (!transparent) {
+		while (height--) {
+			memcpy(dest, source, sourceRect.width);
+			source += sourceSurface->pitch;
+			dest += _surface->pitch;
+		}
+	} else {
+		while (height--) {
+			for (int xc = 0; xc < sourceRect.width; xc++)
+				if (source[xc] != 0)
+					dest[xc] = source[xc];
+			source += sourceSurface->pitch;
+			dest += _surface->pitch;
+		}
+	}
+}
+
+// FontSurface
+
+FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
+	: BaseSurface(vm, 0, charWidth * 16, charHeight * numRows), _tracking(tracking), _numRows(numRows), _firstChar(firstChar),
+	_charWidth(charWidth), _charHeight(charHeight) {
+}
+
+void FontSurface::drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr) {
+	NDrawRect sourceRect;
+	chr -= _firstChar;
+	sourceRect.x = (chr % 16) * _charWidth;
+	sourceRect.y = (chr / 16) * _charHeight;
+	sourceRect.width = _charWidth;
+	sourceRect.height = _charHeight;
+	destSurface->copyFrom(_surface, x, y, sourceRect, true);
+}
+
+void FontSurface::drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string) {
+	for (; *string != 0; string++) {
+		drawChar(destSurface, x, y, *string);
+		x += (*_tracking)[*string - _firstChar].x;
+	}	
+}
+
 // Misc
 
 void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoint *position, byte **palette, byte **pixels) {

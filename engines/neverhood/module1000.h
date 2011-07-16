@@ -302,6 +302,22 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+// Scene1005
+
+class Scene1005 : public Scene {
+public:
+	Scene1005(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Scene1005();
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void drawTextToBackground();
+	FontSurface *createFontSurface();
+	uint32 getTextIndex();
+	uint32 getTextIndex1();
+	uint32 getTextIndex2();
+	uint32 getTextIndex3();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE1000_H */

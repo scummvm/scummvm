@@ -23,8 +23,10 @@
 #ifndef NEVERHOOD_RESOURCE_H
 #define NEVERHOOD_RESOURCE_H
 
+#include "common/str.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/graphics.h"
+#include "neverhood/staticdata.h"
 
 namespace Neverhood {
 
@@ -119,6 +121,74 @@ protected:
 	uint32 _currFileHash;
 };
 
+class TextResource {
+public:
+	TextResource(NeverhoodEngine *vm);
+	~TextResource();
+	void load(uint32 fileHash);
+	void unload();
+	const char *getString(uint index, const char *&textEnd);
+	uint getCount() const { return _count;}
+protected:
+	NeverhoodEngine *_vm;
+	int _resourceHandle;
+	byte *_textData;
+	uint _count;
+};
+
+/* DataResource
+	1	Single NPoint
+	2	Array of NPoints
+	3	Array of NRects
+	4	MessageList
+	5	SubRectList
+	6	RectList
+*/
+
+class DataResource {
+public:
+	DataResource(NeverhoodEngine *vm);
+	~DataResource();
+	void load(uint32 fileHash);
+	void unload();
+	NPoint getPoint(uint32 nameHash);
+	NPointArray *getPointArray(uint32 nameHash);
+	HitRectList *getHitRectList();
+	MessageList *getMessageListAtPos(int16 klaymanX, int16 klaymanY, int16 mouseX, int16 mouseY);
+protected:
+
+	struct DRDirectoryItem {
+		uint32 nameHash;
+		uint16 offset; 
+		uint16 type;
+	};
+
+	struct DRRect {
+		NRect rect;
+		uint16 subRectIndex;
+	};
+
+	struct DRSubRect {
+		NRect rect;
+		uint32 messageListHash;
+		uint16 messageListItemIndex;
+	};
+
+	typedef Common::Array<DRSubRect> DRSubRectList;
+
+	NeverhoodEngine *_vm;
+	int _resourceHandle;
+	Common::Array<DRDirectoryItem> _directory;
+	Common::Array<NPoint> _points;
+	Common::Array<NPointArray*> _pointArrays;
+	Common::Array<NRectArray*> _rectArrays;
+	Common::Array<HitRectList*> _hitRectLists;
+	Common::Array<MessageList*> _messageLists;
+	Common::Array<DRRect> _drRects;
+	Common::Array<DRSubRectList*> _drSubRectLists;
+	DataResource::DRDirectoryItem *findDRDirectoryItem(uint32 nameHash, uint16 type); 
+};
+
 // TODO: Dummy class atm
 
 class SoundResource {
@@ -130,6 +200,8 @@ public:
 protected:
 	NeverhoodEngine *_vm;	
 };
+
+uint32 calcHash(const char *value);
 
 } // End of namespace Neverhood
 
