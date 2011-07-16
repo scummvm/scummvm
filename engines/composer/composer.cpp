@@ -261,7 +261,6 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 			continue;
 
 		stopAnimation(*i);
-		break;
 	}
 
 	Common::SeekableReadStream *stream = NULL;
@@ -396,7 +395,7 @@ void ComposerEngine::processAnimFrame() {
 			if (entry.counter) {
 				entry.counter--;
 			} else {
-				if ((anim->_state > 1) && (anim->_stream->pos() == anim->_stream->size())) {
+				if ((anim->_state > 1) && (anim->_stream->pos() + 2 > anim->_stream->size())) {
 					warning("anim with id %d ended too soon", anim->_id);
 					anim->_state = 0;
 					break;
@@ -419,12 +418,14 @@ void ComposerEngine::processAnimFrame() {
 
 		anim->_state--;
 
+		bool foundWait = false;
 		for (uint j = 0; j < anim->_entries.size(); j++) {
 			AnimationEntry &entry = anim->_entries[j];
 
-			// TODO: only skip these at the start
-			if (entry.op == 1)
+			// only skip these at the start
+			if (!foundWait && (entry.op == 1))
 				continue;
+			foundWait = true;
 
 			if (entry.counter) {
 				entry.counter--;
@@ -434,7 +435,7 @@ void ComposerEngine::processAnimFrame() {
 				}
 			} else {
 				anim->seekToCurrPos();
-				if ((anim->_state > 1) && (anim->_stream->pos() == anim->_stream->size())) {
+				if ((anim->_state > 1) && (anim->_stream->pos() + 2 > anim->_stream->size())) {
 					warning("anim with id %d ended too soon", anim->_id);
 					anim->_state = 0;
 					break;
@@ -581,6 +582,8 @@ Common::Error ComposerEngine::run() {
 				unloadLibrary(_pendingPageChanges[i]._pageId);
 			else
 				loadLibrary(_pendingPageChanges[i]._pageId);
+
+			lastDrawTime = _system->getMillis();
 		}
 		_pendingPageChanges.clear();
 
@@ -597,9 +600,12 @@ Common::Error ComposerEngine::run() {
 			runScript(script._scriptId, i, 0, 0);
 		}
 
-		// _system->delayMillis(frameTime + lastDrawTime - thisTime);
 		if (lastDrawTime + frameTime <= thisTime) {
-			lastDrawTime += frameTime;
+			// catch up if we're more than 5 frames behind
+			if (lastDrawTime + (frameTime * 5) <= thisTime)
+				lastDrawTime = thisTime - (frameTime * 5);
+			else
+				lastDrawTime += frameTime;
 
 			for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
 				drawSprite(*i);
@@ -1190,7 +1196,7 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		playAnimation(param1, param2, param3, 0);
 		return 1; // TODO: return 0 on failure
 	case kFuncStopAnim:
-		debug(3, "ignoring kFuncStopAnim(%d)", param1);
+		debug(3, "kFuncStopAnim(%d)", param1);
 		for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
 			if ((*i)->_id == param1)
 				stopAnimation(*i);
@@ -1490,7 +1496,7 @@ bool ComposerEngine::initSprite(Sprite &sprite) {
 			Pipe *pipe = *k;
 			if (!pipe->hasResource(ID_BMAP, sprite.id))
 				continue;
-			stream = pipe->getResource(ID_BMAP, sprite.id, true);
+			stream = pipe->getResource(ID_BMAP, sprite.id, false);
 			break;
 		}
 
