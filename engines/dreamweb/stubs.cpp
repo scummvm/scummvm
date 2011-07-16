@@ -561,7 +561,7 @@ void DreamGenContext::lockmon() {
 	// is being printed.
 	if (data.byte(kLasthardkey) == 57) {
 		// Clear the keyboard buffer. Otherwise the space that caused
-		// the pause will be read immediately in the pause loop.
+		// the pause will be read immediately unpause the game.
 		do {
 			readkey();
 		} while (data.byte(kCurrentkey) != 0);
