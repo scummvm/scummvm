@@ -56,8 +56,9 @@ Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else if (which == 0) {
 		//createScene1001(0);
 		// DEBUG: Jump to room
-		//createScene1002(0);
-		createScene1005(0);
+		createScene1002(0);
+		//createScene1005(0);
+		//createScene1004(0);
 	} else if (which == 1) {
 		createScene1002(1);
 	}
@@ -93,6 +94,11 @@ void Module1000::createScene1003(int which) {
 }
 
 void Module1000::createScene1004(int which) {
+	_vm->gameState().sceneNum = 3;
+	_childObject = new Scene1004(_vm, this, which);
+	SetUpdateHandler(&Module1000::updateScene1004);
+	// TODO ResourceTable_multiLoad(&_resourceTable4, &_resourceTable3, &_resourceTable1);
+	// TODO Music18hList_stop(0x061880C6, 0, 2);
 }
 
 void Module1000::createScene1005(int which) {
@@ -100,16 +106,13 @@ void Module1000::createScene1005(int which) {
 	_childObject = new Scene1005(_vm, this, which);
 	// TODO Music18hList_stop(0x061880C6, 0, 0);
 	// TODO Music18hList_play(_musicFileHash, 0, 0, 1);
-	SetUpdateHandler(&Module1000::updateScene1002);
+	SetUpdateHandler(&Module1000::updateScene1005);
 }
 
 void Module1000::updateScene1001() {
 	_childObject->handleUpdate();
-
 	if (_done) {
-	
 		debug("SCENE 1001 DONE; _field20 = %d", _field20);
-	
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;
@@ -117,11 +120,10 @@ void Module1000::updateScene1001() {
 			createScene1003(0);
 			_childObject->handleUpdate();
 		} else {
-			// TODO createScene1002();
-			// TODO _childObject->handleUpdate();
+			createScene1002(0);
+			_childObject->handleUpdate();
 		}
 	}
-
 	if (_field24 >= 0) {
 		if (_field24 == 2) {
 			// TODO ResourceTable_multiLoad(&_resourceTable2, &_resourceTable1, &_resourceTable3);
@@ -131,36 +133,29 @@ void Module1000::updateScene1001() {
 			_field24 = -1;
 		}
 	}
-
 	if (_field26 >= 0) {
 		// TODO ResourceTable_multiLoad(&_resourceTable1, &_resourceTable2, &_resourceTable3);
 		_field26 = -1;
 	}
-
 }
 
 void Module1000::updateScene1002() {
-
 	_childObject->handleUpdate();
-
 	if (_done) {
-	
 		debug("SCENE 1002 DONE; _field20 = %d", _field20);
-	
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;
 		if (_field20 == 1) {
 			_parentModule->sendMessage(0x1009, 0, this);
 		} else if (_field20 == 2) {
-			// TODO createScene1004(0);
-			// TODO _childObject->handleUpdate();
+			createScene1004(0);
+			_childObject->handleUpdate();
 		} else {
 			createScene1001(1);
 			_childObject->handleUpdate();
 		}
 	}
-
 	if (_field24 >= 0) {
 		if (_field24 == 1) {
 			_parentModule->sendMessage(0x100A, 0, this);
@@ -171,7 +166,6 @@ void Module1000::updateScene1002() {
 		}
 		_field24 = -1;
 	}
-
 	if (_field26 >= 0) {
 		if (_field26 == 1) {
 			_parentModule->sendMessage(0x1023, 0, this);
@@ -180,11 +174,9 @@ void Module1000::updateScene1002() {
 		}
 		_field26 = -1;
 	}
-
 	if (_field28 >= 0) {
 		_field28 = -1;
 	}
-
 }
 			
 void Module1000::updateScene1003() {
@@ -199,6 +191,30 @@ void Module1000::updateScene1003() {
 }
 			
 void Module1000::updateScene1004() {
+	_childObject->handleUpdate();
+	if (_done) {
+		debug("SCENE 1004 DONE; _field20 = %d", _field20);
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene1005(0);
+			_childObject->handleUpdate();
+		} else {
+			createScene1002(2);
+			_childObject->handleUpdate();
+		}
+	}
+	if (_field24 >= 0) {
+		if (_field24 == 0) {
+			// TODO ResourceTable_multiLoad(&_resourceTable3, &_resourceTable4, &_resourceTable1);
+		}
+		_field24 = -1;
+	}
+	if (_field26 >= 0) {
+		// TODO ResourceTable_multiLoad(&_resourceTable4, &_resourceTable3, &_resourceTable1);
+		_field26 = -1;
+	}
 }
 			
 void Module1000::updateScene1005() {
@@ -223,11 +239,7 @@ AsScene1001Door::AsScene1001Door(NeverhoodEngine *vm)
 	_x = 726;
 	_y = 440;
 	callback1();
-#if 0
-	_soundResource2.set(0xED403E03);
-	_soundResource2.load();
-	_soundResource2.createSoundBuffer();
-#endif
+	_soundResource2.load(0xED403E03);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1001Door::handleMessage);
 }
@@ -1421,49 +1433,66 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_class599 = addSprite(new Class599(_vm, this));
 
-	// DEBUG/HACK!!!!
-	which = 1; setGlobalVar(0x8306F218, 1);
-
 	if (which < 0) {
 		if (_vm->_gameState.field2 == 0) {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 90, 226);
 			_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4270);
-			// TODO			
+			_klayman->getSurface()->getClipRect().x1 = 31;
+			_klayman->getSurface()->getClipRect().y1 = 0;
+			_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
+			_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart3->getSurface()->getDrawRect().y + _ssLadderArchPart3->getSurface()->getDrawRect().height;
+			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 			_klayman->setRepl(64, 0);
 		} else {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 379, 435);
 			_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4270);
-			// TODO			
+			_klayman->getSurface()->getClipRect().x1 = _ssLadderArch->getSurface()->getDrawRect().x;
+			_klayman->getSurface()->getClipRect().y1 = 0;
+			_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
+			_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart1->getSurface()->getDrawRect().y + _ssLadderArchPart1->getSurface()->getDrawRect().height;
+			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 		}
 	} else {
 		if (which == 1) {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 650, 435);
 			_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4478);
-			// TODO			
+			_klayman->getSurface()->getClipRect().x1 = _ssLadderArch->getSurface()->getDrawRect().x;
+			_klayman->getSurface()->getClipRect().y1 = 0;
+			_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
+			_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart1->getSurface()->getDrawRect().y + _ssLadderArchPart1->getSurface()->getDrawRect().height;
+			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 			_vm->_gameState.field2 = 1;
 		} else if (which == 2) {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 68, 645);
 			_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4298);
-			// TODO
+			_klayman->getSurface()->getClipRect().x1 = _ssLadderArch->getSurface()->getDrawRect().x;
+			_klayman->getSurface()->getClipRect().y1 = 0;
+			_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
+			_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart1->getSurface()->getDrawRect().y + _ssLadderArchPart1->getSurface()->getDrawRect().height;
+			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 			_vm->_gameState.field2 = 1;
 			_klayman->sendMessage(0x4820, 0, this);
 		} else {
 			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 90, 226);
 			_class478 = addSprite(new Class478(_vm, _klayman));
 			setMessageList(0x004B4470);
-			// TODO
-			//_class479 = addSprite(new Class479(_vm, this, _klayman));
-			// TODO
+			_klayman->getSurface()->getClipRect().x1 = 31;
+			_klayman->getSurface()->getClipRect().y1 = 0;
+			_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
+			_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart3->getSurface()->getDrawRect().y + _ssLadderArchPart3->getSurface()->getDrawRect().height;
+			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
+			// TODO _class479 = addSprite(new Class479(_vm, this, _klayman));
+			// TODO _class479->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 			_klayman->setRepl(64, 0);
 			_vm->_gameState.field2 = 0;
 		} 
 	}
 
-    addSprite(_klayman);
+	addSprite(_klayman);
 
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x23303124, NULL));
 
@@ -1496,11 +1525,8 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 								  
 	setRectList(0x004B43A0);
 
-								  
-#if 0 // TODO
 	_soundResource2.load(0x60755842);
 	_soundResource3.load(0x616D5821);
-#endif
 
 }
 
@@ -1510,7 +1536,11 @@ Scene1002::~Scene1002() {
 void Scene1002::update() {
 	Scene::update();
 	if (!_flag1B4 && _klayman->getY() > 230) {
-		// TODO
+		_klayman->getSurface()->getClipRect().x1 = _ssLadderArch->getSurface()->getDrawRect().x;
+		_klayman->getSurface()->getClipRect().y1 = 0;
+		_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
+		_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart1->getSurface()->getDrawRect().y + _ssLadderArchPart1->getSurface()->getDrawRect().height;
+		_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 		deleteSprite(&_ssLadderArchPart3);
 		_klayman->clearRepl();
 		_flag1B4 = true;
@@ -1689,6 +1719,144 @@ uint32 Class152::handleMessage(int messageNum, const MessageParam &param, Entity
 	return 0;
 }
 
+// Scene1004
+
+AsScene1004TrashCan::AsScene1004TrashCan(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1100), _soundResource(vm) {
+
+	_x = 330;
+	_y = 327;
+	createSurface(800, 56, 50);
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene1004TrashCan::handleMessage);
+	_surface->setVisible(false);
+}
+
+uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x225A8587) {
+			_soundResource.play(0x109AFC4C);
+		}
+		break;
+	case 0x2002:
+		setFileHash(0xEB312C11, 0, -1);
+		_surface->setVisible(true);
+		break;
+	case 0x3002:
+		setFileHash1();
+		_surface->setVisible(false);
+		break;
+	}
+	return 0;
+}
+
+Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _paletteAreaStatus(-1) {
+
+	Palette2 *palette2;
+	Sprite *tempSprite;
+	
+	_surfaceFlag = true;
+	
+	SetUpdateHandler(&Scene1004::update);
+	SetMessageHandler(&Scene1004::handleMessage);
+
+	_background = addBackground(new DirtyBackground(_vm, 0x50C03005, 0, 0));
+
+	if (getGlobalVar(0x0D0A14D10)) {
+		palette2 = new Palette2(_vm, 0xA30BA329);
+		palette2->addPalette(0xA30BA329, 0, 256, 0);
+	} else {
+		palette2 = new Palette2(_vm, 0x50C03005);
+		palette2->addPalette(0x50C03005, 0, 256, 0);
+	}
+	_palette = palette2;
+	_palette->usePalette();
+	addEntity(_palette);
+
+	_mouseCursor = addSprite(new Mouse433(_vm, 0x03001504, NULL));
+
+	if (which < 0) {
+		setRectList(0x004B7C70);
+		_klayman = new KmScene1004(_vm, this, 330, 327);
+		setMessageList(0x004B7C18);
+	} else if (which == 1) {
+		setRectList(0x004B7C70);
+		_klayman = new KmScene1004(_vm, this, 330, 327);
+		setMessageList(0x004B7C08);
+	} else {
+		loadDataResource(0x01900A04);
+		_klayman = new KmScene1004(_vm, this, _dataResource.getPoint(0x80052A29).x, 27);
+		setMessageList(0x004B7BF0);
+	}
+	
+	addSprite(_klayman);
+	
+	updatePaletteArea();
+	
+	_class478 = addSprite(new Class478(_vm, _klayman));
+
+	addSprite(new StaticSprite(_vm, 0x800034A0, 1100));
+	addSprite(new StaticSprite(_vm, 0x64402020, 1100));
+	addSprite(new StaticSprite(_vm, 0x3060222E, 1300));
+	tempSprite = addSprite(new StaticSprite(_vm, 0x0E002004, 1300));
+	
+	_klayman->getSurface()->getClipRect().x1 = 0;
+	_klayman->getSurface()->getClipRect().y1 = tempSprite->getSurface()->getDrawRect().y;
+	_klayman->getSurface()->getClipRect().x2 = 640;
+	_klayman->getSurface()->getClipRect().y2 = 480;
+	_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
+
+	_asTrashCan = addSprite(new AsScene1004TrashCan(_vm));
+
+}
+
+void Scene1004::update() {
+	Scene::update();
+	updatePaletteArea();
+}
+
+uint32 Scene1004::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = 0;
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x926500A1) {
+			setMessageList(0x004B7C20);
+			messageResult = 1;
+		}
+		break;
+	case 0x2000:
+		loadDataResource(0x01900A04);
+		break;
+	case 0x2001:
+		setRectList(0x004B7C70);
+		break;
+	case 0x2002:
+		_asTrashCan->sendMessage(0x2002, 0, this);
+		break;
+	}
+	return messageResult;
+} 
+
+void Scene1004::updatePaletteArea() {
+	if (_klayman->getY() < 150) {
+		if (_paletteAreaStatus != 0) {
+			_paletteAreaStatus = 0;
+			((Palette2*)_palette)->addPalette(0x406B0D10, 0, 64, 0);
+			((Palette2*)_palette)->startFadeToPalette(12);
+		}
+	} else {
+		if (_paletteAreaStatus != 1) {
+			_paletteAreaStatus = 1;
+			((Palette2*)_palette)->addPalette(0x24332243, 0, 64, 0);
+			((Palette2*)_palette)->startFadeToPalette(12);
+		}
+	}
+}
+
 // Scene1005
 
 Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -1715,9 +1883,6 @@ Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	drawTextToBackground();
 	
-}
-
-Scene1005::~Scene1005() {
 }
 
 uint32 Scene1005::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {

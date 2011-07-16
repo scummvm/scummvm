@@ -53,6 +53,7 @@ public:
 	bool isDoDeltaY() const { return _doDeltaY; }
 	NRect& getRect() { return _rect; }
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void loadDataResource(uint32 fileHash);
 protected:
 	void (Sprite::*_spriteUpdateCb)();
 	Common::String _spriteUpdateCbName; // For debugging purposes
@@ -69,7 +70,7 @@ protected:
 	NRect _rect;
 	uint16 _flags;
 	//0000004A field4A		dw ? // seems to be unused except in ctor
-	//0000004C rectResource	RectResource ?
+	DataResource _dataResource;
 	//void update();
 	void createSurface(int surfacePriority, int16 width, int16 height);
 	void handleSpriteUpdate() {

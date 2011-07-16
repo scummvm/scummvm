@@ -606,6 +606,7 @@ DataResource::DRDirectoryItem *DataResource::findDRDirectoryItem(uint32 nameHash
 }
 
 // SoundResource
+// ALL TODO
 
 SoundResource::SoundResource(NeverhoodEngine *vm)
 	: _vm(vm) {
@@ -613,6 +614,9 @@ SoundResource::SoundResource(NeverhoodEngine *vm)
 
 bool SoundResource::isPlaying() { 
 	return false; 
+}
+
+void SoundResource::load(uint32 fileHash) {
 }
 
 void SoundResource::play(uint32 fileHash, bool looping) {

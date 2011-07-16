@@ -26,7 +26,7 @@
 namespace Neverhood {
 
 Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
-	: Entity(vm, 0), _parentModule(parentModule) {
+	: Entity(vm, 0), _parentModule(parentModule), _dataResource(vm) {
 	
 	_messageListFlag1 = false;
 	_systemCallbackFlag = false;
@@ -94,8 +94,10 @@ void Scene::draw() {
 				(*iter)->addDirtyRect();
 			// TODO g_screen->addDirtyRects();
 		}
-		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
+		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++) {
+			debug(4, "priority = %d", (*iter)->getPriority());
 			(*iter)->draw();
+		}
 	}	
 }
 
@@ -490,6 +492,12 @@ void Scene::setRectList(uint32 id) {
 void Scene::setRectList(RectList *rectList) {
 	_rectList = rectList;
 	_rectType = 1;
+}
+
+void Scene::loadDataResource(uint32 fileHash) {
+	_dataResource.load(fileHash);
+	if (_klayman)
+		_klayman->loadDataResource(fileHash);
 }
 
 } // End of namespace Neverhood

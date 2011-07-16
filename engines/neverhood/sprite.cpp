@@ -27,10 +27,8 @@ namespace Neverhood {
 // Sprite
 
 Sprite::Sprite(NeverhoodEngine *vm, int objectPriority)
-	: Entity(vm, objectPriority), _x(0), _y(0),
-	_spriteUpdateCb(NULL), _filterXCb(NULL), _filterYCb(NULL),   
-	_doDeltaX(false), _doDeltaY(false), _needRefresh(false),
-	_flags(0) {
+	: Entity(vm, objectPriority), _x(0), _y(0), _spriteUpdateCb(NULL), _filterXCb(NULL), _filterYCb(NULL),   
+	_dataResource(vm), _doDeltaX(false), _doDeltaY(false), _needRefresh(false), _flags(0) {
 
 	_name = "Sprite"; 
 	SetMessageHandler(&Sprite::handleMessage);
@@ -87,6 +85,10 @@ uint32 Sprite::handleMessage(int messageNum, const MessageParam &param, Entity *
 	return 0;
 }
 
+void Sprite::loadDataResource(uint32 fileHash) {
+	_dataResource.load(fileHash);
+}
+
 void Sprite::createSurface(int surfacePriority, int16 width, int16 height) {
 	_surface = new BaseSurface(_vm, surfacePriority, width, height);
 }
@@ -138,7 +140,7 @@ void StaticSprite::init(uint32 fileHash, int surfacePriority, int16 x, int16 y, 
 	_drawRect.x = 0;
 	_drawRect.y = 0;
 	_drawRect.width = width;
-	_drawRect.width = height; 
+	_drawRect.height = height; 
 
 	_needRefresh = true;
 

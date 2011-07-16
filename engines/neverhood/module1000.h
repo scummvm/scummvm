@@ -302,12 +302,33 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+// Scene1004
+
+class AsScene1004TrashCan : public AnimatedSprite {
+public:
+	AsScene1004TrashCan(NeverhoodEngine *vm);
+protected:
+	SoundResource _soundResource;	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene1004 : public Scene {
+public:
+	Scene1004(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_class478;
+	Sprite *_asTrashCan;
+	int _paletteAreaStatus;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void updatePaletteArea();
+};
+
 // Scene1005
 
 class Scene1005 : public Scene {
 public:
 	Scene1005(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Scene1005();
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void drawTextToBackground();

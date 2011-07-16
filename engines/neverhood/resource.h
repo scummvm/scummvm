@@ -195,6 +195,7 @@ class SoundResource {
 public:
 	SoundResource(NeverhoodEngine *vm);
 	bool isPlaying();
+	void load(uint32 fileHash);
 	void play(uint32 fileHash, bool looping = false);
 	void play();
 protected:

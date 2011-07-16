@@ -1555,12 +1555,38 @@ void Klayman::sub420420() {
 }
 
 uint32 Klayman::handleMessage41E290(int messageNum, const MessageParam &param, Entity *sender) {
-
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x320AC306) {
 			_soundResource1.play(0x5860C640);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void Klayman::sub420ED0() {
+	if (!sub41CEB0(AnimationCallback(&Klayman::sub420ED0))) {
+		_status2 = 2;
+		_flagE5 = false;
+		setFileHash(0x91540140, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetMessageHandler(&Klayman::handleMessage41E2F0);
+		SetSpriteCallback(&Klayman::spriteUpdate41F230);
+	}
+}
+
+uint32 Klayman::handleMessage41E2F0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0xC61A0119) {
+			_soundResource1.play(0x402338C2);
+		} else if (param.asInteger() == 0x32180101) {
+			_soundResource1.play(0x4924AAC4);
+		} else if (param.asInteger() == 0x0A2A9098) {
+			_soundResource1.play(0x0A2AA8E0);
 		}
 		break;
 	}
@@ -2207,6 +2233,96 @@ void KmScene1002::sub44A460() {
 
 void KmScene1002::sub44A4B0() {
 	_attachedSprite->sendMessage(0x482A, 0, this);
+}
+
+// KmScene1004
+
+KmScene1004::KmScene1004(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	
+	_dataResource.load(0x01900A04);	
+}
+
+uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;
+	case 0x4818:
+		sub41C930(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x481E:
+		setCallback2(AnimationCallback(&KmScene1004::sub478170));
+		break;
+	case 0x4820:
+		_parentScene->sendMessage(0x2000, 0, this);
+		setCallback2(AnimationCallback(&Klayman::sub420970));
+		break;
+	case 0x4821:
+		_parentScene->sendMessage(0x2000, 0, this);
+		_y4 = param.asInteger();
+		setCallback2(AnimationCallback(&Klayman::sub4209D0));
+		break;
+	case 0x4822:
+		_parentScene->sendMessage(0x2000, 0, this);
+		_y4 = param.asInteger();
+		setCallback2(AnimationCallback(&Klayman::sub420AD0));
+		break;
+	case 0x4823:
+		_parentScene->sendMessage(0x2001, 0, this);
+		setCallback2(AnimationCallback(&Klayman::sub420BC0));
+		break;
+	case 0x4824:
+		_parentScene->sendMessage(0x2000, 0, this);
+		_y4 = _dataResource.getPoint(param.asInteger()).y;
+		setCallback2(AnimationCallback(&Klayman::sub4209D0));
+		break;
+	case 0x4825:
+		_parentScene->sendMessage(0x2000, 0, this);
+		_y4 = _dataResource.getPoint(param.asInteger()).y;
+		setCallback2(AnimationCallback(&Klayman::sub420AD0));
+		break;
+	case 0x4828:
+		setCallback2(AnimationCallback(&Klayman::sub420ED0));
+		break;
+	case 0x483F:
+		sub41CD00(param.asInteger());
+		break;
+	case 0x4840:
+		sub41CD70(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+uint32 KmScene1004::handleMessage478110(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x04684052) {
+			_flagE5 = true;
+			_parentScene->sendMessage(0x2002, 0, this);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene1004::sub478170() {
+	_status2 = 2;
+	_flagE5 = false;
+	setFileHash(0x123E9C9F, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&KmScene1004::handleMessage478110);
+	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
 }
 
 } // End of namespace Neverhood

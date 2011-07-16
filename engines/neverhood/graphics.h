@@ -81,6 +81,7 @@ public:
 	bool getVisible() const { return _visible; }
 	void setVisible(bool value) { _visible = value; }
 	void setTransparent(bool value) { _transparent = value; }
+	Graphics::Surface *getSurface() { return _surface; }
 protected:
 	NeverhoodEngine *_vm;
 	int _priority;

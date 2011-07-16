@@ -61,7 +61,7 @@ protected:
 	bool _messageListFlag1;
 	NPoint _mouseClickPos;
 	bool _mouseClicked;
-	// TODO RectResource _rectResource;
+	DataResource _dataResource;
 	RectList *_rectList;
 	int _rectType;
 	// rectListCount
@@ -102,6 +102,7 @@ protected:
 	void runMessageList();
 	void setRectList(uint32 id);
 	void setRectList(RectList *rectList);
+	void loadDataResource(uint32 fileHash);
 };
 
 } // End of namespace Neverhood
