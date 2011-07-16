@@ -260,25 +260,7 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 		if (anim->_id != animId)
 			continue;
 
-		// disable the animation
-		anim->_state = 0;
-
-		// stop any animations it may have spawned
-		for (uint j = 0; j < anim->_entries.size(); j++) {
-			if (anim->_entries[j].op == 3)
-				; // TODO: stop anim
-		}
-
-		// kill any pipes owned by the animation
-		for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
-			Pipe *pipe = *j;
-			if (pipe->_anim != anim)
-				continue;
-			j = _pipes.reverse_erase(j);
-			delete pipe;
-			break;
-		}
-
+		stopAnimation(*i);
 		break;
 	}
 
@@ -325,6 +307,43 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 	runEvent(1, animId, eventParam, 0);
 }
 
+void ComposerEngine::stopAnimation(Animation *anim, bool localOnly, bool pipesOnly) {
+	// disable the animation
+	anim->_state = 0;
+
+	// stop any animations it may have spawned
+	for (uint j = 0; j < anim->_entries.size(); j++) {
+		AnimationEntry &entry = anim->_entries[j];
+		if (!entry.word10)
+			continue;
+		if (localOnly) {
+			if (pipesOnly)
+				continue;
+			// TODO: stop audio if needed
+			if (entry.op != 4)
+				continue;
+			removeSprite(entry.word10, anim->_id);
+		} else {
+			if (entry.op != 3)
+				continue;
+			for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
+				if ((*i)->_id == entry.word10)
+					stopAnimation(*i);
+			}
+		}
+	}
+
+	// kill any pipe owned by the animation
+	for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
+		Pipe *pipe = *j;
+		if (pipe->_anim != anim)
+			continue;
+		j = _pipes.reverse_erase(j);
+		delete pipe;
+		break;
+	}
+}
+
 void ComposerEngine::playWaveForAnim(uint16 id, bool bufferingOnly) {
 	Common::SeekableReadStream *stream = NULL;
 	if (!bufferingOnly && hasResource(ID_WAVE, id)) {
@@ -355,18 +374,13 @@ void ComposerEngine::processAnimFrame() {
 		Animation *anim = *i;
 
 		anim->seekToCurrPos();
-		if ((anim->_state > 1) && (anim->_stream->pos() == anim->_stream->size())) {
-			warning("anim with id %d ended too soon", anim->_id);
-			anim->_state = 0;
-		}
 
 		if (anim->_state <= 1) {
-			if (anim->_state == 1) {
+			bool normalEnd = (anim->_state == 1);
+			if (normalEnd) {
 				runEvent(2, anim->_id, anim->_eventParam, 0);
-			} else {
-				// TODO: stop anything which was running
 			}
-			// TODO: kill pipes
+			stopAnimation(anim, true, normalEnd);
 			delete anim;
 			i = _anims.reverse_erase(i);
 
@@ -380,6 +394,12 @@ void ComposerEngine::processAnimFrame() {
 			if (entry.counter) {
 				entry.counter--;
 			} else {
+				if ((anim->_state > 1) && (anim->_stream->pos() == anim->_stream->size())) {
+					warning("anim with id %d ended too soon", anim->_id);
+					anim->_state = 0;
+					break;
+				}
+
 				uint16 event = anim->_stream->readUint16LE();
 				anim->_offset += 2;
 				if (event == 0xffff) {
@@ -412,6 +432,11 @@ void ComposerEngine::processAnimFrame() {
 				}
 			} else {
 				anim->seekToCurrPos();
+				if ((anim->_state > 1) && (anim->_stream->pos() == anim->_stream->size())) {
+					warning("anim with id %d ended too soon", anim->_id);
+					anim->_state = 0;
+					break;
+				}
 
 				uint16 data = anim->_stream->readUint16LE();
 				anim->_offset += 2;
@@ -1161,8 +1186,11 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		playAnimation(param1, param2, param3, 0);
 		return 1; // TODO: return 0 on failure
 	case kFuncStopAnim:
-		// TODO
-		warning("ignoring kFuncStopAnim(%d)", param1);
+		debug(3, "ignoring kFuncStopAnim(%d)", param1);
+		for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
+			if ((*i)->_id == param1)
+				stopAnimation(*i);
+		}
 		return 0;
 	case kFuncQueueScript:
 		debug(3, "kFuncQueueScript(%d, %d, %d)", param1, param2, param3);

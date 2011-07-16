@@ -202,6 +202,7 @@ private:
 	int16 scriptFuncCall(uint16 id, int16 param1, int16 param2, int16 param3);
 
 	void playAnimation(uint16 animId, int16 param1, int16 param2, int16 param3);
+	void stopAnimation(Animation *anim, bool localOnly = false, bool pipesOnly = false);
 	void playWaveForAnim(uint16 id, bool bufferingOnly);
 	void processAnimFrame();
 
