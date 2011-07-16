@@ -363,6 +363,8 @@ void ComposerEngine::playWaveForAnim(uint16 id, bool bufferingOnly) {
 	// FIXME: deal with word6 (priority)
 	byte *buffer = (byte *)malloc(stream->size());
 	stream->read(buffer, stream->size());
+	if (!_audioStream)
+		_audioStream = Audio::makeQueuingAudioStream(22050, false);
 	_audioStream->queueBuffer(buffer, stream->size(), DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 	delete stream;
 	if (!_mixer->isSoundHandleActive(_soundHandle))
@@ -534,7 +536,6 @@ ComposerEngine::~ComposerEngine() {
 	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++)
 		delete i->_archive;
 
-	delete _audioStream;
 	delete _rnd;
 }
 
@@ -566,8 +567,6 @@ Common::Error ComposerEngine::run() {
 		height = atoi(getStringFromConfig("Common", "Height").c_str());
 	initGraphics(width, height, true);
 	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-
-	_audioStream = Audio::makeQueuingAudioStream(22050, false);
 
 	loadLibrary(0);
 
@@ -743,6 +742,9 @@ void ComposerEngine::unloadLibrary(uint id) {
 			j->surface.free();
 		}
 		_sprites.clear();
+
+		_mixer->stopAll();
+		_audioStream = NULL;
 
 		for (uint j = 0; j < _queuedScripts.size(); j++) {
 			_queuedScripts[j]._count = 0;
