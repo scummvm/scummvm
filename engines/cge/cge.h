@@ -25,7 +25,9 @@
 
 #include "cge/general.h"
 #include "common/random.h"
+#include "common/savefile.h"
 #include "common/serializer.h"
+#include "common/str.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "graphics/surface.h"
@@ -56,11 +58,27 @@ enum CallbackType {
 
 #define POCKET_NX   8
 
+#define CGE_SAVEGAME_VERSION 1
+
+struct SavegameHeader {
+	uint8 version;
+	Common::String saveName;
+	Graphics::Surface *thumbnail;
+	int saveYear, saveMonth, saveDay;
+	int saveHour, saveMinutes;
+	int totalFrames;
+};
+
 class CGEEngine : public Engine {
 private:
 	uint32 _lastFrame;
 	void tick();
 	void syncHeader(Common::Serializer &s);
+	bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
+	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
+	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream, bool tiny = false);
+	bool savegameExists(int slotNumber);
+	Common::String generateSaveName(int slot);
 public:
 	CGEEngine(OSystem *syst, const ADGameDescription *gameDescription);
 	~CGEEngine();
@@ -83,6 +101,7 @@ public:
 	bool   _game;
 	int    _now;
 	int    _lev;
+	char	_usrFnam[15];
 
 	Common::RandomSource _randomSource;
 	byte *		_mini;
@@ -100,7 +119,7 @@ public:
 	void quit();
 	void resetQSwitch();
 	void optionTouch(int opt, uint16 mask);
-	void loadGame(XFile &file, bool tiny);
+	bool loadGame(int slotNumber, SavegameHeader *header = NULL, bool tiny = false);
 	void setMapBrick(int x, int z);
 	void switchMapping();
 	void loadSprite(const char *fname, int ref, int cav, int col, int row, int pos);
@@ -129,7 +148,7 @@ public:
 	void setIRQ();
 	void setDMA();
 	void mainLoop();
-	void saveGame(Common::WriteStream *file);
+	void saveGame(int slotNumber, const Common::String &desc);
 	void switchMusic();
 	void selectPocket(int n);
 	void expandSprite(Sprite *spr);
