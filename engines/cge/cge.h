@@ -74,7 +74,7 @@ extern const char *SAVEGAME_STR;
 
 class CGEEngine : public Engine {
 private:
-	uint32 _lastFrame;
+	uint32 _lastFrame, _lastTick;
 	void tick();
 	void syncHeader(Common::Serializer &s);
 	static void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
@@ -156,6 +156,7 @@ public:
 	void setIRQ();
 	void setDMA();
 	void mainLoop();
+	void handleFrame();
 	void saveGame(int slotNumber, const Common::String &desc);
 	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
 	void switchMusic();
