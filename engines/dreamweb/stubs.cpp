@@ -568,10 +568,24 @@ void DreamGenContext::frameoutv() {
 */
 
 void DreamGenContext::frameoutv(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+	// NB : These resilience checks were not in the original engine, but did they result in undefined behaviour
+	// or was something broken during porting to C++?
+	assert(pitch == 320);
+
+	if(x >= 320)
+		return;
+	if(y >= 200)
+		return;
+	if(x + width > 320) {
+		width = 320 - x;
+	}
+	if(y + height > 200) {
+		height = 200 - y;
+	}
+
 	uint16 stride = pitch - width;
 	dst += pitch * y + x;
 
-	// NB: Original code assumes non-zero width and height, "for" are unneeded, do-while would suffice but would be less readable
 	for (uint16 j = 0; j < height; ++j) {
 		for (uint16 i = 0; i < width; ++i) {
 			uint8 pixel = *src++;
@@ -659,7 +673,7 @@ uint16 DreamGenContext::showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y,
 	}
 //noeffects:
 	es = data.word(kWorkspace);
-	frameoutv(es.ptr(0, 320 * height), ds.ptr(si, width * height), 320, width, height, di, bx);
+	frameoutv(es.ptr(0, 65536), ds.ptr(si, width * height), 320, width, height, di, bx);
 	return written;
 }
 
