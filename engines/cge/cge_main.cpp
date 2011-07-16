@@ -1411,6 +1411,7 @@ void CGEEngine::loadScript(const char *fname) {
 }
 
 #define GAME_FRAME_DELAY (1000 / 50)
+#define GAME_TICK_DELAY (1000 / 62)
 
 void CGEEngine::mainLoop() {
 	sayDebug();
@@ -1432,11 +1433,25 @@ void CGEEngine::mainLoop() {
 	_snail_->runCom();
 	_snail->runCom();
 
+	// Handle a delay between game frames
+	handleFrame();
+
+	// Handle any pending events
+	_eventManager->poll();
+}
+
+void CGEEngine::handleFrame() {
 	// Game frame delay
 	uint32 millis = g_system->getMillis();
 	while (!_eventManager->_quitFlag && (millis < (_lastFrame + GAME_FRAME_DELAY))) {
 		// Handle any pending events
 		_eventManager->poll();
+
+		if (millis >= (_lastTick + GAME_TICK_DELAY)) {
+			// Dispatch the tick to any active objects
+			tick();
+			_lastTick = millis;
+		}
 
 		// Slight delay
 		g_system->delayMillis(10);
@@ -1444,11 +1459,11 @@ void CGEEngine::mainLoop() {
 	}
 	_lastFrame = millis;
 
-	// Dispatch the tick to any active objects
-	tick();
-
-	// Handle any pending events
-	_eventManager->poll();
+	if (millis >= (_lastTick + GAME_TICK_DELAY)) {
+		// Dispatch the tick to any active objects
+		tick();
+		_lastTick = millis;
+	}
 }
 
 void CGEEngine::tick() {
