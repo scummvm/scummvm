@@ -90,8 +90,6 @@ static char _usrFnam[15] = "\0É±%^þúÈ¼´ ÇÉ";
 
 //--------------------------------------------------------------------------
 
-static  BMP_PTR  *_miniShpList = NULL;
-static  BMP_PTR   _miniShp[]   = { NULL, NULL };
 static  bool      _finis       = false;
 int	_offUseCount;
 uint16 *_intStackPtr = false;
@@ -1364,11 +1362,15 @@ void CGEEngine::runGame() {
 		killMidi();
 
 	if (_mini && INI_FILE::exist("MINI.SPR")) {
+		_miniShp = new BMP_PTR[2];
+		_miniShp[0] = _miniShp[1] = NULL;
+
 		uint8 *ptr = (uint8 *) &*_mini;
 		if (ptr != NULL) {
 			loadSprite("MINI", -1, 0, MINI_X, MINI_Y);
 			expandSprite(_miniCave = _sprite);  // NULL is ok
 			if (_miniCave) {
+				_miniCave->_flags._kill = false;
 				_miniCave->_flags._hide = true;
 				_miniCave->moveShapes(ptr);
 				_miniShp[0] = new Bitmap(*_miniCave->shp());
