@@ -127,6 +127,7 @@ Vmenu::~Vmenu() {
 	_addr = NULL;
 }
 
+#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember)) 
 
 void Vmenu::touch(uint16 mask, int x, int y) {
 	uint16 h = FONT_HIG + TEXT_LS;
@@ -150,8 +151,9 @@ void Vmenu::touch(uint16 mask, int x, int y) {
 		if (ok && (mask & L_UP)) {
 			_items = 0;
 			SNPOST_(SNKILL, -1, 0, this);
-			//_menu[_recent = n].Proc();
-			warning("Missing call to proc()");
+			_recent = n;
+			assert(_menu[n].Proc);
+			CALL_MEMBER_FN(*_vm, _menu[n].Proc)();
 		}
 	}
 }
