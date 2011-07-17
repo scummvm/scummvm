@@ -374,9 +374,9 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 
 	Animation *anim = new Animation(stream, animId, Common::Point(x, y), eventParam);
 	_anims.push_back(anim);
+	runEvent(1, animId, eventParam, 0);
 	if (newPipe)
 		newPipe->_anim = anim;
-	runEvent(1, animId, eventParam, 0);
 }
 
 void ComposerEngine::stopAnimation(Animation *anim, bool localOnly, bool pipesOnly) {
@@ -489,6 +489,14 @@ void ComposerEngine::processAnimFrame() {
 	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
 		Animation *anim = *i;
 
+		// did the anim get disabled?
+		if (anim->_state == 0) {
+			stopAnimation(anim, true, false);
+			delete anim;
+			i = _anims.reverse_erase(i);
+			continue;
+		}
+
 		anim->_state--;
 
 		bool foundWait = false;
@@ -502,7 +510,7 @@ void ComposerEngine::processAnimFrame() {
 
 			if (entry.counter) {
 				entry.counter--;
-				if (entry.op == 2 && entry.word10) {
+				if ((entry.op == 2) && entry.word10) {
 					debug(4, "anim: continue play wave %d", entry.word10);
 					playWaveForAnim(entry.word10, true);
 				}
@@ -534,20 +542,30 @@ void ComposerEngine::processAnimFrame() {
 						playAnimation(data, anim->_basePos.x, anim->_basePos.y, 1);
 						break;
 					case 4:
-						if (entry.word10 && (!data || data != entry.word10)) {
+						if (!data || (entry.word10 && (data != entry.word10))) {
 							debug(4, "anim: erase sprite %d", entry.word10);
 							removeSprite(entry.word10, anim->_id);
 						}
 						if (data) {
-							uint16 x = anim->_stream->readUint16LE();
-							uint16 y = anim->_stream->readUint16LE();
+							int16 x = anim->_stream->readSint16LE();
+							int16 y = anim->_stream->readSint16LE();
 							Common::Point pos(x, y);
 							anim->_offset += 4;
 							uint16 animId = anim->_id;
 							if (anim->_state == entry.dword0)
 								animId = 0;
 							debug(4, "anim: draw sprite %d at (relative) %d,%d", data, x, y);
+							bool wasVisible = spriteVisible(data, animId);
 							addSprite(data, animId, entry.word6, anim->_basePos + pos);
+							if (wasVisible) {
+								// make sure modified sprite isn't removed by another entry
+								for (uint k = 0; k < anim->_entries.size(); k++) {
+									if (anim->_entries[k].op != 4)
+										continue;
+									if (anim->_entries[k].word10 == data)
+										anim->_entries[k].word10 = 1;
+								}
+							}
 						}
 						break;
 					default:
