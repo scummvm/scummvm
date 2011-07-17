@@ -381,6 +381,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_listFilesIter = NULL;
 	_savedState = NULL;
 	_fps[0] = 0;
+	_iris = new Iris();
 
 	Color *c = new Color(0, 0, 0);
 	registerColor(c);
@@ -455,6 +456,7 @@ GrimEngine::~GrimEngine() {
 	g_resourceloader = NULL;
 	delete g_driver;
 	g_driver = NULL;
+	delete _iris;
 }
 
 Common::Error GrimEngine::run() {
@@ -858,6 +860,10 @@ void GrimEngine::drawPrimitives() {
 	}
 }
 
+void GrimEngine::playIrisAnimation(Iris::Direction dir, int x, int y, int time) {
+	_iris->play(dir, x, y, time);
+}
+
 void GrimEngine::luaUpdate() {
 	if (_savegameLoadRequest || _savegameSaveRequest)
 		return;
@@ -996,6 +1002,7 @@ void GrimEngine::updateDisplayScene() {
 		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 
 		drawPrimitives();
+		_iris->draw();
 	} else if (_mode == ENGINE_MODE_DRAW) {
 		_doFlip = false;
 		_prevSmushFrame = 0;

@@ -31,6 +31,7 @@
 #include "engines/advancedDetector.h"
 
 #include "engines/grim/textobject.h"
+#include "engines/grim/iris.h"
 
 namespace Grim {
 
@@ -118,6 +119,7 @@ public:
 	bool getFlipEnable() { return _flipEnable; }
 	void refreshDrawMode() { _refreshDrawNeeded = true; }
 	void drawPrimitives();
+	void playIrisAnimation(Iris::Direction dir, int x, int y, int time);
 
 	void mainLoop();
 	unsigned getFrameStart() const { return _frameStart; }
@@ -272,6 +274,7 @@ private:
 
 	Actor *_selectedActor;
 	Actor *_talkingActor;
+	Iris *_iris;
 
 	SceneListType _scenes;
 	ActorListType _actors;

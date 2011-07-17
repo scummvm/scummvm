@@ -32,6 +32,7 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
+#include "engines/grim/iris.h"
 
 #include "engines/grim/movie/movie.h"
 
@@ -536,6 +537,22 @@ void L1_RenderModeUser() {
 		g_grim->refreshDrawMode();
 		g_grim->setMode(g_grim->getPreviousMode());
 	}
+}
+
+void L1_IrisUp() {
+	lua_Object xObj = lua_getparam(1);
+	lua_Object yObj = lua_getparam(2);
+	lua_Object timeObj = lua_getparam(3);
+
+	g_grim->playIrisAnimation(Iris::Open, (int)lua_getnumber(xObj), (int)lua_getnumber(yObj), (int)lua_getnumber(timeObj));
+}
+
+void L1_IrisDown() {
+	lua_Object xObj = lua_getparam(1);
+	lua_Object yObj = lua_getparam(2);
+	lua_Object timeObj = lua_getparam(3);
+
+	g_grim->playIrisAnimation(Iris::Close, (int)lua_getnumber(xObj), (int)lua_getnumber(yObj), (int)lua_getnumber(timeObj));
 }
 
 } // end of namespace Grim
