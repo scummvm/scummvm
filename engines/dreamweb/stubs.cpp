@@ -221,9 +221,7 @@ void DreamGenContext::getnextword() {
 	uint8 totalWidth = 0;
 	bh = 0;
 	while(true) {
-		ax = es.word(di);
-		uint8 firstChar = al;
-		uint8 secondChar = ah;
+		uint8 firstChar = es.byte(di);
 		++di;
 		++bh;
 		if ((firstChar == ':') || (firstChar == 0)) { //endall
@@ -240,6 +238,7 @@ void DreamGenContext::getnextword() {
 		}
 		firstChar = engine->modifyChar(firstChar);
 		if (firstChar != 255) {
+			uint8 secondChar = es.byte(di);
 			uint8 width = ds.byte(6*(firstChar - 32 + data.word(kCharshift)));
 			width = kernchars(firstChar, secondChar, width);
 			totalWidth += width;
