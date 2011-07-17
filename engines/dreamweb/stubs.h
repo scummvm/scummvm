@@ -14,6 +14,9 @@
 	void seecommandtail();
 	void randomnumber();
 	void quickquit2();
+	void getnextword();
+	void kernchars();
+	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
 	Sprite* spritetable();
 	void showframe();
 	uint16 showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag);

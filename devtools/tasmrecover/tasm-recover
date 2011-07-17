@@ -20,6 +20,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'frameoutfx',
 	'cls', 
 	'printundermon',
+	'kernchars',
+	'getnextword',
 	'worktoscreen',
 	'width160',
 	'convertkey',

@@ -4946,36 +4946,6 @@ nokern:
 	cx = pop();
 }
 
-void DreamGenContext::kernchars() {
-	STACK_CHECK;
-	_cmp(al, 'a');
-	if (flags.z())
-		goto iskern;
-	_cmp(al, 'u');
-	if (flags.z())
-		goto iskern;
-	return;
-iskern:
-	_cmp(ah, 'n');
-	if (flags.z())
-		goto kernit;
-	_cmp(ah, 't');
-	if (flags.z())
-		goto kernit;
-	_cmp(ah, 'r');
-	if (flags.z())
-		goto kernit;
-	_cmp(ah, 'i');
-	if (flags.z())
-		goto kernit;
-	_cmp(ah, 'l');
-	if (flags.z())
-		goto kernit;
-	return;
-kernit:
-	_dec(cl);
-}
-
 void DreamGenContext::printslow() {
 	STACK_CHECK;
 	data.byte(kPointerframe) = 1;
@@ -5345,48 +5315,6 @@ notcent2:
 	bx = pop();
 	si = pop();
 	cl = ch;
-}
-
-void DreamGenContext::getnextword() {
-	STACK_CHECK;
-	bx = 0;
-getloop:
-	ax = es.word(di);
-	_inc(di);
-	_inc(bh);
-	_cmp(al, ':');
-	if (flags.z())
-		goto endall;
-	_cmp(al, 0);
-	if (flags.z())
-		goto endall;
-	_cmp(al, 32);
-	if (flags.z())
-		goto endword;
-	modifychar();
-	_cmp(al, 255);
-	if (flags.z())
-		goto getloop;
-	push(ax);
-	_sub(al, 32);
-	ah = 0;
-	_add(ax, data.word(kCharshift));
-	_add(ax, ax);
-	si = ax;
-	_add(ax, ax);
-	_add(si, ax);
-	cl = ds.byte(si+0);
-	ax = pop();
-	kernchars();
-	_add(bl, cl);
-	goto getloop;
-endword:
-	_add(bl, 6);
-	al = 0;
-	return;
-endall:
-	_add(bl, 6);
-	al = 1;
 }
 
 void DreamGenContext::fillryan() {
@@ -21610,14 +21538,12 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_set16colpalette: set16colpalette(); break;
 		case addr_realcredits: realcredits(); break;
 		case addr_printchar: printchar(); break;
-		case addr_kernchars: kernchars(); break;
 		case addr_printslow: printslow(); break;
 		case addr_waitframes: waitframes(); break;
 		case addr_printboth: printboth(); break;
 		case addr_printdirect: printdirect(); break;
 		case addr_monprint: monprint(); break;
 		case addr_getnumber: getnumber(); break;
-		case addr_getnextword: getnextword(); break;
 		case addr_fillryan: fillryan(); break;
 		case addr_fillopen: fillopen(); break;
 		case addr_findallryan: findallryan(); break;

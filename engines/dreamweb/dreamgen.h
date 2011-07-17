@@ -562,14 +562,12 @@ public:
 	static const uint16 addr_findallryan = 0xc328;
 	static const uint16 addr_fillopen = 0xc324;
 	static const uint16 addr_fillryan = 0xc320;
-	static const uint16 addr_getnextword = 0xc31c;
 	static const uint16 addr_getnumber = 0xc318;
 	static const uint16 addr_monprint = 0xc314;
 	static const uint16 addr_printdirect = 0xc310;
 	static const uint16 addr_printboth = 0xc30c;
 	static const uint16 addr_waitframes = 0xc308;
 	static const uint16 addr_printslow = 0xc304;
-	static const uint16 addr_kernchars = 0xc300;
 	static const uint16 addr_printchar = 0xc2fc;
 	static const uint16 addr_realcredits = 0xc2f8;
 	static const uint16 addr_set16colpalette = 0xc2f4;
@@ -1396,7 +1394,7 @@ public:
 	void showdiscops();
 	void advisor();
 	void additionaltext();
-	void kernchars();
+	//void kernchars();
 	void othersmoker();
 	void autosetwalk();
 	void setuptimedtemp();
@@ -1967,7 +1965,7 @@ public:
 	void checkforshake();
 	void usebuttona();
 	void cancelch1();
-	void getnextword();
+	//void getnextword();
 	void generalerror();
 	void actualload();
 	void allocateload();
