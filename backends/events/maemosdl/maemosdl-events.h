@@ -24,6 +24,8 @@
 #define BACKEND_EVENTS_SDL_MAEMO_H
 
 #include "backends/events/sdl/sdl-events.h"
+#include "backends/platform/sdl/sdl.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
 /**
  * SDL events manager for Maemo
