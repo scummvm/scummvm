@@ -630,7 +630,6 @@ public:
 	void setupTexture();
 	void reset();
 	void resetColormap();
-	void cleanup();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
 	~MaterialComponent() { }
@@ -1011,10 +1010,6 @@ void MaterialComponent::reset() {
 
 void MaterialComponent::resetColormap() {
 	init();
-}
-
-void MaterialComponent::cleanup() {
-	_num = 0;
 }
 
 void MaterialComponent::saveState(SaveGame *state) {
@@ -1536,18 +1531,6 @@ void Costume::Chore::fade(Costume::Chore::FadeMode mode, int msecs) {
 	_fadeLength = msecs;
 }
 
-void Costume::Chore::cleanup() {
-	_playing = false;
-	_hasPlayed = false;
-	_fadeMode = None;
-
-	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i].compID];
-		if (comp)
-			comp->cleanup();
-	}
-}
-
 Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
 	if (FROM_BE_32(tag) == MKTAG('M','M','D','L'))
 		return new MainModelComponent(parent, parentID, name, prevComponent, tag);
@@ -1715,17 +1698,6 @@ void Costume::fadeChoreOut(int chore, int msecs) {
 	_chores[chore].fade(Chore::FadeOut, msecs);
 	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[chore]) == _playingChores.end())
 		_playingChores.push_back(&_chores[chore]);
-}
-
-void Costume::cleanupChore(int chore) {
-	if (chore >= _numChores) {
-		if (chore < 0 || chore >= _numChores) {
-			if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
-			return;
-		}
-	}
-	_chores[chore].cleanup();
 }
 
 int Costume::isChoring(const char *name, bool excludeLooping) {

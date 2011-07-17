@@ -942,13 +942,14 @@ void Actor::shutUp() {
 	}
 	if (_lipSync) {
 		if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-			_talkCostume[_talkAnim]->cleanupChore(_talkChore[_talkAnim]);
+			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 		_lipSync = NULL;
 	} else if (_mumbleChore >= 0 && _mumbleCostume->isChoring(_mumbleChore, false) >= 0) {
-		// Not using stopChore here, because it calls reset() on the components and
-		// so hides the model components, which is a problem when talking to Sal's head.
-		// https://github.com/residual/residual/issues/253
-		_mumbleCostume->cleanupChore(_mumbleChore);
+		_mumbleCostume->stopChore(_mumbleChore);
+	}
+	if (_talkChore[0] >= 0) {
+		// _talkChore[0] is *_stop_talk
+		_talkCostume[0]->playChore(_talkChore[0]);
 	}
 
 	if (_sayLineText) {

@@ -55,7 +55,6 @@ public:
 	void stopChore(int num);
 	void fadeChoreIn(int chore, int msecs);
 	void fadeChoreOut(int chore, int msecs);
-	void cleanupChore(int chore);
 	Model::HierNode *getModelNodes();
 	Model *getModel();
 	void setColormap(const Common::String &map);
@@ -98,7 +97,6 @@ public:
 		virtual void setupTexture() { }
 		virtual void draw() { }
 		virtual void reset() { }
-		virtual void cleanup() { }
 		virtual void resetColormap() { }
 		virtual void saveState(SaveGame *) { }
 		virtual void restoreState(SaveGame *) { }
