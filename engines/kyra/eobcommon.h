@@ -108,7 +108,7 @@ struct EobCharacter {
 
 	int8 mageSpells[80];
 	int8 clericSpells[80];
-	uint32 mageSpellsAvailabilityFlags;
+	uint32 mageSpellsAvailableFlags;
 
 	Item inventory[27];
 	uint32 timers[10];
@@ -311,7 +311,7 @@ protected:
 	virtual void startupLoad() = 0;
 	void runLoop();
 	void update() { screen()->updateScreen(); }
-	bool updateCharacterEvents(bool a);
+	bool checkPartyStatus(bool handleDeath);
 
 	bool _runFlag;
 	//int _runLoopUnk2;
@@ -334,6 +334,7 @@ protected:
 	void setCharEventTimer(int charIndex, uint32 countdown, int evnt, int updateExistingTimer);
 	void deleteCharEventTimer(int charIndex, int evnt);
 	void setupCharacterTimers();
+	void manualAdvanceTimer(int sysTimer, uint32 millis);
 
 	void timerProcessMonsters(int timerNum);
 	void timerSpecialCharacterUpdate(int timerNum);
@@ -348,6 +349,8 @@ protected:
 
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
+
+	int32 _restPartyElapsedTime;
 
 	// Mouse
 	void setHandItem(Item itemIndex);
@@ -369,7 +372,7 @@ protected:
 	int getCharacterLevelIndex(int type, int cClass);
 
 	int countCharactersWithSpecificItems(int16 itemType, int16 itemValue);
-	int checkCharacterInventoryForItem(int character, int16 itemType, int16 itemValue);
+	int checkInventoryForItem(int character, int16 itemType, int16 itemValue);
 	void modifyCharacterHitpoints(int character, int16 points);
 	void neutralizePoison(int character);
 
@@ -471,6 +474,7 @@ protected:
 	void placeMonster(EobMonsterInPlay *m, uint16 block, int dir);
 	virtual void replaceMonster(int b, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) = 0;
 	void killMonster(EobMonsterInPlay *m, bool giveExperience);
+	virtual bool killMonsterExtra(EobMonsterInPlay *m);
 	int countSpecificMonsters(int type);
 	void updateAttackingMonsterFlags();
 
@@ -533,7 +537,7 @@ protected:
 	const uint8 *_monsterProximityTable;
 	const uint8 *_findBlockMonstersTable;
 	const char *const *_monsterDustStrings;
-
+	
 	const uint8 *_monsterDistAttType10;
 	const uint8 *_monsterDistAttSfx10;
 	const uint8 *_monsterDistAttType17;
@@ -766,12 +770,19 @@ protected:
 	const char *const *_cancelStrings;
 	const char *const *_abortStrings;
 
+	// Rest party
+	void restParty_displayWarning(const char *str);
+	bool restParty_updateMonsters();
+	int restParty_getCharacterWithLowestHp();
+	bool restParty_checkHealSpells(int charIndex);
+	bool restParty_checkSpellsToLearn();
+	virtual void restParty_npc();
+	virtual bool restParty_extraAbortCondition();
+
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
 	void displayParchment(int id);
-
-	bool restParty();
-	void displayRestWarning(const char *str);
+	virtual void checkPartyStatusExtra() {}
 
 	virtual void drawLightningColumn() {}
 	virtual int resurrectionSelectDialogue() { return -1; }
@@ -843,7 +854,7 @@ protected:
 	void sparkEffectDefensive(int charIndex);
 	void sparkEffectOffensive();
 	void setSpellEventTimer(int spell, int timerBaseFactor, int timerLength, int timerLevelFactor, int updateExistingTimer);
-	void cleanupCharacterSpellList(int charIndex);
+	void sortCharacterSpellList(int charIndex);
 
 	bool magicObjectHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level);
 

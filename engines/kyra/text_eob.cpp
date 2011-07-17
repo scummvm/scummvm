@@ -445,9 +445,11 @@ void TextDisplayer_Eob::printDialogueText(int stringId, const char *pageBreakStr
 	displayText(_dialogueBuffer);
 
 	if (pageBreakString) {
-		strcpy(_pageBreakString, pageBreakString);
-		displayWaitButton();
-		resetPageBreakString();
+		if (pageBreakString[0]) {
+			strcpy(_pageBreakString, pageBreakString);
+			displayWaitButton();
+			resetPageBreakString();
+		}
 	}
 }
 

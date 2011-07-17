@@ -221,7 +221,7 @@ void EobCoreEngine::deletePartyItem(Item itemType, int16 itemValue) {
 			continue;
 
 		EobCharacter *c = &_characters[i];
-		int slot = checkCharacterInventoryForItem(i, itemType, itemValue);
+		int slot = checkInventoryForItem(i, itemType, itemValue);
 
 		if (slot == -1)
 			continue;

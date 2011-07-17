@@ -271,6 +271,24 @@ void DarkMoonEngine::replaceMonster(int unit, uint16 block, int pos, int dir, in
 	initMonster(index, unit, block, pos, dir, type, shpIndex, mode, h2, randItem, fixedItem);
 }
 
+bool DarkMoonEngine::killMonsterExtra(EobMonsterInPlay *m) {
+	if (_currentLevel == 16 && _currentSub == 1 && (_monsterProps[m->type].flags & 4)) {
+		if (m->type) {
+			_playFinale = true;
+			_runFlag = false;
+		} else {
+			m->hitPointsCur = 150;
+			m->curRemoteWeapon = 0;
+			m->numRemoteAttacks = 255;
+			m->shpIndex++;
+			m->type++;
+			seq_dranDragonTransformation();
+		}
+		return false;
+	}
+	return true;
+}
+
 const uint8 *DarkMoonEngine::loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) {
 	_screen->loadEobBitmap(filename, 3, 3);
 	for (int i = 0; i < 3; i++) {
@@ -317,6 +335,24 @@ void DarkMoonEngine::drawDoorIntern(int type, int, int x, int y, int w, int wall
 
 	if (_wllShapeMap[wall] == -1 && !_noDoorSwitch[type])
 		drawBlockObject(0, 2, _doorSwitches[shapeIndex].shp, _doorSwitches[shapeIndex].x + w, _doorSwitches[shapeIndex].y, 5);
+}
+
+void DarkMoonEngine::restParty_npc() {
+
+}
+
+bool DarkMoonEngine::restParty_extraAbortCondition() {
+	if (_currentLevel != 3)
+		return false;
+	
+	seq_nightmare();
+
+	return true;
+}
+
+void DarkMoonEngine::checkPartyStatusExtra() {
+	if (checkScriptFlag(0x10))
+		seq_dranFools();
 }
 
 void DarkMoonEngine::drawLightningColumn() {

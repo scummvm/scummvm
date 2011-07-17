@@ -185,7 +185,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		c->faceShape = 0;
 		in.read(c->mageSpells, 80);
 		in.read(c->clericSpells, 80);
-		c->mageSpellsAvailabilityFlags = in.readUint32BE();
+		c->mageSpellsAvailableFlags = in.readUint32BE();
 		for (int ii = 0; ii < 27; ii++)
 			c->inventory[ii] = in.readSint16BE();
 		uint32 ct = _system->getMillis();
@@ -427,7 +427,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 			out->writeUint32BE(c->experience[ii]);
 		out->write(c->mageSpells, 80);
 		out->write(c->clericSpells, 80);
-		out->writeUint32BE(c->mageSpellsAvailabilityFlags);
+		out->writeUint32BE(c->mageSpellsAvailableFlags);
 		for (int ii = 0; ii < 27; ii++)
 			out->writeSint16BE(c->inventory[ii]);
 		uint32 ct = _system->getMillis();

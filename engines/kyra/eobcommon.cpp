@@ -135,6 +135,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_spells = 0;
 	_spellAnimBuffer = 0;
 	_clericSpellOffset = 0;
+	_restPartyElapsedTime = 0;
 }
 
 EobCoreEngine::~EobCoreEngine() {
@@ -351,6 +352,7 @@ Common::Error EobCoreEngine::go() {
 		if (_gameToLoad != -1) {
 			if (loadGameState(_gameToLoad).getCode() != Common::kNoError)
 				error("Couldn't load game slot %d on startup", _gameToLoad);
+			startupLoad();
 			_gameToLoad = -1;
 		} else {
 			action = mainMenu();
@@ -434,7 +436,7 @@ void EobCoreEngine::runLoop() {
 
 	while (!shouldQuit() && _runFlag) {
 		//_runLoopUnk2 = _currentBlock;
-		updateCharacterEvents(true);
+		checkPartyStatus(true);
 		checkInput(_activeButtons, true, 0);
 		removeInputTop();
 
@@ -444,16 +446,18 @@ void EobCoreEngine::runLoop() {
 		if (_sceneUpdateRequired)
 			drawScene(1);
 
-		if (_envAudioTimer >= _system->getMillis())
+		if (_envAudioTimer >= _system->getMillis() || (_flags.gameID == GI_EOB1 && (_currentLevel == 0 || _currentLevel > 3)))
 			continue;
 
 		_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
-		snd_processEnvironmentalSoundEffect(rollDice(1, 2, -1) ? 27 : 28, _currentBlock + rollDice(1, 12, -1));
+		snd_processEnvironmentalSoundEffect(_flags.gameID == GI_EOB1 ? 30 : (rollDice(1, 2, -1) ? 27 : 28), _currentBlock + rollDice(1, 12, -1));
 		updateEnvironmentalSfx(0);
+		//TODO
+		//EOB1__level_2_7__turnUndead();
 	}
 }
 
-bool EobCoreEngine::updateCharacterEvents(bool a) {
+bool EobCoreEngine::checkPartyStatus(bool handleDeath) {
 	int numChars = 0;
 	for (int i = 0; i < 6; i++)
 		numChars += testCharacter(i, 13);
@@ -461,21 +465,22 @@ bool EobCoreEngine::updateCharacterEvents(bool a) {
 	if (numChars)
 		return false;
 
-	if (!a)
+	if (!handleDeath)
 		return true;
 
-
 	gui_drawAllCharPortraitsWithStats();
+	checkPartyStatusExtra();
 
-	///	TODO
-	/// if (checkScriptFlag(0x10))
-	/// j_dranThoseFools()
+	if (_gui->confirmDialogue2(14, 67, 1)) {
+		_screen->setFont(Screen::FID_8_FNT);
+		gui_updateControls();
+		if (_gui->runLoadMenu(0, 0)) {
+			_screen->setFont(Screen::FID_6_FNT);
+			return true;
+		}
+	}
 
-	///	TODO
-
-	///	TODO
-
-
+	quitGame();
 	return false;
 }
 
@@ -932,13 +937,13 @@ int EobCoreEngine::countCharactersWithSpecificItems(int16 itemType, int16 itemVa
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 1))
 			continue;
-		if (checkCharacterInventoryForItem(i, itemType, itemValue) != -1)
+		if (checkInventoryForItem(i, itemType, itemValue) != -1)
 			res++;
 	}
 	return res;
 }
 
-int EobCoreEngine::checkCharacterInventoryForItem(int character, int16 itemType, int16 itemValue) {
+int EobCoreEngine::checkInventoryForItem(int character, int16 itemType, int16 itemValue) {
 	for (int i = 0; i < 27; i++) {
 		uint16 inv = _characters[character].inventory[i];
 		if (!inv)
@@ -1275,6 +1280,118 @@ int EobCoreEngine::runDialogue(int dialogueTextId, int style, const char *button
 	return res;
 }
 
+void EobCoreEngine::restParty_displayWarning(const char *str) {
+	int od = _screen->curDimIndex();
+	_screen->setScreenDim(7);
+	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+	_screen->setCurPage(0);
+
+	_txt->printMessage(Common::String::format("\r%s\r", str).c_str());
+
+	_screen->setFont(of);
+	_screen->setScreenDim(od);
+}
+
+bool EobCoreEngine::restParty_updateMonsters() {
+	bool sfxEnabled = _sound->sfxEnabled();
+	bool musicEnabled = _sound->musicEnabled();
+	_sound->enableSFX(false);
+	_sound->enableMusic(false);
+
+	for (int i = 0; i < 5; i++) {
+		_partyResting = true;
+		Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+		int od = _screen->curDimIndex();
+		_screen->setScreenDim(7);
+		updateMonsters(0);
+		updateMonsters(1);
+		timerProcessFlyingObjects(0);
+		_screen->setScreenDim(od);
+		_screen->setFont(of);
+		_partyResting = false;
+
+		for (int ii = 0; ii < 30; ii++) {
+			if (_monsters[ii].mode == 8)
+				continue;
+			if (getBlockDistance(_currentBlock, _monsters[ii].block) >= 2)
+				continue;
+
+			restParty_displayWarning(_menuStringsRest4[0]);
+			_sound->enableSFX(sfxEnabled);
+			_sound->enableMusic(musicEnabled);
+			return true;
+		}
+	}
+	
+	_sound->enableSFX(sfxEnabled);
+	_sound->enableMusic(musicEnabled);
+	return false;
+}
+
+int EobCoreEngine::restParty_getCharacterWithLowestHp() {
+	int lhp = 900;
+	int res = -1;
+
+	for (int i = 0; i < 6; i++) {
+		if (!testCharacter(i, 3))
+			continue;
+		if (_characters[i].hitPointsCur >= _characters[i].hitPointsMax)
+			continue;
+		if (_characters[i].hitPointsCur < lhp) {
+			lhp = _characters[i].hitPointsCur;
+			res = i;
+		}
+	}
+
+	return res + 1;
+}
+
+bool EobCoreEngine::restParty_checkHealSpells(int charIndex) {
+	static const uint8 eob1healSpells[] = { 2, 15, 20 };
+	static const uint8 eob2healSpells[] = { 3, 16, 20 };
+	const uint8 *spells = _flags.gameID == GI_EOB1 ? eob1healSpells : eob2healSpells;
+	const int8 *list = _characters[charIndex].clericSpells;
+	
+	for (int i = 0; i < 80; i++) {
+		int s = list[i] < 0 ? -list[i] : list[i];
+		if (s == spells[0] || s == spells[1] || s == spells[2])
+			return true;
+	}
+
+	return false;
+}
+
+bool EobCoreEngine::restParty_checkSpellsToLearn() {
+	for (int i = 0; i < 6; i++) {
+		if (!testCharacter(i, 0x43))
+			continue;
+
+		if ((getCharacterLevelIndex(2, _characters[i].cClass) != -1 || getCharacterLevelIndex(4, _characters[i].cClass) != -1) && (checkInventoryForItem(i, 30, -1) != -1)) {
+			for (int ii = 0; ii < 80; ii++) {
+				if (_characters[i].clericSpells[ii] < 0)
+					return true;
+			}
+		}
+
+		if ((getCharacterLevelIndex(1, _characters[i].cClass) != -1) && (checkInventoryForItem(i, 29, -1) != -1)) {
+			for (int ii = 0; ii < 80; ii++) {
+				if (_characters[i].mageSpells[ii] < 0)
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void EobCoreEngine::restParty_npc() {
+
+}
+
+bool EobCoreEngine::restParty_extraAbortCondition() {
+	return false;
+}
+
 void EobCoreEngine::delay(uint32 millis, bool, bool) {
 	while (millis && !shouldQuit() && !skipFlag()) {
 		updateInput();
@@ -1317,28 +1434,6 @@ void EobCoreEngine::displayParchment(int id) {
 	}
 
 	restoreAfterDialogueSequence();
-}
-
-bool EobCoreEngine::restParty() {
-	if (_inf->preventRest()) {
-		assert(_menuStringsRest3[0]);
-		displayRestWarning(_menuStringsRest3[0]);
-		return true;
-	}
-
-	return true;
-}
-
-void EobCoreEngine::displayRestWarning(const char *str) {
-	int od = _screen->curDimIndex();
-	_screen->setScreenDim(7);
-	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
-	_screen->setCurPage(0);
-
-	_txt->printMessage(Common::String::format("\r%s\r", str).c_str());
-
-	_screen->setFont(of);
-	_screen->setScreenDim(od);
 }
 
 void EobCoreEngine::useSlotWeapon(int charIndex, int slotIndex, int item) {

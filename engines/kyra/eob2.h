@@ -60,6 +60,7 @@ private:
 	// Main Menu
 	int mainMenu();
 	int mainMenuLoop();
+
 	int _menuChoiceInit;
 
 	// Main loop
@@ -85,6 +86,13 @@ private:
 	static const char *_palFilesIntro[];
 	static const char *_palFilesFinale[];
 
+	// Ingame sequence
+	void seq_nightmare();
+	void seq_dranFools();
+	void seq_dranDragonTransformation();
+
+	const char *const *_dranFoolsStrings;
+
 	// characters
 	void npcSequence(int npcIndex);
 
@@ -99,6 +107,7 @@ private:
 	void generateMonsterPalettes(const char *file, int16 monsterIndex);
 	void loadMonsterDecoration(const char *file, int16 monsterIndex);
 	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
+	bool killMonsterExtra(EobMonsterInPlay *m);
 
 	// Level
 	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs);
@@ -106,7 +115,12 @@ private:
 
 	const uint8 *_dscDoorType5Offs;
 
+	// Rest party
+	void restParty_npc();
+	bool restParty_extraAbortCondition();
+
 	// misc
+	void checkPartyStatusExtra();
 	void drawLightningColumn();
 	int resurrectionSelectDialogue();
 	int charSelectDialogue();

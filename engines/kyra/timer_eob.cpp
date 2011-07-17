@@ -193,6 +193,23 @@ void EobCoreEngine::setupCharacterTimers() {
 	}
 }
 
+void EobCoreEngine::manualAdvanceTimer(int sysTimer, uint32 millis) {
+	if (sysTimer != 2)
+		return;
+
+	uint32 ct = _system->getMillis();
+	for (int i = 0; i < 6; i++) {
+		for (int ii = 0; ii < 10; ii++) {
+			if (_characters[i].timers[ii]) {
+				uint32 chrt = _characters[i].timers[ii] - ct;
+				_characters[i].timers[ii] = chrt > millis ? chrt - millis : 1;
+			}
+		}
+	}
+
+	_timer->manualAdvance(millis);
+}
+
 void EobCoreEngine::timerProcessCharacterExchange(int timerNum) {
 	_charExchangeSwap ^= 1;
 	if (_charExchangeSwap) {

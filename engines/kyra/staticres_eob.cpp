@@ -157,7 +157,7 @@ bool StaticResource::loadEobNpcData(Common::SeekableReadStream &stream, void *&p
 		s->experience[0] = stream.readUint32BE();
 		s->experience[1] = stream.readUint32BE();
 		s->experience[2] = stream.readUint32BE();
-		s->mageSpellsAvailabilityFlags = stream.readUint32BE();
+		s->mageSpellsAvailableFlags = stream.readUint32BE();
 		for (int ii = 0; ii < 27; ii++)
 			s->inventory[i] = stream.readUint16BE();
 	}
@@ -1184,6 +1184,7 @@ void DarkMoonEngine::initStaticResource() {
 	_npc1Strings = _staticres->loadStrings(kEob2Npc1Strings, temp);
 	_npc2Strings = _staticres->loadStrings(kEob2Npc2Strings, temp);
 	_monsterDustStrings = _staticres->loadStrings(kEob2MonsterDustStrings, temp);
+	_dranFoolsStrings = _staticres->loadStrings(kEob2DranFoolsStrings, temp);
 }
 
 void DarkMoonEngine::initSpells() {

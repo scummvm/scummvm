@@ -224,20 +224,7 @@ void EobCoreEngine::killMonster(EobMonsterInPlay *m, bool giveExperience) {
 	if (giveExperience)
 		increasePartyExperience(_monsterProps[m->type].experience);
 
-	if ((_flags.gameID == GI_EOB2) && (_currentLevel == 16) && (_currentSub == 1) && (_monsterProps[m->type].flags & 4)) {
-		if (m->type) {
-			_playFinale = true;
-			_runFlag = false;
-		} else {
-			m->hitPointsCur = 150;
-			m->curRemoteWeapon = 0;
-			m->numRemoteAttacks = 255;
-			m->shpIndex++;
-			m->type++;
-			//// TODO
-			// dranDragonTransformation();
-		}
-	} else {
+	if (killMonsterExtra(m)) {
 		placeMonster(m, 0, -1);
 
 		if ((_flags.gameID == GI_EOB1) && (m->type == 21)) {
@@ -248,6 +235,10 @@ void EobCoreEngine::killMonster(EobMonsterInPlay *m, bool giveExperience) {
 		if (m->mode == 8)
 			updateAttackingMonsterFlags();
 	}
+}
+
+bool EobCoreEngine::killMonsterExtra(EobMonsterInPlay*) {
+	return true;
 }
 
 int EobCoreEngine::countSpecificMonsters(int type) {
