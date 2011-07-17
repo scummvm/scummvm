@@ -1389,8 +1389,10 @@ static void decompressSLWM(byte *buffer, Common::SeekableReadStream *stream) {
 
 		count += 2;
 		start++;
-		memcpy(buffer, buffer - start, count);
-		buffer += count;
+		for (uint i = 0; i < count; i++) {
+			*buffer = *(buffer - start);
+			buffer++;
+		}
 	}
 }
 
@@ -1441,8 +1443,11 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 				size -= 2;
 			}
 			count += 4;
-			memcpy(buffer, buffer - step - 1, count);
-			buffer += count;
+			// this is often overlapping (for repeating patterns)
+			for (uint i = 0; i < count; i++) {
+				*buffer = *(buffer - step  - 1);
+				buffer++;
+			}
 		}
 		break;
 	case kBitmapRLESLWM:
