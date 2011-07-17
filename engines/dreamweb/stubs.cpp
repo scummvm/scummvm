@@ -217,34 +217,36 @@ void DreamGenContext::setmouse() {
 	data.word(kOldpointerx) = 0xffff;
 }
 
-void DreamGenContext::getnextword() {
-	uint8 totalWidth = 0;
-	bh = 0;
+uint8 DreamGenContext::getnextword(uint8 *totalWidth, uint8 *charCount) {
+	*totalWidth = 0;
+	*charCount = 0;
 	while(true) {
 		uint8 firstChar = es.byte(di);
 		++di;
-		++bh;
+		++*charCount;
 		if ((firstChar == ':') || (firstChar == 0)) { //endall
-			totalWidth += 6;
-			bl = totalWidth;
-			al = 1;
-			return;
+			*totalWidth += 6;
+			return 1;
 		}
 		if (firstChar == 32) { //endword
-			totalWidth += 6;
-			bl = totalWidth;
-			al = 0;
-			return;
+			*totalWidth += 6;
+			return 0;
 		}
 		firstChar = engine->modifyChar(firstChar);
 		if (firstChar != 255) {
 			uint8 secondChar = es.byte(di);
 			uint8 width = ds.byte(6*(firstChar - 32 + data.word(kCharshift)));
 			width = kernchars(firstChar, secondChar, width);
-			totalWidth += width;
-			bl = totalWidth;
+			*totalWidth += width;
 		}
 	}
+}
+
+void DreamGenContext::getnextword() {
+	uint8 totalWidth, charCount;
+	al = getnextword(&totalWidth, &charCount);
+	bl = totalWidth;
+	bh = charCount;	
 }
 
 uint8 DreamGenContext::kernchars(uint8 firstChar, uint8 secondChar, uint8 width) {
