@@ -877,6 +877,10 @@ void GrimEngine::luaUpdate() {
 	_frameTime = newStart - _frameStart;
 	_frameStart = newStart;
 
+	if (_mode == ENGINE_MODE_DRAW || _mode == ENGINE_MODE_PAUSE) {
+		_frameTime = 0;
+	}
+
 	_frameTimeCollection += _frameTime;
 	if (_frameTimeCollection > 10000) {
 		_frameTimeCollection = 0;
