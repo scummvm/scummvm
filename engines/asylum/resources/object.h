@@ -52,25 +52,25 @@ public:
 	void setPriority(int32 priority) { _priority = priority; }
 	void setSoundResourceId(ResourceId id) { _soundResourceId = id; }
 
-	void setField67C(int32 val) { _field_67C = val; }
+	void setTransparency(int32 val) { _transparency = val; }
 	void setField6A4(ActorDirection val) { _field_6A4 = val; }
 
-	Common::Rect   *getBoundingRect() { return &_boundingRect; }
-	uint32          getFrameIndex() { return _frameIndex; }
-	uint32          getFrameCount() { return _frameCount; }
+	Common::Rect   *getBoundingRect()               { return &_boundingRect; }
+	uint32          getFrameIndex()                 { return _frameIndex; }
+	uint32          getFrameCount()                 { return _frameCount; }
 	FrameSoundItem *getFrameSoundItem(uint32 index) { assert(index < ARRAYSIZE(_frameSoundItems)); return &_frameSoundItems[index]; }
-	ObjectId        getId() { return _id; }
-	int32           getPolygonIndex() { return _polygonIndex; }
-	int32           getPriority() { return _priority; }
-	ResourceId      getResourceId() { return _resourceId; }
-	ResourceId      getSoundResourceId() { return _soundResourceId; }
+	ObjectId        getId()                         { return _id; }
+	int32           getPolygonIndex()               { return _polygonIndex; }
+	int32           getPriority()                   { return _priority; }
+	ResourceId      getResourceId()                 { return _resourceId; }
+	ResourceId      getSoundResourceId()            { return _soundResourceId; }
 
-	Common::Rect   *getRect()        { return &_rect; }
-	int32           getScriptIndex() { return _scriptIndex; }
-	int32           getSoundY()      { return _soundY; }
-	int32           getField67C()    { return _field_67C; }
-	int32           getField688()    { return _field_688; }
-	ActorDirection  getField6A4()    { return _field_6A4; }
+	Common::Rect   *getRect()         { return &_rect; }
+	int32           getScriptIndex()  { return _scriptIndex; }
+	int32           getSoundY()       { return _soundY; }
+	int32           getTransparency() { return _transparency; }
+	int32           getField688()     { return _field_688; }
+	ActorDirection  getField6A4()     { return _field_6A4; }
 
 	/////////////////////////////////////////////////////////////////////////
 	// Loading & disabling
@@ -195,7 +195,7 @@ private:
 	int32		   _scriptIndex;
 	SoundItem	   _soundItems[16];
 	FrameSoundItem _frameSoundItems[50];
-	int32		   _field_67C;
+	int32		   _transparency;
 	int32		   _soundX;
 	int32		   _soundY;
 	int32		   _field_688;

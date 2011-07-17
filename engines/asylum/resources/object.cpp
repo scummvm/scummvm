@@ -40,7 +40,7 @@ Object::Object(AsylumEngine *engine) : x(0), y(0), flags(0), actionType(0),
 	_vm(engine), _index(0),
 	_id(kObjectNone), _resourceId(kResourceNone), _field_20(0), _frameIndex(0), _frameCount(0),
 	_field_2C(0), _field_30(0), _field_34(0), _field_3C(0), _polygonIndex(0), _field_B4(0),
-	_tickCount(0), _tickCount2(0), _field_C0(0), _priority(0), _scriptIndex(0), _field_67C(0),
+	_tickCount(0), _tickCount2(0), _field_C0(0), _priority(0), _scriptIndex(0), _transparency(0),
 	_soundX(0), _soundY(0), _field_688(0), _soundResourceId(kResourceNone), _field_6A4(kDirectionN)
 {
 	memset(&_name, 0, sizeof(_name));
@@ -112,7 +112,7 @@ void Object::load(Common::SeekableReadStream *stream) {
 		_frameSoundItems[i].field_14 = stream->readSint32LE();
 	}
 
-	_field_67C = stream->readSint32LE();
+	_transparency = stream->readSint32LE();
 	_soundX	  = stream->readSint32LE();
 	_soundY	  = stream->readSint32LE();
 	_field_688 = stream->readSint32LE();
@@ -198,10 +198,10 @@ void Object::draw() {
 	Common::Point point;
 	adjustCoordinates(&point);
 
-	if (_field_67C <= 0 || _field_67C >= 4 || Config.performance <= 1) {
-		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, point, (DrawFlags)((flags >> 11) & kDrawFlagMirrorLeftRight), _field_67C - 3, _priority);
+	if (_transparency <= 0 || _transparency >= 4 || Config.performance <= 1) {
+		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, point, (DrawFlags)((flags >> 11) & kDrawFlagMirrorLeftRight), _transparency - 3, _priority);
 	} else {
-		getScreen()->addGraphicToQueueCrossfade(_resourceId, _frameIndex, point, getWorld()->backgroundImage, Common::Point(getWorld()->xLeft, getWorld()->yTop), _field_67C - 1);
+		getScreen()->addGraphicToQueueCrossfade(_resourceId, _frameIndex, point, getWorld()->backgroundImage, Common::Point(getWorld()->xLeft, getWorld()->yTop), _transparency - 1);
 	}
 }
 
@@ -506,8 +506,8 @@ Common::String Object::toString(bool shortString) {
 		output += Common::String::format("    tickCount2:      %d\n", _tickCount2);
 		output += Common::String::format("    field_C0:        %d\n", _field_C0);
 		output += Common::String::format("    priority:        %d\n", _priority);
-		output += Common::String::format("    scriptIndex:   %d\n", _scriptIndex);
-		output += Common::String::format("    field_67C:       %d\n", _field_67C);
+		output += Common::String::format("    scriptIndex:     %d\n", _scriptIndex);
+		output += Common::String::format("    transparency     %d\n", _transparency);
 		output += Common::String::format("    soundX:          %d\n", _soundX);
 		output += Common::String::format("    soundY:          %d\n", _soundY);
 		output += Common::String::format("    field_688:       %d\n", _field_688);

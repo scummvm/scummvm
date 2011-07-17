@@ -96,7 +96,7 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_numberStringY = 0;
  	memset(&_numberString01, 0, 8);
  	_field_968 = 0;
- 	_field_96C = 0;
+ 	_transparency = 0;
  	_field_970 = 0;
  	_field_974 = 0;
  	_field_978 = 0;
@@ -208,7 +208,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_numberStringY  = stream->readSint32LE();
 	stream->read(_numberString01, sizeof(_numberString01));
 	_field_968  = stream->readSint32LE();
-	_field_96C  = stream->readSint32LE();
+	_transparency  = stream->readSint32LE();
 	_field_970  = stream->readSint32LE();
 	_field_974  = stream->readSint32LE();
 	_field_978  = stream->readSint32LE();
@@ -266,7 +266,7 @@ void Actor::draw() {
 		// Update flags
 		flags &= ~kActorFlagMasked;
 	} else {
-		getScreen()->addGraphicToQueue(_resourceId, frameIndex, point, getGraphicsFlags(), _field_96C, _priority);
+		getScreen()->addGraphicToQueue(_resourceId, frameIndex, point, getGraphicsFlags(), _transparency, _priority);
 	}
 }
 

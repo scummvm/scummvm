@@ -1384,12 +1384,12 @@ void Special::checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag f
 				_vm->clearGameFlag(flag1);
 				_vm->clearGameFlag(flag2);
 
-				getWorld()->getObjectById(id)->setField67C(0);
+				getWorld()->getObjectById(id)->setTransparency(0);
 
 			} else {
 				(*val2)++;
 
-				getWorld()->getObjectById(id)->setField67C(6 - Common::Rational(*val2, 4).toInt());
+				getWorld()->getObjectById(id)->setTransparency(6 - Common::Rational(*val2, 4).toInt());
 			}
 		} else {
 
@@ -1404,12 +1404,12 @@ void Special::checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag f
 				_vm->clearGameFlag(flag2);
 				_vm->clearGameFlag(flag4);
 
-				getWorld()->getObjectById(id)->setField67C(0);
+				getWorld()->getObjectById(id)->setTransparency(0);
 
 			} else {
 				(*val2)++;
 
-				getWorld()->getObjectById(id)->setField67C(Common::Rational(*val2, 4).toInt() + 4);
+				getWorld()->getObjectById(id)->setTransparency(Common::Rational(*val2, 4).toInt() + 4);
 			}
 		}
 	}
