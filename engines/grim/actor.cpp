@@ -1179,13 +1179,16 @@ void Actor::update() {
 		if (posSound != -1) {
 			int anim = _lipSync->getAnim(posSound);
 			if (_talkAnim != anim) {
-				if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-					_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 				if (anim != -1) {
-					_talkAnim = anim;
-					if (_talkChore[_talkAnim] >= 0) {
+					if (_talkChore[anim] >= 0) {
+						if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
+							_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+
+						_talkAnim = anim;
 						_talkCostume[_talkAnim]->playChoreLooping(_talkChore[_talkAnim]);
 					}
+				} else {
+					_talkCostume[0]->playChore(_talkChore[0]);
 				}
 			}
 		}
