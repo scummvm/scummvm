@@ -25,11 +25,13 @@
 
 namespace Grim {
 
+class SaveGame;
+
 class Iris {
 public:
 	enum Direction {
-		Open,
-		Close
+		Open = 0,
+		Close = 1
 	};
 
 	Iris();
@@ -37,6 +39,9 @@ public:
 
 	void play(Direction dir, int x, int y, int lenght);
 	void draw();
+
+	void saveState(SaveGame *state) const;
+	void restoreState(SaveGame *state);
 
 private:
 	bool _playing;

@@ -23,6 +23,7 @@
 #include "engines/grim/iris.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/grim.h"
+#include "engines/grim/savegame.h"
 
 namespace Grim {
 
@@ -74,6 +75,32 @@ void Iris::draw() {
 	g_driver->dimRegion(0, y, x, 479 - y, 0);
 	g_driver->dimRegion(x, 479 - y, 640 - x, y, 0);
 	g_driver->dimRegion(640 - x, y, x, 479 - y, 0);
+}
+
+void Iris::saveState(SaveGame *state) const {
+	state->beginSection('IRIS');
+
+	state->writeLEBool(_playing);
+	state->writeLEUint32((uint32)_direction);
+	state->writeLEUint32(_x);
+	state->writeLEUint32(_y);
+	state->writeLEUint32(_lenght);
+	state->writeLEUint32(_currTime);
+
+	state->endSection();
+}
+
+void Iris::restoreState(SaveGame *state) {
+	state->beginSection('IRIS');
+
+	_playing = state->readLEBool();
+	_direction = (Direction)state->readLEUint32();
+	_x = state->readLEUint32();
+	_y = state->readLEUint32();
+	_lenght = state->readLEUint32();
+	_currTime = state->readLEUint32();
+
+	state->endSection();
 }
 
 }

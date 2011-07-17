@@ -1161,6 +1161,7 @@ void GrimEngine::savegameRestore() {
 	g_driver->restoreState(_savedState);
 	g_imuse->restoreState(_savedState);
 	g_movie->restoreState(_savedState);
+	_iris->restoreState(_savedState);
 	lua_Restore(_savedState);
 
 	delete _savedState;
@@ -1327,6 +1328,7 @@ void GrimEngine::savegameSave() {
 	g_driver->saveState(_savedState);
 	g_imuse->saveState(_savedState);
 	g_movie->saveState(_savedState);
+	_iris->saveState(_savedState);
 	lua_Save(_savedState);
 
 	delete _savedState;
