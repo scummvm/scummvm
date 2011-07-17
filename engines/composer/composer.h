@@ -253,6 +253,7 @@ private:
 	void loadCTBL(uint id, uint fadePercent);
 	void decompressBitmap(uint16 type, Common::SeekableReadStream *stream, byte *buffer, uint32 size, uint width, uint height);
 	bool initSprite(Sprite &sprite);
+	Common::SeekableReadStream *getStreamForSprite(uint16 id);
 	void drawSprite(const Sprite &sprite);
 };
 

@@ -1558,12 +1558,16 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		warning("ignoring kFuncClearSprites()");
 		return 0;
 	case kFuncAddSprite:
-		// TODO
-		warning("ignoring kFuncAddSprite(%d, %d, %d)", param1, param2, param3);
+		{
+		Common::Point pos(_vars[param3], _vars[param3 + 1]);
+		int16 zorder = _vars[param3 + 2];
+		debug(3, "kFuncAddSprite(%d, %d, [%d = %d, (%d, %d)])", param1, param2, param3, pos.x, pos.y, zorder);
+		addSprite(param1, param2, zorder, pos);
+		}
 		return 0;
 	case kFuncRemoveSprite:
-		// TODO
-		warning("ignoring kFuncRemoveSprite(%d, %d)", param1, param2);
+		debug(3, "kFuncRemoveSprite(%d, %d)", param1, param2);
+		removeSprite(param1, param2);
 		return 0;
 	case kFuncQuit:
 		// TODO
@@ -1578,8 +1582,21 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		warning("ignoring kFuncLoadData(%d, %d, %d)", param1, param2, param3);
 		return 1;
 	case kFuncGetSpriteSize:
-		// TODO
-		warning("ignoring kFuncGetSpriteSize(%d, %d, %d)", param1, param2, param3);
+		debug(3, "kFuncGetSpriteSize(%d, %d, %d)", param1, param2, param3);
+		int16 width, height;
+		width = 0;
+		height = 0;
+		{
+		Common::SeekableReadStream *stream = getStreamForSprite(param1);
+		if (stream) {
+			stream->readUint16LE();
+			height = stream->readSint16LE();
+			width = stream->readSint16LE();
+			delete stream;
+		}
+		}
+		_vars[param2] = width;
+		_vars[param3] = height;
 		return 0;
 	default:
 		error("unknown scriptFuncCall %d(%d, %d, %d)", (uint32)id, param1, param2, param3);
@@ -1770,19 +1787,20 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 	}
 }
 
-bool ComposerEngine::initSprite(Sprite &sprite) {
-	Common::SeekableReadStream *stream = NULL;
-	if (hasResource(ID_BMAP, sprite._id))
-		stream = getResource(ID_BMAP, sprite._id);
-	else
-		for (Common::List<Pipe *>::iterator k = _pipes.begin(); k != _pipes.end(); k++) {
-			Pipe *pipe = *k;
-			if (!pipe->hasResource(ID_BMAP, sprite._id))
-				continue;
-			stream = pipe->getResource(ID_BMAP, sprite._id, false);
-			break;
-		}
+Common::SeekableReadStream *ComposerEngine::getStreamForSprite(uint16 id) {
+	if (hasResource(ID_BMAP, id))
+		return getResource(ID_BMAP, id);
+	for (Common::List<Pipe *>::iterator k = _pipes.begin(); k != _pipes.end(); k++) {
+		Pipe *pipe = *k;
+		if (!pipe->hasResource(ID_BMAP, id))
+			continue;
+		return pipe->getResource(ID_BMAP, id, false);
+	}
+	return NULL;
+}
 
+bool ComposerEngine::initSprite(Sprite &sprite) {
+	Common::SeekableReadStream *stream = getStreamForSprite(sprite._id);
 	if (!stream)
 		return false;
 
