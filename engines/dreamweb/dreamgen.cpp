@@ -5233,114 +5233,6 @@ nottrigger2:
 	data.byte(kKerning) = 0;
 }
 
-void DreamGenContext::getnumber() {
-	STACK_CHECK;
-	cx = 0;
-	push(si);
-	push(bx);
-	push(di);
-	push(ds);
-	push(es);
-	di = si;
-wordloop:
-	push(cx);
-	push(dx);
-	getnextword();
-	dx = pop();
-	cx = pop();
-	_cmp(al, 1);
-	if (flags.z())
-		goto endoftext;
-	al = cl;
-	ah = 0;
-	push(bx);
-	bh = 0;
-	_add(ax, bx);
-	bx = pop();
-	_sub(ax, 10);
-	dh = 0;
-	_cmp(ax, dx);
-	if (!flags.c())
-		goto gotoverend;
-	_add(cl, bl);
-	_add(ch, bh);
-	goto wordloop;
-gotoverend:
-	al = dl;
-	_and(al, 1);
-	if (flags.z())
-		goto notcentre;
-	push(cx);
-	al = dl;
-	_and(al, 0xfe);
-	ah = 0;
-	ch = 0;
-	_sub(ax, cx);
-	_add(ax, 20);
-	_shr(ax, 1);
-	cx = pop();
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	_add(di, ax);
-	cl = ch;
-	return;
-notcentre:
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	cl = ch;
-	return;
-endoftext:
-	al = cl;
-	ah = 0;
-	push(bx);
-	bh = 0;
-	_add(ax, bx);
-	bx = pop();
-	_sub(ax, 10);
-	dh = 0;
-	_cmp(ax, dx);
-	if (!flags.c())
-		goto gotoverend2;
-	_add(cl, bl);
-	_add(ch, bh);
-gotoverend2:
-	al = dl;
-	_and(al, 1);
-	if (flags.z())
-		goto notcent2;
-	push(cx);
-	al = dl;
-	_and(al, 0xfe);
-	_add(al, 2);
-	ah = 0;
-	ch = 0;
-	_add(ax, 20);
-	_sub(ax, cx);
-	_shr(ax, 1);
-	cx = pop();
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	_add(di, ax);
-	cl = ch;
-	return;
-notcent2:
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	cl = ch;
-}
-
 void DreamGenContext::fillryan() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -21554,7 +21446,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_printboth: printboth(); break;
 		case addr_printdirect: printdirect(); break;
 		case addr_monprint: monprint(); break;
-		case addr_getnumber: getnumber(); break;
 		case addr_fillryan: fillryan(); break;
 		case addr_fillopen: fillopen(); break;
 		case addr_findallryan: findallryan(); break;

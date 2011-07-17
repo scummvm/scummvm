@@ -271,6 +271,65 @@ void DreamGenContext::getnextword() {
 	bh = charCount;	
 }
 
+void DreamGenContext::getnumber() {
+	cl = getnumber(dl, (bool)(dl & 1));
+}
+
+uint8 DreamGenContext::getnumber(uint16 maxWidth, bool centered) {
+	uint8 totalWidth = 0;
+	uint8 charCount = 0;
+	push(si);
+	push(bx);
+	push(di);
+	push(ds);
+	push(es);
+	di = si;
+	while (true) {
+		uint8 wordTotalWidth, wordCharCount;
+		uint8 done = getnextword(&wordTotalWidth, &wordCharCount);
+
+		if (done == 1) { //endoftext
+			ax = totalWidth + wordTotalWidth - 10;
+			if (ax < maxWidth) {
+				totalWidth += wordTotalWidth;
+				charCount += wordCharCount;
+			}
+
+			if (centered) {
+				ax = (maxWidth & 0xfe) + 2 + 20 - totalWidth;
+				ax /= 2;
+			} else {
+				ax = 0;
+			}
+			es = pop();
+			ds = pop();
+			di = pop();
+			bx = pop();
+			si = pop();
+			_add(di, ax);
+			return charCount;
+		}
+		ax = totalWidth + wordTotalWidth - 10;
+		if (ax >= maxWidth) { //gotoverend
+			if (centered) {
+				ax = (maxWidth & 0xfe) - totalWidth + 20;
+				ax /= 2;
+			} else {
+				ax = 0;
+			}
+			es = pop();
+			ds = pop();
+			di = pop();
+			bx = pop();
+			si = pop();
+			_add(di, ax);
+			return charCount;
+		}
+		totalWidth += wordTotalWidth;
+		charCount += wordCharCount;
+	}
+}
+
 uint8 DreamGenContext::kernchars(uint8 firstChar, uint8 secondChar, uint8 width) {
 	if ((firstChar == 'a') || (al == 'u')) {
 		if ((secondChar == 'n') || (secondChar == 't') || (secondChar == 'r') || (secondChar == 'i') || (secondChar == 'l'))

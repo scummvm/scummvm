@@ -38,6 +38,8 @@
 	void quickquit2();
 	void getnextword();
 	uint8 getnextword(uint8 *totalWidth, uint8 *charCount);
+	void getnumber();
+	uint8 getnumber(uint16 maxWidth, bool centered);
 	void kernchars();
 	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
 	Sprite *spritetable();

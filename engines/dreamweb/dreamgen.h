@@ -584,7 +584,6 @@ public:
 	static const uint16 addr_findallryan = 0xc328;
 	static const uint16 addr_fillopen = 0xc324;
 	static const uint16 addr_fillryan = 0xc320;
-	static const uint16 addr_getnumber = 0xc318;
 	static const uint16 addr_monprint = 0xc314;
 	static const uint16 addr_printdirect = 0xc310;
 	static const uint16 addr_printboth = 0xc30c;
@@ -1535,7 +1534,7 @@ public:
 	//void printsprites();
 	void checkifperson();
 	void showallobs();
-	void getnumber();
+	//void getnumber();
 	void adjustleft();
 	void calledenslift();
 	void useclearbox();
