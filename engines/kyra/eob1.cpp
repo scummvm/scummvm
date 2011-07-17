@@ -24,6 +24,7 @@
 
 #include "kyra/eob1.h"
 #include "kyra/resource.h"
+#include "kyra/sound.h"
 
 namespace Kyra {
 
@@ -75,6 +76,10 @@ void EobEngine::startupNew() {
 	_currentDirection = 0;
 	setHandItem(0);
 	EobCoreEngine::startupNew();
+}
+
+void EobEngine::startupLoad() {
+	_sound->loadSoundFile("ADLIB");
 }
 
 void EobEngine::npcSequence(int npcIndex) {

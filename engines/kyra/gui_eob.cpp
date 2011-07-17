@@ -24,6 +24,7 @@
 
 #include "kyra/eobcommon.h"
 #include "kyra/gui_eob.h"
+#include "kyra/script_eob.h"
 #include "kyra/text_eob.h"
 #include "kyra/timer.h"
 #include "kyra/util.h"
@@ -508,7 +509,7 @@ void EobCoreEngine::gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32
 }
 
 void EobCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
-	uint8 boxColor = ((_partyEffectFlags & 0x20000) | (_partyEffectFlags & 0xffff)) ? 4 : 6;
+	uint8 redGreenColor = (_partyEffectFlags & 0x20000) ? 4 : 6;
 
 	static const uint8 xCoords[] = { 8, 80 };
 	static const uint8 yCoords[] = { 2, 54, 106 };
@@ -520,18 +521,16 @@ void EobCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 
 	EobCharacter *c = &_characters[index];
 
-	int v8 = (_flags.gameID == GI_EOB2 && ((c->effectFlags & 0x4818) || c->effectsRemainder[0] || c->effectsRemainder[1] || ((_partyEffectFlags & 0x20000) | (_partyEffectFlags & 0xffff)))) ||
-		(_flags.gameID == GI_EOB1 && ((c->effectFlags & 0x302) || c->effectsRemainder[0] || c->effectsRemainder[1])) ? 1 : 0;
-	int vA = (_flags.gameID == GI_EOB2 && ((((c->effectFlags & 0x3000) | (c->effectFlags & 0x10000)) || (_partyEffectFlags & 0x8420)))) ||
-		(_flags.gameID == GI_EOB1 && ((c->effectFlags & 0x4c8) || _partyEffectFlags & 300000))? 1 : 0;
+	bool redGreen = ((c->effectFlags & 0x4818) || (_partyEffectFlags & 0x20000) || c->effectsRemainder[0] || c->effectsRemainder[1]) ? true : false;
+	bool yellow = ((c->effectFlags & 0x13000) || (_partyEffectFlags & 0x8420) || c->effectsRemainder[0] || c->effectsRemainder[1]) ? true : false;
 
-	if (v8 || vA) {
-		if (v8 && !vA) {
-			_screen->drawBox(x, y, x + 63, y + 49, boxColor);
+	if (redGreen || yellow) {
+		if (redGreen && !yellow) {
+			_screen->drawBox(x, y, x + 63, y + 49, redGreenColor);
 			return;
 		}
 
-		if (vA && !v8) {
+		if (yellow && !redGreen) {
 			_screen->drawBox(x, y, x + 63, y + 49, 5);
 			return;
 		}
@@ -541,11 +540,11 @@ void EobCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 
 		for (int i = 0; i < 64; i += 16) {
 			x = iX + i;
-			if (v8) {
-				_screen->drawClippedLine(x, y, x + 7, y, boxColor);
-				_screen->drawClippedLine(x + 8, y + 49, x + 15, y + 49, boxColor);
+			if (redGreen) {
+				_screen->drawClippedLine(x, y, x + 7, y, redGreenColor);
+				_screen->drawClippedLine(x + 8, y + 49, x + 15, y + 49, redGreenColor);
 			}
-			if (vA) {
+			if (yellow) {
 				_screen->drawClippedLine(x + 8, y, x + 15, y, 5);
 				_screen->drawClippedLine(x, y + 49, x + 7, y + 49, 5);
 			}
@@ -556,13 +555,13 @@ void EobCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 		for (int i = 1; i < 48; i += 12) {
 			y = iY + i - 1;
 
-			if (vA) {
+			if (yellow) {
 				_screen->drawClippedLine(x, y + 1, x, y + 6, 5);
 				_screen->drawClippedLine(x + 63, y + 7, x + 63, y + 12, 5);
 			}
-			if (v8) {
-				_screen->drawClippedLine(x, y + 7, x, y + 12, boxColor);
-				_screen->drawClippedLine(x + 63, y + 1, x + 63, y + 6, boxColor);
+			if (redGreen) {
+				_screen->drawClippedLine(x, y + 7, x, y + 12, redGreenColor);
+				_screen->drawClippedLine(x + 63, y + 1, x + 63, y + 6, redGreenColor);
 			}
 		}
 
@@ -859,7 +858,7 @@ int EobCoreEngine::clickedCamp(Button *button) {
 	drawScene(0);
 
 	for (int i = 0; i < 6; i++)
-		cleanupCharacterSpellList(i);
+		sortCharacterSpellList(i);
 
 	_screen->setCurPage(0);
 	const ScreenDim *dm = _screen->getScreenDim(10);
@@ -867,8 +866,11 @@ int EobCoreEngine::clickedCamp(Button *button) {
 
 	_screen->updateScreen();
 
-	enableSysTimer(2);	
-	updateCharacterEvents(true);
+	enableSysTimer(2);
+	manualAdvanceTimer(2, _restPartyElapsedTime);
+	_restPartyElapsedTime = 0;
+
+	checkPartyStatus(true);
 
 	return button->arg;
 }
@@ -2174,11 +2176,12 @@ void GUI_Eob::runCampMenu() {
 
 			switch (inputFlag) {
 			case 0x8001:
-				if (_vm->restParty())
+				if (restParty())
 					runLoop = false;
 				else
 					_needRest = false;
 				redrawPortraits = true;
+				newMenu = 0;
 				break;
 
 			case 0x8002:
@@ -2286,7 +2289,7 @@ void GUI_Eob::runCampMenu() {
 		if (_charSelectRedraw || redrawPortraits) {
 			for (int i = 0; i < 6; i++) {
 				_vm->gui_drawCharPortraitWithStats(i);
-				_vm->cleanupCharacterSpellList(i);
+				_vm->sortCharacterSpellList(i);
 			}
 		}
 
@@ -2332,6 +2335,74 @@ bool GUI_Eob::runLoadMenu(int x, int y) {
 
 	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
 	return result;
+}
+
+bool GUI_Eob::confirmDialogue2(int dim, int id, int deflt) {
+	int od = _screen->curDimIndex();
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+	_screen->setScreenDim(dim);
+
+	drawTextBox(dim, id);
+
+	int16 x[2];
+	x[0] = (_screen->_curDim->sx << 3) + 8;
+	x[1] = (_screen->_curDim->sx + _screen->_curDim->w - 5) << 3;
+	int16 y = _screen->_curDim->sy + _screen->_curDim->h - 21;
+	int newHighlight = deflt ^ 1;
+	int lastHighlight = -1;
+	
+	for (int i = 0; i < 2; i++)
+		drawMenuButtonBox(x[i], y, 32, 14, false, false);
+
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+		Common::Point p = _vm->getMousePos();
+		if (_vm->posWithinRect(p.x, p.y, x[0], y, x[0] + 32, y + 14))
+			newHighlight = 0;
+		else if (_vm->posWithinRect(p.x, p.y, x[1], y, x[1] + 32, y + 14))
+			newHighlight = 1;
+
+		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
+		_vm->removeInputTop();
+
+		if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+			runLoop = false;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP6]) {
+			newHighlight ^= 1;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_n]) {
+			newHighlight = 1;
+			runLoop = false;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_y]) {
+			newHighlight = 0;
+			runLoop = false;
+		}  else if (inputFlag == 199 || inputFlag == 201) {
+			if (_vm->posWithinRect(p.x, p.y, x[0], y, x[0] + 32, y + 14)) {
+				newHighlight = 0;
+				runLoop = false;
+			} else if (_vm->posWithinRect(p.x, p.y, x[1], y, x[1] + 32, y + 14)) {
+				newHighlight = 1;
+				runLoop = false;
+			}
+		}
+
+		if (newHighlight != lastHighlight) {
+			for (int i = 0; i < 2; i++)				
+				_screen->printShadedText(_vm->_menuYesNoStrings[i], x[i] + 16 - (strlen(_vm->_menuYesNoStrings[i]) << 2) + 1, y + 3, i == newHighlight ? 6 : 15, 0);
+			_screen->updateScreen();
+			lastHighlight = newHighlight;
+		}
+	}
+
+	drawMenuButtonBox(x[newHighlight], y, 32, 14, true, true);
+	_screen->updateScreen();
+	_vm->_system->delayMillis(80);
+	drawMenuButtonBox(x[newHighlight], y, 32, 14, false, true);
+	_screen->updateScreen();
+
+	_screen->copyRegion(0, _screen->_curDim->h, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->setFont(of);
+	_screen->setScreenDim(od);
+	
+	return newHighlight ? false : true;
 }
 
 void GUI_Eob::updateBoxFrameHighLight(int box) {
@@ -2686,7 +2757,7 @@ void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
 			for (int i = 0; i < _numPages; i++)
 				np[i] = _vm->_numSpellsMage[lv * _numPages + i];
 
-			avltyFlags = c->mageSpellsAvailabilityFlags;
+			avltyFlags = c->mageSpellsAvailableFlags;
 		}
 	}
 
@@ -2916,7 +2987,7 @@ void GUI_Eob::scribeScrollDialogue() {
 
 	for (int i = 0; i < 32; i++) {
 		for (int ii = 0; ii < 6; ii++) {
-			scrollInvSlot[i] = _vm->checkCharacterInventoryForItem(ii, 34, i + 1) + 1;
+			scrollInvSlot[i] = _vm->checkInventoryForItem(ii, 34, i + 1) + 1;
 			if (scrollInvSlot[i] > 0) {
 				numScrolls++;
 				scrollCharacter[i] = ii;
@@ -2936,7 +3007,7 @@ void GUI_Eob::scribeScrollDialogue() {
 				if (!scrollInvSlot[i])
 					continue;
 
-				if (c->mageSpellsAvailabilityFlags & (1 << i))
+				if (c->mageSpellsAvailableFlags & (1 << i))
 					scrollInvSlot[i] = 0;
 				else
 					menuItems[s++] = i + 1;
@@ -3005,7 +3076,7 @@ void GUI_Eob::scribeScrollDialogue() {
 					if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5])  {
 						int t = menuItems[newHighLight] - 1;
 						Item scItem = _vm->_characters[scrollCharacter[t]].inventory[scrollInvSlot[t] - 1];
-						c->mageSpellsAvailabilityFlags |= (1 << t);
+						c->mageSpellsAvailableFlags |= (1 << t);
 						_vm->_characters[scrollCharacter[t]].inventory[scrollInvSlot[t] - 1] = 0;
 						_vm->gui_drawCharPortraitWithStats(_vm->_characters[scrollCharacter[t]].id);
 						scrollInvSlot[t] = 0;
@@ -3028,6 +3099,284 @@ void GUI_Eob::scribeScrollDialogue() {
 	delete[] menuItems;
 	delete[] scrollCharacter;
 	delete[] scrollInvSlot;
+}
+
+bool GUI_Eob::restParty() {
+	static const int8 eob1healSpells[] = { 2, 15, 20, 24 };
+	static const int8 eob2healSpells[] = { 3, 16, 20, 28 };
+	const int8 *spells = _vm->game() == GI_EOB1 ? eob1healSpells : eob2healSpells;
+	
+	uint8 crs[6];
+	memset(crs, 0, 6);
+	int hours = 0;
+
+	if (_vm->_inf->preventRest()) {
+		assert(_vm->_menuStringsRest3[0]);
+		_vm->restParty_displayWarning(_vm->_menuStringsRest3[0]);
+		return true;
+	}
+
+	if (_vm->restParty_updateMonsters())
+		return true;
+
+	if (_vm->restParty_extraAbortCondition())
+		return true;
+
+	drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
+
+	int nonPoisoned = 0;
+	for (int i = 0; i < 6; i++) {
+		if (!_vm->testCharacter(i, 1))
+			continue;
+		nonPoisoned |= _vm->testCharacter(i, 0x10);
+	}
+
+	if (!nonPoisoned) {
+		if (!confirmDialogue(59))
+			return false;
+	}
+
+	int8 *list = 0;
+	bool useHealers = false;
+	bool res = false;
+	bool restLoop = true;
+	bool restContinue = false;
+	int injured = _vm->restParty_getCharacterWithLowestHp();
+
+	if (injured > 0) {
+		for (int i = 0; i < 6; i++) {
+			if (!_vm->testCharacter(i, 13))
+				continue;
+			if (_vm->getCharacterLevelIndex(2, _vm->_characters[i].cClass) == -1 && _vm->getCharacterLevelIndex(4, _vm->_characters[i].cClass) == -1)
+				continue;
+			if (_vm->checkInventoryForItem(i, 30, -1) == -1)
+				continue;
+			if (_vm->restParty_checkHealSpells(i))
+				useHealers = confirmDialogue(40);
+		} 
+	}
+
+	_screen->setClearScreenDim(7);
+	_screen->setFont(Screen::FID_6_FNT);
+
+	restParty_updateRestTime(hours, true);
+
+	for (int l = 0; !res && restLoop && !_vm->shouldQuit(); ) {
+		l++;
+
+		// Regenerate spells
+		for (int i = 0; i < 6; i++) {
+			crs[i]++;
+
+			if (!_vm->_characters[i].food)
+				continue;
+			if (!_vm->testCharacter(i, 5))
+				continue;
+
+			if (_vm->checkInventoryForItem(i, 30, -1) != -1) {
+				list = _vm->_characters[i].clericSpells;
+
+				for (int ii = 0; ii < 80; ii++) {
+					if ((ii / 10 + 48) >= crs[i])
+						break;
+					
+					if (*list >= 0) {
+						list++;
+						continue;
+					}
+
+					*list *= -1;
+					crs[i] = 48;					
+					_vm->_txt->printMessage(Common::String::format(_vm->_menuStringsRest2[0], _vm->_characters[i].name, _vm->_spells[_vm->_mageSpellListSize + *list].name).c_str());
+					_vm->delay(80);
+					break;
+				}
+			}
+
+			if (_vm->checkInventoryForItem(i, 29, -1) != -1) {
+				list = _vm->_characters[i].mageSpells;
+
+				for (int ii = 0; ii < 80; ii++) {
+					if ((ii / 6 + 48) >= crs[i])
+						break;
+					
+					if (*list >= 0) {
+						list++;
+						continue;
+					}
+
+					*list *= -1;
+					crs[i] = 48;					
+					_vm->_txt->printMessage(Common::String::format(_vm->_menuStringsRest2[1], _vm->_characters[i].name, _vm->_spells[*list].name).c_str());
+					_vm->delay(80);
+					break;
+				}
+			}
+		}
+
+		// Heal party members
+		if (useHealers) {
+			for (int i = 0; i < 6 && injured; i++) {
+				if (_vm->getCharacterLevelIndex(2, _vm->_characters[i].cClass) == -1 && _vm->getCharacterLevelIndex(4, _vm->_characters[i].cClass) == -1)
+					continue;
+				if (_vm->checkInventoryForItem(i, 30, -1) == -1)
+					continue;
+				
+				list = 0;
+				if (crs[i] >= 48) {
+					for (int ii = 0; !list && ii < 3; ii++)
+						list = (int8*)memchr(_vm->_characters[i].clericSpells, -spells[ii], 80);
+				}
+
+				if (list)
+					break;
+
+				list = _vm->_characters[i].clericSpells;
+				for (int ii = 0; ii < 80 && injured; ii++) {
+					int healHp = 0;
+					if (*list == spells[0])
+						healHp = _vm->rollDice(1, 8, 0);
+					else if (*list == spells[1])
+						healHp = _vm->rollDice(2, 8, 1);
+					else if (*list == spells[2])
+						healHp = _vm->rollDice(3, 8, 3);
+
+					if (!healHp) {
+						list++;
+						continue;
+					}
+
+					*list *= -1;
+					list++;
+
+					crs[i] = 0;
+					injured--;
+
+					_vm->_txt->printMessage(Common::String::format(_vm->_menuStringsRest2[2], _vm->_characters[i].name, _vm->_characters[injured].name).c_str());
+					_vm->delay(80);
+
+					_vm->_characters[injured].hitPointsCur += healHp;
+					if (_vm->_characters[injured].hitPointsCur > _vm->_characters[injured].hitPointsMax)
+						_vm->_characters[injured].hitPointsCur = _vm->_characters[injured].hitPointsMax;
+
+					_vm->gui_drawCharPortraitWithStats(injured++);
+				}
+			}
+		}
+
+		if (l == 6) {
+			l = 0;
+			restParty_updateRestTime(++hours, false);
+			_vm->_restPartyElapsedTime += (32760 * _vm->_tickLength);
+
+			// Update poisoning
+			for (int i = 0; i < 6; i++) {
+				if (!_vm->testCharacter(i, 1))
+					continue;
+				if (_vm->testCharacter(i, 16))
+					continue;
+				_vm->inflictCharacterDamage(i, 10);
+				_vm->delayWithTicks(5);
+			}
+
+			if (!(hours % 8)) {
+				bool starving = false;
+				for (int i = 0; i < 6; i++) {
+					// Add Lay On Hands spell
+					if (_vm->_characters[i].cClass == 2) {
+						list = (int8*)memchr(_vm->_characters[i].clericSpells, spells[3], 10);
+						if (list) {
+							*list = spells[3];
+						} else {
+							list = (int8*)memchr(_vm->_characters[i].clericSpells, -spells[3], 10);
+							if (list) {
+								*list = spells[3];
+							} else if (!memchr(_vm->_characters[i].clericSpells, spells[3], 10)) {
+								list = (int8*)memchr(_vm->_characters[i].clericSpells, 0, 10);
+								*list = spells[3];
+							}
+						}
+					}
+
+					if (!_vm->testCharacter(i, 3))
+						continue;
+
+					// Update hitpoints and food status
+					if (_vm->_characters[i].food) {
+						if (_vm->_characters[i].hitPointsCur < _vm->_characters[i].hitPointsMax) {
+							_vm->_characters[i].hitPointsCur++;
+							_screen->setFont(Screen::FID_6_FNT);
+							_vm->gui_drawCharPortraitWithStats(i);
+						}
+
+						if (!_vm->checkInventoryForRings(i, 2)) {
+							if (_vm->_characters[i].food <= 5) {
+								_vm->_characters[i].food = 0;
+								starving = true;
+							} else {
+								_vm->_characters[i].food -= 5;
+							}
+						}
+					} else {
+						if ((hours % 24) || (_vm->_characters[i].hitPointsCur <= -10))
+							continue;
+						_vm->inflictCharacterDamage(i, 1);
+						starving = true;
+						_screen->setFont(Screen::FID_6_FNT);
+						_vm->gui_drawCharPortraitWithStats(i);
+					}
+				}
+				
+				if (starving) {
+					if (!confirmDialogue(47)) {
+						restContinue = false;
+						restLoop = false;
+					}
+					restParty_updateRestTime(hours, true);
+				}
+				injured = restLoop ? _vm->restParty_getCharacterWithLowestHp() : 0;
+			}
+		}
+
+		if (!_vm->restParty_checkSpellsToLearn() && restLoop && !restContinue && injured) {
+			restContinue = confirmDialogue(41);
+			restParty_updateRestTime(hours, true);
+			if (!restContinue)
+				restLoop = false;
+		}
+
+		int in = _vm->checkInput(0, false, 0);
+		_vm->removeInputTop();
+		if (in)
+			restLoop = false;
+
+		if (restLoop) {
+			res = _vm->restParty_updateMonsters();
+			if (!res)
+				res = _vm->checkPartyStatus(false);
+		}
+
+		if (!_vm->restParty_checkSpellsToLearn()) {
+			if (!restContinue) {
+				if (!useHealers)
+					restLoop = false;
+			}
+			if (!injured)
+				restLoop = false;
+		}
+	}
+
+	_vm->removeInputTop();
+	_screen->setScreenDim(4);
+	_screen->setFont(Screen::FID_8_FNT);
+
+	if (!injured && !res)
+		displayTextBox(43);
+
+	if (res && hours > 4)
+		_vm->restParty_npc();
+
+	return res;
 }
 
 bool GUI_Eob::confirmDialogue(int id) {
@@ -3090,74 +3439,6 @@ bool GUI_Eob::confirmDialogue(int id) {
 	_screen->setScreenDim(od);
 
 	return result;
-}
-
-bool GUI_Eob::confirmDialogue2(int dim, int id, int deflt) {
-	int od = _screen->curDimIndex();
-	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
-	_screen->setScreenDim(dim);
-
-	drawTextBox(dim, id);
-
-	int16 x[2];
-	x[0] = (_screen->_curDim->sx << 3) + 8;
-	x[1] = (_screen->_curDim->sx + _screen->_curDim->w - 5) << 3;
-	int16 y = _screen->_curDim->sy + _screen->_curDim->h - 21;
-	int newHighlight = deflt ^ 1;
-	int lastHighlight = -1;
-	
-	for (int i = 0; i < 2; i++)
-		drawMenuButtonBox(x[i], y, 32, 14, false, false);
-
-	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
-		Common::Point p = _vm->getMousePos();
-		if (_vm->posWithinRect(p.x, p.y, x[0], y, x[0] + 32, y + 14))
-			newHighlight = 0;
-		else if (_vm->posWithinRect(p.x, p.y, x[1], y, x[1] + 32, y + 14))
-			newHighlight = 1;
-
-		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
-		_vm->removeInputTop();
-
-		if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
-			runLoop = false;
-		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP6]) {
-			newHighlight ^= 1;
-		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_n]) {
-			newHighlight = 1;
-			runLoop = false;
-		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_y]) {
-			newHighlight = 0;
-			runLoop = false;
-		}  else if (inputFlag == 199 || inputFlag == 201) {
-			if (_vm->posWithinRect(p.x, p.y, x[0], y, x[0] + 32, y + 14)) {
-				newHighlight = 0;
-				runLoop = false;
-			} else if (_vm->posWithinRect(p.x, p.y, x[1], y, x[1] + 32, y + 14)) {
-				newHighlight = 1;
-				runLoop = false;
-			}
-		}
-
-		if (newHighlight != lastHighlight) {
-			for (int i = 0; i < 2; i++)				
-				_screen->printShadedText(_vm->_menuYesNoStrings[i], x[i] + 16 - (strlen(_vm->_menuYesNoStrings[i]) << 2) + 1, y + 3, i == newHighlight ? 6 : 15, 0);
-			_screen->updateScreen();
-			lastHighlight = newHighlight;
-		}
-	}
-
-	drawMenuButtonBox(x[newHighlight], y, 32, 14, true, true);
-	_screen->updateScreen();
-	_vm->_system->delayMillis(80);
-	drawMenuButtonBox(x[newHighlight], y, 32, 14, false, true);
-	_screen->updateScreen();
-
-	_screen->copyRegion(0, _screen->_curDim->h, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->setFont(of);
-	_screen->setScreenDim(od);
-	
-	return newHighlight ? false : true;
 }
 
 void GUI_Eob::messageDialogue(int dim, int id, int buttonTextCol) {
@@ -3338,7 +3619,7 @@ int GUI_Eob::selectCharacterDialogue(int id) {
 				result = -1;
 			}
 		} else {
-			if (_vm->checkCharacterInventoryForItem(result, 29, -1) == -1) {
+			if (_vm->checkInventoryForItem(result, 29, -1) == -1) {
 				displayTextBox(25);
 				result = -1;
 			}
@@ -3633,6 +3914,31 @@ int GUI_Eob::getHighlightSlot() {
 		res = 6;
 
 	return res;
+}
+
+void GUI_Eob::restParty_updateRestTime(int hours, bool init) {
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+	int od = _screen->curDimIndex();
+	_screen->setScreenDim(10);
+
+	if (init) {
+		_screen->setCurPage(0);
+		_vm->_txt->clearCurDim();
+		drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
+		_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 0, 2, Screen::CR_NO_P_CHECK);
+		_screen->printShadedText(getMenuString(42), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 5, 9, 0);
+	}
+
+	_screen->setCurPage(2);
+	_screen->printShadedText(Common::String::format(_vm->_menuStringsRest2[3], hours).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 20, 15, _vm->_bkgColor_1);
+	_screen->setCurPage(0);
+	_screen->copyRegion(((_screen->_curDim->sx + 1) << 3) - 1, _screen->_curDim->sy + 20, ((_screen->_curDim->sx + 1) << 3) - 1, _screen->_curDim->sy + 20, 144, 8, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+	
+	_vm->delay(160);
+
+	_screen->setScreenDim(od);
+	_screen->setFont(of);
 }
 
 #endif // ENABLE_EOB

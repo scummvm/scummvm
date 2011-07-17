@@ -474,6 +474,8 @@ enum kExtractID {
 	kEob2Npc2Strings,
 	kEob2MonsterDustStrings,
 
+	kEob2DranFoolsStrings,
+
 	kLolIngamePakFiles,
 	kLolCharacterDefs,
 	kLolIngameSfxFiles,

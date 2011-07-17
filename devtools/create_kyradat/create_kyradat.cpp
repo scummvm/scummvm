@@ -492,7 +492,8 @@ const ExtractFilename extractFilenames[] = {
 	{ kEob2Npc1Strings, kTypeStringList, true },
 	{ kEob2Npc2Strings, kTypeStringList, true },
 	{ kEob2MonsterDustStrings, kTypeStringList, true },
-
+	{ kEob2DranFoolsStrings, kTypeStringList, true },
+	
 	// LANDS OF LORE
 
 	// Ingame
@@ -1767,6 +1768,8 @@ const char *getIdString(const int id) {
 		return "kEob2Npc2Strings";
 	case kEob2MonsterDustStrings:
 		return "kEob2MonsterDustStrings";
+	case kEob2DranFoolsStrings:
+		return "kEob2DranFoolsStrings";
 	case kLolIngamePakFiles:
 		return "kLolIngamePakFiles";
 	case kLolCharacterDefs:

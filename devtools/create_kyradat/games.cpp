@@ -1484,6 +1484,7 @@ const int eob2FloppyNeed[] = {
 	kEob2Npc1Strings,
 	kEob2Npc2Strings,
 	kEob2MonsterDustStrings,
+	kEob2DranFoolsStrings,
 
 	kLolEobCommonDscShapeIndex,
 	kLolEobCommonDscX,

@@ -62,6 +62,7 @@ public:
 	void runCampMenu();
 	bool runLoadMenu(int x, int y);
 
+	bool confirmDialogue2(int dim, int id, int deflt);
 	void updateBoxFrameHighLight(int box);
 
 	int getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor);
@@ -78,9 +79,9 @@ private:
 	int selectSaveSlotDialogue(int x, int y, int id);
 	void runMemorizePrayMenu(int charIndex, int spellType);
 	void scribeScrollDialogue();
+	bool restParty();
 
 	bool confirmDialogue(int id);
-	bool confirmDialogue2(int dim, int id, int deflt);
 	void messageDialogue(int dim, int id, int buttonTextCol);
 	int selectCharacterDialogue(int id);
 	void displayTextBox(int id);
@@ -99,6 +100,8 @@ private:
 
 	void setupSaveMenuSlots();
 	int getHighlightSlot();
+
+	void restParty_updateRestTime(int hours, bool init);
 
 	Button _scrollUpButton;//////////////////77
 	Button _scrollDownButton;

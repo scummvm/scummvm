@@ -1270,10 +1270,10 @@ void CharacterGenerator::finish() {
 
 	for (int i = 0; i < 4; i++) {
 		if (_vm->_classModifierFlags[_characters[i].cClass] & 2)
-			_characters[i].mageSpellsAvailabilityFlags = (_vm->game() == GI_EOB2) ? 0x81CB6 : 0x26C;
+			_characters[i].mageSpellsAvailableFlags = (_vm->game() == GI_EOB2) ? 0x81CB6 : 0x26C;
 
 		if (_vm->_classModifierFlags[_characters[i].cClass] & 0x14 && _vm->game() == GI_EOB2) {
-			// Cleric: Turn Undead
+			// Cleric/Paladin: Add Turn Undead spell
 			_characters[i].clericSpells[0] = 29;
 		}
 	}

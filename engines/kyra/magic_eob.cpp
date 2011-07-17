@@ -235,7 +235,7 @@ void EobCoreEngine::removeCharacterEffect(int spell, int charIndex, int showWarn
 	if (showWarning) {
 		if (s->flags & 0x20A0)
 			gui_drawCharPortraitWithStats(charIndex);
-		else if (s->flags & 0x20A0)
+		else if (s->flags & 0x40)
 			gui_drawAllCharPortraitsWithStats();
 	}
 }
@@ -416,8 +416,40 @@ void EobCoreEngine::setSpellEventTimer(int spell, int timerBaseFactor, int timer
 	setCharEventTimer(_activeSpellCaster, countdown, -spell, updateExistingTimer);
 }
 
-void EobCoreEngine::cleanupCharacterSpellList(int charIndex) {
+void EobCoreEngine::sortCharacterSpellList(int charIndex) {
+	int8 *list = _characters[charIndex].mageSpells;
 
+	for (int i = 0; i < 16; ) {
+		bool p = false;
+		for (int ii = 0; ii < 9; ii++) {
+			int8 *pos = &list[ii];
+
+			int s1 = pos[0];
+			int s2 = pos[1];
+
+			if (s1 == 0)
+				s1 = 80;
+			else if (s1 < 0)
+				s1 = s1 * -1 + 40;
+
+			if (s2 == 0)
+				s2 = 80;
+			else if (s2 < 0)
+				s2 = s2 * -1 + 40;
+
+			if (s1 > s2) {
+				SWAP(pos[0], pos[1]);
+				p = true;
+			}
+		}
+
+		if (p)
+			continue;
+
+		list += 10;
+		if (++i == 8)
+			list = _characters[charIndex].clericSpells;
+	}
 }
 
 bool EobCoreEngine::magicObjectHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level) {
@@ -685,7 +717,7 @@ void EobCoreEngine::spellCallback_start_createFood() {
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 3))
 			continue;
-		_characters[_activeSpellCaster].food = 100;
+		_characters[i].food = 100;
 	}
 }
 
