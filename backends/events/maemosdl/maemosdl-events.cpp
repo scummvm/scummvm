@@ -42,6 +42,14 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F6) {
 				// handled in keyup
+			} else if (ev.key.keysym.sym == SDLK_F7) {
+				event.type = Common::EVENT_RBUTTONDOWN;
+				fillMouseEvent(event, _km.x, _km.y);
+				return true;
+			} else if (ev.key.keysym.sym == SDLK_F8) {
+				event.type = Common::EVENT_MBUTTONDOWN;
+				fillMouseEvent(event, _km.x, _km.y);
+				return true;
 			}
 			break;
 		}
@@ -54,6 +62,14 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				g_system->beginGFXTransaction();
 				((OSystem_SDL *)g_system)->getGraphicsManager()->setFeatureState(OSystem::kFeatureFullscreenMode, !currentState);
 				g_system->endGFXTransaction();
+				return true;
+			} else if (ev.key.keysym.sym == SDLK_F7) {
+				event.type = Common::EVENT_RBUTTONUP;
+				fillMouseEvent(event, _km.x, _km.y);
+				return true;
+			} else if (ev.key.keysym.sym == SDLK_F8) {
+				event.type = Common::EVENT_MBUTTONUP;
+				fillMouseEvent(event, _km.x, _km.y);
 				return true;
 			}
 			break;
