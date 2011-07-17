@@ -45,6 +45,7 @@
 #include "audio/mixer_intern.h"
 #include "audio/fmopl.h"
 
+#include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 
 #include "gui/Actions.h"
@@ -381,14 +382,6 @@ void OSystem_WINCE3::initBackend() {
 
 	((WINCESdlEventSource *)_eventSource)->init((WINCESdlGraphicsManager *)_graphicsManager);
 
-	// Create the timer (but remove the timer manager from the SDL backend first).
-	// CE SDL does not support multiple timers (SDL_AddTimer).
-	// We work around this by using the SetTimer function, since we only use
-	// one timer in scummvm (for the time being)
-	delete _timerManager;
-	_timerManager = new DefaultTimerManager();
-	SDL_SetTimer(10, &timer_handler_wrapper);
-
 	// Call parent implementation of this method
 	OSystem_SDL::initBackend();
 
@@ -551,6 +544,24 @@ void OSystem_WINCE3::initSDL() {
 
 		_initedSDL = true;
 	}
+}
+
+void OSystem_WINCE3::init() {
+	// Create SdlMutexManager instance as the TimerManager relies on the
+	// MutexManager being already initialized
+	if (_mutexManager == 0)
+		_mutexManager = new SdlMutexManager();
+
+	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
+	// We work around this by using the SetTimer function, since we only use
+	// one timer in scummvm (for the time being)
+	if (_timerManager == 0) {
+		_timerManager = new DefaultTimerManager();
+		SDL_SetTimer(10, &timer_handler_wrapper);
+	}
+
+	// Call parent implementation of this method
+	OSystem_SDL::init();
 }
 
 void OSystem_WINCE3::quit() {

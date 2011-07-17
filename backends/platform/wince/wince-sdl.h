@@ -55,6 +55,7 @@ public:
 	void initBackend();
 
 	// Overloaded from SDL backend
+	void init();
 	void quit();
 	virtual Common::String getSystemLanguage() const;
 
