@@ -60,11 +60,13 @@ class Archive;
 class ComposerEngine;
 
 struct Sprite {
-	uint16 id;
-	uint16 animId;
-	uint16 zorder;
-	Common::Point pos;
-	Graphics::Surface surface;
+	uint16 _id;
+	uint16 _animId;
+	uint16 _zorder;
+	Common::Point _pos;
+	Graphics::Surface _surface;
+
+	bool contains(const Common::Point &pos) const;
 };
 
 struct AnimationEntry {
@@ -122,9 +124,29 @@ protected:
 	uint32 _offset;
 };
 
+enum {
+	kButtonRect = 0,
+	kButtonEllipse = 1,
+	kButtonSprites = 4
+};
+
 class Button {
 public:
-	Button(ComposerEngine *vm, uint16 id);
+	Button() { }
+	Button(Common::SeekableReadStream *stream, uint16 id);
+
+	bool contains(const Common::Point &pos) const;
+
+	uint16 _id;
+	uint16 _type;
+	uint16 _zorder;
+	uint16 _scriptId;
+	uint16 _scriptIdRollOn;
+	uint16 _scriptIdRollOff;
+	bool _active;
+
+	Common::Rect _rect;
+	Common::Array<uint16> _spriteIds;
 };
 
 struct Library {
@@ -170,7 +192,9 @@ private:
 	Audio::SoundHandle _soundHandle;
 	Audio::QueuingAudioStream *_audioStream;
 
+	bool _needsUpdate;
 	Graphics::Surface _surface;
+	Common::List<Button> _buttons;
 	Common::List<Sprite> _sprites;
 
 	uint _directoriesToStrip;
@@ -184,6 +208,19 @@ private:
 	Common::Array<QueuedScript> _queuedScripts;
 	Common::List<Animation *> _anims;
 	Common::List<Pipe *> _pipes;
+
+	void onMouseDown(const Common::Point &pos);
+	void onMouseMove(const Common::Point &pos);
+	void onKeyDown(uint16 keyCode);
+	void setCursor(uint16 id, const Common::Point &offset);
+	void setCursorVisible(bool visible);
+
+	bool _mouseEnabled;
+	bool _mouseVisible;
+	Common::Point _lastMousePos;
+	const Button *_lastButton;
+	uint16 _mouseSpriteId;
+	Common::Point _mouseOffset;
 
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
 	Common::String getFilename(const Common::String &section, uint id);
@@ -206,9 +243,13 @@ private:
 	void playWaveForAnim(uint16 id, bool bufferingOnly);
 	void processAnimFrame();
 
+	bool spriteVisible(uint16 id, uint16 animId);
 	void addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos);
 	void removeSprite(uint16 id, uint16 animId);
+	const Sprite *getSpriteAtPos(const Common::Point &pos);
+	const Button *getButtonFor(const Sprite *sprite, const Common::Point &pos);
 
+	void redraw();
 	void loadCTBL(uint id, uint fadePercent);
 	void decompressBitmap(uint16 type, Common::SeekableReadStream *stream, byte *buffer, uint32 size, uint width, uint height);
 	bool initSprite(Sprite &sprite);

@@ -133,6 +133,17 @@ enum {
 	kFuncGetSpriteSize = 35029
 };
 
+bool Sprite::contains(const Common::Point &pos) const {
+	Common::Point adjustedPos = pos - _pos;
+
+	if (adjustedPos.x < 0 || adjustedPos.x >= _surface.w)
+		return false;
+	if (adjustedPos.y < 0 || adjustedPos.y >= _surface.h)
+		return false;
+	byte *pixels = (byte *)_surface.pixels;
+	return (pixels[(_surface.h - adjustedPos.y - 1) * _surface.w + adjustedPos.x] == 0);
+}
+
 // TODO: params: x, y, event param for done
 Animation::Animation(Common::SeekableReadStream *stream, uint16 id, Common::Point basePos, uint32 eventParam)
 	: _stream(stream), _id(id), _basePos(basePos), _eventParam(eventParam) {
@@ -250,6 +261,68 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 	if (buffering)
 		_types[tag].erase(id);
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
+}
+
+Button::Button(Common::SeekableReadStream *stream, uint16 id) {
+	_id = id;
+
+	_type = stream->readUint16LE();
+	_active = (_type & 0x8000) ? true : false;
+	_type &= 0xfff;
+	debug(9, "button: type %d, active %d", _type, _active);
+
+	_zorder = stream->readUint16LE();
+	_scriptId = stream->readUint16LE();
+	_scriptIdRollOn = stream->readUint16LE();
+	_scriptIdRollOff = stream->readUint16LE();
+
+	stream->skip(4);
+
+	uint16 size = stream->readUint16LE();
+
+	switch (_type) {
+	case kButtonRect:
+	case kButtonEllipse:
+		if (size != 4)
+			error("button %d of type %d had %d points, not 4", id, _type, size);
+		_rect.left = stream->readSint16LE();
+		_rect.top = stream->readSint16LE();
+		_rect.right = stream->readSint16LE();
+		_rect.bottom = stream->readSint16LE();
+		debug(9, "button: (%d, %d, %d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
+		break;
+	case kButtonSprites:
+		for (uint i = 0; i < size; i++) {
+			_spriteIds.push_back(stream->readSint16LE());
+		}
+		break;
+	default:
+		error("unknown button type %d", _type);
+	}
+
+	delete stream;
+}
+
+bool Button::contains(const Common::Point &pos) const {
+	switch (_type) {
+	case kButtonRect:
+		return _rect.contains(pos);
+	case kButtonEllipse:
+		if (!_rect.contains(pos))
+			return false;
+		{
+		int16 a = _rect.height() / 2;
+		int16 b = _rect.width() / 2;
+		if (!a || !b)
+			return false;
+		Common::Point adjustedPos = pos - Common::Point(_rect.left + a, _rect.top + b);
+		return ((adjustedPos.x*adjustedPos.x)/a*2 + (adjustedPos.y*adjustedPos.y)/b*2 < 1);
+		}
+	case kButtonSprites:
+		return false;
+	default:
+		error("internal error (button type %d)", _type);
+	}
 }
 
 void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventParam) {
@@ -493,22 +566,58 @@ void ComposerEngine::processAnimFrame() {
 	}
 }
 
-void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos) {
-	// TODO: re-use old sprite
-	removeSprite(id, animId);
+bool ComposerEngine::spriteVisible(uint16 id, uint16 animId) {
+	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+		if (i->_id != id)
+			continue;
+		if (i->_animId && animId && (i->_animId != animId))
+			continue;
+		return true;
+	}
 
+	return false;
+}
+
+void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos) {
 	Sprite sprite;
-	sprite.id = id;
-	sprite.animId = animId;
-	sprite.zorder = zorder;
-	sprite.pos = pos;
-	if (!initSprite(sprite)) {
-		warning("ignoring addSprite on invalid sprite %d", id);
-		return;
+	bool foundSprite = false;
+
+	// re-use old sprite, if any (the BMAP for this id might well have
+	// changed in the meantime, but the scripts depend on that!)
+	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+		if (i->_id != id)
+			continue;
+		if (i->_animId && animId && (i->_animId != animId))
+			continue;
+
+		// if the zordering is identical, modify it in-place
+		if (i->_zorder == zorder) {
+			i->_animId = animId;
+			i->_pos = pos;
+			return;
+		}
+
+		// otherwise, take a copy and remove it from the list
+		sprite = *i;
+		foundSprite = true;
+		_sprites.erase(i);
+		break;
+	}
+
+	sprite._animId = animId;
+	sprite._zorder = zorder;
+	sprite._pos = pos;
+
+	if (!foundSprite) {
+		sprite._id = id;
+		if (!initSprite(sprite)) {
+			warning("ignoring addSprite on invalid sprite %d", id);
+			return;
+		}
 	}
 
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
-		if (sprite.zorder <= i->zorder)
+		if (sprite._zorder <= i->_zorder)
 			continue;
 		// insert *before* this sprite
 		_sprites.insert(i, sprite);
@@ -519,13 +628,47 @@ void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Co
 
 void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
-		if (i->id != id)
+		if (id && i->_id != id)
 			continue;
-		if (i->animId && animId && (i->animId != animId))
+		if (i->_animId && animId && (i->_animId != animId))
 			continue;
-		i->surface.free();
+		i->_surface.free();
 		i = _sprites.reverse_erase(i);
+		if (id)
+			break;
 	}
+}
+
+const Sprite *ComposerEngine::getSpriteAtPos(const Common::Point &pos) {
+	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+		if (i->contains(pos))
+			return &(*i);
+	}
+
+	return NULL;
+}
+
+const Button *ComposerEngine::getButtonFor(const Sprite *sprite, const Common::Point &pos) {
+	for (Common::List<Button>::iterator i = _buttons.begin(); i != _buttons.end(); i++) {
+		if (!i->_active)
+			continue;
+
+		if (i->_spriteIds.empty()) {
+			if (i->contains(pos))
+				return &(*i);
+			continue;
+		}
+
+		if (!sprite)
+			continue;
+
+		for (uint j = 0; j < i->_spriteIds.size(); j++) {
+			if (i->_spriteIds[j] == sprite->_id)
+				return &(*i);
+		}
+	}
+
+	return NULL;
 }
 
 ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
@@ -555,6 +698,11 @@ Common::Error ComposerEngine::run() {
 		_queuedScripts[i]._scriptId = 0;
 	}
 
+	_mouseVisible = true;
+	_mouseEnabled = false;
+	_mouseSpriteId = 0;
+	_lastButton = NULL;
+
 	_directoriesToStrip = 1;
 	if (!_bookIni.loadFromFile("book.ini")) {
 		_directoriesToStrip = 0;
@@ -570,6 +718,7 @@ Common::Error ComposerEngine::run() {
 		height = atoi(getStringFromConfig("Common", "Height").c_str());
 	initGraphics(width, height, true);
 	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	_needsUpdate = true;
 
 	loadLibrary(0);
 
@@ -607,19 +756,17 @@ Common::Error ComposerEngine::run() {
 			else
 				lastDrawTime += frameTime;
 
-			for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
-				drawSprite(*i);
-			}
-
-			_system->copyRectToScreen((byte *)_surface.pixels, _surface.pitch, 0, 0, _surface.w, _surface.h);
-			_system->updateScreen();
+			redraw();
 
 			processAnimFrame();
+		} else if (_needsUpdate) {
+			redraw();
 		}
 
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
+				onMouseDown(event.mouse);
 				break;
 
 			case Common::EVENT_LBUTTONUP:
@@ -629,6 +776,7 @@ Common::Error ComposerEngine::run() {
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
+				onMouseMove(event.mouse);
 				break;
 
 			case Common::EVENT_KEYDOWN:
@@ -650,7 +798,7 @@ Common::Error ComposerEngine::run() {
 					break;
 				}
 
-				runEvent(5, event.kbd.keycode, 0, 0);
+				onKeyDown(event.kbd.keycode);
 				break;
 
 			case Common::EVENT_QUIT:
@@ -667,6 +815,79 @@ Common::Error ComposerEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void ComposerEngine::onMouseDown(const Common::Point &pos) {
+	if (!_mouseEnabled || !_mouseVisible)
+		return;
+
+	const Sprite *sprite = getSpriteAtPos(pos);
+	const Button *button = getButtonFor(sprite, pos);
+	if (!button)
+		return;
+
+	// TODO: other buttons?
+	uint16 buttonsDown = 1; // MK_LBUTTON
+
+	uint16 spriteId = sprite ? sprite->_id : 0;
+	runScript(button->_scriptId, button->_id, buttonsDown, spriteId);
+}
+
+void ComposerEngine::onMouseMove(const Common::Point &pos) {
+	_lastMousePos = pos;
+
+	if (!_mouseEnabled || !_mouseVisible)
+		return;
+
+	// TODO: do we need to keep track of this?
+	uint buttonsDown = 0;
+
+	const Sprite *sprite = getSpriteAtPos(pos);
+	const Button *button = getButtonFor(sprite, pos);
+	if (_lastButton != button) {
+		if (_lastButton)
+			runScript(_lastButton->_scriptIdRollOff, _lastButton->_id, buttonsDown, 0);
+		_lastButton = button;
+		if (_lastButton)
+			runScript(_lastButton->_scriptIdRollOn, _lastButton->_id, buttonsDown, 0);
+	}
+
+	if (_mouseSpriteId) {
+		addSprite(_mouseSpriteId, 0, 0, _lastMousePos - _mouseOffset);
+		_needsUpdate = true;
+	}
+}
+
+void ComposerEngine::onKeyDown(uint16 keyCode) {
+	runEvent(5, keyCode, 0, 0);
+}
+
+void ComposerEngine::setCursor(uint16 id, const Common::Point &offset) {
+	_mouseOffset = offset;
+	if (_mouseSpriteId == id)
+		return;
+
+	if (_mouseSpriteId && _mouseVisible) {
+		removeSprite(_mouseSpriteId, 0);
+	}
+	_mouseSpriteId = id;
+	if (_mouseSpriteId && _mouseVisible) {
+		addSprite(_mouseSpriteId, 0, 0, _lastMousePos - _mouseOffset);
+	}
+}
+
+void ComposerEngine::setCursorVisible(bool visible) {
+	if (!_mouseSpriteId)
+		return;
+
+	if (visible && !_mouseVisible) {
+		_mouseVisible = true;
+		addSprite(_mouseSpriteId, 0, 0, _lastMousePos - _mouseOffset);
+		onMouseMove(_lastMousePos);
+	} else if (!visible && _mouseVisible) {
+		_mouseVisible = false;
+		removeSprite(_mouseSpriteId, 0);
+	}
 }
 
 Common::String ComposerEngine::getStringFromConfig(const Common::String &section, const Common::String &key) {
@@ -722,6 +943,14 @@ void ComposerEngine::loadLibrary(uint id) {
 	Common::hexdump(buf, stream->size());
 	delete stream;*/
 
+	Common::Array<uint16> buttonResources = library._archive->getResourceIDList(ID_BUTN);
+	for (uint i = 0; i < buttonResources.size(); i++) {
+		uint16 buttonId = buttonResources[i];
+		Common::SeekableReadStream *stream = library._archive->getResource(ID_BUTN, buttonId);
+		Button button(stream, buttonId);
+		_buttons.push_back(button);
+	}
+
 	// add background sprite, if it exists
 	if (hasResource(ID_BMAP, 1000))
 		addSprite(1000, 0, 0xffff, Common::Point());
@@ -731,6 +960,9 @@ void ComposerEngine::loadLibrary(uint id) {
 
 	// Run the startup script.
 	runScript(1000, 0, 0, 0);
+
+	_mouseEnabled = true;
+	onMouseMove(_lastMousePos);
 
 	runEvent(3, id, 0, 0);
 }
@@ -750,9 +982,12 @@ void ComposerEngine::unloadLibrary(uint id) {
 		_pipes.clear();
 
 		for (Common::List<Sprite>::iterator j = _sprites.begin(); j != _sprites.end(); j++) {
-			j->surface.free();
+			j->_surface.free();
 		}
 		_sprites.clear();
+		_buttons.clear();
+
+		_lastButton = NULL;
 
 		_mixer->stopAll();
 		_audioStream = NULL;
@@ -1218,28 +1453,40 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		_queuedScripts[param1]._scriptId = 0;
 		return 0;
 	case kFuncSetCursor:
-		warning("ignoring kSetCursor(%d, %d, %d)", param1, param2, param3);
-		// TODO: return old cursor
-		return 0;
+		debug(3, "kSetCursor(%d, (%d, %d))", param1, param2, param3);
+		{
+		uint16 oldCursor = _mouseSpriteId;
+		setCursor(param1, Common::Point(param2, param3));
+		return oldCursor;
+		}
 	case kFuncGetCursor:
-		warning("ignoring kFuncGetCursor()");
-		// TODO: return cursor
-		return 0;
+		debug(3, "kFuncGetCursor()");
+		return _mouseSpriteId;
 	case kFuncShowCursor:
-		// TODO
-		warning("ignoring kFuncShowCursor(%d)", param1);
+		debug(3, "kFuncShowCursor()");
+		setCursorVisible(true);
 		return 0;
 	case kFuncHideCursor:
-		// TODO
-		warning("ignoring kFuncHideCursor(%d)", param1);
+		debug(3, "kFuncHideCursor()");
+		setCursorVisible(false);
 		return 0;
 	case kFuncActivateButton:
-		// TODO
-		warning("ignoring kFuncActivateButton(%d)", param1);
+		debug(3, "kFuncActivateButton(%d)", param1);
+		for (Common::List<Button>::iterator i = _buttons.begin(); i != _buttons.end(); i++) {
+			if (i->_id != param1)
+				continue;
+			i->_active = true;
+		}
+		onMouseMove(_lastMousePos);
 		return 1;
 	case kFuncDeactivateButton:
-		// TODO
-		warning("ignoring kFuncDeactivateButton(%d)", param1);
+		debug(3, "kFuncDeactivateButton(%d)", param1);
+		for (Common::List<Button>::iterator i = _buttons.begin(); i != _buttons.end(); i++) {
+			if (i->_id != param1)
+				continue;
+			i->_active = false;
+		}
+		onMouseMove(_lastMousePos);
 		return 1;
 	case kFuncNewPage:
 		debug(3, "kFuncNewPage(%d, %d)", param1, param2);
@@ -1319,6 +1566,16 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	default:
 		error("unknown scriptFuncCall %d(%d, %d, %d)", (uint32)id, param1, param2, param3);
 	}
+}
+
+void ComposerEngine::redraw() {
+	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+		drawSprite(*i);
+	}
+
+	_system->copyRectToScreen((byte *)_surface.pixels, _surface.pitch, 0, 0, _surface.w, _surface.h);
+	_system->updateScreen();
+	_needsUpdate = false;
 }
 
 void ComposerEngine::loadCTBL(uint id, uint fadePercent) {
@@ -1497,14 +1754,14 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 
 bool ComposerEngine::initSprite(Sprite &sprite) {
 	Common::SeekableReadStream *stream = NULL;
-	if (hasResource(ID_BMAP, sprite.id))
-		stream = getResource(ID_BMAP, sprite.id);
+	if (hasResource(ID_BMAP, sprite._id))
+		stream = getResource(ID_BMAP, sprite._id);
 	else
 		for (Common::List<Pipe *>::iterator k = _pipes.begin(); k != _pipes.end(); k++) {
 			Pipe *pipe = *k;
-			if (!pipe->hasResource(ID_BMAP, sprite.id))
+			if (!pipe->hasResource(ID_BMAP, sprite._id))
 				continue;
-			stream = pipe->getResource(ID_BMAP, sprite.id, false);
+			stream = pipe->getResource(ID_BMAP, sprite._id, false);
 			break;
 		}
 
@@ -1512,14 +1769,16 @@ bool ComposerEngine::initSprite(Sprite &sprite) {
 		return false;
 
 	uint16 type = stream->readUint16LE();
-	uint16 height = stream->readUint16LE();
-	uint16 width = stream->readUint16LE();
+	int16 height = stream->readSint16LE();
+	int16 width = stream->readSint16LE();
 	uint32 size = stream->readUint32LE();
 	debug(1, "loading BMAP: type %d, width %d, height %d, size %d", type, width, height, size);
 
-	if (width && height) {
-		sprite.surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-		decompressBitmap(type, stream, (byte *)sprite.surface.pixels, size, width, height);
+	if (width > 0 && height > 0) {
+		sprite._surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+		decompressBitmap(type, stream, (byte *)sprite._surface.pixels, size, width, height);
+	} else {
+		warning("ignoring sprite with size %dx%d", width, height);
 	}
 	delete stream;
 
@@ -1527,15 +1786,15 @@ bool ComposerEngine::initSprite(Sprite &sprite) {
 }
 
 void ComposerEngine::drawSprite(const Sprite &sprite) {
-	int x = sprite.pos.x;
-	int y = sprite.pos.y;
+	int x = sprite._pos.x;
+	int y = sprite._pos.y;
 
 	// incoming data is BMP-style (bottom-up), so flip it
 	byte *pixels = (byte *)_surface.pixels;
-	for (uint j = 0; j < sprite.surface.h; j++) {
-		byte *in = (byte *)sprite.surface.pixels + (sprite.surface.h - j - 1) * sprite.surface.w;
+	for (int j = 0; j < sprite._surface.h; j++) {
+		byte *in = (byte *)sprite._surface.pixels + (sprite._surface.h - j - 1) * sprite._surface.w;
 		byte *out = pixels + ((j + y) * _surface.w) + x;
-		for (uint i = 0; i < sprite.surface.w; i++)
+		for (uint i = 0; i < sprite._surface.w; i++)
 			if (in[i])
 				out[i] = in[i];
 	}
