@@ -1148,6 +1148,16 @@ int ScummEngine::readSoundResource(ResId idx) {
 			if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR || _musicType == MDT_CMS) && pri != 11)
 				pri = -1;
 
+			// We only allow ADL resources when AdLib or FM-Towns is used as
+			// primary audio output. This fixes some odd sounds when Indy and
+			// Sophia leave Atlantis with the submarine in Indy4. (Easy to
+			// check with bootparam 4061 in the CD version). It seems the game
+			// only contains a ROL resource for sound id 60. Formerly we tried
+			// to play that via the AdLib or FM-Towns audio driver resulting
+			// in strange noises. Now we behave like the original did.
+			if ((_musicType == MDT_ADLIB || _musicType == MDT_TOWNS) && pri != 10)
+				pri = -1;
+
 			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(tag), size, pri);
 
 
