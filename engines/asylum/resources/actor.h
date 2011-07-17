@@ -69,12 +69,12 @@ public:
 	void setResourceId(ResourceId id) { _resourceId = id; }
 	void setSoundResourceId(ResourceId id) { _soundResourceId = id; }
 	void setStatus(ActorStatus status) { _status = status; }
+	void setTransparency(int32 val) { _transparency = val; }
 
 	void setField638(int32 val) { _field_638 = val; }
 	void setField934(int32 val) { _field_934 = val; }
 	void setField938(int32 val) { _field_938 = val; }
 	void setField944(int32 val) { _field_944 = val; }
-	void setField96C(int32 val) { _field_96C = val; }
 
 	int32          getActionIndex3() { return _actionIdx3; }
 	Common::Rect  *getBoundingRect() { return &_boundingRect; }
@@ -86,6 +86,7 @@ public:
 	Common::Point *getPoint() { return &_point; }
 	Common::Point *getPoint1() { return &_point1; }
 	Common::Point *getPoint2() { return &_point2; }
+	int32          getPriority() { return _priority; }
 	int32          getReactionValue(uint32 index) { return _reaction[index]; }
 	ResourceId     getResourceId() { return _resourceId; }
 	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
@@ -98,10 +99,8 @@ public:
 	int32          getField944() { return _field_944; }
 	int32          getField948() { return _field_948; }
 	int32          getField94C() { return _field_94C; }
-	int32          getField96C() { return _field_96C; }
 	int32          getField974() { return _field_974; }
 	int32          getField980() { return _field_980; }
-	int32          getPriority() { return _priority; }
 
 	/////////////////////////////////////////////////////////////////////////
 	// Data
@@ -368,7 +367,7 @@ private:
 	int32  _numberStringY;
 	char   _numberString01[8];
 	int32  _field_968;
-	int32  _field_96C;
+	int32  _transparency;
 	int32  _field_970;
 	int32  _field_974;
 	int32  _field_978;

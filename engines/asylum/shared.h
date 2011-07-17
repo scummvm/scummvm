@@ -356,7 +356,7 @@ enum OpcodeType {
 	kOpcodeSetObjectFrameIndexAndFlags,
 	kOpcodeSetObjectFlags,
 	kOpcodeSetActorActionIndex2,                // 90
-	kOpcodeUpdateObjectFields,
+	kOpcodeUpdateTransparency,
 	kOpcodeQueueScript,
 	kOpcodeProcessActor,
 	kOpcodeClearActorFields,

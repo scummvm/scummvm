@@ -163,10 +163,10 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
-	enum ObjectEnableType {
+	enum ObjectTransparency {
 		kObjectEnableType0,
 		kObjectEnableType1,
-		kObjectEnableType2
+		kObjectTransparencyOpaque
 	};
 
 	//////////////////////////////////////////////////////////////////////////
@@ -292,7 +292,7 @@ private:
 	void updateQueue(uint32 entryIndex);
 
 	// Opcode helper functions
-	void enableObject(ScriptEntry *cmd, ObjectEnableType type);
+	void enableObject(ScriptEntry *cmd, ObjectTransparency type);
 	void setActionFlag(ScriptEntry *cmd, ActionType flag); //|
 	void clearActionFlag(ScriptEntry *cmd, ActionType flag); //&
 	void jumpIfActionFlag(ScriptEntry *cmd, ActionType flag);
@@ -390,7 +390,7 @@ private:
 	DECLARE_OPCODE(SetObjectFrameIndexAndFlags);
 	DECLARE_OPCODE(SetObjectFlags);
 	DECLARE_OPCODE(SetActorActionIndex2);
-	DECLARE_OPCODE(UpdateObjectFields);
+	DECLARE_OPCODE(UpdateTransparency);
 	DECLARE_OPCODE(QueueScript);
 	DECLARE_OPCODE(ProcessActor);
 	DECLARE_OPCODE(ClearActorFields);

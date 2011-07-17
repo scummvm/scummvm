@@ -171,7 +171,7 @@ ScriptManager::ScriptManager(AsylumEngine *engine) : _vm(engine) {
 	ADD_OPCODE(SetObjectFrameIndexAndFlags);
 	ADD_OPCODE(SetObjectFlags);
 	ADD_OPCODE(SetActorActionIndex2);
-	ADD_OPCODE(UpdateObjectFields);
+	ADD_OPCODE(UpdateTransparency);
 	ADD_OPCODE(QueueScript);
 	ADD_OPCODE(ProcessActor);
 	ADD_OPCODE(ClearActorFields);
@@ -607,15 +607,15 @@ IMPLEMENT_OPCODE(EnableObjects)
 
 	if (_currentScript->counter >= (3 * cmd->param2 - 1)) {
 		_currentScript->counter = 0;
-		object->setField67C(0);
-		enableObject(cmd, kObjectEnableType2);
+		object->setTransparency(0);
+		enableObject(cmd, kObjectTransparencyOpaque);
 	} else {
 		++_currentScript->counter;
 		if (cmd->param3) {
-			object->setField67C(3 - _currentScript->counter / cmd->param2);
+			object->setTransparency(3 - _currentScript->counter / cmd->param2);
 			enableObject(cmd, kObjectEnableType1);
 		} else {
-			object->setField67C(_currentScript->counter / cmd->param2 + 1);
+			object->setTransparency(_currentScript->counter / cmd->param2 + 1);
 			enableObject(cmd, kObjectEnableType0);
 		}
 
@@ -1738,17 +1738,17 @@ END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x5B
-IMPLEMENT_OPCODE(UpdateObjectFields)
+IMPLEMENT_OPCODE(UpdateTransparency)
 	if (cmd->param2 >= 0 && cmd->param2 <= 3) {
 		if (cmd->param1) {
 			Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 
-			object->setField67C(cmd->param2);
-
-			if (object->getField67C())
-				object->setField67C(object->getField67C() + 3);
+			if (!cmd->param2)
+				object->setTransparency(0);
+			else
+				object->setTransparency(cmd->param2 + 3);
 		} else {
-			getScene()->getActor(cmd->param3)->setField96C(cmd->param2);
+			getScene()->getActor(cmd->param3)->setTransparency(cmd->param2);
 		}
 	}
 END_OPCODE
@@ -1843,24 +1843,24 @@ END_OPCODE
 // Opcode Helper functions
 //////////////////////////////////////////////////////////////////////////
 
-void ScriptManager::enableObject(ScriptEntry *cmd, ObjectEnableType type) {
-	int32 field67C = 0;
+void ScriptManager::enableObject(ScriptEntry *cmd, ObjectTransparency type) {
+	int32 transparency = 0;
 
-	// Setup field67C
+	// Setup transparency
 	switch (type) {
 	default:
 		break;
 
 	case kObjectEnableType0:
-		field67C = 4 + _currentScript->counter / cmd->param2;
+		transparency = 4 + _currentScript->counter / cmd->param2;
 		break;
 
 	case kObjectEnableType1:
-		field67C = 6 - _currentScript->counter / cmd->param2;
+		transparency = 6 - _currentScript->counter / cmd->param2;
 		break;
 
-	case kObjectEnableType2:
-		field67C = 0;
+	case kObjectTransparencyOpaque:
+		transparency = 0;
 		break;
 	}
 
@@ -1868,7 +1868,7 @@ void ScriptManager::enableObject(ScriptEntry *cmd, ObjectEnableType type) {
 	for (int i = 0; i < 7; i++) {
 		Object *object = getWorld()->getObjectById((ObjectId)cmd->param4);
 		if (object != NULL)
-			object->setField67C(field67C);
+			object->setTransparency(transparency);
 
 		++cmd->param4;
 	}
@@ -1882,45 +1882,45 @@ void ScriptManager::enableObject(ScriptEntry *cmd, ObjectEnableType type) {
 		if (cmd->param1 != 810)
 			break;
 
-		getWorld()->getObjectById(kObjectTableRecordRoom)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectOrangeRecord)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectTableRecordRoom)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectOrangeRecord)->setTransparency(transparency);
 		break;
 
 	case kChapter4:
 		if (cmd->param1 != 1232)
 			break;
 
-		getWorld()->getObjectById(kObjectInfernoStatusQuo)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectJugglerWithPin)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectJuggler)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectClownStatusQuo)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectTrixieStatusQuo)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectSimonStatusQuo)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectBigTopBarrel)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectStandBehindJuggler)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectStrongmanLeft)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectStrongmanRight)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectInfernoStatusQuo)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectJugglerWithPin)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectJuggler)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectClownStatusQuo)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectTrixieStatusQuo)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectSimonStatusQuo)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectBigTopBarrel)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectStandBehindJuggler)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectStrongmanLeft)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectStrongmanRight)->setTransparency(transparency);
 		break;
 
 	case kChapter6:
 		if (cmd->param1 == 1998) {
-			getWorld()->getObjectById(kObjectGlow4)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectBugOnTable)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectInsidePipeCyberPod)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectDiscardedBugPincer)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectLitLimbScanner)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectCyberTable)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectGlow4)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectBugOnTable)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectInsidePipeCyberPod)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectDiscardedBugPincer)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectLitLimbScanner)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectCyberTable)->setTransparency(transparency);
 		}
 
 		if (cmd->param1 == 2003) {
-			getWorld()->getObjectById(kObjectNPC066StatusQuo)->setField67C(field67C);
-			getWorld()->getObjectById(kObject2507)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectBrokenPipe)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectEmberPopsOut)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectBugCarriesEmber)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectFurnaceHole)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectTopOfFurnace)->setField67C(field67C);
-			getWorld()->getObjectById(kObjectElderBugLimb)->setField67C(field67C);
+			getWorld()->getObjectById(kObjectNPC066StatusQuo)->setTransparency(transparency);
+			getWorld()->getObjectById(kObject2507)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectBrokenPipe)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectEmberPopsOut)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectBugCarriesEmber)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectFurnaceHole)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectTopOfFurnace)->setTransparency(transparency);
+			getWorld()->getObjectById(kObjectElderBugLimb)->setTransparency(transparency);
 		}
 		break;
 
@@ -1928,28 +1928,28 @@ void ScriptManager::enableObject(ScriptEntry *cmd, ObjectEnableType type) {
 		if (cmd->param1 != 1273)
 			break;
 
-		getWorld()->getObjectById(kObjectHeadOnTable)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectOfficeWallNew)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectChalice)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHeadOnTable)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectOfficeWallNew)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectChalice)->setTransparency(transparency);
 		break;
 
 	case kChapter8:
 		if (cmd->param1 != 1795)
 			break;
 
-		getWorld()->getObjectById(kObjectHook1B)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook2B)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook3B)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook4B)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook5B)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook6B)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook0Down)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook2Down)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook3Down)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook4Down)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook5Down)->setField67C(field67C);
-		getWorld()->getObjectById(kObjectHook6Down)->setField67C(field67C);
-		getWorld()->getObjectById(kObject2230)->setField67C(field67C);
+		getWorld()->getObjectById(kObjectHook1B)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook2B)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook3B)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook4B)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook5B)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook6B)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook0Down)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook2Down)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook3Down)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook4Down)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook5Down)->setTransparency(transparency);
+		getWorld()->getObjectById(kObjectHook6Down)->setTransparency(transparency);
+		getWorld()->getObjectById(kObject2230)->setTransparency(transparency);
 		break;
 	}
 }
