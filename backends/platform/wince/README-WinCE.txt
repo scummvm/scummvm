@@ -9,6 +9,8 @@ x.x.x:
 - Changed default values for "high_sample_rate" & "FM_high_quality" to "true" as
   most devices today are fast enough to handle this. It's still possible to set
   this to "false" if you have a slower device.
+- Fix for TeenAgent engine (TeenAgent wasn't running at all, crashed right at
+  the beginning)
 
 1.3.1:
 - Fix for Normal2xAspect scaler which was causing screen update issues in some
