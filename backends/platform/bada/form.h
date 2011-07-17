@@ -90,14 +90,15 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   void pushEvent(Common::EventType type,
                  const Osp::Graphics::Point& currentPosition);
   void terminate();
-  bool isEscapeMode();
+  int getShortcutIndex();
 
   // event handling
   Osp::Base::Runtime::Thread* gameThread;
   Osp::Base::Runtime::Mutex* eventQueueLock;
   Common::Queue<Common::Event> eventQueue;
   enum {InitState, ActiveState, ClosingState, DoneState} state;
-  uint32 setupTimer;
+  uint32 shortcutTimer;
+  int shortcutIndex;
   bool leftButton;
 };
 

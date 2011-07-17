@@ -33,6 +33,7 @@ AudioThread::AudioThread() :
   tail(0),
   ready(0),
   interval(TIMER_INTERVAL),
+  muteVol(0),
   playing(false) {
 }
 
@@ -52,12 +53,36 @@ AudioThread::~AudioThread() {
   logEntered();
 }
 
-void AudioThread::setVolume(bool up) {
-  if (audioOut) {
+bool AudioThread::isSilentMode() {
+  bool silentMode;
+  String key(L"SilentMode");
+  Osp::System::SettingInfo::GetValue(key, silentMode);
+  return silentMode;
+}
+
+void AudioThread::setMute(bool on) {
+  if (audioOut && !isSilentMode()) {
+    if (on) {
+      muteVol = audioOut->GetVolume();
+      audioOut->SetVolume(0);
+    }
+    else {
+      audioOut->SetVolume(muteVol);
+    }
+  }
+}
+
+void AudioThread::setVolume(bool up, bool minMax) {
+  if (audioOut && !isSilentMode()) {
     int volume = audioOut->GetVolume();
     if (volume) {
-      volume += up ? 10 : -10;
-      if (volume > 0 && volume < 90) {
+      if (minMax) {
+        volume = up ? 99 : 1;
+      }
+      else {
+        volume += up ? 5 : -5;
+      }
+      if (volume > 0 && volume < 100) {
         audioOut->SetVolume(volume);
       }
     }
@@ -103,12 +128,8 @@ bool AudioThread::OnStart(void) {
     return false;
   }
 
-  bool silentMode;
-  String key(L"SilentMode");
-  Osp::System::SettingInfo::GetValue(key, silentMode);
-
   mixer->setReady(true);
-  audioOut->SetVolume(silentMode ? 0 : 40);
+  audioOut->SetVolume(isSilentMode() ? 0 : 40);
   audioOut->Start();
   return true;
 }

@@ -52,7 +52,9 @@ public:
   ~AudioThread(void);
 
   Audio::MixerImpl* Construct(OSystem* system);
-  void setVolume(bool up);
+  bool isSilentMode();
+  void setMute(bool on);
+  void setVolume(bool up, bool minMax);
 
   bool OnStart(void);
   void OnStop(void);
@@ -67,7 +69,7 @@ public:
   Osp::Base::Runtime::Timer* timer;
 	Osp::Media::AudioOut* audioOut;
 	Osp::Base::ByteBuffer audioBuffer[NUM_AUDIO_BUFFERS];
-  int head, tail, ready, interval;
+  int head, tail, ready, interval, muteVol;
   bool playing;
 };
 

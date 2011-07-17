@@ -67,6 +67,7 @@ bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry,
 void BadaScummVM::OnUserEventReceivedN(RequestId requestId, 
                                        Osp::Base::Collection::IList* pArgs) {
   logEntered();
+
   if (requestId == USER_MESSAGE_EXIT) {
     Terminate();
   }
@@ -74,31 +75,35 @@ void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
 
 void BadaScummVM::OnForeground(void) {
   logEntered();
+  pauseGame(false);
 }
 
 void BadaScummVM::OnBackground(void) {
   logEntered();
-  if (appForm) {
-    appForm->pushKey(Common::KEYCODE_SPACE);
-  }
+  pauseGame(true);
 }
 
 void BadaScummVM::OnBatteryLevelChanged(BatteryLevel batteryLevel) {
-
 }
 
 void BadaScummVM::OnLowMemory(void) {
-  if (appForm) {
-    appForm->pushKey(Common::KEYCODE_SPACE);
-  }
 }
 
 void BadaScummVM::OnScreenOn(void) {
+  logEntered();
 }
 
 void BadaScummVM::OnScreenOff(void) {
-  if (appForm) {
+  logEntered();
+}
+
+void BadaScummVM::pauseGame(bool pause) {
+  if (pause && appForm && g_engine && !g_engine->isPaused()) {
     appForm->pushKey(Common::KEYCODE_SPACE);
+  }
+
+  if (g_system) {
+    ((BadaSystem*) g_system)->setMute(pause);
   }
 }
 

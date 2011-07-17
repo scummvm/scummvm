@@ -31,16 +31,15 @@
 
 #include "system.h"
 
-class BadaScummVM :
-  public Osp::App::Application,
-  public Osp::System::IScreenEventListener {
+class BadaScummVM : public Osp::App::Application,
+                    public Osp::System::IScreenEventListener {
 
-public:
+ public:
   BadaScummVM();
   ~BadaScummVM();
 
   static Osp::App::Application* createInstance(void);
-
+  
   bool OnAppInitializing(Osp::App::AppRegistry& appRegistry);
   bool OnAppTerminating(Osp::App::AppRegistry& appRegistry, bool forcedTermination = false);
   void OnForeground(void);
@@ -51,6 +50,8 @@ public:
   void OnScreenOff(void);
   void OnUserEventReceivedN(RequestId requestId, Osp::Base::Collection::IList* pArgs);
 
+ private:
+  void pauseGame(bool pause);
   BadaAppForm* appForm;
 };
 

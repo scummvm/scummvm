@@ -405,6 +405,18 @@ void BadaSystem::closeGraphics() {
   }
 }
 
+void BadaSystem::setMute(bool on) {
+  if (audioThread) {
+    audioThread->setMute(on);
+  }
+}
+
+void BadaSystem::setVolume(bool up, bool minMax) {
+  if (audioThread) {
+    audioThread->setVolume(up, minMax);
+  }
+}
+
 //
 // create the scummVM system
 //
@@ -431,6 +443,8 @@ BadaAppForm* systemStart(Osp::App::Application* app) {
 // display a fatal error notification
 //
 void systemError(const char* format, ...) {
+  MessageBox messageBox;
+  int modalResult;
   va_list ap;
   char buffer[255];
 
@@ -445,11 +459,9 @@ void systemError(const char* format, ...) {
     ((BadaSystem*) g_system)->closeGraphics();
   }
 
-  MessageBox messageBox;
-  messageBox.Construct(L"Fatal Error", buffer, MSGBOX_STYLE_OK);
-  int modalResult;
+  messageBox.Construct(L"Fatal", L"Internal Error", MSGBOX_STYLE_OK);
   messageBox.ShowAndWait(modalResult);
-  Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, null);
+  Application::GetInstance()->Terminate();
 }
 
 //

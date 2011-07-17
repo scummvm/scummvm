@@ -22,6 +22,8 @@
 
 #include <FAppApplication.h>
 
+#include "common/translation.h"
+
 #include "form.h"
 #include "system.h"
 
@@ -32,10 +34,12 @@ using namespace Osp::Graphics;
 using namespace Osp::Ui;
 using namespace Osp::Ui::Controls;
 
-#define SETUP_TIMEOUT 4000
-#define SETUP_KEYPAD  0
-#define SETUP_MOUSE   1
-#define SETUP_VOLUME  2
+#define SHORTCUT_TIMEOUT 4000
+#define SHORTCUT_SWAP_MOUSE  0
+#define SHORTCUT_ESCAPE      1
+#define SHORTCUT_F5          2
+#define SHORTCUT_PERIOD      3
+#define SHORTCUT_SPACE       4
 
 //
 // BadaAppForm
@@ -43,7 +47,8 @@ using namespace Osp::Ui::Controls;
 BadaAppForm::BadaAppForm() : 
   gameThread(0), 
   state(InitState),
-  setupTimer(0),
+  shortcutTimer(0),
+  shortcutIndex(-1),
   leftButton(true) {
   eventQueueLock = new Mutex();
   eventQueueLock->Create();
@@ -188,11 +193,18 @@ void BadaAppForm::pushEvent(Common::EventType type,
 
 void BadaAppForm::pushKey(Common::KeyCode keycode) {
   Common::Event e;
-  e.type = Common::EVENT_KEYDOWN;
+  e.synthetic = false;
   e.kbd.keycode = keycode;
+  e.kbd.ascii = keycode;
+  e.kbd.flags = 0;
 
   eventQueueLock->Acquire();
+
+  e.type = Common::EVENT_KEYDOWN;
   eventQueue.push(e);
+  e.type = Common::EVENT_KEYUP;
+  eventQueue.push(e);
+
   eventQueueLock->Release();
 }
 
@@ -217,22 +229,49 @@ Object* BadaAppForm::Run(void) {
   return null;
 }
 
-bool BadaAppForm::isEscapeMode() {
-  bool result = false;
-  if (setupTimer) {
+int BadaAppForm::getShortcutIndex() {
+  if (shortcutTimer) {
     uint32 nextTimer = g_system->getMillis();
-    if (setupTimer + SETUP_TIMEOUT < nextTimer) {
-      setupTimer = 0;
+    if (shortcutTimer + SHORTCUT_TIMEOUT < nextTimer) {
+      // double tap has expired
+      shortcutTimer = 0;
+      shortcutIndex = -1;
     }
   }
-  return setupTimer != 0;
+  return shortcutIndex;
 }
 
 void BadaAppForm::OnTouchDoublePressed(const Control& source, 
                                        const Point& currentPosition, 
                                        const TouchEventInfo& touchInfo) {
-  setupTimer = g_system->getMillis();
-  g_system->displayMessageOnOSD("ALT Keys Active");
+  int index = getShortcutIndex();
+  shortcutIndex = (index == -1 ? 0 : index + 1);
+  shortcutTimer = g_system->getMillis();
+
+  switch (shortcutIndex) {
+  case SHORTCUT_SWAP_MOUSE:
+    g_system->displayMessageOnOSD(_("Sweep = Swap Left/Right Mouse"));
+    break;
+
+  case SHORTCUT_F5:
+    g_system->displayMessageOnOSD(_("Sweep = Game Menu"));
+    break;
+
+  case SHORTCUT_ESCAPE:
+    g_system->displayMessageOnOSD(_("Sweep = Escape"));
+    break;
+
+  case SHORTCUT_PERIOD:
+    g_system->displayMessageOnOSD(_("Sweep = Dot Key"));
+    break;
+
+  case SHORTCUT_SPACE:
+    g_system->displayMessageOnOSD(_("Sweep = Space Key"));
+    break;
+    
+  default:
+    shortcutIndex = -1;
+  }
 }
 
 void BadaAppForm::OnTouchFocusIn(const Control& source, 
@@ -254,37 +293,69 @@ void BadaAppForm::OnTouchLongPressed(const Control& source,
 void BadaAppForm::OnTouchMoved(const Control& source, 
                                const Point& currentPosition, 
                                const TouchEventInfo& touchInfo) {
-  pushEvent(Common::EVENT_MOUSEMOVE, currentPosition);
+  if (getShortcutIndex() == -1) {
+    pushEvent(Common::EVENT_MOUSEMOVE, currentPosition);
+  }
 }
 
 void BadaAppForm::OnTouchPressed(const Control& source, 
                                  const Point& currentPosition, 
                                  const TouchEventInfo& touchInfo) {
-  pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
-            currentPosition);
+  if (getShortcutIndex() == -1) {
+    pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+              currentPosition);
+  }
 }
 
 void BadaAppForm::OnTouchReleased(const Control& source, 
                                   const Point& currentPosition, 
                                   const TouchEventInfo& touchInfo) {
-  if (isEscapeMode() && touchInfo.IsFlicked()) {
-    pushKey(Common::KEYCODE_F7);
-  }
-  else {
+  if (getShortcutIndex() == -1) {
     pushEvent(leftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
               currentPosition);
+  }
+  else if (touchInfo.IsFlicked()) {
+    switch (shortcutIndex) {
+    case SHORTCUT_SWAP_MOUSE:
+      leftButton = !leftButton;
+      g_system->displayMessageOnOSD(leftButton ? _("Left Button") : _("Right Button"));
+      break;
+
+    case SHORTCUT_F5:
+      pushKey(Common::KEYCODE_F5);
+      break;
+
+    case SHORTCUT_ESCAPE:
+      pushKey(Common::KEYCODE_ESCAPE);
+      break;
+      
+    case SHORTCUT_PERIOD:
+      pushKey(Common::KEYCODE_PERIOD);
+      break;
+
+    case SHORTCUT_SPACE:
+      pushKey(Common::KEYCODE_SPACE);
+      break;
+    }
+    shortcutIndex = -1;
   }
 }
 
 void BadaAppForm::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
   logEntered();
   switch (keyCode) {
-  case KEY_SWITCH:
-    pushKey(Common::KEYCODE_F7);
+  case KEY_SIDE_UP:
+    g_system->displayMessageOnOSD(_("Volume Up"));
+    ((BadaSystem*) g_system)->setVolume(true, true);
+    return;
+
+  case KEY_SIDE_DOWN:
+    g_system->displayMessageOnOSD(_("Volume Down"));
+    ((BadaSystem*) g_system)->setVolume(false, true);
     return;
 
   case KEY_CAMERA:
-    pushKey(Common::KEYCODE_ESCAPE);
+    pushKey(Common::KEYCODE_F5);
     return;
 
   default:
@@ -293,40 +364,20 @@ void BadaAppForm::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
 }
 
 void BadaAppForm::OnKeyPressed(const Control& source, KeyCode keyCode) {
-  if (isEscapeMode()) {
-    setupTimer = g_system->getMillis();
-  }
-
   switch (keyCode) {
   case KEY_SIDE_UP:
-    if (isEscapeMode()) {
-      g_system->displayMessageOnOSD("Volume Up");
-      ((BadaSystem*) g_system)->setVolume(true);
-    }
-    else {
-      g_system->displayMessageOnOSD("Left Button Active");
-      leftButton = true;
-    }
+    g_system->displayMessageOnOSD(_("Volume Up"));
+    ((BadaSystem*) g_system)->setVolume(true, false);
     return;
 
   case KEY_SIDE_DOWN:
-    if (isEscapeMode()) {
-      g_system->displayMessageOnOSD("Volume Down");
-      ((BadaSystem*) g_system)->setVolume(false);
-    }
-    else {
-      g_system->displayMessageOnOSD("Right Button Active");
-      leftButton = false;
-    }
+    g_system->displayMessageOnOSD(_("Volume Down"));
+    ((BadaSystem*) g_system)->setVolume(false, false);
     return;
 
   case KEY_CAMERA:
-    if (isEscapeMode()) {
-      pushKey(Common::KEYCODE_F5);
-    }
-    else {
-      pushKey(Common::KEYCODE_F7);
-    }
+    // display the soft keyboard
+    pushKey(Common::KEYCODE_F7);
     return;
 
   default:

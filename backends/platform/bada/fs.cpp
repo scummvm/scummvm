@@ -34,7 +34,7 @@ class BadaFileStream : public Common::SeekableReadStream,
 public:
   static BadaFileStream* makeFromPath(const String &path, bool writeMode);
 
-  BadaFileStream(File* file);
+  BadaFileStream(File* file, bool writeMode);
   ~BadaFileStream();
 
   bool err() const;
@@ -53,18 +53,25 @@ private:
   byte buffer[BUFFER_SIZE];
   uint32 bufferIndex;
   uint32 bufferLength;
+  bool writeMode;
   File* file;
 };
 
-BadaFileStream::BadaFileStream(File* ioFile) : 
+BadaFileStream::BadaFileStream(File* ioFile, bool writeMode) : 
   bufferIndex(0),
   bufferLength(0),
+  writeMode(writeMode),
   file(ioFile) {
   AppAssert(ioFile != 0);
 }
 
 BadaFileStream::~BadaFileStream() {
-  delete file;
+  if (file) {
+    if (writeMode) {
+      flush();
+    }
+    delete file;
+  }
 }
 
 bool BadaFileStream::err() const {
@@ -189,7 +196,7 @@ BadaFileStream* BadaFileStream::makeFromPath(const String &path, bool writeMode)
 
   result r = ioFile->Construct(filePath, writeMode ? L"wb" : L"rb", false);
   if (r == E_SUCCESS) {
-    return new BadaFileStream(ioFile);
+    return new BadaFileStream(ioFile, writeMode);
   }
   
   AppLog("Failed to open file");
