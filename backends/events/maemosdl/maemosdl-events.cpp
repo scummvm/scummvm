@@ -40,12 +40,20 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			if (ev.key.keysym.sym == SDLK_F4) {
 				event.type = Common::EVENT_MAINMENU;
 				return true;
+			} else if (ev.key.keysym.sym == SDLK_F6) {
+				// handled in keyup
 			}
 			break;
 		}
 		case SDL_KEYUP: {
 			if (ev.key.keysym.sym == SDLK_F4) {
 				event.type = Common::EVENT_MAINMENU;
+				return true;
+			} else if (ev.key.keysym.sym == SDLK_F6) {
+				bool currentState = ((OSystem_SDL *)g_system)->getGraphicsManager()->getFeatureState(OSystem::kFeatureFullscreenMode);
+				g_system->beginGFXTransaction();
+				((OSystem_SDL *)g_system)->getGraphicsManager()->setFeatureState(OSystem::kFeatureFullscreenMode, !currentState);
+				g_system->endGFXTransaction();
 				return true;
 			}
 			break;
