@@ -877,7 +877,7 @@ void GrimEngine::luaUpdate() {
 	_frameTime = newStart - _frameStart;
 	_frameStart = newStart;
 
-	if (_mode == ENGINE_MODE_DRAW || _mode == ENGINE_MODE_PAUSE) {
+	if (_mode == ENGINE_MODE_DRAW || _mode == ENGINE_MODE_PAUSE || _shortFrame) {
 		_frameTime = 0;
 	}
 
@@ -1042,9 +1042,17 @@ void GrimEngine::mainLoop() {
 	_frameTimeCollection = 0;
 	_prevSmushFrame = 0;
 	_refreshShadowMask = false;
+	_shortFrame = false;
+	bool resetShortFrame = false;
 
 	for (;;) {
 		uint32 startTime = g_system->getMillis();
+		if (_shortFrame) {
+			if (resetShortFrame) {
+				_shortFrame = false;
+			}
+			resetShortFrame = !resetShortFrame;
+		}
 
 		if (_savegameLoadRequest) {
 			savegameRestore();
@@ -1175,6 +1183,8 @@ void GrimEngine::savegameRestore() {
 	g_imuse->pause(false);
 	g_movie->pause(false);
 	printf("GrimEngine::savegameRestore() finished.\n");
+
+	_shortFrame = true;
 }
 
 template<typename T>
@@ -1497,6 +1507,7 @@ void GrimEngine::setScene(Scene *scene) {
 		removeScene(lastScene);
 		delete lastScene;
 	}
+	_shortFrame = true;
 }
 
 void GrimEngine::makeCurrentSetup(int num) {

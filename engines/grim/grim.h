@@ -259,6 +259,7 @@ private:
 	char _fps[8];
 	bool _doFlip;
 	bool _refreshShadowMask;
+	bool _shortFrame;
 
 	unsigned _frameStart, _frameTime, _movieTime;
 	unsigned int _frameTimeCollection;
