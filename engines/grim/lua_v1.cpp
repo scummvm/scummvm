@@ -777,9 +777,6 @@ void L1_GetShrinkPos() {
 	g_grim->getCurrScene()->findClosestSector(pos, &sector, &pos);
 	g_grim->getCurrScene()->unshrinkBoxes();
 
-	// TODO
-	//UnShrinkBoxes();
-	// lua_pusnumber 1, 2, 3 or lua_pushnil
 	if (sector) {
 		lua_pushnumber(pos.x());
 		lua_pushnumber(pos.y());
@@ -787,8 +784,6 @@ void L1_GetShrinkPos() {
 	} else {
 		lua_pushnil();
 	}
-
-	warning("Stub function GetShrinkPos(%g,%g,%g,%g) called", x, y, z, r);
 }
 
 void L1_FileFindDispose() {
