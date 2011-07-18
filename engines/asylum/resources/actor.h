@@ -294,9 +294,9 @@ public:
 	 *
 	 * @return The direction
 	 */
-	static ActorDirection direction(Common::Point vec1, Common::Point vec2);
+	static ActorDirection directionFromAngle(Common::Point vec1, Common::Point vec2);
 
-		/**
+	/**
 	 * Get the euclidean distance between the two vectors
 	 *
 	 * @param vec1 The first vector.
@@ -304,7 +304,7 @@ public:
 	 *
 	 * @return the distance.
 	 */
-	static uint32 distance(Common::Point vec1, Common::Point vec2);
+	static uint32 euclidianDistance(Common::Point vec1, Common::Point vec2);
 
 private:
 	AsylumEngine *_vm;
@@ -538,7 +538,7 @@ private:
 	 *
 	 * @return the angle
 	 */
-	static uint32 angle(Common::Point vec1, Common::Point vec2);
+	static uint32 angleFromVectors(Common::Point vec1, Common::Point vec2);
 
 	/**
 	 * Create a new rect using the point, depending on the actor direction
@@ -547,7 +547,7 @@ private:
 	 * @param direction 	The direction.
 	 * @param point 		The point.
 	 */
-	static void rect(Common::Rect *rect, ActorDirection direction, Common::Point point);
+	static void rectFromDirection(Common::Rect *rect, ActorDirection direction, Common::Point point);
 
 	/**
 	 * Compares the angle between two vectors

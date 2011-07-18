@@ -1733,7 +1733,7 @@ void Scene::hitActorChapter2(ActorIndex index) {
 		Common::Point pointPlayer(player->getPoint1()->x + player->getPoint2()->x, player->getPoint1()->y + player->getPoint2()->y);
 		Common::Point pointActor11(actor11->getPoint1()->x + actor11->getPoint2()->x, actor11->getPoint1()->y + actor11->getPoint2()->y);
 
-		if (Actor::distance(pointPlayer, pointActor11) < 150) {
+		if (Actor::euclidianDistance(pointPlayer, pointActor11) < 150) {
 			if (actor11->getStatus() == kActorStatus12)
 				actor11->updateStatus(kActorStatus18);
 

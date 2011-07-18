@@ -834,7 +834,7 @@ void Actor::faceTarget(uint32 target, DirectionFrom from) {
 	}
 
 	Common::Point mid(_point1.x + _point2.x, _point1.y + _point2.y);
-	updateFromDirection(direction(mid, point));
+	updateFromDirection(directionFromAngle(mid, point));
 }
 
 void Actor::setPosition(int32 newX, int32 newY, ActorDirection newDirection, uint32 frame) {
@@ -2086,7 +2086,7 @@ void Actor::updateStatus14_Chapter11() {
 	updateCoordinates(getSharedData()->vector1, getSharedData()->vector2);
 
 	if (getWorld()->tickValueArray[_index] < (int)_vm->getTick()) {
-		if (distance(getSharedData()->vector1, getSharedData()->vector2) >= 75) {
+		if (euclidianDistance(getSharedData()->vector1, getSharedData()->vector2) >= 75) {
 			getWorld()->tickValueArray[_index] = rnd(1000) + 2000 + _vm->getTick();
 		} else {
 			if (actor0->getStatus() == kActorStatus12 || actor0->getStatus() == kActorStatus14 || actor0->getStatus() == kActorStatus15)
@@ -2173,7 +2173,7 @@ void Actor::updateStatus15_Chapter2_Player_Helper() {
 	Common::Point point(_point1.x + _point2.x, _point1.y + _point2.y);
 	Common::Point point11(actor11->getPoint1()->x + actor11->getPoint2()->x, actor11->getPoint1()->y + actor11->getPoint2()->y);
 
-	if (actor11->getStatus() == kActorStatus15 && distance(point, point11) < 100) {
+	if (actor11->getStatus() == kActorStatus15 && euclidianDistance(point, point11) < 100) {
 		Actor *actor = getScene()->getActor(getSharedData()->getData(38));
 
 		actor40->show();
@@ -2238,7 +2238,7 @@ void Actor::updateStatus15_Chapter11() {
 		updateStatus(kActorStatus14);
 
 	if (_frameIndex == 14) {
-		if (Actor::distance(getSharedData()->vector1, getSharedData()->vector2) < 75) {
+		if (Actor::euclidianDistance(getSharedData()->vector1, getSharedData()->vector2) < 75) {
 
 			actor0->updateStatus(kActorStatus16);
 			++getWorld()->field_E848C;
@@ -2743,7 +2743,7 @@ void Actor::setVolume() {
 // Helper methods
 //////////////////////////////////////////////////////////////////////////
 
-ActorDirection Actor::direction(Common::Point vec1, Common::Point vec2) {
+ActorDirection Actor::directionFromAngle(Common::Point vec1, Common::Point vec2) {
 	int32 diffX = (vec2.x - vec1.x) * 2^16;
 	int32 diffY = (vec1.y - vec2.y) * 2^16;
 	int32 adjust = 0;
@@ -2932,12 +2932,12 @@ void Actor::updateCoordinatesForDirection(ActorDirection direction, int32 delta,
 	}
 }
 
-uint32 Actor::distance(Common::Point vec1, Common::Point vec2) {
+uint32 Actor::euclidianDistance(Common::Point vec1, Common::Point vec2) {
 	return sqrt(pow((double)(vec2.y - vec1.y), 2) + pow((double)(vec2.x - vec1.x), 2));
 }
 
-uint32 Actor::angle(Common::Point vec1, Common::Point vec2) {
-	int32 result = ((long)(180 - acos((double)(vec2.y - vec1.y) / distance(vec1, vec2)) * 180 / M_PI)) % 360;
+uint32 Actor::angleFromVectors(Common::Point vec1, Common::Point vec2) {
+	int32 result = ((long)(180 - acos((double)(vec2.y - vec1.y) / euclidianDistance(vec1, vec2)) * 180 / M_PI)) % 360;
 
 	if (vec1.x < vec2.x)
 		return 360 - result;
@@ -2945,7 +2945,7 @@ uint32 Actor::angle(Common::Point vec1, Common::Point vec2) {
 	return result;
 }
 
-void Actor::rect(Common::Rect *rect, ActorDirection direction, Common::Point point) {
+void Actor::rectFromDirection(Common::Rect *rect, ActorDirection direction, Common::Point point) {
 	if (!rect)
 		error("[Actor::rect] Invalid rect (NULL)!");
 
@@ -3005,7 +3005,7 @@ void Actor::rect(Common::Rect *rect, ActorDirection direction, Common::Point poi
 bool Actor::compareAngles(Common::Point vec1, Common::Point vec2) {
 	Common::Point vec3(2289, 171);
 
-	int32 diff = angle(vec1, vec3) - angle(vec1, vec2);
+	int32 diff = angleFromVectors(vec1, vec3) - angleFromVectors(vec1, vec2);
 
 	if (diff < 0)
 		diff += 359;
