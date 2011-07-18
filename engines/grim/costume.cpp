@@ -377,7 +377,7 @@ void ModelComponent::init() {
 
 			cm = g_resourceloader->getColormap(DEFAULT_COLORMAP);
 		}
-		_obj = g_resourceloader->getModel(_filename, cm);
+		_obj = g_resourceloader->loadModel(_filename, cm);
 		_hier = _obj->copyHierarchy();
 
 		// Use parent availablity to decide whether to default the
