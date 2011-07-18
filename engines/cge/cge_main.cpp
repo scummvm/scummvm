@@ -534,12 +534,14 @@ void CGEEngine::quit() {
 
 
 void CGEEngine::AltCtrlDel() {
-	debugC(1, kDebugEngine, "CGEEngine::setup()");
+	debugC(1, kDebugEngine, "CGEEngine::AltCtrlDel()");
 
 	SNPOST_(SNSAY,  -1, A_C_D_TEXT, _hero);
 }
 
 void CGEEngine::miniStep(int stp) {
+	debugC(1, kDebugEngine, "CGEEngine::miniStep(%d)", stp);
+
 	if (stp < 0)
 		_miniCave->_flags._hide = true;
 	else {
@@ -551,32 +553,16 @@ void CGEEngine::miniStep(int stp) {
 	}
 }
 
+void CGEEngine::postMiniStep(int step) {
+	debugC(6, kDebugEngine, "CGEEngine::postMiniStep(%d)", step);
 
-static void postMiniStep(int stp) {
-	static int recent = -2;
-	if (_miniCave && stp != recent)
-		SNPOST2_(SNEXEC, -1, recent = stp, kMiniStep);
+	if (_miniCave && step != _recentStep)
+		SNPOST2_(SNEXEC, -1, _recentStep = step, kMiniStep);
 }
 
-void System::setPal() {
-	uint i;
-	Dac *p = Vga::_sysPal + 256 - ArrayCount(_stdPal);
-	for (i = 0; i < ArrayCount(_stdPal); i++) {
-		p[i]._r = _stdPal[i]._r >> 2;
-		p[i]._g = _stdPal[i]._g >> 2;
-		p[i]._b = _stdPal[i]._b >> 2;
-	}
-}
+void CGEEngine::ShowBak(int ref) {
+	debugC(1, kDebugEngine, "CGEEngine::ShowBack(%d)", ref);
 
-
-void System::funTouch() {
-	uint16 n = (PAIN) ? HEROFUN1 : HEROFUN0;
-	if (_talk == NULL || n > _funDel)
-		_funDel = n;
-}
-
-
-static void ShowBak(int ref) {
 	Sprite *spr = _vga->_spareQ->locate(ref);
 	if (spr) {
 		Bitmap::_pal = Vga::_sysPal;
@@ -589,8 +575,9 @@ static void ShowBak(int ref) {
 	}
 }
 
-
 void CGEEngine::caveUp() {
+	debugC(1, kDebugEngine, "CGEEngine::caveUp()");
+
 	int BakRef = 1000 * _now;
 	if (_music)
 		loadMidi(_now);
@@ -653,6 +640,8 @@ void CGEEngine::caveUp() {
 
 
 void CGEEngine::caveDown() {
+	debugC(1, kDebugEngine, "CGEEngine::caveDown()");
+
 	Sprite *spr;
 	if (!_horzLine->_flags._hide)
 		switchMapping();
@@ -669,14 +658,16 @@ void CGEEngine::caveDown() {
 	_text->clear(1000);
 }
 
-
 void CGEEngine::xCave() {
+	debugC(6, kDebugEngine, "CGEEngine::xCave()");
+
 	caveDown();
 	caveUp();
 }
 
-
 void CGEEngine::qGame() {
+	debugC(1, kDebugEngine, "CGEEngine::qGame()");
+
 	caveDown();
 	_oldLev = _lev;
 	saveSound();
@@ -690,6 +681,8 @@ void CGEEngine::qGame() {
 
 
 void CGEEngine::switchCave(int cav) {
+	debugC(1, kDebugEngine, "CGEEngine::switchCave(%d)", cav);
+
 	if (cav != _now) {
 		_heart->_enable = false;
 		if (cav < 0) {
@@ -721,6 +714,22 @@ System::System(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	_funDel = HEROFUN0;
 	setPal();
 	tick();
+}
+
+void System::setPal() {
+	uint i;
+	Dac *p = Vga::_sysPal + 256 - ArrayCount(_stdPal);
+	for (i = 0; i < ArrayCount(_stdPal); i++) {
+		p[i]._r = _stdPal[i]._r >> 2;
+		p[i]._g = _stdPal[i]._g >> 2;
+		p[i]._b = _stdPal[i]._b >> 2;
+	}
+}
+
+void System::funTouch() {
+	uint16 n = (PAIN) ? HEROFUN1 : HEROFUN0;
+	if (_talk == NULL || n > _funDel)
+		_funDel = n;
 }
 
 void System::touch(uint16 mask, int x, int y) {
@@ -856,7 +865,7 @@ void System::touch(uint16 mask, int x, int y) {
 			}
 		}
 
-		postMiniStep(cav - 1);
+		_vm->postMiniStep(cav - 1);
 
 		if (mask & L_UP) {
 			if (cav && _snail->idle() && _hero->_tracePtr < 0)
@@ -869,8 +878,7 @@ void System::touch(uint16 mask, int x, int y) {
 					Cluster::_map[z1][x1] = 1;
 					_vm->setMapBrick(x1, z1);
 				}
-			} else
-			{
+			} else {
 				if (!_talk && _snail->idle() && _hero
 				        && y >= MAP_TOP && y < MAP_TOP + MAP_HIG && !_vm->_game) {
 					_hero->findWay(XZ(x, y));
@@ -909,35 +917,17 @@ void System::tick() {
 	_time = SYSTIMERATE;
 }
 
-
-/*
-static void SpkOpen() {
-  asm   in  al,0x61
-  asm   or  al,0x03
-  asm   out 0x61,al
-  asm   mov al,0x90
-  asm   out 0x43,al
-}
-
-
-static void SpkClose() {
-  asm   in  al,0x61
-  asm   and al,0xFC
-  asm   out 0x61,al
-}
-
-*/
-
-
 void CGEEngine::switchColorMode() {
+	debugC(1, kDebugEngine, "CGEEngine::switchColorMode()");
+
 	SNPOST_(SNSEQ, 121, _vga->_mono = !_vga->_mono, NULL);
 	keyClick();
 	_vga->setColors(Vga::_sysPal, 64);
 }
 
-
-
 void CGEEngine::switchMusic() {
+	debugC(1, kDebugEngine, "CGEEngine::switchMusic()");
+
 	if (_keyboard->_key[ALT]) {
 		if (Vmenu::_addr)
 			SNPOST_(SNKILL, -1, 0, Vmenu::_addr);
@@ -959,14 +949,16 @@ void CGEEngine::switchMusic() {
 		killMidi();
 }
 
-
 void CGEEngine::startCountDown() {
+	debugC(1, kDebugEngine, "CGEEngine::startCountDown()");
+
 	//SNPOST(SNSEQ, 123, 0, NULL);
 	switchCave(-1);
 }
 
-
 void CGEEngine::takeName() {
+	debugC(1, kDebugEngine, "CGEEngine::takeName()");
+
 	if (GetText::_ptr)
 		SNPOST_(SNKILL, -1, 0, GetText::_ptr);
 	else {
@@ -982,8 +974,9 @@ void CGEEngine::takeName() {
 	}
 }
 
-
 void CGEEngine::switchMapping() {
+	debugC(1, kDebugEngine, "CGEEngine::switchMapping()");
+
 	if (_horzLine->_flags._hide) {
 		int i;
 		for (i = 0; i < MAP_ZCNT; i++) {
@@ -1003,6 +996,8 @@ void CGEEngine::switchMapping() {
 }
 
 void CGEEngine::killSprite() {
+	debugC(1, kDebugEngine, "CGEEngine::killSprite()");
+
 	_sprite->_flags._kill = true;
 	_sprite->_flags._bDel = true;
 	SNPOST_(SNKILL, -1, 0, _sprite);
@@ -1010,6 +1005,8 @@ void CGEEngine::killSprite() {
 }
 
 void CGEEngine::pushSprite() {
+	debugC(1, kDebugEngine, "CGEEngine::pushSprite()");
+
 	Sprite *spr = _sprite->_prev;
 	if (spr) {
 		_vga->_showQ->insert(_vga->_showQ->remove(_sprite), spr);
@@ -1020,6 +1017,8 @@ void CGEEngine::pushSprite() {
 }
 
 void CGEEngine::pullSprite() {
+	debugC(1, kDebugEngine, "CGEEngine::pullSprite()");
+
 	bool ok = false;
 	Sprite *spr = _sprite->_next;
 	if (spr) {
@@ -1037,65 +1036,45 @@ void CGEEngine::pullSprite() {
 }
 
 void CGEEngine::nextStep() {
+	debugC(1, kDebugEngine, "CGEEngine::nextStep()");
+
 	SNPOST_(SNSTEP, 0, 0, _sprite);
 }
 
 void CGEEngine::saveMapping() {
-	{
-		IoHand cf(progName(".TAB"), UPD);
-		if (!cf._error) {
-			cf.seek((_now - 1) * sizeof(Cluster::_map));
-			cf.write((uint8 *) Cluster::_map, sizeof(Cluster::_map));
-		}
+	IoHand cfTab(progName(".TAB"), UPD);
+	if (!cfTab._error) {
+		cfTab.seek((_now - 1) * sizeof(Cluster::_map));
+		cfTab.write((uint8 *) Cluster::_map, sizeof(Cluster::_map));
 	}
-	{
-		IoHand cf(progName(".HXY"), WRI);
-			if (!cf._error) {
-				_heroXY[_now - 1]._x = _hero->_x;
-				_heroXY[_now - 1]._y = _hero->_y;
-				cf.write((uint8 *) _heroXY, sizeof(_heroXY));
-		}
+
+	IoHand cfHxy(progName(".HXY"), WRI);
+	if (!cfHxy._error) {
+		_heroXY[_now - 1]._x = _hero->_x;
+		_heroXY[_now - 1]._y = _hero->_y;
+		cfHxy.write((uint8 *) _heroXY, sizeof(_heroXY));
 	}
 }
 
-//              1111111111222222222233333333 334444444444555555555566666666667777777777
-//    01234567890123456789012345678901234567 890123456789012345678901234567890123456789
-static  char    DebugText[] = " N=00000 F=000000 X=000 Y=000 FPS=0000\0S=00:00 000:000:000 000:000 00  ";
+//                                       1111111111222222222233333333334444444444555555555566666666667777777777
+//                             01234567890123456789012345678901234567890123456789012345678901234567890123456789
+static  char    DebugText[] = " X=000 Y=000 S=00:00 000:000:000 000:000 00";
 
-#define NFRE    (DebugText +  3)
-#define FFRE    (DebugText + 11)
-#define ABSX    (DebugText + 20)
-#define ABSY    (DebugText + 26)
-#define FRPS    (DebugText + 34)
-#define XSPR    (DebugText + 38)
-#define SP_N    (DebugText + 41)
-#define SP_S    (DebugText + 44)
-
-#define SP_X    (DebugText + 47)
-#define SP_Y    (DebugText + 51)
-#define SP_Z    (DebugText + 55)
-#define SP_W    (DebugText + 59)
-#define SP_H    (DebugText + 63)
-#define SP_F    (DebugText + 67)
-#define SP__    (DebugText + 70)
+#define ABSX    (DebugText + 3)
+#define ABSY    (DebugText + 9)
+#define SP_N    (DebugText + 15)
+#define SP_S    (DebugText + 18)
+#define SP_X    (DebugText + 21)
+#define SP_Y    (DebugText + 25)
+#define SP_Z    (DebugText + 29)
+#define SP_W    (DebugText + 33)
+#define SP_H    (DebugText + 37)
+#define SP_F    (DebugText + 41)
 
 void CGEEngine::sayDebug() {
 	if (!_debugLine->_flags._hide) {
-		static long t = -1L;
-		long t1 = timer();
-
-		if (t1 - t >= 18) {
-			static uint32 old = 0L;
-			uint32 now = _vga->_frmCnt;
-			dwtom(now - old, FRPS, 10, 4);
-			old = now;
-			t = t1;
-		}
-
 		dwtom(_mouse->_x, ABSX, 10, 3);
 		dwtom(_mouse->_y, ABSY, 10, 3);
-//		dwtom(coreleft(), NFRE, 10, 5);
-//		dwtom(farcoreleft(), FFRE, 10, 6);
 
 		// sprite queue size
 		uint16 n = 0;
@@ -1103,7 +1082,6 @@ void CGEEngine::sayDebug() {
 		for (spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 			++ n;
 			if (spr == _sprite) {
-				*XSPR = ' ';
 				dwtom(n, SP_N, 10, 2);
 				dwtom(_sprite->_x, SP_X, 10, 3);
 				dwtom(_sprite->_y, SP_Y, 10, 3);
@@ -1114,7 +1092,6 @@ void CGEEngine::sayDebug() {
 			}
 		}
 		dwtom(n, SP_S, 10, 2);
-//		*SP__ = (heapcheck() < 0) ? '!' : ' ';
 		_debugLine->update(DebugText);
 	}
 }
