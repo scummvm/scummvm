@@ -408,7 +408,7 @@ bool GfxSurface::displayText(const Common::String &msg, const Common::Point &pt)
 
 	// Write for a  mouse or keypress
 	Event event;
-	while (!_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !_vm->getEventManager()->shouldQuit())
+	while (!_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !_vm->shouldQuit())
 		;
 
 	// Restore the display area
@@ -718,7 +718,7 @@ bool GfxElement::focusedEvent(Event &event) {
 	int xOffset = mousePos.x - _globals->_events._mousePos.x;
 	int yOffset = mousePos.y - _globals->_events._mousePos.y;
 
-	while (event.eventType != EVENT_BUTTON_UP && !_vm->getEventManager()->shouldQuit()) {
+	while (event.eventType != EVENT_BUTTON_UP && !_vm->shouldQuit()) {
 		g_system->delayMillis(10);
 
 		if (_bounds.contains(mousePos)) {
@@ -1029,7 +1029,7 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 	GfxButton *selectedButton = NULL;
 
 	bool breakFlag = false;
-	while (!_vm->getEventManager()->shouldQuit() && !breakFlag) {
+	while (!_vm->shouldQuit() && !breakFlag) {
 		Event event;
 		while (_globals->_events.getEvent(event) && !breakFlag) {
 			// Adjust mouse positions to be relative within the dialog

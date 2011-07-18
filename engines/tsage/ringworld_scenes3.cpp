@@ -526,7 +526,7 @@ void Scene2100::Action1::signal() {
 		_state = 0;
 		_globals->_events.setCursor(CURSOR_USE);
 
-		while (!_state && !_vm->getEventManager()->shouldQuit()) {
+		while (!_state && !_vm->shouldQuit()) {
 			// Wait for an event
 			Event event;
 			if (!_globals->_events.getEvent(event)) {
@@ -2257,7 +2257,7 @@ void Scene2150::Action1::signal() {
 		_state = 0;
 		_globals->_events.setCursor(CURSOR_USE);
 
-		while (!_state && !_vm->getEventManager()->shouldQuit()) {
+		while (!_state && !_vm->shouldQuit()) {
 			// Wait for an event
 			Event event;
 			if (!_globals->_events.getEvent(event)) {
@@ -5112,7 +5112,7 @@ void Scene2320::Action3::signal() {
 		_state = 0;
 		_globals->_events.setCursor(CURSOR_USE);
 
-		while (!_state && !_vm->getEventManager()->shouldQuit()) {
+		while (!_state && !_vm->shouldQuit()) {
 			// Wait for an event
 			Event event;
 			if (!_globals->_events.getEvent(event)) {

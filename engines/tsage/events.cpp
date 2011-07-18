@@ -78,7 +78,7 @@ bool EventsClass::pollEvent() {
 
 void EventsClass::waitForPress(int eventMask) {
 	Event evt;
-	while (!_vm->getEventManager()->shouldQuit() && !getEvent(evt, eventMask))
+	while (!_vm->shouldQuit() && !getEvent(evt, eventMask))
 		g_system->delayMillis(10);
 }
 
@@ -86,7 +86,7 @@ void EventsClass::waitForPress(int eventMask) {
  * Standard event retrieval, which only returns keyboard and mouse clicks
  */
 bool EventsClass::getEvent(Event &evt, int eventMask) {
-	while (pollEvent() && !_vm->getEventManager()->shouldQuit()) {
+	while (pollEvent() && !_vm->shouldQuit()) {
 		evt.handled = false;
 		evt.eventType = EVENT_NONE;
 		evt.mousePos = _event.mouse;
