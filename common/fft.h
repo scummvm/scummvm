@@ -34,7 +34,12 @@
 
 namespace Common {
 
-/** (Inverse) Fast Fourier Transform. */
+/**
+ * (Inverse) Fast Fourier Transform.
+ *
+ * Used in engines:
+ *  - scumm
+ */
 class FFT {
 public:
 	FFT(int bits, int inverse);

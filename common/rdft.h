@@ -33,7 +33,13 @@
 
 namespace Common {
 
-/** (Inverse) Real Discrete Fourier Transform. */
+/**
+ * (Inverse) Real Discrete Fourier Transform.
+ *
+ * Used in engines:
+ *  - scumm
+ */
+
 class RDFT {
 public:
 	enum TransformType {

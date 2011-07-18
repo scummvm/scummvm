@@ -33,7 +33,12 @@ namespace Common {
 
 class BitStream;
 
-/** Decode a Huffman'd bitstream. */
+/**
+ * Huffman bitstream decoding
+ *
+ * Used in engines:
+ *  - scumm
+ */
 class Huffman {
 public:
 	/** Construct a Huffman decoder.

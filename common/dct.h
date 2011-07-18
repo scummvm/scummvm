@@ -35,7 +35,12 @@
 
 namespace Common {
 
-/** (Inverse) Discrete Cosine Transforms. */
+/**
+ * (Inverse) Discrete Cosine Transforms.
+ *
+ * Used in engines:
+ *  - scumm
+ */
 class DCT {
 public:
 	enum TransformType {

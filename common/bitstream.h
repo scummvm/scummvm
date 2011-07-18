@@ -31,7 +31,12 @@ namespace Common {
 
 class SeekableReadStream;
 
-/** A bit stream. */
+/**
+ * A bit stream.
+ *
+ * Used in engines:
+ *  - scumm
+ */
 class BitStream {
 public:
 	BitStream();
