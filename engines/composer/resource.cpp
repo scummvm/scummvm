@@ -23,6 +23,7 @@
 #include "composer/resource.h"
 
 #include "common/debug.h"
+#include "common/memstream.h"
 #include "common/substream.h"
 #include "common/util.h"
 #include "common/textconsole.h"
@@ -245,6 +246,92 @@ bool ComposerArchive::openStream(Common::SeekableReadStream *stream) {
 
 	_stream = stream;
 	return true;
+}
+
+Pipe::Pipe(Common::SeekableReadStream *stream) {
+	_offset = 0;
+	_stream = stream;
+
+	nextFrame();
+}
+
+void Pipe::nextFrame() {
+	if (_offset == (uint)_stream->size())
+		return;
+
+	_stream->seek(_offset, SEEK_SET);
+
+	uint32 tagCount = _stream->readUint32LE();
+	_offset += 4;
+	for (uint i = 0; i < tagCount; i++) {
+		uint32 tag = _stream->readUint32BE();
+		uint32 count = _stream->readUint32LE();
+		_offset += 8;
+
+		ResourceMap &resMap = _types[tag];
+
+		_offset += (12 * count);
+		//uint32 baseOffset = _offset;
+		for (uint j = 0; j < count; j++) {
+			uint32 offset = _stream->readUint32LE();
+			uint32 size = _stream->readUint32LE();
+			uint16 id = _stream->readUint16LE();
+			uint32 unknown = _stream->readUint16LE(); // frame id?
+			debug(9, "pipe: %s/%d: offset %d, size %d, unknown %d", tag2str(tag), id, offset, size, unknown);
+
+			PipeResourceEntry entry;
+			entry.size = size;
+			entry.offset = _offset;
+			resMap[id].entries.push_back(entry);
+
+			_offset += size;
+		}
+		_stream->seek(_offset, SEEK_SET);
+	}
+}
+
+bool Pipe::hasResource(uint32 tag, uint16 id) const {
+	if (!_types.contains(tag))
+		return false;
+
+	return _types[tag].contains(id);
+}
+
+Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffering) {
+	if (!_types.contains(tag))
+		error("Pipe does not contain '%s' %04x", tag2str(tag), id);
+
+	const ResourceMap &resMap = _types[tag];
+
+	if (!resMap.contains(id))
+		error("Archive does not contain '%s' %04x", tag2str(tag), id);
+
+	const PipeResource &res = resMap[id];
+
+	if (res.entries.size() == 1) {
+		Common::SeekableReadStream *stream = new Common::SeekableSubReadStream(_stream,
+			res.entries[0].offset, res.entries[0].offset + res.entries[0].size);
+		if (buffering)
+			_types[tag].erase(id);
+		return stream;
+	}
+
+	// If there are multiple entries in the pipe, we have to concaternate them together.
+
+	uint32 size = 0;
+	for (uint i = 0; i < res.entries.size(); i++)
+		size += res.entries[i].size;
+
+	byte *buffer = (byte *)malloc(size);
+	uint32 offset = 0;
+	for (uint i = 0; i < res.entries.size(); i++) {
+		_stream->seek(res.entries[i].offset, SEEK_SET);
+		_stream->read(buffer + offset, res.entries[i].size);
+		offset += res.entries[i].size;
+	}
+	if (buffering)
+		_types[tag].erase(id);
+	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }
 
 }	// End of namespace Composer

@@ -59,36 +59,8 @@ enum GameType {
 class Archive;
 struct Animation;
 class ComposerEngine;
+class Pipe;
 struct Sprite;
-
-struct PipeResourceEntry {
-	uint32 size;
-	uint32 offset;
-};
-
-struct PipeResource {
-	Common::Array<PipeResourceEntry> entries;
-};
-
-class Pipe {
-public:
-	Pipe(Common::SeekableReadStream *stream);
-	void nextFrame();
-
-	Animation *_anim;
-
-        bool hasResource(uint32 tag, uint16 id) const;
-	Common::SeekableReadStream *getResource(uint32 tag, uint16 id, bool buffering);
-
-protected:
-	Common::SeekableReadStream *_stream;
-
-	typedef Common::HashMap<uint16, PipeResource> ResourceMap;
-	typedef Common::HashMap<uint32, ResourceMap> TypeMap;
-	TypeMap _types;
-
-	uint32 _offset;
-};
 
 enum {
 	kButtonRect = 0,
