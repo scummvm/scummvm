@@ -144,8 +144,9 @@ osxsnap: bundle
 	cp $(srcdir)/NEWS ./ScummVM-snapshot/News
 	cp $(srcdir)/README ./ScummVM-snapshot/ScummVM\ ReadMe
 	mkdir ScummVM-snapshot/doc
-	cp $(srcdir)/doc/QuickStart ./ScummVM-snapshot/doc/de/Schnellstart
+	cp $(srcdir)/doc/QuickStart ./ScummVM-snapshot/doc/QuickStart
 	mkdir ScummVM-snapshot/doc/de
+	cp $(srcdir)/doc/de/Liesmich ./ScummVM-snapshot/doc/de/Liesmich
 	cp $(srcdir)/doc/de/Schnellstart ./ScummVM-snapshot/doc/de/Schnellstart
 	mkdir ScummVM-snapshot/doc/fr
 	cp $(srcdir)/doc/fr/QuickStart_fr ./ScummVM-snapshot/doc/fr/QuickStart_fr
@@ -188,6 +189,7 @@ endif
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
 	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
+	cp $(srcdir)/doc/de/Liesmich $(WIN32PATH)/doc/de/Liesmich.txt
 	cp $(srcdir)/doc/fr/QuickStart_fr $(WIN32PATH)/doc/fr/QuickStart_fr.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
