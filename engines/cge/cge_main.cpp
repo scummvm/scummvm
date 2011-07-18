@@ -1702,7 +1702,7 @@ bool CGEEngine::showTitle(const char *name) {
 		_vga->_showQ->append(_mouse);
 		_heart->_enable = true;
 		_mouse->on();
-		for (selectSound(); !_snail->idle() || Vmenu::_addr;) {
+		for (; !_snail->idle() || Vmenu::_addr;) {
 			mainLoop();
 			if (_eventManager->_quitFlag)
 				return false;
