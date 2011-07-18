@@ -672,7 +672,7 @@ const Sprite *ComposerEngine::getSpriteAtPos(const Common::Point &pos) {
 }
 
 const Button *ComposerEngine::getButtonFor(const Sprite *sprite, const Common::Point &pos) {
-	for (Common::List<Button>::iterator i = _buttons.begin(); i != _buttons.end(); i++) {
+	for (Common::List<Button>::iterator i = _buttons.reverse_begin(); i != _buttons.end(); --i) {
 		if (!i->_active)
 			continue;
 
