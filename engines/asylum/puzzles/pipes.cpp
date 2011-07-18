@@ -388,22 +388,27 @@ bool PuzzlePipes::update(const AsylumEvent &evt) {
 		 getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[45], 0, Common::Point(518, 108), kDrawFlagNone, 0, 2);
 
 	for (uint32 i = 0; i < _spiders.size(); ++i) {
-		uint32 spiderResourceId;
+		uint32 spiderResourceId = 0;
 
 		switch (_spiders[i]->getDirection()) {
+		default:
+			error("[PuzzlePipes::update] Invalid spider direction (%d)", _spiders[i]->getDirection());
+
 		case kDirectionNh:
 			spiderResourceId = _spiders[i]->isAlive() ? 34 : 37;
 			break;
+
 		case kDirectionEt:
 			spiderResourceId = _spiders[i]->isAlive() ? 35 : 38;	// FIXME
 			break;
+
 		case kDirectionSh:
 			spiderResourceId = _spiders[i]->isAlive() ? 36 : 39;
 			break;
+
 		case kDirectionWt:
 			spiderResourceId = _spiders[i]->isAlive() ? 35 : 38;
 			break;
-		default: ;
 		}
 
 		if (_spiders[i]->isVisible(Common::Rect(-10, -10, 650, 490))) {
