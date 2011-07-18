@@ -159,11 +159,11 @@ Animation::Animation(Common::SeekableReadStream *stream, uint16 id, Common::Poin
 	for (uint i = 0; i < size; i++) {
 		AnimationEntry entry;
 		entry.op = _stream->readUint16LE();
-		entry.word6 = _stream->readUint16LE();
-		entry.dword0 = _stream->readUint16LE();
+		entry.priority = _stream->readUint16LE();
+		entry.state = _stream->readUint16LE();
 		entry.counter = 0;
-		entry.word10 = 0;
-		debug(8, "anim entry: %04x, %04x, %04x", entry.op, entry.word6, entry.dword0);
+		entry.prevValue = 0;
+		debug(8, "anim entry: %04x, %04x, %04x", entry.op, entry.priority, entry.state);
 		_entries.push_back(entry);
 	}
 
@@ -387,20 +387,20 @@ void ComposerEngine::stopAnimation(Animation *anim, bool localOnly, bool pipesOn
 	// stop any animations it may have spawned
 	for (uint j = 0; j < anim->_entries.size(); j++) {
 		AnimationEntry &entry = anim->_entries[j];
-		if (!entry.word10)
+		if (!entry.prevValue)
 			continue;
 		if (localOnly) {
 			if (pipesOnly)
 				continue;
 			// TODO: stop audio if needed
-			if (entry.op != 4)
+			if (entry.op != kAnimOpDrawSprite)
 				continue;
-			removeSprite(entry.word10, anim->_id);
+			removeSprite(entry.prevValue, anim->_id);
 		} else {
-			if (entry.op != 3)
+			if (entry.op != kAnimOpPlayAnim)
 				continue;
 			for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++) {
-				if ((*i)->_id == entry.word10)
+				if ((*i)->_id == entry.prevValue)
 					stopAnimation(*i);
 			}
 		}
@@ -464,7 +464,7 @@ void ComposerEngine::processAnimFrame() {
 
 		for (uint j = 0; j < anim->_entries.size(); j++) {
 			AnimationEntry &entry = anim->_entries[j];
-			if (entry.op != 1)
+			if (entry.op != kAnimOpEvent)
 				break;
 			if (entry.counter) {
 				entry.counter--;
@@ -481,6 +481,7 @@ void ComposerEngine::processAnimFrame() {
 					entry.counter = anim->_stream->readUint16LE() - 1;
 					anim->_offset += 2;
 				} else {
+					debug(4, "anim: event %d", event);
 					runEvent(event, anim->_id, 0, 0);
 				}
 			}
@@ -505,15 +506,15 @@ void ComposerEngine::processAnimFrame() {
 			AnimationEntry &entry = anim->_entries[j];
 
 			// only skip these at the start
-			if (!foundWait && (entry.op == 1))
+			if (!foundWait && (entry.op == kAnimOpEvent))
 				continue;
 			foundWait = true;
 
 			if (entry.counter) {
 				entry.counter--;
-				if ((entry.op == 2) && entry.word10) {
-					debug(4, "anim: continue play wave %d", entry.word10);
-					playWaveForAnim(entry.word10, true);
+				if ((entry.op == kAnimOpPlayWave) && entry.prevValue) {
+					debug(4, "anim: continue play wave %d", entry.prevValue);
+					playWaveForAnim(entry.prevValue, true);
 				}
 			} else {
 				anim->seekToCurrPos();
@@ -530,22 +531,22 @@ void ComposerEngine::processAnimFrame() {
 					anim->_offset += 2;
 				} else {
 					switch (entry.op) {
-					case 1:
-						// TODO
-						warning("ignoring tingie (%d)", data);
+					case kAnimOpEvent:
+						debug(4, "anim: event %d", data);
+						runEvent(data, anim->_id, 0, 0);
 						break;
-					case 2:
+					case kAnimOpPlayWave:
 						debug(4, "anim: play wave %d", data);
 						playWaveForAnim(data, false);
 						break;
-					case 3:
+					case kAnimOpPlayAnim:
 						debug(4, "anim: play anim %d", data);
 						playAnimation(data, anim->_basePos.x, anim->_basePos.y, 1);
 						break;
-					case 4:
-						if (!data || (entry.word10 && (data != entry.word10))) {
-							debug(4, "anim: erase sprite %d", entry.word10);
-							removeSprite(entry.word10, anim->_id);
+					case kAnimOpDrawSprite:
+						if (!data || (entry.prevValue && (data != entry.prevValue))) {
+							debug(4, "anim: erase sprite %d", entry.prevValue);
+							removeSprite(entry.prevValue, anim->_id);
 						}
 						if (data) {
 							int16 x = anim->_stream->readSint16LE();
@@ -553,18 +554,18 @@ void ComposerEngine::processAnimFrame() {
 							Common::Point pos(x, y);
 							anim->_offset += 4;
 							uint16 animId = anim->_id;
-							if (anim->_state == entry.dword0)
+							if (anim->_state == entry.state)
 								animId = 0;
 							debug(4, "anim: draw sprite %d at (relative) %d,%d", data, x, y);
 							bool wasVisible = spriteVisible(data, animId);
-							addSprite(data, animId, entry.word6, anim->_basePos + pos);
+							addSprite(data, animId, entry.priority, anim->_basePos + pos);
 							if (wasVisible) {
 								// make sure modified sprite isn't removed by another entry
 								for (uint k = 0; k < anim->_entries.size(); k++) {
-									if (anim->_entries[k].op != 4)
+									if (anim->_entries[k].op != kAnimOpDrawSprite)
 										continue;
-									if (anim->_entries[k].word10 == data)
-										anim->_entries[k].word10 = 1;
+									if (anim->_entries[k].prevValue == data)
+										anim->_entries[k].prevValue = 1;
 								}
 							}
 						}
@@ -573,7 +574,7 @@ void ComposerEngine::processAnimFrame() {
 						warning("unknown anim op %d", entry.op);
 					}
 
-					entry.word10 = data;
+					entry.prevValue = data;
 				}
 			}
 		}

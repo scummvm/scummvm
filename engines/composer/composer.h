@@ -69,12 +69,19 @@ struct Sprite {
 	bool contains(const Common::Point &pos) const;
 };
 
+enum {
+	kAnimOpEvent = 1,
+	kAnimOpPlayWave = 2,
+	kAnimOpPlayAnim = 3,
+	kAnimOpDrawSprite = 4
+};
+
 struct AnimationEntry {
-	uint32 dword0;
+	uint32 state;
 	uint16 op;
-	uint16 word6;
+	uint16 priority;
 	uint16 counter;
-	uint16 word10;
+	uint16 prevValue;
 };
 
 struct Animation {
