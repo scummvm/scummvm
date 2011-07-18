@@ -1902,7 +1902,11 @@ bool ComposerEngine::initSprite(Sprite &sprite) {
 		sprite._surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		decompressBitmap(type, stream, (byte *)sprite._surface.pixels, size, width, height);
 	} else {
-		warning("ignoring sprite with size %dx%d", width, height);
+		// there are some sprites (e.g. a -998x-998 one in Gregory's title screen)
+		// which have an invalid size, but the original engine doesn't notice for
+		// RLE sprites since the width/height is ignored until the actual draw
+		if (type != kBitmapRLESLWM)
+			error("sprite (type %d) had invalid size %dx%d", type, width, height);
 	}
 	delete stream;
 
