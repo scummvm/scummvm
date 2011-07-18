@@ -958,7 +958,7 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 void GfxOpenGL::destroyTextObject(TextObject *text) {
 }
 
-void GfxOpenGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
+void GfxOpenGL::createMaterial(MaterialData *material, const char *data, const CMap *cmap) {
 	material->_textures = new GLuint[material->_numImages];
 	glGenTextures(material->_numImages, (GLuint *)material->_textures);
 	char *texdata = new char[material->_width * material->_height * 4];
@@ -991,14 +991,14 @@ void GfxOpenGL::createMaterial(Material *material, const char *data, const CMap 
 }
 
 void GfxOpenGL::selectMaterial(const Material *material) {
-	GLuint *textures = (GLuint *)material->_textures;
-	glBindTexture(GL_TEXTURE_2D, textures[material->_currImage]);
+	GLuint *textures = (GLuint *)material->getData()->_textures;
+	glBindTexture(GL_TEXTURE_2D, textures[material->getCurrentImage()]);
 	glMatrixMode(GL_TEXTURE);
 	glLoadIdentity();
-	glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
+	glScalef(1.0f / material->getData()->_width, 1.0f / material->getData()->_height, 1);
 }
 
-void GfxOpenGL::destroyMaterial(Material *material) {
+void GfxOpenGL::destroyMaterial(MaterialData *material) {
 	GLuint *textures = (GLuint *)material->_textures;
 	if (textures) {
 		glDeleteTextures(material->_numImages, textures);

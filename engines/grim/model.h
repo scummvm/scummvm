@@ -148,7 +148,7 @@ public:
 
 	int _numMaterials;
 	char (*_materialNames)[32];
-	ObjectPtr<Material> *_materials;
+	Material **_materials;
 	Graphics::Vector3d _insertOffset;
 	int _numGeosets;
 	Geoset *_geosets;

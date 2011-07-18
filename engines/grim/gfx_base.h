@@ -31,6 +31,7 @@ namespace Grim {
 struct Shadow;
 class SaveGame;
 class BitmapData;
+class MaterialData;
 class PrimitiveObject;
 class Font;
 class TextObject;
@@ -78,9 +79,9 @@ public:
 	virtual void disableLights() = 0;
 	virtual void setupLight(Scene::Light *light, int lightId) = 0;
 
-	virtual void createMaterial(Material *material, const char *data, const CMap *cmap) = 0;
+	virtual void createMaterial(MaterialData *material, const char *data, const CMap *cmap) = 0;
 	virtual void selectMaterial(const Material *material) = 0;
-	virtual void destroyMaterial(Material *material) = 0;
+	virtual void destroyMaterial(MaterialData *material) = 0;
 
 	virtual void createBitmap(BitmapData *bitmap) = 0;
 	virtual void drawBitmap(const Bitmap *bitmap) = 0;

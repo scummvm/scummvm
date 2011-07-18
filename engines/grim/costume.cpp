@@ -635,7 +635,7 @@ public:
 	~MaterialComponent() { }
 
 private:
-	MaterialPtr _mat;
+	Material *_mat;
 	Common::String _filename;
 	int _num;
 };
@@ -986,7 +986,7 @@ void MaterialComponent::init() {
 		Model *model = p->getModel();
 		for (int i = 0; i < model->_numMaterials; ++i) {
 			if (_filename.compareToIgnoreCase(model->_materials[i]->getFilename()) == 0) {
-				_mat = model->_materials[i].object();
+				_mat = model->_materials[i];
 				return;
 			}
 		}

@@ -101,7 +101,6 @@ ResourceLoader::~ResourceLoader() {
 		delete r.resPtr;
 	}
 	clearList(_labs);
-	clearList(_materials);
 	clearList(_models);
 	clearList(_colormaps);
 	clearList(_keyframeAnims);
@@ -341,7 +340,6 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 	}
 
 	Material *result = new Material(fname, b->getData(), b->getLen(), c);
-	_materials.push_back(result);
 
 	return result;
 }
@@ -382,10 +380,6 @@ void ResourceLoader::uncache(const char *filename) {
 	}
 }
 
-void ResourceLoader::uncacheMaterial(Material *mat) {
-	_materials.remove(mat);
-}
-
 void ResourceLoader::uncacheModel(Model *m) {
 	_models.remove(m);
 }
@@ -404,19 +398,6 @@ void ResourceLoader::uncacheFont(Font *f) {
 
 void ResourceLoader::uncacheLipSync(LipSync *s) {
 	_lipsyncs.remove(s);
-}
-
-MaterialPtr ResourceLoader::getMaterial(const char *fname, CMap *c) {
-	Common::String filename = fname;
-	filename.toLowercase();
-	for (Common::List<Material *>::const_iterator i = _materials.begin(); i != _materials.end(); ++i) {
-		Material *m = *i;
-		if (filename.equals(m->_fname) && *m->_cmap == *c) {
-			return m;
-		}
-	}
-
-	return loadMaterial(fname, c);
 }
 
 ModelPtr ResourceLoader::getModel(const Common::String &fname, CMap *c) {
