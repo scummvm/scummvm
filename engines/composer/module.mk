@@ -4,7 +4,8 @@ MODULE_OBJS = \
 	composer.o \
 	detection.o \
 	graphics.o \
-	resource.o
+	resource.o \
+	scripting.o
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS
