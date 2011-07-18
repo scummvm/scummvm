@@ -142,7 +142,7 @@ bool Sprite::contains(const Common::Point &pos) const {
 	if (adjustedPos.y < 0 || adjustedPos.y >= _surface.h)
 		return false;
 	byte *pixels = (byte *)_surface.pixels;
-	return (pixels[(_surface.h - adjustedPos.y - 1) * _surface.w + adjustedPos.x] == 0);
+	return (pixels[(_surface.h - adjustedPos.y - 1) * _surface.w + adjustedPos.x] != 0);
 }
 
 // TODO: params: x, y, event param for done
