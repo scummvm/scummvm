@@ -307,6 +307,8 @@ PuzzlePipes::PuzzlePipes(AsylumEngine *engine) : Puzzle(engine) {
 	memset(_previousLevels, 0, sizeof(_previousLevels));
 	memset(&_levelFlags, false, sizeof(_levelFlags));
 	_levelFlags[4] = true;
+
+	_frameIndexSpider = NULL;
 }
 
 PuzzlePipes::~PuzzlePipes() {
