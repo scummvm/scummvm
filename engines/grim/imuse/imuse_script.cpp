@@ -76,10 +76,10 @@ void Imuse::refreshScripts() {
 	}
 }
 
-void Imuse::startVoice(const char *soundName, int volume, int pan) {
+bool Imuse::startVoice(const char *soundName, int volume, int pan) {
 	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
 		printf("Imuse::startVoice(): SoundName %s, vol:%d, pan:%d\n", soundName, volume, pan);
-	startSound(soundName, IMUSE_VOLGRP_VOICE, 0, volume, pan, 127, NULL);
+	return startSound(soundName, IMUSE_VOLGRP_VOICE, 0, volume, pan, 127, NULL);
 }
 
 void Imuse::startMusic(const char *soundName, int hookId, int volume, int pan) {

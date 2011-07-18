@@ -841,8 +841,7 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 
 	_talkSoundName = soundName;
 	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
-		g_imuse->startVoice(_talkSoundName.c_str());
-		if (g_grim->getCurrScene()) {
+		if (g_imuse->startVoice(_talkSoundName.c_str()) && g_grim->getCurrScene()) {
 			g_grim->getCurrScene()->setSoundPosition(_talkSoundName.c_str(), _pos);
 		}
 	}
