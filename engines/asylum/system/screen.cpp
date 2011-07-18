@@ -306,10 +306,12 @@ void Screen::setupPalette(byte *buffer, int start, int count) {
 // Gamma
 //////////////////////////////////////////////////////////////////////////
 void Screen::setGammaLevel(ResourceId id, int32 val) {
-	if (Config.gammaLevel)
-		setPaletteGamma(id);
-	else
-		warning("[Screen::setGammaLevel] Palette creation without a valid resource Id not implemented");
+	if (Config.gammaLevel) {
+		if (id)
+			setPaletteGamma(id);
+		else
+			warning("[Screen::setGammaLevel] Palette creation without a valid resource Id not implemented");
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
