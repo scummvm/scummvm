@@ -44,7 +44,6 @@ void Sprite::draw() const {
 Model::Model(const Common::String &filename, const char *data, int len, CMap *cmap) :
 		Object(), _numMaterials(0), _numGeosets(0), _cmap(cmap) {
 	_fname = filename;
-	_headNode = NULL;
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		Common::MemoryReadStream ms((const byte *)data, len);
@@ -118,12 +117,6 @@ void Model::loadBinary(const char *&data, CMap *cmap) {
 	_numHierNodes = READ_LE_UINT32(data + 4);
 	data += 8;
 	_rootHierNode = new HierNode[_numHierNodes];
-	for (int i = 0; i < _numHierNodes; i++) {
-		_rootHierNode[i].loadBinary(data, _rootHierNode, &_geosets[0]);
-		if (strcmp(_rootHierNode[i]._name, "head") == 0) {
-			_headNode = _rootHierNode + i;
-		}
-	}
 	_radius = get_float(data);
 	_insertOffset = Graphics::get_vector3d(data + 40);
 }

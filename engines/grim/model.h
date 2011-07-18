@@ -155,7 +155,6 @@ public:
 	float _radius;
 	int _numHierNodes;
 	HierNode *_rootHierNode;
-	HierNode *_headNode;
 };
 
 } // end of namespace Grim
