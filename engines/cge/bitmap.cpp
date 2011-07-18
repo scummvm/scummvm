@@ -32,6 +32,8 @@
 #include "cge/cfile.h"
 #include "cge/vga13h.h"
 #include "common/system.h"
+#include "common/debug.h"
+#include "common/debug-channels.h"
 
 namespace CGE {
 
@@ -47,6 +49,8 @@ void Bitmap::deinit() {
 
 #pragma argsused
 Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL), _map(0) {
+	debugC(1, kDebugBitmap, "Bitmap::Bitmap(%s, %s)", fname, rem ? "true" : "false");
+
 	char pat[MAXPATH];
 	forceExt(pat, fname, ".VBM");
 
@@ -79,6 +83,7 @@ Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL), _map(0) {
 
 
 Bitmap::Bitmap(uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL), _map(0) {
+	debugC(1, kDebugBitmap, "Bitmap::Bitmap(%d, %d, map)", w, h);
 	if (map)
 		code();
 }
@@ -92,6 +97,8 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 	  _h(h),
 	  _m(NULL),
 	  _map(0) {
+	debugC(1, kDebugBitmap, "Bitmap::Bitmap(%d, %d, %d)", w, h, fill);
+
 	uint16 dsiz = _w >> 2;                           // data size (1 plane line size)
 	uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
 	uint16 psiz = _h * lsiz;                         // - last gape, but + plane trailer
@@ -116,20 +123,21 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 		Common::copy(v, v + psiz, destP);
 
 	HideDesc *b = (HideDesc *)(v + 4 * psiz);
-	b->skip = (SCR_WID - _w) >> 2;
-	b->hide = _w >> 2;
+	b->_skip = (SCR_WID - _w) >> 2;
+	b->_hide = _w >> 2;
 
 	// Replicate across the entire table
 	for (HideDesc *hdP = b + 1; hdP < (b + _h); ++hdP)
 		*hdP = *b;
 	
-	b->skip = 0;                                    // fix the first entry
+	b->_skip = 0;                                    // fix the first entry
 	_v = v;
 	_b = b;
 }
 
 
 Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), _map(0) {
+	debugC(1, kDebugBitmap, "Bitmap::Bitmap(bmp)");
 	uint8 *v0 = bmp._v;
 	if (v0) {
 		uint16 vsiz = (uint8 *)(bmp._b) - (uint8 *)(v0);
@@ -144,12 +152,16 @@ Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), 
 
 
 Bitmap::~Bitmap() {
+	debugC(6, kDebugBitmap, "Bitmap::~Bitmap()");
+
 	free(_m);
 	delete[] _v;
 }
 
 
 Bitmap &Bitmap::operator = (const Bitmap &bmp) {
+	debugC(1, kDebugBitmap, "&Bitmap::operator =");
+
 	uint8 *v0 = bmp._v;
 	_w = bmp._w;
 	_h = bmp._h;
@@ -172,6 +184,8 @@ Bitmap &Bitmap::operator = (const Bitmap &bmp) {
 
 
 uint16 Bitmap::moveVmap(uint8 *buf) {
+	debugC(1, kDebugBitmap, "Bitmap::moveVmap(buf)");
+
 	if (_v) {
 		uint16 vsiz = (uint8 *)_b - (uint8 *)_v;
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
@@ -185,6 +199,8 @@ uint16 Bitmap::moveVmap(uint8 *buf) {
 
 
 BMP_PTR Bitmap::code() {
+	debugC(1, kDebugBitmap, "Bitmap::code()");
+
 	if (!_m)
 		return false;
 
@@ -202,8 +218,8 @@ BMP_PTR Bitmap::code() {
 
 		if (_v) {                                      // 2nd pass - fill the hide table
 			for (i = 0; i < _h; i++) {
-				_b[i].skip = 0xFFFF;
-				_b[i].hide = 0x0000;
+				_b[i]._skip = 0xFFFF;
+				_b[i]._hide = 0x0000;
 			}
 		}
 		for (bpl = 0; bpl < 4; bpl++) {              // once per each bitplane
@@ -217,11 +233,11 @@ BMP_PTR Bitmap::code() {
 				for (j = bpl; j < _w; j += 4) {
 					pix = bm[j];
 					if (_v && pix != TRANS) {
-						if (j < _b[i].skip)
-							_b[i].skip = j;
+						if (j < _b[i]._skip)
+							_b[i]._skip = j;
 
-						if (j >= _b[i].hide)
-							_b[i].hide = j + 1;
+						if (j >= _b[i]._hide)
+							_b[i]._hide = j + 1;
 					}
 					if ((pix == TRANS) != skip || cnt >= 0x3FF0) { // end of block
 						cnt |= (skip) ? SKP : CPY;
@@ -282,14 +298,14 @@ BMP_PTR Bitmap::code() {
 	}
 	cnt = 0;
 	for (i = 0; i < _h; i++) {
-		if (_b[i].skip == 0xFFFF) {                    // whole line is skipped
-			_b[i].skip = (cnt + SCR_WID) >> 2;
+		if (_b[i]._skip == 0xFFFF) {                    // whole line is skipped
+			_b[i]._skip = (cnt + SCR_WID) >> 2;
 			cnt = 0;
 		} else {
-			uint16 s = _b[i].skip & ~3;
-			uint16 h = (_b[i].hide + 3) & ~3;
-			_b[i].skip = (cnt + s) >> 2;
-			_b[i].hide = (h - s) >> 2;
+			uint16 s = _b[i]._skip & ~3;
+			uint16 h = (_b[i]._hide + 3) & ~3;
+			_b[i]._skip = (cnt + s) >> 2;
+			_b[i]._hide = (h - s) >> 2;
 			cnt = SCR_WID - h;
 		}
 	}
@@ -299,6 +315,8 @@ BMP_PTR Bitmap::code() {
 
 
 bool Bitmap::solidAt(int16 x, int16 y) {
+	debugC(6, kDebugBitmap, "Bitmap::solidAt(%d, %d)", x, y);
+
 	uint8 *m;
 	uint16 r, n, n0;
 
@@ -360,6 +378,8 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 
 
 bool Bitmap::saveVBM(XFile *f) {
+	debugC(1, kDebugBitmap, "Bitmap::saveVBM(f)");
+
 	uint16 p = (_pal != NULL),
 	       n = ((uint16)(((uint8 *)_b) - _v)) + _h * sizeof(HideDesc);
 	if (f->_error == 0)
@@ -386,6 +406,8 @@ bool Bitmap::saveVBM(XFile *f) {
 
 
 bool Bitmap::loadVBM(XFile *f) {
+	debugC(5, kDebugBitmap, "Bitmap::loadVBM(f)");
+
 	uint16 p = 0, n = 0;
 	if (f->_error == 0)
 		f->read((uint8 *)&p, sizeof(p));
@@ -427,6 +449,8 @@ bool Bitmap::loadVBM(XFile *f) {
 }
 
 bool Bitmap::loadBMP(XFile *f) {
+	debugC(1, kDebugBitmap, "Bitmap::loadBMP(f)");
+
 	struct {
 		char BM[2];
 		union { int16 len; int32 len_; };

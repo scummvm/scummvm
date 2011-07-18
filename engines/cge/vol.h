@@ -70,8 +70,8 @@ private:
 	long _begMark;
 	long _endMark;
 
-	void readBuff();
-	void writeBuff() { }
+	void readBuf();
+	void writeBuf() { }
 	void make(const char *fspec);
 public:
 	VFile(const char *name, IOMODE mode = REA);
