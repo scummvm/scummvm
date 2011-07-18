@@ -703,6 +703,8 @@ ComposerEngine::~ComposerEngine() {
 
 	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++)
 		delete i->_archive;
+	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++)
+		i->_surface.free();
 
 	delete _rnd;
 }
@@ -1029,6 +1031,7 @@ void ComposerEngine::unloadLibrary(uint id) {
 			_queuedScripts[j]._scriptId = 0;
 		}
 
+		delete i->_archive;
 		_libraries.erase(i);
 		return;
 	}
