@@ -4937,39 +4937,6 @@ realcreditsearly:
 	data.byte(kLasthardkey) =  0;
 }
 
-void DreamGenContext::printchar() {
-	STACK_CHECK;
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (ignoreit) */;
-	push(si);
-	push(bx);
-	push(di);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(bx, 3);
-_tmp1:
-	push(ax);
-	_sub(al, 32);
-	ah = 0;
-	_add(ax, data.word(kCharshift));
-	showframe();
-	ax = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	_cmp(data.byte(kKerning), 0);
-	if (!flags.z())
-		goto nokern;
-	kernchars();
-nokern:
-	push(cx);
-	ch = 0;
-	_add(di, cx);
-	cx = pop();
-}
-
 void DreamGenContext::printslow() {
 	STACK_CHECK;
 	data.byte(kPointerframe) = 1;
@@ -21401,7 +21368,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_mode640x480: mode640x480(); break;
 		case addr_set16colpalette: set16colpalette(); break;
 		case addr_realcredits: realcredits(); break;
-		case addr_printchar: printchar(); break;
 		case addr_printslow: printslow(); break;
 		case addr_waitframes: waitframes(); break;
 		case addr_printboth: printboth(); break;

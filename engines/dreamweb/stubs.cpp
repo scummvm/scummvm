@@ -271,6 +271,28 @@ void DreamGenContext::getnextword() {
 	bh = charCount;	
 }
 
+void DreamGenContext::printchar() {
+	uint16 x = di;
+	printchar(es, ds, &x, bx, al);
+	di = x;
+}
+
+void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uint8 c) {
+	if (c == 255)
+		return;
+	push(si);
+	push(di);
+	if (data.byte(kForeignrelease) != 0)
+		y -= 3;
+	cx = showframeCPP(dst, src, *x, y, c - 32 + data.word(kCharshift), 0);
+	di = pop();
+	si = pop();
+	_cmp(data.byte(kKerning), 0);
+	if (flags.z())
+		kernchars();
+	(*x) += cl;
+}
+
 void DreamGenContext::printdirect() {
 	data.word(kLastxpos) = di;
 	ds = data.word(kCurrentset);
@@ -278,7 +300,10 @@ void DreamGenContext::printdirect() {
 		push(bx);
 		push(di);
 		push(dx);
-		uint8 charCount = getnumber(dl, (bool)(dl & 1));
+		uint16 offset;
+		uint8 charCount = getnumber(dl, (bool)(dl & 1), &offset);
+		di = offset;
+		uint16 x = di;
 		do {
 			ax = es.word(si);
 			++si;
@@ -290,8 +315,8 @@ void DreamGenContext::printdirect() {
 			}
 			push(es);
 			al = engine->modifyChar(al);
-			printchar();
-			data.word(kLastxpos) = di;
+			printchar(es, ds, &x, bx, al);
+			data.word(kLastxpos) = x;
 			es = pop();
 			--charCount;
 		} while(charCount);
@@ -303,10 +328,12 @@ void DreamGenContext::printdirect() {
 }
 
 void DreamGenContext::getnumber() {
-	cl = getnumber(dl, (bool)(dl & 1));
+	uint16 offset = di;
+	cl = getnumber(dl, (bool)(dl & 1), &offset);
+	di = offset;
 }
 
-uint8 DreamGenContext::getnumber(uint16 maxWidth, bool centered) {
+uint8 DreamGenContext::getnumber(uint16 maxWidth, bool centered, uint16* offset) {
 	uint8 totalWidth = 0;
 	uint8 charCount = 0;
 	push(si);
@@ -315,6 +342,7 @@ uint8 DreamGenContext::getnumber(uint16 maxWidth, bool centered) {
 	push(ds);
 	push(es);
 	di = si;
+	*offset = di;
 	while (true) {
 		uint8 wordTotalWidth, wordCharCount;
 		uint8 done = getnextword(&wordTotalWidth, &wordCharCount);
@@ -338,6 +366,7 @@ uint8 DreamGenContext::getnumber(uint16 maxWidth, bool centered) {
 			bx = pop();
 			si = pop();
 			_add(di, ax);
+			*offset = di;
 			return charCount;
 		}
 		ax = totalWidth + wordTotalWidth - 10;
@@ -354,6 +383,7 @@ uint8 DreamGenContext::getnumber(uint16 maxWidth, bool centered) {
 			bx = pop();
 			si = pop();
 			_add(di, ax);
+			*offset = di;
 			return charCount;
 		}
 		totalWidth += wordTotalWidth;

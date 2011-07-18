@@ -588,7 +588,6 @@ public:
 	static const uint16 addr_printboth = 0xc30c;
 	static const uint16 addr_waitframes = 0xc308;
 	static const uint16 addr_printslow = 0xc304;
-	static const uint16 addr_printchar = 0xc2fc;
 	static const uint16 addr_realcredits = 0xc2f8;
 	static const uint16 addr_set16colpalette = 0xc2f4;
 	static const uint16 addr_mode640x480 = 0xc2f0;
@@ -1548,7 +1547,7 @@ public:
 	void showpcx();
 	void showdecisions();
 	void checkspeed();
-	void printchar();
+	//void printchar();
 	void showkeypad();
 	void obtoinv();
 	void removeobfrominv();
