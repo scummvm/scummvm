@@ -239,7 +239,33 @@ void Screen::setPalette(byte *rgbPalette) const {
 }
 
 void Screen::setPaletteGamma(ResourceId id) {
-	warning("[Screen::setGammaPalette] not implemented");
+	byte *resPalette = getResource()->get(id)->data + 32;
+	byte rgbPalette[256 * 3];
+
+	_vm->_system->getPaletteManager()->grabPalette(rgbPalette, 0, 256);
+
+	for (int32 i = 1; i < 256; i++) {
+		int color = 0;
+		if (resPalette[i * 3 + 0] > 0)
+			color = resPalette[i * 3 + 0];
+		if (resPalette[i * 3 + 1] > color)
+			color = resPalette[i * 3 + 1];
+		if (resPalette[i * 3 + 2] > color)
+			color = resPalette[i * 3 + 2];
+
+		int gamma = color + (Config.gammaLevel * (63 - color) + 31) / 63;
+
+		if (gamma) {
+			if (resPalette[i * 3 + 0])
+				rgbPalette[i * 3 + 0] = 4 * ((color >> 1) + resPalette[i * 3 + 0] * gamma) / color;
+			if (resPalette[i * 3 + 1])
+				rgbPalette[i * 3 + 1] = 4 * ((color >> 1) + resPalette[i * 3 + 1] * gamma) / color;
+			if (resPalette[i * 3 + 2])
+				rgbPalette[i * 3 + 2] = 4 * ((color >> 1) + resPalette[i * 3 + 2] * gamma) / color;
+		}
+	}
+
+	_vm->_system->getPaletteManager()->setPalette(rgbPalette, 0, 256);
 }
 
 void Screen::setupPaletteAndStartFade(uint32 red, int32 milliseconds, int32 param) {
@@ -280,7 +306,10 @@ void Screen::setupPalette(byte *buffer, int start, int count) {
 // Gamma
 //////////////////////////////////////////////////////////////////////////
 void Screen::setGammaLevel(ResourceId id, int32 val) {
-	warning("[Screen::setGammaLevel] not implemented");
+	if (Config.gammaLevel)
+		setPaletteGamma(id);
+	else
+		warning("[Screen::setGammaLevel] Palette creation without a valid resource Id not implemented");
 }
 
 //////////////////////////////////////////////////////////////////////////
