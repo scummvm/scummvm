@@ -73,7 +73,7 @@ enum ActionAreaType {
 class Scene : public EventHandler {
 public:
 	Scene(AsylumEngine *engine);
-	~Scene();
+	virtual ~Scene();
 
 	/**
 	 * Load the scene data
