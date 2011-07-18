@@ -41,8 +41,8 @@ void Sprite::draw() const {
 	g_driver->drawSprite(this);
 }
 
-Model::Model(const Common::String &filename, const char *data, int len, CMap *cmap) :
-		Object(), _numMaterials(0), _numGeosets(0), _cmap(cmap) {
+Model::Model(const Common::String &filename, const char *data, int len, CMap *cmap, Model *parent) :
+		Object(), _parent(parent), _numMaterials(0), _numGeosets(0), _cmap(cmap) {
 	_fname = filename;
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
@@ -59,8 +59,7 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 void Model::reload(CMap *cmap) {
 	// Load the new colormap
 	for (int i = 0; i < _numMaterials; i++) {
-		delete _materials[i];
-		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap);
+		loadMaterial(i, cmap);
 	}
 	for (int i = 0; i < _numGeosets; i++)
 		_geosets[i].changeMaterials(_materials);
@@ -89,7 +88,7 @@ void Model::loadEMI(Common::MemoryReadStream &ms) {
 		if (memcmp(_materialNames[i], "specialty", 9) == 0) {
 			_materials[i] = 0;
 		} else {
-			_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], 0);
+			loadMaterial(i, 0);
 		}
 		ms.seek(4, SEEK_CUR);
 	}
@@ -103,9 +102,12 @@ void Model::loadBinary(const char *&data, CMap *cmap) {
 	data += 8;
 	_materials = new Material*[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
+	_materialsShared = new bool[_numMaterials];
 	for (int i = 0; i < _numMaterials; i++) {
 		strcpy(_materialNames[i], data);
-		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap);
+		_materialsShared[i] = false;
+		_materials[i] = NULL;
+		loadMaterial(i, cmap);
 		data += 32;
 	}
 	data += 32; // skip name
@@ -323,13 +325,16 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 	ts->scanString("materials %d", 1, &_numMaterials);
 	_materials = new Material*[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
+	_materialsShared = new bool[_numMaterials];
 	for (int i = 0; i < _numMaterials; i++) {
 		char materialName[32];
 		int num;
+		_materialsShared[i] = false;
+		_materials[i] = NULL;
 
 		ts->scanString("%d: %32s", 2, &num, materialName);
-		_materials[num] = g_resourceloader->loadMaterial(materialName, cmap);
 		strcpy(_materialNames[num], materialName);
+		loadMaterial(num, cmap);
 	}
 
 	ts->expectString("section: geometrydef");
@@ -389,6 +394,31 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 
 	if (!ts->isEof() && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
 		warning("Unexpected junk at end of model text");
+}
+
+void Model::loadMaterial(int index, CMap *cmap) {
+	if (!_materialsShared[index]) {
+		delete _materials[index];
+		_materials[index] = NULL;
+	}
+	if (_parent) {
+		_materials[index] = _parent->findMaterial(_materialNames[index]);
+		_materialsShared[index] = true;
+	}
+	if (!_materials[index]) {
+		_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], cmap);
+		_materialsShared[index] = false;
+	}
+}
+
+Material *Model::findMaterial(const char *name) const {
+	for (int i = 0; i < _numMaterials; ++i) {
+		if (scumm_stricmp(name, _materialNames[i]) == 0) {
+			return _materials[i];
+		}
+	}
+
+	return NULL;
 }
 
 void Model::Geoset::changeMaterials(Material *materials[]) {

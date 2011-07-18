@@ -207,10 +207,12 @@ public:
 	void setMatrix(Graphics::Matrix4 matrix) { _matrix = matrix; };
 
 	Model::HierNode *getNode() { return _node; }
+	Model *getModel() { return _model; }
 
 private:
 	Common::String _name;
 	int _num;
+	Model *_model;
 	Model::HierNode *_node;
 	Graphics::Matrix4 _matrix;
 };
@@ -377,8 +379,20 @@ void ModelComponent::init() {
 
 			cm = g_resourceloader->getColormap(DEFAULT_COLORMAP);
 		}
-		_obj = g_resourceloader->loadModel(_filename, cm);
-		_hier = _obj->copyHierarchy();
+
+		// If we're the child of a mesh component, put our nodes in the
+		// parent object's tree.
+		if (_parent) {
+			MeshComponent *mc = static_cast<MeshComponent *>(_parent);
+			_obj = g_resourceloader->loadModel(_filename, cm, mc->getModel());
+			_hier = _obj->copyHierarchy();
+			mc->getNode()->addChild(_hier);
+		} else {
+			_obj = g_resourceloader->loadModel(_filename, cm);
+			_hier = _obj->copyHierarchy();
+			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+				warning("Parent of model %s wasn't a mesh", _filename.c_str());
+		}
 
 		// Use parent availablity to decide whether to default the
 		// component to being visible
@@ -390,22 +404,6 @@ void ModelComponent::init() {
 
 	if (!_activeAnims) {
 		_activeAnims = new Common::List<AnimationEntry>();
-	}
-
-	// If we're the child of a mesh component, put our nodes in the
-	// parent object's tree.
-	if (_parent) {
-		MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
-
-		// Default the visibility to false. Without this when going in the land of the livings
-		// a shady thing attached to Manny will appear. It must do this only if _parent is not
-		// NULL, though, otherwise bruno will be invisible in the "td" set.
-		reset();
-
-		if (mc)
-			mc->getNode()->addChild(_hier);
-		else if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Parent of model %s wasn't a mesh", _filename.c_str());
 	}
 }
 
@@ -937,12 +935,14 @@ MeshComponent::MeshComponent(Costume::Component *p, int parentID, const char *na
 
 void MeshComponent::init() {
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
-	if (mc)
+	if (mc) {
 		_node = mc->getHierarchy() + _num;
-	else {
+		_model = mc->getModel();
+	} else {
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of mesh %d was not a model", _num);
 		_node = NULL;
+		_model = NULL;
 	}
 }
 

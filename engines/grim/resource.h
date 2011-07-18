@@ -63,7 +63,7 @@ public:
 	Font *loadFont(const Common::String &fname);
 	KeyframeAnim *loadKeyframe(const Common::String &fname);
 	Material *loadMaterial(const Common::String &fname, CMap *c);
-	Model *loadModel(const Common::String &fname, CMap *c);
+	Model *loadModel(const Common::String &fname, CMap *c, Model *parent = NULL);
 	LipSync *loadLipSync(const Common::String &fname);
 	Block *getFileBlock(const Common::String &filename) const;
 	Block *getBlock(const char *filename);

@@ -344,7 +344,7 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 	return result;
 }
 
-Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c) {
+Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c, Model *parent) {
 	Common::String fname = fixFilename(filename);
 	Block *b = getFileFromCache(fname);
 	if (!b) {
@@ -354,7 +354,7 @@ Model *ResourceLoader::loadModel(const Common::String &filename, CMap *c) {
 		putIntoCache(fname, b);
 	}
 
-	Model *result = new Model(filename, b->getData(), b->getLen(), c);
+	Model *result = new Model(filename, b->getData(), b->getLen(), c, parent);
 	_models.push_back(result);
 
 	return result;
