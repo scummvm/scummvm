@@ -80,4 +80,4 @@ inline float deg2rad(float deg) {
 
 } // End of namespace Common
 
-#endif // COMMON_MATHS_H
+#endif // COMMON_MATH_H
