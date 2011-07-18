@@ -111,7 +111,7 @@ public:
 	bool   _game;
 	int    _now;
 	int    _lev;
-	char	_usrFnam[15];
+	char   _usrFnam[15];
 
 	Common::RandomSource _randomSource;
 	byte *		_mini;
@@ -189,7 +189,7 @@ public:
 	void miniStep(int stp);
 	void AltCtrlDel();
 	void postMiniStep(int stp);
-	void ShowBak(int ref);
+	void showBak(int ref);
 
 	void snBackPt(Sprite *spr, int stp);
 	void snBarrier(int cav, int bar, bool horz);

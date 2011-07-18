@@ -560,8 +560,8 @@ void CGEEngine::postMiniStep(int step) {
 		SNPOST2_(SNEXEC, -1, _recentStep = step, kMiniStep);
 }
 
-void CGEEngine::ShowBak(int ref) {
-	debugC(1, kDebugEngine, "CGEEngine::ShowBack(%d)", ref);
+void CGEEngine::showBak(int ref) {
+	debugC(1, kDebugEngine, "CGEEngine::showBack(%d)", ref);
 
 	Sprite *spr = _vga->_spareQ->locate(ref);
 	if (spr) {
@@ -582,7 +582,7 @@ void CGEEngine::caveUp() {
 	if (_music)
 		loadMidi(_now);
 
-	ShowBak(BakRef);
+	showBak(BakRef);
 	loadMapping();
 	_text->preload(BakRef, BakRef + 1000);
 	Sprite *spr = _vga->_spareQ->first();
@@ -1042,6 +1042,8 @@ void CGEEngine::nextStep() {
 }
 
 void CGEEngine::saveMapping() {
+	debugC(1, kDebugEngine, "CGEEngine::saveMapping()");
+
 	IoHand cfTab(progName(".TAB"), UPD);
 	if (!cfTab._error) {
 		cfTab.seek((_now - 1) * sizeof(Cluster::_map));
