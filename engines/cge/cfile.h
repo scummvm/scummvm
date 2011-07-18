@@ -49,8 +49,8 @@ protected:
 	long _bufMark;
 	uint16 _seed;
 	CRYPT *_crypt;
-	virtual void readBuff();
-	virtual void writeBuff();
+	virtual void readBuf();
+	virtual void writeBuf();
 public:
 	IoBuf(IOMODE mode, CRYPT *crpt = NULL);
 	IoBuf(const char *name, IOMODE mode, CRYPT *crpt = NULL);

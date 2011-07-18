@@ -53,8 +53,8 @@ struct Bgr4 {
 
 
 struct HideDesc {
-	uint16 skip;
-	uint16 hide;
+	uint16 _skip;
+	uint16 _hide;
 };
 
 #include "common/pack-end.h"

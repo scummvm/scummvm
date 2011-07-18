@@ -28,19 +28,16 @@
 #include "cge/btfile.h"
 #include "common/system.h"
 #include "common/str.h"
+#include "cge/cge.h"
+#include "common/debug.h"
+#include "common/debug-channels.h"
 
 namespace CGE {
 
-#ifndef BT_SIZE
-#define BT_SIZE     K(1)
-#endif
-
-#ifndef BT_KEYLEN
-#define BT_KEYLEN   13
-#endif
-
 BtFile::BtFile(const char *name, IOMODE mode, CRYPT *crpt)
 	: IoHand(name, mode, crpt) {
+	debugC(1, kDebugFile, "BtFile::BtFile(%s, %d, crpt)", name, mode);
+
 	for (int i = 0; i < BT_LEVELS; i++) {
 		_buff[i]._page = new BtPage;
 		_buff[i]._pgNo = BT_NONE;
@@ -53,6 +50,7 @@ BtFile::BtFile(const char *name, IOMODE mode, CRYPT *crpt)
 
 
 BtFile::~BtFile() {
+	debugC(1, kDebugFile, "BtFile::~BtFile()");
 	for (int i = 0; i < BT_LEVELS; i++) {
 		putPage(i, false);
 		delete _buff[i]._page;
@@ -61,6 +59,8 @@ BtFile::~BtFile() {
 
 
 void BtFile::putPage(int lev, bool hard) {
+	debugC(1, kDebugFile, "BtFile::putPage(%d, %s)", lev, hard ? "true" : "false");
+
 	if (hard || _buff[lev]._updt) {
 		seek(_buff[lev]._pgNo * sizeof(BtPage));
 		write((uint8 *) _buff[lev]._page, sizeof(BtPage));
@@ -70,6 +70,8 @@ void BtFile::putPage(int lev, bool hard) {
 
 
 BtPage *BtFile::getPage(int lev, uint16 pgn) {
+	debugC(1, kDebugFile, "BtFile::getPage(%d, %d)", lev, pgn);
+
 	if (_buff[lev]._pgNo != pgn) {
 		int32 pos = pgn * sizeof(BtPage);
 		putPage(lev, false);
@@ -90,6 +92,8 @@ BtPage *BtFile::getPage(int lev, uint16 pgn) {
 }
 
 BtKeypack *BtFile::find(const char *key) {
+	debugC(1, kDebugFile, "BtFile::find(%s)", key);
+
 	int lev = 0;
 	uint16 nxt = BT_ROOT;
 	while (!_error) {
@@ -125,6 +129,8 @@ int keycomp(const void *k1, const void *k2) {
 
 
 void BtFile::make(BtKeypack *keypack, uint16 count) {
+	debugC(1, kDebugFile, "BtFile::make(keypack, %d)", count);
+
 #if BT_LEVELS != 2
 #error This tiny BTREE implementation works with exactly 2 levels!
 #endif

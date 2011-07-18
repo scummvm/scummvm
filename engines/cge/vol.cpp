@@ -28,6 +28,9 @@
 #include "cge/vol.h"
 #include "common/system.h"
 #include "common/str.h"
+#include "cge/cge.h"
+#include "common/debug.h"
+#include "common/debug-channels.h"
 
 namespace CGE {
 
@@ -44,11 +47,14 @@ Dat::Dat():
 	_file(DAT_NAME, REA, CRP)
 #endif
 {
+	debugC(1, kDebugFile, "Dat::Dat()");
 }
 
 /*-----------------------------------------------------------------------*/
 
 void VFile::init() {
+	debugC(1, kDebugFile, "VFile::init()");
+
 	_dat = new Dat();
 #ifdef VOL_UPD
 	_cat = new BtFile(CAT_NAME, UPD, CRP);
@@ -66,6 +72,8 @@ void VFile::deinit() {
 
 VFile::VFile(const char *name, IOMODE mode)
 	: IoBuf(mode) {
+	debugC(3, kDebugFile, "VFile::VFile(%s, %d)", name, mode);
+
 	if (mode == REA) {
 		if (_dat->_file._error || _cat->_error)
 			error("Bad volume data");
@@ -88,11 +96,15 @@ VFile::~VFile() {
 
 
 bool VFile::exist(const char *name) {
+	debugC(1, kDebugFile, "VFile::exist(%s)", name);
+
 	return scumm_stricmp(_cat->find(name)->_key, name) == 0;
 }
 
 
-void VFile::readBuff() {
+void VFile::readBuf() {
+	debugC(3, kDebugFile, "VFile::readBuf()");
+
 	if (_recent != this) {
 		_dat->_file.seek(_bufMark + _lim);
 		_recent = this;
@@ -106,14 +118,20 @@ void VFile::readBuff() {
 }
 
 long VFile::mark() {
+	debugC(5, kDebugFile, "VFile::mark()");
+
 	return (_bufMark + _ptr) - _begMark;
 }
 
 long VFile::size() {
+	debugC(1, kDebugFile, "VFile::size()");
+
 	return _endMark - _begMark;
 }
 
 long VFile::seek(long pos) {
+	debugC(1, kDebugFile, "VFile::seel(%ld)", pos);
+
 	_recent = NULL;
 	_lim = 0;
 	return (_bufMark = _begMark + pos);

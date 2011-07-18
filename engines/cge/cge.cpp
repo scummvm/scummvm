@@ -45,6 +45,9 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(kCGEDebug, "general", "CGE general debug channel");
+	DebugMan.addDebugChannel(kDebugBitmap, "bitmap", "CGE Bitmap debug channel");
+	DebugMan.addDebugChannel(kDebugFile, "file", "CGE IO debug channel");
+	DebugMan.addDebugChannel(kDebugEngine, "engine", "CGE Engine debug channel");
 
 	_isDemo      = _gameDescription->flags & ADGF_DEMO;
 	_startupMode = 1;
@@ -56,6 +59,8 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 }
 
 void CGEEngine::setup() {
+	debugC(1, kDebugEngine, "CGEEngine::setup()");
+
 	// Initialise fields
 	_lastFrame = 0;
 	_lastTick = 0;
@@ -131,7 +136,7 @@ void CGEEngine::setup() {
 }
 
 CGEEngine::~CGEEngine() {
-	debug("CGEEngine::~CGEEngine");
+	debugC(1, kDebugEngine, "CGEEngine::~CGEEngine()");
 
 	// Call classes with static members to clear them up
 	Talk::deinit();
@@ -169,12 +174,13 @@ CGEEngine::~CGEEngine() {
 }
 
 Common::Error CGEEngine::run() {
+	debugC(1, kDebugEngine, "CGEEngine::run()");
+
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);
 
 	// Setup necessary game objects
 	setup();
-
 	// Run the game
 	cge_main();
 
