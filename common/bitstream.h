@@ -22,14 +22,6 @@
 
 // Based on eos' BitStream implementation
 
-#include "common/scummsys.h"
-
-#ifndef USE_BINK
-
-#error "BitStream support disabled because Bink support is disabled"
-
-#else
-
 #ifndef COMMON_BITSTREAM_H
 #define COMMON_BITSTREAM_H
 
@@ -108,5 +100,3 @@ private:
 } // End of namespace Common
 
 #endif // COMMON_BITSTREAM_H
-
-#endif // USE_BINK

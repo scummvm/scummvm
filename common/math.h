@@ -22,14 +22,6 @@
 
 // Based on eos' math code
 
-#include "common/scummsys.h"
-
-#ifndef USE_BINK
-
-#error "Math functions disabled because Bink support is disabled"
-
-#else
-
 #ifndef COMMON_MATH_H
 #define COMMON_MATH_H
 
@@ -117,5 +109,3 @@ inline float deg2rad(float deg) {
 } // End of namespace Common
 
 #endif // COMMON_MATHS_H
-
-#endif // USE_BINK
