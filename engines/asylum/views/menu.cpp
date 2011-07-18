@@ -1542,17 +1542,16 @@ void Menu::updateShowCredits() {
 				break;
 
 			int32 minBound = _startIndex + step + 24;
-			if (minBound >= 0)
-				if (minBound < 32)
-					getText()->setTransTableNum(3 - minBound / 8);
+			if (minBound >= 0 && minBound < 32)
+				getText()->setTransTableNum(3 - minBound / 8);
 
 			int32 maxBound = _startIndex + step;
-			if ((_startIndex + step) < 480)
-				if (maxBound > 448)
-					getText()->setTransTableNum(3 - (479 - maxBound) / 8);
+			if ((_startIndex + step) < 480 && maxBound > 448)
+				getText()->setTransTableNum(3 - (479 - maxBound) / 8);
 
 			getText()->setPosition(320, step + _startIndex);
 			getText()->draw(MAKE_RESOURCE(kResourcePackText, 1447 + index));
+			getText()->setTransTableNum(0);
 		}
 
 		step += 24;
@@ -1568,7 +1567,7 @@ void Menu::updateShowCredits() {
 	}
 
 	_startIndex -= 2;
-	if (_startIndex < -(8688 + 24))
+	if (_startIndex < -8712)   // 8688 + 24
 		closeCredits();
 }
 
