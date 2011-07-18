@@ -38,6 +38,7 @@
 	void quickquit2();
 	void getnextword();
 	uint8 getnextword(uint8 *totalWidth, uint8 *charCount);
+	void printdirect();
 	void getnumber();
 	uint8 getnumber(uint16 maxWidth, bool centered);
 	void kernchars();

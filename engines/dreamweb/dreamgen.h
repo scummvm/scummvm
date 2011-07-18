@@ -585,7 +585,6 @@ public:
 	static const uint16 addr_fillopen = 0xc324;
 	static const uint16 addr_fillryan = 0xc320;
 	static const uint16 addr_monprint = 0xc314;
-	static const uint16 addr_printdirect = 0xc310;
 	static const uint16 addr_printboth = 0xc30c;
 	static const uint16 addr_waitframes = 0xc308;
 	static const uint16 addr_printslow = 0xc304;
@@ -1566,7 +1565,7 @@ public:
 	//void spriteupdate();
 	void usetempcharset();
 	void discops();
-	void printdirect();
+	//void printdirect();
 	void delthisone();
 	void makebackob();
 	void middlepanel();

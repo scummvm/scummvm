@@ -5108,45 +5108,6 @@ void DreamGenContext::printboth() {
 	ax = pop();
 }
 
-void DreamGenContext::printdirect() {
-	STACK_CHECK;
-	data.word(kLastxpos) = di;
-	ds = data.word(kCurrentset);
-printloop6:
-	push(bx);
-	push(di);
-	push(dx);
-	getnumber();
-	ch = 0;
-printloop5:
-	ax = es.word(si);
-	_inc(si);
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishdirct;
-	_cmp(al, ':');
-	if (flags.z())
-		goto finishdirct;
-	push(cx);
-	push(es);
-	modifychar();
-	printchar();
-	data.word(kLastxpos) = di;
-	es = pop();
-	cx = pop();
-	if (--cx)
-		goto printloop5;
-	dx = pop();
-	di = pop();
-	bx = pop();
-	_add(bx, data.word(kLinespacing));
-	goto printloop6;
-finishdirct:
-	dx = pop();
-	di = pop();
-	bx = pop();
-}
-
 void DreamGenContext::monprint() {
 	STACK_CHECK;
 	data.byte(kKerning) = 1;
@@ -21444,7 +21405,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_printslow: printslow(); break;
 		case addr_waitframes: waitframes(); break;
 		case addr_printboth: printboth(); break;
-		case addr_printdirect: printdirect(); break;
 		case addr_monprint: monprint(); break;
 		case addr_fillryan: fillryan(); break;
 		case addr_fillopen: fillopen(); break;

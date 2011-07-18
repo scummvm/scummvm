@@ -271,6 +271,37 @@ void DreamGenContext::getnextword() {
 	bh = charCount;	
 }
 
+void DreamGenContext::printdirect() {
+	data.word(kLastxpos) = di;
+	ds = data.word(kCurrentset);
+	while (true) {
+		push(bx);
+		push(di);
+		push(dx);
+		uint8 charCount = getnumber(dl, (bool)(dl & 1));
+		do {
+			ax = es.word(si);
+			++si;
+			if ((al == 0) || (al == ':')) {
+				dx = pop();
+				di = pop();
+				bx = pop();
+				return;
+			}
+			push(es);
+			al = engine->modifyChar(al);
+			printchar();
+			data.word(kLastxpos) = di;
+			es = pop();
+			--charCount;
+		} while(charCount);
+		dx = pop();
+		di = pop();
+		bx = pop();
+		bx += data.word(kLinespacing);
+	}
+}
+
 void DreamGenContext::getnumber() {
 	cl = getnumber(dl, (bool)(dl & 1));
 }
