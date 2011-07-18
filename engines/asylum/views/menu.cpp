@@ -419,7 +419,7 @@ bool Menu::update() {
 			Common::Point cursor = getCursor()->position();
 
 			if (cursor.x < 230 || cursor.x > 399 || cursor.y < 199 || cursor.y > 259)
-				frameIndex = eyeFrameIndex[Actor::direction(Common::Point(320, 240), cursor)];
+				frameIndex = eyeFrameIndex[Actor::directionFromAngle(Common::Point(320, 240), cursor)];
 			else if (cursor.x >= 743 && cursor.x <= 743 && cursor.y >= 587 && cursor.y <= 602)
 				frameIndex = 9;
 		}
