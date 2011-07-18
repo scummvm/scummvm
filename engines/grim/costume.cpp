@@ -1746,8 +1746,12 @@ void Costume::update() {
 
 	for (int i = 0; i < _numComponents; i++) {
 		if (_components[i]) {
-			_components[i]->setMatrix(_matrix);
-			_components[i]->update();
+			if (_components[i]->_fade > 0) {
+				_components[i]->setMatrix(_matrix);
+				_components[i]->update();
+			} else {
+				_components[i]->reset();
+			}
 		}
 	}
 }
