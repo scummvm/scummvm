@@ -485,7 +485,6 @@ void Klayman::sub41C930(int16 x, bool flag) {
 		error("// TODO AnimatedSprite_setCallback2(AnimationCallback(&Klayman::sub421550));");
 		// TODO AnimatedSprite_setCallback2(AnimationCallback(&Klayman::sub421550));
 	} else {
-	debug("##################################################################");
 		_x4 = x;
 		setCallback2(AnimationCallback(&Klayman::sub41F950));
 	}
@@ -773,8 +772,7 @@ void Klayman::sub41FA40() {
 	if (_status3 == 2) {
 		sub41C7B0();
 	} else if (_status3 == 3) {
-		error("// TODO sub420F20();");
-		// TODO sub420F20();
+		sub420F20();
 	} else {
 		_flagE2 = true;
 		_flagE5 = true;
@@ -1626,6 +1624,23 @@ void Klayman::sub4207F0() {
 	SetMessageHandler(&Klayman::handleMessage41EEF0);
 }
 
+void Klayman::sub420F20() {
+	_flagF8 = false;
+	_flagE5 = false;
+	setFileHash(0x11A8E012, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(&Klayman::spriteUpdate41F5A0);
+	SetMessageHandler(&Klayman::handleMessage41EC70);
+}
+
+void Klayman::spriteUpdate41F5A0() {
+	if (!_flagF8 && ABS(_x4 - _x) < 80) {
+		_parentScene->sendMessage(0x4829, 0, this);
+		_flagF8 = true;
+	}
+	AnimatedSprite::updateDeltaXY();
+}
+
 //##############################################################################
 
 // KmScene1001
@@ -1758,8 +1773,6 @@ void KmScene1002::xUpdate() {
 uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	//ok
 	debug("KmScene1002::xHandleMessage(%04X)", messageNum);
-	if (messageNum == 0x100D)
-		debug("-> %08X", param.asInteger());
 	switch (messageNum) {
 	case 0x2001:
 		setCallback2(AnimationCallback(&KmScene1002::sub449E90));
@@ -1908,9 +1921,6 @@ uint32 KmScene1002::handleMessage4498E0(int messageNum, const MessageParam &para
 			_x = ((Sprite*)sender)->getX() + 75;
 		}
 		_y = ((Sprite*)sender)->getY() - 200;
-		
-		debug("&&&&&&&&&&& param.asInteger() = %d", param.asInteger());
-		
 		if (param.asInteger() == 0) {
 			sub449EF0();
 		} else if (param.asInteger() == 1) {

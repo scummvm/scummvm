@@ -84,11 +84,13 @@ public:
 	void sub420ED0();
 	void sub4207A0();
 	void sub4207F0();
+	void sub420F20();
 	
 	void spriteUpdate41F250();
 	void spriteUpdate41F5F0();
 	void spriteUpdate41F780();
 	void spriteUpdate41F230();
+	void spriteUpdate41F5A0();
 
 	uint32 handleMessage41D360(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41D480(int messageNum, const MessageParam &param, Entity *sender);

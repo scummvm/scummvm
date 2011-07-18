@@ -478,6 +478,69 @@ void Class463::sub40CD90() {
 	_newHashListIndex = -2;
 }
 
+Class465::Class465(NeverhoodEngine *vm, Sprite *class463)
+	: AnimatedSprite(vm, 1200), _class463(class463) {
+
+	createSurface1(995, 0x828C0411);
+	SetUpdateHandler(&Class465::update);
+	SetMessageHandler(&Sprite::handleMessage);
+	SetSpriteCallback(&Class465::spriteUpdate40D150);
+	setFileHash(0x828C0411, 0, -1);
+	_surface->setVisible(false);
+}
+
+Class465::~Class465() {
+	// TODO Sound1ChList_sub_407AF0(0x041080A4);
+}
+
+void Class465::update() {
+	AnimatedSprite::update();
+	if (getGlobalVar(0x20A0C516)) {
+		_surface->setVisible(true);
+		SetUpdateHandler(&AnimatedSprite::update);
+		// TODO Sound1ChList_addSoundResource(0x041080A4, 0x460A1050, true);
+		// TODO Sound1ChList_playLooping(0x460A1050);
+	}
+}
+
+void Class465::spriteUpdate40D150() {
+	_x = _class463->getX() - 18;
+	_y = _class463->getY() - 158;
+}
+
+AsScene1201LeftDoor::AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klayman)
+	: AnimatedSprite(vm, 1100), _soundResource(vm), _klayman(klayman) {
+
+	_x = 320;
+	_y = 240;
+	createSurface(800, 55, 199);
+	if (_klayman->getX() < 100) {
+		setFileHash(0x508A111B, 0, -1);
+		_newHashListIndex = -2;
+		_soundResource.play(calcHash("fxDoorOpen03"));
+	} else {
+		setFileHash(0x508A111B, -1, -1);
+		_newHashListIndex = -2;
+	}
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene1201LeftDoor::handleMessage);
+}
+
+uint32 AsScene1201LeftDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x4809:
+		sub40D590();
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene1201LeftDoor::sub40D590() {
+	setFileHash(0x508A111B, -1, -1);
+	_playBackwards = true;
+	_newHashListIndex = 0;
+}
 
 Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _flag(false) {
@@ -600,13 +663,11 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			class463->getSurface()->getClipRect().y2 = 480;
 			_vm->_collisionMan->addSprite(_class463);
 			_class463 = addSprite(class463);
-#if 0			
 			tempSprite = addSprite(new Class465(_vm, _class463));
 			tempSprite->getSurface()->getClipRect().x1 = x1;
 			tempSprite->getSurface()->getClipRect().y1 = 0;
 			tempSprite->getSurface()->getClipRect().x2 = x2;
 			tempSprite->getSurface()->getClipRect().y2 = 480;
-#endif			
 			class463->setRepl(64, 0);
 		}
 		
@@ -670,13 +731,11 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	tempSprite = addSprite(new StaticSprite(_vm, 0x63D400BC, 900));
 
-#if 0
-	_class467 = addSprite(new Class467(_vm, _klayman));
-	_class467->getSurface()->getClipRect().x1 = x1;
-	_class467->getSurface()->getClipRect().y1 = tempSprite->getSurface()->getDrawRect().y;
-	_class467->getSurface()->getClipRect().x2 = tempSprite->getSurface()->getDrawRect().x + tempSprite->getSurface()->getDrawRect().width;
-	_class467->getSurface()->getClipRect().y2 = 480;
-#endif	
+	_asLeftDoor = addSprite(new AsScene1201LeftDoor(_vm, _klayman));
+	_asLeftDoor->getSurface()->getClipRect().x1 = x1;
+	_asLeftDoor->getSurface()->getClipRect().y1 = tempSprite->getSurface()->getDrawRect().y;
+	_asLeftDoor->getSurface()->getClipRect().x2 = tempSprite->getSurface()->getDrawRect().x + tempSprite->getSurface()->getDrawRect().width;
+	_asLeftDoor->getSurface()->getClipRect().y2 = 480;
 
 	if (getGlobalVar(0x0A310817) && ! getGlobalVar(0x0112090A)) {
 		setGlobalVar(0x0112090A, 1);

@@ -109,6 +109,26 @@ protected:
 	void sub40CD90();
 };
 
+class Class465 : public AnimatedSprite {
+public:
+	Class465(NeverhoodEngine *vm, Sprite *class463);
+	~Class465();
+protected:
+	Sprite *_class463;
+	void update();
+	void spriteUpdate40D150();
+};
+
+class AsScene1201LeftDoor : public AnimatedSprite {
+public:
+	AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klayman);
+protected:
+	Sprite *_klayman;
+	SoundResource _soundResource;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void sub40D590();
+};
+
 class SsScene1201Tnt : public StaticSprite {
 public:
 	SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 pointIndex, int16 clipY2);
@@ -128,7 +148,7 @@ protected:
 	Sprite *_class463;
 	Sprite *_class462;
 	Sprite *_class466;
-	Sprite *_class467;
+	Sprite *_asLeftDoor;
 	Sprite *_class468;
 	Sprite *_asTape;
 	bool _flag;
