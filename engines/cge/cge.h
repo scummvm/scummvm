@@ -188,6 +188,8 @@ public:
 	void switchDebug();
 	void miniStep(int stp);
 	void AltCtrlDel();
+	void postMiniStep(int stp);
+	void ShowBak(int ref);
 
 	void snBackPt(Sprite *spr, int stp);
 	void snBarrier(int cav, int bar, bool horz);
@@ -232,7 +234,8 @@ public:
 	void snUncover(Sprite *spr, Sprite *xspr);
 	void snWalk(Sprite *spr, int x, int y);
 	void snZTrim(Sprite *spr);
-
+protected:
+	int _recentStep;
 private:
 	CGEConsole *_console;
 	void setup();
