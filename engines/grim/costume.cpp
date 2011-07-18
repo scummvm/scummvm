@@ -396,10 +396,10 @@ void ModelComponent::init() {
 
 		// Use parent availablity to decide whether to default the
 		// component to being visible
-		if (!_parent || !_parent->isVisible())
-			setKey(1);
-		else
+		if (_parent)
 			setKey(0);
+		else
+			setKey(1);
 	}
 
 	if (!_activeAnims) {
