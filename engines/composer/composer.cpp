@@ -1861,14 +1861,14 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 }
 
 Common::SeekableReadStream *ComposerEngine::getStreamForSprite(uint16 id) {
-	if (hasResource(ID_BMAP, id))
-		return getResource(ID_BMAP, id);
 	for (Common::List<Pipe *>::iterator k = _pipes.begin(); k != _pipes.end(); k++) {
 		Pipe *pipe = *k;
 		if (!pipe->hasResource(ID_BMAP, id))
 			continue;
-		return pipe->getResource(ID_BMAP, id, false);
+		return pipe->getResource(ID_BMAP, id, true);
 	}
+	if (hasResource(ID_BMAP, id))
+		return getResource(ID_BMAP, id);
 	return NULL;
 }
 
