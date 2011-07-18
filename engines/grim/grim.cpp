@@ -45,6 +45,9 @@
 #include "common/fs.h"
 #include "common/config-manager.h"
 
+#include "gui/error.h"
+#include "gui/gui-manager.h"
+
 #include "engines/engine.h"
 
 #include "engines/grim/grim.h"
@@ -487,6 +490,9 @@ Common::Error GrimEngine::run() {
 #endif
 
 	g_driver->setupScreen(640, 480, fullscreen);
+
+	// refresh the theme engine so that we can show the gui overlay without it crashing.
+	GUI::GuiManager::instance().theme()->refresh();
 
 	BitmapPtr splash_bm;
 	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
@@ -1316,8 +1322,11 @@ void GrimEngine::savegameSave() {
 		strcpy(filename, _savegameFileName.c_str());
 	}
 	_savedState = SaveGame::openForSaving(filename);
-	if (!_savedState)
+	if (!_savedState) {
+		//TODO: Translate this!
+		GUI::displayErrorDialog("Error: the game could not be saved.");
 		return;
+	}
 
 	storeSaveGameImage(_savedState);
 
