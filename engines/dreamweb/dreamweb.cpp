@@ -219,7 +219,13 @@ Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
 	_console = new DreamWebConsole(this);
 
-	_loadSavefile = Common::ConfigManager::instance().getInt("save_slot");
+	if (ConfMan.hasKey("save_slot")) {
+		_enableSavingOrLoading = true;
+		_loadSavefile = ConfMan.getInt("save_slot");
+	} else {
+		_enableSavingOrLoading = false;
+		_loadSavefile = -1;
+	}
 
 	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this);
 	_context.__start();
