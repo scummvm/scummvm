@@ -1348,6 +1348,7 @@ void GrimEngine::savegameSave() {
 	g_movie->pause(false);
 	printf("GrimEngine::savegameSave() finished.\n");
 
+	_shortFrame = true;
 	clearEventQueue();
 }
 
