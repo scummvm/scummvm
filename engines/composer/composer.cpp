@@ -885,6 +885,7 @@ void ComposerEngine::onMouseMove(const Common::Point &pos) {
 
 void ComposerEngine::onKeyDown(uint16 keyCode) {
 	runEvent(5, keyCode, 0, 0);
+	runEvent(6, keyCode, 0, 0);
 }
 
 void ComposerEngine::setCursor(uint16 id, const Common::Point &offset) {
