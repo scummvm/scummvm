@@ -245,6 +245,8 @@ private:
 	void savegameCallback();
 	void storeSaveGameImage(SaveGame *savedState);
 
+	void clearEventQueue();
+
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;
 	Common::String _savegameFileName;

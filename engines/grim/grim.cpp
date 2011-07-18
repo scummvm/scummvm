@@ -1185,6 +1185,7 @@ void GrimEngine::savegameRestore() {
 	printf("GrimEngine::savegameRestore() finished.\n");
 
 	_shortFrame = true;
+	clearEventQueue();
 }
 
 template<typename T>
@@ -1346,6 +1347,8 @@ void GrimEngine::savegameSave() {
 	g_imuse->pause(false);
 	g_movie->pause(false);
 	printf("GrimEngine::savegameSave() finished.\n");
+
+	clearEventQueue();
 }
 
 template<typename T>
@@ -1722,6 +1725,12 @@ void GrimEngine::killScenes() {
 
 int GrimEngine::sceneId(Scene *s) const {
 	return s->_id;
+}
+
+void GrimEngine::clearEventQueue() {
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+	}
 }
 
 } // end of namespace Grim
