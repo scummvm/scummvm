@@ -1901,10 +1901,14 @@ void ComposerEngine::drawSprite(const Sprite &sprite) {
 	// incoming data is BMP-style (bottom-up), so flip it
 	byte *pixels = (byte *)_surface.pixels;
 	for (int j = 0; j < sprite._surface.h; j++) {
+		if (j + y < 0)
+			continue;
+		if (j + y >= _surface.h)
+			break;
 		byte *in = (byte *)sprite._surface.pixels + (sprite._surface.h - j - 1) * sprite._surface.w;
 		byte *out = pixels + ((j + y) * _surface.w) + x;
-		for (uint i = 0; i < sprite._surface.w; i++)
-			if (in[i])
+		for (int i = 0; i < sprite._surface.w; i++)
+			if ((x + i >= 0) && (x + i < _surface.w) && in[i])
 				out[i] = in[i];
 	}
 }
