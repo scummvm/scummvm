@@ -658,7 +658,11 @@ void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
 }
 
 const Sprite *ComposerEngine::getSpriteAtPos(const Common::Point &pos) {
-	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+	for (Common::List<Sprite>::iterator i = _sprites.reverse_begin(); i != _sprites.end(); --i) {
+		// avoid highest-level objects (e.g. the cursor)
+		if (!i->_zorder)
+			continue;
+
 		if (i->contains(pos))
 			return &(*i);
 	}
@@ -966,7 +970,17 @@ void ComposerEngine::loadLibrary(uint id) {
 		uint16 buttonId = buttonResources[i];
 		Common::SeekableReadStream *stream = library._archive->getResource(ID_BUTN, buttonId);
 		Button button(stream, buttonId);
-		_buttons.push_back(button);
+
+		bool inserted = false;
+		for (Common::List<Button>::iterator b = _buttons.begin(); b != _buttons.end(); b++) {
+			if (button._zorder <= b->_zorder)
+				continue;
+			_buttons.insert(b, button);
+			inserted = true;
+			break;
+		}
+		if (!inserted)
+			_buttons.push_back(button);
 	}
 
 	// add background sprite, if it exists
