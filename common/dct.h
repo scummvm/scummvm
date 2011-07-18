@@ -20,46 +20,57 @@
  *
  */
 
-#if !defined(SCUMM_HE_ANIMATION_H) && defined(ENABLE_HE)
-#define SCUMM_HE_ANIMATION_H
+// Based on eos' (I)RDFT code which is in turn
+// Based upon the (I)DCT code in FFmpeg
+// Copyright (c) 2009 Peter Ross <pross@xvid.org>
+// Copyright (c) 2010 Alex Converse <alex.converse@gmail.com>
+// Copyright (c) 2010 Vitor Sessak
 
-#include "audio/mixer.h"
+#ifndef COMMON_DCT_H
+#define COMMON_DCT_H
 
-namespace Video {
-	class VideoDecoder;
-}
+#include "common/scummsys.h"
+#include "common/math.h"
+#include "common/rdft.h"
 
-namespace Scumm {
+namespace Common {
 
-class ScummEngine_v90he;
-
-class MoviePlayer {
+/**
+ * (Inverse) Discrete Cosine Transforms.
+ *
+ * Used in engines:
+ *  - scumm
+ */
+class DCT {
 public:
-	MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer);
-	~MoviePlayer();
+	enum TransformType {
+		DCT_II,
+		DCT_III,
+		DCT_I,
+		DST_I
+	};
 
-	int getImageNum();
-	int load(const char *filename, int flags, int image = 0);
+	DCT(int bits, TransformType trans);
+	~DCT();
 
-	void copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch);
-	void handleNextFrame();
-
-	void close();
-	int getWidth() const;
-	int getHeight() const;
-	int getFrameCount() const;
-	int getCurFrame() const;
+	void calc(float *data);
 
 private:
-	ScummEngine_v90he *_vm;
+	int _bits;
+	TransformType _trans;
 
-	Video::VideoDecoder *_video;
+	const float *_tCos;
 
-	char baseName[40];
-	uint32 _flags;
-	uint32 _wizResNum;
+	float *_csc2;
+
+	RDFT *_rdft;
+
+	void calcDCTI  (float *data);
+	void calcDCTII (float *data);
+	void calcDCTIII(float *data);
+	void calcDSTI  (float *data);
 };
 
-} // End of namespace Scumm
+} // End of namespace Common
 
-#endif
+#endif // COMMON_DCT_H
