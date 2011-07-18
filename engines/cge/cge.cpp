@@ -123,11 +123,12 @@ void CGEEngine::setup() {
 		_maxCaveArr[3] = 23;
 		_maxCaveArr[4] = 24;
 	};
-	_maxCave  =  0;
-	_dark     = false;
-	_game     = false;
-	_now      =  1;
-	_lev      = -1;
+	_maxCave    =  0;
+	_dark       = false;
+	_game       = false;
+	_now        =  1;
+	_lev        = -1;
+	_recentStep = -2;
 
 	for (int i = 0; i < 4; i++)
 		_flag[i] = false;
