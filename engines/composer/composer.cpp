@@ -74,24 +74,24 @@ enum {
 	kOpAnd = 0xC,
 	kOpOr = 0xD,
 	kOpXor = 0xE,
-	kOpNotPositive = 0xF,
+	kOpNot = 0xF,
 	kOpSqrt = 0x10,
 	kOpRandom = 0x11,
 	kOpExecuteScript = 0x12,
 	kOpCallFunc = 0x13,
-	kOpBoolLessThanEq = 0x14,
-	kOpBoolLessThan = 0x15,
-	kOpBoolGreaterThanEq = 0x16,
-	kOpBoolGreaterThan = 0x17,
+	kOpBoolLessThanEq = 0x17,
+	kOpBoolLessThan = 0x16,
+	kOpBoolGreaterThanEq = 0x15,
+	kOpBoolGreaterThan = 0x14,
 	kOpBoolEqual = 0x18,
 	kOpBoolNotEqual = 0x19,
 	kOpSaveArgs = 0x1A,
 	kOpRestoreArgs = 0x1B,
-	kOpSetReturnValue = 0x20,
-	kOpLessThanEq = 0x21,
-	kOpLessThan = 0x22,
-	kOpGreaterThanEq = 0x23,
-	kOpGreaterThan = 0x24,
+	kOpReturn = 0x20,
+	kOpLessThanEq = 0x22,
+	kOpLessThan = 0x21,
+	kOpGreaterThanEq = 0x24,
+	kOpGreaterThan = 0x23,
 	kOpEqual = 0x25,
 	kOpNotEqual = 0x26,
 	kOpJump = 0x80,
@@ -1233,12 +1233,12 @@ void ComposerEngine::runScript(uint16 id) {
 			debug(9, "[%d/%d] = [%d/%d]=%d ^ [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 ^ val3);
 			setArg(script[pos + 1], arg1, val2 ^ val3);
 			break;
-		case kOpNotPositive:
+		case kOpNot:
 			if (numParams != 2)
-				error("kOpNotPositive had wrong number of params (%d)", numParams);
+				error("kOpNot had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
-			debug(9, "[%d/%d] = [%d/%d] (%d) < 1", script[pos + 1], arg1, script[pos + 2], arg2, val2);
-			setArg(script[pos + 1], arg1, (val2 < 1) ? 1 : 0);
+			debug(9, "[%d/%d] = ![%d/%d] (!%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2);
+			setArg(script[pos + 1], arg1, val2 ? 0 : 1);
 			break;
 		case kOpSqrt:
 			if (numParams != 2)
@@ -1333,9 +1333,9 @@ void ComposerEngine::runScript(uint16 id) {
 			for (uint i = 1; i < 19; i++)
 				_vars[i] = _stack[stackBase + i];
 			break;
-		case kOpSetReturnValue:
+		case kOpReturn:
 			if (numParams != 1)
-				error("kOpSetReturnValue had wrong number of params (%d)", numParams);
+				error("kOpReturn had wrong number of params (%d)", numParams);
 			val1 = getArg(script[pos + 1], arg1);
 			debug(9, "return [%d/%d]=%d", script[pos + 1], arg1, val1);
 			_vars[0] = val1;
@@ -1345,7 +1345,7 @@ void ComposerEngine::runScript(uint16 id) {
 				error("kOpLessThanEq had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
-			debug(9, "[%d/%d] = [%d/%d] <= [%d/%d]? (%d <= %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val2, val3);
+			debug(9, "[%d/%d] = [%d/%d] <= [%d/%d]? (%d <= %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val3, val2);
 			setArg(script[pos + 1], arg1, (val3 <= val2) ? 1 : 0);
 			break;
 		case kOpLessThan:
@@ -1353,7 +1353,7 @@ void ComposerEngine::runScript(uint16 id) {
 				error("kOpLessThan had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
-			debug(9, "[%d/%d] = [%d/%d] < [%d/%d]? (%d < %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val2, val3);
+			debug(9, "[%d/%d] = [%d/%d] < [%d/%d]? (%d < %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val3, val2);
 			setArg(script[pos + 1], arg1, (val3 < val2) ? 1 : 0);
 			break;
 		case kOpGreaterThanEq:
@@ -1361,7 +1361,7 @@ void ComposerEngine::runScript(uint16 id) {
 				error("kOpGreaterThanEq had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
-			debug(9, "[%d/%d] = [%d/%d] >= [%d/%d]? (%d >= %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val2, val3);
+			debug(9, "[%d/%d] = [%d/%d] >= [%d/%d]? (%d >= %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val3, val2);
 			setArg(script[pos + 1], arg1, (val3 >= val2) ? 1 : 0);
 			break;
 		case kOpGreaterThan:
@@ -1369,7 +1369,7 @@ void ComposerEngine::runScript(uint16 id) {
 				error("kOpGreaterThan had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
-			debug(9, "[%d/%d] = [%d/%d] > [%d/%d]? (%d > %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val2, val3);
+			debug(9, "[%d/%d] = [%d/%d] > [%d/%d]? (%d > %d)", script[pos + 1], arg1, script[pos + 2], arg2, script[pos + 3], arg3, val3, val2);
 			setArg(script[pos + 1], arg1, (val3 > val2) ? 1 : 0);
 			break;
 		case kOpEqual:
@@ -1439,6 +1439,9 @@ void ComposerEngine::runScript(uint16 id) {
 			error("unknown script op 0x%02x", op);
 		}
 		pos += (1 + numParams);
+
+		if (op == kOpReturn)
+			break;
 	}
 
 	delete[] script;
