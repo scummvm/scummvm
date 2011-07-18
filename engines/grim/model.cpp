@@ -117,6 +117,9 @@ void Model::loadBinary(const char *&data, CMap *cmap) {
 	_numHierNodes = READ_LE_UINT32(data + 4);
 	data += 8;
 	_rootHierNode = new HierNode[_numHierNodes];
+	for (int i = 0; i < _numHierNodes; i++) {
+		_rootHierNode[i].loadBinary(data, _rootHierNode, &_geosets[0]);
+	}
 	_radius = get_float(data);
 	_insertOffset = Graphics::get_vector3d(data + 40);
 }
