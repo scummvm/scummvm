@@ -20,46 +20,51 @@
  *
  */
 
-#if !defined(SCUMM_HE_ANIMATION_H) && defined(ENABLE_HE)
-#define SCUMM_HE_ANIMATION_H
+// Based on eos' (I)RDFT code which is in turn
+// Based upon the (I)RDFT code in FFmpeg
+// Copyright (c) 2009 Alex Converse <alex dot converse at gmail dot com>
 
-#include "audio/mixer.h"
+#ifndef COMMON_RDFT_H
+#define COMMON_RDFT_H
 
-namespace Video {
-	class VideoDecoder;
-}
+#include "common/scummsys.h"
+#include "common/math.h"
+#include "common/fft.h"
 
-namespace Scumm {
+namespace Common {
 
-class ScummEngine_v90he;
+/**
+ * (Inverse) Real Discrete Fourier Transform.
+ *
+ * Used in engines:
+ *  - scumm
+ */
 
-class MoviePlayer {
+class RDFT {
 public:
-	MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer);
-	~MoviePlayer();
+	enum TransformType {
+		DFT_R2C,
+		IDFT_C2R,
+		IDFT_R2C,
+		DFT_C2R
+	};
 
-	int getImageNum();
-	int load(const char *filename, int flags, int image = 0);
+	RDFT(int bits, TransformType trans);
+	~RDFT();
 
-	void copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch);
-	void handleNextFrame();
-
-	void close();
-	int getWidth() const;
-	int getHeight() const;
-	int getFrameCount() const;
-	int getCurFrame() const;
+	void calc(float *data);
 
 private:
-	ScummEngine_v90he *_vm;
+	int _bits;
+	int _inverse;
+	int _signConvention;
 
-	Video::VideoDecoder *_video;
+	const float *_tSin;
+	const float *_tCos;
 
-	char baseName[40];
-	uint32 _flags;
-	uint32 _wizResNum;
+	FFT *_fft;
 };
 
-} // End of namespace Scumm
+} // End of namespace Common
 
-#endif
+#endif // COMMON_RDFT_H

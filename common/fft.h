@@ -18,42 +18,61 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-/**
- * @file
- * YUV to RGB conversion used in engines:
- * - scumm (he)
- * - sword25
- */
+// Based on eos' (I)FFT code which is in turn
+// based upon the (I)FFT code in FFmpeg
+// Copyright (c) 2008 Loren Merritt
+// Copyright (c) 2002 Fabrice Bellard
+// Partly based on libdjbfft by D. J. Bernstein
 
-#ifndef GRAPHICS_YUV_TO_RGB_H
-#define GRAPHICS_YUV_TO_RGB_H
+#ifndef COMMON_FFT_H
+#define COMMON_FFT_H
 
 #include "common/scummsys.h"
-#include "graphics/surface.h"
+#include "common/math.h"
 
-namespace Graphics {
-
-struct Surface;
+namespace Common {
 
 /**
- * Convert a YUV420 image to an RGB surface
+ * (Inverse) Fast Fourier Transform.
  *
- * @param dst     the destination surface
- * @param ySrc    the source of the y component
- * @param uSrc    the source of the u component
- * @param vSrc    the source of the v component
- * @param yWidth  the width of the y surface (must be divisible by 2)
- * @param yHeight the height of the y surface (must be divisible by 2)
- * @param yPitch  the pitch of the y surface
- * @param uvPitch the pitch of the u and v surfaces
+ * Used in engines:
+ *  - scumm
  */
-void convertYUV420ToRGB(Graphics::Surface *dst, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch);
+class FFT {
+public:
+	FFT(int bits, int inverse);
+	~FFT();
 
-} // End of namespace Graphics
+	/** Do the permutation needed BEFORE calling calc(). */
+	void permute(Complex *z);
 
-#endif
+	/** Do a complex FFT.
+	 *
+	 *  The input data must be permuted before.
+	 *  No 1.0/sqrt(n) normalization is done.
+	 */
+	void calc(Complex *z);
+
+private:
+	int _bits;
+	int _inverse;
+
+	uint16 *_revTab;
+
+	Complex *_expTab;
+	Complex *_tmpBuf;
+
+	const float *_tSin;
+	const float *_tCos;
+
+	int _splitRadix;
+	int _permutation;
+
+	static int splitRadixPermutation(int i, int n, int inverse);
+};
+
+} // End of namespace Common
+
+#endif // COMMON_FFT_H

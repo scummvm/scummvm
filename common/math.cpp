@@ -20,46 +20,25 @@
  *
  */
 
-#if !defined(SCUMM_HE_ANIMATION_H) && defined(ENABLE_HE)
-#define SCUMM_HE_ANIMATION_H
+// Based on eos' math code
 
-#include "audio/mixer.h"
+#include "common/math.h"
 
-namespace Video {
-	class VideoDecoder;
+#include "common/sinetables.h"
+#include "common/cosinetables.h"
+
+namespace Common {
+
+const float *getSineTable(int bits) {
+	assert((bits >= 4) && (bits <= 16));
+
+	return sinTables[bits];
 }
 
-namespace Scumm {
+const float *getCosineTable(int bits) {
+	assert((bits >= 4) && (bits <= 16));
 
-class ScummEngine_v90he;
+	return cosTables[bits];
+}
 
-class MoviePlayer {
-public:
-	MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer);
-	~MoviePlayer();
-
-	int getImageNum();
-	int load(const char *filename, int flags, int image = 0);
-
-	void copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch);
-	void handleNextFrame();
-
-	void close();
-	int getWidth() const;
-	int getHeight() const;
-	int getFrameCount() const;
-	int getCurFrame() const;
-
-private:
-	ScummEngine_v90he *_vm;
-
-	Video::VideoDecoder *_video;
-
-	char baseName[40];
-	uint32 _flags;
-	uint32 _wizResNum;
-};
-
-} // End of namespace Scumm
-
-#endif
+} // End of namespace Common
