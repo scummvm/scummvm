@@ -145,7 +145,6 @@ bool Sprite::contains(const Common::Point &pos) const {
 	return (pixels[(_surface.h - adjustedPos.y - 1) * _surface.w + adjustedPos.x] != 0);
 }
 
-// TODO: params: x, y, event param for done
 Animation::Animation(Common::SeekableReadStream *stream, uint16 id, Common::Point basePos, uint32 eventParam)
 	: _stream(stream), _id(id), _basePos(basePos), _eventParam(eventParam) {
 	uint32 size = _stream->readUint32LE();
@@ -445,7 +444,6 @@ void ComposerEngine::playWaveForAnim(uint16 id, uint16 priority, bool bufferingO
 	if (!stream)
 		return;
 	// FIXME: non-pipe buffers have fixed wav header (data at +44, size at +40)
-	// FIXME: deal with word6 (priority)
 	byte *buffer = (byte *)malloc(stream->size());
 	stream->read(buffer, stream->size());
 	if (!_audioStream)
@@ -974,14 +972,7 @@ void ComposerEngine::loadLibrary(uint id) {
 	library._archive = new ComposerArchive();
 	if (!library._archive->openFile(filename))
 		error("failed to open '%s'", filename.c_str());
-	// FIXME: push in front?
 	_libraries.push_front(library);
-
-	/*Common::SeekableReadStream *stream = _archive->getResource(ID_ANIM, 1004);
-	byte buf[stream->size()];
-	stream->read(buf, stream->size());
-	Common::hexdump(buf, stream->size());
-	delete stream;*/
 
 	Common::Array<uint16> buttonResources = library._archive->getResourceIDList(ID_BUTN);
 	for (uint i = 0; i < buttonResources.size(); i++) {
