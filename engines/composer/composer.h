@@ -57,50 +57,9 @@ enum GameType {
 };
 
 class Archive;
+struct Animation;
 class ComposerEngine;
-
-struct Sprite {
-	uint16 _id;
-	uint16 _animId;
-	uint16 _zorder;
-	Common::Point _pos;
-	Graphics::Surface _surface;
-
-	bool contains(const Common::Point &pos) const;
-};
-
-enum {
-	kAnimOpEvent = 1,
-	kAnimOpPlayWave = 2,
-	kAnimOpPlayAnim = 3,
-	kAnimOpDrawSprite = 4
-};
-
-struct AnimationEntry {
-	uint32 state;
-	uint16 op;
-	uint16 priority;
-	uint16 counter;
-	uint16 prevValue;
-};
-
-struct Animation {
-	Animation(Common::SeekableReadStream *stream, uint16 id, Common::Point basePos, uint32 eventParam);
-	~Animation();
-
-	void seekToCurrPos();
-
-	uint16 _id;
-	Common::Point _basePos;
-	uint32 _eventParam;
-	
-	uint32 _state;
-
-	Common::Array<AnimationEntry> _entries;
-
-	uint32 _offset;
-	Common::SeekableReadStream *_stream;
-};
+struct Sprite;
 
 struct PipeResourceEntry {
 	uint32 size;

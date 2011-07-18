@@ -3,6 +3,7 @@ MODULE := engines/composer
 MODULE_OBJS = \
 	composer.o \
 	detection.o \
+	graphics.o \
 	resource.o
 
 # This module can be built as a plugin
