@@ -51,10 +51,15 @@ protected:
 	void startup();
 	void createModule1000(int which);
 	void updateModule1000();
+	void createModule1200(int which);
+	void updateModule1200();
 	void createModule1500(int which);
 	void updateModule1500();
+	void createModule2200(int which);
 	void createModule2300(int which);
 	void updateModule2300();
+	void createModule2400(int which);
+	void createModule3000(int which);
 };
 
 } // End of namespace Neverhood

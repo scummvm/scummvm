@@ -24,6 +24,7 @@
 
 #include "neverhood/graphics.h"
 #include "neverhood/module1000.h"
+#include "neverhood/module1200.h"
 #include "neverhood/module1500.h"
 #include "neverhood/module2300.h"
 
@@ -108,8 +109,9 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 void GameModule::startup() {
 	// TODO: Displaying of error text probably not needed in ScummVM
 //	createModule1500(0); // Logos and intro video //Real
-//	createModule1000(0);
-	createModule2300(0);
+//	createModule1000(-1);
+//	createModule2300(0);
+	createModule1200(0);
 }
 
 void GameModule::createModule1000(int which) {
@@ -129,6 +131,30 @@ void GameModule::updateModule1000() {
 		_childObject = NULL;
 		createModule2300(0);
 		_childObject->handleUpdate();
+	}
+}
+
+void GameModule::createModule1200(int which) {
+	setGlobalVar(0x91080831, 0x00478311);
+	_childObject = new Module1200(_vm, this, which);
+	SetUpdateHandler(&GameModule::updateModule1200);
+}
+
+void GameModule::updateModule1200() {
+	if (!_childObject)
+		return;
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			// TODO createModule2600(0);
+			// TODO _childObject->handleUpdate();
+		} else {
+			createModule2300(2);
+			_childObject->handleUpdate();
+		}
 	}
 }
 
@@ -170,8 +196,8 @@ void GameModule::updateModule2300() {
 			// TODO createModule2200(0);
 			// TODO _childObject->handleUpdate();
 		} else if (_field20 == 2) {
-			// TODO createModule1200(0);
-			// TODO _childObject->handleUpdate();
+			createModule1200(0);
+			_childObject->handleUpdate();
 		} else if (_field20 == 3) {
 			// TODO createModule2400(0);
 			// TODO _childObject->handleUpdate();
@@ -194,6 +220,16 @@ void GameModule::updateModule2300() {
 	if (_field26 >= 0) {
 		_field26 = -1;
 	}
+}
+
+void GameModule::createModule2400(int which) {
+	debug("createModule2400");
+	_vm->_system->quit();
+}
+
+void GameModule::createModule3000(int which) {
+	debug("createModule3000");
+	_vm->_system->quit();
 }
 
 } // End of namespace Neverhood

@@ -485,6 +485,13 @@ void Scene::runMessageList() {
 	
 }
 
+void Scene::messageList402220() {
+	_messageListFlag1 = false;
+	_messageList = NULL;
+	_messageListFlag = true;
+	_klayman->sendMessage(0x4004, 0, this);
+}
+
 void Scene::setRectList(uint32 id) {
 	setRectList(_vm->_staticData->getRectList(id));
 }

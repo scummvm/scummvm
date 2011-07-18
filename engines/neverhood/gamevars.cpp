@@ -57,7 +57,16 @@ uint32 GameVars::getSubVar(uint32 nameHash, uint32 subNameHash) {
 
 void GameVars::setSubVar(uint32 nameHash, uint32 subNameHash, uint32 value) {
 	debug("GameVars::setSubVar(%08X, %08X, %d)", nameHash, subNameHash, value);
-	_vars[getSubVarIndex(getSubVarIndex(0, nameHash), subNameHash)].value = value;
+	
+	int16 varIndex = getSubVarIndex(0, nameHash);
+	debug("  varIndex = %d", varIndex);
+	
+	int16 subVarIndex = getSubVarIndex(varIndex, subNameHash);
+	debug("  subVarIndex = %d", subVarIndex);
+	
+	_vars[subVarIndex].value = value;
+	
+	//_vars[getSubVarIndex(getSubVarIndex(0, nameHash), subNameHash)].value = value;
 }
 
 int16 GameVars::addVar(uint32 nameHash, uint32 value) {
@@ -89,16 +98,19 @@ int16 GameVars::addSubVar(int16 varIndex, uint32 subNameHash, uint32 value) {
 	} else {
 		while (_vars[nextIndex].nextIndex != -1)
 			nextIndex = _vars[nextIndex].nextIndex;
-		_vars[nextIndex].nextIndex = addVar(subNameHash, value);
-		return _vars[nextIndex].nextIndex;
+		int16 index = addVar(subNameHash, value);	
+		_vars[nextIndex].nextIndex = index;
+		return index;
 	}
 }
 
 int16 GameVars::getSubVarIndex(int16 varIndex, uint32 subNameHash) {
 	debug("GameVars::getSubVarIndex(%d, %08X)", varIndex, subNameHash);
 	int16 subVarIndex = findSubVarIndex(varIndex, subNameHash);
-	if (subVarIndex == -1)
+	if (subVarIndex == -1) {
 		subVarIndex = addSubVar(varIndex, subNameHash, 0);
+		debug("need to create: subVarIndex = %d", subVarIndex);
+	}
 	return subVarIndex;
 }
 

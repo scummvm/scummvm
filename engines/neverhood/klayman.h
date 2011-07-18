@@ -82,6 +82,8 @@ public:
 	void sub421070();
 	void sub420420();
 	void sub420ED0();
+	void sub4207A0();
+	void sub4207F0();
 	
 	void spriteUpdate41F250();
 	void spriteUpdate41F5F0();
@@ -262,6 +264,25 @@ protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	uint32 handleMessage478110(int messageNum, const MessageParam &param, Entity *sender);
 	void sub478170();
+};
+
+class KmScene1201 : public Klayman {
+public:
+	KmScene1201(NeverhoodEngine *vm, Entity *parentScene, Entity *class464, int16 x, int16 y);
+protected:
+	Entity *_class464;
+	int _countdown;
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	void update40DBE0();
+	uint32 handleMessage40DC00(int messageNum, const MessageParam &param, Entity *sender);
+	void sub40DD20();
+	void sub40DD90();
+	uint32 handleMessage40DDF0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage40DEA0(int messageNum, const MessageParam &param, Entity *sender);
+	void sub40DF00();
+	void sub40DF60();
+	void sub40DFA0();
+	void sub40E040();
 };
 
 } // End of namespace Neverhood

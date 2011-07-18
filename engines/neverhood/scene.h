@@ -102,6 +102,7 @@ protected:
 	void runMessageList();
 	void setRectList(uint32 id);
 	void setRectList(RectList *rectList);
+	void messageList402220();
 	void loadDataResource(uint32 fileHash);
 };
 
