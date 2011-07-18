@@ -25,6 +25,9 @@
 
 #include "asylum/puzzles/puzzle.h"
 
+#include "common/array.h"
+#include "asylum/resources/polygons.h"
+
 namespace Asylum {
 
 class AsylumEngine;
@@ -35,7 +38,23 @@ public:
 	~PuzzleHiveMachine();
 
 private:
+	enum MusicalNote {
+		kMusicalNoteNone = -1,
+		kMusicalNoteF,
+		kMusicalNoteD,
+		kMusicalNoteE,
+		kMusicalNoteA,
+		kMusicalNoteB
+	};
+
+	uint32 _counter, _counter1;
 	int32 _rectIndex;
+	uint32 _frameIndex, _frameIndex1;
+	Common::Array<MusicalNote> _melody;
+	MusicalNote _soundingNote;
+	uint32 _notesNumber;
+	Polygon _polygons[5];
+	bool _ok;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
