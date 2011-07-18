@@ -43,7 +43,7 @@ class Huffman {
 public:
 	/** Construct a Huffman decoder.
 	 *
-	 *  @param maxLength Maximal code length.
+	 *  @param maxLength Maximal code length. If 0, it's searched for.
 	 *  @param codeCount Number of codes.
 	 *  @param codes The actual codes.
 	 *  @param lengths Lengths of the individual codes.
@@ -56,7 +56,7 @@ public:
 	void setSymbols(const uint32 *symbols = 0);
 
 	/** Return the next symbol in the bitstream. */
-	uint32 getSymbol(BitStream &bits);
+	uint32 getSymbol(BitStream &bits) const;
 
 private:
 	struct Symbol {

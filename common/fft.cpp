@@ -163,13 +163,13 @@ PASS(pass)
 #define BUTTERFLIES BUTTERFLIES_BIG
 PASS(pass_big)
 
-#define DECL_FFT(n,n2,n4)\
+#define DECL_FFT(t,n,n2,n4)\
 static void fft##n(Complex *z)\
 {\
 	fft##n2(z);\
 	fft##n4(z+n4*2);\
 	fft##n4(z+n4*3);\
-	pass(z,cosTable##n,n4/2);\
+	pass(z,getCosineTable(t),n4/2);\
 }
 
 static void fft4(Complex *z)
@@ -214,25 +214,27 @@ static void fft16(Complex *z)
 	fft4(z+8);
 	fft4(z+12);
 
+	const float * const cosTable = getCosineTable(4);
+
 	TRANSFORM_ZERO(z[0],z[4],z[8],z[12]);
 	TRANSFORM(z[2],z[6],z[10],z[14],sqrthalf,sqrthalf);
-	TRANSFORM(z[1],z[5],z[9],z[13],cosTable16[1],cosTable16[3]);
-	TRANSFORM(z[3],z[7],z[11],z[15],cosTable16[3],cosTable16[1]);
+	TRANSFORM(z[1],z[5],z[9],z[13],cosTable[1],cosTable[3]);
+	TRANSFORM(z[3],z[7],z[11],z[15],cosTable[3],cosTable[1]);
 }
 
-DECL_FFT(32,16,8)
-DECL_FFT(64,32,16)
-DECL_FFT(128,64,32)
-DECL_FFT(256,128,64)
-DECL_FFT(512,256,128)
+DECL_FFT(5, 32,16,8)
+DECL_FFT(6, 64,32,16)
+DECL_FFT(7, 128,64,32)
+DECL_FFT(8, 256,128,64)
+DECL_FFT(9, 512,256,128)
 #define pass pass_big
-DECL_FFT(1024,512,256)
-DECL_FFT(2048,1024,512)
-DECL_FFT(4096,2048,1024)
-DECL_FFT(8192,4096,2048)
-DECL_FFT(16384,8192,4096)
-DECL_FFT(32768,16384,8192)
-DECL_FFT(65536,32768,16384)
+DECL_FFT(10, 1024,512,256)
+DECL_FFT(11, 2048,1024,512)
+DECL_FFT(12, 4096,2048,1024)
+DECL_FFT(13, 8192,4096,2048)
+DECL_FFT(14, 16384,8192,4096)
+DECL_FFT(15, 32768,16384,8192)
+DECL_FFT(16, 65536,32768,16384)
 
 static void (* const fft_dispatch[])(Complex*) = {
 	fft4, fft8, fft16, fft32, fft64, fft128, fft256, fft512, fft1024,
