@@ -47,91 +47,6 @@
 
 namespace Composer {
 
-Button::Button(Common::SeekableReadStream *stream, uint16 id) {
-	_id = id;
-
-	_type = stream->readUint16LE();
-	_active = (_type & 0x8000) ? true : false;
-	_type &= 0xfff;
-	debug(9, "button: type %d, active %d", _type, _active);
-
-	_zorder = stream->readUint16LE();
-	_scriptId = stream->readUint16LE();
-	_scriptIdRollOn = stream->readUint16LE();
-	_scriptIdRollOff = stream->readUint16LE();
-
-	stream->skip(4);
-
-	uint16 size = stream->readUint16LE();
-
-	switch (_type) {
-	case kButtonRect:
-	case kButtonEllipse:
-		if (size != 4)
-			error("button %d of type %d had %d points, not 4", id, _type, size);
-		_rect.left = stream->readSint16LE();
-		_rect.top = stream->readSint16LE();
-		_rect.right = stream->readSint16LE();
-		_rect.bottom = stream->readSint16LE();
-		debug(9, "button: (%d, %d, %d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
-		break;
-	case kButtonSprites:
-		for (uint i = 0; i < size; i++) {
-			_spriteIds.push_back(stream->readSint16LE());
-		}
-		break;
-	default:
-		error("unknown button type %d", _type);
-	}
-
-	delete stream;
-}
-
-bool Button::contains(const Common::Point &pos) const {
-	switch (_type) {
-	case kButtonRect:
-		return _rect.contains(pos);
-	case kButtonEllipse:
-		if (!_rect.contains(pos))
-			return false;
-		{
-		int16 a = _rect.width() / 2;
-		int16 b = _rect.height() / 2;
-		if (!a || !b)
-			return false;
-		Common::Point adjustedPos = pos - Common::Point(_rect.left + a, _rect.top + b);
-		return ((adjustedPos.x*adjustedPos.x)/(a*a) + (adjustedPos.y*adjustedPos.y)/(b*b) < 1);
-		}
-	case kButtonSprites:
-		return false;
-	default:
-		error("internal error (button type %d)", _type);
-	}
-}
-
-const Button *ComposerEngine::getButtonFor(const Sprite *sprite, const Common::Point &pos) {
-	for (Common::List<Button>::iterator i = _buttons.reverse_begin(); i != _buttons.end(); --i) {
-		if (!i->_active)
-			continue;
-
-		if (i->_spriteIds.empty()) {
-			if (i->contains(pos))
-				return &(*i);
-			continue;
-		}
-
-		if (!sprite)
-			continue;
-
-		for (uint j = 0; j < i->_spriteIds.size(); j++) {
-			if (i->_spriteIds[j] == sprite->_id)
-				return &(*i);
-		}
-	}
-
-	return NULL;
-}
-
 ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_rnd = new Common::RandomSource("composer");
 	_audioStream = NULL;
@@ -486,6 +401,91 @@ Common::SeekableReadStream *ComposerEngine::getResource(uint32 tag, uint16 id) {
 			return i->_archive->getResource(tag, id);
 
 	error("No loaded library contains '%s' %04x", tag2str(tag), id);
+}
+
+Button::Button(Common::SeekableReadStream *stream, uint16 id) {
+	_id = id;
+
+	_type = stream->readUint16LE();
+	_active = (_type & 0x8000) ? true : false;
+	_type &= 0xfff;
+	debug(9, "button: type %d, active %d", _type, _active);
+
+	_zorder = stream->readUint16LE();
+	_scriptId = stream->readUint16LE();
+	_scriptIdRollOn = stream->readUint16LE();
+	_scriptIdRollOff = stream->readUint16LE();
+
+	stream->skip(4);
+
+	uint16 size = stream->readUint16LE();
+
+	switch (_type) {
+	case kButtonRect:
+	case kButtonEllipse:
+		if (size != 4)
+			error("button %d of type %d had %d points, not 4", id, _type, size);
+		_rect.left = stream->readSint16LE();
+		_rect.top = stream->readSint16LE();
+		_rect.right = stream->readSint16LE();
+		_rect.bottom = stream->readSint16LE();
+		debug(9, "button: (%d, %d, %d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
+		break;
+	case kButtonSprites:
+		for (uint i = 0; i < size; i++) {
+			_spriteIds.push_back(stream->readSint16LE());
+		}
+		break;
+	default:
+		error("unknown button type %d", _type);
+	}
+
+	delete stream;
+}
+
+bool Button::contains(const Common::Point &pos) const {
+	switch (_type) {
+	case kButtonRect:
+		return _rect.contains(pos);
+	case kButtonEllipse:
+		if (!_rect.contains(pos))
+			return false;
+		{
+		int16 a = _rect.width() / 2;
+		int16 b = _rect.height() / 2;
+		if (!a || !b)
+			return false;
+		Common::Point adjustedPos = pos - Common::Point(_rect.left + a, _rect.top + b);
+		return ((adjustedPos.x*adjustedPos.x)/(a*a) + (adjustedPos.y*adjustedPos.y)/(b*b) < 1);
+		}
+	case kButtonSprites:
+		return false;
+	default:
+		error("internal error (button type %d)", _type);
+	}
+}
+
+const Button *ComposerEngine::getButtonFor(const Sprite *sprite, const Common::Point &pos) {
+	for (Common::List<Button>::iterator i = _buttons.reverse_begin(); i != _buttons.end(); --i) {
+		if (!i->_active)
+			continue;
+
+		if (i->_spriteIds.empty()) {
+			if (i->contains(pos))
+				return &(*i);
+			continue;
+		}
+
+		if (!sprite)
+			continue;
+
+		for (uint j = 0; j < i->_spriteIds.size(); j++) {
+			if (i->_spriteIds[j] == sprite->_id)
+				return &(*i);
+		}
+	}
+
+	return NULL;
 }
 
 } // End of namespace Composer
