@@ -768,7 +768,7 @@ Common::Error ComposerEngine::run() {
 				continue;
 			if (script._baseTime + script._duration > thisTime)
 				continue;
-			if (script._count != 0xffff)
+			if (script._count != 0xffffffff)
 				script._count--;
 			script._baseTime = thisTime;
 			runScript(script._scriptId, i, 0, 0);
@@ -870,10 +870,10 @@ void ComposerEngine::onMouseMove(const Common::Point &pos) {
 	const Sprite *sprite = getSpriteAtPos(pos);
 	const Button *button = getButtonFor(sprite, pos);
 	if (_lastButton != button) {
-		if (_lastButton)
+		if (_lastButton && _lastButton->_scriptIdRollOff)
 			runScript(_lastButton->_scriptIdRollOff, _lastButton->_id, buttonsDown, 0);
 		_lastButton = button;
-		if (_lastButton)
+		if (_lastButton && _lastButton->_scriptIdRollOn)
 			runScript(_lastButton->_scriptIdRollOn, _lastButton->_id, buttonsDown, 0);
 	}
 
@@ -1065,6 +1065,9 @@ void ComposerEngine::runEvent(uint16 id, int16 param1, int16 param2, int16 param
 		error("bad EVNT size %d", stream->size());
 	uint16 scriptId = stream->readUint16LE();
 	delete stream;
+
+	if (!scriptId)
+		return;
 
 	debug(2, "running event %d via script %d(%d, %d, %d)", id, scriptId, param1, param2, param3);
 
@@ -1483,7 +1486,7 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		debug(3, "kFuncQueueScript(%d, %d, %d)", param1, param2, param3);
 		_queuedScripts[param1]._baseTime = _system->getMillis();
 		_queuedScripts[param1]._duration = 10 * param2;
-		_queuedScripts[param1]._count = 0xffff;
+		_queuedScripts[param1]._count = 0xffffffff;
 		_queuedScripts[param1]._scriptId = param3;
 		return 0;
 	case kFuncDequeueScript:
@@ -1614,7 +1617,7 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		{
 		Common::Point pos(_vars[param3], _vars[param3 + 1]);
 		int16 zorder = _vars[param3 + 2];
-		debug(3, "kFuncAddSprite(%d, %d, [%d = %d, (%d, %d)])", param1, param2, param3, pos.x, pos.y, zorder);
+		debug(3, "kFuncAddSprite(%d, %d, [%d = (%d, %d), %d])", param1, param2, param3, pos.x, pos.y, zorder);
 		addSprite(param1, param2, zorder, pos);
 		}
 		return 0;
