@@ -35,31 +35,48 @@ namespace Grim {
 
 int SaveGame::SAVEGAME_VERSION = 18;
 
-// Constructor. Should create/open a saved game
-SaveGame::SaveGame(const Common::String &filename, bool saving) :
-		_saving(saving), _currentSection(0), _sectionBuffer(0) {
-	if (_saving) {
-		_outSaveFile = g_system->getSavefileManager()->openForSaving(filename);
-		if (!_outSaveFile) {
-			warning("SaveGame::SaveGame() Error creating savegame file");
-			return;
-		}
-		_outSaveFile->writeUint32BE(SAVEGAME_HEADERTAG);
-		_outSaveFile->writeUint32BE(SAVEGAME_VERSION);
-
-		_version = SAVEGAME_VERSION;
-	} else {
-		uint32 tag;
-
-		_inSaveFile = g_system->getSavefileManager()->openForLoading(filename);
-		if (!_inSaveFile) {
-			warning("SaveGame::SaveGame() Error opening savegame file");
-			return;
-		}
-		tag = _inSaveFile->readUint32BE();
-		assert(tag == SAVEGAME_HEADERTAG);
-		_version = _inSaveFile->readUint32BE();
+SaveGame *SaveGame::openForLoading(const Common::String &filename) {
+	Common::InSaveFile *inSaveFile = g_system->getSavefileManager()->openForLoading(filename);
+	if (!inSaveFile) {
+		warning("SaveGame::openForLoading() Error opening savegame file");
+		return NULL;
 	}
+
+	SaveGame *save = new SaveGame();
+
+	save->_saving = false;
+	save->_inSaveFile = inSaveFile;
+
+	uint32 tag = inSaveFile->readUint32BE();
+	assert(tag == SAVEGAME_HEADERTAG);
+	save->_version = inSaveFile->readUint32BE();
+
+	return save;
+}
+
+SaveGame *SaveGame::openForSaving(const Common::String &filename) {
+	Common::OutSaveFile *outSaveFile =  g_system->getSavefileManager()->openForSaving(filename);
+	if (!outSaveFile) {
+		warning("SaveGame::openForSaving() Error creating savegame file");
+		return NULL;
+	}
+
+	SaveGame *save = new SaveGame();
+
+	save->_saving = true;
+	save->_outSaveFile = outSaveFile;
+
+	outSaveFile->writeUint32BE(SAVEGAME_HEADERTAG);
+	outSaveFile->writeUint32BE(SAVEGAME_VERSION);
+
+	save->_version = SAVEGAME_VERSION;
+
+	return save;
+}
+
+SaveGame::SaveGame() :
+	_currentSection(0), _sectionBuffer(0) {
+
 }
 
 SaveGame::~SaveGame() {

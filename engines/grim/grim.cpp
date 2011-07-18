@@ -1137,7 +1137,7 @@ void GrimEngine::savegameRestore() {
 	} else {
 		filename = _savegameFileName;
 	}
-	_savedState = new SaveGame(filename, false);
+	_savedState = SaveGame::openForLoading(filename);
 	if (!_savedState || _savedState->saveVersion() != SaveGame::SAVEGAME_VERSION)
 		return;
 	g_imuse->stopAllSounds();
@@ -1314,7 +1314,7 @@ void GrimEngine::savegameSave() {
 	} else {
 		strcpy(filename, _savegameFileName.c_str());
 	}
-	_savedState = new SaveGame(filename, true);
+	_savedState = SaveGame::openForSaving(filename);
 	if (!_savedState)
 		return;
 

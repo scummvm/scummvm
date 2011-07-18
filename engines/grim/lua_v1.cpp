@@ -962,7 +962,7 @@ void L1_GetSaveGameImage() {
 		return;
 	}
 	const char *filename = lua_getstring(param);
-	SaveGame *savedState = new SaveGame(filename, false);
+	SaveGame *savedState = SaveGame::openForLoading(filename);
 	if (!savedState || savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
 		lua_pushnil();
 		return;
@@ -1016,7 +1016,7 @@ void L1_GetSaveGameData() {
 	if (!lua_isstring(param))
 		return;
 	const char *filename = lua_getstring(param);
-	SaveGame *savedState = new SaveGame(filename, false);
+	SaveGame *savedState = SaveGame::openForLoading(filename);
 	lua_Object result = lua_createtable();
 
 	if (!savedState || savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
