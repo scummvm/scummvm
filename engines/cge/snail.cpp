@@ -1068,7 +1068,7 @@ void Snail::runCom() {
 					_vm->xCave();
 					break;
 				case kSelectSound:
-					_vm->selectSound();
+					warning("TODO: Select sound card");
 					break;
 				case kSnSelect:
 					_vm->snSelect();

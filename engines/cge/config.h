@@ -29,9 +29,6 @@
 #define __CGE_CONFIG__
 
 namespace CGE {
-
-void selectSound();
-
 } // End of namespace CGE
 
 #endif
