@@ -1188,6 +1188,9 @@ void Actor::update() {
 						_talkCostume[_talkAnim]->playChoreLooping(_talkChore[_talkAnim]);
 					}
 				} else {
+					if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
+						_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+
 					_talkCostume[0]->playChore(_talkChore[0]);
 				}
 			}
