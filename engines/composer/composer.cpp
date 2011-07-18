@@ -32,6 +32,7 @@
 #include "common/keyboard.h"
 #include "common/substream.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
@@ -1546,12 +1547,44 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		// TODO: incomplete?
 		return 1;
 	case kFuncSaveVars:
-		// TODO
-		warning("ignoring kFuncSaveVars(%d)", param1);
+		debug(3, "kFuncSaveVars(%d)", param1);
+		{
+		Common::String filename = _targetName + Common::String::format(".%03d", param1);
+		Common::WriteStream *stream = _saveFileMan->openForSaving(filename);
+		for (uint i = 0; i < 1000; i++) {
+			stream->writeUint16LE(_vars[i]);
+		}
+		delete stream;
+		}
 		return 1;
 	case kFuncLoadVars:
-		// TODO
-		warning("ignoring kFuncLoadVars(%d, %d, %d)", param1, param2, param3);
+		debug(3, "kFuncLoadVars(%d, %d, %d)", param1, param2, param3);
+		{
+		Common::String filename = _targetName + Common::String::format(".%03d", param1);
+		Common::SeekableReadStream *stream = _saveFileMan->openForLoading(filename);
+		if (!stream) {
+			if (!_bookIni.hasKey(Common::String::format("%d", param1), "Data"))
+				return 0;
+			filename = getFilename("Data", param1);
+			Common::File *file = new Common::File();
+			if (!file->open(filename))
+				error("couldn't open '%s' to get vars id '%d'", filename.c_str(), param1);
+			stream = file;
+		}
+		if (param3 == 0)
+			param3 = 1000;
+		else
+			param3 = param3;
+		if (param2 < 0 || param3 < 0 || param2 + param3 > 1000)
+			error("can't read %d entries into %d from file '%s' for vars id '%d'", param3, param2, filename.c_str(), param1);
+		stream->skip(param2 * 2);
+		for (uint i = 0; i < (uint)param3; i++) {
+			if (stream->pos() + 1 > stream->size())
+				break;
+			_vars[param2 + i] = stream->readUint16LE();
+		}
+		delete stream;
+		}
 		return 1;
 	case kFuncQueueScriptOnce:
 		debug(3, "kFuncQueueScriptOnce(%d, %d, %d)", param1, param2, param3);
@@ -1598,7 +1631,7 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		warning("ignoring kFuncSaveData(%d, %d, %d)", param1, param2, param3);
 		return 1;
 	case kFuncLoadData:
-		debug(3, "ignoring kFuncLoadData(%d, %d, %d)", param1, param2, param3);
+		debug(3, "kFuncLoadData(%d, %d, %d)", param1, param2, param3);
 		{
 		Common::String filename = getFilename("Data", param1);
 		Common::File *file = new Common::File();
@@ -1607,7 +1640,7 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		if (param3 == 0)
 			param3 = 1000;
 		else
-			param3 = param3 / 2;
+			param3 = param3;
 		if (param2 < 0 || param3 < 0 || param2 + param3 > 1000)
 			error("can't read %d entries into %d from file '%s' for data id '%d'", param3, param2, filename.c_str(), param1);
 		for (uint i = 0; i < (uint)param3; i++) {
