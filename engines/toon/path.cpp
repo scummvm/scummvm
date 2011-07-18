@@ -63,23 +63,23 @@ void PathFindingHeap::clear() {
 void PathFindingHeap::push(int32 x, int32 y, int32 weight) {
 	debugC(2, kDebugPath, "push(%d, %d, %d)", x, y, weight);
 
-	if (_count == _size - 1) {
+	if (_count == _size) {
 		warning("Aborting attempt to push onto PathFindingHeap at maximum size: %d", _count);
 		return;
 	}
 
-	_count++;
 	_data[_count]._x = x;
 	_data[_count]._y = y;
 	_data[_count]._weight = weight;
+	_count++;
 
-	int32 lMax = _count;
+	int32 lMax = _count-1;
 	int32 lT = 0;
 
 	while (1) {
-		lT = lMax / 2;
-		if (lT < 1)
+		if (lMax <= 0)
 			break;
+		lT = (lMax-1) / 2;
 
 		if (_data[lT]._weight > _data[lMax]._weight) {
 			HeapDataGrid temp;
@@ -101,22 +101,21 @@ void PathFindingHeap::pop(int32 *x, int32 *y, int32 *weight) {
 		return;
 	}
 
-	*x = _data[1]._x;
-	*y = _data[1]._y;
-	*weight = _data[1]._weight;
+	*x = _data[0]._x;
+	*y = _data[0]._y;
+	*weight = _data[0]._weight;
 
-	_data[1] = _data[_count];
-	_count--;
+	_data[0] = _data[--_count];
 	if (!_count)
 		return;
 
-	int32 lMin = 1;
-	int32 lT = 1;
+	int32 lMin = 0;
+	int32 lT = 0;
 
 	while (1) {
-		lT = lMin << 1;
-		if (lT <= _count) {
-			if (lT < _count) {
+		lT = (lMin << 1) + 1;
+		if (lT < _count) {
+			if (lT < _count-1) {
 				if (_data[lT + 1]._weight < _data[lT]._weight)
 					lT++;
 			}
