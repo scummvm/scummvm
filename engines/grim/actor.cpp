@@ -848,7 +848,7 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 	}
 
 	// If the actor is clearly not visible then don't try to play the lip sync
-	if (_visible && !g_movie->isPlaying() || g_grim->getMode() == ENGINE_MODE_NORMAL) {
+	if (_visible && (!g_movie->isPlaying() || g_grim->getMode() == ENGINE_MODE_NORMAL)) {
 		Common::String soundLip = msgId;
 		soundLip += ".lip";
 
