@@ -44,7 +44,10 @@ class Sprite;
 
 // our engine debug channels
 enum {
-    kCGEDebug = 1 << 0
+    kCGEDebug = 1 << 0,
+	kDebugBitmap = 1 << 1,
+	kDebugFile = 1 << 2,
+	kDebugEngine = 1 << 3
 };
 
 enum SnList {
@@ -184,6 +187,7 @@ public:
 	void nextStep();
 	void switchDebug();
 	void miniStep(int stp);
+	void AltCtrlDel();
 
 	void snBackPt(Sprite *spr, int stp);
 	void snBarrier(int cav, int bar, bool horz);

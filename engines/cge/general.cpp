@@ -238,7 +238,8 @@ uint16 IoHand::read(void *buf, uint16 len) {
 }
 
 uint16 IoHand::write(void *buf, uint16 len) {
-	error("IOHAND::Write not supported");
+	warning("IOHAND::Write not supported");
+	return 0;
 /*
 	if (len) {
 		if (Mode == REA || Handle < 0)

@@ -104,6 +104,8 @@ Bar _barriers[1 + CAVE_MAX] = { { 0xFF, 0xFF } };
 extern Dac _stdPal[58];
 
 void CGEEngine::syncHeader(Common::Serializer &s) {
+	debugC(1, kDebugEngine, "CGEEngine::syncHeader(s)");
+
 	int i;
 
 	s.syncAsUint16LE(_now);
@@ -142,6 +144,8 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 }
 
 bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
+	debugC(1, kDebugEngine, "CGEEngine::loadgame(file, %s)", tiny ? "true" : "false");
+
 	Common::MemoryReadStream *readStream;
 	SavegameHeader saveHeader;
 
@@ -358,6 +362,8 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 			}
 		}
 	}
+	debugC(1, kDebugEngine, "CGEEngine::saveSound()");
+
 }
 
 bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
@@ -393,10 +399,14 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 }
 
 void CGEEngine::heroCover(int cvr) {
+	debugC(1, kDebugEngine, "CGEEngine::heroCover(%d)", cvr);
+
 	SNPOST(SNCOVER, 1, cvr, NULL);
 }
 
 void CGEEngine::trouble(int seq, int txt) {
+	debugC(1, kDebugEngine, "CGEEngine::trouble(%d, %d)", seq, txt);
+
 	_hero->park();
 	SNPOST(SNWAIT, -1, -1, _hero);
 	SNPOST(SNSEQ, -1, seq, _hero);
@@ -406,14 +416,20 @@ void CGEEngine::trouble(int seq, int txt) {
 }
 
 void CGEEngine::offUse() {
+	debugC(1, kDebugEngine, "CGEEngine::offUse()");
+
 	trouble(OFF_USE, OFF_USE_TEXT + new_random(_offUseCount));
 }
 
 void CGEEngine::tooFar() {
+	debugC(1, kDebugEngine, "CGEEngine::tooFar()");
+
 	trouble(TOO_FAR, TOO_FAR_TEXT);
 }
 
 void CGEEngine::loadHeroXY() {
+	debugC(1, kDebugEngine, "CGEEngine::loadHeroXY()");
+
 	INI_FILE cf(progName(".HXY"));
 	memset(_heroXY, 0, sizeof(_heroXY));
 	if (!cf._error)
@@ -421,6 +437,8 @@ void CGEEngine::loadHeroXY() {
 }
 
 void CGEEngine::loadMapping() {
+	debugC(1, kDebugEngine, "CGEEngine::loadMapping()");
+
 	if (_now <= CAVE_MAX) {
 		INI_FILE cf(progName(".TAB"));
 		if (!cf._error) {
@@ -462,6 +480,8 @@ void SQUARE::touch(uint16 mask, int x, int y) {
 
 
 void CGEEngine::setMapBrick(int x, int z) {
+	debugC(1, kDebugEngine, "CGEEngine::setMapBrick(%d, %d)", x, z);
+
 	SQUARE *s = new SQUARE(this);
 	if (s) {
 		static char n[] = "00:00";
@@ -474,22 +494,24 @@ void CGEEngine::setMapBrick(int x, int z) {
 	}
 }
 
-//static void switchDebug();
-//static void pullSprite();
-//static void NextStep();
-
 void CGEEngine::keyClick() {
+	debugC(1, kDebugEngine, "CGEEngine::keyClick()");
+
 	SNPOST_(SNSOUND, -1, 5, NULL);
 }
 
 
 void CGEEngine::resetQSwitch() {
+	debugC(1, kDebugEngine, "CGEEngine::resetQSwitch()");
+
 	SNPOST_(SNSEQ, 123,  0, NULL);
 	keyClick();
 }
 
 
 void CGEEngine::quit() {
+	debugC(1, kDebugEngine, "CGEEngine::quit()");
+
 	static Choice QuitMenu[] = { 
 		{ NULL, &CGEEngine::startCountDown },
 		{ NULL, &CGEEngine::resetQSwitch   },
@@ -511,8 +533,10 @@ void CGEEngine::quit() {
 }
 
 
-static void AltCtrlDel() {
-		SNPOST_(SNSAY,  -1, A_C_D_TEXT, _hero);
+void CGEEngine::AltCtrlDel() {
+	debugC(1, kDebugEngine, "CGEEngine::setup()");
+
+	SNPOST_(SNSAY,  -1, A_C_D_TEXT, _hero);
 }
 
 void CGEEngine::miniStep(int stp) {
@@ -716,7 +740,7 @@ void System::touch(uint16 mask, int x, int y) {
 		switch (x) {
 		case Del:
 			if (_keyboard->_key[ALT] && _keyboard->_key[CTRL])
-				AltCtrlDel();
+				_vm->AltCtrlDel();
 			else 
 				_vm->killSprite();
 			break;
