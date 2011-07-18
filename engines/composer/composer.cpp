@@ -392,10 +392,14 @@ void ComposerEngine::stopAnimation(Animation *anim, bool localOnly, bool pipesOn
 		if (localOnly) {
 			if (pipesOnly)
 				continue;
-			// TODO: stop audio if needed
-			if (entry.op != kAnimOpDrawSprite)
-				continue;
-			removeSprite(entry.prevValue, anim->_id);
+			if (entry.op == kAnimOpDrawSprite) {
+				removeSprite(entry.prevValue, anim->_id);
+			} else if (entry.op == kAnimOpPlayWave) {
+				if (_currSoundPriority >= entry.priority) {
+					_mixer->stopAll();
+					_audioStream = NULL;
+				}
+			}
 		} else {
 			if (entry.op != kAnimOpPlayAnim)
 				continue;
@@ -417,7 +421,15 @@ void ComposerEngine::stopAnimation(Animation *anim, bool localOnly, bool pipesOn
 	}
 }
 
-void ComposerEngine::playWaveForAnim(uint16 id, bool bufferingOnly) {
+void ComposerEngine::playWaveForAnim(uint16 id, uint16 priority, bool bufferingOnly) {
+	if (_audioStream && _audioStream->numQueuedStreams() != 0) {
+		if (_currSoundPriority < priority)
+			return;
+		if (_currSoundPriority > priority) {
+			_mixer->stopAll();
+			_audioStream = NULL;
+		}
+	}
 	Common::SeekableReadStream *stream = NULL;
 	if (!bufferingOnly && hasResource(ID_WAVE, id)) {
 		stream = getResource(ID_WAVE, id);
@@ -439,6 +451,7 @@ void ComposerEngine::playWaveForAnim(uint16 id, bool bufferingOnly) {
 	if (!_audioStream)
 		_audioStream = Audio::makeQueuingAudioStream(22050, false);
 	_audioStream->queueBuffer(buffer, stream->size(), DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+	_currSoundPriority = priority;
 	delete stream;
 	if (!_mixer->isSoundHandleActive(_soundHandle))
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
@@ -514,7 +527,7 @@ void ComposerEngine::processAnimFrame() {
 				entry.counter--;
 				if ((entry.op == kAnimOpPlayWave) && entry.prevValue) {
 					debug(4, "anim: continue play wave %d", entry.prevValue);
-					playWaveForAnim(entry.prevValue, true);
+					playWaveForAnim(entry.prevValue, entry.priority, true);
 				}
 			} else {
 				anim->seekToCurrPos();
@@ -537,7 +550,7 @@ void ComposerEngine::processAnimFrame() {
 						break;
 					case kAnimOpPlayWave:
 						debug(4, "anim: play wave %d", data);
-						playWaveForAnim(data, false);
+						playWaveForAnim(data, entry.priority, false);
 						break;
 					case kAnimOpPlayAnim:
 						debug(4, "anim: play anim %d", data);

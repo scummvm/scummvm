@@ -198,6 +198,7 @@ private:
 
 	Audio::SoundHandle _soundHandle;
 	Audio::QueuingAudioStream *_audioStream;
+	uint16 _currSoundPriority;
 
 	bool _needsUpdate;
 	Graphics::Surface _surface;
@@ -247,7 +248,7 @@ private:
 
 	void playAnimation(uint16 animId, int16 param1, int16 param2, int16 param3);
 	void stopAnimation(Animation *anim, bool localOnly = false, bool pipesOnly = false);
-	void playWaveForAnim(uint16 id, bool bufferingOnly);
+	void playWaveForAnim(uint16 id, uint16 priority, bool bufferingOnly);
 	void processAnimFrame();
 
 	bool spriteVisible(uint16 id, uint16 animId);
