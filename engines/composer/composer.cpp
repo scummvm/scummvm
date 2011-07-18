@@ -312,12 +312,12 @@ bool Button::contains(const Common::Point &pos) const {
 		if (!_rect.contains(pos))
 			return false;
 		{
-		int16 a = _rect.height() / 2;
-		int16 b = _rect.width() / 2;
+		int16 a = _rect.width() / 2;
+		int16 b = _rect.height() / 2;
 		if (!a || !b)
 			return false;
 		Common::Point adjustedPos = pos - Common::Point(_rect.left + a, _rect.top + b);
-		return ((adjustedPos.x*adjustedPos.x)/a*2 + (adjustedPos.y*adjustedPos.y)/b*2 < 1);
+		return ((adjustedPos.x*adjustedPos.x)/(a*a) + (adjustedPos.y*adjustedPos.y)/(b*b) < 1);
 		}
 	case kButtonSprites:
 		return false;
