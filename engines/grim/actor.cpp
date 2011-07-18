@@ -823,46 +823,48 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 		return;
 	}
 
-	// During Fullscreen movies SayLine is called for text display only
+	// During Fullscreen movies SayLine is usually called for text display only.
+	// The movie with Charlie screaming after Manny put the sheet on him instead
+	// uses sayLine for the voice too.
 	// However, normal SMUSH movies may call SayLine, for example:
 	// When Domino yells at Manny (a SMUSH movie) he does it with
 	// a SayLine request rather than as part of the movie!
-	if (!g_movie->isPlaying() || g_grim->getMode() == ENGINE_MODE_NORMAL) {
-		Common::String soundName = msgId;
+
+	Common::String soundName = msgId;
+	soundName += ".wav";
+
+	if (_talkSoundName == soundName)
+		return;
+
+	if (g_imuse->getSoundStatus(_talkSoundName.c_str()) || msg[0] == 0)
+		shutUp();
+
+	_talkSoundName = soundName;
+	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
+		g_imuse->startVoice(_talkSoundName.c_str());
+		if (g_grim->getCurrScene()) {
+			g_grim->getCurrScene()->setSoundPosition(_talkSoundName.c_str(), _pos);
+		}
+	}
+
+	// If the actor is clearly not visible then don't try to play the lip sync
+	if (_visible && !g_movie->isPlaying() || g_grim->getMode() == ENGINE_MODE_NORMAL) {
 		Common::String soundLip = msgId;
-		soundName += ".wav";
 		soundLip += ".lip";
 
-		if (_talkSoundName == soundName)
-			return;
+		// Sometimes actors speak offscreen before they, including their
+		// talk chores are initialized.
+		// For example, when reading the work order (a LIP file exists for no reason).
+		// Also, some lip sync files have no entries
+		// In these cases, revert to using the mumble chore.
+		if (g_grim->getSpeechMode() != GrimEngine::TextOnly)
+			_lipSync = g_resourceloader->getLipSync(soundLip);
+		// If there's no lip sync file then load the mumble chore if it exists
+		// (the mumble chore doesn't exist with the cat races announcer)
+		if (!_lipSync && _mumbleChore != -1)
+			_mumbleCostume->playChoreLooping(_mumbleChore);
 
-		if (g_imuse->getSoundStatus(_talkSoundName.c_str()) || msg[0] == 0)
-			shutUp();
-
-		_talkSoundName = soundName;
-		if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
-			g_imuse->startVoice(_talkSoundName.c_str());
-			if (g_grim->getCurrScene()) {
-				g_grim->getCurrScene()->setSoundPosition(_talkSoundName.c_str(), _pos);
-			}
-		}
-
-		// If the actor is clearly not visible then don't try to play the lip sync
-		if (_visible) {
-			// Sometimes actors speak offscreen before they, including their
-			// talk chores are initialized.
-			// For example, when reading the work order (a LIP file exists for no reason).
-			// Also, some lip sync files have no entries
-			// In these cases, revert to using the mumble chore.
-			if (g_grim->getSpeechMode() != GrimEngine::TextOnly)
-				_lipSync = g_resourceloader->getLipSync(soundLip);
-			// If there's no lip sync file then load the mumble chore if it exists
-			// (the mumble chore doesn't exist with the cat races announcer)
-			if (!_lipSync && _mumbleChore != -1)
-				_mumbleCostume->playChoreLooping(_mumbleChore);
-
-			_talkAnim = -1;
-		}
+		_talkAnim = -1;
 	}
 
 	g_grim->setTalkingActor(this);
