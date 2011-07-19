@@ -1404,7 +1404,7 @@ void BinkDecoder::readResidue(VideoFrame &video, int16 *block, int masksCount) {
 float BinkDecoder::getFloat(AudioTrack &audio) {
 	int power = audio.bits->getBits(5);
 
-	float f = ldexpf(audio.bits->getBits(23), power - 23);
+	float f = ldexp((float)audio.bits->getBits(23), power - 23);
 
 	if (audio.bits->getBit())
 		f = -f;
@@ -1478,8 +1478,8 @@ void BinkDecoder::readAudioCoeffs(AudioTrack &audio, float *coeffs) {
 	for (uint32 i = 0; i < audio.bandCount; i++) {
 		int value = audio.bits->getBits(8);
 
-		//                               0.066399999 / log10(M_E)
-		quant[i] = expf(MIN(value, 95) * 0.15289164787221953823f) * audio.root;
+		//                              0.066399999 / log10(M_E)
+		quant[i] = exp(MIN(value, 95) * 0.15289164787221953823f) * audio.root;
 	}
 
 	float q = 0.0;
