@@ -654,7 +654,7 @@ void BinkDecoder::initAudioTrack(AudioTrack &audio) {
 
 	audio.overlapLen = audio.frameLen / 16;
 	audio.blockSize  = (audio.frameLen - audio.overlapLen) * audio.channels;
-	audio.root       = 2.0 / sqrt(audio.frameLen);
+	audio.root       = 2.0 / sqrt((double)audio.frameLen);
 
 	uint32 sampleRateHalf = (audio.sampleRate + 1) / 2;
 
