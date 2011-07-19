@@ -433,7 +433,7 @@ void CGEEngine::loadHeroXY() {
 	INI_FILE cf(progName(".HXY"));
 	memset(_heroXY, 0, sizeof(_heroXY));
 	if (!cf._error)
-		cf.CFREAD(&_heroXY);
+		cf.read((uint8 *)(&_heroXY),sizeof(*(&_heroXY)));
 }
 
 void CGEEngine::loadMapping() {

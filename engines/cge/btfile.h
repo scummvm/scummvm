@@ -32,23 +32,23 @@
 
 namespace CGE {
 
-#define BT_SIZE     1024
-#define BT_KEYLEN   13
-#define BT_LEVELS   2
+#define kBtSize      1024
+#define kBtKeySize   13
+#define kBtLevel     2
 
-#define BT_NONE     0xFFFF
-#define BT_ROOT     0
+#define kBtValNone   0xFFFF
+#define kBtValRoot   0
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 struct BtKeypack {
-	char _key[BT_KEYLEN];
+	char _key[kBtKeySize];
 	uint32 _mark;
 	uint16 _size;
 };
 
 struct Inner {
-	uint8 _key[BT_KEYLEN];
+	uint8 _key[kBtKeySize];
 	uint16 _down;
 };
 
@@ -61,11 +61,11 @@ struct BtPage {
 	Hea _hea;
 	union {
 		// dummy filler to make proper size of union
-		uint8 _data[BT_SIZE - sizeof(Hea)];
+		uint8 _data[kBtSize - sizeof(Hea)];
 		// inner version of data: key + word-sized page link
-		Inner _inn[(BT_SIZE - sizeof(Hea)) / sizeof(Inner)];
+		Inner _inn[(kBtSize - sizeof(Hea)) / sizeof(Inner)];
 		// leaf version of data: key + all user data
-		BtKeypack _lea[(BT_SIZE - sizeof(Hea)) / sizeof(BtKeypack)];
+		BtKeypack _lea[(kBtSize - sizeof(Hea)) / sizeof(BtKeypack)];
 	};
 };
 
@@ -78,7 +78,7 @@ class BtFile : public IoHand {
 		uint16 _pgNo;
 		int _indx;
 		bool _updt;
-	} _buff[BT_LEVELS];
+	} _buff[kBtLevel];
 
 	void putPage(int lev, bool hard);
 	BtPage *getPage(int lev, uint16 pgn);

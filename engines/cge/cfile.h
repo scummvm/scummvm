@@ -32,11 +32,8 @@
 
 namespace CGE {
 
-#define LINE_MAX    512
-#define IOBUF_SIZE  2048
-
-#define CFREAD(x)   read((uint8 *)(x),sizeof(*(x)))
-
+#define kLineMaxSize  512
+#define kBufferSize   2048
 
 class IoBuf : public IoHand {
 protected:
