@@ -210,10 +210,10 @@ Bitmap *Talk::box(uint16 w, uint16 h) {
 		for (int i = 0; i < r; i++) {
 			int j;
 			for (j = 0; j < r - i; j++) {
-				p[j] = TRANS;
-				p[w - j - 1] = TRANS;
-				q[j] = TRANS;
-				q[w - j - 1] = TRANS;
+				p[j] = kPixelTransp;
+				p[w - j - 1] = kPixelTransp;
+				q[j] = kPixelTransp;
+				q[w - j - 1] = kPixelTransp;
 			}
 			p[j] = LGRAY;
 			p[w - j - 1] = DGRAY;
@@ -305,7 +305,7 @@ void InfoLine::update(const char *tx) {
 		for (pDest = v + lsiz; pDest < (v + psiz); pDest += lsiz) {
 			Common::copy(v, v + lsiz, pDest);
 		}
-		*(uint16 *)(v + psiz - 2) = EOI;               // plane trailer uint16
+		*(uint16 *)(v + psiz - 2) = kBmpEOI;              // plane trailer uint16
 		for (pDest = v + psiz; pDest < (v + 4 * psiz); pDest += psiz) {
 			Common::copy(v, v + psiz, pDest);
 		}

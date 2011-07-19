@@ -38,7 +38,6 @@
 namespace CGE {
 
 Dac *Bitmap::_pal = NULL;
-#define MAXPATH  128
 
 void Bitmap::init() {
 	_pal = NULL;
@@ -51,7 +50,7 @@ void Bitmap::deinit() {
 Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL), _map(0) {
 	debugC(1, kDebugBitmap, "Bitmap::Bitmap(%s, %s)", fname, rem ? "true" : "false");
 
-	char pat[MAXPATH];
+	char pat[kMaxPath];
 	forceExt(pat, fname, ".VBM");
 
 #if (BMP_MODE < 2)
@@ -107,16 +106,16 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 	if (v == NULL)
 		error("No core");
 
-	*(uint16 *) v = CPY | dsiz;                     // data chunk hader
+	*(uint16 *) v = kBmpCPY | dsiz;                 // data chunk hader
 	memset(v + 2, fill, dsiz);                      // data bytes
-	*(uint16 *)(v + lsiz - 2) = SKP | ((SCR_WID / 4) - dsiz);  // gap
+	*(uint16 *)(v + lsiz - 2) = kBmpSKP | ((SCR_WID / 4) - dsiz);  // gap
 
 	// Replicate lines
 	byte *destP;
 	for (destP = v + lsiz; destP < (v + psiz); destP += lsiz)
 		Common::copy(v, v + lsiz, destP);
 
-	*(uint16 *)(v + psiz - 2) = EOI;                // plane trailer uint16
+	*(uint16 *)(v + psiz - 2) = kBmpEOI;            // plane trailer uint16
 
 	// Repliccate planes
 	for (destP = v + psiz; destP < (v + 4 * psiz); destP += psiz)
@@ -224,7 +223,7 @@ BMP_PTR Bitmap::code() {
 		}
 		for (bpl = 0; bpl < 4; bpl++) {              // once per each bitplane
 			uint8 *bm = _m;
-			bool skip = (bm[bpl] == TRANS);
+			bool skip = (bm[bpl] == kPixelTransp);
 			uint16 j;
 
 			cnt = 0;
@@ -232,21 +231,21 @@ BMP_PTR Bitmap::code() {
 				uint8 pix;
 				for (j = bpl; j < _w; j += 4) {
 					pix = bm[j];
-					if (_v && pix != TRANS) {
+					if (_v && pix != kPixelTransp) {
 						if (j < _b[i]._skip)
 							_b[i]._skip = j;
 
 						if (j >= _b[i]._hide)
 							_b[i]._hide = j + 1;
 					}
-					if ((pix == TRANS) != skip || cnt >= 0x3FF0) { // end of block
-						cnt |= (skip) ? SKP : CPY;
+					if ((pix == kPixelTransp) != skip || cnt >= 0x3FF0) { // end of block
+						cnt |= (skip) ? kBmpSKP : kBmpCPY;
 						if (_v)
 							*cp = cnt;                          // store block description uint16
 
 						cp = (uint16 *) im;
 						im += 2;
-						skip = (pix == TRANS);
+						skip = (pix == kPixelTransp);
 						cnt = 0;
 					}
 					if (! skip) {
@@ -262,7 +261,7 @@ BMP_PTR Bitmap::code() {
 					if (skip) {
 						cnt += (SCR_WID - j + 3) / 4;
 					} else {
-						cnt |= CPY;
+						cnt |= kBmpCPY;
 						if (_v)
 							*cp = cnt;
 
@@ -274,7 +273,7 @@ BMP_PTR Bitmap::code() {
 				}
 			}
 			if (cnt && ! skip) {
-				cnt |= CPY;
+				cnt |= kBmpCPY;
 				if (_v)
 					*cp = cnt;
 
@@ -282,7 +281,7 @@ BMP_PTR Bitmap::code() {
 				im += 2;
 			}
 			if (_v)
-				*cp = EOI;
+				*cp = kBmpEOI;
 			cp = (uint16 *) im;
 			im += 2;
 		}
@@ -336,12 +335,12 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 		w &= 0x3FFF;
 
 		switch (t) {
-		case EOI :
+		case kBmpEOI:
 			r--;
-		case SKP :
+		case kBmpSKP:
 			w = 0;
 			break;
-		case REP :
+		case kBmpREP:
 			w = 1;
 			break;
 		}
@@ -361,18 +360,18 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 
 		n += w;
 		switch (t) {
-		case EOI :
+		case kBmpEOI:
 			return false;
-		case SKP :
+		case kBmpSKP:
 			w = 0;
 			break;
-		case REP :
-		case CPY :
+		case kBmpREP:
+		case kBmpCPY:
 			if (n - w <= n0 && n > n0)
 				return true;
 			break;
 		}
-		m += ((t == REP) ? 1 : w);
+		m += ((t == kBmpREP) ? 1 : w);
 	}
 }
 

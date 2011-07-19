@@ -62,6 +62,7 @@ namespace CGE {
 #define DGRAY       225 /*219*/
 #define GRAY        231
 #define LGRAY       237
+#define kPixelTransp 0xFE
 
 #define NO_SEQ      (-1)
 #define NO_PTR      ((uint8)-1)

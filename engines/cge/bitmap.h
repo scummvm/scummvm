@@ -32,12 +32,12 @@
 
 namespace CGE {
 
-#define EOI     0x0000
-#define SKP     0x4000
-#define REP     0x8000
-#define CPY     0xC000
+#define kBmpEOI      0x0000
+#define kBmpSKP      0x4000
+#define kBmpREP      0x8000
+#define kBmpCPY      0xC000
 
-#define TRANS   0xFE
+#define kMaxPath  128
 
 #include "common/pack-start.h"
 
