@@ -1822,11 +1822,11 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 			warning("QDM2Stream::QDM2Stream() u4 field not 0");
 	}
 
-	_fftOrder = log2(_frameSize) + 1;
+	_fftOrder = Common::intLog2(_frameSize) + 1;
 	_fftFrameSize = 2 * _frameSize; // complex has two floats
 
 	// something like max decodable tones
-	_groupOrder = log2(_blockSize) + 1;
+	_groupOrder = Common::intLog2(_blockSize) + 1;
 	_sFrameSize = _blockSize / 16; // 16 iterations per super block
 
 	_subSampling = _fftOrder - 7;
