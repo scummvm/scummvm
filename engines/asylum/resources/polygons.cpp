@@ -33,6 +33,11 @@ bool Polygon::contains(const Common::Point &point) {
 	bool  yflag1;
 	bool inside_flag = false;
 
+	// if no points are defined, an intersect check will fail
+	// (count - 1 would trigger an assertion in vtx0)
+	if (points.size() == 0)
+		return false;
+
 	Common::Point *vtx0 = &points[count() - 1];
 	Common::Point *vtx1 = &points[0];
 
