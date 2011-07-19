@@ -335,7 +335,7 @@ void ComposerEngine::loadLibrary(uint id) {
 
 	// add background sprite, if it exists
 	if (hasResource(ID_BMAP, 1000))
-		addSprite(1000, 0, 0xffff, Common::Point());
+		setBackground(1000);
 
 	// TODO: better CTBL logic
 	loadCTBL(1000, 100);

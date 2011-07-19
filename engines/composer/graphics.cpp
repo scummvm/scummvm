@@ -369,7 +369,7 @@ bool ComposerEngine::spriteVisible(uint16 id, uint16 animId) {
 	return false;
 }
 
-void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos) {
+Sprite *ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos) {
 	Sprite sprite;
 	bool foundSprite = false;
 
@@ -385,7 +385,7 @@ void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Co
 		if (i->_zorder == zorder) {
 			i->_animId = animId;
 			i->_pos = pos;
-			return;
+			return &(*i);
 		}
 
 		// otherwise, take a copy and remove it from the list
@@ -403,7 +403,7 @@ void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Co
 		sprite._id = id;
 		if (!initSprite(sprite)) {
 			warning("ignoring addSprite on invalid sprite %d", id);
-			return;
+			return NULL;
 		}
 	}
 
@@ -412,9 +412,11 @@ void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Co
 			continue;
 		// insert *before* this sprite
 		_sprites.insert(i, sprite);
-		return;
+		--i;
+		return &(*i);
 	}
 	_sprites.push_back(sprite);
+	return &_sprites.back();
 }
 
 void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
@@ -453,7 +455,7 @@ void ComposerEngine::redraw() {
 	_needsUpdate = false;
 }
 
-void ComposerEngine::loadCTBL(uint id, uint fadePercent) {
+void ComposerEngine::loadCTBL(uint16 id, uint fadePercent) {
 	Common::SeekableReadStream *stream = getResource(ID_CTBL, id);
 
 	uint16 numEntries = stream->readUint16LE();
@@ -470,6 +472,22 @@ void ComposerEngine::loadCTBL(uint id, uint fadePercent) {
 		buffer[i] = ((unsigned int)buffer[i] * fadePercent) / 100;
 
 	_system->getPaletteManager()->setPalette(buffer, 0, numEntries);
+}
+
+void ComposerEngine::setBackground(uint16 id) {
+	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+		if (i->_id)
+			continue;
+		i->_surface.free();
+		i->_id = id;
+		initSprite(*i);
+		i->_id = 0;
+		return;
+	}
+
+	Sprite *background = addSprite(id, 0, 0xffff, Common::Point());
+	if (background)
+		background->_id = 0;
 }
 
 static void decompressSLWM(byte *buffer, Common::SeekableReadStream *stream) {

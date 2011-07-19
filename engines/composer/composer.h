@@ -183,13 +183,14 @@ private:
 	void processAnimFrame();
 
 	bool spriteVisible(uint16 id, uint16 animId);
-	void addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos);
+	Sprite *addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos);
 	void removeSprite(uint16 id, uint16 animId);
 	const Sprite *getSpriteAtPos(const Common::Point &pos);
 	const Button *getButtonFor(const Sprite *sprite, const Common::Point &pos);
 
 	void redraw();
-	void loadCTBL(uint id, uint fadePercent);
+	void loadCTBL(uint16 id, uint fadePercent);
+	void setBackground(uint16 id);
 	void decompressBitmap(uint16 type, Common::SeekableReadStream *stream, byte *buffer, uint32 size, uint width, uint height);
 	bool initSprite(Sprite &sprite);
 	Common::SeekableReadStream *getStreamForSprite(uint16 id);

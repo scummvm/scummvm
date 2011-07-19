@@ -652,10 +652,10 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		_vars[param2] = _lastMousePos.y;
 		return 0;
 	case kFuncChangeBackground:
-		// TODO
-		warning("ignoring kFuncChangeBackground(%d)", param1);
+		debug(3, "kFuncChangeBackground(%d)", param1);
 		// TODO: return 1 if background existed, else 0
-		return 0;
+		setBackground(param1);
+		return 1;
 	case kFuncSetBackgroundColor:
 		// TODO
 		warning("ignoring kFuncSetBackgroundColor(%d)", param1);
