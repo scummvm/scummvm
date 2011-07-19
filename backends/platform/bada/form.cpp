@@ -119,6 +119,8 @@ BadaAppForm::~BadaAppForm() {
 //
 void BadaAppForm::terminate() {
   if (state == ActiveState) {
+    ((BadaSystem*) g_system)->setMute(true);
+
     eventQueueLock->Acquire();
 
     Common::Event e;
@@ -127,7 +129,7 @@ void BadaAppForm::terminate() {
     state = ClosingState;
 
     eventQueueLock->Release();
-    
+
     // block while thread ends
     AppLog("waiting for shutdown");
     for (int i = 0; i < 10 && state == ClosingState; i++) {
@@ -315,6 +317,7 @@ void BadaAppForm::OnTouchReleased(const Control& source,
               currentPosition);
   }
   else if (touchInfo.IsFlicked()) {
+    bool repeat = false;
     switch (shortcutIndex) {
     case SHORTCUT_SWAP_MOUSE:
       leftButton = !leftButton;
@@ -327,17 +330,24 @@ void BadaAppForm::OnTouchReleased(const Control& source,
 
     case SHORTCUT_ESCAPE:
       pushKey(Common::KEYCODE_ESCAPE);
+      repeat = true;
       break;
       
     case SHORTCUT_PERIOD:
       pushKey(Common::KEYCODE_PERIOD);
+      repeat = true;
       break;
 
     case SHORTCUT_SPACE:
       pushKey(Common::KEYCODE_SPACE);
+      repeat = true;
       break;
     }
-    shortcutIndex = -1;
+
+    if (repeat) {
+      // allow key repeat
+      shortcutTimer = g_system->getMillis();
+    }
   }
 }
 

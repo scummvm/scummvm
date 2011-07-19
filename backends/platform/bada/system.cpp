@@ -285,7 +285,7 @@ void BadaSystem::initBackend() {
 
   // set default save path to writable area
   if (!ConfMan.hasKey("savepath")) {
-    ConfMan.set("savepath", "/Home");
+    ConfMan.set("savepath", "/Home/Share");
   }
 
 	ConfMan.registerDefault("fullscreen", true);
@@ -453,14 +453,6 @@ void systemError(const char* format, ...) {
   va_end(ap);
   
   AppLog(buffer);
-
-  // prevent graphicsmanager from overwriting the popup
-  if (g_system) {
-    ((BadaSystem*) g_system)->closeGraphics();
-  }
-
-  messageBox.Construct(L"Fatal", L"Internal Error", MSGBOX_STYLE_OK);
-  messageBox.ShowAndWait(modalResult);
   Application::GetInstance()->Terminate();
 }
 

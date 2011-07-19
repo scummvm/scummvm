@@ -2009,7 +2009,6 @@ if test -n "$_host"; then
 			;;
 		bada)
       _unix=yes
-      _need_memalign=yes
       _backend="bada"
       _port_mk="backends/platform/bada/bada.mk"
       if test "$_debug_build" = yes; then
@@ -3447,6 +3446,8 @@ case $_backend in
       CXXFLAGS="$CXXFLAGS -mlittle-endian"
       CXXFLAGS="$CXXFLAGS -mthumb-interwork"
       CXXFLAGS="$CXXFLAGS -Wno-psabi"
+		  CXXFLAGS="$CXXFLAGS -fno-strict-aliasing"
+		  CXXFLAGS="$CXXFLAGS -fno-short-enums"
     fi
     HOSTEXEPRE=lib
     HOSTEXEEXT=.a

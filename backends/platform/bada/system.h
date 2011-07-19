@@ -60,7 +60,7 @@
 BadaAppForm* systemStart(Osp::App::Application* app);
 void systemError(const char* format, ...);
 
-#define USER_MESSAGE_EXIT     1000
+#define USER_MESSAGE_EXIT 1000
 
 //
 // BadaSystem
