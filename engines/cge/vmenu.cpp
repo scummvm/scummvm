@@ -31,31 +31,18 @@
 
 namespace CGE {
 
-
-#define RELIEF      1
-#if RELIEF
-#define MB_LT       LGRAY
-#define MB_RB       DGRAY
-#else
-#define MB_LT       DGRAY
-#define MB_RB       LGRAY
-#endif
-
-
-
-
 MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
-	int h = FONT_HIG + 2 * MB_VM, i = (w += 2 * MB_HM) * h;
+	int h = kFontHigh + 2 * kMenuBarVM, i = (w += 2 * kMenuBarHM) * h;
 	uint8 *p = farnew(uint8, i), * p1, * p2;
 
 	memset(p + w, TRANS, i - 2 * w);
-	memset(p, MB_LT, w);
-	memset(p + i - w, MB_RB, w);
+	memset(p, kMenuBarLT, w);
+	memset(p + i - w, kMenuBarRB, w);
 	p1 = p;
 	p2 = p + i - 1;
 	for (i = 0; i < h; i++) {
-		*p1 = MB_LT;
-		*p2 = MB_RB;
+		*p1 = kMenuBarLT;
+		*p2 = kMenuBarRB;
 		p1 += w;
 		p2 -= w;
 	}
@@ -115,10 +102,10 @@ Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
 	if (x < 0 || y < 0)
 		center();
 	else
-		gotoxy(x - _w / 2, y - (TEXT_VM + FONT_HIG / 2));
+		gotoxy(x - _w / 2, y - (kTextVMargin + kFontHigh / 2));
 	_vga->_showQ->insert(this, _vga->_showQ->last());
-	_bar = new MenuBar(_vm, _w - 2 * TEXT_HM);
-	_bar->gotoxy(_x + TEXT_HM - MB_HM, _y + TEXT_VM - MB_VM);
+	_bar = new MenuBar(_vm, _w - 2 * kTextHMargin);
+	_bar->gotoxy(_x + kTextHMargin - kMenuBarHM, _y + kTextVMargin - kMenuBarVM);
 	_vga->_showQ->insert(_bar, _vga->_showQ->last());
 }
 
@@ -130,23 +117,23 @@ Vmenu::~Vmenu() {
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember)) 
 
 void Vmenu::touch(uint16 mask, int x, int y) {
-	uint16 h = FONT_HIG + TEXT_LS;
-	bool ok = false;
-
 	if (_items) {
 		Sprite::touch(mask, x, y);
 
-		y -= TEXT_VM - 1;
+		y -= kTextVMargin - 1;
 		int n = 0;
+		bool ok = false;
+		uint16 h = kFontHigh + kTextLineSpace;
+
 		if (y >= 0) {
 			n = y / h;
 			if (n < _items)
-				ok = (x >= TEXT_HM && x < _w - TEXT_HM/* && y % h < FONT_HIG*/);
+				ok = (x >= kTextHMargin && x < _w - kTextHMargin/* && y % h < FONT_HIG*/);
 			else
 				n = _items - 1;
 		}
 
-		_bar->gotoxy(_x + TEXT_HM - MB_HM, _y + TEXT_VM + n * h - MB_VM);
+		_bar->gotoxy(_x + kTextHMargin - kMenuBarHM, _y + kTextVMargin + n * h - kMenuBarVM);
 
 		if (ok && (mask & L_UP)) {
 			_items = 0;

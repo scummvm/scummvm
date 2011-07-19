@@ -34,15 +34,18 @@
 
 namespace CGE {
 
-#define TEXT_FG     DARK    // foreground color
-#define TEXT_BG     GRAY    // background color
-#define TEXT_HM     (6&~1)  // EVEN horizontal margins!
-#define TEXT_VM     5   // vertical margins
-#define TEXT_LS     2   // line spacing
-#define TEXT_RD     3   // rounded corners
+#define kTextColFG         DARK                     // foreground color
+#define kTextColBG         GRAY                     // background color
+#define kTextHMargin      (6&~1)                    // EVEN horizontal margins!
+#define kTextVMargin       5                        // vertical margins
+#define kTextLineSpace     2                        // line spacing
+#define kTextRoundCorner   3                        // rounded corners
+#define kWidSize           256
+#define kPosSize           256
+#define kMapSize          (256*8)
 
-#define FONT_HIG    8
-#define FONT_EXT    ".CFT"
+#define kFontHigh   8
+#define kFontExt    ".CFT"
 
 
 
