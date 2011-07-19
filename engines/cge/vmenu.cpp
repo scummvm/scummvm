@@ -36,7 +36,7 @@ MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 	int i = (w += 2 * kMenuBarHM) * h;
 	uint8 *p = (uint8 *) malloc(sizeof(uint8) * i);
 
-	memset(p + w, TRANS, i - 2 * w);
+	memset(p + w, kPixelTransp, i - 2 * w);
 	memset(p, kMenuBarLT, w);
 	memset(p + i - w, kMenuBarRB, w);
 	uint8 *p1 = p;

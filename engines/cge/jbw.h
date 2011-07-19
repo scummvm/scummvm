@@ -91,9 +91,6 @@ enum Keys {
     TwiceRight
 };
 
-//extern  uint16  _stklen;
-//extern  uint16  _heaplen;
-
 } // End of namespace CGE
 
 #endif
