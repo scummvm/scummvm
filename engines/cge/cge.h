@@ -236,6 +236,7 @@ public:
 	void snZTrim(Sprite *spr);
 protected:
 	int _recentStep;
+
 private:
 	CGEConsole *_console;
 	void setup();
