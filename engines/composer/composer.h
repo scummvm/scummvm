@@ -100,6 +100,8 @@ enum {
 struct Library {
 	uint _id;
 	Archive *_archive;
+
+	Common::List<Button> _buttons;
 };
 
 struct QueuedScript {
@@ -143,7 +145,6 @@ private:
 
 	bool _needsUpdate;
 	Graphics::Surface _surface;
-	Common::List<Button> _buttons;
 	Common::List<Sprite> _sprites;
 
 	uint _directoriesToStrip;

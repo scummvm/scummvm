@@ -315,6 +315,8 @@ void ComposerEngine::loadLibrary(uint id) {
 		error("failed to open '%s'", filename.c_str());
 	_libraries.push_front(library);
 
+	Library &newLib = _libraries.front();
+
 	Common::Array<uint16> buttonResources = library._archive->getResourceIDList(ID_BUTN);
 	for (uint i = 0; i < buttonResources.size(); i++) {
 		uint16 buttonId = buttonResources[i];
@@ -322,15 +324,15 @@ void ComposerEngine::loadLibrary(uint id) {
 		Button button(stream, buttonId);
 
 		bool inserted = false;
-		for (Common::List<Button>::iterator b = _buttons.begin(); b != _buttons.end(); b++) {
+		for (Common::List<Button>::iterator b = newLib._buttons.begin(); b != newLib._buttons.end(); b++) {
 			if (button._zorder <= b->_zorder)
 				continue;
-			_buttons.insert(b, button);
+			newLib._buttons.insert(b, button);
 			inserted = true;
 			break;
 		}
 		if (!inserted)
-			_buttons.push_back(button);
+			newLib._buttons.push_back(button);
 	}
 
 	// add background sprite, if it exists
@@ -367,7 +369,7 @@ void ComposerEngine::unloadLibrary(uint id) {
 			j->_surface.free();
 		}
 		_sprites.clear();
-		_buttons.clear();
+		i->_buttons.clear();
 
 		_lastButton = NULL;
 
@@ -469,22 +471,24 @@ bool Button::contains(const Common::Point &pos) const {
 }
 
 const Button *ComposerEngine::getButtonFor(const Sprite *sprite, const Common::Point &pos) {
-	for (Common::List<Button>::iterator i = _buttons.reverse_begin(); i != _buttons.end(); --i) {
-		if (!i->_active)
-			continue;
+	for (Common::List<Library>::iterator l = _libraries.begin(); l != _libraries.end(); l++) {
+		for (Common::List<Button>::iterator i = l->_buttons.reverse_begin(); i != l->_buttons.end(); --i) {
+			if (!i->_active)
+				continue;
 
-		if (i->_spriteIds.empty()) {
-			if (i->contains(pos))
-				return &(*i);
-			continue;
-		}
+			if (i->_spriteIds.empty()) {
+				if (i->contains(pos))
+					return &(*i);
+				continue;
+			}
 
-		if (!sprite)
-			continue;
+			if (!sprite)
+				continue;
 
-		for (uint j = 0; j < i->_spriteIds.size(); j++) {
-			if (i->_spriteIds[j] == sprite->_id)
-				return &(*i);
+			for (uint j = 0; j < i->_spriteIds.size(); j++) {
+				if (i->_spriteIds[j] == sprite->_id)
+					return &(*i);
+			}
 		}
 	}
 

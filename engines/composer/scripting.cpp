@@ -564,19 +564,23 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		return 0;
 	case kFuncActivateButton:
 		debug(3, "kFuncActivateButton(%d)", param1);
-		for (Common::List<Button>::iterator i = _buttons.begin(); i != _buttons.end(); i++) {
-			if (i->_id != param1)
-				continue;
-			i->_active = true;
+		for (Common::List<Library>::iterator l = _libraries.begin(); l != _libraries.end(); l++) {
+			for (Common::List<Button>::iterator i = l->_buttons.begin(); i != l->_buttons.end(); i++) {
+				if (i->_id != param1)
+					continue;
+				i->_active = true;
+			}
 		}
 		onMouseMove(_lastMousePos);
 		return 1;
 	case kFuncDeactivateButton:
 		debug(3, "kFuncDeactivateButton(%d)", param1);
-		for (Common::List<Button>::iterator i = _buttons.begin(); i != _buttons.end(); i++) {
-			if (i->_id != param1)
-				continue;
-			i->_active = false;
+		for (Common::List<Library>::iterator l = _libraries.begin(); l != _libraries.end(); l++) {
+			for (Common::List<Button>::iterator i = l->_buttons.begin(); i != l->_buttons.end(); i++) {
+				if (i->_id != param1)
+					continue;
+				i->_active = false;
+			}
 		}
 		onMouseMove(_lastMousePos);
 		return 1;
