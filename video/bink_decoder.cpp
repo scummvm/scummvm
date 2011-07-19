@@ -1043,7 +1043,7 @@ void BinkDecoder::readMotionValues(VideoFrame &video, Bundle &bundle) {
 		byte v = video.bits->getBits(4);
 
 		if (v) {
-			int sign = -video.bits->getBit();
+			int sign = -(int)video.bits->getBit();
 			v = (v ^ sign) - sign;
 		}
 
@@ -1057,7 +1057,7 @@ void BinkDecoder::readMotionValues(VideoFrame &video, Bundle &bundle) {
 		byte v = getHuffmanSymbol(video, bundle.huffman);
 
 		if (v) {
-			int sign = -video.bits->getBit();
+			int sign = -(int)video.bits->getBit();
 			v = (v ^ sign) - sign;
 		}
 
@@ -1175,7 +1175,7 @@ void BinkDecoder::readDCS(VideoFrame &video, Bundle &bundle, int startBits, bool
 
 	int32 v = video.bits->getBits(startBits - (hasSign ? 1 : 0));
 	if (v && hasSign) {
-		int sign = -video.bits->getBit();
+		int sign = -(int)video.bits->getBit();
 		v = (v ^ sign) - sign;
 	}
 
@@ -1192,7 +1192,7 @@ void BinkDecoder::readDCS(VideoFrame &video, Bundle &bundle, int startBits, bool
 			for (uint32 j = 0; j < length2; j++) {
 				int16 v2 = video.bits->getBits(bSize);
 				if (v2) {
-					int sign = -video.bits->getBit();
+					int sign = -(int)video.bits->getBit();
 					v2 = (v2 ^ sign) - sign;
 				}
 
@@ -1261,7 +1261,7 @@ void BinkDecoder::readDCTCoeffs(VideoFrame &video, int16 *block, bool isIntra) {
 						} else {
 							t = video.bits->getBits(bits) | mask;
 
-							int sign = -video.bits->getBit();
+							int sign = -(int)video.bits->getBit();
 							t = (t ^ sign) - sign;
 						}
 						block[binkScan[ccoef]] = t;
@@ -1286,7 +1286,7 @@ void BinkDecoder::readDCTCoeffs(VideoFrame &video, int16 *block, bool isIntra) {
 				} else {
 					t = video.bits->getBits(bits) | mask;
 
-					int sign = -video.bits->getBit();
+					int sign = -(int)video.bits->getBit();
 					t = (t ^ sign) - sign;
 				}
 				block[binkScan[ccoef]] = t;
@@ -1365,7 +1365,7 @@ void BinkDecoder::readResidue(VideoFrame &video, int16 *block, int masksCount) {
 					} else {
 						nzCoeff[nzCoeffCount++] = binkScan[ccoef];
 
-						int sign = -video.bits->getBit();
+						int sign = -(int)video.bits->getBit();
 						block[binkScan[ccoef]] = (mask ^ sign) - sign;
 
 						masksCount--;
@@ -1387,7 +1387,7 @@ void BinkDecoder::readResidue(VideoFrame &video, int16 *block, int masksCount) {
 			case 3:
 				nzCoeff[nzCoeffCount++] = binkScan[ccoef];
 
-				int sign = -video.bits->getBit();
+				int sign = -(int)video.bits->getBit();
 				block[binkScan[ccoef]] = (mask ^ sign) - sign;
 
 				coefList[listPos]   = 0;
