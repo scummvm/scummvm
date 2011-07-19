@@ -44,16 +44,13 @@
  * Status of this engine:
  *  - Script interpreters for main game and encounters are implemented
  *  - Object handling, player reaction and special chapter logic is implemented
- *  - Scene parsing and drawing is almost complete
- *  - Movie code is almost complete
- *  - Mouse cursor is initialized and animated properly
- *  - Menu handling is mostly done (missing savegame management and movie list)
+ *  - Scene parsing and drawing, movie playing, mouse cursor and menu handling are almost complete
  *  - Sound code is almost complete (music is still WIP)
- *  - Only one puzzle is partially implemented
- *  - Preliminary code for walking around with the mouse.
+ *  - Almost all puzzles are implemented
+ *  - Walking is partialy implemented but the primitive pathfinding is missing
  *
  * Maintainers:
- *  alexbevi, alexandrefontoura, bluegr, littleboy
+ *  alexbevi, alexandrefontoura, bluegr, littleboy, midstream
  *
  * Supported games:
  *  - Sanitarium
