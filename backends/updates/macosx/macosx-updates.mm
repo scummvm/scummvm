@@ -35,6 +35,17 @@
 
 SUUpdater *sparkleUpdater;
 
+/**
+ * Sparkle is a software update framework for Mac OS X which uses appcasts for
+ * release information. Appcasts are RSS-like XML feeds which contain information
+ * about the most current version at the time. If a new version is available, the
+ * user is presented the release-notes/changes/fixes and is asked if he wants to
+ * update, and if yes the Sparkle framework downloads a signed update package
+ * from the server and automatically installs and restarts the software.
+ * More detailed information is available at the following address:
+ * http://sparkle.andymatuschak.org/
+ *
+ */
 MacOSXUpdateManager::MacOSXUpdateManager() {
 	NSMenuItem *menuItem = [[NSApp mainMenu] itemAtIndex:0];
 	NSMenu *applicationMenu = [menuItem submenu];
