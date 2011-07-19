@@ -40,7 +40,7 @@ IoBuf::IoBuf(IOMODE mode, CRYPT *crpt)
 	  _lim(0) {
 	debugC(1, kDebugFile, "IoBuf::IoBuf(%d, crpt)", mode);
 
-	_buff = (uint8 *) malloc(sizeof(uint8) * IOBUF_SIZE);
+	_buff = (uint8 *) malloc(sizeof(uint8) * kBufferSize);
 	if (_buff == NULL)
 		error("No core for I/O");
 }
@@ -53,7 +53,7 @@ IoBuf::IoBuf(const char *name, IOMODE mode, CRYPT *crpt)
 	  _lim(0) {
 	debugC(1, kDebugFile, "IoBuf::IoBuf(%s, %d, crpt)", name, mode);
 
-	_buff = (uint8 *) malloc(sizeof(uint8) * IOBUF_SIZE);
+	_buff = (uint8 *) malloc(sizeof(uint8) * kBufferSize);
 	if (_buff == NULL)
 		error("No core for I/O [%s]", name);
 }
@@ -71,7 +71,7 @@ void IoBuf::readBuf() {
 	debugC(4, kDebugFile, "IoBuf::readBuf()");
 
 	_bufMark = IoHand::mark();
-	_lim = IoHand::read(_buff, IOBUF_SIZE);
+	_lim = IoHand::read(_buff, kBufferSize);
 	_ptr = 0;
 }
 
@@ -115,14 +115,14 @@ uint16 IoBuf::read(uint8 *buf) {
 
 	uint16 total = 0;
 
-	while (total < LINE_MAX - 2) {
+	while (total < kLineMaxSize - 2) {
 		if (_ptr >= _lim)
 			readBuf();
 		uint8 *p = _buff + _ptr;
 		uint16 n = _lim - _ptr;
 		if (n) {
-			if (total + n >= LINE_MAX - 2)
-				n = LINE_MAX - 2 - total;
+			if (total + n >= kLineMaxSize - 2)
+				n = kLineMaxSize - 2 - total;
 			uint8 *eol = (uint8 *) memchr(p, '\r', n);
 			if (eol)
 				n = (uint16)(eol - p);
@@ -162,7 +162,7 @@ uint16 IoBuf::write(void *buf, uint16 len) {
 
 	uint16 tot = 0;
 	while (len) {
-		uint16 n = IOBUF_SIZE - _lim;
+		uint16 n = kBufferSize - _lim;
 		if (n > len)
 			n = len;
 		if (n) {
@@ -213,13 +213,13 @@ int IoBuf::read() {
 void IoBuf::write(uint8 b) {
 	debugC(1, kDebugFile, "IoBuf::write(%d)", b);
 
-	if (_lim >= IOBUF_SIZE)
+	if (_lim >= kBufferSize)
 		writeBuf();
 	_buff[_lim++] = b;
 }
 
 
-uint16  CFile::_maxLineLen   = LINE_MAX;
+uint16  CFile::_maxLineLen   = kLineMaxSize;
 
 
 CFile::CFile(const char *name, IOMODE mode, CRYPT *crpt)
@@ -280,7 +280,7 @@ void CFile::append(CFile &f) {
 	seek(size());
 	if (f._error == 0) {
 		while (true) {
-			if ((_lim = f.IoHand::read(_buff, IOBUF_SIZE)) == IOBUF_SIZE)
+			if ((_lim = f.IoHand::read(_buff, kBufferSize)) == kBufferSize)
 				writeBuf();
 			else
 				break;

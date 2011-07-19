@@ -111,8 +111,8 @@ void VFile::readBuf() {
 	}
 	_bufMark = _dat->_file.mark();
 	long n = _endMark - _bufMark;
-	if (n > IOBUF_SIZE)
-		n = IOBUF_SIZE;
+	if (n > kBufferSize)
+		n = kBufferSize;
 	_lim = _dat->_file.read(_buff, (uint16) n);
 	_ptr = 0;
 }

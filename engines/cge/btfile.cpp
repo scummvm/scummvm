@@ -38,9 +38,9 @@ BtFile::BtFile(const char *name, IOMODE mode, CRYPT *crpt)
 	: IoHand(name, mode, crpt) {
 	debugC(1, kDebugFile, "BtFile::BtFile(%s, %d, crpt)", name, mode);
 
-	for (int i = 0; i < BT_LEVELS; i++) {
+	for (int i = 0; i < kBtLevel; i++) {
 		_buff[i]._page = new BtPage;
-		_buff[i]._pgNo = BT_NONE;
+		_buff[i]._pgNo = kBtValNone;
 		_buff[i]._indx = -1;
 		_buff[i]._updt = false;
 		if (_buff[i]._page == NULL)
@@ -51,7 +51,7 @@ BtFile::BtFile(const char *name, IOMODE mode, CRYPT *crpt)
 
 BtFile::~BtFile() {
 	debugC(1, kDebugFile, "BtFile::~BtFile()");
-	for (int i = 0; i < BT_LEVELS; i++) {
+	for (int i = 0; i < kBtLevel; i++) {
 		putPage(i, false);
 		delete _buff[i]._page;
 	}
@@ -82,7 +82,7 @@ BtPage *BtFile::getPage(int lev, uint16 pgn) {
 			_buff[lev]._updt = false;
 		} else {
 			_buff[lev]._page->_hea._count = 0;
-			_buff[lev]._page->_hea._down = BT_NONE;
+			_buff[lev]._page->_hea._down = kBtValNone;
 			memset(_buff[lev]._page->_data, '\0', sizeof(_buff[lev]._page->_data));
 			_buff[lev]._updt = true;
 		}
@@ -95,15 +95,15 @@ BtKeypack *BtFile::find(const char *key) {
 	debugC(1, kDebugFile, "BtFile::find(%s)", key);
 
 	int lev = 0;
-	uint16 nxt = BT_ROOT;
+	uint16 nxt = kBtValRoot;
 	while (!_error) {
 		BtPage *pg = getPage(lev, nxt);
 		// search
-		if (pg->_hea._down != BT_NONE) {
+		if (pg->_hea._down != kBtValNone) {
 			int i;
 			for (i = 0; i < pg->_hea._count; i++) {
 				// Does this work, or does it have to compare the entire buffer?
-				if (scumm_strnicmp((const char *)key, (const char*)pg->_inn[i]._key, BT_KEYLEN) < 0)
+				if (scumm_strnicmp((const char *)key, (const char*)pg->_inn[i]._key, kBtKeySize) < 0)
 					break;
 			}
 			nxt = (i) ? pg->_inn[i - 1]._down : pg->_hea._down;
@@ -124,14 +124,14 @@ BtKeypack *BtFile::find(const char *key) {
 
 
 int keycomp(const void *k1, const void *k2) {
-	return scumm_strnicmp((const char *) k1, (const char*) k2, BT_KEYLEN);
+	return scumm_strnicmp((const char *) k1, (const char*) k2, kBtKeySize);
 }
 
 
 void BtFile::make(BtKeypack *keypack, uint16 count) {
 	debugC(1, kDebugFile, "BtFile::make(keypack, %d)", count);
 
-#if BT_LEVELS != 2
+#if kBtLevel != 2
 #error This tiny BTREE implementation works with exactly 2 levels!
 #endif
 	_fqsort(keypack, count, sizeof(*keypack), keycomp);
@@ -144,7 +144,7 @@ void BtFile::make(BtKeypack *keypack, uint16 count) {
 		if (Leaf->_hea._count >= ArrayCount(Leaf->_lea)) {
 			putPage(1, true);     // save filled page
 			Leaf = getPage(1, ++n);   // take empty page
-			memcpy(Root->_inn[Root->_hea._count]._key, keypack->_key, BT_KEYLEN);
+			memcpy(Root->_inn[Root->_hea._count]._key, keypack->_key, kBtKeySize);
 			Root->_inn[Root->_hea._count++]._down = n;
 			_buff[0]._updt = true;
 		}
