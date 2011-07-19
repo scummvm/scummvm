@@ -32,7 +32,7 @@
 
 namespace CGE {
 
-#define BT_SIZE     K(1)
+#define BT_SIZE     1024
 #define BT_KEYLEN   13
 #define BT_LEVELS   2
 

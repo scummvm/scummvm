@@ -100,12 +100,12 @@ void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, c
 }
 
 const char *progName(const char *ext) {
-	static char buf[MAXFILE];
+	static char buf[kMaxFile];
 	strcpy(buf, "CGE");
 	if (ext) {
 		strcat(buf, ".");
 		if (*ext == '.')
-			++ext;
+			ext++;
 		strcat(buf, ext);
 	}
 

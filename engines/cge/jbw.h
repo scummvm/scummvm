@@ -39,33 +39,11 @@ namespace CGE {
 #define BMP_MODE 0
 //
 
-#define BEL      7
-#define BS       8
-#define HT       9
-#define LF      10
-#define FF      12
-#define CR      13
-#define MAXFILE 128
+#define kMaxFile      128
 
-#define IsWhite(c)  ((c) == ' ' || (c) == '\t' || (c) == '\n')
-#define IsUpper(c)  ((c) >= 'A' && (c) <= 'Z')
-#define IsLower(c)  ((c) >= 'a' && (c) <= 'z')
-#define IsDigit(c)  ((c) >= '0' && (c) <= '9')
-#define IsAlpha(c)  (IsLower(c) || IsUpper(c) || (c) == '_')
-#define IsAlNum(c)  (IsAlpha(c) || IsDigit(c))
-#define IsHxDig(c)  (IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
-
-#define ArrayCount(a)   (sizeof(a) / sizeof((a)[0]))
-#define MAX_TIMER   0x1800B0L
-
-typedef void (MouseFunType)();
-
-#define Lo(d)       (((int *) &d)[0])
-#define Hi(d)       (((int *) &d)[1])
-#define LoWord(d)   ((uint16) Lo(d))
-#define HiWord(d)   ((uint16) Hi(d))
-#define K(n)        (1024 * (n))
-#define MASK(n)     ((1 << n) - 1)
+#define IsDigit(c)    ((c) >= '0' && (c) <= '9')
+#define IsHxDig(c)    (IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
+#define ArrayCount(a) (sizeof(a) / sizeof((a)[0]))
 
 enum Keys {
     NoKey   = 0, CtrlA, CtrlB, CtrlC, CtrlD, CtrlE, CtrlF, CtrlG, CtrlH,
@@ -113,18 +91,8 @@ enum Keys {
     TwiceRight
 };
 
-#define HGC_Cursor  0x0B0C
-#define CGA_Cursor  0x0607
-#define OFF_Cursor  0x2000
-
-//#define TimerCount  (*((volatile long *) ((void _seg *) 0x40 + (void *) 0x6C)))
-//#define BreakFlag   (*((volatile uint8 *) ((void _seg *) 0x40 + (void *) 0x71)))
-//#define PostFlag    (*((volatile uint16 *) ((void _seg *) 0x40 + (void *) 0x72)))
-//#define POST        ((void (*)(void)) ((void _seg *) 0xF000 + (void *) 0xFFF0))
-
-
-extern  uint16  _stklen;
-extern  uint16  _heaplen;
+//extern  uint16  _stklen;
+//extern  uint16  _heaplen;
 
 } // End of namespace CGE
 
