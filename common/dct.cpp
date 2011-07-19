@@ -51,21 +51,18 @@ DCT::~DCT() {
 
 void DCT::calc(float *data) {
 	switch (_trans) {
-		case DCT_I:
-			calcDCTI(data);
-			break;
-
-		case DCT_II:
-			calcDCTII(data);
-			break;
-
-		case DCT_III:
-			calcDCTIII(data);
-			break;
-
-		case DST_I:
-			calcDSTI(data);
-			break;
+	case DCT_I:
+		calcDCTI(data);
+		break;
+	case DCT_II:
+		calcDCTII(data);
+		break;
+	case DCT_III:
+		calcDCTIII(data);
+		break;
+	case DST_I:
+		calcDSTI(data);
+		break;
 	}
 }
 
@@ -119,8 +116,8 @@ void DCT::calcDCTII(float *data) {
 
 		tmp1 = (tmp1 + tmp2) * 0.5;
 
-		data[i    ] = tmp1 + s;
-		data[n-i-1] = tmp1 - s;
+		data[i        ] = tmp1 + s;
+		data[n - i - 1] = tmp1 - s;
 	}
 
 	_rdft->calc(data);
@@ -136,8 +133,8 @@ void DCT::calcDCTII(float *data) {
 		float c = COS(n, i);
 		float s = SIN(n, i);
 
-		data[i  ] = c * inr + s * ini;
-		data[i+1] = next;
+		data[i    ] = c * inr + s * ini;
+		data[i + 1] = next;
 
 		next += s * inr - c * ini;
 	}
