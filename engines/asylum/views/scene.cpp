@@ -1286,7 +1286,7 @@ int32 Scene::hitTestScene(HitType &type) {
 	for (uint i = 0; i < _ws->objects.size(); i++) {
 		Object *object = _ws->objects[i];
 
-		if (object->isOnScreen() && object->actionType & kActionType8) {
+		if (object->isOnScreen() && (object->actionType & kActionType8)) {
 			if (hitTestPixel(object->getResourceId(),
 			                 object->getFrameIndex(),
 							 top - object->x,
@@ -2474,7 +2474,7 @@ void Scene::processUpdateList() {
 				                   actor->getPoint1()->x + actor->getBoundingRect()->right,
 				                   bottomRight)) {
 
-					if (BYTE1(object->flags) & kObjectFlag20 && !(BYTE1(object->flags) & kObjectFlag80))
+					if ((BYTE1(object->flags) & kObjectFlag20) && !(BYTE1(object->flags) & kObjectFlag80))
 						BYTE1(object->flags) = BYTE1(object->flags) | kObjectFlag40;
 
 					continue;
@@ -2490,9 +2490,9 @@ void Scene::processUpdateList() {
 				}
 
 				// Adjust object flags
-				if (BYTE1(object->flags) & kObjectFlag80 || isMasked) {
+				if ((BYTE1(object->flags) & kObjectFlag80) || isMasked) {
 					if (BYTE1(object->flags) & kObjectFlag20)
-						BYTE1(object->flags) = BYTE1(object->flags) & kObjectFlagBF | kObjectFlag80;
+						BYTE1(object->flags) = (BYTE1(object->flags) & kObjectFlagBF) | kObjectFlag80;
 				} else {
 					if (BYTE1(object->flags) & kObjectFlag20) {
 						BYTE1(object->flags) = BYTE1(object->flags) | kObjectFlag40;
