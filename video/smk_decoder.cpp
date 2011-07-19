@@ -375,7 +375,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// Read in the Smacker header
 	_header.signature = _fileStream->readUint32BE();
 
-	if (_header.signature != MKTAG('S', 'M', 'K', '2') && _header.signature == MKTAG('S', 'M', 'K', '4'))
+	if (_header.signature != MKTAG('S', 'M', 'K', '2') && _header.signature != MKTAG('S', 'M', 'K', '4'))
 		return false;
 
 	uint32 width = _fileStream->readUint32LE();
