@@ -37,7 +37,7 @@
 	void randomnumber();
 	void quickquit2();
 	void getnextword();
-	uint8 getnextword(uint8 *totalWidth, uint8 *charCount);
+	uint8 getnextword(const uint8 *string, uint8 *totalWidth, uint8 *charCount);
 	void printchar();
 	void printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uint8 c);
 	void printdirect();

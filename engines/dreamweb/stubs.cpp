@@ -239,12 +239,12 @@ void DreamGenContext::setmouse() {
 	data.word(kOldpointerx) = 0xffff;
 }
 
-uint8 DreamGenContext::getnextword(uint8 *totalWidth, uint8 *charCount) {
+uint8 DreamGenContext::getnextword(const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
 	*totalWidth = 0;
 	*charCount = 0;
 	while(true) {
-		uint8 firstChar = es.byte(di);
-		++di;
+		uint8 firstChar = *string;
+		++string;
 		++*charCount;
 		if ((firstChar == ':') || (firstChar == 0)) { //endall
 			*totalWidth += 6;
@@ -256,7 +256,7 @@ uint8 DreamGenContext::getnextword(uint8 *totalWidth, uint8 *charCount) {
 		}
 		firstChar = engine->modifyChar(firstChar);
 		if (firstChar != 255) {
-			uint8 secondChar = es.byte(di);
+			uint8 secondChar = *string;
 			uint8 width = ds.byte(6*(firstChar - 32 + data.word(kCharshift)));
 			width = kernchars(firstChar, secondChar, width);
 			*totalWidth += width;
@@ -266,9 +266,10 @@ uint8 DreamGenContext::getnextword(uint8 *totalWidth, uint8 *charCount) {
 
 void DreamGenContext::getnextword() {
 	uint8 totalWidth, charCount;
-	al = getnextword(&totalWidth, &charCount);
+	al = getnextword(es.ptr(di, 0), &totalWidth, &charCount);
 	bl = totalWidth;
-	bh = charCount;	
+	bh = charCount;
+	di += charCount;
 }
 
 void DreamGenContext::printchar() {
@@ -345,7 +346,8 @@ uint8 DreamGenContext::getnumber(uint16 maxWidth, bool centered, uint16* offset)
 	*offset = di;
 	while (true) {
 		uint8 wordTotalWidth, wordCharCount;
-		uint8 done = getnextword(&wordTotalWidth, &wordCharCount);
+		uint8 done = getnextword(es.ptr(di, 0), &wordTotalWidth, &wordCharCount);
+		di += wordCharCount;
 
 		if (done == 1) { //endoftext
 			ax = totalWidth + wordTotalWidth - 10;
