@@ -986,8 +986,8 @@ Vga::Vga(int mode)
 	setStatAdr();
 	if (_statAdr != VGAST1_)
 		_mono++;
-	_oldColors = farnew(Dac, 256);
-	_newColors = farnew(Dac, 256);
+	_oldColors = (Dac *) malloc(sizeof(Dac) * PAL_CNT);
+	_newColors = (Dac *) malloc(sizeof(Dac) * PAL_CNT);
 	_oldScreen = SaveScreen();
 	getColors(_oldColors);
 	sunset();

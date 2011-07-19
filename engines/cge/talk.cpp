@@ -33,9 +33,9 @@
 
 namespace CGE {
 Font::Font(const char *name) {
-	_map = farnew(uint8, kMapSize);
-	_pos = farnew(uint16, kPosSize);
-	_wid = farnew(uint8, kWidSize);
+	_map = (uint8 *) malloc(sizeof(uint8) * kMapSize);
+	_pos = (uint16 *) malloc(sizeof(uint16) * kPosSize);
+	_wid = (uint8 *) malloc(sizeof(uint8) * kWidSize);
 	if ((_map == NULL) || (_pos == NULL) || (_wid == NULL))
 		error("No core");
 	mergeExt(_path, name, kFontExt);
@@ -190,7 +190,8 @@ Bitmap *Talk::box(uint16 w, uint16 h) {
 		w = 8;
 	if (h < 8)
 		h = 8;
-	b = farnew(uint8, n = w * h);
+	n = w * h;
+	b = (uint8 *) malloc(sizeof(uint8) * n);
 	if (! b)
 		error("No core");
 	memset(b, kTextColBG, n);

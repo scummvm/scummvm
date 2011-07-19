@@ -32,15 +32,16 @@
 namespace CGE {
 
 MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
-	int h = kFontHigh + 2 * kMenuBarVM, i = (w += 2 * kMenuBarHM) * h;
-	uint8 *p = farnew(uint8, i), * p1, * p2;
+	int h = kFontHigh + 2 * kMenuBarVM;
+	int i = (w += 2 * kMenuBarHM) * h;
+	uint8 *p = (uint8 *) malloc(sizeof(uint8) * i);
 
 	memset(p + w, TRANS, i - 2 * w);
 	memset(p, kMenuBarLT, w);
 	memset(p + i - w, kMenuBarRB, w);
-	p1 = p;
-	p2 = p + i - 1;
-	for (i = 0; i < h; i++) {
+	uint8 *p1 = p;
+	uint8 *p2 = p + i - 1;
+	for (int cpt = 0; cpt < h; cpt++) {
 		*p1 = kMenuBarLT;
 		*p2 = kMenuBarRB;
 		p1 += w;

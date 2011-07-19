@@ -40,7 +40,7 @@ IoBuf::IoBuf(IOMODE mode, CRYPT *crpt)
 	  _lim(0) {
 	debugC(1, kDebugFile, "IoBuf::IoBuf(%d, crpt)", mode);
 
-	_buff = farnew(uint8, IOBUF_SIZE);
+	_buff = (uint8 *) malloc(sizeof(uint8) * IOBUF_SIZE);
 	if (_buff == NULL)
 		error("No core for I/O");
 }
@@ -53,7 +53,7 @@ IoBuf::IoBuf(const char *name, IOMODE mode, CRYPT *crpt)
 	  _lim(0) {
 	debugC(1, kDebugFile, "IoBuf::IoBuf(%s, %d, crpt)", name, mode);
 
-	_buff = farnew(uint8, IOBUF_SIZE);
+	_buff = (uint8 *) malloc(sizeof(uint8) * IOBUF_SIZE);
 	if (_buff == NULL)
 		error("No core for I/O [%s]", name);
 }
