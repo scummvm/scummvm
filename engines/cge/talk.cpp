@@ -32,23 +32,13 @@
 #include "cge/events.h"
 
 namespace CGE {
-
-#define WID_SIZ     256
-#define POS_SIZ     256
-#define MAP_SIZ     (256*8)
-
-//uint8 FONT::Wid[WID_SIZ];
-//uint16    FONT::Pos[POS_SIZ];
-//uint8 FONT::Map[MAP_SIZ];
-
-
 Font::Font(const char *name) {
-	_map = farnew(uint8, MAP_SIZ);
-	_pos = farnew(uint16, POS_SIZ);
-	_wid = farnew(uint8, WID_SIZ);
+	_map = farnew(uint8, kMapSize);
+	_pos = farnew(uint16, kPosSize);
+	_wid = farnew(uint8, kWidSize);
 	if ((_map == NULL) || (_pos == NULL) || (_wid == NULL))
 		error("No core");
-	mergeExt(_path, name, FONT_EXT);
+	mergeExt(_path, name, kFontExt);
 	load();
 }
 
@@ -63,10 +53,10 @@ Font::~Font() {
 void Font::load() {
 	INI_FILE f(_path);
 	if (!f._error) {
-		f.read(_wid, WID_SIZ);
+		f.read(_wid, kWidSize);
 		if (!f._error) {
 			uint16 i, p = 0;
-			for (i = 0; i < POS_SIZ; i++) {
+			for (i = 0; i < kPosSize; i++) {
 				_pos[i] = p;
 				p += _wid[i];
 			}
@@ -136,18 +126,18 @@ void Talk::deinit() {
 
 
 void Talk::update(const char *tx) {
-	uint16 vmarg = (_mode) ? TEXT_VM : 0;
-	uint16 hmarg = (_mode) ? TEXT_HM : 0;
+	uint16 vmarg = (_mode) ? kTextVMargin : 0;
+	uint16 hmarg = (_mode) ? kTextHMargin : 0;
 	uint16 mw = 0, mh, ln = vmarg;
 	const char *p;
 	uint8 *m;
 
 	if (!_ts) {
 		uint16 k = 2 * hmarg;
-		mh = 2 * vmarg + FONT_HIG;
+		mh = 2 * vmarg + kFontHigh;
 		for (p = tx; *p; p++) {
 			if (*p == '|' || *p == '\n') {
-				mh += FONT_HIG + TEXT_LS;
+				mh += kFontHigh + kTextLineSpace;
 				if (k > mw)
 					mw = k;
 				k = 2 * hmarg;
@@ -166,7 +156,7 @@ void Talk::update(const char *tx) {
 
 	while (* tx) {
 		if (*tx == '|' || *tx == '\n')
-			m = _ts[0]->_m + (ln += FONT_HIG + TEXT_LS) * mw + hmarg;
+			m = _ts[0]->_m + (ln += kFontHigh + kTextLineSpace) * mw + hmarg;
 		else {
 			int cw = _font->_wid[(unsigned char)*tx], i;
 			uint8 *f = _font->_map + _font->_pos[(unsigned char)*tx];
@@ -174,9 +164,9 @@ void Talk::update(const char *tx) {
 				uint8 *pp = m;
 				uint16 n;
 				register uint16 b = *(f++);
-				for (n = 0; n < FONT_HIG; n++) {
+				for (n = 0; n < kFontHigh; n++) {
 					if (b & 1)
-						*pp = TEXT_FG;
+						*pp = kTextColFG;
 					b >>= 1;
 					pp += mw;
 				}
@@ -194,7 +184,7 @@ void Talk::update(const char *tx) {
 
 Bitmap *Talk::box(uint16 w, uint16 h) {
 	uint8 *b, * p, * q;
-	uint16 n, r = (_mode == ROUND) ? TEXT_RD : 0;
+	uint16 n, r = (_mode == ROUND) ? kTextRoundCorner : 0;
 
 	if (w < 8)
 		w = 8;
@@ -203,7 +193,7 @@ Bitmap *Talk::box(uint16 w, uint16 h) {
 	b = farnew(uint8, n = w * h);
 	if (! b)
 		error("No core");
-	memset(b, TEXT_BG, n);
+	memset(b, kTextColBG, n);
 
 	if (_mode) {
 		p = b;
@@ -245,10 +235,10 @@ void Talk::putLine(int line, const char *text) {
 	uint16 lsiz = 2 + dsiz + 2;   // uint16 for line header, uint16 for gap
 	uint16 psiz = h * lsiz;       // - last gap, but + plane trailer
 	uint16 size = 4 * psiz;       // whole map size
-	uint16 rsiz = FONT_HIG * lsiz;    // length of whole text row map
+	uint16 rsiz = kFontHigh * lsiz;    // length of whole text row map
 
 	// set desired line pointer
-	v += (TEXT_VM + (FONT_HIG + TEXT_LS) * line) * lsiz;
+	v += (kTextVMargin + (kFontHigh + kTextLineSpace) * line) * lsiz;
 	p = v;                // assume blanked line above text
 
 	// clear whole rectangle
@@ -261,7 +251,7 @@ void Talk::putLine(int line, const char *text) {
 	// paint text line
 	if (text) {
 		uint8 *q;
-		p = v + 2 + TEXT_HM / 4 + (TEXT_HM % 4) * psiz;
+		p = v + 2 + kTextHMargin / 4 + (kTextHMargin % 4) * psiz;
 		q = v + size;
 
 		while (* text) {
@@ -271,9 +261,9 @@ void Talk::putLine(int line, const char *text) {
 			for (i = 0; i < cw; i++) {
 				register uint16 b = fp[i];
 				uint16 n;
-				for (n = 0; n < FONT_HIG; n++) {
+				for (n = 0; n < kFontHigh; n++) {
 					if (b & 1)
-						*p = TEXT_FG;
+						*p = kTextColFG;
 					b >>= 1;
 					p += lsiz;
 				}
@@ -293,7 +283,7 @@ InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldTxt(NULL), _vm(vm) {
 		_ts[1] = NULL;
 	}
 
-	_ts[0] = new Bitmap(w, FONT_HIG, TEXT_BG);
+	_ts[0] = new Bitmap(w, kFontHigh, kTextColBG);
 	setShapeList(_ts);
 }
 
@@ -310,7 +300,7 @@ void InfoLine::update(const char *tx) {
 
 		// clear whole rectangle
 		byte *pDest;
-		memset(v + 2, TEXT_BG, dsiz);                   // data bytes
+		memset(v + 2, kTextColBG, dsiz);                // data bytes
 		for (pDest = v + lsiz; pDest < (v + psiz); pDest += lsiz) {
 			Common::copy(v, v + lsiz, pDest);
 		}
@@ -329,9 +319,9 @@ void InfoLine::update(const char *tx) {
 
 				for (uint16 i = 0; i < cw; i++) {
 					register uint16 b = fp[i];
-					for (uint16 n = 0; n < FONT_HIG; n++) {
+					for (uint16 n = 0; n < kFontHigh; n++) {
 						if (b & 1)
-							*p = TEXT_FG;
+							*p = kTextColFG;
 						b >>= 1;
 						p += lsiz;
 					}

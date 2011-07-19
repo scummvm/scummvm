@@ -37,12 +37,12 @@ GetText *GetText::_ptr = NULL;
 GetText::GetText(CGEEngine *vm, const char *info, char *text, int size)
 	: Talk(vm), _text(text), _size(min<int>(size, GTMAX)), _len(min<int>(_size, strlen(text))),
 	_cntr(GTBLINK), _oldKeybClient(_keyboard->setClient(this)), _vm(vm) {
-	int i = 2 * TEXT_HM + _font->width(info);
+	int i = 2 * kTextHMargin + _font->width(info);
 	_ptr = this;
 	_mode = RECT;
 
 	_ts = new BMP_PTR[2];
-	_ts[0] = box((i + 3) & ~3, 2 * TEXT_VM + 2 * FONT_HIG + TEXT_LS);
+	_ts[0] = box((i + 3) & ~3, 2 * kTextVMargin + 2 * kFontHigh + kTextLineSpace);
 	_ts[1] = NULL;
 	setShapeList(_ts);
 
@@ -108,7 +108,7 @@ void GetText::touch(uint16 mask, int x, int y) {
 					if (p)
 						x = ogon[p - bezo];
 				}
-				if (_len < _size && 2 * TEXT_HM + _font->width(_buff) + _font->_wid[x] <= _w) {
+				if (_len < _size && 2 * kTextHMargin + _font->width(_buff) + _font->_wid[x] <= _w) {
 					_buff[_len + 2] = _buff[_len + 1];
 					_buff[_len + 1] = _buff[_len];
 					_buff[_len++] = x;

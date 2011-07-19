@@ -32,8 +32,10 @@
 
 namespace CGE {
 
-#define MB_VM       1
-#define MB_HM       3
+#define kMenuBarVM       1
+#define kMenuBarHM       3
+#define kMenuBarLT       LGRAY
+#define kMenuBarRB       DGRAY
 
 
 struct Choice {

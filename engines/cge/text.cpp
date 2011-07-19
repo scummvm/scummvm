@@ -187,10 +187,10 @@ void Text::say(const char *txt, Sprite *spr) {
 		uint16 sw = spike->_w;
 
 		if (east) {
-			if (x + sw + TEXT_RD + 5 >= SCR_WID)
+			if (x + sw + kTextRoundCorner + 5 >= SCR_WID)
 				east = false;
 		} else {
-			if (x <= 5 + TEXT_RD + sw)
+			if (x <= 5 + kTextRoundCorner + sw)
 				east = true;
 		}
 		x = (east) ? (spr->_x + spr->_w - 2) : (spr->_x + 2 - sw);
