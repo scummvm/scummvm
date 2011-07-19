@@ -544,14 +544,19 @@ namespace %s {
 """\n#include "dreamweb/runtime.h"
 
 namespace %s {
-
+#include "structs.h"
 class %sContext : public Context {
 public:
 	void __start();
 	void __dispatch_call(uint16 addr);
+#include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
 """ 
 %(self.namespace, self.namespace))
+
+		for name,addr in self.proc_addr:
+			self.hd.write("\tstatic const uint16 addr_%s = 0x%04x;\n" %(name, addr))
+
 		offsets = []
 		for k, v in self.context.get_globals().items():
 			if isinstance(v, op.var):
@@ -564,7 +569,10 @@ public:
 			self.hd.write("\tconst static uint16 k%s = %s;\n" %o)
 		self.hd.write("\n")
 		for p in set(self.methods):
-			self.hd.write("\tvoid %s();\n" %p)
+			if p in self.blacklist:
+				self.hd.write("\t//void %s();\n" %p)
+			else:
+				self.hd.write("\tvoid %s();\n" %p)
 
 		self.hd.write("};\n}\n\n#endif\n")
 		self.hd.close()
@@ -574,7 +582,7 @@ public:
 		self.fd.write("\nvoid %sContext::__dispatch_call(uint16 addr) {\n\tswitch(addr) {\n" %self.namespace)
 		self.proc_addr.sort(cmp = lambda x, y: x[1] - y[1])
 		for name,addr in self.proc_addr:
-			self.fd.write("\t\tcase 0x%04x: %s(); break;\n" %(addr, name))
+			self.fd.write("\t\tcase addr_%s: %s(); break;\n" %(name, name))
 		self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16)ax);")
 		self.fd.write("\n\t}\n}\n\n} /*namespace*/\n")
 
