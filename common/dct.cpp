@@ -26,6 +26,7 @@
 // Copyright (c) 2010 Alex Converse <alex.converse@gmail.com>
 // Copyright (c) 2010 Vitor Sessak
 
+#include "common/cosinetables.h"
 #include "common/dct.h"
 
 namespace Common {

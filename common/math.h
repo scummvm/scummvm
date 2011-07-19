@@ -50,9 +50,6 @@ struct Complex {
 	float re, im;
 };
 
-const float *getSineTable(int bits);
-const float *getCosineTable(int bits);
-
 // See http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogLookup
 static const char LogTable256[256] = {
 #define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n

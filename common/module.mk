@@ -38,11 +38,12 @@ MODULE_OBJS := \
 ifdef USE_BINK
 MODULE_OBJS += \
 	bitstream.o \
+	cosinetables.o \
 	dct.o \
 	fft.o \
 	huffman.o \
-	math.o \
-	rdft.o
+	rdft.o \
+	sinetables.o
 endif
 
 # Include common rules

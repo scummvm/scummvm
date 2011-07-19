@@ -25,6 +25,8 @@
 // Copyright (c) 2009 Alex Converse <alex dot converse at gmail dot com>
 
 #include "common/rdft.h"
+#include "common/cosinetables.h"
+#include "common/sinetables.h"
 
 namespace Common {
 
