@@ -600,8 +600,10 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	case kFuncSetPalette:
 		// TODO: return 0 if not disabling (0) and doesn't exist
 		debug(4, "kFuncSetPalette(%d, %d)", param1, param2);
+		// this seems only needed for a script bug in the Gregory credits, sigh
+		if ((uint16)param2 > 100)
+			param2 = 100;
 		loadCTBL(param1, param2);
-		// TODO: incomplete?
 		return 1;
 	case kFuncSaveVars:
 		debug(3, "kFuncSaveVars(%d)", param1);
