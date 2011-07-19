@@ -194,7 +194,7 @@ public:
 	void snBackPt(Sprite *spr, int stp);
 	void snBarrier(int cav, int bar, bool horz);
 	void snCover(Sprite *spr, int xref);
-	void snFlag(int fn, bool v);
+	void snFlag(int indx, bool v);
 	void snFlash(bool on);
 	void snGame(Sprite *spr, int num);
 	void snGhost(Bitmap *bmp);
@@ -205,12 +205,12 @@ public:
 	void snLevel(Sprite *spr, int lev);
 	void snLight(bool in);
 	void snMouse(bool on);
-	void snNNext(Sprite *sprel, int p);
+	void snNNext(Sprite *spr, int p);
 	void snPort(Sprite *spr, int port);
 	void snReach(Sprite *spr, int mode);
 	void snRelZ(Sprite *spr, int z);
-	void snRNNext(Sprite *sprel, int p);
-	void snRTNext(Sprite *sprel, int p);
+	void snRNNext(Sprite *spr, int p);
+	void snRTNext(Sprite *spr, int p);
 	void snSelect();
 	void snSend(Sprite *spr, int val);
 	void snRelX(Sprite *spr, int x);
@@ -229,7 +229,7 @@ public:
 	void snSlave(Sprite *spr, int ref);
 	void snSound(Sprite *spr, int wav, int cnt);
 	void snSwap(Sprite *spr, int xref);
-	void snTNext(Sprite *sprel, int p);
+	void snTNext(Sprite *spr, int p);
 	void snTrans(Sprite *spr, int trans);
 	void snUncover(Sprite *spr, Sprite *xspr);
 	void snWalk(Sprite *spr, int x, int y);

@@ -46,6 +46,8 @@ extern  Sprite *_pocLight;
 extern  Sprite *_pocket[];
 
 void CGEEngine::snGame(Sprite *spr, int num) {
+	debugC(1, kDebugEngine, "CGEEngine::snGame(spr, %d)", num);
+
 	switch (num) {
 	case 1 : {
 #define STAGES 8
@@ -255,17 +257,23 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 
 
 void CGEEngine::expandSprite(Sprite *spr) {
+	debugC(5, kDebugEngine, "CGEEngine::expandSprite(spr)");
+
 	if (spr)
 		_vga->_showQ->insert(_vga->_spareQ->remove(spr));
 }
 
 
 void CGEEngine::contractSprite(Sprite *spr) {
+	debugC(1, kDebugEngine, "CGEEngine::contractSprite(spr)");
+
 	if (spr)
 		_vga->_spareQ->append(_vga->_showQ->remove(spr));
 }
 
 int CGEEngine::findPocket(Sprite *spr) {
+	debugC(1, kDebugEngine, "CGEEngine::findPocket(spr)");
+
 	for (int i = 0; i < POCKET_NX; i++)
 	if (_pocket[i] == spr)
 		return i;
@@ -274,6 +282,8 @@ int CGEEngine::findPocket(Sprite *spr) {
 
 
 void CGEEngine::selectPocket(int n) {
+	debugC(1, kDebugEngine, "CGEEngine::selectPocket(%d)", n);
+
 	if (n < 0 || (_pocLight->_seqPtr && _pocPtr == n)) {
 		_pocLight->step(0);
 		n = findPocket(NULL);
@@ -289,6 +299,8 @@ void CGEEngine::selectPocket(int n) {
 }
 
 void CGEEngine::pocFul() {
+	debugC(1, kDebugEngine, "CGEEngine::pocFul()");
+
 	_hero->park();
 	SNPOST(SNWAIT, -1, -1, _hero);
 	SNPOST(SNSEQ, -1, POC_FUL, _hero);
@@ -298,10 +310,14 @@ void CGEEngine::pocFul() {
 }
 
 void CGEEngine::hide1(Sprite *spr) {
+	debugC(1, kDebugEngine, "CGEEngine::hide1(spr)");
+
 	SNPOST_(SNGHOST, -1, 0, spr->ghost());
 }
 
 void CGEEngine::snGhost(Bitmap *bmp) {
+	debugC(1, kDebugEngine, "CGEEngine::snGhost(bmp)");
+
 	bmp->hide(bmp->_map & 0xFFFF, bmp->_map >> 16);
 	bmp->_m = NULL;
 	bmp->_map = 0;
@@ -309,6 +325,8 @@ void CGEEngine::snGhost(Bitmap *bmp) {
 }
 
 void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
+	debugC(1, kDebugEngine, "CGEEngine::feedSnail(spr, snq)");
+
 	if (spr)
 		if (spr->active()) {
 			uint8 ptr = (snq == kTake) ? spr->_takePtr : spr->_nearPtr;
@@ -454,32 +472,42 @@ void Snail::insCom(SNCOM com, int ref, int val, void *ptr) {
 	}
 }
 
-void CGEEngine::snNNext(Sprite *sprel, int p) {
-	if (sprel)
-		if (sprel->_nearPtr != NO_PTR)
-			sprel->_nearPtr = p;
+void CGEEngine::snNNext(Sprite *spr, int p) {
+	debugC(1, kDebugEngine, "CGEEngine::snNNext(spr, %d)", p);
+
+	if (spr)
+		if (spr->_nearPtr != NO_PTR)
+			spr->_nearPtr = p;
 }
 
-void CGEEngine::snTNext(Sprite *sprel, int p) {
-	if (sprel)
-		if (sprel->_takePtr != NO_PTR)
-			sprel->_takePtr = p;
+void CGEEngine::snTNext(Sprite *spr, int p) {
+	debugC(1, kDebugEngine, "CGEEngine::snTNext(spr, %d)", p);
+
+	if (spr)
+		if (spr->_takePtr != NO_PTR)
+			spr->_takePtr = p;
 }
 
-void CGEEngine::snRNNext(Sprite *sprel, int p) {
-	if (sprel)
-		if (sprel->_nearPtr != NO_PTR)
-			sprel->_nearPtr += p;
+void CGEEngine::snRNNext(Sprite *spr, int p) {
+	debugC(1, kDebugEngine, "CGEEngine::snRNNext(spr, %d)", p);
+
+	if (spr)
+		if (spr->_nearPtr != NO_PTR)
+			spr->_nearPtr += p;
 }
 
 
-void CGEEngine::snRTNext(Sprite *sprel, int p) {
-	if (sprel)
-		if (sprel->_takePtr != NO_PTR)
-			sprel->_takePtr += p;
+void CGEEngine::snRTNext(Sprite *spr, int p) {
+	debugC(1, kDebugEngine, "CGEEngine::snRTNext(spr, %d)", p);
+
+	if (spr)
+		if (spr->_takePtr != NO_PTR)
+			spr->_takePtr += p;
 }
 
 void CGEEngine::snZTrim(Sprite *spr) {
+	debugC(4, kDebugEngine, "CGEEngine::snZTrim(spr)");
+
 	if (spr)
 		if (spr->active()) {
 			bool en = _heart->_enable;
@@ -496,6 +524,8 @@ void CGEEngine::snZTrim(Sprite *spr) {
 }
 
 void CGEEngine::snHide(Sprite *spr, int val) {
+	debugC(1, kDebugEngine, "CGEEngine::snHide(spr, %d)", val);
+
 	if (spr) {
 		spr->_flags._hide = (val >= 0) ? (val != 0) : (!spr->_flags._hide);
 		if (spr->_flags._shad)
@@ -504,16 +534,22 @@ void CGEEngine::snHide(Sprite *spr, int val) {
 }
 
 void CGEEngine::snRmNear(Sprite *spr) {
+	debugC(1, kDebugEngine, "CGEEngine::snRmNear(spr)");
+
 	if (spr)
 		spr->_nearPtr = NO_PTR;
 }
 
 void CGEEngine::snRmTake(Sprite *spr) {
+	debugC(1, kDebugEngine, "CGEEngine::snRmTake(spr)");
+
 	if (spr)
 		spr->_takePtr = NO_PTR;
 }
 
 void CGEEngine::snSeq(Sprite *spr, int val) {
+	debugC(1, kDebugEngine, "CGEEngine::snSeq(spr, %d)", val);
+
 	if (spr) {
 		if (spr == _hero && val == 0)
 			_hero->park();
@@ -523,11 +559,15 @@ void CGEEngine::snSeq(Sprite *spr, int val) {
 }
 
 void CGEEngine::snRSeq(Sprite *spr, int val) {
+	debugC(1, kDebugEngine, "CGEEngine::snRSeq(spr, %d)", val);
+
 	if (spr)
 		snSeq(spr, spr->_seqPtr + val);
 }
 
 void CGEEngine::snSend(Sprite *spr, int val) {
+	debugC(1, kDebugEngine, "CGEEngine::snSend(spr, %d)", val);
+
 	if (spr) {
 		int was = spr->_cave;
 		bool was1 = (was == 0 || was == _now);
@@ -558,6 +598,8 @@ void CGEEngine::snSend(Sprite *spr, int val) {
 
 
 void CGEEngine::snSwap(Sprite *spr, int xref) {
+	debugC(1, kDebugEngine, "CGEEngine::snSwap(spr, %d)", xref);
+
 	Sprite *xspr = locate(xref);
 	if (spr && xspr) {
 		int was = spr->_cave;
@@ -593,6 +635,8 @@ void CGEEngine::snSwap(Sprite *spr, int xref) {
 
 
 void CGEEngine::snCover(Sprite *spr, int xref) {
+	debugC(1, kDebugEngine, "CGEEngine::snCover(spr, %d)", xref);
+
 	Sprite *xspr = locate(xref);
 	if (spr && xspr) {
 		spr->_flags._hide = true;
@@ -610,6 +654,8 @@ void CGEEngine::snCover(Sprite *spr, int xref) {
 
 
 void CGEEngine::snUncover(Sprite *spr, Sprite *xspr) {
+	debugC(1, kDebugEngine, "CGEEngine::snUncover(spr, xspr)");
+
 	if (spr && xspr) {
 		spr->_flags._hide = false;
 		spr->_cave = xspr->_cave;
@@ -627,30 +673,42 @@ void CGEEngine::snUncover(Sprite *spr, Sprite *xspr) {
 
 
 void CGEEngine::snSetX0(int cav, int x0) {
+	debugC(1, kDebugEngine, "CGEEngine::snSetX0(%d, %d)", cav, x0);
+
 	_heroXY[cav - 1]._x = x0;
 }
 
 void CGEEngine::snSetY0(int cav, int y0) {
+	debugC(1, kDebugEngine, "CGEEngine::snSetY0(%d, %d)", cav, y0);
+
 	_heroXY[cav - 1]._y = y0;
 }
 
 void CGEEngine::snSetXY(Sprite *spr, uint16 xy) {
+	debugC(1, kDebugEngine, "CGEEngine::snSetXY(spr, %d)", xy);
+
 	if (spr)
 		spr->gotoxy(xy % SCR_WID, xy / SCR_WID);
 }
 
 void CGEEngine::snRelX(Sprite *spr, int x) {
+	debugC(1, kDebugEngine, "CGEEngine::snRelX(spr, %d)", x);
+
 	if (spr && _hero)
 		spr->gotoxy(_hero->_x + x, spr->_y);
 }
 
 void CGEEngine::snRelY(Sprite *spr, int y) {
+	debugC(1, kDebugEngine, "CGEEngine::snRelY(spr, %d)", y);
+
 	if (spr && _hero)
 		spr->gotoxy(spr->_x, _hero->_y + y);
 }
 
 
 void CGEEngine::snRelZ(Sprite *spr, int z) {
+	debugC(1, kDebugEngine, "CGEEngine::snRelZ(spr, %d)", z);
+
 	if (spr && _hero) {
 		spr->_z = _hero->_z + z;
 		snZTrim(spr);
@@ -659,18 +717,24 @@ void CGEEngine::snRelZ(Sprite *spr, int z) {
 
 
 void CGEEngine::snSetX(Sprite *spr, int x) {
+	debugC(1, kDebugEngine, "CGEEngine::snSetX(spr, %d)", x);
+
 	if (spr)
 		spr->gotoxy(x, spr->_y);
 }
 
 
 void CGEEngine::snSetY(Sprite *spr, int y) {
+	debugC(1, kDebugEngine, "CGEEngine::snSetY(spr, %d)", y);
+
 	if (spr)
 		spr->gotoxy(spr->_x, y);
 }
 
 
 void CGEEngine::snSetZ(Sprite *spr, int z) {
+	debugC(1, kDebugEngine, "CGEEngine::snSetZ(spr, %d)", z);
+
 	if (spr) {
 		spr->_z = z;
 		//SNPOST_(SNZTRIM, -1, 0, spr);
@@ -680,6 +744,8 @@ void CGEEngine::snSetZ(Sprite *spr, int z) {
 
 
 void CGEEngine::snSlave(Sprite *spr, int ref) {
+	debugC(1, kDebugEngine, "CGEEngine::snSlave(spr, %d)", ref);
+
 	Sprite *slv = locate(ref);
 	if (spr && slv) {
 		if (spr->active()) {
@@ -693,16 +759,22 @@ void CGEEngine::snSlave(Sprite *spr, int ref) {
 
 
 void CGEEngine::snTrans(Sprite *spr, int trans) {
+	debugC(1, kDebugEngine, "CGEEngine::snTrans(spr, %d)", trans);
+
 	if (spr)
 		spr->_flags._tran = (trans < 0) ? !spr->_flags._tran : (trans != 0);
 }
 
 void CGEEngine::snPort(Sprite *spr, int port) {
+	debugC(1, kDebugEngine, "CGEEngine::snPort(spr, %d)", port);
+
 	if (spr)
 		spr->_flags._port = (port < 0) ? !spr->_flags._port : (port != 0);
 }
 
 void CGEEngine::snKill(Sprite *spr) {
+	debugC(1, kDebugEngine, "CGEEngine::snKill(spr)");
+
 	if (spr) {
 		if (spr->_flags._kept) {
 			int n = findPocket(spr);
@@ -728,6 +800,8 @@ void CGEEngine::snKill(Sprite *spr) {
 
 
 void CGEEngine::snSound(Sprite *spr, int wav, int cnt) {
+	debugC(1, kDebugEngine, "CGEEngine::snSound(spr, %d, %d)", wav, cnt);
+
 	if (_sndDrvInfo._dDev) {
 		if (wav == -1)
 			_sound.stop();
@@ -738,6 +812,8 @@ void CGEEngine::snSound(Sprite *spr, int wav, int cnt) {
 
 
 void CGEEngine::snKeep(Sprite *spr, int stp) {
+	debugC(1, kDebugEngine, "CGEEngine::snKeep(spr, %d)", stp);
+
 	selectPocket(-1);
 	if (spr && ! spr->_flags._kept && _pocket[_pocPtr] == NULL) {
 		snSound(spr, 3, 1);
@@ -754,6 +830,8 @@ void CGEEngine::snKeep(Sprite *spr, int stp) {
 
 
 void CGEEngine::snGive(Sprite *spr, int stp) {
+	debugC(1, kDebugEngine, "CGEEngine::snGive(spr, %d)", stp);
+
 	if (spr) {
 		int p = findPocket(spr);
 		if (p >= 0) {
@@ -769,6 +847,8 @@ void CGEEngine::snGive(Sprite *spr, int stp) {
 
 
 void CGEEngine::snBackPt(Sprite *spr, int stp) {
+	debugC(1, kDebugEngine, "CGEEngine::snBackPt(spr, %d)", stp);
+
 	if (spr) {
 		if (stp >= 0)
 			spr->step(stp);
@@ -777,6 +857,8 @@ void CGEEngine::snBackPt(Sprite *spr, int stp) {
 }
 
 void CGEEngine::snLevel(Sprite *spr, int lev) {
+	debugC(1, kDebugEngine, "CGEEngine::snLevel(spr, %d)", lev);
+
 	while (_lev < lev) {
 		_lev++;
 		spr = _vga->_spareQ->locate(100 + _lev);
@@ -791,16 +873,20 @@ void CGEEngine::snLevel(Sprite *spr, int lev) {
 }
 
 
-void CGEEngine::snFlag(int fn, bool v) {
-	_flag[fn] = v;
+void CGEEngine::snFlag(int indx, bool v) {
+	_flag[indx] = v;
 }
 
 void CGEEngine::snSetRef(Sprite *spr, int nr) {
+	debugC(1, kDebugEngine, "CGEEngine::snSetRef(spr, %d)", nr);
+
 	if (spr)
 		spr->_ref = nr;
 }
 
 void CGEEngine::snFlash(bool on) {
+	debugC(1, kDebugEngine, "CGEEngine::snFlash(%s)", on ? "true" : "false");
+
 	if (on) {
 		Dac *pal = farnew(Dac, PAL_CNT);
 		if (pal) {
@@ -823,6 +909,8 @@ void CGEEngine::snFlash(bool on) {
 
 
 void CGEEngine::snLight(bool in) {
+	debugC(1, kDebugEngine, "CGEEngine::snLight(%s)", in ? "true" : "false");
+
 	if (in)
 		_vga->sunrise(Vga::_sysPal);
 	else
@@ -831,10 +919,14 @@ void CGEEngine::snLight(bool in) {
 }
 
 void CGEEngine::snBarrier(int cav, int bar, bool horz) {
+	debugC(1, kDebugEngine, "CGEEngine::snBarrier(%d, %d, %s)", cav, bar, horz ? "true" : "false");
+
 	((uint8 *)(_barriers + ((cav > 0) ? cav : _now)))[horz] = bar;
 }
 
 void CGEEngine::snWalk(Sprite *spr, int x, int y) {
+	debugC(1, kDebugEngine, "CGEEngine::snWalk(spr, %d, %d)", x, y);
+
 	if (_hero) {
 		if (spr && y < 0)
 			_hero->findWay(spr);
@@ -844,11 +936,15 @@ void CGEEngine::snWalk(Sprite *spr, int x, int y) {
 }
 
 void CGEEngine::snReach(Sprite *spr, int mode) {
+	debugC(1, kDebugEngine, "CGEEngine::snReach(spr, %d)", mode);
+
 	if (_hero)
 		_hero->reach(spr, mode);
 }
 
 void CGEEngine::snMouse(bool on) {
+	debugC(1, kDebugEngine, "CGEEngine::snMouse(%s)", on ? "true" : "false");
+
 	if (on)
 		_mouse->on();
 	else
@@ -883,7 +979,7 @@ void Snail::runCom() {
 					break;
 			}
 
-			Sprite *sprel = ((snc->_ref >= 0) ? locate(snc->_ref) : ((Sprite *) snc->_ptr));
+			Sprite *spr = ((snc->_ref >= 0) ? locate(snc->_ref) : ((Sprite *) snc->_ptr));
 			switch (snc->_com) {
 			case SNLABEL    :
 				break;
@@ -893,25 +989,25 @@ void Snail::runCom() {
 					_textDelay = true;
 				break;
 			case SNWAIT     :
-				if (sprel) {
-					if (sprel->seqTest(snc->_val) &&
-					        (snc->_val >= 0 || sprel != _hero || _hero->_tracePtr < 0)) {
-						_timerExpiry = g_system->getMillis() + sprel->_time * SNAIL_FRAME_DELAY;
+				if (spr) {
+					if (spr->seqTest(snc->_val) &&
+					        (snc->_val >= 0 || spr != _hero || _hero->_tracePtr < 0)) {
+						_timerExpiry = g_system->getMillis() + spr->_time * SNAIL_FRAME_DELAY;
 					} else
 						goto xit;
 				}
 				break;
 			case SNLEVEL    :
-				_vm->snLevel(sprel, snc->_val);
+				_vm->snLevel(spr, snc->_val);
 				break;
 			case SNHIDE     :
-				_vm->snHide(sprel, snc->_val);
+				_vm->snHide(spr, snc->_val);
 				break;
 			case SNSAY      :
-				if (sprel && _talkEnable) {
-					if (sprel == _hero && sprel->seqTest(-1))
-						sprel->step(HTALK);
-					_text->say(_text->getText(snc->_val), sprel);
+				if (spr && _talkEnable) {
+					if (spr == _hero && spr->seqTest(-1))
+						spr->step(HTALK);
+					_text->say(_text->getText(snc->_val), spr);
 					_sys->_funDel = HEROFUN0;
 				}
 				break;
@@ -922,44 +1018,44 @@ void Snail::runCom() {
 				}
 				break;
 			case SNTIME     :
-				if (sprel && _talkEnable) {
-					if (sprel == _hero && sprel->seqTest(-1))
-						sprel->step(HTALK);
-					sayTime(sprel);
+				if (spr && _talkEnable) {
+					if (spr == _hero && spr->seqTest(-1))
+						spr->step(HTALK);
+					sayTime(spr);
 				}
 				break;
 			case SNCAVE     :
 				_vm->switchCave(snc->_val);
 				break;
 			case SNKILL     :
-				_vm->snKill(sprel);
+				_vm->snKill(spr);
 				break;
 			case SNSEQ      :
-				_vm->snSeq(sprel, snc->_val);
+				_vm->snSeq(spr, snc->_val);
 				break;
 			case SNRSEQ     :
-				_vm->snRSeq(sprel, snc->_val);
+				_vm->snRSeq(spr, snc->_val);
 				break;
 			case SNSEND     :
-				_vm->snSend(sprel, snc->_val);
+				_vm->snSend(spr, snc->_val);
 				break;
 			case SNSWAP     :
-				_vm->snSwap(sprel, snc->_val);
+				_vm->snSwap(spr, snc->_val);
 				break;
 			case SNCOVER    :
-				_vm->snCover(sprel, snc->_val);
+				_vm->snCover(spr, snc->_val);
 				break;
 			case SNUNCOVER  :
-				_vm->snUncover(sprel, (snc->_val >= 0) ? locate(snc->_val) : ((Sprite *) snc->_ptr));
+				_vm->snUncover(spr, (snc->_val >= 0) ? locate(snc->_val) : ((Sprite *) snc->_ptr));
 				break;
 			case SNKEEP     :
-				_vm->snKeep(sprel, snc->_val);
+				_vm->snKeep(spr, snc->_val);
 				break;
 			case SNGIVE     :
-				_vm->snGive(sprel, snc->_val);
+				_vm->snGive(spr, snc->_val);
 				break;
 			case SNGAME     :
-				_vm->snGame(sprel, snc->_val);
+				_vm->snGame(spr, snc->_val);
 				break;
 			case SNSETX0    :
 				_vm->snSetX0(snc->_ref, snc->_val);
@@ -968,34 +1064,34 @@ void Snail::runCom() {
 				_vm->snSetY0(snc->_ref, snc->_val);
 				break;
 			case SNSETXY    :
-				_vm->snSetXY(sprel, snc->_val);
+				_vm->snSetXY(spr, snc->_val);
 				break;
 			case SNRELX     :
-				_vm->snRelX(sprel, snc->_val);
+				_vm->snRelX(spr, snc->_val);
 				break;
 			case SNRELY     :
-				_vm->snRelY(sprel, snc->_val);
+				_vm->snRelY(spr, snc->_val);
 				break;
 			case SNRELZ     :
-				_vm->snRelZ(sprel, snc->_val);
+				_vm->snRelZ(spr, snc->_val);
 				break;
 			case SNSETX     :
-				_vm->snSetX(sprel, snc->_val);
+				_vm->snSetX(spr, snc->_val);
 				break;
 			case SNSETY     :
-				_vm->snSetY(sprel, snc->_val);
+				_vm->snSetY(spr, snc->_val);
 				break;
 			case SNSETZ     :
-				_vm->snSetZ(sprel, snc->_val);
+				_vm->snSetZ(spr, snc->_val);
 				break;
 			case SNSLAVE    :
-				_vm->snSlave(sprel, snc->_val);
+				_vm->snSlave(spr, snc->_val);
 				break;
 			case SNTRANS    :
-				_vm->snTrans(sprel, snc->_val);
+				_vm->snTrans(spr, snc->_val);
 				break;
 			case SNPORT     :
-				_vm->snPort(sprel, snc->_val);
+				_vm->snPort(spr, snc->_val);
 				break;
 			case SNNEXT     :
 			case SNIF       :
@@ -1005,31 +1101,31 @@ void Snail::runCom() {
 				_vm->snMouse(snc->_val != 0);
 				break;
 			case SNNNEXT    :
-				_vm->snNNext(sprel, snc->_val);
+				_vm->snNNext(spr, snc->_val);
 				break;
 			case SNTNEXT    :
-				_vm->snTNext(sprel, snc->_val);
+				_vm->snTNext(spr, snc->_val);
 				break;
 			case SNRNNEXT   :
-				_vm->snRNNext(sprel, snc->_val);
+				_vm->snRNNext(spr, snc->_val);
 				break;
 			case SNRTNEXT   :
-				_vm->snRTNext(sprel, snc->_val);
+				_vm->snRTNext(spr, snc->_val);
 				break;
 			case SNRMNEAR   :
-				_vm->snRmNear(sprel);
+				_vm->snRmNear(spr);
 				break;
 			case SNRMTAKE   :
-				_vm->snRmTake(sprel);
+				_vm->snRmTake(spr);
 				break;
 			case SNFLAG     :
 				_vm->snFlag(snc->_ref & 3, snc->_val != 0);
 				break;
 			case SNSETREF   :
-				_vm->snSetRef(sprel, snc->_val);
+				_vm->snSetRef(spr, snc->_val);
 				break;
 			case SNBACKPT   :
-				_vm->snBackPt(sprel, snc->_val);
+				_vm->snBackPt(spr, snc->_val);
 				break;
 			case SNFLASH    :
 				_vm->snFlash(snc->_val != 0);
@@ -1044,13 +1140,13 @@ void Snail::runCom() {
 				_vm->snBarrier(snc->_ref, snc->_val, false);
 				break;
 			case SNWALK     :
-				_vm->snWalk(sprel, snc->_ref, snc->_val);
+				_vm->snWalk(spr, snc->_ref, snc->_val);
 				break;
 			case SNREACH    :
-				_vm->snReach(sprel, snc->_val);
+				_vm->snReach(spr, snc->_val);
 				break;
 			case SNSOUND    :
-				_vm->snSound(sprel, snc->_val, count);
+				_vm->snSound(spr, snc->_val, count);
 				count = 1;
 				break;
 			case SNCOUNT    :
@@ -1081,10 +1177,10 @@ void Snail::runCom() {
 				}
 				break;
 			case SNSTEP     :
-				sprel->step();
+				spr->step();
 				break;
 			case SNZTRIM    :
-				_vm->snZTrim(sprel);
+				_vm->snZTrim(spr);
 				break;
 			case SNGHOST    :
 				_vm->snGhost((Bitmap *) snc->_ptr);
