@@ -445,7 +445,7 @@ IMPLEMENT_OPCODE(JumpIfGameFlag)
 	if (cmd->param1 < 0)
 		return;
 
-	bool doJump = (cmd->param2) ? _vm->isGameFlagSet((GameFlag)cmd->param1) : _vm->isGameFlagNotSet((GameFlag)cmd->param1);
+	bool doJump = (cmd->param2) ? _vm->isGameFlagNotSet((GameFlag)cmd->param1) : _vm->isGameFlagSet((GameFlag)cmd->param1);
 	if (!doJump)
 		return;
 
