@@ -988,7 +988,7 @@ bool Actor::process(const Common::Point &point) {
 	}
 
 	if (abs(delta.x) != abs(delta.y)) {
-		Common::Array<int> actions;
+		Common::Array<ActionArea *> actions;
 		Common::Point point1;
 		Common::Point point2;
 		uint32 count1 = 0;
@@ -2508,7 +2508,7 @@ void Actor::updateNumbers(int32 reaction, const Common::Point &point) {
 //////////////////////////////////////////////////////////////////////////
 // Path finding functions
 //////////////////////////////////////////////////////////////////////////
-bool Actor::processActionLeft(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+bool Actor::processActionLeft(Common::Point source, const Common::Point &destination, Common::Array<ActionArea *> *actions) {
 	// Reset pathfinding data
 	_data.count = 0;
 	_data.current = 0;
@@ -2537,7 +2537,7 @@ bool Actor::processActionLeft(Common::Point source, const Common::Point &destina
 	return false;
 }
 
-bool Actor::processActionAll(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+bool Actor::processActionAll(Common::Point source, const Common::Point &destination, Common::Array<ActionArea *> *actions) {
 	// Reset pathfinding data
 	_data.count = 0;
 	_data.current = 0;
@@ -2576,7 +2576,7 @@ bool Actor::processActionAll(Common::Point source, const Common::Point &destinat
 	return false;
 }
 
-bool Actor::processActionTop(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+bool Actor::processActionTop(Common::Point source, const Common::Point &destination, Common::Array<ActionArea *> *actions) {
 	// Reset pathfinding data
 	_data.count = 0;
 	_data.current = 0;
@@ -2611,7 +2611,7 @@ bool Actor::processActionTop(Common::Point source, const Common::Point &destinat
 	return false;
 }
 
-bool Actor::processActionDown(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+bool Actor::processActionDown(Common::Point source, const Common::Point &destination, Common::Array<ActionArea *> *actions) {
 	// Reset pathfinding data
 	_data.count = 0;
 	_data.current = 0;
@@ -2637,16 +2637,169 @@ bool Actor::processActionDown(Common::Point source, const Common::Point &destina
 	return false;
 }
 
-bool Actor::processAction(const Common::Point &source, Common::Array<int> *actions, Common::Point *point, ActorDirection direction, const Common::Point &destination, bool *flag) {
-	error("[Actor::processAction] Not implemented");
+bool Actor::processAction(const Common::Point &source, Common::Array<ActionArea *> *actions, Common::Point *point, ActorDirection direction, const Common::Point &destination, bool *flag) {
+	Common::Point sign;
+	Common::Point src = source;
+	uint32 frameNumber = _frameNumber;
+
+	switch (direction){
+	default:
+		return false;
+
+	case kDirectionN:
+		sign.y = -1;
+		break;
+
+	case kDirectionNO:
+		sign.x = -1;
+		sign.y = -1;
+		break;
+
+	case kDirectionO:
+		sign.x = -1;
+		break;
+
+	case kDirectionSO:
+		sign.x = -1;
+		sign.y = 1;
+		break;
+
+	case kDirectionS:
+		sign.y = 1;
+		break;
+
+	case kDirectionSE:
+		sign.x = 1;
+		sign.y = 1;
+		break;
+
+	case kDirectionE:
+		sign.x = 1;
+		break;
+
+	case kDirectionNE:
+		sign.x = 1;
+		sign.y = -1;
+		break;
+	}
+
+	for (int i = 0; i < 10; i++) {
+		if (!checkAllActions(src, actions))
+			break;
+
+		int32 dist = getDistanceForFrame(direction, frameNumber);
+		src.x += sign.x * dist;
+		src.y += sign.y * dist;
+
+		if (abs(src.x - destination.x) >= getDistanceForFrame(kDirectionO, frameNumber)) {
+			if (abs(src.y - destination.y) >= getDistanceForFrame(kDirectionN, frameNumber)) {
+
+				if (src.x >= destination.x) {
+					if (checkPath(actions, src, kDirectionO, src.x - destination.x)) {
+						*flag = true;
+						*point = src;
+
+						_data.points[_data.count]     = src;
+						_data.directions[_data.count] = direction;
+						_data.count++;
+
+						_data.points[_data.count]     = destination;
+						_data.directions[_data.count] = kDirectionO;
+						_data.count++;
+
+						return true;
+					}
+				} else {
+					if (checkPath(actions, src, kDirectionE, destination.x - src.x)) {
+						*flag = true;
+						*point = src;
+
+						_data.points[_data.count]     = src;
+						_data.directions[_data.count] = direction;
+						_data.count++;
+
+						_data.points[_data.count]     = destination;
+						_data.directions[_data.count] = kDirectionE;
+						_data.count++;
+
+						return true;
+					}
+				}
+			}
+		} else {
+			if (src.y >= destination.y) {
+				if (checkPath(actions, src, kDirectionN, src.y - destination.y)) {
+					*flag = true;
+					*point = src;
+
+					_data.points[_data.count]     = src;
+					_data.directions[_data.count] = direction;
+					_data.count++;
+
+					_data.points[_data.count]     = destination;
+					_data.directions[_data.count] = kDirectionN;
+					_data.count++;
+
+					return true;
+				}
+			} else {
+				if (checkPath(actions, src, kDirectionS, destination.y - src.y)) {
+					*flag = true;
+					*point = src;
+
+					_data.points[_data.count]     = src;
+					_data.directions[_data.count] = direction;
+					_data.count++;
+
+					_data.points[_data.count]     = destination;
+					_data.directions[_data.count] = kDirectionS;
+					_data.count++;
+
+					return true;
+				}
+			}
+		}
+
+		// Proceed to next frame
+		++frameNumber;
+
+		if (frameNumber >= _frameCount)
+			frameNumber = 0;
+	}
+
+	// Check if we need to process
+	int32 distance = getDistanceForFrame(direction, frameNumber);
+	if (source.x == (src.x - sign.x * distance) && source.y == (src.y - sign.y * distance))
+		return false;
+
+	if (!getWorld()->sceneRects[getWorld()->sceneRectIdx].contains(src))
+		return false;
+
+	// Update frame and setup pathfinding
+	_frameNumber = frameNumber;
+
+	if (_frameNumber <= 0)
+		distance = getDistanceForFrame(direction, _frameCount - 1);
+	else
+		distance = getDistanceForFrame(direction, _frameNumber - 1);
+
+	src.x -= sign.x * distance;
+	src.y -= sign.y * distance;
+
+	*point = src;
+	_data.points[_data.count]     = src;
+	_data.directions[_data.count] = direction;
+	_data.count++;
+
+	return true;
 }
 
-bool Actor::checkPath(Common::Array<ActionArea *> *actions, const Common::Point &point, uint32 index, uint32 loopcount) {
+bool Actor::checkPath(Common::Array<ActionArea *> *actions, const Common::Point &point, ActorDirection direction, uint32 loopcount) {
 	if (loopcount <= 1)
 		return true;
 
 	// Initialize base coordinates
-	Common::Point basePoint = deltaPointsArray[index] + point;
+	Common::Point basePoint = deltaPointsArray[direction] + point;
 	Common::Rect  rect      = getWorld()->sceneRects[getWorld()->sceneRectIdx];
 
 	for (uint32 i = 1; i < loopcount; i++) {
@@ -2656,7 +2809,7 @@ bool Actor::checkPath(Common::Array<ActionArea *> *actions, const Common::Point 
 		if (!rect.contains(basePoint))
 			return false;
 
-		basePoint += deltaPointsArray[index];
+		basePoint += deltaPointsArray[direction];
 	}
 
 	return true;
