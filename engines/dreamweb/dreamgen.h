@@ -587,7 +587,6 @@ public:
 	static const uint16 addr_monprint = 0xc314;
 	static const uint16 addr_printboth = 0xc30c;
 	static const uint16 addr_waitframes = 0xc308;
-	static const uint16 addr_printslow = 0xc304;
 	static const uint16 addr_realcredits = 0xc2f8;
 	static const uint16 addr_set16colpalette = 0xc2f4;
 	static const uint16 addr_mode640x480 = 0xc2f0;
@@ -1485,7 +1484,7 @@ public:
 	void turnonpower();
 	void manasleep2();
 	void moretalk();
-	void printslow();
+	//void printslow();
 	void loadroom();
 	void starttalk();
 	void delchar();

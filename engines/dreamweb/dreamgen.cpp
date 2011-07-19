@@ -4937,107 +4937,6 @@ realcreditsearly:
 	data.byte(kLasthardkey) =  0;
 }
 
-void DreamGenContext::printslow() {
-	STACK_CHECK;
-	data.byte(kPointerframe) = 1;
-	data.byte(kPointermode) = 3;
-	ds = data.word(kCharset1);
-printloopslow6:
-	push(bx);
-	push(di);
-	push(dx);
-	getnumber();
-	ch = 0;
-printloopslow5:
-	push(cx);
-	push(si);
-	push(es);
-	ax = es.word(si);
-	push(bx);
-	push(cx);
-	push(es);
-	push(si);
-	push(ds);
-	modifychar();
-	printboth();
-	ds = pop();
-	si = pop();
-	es = pop();
-	cx = pop();
-	bx = pop();
-	ax = es.word(si+1);
-	_inc(si);
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishslow;
-	_cmp(al, ':');
-	if (flags.z())
-		goto finishslow;
-	_cmp(cl, 1);
-	if (flags.z())
-		goto afterslow;
-	push(di);
-	push(ds);
-	push(bx);
-	push(cx);
-	push(es);
-	push(si);
-	modifychar();
-	data.word(kCharshift) = 91;
-	printboth();
-	data.word(kCharshift) = 0;
-	si = pop();
-	es = pop();
-	cx = pop();
-	bx = pop();
-	ds = pop();
-	di = pop();
-	waitframes();
-	_cmp(ax, 0);
-	if (flags.z())
-		goto keepgoing;
-	_cmp(ax, data.word(kOldbutton));
-	if (!flags.z())
-		goto finishslow2;
-keepgoing:
-	waitframes();
-	_cmp(ax, 0);
-	if (flags.z())
-		goto afterslow;
-	_cmp(ax, data.word(kOldbutton));
-	if (!flags.z())
-		goto finishslow2;
-afterslow:
-	es = pop();
-	si = pop();
-	cx = pop();
-	_inc(si);
-	if (--cx)
-		goto printloopslow5;
-	dx = pop();
-	di = pop();
-	bx = pop();
-	_add(bx, 10);
-	goto printloopslow6;
-finishslow:
-	es = pop();
-	si = pop();
-	cx = pop();
-	dx = pop();
-	di = pop();
-	bx = pop();
-	al = 0;
-	return;
-finishslow2:
-	es = pop();
-	si = pop();
-	cx = pop();
-	dx = pop();
-	di = pop();
-	bx = pop();
-	al = 1;
-}
-
 void DreamGenContext::waitframes() {
 	STACK_CHECK;
 	push(di);
@@ -21368,7 +21267,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_mode640x480: mode640x480(); break;
 		case addr_set16colpalette: set16colpalette(); break;
 		case addr_realcredits: realcredits(); break;
-		case addr_printslow: printslow(); break;
 		case addr_waitframes: waitframes(); break;
 		case addr_printboth: printboth(); break;
 		case addr_monprint: monprint(); break;

@@ -294,6 +294,94 @@ void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uin
 	(*x) += cl;
 }
 
+void DreamGenContext::printslow() {
+	data.byte(kPointerframe) = 1;
+	data.byte(kPointermode) = 3;
+	ds = data.word(kCharset1);
+	do {
+		push(bx);
+		push(di);
+		push(dx);
+		uint16 offset = di;
+		cx = getnumber(dl, (bool)(dl & 1), &offset);
+		di = offset;
+		do {
+			push(cx);
+			push(si);
+			push(es);
+			ax = es.word(si);
+			push(bx);
+			push(cx);
+			push(es);
+			push(si);
+			push(ds);
+			al = engine->modifyChar(al);
+			printboth();
+			ds = pop();
+			si = pop();
+			es = pop();
+			cx = pop();
+			bx = pop();
+			ax = es.word(si+1);
+			_inc(si);
+			if ((al == 0) || (al == ':')) {
+				es = pop();
+				si = pop();
+				cx = pop();
+				dx = pop();
+				di = pop();
+				bx = pop();
+				al = 0;
+				return;
+			}
+			_cmp(cl, 1);
+			if (flags.z())
+				goto afterslow;
+			push(di);
+			push(ds);
+			push(bx);
+			push(cx);
+			push(es);
+			push(si);
+			al = engine->modifyChar(al);
+			data.word(kCharshift) = 91;
+			printboth();
+			data.word(kCharshift) = 0;
+			si = pop();
+			es = pop();
+			cx = pop();
+			bx = pop();
+			ds = pop();
+			di = pop();
+			for (int i=0; i<2; ++i) {
+				waitframes();
+				if (ax == 0)
+					continue;
+				if (ax != data.word(kOldbutton)) {
+					es = pop();
+					si = pop();
+					cx = pop();
+					dx = pop();
+					di = pop();
+					bx = pop();
+					al = 1;
+					return;
+				}
+			}
+		afterslow:
+			es = pop();
+			si = pop();
+			cx = pop();
+			_inc(si);
+			--cx;
+		} while (cx);
+		dx = pop();
+		di = pop();
+		bx = pop();
+		_add(bx, 10);
+	} while (true);
+}
+
 void DreamGenContext::printdirect() {
 	data.word(kLastxpos) = di;
 	ds = data.word(kCurrentset);

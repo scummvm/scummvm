@@ -46,6 +46,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'getnumber',
 	'printchar',
 	'printdirect',
+	'printslow',
 	'worktoscreen',
 	'width160',
 	'convertkey',
