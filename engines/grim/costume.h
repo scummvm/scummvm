@@ -84,7 +84,7 @@ public:
 
 		tag32 getTag() { return _tag; }
 		CMap *getCMap();
-		void setColormap(CMap *c);
+		virtual void setColormap(CMap *c);
 		void setFade(float fade);
 		bool isVisible();
 		Component *getParent() { return _parent; }
@@ -114,6 +114,7 @@ public:
 		void setCostume(Costume *cost) { _cost = cost; }
 		void setParent(Component *newParent);
 		void removeChild(Component *child);
+		void resetHierCMap();
 
 		friend class Costume;
 	};

@@ -177,6 +177,7 @@ public:
 	MainModelComponent(Costume::Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	void init();
 	void update();
+	void setColormap(CMap *cmap);
 	void reset();
 	~MainModelComponent();
 
@@ -600,6 +601,13 @@ void MainModelComponent::update() {
 		ModelComponent::update();
 }
 
+void MainModelComponent::setColormap(CMap *cmap) {
+	Component::setColormap(cmap);
+	if (_parentModel) {
+		_parentModel->setColormap(cmap);
+	}
+}
+
 void MainModelComponent::reset() {
 	_visible = true;
 	_hier->_hierVisible = _visible;
@@ -624,7 +632,6 @@ public:
 	MaterialComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
 	void init();
 	void setKey(int val);
-	void setColormap(CMap *c);
 	void setupTexture();
 	void reset();
 	void resetColormap();
@@ -980,19 +987,21 @@ MaterialComponent::MaterialComponent(Costume::Component *p, int parentID, const 
 }
 
 void MaterialComponent::init() {
+	_mat = NULL;
 	if (FROM_BE_32(_parent->getTag()) == MKTAG('M','M','D','L') ||
 		FROM_BE_32(_parent->getTag()) == MKTAG('M','O','D','L')) {
 		ModelComponent *p = static_cast<ModelComponent *>(_parent);
 		Model *model = p->getModel();
-		for (int i = 0; i < model->_numMaterials; ++i) {
-			if (_filename.compareToIgnoreCase(model->_materials[i]->getFilename()) == 0) {
-				_mat = model->_materials[i];
-				return;
+		if (model) {
+			for (int i = 0; i < model->_numMaterials; ++i) {
+				if (_filename.compareToIgnoreCase(model->_materials[i]->getFilename()) == 0) {
+					_mat = model->_materials[i];
+					return;
+				}
 			}
 		}
 	} else {
 		warning("Parent of a MaterialComponent not a ModelComponent. %s %s", _filename.c_str(), _cost->getFilename().c_str());
-		_mat = NULL;
 	}
 }
 
@@ -1166,8 +1175,8 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 	}
 
 	for (int i = 0; i < _numComponents; i++) {
-		if (_components[i])
-			_components[i]->setCostume(this);
+			if (_components[i])
+					_components[i]->setCostume(this);
 	}
 
 	delete[] tags;
@@ -1318,8 +1327,10 @@ Costume::Component::~Component()
 void Costume::Component::setColormap(CMap *c) {
 	if (c)
 		_cmap = c;
-	if (getCMap())
+	if (getCMap()) {
 		resetColormap();
+		resetHierCMap();
+	}
 }
 
 void Costume::Component::setFade(float fade) {
@@ -1362,6 +1373,16 @@ void Costume::Component::removeChild(Component *child) {
 	if (*childPos) {
 		*childPos = child->_sibling;
 		child->_parent = NULL;
+	}
+}
+
+void Costume::Component::resetHierCMap() {
+	resetColormap();
+
+	Component *child = _child;
+	while (child) {
+		child->resetHierCMap();
+		child = child->_sibling;
 	}
 }
 
