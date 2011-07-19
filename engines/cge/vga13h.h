@@ -191,7 +191,7 @@ public:
 	uint8 _takePtr;
 	int _seqPtr;
 	int _shpCnt;
-	char _file[MAXFILE];
+	char _file[kMaxFile];
 	Sprite *_prev;
 	Sprite *_next;
 

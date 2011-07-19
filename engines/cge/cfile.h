@@ -33,10 +33,7 @@
 namespace CGE {
 
 #define LINE_MAX    512
-
-#ifndef IOBUF_SIZE
-#define IOBUF_SIZE  K(2)
-#endif
+#define IOBUF_SIZE  2048
 
 #define CFREAD(x)   read((uint8 *)(x),sizeof(*(x)))
 

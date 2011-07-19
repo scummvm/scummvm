@@ -54,7 +54,7 @@
 
 namespace CGE {
 
-#define STACK_SIZ   (K(2))
+#define STACK_SIZ   2048
 #define SVGCHKSUM   (1956 + _now + _oldLev + _game + _music + _demoText)
 
 #define SVG0NAME    ("{{INIT}}" SVG_EXT)
