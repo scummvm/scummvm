@@ -675,7 +675,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	byte *frameBuffer = (byte *)frame->surface.pixels;
 	byte *mirroredBuffer = NULL;
 	int16 frameRight = frame->surface.pitch;
-	uint16 srcMaskLeft = abs(sourceMask->left);
+	byte zoom = abs(sourceMask->left) & 7;
 
 	// Prepare temporary source buffer if needed
 	if (flags & kDrawFlagMirrorLeftRight) {
@@ -695,7 +695,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	}
 
 	// Setup buffers and rectangles
-	byte *frameBufferPtr = frameBuffer + source->top     * frameRight       + source->left;
+	byte *frameBufferPtr = frameBuffer + source->top     * frameRight      + source->left;
 	byte *maskBufferPtr  = maskData    + sourceMask->top * (maskWidth / 8) + sourceMask->left / 8;
 
 	// Check if we need to draw masked
@@ -722,9 +722,9 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	}
 
 	if (destination->left > destMask->left) {
-		maskBufferPtr += (destination->left - destMask->left) / 8 + abs(destination->left - destMask->left) / 8;
+		zoom += abs(destination->left - destMask->left) & 7;
+		maskBufferPtr += (destination->left - destMask->left + zoom) / 8;
 		sourceMask->setWidth(sourceMask->width() + destMask->left - destination->left);
-		srcMaskLeft = abs(destination->left - destMask->left);
 		destMask->left = destination->left;
 	}
 
@@ -806,15 +806,15 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	          source->height(),
 	          source->width(),
 	          frameRight - source->width(),
-	          (maskWidth - srcMaskLeft - source->width()) / 8,
-	          srcMaskLeft,
+	          (maskWidth - zoom - source->width()) / 8,
+	          zoom,
 	          (byte *)_backBuffer.pixels + _backBuffer.pitch * destination->top + destination->left,
 	          _backBuffer.pitch - source->width());
 
 	// Draw debug rects
 	if (g_debugDrawRects) {
 		_backBuffer.frameRect(*destination, 0x128);
-		drawZoomedMask(maskData, 21, maskWidth / 8, maskWidth);
+		drawZoomedMask(maskData, 20, maskWidth / 8, maskWidth);
 	}
 
 	// Cleanup
@@ -823,7 +823,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 
 // DEBUG: Draw the mask (zoomed)
 void Screen::drawZoomedMask(byte *mask, int16 height, int16 width, uint16 maskPitch) {
-	int zoom = 8;
+	int zoom = 7;
 
 	byte *dstBuffer = (byte *)_backBuffer.pixels;
 	uint16 dstPitch = _backBuffer.pitch - (width * zoom);
@@ -847,11 +847,41 @@ void Screen::drawZoomedMask(byte *mask, int16 height, int16 width, uint16 maskPi
 	}
 }
 
-void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 height, int16 width, uint16 srcPitch, uint16 maskPitch, byte maskLeft, byte *dstBuffer, uint16 dstPitch) {
-	// FIXME: Use mask
-	//warning("[Screen::bltMasked] Not implemented!");
+void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 height, int16 width, uint16 srcPitch, uint16 maskPitch, byte zoom, byte *dstBuffer, uint16 dstPitch) {
+	if (zoom > 7)
+		error("[Screen::bltMasked] Invalid zoom value (was: %d, max: 7)", zoom);
 
-	blitRawColorKey(dstBuffer, srcBuffer, height, width, srcPitch, dstPitch);
+	while (height--) {
+
+		// Calculate current zoom and run length
+		int run = (7 - zoom);
+		int skip = (*maskBuffer >> zoom);
+
+		for (int16 i = 0; i < width; i++) {
+			// Set destination value
+			if (*srcBuffer && !(skip & 1))
+				*dstBuffer = *srcBuffer;
+
+			// Advance buffers
+			dstBuffer++;
+			srcBuffer++;
+
+			// Check run/skip
+			run--;
+			if (run < 0) {
+				++maskBuffer;
+
+				run  = 7;
+				skip = *maskBuffer;
+			} else {
+				skip >>= 1;
+			}
+		}
+
+		dstBuffer  += dstPitch;
+		srcBuffer  += srcPitch;
+		maskBuffer += maskPitch + 1;
+	}
 }
 
 void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags) {
