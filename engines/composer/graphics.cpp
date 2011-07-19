@@ -419,7 +419,7 @@ void ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const Co
 
 void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
-		if (id && i->_id != id)
+		if (!i->_id || (id && i->_id != id))
 			continue;
 		if (i->_animId && animId && (i->_animId != animId))
 			continue;

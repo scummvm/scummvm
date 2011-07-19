@@ -660,8 +660,8 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		warning("ignoring kFuncSetBackgroundColor(%d)", param1);
 		return 0;
 	case kFuncClearSprites:
-		// TODO
-		warning("ignoring kFuncClearSprites()");
+		debug(3, "kFuncClearSprites()");
+		removeSprite(0, 0);
 		return 0;
 	case kFuncAddSprite:
 		{
