@@ -647,8 +647,9 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		_queuedScripts[param1]._scriptId = param3;
 		return 0;
 	case kFuncGetMousePos:
-		// TODO
-		warning("ignoring kFuncGetMousePos(%d, %d)", param1, param2);
+		debug(3, "kFuncGetMousePos(%d, %d)", param1, param2);
+		_vars[param1] = _lastMousePos.x;
+		_vars[param2] = _lastMousePos.y;
 		return 0;
 	case kFuncChangeBackground:
 		// TODO
