@@ -134,7 +134,7 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 
 	Animation *anim = new Animation(stream, animId, Common::Point(x, y), eventParam);
 	_anims.push_back(anim);
-	runEvent(1, animId, eventParam, 0);
+	runEvent(kEventAnimStarted, animId, eventParam, 0);
 	if (newPipe)
 		newPipe->_anim = anim;
 }
@@ -224,7 +224,7 @@ void ComposerEngine::processAnimFrame() {
 		if (anim->_state <= 1) {
 			bool normalEnd = (anim->_state == 1);
 			if (normalEnd) {
-				runEvent(2, anim->_id, anim->_eventParam, 0);
+				runEvent(kEventAnimDone, anim->_id, anim->_eventParam, 0);
 			}
 			stopAnimation(anim, true, normalEnd);
 			delete anim;

@@ -87,6 +87,16 @@ public:
 	Common::Array<uint16> _spriteIds;
 };
 
+enum {
+	kEventAnimStarted = 1,
+	kEventAnimDone = 2,
+	kEventLoad = 3,
+	kEventUnload = 4,
+	kEventKeyDown = 5,
+	kEventChar = 6,
+	kEventKeyUp = 7
+};
+
 struct Library {
 	uint _id;
 	Archive *_archive;

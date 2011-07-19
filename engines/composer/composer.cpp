@@ -237,8 +237,8 @@ void ComposerEngine::onMouseMove(const Common::Point &pos) {
 }
 
 void ComposerEngine::onKeyDown(uint16 keyCode) {
-	runEvent(5, keyCode, 0, 0);
-	runEvent(6, keyCode, 0, 0);
+	runEvent(kEventKeyDown, keyCode, 0, 0);
+	runEvent(kEventChar, keyCode, 0, 0);
 }
 
 void ComposerEngine::setCursor(uint16 id, const Common::Point &offset) {
@@ -346,7 +346,7 @@ void ComposerEngine::loadLibrary(uint id) {
 	_mouseEnabled = true;
 	onMouseMove(_lastMousePos);
 
-	runEvent(3, id, 0, 0);
+	runEvent(kEventLoad, id, 0, 0);
 }
 
 void ComposerEngine::unloadLibrary(uint id) {
