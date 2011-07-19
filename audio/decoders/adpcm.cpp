@@ -234,7 +234,7 @@ int MSIma_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 
 		while (samples < numSamples && _samplesLeft[0] != 0) {
 			for (int i = 0; i < _channels; i++) {
-				buffer[samples] = _buffer[i][8 - _samplesLeft[i]];
+				buffer[samples + i] = _buffer[i][8 - _samplesLeft[i]];
 				_samplesLeft[i]--;
 			}
 
