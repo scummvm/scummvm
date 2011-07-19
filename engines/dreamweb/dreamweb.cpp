@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://svn.scummvm.org:4444/svn/dreamweb/dreamweb.cpp $
- * $Id: dreamweb.cpp 79 2011-06-05 08:26:54Z eriktorbjorn $
- *
  */
 
 #include "common/config-manager.h"

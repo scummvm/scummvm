@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://svn.scummvm.org:4444/svn/dreamweb/dreamweb.h $
- * $Id: dreamweb.h 77 2011-05-18 14:26:43Z digitall $
- *
  */
 
 #ifndef DREAMWEB_H
