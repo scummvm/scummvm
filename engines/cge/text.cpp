@@ -218,6 +218,8 @@ void Text::say(const char *txt, Sprite *spr) {
 }
 
 void CGEEngine::inf(const char *txt) {
+	debugC(1, kDebugEngine, "CGEEngine::inf(%s)", txt);
+
 	killText();
 	_talk = new Talk(this, txt, RECT);
 	if (_talk) {
