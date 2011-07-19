@@ -34,6 +34,9 @@
 #define SCENE_FILE_MASK "scn.%03d"
 #define MUSIC_FILE_MASK "mus.%03d"
 
+// If defined, will show the scene update times on the debugger output
+//#define DEBUG_SCENE_TIMES
+
 namespace Asylum {
 
 class Actor;

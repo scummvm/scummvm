@@ -57,9 +57,6 @@
  */
 namespace Asylum {
 
-// If defined, will show the scene update times on the debugger output
-//#define DEBUG_SCENE_TIMES
-
 class Puzzle;
 class Cursor;
 class Encounter;
