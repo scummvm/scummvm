@@ -676,8 +676,8 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		removeSprite(param1, param2);
 		return 0;
 	case kFuncQuit:
-		// TODO
-		warning("ignoring kFuncQuit()");
+		debug(3, "kFuncQuit()");
+		quitGame();
 		return 0;
 	case kFuncSaveData:
 		// TODO
