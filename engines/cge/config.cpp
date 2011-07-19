@@ -42,8 +42,8 @@ void CGEEngine::snSelect() {
 	debugC(1, kDebugEngine, "CGEEngine::snSelect()");
 
 	inf(_text->getText(_hlp));
-	_talk->gotoxy(_talk->_x, FONT_HIG / 2);
-	(new Vmenu(this, _cho, SCR_WID / 2, _talk->_y + _talk->_h + TEXT_VM + FONT_HIG))->setName(_text->getText(MENU_TEXT));
+	_talk->gotoxy(_talk->_x, kFontHigh / 2);
+	(new Vmenu(this, _cho, SCR_WID / 2, _talk->_y + _talk->_h + kTextVMargin + kFontHigh))->setName(_text->getText(MENU_TEXT));
 }
 
 } // End of namespace CGE
