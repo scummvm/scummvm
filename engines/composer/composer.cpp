@@ -381,6 +381,9 @@ void ComposerEngine::unloadLibrary(uint id) {
 
 		delete i->_archive;
 		_libraries.erase(i);
+
+		runEvent(kEventUnload, id, 0, 0);
+
 		return;
 	}
 

@@ -590,7 +590,7 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		_pendingPageChanges.push_back(PendingPageChange(param1, false));
 		return 1;
 	case kFuncUnloadPage:
-		debug(3, "ignoring kFuncUnloadPage(%d)", param1);
+		debug(3, "kFuncUnloadPage(%d)", param1);
 		_pendingPageChanges.push_back(PendingPageChange(param1, true));
 		return 1;
 	case kFuncSetPalette:
