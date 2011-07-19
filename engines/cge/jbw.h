@@ -55,7 +55,6 @@ namespace CGE {
 #define IsAlNum(c)  (IsAlpha(c) || IsDigit(c))
 #define IsHxDig(c)  (IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
 
-#define farnew(t, n) ((t *) malloc(sizeof(t) * (n)))
 #define ArrayCount(a)   (sizeof(a) / sizeof((a)[0]))
 #define MAX_TIMER   0x1800B0L
 
