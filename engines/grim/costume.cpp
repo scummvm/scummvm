@@ -1971,6 +1971,8 @@ void Costume::saveState(SaveGame *state) const {
 	state->writeFloat(_head.maxPitch);
 	state->writeFloat(_head.maxYaw);
 	state->writeFloat(_head.maxRoll);
+	state->writeFloat(_headPitch);
+	state->writeFloat(_headYaw);
 }
 
 bool Costume::restoreState(SaveGame *state) {
@@ -2021,6 +2023,8 @@ bool Costume::restoreState(SaveGame *state) {
 	float mY = state->readFloat();
 	float mR = state->readFloat();
 	setHead(j1, j2, j3, mR, mP, mY);
+	_headPitch = state->readFloat();
+	_headYaw = state->readFloat();
 
 	return true;
 }
