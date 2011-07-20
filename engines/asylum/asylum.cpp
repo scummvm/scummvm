@@ -203,7 +203,6 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	_handler = _scene;
 
 	// Original checks for the current cd (we have all data files on disc, so this is not needed)
-
 	switch (type) {
 	default:
 		error("[AsylumEngine::startGame] Invalid start game type!");
@@ -280,8 +279,8 @@ void AsylumEngine::playIntro() {
 		} else {
 			_sound->playMusic(kResourceNone, 0);
 
-			// TODO convert to new event handling
 			_video->play(1, _menu);
+			// FIXME: the cursor is still shown after the video ends
 
 			if (_scene->worldstats()->musicCurrentResourceIndex != kMusicStopped)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
@@ -291,22 +290,18 @@ void AsylumEngine::playIntro() {
 			setGameFlag(kGameFlag4);
 			setGameFlag(kGameFlag12);
 
-			// Play the intro sound sample (the screen is blacked out, you hear an alarm sounding and men talking about.
+			// Play the intro speech: it is played after the intro video over a black background,
+			// and the game is "locked" until the speech is completed.
 			ResourceId introSpeech = MAKE_RESOURCE(kResourcePackSound, 7);
 			_sound->playSound(introSpeech);
 
-			// TODO In the original game, the intro speech is played after the intro video. The speech is played over a black
-			// background, and the game is locked until the speech is completed.
-			// The implementation below is here is what was originally implemented by DreamForge. This code will lock up the
-			// application if used as is as no events are being processed until the sound thread completes.
-			// A much cleaner implementation can be found in commit f6b2ed3be51b738c962608e06d10a665e3abfb82 (svn298), but
-			// needs to be adapted to the new event code.
-			/*
-			if (_sound->isPlaying(introSpeech)) {
-				while (_sound->isPlaying(introSpeech))
-					;
-			}
-			*/
+			do {
+				// Poll events (this ensure we don't freeze the screen)
+				Common::Event ev;
+				_eventMan->pollEvent(ev);
+
+			} while (_sound->isPlaying(introSpeech));
+
 		}
 
 		_introPlayed = true;
