@@ -477,6 +477,16 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	_mixer->playStream(type, &_channelHandle[channel], stream);
 }
 
+void DreamWebEngine::stopSound(uint8 channel) {
+	debug(1, "stopSound(%u)", channel);
+	assert(channel == 0 || channel == 1);
+	_mixer->stopHandle(_channelHandle[channel]);
+	if (channel == 0)
+		_channel0 = 0;
+	else
+		_channel1 = 0;
+}
+
 bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 	if (ConfMan.getBool("speech_mute"))
 		return false;

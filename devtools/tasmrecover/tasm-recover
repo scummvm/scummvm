@@ -61,6 +61,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'liftsprite',
 	'frameoutv',
 	'modifychar',
-	'lockmon'
+	'lockmon',
+	'cancelch0',
+	'cancelch1'
 	])
 generator.generate('dreamweb') #start routine

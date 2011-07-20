@@ -3,6 +3,30 @@
 
 /* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */
 
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+
+
 
 #include "dreamweb/runtime.h"
 
@@ -180,8 +204,6 @@ public:
 	static const uint16 addr_channel0tran = 0xc920;
 	static const uint16 addr_channel1only = 0xc91c;
 	static const uint16 addr_channel0only = 0xc918;
-	static const uint16 addr_cancelch1 = 0xc914;
-	static const uint16 addr_cancelch0 = 0xc910;
 	static const uint16 addr_loopchannel0 = 0xc90c;
 	static const uint16 addr_volumeadjust = 0xc908;
 	static const uint16 addr_makenextblock = 0xc904;
@@ -1325,7 +1347,6 @@ public:
 	void clearbuffers();
 	void neterror();
 	void storeit();
-	void lockeddoorway();
 	void isitworn();
 	void putundertimed();
 	void dumpmap();
@@ -1454,10 +1475,10 @@ public:
 	void dumpkeypad();
 	void dumpzoom();
 	void endgameseq();
-	void cancelch0();
+	//void cancelch0();
 	void setbotleft();
 	void findfirstpath();
-	void showallfree();
+	void fadescreenup();
 	void loadold();
 	void loadtempcharset();
 	void useslab();
@@ -1512,7 +1533,7 @@ public:
 	void loadspeech();
 	//void cls();
 	//void printsprites();
-	void dumptimedtext();
+	void checkifperson();
 	void showallobs();
 	void getnumber();
 	void adjustleft();
@@ -1580,7 +1601,7 @@ public:
 	void folderhints();
 	void openhoteldoor();
 	void removesetobject();
-	void checkifperson();
+	void dumptimedtext();
 	//void frameoutfx();
 	void blank();
 	void drinker();
@@ -1634,7 +1655,6 @@ public:
 	void fadetowhite();
 	void textformonk();
 	void loadsavebox();
-	void fadescreenup();
 	void soundend();
 	void redes();
 	void errormessage1();
@@ -1682,9 +1702,8 @@ public:
 	void showmonk();
 	void diarykeyn();
 	void set16colpalette();
-	void convicons();
-	void interviewer();
 	void sparky();
+	void interviewer();
 	void purgeanitem();
 	void madman();
 	void createpanel();
@@ -1813,6 +1832,7 @@ public:
 	void pickupob();
 	void error();
 	void showopbox();
+	//void cancelch1();
 	void clearbeforeload();
 	void biblequote();
 	void doload();
@@ -1964,7 +1984,7 @@ public:
 	void initialmoncols();
 	void checkforshake();
 	void usebuttona();
-	void cancelch1();
+	void showallfree();
 	//void getnextword();
 	void generalerror();
 	void actualload();
@@ -1979,12 +1999,14 @@ public:
 	void usechurchgate();
 	void monkandryan();
 	void allocatebuffers();
+	void convicons();
 	void swapwithinv();
 	void usecontrol();
 	void buttonseven();
 	void redrawmainscrn();
 	void finishedwalking();
 	void findallryan();
+	void lockeddoorway();
 	void channel0tran();
 	void buttonpress();
 	void parseblaster();

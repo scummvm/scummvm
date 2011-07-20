@@ -1241,5 +1241,18 @@ void DreamGenContext::lockmon() {
 	}
 }
 
+void DreamGenContext::cancelch0() {
+	data.byte(kCh0repeat) = 0;
+	data.word(kCh0blockstocopy) = 0;
+	data.byte(kCh0playing) = 255;
+	engine->stopSound(0);
+}
+
+void DreamGenContext::cancelch1() {
+	data.word(kCh1blockstocopy) = 0;
+	data.byte(kCh1playing) = 255;
+	engine->stopSound(1);
+}
+
 } /*namespace dreamgen */
 

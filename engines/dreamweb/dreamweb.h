@@ -111,6 +111,8 @@ public:
 	Common::Language getLanguage() const { return _language; }
 	uint8 modifyChar(uint8 c) const;
 
+	void stopSound(uint8 channel);
+
 private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);

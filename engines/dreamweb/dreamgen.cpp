@@ -1,5 +1,29 @@
 /* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */
 
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+
+
 #include "dreamgen.h"
 
 namespace DreamGen {
@@ -16570,19 +16594,6 @@ endlessloop:
 	data.word(kCh0blockstocopy) = ax;
 }
 
-void DreamGenContext::cancelch0() {
-	STACK_CHECK;
-	data.byte(kCh0repeat) = 0;
-	data.word(kCh0blockstocopy) = 0;
-	data.byte(kCh0playing) = 255;
-}
-
-void DreamGenContext::cancelch1() {
-	STACK_CHECK;
-	data.word(kCh1blockstocopy) = 0;
-	data.byte(kCh1playing) = 255;
-}
-
 void DreamGenContext::channel0tran() {
 	STACK_CHECK;
 	_cmp(data.byte(kVolume), 0);
@@ -21922,8 +21933,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_makenextblock: makenextblock(); break;
 		case addr_volumeadjust: volumeadjust(); break;
 		case addr_loopchannel0: loopchannel0(); break;
-		case addr_cancelch0: cancelch0(); break;
-		case addr_cancelch1: cancelch1(); break;
 		case addr_channel0only: channel0only(); break;
 		case addr_channel1only: channel1only(); break;
 		case addr_channel0tran: channel0tran(); break;

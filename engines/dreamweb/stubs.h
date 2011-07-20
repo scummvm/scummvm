@@ -69,4 +69,5 @@
 	void turnpathoffCPP(uint8 param);
 	void modifychar();
 	void lockmon();
-
+	void cancelch0();
+	void cancelch1();
