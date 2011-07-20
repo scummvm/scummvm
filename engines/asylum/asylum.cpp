@@ -81,6 +81,9 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	_introPlayed = false;
 	_tickOffset = 0;
 
+	screenUpdateCount = 0;
+	lastScreenUpdate  = 0;
+
 	// Debug
 	_delayedSceneIndex = kResourcePackInvalid;
 	_delayedVideoIndex = -1;
