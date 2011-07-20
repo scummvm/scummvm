@@ -712,7 +712,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 		                _backBuffer.pitch - source->width());
 
 		// cleanup
-		delete mirroredBuffer;
+		free(mirroredBuffer);
 
 		// Draw debug rects
 		if (g_debugDrawRects)
@@ -818,7 +818,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	}
 
 	// Cleanup
-	delete mirroredBuffer;
+	free(mirroredBuffer);
 }
 
 // DEBUG: Draw the mask (zoomed)
