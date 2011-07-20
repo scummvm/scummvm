@@ -49,10 +49,10 @@ namespace CGE {
 
 
 
-#define MAXPATH  128
+#define kPathMax           128
 
 class Font {
-	char _path[MAXPATH];
+	char _path[kPathMax];
 	void load();
 public:
 //  static uint8 _wid[256];

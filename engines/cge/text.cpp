@@ -86,7 +86,7 @@ void Text::preload(int from, int upto) {
 	INI_FILE tf = _fileName;
 	if (!tf._error) {
 		Han *CacheLim = _cache + _size;
-		char line[LINE_MAX + 1];
+		char line[kLineMax + 1];
 		int n;
 
 		while ((n = tf.read((uint8 *)line)) != 0) {
@@ -128,7 +128,7 @@ char *Text::load(int idx, int ref) {
 	INI_FILE tf = _fileName;
 	if (!tf._error) {
 		Han *p = &_cache[idx];
-		char line[LINE_MAX + 1];
+		char line[kLineMax + 1];
 		int n;
 
 		while ((n = tf.read((uint8 *)line)) != 0) {
@@ -187,7 +187,7 @@ void Text::say(const char *txt, Sprite *spr) {
 		uint16 sw = spike->_w;
 
 		if (east) {
-			if (x + sw + kTextRoundCorner + 5 >= SCR_WID)
+			if (x + sw + kTextRoundCorner + 5 >= kScrWidth)
 				east = false;
 		} else {
 			if (x <= 5 + kTextRoundCorner + sw)

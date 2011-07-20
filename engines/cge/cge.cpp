@@ -85,15 +85,15 @@ void CGEEngine::setup() {
 	_heart = new Heart;
 	_sys = new System(this);
 	_pocLight = new PocLight(this);
-	for (int i = 0; i < POCKET_NX; i++) {
+	for (int i = 0; i < kPocketNX; i++) {
 		_pocket[i] = new Sprite(this, NULL);
 		_pocket[i]->_flags._kill = false;
 	}
 	_sprite = new Sprite(this, NULL);
 	_horzLine = new HorizLine(this);
-	_infoLine = new InfoLine(this, INFO_W);
+	_infoLine = new InfoLine(this, kInfoW);
 	_cavLight = new CavLight(this);
-	_debugLine = new InfoLine(this, SCR_WID);
+	_debugLine = new InfoLine(this, kScrWidth);
 	_snail = new Snail(this, false);
 	_snail_ = new Snail(this, true);
 
@@ -104,7 +104,7 @@ void CGEEngine::setup() {
 	_music = true;
 	_mini = new byte[MINI_EMM_SIZE];
 
-	for (int i = 0; i < POCKET_NX; i++)
+	for (int i = 0; i < kPocketNX; i++)
 		_pocref[i] = -1;
 	_volume[0] = 0;
 	_volume[1] = 0;
@@ -165,7 +165,7 @@ CGEEngine::~CGEEngine() {
 	delete _pocLight;
 	delete _keyboard;
 	delete _mouse;
-	for (int i = 0; i < POCKET_NX; i++)
+	for (int i = 0; i < kPocketNX; i++)
 		delete _pocket[i];
 	delete _snail;
 	delete _snail_;

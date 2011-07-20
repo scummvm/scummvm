@@ -48,15 +48,6 @@ namespace CGE {
 #define TEXT_MODE   0x03
 #define M13H        0x13
 
-#ifndef SCR_WID
-#define SCR_WID     320
-#endif
-
-#ifndef SCR_HIG
-#define SCR_HIG     200
-#endif
-
-
 #define LIGHT       0xFF
 #define DARK        207
 #define DGRAY       225 /*219*/

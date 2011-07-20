@@ -33,15 +33,6 @@
 
 namespace CGE {
 
-#define POCKET_X    174
-#define POCKET_Y    176
-#define POCKET_DX   18
-#define POCKET_DY   22
-#define POCKET_NY   1
-
-#define POCKET_SX   8
-#define POCKET_SY   3
-
 #define SNINSERT(c, r, v, p)   _snail->insCom(c, r, v, p)
 #define SNPOST(c, r, v, p)     _snail->addCom(c, r, v, p)
 #define SNPOST2(c, r, v, p)    _snail->addCom2(c, r, v, p)

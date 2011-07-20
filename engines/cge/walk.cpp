@@ -130,8 +130,8 @@ void WALK::tick() {
 	}
 	step();
 	if ((Dir == WW && _x <= 0)           ||
-	    (Dir == EE && _x + _w >= SCR_WID) ||
-	    (Dir == SS && _y + _w >= WORLD_HIG - 2))
+	    (Dir == EE && _x + _w >= kScrWidth) ||
+	    (Dir == SS && _y + _w >= kWorldHeight - 2))
 		park();
 	else {
 		signed char x;            // dummy var
@@ -143,9 +143,9 @@ void WALK::tick() {
 
 int WALK::distance(Sprite *spr) {
 	int dx, dz;
-	dx = spr->_x - (_x + _w - WALKSIDE);
+	dx = spr->_x - (_x + _w - kWalkSide);
 	if (dx < 0)
-		dx = (_x + WALKSIDE) - (spr->_x + spr->_w);
+		dx = (_x + kWalkSide) - (spr->_x + spr->_w);
 
 	if (dx < 0)
 		dx = 0;
@@ -208,11 +208,11 @@ void WALK::findWay(Sprite *spr) {
 		int x = spr->_x;
 		int z = spr->_z;
 		if (spr->_flags._east)
-			x += spr->_w + _w / 2 - WALKSIDE;
+			x += spr->_w + _w / 2 - kWalkSide;
 		else
-			x -= _w / 2 - WALKSIDE;
+			x -= _w / 2 - kWalkSide;
 		findWay(Cluster((x / MAP_XGRID),
-		                ((z < MAP_ZCNT - MAX_DISTANCE) ? (z + 1)
+		                ((z < MAP_ZCNT - kDistMax) ? (z + 1)
 		                 : (z - 1))));
 	}
 }
