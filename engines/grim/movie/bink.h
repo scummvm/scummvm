@@ -33,13 +33,20 @@
 
 #include "engines/grim/movie/movie.h"
 
+namespace Video{
+	class BinkDecoder;
+}
+namespace Graphics{
+	struct Surface;
+}
+
 namespace Grim {
 
 class BinkPlayer : public MoviePlayer {
 private:
 	Common::File _f;
-	//Video::BaseAnimationState *_videoBase;
-
+	Video::BinkDecoder *_binkDecoder;
+	Graphics::Surface *_surface;
 public:
 	BinkPlayer();
 	~BinkPlayer();
