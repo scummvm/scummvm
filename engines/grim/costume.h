@@ -85,7 +85,6 @@ public:
 		tag32 getTag() { return _tag; }
 		CMap *getCMap();
 		virtual void setColormap(CMap *c);
-		void setFade(float fade);
 		bool isVisible();
 		Component *getParent() { return _parent; }
 		virtual void setMatrix(Graphics::Matrix4) { };
@@ -107,7 +106,6 @@ public:
 		tag32 _tag;
 		int _parentID;
 		bool _visible;
-		float _fade;
 		Component *_parent, *_child, *_sibling;
 		Graphics::Matrix4 _matrix;
 		Costume *_cost;
@@ -150,12 +148,6 @@ private:
 
 	class Chore {
 	public:
-		enum FadeMode {
-			None,
-			FadeIn,
-			FadeOut
-		};
-
 		Chore();
 		~Chore();
 		void load(int id, Costume *owner, TextSplitter &ts);
@@ -165,7 +157,8 @@ private:
 		void stop();
 		void update();
 		void setLastFrame();
-		void fade(FadeMode mode, int msecs);
+		void fadeIn(int msecs);
+		void fadeOut(int msecs);
 		void cleanup();
 
 	private:
@@ -179,10 +172,6 @@ private:
 
 		bool _hasPlayed, _playing, _looping;
 		int _currTime;
-
-		int _fadeLength;
-		float _fade;
-		FadeMode _fadeMode;
 
 		void setKeys(int startTime, int stopTime);
 

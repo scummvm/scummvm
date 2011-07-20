@@ -115,7 +115,6 @@ public:
 	void init();
 	void setKey(int val);
 	void reset();
-	void update();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
 
@@ -322,12 +321,6 @@ void SpriteComponent::setKey(int val) {
 void SpriteComponent::reset() {
 	if (_sprite)
 		_sprite->_visible = false;
-}
-
-void SpriteComponent::update() {
-	if (_sprite && _sprite->_visible && _fade == 0.f) {
-		_sprite->_visible = false;
-	}
 }
 
 void SpriteComponent::saveState(SaveGame *state) {
@@ -678,6 +671,7 @@ public:
 	};
 
 	KeyframeComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
+	~KeyframeComponent();
 	void init();
 	void play(RepeatMode repeatMode);
 	void fade(FadeMode, int fadeLength);
@@ -688,7 +682,6 @@ public:
 	void restoreState(SaveGame *state);
 	void activate();
 	void deactivate();
-	~KeyframeComponent() {}
 
 private:
 	AnimationState _anim;
@@ -700,7 +693,6 @@ private:
 	RepeatMode _repeatMode;
 	FadeMode _fadeMode;
 	int _fadeLength;
-	int _fadeCurrTime;
 	Common::String _fname;
 
 	friend class Costume;
@@ -719,24 +711,31 @@ KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const 
 		_anim._keyf = g_resourceloader->getKeyframe(filename);
 }
 
+KeyframeComponent::~KeyframeComponent() {
+	deactivate();
+}
+
 void KeyframeComponent::play(RepeatMode repeatMode) {
 	_repeatMode = repeatMode;
 	if (_repeatMode != Looping)
 		_anim._time = -1;
 	_paused = false;
-	_fadeMode = None;
 	activate();
 }
 
 void KeyframeComponent::fade(FadeMode fadeMode, int fadeLength) {
-	if (fadeMode == FadeIn) {
-		_repeatMode = PauseAtEnd;
-		_anim._time = -1;
-		_paused = false;
-		activate();
+	if (!_active) {
+		if (fadeMode == FadeIn) {
+			_repeatMode = Once;
+			_anim._time = -1;
+			_anim._fade = 0.f;
+			_paused = false;
+			activate();
+		} else {
+			return;
+		}
 	}
 	_fadeMode = fadeMode;
-	_fadeCurrTime = 0;
 	_fadeLength = fadeLength;
 }
 
@@ -755,17 +754,7 @@ void KeyframeComponent::setKey(int val) {
 		play(FadeAtEnd);
 		break;
 	case 4: // "Stop"
-		// Without this Velasco's animation in lm.set is choppy when he turns
-		// back to face the bottle, because a fading out keyframe is stopped
-		// before it is completely faded out.
-		if (_fadeMode == FadeOut)
-			break;
-
-		_fadeMode = None;
-		_fadeCurrTime = 0;
-		_anim._time = -1;
-		_paused = false;
-		deactivate();
+		reset();
 		break;
 	case 5: // "Pause"
 		_paused = true;
@@ -804,17 +793,18 @@ void KeyframeComponent::setKey(int val) {
 }
 
 void KeyframeComponent::reset() {
-	deactivate();
+	if (_fadeMode != FadeOut) {
+		_fadeMode = None;
+		_anim._time = -1;
+		_anim._fade = 1.f;
+		_paused = false;
+		deactivate();
+	}
 }
 
 void KeyframeComponent::update() {
 	if (!_active)
 		return;
-
-	if (_fade == 0.0f) {
-		deactivate();
-		return;
-	}
 
 	int time = g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale();
 
@@ -826,16 +816,23 @@ void KeyframeComponent::update() {
 	int animLength = (int)(_anim._keyf->getLength() * 1000);
 
 	if (_fadeMode != None) {
-		_fadeCurrTime += time;
-		if (_fadeCurrTime > _fadeLength) {
-			if (_fadeMode == FadeOut) {
+		if (_fadeMode == FadeIn) {
+			_anim._fade += (float)time / (float)_fadeLength;
+			if (_anim._fade >= 1.f) {
+				_anim._fade = 1.f;
+				_fadeMode = None;
+			}
+		} else {
+			_anim._fade -= (float)time / (float)_fadeLength;
+			if (_anim._fade <= 0.f) {
+				_anim._fade = 1.f;
 				_fadeMode = None;
 				deactivate();
 				return;
-			} else {
-				_fadeMode = None;
 			}
 		}
+	} else {
+		_anim._fade = 1.f;
 	}
 
 	if (_anim._time > animLength) { // What to do at end?
@@ -859,7 +856,6 @@ void KeyframeComponent::update() {
 				if (_fadeMode != FadeOut) {
 					_fadeMode = FadeOut;
 					_fadeLength = 250;
-					_fadeCurrTime = 0;
 				}
 				_anim._time = animLength;
 				break;
@@ -868,13 +864,6 @@ void KeyframeComponent::update() {
 					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _anim._keyf->getFilename().c_str());
 		}
 	}
-
-	if (_fadeMode == FadeIn)
-		_anim._fade = _fade * (float)_fadeCurrTime / (float)_fadeLength;
-	else if (_fadeMode == FadeOut)
-		_anim._fade = _fade * (1.0f - (float)_fadeCurrTime / (float)_fadeLength);
-	else
-		_anim._fade = _fade;
 }
 
 void KeyframeComponent::init() {
@@ -890,6 +879,7 @@ void KeyframeComponent::init() {
 	}
 
 	_anim._time = -1;
+	_anim._fade = 1.f;
 }
 
 void KeyframeComponent::saveState(SaveGame *state) {
@@ -897,7 +887,13 @@ void KeyframeComponent::saveState(SaveGame *state) {
 	state->writeLESint32((int)_repeatMode);
 	state->writeLESint32(_anim._time);
 	state->writeLESint32((int)_fadeMode);
-	state->writeLESint32(_fadeCurrTime);
+#if 1
+	// Remove on next save format change.
+	state->writeLESint32(0);
+#else
+	// Enable on next save format change.
+	state->writeFloat(_anim._fade);
+#endif
 	state->writeLESint32(_fadeLength);
 	state->writeLESint32(_paused);
 }
@@ -907,7 +903,13 @@ void KeyframeComponent::restoreState(SaveGame *state) {
 	_repeatMode = (RepeatMode)state->readLESint32();
 	_anim._time = state->readLESint32();
 	_fadeMode = (FadeMode)state->readLESint32();
-	_fadeCurrTime = state->readLESint32();
+#if 1
+	// Remove on next save format change.
+	state->readLESint32();
+#else
+	// Enable on next save format change.
+	_anim._fade = state->readFloat();
+#endif
 	_fadeLength = state->readLESint32();
 	_paused = state->readLESint32();
 
@@ -1180,7 +1182,6 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 	for (int i = 0; i < _numComponents; i++)
 		if (_components[i]) {
 			_components[i]->init();
-			_components[i]->setFade(1.f);
 		}
 
 	ts.expectString("section chores");
@@ -1280,7 +1281,6 @@ void Costume::loadEMI(Common::MemoryReadStream &ms, Costume *prevCost) {
 			continue;
 		_components[i]->setCostume(this);
 		_components[i]->init();
-		_components[i]->setFade(1.f);
 	}
 }
 
@@ -1327,10 +1327,6 @@ void Costume::Component::setColormap(CMap *c) {
 		resetColormap();
 		resetHierCMap();
 	}
-}
-
-void Costume::Component::setFade(float fade) {
-	_fade = fade;
 }
 
 bool Costume::Component::isVisible() {
@@ -1382,7 +1378,7 @@ void Costume::Component::resetHierCMap() {
 
 // Should initialize the status variables so the chore can't play unexpectedly
 Costume::Chore::Chore() : _hasPlayed(false), _playing(false), _looping(false), _currTime(-1),
-                          _tracks(NULL), _fadeMode(None), _fade(1.f) {
+                          _tracks(NULL) {
 }
 
 Costume::Chore::~Chore() {
@@ -1417,7 +1413,6 @@ void Costume::Chore::play() {
 	_hasPlayed = true;
 	_looping = false;
 	_currTime = -1;
-	_fade = 1.0f;
 }
 
 void Costume::Chore::playLooping() {
@@ -1425,13 +1420,11 @@ void Costume::Chore::playLooping() {
 	_hasPlayed = true;
 	_looping = true;
 	_currTime = -1;
-	_fade = 1.0f;
 }
 
 void Costume::Chore::stop() {
 	_playing = false;
 	_hasPlayed = false;
-	_fadeMode = None;
 
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
@@ -1445,8 +1438,6 @@ void Costume::Chore::setKeys(int startTime, int stopTime) {
 		Component *comp = _owner->_components[_tracks[i].compID];
 		if (!comp)
 			continue;
-
-		comp->setFade(_fade);
 
 		for (int j = 0; j < _tracks[i].numKeys; j++) {
 			if (_tracks[i].keys[j].time > stopTime)
@@ -1473,10 +1464,8 @@ void Costume::Chore::setLastFrame() {
 	_playing = false;
 	_hasPlayed = true;
 	_looping = false;
-	_fade = 1.0f;
 	setKeys(-1, _currTime);
 	_currTime = -1;
-	_fadeMode = None;
 }
 
 void Costume::Chore::update() {
@@ -1491,38 +1480,11 @@ void Costume::Chore::update() {
 	else
 		newTime = _currTime + time;
 
-	if (_fadeMode == FadeOut) {
-		_fade -= (float)time / (float)_fadeLength;
-		if (_fade <= 0.0f) {
-			_playing = false;
-			_fadeMode = None;
-			_fade = 0.0f;
-			for (int i = 0; i < _numTracks; i++) {
-				Component *comp = _owner->_components[_tracks[i].compID];
-				if (comp) {
-					comp->setFade(0.f);
-				}
-			}
-			return;
-		}
-	} else if (_fadeMode == FadeIn) {
-		_fade += (float)time / (float)_fadeLength;
-		if (_fade >= 1.0f) {
-			_fadeMode = None;
-			_fade = 1.0f;
-		}
-	}
-
 	setKeys(_currTime, newTime);
 
 	if (newTime > _length) {
 		if (!_looping) {
-			if (_fadeMode == None) {
-				_playing = false;
-			} else {
-				_currTime = _length;
-				return;
-			}
+			_playing = false;
 		} else {
 			do {
 				newTime -= _length;
@@ -1533,17 +1495,39 @@ void Costume::Chore::update() {
 	_currTime = newTime;
 }
 
-void Costume::Chore::fade(Costume::Chore::FadeMode mode, int msecs) {
-	if (mode == FadeIn) {
-		if (!_playing || _fadeMode == None) {
-			_currTime = -1;
-			_fade = 0.0f;
+void Costume::Chore::fadeIn(int msecs) {
+	if (!_playing)
+	{
+		_playing = true;
+		_hasPlayed = true;
+		_currTime = -1;
+	}
+
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = _owner->_components[_tracks[i].compID];
+		if (!comp)
+			continue;
+
+		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
+			KeyframeComponent* kf = static_cast<KeyframeComponent*>(comp);
+			kf->fade(KeyframeComponent::FadeIn, msecs);
 		}
 	}
-	_playing = true;
-	_hasPlayed = true;
-	_fadeMode = mode;
-	_fadeLength = msecs;
+}
+
+void Costume::Chore::fadeOut(int msecs) {
+	// Note: It doesn't matter whether the chore is playing or not. The keyframe
+	// components should fade out in either case.
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = _owner->_components[_tracks[i].compID];
+		if (!comp)
+			continue;
+
+		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
+			KeyframeComponent* kf = static_cast<KeyframeComponent*>(comp);
+			kf->fade(KeyframeComponent::FadeOut, msecs);
+		}
+	}
 }
 
 Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
@@ -1697,7 +1681,7 @@ void Costume::fadeChoreIn(int chore, int msecs) {
 			return;
 		}
 	}
-	_chores[chore].fade(Chore::FadeIn, msecs);
+	_chores[chore].fadeIn(msecs);
 	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[chore]) == _playingChores.end())
 		_playingChores.push_back(&_chores[chore]);
 }
@@ -1710,9 +1694,7 @@ void Costume::fadeChoreOut(int chore, int msecs) {
 			return;
 		}
 	}
-	_chores[chore].fade(Chore::FadeOut, msecs);
-	if (Common::find(_playingChores.begin(), _playingChores.end(), &_chores[chore]) == _playingChores.end())
-		_playingChores.push_back(&_chores[chore]);
+	_chores[chore].fadeOut(msecs);
 }
 
 int Costume::isChoring(const char *name, bool excludeLooping) {
@@ -1761,12 +1743,8 @@ void Costume::update() {
 
 	for (int i = 0; i < _numComponents; i++) {
 		if (_components[i]) {
-			if (_components[i]->_fade > 0) {
-				_components[i]->setMatrix(_matrix);
-				_components[i]->update();
-			} else {
-				_components[i]->reset();
-			}
+			_components[i]->setMatrix(_matrix);
+			_components[i]->update();
 		}
 	}
 }
@@ -1956,9 +1934,12 @@ void Costume::saveState(SaveGame *state) const {
 		state->writeLESint32(c._playing);
 		state->writeLESint32(c._looping);
 		state->writeLESint32(c._currTime);
-		state->writeLESint32(c._fadeMode);
-		state->writeLESint32(c._fadeLength);
-		state->writeFloat(c._fade);
+#if 1
+		// Remove on next save format change.
+		state->writeLESint32(0);
+		state->writeLESint32(0);
+		state->writeFloat(0.f);
+#endif
 	}
 
 	for (int i = 0; i < _numComponents; ++i) {
@@ -1967,8 +1948,10 @@ void Costume::saveState(SaveGame *state) const {
 		if (c) {
 			state->writeLESint32(c->_visible);
 			state->writeVector3d(c->_matrix._pos);
-			state->writeFloat(c->_fade);
-
+#if 1
+			// Remove on next save format change.
+			state->writeFloat(0.f);
+#endif
 			c->saveState(state);
 		}
 	}
@@ -1999,9 +1982,12 @@ bool Costume::restoreState(SaveGame *state) {
 		c._playing = state->readLESint32();
 		c._looping = state->readLESint32();
 		c._currTime = state->readLESint32();
-		c._fadeMode = (Chore::FadeMode)state->readLESint32();
-		c._fadeLength = state->readLESint32();
-		c._fade = state->readFloat();
+#if 1
+		// Remove on next save format change.
+		state->readLESint32();
+		state->readLESint32();
+		state->readFloat();
+#endif
 	}
 	for (int i = 0; i < _numComponents; ++i) {
 		Component *c = _components[i];
@@ -2009,7 +1995,10 @@ bool Costume::restoreState(SaveGame *state) {
 		if (c) {
 			c->_visible = state->readLESint32();
 			c->_matrix._pos = state->readVector3d();
-			c->_fade = state->readFloat();
+#if 1
+			// Remove on next save format change.
+			state->readFloat();
+#endif
 
 			c->restoreState(state);
 		}
