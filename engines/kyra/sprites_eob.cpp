@@ -99,9 +99,9 @@ const uint8 *EobCoreEngine::loadMonsterProperties(const uint8 *data) {
 		d->dmgDc[3].base = (int8)*data++;
 		d->statusFlags = READ_LE_UINT16(data);
 		data += 2;
-		d->flags = READ_LE_UINT16(data);
+		d->capsFlags = READ_LE_UINT16(data);
 		data += 2;
-		d->u22 = (int16)READ_LE_UINT16(data);
+		d->typeFlags = READ_LE_UINT16(data);
 		data += 2;
 		d->experience = READ_LE_UINT16(data);
 		data += 2;
@@ -121,7 +121,7 @@ const uint8 *EobCoreEngine::loadMonsterProperties(const uint8 *data) {
 			}
 		}
 
-		d->u41 = *data++;
+		d->tuResist = *data++;
 		d->dmgModifierEvade = *data++;
 
 		for (int i = 0; i < 3; i++)
@@ -176,7 +176,7 @@ void EobCoreEngine::initMonster(int index, int unit, uint16 block, int pos, int 
 	m->pos = pos;
 	m->shpIndex = shpIndex;
 	m->mode = mode;
-	m->f_b = i;
+	m->spellStatusLeft = i;
 	m->dir = dir;
 	m->palette = _flags.gameID == GI_EOB2 ? (index % 3) : 0;
 	m->hitPointsCur = m->hitPointsMax = _flags.gameID == GI_EOB2 ? rollDice(p->hpDcTimes, p->hpDcPips, p->hpDcBase) : (p->hpDcTimes == 255 ? rollDice(1, 4, 0) : rollDice(p->hpDcTimes, 8, 0));
@@ -503,11 +503,11 @@ void EobCoreEngine::drawMonsters(int index) {
 
 		EobMonsterProperty *p = &_monsterProps[d->type];
 
-		if (_flags.gameID == GI_EOB2 && (p->flags & 0x100) && !(_partyEffectFlags & 0x220) && !(d->flags & 2))
+		if (_flags.gameID == GI_EOB2 && (p->capsFlags & 0x100) && !(_partyEffectFlags & 0x220) && !(d->flags & 2))
 			continue;
 
 		int f = (d->animStep << 4) + cDirOffs + d->dir;
-		f = (p->flags & 2) ? _monsterFrmOffsTable1[f] : _monsterFrmOffsTable2[f];
+		f = (p->capsFlags & 2) ? _monsterFrmOffsTable1[f] : _monsterFrmOffsTable2[f];
 
 		if (!blockDistance && d->curAttackFrame < 0)
 			f = d->curAttackFrame + 7;
@@ -719,7 +719,7 @@ void EobCoreEngine::updateMonsters(int unit) {
 				break;
 			case 7:
 			case 10:
-				updateMonsters_mode710(m);
+				updateMonstersSpellStatus(m);
 				break;
 			default:
 				break;
@@ -871,7 +871,7 @@ void EobCoreEngine::updateMoveMonster(EobMonsterInPlay *m) {
 	EobMonsterProperty *p = &_monsterProps[m->type];
 	int d = getNextMonsterDirection(m->block, _currentBlock);
 
-	if ((p->flags & 0x800) && !(d & 1))
+	if ((p->capsFlags & 0x800) && !(d & 1))
 		d >>= 1;
 	else
 		d = m->dir;
@@ -892,13 +892,13 @@ void EobCoreEngine::updateMoveMonster(EobMonsterInPlay *m) {
 	m->curAttackFrame = 0;
 	walkMonster(m, m->dest);
 
-	if (p->flags & 8)
+	if (p->capsFlags & 8)
 		updateMonsterTryCloseAttack(m, -1);
 }
 
 bool EobCoreEngine::updateMonsterTryDistanceAttack(EobMonsterInPlay *m) {
 	EobMonsterProperty *p = &_monsterProps[m->type];
-	if (!m->numRemoteAttacks || ((_flags.gameID == GI_EOB1) && !(p->flags & 0x40)))
+	if (!m->numRemoteAttacks || ((_flags.gameID == GI_EOB1) && !(p->capsFlags & 0x40)))
 		return false;
 
 	if ((_flags.gameID == GI_EOB1 && m->stepsTillRemoteAttack == 5) || (_flags.gameID == GI_EOB2 && rollDice(1, 3) > m->stepsTillRemoteAttack)) {
@@ -1073,8 +1073,8 @@ void EobCoreEngine::walkMonster(EobMonsterInPlay *m, int destBlock) {
 	if (m->flags & 8) {
 		if (_flags.gameID == GI_EOB1 ) {
 			d ^= 4;
-		} else if (--m->f_b <= 0) {
-			m->f_b = 0;
+		} else if (--m->spellStatusLeft <= 0) {
+			m->spellStatusLeft = 0;
 			m->flags &= ~8;
 		} else {
 			d ^= 4;
@@ -1095,7 +1095,7 @@ void EobCoreEngine::walkMonster(EobMonsterInPlay *m, int destBlock) {
 		} else if (_flags.gameID == GI_EOB2) {
 			if (d & 1) {
 				int e = _monsterStepTable1[((d - 1) << 1) + m->dir];
-				if (e && !((_monsterProps[m->type].flags & 0x200) && (rollDice(1, 4) == 4))) {
+				if (e && !((_monsterProps[m->type].capsFlags & 0x200) && (rollDice(1, 4) == 4))) {
 					if (walkMonsterNextStep(m, b + e, -1))
 						return;
 				}
@@ -1144,11 +1144,11 @@ bool EobCoreEngine::walkMonsterNextStep(EobMonsterInPlay *m, int destBlock, int 
 		uint8 w = l->walls[direction ^ 2];
 
 		if (!(_wllWallFlags[w] & 4)) {
-			if (_flags.gameID == GI_EOB1 ||!(p->flags & 0x1000) || _wllShapeMap[w] != -1)
+			if (_flags.gameID == GI_EOB1 || !(p->capsFlags & 0x1000) || _wllShapeMap[w] != -1)
 				return false;
 
 			if (_wllWallFlags[w] & 0x20) {
-				if (p->flags & 4 && m->type == 1)
+				if (p->capsFlags & 4 && m->type == 1)
 					l->walls[direction] = l->walls[direction ^ 2] = 72;
 				else
 					openDoor(destBlock);
@@ -1219,9 +1219,9 @@ void EobCoreEngine::updateMonstersStraying(EobMonsterInPlay *m, int a) {
 	}
 }
 
-void EobCoreEngine::updateMonsters_mode710(EobMonsterInPlay *m) {
-	if (m->f_b) {
-		if (!--m->f_b)
+void EobCoreEngine::updateMonstersSpellStatus(EobMonsterInPlay *m) {
+	if (m->spellStatusLeft) {
+		if (!--m->spellStatusLeft)
 			m->mode = 0;
 	}
 }

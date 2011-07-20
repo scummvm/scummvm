@@ -631,7 +631,7 @@ void EobCoreEngine::initButtonData() {
 		{ 4, 0, 0x1100, 113, 122, 20, 8, EOB_CB(clickedSpellbookTab), 2 },
 		{ 5, 0, 0x1100, 134, 122, 20, 8, EOB_CB(clickedSpellbookTab), 3 },
 		{ 6, 0, 0x1100, 155, 122, 20, 8, EOB_CB(clickedSpellbookTab), 4 },
-		{ 110, 0, 0x1100, 75, 168, 97, 6, EOB_CB(clickedSpellbookAbort), 0 },
+		{ 110, 0, 0x1100, 75, 168, 97, 6, EOB_CB(clickedSpellbookAbort), 0 }
 	};
 
 	_buttonDefs = buttonDefs;
@@ -975,11 +975,19 @@ void EobCoreEngine::initSpells() {
 	ec2(fleshToStonePassive);
 
 	_spells = new EobSpell[_numSpells];
-	memset(_spells, 0, _numSpells * sizeof(EobSpell));
+	memset(_spells, 0, _numSpells * sizeof(EobSpell));	
 
-	for (int i = 0; i < _numSpells; i++) {
+	for (int i = 0, n = 0; i < _numSpells; i++, n++) {
 		EobSpell *s = &_spells[i];
-		s->name = _flags.gameID == GI_EOB2 ? ((i == 0 || i == _mageSpellListSize) ? _mageSpellList[0] : ((i < (_mageSpellListSize + 1)) ? _spellNames[i - 1] : _spellNames[i - 2])) : _spellNames[i];
+
+		// Fix Eob 1 spell names
+		bool skip = false;
+		if (i == 5 || i == 9) {
+			n--;
+			skip = true;
+		}
+
+		s->name = _flags.gameID == GI_EOB2 ? ((i == 0 || i == _mageSpellListSize) ? _mageSpellList[0] : ((i < (_mageSpellListSize + 1)) ? _spellNames[i - 1] : _spellNames[i - 2])) : (skip ? _spellNames[0] : _spellNames[n]);
 		s->startCallback = startCallback[i];
 		s->timingPara = magicTimingParaAssign[i];
 		s->endCallback = endCallback[i];
@@ -1031,8 +1039,7 @@ void EobEngine::initStaticResource() {
 	temp /= 27;
 	_monsterProps = new EobMonsterProperty[temp];
 	memset(_monsterProps, 0, temp * sizeof(EobMonsterProperty));
-	// Try to convert EOB1 (hard coded) monster properties to EOB2 type monster properties.
-	// This is still WIP, since most properties are unknown for now.
+	// Convert EOB1 (hard coded) monster properties to EOB2 type monster properties.
 	for (int i = 0; i < temp; i++) {
 		EobMonsterProperty *p = &_monsterProps[i];
 		p->armorClass = (int8)*ps++;
@@ -1049,9 +1056,9 @@ void EobEngine::initStaticResource() {
 		p->dmgDc[2].pips = *ps++;
 		p->dmgDc[2].base = (int8)*ps++;
 		ps++;
-		p->flags = *ps++;
-		ps++;
-		ps++;
+		p->capsFlags = *ps++;
+		p->typeFlags = READ_LE_UINT16(ps);
+		ps += 2;
 		ps++;
 		ps++;
 		p->experience = READ_LE_UINT16(ps);
@@ -1060,7 +1067,7 @@ void EobEngine::initStaticResource() {
 		p->sound1 = *ps++;
 		p->sound2 = *ps++;
 		p->numRemoteAttacks = *ps++;
-		ps++;
+		p->tuResist = *ps++;
 		p->dmgModifierEvade = *ps++;
 	}
 }
@@ -1132,7 +1139,7 @@ void EobEngine::initSpells() {
 
 	int temp;
 	const uint8 *src = _staticres->loadRawData(kEobBaseSpellProperties, temp);
-	_clericSpellOffset -= 3;
+	_clericSpellOffset -= 1;
 
 	for (int i = 0; i < _numSpells; i++) {
 		EobSpell *s = &_spells[i];

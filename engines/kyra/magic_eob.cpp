@@ -156,14 +156,12 @@ void EobCoreEngine::castSpell(int spell, int weaponSlot) {
 
 	if (s->flags & 0x400) {
 		if (c->inventory[0] && c->inventory[1]) {
-			_txt->printMessage(_magicStrings1[2]);
-			snd_playSoundEffect(79);
+			printWarning(_magicStrings1[2]);
 			return;
 		}
 
 		if (isMagicWeapon(c->inventory[0]) || isMagicWeapon(c->inventory[1])) {
-			_txt->printMessage(_magicStrings1[3]);
-			snd_playSoundEffect(79);
+			printWarning(_magicStrings1[3]);
 			return;
 		}
 	}
@@ -205,10 +203,8 @@ void EobCoreEngine::removeCharacterEffect(int spell, int charIndex, int showWarn
 	EobCharacter *c = &_characters[charIndex];
 	EobSpell *s = &_spells[spell];
 
-	if (showWarning) {
-		_txt->printMessage(_magicStrings3[2], -1, c->name, s->name);
-		snd_playSoundEffect(79);
-	}
+	if (showWarning)
+		printWarning(Common::String::format(_magicStrings3[_flags.gameID == GI_EOB1 ? 3 : 2], c->name, s->name).c_str());
 
 	if (s->endCallback)
 		(this->*s->endCallback)(0);
@@ -262,8 +258,7 @@ void EobCoreEngine::removeAllCharacterEffects(int charIndex) {
 }
 
 void EobCoreEngine::castOnWhomDialogue() {
-	_txt->printMessage(_magicStrings3[0]);
-	snd_playSoundEffect(79);
+	printWarning(_magicStrings3[0]);
 	gui_setCastOnWhomButtons();
 }
 
@@ -281,15 +276,13 @@ void EobCoreEngine::startSpell(int spell) {
 
 	if (s->flags & 0x20) {
 		_txt->printMessage(c->name);
-		_txt->printMessage(_magicStrings1[5]);
+		_txt->printMessage(_flags.gameID == GI_EOB1 ? _magicStrings3[1] : _magicStrings1[5]);
 	}
 
 	if ((s->flags & 0x30) && (s->effectFlags & c->effectFlags)) {
-		_txt->printMessage(_magicStrings7[0], -1, c->name, s->name);
-		snd_playSoundEffect(79);
+		printWarning(Common::String::format(_magicStrings7[0], c->name, s->name).c_str());
 	} else if ((s->flags & 0x50) && (s->effectFlags & _partyEffectFlags)) {
-		_txt->printMessage(_magicStrings7[1], -1, s->name);
-		snd_playSoundEffect(79);
+		printWarning(Common::String::format(_magicStrings7[1], s->name).c_str());
 	} else {
 		if (s->flags & 8)
 			setSpellEventTimer(spell, s->timingPara[0], s->timingPara[1], s->timingPara[2], s->timingPara[3]);
@@ -452,7 +445,7 @@ void EobCoreEngine::sortCharacterSpellList(int charIndex) {
 	}
 }
 
-bool EobCoreEngine::magicObjectHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level) {
+bool EobCoreEngine::magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level) {
 	int ignoreAttackerId = fo->flags & 0x10;
 	int singleTargetCheckAdjacent = fo->flags & 1;
 	int blockDamage = fo->flags & 2;
@@ -527,6 +520,70 @@ bool EobCoreEngine::magicObjectHit(EobFlyingObject *fo, int dcTimes, int dcPips,
 	return res;
 }
 
+bool EobCoreEngine::magicObjectStatusHit(EobMonsterInPlay *m, int type, bool tryEvade, int mod) {
+	EobMonsterProperty *p = &_monsterProps[m->type];
+	if (tryEvade) {
+		if (tryMonsterAttackEvasion(m) || (p->capsFlags & 0x10))
+			return true;
+	}
+
+	if (checkUnkConstModifiers(m, 0, p->level, mod, 6))
+		return false;
+	
+	int para = 0;
+		
+	switch (type) {
+	case 0:
+	case 1:
+	case 2:
+		para = (type == 0) ? ((p->typeFlags & 1) ? 1 : 0) : ((type == 1) ? ((p->typeFlags & 2) ? 1 : 0) : 1);
+		if (para && !(p->statusFlags & 2)) {
+			m->mode = 10;
+			m->spellStatusLeft = 15;
+		}
+
+		break;
+
+	case 3:
+		if (!(p->statusFlags & 8))
+			inflictMonsterDamage(m, 1000, true);
+		break;
+
+	case 4:
+		inflictMonsterDamage(m, 1000, true);
+		break;
+
+	case 5:
+		m->flags |= 0x20;
+		_sceneUpdateRequired = true;
+		break;
+
+	case 6:
+		if (!(p->statusFlags & 4) && m->mode != 7 && m->mode != 8 && m->mode != 10) {
+			m->mode = 0;
+			m->spellStatusLeft = 20;
+			para = (getNextMonsterDirection(m->block, _currentBlock) ^ 4) >> 1;
+			m->flags |= 8;
+			walkMonsterNextStep(m, -1, para);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
+}
+
+void EobCoreEngine::printWarning(const char* str) {
+	_txt->printMessage(str);
+	snd_playSoundEffect(79);
+}
+
+void EobCoreEngine::printNoEffectWarning() {
+	printWarning(_magicStrings4[0]);
+}
+
 void EobCoreEngine::spellCallback_start_armor() {
 
 }
@@ -548,7 +605,7 @@ void EobCoreEngine::spellCallback_start_magicMissile() {
 }
 
 bool EobCoreEngine::spellCallback_end_magicMissile(EobFlyingObject *fo) {
-	return magicObjectHit(fo, 1, 4, 1, (getCharacterMageLevel(fo->attackerId) - 1) >> 1);
+	return magicObjectDamageHit(fo, 1, 4, 1, (getCharacterMageLevel(fo->attackerId) - 1) >> 1);
 }
 
 void EobCoreEngine::spellCallback_start_shockingGrasp() {
@@ -568,7 +625,7 @@ void EobCoreEngine::spellCallback_start_melfsAcidArrow() {
 }
 
 bool EobCoreEngine::spellCallback_end_melfsAcidArrow(EobFlyingObject *fo) {
-	return magicObjectHit(fo, 2, 4, 0, getCharacterMageLevel(fo->attackerId) / 3);
+	return magicObjectDamageHit(fo, 2, 4, 0, getCharacterMageLevel(fo->attackerId) / 3);
 }
 
 void EobCoreEngine::spellCallback_start_dispelMagic() {
@@ -580,7 +637,7 @@ void EobCoreEngine::spellCallback_start_fireball() {
 }
 
 bool EobCoreEngine::spellCallback_end_fireball(EobFlyingObject *fo) {
-	return magicObjectHit(fo, 1, 6, 0, getCharacterMageLevel(fo->attackerId));
+	return magicObjectDamageHit(fo, 1, 6, 0, getCharacterMageLevel(fo->attackerId));
 }
 
 void EobCoreEngine::spellCallback_start_flameArrow() {
@@ -588,7 +645,7 @@ void EobCoreEngine::spellCallback_start_flameArrow() {
 }
 
 bool EobCoreEngine::spellCallback_end_flameArrow(EobFlyingObject *fo) {
-	return magicObjectHit(fo, 5, 6, 0, getCharacterMageLevel(fo->attackerId));
+	return magicObjectDamageHit(fo, 5, 6, 0, getCharacterMageLevel(fo->attackerId));
 }
 
 void EobCoreEngine::spellCallback_start_holdPerson() {
@@ -596,7 +653,28 @@ void EobCoreEngine::spellCallback_start_holdPerson() {
 }
 
 bool EobCoreEngine::spellCallback_end_holdPerson(EobFlyingObject *fo) {
-	return true;
+	bool res = false;
+	
+	if (_flags.gameID == GI_EOB2 && fo->curBlock == _currentBlock) {
+		// party hit
+		int numChar = rollDice(1, 4, 0);
+		int charIndex = rollDice(1, 6, 0);
+		for (int i = 0; i < 6 && numChar; i++) {
+			if (testCharacter(charIndex, 3)) {
+				statusAttack(charIndex, 4, _magicStrings8[1], 4, 5, 9, 1);
+				numChar--;
+			}
+			charIndex = (charIndex + 1) % 6;
+		}
+		res = true;
+
+	} else {
+		// monster hit
+		for (const int16 *m = findBlockMonsters(fo->curBlock, fo->curPos, fo->direction, 1, 1); *m != -1; m++)
+			res |= magicObjectStatusHit(&_monsters[*m], 0, true, 4);
+	}
+
+	return res;
 }
 
 void EobCoreEngine::spellCallback_start_lightningBolt() {
@@ -604,7 +682,7 @@ void EobCoreEngine::spellCallback_start_lightningBolt() {
 }
 
 bool EobCoreEngine::spellCallback_end_lightningBolt(EobFlyingObject *fo) {
-	return magicObjectHit(fo, 1, 6, 0, getCharacterMageLevel(fo->attackerId));
+	return magicObjectDamageHit(fo, 1, 6, 0, getCharacterMageLevel(fo->attackerId));
 }
 
 void EobCoreEngine::spellCallback_start_vampiricTouch() {
@@ -616,7 +694,12 @@ bool EobCoreEngine::spellCallback_end_vampiricTouch(EobFlyingObject*) {
 }
 
 void EobCoreEngine::spellCallback_start_fear() {
-
+	sparkEffectOffensive();
+	uint16 bl = calcNewBlockPosition(_currentBlock, _currentDirection);
+	for (int i = 0; i < 30; i++) {
+		if (_monsters[i].block == bl)
+			magicObjectStatusHit(&_monsters[i], 6, true, 4);
+	}
 }
 
 void EobCoreEngine::spellCallback_start_iceStorm() {
@@ -625,12 +708,12 @@ void EobCoreEngine::spellCallback_start_iceStorm() {
 
 bool EobCoreEngine::spellCallback_end_iceStorm(EobFlyingObject *fo) {
 	static int8 blockAdv[] = { -32, 32, 1, -1 };
-	bool res = magicObjectHit(fo, 1, 6, 0, getCharacterMageLevel(fo->attackerId));
+	bool res = magicObjectDamageHit(fo, 1, 6, 0, getCharacterMageLevel(fo->attackerId));
 	if (res) {
 		for (int i = 0; i < 4; i++) {
 			uint16 bl = fo->curBlock;
 			fo->curBlock = (fo->curBlock + blockAdv[i]) & 0x3ff;
-			magicObjectHit(fo, 1, 6, 0, getCharacterMageLevel(fo->attackerId));
+			magicObjectDamageHit(fo, 1, 6, 0, getCharacterMageLevel(fo->attackerId));
 			fo->curBlock = bl;
 		}
 	}
@@ -650,7 +733,10 @@ void EobCoreEngine::spellCallback_start_holdMonster() {
 }
 
 bool EobCoreEngine::spellCallback_end_holdMonster(EobFlyingObject *fo) {
-	return true;
+	bool res = false;
+	for (const int16 *m = findBlockMonsters(fo->curBlock, fo->curPos, fo->direction, 1, 1); *m != -1; m++)
+		res |= magicObjectStatusHit(&_monsters[*m], 1, true, 4);
+	return res;
 }
 
 void EobCoreEngine::spellCallback_start_wallOfForce() {
@@ -662,18 +748,27 @@ void EobCoreEngine::spellCallback_start_disintegrate() {
 }
 
 void EobCoreEngine::spellCallback_start_fleshToStone() {
-
+	sparkEffectOffensive();
+	int t = getClosestMonsterPos(_openBookChar, calcNewBlockPosition(_currentBlock, _currentDirection));
+	if (t != -1)
+		magicObjectStatusHit(&_monsters[t], 5, true, 4);
+	else
+		printWarning(_magicStrings8[4]);
 }
 
 void EobCoreEngine::spellCallback_start_stoneToFlesh() {
-
+	if (_characters[_activeSpellCaster].flags & 8)
+		_characters[_activeSpellCaster].flags &= ~8;
+	else
+		printNoEffectWarning();
 }
 
 void EobCoreEngine::spellCallback_start_trueSeeing() {
-
+	_wllVmpMap[46] = 0;
 }
 
 bool EobCoreEngine::spellCallback_end_trueSeeing(EobFlyingObject*) {
+	_wllVmpMap[46] = 1;
 	return true;
 }
 
@@ -722,7 +817,13 @@ void EobCoreEngine::spellCallback_start_createFood() {
 }
 
 void EobCoreEngine::spellCallback_start_removeParalysis() {
-
+	int numChar = 4;
+	for (int i = 0; i < 6; i++) {
+		if (!(_characters[i].flags & 4) || !numChar)
+			continue;
+		_characters[i].flags &= ~4;
+		numChar--;
+	}
 }
 
 void EobCoreEngine::spellCallback_start_causeSeriousWounds() {
@@ -750,7 +851,7 @@ void EobCoreEngine::spellCallback_start_flameStrike() {
 }
 
 bool EobCoreEngine::spellCallback_end_flameStrike(EobFlyingObject *fo) {
-	return magicObjectHit(fo, 6, 8, 0, 0);
+	return magicObjectDamageHit(fo, 6, 8, 0, 0);
 }
 
 void EobCoreEngine::spellCallback_start_raiseDead() {
@@ -763,12 +864,10 @@ void EobCoreEngine::spellCallback_start_harm() {
 
 void EobCoreEngine::spellCallback_start_heal() {
 	EobCharacter *c = &_characters[_activeSpellCaster];
-	if (c->hitPointsMax <= c->hitPointsCur) {
-		_txt->printMessage(_magicStrings4[0]);
-		snd_playSoundEffect(79);
-	} else {
+	if (c->hitPointsMax <= c->hitPointsCur)
+		printWarning(_magicStrings4[0]);
+	else
 		modifyCharacterHitpoints(_activeSpellCaster, c->hitPointsMax - c->hitPointsCur);
-	}
 }
 
 void EobCoreEngine::spellCallback_start_layOnHands() {
@@ -782,19 +881,19 @@ void EobCoreEngine::spellCallback_start_turnUndead() {
 bool EobCoreEngine::spellCallback_end_unk1Passive(EobFlyingObject *fo) {
 	bool res = false;
 	if (_partyEffectFlags & 0x20000) {
-		res = magicObjectHit(fo, 4, 10, 6, 0);
+		res = magicObjectDamageHit(fo, 4, 10, 6, 0);
 		if (res) {
 			gui_drawAllCharPortraitsWithStats();
 			_partyEffectFlags &= ~0x20000;
 		}
 	} else {
-		res = magicObjectHit(fo, 12, 10, 6, 0);
+		res = magicObjectDamageHit(fo, 12, 10, 6, 0);
 	}
 	return res;
 }
 
 bool EobCoreEngine::spellCallback_end_unk2Passive(EobFlyingObject *fo) {
-	return magicObjectHit(fo, 0, 0, 18, 0);
+	return magicObjectDamageHit(fo, 0, 0, 18, 0);
 }
 
 bool EobCoreEngine::spellCallback_end_deathSpellPassive(EobFlyingObject *fo) {

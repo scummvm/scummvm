@@ -315,7 +315,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 			m->mode = in.readSByte();
 			m->f_9 = in.readSByte();
 			m->curAttackFrame = in.readSByte();
-			m->f_b = in.readByte();
+			m->spellStatusLeft = in.readSByte();
 			m->hitPointsMax = in.readSint16BE();
 			m->hitPointsCur = in.readSint16BE();
 			m->dest = in.readUint16BE();
@@ -523,7 +523,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 			out->writeSByte(m->mode);
 			out->writeSByte(m->f_9);
 			out->writeSByte(m->curAttackFrame);
-			out->writeByte(m->f_b);
+			out->writeSByte(m->spellStatusLeft);
 			out->writeSint16BE(m->hitPointsMax);
 			out->writeSint16BE(m->hitPointsCur);
 			out->writeUint16BE(m->dest);

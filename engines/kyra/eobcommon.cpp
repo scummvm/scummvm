@@ -1547,7 +1547,7 @@ void EobCoreEngine::inflictMonsterDamage(EobMonsterInPlay *m, int damage, bool g
 	m->hitPointsCur -= damage;
 	m->flags = (m->flags & 0xf7) | 1;
 
-	if (_monsterProps[m->type].flags & 0x2000) {
+	if (_monsterProps[m->type].capsFlags & 0x2000) {
 		explodeMonster(m);
 		checkSceneUpdateNeed(m->block);
 		m->hitPointsCur = 0;
@@ -1762,7 +1762,7 @@ void EobCoreEngine::monsterCloseAttack(EobMonsterInPlay *m) {
 		}
 
 		if (dmg > 0) {
-			if ((_monsterProps[m->type].flags & 0x80) && rollDice(1, 4, -1) != 3) {
+			if ((_monsterProps[m->type].capsFlags & 0x80) && rollDice(1, 4, -1) != 3) {
 				int slot = rollDice(1, 27, -1);
 				for (int iii = 0; iii < 27; iii++) {
 					Item itm = _characters[c].inventory[slot];
@@ -1782,20 +1782,20 @@ void EobCoreEngine::monsterCloseAttack(EobMonsterInPlay *m) {
 
 			inflictCharacterDamage(c, dmg);
 
-			if (_monsterProps[m->type].flags & 0x10) {
+			if (_monsterProps[m->type].capsFlags & 0x10) {
 				statusAttack(c, 2, _monsterSpecAttStrings[_flags.gameID == GI_EOB1 ? 3 : 2], 0, 1, 8, 1);
 				_characters[c].effectFlags &= ~0x2000;
 			}
 
-			if (_monsterProps[m->type].flags & 0x20)
+			if (_monsterProps[m->type].capsFlags & 0x20)
 				statusAttack(c, 4, _monsterSpecAttStrings[_flags.gameID == GI_EOB1 ? 4 : 3], 2, 5, 9, 1);
 
-			if (_monsterProps[m->type].flags & 0x8000)
+			if (_monsterProps[m->type].capsFlags & 0x8000)
 				statusAttack(c, 8, _monsterSpecAttStrings[4], 2, 0, 0, 1);
 
 		}
 
-		if (!(_monsterProps[m->type].flags & 0x4000))
+		if (!(_monsterProps[m->type].capsFlags & 0x4000))
 			return;
 	}
 }
@@ -1848,7 +1848,7 @@ int EobCoreEngine::calcCloseDistanceMonsterDamage(EobMonsterInPlay *m, int times
 			s = 1;
 	}
 
-	if ((flags & 0x100) && ((_flags.gameID == GI_EOB2 && (p->statusFlags & 0x100)) || (_flags.gameID == GI_EOB1 && (p->flags & 4))) && (!(_itemTypes[_items[pips].type].allowedClasses & 4 /* bug in original code ??*/)))
+	if ((flags & 0x100) && ((_flags.gameID == GI_EOB2 && (p->statusFlags & 0x100)) || (_flags.gameID == GI_EOB1 && (p->capsFlags & 4))) && (!(_itemTypes[_items[pips].type].allowedClasses & 4 /* bug in original code ??*/)))
 		s >>= 1;
 
 	if (p->statusFlags & 0x2000) {
@@ -1866,7 +1866,7 @@ int EobCoreEngine::calcCloseDistanceMonsterDamage(EobMonsterInPlay *m, int times
 	}
 
 	if (flags & 1) {
-		if (checkMonsterDamageEvasion(m))
+		if (tryMonsterAttackEvasion(m))
 			s = 0;
 	}
 
@@ -1887,7 +1887,7 @@ int EobCoreEngine::calcDamageModifers(int charIndex, EobMonsterInPlay *m, int it
 	if (item) {
 		EobItemType *p = &_itemTypes[itemType];
 		int t = m ? m->type : 0;
-		s += ((m && (_monsterProps[t].flags & 1)) ?	rollDice(p->dmgNumDiceL, p->dmgNumPipsL, p->dmgIncS /* bug in original code ? */) :
+		s += ((m && (_monsterProps[t].capsFlags & 1)) ?	rollDice(p->dmgNumDiceL, p->dmgNumPipsL, p->dmgIncS /* bug in original code ? */) :
 			rollDice(p->dmgNumDiceS, p->dmgNumPipsS, p->dmgIncS));
 		s += _items[item].value;
 	} else {
@@ -1941,7 +1941,7 @@ int EobCoreEngine::recalcDamageModifier(int damageType, int dmgModifier) {
 	return dmgModifier;
 }
 
-bool EobCoreEngine::checkMonsterDamageEvasion(EobMonsterInPlay *m) {
+bool EobCoreEngine::tryMonsterAttackEvasion(EobMonsterInPlay *m) {
 	return rollDice(1, 100) < _monsterProps[m->type].dmgModifierEvade ? true : false;
 }
 
