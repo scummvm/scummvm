@@ -51,7 +51,7 @@
 	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
 	Sprite *spritetable();
 	void showframe();
-	uint16 showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag);
+	void showframe(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void printasprite(const Sprite *sprite);
 	void width160();
 	void multiput();
