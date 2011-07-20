@@ -292,7 +292,21 @@ void AsylumEngine::playIntro() {
 			setGameFlag(kGameFlag12);
 
 			// Play the intro sound sample (the screen is blacked out, you hear an alarm sounding and men talking about.
-			_sound->playSound(MAKE_RESOURCE(kResourcePackSound, 7));
+			ResourceId introSpeech = MAKE_RESOURCE(kResourcePackSound, 7);
+			_sound->playSound(introSpeech);
+
+			// TODO In the original game, the intro speech is played after the intro video. The speech is played over a black
+			// background, and the game is locked until the speech is completed.
+			// The implementation below is here is what was originally implemented by DreamForge. This code will lock up the
+			// application if used as is as no events are being processed until the sound thread completes.
+			// A much cleaner implementation can be found in commit f6b2ed3be51b738c962608e06d10a665e3abfb82 (svn298), but
+			// needs to be adapted to the new event code.
+			/*
+			if (_sound->isPlaying(introSpeech)) {
+				while (_sound->isPlaying(introSpeech))
+					;
+			}
+			*/
 		}
 
 		_introPlayed = true;
