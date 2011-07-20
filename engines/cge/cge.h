@@ -44,10 +44,9 @@ class Sprite;
 
 // our engine debug channels
 enum {
-    kCGEDebug = 1 << 0,
-	kDebugBitmap = 1 << 1,
-	kDebugFile = 1 << 2,
-	kDebugEngine = 1 << 3
+	kCGEDebugBitmap = 1 << 0,
+	kCGEDebugFile = 1 << 1,
+	kCGEDebugEngine = 1 << 2
 };
 
 enum SnList {
