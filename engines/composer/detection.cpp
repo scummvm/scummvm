@@ -69,8 +69,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"magictales",
 			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
-			{{"book.ini", 0, "dbc98c566f4ac61b544443524585dccb", -1},
-			 AD_LISTEND},
+			AD_ENTRY1("book.ini", "dbc98c566f4ac61b544443524585dccb"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_USEEXTRAASTITLE,
@@ -83,8 +82,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"liam",
 			0,
-			{{"install.inf", 0, "320d2f1d4f8dd96947676ae25d6688c6", -1},
-			 AD_LISTEND},
+			AD_ENTRY1("install.inf", "320d2f1d4f8dd96947676ae25d6688c6"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -98,8 +96,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"magictales",
 			"Magic Tales Demo: Sleeping Cub, Princess & Crab",
-			{{"book.ini", 0, "3dede2522bb0886c95667b082987a87f", -1},
-			 AD_LISTEND},
+			AD_ENTRY1("book.ini", "3dede2522bb0886c95667b082987a87f"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_USEEXTRAASTITLE,
@@ -112,8 +109,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"darby",
 			0,
-			{{"install.inf", 0, "e83cc20ee18a2e138da1aadfc640dff2", -1},
-			 AD_LISTEND},
+			AD_ENTRY1("install.inf", "e83cc20ee18a2e138da1aadfc640dff2"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -126,8 +122,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"gregory",
 			0,
-			{{"install.inf", 0, "b7e9d6f7949d412dad0a183375069844", -1},
-			 AD_LISTEND},
+			AD_ENTRY1("install.inf", "b7e9d6f7949d412dad0a183375069844"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -154,7 +149,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Animation Magic";
+		return "Copyright (C) 1995-1999 Animation Magic";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
