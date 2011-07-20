@@ -46,7 +46,7 @@ extern  Sprite *_pocLight;
 extern  Sprite *_pocket[];
 
 void CGEEngine::snGame(Sprite *spr, int num) {
-	debugC(1, kDebugEngine, "CGEEngine::snGame(spr, %d)", num);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snGame(spr, %d)", num);
 
 	switch (num) {
 	case 1 : {
@@ -257,7 +257,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 
 
 void CGEEngine::expandSprite(Sprite *spr) {
-	debugC(5, kDebugEngine, "CGEEngine::expandSprite(spr)");
+	debugC(5, kCGEDebugEngine, "CGEEngine::expandSprite(spr)");
 
 	if (spr)
 		_vga->_showQ->insert(_vga->_spareQ->remove(spr));
@@ -265,14 +265,14 @@ void CGEEngine::expandSprite(Sprite *spr) {
 
 
 void CGEEngine::contractSprite(Sprite *spr) {
-	debugC(1, kDebugEngine, "CGEEngine::contractSprite(spr)");
+	debugC(1, kCGEDebugEngine, "CGEEngine::contractSprite(spr)");
 
 	if (spr)
 		_vga->_spareQ->append(_vga->_showQ->remove(spr));
 }
 
 int CGEEngine::findPocket(Sprite *spr) {
-	debugC(1, kDebugEngine, "CGEEngine::findPocket(spr)");
+	debugC(1, kCGEDebugEngine, "CGEEngine::findPocket(spr)");
 
 	for (int i = 0; i < POCKET_NX; i++)
 	if (_pocket[i] == spr)
@@ -282,7 +282,7 @@ int CGEEngine::findPocket(Sprite *spr) {
 
 
 void CGEEngine::selectPocket(int n) {
-	debugC(1, kDebugEngine, "CGEEngine::selectPocket(%d)", n);
+	debugC(1, kCGEDebugEngine, "CGEEngine::selectPocket(%d)", n);
 
 	if (n < 0 || (_pocLight->_seqPtr && _pocPtr == n)) {
 		_pocLight->step(0);
@@ -299,7 +299,7 @@ void CGEEngine::selectPocket(int n) {
 }
 
 void CGEEngine::pocFul() {
-	debugC(1, kDebugEngine, "CGEEngine::pocFul()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::pocFul()");
 
 	_hero->park();
 	SNPOST(SNWAIT, -1, -1, _hero);
@@ -310,13 +310,13 @@ void CGEEngine::pocFul() {
 }
 
 void CGEEngine::hide1(Sprite *spr) {
-	debugC(1, kDebugEngine, "CGEEngine::hide1(spr)");
+	debugC(1, kCGEDebugEngine, "CGEEngine::hide1(spr)");
 
 	SNPOST_(SNGHOST, -1, 0, spr->ghost());
 }
 
 void CGEEngine::snGhost(Bitmap *bmp) {
-	debugC(1, kDebugEngine, "CGEEngine::snGhost(bmp)");
+	debugC(1, kCGEDebugEngine, "CGEEngine::snGhost(bmp)");
 
 	bmp->hide(bmp->_map & 0xFFFF, bmp->_map >> 16);
 	bmp->_m = NULL;
@@ -325,7 +325,7 @@ void CGEEngine::snGhost(Bitmap *bmp) {
 }
 
 void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
-	debugC(1, kDebugEngine, "CGEEngine::feedSnail(spr, snq)");
+	debugC(1, kCGEDebugEngine, "CGEEngine::feedSnail(spr, snq)");
 
 	if (spr)
 		if (spr->active()) {
@@ -473,7 +473,7 @@ void Snail::insCom(SNCOM com, int ref, int val, void *ptr) {
 }
 
 void CGEEngine::snNNext(Sprite *spr, int p) {
-	debugC(1, kDebugEngine, "CGEEngine::snNNext(spr, %d)", p);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snNNext(spr, %d)", p);
 
 	if (spr)
 		if (spr->_nearPtr != NO_PTR)
@@ -481,7 +481,7 @@ void CGEEngine::snNNext(Sprite *spr, int p) {
 }
 
 void CGEEngine::snTNext(Sprite *spr, int p) {
-	debugC(1, kDebugEngine, "CGEEngine::snTNext(spr, %d)", p);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snTNext(spr, %d)", p);
 
 	if (spr)
 		if (spr->_takePtr != NO_PTR)
@@ -489,7 +489,7 @@ void CGEEngine::snTNext(Sprite *spr, int p) {
 }
 
 void CGEEngine::snRNNext(Sprite *spr, int p) {
-	debugC(1, kDebugEngine, "CGEEngine::snRNNext(spr, %d)", p);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snRNNext(spr, %d)", p);
 
 	if (spr)
 		if (spr->_nearPtr != NO_PTR)
@@ -498,7 +498,7 @@ void CGEEngine::snRNNext(Sprite *spr, int p) {
 
 
 void CGEEngine::snRTNext(Sprite *spr, int p) {
-	debugC(1, kDebugEngine, "CGEEngine::snRTNext(spr, %d)", p);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snRTNext(spr, %d)", p);
 
 	if (spr)
 		if (spr->_takePtr != NO_PTR)
@@ -506,7 +506,7 @@ void CGEEngine::snRTNext(Sprite *spr, int p) {
 }
 
 void CGEEngine::snZTrim(Sprite *spr) {
-	debugC(4, kDebugEngine, "CGEEngine::snZTrim(spr)");
+	debugC(4, kCGEDebugEngine, "CGEEngine::snZTrim(spr)");
 
 	if (spr)
 		if (spr->active()) {
@@ -524,7 +524,7 @@ void CGEEngine::snZTrim(Sprite *spr) {
 }
 
 void CGEEngine::snHide(Sprite *spr, int val) {
-	debugC(1, kDebugEngine, "CGEEngine::snHide(spr, %d)", val);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snHide(spr, %d)", val);
 
 	if (spr) {
 		spr->_flags._hide = (val >= 0) ? (val != 0) : (!spr->_flags._hide);
@@ -534,21 +534,21 @@ void CGEEngine::snHide(Sprite *spr, int val) {
 }
 
 void CGEEngine::snRmNear(Sprite *spr) {
-	debugC(1, kDebugEngine, "CGEEngine::snRmNear(spr)");
+	debugC(1, kCGEDebugEngine, "CGEEngine::snRmNear(spr)");
 
 	if (spr)
 		spr->_nearPtr = NO_PTR;
 }
 
 void CGEEngine::snRmTake(Sprite *spr) {
-	debugC(1, kDebugEngine, "CGEEngine::snRmTake(spr)");
+	debugC(1, kCGEDebugEngine, "CGEEngine::snRmTake(spr)");
 
 	if (spr)
 		spr->_takePtr = NO_PTR;
 }
 
 void CGEEngine::snSeq(Sprite *spr, int val) {
-	debugC(1, kDebugEngine, "CGEEngine::snSeq(spr, %d)", val);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSeq(spr, %d)", val);
 
 	if (spr) {
 		if (spr == _hero && val == 0)
@@ -559,14 +559,14 @@ void CGEEngine::snSeq(Sprite *spr, int val) {
 }
 
 void CGEEngine::snRSeq(Sprite *spr, int val) {
-	debugC(1, kDebugEngine, "CGEEngine::snRSeq(spr, %d)", val);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snRSeq(spr, %d)", val);
 
 	if (spr)
 		snSeq(spr, spr->_seqPtr + val);
 }
 
 void CGEEngine::snSend(Sprite *spr, int val) {
-	debugC(1, kDebugEngine, "CGEEngine::snSend(spr, %d)", val);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSend(spr, %d)", val);
 
 	if (spr) {
 		int was = spr->_cave;
@@ -598,7 +598,7 @@ void CGEEngine::snSend(Sprite *spr, int val) {
 
 
 void CGEEngine::snSwap(Sprite *spr, int xref) {
-	debugC(1, kDebugEngine, "CGEEngine::snSwap(spr, %d)", xref);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSwap(spr, %d)", xref);
 
 	Sprite *xspr = locate(xref);
 	if (spr && xspr) {
@@ -635,7 +635,7 @@ void CGEEngine::snSwap(Sprite *spr, int xref) {
 
 
 void CGEEngine::snCover(Sprite *spr, int xref) {
-	debugC(1, kDebugEngine, "CGEEngine::snCover(spr, %d)", xref);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snCover(spr, %d)", xref);
 
 	Sprite *xspr = locate(xref);
 	if (spr && xspr) {
@@ -654,7 +654,7 @@ void CGEEngine::snCover(Sprite *spr, int xref) {
 
 
 void CGEEngine::snUncover(Sprite *spr, Sprite *xspr) {
-	debugC(1, kDebugEngine, "CGEEngine::snUncover(spr, xspr)");
+	debugC(1, kCGEDebugEngine, "CGEEngine::snUncover(spr, xspr)");
 
 	if (spr && xspr) {
 		spr->_flags._hide = false;
@@ -673,33 +673,33 @@ void CGEEngine::snUncover(Sprite *spr, Sprite *xspr) {
 
 
 void CGEEngine::snSetX0(int cav, int x0) {
-	debugC(1, kDebugEngine, "CGEEngine::snSetX0(%d, %d)", cav, x0);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSetX0(%d, %d)", cav, x0);
 
 	_heroXY[cav - 1]._x = x0;
 }
 
 void CGEEngine::snSetY0(int cav, int y0) {
-	debugC(1, kDebugEngine, "CGEEngine::snSetY0(%d, %d)", cav, y0);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSetY0(%d, %d)", cav, y0);
 
 	_heroXY[cav - 1]._y = y0;
 }
 
 void CGEEngine::snSetXY(Sprite *spr, uint16 xy) {
-	debugC(1, kDebugEngine, "CGEEngine::snSetXY(spr, %d)", xy);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSetXY(spr, %d)", xy);
 
 	if (spr)
 		spr->gotoxy(xy % SCR_WID, xy / SCR_WID);
 }
 
 void CGEEngine::snRelX(Sprite *spr, int x) {
-	debugC(1, kDebugEngine, "CGEEngine::snRelX(spr, %d)", x);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snRelX(spr, %d)", x);
 
 	if (spr && _hero)
 		spr->gotoxy(_hero->_x + x, spr->_y);
 }
 
 void CGEEngine::snRelY(Sprite *spr, int y) {
-	debugC(1, kDebugEngine, "CGEEngine::snRelY(spr, %d)", y);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snRelY(spr, %d)", y);
 
 	if (spr && _hero)
 		spr->gotoxy(spr->_x, _hero->_y + y);
@@ -707,7 +707,7 @@ void CGEEngine::snRelY(Sprite *spr, int y) {
 
 
 void CGEEngine::snRelZ(Sprite *spr, int z) {
-	debugC(1, kDebugEngine, "CGEEngine::snRelZ(spr, %d)", z);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snRelZ(spr, %d)", z);
 
 	if (spr && _hero) {
 		spr->_z = _hero->_z + z;
@@ -717,7 +717,7 @@ void CGEEngine::snRelZ(Sprite *spr, int z) {
 
 
 void CGEEngine::snSetX(Sprite *spr, int x) {
-	debugC(1, kDebugEngine, "CGEEngine::snSetX(spr, %d)", x);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSetX(spr, %d)", x);
 
 	if (spr)
 		spr->gotoxy(x, spr->_y);
@@ -725,7 +725,7 @@ void CGEEngine::snSetX(Sprite *spr, int x) {
 
 
 void CGEEngine::snSetY(Sprite *spr, int y) {
-	debugC(1, kDebugEngine, "CGEEngine::snSetY(spr, %d)", y);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSetY(spr, %d)", y);
 
 	if (spr)
 		spr->gotoxy(spr->_x, y);
@@ -733,7 +733,7 @@ void CGEEngine::snSetY(Sprite *spr, int y) {
 
 
 void CGEEngine::snSetZ(Sprite *spr, int z) {
-	debugC(1, kDebugEngine, "CGEEngine::snSetZ(spr, %d)", z);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSetZ(spr, %d)", z);
 
 	if (spr) {
 		spr->_z = z;
@@ -744,7 +744,7 @@ void CGEEngine::snSetZ(Sprite *spr, int z) {
 
 
 void CGEEngine::snSlave(Sprite *spr, int ref) {
-	debugC(1, kDebugEngine, "CGEEngine::snSlave(spr, %d)", ref);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSlave(spr, %d)", ref);
 
 	Sprite *slv = locate(ref);
 	if (spr && slv) {
@@ -759,21 +759,21 @@ void CGEEngine::snSlave(Sprite *spr, int ref) {
 
 
 void CGEEngine::snTrans(Sprite *spr, int trans) {
-	debugC(1, kDebugEngine, "CGEEngine::snTrans(spr, %d)", trans);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snTrans(spr, %d)", trans);
 
 	if (spr)
 		spr->_flags._tran = (trans < 0) ? !spr->_flags._tran : (trans != 0);
 }
 
 void CGEEngine::snPort(Sprite *spr, int port) {
-	debugC(1, kDebugEngine, "CGEEngine::snPort(spr, %d)", port);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snPort(spr, %d)", port);
 
 	if (spr)
 		spr->_flags._port = (port < 0) ? !spr->_flags._port : (port != 0);
 }
 
 void CGEEngine::snKill(Sprite *spr) {
-	debugC(1, kDebugEngine, "CGEEngine::snKill(spr)");
+	debugC(1, kCGEDebugEngine, "CGEEngine::snKill(spr)");
 
 	if (spr) {
 		if (spr->_flags._kept) {
@@ -800,7 +800,7 @@ void CGEEngine::snKill(Sprite *spr) {
 
 
 void CGEEngine::snSound(Sprite *spr, int wav, int cnt) {
-	debugC(1, kDebugEngine, "CGEEngine::snSound(spr, %d, %d)", wav, cnt);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSound(spr, %d, %d)", wav, cnt);
 
 	if (_sndDrvInfo._dDev) {
 		if (wav == -1)
@@ -812,7 +812,7 @@ void CGEEngine::snSound(Sprite *spr, int wav, int cnt) {
 
 
 void CGEEngine::snKeep(Sprite *spr, int stp) {
-	debugC(1, kDebugEngine, "CGEEngine::snKeep(spr, %d)", stp);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snKeep(spr, %d)", stp);
 
 	selectPocket(-1);
 	if (spr && ! spr->_flags._kept && _pocket[_pocPtr] == NULL) {
@@ -830,7 +830,7 @@ void CGEEngine::snKeep(Sprite *spr, int stp) {
 
 
 void CGEEngine::snGive(Sprite *spr, int stp) {
-	debugC(1, kDebugEngine, "CGEEngine::snGive(spr, %d)", stp);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snGive(spr, %d)", stp);
 
 	if (spr) {
 		int p = findPocket(spr);
@@ -847,7 +847,7 @@ void CGEEngine::snGive(Sprite *spr, int stp) {
 
 
 void CGEEngine::snBackPt(Sprite *spr, int stp) {
-	debugC(1, kDebugEngine, "CGEEngine::snBackPt(spr, %d)", stp);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snBackPt(spr, %d)", stp);
 
 	if (spr) {
 		if (stp >= 0)
@@ -857,7 +857,7 @@ void CGEEngine::snBackPt(Sprite *spr, int stp) {
 }
 
 void CGEEngine::snLevel(Sprite *spr, int lev) {
-	debugC(1, kDebugEngine, "CGEEngine::snLevel(spr, %d)", lev);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snLevel(spr, %d)", lev);
 
 	while (_lev < lev) {
 		_lev++;
@@ -878,14 +878,14 @@ void CGEEngine::snFlag(int indx, bool v) {
 }
 
 void CGEEngine::snSetRef(Sprite *spr, int nr) {
-	debugC(1, kDebugEngine, "CGEEngine::snSetRef(spr, %d)", nr);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSetRef(spr, %d)", nr);
 
 	if (spr)
 		spr->_ref = nr;
 }
 
 void CGEEngine::snFlash(bool on) {
-	debugC(1, kDebugEngine, "CGEEngine::snFlash(%s)", on ? "true" : "false");
+	debugC(1, kCGEDebugEngine, "CGEEngine::snFlash(%s)", on ? "true" : "false");
 
 	if (on) {
 		Dac *pal = (Dac *) malloc(sizeof(Dac) * PAL_CNT);
@@ -909,7 +909,7 @@ void CGEEngine::snFlash(bool on) {
 
 
 void CGEEngine::snLight(bool in) {
-	debugC(1, kDebugEngine, "CGEEngine::snLight(%s)", in ? "true" : "false");
+	debugC(1, kCGEDebugEngine, "CGEEngine::snLight(%s)", in ? "true" : "false");
 
 	if (in)
 		_vga->sunrise(Vga::_sysPal);
@@ -919,13 +919,13 @@ void CGEEngine::snLight(bool in) {
 }
 
 void CGEEngine::snBarrier(int cav, int bar, bool horz) {
-	debugC(1, kDebugEngine, "CGEEngine::snBarrier(%d, %d, %s)", cav, bar, horz ? "true" : "false");
+	debugC(1, kCGEDebugEngine, "CGEEngine::snBarrier(%d, %d, %s)", cav, bar, horz ? "true" : "false");
 
 	((uint8 *)(_barriers + ((cav > 0) ? cav : _now)))[horz] = bar;
 }
 
 void CGEEngine::snWalk(Sprite *spr, int x, int y) {
-	debugC(1, kDebugEngine, "CGEEngine::snWalk(spr, %d, %d)", x, y);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snWalk(spr, %d, %d)", x, y);
 
 	if (_hero) {
 		if (spr && y < 0)
@@ -936,14 +936,14 @@ void CGEEngine::snWalk(Sprite *spr, int x, int y) {
 }
 
 void CGEEngine::snReach(Sprite *spr, int mode) {
-	debugC(1, kDebugEngine, "CGEEngine::snReach(spr, %d)", mode);
+	debugC(1, kCGEDebugEngine, "CGEEngine::snReach(spr, %d)", mode);
 
 	if (_hero)
 		_hero->reach(spr, mode);
 }
 
 void CGEEngine::snMouse(bool on) {
-	debugC(1, kDebugEngine, "CGEEngine::snMouse(%s)", on ? "true" : "false");
+	debugC(1, kCGEDebugEngine, "CGEEngine::snMouse(%s)", on ? "true" : "false");
 
 	if (on)
 		_mouse->on();

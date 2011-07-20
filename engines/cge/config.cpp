@@ -39,7 +39,7 @@ static Choice *_cho;
 static int     _hlp;
 
 void CGEEngine::snSelect() {
-	debugC(1, kDebugEngine, "CGEEngine::snSelect()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSelect()");
 
 	inf(_text->getText(_hlp));
 	_talk->gotoxy(_talk->_x, kFontHigh / 2);

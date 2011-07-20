@@ -38,7 +38,7 @@ IoBuf::IoBuf(IOMODE mode, CRYPT *crpt)
 	  _bufMark(0),
 	  _ptr(0),
 	  _lim(0) {
-	debugC(1, kDebugFile, "IoBuf::IoBuf(%d, crpt)", mode);
+	debugC(1, kCGEDebugFile, "IoBuf::IoBuf(%d, crpt)", mode);
 
 	_buff = (uint8 *) malloc(sizeof(uint8) * kBufferSize);
 	if (_buff == NULL)
@@ -51,7 +51,7 @@ IoBuf::IoBuf(const char *name, IOMODE mode, CRYPT *crpt)
 	  _bufMark(0),
 	  _ptr(0),
 	  _lim(0) {
-	debugC(1, kDebugFile, "IoBuf::IoBuf(%s, %d, crpt)", name, mode);
+	debugC(1, kCGEDebugFile, "IoBuf::IoBuf(%s, %d, crpt)", name, mode);
 
 	_buff = (uint8 *) malloc(sizeof(uint8) * kBufferSize);
 	if (_buff == NULL)
@@ -59,7 +59,7 @@ IoBuf::IoBuf(const char *name, IOMODE mode, CRYPT *crpt)
 }
 
 IoBuf::~IoBuf() {
-	debugC(6, kDebugFile, "IoBuf::~IoBuf()");
+	debugC(6, kCGEDebugFile, "IoBuf::~IoBuf()");
 
 	if (_mode > REA)
 		writeBuf();
@@ -68,7 +68,7 @@ IoBuf::~IoBuf() {
 
 
 void IoBuf::readBuf() {
-	debugC(4, kDebugFile, "IoBuf::readBuf()");
+	debugC(4, kCGEDebugFile, "IoBuf::readBuf()");
 
 	_bufMark = IoHand::mark();
 	_lim = IoHand::read(_buff, kBufferSize);
@@ -77,7 +77,7 @@ void IoBuf::readBuf() {
 
 
 void IoBuf::writeBuf() {
-	debugC(4, kDebugFile, "IoBuf::writeBuf()");
+	debugC(4, kCGEDebugFile, "IoBuf::writeBuf()");
 
 	if (_lim) {
 		IoHand::write(_buff, _lim);
@@ -88,7 +88,7 @@ void IoBuf::writeBuf() {
 
 
 uint16 IoBuf::read(void *buf, uint16 len) {
-	debugC(4, kDebugFile, "IoBuf::read(buf, %d)", len);
+	debugC(4, kCGEDebugFile, "IoBuf::read(buf, %d)", len);
 
 	uint16 total = 0;
 	while (len) {
@@ -111,7 +111,7 @@ uint16 IoBuf::read(void *buf, uint16 len) {
 
 
 uint16 IoBuf::read(uint8 *buf) {
-	debugC(3, kDebugFile, "IoBuf::read(buf)");
+	debugC(3, kCGEDebugFile, "IoBuf::read(buf)");
 
 	uint16 total = 0;
 
@@ -158,7 +158,7 @@ uint16 IoBuf::read(uint8 *buf) {
 
 
 uint16 IoBuf::write(void *buf, uint16 len) {
-	debugC(1, kDebugFile, "IoBuf::write(buf, %d)", len);
+	debugC(1, kCGEDebugFile, "IoBuf::write(buf, %d)", len);
 
 	uint16 tot = 0;
 	while (len) {
@@ -179,7 +179,7 @@ uint16 IoBuf::write(void *buf, uint16 len) {
 
 
 uint16 IoBuf::write(uint8 *buf) {
-	debugC(1, kDebugFile, "IoBuf::write(buf)");
+	debugC(1, kCGEDebugFile, "IoBuf::write(buf)");
 
 	uint16 len = 0;
 	if (buf) {
@@ -199,7 +199,7 @@ uint16 IoBuf::write(uint8 *buf) {
 
 
 int IoBuf::read() {
-	debugC(1, kDebugFile, "IoBuf::read()");
+	debugC(1, kCGEDebugFile, "IoBuf::read()");
 
 	if (_ptr >= _lim) {
 		readBuf();
@@ -211,7 +211,7 @@ int IoBuf::read() {
 
 
 void IoBuf::write(uint8 b) {
-	debugC(1, kDebugFile, "IoBuf::write(%d)", b);
+	debugC(1, kCGEDebugFile, "IoBuf::write(%d)", b);
 
 	if (_lim >= kBufferSize)
 		writeBuf();
@@ -224,7 +224,7 @@ uint16  CFile::_maxLineLen   = kLineMaxSize;
 
 CFile::CFile(const char *name, IOMODE mode, CRYPT *crpt)
 	: IoBuf(name, mode, crpt) {
-	debugC(1, kDebugFile, "CFile::CFile(%s, %d, crpt)", name, mode);
+	debugC(1, kCGEDebugFile, "CFile::CFile(%s, %d, crpt)", name, mode);
 }
 
 
@@ -233,7 +233,7 @@ CFile::~CFile() {
 
 
 void CFile::flush() {
-	debugC(1, kDebugFile, "CFile::flush()");
+	debugC(1, kCGEDebugFile, "CFile::flush()");
 
 	if (_mode > REA)
 		writeBuf();
@@ -250,14 +250,14 @@ void CFile::flush() {
 
 
 long CFile::mark() {
-	debugC(5, kDebugFile, "CFile::mark()");
+	debugC(5, kCGEDebugFile, "CFile::mark()");
 
 	return _bufMark + ((_mode > REA) ? _lim : _ptr);
 }
 
 
 long CFile::seek(long pos) {
-	debugC(1, kDebugFile, "CFile::seek(%ld)", pos);
+	debugC(1, kCGEDebugFile, "CFile::seek(%ld)", pos);
 
 	if (pos >= _bufMark && pos < _bufMark + _lim) {
 		((_mode == REA) ? _ptr : _lim) = (uint16)(pos - _bufMark);
@@ -275,7 +275,7 @@ long CFile::seek(long pos) {
 
 
 void CFile::append(CFile &f) {
-	debugC(1, kDebugFile, "CFile::append(f)");
+	debugC(1, kCGEDebugFile, "CFile::append(f)");
 
 	seek(size());
 	if (f._error == 0) {

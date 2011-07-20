@@ -104,7 +104,7 @@ Bar _barriers[1 + CAVE_MAX] = { { 0xFF, 0xFF } };
 extern Dac _stdPal[58];
 
 void CGEEngine::syncHeader(Common::Serializer &s) {
-	debugC(1, kDebugEngine, "CGEEngine::syncHeader(s)");
+	debugC(1, kCGEDebugEngine, "CGEEngine::syncHeader(s)");
 
 	int i;
 
@@ -144,7 +144,7 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 }
 
 bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
-	debugC(1, kDebugEngine, "CGEEngine::loadgame(file, %s)", tiny ? "true" : "false");
+	debugC(1, kCGEDebugEngine, "CGEEngine::loadgame(file, %s)", tiny ? "true" : "false");
 
 	Common::MemoryReadStream *readStream;
 	SavegameHeader saveHeader;
@@ -362,7 +362,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 			}
 		}
 	}
-	debugC(1, kDebugEngine, "CGEEngine::saveSound()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::saveSound()");
 
 }
 
@@ -399,13 +399,13 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 }
 
 void CGEEngine::heroCover(int cvr) {
-	debugC(1, kDebugEngine, "CGEEngine::heroCover(%d)", cvr);
+	debugC(1, kCGEDebugEngine, "CGEEngine::heroCover(%d)", cvr);
 
 	SNPOST(SNCOVER, 1, cvr, NULL);
 }
 
 void CGEEngine::trouble(int seq, int txt) {
-	debugC(1, kDebugEngine, "CGEEngine::trouble(%d, %d)", seq, txt);
+	debugC(1, kCGEDebugEngine, "CGEEngine::trouble(%d, %d)", seq, txt);
 
 	_hero->park();
 	SNPOST(SNWAIT, -1, -1, _hero);
@@ -416,19 +416,19 @@ void CGEEngine::trouble(int seq, int txt) {
 }
 
 void CGEEngine::offUse() {
-	debugC(1, kDebugEngine, "CGEEngine::offUse()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::offUse()");
 
 	trouble(OFF_USE, OFF_USE_TEXT + new_random(_offUseCount));
 }
 
 void CGEEngine::tooFar() {
-	debugC(1, kDebugEngine, "CGEEngine::tooFar()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::tooFar()");
 
 	trouble(TOO_FAR, TOO_FAR_TEXT);
 }
 
 void CGEEngine::loadHeroXY() {
-	debugC(1, kDebugEngine, "CGEEngine::loadHeroXY()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::loadHeroXY()");
 
 	INI_FILE cf(progName(".HXY"));
 	memset(_heroXY, 0, sizeof(_heroXY));
@@ -437,7 +437,7 @@ void CGEEngine::loadHeroXY() {
 }
 
 void CGEEngine::loadMapping() {
-	debugC(1, kDebugEngine, "CGEEngine::loadMapping()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::loadMapping()");
 
 	if (_now <= CAVE_MAX) {
 		INI_FILE cf(progName(".TAB"));
@@ -480,7 +480,7 @@ void SQUARE::touch(uint16 mask, int x, int y) {
 
 
 void CGEEngine::setMapBrick(int x, int z) {
-	debugC(1, kDebugEngine, "CGEEngine::setMapBrick(%d, %d)", x, z);
+	debugC(1, kCGEDebugEngine, "CGEEngine::setMapBrick(%d, %d)", x, z);
 
 	SQUARE *s = new SQUARE(this);
 	if (s) {
@@ -495,14 +495,14 @@ void CGEEngine::setMapBrick(int x, int z) {
 }
 
 void CGEEngine::keyClick() {
-	debugC(1, kDebugEngine, "CGEEngine::keyClick()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::keyClick()");
 
 	SNPOST_(SNSOUND, -1, 5, NULL);
 }
 
 
 void CGEEngine::resetQSwitch() {
-	debugC(1, kDebugEngine, "CGEEngine::resetQSwitch()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::resetQSwitch()");
 
 	SNPOST_(SNSEQ, 123,  0, NULL);
 	keyClick();
@@ -510,7 +510,7 @@ void CGEEngine::resetQSwitch() {
 
 
 void CGEEngine::quit() {
-	debugC(1, kDebugEngine, "CGEEngine::quit()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::quit()");
 
 	static Choice QuitMenu[] = { 
 		{ NULL, &CGEEngine::startCountDown },
@@ -534,13 +534,13 @@ void CGEEngine::quit() {
 
 
 void CGEEngine::AltCtrlDel() {
-	debugC(1, kDebugEngine, "CGEEngine::AltCtrlDel()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::AltCtrlDel()");
 
 	SNPOST_(SNSAY,  -1, A_C_D_TEXT, _hero);
 }
 
 void CGEEngine::miniStep(int stp) {
-	debugC(1, kDebugEngine, "CGEEngine::miniStep(%d)", stp);
+	debugC(1, kCGEDebugEngine, "CGEEngine::miniStep(%d)", stp);
 
 	if (stp < 0)
 		_miniCave->_flags._hide = true;
@@ -554,14 +554,14 @@ void CGEEngine::miniStep(int stp) {
 }
 
 void CGEEngine::postMiniStep(int step) {
-	debugC(6, kDebugEngine, "CGEEngine::postMiniStep(%d)", step);
+	debugC(6, kCGEDebugEngine, "CGEEngine::postMiniStep(%d)", step);
 
 	if (_miniCave && step != _recentStep)
 		SNPOST2_(SNEXEC, -1, _recentStep = step, kMiniStep);
 }
 
 void CGEEngine::showBak(int ref) {
-	debugC(1, kDebugEngine, "CGEEngine::showBack(%d)", ref);
+	debugC(1, kCGEDebugEngine, "CGEEngine::showBack(%d)", ref);
 
 	Sprite *spr = _vga->_spareQ->locate(ref);
 	if (spr) {
@@ -576,7 +576,7 @@ void CGEEngine::showBak(int ref) {
 }
 
 void CGEEngine::caveUp() {
-	debugC(1, kDebugEngine, "CGEEngine::caveUp()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::caveUp()");
 
 	int BakRef = 1000 * _now;
 	if (_music)
@@ -640,7 +640,7 @@ void CGEEngine::caveUp() {
 
 
 void CGEEngine::caveDown() {
-	debugC(1, kDebugEngine, "CGEEngine::caveDown()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::caveDown()");
 
 	Sprite *spr;
 	if (!_horzLine->_flags._hide)
@@ -659,14 +659,14 @@ void CGEEngine::caveDown() {
 }
 
 void CGEEngine::xCave() {
-	debugC(6, kDebugEngine, "CGEEngine::xCave()");
+	debugC(6, kCGEDebugEngine, "CGEEngine::xCave()");
 
 	caveDown();
 	caveUp();
 }
 
 void CGEEngine::qGame() {
-	debugC(1, kDebugEngine, "CGEEngine::qGame()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::qGame()");
 
 	caveDown();
 	_oldLev = _lev;
@@ -681,7 +681,7 @@ void CGEEngine::qGame() {
 
 
 void CGEEngine::switchCave(int cav) {
-	debugC(1, kDebugEngine, "CGEEngine::switchCave(%d)", cav);
+	debugC(1, kCGEDebugEngine, "CGEEngine::switchCave(%d)", cav);
 
 	if (cav != _now) {
 		_heart->_enable = false;
@@ -918,7 +918,7 @@ void System::tick() {
 }
 
 void CGEEngine::switchColorMode() {
-	debugC(1, kDebugEngine, "CGEEngine::switchColorMode()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::switchColorMode()");
 
 	SNPOST_(SNSEQ, 121, _vga->_mono = !_vga->_mono, NULL);
 	keyClick();
@@ -926,7 +926,7 @@ void CGEEngine::switchColorMode() {
 }
 
 void CGEEngine::switchMusic() {
-	debugC(1, kDebugEngine, "CGEEngine::switchMusic()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::switchMusic()");
 
 	if (_keyboard->_key[ALT]) {
 		if (Vmenu::_addr)
@@ -950,14 +950,14 @@ void CGEEngine::switchMusic() {
 }
 
 void CGEEngine::startCountDown() {
-	debugC(1, kDebugEngine, "CGEEngine::startCountDown()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::startCountDown()");
 
 	//SNPOST(SNSEQ, 123, 0, NULL);
 	switchCave(-1);
 }
 
 void CGEEngine::takeName() {
-	debugC(1, kDebugEngine, "CGEEngine::takeName()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::takeName()");
 
 	if (GetText::_ptr)
 		SNPOST_(SNKILL, -1, 0, GetText::_ptr);
@@ -975,7 +975,7 @@ void CGEEngine::takeName() {
 }
 
 void CGEEngine::switchMapping() {
-	debugC(1, kDebugEngine, "CGEEngine::switchMapping()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::switchMapping()");
 
 	if (_horzLine->_flags._hide) {
 		int i;
@@ -996,7 +996,7 @@ void CGEEngine::switchMapping() {
 }
 
 void CGEEngine::killSprite() {
-	debugC(1, kDebugEngine, "CGEEngine::killSprite()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::killSprite()");
 
 	_sprite->_flags._kill = true;
 	_sprite->_flags._bDel = true;
@@ -1005,7 +1005,7 @@ void CGEEngine::killSprite() {
 }
 
 void CGEEngine::pushSprite() {
-	debugC(1, kDebugEngine, "CGEEngine::pushSprite()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::pushSprite()");
 
 	Sprite *spr = _sprite->_prev;
 	if (spr) {
@@ -1017,7 +1017,7 @@ void CGEEngine::pushSprite() {
 }
 
 void CGEEngine::pullSprite() {
-	debugC(1, kDebugEngine, "CGEEngine::pullSprite()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::pullSprite()");
 
 	bool ok = false;
 	Sprite *spr = _sprite->_next;
@@ -1036,13 +1036,13 @@ void CGEEngine::pullSprite() {
 }
 
 void CGEEngine::nextStep() {
-	debugC(1, kDebugEngine, "CGEEngine::nextStep()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::nextStep()");
 
 	SNPOST_(SNSTEP, 0, 0, _sprite);
 }
 
 void CGEEngine::saveMapping() {
-	debugC(1, kDebugEngine, "CGEEngine::saveMapping()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::saveMapping()");
 
 	IoHand cfTab(progName(".TAB"), UPD);
 	if (!cfTab._error) {
