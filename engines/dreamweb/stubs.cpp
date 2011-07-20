@@ -105,7 +105,7 @@ void DreamGenContext::cls() {
 	engine->cls();
 }
 
-void DreamGenContext::frameoutnm(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamGenContext::frameoutnm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	dst += pitch * y + x;
 
 	for (uint16 j = 0; j < height; ++j) {
@@ -115,7 +115,7 @@ void DreamGenContext::frameoutnm(uint8* dst, const uint8* src, uint16 pitch, uin
 	}
 }
 
-void DreamGenContext::frameoutbh(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamGenContext::frameoutbh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	uint16 stride = pitch - width;
 	dst += y * pitch + x;
 
@@ -131,7 +131,7 @@ void DreamGenContext::frameoutbh(uint8* dst, const uint8* src, uint16 pitch, uin
 	}
 }
 
-void DreamGenContext::frameoutfx(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamGenContext::frameoutfx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	uint16 stride = pitch - width;
 	dst += y * pitch + x;
 	dst -= width;
@@ -522,7 +522,7 @@ void DreamGenContext::doshake() {
 		1, -3,  3,  0,
 	};
 	int offset = shakeTable[counter];
-	engine->setShakePos(offset >= 0? offset: -offset);
+	engine->setShakePos(offset >= 0 ? offset : -offset);
 }
 
 void DreamGenContext::vsync() {
@@ -626,14 +626,14 @@ void DreamGenContext::frameoutv() {
 	uint16 width = cx & 0xff;
 	uint16 height = cx >> 8;
 
-	const uint8* src = ds.ptr(si, width * height);
-	uint8* dst = es.ptr(0, pitch * height);
+	const uint8 *src = ds.ptr(si, width * height);
+	uint8 *dst = es.ptr(0, pitch * height);
 
 	frameoutv(dst, src, pitch, width, height, di, bx);
 }
 */
 
-void DreamGenContext::frameoutv(uint8* dst, const uint8* src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamGenContext::frameoutv(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	// NB : These resilience checks were not in the original engine, but did they result in undefined behaviour
 	// or was something broken during porting to C++?
 	assert(pitch == 320);
@@ -663,13 +663,13 @@ void DreamGenContext::frameoutv(uint8* dst, const uint8* src, uint16 pitch, uint
 	}
 }
 
-Sprite* DreamGenContext::spritetable() {
+Sprite *DreamGenContext::spritetable() {
 	push(es);
 	push(bx);
 
 	es = data.word(kBuffers);
 	bx = kSpritetable;
-	Sprite *sprite = (Sprite*)es.ptr(bx, 16*sizeof(Sprite));
+	Sprite *sprite = (Sprite *)es.ptr(bx, 16 * sizeof(Sprite));
 
 	bx = pop();
 	es = pop();
@@ -692,11 +692,11 @@ uint16 DreamGenContext::showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y,
 
 //notblankshow:
 	if ((effectsFlag & 128) == 0) {
-		di += ds.byte(si+4);
-		bx += ds.byte(si+5);
+		di += ds.byte(si + 4);
+		bx += ds.byte(si + 5);
 	}
 //skipoffsets:
-	cx = ds.word(si+0);
+	cx = ds.word(si + 0);
 	uint8 width = cl;
 	uint8 height = ch;
 	uint16 written = cx;
@@ -763,7 +763,7 @@ void DreamGenContext::printsprites() {
 	}
 }
 
-void DreamGenContext::printasprite(const Sprite* sprite) {
+void DreamGenContext::printasprite(const Sprite *sprite) {
 	push(es);
 	push(bx);
 	ds = READ_LE_UINT16(&sprite->w6);
@@ -795,7 +795,7 @@ void DreamGenContext::eraseoldobs() {
 		return;
 
 	Sprite *sprites = spritetable();
-	for (size_t i=0; i<16; ++i) {
+	for (size_t i=0; i < 16; ++i) {
 		Sprite &sprite = sprites[i];
 		if (READ_LE_UINT16(&sprite.obj_data) != 0xffff) {
 			memset(&sprite, 0xff, sizeof(Sprite));
@@ -804,10 +804,10 @@ void DreamGenContext::eraseoldobs() {
 }
 
 void DreamGenContext::clearsprites() {
-	memset(spritetable(), 0xff, sizeof(Sprite)*16);
+	memset(spritetable(), 0xff, sizeof(Sprite) * 16);
 }
 
-Sprite* DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 somethingInDx, uint16 somethingInDi) {
+Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 somethingInDx, uint16 somethingInDi) {
 	Sprite *sprite = spritetable();
 	while (sprite->b15 != 0xff) { // NB: No boundchecking in the original code either
 		++sprite;
@@ -830,8 +830,8 @@ void DreamGenContext::makesprite() { // NB: returns new sprite in es:bx
 	// Recover es:bx from sprite
 	es = data.word(kBuffers);
 	bx = kSpritetable;
-	Sprite *sprites = (Sprite*)es.ptr(bx, sizeof(Sprite)*16);
-	bx += sizeof(Sprite)*(sprite-sprites);
+	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
+	bx += sizeof(Sprite) * (sprite - sprites);
 	//
 }
 
@@ -840,7 +840,7 @@ void DreamGenContext::spriteupdate() {
 	sprites[0].hidden = data.byte(kRyanon);
 
 	Sprite *sprite = sprites;
-	for (size_t i=0; i<16; ++i) {
+	for (size_t i=0; i < 16; ++i) {
 		uint16 updateCallback = READ_LE_UINT16(&sprite->updateCallback);
 		if (updateCallback != 0xffff) {
 			sprite->w24 = sprite->w2;
@@ -867,20 +867,20 @@ void DreamGenContext::initman() {
 	// Recover es:bx from sprite
 	es = data.word(kBuffers);
 	bx = kSpritetable;
-	Sprite *sprites = (Sprite*)es.ptr(bx, sizeof(Sprite)*16);
-	bx += 32*(sprite-sprites);
+	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
+	bx += 32 * (sprite - sprites);
 	//
 }
 
-void DreamGenContext::mainmanCPP(Sprite* sprite) {
+void DreamGenContext::mainmanCPP(Sprite *sprite) {
 	push(es);
 	push(ds);
 
 	// Recover es:bx from sprite
 	es = data.word(kBuffers);
 	bx = kSpritetable;
-	Sprite *sprites = (Sprite*)es.ptr(bx, sizeof(Sprite)*16);
-	bx += 32*(sprite-sprites);
+	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
+	bx += 32 * (sprite - sprites);
 	//
 
 	if (data.byte(kResetmanxy) == 1) {
@@ -937,7 +937,7 @@ void DreamGenContext::mainmanCPP(Sprite* sprite) {
 }
 
 void DreamGenContext::walking() {
-	Sprite *sprite = (Sprite*)es.ptr(bx, sizeof(Sprite));
+	Sprite *sprite = (Sprite *)es.ptr(bx, sizeof(Sprite));
 
 	uint8 comp;
 	if (data.byte(kLinedirection) != 0) {
@@ -967,7 +967,7 @@ void DreamGenContext::walking() {
 	es = pop();
 }
 
-void DreamGenContext::aboutturn(Sprite* sprite) {
+void DreamGenContext::aboutturn(Sprite *sprite) {
 	if (data.byte(kTurndirection) == 1)
 		goto incdir;
 	else if ((int8)data.byte(kTurndirection) == -1)
@@ -998,20 +998,20 @@ decdir:
 	sprite->b29 = 0;
 }
 
-void DreamGenContext::backobject(Sprite* sprite) {
+void DreamGenContext::backobject(Sprite *sprite) {
 	push(es);
 	push(ds);
 
 	// Recover es:bx from sprite
 	es = data.word(kBuffers);
 	bx = kSpritetable;
-	Sprite *sprites = (Sprite*)es.ptr(bx, sizeof(Sprite)*16);
-	bx += 32*(sprite-sprites);
+	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
+	bx += 32 * (sprite - sprites);
 	//
 
 	ds = data.word(kSetdat);
 	di = READ_LE_UINT16(&sprite->obj_data);
-	ObjData* objData = (ObjData*)ds.ptr(di, 0);
+	ObjData *objData = (ObjData *)ds.ptr(di, 0);
 
 	if (sprite->delay != 0) {
 		--sprite->delay;
@@ -1040,7 +1040,7 @@ void DreamGenContext::backobject(Sprite* sprite) {
 	es = pop();
 }
 
-void DreamGenContext::constant(Sprite* sprite, ObjData* objData) {
+void DreamGenContext::constant(Sprite *sprite, ObjData *objData) {
 	++sprite->frame;
 	if (objData->b18[sprite->frame] == 255) {
 		sprite->frame = 0;
@@ -1050,13 +1050,13 @@ void DreamGenContext::constant(Sprite* sprite, ObjData* objData) {
 	sprite->b15 = b18;
 }
 
-void DreamGenContext::random(Sprite* sprite, ObjData* objData) {
+void DreamGenContext::random(Sprite *sprite, ObjData *objData) {
 	randomnum1();
 	uint16 r = ax;
 	sprite->b15 = objData->b18[r&7];
 }
 
-void DreamGenContext::doorway(Sprite* sprite, ObjData* objData) {
+void DreamGenContext::doorway(Sprite *sprite, ObjData *objData) {
 	data.byte(kDoorcheck1) = -24;
 	data.byte(kDoorcheck2) = 10;
 	data.byte(kDoorcheck3) = -30;
@@ -1064,7 +1064,7 @@ void DreamGenContext::doorway(Sprite* sprite, ObjData* objData) {
 	dodoor(sprite, objData);
 }
 
-void DreamGenContext::widedoor(Sprite* sprite, ObjData* objData) {
+void DreamGenContext::widedoor(Sprite *sprite, ObjData *objData) {
 	data.byte(kDoorcheck1) = -24;
 	data.byte(kDoorcheck2) = 24;
 	data.byte(kDoorcheck3) = -30;
@@ -1073,12 +1073,12 @@ void DreamGenContext::widedoor(Sprite* sprite, ObjData* objData) {
 }
 
 void DreamGenContext::dodoor() {
-	Sprite *sprite = (Sprite*)es.ptr(bx, sizeof(Sprite));
-	ObjData *objData = (ObjData*)ds.ptr(di, 0);
+	Sprite *sprite = (Sprite *)es.ptr(bx, sizeof(Sprite));
+	ObjData *objData = (ObjData *)ds.ptr(di, 0);
 	dodoor(sprite, objData);
 }
 
-void DreamGenContext::dodoor(Sprite* sprite, ObjData* objData) {
+void DreamGenContext::dodoor(Sprite *sprite, ObjData *objData) {
 	uint8 ryanx = data.byte(kRyanx);
 	uint8 ryany = data.byte(kRyany);
 	int8 deltax = ryanx - sprite->x;
@@ -1131,7 +1131,7 @@ shutdoor:
 		data.byte(kThroughdoor) = 0;
 }
 
-void DreamGenContext::steady(Sprite* sprite, ObjData* objData) {
+void DreamGenContext::steady(Sprite *sprite, ObjData *objData) {
 	uint8 b18 = objData->b18[0];
 	objData->b17 = b18;
 	sprite->b15 = b18;
@@ -1156,12 +1156,12 @@ void DreamGenContext::turnpathoffCPP(uint8 param) {
 }
 
 void DreamGenContext::liftsprite() {
-	Sprite *sprite = (Sprite*)es.ptr(bx, sizeof(Sprite));
-	ObjData *objData = (ObjData*)ds.ptr(di, 0);
+	Sprite *sprite = (Sprite *)es.ptr(bx, sizeof(Sprite));
+	ObjData *objData = (ObjData *)ds.ptr(di, 0);
 	liftsprite(sprite, objData);
 }
 
-void DreamGenContext::liftsprite(Sprite* sprite, ObjData* objData) {
+void DreamGenContext::liftsprite(Sprite *sprite, ObjData *objData) {
 	uint8 liftFlag = data.byte(kLiftflag);
 	if (liftFlag == 0) { //liftclosed
 		turnpathoffCPP(data.byte(kLiftpath));

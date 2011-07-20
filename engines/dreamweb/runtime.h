@@ -133,7 +133,7 @@ struct Segment {
 		return WordRef(data, index);
 	}
 
-	inline uint8* ptr(unsigned index, unsigned size) {
+	inline uint8 *ptr(unsigned index, unsigned size) {
 		assert(index + size <= data.size());
 		return data.begin() + index;
 	}
@@ -186,7 +186,7 @@ public:
 		_segment->assign(b, e);
 	}
 
-	inline uint8* ptr(unsigned index, unsigned size) {
+	inline uint8 *ptr(unsigned index, unsigned size) {
 		assert(_segment != 0);
 		return _segment->ptr(index, size);
 	}
@@ -487,7 +487,7 @@ public:
 	inline void _movsb(uint size, bool clear_cx = false) {
 		assert(size != 0xffff);
 		//fixme: add overlap and segment boundary check and rewrite
-		while(size--)
+		while (size--)
 			_movsb();
 		if (clear_cx)
 			cx = 0;
@@ -525,7 +525,7 @@ public:
 		assert(size != 0xffff);
 		uint8 *dst = es.ptr(di, size * 2);
 		di += 2 * size;
-		while(size--) {
+		while (size--) {
 			*dst++ = al;
 			*dst++ = ah;
 		}
