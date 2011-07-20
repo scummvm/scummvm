@@ -31,6 +31,7 @@
 #include "cge/vol.h"
 #include "cge/cfile.h"
 #include "cge/vga13h.h"
+#include "cge/cge_main.h"
 #include "common/system.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -108,7 +109,7 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 
 	*(uint16 *) v = kBmpCPY | dsiz;                 // data chunk hader
 	memset(v + 2, fill, dsiz);                      // data bytes
-	*(uint16 *)(v + lsiz - 2) = kBmpSKP | ((SCR_WID / 4) - dsiz);  // gap
+	*(uint16 *)(v + lsiz - 2) = kBmpSKP | ((kScrWidth / 4) - dsiz);  // gap
 
 	// Replicate lines
 	byte *destP;
@@ -122,7 +123,7 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 		Common::copy(v, v + psiz, destP);
 
 	HideDesc *b = (HideDesc *)(v + 4 * psiz);
-	b->_skip = (SCR_WID - _w) >> 2;
+	b->_skip = (kScrWidth - _w) >> 2;
 	b->_hide = _w >> 2;
 
 	// Replicate across the entire table
@@ -257,9 +258,9 @@ BMP_PTR Bitmap::code() {
 				}
 
 				bm += _w;
-				if (_w < SCR_WID) {
+				if (_w < kScrWidth) {
 					if (skip) {
-						cnt += (SCR_WID - j + 3) / 4;
+						cnt += (kScrWidth - j + 3) / 4;
 					} else {
 						cnt |= kBmpCPY;
 						if (_v)
@@ -268,7 +269,7 @@ BMP_PTR Bitmap::code() {
 						cp = (uint16 *) im;
 						im += 2;
 						skip = true;
-						cnt = (SCR_WID - j + 3) / 4;
+						cnt = (kScrWidth - j + 3) / 4;
 					}
 				}
 			}
@@ -298,14 +299,14 @@ BMP_PTR Bitmap::code() {
 	cnt = 0;
 	for (i = 0; i < _h; i++) {
 		if (_b[i]._skip == 0xFFFF) {                    // whole line is skipped
-			_b[i]._skip = (cnt + SCR_WID) >> 2;
+			_b[i]._skip = (cnt + kScrWidth) >> 2;
 			cnt = 0;
 		} else {
 			uint16 s = _b[i]._skip & ~3;
 			uint16 h = (_b[i]._hide + 3) & ~3;
 			_b[i]._skip = (cnt + s) >> 2;
 			_b[i]._hide = (h - s) >> 2;
-			cnt = SCR_WID - h;
+			cnt = kScrWidth - h;
 		}
 	}
 
@@ -324,7 +325,7 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 
 	m = _v;
 	r = static_cast<uint16>(x) % 4;
-	n0 = (SCR_WID * y + x) / 4, n = 0;
+	n0 = (kScrWidth * y + x) / 4, n = 0;
 
 	while (r) {
 		uint16 w, t;

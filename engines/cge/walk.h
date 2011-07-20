@@ -38,7 +38,7 @@ namespace CGE {
 #define MAP_ZCNT       20
 #define MAP_TOP        80
 #define MAP_HIG        80
-#define MAP_XGRID      (SCR_WID / MAP_XCNT)
+#define MAP_XGRID      (kScrWidth / MAP_XCNT)
 #define MAP_ZGRID      (MAP_HIG / MAP_ZCNT)
 #define MAX_FIND_LEVEL 3
 

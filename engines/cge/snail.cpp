@@ -107,11 +107,11 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 				SNPOST(SNPAUSE, -1, 72, NULL);              // chwilk‘...
 
 				SNPOST(SNSEQ, -1, 0, dup[1]);               // odstaw Go
-				SNPOST(SNSETXY, -1, 203 + SCR_WID * 49, dup[1]);
+				SNPOST(SNSETXY, -1, 203 + kScrWidth * 49, dup[1]);
 				SNPOST(SNSETZ, -1, 7, dup[1]);
 
 				SNPOST(SNSEQ, -1, 0, dup[2]);               // odstaw J†
-				SNPOST(SNSETXY, -1, 182 + SCR_WID * 62, dup[2]);
+				SNPOST(SNSETXY, -1, 182 + kScrWidth * 62, dup[2]);
 				SNPOST(SNSETZ, -1, 9, dup[2]);
 				_game = 0;
 				return;
@@ -274,7 +274,7 @@ void CGEEngine::contractSprite(Sprite *spr) {
 int CGEEngine::findPocket(Sprite *spr) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::findPocket(spr)");
 
-	for (int i = 0; i < POCKET_NX; i++)
+	for (int i = 0; i < kPocketNX; i++)
 	if (_pocket[i] == spr)
 		return i;
 	return -1;
@@ -295,7 +295,7 @@ void CGEEngine::selectPocket(int n) {
 			_pocLight->step(1);
 		}
 	}
-	_pocLight->gotoxy(POCKET_X + _pocPtr * POCKET_DX + POCKET_SX, POCKET_Y + POCKET_SY);
+	_pocLight->gotoxy(kPocketX + _pocPtr * kPocketDX + kPocketSX, kPocketY + kPocketSY);
 }
 
 void CGEEngine::pocFul() {
@@ -688,7 +688,7 @@ void CGEEngine::snSetXY(Sprite *spr, uint16 xy) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snSetXY(spr, %d)", xy);
 
 	if (spr)
-		spr->gotoxy(xy % SCR_WID, xy / SCR_WID);
+		spr->gotoxy(xy % kScrWidth, xy / kScrWidth);
 }
 
 void CGEEngine::snRelX(Sprite *spr, int x) {
@@ -806,7 +806,7 @@ void CGEEngine::snSound(Sprite *spr, int wav, int cnt) {
 		if (wav == -1)
 			_sound.stop();
 		else
-			_sound.play(_fx[wav], (spr) ? ((spr->_x + spr->_w / 2) / (SCR_WID / 16)) : 8, cnt);
+			_sound.play(_fx[wav], (spr) ? ((spr->_x + spr->_w / 2) / (kScrWidth / 16)) : 8, cnt);
 	}
 }
 
@@ -820,8 +820,8 @@ void CGEEngine::snKeep(Sprite *spr, int stp) {
 		_pocket[_pocPtr] = spr;
 		spr->_cave = 0;
 		spr->_flags._kept = true;
-		spr->gotoxy(POCKET_X + POCKET_DX * _pocPtr + POCKET_DX / 2 - spr->_w / 2,
-		          POCKET_Y + POCKET_DY / 2 - spr->_h / 2);
+		spr->gotoxy(kPocketX + kPocketDX * _pocPtr + kPocketDX / 2 - spr->_w / 2,
+		          kPocketY + kPocketDY / 2 - spr->_h / 2);
 		if (stp >= 0)
 			spr->step(stp);
 	}
@@ -1008,13 +1008,13 @@ void Snail::runCom() {
 					if (spr == _hero && spr->seqTest(-1))
 						spr->step(HTALK);
 					_text->say(_text->getText(snc->_val), spr);
-					_sys->_funDel = HEROFUN0;
+					_sys->_funDel = kHeroFun0;
 				}
 				break;
 			case SNINF      :
 				if (_talkEnable) {
 					_vm->inf(_text->getText(snc->_val));
-					_sys->_funDel = HEROFUN0;
+					_sys->_funDel = kHeroFun0;
 				}
 				break;
 			case SNTIME     :

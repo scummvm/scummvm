@@ -57,7 +57,7 @@ class Text {
 		char *_txt;
 	} *_cache;
 	int _size;
-	char _fileName[MAXPATH];
+	char _fileName[kPathMax];
 	char *load(int idx, int ref);
 	int find(int ref);
 public:

@@ -157,7 +157,7 @@ Startup::Startup() {
 
 
 const char *usrPath(const char *nam) {
-	static char buf[MAXPATH] = ".\\", *p = buf + 2;
+	static char buf[kPathMax] = ".\\", *p = buf + 2;
 #if defined(CD)
 	if (DriveCD(0)) {
 		bool ok = false;

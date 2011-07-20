@@ -57,7 +57,7 @@ namespace CGE {
 #define STACK_SIZ   2048
 #define SVGCHKSUM   (1956 + _now + _oldLev + _game + _music + _demoText)
 
-#define SVG0NAME    ("{{INIT}}" SVG_EXT)
+#define SVG0NAME    ("{{INIT}}" kSvgExt)
 #define SVG0FILE    INI_FILE
 
 uint16  _stklen = (STACK_SIZ * 2);
@@ -69,7 +69,7 @@ Sprite *_pocLight;
 EventManager *_eventManager;
 Keyboard *_keyboard;
 Mouse *_mouse;
-Sprite *_pocket[POCKET_NX];
+Sprite *_pocket[kPocketNX];
 Sprite *_sprite;
 Sprite *_miniCave;
 Sprite *_shadow;
@@ -127,7 +127,7 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 		s.syncAsByte(_barriers[i]._horz);
 		s.syncAsByte(_barriers[i]._vert);
 	}
-	for (i = 0; i < POCKET_NX; ++i)
+	for (i = 0; i < kPocketNX; ++i)
 		s.syncAsUint16LE(_pocref[i]);
 
 	if (s.isSaving()) {
@@ -291,7 +291,7 @@ void CGEEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &he
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
 	Graphics::Surface *s = _vga->_page[0];
-	::createThumbnail(thumb, (const byte *)s->pixels, SCR_WID, SCR_HIG, thumbPalette);
+	::createThumbnail(thumb, (const byte *)s->pixels, kScrWidth, kScrHeight, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
 	delete thumb;
 
@@ -312,7 +312,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 	Common::Serializer s(readStream, writeStream);
 
 	if (s.isSaving()) {
-		for (i = 0; i < POCKET_NX; i++) {
+		for (i = 0; i < kPocketNX; i++) {
 			register Sprite *s = _pocket[i];
 			_pocref[i] = (s) ? s->_ref : -1;
 		}
@@ -355,7 +355,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 				_vga->_spareQ->append(spr);
 			}
 
-			for (i = 0; i < POCKET_NX; i++) {
+			for (i = 0; i < kPocketNX; i++) {
 				register int r = _pocref[i];
 				delete _pocket[i];
 				_pocket[i] = (r < 0) ? NULL : _vga->_spareQ->locate(r);
@@ -701,7 +701,7 @@ void CGEEngine::switchCave(int cav) {
 }
 
 System::System(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
-	_funDel = HEROFUN0;
+	_funDel = kHeroFun0;
 	setPal();
 	tick();
 }
@@ -717,7 +717,7 @@ void System::setPal() {
 }
 
 void System::funTouch() {
-	uint16 n = (PAIN) ? HEROFUN1 : HEROFUN0;
+	uint16 n = (PAIN) ? kHeroFun1 : kHeroFun0;
 	if (_talk == NULL || n > _funDel)
 		_funDel = n;
 }
@@ -836,8 +836,8 @@ void System::touch(uint16 mask, int x, int y) {
 			return;
 		int cav = 0;
 		_infoLine->update(NULL);
-		if (y >= WORLD_HIG) {
-			if (x < BUTTON_X) {                           // select cave?
+		if (y >= kWorldHeight ) {
+			if (x < kButtonX) {                           // select cave?
 				if (y >= CAVE_Y && y < CAVE_Y + CAVE_NY * CAVE_DY &&
 				        x >= CAVE_X && x < CAVE_X + CAVE_NX * CAVE_DX && !_vm->_game) {
 					cav = ((y - CAVE_Y) / CAVE_DY) * CAVE_NX + (x - CAVE_X) / CAVE_DX + 1;
@@ -847,9 +847,9 @@ void System::touch(uint16 mask, int x, int y) {
 					cav = 0;
 				}
 			} else if (mask & L_UP) {
-				if (y >= POCKET_Y && y < POCKET_Y + POCKET_NY * POCKET_DY &&
-				        x >= POCKET_X && x < POCKET_X + POCKET_NX * POCKET_DX) {
-					int n = ((y - POCKET_Y) / POCKET_DY) * POCKET_NX + (x - POCKET_X) / POCKET_DX;
+				if (y >= kPocketY && y < kPocketY + kPocketNY * kPocketDY &&
+				    x >= kPocketX && x < kPocketX + kPocketNX * kPocketDX) {
+					int n = ((y - kPocketY) / kPocketDY) * kPocketNX + (x - kPocketX) / kPocketDX;
 					_vm->selectPocket(n);
 				}
 			}
@@ -889,7 +889,7 @@ void System::tick() {
 				else if (Startup::_core >= CORE_MID) {
 					int n = new_random(100);
 					if (n > 96)
-						_vm->heroCover(6 + (_hero->_x + _hero->_w / 2 < SCR_WID / 2));
+						_vm->heroCover(6 + (_hero->_x + _hero->_w / 2 < kScrWidth / 2));
 					else {
 						if (n > 90)
 							_vm->heroCover(5);
@@ -904,7 +904,7 @@ void System::tick() {
 			}
 			funTouch();
 		}
-	_time = SYSTIMERATE;
+	_time = kSystemRate;
 }
 
 void CGEEngine::switchColorMode() {
@@ -1106,7 +1106,7 @@ void CGEEngine::optionTouch(int opt, uint16 mask) {
 		else if (mask & R_UP)
 			if (!Mixer::_appear) {
 				Mixer::_appear = true;
-				new Mixer(this, BUTTON_X, BUTTON_Y);
+				new Mixer(this, kButtonX, kButtonY);
 			}
 		break;
 	case 3 :
@@ -1137,7 +1137,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 		if ((mask & R_UP) && _snail->idle()) {
 			Sprite *ps = (_pocLight->_seqPtr) ? _pocket[_vm->_pocPtr] : NULL;
 			if (ps) {
-				if (_flags._kept || _hero->distance(this) < MAX_DISTANCE) {
+				if (_flags._kept || _hero->distance(this) < kDistMax) {
 					if (works(ps)) {
 						_vm->feedSnail(ps, kTake);
 					} else
@@ -1149,7 +1149,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 				if (_flags._kept)
 					mask |= L_UP;
 				else {
-					if (_hero->distance(this) < MAX_DISTANCE) {
+					if (_hero->distance(this) < kDistMax) {
 						///
 						if (_flags._port) {
 							if (_vm->findPocket(NULL) < 0)
@@ -1177,7 +1177,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 		if ((mask & L_UP) && _snail->idle()) {
 			if (_flags._kept) {
 				int n;
-				for (n = 0; n < POCKET_NX; n++) {
+				for (n = 0; n < kPocketNX; n++) {
 					if (_pocket[n] == this) {
 						_vm->selectPocket(n);
 						break;
@@ -1200,7 +1200,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 	static const char *Type[] = { "DEAD", "AUTO", "WALK", "NEWTON", "LISSAJOUS",
 	                              "FLY", NULL
 	                            };
-	char line[LINE_MAX];
+	char line[kLineMax];
 
 	int shpcnt = 0;
 	int type = 0; // DEAD
@@ -1345,7 +1345,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 
 
 void CGEEngine::loadScript(const char *fname) {
-	char line[LINE_MAX];
+	char line[kLineMax];
 	char *SpN;
 	int SpI, SpA, SpX, SpY, SpZ;
 	bool BkG = false;
@@ -1483,7 +1483,7 @@ void CGEEngine::loadUser() {
 			error("Creating setup savegames not supported");
 		}
 	}
-	loadScript(progName(IN0_EXT));
+	loadScript(progName(kIn0Ext));
 }
 
 
@@ -1538,7 +1538,7 @@ void CGEEngine::runGame() {
 
 		uint8 *ptr = (uint8 *) &*_mini;
 		if (ptr != NULL) {
-			loadSprite("MINI", -1, 0, MINI_X, MINI_Y);
+			loadSprite("MINI", -1, 0, kMiniX, kMiniY);
 			expandSprite(_miniCave = _sprite);  // NULL is ok
 			if (_miniCave) {
 				_miniCave->_flags._kill = false;
@@ -1567,7 +1567,7 @@ void CGEEngine::runGame() {
 		}
 	}
 
-	_infoLine->gotoxy(INFO_X, INFO_Y);
+	_infoLine->gotoxy(kInfoX, kInfoY);
 	_infoLine->_flags._tran = true;
 	_infoLine->update(NULL);
 	_vga->_showQ->insert(_infoLine);
@@ -1579,7 +1579,7 @@ void CGEEngine::runGame() {
 	_horzLine->_z = 126;
 	_vga->_showQ->insert(_horzLine);
 
-	_mouse->_busy = _vga->_spareQ->locate(BUSY_REF);
+	_mouse->_busy = _vga->_spareQ->locate(kBusyRef);
 	if (_mouse->_busy)
 		expandSprite(_mouse->_busy);
 
@@ -1688,7 +1688,7 @@ bool CGEEngine::showTitle(const char *name) {
 
 	if (Startup::_mode < 2) {
 		if (_isDemo) {
-			strcpy(_usrFnam, progName(SVG_EXT));
+			strcpy(_usrFnam, progName(kSvgExt));
 			usr_ok = true;
 		} else {
 			//-----------------------------------------
@@ -1792,7 +1792,7 @@ void CGEEngine::cge_main() {
 			movie("X03");
 	} else {
 		if (Startup::_mode < 2)
-			movie(LGO_EXT);
+			movie(kLgoExt);
 
 		if (showTitle("WELCOME")) {
 			if ((!_isDemo) && (Startup::_mode == 1))
