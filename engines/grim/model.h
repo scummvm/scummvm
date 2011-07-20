@@ -47,12 +47,13 @@ struct Sprite {
 class Model : public Object {
 public:
 	// Construct a 3D model from the given data.
-	Model(const Common::String &filename, const char *data, int len, CMap *cmap);
+	Model(const Common::String &filename, const char *data, int len, CMap *cmap, Model *parent = NULL);
 	void loadBinary(const char *&data, CMap *cmap);
 	void loadText(TextSplitter *ts, CMap *cmap);
 	void loadEMI(Common::MemoryReadStream &ms);
 	void reload(CMap *cmap);
 	void draw() const;
+	Material *findMaterial(const char *name) const;
 
 	~Model();
 
@@ -146,16 +147,19 @@ public:
 		Mesh *_meshes;
 	};
 
+	void loadMaterial(int index, CMap *cmap);
+
+	Model *_parent;
 	int _numMaterials;
 	char (*_materialNames)[32];
-	ObjectPtr<Material> *_materials;
+	Material **_materials;
+	bool *_materialsShared;
 	Graphics::Vector3d _insertOffset;
 	int _numGeosets;
 	Geoset *_geosets;
 	float _radius;
 	int _numHierNodes;
 	HierNode *_rootHierNode;
-	HierNode *_headNode;
 };
 
 } // end of namespace Grim

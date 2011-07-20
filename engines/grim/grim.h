@@ -31,6 +31,7 @@
 #include "engines/advancedDetector.h"
 
 #include "engines/grim/textobject.h"
+#include "engines/grim/iris.h"
 
 namespace Grim {
 
@@ -118,6 +119,7 @@ public:
 	bool getFlipEnable() { return _flipEnable; }
 	void refreshDrawMode() { _refreshDrawNeeded = true; }
 	void drawPrimitives();
+	void playIrisAnimation(Iris::Direction dir, int x, int y, int time);
 
 	void mainLoop();
 	unsigned getFrameStart() const { return _frameStart; }
@@ -141,6 +143,7 @@ public:
 
 	Scene *findScene(const Common::String &name);
 	void setSceneLock(const char *name, bool lockStatus);
+	Scene *loadScene(const Common::String &name);
 	void setScene(const char *name);
 	void setScene(Scene *scene);
 	Scene *getCurrScene() { return _currScene; }
@@ -242,6 +245,8 @@ private:
 	void savegameCallback();
 	void storeSaveGameImage(SaveGame *savedState);
 
+	void clearEventQueue();
+
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;
 	Common::String _savegameFileName;
@@ -256,6 +261,7 @@ private:
 	char _fps[8];
 	bool _doFlip;
 	bool _refreshShadowMask;
+	bool _shortFrame;
 
 	unsigned _frameStart, _frameTime, _movieTime;
 	unsigned int _frameTimeCollection;
@@ -271,6 +277,7 @@ private:
 
 	Actor *_selectedActor;
 	Actor *_talkingActor;
+	Iris *_iris;
 
 	SceneListType _scenes;
 	ActorListType _actors;

@@ -75,7 +75,7 @@ public:
 	~Imuse();
 
 	bool startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority, Track *otherTrack);
-	void startVoice(const char *soundName, int volume = 127, int pan = 64);
+	bool startVoice(const char *soundName, int volume = 127, int pan = 64);
 	void startMusic(const char *soundName, int hookId, int volume, int pan);
 	void startMusicWithOtherPos(const char *soundName, int hookId, int volume, int pan, Track *otherTrack);
 	void startSfx(const char *soundName, int priority = 127);

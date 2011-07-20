@@ -8,44 +8,49 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
 
-#ifndef GRIM_LOCALIZE_H
-#define GRIM_LOCALIZE_H
-
-#include "common/array.h"
+#ifndef GRIM_IRIS_H
+#define GRIM_IRIS_H
 
 namespace Grim {
 
-class Localizer {
+class SaveGame;
+
+class Iris {
 public:
-	Common::String localize(const char *str) const;
-
-	Localizer();
-	~Localizer();
-
-	struct LocaleEntry {
-		char *text;
-		char *translation;
+	enum Direction {
+		Open = 0,
+		Close = 1
 	};
 
+	Iris();
+	~Iris();
+
+	void play(Direction dir, int x, int y, int lenght);
+	void draw();
+
+	void saveState(SaveGame *state) const;
+	void restoreState(SaveGame *state);
+
 private:
-	char *_data;
-
-	Common::Array<LocaleEntry> _entries;
+	bool _playing;
+	Direction _direction;
+	int _x;
+	int _y;
+	int _lenght;
+	int _currTime;
 };
-
-extern Localizer *g_localizer;
 
 } // end of namespace Grim
 

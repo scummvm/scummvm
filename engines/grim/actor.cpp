@@ -626,17 +626,6 @@ void Actor::walkForward() {
 	float dist = g_grim->getPerSecond(_walkRate);
 	_walking = false;
 
-	// HACK: Limit the speed of the movement. Find a better way??
-	// When the game starts or the scene changes the value of g_grim->frameRate() can
-	// be big (seconds), and so perSecond().
-	// This is a problem for the set "ly", since unicycle_man
-	// uses walkForward to move as soon as the set starts and without this trick
-	// it would result in him making big steps and jumping over his destination point.
-	float maxDist = _walkRate / 3.f;
-	if ((_walkRate > 0 && dist > maxDist) || (_walkRate < 0 && dist < maxDist)) {
-		dist = maxDist;
-	}
-
 	float yaw_rad = _yaw * (LOCAL_PI / 180.f), pitch_rad = _pitch * (LOCAL_PI / 180.f);
 	//float yaw;
 	Graphics::Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
@@ -829,54 +818,52 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 	assert(msg);
 	assert(msgId);
 
-	Common::String textName(msgId);
-	textName += ".txt";
-
 	if (msgId[0] == 0) {
 		error("Actor::sayLine: No message ID for text");
 		return;
 	}
 
-	// During Fullscreen movies SayLine is called for text display only
+	// During Fullscreen movies SayLine is usually called for text display only.
+	// The movie with Charlie screaming after Manny put the sheet on him instead
+	// uses sayLine for the voice too.
 	// However, normal SMUSH movies may call SayLine, for example:
 	// When Domino yells at Manny (a SMUSH movie) he does it with
 	// a SayLine request rather than as part of the movie!
-	if (!g_movie->isPlaying() || g_grim->getMode() == ENGINE_MODE_NORMAL) {
-		Common::String soundName = msgId;
+
+	Common::String soundName = msgId;
+	soundName += ".wav";
+
+	if (_talkSoundName == soundName)
+		return;
+
+	if (g_imuse->getSoundStatus(_talkSoundName.c_str()) || msg[0] == 0)
+		shutUp();
+
+	_talkSoundName = soundName;
+	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
+		if (g_imuse->startVoice(_talkSoundName.c_str()) && g_grim->getCurrScene()) {
+			g_grim->getCurrScene()->setSoundPosition(_talkSoundName.c_str(), _pos);
+		}
+	}
+
+	// If the actor is clearly not visible then don't try to play the lip sync
+	if (_visible && (!g_movie->isPlaying() || g_grim->getMode() == ENGINE_MODE_NORMAL)) {
 		Common::String soundLip = msgId;
-		soundName += ".wav";
 		soundLip += ".lip";
 
-		if (_talkSoundName == soundName)
-			return;
+		// Sometimes actors speak offscreen before they, including their
+		// talk chores are initialized.
+		// For example, when reading the work order (a LIP file exists for no reason).
+		// Also, some lip sync files have no entries
+		// In these cases, revert to using the mumble chore.
+		if (g_grim->getSpeechMode() != GrimEngine::TextOnly)
+			_lipSync = g_resourceloader->getLipSync(soundLip);
+		// If there's no lip sync file then load the mumble chore if it exists
+		// (the mumble chore doesn't exist with the cat races announcer)
+		if (!_lipSync && _mumbleChore != -1)
+			_mumbleCostume->playChoreLooping(_mumbleChore);
 
-		if (g_imuse->getSoundStatus(_talkSoundName.c_str()) || msg[0] == 0)
-			shutUp();
-
-		_talkSoundName = soundName;
-		if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
-			g_imuse->startVoice(_talkSoundName.c_str());
-			if (g_grim->getCurrScene()) {
-				g_grim->getCurrScene()->setSoundPosition(_talkSoundName.c_str(), _pos);
-			}
-		}
-
-		// If the actor is clearly not visible then don't try to play the lip sync
-		if (_visible) {
-			// Sometimes actors speak offscreen before they, including their
-			// talk chores are initialized.
-			// For example, when reading the work order (a LIP file exists for no reason).
-			// Also, some lip sync files have no entries
-			// In these cases, revert to using the mumble chore.
-			if (g_grim->getSpeechMode() != GrimEngine::TextOnly)
-				_lipSync = g_resourceloader->getLipSync(soundLip);
-			// If there's no lip sync file then load the mumble chore if it exists
-			// (the mumble chore doesn't exist with the cat races announcer)
-			if (!_lipSync && _mumbleChore != -1)
-				_mumbleCostume->playChoreLooping(_mumbleChore);
-
-			_talkAnim = -1;
-		}
+		_talkAnim = -1;
 	}
 
 	g_grim->setTalkingActor(this);
@@ -949,6 +936,10 @@ void Actor::shutUp() {
 		_lipSync = NULL;
 	} else if (_mumbleChore >= 0 && _mumbleCostume->isChoring(_mumbleChore, false) >= 0) {
 		_mumbleCostume->stopChore(_mumbleChore);
+	}
+	if (_talkChore[0] >= 0) {
+		// _talkChore[0] is *_stop_talk
+		_talkCostume[0]->playChore(_talkChore[0]);
 	}
 
 	if (_sayLineText) {
@@ -1189,13 +1180,19 @@ void Actor::update() {
 		if (posSound != -1) {
 			int anim = _lipSync->getAnim(posSound);
 			if (_talkAnim != anim) {
-				if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-					_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 				if (anim != -1) {
-					_talkAnim = anim;
-					if (_talkChore[_talkAnim] >= 0) {
+					if (_talkChore[anim] >= 0) {
+						if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
+							_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+
+						_talkAnim = anim;
 						_talkCostume[_talkAnim]->playChoreLooping(_talkChore[_talkAnim]);
 					}
+				} else {
+					if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
+						_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+
+					_talkCostume[0]->playChore(_talkChore[0]);
 				}
 			}
 		}
@@ -1241,7 +1238,7 @@ void Actor::draw() {
 		Costume *costume = _costumeStack.back();
 		if (!g_driver->isHardwareAccelerated()) {
 			for (int l = 0; l < 5; l++) {
-				if (!_shadowArray[l].active)
+				if (!shouldDrawShadow(l))
 					continue;
 				g_driver->setShadow(&_shadowArray[l]);
 				g_driver->setShadowMode();
@@ -1262,7 +1259,7 @@ void Actor::draw() {
 			g_driver->finishActorDraw();
 
 			for (int l = 0; l < 5; l++) {
-				if (!_shadowArray[l].active)
+				if (!shouldDrawShadow(l))
 					continue;
 				g_driver->setShadow(&_shadowArray[l]);
 				g_driver->setShadowMode();
@@ -1287,8 +1284,6 @@ void Actor::undraw(bool /*visible*/) {
 		shutUp();
 }
 
-#define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
-
 void Actor::setShadowPlane(const char *n) {
 	assert(_activeShadowSlot != -1);
 
@@ -1306,13 +1301,31 @@ void Actor::addShadowPlane(const char *n, Scene *scene, int shadowId) {
 		// Naranja is dead, because the scene changes back and forth few times and so
 		// the scenes' sectors are deleted while they are still keeped by the actors.
 		Sector *sector = scene->getSectorBase(i);
-		if (strmatch(sector->getName(), n)) {
+		if (!strcmp(sector->getName(), n)) {
 			Plane p = { scene->getName(), new Sector(*sector) };
 			_shadowArray[shadowId].planeList.push_back(p);
 			g_grim->flagRefreshShadowMask(true);
 			return;
 		}
 	}
+}
+
+bool Actor::shouldDrawShadow(int shadowId) {
+	Shadow *shadow = &_shadowArray[shadowId];
+	if (!shadow->active)
+		return false;
+
+	// Don't draw a shadow if the actor is behind the shadow plane.
+	Sector *sector = shadow->planeList.front().sector;
+	Graphics::Vector3d n = sector->getNormal();
+	Graphics::Vector3d p = sector->getVertices()[0];
+	float d = -(n.x() * p.x() + n.y() * p.y() + n.z() * p.z());
+
+	p = getPos();
+	if (n.x() * p.x() + n.y() * p.y() + n.z() * p.z() + d < 0.f)
+		return true;
+	else
+		return false;
 }
 
 void Actor::addShadowPlane(const char *n) {

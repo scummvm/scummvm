@@ -45,6 +45,9 @@
 #include "common/fs.h"
 #include "common/config-manager.h"
 
+#include "gui/error.h"
+#include "gui/gui-manager.h"
+
 #include "engines/engine.h"
 
 #include "engines/grim/grim.h"
@@ -381,6 +384,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_listFilesIter = NULL;
 	_savedState = NULL;
 	_fps[0] = 0;
+	_iris = new Iris();
 
 	Color *c = new Color(0, 0, 0);
 	registerColor(c);
@@ -455,6 +459,7 @@ GrimEngine::~GrimEngine() {
 	g_resourceloader = NULL;
 	delete g_driver;
 	g_driver = NULL;
+	delete _iris;
 }
 
 Common::Error GrimEngine::run() {
@@ -485,6 +490,9 @@ Common::Error GrimEngine::run() {
 #endif
 
 	g_driver->setupScreen(640, 480, fullscreen);
+
+	// refresh the theme engine so that we can show the gui overlay without it crashing.
+	GUI::GuiManager::instance().theme()->refresh();
 
 	BitmapPtr splash_bm;
 	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
@@ -858,6 +866,10 @@ void GrimEngine::drawPrimitives() {
 	}
 }
 
+void GrimEngine::playIrisAnimation(Iris::Direction dir, int x, int y, int time) {
+	_iris->play(dir, x, y, time);
+}
+
 void GrimEngine::luaUpdate() {
 	if (_savegameLoadRequest || _savegameSaveRequest)
 		return;
@@ -870,6 +882,10 @@ void GrimEngine::luaUpdate() {
 	}
 	_frameTime = newStart - _frameStart;
 	_frameStart = newStart;
+
+	if (_mode == ENGINE_MODE_DRAW || _mode == ENGINE_MODE_PAUSE || _shortFrame) {
+		_frameTime = 0;
+	}
 
 	_frameTimeCollection += _frameTime;
 	if (_frameTimeCollection > 10000) {
@@ -888,7 +904,7 @@ void GrimEngine::luaUpdate() {
 	// Run asynchronous tasks
 	lua_runtasks();
 
-	if (_mode == ENGINE_MODE_NORMAL) {
+	if (_mode == ENGINE_MODE_NORMAL || _mode == ENGINE_MODE_SMUSH) {
 		// Update the actors. Do it here so that we are sure to react asap to any change
 		// in the actors state caused by lua.
 		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
@@ -996,6 +1012,7 @@ void GrimEngine::updateDisplayScene() {
 		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 
 		drawPrimitives();
+		_iris->draw();
 	} else if (_mode == ENGINE_MODE_DRAW) {
 		_doFlip = false;
 		_prevSmushFrame = 0;
@@ -1031,9 +1048,17 @@ void GrimEngine::mainLoop() {
 	_frameTimeCollection = 0;
 	_prevSmushFrame = 0;
 	_refreshShadowMask = false;
+	_shortFrame = false;
+	bool resetShortFrame = false;
 
 	for (;;) {
 		uint32 startTime = g_system->getMillis();
+		if (_shortFrame) {
+			if (resetShortFrame) {
+				_shortFrame = false;
+			}
+			resetShortFrame = !resetShortFrame;
+		}
 
 		if (_savegameLoadRequest) {
 			savegameRestore();
@@ -1118,7 +1143,7 @@ void GrimEngine::savegameRestore() {
 	} else {
 		filename = _savegameFileName;
 	}
-	_savedState = new SaveGame(filename, false);
+	_savedState = SaveGame::openForLoading(filename);
 	if (!_savedState || _savedState->saveVersion() != SaveGame::SAVEGAME_VERSION)
 		return;
 	g_imuse->stopAllSounds();
@@ -1150,6 +1175,7 @@ void GrimEngine::savegameRestore() {
 	g_driver->restoreState(_savedState);
 	g_imuse->restoreState(_savedState);
 	g_movie->restoreState(_savedState);
+	_iris->restoreState(_savedState);
 	lua_Restore(_savedState);
 
 	delete _savedState;
@@ -1163,6 +1189,9 @@ void GrimEngine::savegameRestore() {
 	g_imuse->pause(false);
 	g_movie->pause(false);
 	printf("GrimEngine::savegameRestore() finished.\n");
+
+	_shortFrame = true;
+	clearEventQueue();
 }
 
 template<typename T>
@@ -1292,9 +1321,12 @@ void GrimEngine::savegameSave() {
 	} else {
 		strcpy(filename, _savegameFileName.c_str());
 	}
-	_savedState = new SaveGame(filename, true);
-	if (!_savedState)
+	_savedState = SaveGame::openForSaving(filename);
+	if (!_savedState) {
+		//TODO: Translate this!
+		GUI::displayErrorDialog("Error: the game could not be saved.");
 		return;
+	}
 
 	storeSaveGameImage(_savedState);
 
@@ -1316,6 +1348,7 @@ void GrimEngine::savegameSave() {
 	g_driver->saveState(_savedState);
 	g_imuse->saveState(_savedState);
 	g_movie->saveState(_savedState);
+	_iris->saveState(_savedState);
 	lua_Save(_savedState);
 
 	delete _savedState;
@@ -1323,6 +1356,9 @@ void GrimEngine::savegameSave() {
 	g_imuse->pause(false);
 	g_movie->pause(false);
 	printf("GrimEngine::savegameSave() finished.\n");
+
+	_shortFrame = true;
+	clearEventQueue();
 }
 
 template<typename T>
@@ -1448,32 +1484,28 @@ void GrimEngine::setSceneLock(const char *name, bool lockStatus) {
 	scene->_locked = lockStatus;
 }
 
-void GrimEngine::setScene(const char *name) {
-	Scene *scene = findScene(name);
-	Scene *lastScene = _currScene;
+Scene *GrimEngine::loadScene(const Common::String &name) {
+	Scene *s = findScene(name);
 
-	// If the scene already exists then use the existing data
-	if (scene) {
-		setScene(scene);
-		return;
+	if (!s) {
+		Common::String filename(name);
+		// EMI-scripts refer to their .setb files as .set
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			filename += "b";
+		}
+		Block *b = g_resourceloader->getFileBlock(filename);
+		if (!b)
+			warning("Could not find scene file %s", name.c_str());
+		s = new Scene(name, b->getData(), b->getLen());
+		registerScene(s);
+		delete b;
 	}
-	Common::String filename(name);
-	// EMI-scripts refer to their .setb files as .set
-	if (g_grim->getGameType() == GType_MONKEY4) {
-		filename += "b";
-	}
-	Block *b = g_resourceloader->getFileBlock(filename);
-	if (!b)
-		warning("Could not find scene file %s", name);
-	_currScene = new Scene(name, b->getData(), b->getLen());
-	registerScene(_currScene);
-	_currScene->setSoundParameters(20, 127);
-	// should delete the old scene after creating the new one
-	if (lastScene && !lastScene->_locked) {
-		removeScene(lastScene);
-		delete lastScene;
-	}
-	delete b;
+
+	return s;
+}
+
+void GrimEngine::setScene(const char *name) {
+	setScene(loadScene(name));
 }
 
 void GrimEngine::setScene(Scene *scene) {
@@ -1488,6 +1520,7 @@ void GrimEngine::setScene(Scene *scene) {
 		removeScene(lastScene);
 		delete lastScene;
 	}
+	_shortFrame = true;
 }
 
 void GrimEngine::makeCurrentSetup(int num) {
@@ -1702,6 +1735,12 @@ void GrimEngine::killScenes() {
 
 int GrimEngine::sceneId(Scene *s) const {
 	return s->_id;
+}
+
+void GrimEngine::clearEventQueue() {
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+	}
 }
 
 } // end of namespace Grim

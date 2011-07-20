@@ -63,7 +63,7 @@ public:
 	Font *loadFont(const Common::String &fname);
 	KeyframeAnim *loadKeyframe(const Common::String &fname);
 	Material *loadMaterial(const Common::String &fname, CMap *c);
-	Model *loadModel(const Common::String &fname, CMap *c);
+	Model *loadModel(const Common::String &fname, CMap *c, Model *parent = NULL);
 	LipSync *loadLipSync(const Common::String &fname);
 	Block *getFileBlock(const Common::String &filename) const;
 	Block *getBlock(const char *filename);
@@ -73,13 +73,11 @@ public:
 	bool getFileExists(const Common::String &filename) const;
 	int getFileLength(const char *filename) const;
 
-	MaterialPtr getMaterial(const char *filename, CMap *c);
 	ModelPtr getModel(const Common::String &fname, CMap *c);
 	CMapPtr getColormap(const Common::String &fname);
 	KeyframeAnimPtr getKeyframe(const Common::String &fname);
 	FontPtr getFont(const Common::String &fname);
 	LipSyncPtr getLipSync(const Common::String &fname);
-	void uncacheMaterial(Material *m);
 	void uncacheModel(Model *m);
 	void uncacheColormap(CMap *c);
 	void uncacheKeyframe(KeyframeAnim *kf);
@@ -105,7 +103,6 @@ private:
 	bool _cacheDirty;
 	int32 _cacheMemorySize;
 
-	Common::List<Material *> _materials;
 	Common::List<Model *> _models;
 	Common::List<CMap *> _colormaps;
 	Common::List<KeyframeAnim *> _keyframeAnims;

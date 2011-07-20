@@ -563,6 +563,10 @@ void GfxTinyGL::drawHierachyNode(const Model::HierNode *node) {
 		node->_sibling->draw();
 }
 
+void GfxTinyGL::enableLights() {
+	tglEnable(TGL_LIGHTING);
+}
+
 void GfxTinyGL::disableLights() {
 	tglDisable(TGL_LIGHTING);
 }
@@ -797,7 +801,7 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 	}
 }
 
-void GfxTinyGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
+void GfxTinyGL::createMaterial(MaterialData *material, const char *data, const CMap *cmap) {
 	material->_textures = new TGLuint[material->_numImages];
 	tglGenTextures(material->_numImages, (TGLuint *)material->_textures);
 	char *texdata = new char[material->_width * material->_height * 4];
@@ -829,17 +833,17 @@ void GfxTinyGL::createMaterial(Material *material, const char *data, const CMap 
 }
 
 void GfxTinyGL::selectMaterial(const Material *material) {
-	TGLuint *textures = (TGLuint *)material->_textures;
-	tglBindTexture(TGL_TEXTURE_2D, textures[material->_currImage]);
+	TGLuint *textures = (TGLuint *)material->getData()->_textures;
+	tglBindTexture(TGL_TEXTURE_2D, textures[material->getCurrentImage()]);
 	tglPushMatrix();
 	tglMatrixMode(TGL_TEXTURE);
 	tglLoadIdentity();
-	tglScalef(1.0f / material->_width, 1.0f / material->_height, 1);
+	tglScalef(1.0f / material->getData()->_width, 1.0f / material->getData()->_height, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPopMatrix();
 }
 
-void GfxTinyGL::destroyMaterial(Material *material) {
+void GfxTinyGL::destroyMaterial(MaterialData *material) {
 	tglDeleteTextures(material->_numImages, (TGLuint *)material->_textures);
 	delete[] (TGLuint *)material->_textures;
 }

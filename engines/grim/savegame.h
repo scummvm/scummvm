@@ -35,7 +35,8 @@ class Color;
 
 class SaveGame {
 public:
-	SaveGame(const Common::String &filename, bool saving);
+	static SaveGame *openForLoading(const Common::String &filename);
+	static SaveGame *openForSaving(const Common::String &filename);
 	~SaveGame();
 
 	static int SAVEGAME_VERSION;
@@ -69,6 +70,8 @@ public:
 	void checkAlloc(int size);
 
 protected:
+	SaveGame();
+
 	int _version;
 	bool _saving;
 	Common::InSaveFile *_inSaveFile;

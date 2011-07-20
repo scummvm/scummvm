@@ -723,7 +723,7 @@ void L1_GetCurrentSetup() {
 	const char *name = lua_getstring(nameObj);
 
 	// FIXME there are some big difference here !
-	Scene *scene = g_grim->findScene(name);
+	Scene *scene = g_grim->loadScene(name);
 	if (!scene) {
 		warning("GetCurrentSetup() Requested scene (%s) is not loaded", name);
 		lua_pushnil();
@@ -777,9 +777,6 @@ void L1_GetShrinkPos() {
 	g_grim->getCurrScene()->findClosestSector(pos, &sector, &pos);
 	g_grim->getCurrScene()->unshrinkBoxes();
 
-	// TODO
-	//UnShrinkBoxes();
-	// lua_pusnumber 1, 2, 3 or lua_pushnil
 	if (sector) {
 		lua_pushnumber(pos.x());
 		lua_pushnumber(pos.y());
@@ -787,8 +784,6 @@ void L1_GetShrinkPos() {
 	} else {
 		lua_pushnil();
 	}
-
-	warning("Stub function GetShrinkPos(%g,%g,%g,%g) called", x, y, z, r);
 }
 
 void L1_FileFindDispose() {
@@ -930,7 +925,7 @@ void L1_SendObjectToBack() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
 		ObjectState *state =  getobjectstate(param);
-		g_grim->getCurrScene()->moveObjectStateToFirst(state);
+		g_grim->getCurrScene()->moveObjectStateToBack(state);
 	}
 }
 
@@ -938,7 +933,7 @@ void L1_SendObjectToFront() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
 		ObjectState *state =  getobjectstate(param);
-		g_grim->getCurrScene()->moveObjectStateToLast(state);
+		g_grim->getCurrScene()->moveObjectStateToFront(state);
 	}
 }
 
@@ -967,7 +962,7 @@ void L1_GetSaveGameImage() {
 		return;
 	}
 	const char *filename = lua_getstring(param);
-	SaveGame *savedState = new SaveGame(filename, false);
+	SaveGame *savedState = SaveGame::openForLoading(filename);
 	if (!savedState || savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
 		lua_pushnil();
 		return;
@@ -1021,7 +1016,7 @@ void L1_GetSaveGameData() {
 	if (!lua_isstring(param))
 		return;
 	const char *filename = lua_getstring(param);
-	SaveGame *savedState = new SaveGame(filename, false);
+	SaveGame *savedState = SaveGame::openForLoading(filename);
 	lua_Object result = lua_createtable();
 
 	if (!savedState || savedState->saveVersion() != SaveGame::SAVEGAME_VERSION) {
@@ -1299,8 +1294,6 @@ STUB_FUNC(L1_NukeResources)
 STUB_FUNC(L1_ResetTextures)
 STUB_FUNC(L1_AttachToResources)
 STUB_FUNC(L1_DetachFromResources)
-STUB_FUNC(L1_IrisUp)
-STUB_FUNC(L1_IrisDown)
 STUB_FUNC(L1_SetActorClipPlane)
 STUB_FUNC(L1_SetActorClipActive)
 STUB_FUNC(L1_SetActorCollisionScale)

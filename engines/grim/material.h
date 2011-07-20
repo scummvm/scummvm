@@ -27,11 +27,24 @@
 
 namespace Grim {
 
-class CMAp;
+class MaterialData {
+public:
+	MaterialData(const Common::String &filename, const char *data, int len, CMap *cmap);
+	~MaterialData();
+
+	static MaterialData *getMaterialData(const Common::String &filename, const char *data, int len, CMap *cmap);
+	static Common::List<MaterialData *> *_materials;
+
+	Common::String _fname;
+	const ObjectPtr<CMap> _cmap;
+	int _numImages;
+	int _width, _height;
+	void *_textures;
+	int _refCount;
+};
 
 class Material : public Object {
 public:
-	Material() { _width = 0; }
 	// Load a texture from the given data.
 	Material(const Common::String &filename, const char *data, int len, CMap *cmap);
 
@@ -41,18 +54,16 @@ public:
 	// Set which image in an animated texture to use
 	void setNumber(int n) { _currImage = n; }
 
-	int getNumImages() const { return _numImages; }
-	int getCurrentImage() const { return _currImage; }
-	const Common::String &getFilename() { return _fname; }
+	int getNumImages() const;
+	int getCurrentImage() const;
+	const Common::String &getFilename() const;
+	MaterialData *getData() const;
 
 	~Material();
 
-	Common::String _fname;
-
-	const ObjectPtr<CMap> _cmap;
-	int _numImages, _currImage;
-	int _width, _height;
-	void *_textures;
+private:
+	MaterialData *_data;
+	int _currImage;
 };
 
 } // end of namespace Grim

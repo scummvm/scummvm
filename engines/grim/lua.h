@@ -277,6 +277,8 @@ void L1_SetLightIntensity();
 void L1_SetLightPosition();
 void L1_TurnLightOn();
 void L1_RenderModeUser();
+void L1_IrisUp();
+void L1_IrisDown();
 void L1_SetGamma();
 void L1_Display();
 void L1_EngineDisplay();

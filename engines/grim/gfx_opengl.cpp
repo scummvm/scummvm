@@ -365,6 +365,7 @@ void GfxOpenGL::drawShadowPlanes() {
 	}
 */
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDepthMask(GL_FALSE);
 	glClearStencil(~0);
 	glClear(GL_STENCIL_BUFFER_BIT);
 
@@ -372,7 +373,7 @@ void GfxOpenGL::drawShadowPlanes() {
 	glStencilFunc(GL_ALWAYS, 1, (GLuint)~0);
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	glDisable(GL_LIGHTING);
-	glDisable(GL_TEXTURE);
+	glDisable(GL_TEXTURE_2D);
 	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
 		Sector *shadowSector = i->sector;
@@ -383,6 +384,7 @@ void GfxOpenGL::drawShadowPlanes() {
 		glEnd();
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDepthMask(GL_TRUE);
 
 	glStencilFunc(GL_EQUAL, 1, (GLuint)~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
@@ -524,6 +526,10 @@ void GfxOpenGL::drawHierachyNode(const Model::HierNode *node) {
 
 	if (node->_sibling)
 		node->_sibling->draw();
+}
+
+void GfxOpenGL::enableLights() {
+	glEnable(GL_LIGHTING);
 }
 
 void GfxOpenGL::disableLights() {
@@ -952,7 +958,7 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 void GfxOpenGL::destroyTextObject(TextObject *text) {
 }
 
-void GfxOpenGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
+void GfxOpenGL::createMaterial(MaterialData *material, const char *data, const CMap *cmap) {
 	material->_textures = new GLuint[material->_numImages];
 	glGenTextures(material->_numImages, (GLuint *)material->_textures);
 	char *texdata = new char[material->_width * material->_height * 4];
@@ -985,14 +991,14 @@ void GfxOpenGL::createMaterial(Material *material, const char *data, const CMap 
 }
 
 void GfxOpenGL::selectMaterial(const Material *material) {
-	GLuint *textures = (GLuint *)material->_textures;
-	glBindTexture(GL_TEXTURE_2D, textures[material->_currImage]);
+	GLuint *textures = (GLuint *)material->getData()->_textures;
+	glBindTexture(GL_TEXTURE_2D, textures[material->getCurrentImage()]);
 	glMatrixMode(GL_TEXTURE);
 	glLoadIdentity();
-	glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
+	glScalef(1.0f / material->getData()->_width, 1.0f / material->getData()->_height, 1);
 }
 
-void GfxOpenGL::destroyMaterial(Material *material) {
+void GfxOpenGL::destroyMaterial(MaterialData *material) {
 	GLuint *textures = (GLuint *)material->_textures;
 	if (textures) {
 		glDeleteTextures(material->_numImages, textures);

@@ -185,6 +185,7 @@ private:
 	void costumeMarkerCallback(Footstep step);
 	void updateWalk();
 	void addShadowPlane(const char *n, Scene *scene, int shadowId);
+	bool shouldDrawShadow(int shadowId);
 
 	Common::String _name;
 	Common::String _setName;    // The actual current set

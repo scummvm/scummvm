@@ -92,6 +92,8 @@ void SmushPlayer::init() {
 		vimaInit(smushDestTable);
 	}
 	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
+	// Get a valid frame to draw
+	timerCallback(0);
 }
 
 void SmushPlayer::deinit() {

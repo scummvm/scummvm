@@ -56,20 +56,20 @@ Localizer::Localizer() {
 	long filesize = f.size();
 
 	// Read in the data
-	char *data = new char[filesize + 1];
-	f.read(data, filesize);
-	data[filesize] = '\0';
+	_data = new char[filesize + 1];
+	f.read(_data, filesize);
+	_data[filesize] = '\0';
 	f.close();
 
-	if (filesize < 4 || READ_BE_UINT32(data) != MKTAG('R','C','N','E'))
+	if (filesize < 4 || READ_BE_UINT32(_data) != MKTAG('R','C','N','E'))
 		error("Invalid magic reading grim.tab");
 
 	// Decode the data
 	for (int i = 4; i < filesize; i++)
-		data[i] ^= '\xdd';
+		_data[i] ^= '\xdd';
 
 	char *nextline;
-	for (char *line = data + 4; line != NULL && *line != '\0'; line = nextline) {
+	for (char *line = _data + 4; line != NULL && *line != '\0'; line = nextline) {
 		nextline = strchr(line, '\n');
 
 		if (nextline) {
@@ -83,17 +83,14 @@ Localizer::Localizer() {
 			continue;
 
 		LocaleEntry entry;
-		entry.text = new char[(tab - line) + 1];
-		strncpy(entry.text, line, tab - line);
+		entry.text = line;
 		entry.text[tab - line] = '\0';
-		entry.translation = new char[strlen(tab + 1) + 1];
-		strcpy(entry.translation, tab + 1);
+		entry.translation = tab + 1;
 		_entries.push_back(entry);
 	}
 
 	qsort(_entries.begin(), _entries.size(), sizeof(LocaleEntry), sortCallback);
 
-	delete[] data;
 }
 
 Common::String Localizer::localize(const char *str) const {
@@ -118,10 +115,7 @@ Common::String Localizer::localize(const char *str) const {
 }
 
 Localizer::~Localizer() {
-	for (unsigned int i = 0; i < _entries.size(); i++) {
-		delete[] _entries[i].text;
-		delete[] _entries[i].translation;
-	}
+	delete[] _data;
 }
 
 } // end of namespace Grim

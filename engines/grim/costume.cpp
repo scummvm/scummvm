@@ -177,6 +177,7 @@ public:
 	MainModelComponent(Costume::Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	void init();
 	void update();
+	void setColormap(CMap *cmap);
 	void reset();
 	~MainModelComponent();
 
@@ -207,10 +208,12 @@ public:
 	void setMatrix(Graphics::Matrix4 matrix) { _matrix = matrix; };
 
 	Model::HierNode *getNode() { return _node; }
+	Model *getModel() { return _model; }
 
 private:
 	Common::String _name;
 	int _num;
+	Model *_model;
 	Model::HierNode *_node;
 	Graphics::Matrix4 _matrix;
 };
@@ -377,35 +380,31 @@ void ModelComponent::init() {
 
 			cm = g_resourceloader->getColormap(DEFAULT_COLORMAP);
 		}
-		_obj = g_resourceloader->getModel(_filename, cm);
-		_hier = _obj->copyHierarchy();
+
+		// If we're the child of a mesh component, put our nodes in the
+		// parent object's tree.
+		if (_parent) {
+			MeshComponent *mc = static_cast<MeshComponent *>(_parent);
+			_obj = g_resourceloader->loadModel(_filename, cm, mc->getModel());
+			_hier = _obj->copyHierarchy();
+			mc->getNode()->addChild(_hier);
+		} else {
+			_obj = g_resourceloader->loadModel(_filename, cm);
+			_hier = _obj->copyHierarchy();
+			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+				warning("Parent of model %s wasn't a mesh", _filename.c_str());
+		}
 
 		// Use parent availablity to decide whether to default the
 		// component to being visible
-		if (!_parent || !_parent->isVisible())
-			setKey(1);
-		else
+		if (_parent)
 			setKey(0);
+		else
+			setKey(1);
 	}
 
 	if (!_activeAnims) {
 		_activeAnims = new Common::List<AnimationEntry>();
-	}
-
-	// If we're the child of a mesh component, put our nodes in the
-	// parent object's tree.
-	if (_parent) {
-		MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
-
-		// Default the visibility to false. Without this when going in the land of the livings
-		// a shady thing attached to Manny will appear. It must do this only if _parent is not
-		// NULL, though, otherwise bruno will be invisible in the "td" set.
-		reset();
-
-		if (mc)
-			mc->getNode()->addChild(_hier);
-		else if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Parent of model %s wasn't a mesh", _filename.c_str());
 	}
 }
 
@@ -602,6 +601,13 @@ void MainModelComponent::update() {
 		ModelComponent::update();
 }
 
+void MainModelComponent::setColormap(CMap *cmap) {
+	Component::setColormap(cmap);
+	if (_parentModel) {
+		_parentModel->setColormap(cmap);
+	}
+}
+
 void MainModelComponent::reset() {
 	_visible = true;
 	_hier->_hierVisible = _visible;
@@ -626,7 +632,6 @@ public:
 	MaterialComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
 	void init();
 	void setKey(int val);
-	void setColormap(CMap *c);
 	void setupTexture();
 	void reset();
 	void resetColormap();
@@ -635,7 +640,7 @@ public:
 	~MaterialComponent() { }
 
 private:
-	MaterialPtr _mat;
+	Material *_mat;
 	Common::String _filename;
 	int _num;
 };
@@ -937,12 +942,14 @@ MeshComponent::MeshComponent(Costume::Component *p, int parentID, const char *na
 
 void MeshComponent::init() {
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(_parent);
-	if (mc)
+	if (mc) {
 		_node = mc->getHierarchy() + _num;
-	else {
+		_model = mc->getModel();
+	} else {
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of mesh %d was not a model", _num);
 		_node = NULL;
+		_model = NULL;
 	}
 }
 
@@ -951,7 +958,11 @@ void MeshComponent::setKey(int val) {
 }
 
 void MeshComponent::reset() {
-	_node->_meshVisible = true;
+	// NOTE: Setting the visibility to true here causes a bug with the thunderboy costume:
+	// closing the inventory causes the hat to appear, while it shouldn't.
+	// This could however introduce regressions somewhere else, so if there is something
+	// disappearing or not behaving properly in a costume the cause might be here.
+// 	_node->_meshVisible = true;
 }
 
 void MeshComponent::update() {
@@ -976,19 +987,21 @@ MaterialComponent::MaterialComponent(Costume::Component *p, int parentID, const 
 }
 
 void MaterialComponent::init() {
+	_mat = NULL;
 	if (FROM_BE_32(_parent->getTag()) == MKTAG('M','M','D','L') ||
 		FROM_BE_32(_parent->getTag()) == MKTAG('M','O','D','L')) {
 		ModelComponent *p = static_cast<ModelComponent *>(_parent);
 		Model *model = p->getModel();
-		for (int i = 0; i < model->_numMaterials; ++i) {
-			if (_filename.compareToIgnoreCase(model->_materials[i]->getFilename()) == 0) {
-				_mat = model->_materials[i].object();
-				return;
+		if (model) {
+			for (int i = 0; i < model->_numMaterials; ++i) {
+				if (_filename.compareToIgnoreCase(model->_materials[i]->getFilename()) == 0) {
+					_mat = model->_materials[i];
+					return;
+				}
 			}
 		}
 	} else {
 		warning("Parent of a MaterialComponent not a ModelComponent. %s %s", _filename.c_str(), _cost->getFilename().c_str());
-		_mat = NULL;
 	}
 }
 
@@ -1162,8 +1175,8 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 	}
 
 	for (int i = 0; i < _numComponents; i++) {
-		if (_components[i])
-			_components[i]->setCostume(this);
+			if (_components[i])
+					_components[i]->setCostume(this);
 	}
 
 	delete[] tags;
@@ -1314,8 +1327,10 @@ Costume::Component::~Component()
 void Costume::Component::setColormap(CMap *c) {
 	if (c)
 		_cmap = c;
-	if (getCMap())
+	if (getCMap()) {
 		resetColormap();
+		resetHierCMap();
+	}
 }
 
 void Costume::Component::setFade(float fade) {
@@ -1358,6 +1373,16 @@ void Costume::Component::removeChild(Component *child) {
 	if (*childPos) {
 		*childPos = child->_sibling;
 		child->_parent = NULL;
+	}
+}
+
+void Costume::Component::resetHierCMap() {
+	resetColormap();
+
+	Component *child = _child;
+	while (child) {
+		child->resetHierCMap();
+		child = child->_sibling;
 	}
 }
 
@@ -1742,8 +1767,12 @@ void Costume::update() {
 
 	for (int i = 0; i < _numComponents; i++) {
 		if (_components[i]) {
-			_components[i]->setMatrix(_matrix);
-			_components[i]->update();
+			if (_components[i]->_fade > 0) {
+				_components[i]->setMatrix(_matrix);
+				_components[i]->update();
+			} else {
+				_components[i]->reset();
+			}
 		}
 	}
 }

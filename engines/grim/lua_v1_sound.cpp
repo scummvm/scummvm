@@ -229,7 +229,7 @@ void L1_ImSetSequence() {
 }
 
 void L1_SaveIMuse() {
-	SaveGame *savedIMuse = new SaveGame("grim.tmp", true);
+	SaveGame *savedIMuse = SaveGame::openForSaving("grim.tmp");
 	if (!savedIMuse)
 		return;
 	g_imuse->saveState(savedIMuse);
@@ -237,7 +237,7 @@ void L1_SaveIMuse() {
 }
 
 void L1_RestoreIMuse() {
-	SaveGame *savedIMuse = new SaveGame("grim.tmp", false);
+	SaveGame *savedIMuse = SaveGame::openForLoading("grim.tmp");
 	if (!savedIMuse)
 		return;
 	g_imuse->stopAllSounds();

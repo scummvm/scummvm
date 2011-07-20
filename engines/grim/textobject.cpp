@@ -45,7 +45,7 @@ TextObject::TextObject(bool blastDraw, bool isSpeech) :
 }
 
 TextObject::TextObject() :
-	Object(), TextObjectCommon() {
+	Object(), TextObjectCommon(), _lines(NULL) {
 
 }
 
@@ -203,13 +203,15 @@ void TextObject::setupText() {
 	}
 
 	// We break the message to lines not longer than maxWidth
+	Common::String currLine;
 	_numberLines = 1;
 	int lineWidth = 0;
 	int maxLineWidth = 0;
 	for (uint i = 0; i < msg.size(); i++) {
 		lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
 		if (lineWidth > maxWidth) {
-			if (message.contains(' ')) {
+			bool wordSplit = false;
+			if (currLine.contains(' ')) {
 				while (msg[i] != ' ' && i > 0) {
 					lineWidth -= MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
 					message.deleteLastChar();
@@ -223,8 +225,10 @@ void TextObject::setupText() {
 					--i;
 				}
 				message += '-';
+				wordSplit = true;
  			}
 			message += '\n';
+			currLine.clear();
 			_numberLines++;
 
 			if (lineWidth > maxLineWidth) {
@@ -232,13 +236,18 @@ void TextObject::setupText() {
 			}
 			lineWidth = 0;
 
-			continue; // don't add the space back
+			if (wordSplit) {
+				lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+			} else {
+				continue; // don't add the space back
+			}
 		}
 
 		if (lineWidth > maxLineWidth)
 			maxLineWidth = lineWidth;
 
 		message += msg[i];
+		currLine += msg[i];
 	}
 
 	// If the text object is a speech subtitle, the y parameter is the
@@ -257,9 +266,9 @@ void TextObject::setupText() {
 
 	for (int j = 0; j < _numberLines; j++) {
 		int nextLinePos, cutLen;
-		const char *pos = strchr(message.c_str(), '\n');
-		if (pos) {
-			nextLinePos = pos - message.c_str();
+		const char *breakPos = strchr(message.c_str(), '\n');
+		if (breakPos) {
+			nextLinePos = breakPos - message.c_str();
 			cutLen = nextLinePos + 1;
 		} else {
 			nextLinePos = message.size();

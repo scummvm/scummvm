@@ -50,6 +50,7 @@ MODULE_OBJS := \
 	gfx_opengl.o \
 	gfx_tinygl.o \
 	grim.o \
+	iris.o \
 	keyframe.o \
 	lab.o \
 	lipsync.o \
