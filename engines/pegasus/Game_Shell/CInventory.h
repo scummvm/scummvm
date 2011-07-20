@@ -5,7 +5,7 @@
  * file distributed with this source distribution.
  *
  * Additional copyright for this file:
- * Copyright (C) 1995-1997 Presto Studios
+ * Copyright (C) 1995-1997 Presto Studios, Inc.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
