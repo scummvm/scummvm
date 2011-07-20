@@ -449,17 +449,7 @@ void CGEEngine::loadMapping() {
 	}
 }
 
-class SQUARE : public Sprite {
-public:
-	SQUARE(CGEEngine *vm);
-	virtual void touch(uint16 mask, int x, int y);
-private:
-	CGEEngine *_vm;
-};
-
-
-SQUARE::SQUARE(CGEEngine *vm)
-	: Sprite(vm, NULL), _vm(vm) {
+Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	_flags._kill = true;
 	_flags._bDel = false;
 
@@ -470,7 +460,7 @@ SQUARE::SQUARE(CGEEngine *vm)
 }
 
 
-void SQUARE::touch(uint16 mask, int x, int y) {
+void Square::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
 	if (mask & L_UP) {
 		XZ(_x + x, _y + y).cell() = 0;
@@ -482,7 +472,7 @@ void SQUARE::touch(uint16 mask, int x, int y) {
 void CGEEngine::setMapBrick(int x, int z) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::setMapBrick(%d, %d)", x, z);
 
-	SQUARE *s = new SQUARE(this);
+	Square *s = new Square(this);
 	if (s) {
 		static char n[] = "00:00";
 		s->gotoxy(x * MAP_XGRID, MAP_TOP + z * MAP_ZGRID);
