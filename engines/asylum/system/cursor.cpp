@@ -70,6 +70,7 @@ void Cursor::set(ResourceId resourceId, int32 cnt, CursorAnimation anim, int32 f
 	else
 		lastFrameIndex = _cursorRes->count() - 1;
 
+	this->graphicResourceId = resourceId;
 	this->animation = anim;
 	this->counter = cnt;
 	currentFrame = 0;
