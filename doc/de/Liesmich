@@ -1,0 +1,770 @@
+﻿ScummVM – Liesmich-Datei
+------------------------------------------------------------------------
+
+Dieses Dokument ist eine auszugsweise Übersetzung der englischen README-Datei. 
+Das Original-Dokument enthält viel mehr Informationen. Sollten Sie hier also 
+nicht das finden, was Sie benötigen und ein wenig Englisch können, sollten Sie 
+sich die englische README-Datei ansehen.
+
+Für weitere Informationen, Kompatibilitätslisten, Einzelheiten zu Spenden, die 
+neusten veröffentlichten Versionen, Fortschrittsberichte und mehr besuchen Sie 
+bitte die ScummVM-Website unter der Adresse: http://www.scummvm.org/
+
+
+Inhaltsverzeichnis:
+-------------------
+1.0) Einführung
+ * 1.1 Über ScummVM
+ * 1.2 Schnellstart
+2.0) Kontakt
+ * 2.1 Fehler berichten
+3.0) Unterstützte Spiele
+ * 3.1 Kopierschutz
+ * 3.2 Hinweise zu Commodore64-Spielen
+ * 3.3 Hinweise zu Maniac Mansion NES
+ * 3.4 Hinweise zu Macintosh-Spielen
+ * 3.5 Hinweise zu Spielen auf mehren CDs
+ * 3.6 Hinweise zu The Curse of Monkey Island
+ * 3.7 Hinweise zu den Baphomets-Fluch-Spielen
+ * 3.8 Hinweise zu Beneath a Steel Sky
+ * 3.9 Hinweise zu Flight of the Amazon Queen
+ * 3.10 Hinweise zu Gobliiins
+ * 3.11 Hinweise zu Inherit the Earth: Quest for the Orb (Macintosh)
+ * 3.12 Hinweise zu Simon the Sorcerer 1 und 2
+ * 3.13 Hinweise zu Floyd – Es gibt noch Helden
+ * 3.14 Hinweise zu The Legend of Kyrandia
+ * 3.15 Hinweise zum vorhersagenden Eingabedialog bei Sierras AGI-Spielen
+
+
+1.0) Einführung:
+---- -----------
+
+1.1) Über ScummVM:
+---- -------------
+ScummVM ist ein Programm, welches es Ihnen ermöglicht, bestimmte klassische 
+Grafik-Adventure (unter anderem aus dem Point-and-Click-Bereich) zu spielen, 
+vorausgesetzt, Sie sind im Besitz der Dateien des Spiels. Der Trick dabei ist: 
+ScummVM ersetzt lediglich die Funktion der ausführbaren Dateien, die mit den 
+Spielen kamen, was ermöglicht, diese Spiele auf Systemen zu spielen, für welche 
+sie nie erstellt wurden!
+
+Ursprünglich wurde dieses Programm dafür entwickelt, um SCUMM-Spiele von 
+LucasArts auszuführen, wie beispielsweise Maniac Mansion, Monkey Island, Day of 
+the Tentacle oder Sam & Max. SCUMM steht als Abkürzung für „Script Creation 
+Utility for Maniac Mansion“ (deutsch etwa: Skripterstellungsdienstprogramm für 
+Maniac Mansion), was das erste Spiel von LucasArts war, für welches LucasArts 
+dieses System entworfen hatte. Und viel später verlieh es seinen Namen an 
+ScummVM (wobei „VM“ für „Virtuelle Maschine“ steht).
+
+Mit der Zeit wurde Unterstützung für viele Nicht-SCUMM-Spiele hinzugefügt und 
+ScummVM unterstützt nun auch viele AGI- und SCI-Spiele von Sierra (wie 
+beispielsweise King's Quest 1-6, Space Quest 1-5, ...), Discworld 1 und 2, Simon 
+the Sorcerer 1 und 2, Beneath A Steel Sky, Lure of the Temptress, Baphomets 
+Fluch I und II, Flight of the Amazon Queen, Gobliiins 1-3, die Adventure-Reihe 
+The Legend of Kyrandia, viele der SCUMM-Spiele für Kinder von Humongous 
+Entertainment (einschließlich der Spiele von Fritzi Fisch und Töff-Töff) und 
+viele mehr. Sie können eine vollständige Liste mit Einzelheiten einsehen, welche 
+Auskunft darüber gibt, welche Spiele unterstützt werden und wie gut. Gehen Sie 
+hierfür auf die Kompatibilitätsseite. ScummVM wird fortlaufend verbessert, also 
+schauen Sie öfter einmal vorbei.
+
+Unter den Systemen, mit denen Sie diese Spiele spielen können, befinden sich 
+normale Schreibtisch-Computer (mit den Betriebssystemen Windows, Linux,
+Mac OS X, ...), Spielekonsolen (Dreamcast, Nintendo DS & Wii, PS2, PSP, ...), 
+Smartphones (Android, iPhone, PocketPC, Symbian ...) und einige weitere.
+
+Zurzeit befindet sich ScummVM immer noch stark in der Entwicklung. Seien Sie 
+sich bewusst, dass wir zwar versuchen, dass viele Spiele mit wenigen erheblichen 
+Fehlern durchgespielt werden können, aber es dennoch zu Abstürzen kommen kann 
+und wir keine Gewähr übernehmen. Davon abgesehen: Einige Spiele werden seit 
+längerer Zeit unterstützt und sollten in jeder neusten stabilen veröffentlichten 
+Version ohne größere Probleme laufen. Sie können sich einen Eindruck davon 
+verschaffen, wie gut jedes Spiel unter ScummVM läuft, indem Sie auf die 
+Kompatibilitätsseite schauen. Wenn Sie sich ein wenig im Internet umsehen, 
+können Sie feststellen, dass ScummVM sogar kommerziell genutzt wird, um einige 
+der unterstützen Spiele für moderne Plattformen wiederzuveröffentlichen. Dies 
+zeigt, dass mehrere Firmen mit der Qualität der Software zufrieden sind und wie 
+gut einige der Spiele mit Hilfe des Programms laufen.
+
+Wenn Ihnen ScummVM gefällt, können Sie uns gerne Geld spenden, indem Sie auf die 
+PayPal-Schaltfläche auf der ScummVM-Website klicken. Dies hilft uns dabei, 
+notwendige Dienstprogramme zu kaufen, um ScummVM einfacher und schneller zu 
+entwickeln. Wenn Sie nicht spenden können, dürfen Sie auch gerne einen Patch 
+beisteuern.
+
+1.2) Schnellstart:
+---- -------------
+WICHTIG: In dieser kurzen Anleitung wird davon ausgegangen, dass Sie ScummVM auf 
+Deutsch benutzen. Standardmäßig wird ScummVM die Sprache Ihres Betriebssystems 
+verwenden. Wenn Sie ScummVM lieber auf Englisch verwenden möchten, benutzen Sie 
+bitte die Anleitung in der englischen README-Datei.
+
+Für die ungeduldigen unter den Anwendern ist hier in fünf einfachen Schritten 
+kurz beschrieben, wie man ScummVM lauffähig macht und das Programm verwendet.
+
+1. Laden Sie ScummVM unter der Adresse http://www.scummvm.org/downloads.php 
+herunter und installieren Sie es.
+
+2. Erstellen Sie ein Verzeichnis auf Ihrer Festplatte und kopieren Sie die 
+Dateien des Spiels vom Original-Datenträger in dieses Verzeichnis. Wiederholen 
+Sie diesen Vorgang für jedes Spiel, das Sie spielen möchten (es ist besser, für 
+jedes Spiel ein eigenes Verzeichnis zu verwenden).
+
+3. Starten Sie ScummVM.
+
+Sollte an diesem Punkt ScummVM auf Englisch statt auf Deutsch erscheinen, gehen 
+Sie wie folgt vor, um die Spracheinstellung zu ändern:
+-Klicken Sie auf „Options“.
+-Klicken Sie auf den rechten Pfeil in der Reiterleiste und wählen den Reiter
+ „Misc“ aus.
+-Wählen Sie im Feld „GUI Language“ „Deutsch“ aus und klicken auf „OK“.
+-Bestätigen Sie die erscheinende Nachricht, klicken auf „Quit“, um ScummVM zu
+ beenden, und starten dann das Programm erneut.
+
+Nun klicken Sie auf „Spiel hinzufügen“, wählen das Verzeichnis mit den Dateien 
+des Spiels aus (versuchen Sie nicht, die Dateien des Spiels selbst auszuwählen!) 
+und klicken Sie auf „Auswählen“.
+
+4. Ein Dialog sollte erscheinen, der Ihnen ermöglicht, verschiedene 
+Einstellungen vorzunehmen, sollten Sie dies wünschen (es sollte jedoch in 
+Ordnung sein, alles voreingestellt zu belassen). Bestätigen Sie diesen Dialog.
+
+5. Wählen Sie das Spiel aus der Liste aus, welches Sie spielen möchten, und 
+klicken Sie auf „Starten“.
+
+ScummVM behält die Spiele in der Liste, die Sie hinzufügen. Wenn Sie also 
+ScummVM schließen, werden beim nächsten Start alle Spiele, die Sie zuvor 
+hinzugefügt haben, in der Liste angezeigt. Sie können somit direkt zu Schritt 5 
+übergehen, außer Sie wollen noch mehr Spiele hinzufügen.
+
+Tipp: Wenn Sie mehrere Spiele auf einmal hinzufügen möchten, drücken Sie die 
+Umschalt-Taste (Shift), bevor Sie auf „Spiel hinzufügen“ klicken. Diese 
+Schaltfläche wird somit ihren Text zu „Durchsuchen“ umändern und wenn Sie dann 
+auf diese klicken, werden Sie auch dazu aufgefordert, ein Verzeichnis 
+auszuwählen, nur dieses Mal wird ScummVM alle Unterverzeichnisse automatisch 
+nach unterstützen Spielen durchsuchen.
+
+
+2.0) Kontakt:
+---- --------
+Der einfachste Weg, um mit dem ScummVM-Team in Verbindung zu treten, ist, 
+Fehlerberichte einzusenden (siehe Abschnitt 2.1) oder durch Verwendung des 
+Forums unter der Adresse http://forums.scummvm.org .
+Sie können ebenso der Mailing-Liste scummvm-devel beitreten und an diese E-Mails 
+versenden oder mit uns im IRC chatten (#scummvm unter irc.freenode.net). Bitte 
+fordern Sie uns nicht dazu auf, ein nicht unterstütztes Spiel zu unterstützen. 
+Lesen Sie zuerst die Seite FAQ (Häufig gestellte Fragen) auf unserer Website. 
+Bitte beachten Sie, dass die offizielle Sprache des Forums, der Mailing-Liste 
+und des Chats Englisch ist und keine andere Sprache dort verwendet werden 
+sollte.
+
+
+2.1) Fehler berichten:
+---- -----------------
+Um einen Fehler zu berichten, erstellen Sie bitte ein SourceForge-Konto und 
+folgen Sie dem Link „Bug Tracker“ auf der ScummVM-Website. Bitte stellen Sie 
+sicher, dass sich der Bug wiedererzeugen lässt und immer noch in der neusten 
+Version von SVN oder des Daily Builds auftritt. Bitte sehen Sie auch auf der 
+Kompatibilitätsliste der ScummVM-Website für dieses Spiel nach, um 
+sicherzustellen, dass das Problem nicht bereits bekannt ist:
+
+  http://www.scummvm.org/compatibility_stable.php
+
+Bitte berichten Sie keine Fehler zu Spielen, die nicht als durchspielbar im 
+Bereich „Supported Games“ oder der Kompatibilitätsliste aufgelistet sind.
+Wir -wissen-, dass diese Spiele Fehler aufweisen.
+
+Bitte liefern Sie folgende Informationen:
+    - ScummVM-Version (BITTE mit neuster Version von SVN oder des Daily Builds
+      testen)
+    - Einzelheiten zum Fehler, einschließlich Anweisungen, um den Fehler
+      hervorzurufen
+    - Sprache des Spiels (Deutsch, Englisch ...)
+    - Version des Spiels (Version mit Sprachausgabe [Talkie],
+      Diskettenversion, ...)
+    - Plattform und gegebenenfalls Compiler (Win32, Linux, FreeBSD, ...)
+    - Fügen Sie – wenn möglich - einen Speicherstand hinzu.
+    - Wenn dieser Fehler erst seit kurzem Auftritt, teilen Sie bitte die letzte
+      Version ohne den Fehler mit und die erste Version mit diesem Fehler.
+      Auf diese Weise können wir diesen schneller beseitigen, indem wir die
+      vorgenommen Veränderungen einsehen.
+
+Zum Schluss möchten wir Sie noch bitten, jeden Punkt einzeln zu berichten. Bitte 
+senden Sie nicht mehrere Punkte mit demselben Ticket ein, ansonsten wird es 
+schwierig, den Status jedes einzelnen Fehlers zu verfolgen. Denken Sie bitte 
+auch daran, dass alle Fehlerberichte in Englisch verfasst sein müssen.
+
+
+3.0) Unterstützte Spiele:
+---- --------------------
+Im Moment gelten folgende Spiele als funktionsfähig gemeldet und sollten bis zum 
+Ende spielbar sein:
+
+SCUMM-Spiele von LucasArts:
+     Maniac Mansion                              [maniac]
+     Zak McKracken and the Alien Mindbenders     [zak]
+     Indiana Jones and the Last Crusade          [indy3]
+     Loom                                        [loom]
+     The Secret of Monkey Island                 [monkey]
+     Monkey Island 2: LeChuck's Revenge          [monkey2]
+     Indiana Jones and the Fate of Atlantis      [atlantis]
+     Day of the Tentacle                         [tentacle]
+     Sam & Max Hit the Road                      [samnmax]
+     Vollgas                                     [ft]
+     The Dig                                     [dig]
+     The Curse of Monkey Island                  [comi]
+
+AGI-Spiele von Sierra:
+     The Black Cauldron                          [bc]
+     Gold Rush!                                  [goldrush]
+     King's Quest I                              [kq1]
+     King's Quest II                             [kq2]
+     King's Quest III                            [kq3]
+     King's Quest IV                             [kq4]
+     Leisure Suit Larry in the Land of the
+     Lounge Lizards                              [lsl1]
+     Mixed-Up Mother Goose                       [mixedup]
+     Manhunter 1: New York                       [mh1]
+     Manhunter 2: San Francisco                  [mh2]
+     Police Quest I: In Pursuit of the Death
+     Angel                                       [pq1]
+     Space Quest I: The Sarien Encounter         [sq1]
+     Space Quest II: Vohaul's Revenge            [sq2]
+     Erstellte Spiele von Fans                   [agi-fanmade]
+
+AGOS-Spiele von Adventuresoft/Horrorsoft:
+     Elvira - Mistress of the Dark               [elvira1]
+     Elvira II - The Jaws of Cerberus            [elvira2]
+     Personal Nightmare                          [pn]
+     Waxworks                                    [waxworks]
+     Simon the Sorcerer 1                        [simon1]
+     Simon the Sorcerer 2                        [simon2]
+     Simon the Sorcerer's Game Pack
+         - Dämonen in meinem PC                  [dimp]
+     Simon the Sorcerer's Game Pack
+         - Jumble                                [jumble]
+     Simon the Sorcerer's Game Pack
+         - NoPatience                            [puzzle]
+     Simon the Sorcerer's Game Pack
+         - Swampy Adventures                     [swampy]
+     Floyd - Es gibt noch Helden                 [feeble]
+
+GOB-Spiele von Coktel Vision:
+     Bargon Attack                               [bargon]
+     Gobliiins                                   [gob1]
+     Gobliins 2                                  [gob2]
+     Goblins 3                                   [gob3]
+     Lost in Time                                [lostintime]
+     Woodruff and the Schnibble of Azimuth       [woodruff]
+     Ween: The Prophecy                          [ween]
+
+MADE-Spiele von Activision:
+     Leather Goddesses of Phobos 2               [lgop2]
+     Return to Zork                              [rtz]
+     Rodney's Funscreen                          [rodney]
+     The Manhole                                 [manhole]
+
+Andere Spiele:
+     Beneath a Steel Sky                         [sky]
+     Baphomets Fluch                             [sword1]
+     Baphomets Fluch II:
+         Die Spiegel der Finsternis              [sword2]
+     Cruise for a Corpse                         [cruise]
+     Discworld                                   [dw]
+     Discworld 2: Vermutlich vermisst            [dw2]
+     Draci Historie                              [draci]
+     Drascula: The Vampire Strikes Back          [drascula]
+     Flight of the Amazon Queen                  [queen]
+     Future Wars                                 [fw]
+     Erben der Erde: Die große Suche             [ite]
+     Nippon Safes Inc.                           [nippon]
+     The Legend of Kyrandia                      [kyra1]
+     The Legend of Kyrandia: The Hand of Fate    [kyra2]
+     The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
+     Touché: Die Abenteuer des fünften
+         Musketiers                              [touche]
+
+SCUMM-Spiele von Humongous Entertainment:
+     Backyard Baseball                           [baseball]
+     Backyard Baseball 2001                      [baseball2001]
+     Backyard Football                           [football]
+     Big Thinkers First Grade                    [thinker1]
+     Big Thinkers Kindergarten                   [thinkerk]
+     Blue's 123 Time Activities                  [Blues123Time]
+     Blue's ABC Time Activities                  [BluesABCTime]
+     Blue's Art Time Activities                  [arttime]
+     Blue's Reading Time Activities              [readtime]
+     Fatty Bear's Birthday Surprise              [fbear]
+     Fatty Bear's Fun Pack                       [fbpack]
+     Fritzi Fisch und der verschwundene Schatz   [freddi]
+     Fritzi Fisch und das Flossengespenst        [freddi2]
+     Fritzi Fisch und der Fall der gestohlenen
+         Trompetenschnecke                       [freddi3]
+     Freddi Fisch und das Geheimnis
+         der Salzwasserschlucht                  [freddi4]
+     Freddi Fisch und das Rätsel
+          der Korallenbucht                      [freddicove]
+     Freddi Fish and Luther's Maze Madness       [maze]
+     Freddi Fish and Luther's Water Worries      [water]
+     Let's Explore the Airport with Buzzy        [airport]
+     Let's Explore the Farm with Buzzy           [farm]
+     Let's Explore the Jungle with Buzzy         [jungle]
+     Pyjama Pit: Keine Angst im Dunkeln          [pajama]
+     Pyjama Sam: Donner und Blitz
+         machen mir nix                          [pajama2]
+     Pyjama Sam 3: Süßigkeiten kriegen Saures    [pajama3]
+     Pajama Sam's Lost & Found                   [lost]
+     Pajama Sam's Sock Works                     [socks]
+     Putt-Putt Joins the Parade                  [puttputt]
+     Putt-Putt Goes to the Moon                  [puttmoon]
+     Töff-Töff rettet den Zoo                    [puttzoo]
+     Töff-Töff reist durch die Zeit              [putttime]
+     Töff-Töff und das große Rennen              [puttrace]
+     Töff-Töff geht zum Zirkus                   [puttcircus]
+     Putt-Putt and Pep's Balloon-O-Rama          [balloon]
+     Putt-Putt and Pep's Dog on a Stick          [dog]
+     Putt-Putt & Fatty Bear's Activity Pack      [activity]
+     Putt-Putt's Fun Pack                        [funpack]
+     SPY Fox: Das Milchkartell                   [spyfox]
+     SPY Fox: Operation Robobund                 [spyfox2]
+     SPY Fox: Alarm im Weltall                   [spyozon]
+     SPY Fox in Cheese Chase                     [chase]
+     SPY Fox in Hold the Mustard                 [mustard]
+
+Spiele von Living Books:
+     Aesop's Fables: The Tortoise and the Hare   [tortoise]
+     Arthur's Birthday                           [arthurbday]
+     Arthur's Teacher Trouble                    [arthur]
+     Dr. Seuss's ABC                             [seussabc]
+     Green Eggs and Ham                          [greeneggs]
+     Harry and the Haunted House                 [harryhh]
+     Just Grandma and Me                         [grandma]
+     Little Monster at School                    [lilmonster]
+     Ruff's Bone                                 [ruff]
+     Sheila Rae, the Brave                       [sheila]
+     Stellaluna                                  [stellaluna]
+     The Berenstain Bears Get in a Fight         [bearfight]
+     The Berenstain Bears in the Dark            [beardark]
+     The New Kid on the Block                    [newkid]
+
+Die folgenden Spiele sollten geladen werden, sind aber noch nicht vollständig 
+spielbar. Spielen erfolgt auf eigenes Risiko. Bitte reichen Sie für diese Spiele 
+keine Fehlerberichte ein.
+Wenn Sie über den neusten Stand bezüglich der Kompatibilität des Spiels erfahren 
+möchten, besuchen Sie unsere Website und schauen Sie in der Kompatibilitätsliste 
+nach.
+
+     Backyard Baseball 2003                      [baseball2003]
+     Backyard Football 2002                      [football2002]
+     Backyard Soccer                             [soccer]
+     Backyard Soccer MLS                         [soccermls]
+     Backyard Soccer 2004                        [soccer2004]
+     Blue's Birthday Adventure                   [BluesBirthday]
+     Blue's Treasure Hunt                        [BluesTreasureHunt]
+     Pajama Sam: Games to Play on Any Day        [pjgames]
+
+Die folgenden Spiele basieren auf der SCUMM-Engine, werden aber (noch) nicht von 
+ScummVM unterstützt:
+
+     Andere Spiele von Humongous Entertainment
+
+Seien Sie sich bitte bewusst, dass die Engines („Motoren“ der Spiele) Fehler 
+enthalten können und manche Funktionen möglicherweise fehlen, was es unmöglich 
+macht, das Spiel zu Ende zu spielen. Speichern Sie oft und bitte schicken Sie 
+englische Fehlerberichte ein (Anweisungen zum Senden von Fehlerberichten finden 
+Sie oben), wenn Sie einen solchen Fehler in einem „unterstützten“ Spiel 
+vorfinden.
+
+
+3.1) Kopierschutz:
+---- -------------
+Das ScummVM-Team duldet keine Spielepiraterie. Es gibt jedoch Fälle, in denen 
+die Spielefirmen (wie beispielsweise LucasArts) selbst „gecrackte“ 
+Ausführdateien in ihre Spiele gepackt haben -- in diesen Fällen beinhalten die 
+Dateien des Spiels immer noch die Kopierschutzskripte, aber der Interpreter 
+umgeht sie (ähnlich wie illegale gecrackte Versionen es tun können, nur dass es 
+hier der Spielehersteller getan hat). Es gibt für uns keinerlei Möglichkeit, den 
+Unterschied zwischen einer legitimen und einer illegalen Spieldatei zu erkennen, 
+also wird ScummVM bei Spielen, von denen wir wissen, dass eine gecrackte Version 
+des Orginalinterpreters zu irgendeinem Zeitpunkt verkauft wurde, immer den 
+Kopierschutz umgehen müssen.
+
+In einigen Fällen wird ScummVM immer noch den Kopierschutzbildschirm anzeigen. 
+Versuchen Sie, irgendeine Antwort einzugeben. Die Chancen stehen gut, dass sie 
+akzeptiert wird.
+
+ScummVM wird den Kopierschutz in folgenden Spielen überspringen:
+
+  * Maniac Mansion
+  * Zak McKracken and the Alien Mindbenders
+  * Loom (EGA)
+  * The Secret of Monkey Island (VGA)
+  * Monkey Island 2: LeChuck's Revenge
+  * Beneath a Steel Sky
+      -- umgangen mit freundlicher Genehmigung von Revolution Software.
+  * Erben der Erde: Die große Suche (Diskettenversion)
+      -- umgangen mit freundlicher Genehmigung von Wyrmkeep Entertainment,
+         da er in allen CD-Versionen des Spiels umgangen wurde.
+  * Simon the Sorcerer 1 (Diskettenversion)
+  * Simon the Sorcerer 2 (Diskettenversion)
+      -- umgangen mit freundlicher Genehmigung von Adventure Soft,
+         da er in allen CD-Versionen des Spiels umgangen wurde.
+  * Waxworks
+
+3.2) Hinweise zu Commodore64-Spielen:
+---- --------------------------------
+Sowohl Maniac Mansion als auch Zak McKracken laufen, aber Maniac Mansion ist 
+noch nicht spielbar. Benennen Sie einfach die D64-Datenträger um in 
+„maniac1.d64“ und „maniac2.d64“ und entsprechend „zak1.d64“ und „zak2.d64“, dann 
+sollte ScummVM in der Lage sein, das Spiel automatisch zu erkennen, wenn Sie auf 
+das richtige Verzeichnis zeigen.
+
+Alternativ können Sie „extract_mm_c64“ aus dem Tools-Paket verwenden, um die 
+Spieldateien zu extrahieren. Dann wird das Spiel jedoch nicht einwandfrei von 
+ScummVM automatisch erkannt und Sie müssen sicherstellen, dass Commodore64 als 
+Plattform eingestellt ist. Wir empfehlen, auf die viel einfachere Methode 
+zurückzugreifen, die im vorherigen Absatz beschrieben ist.
+
+
+3.3) Hinweise zu Maniac Mansion NES:
+---- -------------------------------
+Unterstützte Versionen sind Deutsch (G) [G=German], Englisch GB (E), Französisch 
+(F), Italienisch (I), Schwedisch (SW) und Englisch US (U). ScummVM benötigt nur 
+den PRG-Bereich und nicht die gesamte ROM-Datei, um das Spiel laufen zu lassen.
+
+Damit das Spiel funktioniert, müssen Sie die ersten 16 Bytes aus der ROM-Datei 
+entfernen, die Sie verwenden wollen. Das klappt mit jedem Hexeditor, solange Sie 
+mit diesem kopieren und einfügen können. Nachdem Sie die ROM-Datei mit dem 
+Hexeditor geöffnet haben, kopieren Sie alles von der zweiten Reihe (17. Byte) 
+bis zum Ende. Danach fügen Sie den kopierten Inhalt in eine neue Hexdatei ein. 
+Speichern Sie die neue Datei unter dem Namen „Maniac Mansion (XX).prg“, wobei XX 
+für die Sprachversion steht, die Sie verwenden wollen (G, E, F, I, SW oder U). 
+Die Größe der neuen Datei sollte genau 262144 Bytes betragen.
+
+Wenn Sie das Spiel manuell hinzufügen, stellen Sie sicher, dass die Plattform 
+auf NES eingestellt ist.
+
+Die häufigsten Fehler, die verhindern, dass das Spiel läuft:
+
+  * Fehlerhafte Datei
+  * ROM extrahiert mit den Tools der Version 0.7.0
+  * Sie versuchen, in ScummVM die VOLLE ROM-DATEI zu laden und nicht nur den
+    PRG-Bereich.
+
+Es ist auch möglich, die einzelnen LFL-Dateien aus dem PRG-Bereich zu 
+extrahieren. Um dies zu tun, verwenden Sie das Dienstprogramm „extract_mm_nes“ 
+aus dem Tools-Paket.
+
+
+3.4) Hinweise zu Macintosh-Spielen:
+---- ------------------------------
+Alle auf SCUMM basierenden Adventures von Lucasarts, mit Ausnahme von COMI, 
+existieren auch als Versionen für den Macintosh. ScummVM kann die meisten 
+(alle?) von diesen verwenden, jedoch ist in manchen Fällen zusätzliche Arbeit 
+erforderlich. Zuallererst: Wenn Sie keinen Macintosh dafür verwenden, könnte es 
+kompliziert werden, auf die CD- oder Diskettendaten zuzugreifen. Der Grund 
+hierfür ist, dass der Mac ein spezielles Datenträgerformat nutzt, welches sich 
+HFS nennt, und das andere Systeme normalerweise nicht unterstützen. Es gibt 
+jedoch zahlreiche kostenlose Tools, die es ermöglichen, einen solchen HFS-
+Datenträger zu lesen. Z. B. „HFVExplorer“ für Windows und „hfsutils“ für Linux 
+und andere Betriebssysteme, die Unix ähnlich sind.
+
+Die meisten neueren Spiele für den Macintosh wurden nur mit einer einzigen 
+Spieldatei ausgeliefert (beachten Sie, dass in manchen Fällen diese Spieldatei 
+unsichtbar gemacht wurde und Sie somit zusätzliche Tools benötigen, um diese zu 
+kopieren). ScummVM ist in der Lage, eine solche Spieldatei direkt zu verwenden; 
+verweisen Sie ScummVM einfach auf das Verzeichnis, welches diese enthält und es 
+sollte klappen (so wie mit jedem anderen unterstützten Spiel).
+
+Wir stellen außerdem ein Tool mit dem Namen „extract_scumm_mac“ im Tools-Paket 
+zur Verfügung, um die Daten aus diesen Spieldateien zu extrahieren, aber dies 
+ist weder erforderlich noch wird es empfohlen.
+
+Für weitere Informationen dazu, wie Sie Macintosh-Spieldateien auf Ihre 
+Festplatte kopieren können, lesen Sie:
+
+  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+
+
+3.5) Hinweise zu Spielen auf mehren CDs:
+---- -----------------------------------
+Allgemein kann ScummVM nicht sehr gut mit Spielen auf mehreren CDs umgehen. Das 
+liegt daran, dass ScummVM annimmt, alles von einem Spiel in einem Verzeichnis 
+vorzufinden. Selbst wenn ScummVM einige Fälle berücksichtigt und den Anwender 
+dazu auffordert, die CD zu wechseln, so installierten die ursprünglichen 
+ausführbaren Dateien des Spiels normalerweise eine kleine Anzahl an Dateien auf 
+die Festplatte. Sofern diese Dateien nicht auf allen CDs vorgefunden werden 
+können, wird ScummVM Schwierigkeiten haben.
+
+Glücklicherweise hat ScummVM keine Probleme damit, die Spiele komplett von der 
+Festplatte aus laufen zu lassen, wenn Sie ein Verzeichnis mit der richtigen 
+Kombination der Dateien erstellen. Wenn eine Datei auf mehr als einer CD 
+vorkommt, ist es normalerweise egal, welche sie in das Verzeichnis 
+hineinkopieren.
+
+
+3.6) Hinweise zu The Curse of Monkey Island:
+---- ---------------------------------------
+Für dieses Spiel benötigen Sie die Dateien comi.la0, comi.la1 und comi.la2. Die 
+Datei comi.la0 kann auf beiden CDs vorgefunden werden, ist aber auf beiden 
+identisch, womit es egal ist, welche der beiden Sie verwenden.
+
+Zusätzlich müssen Sie ein Unterverzeichnis namens „resource“ erstellen, das alle 
+Dateien des Unterverzeichnisses „resource“ auf –beiden- CDs beinhaltet. Einige 
+dieser Dateien lassen sich auf beiden CDs vorfinden, jedoch sind sie auch in 
+diesem Fall identisch.
+
+
+3.7) Hinweise zu den Baphomets-Fluch-Spielen:
+---- ----------------------------------------
+Die Anweisungen für die Baphomets-Fluch-Spiele sind für die ausverkauften 
+Software-Versionen, bei welchen sich jedes Spiel auf je zwei CDs befindet, da 
+diese am leichtesten erhältlich waren, als ScummVM Unterstützung für diese 
+Spiele erlangte. Wir hoffen, dass sie allgemein ausreichend ausführlich sind, um 
+für andere Ausgaben genauso hilfreich zu sein.
+
+
+3.7.1) Zwischensequenzen der Baphomets-Fluch-Spiele:
+------ ---------------------------------------------
+Die Zwischensequenzen für die Baphomets-Fluch-Spiele haben eine kleine 
+Geschichte (schauen Sie im nächsten Abschnitt, wenn Sie interessiert sind), aber 
+im Großen und Ganzen müssen Sie nur die .SMK-Dateien aus den „SMACKS“- oder 
+„SMACKSHI“-Verzeichnissen auf den CDs in dasselbe Verzeichnis wie die anderen 
+Spieldateien kopieren. (Baphomets Fluch hat ein „SMACKSLO“-Verzeichnis mit 
+denselben Zwischensequenzen, aber diese sind von niedrigerer Qualität.) Sie 
+können sie auch in einem Unterverzeichnis namens „video“ ablegen, wenn Ihnen das 
+lieber ist.
+
+Einige Neuausgaben der Spiele, wie beispielsweise die PlayStation-Version, haben 
+keine Smacker-Videos. Revolution Software hat uns freundlicherweise erlaubt, die 
+Zwischensequenzen umgewandelt auf unserer Website als Download zur Verfügung zu 
+stellen. Siehe hierfür:
+
+  http://www.scummvm.org/downloads.php
+
+Diese Zwischensequenzen werden im DXA-Format mit FLAC-Audio zur Verfügung 
+gestellt. Ihre Qualität ist durch die Verwendung verlustfreier Kompression 
+gleich wie im Originalspiel. Um diese Zwischensequenzen abspielen zu können, ist 
+eine Version von ScummVM erforderlich, die sowohl mit Unterstützung von FLAC als 
+auch zlib kompiliert wurde.
+
+Für Systeme, die zu langsam sind, um die Entschlüsselung von FLAC-Audio zu 
+handhaben, wird die Tonspur für diese Zwischensequenzen gesondert auch mit Ogg-
+Vorbis-Audio angeboten. Um diese Zwischensequenzen mit Ogg-Vorbis-Audio 
+abspielen zu können, ist eine Version von ScummVM erforderlich, die sowohl mit 
+Unterstützung von libVorbis als auch zlib kompiliert wurde.
+
+Für Baphomets Fluch bieten wir auch ein Untertitel-Paket an. Entpacken Sie es 
+einfach und folgen Sie den Anweisungen in der liesmich.txt. (Baphomets Fluch II 
+hat bereits Untertitel; für diese ist keine zusätzliche Arbeit notwendig.)
+
+
+3.7.2) Zwischensequenzen der Baphomets-Fluch-Spiele im Rückblick
+------ ---------------------------------------------------------
+Die Originalausgaben der Baphomets-Fluch-Spiele verwendeten das Smacker™-Format 
+der RAD Game Tools. Da RAD uns nicht die ältere Ur-Version dieses Formats 
+offenlegen wollte und uns aufforderte, es nicht mittels Reverse Engineering zu 
+rekonstruieren, musste eine alternative Lösung gefunden werden.
+
+In Baphomets Fluch II war es möglich, die Sprachausgabe ohne das Video 
+wiederzugeben. Dies blieb bis ScummVM 1.0.0 eine Ausweichmöglichkeit, war aber 
+nie die alleinige Lösung für eine stabile Veröffentlichung.
+
+In ScummVM 0.6.0 verwendeten wir MPEG, das einen zumutbaren Kompromiss zwischen 
+Größe und Qualität bot. In ScummVM 0.10.0 wurde dies durch DXA abgelöst (das 
+ursprünglich für Adventure Softs „Floyd – Es gibt noch Helden“ hinzugefügt 
+wurde). Dies gab uns die Möglichkeit, die Zwischensequenzen mit genau derselben 
+Qualität wie im Original anzubieten, zu dem Preis, dass die Dateien größer 
+waren.
+
+Schließlich wurde Anfang 2006 das Smacker-Format für das FFmpeg-Projekt mittels 
+Reverse Engineering rekonstruiert. Dank der harten Arbeit in diesem Projekt 
+unterstützt ScummVM nun die originalen Zwischensequenzen. Zur selben Zeit wurde 
+die MPEG-Unterstützung eingestellt. Vom technischen Standpunkt war das eine gute 
+Sache, da das Entschlüsseln von MPEG-Filmen mit vielen Schwierigkeiten verbunden 
+war und diese ohnehin nicht so gut aussahen wie Smacker- und DXA-Versionen.
+
+
+3.7.3) Baphomets Fluch:
+------ ----------------
+Für dieses Spiel benötigen Sie die Dateien aus dem Verzeichnis clusters von 
+beiden CDs. Für die Windows- und Macintosh-Versionen benötigen Sie auch die 
+Datei speech.clu aus dem Verzeichnis speech von beiden CDs. Da diese jedoch 
+nicht identisch sind, müssen Sie diese in speech1.clu und speech2.clu für CD 1 
+und 2 entsprechend umbenennen. Die PlayStation-Version erfordert die Dateien 
+speech.tab, speech.dat, speech.lis, und speech.inf.
+
+Zusätzlich benötigen die Windows- und Macintosh-Versionen das Unterverzeichnis 
+„music“ mit allen Dateien der „music“-Unterverzeichnisse auf beiden CDs. Einige 
+dieser Dateien tauchen auf beiden CDs auf, aber in diesen Fällen sind sie 
+entweder identisch oder in einem Fall nahezu so identisch, dass es wenig 
+Unterschied macht. Die PlayStation-Version erfordert die Dateien tunes.dat und 
+tunes.tab.
+
+
+3.7.4) Baphomets Fluch II:
+------ -------------------
+Für dieses Spiel benötigen Sie die Dateien aus dem Verzeichnis clusters von 
+beiden CDs. (Ein paar von ihnen sind streng genommen eigentlich nicht notwendig, 
+aber diejenigen, über die Unsicherheit besteht, sind alle ziemlich klein.)
+Sie müssen die Dateien speech.clu und music.clu umbenennen, und zwar in 
+speech1.clu, speech2.clu, music1.clu und music2.clu, sodass ScummVM weiß, welche 
+der Dateien von CD 1 und welche von CD 2 sind. Alle anderen Dateien, die in 
+beiden „clusters“-Verzeichnissen auftauchen, sind identisch. Verwenden Sie in 
+diesen Fällen die Datei, die Sie möchten.
+
+Zusätzlich brauchen Sie die Datei cd.inf und optional die Datei startup.inf aus 
+dem Verzeichnis sword2 von CD 1.
+
+
+3.8) Hinweise zu Beneath a Steel Sky:
+---- --------------------------------
+Beginnend mit ScummVM 0.8.0 benötigen Sie die zusätzliche Datei „SKY.CPT“, um 
+Beneath a Steel Sky laufen lassen.
+
+Diese Datei ist auf der Seite „Downloads“ der ScummVM-Website verfügbar. Sie 
+können sie entweder im Verzeichnis mit den anderen Spieldateien (SKY.DNR, 
+SKY.DSK) ablegen, in einem Extrapfad oder im Verzeichnis, in dem sich Ihre 
+ausführbare ScummVM-Datei befindet.
+
+
+3.9) Hinweise zu Flight of the Amazon Queen:
+---- ---------------------------------------
+Um eine Nicht-Freeware-Version von Flight of the Amazon Queen zu verwenden (von 
+einer Original-CD), müssen Sie die Datei „queen.tbl“ (erhältlich von der Seite 
+„Downloads“ auf unserer Website) entweder im Verzeichnis mit der Spieldatei 
+„queen.1“ ablegen, in einem Extrapfad oder im Verzeichnis, in dem sich Ihre 
+ausführbare ScummVM-Datei befindet.
+
+Alternativ können Sie das Tool „compress_queen“ aus dem Tools-Paket verwenden, 
+um Ihre FOTAQ-Spieldatei neu „zusammenzubauen“, um die Tabellendatei für diese 
+spezielle Version miteinzubeziehen und somit die Laufzeit-Abhängigkeit von der 
+Datei „queen.tbl“ zu lösen. Dieses Tool kann auch die Sprachausgabe und 
+Soundeffekte mittels MP3, OGG oder FLAC komprimieren.
+
+
+3.10) Hinweise zu Gobliiins:
+----- ----------------------
+Die CD-Versionen der Gobliiins-Serie enthalten einen großen Audio-Titel, den Sie 
+extrahieren müssen (siehe Abschnitt über die Verwendung komprimierter Audio-
+Dateien) sowie ins Spielverzeichnis kopieren, wenn Sie Musik im Spiel hören 
+möchten, ohne die CD die ganze Zeit im Laufwerk haben zu müssen. Die 
+Sprachausgabe ist auch in diesem Titel und ihre Lautstärke wird deshalb ebenso 
+über die Musiklautstärke-Regelung geändert.
+
+
+3.11) Hinweise zu Inherit the Earth: Quest for the Orb (Macintosh):
+----- -------------------------------------------------------------
+Um die Neuausgabe des Spiels für Mac OS X von Wyrmkeep laufen zu lassen, müssen 
+Sie die Daten von der CD auf die Festplatte kopieren. Wenn Sie an einem PC 
+arbeiten, lesen Sie hierfür:
+
+  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+
+Obwohl hier in erster Linie über SCUMM-Spiele gesprochen wird, findet das 
+Dienstprogramm „HFVExplorer“ Erwähnung, welches Sie benötigen, um die Dateien zu 
+extrahieren. Beachten Sie, dass Sie die Sprachausgabedaten aus „Inherit the 
+Earth Voices“ im selben Verzeichnis ablegen müssen wie die Spieldaten, die sich 
+an folgendem Ort befinden:
+
+  Inherit the Earth.app/Contents/Resources
+
+Bei der alten Ausgabe für Mac OS 9 müssen Sie die Dateien im MacBinary-Format 
+kopieren, da sie sowohl Ressourcen- und Datenverzweigungen beinhalten sollten. 
+Kopieren Sie alle „ITE *“-Dateien.
+
+
+3.12) Hinweise zu Simon the Sorcerer 1 und 2:
+----- ---------------------------------------
+Wenn Sie die Doppel-Version von Simon the Sorcerer 1 oder 2 auf CD haben, finden 
+Sie die Windows-Version im Hauptverzeichnis der CD und die DOS-Version im 
+DOS-Verzeichnis der CD.
+
+
+3.13) Hinweise zu Floyd – Es gibt noch Helden:
+----- ----------------------------------------
+Wenn Sie die Windows-Version von Floyd – Es gibt noch Helden haben, sind einige 
+Dinge zu beachten.
+
+Viele notwendige Dateien für das Spiel sind in einer InstallShield-Datei namens 
+data1.cab gespeichert, die ScummVM nicht entpacken kann. Sie müssen das 
+Original-Installationsprogramm oder i5comp verwenden, um die Inhalte dieser 
+Datei zu entpacken. Das Tool i5comp für die Dekompression kann durch Suchen im 
+Internet gefunden werden.
+
+Um die Sprachdateien in ScummVM zu verwenden, müssen sie nach dem Kopiervorgang 
+wie folgt umbenannt werden:
+voices.wav von CD1 in voices1.wav
+voices.wav von CD2 in voices2.wav
+voices.wav von CD3 in voices3.wav
+voices.wav von CD4 in voices4.wav
+
+
+3.14) Hinweise zu The Legend of Kyrandia:
+----- -----------------------------------
+Um The Legend of Kyrandia unter ScummVM laufen zu lassen, benötigen Sie die 
+Datei „kyra.dat“, welche auf der Seite „Downloads“ der ScummVM-Website gefunden 
+werden kann.
+
+
+3.15) Hinweise zum vorhersagenden Eingabedialog bei Sierras AGI-Spielen:
+----- ------------------------------------------------------------------
+Der vorhersagende Eingabedialog ist ein ScummVM-Hilfsmittel, um die englischen 
+Spiele der AGI-Engine (die offensichtlich Kommandozeilen-Eingabe erfordern) auf 
+Geräten laufen zu lassen, die eingeschränkte Tastatur-Unterstützung haben. Da es 
+mühsam ist, mit emulierten Tastaturen zu tippen, können in solchen Fällen 
+Befehle schnell und einfach über den vorhersagenden Eingabedialog eingegeben 
+werden.
+
+Um die vorhersagende Eingabe in AGI-Spielen zu aktivieren, müssen Sie die Datei 
+pred.dic in den Extrapfad von ScummVM oder in das Verzeichnis des Spiels 
+kopieren, das Sie spielen möchten. Dieses Wörterbuch wurde erstellt, indem alle 
+bekannten AGI-Spiele analysiert wurden, und enthält den maximalen Satz 
+gebräuchlicher Wörter.
+
+Wenn das Wörterbuch erkannt wurde, wird der vorhersagende Eingabedialog entweder 
+durch Klicken auf den Kommandozeilenbereich angezeigt (dort, wo auch immer eine 
+Tastatureingabe erforderlich ist, auch in Dialogfeldern) oder in einigen Ports 
+durch Drücken eines bestimmten Tastenkürzels.
+
+Der vorhersagende Eingabedialog funktioniert in drei Modi, zwischen denen mit 
+der Schaltfläche (*)Pre/123/Abc gewechselt werden kann. Die primäre 
+Eingabemethode ist der vorhersagende Modus (Pre), welcher der Worterkennung bei 
+„schnellem Tippen“ auf Mobilfunktelefonen ähnelt. Das Alphabet ist in neun 
+Gruppen unterteilt, die naturgemäß den neun Ziffern auf dem Ziffernblock 
+zugeteilt sind (0 ist die Leertaste). Um ein Wort einzugeben, drücken Sie einmal 
+die Ziffer der Gruppe, die den Buchstaben des Worts enthält, den Sie tippen 
+möchten, dann gehen Sie zum nächsten Buchstaben über. Um z. B. den Befehl „look“ 
+einzugeben, sollten Sie 5665 drücken. Während Sie schrittweise die Ziffernfolge 
+des beabsichtigten Wortes eingeben, wird auf das Wörterbuch zugegriffen, um 
+bekannte Wörter, die mit Ihrer Eingabe bis zu diesem Punkt übereinstimmen, zu 
+finden. Während Sie mehr und mehr Tasten drücken, läuft die Vorhersage auf das 
+richtige Wort zu. Das ist der Grund, warum das angezeigte Wort sich zwischen 
+einem Tastendruck drastisch verändern kann. Es gibt jedoch Fälle, in denen mehr 
+als ein Wort dieselbe Zahlenkombination teilen. Z. B. haben die Worte „quit“ und 
+„suit“ dieselbe Nummer, nämlich 7848. In diesen Fällen hilft die Schaltfläche 
+(#)next weiter. Durch ihre Betätigung können Sie durch die Liste der Wörter 
+schalten, welche denselben Zahlencode haben und schließlich das richtige Wort 
+akzeptieren, indem Sie die (0) für Leertaste oder OK drücken.
+
+Die zweite Eingabemethode (123) ist die numerische Eingabe: Jede Taste, die Sie 
+drücken, wird als tatsächliche Ziffer eingegeben.
+
+Die dritte Eingabemethode (Abc) ist die Multi-Tipp-Alpha-Eingabemthode. Dieser 
+Modus ist dazu gedacht, um freien Text einzugeben, ohne die Hilfe des 
+Wörterbuchschemas des vorhersagenden Modus (Pre). Der Text wird Buchstabe für 
+Buchstabe eingegeben. Für jeden Buchstaben drücken Sie zuerst die Ziffer der 
+Gruppe, die den Buchstaben beinhaltet, den Sie tippen wollen, dann verwenden Sie 
+die Schaltfläche (#)next, um durch die Buchstaben zu schalten, bis der richtige 
+erscheint, und wiederholen dies mit der nächsten Ziffer. Um z. B. das Wort 
+„look“ einzugeben, müssen Sie folgendes Drücken: 5##6##6##5#
+
+Der Dialog kann vollständig mit der Maus verwendet werden, aber ein paar 
+Maßnahmen wurden getroffen, um dessen Verwendung bei einigen ScummVM-Ports 
+komfortabler zu gestalten, indem naturgemäß dessen Funktionsweise dem 
+Ziffernblock zugewiesen wurde. Ebenso können die Schaltflächen mittels der 
+Pfeiltasten und der Eingabetaste gesteuert werden.
+
+
+(Übersetzung basiert auf README mit SHA1 ID: 
+eae06884b6c6da23b7932ceba65e435d9be6ef82)

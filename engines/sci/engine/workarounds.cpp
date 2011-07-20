@@ -77,6 +77,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE4,        700,   700,  1,         "BridgeHand", "calcQTS",        -1,    3, { WORKAROUND_FAKE,   0 } }, // sometimes when placing a bid in bridge
 	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2",   0x1d4d,    0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE4,        400,   400,  1,            "GinHand", "calcRuns",       -1,    4, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Gin Rummy (e.g. when knocking and placing a card) - bug #3292334
+	{ GID_HOYLE4,        500,    17,  1,          "Character", "say",            -1,  504, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Cribbage (e.g. when the opponent says "Last Card") - bug #3292327
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",  -1,   58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #3045225
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",           -1,    3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",         -1,    0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
@@ -282,6 +283,8 @@ const SciWorkaroundEntry kGraphSaveBox_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
+	{ GID_LSL6,           -1,    86,  0,             "LL6Inv", "show",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens when restoring, is called with hunk segment, but hunk is not allocated at that time
+	// ^^ TODO: check, if this is really a script error or an issue with our restore code
 	{ GID_LSL6,           -1,    86,  0,             "LL6Inv", "hide",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens during the game, gets called with 1 extra parameter
 	{ GID_SQ5,           850,   850,  0,                 NULL, "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens while playing Battle Cruiser (invalid segment) - bug #3056811
 	SCI_WORKAROUNDENTRY_TERMINATOR
@@ -447,7 +450,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 		do {
 			workaround = workaroundList;
 			while (workaround->methodName) {
-				bool objectNameMatches = (workaround->objectName == NULL) || 
+				bool objectNameMatches = (workaround->objectName == NULL) ||
 										 (workaround->objectName == g_sci->getSciLanguageString(searchObjectName, K_LANG_ENGLISH));
 
 				// Special case: in the fanmade Russian translation of SQ4, all

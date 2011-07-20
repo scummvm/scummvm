@@ -30,7 +30,7 @@ namespace tSage {
 void RingworldDemoGame::start() {
 	// Start the demo's single scene
 	_globals->_sceneManager.changeScene(1);
-	
+
 	_globals->_events.setCursor(CURSOR_NONE);
 }
 
@@ -72,6 +72,7 @@ void RingworldDemoGame::processEvent(Event &event) {
 			ConfigDialog *dlg = new ConfigDialog();
 			dlg->runModal();
 			delete dlg;
+			_globals->_soundManager.syncSounds();
 			_globals->_events.setCursorFromFlag();
 			break;
 		}
@@ -101,19 +102,19 @@ void RingworldDemoScene::postInit(SceneObjectList *OwnerList) {
 }
 
 void RingworldDemoScene::signal() {
-	_soundHandler.startSound(4);
+	_soundHandler.play(4);
 	_actor1.postInit();
 	_actor2.postInit();
 	_actor3.postInit();
 	_actor4.postInit();
 	_actor5.postInit();
 	_actor6.postInit();
-	
+
 	setAction(&_sequenceManager, this, 22, &_actor1, &_actor2, &_actor3, &_actor4, &_actor5, &_actor6, NULL);
 }
 
 void RingworldDemoScene::process(Event &event) {
-	
+
 }
 
 } // End of namespace tSage

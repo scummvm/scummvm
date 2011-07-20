@@ -45,6 +45,7 @@ namespace Common {
 namespace Audio {
 
 class AudioStream;
+class Codec;
 class QueuingAudioStream;
 
 class QuickTimeAudioDecoder : public Common::QuickTimeParser {
@@ -68,10 +69,12 @@ protected:
 	class AudioSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:
 		AudioSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
+		~AudioSampleDesc();
 
 		bool isAudioCodecSupported() const;
 		uint32 getAudioChunkSampleCount(uint chunk) const;
 		AudioStream *createAudioStream(Common::SeekableReadStream *stream) const;
+		void initCodec();
 
 		// TODO: Make private in the long run
 		uint16 _bitsPerSample;
@@ -79,6 +82,8 @@ protected:
 		uint32 _sampleRate;
 		uint32 _samplesPerFrame;
 		uint32 _bytesPerFrame;
+
+		Codec *_codec;
 	};
 
 	// Common::QuickTimeParser API

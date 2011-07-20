@@ -143,7 +143,7 @@ class SearchSet : public Archive {
 	ArchiveNodeList::iterator find(const String &name);
 	ArchiveNodeList::const_iterator find(const String &name) const;
 
-	// Add an archive keeping the list sorted by ascending priorities.
+	// Add an archive keeping the list sorted by descending priority.
 	void insert(const Node& node);
 
 public:

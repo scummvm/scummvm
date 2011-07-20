@@ -46,9 +46,10 @@
 /* This disables the dual layer mode which is used in FM-Towns versions
  * of SCUMM games and which emulates the behavior of the original code.
  * The only purpose is code size reduction for certain backends.
- * SCUMM 3 (FM-Towns) games will run in normal (DOS VGA) mode, which should
- * work just fine in most situations. Some glitches might occur. SCUMM 5 games
- * will not work without dual layer (and 16 bit color) support.
+ * SCUMM 3 (FM-Towns) games will run in English in normal (DOS VGA) mode,
+ * which should work just fine in most situations. Some glitches might
+ * occur. Japanese mode and SCUMM 5 FM-Towns games will not work without
+ * dual layer (and 16 bit color) support.
  */
 #define DISABLE_TOWNS_DUAL_LAYER_MODE
 #endif
@@ -345,6 +346,7 @@ class ResourceManager;
 class ScummEngine : public Engine {
 	friend class ScummDebugger;
 	friend class CharsetRenderer;
+	friend class CharsetRendererTownsClassic;
 	friend class ResourceManager;
 
 public:
@@ -897,7 +899,7 @@ public:
 
 	Common::RenderMode _renderMode;
 	uint8 _bytesPerPixel;
-	uint8 _bytesPerPixelOutput;
+	Graphics::PixelFormat _outputPixelFormat;
 
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
@@ -1004,7 +1006,7 @@ protected:
 	// Screen rendering
 	byte *_compositeBuf;
 	byte *_herculesBuf;
-	
+
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
@@ -1148,7 +1150,7 @@ protected:
 	void restoreCharsetBg();
 	void clearCharsetMask();
 	void clearTextSurface();
-	
+
 	virtual void initCharset(int charset);
 
 	virtual void printString(int m, const byte *msg);
@@ -1326,14 +1328,17 @@ public:
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;
 
+#ifdef USE_RGB_COLOR
+	// FM-Towns / PC-Engine specific
+	Graphics::FontSJIS *_cjkFont;
+#endif
+
 	// FM-Towns specific
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 public:
 	bool towns_isRectInStringBox(int x1, int y1, int x2, int y2);
 	byte _townsPaletteFlags;
-	byte _townsCharsetColorMap[16];
-	Graphics::FontSJIS *_cjkFont;
-	uint16 _cjkChar;
+	byte _townsCharsetColorMap[16];	
 
 protected:
 	void towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int w, int h);
@@ -1348,10 +1353,10 @@ protected:
 
 	Common::Rect _cyclRects[16];
 	int _numCyclRects;
-	
+
 	Common::Rect _curStringRect;
 
-	byte _townsOverrideShadowColor;	
+	byte _townsOverrideShadowColor;
 	byte _textPalette[48];
 	byte _townsClearLayerFlag;
 	byte _townsActiveLayerFlags;

@@ -31,6 +31,7 @@
 #include "tsage/scenes.h"
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
+#include "tsage/sound.h"
 
 namespace tSage {
 
@@ -1551,7 +1552,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		Event event;
 
 		// Keep event on-screen until a mouse or keypress
-		while (!_vm->getEventManager()->shouldQuit() && !_globals->_events.getEvent(event,
+		while (!_vm->shouldQuit() && !_globals->_events.getEvent(event,
 				EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
 			g_system->updateScreen();
 			g_system->delayMillis(10);
@@ -2868,8 +2869,6 @@ void Region::draw() {
 }
 
 void Region::uniteLine(int yp, LineSliceSet &sliceSet) {
-	// TODO: More properly implement like the original
-
 	// First expand the bounds as necessary to fit in the row
 	if (_ySlices.empty()) {
 		_bounds = Rect(sliceSet.items[0].xs, yp, sliceSet.items[sliceSet.items.size() - 1].xe, yp + 1);
@@ -2961,55 +2960,6 @@ int SceneRegions::indexOf(const Common::Point &pt) {
 
 /*--------------------------------------------------------------------------*/
 
-SoundHandler::SoundHandler() {
-	_action = NULL;
-	_field280 = -1;
-	if (_globals)
-		_globals->_sceneListeners.push_back(this);
-}
-
-SoundHandler::~SoundHandler() {
-	if (_globals)
-		_globals->_sceneListeners.remove(this);
-}
-
-void SoundHandler::dispatch() {
-	EventHandler::dispatch();
-	int v = _sound.proc12();
-
-	if (v != -1) {
-		_field280 = v;
-		_sound.proc2(-1);
-
-		if (_action)
-			_action->signal();
-	}
-
-	if (_field280 != -1) {
-		// FIXME: Hardcoded to only flag a sound ended if an action has been set
-		if (_action) {
-//		if (!_sound.proc3()) {
-			_field280 = -1;
-			if (_action) {
-				_action->signal();
-				_action = NULL;
-			}
-		}
-	}
-}
-
-void SoundHandler::startSound(int soundNum, Action *action, int volume) {
-	_action = action;
-	_field280 = 0;
-	setVolume(volume);
-	_sound.startSound(soundNum);
-
-	warning("TODO: SoundHandler::startSound");
-}
-
-
-/*--------------------------------------------------------------------------*/
-
 void SceneItemList::addItems(SceneItem *first, ...) {
 	va_list va;
 	va_start(va, first);
@@ -3072,13 +3022,12 @@ void WalkRegion::loadProcessList(byte *dataP, int dataSize, int &dataIndex, int 
 		int yp = READ_LE_UINT16(dataP + idx * 4 + 2);
 		if (yp != y1) {
 			/*
-			 * Commented out: doesn't seem to be used
+			 * Commented out: v doesn't seem to be used
 			int v;
 			if (idx == (dataSize - 1))
 				v = READ_LE_UINT16(dataP + 2);
 			else
 				v = process1(idx, dataP, dataSize);
-			warning("TODO: v not used? - %d", v);
 			*/
 			process2(dataIndex, x1, y1, xp, yp);
 			++dataIndex;
@@ -3490,8 +3439,9 @@ void SceneHandler::postInit(SceneObjectList *OwnerList) {
 	_globals->_scenePalette.loadPalette(0);
 	_globals->_scenePalette.refresh();
 
-	// TODO: Bunch of other scene related setup goes here
 	_globals->_soundManager.postInit();
+	_globals->_soundManager.buildDriverList(true);
+	_globals->_soundManager.installConfigDrivers();
 
 	_globals->_game->start();
 }
@@ -3594,9 +3544,10 @@ void SceneHandler::dispatch() {
 	if (_globals->_sceneManager._scene)
 		_globals->_sceneManager._scene->dispatch();
 
-	//TODO: Figure out purpose of the given list
-	//_globals->_regions.forEach(SceneHandler::handleListener);
+	// Not actually used
+	//_eventListeners.forEach(SceneHandler::handleListener);
 
+	// Handle pending eents
 	Event event;
 	while (_globals->_events.getEvent(event))
 		process(event);
@@ -3620,7 +3571,6 @@ void SceneHandler::dispatchObject(EventHandler *obj) {
 }
 
 void SceneHandler::saveListener(Serializer &ser) {
-	warning("TODO: SceneHandler::saveListener");
 }
 
 } // End of namespace tSage

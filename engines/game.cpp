@@ -46,7 +46,7 @@ GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, uint32 guioptions
 		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
 }
 
-GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, uint32 guioptions) {
+GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, uint32 guioptions, GameSupportLevel gsl) {
 	setVal("gameid", g);
 	setVal("description", d);
 	if (l != Common::UNK_LANG)
@@ -55,6 +55,8 @@ GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d,
 		setVal("platform", Common::getPlatformCode(p));
 	if (guioptions != 0)
 		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
+
+	setSupportLevel(gsl);
 }
 
 void GameDescriptor::setGUIOptions(uint32 guioptions) {
@@ -69,9 +71,6 @@ void GameDescriptor::appendGUIOptions(const Common::String &str) {
 }
 
 void GameDescriptor::updateDesc(const char *extra) {
-	// TODO: The format used here (LANG/PLATFORM/EXTRA) is not set in stone.
-	// We may want to change the order (PLATFORM/EXTRA/LANG, anybody?), or
-	// the seperator (instead of '/' use ', ' or ' ').
 	const bool hasCustomLanguage = (language() != Common::UNK_LANG);
 	const bool hasCustomPlatform = (platform() != Common::kPlatformUnknown);
 	const bool hasExtraDesc = (extra && extra[0]);
@@ -95,5 +94,32 @@ void GameDescriptor::updateDesc(const char *extra) {
 		}
 		descr += ")";
 		setVal("description", descr);
+	}
+}
+
+GameSupportLevel GameDescriptor::getSupportLevel() {
+	GameSupportLevel gsl = kStableGame;
+	if (contains("gsl")) {
+		Common::String gslString = getVal("gsl");
+		if (gslString.equals("unstable"))
+			gsl = kUnstableGame;
+		else if (gslString.equals("testing"))
+			gsl = kTestingGame;
+	}
+	return gsl;
+}
+
+void GameDescriptor::setSupportLevel(GameSupportLevel gsl) {
+	switch (gsl) {
+	case kUnstableGame:
+		setVal("gsl", "unstable");
+		break;
+	case kTestingGame:
+		setVal("gsl", "testing");
+		break;
+	case kStableGame:
+		// Fall Through intended
+	default:
+		erase("gsl");
 	}
 }

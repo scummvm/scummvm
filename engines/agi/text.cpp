@@ -504,17 +504,16 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
  *
  */
 void AgiEngine::printStatus(const char *message, ...) {
-	char x[42];
 	va_list args;
 
 	va_start(args, message);
 
-	vsprintf(x, message, args);
+	Common::String x = Common::String::vformat(message, args);
 
 	va_end(args);
 
 	debugC(4, kDebugLevelText, "fg=%d, bg=%d", STATUS_FG, STATUS_BG);
-	printText(x, 0, 0, _game.lineStatus, 40, STATUS_FG, STATUS_BG);
+	printText(x.c_str(), 0, 0, _game.lineStatus, 40, STATUS_FG, STATUS_BG);
 }
 
 static void safeStrcat(Common::String &p, const char *t) {

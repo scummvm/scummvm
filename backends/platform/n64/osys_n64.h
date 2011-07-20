@@ -107,7 +107,7 @@ protected:
 	// FIXME: This must be left as "int" for now, to fix the sign-comparison problem
 	// there is a little more work involved than an int->uint change
 	int _cursorWidth, _cursorHeight;
-	
+
 	int _cursorKeycolor;
 
 	uint16	_overlayHeight, _overlayWidth;
@@ -199,6 +199,7 @@ public:
 	virtual Audio::Mixer *getMixer();
 	virtual void getTimeAndDate(TimeDate &t) const;
 	virtual void setTimerCallback(TimerProc callback, int interval);
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 	void rebuildOffscreenGameBuffer(void);
 	void rebuildOffscreenMouseBuffer(void);

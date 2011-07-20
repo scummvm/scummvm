@@ -32,7 +32,7 @@
 #include "common/textconsole.h"
 
 OPGraphicsManager::OPGraphicsManager(SdlEventSource *sdlEventSource)
-	: SdlGraphicsManager(sdlEventSource) {
+	: SurfaceSdlGraphicsManager(sdlEventSource) {
 }
 
 bool OPGraphicsManager::loadGFXMode() {
@@ -47,7 +47,7 @@ bool OPGraphicsManager::loadGFXMode() {
 	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
 		_videoMode.aspectRatioCorrection = false;
 
-	return SdlGraphicsManager::loadGFXMode();
+	return SurfaceSdlGraphicsManager::loadGFXMode();
 }
 
 #endif

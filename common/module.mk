@@ -35,5 +35,16 @@ MODULE_OBJS := \
 	xmlparser.o \
 	zlib.o
 
+ifdef USE_BINK
+MODULE_OBJS += \
+	bitstream.o \
+	cosinetables.o \
+	dct.o \
+	fft.o \
+	huffman.o \
+	rdft.o \
+	sinetables.o
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk

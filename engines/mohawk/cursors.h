@@ -56,6 +56,7 @@ public:
 	virtual void showCursor();
 	virtual void hideCursor();
 	virtual void setCursor(uint16 id);
+	virtual void setCursor(const Common::String &name) {}
 	virtual void setDefaultCursor();
 	virtual bool hasSource() const { return false; }
 
@@ -157,6 +158,7 @@ public:
 	~LivingBooksCursorManager_v2();
 
 	void setCursor(uint16 id);
+	void setCursor(const Common::String &name);
 	bool hasSource() const { return _sysArchive != 0; }
 
 private:

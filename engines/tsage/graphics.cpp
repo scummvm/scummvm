@@ -326,7 +326,7 @@ void GfxSurface::synchronize(Serializer &s) {
 			s.syncAsSint16LE(zero);
 		}
 	} else {
-		int w, h;
+		int w = 0, h = 0;
 		s.syncAsSint16LE(w);
 		s.syncAsSint16LE(h);
 
@@ -408,7 +408,7 @@ bool GfxSurface::displayText(const Common::String &msg, const Common::Point &pt)
 
 	// Write for a  mouse or keypress
 	Event event;
-	while (!_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !_vm->getEventManager()->shouldQuit())
+	while (!_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !_vm->shouldQuit())
 		;
 
 	// Restore the display area
@@ -718,7 +718,7 @@ bool GfxElement::focusedEvent(Event &event) {
 	int xOffset = mousePos.x - _globals->_events._mousePos.x;
 	int yOffset = mousePos.y - _globals->_events._mousePos.y;
 
-	while (event.eventType != EVENT_BUTTON_UP && !_vm->getEventManager()->shouldQuit()) {
+	while (event.eventType != EVENT_BUTTON_UP && !_vm->shouldQuit()) {
 		g_system->delayMillis(10);
 
 		if (_bounds.contains(mousePos)) {
@@ -846,7 +846,7 @@ void GfxButton::setDefaults() {
 	gfxManager._font.getStringBounds(_message.c_str(), tempRect, 240);
 	tempRect.right = ((tempRect.right + 15) / 16) * 16;
 
-	// Set the button bounds 
+	// Set the button bounds
 	tempRect.collapse(-_globals->_gfxEdgeAdjust, -_globals->_gfxEdgeAdjust);
 	if (_vm->getFeatures() & GF_CD)
 		--tempRect.top;
@@ -866,7 +866,7 @@ void GfxButton::draw() {
 	// Set the font and color
 	gfxManager._font.setFontNumber(_fontNumber);
 
-	// 
+	//
 	gfxManager._font._colors.foreground = this->_unkColor1;
 	gfxManager._font._colors2.background = this->_unkColor2;
 	gfxManager._font._colors2.foreground = this->_unkColor3;
@@ -895,7 +895,7 @@ bool GfxButton::process(Event &event) {
 
 	case EVENT_KEYPRESS:
 		if (!event.handled && (event.kbd.keycode == _keycode)) {
-			// TODO: Ensure momentary click operation displays
+			// Highlight the button momentarily
 			highlight();
 			g_system->delayMillis(20);
 			highlight();
@@ -1029,7 +1029,7 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 	GfxButton *selectedButton = NULL;
 
 	bool breakFlag = false;
-	while (!_vm->getEventManager()->shouldQuit() && !breakFlag) {
+	while (!_vm->shouldQuit() && !breakFlag) {
 		Event event;
 		while (_globals->_events.getEvent(event) && !breakFlag) {
 			// Adjust mouse positions to be relative within the dialog

@@ -115,7 +115,7 @@ AnimFrame::AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f) : _pale
 		decompFF(in, f);
 		break;
 	default:
-		error("Unknown frame compression: %d", f.compressionType);
+		error("[AnimFrame::AnimFrame] Unknown frame compression: %d", f.compressionType);
 	}
 
 	readPalette(in, f);
@@ -379,11 +379,11 @@ bool Sequence::load(Common::SeekableReadStream *stream, byte field30) {
 		// Move stream to start of frame
 		_stream->seek((int32)(_sequenceHeaderSize + i * _sequenceFrameSize), SEEK_SET);
 		if (_stream->eos())
-			error("Couldn't seek to the current frame data");
+			error("[Sequence::load] Couldn't seek to the current frame data");
 
 		// Check if there is enough data
 		if ((unsigned)(_stream->size() - _stream->pos()) < _sequenceFrameSize)
-			error("The sequence frame does not have a valid header");
+			error("[Sequence::load] The sequence frame does not have a valid header");
 
 		FrameInfo info;
 		info.read(_stream, true);
@@ -397,10 +397,10 @@ bool Sequence::load(Common::SeekableReadStream *stream, byte field30) {
 
 FrameInfo *Sequence::getFrameInfo(uint16 index) {
 	if (_frames.size() == 0)
-		error("Trying to decode a sequence before loading its data");
+		error("[Sequence::getFrameInfo] Trying to decode a sequence before loading its data");
 
 	if (index > _frames.size() - 1)
-		error("Invalid sequence frame requested: %d, max %d", index, _frames.size() - 1);
+		error("[Sequence::getFrameInfo] Invalid sequence frame requested: %d, max %d", index, _frames.size() - 1);
 
 	return &_frames[index];
 }
@@ -463,14 +463,14 @@ bool SequenceFrame::nextFrame() {
 
 FrameInfo *SequenceFrame::getInfo() {
 	if (!_sequence)
-		error("SequenceFrame::getFrameInfo: Invalid sequence!");
+		error("[SequenceFrame::getInfo] Invalid sequence");
 
 	return _sequence->getFrameInfo(_frame);
 }
 
 Common::String SequenceFrame::getName() {
 	if (!_sequence)
-		error("SequenceFrame::getName: Invalid sequence!");
+		error("[SequenceFrame::getName] Invalid sequence");
 
 	return _sequence->getName();
 }

@@ -42,6 +42,7 @@
 #include "audio/mixer_intern.h"
 #include "audio/fmopl.h"
 
+#include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 
 #include "gui/Actions.h"
@@ -353,9 +354,9 @@ void drawError(char *error) {
 }
 
 // ********************************************************************************************
-static DefaultTimerManager *_int_timer = NULL;
 static Uint32 timer_handler_wrapper(Uint32 interval) {
-	_int_timer->handler();
+	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
+	tm->handler();
 	return interval;
 }
 
@@ -379,21 +380,7 @@ void OSystem_WINCE3::initBackend() {
 
 	((WINCESdlEventSource *)_eventSource)->init((WINCESdlGraphicsManager *)_graphicsManager);
 
-
-	// FIXME: This timer manager is *not accesible* from the outside.
-	// Instead the timer manager setup by OSystem_SDL is visible on the outside.
-	// Since the WinCE backend actually seems to work, my guess is that
-	// SDL_AddTimer works after all and the following code is redundant.
-	// However it may be, this must be resolved one way or another.
-
-	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
-	// We work around this by using the SetTimer function, since we only use
-	// one timer in scummvm (for the time being)
-	_int_timer = new DefaultTimerManager();
-	//_timerID = NULL;  // OSystem_SDL will call removetimer with this, it's ok
-	SDL_SetTimer(10, &timer_handler_wrapper);
-
-	// Chain init
+	// Call parent implementation of this method
 	OSystem_SDL::initBackend();
 
 	// Initialize global key mapping
@@ -403,9 +390,6 @@ void OSystem_WINCE3::initBackend() {
 		warning("Setting default action mappings");
 		GUI_Actions::Instance()->saveMapping(); // write defaults
 	}
-
-	// Call parent implementation of this method
-	//OSystem_SDL::initBackend();
 
 	_inited = true;
 }
@@ -555,6 +539,24 @@ void OSystem_WINCE3::initSDL() {
 	}
 }
 
+void OSystem_WINCE3::init() {
+	// Create SdlMutexManager instance as the TimerManager relies on the
+	// MutexManager being already initialized
+	if (_mutexManager == 0)
+		_mutexManager = new SdlMutexManager();
+
+	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
+	// We work around this by using the SetTimer function, since we only use
+	// one timer in scummvm (for the time being)
+	if (_timerManager == 0) {
+		_timerManager = new DefaultTimerManager();
+		SDL_SetTimer(10, &timer_handler_wrapper);
+	}
+
+	// Call parent implementation of this method
+	OSystem_SDL::init();
+}
+
 void OSystem_WINCE3::quit() {
 	fclose(stdout_file);
 	fclose(stderr_file);
@@ -576,6 +578,73 @@ void OSystem_WINCE3::getTimeAndDate(TimeDate &t) const {
 	t.tm_hour   = systime.wHour;
 	t.tm_min    = systime.wMinute;
 	t.tm_sec    = systime.wSecond;
+}
+
+Common::String OSystem_WINCE3::getSystemLanguage() const {
+#ifdef USE_DETECTLANG
+	// We can not use "setlocale" (at least not for MSVC builds), since it
+	// will return locales like: "English_USA.1252", thus we need a special
+	// way to determine the locale string for Win32.
+	char langName[9];
+	char ctryName[9];
+	TCHAR langNameW[32];
+	TCHAR ctryNameW[32];
+	int i = 0;
+	bool localeFound = false;
+	Common::String localeName;
+
+	// Really not nice, but the only way to map Windows CE language/country codes to posix NLS names,
+	// because Windows CE doesn't support LOCALE_SISO639LANGNAME and LOCALE_SISO3166CTRYNAME,
+	// according to this: http://msdn.microsoft.com/en-us/library/aa912934.aspx
+	//
+	// See http://msdn.microsoft.com/en-us/goglobal/bb896001.aspx for a translation table
+	// This table has to be updated manually when new translations are added
+	const char *posixMappingTable[][3] = {
+		{"CAT", "ESP", "ca_ES"},
+		{"CSY", "CZE", "cs_CZ"},
+		{"DAN", "DNK", "da_DA"},
+		{"DEU", "DEU", "de_DE"},
+		{"ESN", "ESP", "es_ES"},
+		{"ESP", "ESP", "es_ES"},
+		{"FRA", "FRA", "fr_FR"},
+		{"HUN", "HUN", "hu_HU"},
+		{"ITA", "ITA", "it_IT"},
+		{"NOR", "NOR", "nb_NO"},
+		{"NON", "NOR", "nn_NO"},
+		{"PLK", "POL", "pl_PL"},
+		{"PTB", "BRA", "pt_BR"},
+		{"RUS", "RUS", "ru_RU"},
+		{"SVE", "SWE", "se_SE"},
+		{"UKR", "UKR", "uk_UA"},
+		{NULL, NULL, NULL}
+	};
+
+	if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVLANGNAME, langNameW, sizeof(langNameW)) != 0 &&
+		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVCTRYNAME, ctryNameW, sizeof(ctryNameW)) != 0) {
+		WideCharToMultiByte(CP_ACP, 0, langNameW, -1, langName, (wcslen(langNameW) + 1), NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, ctryNameW, -1, ctryName, (wcslen(ctryNameW) + 1), NULL, NULL);
+
+		debug(1, "Trying to find posix locale name for %s_%s", langName, ctryName);
+		while (posixMappingTable[i][0] && !localeFound) {
+			if ( (!strcmp(posixMappingTable[i][0], langName) || !strcmp(posixMappingTable[i][0], "*")) &&
+				 (!strcmp(posixMappingTable[i][1], ctryName) || !strcmp(posixMappingTable[i][0], "*")) ) {
+				localeFound = true;
+				localeName = posixMappingTable[i][2];
+			}
+			i++;
+		}
+		if (!localeFound) warning("No posix locale name found for %s_%s", langName, ctryName);
+	}
+
+	if (localeFound) {
+		debug(1, "Found posix locale name: %s", localeName.c_str());
+		return localeName;
+	} else {
+		return ModularBackend::getSystemLanguage();
+	}
+#else // USE_DETECTLANG
+	return ModularBackend::getSystemLanguage();
+#endif // USE_DETECTLANG
 }
 
 int OSystem_WINCE3::_platformScreenWidth;

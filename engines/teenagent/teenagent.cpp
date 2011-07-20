@@ -206,7 +206,7 @@ void TeenAgentEngine::deinit() {
 
 Common::Error TeenAgentEngine::loadGameState(int slot) {
 	debug(0, "loading from slot %d", slot);
-	Common::ScopedPtr<Common::InSaveFile> 
+	Common::ScopedPtr<Common::InSaveFile>
 		in(_saveFileMan->openForLoading(Common::String::format("teenagent.%02d", slot)));
 	if (!in)
 		in.reset(_saveFileMan->openForLoading(Common::String::format("teenagent.%d", slot)));
@@ -216,14 +216,22 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 	Resources *res = Resources::instance();
 
-	assert(res->dseg.size() >= 0x6478 + 0x777a);
-	char data[0x777a];
+	const uint dataSize = 0x777a;
+	assert(res->dseg.size() >= 0x6478 + dataSize);
+
+	char *data = (char *)malloc(dataSize);
+	if (!data)
+		error("[TeenAgentEngine::loadGameState] Cannot allocate buffer");
+
 	in->seek(0);
-	if (in->read(data, 0x777a) != 0x777a) {
+	if (in->read(data, dataSize) != dataSize) {
+		free(data);
 		return Common::kReadingFailed;
 	}
 
-	memcpy(res->dseg.ptr(0x6478), data, sizeof(data));
+	memcpy(res->dseg.ptr(0x6478), data, dataSize);
+
+	free(data);
 
 	scene->clear();
 	inventory->activate(false);
@@ -290,16 +298,31 @@ bool TeenAgentEngine::showCDLogo() {
 	if (!cdlogo.exists("cdlogo.res") || !cdlogo.open("cdlogo.res"))
 		return true;
 
-	byte bg[0xfa00];
-	byte palette[3*256];
+	const uint bgSize = 0xfa00;
+	const uint paletteSize = 3 * 256;
 
-	cdlogo.read(bg, sizeof(bg));
-	cdlogo.read(palette, sizeof(palette));
-	for (uint c = 0; c < 3*256; ++c)
+	byte *bg = (byte *)malloc(bgSize);
+	if (!bg)
+		error("[TeenAgentEngine::showCDLogo] Cannot allocate background buffer");
+
+	byte *palette = (byte *)malloc(paletteSize);
+	if (!palette) {
+		free(bg);
+		error("[TeenAgentEngine::showCDLogo] Cannot allocate palette buffer");
+	}
+
+	cdlogo.read(bg, bgSize);
+	cdlogo.read(palette, paletteSize);
+
+	for (uint c = 0; c < paletteSize; ++c)
 		palette[c] *= 4;
+
 	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
 	_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
 	_system->updateScreen();
+
+	free(bg);
+	free(palette);
 
 	for(uint i = 0; i < 20; ++i) {
 		int r = skipEvents();
@@ -317,43 +340,66 @@ bool TeenAgentEngine::showLogo() {
 	if (!logo.open("unlogic.res"))
 		return true;
 
-	byte bg[0xfa00];
-	byte palette[3*256];
-
 	Common::ScopedPtr<Common::SeekableReadStream> frame(logo.getStream(1));
 	if (!frame)
 		return true;
 
-	frame->read(bg, sizeof(bg));
-	frame->read(palette, sizeof(palette));
-	for (uint c = 0; c < 3*256; ++c)
+	const uint bgSize = 0xfa00;
+	const uint paletteSize = 3 * 256;
+
+	byte *bg = (byte *)malloc(bgSize);
+	if (!bg)
+		error("[TeenAgentEngine::showLogo] Cannot allocate background buffer");
+
+	byte *palette = (byte *)malloc(paletteSize);
+	if (!palette) {
+		free(bg);
+		error("[TeenAgentEngine::showLogo] Cannot allocate palette buffer");
+	}
+
+	frame->read(bg, bgSize);
+	frame->read(palette, paletteSize);
+
+	for (uint c = 0; c < paletteSize; ++c)
 		palette[c] *= 4;
+
 	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
+
+	free(palette);
 
 	uint n = logo.fileCount();
 	for(uint f = 0; f < 4; ++f)
 		for(uint i = 2; i <= n; ++i) {
 			{
 				int r = skipEvents();
-				if (r != 0)
+				if (r != 0) {
+					free(bg);
 					return r > 0? true: false;
+				}
 			}
 			_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
 
 			frame.reset(logo.getStream(i));
-			if (!frame)
+			if (!frame) {
+				free(bg);
 				return true;
+			}
 
 			Surface s;
 			s.load(frame, Surface::kTypeOns);
-			if (s.empty())
+			if (s.empty()) {
+				free(bg);
 				return true;
+			}
 
 			_system->copyRectToScreen((const byte *)s.pixels, s.w, s.x, s.y, s.w, s.h);
 			_system->updateScreen();
 
 			_system->delayMillis(100);
 		}
+
+	free(bg);
+
 	return true;
 }
 
@@ -364,29 +410,53 @@ bool TeenAgentEngine::showMetropolis() {
 	FilePack varia;
 	varia.open("varia.res");
 
-	byte palette[3*256];
+	const uint paletteSize = 3 * 256;
+	byte *palette = (byte *)malloc(paletteSize);
+	if (!palette)
+		error("[TeenAgentEngine::showMetropolis] Cannot allocate palette buffer");
+
 	{
 		Common::ScopedPtr<Common::SeekableReadStream> s(varia.getStream(5));
-		s->read(palette, sizeof(palette));
-		for (uint c = 0; c < 3*256; ++c)
+		s->read(palette, paletteSize);
+		for (uint c = 0; c < paletteSize; ++c)
 			palette[c] *= 4;
 	}
 
 	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
 
-	byte varia_6[21760], varia_9[18302];
-	varia.read(6, varia_6, sizeof(varia_6));
-	varia.read(9, varia_9, sizeof(varia_9));
+	free(palette);
 
-	byte colors[56 * 160 * 2];
-	memset(colors, 0, sizeof(colors));
+	const uint varia6Size = 21760;
+	const uint varia9Size = 18302;
+	byte *varia_6 = (byte *)malloc(varia6Size);
+	byte *varia_9 = (byte *)malloc(varia9Size);
+	if (!varia_6 || !varia_9) {
+		free(varia_6);
+		free(varia_9);
+
+		error("[TeenAgentEngine::showMetropolis] Cannot allocate buffer");
+	}
+
+	varia.read(6, varia_6, varia6Size);
+	varia.read(9, varia_9, varia9Size);
+
+	const uint colorsSize = 56 * 160 * 2;
+	byte *colors = (byte *)malloc(colorsSize);
+	if (!colors)
+		error("[TeenAgentEngine::showMetropolis] Cannot allocate colors buffer");
+
+	memset(colors, 0, colorsSize);
 
 	int logo_y = -56;
 	for(uint f = 0; f < 300; ++f) {
 		{
 			int r = skipEvents();
-			if (r != 0)
+			if (r != 0) {
+				free(varia_6);
+				free(varia_9);
+				free(colors);
 				return r > 0? true: false;
+			}
 		}
 
 		Graphics::Surface *surface = _system->lockScreen();
@@ -441,6 +511,11 @@ bool TeenAgentEngine::showMetropolis() {
 		_system->updateScreen();
 		_system->delayMillis(100);
 	}
+
+	free(varia_6);
+	free(varia_9);
+	free(colors);
+
 	return true;
 }
 
@@ -963,10 +1038,10 @@ void TeenAgentEngine::playSoundNow(byte id) {
 void TeenAgentEngine::setMusic(byte id) {
 	debug(0, "starting music %u", id);
 	Resources *res = Resources::instance();
-	
+
 	if (id != 1) //intro music
 		*res->dseg.ptr(0xDB90) = id;
-	
+
 	if (_gameDescription->flags & ADGF_CD) {
 		byte track2cd[] = {7, 2, 0, 9, 3, 6, 8, 10, 4, 5, 11};
 		if (id == 0 || id > 11 || track2cd[id - 1] == 0) {

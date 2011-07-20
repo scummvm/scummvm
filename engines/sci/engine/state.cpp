@@ -144,7 +144,7 @@ void EngineState::wait(int16 ticks) {
 
 void EngineState::initGlobals() {
 	Script *script_000 = _segMan->getScript(1);
-	
+
 	if (!script_000->_localsBlock)
 		error("Script 0 has no locals block");
 
@@ -331,7 +331,7 @@ void SciEngine::checkVocabularySwitch() {
 	uint16 parserLanguage = 1;
 	if (SELECTOR(parseLang) != -1)
 		parserLanguage = readSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(parseLang));
-		
+
 	if (parserLanguage != _vocabularyLanguage) {
 		delete _vocabulary;
 		_vocabulary = new Vocabulary(_resMan, parserLanguage > 1 ? true : false);

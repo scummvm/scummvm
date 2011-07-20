@@ -312,7 +312,7 @@ void Sound::playSound(int soundID) {
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr + 6, size);
 		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);			
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	else if (_vm->_game.platform != Common::kPlatformFMTowns && READ_BE_UINT32(ptr) == MKTAG('S','O','U','N')) {
 		if (_vm->_game.version != 3)
@@ -1137,12 +1137,25 @@ int ScummEngine::readSoundResource(ResId idx) {
 				break;
 			case MKTAG('S','P','K',' '):
 				pri = -1;
-//				if (_musicType == MDT_PCSPK || _musicType == MDT_PCJR)
-//					pri = 11;
+				if (_musicType == MDT_PCSPK || _musicType == MDT_PCJR)
+					pri = 11;
 				break;
 			}
 
+			// We only allow SPK resources for PC Speaker, PCJr and CMS here
+			// since other resource would sound horribly with their output
+			// drivers.
 			if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR || _musicType == MDT_CMS) && pri != 11)
+				pri = -1;
+
+			// We only allow ADL resources when AdLib or FM-Towns is used as
+			// primary audio output. This fixes some odd sounds when Indy and
+			// Sophia leave Atlantis with the submarine in Indy4. (Easy to
+			// check with bootparam 4061 in the CD version). It seems the game
+			// only contains a ROL resource for sound id 60. Formerly we tried
+			// to play that via the AdLib or FM-Towns audio driver resulting
+			// in strange noises. Now we behave like the original did.
+			if ((_musicType == MDT_ADLIB || _musicType == MDT_TOWNS) && pri != 10)
 				pri = -1;
 
 			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(tag), size, pri);

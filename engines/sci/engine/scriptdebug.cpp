@@ -72,7 +72,7 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 	const byte *scr;
 	int scr_size;
 	reg_t retval = make_reg(pos.segment, pos.offset + 1);
-	uint16 param_value = 0xffff; // Suppress GCC warning by setting default value, chose value as invalid to getKernelName etc. 
+	uint16 param_value = 0xffff; // Suppress GCC warning by setting default value, chose value as invalid to getKernelName etc.
 	int i = 0;
 	Kernel *kernel = g_sci->getKernel();
 
@@ -617,8 +617,8 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 	Console *con = g_sci->getSciDebugger();
 
 #ifdef VM_DEBUG_SEND
-		debugN("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj), 
-			s->_segMan->getObjectName(send_obj), selector, 
+		debugN("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj),
+			s->_segMan->getObjectName(send_obj), selector,
 			g_sci->getKernel()->getSelectorName(selector).c_str());
 #endif // VM_DEBUG_SEND
 
@@ -644,18 +644,18 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 			reg_t selectorValue = *varp.getPointer(segMan);
 			if (!argc && (activeBreakpointTypes & BREAK_SELECTORREAD)) {
 				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORREAD, send_obj, selector))
-					con->DebugPrintf("Read from selector (%s:%s): %04x:%04x\n", 
+					con->DebugPrintf("Read from selector (%s:%s): %04x:%04x\n",
 							objectName, selectorName,
 							PRINT_REG(selectorValue));
 			} else if (argc && (activeBreakpointTypes & BREAK_SELECTORWRITE)) {
 				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORWRITE, send_obj, selector))
-					con->DebugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n", 
+					con->DebugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n",
 							objectName, selectorName,
 							PRINT_REG(selectorValue), PRINT_REG(argp[1]));
 			}
 
 			if (argc > 1)
-				debug(kDebugLevelScripts, "Write to selector (%s:%s): change %04x:%04x to %04x:%04x, argc == %d\n", 
+				debug(kDebugLevelScripts, "Write to selector (%s:%s): change %04x:%04x to %04x:%04x, argc == %d\n",
 							objectName, selectorName,
 							PRINT_REG(selectorValue), PRINT_REG(argp[1]), argc);
 		}

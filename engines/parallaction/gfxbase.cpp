@@ -296,19 +296,19 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 	// clipped scaled destination rectangle
 	Common::Rect dstRect(scaledWidth, scaledHeight);
 	dstRect.moveTo(scaledLeft, scaledTop);
-	
-	Common::Rect clipper(surf->w, surf->h);	
+
+	Common::Rect clipper(surf->w, surf->h);
 	dstRect.clip(clipper);
 	if (!dstRect.isValidRect()) return;
-	
-	
+
+
 	// clipped source rectangle
 	Common::Rect srcRect;
 	srcRect.left = (dstRect.left - scaledLeft)  * 100 / scale;
 	srcRect.top = (dstRect.top - scaledTop) * 100 / scale;
 	srcRect.setWidth(dstRect.width() * 100 / scale);
 	srcRect.setHeight(dstRect.height() * 100 / scale);
-	if (!srcRect.isValidRect()) return;	
+	if (!srcRect.isValidRect()) return;
 
 	Common::Point dp;
 	dp.x = dstRect.left;

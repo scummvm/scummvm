@@ -207,7 +207,7 @@ void Sprite::drawClip(const Point &spritePointer, int width, int height, const b
 	const byte *srcPointer;
 
 	int backBufferPitch = _vm->_gfx->getBackBufferPitch();
-	
+
 	//find Rects intersection
 	yDiff = clipRect.top - spritePointer.y;
 	if (yDiff > 0) {
@@ -247,10 +247,10 @@ void Sprite::drawClip(const Point &spritePointer, int width, int height, const b
 	}
 	bufRowPointer = _vm->_gfx->getBackBufferPixels() + backBufferPitch * yDstOffset + xDstOffset;
 	srcRowPointer = spriteBuffer + width * ySrcOffset + xSrcOffset;
-	
+
 	// validate src, dst buffers
 	assert(_vm->_gfx->getBackBufferPixels() <= bufRowPointer);
-	assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width * _vm->getDisplayInfo().height)) >= 
+	assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width * _vm->getDisplayInfo().height)) >=
 		(byte *)(bufRowPointer + backBufferPitch * (cHeight - 1) + cWidth));
 	assert((const byte *)spriteBuffer <= srcRowPointer);
 	assert(((const byte *)spriteBuffer + (width * height)) >= (const byte *)(srcRowPointer + width * (cHeight - 1) + cWidth));
@@ -469,7 +469,7 @@ void Sprite::scaleBuffer(const byte *src, int width, int height, int scale, size
 
 	_decodeBuf.resize(outLength);
 	byte *dst = &_decodeBuf.front();
-	
+
 	memset(dst, 0, _decodeBuf.size());
 
 	for (int i = 0; i < height; i++) {

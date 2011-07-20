@@ -163,7 +163,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	// extend the internal storage size.
 	if (infoSelector & kInfoFlagClone)
 		parentObj = s->_segMan->getObject(parentAddr);
-	
+
 	*cloneObj = *parentObj;
 
 	// Mark as clone

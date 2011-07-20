@@ -45,19 +45,29 @@ MODULE_OBJS := \
 	entities/verges.o \
 	entities/vesna.o \
 	entities/yasmin.o \
+	fight/fight.o \
+	fight/fighter.o \
+	fight/fighter_anna.o \
+	fight/fighter_ivo.o \
+	fight/fighter_milos.o \
+	fight/fighter_salko.o \
+	fight/fighter_vesna.o \
 	game/action.o \
 	game/beetle.o \
 	game/entities.o \
-	game/fight.o \
 	game/inventory.o \
 	game/logic.o \
-	game/menu.o \
 	game/object.o \
 	game/savegame.o \
 	game/savepoint.o \
 	game/scenes.o \
-	game/sound.o \
 	game/state.o \
+	menu/clock.o \
+	menu/menu.o \
+	menu/trainline.o \
+	sound/entry.o \
+	sound/queue.o \
+	sound/sound.o \
 	debug.o \
 	detection.o \
 	graphics.o \

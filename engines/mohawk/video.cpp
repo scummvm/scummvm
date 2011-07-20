@@ -436,22 +436,22 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 	entry.filename = filename;
 	entry.loop = loop;
 	entry.enabled = true;
-	
+
 	Common::File *file = new Common::File();
 	if (!file->open(filename)) {
 		delete file;
 		return NULL_VID_HANDLE;
 	}
-	
+
 	entry->loadStream(file);
-	
+
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
 		if (!_videoStreams[i].video) {
 			_videoStreams[i] = entry;
 			return i;
 		}
-			
+
 	// Otherwise, just add it to the list
 	_videoStreams.push_back(entry);
 	return _videoStreams.size() - 1;

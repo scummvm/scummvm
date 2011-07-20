@@ -69,7 +69,7 @@ void Demo::disablePersistentScripts() {
 
 void Demo::runPersistentScripts() {
 	Intro::runPersistentScripts();
-	
+
 	if (_enabled201) {
 		// Used on Card 2001, 2002 and 2003
 

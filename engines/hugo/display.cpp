@@ -736,7 +736,7 @@ overlayState_t Screen_v1d::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
 	uint16 index = (uint16)(dst_p - _frontBuffer) >> 3;
 
 	for (int i = 0; i < seq_p->lines-y; i++) {      // Each line in object
-		if (_vm->_object->getBaseBoundary(index))   // If any overlay base byte is non-zero then the object is foreground, else back. 
+		if (_vm->_object->getBaseBoundary(index))   // If any overlay base byte is non-zero then the object is foreground, else back.
 			return kOvlForeground;
 		index += kCompLineSize;
 	}

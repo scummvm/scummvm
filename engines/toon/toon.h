@@ -204,7 +204,7 @@ public:
 	void viewInventoryItem(Common::String str, int32 lineId, int32 itemDest);
 	void storePalette();
 	void restorePalette();
-	const char *getSpecialConversationMusic(int32 locationId); 
+	const char *getSpecialConversationMusic(int32 locationId);
 	void playRoomMusic();
 	void waitForScriptStep();
 	void doMagnifierEffect();
@@ -320,7 +320,7 @@ public:
 	}
 
 	Common::Error saveGameState(int slot, const Common::String &desc) {
-		
+
 		return (saveGame(slot, desc) ? Common::kWritingFailed : Common::kNoError);
 	}
 
@@ -381,7 +381,7 @@ protected:
 	Common::Array<Common::Rect> _oldDirtyRects;
 
 	bool _dirtyAll;
-	
+
 
 	AnimationInstance *_cursorAnimationInstance;
 	Animation *_cursorAnimation;

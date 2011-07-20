@@ -2933,7 +2933,7 @@ void ScummEngine_v100he::o100_getVideoData() {
 		break;
 	case 73:
 		pop();
-		push(_moviePlay->endOfVideo() ? -1 : (_moviePlay->getCurFrame() + 1));
+		push(_moviePlay->getCurFrame());
 		break;
 	case 84:
 		pop();

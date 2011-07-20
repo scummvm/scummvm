@@ -43,7 +43,7 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 							 const Common::String &btn2Message) : GfxDialog() {
 	// Set up the message
 	addElements(&_msg, &_btn1, NULL);
- 
+
 	_msg.set(message, 200, ALIGN_LEFT);
 	_msg._bounds.moveTo(0, 0);
 	_defaultButton = &_btn1;
@@ -243,7 +243,7 @@ void RightClickDialog::execute() {
 	// Dialog event handler loop
 	_gfxManager.activate();
 
-	while (!_vm->getEventManager()->shouldQuit() && (_selectedAction == -1)) {
+	while (!_vm->shouldQuit() && (_selectedAction == -1)) {
 		Event evt;
 		while (_globals->_events.getEvent(evt, EVENT_MOUSE_MOVE | EVENT_BUTTON_DOWN)) {
 			evt.mousePos.x -= _bounds.left;
@@ -465,14 +465,14 @@ void InventoryDialog::execute() {
 	bool lookFlag = false;
 	_gfxManager.activate();
 
-	while (!_vm->getEventManager()->shouldQuit()) {
+	while (!_vm->shouldQuit()) {
 		// Get events
 		Event event;
-		while (!_globals->_events.getEvent(event) && !_vm->getEventManager()->shouldQuit()) {
+		while (!_globals->_events.getEvent(event) && !_vm->shouldQuit()) {
 			g_system->delayMillis(10);
 			g_system->updateScreen();
 		}
-		if (_vm->getEventManager()->shouldQuit())
+		if (_vm->shouldQuit())
 			break;
 
 		hiliteObj = NULL;

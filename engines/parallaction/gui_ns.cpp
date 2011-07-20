@@ -122,7 +122,7 @@ public:
 		_dosLanguageSelectBlocks[1] = Common::Rect( 129,  85, 177, 155 );	// French
 		_dosLanguageSelectBlocks[2] = Common::Rect( 178,  60, 226, 130 );	// English
 		_dosLanguageSelectBlocks[3] = Common::Rect( 227,  35, 275, 105 );	// German
-	
+
 		_amigaLanguageSelectBlocks[0] = Common::Rect(  -1,  -1,  -1,  -1 );	// Italian: not supported by Amiga multi-lingual version
 		_amigaLanguageSelectBlocks[1] = Common::Rect( 129,  85, 177, 155 );	// French
 		_amigaLanguageSelectBlocks[2] = Common::Rect( 178,  60, 226, 130 );	// English
@@ -149,7 +149,7 @@ public:
 		_language = -1;
 		_allowChoice = true;
 	}
-	
+
 	~ChooseLanguageInputState_NS() {
 		destroyLabels();
 	}
@@ -222,15 +222,15 @@ public:
 
 		_nextState[0] = "newgame";
 		_nextState[1] = "loadgame";
-		
+
 		_labels[0] = 0;
 		_labels[1] = 0;
 	}
-	
+
 	~SelectGameInputState_NS() {
 		destroyLabels();
 	}
-	
+
 	void destroyLabels() {
 		_vm->_gfx->unregisterLabel(_labels[0]);
 		_vm->_gfx->unregisterLabel(_labels[1]);
@@ -326,7 +326,7 @@ public:
 		_labels[2] = 0;
 		_labels[3] = 0;
 	}
-	
+
 	~NewGameInputState_NS() {
 		destroyLabels();
 	}
@@ -475,7 +475,7 @@ public:
 		_block.create(BLOCK_WIDTH, BLOCK_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 		_labels[0] = 0;
 		_labels[1] = 0;
-		
+
 		_codeSelectBlocks[0] = Common::Rect( 111, 129, 127, 153 );	// na
 		_codeSelectBlocks[1] = Common::Rect( 128, 120, 144, 144 );	// wa
 		_codeSelectBlocks[2] = Common::Rect( 145, 111, 161, 135 );	// ra
@@ -698,7 +698,7 @@ public:
 		_vm->_gfx->unregisterLabel(_labels[0]);
 		_vm->_gfx->unregisterLabel(_labels[1]);
 		delete _labels[0];
-		delete _labels[1];	
+		delete _labels[1];
 		_labels[0] = 0;
 		_labels[1] = 0;
 	}
@@ -827,18 +827,18 @@ public:
 		_labels[2] = 0;
 		_labels[3] = 0;
 	}
-	
+
 	void destroyLabels() {
 		_vm->_gfx->unregisterLabel(_labels[0]);
 		_vm->_gfx->unregisterLabel(_labels[1]);
 		_vm->_gfx->unregisterLabel(_labels[2]);
 		_vm->_gfx->unregisterLabel(_labels[3]);
-		
+
 		delete _labels[0];
 		delete _labels[1];
 		delete _labels[2];
 		delete _labels[3];
-		
+
 		_labels[0] = 0;
 		_labels[1] = 0;
 		_labels[2] = 0;

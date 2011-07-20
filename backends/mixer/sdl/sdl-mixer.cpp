@@ -70,7 +70,7 @@ void SdlMixerManager::init() {
 		warning("Could not open audio device: %s", SDL_GetError());
 
 		_mixer = new Audio::MixerImpl(g_system, desired.freq);
-		assert(_mixer); 
+		assert(_mixer);
 		_mixer->setReady(false);
 	} else {
 		debug(1, "Output sample rate: %d Hz", _obtained.freq);
@@ -84,8 +84,12 @@ void SdlMixerManager::init() {
 		if (_obtained.format != desired.format)
 			warning("SDL mixer sound format: %d differs from desired: %d", _obtained.format, desired.format);
 
+#ifndef __SYMBIAN32__
+		// The SymbianSdlMixerManager does stereo->mono downmixing,
+		// but otherwise we require stereo output.
 		if (_obtained.channels != 2)
 			error("SDL mixer output requires stereo output device");
+#endif
 
 		_mixer = new Audio::MixerImpl(g_system, _obtained.freq);
 		assert(_mixer);

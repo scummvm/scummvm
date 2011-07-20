@@ -124,7 +124,7 @@ bool RoninCDDirectoryNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 			if (mode == Common::FSNode::kListFilesOnly)
 				continue;
 
-			myList.push_back(new RoninCDDirectoryNode(newPath+"/"));
+			myList.push_back(new RoninCDDirectoryNode(newPath));
 		} else {
 			// Honor the chosen mode
 			if (mode == Common::FSNode::kListDirectoriesOnly)

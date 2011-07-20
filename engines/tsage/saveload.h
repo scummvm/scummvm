@@ -33,7 +33,7 @@ namespace tSage {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
-#define TSAGE_SAVEGAME_VERSION 5
+#define TSAGE_SAVEGAME_VERSION 6
 
 class SavedObject;
 
@@ -77,6 +77,7 @@ public:
 		Common::Serializer::Version maxVersion = kLastVersion);
 	void validate(int v, Common::Serializer::Version minVersion = 0,
 		Common::Serializer::Version maxVersion = kLastVersion);
+	void syncAsDouble(double &v);
 };
 
 /*--------------------------------------------------------------------------*/

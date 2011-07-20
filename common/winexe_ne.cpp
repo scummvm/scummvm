@@ -136,7 +136,7 @@ bool NEResources::loadFromCompressedEXE(const String &fileName) {
 					matchPos &= 0xFFF;
 				}
 			}
-				
+
 		}
 	}
 

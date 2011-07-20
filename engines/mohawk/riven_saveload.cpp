@@ -100,7 +100,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 
 	MohawkArchive *mhk = new MohawkArchive();
 
-	if (!mhk->open(loadFile)) {
+	if (!mhk->openStream(loadFile)) {
 		warning("Save file is not a Mohawk archive");
 		delete mhk;
 		return false;
@@ -274,7 +274,16 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genZIPSSection() {
 }
 
 bool RivenSaveLoad::saveGame(Common::String filename) {
-	// Note, this code is still WIP. It works quite well for now.
+	// NOTE: This code is designed to only output a Mohawk archive
+	// for a Riven saved game. It's hardcoded to do this because
+	// (as of right now) this is the only place in the engine
+	// that requires this feature. If the time comes when other
+	// games need this, we should think about coming up with some
+	// more common way of outputting resources to an archive.
+
+	// TODO: Make these saves work with the original interpreter.
+	// Not sure why they don't work yet (they still can be loaded
+	// by ScummVM).
 
 	// Make sure we have the right extension
 	if (!filename.matchString("*.rvn", true))
@@ -296,99 +305,101 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 	Common::MemoryWriteStreamDynamic *zipsSection = genZIPSSection();
 
 	// Let's calculate the file size!
-	uint32 fileSize = 0;
+	uint32 fileSize = 142;
 	fileSize += versSection->size();
 	fileSize += nameSection->size();
 	fileSize += varsSection->size();
 	fileSize += zipsSection->size();
-	fileSize += 16; // RSRC Header
-	fileSize += 4; // Type Table Header
-	fileSize += 4 * 8; // Type Table Entries
-	fileSize += 2; // Pseudo-Name entries
 
-	// IFF Header
+	// MHWK Header (8 bytes - total: 8)
 	saveFile->writeUint32BE(ID_MHWK);
-	saveFile->writeUint32BE(fileSize);
+	saveFile->writeUint32BE(fileSize - 8);
 
-	// RSRC Header
+	// RSRC Header (20 bytes - total: 28)
 	saveFile->writeUint32BE(ID_RSRC);
 	saveFile->writeUint16BE(0x100); // Resource Version (1.0)
-	saveFile->writeUint16BE(0); // No compaction
-	saveFile->writeUint32BE(fileSize + 8); // Add on the 8 from the IFF header
-	saveFile->writeUint32BE(28); // IFF + RSRC
-	saveFile->writeUint16BE(62); // File Table Offset
-	saveFile->writeUint16BE(44); // 4 + 4 * 10
+	saveFile->writeUint16BE(1); // Compaction -- original saves have this too
+	saveFile->writeUint32BE(fileSize); // Subtract off the MHWK header size
+	saveFile->writeUint32BE(28); // Absolute offset: right after both headers
+	saveFile->writeUint16BE(70); // File Table Offset
+	saveFile->writeUint16BE(44); // File Table Size (4 bytes count + 4 entries * 10 bytes per entry)
 
-	//Type Table
-	saveFile->writeUint16BE(36); // After the Type Table Entries
+	// Type Table (4 bytes - total: 32)
+	saveFile->writeUint16BE(36); // String table offset After the Type Table Entries
 	saveFile->writeUint16BE(4); // 4 Type Table Entries
 
-	// Hardcode Entries
+	// Hardcode Entries (32 bytes - total: 64)
 	saveFile->writeUint32BE(ID_VERS);
-	saveFile->writeUint16BE(38);
-	saveFile->writeUint16BE(36);
+	saveFile->writeUint16BE(46); // Resource table offset
+	saveFile->writeUint16BE(38); // String table offset
 
 	saveFile->writeUint32BE(ID_NAME);
-	saveFile->writeUint16BE(44);
-	saveFile->writeUint16BE(36);
+	saveFile->writeUint16BE(52);
+	saveFile->writeUint16BE(40);
 
 	saveFile->writeUint32BE(ID_VARS);
-	saveFile->writeUint16BE(50);
-	saveFile->writeUint16BE(36);
+	saveFile->writeUint16BE(58);
+	saveFile->writeUint16BE(42);
 
 	saveFile->writeUint32BE(ID_ZIPS);
-	saveFile->writeUint16BE(56);
-	saveFile->writeUint16BE(36);
+	saveFile->writeUint16BE(64);
+	saveFile->writeUint16BE(44);
 
-	// Pseudo-Name Table/Name List
+	// Pseudo-String Table (2 bytes - total: 66)
 	saveFile->writeUint16BE(0); // We don't need a name list
 
-	// VERS Section (Resource Table)
+	// Psuedo-Name Tables (8 bytes - total: 74)
+	saveFile->writeUint16BE(0);
+	saveFile->writeUint16BE(0);
+	saveFile->writeUint16BE(0);
+	saveFile->writeUint16BE(0);
+
+	// VERS Section (Resource Table) (6 bytes - total: 80)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 
-	// NAME Section (Resource Table)
+	// NAME Section (Resource Table) (6 bytes - total: 86)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(2);
 
-	// VARS Section (Resource Table)
+	// VARS Section (Resource Table) (6 bytes - total: 92)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(3);
 
-	// ZIPS Section (Resource Table)
+	// ZIPS Section (Resource Table) (6 bytes - total: 98)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(4);
 
-	// File Table
+	// File Table (4 bytes - total: 102)
 	saveFile->writeUint32BE(4);
 
-	// VERS Section (File Table)
-	saveFile->writeUint32BE(134);
+	// VERS Section (File Table) (10 bytes - total: 112)
+	saveFile->writeUint32BE(142);
 	saveFile->writeUint16BE(versSection->size() & 0xFFFF);
 	saveFile->writeByte((versSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);
 	saveFile->writeUint16BE(0);
 
-	// NAME Section (File Table)
-	saveFile->writeUint32BE(134 + versSection->size());
+	// NAME Section (File Table) (10 bytes - total: 122)
+	saveFile->writeUint32BE(142 + versSection->size());
 	saveFile->writeUint16BE(nameSection->size() & 0xFFFF);
 	saveFile->writeByte((nameSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);
 	saveFile->writeUint16BE(0);
 
-	// VARS Section (File Table)
-	saveFile->writeUint32BE(134 + versSection->size() + nameSection->size());
+	// VARS Section (File Table) (10 bytes - total: 132)
+	saveFile->writeUint32BE(142 + versSection->size() + nameSection->size());
 	saveFile->writeUint16BE(varsSection->size() & 0xFFFF);
 	saveFile->writeByte((varsSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);
 	saveFile->writeUint16BE(0);
 
-	// ZIPS Section (File Table)
-	saveFile->writeUint32BE(134 + versSection->size() + nameSection->size() + varsSection->size());
+	// ZIPS Section (File Table) (10 bytes - total: 142)
+	saveFile->writeUint32BE(142 + versSection->size() + nameSection->size() + varsSection->size());
 	saveFile->writeUint16BE(zipsSection->size() & 0xFFFF);
 	saveFile->writeByte((zipsSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);

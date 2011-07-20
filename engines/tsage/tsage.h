@@ -51,7 +51,9 @@ enum {
 };
 
 enum {
-	kRingDebugScripts = 1 << 0
+	kRingDebugScripts = 1 << 0,
+	ktSageSound = 1 << 1,
+	ktSageCore = 1 << 2
 };
 
 struct tSageGameDescription;
@@ -76,6 +78,7 @@ public:
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
 	Common::String getPrimaryFilename() const;
+	bool shouldQuit();
 
 	virtual Common::Error init();
 	virtual Common::Error run();
@@ -83,6 +86,7 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual void syncSoundSettings();
 	Common::String generateSaveName(int slot);
 
 	void initialize();

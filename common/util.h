@@ -208,11 +208,6 @@ enum RenderMode {
 	kRenderAmiga = 5
 };
 
-enum HerculesDimensions {
-	kHercW = 720,
-	kHercH = 350
-};
-
 struct RenderModeDescription {
 	const char *code;
 	const char *description;

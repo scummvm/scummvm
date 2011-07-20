@@ -36,7 +36,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 GPHGraphicsManager::GPHGraphicsManager(SdlEventSource *sdlEventSource)
- : SdlGraphicsManager(sdlEventSource) {
+ : SurfaceSdlGraphicsManager(sdlEventSource) {
 }
 
 const OSystem::GraphicsMode *GPHGraphicsManager::getSupportedGraphicsModes() const {
@@ -443,7 +443,7 @@ void GPHGraphicsManager::showOverlay() {
 		_mouseCurState.x = _mouseCurState.x / 2;
 		_mouseCurState.y = _mouseCurState.y / 2;
 	}
-	SdlGraphicsManager::showOverlay();
+	SurfaceSdlGraphicsManager::showOverlay();
 }
 
 void GPHGraphicsManager::hideOverlay() {
@@ -451,7 +451,7 @@ void GPHGraphicsManager::hideOverlay() {
 		_mouseCurState.x = _mouseCurState.x * 2;
 		_mouseCurState.y = _mouseCurState.y * 2;
 	}
-	SdlGraphicsManager::hideOverlay();
+	SurfaceSdlGraphicsManager::hideOverlay();
 }
 
 
@@ -503,7 +503,7 @@ void GPHGraphicsManager::hideOverlay() {
 //
 //	}
 
-//	return SdlGraphicsManager::loadGFXMode();
+//	return SurfaceSdlGraphicsManager::loadGFXMode();
 //}
 
 bool GPHGraphicsManager::loadGFXMode() {
@@ -531,7 +531,7 @@ bool GPHGraphicsManager::loadGFXMode() {
 		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 		_videoMode.hardwareHeight = effectiveScreenHeight();
 	}
-	return SdlGraphicsManager::loadGFXMode();
+	return SurfaceSdlGraphicsManager::loadGFXMode();
 }
 
 bool GPHGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -561,11 +561,11 @@ bool GPHGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-SdlGraphicsManager::MousePos* GPHGraphicsManager::getMouseCurState() {
+SurfaceSdlGraphicsManager::MousePos *GPHGraphicsManager::getMouseCurState() {
 	return &_mouseCurState;
 }
 
-SdlGraphicsManager::VideoState* GPHGraphicsManager::getVideoMode() {
+SurfaceSdlGraphicsManager::VideoState *GPHGraphicsManager::getVideoMode() {
 	return &_videoMode;
 }
 
@@ -576,7 +576,7 @@ void GPHGraphicsManager::warpMouse(int x, int y) {
 			y = y / 2;
 		}
 	}
-	SdlGraphicsManager::warpMouse(x, y);
+	SurfaceSdlGraphicsManager::warpMouse(x, y);
 }
 
 void GPHGraphicsManager::adjustMouseEvent(const Common::Event &event) {

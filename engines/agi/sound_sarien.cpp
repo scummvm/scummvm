@@ -105,7 +105,7 @@ SoundGenSarien::~SoundGenSarien() {
 
 int SoundGenSarien::readBuffer(int16 *buffer, const int numSamples) {
 	fillAudio(buffer, numSamples / 2);
-	
+
 	return numSamples;
 }
 
@@ -124,7 +124,7 @@ void SoundGenSarien::play(int resnum) {
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		_chn[i].type = type;
 		_chn[i].flags = AGI_SOUND_LOOP;
-				
+
 		if (_env) {
 			_chn[i].flags |= AGI_SOUND_ENVELOPE;
 			_chn[i].adsr = AGI_SOUND_ENV_ATTACK;

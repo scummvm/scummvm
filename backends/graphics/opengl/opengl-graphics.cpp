@@ -179,7 +179,7 @@ bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
 }
 
 int OpenGLGraphicsManager::getGraphicsMode() const {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	return _videoMode.mode;
 }
 
@@ -420,12 +420,12 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 }
 
 void OpenGLGraphicsManager::updateScreen() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	internUpdateScreen();
 }
 
 void OpenGLGraphicsManager::setShakePos(int shakeOffset) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 	_shakePos = shakeOffset;
 }
 
@@ -440,7 +440,7 @@ void OpenGLGraphicsManager::clearFocusRectangle() {
 //
 
 void OpenGLGraphicsManager::showOverlay() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayVisible)
 		return;
@@ -451,7 +451,7 @@ void OpenGLGraphicsManager::showOverlay() {
 }
 
 void OpenGLGraphicsManager::hideOverlay() {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (!_overlayVisible)
 		return;
@@ -483,7 +483,7 @@ void OpenGLGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
 }
 
 void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	assert (_transactionMode == kTransactionNone);
+	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayTexture == NULL)
 		return;
@@ -642,7 +642,7 @@ void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int 
 
 void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
 	assert(colors);
-	
+
 	// Save the cursor palette
 	memcpy(_cursorPalette + start * 3, colors, num * 3);
 
@@ -1315,7 +1315,7 @@ bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	int width = _videoMode.hardwareWidth;
 	int height = _videoMode.hardwareHeight;
-	
+
 	// A line of a BMP image must have a size divisible by 4.
 	// We calculate the padding bytes needed here.
 	// Since we use a 3 byte per pixel mode, we can use width % 4 here, since
@@ -1358,7 +1358,7 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	out.writeUint32LE(0);
 	out.writeUint32LE(0);
 	out.writeUint32LE(0);
-	out.writeUint32LE(0); 
+	out.writeUint32LE(0);
 
 	// Write pixel data to BMP
 	out.write(pixels, lineSize * height);
@@ -1413,7 +1413,7 @@ void OpenGLGraphicsManager::updateOSD() {
 	int dstX = (_osdSurface.w - width) / 2;
 	int dstY = (_osdSurface.h - height) / 2;
 
-	// Draw a dark gray rect
+	// Draw a dark gray rect (R = 40, G = 40, B = 40)
 	const uint16 color = 0x294B;
 	_osdSurface.fillRect(Common::Rect(dstX, dstY, dstX + width, dstY + height), color);
 
@@ -1423,9 +1423,9 @@ void OpenGLGraphicsManager::updateOSD() {
 		                 dstX, dstY + i * lineHeight + vOffset + lineSpacing, width,
 		                 0xFFFF, Graphics::kTextAlignCenter);
 	}
- 
+
 	// Update the texture
-	_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0, 
+	_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0,
 	                          _osdSurface.w, _osdSurface.h);
 }
 #endif

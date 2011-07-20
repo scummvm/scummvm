@@ -202,7 +202,7 @@ void LoLEngine::setupPrologueData(bool load) {
 void LoLEngine::showIntro() {
 	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
-	
+
 	if (_flags.platform == Common::kPlatformPC98)
 		showStarcraftLogo();
 
@@ -1115,7 +1115,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 		showCredits();
 
 	_eventList.clear();
-	
+
 	if (!shouldQuit()) {
 		switch (character) {
 		case 0:

@@ -477,6 +477,8 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 
 	// Points to just after frame header, ie. start of sprite data
 	_sprites[state].data = frame + FrameHeader::size();
+	_sprites[state].colorTable = colTablePtr;
+	_sprites[state].isText = false;
 
 	_vm->_screen->createSurface(&_sprites[state], &_surfaces[state]._surface);
 	_surfaces[state]._original = true;

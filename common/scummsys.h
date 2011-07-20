@@ -302,6 +302,19 @@
 #define MAXPATHLEN 256
 #endif
 
+#ifndef scumm_va_copy
+	#if defined(va_copy)
+		#define scumm_va_copy va_copy
+	#elif defined(__va_copy)
+		#define scumm_va_copy __va_copy
+	#elif defined(_MSC_VER)
+		#define scumm_va_copy(dst, src)       ((dst) = (src))
+	#else
+		#error scumm_va_copy undefined for this port
+	#endif
+#endif
+
+
 
 //
 // Typedef our system types unless they have already been defined by config.h,

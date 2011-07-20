@@ -1446,7 +1446,7 @@ void ScummEngine_v72he::o72_openFile() {
 				_hOutFileTable[slot]->write(initialData, initialSize);
 				delete[] initialData;
 			}
-			
+
 			} break;
 		default:
 			error("o72_openFile(): wrong open file mode %d", mode);

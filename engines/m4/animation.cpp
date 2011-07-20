@@ -91,7 +91,7 @@ void MadsAnimation::initialize(const Common::String &filename, uint16 flags, M4S
 	_scrollY = animStream->readSint16LE();
 	_scrollTicks = animStream->readUint16LE();
 	animStream->skip(8);
-	
+
 	animStream->read(buffer, FILENAME_SIZE);
 	buffer[FILENAME_SIZE] = '\0';
 	_interfaceFile = Common::String(buffer);
@@ -230,7 +230,7 @@ void MadsAnimation::initialize(const Common::String &filename, uint16 flags, M4S
 	// Load all the sprite sets for the animation
 	for (int i = 0; i < spriteListCount; ++i) {
 		if (_field12 && (i == _spriteListIndex))
-			// Skip over field, since it's manually loaded		
+			// Skip over field, since it's manually loaded
 			continue;
 
 		_spriteListIndexes[i] = _view->_spriteSlots.addSprites(_spriteSetNames[i].c_str());
@@ -242,7 +242,7 @@ void MadsAnimation::initialize(const Common::String &filename, uint16 flags, M4S
 		if (madsRes)
 			resName += "*";
 		resName += _spriteSetNames[_spriteListIndex];
-		
+
 		_spriteListIndexes[_spriteListIndex] = _view->_spriteSlots.addSprites(resName.c_str());
 	}
 
@@ -298,7 +298,7 @@ void MadsAnimation::update() {
 	if (_field12) {
 		int spriteListIndex = _spriteListIndexes[_spriteListIndex];
 		int newIndex = -1;
-		
+
 		for (uint idx = _oldFrameEntry; idx < _frameEntries.size(); ++idx) {
 			if (_frameEntries[idx].frameNumber > _currentFrame)
 				break;
@@ -378,7 +378,7 @@ void MadsAnimation::update() {
 		if (_frameEntries[_oldFrameEntry].frameNumber > _currentFrame)
 			break;
 		else if (_frameEntries[_oldFrameEntry].frameNumber == _currentFrame) {
-			// Found the correct frame 
+			// Found the correct frame
 			int spriteSlotIndex = 0;
 			int index = 0;
 
@@ -393,14 +393,14 @@ void MadsAnimation::update() {
 					}
 					++index;
 					continue;
-				} 
-				
+				}
+
 				if (spriteSlotIndex == 0) {
 					int slotIndex = _view->_spriteSlots.getIndex();
 					MadsSpriteSlot &slot = _view->_spriteSlots[slotIndex];
 					slot.copy(_frameEntries[_oldFrameEntry].spriteSlot);
 					slot.seqIndex = _frameEntries[_oldFrameEntry].seqIndex + 0x80;
-					
+
 					SpriteAsset &spriteSet = _view->_spriteSlots.getSprite(
 						_view->_spriteSlots[slotIndex].spriteListIndex);
 					slot.spriteType = spriteSet.isBackground() ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
@@ -408,7 +408,7 @@ void MadsAnimation::update() {
 				break;
 			}
 		}
-		
+
 		++_oldFrameEntry;
 	}
 

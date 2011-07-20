@@ -211,6 +211,8 @@ public:
 	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void getTimeAndDate(TimeDate &t) const;
 
+	virtual void logMessage(LogMessageType::Type type, const char *message);
+
 #ifndef GAMECUBE
 	virtual Common::String getSystemLanguage() const;
 #endif // GAMECUBE

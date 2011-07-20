@@ -352,11 +352,8 @@ bool ThemeParser::parserCallback_drawdata(ParserNode *node) {
 	}
 
 	if (node->values.contains("cache")) {
-		if (node->values["cache"] == "true")
-			cached = true;
-		else if (node->values["cache"] == "false")
-			cached = false;
-		else return parserError("'Parsed' value must be either true or false.");
+		if (!Common::parseBool(node->values["cache"], cached))
+			return parserError("'Parsed' value must be either true or false.");
 	}
 
 	if (_theme->addDrawData(node->values["id"], cached) == false)
@@ -595,9 +592,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		bool enabled = true;
 
 		if (node->values.contains("enabled")) {
-			if (node->values["enabled"] == "false")
-				enabled = false;
-			else if (node->values["enabled"] != "true")
+			if (!Common::parseBool(node->values["enabled"], enabled))
 				return parserError("Invalid value for Widget enabling (expecting true/false)");
 		}
 
@@ -641,9 +636,7 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 	}
 
 	if (node->values.contains("enabled")) {
-		if (node->values["enabled"] == "false")
-			enabled = false;
-		else if (node->values["enabled"] != "true")
+		if (!Common::parseBool(node->values["enabled"], enabled))
 			return parserError("Invalid value for Dialog enabling (expecting true/false)");
 	}
 
@@ -677,16 +670,19 @@ bool ThemeParser::parserCallback_import(ParserNode *node) {
 
 bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	int spacing = -1;
+	bool center = false;
 
 	if (node->values.contains("spacing")) {
 		if (!parseIntegerKey(node->values["spacing"], 1, &spacing))
 			return false;
 	}
 
+	Common::parseBool(node->values["center"], center);
+
 	if (node->values["type"] == "vertical")
-		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing, node->values["center"] == "true");
+		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing, center);
 	else if (node->values["type"] == "horizontal")
-		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, spacing, node->values["center"] == "true");
+		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, spacing, center);
 	else
 		return parserError("Invalid layout type. Only 'horizontal' and 'vertical' layouts allowed.");
 

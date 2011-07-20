@@ -37,9 +37,9 @@
 
 #ifdef USE_TRANSLATION
 
-DECLARE_SINGLETON(Common::TranslationManager);
-
 namespace Common {
+
+DECLARE_SINGLETON(TranslationManager);
 
 bool operator<(const TLanguage &l, const TLanguage &r) {
 	return strcmp(l.name, r.name) < 0;
@@ -223,13 +223,21 @@ String TranslationManager::getLangById(int id) const {
 }
 
 bool TranslationManager::openTranslationsFile(File& inFile) {
-	// First try to open it directly (i.e. using the SearchMan).
-	if (inFile.open("translations.dat"))
+	// First look in the Themepath if we can find the file.
+	if (ConfMan.hasKey("themepath") && openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile))
 		return true;
 
-	// Then look in the Themepath if we can find the file.
-	if (ConfMan.hasKey("themepath"))
-		return openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile);
+	// Then try to open it using the SearchMan.
+	ArchiveMemberList fileList;
+	SearchMan.listMatchingMembers(fileList, "translations.dat");
+	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
+		SeekableReadStream *stream = it->get()->createReadStream();
+		if (stream && inFile.open(stream, it->get()->getName())) {
+			if (checkHeader(inFile))
+				return true;
+			inFile.close();
+		}
+	}
 
 	return false;
 }
@@ -243,8 +251,11 @@ bool TranslationManager::openTranslationsFile(const FSNode &node, File& inFile, 
 	// necessary to make them here. But it avoid printing warnings.
 	FSNode fileNode = node.getChild("translations.dat");
 	if (fileNode.exists() && fileNode.isReadable() && !fileNode.isDirectory()) {
-		if (inFile.open(fileNode))
-			return true;
+		if (inFile.open(fileNode)) {
+			if (checkHeader(inFile))
+				return true;
+			inFile.close();
+		}
 	}
 
 	// Check if we exceeded the given recursion depth
@@ -268,12 +279,9 @@ bool TranslationManager::openTranslationsFile(const FSNode &node, File& inFile, 
 void TranslationManager::loadTranslationsInfoDat() {
 	File in;
 	if (!openTranslationsFile(in)) {
-		warning("You are missing the 'translations.dat' file. GUI translation will not be available");
+		warning("You are missing a valid 'translations.dat' file. GUI translation will not be available");
 		return;
 	}
-
-	if (!checkHeader(in))
-		return;
 
 	char buf[256];
 	int len;
@@ -302,8 +310,13 @@ void TranslationManager::loadTranslationsInfoDat() {
 	_messageIds.resize(numMessages);
 	for (int i = 0; i < numMessages; ++i) {
 		len = in.readUint16BE();
-		in.read(buf, len);
-		_messageIds[i] = String(buf, len - 1);
+		String msg;
+		while (len > 0) {
+			in.read(buf, len > 256 ? 256 : len);
+			msg += String(buf, len > 256 ? 256 : len - 1);
+			len -= 256;
+		}
+		_messageIds[i] = msg;
 	}
 }
 
@@ -319,9 +332,6 @@ void TranslationManager::loadLanguageDat(int index) {
 
 	File in;
 	if (!openTranslationsFile(in))
-		return;
-
-	if (!checkHeader(in))
 		return;
 
 	char buf[1024];
@@ -357,8 +367,13 @@ void TranslationManager::loadLanguageDat(int index) {
 	for (int i = 0; i < nbMessages; ++i) {
 		_currentTranslationMessages[i].msgid = in.readUint16BE();
 		len = in.readUint16BE();
-		in.read(buf, len);
-		_currentTranslationMessages[i].msgstr = String(buf, len - 1);
+		String msg;
+		while (len > 0) {
+			in.read(buf, len > 256 ? 256 : len);
+			msg += String(buf, len > 256 ? 256 : len - 1);
+			len -= 256;
+		}
+		_currentTranslationMessages[i].msgstr = msg;
 		len = in.readUint16BE();
 		if (len > 0) {
 			in.read(buf, len);
@@ -376,7 +391,7 @@ bool TranslationManager::checkHeader(File &in) {
 
 	// Check header
 	if (strcmp(buf, "TRANSLATIONS")) {
-		warning("Your 'translations.dat' file is corrupt. GUI translation will not be available");
+		warning("File '%s' is not a valid translations data file. Skipping this file", in.getName());
 		return false;
 	}
 
@@ -384,7 +399,7 @@ bool TranslationManager::checkHeader(File &in) {
 	ver = in.readByte();
 
 	if (ver != TRANSLATIONS_DAT_VER) {
-		warning("Your 'translations.dat' file has a mismatching version, expected was %d but you got %d. GUI translation will not be available", TRANSLATIONS_DAT_VER, ver);
+		warning("File '%s' has a mismatching version, expected was %d but you got %d. Skipping this file", in.getName(), TRANSLATIONS_DAT_VER, ver);
 		return false;
 	}
 

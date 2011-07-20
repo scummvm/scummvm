@@ -62,7 +62,9 @@ const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 
 // Class VramAllocator -----------------------------------
 
+namespace Common {
 DECLARE_SINGLETON(VramAllocator);
+}
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
 //#define __PSP_DEBUG_PRINT__
@@ -299,7 +301,7 @@ void DisplayManager::init() {
 #endif
 
 	// Init overlay since we never change the size
-	_overlay->deallocate();	
+	_overlay->deallocate();
 	_overlay->setBytesPerPixel(sizeof(OverlayColor));
 	_overlay->setSize(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
 	_overlay->allocate();
@@ -432,13 +434,13 @@ bool DisplayManager::renderAll() {
 
 	_screen->render();
 	_screen->setClean();				// clean out dirty bit
-	
+
 	if (_imageViewer->isVisible())
 		_imageViewer->render();
 	_imageViewer->setClean();
 
 	if (_overlay->isVisible())
-		_overlay->render();		
+		_overlay->render();
 	_overlay->setClean();
 
 	if (_cursor->isVisible())
@@ -448,7 +450,7 @@ bool DisplayManager::renderAll() {
 	if (_keyboard->isVisible())
 		_keyboard->render();
 	_keyboard->setClean();
-	
+
 	_masterGuRenderer.guPostRender();
 
 	return true;	// rendered successfully

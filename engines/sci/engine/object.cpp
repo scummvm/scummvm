@@ -259,13 +259,13 @@ void Object::initSelectorsSci3(const byte *buf) {
 	// two selectors are always reserved (because their storage
 	// space is used by the typeMask).
 	// We don't know beforehand how many methods and properties
-	// there are, so we count them first. 
+	// there are, so we count them first.
 	for (int groupNr = 0; groupNr < groups; ++groupNr) {
 		byte groupLocation = groupInfo[groupNr];
 		const byte *seeker = selectorBase + groupLocation * 32 * 2;
 
 		if (groupLocation != 0)	{
-			// This object actually has selectors belonging to this group 
+			// This object actually has selectors belonging to this group
 			int typeMask = READ_SCI11ENDIAN_UINT32(seeker);
 
 			for (int bit = 2; bit < 32; ++bit) {
@@ -277,7 +277,7 @@ void Object::initSelectorsSci3(const byte *buf) {
 				} else {
 					// Undefined selector
 				}
-				       
+
 			}
 		}
 	}
@@ -296,7 +296,7 @@ void Object::initSelectorsSci3(const byte *buf) {
 		const byte *seeker = selectorBase + groupLocation * 32 * 2;
 
 		if (groupLocation != 0)	{
-			// This object actually has selectors belonging to this group 
+			// This object actually has selectors belonging to this group
 			int typeMask = READ_SCI11ENDIAN_UINT32(seeker);
 			int groupBaseId = groupNr * 32;
 
@@ -323,7 +323,7 @@ void Object::initSelectorsSci3(const byte *buf) {
 				} else {
 					// Undefined selector
 				}
-				       
+
 			}
 		}
 	}

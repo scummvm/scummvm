@@ -34,7 +34,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("data.b25c", "f8b6e03ada2d2f6cf27fbc11ad1572e9", 654310588),
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		Common::GUIO_NONE
 	},
 	{
@@ -43,7 +43,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("lang_fr.b25c", "690caf157387e06d2c3d1ca53c43f428", 1006043),
 		Common::FR_FRA,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		Common::GUIO_NONE
 	},
 	{
@@ -52,7 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("data.b25c", "f8b6e03ada2d2f6cf27fbc11ad1572e9", 654310588),
 		Common::DE_DEU,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		Common::GUIO_NONE
 	},
 	{
@@ -61,7 +61,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("lang_hr.b25c", "e881054d1f8ec1e527422fc521c25405", 1273217),
 		Common::HU_HUN,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		Common::GUIO_NONE
 	},
 	{
@@ -70,7 +70,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("lang_it.b25c", "f3325666da0515cc2b42062e953c0889", 996197),
 		Common::IT_ITA,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		Common::GUIO_NONE
 	},
 	{
@@ -79,7 +79,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("lang_pl.b25c", "49dc1a20f95391a808e475c49be2bac0", 1281799),
 		Common::PL_POL,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		Common::GUIO_NONE
 	},
 	{
@@ -88,7 +88,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("lang_pt.b25c", "1df701432f9e13dcefe1adeb890b9c69", 993812),
 		Common::PT_BRA,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		Common::GUIO_NONE
 	},
 	{
@@ -97,7 +97,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("lang_ru.b25c", "deb33dd2f90a71ff60181918a8ce5063", 1235378),
 		Common::RU_RUS,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		Common::GUIO_NONE
 	},
 	{
@@ -106,7 +106,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("lang_es.b25c", "384c19072d83725f351bb9ecb4d3f02b", 987965),
 		Common::ES_ESP,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		Common::GUIO_NONE
 	},
 
@@ -120,7 +120,7 @@ static const ADGameDescription gameDescriptions[] = {
 		 AD_LISTEND},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		GF_EXTRACTED,
+		GF_EXTRACTED | ADGF_UNSTABLE,
 		Common::GUIO_NONE
 	},
 	AD_TABLE_END_MARKER

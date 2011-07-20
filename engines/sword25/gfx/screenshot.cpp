@@ -67,8 +67,8 @@ bool Screenshot::saveToFile(Graphics::Surface *data, Common::WriteStream *stream
 
 Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data) {
 	// This method takes a screen image with a dimension of 800x600, and creates a screenshot with a dimension of 200x125.
-	// First 50 pixels are cut off the top and bottom (the interface boards in the game). The remaining image of 800x500 
-	// will be on a 16th of its size, reduced by being handed out in 4x4 pixel blocks and the average of each block 
+	// First 50 pixels are cut off the top and bottom (the interface boards in the game). The remaining image of 800x500
+	// will be on a 16th of its size, reduced by being handed out in 4x4 pixel blocks and the average of each block
 	// generates a pixel of the target image. Finally, the result as a PNG file is stored as a file.
 
 	// The source image must be 800x600.
@@ -84,7 +84,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 	// Über das Zielbild iterieren und einen Pixel zur Zeit berechnen.
 	uint x, y;
 	x = y = 0;
-	
+
 	for (byte *pDest = (byte *)thumbnail.pixels; pDest < ((byte *)thumbnail.pixels + thumbnail.pitch * thumbnail.h); ) {
 		// Get an average over a 4x4 pixel block in the source image
 		int alpha, red, green, blue;

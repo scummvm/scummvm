@@ -63,6 +63,7 @@
 
 // Sound
 #define getSound() _engine->getSoundManager()
+#define getSoundQueue() _engine->getSoundManager()->getQueue()
 
 // Others
 #define getEntityData(entity) getEntities()->getData(entity)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-06-13 22:20+0100\n"
+"POT-Creation-Date: 2011-06-20 23:09+0100\n"
 "PO-Revision-Date: 2011-05-02 19:50+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
@@ -46,8 +46,8 @@ msgstr "Remonter"
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:312 gui/massadd.cpp:92 gui/options.cpp:1178
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
-#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:281
-#: backends/platform/wii/options.cpp:48
+#: engines/engine.cpp:408 engines/sword1/control.cpp:865
+#: engines/parallaction/saveload.cpp:281 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:222
 #: backends/events/default/default-events.cpp:244
 msgid "Cancel"
@@ -86,7 +86,7 @@ msgstr "Affecter"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
 #: gui/launcher.cpp:940 gui/massadd.cpp:89 gui/options.cpp:1179
-#: engines/engine.cpp:346 engines/engine.cpp:357 engines/scumm/scumm.cpp:1772
+#: engines/engine.cpp:346 engines/engine.cpp:357 engines/scumm/scumm.cpp:1796
 #: engines/agos/animation.cpp:545 engines/groovie/script.cpp:417
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:344 engines/sword1/animation.cpp:354
@@ -606,8 +606,9 @@ msgstr "Mode de rendu:"
 msgid "Special dithering modes supported by some games"
 msgstr "Mode spécial de tramage supporté par certains jeux"
 
-#: gui/options.cpp:726 backends/graphics/sdl/sdl-graphics.cpp:2252
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:456
+#: gui/options.cpp:726
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2252
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:460
 msgid "Fullscreen mode"
 msgstr "Plein écran"
 
@@ -1090,7 +1091,11 @@ msgstr "Aucun plugin n'a pu être trouvé pour ce jeu"
 msgid "Engine plugin does not support save states"
 msgstr "Ce moteur de jeu ne supporte pas les sauvegardes"
 
-#: common/error.cpp:72
+#: common/error.cpp:71
+msgid "User canceled"
+msgstr ""
+
+#: common/error.cpp:75
 msgid "Unknown error"
 msgstr "Erreur inconnue"
 
@@ -1112,32 +1117,17 @@ msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Ambre"
 
-#: engines/advancedDetector.cpp:323
+#: engines/advancedDetector.cpp:296
 #, c-format
 msgid "The game in '%s' seems to be unknown."
 msgstr ""
 
-#: engines/advancedDetector.cpp:324
+#: engines/advancedDetector.cpp:297
 msgid "Please, report the following data to the ScummVM team along with name"
 msgstr ""
 
-#: engines/advancedDetector.cpp:326
+#: engines/advancedDetector.cpp:299
 msgid "of the game you tried to add and its version/language/etc.:"
-msgstr ""
-
-#: engines/advancedDetector.cpp:574
-#, c-format
-msgid ""
-"Your game version has been detected using filename matching as a variant of %"
-"s."
-msgstr ""
-
-#: engines/advancedDetector.cpp:577
-msgid "If this is an original and unmodified version, please report any"
-msgstr ""
-
-#: engines/advancedDetector.cpp:579
-msgid "information previously printed by ScummVM to the team."
 msgstr ""
 
 #: engines/dialogs.cpp:84
@@ -1243,6 +1233,17 @@ msgid ""
 "an appropriate CD audio extracting tool in\n"
 "order to listen to the game's music.\n"
 "See the README file for details."
+msgstr ""
+
+#: engines/engine.cpp:405
+msgid ""
+"WARNING: The game you are about to start is not yet fully supported by "
+"ScummVM. As such, it is likely to be unstable, and any saves you make might "
+"not work in future versions of ScummVM."
+msgstr ""
+
+#: engines/engine.cpp:408
+msgid "Start anyway"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:281
@@ -1778,14 +1779,14 @@ msgstr "Voler vers la droite"
 msgid "Fly to lower right"
 msgstr "Voler vers la bas à droite"
 
-#: engines/scumm/scumm.cpp:1770
+#: engines/scumm/scumm.cpp:1794
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2256 engines/agos/saveload.cpp:190
+#: engines/scumm/scumm.cpp:2280 engines/agos/saveload.cpp:190
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1796,7 +1797,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2263 engines/agos/saveload.cpp:155
+#: engines/scumm/scumm.cpp:2287 engines/agos/saveload.cpp:155
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1807,7 +1808,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2275 engines/agos/saveload.cpp:198
+#: engines/scumm/scumm.cpp:2299 engines/agos/saveload.cpp:198
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1818,7 +1819,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2490
+#: engines/scumm/scumm.cpp:2514
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -1835,7 +1836,7 @@ msgstr "Mode ~Z~ip Activé"
 
 #: engines/mohawk/dialogs.cpp:91
 msgid "~T~ransitions Enabled"
-msgstr "T~r~ansitions activé"
+msgstr "T~r~ansitions activées"
 
 #: engines/mohawk/dialogs.cpp:92
 msgid "~D~rop Page"
@@ -2186,34 +2187,34 @@ msgstr "Mode touchpad activé"
 msgid "Touchpad mode disabled."
 msgstr "Mode touchpad désactivé"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:45
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"
 msgstr "Normal (échelle d'origine)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:64
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:64
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2137
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:517
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2137
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:521
 #, fuzzy
 msgid "Enabled aspect ratio correction"
 msgstr "Changer correction du rapport d'aspect"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2143
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:522
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2143
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:526
 #, fuzzy
 msgid "Disabled aspect ratio correction"
 msgstr "Changer correction du rapport d'aspect"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2198
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2198
 #, fuzzy
 msgid "Active graphics filter:"
 msgstr "Changer de filtre graphique"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2254
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:461
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2254
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:465
 #, fuzzy
 msgid "Windowed mode"
 msgstr "Mode de rendu:"
@@ -2230,20 +2231,20 @@ msgstr "OpenGL Préserve"
 msgid "OpenGL Original"
 msgstr "OpenGL Originel"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:399
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:403
 #, fuzzy
 msgid "Current display mode"
 msgstr "Mode vidéo actuel"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:412
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:416
 msgid "Current scale"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:546
 msgid "Active filter mode: Linear"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:544
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:548
 msgid "Active filter mode: Nearest"
 msgstr ""
 

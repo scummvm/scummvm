@@ -397,7 +397,7 @@ uint16 Myst::getVar(uint16 var) {
 		else
 			return 0;
 	case 25: // Fireplace Red Page Present
-		if (_globals.ending != 4) 
+		if (_globals.ending != 4)
 			return !(_globals.redPagesInBook & 32) && (_globals.heldPage != 12);
 		else
 			return 0;
@@ -3269,7 +3269,7 @@ void Myst::generatorControlRoom_run(void) {
 	if (_generatorVoltage == _state.generatorVoltage) {
 		generatorRedrawRocket();
 	} else {
-		// Animate generator gauge		
+		// Animate generator gauge
 		if (_generatorVoltage > _state.generatorVoltage)
 			_generatorVoltage--;
 		else

@@ -28,7 +28,7 @@
 #include "backends/platform/symbian/src/SymbianActions.h"
 
 SymbianSdlGraphicsManager::SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource)
-	: SdlGraphicsManager(sdlEventSource) {
+	: SurfaceSdlGraphicsManager(sdlEventSource) {
 }
 
 int SymbianSdlGraphicsManager::getDefaultGraphicsMode() const {
@@ -47,7 +47,7 @@ const OSystem::GraphicsMode *SymbianSdlGraphicsManager::getSupportedGraphicsMode
 // make sure we always go to normal, even if the string might be set wrong!
 bool SymbianSdlGraphicsManager::setGraphicsMode(int /*name*/) {
 	// let parent OSystem_SDL handle it
-	return SdlGraphicsManager::setGraphicsMode(getDefaultGraphicsMode());
+	return SurfaceSdlGraphicsManager::setGraphicsMode(getDefaultGraphicsMode());
 }
 
 bool SymbianSdlGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -72,7 +72,7 @@ void SymbianSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 		GUI::Actions::Instance()->beginMapping(enable);
 		break;
 	default:
-		SdlGraphicsManager::setFeatureState(f, enable);
+		SurfaceSdlGraphicsManager::setFeatureState(f, enable);
 	}
 }
 

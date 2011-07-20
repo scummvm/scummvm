@@ -98,7 +98,7 @@ void Scene10::Action1::signal() {
 		scene->_object4.animate(ANIM_MODE_6, this);
 		break;
 	case 10:
-		_globals->_soundHandler.proc1(this);
+		_globals->_soundHandler.fadeOut(this);
 		break;
 	case 11:
 		_globals->_scenePalette.clearListeners();
@@ -185,7 +185,7 @@ void Scene10::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 
 	setAction(&_action1);
-	_globals->_soundHandler.startSound(5);
+	_globals->_soundHandler.play(5);
 }
 
 void Scene10::stripCallback(int v) {
@@ -232,7 +232,7 @@ void Scene15::Action1::signal() {
 		Common::Point pt(160, 100);
 		NpcMover *mover = new NpcMover();
 		scene->_object1.addMover(mover, &pt, this);
-		scene->_soundHandler.startSound(7);
+		scene->_soundHandler.play(7);
 		break;
 	}
 	case 3:
@@ -256,7 +256,7 @@ void Scene15::postInit(SceneObjectList *OwnerList) {
 	loadScene(15);
 	Scene::postInit();
 	setZoomPercents(0, 100, 200, 100);
-	_globals->_soundHandler.startSound(6);
+	_globals->_soundHandler.play(6);
 	setAction(&_action1);
 }
 
@@ -276,7 +276,7 @@ void Scene20::Action1::signal() {
 		scene->_stripManager.start(20, this);
 		break;
 	case 2:
-		_globals->_soundHandler.proc1(this);
+		_globals->_soundHandler.fadeOut(this);
 		break;
 	case 3:
 		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
@@ -341,8 +341,8 @@ void Scene20::Action2::signal() {
 		break;
 	}
 	case 8:
-		scene->_sound.proc4();
-		scene->_sound.proc1(this);
+		scene->_sound.release();
+		_globals->_soundHandler.fadeOut(this);
 		break;
 	case 9:
 		SceneItem::display(0, 0, LIST_END);
@@ -400,8 +400,8 @@ void Scene20::Action3::signal() {
 		break;
 	}
 	case 6:
-		scene->_sound.startSound(60, this, 127);
-		_globals->_soundHandler.proc4();
+		scene->_sound.play(60, this, 127);
+		_globals->_soundHandler.release();
 		break;
 	case 7:
 		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
@@ -450,7 +450,7 @@ void Scene20::Action4::signal() {
 		break;
 	}
 	case 4: {
-		scene->_sound.startSound(28);
+		scene->_sound.play(28);
 		scene->_sceneObject4.postInit();
 		scene->_sceneObject4.setVisage(21);
 		scene->_sceneObject4.setStrip(3);
@@ -463,7 +463,7 @@ void Scene20::Action4::signal() {
 		break;
 	}
 	case 5: {
-		scene->_sound.startSound(42);
+		scene->_sound.play(42);
 		scene->_sceneObject4.remove();
 		scene->_SceneObjectExt.setVisage(21);
 		scene->_SceneObjectExt.setStrip(1);
@@ -487,7 +487,7 @@ void Scene20::Action4::signal() {
 		break;
 	}
 	case 6: {
-		scene->_sound.startSound(42);
+		scene->_sound.play(42);
 		scene->_SceneObjectExt.setStrip(2);
 		scene->_SceneObjectExt.animate(ANIM_MODE_2, NULL);
 
@@ -506,7 +506,7 @@ void Scene20::Action4::signal() {
 	case 7:
 		_globals->_player.setStrip(2);
 		_globals->_player.animate(ANIM_MODE_2, NULL);
-		scene->_sound.startSound(77, this, 127);
+		scene->_sound.play(77, this, 127);
 		break;
 	case 8:
 		_globals->_game->endGame(20, 0);
@@ -549,15 +549,15 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 
 		_SceneObjectExt._moveDiff = Common::Point(10, 10);
 		_sceneObject3._moveDiff = Common::Point(10, 10);
-		_globals->_soundHandler.startSound(20);
-		_sound.startSound(21);
-		_sound.proc5(1);
+		_globals->_soundHandler.play(20);
+		_sound.play(21);
+		_sound.holdAt(true);
 		setAction(&_action2);
 
 		_sceneBounds = Rect(320, 0, 640, 200);
 	} else if (_globals->_sceneManager._previousScene == 60) {
 		// Evasion
-		_sound.startSound(30);
+		_sound.play(30);
 		_globals->_player.postInit();
 		_globals->_player.setVisage(20);
 		_globals->_player.setPosition(Common::Point(588, 79));
@@ -605,7 +605,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_speakerGameText.setTextPos(Common::Point(350, 20));
 		_speakerGameText._textWidth = 260;
 
-		_globals->_soundHandler.startSound(8);
+		_globals->_soundHandler.play(8);
 		_sceneBounds = Rect(320, 0, 640, 200);
 	}
 
@@ -669,7 +669,7 @@ void Scene30::BeamAction::signal() {
 
 	case 2:
 		// Hide the beam and lower the player's hand
-		scene->_sound.startSound(10, NULL, 127);
+		scene->_sound.play(10, NULL, 127);
 		_globals->_player.animate(ANIM_MODE_6, this);
 		scene->_beam.remove();
 		break;
@@ -693,14 +693,14 @@ void Scene30::BeamAction::signal() {
 
 	case 4:
 		// Open the door
-		scene->_sound.startSound(11, NULL, 127);
+		scene->_sound.play(11, NULL, 127);
 		scene->_door.animate(ANIM_MODE_5, this);
 		break;
 
 	case 5:
 		// Run the Kzin's talk sequence
-		scene->_sound.startSound(13, NULL, 127);
-		_globals->_soundHandler.startSound(12, NULL, 127);
+		scene->_sound.play(13, NULL, 127);
+		_globals->_soundHandler.play(12, NULL, 127);
 		scene->_stripManager.start((scene->_sceneMode == 0) ? 30 : 37, this);
 		break;
 
@@ -732,7 +732,7 @@ void Scene30::KzinAction::signal() {
 		setDelay(1200);
 		break;
 	case 1:
-		_globals->_soundHandler.proc2(0);
+		_globals->_soundHandler.fadeOut(NULL);
 		_globals->_player.disableControl();
 		setAction(&scene->_sequenceManager, _globals->_sceneManager._scene, 31, &scene->_kzin, &scene->_door, NULL);
 		break;
@@ -772,12 +772,12 @@ void Scene30::RingAction::signal() {
 	}
 
 	case 3:
-		scene->_sound.startSound(11, NULL, 127);
+		scene->_sound.play(11, NULL, 127);
 		scene->_door.animate(ANIM_MODE_6, this);
 		break;
 
 	case 4: {
-		scene->_sound.startSound(13, NULL, 127);
+		scene->_sound.play(13, NULL, 127);
 		NpcMover *kzinMover = new NpcMover();
 		Common::Point pt(354, 5);
 		scene->_kzin.addMover(kzinMover, &pt, this);
@@ -955,7 +955,7 @@ void Scene40::Action1::signal() {
 		scene->_doorway.setVisage(46);
 		scene->_doorway.setPosition(Common::Point(305, 61));
 		scene->_doorway.animate(ANIM_MODE_5, this);
-		scene->_soundHandler.startSound(25);
+		scene->_soundHandler.play(25);
 		break;
 	case 3:
 		scene->_doorway.hide();
@@ -976,7 +976,7 @@ void Scene40::Action1::signal() {
 		scene->_assassin.setFrame(1);
 		scene->_assassin.setPosition(Common::Point(13, 171));
 		scene->_assassin.animate(ANIM_MODE_5, this);
-		scene->_soundHandler.startSound(25);
+		scene->_soundHandler.play(25);
 		break;
 	case 5:
 		scene->_doorway.show();
@@ -1011,7 +1011,7 @@ void Scene40::Action1::signal() {
 		break;
 	}
 	case 10: {
-		scene->_soundHandler.startSound(27);
+		scene->_soundHandler.play(27);
 		Common::Point pt(223, 184);
 		NpcMover *mover = new NpcMover();
 		scene->_dyingKzin.addMover(mover, &pt, this);
@@ -1024,7 +1024,7 @@ void Scene40::Action1::signal() {
 		break;
 	}
 	case 12: {
-		_globals->_soundHandler.startSound(26);
+		_globals->_soundHandler.play(26);
 		_globals->_player._uiEnabled = true;
 		scene->_assassin.setVisage(42);
 		scene->_assassin.setPosition(Common::Point(4, 191));
@@ -1043,7 +1043,7 @@ void Scene40::Action1::signal() {
 		scene->_assassin.setStrip(1);
 		scene->_assassin.setFrame(1);
 		scene->_assassin.animate(ANIM_MODE_5, this);
-		scene->_soundHandler.startSound(28);
+		scene->_soundHandler.play(28);
 		break;
 	case 15:
 		_globals->_player.disableControl();
@@ -1057,7 +1057,7 @@ void Scene40::Action1::signal() {
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 16:
-		_globals->_soundHandler.startSound(77, this);
+		_globals->_soundHandler.play(77, this);
 		break;
 	case 17:
 		_globals->_game->endGame(40, 20);
@@ -1083,7 +1083,7 @@ void Scene40::Action2::signal() {
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 2: {
-		scene->_soundHandler.startSound(28);
+		scene->_soundHandler.play(28);
 		scene->_doorway.postInit();
 		scene->_doorway.setVisage(16);
 		scene->_doorway.setStrip2(6);
@@ -1103,7 +1103,7 @@ void Scene40::Action2::signal() {
 		scene->_assassin.setVisage(44);
 		scene->_assassin._frame = 1;
 		scene->_assassin.animate(ANIM_MODE_5, this);
-		scene->_soundHandler.startSound(29);
+		scene->_soundHandler.play(29);
 		RING_INVENTORY._infoDisk._sceneNumber = 40;
 		break;
 	case 4:
@@ -1234,11 +1234,11 @@ void Scene40::Action6::signal() {
 		scene->_doorway.setVisage(46);
 		scene->_doorway.setPosition(Common::Point(305, 61));
 		scene->_doorway.animate(ANIM_MODE_5, this);
-		scene->_soundHandler.startSound(25);
+		scene->_soundHandler.play(25);
 		break;
 	}
 	case 1:
-		scene->_soundHandler.startSound(28);
+		scene->_soundHandler.play(28);
 		scene->_doorway.setPosition(Common::Point(148, 74));
 		scene->_doorway.setFrame(1);
 		scene->_doorway.setStrip(2);
@@ -1255,8 +1255,7 @@ void Scene40::Action7::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		// TODO: check if it's rand(500) or rand(499)+500
-		setDelay(_globals->_randomSource.getRandomNumber(500));
+		setDelay(_globals->_randomSource.getRandomNumber(499) + 500);
 		break;
 	case 1:
 		scene->_object7.postInit();
@@ -1270,7 +1269,7 @@ void Scene40::Action7::signal() {
 			scene->_object7.setFrame(15);
 		}
 		scene->_object7.animate(ANIM_MODE_5, this);
-		scene->_soundHandler.startSound(25);
+		scene->_soundHandler.play(25);
 		break;
 	case 2:
 		scene->_object7.remove();
@@ -1322,7 +1321,7 @@ void Scene40::Action8::signal() {
 		_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		_globals->_soundHandler.startSound(77, this);
+		_globals->_soundHandler.play(77, this);
 		break;
 	case 4:
 		_globals->_game->endGame(40, 45);
@@ -1480,7 +1479,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.disableControl();
 
 	if (_globals->_sceneManager._previousScene == 20) {
-		_globals->_soundHandler.startSound(24);
+		_globals->_soundHandler.play(24);
 		_globals->_player.setVisage(43);
 
 		_object1.postInit();
@@ -1872,7 +1871,7 @@ void Scene60::Action1::signal() {
 		scene->_floppyDrive.setPosition(Common::Point(136, 65));
 		scene->_floppyDrive.animate(ANIM_MODE_5, this);
 
-		scene->_soundHandler1.startSound(35);
+		scene->_soundHandler1.play(35);
 		break;
 	case 2:
 		scene->_redLights.postInit();
@@ -1893,13 +1892,13 @@ void Scene60::Action1::signal() {
 			scene->_message._numFrames = 5;
 
 			_globals->_sceneItems.push_front(&scene->_message);
-			scene->_soundHandler2.startSound(38);
+			scene->_soundHandler2.play(38);
 		}
 
 		_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 3:
-		scene->_soundHandler2.startSound(37);
+		scene->_soundHandler2.play(37);
 		scene->loadScene(65);
 		scene->_message.remove();
 
@@ -1968,8 +1967,8 @@ void Scene60::Action1::signal() {
 		scene->_floppyDrive.setFrame(scene->_floppyDrive.getFrameCount());
 		scene->_floppyDrive.animate(ANIM_MODE_6, this);
 
-		scene->_soundHandler1.startSound(35);
-		scene->_soundHandler3.proc3();
+		scene->_soundHandler1.play(35);
+		scene->_soundHandler3.stop();
 
 		scene->_masterButton.setFrame(1);
 		scene->_masterButton._state = 0;
@@ -2019,7 +2018,7 @@ void Scene60::PrevObject::doAction(int action) {
 		animate(ANIM_MODE_8, 1, NULL);
 
 		if (scene->_action1.getActionIndex() > 5) {
-			scene->_soundHandler3.startSound(36);
+			scene->_soundHandler3.play(36);
 			scene->_action1.setActionIndex(scene->_action1.getActionIndex() - 2);
 			scene->_action1.setDelay(1);
 		}
@@ -2037,7 +2036,7 @@ void Scene60::NextObject::doAction(int action) {
 		animate(ANIM_MODE_8, 1, NULL);
 
 		if (scene->_action1.getActionIndex() < 8) {
-			scene->_soundHandler3.startSound(36);
+			scene->_soundHandler3.play(36);
 			scene->_action1.setDelay(1);
 		}
 	} else {
@@ -2051,7 +2050,7 @@ void Scene60::ExitObject::doAction(int action) {
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 18);
 	} else if (action == CURSOR_USE) {
-		scene->_soundHandler3.startSound(36);
+		scene->_soundHandler3.play(36);
 		animate(ANIM_MODE_8, 1, NULL);
 		scene->_nextButton.remove();
 		scene->_prevButton.remove();
@@ -2132,8 +2131,8 @@ void Scene60::ControlObject::doAction(int action) {
 		if (_animateMode == ANIM_MODE_NONE)
 			SceneItem::display2(60, 14);
 		else if (!scene->_slaveButton._state) {
-			_globals->_soundHandler.startSound(40);
-			_globals->_soundHandler.proc5(1);
+			_globals->_soundHandler.play(40);
+			_globals->_soundHandler.holdAt(true);
 			_globals->_sceneManager.changeScene(20);
 		} else {
 			scene->_sceneMode = 15;
@@ -2153,14 +2152,14 @@ void Scene60::SlaveObject::doAction(int action) {
 		if (scene->_masterButton._state)
 			scene->_sceneMode = 19;
 		else if (_state) {
-			scene->_soundHandler3.proc3();
+			scene->_soundHandler3.stop();
 			animate(ANIM_MODE_6, NULL);
 			_globals->clearFlag(102);
 			_globals->clearFlag(!_globals->_stripNum ? 117 : 120);
 			_state = 0;
 			scene->_sceneMode = 9998;
 		} else {
-			scene->_soundHandler3.startSound(39);
+			scene->_soundHandler3.play(39);
 			_globals->setFlag(102);
 			_globals->setFlag(!_globals->_stripNum ? 117 : 120);
 			animate(ANIM_MODE_5, NULL);
@@ -2185,14 +2184,14 @@ void Scene60::MasterObject::doAction(int action) {
 		else if (scene->_slaveButton._state)
 			scene->_sceneMode = 20;
 		else if (_state) {
-			scene->_soundHandler3.proc3();
+			scene->_soundHandler3.stop();
 			animate(ANIM_MODE_6, NULL);
 			_state = 0;
 			_globals->clearFlag(103);
 			_globals->clearFlag(!_globals->_stripNum ? 116 : 119);
 			scene->_sceneMode = 9998;
 		} else {
-			scene->_soundHandler3.startSound(39);
+			scene->_soundHandler3.play(39);
 			animate(ANIM_MODE_5, NULL);
 			_state = 1;
 			_globals->setFlag(103);
@@ -2347,7 +2346,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 			_redLights.setPosition(Common::Point(199, 186));
 			_redLights.animate(ANIM_MODE_8, 0, NULL);
 
-			_soundHandler1.startSound(35);
+			_soundHandler1.play(35);
 
 			if (!_globals->getFlag(83)) {
 				_message.postInit();
@@ -2359,7 +2358,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 				_message._numFrames = 5;
 				_globals->_sceneItems.push_front(&_message);
 
-				_soundHandler2.startSound(38);
+				_soundHandler2.play(38);
 			}
 		}
 	} else {
@@ -2382,7 +2381,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 			_redLights.animate(ANIM_MODE_8, 0, NULL);
 			_redLights._numFrames = 5;
 
-			_soundHandler1.startSound(35);
+			_soundHandler1.play(35);
 
 			if (!_globals->getFlag(83)) {
 				_message.postInit();
@@ -2394,7 +2393,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 				_message._numFrames = 5;
 				_globals->_sceneItems.push_front(&_message);
 
-				_soundHandler2.startSound(38);
+				_soundHandler2.play(38);
 			}
 		}
 	}
@@ -2462,7 +2461,7 @@ void Scene90::Action1::signal() {
 		setDelay(2);
 		break;
 	case 5:
-		scene->_soundHandler2.startSound(58);
+		scene->_soundHandler2.play(58);
 
 		if (scene->_stripManager._field2E8 == 220)
 			scene->_stripManager.start(91, this, scene);
@@ -2477,7 +2476,7 @@ void Scene90::Action1::signal() {
 		break;
 	case 7:
 		scene->_object2.animate(ANIM_MODE_NONE);
-		_globals->_soundHandler.startSound(56);
+		_globals->_soundHandler.play(56);
 		scene->_object3.animate(ANIM_MODE_5, this);
 		break;
 	case 8: {
@@ -2507,8 +2506,8 @@ void Scene90::Action1::signal() {
 		break;
 	}
 	case 11:
-		_globals->_soundHandler.startSound(57);
-		_globals->_soundHandler.startSound(68);
+		_globals->_soundHandler.play(57);
+		_globals->_soundHandler.play(68);
 		scene->_object3.animate(ANIM_MODE_6, NULL);
 
 		SceneItem::display(90, _globals->getFlag(104) ? 15 : 14,
@@ -2556,8 +2555,8 @@ void Scene90::Object2::doAction(int action) {
 		scene->_object6.hide();
 
 		scene->_sceneMode = 91;
-		scene->_soundHandler1.startSound(59);
-		scene->_soundHandler1.proc5(1);
+		scene->_soundHandler1.play(59);
+		scene->_soundHandler1.holdAt(true);
 		scene->setAction(&scene->_sequenceManager, scene, 91, this, &scene->_object6, NULL);
 		break;
 	case CURSOR_LOOK:
@@ -2653,9 +2652,9 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 	_globals->_sceneItems.push_back(&_object3);
 
 	_globals->_player.disableControl();
-	_globals->_soundHandler.startSound(55);
-	_soundHandler1.startSound(52);
-	_soundHandler1.proc5(1);
+	_globals->_soundHandler.play(55);
+	_soundHandler1.play(52);
+	_soundHandler1.holdAt(true);
 
 	setAction(&_action1);
 
@@ -2670,7 +2669,7 @@ void Scene90::signal() {
 	switch (_sceneMode) {
 	case 91:
 		_sceneMode = 92;
-		_globals->_soundHandler.startSound(77, this);
+		_globals->_soundHandler.play(77, this);
 		break;
 	case 92:
 		_globals->_scenePalette.clearListeners();
@@ -2713,7 +2712,7 @@ void Scene95::Action1::signal() {
 		setDelay(60);
 		break;
 	case 2: {
-		scene->_soundHandler.startSound(66);
+		scene->_soundHandler.play(66);
 		scene->_object3._numFrames = 5;
 		scene->_object3.animate(ANIM_MODE_5, NULL);
 		SceneItem::display(0, 0);
@@ -2728,7 +2727,7 @@ void Scene95::Action1::signal() {
 		break;
 	}
 	case 3: {
-		scene->_soundHandler.startSound(21);
+		scene->_soundHandler.play(21);
 
 		Common::Point pt1(235, 72);
 		PlayerMover *mover1 = new PlayerMover();
@@ -2768,7 +2767,7 @@ void Scene95::Action1::signal() {
 		scene->_object1.setVisage(91);
 		scene->_object1.setPosition(Common::Point(-22, 220));
 
-		scene->_soundHandler.startSound(21);
+		scene->_soundHandler.play(21);
 
 		Common::Point pt1(5, 198);
 		NpcMover *mover1 = new NpcMover();
@@ -2826,7 +2825,7 @@ void Scene95::postInit(SceneObjectList *OwnerList) {
 	_object3.setVisage(96);
 	_object3.setPosition(Common::Point(29, 198));
 
-	_soundHandler.startSound(67);
+	_soundHandler.play(67);
 	setAction(&_action1);
 }
 
@@ -2890,7 +2889,7 @@ void Scene6100::Action3::signal() {
 		scene->_sunflower3.hide();
 		scene->_rocks.hide();
 		scene->_sceneText.hide();
-	
+
 		_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(8120, this);
 		break;
@@ -3000,21 +2999,21 @@ void Scene6100::Action5::dispatch() {
 				(tempSet.sqrt(zeroSet) < 150.0)) {
 			switch (scene->_hitCount++) {
 			case 0:
-				scene->_soundHandler.startSound(233);
+				scene->_soundHandler.play(233);
 				scene->showMessage(NULL, 0, NULL);
 
 				if (!_globals->getFlag(76))
 					scene->_probe.setAction(&scene->_action1);
 				break;
 			case 1:
-				scene->_soundHandler.startSound(233);
+				scene->_soundHandler.play(233);
 				scene->showMessage(NULL, 0, NULL);
 
 				if (!_globals->getFlag(76))
 					scene->_probe.setAction(&scene->_action2);
 				break;
 			case 2:
-				scene->_soundHandler.startSound(234);
+				scene->_soundHandler.play(234);
 				scene->showMessage(NULL, 0, NULL);
 
 				if (!_globals->getFlag(76))
@@ -3106,10 +3105,10 @@ void Scene6100::Object::synchronize(Serializer &s) {
 	SceneObject::synchronize(s);
 
 	// Save the double fields of the FloatSet
-	s.syncBytes((byte *)&_floats._float1, sizeof(double));
-	s.syncBytes((byte *)&_floats._float2, sizeof(double));
-	s.syncBytes((byte *)&_floats._float3, sizeof(double));
-	s.syncBytes((byte *)&_floats._float4, sizeof(double));
+	s.syncAsDouble(_floats._float1);
+	s.syncAsDouble(_floats._float2);
+	s.syncAsDouble(_floats._float3);
+	s.syncAsDouble(_floats._float4);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -3243,7 +3242,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 	if (!_globals->getFlag(76))
 		_probe.setAction(&_action4);
 
-	_globals->_soundHandler.startSound(231);
+	_globals->_soundHandler.play(231);
 }
 
 void Scene6100::remove() {

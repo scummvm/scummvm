@@ -48,6 +48,7 @@ bool EventsClass::pollEvent() {
 		_priorFrameTime = milli;
 		++_frameNumber;
 
+		// Update screen
 		g_system->updateScreen();
 	}
 
@@ -77,7 +78,7 @@ bool EventsClass::pollEvent() {
 
 void EventsClass::waitForPress(int eventMask) {
 	Event evt;
-	while (!_vm->getEventManager()->shouldQuit() && !getEvent(evt, eventMask))
+	while (!_vm->shouldQuit() && !getEvent(evt, eventMask))
 		g_system->delayMillis(10);
 }
 
@@ -85,7 +86,7 @@ void EventsClass::waitForPress(int eventMask) {
  * Standard event retrieval, which only returns keyboard and mouse clicks
  */
 bool EventsClass::getEvent(Event &evt, int eventMask) {
-	while (pollEvent() && !_vm->getEventManager()->shouldQuit()) {
+	while (pollEvent() && !_vm->shouldQuit()) {
 		evt.handled = false;
 		evt.eventType = EVENT_NONE;
 		evt.mousePos = _event.mouse;
@@ -280,7 +281,7 @@ void EventsClass::hideCursor() {
 	setCursor(CURSOR_NONE);
 }
 
-bool EventsClass::isCursorVisible() const { 
+bool EventsClass::isCursorVisible() const {
 	return !_globals->getFlag(122);
 }
 
@@ -307,7 +308,7 @@ void EventsClass::delay(int numFrames) {
 void EventsClass::listenerSynchronize(Serializer &s) {
 	s.syncAsUint32LE(_frameNumber);
 	s.syncAsUint32LE(_prevDelayFrame);
-	
+
 	if (s.getVersion() >= 5) {
 		s.syncAsSint16LE(_currentCursor);
 		s.syncAsSint16LE(_lastCursor);

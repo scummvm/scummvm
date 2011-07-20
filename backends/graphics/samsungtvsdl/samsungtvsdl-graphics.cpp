@@ -29,7 +29,7 @@
 #include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
 
 SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource)
-	: SdlGraphicsManager(sdlEventSource) {
+	: SurfaceSdlGraphicsManager(sdlEventSource) {
 }
 
 bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -41,7 +41,7 @@ bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 void SamsungTVSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
-		SdlGraphicsManager::setFeatureState(f, enable);
+		SurfaceSdlGraphicsManager::setFeatureState(f, enable);
 		break;
 	default:
 		break;
@@ -51,7 +51,7 @@ void SamsungTVSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enabl
 bool SamsungTVSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
-		return SdlGraphicsManager::getFeatureState(f);
+		return SurfaceSdlGraphicsManager::getFeatureState(f);
 	default:
 		return false;
 	}

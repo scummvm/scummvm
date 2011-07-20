@@ -1316,10 +1316,10 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			MKEND()
 		};
 
-		s->saveLoadArrayOf(_textPalette, 48, sizeof(_textPalette[0]), sleUint8);		
+		s->saveLoadArrayOf(_textPalette, 48, sizeof(_textPalette[0]), sleUint8);
 		s->saveLoadArrayOf(_cyclRects, 10, sizeof(_cyclRects[0]), townsFields);
 		s->saveLoadArrayOf(&_curStringRect, 1, sizeof(_curStringRect), townsFields);
-		s->saveLoadArrayOf(_townsCharsetColorMap, 16, sizeof(_townsCharsetColorMap[0]), sleUint8);		
+		s->saveLoadArrayOf(_townsCharsetColorMap, 16, sizeof(_townsCharsetColorMap[0]), sleUint8);
 		s->saveLoadEntries(this, townsExtraEntries);
 	}
 #endif
@@ -1489,7 +1489,7 @@ void ScummEngine_v5::saveOrLoad(Serializer *s) {
 
 	// Reset cursors for old FM-Towns savegames saved with 256 color setting.
 	// Otherwise the cursor will be messed up when displayed in the new hi color setting.
-	if (_game.platform == Common::kPlatformFMTowns && _bytesPerPixelOutput == 2 && s->isLoading() && s->getVersion() < VER(82)) {
+	if (_game.platform == Common::kPlatformFMTowns && _outputPixelFormat.bytesPerPixel == 2 && s->isLoading() && s->getVersion() < VER(82)) {
 		if (_game.id == GID_LOOM) {
 			redefineBuiltinCursorFromChar(1, 1);
 			redefineBuiltinCursorHotspot(1, 0, 0);
@@ -1497,6 +1497,16 @@ void ScummEngine_v5::saveOrLoad(Serializer *s) {
 			resetCursors();
 		}
 	}
+
+	// Regenerate 16bit palette after loading.
+	// This avoids color issues when loading savegames that have been saved with a different ScummVM port
+	// that uses a different 16bit color mode than the ScummVM port which is currently used.
+#ifdef USE_RGB_COLOR
+	if (_game.platform == Common::kPlatformPCEngine && s->isLoading()) {
+		for (int i = 0; i < 256; ++i)
+			_16BitPalette[i] = get16BitColor(_currentPalette[i * 3 + 0], _currentPalette[i * 3 + 1], _currentPalette[i * 3 + 2]);
+	}
+#endif
 }
 
 #ifdef ENABLE_SCUMM_7_8

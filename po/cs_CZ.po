@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-06-13 22:20+0100\n"
-"PO-Revision-Date: 2011-06-14 15:04+0100\n"
+"POT-Creation-Date: 2011-06-20 23:09+0100\n"
+"PO-Revision-Date: 2011-06-24 06:44+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -49,8 +49,8 @@ msgstr "Jít nahoru"
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:312 gui/massadd.cpp:92 gui/options.cpp:1178
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
-#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:281
-#: backends/platform/wii/options.cpp:48
+#: engines/engine.cpp:408 engines/sword1/control.cpp:865
+#: engines/parallaction/saveload.cpp:281 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:222
 #: backends/events/default/default-events.cpp:244
 msgid "Cancel"
@@ -89,7 +89,7 @@ msgstr "Mapovat"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
 #: gui/launcher.cpp:940 gui/massadd.cpp:89 gui/options.cpp:1179
-#: engines/engine.cpp:346 engines/engine.cpp:357 engines/scumm/scumm.cpp:1772
+#: engines/engine.cpp:346 engines/engine.cpp:357 engines/scumm/scumm.cpp:1796
 #: engines/agos/animation.cpp:545 engines/groovie/script.cpp:417
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:344 engines/sword1/animation.cpp:354
@@ -605,8 +605,9 @@ msgstr "Re¾im vykreslení:"
 msgid "Special dithering modes supported by some games"
 msgstr "Speciální re¾imy chvìní podporované nìkterými hrami"
 
-#: gui/options.cpp:726 backends/graphics/sdl/sdl-graphics.cpp:2252
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:456
+#: gui/options.cpp:726
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2252
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:460
 msgid "Fullscreen mode"
 msgstr "Re¾im celé obrazovky"
 
@@ -1079,7 +1080,11 @@ msgstr "Nelze nalézt vhodný zás. modul jádra"
 msgid "Engine plugin does not support save states"
 msgstr "Zás. modul jádra nepodporuje ulo¾ené stavy"
 
-#: common/error.cpp:72
+#: common/error.cpp:71
+msgid "User canceled"
+msgstr "Zru¹eno u¾ivatelem"
+
+#: common/error.cpp:75
 msgid "Unknown error"
 msgstr "Neznámá chyba"
 
@@ -1101,35 +1106,18 @@ msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Jantarová"
 
-#: engines/advancedDetector.cpp:323
+#: engines/advancedDetector.cpp:296
 #, c-format
 msgid "The game in '%s' seems to be unknown."
 msgstr "Hra v '%s' se zdá být neznámá."
 
-#: engines/advancedDetector.cpp:324
+#: engines/advancedDetector.cpp:297
 msgid "Please, report the following data to the ScummVM team along with name"
 msgstr "Prosím nahlaste následující data týmu ScummVM spolu se jménem"
 
-#: engines/advancedDetector.cpp:326
+#: engines/advancedDetector.cpp:299
 msgid "of the game you tried to add and its version/language/etc.:"
 msgstr "hry, kterou jste se pokusili pøidat a její verzi/jazyk/atd.:"
-
-#: engines/advancedDetector.cpp:574
-#, c-format
-msgid ""
-"Your game version has been detected using filename matching as a variant of %"
-"s."
-msgstr ""
-"Bylo zji¹tìno, ¾e Va¹e verze hry pou¾ívá jméno souboru shodující se s "
-"variantou %s."
-
-#: engines/advancedDetector.cpp:577
-msgid "If this is an original and unmodified version, please report any"
-msgstr "Pokud je toto pùvodní a nezmìnìná verze, ohlaste prosím jakékoli"
-
-#: engines/advancedDetector.cpp:579
-msgid "information previously printed by ScummVM to the team."
-msgstr "pøede¹le vypsané informace od ScummVM zpátky týmu."
 
 #: engines/dialogs.cpp:84
 msgid "~R~esume"
@@ -1246,6 +1234,20 @@ msgstr ""
 "vhodného nástroje pro extrakci zvuku z CD,\n"
 "abyste mohli poslouchat hudbu ve høe.\n"
 "Pro podrobnosti si pøeètìte README."
+
+#: engines/engine.cpp:405
+msgid ""
+"WARNING: The game you are about to start is not yet fully supported by "
+"ScummVM. As such, it is likely to be unstable, and any saves you make might "
+"not work in future versions of ScummVM."
+msgstr ""
+"VAROVÁNÍ: Hra, kterou se chystáte spustit, není je¹tì plnì podporována "
+"ScummVM. Proto je mo¾né, ¾e bude nestabilní a jakékoli ulo¾ené hry nemusí "
+"fungovat v budoucích verzích ScummVM."
+
+#: engines/engine.cpp:408
+msgid "Start anyway"
+msgstr "Pøesto spustit"
 
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
@@ -1779,7 +1781,7 @@ msgstr "Letìt doprava"
 msgid "Fly to lower right"
 msgstr "Letìt doprava dolù"
 
-#: engines/scumm/scumm.cpp:1770
+#: engines/scumm/scumm.cpp:1794
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -1788,7 +1790,7 @@ msgstr ""
 "Pøirozená podpora MIDI vy¾aduje Aktualizaci Roland od LucasArts,\n"
 "ale %s chybí. Místo toho je pou¾it AdLib."
 
-#: engines/scumm/scumm.cpp:2256 engines/agos/saveload.cpp:190
+#: engines/scumm/scumm.cpp:2280 engines/agos/saveload.cpp:190
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1799,7 +1801,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2263 engines/agos/saveload.cpp:155
+#: engines/scumm/scumm.cpp:2287 engines/agos/saveload.cpp:155
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1810,7 +1812,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2275 engines/agos/saveload.cpp:198
+#: engines/scumm/scumm.cpp:2299 engines/agos/saveload.cpp:198
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1821,7 +1823,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2490
+#: engines/scumm/scumm.cpp:2514
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -2204,31 +2206,31 @@ msgstr "Touchpad re¾im zapnut"
 msgid "Touchpad mode disabled."
 msgstr "Touchpad re¾im vypnut"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:45
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"
 msgstr "Normální (bez zmìny velikosti)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:64
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:64
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normální (bez zmìny velikosti)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2137
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:517
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2137
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:521
 msgid "Enabled aspect ratio correction"
 msgstr "Povolena korekce pomìru stran"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2143
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:522
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2143
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:526
 msgid "Disabled aspect ratio correction"
 msgstr "Zakázána korekce pomìru stran"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2198
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2198
 msgid "Active graphics filter:"
 msgstr "Aktivní grafický filtr:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:2254
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:461
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2254
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:465
 msgid "Windowed mode"
 msgstr "Re¾im do okna"
 
@@ -2244,19 +2246,19 @@ msgstr "OpenGL Zachovávající"
 msgid "OpenGL Original"
 msgstr "OpenGL Pùvodní"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:399
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:403
 msgid "Current display mode"
 msgstr "Souèasný re¾im obrazu"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:412
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:416
 msgid "Current scale"
 msgstr "Souèasná velikost"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:546
 msgid "Active filter mode: Linear"
 msgstr "Aktivní re¾im filtru: Lineární"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:544
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:548
 msgid "Active filter mode: Nearest"
 msgstr "Aktivní re¾im filtru: Nejbli¾¹í"
 
@@ -2626,6 +2628,19 @@ msgstr "Minimální Hlasitost"
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
 msgstr "Sni¾uji Hlasitost"
+
+#~ msgid ""
+#~ "Your game version has been detected using filename matching as a variant "
+#~ "of %s."
+#~ msgstr ""
+#~ "Bylo zji¹tìno, ¾e Va¹e verze hry pou¾ívá jméno souboru shodující se s "
+#~ "variantou %s."
+
+#~ msgid "If this is an original and unmodified version, please report any"
+#~ msgstr "Pokud je toto pùvodní a nezmìnìná verze, ohlaste prosím jakékoli"
+
+#~ msgid "information previously printed by ScummVM to the team."
+#~ msgstr "pøede¹le vypsané informace od ScummVM zpátky týmu."
 
 #~ msgid "Discovered %d new games."
 #~ msgstr "Objeveno %d nových her."

@@ -114,7 +114,7 @@ void ToonEngine::init() {
 	_drew = _characters[0];
 	_flux = _characters[1];
 
-	
+
 
 	// preload walk anim for flux and drew
 	_drew->loadWalkAnimation("STNDWALK.CAF");
@@ -614,7 +614,7 @@ struct MainMenuEntry {
 
 bool ToonEngine::showMainmenu(bool &loadedGame) {
 	Picture *mainmenuPicture = new Picture(this);
-	mainmenuPicture->loadPicture("TITLESCR.CPS", true);
+	mainmenuPicture->loadPicture("TITLESCR.CPS");
 	mainmenuPicture->setupPalette();
 	flushPalette(false);
 
@@ -688,6 +688,11 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 						frameNr = 1;
 					entries[entryNr].animation->drawFrame(*_mainSurface, frameNr, 0, 0);
 				}
+			}
+
+			if (_needPaletteFlush) {
+				flushPalette(false);
+				_needPaletteFlush = false;
 			}
 
 			parseInput();
@@ -1547,7 +1552,7 @@ void ToonEngine::clickEvent() {
 					return;
 				}
 			} else {
-				if (!_drew->walkTo(_mouseX, _mouseY)) {
+				if (!_drew->walkTo(_mouseX + _gameState->_currentScrollValue, _mouseY)) {
 					// walk was canceled ?
 					return;
 				}
@@ -2600,7 +2605,7 @@ int32 ToonEngine::showInventory() {
 	delete _inventoryPicture;
 	_inventoryPicture = new Picture(this);
 	fadeOut(5);
-	_inventoryPicture->loadPicture("SACK128.CPS", true);
+	_inventoryPicture->loadPicture("SACK128.CPS");
 	_inventoryPicture->setupPalette();
 	dirtyAllScreen();
 
@@ -2695,7 +2700,7 @@ int32 ToonEngine::showInventory() {
 		}
 
 		renderInventory();
-
+		_system->delayMillis(10);
 	}
 
 	_gameState->_currentScrollValue = oldScrollValue;
@@ -2786,7 +2791,7 @@ void ToonEngine::showCutaway(Common::String cutawayPicture) {
 	if (cutawayPicture == "") {
 		cutawayPicture = Common::String(_gameState->_locations[_gameState->_currentScene]._cutaway) + ".CPS";
 	}
-	_currentCutaway->loadPicture(cutawayPicture, false);
+	_currentCutaway->loadPicture(cutawayPicture);
 	_currentCutaway->setupPalette();
 	_oldScrollValue = _gameState->_currentScrollValue;
 	_gameState->_currentScrollValue = 0;
@@ -3418,7 +3423,7 @@ void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemD
 	fadeOut(5);
 
 	Picture *pic = new Picture(this);
-	pic->loadPicture(str, false);
+	pic->loadPicture(str);
 	pic->setupPalette();
 	dirtyAllScreen();
 	flushPalette();

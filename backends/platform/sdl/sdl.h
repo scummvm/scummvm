@@ -30,7 +30,7 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 
-/** 
+/**
  * Base OSystem class for all SDL ports.
  */
 class OSystem_SDL : public ModularBackend {
@@ -38,7 +38,7 @@ public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
 
-	/** 
+	/**
 	 * Pre-initialize backend. It should be called after
 	 * instantiating the backend. Early needed managers are
 	 * created here.
@@ -54,6 +54,10 @@ public:
 
 	// Override functions from ModularBackend and OSystem
 	virtual void initBackend();
+#if defined(USE_TASKBAR)
+	virtual void engineInit();
+	virtual void engineDone();
+#endif
 	virtual Common::HardwareKeySet *getHardwareKeySet();
 	virtual void quit();
 	virtual void fatalError();

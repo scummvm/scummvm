@@ -265,7 +265,7 @@ void Dialog::setupInputArea() {
  */
 bool Dialog::matchCommand(const char *s1, const char *s2) {
 	bool result = scumm_strnicmp(s1, s2, strlen(s2)) == 0;
-	_commandCase = isupper(*s1);
+	_commandCase = isupper(static_cast<unsigned char>(*s1));
 	return result;
 }
 
@@ -532,7 +532,7 @@ void Dialog::display(MadsM4Engine *vm, int widthChars, const char **descEntries)
 	}
 
 	dlg->_lines[0].underline = true;
-	
+
 	dlg->draw();
 	vm->_viewManager->addView(dlg);
 	vm->_viewManager->moveToFront(dlg);
@@ -554,7 +554,7 @@ void Dialog::getValue(MadsM4Engine *vm, const char *title, const char *text, int
 	vm->_viewManager->moveToFront(dlg);
 
 	// TODO: How to wait until the dialog is closed
-	
+
 }
 
 } // End of namespace M4

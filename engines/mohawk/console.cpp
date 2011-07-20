@@ -632,7 +632,7 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 	uint32 teleCombo = _vm->_vars["tcorrectorder"];
 	uint32 prisonCombo = _vm->_vars["pcorrectorder"];
 	uint32 domeCombo = _vm->_vars["adomecombo"];
-	
+
 	DebugPrintf("Telescope Combo:\n  ");
 	for (int i = 0; i < 5; i++)
 		DebugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(teleCombo, i));
@@ -700,14 +700,25 @@ bool LivingBooksConsole::Cmd_DrawImage(int argc, const char **argv) {
 }
 
 bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
-	if (argc == 1) {
-		DebugPrintf("Usage: changePage <page> [<mode>]\n");
+	if (argc < 2 || argc > 3) {
+		DebugPrintf("Usage: changePage <page>[.<subpage>] [<mode>]\n");
 		return true;
 	}
 
-	if (_vm->tryLoadPageStart(argc == 2 ? _vm->getCurMode() : (LBMode)atoi(argv[2]), atoi(argv[1])))
-		return false;
-	DebugPrintf("no such page %d\n", atoi(argv[1]));
+	int page, subpage = 0;
+	if (sscanf(argv[1], "%d.%d", &page, &subpage) == 0) {
+		DebugPrintf("Usage: changePage <page>[.<subpage>] [<mode>]\n");
+		return true;
+	}
+	LBMode mode = argc == 2 ? _vm->getCurMode() : (LBMode)atoi(argv[2]);
+	if (subpage == 0) {
+		if (_vm->tryLoadPageStart(mode, page))
+			return false;
+	} else {
+		if (_vm->loadPage(mode, page, subpage))
+			return false;
+	}
+	DebugPrintf("no such page %d.%d\n", page, subpage);
 	return true;
 }
 

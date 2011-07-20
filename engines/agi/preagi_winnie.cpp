@@ -86,27 +86,30 @@ void Winnie::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
 }
 
 uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
-	char szFile[256] = {0};
+	Common::String fileName;
 
 	if (_vm->getPlatform() == Common::kPlatformPC)
-		sprintf(szFile, IDS_WTP_ROOM_DOS, iRoom);
+		fileName = Common::String::format(IDS_WTP_ROOM_DOS, iRoom);
 	else if (_vm->getPlatform() == Common::kPlatformAmiga)
-		sprintf(szFile, IDS_WTP_ROOM_AMIGA, iRoom);
+		fileName = Common::String::format(IDS_WTP_ROOM_AMIGA, iRoom);
 	else if (_vm->getPlatform() == Common::kPlatformC64)
-		sprintf(szFile, IDS_WTP_ROOM_C64, iRoom);
+		fileName = Common::String::format(IDS_WTP_ROOM_C64, iRoom);
 	else if (_vm->getPlatform() == Common::kPlatformApple2GS)
-		sprintf(szFile, IDS_WTP_ROOM_APPLE, iRoom);
+		fileName = Common::String::format(IDS_WTP_ROOM_APPLE, iRoom);
+
 	Common::File file;
-	if (!file.open(szFile)) {
-		warning ("Could not open file \'%s\'", szFile);
+	if (!file.open(fileName)) {
+		warning("Could not open file \'%s\'", fileName.c_str());
 		return 0;
 	}
+
 	uint32 filelen = file.size();
-	if (_vm->getPlatform() == Common::kPlatformC64) { //Skip the loading address
+	if (_vm->getPlatform() == Common::kPlatformC64) { // Skip the loading address
 		filelen -= 2;
 		file.seek(2, SEEK_CUR);
 	}
-	memset(buffer, 0, sizeof(buffer));
+
+	memset(buffer, 0, 4096);
 	file.read(buffer, filelen);
 	file.close();
 
@@ -116,26 +119,30 @@ uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 }
 
 uint32 Winnie::readObj(int iObj, uint8 *buffer) {
-	char szFile[256] = {0};
+	Common::String fileName;
+
 	if (_vm->getPlatform() == Common::kPlatformPC)
-		sprintf(szFile, IDS_WTP_OBJ_DOS, iObj);
+		fileName = Common::String::format(IDS_WTP_OBJ_DOS, iObj);
 	else if (_vm->getPlatform() == Common::kPlatformAmiga)
-		sprintf(szFile, IDS_WTP_OBJ_AMIGA, iObj);
+		fileName = Common::String::format(IDS_WTP_OBJ_AMIGA, iObj);
 	else if (_vm->getPlatform() == Common::kPlatformC64)
-		sprintf(szFile, IDS_WTP_OBJ_C64, iObj);
+		fileName = Common::String::format(IDS_WTP_OBJ_C64, iObj);
 	else if (_vm->getPlatform() == Common::kPlatformApple2GS)
-		sprintf(szFile, IDS_WTP_OBJ_APPLE, iObj);
+		fileName = Common::String::format(IDS_WTP_OBJ_APPLE, iObj);
+
 	Common::File file;
-	if (!file.open(szFile)) {
-		warning ("Could not open file \'%s\'", szFile);
+	if (!file.open(fileName)) {
+		warning ("Could not open file \'%s\'", fileName.c_str());
 		return 0;
 	}
+
 	uint32 filelen = file.size();
-	if (_vm->getPlatform() == Common::kPlatformC64) { //Skip the loading address
+	if (_vm->getPlatform() == Common::kPlatformC64) { // Skip the loading address
 		filelen -= 2;
 		file.seek(2, SEEK_CUR);
 	}
-	memset(buffer, 0, sizeof(buffer));
+
+	memset(buffer, 0, 2048);
 	file.read(buffer, filelen);
 	file.close();
 	return filelen;
@@ -461,8 +468,6 @@ void Winnie::keyHelp() {
 }
 
 void Winnie::inventory() {
-	char szMissing[41] = {0};
-
 	if (_game.iObjHave)
 		printObjStr(_game.iObjHave, IDI_WTP_OBJ_TAKE);
 	else {
@@ -470,8 +475,9 @@ void Winnie::inventory() {
 		_vm->drawStr(IDI_WTP_ROW_MENU, IDI_WTP_COL_MENU, IDA_DEFAULT, IDS_WTP_INVENTORY_0);
 	}
 
-	sprintf(szMissing, IDS_WTP_INVENTORY_1, _game.nObjMiss);
-	_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, szMissing);
+	Common::String missing = Common::String::format(IDS_WTP_INVENTORY_1, _game.nObjMiss);
+
+	_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, missing.c_str());
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen(); //TODO: Move to game's main loop
 	_vm->getSelection(kSelAnyKey);
@@ -1042,16 +1048,15 @@ phase2:
 }
 
 void Winnie::drawPic(const char *szName) {
-	char szFile[256] = {0};
+	Common::String fileName = szName;
+
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
+		fileName += ".pic";
+
 	Common::File file;
 
-	// construct filename
-	if (_vm->getPlatform() != Common::kPlatformAmiga)
-		sprintf(szFile, "%s.pic", szName);
-	else
-		strcpy(szFile, szName);
-	if (!file.open(szFile)) {
-		warning ("Could not open file \'%s\'", szFile);
+	if (!file.open(fileName)) {
+		warning ("Could not open file \'%s\'", fileName.c_str());
 		return;
 	}
 
@@ -1142,12 +1147,11 @@ void Winnie::gameOver() {
 }
 
 void Winnie::saveGame() {
-	Common::OutSaveFile* outfile;
-	char szFile[256] = {0};
 	int i = 0;
 
-	sprintf(szFile, IDS_WTP_FILE_SAVEGAME);
-	if (!(outfile = _vm->getSaveFileMan()->openForSaving(szFile)))
+	Common::OutSaveFile *outfile = _vm->getSaveFileMan()->openForSaving(IDS_WTP_FILE_SAVEGAME);
+
+	if (!outfile)
 		return;
 
 	outfile->writeUint32BE(MKTAG('W','I','N','N'));	// header
@@ -1171,19 +1175,18 @@ void Winnie::saveGame() {
 	outfile->finalize();
 
 	if (outfile->err())
-		warning("Can't write file '%s'. (Disk full?)", szFile);
+		warning("Can't write file '%s'. (Disk full?)", IDS_WTP_FILE_SAVEGAME);
 
 	delete outfile;
 }
 
 void Winnie::loadGame() {
-	Common::InSaveFile* infile;
-	char szFile[256] = {0};
 	int saveVersion = 0;
 	int i = 0;
 
-	sprintf(szFile, IDS_WTP_FILE_SAVEGAME);
-	if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile)))
+	Common::InSaveFile *infile = _vm->getSaveFileMan()->openForLoading(IDS_WTP_FILE_SAVEGAME);
+
+	if (!infile)
 		return;
 
 	if (infile->readUint32BE() == MKTAG('W','I','N','N')) {

@@ -47,6 +47,15 @@ struct PlainGameDescriptor {
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list);
 
 /**
+ * Ths is an enum to describe how done a game is. This also indicates what level of support is expected.
+ */
+enum GameSupportLevel {
+	kStableGame = 0, // the game is fully supported
+	kTestingGame, // the game is not supposed to end up in releases yet but is ready for public testing
+	kUnstableGame // the game is not even ready for public testing yet
+};
+
+/**
  * A hashmap describing details about a given game. In a sense this is a refined
  * version of PlainGameDescriptor, as it also contains a gameid and a description string.
  * But in addition, platform and language settings, as well as arbitrary other settings,
@@ -61,15 +70,24 @@ public:
 	              const Common::String &description,
 	              Common::Language language = Common::UNK_LANG,
 				  Common::Platform platform = Common::kPlatformUnknown,
-				  uint32 guioptions = 0);
+				  uint32 guioptions = 0,
+				  GameSupportLevel gsl = kStableGame);
 
 	/**
-	 * Update the description string by appending (LANG/PLATFORM/EXTRA) to it.
+	 * Update the description string by appending (EXTRA/PLATFORM/LANG) to it.
+	 * Values that are missing are omitted, so e.g. (EXTRA/LANG) would be
+	 * added if no platform has been specified but a language and an extra string.
 	 */
 	void updateDesc(const char *extra = 0);
 
 	void setGUIOptions(uint32 options);
 	void appendGUIOptions(const Common::String &str);
+
+	/**
+	 * What level of support is expected of this game
+	 */
+	GameSupportLevel getSupportLevel();
+	void setSupportLevel(GameSupportLevel gsl);
 
 	Common::String &gameid() { return getVal("gameid"); }
 	Common::String &description() { return getVal("description"); }

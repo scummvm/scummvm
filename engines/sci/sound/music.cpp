@@ -291,8 +291,8 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			if (_soundVersion >= SCI_VERSION_1_EARLY && g_sci->getPlatform() == Common::kPlatformAmiga)
 				flags = 0;
 			int endPart = track->digitalSampleEnd > 0 ? (track->digitalSampleSize - track->digitalSampleEnd) : 0;
-			pSnd->pStreamAud = Audio::makeRawStream(channelData + track->digitalSampleStart, 
-								track->digitalSampleSize - track->digitalSampleStart - endPart, 
+			pSnd->pStreamAud = Audio::makeRawStream(channelData + track->digitalSampleStart,
+								track->digitalSampleSize - track->digitalSampleStart - endPart,
 								track->digitalSampleRate, flags, DisposeAfterUse::NO);
 			delete pSnd->pLoopStream;
 			pSnd->pLoopStream = 0;

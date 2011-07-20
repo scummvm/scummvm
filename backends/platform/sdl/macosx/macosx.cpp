@@ -29,9 +29,12 @@
 
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
+#include "backends/platform/sdl/macosx/appmenu_osx.h"
 
 #include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/translation.h"
 
 #include "ApplicationServices/ApplicationServices.h"	// for LSOpenFSRef
 #include "CoreFoundation/CoreFoundation.h"	// for CF* stuff
@@ -50,6 +53,15 @@ void OSystem_MacOSX::initBackend() {
 		// Setup and start mixer
 		_mixerManager->init();
 	}
+
+#ifdef USE_TRANSLATION
+	// We need to initialize the translataion manager here for the following
+	// call to replaceApplicationMenuItems() work correctly
+	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
+#endif // USE_TRANSLATION
+
+	// Replace the SDL generated menu items with our own translated ones on Mac OS X
+	replaceApplicationMenuItems();
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -74,7 +86,7 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 }
 
 void OSystem_MacOSX::setupIcon() {
-	// Don't set icon on OS X, as we use a nicer external icon there. 
+	// Don't set icon on OS X, as we use a nicer external icon there.
 }
 
 bool OSystem_MacOSX::hasFeature(Feature f) {

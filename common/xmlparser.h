@@ -31,6 +31,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stack.h"
+#include "common/memorypool.h"
 
 
 namespace Common {
@@ -294,7 +295,7 @@ protected:
 	 * in their name.
 	 */
 	virtual inline bool isValidNameChar(char c) {
-		return isalnum(c) || c == '_';
+		return isalnum(static_cast<unsigned char>(c)) || c == '_';
 	}
 
 	/**

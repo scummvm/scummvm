@@ -33,7 +33,6 @@
 #include "tsage/graphics.h"
 #include "tsage/resources.h"
 #include "tsage/saveload.h"
-#include "tsage/sound.h"
 
 namespace tSage {
 
@@ -715,74 +714,6 @@ public:
 	void load(int resNum);
 
 	Region *find(int priority);
-};
-
-/*--------------------------------------------------------------------------*/
-
-class GameSoundHandler {
-public:
-	void proc1() {
-		warning("TODO: GameSoundHandler::proc1");
-	}
-	void proc5(int v) {
-		warning("TODO: GameSoundHandler::proc5");
-	}
-	void proc11(int v1, int v2, int v3, int v4) {
-		warning("TODO: GameSoundHandler::proc11");
-	}
-	int proc12() {
-		// TODO
-		return -1;
-	}
-	void proc2(int v) {
-		// TODO
-	}
-	int proc3() {
-		return 0;
-	}
-	void setVolume(int volume) {
-		warning("TODO GameSoundHandler::setVolume");
-	}
-	void startSound(int soundNum) {
-		warning("TODO GameSoundHandler::startSound");
-	}
-};
-
-class SoundHandler : public EventHandler {
-public:
-	GameSoundHandler _sound;
-	Action *_action;
-	int _field280;
-public:
-	SoundHandler();
-	~SoundHandler();
-
-	void startSound(int soundNum, Action *action = NULL, int volume = 127);
-	void proc1(Action *action) {
-		proc11(0, 5, 10, 1, action);
-	}
-	void proc2(int v) {
-		warning("TODO: SoundHandler::proc2");
-	}
-	void proc3() {
-		warning("TODO: SoundHandler::proc5");
-	}
-	void proc4() {
-		_sound.proc1();
-	}
-	void proc5(int v) {
-		_sound.proc5(v);
-	}
-	void proc11(int v1, int v2, int v3, int v4, Action *action) {
-		if (action)
-			_action = action;
-
-		_sound.proc11(v1, v2, v3, v4);
-	}
-	void setVolume(int volume) { _sound.setVolume(volume); }
-
-	virtual Common::String getClassName() { return "SoundHandler"; }
-	virtual void dispatch();
 };
 
 /*--------------------------------------------------------------------------*/

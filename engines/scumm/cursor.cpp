@@ -551,7 +551,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 	uint16 color;
 	const uint16 *src = _cursorImages[_currentCursor];
 
-	if (_bytesPerPixelOutput == 2) {
+	if (_outputPixelFormat.bytesPerPixel == 2) {
 		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
 			byte r, g, b;
 			colorPCEToRGB(default_pce_cursor_colors[idx], &r, &g, &b);
@@ -577,14 +577,14 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 	_cursor.width = 16 * _textSurfaceMultiplier;
 	_cursor.height = 16 * _textSurfaceMultiplier;
 
-	int scl = _bytesPerPixelOutput * _textSurfaceMultiplier;
+	int scl = _outputPixelFormat.bytesPerPixel * _textSurfaceMultiplier;
 
 	for (i = 0; i < 16; i++) {
 		for (j = 0; j < 16; j++) {
 			if (src[i] & (1 << j)) {
 				byte *dst1 = _grabbedCursor + 16 * scl * i * _textSurfaceMultiplier + (15 - j) * scl;
 				byte *dst2 = (_textSurfaceMultiplier == 2) ? dst1 + 16 * scl : dst1;
-				if (_bytesPerPixelOutput == 2) {
+				if (_outputPixelFormat.bytesPerPixel == 2) {
 					for (int b = 0; b < scl; b += 2) {
 						*((uint16*)dst1) = *((uint16*)dst2) = color;
 						dst1 += 2;

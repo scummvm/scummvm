@@ -53,7 +53,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 	debug(2, "elfloader: Loaded relocation table. %d entries. base address=%p", cnt, relSegment);
 
 	Elf32_Addr adjustedMainSegment = Elf32_Addr(_segment) - _segmentVMA;	// adjust for VMA offset
-	
+
 	bool seenHi16 = false;			// For treating HI/LO16 commands
 	int32 firstHi16 = -1;			// Mark the point of the first hi16 seen
 	Elf32_Addr ahl = 0;				// Calculated addend
@@ -259,7 +259,7 @@ void MIPSDLObject::relocateSymbols(ptrdiff_t offset) {
 			if (!ShortsMan.inGeneralSegment((char *)s->st_value)) {
 				if (s->st_value < _segmentVMA)
 					s->st_value = _segmentVMA;	// deal with symbols referring to sections, which start before the VMA
-					
+
 				s->st_value += offset;
 
 				if (s->st_value < Elf32_Addr(_segment) || s->st_value > Elf32_Addr(_segment) + _segmentSize)
@@ -287,7 +287,7 @@ bool MIPSDLObject::loadSegment(Elf32_Phdr *phdr) {
 		}
 
 		debug(2, "elfloader: Allocated segment @ %p", _segment);
-		
+
 		// Get offset to load segment into
 		baseAddress = _segment;
 		_segmentSize = phdr->p_memsz;

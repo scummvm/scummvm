@@ -1160,12 +1160,12 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 		for (int i = 0; i < 2; i++) {
 			if (_timers[i].enabled && _timers[i].cb) {
 				if (!_timers[i].smpTillCb) {
-					
+
 					if (locked && _externalMutex) {
 						_mutex.unlock();
 						locked = false;
 					}
-					
+
 					(this->*_timers[i].cb)();
 
 					if (!locked && _externalMutex) {

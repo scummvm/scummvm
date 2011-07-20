@@ -137,6 +137,7 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_tinsel = (gameid == "tinsel");
 	bool is_cruise = (gameid == "cruise");
 	bool is_made = (gameid == "made");
+	bool is_sci = (gameid == "sci");
 
 	GUI_Actions::initInstanceGame();
 
@@ -214,12 +215,14 @@ void CEActionsPocket::initInstanceGame() {
 		_key_action[POCKET_ACTION_MULTI].setKey(Common::ASCII_F1, SDLK_F1); // bargon : F1 to start
 	else if (gameid == "atlantis")
 		_key_action[POCKET_ACTION_MULTI].setKey(0, SDLK_KP0); // fate of atlantis : Ins to sucker-punch
+	else if (is_simon)
+		_key_action[POCKET_ACTION_MULTI].setKey(Common::ASCII_F10, SDLK_F10); // F10
 	else
 		_key_action[POCKET_ACTION_MULTI].setKey('V', SDLK_v, KMOD_SHIFT); // FT cheat : shift-V
 	// Key bind method
 	_action_enabled[POCKET_ACTION_BINDKEYS] = true;
 	// Disable double-tap right-click for convenience
-	if (is_tinsel || is_cruise)
+	if (is_tinsel || is_cruise || is_sci)
 		if (!ConfMan.hasKey("no_doubletap_rightclick")) {
 			ConfMan.setBool("no_doubletap_rightclick", true);
 			ConfMan.flushToDisk();
@@ -266,6 +269,15 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 				_key_action[action].setKey(SDLK_l);
 			else
 				_key_action[action].setKey(SDLK_s);
+		}
+		if (action == POCKET_ACTION_SKIP && ConfMan.get("gameid") == "agi") {
+			// In several AGI games (for example SQ2) it is needed to press F10 to exit from
+			// a screen. But we still want be able to skip normally with the skip button.
+			// Because of this, we inject a F10 keystroke here (this works and doesn't seem
+			// to have side-effects)
+			_key_action[action].setKey(Common::ASCII_F10, SDLK_F10); // F10
+			EventsBuffer::simulateKey(&_key_action[action], true);
+			_key_action[action].setKey(KEY_ALL_SKIP);
 		}
 		EventsBuffer::simulateKey(&_key_action[action], true);
 		return true;

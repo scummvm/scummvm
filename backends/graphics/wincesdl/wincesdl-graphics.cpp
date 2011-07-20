@@ -43,8 +43,8 @@
 #include "backends/platform/wince/CEgui/ItemAction.h"
 
 WINCESdlGraphicsManager::WINCESdlGraphicsManager(SdlEventSource *sdlEventSource)
-	: SdlGraphicsManager(sdlEventSource),
-	  _panelInitialized(false), _noDoubleTapRMB(false),
+	: SurfaceSdlGraphicsManager(sdlEventSource),
+	  _panelInitialized(false), _noDoubleTapRMB(false), _noDoubleTapPT(false),
 	  _toolbarHighDrawn(false), _newOrientation(0), _orientationLandscape(0),
 	  _panelVisible(true), _saveActiveToolbar(NAME_MAIN_PANEL), _panelStateForced(false),
 	  _canBeAspectScaled(false), _scalersChanged(false), _saveToolbarState(false),
@@ -149,7 +149,7 @@ void WINCESdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		return;
 
 	default:
-		SdlGraphicsManager::setFeatureState(f, enable);
+		SurfaceSdlGraphicsManager::setFeatureState(f, enable);
 	}
 }
 
@@ -160,7 +160,7 @@ bool WINCESdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	case OSystem::kFeatureVirtualKeyboard:
 		return (_panelStateForced);
 	default:
-		return SdlGraphicsManager::getFeatureState(f);
+		return SurfaceSdlGraphicsManager::getFeatureState(f);
 	}
 }
 
@@ -204,7 +204,7 @@ void WINCESdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelForm
 	_videoMode.overlayWidth = w;
 	_videoMode.overlayHeight = h;
 
-	SdlGraphicsManager::initSize(w, h, format);
+	SurfaceSdlGraphicsManager::initSize(w, h, format);
 
 	if (_scalersChanged) {
 		unloadGFXMode();
@@ -478,6 +478,9 @@ void WINCESdlGraphicsManager::update_game_settings() {
 
 	if (ConfMan.hasKey("no_doubletap_rightclick"))
 		_noDoubleTapRMB = ConfMan.getBool("no_doubletap_rightclick");
+
+	if (ConfMan.hasKey("no_doubletap_paneltoggle"))
+		_noDoubleTapPT = ConfMan.getBool("no_doubletap_paneltoggle");
 }
 
 void WINCESdlGraphicsManager::internUpdateScreen() {
@@ -1185,7 +1188,7 @@ void WINCESdlGraphicsManager::setMousePos(int x, int y) {
 Graphics::Surface *WINCESdlGraphicsManager::lockScreen() {
 	// Make sure mouse pointer is not painted over the playfield at the time of locking
 	undrawMouse();
-	return SdlGraphicsManager::lockScreen();
+	return SurfaceSdlGraphicsManager::lockScreen();
 }
 
 void WINCESdlGraphicsManager::showOverlay() {
@@ -1293,7 +1296,7 @@ void WINCESdlGraphicsManager::warpMouse(int x, int y) {
 }
 
 void WINCESdlGraphicsManager::unlockScreen() {
-	SdlGraphicsManager::unlockScreen();
+	SurfaceSdlGraphicsManager::unlockScreen();
 }
 
 void WINCESdlGraphicsManager::internDrawMouse() {
@@ -1468,7 +1471,7 @@ void WINCESdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool mous
 	if (_forceFull || _paletteDirtyEnd)
 		return;
 
-	SdlGraphicsManager::addDirtyRect(x, y, w, h, false);
+	SurfaceSdlGraphicsManager::addDirtyRect(x, y, w, h, false);
 }
 
 void WINCESdlGraphicsManager::swap_panel_visibility() {
@@ -1597,6 +1600,19 @@ void WINCESdlGraphicsManager::swap_mouse_visibility() {
 	_forceHideMouse = !_forceHideMouse;
 	if (_forceHideMouse)
 		undrawMouse();
+}
+
+void WINCESdlGraphicsManager::init_panel() {
+	_panelVisible = true;
+	if (_panelInitialized) {
+		_toolbarHandler.setVisible(true);
+		_toolbarHandler.setActive(NAME_MAIN_PANEL);
+	}
+}
+
+void WINCESdlGraphicsManager::reset_panel() {
+	_panelVisible = false;
+	_toolbarHandler.setVisible(false);
 }
 
 // Smartphone actions

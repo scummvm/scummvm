@@ -160,7 +160,7 @@ void Script::load(ResourceManager *resMan) {
 	_numExports = 0;
 	_synonyms = 0;
 	_numSynonyms = 0;
-	
+
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		_exportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS);
 		if (_exportTable) {

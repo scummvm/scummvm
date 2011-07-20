@@ -115,7 +115,7 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 		return;
 	}
 
-	uint16 pos = 0;
+	//uint16 pos = 0;
 	int off = 0;
 	switch (type) {
 	case kTypeLan:
@@ -141,7 +141,7 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 		frames = new Surface[frames_count];
 
 		s->skip(frames_count * 2 - 2); //sizes
-		pos = s->readUint16LE();
+		/*pos = */s->readUint16LE();
 		//debug(0, "pos?: %04x", pos);
 
 		for (uint16 i = 0; i < frames_count; ++i) {

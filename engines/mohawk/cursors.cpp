@@ -234,7 +234,7 @@ LivingBooksCursorManager_v2::LivingBooksCursorManager_v2() {
 	// Try to open the system archive if we have it
 	_sysArchive = new MohawkArchive();
 
-	if (!_sysArchive->open("system.mhk")) {
+	if (!_sysArchive->openFile("system.mhk")) {
 		delete _sysArchive;
 		_sysArchive = 0;
 	}
@@ -250,6 +250,17 @@ void LivingBooksCursorManager_v2::setCursor(uint16 id) {
 	} else {
 		// TODO: Handle generated cursors
 	}
+}
+
+void LivingBooksCursorManager_v2::setCursor(const Common::String &name) {
+	if (!_sysArchive)
+		return;
+
+	uint16 id = _sysArchive->findResourceID(ID_TCUR, name);
+	if (id == 0xffff)
+		error("Could not find cursor '%s'", name.c_str());
+	else
+		setCursor(id);
 }
 
 PECursorManager::PECursorManager(const Common::String &appName) {
@@ -274,6 +285,7 @@ void PECursorManager::setCursor(uint16 id) {
 			Graphics::WinCursor *cursor = cursorGroup->cursors[0].cursor;
 			CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 			CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
+			delete cursorGroup;
 			return;
 		}
 	}

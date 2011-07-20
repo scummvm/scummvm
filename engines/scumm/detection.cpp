@@ -142,6 +142,14 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 	Common::String result;
 	char id = 0;
 
+	Common::String bPattern = _filenamePattern.pattern;
+
+	// Special cases for Blue's games, which share common (b) files
+	if (_game.id == GID_BIRTHDAY && !(_game.features & GF_DEMO))
+		bPattern = "Blue'sBirthday";
+	else if (_game.id == GID_TREASUREHUNT)
+		bPattern = "Blue'sTreasureHunt";
+
 	switch (_filenamePattern.genMethod) {
 	case kGenHEMac:
 	case kGenHEMacNoParens:
@@ -154,13 +162,7 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 			switch (disk) {
 			case 2:
 				id = 'b';
-				// Special cases for Blue's games, which share common (b) files
-				if (_game.id == GID_BIRTHDAY && !(_game.features & GF_DEMO))
-					result = "Blue'sBirthday.(b)";
-				else if (_game.id == GID_TREASUREHUNT)
-					result = "Blue'sTreasureHunt.(b)";
-				else
-					result = Common::String::format("%s.(b)", _filenamePattern.pattern);
+				result = bPattern + ".(b)";
 				break;
 			case 1:
 				id = 'a';
@@ -185,10 +187,11 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 				// For mac they're stored in game binary
 				result = _filenamePattern.pattern;
 			} else {
+				Common::String pattern = id == 'b' ? bPattern : _filenamePattern.pattern;
 				if (_filenamePattern.genMethod == kGenHEMac)
-					result = Common::String::format("%s (%c)", _filenamePattern.pattern, id);
+					result = Common::String::format("%s (%c)", pattern.c_str(), id);
 				else
-					result = Common::String::format("%s %c", _filenamePattern.pattern, id);
+					result = Common::String::format("%s %c", pattern.c_str(), id);
 			}
 		}
 
@@ -272,7 +275,7 @@ static BaseScummFile *openDiskImage(const Common::FSNode &node, const GameFilena
 		GameSettings gs;
 		memset(&gs, 0, sizeof(GameSettings));
 		gs.gameid = gfp->gameid;
-		gs.id = (Common::String(gfp->gameid) == "maniac" ? GID_MANIAC : GID_ZAK); 
+		gs.id = (Common::String(gfp->gameid) == "maniac" ? GID_MANIAC : GID_ZAK);
 		gs.platform = gfp->platform;
 
 		// determine second disk file name
@@ -454,7 +457,7 @@ static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist
 					matched = true;
 					break;
 				}
-					
+
 			if (!matched)
 				continue;
 
@@ -515,7 +518,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		if (d.md5.empty()) {
 			Common::SeekableReadStream *tmp = 0;
 			bool isDiskImg = (file.hasSuffix(".d64") || file.hasSuffix(".dsk") || file.hasSuffix(".prg"));
-			
+
 			if (isDiskImg) {
 				tmp = openDiskImage(d.node, gfp);
 

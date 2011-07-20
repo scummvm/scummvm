@@ -23,6 +23,7 @@
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 #include "common/file.h"
+#include "common/ptr.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
@@ -224,6 +225,7 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "emc",		"funseeker",		SCI_VERSION_NONE     },
 	{ "gk",			"gk1",				SCI_VERSION_NONE     },
 	// gk2 is the same
+	{ "gk2demo",	"gk2",				SCI_VERSION_NONE     },
 	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE     },
 	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE     },
 	{ "solitare",	"hoyle2",			SCI_VERSION_NONE     },
@@ -235,7 +237,7 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "kq4",		"kq4sci",			SCI_VERSION_NONE     },
 	// kq5 is the same
 	// kq6 is the same
-	// kq7 is the same
+	{ "kq7cd",		"kq7",				SCI_VERSION_NONE     },
 	{ "mm1",		"laurabow",			SCI_VERSION_NONE     },
 	{ "cb1",		"laurabow",			SCI_VERSION_NONE     },
 	{ "lb2",		"laurabow2",		SCI_VERSION_NONE     },
@@ -323,7 +325,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 
 	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId[0]; ++cur) {
 		if (sierraId == cur->oldId) {
-			// Distinguish same IDs from the SCI version
+			// Distinguish same IDs via the SCI version
 			if (cur->version != SCI_VERSION_NONE && cur->version != getSciVersion())
 				continue;
 
@@ -428,64 +430,57 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	s_fallbackDesc.flags = ADGF_NO_FLAGS;
 	s_fallbackDesc.platform = Common::kPlatformPC;	// default to PC platform
 	s_fallbackDesc.gameid = "sci";
+	s_fallbackDesc.guioptions = Common::GUIO_NONE;
 
-	// First grab all filenames
-	// TODO: Consider using allFiles instead of fslist
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory())
-			continue;
-
-		Common::String filename = file->getName();
-		filename.toLowercase();
-
-		if (filename.contains("resource.map") || filename.contains("resmap.00") || filename.contains("Data1")) {
-			foundResMap = true;
-		}
-
-		// Determine if we got a CD version and set the CD flag accordingly, by checking for
-		// resource.aud for SCI1.1 CD games, or audio001.002 for SCI1 CD games. We assume that
-		// the file should be over 10MB, as it contains all the game speech and is usually
-		// around 450MB+. The size check is for some floppy game versions like KQ6 floppy, which
-		// also have a small resource.aud file
-		if (filename.contains("resource.aud") || filename.contains("audio001.002")) {
-			Common::SeekableReadStream *tmpStream = file->createReadStream();
-			if (tmpStream->size() > 10 * 1024 * 1024) {
-				// We got a CD version, so set the CD flag accordingly
-				s_fallbackDesc.flags |= ADGF_CD;
-				s_fallbackDesc.extra = "CD";
-			}
-			delete tmpStream;
-		}
-
-		if (filename.contains("resource.000") || filename.contains("resource.001")
-			|| filename.contains("ressci.000") || filename.contains("ressci.001"))
-			foundRes000 = true;
-
-		// Data1 contains both map and volume for SCI1.1+ Mac games
-		if (filename.contains("Data1")) {
-			foundResMap = foundRes000 = true;
-			 s_fallbackDesc.platform = Common::kPlatformMacintosh;
-		}
-
-		// Determine the game platform
-		// The existence of any of these files indicates an Amiga game
-		if (filename.contains("9.pat") || filename.contains("spal") ||
-			filename.contains("patch.005") || filename.contains("bank.001"))
-				s_fallbackDesc.platform = Common::kPlatformAmiga;
-
-		// The existence of 7.pat or patch.200 indicates a Mac game
-		if (filename.contains("7.pat") || filename.contains("patch.200"))
-			s_fallbackDesc.platform = Common::kPlatformMacintosh;
-
-		// The data files for Atari ST versions are the same as their DOS counterparts
+	if (allFiles.contains("resource.map") || allFiles.contains("Data1")
+	    || allFiles.contains("resmap.001") || allFiles.contains("resmap.001")) {
+		foundResMap = true;
 	}
+
+	// Determine if we got a CD version and set the CD flag accordingly, by checking for
+	// resource.aud for SCI1.1 CD games, or audio001.002 for SCI1 CD games. We assume that
+	// the file should be over 10MB, as it contains all the game speech and is usually
+	// around 450MB+. The size check is for some floppy game versions like KQ6 floppy, which
+	// also have a small resource.aud file
+	if (allFiles.contains("resource.aud") || allFiles.contains("audio001.002")) {
+		Common::FSNode file = allFiles.contains("resource.aud") ? allFiles["resource.aud"] :  allFiles["audio001.002"];
+		Common::SeekableReadStream *tmpStream = file.createReadStream();
+		if (tmpStream->size() > 10 * 1024 * 1024) {
+			// We got a CD version, so set the CD flag accordingly
+			s_fallbackDesc.flags |= ADGF_CD;
+		}
+		delete tmpStream;
+	}
+
+	if (allFiles.contains("resource.000") || allFiles.contains("resource.001")
+		|| allFiles.contains("ressci.000") || allFiles.contains("ressci.001"))
+		foundRes000 = true;
+
+	// Data1 contains both map and volume for SCI1.1+ Mac games
+	if (allFiles.contains("Data1")) {
+		foundResMap = foundRes000 = true;
+		 s_fallbackDesc.platform = Common::kPlatformMacintosh;
+	}
+
+	// Determine the game platform
+	// The existence of any of these files indicates an Amiga game
+	if (allFiles.contains("9.pat") || allFiles.contains("spal") ||
+		allFiles.contains("patch.005") || allFiles.contains("bank.001"))
+			s_fallbackDesc.platform = Common::kPlatformAmiga;
+
+	// The existence of 7.pat or patch.200 indicates a Mac game
+	if (allFiles.contains("7.pat") || allFiles.contains("patch.200"))
+		s_fallbackDesc.platform = Common::kPlatformMacintosh;
+
+	// The data files for Atari ST versions are the same as their DOS counterparts
+
 
 	// If these files aren't found, it can't be SCI
 	if (!foundResMap && !foundRes000) {
 		return 0;
 	}
 
-	ResourceManager *resMan = new ResourceManager();
+	Common::ScopedPtr<ResourceManager> resMan(new ResourceManager());
 	assert(resMan);
 	resMan->addAppropriateSources(fslist);
 	resMan->init(true);
@@ -495,7 +490,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
 	if (getSciVersion() >= SCI_VERSION_2) {
-		delete resMan;
 		return (const ADGameDescription *)&s_fallbackDesc;
 	}
 #endif
@@ -506,7 +500,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// Can't be SCI (or unsupported SCI views). Pinball Creep by sierra also uses resource.map/resource.000 files
 	//  but doesnt share sci format at all, if we dont return 0 here we will detect this game as SCI
 	if (gameViews == kViewUnknown) {
-		delete resMan;
 		return 0;
 	}
 
@@ -519,7 +512,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 
 	// If we don't have a game id, the game is not SCI
 	if (sierraGameId.empty()) {
-		delete resMan;
 		return 0;
 	}
 
@@ -558,24 +550,43 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	}
 
 
-	// Fill in extras field
+	// Fill in "extra" field
+
+	// Is this an EGA version that might have a VGA pendant? Then we want
+	// to mark it as such in the "extra" field.
+	const bool markAsEGA = (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga
+			&& getSciVersion() > SCI_VERSION_1_EGA_ONLY);
+
+	const bool isDemo = (s_fallbackDesc.flags & ADGF_DEMO);
+	const bool isCD = (s_fallbackDesc.flags & ADGF_CD);
+
+	if (!isCD)
+		s_fallbackDesc.guioptions |= Common::GUIO_NOSPEECH;
 
 	if (gameId.hasSuffix("sci")) {
 		s_fallbackDesc.extra = "SCI";
 
 		// Differentiate EGA versions from the VGA ones, where needed
-		if (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga)
+		if (markAsEGA)
 			s_fallbackDesc.extra = "SCI/EGA";
+
+		// Mark as demo.
+		// Note: This overwrites the 'EGA' info, if it was previously set.
+		if (isDemo)
+			s_fallbackDesc.extra = "SCI/Demo";
 	} else {
-		if (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga)
+		if (markAsEGA)
 			s_fallbackDesc.extra = "EGA";
+
+		// Set "CD" and "Demo" as appropriate.
+		// Note: This overwrites the 'EGA' info, if it was previously set.
+		if (isDemo && isCD)
+			s_fallbackDesc.extra = "CD Demo";
+		else if (isDemo)
+			s_fallbackDesc.extra = "Demo";
+		else if (isCD)
+			s_fallbackDesc.extra = "CD";
 	}
-
-	// Add "demo" to the description for demos
-	if (s_fallbackDesc.flags & ADGF_DEMO)
-		s_fallbackDesc.extra = (gameId.hasSuffix("sci")) ? "SCI/Demo" : "Demo";
-
-	delete resMan;
 
 	return (const ADGameDescription *)&s_fallbackDesc;
 }

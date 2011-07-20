@@ -32,6 +32,10 @@ bool LBValue::operator==(const LBValue &x) const {
 	if (type != x.type) {
 		if (isNumeric() && x.isNumeric())
 			return toDouble() == x.toDouble();
+		else if (type == kLBValueString && x.type == kLBValueItemPtr)
+			return string == x.item->getName();
+		else if (type == kLBValueItemPtr && x.type == kLBValueString)
+			return item->getName() == x.string;
 		else
 			return false;
 	}
@@ -123,6 +127,12 @@ Common::Rect LBValue::toRect() const {
 }
 
 LBCode::LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId) : _vm(vm) {
+	if (!baseId) {
+		_data = NULL;
+		_size = 0;
+		return;
+	}
+
 	Common::SeekableSubReadStreamEndian *bcodStream = _vm->wrapStreamEndian(ID_BCOD, baseId);
 
 	uint32 totalSize = bcodStream->readUint32();
@@ -168,12 +178,8 @@ LBValue LBCode::runCode(LBItem *src, uint32 offset) {
 }
 
 void LBCode::nextToken() {
-	if (_currOffset + 1 >= _size) {
-		// TODO
-		warning("went off the end of code");
-		_currToken = kTokenEndOfFile;
-		_currValue = LBValue();
-		return;
+	if (_currOffset >= _size) {
+		error("went off the end of code");
 	}
 
 	_currToken = _data[_currOffset++];
@@ -182,6 +188,8 @@ void LBCode::nextToken() {
 	switch (_currToken) {
 	case kTokenIdentifier:
 		{
+		if (_currOffset + 2 > _size)
+			error("went off the end of code reading identifier");
 		uint16 offset = READ_BE_UINT16(_data + _currOffset);
 		// TODO: check string exists
 		_currValue = _strings[offset];
@@ -191,9 +199,13 @@ void LBCode::nextToken() {
 
 	case kTokenLiteral:
 		{
+		if (_currOffset + 1 > _size)
+			error("went off the end of code reading literal");
 		byte literalType = _data[_currOffset++];
 		switch (literalType) {
 		case kLBCodeLiteralInteger:
+			if (_currOffset + 2 > _size)
+				error("went off the end of code reading literal integer");
 			_currValue = READ_BE_UINT16(_data + _currOffset);
 			_currOffset += 2;
 			break;
@@ -207,6 +219,8 @@ void LBCode::nextToken() {
 	case kTokenConstEventId:
 	case 0x5e: // TODO: ??
 	case kTokenKeycode:
+		if (_currOffset + 2 > _size)
+			error("went off the end of code reading immediate");
 		_currValue = READ_BE_UINT16(_data + _currOffset);
 		_currOffset += 2;
 		break;
@@ -223,6 +237,8 @@ void LBCode::nextToken() {
 
 	case kTokenString:
 		{
+		if (_currOffset + 2 > _size)
+			error("went off the end of code reading string");
 		uint16 offset = READ_BE_UINT16(_data + _currOffset);
 		// TODO: check string exists
 		_currValue = _strings[offset];
@@ -246,8 +262,10 @@ LBValue LBCode::runCode(byte terminator) {
 		parseStatement();
 		if (_stack.size())
 			result = _stack.pop();
-		if (_currToken == terminator || _currToken == kTokenEndOfFile)
+		if (_currToken == terminator || _currToken == kTokenEndOfFile) {
+			debugN("\n");
 			break;
+		}
 		if (_currToken != kTokenEndOfStatement && _currToken != kTokenEndOfFile)
 			error("missing EOS (got %02x)", _currToken);
 		debugN("\n");
@@ -259,27 +277,27 @@ LBValue LBCode::runCode(byte terminator) {
 void LBCode::parseStatement() {
 	parseComparisons();
 
-	if (_currToken != kTokenAnd && _currToken != kTokenOr)
-		return;
-	byte op = _currToken;
-	if (op == kTokenAnd)
-		debugN(" && ");
-	else
-		debugN(" || ");
+	while (_currToken == kTokenAnd || _currToken == kTokenOr) {
+		byte op = _currToken;
+		if (op == kTokenAnd)
+			debugN(" && ");
+		else
+			debugN(" || ");
 
-	nextToken();
-	parseComparisons();
+		nextToken();
+		parseComparisons();
 
-	LBValue val2 = _stack.pop();
-	LBValue val1 = _stack.pop();
-	bool result;
-	if (op == kTokenAnd)
-		result = !val1.isZero() && !val2.isZero();
-	else
-		result = !val1.isZero() || !val2.isZero();
+		LBValue val2 = _stack.pop();
+		LBValue val1 = _stack.pop();
+		bool result;
+		if (op == kTokenAnd)
+			result = !val1.isZero() && !val2.isZero();
+		else
+			result = !val1.isZero() || !val2.isZero();
 
-	debugN(" [--> %s]", result ? "true" : "false");
-	_stack.push(result);
+		debugN(" [--> %s]", result ? "true" : "false");
+		_stack.push(result);
+	}
 }
 
 void LBCode::parseComparisons() {
@@ -347,49 +365,95 @@ void LBCode::parseComparisons() {
 void LBCode::parseConcat() {
 	parseArithmetic1();
 
-	if (_currToken != kTokenConcat)
-		return;
+	while (_currToken == kTokenConcat) {
+		debugN(" & ");
+		nextToken();
+		parseArithmetic1();
 
-	debugN(" & ");
-	nextToken();
-	parseArithmetic1();
-
-	LBValue val2 = _stack.pop();
-	LBValue val1 = _stack.pop();
-	Common::String result = val1.toString() + val2.toString();
-	debugN(" [--> \"%s\"]", result.c_str());
-	_stack.push(result);
+		LBValue val2 = _stack.pop();
+		LBValue val1 = _stack.pop();
+		Common::String result = val1.toString() + val2.toString();
+		debugN(" [--> \"%s\"]", result.c_str());
+		_stack.push(result);
+	}
 }
 
 void LBCode::parseArithmetic1() {
 	parseArithmetic2();
 
-	if (_currToken != kTokenMinus && _currToken != kTokenPlus)
-		return;
+	while (_currToken == kTokenMinus || _currToken == kTokenPlus) {
+		byte op = _currToken;
+		if (op == kTokenMinus)
+			debugN(" - ");
+		else if (op == kTokenPlus)
+			debugN(" + ");
 
-	byte op = _currToken;
-	if (op == kTokenMinus)
-		debugN(" - ");
-	else if (op == kTokenPlus)
-		debugN(" + ");
+		nextToken();
+		parseArithmetic2();
 
-	nextToken();
-	parseArithmetic2();
-
-	LBValue val2 = _stack.pop();
-	LBValue val1 = _stack.pop();
-	LBValue result;
-	// TODO: cope with non-integers
-	if (op == kTokenMinus)
-		result = val1.toInt() - val2.toInt();
-	else
-		result = val1.toInt() + val2.toInt();
-	_stack.push(result);
+		LBValue val2 = _stack.pop();
+		LBValue val1 = _stack.pop();
+		LBValue result;
+		// TODO: cope with non-integers
+		if (op == kTokenMinus)
+			result = val1.toInt() - val2.toInt();
+		else
+			result = val1.toInt() + val2.toInt();
+		debugN(" [--> %d]", result.toInt());
+		_stack.push(result);
+	}
 }
 
 void LBCode::parseArithmetic2() {
-	// FIXME: other math operators
 	parseMain();
+
+	while (true) {
+		byte op = _currToken;
+		switch (op) {
+		case kTokenMultiply:
+			debugN(" * ");
+			break;
+		case kTokenDivide:
+			debugN(" / ");
+			break;
+		case kTokenIntDivide:
+			debugN(" div ");
+			break;
+		case kTokenModulo:
+			debugN(" %% ");
+			break;
+		default:
+			return;
+		}
+
+		nextToken();
+		parseMain();
+
+		LBValue val2 = _stack.pop();
+		LBValue val1 = _stack.pop();
+		LBValue result;
+		// TODO: cope with non-integers
+		if (op == kTokenMultiply) {
+			result = val1.toInt() * val2.toInt();
+		} else if (val2.toInt() == 0) {
+			result = 1;
+		} else {
+			switch (op) {
+			case kTokenDivide:
+				// TODO: fp divide
+				result = val1.toInt() / val2.toInt();
+				break;
+			case kTokenIntDivide:
+				result = val1.toInt() / val2.toInt();
+				break;
+			case kTokenModulo:
+				result = val1.toInt() % val2.toInt();
+				break;
+			}
+		}
+
+		_stack.push(result);
+	}
 }
 
 void LBCode::parseMain() {
@@ -434,6 +498,33 @@ void LBCode::parseMain() {
 			_vm->_variables[varname].integer--;
 			nextToken();
 		}
+		}
+		break;
+
+	case kTokenPlusPlus:
+	case kTokenMinusMinus:
+		{
+		byte token = _currToken;
+		if (token == kTokenPlusPlus)
+			debugN("++");
+		else
+			debugN("--");
+		nextToken();
+
+		if (_currToken != kTokenIdentifier)
+			error("expected identifier");
+		assert(_currValue.type == kLBValueString);
+		Common::String varname = _currValue.string;
+		debugN("%s", varname.c_str());
+		LBValue &val = _vm->_variables[varname];
+
+		// FIXME: pre/postincrement for non-integers
+		if (token == kTokenPlusPlus)
+			val.integer++;
+		else
+			val.integer--;
+		_stack.push(val);
+		nextToken();
 		}
 		break;
 
@@ -516,6 +607,16 @@ void LBCode::parseMain() {
 	}
 }
 
+LBItem *LBCode::resolveItem(const LBValue &value) {
+	if (value.type == kLBValueItemPtr)
+		return value.item;
+	if (value.type == kLBValueString)
+		return _vm->getItemByName(value.string);
+	if (value.type == kLBValueInteger)
+		return _vm->getItemById(value.integer);
+	return NULL;
+}
+
 Common::Array<LBValue> LBCode::readParams() {
 	Common::Array<LBValue> params;
 
@@ -583,10 +684,10 @@ struct CodeCommandInfo {
 
 #define NUM_GENERAL_COMMANDS 129
 CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
-	{ "eval", 0 },
-	{ "random", 0 },
-	{ "stringLen", 0 },
-	{ "substring", 0 },
+	{ "eval", &LBCode::cmdEval },
+	{ "random", &LBCode::cmdRandom },
+	{ "stringLen", &LBCode::cmdStringLen },
+	{ "substring", &LBCode::cmdSubstring },
 	{ "max", 0 },
 	{ "min", 0 },
 	{ "abs", 0 },
@@ -740,6 +841,51 @@ void LBCode::cmdUnimplemented(const Common::Array<LBValue> &params) {
 	warning("unimplemented command called");
 }
 
+void LBCode::cmdEval(const Common::Array<LBValue> &params) {
+	// FIXME: v4 eval is different?
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to eval", params.size());
+
+	LBCode tempCode(_vm, 0);
+
+	uint offset = tempCode.parseCode(params[0].toString());
+	_stack.push(tempCode.runCode(_currSource, offset));
+}
+
+void LBCode::cmdRandom(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to random", params.size());
+
+	int min = params[0].toInt();
+	int max = params[1].toInt();
+	_stack.push(_vm->_rnd->getRandomNumberRng(min, max));
+}
+
+void LBCode::cmdStringLen(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to stringLen", params.size());
+
+	const Common::String &string = params[0].toString();
+	_stack.push(string.size());
+}
+
+void LBCode::cmdSubstring(const Common::Array<LBValue> &params) {
+	if (params.size() != 3)
+		error("incorrect number of parameters (%d) to substring", params.size());
+
+	const Common::String &string = params[0].toString();
+	uint begin = params[1].toInt();
+	uint end = params[2].toInt();
+	if (begin == 0)
+		error("invalid substring call (%d to %d)", begin, end);
+	if (begin > end || end > string.size()) {
+		_stack.push(Common::String());
+		return;
+	}
+	Common::String substring(string.c_str() + (begin - 1), end - begin + 1);
+	_stack.push(substring);
+}
+
 void LBCode::cmdGetRect(const Common::Array<LBValue> &params) {
 	if (params.size() < 2) {
 		_stack.push(getRectFromParams(params));
@@ -882,7 +1028,7 @@ CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
 	{ "moveTo", &LBCode::itemMoveTo },
 	{ "mute", 0 },
 	{ "play", 0 },
-	{ "seek", 0 },
+	{ "seek", &LBCode::itemSeek },
 	{ "seekToFrame", 0 },
 	{ "setParent", &LBCode::itemSetParent },
 	{ "setZOrder", 0 },
@@ -916,6 +1062,17 @@ void LBCode::itemIsPlaying(const Common::Array<LBValue> &params) {
 
 void LBCode::itemMoveTo(const Common::Array<LBValue> &params) {
 	warning("ignoring moveTo");
+}
+
+void LBCode::itemSeek(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to seek", params.size());
+
+	LBItem *item = resolveItem(params[0]);
+	if (!item)
+		error("attempted seek on invalid item (%s)", params[0].toString().c_str());
+	uint seekTo = params[1].toInt();
+	item->seek(seekTo);
 }
 
 void LBCode::itemSetParent(const Common::Array<LBValue> &params) {
@@ -1000,6 +1157,280 @@ void LBCode::runNotifyCommand() {
 	default:
 		error("unknown notify command %02x in code", commandType);
 	}
+}
+
+/*
+ * Helper function for parseCode/parseCodeSymbol:
+ * Returns an unused string id.
+ */
+uint LBCode::nextFreeString() {
+	for (uint i = 0; i <= 0xffff; i++) {
+		if (!_strings.contains(i))
+			return i;
+	}
+
+	error("nextFreeString couldn't find a space");
+}
+
+/*
+ * Helper function for parseCode:
+ * Given a name, appends the appropriate data to the provided code array and
+ * returns true if it's a function, or false otherwise.
+ */
+bool LBCode::parseCodeSymbol(const Common::String &name, uint &pos, Common::Array<byte> &code) {
+	// first, check whether the name matches a known function
+	for (uint i = 0; i < 2; i++) {
+		byte cmdToken;
+		CodeCommandInfo *cmdInfo = NULL;
+		uint cmdCount = 0;
+
+		switch (i) {
+		case 0:
+			cmdInfo = generalCommandInfo;
+			cmdToken = kTokenGeneralCommand;
+			cmdCount = NUM_GENERAL_COMMANDS;
+			break;
+		case 1:
+			cmdInfo = itemCommandInfo;
+			cmdToken = kTokenItemCommand;
+			cmdCount = NUM_ITEM_COMMANDS;
+			break;
+		}
+
+		for (uint n = 0; n < cmdCount; n++) {
+			const char *cmdName = cmdInfo[n].name;
+			if (!cmdName)
+				continue;
+			if (!name.equalsIgnoreCase(cmdName))
+				continue;
+
+			// found a matching function
+			code.push_back(cmdToken);
+			code.push_back(n + 1);
+			return true;
+		}
+	}
+
+	// not a function, so must be an identifier
+	code.push_back(kTokenIdentifier);
+
+	uint stringId = nextFreeString();
+	_strings[stringId] = name;
+
+	char tmp[2];
+	WRITE_BE_UINT16(tmp, (int16)stringId);
+	code.push_back(tmp[0]);
+	code.push_back(tmp[1]);
+
+	return false;
+}
+
+/*
+ * Parse a string for later execution, and return the offset where it was
+ * stored.
+ */
+uint LBCode::parseCode(const Common::String &source) {
+	struct LBCodeOperator {
+		byte token;
+		byte op;
+		byte lookahead1;
+		byte lookahead1Op;
+		byte lookahead2;
+		byte lookahead2Op;
+	};
+
+	#define NUM_LB_OPERATORS 11
+	static const LBCodeOperator operators[NUM_LB_OPERATORS] = {
+		{ '+', kTokenPlus, '+', kTokenPlusPlus, '=', kTokenPlusEquals },
+		{ '-', kTokenMinus, '-', kTokenMinusMinus, '=', kTokenMinusEquals },
+		{ '/', kTokenDivide, '=', kTokenDivideEquals, 0, 0 },
+		{ '*', kTokenMultiply, '=', kTokenMultiplyEquals, 0, 0 },
+		{ '=', kTokenAssign, '=', kTokenEquals, 0, 0 },
+		{ '>', kTokenGreaterThan, '=', kTokenGreaterThanEq, 0, 0 },
+		{ '<', kTokenLessThan, '=', kTokenLessThanEq, 0, 0 },
+		{ '!', kTokenNot, '=', kTokenNotEq, 0, 0 },
+		{ '&', kTokenConcat, '&', kTokenAnd, '=', kTokenAndEquals },
+		{ '|', 0, '|', kTokenOr, 0, 0 },
+		{ ';', kTokenEndOfStatement, 0, 0, 0, 0 }
+	};
+
+	uint pos = 0;
+	Common::Array<byte> code;
+	Common::Array<uint> counterPositions;
+	bool wasFunction = false;
+
+	while (pos < source.size()) {
+		byte token = source[pos];
+		byte lookahead = 0;
+		if (pos + 1 < source.size())
+			lookahead = source[pos + 1];
+		pos++;
+
+		if (token != ' ' && token != '(' && wasFunction)
+			error("while parsing script '%s', encountered incomplete function call", source.c_str());
+
+		// First, we check for simple operators.
+		for (uint i = 0; i < NUM_LB_OPERATORS; i++) {
+			if (token != operators[i].token)
+				continue;
+			if (lookahead) {
+				if (lookahead == operators[i].lookahead1) {
+					code.push_back(operators[i].lookahead1Op);
+					token = 0;
+				} else if (lookahead == operators[i].lookahead2) {
+					code.push_back(operators[i].lookahead2Op);
+					token = 0;
+				}
+				if (!token) {
+					pos++;
+					break;
+				}
+			}
+			if (operators[i].op) {
+				code.push_back(operators[i].op);
+				token = 0;
+			}
+			break;
+		}
+		if (!token)
+			continue;
+
+		// Then, we check for more complex tokens.
+		switch (token) {
+		// whitespace
+		case ' ':
+			// ignore
+			break;
+		// literal string
+		case '"':
+		case '\'':
+			{
+			Common::String tempString;
+			while (pos < source.size()) {
+				if (source[pos] == token)
+					break;
+				tempString += source[pos++];
+			}
+			if (pos++ == source.size())
+				error("while parsing script '%s', string had no end", source.c_str());
+
+			code.push_back(kTokenString);
+
+			uint stringId = nextFreeString();
+			_strings[stringId] = tempString;
+
+			char tmp[2];
+			WRITE_BE_UINT16(tmp, (int16)stringId);
+			code.push_back(tmp[0]);
+			code.push_back(tmp[1]);
+			}
+			break;
+		// open bracket
+		case '(':
+			if (wasFunction) {
+				// function call parameters
+				wasFunction = false;
+				// we will need to back-patch the parameter count,
+				// if parameters are encountered
+				counterPositions.push_back(code.size());
+				code.push_back(1);
+				// if the next token is a ) then there are no
+				// parameters, otherwise start with 1 and increment
+				// if/when we encounter commas
+				for (uint i = pos; i < source.size(); i++) {
+					if (source[i] == ' ')
+						continue;
+					if (source[i] != ')')
+						break;
+					code[code.size() - 1] = 0;
+					break;
+				}
+			} else {
+				// brackets around expression
+				counterPositions.push_back(0);
+			}
+			code.push_back(kTokenOpenBracket);
+			break;
+		// close bracket
+		case ')':
+			if (counterPositions.empty())
+				error("while parsing script '%s', encountered unmatched )", source.c_str());
+			counterPositions.pop_back();
+			code.push_back(kTokenCloseBracket);
+			break;
+		// comma (seperating function params)
+		case ',':
+			{
+			if (counterPositions.empty())
+				error("while parsing script '%s', encountered unexpected ,", source.c_str());
+			code.push_back(kTokenComma);
+			uint counterPos = counterPositions.back();
+			if (!counterPos)
+				error("while parsing script '%s', encountered , outside parameter list", source.c_str());
+			code[counterPos]++;
+			}
+			break;
+		// old-style explicit function call
+		case '@':
+			{
+			Common::String tempString;
+			while (pos < source.size()) {
+				if (!isalpha(source[pos]) && !isdigit(source[pos]))
+					break;
+				tempString += source[pos++];
+			}
+			wasFunction = parseCodeSymbol(tempString, pos, code);
+			if (!wasFunction)
+				error("while parsing script '%s', encountered explicit function call to unknown function '%s'",
+					source.c_str(), tempString.c_str());
+			}
+			break;
+		default:
+			if (isdigit(token)) {
+				const char *in = source.c_str() + pos - 1;
+				// FIXME: handle floats?
+				char *endptr;
+				long int intValue = strtol(in, &endptr, 0);
+				assert(endptr > in);
+				pos += (endptr - in) - 1;
+
+				// FIXME: handle storing longs if needed
+				code.push_back(kTokenLiteral);
+				code.push_back(kLBCodeLiteralInteger);
+				char tmp[2];
+				WRITE_BE_UINT16(tmp, (int16)intValue);
+				code.push_back(tmp[0]);
+				code.push_back(tmp[1]);
+			} else if (isalpha(token)) {
+				Common::String tempString;
+				tempString += token;
+				while (pos < source.size()) {
+					if (!isalpha(source[pos]) && !isdigit(source[pos]))
+						break;
+					tempString += source[pos++];
+				}
+				wasFunction = parseCodeSymbol(tempString, pos, code);
+			} else {
+				error("while parsing script '%s', couldn't parse '%c'", source.c_str(), token);
+			}
+		}
+	}
+
+	if (wasFunction)
+		error("while parsing script '%s', encountered incomplete function call", source.c_str());
+	if (counterPositions.size())
+		error("while parsing script '%s', unmatched (", source.c_str());
+
+	code.push_back(kTokenEndOfFile);
+
+	uint codeOffset = _size;
+	byte *newData = new byte[_size + code.size()];
+	memcpy(newData, _data, _size);
+	memcpy(newData, &code[0], code.size());
+	delete[] _data;
+	_data = newData;
+	_size += code.size();
+	return codeOffset;
 }
 
 } // End of namespace Mohawk

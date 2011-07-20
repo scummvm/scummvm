@@ -125,7 +125,7 @@ private:
 
 	void loadMacIconBarPalette();
 	byte *_macClut;
-	
+
 #ifdef ENABLE_SCI32
 	byte *_clutTable;
 #endif

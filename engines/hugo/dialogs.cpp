@@ -95,15 +95,15 @@ void TopMenu::reflowLayout() {
 
 	_recallButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
 	x += kButtonWidth + kButtonPad;
-	
+
 	_turboButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
 	x += kButtonWidth + kButtonPad;
 
 	x += kButtonSpace;
-	
+
 	_lookButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
 	x += kButtonWidth + kButtonPad;
-	
+
 	_inventButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
 	x += kButtonWidth + kButtonPad;
 
@@ -133,7 +133,7 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 		arrayBmp[i * 2 + 1]->create(arrayBmp[i * 2]->w * 2, arrayBmp[i * 2]->h * 2, g_system->getOverlayFormat());
 		byte *src = (byte *)arrayBmp[i * 2]->pixels;
 		byte *dst = (byte *)arrayBmp[i * 2 + 1]->pixels;
-		
+
 		for (int j = 0; j < arrayBmp[i * 2]->h; j++) {
 			src = (byte *)arrayBmp[i * 2]->getBasePtr(0, j);
 			dst = (byte *)arrayBmp[i * 2 + 1]->getBasePtr(0, j * 2);
@@ -153,7 +153,7 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 				*dst++ = *src++;
 			}
 		}
-		
+
 		in.skip(bmpSize);
 	}
 }

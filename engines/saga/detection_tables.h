@@ -221,7 +221,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		GID_ITE,
-		GF_WYRMKEEP | GF_SCENE_SUBSTITUTES | GF_MONO_MUSIC | GF_LE_VOICES,
+		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -247,7 +247,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		GID_ITE,
-		GF_WYRMKEEP | GF_LE_VOICES,
+		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -273,7 +273,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		GID_ITE,
-		GF_WYRMKEEP | GF_SCENE_SUBSTITUTES,
+		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -299,7 +299,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		GID_ITE,
-		GF_WYRMKEEP | GF_8BIT_UNSIGNED_PCM,
+		GF_8BIT_UNSIGNED_PCM,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -356,7 +356,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		GID_ITE,
-		GF_WYRMKEEP,
+		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -388,7 +388,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		GID_ITE,
-		GF_WYRMKEEP,
+		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -418,7 +418,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		GID_ITE,
-		GF_WYRMKEEP,
+		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
@@ -821,7 +821,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GID_DINO,
@@ -851,7 +851,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO_NONE
 		},
 		GID_FTA2,

@@ -68,6 +68,7 @@ public:
 	void drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 frame, int32 xx, int32 yy, int32 zz, Picture *mask, int32 scale);
 	void drawStrip(int32 offset = 0);
 	void applyPalette(int32 offset, int32 srcOffset, int32 numEntries);
+	Common::Rect getFrameRect(int32 frame);
 	int32 getFrameWidth(int32 frame);
 	int32 getFrameHeight(int32 frame);
 	int32 getWidth() const;

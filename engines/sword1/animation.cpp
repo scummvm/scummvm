@@ -114,7 +114,7 @@ bool MoviePlayer::load(uint32 id) {
 				int startFrame = strtoul(ptr, const_cast<char **>(&ptr), 10);
 				int endFrame = strtoul(ptr, const_cast<char **>(&ptr), 10);
 
-				while (*ptr && isspace(*ptr))
+				while (*ptr && isspace(static_cast<unsigned char>(*ptr)))
 					ptr++;
 
 				if (startFrame > endFrame) {
@@ -261,7 +261,7 @@ bool MoviePlayer::playVideo() {
 				uint32 minWeight = 0xFFFFFFFF;
 				uint32 weight;
 				byte r, g, b;
-				
+
 				const byte *palette = _decoder->getPalette();
 
 				for (int i = 0; i < 256; i++) {

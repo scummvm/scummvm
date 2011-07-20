@@ -21,17 +21,13 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fputs
-#define FORBIDDEN_SYMBOL_EXCEPTION_fflush
-#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 
 #include "common/system.h"
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/savefile.h"
 #include "common/str.h"
+#include "common/taskbar.h"
 #include "common/textconsole.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
@@ -45,6 +41,9 @@ OSystem::OSystem() {
 	_eventManager = 0;
 	_timerManager = 0;
 	_savefileManager = 0;
+#if defined(USE_TASKBAR)
+	_taskbarManager = 0;
+#endif
 	_fsFactory = 0;
 }
 
@@ -57,6 +56,11 @@ OSystem::~OSystem() {
 
 	delete _timerManager;
 	_timerManager = 0;
+
+#if defined(USE_TASKBAR)
+	delete _taskbarManager;
+	_taskbarManager = 0;
+#endif
 
 	delete _savefileManager;
 	_savefileManager = 0;
@@ -134,20 +138,6 @@ Common::WriteStream *OSystem::createConfigWriteStream() {
 
 Common::String OSystem::getDefaultConfigFileName() {
 	return "scummvm.ini";
-}
-
-void OSystem::logMessage(LogMessageType::Type type, const char *message) {
-#if !defined(__PLAYSTATION2__) && !defined(__DS__)
-	FILE *output = 0;
-
-	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
-		output = stdout;
-	else
-		output = stderr;
-
-	fputs(message, output);
-	fflush(output);
-#endif
 }
 
 Common::String OSystem::getSystemLanguage() const {

@@ -1383,10 +1383,10 @@ void ScummEngine_v7::loadLanguageBundle() {
 			} else if (*ptr == '#') {
 				// Number of subtags following a given basetag. We don't need that
 				// information so we just skip it
-			} else if (isdigit(*ptr)) {
+			} else if (isdigit(static_cast<unsigned char>(*ptr))) {
 				int idx = 0;
 				// A number (up to three digits)...
-				while (isdigit(*ptr)) {
+				while (isdigit(static_cast<unsigned char>(*ptr))) {
 					idx = idx * 10 + (*ptr - '0');
 					ptr++;
 				}
@@ -1424,12 +1424,12 @@ void ScummEngine_v7::loadLanguageBundle() {
 		for (i = 0; i < _languageIndexSize; i++) {
 			// First 8 chars in the line give the string ID / 'tag'
 			int j;
-			for (j = 0; j < 8 && !isspace(*ptr); j++, ptr++)
+			for (j = 0; j < 8 && !isspace(static_cast<unsigned char>(*ptr)); j++, ptr++)
 				_languageIndex[i].tag[j] = toupper(*ptr);
 			_languageIndex[i].tag[j] = 0;
 
 			// After that follows a single space which we skip
-			assert(isspace(*ptr));
+			assert(isspace(static_cast<unsigned char>(*ptr)));
 			ptr++;
 
 			// Then comes the translated string: we record an offset to that.
