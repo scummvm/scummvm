@@ -47,13 +47,13 @@ Dat::Dat():
 	_file(DAT_NAME, REA, CRP)
 #endif
 {
-	debugC(1, kDebugFile, "Dat::Dat()");
+	debugC(1, kCGEDebugFile, "Dat::Dat()");
 }
 
 /*-----------------------------------------------------------------------*/
 
 void VFile::init() {
-	debugC(1, kDebugFile, "VFile::init()");
+	debugC(1, kCGEDebugFile, "VFile::init()");
 
 	_dat = new Dat();
 #ifdef VOL_UPD
@@ -72,7 +72,7 @@ void VFile::deinit() {
 
 VFile::VFile(const char *name, IOMODE mode)
 	: IoBuf(mode) {
-	debugC(3, kDebugFile, "VFile::VFile(%s, %d)", name, mode);
+	debugC(3, kCGEDebugFile, "VFile::VFile(%s, %d)", name, mode);
 
 	if (mode == REA) {
 		if (_dat->_file._error || _cat->_error)
@@ -96,14 +96,14 @@ VFile::~VFile() {
 
 
 bool VFile::exist(const char *name) {
-	debugC(1, kDebugFile, "VFile::exist(%s)", name);
+	debugC(1, kCGEDebugFile, "VFile::exist(%s)", name);
 
 	return scumm_stricmp(_cat->find(name)->_key, name) == 0;
 }
 
 
 void VFile::readBuf() {
-	debugC(3, kDebugFile, "VFile::readBuf()");
+	debugC(3, kCGEDebugFile, "VFile::readBuf()");
 
 	if (_recent != this) {
 		_dat->_file.seek(_bufMark + _lim);
@@ -118,19 +118,19 @@ void VFile::readBuf() {
 }
 
 long VFile::mark() {
-	debugC(5, kDebugFile, "VFile::mark()");
+	debugC(5, kCGEDebugFile, "VFile::mark()");
 
 	return (_bufMark + _ptr) - _begMark;
 }
 
 long VFile::size() {
-	debugC(1, kDebugFile, "VFile::size()");
+	debugC(1, kCGEDebugFile, "VFile::size()");
 
 	return _endMark - _begMark;
 }
 
 long VFile::seek(long pos) {
-	debugC(1, kDebugFile, "VFile::seel(%ld)", pos);
+	debugC(1, kCGEDebugFile, "VFile::seel(%ld)", pos);
 
 	_recent = NULL;
 	_lim = 0;

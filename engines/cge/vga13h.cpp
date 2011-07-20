@@ -1213,7 +1213,7 @@ void Vga::copyPage(uint16 d, uint16 s) {
 //--------------------------------------------------------------------------
 
 void Bitmap::xShow(int16 x, int16 y) {
-	debugC(4, kDebugBitmap, "Bitmap::xShow(%d, %d)", x, y);
+	debugC(4, kCGEDebugBitmap, "Bitmap::xShow(%d, %d)", x, y);
 
 	const byte *srcP = (const byte *)_v;
 	byte *destEndP = (byte *)Vga::_page[1]->pixels + (SCR_WID * SCR_HIG);
@@ -1266,7 +1266,7 @@ void Bitmap::xShow(int16 x, int16 y) {
 
 
 void Bitmap::show(int16 x, int16 y) {
-	debugC(5, kDebugBitmap, "Bitmap::show(%d, %d)", x, y);
+	debugC(5, kCGEDebugBitmap, "Bitmap::show(%d, %d)", x, y);
 
 	const byte *srcP = (const byte *)_v;
 	byte *destEndP = (byte *)Vga::_page[1]->pixels + (SCR_WID * SCR_HIG);
@@ -1330,7 +1330,7 @@ void Bitmap::show(int16 x, int16 y) {
 
 
 void Bitmap::hide(int16 x, int16 y) {
-	debugC(5, kDebugBitmap, "Bitmap::hide(%d, %d)", x, y);
+	debugC(5, kCGEDebugBitmap, "Bitmap::hide(%d, %d)", x, y);
 
 	for (int yp = y; yp < y + _h; yp++) {
 		const byte *srcP = (const byte *)Vga::_page[2]->getBasePtr(x, yp);
