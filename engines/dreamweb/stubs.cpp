@@ -1021,10 +1021,15 @@ void DreamGenContext::printasprite(const Sprite *sprite) {
 		di = ax + data.word(kMapadx);
 	}
 	
-	ax = sprite->b15;
+	uint8 c;
 	if (sprite->b29 != 0)
-		ah = 8;
-	showframe();
+		c = 8;
+	else
+		c = 0;
+	uint8 width, height;
+	showframe(es, ds, di, bx, sprite->b15, c, &width, &height);
+	cl = width;
+	ch = height;
 
 	bx = pop();
 	es = pop();
