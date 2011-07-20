@@ -106,7 +106,7 @@ public:
 
 	Animation *_anim;
 
-        bool hasResource(uint32 tag, uint16 id) const;
+	bool hasResource(uint32 tag, uint16 id) const;
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id, bool buffering);
 
 protected:

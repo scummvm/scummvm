@@ -271,7 +271,6 @@ void Pipe::nextFrame() {
 		ResourceMap &resMap = _types[tag];
 
 		_offset += (12 * count);
-		//uint32 baseOffset = _offset;
 		for (uint j = 0; j < count; j++) {
 			uint32 offset = _stream->readUint32LE();
 			uint32 size = _stream->readUint32LE();
