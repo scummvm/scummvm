@@ -103,7 +103,6 @@ namespace CGE {
 #define HEROFUN0       (40 * 12)
 #define HEROFUN1       ( 2 * 12)
 #define PAIN           (_vm->_flag[0])
-//#define FINIS          (_vm->_flag[3])
 
 
 class System : public Sprite {
@@ -121,6 +120,13 @@ private:
 	CGEEngine *_vm;
 };
 
+class Square : public Sprite {
+public:
+	Square(CGEEngine *vm);
+	virtual void touch(uint16 mask, int x, int y);
+private:
+	CGEEngine *_vm;
+};
 
 extern Vga *_vga;
 extern Heart *_heart;
