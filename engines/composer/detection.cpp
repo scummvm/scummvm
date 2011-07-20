@@ -55,11 +55,10 @@ Common::Language ComposerEngine::getLanguage() const {
 }
 
 static const PlainGameDescriptor composerGames[] = {
+	{"composer", "Composer Game"},
 	{"darby", "Darby the Dragon"},
 	{"gregory", "Gregory and the Hot Air Balloon"},
-	{"liam", "Liam Finds a Story"},
-	{"magictalesdemo1", "Magic Tales Demo 1"},
-	{"magictalesdemo2", "Magic Tales Demo 2"},
+	{"liam", "Magic Tales: Liam Finds a Story"},
 	{0, 0}
 };
 
@@ -71,13 +70,13 @@ static const ComposerGameDescription gameDescriptions[] = {
 	// from Liam Finds a Story CD
 	{
 		{
-			"magictalesdemo1",
-			0,
+			"magictales",
+			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
 			{{"book.ini", 0, "dbc98c566f4ac61b544443524585dccb", -1},
 			 AD_LISTEND},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_USEEXTRAASTITLE,
 			Common::GUIO_NONE
 		},
 		GType_ComposerV1
@@ -100,13 +99,13 @@ static const ComposerGameDescription gameDescriptions[] = {
 	// from Liam Finds a Story CD
 	{
 		{
-			"magictalesdemo2",
-			0,
+			"magictales",
+			"Magic Tales Demo: Sleeping Cub, Princess & Crab",
 			{{"book.ini", 0, "3dede2522bb0886c95667b082987a87f", -1},
 			 AD_LISTEND},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_USEEXTRAASTITLE,
 			Common::GUIO_NONE
 		},
 		GType_ComposerV2
@@ -149,7 +148,9 @@ using namespace Composer;
 
 class ComposerMetaEngine : public AdvancedMetaEngine {
 public:
-	ComposerMetaEngine() : AdvancedMetaEngine(Composer::gameDescriptions, sizeof(Composer::ComposerGameDescription), composerGames) {}
+	ComposerMetaEngine() : AdvancedMetaEngine(Composer::gameDescriptions, sizeof(Composer::ComposerGameDescription), composerGames) {
+		_singleid = "composer";
+	}
 
 	virtual const char *getName() const {
 		return "Magic Composer Engine";
