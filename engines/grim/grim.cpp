@@ -883,7 +883,7 @@ void GrimEngine::luaUpdate() {
 	_frameTime = newStart - _frameStart;
 	_frameStart = newStart;
 
-	if (_mode == ENGINE_MODE_DRAW || _mode == ENGINE_MODE_PAUSE || _shortFrame) {
+	if (_mode == ENGINE_MODE_PAUSE || _shortFrame) {
 		_frameTime = 0;
 	}
 
