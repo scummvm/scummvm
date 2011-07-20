@@ -76,7 +76,9 @@ public:
 	// Drawing
 	void draw(ResourceId resourceId);
 	void draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags = kDrawFlagNone, bool colorKey = true);
+	void draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags= kDrawFlagNone, bool colorKey = true);
 	void draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, int32 transTableNum);
+	void draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, int32 transTableNum);
 	void draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, ResourceId resourceId2, const Common::Point &destination, bool colorKey = true);
 
 	// Misc
@@ -148,6 +150,8 @@ private:
 
 	// Misc
 	void clip(Common::Rect *source, Common::Rect *destination, int32 flags);
+
+	void draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, ResourceId resourceId2, const Common::Point &destination, bool colorKey = true);
 
 	// Screen blitting
 	void blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags);
