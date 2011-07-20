@@ -28,6 +28,9 @@
 #include "backends/events/maemosdl/maemosdl-events.h"
 #include "common/textconsole.h"
 
+#include <SDL/SDL_syswm.h>
+#include <X11/Xutil.h>
+
 OSystem_SDL_Maemo::OSystem_SDL_Maemo()
 	:
 	OSystem_POSIX() {
@@ -52,5 +55,44 @@ void OSystem_SDL_Maemo::fatalError() {
 	warning("fatal error");
 	for (;;) {}
 }
+
+void OSystem_SDL_Maemo::setXWindowName(const char *caption) {
+	SDL_SysWMinfo info;
+	SDL_VERSION(&info.version);
+	if ( SDL_GetWMInfo(&info) ) {
+		Display *dpy = info.info.x11.display;
+		Window win;
+		//if (_videoMode.fullscreen)
+		win = info.info.x11.fswindow;
+		if (win) XStoreName(dpy, win, caption);
+		//else
+		win = info.info.x11.wmwindow;
+		if (win) XStoreName(dpy, win, caption);
+	}
+}
+
+void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
+	Common::String cap;
+	byte c;
+
+	// The string caption is supposed to be in LATIN-1 encoding.
+	// SDL expects UTF-8. So we perform the conversion here.
+	while ((c = *(const byte *)caption++)) {
+		if (c < 0x80)
+			cap += c;
+		else {
+			cap += 0xC0 | (c >> 6);
+			cap += 0x80 | (c & 0x3F);
+		}
+	}
+
+	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
+
+	Common::String cap2("ScummVM - "); // 2 lines in OS2008 task switcher, set first line
+	cap=cap2+cap;
+	setXWindowName(cap.c_str());
+}
+
+
 
 #endif
