@@ -552,7 +552,7 @@ void lua_Restore(SaveGame *savedState) {
 				state->some_task = state->some_task->next;
 		}
 
-		state->flag2 = savedState->readLESint32();
+		state->updated = savedState->readLESint32();
 		state->paused = savedState->readLESint32();
 		state->state_counter1 = savedState->readLESint32();
 		state->state_counter2 = savedState->readLESint32();

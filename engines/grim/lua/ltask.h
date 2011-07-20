@@ -33,6 +33,8 @@ void unpause_scripts();
 void find_script();
 void break_here();
 
+void runtasks(LState *const rootState);
+
 } // end of namespace Grim
 
 #endif

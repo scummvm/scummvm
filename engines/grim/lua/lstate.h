@@ -78,7 +78,7 @@ struct LState {
 	int32 paused; // flag mean if task is paused
 	int32 state_counter1;
 	int32 state_counter2;
-	int32 flag2;
+	bool updated;
 	Stack stack;  // Lua stack
 	C_Lua_Stack Cstack;  // C2lua struct
 	struct FuncState *mainState, *currState;  // point to local structs in yacc

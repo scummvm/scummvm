@@ -380,7 +380,7 @@ void lua_Save(SaveGame *savedState) {
 
 		savedState->writeLESint32(n);
 
-		savedState->writeLESint32(state->flag2);
+		savedState->writeLESint32(state->updated);
 		savedState->writeLESint32(state->paused);
 		savedState->writeLESint32(state->state_counter1);
 		savedState->writeLESint32(state->state_counter2);

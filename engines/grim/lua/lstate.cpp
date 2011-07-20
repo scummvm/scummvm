@@ -79,7 +79,7 @@ void lua_stateinit(LState *state) {
 	state->paused = 0;
 	state->state_counter1 = 0;
 	state->state_counter2 = 0;
-	state->flag2 = 0;
+	state->updated = false;
 
 	state->numCblocks = 0;
 	state->Cstack.base = 0;

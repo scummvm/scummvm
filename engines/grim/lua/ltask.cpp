@@ -238,66 +238,73 @@ void current_script() {
 void break_here() {}
 
 void lua_runtasks() {
-	int32 flag;
-	LState *tmpState = lua_state;
-	LState *state = lua_state->next;
-	if (state) {
-		do {
-			state->flag2 = 0;
-			state = state->next;
-		} while	(state);
+	if (!lua_state || !lua_state->next) {
+		return;
+	}
 
-loop:
-		lua_state = lua_state->next;
-		if (lua_state) {
-			while (1) {
-				if (!lua_state->flag2 && !lua_state->paused) {
-					jmp_buf	errorJmp;
-					lua_state->errorJmp = &errorJmp;
-					if (setjmp(errorJmp)) {
-						lua_Task *t, *m;
-						for (t = lua_state->task; t != NULL;) {
-							m = t->next;
-							luaM_free(t);
-							t = m;
-						}
-						flag = 0;
-						lua_state->task = NULL;
-					} else {
-						if (lua_state->task) {
-							flag = luaD_call(lua_state->task->some_base, lua_state->task->some_results);
-						} else {
-							StkId base = lua_state->Cstack.base;
-							luaD_openstack((lua_state->stack.top - lua_state->stack.stack) - base);
-							set_normalized(lua_state->stack.stack + lua_state->Cstack.base, &lua_state->taskFunc);
-							flag = luaD_call(base + 1, 255);
-						}
-					}
-					if (!flag) {
-						state = lua_state->next;
-						lua_statedeinit(lua_state);
-						luaM_free(lua_state);
-						goto label2;
-					}
-					lua_state->flag2 = 1;
+	// Mark all the states to be updated
+	LState *state = lua_state->next;
+	do {
+		state->updated = false;
+		state = state->next;
+	} while	(state);
+
+	// And run them
+	runtasks(lua_state);
+}
+
+void runtasks(LState *const rootState) {
+	lua_state = lua_state->next;
+	while (lua_state) {
+		LState *nextState = NULL;
+		bool stillRunning;
+		if (!lua_state->updated && !lua_state->paused) {
+			jmp_buf	errorJmp;
+			lua_state->errorJmp = &errorJmp;
+			if (setjmp(errorJmp)) {
+				lua_Task *t, *m;
+				for (t = lua_state->task; t != NULL;) {
+					m = t->next;
+					luaM_free(t);
+					t = m;
 				}
-				state = lua_state->next;
-label2:
-				lua_state = state;
-				if (!state) {
-					break;
+				stillRunning = false;
+				lua_state->task = NULL;
+			} else {
+				if (lua_state->task) {
+					stillRunning = luaD_call(lua_state->task->some_base, lua_state->task->some_results);
+				} else {
+					StkId base = lua_state->Cstack.base;
+					luaD_openstack((lua_state->stack.top - lua_state->stack.stack) - base);
+					set_normalized(lua_state->stack.stack + lua_state->Cstack.base, &lua_state->taskFunc);
+					stillRunning = luaD_call(base + 1, 255);
 				}
 			}
+			nextState = lua_state->next;
+			// The state returned. Delete it
+			if (!stillRunning) {
+				lua_statedeinit(lua_state);
+				luaM_free(lua_state);
+			} else {
+				lua_state->updated = true;
+			}
+		} else {
+			nextState = lua_state->next;
 		}
-		lua_state = tmpState;
-		state = lua_state->next;
-		do {
-			if (!state)
-				break;
-			if (!state->paused && !state->flag2)
-				goto loop;
-			state = state->next;
-		} while (state);
+		lua_state = nextState;
+	}
+
+	// Restore the value of lua_state to the main script
+	lua_state = rootState;
+	// Check for states that may have been created in this run.
+	LState *state = lua_state->next;
+	while (state) {
+		if (!state->paused && !state->updated) {
+			// New state! Run a new pass.
+			runtasks(rootState);
+			return;
+		}
+		state = state->next;
 	}
 }
 
