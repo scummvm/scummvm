@@ -4957,23 +4957,6 @@ void DreamGenContext::waitframes() {
 	di = pop();
 }
 
-void DreamGenContext::printboth() {
-	STACK_CHECK;
-	push(ax);
-	push(cx);
-	push(bx);
-	push(di);
-	printchar();
-	ax = pop();
-	push(di);
-	di = ax;
-	multidump();
-	di = pop();
-	bx = pop();
-	cx = pop();
-	ax = pop();
-}
-
 void DreamGenContext::monprint() {
 	STACK_CHECK;
 	data.byte(kKerning) = 1;
@@ -21268,7 +21251,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_set16colpalette: set16colpalette(); break;
 		case addr_realcredits: realcredits(); break;
 		case addr_waitframes: waitframes(); break;
-		case addr_printboth: printboth(); break;
 		case addr_monprint: monprint(); break;
 		case addr_fillryan: fillryan(); break;
 		case addr_fillopen: fillopen(); break;

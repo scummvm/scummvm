@@ -585,7 +585,6 @@ public:
 	static const uint16 addr_fillopen = 0xc324;
 	static const uint16 addr_fillryan = 0xc320;
 	static const uint16 addr_monprint = 0xc314;
-	static const uint16 addr_printboth = 0xc30c;
 	static const uint16 addr_waitframes = 0xc308;
 	static const uint16 addr_realcredits = 0xc2f8;
 	static const uint16 addr_set16colpalette = 0xc2f4;
@@ -1343,6 +1342,7 @@ public:
 	void clearbuffers();
 	void neterror();
 	void storeit();
+	void lockeddoorway();
 	void isitworn();
 	void putundertimed();
 	void dumpmap();
@@ -1698,8 +1698,9 @@ public:
 	void showmonk();
 	void diarykeyn();
 	void set16colpalette();
-	void sparky();
+	void convicons();
 	void interviewer();
+	void sparky();
 	void purgeanitem();
 	void madman();
 	void createpanel();
@@ -1886,7 +1887,7 @@ public:
 	void turnanypathon();
 	void restorereels();
 	void setwalk();
-	void printboth();
+	//void printboth();
 	void useroutine();
 	void zoomicon();
 	void hotelcontrol();
@@ -1995,14 +1996,12 @@ public:
 	void usechurchgate();
 	void monkandryan();
 	void allocatebuffers();
-	void convicons();
 	void swapwithinv();
 	void usecontrol();
 	void buttonseven();
 	void redrawmainscrn();
 	void finishedwalking();
 	void findallryan();
-	void lockeddoorway();
 	void channel0tran();
 	void buttonpress();
 	void parseblaster();

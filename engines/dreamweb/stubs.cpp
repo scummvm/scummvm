@@ -242,6 +242,25 @@ void DreamGenContext::setmouse() {
 	data.word(kOldpointerx) = 0xffff;
 }
 
+void DreamGenContext::printboth() {
+	printboth(es, ds, di, bx, al);
+}
+
+void DreamGenContext::printboth(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 c) {
+	push(ax);
+	push(cx);
+	push(bx);
+	uint16 newX = x;
+	uint8 width, height;
+	printchar(dst, src, &newX, y, c, &width, &height);
+	multidump(x, y, width, height);
+	si = x + (y + height) * kScreenwidth;
+	di = newX;
+	bx = pop();
+	cx = pop();
+	ax = pop();
+}
+
 uint8 DreamGenContext::getnextword(const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
 	*totalWidth = 0;
 	*charCount = 0;
@@ -277,11 +296,14 @@ void DreamGenContext::getnextword() {
 
 void DreamGenContext::printchar() {
 	uint16 x = di;
-	printchar(es, ds, &x, bx, al);
+	uint8 width, height;
+	printchar(es, ds, &x, bx, al, &width, &height);
 	di = x;
+	cl = width;
+	ch = height;
 }
 
-void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uint8 c) {
+void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uint8 c, uint8 *width, uint8 *height) {
 	if (c == 255)
 		return;
 	push(si);
@@ -295,6 +317,8 @@ void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uin
 	if (flags.z())
 		kernchars();
 	(*x) += cl;
+	*width = cl;
+	*height = ch;
 }
 
 void DreamGenContext::printslow() {
@@ -407,7 +431,8 @@ void DreamGenContext::printdirect() {
 			}
 			push(es);
 			al = engine->modifyChar(al);
-			printchar(es, ds, &x, bx, al);
+			uint8 width, height;
+			printchar(es, ds, &x, bx, al, &width, &height);
 			data.word(kLastxpos) = x;
 			es = pop();
 			--charCount;

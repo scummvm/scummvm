@@ -39,8 +39,10 @@
 	void quickquit2();
 	void getnextword();
 	uint8 getnextword(const uint8 *string, uint8 *totalWidth, uint8 *charCount);
+	void printboth();
+	void printboth(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 c);
 	void printchar();
-	void printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uint8 c);
+	void printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uint8 c, uint8 *width, uint8 *height);
 	void printdirect();
 	void printslow();
 	void getnumber();
