@@ -35,12 +35,20 @@
 #include "cge/console.h"
 #include "cge/bitmap.h"
 
-#define CGE_SAVEGAME_VERSION 1
-
 namespace CGE {
 
 class Console;
 class Sprite;
+
+#define CGE_SAVEGAME_VERSION 1
+#define kPocketX    174
+#define kPocketY    176
+#define kPocketDX   18
+#define kPocketDY   22
+#define kPocketNX   8
+#define kPocketNY   1
+#define kPocketSX   8
+#define kPocketSY   3
 
 // our engine debug channels
 enum {
@@ -57,10 +65,6 @@ enum CallbackType {
 	kNullCB = 0, kQGame, kMiniStep, kXCave, kSelectSound,
 	kSnSelect,   kSndSetVolume
 };
-
-#define POCKET_NX   8
-
-#define CGE_SAVEGAME_VERSION 1
 
 struct SavegameHeader {
 	uint8 version;
@@ -100,7 +104,7 @@ public:
 	bool   _jbw;
 	int    _pocPtr;
 	bool   _music;
-	int    _pocref[POCKET_NX];
+	int    _pocref[kPocketNX];
 	uint8  _volume[2];
 	int    _maxCaveArr[5];
 

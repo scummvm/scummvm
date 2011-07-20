@@ -33,34 +33,6 @@
 #include "cge/events.h"
 
 namespace CGE {
-
-#define TSEQ           96
-#define HTALK          (TSEQ + 4)
-#define TOO_FAR        (TSEQ + 5)
-#define NO_WAY         (TSEQ + 5)
-#define POC_FUL        (TSEQ + 5)
-#define OFF_USE        (TSEQ + 6)
-#define EXIT_OK_TEXT   40
-#define NOMUSIC_TEXT   98
-#define BADSVG_TEXT    99
-#define OFF_USE_COUNT  600
-#define OFF_USE_TEXT   601
-#define NO_WAY_TEXT    671
-#define TOO_FAR_TEXT   681
-#define POC_FUL_TEXT   691
-#define A_C_D_TEXT     777
-#define GETNAME_PROMPT 50
-#define GETNAME_TITLE  51
-#define QUIT_TITLE     200
-#define QUIT_TEXT      201
-#define NOQUIT_TEXT    202
-#define DEMO_TEXT      300
-#define NOSOUND_TEXT   310
-#define PAN_HIG        40
-#define WORLD_HIG      (SCR_HIG - PAN_HIG)
-#define INFO_X         177
-#define INFO_Y         164
-#define INFO_W         140
 #define CAVE_X         4
 #define CAVE_Y         166
 #define CAVE_SX        0
@@ -77,33 +49,51 @@ namespace CGE {
 #define CAVE_NX        8
 #define CAVE_NY        3
 #endif
-
-#define BUTTON_X       151
-#define BUTTON_Y       164
-#define BUTTON_DX      19
-#define BUTTON_DY      11
-#define BUTTON_NX      1
-#define BUTTON_NY      3
-#define MINI_X         86
-#define MINI_Y         162
-#define LINE_MAX       512
-#define USER_MAX       100
-#define SHP_MAX        1024
-#define STD_DELAY      3
-#define LEV_MAX        5
 #define CAVE_MAX       (CAVE_NX * CAVE_NY)
-#define MAX_DISTANCE   3
-#define INI_EXT        ".INI"
-#define IN0_EXT        ".IN0"
-#define LGO_EXT        ".LGO"
-#define SVG_EXT        ".SVG"
-#define WALKSIDE       10
-#define BUSY_REF       500
-#define SYSTIMERATE    6   // 12 Hz
-#define HEROFUN0       (40 * 12)
-#define HEROFUN1       ( 2 * 12)
 #define PAIN           (_vm->_flag[0])
 
+#define kInfoX         177
+#define kInfoY         164
+#define kInfoW         140
+#define kButtonX       151
+#define kButtonY       164
+#define kMiniX         86
+#define kMiniY         162
+#define kLineMax       512
+#define kDistMax       3
+#define kIn0Ext        ".IN0"
+#define kLgoExt        ".LGO"
+#define kSvgExt        ".SVG"
+#define kWalkSide      10
+#define kBusyRef       500
+#define kSystemRate    6   // 12 Hz
+#define kHeroFun0      (40 * 12)
+#define kHeroFun1      ( 2 * 12)
+#define GETNAME_PROMPT 50
+#define GETNAME_TITLE  51
+#define TSEQ           96
+#define NOMUSIC_TEXT   98
+#define BADSVG_TEXT    99
+#define HTALK          (TSEQ + 4)
+#define TOO_FAR        (TSEQ + 5)
+#define NO_WAY         (TSEQ + 5)
+#define POC_FUL        (TSEQ + 5)
+#define OFF_USE        (TSEQ + 6)
+#define QUIT_TITLE     200
+#define QUIT_TEXT      201
+#define NOQUIT_TEXT    202
+#define DEMO_TEXT      300
+#define NOSOUND_TEXT   310
+#define OFF_USE_COUNT  600
+#define OFF_USE_TEXT   601
+#define NO_WAY_TEXT    671
+#define TOO_FAR_TEXT   681
+#define POC_FUL_TEXT   691
+#define A_C_D_TEXT     777
+#define kPanHeight     40
+#define kScrWidth      320
+#define kScrHeight     200
+#define kWorldHeight   (kScrHeight - kPanHeight)
 
 class System : public Sprite {
 	int _lum;

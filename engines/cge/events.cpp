@@ -169,7 +169,7 @@ Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0)
 	MC[2] = NULL;
 	setShapeList(MC);
 
-	gotoxy(SCR_WID/2, SCR_HIG/2);
+	gotoxy(kScrWidth/2, kScrHeight/2);
 	_z = 127;
 	step(1);
 }
