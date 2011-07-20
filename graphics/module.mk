@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	cursorman.o \
 	font.o \
 	fontman.o \
+	fonts/bdf.o \
 	fonts/consolefont.o \
 	fonts/newfont_big.o \
 	fonts/newfont.o \
@@ -13,6 +14,7 @@ MODULE_OBJS := \
 	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
+	yuv_to_rgb.o \
 	matrix3.o \
 	matrix4.o \
 	line3d.o \

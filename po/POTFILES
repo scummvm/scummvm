@@ -36,5 +36,6 @@ audio/softsynth/pcspk.cpp
 
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
+backends/platform/sdl/macosx/appMenu_osx.mm
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/events/default/default-events.cpp

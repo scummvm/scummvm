@@ -109,6 +109,7 @@ _mt32emu=no
 
 _enable_prof=no
 _global_constructors=no
+_bink=yes
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -685,6 +686,7 @@ Optional Features:
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
                            process
+  --disable-bink           don't build with Bink video support
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -769,6 +771,8 @@ for ac_option in $@; do
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
+	--enable-bink)            _bink=yes       ;;
+	--disable-bink)           _bink=no        ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
@@ -831,6 +835,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		READLINE_CFLAGS="-I$arg/include"
 		READLINE_LIBS="-L$arg/lib"
+		;;
+	--with-libunity-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		LIBUNITY_CFLAGS="-I$arg/include"
+		LIBUNITY_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -1977,6 +1986,7 @@ if test -n "$_host"; then
 		gamecube)
 			_backend="wii"
 			_build_scalers=no
+			_vkeybd=yes
 			_mt32emu=no
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 1'
@@ -2191,6 +2201,7 @@ if test -n "$_host"; then
 		wii)
 			_backend="wii"
 			_build_scalers=no
+			_vkeybd=yes
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
 			add_line_to_config_h '#define AUDIO_REVERSE_STEREO'
@@ -3141,6 +3152,13 @@ if test "$_taskbar" = yes; then
 else
 	echo "$_taskbar"
 fi
+
+#
+# Check whether to build Bink video support
+#
+echo_n "Building Bink video support... "
+define_in_config_if_yes $_bink 'USE_BINK'
+echo "$_bink"
 
 #
 # Figure out installation directories

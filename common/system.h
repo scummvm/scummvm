@@ -154,9 +154,9 @@ protected:
 
 #if defined(USE_TASKBAR)
 	/**
-	 * No default value is provided for _savefileManager by OSystem.
+	 * No default value is provided for _taskbarManager by OSystem.
 	 *
-	 * @note _savefileManager is deleted by the OSystem destructor.
+	 * @note _taskbarManager is deleted by the OSystem destructor.
 	 */
 	Common::TaskbarManager *_taskbarManager;
 #endif
