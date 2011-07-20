@@ -129,26 +129,6 @@ void TimerManager::update() {
 	}
 }
 
-void TimerManager::manualAdvance(uint32 millis) {
-	uint32 curTime = _system->getMillis();
-	for (Iterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
-		if (pos->enabled == 1 && pos->countdown >= 0) {
-			pos->nextRun -= curTime;
-			while (pos->nextRun <= millis) {
-				if (pos->func && pos->func->isValid())
-					(*pos->func)(pos->id);
-
-				pos->lastUpdate = curTime;
-				pos->nextRun = pos->countdown * _vm->tickLength();
-				millis -= pos->nextRun;
-			}
-			pos->nextRun += curTime;
-			_nextRun = MIN(_nextRun, pos->nextRun);
-		}
-	}
-
-}
-
 void TimerManager::resync() {
 	const uint32 curTime = _isPaused ? _pauseStart : _system->getMillis();
 

@@ -665,11 +665,13 @@ void EobCoreEngine::gui_drawSpellbook() {
 	int textXs = 71;
 	int textY = 170;
 	int col3 = _bkgColor_1;
+	int col4 = _color6;
 
 	if (_flags.gameID == GI_EOB1) {
 		textCol2 = 11;
 		textXa = textXs = 73;
 		textY = 168;
+		col4 = _bkgColor_1;
 	}
 
 	for (int i = 0; i < 7; i++) {
@@ -686,7 +688,7 @@ void EobCoreEngine::gui_drawSpellbook() {
 			if (d >= 0 && i < 6 && (i + _openBookSpellListOffset) < 9)
 				_screen->printText(_openBookSpellList[d], textXs, 132 + 6 * i, textCol1, col3);
 			else
-				_screen->printText(_magicStrings1[0], textXa, textY, 12, _color6);
+				_screen->printText(_magicStrings1[0], textXa, textY, 12, col4);
 		}
 	}
 
@@ -805,7 +807,7 @@ void EobCoreEngine::gui_initButton(int index, int, int, int) {
 
 	if (_flags.gameID == GI_EOB1) {
 		// EOB1 spellbook modifications
-		if (index > 61 && index < 67)
+		if (index > 60 && index < 66)
 			d = &_buttonDefs[index + 33];
 		if (index == 88)
 			d = &_buttonDefs[index + 12];
@@ -867,7 +869,7 @@ int EobCoreEngine::clickedCamp(Button *button) {
 	_screen->updateScreen();
 
 	enableSysTimer(2);
-	manualAdvanceTimer(2, _restPartyElapsedTime);
+	advanceTimers(_restPartyElapsedTime);
 	_restPartyElapsedTime = 0;
 
 	checkPartyStatus(true);
@@ -1083,7 +1085,7 @@ int EobCoreEngine::clickedSpellbookList(Button *button) {
 
 				int s = _openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellListOffset + _openBookSpellSelectedItem];
 				if (_openBookType == 1)
-					s += _mageSpellListSize;
+					s += _clericSpellOffset;
 
 				castSpell(s, 0);
 
@@ -1100,11 +1102,10 @@ int EobCoreEngine::clickedSpellbookList(Button *button) {
 }
 
 int EobCoreEngine::clickedCastSpellOnCharacter(Button *button) {
-	_activeSpellCaster = button->arg;
+	_activeSpellCaster = button->arg & 0xff;
 
-	if (_activeSpellCaster == 255) {
-		_txt->printMessage(_magicStrings3[1]);
-		snd_playSoundEffect(79);
+	if (_activeSpellCaster == 0xff) {
+		printWarning(_magicStrings3[_flags.gameID == GI_EOB1 ? 2 : 1]);
 		if (_castScrollSlot) {
 			gui_updateSlotAfterScrollUse();
 		} else {
@@ -2774,7 +2775,7 @@ void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
 
 	for (int i = 0; i < 80; i++) {
 		int8 s = charSpellList[i];
-		if (s == 0 || s == _vm->_spellLevelsClericSize)
+		if (s == 0 || (_vm->game() == GI_EOB2 && s == 29))
 			continue;
 
 		if (s < 0)
@@ -2938,8 +2939,8 @@ void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
 	_screen->setFont(Screen::FID_8_FNT);
 
 	memset(charSpellList, 0, 80);
-	if (spellType)
-		charSpellList[0] = _vm->_spellLevelsClericSize;
+	if (spellType && _vm->game() == GI_EOB2)
+		charSpellList[0] = 29;
 
 	for (int i = 0; i < 32; i++) {
 		if (_numAssignedSpellsOfType[i * 2] < _numAssignedSpellsOfType[i * 2 + 1])
@@ -3187,7 +3188,7 @@ bool GUI_Eob::restParty() {
 
 					*list *= -1;
 					crs[i] = 48;					
-					_vm->_txt->printMessage(Common::String::format(_vm->_menuStringsRest2[0], _vm->_characters[i].name, _vm->_spells[_vm->_mageSpellListSize + *list].name).c_str());
+					_vm->_txt->printMessage(Common::String::format(_vm->_menuStringsRest2[0], _vm->_characters[i].name, _vm->_spells[_vm->_clericSpellOffset + *list].name).c_str());
 					_vm->delay(80);
 					break;
 				}
@@ -3485,7 +3486,7 @@ void GUI_Eob::messageDialogue(int dim, int id, int buttonTextCol) {
 }
 
 int GUI_Eob::selectCharacterDialogue(int id) {
-	uint8 flags = (id == 26) ? 0x14 : 0x02;
+	uint8 flags = (id == 26) ? (_vm->game() == GI_EOB1 ? 0x04 : 0x14) : 0x02;
 	_vm->removeInputTop();
 
 	_charSelectRedraw = false;	
@@ -3613,10 +3614,13 @@ int GUI_Eob::selectCharacterDialogue(int id) {
 	_screen->setFont(Screen::FID_8_FNT);
 
 	if (result != -1 && id != 53) {
-		if (flags == 0x14) {
-			if (_vm->_classModifierFlags[_vm->_characters[result].cClass] & 0x10 && _vm->_characters[result].level[0] < 9) {
-				displayTextBox(24);
-				result = -1;
+		if (flags & 4) {
+			int lv = _vm->getCharacterLevelIndex(4, _vm->_characters[result].cClass);
+			if (lv != -1) {
+				if (_vm->_characters[result].level[lv] < 9) {
+					displayTextBox(24);
+					result = -1;
+				}
 			}
 		} else {
 			if (_vm->checkInventoryForItem(result, 29, -1) == -1) {

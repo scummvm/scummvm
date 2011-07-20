@@ -133,18 +133,20 @@ void EobCoreEngine::setCharEventTimer(int charIndex, uint32 countdown, int evnt,
 		_timer->setNextRun(timerId, ntime);
 
 	if (updateExistingTimer) {
-		bool br = false;
+		bool updated = false;
 		int d = -1;
 
-		for (int i = 0; i < 10 && br == false; i++) {
+		for (int i = 0; i < 10 && updated == false; i++) {
 			if (d == -1 && !c->timers[i])
 				d = i;
 
-			if (!br && c->events[i] == evnt) {
+			if (!updated && c->events[i] == evnt) {
 				d = i;
-				br = true;
+				updated = true;
 			}
 		}
+
+		assert(d != -1);
 
 		c->timers[d] = ntime;
 		c->events[d] = evnt;
@@ -179,7 +181,7 @@ void EobCoreEngine::setupCharacterTimers() {
 		uint32 nextTimer = 0xffffffff;
 
 		for (int ii = 0; ii < 10; ii++) {
-			if (c->timers[ii] < nextTimer)
+			if (c->timers[ii] && c->timers[ii] < nextTimer)
 				nextTimer = c->timers[ii];
 		}
 		uint32 ctime = _system->getMillis();
@@ -193,21 +195,28 @@ void EobCoreEngine::setupCharacterTimers() {
 	}
 }
 
-void EobCoreEngine::manualAdvanceTimer(int sysTimer, uint32 millis) {
-	if (sysTimer != 2)
-		return;
-
+void EobCoreEngine::advanceTimers(uint32 millis) {
 	uint32 ct = _system->getMillis();
 	for (int i = 0; i < 6; i++) {
+		EobCharacter *c = &_characters[i];
 		for (int ii = 0; ii < 10; ii++) {
-			if (_characters[i].timers[ii]) {
-				uint32 chrt = _characters[i].timers[ii] - ct;
-				_characters[i].timers[ii] = chrt > millis ? chrt - millis : 1;
+			if (c->timers[ii] > ct) {
+				uint32 chrt = c->timers[ii] - ct;
+				c->timers[ii] = chrt > millis ? chrt - millis : ct;
 			}
 		}
 	}
 
-	_timer->manualAdvance(millis);
+	setupCharacterTimers();
+
+	if (_scriptTimersMode & 2) {
+		for (int i = 0; i < _scriptTimersCount; i++) {
+			if (_scriptTimers[i].next > ct) {
+				uint32 chrt = _scriptTimers[i].next - ct;
+				_scriptTimers[i].next = chrt > millis ? chrt - millis : ct;
+			}
+		}
+	}
 }
 
 void EobCoreEngine::timerProcessCharacterExchange(int timerNum) {
@@ -314,7 +323,7 @@ void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 				calcAndInflictCharacterDamage(charIndex, 0, 0, 5, 0x400, 5, 3);
 				setCharEventTimer(charIndex, 546, 8, 1);
 			} else {
-				c->flags &= 0xfd;
+				c->flags &= ~2;
 				gui_drawCharPortraitWithStats(charIndex);
 			}
 			break;
@@ -329,7 +338,7 @@ void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 
 		case 11:
 			if (c->disabledSlots & 4) {
-				c->disabledSlots &= 0xfb;
+				c->disabledSlots &= ~4;
 				if (_openBookChar == charIndex && _updateFlags)
 					gui_drawSpellbook();
 			}
@@ -345,13 +354,13 @@ void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 		}
 	}
 
-	uint32 nextTimer = (uint32)(-1);
+	uint32 nextTimer = 0xffffffff;
 	for (int i = 0; i < 10; i++) {
 		if (c->timers[i] && c->timers[i] < nextTimer)
 			nextTimer = c->timers[i];
 	}
 
-	if (nextTimer == (uint32)(-1))
+	if (nextTimer == 0xffffffff)
 		_timer->disable(timerNum);
 	else
 		_timer->setCountdown(timerNum, (nextTimer - ctime) / _tickLength);

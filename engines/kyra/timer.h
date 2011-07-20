@@ -61,8 +61,6 @@ public:
 
 	void update();
 
-	void manualAdvance(uint32 millis);
-
 	void resetNextRun();
 
 	void setCountdown(uint8 id, int32 countdown);

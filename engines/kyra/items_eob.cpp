@@ -445,8 +445,7 @@ void EobCoreEngine::eatItemInHand(int charIndex) {
 	} else if (_itemInHand && _items[_itemInHand].type != 31) {
 		_txt->printMessage(_warningStrings[3]);
 	} else if (_items[_itemInHand].value == -1) {
-		_txt->printMessage(_warningStrings[2]);
-		snd_playSoundEffect(79);
+		printWarning(_warningStrings[2]);
 	} else {
 		c->food += _items[_itemInHand].value;
 		if (c->food > 100)

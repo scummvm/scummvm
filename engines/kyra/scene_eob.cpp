@@ -583,7 +583,7 @@ void LolEobBaseEngine::openCloseDoor(int block, int openClose) {
 			}
 		}
 
-		enableTimer(_flags.gameID == GI_LOL ? 0 : 12);
+		enableTimer(_flags.gameID == GI_LOL ? 0 : 4);
 
 	} else {
 		while (!(flg & _wllWallFlags[v]))

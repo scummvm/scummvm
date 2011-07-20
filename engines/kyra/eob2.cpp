@@ -272,7 +272,7 @@ void DarkMoonEngine::replaceMonster(int unit, uint16 block, int pos, int dir, in
 }
 
 bool DarkMoonEngine::killMonsterExtra(EobMonsterInPlay *m) {
-	if (_currentLevel == 16 && _currentSub == 1 && (_monsterProps[m->type].flags & 4)) {
+	if (_currentLevel == 16 && _currentSub == 1 && (_monsterProps[m->type].capsFlags & 4)) {
 		if (m->type) {
 			_playFinale = true;
 			_runFlag = false;

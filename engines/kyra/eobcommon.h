@@ -169,8 +169,8 @@ struct EobMonsterProperty {
 		int8 base;
 	} dmgDc[3];
 	uint16 statusFlags;
-	uint16 flags;
-	int32 u22;
+	uint32 capsFlags;
+	uint32 typeFlags;
 	int32 experience;
 
 	uint8 u30;
@@ -182,7 +182,7 @@ struct EobMonsterProperty {
 
 	int8 remoteWeapons[5];
 
-	uint8 u41;
+	uint8 tuResist;
 	uint8 dmgModifierEvade;
 
 	uint8 decorations[3];
@@ -199,7 +199,7 @@ struct EobMonsterInPlay {
 	int8 mode;
 	int8 f_9;
 	int8 curAttackFrame;
-	uint8 f_b;
+	int8 spellStatusLeft;
 	int16 hitPointsMax;
 	int16 hitPointsCur;
 	uint16 dest;
@@ -334,7 +334,7 @@ protected:
 	void setCharEventTimer(int charIndex, uint32 countdown, int evnt, int updateExistingTimer);
 	void deleteCharEventTimer(int charIndex, int evnt);
 	void setupCharacterTimers();
-	void manualAdvanceTimer(int sysTimer, uint32 millis);
+	void advanceTimers(uint32 millis);
 
 	void timerProcessMonsters(int timerNum);
 	void timerSpecialCharacterUpdate(int timerNum);
@@ -511,7 +511,7 @@ protected:
 	bool walkMonsterNextStep(EobMonsterInPlay *m, int destBlock, int direction);
 	void updateMonsterFollowPath(EobMonsterInPlay *m, int turnSteps);
 	void updateMonstersStraying(EobMonsterInPlay *m, int a);
-	void updateMonsters_mode710(EobMonsterInPlay *m);
+	void updateMonstersSpellStatus(EobMonsterInPlay *m);
 	void setBlockMonsterDirection(int block, int dir);
 
 	uint8 *_monsterOvl1;
@@ -829,7 +829,7 @@ protected:
 	int getConstModifierTableValue(int hpModifier, int level, int b);
 	bool calcDamageCheckItemType(int itemType);
 	int recalcDamageModifier(int damageType, int dmgModifier);
-	bool checkMonsterDamageEvasion(EobMonsterInPlay *m);
+	bool tryMonsterAttackEvasion(EobMonsterInPlay *m);
 	int getStrHitChanceModifier(int charIndex);
 	int getStrDamageModifier(int charIndex);
 	int getDexHitChanceModifier(int charIndex);
@@ -856,7 +856,11 @@ protected:
 	void setSpellEventTimer(int spell, int timerBaseFactor, int timerLength, int timerLevelFactor, int updateExistingTimer);
 	void sortCharacterSpellList(int charIndex);
 
-	bool magicObjectHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level);
+	bool magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level);
+	bool magicObjectStatusHit(EobMonsterInPlay *m, int type, bool tryEvade, int mod);
+
+	void printWarning(const char* str);
+	void printNoEffectWarning();
 
 	void spellCallback_start_empty() {}
 	bool spellCallback_end_empty(EobFlyingObject *fo) { return true; }
