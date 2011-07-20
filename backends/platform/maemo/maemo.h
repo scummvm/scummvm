@@ -34,8 +34,12 @@ public:
 	virtual void initBackend();
 	virtual void quit();
 	virtual void fatalError();
-};
+	virtual void setWindowCaption(const char *caption);
 
+private:
+	virtual void setXWindowName(const char *caption);
+
+};
 #endif
 
 #endif
