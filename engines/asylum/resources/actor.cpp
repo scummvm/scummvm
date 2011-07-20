@@ -97,15 +97,11 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	memset(&_numberString01, 0, 8);
  	_field_968 = 0;
  	_transparency = 0;
- 	_field_970 = 0;
- 	_field_974 = 0;
- 	_field_978 = 0;
- 	_actionIdx1 = 0;
- 	_field_980 = 0;
- 	_field_984 = 0;
- 	_field_988 = 0;
- 	_field_98C = 0;
- 	_field_990 = 0;
+ 	_processNewDirection = false;
+ 	_invertPriority = false;
+ 	_nextDirection = kDirectionN;
+ 	_nextActionIndex = 0;
+ 	_nextActorIndex = kActorMax;
  	_field_994 = 0;
  	_field_998 = 0;
  	_field_99C = 0;
@@ -190,38 +186,38 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	for (int32 i = 0; i < 20; i++)
 		_distancesNSEO[i] = stream->readSint32LE();
 
-	_actionIdx2 = stream->readSint32LE();
-	_field_924  = stream->readSint32LE();
-	_lastScreenUpdate = stream->readUint32LE();
-	_scriptIndex  = stream->readSint32LE();
-	actionType     = stream->readSint32LE();
-	_field_934  = stream->readSint32LE();
-	_field_938  = stream->readSint32LE();
-	_soundResourceId = (ResourceId)stream->readSint32LE();
-	_numberValue01 = stream->readSint32LE();
-	_field_944  = stream->readSint32LE();
-	_field_948  = stream->readSint32LE();
-	_field_94C  = stream->readSint32LE();
-	_numberFlag01 = stream->readSint32LE();
-	_numberStringWidth  = stream->readSint32LE();
-	_numberStringX  = stream->readSint32LE();
-	_numberStringY  = stream->readSint32LE();
+	_actionIdx2           = stream->readSint32LE();
+	_field_924            = stream->readSint32LE();
+	_lastScreenUpdate     = stream->readUint32LE();
+	_scriptIndex          = stream->readSint32LE();
+	actionType            = stream->readSint32LE();
+	_field_934            = stream->readSint32LE();
+	_field_938            = stream->readSint32LE();
+	_soundResourceId      = (ResourceId)stream->readSint32LE();
+	_numberValue01        = stream->readSint32LE();
+	_field_944            = stream->readSint32LE();
+	_field_948            = stream->readSint32LE();
+	_field_94C            = stream->readSint32LE();
+	_numberFlag01         = stream->readSint32LE();
+	_numberStringWidth    = stream->readSint32LE();
+	_numberStringX        = stream->readSint32LE();
+	_numberStringY        = stream->readSint32LE();
 	stream->read(_numberString01, sizeof(_numberString01));
-	_field_968  = stream->readSint32LE();
-	_transparency  = stream->readSint32LE();
-	_field_970  = stream->readSint32LE();
-	_field_974  = stream->readSint32LE();
-	_field_978  = stream->readSint32LE();
-	_actionIdx1 = stream->readSint32LE();
-	_field_980  = stream->readSint32LE();
-	_field_984  = stream->readSint32LE();
-	_field_988  = stream->readSint32LE();
-	_field_98C  = stream->readSint32LE();
-	_field_990  = stream->readSint32LE();
-	_field_994  = stream->readSint32LE();
-	_field_998  = stream->readSint32LE();
-	_field_99C  = stream->readSint32LE();
-	_field_9A0  = stream->readSint32LE();
+	_field_968            = stream->readSint32LE();
+	_transparency         = stream->readSint32LE();
+	_processNewDirection  = (bool)stream->readSint32LE();
+	_invertPriority       = (bool)stream->readSint32LE();
+	_nextDirection        = (ActorDirection)stream->readSint32LE();
+	_nextActionIndex      = stream->readSint32LE();
+	_nextActorIndex       = stream->readSint32LE();
+	_nextPositionOffset.x = (int16)stream->readSint32LE();
+	_nextPositionOffset.y = (int16)stream->readSint32LE();
+	_nextPosition.x       = (int16)stream->readSint32LE();
+	_nextPosition.y       = (int16)stream->readSint32LE();
+	_field_994            = stream->readSint32LE();
+	_field_998            = stream->readSint32LE();
+	_field_99C            = stream->readSint32LE();
+	_field_9A0            = stream->readSint32LE();
 }
 
 void Actor::loadData(Common::SeekableReadStream *stream) {
@@ -744,11 +740,213 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 //////////////////////////////////////////////////////////////////////////
 
 void Actor::updateDirection() {
-	// Called by Script::hideActor() / showActor() and process_401830()
-	if(!_field_970)
+	if(!_processNewDirection)
 		return;
 
-	error("[Actor::updateDirection] Not implemented");
+	Common::Point sum = _point1 + _point2;
+	if (_nextActionIndex != -1 && !getScene()->polygons()->get(getWorld()->actions[_nextActionIndex]->polygonIndex).contains(sum))
+		return;
+
+	ActorDirection direction = kDirectionN;
+	Common::Point position = sum;
+	ResourceId resourceId = kResourceNone;
+	switch (_nextDirection) {
+	default:
+		// position is unchanged
+		break;
+
+	case kDirectionN:
+	case kDirectionS:
+		position.x = _nextPosition.x + sum.x;
+		position.y = _nextPosition.y + sum.y;
+		position.y += (_nextDirection == kDirectionN ? -1 : 1) * 2 * abs(sum.y - _nextPositionOffset.y);
+
+		switch (direction) {
+		default:
+			break;
+
+		case kDirectionN:
+			direction = kDirectionS;
+			break;
+
+		case kDirectionS:
+			direction = kDirectionN;
+			break;
+
+		case kDirectionNE:
+			direction = kDirectionSE;
+			break;
+
+		case kDirectionSE:
+			direction = kDirectionNE;
+			break;
+
+		case kDirectionNO:
+			direction = kDirectionSO;
+			break;
+
+		case kDirectionSO:
+			direction = kDirectionNO;
+			break;
+		}
+		break;
+
+	case kDirectionO:
+	case kDirectionE:
+		position.x = _nextPosition.x + sum.x;
+		position.x += (_nextDirection == kDirectionO ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x);
+		position.y = _nextPosition.y + sum.y;
+
+		switch (direction) {
+		default:
+			break;
+
+		case kDirectionO:
+			direction = kDirectionE;
+			break;
+
+		case kDirectionE:
+			direction = kDirectionO;
+			break;
+
+		case kDirectionSO:
+			direction = kDirectionSE;
+			break;
+
+		case kDirectionNO:
+			direction = kDirectionNE;
+			break;
+
+		case kDirectionSE:
+			direction = kDirectionSO;
+			break;
+
+		case kDirectionNE:
+			direction = kDirectionNO;
+			break;
+		}
+		break;
+
+	case kDirectionNO:
+	case kDirectionSE:
+		position.x = _nextPosition.x + sum.x;
+		position.y = _nextPosition.y + sum.y;
+		position.x += (_nextDirection == kDirectionNO ? -1 : 1) * 2 * abs(sum.y - _nextPositionOffset.y);
+		position.y += (_nextDirection == kDirectionNO ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x);
+
+		switch (direction) {
+		default:
+			break;
+
+		case kDirectionN:
+			direction = kDirectionE;
+			break;
+
+		case kDirectionS:
+			direction = kDirectionO;
+			break;
+
+		case kDirectionO:
+			direction = kDirectionS;
+			break;
+
+		case kDirectionE:
+			direction = kDirectionN;
+			break;
+
+		case kDirectionNO:
+			direction = kDirectionSE;
+			break;
+
+		case kDirectionNE:
+			direction = kDirectionNE;
+			break;
+
+		case kDirectionSO:
+			direction = kDirectionSO;
+			break;
+
+		case kDirectionSE:
+			direction = kDirectionNO;
+			break;
+		}
+		break;
+
+	case kDirectionSO:
+	case kDirectionNE:
+		if (_nextDirection == kDirectionSO) {
+			position.x = _nextPosition.x + sum.x - 2 * abs(sum.y - _nextPositionOffset.y);
+			position.y = _nextPosition.y + sum.y + 2 * abs(sum.x - _nextPositionOffset.x);
+		} else {
+			double deltaX = sum.x * -0.56666666;
+			double deltaY = (419 - sum.y + deltaX) * 0.87613291;
+			position.x = sum.x + 2 * (_nextPositionOffset.x - deltaY);
+			position.y = sum.y + 2 * (_nextPosition.x - (sum.y + deltaX) - (deltaY * -0.56666666));
+		}
+
+		switch (direction) {
+		default:
+			break;
+
+		case kDirectionS:
+			direction = kDirectionE;
+			break;
+
+		case kDirectionN:
+			direction = kDirectionO;
+			break;
+
+		case kDirectionE:
+			direction = kDirectionS;
+			break;
+
+		case kDirectionO:
+			direction = kDirectionN;
+			break;
+
+		case kDirectionSE:
+			direction = kDirectionSE;
+			break;
+
+		case kDirectionSO:
+			direction = kDirectionNE;
+			break;
+
+		case kDirectionNE:
+			direction = kDirectionSO;
+			break;
+
+		case kDirectionNO:
+			direction = kDirectionNO;
+			break;
+		}
+		break;
+
+	case kDirection8:
+		position = _nextPosition + sum;
+		break;
+	}
+
+	// Get the next resource index offset
+	uint32 index = 0;
+	while (getWorld()->graphicResourceIds[index] != _resourceId) {
+		index++;
+
+		if (index >= 55)
+			error("[Actor::updateDirection] Invalid resource id index");
+	}
+
+	// Compute resource id and adjust frame count
+	Actor *nextActor = getScene()->getActor(_nextActorIndex);
+
+	resourceId = nextActor->getResourcesId(index - index % 5 + (direction > kDirectionS ? 8 - direction : direction));
+	nextActor->setFrameCount(GraphicResource::getFrameCount(_vm, resourceId));
+
+	// Adjust graphic resource and position
+	uint32 frameIndex = _frameIndex % nextActor->getFrameCount();
+	nextActor->setPosition(position.x, position.y, direction, frameIndex);
+	nextActor->setFrameIndex(frameIndex);
+	nextActor->setResourceId(resourceId);
 }
 
 void Actor::updateFromDirection(ActorDirection actorDirection) {
@@ -886,15 +1084,13 @@ Common::String Actor::toString(bool shortString) {
 //////////////////////////////////////////////////////////////////////////
 
 void Actor::clearFields() {
-	_field_970 = 0;
-	_field_974 = 0;
-	_field_978 = 0;
-	_actionIdx1 = 0;
-	_field_980 = 0;
-	_field_984 = 0;
-	_field_988 = 0;
-	_field_98C = 0;
-	_field_990 = 0;
+	_processNewDirection = false;
+	_invertPriority = false;
+	_nextDirection = kDirectionN;
+	_nextActionIndex = 0;
+	_nextActorIndex = 0;
+	_nextPositionOffset = Common::Point(0, 0);
+	_nextPosition = Common::Point(0, 0);
 	_field_994 = 0;
 	_field_998 = 0;
 	_field_99C = 0;
@@ -1162,90 +1358,85 @@ void Actor::processStatus(int32 actorX, int32 actorY, bool doSpeech) {
 	}
 }
 
-void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 field984, int32 field988) {
-	_field_980 = field980;
-	_actionIdx1 = (actionAreaId != -1) ? getWorld()->getActionAreaIndexById(actionAreaId) : -1;
-	_field_978 = field978;
-	_field_98C = field98C;
-	_field_990 = field990;
-	_field_974 = field974;
+void Actor::processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection nextDirection, const Common::Point &nextPosition, bool invertPriority, const Common::Point &nextPositionOffset) {
+	_nextActorIndex = nextActor;
+	_nextActionIndex = (actionAreaId != -1) ? getWorld()->getActionAreaIndexById(actionAreaId) : -1;
+	_nextDirection = nextDirection;
+	_nextPosition = nextPosition;
+	_invertPriority = invertPriority;
 
-	int field_984 = 0;
-	int field_988 = 0;
+	Common::Point offset;
 	if (actionAreaId != -1) {
-		if (field984) {
-			field_984 = field984;
-			field_988 = field988;
+		if (nextPositionOffset.x) {
+			offset = nextPositionOffset;
 		} else {
-			Polygon polygon = getScene()->polygons()->get(_actionIdx1);
+			Polygon polygon = getScene()->polygons()->get(_nextActionIndex);
 
-			field_984 = polygon.points[0].x;
-			field_988 = polygon.points[0].y;
+			offset = polygon.points[0];
 
 			// Iterate through points
 			if (polygon.count() > 1) {
 				for (uint i = 1; i < polygon.count() - 1; i++) {
 					Common::Point point = polygon.points[i];
 
-					switch (field978) {
+					switch (nextDirection) {
 					default:
 						break;
 
-					case 0:
-						if (field_988 > point.y)
-							field_988 = point.y;
+					case kDirectionN:
+						if (offset.y > point.y)
+							offset.y = point.y;
 						break;
 
-					case 1:
-						if (field_988 > point.y)
-							field_988 = point.y;
+					case kDirectionNO:
+						if (offset.y > point.y)
+							offset.y = point.y;
 
-						if (field_984 > point.x)
-							field_984 = point.x;
+						if (offset.x > point.x)
+							offset.x = point.x;
 						break;
 
-					case 2:
-						if (field_984 > point.x)
-							field_984 = point.x;
+					case kDirectionO:
+						if (offset.x > point.x)
+							offset.x = point.x;
 						break;
 
-					case 3:
-						if (field_988 < point.y)
-							field_988 = point.y;
+					case kDirectionSO:
+						if (offset.y < point.y)
+							offset.y = point.y;
 
-						if (field_984 > point.x)
-							field_984 = point.x;
+						if (offset.x > point.x)
+							offset.x = point.x;
 						break;
 
-					case 4:
-						if (field_988 < point.y)
-							field_988 = point.y;
+					case kDirectionS:
+						if (offset.y < point.y)
+							offset.y = point.y;
 						break;
 
-					case 5:
-						if (field_988 < point.y)
-							field_988 = point.y;
+					case kDirectionSE:
+						if (offset.y < point.y)
+							offset.y = point.y;
 
-						if (field_984 < point.x)
-							field_984 = point.x;
+						if (offset.x < point.x)
+							offset.x = point.x;
 						break;
 
-					case 6:
-						if (field_984 < point.x)
-							field_984 = point.x;
+					case kDirectionE:
+						if (offset.x < point.x)
+							offset.x = point.x;
 						break;
 
-					case 7:
-						if (field_988 > point.y)
-							field_988 = point.y;
+					case kDirectionNE:
+						if (offset.y > point.y)
+							offset.y = point.y;
 
-						if (field_984 < point.x)
-							field_984 = point.x;
+						if (offset.x < point.x)
+							offset.x = point.x;
 						break;
 
-					case 8:
-						field_984 = 0;
-						field_988 = 0;
+					case kDirection8:
+						offset = Common::Point(0, 0);
 						break;
 					}
 				}
@@ -1253,17 +1444,17 @@ void Actor::process_401830(int32 field980, int32 actionAreaId, int32 field978, i
 		}
 	}
 
-	_field_984 = field_984;
-	_field_988 = field_988;
+	_nextPositionOffset = offset;
 
 	double cosValue = cos(0.523598775) * 1000.0;
 	double sinValue = sin(0.523598775) * 1000.0;
 
-	_field_994 = field_984 - cosValue;
-	_field_998 = sinValue + field_988;
-	_field_99C = field_984 + cosValue;
-	_field_9A0 = field_988 - sinValue;
-	_field_970 = 1;
+	_field_994 = offset.x - cosValue;
+	_field_998 = offset.y + sinValue;
+	_field_99C = offset.x + cosValue;
+	_field_9A0 = offset.y - sinValue;
+
+	_processNewDirection = true;
 
 	updateDirection();
 }

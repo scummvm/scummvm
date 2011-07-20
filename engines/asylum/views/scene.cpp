@@ -2568,8 +2568,8 @@ void Scene::processUpdateList() {
 				}
 			}
 
-			if (actor->getField974())
-				getActor(actor->getField980())->setPriority(-actor->getPriority());
+			if (actor->shouldInvertPriority())
+				getActor(actor->getNextActorIndex())->setPriority(-actor->getPriority());
 		}
 	} // end processing actors
 

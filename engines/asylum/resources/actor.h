@@ -82,6 +82,7 @@ public:
 	uint32         getFrameCount() { return _frameCount; }
 	uint32         getFrameIndex() { return _frameIndex; }
 	char          *getName() { return (char *)&_name; }
+	ActorIndex     getNextActorIndex() { return _nextActorIndex; }
 	int32          getNumberValue01() { return _numberValue01; }
 	Common::Point *getPoint() { return &_point; }
 	Common::Point *getPoint1() { return &_point1; }
@@ -91,6 +92,7 @@ public:
 	ResourceId     getResourceId() { return _resourceId; }
 	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
 	int32          getScriptIndex() { return _scriptIndex; }
+	bool           shouldInvertPriority() { return _invertPriority; }
 	ResourceId     getSoundResourceId() { return _soundResourceId; }
 	ActorStatus    getStatus()    { return _status; }
 
@@ -99,8 +101,6 @@ public:
 	int32          getField944() { return _field_944; }
 	int32          getField948() { return _field_948; }
 	int32          getField94C() { return _field_94C; }
-	int32          getField974() { return _field_974; }
-	int32          getField980() { return _field_980; }
 
 	/////////////////////////////////////////////////////////////////////////
 	// Data
@@ -184,7 +184,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Updates the actor direction.
+	 * Updates the actor direction, using the values set by script
 	 */
 	void updateDirection();
 
@@ -255,7 +255,7 @@ public:
 	// Unknown methods
 	bool process(const Common::Point &point);
 	void processStatus(int32 actorX, int32 actorY, bool doSpeech);
-	void process_401830(int32 field980, int32 actionAreaId, int32 field978, int field98C, int32 field990, int32 field974, int32 field984, int32 field988);
+	void processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection nextDirection, const Common::Point &nextPosition, bool invertPriority, const Common::Point &nextPositionOffset);
 	bool process_4069B0(int32 *x, int32 *y);
 	bool canMove(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
 	void move(ActorDirection dir, uint32 distance);
@@ -368,15 +368,13 @@ private:
 	char   _numberString01[8];
 	int32  _field_968;
 	int32  _transparency;
-	int32  _field_970;
-	int32  _field_974;
-	int32  _field_978;
-	int32  _actionIdx1;
-	int32  _field_980;
-	int32  _field_984;
-	int32  _field_988;
-	int32  _field_98C;
-	int32  _field_990;
+	bool   _processNewDirection;
+	bool   _invertPriority;
+	ActorDirection _nextDirection;
+	int32  _nextActionIndex;
+	ActorIndex _nextActorIndex;
+	Common::Point _nextPositionOffset;
+	Common::Point _nextPosition;
 	int32  _field_994;
 	int32  _field_998;
 	int32  _field_99C;
