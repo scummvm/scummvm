@@ -1172,11 +1172,7 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 		}
 		// Actually load the appropriate component
 		_components[id] = loadComponent(tags[tagID], parentID < 0 ? NULL : _components[parentID], parentID, line + namePos, prevComponent);
-	}
-
-	for (int i = 0; i < _numComponents; i++) {
-			if (_components[i])
-					_components[i]->setCostume(this);
+		_components[id]->setCostume(this);
 	}
 
 	delete[] tags;
@@ -1359,10 +1355,8 @@ void Costume::Component::setParent(Component *newParent) {
 	_child = NULL;
 	_sibling = NULL;
 	if (_parent) {
-		Component **lastChildPos = &_parent->_child;
-		while (*lastChildPos)
-			lastChildPos = &((*lastChildPos)->_sibling);
-		*lastChildPos = this;
+		_sibling = _parent->_child;
+		_parent->_child = this;
 	}
 }
 
