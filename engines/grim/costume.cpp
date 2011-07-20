@@ -892,13 +892,7 @@ void KeyframeComponent::saveState(SaveGame *state) {
 	state->writeLESint32((int)_repeatMode);
 	state->writeLESint32(_anim._time);
 	state->writeLESint32((int)_fadeMode);
-#if 1
-	// Remove on next save format change.
-	state->writeLESint32(0);
-#else
-	// Enable on next save format change.
 	state->writeFloat(_anim._fade);
-#endif
 	state->writeLESint32(_fadeLength);
 	state->writeLESint32(_paused);
 }
@@ -908,13 +902,7 @@ void KeyframeComponent::restoreState(SaveGame *state) {
 	_repeatMode = (RepeatMode)state->readLESint32();
 	_anim._time = state->readLESint32();
 	_fadeMode = (FadeMode)state->readLESint32();
-#if 1
-	// Remove on next save format change.
-	state->readLESint32();
-#else
-	// Enable on next save format change.
 	_anim._fade = state->readFloat();
-#endif
 	_fadeLength = state->readLESint32();
 	_paused = state->readLESint32();
 
@@ -1938,12 +1926,6 @@ void Costume::saveState(SaveGame *state) const {
 		state->writeLESint32(c._playing);
 		state->writeLESint32(c._looping);
 		state->writeLESint32(c._currTime);
-#if 1
-		// Remove on next save format change.
-		state->writeLESint32(0);
-		state->writeLESint32(0);
-		state->writeFloat(0.f);
-#endif
 	}
 
 	for (int i = 0; i < _numComponents; ++i) {
@@ -1952,10 +1934,6 @@ void Costume::saveState(SaveGame *state) const {
 		if (c) {
 			state->writeLESint32(c->_visible);
 			state->writeVector3d(c->_matrix._pos);
-#if 1
-			// Remove on next save format change.
-			state->writeFloat(0.f);
-#endif
 			c->saveState(state);
 		}
 	}
@@ -1988,12 +1966,6 @@ bool Costume::restoreState(SaveGame *state) {
 		c._playing = state->readLESint32();
 		c._looping = state->readLESint32();
 		c._currTime = state->readLESint32();
-#if 1
-		// Remove on next save format change.
-		state->readLESint32();
-		state->readLESint32();
-		state->readFloat();
-#endif
 	}
 	for (int i = 0; i < _numComponents; ++i) {
 		Component *c = _components[i];
@@ -2001,11 +1973,6 @@ bool Costume::restoreState(SaveGame *state) {
 		if (c) {
 			c->_visible = state->readLESint32();
 			c->_matrix._pos = state->readVector3d();
-#if 1
-			// Remove on next save format change.
-			state->readFloat();
-#endif
-
 			c->restoreState(state);
 		}
 	}
