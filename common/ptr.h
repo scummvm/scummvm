@@ -240,7 +240,7 @@ public:
 	operator bool() const { return _pointer != 0; }
 
 	~ScopedPtr() {
-		delete _pointer;		
+		delete _pointer;
 	}
 
 	/**

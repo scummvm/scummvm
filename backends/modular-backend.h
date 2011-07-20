@@ -23,28 +23,28 @@
 #ifndef BACKENDS_MODULAR_BACKEND_H
 #define BACKENDS_MODULAR_BACKEND_H
 
-#include "common/system.h"
+#include "backends/base-backend.h"
 
 class GraphicsManager;
 class MutexManager;
 
 /**
  * Base class for modular backends.
- * 
+ *
  * It wraps most functions to their manager equivalent, but not
  * all OSystem functions are implemented here.
- * 
+ *
  * A backend derivated from this class, will need to implement
  * these functions on its own:
  *   OSystem::pollEvent()
  *   OSystem::getMillis()
  *   OSystem::delayMillis()
  *   OSystem::getTimeAndDate()
- * 
+ *
  * And, it should also initialize all the managers variables
  * declared in this class, or override their related functions.
  */
-class ModularBackend : public OSystem {
+class ModularBackend : public BaseBackend {
 public:
 	ModularBackend();
 	virtual ~ModularBackend();
@@ -86,11 +86,11 @@ public:
 
 	/** @name Events and Time */
 	//@{
-	
+
 	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
 
 	//@}
-	
+
 	/** @name Mutex handling */
 	//@{
 

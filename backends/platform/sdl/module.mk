@@ -29,6 +29,12 @@ MODULE_OBJS += \
 	amigaos/amigaos.o
 endif
 
+ifdef PLAYSTATION3
+MODULE_OBJS += \
+	ps3/ps3-main.o \
+	ps3/ps3.o
+endif
+
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
 OBJS := $(MODULE_OBJS) $(OBJS)

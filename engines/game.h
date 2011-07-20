@@ -40,22 +40,20 @@ struct PlainGameDescriptor {
 };
 
 /**
- * Same as PlainGameDsscriptor except it adds Game GUI options parameter
- * This is a plain struct to make it possible to declare NULL-terminated C arrays
- * consisting of PlainGameDescriptors.
- */
-struct PlainGameDescriptorGUIOpts {
-	const char *gameid;
-	const char *description;
-	uint32 guioptions;
-};
-
-/**
  * Given a list of PlainGameDescriptors, returns the first PlainGameDescriptor
  * matching the given gameid. If not match is found return 0.
- * The end of the list must marked by a PlainGameDescriptor with gameid equal to 0.
+ * The end of the list must be marked by an entry with gameid 0.
  */
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list);
+
+/**
+ * Ths is an enum to describe how done a game is. This also indicates what level of support is expected.
+ */
+enum GameSupportLevel {
+	kStableGame = 0, // the game is fully supported
+	kTestingGame, // the game is not supposed to end up in releases yet but is ready for public testing
+	kUnstableGame // the game is not even ready for public testing yet
+};
 
 /**
  * A hashmap describing details about a given game. In a sense this is a refined
@@ -67,21 +65,29 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
 class GameDescriptor : public Common::StringMap {
 public:
 	GameDescriptor();
-	GameDescriptor(const PlainGameDescriptor &pgd);
-	GameDescriptor(const PlainGameDescriptorGUIOpts &pgd);
+	GameDescriptor(const PlainGameDescriptor &pgd, uint32 guioptions = 0);
 	GameDescriptor(const Common::String &gameid,
 	              const Common::String &description,
 	              Common::Language language = Common::UNK_LANG,
 				  Common::Platform platform = Common::kPlatformUnknown,
-				  uint32 guioptions = 0);
+				  uint32 guioptions = 0,
+				  GameSupportLevel gsl = kStableGame);
 
 	/**
-	 * Update the description string by appending (LANG/PLATFORM/EXTRA) to it.
+	 * Update the description string by appending (EXTRA/PLATFORM/LANG) to it.
+	 * Values that are missing are omitted, so e.g. (EXTRA/LANG) would be
+	 * added if no platform has been specified but a language and an extra string.
 	 */
 	void updateDesc(const char *extra = 0);
 
 	void setGUIOptions(uint32 options);
 	void appendGUIOptions(const Common::String &str);
+
+	/**
+	 * What level of support is expected of this game
+	 */
+	GameSupportLevel getSupportLevel();
+	void setSupportLevel(GameSupportLevel gsl);
 
 	Common::String &gameid() { return getVal("gameid"); }
 	Common::String &description() { return getVal("description"); }
@@ -102,7 +108,7 @@ public:
 	GameList(const GameList &list) : Common::Array<GameDescriptor>(list) {}
 	GameList(const PlainGameDescriptor *g) {
 		while (g->gameid) {
-			push_back(GameDescriptor(g->gameid, g->description));
+			push_back(GameDescriptor(*g));
 			g++;
 		}
 	}

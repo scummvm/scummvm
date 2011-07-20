@@ -105,7 +105,9 @@ public:
 	virtual bool isSoundTypeMuted(SoundType type) const;
 
 	virtual void setChannelVolume(SoundHandle handle, byte volume);
+	virtual byte getChannelVolume(SoundHandle handle);
 	virtual void setChannelBalance(SoundHandle handle, int8 balance);
+	virtual int8 getChannelBalance(SoundHandle handle);
 
 	virtual uint32 getSoundElapsedTime(SoundHandle handle);
 	virtual Timestamp getElapsedTime(SoundHandle handle);

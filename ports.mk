@@ -175,6 +175,7 @@ residualwinres.o: $(srcdir)/icons/residual.ico $(DIST_FILES_THEMES) $(DIST_FILES
 # Special target to create a win32 snapshot binary
 win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
+	mkdir -p $(WIN32PATH)/graphics
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 ifdef DIST_FILES_ENGINEDATA
@@ -227,6 +228,29 @@ ifdef DIST_FILES_ENGINEDATA
 endif
 	cp $(DIST_FILES_DOCS) $(AOS4PATH)
 
+#
+# PlayStation 3 specific
+#
+ps3pkg: $(EXECUTABLE)
+	$(STRIP) $(EXECUTABLE)
+	sprxlinker $(EXECUTABLE)
+	mkdir -p ps3pkg/USRDIR/data/
+	mkdir -p ps3pkg/USRDIR/doc/
+	mkdir -p ps3pkg/USRDIR/saves/
+	make_self_npdrm "$(EXECUTABLE)" ps3pkg/USRDIR/EBOOT.BIN UP0001-SCUM12000_00-0000000000000000
+	cp $(DIST_FILES_THEMES) ps3pkg/USRDIR/data/
+ifdef DIST_FILES_ENGINEDATA
+	cp $(DIST_FILES_ENGINEDATA) ps3pkg/USRDIR/data/
+endif
+	cp $(DIST_FILES_DOCS) ps3pkg/USRDIR/doc/
+	cp $(srcdir)/dists/ps3/readme-ps3.md ps3pkg/USRDIR/doc/
+	cp $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip ps3pkg/USRDIR/data/
+	cp $(srcdir)/dists/ps3/ICON0.PNG ps3pkg/
+	cp $(srcdir)/dists/ps3/PIC1.PNG ps3pkg/
+	sfo.py -f $(srcdir)/dists/ps3/sfo.xml ps3pkg/PARAM.SFO
+	pkg.py --contentid UP0001-SCUM12000_00-0000000000000000 ps3pkg/ scummvm-ps3.pkg
+	package_finalize residual-ps3.pkg
+
 # Mark special targets as phony
-.PHONY: deb bundle osxsnap win32dist install uninstall
+.PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg
 

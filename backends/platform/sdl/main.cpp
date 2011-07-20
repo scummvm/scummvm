@@ -34,6 +34,7 @@
     !defined(CAANOO) && \
     !defined(LINUXMOTO) && \
     !defined(SAMSUNGTV) && \
+    !defined(PLAYSTATION3) && \
     !defined(OPENPANDORA)
 
 #include "backends/platform/sdl/sdl.h"

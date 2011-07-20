@@ -27,6 +27,8 @@
 #include "common/noncopyable.h"
 #include "common/keyboard.h"
 
+//#include "graphics/palette.h"
+
 /**
  * Abstract class for graphics manager. Subclasses
  * implement the real functionality.

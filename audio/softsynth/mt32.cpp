@@ -44,6 +44,7 @@
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+//#include "graphics/palette.h"
 #include "graphics/font.h"
 
 class MidiChannel_MT32 : public MidiChannel_MPU401 {
@@ -570,8 +571,8 @@ bool MT32EmuMusicPlugin::checkDevice(MidiDriver::DeviceHandle) const {
 			warning("The MT-32 emulator requires one of the two following file sets (not bundled with ScummVM):\n Either 'MT32_CONTROL.ROM' and 'MT32_PCM.ROM' or 'CM32L_CONTROL.ROM' and 'CM32L_PCM.ROM'");
 			return false;
 	}
-	
-	return true;	
+
+	return true;
 }
 
 Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {

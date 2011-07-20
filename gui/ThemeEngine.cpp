@@ -33,6 +33,7 @@
 #include "graphics/imagedec.h"
 #include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
+#include "graphics/fonts/bdf.h"
 
 #include "gui/widget.h"
 #include "gui/ThemeEngine.h"
@@ -1393,7 +1394,7 @@ const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &fil
 	if (_themeArchive)
 		stream = _themeArchive->createReadStreamForMember(filename);
 	if (stream) {
-		font = Graphics::NewFont::loadFont(*stream);
+		font = Graphics::BdfFont::loadFont(*stream);
 		delete stream;
 	}
 
@@ -1407,7 +1408,7 @@ const Graphics::Font *ThemeEngine::loadCachedFontFromArchive(const Common::Strin
 	if (_themeArchive)
 		stream = _themeArchive->createReadStreamForMember(filename);
 	if (stream) {
-		font = Graphics::NewFont::loadFromCache(*stream);
+		font = Graphics::BdfFont::loadFromCache(*stream);
 		delete stream;
 	}
 
@@ -1421,7 +1422,7 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 
 	if (!cacheFilename.empty()) {
 		if (fontFile.open(cacheFilename)) {
-			font = Graphics::NewFont::loadFromCache(fontFile);
+			font = Graphics::BdfFont::loadFromCache(fontFile);
 		}
 
 		if (font)
@@ -1433,7 +1434,7 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 
 	// normal open
 	if (fontFile.open(filename)) {
-		font = Graphics::NewFont::loadFont(fontFile);
+		font = Graphics::BdfFont::loadFont(fontFile);
 	}
 
 	if (!font) {
@@ -1442,7 +1443,7 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 
 	if (font) {
 		if (!cacheFilename.empty()) {
-			if (!Graphics::NewFont::cacheFontData(*(const Graphics::NewFont *)font, cacheFilename)) {
+			if (!Graphics::BdfFont::cacheFontData(*(const Graphics::BdfFont *)font, cacheFilename)) {
 				warning("Couldn't create cache file for font '%s'", filename.c_str());
 			}
 		}

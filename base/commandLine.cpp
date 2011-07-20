@@ -25,6 +25,8 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
+#include <limits.h>
+
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
@@ -162,13 +164,6 @@ void registerDefaults() {
 	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
 	ConfMan.registerDefault("record_time_file_name", "record.time");
 
-#if 0
-	// NEW CODE TO HIDE CONSOLE FOR WIN32
-#ifdef WIN32
-	// console hiding for win32
-	ConfMan.registerDefault("show_console", false);
-#endif
-#endif
 }
 
 //
@@ -197,17 +192,19 @@ void registerDefaults() {
 	if (!option) usage("Option '%s' requires an argument", argv[isLongCmd ? i : i-1]);
 
 // Use this for options which have a required integer value
+// (we don't check ERANGE because WinCE doesn't support errno, so we're stuck just rejecting LONG_MAX/LONG_MIN..)
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION(shortCmd, longCmd) \
-	char *endptr = 0; \
-	strtol(option, &endptr, 0); \
-	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
+	char *endptr; \
+	long int retval = strtol(option, &endptr, 0); \
+	if (*endptr != '\0' || retval == LONG_MAX || retval == LONG_MIN) \
+		usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".
 #define DO_OPTION_BOOL(shortCmd, longCmd) \
 	if (isLongCmd ? (!strcmp(s+2, longCmd) || !strcmp(s+2, "no-"longCmd)) : (tolower(s[1]) == shortCmd)) { \
-		bool boolValue = (islower(s[1]) != 0); \
+		bool boolValue = (islower(static_cast<unsigned char>(s[1])) != 0); \
 		s += 2; \
 		if (isLongCmd) { \
 			boolValue = !strcmp(s, longCmd); \
@@ -460,13 +457,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
-#if 0
-	// NEW CODE TO HIDE CONSOLE FOR WIN32
-#ifdef WIN32
-			// console hiding for win32
-			DO_LONG_OPTION_BOOL("show-console")
+#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+			// Optional console window on Windows (default: enabled)
+			DO_LONG_OPTION_BOOL("console")
 			END_OPTION
-#endif
 #endif
 
 unknownOption:
@@ -575,7 +569,7 @@ static Common::Error listSaves(const char *target) {
 				   "  ---- ------------------------------------------------------\n");
 
 			for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
-				printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
+				printf("  %-4d %s\n", x->getSaveSlot(), x->getDescription().c_str());
 				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
 			}
 		} else {

@@ -21,6 +21,7 @@ common/util.cpp
 
 engines/advancedDetector.cpp
 engines/dialogs.cpp
+engines/engine.cpp
 
 audio/fmopl.cpp
 audio/mididrv.cpp
@@ -35,4 +36,5 @@ audio/softsynth/pcspk.cpp
 
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
-backends/platform/sdl/graphics.cpp
+backends/graphics/surfacesdl/surfacesdl-graphics.cpp
+backends/events/default/default-events.cpp

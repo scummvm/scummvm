@@ -23,9 +23,12 @@ lib*.a
 /.project
 /.cproject
 /.settings
+/.autotools
 /Icon.*
 
 /build
+/staging
+
 /dists/codeblocks/*.cbp
 /dists/codeblocks/*.depend
 /dists/codeblocks/*.layout
@@ -43,6 +46,7 @@ project.xcworkspace
 
 /dists/msvc*/[Dd]ebug*/
 /dists/msvc*/[Rr]elease*/
+/dists/msvc*/[Aa]nalysis*/
 /dists/msvc*/*.lib
 /dists/msvc*/*.SAV
 /dists/msvc*/*.dat
@@ -87,3 +91,9 @@ ipch/
 #Ignore default Visual Studio build folders
 [Dd]ebug*/
 [Rr]elease*/
+
+#Ignore Qt Creator project files
+Residual.config
+Residual.creator
+Residual.files
+Residual.includes

@@ -27,7 +27,7 @@
 // fashion, even on the Symbian port.
 // Moreover, it contains a workaround for the fact that SDL_rwops.h uses
 // a FILE pointer in one place, which conflicts with common/forbidden.h.
-
+// The SDL 1.3 headers also include strings.h
 
 #include "common/scummsys.h"
 
@@ -39,6 +39,16 @@ typedef struct { int FAKE; } FAKE_FILE;
 #define FILE FAKE_FILE
 #endif
 
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strcasecmp)
+#undef strcasecmp
+#define strcasecmp FAKE_strcasecmp
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp)
+#undef strncasecmp
+#define strncasecmp FAKE_strncasecmp
+#endif
+
 #if defined(__SYMBIAN32__)
 #include <esdl\SDL.h>
 #else
@@ -47,8 +57,19 @@ typedef struct { int FAKE; } FAKE_FILE;
 
 // Finally forbid FILE again (if it was forbidden to start with)
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_FILE)
-#undef FILE 
+#undef FILE
 #define FILE	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strcasecmp)
+#undef strcasecmp
+#define strcasecmp     FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp)
+#undef strncasecmp
+#define strncasecmp    FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
 
 #endif

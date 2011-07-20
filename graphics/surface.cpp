@@ -127,7 +127,7 @@ void Surface::vLine(int x, int y, int y2, uint32 color) {
 			*ptr = (uint16)color;
 			ptr += pitch / 2;
 		}
-	
+
 	} else if (format.bytesPerPixel == 4) {
 		uint32 *ptr = (uint32 *)getBasePtr(x, y);
 		while (y++ <= y2) {

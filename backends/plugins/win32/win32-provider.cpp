@@ -31,7 +31,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
 
 class Win32Plugin : public DynamicPlugin {

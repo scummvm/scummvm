@@ -42,6 +42,7 @@
 #include "common/list_intern.h"
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "gui/debugger.h"
 #include "gui/dialog.h"
@@ -95,6 +96,7 @@ Engine::Engine(OSystem *syst)
 		_targetName(ConfMan.getActiveDomainName()),
 		_pauseLevel(0),
 		_pauseStartTime(0),
+		_saveSlotToLoad(-1),
 		_engineStartTime(_system->getMillis()),
 		_mainMenuDialog(NULL) {
 
@@ -112,6 +114,19 @@ Engine::Engine(OSystem *syst)
 	// there still would be problems with many games...
 	if (!_mixer->isReady())
 		warning("Sound initialization failed. This may cause severe problems in some games");
+
+	// Setup a dummy cursor and palette, so that all engines can use
+	// CursorMan.replace without having any headaches about memory leaks.
+	//
+	// If an engine only used CursorMan.replaceCursor and no cursor has
+	// been setup before, then replaceCursor just uses pushCursor. This
+	// means that that the engine's cursor is never again removed from
+	// CursorMan. Hence we setup a fake cursor here and remove it again
+	// in the destructor.
+	CursorMan.pushCursor(NULL, 0, 0, 0, 0, 0);
+	// Note: Using this dummy palette will actually disable cursor
+	// palettes till the user enables it again.
+	CursorMan.pushCursorPalette(NULL, 0, 0);
 }
 
 Engine::~Engine() {
@@ -178,22 +193,22 @@ void Engine::checkCD() {
 
 	if (GetDriveType(buffer) == DRIVE_CDROM) {
 		GUI::MessageDialog dialog(
-			"You appear to be playing this game directly\n"
+			_("You appear to be playing this game directly\n"
 			"from the CD. This is known to cause problems,\n"
 			"and it is therefore recommended that you copy\n"
 			"the data files to your hard disk instead.\n"
-			"See the README file for details.", "OK");
+			"See the README file for details."), _("OK"));
 		dialog.runModal();
 	} else {
 		// If we reached here, the game has audio tracks,
 		// it's not ran from the CD and the tracks have not
 		// been ripped.
 		GUI::MessageDialog dialog(
-			"This game has audio tracks in its disk. These\n"
+			_("This game has audio tracks in its disk. These\n"
 			"tracks need to be ripped from the disk using\n"
 			"an appropriate CD audio extracting tool in\n"
 			"order to listen to the game's music.\n"
-			"See the README file for details.", "OK");
+			"See the README file for details."), _("OK"));
 		dialog.runModal();
 	}
 #endif
@@ -235,8 +250,34 @@ void Engine::pauseEngineIntern(bool pause) {
 void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
+
+	setGameToLoadSlot(-1);
+
 	runDialog(*_mainMenuDialog);
+
+	// Load savegame after main menu execution
+	// (not from inside the menu loop to avoid
+	// mouse cursor glitches and simliar bugs,
+	// e.g. #2822778).
+	// FIXME: For now we just ignore the return
+	// value, which is quite bad since it could
+	// be a fatal loading error, which renders
+	// the engine unusable.
+	if (_saveSlotToLoad >= 0)
+		loadGameState(_saveSlotToLoad);
+
 	syncSoundSettings();
+}
+
+bool Engine::warnUserAboutUnsupportedGame() {
+	if (ConfMan.getBool("enable_unsupported_game_warning")) {
+		GUI::MessageDialog alert(_("WARNING: The game you are about to start is"
+			" not yet fully supported by Residual. As such, it is likely to be"
+			" unstable, and any saves you make might not work in future"
+			" versions of Residual."), _("Start anyway"), _("Cancel"));
+		return alert.runModal() == GUI::kMessageOK;
+	}
+	return true;
 }
 
 uint32 Engine::getTotalPlayTime() const {
@@ -263,6 +304,10 @@ int Engine::runDialog(GUI::Dialog &dialog) {
 	pauseEngine(false);
 
 	return result;
+}
+
+void Engine::setGameToLoadSlot(int slot) {
+	_saveSlotToLoad = slot;
 }
 
 void Engine::syncSoundSettings() {

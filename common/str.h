@@ -24,6 +24,8 @@
 
 #include "common/scummsys.h"
 
+#include <stdarg.h>
+
 namespace Common {
 
 /**
@@ -213,9 +215,18 @@ public:
 	uint hash() const;
 
 	/**
-	 * Printf-like function. Returns a formatted String.
+	 * Print formatted data into a String object. Similar to sprintf,
+	 * except that it stores the result in (variably sized) String
+	 * instead of a fixed size buffer.
 	 */
 	static Common::String format(const char *fmt, ...) GCC_PRINTF(1,2);
+
+	/**
+	 * Print formatted data into a String object. Similar to vsprintf,
+	 * except that it stores the result in (variably sized) String
+	 * instead of a fixed size buffer.
+	 */
+	static Common::String vformat(const char *fmt, va_list args);
 
 public:
 	typedef char *        iterator;

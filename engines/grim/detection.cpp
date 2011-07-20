@@ -21,6 +21,7 @@
  */
 
 #include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/colormap.h"
@@ -362,39 +363,21 @@ static const GrimGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, GType_GRIM }
 };
 
-static const ADObsoleteGameID obsoleteGameIDsTable[] = {
+static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"grimdemo", "grim", Common::kPlatformWindows},
 	{0, 0, Common::kPlatformUnknown}
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)gameDescriptions,
-	// Size of that superset structure
-	sizeof(GrimGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	grimGames,
-	// Structure for autoupgrading obsolete targets
-	obsoleteGameIDsTable,
-	// Name of single gameid (optional)
-	0,
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	0,
-	// Additional GUI options (for every game}
-	Common::GUIO_NOMIDI,
-	// Maximum directory depth
-	1,
-	// List of directory globs
-	0
-};
-
 class GrimMetaEngine : public AdvancedMetaEngine {
 public:
-	GrimMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	GrimMetaEngine() : AdvancedMetaEngine(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames) {
+		_singleid = "grim";
+		_guioptions = Common::GUIO_NOMIDI;
+	}
+
+	virtual GameDescriptor findGame(const char *gameid) const {
+		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	}
 
 	virtual const char *getName() const {
 		return "Grim Engine";
@@ -404,9 +387,15 @@ public:
 		return "LucasArts GrimE Games (C) LucasArts";
 	}
 
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngine::createInstance(syst, engine);
+	}
+
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
+
 	virtual SaveStateList listSaves(const char *target) const;
 };
 

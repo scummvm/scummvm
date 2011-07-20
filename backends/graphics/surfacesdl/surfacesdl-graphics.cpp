@@ -24,7 +24,7 @@
 
 #if defined(SDL_BACKEND)
 
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
@@ -40,7 +40,7 @@
 #include "graphics/scaler.h"
 #include "graphics/surface.h"
 
-SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)
+SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource)
 	:
 	_sdlEventSource(sdlEventSource),
 	_screen(0),
@@ -69,18 +69,18 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *sdlEventSource)
 #endif
 }
 
-SdlGraphicsManager::~SdlGraphicsManager() {
+SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	// Unregister the event observer
 	if (g_system->getEventManager()->getEventDispatcher() != NULL)
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 }
 
-void SdlGraphicsManager::initEventObserver() {
+void SurfaceSdlGraphicsManager::initEventObserver() {
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
-bool SdlGraphicsManager::hasFeature(OSystem::Feature f) {
+bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 #ifdef USE_OPENGL
 		(f == OSystem::kFeatureOpenGL);
@@ -89,19 +89,19 @@ bool SdlGraphicsManager::hasFeature(OSystem::Feature f) {
 #endif
 }
 
-void SdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 }
 
-bool SdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	return false;
 }
 
-void SdlGraphicsManager::launcherInitSize(uint w, uint h) {
+void SurfaceSdlGraphicsManager::launcherInitSize(uint w, uint h) {
 	closeOverlay();
 	setupScreen(w, h, false, false);
 }
 
-byte *SdlGraphicsManager::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+byte *SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
 	uint32 sdlflags;
 	int bpp;
 
@@ -220,7 +220,7 @@ byte *SdlGraphicsManager::setupScreen(int screenW, int screenH, bool fullscreen,
 
 #define BITMAP_TEXTURE_SIZE 256
 
-void SdlGraphicsManager::updateScreen() {
+void SurfaceSdlGraphicsManager::updateScreen() {
 #ifdef USE_OPENGL
 	if (_opengl) {
 		if (_overlayVisible) {
@@ -324,11 +324,11 @@ void SdlGraphicsManager::updateScreen() {
 	}
 }
 
-int16 SdlGraphicsManager::getHeight() {
+int16 SurfaceSdlGraphicsManager::getHeight() {
 	return _screen->h;
 }
 
-int16 SdlGraphicsManager::getWidth() {
+int16 SurfaceSdlGraphicsManager::getWidth() {
 	return _screen->w;
 }
 
@@ -337,7 +337,7 @@ int16 SdlGraphicsManager::getWidth() {
 #pragma mark --- Overlays ---
 #pragma mark -
 
-void SdlGraphicsManager::showOverlay() {
+void SurfaceSdlGraphicsManager::showOverlay() {
 	if (_overlayVisible)
 		return;
 
@@ -346,7 +346,7 @@ void SdlGraphicsManager::showOverlay() {
 	clearOverlay();
 }
 
-void SdlGraphicsManager::hideOverlay() {
+void SurfaceSdlGraphicsManager::hideOverlay() {
 
 	if (!_overlayVisible)
 		return;
@@ -356,7 +356,7 @@ void SdlGraphicsManager::hideOverlay() {
 	clearOverlay();
 }
 
-void SdlGraphicsManager::clearOverlay() {
+void SurfaceSdlGraphicsManager::clearOverlay() {
 
 	if (!_overlayVisible)
 		return;
@@ -385,7 +385,7 @@ void SdlGraphicsManager::clearOverlay() {
 	_overlayDirty = true;
 }
 
-void SdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
+void SurfaceSdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
 	if (_overlayscreen == NULL)
 		return;
 
@@ -403,7 +403,7 @@ void SdlGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-void SdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void SurfaceSdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	if (_overlayscreen == NULL)
 		return;
 
@@ -444,7 +444,7 @@ void SdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, i
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-void SdlGraphicsManager::closeOverlay() {
+void SurfaceSdlGraphicsManager::closeOverlay() {
 	if (_overlayscreen) {
 		SDL_FreeSurface(_overlayscreen);
 		_overlayscreen = NULL;
@@ -462,16 +462,16 @@ void SdlGraphicsManager::closeOverlay() {
 #pragma mark --- Mouse ---
 #pragma mark -
 
-bool SdlGraphicsManager::showMouse(bool visible) {
+bool SurfaceSdlGraphicsManager::showMouse(bool visible) {
 	SDL_ShowCursor(visible);
 	return true;
 }
 
-void SdlGraphicsManager::warpMouse(int x, int y) {
+void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	SDL_WarpMouse(x, y);
 }
 
-bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
+bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	return false;
 }
 

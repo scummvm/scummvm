@@ -42,10 +42,10 @@
 /**
  * SDL graphics manager
  */
-class SdlGraphicsManager : public GraphicsManager, public Common::EventObserver {
+class SurfaceSdlGraphicsManager : public GraphicsManager, public Common::EventObserver {
 public:
-	SdlGraphicsManager(SdlEventSource *sdlEventSource);
-	virtual ~SdlGraphicsManager();
+	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	virtual ~SurfaceSdlGraphicsManager();
 
 	virtual void initEventObserver();
 

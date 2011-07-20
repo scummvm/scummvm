@@ -143,7 +143,7 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 // Abstract plugins
 
 /**
- * Abstract base class for the plugin objects which handle plugins 
+ * Abstract base class for the plugin objects which handle plugins
  * instantiation. Subclasses for this may be used for engine plugins and other
  * types of plugins. An existing PluginObject refers to an executable file
  * loaded in memory and ready to run. The plugin, on the other hand, is just
@@ -310,7 +310,7 @@ protected:
 
 	bool tryLoadPlugin(Plugin *plugin);
 	void addToPluginsInMemList(Plugin *plugin);
-	
+
 	static PluginManager *_instance;
 	PluginManager();
 
@@ -326,9 +326,9 @@ public:
 	virtual void init()	{}
 	virtual void loadFirstPlugin() {}
 	virtual bool loadNextPlugin() { return false; }
-	virtual bool loadPluginFromGameId(const Common::String &gameId) { return false; } 
-	virtual void updateConfigWithFileName(const Common::String &gameId) {} 
-	
+	virtual bool loadPluginFromGameId(const Common::String &gameId) { return false; }
+	virtual void updateConfigWithFileName(const Common::String &gameId) {}
+
 	// Functions used only by the cached PluginManager
 	virtual void loadAllPlugins();
 	void unloadAllPlugins();
@@ -338,7 +338,7 @@ public:
 	const PluginList &getPlugins(PluginType t) { return _pluginsInMem[t]; }
 };
 
-/** 
+/**
  *  Uncached version of plugin manager
  *  Keeps only one dynamic plugin in memory at a time
  **/
@@ -349,15 +349,15 @@ protected:
 	PluginList::iterator _currentPlugin;
 
 	PluginManagerUncached() {}
-	bool loadPluginByFileName(const Common::String &filename); 
+	bool loadPluginByFileName(const Common::String &filename);
 
 public:
 	virtual void init();
 	virtual void loadFirstPlugin();
 	virtual bool loadNextPlugin();
-	virtual bool loadPluginFromGameId(const Common::String &gameId); 
-	virtual void updateConfigWithFileName(const Common::String &gameId); 
-	
+	virtual bool loadPluginFromGameId(const Common::String &gameId);
+	virtual void updateConfigWithFileName(const Common::String &gameId);
+
 	virtual void loadAllPlugins() {} 	// we don't allow this
 };
 

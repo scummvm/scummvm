@@ -67,13 +67,13 @@ protected:
 	 * The obtained audio specification after opening the
 	 * audio system.
 	 */
-	SDL_AudioSpec _obtainedRate;
+	SDL_AudioSpec _obtained;
 
 	/** State of the audio system */
 	bool _audioSuspended;
 
 	/**
-	 * Returns the desired audio specification 
+	 * Returns the desired audio specification
 	 */
 	virtual SDL_AudioSpec getAudioSpec(uint32 rate);
 
