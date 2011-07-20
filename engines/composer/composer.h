@@ -144,6 +144,7 @@ private:
 	uint16 _currSoundPriority;
 
 	bool _needsUpdate;
+	Common::Array<Common::Rect> _dirtyRects;
 	Graphics::Surface _surface;
 	Common::List<Sprite> _sprites;
 
@@ -199,6 +200,7 @@ private:
 	const Sprite *getSpriteAtPos(const Common::Point &pos);
 	const Button *getButtonFor(const Sprite *sprite, const Common::Point &pos);
 
+	void dirtySprite(const Sprite &sprite);
 	void redraw();
 	void loadCTBL(uint16 id, uint fadePercent);
 	void setBackground(uint16 id);

@@ -381,10 +381,13 @@ Sprite *ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const
 		if (i->_animId && animId && (i->_animId != animId))
 			continue;
 
+		dirtySprite(*i);
+
 		// if the zordering is identical, modify it in-place
 		if (i->_zorder == zorder) {
 			i->_animId = animId;
 			i->_pos = pos;
+			dirtySprite(*i);
 			return &(*i);
 		}
 
@@ -402,10 +405,12 @@ Sprite *ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const
 	if (!foundSprite) {
 		sprite._id = id;
 		if (!initSprite(sprite)) {
-			warning("ignoring addSprite on invalid sprite %d", id);
+			debug(1, "ignoring addSprite on invalid sprite %d", id);
 			return NULL;
 		}
 	}
+
+	dirtySprite(sprite);
 
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
 		if (sprite._zorder <= i->_zorder)
@@ -425,6 +430,7 @@ void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
 			continue;
 		if (i->_animId && animId && (i->_animId != animId))
 			continue;
+		dirtySprite(*i);
 		i->_surface.free();
 		i = _sprites.reverse_erase(i);
 		if (id)
@@ -445,14 +451,49 @@ const Sprite *ComposerEngine::getSpriteAtPos(const Common::Point &pos) {
 	return NULL;
 }
 
+void ComposerEngine::dirtySprite(const Sprite &sprite) {
+	Common::Rect rect(sprite._pos.x, sprite._pos.y, sprite._pos.x + sprite._surface.w, sprite._pos.y + sprite._surface.h);
+	rect.clip(_surface.w, _surface.h);
+	if (rect.isEmpty())
+		return;
+
+	for (uint i = 0; i < _dirtyRects.size(); i++) {
+		if (!_dirtyRects[i].intersects(rect))
+			continue;
+		_dirtyRects[i].extend(rect);
+		return;
+	}
+
+	_dirtyRects.push_back(rect);
+}
+
 void ComposerEngine::redraw() {
+	if (!_needsUpdate && _dirtyRects.empty())
+		return;
+
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
+		Common::Rect rect(i->_pos.x, i->_pos.y, i->_pos.x + i->_surface.w, i->_pos.y + i->_surface.h);
+		bool intersects = false;
+		for (uint j = 0; j < _dirtyRects.size(); j++) {
+			if (!_dirtyRects[j].intersects(rect))
+				continue;
+			intersects = true;
+			break;
+		}
+		if (!intersects)
+			continue;
 		drawSprite(*i);
 	}
 
-	_system->copyRectToScreen((byte *)_surface.pixels, _surface.pitch, 0, 0, _surface.w, _surface.h);
+	for (uint i = 0; i < _dirtyRects.size(); i++) {
+		const Common::Rect &rect = _dirtyRects[i];
+		byte *pixels = (byte *)_surface.pixels + (rect.top * _surface.pitch) + rect.left;
+		_system->copyRectToScreen(pixels, _surface.pitch, rect.left, rect.top, rect.width(), rect.height());
+	}
 	_system->updateScreen();
+
 	_needsUpdate = false;
+	_dirtyRects.clear();
 }
 
 void ComposerEngine::loadCTBL(uint16 id, uint fadePercent) {
@@ -472,15 +513,19 @@ void ComposerEngine::loadCTBL(uint16 id, uint fadePercent) {
 		buffer[i] = ((unsigned int)buffer[i] * fadePercent) / 100;
 
 	_system->getPaletteManager()->setPalette(buffer, 0, numEntries);
+	_needsUpdate = true;
 }
 
 void ComposerEngine::setBackground(uint16 id) {
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
 		if (i->_id)
 			continue;
+		dirtySprite(*i);
 		i->_surface.free();
 		i->_id = id;
-		initSprite(*i);
+		if (!initSprite(*i))
+			error("failed to set background %d", id);
+		dirtySprite(*i);
 		i->_id = 0;
 		return;
 	}
@@ -686,6 +731,8 @@ bool ComposerEngine::initSprite(Sprite &sprite) {
 		// RLE sprites since the width/height is ignored until the actual draw
 		if (type != kBitmapRLESLWM)
 			error("sprite (type %d) had invalid size %dx%d", type, width, height);
+		delete stream;
+		return false;
 	}
 	delete stream;
 
