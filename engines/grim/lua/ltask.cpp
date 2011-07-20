@@ -216,7 +216,7 @@ void pause_scripts() {
 
 	for (t = lua_rootState->next; t != NULL; t = t->next) {
 		if (lua_state != t)
-			t->paused = 0;
+			t->paused = true;
 	}
 }
 
@@ -225,7 +225,7 @@ void unpause_scripts() {
 
 	for (t = lua_rootState->next; t != NULL; t = t->next) {
 		if (lua_state != t)
-			t->paused = 0;
+			t->paused = false;
 	}
 }
 
