@@ -124,9 +124,9 @@ void Text::drawChar(char character) {
 		error("[Text::drawChar] font resource hasn't been loaded yet!");
 
 	if (_transTableNum) {
-		getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _position, kDrawFlagNone, _transTableNum);
+		getScreen()->draw(_fontResource, (uint8)character, _position, kDrawFlagNone, _transTableNum);
 	} else {
-		getScreen()->draw(_fontResource->getResourceId(), (uint8)character, _position);
+		getScreen()->draw(_fontResource, (uint8)character, _position);
 	}
 
 	GraphicFrame *fontLetter = _fontResource->getFrame((uint8)character);

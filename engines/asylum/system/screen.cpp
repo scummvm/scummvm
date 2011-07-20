@@ -81,6 +81,26 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, ResourceId resourceIdDestination, const Common::Point &destination, bool colorKey) {
 	// Get the frame to draw
 	GraphicResource *resource = new GraphicResource(_vm, resourceId);
+
+	draw(resource, frameIndex, source, flags, resourceIdDestination, destination, colorKey);
+
+	delete resource;
+}
+
+void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, bool colorKey) {
+	draw(resource, frameIndex, source, flags, kResourceNone, Common::Point(0, 0), colorKey);
+}
+
+void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, int32 transTableNum) {
+	byte *index = _transTable;
+	selectTransTable(transTableNum);
+
+	draw(resource, frameIndex, source, (DrawFlags)(flags | 0x90000000));
+
+	_transTable = index;
+}
+
+void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, ResourceId resourceIdDestination, const Common::Point &destination, bool colorKey) {
 	GraphicFrame *frame = resource->getFrame(frameIndex);
 	ResourceEntry *resourceMask = NULL;
 
@@ -147,8 +167,6 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 		blitMasked(frame, &src, resourceMask->data + 8, &srcMask, &destMask, resourceMask->getData(4), &dest, flags);
 	else
 		blit(frame, &src, &dest, flags);
-
-	delete resource;
 }
 
 //////////////////////////////////////////////////////////////////////////
