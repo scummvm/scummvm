@@ -675,6 +675,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	byte *frameBuffer = (byte *)frame->surface.pixels;
 	byte *mirroredBuffer = NULL;
 	int16 frameRight = frame->surface.pitch;
+	int16 maskHeight = sourceMask->height(); // for debugging only
 	byte zoom = abs(sourceMask->left) & 7;
 
 	// Prepare temporary source buffer if needed
@@ -814,7 +815,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	// Draw debug rects
 	if (g_debugDrawRects) {
 		_backBuffer.frameRect(*destination, 0x128);
-		drawZoomedMask(maskData, 20, maskWidth / 8, maskWidth);
+		drawZoomedMask(maskData, maskHeight / 8, maskWidth / 8, maskWidth);
 	}
 
 	// Cleanup
