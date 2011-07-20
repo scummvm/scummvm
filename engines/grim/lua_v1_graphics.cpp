@@ -136,7 +136,7 @@ void L1_StartMovie() {
  * just return true whenever ANY movie is playing
  */
 void L1_IsFullscreenMoviePlaying() {
-	pushbool(g_movie->isPlaying() && g_grim->getMode() == ENGINE_MODE_SMUSH);
+	pushbool(g_movie->isPlaying());
 }
 
 void L1_IsMoviePlaying() {
