@@ -1764,7 +1764,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(ProcessActor)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	actor->process_401830(cmd->param2, cmd->param3, cmd->param4, cmd->param5, cmd->param6, cmd->param7, cmd->param8, cmd->param9);
+	actor->processNext(cmd->param2, cmd->param3, (ActorDirection)cmd->param4, Common::Point(cmd->param5, cmd->param6), cmd->param7, Common::Point(cmd->param8, cmd->param9));
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
