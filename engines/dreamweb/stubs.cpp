@@ -968,34 +968,37 @@ void DreamGenContext::walking() {
 }
 
 void DreamGenContext::aboutturn(Sprite *sprite) {
+	bool incdir = true;
+
 	if (data.byte(kTurndirection) == 1)
-		goto incdir;
+		incdir = true;
 	else if ((int8)data.byte(kTurndirection) == -1)
-		goto decdir;
+		incdir = false;
 	else {
 		if (data.byte(kFacing) < data.byte(kTurntoface)) {
 			uint8 delta = data.byte(kTurntoface) - data.byte(kFacing);
 			if (delta >= 4)
-				goto decdir;
+				incdir = false;
 			else
-				goto incdir;
+				incdir = true;
 		} else {
 			uint8 delta = data.byte(kFacing) - data.byte(kTurntoface);
 			if (delta >= 4)
-				goto incdir;
+				incdir = true;
 			else
-				goto decdir;
+				incdir = false;
 		}
 	}
-incdir:
-	data.byte(kTurndirection) = 1;
-	data.byte(kFacing) = (data.byte(kFacing) + 1) & 7;
-	sprite->b29 = 0;
-	return;
-decdir:
-	data.byte(kTurndirection) = -1;
-	data.byte(kFacing) = (data.byte(kFacing) - 1) & 7;
-	sprite->b29 = 0;
+
+	if (incdir) {
+		data.byte(kTurndirection) = 1;
+		data.byte(kFacing) = (data.byte(kFacing) + 1) & 7;
+		sprite->b29 = 0;
+	} else {
+		data.byte(kTurndirection) = -1;
+		data.byte(kFacing) = (data.byte(kFacing) - 1) & 7;
+		sprite->b29 = 0;
+	}
 }
 
 void DreamGenContext::backobject(Sprite *sprite) {
