@@ -141,7 +141,7 @@ bool BadaFileStream::seek(int32 offs, int whence) {
 
   default:
     AppLog("Invalid whence %d", whence);
-    return;
+    return false;
   }
 
   if (!result) {

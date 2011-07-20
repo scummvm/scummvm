@@ -2016,6 +2016,7 @@ if test -n "$_host"; then
       else
         _arm_asm=yes
       fi
+      _taskbar=no
       _build_scalers=no
       _seq_midi=no
       _mt32emu=no
