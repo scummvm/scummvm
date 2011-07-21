@@ -48,7 +48,7 @@ void Iris::play(Iris::Direction dir, int x, int y, int lenght) {
 void Iris::draw() {
 	if (!_playing) {
 		if (_direction == Close) {
-			g_driver->dimScreen();
+			g_driver->dimRegion(0, 0, 640, 479, 0);
 		}
 		return;
 	}
@@ -57,7 +57,7 @@ void Iris::draw() {
 	if (_currTime >= _lenght) {
 		_playing = false;
 		if (_direction == Close) {
-			g_driver->dimScreen();
+			g_driver->dimRegion(0, 0, 640, 479, 0);
 		}
 		return;
 	}
