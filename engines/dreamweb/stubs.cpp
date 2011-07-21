@@ -249,19 +249,11 @@ void DreamGenContext::printboth() {
 }
 
 void DreamGenContext::printboth(uint16 dst, uint16 src, uint16 *x, uint16 y, uint8 c) {
-	push(ax);
-	push(cx);
-	push(bx);
 	uint16 newX = *x;
 	uint8 width, height;
 	printchar(dst, src, &newX, y, c, &width, &height);
 	multidump(*x, y, width, height);
-	si = *x + (y + height) * kScreenwidth;
-	di = newX;
 	*x = newX;
-	bx = pop();
-	cx = pop();
-	ax = pop();
 }
 
 uint8 DreamGenContext::getnextword(const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
