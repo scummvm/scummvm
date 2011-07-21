@@ -33,15 +33,15 @@ PathFindingHeap::PathFindingHeap() {
 }
 
 PathFindingHeap::~PathFindingHeap() {
-	delete[] _data;
+	free(_data);
 }
 
 void PathFindingHeap::init(int32 size) {
 	debugC(1, kDebugPath, "init(%d)", size);
 	_size = size;
 
-	delete[] _data;
-	_data = new HeapDataGrid[_size];
+	free(_data);
+	_data = (HeapDataGrid *)malloc(sizeof(HeapDataGrid) * _size);
 	memset(_data, 0, sizeof(HeapDataGrid) * _size);
 	_count = 0;
 }
@@ -49,7 +49,7 @@ void PathFindingHeap::init(int32 size) {
 void PathFindingHeap::unload() {
 	_count = 0;
 	_size = 0;
-	delete[] _data;
+	free(_data);
 	_data = NULL;
 }
 
@@ -64,8 +64,19 @@ void PathFindingHeap::push(int32 x, int32 y, int32 weight) {
 	debugC(2, kDebugPath, "push(%d, %d, %d)", x, y, weight);
 
 	if (_count == _size) {
-		warning("Aborting attempt to push onto PathFindingHeap at maximum size: %d", _count);
-		return;
+		// Increase size by 50%
+		int newSize = _size + (_size >> 1) + 1;
+		HeapDataGrid *newData;
+
+		newData = (HeapDataGrid *)realloc(_data, sizeof(HeapDataGrid) * newSize);
+		if (newData == NULL) {
+			warning("Aborting attempt to push onto PathFindingHeap at maximum size: %d", _count);
+			return;
+		}
+
+		memset(newData + _size, 0, sizeof(HeapDataGrid) * (newSize - _size));
+		_data = newData;
+		_size = newSize;
 	}
 
 	_data[_count]._x = x;
@@ -427,11 +438,7 @@ void PathFinding::init(Picture *mask) {
 	_height = mask->getHeight();
 	_currentMask = mask;
 	_heap->unload();
-	// In order to reduce memory fragmentation on small devices, we use the maximum
-	// possible size here which is TOON_BACKBUFFER_WIDTH. Even though this is
-	// 1280 as opposed to the possible 640, it actually helps memory allocation on
-	// those devices.
-	_heap->init(TOON_BACKBUFFER_WIDTH * _height);	// should really be _width
+	_heap->init(500);
 	delete[] _gridTemp;
 	_gridTemp = new int32[_width*_height];
 }
