@@ -318,6 +318,17 @@ void DreamGenContext::printslow() {
 	al = printslow(di, bx, dl, (bool)(dl & 1));
 }
 
+void DreamGenContext::dumptextline() {
+	if (data.byte(kNewtextline) != 1)
+		return;
+	data.byte(kNewtextline) = 0;
+	uint16 x = data.word(kTextaddressx);
+	uint16 y = data.word(kTextaddressy);
+	if (data.byte(kForeignrelease) != 0)
+		y -= 3;
+	multidump(x, y, 228, 13);
+}
+
 uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	data.byte(kPointerframe) = 1;
 	data.byte(kPointermode) = 3;

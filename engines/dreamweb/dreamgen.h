@@ -92,7 +92,6 @@ public:
 	static const uint16 addr_readmouse = 0xcae4;
 	static const uint16 addr_setmouse = 0xcae0;
 	static const uint16 addr_animpointer = 0xcadc;
-	static const uint16 addr_dumptextline = 0xcad8;
 	static const uint16 addr_deltextline = 0xcad4;
 	static const uint16 addr_undertextline = 0xcad0;
 	static const uint16 addr_dumppointer = 0xcacc;
@@ -1518,7 +1517,7 @@ public:
 	void fillopen();
 	void delsprite();
 	void getroomspaths();
-	void dumptextline();
+	//void dumptextline();
 	void fadescreendownhalf();
 	void useplate();
 	void candles1();

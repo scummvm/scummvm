@@ -46,6 +46,7 @@
 	void printdirect();
 	uint8 printslow(uint16 x, uint16 y, uint8 maxWidth, bool centered);
 	void printslow();
+	void dumptextline();
 	void getnumber();
 	uint8 getnumber(uint16 maxWidth, bool centered, uint16* offset);
 	void kernchars();
