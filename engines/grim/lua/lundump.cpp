@@ -12,13 +12,13 @@
 namespace Grim {
 
 static float conv_float(const byte *data) {
-	const byte *udata = data;
-	byte fdata[4];
-	fdata[0] = udata[3];
-	fdata[1] = udata[2];
-	fdata[2] = udata[1];
-	fdata[3] = udata[0];
-	return *(const float *)(fdata);
+	float f;
+	byte *fdata = (byte *)(&f);
+	fdata[0] = data[3];
+	fdata[1] = data[2];
+	fdata[2] = data[1];
+	fdata[3] = data[0];
+	return f;
 }
 
 static void unexpectedEOZ(ZIO *Z) {
