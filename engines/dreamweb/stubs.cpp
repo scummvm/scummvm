@@ -336,7 +336,7 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 	do {
 		push(di);
 		uint16 offset = x;
-		uint16 charCount = getnumber(maxWidth, centered, &offset);
+		uint16 charCount = getnumber(si, maxWidth, centered, &offset);
 		do {
 			push(si);
 			push(es);
@@ -400,7 +400,7 @@ void DreamGenContext::printdirect() {
 		push(di);
 		push(dx);
 		uint16 offset;
-		uint8 charCount = getnumber(dl, (bool)(dl & 1), &offset);
+		uint8 charCount = getnumber(si, dl, (bool)(dl & 1), &offset);
 		di = offset;
 		uint16 x = di;
 		do {
@@ -429,20 +429,16 @@ void DreamGenContext::printdirect() {
 
 void DreamGenContext::getnumber() {
 	uint16 offset = di;
-	cl = getnumber(dl, (bool)(dl & 1), &offset);
+	cl = getnumber(si, dl, (bool)(dl & 1), &offset);
 	di = offset;
 }
 
-uint8 DreamGenContext::getnumber(uint16 maxWidth, bool centered, uint16* offset) {
+uint8 DreamGenContext::getnumber(uint16 index, uint16 maxWidth, bool centered, uint16* offset) {
 	uint8 totalWidth = 0;
 	uint8 charCount = 0;
-	push(si);
-	push(bx);
 	push(di);
-	push(ds);
-	push(es);
-	di = si;
-	*offset = di;
+	di = index;
+	*offset = index;
 	while (true) {
 		uint8 wordTotalWidth, wordCharCount;
 		uint8 done = getnextword(es.ptr(di, 0), &wordTotalWidth, &wordCharCount);
@@ -461,12 +457,8 @@ uint8 DreamGenContext::getnumber(uint16 maxWidth, bool centered, uint16* offset)
 			} else {
 				ax = 0;
 			}
-			es = pop();
-			ds = pop();
 			di = pop();
-			bx = pop();
-			si = pop();
-			_add(di, ax);
+			di += ax;
 			*offset = di;
 			return charCount;
 		}
@@ -478,12 +470,8 @@ uint8 DreamGenContext::getnumber(uint16 maxWidth, bool centered, uint16* offset)
 			} else {
 				ax = 0;
 			}
-			es = pop();
-			ds = pop();
 			di = pop();
-			bx = pop();
-			si = pop();
-			_add(di, ax);
+			di += ax;
 			*offset = di;
 			return charCount;
 		}
