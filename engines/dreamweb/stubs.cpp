@@ -315,61 +315,47 @@ void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uin
 }
 
 void DreamGenContext::printslow() {
-	al = printslow(di, bx);
+	al = printslow(di, bx, dl, (bool)(dl & 1));
 }
 
-uint8 DreamGenContext::printslow(uint16 x, uint16 y) {
+uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	data.byte(kPointerframe) = 1;
 	data.byte(kPointermode) = 3;
 	ds = data.word(kCharset1);
 	do {
 		push(di);
-		push(dx);
 		uint16 offset = x;
-		cx = getnumber(dl, (bool)(dl & 1), &offset);
+		uint16 charCount = getnumber(maxWidth, centered, &offset);
 		do {
-			push(cx);
 			push(si);
 			push(es);
-			ax = es.word(si);
-			push(bx);
-			push(cx);
+			uint8 c0 = es.byte(si);
 			push(es);
-			push(si);
 			push(ds);
-			al = engine->modifyChar(al);
-			printboth(es, ds, &offset, y, al);
+			c0 = engine->modifyChar(c0);
+			printboth(es, ds, &offset, y, c0);
 			ds = pop();
-			si = pop();
 			es = pop();
-			cx = pop();
-			bx = pop();
-			ax = es.word(si+1);
-			_inc(si);
-			if ((al == 0) || (al == ':')) {
+			uint8 c1 = es.byte(si+1);
+			++si;
+			if ((c1 == 0) || (c1 == ':')) {
 				es = pop();
 				si = pop();
-				cx = pop();
-				dx = pop();
 				di = pop();
 				return 0;
 			}
-			if (cl != 1) {
+			if (charCount != 1) {
 				push(di);
 				push(ds);
-				push(bx);
 				push(cx);
 				push(es);
-				push(si);
-				al = engine->modifyChar(al);
+				c1 = engine->modifyChar(c1);
 				data.word(kCharshift) = 91;
 				uint16 offset2 = offset;
-				printboth(es, ds, &offset2, y, al);
+				printboth(es, ds, &offset2, y, c1);
 				data.word(kCharshift) = 0;
-				si = pop();
 				es = pop();
 				cx = pop();
-				bx = pop();
 				ds = pop();
 				di = pop();
 				for (int i=0; i<2; ++i) {
@@ -379,8 +365,6 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y) {
 					if (ax != data.word(kOldbutton)) {
 						es = pop();
 						si = pop();
-						cx = pop();
-						dx = pop();
 						di = pop();
 						return 1;
 					}
@@ -389,11 +373,9 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y) {
 
 			es = pop();
 			si = pop();
-			cx = pop();
-			_inc(si);
-			--cx;
-		} while (cx);
-		dx = pop();
+			++si;
+			--charCount;
+		} while (charCount);
 		di = pop();
 		y += 10;
 	} while (true);
