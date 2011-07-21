@@ -25,22 +25,79 @@
 
 #include "asylum/puzzles/puzzle.h"
 
+#include "common/hashmap.h"
+
 namespace Asylum {
 
 class AsylumEngine;
+
+enum Control {
+	kControlNone		= -1,
+	kControlWingsButton1	= 34,
+	kControlWingsButton2	= 35,
+	kControlWingsButton3	= 36,
+	kControlReset		= 38,
+	kControlWheelLeft	= 39,
+	kControlWheelRight	= 40,
+	kControlButtonRight	= 41,
+	kControlButtonLeft	= 42,
+	kControlGlyph1		= 49,
+	kControlGlyph2		= 50,
+	kControlGlyph3		= 51,
+	kControlGlyph4		= 52,
+	kControlGlyph5		= 53,
+	kControlGlyph6		= 54
+};
+
+static const uint32 puzzleHiveControlHieroglyphs[2][6] = {
+	{5, 12, 22, 13, 20, 6},
+	{21, 4, 14, 13, 20, 6}
+};
 
 class PuzzleHiveControl : public Puzzle {
 public:
 	PuzzleHiveControl(AsylumEngine *engine);
 	~PuzzleHiveControl();
 
+	bool hitTest1(uint32 resourceId, Common::Point point, Common::Point location);
+	void reset();
+
 private:
+	enum Element {
+		kElementSwirl		= 31,
+		kElementFlyHead		= 32,
+		kElementResetDynamic	= 33,
+		kElementLever		= 37,
+		kElementWingLeft1	= 43,
+		kElementWingRight1	= 44,
+		kElementWingLeft2	= 45,
+		kElementWingRight2	= 46,
+		kElementWingLeft3	= 47,
+		kElementWingRight3	= 48,
+		kElementLensLeft	= 55,
+		kElementLensRight	= 56,
+		kElementIndicator	= 57,
+		kElementSwirlRim	= 71,
+		kElementResetStatic	= 72
+	};
+
 	int32 _soundVolume;
 	int32 _rectIndex;
 	uint32 _counter;
 
 	int32 _data_457260;
 	int32 _data_457264;
+
+	uint32 _frameIndexes[73];
+	Common::HashMap<uint32, Common::Point> _controlPoints;
+
+	bool _resetFlag;
+	bool _wingsState[3];
+	bool _glyphFlags[2][6];
+	Control _currentControl;
+	uint32 _colorL, _colorR;
+	uint32 _frameIndexOffset;
+	uint32 _leverPosition, _prevLeverPosition, _leverDelta;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
@@ -54,7 +111,7 @@ private:
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
 	void updateCursor();
-	int32 findRect();
+	Control findControl();
 	void updateScreen();
 	void playSound();
 };
