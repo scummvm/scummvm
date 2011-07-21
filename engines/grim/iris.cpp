@@ -67,8 +67,8 @@ void Iris::draw() {
 		factor = 1 - factor;
 	}
 
-	int y = _y * factor;
-	int x = _x * factor;
+	int y = (int)(_y * factor);
+	int x = (int)(_x * factor);
 
 	// Why doesn't 480 work here??
 	g_driver->dimRegion(0, 0, 640, y, 0);

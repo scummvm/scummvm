@@ -806,7 +806,7 @@ void KeyframeComponent::update() {
 	if (!_active)
 		return;
 
-	int time = g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale();
+	int time = (int)(g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale());
 
 	if (_anim._time < 0)		// For first time through
 		_anim._time = 0;
@@ -1472,7 +1472,7 @@ void Costume::Chore::update() {
 	if (!_playing)
 		return;
 
-	int time = g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale();
+	int time = (int)(g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale());
 
 	int newTime;
 	if (_currTime < 0)
