@@ -38,8 +38,6 @@ using namespace Osp::Ui::Controls;
 #define SHORTCUT_SWAP_MOUSE  0
 #define SHORTCUT_ESCAPE      1
 #define SHORTCUT_F5          2
-#define SHORTCUT_PERIOD      3
-#define SHORTCUT_SPACE       4
 
 //
 // BadaAppForm
@@ -136,6 +134,23 @@ void BadaAppForm::terminate() {
       Thread::Sleep(250);
     }
   }
+}
+
+void BadaAppForm::fatalError(Osp::Base::String message) {
+  AppLog("Fatal system error: %S", message.GetPointer());
+
+  if (gameThread) {
+    gameThread->Stop();
+    delete gameThread;
+    gameThread = null;
+  }
+  
+  state = ErrorState;
+  MessageBox messageBox;
+  messageBox.Construct(L"Fatal Error", message, MSGBOX_STYLE_OK);
+  int modalResult;
+  messageBox.ShowAndWait(modalResult);
+  Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, null);
 }
 
 result BadaAppForm::OnInitializing(void) {
@@ -251,10 +266,6 @@ void BadaAppForm::OnTouchDoublePressed(const Control& source,
   shortcutTimer = g_system->getMillis();
 
   switch (shortcutIndex) {
-  case SHORTCUT_SWAP_MOUSE:
-    g_system->displayMessageOnOSD(_("Sweep = Swap Left/Right Mouse"));
-    break;
-
   case SHORTCUT_F5:
     g_system->displayMessageOnOSD(_("Sweep = Game Menu"));
     break;
@@ -263,16 +274,9 @@ void BadaAppForm::OnTouchDoublePressed(const Control& source,
     g_system->displayMessageOnOSD(_("Sweep = Escape"));
     break;
 
-  case SHORTCUT_PERIOD:
-    g_system->displayMessageOnOSD(_("Sweep = Dot Key"));
-    break;
-
-  case SHORTCUT_SPACE:
-    g_system->displayMessageOnOSD(_("Sweep = Space Key"));
-    break;
-    
   default:
-    shortcutIndex = -1;
+    g_system->displayMessageOnOSD(_("Sweep = Swap Left/Right Mouse"));
+    shortcutIndex = SHORTCUT_SWAP_MOUSE;
   }
 }
 
@@ -332,22 +336,10 @@ void BadaAppForm::OnTouchReleased(const Control& source,
       pushKey(Common::KEYCODE_ESCAPE);
       repeat = true;
       break;
-      
-    case SHORTCUT_PERIOD:
-      pushKey(Common::KEYCODE_PERIOD);
-      repeat = true;
-      break;
-
-    case SHORTCUT_SPACE:
-      pushKey(Common::KEYCODE_SPACE);
-      repeat = true;
-      break;
     }
 
-    if (repeat) {
-      // allow key repeat
-      shortcutTimer = g_system->getMillis();
-    }
+    // allow key repeat or terminate setup mode
+    shortcutTimer = repeat ? g_system->getMillis() : -1;
   }
 }
 

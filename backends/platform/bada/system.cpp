@@ -296,7 +296,7 @@ void BadaSystem::initBackend() {
   Osp::System::SystemTime::GetTicks(epoch);
 
   if (E_SUCCESS != initModules()) {
-    systemError("initModules failed");
+    AppLog("initModules failed");
   }
   else {
     OSystem::initBackend();
@@ -381,7 +381,14 @@ void BadaSystem::getTimeAndDate(TimeDate &td) const {
 }
 
 void BadaSystem::fatalError() {
-  systemError("ScummVM: Fatal internal error.");
+  fatalError(L"ScummVM: Fatal internal error.");
+}
+
+void BadaSystem::fatalError(Osp::Base::String message) {
+  if (appForm) {
+    closeGraphics();
+    appForm->fatalError(message);
+  }
 }
 
 void BadaSystem::logMessage(LogMessageType::Type /*type*/, const char* message) {
@@ -425,14 +432,14 @@ BadaAppForm* systemStart(Osp::App::Application* app) {
 
   BadaAppForm* appForm = new BadaAppForm();
   if (!appForm) {
-    systemError("Failed to create appForm");
+    AppLog("Failed to create appForm");
     return null;
   }
 
   if (E_SUCCESS != appForm->Construct() ||
       E_SUCCESS != app->GetAppFrame()->GetFrame()->AddControl(*appForm)) {
     delete appForm;
-    systemError("Failed to construct appForm");
+    AppLog("Failed to construct appForm");
     return null;
   }
 
@@ -443,17 +450,17 @@ BadaAppForm* systemStart(Osp::App::Application* app) {
 // display a fatal error notification
 //
 void systemError(const char* format, ...) {
-  MessageBox messageBox;
-  int modalResult;
   va_list ap;
   char buffer[255];
 
   va_start(ap, format);
   vsnprintf(buffer, sizeof(buffer), format, ap);
   va_end(ap);
-  
-  AppLog(buffer);
-  Application::GetInstance()->Terminate();
+
+  if (g_system) {
+    BadaSystem* system = (BadaSystem*) g_system;
+    system->fatalError(format);
+  }
 }
 
 //

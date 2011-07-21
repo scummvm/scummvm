@@ -50,8 +50,9 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
 
   result Construct();
   bool pollEvent(Common::Event& event);
-  void pushKey(Common::KeyCode keycode);
   bool isClosing() { return state == ClosingState; }
+  void pushKey(Common::KeyCode keycode);
+  void fatalError(Osp::Base::String message);
 
  private:
   Object* Run();
@@ -96,7 +97,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   Osp::Base::Runtime::Thread* gameThread;
   Osp::Base::Runtime::Mutex* eventQueueLock;
   Common::Queue<Common::Event> eventQueue;
-  enum {InitState, ActiveState, ClosingState, DoneState} state;
+  enum {InitState, ActiveState, ClosingState, DoneState, ErrorState} state;
   uint32 shortcutTimer;
   int shortcutIndex;
   bool leftButton;

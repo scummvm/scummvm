@@ -76,6 +76,7 @@ class BadaSystem : public ModularBackend,
   void destroyBackend();
   void setMute(bool on);
   void setVolume(bool up, bool minMax);
+  void fatalError(Osp::Base::String message);
   bool isClosing() {return appForm->isClosing();  }
 
   BadaGraphicsManager* getGraphics() {
