@@ -196,7 +196,7 @@ void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
 		if (lua_isnumber(keyObj)) {
 			float num = lua_getnumber(keyObj);
 			if (g_grim->getGameType() == GType_MONKEY4)
-				textObject->setX(num * 640);
+				textObject->setX((int)(num * 640));
 			else
 				textObject->setX((int)num);
 		}
@@ -209,7 +209,7 @@ void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
 		if (lua_isnumber(keyObj)) {
 			float num = lua_getnumber(keyObj);
 			if (g_grim->getGameType() == GType_MONKEY4)
-				textObject->setY(num * 480);
+				textObject->setY((int)(num * 480));
 			else
 				textObject->setY((int)num);
 		}
