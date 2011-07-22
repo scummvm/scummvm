@@ -41,6 +41,9 @@ void Sprite::draw() const {
 	g_driver->drawSprite(this);
 }
 
+/**
+ * @class Model
+ */
 Model::Model(const Common::String &filename, const char *data, int len, CMap *cmap, Model *parent) :
 		Object(), _parent(parent), _numMaterials(0), _numGeosets(0), _cmap(cmap) {
 	_fname = filename;
@@ -56,13 +59,12 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 	}
 }
 
-void Model::reload(CMap *cmap) {
-	// Load the new colormap
-	for (int i = 0; i < _numMaterials; i++) {
-		loadMaterial(i, cmap);
-	}
-	for (int i = 0; i < _numGeosets; i++)
-		_geosets[i].changeMaterials(_materials);
+Model::~Model() {
+	delete[] _materials;
+	delete[] _materialNames;
+	delete[] _geosets;
+	delete[] _rootHierNode;
+	g_resourceloader->uncacheModel(this);
 }
 
 void Model::loadEMI(Common::MemoryReadStream &ms) {
@@ -126,197 +128,6 @@ void Model::loadBinary(const char *&data, CMap *cmap) {
 	_insertOffset = Graphics::get_vector3d(data + 40);
 }
 
-Model::~Model() {
-	delete[] _materials;
-	delete[] _materialNames;
-	delete[] _geosets;
-	delete[] _rootHierNode;
-	g_resourceloader->uncacheModel(this);
-}
-
-void Model::Geoset::loadBinary(const char *&data, Material *materials[]) {
-	_numMeshes = READ_LE_UINT32(data);
-	data += 4;
-	_meshes = new Mesh[_numMeshes];
-	for (int i = 0; i < _numMeshes; i++)
-		_meshes[i].loadBinary(data, materials);
-}
-
-Model::Geoset::~Geoset() {
-	delete[] _meshes;
-}
-
-void Mesh::loadBinary(const char *&data, Material *materials[]) {
-	memcpy(_name, data, 32);
-	_geometryMode = READ_LE_UINT32(data + 36);
-	_lightingMode = READ_LE_UINT32(data + 40);
-	_textureMode = READ_LE_UINT32(data + 44);
-	_numVertices = READ_LE_UINT32(data + 48);
-	_numTextureVerts = READ_LE_UINT32(data + 52);
-	_numFaces = READ_LE_UINT32(data + 56);
-	_vertices = new float[3 * _numVertices];
-	_verticesI = new float[_numVertices];
-	_vertNormals = new float[3 * _numVertices];
-	_textureVerts = new float[2 * _numTextureVerts];
-	_faces = new MeshFace[_numFaces];
-	_materialid = new int[_numFaces];
-	data += 60;
-	for (int i = 0; i < 3 * _numVertices; i++) {
-		_vertices[i] = get_float(data);
-		data += 4;
-	}
-	for (int i = 0; i < 2 * _numTextureVerts; i++) {
-		_textureVerts[i] = get_float(data);
-		data += 4;
-	}
-	for (int i = 0; i < _numVertices; i++) {
-		_verticesI[i] = get_float(data);
-		data += 4;
-	}
-	data += _numVertices * 4;
-	for (int i = 0; i < _numFaces; i++)
-		_materialid[i] = _faces[i].loadBinary(data, materials);
-	for (int i = 0; i < 3 * _numVertices; i++) {
-		_vertNormals[i] = get_float(data);
-		data += 4;
-	}
-	_shadow = READ_LE_UINT32(data);
-	_radius = get_float(data + 8);
-	data += 36;
-}
-
-Mesh::~Mesh() {
-	delete[] _vertices;
-	delete[] _verticesI;
-	delete[] _vertNormals;
-	delete[] _textureVerts;
-	delete[] _faces;
-	delete[] _materialid;
-}
-
-void Mesh::update() {
-}
-
-void MeshFace::changeMaterial(Material *material) {
-	_material = material;
-}
-
-int MeshFace::loadBinary(const char *&data, Material *materials[]) {
-	_type = READ_LE_UINT32(data + 4);
-	_geo = READ_LE_UINT32(data + 8);
-	_light = READ_LE_UINT32(data + 12);
-	_tex = READ_LE_UINT32(data + 16);
-	_numVertices = READ_LE_UINT32(data + 20);
-	int texPtr = READ_LE_UINT32(data + 28);
-	int materialPtr = READ_LE_UINT32(data + 32);
-	_extraLight = get_float(data + 48);
-	_normal = Graphics::get_vector3d(data + 64);
-	data += 76;
-
-	_vertices = new int[_numVertices];
-	for (int i = 0; i < _numVertices; i++) {
-		_vertices[i] = READ_LE_UINT32(data);
-		data += 4;
-	}
-	if (texPtr == 0)
-		_texVertices = NULL;
-	else {
-		_texVertices = new int[_numVertices];
-		for (int i = 0; i < _numVertices; i++) {
-			_texVertices[i] = READ_LE_UINT32(data);
-			data += 4;
-		}
-	}
-	if (materialPtr == 0)
-		_material = 0;
-	else {
-		_material = materials[READ_LE_UINT32(data)];
-		materialPtr = READ_LE_UINT32(data);
-		data += 4;
-	}
-	return materialPtr;
-}
-
-MeshFace::~MeshFace() {
-	delete[] _vertices;
-	delete[] _texVertices;
-}
-
-ModelNode::~ModelNode() {
-	ModelNode *child = _child;
-	while (child) {
-		child->_parent = NULL;
-		child = child->_sibling;
-	}
-}
-
-void ModelNode::loadBinary(const char *&data, ModelNode *hierNodes, const Model::Geoset *g) {
-	memcpy(_name, data, 64);
-	_flags = READ_LE_UINT32(data + 64);
-	_type = READ_LE_UINT32(data + 72);
-	int meshNum = READ_LE_UINT32(data + 76);
-	if (meshNum < 0)
-		_mesh = NULL;
-	else
-		_mesh = g->_meshes + meshNum;
-	_depth = READ_LE_UINT32(data + 80);
-	int parentPtr = READ_LE_UINT32(data + 84);
-	_numChildren = READ_LE_UINT32(data + 88);
-	int childPtr = READ_LE_UINT32(data + 92);
-	int siblingPtr = READ_LE_UINT32(data + 96);
-	_pivot = Graphics::get_vector3d(data + 100);
-	_pos = Graphics::get_vector3d(data + 112);
-	_pitch = get_float(data + 124);
-	_yaw = get_float(data + 128);
-	_roll = get_float(data + 132);
-	_animPos.set(0,0,0);
-	_animPitch = 0;
-	_animYaw = 0;
-	_animRoll = 0;
-	_sprite = NULL;
-
-	data += 184;
-
-	if (parentPtr != 0) {
-		_parent = hierNodes + READ_LE_UINT32(data);
-		data += 4;
-	} else
-		_parent = NULL;
-	if (childPtr != 0) {
-		_child = hierNodes + READ_LE_UINT32(data);
-		data += 4;
-	} else
-		_child = NULL;
-	if (siblingPtr != 0) {
-		_sibling = hierNodes + READ_LE_UINT32(data);
-		data += 4;
-	} else
-		_sibling = NULL;
-
-	_meshVisible = true;
-	_hierVisible = true;
-	_initialized = true;
-}
-
-void Model::draw() const {
-	_rootHierNode->draw();
-}
-
-ModelNode *Model::copyHierarchy() {
-	ModelNode *result = new ModelNode[_numHierNodes];
-	memcpy(result, _rootHierNode, _numHierNodes * sizeof(ModelNode));
-	// Now adjust pointers
-	for (int i = 0; i < _numHierNodes; i++) {
-		if (result[i]._parent)
-			result[i]._parent = &result[(_rootHierNode[i]._parent - _rootHierNode)];
-		if (result[i]._child)
-			result[i]._child = &result[(_rootHierNode[i]._child - _rootHierNode)];
-		if (result[i]._sibling)
-			result[i]._sibling = &result[(_rootHierNode[i]._sibling - _rootHierNode)];
-	}
-	return result;
-}
-
 void Model::loadText(TextSplitter *ts, CMap *cmap) {
 	ts->expectString("section: header");
 	int major, minor;
@@ -357,8 +168,8 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 		float x, y, z, pitch, yaw, roll, pivotx, pivoty, pivotz;
 		char name[64];
 		ts->scanString(" %d: %x %x %d %d %d %d %d %f %f %f %f %f %f %f %f %f %64s",
-			18, &num, &flags, &type, &mesh, &parent, &child, &sibling,
-			&numChildren, &x, &y, &z, &pitch, &yaw, &roll, &pivotx, &pivoty, &pivotz, name);
+					   18, &num, &flags, &type, &mesh, &parent, &child, &sibling,
+				 &numChildren, &x, &y, &z, &pitch, &yaw, &roll, &pivotx, &pivoty, &pivotz, name);
 		_rootHierNode[num]._flags = (int)flags;
 		_rootHierNode[num]._type = (int)type;
 		if (mesh < 0)
@@ -396,6 +207,34 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 		warning("Unexpected junk at end of model text");
 }
 
+void Model::draw() const {
+	_rootHierNode->draw();
+}
+
+ModelNode *Model::copyHierarchy() {
+	ModelNode *result = new ModelNode[_numHierNodes];
+	memcpy(result, _rootHierNode, _numHierNodes * sizeof(ModelNode));
+	// Now adjust pointers
+	for (int i = 0; i < _numHierNodes; i++) {
+		if (result[i]._parent)
+			result[i]._parent = &result[(_rootHierNode[i]._parent - _rootHierNode)];
+		if (result[i]._child)
+			result[i]._child = &result[(_rootHierNode[i]._child - _rootHierNode)];
+		if (result[i]._sibling)
+			result[i]._sibling = &result[(_rootHierNode[i]._sibling - _rootHierNode)];
+	}
+	return result;
+}
+
+void Model::reload(CMap *cmap) {
+	// Load the new colormap
+	for (int i = 0; i < _numMaterials; i++) {
+		loadMaterial(i, cmap);
+	}
+	for (int i = 0; i < _numGeosets; i++)
+		_geosets[i].changeMaterials(_materials);
+}
+
 void Model::loadMaterial(int index, CMap *cmap) {
 	if (!_materialsShared[index]) {
 		delete _materials[index];
@@ -421,9 +260,19 @@ Material *Model::findMaterial(const char *name) const {
 	return NULL;
 }
 
-void Model::Geoset::changeMaterials(Material *materials[]) {
+/**
+ * @class Model::Geoset
+ */
+Model::Geoset::~Geoset() {
+	delete[] _meshes;
+}
+
+void Model::Geoset::loadBinary(const char *&data, Material *materials[]) {
+	_numMeshes = READ_LE_UINT32(data);
+	data += 4;
+	_meshes = new Mesh[_numMeshes];
 	for (int i = 0; i < _numMeshes; i++)
-		_meshes[i].changeMaterials(materials);
+		_meshes[i].loadBinary(data, materials);
 }
 
 void Model::Geoset::loadText(TextSplitter *ts, Material *materials[]) {
@@ -436,9 +285,113 @@ void Model::Geoset::loadText(TextSplitter *ts, Material *materials[]) {
 	}
 }
 
-void Mesh::changeMaterials(Material *materials[]) {
+void Model::Geoset::changeMaterials(Material *materials[]) {
+	for (int i = 0; i < _numMeshes; i++)
+		_meshes[i].changeMaterials(materials);
+}
+
+/**
+ * @class MeshFace
+ */
+MeshFace::~MeshFace() {
+	delete[] _vertices;
+	delete[] _texVertices;
+}
+
+int MeshFace::loadBinary(const char *&data, Material *materials[]) {
+	_type = READ_LE_UINT32(data + 4);
+	_geo = READ_LE_UINT32(data + 8);
+	_light = READ_LE_UINT32(data + 12);
+	_tex = READ_LE_UINT32(data + 16);
+	_numVertices = READ_LE_UINT32(data + 20);
+	int texPtr = READ_LE_UINT32(data + 28);
+	int materialPtr = READ_LE_UINT32(data + 32);
+	_extraLight = get_float(data + 48);
+	_normal = Graphics::get_vector3d(data + 64);
+	data += 76;
+
+	_vertices = new int[_numVertices];
+	for (int i = 0; i < _numVertices; i++) {
+		_vertices[i] = READ_LE_UINT32(data);
+		data += 4;
+	}
+	if (texPtr == 0)
+		_texVertices = NULL;
+	else {
+		_texVertices = new int[_numVertices];
+		for (int i = 0; i < _numVertices; i++) {
+			_texVertices[i] = READ_LE_UINT32(data);
+			data += 4;
+		}
+	}
+	if (materialPtr == 0)
+		_material = 0;
+	else {
+		_material = materials[READ_LE_UINT32(data)];
+		materialPtr = READ_LE_UINT32(data);
+		data += 4;
+	}
+	return materialPtr;
+}
+
+void MeshFace::changeMaterial(Material *material) {
+	_material = material;
+}
+
+void MeshFace::draw(float *vertices, float *vertNormals, float *textureVerts) const {
+	_material->select();
+	g_driver->drawModelFace(this, vertices, vertNormals, textureVerts);
+}
+
+/**
+ * @class Mesh
+ */
+Mesh::~Mesh() {
+	delete[] _vertices;
+	delete[] _verticesI;
+	delete[] _vertNormals;
+	delete[] _textureVerts;
+	delete[] _faces;
+	delete[] _materialid;
+}
+
+void Mesh::loadBinary(const char *&data, Material *materials[]) {
+	memcpy(_name, data, 32);
+	_geometryMode = READ_LE_UINT32(data + 36);
+	_lightingMode = READ_LE_UINT32(data + 40);
+	_textureMode = READ_LE_UINT32(data + 44);
+	_numVertices = READ_LE_UINT32(data + 48);
+	_numTextureVerts = READ_LE_UINT32(data + 52);
+	_numFaces = READ_LE_UINT32(data + 56);
+	_vertices = new float[3 * _numVertices];
+	_verticesI = new float[_numVertices];
+	_vertNormals = new float[3 * _numVertices];
+	_textureVerts = new float[2 * _numTextureVerts];
+	_faces = new MeshFace[_numFaces];
+	_materialid = new int[_numFaces];
+	data += 60;
+	for (int i = 0; i < 3 * _numVertices; i++) {
+		_vertices[i] = get_float(data);
+		data += 4;
+	}
+	for (int i = 0; i < 2 * _numTextureVerts; i++) {
+		_textureVerts[i] = get_float(data);
+		data += 4;
+	}
+	for (int i = 0; i < _numVertices; i++) {
+		_verticesI[i] = get_float(data);
+		data += 4;
+	}
+	data += _numVertices * 4;
 	for (int i = 0; i < _numFaces; i++)
-		_faces[i].changeMaterial(materials[_materialid[i]]);
+		_materialid[i] = _faces[i].loadBinary(data, materials);
+	for (int i = 0; i < 3 * _numVertices; i++) {
+		_vertNormals[i] = get_float(data);
+		data += 4;
+	}
+	_shadow = READ_LE_UINT32(data);
+	_radius = get_float(data + 8);
+	data += 36;
 }
 
 void Mesh::loadText(TextSplitter *ts, Material* materials[]) {
@@ -536,6 +489,93 @@ void Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 	}
 }
 
+void Mesh::update() {
+}
+
+void Mesh::changeMaterials(Material *materials[]) {
+	for (int i = 0; i < _numFaces; i++)
+		_faces[i].changeMaterial(materials[_materialid[i]]);
+}
+
+void Mesh::draw() const {
+	int winX1, winY1, winX2, winY2;
+	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
+	if (winX1 != -1 && winY1 != -1 && winX2 != -1 && winY2 != -1) {
+		g_winX1 = MIN(g_winX1, winX1);
+		g_winY1 = MIN(g_winY1, winY1);
+		g_winX2 = MAX(g_winX2, winX2);
+		g_winY2 = MAX(g_winY2, winY2);
+	}
+
+	if (_lightingMode == 0)
+		g_driver->disableLights();
+
+	for (int i = 0; i < _numFaces; i++)
+		_faces[i].draw(_vertices, _vertNormals, _textureVerts);
+
+	if (_lightingMode == 0)
+		g_driver->enableLights();
+}
+
+/**
+ * @class ModelNode
+ */
+ModelNode::~ModelNode() {
+	ModelNode *child = _child;
+	while (child) {
+		child->_parent = NULL;
+		child = child->_sibling;
+	}
+}
+
+void ModelNode::loadBinary(const char *&data, ModelNode *hierNodes, const Model::Geoset *g) {
+	memcpy(_name, data, 64);
+	_flags = READ_LE_UINT32(data + 64);
+	_type = READ_LE_UINT32(data + 72);
+	int meshNum = READ_LE_UINT32(data + 76);
+	if (meshNum < 0)
+		_mesh = NULL;
+	else
+		_mesh = g->_meshes + meshNum;
+	_depth = READ_LE_UINT32(data + 80);
+	int parentPtr = READ_LE_UINT32(data + 84);
+	_numChildren = READ_LE_UINT32(data + 88);
+	int childPtr = READ_LE_UINT32(data + 92);
+	int siblingPtr = READ_LE_UINT32(data + 96);
+	_pivot = Graphics::get_vector3d(data + 100);
+	_pos = Graphics::get_vector3d(data + 112);
+	_pitch = get_float(data + 124);
+	_yaw = get_float(data + 128);
+	_roll = get_float(data + 132);
+	_animPos.set(0,0,0);
+	_animPitch = 0;
+	_animYaw = 0;
+	_animRoll = 0;
+	_sprite = NULL;
+
+	data += 184;
+
+	if (parentPtr != 0) {
+		_parent = hierNodes + READ_LE_UINT32(data);
+		data += 4;
+	} else
+		_parent = NULL;
+	if (childPtr != 0) {
+		_child = hierNodes + READ_LE_UINT32(data);
+		data += 4;
+	} else
+		_child = NULL;
+	if (siblingPtr != 0) {
+		_sibling = hierNodes + READ_LE_UINT32(data);
+		data += 4;
+	} else
+		_sibling = NULL;
+
+	_meshVisible = true;
+	_hierVisible = true;
+	_initialized = true;
+}
+
 void ModelNode::draw() const {
 	g_driver->drawHierachyNode(this);
 }
@@ -611,31 +651,6 @@ void ModelNode::removeSprite(Sprite *sprite) {
 		prev = curr;
 		curr = curr->_next;
 	}
-}
-
-void Mesh::draw() const {
-	int winX1, winY1, winX2, winY2;
-	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
-	if (winX1 != -1 && winY1 != -1 && winX2 != -1 && winY2 != -1) {
-		g_winX1 = MIN(g_winX1, winX1);
-		g_winY1 = MIN(g_winY1, winY1);
-		g_winX2 = MAX(g_winX2, winX2);
-		g_winY2 = MAX(g_winY2, winY2);
-	}
-
-	if (_lightingMode == 0)
-		g_driver->disableLights();
-
-	for (int i = 0; i < _numFaces; i++)
-		_faces[i].draw(_vertices, _vertNormals, _textureVerts);
-
-	if (_lightingMode == 0)
-		g_driver->enableLights();
-}
-
-void MeshFace::draw(float *vertices, float *vertNormals, float *textureVerts) const {
-	_material->select();
-	g_driver->drawModelFace(this, vertices, vertNormals, textureVerts);
 }
 
 } // end of namespace Grim
