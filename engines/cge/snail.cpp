@@ -303,10 +303,10 @@ void CGEEngine::pocFul() {
 
 	_hero->park();
 	SNPOST(SNWAIT, -1, -1, _hero);
-	SNPOST(SNSEQ, -1, POC_FUL, _hero);
+	SNPOST(SNSEQ, -1, kSeqPocketFull, _hero);
 	SNPOST(SNSOUND, -1, 2, _hero);
 	SNPOST(SNWAIT, -1, -1, _hero);
-	SNPOST(SNSAY,  1, POC_FUL_TEXT, _hero);
+	SNPOST(SNSAY,  1, kPocketFull, _hero);
 }
 
 void CGEEngine::hide1(Sprite *spr) {
@@ -1006,7 +1006,7 @@ void Snail::runCom() {
 			case SNSAY      :
 				if (spr && _talkEnable) {
 					if (spr == _hero && spr->seqTest(-1))
-						spr->step(HTALK);
+						spr->step(kSeqHTalk);
 					_text->say(_text->getText(snc->_val), spr);
 					_sys->_funDel = kHeroFun0;
 				}
@@ -1020,7 +1020,7 @@ void Snail::runCom() {
 			case SNTIME     :
 				if (spr && _talkEnable) {
 					if (spr == _hero && spr->seqTest(-1))
-						spr->step(HTALK);
+						spr->step(kSeqHTalk);
 					sayTime(spr);
 				}
 				break;

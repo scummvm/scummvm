@@ -234,7 +234,7 @@ void WALK::reach(Sprite *spr, int mode) {
 	}
 	// note: insert SNAIL commands in reverse order
 	SNINSERT(SNPAUSE, -1, 64, NULL);
-	SNINSERT(SNSEQ, -1, TSEQ + mode, this);
+	SNINSERT(SNSEQ, -1, kTSeq + mode, this);
 	if (spr) {
 		SNINSERT(SNWAIT,  -1, -1, _hero); /////--------$$$$$$$
 		//SNINSERT(SNWALK, -1, -1, spr);
@@ -244,7 +244,7 @@ void WALK::reach(Sprite *spr, int mode) {
 }
 
 void WALK::noWay() {
-	_vm->trouble(NO_WAY, NO_WAY_TEXT);
+	_vm->trouble(kSeqNoWay, kNoWay);
 }
 
 bool WALK::find1Way(Cluster c) {
