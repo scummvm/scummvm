@@ -58,9 +58,10 @@
 #endif
 
 BadaAppForm* systemStart(Osp::App::Application* app);
-void systemError(const char* format, ...);
+void systemError(const char* message);
 
-#define USER_MESSAGE_EXIT 1000
+#define USER_MESSAGE_EXIT     1000
+#define USER_MESSAGE_EXIT_ERR 1001
 
 //
 // BadaSystem
@@ -72,12 +73,13 @@ class BadaSystem : public ModularBackend,
   ~BadaSystem();
 
   result Construct();
+  void closeAudio();
   void closeGraphics();
   void destroyBackend();
   void setMute(bool on);
   void setVolume(bool up, bool minMax);
-  void fatalError(Osp::Base::String message);
-  bool isClosing() {return appForm->isClosing();  }
+  void exitSystem();
+  bool isClosing() { return appForm->isClosing(); }
 
   BadaGraphicsManager* getGraphics() {
     return (BadaGraphicsManager*) _graphicsManager;

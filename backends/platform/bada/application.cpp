@@ -65,10 +65,25 @@ bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry,
 }
 
 void BadaScummVM::OnUserEventReceivedN(RequestId requestId, 
-                                       Osp::Base::Collection::IList* pArgs) {
+                                       Osp::Base::Collection::IList* args) {
   logEntered();
 
   if (requestId == USER_MESSAGE_EXIT) {
+    Terminate();
+  }
+  else if (requestId == USER_MESSAGE_EXIT_ERR) {
+    String* message = null;
+    if (args) {
+      message = (String*) args->GetAt(0);
+    }
+    if (!message) {
+      message = new String("Unknown error");
+    }
+    
+    MessageBox messageBox;
+    messageBox.Construct(L"Fatal Error", *message, MSGBOX_STYLE_OK);
+    int modalResult;
+    messageBox.ShowAndWait(modalResult);
     Terminate();
   }
 }

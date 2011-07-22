@@ -106,20 +106,20 @@ bool BadaGraphicsManager::loadEgl() {
 
   eglDisplay = eglGetDisplay((EGLNativeDisplayType) EGL_DEFAULT_DISPLAY);
   if (EGL_NO_DISPLAY == eglDisplay) {
-    systemError("eglGetDisplay() failed. [0x%x]\n", eglGetError());
+    systemError("eglGetDisplay() failed");
     return false;
   }
   
   if (EGL_FALSE == eglInitialize(eglDisplay, null, null) || 
       EGL_SUCCESS != eglGetError()) {
-    systemError("eglInitialize() failed. [0x%x]\n", eglGetError());
+    systemError("eglInitialize() failed");
     return false;
   }
 
   if (EGL_FALSE == eglChooseConfig(eglDisplay, eglConfigList, 
                                    &eglConfig, 1, &numConfigs) ||
       EGL_SUCCESS != eglGetError()) {
-    systemError("eglChooseConfig() failed. [0x%x]\n", eglGetError());
+    systemError("eglChooseConfig() failed");
     return false;
   }
 
@@ -131,8 +131,7 @@ bool BadaGraphicsManager::loadEgl() {
   eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, 
                                       (EGLNativeWindowType)appForm, null);
   if (EGL_NO_SURFACE == eglSurface || EGL_SUCCESS != eglGetError()) {
-    systemError("eglCreateWindowSurface() failed. EGL_NO_SURFACE [0x%x]\n", 
-                eglGetError());
+    systemError("eglCreateWindowSurface() failed. EGL_NO_SURFACE");
     return false;
   }
   
@@ -140,13 +139,13 @@ bool BadaGraphicsManager::loadEgl() {
                                 EGL_NO_CONTEXT, eglContextList);
   if (EGL_NO_CONTEXT == eglContext ||
       EGL_SUCCESS != eglGetError()) {
-    systemError("eglCreateContext() failed. [0x%x]\n", eglGetError());
+    systemError("eglCreateContext() failed");
     return false;
   }
 
   if (false == eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) ||
       EGL_SUCCESS != eglGetError()) {
-    systemError("eglMakeCurrent() failed. [0x%x]\n", eglGetError());
+    systemError("eglMakeCurrent() failed");
     return false;
   }
 

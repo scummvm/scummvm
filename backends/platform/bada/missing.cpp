@@ -35,7 +35,7 @@
 
 #define BUF_SIZE 255
 
-void systemError(const char* format, ...);
+void systemError(const char* message);
 
 C_LINKAGE_BEGIN
 
@@ -43,8 +43,9 @@ int __errno; // for overridden method in saves/default/default-saves.cpp
 
 void __assert_func(const char* file, int line, 
                    const char* func, const char* err) {
-  systemError("ScummVM internal error: %s %d %s %s",
-              file, line, func, err);
+  char buffer[BUF_SIZE];
+  snprintf(buffer, sizeof(buffer), "Error: %s %d %s %s", file, line, func, err);
+  systemError(buffer);
 }
 
 void stderr_fprintf(void*, const char* format, ...) {

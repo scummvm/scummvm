@@ -136,21 +136,14 @@ void BadaAppForm::terminate() {
   }
 }
 
-void BadaAppForm::fatalError(Osp::Base::String message) {
-  AppLog("Fatal system error: %S", message.GetPointer());
+void BadaAppForm::exitSystem() {
+  state = ErrorState;
 
   if (gameThread) {
     gameThread->Stop();
     delete gameThread;
     gameThread = null;
   }
-  
-  state = ErrorState;
-  MessageBox messageBox;
-  messageBox.Construct(L"Fatal Error", message, MSGBOX_STYLE_OK);
-  int modalResult;
-  messageBox.ShowAndWait(modalResult);
-  Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, null);
 }
 
 result BadaAppForm::OnInitializing(void) {
@@ -267,15 +260,15 @@ void BadaAppForm::OnTouchDoublePressed(const Control& source,
 
   switch (shortcutIndex) {
   case SHORTCUT_F5:
-    g_system->displayMessageOnOSD(_("Sweep = Game Menu"));
+    g_system->displayMessageOnOSD(_("Sweep: Game Menu"));
     break;
 
   case SHORTCUT_ESCAPE:
-    g_system->displayMessageOnOSD(_("Sweep = Escape"));
+    g_system->displayMessageOnOSD(_("Sweep: Escape"));
     break;
 
   default:
-    g_system->displayMessageOnOSD(_("Sweep = Swap Left/Right Mouse"));
+    g_system->displayMessageOnOSD(_("Sweep: Swap Left/Right Buttons"));
     shortcutIndex = SHORTCUT_SWAP_MOUSE;
   }
 }
@@ -354,10 +347,6 @@ void BadaAppForm::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
   case KEY_SIDE_DOWN:
     g_system->displayMessageOnOSD(_("Volume Down"));
     ((BadaSystem*) g_system)->setVolume(false, true);
-    return;
-
-  case KEY_CAMERA:
-    pushKey(Common::KEYCODE_F5);
     return;
 
   default:

@@ -52,7 +52,6 @@ int OspMain(int argc, char *pArgv[]) {
 
 	r = Osp::App::Application::Execute(BadaScummVM::createInstance, pArgs);
 	if (IsFailed(r)) {
-		systemError("ScummVM failed: [%s].", GetErrorMessage(r));
 		r &= 0x0000FFFF;
 	}
 

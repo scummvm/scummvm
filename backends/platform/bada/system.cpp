@@ -306,12 +306,7 @@ void BadaSystem::initBackend() {
 }
 
 void BadaSystem::destroyBackend() {
-  if (audioThread) {
-    audioThread->Stop();
-    audioThread->Join();
-    delete audioThread;
-    audioThread = 0;
-  }
+  closeAudio();
 
   if (_graphicsManager) {
     delete _graphicsManager;
@@ -381,13 +376,14 @@ void BadaSystem::getTimeAndDate(TimeDate &td) const {
 }
 
 void BadaSystem::fatalError() {
-  fatalError(L"ScummVM: Fatal internal error.");
+  systemError("ScummVM: Fatal internal error.");
 }
 
-void BadaSystem::fatalError(Osp::Base::String message) {
+void BadaSystem::exitSystem() {
   if (appForm) {
+    closeAudio();
     closeGraphics();
-    appForm->fatalError(message);
+    appForm->exitSystem();
   }
 }
 
@@ -403,6 +399,15 @@ Common::SeekableReadStream* BadaSystem::createConfigReadStream() {
 Common::WriteStream* BadaSystem::createConfigWriteStream() {
   BadaFilesystemNode file(DEFAULT_CONFIG_FILE);
   return file.createWriteStream();
+}
+
+void BadaSystem::closeAudio() {
+  if (audioThread) {
+    audioThread->Stop();
+    audioThread->Join();
+    delete audioThread;
+    audioThread = 0;
+  }
 }
 
 void BadaSystem::closeGraphics() {
@@ -449,17 +454,17 @@ BadaAppForm* systemStart(Osp::App::Application* app) {
 //
 // display a fatal error notification
 //
-void systemError(const char* format, ...) {
-  va_list ap;
-  char buffer[255];
+void systemError(const char* message) {
+  AppLog("Fatal system error: %s", message);
 
-  va_start(ap, format);
-  vsnprintf(buffer, sizeof(buffer), format, ap);
-  va_end(ap);
+	ArrayList* args = new ArrayList();
+	args->Construct();
+  args->Add(*(new String(message)));
+  Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT_ERR, args);
 
   if (g_system) {
     BadaSystem* system = (BadaSystem*) g_system;
-    system->fatalError(format);
+    system->exitSystem();
   }
 }
 

@@ -13,7 +13,9 @@ Build instructions:
  alias mmake=/cygdrive/c/MinGW/bin/mingw32-make.exe
  export BADA_SDK=/cygdrive/c/bada/1.2.1
  export ARM_BIN=c:/bada/1.2.1/Tools/Toolchains/ARM/bin
- export CPPFLAGS="-fpic -fshort-wchar -mcpu=cortex-a8 -mfpu=vfpv3 -mfloat-abi=hard -mlittle-endian -mthumb-interwork -Wno-psabi"
+ export CPPFLAGS="-fpic -fshort-wchar -mcpu=cortex-a8 -mfpu=vfpv3 \
+                  -mfloat-abi=hard -mlittle-endian -mthumb-interwork -Wno-psabi \
+                  -fno-strict-aliasing -fno-short-enums"
  export LDFLAGS="-nostdlib -lc-newlib -lm-newlib -LC:/bada/1.2.1/Model/Wave_LP1/Target"
  #export PATH=${BADA_SDK}/Tools/Toolchains/Win32/bin:${PATH}
  export PATH=${BADA_SDK}/Tools/Toolchains/ARM/bin:~/utils:${PATH}
@@ -63,9 +65,11 @@ Build instructions:
 
 4. Build the ScummVM base library:
 
- ./configure --host=bada --enable-debug
+  ./configure --host=bada --enable-release
 
-Note the debug build will target the Win32 simulator 
+  To target the Win32 simulator:
+
+ ./configure --host=bada --enable-debug
 
 5. Build the front end application using BADA-Ide:
 
@@ -73,4 +77,3 @@ Note the debug build will target the Win32 simulator
  outside of the scummvm package. Start the BADA IDE then 
  choose this folder as the eclipse workspace. Click
  Project / Build.
-==

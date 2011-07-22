@@ -52,7 +52,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   bool pollEvent(Common::Event& event);
   bool isClosing() { return state == ClosingState; }
   void pushKey(Common::KeyCode keycode);
-  void fatalError(Osp::Base::String message);
+  void exitSystem();
 
  private:
   Object* Run();
