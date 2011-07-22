@@ -29,10 +29,6 @@
 
 namespace CGE {
 
-#define EMS_INT     0x67
-#define PAGE_MASK   0x3FFF
-#define SIZ(n)      ((n) ? ((long)n) : (0x10000L))
-
 
 enum EMM_FUN {
 	GET_STATUS = 0x40, GET_FRAME, GET_SIZE,     OPEN_HANDLE,  MAP_PAGE,

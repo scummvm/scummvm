@@ -69,27 +69,26 @@ namespace CGE {
 #define kSystemRate    6   // 12 Hz
 #define kHeroFun0      (40 * 12)
 #define kHeroFun1      ( 2 * 12)
-#define GETNAME_PROMPT 50
-#define GETNAME_TITLE  51
-#define TSEQ           96
-#define NOMUSIC_TEXT   98
-#define BADSVG_TEXT    99
-#define HTALK          (TSEQ + 4)
-#define TOO_FAR        (TSEQ + 5)
-#define NO_WAY         (TSEQ + 5)
-#define POC_FUL        (TSEQ + 5)
-#define OFF_USE        (TSEQ + 6)
-#define QUIT_TITLE     200
-#define QUIT_TEXT      201
-#define NOQUIT_TEXT    202
-#define DEMO_TEXT      300
-#define NOSOUND_TEXT   310
-#define OFF_USE_COUNT  600
-#define OFF_USE_TEXT   601
-#define NO_WAY_TEXT    671
-#define TOO_FAR_TEXT   681
-#define POC_FUL_TEXT   691
-#define A_C_D_TEXT     777
+#define kGetNamePrompt 50
+#define kGetNameTitle  51
+#define kTSeq          96
+#define kNoMusic       98
+#define kBadSVG        99
+#define kSeqHTalk      (kTSeq + 4)
+#define kSeqTooFar     (kTSeq + 5)
+#define kSeqNoWay      (kTSeq + 5)
+#define kSeqPocketFull (kTSeq + 5)
+#define kSeqOffUse     (kTSeq + 6)
+#define kQuitTitle     200
+#define kQuit          201
+#define kNoQuit        202
+#define kDemo          300
+#define kOffUseCount   600
+#define kOffUse        601
+#define kNoWay         671
+#define kTooFar        681
+#define kPocketFull    691
+#define kAltCtrlDel    777
 #define kPanHeight     40
 #define kScrWidth      320
 #define kScrHeight     200

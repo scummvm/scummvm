@@ -139,7 +139,7 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 		uint16 checksum;
 		s.syncAsUint16LE(checksum);
 		if (checksum != SVGCHKSUM)
-			error("%s", _text->getText(BADSVG_TEXT));
+			error("%s", _text->getText(kBadSVG));
 	}
 }
 
@@ -418,13 +418,13 @@ void CGEEngine::trouble(int seq, int txt) {
 void CGEEngine::offUse() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::offUse()");
 
-	trouble(OFF_USE, OFF_USE_TEXT + new_random(_offUseCount));
+	trouble(kSeqOffUse, kOffUse + new_random(_offUseCount));
 }
 
 void CGEEngine::tooFar() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::tooFar()");
 
-	trouble(TOO_FAR, TOO_FAR_TEXT);
+	trouble(kSeqTooFar, kTooFar);
 }
 
 void CGEEngine::loadHeroXY() {
@@ -513,9 +513,9 @@ void CGEEngine::quit() {
 			SNPOST_(SNKILL, -1, 0, Vmenu::_addr);
 			resetQSwitch();
 		} else {
-			QuitMenu[0]._text = _text->getText(QUIT_TEXT);
-			QuitMenu[1]._text = _text->getText(NOQUIT_TEXT);
-			(new Vmenu(this, QuitMenu, -1, -1))->setName(_text->getText(QUIT_TITLE));
+			QuitMenu[0]._text = _text->getText(kQuit);
+			QuitMenu[1]._text = _text->getText(kNoQuit);
+			(new Vmenu(this, QuitMenu, -1, -1))->setName(_text->getText(kQuitTitle));
 			SNPOST_(SNSEQ, 123, 1, NULL);
 			keyClick();
 		}
@@ -526,7 +526,7 @@ void CGEEngine::quit() {
 void CGEEngine::AltCtrlDel() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::AltCtrlDel()");
 
-	SNPOST_(SNSAY,  -1, A_C_D_TEXT, _hero);
+	SNPOST_(SNSAY,  -1, kAltCtrlDel, _hero);
 }
 
 void CGEEngine::miniStep(int stp) {
@@ -771,22 +771,22 @@ void System::touch(uint16 mask, int x, int y) {
 			_vm->switchDebug();
 			break;
 		case F3:
-			_hero->step(TSEQ + 4);
+			_hero->step(kTSeq + 4);
 			break;
 		case F4:
-			_hero->step(TSEQ + 5);
+			_hero->step(kTSeq + 5);
 			break;
 		case F5:
-			_hero->step(TSEQ + 0);
+			_hero->step(kTSeq + 0);
 			break;
 		case F6:
-			_hero->step(TSEQ + 1);
+			_hero->step(kTSeq + 1);
 			break;
 		case F7:
-			_hero->step(TSEQ + 2);
+			_hero->step(kTSeq + 2);
 			break;
 		case F8:
-			_hero->step(TSEQ + 3);
+			_hero->step(kTSeq + 3);
 			break;
 		case F9:
 			_sys->_funDel = 1;
@@ -927,7 +927,7 @@ void CGEEngine::switchMusic() {
 		}
 	} else {
 		if (Startup::_core < CORE_HIG)
-			SNPOST(SNINF, -1, NOMUSIC_TEXT, NULL);
+			SNPOST(SNINF, -1, kNoMusic, NULL);
 		else {
 			SNPOST_(SNSEQ, 122, (_music = !_music), NULL);
 			keyClick();
@@ -953,9 +953,9 @@ void CGEEngine::takeName() {
 		SNPOST_(SNKILL, -1, 0, GetText::_ptr);
 	else {
 		memset(_usrFnam, 0, 15);
-		GetText *tn = new GetText(this, _text->getText(GETNAME_PROMPT), _usrFnam, 8);
+		GetText *tn = new GetText(this, _text->getText(kGetNamePrompt), _usrFnam, 8);
 		if (tn) {
-			tn->setName(_text->getText(GETNAME_TITLE));
+			tn->setName(_text->getText(kGetNameTitle));
 			tn->center();
 			tn->gotoxy(tn->_x, tn->_y - 10);
 			tn->_z = 126;
@@ -1417,7 +1417,7 @@ void CGEEngine::mainLoop() {
 				SNPOST(SNINF,  -1, _demoText, NULL);
 				SNPOST(SNLABEL, -1, -1, NULL);
 				if (_text->getText(++_demoText) == NULL)
-					_demoText = DEMO_TEXT + 1;
+					_demoText = kDemo + 1;
 			}
 			//FIXME: tc = TimerCount;
 		}

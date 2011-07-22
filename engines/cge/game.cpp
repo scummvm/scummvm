@@ -43,35 +43,16 @@ uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b) {
 	return x;
 }
 
-/* Useless?
-uint8 *Mark(DAC *pal) {
-#define f(c) (c ^ 63)
-	uint8 *x = new uint8[256];
-	if (x) {
-		uint16 i;
-		for (i = 0; i < 256; i++) {
-			x[i] = closest(pal, mkDax(f(pal[i]._R),
-			                          f(pal[i]._G),
-			                          f(pal[i]._B)));
-		}
-	}
-	return x;
-#undef f
-}
-*/
-
 int Fly::_l = 20,
     Fly::_t = 40,
     Fly::_r = 110,
     Fly::_b = 100;
-
 
 Fly::Fly(CGEEngine *vm, Bitmap **shpl)
 	: Sprite(vm, shpl), _tx(0), _ty(0), _vm(vm) {
 	step(new_random(2));
 	gotoxy(_l + new_random(_r - _l - _w), _t + new_random(_b - _t - _h));
 }
-
 
 void Fly::tick() {
 	step();
