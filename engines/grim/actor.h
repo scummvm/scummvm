@@ -103,7 +103,7 @@ public:
 	Graphics::Vector3d getPuckVector() const;
 	void turn(int dir);
 
-	void sayLine(const char *msg, const char *msgId, bool background);
+	void sayLine(const char *msgId, bool background);
 	// When we clean all text objects we don't want the actors to clean their
 	// objects again since they're already freed
 	void lineCleanup() { _sayLineText = 0; }

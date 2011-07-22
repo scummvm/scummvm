@@ -479,7 +479,7 @@ void L1_SetSayLineDefaults() {
 void L1_SayLine() {
 	int vol = 127, buffer = 64, paramId = 1, x = -1, y = -1;
 	bool background = true;
-	char msgId[50];
+	const char *msgId = NULL;;
 	Common::String msg;
 	lua_Object paramObj = lua_getparam(paramId++);
 
@@ -500,14 +500,13 @@ void L1_SayLine() {
 					if (lua_isnumber(paramObj))
 						background = false;
 					else {
-						const char *tmpstr = lua_getstring(paramObj);
-						msg = parseMsgText(tmpstr, msgId);
+						msgId = lua_getstring(paramObj);
 					}
 				}
 				paramObj = lua_getparam(paramId++);
 			}
 
-			actor->sayLine(msg.c_str(), msgId, background); //background, vol, pan, x, y
+			actor->sayLine(msgId, background); //background, vol, pan, x, y
 		}
 	}
 }

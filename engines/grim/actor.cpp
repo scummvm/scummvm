@@ -817,9 +817,11 @@ float Actor::getYawTo(Graphics::Vector3d p) const {
 		return atan2(-dpos.x(), dpos.y()) * (180.f / LOCAL_PI);
 }
 
-void Actor::sayLine(const char *msg, const char *msgId, bool background) {
-	assert(msg);
+void Actor::sayLine(const char *msgId, bool background) {
 	assert(msgId);
+
+	char id[50];
+	Common::String msg = parseMsgText(msgId, id);
 
 	if (msgId[0] == 0) {
 		error("Actor::sayLine: No message ID for text");
@@ -833,7 +835,7 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 	// When Domino yells at Manny (a SMUSH movie) he does it with
 	// a SayLine request rather than as part of the movie!
 
-	Common::String soundName = msgId;
+	Common::String soundName = id;
 	soundName += ".wav";
 
 	if (_talkSoundName == soundName)
@@ -889,7 +891,7 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 		if (g_grim->getMode() == ENGINE_MODE_SMUSH)
 			g_grim->killTextObjects();
 		if (m == GrimEngine::TextOnly || g_grim->getMode() == ENGINE_MODE_SMUSH) {
-			textObject->setDuration(500 + strlen(msg) * 15 * (11 - g_grim->getTextSpeed()));
+			textObject->setDuration(500 + msg.size() * 15 * (11 - g_grim->getTextSpeed()));
 		}
 		if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
 			textObject->setX(640 / 2);
@@ -903,7 +905,7 @@ void Actor::sayLine(const char *msg, const char *msgId, bool background) {
 				textObject->setY(_winY1);
 			}
 		}
-		textObject->setText(msg);
+		textObject->setText(msgId);
 		g_grim->registerTextObject(textObject);
 		if (g_grim->getMode() != ENGINE_MODE_SMUSH)
 			_sayLineText = textObject->getId();
