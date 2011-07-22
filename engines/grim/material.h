@@ -54,7 +54,7 @@ public:
 	void select() const;
 
 	// Set which image in an animated texture to use
-	void setNumber(int n);
+	void setNumber(int n) { _currImage = n; }
 
 	int getNumImages() const;
 	int getCurrentImage() const;
