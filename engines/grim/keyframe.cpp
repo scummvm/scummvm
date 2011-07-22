@@ -153,7 +153,7 @@ KeyframeAnim::~KeyframeAnim() {
 	g_resourceloader->uncacheKeyframe(this);
 }
 
-bool KeyframeAnim::animate(Model::HierNode *nodes, int num, float time, float fade, bool tagged) const {
+bool KeyframeAnim::animate(ModelNode *nodes, int num, float time, float fade, bool tagged) const {
 	// Without this sending the bread down the tube in "mo" often crashes,
 	// because it goes outside the bounds of the array of the nodes.
 	if (num >= _numJoints)
@@ -226,7 +226,7 @@ KeyframeAnim::KeyframeNode::~KeyframeNode() {
 	delete[] _entries;
 }
 
-bool KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, float fade, bool useDelta) const {
+bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fade, bool useDelta) const {
 	if (_numEntries == 0)
 		return false;
 

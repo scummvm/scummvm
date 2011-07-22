@@ -31,6 +31,8 @@ namespace Grim {
 
 class TextSplitter;
 class Material;
+class Mesh;
+class ModelNode;
 class CMap;
 
 struct Sprite {
@@ -60,82 +62,10 @@ public:
 	Common::String _fname;
 	ObjectPtr<CMap> _cmap;
 
-	struct Geoset;
-	struct Mesh;
-	struct HierNode {
-		HierNode() : _initialized(false) { }
-		~HierNode();
-		void loadBinary(const char *&data, HierNode *hierNodes, const Geoset *g);
-		void draw() const;
-		void addChild(HierNode *child);
-		void removeChild(HierNode *child);
-		void setMatrix(Graphics::Matrix4 matrix);
-		void update();
-		void addSprite(Sprite *sprite);
-		void removeSprite(Sprite *sprite);
-
-		char _name[64];
-		Mesh *_mesh;
-		int _flags, _type;
-		int _depth, _numChildren;
-		HierNode *_parent, *_child, *_sibling;
-		Graphics::Vector3d _pos, _pivot;
-		float _pitch, _yaw, _roll;
-		Graphics::Vector3d _animPos;
-		float _animPitch, _animYaw, _animRoll;
-		bool _meshVisible, _hierVisible;
-		bool _initialized;
-		Graphics::Matrix4 _matrix;
-		Graphics::Matrix4 _localMatrix;
-		Graphics::Matrix4 _pivotMatrix;
-		Sprite* _sprite;
-	};
-
-	HierNode *copyHierarchy();
+	ModelNode *copyHierarchy();
 	int getNumNodes() const { return _numHierNodes; }
 
 //private:
-	struct Face {
-		int loadBinary(const char *&data, Material *materials[]);
-		void draw(float *vertices, float *vertNormals, float *textureVerts) const;
-		void changeMaterial(Material *material);
-		~Face();
-
-		Material *_material;
-		int _type, _geo, _light, _tex;
-		float _extraLight;
-		int _numVertices;
-		int *_vertices, *_texVertices;
-		Graphics::Vector3d _normal;
-	};
-
-	struct Mesh {
-		void loadBinary(const char *&data, Material *materials[]);
-		void loadText(TextSplitter *ts, Material *materials[]);
-		void changeMaterials(Material *materials[]);
-		void draw() const;
-		void update();
-		Mesh() : _numFaces(0) { }
-		~Mesh();
-
-		char _name[32];
-		float _radius;
-		int _shadow, _geometryMode, _lightingMode, _textureMode;
-
-		int _numVertices;
-		int *_materialid;
-		float *_vertices;		// sets of 3
-		float *_verticesI;
-		float *_vertNormals;	// sets of 3
-
-		int _numTextureVerts;
-		float *_textureVerts;	// sets of 2
-
-		int _numFaces;
-		Face *_faces;
-		Graphics::Matrix4 _matrix;
-	};
-
 	struct Geoset {
 		void loadBinary(const char *&data, Material *materials[]);
 		void loadText(TextSplitter *ts, Material *materials[]);
@@ -159,7 +89,80 @@ public:
 	Geoset *_geosets;
 	float _radius;
 	int _numHierNodes;
-	HierNode *_rootHierNode;
+	ModelNode *_rootHierNode;
+};
+
+class MeshFace {
+public:
+	int loadBinary(const char *&data, Material *materials[]);
+	void draw(float *vertices, float *vertNormals, float *textureVerts) const;
+	void changeMaterial(Material *material);
+	~MeshFace();
+
+	Material *_material;
+	int _type, _geo, _light, _tex;
+	float _extraLight;
+	int _numVertices;
+	int *_vertices, *_texVertices;
+	Graphics::Vector3d _normal;
+};
+
+class Mesh {
+public:
+	void loadBinary(const char *&data, Material *materials[]);
+	void loadText(TextSplitter *ts, Material *materials[]);
+	void changeMaterials(Material *materials[]);
+	void draw() const;
+	void update();
+	Mesh() : _numFaces(0) { }
+	~Mesh();
+
+	char _name[32];
+	float _radius;
+	int _shadow, _geometryMode, _lightingMode, _textureMode;
+
+	int _numVertices;
+	int *_materialid;
+	float *_vertices;		// sets of 3
+	float *_verticesI;
+	float *_vertNormals;	// sets of 3
+
+	int _numTextureVerts;
+	float *_textureVerts;	// sets of 2
+
+	int _numFaces;
+	MeshFace *_faces;
+	Graphics::Matrix4 _matrix;
+};
+
+class ModelNode {
+public:
+	ModelNode() : _initialized(false) { }
+	~ModelNode();
+	void loadBinary(const char *&data, ModelNode *hierNodes, const Model::Geoset *g);
+	void draw() const;
+	void addChild(ModelNode *child);
+	void removeChild(ModelNode *child);
+	void setMatrix(Graphics::Matrix4 matrix);
+	void update();
+	void addSprite(Sprite *sprite);
+	void removeSprite(Sprite *sprite);
+
+	char _name[64];
+	Mesh *_mesh;
+	int _flags, _type;
+	int _depth, _numChildren;
+	ModelNode *_parent, *_child, *_sibling;
+	Graphics::Vector3d _pos, _pivot;
+	float _pitch, _yaw, _roll;
+	Graphics::Vector3d _animPos;
+	float _animPitch, _animYaw, _animRoll;
+	bool _meshVisible, _hierVisible;
+	bool _initialized;
+	Graphics::Matrix4 _matrix;
+	Graphics::Matrix4 _localMatrix;
+	Graphics::Matrix4 _pivotMatrix;
+	Sprite* _sprite;
 };
 
 } // end of namespace Grim

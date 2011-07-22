@@ -25,8 +25,10 @@
 
 #include "common/memstream.h"
 
+#include "graphics/matrix4.h"
+
 #include "engines/grim/object.h"
-#include "engines/grim/model.h"
+
 
 namespace Grim {
 
@@ -34,6 +36,9 @@ namespace Grim {
 
 typedef uint32 tag32;
 
+class CMap;
+class Model;
+class ModelNode;
 class TextSplitter;
 
 class Costume : public Object {
@@ -55,7 +60,7 @@ public:
 	void stopChore(int num);
 	void fadeChoreIn(int chore, int msecs);
 	void fadeChoreOut(int chore, int msecs);
-	Model::HierNode *getModelNodes();
+	ModelNode *getModelNodes();
 	Model *getModel();
 	void setColormap(const Common::String &map);
 	void stopChores();
@@ -183,9 +188,9 @@ private:
 	Chore *_chores;
 	Common::List<Chore*> _playingChores;
 	Graphics::Matrix4 _matrix;
-	Model::HierNode *_joint1Node;
-	Model::HierNode *_joint2Node;
-	Model::HierNode *_joint3Node;
+	ModelNode *_joint1Node;
+	ModelNode *_joint2Node;
+	ModelNode *_joint3Node;
 
 	float _headPitch;
 	float _headYaw;

@@ -27,6 +27,8 @@
 
 namespace Grim {
 
+class ModelNode;
+
 class KeyframeAnim : public Object {
 public:
 	KeyframeAnim(const Common::String &filename, const char *data, int len);
@@ -34,7 +36,7 @@ public:
 
 	void loadBinary(const char *data, int len);
 	void loadText(TextSplitter &ts);
-	bool animate(Model::HierNode *nodes, int num, float time, float fade, bool tagged) const;
+	bool animate(ModelNode *nodes, int num, float time, float fade, bool tagged) const;
 
 	float getLength() const { return _numFrames / _fps; }
 	const Common::String &getFilename() const { return _fname; }
@@ -66,7 +68,7 @@ private:
 		void loadText(TextSplitter &ts);
 		~KeyframeNode();
 
-		bool animate(Model::HierNode &node, float frame, float fade, bool useDelta) const;
+		bool animate(ModelNode &node, float frame, float fade, bool useDelta) const;
 
 		char _meshName[32];
 		int _numEntries;

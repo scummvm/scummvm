@@ -626,10 +626,10 @@ void L1_GetActorNodeLocation() {
 
 	int nodeId = (int)lua_getnumber(nodeObj);
 
-	Model::HierNode *allNodes = actor->getCurrentCostume()->getModelNodes();
-	Model::HierNode *node = allNodes + nodeId;
+	ModelNode *allNodes = actor->getCurrentCostume()->getModelNodes();
+	ModelNode *node = allNodes + nodeId;
 
-	Model::HierNode *root = node;
+	ModelNode *root = node;
 	while (root->_parent) {
 		root = root->_parent;
 	}

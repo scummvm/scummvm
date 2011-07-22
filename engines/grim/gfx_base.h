@@ -36,6 +36,10 @@ class PrimitiveObject;
 class Font;
 class TextObject;
 
+class ModelNode;
+class Mesh;
+class MeshFace;
+
 enum colorFormat {
 	BM_RGB565 = 1,    // Grim Fandango
 	BM_RGB1555 = 2,   // EMI-PS2
@@ -56,7 +60,7 @@ public:
 	virtual void clearScreen() = 0;
 	virtual void flipBuffer() = 0;
 
-	virtual void getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) = 0;
+	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
 	virtual void startActorDraw(Graphics::Vector3d pos, float scale, float yaw, float pitch, float roll) = 0;
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;
@@ -71,8 +75,8 @@ public:
 	virtual void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) = 0;
 	virtual void translateViewpointFinish() = 0;
 
-	virtual void drawHierachyNode(const Model::HierNode *node) = 0;
-	virtual void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
+	virtual void drawHierachyNode(const ModelNode *node) = 0;
+	virtual void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
 	virtual void drawSprite(const Sprite *sprite) = 0;
 
 	virtual void enableLights() = 0;

@@ -118,7 +118,7 @@ void Model::loadBinary(const char *&data, CMap *cmap) {
 		_geosets[i].loadBinary(data, _materials);
 	_numHierNodes = READ_LE_UINT32(data + 4);
 	data += 8;
-	_rootHierNode = new HierNode[_numHierNodes];
+	_rootHierNode = new ModelNode[_numHierNodes];
 	for (int i = 0; i < _numHierNodes; i++) {
 		_rootHierNode[i].loadBinary(data, _rootHierNode, &_geosets[0]);
 	}
@@ -146,7 +146,7 @@ Model::Geoset::~Geoset() {
 	delete[] _meshes;
 }
 
-void Model::Mesh::loadBinary(const char *&data, Material *materials[]) {
+void Mesh::loadBinary(const char *&data, Material *materials[]) {
 	memcpy(_name, data, 32);
 	_geometryMode = READ_LE_UINT32(data + 36);
 	_lightingMode = READ_LE_UINT32(data + 40);
@@ -158,7 +158,7 @@ void Model::Mesh::loadBinary(const char *&data, Material *materials[]) {
 	_verticesI = new float[_numVertices];
 	_vertNormals = new float[3 * _numVertices];
 	_textureVerts = new float[2 * _numTextureVerts];
-	_faces = new Face[_numFaces];
+	_faces = new MeshFace[_numFaces];
 	_materialid = new int[_numFaces];
 	data += 60;
 	for (int i = 0; i < 3 * _numVertices; i++) {
@@ -185,7 +185,7 @@ void Model::Mesh::loadBinary(const char *&data, Material *materials[]) {
 	data += 36;
 }
 
-Model::Mesh::~Mesh() {
+Mesh::~Mesh() {
 	delete[] _vertices;
 	delete[] _verticesI;
 	delete[] _vertNormals;
@@ -194,14 +194,14 @@ Model::Mesh::~Mesh() {
 	delete[] _materialid;
 }
 
-void Model::Mesh::update() {
+void Mesh::update() {
 }
 
-void Model::Face::changeMaterial(Material *material) {
+void MeshFace::changeMaterial(Material *material) {
 	_material = material;
 }
 
-int Model::Face::loadBinary(const char *&data, Material *materials[]) {
+int MeshFace::loadBinary(const char *&data, Material *materials[]) {
 	_type = READ_LE_UINT32(data + 4);
 	_geo = READ_LE_UINT32(data + 8);
 	_light = READ_LE_UINT32(data + 12);
@@ -237,20 +237,20 @@ int Model::Face::loadBinary(const char *&data, Material *materials[]) {
 	return materialPtr;
 }
 
-Model::Face::~Face() {
+MeshFace::~MeshFace() {
 	delete[] _vertices;
 	delete[] _texVertices;
 }
 
-Model::HierNode::~HierNode() {
-	HierNode *child = _child;
+ModelNode::~ModelNode() {
+	ModelNode *child = _child;
 	while (child) {
 		child->_parent = NULL;
 		child = child->_sibling;
 	}
 }
 
-void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, const Geoset *g) {
+void ModelNode::loadBinary(const char *&data, ModelNode *hierNodes, const Model::Geoset *g) {
 	memcpy(_name, data, 64);
 	_flags = READ_LE_UINT32(data + 64);
 	_type = READ_LE_UINT32(data + 72);
@@ -302,9 +302,9 @@ void Model::draw() const {
 	_rootHierNode->draw();
 }
 
-Model::HierNode *Model::copyHierarchy() {
-	HierNode *result = new HierNode[_numHierNodes];
-	memcpy(result, _rootHierNode, _numHierNodes * sizeof(HierNode));
+ModelNode *Model::copyHierarchy() {
+	ModelNode *result = new ModelNode[_numHierNodes];
+	memcpy(result, _rootHierNode, _numHierNodes * sizeof(ModelNode));
 	// Now adjust pointers
 	for (int i = 0; i < _numHierNodes; i++) {
 		if (result[i]._parent)
@@ -350,7 +350,7 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 
 	ts->expectString("section: hierarchydef");
 	ts->scanString("hierarchy nodes %d", 1, &_numHierNodes);
-	_rootHierNode = new HierNode[_numHierNodes];
+	_rootHierNode = new ModelNode[_numHierNodes];
 	for (int i = 0; i < _numHierNodes; i++) {
 		int num, mesh, parent, child, sibling, numChildren;
 		unsigned int flags, type;
@@ -436,12 +436,12 @@ void Model::Geoset::loadText(TextSplitter *ts, Material *materials[]) {
 	}
 }
 
-void Model::Mesh::changeMaterials(Material *materials[]) {
+void Mesh::changeMaterials(Material *materials[]) {
 	for (int i = 0; i < _numFaces; i++)
 		_faces[i].changeMaterial(materials[_materialid[i]]);
 }
 
-void Model::Mesh::loadText(TextSplitter *ts, Material* materials[]) {
+void Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 	ts->scanString("name %32s", 1, _name);
 	ts->scanString("radius %f", 1, &_radius);
 
@@ -490,7 +490,7 @@ void Model::Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 	}
 
 	ts->scanString("faces %d", 1, &_numFaces);
-	_faces = new Face[_numFaces];
+	_faces = new MeshFace[_numFaces];
 	_materialid = new int[_numFaces];
 	for (int i = 0; i < _numFaces; i++) {
 		int num, materialid, geo, light, tex, verts;
@@ -536,20 +536,20 @@ void Model::Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 	}
 }
 
-void Model::HierNode::draw() const {
+void ModelNode::draw() const {
 	g_driver->drawHierachyNode(this);
 }
 
-void Model::HierNode::addChild(HierNode *child) {
-	HierNode **childPos = &_child;
+void ModelNode::addChild(ModelNode *child) {
+	ModelNode **childPos = &_child;
 	while (*childPos)
 		childPos = &(*childPos)->_sibling;
 	*childPos = child;
 	child->_parent = this;
 }
 
-void Model::HierNode::removeChild(HierNode *child) {
-	HierNode **childPos = &_child;
+void ModelNode::removeChild(ModelNode *child) {
+	ModelNode **childPos = &_child;
 	while (*childPos && *childPos != child)
 		childPos = &(*childPos)->_sibling;
 	if (*childPos) {
@@ -558,11 +558,11 @@ void Model::HierNode::removeChild(HierNode *child) {
 	}
 }
 
-void Model::HierNode::setMatrix(Graphics::Matrix4 matrix) {
+void ModelNode::setMatrix(Graphics::Matrix4 matrix) {
 	_matrix = matrix;
 }
 
-void Model::HierNode::update() {
+void ModelNode::update() {
 	if (!_initialized)
 		return;
 
@@ -584,7 +584,7 @@ void Model::HierNode::update() {
 		_mesh->_matrix = _pivotMatrix;
 	}
 
-	HierNode *child = _child;
+	ModelNode *child = _child;
 	while (child) {
 		child->setMatrix(_matrix);
 		child->update();
@@ -593,12 +593,12 @@ void Model::HierNode::update() {
 	}
 }
 
-void Model::HierNode::addSprite(Sprite *sprite) {
+void ModelNode::addSprite(Sprite *sprite) {
 	sprite->_next = _sprite;
 	_sprite = sprite;
 }
 
-void Model::HierNode::removeSprite(Sprite *sprite) {
+void ModelNode::removeSprite(Sprite *sprite) {
 	Sprite* curr = _sprite;
 	Sprite* prev = NULL;
 	while (curr) {
@@ -613,7 +613,7 @@ void Model::HierNode::removeSprite(Sprite *sprite) {
 	}
 }
 
-void Model::Mesh::draw() const {
+void Mesh::draw() const {
 	int winX1, winY1, winX2, winY2;
 	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
 	if (winX1 != -1 && winY1 != -1 && winX2 != -1 && winY2 != -1) {
@@ -633,7 +633,7 @@ void Model::Mesh::draw() const {
 		g_driver->enableLights();
 }
 
-void Model::Face::draw(float *vertices, float *vertNormals, float *textureVerts) const {
+void MeshFace::draw(float *vertices, float *vertNormals, float *textureVerts) const {
 	_material->select();
 	g_driver->drawModelFace(this, vertices, vertNormals, textureVerts);
 }

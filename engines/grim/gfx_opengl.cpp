@@ -242,7 +242,7 @@ static void glShadowProjection(Graphics::Vector3d light, Graphics::Vector3d plan
 	glMultMatrixf((GLfloat *)mat);
 }
 
-void GfxOpenGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
@@ -415,7 +415,7 @@ void GfxOpenGL::set3DMode() {
 	glDepthFunc(GL_LESS);
 }
 
-void GfxOpenGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
+void GfxOpenGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
 	// Support transparency in actor objects, such as the message tube
 	// in Manny's Office
 	glAlphaFunc(GL_GREATER, 0.5);
@@ -492,7 +492,7 @@ void GfxOpenGL::translateViewpointFinish() {
 	glPopMatrix();
 }
 
-void GfxOpenGL::drawHierachyNode(const Model::HierNode *node) {
+void GfxOpenGL::drawHierachyNode(const ModelNode *node) {
 	Graphics::Vector3d animPos = node->_pos + node->_animPos;
 	float animPitch = node->_pitch + node->_animPitch;
 	float animYaw = node->_yaw + node->_animYaw;

@@ -37,6 +37,10 @@
 
 namespace Grim {
 
+class ModelNode;
+class Mesh;
+class MeshFace;
+
 class GfxOpenGL : public GfxBase {
 public:
 	GfxOpenGL();
@@ -55,7 +59,7 @@ public:
 
 	bool isHardwareAccelerated();
 
-	void getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2);
+	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
 	void startActorDraw(Graphics::Vector3d pos, float scale, float yaw, float pitch, float roll);
 	void finishActorDraw();
@@ -71,8 +75,8 @@ public:
 	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
 	void translateViewpointFinish();
 
-	void drawHierachyNode(const Model::HierNode *node);
-	void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts);
+	void drawHierachyNode(const ModelNode *node);
+	void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts);
 	void drawSprite(const Sprite *sprite);
 
 	void enableLights();

@@ -35,6 +35,7 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
+#include "engines/grim/model.h"
 
 #include "engines/grim/imuse/imuse.h"
 
@@ -152,7 +153,7 @@ public:
 	void removeActiveAnimation(AnimationState *anim);
 	~ModelComponent();
 
-	Model::HierNode *getHierarchy() { return _hier; }
+	ModelNode *getHierarchy() { return _hier; }
 	int getNumNodes() { return _obj->getNumNodes(); }
 	Model *getModel() { return _obj; }
 	void draw();
@@ -166,7 +167,7 @@ protected:
 
 	Common::String _filename;
 	ObjectPtr<Model> _obj;
-	Model::HierNode *_hier;
+	ModelNode *_hier;
 	Graphics::Matrix4 _matrix;
 	Common::List<AnimationEntry> *_activeAnims;
 };
@@ -206,14 +207,14 @@ public:
 
 	void setMatrix(Graphics::Matrix4 matrix) { _matrix = matrix; };
 
-	Model::HierNode *getNode() { return _node; }
+	ModelNode *getNode() { return _node; }
 	Model *getModel() { return _model; }
 
 private:
 	Common::String _name;
 	int _num;
 	Model *_model;
-	Model::HierNode *_node;
+	ModelNode *_node;
 	Graphics::Matrix4 _matrix;
 };
 
@@ -531,7 +532,7 @@ ModelComponent::~ModelComponent() {
 	delete[] _hier;
 }
 
-void translateObject(Model::HierNode *node, bool reset) {
+void translateObject(ModelNode *node, bool reset) {
 	if (node->_parent)
 		translateObject(node->_parent, reset);
 
@@ -686,7 +687,7 @@ public:
 private:
 	AnimationState _anim;
 	int _priority1, _priority2;
-	Model::HierNode *_hier;
+	ModelNode *_hier;
 	int _numNodes;
 	bool _active;
 	bool _paused;
@@ -1601,7 +1602,7 @@ Costume::Component *Costume::loadComponentEMI(Costume::Component *parent, int pa
 	return NULL;
 }
 
-Model::HierNode *Costume::getModelNodes() {
+ModelNode *Costume::getModelNodes() {
 	for (int i = 0; i < _numComponents; i++) {
 		if (!_components[i])
 			continue;
@@ -1793,7 +1794,7 @@ void Costume::moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float
 			return;
 		}
 
-		Model::HierNode *p = _joint3Node;
+		ModelNode *p = _joint3Node;
 		while (p->_parent) {
 			p = p->_parent;
 		}
@@ -1901,7 +1902,7 @@ void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float m
 	_head.maxYaw = maxYaw;
 
 	if (joint1 >= 0 && joint2 >= 0 && joint3 >= 0) {
-		Model::HierNode *nodes = getModelNodes();
+		ModelNode *nodes = getModelNodes();
 		if (nodes) {
 			_joint1Node = nodes + joint1;
 			_joint2Node = nodes + joint2;

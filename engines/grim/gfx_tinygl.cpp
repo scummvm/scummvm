@@ -268,7 +268,7 @@ static void tglShadowProjection(Graphics::Vector3d light, Graphics::Vector3d pla
 	tglMultMatrixf(mat);
 }
 
-void GfxTinyGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
@@ -460,7 +460,7 @@ void GfxTinyGL::getShadowColor(byte *r, byte *g, byte *b) {
 	*b = _shadowColorB;
 }
 
-void GfxTinyGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
+void GfxTinyGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
 	tglNormal3fv(const_cast<float *>(face->_normal._coords));
 	tglBegin(TGL_POLYGON);
 	for (int i = 0; i < face->_numVertices; i++) {
@@ -527,7 +527,7 @@ void GfxTinyGL::translateViewpointFinish() {
 	tglPopMatrix();
 }
 
-void GfxTinyGL::drawHierachyNode(const Model::HierNode *node) {
+void GfxTinyGL::drawHierachyNode(const ModelNode *node) {
 	Graphics::Vector3d animPos = node->_pos + node->_animPos;
 	float animPitch = node->_pitch + node->_animPitch;
 	float animYaw = node->_yaw + node->_animYaw;
