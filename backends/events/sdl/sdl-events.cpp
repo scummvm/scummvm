@@ -514,14 +514,28 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 #if SDL_VERSION_ATLEAST(1, 3, 0)
 bool SdlEventSource::handleTextInput(SDL_Event &ev, Common::Event &event) {
+    Common::EventManager *eventManager = g_system->getEventManager();
 	uint16 *unicode = SDL_iconv_utf8_ucs2(ev.text.text);
 
-	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.keycode = Common::KEYCODE_INVALID;
-	event.kbd.ascii = unicode[0];
+
+	// Send artificial key up and key down events for each character.
+	// Events are eventually copied when stored in the queue,
+	// it's ok to reuse the same Common::Event object.
+	for (int i = 0; unicode[i] > 0; i++) {
+		event.kbd.ascii = unicode[i];
+
+		event.type = Common::EVENT_KEYDOWN;
+		eventManager->pushEvent(event);
+
+		event.type = Common::EVENT_KEYUP;
+		eventManager->pushEvent(event);
+	}
 
 	SDL_free(unicode);
-	return true;
+
+	// The current event should not be sent to the engine
+	return false;
 }
 #endif
 
