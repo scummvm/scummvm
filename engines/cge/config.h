@@ -29,6 +29,7 @@
 #define __CGE_CONFIG__
 
 namespace CGE {
+	#define kMenu 56
 } // End of namespace CGE
 
 #endif

@@ -33,8 +33,6 @@
 
 namespace CGE {
 
-#define MENU_TEXT   56
-
 static Choice *_cho;
 static int     _hlp;
 
@@ -43,7 +41,7 @@ void CGEEngine::snSelect() {
 
 	inf(_text->getText(_hlp));
 	_talk->gotoxy(_talk->_x, kFontHigh / 2);
-	(new Vmenu(this, _cho, kScrWidth / 2, _talk->_y + _talk->_h + kTextVMargin + kFontHigh))->setName(_text->getText(MENU_TEXT));
+	(new Vmenu(this, _cho, kScrWidth / 2, _talk->_y + _talk->_h + kTextVMargin + kFontHigh))->setName(_text->getText(kMenu));
 }
 
 } // End of namespace CGE

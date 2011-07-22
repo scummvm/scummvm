@@ -50,7 +50,7 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 
 	_isDemo      = _gameDescription->flags & ADGF_DEMO;
 	_startupMode = 1;
-	_demoText    = DEMO_TEXT;
+	_demoText    = kDemo;
 	_oldLev      = 0;
 	_jbw         = false;
 	_pocPtr      = 0;
@@ -100,7 +100,7 @@ void CGEEngine::setup() {
 	_mouse = new Mouse(this);
 	_keyboard = new Keyboard();
 	_eventManager = new EventManager();
-	_offUseCount = atoi(_text->getText(OFF_USE_COUNT));
+	_offUseCount = atoi(_text->getText(kOffUseCount));
 	_music = true;
 	_mini = new byte[MINI_EMM_SIZE];
 
