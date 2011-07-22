@@ -23,11 +23,14 @@
 #ifndef GRIM_KEYFRAME_H
 #define GRIM_KEYFRAME_H
 
+#include "graphics/vector3d.h"
+
 #include "engines/grim/object.h"
 
 namespace Grim {
 
 class ModelNode;
+class TextSplitter;
 
 class KeyframeAnim : public Object {
 public:

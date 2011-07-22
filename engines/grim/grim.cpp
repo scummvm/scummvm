@@ -1743,6 +1743,10 @@ int GrimEngine::sceneId(Scene *s) const {
 	return s->_id;
 }
 
+const Common::String &GrimEngine::getSceneName() const {
+	return _currScene->getName();
+}
+
 void GrimEngine::clearEventQueue() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {

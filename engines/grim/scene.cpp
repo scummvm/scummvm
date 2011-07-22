@@ -32,6 +32,7 @@
 #include "engines/grim/lua.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/bitmap.h"
+#include "engines/grim/gfx_base.h"
 
 #include "engines/grim/imuse/imuse.h"
 

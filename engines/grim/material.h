@@ -24,6 +24,7 @@
 #define GRIM_MATERIAL_H
 
 #include "engines/grim/object.h"
+#include "engines/grim/colormap.h"
 
 namespace Grim {
 
@@ -39,6 +40,7 @@ public:
 	const ObjectPtr<CMap> _cmap;
 	int _numImages;
 	int _width, _height;
+	int _alpha;
 	void *_textures;
 	int _refCount;
 };
@@ -52,7 +54,7 @@ public:
 	void select() const;
 
 	// Set which image in an animated texture to use
-	void setNumber(int n) { _currImage = n; }
+	void setNumber(int n);
 
 	int getNumImages() const;
 	int getCurrentImage() const;

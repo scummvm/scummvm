@@ -28,6 +28,7 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/scene.h"
 
 namespace Grim {
 

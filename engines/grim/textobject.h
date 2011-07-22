@@ -23,7 +23,7 @@
 #ifndef GRIM_TEXTOBJECT_H
 #define GRIM_TEXTOBJECT_H
 
-#include "engines/grim/gfx_base.h"
+#include "engines/grim/color.h"
 
 namespace Grim {
 

@@ -32,6 +32,7 @@
 #include "engines/grim/lab.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
+#include "engines/grim/model.h"
 
 namespace Grim {
 

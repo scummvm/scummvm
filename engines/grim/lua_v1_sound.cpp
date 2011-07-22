@@ -26,6 +26,7 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/scene.h"
 
 #include "engines/grim/imuse/imuse.h"
 

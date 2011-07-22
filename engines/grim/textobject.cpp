@@ -26,6 +26,7 @@
 #include "engines/grim/lua.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/font.h"
+#include "engines/grim/gfx_base.h"
 
 namespace Grim {
 

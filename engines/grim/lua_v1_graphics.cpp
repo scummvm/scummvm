@@ -33,6 +33,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
 #include "engines/grim/iris.h"
+#include "engines/grim/gfx_base.h"
 
 #include "engines/grim/movie/movie.h"
 

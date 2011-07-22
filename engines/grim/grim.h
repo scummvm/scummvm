@@ -147,7 +147,7 @@ public:
 	void setScene(const char *name);
 	void setScene(Scene *scene);
 	Scene *getCurrScene() { return _currScene; }
-	const Common::String &getSceneName() const { return _currScene->getName(); }
+	const Common::String &getSceneName() const;
 	void makeCurrentSetup(int num);
 
 	// Scene registration
