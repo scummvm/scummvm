@@ -46,7 +46,7 @@ TextObject::TextObject(bool blastDraw, bool isSpeech) :
 }
 
 TextObject::TextObject() :
-	Object(), TextObjectCommon(), _lines(NULL) {
+	Object(), TextObjectCommon(), _maxLineWidth(0), _lines(NULL) {
 
 }
 
