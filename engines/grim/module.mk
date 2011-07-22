@@ -69,10 +69,10 @@ MODULE_OBJS := \
 	resource.o \
 	savegame.o \
 	scene.o \
+	sector.o \
 	textobject.o \
 	textsplit.o \
-	object.o \
-	walkplane.o
+	object.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GRIM), DYNAMIC_PLUGIN)

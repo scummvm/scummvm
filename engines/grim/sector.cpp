@@ -24,7 +24,7 @@
 #include "common/memstream.h"
 
 #include "engines/grim/grim.h"
-#include "engines/grim/walkplane.h"
+#include "engines/grim/sector.h"
 #include "engines/grim/textsplit.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/colormap.h"

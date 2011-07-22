@@ -24,7 +24,7 @@
 #define GRIM_SCENE_H
 
 #include "engines/grim/color.h"
-#include "engines/grim/walkplane.h"
+#include "engines/grim/sector.h"
 #include "engines/grim/objectstate.h"
 
 namespace Common {
