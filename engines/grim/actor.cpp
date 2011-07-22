@@ -858,6 +858,10 @@ void Actor::sayLine(const char *msgId, bool background) {
 		Common::String soundLip = msgId;
 		soundLip += ".lip";
 
+		if (_talkChore[0] >= 0 && _talkCostume[0]->isChoring(_talkChore[0], true) < 0) {
+			// _talkChore[0] is *_stop_talk
+			_talkCostume[0]->stopChore(_talkChore[0]);
+		}
 		// Sometimes actors speak offscreen before they, including their
 		// talk chores are initialized.
 		// For example, when reading the work order (a LIP file exists for no reason).
@@ -944,9 +948,9 @@ void Actor::shutUp() {
 	} else if (_mumbleChore >= 0 && _mumbleCostume->isChoring(_mumbleChore, false) >= 0) {
 		_mumbleCostume->stopChore(_mumbleChore);
 	}
-	if (_talkChore[0] >= 0) {
+	if (_talkChore[0] >= 0 && _talkCostume[0]->isChoring(_talkChore[0], true) < 0) {
 		// _talkChore[0] is *_stop_talk
-		_talkCostume[0]->playChore(_talkChore[0]);
+		_talkCostume[0]->playChoreLooping(_talkChore[0]);
 	}
 
 	if (_sayLineText) {
