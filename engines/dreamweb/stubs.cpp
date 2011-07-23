@@ -334,7 +334,6 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 	data.byte(kPointermode) = 3;
 	ds = data.word(kCharset1);
 	do {
-		push(di);
 		uint16 offset = x;
 		uint16 charCount = getnumber(si, maxWidth, centered, &offset);
 		do {
@@ -352,13 +351,10 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 			if ((c1 == 0) || (c1 == ':')) {
 				es = pop();
 				si = pop();
-				di = pop();
 				return 0;
 			}
 			if (charCount != 1) {
-				push(di);
 				push(ds);
-				push(cx);
 				push(es);
 				c1 = engine->modifyChar(c1);
 				data.word(kCharshift) = 91;
@@ -366,9 +362,7 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 				printboth(es, ds, &offset2, y, c1);
 				data.word(kCharshift) = 0;
 				es = pop();
-				cx = pop();
 				ds = pop();
-				di = pop();
 				for (int i=0; i<2; ++i) {
 					waitframes();
 					if (ax == 0)
@@ -376,7 +370,6 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 					if (ax != data.word(kOldbutton)) {
 						es = pop();
 						si = pop();
-						di = pop();
 						return 1;
 					}
 				}
@@ -387,7 +380,6 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 			++si;
 			--charCount;
 		} while (charCount);
-		di = pop();
 		y += 10;
 	} while (true);
 }
