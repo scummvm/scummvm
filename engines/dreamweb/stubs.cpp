@@ -36,8 +36,10 @@ Common::String getFilename(Context &context) {
 }
 
 void DreamGenContext::multiget() {
-	unsigned w = (uint8)cl, h = (uint8)ch;
-	unsigned x = (uint16)di, y = (uint16)bx;
+	multiget(di, bx, cl, ch);
+}
+
+void DreamGenContext::multiget(uint16 x, uint16 y, uint8 w, uint8 h) {
 	unsigned src = x + y * kScreenwidth;
 	unsigned dst = (uint16)si;
 	es = ds;
@@ -58,8 +60,10 @@ void DreamGenContext::multiget() {
 }
 
 void DreamGenContext::multiput() {
-	unsigned w = (uint8)cl, h = (uint8)ch;
-	unsigned x = (uint16)di, y = (uint16)bx;
+	multiput(di, bx, cl, ch);
+}
+
+void DreamGenContext::multiput(uint16 x, uint16 y, uint8 w, uint8 h) {
 	unsigned src = (uint16)si;
 	unsigned dst = x + y * kScreenwidth;
 	es = data.word(kWorkspace);
