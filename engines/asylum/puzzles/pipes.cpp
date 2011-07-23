@@ -348,9 +348,12 @@ bool PuzzlePipes::update(const AsylumEvent &evt) {
 	for (uint32 i = 0; i < ARRAYSIZE(_connectors); ++i)
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[_connectorResources[_connectors[i].getState()]], 0, connectorPoints[i], kDrawFlagNone, 0, 1);
 
+	uint32 filled = 0;
 	for (uint32 i = 0; i < 4; ++i) {
 		if (fabs(_levelValues[i] - _previousLevels[i]) > 0.005)
 			_previousLevels[i] += _levelValues[i] > _previousLevels[i] ? 0.01 : -0.01;
+		else
+			++filled;
 	}
 
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(210, 444 - uint32(_previousLevels[0] * 52)), kDrawFlagNone, 0, 3);
@@ -376,16 +379,18 @@ bool PuzzlePipes::update(const AsylumEvent &evt) {
 	}
 
 	// TODO: turn the fountain on
-	if (_levelFlags[0])
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(233, 416), kDrawFlagNone, 0, 1);
-	else if (_levelFlags[1])
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(299, 431), kDrawFlagNone, 0, 1);
-	else if (_levelFlags[2])
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(398, 421), kDrawFlagNone, 0, 1);
-	else if (_levelFlags[3])
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(481, 417), kDrawFlagNone, 0, 1);
-	if (!_levelFlags[4])
-		 getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[45], 0, Common::Point(518, 108), kDrawFlagNone, 0, 2);
+	if (filled == 4) {
+		if (_levelFlags[0])
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(233, 416), kDrawFlagNone, 0, 1);
+		else if (_levelFlags[1])
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(299, 431), kDrawFlagNone, 0, 1);
+		else if (_levelFlags[2])
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(398, 421), kDrawFlagNone, 0, 1);
+		else if (_levelFlags[3])
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(481, 417), kDrawFlagNone, 0, 1);
+		if (!_levelFlags[4])
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[45], 0, Common::Point(518, 108), kDrawFlagNone, 0, 2);
+	}
 
 	for (uint32 i = 0; i < _spiders.size(); ++i) {
 		uint32 spiderResourceId = 0;
