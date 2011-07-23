@@ -23,22 +23,26 @@
 #ifndef GRIM_GFX_BASE_H
 #define GRIM_GFX_BASE_H
 
-#include "engines/grim/model.h"
-#include "engines/grim/scene.h"
+#include "graphics/vector3d.h"
 
 namespace Grim {
 
 struct Shadow;
 class SaveGame;
 class BitmapData;
+class Bitmap;
+class CMap;
+class Color;
 class MaterialData;
 class PrimitiveObject;
 class Font;
 class TextObject;
-
+class Material;
 class ModelNode;
 class Mesh;
 class MeshFace;
+class Sprite;
+class Light;
 
 enum colorFormat {
 	BM_RGB565 = 1,    // Grim Fandango
@@ -81,7 +85,7 @@ public:
 
 	virtual void enableLights() = 0;
 	virtual void disableLights() = 0;
-	virtual void setupLight(Scene::Light *light, int lightId) = 0;
+	virtual void setupLight(Light *light, int lightId) = 0;
 
 	virtual void createMaterial(MaterialData *material, const char *data, const CMap *cmap) = 0;
 	virtual void selectMaterial(const Material *material) = 0;

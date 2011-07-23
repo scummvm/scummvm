@@ -31,14 +31,14 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/keyframe.h"
 #include "engines/grim/material.h"
-#include "engines/grim/lua.h"
-#include "engines/grim/lipsync.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/model.h"
 #include "engines/grim/scene.h"
 #include "engines/grim/objectstate.h"
 #include "engines/grim/gfx_base.h"
+
+#include "engines/grim/lua/lua.h"
 
 #include "engines/grim/imuse/imuse.h"
 

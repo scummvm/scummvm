@@ -29,7 +29,6 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
-#include "engines/grim/lua.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/gfx_base.h"
@@ -432,7 +431,7 @@ void Scene::Setup::loadBinary(Common::MemoryReadStream *ms) {
 
 }
 
-void Scene::Light::load(TextSplitter &ts) {
+void Light::load(TextSplitter &ts) {
 	char buf[256];
 
 	// Light names can be null, but ts doesn't seem flexible enough to allow this
@@ -462,7 +461,7 @@ void Scene::Light::load(TextSplitter &ts) {
 	_enabled = true;
 }
 
-void Scene::Light::loadBinary(Common::MemoryReadStream *ms) {
+void Light::loadBinary(Common::MemoryReadStream *ms) {
 	// skip lights for now
 	ms->seek(100, SEEK_CUR);
 }

@@ -59,14 +59,12 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/localize.h"
 #include "engines/grim/gfx_base.h"
-#include "engines/grim/object.h"
-#include "engines/grim/costume.h"
-#include "engines/grim/material.h"
-#include "engines/grim/lipsync.h"
 #include "engines/grim/lab.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/primitives.h"
+#include "engines/grim/objectstate.h"
+#include "engines/grim/scene.h"
 
 #include "engines/grim/lua/lualib.h"
 

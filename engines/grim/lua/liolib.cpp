@@ -28,9 +28,6 @@
 #include "base/commandLine.h"
 
 #include "engines/grim/resource.h"
-#include "engines/grim/grim.h"
-#include "engines/grim/savegame.h"
-#include "engines/grim/colormap.h"
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
 #include <sys/stat.h>

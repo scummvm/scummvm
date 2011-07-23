@@ -38,6 +38,8 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
+#include "engines/grim/model.h"
+#include "engines/grim/scene.h"
 
 #ifdef USE_OPENGL
 
@@ -536,7 +538,7 @@ void GfxOpenGL::disableLights() {
 	glDisable(GL_LIGHTING);
 }
 
-void GfxOpenGL::setupLight(Scene::Light *light, int lightId) {
+void GfxOpenGL::setupLight(Light *light, int lightId) {
 	glEnable(GL_LIGHTING);
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };

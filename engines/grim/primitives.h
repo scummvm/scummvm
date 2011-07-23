@@ -25,6 +25,8 @@
 
 #include "common/rect.h"
 
+#include "engines/grim/object.h"
+
 namespace Grim {
 
 class SaveGame;

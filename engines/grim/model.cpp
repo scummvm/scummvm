@@ -24,11 +24,9 @@
 
 #include "engines/grim/grim.h"
 #include "engines/grim/model.h"
-#include "engines/grim/actor.h"
 #include "engines/grim/material.h"
 #include "engines/grim/textsplit.h"
 #include "engines/grim/gfx_base.h"
-#include "engines/grim/lipsync.h"
 #include "engines/grim/resource.h"
 
 namespace Grim {
@@ -497,6 +495,7 @@ void Mesh::changeMaterials(Material *materials[]) {
 		_faces[i].changeMaterial(materials[_materialid[i]]);
 }
 
+extern int g_winX1, g_winY1, g_winX2, g_winY2;
 void Mesh::draw() const {
 	int winX1, winY1, winX2, winY2;
 	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);

@@ -72,7 +72,7 @@ public:
 
 	void enableLights();
 	void disableLights();
-	void setupLight(Scene::Light *light, int lightId);
+	void setupLight(Light *light, int lightId);
 
 	void createMaterial(MaterialData *material, const char *data, const CMap *cmap);
 	void selectMaterial(const Material *material);

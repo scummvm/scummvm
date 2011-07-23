@@ -32,6 +32,8 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
+#include "engines/grim/model.h"
+#include "engines/grim/scene.h"
 
 namespace Grim {
 
@@ -571,7 +573,7 @@ void GfxTinyGL::disableLights() {
 	tglDisable(TGL_LIGHTING);
 }
 
-void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
+void GfxTinyGL::setupLight(Light *light, int lightId) {
 	assert(lightId < T_MAX_LIGHTS);
 	tglEnable(TGL_LIGHTING);
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };

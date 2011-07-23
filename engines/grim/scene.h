@@ -34,6 +34,7 @@ namespace Grim {
 
 class SaveGame;
 class CMap;
+class Light;
 
 class Scene {
 public:
@@ -112,17 +113,6 @@ public:
 		float _roll, _fov, _nclip, _fclip;
 	};
 
-	struct Light {		// Scene lighting data
-		void load(TextSplitter &ts);
-		void loadBinary(Common::MemoryReadStream *ms);
-		Common::String _name;
-		Common::String _type;
-		Graphics::Vector3d _pos, _dir;
-		Color _color;
-		float _intensity, _umbraangle, _penumbraangle;
-		bool _enabled;
-	};
-
 	CMap *getCMap() {
 		if (!_cmaps || ! _numCmaps)
 			return NULL;
@@ -152,6 +142,18 @@ private:
 	static int s_id;
 
 	friend class GrimEngine;
+};
+
+class Light {		// Scene lighting data
+public:
+	void load(TextSplitter &ts);
+	void loadBinary(Common::MemoryReadStream *ms);
+	Common::String _name;
+	Common::String _type;
+	Graphics::Vector3d _pos, _dir;
+	Color _color;
+	float _intensity, _umbraangle, _penumbraangle;
+	bool _enabled;
 };
 
 } // end of namespace Grim
