@@ -50,8 +50,6 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 
 	switch (num) {
 	case 1 : {
-#define STAGES 8
-#define DRESSED 3
 		static Sprite *dup[3] = { NULL, NULL, NULL };
 		int buref = 0;
 		int Stage = 0;
@@ -71,71 +69,69 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 		if (_game) { // continue game
 			int i = new_random(3), hand = (dup[0]->_shpCnt == 6);
 			Stage++;
-			if (hand && Stage > DRESSED)
+			if (hand && Stage > kDressed)
 				++hand;
 			if (i >= 0 || (dup[i] == spr && new_random(3) == 0)) {
-				SNPOST(SNSEQ, -1, 3, dup[0]);               // yes
-				SNPOST(SNSEQ, -1, 3, dup[1]);               // yes
-				SNPOST(SNSEQ, -1, 3, dup[2]);               // yes
-				SNPOST(SNTNEXT, -1, 0, dup[0]);             // reset Take
-				SNPOST(SNTNEXT, -1, 0, dup[1]);             // reset Take
-				SNPOST(SNTNEXT, -1, 0, dup[2]);             // reset Take
-				SNPOST(SNNNEXT, -1, 0, dup[0]);             // reset Near
-				SNPOST(SNPAUSE, -1, 72, NULL);              // little rest
-				SNPOST(SNSAY, 1, 16009, NULL);              // hura
-				SNPOST(SNSAY, buref, 16010, NULL);          // siadaj
-				SNPOST(SNSAY, 1, 16011, NULL);              // postoj‘
+				_snail->addCom(kSnSeq, -1, 3, dup[0]);               // yes
+				_snail->addCom(kSnSeq, -1, 3, dup[1]);               // yes
+				_snail->addCom(kSnSeq, -1, 3, dup[2]);               // yes
+				_snail->addCom(kSnTNext, -1, 0, dup[0]);             // reset Take
+				_snail->addCom(kSnTNext, -1, 0, dup[1]);             // reset Take
+				_snail->addCom(kSnTNext, -1, 0, dup[2]);             // reset Take
+				_snail->addCom(kSnNNext, -1, 0, dup[0]);             // reset Near
+				_snail->addCom(kSnPause, -1, 72, NULL);              // little rest
+				_snail->addCom(kSnSay, 1, 16009, NULL);              // hura
+				_snail->addCom(kSnSay, buref, 16010, NULL);          // siadaj
+				_snail->addCom(kSnSay, 1, 16011, NULL);              // postoj‘
 
 				if (hand) {
-					SNPOST(SNSEND, 16060 + hand, 16, NULL);   // dawaj r‘k‘
-					SNPOST(SNSEQ, buref, 4, NULL);            // zdejmowanie
-					SNPOST(SNSEQ, 16060 + hand, 1, NULL);     // ruch
-					SNPOST(SNSOUND, 16060 + hand, 16002, NULL); // szelest
-					SNPOST(SNWAIT, 16060 + hand, 3, NULL);    // podniesie
-					SNPOST(SNSWAP, buref, buref + 100, NULL); // rozdziana
-					SNPOST(SNSEQ, 16016, Stage, NULL);        // rožnie kupa
-					SNPOST(SNSEND, 16060 + hand, -1, NULL);   // chowaj r‘k‘
-					SNPOST(SNWAIT, 16060 + hand, -1, NULL);   // r‘ka zamar’a
+					_snail->addCom(kSnSend, 16060 + hand, 16, NULL);   // dawaj r‘k‘
+					_snail->addCom(kSnSeq, buref, 4, NULL);            // zdejmowanie
+					_snail->addCom(kSnSeq, 16060 + hand, 1, NULL);     // ruch
+					_snail->addCom(kSnSound, 16060 + hand, 16002, NULL); // szelest
+					_snail->addCom(kSnWait, 16060 + hand, 3, NULL);    // podniesie
+					_snail->addCom(kSnSwap, buref, buref + 100, NULL); // rozdziana
+					_snail->addCom(kSnSeq, 16016, Stage, NULL);        // rožnie kupa
+					_snail->addCom(kSnSend, 16060 + hand, -1, NULL);   // chowaj r‘k‘
+					_snail->addCom(kSnWait, 16060 + hand, -1, NULL);   // r‘ka zamar’a
 				} else {
-					SNPOST(SNSEQ, buref, 4, NULL);            // zdejmowanie
-					SNPOST(SNSOUND, 16060 + hand, 16002, NULL); // szelest
-					SNPOST(SNWAIT, buref, -1, NULL);          // zdejmie
-					SNPOST(SNSWAP, buref, buref + 100, NULL); // rozdziana
-					SNPOST(SNSEQ, 16016, Stage, NULL);        // rožnie kupa
+					_snail->addCom(kSnSeq, buref, 4, NULL);            // zdejmowanie
+					_snail->addCom(kSnSound, 16060 + hand, 16002, NULL); // szelest
+					_snail->addCom(kSnWait, buref, -1, NULL);          // zdejmie
+					_snail->addCom(kSnSwap, buref, buref + 100, NULL); // rozdziana
+					_snail->addCom(kSnSeq, 16016, Stage, NULL);        // rožnie kupa
 				}
 				//SNPOST(SNSEQ, buref+100, 0, NULL);        // reset
-				SNPOST(SNPAUSE, -1, 72, NULL);              // chwilk‘...
-
-				SNPOST(SNSEQ, -1, 0, dup[1]);               // odstaw Go
-				SNPOST(SNSETXY, -1, 203 + kScrWidth * 49, dup[1]);
-				SNPOST(SNSETZ, -1, 7, dup[1]);
-
-				SNPOST(SNSEQ, -1, 0, dup[2]);               // odstaw J†
-				SNPOST(SNSETXY, -1, 182 + kScrWidth * 62, dup[2]);
-				SNPOST(SNSETZ, -1, 9, dup[2]);
+				_snail->addCom(kSnPause, -1, 72, NULL);              // chwilk‘...
+				_snail->addCom(kSnSeq, -1, 0, dup[1]);               // odstaw Go
+				_snail->addCom(kSnSetXY, -1, 203 + kScrWidth * 49, dup[1]);
+				_snail->addCom(kSnSetZ, -1, 7, dup[1]);
+				_snail->addCom(kSnSeq, -1, 0, dup[2]);               // odstaw J†
+				_snail->addCom(kSnSetXY, -1, 182 + kScrWidth * 62, dup[2]);
+				_snail->addCom(kSnSetZ, -1, 9, dup[2]);
 				_game = 0;
 				return;
 			} else {
-				SNPOST(SNSEQ, -1, 2, dup[0]);               // no
-				SNPOST(SNSEQ, -1, 2, dup[1]);               // no
-				SNPOST(SNSEQ, -1, 2, dup[2]);               // no
-				SNPOST(SNPAUSE, -1, 72, NULL);              // 1 sec
+				_snail->addCom(kSnSeq, -1, 2, dup[0]);               // no
+				_snail->addCom(kSnSeq, -1, 2, dup[1]);               // no
+				_snail->addCom(kSnSeq, -1, 2, dup[2]);               // no
+				_snail->addCom(kSnPause, -1, 72, NULL);              // 1 sec
 			}
 		}
-		SNPOST(SNWALK, 198, 134, NULL);                 // na miejsce
-		SNPOST(SNWAIT, 1, -1, NULL);                    // stoi
-		SNPOST(SNCOVER, 1, 16101, NULL);                // ch’op do bicia
-		SNPOST(SNSEQ, 16101, 1, NULL);                  // wystaw
-		SNPOST(SNWAIT, 16101, 5, NULL);                 // czekaj
-		SNPOST(SNPAUSE, 16101, 24, NULL);               // czekaj chwil‘
-		SNPOST(SNSEQ, 16040, 1, NULL);                  // plask
-		SNPOST(SNSOUND, 16101, 16001, NULL);            // plask!
-		SNPOST(SNPAUSE, 16101, 24, NULL);               // czekaj chwil‘
-		SNPOST(SNSEQ, 16040, 0, NULL);                  // schowaj plask
-		SNPOST(SNWAIT, 16101, -1, NULL);                // stoi
-		SNPOST(SNUNCOVER, 1, 16101, NULL);              // SDS
+		_snail->addCom(kSnWalk, 198, 134, NULL);                 // na miejsce
+		_snail->addCom(kSnWait, 1, -1, NULL);                    // stoi
+		_snail->addCom(kSnCover, 1, 16101, NULL);                // ch’op do bicia
+		_snail->addCom(kSnSeq, 16101, 1, NULL);                  // wystaw
+		_snail->addCom(kSnWait, 16101, 5, NULL);                 // czekaj
+		_snail->addCom(kSnPause, 16101, 24, NULL);               // czekaj chwil‘
+		_snail->addCom(kSnSeq, 16040, 1, NULL);                  // plask
+		_snail->addCom(kSnSound, 16101, 16001, NULL);            // plask!
+		_snail->addCom(kSnPause, 16101, 24, NULL);               // czekaj chwil‘
+		_snail->addCom(kSnSeq, 16040, 0, NULL);                  // schowaj plask
+		_snail->addCom(kSnWait, 16101, -1, NULL);                // stoi
+		_snail->addCom(kSnUncover, 1, 16101, NULL);              // SDS
 		if (!_game) {
-			SNPOST(SNSAY, buref, 16008, NULL);            // zgadnij!
+			_snail->addCom(kSnSay, buref, 16008, NULL);            // zgadnij!
 			_game = true;
 		}
 #undef STEPS
@@ -155,7 +151,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 		}
 
 		if (!_game) { // init
-			SNPOST(SNGAME, 20002, 2, NULL);
+			_snail->addCom(kSnGame, 20002, 2, NULL);
 			_game = true;
 		} else { // cont
 			k1->step(new_random(6));
@@ -168,23 +164,23 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 				k3->step(5);
 			}
 			///--------------------
-			SNPOST(SNSETZ, 20700, 0, NULL);
+			_snail->addCom(kSnSetZ, 20700, 0, NULL);
 			bool hit = (k1->_seqPtr + k2->_seqPtr + k3->_seqPtr == 15);
 			if (hit) {
 				if (spr->_ref == 1) {
-					SNPOST(SNSAY,      1, 20003, NULL);       // hura!
-					SNPOST(SNSEQ,  20011,     2, NULL);       // kamera won
-					SNPOST(SNSEND, 20701,    -1, NULL);       // k1 won
-					SNPOST(SNSEND, 20702,    -1, NULL);       // k2 won
-					SNPOST(SNSEND, 20703,    -1, NULL);       // k3 won
-					SNPOST(SNSEND, 20700,    -1, NULL);       // tv won
-					SNPOST(SNKEEP, 20007,     0, NULL);       // do kieszeni
-					SNPOST(SNSEND, 20006,    20, NULL);       // bilon
-					SNPOST(SNSOUND, 20006, 20002, NULL);      // bilon!
-					SNPOST(SNSAY,  20002, 20004, NULL);
-					SNPOST(SNSEND, 20010,    20, NULL);       // papier
-					SNPOST(SNSOUND, 20010, 20003, NULL);      // papier!
-					SNPOST(SNSAY,  20001, 20005, NULL);
+					_snail->addCom(kSnSay,      1, 20003, NULL);       // hura!
+					_snail->addCom(kSnSeq,  20011,     2, NULL);       // kamera won
+					_snail->addCom(kSnSend, 20701,    -1, NULL);       // k1 won
+					_snail->addCom(kSnSend, 20702,    -1, NULL);       // k2 won
+					_snail->addCom(kSnSend, 20703,    -1, NULL);       // k3 won
+					_snail->addCom(kSnSend, 20700,    -1, NULL);       // tv won
+					_snail->addCom(kSnKeep, 20007,     0, NULL);       // do kieszeni
+					_snail->addCom(kSnSend, 20006,    20, NULL);       // bilon
+					_snail->addCom(kSnSound, 20006, 20002, NULL);      // bilon!
+					_snail->addCom(kSnSay,  20002, 20004, NULL);
+					_snail->addCom(kSnSend, 20010,    20, NULL);       // papier
+					_snail->addCom(kSnSound, 20010, 20003, NULL);      // papier!
+					_snail->addCom(kSnSay,  20001, 20005, NULL);
 					_game = false;
 					return;
 				} else
@@ -193,60 +189,60 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			if (count < 100) {
 				switch (count) {
 				case 15 :
-					SNPOST(SNSAY, 20003, 20021, NULL);
+					_snail->addCom(kSnSay, 20003, 20021, NULL);
 					break;
 				case 30 :
 				case 45 :
 				case 60 :
 				case 75 :
-					SNPOST(SNSAY, 20003, 20022, NULL);
+					_snail->addCom(kSnSay, 20003, 20022, NULL);
 					break;
 				}
 				count++;
 			}
 			switch (spr->_ref) {
 			case     1 :
-				SNPOST(SNSAY,  20001, 20011, NULL);         // zapro
-				SNPOST(SNSEQ,  20001, 1, NULL);             // rzu
-				SNPOST(SNWAIT, 20001, 1, NULL);             // czekaj
-				SNPOST(SNSETZ, 20700, 2, NULL);             // skryj k
-				SNPOST(SNHIDE, 20007, 1, NULL);             // skryj k
-				SNPOST(SNWAIT, 20001, 16, NULL);            // czekaj
-				SNPOST(SNSEQ,  20007, 1, NULL);             // lec†
-				SNPOST(SNHIDE, 20007, 0, NULL);             // poka§
-				SNPOST(SNSOUND, 20007, 20001, NULL);        // grzech
-				SNPOST(SNWAIT, 20007, -1, NULL);            // koniec
-				SNPOST(SNGAME, 20001, 2, NULL);             // again!
+				_snail->addCom(kSnSay,  20001, 20011, NULL);         // zapro
+				_snail->addCom(kSnSeq,  20001, 1, NULL);             // rzu
+				_snail->addCom(kSnWait, 20001, 1, NULL);             // czekaj
+				_snail->addCom(kSnSetZ, 20700, 2, NULL);             // skryj k
+				_snail->addCom(kSnHide, 20007, 1, NULL);             // skryj k
+				_snail->addCom(kSnWait, 20001, 16, NULL);            // czekaj
+				_snail->addCom(kSnSeq,  20007, 1, NULL);             // lec†
+				_snail->addCom(kSnHide, 20007, 0, NULL);             // poka§
+				_snail->addCom(kSnSound, 20007, 20001, NULL);        // grzech
+				_snail->addCom(kSnWait, 20007, -1, NULL);            // koniec
+				_snail->addCom(kSnGame, 20001, 2, NULL);             // again!
 				break;
 			case 20001:
-				SNPOST(SNSAY, 20002, 20012, NULL);          // zapro
-				SNPOST(SNSEQ, 20002, 1, NULL);              // rzu
-				SNPOST(SNWAIT, 20002, 3, NULL);             // czekaj
-				SNPOST(SNSETZ, 20700, 2, NULL);             // skryj k
-				SNPOST(SNHIDE, 20007, 1, NULL);             // skryj k
-				SNPOST(SNWAIT, 20002, 10, NULL);            // czekaj
-				SNPOST(SNSEQ, 20007, 2, NULL);              // lec†
-				SNPOST(SNHIDE, 20007, 0, NULL);             // poka§
-				SNPOST(SNSOUND, 20007, 20001, NULL);        // grzech
-				SNPOST(SNWAIT, 20007, -1, NULL);            // koniec
-				SNPOST(SNGAME, 20002, 2, NULL);             // again!
+				_snail->addCom(kSnSay, 20002, 20012, NULL);          // zapro
+				_snail->addCom(kSnSeq, 20002, 1, NULL);              // rzu
+				_snail->addCom(kSnWait, 20002, 3, NULL);             // czekaj
+				_snail->addCom(kSnSetZ, 20700, 2, NULL);             // skryj k
+				_snail->addCom(kSnHide, 20007, 1, NULL);             // skryj k
+				_snail->addCom(kSnWait, 20002, 10, NULL);            // czekaj
+				_snail->addCom(kSnSeq, 20007, 2, NULL);              // lec†
+				_snail->addCom(kSnHide, 20007, 0, NULL);             // poka§
+				_snail->addCom(kSnSound, 20007, 20001, NULL);        // grzech
+				_snail->addCom(kSnWait, 20007, -1, NULL);            // koniec
+				_snail->addCom(kSnGame, 20002, 2, NULL);             // again!
 				break;
 			case 20002:
-				SNPOST(SNSAY, 20002, 20010, NULL);          // zapro
-				SNPOST(SNWALK, 20005, -1, NULL);            // do stol
-				SNPOST(SNWAIT, 1, -1, NULL);                // stoi
-				SNPOST(SNCOVER, 1, 20101, NULL);            // grasol
-				SNPOST(SNSEQ, 20101, 1, NULL);              // rzu
-				SNPOST(SNWAIT, 20101, 5, NULL);             // czekaj
-				SNPOST(SNSETZ, 20700, 2, NULL);             // skryj k
-				SNPOST(SNHIDE, 20007, 1, NULL);             // skryj k
-				SNPOST(SNWAIT, 20101, 15, NULL);            // czekaj
-				SNPOST(SNSEQ, 20007, 1, NULL);              // lec†
-				SNPOST(SNHIDE, 20007, 0, NULL);             // poka§
-				SNPOST(SNSOUND, 20007, 20001, NULL);        // grzech
-				SNPOST(SNWAIT, 20101, -1, NULL);            // koniec
-				SNPOST(SNUNCOVER, 1, 20101, NULL);          // SDS
-				SNPOST(SNGAME, 1, 2, NULL);                 // again!
+				_snail->addCom(kSnSay, 20002, 20010, NULL);          // zapro
+				_snail->addCom(kSnWalk, 20005, -1, NULL);            // do stol
+				_snail->addCom(kSnWait, 1, -1, NULL);                // stoi
+				_snail->addCom(kSnCover, 1, 20101, NULL);            // grasol
+				_snail->addCom(kSnSeq, 20101, 1, NULL);              // rzu
+				_snail->addCom(kSnWait, 20101, 5, NULL);             // czekaj
+				_snail->addCom(kSnSetZ, 20700, 2, NULL);             // skryj k
+				_snail->addCom(kSnHide, 20007, 1, NULL);             // skryj k
+				_snail->addCom(kSnWait, 20101, 15, NULL);            // czekaj
+				_snail->addCom(kSnSeq, 20007, 1, NULL);              // lec†
+				_snail->addCom(kSnHide, 20007, 0, NULL);             // poka§
+				_snail->addCom(kSnSound, 20007, 20001, NULL);        // grzech
+				_snail->addCom(kSnWait, 20101, -1, NULL);            // koniec
+				_snail->addCom(kSnUncover, 1, 20101, NULL);          // SDS
+				_snail->addCom(kSnGame, 1, 2, NULL);                 // again!
 				break;
 			}
 		}
@@ -302,17 +298,17 @@ void CGEEngine::pocFul() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::pocFul()");
 
 	_hero->park();
-	SNPOST(SNWAIT, -1, -1, _hero);
-	SNPOST(SNSEQ, -1, kSeqPocketFull, _hero);
-	SNPOST(SNSOUND, -1, 2, _hero);
-	SNPOST(SNWAIT, -1, -1, _hero);
-	SNPOST(SNSAY,  1, kPocketFull, _hero);
+	_snail->addCom(kSnWait, -1, -1, _hero);
+	_snail->addCom(kSnSeq, -1, kSeqPocketFull, _hero);
+	_snail->addCom(kSnSound, -1, 2, _hero);
+	_snail->addCom(kSnWait, -1, -1, _hero);
+	_snail->addCom(kSnSay,  1, kPocketFull, _hero);
 }
 
 void CGEEngine::hide1(Sprite *spr) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::hide1(spr)");
 
-	SNPOST_(SNGHOST, -1, 0, spr->ghost());
+	_snail_->addCom(kSnGhost, -1, 0, spr->ghost());
 }
 
 void CGEEngine::snGhost(Bitmap *bmp) {
@@ -337,8 +333,8 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 
 				if (findPocket(NULL) < 0) {                 // no empty pockets?
 					Snail::Com *p;
-					for (p = c; p->_com != SNNEXT; p++) {     // find KEEP command
-						if (p->_com == SNKEEP) {
+					for (p = c; p->_com != kSnNext; p++) {     // find KEEP command
+						if (p->_com == kSnKeep) {
 							pocFul();
 							return;
 						}
@@ -347,11 +343,11 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 					}
 				}
 				while (true) {
-					if (c->_com == SNTALK) {
+					if (c->_com == kSnTalk) {
 						if ((_snail->_talkEnable = (c->_val != 0)) == false)
 							killText();
 					}
-					if (c->_com == SNNEXT) {
+					if (c->_com == kSnNext) {
 						Sprite *s = (c->_ref < 0) ? spr : locate(c->_ref);
 						if (s) {
 							uint8 *idx = (snq == kTake) ? &s->_takePtr : &s->_nearPtr;
@@ -378,7 +374,7 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 						if (s == spr)
 							break;
 					}
-					if (c->_com == SNIF) {
+					if (c->_com == kSnIf) {
 						Sprite *s = (c->_ref < 0) ? spr : locate(c->_ref);
 						if (s) { // sprite extsts
 							if (! s->seqTest(-1))
@@ -388,7 +384,7 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 						} else
 							++c;
 					} else {
-						SNPOST(c->_com, c->_ref, c->_val, spr);
+						_snail->addCom(c->_com, c->_ref, c->_val, spr);
 						if (c->_ptr)
 							break;
 						else
@@ -424,35 +420,35 @@ Snail::~Snail() {
 	free(_snList);
 }
 
-void Snail::addCom(SNCOM com, int ref, int val, void *ptr) {
+void Snail::addCom(SnCom com, int ref, int val, void *ptr) {
 	Com *snc = &_snList[_head++];
 	snc->_com = com;
 	snc->_ref = ref;
 	snc->_val = val;
 	snc->_ptr = ptr;
 	snc->_cbType = kNullCB;
-	if (com == SNCLEAR) {
+	if (com == kSnClear) {
 		_tail = _head;
 		killText();
 		_timerExpiry = 0;
 	}
 }
 
-void Snail::addCom2(SNCOM com, int ref, int val, CallbackType cbType) {
+void Snail::addCom2(SnCom com, int ref, int val, CallbackType cbType) {
 	Com *snc = &_snList[_head++];
 	snc->_com = com;
 	snc->_ref = ref;
 	snc->_val = val;
 	snc->_ptr = NULL;
 	snc->_cbType = cbType;
-	if (com == SNCLEAR) {
+	if (com == kSnClear) {
 		_tail = _head;
 		killText();
 		_timerExpiry = 0;
 	}
 }
 
-void Snail::insCom(SNCOM com, int ref, int val, void *ptr) {
+void Snail::insCom(SnCom com, int ref, int val, void *ptr) {
 	Com *snc;
 
 	if (_busy) {
@@ -465,7 +461,7 @@ void Snail::insCom(SNCOM com, int ref, int val, void *ptr) {
 	snc->_ref = ref;
 	snc->_val = val;
 	snc->_ptr = ptr;
-	if (com == SNCLEAR) {
+	if (com == kSnClear) {
 		_tail = _head;
 		killText();
 		_timerExpiry = 0;
@@ -595,7 +591,6 @@ void CGEEngine::snSend(Sprite *spr, int val) {
 		}
 	}
 }
-
 
 void CGEEngine::snSwap(Sprite *spr, int xref) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snSwap(spr, %d)", xref);
@@ -828,7 +823,6 @@ void CGEEngine::snKeep(Sprite *spr, int stp) {
 	selectPocket(-1);
 }
 
-
 void CGEEngine::snGive(Sprite *spr, int stp) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snGive(spr, %d)", stp);
 
@@ -844,7 +838,6 @@ void CGEEngine::snGive(Sprite *spr, int stp) {
 	}
 	selectPocket(-1);
 }
-
 
 void CGEEngine::snBackPt(Sprite *spr, int stp) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snBackPt(spr, %d)", stp);
@@ -956,8 +949,8 @@ void Snail::runCom() {
 	static int count = 1;
 	if (!_busy) {
 		_busy = true;
-		uint8 tmphea = _head;
-		while (_tail != tmphea) {
+		uint8 tmpHead = _head;
+		while (_tail != tmpHead) {
 			Com *snc = &_snList[_tail];
 
 			if (!_turbo) { // only for the slower one
@@ -975,35 +968,35 @@ void Snail::runCom() {
 						_textDelay = false;
 					}
 				}
-				if (_talk && snc->_com != SNPAUSE)
+				if (_talk && snc->_com != kSnPause)
 					break;
 			}
 
 			Sprite *spr = ((snc->_ref >= 0) ? locate(snc->_ref) : ((Sprite *) snc->_ptr));
 			switch (snc->_com) {
-			case SNLABEL    :
+			case kSnLabel:
 				break;
-			case SNPAUSE    :
-				_timerExpiry = g_system->getMillis() + snc->_val * SNAIL_FRAME_DELAY;
+			case kSnPause    :
+				_timerExpiry = g_system->getMillis() + snc->_val * kSnailFrameDelay;
 				if (_talk)
 					_textDelay = true;
 				break;
-			case SNWAIT     :
+			case kSnWait:
 				if (spr) {
 					if (spr->seqTest(snc->_val) &&
 					        (snc->_val >= 0 || spr != _hero || _hero->_tracePtr < 0)) {
-						_timerExpiry = g_system->getMillis() + spr->_time * SNAIL_FRAME_DELAY;
+						_timerExpiry = g_system->getMillis() + spr->_time * kSnailFrameDelay;
 					} else
 						goto xit;
 				}
 				break;
-			case SNLEVEL    :
+			case kSnLevel:
 				_vm->snLevel(spr, snc->_val);
 				break;
-			case SNHIDE     :
+			case kSnHide:
 				_vm->snHide(spr, snc->_val);
 				break;
-			case SNSAY      :
+			case kSnSay:
 				if (spr && _talkEnable) {
 					if (spr == _hero && spr->seqTest(-1))
 						spr->step(kSeqHTalk);
@@ -1011,148 +1004,148 @@ void Snail::runCom() {
 					_sys->_funDel = kHeroFun0;
 				}
 				break;
-			case SNINF      :
+			case kSnInf:
 				if (_talkEnable) {
 					_vm->inf(_text->getText(snc->_val));
 					_sys->_funDel = kHeroFun0;
 				}
 				break;
-			case SNTIME     :
+			case kSnTime:
 				if (spr && _talkEnable) {
 					if (spr == _hero && spr->seqTest(-1))
 						spr->step(kSeqHTalk);
 					sayTime(spr);
 				}
 				break;
-			case SNCAVE     :
+			case kSnCave:
 				_vm->switchCave(snc->_val);
 				break;
-			case SNKILL     :
+			case kSnKill:
 				_vm->snKill(spr);
 				break;
-			case SNSEQ      :
+			case kSnSeq:
 				_vm->snSeq(spr, snc->_val);
 				break;
-			case SNRSEQ     :
+			case kSnRSeq:
 				_vm->snRSeq(spr, snc->_val);
 				break;
-			case SNSEND     :
+			case kSnSend:
 				_vm->snSend(spr, snc->_val);
 				break;
-			case SNSWAP     :
+			case kSnSwap:
 				_vm->snSwap(spr, snc->_val);
 				break;
-			case SNCOVER    :
+			case kSnCover:
 				_vm->snCover(spr, snc->_val);
 				break;
-			case SNUNCOVER  :
+			case kSnUncover:
 				_vm->snUncover(spr, (snc->_val >= 0) ? locate(snc->_val) : ((Sprite *) snc->_ptr));
 				break;
-			case SNKEEP     :
+			case kSnKeep:
 				_vm->snKeep(spr, snc->_val);
 				break;
-			case SNGIVE     :
+			case kSnGive:
 				_vm->snGive(spr, snc->_val);
 				break;
-			case SNGAME     :
+			case kSnGame:
 				_vm->snGame(spr, snc->_val);
 				break;
-			case SNSETX0    :
+			case kSnSetX0:
 				_vm->snSetX0(snc->_ref, snc->_val);
 				break;
-			case SNSETY0    :
+			case kSnSetY0:
 				_vm->snSetY0(snc->_ref, snc->_val);
 				break;
-			case SNSETXY    :
+			case kSnSetXY:
 				_vm->snSetXY(spr, snc->_val);
 				break;
-			case SNRELX     :
+			case kSnRelX:
 				_vm->snRelX(spr, snc->_val);
 				break;
-			case SNRELY     :
+			case kSnRelY:
 				_vm->snRelY(spr, snc->_val);
 				break;
-			case SNRELZ     :
+			case kSnRelZ:
 				_vm->snRelZ(spr, snc->_val);
 				break;
-			case SNSETX     :
+			case kSnSetX:
 				_vm->snSetX(spr, snc->_val);
 				break;
-			case SNSETY     :
+			case kSnSetY:
 				_vm->snSetY(spr, snc->_val);
 				break;
-			case SNSETZ     :
+			case kSnSetZ:
 				_vm->snSetZ(spr, snc->_val);
 				break;
-			case SNSLAVE    :
+			case kSnSlave:
 				_vm->snSlave(spr, snc->_val);
 				break;
-			case SNTRANS    :
+			case kSnTrans:
 				_vm->snTrans(spr, snc->_val);
 				break;
-			case SNPORT     :
+			case kSnPort:
 				_vm->snPort(spr, snc->_val);
 				break;
-			case SNNEXT     :
-			case SNIF       :
-			case SNTALK     :
+			case kSnNext:
+			case kSnIf:
+			case kSnTalk:
 				break;
-			case SNMOUSE    :
+			case kSnMouse:
 				_vm->snMouse(snc->_val != 0);
 				break;
-			case SNNNEXT    :
+			case kSnNNext:
 				_vm->snNNext(spr, snc->_val);
 				break;
-			case SNTNEXT    :
+			case kSnTNext:
 				_vm->snTNext(spr, snc->_val);
 				break;
-			case SNRNNEXT   :
+			case kSnRNNext:
 				_vm->snRNNext(spr, snc->_val);
 				break;
-			case SNRTNEXT   :
+			case kSnRTNext:
 				_vm->snRTNext(spr, snc->_val);
 				break;
-			case SNRMNEAR   :
+			case kSnRMNear:
 				_vm->snRmNear(spr);
 				break;
-			case SNRMTAKE   :
+			case kSnRmTake:
 				_vm->snRmTake(spr);
 				break;
-			case SNFLAG     :
+			case kSnFlag:
 				_vm->snFlag(snc->_ref & 3, snc->_val != 0);
 				break;
-			case SNSETREF   :
+			case kSnSetRef:
 				_vm->snSetRef(spr, snc->_val);
 				break;
-			case SNBACKPT   :
+			case kSnBackPt:
 				_vm->snBackPt(spr, snc->_val);
 				break;
-			case SNFLASH    :
+			case kSnFlash:
 				_vm->snFlash(snc->_val != 0);
 				break;
-			case SNLIGHT    :
+			case kSnLight:
 				_vm->snLight(snc->_val != 0);
 				break;
-			case SNSETHB    :
+			case kSnSetHBarrier:
 				_vm->snBarrier(snc->_ref, snc->_val, true);
 				break;
-			case SNSETVB    :
+			case kSnSetVBarrier:
 				_vm->snBarrier(snc->_ref, snc->_val, false);
 				break;
-			case SNWALK     :
+			case kSnWalk:
 				_vm->snWalk(spr, snc->_ref, snc->_val);
 				break;
-			case SNREACH    :
+			case kSnReach:
 				_vm->snReach(spr, snc->_val);
 				break;
-			case SNSOUND    :
+			case kSnSound:
 				_vm->snSound(spr, snc->_val, count);
 				count = 1;
 				break;
-			case SNCOUNT    :
+			case kSnCount:
 				count = snc->_val;
 				break;
-			case SNEXEC     :
+			case kSnExec:
 				switch (snc->_cbType) {
 				case kQGame:
 					_vm->qGame();
@@ -1176,13 +1169,13 @@ void Snail::runCom() {
 					error("Unknown Callback Type in SNEXEC");
 				}
 				break;
-			case SNSTEP     :
+			case kSnStep:
 				spr->step();
 				break;
-			case SNZTRIM    :
+			case kSnZTrim:
 				_vm->snZTrim(spr);
 				break;
-			case SNGHOST    :
+			case kSnGhost:
 				_vm->snGhost((Bitmap *) snc->_ptr);
 				break;
 			default :

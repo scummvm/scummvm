@@ -206,15 +206,15 @@ char *dwtom(uint32 val, char *str, int radix, int len) {
 	return str;
 }
 
-IoHand::IoHand(IOMODE mode, CRYPT *crpt)
-	: XFile(mode), _crypt(crpt), _seed(SEED) {
+IoHand::IoHand(IOMode mode, CRYPT *crpt)
+	: XFile(mode), _crypt(crpt), _seed(kCryptSeed) {
 	_file = new Common::File();
 }
 
-IoHand::IoHand(const char *name, IOMODE mode, CRYPT *crpt)
-		: XFile(mode), _crypt(crpt), _seed(SEED) {
+IoHand::IoHand(const char *name, IOMode mode, CRYPT *crpt)
+		: XFile(mode), _crypt(crpt), _seed(kCryptSeed) {
 	// TODO: Check if WRI and/or UPD modes are needed, and map to a save file
-	assert(mode == REA);
+	assert(mode == kModeRead);
 
 	_file = new Common::File();
 	_file->open(name);
@@ -226,7 +226,7 @@ IoHand::~IoHand() {
 }
 
 uint16 IoHand::read(void *buf, uint16 len) {
-	if (_mode == WRI || !_file->isOpen())
+	if (_mode == kModeWrite || !_file->isOpen())
 		return 0;
 
 	uint16 bytesRead = _file->read(buf, len);
@@ -242,7 +242,7 @@ uint16 IoHand::write(void *buf, uint16 len) {
 	return 0;
 /*
 	if (len) {
-		if (Mode == REA || Handle < 0)
+		if (Mode == kModeRead || Handle < 0)
 			return 0;
 		if (Crypt)
 			Seed = Crypt(buf, len, Seed);
@@ -333,7 +333,6 @@ int new_random(int range) {
 	return ((CGEEngine *)g_engine)->_randomSource.getRandomNumber(range - 1);
 }
 
-#define		TIMER_INT	0x08
 //void interrupt	(* Engine_::oldTimer) (...) = NULL;
 
 Engine_::Engine_(uint16 tdiv) {

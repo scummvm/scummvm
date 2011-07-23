@@ -401,18 +401,18 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 void CGEEngine::heroCover(int cvr) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::heroCover(%d)", cvr);
 
-	SNPOST(SNCOVER, 1, cvr, NULL);
+	_snail->addCom(kSnCover, 1, cvr, NULL);
 }
 
 void CGEEngine::trouble(int seq, int txt) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::trouble(%d, %d)", seq, txt);
 
 	_hero->park();
-	SNPOST(SNWAIT, -1, -1, _hero);
-	SNPOST(SNSEQ, -1, seq, _hero);
-	SNPOST(SNSOUND, -1, 2, _hero);
-	SNPOST(SNWAIT, -1, -1, _hero);
-	SNPOST(SNSAY,  1, txt, _hero);
+	_snail->addCom(kSnWait, -1, -1, _hero);
+	_snail->addCom(kSnSeq, -1, seq, _hero);
+	_snail->addCom(kSnSound, -1, 2, _hero);
+	_snail->addCom(kSnWait, -1, -1, _hero);
+	_snail->addCom(kSnSay,  1, txt, _hero);
 }
 
 void CGEEngine::offUse() {
@@ -464,7 +464,7 @@ void Square::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
 	if (mask & L_UP) {
 		XZ(_x + x, _y + y).cell() = 0;
-		SNPOST_(SNKILL, -1, 0, this);
+		_snail_->addCom(kSnKill, -1, 0, this);
 	}
 }
 
@@ -487,14 +487,14 @@ void CGEEngine::setMapBrick(int x, int z) {
 void CGEEngine::keyClick() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::keyClick()");
 
-	SNPOST_(SNSOUND, -1, 5, NULL);
+	_snail_->addCom(kSnSound, -1, 5, NULL);
 }
 
 
 void CGEEngine::resetQSwitch() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::resetQSwitch()");
 
-	SNPOST_(SNSEQ, 123,  0, NULL);
+	_snail_->addCom(kSnSeq, 123,  0, NULL);
 	keyClick();
 }
 
@@ -510,13 +510,13 @@ void CGEEngine::quit() {
 
 	if (_snail->idle() && !_hero->_flags._hide) {
 		if (Vmenu::_addr) {
-			SNPOST_(SNKILL, -1, 0, Vmenu::_addr);
+			_snail_->addCom(kSnKill, -1, 0, Vmenu::_addr);
 			resetQSwitch();
 		} else {
 			QuitMenu[0]._text = _text->getText(kQuit);
 			QuitMenu[1]._text = _text->getText(kNoQuit);
 			(new Vmenu(this, QuitMenu, -1, -1))->setName(_text->getText(kQuitTitle));
-			SNPOST_(SNSEQ, 123, 1, NULL);
+			_snail_->addCom(kSnSeq, 123, 1, NULL);
 			keyClick();
 		}
 	}
@@ -526,7 +526,7 @@ void CGEEngine::quit() {
 void CGEEngine::AltCtrlDel() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::AltCtrlDel()");
 
-	SNPOST_(SNSAY,  -1, kAltCtrlDel, _hero);
+	_snail_->addCom(kSnSay,  -1, kAltCtrlDel, _hero);
 }
 
 void CGEEngine::miniStep(int stp) {
@@ -547,7 +547,7 @@ void CGEEngine::postMiniStep(int step) {
 	debugC(6, kCGEDebugEngine, "CGEEngine::postMiniStep(%d)", step);
 
 	if (_miniCave && step != _recentStep)
-		SNPOST2_(SNEXEC, -1, _recentStep = step, kMiniStep);
+		_snail_->addCom2(kSnExec, -1, _recentStep = step, kMiniStep);
 }
 
 void CGEEngine::showBak(int ref) {
@@ -676,8 +676,8 @@ void CGEEngine::switchCave(int cav) {
 	if (cav != _now) {
 		_heart->_enable = false;
 		if (cav < 0) {
-			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
-			SNPOST2(SNEXEC,  -1, 0, kQGame); // switch cave
+			_snail->addCom(kSnLabel, -1, 0, NULL);  // wait for repaint
+			_snail->addCom2(kSnExec,  -1, 0, kQGame); // switch cave
 		} else {
 			_now = cav;
 			_mouse->off();
@@ -694,8 +694,8 @@ void CGEEngine::switchCave(int cav) {
 			killText();
 			if (!_startupMode)
 				keyClick();
-			SNPOST(SNLABEL, -1, 0, NULL);  // wait for repaint
-			SNPOST2(SNEXEC,   0, 0, kXCave); // switch cave
+			_snail->addCom(kSnLabel, -1, 0, NULL);  // wait for repaint
+			_snail->addCom2(kSnExec,   0, 0, kXCave); // switch cave
 		}
 	}
 }
@@ -732,7 +732,7 @@ void System::touch(uint16 mask, int x, int y) {
 		_vm->keyClick();
 		killText();
 		if (_vm->_startupMode == 1) {
-			SNPOST(SNCLEAR, -1, 0, NULL);
+			_snail->addCom(kSnClear, -1, 0, NULL);
 			return;
 		}
 		pp0 = pp;
@@ -801,7 +801,7 @@ void System::touch(uint16 mask, int x, int y) {
 		case '3':
 		case '4':
 			if (_keyboard->_key[ALT]) {
-				SNPOST(SNLEVEL, -1, x - '0', NULL);
+				_snail->addCom(kSnLevel, -1, x - '0', NULL);
 				break;
 			}
 		case '5':
@@ -910,7 +910,7 @@ void System::tick() {
 void CGEEngine::switchColorMode() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchColorMode()");
 
-	SNPOST_(SNSEQ, 121, _vga->_mono = !_vga->_mono, NULL);
+	_snail_->addCom(kSnSeq, 121, _vga->_mono = !_vga->_mono, NULL);
 	keyClick();
 	_vga->setColors(Vga::_sysPal, 64);
 }
@@ -920,16 +920,16 @@ void CGEEngine::switchMusic() {
 
 	if (_keyboard->_key[ALT]) {
 		if (Vmenu::_addr)
-			SNPOST_(SNKILL, -1, 0, Vmenu::_addr);
+			_snail_->addCom(kSnKill, -1, 0, Vmenu::_addr);
 		else {
-			SNPOST_(SNSEQ, 122, (_music = false), NULL);
-			SNPOST2(SNEXEC, -1, 0, kSelectSound);
+			_snail_->addCom(kSnSeq, 122, (_music = false), NULL);
+			_snail->addCom2(kSnExec, -1, 0, kSelectSound);
 		}
 	} else {
 		if (Startup::_core < CORE_HIG)
-			SNPOST(SNINF, -1, kNoMusic, NULL);
+			_snail->addCom(kSnInf, -1, kNoMusic, NULL);
 		else {
-			SNPOST_(SNSEQ, 122, (_music = !_music), NULL);
+			_snail_->addCom(kSnSeq, 122, (_music = !_music), NULL);
 			keyClick();
 		}
 	}
@@ -950,7 +950,7 @@ void CGEEngine::takeName() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::takeName()");
 
 	if (GetText::_ptr)
-		SNPOST_(SNKILL, -1, 0, GetText::_ptr);
+		_snail_->addCom(kSnKill, -1, 0, GetText::_ptr);
 	else {
 		memset(_usrFnam, 0, 15);
 		GetText *tn = new GetText(this, _text->getText(kGetNamePrompt), _usrFnam, 8);
@@ -980,7 +980,7 @@ void CGEEngine::switchMapping() {
 		Sprite *s;
 		for (s = _vga->_showQ->first(); s; s = s->_next)
 			if (s->_w == MAP_XGRID && s->_h == MAP_ZGRID)
-				SNPOST_(SNKILL, -1, 0, s);
+				_snail_->addCom(kSnKill, -1, 0, s);
 	}
 	_horzLine->_flags._hide = !_horzLine->_flags._hide;
 }
@@ -990,7 +990,7 @@ void CGEEngine::killSprite() {
 
 	_sprite->_flags._kill = true;
 	_sprite->_flags._bDel = true;
-	SNPOST_(SNKILL, -1, 0, _sprite);
+	_snail_->addCom(kSnKill, -1, 0, _sprite);
 	_sprite = NULL;
 }
 
@@ -1003,7 +1003,7 @@ void CGEEngine::pushSprite() {
 		while (_sprite->_z > _sprite->_next->_z)
 			_sprite->_z--;
 	} else
-		SNPOST_(SNSOUND, -1, 2, NULL);
+		_snail_->addCom(kSnSound, -1, 2, NULL);
 }
 
 void CGEEngine::pullSprite() {
@@ -1022,25 +1022,25 @@ void CGEEngine::pullSprite() {
 			while (_sprite->_z < _sprite->_prev->_z)
 				_sprite->_z++;
 	} else
-		SNPOST_(SNSOUND, -1, 2, NULL);
+		_snail_->addCom(kSnSound, -1, 2, NULL);
 }
 
 void CGEEngine::nextStep() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::nextStep()");
 
-	SNPOST_(SNSTEP, 0, 0, _sprite);
+	_snail_->addCom(kSnStep, 0, 0, _sprite);
 }
 
 void CGEEngine::saveMapping() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::saveMapping()");
 
-	IoHand cfTab(progName(".TAB"), UPD);
+	IoHand cfTab(progName(".TAB"), kModeUpdate);
 	if (!cfTab._error) {
 		cfTab.seek((_now - 1) * sizeof(Cluster::_map));
 		cfTab.write((uint8 *) Cluster::_map, sizeof(Cluster::_map));
 	}
 
-	IoHand cfHxy(progName(".HXY"), WRI);
+	IoHand cfHxy(progName(".HXY"), kModeWrite);
 	if (!cfHxy._error) {
 		_heroXY[_now - 1]._x = _hero->_x;
 		_heroXY[_now - 1]._y = _hero->_y;
@@ -1155,13 +1155,13 @@ void Sprite::touch(uint16 mask, int x, int y) {
 							if (_vm->findPocket(NULL) < 0)
 								_vm->pocFul();
 							else {
-								SNPOST(SNREACH, -1, -1, this);
-								SNPOST(SNKEEP, -1, -1, this);
+								_snail->addCom(kSnReach, -1, -1, this);
+								_snail->addCom(kSnKeep, -1, -1, this);
 								_flags._port = false;
 							}
 						} else {
 							if (_takePtr != NO_PTR) {
-								if (snList(kTake)[_takePtr]._com == SNNEXT)
+								if (snList(kTake)[_takePtr]._com == kSnNext)
 									_vm->offUse();
 								else
 									_vm->feedSnail(this, kTake);
@@ -1184,7 +1184,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 					}
 				}
 			} else
-				SNPOST(SNWALK, -1, -1, this); // Hero->FindWay(this);
+				_snail->addCom(kSnWalk, -1, -1, this); // Hero->FindWay(this);
 		}
 	}
 }
@@ -1413,9 +1413,9 @@ void CGEEngine::mainLoop() {
 //		static uint32 tc = 0;
 		if (/* FIXME: TimerCount - tc >= ((182L * 6L) * 5L) && */ _talk == NULL && _snail->idle()) {
 			if (_text->getText(_demoText)) {
-				SNPOST(SNSOUND,  -1, 4, NULL); // drumla
-				SNPOST(SNINF,  -1, _demoText, NULL);
-				SNPOST(SNLABEL, -1, -1, NULL);
+				_snail->addCom(kSnSound,  -1, 4, NULL); // drumla
+				_snail->addCom(kSnInf,  -1, _demoText, NULL);
+				_snail->addCom(kSnLabel, -1, -1, NULL);
 				if (_text->getText(++_demoText) == NULL)
 					_demoText = kDemo + 1;
 			}
@@ -1525,10 +1525,10 @@ void CGEEngine::runGame() {
 //    ~~~~~~~~~~~
 
 	if ((_sprite = _vga->_spareQ->locate(121)) != NULL)
-		SNPOST_(SNSEQ, -1, _vga->_mono, _sprite);
+		_snail_->addCom(kSnSeq, -1, _vga->_mono, _sprite);
 	if ((_sprite = _vga->_spareQ->locate(122)) != NULL)
 		_sprite->step(_music);
-	SNPOST_(SNSEQ, -1, _music, _sprite);
+	_snail_->addCom(kSnSeq, -1, _music, _sprite);
 	if (!_music)
 		killMidi();
 
@@ -1585,7 +1585,7 @@ void CGEEngine::runGame() {
 
 	_startupMode = 0;
 
-	SNPOST(SNLEVEL, -1, _oldLev, &_cavLight);
+	_snail->addCom(kSnLevel, -1, _oldLev, &_cavLight);
 	_cavLight->gotoxy(CAVE_X + ((_now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
 	              CAVE_Y + ((_now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
 	caveUp();
@@ -1594,14 +1594,14 @@ void CGEEngine::runGame() {
 	// main loop
 	while (!_finis && !_eventManager->_quitFlag) {
 		if (_finis)
-			SNPOST2(SNEXEC,  -1, 0, kQGame);
+			_snail->addCom2(kSnExec,  -1, 0, kQGame);
 		mainLoop();
 	}
 
 	_keyboard->setClient(NULL);
 	_heart->_enable = false;
-	SNPOST(SNCLEAR, -1, 0, NULL);
-	SNPOST_(SNCLEAR, -1, 0, NULL);
+	_snail->addCom(kSnClear, -1, 0, NULL);
+	_snail_->addCom(kSnClear, -1, 0, NULL);
 	_mouse->off();
 	_vga->_showQ->clear();
 	_vga->_spareQ->clear();
@@ -1629,8 +1629,8 @@ void CGEEngine::movie(const char *ext) {
 
 		_keyboard->setClient(NULL);
 		_heart->_enable = false;
-		SNPOST(SNCLEAR, -1, 0, NULL);
-		SNPOST_(SNCLEAR, -1, 0, NULL);
+		_snail->addCom(kSnClear, -1, 0, NULL);
+		_snail_->addCom(kSnClear, -1, 0, NULL);
 		_vga->_showQ->clear();
 		_vga->_spareQ->clear();
 	}

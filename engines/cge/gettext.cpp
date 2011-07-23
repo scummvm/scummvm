@@ -35,8 +35,8 @@ GetText *GetText::_ptr = NULL;
 
 
 GetText::GetText(CGEEngine *vm, const char *info, char *text, int size)
-	: Talk(vm), _text(text), _size(min<int>(size, GTMAX)), _len(min<int>(_size, strlen(text))),
-	_cntr(GTBLINK), _oldKeybClient(_keyboard->setClient(this)), _vm(vm) {
+	: Talk(vm), _text(text), _size(min<int>(size, kGetTextMax)), _len(min<int>(_size, strlen(text))),
+	_cntr(kGetTextBlink), _oldKeybClient(_keyboard->setClient(this)), _vm(vm) {
 	int i = 2 * kTextHMargin + _font->width(info);
 	_ptr = this;
 	_mode = RECT;
@@ -63,12 +63,12 @@ GetText::~GetText() {
 
 
 void GetText::tick() {
-	if (++_cntr >= GTBLINK) {
+	if (++_cntr >= kGetTextBlink) {
 		_buff[_len] ^= (' ' ^ '_');
 		_cntr = 0;
 	}
 	putLine(1, _buff);
-	_time = GTTIME;
+	_time = kGetTextTime;
 }
 
 
@@ -89,7 +89,7 @@ void GetText::touch(uint16 mask, int x, int y) {
 					*p = bezo[q - ogon];
 			}
 		case Esc   :
-			SNPOST_(SNKILL, -1, 0, this);
+			_snail_->addCom(kSnKill, -1, 0, this);
 			break;
 		case BSp   :
 			if (_len) {

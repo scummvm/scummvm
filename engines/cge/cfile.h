@@ -46,8 +46,8 @@ protected:
 	virtual void readBuf();
 	virtual void writeBuf();
 public:
-	IoBuf(IOMODE mode, CRYPT *crpt = NULL);
-	IoBuf(const char *name, IOMODE mode, CRYPT *crpt = NULL);
+	IoBuf(IOMode mode, CRYPT *crpt = NULL);
+	IoBuf(const char *name, IOMode mode, CRYPT *crpt = NULL);
 	virtual ~IoBuf();
 	uint16 read(void *buf, uint16 len);
 	uint16 read(uint8 *buf);
@@ -61,7 +61,7 @@ public:
 class CFile : public IoBuf {
 public:
 	static uint16 _maxLineLen;
-	CFile(const char *name, IOMODE mode = REA, CRYPT *crpt = NULL);
+	CFile(const char *name, IOMode mode = kModeRead, CRYPT *crpt = NULL);
 	virtual ~CFile();
 	void flush();
 	long mark();

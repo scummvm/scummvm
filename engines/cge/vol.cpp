@@ -44,7 +44,7 @@ Dat::Dat():
 #ifdef VOL_UPD
 	_file(DAT_NAME, UPD, CRP)
 #else
-	_file(DAT_NAME, REA, CRP)
+	_file(DAT_NAME, kModeRead, CRP)
 #endif
 {
 	debugC(1, kCGEDebugFile, "Dat::Dat()");
@@ -59,7 +59,7 @@ void VFile::init() {
 #ifdef VOL_UPD
 	_cat = new BtFile(CAT_NAME, UPD, CRP);
 #else
-	_cat = new BtFile(CAT_NAME, REA, CRP);
+	_cat = new BtFile(CAT_NAME, kModeRead, CRP);
 #endif
 
 	_recent = NULL;
@@ -70,11 +70,11 @@ void VFile::deinit() {
 	delete _cat;
 }
 
-VFile::VFile(const char *name, IOMODE mode)
+VFile::VFile(const char *name, IOMode mode)
 	: IoBuf(mode) {
 	debugC(3, kCGEDebugFile, "VFile::VFile(%s, %d)", name, mode);
 
-	if (mode == REA) {
+	if (mode == kModeRead) {
 		if (_dat->_file._error || _cat->_error)
 			error("Bad volume data");
 		BtKeypack *kp = _cat->find(name);
