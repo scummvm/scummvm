@@ -40,8 +40,8 @@
 
 #include "engines/grim/movie/mpeg.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
-#include "engines/grim/colormap.h"
 
 #define MWIDTH 640
 #define MHEIGHT 400

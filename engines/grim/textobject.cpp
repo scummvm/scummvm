@@ -20,6 +20,7 @@
  *
  */
 
+#include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/textobject.h"
 #include "engines/grim/savegame.h"

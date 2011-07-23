@@ -39,8 +39,8 @@
 
 #include "engines/grim/movie/smush.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
-#include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
 

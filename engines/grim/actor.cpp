@@ -29,6 +29,7 @@
 
 #include "graphics/line3d.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/colormap.h"

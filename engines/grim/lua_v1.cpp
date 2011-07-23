@@ -25,6 +25,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/lipsync.h"

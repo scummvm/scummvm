@@ -22,8 +22,7 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "engines/grim/grim.h"
-#include "engines/grim/colormap.h"
+#include "engines/grim/debug.h"
 
 #include "engines/grim/imuse/imuse.h"
 #include "engines/grim/imuse/imuse_tables.h"

@@ -22,7 +22,7 @@
 
 #include "common/endian.h"
 
-#include "engines/grim/grim.h"
+#include "engines/grim/debug.h"
 #include "engines/grim/material.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/colormap.h"

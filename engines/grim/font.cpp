@@ -22,6 +22,7 @@
 
 #include "common/endian.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/font.h"

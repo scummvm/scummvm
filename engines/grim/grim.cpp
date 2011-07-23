@@ -50,6 +50,7 @@
 
 #include "engines/engine.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
 #include "engines/grim/actor.h"

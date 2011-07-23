@@ -24,6 +24,7 @@
 
 #include "common/memstream.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/scene.h"
 #include "engines/grim/textsplit.h"
 #include "engines/grim/colormap.h"

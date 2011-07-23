@@ -23,6 +23,7 @@
 #include "common/util.h"
 #include "common/memstream.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/sector.h"
 #include "engines/grim/textsplit.h"
