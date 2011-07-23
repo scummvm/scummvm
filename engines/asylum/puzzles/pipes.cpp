@@ -32,7 +32,7 @@
 
 #include "asylum/asylum.h"
 
-#include <math.h>
+#include <common/math.h>
 
 namespace Asylum {
 
@@ -102,8 +102,6 @@ const Common::Point peepholePoints[] = {
 
 const uint32 peepholeResources[] = {15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 32, 32, 15,
                                     15, 32, 32, 15, 15, 15, 15,15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15};
-
-const double LOG2 = 0.6931471;
 
 //////////////////////////////////////////////////////////////////////////
 // Peephole
@@ -177,8 +175,8 @@ void Connector::turn() {
 			oldIndex[1] = 2;
 		}
 	} else {
-		newIndex[0] = log((double)(newState & delta)) / LOG2;
-		oldIndex[0] = log((double)(_state & delta)) / LOG2;
+		newIndex[0] = Common::intLog2(newState & delta);
+		oldIndex[0] = Common::intLog2(_state & delta);
 	}
 
 	for (uint32 i = 0; i < (uint32)(delta == kBinNum1111 ? 2 : 1); ++i) {
