@@ -32,16 +32,16 @@
 
 namespace CGE {
 
-#define MIX_MAX     16                              // count of Leds
-#define MIX_Z       64                              // mixer Z position
-#define MIX_DELAY   12                              // 6/s
-#define MIX_FALL    6                               // in MIX_DELAY units
-#define MIX_BHIG    6                               // mixer button high
-#define MIX_NAME    105                             // sprite name
+#define kMixMax        16                              // count of Leds
+#define kMixZ          64                              // mixer Z position
+#define kMixDelay      12                              // 6/s
+#define kMixFall       6                               // in MIX_DELAY units
+#define kMixButtonHigh 6                               // mixer button high
+#define kMixName       105                             // sprite name
 
 class Mixer : public Sprite {
 	BMP_PTR _mb[2];
-	BMP_PTR _lb[MIX_MAX + 1];
+	BMP_PTR _lb[kMixMax + 1];
 	Sprite *_led[2];
 	int _fall;
 	void update();

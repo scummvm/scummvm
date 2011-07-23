@@ -33,40 +33,34 @@
 
 namespace CGE {
 
-#define SNINSERT(c, r, v, p)   _snail->insCom(c, r, v, p)
-#define SNPOST(c, r, v, p)     _snail->addCom(c, r, v, p)
-#define SNPOST2(c, r, v, p)    _snail->addCom2(c, r, v, p)
-#define SNPOST_(c, r, v, p)    _snail_->addCom(c, r, v, p)
-#define SNPOST2_(c, r, v, p)   _snail_->addCom2(c, r, v, p)
-
-#define SNAIL_FRAME_RATE 80
-#define SNAIL_FRAME_DELAY (1000 / SNAIL_FRAME_RATE)
+#define kSnailFrameRate 80
+#define kSnailFrameDelay (1000 / kSnailFrameRate)
+#define kDressed 3
 
 struct Bar {
 	uint8 _horz;
 	uint8 _vert;
 };
 
-
-enum SNCOM {
-	SNLABEL,  SNPAUSE,  SNWAIT,    SNLEVEL,  SNHIDE,
-	SNSAY,    SNINF,    SNTIME,    SNCAVE,   SNKILL,
-	SNRSEQ,   SNSEQ,    SNSEND,    SNSWAP,   SNKEEP,
-	SNGIVE,   SNIF,     SNGAME,    SNSETX0,  SNSETY0,
-	SNSLAVE,  SNSETXY,  SNRELX,    SNRELY,   SNRELZ,
-	SNSETX,   SNSETY,   SNSETZ,    SNTRANS,  SNPORT,
-	SNNEXT,   SNNNEXT,  SNTNEXT,   SNRNNEXT, SNRTNEXT,
-	SNRMNEAR, SNRMTAKE, SNFLAG,    SNSETREF, SNBACKPT,
-	SNFLASH,  SNLIGHT,  SNSETHB,   SNSETVB,  SNWALK,
-	SNREACH,  SNCOVER,  SNUNCOVER, SNCLEAR,  SNTALK,
-	SNMOUSE,  SNSOUND,  SNCOUNT,   SNEXEC,   SNSTEP,
-	SNZTRIM,  SNGHOST
+enum SnCom {
+	kSnLabel,  kSnPause,  kSnWait,        kSnLevel,       kSnHide,
+	kSnSay,    kSnInf,    kSnTime,        kSnCave,        kSnKill,
+	kSnRSeq,   kSnSeq,    kSnSend,        kSnSwap,        kSnKeep,
+	kSnGive,   kSnIf,     kSnGame,        kSnSetX0,       kSnSetY0,
+	kSnSlave,  kSnSetXY,  kSnRelX,        kSnRelY,        kSnRelZ,
+	kSnSetX,   kSnSetY,   kSnSetZ,        kSnTrans,       kSnPort,
+	kSnNext,   kSnNNext,  kSnTNext,       kSnRNNext,      kSnRTNext,
+	kSnRMNear, kSnRmTake, kSnFlag,        kSnSetRef,      kSnBackPt,
+	kSnFlash,  kSnLight,  kSnSetHBarrier, kSnSetVBarrier, kSnWalk,
+	kSnReach,  kSnCover,  kSnUncover,     kSnClear,       kSnTalk,
+	kSnMouse,  kSnSound,  kSnCount,       kSnExec,        kSnStep,
+	kSnZTrim,  kSnGhost
 };
 
 class Snail {
 public:
 	struct Com {
-		SNCOM _com;
+		SnCom _com;
 		int _ref;
 		int _val;
 		void *_ptr;
@@ -83,17 +77,15 @@ public:
 	Snail(CGEEngine *vm, bool turbo);
 	~Snail();
 	void runCom();
-	void addCom(SNCOM com, int ref, int val, void *ptr);
-	void addCom2(SNCOM com, int ref, int val, CallbackType cbType);
-	void insCom(SNCOM com, int ref, int val, void *ptr);
+	void addCom(SnCom com, int ref, int val, void *ptr);
+	void addCom2(SnCom com, int ref, int val, CallbackType cbType);
+	void insCom(SnCom com, int ref, int val, void *ptr);
 	bool idle();
 private:
 	CGEEngine *_vm;
 };
 
 
-extern  bool _dark;
-extern  int _lev;
 extern  Bar _barriers[];
 extern  struct Hxy {
 	int _x;

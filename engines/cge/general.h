@@ -37,9 +37,9 @@
 
 namespace CGE {
 
-#define     SEED        0xA5
+#define kCryptSeed  0xA5
 
-enum    IOMODE      { REA, WRI, UPD };
+enum IOMode { kModeRead, kModeWrite, kModeUpdate };
 
 struct Dac {
 	uint8 _r;
@@ -47,7 +47,7 @@ struct Dac {
 	uint8 _b;
 };
 
-typedef uint16  CRYPT(void *buf, uint16 siz, uint16 seed);
+typedef uint16 CRYPT(void *buf, uint16 siz, uint16 seed);
 
 class Engine_ {
 protected:
@@ -111,11 +111,11 @@ T min(T A, T B) {
 
 class XFile {
 public:
-	IOMODE _mode;
+	IOMode _mode;
 	uint16 _error;
 
-	XFile() : _mode(REA), _error(0) { }
-	XFile(IOMODE mode) : _mode(mode), _error(0) { }
+	XFile() : _mode(kModeRead), _error(0) { }
+	XFile(IOMode mode) : _mode(mode), _error(0) { }
 	virtual ~XFile() { }
 	virtual uint16 read(void *buf, uint16 len) = 0;
 	virtual uint16 write(void *buf, uint16 len) = 0;
@@ -137,8 +137,8 @@ protected:
 	uint16 _seed;
 	CRYPT *_crypt;
 public:
-	IoHand(const char *name, IOMODE mode = REA, CRYPT crypt = NULL);
-	IoHand(IOMODE mode = REA, CRYPT *crpt = NULL);
+	IoHand(const char *name, IOMode mode = kModeRead, CRYPT crypt = NULL);
+	IoHand(IOMode mode = kModeRead, CRYPT *crpt = NULL);
 	virtual ~IoHand();
 	static bool exist(const char *name);
 	uint16 read(void *buf, uint16 len);
@@ -146,8 +146,6 @@ public:
 	long mark();
 	long size();
 	long seek(long pos);
-	//timeb  Time ();
-// void SetTime (timeb  t);
 };
 
 CRYPT     XCrypt;

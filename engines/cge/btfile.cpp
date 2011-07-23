@@ -34,7 +34,7 @@
 
 namespace CGE {
 
-BtFile::BtFile(const char *name, IOMODE mode, CRYPT *crpt)
+BtFile::BtFile(const char *name, IOMode mode, CRYPT *crpt)
 	: IoHand(name, mode, crpt) {
 	debugC(1, kCGEDebugFile, "BtFile::BtFile(%s, %d, crpt)", name, mode);
 

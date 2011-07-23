@@ -138,7 +138,7 @@ void Vmenu::touch(uint16 mask, int x, int y) {
 
 		if (ok && (mask & L_UP)) {
 			_items = 0;
-			SNPOST_(SNKILL, -1, 0, this);
+			_snail_->addCom(kSnKill, -1, 0, this);
 			_recent = n;
 			assert(_menu[n].Proc);
 			CALL_MEMBER_FN(*_vm, _menu[n].Proc)();

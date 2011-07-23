@@ -33,12 +33,12 @@
 
 namespace CGE {
 
-#define GTMAX       24
-#define GTBLINK      6
-#define GTTIME       6
+#define kGetTextMax   24
+#define kGetTextBlink 6
+#define kGetTextTime  6
 
 class GetText : public Talk {
-	char   _buff[GTMAX + 2];
+	char   _buff[kGetTextMax + 2];
 	char  *_text;
 	uint16 _size;
 	uint16 _len;
