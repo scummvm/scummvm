@@ -419,6 +419,46 @@ void DreamGenContext::printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool cent
 	}
 }
 
+void DreamGenContext::getundertimed() {
+	uint16 y = data.byte(kTimedy);
+	if (data.byte(kForeignrelease))
+		y -= 3;
+	ds = data.word(kBuffers);
+	si = kUndertimedtext;
+	multiget(data.byte(kTimedx), y, 240, kUndertimedysize);
+}
+
+void DreamGenContext::putundertimed() {
+	uint16 y = data.byte(kTimedy);
+	if (data.byte(kForeignrelease))
+		y -= 3;
+	ds = data.word(kBuffers);
+	si = kUndertimedtext;
+	multiput(data.byte(kTimedx), y, 240, kUndertimedysize);
+}
+
+void DreamGenContext::usetimedtext() {
+	if (data.word(kTimecount) == 0)
+		return;
+	--data.word(kTimecount);
+	if (data.word(kTimecount) == 0) {
+		putundertimed();
+		data.byte(kNeedtodumptimed) = 1;
+		return;
+	}
+
+	if (data.word(kTimecount) == data.word(kCounttotimed))
+		getundertimed();
+	else if (data.word(kTimecount) > data.word(kCounttotimed))
+		return;
+
+	es = data.word(kTimedseg);
+	si = data.word(kTimedoffset);
+	uint16 y = data.byte(kTimedy);
+	printdirect(data.byte(kTimedx), &y, 237, true);
+	data.byte(kNeedtodumptimed) = 1;
+}
+
 void DreamGenContext::getnumber() {
 	uint16 offset = di;
 	cl = getnumber(si, dl, (bool)(dl & 1), &offset);

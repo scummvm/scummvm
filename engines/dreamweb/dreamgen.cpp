@@ -12853,46 +12853,6 @@ notonsartroof:
 	placesetobject();
 }
 
-void DreamGenContext::getundertimed() {
-	STACK_CHECK;
-	al = data.byte(kTimedy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(al, 3);
-_tmp1:
-	ah = 0;
-	bx = ax;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	ch = (30);
-	cl = 240;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiget();
-}
-
-void DreamGenContext::putundertimed() {
-	STACK_CHECK;
-	al = data.byte(kTimedy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(al, 3);
-_tmp1:
-	ah = 0;
-	bx = ax;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	ch = (30);
-	cl = 240;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiput();
-}
-
 void DreamGenContext::dumptimedtext() {
 	STACK_CHECK;
 	_cmp(data.byte(kNeedtodumptimed), 1);
@@ -12987,42 +12947,6 @@ notloadspeech3:
 	bx = ax;
 	data.word(kTimedseg) = es;
 	data.word(kTimedoffset) = bx;
-}
-
-void DreamGenContext::usetimedtext() {
-	STACK_CHECK;
-	_cmp(data.word(kTimecount), 0);
-	if (flags.z())
-		return /* (notext) */;
-	_dec(data.word(kTimecount));
-	_cmp(data.word(kTimecount), 0);
-	if (flags.z())
-		goto deltimedtext;
-	ax = data.word(kTimecount);
-	_cmp(ax, data.word(kCounttotimed));
-	if (flags.z())
-		goto firsttimed;
-	if (!flags.c())
-		return /* (notext) */;
-	goto notfirsttimed;
-firsttimed:
-	getundertimed();
-notfirsttimed:
-	bl = data.byte(kTimedy);
-	bh = 0;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	es = data.word(kTimedseg);
-	si = data.word(kTimedoffset);
-	dl = 237;
-	ah = 0;
-	printdirect();
-	data.byte(kNeedtodumptimed) = 1;
-	return;
-deltimedtext:
-	putundertimed();
-	data.byte(kNeedtodumptimed) = 1;
 }
 
 void DreamGenContext::edenscdplayer() {
@@ -21484,12 +21408,9 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_setallchanges: setallchanges(); break;
 		case addr_dochange: dochange(); break;
 		case addr_autoappear: autoappear(); break;
-		case addr_getundertimed: getundertimed(); break;
-		case addr_putundertimed: putundertimed(); break;
 		case addr_dumptimedtext: dumptimedtext(); break;
 		case addr_setuptimeduse: setuptimeduse(); break;
 		case addr_setuptimedtemp: setuptimedtemp(); break;
-		case addr_usetimedtext: usetimedtext(); break;
 		case addr_edenscdplayer: edenscdplayer(); break;
 		case addr_usewall: usewall(); break;
 		case addr_usechurchgate: usechurchgate(); break;

@@ -46,6 +46,9 @@
 	void printchar(uint16 dst, uint16 src, uint16 *x, uint16 y, uint8 c, uint8 *width, uint8 *height);
 	void printdirect();
 	void printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool centered);
+	void usetimedtext();
+	void getundertimed();
+	void putundertimed();
 	uint8 printslow(uint16 x, uint16 y, uint8 maxWidth, bool centered);
 	void printslow();
 	void dumptextline();

@@ -327,12 +327,9 @@ public:
 	static const uint16 addr_usechurchgate = 0xc730;
 	static const uint16 addr_usewall = 0xc72c;
 	static const uint16 addr_edenscdplayer = 0xc728;
-	static const uint16 addr_usetimedtext = 0xc724;
 	static const uint16 addr_setuptimedtemp = 0xc720;
 	static const uint16 addr_setuptimeduse = 0xc71c;
 	static const uint16 addr_dumptimedtext = 0xc718;
-	static const uint16 addr_putundertimed = 0xc714;
-	static const uint16 addr_getundertimed = 0xc710;
 	static const uint16 addr_autoappear = 0xc70c;
 	static const uint16 addr_dochange = 0xc708;
 	static const uint16 addr_setallchanges = 0xc704;
@@ -1343,7 +1340,7 @@ public:
 	void storeit();
 	void lockeddoorway();
 	void isitworn();
-	void putundertimed();
+	//void putundertimed();
 	void dumpmap();
 	//void multidump();
 	void channel0only();
@@ -1369,7 +1366,7 @@ public:
 	void restoreall();
 	void screenupdate();
 	void addlength();
-	void usetimedtext();
+	void wornerror();
 	void putundercentre();
 	void checkobjectsize();
 	void commandonly();
@@ -1515,6 +1512,7 @@ public:
 	void openpoolboss();
 	void buttontwo();
 	void fillopen();
+	//void usetimedtext();
 	void delsprite();
 	void getroomspaths();
 	//void dumptextline();
@@ -1570,7 +1568,6 @@ public:
 	void saveload();
 	void monitorlogo();
 	void loadposition();
-	void wornerror();
 	void entersymbol();
 	void showword();
 	void dirfile();
@@ -1791,7 +1788,7 @@ public:
 	void findsetobject();
 	void singlekey();
 	//void seecommandtail();
-	void getundertimed();
+	//void getundertimed();
 	void hangone();
 	void carparkdrip();
 	void usediary();
