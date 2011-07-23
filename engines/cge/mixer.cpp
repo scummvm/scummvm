@@ -39,24 +39,24 @@ extern Mouse *Mouse;
 bool Mixer::_appear = false;
 
 
-Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(MIX_FALL), _vm(vm) {
+Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(kMixFall), _vm(vm) {
 	_appear = true;
 	_mb[0] = new Bitmap("VOLUME", true);
 	_mb[1] = NULL;
 	setShapeList(_mb);
-	setName(_text->getText(MIX_NAME));
+	setName(_text->getText(kMixName));
 	_flags._syst = true;
 	_flags._kill = true;
 	_flags._bDel = true;
 	gotoxy(x, y);
-	_z = MIX_Z;
+	_z = kMixZ;
 
 	// slaves
 
 	uint i;
-	Seq ls[MIX_MAX]; 
+	Seq ls[kMixMax]; 
 
-	for (i = 0; i < MIX_MAX; i++) {
+	for (i = 0; i < kMixMax; i++) {
 		static char fn[] = "V00";
 		wtom(i, fn + 1, 10, 2);
 		_lb[i] = new Bitmap(fn, true);
@@ -68,15 +68,15 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(MIX_FALL), _
 	for (i = 0; i < ArrayCount(_led); i++) {
 		register Sprite *spr = new Sprite(_vm, _lb);
 
-		Seq *seq = (Seq *)malloc(MIX_MAX * sizeof(Seq));
-		Common::copy(ls, ls + MIX_MAX, seq);
+		Seq *seq = (Seq *)malloc(kMixMax * sizeof(Seq));
+		Common::copy(ls, ls + kMixMax, seq);
 		spr->setSeq(seq);
 
 		spr->gotoxy(x + 2 + 12 * i, y + 8);
 		spr->_flags._tran = true;
 		spr->_flags._kill = true;
 		spr->_flags._bDel = false;
-		spr->_z = MIX_Z;
+		spr->_z = kMixZ;
 		_led[i] = spr;
 	}
 	_led[ArrayCount(_led) - 1]->_flags._bDel = true;
@@ -93,7 +93,7 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(MIX_FALL), _
 	_sndDrvInfo.Vol4._dl = i;
 	_sndDrvInfo.Vol4._dr = i;
 	update();
-	_time = MIX_DELAY;
+	_time = kMixDelay;
 }
 
 Mixer::~Mixer() {
@@ -106,10 +106,10 @@ void Mixer::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
 	if (mask & L_UP) {
 		uint8 *vol = (&_sndDrvInfo.Vol2._d) + (x < _w / 2);
-		if (y < MIX_BHIG) {
+		if (y < kMixButtonHigh) {
 			if (*vol < 0xFF)
 				*vol += 0x11;
-		} else if (y >= _h - MIX_BHIG) {
+		} else if (y >= _h - kMixButtonHigh) {
 			if (*vol > 0x00)
 				*vol -= 0x11;
 		}
@@ -122,7 +122,7 @@ void Mixer::tick() {
 	int x = _mouse->_x;
 	int y = _mouse->_y;
 	if (spriteAt(x, y) == this) {
-		_fall = MIX_FALL;
+		_fall = kMixFall;
 		if (_flags._hold)
 			touch(L_UP, x - _x, y - _y);
 	} else {
@@ -130,11 +130,11 @@ void Mixer::tick() {
 			_fall--;
 		else {
 			for (uint i = 0; i < ArrayCount(_led); i++)
-				SNPOST_(SNKILL, -1, 0, _led[i]);
-			SNPOST_(SNKILL, -1, 0, this);
+				_snail_->addCom(kSnKill, -1, 0, _led[i]);
+			_snail_->addCom(kSnKill, -1, 0, this);
 		}
 	}
-	_time = MIX_DELAY;
+	_time = kMixDelay;
 }
 
 
@@ -142,7 +142,7 @@ void Mixer::update() {
 	_led[0]->step(_sndDrvInfo.Vol4._ml);
 	_led[1]->step(_sndDrvInfo.Vol4._dl);
 
-	SNPOST2_(SNEXEC, -1, 0, kSndSetVolume);
+	_snail_->addCom2(kSnExec, -1, 0, kSndSetVolume);
 }
 
 } // End of namespace CGE

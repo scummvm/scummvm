@@ -234,7 +234,6 @@ void CGEEngine::inf(const char *txt) {
 	}
 }
 
-
 void sayTime(Sprite *spr) {
 	/*
 	  static char t[] = "00:00";
@@ -249,7 +248,7 @@ void sayTime(Sprite *spr) {
 
 void killText() {
 	if (_talk) {
-		SNPOST_(SNKILL, -1, 0, _talk);
+		_snail_->addCom(kSnKill, -1, 0, _talk);
 		_talk = NULL;
 	}
 }

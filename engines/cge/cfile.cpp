@@ -33,7 +33,7 @@
 
 namespace CGE {
 
-IoBuf::IoBuf(IOMODE mode, CRYPT *crpt)
+IoBuf::IoBuf(IOMode mode, CRYPT *crpt)
 	: IoHand(mode, crpt),
 	  _bufMark(0),
 	  _ptr(0),
@@ -46,7 +46,7 @@ IoBuf::IoBuf(IOMODE mode, CRYPT *crpt)
 }
 
 
-IoBuf::IoBuf(const char *name, IOMODE mode, CRYPT *crpt)
+IoBuf::IoBuf(const char *name, IOMode mode, CRYPT *crpt)
 	: IoHand(name, mode, crpt),
 	  _bufMark(0),
 	  _ptr(0),
@@ -61,7 +61,7 @@ IoBuf::IoBuf(const char *name, IOMODE mode, CRYPT *crpt)
 IoBuf::~IoBuf() {
 	debugC(6, kCGEDebugFile, "IoBuf::~IoBuf()");
 
-	if (_mode > REA)
+	if (_mode != kModeRead)
 		writeBuf();
 	free(_buff);
 }
@@ -222,7 +222,7 @@ void IoBuf::write(uint8 b) {
 uint16  CFile::_maxLineLen   = kLineMaxSize;
 
 
-CFile::CFile(const char *name, IOMODE mode, CRYPT *crpt)
+CFile::CFile(const char *name, IOMode mode, CRYPT *crpt)
 	: IoBuf(name, mode, crpt) {
 	debugC(1, kCGEDebugFile, "CFile::CFile(%s, %d, crpt)", name, mode);
 }
@@ -235,7 +235,7 @@ CFile::~CFile() {
 void CFile::flush() {
 	debugC(1, kCGEDebugFile, "CFile::flush()");
 
-	if (_mode > REA)
+	if (_mode != kModeRead)
 		writeBuf();
 	else
 		_lim = 0;
@@ -252,7 +252,7 @@ void CFile::flush() {
 long CFile::mark() {
 	debugC(5, kCGEDebugFile, "CFile::mark()");
 
-	return _bufMark + ((_mode > REA) ? _lim : _ptr);
+	return _bufMark + ((_mode != kModeRead) ? _lim : _ptr);
 }
 
 
@@ -260,10 +260,10 @@ long CFile::seek(long pos) {
 	debugC(1, kCGEDebugFile, "CFile::seek(%ld)", pos);
 
 	if (pos >= _bufMark && pos < _bufMark + _lim) {
-		((_mode == REA) ? _ptr : _lim) = (uint16)(pos - _bufMark);
+		((_mode == kModeRead) ? _ptr : _lim) = (uint16)(pos - _bufMark);
 		return pos;
 	} else {
-		if (_mode > REA)
+		if (_mode != kModeRead)
 			writeBuf();
 		else
 			_lim = 0;

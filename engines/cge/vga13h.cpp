@@ -442,7 +442,7 @@ bool Sprite::works(Sprite *spr) {
 			if (c != NULL) {
 				c += spr->_takePtr;
 				if (c->_ref == _ref)
-					if (c->_com != SNLABEL || (c->_val == 0 || c->_val == _vm->_now))
+					if (c->_com != kSnLabel || (c->_val == 0 || c->_val == _vm->_now))
 						return true;
 			}
 		}
@@ -573,7 +573,7 @@ Sprite *Sprite::expand() {
 								error("No core [%s]", fname);
 							else {
 								Snail::Com *c = &nea[neacnt++];
-								if ((c->_com = (SNCOM)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
+								if ((c->_com = (SnCom)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
 									error("Bad NEAR in %d [%s]", lcnt, fname);
 								c->_ref = atoi(strtok(NULL, " \t,;/"));
 								c->_val = atoi(strtok(NULL, " \t,;/"));
@@ -589,7 +589,7 @@ Sprite *Sprite::expand() {
 								error("No core [%s]", fname);
 							else {
 								Snail::Com *c = &tak[takcnt++];
-								if ((c->_com = (SNCOM)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
+								if ((c->_com = (SnCom)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
 									error("Bad NEAR in %d [%s]", lcnt, fname);
 								c->_ref = atoi(strtok(NULL, " \t,;/"));
 								c->_val = atoi(strtok(NULL, " \t,;/"));

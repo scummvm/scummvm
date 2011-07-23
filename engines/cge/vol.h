@@ -74,7 +74,7 @@ private:
 	void writeBuf() { }
 	void make(const char *fspec);
 public:
-	VFile(const char *name, IOMODE mode = REA);
+	VFile(const char *name, IOMode mode = kModeRead);
 	~VFile();
 
 	static void init();
