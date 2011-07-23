@@ -39,6 +39,7 @@ public:
 
 	void play(Direction dir, int x, int y, int lenght);
 	void draw();
+	void update(int frameTime);
 
 	void saveState(SaveGame *state) const;
 	void restoreState(SaveGame *state);
@@ -48,6 +49,8 @@ private:
 	Direction _direction;
 	int _x;
 	int _y;
+	int _targetX;
+	int _targetY;
 	int _lenght;
 	int _currTime;
 };

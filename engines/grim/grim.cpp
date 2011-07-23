@@ -918,6 +918,8 @@ void GrimEngine::luaUpdate() {
 				a->update();
 		}
 		g_currentUpdatedActor = NULL;
+
+		_iris->update(_frameTime);
 	}
 	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {
 		i->_value->update();

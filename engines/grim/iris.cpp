@@ -22,7 +22,6 @@
 
 #include "engines/grim/iris.h"
 #include "engines/grim/gfx_base.h"
-#include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
 
 namespace Grim {
@@ -39,8 +38,8 @@ Iris::~Iris() {
 void Iris::play(Iris::Direction dir, int x, int y, int lenght) {
 	_playing = true;
 	_direction = dir;
-	_x = x;
-	_y = y;
+	_targetX = x;
+	_targetY = y;
 	_lenght = lenght;
 	_currTime = 0;
 }
@@ -53,12 +52,21 @@ void Iris::draw() {
 		return;
 	}
 
-	_currTime += g_grim->getFrameTime();
+	// Why doesn't 480 work here??
+	g_driver->dimRegion(0, 0, 640, _y, 0);
+	g_driver->dimRegion(0, _y, _x, 479 - _y, 0);
+	g_driver->dimRegion(_x, 479 - _y, 640 - _x, _y, 0);
+	g_driver->dimRegion(640 - _x, _y, _x, 479 - _y, 0);
+}
+
+void Iris::update(int frameTime) {
+	if (!_playing) {
+		return;
+	}
+
+	_currTime += frameTime;
 	if (_currTime >= _lenght) {
 		_playing = false;
-		if (_direction == Close) {
-			g_driver->dimRegion(0, 0, 640, 479, 0);
-		}
 		return;
 	}
 
@@ -67,14 +75,8 @@ void Iris::draw() {
 		factor = 1 - factor;
 	}
 
-	int y = (int)(_y * factor);
-	int x = (int)(_x * factor);
-
-	// Why doesn't 480 work here??
-	g_driver->dimRegion(0, 0, 640, y, 0);
-	g_driver->dimRegion(0, y, x, 479 - y, 0);
-	g_driver->dimRegion(x, 479 - y, 640 - x, y, 0);
-	g_driver->dimRegion(640 - x, y, x, 479 - y, 0);
+	_y = (int)(_targetY * factor);
+	_x = (int)(_targetX * factor);
 }
 
 void Iris::saveState(SaveGame *state) const {
