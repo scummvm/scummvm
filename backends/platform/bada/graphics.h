@@ -32,6 +32,7 @@
 
 #include "config.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
+#include "graphics/font.h"
 #include "form.h"
 
 using namespace Osp::Graphics;
@@ -53,6 +54,7 @@ class BadaGraphicsManager : public OpenGLGraphicsManager {
   void refreshGameScreen();
   void setReady();
   bool isReady() {return !initState;}
+  const Graphics::Font* getFontOSD();
 
  private:
   void showSplash();
@@ -63,6 +65,7 @@ class BadaGraphicsManager : public OpenGLGraphicsManager {
   EGLSurface eglSurface;
   EGLConfig  eglConfig;
   EGLContext eglContext;
+  const Graphics::Font* osdFont;
   bool initState;
 };
 

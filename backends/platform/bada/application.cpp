@@ -69,9 +69,11 @@ void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
   logEntered();
 
   if (requestId == USER_MESSAGE_EXIT) {
+    // normal program termination
     Terminate();
   }
   else if (requestId == USER_MESSAGE_EXIT_ERR) {
+    // assertion failure termination
     String* message = null;
     if (args) {
       message = (String*) args->GetAt(0);
@@ -81,7 +83,7 @@ void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
     }
     
     MessageBox messageBox;
-    messageBox.Construct(L"Fatal Error", *message, MSGBOX_STYLE_OK);
+    messageBox.Construct(L"Oops...", *message, MSGBOX_STYLE_OK);
     int modalResult;
     messageBox.ShowAndWait(modalResult);
     Terminate();

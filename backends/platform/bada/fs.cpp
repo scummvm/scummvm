@@ -269,8 +269,8 @@ void BadaFilesystemNode::init(const Common::String& nodePath) {
   displayName = Common::lastPathComponent(path, '/');
 
   StringUtil::Utf8ToString(path.c_str(), unicodePath);
-  isVirtualDir = (path == "/" || 
-                  path == "/Home" || 
+  isVirtualDir = (path == "/" ||
+                  path == "/Home" ||
                   path == "/Home/Share" ||
                   path == "/Home/Share2" ||
                   path == "/Storagecard");

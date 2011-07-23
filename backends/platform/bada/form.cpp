@@ -260,15 +260,15 @@ void BadaAppForm::OnTouchDoublePressed(const Control& source,
 
   switch (shortcutIndex) {
   case SHORTCUT_F5:
-    g_system->displayMessageOnOSD(_("Sweep: Game Menu"));
+    g_system->displayMessageOnOSD(_("Sweep = Game Menu"));
     break;
 
   case SHORTCUT_ESCAPE:
-    g_system->displayMessageOnOSD(_("Sweep: Escape"));
+    g_system->displayMessageOnOSD(_("Sweep = Escape"));
     break;
 
   default:
-    g_system->displayMessageOnOSD(_("Sweep: Swap Left/Right Buttons"));
+    g_system->displayMessageOnOSD(_("Sweep = Swap Left/Right Buttons"));
     shortcutIndex = SHORTCUT_SWAP_MOUSE;
   }
 }

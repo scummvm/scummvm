@@ -581,6 +581,7 @@
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/StubDynCast.so&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/FOsp.so&quot;"/>
 </option>
+<option id="osp.gnu.cpp.link.option.flags.782338107" name="Linker flags" superClass="osp.gnu.cpp.link.option.flags" value="-fno-short-enums --no-enum-size-warning" valueType="string"/>
 <inputType id="cdt.managedbuild.tool.osp.gnu.cpp.linker.input.796744060" superClass="cdt.managedbuild.tool.osp.gnu.cpp.linker.input">
 <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 <additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -1051,7 +1052,7 @@
 <listOptionValue builtIn="false" value="c:/src/scummvm"/>
 <listOptionValue builtIn="false" value="C:/bada/1.2.1/Include"/>
 </option>
-<option id="osp.gnu.target.cpp.compiler.exe.release.option.other.other.1650957276" superClass="osp.gnu.target.cpp.compiler.exe.release.option.other.other" value="-c -Wno-psabi -fno-strict-aliasing -fno-short-enums" valueType="string"/>
+<option id="osp.gnu.target.cpp.compiler.exe.release.option.other.other.1650957276" name="Other flags" superClass="osp.gnu.target.cpp.compiler.exe.release.option.other.other" value="-c -Wno-psabi -fno-strict-aliasing -fno-short-enums" valueType="string"/>
 <inputType id="cdt.managedbuild.tool.osp.gnu.cpp.compiler.input.643290674" superClass="cdt.managedbuild.tool.osp.gnu.cpp.compiler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.osp.gnu.target.c.compiler.exe.release.564428842" name="bada C Compiler" superClass="cdt.managedbuild.tool.osp.gnu.target.c.compiler.exe.release">
@@ -1083,6 +1084,7 @@
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/StubDynCast.so&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${TARGET_LIB_PATH}/FOsp.so&quot;"/>
 </option>
+<option id="osp.gnu.cpp.link.option.flags.1148877590" name="Linker flags" superClass="osp.gnu.cpp.link.option.flags" value="-fno-short-enums --no-enum-size-warning" valueType="string"/>
 <inputType id="cdt.managedbuild.tool.osp.gnu.cpp.linker.input.691625257" superClass="cdt.managedbuild.tool.osp.gnu.cpp.linker.input">
 <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 <additionalInput kind="additionalinput" paths="$(LIBS)"/>
