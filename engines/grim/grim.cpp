@@ -859,6 +859,8 @@ void GrimEngine::drawPrimitives() {
 		i->_value->draw();
 	}
 
+	_iris->draw();
+
 	// Draw text
 	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {
 		i->_value->draw();
@@ -1013,7 +1015,6 @@ void GrimEngine::updateDisplayScene() {
 		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 
 		drawPrimitives();
-		_iris->draw();
 	} else if (_mode == ENGINE_MODE_DRAW) {
 		_doFlip = false;
 		_prevSmushFrame = 0;
