@@ -58,7 +58,7 @@ static const char LogTable256[256] = {
 	LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
 };
 
-inline uint32 intLog2(uint32 v) {
+inline int intLog2(uint32 v) {
 	register uint32 t, tt;
 
 	if ((tt = v >> 16))
