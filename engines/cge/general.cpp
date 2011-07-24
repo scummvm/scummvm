@@ -93,8 +93,6 @@ Dac _stdPal[] =  {// R    G   B
 	{ 255, 255, 255},   // 255
 };
 
-DrvInfo _sndDrvInfo;
-
 void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *)) {
 	warning("STUB: _fqsort");
 }

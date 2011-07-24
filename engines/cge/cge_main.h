@@ -72,6 +72,9 @@ namespace CGE {
 #define kGetNamePrompt 50
 #define kGetNameTitle  51
 #define kTSeq          96
+//Useless?
+//#define kBadSnd        97
+//#define kBadMidi       98
 #define kNoMusic       98
 #define kBadSVG        99
 #define kSeqHTalk      (kTSeq + 4)

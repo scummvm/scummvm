@@ -39,7 +39,7 @@ GetText::GetText(CGEEngine *vm, const char *info, char *text, int size)
 	_cntr(kGetTextBlink), _oldKeybClient(_keyboard->setClient(this)), _vm(vm) {
 	int i = 2 * kTextHMargin + _font->width(info);
 	_ptr = this;
-	_mode = RECT;
+	_mode = kTBRect;
 
 	_ts = new BMP_PTR[2];
 	_ts[0] = box((i + 3) & ~3, 2 * kTextVMargin + 2 * kFontHigh + kTextLineSpace);

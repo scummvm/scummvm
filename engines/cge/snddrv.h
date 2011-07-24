@@ -42,40 +42,6 @@ namespace CGE {
 // ******************************************************
 // *  Constants                                         *
 // ******************************************************
-// available devices
-
-enum  DEV_TYPE  { DEV_AUTO = -1,                    // auto-detect mode
-                  DEV_QUIET,                        // disable sound
-                  DEV_SB,                           // sb/pro/16/awe32
-                  DEV_GUS,                          // gus/max
-                  DEV_GM                            // general midi
-                };
-
-#define SERR_OK           0                         // no error
-#define SERR_INITFAIL     1                         // couldn't initialize
-#define SERR_BADDDEV      128                       // bad device
-
-// driver info
-struct DrvInfo {
-	DEV_TYPE _dDev;                                    // digi device
-	DEV_TYPE _mDev;                                    // midi device
-	uint16   _dBase;                                   // digi base port
-	uint16   _dDma;                                    // digi dma no
-	uint16   _dIrq;                                    // digi irq no
-	uint16   _mBase;                                   // midi base port
-	union {
-		struct {
-			uint16 _dr : 4;
-			uint16 _dl : 4;
-			uint16 _mr : 4;
-			uint16 _ml : 4;
-		} Vol4;
-		struct {
-			uint8  _d;                                     // digi volume
-			uint8  _m;                                     // midi volume
-		} Vol2;
-	};
-};
 
 // sample info
 struct SmpInfo {
@@ -88,8 +54,6 @@ struct SmpInfo {
 // ******************************************************
 // *  Data                                              *
 // ******************************************************
-// driver info
-extern DrvInfo _sndDrvInfo;
 
 // midi player flag (1 means we are playing)
 extern uint16 _midiPlayFlag;

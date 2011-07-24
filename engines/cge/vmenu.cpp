@@ -90,7 +90,7 @@ int    Vmenu::_recent   = -1;
 
 
 Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
-	: Talk(vm, VMGather(list), RECT), _menu(list), _bar(NULL), _vm(vm) {
+	: Talk(vm, VMGather(list), kTBRect), _menu(list), _bar(NULL), _vm(vm) {
 	Choice *cp;
 
 	_addr = this;
