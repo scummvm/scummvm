@@ -694,7 +694,7 @@ const char *const LoLEngine::_charPreviewNamesDefault[] = {
 	"Conrad"
 };
 
-const char *const LoLEngine::_charPreviewNamesRussian[] = {
+const char *const LoLEngine::_charPreviewNamesRussianFloppy[] = {
 	"\x80\xAA\xE8\xA5\xAB\0",
 	"\x8C\xA0\xA9\xAA\xAB\0",
 	"\x8A\xA8\xE0\xA0\xAD\0",

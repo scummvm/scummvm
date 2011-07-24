@@ -1071,6 +1071,59 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_CD_FLAGS
 	},
 
+	// Russian fan translation
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
+				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+
+				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
+				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
+				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
+
 	// Italian fan translation
 	{
 		{

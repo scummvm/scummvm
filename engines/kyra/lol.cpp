@@ -1040,7 +1040,7 @@ char *LoLEngine::getLangString(uint16 id) {
 	char *srcBuffer = _stringBuffer[_lastUsedStringBuffer];
 	if (_flags.lang == Common::JA_JPN) {
 		decodeSjis(string, srcBuffer);
-	} else if (_flags.lang == Common::RU_RUS) {
+	} else if (_flags.lang == Common::RU_RUS && !_flags.isTalkie) {
 		decodeCyrillic(string, srcBuffer);
 		Util::decodeString2(srcBuffer, srcBuffer);
 	} else {

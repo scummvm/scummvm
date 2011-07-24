@@ -369,7 +369,7 @@ private:
 
 	static const CharacterPrev _charPreviews[];
 	static const char *const _charPreviewNamesDefault[];
-	static const char *const _charPreviewNamesRussian[];
+	static const char *const _charPreviewNamesRussianFloppy[];
 
 	// PC98 specific data
 	static const uint16 _charPosXPC98[];
