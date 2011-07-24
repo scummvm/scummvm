@@ -190,7 +190,7 @@ bool PuzzleHiveMachine::mouseLeftDown(const AsylumEvent &evt) {
 		playSound();
 
 		if (_melody.size() == 6) {
-			_ok = 	(_melody[0] == kMusicalNoteA) &&
+			_ok = 	(_melody[0] == kMusicalNoteB) &&
 				(_melody[1] == kMusicalNoteD) &&
 				(_melody[2] == kMusicalNoteD) &&
 				(_melody[3] == kMusicalNoteA) &&
