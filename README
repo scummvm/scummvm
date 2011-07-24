@@ -303,12 +303,12 @@ SCUMM Games by Humongous Entertainment:
          From Your Head to Your Feet             [pajama3]
      Pajama Sam's Lost & Found                   [lost]
      Pajama Sam's Sock Works                     [socks]
-     Putt-Putt Enters the Race                   [puttrace]
-     Putt-Putt Goes to the Moon                  [puttmoon]
-     Putt-Putt Joins the Circus                  [puttcircus]
      Putt-Putt Joins the Parade                  [puttputt]
+     Putt-Putt Goes to the Moon                  [puttmoon]
      Putt-Putt Saves the Zoo                     [puttzoo]
      Putt-Putt Travels Through Time              [putttime]
+     Putt-Putt Enters the Race                   [puttrace]
+     Putt-Putt Joins the Circus                  [puttcircus]
      Putt-Putt and Pep's Balloon-O-Rama          [balloon]
      Putt-Putt and Pep's Dog on a Stick          [dog]
      Putt-Putt & Fatty Bear's Activity Pack      [activity]
@@ -770,11 +770,12 @@ to be able to play the game under ScummVM.
 
 3.19) Dragon History notes:
 ----- ---------------------
-There are 3 language variants of the game: Czech, English, and Polish.
-Each of them is distributed in a separate archive.  The only official
-version is the Czech one, and the English and Polish ports have always
-been work in progress and never officially released.  Although all texts
-are fully translated, it is known that some of them contain typos.
+There are 4 language variants of the game: Czech, English, Polish and
+German.  Each of them is distributed in a separate archive.  The only
+official version is the Czech one, and the English, Polish and German
+ports have always been work in progress and never officially released.
+Although all texts are fully translated, it is known that some of them
+contain typos.
 
 There exists an optional Czech dubbing for the game.  For bandwidth
 reasons, you can download it separately and then unpack it to the
@@ -846,8 +847,8 @@ site, please see the section on reporting bugs.
 
   Simon the Sorcerer's Puzzle Pack:
     - No support for displaying, entering, loading or saving high scores.
-    - No support for displaying explanation, when clicking on items in
-      Swampy Adventures.
+    - No support for displaying names of items, when hovering over them
+      in Swampy Adventures.
 
   The Feeble Files:
     - Subtitles are often incomplete, they were always disabled in the
@@ -955,7 +956,7 @@ arguments -- see the next section.
   --themepath=PATH         Path to where GUI themes are stored
   --list-themes            Display list of all usable GUI themes
   -e, --music-driver=MODE  Select music driver (see also section 7.0)
-  -q, --language=LANG      Select language (see also section 5.2)
+  -q, --language=LANG      Select game's language (see also section 5.2)
   -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)
   -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)
   -r, --speech-volume=NUM  Set the voice volume, 0-255 (default: 192)
@@ -1026,8 +1027,8 @@ Examples:
 5.2) Language options:
 ---- -----------------
 ScummVM includes a language option for Maniac Mansion, Zak McKracken,
-The Dig, The Curse of Monkey Island, Beneath a Steel Sky, Broken Sword
-and Simon the Sorcerer 1 and 2.
+The Dig, The Curse of Monkey Island, Beneath a Steel Sky and
+Broken Sword.
 
 Note that with the exception of Beneath a Steel Sky, Broken Sword,
 multilanguage versions of Goblins games and Nippon Safes Inc., using
@@ -1080,16 +1081,6 @@ Broken Sword
     es  - Spanish
     pt  - Portuguese
     cz  - Czech
-
-Simon the Sorcerer 1 and 2
-    en  - English (default)
-    de  - German
-    fr  - French
-    it  - Italian
-    es  - Spanish
-    he  - Hebrew
-    pl  - Polish
-    ru  - Russian
 
 
 5.3) Graphics filters:
@@ -1284,10 +1275,14 @@ other games.
     b                      - Background sounds on/off
                              [Simon the Sorcerer 2 only]
     Pause                  - Pauses
-    t                      - Switch between speech and subtitles
+    t                      - Switch between speech only and
+                             combined speech and subtitles
+                             [Talkies of Simon the Sorcerer other than
+                             English and German and Simon the
+                             Sorcerer 2 (all languages)]
     v                      - Switch between subtitles only and
                              combined speech and subtitles
-                             [Simon the Sorcerer 2 only]
+                             [the same as above]
 
   Simon the Sorcerer's Puzzle Pack
     Ctrl-d                 - Starts the debugger
@@ -1305,7 +1300,8 @@ other games.
     F9                     - Hitbox names on/off
     s                      - Sound effects on/off
     Pause                  - Pauses
-    t                      - Switch between speech and subtitles
+    t                      - Switch between speech only and
+                             combined speech and subtitles
     v                      - Switch between subtitles only and
                              combined speech and subtitles
 
