@@ -153,7 +153,7 @@ support an unsupported game -- read the FAQ on our web site first.
 ---- ---------------
 To report a bug, please create a SourceForge account and follow the
 "Bug Tracker" link from our homepage. Please make sure the bug is
-reproducible, and still occurs in the latest SVN/Daily build version.
+reproducible, and still occurs in the latest git/Daily build version.
 Also check the known problems list (below) and the compatibility list
 on our website for that game, to ensure the issue is not already known:
 
@@ -164,7 +164,7 @@ completeable in the 'Supported Games' section, or compatibility list. We
 -know- those games have bugs.
 
 Please include the following information:
-    - ScummVM version (PLEASE test the latest SVN/Daily build)
+    - ScummVM version (PLEASE test the latest git/Daily build)
     - Bug details, including instructions on reproducing
     - Language of game (English, German, ...)
     - Version of game (talkie, floppy, ...)
@@ -869,7 +869,7 @@ site, please see the section on reporting bugs.
 ScummVM has been ported to run on many platforms and operating systems.
 Links to these ports can be found either on the ScummVM web page or by a
 Google search. Many thanks to our porters for their efforts. If you have
-a port of ScummVM and wish to commit it into the main SVN, feel free to
+a port of ScummVM and wish to commit it into the master git, feel free to
 contact us!
 
 Supported platforms include (but are not limited to):
@@ -2136,7 +2136,7 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
   Maemo:
     * Get Scratchbox environment with Maemo 2.2 rootstrap (2.2 is for 770 and up)
     * Install libmad, Tremor, FLAC from source
-    * patch scummvm source (some stuff is currently too dirty to be in svn directly)
+    * patch scummvm source (some stuff is currently too dirty to be in git directly)
       patch -p1 < backends/platform/maemo/scummvm-[currentversion]-maemo.patch
     * update debian/changelog
     * run 'fakeroot dpkg-buildpackage -b -d'
