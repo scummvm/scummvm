@@ -232,20 +232,31 @@ void Model::reload(CMap *cmap) {
 	}
 	for (int i = 0; i < _numGeosets; i++)
 		_geosets[i].changeMaterials(_materials);
+	_cmap = cmap;
 }
 
 void Model::loadMaterial(int index, CMap *cmap) {
+	Material *mat = NULL;
 	if (!_materialsShared[index]) {
-		delete _materials[index];
-		_materials[index] = NULL;
+		mat = _materials[index];
 	}
+	_materials[index] = NULL;
 	if (_parent) {
 		_materials[index] = _parent->findMaterial(_materialNames[index]);
-		_materialsShared[index] = true;
+		if (_materials[index]) {
+			_materialsShared[index] = true;
+		}
 	}
 	if (!_materials[index]) {
-		_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], cmap);
+		if (mat && cmap == _cmap) {
+			_materials[index] = mat;
+		} else {
+			_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], cmap);
+		}
 		_materialsShared[index] = false;
+	}
+	if (mat != _materials[index]) {
+		delete mat;
 	}
 }
 

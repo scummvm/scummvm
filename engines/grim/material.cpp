@@ -79,7 +79,7 @@ MaterialData *MaterialData::getMaterialData(const Common::String &filename, cons
 
 	for (Common::List<MaterialData *>::iterator i = _materials->begin(); i != _materials->end(); ++i) {
 		MaterialData *m = *i;
-		if (m->_fname == filename && *m->_cmap == *cmap) {
+		if (m->_fname == filename && m->_cmap->getFilename() == cmap->getFilename()) {
 			++m->_refCount;
 			return m;
 		}
