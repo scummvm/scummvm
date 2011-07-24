@@ -91,6 +91,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   void pushEvent(Common::EventType type,
                  const Osp::Graphics::Point& currentPosition);
   void terminate();
+  void showVolume(int level);
   int getShortcutIndex();
 
   // event handling

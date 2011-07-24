@@ -35,9 +35,10 @@ using namespace Osp::Ui;
 using namespace Osp::Ui::Controls;
 
 #define SHORTCUT_TIMEOUT 4000
-#define SHORTCUT_SWAP_MOUSE  0
-#define SHORTCUT_ESCAPE      1
-#define SHORTCUT_F5          2
+#define SHORTCUT_SWAP_MOUSE 0
+#define SHORTCUT_ESCAPE 1
+#define SHORTCUT_F5 2
+#define LEVEL_RANGE 5
 
 //
 // BadaAppForm
@@ -251,6 +252,20 @@ int BadaAppForm::getShortcutIndex() {
   return shortcutIndex;
 }
 
+void BadaAppForm::showVolume(int level) {
+  if (level != -1) {
+    char message[32];
+    char ind[LEVEL_RANGE]; // 1..5 (0=off)
+    int j = LEVEL_RANGE - 1; // 0..4
+    for (int i = 1; i <= LEVEL_RANGE; i++) {
+      ind[j--] = level >= i ? '|' : ' ';
+    }
+    snprintf(message, sizeof(message), "Volume: [ %c%c%c%c%c ]",
+             ind[0], ind[1], ind[2], ind[3], ind[4]);
+    g_system->displayMessageOnOSD(message);
+  }
+}
+
 void BadaAppForm::OnTouchDoublePressed(const Control& source, 
                                        const Point& currentPosition, 
                                        const TouchEventInfo& touchInfo) {
@@ -268,7 +283,7 @@ void BadaAppForm::OnTouchDoublePressed(const Control& source,
     break;
 
   default:
-    g_system->displayMessageOnOSD(_("Sweep = Swap Left/Right Buttons"));
+    g_system->displayMessageOnOSD(_("Sweep = Toggle Buttons"));
     shortcutIndex = SHORTCUT_SWAP_MOUSE;
   }
 }
@@ -318,7 +333,7 @@ void BadaAppForm::OnTouchReleased(const Control& source,
     switch (shortcutIndex) {
     case SHORTCUT_SWAP_MOUSE:
       leftButton = !leftButton;
-      g_system->displayMessageOnOSD(leftButton ? _("Left Button") : _("Right Button"));
+      g_system->displayMessageOnOSD(leftButton ? _("Left Active") : _("Right Active"));
       break;
 
     case SHORTCUT_F5:
@@ -340,13 +355,11 @@ void BadaAppForm::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
   logEntered();
   switch (keyCode) {
   case KEY_SIDE_UP:
-    g_system->displayMessageOnOSD(_("Volume Up"));
-    ((BadaSystem*) g_system)->setVolume(true, true);
+    showVolume(((BadaSystem*) g_system)->setVolume(true, true, LEVEL_RANGE));
     return;
 
   case KEY_SIDE_DOWN:
-    g_system->displayMessageOnOSD(_("Volume Down"));
-    ((BadaSystem*) g_system)->setVolume(false, true);
+    showVolume(((BadaSystem*) g_system)->setVolume(false, true, LEVEL_RANGE));
     return;
 
   default:
@@ -357,13 +370,11 @@ void BadaAppForm::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
 void BadaAppForm::OnKeyPressed(const Control& source, KeyCode keyCode) {
   switch (keyCode) {
   case KEY_SIDE_UP:
-    g_system->displayMessageOnOSD(_("Volume Up"));
-    ((BadaSystem*) g_system)->setVolume(true, false);
+    showVolume(((BadaSystem*) g_system)->setVolume(true, false, LEVEL_RANGE));
     return;
 
   case KEY_SIDE_DOWN:
-    g_system->displayMessageOnOSD(_("Volume Down"));
-    ((BadaSystem*) g_system)->setVolume(false, false);
+    showVolume(((BadaSystem*) g_system)->setVolume(false, false, LEVEL_RANGE));
     return;
 
   case KEY_CAMERA:

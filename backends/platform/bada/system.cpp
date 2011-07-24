@@ -423,10 +423,12 @@ void BadaSystem::setMute(bool on) {
   }
 }
 
-void BadaSystem::setVolume(bool up, bool minMax) {
+int BadaSystem::setVolume(bool up, bool minMax, int range) {
+  int level = -1;
   if (audioThread) {
-    audioThread->setVolume(up, minMax);
+    level = audioThread->setVolume(up, minMax, range);
   }
+  return level;
 }
 
 //

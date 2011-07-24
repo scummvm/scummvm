@@ -25,6 +25,9 @@
 
 #include <FSysSettingInfo.h>
 
+#define MAX_VOL 99
+#define INIT_VOL 40
+
 AudioThread::AudioThread() : 
   mixer(0),
   timer(0),
@@ -72,21 +75,35 @@ void AudioThread::setMute(bool on) {
   }
 }
 
-void AudioThread::setVolume(bool up, bool minMax) {
+int AudioThread::setVolume(bool up, bool minMax, int range) {
+  int level = -1;
   if (audioOut && !isSilentMode()) {
     int volume = audioOut->GetVolume();
-    if (volume) {
-      if (minMax) {
-        volume = up ? 99 : 1;
+    if (minMax) {
+      volume = up ? MAX_VOL : 1;
+      level = up ? range : 0;
+    }
+    else {
+      // adjust volume to be in range steps
+      int unit = MAX_VOL / range;
+      int step = (volume / unit) + (up ? 1 : -1);
+      if (step < 1) {
+        volume = 0;
+        level = 0;
       }
       else {
-        volume += up ? 5 : -5;
-      }
-      if (volume > 0 && volume < 100) {
-        audioOut->SetVolume(volume);
+        if (step > range) {
+          step = range;
+        }
+        volume = step * unit;
+        level = step;
       }
     }
+    if (volume <= MAX_VOL) {
+      audioOut->SetVolume(volume);
+    }
   }
+  return level;
 }
 
 bool AudioThread::OnStart(void) {
@@ -129,7 +146,7 @@ bool AudioThread::OnStart(void) {
   }
 
   mixer->setReady(true);
-  audioOut->SetVolume(isSilentMode() ? 0 : 40);
+  audioOut->SetVolume(isSilentMode() ? 0 : INIT_VOL);
   audioOut->Start();
   return true;
 }
