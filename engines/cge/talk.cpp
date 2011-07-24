@@ -87,7 +87,7 @@ void Font::save() {
 */
 
 
-Talk::Talk(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
+Talk::Talk(CGEEngine *vm, const char *tx, TextBoxStyle mode)
 	: Sprite(vm, NULL), _mode(mode), _vm(vm) {
 	
 	_ts = NULL;
@@ -97,7 +97,7 @@ Talk::Talk(CGEEngine *vm, const char *tx, TBOX_STYLE mode)
 
 
 Talk::Talk(CGEEngine *vm)
-	: Sprite(vm, NULL), _mode(PURE), _vm(vm) {
+	: Sprite(vm, NULL), _mode(kTBPure), _vm(vm) {
 	_ts = NULL;
 	_flags._syst = true;
 }
@@ -179,20 +179,17 @@ void Talk::update(const char *tx) {
 	setShapeList(_ts);
 }
 
-
-
-
 Bitmap *Talk::box(uint16 w, uint16 h) {
 	uint8 *b, * p, * q;
-	uint16 n, r = (_mode == ROUND) ? kTextRoundCorner : 0;
+	uint16 r = (_mode == kTBRound) ? kTextRoundCorner : 0;
 
 	if (w < 8)
 		w = 8;
 	if (h < 8)
 		h = 8;
-	n = w * h;
+	uint16 n = w * h;
 	b = (uint8 *) malloc(sizeof(uint8) * n);
-	if (! b)
+	if (!b)
 		error("No core");
 	memset(b, kTextColBG, n);
 

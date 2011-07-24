@@ -25,32 +25,14 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "common/scummsys.h"
 #include "cge/walk.h"
-#include "cge/cge.h"
-#include "cge/sound.h"
-#include "cge/startup.h"
-#include "cge/config.h"
-#include "cge/vga13h.h"
-#include "cge/snail.h"
-#include "cge/text.h"
-#include "cge/game.h"
-#include "cge/events.h"
-#include "cge/cfile.h"
-#include "cge/vol.h"
-#include "cge/talk.h"
-#include "cge/vmenu.h"
-#include "cge/gettext.h"
-#include "cge/mixer.h"
 #include "cge/cge_main.h"
-#include "cge/cge.h"
-#include "common/str.h"
 
 namespace CGE {
 
 extern Bar _barriers[];
 
-WALK *_hero;
+Walk *_hero;
 
 uint8 Cluster::_map[MAP_ZCNT][MAP_XCNT];
 CGEEngine *Cluster::_vm;
@@ -89,12 +71,12 @@ Cluster XZ(Couple xy) {
 	return XZ(x, y);
 }
 
-WALK::WALK(CGEEngine *vm, BMP_PTR *shpl)
+Walk::Walk(CGEEngine *vm, BMP_PTR *shpl)
 	: Sprite(vm, shpl), Dir(NO_DIR), _tracePtr(-1), _level(0), _vm(vm) {
 }
 
 
-void WALK::tick() {
+void Walk::tick() {
 	if (_flags._hide)
 		return;
 
@@ -141,7 +123,7 @@ void WALK::tick() {
 }
 
 
-int WALK::distance(Sprite *spr) {
+int Walk::distance(Sprite *spr) {
 	int dx, dz;
 	dx = spr->_x - (_x + _w - kWalkSide);
 	if (dx < 0)
@@ -163,7 +145,7 @@ int WALK::distance(Sprite *spr) {
 }
 
 
-void WALK::turn(DIR d) {
+void Walk::turn(DIR d) {
 	DIR dir = (Dir == NO_DIR) ? SS : Dir;
 	if (d != Dir) {
 		step((d == dir) ? (1 + dir + dir) : (9 + 4 * dir + d));
@@ -172,7 +154,7 @@ void WALK::turn(DIR d) {
 }
 
 
-void WALK::park() {
+void Walk::park() {
 	if (_time == 0)
 		++_time;
 
@@ -184,7 +166,7 @@ void WALK::park() {
 }
 
 
-void WALK::findWay(Cluster c) {
+void Walk::findWay(Cluster c) {
 	if (c != _here) {
 		for (_findLevel = 1; _findLevel <= MAX_FIND_LEVEL; _findLevel++) {
 			signed char x, z;
@@ -203,7 +185,7 @@ void WALK::findWay(Cluster c) {
 }
 
 
-void WALK::findWay(Sprite *spr) {
+void Walk::findWay(Sprite *spr) {
 	if (spr && spr != this) {
 		int x = spr->_x;
 		int z = spr->_z;
@@ -218,12 +200,12 @@ void WALK::findWay(Sprite *spr) {
 }
 
 
-bool WALK::lower(Sprite *spr) {
+bool Walk::lower(Sprite *spr) {
 	return (spr->_y > _y + (_h * 3) / 5);
 }
 
 
-void WALK::reach(Sprite *spr, int mode) {
+void Walk::reach(Sprite *spr, int mode) {
 	if (spr) {
 		_hero->findWay(spr);
 		if (mode < 0) {
@@ -243,11 +225,11 @@ void WALK::reach(Sprite *spr, int mode) {
 	// now it is just at sprite appear (disappear) point
 }
 
-void WALK::noWay() {
+void Walk::noWay() {
 	_vm->trouble(kSeqNoWay, kNoWay);
 }
 
-bool WALK::find1Way(Cluster c) {
+bool Walk::find1Way(Cluster c) {
 	Cluster start = c;
 	const Cluster tab[4] = { Cluster(-1, 0), Cluster(1, 0), Cluster(0, -1), Cluster(0, 1)};
 	const int tabLen = 4;

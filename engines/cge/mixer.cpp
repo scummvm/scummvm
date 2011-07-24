@@ -86,12 +86,14 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(kMixFall), _
 		_vga->_showQ->insert(_led[i]);
 
 	//--- reset balance
-	i = (_sndDrvInfo.Vol4._ml + _sndDrvInfo.Vol4._mr) / 2;
+	warning("STUB: MIXER::MIXER() reset balance of digital and midi volumes");
+/*	i = (_sndDrvInfo.Vol4._ml + _sndDrvInfo.Vol4._mr) / 2;
 	_sndDrvInfo.Vol4._ml = i;
 	_sndDrvInfo.Vol4._mr = i;
 	i = (_sndDrvInfo.Vol4._dl + _sndDrvInfo.Vol4._dr) / 2;
 	_sndDrvInfo.Vol4._dl = i;
 	_sndDrvInfo.Vol4._dr = i;
+*/
 	update();
 	_time = kMixDelay;
 }
@@ -104,8 +106,10 @@ Mixer::~Mixer() {
 #pragma argsused
 void Mixer::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
+
 	if (mask & L_UP) {
-		uint8 *vol = (&_sndDrvInfo.Vol2._d) + (x < _w / 2);
+		warning("STUB: Mixer::touch(): Digital Volume");
+/*		uint8 *vol = (&_sndDrvInfo.Vol2._d) + (x < _w / 2);
 		if (y < kMixButtonHigh) {
 			if (*vol < 0xFF)
 				*vol += 0x11;
@@ -114,6 +118,7 @@ void Mixer::touch(uint16 mask, int x, int y) {
 				*vol -= 0x11;
 		}
 		update();
+*/
 	}
 }
 
@@ -139,9 +144,11 @@ void Mixer::tick() {
 
 
 void Mixer::update() {
+	warning("STUB: Mixer::Update");
+/*
 	_led[0]->step(_sndDrvInfo.Vol4._ml);
 	_led[1]->step(_sndDrvInfo.Vol4._dl);
-
+*/
 	_snail_->addCom2(kSnExec, -1, 0, kSndSetVolume);
 }
 
