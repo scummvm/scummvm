@@ -441,6 +441,23 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Syntax: %s <puzzle index>\n", argv[0]);
+		DebugPrintf("        0   VCR\n");
+		DebugPrintf("        1   Pipes\n");
+		DebugPrintf("        2   TicTacToe\n");
+		DebugPrintf("        3   Lock\n");
+		DebugPrintf("        4   N/A\n");
+		DebugPrintf("        5   Wheel\n");
+		DebugPrintf("        6   BoardSalvation\n");
+		DebugPrintf("        7   BoardYouth\n");
+		DebugPrintf("        8   BoardKeyHidesTo\n");
+		DebugPrintf("        9   Writings\n");
+		DebugPrintf("        10  ???\n");
+		DebugPrintf("        11  MorgueDoor\n");
+		DebugPrintf("        12  Clock\n");
+		DebugPrintf("        13  TimerMachine\n");
+		DebugPrintf("        14  Fisherman\n");
+		DebugPrintf("        15  HiveMachine\n");
+		DebugPrintf("        16  HiveControl\n");
 		return true;
 	}
 
