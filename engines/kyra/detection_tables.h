@@ -49,6 +49,7 @@ namespace {
 #define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, false, Kyra::GI_LOL)
 #define LOL_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, Kyra::GI_LOL)
 #define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_LOL)
 #define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, true, true, false, false, Kyra::GI_LOL)
 #define LOL_DEMO_FLAGS FLAGS(true, true, false, false, false, false, false, Kyra::GI_LOL)
@@ -95,18 +96,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_FLAGS
 	},
-	{
-		{
-			"kyra1",
-			"Extracted",
-			AD_ENTRY1("GEMCUT.EMC", "689b62b7519215c1b2571d466c95624c"),
-			Common::RU_RUS,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIPCSPK
-		},
-		KYRA1_FLOPPY_FLAGS
-	},
+
 	{
 		{
 			"kyra1",
@@ -149,6 +139,18 @@ const KYRAGameDescription adGameDescs[] = {
 			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "f0b276781f47c130f423ec9679fe9ed9"),
 			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIPCSPK
+		},
+		KYRA1_FLOPPY_FLAGS
+	},
+	{
+		{
+			"kyra1",
+			"Extracted",
+			AD_ENTRY1("GEMCUT.EMC", "689b62b7519215c1b2571d466c95624c"),
+			Common::RU_RUS,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIPCSPK
@@ -989,24 +991,6 @@ const KYRAGameDescription adGameDescs[] = {
 			"lol",
 			"CD",
 			{
-				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
-				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
-				{ "VOC.PAK", 0, "eb398f09ba3321d872b6174a68a987d9", -1 },
-				{ 0, 0, 0, 0 }
-			},
-			Common::RU_RUS,
-			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE | ADGF_CD,
-			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
-		},
-		LOL_CD_FLAGS
-	},
-
-	{
-		{
-			"lol",
-			"CD",
-			{
 				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
 				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
 				{ 0, 0, 0, 0 }
@@ -1304,6 +1288,24 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		LOL_FLOPPY_FLAGS
+	},
+
+	// Russian fan translation
+	{
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "d8f4c1153aed2418f41f886c3fb27543", -1 },
+				{ "CHAPTER7.PAK", 0, "f0b8a2fdff951738834fadc12248ac1f", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_FLOPPY_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
 	},
 
 	{

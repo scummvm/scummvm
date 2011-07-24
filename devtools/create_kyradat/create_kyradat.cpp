@@ -45,7 +45,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 74
+	kKyraDatVersion = 75
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -219,7 +219,7 @@ const ExtractFilename extractFilenames[] = {
 	// Ingame
 	{ kLolIngamePakFiles, kTypeStringList, false },
 
-	{ kLolCharacterDefs, kLolTypeCharData, false },
+	{ kLolCharacterDefs, kLolTypeCharData, true },
 	{ kLolIngameSfxFiles, k2TypeSfxList, false },
 	{ kLolIngameSfxIndex, kTypeRawData, false },
 	{ kLolMusicTrackMap, kTypeRawData, false },

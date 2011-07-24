@@ -363,12 +363,13 @@ private:
 	void showIntro();
 
 	struct CharacterPrev {
-		const char *name;
 		int x, y;
 		int attrib[3];
 	};
 
 	static const CharacterPrev _charPreviews[];
+	static const char *const _charPreviewNamesDefault[];
+	static const char *const _charPreviewNamesRussian[];
 
 	// PC98 specific data
 	static const uint16 _charPosXPC98[];
@@ -875,6 +876,7 @@ private:
 	char *getLangString(uint16 id);
 	uint8 *getTableEntry(uint8 *buffer, uint16 id);
 	void decodeSjis(const char *src, char *dst);
+	int decodeCyrillic(const char *src, char *dst);
 
 	static const char * const _languageExt[];
 
