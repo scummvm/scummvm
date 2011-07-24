@@ -37,6 +37,11 @@
 
 namespace CGE {
 
+#define FADE_STEP   2
+#define TMR_DIV     ((0x8000/TMR_RATE)*2)
+#define NREP         9
+#define FREP        24
+
 #define TMR_RATE1   16
 #define TMR_RATE2   4
 #define TMR_RATE   (TMR_RATE1 * TMR_RATE2)
@@ -59,11 +64,6 @@ namespace CGE {
 #define NO_PTR      ((uint8)-1)
 
 #define SPR_EXT     ".SPR"
-
-#define IsFile(s)   (access(s, 0) == 0)
-#define IsWrit(s)   (access(s, 2) == 0)
-
-
 
 struct Rgb {
 	uint16 _r : 2;

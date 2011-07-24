@@ -33,10 +33,6 @@
 
 namespace CGE {
 
-#define BAD_SND_TEXT    97
-#define BAD_MIDI_TEXT   98
-
-
 class Sound {
 public:
 	SmpInfo _smpinf;

@@ -97,7 +97,7 @@ public:
 };
 
 
-class WALK : public Sprite {
+class Walk : public Sprite {
 private:
 	CGEEngine *_vm;
 public:
@@ -109,7 +109,7 @@ public:
 	Cluster _trace[MAX_FIND_LEVEL];
 
 	enum DIR { NO_DIR = -1, NN, EE, SS, WW } Dir;
-	WALK(CGEEngine *vm, BMP_PTR *shpl);
+	Walk(CGEEngine *vm, BMP_PTR *shpl);
 	void tick();
 	void findWay(Cluster c);
 	void findWay(Sprite *spr);
@@ -126,7 +126,7 @@ public:
 Cluster XZ(int x, int y);
 Cluster XZ(Couple xy);
 
-extern WALK *_hero;
+extern Walk *_hero;
 
 } // End of namespace CGE
 

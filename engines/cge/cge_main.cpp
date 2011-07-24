@@ -317,8 +317,11 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 			_pocref[i] = (s) ? s->_ref : -1;
 		}
 
-		_volume[0] = _sndDrvInfo.Vol2._d;
-		_volume[1] = _sndDrvInfo.Vol2._m;
+		warning("STUB: CGEEngine::syncGame Digital and Midi volume");
+//		_volume[0] = _sndDrvInfo.Vol2._d;
+//		_volume[1] = _sndDrvInfo.Vol2._m;
+		_volume[0] = 0;
+		_volume[1] = 0;
 	}
 
 	// Synchronise header data
@@ -336,8 +339,9 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 			_music = false;
 
 		if (Startup::_soundOk == 1 && Startup::_mode == 0) {
-			_sndDrvInfo.Vol2._d = _volume[0];
-			_sndDrvInfo.Vol2._m = _volume[1];
+//			_sndDrvInfo.Vol2._d = _volume[0];
+//			_sndDrvInfo.Vol2._m = _volume[1];
+			warning("STUB: CGEEngine::syncGame Digital and Midi volume");
 			sndSetVolume();
 		}
 
@@ -587,12 +591,11 @@ void CGEEngine::caveUp() {
 			}
 		spr = n;
 	}
-	if (_sndDrvInfo._dDev) {
-		_sound.stop();
-		_fx.clear();
-		_fx.preload(0);
-		_fx.preload(BakRef);
-	}
+
+	_sound.stop();
+	_fx.clear();
+	_fx.preload(0);
+	_fx.preload(BakRef);
 
 	if (_hero) {
 		_hero->gotoxy(_heroXY[_now - 1]._x, _heroXY[_now - 1]._y);
@@ -1265,7 +1268,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 		break;
 	}
 	case 2 : { // WALK
-		WALK *w = new WALK(this, NULL);
+		Walk *w = new Walk(this, NULL);
 		if (w && ref == 1) {
 			w->gotoxy(col, row);
 			if (_hero)

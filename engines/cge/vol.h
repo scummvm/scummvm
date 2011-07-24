@@ -36,9 +36,7 @@ namespace CGE {
 #define CAT_NAME    "VOL.CAT"
 #define DAT_NAME    "VOL.DAT"
 
-#ifndef CRP
 #define CRP     XCrypt
-#endif
 
 #define XMASK       0xA5
 

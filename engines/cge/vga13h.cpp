@@ -37,11 +37,6 @@
 
 namespace CGE {
 
-#define FADE_STEP   2
-#define TMR_DIV     ((0x8000/TMR_RATE)*2)
-#define NREP         9
-#define FREP        24
-
 static  VgaRegBlk VideoMode[] = {
 	{ 0x04, VGASEQ, 0x08, 0x04 },   // memory mode
 	{ 0x03, VGAGRA, 0xFF, 0x00 },   // data rotate = 0

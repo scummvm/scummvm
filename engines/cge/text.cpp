@@ -178,7 +178,7 @@ char *Text::getText(int ref) {
 
 void Text::say(const char *txt, Sprite *spr) {
 	killText();
-	_talk = new Talk(_vm, txt, ROUND);
+	_talk = new Talk(_vm, txt, kTBRound);
 	if (_talk) {
 		bool east = spr->_flags._east;
 		int x = (east) ? (spr->_x + spr->_w - 2) : (spr->_x + 2);
@@ -221,7 +221,7 @@ void CGEEngine::inf(const char *txt) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::inf(%s)", txt);
 
 	killText();
-	_talk = new Talk(this, txt, RECT);
+	_talk = new Talk(this, txt, kTBRect);
 	if (_talk) {
 		_talk->_flags._kill = true;
 		_talk->_flags._bDel = true;
