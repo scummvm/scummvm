@@ -47,7 +47,7 @@ private:
 		kMusicalNoteB
 	};
 
-	uint32 _counter, _counter1;
+	uint32 _counterRed, _counterGreen, _counterKey;
 	int32 _rectIndex;
 	uint32 _frameIndex, _frameIndex1;
 	Common::Array<MusicalNote> _melody;

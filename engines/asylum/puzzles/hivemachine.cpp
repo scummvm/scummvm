@@ -52,7 +52,7 @@ const Common::Point indicatorPoints[] = {
 };
 
 PuzzleHiveMachine::PuzzleHiveMachine(AsylumEngine *engine) : Puzzle(engine) {
-	_counter = _counter1 = 0;
+	_counterRed = _counterGreen = _counterKey = 0;
 	_rectIndex = -2;
 	_frameIndex = 0;
 	_soundingNote = kMusicalNoteNone;
@@ -181,11 +181,11 @@ bool PuzzleHiveMachine::update(const AsylumEvent &evt)  {
 }
 
 bool PuzzleHiveMachine::mouseLeftDown(const AsylumEvent &evt) {
-	if (_rectIndex != -1 && _counter == 0) {
+	if (_rectIndex != -1 && _counterRed == 0) {
 		_soundingNote = MusicalNote(_rectIndex);
 		_melody.push_back(_soundingNote);
 		_notesNumber = (_notesNumber + 1) % 7;
-		_counter1 = 10;
+		_counterKey = 10;
 		_frameIndex1 = 0;
 		playSound();
 
@@ -198,8 +198,9 @@ bool PuzzleHiveMachine::mouseLeftDown(const AsylumEvent &evt) {
 				(_melody[5] == kMusicalNoteE);
 			if (!_ok) {
 				_melody.clear();
-				_counter = 30;
-			}
+				_counterRed = 30;
+			} else
+				_counterGreen = 10;
 		}
 	}
 
@@ -245,16 +246,20 @@ void PuzzleHiveMachine::updateScreen() {
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[8], 0, Common::Point(0, 0), kDrawFlagNone, 0, 2);
 
-	if (_ok)
+	if (_ok) {
+		if (_counterGreen > 1)
+			--_counterGreen;
+		else if (_counterGreen-- == 1)
+			getSound()->playSound(getWorld()->graphicResourceIds[86], false, Config.sfxVolume - 10);
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[11], 0, Common::Point(271, 369), kDrawFlagNone, 0, 1);
-	else if (_counter) {
-		if (_counter == 1)
+	} else if (_counterRed) {
+		if (_counterRed == 1)
 			_notesNumber = 0;
-		else if (_counter == 30)
+		else if (_counterRed == 30)
 			getSound()->playSound(getWorld()->graphicResourceIds[85], false, Config.sfxVolume - 10);
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[10], 0, Common::Point(318, 372), kDrawFlagNone, 0, 1);
 
-		--_counter;
+		--_counterRed;
 	}
 
 	for (uint32 i = 0; i < 5; ++i) {
@@ -267,8 +272,8 @@ void PuzzleHiveMachine::updateScreen() {
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[resourceId], frameIndex, keyPoints[i], kDrawFlagNone, 0, 1);
 	}
 
-	if (_counter1)
-		--_counter1;
+	if (_counterKey)
+		--_counterKey;
 	else {
 		_soundingNote = kMusicalNoteNone;
 		_frameIndex1 = 0;
@@ -278,7 +283,7 @@ void PuzzleHiveMachine::updateScreen() {
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[84], 0, indicatorPoints[i], kDrawFlagNone, 0, 1);
 
 	_frameIndex = (_frameIndex + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[13]);
-	if (_counter1)
+	if (_counterKey)
 		_frameIndex1 = (_frameIndex1 + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[18]);
 
 	getScreen()->drawGraphicsInQueue();
