@@ -92,7 +92,7 @@ void PuzzleHiveControl::reset() {
 
 	_frameIndexes[kElementSwirlRim] = 0;
 	if (_leverPosition != _prevLeverPosition) {
-		_leverDelta = abs(_leverPosition - _prevLeverPosition) * 16 / 5;
+		_leverDelta = abs((double)(_leverPosition - _prevLeverPosition)) * 16 / 5;
 		_currentControl = kControlGlyph4;
 	}
 }
@@ -236,7 +236,7 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
 				++_frameIndexes[kElementSwirlRim];
 				//if (_frameIndexes[kElementSwirlRim] == 12)
 					//	...
-			}			
+			}
 		}
 		break;
 
@@ -261,7 +261,7 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
 	case kControlGlyph5:
 	case kControlGlyph6:
 		_leverPosition = _currentControl - 49;
-		_leverDelta = abs(_leverPosition - _prevLeverPosition) * (GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[kElementLever]) - 1) / 5;
+		_leverDelta = abs((double)(_leverPosition - _prevLeverPosition)) * (GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[kElementLever]) - 1) / 5;
 		if (_leverDelta)
 			getSound()->playSound(getWorld()->graphicResourceIds[76], false, Config.sfxVolume - 10);
 	}
@@ -323,7 +323,7 @@ void PuzzleHiveControl::updateScreen() {
 	case kControlGlyph5:
 	case kControlGlyph6:
 		if (_leverDelta) {
-			if (_leverPosition > _prevLeverPosition) 
+			if (_leverPosition > _prevLeverPosition)
 				--_frameIndexes[kElementLever];
 			else
 				++_frameIndexes[kElementLever];
