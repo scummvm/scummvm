@@ -1753,6 +1753,10 @@ void GrimEngine::clearEventQueue() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 	}
+
+	for (int i = 0; i < KEYCODE_EXTRA_LAST; ++i) {
+		_controlsState[i] = false;
+	}
 }
 
 } // end of namespace Grim

@@ -135,6 +135,7 @@ public:
 	void disableControl(int num) { _controlsEnabled[num] = false; }
 	float getControlAxis(int num);
 	bool getControlState(int num);
+	void clearEventQueue();
 
 	Scene *findScene(const Common::String &name);
 	void setSceneLock(const char *name, bool lockStatus);
@@ -239,8 +240,6 @@ private:
 
 	void savegameCallback();
 	void storeSaveGameImage(SaveGame *savedState);
-
-	void clearEventQueue();
 
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;

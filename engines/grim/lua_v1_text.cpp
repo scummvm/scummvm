@@ -33,6 +33,7 @@
 #include "engines/grim/savegame.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/inputdialog.h"
 
 #include "engines/grim/imuse/imuse.h"
 
@@ -545,21 +546,28 @@ void L1_PrintLine() {
 }
 
 void L1_InputDialog() {
-	lua_Object str1Obj = lua_getparam(1);
-	lua_Object str2Obj = lua_getparam(2);
-	int c, i = 0;
-	char buf[512];
+	lua_Object titleObj = lua_getparam(1);
+	lua_Object messageObj = lua_getparam(2);
+	lua_Object defaultObj = lua_getparam(3);
 
-	if (!lua_isstring(str1Obj) || !lua_isstring(str2Obj)) {
+	if (!lua_isstring(titleObj) || !lua_isstring(messageObj)) {
 		lua_pushnil();
 		return;
 	}
-	fprintf(stderr, "%s %s: ", lua_getstring(str1Obj), lua_getstring(str2Obj));
-	while (i < 512 && (c = fgetc(stdin)) != EOF && c != '\n')
-		buf[i++] = c;
-	buf[i] = '\0';
 
-	lua_pushstring(buf);
+	Common::String str = lua_getstring(titleObj);
+	str += ": ";
+	str += lua_getstring(messageObj);
+	InputDialog d(str, lua_getstring(defaultObj));
+	int res = d.runModal();
+	// The KeyUp event for CTRL has been eat by the gui loop, so we
+	// need to reset it manually.
+	g_grim->clearEventQueue();
+	if (res) {
+		lua_pushstring(d.getString().c_str());
+	} else {
+		lua_pushnil();
+	}
 }
 
 void L1_IsMessageGoing() {
