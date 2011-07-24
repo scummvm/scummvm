@@ -66,7 +66,7 @@ SoundManager::~SoundManager() {
 		}
 		_sfTerminate();
 
-		g_system->getTimerManager()->removeTimerProc(_sfUpdateCallback);
+//		g_system->getTimerManager()->removeTimerProc(_sfUpdateCallback);
 	}
 
 	_soundManager = NULL;
@@ -78,9 +78,12 @@ void SoundManager::postInit() {
 		_saver->addLoadNotifier(&SoundManager::loadNotifier);
 		_saver->addListener(this);
 
-		// Install a timer for handling sound manager updates at 60Hz
-		g_system->getTimerManager()->installTimerProc(_sfUpdateCallback, 1000000 / GAME_FRAME_RATE, NULL);
 
+//	I originally separated the sound manager update method into a separate thread, since
+//  it handles updates for both music and Fx. However, since Adlib updates also get done in a
+//	thread, and doesn't get too far ahead, I've left it to the AdlibSoundDriver class to 
+//	call the update method, rather than having it be called separately
+//		g_system->getTimerManager()->installTimerProc(_sfUpdateCallback, 1000000 / SOUND_FREQUENCY, NULL);
 		__sndmgrReady = true;
 	}
 }
@@ -2488,7 +2491,12 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	_opl = OPL::Config::create();
 	assert(_opl);
 	_opl->init(_sampleRate);
-		
+
+	_samplesTillCallback = 0;
+	_samplesTillCallbackRemainder = 0;
+	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
+	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
+
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	Common::set_to(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
@@ -2750,26 +2758,29 @@ void AdlibSoundDriver::setFrequency(int channel) {
 }
 
 int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
-	update(buffer, numSamples);
-	return numSamples;
-}
-
-void AdlibSoundDriver::update(int16 *buf, int len) {
-	static int samplesLeft = 0;
-	while (len != 0) {
-		int count = samplesLeft;
-		if (count > len) {
-			count = len;
-		}
-		samplesLeft -= count;
-		len -= count;
-		_opl->readBuffer(buf, count);
-		if (samplesLeft == 0) {
+	int32 samplesLeft = numSamples;
+	memset(buffer, 0, sizeof(int16) * numSamples);
+	while (samplesLeft) {
+		if (!_samplesTillCallback) {
+			SoundManager::_sfUpdateCallback(NULL);
 			flush();
-			samplesLeft = _sampleRate / 50;
+
+			_samplesTillCallback = _samplesPerCallback;
+			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
+			if (_samplesTillCallbackRemainder >= CALLBACKS_PER_SECOND) {
+				_samplesTillCallback++;
+				_samplesTillCallbackRemainder -= CALLBACKS_PER_SECOND;
+			}
 		}
-		buf += count;
+
+		int32 render = MIN(samplesLeft, _samplesTillCallback);
+		samplesLeft -= render;
+		_samplesTillCallback -= render;
+
+		_opl->readBuffer(buffer, render);
+		buffer += render;
 	}
+	return numSamples;
 }
 
 /*--------------------------------------------------------------------------*/

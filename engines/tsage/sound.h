@@ -41,6 +41,7 @@ class Sound;
 #define ROLAND_DRIVER_NUM 2
 #define ADLIB_DRIVER_NUM 3
 #define SBLASTER_DRIVER_NUM 4
+#define CALLBACKS_PER_SECOND 60
 
 struct trackInfoStruct {
 	int _numTracks;
@@ -411,6 +412,10 @@ private:
 	const byte *_patchData;
 	int _masterVolume;
 	Common::Queue<RegisterValue> _queue;
+	int _samplesTillCallback;
+	int _samplesTillCallbackRemainder;
+	int _samplesPerCallback;
+	int _samplesPerCallbackRemainder;
 
 	bool _channelVoiced[ADLIB_CHANNEL_COUNT];
 	int _channelVolume[ADLIB_CHANNEL_COUNT];
