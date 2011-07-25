@@ -92,7 +92,6 @@ public:
 	static const uint16 addr_readmouse = 0xcae4;
 	static const uint16 addr_setmouse = 0xcae0;
 	static const uint16 addr_animpointer = 0xcadc;
-	static const uint16 addr_dumptextline = 0xcad8;
 	static const uint16 addr_deltextline = 0xcad4;
 	static const uint16 addr_undertextline = 0xcad0;
 	static const uint16 addr_dumppointer = 0xcacc;
@@ -328,12 +327,9 @@ public:
 	static const uint16 addr_usechurchgate = 0xc730;
 	static const uint16 addr_usewall = 0xc72c;
 	static const uint16 addr_edenscdplayer = 0xc728;
-	static const uint16 addr_usetimedtext = 0xc724;
 	static const uint16 addr_setuptimedtemp = 0xc720;
 	static const uint16 addr_setuptimeduse = 0xc71c;
 	static const uint16 addr_dumptimedtext = 0xc718;
-	static const uint16 addr_putundertimed = 0xc714;
-	static const uint16 addr_getundertimed = 0xc710;
 	static const uint16 addr_autoappear = 0xc70c;
 	static const uint16 addr_dochange = 0xc708;
 	static const uint16 addr_setallchanges = 0xc704;
@@ -584,13 +580,8 @@ public:
 	static const uint16 addr_findallryan = 0xc328;
 	static const uint16 addr_fillopen = 0xc324;
 	static const uint16 addr_fillryan = 0xc320;
-	static const uint16 addr_getnumber = 0xc318;
 	static const uint16 addr_monprint = 0xc314;
-	static const uint16 addr_printdirect = 0xc310;
-	static const uint16 addr_printboth = 0xc30c;
 	static const uint16 addr_waitframes = 0xc308;
-	static const uint16 addr_printslow = 0xc304;
-	static const uint16 addr_printchar = 0xc2fc;
 	static const uint16 addr_realcredits = 0xc2f8;
 	static const uint16 addr_set16colpalette = 0xc2f4;
 	static const uint16 addr_mode640x480 = 0xc2f0;
@@ -1347,8 +1338,9 @@ public:
 	void clearbuffers();
 	void neterror();
 	void storeit();
+	void lockeddoorway();
 	void isitworn();
-	void putundertimed();
+	//void putundertimed();
 	void dumpmap();
 	//void multidump();
 	void channel0only();
@@ -1374,7 +1366,7 @@ public:
 	void restoreall();
 	void screenupdate();
 	void addlength();
-	void usetimedtext();
+	void wornerror();
 	void putundercentre();
 	void checkobjectsize();
 	void commandonly();
@@ -1488,7 +1480,7 @@ public:
 	void turnonpower();
 	void manasleep2();
 	void moretalk();
-	void printslow();
+	//void printslow();
 	void loadroom();
 	void starttalk();
 	void delchar();
@@ -1520,9 +1512,10 @@ public:
 	void openpoolboss();
 	void buttontwo();
 	void fillopen();
+	//void usetimedtext();
 	void delsprite();
 	void getroomspaths();
-	void dumptextline();
+	//void dumptextline();
 	void fadescreendownhalf();
 	void useplate();
 	void candles1();
@@ -1535,7 +1528,7 @@ public:
 	//void printsprites();
 	void checkifperson();
 	void showallobs();
-	void getnumber();
+	//void getnumber();
 	void adjustleft();
 	void calledenslift();
 	void useclearbox();
@@ -1550,7 +1543,7 @@ public:
 	void showpcx();
 	void showdecisions();
 	void checkspeed();
-	void printchar();
+	//void printchar();
 	void showkeypad();
 	void obtoinv();
 	void removeobfrominv();
@@ -1567,7 +1560,7 @@ public:
 	//void spriteupdate();
 	void usetempcharset();
 	void discops();
-	void printdirect();
+	//void printdirect();
 	void delthisone();
 	void makebackob();
 	void middlepanel();
@@ -1575,7 +1568,6 @@ public:
 	void saveload();
 	void monitorlogo();
 	void loadposition();
-	void wornerror();
 	void entersymbol();
 	void showword();
 	void dirfile();
@@ -1702,8 +1694,9 @@ public:
 	void showmonk();
 	void diarykeyn();
 	void set16colpalette();
-	void sparky();
+	void convicons();
 	void interviewer();
+	void sparky();
 	void purgeanitem();
 	void madman();
 	void createpanel();
@@ -1795,7 +1788,7 @@ public:
 	void findsetobject();
 	void singlekey();
 	//void seecommandtail();
-	void getundertimed();
+	//void getundertimed();
 	void hangone();
 	void carparkdrip();
 	void usediary();
@@ -1890,7 +1883,7 @@ public:
 	void turnanypathon();
 	void restorereels();
 	void setwalk();
-	void printboth();
+	//void printboth();
 	void useroutine();
 	void zoomicon();
 	void hotelcontrol();
@@ -1999,14 +1992,12 @@ public:
 	void usechurchgate();
 	void monkandryan();
 	void allocatebuffers();
-	void convicons();
 	void swapwithinv();
 	void usecontrol();
 	void buttonseven();
 	void redrawmainscrn();
 	void finishedwalking();
 	void findallryan();
-	void lockeddoorway();
 	void channel0tran();
 	void buttonpress();
 	void parseblaster();

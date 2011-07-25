@@ -36,8 +36,10 @@ Common::String getFilename(Context &context) {
 }
 
 void DreamGenContext::multiget() {
-	unsigned w = (uint8)cl, h = (uint8)ch;
-	unsigned x = (uint16)di, y = (uint16)bx;
+	multiget(di, bx, cl, ch);
+}
+
+void DreamGenContext::multiget(uint16 x, uint16 y, uint8 w, uint8 h) {
 	unsigned src = x + y * kScreenwidth;
 	unsigned dst = (uint16)si;
 	es = ds;
@@ -58,8 +60,10 @@ void DreamGenContext::multiget() {
 }
 
 void DreamGenContext::multiput() {
-	unsigned w = (uint8)cl, h = (uint8)ch;
-	unsigned x = (uint16)di, y = (uint16)bx;
+	multiput(di, bx, cl, ch);
+}
+
+void DreamGenContext::multiput(uint16 x, uint16 y, uint8 w, uint8 h) {
 	unsigned src = (uint16)si;
 	unsigned dst = x + y * kScreenwidth;
 	es = data.word(kWorkspace);
@@ -78,14 +82,17 @@ void DreamGenContext::multiput() {
 	cx = 0;
 }
 
-void DreamGenContext::multidump() {
+void DreamGenContext::multidump(uint16 x, uint16 y, uint8 width, uint8 height) {
 	ds = data.word(kWorkspace);
-	int w = (uint8)cl, h = (uint8)ch;
-	int x = (int16)di, y = (int16)bx;
 	unsigned offset = x + y * kScreenwidth;
 	//debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
-	engine->blit(ds.ptr(offset, w * h), kScreenwidth, x, y, w, h);
-	si = di = offset + h * kScreenwidth;
+	engine->blit(ds.ptr(offset, width * height), kScreenwidth, x, y, width, height);
+}
+
+void DreamGenContext::multidump() {
+	multidump(di, bx, cl, ch);
+	unsigned offset = di + bx * kScreenwidth;
+	si = di = offset + ch * kScreenwidth;
 	cx = 0;
 }
 
@@ -239,12 +246,26 @@ void DreamGenContext::setmouse() {
 	data.word(kOldpointerx) = 0xffff;
 }
 
-uint8 DreamGenContext::getnextword(uint8 *totalWidth, uint8 *charCount) {
+void DreamGenContext::printboth() {
+	uint16 x = di;
+	printboth(es, ds, &x, bx, al);
+	di = x;
+}
+
+void DreamGenContext::printboth(uint16 dst, uint16 src, uint16 *x, uint16 y, uint8 c) {
+	uint16 newX = *x;
+	uint8 width, height;
+	printchar(dst, src, &newX, y, c, &width, &height);
+	multidump(*x, y, width, height);
+	*x = newX;
+}
+
+uint8 DreamGenContext::getnextword(const uint8 *string, uint8 *totalWidth, uint8 *charCount) {
 	*totalWidth = 0;
 	*charCount = 0;
 	while(true) {
-		uint8 firstChar = es.byte(di);
-		++di;
+		uint8 firstChar = *string;
+		++string;
 		++*charCount;
 		if ((firstChar == ':') || (firstChar == 0)) { //endall
 			*totalWidth += 6;
@@ -256,7 +277,7 @@ uint8 DreamGenContext::getnextword(uint8 *totalWidth, uint8 *charCount) {
 		}
 		firstChar = engine->modifyChar(firstChar);
 		if (firstChar != 255) {
-			uint8 secondChar = es.byte(di);
+			uint8 secondChar = *string;
 			uint8 width = ds.byte(6*(firstChar - 32 + data.word(kCharshift)));
 			width = kernchars(firstChar, secondChar, width);
 			*totalWidth += width;
@@ -266,9 +287,222 @@ uint8 DreamGenContext::getnextword(uint8 *totalWidth, uint8 *charCount) {
 
 void DreamGenContext::getnextword() {
 	uint8 totalWidth, charCount;
-	al = getnextword(&totalWidth, &charCount);
+	al = getnextword(es.ptr(di, 0), &totalWidth, &charCount);
 	bl = totalWidth;
-	bh = charCount;	
+	bh = charCount;
+	di += charCount;
+}
+
+void DreamGenContext::printchar() {
+	uint16 x = di;
+	uint8 width, height;
+	printchar(es, ds, &x, bx, al, &width, &height);
+	di = x;
+	cl = width;
+	ch = height;
+}
+
+void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uint8 c, uint8 *width, uint8 *height) {
+	if (c == 255)
+		return;
+	push(si);
+	push(di);
+	if (data.byte(kForeignrelease) != 0)
+		y -= 3;
+	showframe(dst, src, *x, y, c - 32 + data.word(kCharshift), 0, width, height);
+	di = pop();
+	si = pop();
+	_cmp(data.byte(kKerning), 0);
+	if (flags.z())
+		kernchars();
+	(*x) += *width;
+}
+
+void DreamGenContext::printslow() {
+	al = printslow(di, bx, dl, (bool)(dl & 1));
+}
+
+void DreamGenContext::dumptextline() {
+	if (data.byte(kNewtextline) != 1)
+		return;
+	data.byte(kNewtextline) = 0;
+	uint16 x = data.word(kTextaddressx);
+	uint16 y = data.word(kTextaddressy);
+	if (data.byte(kForeignrelease) != 0)
+		y -= 3;
+	multidump(x, y, 228, 13);
+}
+
+uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+	data.byte(kPointerframe) = 1;
+	data.byte(kPointermode) = 3;
+	ds = data.word(kCharset1);
+	do {
+		uint16 offset = x;
+		uint16 charCount = getnumber(si, maxWidth, centered, &offset);
+		do {
+			push(si);
+			push(es);
+			uint8 c0 = es.byte(si);
+			push(es);
+			push(ds);
+			c0 = engine->modifyChar(c0);
+			printboth(es, ds, &offset, y, c0);
+			ds = pop();
+			es = pop();
+			uint8 c1 = es.byte(si+1);
+			++si;
+			if ((c1 == 0) || (c1 == ':')) {
+				es = pop();
+				si = pop();
+				return 0;
+			}
+			if (charCount != 1) {
+				push(ds);
+				push(es);
+				c1 = engine->modifyChar(c1);
+				data.word(kCharshift) = 91;
+				uint16 offset2 = offset;
+				printboth(es, ds, &offset2, y, c1);
+				data.word(kCharshift) = 0;
+				es = pop();
+				ds = pop();
+				for (int i=0; i<2; ++i) {
+					waitframes();
+					if (ax == 0)
+						continue;
+					if (ax != data.word(kOldbutton)) {
+						es = pop();
+						si = pop();
+						return 1;
+					}
+				}
+			}
+
+			es = pop();
+			si = pop();
+			++si;
+			--charCount;
+		} while (charCount);
+		y += 10;
+	} while (true);
+}
+
+void DreamGenContext::printdirect() {
+	uint16 y = bx;
+	printdirect(di, &y, dl, (bool)(dl & 1));
+	bx = y;
+}
+
+void DreamGenContext::printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
+	data.word(kLastxpos) = x;
+	ds = data.word(kCurrentset);
+	while (true) {
+		uint16 offset = x;
+		uint8 charCount = getnumber(si, maxWidth, centered, &offset);
+		uint16 i = offset;
+		do {
+			uint8 c = es.byte(si);
+			++si;
+			if ((c == 0) || (c == ':')) {
+				return;
+			}
+			c = engine->modifyChar(c);
+			uint8 width, height;
+			push(es);
+			printchar(es, ds, &i, *y, c, &width, &height);
+			es = pop();
+			data.word(kLastxpos) = i;
+			--charCount;
+		} while(charCount);
+		*y += data.word(kLinespacing);
+	}
+}
+
+void DreamGenContext::getundertimed() {
+	uint16 y = data.byte(kTimedy);
+	if (data.byte(kForeignrelease))
+		y -= 3;
+	ds = data.word(kBuffers);
+	si = kUndertimedtext;
+	multiget(data.byte(kTimedx), y, 240, kUndertimedysize);
+}
+
+void DreamGenContext::putundertimed() {
+	uint16 y = data.byte(kTimedy);
+	if (data.byte(kForeignrelease))
+		y -= 3;
+	ds = data.word(kBuffers);
+	si = kUndertimedtext;
+	multiput(data.byte(kTimedx), y, 240, kUndertimedysize);
+}
+
+void DreamGenContext::usetimedtext() {
+	if (data.word(kTimecount) == 0)
+		return;
+	--data.word(kTimecount);
+	if (data.word(kTimecount) == 0) {
+		putundertimed();
+		data.byte(kNeedtodumptimed) = 1;
+		return;
+	}
+
+	if (data.word(kTimecount) == data.word(kCounttotimed))
+		getundertimed();
+	else if (data.word(kTimecount) > data.word(kCounttotimed))
+		return;
+
+	es = data.word(kTimedseg);
+	si = data.word(kTimedoffset);
+	uint16 y = data.byte(kTimedy);
+	printdirect(data.byte(kTimedx), &y, 237, true);
+	data.byte(kNeedtodumptimed) = 1;
+}
+
+void DreamGenContext::getnumber() {
+	uint16 offset = di;
+	cl = getnumber(si, dl, (bool)(dl & 1), &offset);
+	di = offset;
+}
+
+uint8 DreamGenContext::getnumber(uint16 index, uint16 maxWidth, bool centered, uint16* offset) {
+	uint8 totalWidth = 0;
+	uint8 charCount = 0;
+	while (true) {
+		uint8 wordTotalWidth, wordCharCount;
+		uint8 done = getnextword(es.ptr(index, 0), &wordTotalWidth, &wordCharCount);
+		index += wordCharCount;
+
+		if (done == 1) { //endoftext
+			ax = totalWidth + wordTotalWidth - 10;
+			if (ax < maxWidth) {
+				totalWidth += wordTotalWidth;
+				charCount += wordCharCount;
+			}
+
+			if (centered) {
+				ax = (maxWidth & 0xfe) + 2 + 20 - totalWidth;
+				ax /= 2;
+			} else {
+				ax = 0;
+			}
+			*offset += ax;
+			return charCount;
+		}
+		ax = totalWidth + wordTotalWidth - 10;
+		if (ax >= maxWidth) { //gotoverend
+			if (centered) {
+				ax = (maxWidth & 0xfe) - totalWidth + 20;
+				ax /= 2;
+			} else {
+				ax = 0;
+			}
+			*offset += ax;
+			return charCount;
+		}
+		totalWidth += wordTotalWidth;
+		charCount += wordCharCount;
+	}
 }
 
 uint8 DreamGenContext::kernchars(uint8 firstChar, uint8 secondChar, uint8 width) {
@@ -677,7 +911,7 @@ Sprite *DreamGenContext::spritetable() {
 	return sprite;
 }
 
-uint16 DreamGenContext::showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag) {
+void DreamGenContext::showframe(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
 	es = dst;
 	ds = src;
 	di = x;
@@ -687,7 +921,9 @@ uint16 DreamGenContext::showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y,
 
 	si = (ax & 0x1ff) * 6;
 	if (ds.word(si) == 0) {
-		return 0;
+		*width = 0;
+		*height = 0;
+		return;
 	}
 
 //notblankshow:
@@ -697,19 +933,18 @@ uint16 DreamGenContext::showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y,
 	}
 //skipoffsets:
 	cx = ds.word(si + 0);
-	uint8 width = cl;
-	uint8 height = ch;
-	uint16 written = cx;
+	*width = cl;
+	*height = ch;
 	si = ds.word(si+2) + 2080;
 
 	if (effectsFlag) {
 		if (effectsFlag & 128) { //centred
-			di -= width / 2;
-			bx -= height / 2;
+			di -= *width / 2;
+			bx -= *height / 2;
 		}
 		if (effectsFlag & 64) { //diffdest
-			frameoutfx(es.ptr(0, dx * height), ds.ptr(si, width * height), dx, width, height, di, bx);
-			return written;
+			frameoutfx(es.ptr(0, dx * *height), ds.ptr(si, *width * *height), dx, *width, *height, di, bx);
+			return;
 		}
 		if (effectsFlag & 8) { //printlist
 			push(ax);
@@ -723,28 +958,31 @@ uint16 DreamGenContext::showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y,
 		}
 		if (effectsFlag & 4) { //flippedx
 			es = data.word(kWorkspace);
-			frameoutfx(es.ptr(0, 320 * height), ds.ptr(si, width * height), 320, width, height, di, bx);
-			return written;
+			frameoutfx(es.ptr(0, 320 * *height), ds.ptr(si, *width * *height), 320, *width, *height, di, bx);
+			return;
 		}
 		if (effectsFlag & 2) { //nomask
 			es = data.word(kWorkspace);
-			frameoutnm(es.ptr(0, 320 * height), ds.ptr(si, width * height), 320, width, height, di, bx);
-			return written;
+			frameoutnm(es.ptr(0, 320 * *height), ds.ptr(si, *width * *height), 320, *width, *height, di, bx);
+			return;
 		}
 		if (effectsFlag & 32) {
 			es = data.word(kWorkspace);
-			frameoutbh(es.ptr(0, 320 * height), ds.ptr(si, width * height), 320, width, height, di, bx);
-			return written;
+			frameoutbh(es.ptr(0, 320 * *height), ds.ptr(si, *width * *height), 320, *width, *height, di, bx);
+			return;
 		}
 	}
 //noeffects:
 	es = data.word(kWorkspace);
-	frameoutv(es.ptr(0, 65536), ds.ptr(si, width * height), 320, width, height, di, bx);
-	return written;
+	frameoutv(es.ptr(0, 65536), ds.ptr(si, *width * *height), 320, *width, *height, di, bx);
+	return;
 }
 
 void DreamGenContext::showframe() {
-	cx = showframeCPP(es, ds, di, bx, al, ah);
+	uint8 width, height;
+	showframe(es, ds, di, bx, al, ah, &width, &height);
+	cl = width;
+	ch = height;
 }
 
 void DreamGenContext::printsprites() {
@@ -781,10 +1019,15 @@ void DreamGenContext::printasprite(const Sprite *sprite) {
 		di = ax + data.word(kMapadx);
 	}
 	
-	ax = sprite->b15;
+	uint8 c;
 	if (sprite->b29 != 0)
-		ah = 8;
-	showframe();
+		c = 8;
+	else
+		c = 0;
+	uint8 width, height;
+	showframe(es, ds, di, bx, sprite->b15, c, &width, &height);
+	cl = width;
+	ch = height;
 
 	bx = pop();
 	es = pop();
