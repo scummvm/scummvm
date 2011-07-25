@@ -38,13 +38,13 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
+#include "graphics/surface.h"
+#include "video/bink_decoder.h"
+
 #include "engines/grim/movie/bink.h"
 
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
-
-#define MWIDTH 640
-#define MHEIGHT 400
 
 namespace Grim {
 
@@ -58,6 +58,8 @@ void BinkPlayer::timerCallback(void *) {
 
 BinkPlayer::BinkPlayer() : MoviePlayer() {
 	g_movie = this;
+	_binkDecoder = new Video::BinkDecoder();
+	_surface = new Graphics::Surface();
 	_speed = 50;
 }
 
@@ -69,21 +71,20 @@ void BinkPlayer::init() {
 	_frame = 0;
 	_movieTime = 0;
 	_updateNeeded = false;
-	_width = MWIDTH;
-	_height = MHEIGHT;
+	_width = 0;
+	_height = 0;
 
 	assert(!_externalBuffer);
 
-	_externalBuffer = new byte[_width * _height * 2];
-
-	warning("Trying to play %s",_fname.c_str());
-	//_videoBase->init(_fname.c_str());
 	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void BinkPlayer::deinit() {
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
-
+	_binkDecoder->close();
+	_f.close();
+	_surface->free();
+	
 	if (_externalBuffer) {
 		delete[] _externalBuffer;
 		_externalBuffer = NULL;
@@ -98,6 +99,9 @@ void BinkPlayer::deinit() {
 }
 
 void BinkPlayer::handleFrame() {
+	if (_binkDecoder->endOfVideo())
+		_videoFinished = true;
+	
 	if (_videoPause)
 		return;
 
@@ -105,7 +109,21 @@ void BinkPlayer::handleFrame() {
 		_videoPause = true;
 		return;
 	}
-
+	
+	if(_binkDecoder->getTimeToNextFrame() > 0)
+		return;
+		
+	_surface->copyFrom(*_binkDecoder->decodeNextFrame());
+	
+	_width = _surface->w;
+	_height = _surface->h; 
+	_externalBuffer = (byte*)_surface->pixels;
+	
+	_updateNeeded = true;
+	
+	_movieTime = _binkDecoder->getElapsedTime();
+	_frame = _binkDecoder->getCurFrame();
+	
 	return;
 }
 
@@ -117,7 +135,10 @@ void BinkPlayer::stop() {
 bool BinkPlayer::play(const char *filename, bool looping, int x, int y) {
 	deinit();
 	_fname = filename;
-
+	_fname += ".bik";
+	_f.open(_fname);
+	
+	_binkDecoder->loadStream(&_f);
 	if (gDebugLevel == DEBUG_SMUSH)
 		printf("Playing video '%s'.\n", filename);
 
