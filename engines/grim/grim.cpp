@@ -854,7 +854,12 @@ static void cameraPostChangeHandle(int num) {
 }
 
 void GrimEngine::drawPrimitives() {
+	_iris->draw();
 
+	// Draw text
+	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {
+		i->_value->draw();
+	}
 }
 
 void GrimEngine::playIrisAnimation(Iris::Direction dir, int x, int y, int time) {
