@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	detection.o \
 	dreamweb.o \
 	dreamgen.o \
+	print.o \
 	sprite.o \
 	stubs.o
 
