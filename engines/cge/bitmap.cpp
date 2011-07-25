@@ -104,8 +104,7 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 	uint16 psiz = _h * lsiz;                         // - last gape, but + plane trailer
 	uint8 *v = new uint8[4 * psiz + _h * sizeof(*_b)];// the same for 4 planes
 	                                                // + room for wash table
-	if (v == NULL)
-		error("No core");
+	assert(v != NULL);
 
 	*(uint16 *) v = kBmpCPY | dsiz;                 // data chunk hader
 	memset(v + 2, fill, dsiz);                      // data bytes
@@ -143,8 +142,7 @@ Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), 
 		uint16 vsiz = (uint8 *)(bmp._b) - (uint8 *)(v0);
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
 		uint8 *v1 = (uint8 *) malloc(sizeof(uint8) * siz);
-		if (v1 == NULL)
-			error("No core");
+		assert(v1 != NULL);
 		memcpy(v1, v0, siz);
 		_b = (HideDesc *)((_v = v1) + vsiz);
 	}
@@ -174,8 +172,7 @@ Bitmap &Bitmap::operator = (const Bitmap &bmp) {
 		uint16 vsiz = (uint8 *)bmp._b - (uint8 *)v0;
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
 		uint8 *v1 = (uint8 *) malloc(sizeof(uint8) * siz);
-		if (v1 == NULL)
-			error("No core");
+		assert(v1 != NULL);
 		memcpy(v1, v0, siz);
 		_b = (HideDesc *)((_v = v1) + vsiz);
 	}
@@ -252,9 +249,9 @@ BMP_PTR Bitmap::code() {
 					if (! skip) {
 						if (_v)
 							*im = pix;
-						++ im;
+						im++;
 					}
-					++ cnt;
+					cnt++;
 				}
 
 				bm += _w;
@@ -291,8 +288,7 @@ BMP_PTR Bitmap::code() {
 
 		uint16 sizV = (uint16)(im - 2 - _v);
 		_v = new uint8[sizV + _h * sizeof(*_b)];
-		if (!_v)
-			error("No core");
+		assert(_v != NULL);
 
 		_b = (HideDesc *)(_v + sizV);
 	}

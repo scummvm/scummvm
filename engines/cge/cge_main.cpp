@@ -353,8 +353,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 				S._prev = S._next = NULL;
 				spr = (scumm_stricmp(S._file + 2, "MUCHA") == 0) ? new Fly(this, NULL)
 					  : new Sprite(this, NULL);
-				if (spr == NULL)
-					error("No core");
+				assert(spr != NULL);
 				*spr = S;
 				_vga->_spareQ->append(spr);
 			}
@@ -1075,7 +1074,7 @@ void CGEEngine::sayDebug() {
 		uint16 n = 0;
 		Sprite *spr;
 		for (spr = _vga->_showQ->first(); spr; spr = spr->_next) {
-			++ n;
+			n++;
 			if (spr == _sprite) {
 				dwtom(n, SP_N, 10, 2);
 				dwtom(_sprite->_x, SP_X, 10, 3);
@@ -1220,9 +1219,9 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 			error("Bad SPR [%s]", line);
 
 		while ((len = sprf.read((uint8 *)line)) != 0) {
-			++ lcnt;
+			lcnt++;
 			if (len && line[len - 1] == '\n')
-				line[-- len] = '\0';
+				line[--len] = '\0';
 			if (len == 0 || *line == '.')
 				continue;
 
@@ -1238,7 +1237,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 					error("Bad line %d [%s]", lcnt, fname);
 				break;
 			case  2 : // Phase
-				++ shpcnt;
+				shpcnt++;
 				break;
 			case  3 : // East
 				east = (atoi(strtok(NULL, " \t,;/")) != 0);
