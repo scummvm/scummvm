@@ -298,7 +298,7 @@ void sndMidiStop() {
 	// FIXME: STUB: sndMIDIStop
 }
 
-DataCk *loadWave(XFile *file, Emm *emm) {
+DataCk *loadWave(XFile *file) {
 	warning("STUB: LoadWave");
 	return NULL;
 }

@@ -65,7 +65,7 @@ void Sound::open() {
 void Sound::play(DataCk *wav, int pan, int cnt) {
 	if (wav) {
 		stop();
-		_smpinf._saddr = (uint8 *) &*(wav->eAddr());
+		_smpinf._saddr = (uint8 *) &*(wav->addr());
 		_smpinf._slen = (uint16)wav->size();
 		_smpinf._span = pan;
 		_smpinf._sflag = cnt;
@@ -79,7 +79,7 @@ void Sound::stop() {
 }
 
 
-Fx::Fx(int size) : _emm(0L), _current(NULL) {
+Fx::Fx(int size) : _current(NULL) {
 	_cache = new Han[size];
 	for (_size = 0; _size < size; _size++) {
 		_cache[_size]._ref = 0;
@@ -103,7 +103,6 @@ void Fx::clear() {
 			p->_wav = NULL;
 		}
 	}
-	_emm.release();
 	_current = NULL;
 }
 
@@ -129,7 +128,7 @@ void Fx::preload(int ref0) {
 		static char fname[] = "FX00000.WAV";
 		wtom(ref, fname + 2, 10, 5);
 		INI_FILE file = INI_FILE(fname);
-		DataCk *wav = loadWave(&file, &_emm);
+		DataCk *wav = loadWave(&file);
 		if (wav) {
 			Han *p = &_cache[find(0)];
 			if (p >= cacheLim)
@@ -146,7 +145,7 @@ DataCk *Fx::load(int idx, int ref) {
 	wtom(ref, fname + 2, 10, 5);
 
 	INI_FILE file = INI_FILE(fname);
-	DataCk *wav = loadWave(&file, &_emm);
+	DataCk *wav = loadWave(&file);
 	if (wav) {
 		Han *p = &_cache[idx];
 		p->_wav = wav;

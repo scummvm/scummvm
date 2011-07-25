@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	config.o \
 	console.o \
 	detection.o \
-	ems.o \
 	events.o \
 	game.o \
 	general.o \

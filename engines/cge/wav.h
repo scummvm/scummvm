@@ -117,20 +117,13 @@ public:
 
 class DataCk : public CkHea {
 	bool _e;
-	union {
-		uint8 *_buf;
-		Ems *_eBuf;
-	};
+	uint8 *_buf;
 public:
 	DataCk(CkHea &hea);
-	DataCk(CkHea &hea, Emm *emm);
 	DataCk(int first, int last);
 	~DataCk();
 	inline uint8 *addr() {
 		return _buf;
-	}
-	inline Ems *eAddr() {
-		return _eBuf;
 	}
 };
 
@@ -141,7 +134,7 @@ extern ChunkId _fmt;
 extern ChunkId _data;
 
 
-DataCk *loadWave(XFile *file, Emm *emm = NULL);
+DataCk *loadWave(XFile *file);
 
 } // End of namespace CGE
 

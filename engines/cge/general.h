@@ -58,40 +58,6 @@ public:
 	~Engine_();
 };
 
-
-class Ems;
-
-
-class Emm {
-	friend class Ems;
-	bool test();
-
-	long _top;
-	long _lim;
-	Ems *_list;
-	int _han;
-	static void *_frame;
-public:
-	Emm(long size);
-	~Emm();
-	Ems *alloc(uint16 siz);
-	void release();
-};
-
-
-class Ems {
-	friend class Emm;
-	Emm *_emm;
-	long _ptr;
-	uint16 _size;
-	Ems *_next;
-public:
-	Ems();
-	void *operator & () const;
-	uint16 size();
-};
-
-
 template <class T>
 void swap(T &A, T &B) {
 	T a = A;
