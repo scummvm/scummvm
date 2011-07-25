@@ -24,9 +24,14 @@
 #include "system.h"
 
 #include <FSysSettingInfo.h>
+#include <FAppAppRegistry.h>
 
-#define MAX_VOL 99
-#define INIT_VOL 40
+#define TIMER_INCREMENT    10
+#define TIMER_INTERVAL     80
+#define MIN_TIMER_INTERVAL 20
+#define MAX_VOL            80
+#define INIT_VOL           40
+#define CONFIG_KEY         L"audiovol"
 
 AudioThread::AudioThread() : 
   mixer(0),
@@ -101,6 +106,12 @@ int AudioThread::setVolume(bool up, bool minMax, int range) {
     }
     if (volume <= MAX_VOL) {
       audioOut->SetVolume(volume);
+
+      // remember the chosen setting
+      AppRegistry* registry = Application::GetInstance()->GetAppRegistry();
+      if (registry) {
+        registry->Set(CONFIG_KEY, volume);
+      }
     }
   }
   return level;
@@ -145,8 +156,21 @@ bool AudioThread::OnStart(void) {
     return false;
   }
 
+  // get the volume from the app-registry
+  int volume = INIT_VOL;
+  AppRegistry* registry = Application::GetInstance()->GetAppRegistry();
+  if (registry) {
+    if (E_KEY_NOT_FOUND == registry->Get(CONFIG_KEY, volume)) {
+      registry->Add(CONFIG_KEY, volume);
+      volume = INIT_VOL;
+    }
+    else {
+      AppLog("Setting volume: %d", volume);
+    }
+  }
+
   mixer->setReady(true);
-  audioOut->SetVolume(isSilentMode() ? 0 : INIT_VOL);
+  audioOut->SetVolume(isSilentMode() ? 0 : volume);
   audioOut->Start();
   return true;
 }

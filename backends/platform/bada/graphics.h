@@ -46,17 +46,18 @@ class BadaGraphicsManager : public OpenGLGraphicsManager {
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const;
   bool hasFeature(OSystem::Feature f);
   void updateScreen();
-  void internUpdateScreen();
-  bool loadGFXMode();
   void setFeatureState(OSystem::Feature f, bool enable);
-  void setInternalMousePosition(int x, int y);
-  void unloadGFXMode();
-  void refreshGameScreen();
   void setReady();
   bool isReady() {return !initState;}
   const Graphics::Font* getFontOSD();
+  void setupMouse(int16& x, int16& y);
 
  private:
+  void internUpdateScreen();
+  bool loadGFXMode();
+  void unloadGFXMode();
+  void refreshGameScreen();
+  void setInternalMousePosition(int x, int y) {}
   void showSplash();
 
   bool loadEgl();

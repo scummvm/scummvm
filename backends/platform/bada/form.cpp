@@ -191,15 +191,20 @@ bool BadaAppForm::pollEvent(Common::Event& event) {
 
 void BadaAppForm::pushEvent(Common::EventType type,
                             const Point& currentPosition) {
-  Common::Event e;
-  e.type = type;
-  e.mouse.x = currentPosition.x;
-  e.mouse.y = currentPosition.y;
-  g_system->warpMouse(currentPosition.x, currentPosition.y);
+  BadaSystem* system = (BadaSystem*) g_system;
+  BadaGraphicsManager* graphics = system->getGraphics();
+  if (graphics) {
+    Common::Event e;
+    e.type = type;
+    e.mouse.x = currentPosition.x;
+    e.mouse.y = currentPosition.y;
+    
+    graphics->setupMouse(e.mouse.x, e.mouse.y);
 
-  eventQueueLock->Acquire();
-  eventQueue.push(e);
-  eventQueueLock->Release();
+    eventQueueLock->Acquire();
+    eventQueue.push(e);
+    eventQueueLock->Release();
+  }
 }
 
 void BadaAppForm::pushKey(Common::KeyCode keycode) {

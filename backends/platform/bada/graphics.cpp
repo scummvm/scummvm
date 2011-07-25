@@ -77,6 +77,11 @@ const Graphics::Font* BadaGraphicsManager::getFontOSD() {
 	return font;
 }
 
+void BadaGraphicsManager::setupMouse(int16& x, int16& y) {
+  adjustMousePosition(x, y);
+  warpMouse(x, y);
+}
+
 Common::List<Graphics::PixelFormat> BadaGraphicsManager::getSupportedFormats() const {
   logEntered();
 
@@ -99,14 +104,8 @@ void BadaGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
   OpenGLGraphicsManager::setFeatureState(f, enable);
 }
 
-void BadaGraphicsManager::setInternalMousePosition(int x, int y) {
-}
-
 void BadaGraphicsManager::setReady() {
-  if (initState) {
-    initEventObserver();
-    initState = false;
-  }
+  initState = false;
 }
 
 void BadaGraphicsManager::updateScreen() {
@@ -267,7 +266,6 @@ void BadaGraphicsManager::refreshGameScreen() {
     }
 
     byte *surface = new byte[sw * sh * 3];
-    memset(surface, 0, sw * sh * 3);
 
 		// Convert the paletted buffer to RGB888
 		const byte *src = (byte *)_screenData.pixels + y * _screenData.pitch;

@@ -288,9 +288,13 @@ void BadaSystem::initBackend() {
     ConfMan.set("savepath", "/Home/Share");
   }
 
+  // default to no auto-save
+  if (!ConfMan.hasKey("autosave_period")) {
+    ConfMan.setInt("autosave_period", 0);
+  }
+
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
-	ConfMan.setInt("autosave_period", 0);
   ConfMan.setBool("confirm_exit", false);
 
   Osp::System::SystemTime::GetTicks(epoch);
