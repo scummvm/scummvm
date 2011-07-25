@@ -32,6 +32,7 @@
 	void convertkey();
 	void cls();
 	void printsprites();
+	void printsprites(uint16 dst);
 	void quickquit();
 	void readoneblock();
 	void printundermon();
@@ -59,7 +60,7 @@
 	Sprite *spritetable();
 	void showframe();
 	void showframe(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
-	void printasprite(const Sprite *sprite);
+	void printasprite(uint16 dst, const Sprite *sprite);
 	void width160();
 	void multiput(uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiput();

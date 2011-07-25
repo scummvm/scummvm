@@ -28,19 +28,17 @@ namespace DreamGen {
 
 Sprite *DreamGenContext::spritetable() {
 	push(es);
-	push(bx);
-
 	es = data.word(kBuffers);
-	bx = kSpritetable;
-	Sprite *sprite = (Sprite *)es.ptr(bx, 16 * sizeof(Sprite));
-
-	bx = pop();
+	Sprite *sprite = (Sprite *)es.ptr(kSpritetable, 16 * sizeof(Sprite));
 	es = pop();
-
 	return sprite;
 }
 
 void DreamGenContext::printsprites() {
+	printsprites(es);
+}
+
+void DreamGenContext::printsprites(uint16 dst) {
 	for (size_t priority = 0; priority < 7; ++priority) {
 		Sprite *sprites = spritetable();
 		for (size_t j = 0; j < 16; ++j) {
@@ -51,27 +49,23 @@ void DreamGenContext::printsprites() {
 				continue;
 			if (sprite.hidden == 1)
 				continue;
-			printasprite(&sprite);
+			printasprite(dst, &sprite);
 		}
 	}
 }
 
-void DreamGenContext::printasprite(const Sprite *sprite) {
-	push(es);
-	push(bx);
-	ds = READ_LE_UINT16(&sprite->w6);
-	ax = sprite->y;
-	if (al >= 220) {
-		bx = data.word(kMapady) - (256 - al);
+void DreamGenContext::printasprite(uint16 dst, const Sprite *sprite) {
+	uint16 x, y;
+	if (sprite->y >= 220) {
+		y = data.word(kMapady) - (256 - sprite->y);
 	} else {
-		bx = ax + data.word(kMapady);
+		y = sprite->y + data.word(kMapady);
 	}
 
-	ax = sprite->x;
-	if (al >= 220) {
-		di = data.word(kMapadx) - (256 - al);
+	if (sprite->x >= 220) {
+		x = data.word(kMapadx) - (256 - sprite->x);
 	} else {
-		di = ax + data.word(kMapadx);
+		x = sprite->x + data.word(kMapadx);
 	}
 	
 	uint8 c;
@@ -80,12 +74,7 @@ void DreamGenContext::printasprite(const Sprite *sprite) {
 	else
 		c = 0;
 	uint8 width, height;
-	showframe(es, ds, di, bx, sprite->b15, c, &width, &height);
-	cl = width;
-	ch = height;
-
-	bx = pop();
-	es = pop();
+	showframe(es, READ_LE_UINT16(&sprite->w6), x, y, sprite->b15, c, &width, &height);
 }
 
 void DreamGenContext::clearsprites() {
@@ -148,13 +137,6 @@ void DreamGenContext::initman() {
 	sprite->priority = 4;
 	sprite->b22 = 0;
 	sprite->b29 = 0;
-
-	// Recover es:bx from sprite
-	es = data.word(kBuffers);
-	bx = kSpritetable;
-	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
-	bx += 32 * (sprite - sprites);
-	//
 }
 
 void DreamGenContext::mainmanCPP(Sprite *sprite) {
