@@ -1501,8 +1501,7 @@ void Costume::Chore::update() {
 }
 
 void Costume::Chore::fadeIn(int msecs) {
-	if (!_playing)
-	{
+	if (!_playing) {
 		_playing = true;
 		_hasPlayed = true;
 		_currTime = -1;
@@ -1514,7 +1513,7 @@ void Costume::Chore::fadeIn(int msecs) {
 			continue;
 
 		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
-			KeyframeComponent* kf = static_cast<KeyframeComponent*>(comp);
+			KeyframeComponent *kf = static_cast<KeyframeComponent *>(comp);
 			kf->fade(KeyframeComponent::FadeIn, msecs);
 		}
 	}
