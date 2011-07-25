@@ -436,13 +436,13 @@ private:
 	// Path finding functions
 	//////////////////////////////////////////////////////////////////////////
 	uint32 _frameNumber;
-	bool processActionLeft(Common::Point source, const Common::Point &destination, Common::Array<ActionArea *> *actions);
-	bool processActionAll(Common::Point source,  const Common::Point &destination, Common::Array<ActionArea *> *actions);
-	bool processActionTop(Common::Point source,  const Common::Point &destination, Common::Array<ActionArea *> *actions);
-	bool processActionDown(Common::Point source, const Common::Point &destination, Common::Array<ActionArea *> *actions);
-	bool processAction(const Common::Point &source, Common::Array<ActionArea *> *actions, Common::Point *point, ActorDirection direction, const Common::Point &destination, bool *flag);
-	bool checkPath(Common::Array<ActionArea *> *actions, const Common::Point &point, ActorDirection direction, uint32 loopcount);
-	bool checkAllActions(const Common::Point &pt, Common::Array<ActionArea *> *actions);
+	bool processActionLeft(Common::Point source, const Common::Point &destination, Common::Array<int> *actions);
+	bool processActionAll(Common::Point source,  const Common::Point &destination, Common::Array<int> *actions);
+	bool processActionTop(Common::Point source,  const Common::Point &destination, Common::Array<int> *actions);
+	bool processActionDown(Common::Point source, const Common::Point &destination, Common::Array<int> *actions);
+	bool processAction(const Common::Point &source, Common::Array<int> *actions, Common::Point *point, ActorDirection direction, const Common::Point &destination, bool *flag);
+	bool checkPath(Common::Array<int> *actions, const Common::Point &point, ActorDirection direction, uint32 loopcount);
+	bool checkAllActions(const Common::Point &pt, Common::Array<int> *actions);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc

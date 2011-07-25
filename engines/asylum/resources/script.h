@@ -74,7 +74,7 @@ struct ActionArea {
 	ResourceId soundResourceId;
 	int32 field_90;
 	ResourceId paletteResourceId;
-	int32 array[5];
+	int32 paths[5];
 	int32 volume;
 
 	ActionArea() {
@@ -96,7 +96,7 @@ struct ActionArea {
 		soundResourceId = kResourceNone;
 		field_90 = 0;
 		paletteResourceId = kResourceNone;
-		memset(&array, 0, sizeof(array));
+		memset(&paths, 0, sizeof(paths));
 		volume = 0;
 	}
 
