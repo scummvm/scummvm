@@ -26,6 +26,9 @@
 #define COMMON_MATH_H
 
 #include "common/scummsys.h"
+#ifdef _MSC_VER
+#include <intrin.h>
+#endif
 
 #ifndef M_SQRT1_2
 	#define M_SQRT1_2 0.70710678118654752440 /* 1/sqrt(2) */
@@ -62,6 +65,12 @@ inline int intLog2(uint32 v) {
 		// instead of CHAR_BIT is sane enough and it saves us from including
 		// limits.h
 		return (sizeof(unsigned int) * 8 - 1) - __builtin_clz(v);
+}
+#elif defined(_MSC_VER)
+inline int intLog2(uint32 v) {
+	unsigned long result = 0;
+	unsigned char nonZero = _BitScanReverse(&result, v);
+	return nonZero ? 31 - result : -1;
 }
 #else
 // See http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogLookup
