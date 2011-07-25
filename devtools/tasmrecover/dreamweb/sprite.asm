@@ -4226,7 +4226,7 @@ botofdoor2:	sub	ah,ch
 opendoor2:	cmp	throughdoor,1
 	jz	mustbeopen
 	cmp	lockstatus,1
-	jz	shutdoor
+	jz	shutdoor2
 mustbeopen:	mov	cl,[es:bx+19]
               	cmp	cl,1
 	jnz	notdoorsound4

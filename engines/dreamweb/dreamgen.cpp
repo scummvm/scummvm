@@ -3023,7 +3023,7 @@ opendoor2:
 		goto mustbeopen;
 	_cmp(data.byte(kLockstatus), 1);
 	if (flags.z())
-		goto shutdoor;
+		goto shutdoor2;
 mustbeopen:
 	cl = es.byte(bx+19);
 	_cmp(cl, 1);
@@ -3104,38 +3104,6 @@ atlast4:
 	bx = pop();
 	es = pop();
 	data.byte(kLockstatus) = 1;
-	return;
-/*continuing to unbounded code: shutdoor from dodoor:60-87*/
-shutdoor:
-	cl = es.byte(bx+19);
-	_cmp(cl, 5);
-	if (!flags.z())
-		goto notdoorsound1;
-	al = 1;
-	_cmp(data.byte(kReallocation), 5);
-	if (!flags.z())
-		goto nothoteldoor1;
-	al = 13;
-nothoteldoor1:
-	playchannel1();
-notdoorsound1:
-	_cmp(cl, 0);
-	if (flags.z())
-		goto atlast2;
-	_dec(cl);
-	es.byte(bx+19) = cl;
-atlast2:
-	ch = 0;
-	push(di);
-	_add(di, cx);
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	_cmp(cl, 5);
-	if (!flags.z())
-		return /* (notnearly) */;
-	data.byte(kThroughdoor) = 0;
 }
 
 void DreamGenContext::updatepeople() {
