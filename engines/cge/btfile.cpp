@@ -43,8 +43,7 @@ BtFile::BtFile(const char *name, IOMode mode, CRYPT *crpt)
 		_buff[i]._pgNo = kBtValNone;
 		_buff[i]._indx = -1;
 		_buff[i]._updt = false;
-		if (_buff[i]._page == NULL)
-			error("No core");
+		assert(_buff[i]._page != NULL);
 	}
 }
 
