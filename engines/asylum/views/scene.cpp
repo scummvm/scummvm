@@ -2515,7 +2515,15 @@ void Scene::processUpdateList() {
 							actor->setPriority(object->getPriority() + 3);
 
 							if (i > 0) {
-								error("[Scene::processUpdateList] list update not implemented!");
+								// Update actor priority up to current index
+								for (uint32 k = 0;  k < i; k++) {
+									Actor *previousActor = getWorld()->actors[_updateList[k].index];
+
+									if (getWorld()->chapter != kChapter2 || previousActor->getField944() != 1) {
+										if (previousActor->getPriority() == actor->getPriority())
+											actor->setPriority(actor->getPriority() - 1);
+									}
+								}
 							}
 						}
 					} else {
@@ -2524,7 +2532,27 @@ void Scene::processUpdateList() {
 							actor->setPriority(object->getPriority() - 1);
 
 							if (i > 0) {
-								error("[Scene::processUpdateList] list update not implemented!");
+
+								// Update actor priority up to current index
+								for (uint32 k = 0;  k < i; k++) {
+									Actor *previousActor = getWorld()->actors[_updateList[k].index];
+
+									if (previousActor->getField944() != 1 && previousActor->getField944() != 4) {
+										Actor *actorCheck = getWorld()->actors[k];
+
+										if (rectIntersect(actorCheck->getPoint1()->x,
+										                  actorCheck->getPoint1()->y,
+										                  actorCheck->getPoint1()->x + actorCheck->getBoundingRect()->bottom,
+										                  actorCheck->getPoint1()->y + actorCheck->getBoundingRect()->right,
+										                  actor->getPoint1()->x,
+										                  actor->getPoint1()->y,
+										                  actor->getPoint1()->x + actor->getBoundingRect()->right,
+										                  bottomRight)) {
+											if (previousActor->getPriority() == actor->getPriority())
+												actor->setPriority(actor->getPriority() - 1);
+										}
+									}
+								}
 							}
 						}
 					}
