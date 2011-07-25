@@ -80,6 +80,8 @@
 	void dodoor(Sprite *sprite, ObjData *objData);
 	void doorway(Sprite *sprite, ObjData *objData);
 	void widedoor(Sprite *sprite, ObjData *objData);
+	void lockeddoorway();
+	void lockeddoorway(Sprite *sprite, ObjData *objData);
 	void liftsprite();
 	void liftsprite(Sprite *sprite, ObjData *objData);
 	void turnpathonCPP(uint8 param);

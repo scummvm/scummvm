@@ -1273,7 +1273,7 @@ void DreamGenContext::backobject(Sprite *sprite) {
 	else if (objData->type == 5)
 		random(sprite, objData);
 	else if (objData->type == 4)
-		lockeddoorway();
+		lockeddoorway(sprite, objData);
 	else if (objData->type == 3)
 		liftsprite(sprite, objData);
 	else if (objData->type == 2)
@@ -1400,6 +1400,86 @@ void DreamGenContext::turnpathoffCPP(uint8 param) {
 	turnpathoff();
 	bx = pop();
 	es = pop();
+}
+
+void DreamGenContext::lockeddoorway() {
+	Sprite *sprite = (Sprite *)es.ptr(bx, sizeof(Sprite));
+	ObjData *objData = (ObjData *)ds.ptr(di, 0);
+	lockeddoorway(sprite, objData);
+}
+
+void DreamGenContext::lockeddoorway(Sprite *sprite, ObjData *objData) {
+	if (data.byte(kRyanx) < sprite->x) {
+		if (sprite->x - data.byte(kRyanx) > 24)
+			goto shutdoor2;
+	} else {
+		if (data.byte(kRyanx) - sprite->x >= 10)
+			goto shutdoor2;
+	}
+
+	if (data.byte(kRyany) < sprite->y) {
+		if (sprite->y - data.byte(kRyany) > 30)
+			goto shutdoor2;
+	} else {
+		if (data.byte(kRyany) - sprite->y >= 12)
+			goto shutdoor2;
+	}
+
+	if (data.byte(kThroughdoor) != 1) {
+		if (data.byte(kLockstatus) == 1)
+			goto shutdoor2;
+	}
+
+	if (sprite->frame == 1) {
+		al = 0;
+		playchannel1();
+	}
+
+	if (sprite->frame == 6) {
+		al = data.byte(kDoorpath);
+		push(es);
+		push(bx);
+		turnpathon();
+		bx = pop();
+		es = pop();
+	}
+
+	if ((data.byte(kThroughdoor) == 1) && (sprite->frame == 0)) {
+		sprite->frame = 6;
+	}
+
+	++sprite->frame;
+	if (objData->b18[sprite->frame] == 255) {
+		--sprite->frame;
+	}
+
+	sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	if (sprite->frame == 5)
+		data.byte(kThroughdoor) = 1;
+	return;
+
+shutdoor2:
+	if (sprite->frame == 5) {
+		al = 1;
+		playchannel1();
+	}
+
+	if (sprite->frame != 0) {
+		--sprite->frame;
+	}
+
+	data.byte(kThroughdoor) = 0;
+	sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+
+	if (sprite->frame == 0) {
+		al = data.byte(kDoorpath);
+		push(es);
+		push(bx);
+		turnpathoff();
+		bx = pop();
+		es = pop();
+		data.byte(kLockstatus) = 1;
+	}
 }
 
 void DreamGenContext::liftsprite() {

@@ -657,7 +657,6 @@ public:
 	static const uint16 addr_reelsonscreen = 0xc1a0;
 	static const uint16 addr_getreelframeax = 0xc19c;
 	static const uint16 addr_updatepeople = 0xc198;
-	static const uint16 addr_lockeddoorway = 0xc194;
 	static const uint16 addr_widedoor = 0xc18c;
 	static const uint16 addr_doorway = 0xc188;
 	static const uint16 addr_constant = 0xc184;
@@ -1338,7 +1337,7 @@ public:
 	void clearbuffers();
 	void neterror();
 	void storeit();
-	void lockeddoorway();
+	//void lockeddoorway();
 	void isitworn();
 	//void putundertimed();
 	void dumpmap();

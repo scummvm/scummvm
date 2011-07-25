@@ -2984,128 +2984,6 @@ void DreamGenContext::widedoor() {
 	dodoor();
 }
 
-void DreamGenContext::lockeddoorway() {
-	STACK_CHECK;
-	al = data.byte(kRyanx);
-	ah = data.byte(kRyany);
-	cl = es.byte(bx+10);
-	ch = es.byte(bx+11);
-	_cmp(al, cl);
-	if (!flags.c())
-		goto rtofdoor2;
-	_sub(al, cl);
-	_cmp(al, -24);
-	if (!flags.c())
-		goto upordown2;
-	goto shutdoor2;
-rtofdoor2:
-	_sub(al, cl);
-	_cmp(al, 10);
-	if (!flags.c())
-		goto shutdoor2;
-upordown2:
-	_cmp(ah, ch);
-	if (!flags.c())
-		goto botofdoor2;
-	_sub(ah, ch);
-	_cmp(ah, -30);
-	if (flags.c())
-		goto shutdoor2;
-	goto opendoor2;
-botofdoor2:
-	_sub(ah, ch);
-	_cmp(ah, 12);
-	if (!flags.c())
-		goto shutdoor2;
-opendoor2:
-	_cmp(data.byte(kThroughdoor), 1);
-	if (flags.z())
-		goto mustbeopen;
-	_cmp(data.byte(kLockstatus), 1);
-	if (flags.z())
-		goto shutdoor2;
-mustbeopen:
-	cl = es.byte(bx+19);
-	_cmp(cl, 1);
-	if (!flags.z())
-		goto notdoorsound4;
-	al = 0;
-	playchannel1();
-notdoorsound4:
-	_cmp(cl, 6);
-	if (!flags.z())
-		goto noturnonyet;
-	al = data.byte(kDoorpath);
-	push(es);
-	push(bx);
-	turnpathon();
-	bx = pop();
-	es = pop();
-noturnonyet:
-	cl = es.byte(bx+19);
-	_cmp(data.byte(kThroughdoor), 1);
-	if (!flags.z())
-		goto notthrough2;
-	_cmp(cl, 0);
-	if (!flags.z())
-		goto notthrough2;
-	cl = 6;
-notthrough2:
-	_inc(cl);
-	ch = 0;
-	push(di);
-	_add(di, cx);
-	al = ds.byte(di+18);
-	_cmp(al, 255);
-	if (!flags.z())
-		goto atlast3;
-	_dec(di);
-	_dec(cl);
-atlast3:
-	es.byte(bx+19) = cl;
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	_cmp(cl, 5);
-	if (!flags.z())
-		return /* (justshutting) */;
-	data.byte(kThroughdoor) = 1;
-	return;
-shutdoor2:
-	cl = es.byte(bx+19);
-	_cmp(cl, 5);
-	if (!flags.z())
-		goto notdoorsound3;
-	al = 1;
-	playchannel1();
-notdoorsound3:
-	_cmp(cl, 0);
-	if (flags.z())
-		goto atlast4;
-	_dec(cl);
-	es.byte(bx+19) = cl;
-atlast4:
-	ch = 0;
-	data.byte(kThroughdoor) = 0;
-	push(di);
-	_add(di, cx);
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	_cmp(cl, 0);
-	if (!flags.z())
-		return /* (notlocky) */;
-	al = data.byte(kDoorpath);
-	push(es);
-	push(bx);
-	turnpathoff();
-	bx = pop();
-	es = pop();
-	data.byte(kLockstatus) = 1;
-}
-
 void DreamGenContext::updatepeople() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -21048,7 +20926,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_constant: constant(); break;
 		case addr_doorway: doorway(); break;
 		case addr_widedoor: widedoor(); break;
-		case addr_lockeddoorway: lockeddoorway(); break;
 		case addr_updatepeople: updatepeople(); break;
 		case addr_getreelframeax: getreelframeax(); break;
 		case addr_reelsonscreen: reelsonscreen(); break;
