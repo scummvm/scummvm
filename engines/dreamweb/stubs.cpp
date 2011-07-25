@@ -309,7 +309,8 @@ void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uin
 	push(di);
 	if (data.byte(kForeignrelease) != 0)
 		y -= 3;
-	showframe(dst, src, *x, y, c - 32 + data.word(kCharshift), 0, width, height);
+	uint16 tmp = c - 32 + data.word(kCharshift);
+	showframe(dst, src, *x, y, tmp & 0xff, tmp >> 8, width, height);
 	di = pop();
 	si = pop();
 	_cmp(data.byte(kKerning), 0);
