@@ -1970,9 +1970,9 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 				if (channelNum != -1) {
 					if (voiceType != VOICETYPE_0) {
 						if (chFlags & 0x10)
-							_soProc42(vtStruct, channelNum, chVoiceType, v);
+							_soProc42(vtStruct, channelData, channelNum, chVoiceType, v);
 						else
-							_soProc32(vtStruct, channelNum, chVoiceType, v, b);
+							_soProc32(vtStruct, channelData, channelNum, chVoiceType, v, b);
 					} else if (voiceNum != -1) {
 						assert(driver);
 						driver->proc20(voiceNum, chVoiceType);
@@ -2140,7 +2140,7 @@ void Sound::_soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceTyp
 	}
 }
 
-void Sound::_soProc32(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0, int v1) {
+void Sound::_soProc32(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0, int v1) {
 	int entryIndex = _soFindSound(vtStruct, channelNum);
 	if (entryIndex != -1) {
 		SoundDriver *driver = vtStruct->_entries[entryIndex]._driver;
@@ -2150,11 +2150,11 @@ void Sound::_soProc32(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voice
 		vtStruct->_entries[entryIndex]._type1._field4 = v0;
 		vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
-		driver->proc32(this, vtStruct->_entries[entryIndex]._voiceNum, _chProgram[channelNum], v0, v1);
+		driver->proc32(channelData, 0, _chProgram[channelNum], vtStruct->_entries[entryIndex]._voiceNum, v0, v1);
 	}
 }
 
-void Sound::_soProc42(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0) {
+void Sound::_soProc42(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0) {
 	for (int trackCtr = 0; trackCtr < _trackInfo._numTracks; ++trackCtr) {
 		const byte *instrument = _channelData[trackCtr];
 		if ((*(instrument + 13) == v0) && (*instrument == 1)) {
@@ -2169,7 +2169,7 @@ void Sound::_soProc42(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voice
 				vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
 				int v1, v2;
-				driver->proc32(this, vtStruct->_entries[entryIndex]._voiceNum, -1, v0, 0x7F);
+				driver->proc32(channelData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, v0, 0x7F);
 				driver->proc42(vtStruct->_entries[entryIndex]._voiceNum, voiceType, 0, &v1, &v2);
 			}
 			break;
@@ -2298,7 +2298,7 @@ void Sound::_soServiceTrackType1(int trackIndex, const byte *channelData) {
 						vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
 						int v1, v2;
-						driver->proc32(this, vtStruct->_entries[entryIndex]._voiceNum, -1, *(channelData + 1), 0x7f);
+						driver->proc32(channelData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, *(channelData + 1), 0x7f);
 						driver->proc42(vtStruct->_entries[entryIndex]._voiceNum, *(channelData + 1), _loop ? 1 : 0,
 							&v1, &v2);
 					}
@@ -2566,7 +2566,7 @@ int AdlibSoundDriver::setMasterVolume(int volume) {
 	return oldVolume;
 }
 
-void AdlibSoundDriver::proc32(Sound *sound, int channel, int program, int v0, int v1) {
+void AdlibSoundDriver::proc32(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {
 	if (program == -1)
 		return;
 
@@ -2865,7 +2865,7 @@ int AdlibFxSoundDriver::setMasterVolume(int volume) {
 	return oldVolume;
 }
 
-void AdlibFxSoundDriver::proc32(Sound *sound, int channel, int program, int v0, int v1) {
+void AdlibFxSoundDriver::proc32(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {
 	if (program == -1)
 		return;
 
