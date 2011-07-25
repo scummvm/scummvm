@@ -335,9 +335,6 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 		}
 	} else {
 		// Loading game
-		if (Startup::_core < CORE_HIG)
-			_music = false;
-
 		if (Startup::_soundOk == 1 && Startup::_mode == 0) {
 //			_sndDrvInfo.Vol2._d = _volume[0];
 //			_sndDrvInfo.Vol2._m = _volume[1];
@@ -888,7 +885,7 @@ void System::tick() {
 			if (_snail->idle()) {
 				if (PAIN)
 					_vm->heroCover(9);
-				else if (Startup::_core >= CORE_MID) {
+				else { // CHECKME: Before, was: if (Startup::_core >= CORE_MID) {
 					int n = new_random(100);
 					if (n > 96)
 						_vm->heroCover(6 + (_hero->_x + _hero->_w / 2 < kScrWidth / 2));
@@ -928,12 +925,8 @@ void CGEEngine::switchMusic() {
 			_snail->addCom2(kSnExec, -1, 0, kSelectSound);
 		}
 	} else {
-		if (Startup::_core < CORE_HIG)
-			_snail->addCom(kSnInf, -1, kNoMusic, NULL);
-		else {
-			_snail_->addCom(kSnSeq, 122, (_music = !_music), NULL);
-			keyClick();
-		}
+		_snail_->addCom(kSnSeq, 122, (_music = !_music), NULL);
+		keyClick();
 	}
 	if (_music)
 		loadMidi(_now);

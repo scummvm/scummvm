@@ -102,20 +102,22 @@ void CGEEngine::setup() {
 	_eventManager = new EventManager();
 	_offUseCount = atoi(_text->getText(kOffUseCount));
 	_music = true;
-	_mini = new byte[MINI_EMM_SIZE];
 
 	for (int i = 0; i < kPocketNX; i++)
 		_pocref[i] = -1;
 	_volume[0] = 0;
 	_volume[1] = 0;
 
+
 	if (_isDemo) {
+		_mini = new byte[16384];
 		_maxCaveArr[0] = CAVE_MAX;
 		_maxCaveArr[1] = -1;
 		_maxCaveArr[2] = -1;
 		_maxCaveArr[3] = -1;
 		_maxCaveArr[4] = -1;
 	} else {
+		_mini = new byte[65536];
 		_maxCaveArr[0] = 1;
 		_maxCaveArr[1] = 8;
 		_maxCaveArr[2] = 16;

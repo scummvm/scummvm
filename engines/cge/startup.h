@@ -47,22 +47,10 @@ namespace CGE {
 
 #define CFG_EXT         ".CFG"
 
-#if defined(DEMO)
-#define MINI_EMM_SIZE   0x00004000L
-#define CORE_HIG        400
-#else
-#define MINI_EMM_SIZE   0x00010000L
-#define CORE_HIG        450
-#endif
-
-#define CORE_MID        (CORE_HIG - 20)
-
-
 class Startup {
 	static bool getParms();
 public:
 	static int _mode;
-	static int _core;
 	static int _soundOk;
 	static uint16 _summa;
 	Startup();
