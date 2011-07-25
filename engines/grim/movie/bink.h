@@ -36,6 +36,7 @@
 namespace Video{
 	class BinkDecoder;
 }
+
 namespace Graphics{
 	struct Surface;
 }

@@ -101,7 +101,7 @@ void BinkPlayer::deinit() {
 void BinkPlayer::handleFrame() {
 	if (_binkDecoder->endOfVideo())
 		_videoFinished = true;
-	
+
 	if (_videoPause)
 		return;
 
@@ -109,21 +109,21 @@ void BinkPlayer::handleFrame() {
 		_videoPause = true;
 		return;
 	}
-	
-	if(_binkDecoder->getTimeToNextFrame() > 0)
+
+	if (_binkDecoder->getTimeToNextFrame() > 0)
 		return;
-		
+
 	_surface->copyFrom(*_binkDecoder->decodeNextFrame());
-	
+
 	_width = _surface->w;
-	_height = _surface->h; 
-	_externalBuffer = (byte*)_surface->pixels;
-	
+	_height = _surface->h;
+	_externalBuffer = (byte *)_surface->pixels;
+
 	_updateNeeded = true;
-	
+
 	_movieTime = _binkDecoder->getElapsedTime();
 	_frame = _binkDecoder->getCurFrame();
-	
+
 	return;
 }
 
