@@ -906,7 +906,13 @@ void Actor::sayLine(const char *msgId, bool background) {
 			textObject->setX(640 / 2);
 			textObject->setY(456);
 		} else {
-			_mustPlaceText = true;
+			if (_visible) {
+				_mustPlaceText = true;
+			} else {
+				_mustPlaceText = false;
+				textObject->setX(640 / 2);
+				textObject->setY(463);
+			}
 		}
 		textObject->setText(msgId);
 		g_grim->registerTextObject(textObject);
@@ -1303,14 +1309,16 @@ void Actor::draw() {
 
 	if (_mustPlaceText) {
 		TextObject *textObject = g_grim->getTextObject(_sayLineText);
-		if (x1 == 1000 || x2 == -1000 || y2 == -1000) {
-			textObject->setX(640 / 2);
-			textObject->setY(463);
-		} else {
-			textObject->setX((x1 + x2) / 2);
-			textObject->setY(y1);
+		if (textObject) {
+			if (x1 == 1000 || x2 == -1000 || y2 == -1000) {
+				textObject->setX(640 / 2);
+				textObject->setY(463);
+			} else {
+				textObject->setX((x1 + x2) / 2);
+				textObject->setY(y1);
+			}
+			textObject->reset();
 		}
-		textObject->reset();
 		_mustPlaceText = false;
 	}
 }
