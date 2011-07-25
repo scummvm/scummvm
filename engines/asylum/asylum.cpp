@@ -238,8 +238,8 @@ void AsylumEngine::restart() {
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
 	delete _scene;
 	_scene = NULL;
-	// TODO reset puzzle data
-	// TODO reset encounter data
+	delete _encounter;
+	_encounter = new Encounter(this);
 	_script->resetQueue();
 
 	_data.point.x = -1;
