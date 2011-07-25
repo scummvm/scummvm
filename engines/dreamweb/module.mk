@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	detection.o \
 	dreamweb.o \
 	dreamgen.o \
+	sprite.o \
 	stubs.o
 
 # This module can be built as a plugin
