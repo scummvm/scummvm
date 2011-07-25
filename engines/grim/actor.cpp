@@ -906,7 +906,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 			textObject->setX(640 / 2);
 			textObject->setY(456);
 		} else {
-			if (_visible) {
+			if (_visible && isInSet(g_grim->getCurrScene()->getName())) {
 				_mustPlaceText = true;
 			} else {
 				_mustPlaceText = false;
