@@ -34,8 +34,6 @@ public:
 	PuzzleLock(AsylumEngine *engine);
 	~PuzzleLock();
 
-	void reset();
-
 private:
 	int32 _frameIndexes[7];
 	bool _incrementLock;

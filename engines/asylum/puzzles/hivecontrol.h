@@ -60,7 +60,6 @@ public:
 	~PuzzleHiveControl();
 
 	bool hitTest1(uint32 resourceId, Common::Point point, Common::Point location);
-	void reset();
 
 private:
 	enum Element {
@@ -114,6 +113,7 @@ private:
 	Control findControl();
 	void updateScreen();
 	void playSound();
+	void reset();
 };
 
 } // End of namespace Asylum

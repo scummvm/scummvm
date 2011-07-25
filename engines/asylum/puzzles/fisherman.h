@@ -34,8 +34,6 @@ public:
 	PuzzleFisherman(AsylumEngine *engine);
 	~PuzzleFisherman();
 
-	void reset();
-
 private:
 	bool _state[6];
 	int32 _counter;

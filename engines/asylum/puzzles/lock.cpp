@@ -51,17 +51,6 @@ PuzzleLock::PuzzleLock(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleLock::~PuzzleLock() {
 }
 
-void PuzzleLock::reset() {
-	_frameIndexes[0] = 4;
-	_frameIndexes[1] = 4;
-	_frameIndexes[2] = 4;
-
-	for (uint32 i = 0; i < 37; i++)
-		getSharedData()->setData(i, 160);
-
-	getSharedData()->setData(37, 1);
-}
-
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
