@@ -962,7 +962,6 @@ void MeshComponent::reset() {
 
 void MeshComponent::update() {
 	_node->setMatrix(_matrix);
-	_node->update();
 }
 
 void MeshComponent::saveState(SaveGame *state) {
