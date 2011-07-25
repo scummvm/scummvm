@@ -1277,12 +1277,12 @@ other games.
     Pause                  - Pauses
     t                      - Switch between speech only and
                              combined speech and subtitles
-                             [Talkies of Simon the Sorcerer other than
-                             English and German and Simon the
-                             Sorcerer 2 (all languages)]
+                             [Simon the Sorcerer 1 CD (other than
+                             English and German) and Simon the
+                             Sorcerer 2 CD (all languages)]
     v                      - Switch between subtitles only and
                              combined speech and subtitles
-                             [the same as above]
+                             [Simon the Sorcerer 2 CD only]
 
   Simon the Sorcerer's Puzzle Pack
     Ctrl-d                 - Starts the debugger
