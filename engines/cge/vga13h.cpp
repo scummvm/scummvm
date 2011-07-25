@@ -486,10 +486,9 @@ void Sprite::setName(char *n) {
 			_ext->_name = NULL;
 		}
 		if (n) {
-			if ((_ext->_name = new char[strlen(n) + 1]) != NULL)
-				strcpy(_ext->_name, n);
-			else
-				error("No core [%s]", n);
+			_ext->_name = new char[strlen(n) + 1];
+			assert(_ext->_name != NULL);
+			strcpy(_ext->_name, n);
 		}
 	}
 }
@@ -499,8 +498,8 @@ Sprite *Sprite::expand() {
 	if (!_ext) {
 		bool enbl = _heart->_enable;
 		_heart->_enable = false;
-		if ((_ext = new SprExt) == NULL)
-			error("No core");
+		_ext = new SprExt;
+		assert(_ext != NULL);
 		if (*_file) {
 			static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
 			char line[kLineMax], fname[kPathMax];
@@ -522,9 +521,9 @@ Sprite *Sprite::expand() {
 					error("Bad SPR [%s]", fname);
 				int len = 0, lcnt = 0;
 				while ((len = sprf.read((uint8 *)line)) != 0) {
-					++lcnt;
+					lcnt++;
 					if (len && line[len - 1] == '\n')
-						line[-- len] = '\0';
+						line[--len] = '\0';
 					if (len == 0 || *line == '.')
 						continue;
 
@@ -539,8 +538,7 @@ Sprite *Sprite::expand() {
 					}
 					case 2 : { // Seq
 						seq = (Seq *) realloc(seq, (seqcnt + 1) * sizeof(*seq));
-						if (seq == NULL)
-							error("No core [%s]", fname);
+						assert(seq != NULL);
 						Seq *s = &seq[seqcnt++];
 						s->_now  = atoi(strtok(NULL, " \t,;/"));
 						if (s->_now > maxnow)
@@ -564,32 +562,26 @@ Sprite *Sprite::expand() {
 					case 3 : { // Near
 						if (_nearPtr != NO_PTR) {
 							nea = (Snail::Com *) realloc(nea, (neacnt + 1) * sizeof(*nea));
-							if (nea == NULL)
-								error("No core [%s]", fname);
-							else {
-								Snail::Com *c = &nea[neacnt++];
-								if ((c->_com = (SnCom)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
-									error("Bad NEAR in %d [%s]", lcnt, fname);
-								c->_ref = atoi(strtok(NULL, " \t,;/"));
-								c->_val = atoi(strtok(NULL, " \t,;/"));
-								c->_ptr = NULL;
-							}
+							assert(nea != NULL);
+							Snail::Com *c = &nea[neacnt++];
+							if ((c->_com = (SnCom)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
+								error("Bad NEAR in %d [%s]", lcnt, fname);
+							c->_ref = atoi(strtok(NULL, " \t,;/"));
+							c->_val = atoi(strtok(NULL, " \t,;/"));
+							c->_ptr = NULL;
 						}
 					}
 					break;
 					case 4 : { // Take
 						if (_takePtr != NO_PTR) {
 							tak = (Snail::Com *) realloc(tak, (takcnt + 1) * sizeof(*tak));
-							if (tak == NULL)
-								error("No core [%s]", fname);
-							else {
-								Snail::Com *c = &tak[takcnt++];
-								if ((c->_com = (SnCom)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
-									error("Bad NEAR in %d [%s]", lcnt, fname);
-								c->_ref = atoi(strtok(NULL, " \t,;/"));
-								c->_val = atoi(strtok(NULL, " \t,;/"));
-								c->_ptr = NULL;
-							}
+							assert(tak != NULL);
+							Snail::Com *c = &tak[takcnt++];
+							if ((c->_com = (SnCom)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
+								error("Bad NEAR in %d [%s]", lcnt, fname);
+							c->_ref = atoi(strtok(NULL, " \t,;/"));
+							c->_val = atoi(strtok(NULL, " \t,;/"));
+							c->_ptr = NULL;
 						}
 						break;
 					}
@@ -774,12 +766,11 @@ BMP_PTR Sprite::ghost() {
 	register SprExt *e = _ext;
 	if (e->_b1) {
 		BMP_PTR bmp = new Bitmap(0, 0, (uint8 *)NULL);
-		if (bmp == NULL)
-			error("No core");
+		assert(bmp != NULL);
 		bmp->_w = e->_b1->_w;
 		bmp->_h = e->_b1->_h;
-		if ((bmp->_b = new HideDesc[bmp->_h]) == NULL)
-			error("No Core");
+		bmp->_b = new HideDesc[bmp->_h];
+		assert(bmp->_b != NULL);
 		bmp->_v = (uint8 *) memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc) * bmp->_h);
 		bmp->_map = (e->_y1 << 16) + e->_x1;
 		return bmp;
