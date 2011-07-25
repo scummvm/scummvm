@@ -1155,12 +1155,12 @@ void DreamGenContext::mainmanCPP(Sprite *sprite) {
 			++sprite->b29;
 			if (sprite->b29 == 11)
 				sprite->b29 = 1;
-			walking();
+			walking(sprite);
 			if (data.byte(kLinepointer) != 254) {
 				if ((data.byte(kFacing) & 1) == 0)
-					walking();
+					walking(sprite);
 				else if ((sprite->b29 != 2) && (sprite->b29 != 7))
-					walking();
+					walking(sprite);
 			}
 			if (data.byte(kLinepointer) == 254) {
 				if (data.byte(kTurntoface) == data.byte(kFacing)) {
@@ -1180,9 +1180,13 @@ void DreamGenContext::mainmanCPP(Sprite *sprite) {
 	es = pop();
 }
 
+
 void DreamGenContext::walking() {
 	Sprite *sprite = (Sprite *)es.ptr(bx, sizeof(Sprite));
+	walking(sprite);
+}
 
+void DreamGenContext::walking(Sprite *sprite) {
 	uint8 comp;
 	if (data.byte(kLinedirection) != 0) {
 		--data.byte(kLinepointer);
@@ -1246,15 +1250,7 @@ void DreamGenContext::aboutturn(Sprite *sprite) {
 }
 
 void DreamGenContext::backobject(Sprite *sprite) {
-	push(es);
 	push(ds);
-
-	// Recover es:bx from sprite
-	es = data.word(kBuffers);
-	bx = kSpritetable;
-	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
-	bx += 32 * (sprite - sprites);
-	//
 
 	ds = data.word(kSetdat);
 	di = READ_LE_UINT16(&sprite->obj_data);
@@ -1263,7 +1259,6 @@ void DreamGenContext::backobject(Sprite *sprite) {
 	if (sprite->delay != 0) {
 		--sprite->delay;
 		ds = pop();
-		es = pop();
 		return;
 	}
 
@@ -1284,7 +1279,6 @@ void DreamGenContext::backobject(Sprite *sprite) {
 		steady(sprite, objData);
 
 	ds = pop();
-	es = pop();
 }
 
 void DreamGenContext::constant(Sprite *sprite, ObjData *objData) {
