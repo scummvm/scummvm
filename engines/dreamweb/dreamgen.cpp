@@ -4937,140 +4937,6 @@ realcreditsearly:
 	data.byte(kLasthardkey) =  0;
 }
 
-void DreamGenContext::printchar() {
-	STACK_CHECK;
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (ignoreit) */;
-	push(si);
-	push(bx);
-	push(di);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(bx, 3);
-_tmp1:
-	push(ax);
-	_sub(al, 32);
-	ah = 0;
-	_add(ax, data.word(kCharshift));
-	showframe();
-	ax = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	_cmp(data.byte(kKerning), 0);
-	if (!flags.z())
-		goto nokern;
-	kernchars();
-nokern:
-	push(cx);
-	ch = 0;
-	_add(di, cx);
-	cx = pop();
-}
-
-void DreamGenContext::printslow() {
-	STACK_CHECK;
-	data.byte(kPointerframe) = 1;
-	data.byte(kPointermode) = 3;
-	ds = data.word(kCharset1);
-printloopslow6:
-	push(bx);
-	push(di);
-	push(dx);
-	getnumber();
-	ch = 0;
-printloopslow5:
-	push(cx);
-	push(si);
-	push(es);
-	ax = es.word(si);
-	push(bx);
-	push(cx);
-	push(es);
-	push(si);
-	push(ds);
-	modifychar();
-	printboth();
-	ds = pop();
-	si = pop();
-	es = pop();
-	cx = pop();
-	bx = pop();
-	ax = es.word(si+1);
-	_inc(si);
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishslow;
-	_cmp(al, ':');
-	if (flags.z())
-		goto finishslow;
-	_cmp(cl, 1);
-	if (flags.z())
-		goto afterslow;
-	push(di);
-	push(ds);
-	push(bx);
-	push(cx);
-	push(es);
-	push(si);
-	modifychar();
-	data.word(kCharshift) = 91;
-	printboth();
-	data.word(kCharshift) = 0;
-	si = pop();
-	es = pop();
-	cx = pop();
-	bx = pop();
-	ds = pop();
-	di = pop();
-	waitframes();
-	_cmp(ax, 0);
-	if (flags.z())
-		goto keepgoing;
-	_cmp(ax, data.word(kOldbutton));
-	if (!flags.z())
-		goto finishslow2;
-keepgoing:
-	waitframes();
-	_cmp(ax, 0);
-	if (flags.z())
-		goto afterslow;
-	_cmp(ax, data.word(kOldbutton));
-	if (!flags.z())
-		goto finishslow2;
-afterslow:
-	es = pop();
-	si = pop();
-	cx = pop();
-	_inc(si);
-	if (--cx)
-		goto printloopslow5;
-	dx = pop();
-	di = pop();
-	bx = pop();
-	_add(bx, 10);
-	goto printloopslow6;
-finishslow:
-	es = pop();
-	si = pop();
-	cx = pop();
-	dx = pop();
-	di = pop();
-	bx = pop();
-	al = 0;
-	return;
-finishslow2:
-	es = pop();
-	si = pop();
-	cx = pop();
-	dx = pop();
-	di = pop();
-	bx = pop();
-	al = 1;
-}
-
 void DreamGenContext::waitframes() {
 	STACK_CHECK;
 	push(di);
@@ -5089,62 +4955,6 @@ void DreamGenContext::waitframes() {
 	es = pop();
 	bx = pop();
 	di = pop();
-}
-
-void DreamGenContext::printboth() {
-	STACK_CHECK;
-	push(ax);
-	push(cx);
-	push(bx);
-	push(di);
-	printchar();
-	ax = pop();
-	push(di);
-	di = ax;
-	multidump();
-	di = pop();
-	bx = pop();
-	cx = pop();
-	ax = pop();
-}
-
-void DreamGenContext::printdirect() {
-	STACK_CHECK;
-	data.word(kLastxpos) = di;
-	ds = data.word(kCurrentset);
-printloop6:
-	push(bx);
-	push(di);
-	push(dx);
-	getnumber();
-	ch = 0;
-printloop5:
-	ax = es.word(si);
-	_inc(si);
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishdirct;
-	_cmp(al, ':');
-	if (flags.z())
-		goto finishdirct;
-	push(cx);
-	push(es);
-	modifychar();
-	printchar();
-	data.word(kLastxpos) = di;
-	es = pop();
-	cx = pop();
-	if (--cx)
-		goto printloop5;
-	dx = pop();
-	di = pop();
-	bx = pop();
-	_add(bx, data.word(kLinespacing));
-	goto printloop6;
-finishdirct:
-	dx = pop();
-	di = pop();
-	bx = pop();
 }
 
 void DreamGenContext::monprint() {
@@ -5231,114 +5041,6 @@ nottrigger2:
 	scrollmonitor();
 	bx = si;
 	data.byte(kKerning) = 0;
-}
-
-void DreamGenContext::getnumber() {
-	STACK_CHECK;
-	cx = 0;
-	push(si);
-	push(bx);
-	push(di);
-	push(ds);
-	push(es);
-	di = si;
-wordloop:
-	push(cx);
-	push(dx);
-	getnextword();
-	dx = pop();
-	cx = pop();
-	_cmp(al, 1);
-	if (flags.z())
-		goto endoftext;
-	al = cl;
-	ah = 0;
-	push(bx);
-	bh = 0;
-	_add(ax, bx);
-	bx = pop();
-	_sub(ax, 10);
-	dh = 0;
-	_cmp(ax, dx);
-	if (!flags.c())
-		goto gotoverend;
-	_add(cl, bl);
-	_add(ch, bh);
-	goto wordloop;
-gotoverend:
-	al = dl;
-	_and(al, 1);
-	if (flags.z())
-		goto notcentre;
-	push(cx);
-	al = dl;
-	_and(al, 0xfe);
-	ah = 0;
-	ch = 0;
-	_sub(ax, cx);
-	_add(ax, 20);
-	_shr(ax, 1);
-	cx = pop();
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	_add(di, ax);
-	cl = ch;
-	return;
-notcentre:
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	cl = ch;
-	return;
-endoftext:
-	al = cl;
-	ah = 0;
-	push(bx);
-	bh = 0;
-	_add(ax, bx);
-	bx = pop();
-	_sub(ax, 10);
-	dh = 0;
-	_cmp(ax, dx);
-	if (!flags.c())
-		goto gotoverend2;
-	_add(cl, bl);
-	_add(ch, bh);
-gotoverend2:
-	al = dl;
-	_and(al, 1);
-	if (flags.z())
-		goto notcent2;
-	push(cx);
-	al = dl;
-	_and(al, 0xfe);
-	_add(al, 2);
-	ah = 0;
-	ch = 0;
-	_add(ax, 20);
-	_sub(ax, cx);
-	_shr(ax, 1);
-	cx = pop();
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	_add(di, ax);
-	cl = ch;
-	return;
-notcent2:
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	cl = ch;
 }
 
 void DreamGenContext::fillryan() {
@@ -13151,46 +12853,6 @@ notonsartroof:
 	placesetobject();
 }
 
-void DreamGenContext::getundertimed() {
-	STACK_CHECK;
-	al = data.byte(kTimedy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(al, 3);
-_tmp1:
-	ah = 0;
-	bx = ax;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	ch = (30);
-	cl = 240;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiget();
-}
-
-void DreamGenContext::putundertimed() {
-	STACK_CHECK;
-	al = data.byte(kTimedy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(al, 3);
-_tmp1:
-	ah = 0;
-	bx = ax;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	ch = (30);
-	cl = 240;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiput();
-}
-
 void DreamGenContext::dumptimedtext() {
 	STACK_CHECK;
 	_cmp(data.byte(kNeedtodumptimed), 1);
@@ -13285,42 +12947,6 @@ notloadspeech3:
 	bx = ax;
 	data.word(kTimedseg) = es;
 	data.word(kTimedoffset) = bx;
-}
-
-void DreamGenContext::usetimedtext() {
-	STACK_CHECK;
-	_cmp(data.word(kTimecount), 0);
-	if (flags.z())
-		return /* (notext) */;
-	_dec(data.word(kTimecount));
-	_cmp(data.word(kTimecount), 0);
-	if (flags.z())
-		goto deltimedtext;
-	ax = data.word(kTimecount);
-	_cmp(ax, data.word(kCounttotimed));
-	if (flags.z())
-		goto firsttimed;
-	if (!flags.c())
-		return /* (notext) */;
-	goto notfirsttimed;
-firsttimed:
-	getundertimed();
-notfirsttimed:
-	bl = data.byte(kTimedy);
-	bh = 0;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	es = data.word(kTimedseg);
-	si = data.word(kTimedoffset);
-	dl = 237;
-	ah = 0;
-	printdirect();
-	data.byte(kNeedtodumptimed) = 1;
-	return;
-deltimedtext:
-	putundertimed();
-	data.byte(kNeedtodumptimed) = 1;
 }
 
 void DreamGenContext::edenscdplayer() {
@@ -19836,24 +19462,6 @@ _tmp1:
 	multiput();
 }
 
-void DreamGenContext::dumptextline() {
-	STACK_CHECK;
-	_cmp(data.byte(kNewtextline), 1);
-	if (!flags.z())
-		return /* (nodumptextline) */;
-	data.byte(kNewtextline) = 0;
-	di = data.word(kTextaddressx);
-	bx = data.word(kTextaddressy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(bx, 3);
-_tmp1:
-	cl = (228);
-	ch = (13);
-	multidump();
-}
-
 void DreamGenContext::animpointer() {
 	STACK_CHECK;
 	_cmp(data.byte(kPointermode), 2);
@@ -21548,13 +21156,8 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_mode640x480: mode640x480(); break;
 		case addr_set16colpalette: set16colpalette(); break;
 		case addr_realcredits: realcredits(); break;
-		case addr_printchar: printchar(); break;
-		case addr_printslow: printslow(); break;
 		case addr_waitframes: waitframes(); break;
-		case addr_printboth: printboth(); break;
-		case addr_printdirect: printdirect(); break;
 		case addr_monprint: monprint(); break;
-		case addr_getnumber: getnumber(); break;
 		case addr_fillryan: fillryan(); break;
 		case addr_fillopen: fillopen(); break;
 		case addr_findallryan: findallryan(); break;
@@ -21805,12 +21408,9 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_setallchanges: setallchanges(); break;
 		case addr_dochange: dochange(); break;
 		case addr_autoappear: autoappear(); break;
-		case addr_getundertimed: getundertimed(); break;
-		case addr_putundertimed: putundertimed(); break;
 		case addr_dumptimedtext: dumptimedtext(); break;
 		case addr_setuptimeduse: setuptimeduse(); break;
 		case addr_setuptimedtemp: setuptimedtemp(); break;
-		case addr_usetimedtext: usetimedtext(); break;
 		case addr_edenscdplayer: edenscdplayer(); break;
 		case addr_usewall: usewall(); break;
 		case addr_usechurchgate: usechurchgate(); break;
@@ -22044,7 +21644,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_dumppointer: dumppointer(); break;
 		case addr_undertextline: undertextline(); break;
 		case addr_deltextline: deltextline(); break;
-		case addr_dumptextline: dumptextline(); break;
 		case addr_animpointer: animpointer(); break;
 		case addr_setmouse: setmouse(); break;
 		case addr_readmouse: readmouse(); break;

@@ -21,12 +21,14 @@
  */
 
 	void multidump();
+	void multidump(uint16 x, uint16 y, uint8 width, uint8 height);
 	void frameoutv(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void frameoutnm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void frameoutbh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void frameoutfx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void worktoscreen();
 	void multiget();
+	void multiget(uint16 x, uint16 y, uint8 width, uint8 height);
 	void convertkey();
 	void cls();
 	void printsprites();
@@ -37,14 +39,29 @@
 	void randomnumber();
 	void quickquit2();
 	void getnextword();
-	uint8 getnextword(uint8 *totalWidth, uint8 *charCount);
+	uint8 getnextword(const uint8 *string, uint8 *totalWidth, uint8 *charCount);
+	void printboth();
+	void printboth(uint16 dst, uint16 src, uint16 *x, uint16 y, uint8 c);
+	void printchar();
+	void printchar(uint16 dst, uint16 src, uint16 *x, uint16 y, uint8 c, uint8 *width, uint8 *height);
+	void printdirect();
+	void printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool centered);
+	void usetimedtext();
+	void getundertimed();
+	void putundertimed();
+	uint8 printslow(uint16 x, uint16 y, uint8 maxWidth, bool centered);
+	void printslow();
+	void dumptextline();
+	void getnumber();
+	uint8 getnumber(uint16 index, uint16 maxWidth, bool centered, uint16* offset);
 	void kernchars();
 	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
 	Sprite *spritetable();
 	void showframe();
-	uint16 showframeCPP(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag);
+	void showframe(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void printasprite(const Sprite *sprite);
 	void width160();
+	void multiput(uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiput();
 	void eraseoldobs();
 	void clearsprites();
