@@ -82,7 +82,7 @@ public:
 	~TextObject();
 
 	void setDefaults(TextObjectDefaults *defaults);
-	void setText(const char *text);
+	void setText(const Common::String &text);
 
 	int getBitmapWidth();
 	int getBitmapHeight();
@@ -97,7 +97,7 @@ public:
 	const Common::String *getLines() { return _lines; }
 	int getNumLines() { return _numberLines; }
 
-	const char *getName() const { return _textID; }
+	const Common::String &getName() const { return _textID; }
 	void draw();
 	void update();
 
@@ -119,7 +119,7 @@ protected:
 	int _numberLines;
 	bool _blastDraw;
 	bool _isSpeech;
-	char _textID[256];
+	Common::String _textID;
 	int _elapsedTime;
 	int _maxLineWidth;
 	Common::String *_lines;

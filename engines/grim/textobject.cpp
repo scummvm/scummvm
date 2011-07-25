@@ -41,7 +41,6 @@ TextObjectCommon::TextObjectCommon() :
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
 		Object(), TextObjectCommon(), _numberLines(1),
 		_maxLineWidth(0), _lines(0), _userData(0), _created(false) {
-	memset(_textID, 0, sizeof(_textID));
 	_blastDraw = blastDraw;
 	_isSpeech = isSpeech;
 }
@@ -56,17 +55,9 @@ TextObject::~TextObject() {
 	g_driver->destroyTextObject(this);
 }
 
-void TextObject::setText(const char *text) {
+void TextObject::setText(const Common::String &text) {
 	destroy();
-	if (strlen(text) < sizeof(_textID))
-		strcpy(_textID, text);
-	else {
-		error("Text ID exceeded maximum length (%d): %s", (int)sizeof(_textID), text);
-		// this should be good enough to still be unique
-		// but for debug purposes lets make this crash the program so we know about it
-		strncpy(_textID, text, sizeof(_textID));
-		_textID[sizeof(_textID) - 1] = 0;
-	}
+	_textID = text;
 	setupText();
 }
 
@@ -88,7 +79,7 @@ void TextObject::saveState(SaveGame *state) const {
 
 	state->writeLEUint32(_font->getId());
 
-	state->write(_textID, 256);
+	state->writeString(_textID);
 }
 
 bool TextObject::restoreState(SaveGame *state) {
@@ -109,7 +100,7 @@ bool TextObject::restoreState(SaveGame *state) {
 
 	_font = g_grim->getFont(state->readLEUint32());
 
-	state->read(_textID, 256);
+	_textID = state->readString();
 
 	setupText();
 	_created = false;
@@ -137,7 +128,7 @@ int TextObject::getBitmapHeight() {
 
 int TextObject::getTextCharPosition(int pos) {
 	int width = 0;
-	Common::String msg = parseMsgText(_textID, NULL);
+	Common::String msg = parseMsgText(_textID.c_str(), NULL);
 	for (int i = 0; (msg[i] != '\0') && (i < pos); ++i) {
 		width += _font->getCharWidth(msg[i]);
 	}
@@ -152,7 +143,7 @@ void TextObject::destroy() {
 }
 
 void TextObject::setupText() {
-	Common::String msg = parseMsgText(_textID, NULL);
+	Common::String msg = parseMsgText(_textID.c_str(), NULL);
 	Common::String message;
 
 	// remove spaces (NULL_TEXT) from the end of the string,
