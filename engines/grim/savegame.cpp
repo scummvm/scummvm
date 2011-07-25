@@ -33,7 +33,7 @@ namespace Grim {
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'
 
-int SaveGame::SAVEGAME_VERSION = 18;
+int SaveGame::SAVEGAME_VERSION = 19;
 
 SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 	Common::InSaveFile *inSaveFile = g_system->getSavefileManager()->openForLoading(filename);
