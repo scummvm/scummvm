@@ -35,6 +35,7 @@ namespace {
 
 #define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, false, Kyra::GI_KYRA2)
@@ -498,6 +499,32 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		KYRA2_FLOPPY_FLAGS
+	},
+
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
+			AD_ENTRY1("CH01-S00.DLG", "54b7a5a94f6e1ec91f0fb1311eec09ab"),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		KYRA2_FLOPPY_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
+	},
+
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
+			AD_ENTRY1("CH01-S00.DLG", "7c36c0e63ab8c81cbb3ea58681331366"),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		KYRA2_FLOPPY_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
 	},
 
 	{ // CD version
