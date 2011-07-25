@@ -145,6 +145,7 @@ _fluidsynth=auto
 _opengl=auto
 _opengles=auto
 _readline=auto
+_freetype2=auto
 _taskbar=yes
 _updates=no
 _libunity=auto
@@ -188,7 +189,9 @@ _win32path="c:/scummvm"
 _aos4path="Games:ScummVM"
 _staticlibpath=/sw
 _sdlconfig=sdl-config
+_freetypeconfig=freetype-config
 _sdlpath="$PATH"
+_freetypepath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
@@ -380,6 +383,40 @@ find_sdlconfig() {
 	if test -z "$_sdlconfig"; then
 		echo "none found!"
 		exit 1
+	fi
+}
+
+#
+# Determine freetype-config
+#
+find_freetypeconfig() {
+	echo_n "Looking for freetype-config... "
+	freetypeconfigs="$_freetypeconfig"
+	_freetypeconfig=
+
+	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
+	for path_dir in $_freetypepath; do
+		#reset separator to parse freetypeconfigs
+		IFS=":"
+		for freetypeconfig in $freetypeconfigs; do
+			if test -f "$path_dir/$freetypeconfig" ; then
+				_freetypeconfig="$path_dir/$freetypeconfig"
+				echo $_freetypeconfig
+				# Save the prefix
+				_freetypepath=$path_dir
+				if test `basename $path_dir` = bin ; then
+					_freetypepath=`dirname $path_dir`
+				fi
+				# break at first freetype-config found in path
+				break 2
+			fi
+		done
+	done
+
+	IFS="$ac_save_ifs"
+
+	if test -z "$_freetypeconfig"; then
+		echo "none found!"
 	fi
 }
 
@@ -846,6 +883,9 @@ Optional Libraries:
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
 
+  --with-freetype-prefix=DIR Prefix where the freetype-config script is
+                           installed (optional)
+
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
 
@@ -905,6 +945,8 @@ for ac_option in $@; do
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
+	--enable-freetype2)       _freetype2=yes  ;;
+	--disable-freetype2)      _freetype2=no   ;;
 	--enable-taskbar)         _taskbar=yes    ;;
 	--disable-taskbar)        _taskbar=no     ;;
 	--enable-updates)         _updates=yes    ;;
@@ -1041,6 +1083,10 @@ for ac_option in $@; do
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_sdlpath="$arg:$arg/bin"
+		;;
+	--with-freetype2-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_freetypepath="$arg:$arg/bin"
 		;;
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -3411,6 +3457,50 @@ fi
 define_in_config_h_if_yes "$_libunity" 'USE_TASKBAR_UNITY'
 fi
 echo "$_libunity"
+
+#
+# Check for FreeType2 to be present
+#
+if test "$_freetype2" != "no"; then
+
+	# Look for the freetype-config script
+	find_freetypeconfig
+
+	if test -z "$_freetypeconfig"; then
+		_freetype2=no
+	else
+		FREETYPE2_LIBS=`$_freetypeconfig --prefix="$_freetypepath" --libs`
+		FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$_freetypepath" --cflags`
+
+		if test "$_freetype2" = "auto"; then
+			_freetype2=no
+
+			cat > $TMPC << EOF
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+int main(int argc, char *argv[]) {
+	FT_Library library;
+	FT_Error error = FT_Init_FreeType(&library);
+	FT_Done_FreeType(library);
+}
+EOF
+
+			cc_check $FREETYPE2_CFLAGS $FREETYPE2_LIBS && _freetype2=yes
+		fi
+
+		if test "$_freetype2" = "yes"; then
+			LIBS="$LIBS $FREETYPE2_LIBS"
+			INCLUDES="$INCLUDES $FREETYPE2_CFLAGS"
+		fi
+	fi
+
+fi
+
+echocheck "FreeType2"
+echo "$_freetype2"
+
+define_in_config_h_if_yes "$_freetype2" "USE_FREETYPE2"
 
 #
 # Check for OpenGL (ES)
