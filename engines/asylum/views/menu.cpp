@@ -1537,16 +1537,17 @@ void Menu::updateShowCredits() {
 	int32 step = 0;
 	uint32 index = 0;
 	do {
-		if ((_startIndex + step - 24) >= 0) {
+		if ((_startIndex + step) >= -24) {
 			if ((_startIndex + step) > 480)
 				break;
 
 			int32 minBound = _startIndex + step + 24;
+			int32 maxBound = _startIndex + step;
+
 			if (minBound >= 0 && minBound < 32)
 				getText()->setTransTableNum(3 - minBound / 8);
 
-			int32 maxBound = _startIndex + step;
-			if ((_startIndex + step) < 480 && maxBound > 448)
+			if (maxBound < 480 && maxBound > 448)
 				getText()->setTransTableNum(3 - (479 - maxBound) / 8);
 
 			getText()->setPosition(320, step + _startIndex);

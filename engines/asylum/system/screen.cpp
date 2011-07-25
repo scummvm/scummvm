@@ -132,10 +132,6 @@ void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Po
 
 	clip(&src, &dest, flags);
 
-	// Check src rectangle
-	if (!src.isValidRect())
-		return;
-
 	bool masked = false;
 	if (resourceIdDestination) {
 		masked = true;
@@ -159,6 +155,10 @@ void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Po
 		if (g_debugDrawRects)
 			_backBuffer.frameRect(destMask, 0x125);
 	}
+
+	// Check src rectangle
+	if (!src.isValidRect())
+		return;
 
 	// Set the color key (always 0 if set)
 	_useColorKey = colorKey;
@@ -435,18 +435,19 @@ void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex
 	dst.translate(point.x + frame->x, point.y + frame->y);
 
 	clip(&src, &dst, 0);
+	if (src.isValidRect()) {
+		// Set the color key (always 0)
+		_useColorKey = true;
 
-	// Set the color key (always 0)
-	_useColorKey = true;
-
-	blitCrossfade((byte *)_backBuffer.pixels          + dst.top                   * _backBuffer.pitch          + dst.left,
-	              (byte *)frame->surface.pixels       + src.top                    * frame->surface.pitch       + src.left,
-	              (byte *)frameObject->surface.pixels + (objectPoint.y + dst.top) * frameObject->surface.pitch + (dst.left + objectPoint.x),
-	              dst.height(),
-	              dst.width(),
-	              frame->surface.pitch       - dst.width(),
-	              _backBuffer.pitch          - dst.width(),
-	              frameObject->surface.pitch - dst.width());
+		blitCrossfade((byte *)_backBuffer.pixels          + dst.top                   * _backBuffer.pitch          + dst.left,
+		              (byte *)frame->surface.pixels       + src.top                    * frame->surface.pitch       + src.left,
+		              (byte *)frameObject->surface.pixels + (objectPoint.y + dst.top) * frameObject->surface.pitch + (dst.left + objectPoint.x),
+		              dst.height(),
+		              dst.width(),
+		              frame->surface.pitch       - dst.width(),
+		              _backBuffer.pitch          - dst.width(),
+		              frameObject->surface.pitch - dst.width());
+	}
 
 	// Restore transparency table
 	_transTable = transparencyIndex;
