@@ -58,25 +58,6 @@ PuzzleFisherman::~PuzzleFisherman() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Reset
-//////////////////////////////////////////////////////////////////////////
-void PuzzleFisherman::reset() {
-	memset(&_state, 0, sizeof(_state));
-	_dword_45AAD4 = false;
-
-	// Original setups polygons here
-
-	_dword_45A130 = false;
-	_counter = 0;
-
-	// Original resets scene fields, but since we are called during a restart, the whole scene is recreated later anyway
-	/*for (uint32 i = 0; i < 6; i++) {
-		getWorld()->field_E8610[i] = 0;
-		getWorld()->field_E8628[i] = 0;
-	}*/
-}
-
-//////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleFisherman::init(const AsylumEvent &evt)  {

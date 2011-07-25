@@ -260,11 +260,19 @@ void AsylumEngine::reset() {
 	_menu->setGameStarted();
 
 	// Reset puzzles
-	for (uint32 i = 0; i < ARRAYSIZE(_puzzles); i++)
-		if (_puzzles[i] != NULL)
-			_puzzles[i]->reset();
+	for (uint i = 0; i < ARRAYSIZE(_puzzles); i++)
+		delete _puzzles[i];
 
-	// FIXME reset shared actor data
+	initPuzzles();
+
+	// Reset shared data
+	for (uint32 i = 0; i < 37; i++)
+		_data.setData(i, 160);
+
+	_data.setData(37, 1);
+
+	// Reset special palette info
+	_special->reset(true);
 }
 
 void AsylumEngine::playIntro() {

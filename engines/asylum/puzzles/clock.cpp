@@ -72,12 +72,6 @@ PuzzleClock::PuzzleClock(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleClock::~PuzzleClock() {
 }
 
-void PuzzleClock::reset() {
-	_frameIndexes[0] = 0;
-	_frameIndexes[1] = 6;
-	_frameIndexes[2] = 10;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////

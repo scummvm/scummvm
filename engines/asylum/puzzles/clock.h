@@ -34,8 +34,6 @@ public:
 	PuzzleClock(AsylumEngine *engine);
 	~PuzzleClock();
 
-	void reset();
-
 private:
 	uint32 _frameIndexes[3];
 	bool _showCursor;

@@ -87,8 +87,8 @@ void PuzzleHiveControl::reset() {
 	_colorL = _colorR = 0;
 	_frameIndexOffset = 0;
 
-	memset(&_glyphFlags, 	false, 	sizeof(_glyphFlags));
-	memset(&_wingsState, 	false, 	sizeof(_wingsState));
+	memset(&_glyphFlags, 	false, sizeof(_glyphFlags));
+	memset(&_wingsState, 	false, sizeof(_wingsState));
 
 	_frameIndexes[kElementSwirlRim] = 0;
 	if (_leverPosition != _prevLeverPosition) {

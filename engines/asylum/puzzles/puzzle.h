@@ -43,8 +43,6 @@ public:
 	Puzzle(AsylumEngine *engine);
 	virtual ~Puzzle();
 
-	virtual void reset() {}
-
 	bool handleEvent(const AsylumEvent &evt);
 
 protected:
