@@ -40,7 +40,6 @@ extern char _copr[];
 // static Startup _startUp;
 
 int    Startup::_mode = 0;
-int    Startup::_core;
 int    Startup::_soundOk = 0;
 uint16 Startup::_summa;
 
