@@ -83,6 +83,7 @@ public:
 
 	void setDefaults(TextObjectDefaults *defaults);
 	void setText(const Common::String &text);
+	void reset();
 
 	int getBitmapWidth();
 	int getBitmapHeight();

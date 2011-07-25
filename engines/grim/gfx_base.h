@@ -79,7 +79,7 @@ public:
 	virtual void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) = 0;
 	virtual void translateViewpointFinish() = 0;
 
-	virtual void drawHierachyNode(const ModelNode *node) = 0;
+	virtual void drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) = 0;
 	virtual void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
 	virtual void drawSprite(const Sprite *sprite) = 0;
 

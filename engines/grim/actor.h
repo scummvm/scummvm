@@ -43,8 +43,6 @@ struct Plane {
 
 typedef Common::List<Plane> SectorListType;
 
-extern int g_winX1, g_winY1, g_winX2, g_winY2;
-
 struct Shadow {
 	Common::String name;
 	Graphics::Vector3d pos;
@@ -240,6 +238,7 @@ private:
 
 	static ObjectPtr<Font> _sayLineFont;
 	int _sayLineText;
+	bool _mustPlaceText;
 
 	// Validate a yaw angle then set it appropriately
 	void setYaw(float yaw);

@@ -160,7 +160,7 @@ public:
 	ModelNode *getHierarchy() { return _hier; }
 	int getNumNodes() { return _obj->getNumNodes(); }
 	Model *getModel() { return _obj; }
-	void draw();
+	void draw(int *x1, int *y1, int *x2, int *y2);
 
 protected:
 	struct AnimationEntry {
@@ -551,7 +551,7 @@ void translateObject(ModelNode *node, bool reset) {
 	}
 }
 
-void ModelComponent::draw() {
+void ModelComponent::draw(int *x1, int *y1, int *x2, int *y2) {
 	// If the object was drawn by being a component
 	// of it's parent then don't draw it
 
@@ -562,7 +562,7 @@ void ModelComponent::draw() {
 	if (_hier->_parent)
 		translateObject(_hier->_parent, false);
 
-	_hier->draw();
+	_hier->draw(x1, y1, x2, y2);
 
 	// Need to un-translate when done
 	if (_hier->_parent)
@@ -1720,7 +1720,13 @@ void Costume::setupTextures() {
 void Costume::draw() {
 	for (int i = 0; i < _numComponents; i++)
 		if (_components[i])
-			_components[i]->draw();
+			_components[i]->draw(NULL, NULL, NULL, NULL);
+}
+
+void Costume::draw(int *x1, int *y1, int *x2, int *y2) {
+	for (int i = 0; i < _numComponents; i++)
+		if (_components[i])
+			_components[i]->draw(x1, y1, x2, y2);
 }
 
 void Costume::update() {

@@ -61,6 +61,11 @@ void TextObject::setText(const Common::String &text) {
 	setupText();
 }
 
+void TextObject::reset() {
+	destroy();
+	setupText();
+}
+
 void TextObject::saveState(SaveGame *state) const {
 	state->writeLEUint32(_fgColor->getId());
 

@@ -66,7 +66,7 @@ public:
 	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
 	void translateViewpointFinish();
 
-	void drawHierachyNode(const ModelNode *node);
+	void drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2);
 	void drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts);
 	void drawSprite(const Sprite *sprite);
 

@@ -207,7 +207,7 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 }
 
 void Model::draw() const {
-	_rootHierNode->draw();
+	_rootHierNode->draw(NULL, NULL, NULL, NULL);
 }
 
 ModelNode *Model::copyHierarchy() {
@@ -507,15 +507,16 @@ void Mesh::changeMaterials(Material *materials[]) {
 		_faces[i].changeMaterial(materials[_materialid[i]]);
 }
 
-extern int g_winX1, g_winY1, g_winX2, g_winY2;
-void Mesh::draw() const {
-	int winX1, winY1, winX2, winY2;
-	g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
-	if (winX1 != -1 && winY1 != -1 && winX2 != -1 && winY2 != -1) {
-		g_winX1 = MIN(g_winX1, winX1);
-		g_winY1 = MIN(g_winY1, winY1);
-		g_winX2 = MAX(g_winX2, winX2);
-		g_winY2 = MAX(g_winY2, winY2);
+void Mesh::draw(int *x1, int *y1, int *x2, int *y2) const {
+	if (x1) {
+		int winX1, winY1, winX2, winY2;
+		g_driver->getBoundingBoxPos(this, &winX1, &winY1, &winX2, &winY2);
+		if (winX1 != -1 && winY1 != -1 && winX2 != -1 && winY2 != -1) {
+			*x1 = MIN(*x1, winX1);
+			*y1 = MIN(*y1, winY1);
+			*x2 = MAX(*x2, winX2);
+			*y2 = MAX(*y2, winY2);
+		}
 	}
 
 	if (_lightingMode == 0)
@@ -587,8 +588,8 @@ void ModelNode::loadBinary(const char *&data, ModelNode *hierNodes, const Model:
 	_initialized = true;
 }
 
-void ModelNode::draw() const {
-	g_driver->drawHierachyNode(this);
+void ModelNode::draw(int *x1, int *y1, int *x2, int *y2) const {
+	g_driver->drawHierachyNode(this, x1, y1, x2, y2);
 }
 
 void ModelNode::addChild(ModelNode *child) {

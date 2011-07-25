@@ -76,6 +76,7 @@ public:
 	void animate();
 	void setupTextures();
 	void draw();
+	void draw(int *x1, int *y1, int *x2, int *y2);
 	void setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll);
 
 	Costume *getPreviousCostume() const;
@@ -99,7 +100,7 @@ public:
 		virtual void update() { }
 		virtual void animate() { }
 		virtual void setupTexture() { }
-		virtual void draw() { }
+		virtual void draw(int *x1, int *y1, int *x2, int *y2) { }
 		virtual void reset() { }
 		virtual void resetColormap() { }
 		virtual void saveState(SaveGame *) { }

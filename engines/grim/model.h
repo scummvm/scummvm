@@ -112,7 +112,7 @@ public:
 	void loadBinary(const char *&data, Material *materials[]);
 	void loadText(TextSplitter *ts, Material *materials[]);
 	void changeMaterials(Material *materials[]);
-	void draw() const;
+	void draw(int *x1, int *y1, int *x2, int *y2) const;
 	void update();
 	Mesh() : _numFaces(0) { }
 	~Mesh();
@@ -140,7 +140,7 @@ public:
 	ModelNode() : _initialized(false) { }
 	~ModelNode();
 	void loadBinary(const char *&data, ModelNode *hierNodes, const Model::Geoset *g);
-	void draw() const;
+	void draw(int *x1, int *y1, int *x2, int *y2) const;
 	void addChild(ModelNode *child);
 	void removeChild(ModelNode *child);
 	void setMatrix(Graphics::Matrix4 matrix);

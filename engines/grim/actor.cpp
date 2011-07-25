@@ -75,6 +75,7 @@ Actor::Actor(const Common::String &actorName) :
 	_running = false;
 	_scale = 1.f;
 	_timeScale = 1.f;
+	_mustPlaceText = false;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -103,6 +104,7 @@ Actor::Actor() :
 	_running = false;
 	_scale = 1.f;
 	_timeScale = 1.f;
+	_mustPlaceText = false;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -904,13 +906,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 			textObject->setX(640 / 2);
 			textObject->setY(456);
 		} else {
-			if (_winX1 == 1000 || _winX2 == -1000 || _winY2 == -1000) {
-				textObject->setX(640 / 2);
-				textObject->setY(463);
-			} else {
-				textObject->setX((_winX1 + _winX2) / 2);
-				textObject->setY(_winY1);
-			}
+			_mustPlaceText = true;
 		}
 		textObject->setText(msgId);
 		g_grim->registerTextObject(textObject);
@@ -1237,9 +1233,6 @@ void Actor::update() {
 }
 
 void Actor::draw() {
-	g_winX1 = g_winY1 = 1000;
-	g_winX2 = g_winY2 = -1000;
-
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		c->setupTextures();
@@ -1253,6 +1246,20 @@ void Actor::draw() {
 			g_driver->drawShadowPlanes();
 			g_driver->setShadow(NULL);
 		}
+	}
+
+	int x1, y1, x2, y2;
+	int *px1, *py1, *px2, *py2;
+	if (_mustPlaceText) {
+		px1 = &x1;
+		py1 = &y1;
+		px2 = &x2;
+		py2 = &y2;
+
+		x1 = y1 = 1000;
+		x2 = y2 = -1000;
+	} else {
+		px1 = py1 = px2 = py2 = NULL;
 	}
 
 	if (!_costumeStack.empty()) {
@@ -1271,12 +1278,12 @@ void Actor::draw() {
 			}
 			// normal draw actor
 			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-			costume->draw();
+			costume->draw(px1, py1, px2, py2);
 			g_driver->finishActorDraw();
 		} else {
 			// normal draw actor
 			g_driver->startActorDraw(_pos, _scale, _yaw, _pitch, _roll);
-			costume->draw();
+			costume->draw(px1, py1, px2, py2);
 			g_driver->finishActorDraw();
 
 			for (int l = 0; l < 5; l++) {
@@ -1293,10 +1300,19 @@ void Actor::draw() {
 			}
 		}
 	}
-	_winX1 = g_winX1;
-	_winX2 = g_winX2;
-	_winY1 = g_winY1;
-	_winY2 = g_winY2;
+
+	if (_mustPlaceText) {
+		TextObject *textObject = g_grim->getTextObject(_sayLineText);
+		if (x1 == 1000 || x2 == -1000 || y2 == -1000) {
+			textObject->setX(640 / 2);
+			textObject->setY(463);
+		} else {
+			textObject->setX((x1 + x2) / 2);
+			textObject->setY(y1);
+		}
+		textObject->reset();
+		_mustPlaceText = false;
+	}
 }
 
 // "Undraw objects" (handle objects for actors that may not be on screen)

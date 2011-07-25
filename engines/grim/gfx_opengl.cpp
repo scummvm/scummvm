@@ -494,7 +494,7 @@ void GfxOpenGL::translateViewpointFinish() {
 	glPopMatrix();
 }
 
-void GfxOpenGL::drawHierachyNode(const ModelNode *node) {
+void GfxOpenGL::drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) {
 	Graphics::Vector3d animPos = node->_pos + node->_animPos;
 	float animPitch = node->_pitch + node->_animPitch;
 	float animYaw = node->_yaw + node->_animYaw;
@@ -513,21 +513,21 @@ void GfxOpenGL::drawHierachyNode(const ModelNode *node) {
 		}
 
 		if (node->_mesh && node->_meshVisible) {
-			node->_mesh->draw();
+			node->_mesh->draw(x1, y1, x2, y2);
 		}
 
 		glMatrixMode(GL_MODELVIEW);
 		glPopMatrix();
 
 		if (node->_child) {
-			node->_child->draw();
+			node->_child->draw(x1, y1, x2, y2);
 			glMatrixMode(GL_MODELVIEW);
 		}
 	}
 	translateViewpointFinish();
 
 	if (node->_sibling)
-		node->_sibling->draw();
+		node->_sibling->draw(x1, y1, x2, y2);
 }
 
 void GfxOpenGL::enableLights() {
