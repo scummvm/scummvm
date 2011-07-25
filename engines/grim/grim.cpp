@@ -854,17 +854,7 @@ static void cameraPostChangeHandle(int num) {
 }
 
 void GrimEngine::drawPrimitives() {
-	// Draw Primitives
-	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); ++i) {
-		i->_value->draw();
-	}
 
-	_iris->draw();
-
-	// Draw text
-	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {
-		i->_value->draw();
-	}
 }
 
 void GrimEngine::playIrisAnimation(Iris::Direction dir, int x, int y, int time) {
@@ -950,6 +940,10 @@ void GrimEngine::updateDisplayScene() {
 			} else
 				g_driver->releaseSmushFrame();
 		}
+		// Draw Primitives
+		for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); ++i) {
+			i->_value->draw();
+		}
 		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_NORMAL) {
 		if (!_currScene)
@@ -992,6 +986,11 @@ void GrimEngine::updateDisplayScene() {
 				g_driver->drawSmushFrame(g_movie->getX(), g_movie->getY());
 			else
 				g_driver->releaseSmushFrame();
+		}
+
+		// Draw Primitives
+		for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); ++i) {
+			i->_value->draw();
 		}
 
 		_currScene->setupCamera();
