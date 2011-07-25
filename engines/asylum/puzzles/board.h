@@ -62,7 +62,7 @@ public:
 
 protected:
 	bool _solved;
-	char _text[800];
+	Common::String _text;
 	bool _charUsed[20];
 	char _solvedText[28]; // KeyHidesTo uses 28 chars, the other puzzles 20
 	uint32 _position;

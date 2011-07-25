@@ -44,7 +44,6 @@ PuzzleBoard::PuzzleBoard(AsylumEngine *engine, PuzzleData data) : Puzzle(engine)
 
 	// Init board
 	_solved = false;
-	memset(&_text,       0,     sizeof(_text));
 	memset(&_charUsed,   false, sizeof(_charUsed));
 	memset(&_solvedText, 0,     sizeof(_solvedText));
 	_rectIndex = -2;
@@ -71,12 +70,12 @@ bool PuzzleBoard::init(const AsylumEvent &evt)  {
 	getText()->loadFont(getWorld()->graphicResourceIds[35]);
 
 	// Prepare text to draw
-	memset(&_text, 0, sizeof(_text));
+	_text = "";
 
 	for (uint32 i = 0; i < _data.soundResourceSize; i++) {
 		_data.soundResources[i].played = false;
-		strcat((char *)&_text, getText()->get(MAKE_RESOURCE(kResourcePackText, 1068 + _data.soundResources[i].index)));
-		strcat((char *)&_text, " ");
+		_text += getText()->get(MAKE_RESOURCE(kResourcePackText, 1068 + _data.soundResources[i].index));
+		_text += " ";
 	}
 
 	updateScreen();
@@ -150,7 +149,7 @@ bool PuzzleBoard::stopSound() {
 
 void PuzzleBoard::drawText() {
 	getText()->loadFont(getWorld()->graphicResourceIds[35]);
-	getText()->draw(0, 99, kTextCenter, 25, 50, 16, 590, _text);
+	getText()->draw(0, 99, kTextCenter, 25, 50, 16, 590, _text.c_str());
 
 	int32 index = 0;
 	for (uint32 x = 215; x < _data.maxWidth; x += 24) {
