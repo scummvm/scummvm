@@ -2300,8 +2300,85 @@ void Actor::updateStatus14_Chapter2() {
 		return;
 	}
 
+	// FIXME original calls getDistance but does not seem to do anything with the results
 
-	error("[Actor::updateStatus14_Chapter2] not implemented!");
+	if (_status == kActorStatus17 || !getScene()->getActor(10)->isVisible()) {
+		updateStatus(kActorStatusEnabled);
+		getSharedData()->actorVerticalOffset[_index] = 160;
+	}
+
+	if (_status != kActorStatus16) {
+		_point1.x -= getSharedData()->getData(2 * _index + 19);
+		_point1.y -= getSharedData()->getData(2 * _index + 20) + 54;
+	}
+
+	if (_frameIndex == _frameCount - 1) {
+		_frameIndex = 0;
+		if (getSharedData()->getData(_index + 6) <= 1 || _status == kActorStatus16 || _status == kActorStatus17) {
+			getSharedData()->setData(_index + 6, getSharedData()->getData(_index + 6) + 1);
+		} else {
+			updateStatus(kActorStatus15);
+			_point1.y -= 54;
+			getSharedData()->setData(_index + 6, 0);
+			getSharedData()->setData(_index, getSharedData()->getData(_index) + 54);
+		}
+	}
+
+	if (_status == kActorStatus17 && getSharedData()->getData(_index + 6) < 100) {
+		_point1.y -= 6;
+		getSharedData()->setData(_index + 6, 100);
+		getSharedData()->setData(_index, getSharedData()->getData(_index) + 6);
+	}
+
+	if (getSharedData()->getData(_index + 6) > 99) {
+		_point1.y -= 6;
+		getSharedData()->setData(_index + 6, getSharedData()->getData(_index + 6) + 1);
+		getSharedData()->setData(_index, getSharedData()->getData(_index) + 6);
+
+		if (getSharedData()->getData(_index + 6) > 108) {
+			getSharedData()->setData(_index + 6, 0);
+
+			updateStatus(kActorStatusEnabled);
+
+			switch (_index) {
+			default:
+				error("Invalid actor index (was: %d)", _index);
+				break;
+
+			case 13:
+				processStatus(2300, 671, false);
+				break;
+
+			case 14:
+				processStatus(2600, 130, false);
+				break;
+
+			case 15:
+				processStatus(2742, 615, false);
+				break;
+
+			case 16:
+				processStatus(2700, 1400, false);
+				break;
+
+			case 17:
+				processStatus(2751, 347, false);
+				break;
+
+			case 18:
+				processStatus(2420, 284, false);
+				break;
+
+			case 19:
+				processStatus(2800, 370, false);
+				break;
+
+			case 20:
+				processStatus(1973, 1, false);
+				break;
+			}
+		}
+	}
 }
 
 void Actor::updateStatus14_Chapter11() {
