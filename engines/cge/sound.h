@@ -46,7 +46,6 @@ public:
 
 
 class Fx {
-	Emm _emm;
 	struct Han {
 		int _ref;
 		DataCk *_wav;

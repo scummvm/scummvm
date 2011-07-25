@@ -69,8 +69,6 @@ public:
 };
 
 
-extern Emm _miniEmm;
-
 const char *usrPath(const char *nam);
 
 } // End of namespace CGE
