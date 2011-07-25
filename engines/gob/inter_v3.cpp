@@ -31,6 +31,7 @@
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/resources.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -39,7 +40,7 @@ namespace Gob {
 #define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
 #define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_v3::Inter_v3(GobEngine *vm) : Inter_v2(vm) {
+Inter_v3::Inter_v3(GobEngine *vm) : Inter_v2(vm), _ignoreSpeakerOff(false) {
 }
 
 void Inter_v3::setupOpcodesDraw() {
@@ -50,6 +51,8 @@ void Inter_v3::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
 
 	OPCODEFUNC(0x1A, o3_getTotTextItemPart);
+	OPCODEFUNC(0x22, o3_speakerOn);
+	OPCODEFUNC(0x23, o3_speakerOff);
 	OPCODEFUNC(0x32, o3_copySprite);
 }
 
@@ -243,6 +246,36 @@ void Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 	}
 
 	delete textItem;
+}
+
+void Inter_v3::o3_speakerOn(OpFuncParams &params) {
+	int16 frequency = _vm->_game->_script->readValExpr();
+	int32 length    = -1;
+
+	_ignoreSpeakerOff = false;
+
+	// WORKAROUND: This is the footsteps sound. The scripts just fire
+	// speaker on" and then a "speaker off" after a short while. Since
+	// we have delay in certain places avoid 100% CPU all the time and
+	// our PC speaker emulator sometimes "swallows" very short beeper
+	// bursts issued in this way, this is in general quite wonky and
+	// prone to fail, as can be seen in bug report #3376547. Therefore,
+	// we explicitely set a length in this case and ignore the next
+	// speaker off command.
+	if (frequency == 50) {
+		length = 5;
+
+		_ignoreSpeakerOff = true;
+	}
+
+	_vm->_sound->speakerOn(frequency, length);
+}
+
+void Inter_v3::o3_speakerOff(OpFuncParams &params) {
+	if (!_ignoreSpeakerOff)
+		_vm->_sound->speakerOff();
+
+	_ignoreSpeakerOff = false;
 }
 
 void Inter_v3::o3_copySprite(OpFuncParams &params) {
