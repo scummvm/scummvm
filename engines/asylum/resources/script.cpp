@@ -70,7 +70,7 @@ void ActionArea::load(Common::SeekableReadStream *stream) {
 	paletteResourceId    = (ResourceId)stream->readSint32LE();
 
 	for (int32 i = 0; i < 5; i++)
-		array[i] = stream->readSint32LE();
+		paths[i] = stream->readSint32LE();
 
 	volume = stream->readSint32LE();
 }
