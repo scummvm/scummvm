@@ -77,9 +77,10 @@ const Graphics::Font* BadaGraphicsManager::getFontOSD() {
 	return font;
 }
 
-void BadaGraphicsManager::setupMouse(int16& x, int16& y) {
+void BadaGraphicsManager::moveMouse(int16& x, int16& y) {
+  _cursorState.x = x;
+  _cursorState.y = y;
   adjustMousePosition(x, y);
-  warpMouse(x, y);
 }
 
 Common::List<Graphics::PixelFormat> BadaGraphicsManager::getSupportedFormats() const {

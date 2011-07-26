@@ -29,9 +29,12 @@
 #define TIMER_INCREMENT    10
 #define TIMER_INTERVAL     80
 #define MIN_TIMER_INTERVAL 20
-#define MAX_VOL            80
+#define MAX_VOL            99
 #define INIT_VOL           40
 #define CONFIG_KEY         L"audiovol"
+
+// sound level pre-sets
+const int levels[] = {2, 20, INIT_VOL, 70, MAX_VOL};
 
 AudioThread::AudioThread() : 
   mixer(0),
@@ -80,28 +83,33 @@ void AudioThread::setMute(bool on) {
   }
 }
 
-int AudioThread::setVolume(bool up, bool minMax, int range) {
+int AudioThread::setVolume(bool up, bool minMax) {
   int level = -1;
+  int numLevels = sizeof(levels);
+
   if (audioOut && !isSilentMode()) {
     int volume = audioOut->GetVolume();
     if (minMax) {
-      volume = up ? MAX_VOL : 1;
-      level = up ? range : 0;
+      level = up ? numLevels - 1 : 0;
+      volume = levels[level];
     }
     else {
-      // adjust volume to be in range steps
-      int unit = MAX_VOL / range;
-      int step = (volume / unit) + (up ? 1 : -1);
-      if (step < 1) {
-        volume = 0;
-        level = 0;
-      }
-      else {
-        if (step > range) {
-          step = range;
+      // adjust volume to be in unit steps
+      for (int i = 0; i < numLevels && level == -1; i++) {
+        if (volume == levels[i]) {
+          if (up) {
+            if (i + 1 < numLevels) {
+              level = i + 1;
+            }
+          }
+          else if (i > 0) {
+            level = i - 1;
+          }
         }
-        volume = step * unit;
-        level = step;
+      }
+      
+      if (level != -1) {
+        volume = levels[level];
       }
     }
     if (volume <= MAX_VOL) {

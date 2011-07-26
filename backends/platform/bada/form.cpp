@@ -199,7 +199,7 @@ void BadaAppForm::pushEvent(Common::EventType type,
     e.mouse.x = currentPosition.x;
     e.mouse.y = currentPosition.y;
     
-    graphics->setupMouse(e.mouse.x, e.mouse.y);
+    graphics->moveMouse(e.mouse.x, e.mouse.y);
 
     eventQueueLock->Acquire();
     eventQueue.push(e);
@@ -360,11 +360,11 @@ void BadaAppForm::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
   logEntered();
   switch (keyCode) {
   case KEY_SIDE_UP:
-    showVolume(((BadaSystem*) g_system)->setVolume(true, true, LEVEL_RANGE));
+    showVolume(((BadaSystem*) g_system)->setVolume(true, true));
     return;
 
   case KEY_SIDE_DOWN:
-    showVolume(((BadaSystem*) g_system)->setVolume(false, true, LEVEL_RANGE));
+    showVolume(((BadaSystem*) g_system)->setVolume(false, true));
     return;
 
   default:
@@ -375,11 +375,11 @@ void BadaAppForm::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
 void BadaAppForm::OnKeyPressed(const Control& source, KeyCode keyCode) {
   switch (keyCode) {
   case KEY_SIDE_UP:
-    showVolume(((BadaSystem*) g_system)->setVolume(true, false, LEVEL_RANGE));
+    showVolume(((BadaSystem*) g_system)->setVolume(true, false));
     return;
 
   case KEY_SIDE_DOWN:
-    showVolume(((BadaSystem*) g_system)->setVolume(false, false, LEVEL_RANGE));
+    showVolume(((BadaSystem*) g_system)->setVolume(false, false));
     return;
 
   case KEY_CAMERA:

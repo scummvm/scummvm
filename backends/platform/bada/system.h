@@ -77,7 +77,7 @@ class BadaSystem : public ModularBackend,
   void closeGraphics();
   void destroyBackend();
   void setMute(bool on);
-  int setVolume(bool up, bool minMax, int range);
+  int setVolume(bool up, bool minMax);
   void exitSystem();
   bool isClosing() { return appForm->isClosing(); }
 

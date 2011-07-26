@@ -51,7 +51,7 @@ public:
   Audio::MixerImpl* Construct(OSystem* system);
   bool isSilentMode();
   void setMute(bool on);
-  int setVolume(bool up, bool minMax, int range);
+  int setVolume(bool up, bool minMax);
 
   bool OnStart(void);
   void OnStop(void);
