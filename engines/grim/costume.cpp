@@ -608,7 +608,11 @@ void MainModelComponent::setColormap(CMap *cmap) {
 
 void MainModelComponent::reset() {
 	_visible = true;
-	_hier->_hierVisible = _visible;
+	// Can be NULL if this was attached to another costume which
+	// was deleted.
+	if (_hier) {
+		_hier->_hierVisible = _visible;
+	}
 }
 
 MainModelComponent::~MainModelComponent() {
