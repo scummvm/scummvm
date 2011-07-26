@@ -2,6 +2,9 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.4.0 (????-??-??)
+ New Games:
+   - Added support for Lands of Lore: The Throne of Chaos.
+
  SCUMM:
    - Implemented PC Speaker support for SCUMM v5 games.
 
