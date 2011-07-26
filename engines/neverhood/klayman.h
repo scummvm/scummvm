@@ -85,6 +85,20 @@ public:
 	void sub4207A0();
 	void sub4207F0();
 	void sub420F20();
+	void sub421350();
+	void sub4213F0();
+	void sub4213B0();
+	void sub420060();
+	void sub41FFF0();
+	void sub4214D0();
+	void sub421510();
+	void sub421160();
+	void sub4212C0();
+	void sub421310();
+	void sub420600();
+	void sub420660();
+	void sub4205C0();
+	void sub420550();
 	
 	void spriteUpdate41F250();
 	void spriteUpdate41F5F0();
@@ -94,6 +108,11 @@ public:
 
 	uint32 handleMessage41D360(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41D480(int messageNum, const MessageParam &param, Entity *sender);
+
+	void setKlaymanTable(const KlaymanTableItem *table, int tableCount);
+	void setKlaymanTable1();
+	void setKlaymanTable2();
+	void setKlaymanTable3();
 
 protected:
 	Entity *_parentScene;
@@ -128,11 +147,6 @@ protected:
 	int _resourceHandle;
 	virtual void xUpdate();
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
-
-	void setKlaymanTable(const KlaymanTableItem *table, int tableCount);
-	void setKlaymanTable1();
-	void setKlaymanTable2();
-	void setKlaymanTable3();
 
 	void sub41FD40();
 	void sub41FD90();
@@ -210,6 +224,11 @@ protected:
 	uint32 handleMessage41E490(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41E290(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41E2F0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41D640(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41EAB0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41D970(int messageNum, const MessageParam &param, Entity *sender);
+	
+	void update41D1C0();
 	
 };
 
@@ -285,6 +304,33 @@ protected:
 	void sub40DF60();
 	void sub40DFA0();
 	void sub40E040();
+};
+
+class KmScene1401 : public Klayman {
+public:
+	KmScene1401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene1402 : public Klayman {
+public:
+	KmScene1402(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene1705 : public Klayman {
+public:
+	KmScene1705(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	bool _flag;
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 handleMessage4689A0(int messageNum, const MessageParam &param, Entity *sender);
+	void spriteUpdate468A30();
+	void sub468A80();
+	void sub468AD0();
+	void sub468B10();
 };
 
 } // End of namespace Neverhood

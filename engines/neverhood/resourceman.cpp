@@ -135,8 +135,8 @@ byte *ResourceMan::getResourceExtData(int resourceHandle) {
 }
 
 byte *ResourceMan::getResourceExtDataByHash(uint32 fileHash) {
-	ResourceFileEntry *entry = findEntry(fileHash);
-	return _archives[entry->archiveIndex]->getEntryExtData(entry->entryIndex);
+	ResourceFileEntry *entry = findEntrySimple(fileHash);
+	return entry ? _archives[entry->archiveIndex]->getEntryExtData(entry->entryIndex) : NULL;
 }
 
 byte *ResourceMan::loadResource(int resourceHandle, bool moveToFront) {

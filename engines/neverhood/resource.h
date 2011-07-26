@@ -91,6 +91,7 @@ public:
 	int16 getFrameIndex(uint32 frameHash);
 	void setReplEnabled(bool value) { _replEnabled = value; }
 	void setRepl(byte oldColor, byte newColor);
+	NDimensions loadSpriteDimensions(uint32 fileHash);
 protected:
 	NeverhoodEngine *_vm;
 	int _resourceHandle;

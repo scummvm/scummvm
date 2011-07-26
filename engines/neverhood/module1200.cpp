@@ -76,8 +76,8 @@ void Module1200::createScene1201(int which) {
 			
 void Module1200::createScene1202(int which) {
 	_vm->gameState().sceneNum = 1;
-	//_childObject = new Scene1202(_vm, this, which);
-	//SetUpdateHandler(&Module1200::updateScene1202);
+	_childObject = new Scene1202(_vm, this, which);
+	SetUpdateHandler(&Module1200::updateScene1202);
 }
 
 void Module1200::createScene1203(int which) {
@@ -161,7 +161,7 @@ static const NPoint kScene1201PointArray[] = {
 	{493, 174}
 };
 
-static const uint32 kScene1201SsScene1201TntFileHashList1[] = {
+static const uint32 kScene1201TntFileHashList1[] = {
 	0x2098212D,   
 	0x1600437E,
 	0x1600437E,
@@ -182,7 +182,7 @@ static const uint32 kScene1201SsScene1201TntFileHashList1[] = {
 	0xDA460476
 };
 
-static const uint32 kScene1201SsScene1201TntFileHashList2[] = {
+static const uint32 kScene1201TntFileHashList2[] = {
 	0x3040C676,  
 	0x10914448,
 	0x10914448,
@@ -209,7 +209,7 @@ SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 poi
 	int16 x = kScene1201PointArray[pointIndex].x;
 	int16 y = kScene1201PointArray[pointIndex].y;
 	if (x < 300) {
-		_spriteResource.load2(kScene1201SsScene1201TntFileHashList1[elemIndex]);
+		_spriteResource.load2(kScene1201TntFileHashList1[elemIndex]);
 		_x = _spriteResource.getPosition().x;
 		_y = _spriteResource.getPosition().y;
 		_drawRect.x = 0;
@@ -217,7 +217,7 @@ SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 poi
 		_drawRect.width = _spriteResource.getDimensions().width;
 		_drawRect.height = _spriteResource.getDimensions().height;
 	} else {
-		_spriteResource.load2(kScene1201SsScene1201TntFileHashList2[elemIndex]);
+		_spriteResource.load2(kScene1201TntFileHashList2[elemIndex]);
 		_x = x;
 		_y = y;
 		_drawRect.x = -(_spriteResource.getDimensions().width / 2);
@@ -307,14 +307,14 @@ void Class466::sub40D380() {
 	_newHashListIndex = -2;
 }
 
-Class468::Class468(NeverhoodEngine *vm, Sprite *klayman, bool flag)
+AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman, bool flag)
 	: AnimatedSprite(vm, 1100), _soundResource(vm), _klayman(klayman), _countdown(0) {
 
-	createSurface1(100, 0xD088AC30);
+	createSurface1(0xD088AC30, 100);
 	_x = 320;
 	_y = 240;
-	SetUpdateHandler(&Class468::update);
-	SetMessageHandler(&Class468::handleMessage);
+	SetUpdateHandler(&AsScene1201RightDoor::update);
+	SetMessageHandler(&AsScene1201RightDoor::handleMessage);
 	_newHashListIndex = -2;
 	if (flag) {
 		setFileHash(0xD088AC30, -1, -1);
@@ -326,14 +326,14 @@ Class468::Class468(NeverhoodEngine *vm, Sprite *klayman, bool flag)
 	}
 }
 
-void Class468::update() {
+void AsScene1201RightDoor::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
 		sub40D830();
 	}
 	AnimatedSprite::update();
 }
 
-uint32 Class468::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1201RightDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
@@ -346,22 +346,22 @@ uint32 Class468::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
-void Class468::sub40D7E0() {
+void AsScene1201RightDoor::sub40D7E0() {
 	setFileHash(0xD088AC30, 0, -1);
 	_newHashListIndex = -2;
 	_surface->setVisible(true);
 	_soundResource.play(calcHash("fxDoorOpen20"));
 }
 
-void Class468::sub40D830() {
+void AsScene1201RightDoor::sub40D830() {
 	setFileHash(0xD088AC30, -1, -1);
 	_playBackwards = true;
 	_surface->setVisible(true);
 	_soundResource.play(calcHash("fxDoorClose20"));
-	SetAnimationCallback3(&Class468::sub40D880);
+	SetAnimationCallback3(&AsScene1201RightDoor::sub40D880);
 }
 
-void Class468::sub40D880() {
+void AsScene1201RightDoor::sub40D880() {
 	setFileHash1();
 	_surface->setVisible(false);
 }
@@ -394,14 +394,14 @@ uint32 Class464::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
-Class463::Class463(NeverhoodEngine *vm, Scene *parentScene, Sprite *class466, bool flag)
+AsScene1201TntMan::AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sprite *class466, bool flag)
 	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene), _class466(class466),
 	_flag(false) {
-	
-	//TODO_field_F0 = -1;
+
+	flag = false;
 	
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class463::handleMessage);
+	SetMessageHandler(&AsScene1201TntMan::handleMessage);
 	createSurface(990, 106, 181);
 	_x = 201;
 	if (flag) {
@@ -413,11 +413,11 @@ Class463::Class463(NeverhoodEngine *vm, Scene *parentScene, Sprite *class466, bo
 	}
 }
 
-Class463::~Class463() {
+AsScene1201TntMan::~AsScene1201TntMan() {
 	// TODO Sound1ChList_sub_407AF0(0x01D00560);
 }	 
 
-uint32 Class463::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -441,8 +441,8 @@ uint32 Class463::handleMessage(int messageNum, const MessageParam &param, Entity
 
 }
 
-uint32 Class463::handleMessage40CCD0(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Class463::handleMessage(messageNum, param, sender);
+uint32 AsScene1201TntMan::handleMessage40CCD0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = AsScene1201TntMan::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
 		removeCallbacks();
@@ -451,37 +451,37 @@ uint32 Class463::handleMessage40CCD0(int messageNum, const MessageParam &param, 
 	return messageResult;
 }
 
-void Class463::spriteUpdate40CD10() {
+void AsScene1201TntMan::spriteUpdate40CD10() {
 	_x = _sprite->getX() + 100;
 }
 
-void Class463::sub40CD30() {
+void AsScene1201TntMan::sub40CD30() {
 	setFileHash(0x654913D0, 0, -1);
-	SetMessageHandler(&Class463::handleMessage);
+	SetMessageHandler(&AsScene1201TntMan::handleMessage);
 	SetSpriteCallback(NULL);
 }
 
-void Class463::sub40CD60() {
+void AsScene1201TntMan::sub40CD60() {
 	setFileHash(0x356803D0, 0, -1);
-	SetMessageHandler(&Class463::handleMessage40CCD0);
+	SetMessageHandler(&AsScene1201TntMan::handleMessage40CCD0);
 	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
-	SetAnimationCallback3(&Class463::sub40CD30);
+	SetAnimationCallback3(&AsScene1201TntMan::sub40CD30);
 }
 
-void Class463::sub40CD90() {
+void AsScene1201TntMan::sub40CD90() {
 	// TODO Sound1ChList_addSoundResource(0x01D00560, 0x4B044624, true);
 	// TODO Sound1ChList_playLooping(0x4B044624);
 	_flag = true;
 	setFileHash(0x85084190, 0, -1);
-	SetMessageHandler(&Class463::handleMessage);
-	SetSpriteCallback(&Class463::spriteUpdate40CD10);
+	SetMessageHandler(&AsScene1201TntMan::handleMessage);
+	SetSpriteCallback(&AsScene1201TntMan::spriteUpdate40CD10);
 	_newHashListIndex = -2;
 }
 
-Class465::Class465(NeverhoodEngine *vm, Sprite *class463)
-	: AnimatedSprite(vm, 1200), _class463(class463) {
+Class465::Class465(NeverhoodEngine *vm, Sprite *asTntMan)
+	: AnimatedSprite(vm, 1200), _asTntMan(asTntMan) {
 
-	createSurface1(995, 0x828C0411);
+	createSurface1(0x828C0411, 995);
 	SetUpdateHandler(&Class465::update);
 	SetMessageHandler(&Sprite::handleMessage);
 	SetSpriteCallback(&Class465::spriteUpdate40D150);
@@ -504,8 +504,251 @@ void Class465::update() {
 }
 
 void Class465::spriteUpdate40D150() {
-	_x = _class463->getX() - 18;
-	_y = _class463->getY() - 158;
+	_x = _asTntMan->getX() - 18;
+	_y = _asTntMan->getY() - 158;
+}
+
+AsScene1201Match::AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene)
+	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene) {
+	
+	createSurface(1100, 57, 60);
+	SetUpdateHandler(&AsScene1201Match::update);
+	SetMessageHandler(&AsScene1201Match::handleMessage40C2D0);
+	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
+	
+	switch (getGlobalVar(0x0112090A)) {
+	case 0:
+		_x = 521;
+		_y = 112;
+		_status = 0;
+		sub40C4C0();
+		break;
+	case 1:
+		_x = 521;
+		_y = 112;
+		_status = 2;
+		sub40C470();
+		_soundResource.load(0xD00230CD);
+		break;
+	case 2:
+		setDoDeltaX(1);
+		_x = 403;
+		_y = 337;
+		_status = 0;
+		sub40C4F0();
+		break;
+	}
+}
+
+void AsScene1201Match::update() {
+	if (_countdown != 0 && (--_countdown == 0)) {
+		removeCallbacks();
+	}
+	updateAnim();
+	handleSpriteUpdate();
+	updatePosition();
+}
+
+uint32 AsScene1201Match::handleMessage40C2D0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x86668011) {
+			_soundResource.play();
+		}
+		break;
+	}
+	return messageResult;
+}
+
+uint32 AsScene1201Match::handleMessage40C320(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage40C2D0(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		removeCallbacks();
+		break;
+	}
+	return messageResult;
+}
+
+uint32 AsScene1201Match::handleMessage40C360(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage40C2D0(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		_parentScene->sendMessage(0x2001, 0, this);
+		messageResult = 1;
+		break;
+	case 0x4806:
+		_surface->setVisible(false);
+		setGlobalVar(0x0112090A, 3);
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene1201Match::sub40C3E0() {
+	setFileHash(0x00842374, 0, -1);
+	SetMessageHandler(&AsScene1201Match::handleMessage40C320);
+	if (_status == 0) {
+		SetAnimationCallback3(&AsScene1201Match::sub40C420);
+	} else {
+		SetAnimationCallback3(&AsScene1201Match::sub40C470);
+	}
+}
+
+void AsScene1201Match::sub40C420() {
+	setGlobalVar(0x0112090A, 2);
+	_x -= 199;
+	_y += 119;
+	setFileHash(0x018D0240, 0, -1);
+	SetMessageHandler(&AsScene1201Match::handleMessage40C320);
+	SetAnimationCallback3(&AsScene1201Match::sub40C4F0);
+}
+
+void AsScene1201Match::sub40C470() {
+	setFileHash(0x00842374, 0, -1);
+	SetMessageHandler(&AsScene1201Match::handleMessage40C2D0);
+	_newHashListIndex = 0;
+	if (_status != 0) {
+		_countdown = 36;
+		_status--;
+		SetAnimationCallback3(&AsScene1201Match::sub40C3E0);
+	}
+}
+
+void AsScene1201Match::sub40C4C0() {
+	setFileHash(0x00842374, 0, -1);
+	SetMessageHandler(&AsScene1201Match::handleMessage40C360);
+	_newHashListIndex = 0;
+}
+
+void AsScene1201Match::sub40C4F0() {
+	setDoDeltaX(1);
+	_x = 403;
+	_y = 337;
+	setFileHash(0x00842374, 0, -1);
+	SetMessageHandler(&AsScene1201Match::handleMessage40C360);
+	_newHashListIndex = 0;
+}
+
+AsScene1201Creature::AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman)
+	: AnimatedSprite(vm, 900), _soundResource(vm), _parentScene(parentScene), _klayman(klayman),
+	_flag(false) {
+	
+	createSurface(1100, 203, 199);
+	SetUpdateHandler(&AsScene1201Creature::update);
+	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
+	_x = 540;
+	_y = 320;
+	sub40C8E0();
+	_countdown3 = 2;
+}
+
+void AsScene1201Creature::update() {
+	bool oldFlag = _flag;
+	_flag = _x >= 385;
+	if (_flag != oldFlag)
+		sub40C8E0();
+	if (_countdown1 != 0 && (--_countdown1 == 0)) {
+		removeCallbacks();
+	}
+	updateAnim();
+	handleSpriteUpdate();
+	updatePosition();
+}
+
+uint32 AsScene1201Creature::handleMessage40C710(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x02060018) {
+			_soundResource.play(0xCD298116);
+		}
+		break;
+	case 0x2004:
+		setCallback2(AnimationCallback(&AsScene1201Creature::sub40C960));
+		break;
+	case 0x2006:
+		setCallback2(AnimationCallback(&AsScene1201Creature::sub40C9B0));
+		break;
+	}
+	return messageResult;
+}
+
+uint32 AsScene1201Creature::handleMessage40C7B0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage40C710(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x02421405) {
+			if (_countdown2 != 0 && (--_countdown2 == 0)) {
+				sub40C990();
+			}
+		}
+		break;
+	case 0x3002:
+		removeCallbacks();
+		break;
+	}
+	return messageResult;
+}
+
+uint32 AsScene1201Creature::handleMessage40C830(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x02060018) {
+			_soundResource.play(0xCD298116);
+			_parentScene->sendMessage(0x4814, 0, this);
+			_klayman->sendMessage(0x4814, 0, this);
+		}
+		break;
+	case 0x3002:
+		removeCallbacks();
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene1201Creature::sub40C8E0() {
+	_countdown3--;
+	if (_countdown3 == 0)
+		_countdown3 = 3;
+	setFileHash(0x08081513, 0, -1);
+	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
+	SetAnimationCallback3(&AsScene1201Creature::sub40C930);
+	_countdown1 = 36;
+}
+
+void AsScene1201Creature::sub40C930() {
+	if (!_flag) {
+		setFileHash(0xCA287133, 0, -1);
+		SetMessageHandler(&AsScene1201Creature::handleMessage40C7B0);
+		SetAnimationCallback3(&AsScene1201Creature::sub40C8E0);
+	}
+}
+
+void AsScene1201Creature::sub40C960() {
+	setFileHash(0x08081513, 0, -1);
+	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
+	SetAnimationCallback3(&AsScene1201Creature::sub40C9E0);
+	_countdown1 = 48;
+}
+
+void AsScene1201Creature::sub40C990() {
+	setFileHash2(0x0B6E13FB, 0x01084280, 0);
+}
+
+void AsScene1201Creature::sub40C9B0() {
+	setFileHash(0xCA287133, 0, -1);
+	SetMessageHandler(&AsScene1201Creature::handleMessage40C830);
+	SetAnimationCallback3(&AsScene1201Creature::sub40C8E0);
+	_countdown1 = 0;
+}
+
+void AsScene1201Creature::sub40C9E0() {
+	setFileHash(0x5A201453, 0, -1);
+	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
+	_countdown1 = 0;
 }
 
 AsScene1201LeftDoor::AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klayman)
@@ -543,7 +786,8 @@ void AsScene1201LeftDoor::sub40D590() {
 }
 
 Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _flag(false) {
+	: Scene(vm, parentModule, true), _flag(false), _asMatch(NULL), _asTntMan(NULL),
+	_asCreature(NULL), _class466(NULL), _asLeftDoor(NULL), _asRightDoor(NULL), _asTape(NULL) {
 
 	int16 topY1, topY2, topY3, topY4;
 	int16 x1, x2;
@@ -589,12 +833,12 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = addSprite(new StaticSprite(_vm, 0x04063110, 500));
 	topY4 = tempSprite->getY() + 1; 
 
-	_class466 = addSprite(new Class466(_vm, getGlobalVar(0x000CF819) && which != 1 ? 1 : 0));
+	_class466 = addSprite(new Class466(_vm, getGlobalVar(0x000CF819) && which != 1));
 	_class466->getSurface()->getClipRect().x1 = 0;
 	_class466->getSurface()->getClipRect().y1 = topY4;
 	_class466->getSurface()->getClipRect().x2 = 640;
 	_class466->getSurface()->getClipRect().y2 = 480;
-
+	
 	addSprite(new StaticSprite(_vm, 0x400B04B0, 1200));
 
 	tempSprite = addSprite(new StaticSprite(_vm, 0x40295462, 1200));
@@ -644,31 +888,31 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		_background = addBackground(new DirtyBackground(_vm, 0x4019A2C4, 0, 0));
 		_palette = new Palette(_vm, 0x4019A2C4);
 		_palette->usePalette();
-		_class468 = NULL;
+		_asRightDoor = NULL;
 	} else {
 		_background = addBackground(new DirtyBackground(_vm, 0x40206EC5, 0, 0));
 		_palette = new Palette(_vm, 0x40206EC5);
 		_palette->usePalette();
-		_class468 = addSprite(new Class468(_vm, _klayman, which - 2 != 1)); // CHECKME???
+		_asRightDoor = addSprite(new AsScene1201RightDoor(_vm, _klayman, which == 2));
 	}
 
 	if (getGlobalVar(0x000CF819)) {
 		addSprite(new StaticSprite(_vm, 0x10002ED8, 500));
 		if (!getGlobalVar(0x0A18CA33)) {
-			Class463 *class463;
-			class463 = new Class463(_vm, this, _class466, which - 1 != 1);
-			class463->getSurface()->getClipRect().x1 = x1;
-			class463->getSurface()->getClipRect().y1 = 0;
-			class463->getSurface()->getClipRect().x2 = x2;
-			class463->getSurface()->getClipRect().y2 = 480;
-			_vm->_collisionMan->addSprite(_class463);
-			_class463 = addSprite(class463);
-			tempSprite = addSprite(new Class465(_vm, _class463));
+			AsScene1201TntMan *asTntMan;
+			asTntMan = new AsScene1201TntMan(_vm, this, _class466, which == 1);
+			asTntMan->getSurface()->getClipRect().x1 = x1;
+			asTntMan->getSurface()->getClipRect().y1 = 0;
+			asTntMan->getSurface()->getClipRect().x2 = x2;
+			asTntMan->getSurface()->getClipRect().y2 = 480;
+			_vm->_collisionMan->addSprite(asTntMan);
+			_asTntMan = addSprite(asTntMan);
+			tempSprite = addSprite(new Class465(_vm, _asTntMan));
 			tempSprite->getSurface()->getClipRect().x1 = x1;
 			tempSprite->getSurface()->getClipRect().y1 = 0;
 			tempSprite->getSurface()->getClipRect().x2 = x2;
 			tempSprite->getSurface()->getClipRect().y2 = 480;
-			class463->setRepl(64, 0);
+			asTntMan->setRepl(64, 0);
 		}
 		
 		uint32 tntIndex = 1; 
@@ -741,22 +985,20 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		setGlobalVar(0x0112090A, 1);
 	}
 
-	_class461 = NULL;
+	_asMatch = NULL;
 
-#if 0	
 	if (getGlobalVar(0x0112090A) < 3) {
-		_class461 = addSprite(new Class461(_vm, this));
-		_vm->_collisionMan->addSprite(_class461);
+		_asMatch = addSprite(new AsScene1201Match(_vm, this));
+		_vm->_collisionMan->addSprite(_asMatch);
 	}
 
 	if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
-		_class462 = addSprite(new Class462(_vm, this, _klayman));
-		_class462->getSurface()->getClipRect().x1 = x1;
-		_class462->getSurface()->getClipRect().y1 = 0;
-		_class462->getSurface()->getClipRect().x2 = x2;
-		_class462->getSurface()->getClipRect().y2 = 480;
+		_asCreature = addSprite(new AsScene1201Creature(_vm, this, _klayman));
+		_asCreature->getSurface()->getClipRect().x1 = x1;
+		_asCreature->getSurface()->getClipRect().y1 = 0;
+		_asCreature->getSurface()->getClipRect().x2 = x2;
+		_asCreature->getSurface()->getClipRect().y2 = 480;
 	}
-#endif
 
 }
 
@@ -765,8 +1007,8 @@ Scene1201::~Scene1201() {
 
 void Scene1201::update() {
 	Scene::update();
-	if (_class461 && getGlobalVar(0x0112090A)) {
-		deleteSprite(&_class461);
+	if (_asMatch && getGlobalVar(0x0112090A)) {
+		deleteSprite(&_asMatch);
 	}
 }
 
@@ -777,12 +1019,12 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x100D:
 		if (param.asInteger() == 0x07053000) {
 			_flag = true;
-			_class462->sendMessage(0x2004, 0, this);
+			_asCreature->sendMessage(0x2004, 0, this);
 		} else if (param.asInteger() == 0x140E5744) {
-			_class462->sendMessage(0x2005, 0, this);
+			_asCreature->sendMessage(0x2005, 0, this);
 		} else if (param.asInteger() == 0x40253C40) {
 			_messageListFlag = false;
-			_class462->sendMessage(0x2006, 0, this);
+			_asCreature->sendMessage(0x2006, 0, this);
 		} else if (param.asInteger() == 0x090EB048) {
 			if (_klayman->getX() < 572) {
 				setMessageList2(0x004AEC90);
@@ -795,17 +1037,17 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (!getGlobalVar(0x0112090A)) {
 			setMessageList2(0x004AECB0);
 		} else {
-			_klayman->sendEntityMessage(0x1014, _class461, this);
+			_klayman->sendEntityMessage(0x1014, _asMatch, this);
 			setMessageList2(0x004AECC0);
 		}
 		break;
 	case 0x2002:		
 		if (getGlobalVar(0x20A0C516)) {
-			_klayman->sendEntityMessage(0x1014, _class463, this);
+			_klayman->sendEntityMessage(0x1014, _asTntMan, this);
 			setMessageList2(0x004AECF0);
 		} else if (getGlobalVar(0x0112090A) == 3) {
-			_klayman->sendEntityMessage(0x1014, _class463, this);
-			if (_klayman->getX() > _class463->getX()) {
+			_klayman->sendEntityMessage(0x1014, _asTntMan, this);
+			if (_klayman->getX() > _asTntMan->getX()) {
 				setMessageList(0x004AECD0);
 			} else {
 				setMessageList(0x004AECE0);
@@ -822,10 +1064,253 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x4829:
-		_class468->sendMessage(0x4829, 0, this);
+		_asRightDoor->sendMessage(0x4829, 0, this);
 		break;		
 	}
 	return messageResult;
+}
+
+// Scene1202
+
+static const uint32 kScene1202Table[] = {
+	1, 2, 0, 4, 5, 3, 7, 8, 6, 10, 11, 9, 13, 14, 12, 16, 17, 15
+};
+
+static const NPoint kScene1202Points[] = {
+	{203, 140},
+	{316, 212},
+	{277, 264},
+	{176, 196},
+	{275, 159},
+	{366, 212},
+	{230, 195},
+	{412, 212},
+	{368, 263},
+	{204, 192},
+	{365, 164},
+	{316, 262},
+	{191, 255},
+	{280, 213},
+	{406, 266},
+	{214, 254},
+	{316, 158},
+	{402, 161}
+};
+
+static const uint32 kScene1202FileHashes[] = {
+	0x1AC00B8,
+	0x1AC14B8,
+	0x1AC14B8,
+	0x1AC30B8,
+	0x1AC14B8,
+	0x1AC14B8,
+	0x1AC00B8,
+	0x1AC14B8,
+	0x1AC14B8,
+	0x1AC90B8,
+	0x1AC18B8,
+	0x1AC18B8,
+	0x1AC30B8,
+	0x1AC14B8,
+	0x1AC14B8,
+	0x1AC50B8,
+	0x1AC14B8,
+	0x1AC14B8
+};
+
+AsScene1202TntItem::AsScene1202TntItem(NeverhoodEngine *vm, Scene *parentScene, int index)
+	: AnimatedSprite(vm, 900), _parentScene(parentScene), _index(index) {
+
+	int positionIndex;
+
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene1202TntItem::handleMessage453FE0);
+	positionIndex = getSubVar(0x10055D14, _index);
+	createSurface(900, 37, 67);
+	_x = kScene1202Points[positionIndex].x;
+	_y = kScene1202Points[positionIndex].y;
+	sub4540A0();
+}
+
+uint32 AsScene1202TntItem::handleMessage453FE0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		_parentScene->sendMessage(0x2000, _index, this);
+		messageResult = 1;
+		break;
+	case 0x2001:
+		_index2 = (int)param.asInteger();
+		sub4540D0();
+		break;		
+	}
+	return messageResult;
+}
+
+uint32 AsScene1202TntItem::handleMessage454060(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		removeCallbacks();
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene1202TntItem::sub4540A0() {
+	setFileHash(kScene1202FileHashes[_index], 0, -1);
+	SetMessageHandler(&AsScene1202TntItem::handleMessage453FE0);
+	_newHashListIndex = 0;
+}
+
+void AsScene1202TntItem::sub4540D0() {
+	setFileHash(kScene1202FileHashes[_index], 0, -1);
+	SetMessageHandler(&AsScene1202TntItem::handleMessage454060);
+	SetAnimationCallback3(&AsScene1202TntItem::sub454100);
+}
+
+void AsScene1202TntItem::sub454100() {
+	_x = kScene1202Points[_index2].x;
+	_y = kScene1202Points[_index2].y;
+	setFileHash(kScene1202FileHashes[_index], 6, -1);
+	SetMessageHandler(&AsScene1202TntItem::handleMessage454060);
+	SetAnimationCallback3(&AsScene1202TntItem::sub454160);
+	_playBackwards = true;
+}
+
+void AsScene1202TntItem::sub454160() {
+	_parentScene->sendMessage(0x2002, _index, this);
+	sub4540A0();
+}
+
+Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _paletteResource(vm), _soundResource1(vm), 
+	_soundResource2(vm), _soundResource3(vm), _soundResource4(vm),
+	_flag(true), _soundFlag(false), _counter(0), _index(-1) {
+
+	Palette2 *palette2;
+
+	SetMessageHandler(&Scene1202::handleMessage453C10);
+	SetUpdateHandler(&Scene1202::update);
+
+	_surfaceFlag = true;
+
+	_background = addBackground(new DirtyBackground(_vm, 0x60210ED5, 0, 0));
+
+	palette2 = new Palette2(_vm, 0x60210ED5);
+	palette2->usePalette();
+	_palette = palette2;
+	addEntity(_palette);
+
+	_paletteResource.load(0x60250EB5);
+	_paletteResource.copyPalette(_paletteData);
+
+	_mouseCursor = addSprite(new Mouse435(_vm, 0x10ED160A, 20, 620));
+
+	for (int i = 0; i < 18; i++) {
+		_asTntItems[i] = addSprite(new AsScene1202TntItem(_vm, this, i));
+		_vm->_collisionMan->addSprite(_asTntItems[i]);
+	}
+
+	addSprite(new StaticSprite(_vm, 0x8E8419C1, 1100));
+
+	if (getGlobalVar(0x000CF819)) {
+		SetMessageHandler(&Scene1202::handleMessage453D90);
+	}
+
+	_soundResource1.play(0x40106542);
+	_soundResource2.load(0x40005446);
+	_soundResource2.load(0x40005446);
+	_soundResource2.load(0x68E25540);
+
+}
+
+Scene1202::~Scene1202() {
+	if (isSolved()) {
+		setGlobalVar(0x000CF819, 1);
+	}
+}
+
+void Scene1202::update() {
+	Scene::update();
+	if (_soundFlag) {
+		if (!_soundResource4.isPlaying()) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
+	} else if (_counter == 0 && isSolved()) {
+		SetMessageHandler(&Scene1202::handleMessage453D90);
+		setGlobalVar(0x000CF819, 1);
+		doPaletteEffect();
+		_soundResource4.play();
+		_soundFlag = true;
+	} else if (_index >= 0 && _counter == 0) {
+		int index2 = kScene1202Table[_index];
+		_asTntItems[_index]->sendMessage(0x2001, getSubVar(0x10055D14, index2), this);
+		_asTntItems[index2]->sendMessage(0x2001, getSubVar(0x10055D14, _index), this);
+		int temp = getSubVar(0x10055D14, index2);
+		setSubVar(0x10055D14, index2, getSubVar(0x10055D14, _index));
+		setSubVar(0x10055D14, _index, temp);
+		_counter = 2;
+		_index = -1;
+		if (_flag) {
+			_soundResource2.play();
+		} else {
+			_soundResource3.play();
+		}
+		_flag = !_flag;
+	}
+}
+
+uint32 Scene1202::handleMessage453C10(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = 0;
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		// TODO: Debug/Cheat stuff
+		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_soundFlag) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
+		break;
+	case 0x000D:
+		if (param.asInteger() == 0x14210006) {
+			// TODO: Debug/Cheat stuff
+			messageResult = 1;
+		}
+		break;
+	case 0x2000:
+		_index = (int)param.asInteger();
+		break;
+	case 0x2002:
+		_counter--;
+		break;
+	}
+	return messageResult;
+}
+
+uint32 Scene1202::handleMessage453D90(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
+		break;
+	}
+	return 0;
+}
+
+bool Scene1202::isSolved() {
+	return 
+		getSubVar(0x10055D14,  0) ==  0 && getSubVar(0x10055D14,  3) ==  3 && 
+		getSubVar(0x10055D14,  6) ==  6 && getSubVar(0x10055D14,  9) ==  9 &&
+		getSubVar(0x10055D14, 12) == 12 && getSubVar(0x10055D14, 15) == 15;
+}
+
+void Scene1202::doPaletteEffect() {
+#if 0 // TODO
+	Palette2 *palette2 = (Palette2*)_palette;
+	palette2->startFadeToPalette(24);
+#endif
 }
 
 } // End of namespace Neverhood

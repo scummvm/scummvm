@@ -38,7 +38,7 @@ public:
 	Palette(NeverhoodEngine *vm, const char *filename);
 	// Create from resource with fileHash
 	Palette(NeverhoodEngine *vm, uint32 fileHash);
-	~Palette();
+	virtual ~Palette();
 	void usePalette();
 	void addPalette(const char *filename, int toIndex, int count, int fromIndex);
 	void addPalette(uint32 fileHash, int toIndex, int count, int fromIndex);
@@ -60,7 +60,8 @@ public:
 	Palette2(NeverhoodEngine *vm);
 	// TODO: Other ctors
 	Palette2(NeverhoodEngine *vm, uint32 fileHash);
-	~Palette2();
+	virtual ~Palette2();
+	void copyBasePalette(int toIndex, int count, int fromIndex);
 	void addPalette(uint32 fileHash, int toIndex, int count, int fromIndex);
 	void startFadeToPalette(int counter);
 public:

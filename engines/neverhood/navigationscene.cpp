@@ -25,7 +25,7 @@
 
 namespace Neverhood {
 
-NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint32 navigationListId, int navigationIndex, byte *itemsTypes)
+NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint32 navigationListId, int navigationIndex, const byte *itemsTypes)
 	: Scene(vm, parentModule, true), _itemsTypes(itemsTypes), _navigationIndex(navigationIndex), _smackerDone(false),
 	_soundFlag1(false), _soundFlag2(false), _smackerFileHash(0), _interactive(true), _done(false) {
 
@@ -64,8 +64,11 @@ NavigationScene::~NavigationScene() {
 	// TODO Sound1ChList_sub_408110(0);
 }
 
-byte NavigationScene::getNavigationAreaType() {
-	return 0; // TODO
+int NavigationScene::getNavigationAreaType() {
+	NPoint mousePos;
+	mousePos.x = _mouseCursor->getX();
+	mousePos.y = _mouseCursor->getY();
+	return _mouseCursor->sendPointMessage(0x2064, mousePos, this);
 }
 
 void NavigationScene::update() {

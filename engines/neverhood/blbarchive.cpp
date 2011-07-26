@@ -105,12 +105,11 @@ void BlbArchive::load(uint index, byte *buffer, uint32 size) {
 
 byte *BlbArchive::getEntryExtData(uint index) {
 	BlbArchiveEntry &entry = _entries[index];
-	return _extData && entry.extDataOfs != 0 ? &_extData[entry.extDataOfs - 1] : NULL;
+	return (_extData && entry.extDataOfs != 0) ? &_extData[entry.extDataOfs - 1] : NULL;
 }
 
 Common::SeekableReadStream *BlbArchive::createStream(uint index) {
 	const BlbArchiveEntry &entry = _entries[index];
-	//debug("entry.offset = %08X; entry.offset + entry.diskSize = %08X", entry.offset, entry.offset + entry.diskSize);
 	return new Common::SafeSubReadStream(&_fd, entry.offset, entry.offset + entry.diskSize);
 }
 

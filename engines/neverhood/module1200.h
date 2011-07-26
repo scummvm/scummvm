@@ -70,9 +70,9 @@ protected:
 	void sub40D380();
 };
 
-class Class468 : public AnimatedSprite {
+class AsScene1201RightDoor : public AnimatedSprite {
 public:
-	Class468(NeverhoodEngine *vm, Sprite *klayman, bool flag);
+	AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman, bool flag);
 protected:
 	SoundResource _soundResource;
 	Sprite *_klayman;
@@ -91,10 +91,10 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class Class463 : public AnimatedSprite {
+class AsScene1201TntMan : public AnimatedSprite {
 public:
-	Class463(NeverhoodEngine *vm, Scene *parentScene, Sprite *class466, bool flag);
-	virtual ~Class463();
+	AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sprite *class466, bool flag);
+	virtual ~AsScene1201TntMan();
 protected:
 	Scene *_parentScene;
 	Sprite *_class466;
@@ -111,12 +111,54 @@ protected:
 
 class Class465 : public AnimatedSprite {
 public:
-	Class465(NeverhoodEngine *vm, Sprite *class463);
+	Class465(NeverhoodEngine *vm, Sprite *asTntMan);
 	~Class465();
 protected:
-	Sprite *_class463;
+	Sprite *_asTntMan;
 	void update();
 	void spriteUpdate40D150();
+};
+
+class AsScene1201Match : public AnimatedSprite {
+public:
+	AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource;
+	int _countdown;
+	int _status;
+	void update();
+	uint32 handleMessage40C2D0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage40C320(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage40C360(int messageNum, const MessageParam &param, Entity *sender);
+	void sub40C3E0();
+	void sub40C420();
+	void sub40C470();
+	void sub40C4C0();
+	void sub40C4F0();
+};
+
+class AsScene1201Creature : public AnimatedSprite {
+public:
+	AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman);
+protected:
+	Scene *_parentScene;
+	Sprite *_klayman;
+	SoundResource _soundResource;
+	int _countdown1;
+	int _countdown2;
+	int _countdown3;
+	bool _flag;
+	void update();
+	uint32 handleMessage40C710(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage40C7B0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage40C830(int messageNum, const MessageParam &param, Entity *sender);
+	void sub40C8E0();
+	void sub40C930();
+	void sub40C960();
+	void sub40C990();
+	void sub40C9B0();
+	void sub40C9E0();
 };
 
 class AsScene1201LeftDoor : public AnimatedSprite {
@@ -144,16 +186,55 @@ public:
 protected:
 	// TODO ResourceTable _resourceTable1;
 	// TODO ResourceTable _resourceTable2;
-	Sprite *_class461;
-	Sprite *_class463;
-	Sprite *_class462;
+	Sprite *_asMatch;
+	Sprite *_asTntMan;
+	Sprite *_asCreature;
 	Sprite *_class466;
 	Sprite *_asLeftDoor;
-	Sprite *_class468;
+	Sprite *_asRightDoor;
 	Sprite *_asTape;
 	bool _flag;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+// Scene1202
+
+class AsScene1202TntItem : public AnimatedSprite {
+public:
+	AsScene1202TntItem(NeverhoodEngine *vm, Scene *parentScene, int index);
+protected:
+	Scene *_parentScene;
+	int _index, _index2;
+	uint32 handleMessage453FE0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage454060(int messageNum, const MessageParam &param, Entity *sender);
+	void sub4540A0();
+	void sub4540D0();
+	void sub454100();
+	void sub454160();
+};
+
+class Scene1202 : public Scene {
+public:
+	Scene1202(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Scene1202();
+protected:
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	SoundResource _soundResource3;
+	SoundResource _soundResource4;
+	PaletteResource _paletteResource;
+	Sprite *_asTntItems[18];
+	int _counter;
+	int _index;
+	byte _paletteData[1024];
+	bool _soundFlag;
+	bool _flag;
+	void update();
+	uint32 handleMessage453C10(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage453D90(int messageNum, const MessageParam &param, Entity *sender);
+	bool isSolved();
+	void doPaletteEffect();
 };
 
 } // End of namespace Neverhood

@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	blbarchive.o \
 	collisionman.o \
 	detection.o \
+	diskplayerscene.o \
 	gamemodule.o \
 	gamevars.o \
 	graphics.o \
@@ -12,7 +13,10 @@ MODULE_OBJS = \
 	module.o \
 	module1000.o \
 	module1200.o \
+	module1400.o \
 	module1500.o \
+	module1700.o \
+	module1800.o \
 	module2300.o \
 	mouse.o \
 	navigationscene.o \

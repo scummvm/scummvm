@@ -20,37 +20,44 @@
  *
  */
 
-#ifndef NEVERHOOD_NAVIGATIONSCENE_H
-#define NEVERHOOD_NAVIGATIONSCENE_H
+#ifndef NEVERHOOD_MODULE1800_H
+#define NEVERHOOD_MODULE1800_H
 
 #include "neverhood/neverhood.h"
-#include "neverhood/resourceman.h"
+#include "neverhood/module.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
 
-class NavigationScene : public Scene {
+// Module1800
+
+class Module1800 : public Module {
 public:
-	NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint32 navigationListId, int navigationIndex, const byte *itemsTypes);
-	virtual ~NavigationScene();
-	int getNavigationAreaType();
+	Module1800(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Module1800();
 protected:
-	SmackerPlayer *_smackerPlayer;
-	bool _smackerDone;
-	NavigationList *_navigationList;
-	int _navigationIndex;
-	uint32 _smackerFileHash;
-	bool _interactive;
-	bool _soundFlag1;
-	bool _soundFlag2;
-	bool _done;
-	const byte *_itemsTypes;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void createMouseCursor();
-	void handleNavigation(const NPoint &mousePos);
+	// TODO ResourceTable _resourceTable;
+	void createScene1801(int which);			
+	void createScene1802(int which);			
+	void createScene1803(int which);			
+	void createScene1804(int which);
+	void createScene1804b(int which);			
+	void createScene1805(int which);			
+	void createScene1806(int which);			
+	void createScene1807(int which);			
+	void createScene1808(int which);			
+	void createScene1809(int which);			
+	void updateScene1801();			
+	void updateScene1802();			
+	void updateScene1803();			
+	void updateScene1804();			
+	void updateScene1805();			
+	void updateScene1806();			
+	void updateScene1807();			
+	void updateScene1808();			
+	void updateScene1809();			
 };
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_NAVIGATIONSCENE_H */
+#endif /* NEVERHOOD_MODULE1800_H */

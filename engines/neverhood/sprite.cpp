@@ -93,6 +93,11 @@ void Sprite::createSurface(int surfacePriority, int16 width, int16 height) {
 	_surface = new BaseSurface(_vm, surfacePriority, width, height);
 }
 
+int16 Sprite::defFilterY(int16 y) {
+	// TODO return y - g_screen->field_26;
+	return y;
+}
+
 // StaticSprite
 
 StaticSprite::StaticSprite(NeverhoodEngine *vm, int objectPriority)
@@ -209,7 +214,6 @@ AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surface
 	_x = x;
 	_y = y;
 	setFileHash(fileHash, 0, -1);
-	
 }
 
 void AnimatedSprite::init() {
@@ -428,10 +432,7 @@ void AnimatedSprite::updateFrameInfo() {
 }
 
 void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {
-	NDimensions dimensions;
-	// TODO dimensions = getAnimatedSpriteDimensions(fileHash);
-	dimensions.width = 640;
-	dimensions.height = 480;
+	NDimensions dimensions = _animResource.loadSpriteDimensions(fileHash);
 	_surface = new BaseSurface(_vm, surfacePriority, dimensions.width, dimensions.height);
 }
 

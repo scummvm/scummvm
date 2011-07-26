@@ -52,7 +52,7 @@ void CollisionMan::setHitRects(HitRectList *hitRects) {
 }
 
 void CollisionMan::clearHitRects() {
-	_hitRects = 0;
+	_hitRects = NULL;
 }
 
 HitRect *CollisionMan::findHitRectAtPos(int16 x, int16 y) {
@@ -82,7 +82,12 @@ void CollisionMan::addSprite(Sprite *sprite) {
 }
 
 void CollisionMan::removeSprite(Sprite *sprite) {
-	// TODO
+	for (uint index = 0; index < _sprites.size(); index++) {
+		if (_sprites[index] == sprite) {
+			_sprites.remove_at(index);
+			break;
+		}
+	}
 }
 
 void CollisionMan::clearSprites() {

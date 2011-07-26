@@ -55,7 +55,10 @@ public:
 	void open(uint32 fileHash, bool keepLastFrame);
 	void close();
 	void gotoFrame(uint frameNumber);
+	uint32 getFrameCount();
+	uint32 getFrameNumber(); 
 	uint getStatus();
+	void setDrawPos(int16 x, int16 y);
 protected:
 	Scene *_scene;
 	Palette *_palette;
@@ -67,6 +70,7 @@ protected:
 	bool _keepLastFrame;
 	bool _flag2;
 	bool _dirtyFlag;
+	int _drawX, _drawY;
 	void update();
 	void updatePalette();
 };

@@ -43,7 +43,7 @@ BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 h
 	_clipRect.x2 = 640;
 	_clipRect.y2 = 480;
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	_surface->create(_sysRect.width, _sysRect.height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 BaseSurface::~BaseSurface() {
@@ -51,7 +51,6 @@ BaseSurface::~BaseSurface() {
 }
 
 void BaseSurface::draw() {
-	debug(8, "BaseSurface::draw()");
 	if (_surface && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
 		// TODO: _sysRect alternate drawing code (is that used?)
 		_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect, _transparent);
@@ -223,9 +222,9 @@ void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPi
 					skip = READ_LE_UINT16(source);
 					copy = READ_LE_UINT16(source + 2);
 					source += 4;
-					if (!flipX)
+					if (!flipX) {
 						memcpy(dest + skip, source, copy);
-					else {
+					} else {
 						byte *flipDest = dest + width - skip - 1;
 						for (int xc = 0; xc < copy; xc++) {
 							*flipDest-- = source[xc];
@@ -247,8 +246,6 @@ void unpackSpriteRleRepl(byte *source, int width, int height, byte *dest, int de
 
 	// TODO: Flip Y
 	
-	debug("unpackSpriteRleRepl(%d, %d)", oldColor, newColor);
-
 	int16 rows, chunks;
 	int16 skip, copy;
 

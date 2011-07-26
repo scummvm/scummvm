@@ -313,6 +313,21 @@ void AnimResource::setRepl(byte oldColor, byte newColor) {
 	_replNewColor = newColor;
 }
 
+NDimensions AnimResource::loadSpriteDimensions(uint32 fileHash) {
+	NDimensions dimensions;
+	byte *resDimensions = _vm->_res->getResourceExtDataByHash(fileHash);
+	if (resDimensions) {
+		dimensions.width = READ_LE_UINT16(resDimensions + 0);
+		dimensions.height = READ_LE_UINT16(resDimensions + 2);
+	} else {
+		dimensions.width = 0;
+		dimensions.height = 0;
+	}
+	return dimensions;
+}
+
+// MouseCursorResource
+
 MouseCursorResource::MouseCursorResource(NeverhoodEngine *vm) 
 	: _cursorSprite(vm), _cursorNum(4), _currFileHash(0) {
 

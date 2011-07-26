@@ -48,12 +48,15 @@ public:
 	bool checkCollision(NRect &rect);
 	int16 getX() const { return _x; }
 	int16 getY() const { return _y; }
+	void setX(int16 value) { _x = value; }
+	void setY(int16 value) { _y = value; }
 	uint16 getFlags() const { return _flags; }
 	bool isDoDeltaX() const { return _doDeltaX; }
 	bool isDoDeltaY() const { return _doDeltaY; }
 	NRect& getRect() { return _rect; }
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void loadDataResource(uint32 fileHash);
+	int16 defFilterY(int16 y);
 protected:
 	void (Sprite::*_spriteUpdateCb)();
 	Common::String _spriteUpdateCbName; // For debugging purposes
@@ -71,7 +74,6 @@ protected:
 	uint16 _flags;
 	//0000004A field4A		dw ? // seems to be unused except in ctor
 	DataResource _dataResource;
-	//void update();
 	void createSurface(int surfacePriority, int16 width, int16 height);
 	void handleSpriteUpdate() {
 		if (_spriteUpdateCb)
@@ -91,10 +93,10 @@ public:
 	StaticSprite(NeverhoodEngine *vm, const char *filename, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition, int16 width = 0, int16 height = 0);
 	StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition, int16 width = 0, int16 height = 0);
 	void load(uint32 fileHash, bool dimensions, bool position);
+	void update();
 protected:
 	SpriteResource _spriteResource;
 	void init(uint32 fileHash, int surfacePriority, int16 x, int16 y, int16 width, int16 height);
-	void update();
 };
 
 #define SetAnimationCallback1(callback) _callback1Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug("SetAnimationCallback1(" #callback ")"); _callback1CbName = #callback

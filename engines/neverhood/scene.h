@@ -50,6 +50,7 @@ public:
 	void setSurfacePriority(BaseSurface *surface, int priority);
 	void deleteSprite(Sprite **sprite);
 	Background *addBackground(Background *background);
+	void update();
 protected:
 	Module *_parentModule;
 	Common::Array<Entity*> _entities;
@@ -89,7 +90,6 @@ protected:
 	bool _prevVisible;
 	int _messageValue;
 	// TODO 000000CF field_CF		db ?
-	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void smackerUpdate();
 	uint32 smackerHandleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -102,6 +102,7 @@ protected:
 	void runMessageList();
 	void setRectList(uint32 id);
 	void setRectList(RectList *rectList);
+	void clearRectList();
 	void messageList402220();
 	void loadDataResource(uint32 fileHash);
 };

@@ -69,12 +69,10 @@ void SmackerDoubleSurface::draw() {
 
 SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag)
 	: Entity(vm, 0), _scene(scene), _doubleSurface(doubleSurface), _dirtyFlag(false), _flag2(false),
-	_palette(NULL), _smackerDecoder(NULL), _smackerSurface(NULL), _stream(NULL), _smackerFirst(true) {
-
-	debug("_smackerSurface = %p", (void*)_smackerSurface);
+	_palette(NULL), _smackerDecoder(NULL), _smackerSurface(NULL), _stream(NULL), _smackerFirst(true),
+	_drawX(-1), _drawY(-1) {
 
 	SetUpdateHandler(&SmackerPlayer::update);
-
 	open(fileHash, flag);
 }
 
@@ -121,14 +119,31 @@ void SmackerPlayer::close() {
 }
 
 void SmackerPlayer::gotoFrame(uint frameNumber) {
+	// TODO?
+}
+
+uint32 SmackerPlayer::getFrameCount() {
+	return _smackerDecoder ? _smackerDecoder->getFrameCount() : 0;
+}
+
+uint32 SmackerPlayer::getFrameNumber() {
+	return _smackerDecoder ? _smackerDecoder->getCurFrame() : 0;
 }
 
 uint SmackerPlayer::getStatus() {
 	return 0;
 }
 
-void SmackerPlayer::update() {
+void SmackerPlayer::setDrawPos(int16 x, int16 y) {
+	_drawX = x;
+	_drawY = y;
+	if (_smackerSurface) {
+		_smackerSurface->getDrawRect().x = _drawX;
+		_smackerSurface->getDrawRect().y = _drawY;
+	}
+}
 
+void SmackerPlayer::update() {
 	debug(8, "SmackerPlayer::update()");
 
 	if (!_smackerDecoder)
@@ -144,15 +159,18 @@ void SmackerPlayer::update() {
 		const Graphics::Surface *smackerFrame = _smackerDecoder->decodeNextFrame();
 
 		if (_smackerFirst) {
-			if (_doubleSurface) {
-				_smackerSurface->getDrawRect().x = 320 - _smackerDecoder->getWidth();
-				_smackerSurface->getDrawRect().y = 240 - _smackerDecoder->getHeight();
-				_smackerSurface->setSmackerFrame(smackerFrame);
-			} else {
-				_smackerSurface->getDrawRect().x = (640 - _smackerDecoder->getWidth()) / 2;
-				_smackerSurface->getDrawRect().y = (480 - _smackerDecoder->getHeight()) / 2;
-				_smackerSurface->setSmackerFrame(smackerFrame);
+			_smackerSurface->setSmackerFrame(smackerFrame);
+			if (_drawX < 0 || _drawY < 0) {
+				if (_doubleSurface) {
+					_drawX = 320 - _smackerDecoder->getWidth();
+					_drawY = 240 - _smackerDecoder->getHeight();
+				} else {
+					_drawX = (640 - _smackerDecoder->getWidth()) / 2;
+					_drawY = (480 - _smackerDecoder->getHeight()) / 2;
+				}
 			}
+			_smackerSurface->getDrawRect().x = _drawX;
+			_smackerSurface->getDrawRect().y = _drawY;
 			_smackerFirst = false;
 		}
 		
@@ -164,7 +182,6 @@ void SmackerPlayer::update() {
 		_dirtyFlag = true;
 
 		if (_smackerDecoder->hasDirtyPalette()) {
-			debug("updatePalette()");
 			updatePalette();
 		}
 
@@ -179,7 +196,6 @@ void SmackerPlayer::update() {
 		}
 		
 	}
-
 }
 
 void SmackerPlayer::updatePalette() {

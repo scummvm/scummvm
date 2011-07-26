@@ -25,7 +25,10 @@
 #include "neverhood/graphics.h"
 #include "neverhood/module1000.h"
 #include "neverhood/module1200.h"
+#include "neverhood/module1400.h"
 #include "neverhood/module1500.h"
+#include "neverhood/module1700.h"
+#include "neverhood/module1800.h"
 #include "neverhood/module2300.h"
 
 namespace Neverhood {
@@ -110,8 +113,13 @@ void GameModule::startup() {
 	// TODO: Displaying of error text probably not needed in ScummVM
 //	createModule1500(0); // Logos and intro video //Real
 //	createModule1000(-1);
-//	createModule2300(0);
-	createModule1200(0);
+//	createModule2300(2);
+	_vm->gameState().sceneNum = 6;
+	//createModule1200(-1);
+	//createModule1800(-1);
+	//createModule1700(-1);
+	//createModule1700(1);
+	createModule1400(-1);
 }
 
 void GameModule::createModule1000(int which) {
@@ -149,11 +157,35 @@ void GameModule::updateModule1200() {
 		delete _childObject;
 		_childObject = NULL;
 		if (_field20 == 1) {
+			error("// TODO createModule2600(0);");
 			// TODO createModule2600(0);
 			// TODO _childObject->handleUpdate();
 		} else {
 			createModule2300(2);
 			_childObject->handleUpdate();
+		}
+	}
+}
+
+void GameModule::createModule1400(int which) {
+	setGlobalVar(0x91080831, 0x00AD0012);
+	_childObject = new Module1400(_vm, this, which);
+	SetUpdateHandler(&GameModule::updateModule1400);
+}
+
+void GameModule::updateModule1400() {
+	if (!_childObject)
+		return;
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			error("WEIRD!");
+		} else {
+			// TODO createModule1600(1);
+			// TODO _childObject->handleUpdate();
 		}
 	}
 }
@@ -175,6 +207,61 @@ void GameModule::updateModule1500() {
 		_childObject = NULL;
 		createModule1000(0);
 		_childObject->handleUpdate();
+	}
+}
+
+void GameModule::createModule1700(int which) {
+	setGlobalVar(0x91080831, 0x04212331);
+	_childObject = new Module1700(_vm, this, which);
+	SetUpdateHandler(&GameModule::updateModule1700);
+}
+
+void GameModule::updateModule1700() {
+	if (!_childObject)
+		return;
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		debug("Module1700 done; _field20 = %d", _field20);
+		if (_field20 == 1) {
+			// TODO createModule2900(3);
+			// TODO _childObject->handleUpdate();
+		} else {
+			// TODO createModule1600(2);
+			// TODO _childObject->handleUpdate();
+		}
+	}
+}
+
+void GameModule::createModule1800(int which) {
+	setGlobalVar(0x91080831, 0x04A14718);
+	_childObject = new Module1800(_vm, this, which);
+	SetUpdateHandler(&GameModule::updateModule1800);
+}
+
+void GameModule::updateModule1800() {
+	if (!_childObject)
+		return;
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			// TODO GameState_clear();
+			// TODO GameModule_handleKeyEscape();
+		} else if (_field20 == 2) {
+			// TODO createModule2700(0);
+			// TODO _childObject->handleUpdate();
+		} else if (_field20 == 3) {
+			// TODO createModule3000(3);
+			// TODO _childObject->handleUpdate();
+		} else {
+			// TODO createModule2800(0);
+			// TODO _childObject->handleUpdate();
+		}
 	}
 }
 
@@ -223,13 +310,11 @@ void GameModule::updateModule2300() {
 }
 
 void GameModule::createModule2400(int which) {
-	debug("createModule2400");
-	_vm->_system->quit();
+	error("createModule2400");
 }
 
 void GameModule::createModule3000(int which) {
-	debug("createModule3000");
-	_vm->_system->quit();
+	error("createModule3000");
 }
 
 } // End of namespace Neverhood

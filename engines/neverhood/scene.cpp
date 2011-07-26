@@ -88,14 +88,16 @@ void Scene::draw() {
 		if (_smackerPlayer->getSurface())
 			_smackerPlayer->getSurface()->draw();
 	} else {
+#if 0	
 		if (_surfaceFlag) {
 			// TODO g_screen->copyDirtyRects();
 			for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
 				(*iter)->addDirtyRect();
 			// TODO g_screen->addDirtyRects();
 		}
+#endif		
 		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++) {
-			debug(4, "priority = %d", (*iter)->getPriority());
+			//debug(4, "priority = %d", (*iter)->getPriority());
 			(*iter)->draw();
 		}
 	}	
@@ -498,6 +500,11 @@ void Scene::setRectList(uint32 id) {
 
 void Scene::setRectList(RectList *rectList) {
 	_rectList = rectList;
+	_rectType = 1;
+}
+
+void Scene::clearRectList() {
+	_rectList = NULL;
 	_rectType = 1;
 }
 

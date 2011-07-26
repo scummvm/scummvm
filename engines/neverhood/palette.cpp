@@ -160,7 +160,6 @@ void Palette2::update() {
 	if (_status == 1) {
 		Palette::update();
 	} else if (_status == 2) {
-	debug("... _palCounter = %d", _palCounter);
 		if (_palCounter > 1) {
 			for (int i = 0; i < 256; i++) {
 				fadeColor(_palette + i * 4, _basePalette[i * 4 + 0], _basePalette[i * 4 + 1], _basePalette[i * 4 + 2]);
@@ -172,6 +171,12 @@ void Palette2::update() {
 			_status = 0;
 		}
 	}
+}
+
+void Palette2::copyBasePalette(int toIndex, int count, int fromIndex) {
+	if (toIndex + count > 256)
+		count = 256 - toIndex;
+	memcpy(_basePalette + toIndex * 4, _palette + fromIndex * 4, count * 4);		
 }
 
 void Palette2::addPalette(uint32 fileHash, int toIndex, int count, int fromIndex) {
