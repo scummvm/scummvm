@@ -2304,7 +2304,7 @@ void Actor::updateStatus14_Chapter2() {
 
 	if (_status == kActorStatus17 || !getScene()->getActor(10)->isVisible()) {
 		updateStatus(kActorStatusEnabled);
-		getSharedData()->actorVerticalOffset[_index] = 160;
+		getSharedData()->setData(_index - 8, 160);
 	}
 
 	if (_status != kActorStatus16) {
@@ -2473,7 +2473,7 @@ void Actor::updateStatus15_Chapter2_Helper() {
 }
 
 void Actor::updateStatus15_Chapter2_Player() {
-	Actor *player = getScene()->getActor(getScene()->getPlayerIndex());
+	Actor *player = getScene()->getActor();
 	ActorIndex actorIndex = getSharedData()->getData(38);
 
 	Common::Point sum = _point1 + _point2;
@@ -2608,6 +2608,7 @@ bool Actor::updateStatus15_isNoVisibleOrStatus17() {
 }
 
 void Actor::updateStatus15_Chapter2_Actor11() {
+
 	error("[Actor::updateStatus15_Chapter2_Actor11] not implemented!");
 }
 

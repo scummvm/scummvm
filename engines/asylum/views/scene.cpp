@@ -2042,7 +2042,7 @@ Actor* Scene::getActor(ActorIndex index) {
 	if (!_ws)
 		error("[Scene::getActor] WorldStats not initialized properly!");
 
-	ActorIndex computedIndex =  (index != -1) ? index : _playerIndex;
+	ActorIndex computedIndex =  (index != kActorInvalid) ? index : _playerIndex;
 
 	if (computedIndex < 0 || computedIndex >= (int16)_ws->actors.size())
 		error("[Scene::getActor] Invalid actor index: %d ([0-%d] allowed)", computedIndex, _ws->actors.size() - 1);

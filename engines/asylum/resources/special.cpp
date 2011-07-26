@@ -245,22 +245,20 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 	case 28:
 	case 29:
 		if (actor->isVisible()) {
-			error("[Special::chapter2] Not implemented!");
-			// FIXME: This is wrong, the 386th object is used as an offset to the proper actor
-			//Object *obj386 = getWorld()->objects[386];
+			// Update actor
+			Actor *refActor = getScene()->getActor(actorIndex - 9); // Original uses offset to object array (+ offset to actor).
 
-			//actor->getPoint1()->x = obj386->getSoundY();
-			//actor->getPoint1()->y = obj386->getField688() + getWorld()->coordinates[actorIndex - 22]; // FIXME out of bound access for actorIndex == 29
-			//actor->setFrameIndex(obj386->getField67C());
-			//actor->setDirection(obj386->getField6A4());
+			*actor->getPoint1() = *refActor->getPoint1();
+			actor->getPoint1()->y += getSharedData()->getData(actorIndex - 8);
+			actor->setFrameIndex(refActor->getFrameIndex());
+			actor->setDirection(refActor->getDirection());
 
-			//// Get the resource Id
-			//Actor *actor0 = getScene()->getActor(0);
-			//Actor *actor13 = getScene()->getActor(13);
-			//int32 index = (actor13->getDirection() > 4) ? 8 - actor13->getDirection() : actor13->getDirection();
-			//ResourceId id = actor0->getResourcesId((uint32)index);
+			// Get the resource Id
+			Actor *actor13 = getScene()->getActor(13);
+			int32 direction = (actor13->getDirection() > kDirectionS) ? 8 - actor13->getDirection() : actor13->getDirection();
+			ResourceId id = actor->getResourcesId(actorIndex + direction);
 
-			//actor->setResourceId(id);
+			actor->setResourceId(id);
 		}
 		break;
 
