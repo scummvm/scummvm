@@ -2409,7 +2409,86 @@ void Actor::updateStatus14_Chapter11() {
 }
 
 void Actor::updateStatus15_Chapter2() {
-	error("[Actor::updateStatus15_Chapter2] not implemented!");
+	Actor *player = getScene()->getActor();
+
+	Common::Point sum = _point1 + _point2;
+	Common::Point sumPlayer = *player->getPoint1() + *player->getPoint2();
+
+	if (_status == kActorStatus17 || !getScene()->getActor(10)->isVisible()) {
+		updateStatus(kActorStatusEnabled);
+		getSharedData()->setData(_index - 8, 160);
+	}
+
+	if (_frameIndex == 1)
+		getSound()->playSound(getWorld()->soundResourceIds[1], false, Config.sfxVolume - 10);
+
+	if (player->getStatus() == kActorStatus17 && _frameIndex < 6)
+		updateStatus(kActorStatusEnabled);
+
+	uint32 dist = euclidianDistance(sumPlayer, sum);
+	uint32 offset = (dist <= 10) ? 7 : 12;
+	if (dist > 20) {
+		faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
+		getScene()->getActor(_index + 9)->setDirection(_direction);
+	}
+
+	if (_frameIndex < 5 || !getSharedData()->getData2(_index))
+		_frameIndex++;
+
+	if (sumPlayer.x > sum.x)
+		_point1.x += offset;
+	else if (sumPlayer.x < sum.x)
+		_point1.x -= offset;
+
+	if (sumPlayer.y > sum.y)
+		_point1.y += offset;
+	else if (sumPlayer.y < sum.y)
+		_point1.y -= offset;
+
+	if (dist < (offset + 1)) {
+		if (player->getStatus() != kActorStatus16 && player->getStatus() != kActorStatus17 && player->getFrameIndex() < 6) {
+			_point1 = sumPlayer - _point2;
+
+			updateStatus15_Chapter2_Helper();
+			getSpeech()->playPlayer(51);
+			_vm->setGameFlag(kGameFlag219);
+
+			player->updateFromDirection((ActorDirection)((_direction + 4) & 7));
+			player->updateStatus(kActorStatus16);
+
+			getSharedData()->setData2(_index, 0);
+		}
+	}
+
+	if (_frameIndex > _frameCount - 1) {
+		switch (rnd(4)) {
+		default:
+		case 0:
+			sum.y -= 200;
+			break;
+
+		case 1:
+			sum.y += 200;
+			break;
+
+		case 2:
+			sum.x -= 200;
+			break;
+
+		case 3:
+			sum.x += 200;
+			break;
+		}
+
+		_frameIndex = 0;
+
+		if (getSharedData()->getData(40) <= 2)
+			processStatus(sum.x, sum.y, false);
+		else
+			updateStatus(kActorStatusEnabled);
+
+		getSharedData()->setData2(_index, 0);
+	}
 }
 
 void Actor::updateStatus15_Chapter2_Helper() {
