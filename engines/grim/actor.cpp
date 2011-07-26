@@ -891,7 +891,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 
 	if (msg[0] != 0) {
 		GrimEngine::SpeechMode m = g_grim->getSpeechMode();
-		if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly || background)
+		if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly)
 			return;
 
 		TextObject *textObject = new TextObject(false, true);
