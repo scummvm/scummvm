@@ -1526,6 +1526,15 @@ void GrimEngine::setScene(const char *name) {
 void GrimEngine::setScene(Scene *scene) {
 	if (scene == _currScene)
 		return;
+
+	// Stop the actors. This fixes bug #289 (https://github.com/residual/residual/issues/289)
+	// and it makes sense too, since when changing set the directions
+	// and coords change too.
+	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
+		Actor *a = i->_value;
+		a->stopWalking();
+	}
+
 	Scene *lastScene = _currScene;
 	_currScene = scene;
 	_currScene->setSoundParameters(20, 127);
