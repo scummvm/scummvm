@@ -739,7 +739,6 @@ void KeyframeComponent::fade(FadeMode fadeMode, int fadeLength) {
 			_anim._time = -1;
 			_anim._fade = 0.f;
 			_paused = false;
-			activate();
 		} else {
 			return;
 		}
