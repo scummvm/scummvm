@@ -151,8 +151,7 @@ public:
 	int32 movieIndex;
 
 	// Saved scene data
-	ResourceId      cursorResources[11]; // FIXME (should be 8)
-	int32           actorVerticalOffset[5];
+	ResourceId      cursorResources[13];
 	ResourceId      sceneFonts[3];
 	int32           smallCurUp;
 	int32           smallCurDown;
