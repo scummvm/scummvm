@@ -2607,8 +2607,83 @@ bool Actor::updateStatus15_isNoVisibleOrStatus17() {
 }
 
 void Actor::updateStatus15_Chapter2_Actor11() {
+	Actor *player = getScene()->getActor();
 
-	error("[Actor::updateStatus15_Chapter2_Actor11] not implemented!");
+	Common::Point sum = _point1 + _point2;
+	Common::Point sumPlayer = *player->getPoint1() + *player->getPoint2();
+
+	Common::Rect rect;
+	rectFromDirection(&rect, _direction, sum);
+
+	switch (_frameIndex) {
+	default:
+		break;
+
+	case 1:
+		getSound()->playSound(getWorld()->soundResourceIds[4], false, Config.sfxVolume - 10);
+		break;
+
+	case 9:
+		getSharedData()->setData(37, 1);
+		getSharedData()->setData(42, getSharedData()->getData(42) + 1);
+		break;
+
+	case 11:
+		if (getSharedData()->getData(42) >= 3)
+			getSharedData()->setData(42, 0);
+		else
+			getSharedData()->setData(37, -1);
+		break;
+	}
+
+	_frameIndex += getSharedData()->getData(37);
+
+	Common::Point actionPoint = sum;
+	actionPoint.x += compareX(Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.bottom), sumPlayer);
+	actionPoint.y += compareY(Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.bottom), sumPlayer);
+
+	if (getScene()->getActor(11)->getFrameIndex() < 8
+	 && getScene()->findActionArea(kActionAreaType2, actionPoint)
+	 && !updateStatus15_Chapter2_Actor11_Helper(10, 11))
+		 _point1 = actionPoint - _point2;
+
+	if (_frameIndex != 8 || _status == kActorStatus16) { /* FIXME the status test seems useless */
+		if (_frameIndex > _frameCount - 1) {
+			_frameIndex = 0;
+
+			if (!getSharedData()->actorUpdateStatus15Check) {
+				updateStatus(kActorStatus12);
+			} else {
+				getSharedData()->actorUpdateStatus15Check = false;
+				getScene()->getActor(11)->updateStatus(kActorStatus18);
+			}
+		}
+	} else {
+		if (compare(Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.bottom), sumPlayer)) {
+
+			_vm->clearGameFlag(kGameFlag263);
+			_vm->clearGameFlag(kGameFlag264);
+			_vm->clearGameFlag(kGameFlag265);
+			_vm->clearGameFlag(kGameFlag266);
+			_vm->clearGameFlag(kGameFlag267);
+			_vm->clearGameFlag(kGameFlag268);
+			_vm->clearGameFlag(kGameFlag269);
+
+			player->update_409230();
+			player->updateStatus(kActorStatus16);
+			updateStatus15_Chapter2_Helper();
+
+			getSpeech()->playPlayer(52);
+
+			_vm->setGameFlag(kGameFlag219);
+
+		} else {
+			if ((abs(sum.y - sumPlayer.y) + abs(sum.x - sumPlayer.x)) < 100) {
+				getSharedData()->setData(41, 5);
+				getSharedData()->actorUpdateStatus15Check = true;
+			}
+		}
+	}
 }
 
 bool Actor::updateStatus15_Chapter2_Actor11_Helper(ActorIndex actorIndex1, ActorIndex actorIndex2) {
