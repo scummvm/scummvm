@@ -23,6 +23,7 @@
 #include "engines/grim/iris.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/savegame.h"
+#include "engines/grim/grim.h"
 
 namespace Grim {
 
@@ -46,7 +47,7 @@ void Iris::play(Iris::Direction dir, int x, int y, int lenght) {
 
 void Iris::draw() {
 	if (!_playing) {
-		if (_direction == Close) {
+		if (_direction == Close && g_grim->getMode() != ENGINE_MODE_SMUSH) {
 			g_driver->dimRegion(0, 0, 640, 479, 0);
 		}
 		return;
