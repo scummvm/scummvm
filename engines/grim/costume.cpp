@@ -772,23 +772,19 @@ void KeyframeComponent::setKey(int val) {
 		break;
 	case 7: // "1.0 Fade in"
 		fade(FadeIn, 1000);
-		if (!_active)
-			activate();
+		activate();
 		break;
 	case 8: // "0.5 Fade in"
 		fade(FadeIn, 500);
-		if (!_active)
-			activate();
+		activate();
 		break;
 	case 9: // "0.25 Fade in"
 		fade(FadeIn, 250);
-		if (!_active)
-			activate();
+		activate();
 		break;
 	case 10: // "0.125 Fade in"
 		fade(FadeIn, 125);
-		if (!_active)
-			activate();
+		activate();
 		break;
 	case 11: // "1.0 Fade out"
 		fade(FadeOut, 1000);
