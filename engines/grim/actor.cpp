@@ -1132,15 +1132,42 @@ void Actor::update() {
 				_walkCostume->playChoreLooping(_walkChore);
 				_walkCostume->fadeChoreIn(_walkChore, 150);
 			}
-		} else if (_walkedLast && _walkCostume->isChoring(_walkChore, false) >= 0) {
-			_walkCostume->fadeChoreOut(_walkChore, 150);
-			_walkCostume->stopChore(_walkChore);
+
+			if (_restChore >= 0) {
+				_restCostume->fadeChoreOut(_restChore, 150);
+				_restCostume->stopChore(_restChore);
+			}
+		} else {
+			if (_walkedLast && _walkCostume->isChoring(_walkChore, false) >= 0) {
+				_walkCostume->fadeChoreOut(_walkChore, 150);
+				_walkCostume->stopChore(_walkChore);
+
+				if (_restChore >= 0) {
+					_restCostume->playChoreLooping(_restChore);
+					_restCostume->fadeChoreIn(_restChore, 150);
+				}
+			}
 		}
 	}
 
 	if (_leftTurnChore >= 0) {
 		if (_walkedCur || _walkedLast)
 			_currTurnDir = 0;
+
+		if (_restChore >= 0) {
+			if (_currTurnDir != 0) {
+				if (_turnCostume->isChoring(getTurnChore(_currTurnDir), false) >= 0) {
+					_restCostume->fadeChoreOut(_restChore, 500);
+					_restCostume->stopChore(_restChore);
+				}
+			}
+			else if (_lastTurnDir != 0) {
+				if (!_walkedCur && _turnCostume->isChoring(getTurnChore(_lastTurnDir), false) >= 0) {
+					_restCostume->playChoreLooping(_restChore);
+					_restCostume->fadeChoreIn(_restChore, 150);
+				}
+			}
+		}
 
 		if (_lastTurnDir != 0 && _lastTurnDir != _currTurnDir) {
 			_turnCostume->fadeChoreOut(getTurnChore(_lastTurnDir), 150);
@@ -1155,7 +1182,7 @@ void Actor::update() {
 
 	// The rest chore might have been stopped because of a
 	// StopActorChore(nil).  Restart it if so.
-	if (_restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0)
+	if (!_walkedCur && _currTurnDir == 0 && _restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0)
 		_restCostume->playChoreLooping(_restChore);
 
 	_walkedLast = _walkedCur;
@@ -1188,7 +1215,7 @@ void Actor::update() {
 					if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
 						_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 
-					_talkCostume[0]->playChoreLooping(_talkChore[0]);
+					_talkCostume[0]->playChore(_talkChore[0]);
 				}
 			}
 		}
