@@ -33,7 +33,7 @@
 #define CONFIG_KEY         L"audiovol"
 
 // sound level pre-sets
-const int levels[] = {0, 2, 20, 45, 70, 99};
+const int levels[] = {0, 1, 20, 45, 70, 99};
 
 AudioThread::AudioThread() : 
   mixer(0),
@@ -93,7 +93,7 @@ int AudioThread::setVolume(bool up, bool minMax) {
       volume = levels[level];
     }
     else {
-      // adjust volume to be in unit steps
+      // adjust volume to be one of the preset values
       for (int i = 0; i < numLevels && level == -1; i++) {
         if (volume == levels[i]) {
           level = i;
@@ -107,7 +107,8 @@ int AudioThread::setVolume(bool up, bool minMax) {
           }
         }
       }
-      
+
+      // default to INIT_LEVEL when current not preset value
       if (level == -1) {
         level = INIT_LEVEL;
       }
