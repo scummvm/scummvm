@@ -2473,7 +2473,107 @@ void Actor::updateStatus15_Chapter2_Helper() {
 }
 
 void Actor::updateStatus15_Chapter2_Player() {
-	error("[Actor::updateStatus15_Chapter2_Player] not implemented!");
+	Actor *player = getScene()->getActor(getScene()->getPlayerIndex());
+	ActorIndex actorIndex = getSharedData()->getData(38);
+
+	Common::Point sum = _point1 + _point2;
+	Common::Point sumPlayer = *player->getPoint1() + *player->getPoint2();
+
+	_frameIndex++;
+
+	if (_frameIndex == 1)
+		getSound()->playSound(getWorld()->soundResourceIds[3], false, Config.sfxVolume - 10);
+
+	if (player->getFrameIndex() == 3) {
+
+		if (actorIndex > 12) {
+			if (sqrt((double)((sum.y - sumPlayer.y) * (sum.y - sumPlayer.y) + (sum.x - sumPlayer.x) * (sum.x - sumPlayer.x))) < 50.0) {
+				Actor *otherActor = getScene()->getActor(actorIndex);
+
+				if (otherActor->getStatus() == kActorStatus14) {
+					// FIXME: this is a bit strange, but it looks like the original does exactly that
+					Actor* actor38 = getScene()->getActor(38);
+					actor38->setFrameIndex(0);
+					*actor38->getPoint1() = *otherActor->getPoint1();
+
+					switch (actorIndex) {
+					default:
+						break;
+
+					case 13:
+						_vm->setGameFlag(kGameFlag319);
+						_vm->clearGameFlag(kGameFlag235);
+						break;
+
+					case 14:
+						_vm->setGameFlag(kGameFlag320);
+						_vm->clearGameFlag(kGameFlag235);
+						break;
+
+					case 15:
+						if (getScene()->getActor(16)->updateStatus15_isNoVisibleOrStatus17()) {
+							_vm->setGameFlag(kGameFlag321);
+							_vm->clearGameFlag(kGameFlag235);
+						}
+						break;
+
+					case 16:
+						if (getScene()->getActor(15)->updateStatus15_isNoVisibleOrStatus17()) {
+							_vm->setGameFlag(kGameFlag321);
+							_vm->clearGameFlag(kGameFlag235);
+						}
+						break;
+
+					case 17:
+						if (getScene()->getActor(21)->updateStatus15_isNoVisibleOrStatus17()) {
+							_vm->setGameFlag(kGameFlag322);
+							_vm->clearGameFlag(kGameFlag235);
+						}
+						break;
+
+					case 18:
+						if (getScene()->getActor(19)->updateStatus15_isNoVisibleOrStatus17() && getScene()->getActor(20)->updateStatus15_isNoVisibleOrStatus17()) {
+							_vm->setGameFlag(kGameFlag323);
+							_vm->clearGameFlag(kGameFlag235);
+						}
+						break;
+
+					case 19:
+						if (getScene()->getActor(18)->updateStatus15_isNoVisibleOrStatus17() && getScene()->getActor(20)->updateStatus15_isNoVisibleOrStatus17()) {
+							_vm->setGameFlag(kGameFlag323);
+							_vm->clearGameFlag(kGameFlag235);
+						}
+						break;
+
+					case 20:
+						if (getScene()->getActor(19)->updateStatus15_isNoVisibleOrStatus17() && getScene()->getActor(18)->updateStatus15_isNoVisibleOrStatus17()) {
+							_vm->setGameFlag(kGameFlag323);
+							_vm->clearGameFlag(kGameFlag235);
+						}
+						break;
+
+					case 21:
+						if (getScene()->getActor(17)->updateStatus15_isNoVisibleOrStatus17()) {
+							_vm->setGameFlag(kGameFlag322);
+							_vm->clearGameFlag(kGameFlag235);
+						}
+						break;
+					}
+
+					otherActor->updateStatus(kActorStatus17);
+					getSound()->playSound(getWorld()->soundResourceIds[2], false, Config.sfxVolume - 10);
+				}
+			}
+		}
+
+		if (actorIndex == 11)
+			updateStatus15_Chapter2_Player_Helper();
+	}
+
+	if (_frameIndex >= _frameCount) {
+		_frameIndex = 0;
+		player->updateStatus(kActorStatus14);
+	}
 }
 
 void Actor::updateStatus15_Chapter2_Player_Helper() {
