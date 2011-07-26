@@ -825,5 +825,18 @@ void DreamGenContext::cancelch1() {
 	engine->stopSound(1);
 }
 
+void DreamGenContext::getroomspaths() {
+	es = data.word(kReels);
+	bx = data.byte(kRoomnum) * 144;
+}
+
+uint8 *DreamGenContext::getroomspathsCPP() {
+	push(es);
+	es = data.word(kReels);
+	void *result = es.ptr(data.byte(kRoomnum) * 144, 144);
+	es = pop();
+	return (uint8 *)result;
+}
+
 } /*namespace dreamgen */
 

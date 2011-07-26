@@ -71,6 +71,7 @@
 	void spriteupdate();
 	void initman();
 	void mainmanCPP(Sprite *sprite);
+	void facerightway();
 	void walking();
 	void walking(Sprite *sprite);
 	void aboutturn(Sprite *sprite);
@@ -88,6 +89,8 @@
 	void liftsprite(Sprite *sprite, ObjData *objData);
 	void turnpathonCPP(uint8 param);
 	void turnpathoffCPP(uint8 param);
+	void getroomspaths();
+	uint8 *getroomspathsCPP();
 	void modifychar();
 	void lockmon();
 	void cancelch0();

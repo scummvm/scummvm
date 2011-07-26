@@ -2395,24 +2395,6 @@ decdir:
 	es.byte(bx+29) = 0;
 }
 
-void DreamGenContext::facerightway() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	getroomspaths();
-	al = data.byte(kManspath);
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = es.byte(bx+7);
-	data.byte(kTurntoface) = al;
-	data.byte(kLeavedirection) = al;
-	bx = pop();
-	es = pop();
-}
-
 void DreamGenContext::checkforexit() {
 	STACK_CHECK;
 	cl = data.byte(kRyanx);
@@ -18566,17 +18548,6 @@ success:
 	data.byte(kTurndirection) = 0;
 }
 
-void DreamGenContext::getroomspaths() {
-	STACK_CHECK;
-	al = data.byte(kRoomnum);
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	es = data.word(kReels);
-	bx = (0);
-	_add(bx, ax);
-}
-
 void DreamGenContext::copyname() {
 	STACK_CHECK;
 	push(di);
@@ -20908,7 +20879,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_findsource: findsource(); break;
 		case addr_mainman: mainman(); break;
 		case addr_aboutturn: aboutturn(); break;
-		case addr_facerightway: facerightway(); break;
 		case addr_checkforexit: checkforexit(); break;
 		case addr_adjustdown: adjustdown(); break;
 		case addr_adjustup: adjustup(); break;
@@ -21457,7 +21427,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_checkdest: checkdest(); break;
 		case addr_bresenhams: bresenhams(); break;
 		case addr_workoutframes: workoutframes(); break;
-		case addr_getroomspaths: getroomspaths(); break;
 		case addr_copyname: copyname(); break;
 		case addr_findobname: findobname(); break;
 		case addr_showicon: showicon(); break;

@@ -123,7 +123,6 @@ public:
 	static const uint16 addr_showicon = 0xca64;
 	static const uint16 addr_findobname = 0xca60;
 	static const uint16 addr_copyname = 0xca5c;
-	static const uint16 addr_getroomspaths = 0xca58;
 	static const uint16 addr_workoutframes = 0xca54;
 	static const uint16 addr_bresenhams = 0xca50;
 	static const uint16 addr_checkdest = 0xca4c;
@@ -674,7 +673,6 @@ public:
 	static const uint16 addr_adjustup = 0xc150;
 	static const uint16 addr_adjustdown = 0xc14c;
 	static const uint16 addr_checkforexit = 0xc148;
-	static const uint16 addr_facerightway = 0xc144;
 	static const uint16 addr_aboutturn = 0xc13c;
 	static const uint16 addr_mainman = 0xc138;
 	static const uint16 addr_findsource = 0xc130;
@@ -1513,7 +1511,7 @@ public:
 	void fillopen();
 	//void usetimedtext();
 	void delsprite();
-	void getroomspaths();
+	//void getroomspaths();
 	//void dumptextline();
 	void fadescreendownhalf();
 	void useplate();
@@ -1902,7 +1900,7 @@ public:
 	void checkdest();
 	//void initman();
 	void loadpalfromiff();
-	void facerightway();
+	//void facerightway();
 	void startup1();
 	void findlen();
 	void showsymbol();

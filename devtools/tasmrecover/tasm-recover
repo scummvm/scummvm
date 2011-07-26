@@ -73,6 +73,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'modifychar',
 	'lockmon',
 	'cancelch0',
-	'cancelch1'
+	'cancelch1',
+	'getroomspaths',
+	'facerightway',
 	])
 generator.generate('dreamweb') #start routine
