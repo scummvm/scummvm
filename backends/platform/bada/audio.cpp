@@ -29,12 +29,11 @@
 #define TIMER_INCREMENT    10
 #define TIMER_INTERVAL     80
 #define MIN_TIMER_INTERVAL 20
-#define MAX_VOL            99
-#define INIT_VOL           40
+#define INIT_LEVEL         3
 #define CONFIG_KEY         L"audiovol"
 
 // sound level pre-sets
-const int levels[] = {2, 20, INIT_VOL, 70, MAX_VOL};
+const int levels[] = {0, 2, 20, 45, 70, 99};
 
 AudioThread::AudioThread() : 
   mixer(0),
@@ -85,7 +84,7 @@ void AudioThread::setMute(bool on) {
 
 int AudioThread::setVolume(bool up, bool minMax) {
   int level = -1;
-  int numLevels = sizeof(levels);
+  int numLevels = sizeof(levels) / sizeof(levels[0]);
 
   if (audioOut && !isSilentMode()) {
     int volume = audioOut->GetVolume();
@@ -97,6 +96,7 @@ int AudioThread::setVolume(bool up, bool minMax) {
       // adjust volume to be in unit steps
       for (int i = 0; i < numLevels && level == -1; i++) {
         if (volume == levels[i]) {
+          level = i;
           if (up) {
             if (i + 1 < numLevels) {
               level = i + 1;
@@ -108,18 +108,18 @@ int AudioThread::setVolume(bool up, bool minMax) {
         }
       }
       
-      if (level != -1) {
-        volume = levels[level];
+      if (level == -1) {
+        level = INIT_LEVEL;
       }
+      volume = levels[level];
     }
-    if (volume <= MAX_VOL) {
-      audioOut->SetVolume(volume);
 
-      // remember the chosen setting
-      AppRegistry* registry = Application::GetInstance()->GetAppRegistry();
-      if (registry) {
-        registry->Set(CONFIG_KEY, volume);
-      }
+    audioOut->SetVolume(volume);
+
+    // remember the chosen setting
+    AppRegistry* registry = Application::GetInstance()->GetAppRegistry();
+    if (registry) {
+      registry->Set(CONFIG_KEY, volume);
     }
   }
   return level;
@@ -165,12 +165,12 @@ bool AudioThread::OnStart(void) {
   }
 
   // get the volume from the app-registry
-  int volume = INIT_VOL;
+  int volume = levels[INIT_LEVEL];
   AppRegistry* registry = Application::GetInstance()->GetAppRegistry();
   if (registry) {
     if (E_KEY_NOT_FOUND == registry->Get(CONFIG_KEY, volume)) {
       registry->Add(CONFIG_KEY, volume);
-      volume = INIT_VOL;
+      volume = levels[INIT_LEVEL];
     }
     else {
       AppLog("Setting volume: %d", volume);
