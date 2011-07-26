@@ -120,6 +120,7 @@ public:
 	};
 
 	Setup *getCurrSetup() { return _currSetup; }
+	void reset();
 
 private:
 	bool _locked;

@@ -1217,6 +1217,9 @@ void GrimEngine::restoreObjects(Common::HashMap<int32, T *> &map, uint32 ID) {
 		t->restoreState(_savedState);
 	}
 	for (typename Common::HashMap<int32, T *>::iterator i = map.begin(); i != map.end(); ++i) {
+		// Make sure to not try to delete objects which were deleted already by
+		// functions like restoreBitmaps().
+		i->_value->reset();
 		delete i->_value;
 	}
 	map = tempMap;

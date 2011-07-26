@@ -42,6 +42,7 @@ public:
 	Object();
 	virtual ~Object();
 
+	void reset() { };
 	void reference();
 	void dereference();
 

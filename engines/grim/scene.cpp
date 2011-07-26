@@ -78,6 +78,13 @@ Scene::~Scene() {
 	}
 }
 
+void Scene::reset() {
+	for (int i = 0; i < _numSetups; ++i) {
+		_setups[i]._bkgndBm = NULL;
+		_setups[i]._bkgndZBm = NULL;
+	}
+}
+
 int32 Scene::getId() {
 	return _id;
 }
