@@ -33,7 +33,7 @@
 #define CONFIG_KEY         L"audiovol"
 
 // sound level pre-sets
-const int levels[] = {0, 1, 20, 45, 70, 99};
+const int levels[] = {0, 1, 10, 45, 70, 99};
 
 AudioThread::AudioThread() : 
   mixer(0),
