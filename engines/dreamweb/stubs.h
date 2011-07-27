@@ -90,6 +90,7 @@
 	void turnpathoffCPP(uint8 param);
 	void getroomspaths();
 	uint8 *getroomspathsCPP();
+	void makebackob();
 	void modifychar();
 	void lockmon();
 	void cancelch0();

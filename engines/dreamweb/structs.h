@@ -31,7 +31,8 @@ struct Sprite {
 	uint16 w12;
 	uint8  b14;
 	uint8  b15;
-	uint16 w16;
+	uint8  b16;
+	uint8  b17;
 	uint8  delay;
 	uint8  frame;
 	uint16 obj_data;

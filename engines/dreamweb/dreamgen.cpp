@@ -7476,40 +7476,6 @@ blankframe:
 	goto showobsloop;
 }
 
-void DreamGenContext::makebackob() {
-	STACK_CHECK;
-	_cmp(data.byte(kNewobs), 0);
-	if (flags.z())
-		return /* (nomake) */;
-	al = es.byte(si+5);
-	ah = es.byte(si+8);
-	push(si);
-	push(ax);
-	push(si);
-	ax = data.word(kObjectx);
-	bx = data.word(kObjecty);
-	ah = bl;
-	si = ax;
-	cx = 49520;
-	dx = data.word(kSetframes);
-	di = (0);
-	makesprite();
-	ax = pop();
-	es.word(bx+20) = ax;
-	ax = pop();
-	_cmp(al, 255);
-	if (!flags.z())
-		goto usedpriority;
-	al = 0;
-usedpriority:
-	es.byte(bx+23) = al;
-	es.byte(bx+30) = ah;
-	es.byte(bx+16) = 0;
-	es.byte(bx+18) = 0;
-	es.byte(bx+19) = 0;
-	si = pop();
-}
-
 void DreamGenContext::showallfree() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -21046,7 +21012,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_addlength: addlength(); break;
 		case addr_drawflags: drawflags(); break;
 		case addr_showallobs: showallobs(); break;
-		case addr_makebackob: makebackob(); break;
 		case addr_showallfree: showallfree(); break;
 		case addr_showallex: showallex(); break;
 		case addr_calcfrframe: calcfrframe(); break;

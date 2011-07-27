@@ -825,5 +825,28 @@ uint8 *DreamGenContext::getroomspathsCPP() {
 	return (uint8 *)result;
 }
 
+void DreamGenContext::makebackob() {
+	if (data.byte(kNewobs) == 0)
+		return;
+	uint8 priority = es.byte(si+5);
+	uint8 type = es.byte(si+8);
+	Sprite *sprite = makesprite(data.word(kObjectx), data.word(kObjecty), addr_backobject, data.word(kSetframes), 0);
+
+	// Recover es:bx from sprite
+	es = data.word(kBuffers);
+	bx = kSpritetable;
+	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
+	bx += sizeof(Sprite) * (sprite - sprites);
+	//
+	WRITE_LE_UINT16(&sprite->obj_data, si);
+	if (priority == 255)
+		priority = 0;
+	sprite->priority = priority;
+	sprite->type = type;
+	sprite->b16 = 0;
+	sprite->delay = 0;
+	sprite->frame = 0;
+}
+
 } /*namespace dreamgen */
 

@@ -505,7 +505,6 @@ public:
 	static const uint16 addr_calcfrframe = 0xc454;
 	static const uint16 addr_showallex = 0xc450;
 	static const uint16 addr_showallfree = 0xc44c;
-	static const uint16 addr_makebackob = 0xc448;
 	static const uint16 addr_showallobs = 0xc444;
 	static const uint16 addr_drawflags = 0xc43c;
 	static const uint16 addr_addlength = 0xc438;
@@ -1559,7 +1558,7 @@ public:
 	void discops();
 	//void printdirect();
 	void delthisone();
-	void makebackob();
+	//void makebackob();
 	void middlepanel();
 	void dumpwatch();
 	void saveload();
