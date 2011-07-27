@@ -459,12 +459,13 @@ public:
 	void update(int16 *buf, int len);
 };
 
-class AdlibFxSoundDriver: public SoundDriver, Audio::AudioStream {
+class AdlibFxSoundDriver: public SoundDriver {
 private:
 	Common::Queue<RegisterValue> _queue;
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
+	Audio::QueuingAudioStream *_audioStream;
 	int _sampleRate;
 
 	int _v45062;
@@ -497,14 +498,6 @@ public:
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void proc42(int channel, int cmd, int value, int *v1, int *v2);
-
-	// AudioStream interface
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
-
-	void update(int16 *buf, int len);
 };
 
 

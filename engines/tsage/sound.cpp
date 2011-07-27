@@ -20,6 +20,7 @@
  *
  */
 
+#include "audio/decoders/raw.h"
 #include "common/config-manager.h"
 #include "tsage/core.h"
 #include "tsage/globals.h"
@@ -158,9 +159,7 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 
 void SoundManager::installConfigDrivers() {
 	installDriver(ADLIB_DRIVER_NUM);
-#ifdef DEBUG
 	installDriver(SBLASTER_DRIVER_NUM);
-#endif
 }
 
 Common::List<SoundDriverEntry> &SoundManager::getDriverList(bool detectFlag) {
@@ -2801,6 +2800,7 @@ AdlibFxSoundDriver::AdlibFxSoundDriver(): SoundDriver() {
 
 	_mixer = _vm->_mixer;
 	_sampleRate = _mixer->getOutputRate();
+	_audioStream = NULL;
 //	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 /*
 	Common::set_to(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
@@ -2818,7 +2818,7 @@ AdlibFxSoundDriver::AdlibFxSoundDriver(): SoundDriver() {
 }
 
 AdlibFxSoundDriver::~AdlibFxSoundDriver() {
-//	_mixer->stopHandle(_soundHandle);
+	_mixer->stopHandle(_soundHandle);
 }
 
 bool AdlibFxSoundDriver::open() {
@@ -2878,14 +2878,28 @@ void AdlibFxSoundDriver::proc32(const byte *channelData, int dataOffset, int pro
 	_channelData = channelData + dataOffset;
 	_soundData = _channelData + 18;
 
+	// Make a copy of the buffer
+	int dataSize = _vm->_memoryManager.getSize(channelData);
+	byte *soundData = (byte *)malloc(dataSize - dataOffset);
+	Common::copy(_channelData, _channelData + (dataSize - dataOffset), soundData);
+
+	_audioStream = Audio::makeQueuingAudioStream(11025, false);
+	_audioStream->queueBuffer(soundData, dataSize - dataOffset, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+
 	// Start the new sound
-	debug("Start sound");
+	if (!_mixer->isSoundHandleActive(_soundHandle))
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
 }
 
 void AdlibFxSoundDriver::updateVoice(int channel) {
 	if (_channelData) {
 		write(208);
-
+/*
+		if (_audioStream && _audioStream->numQueuedStreams() != 0) {
+			_mixer->stopAll();
+			_audioStream = NULL;
+		}
+*/
 		_channelData = NULL;
 		_v45062 = 0;
 		_v45066 = 0;
@@ -2911,46 +2925,7 @@ void AdlibFxSoundDriver::proc42(int channel, int cmd, int value, int *v1, int *v
 }
 
 void AdlibFxSoundDriver::write(int v) {
-	/*
-	port[adlib_port + 12] = v;
-	for (int i = 0; i < 100; ++i) {
-		if (!port[adlib_port + 12] & 0x80)
-			break;
-	}
-	*/
-}
-
-void AdlibFxSoundDriver::flush() {
-	Common::StackLock slock(SoundManager::sfManager()._serverDisabledMutex);
-
-	// No data output yet
-}
-
-
-
-int AdlibFxSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
-	update(buffer, numSamples);
-	return numSamples;
-}
-
-void AdlibFxSoundDriver::update(int16 *buf, int len) {
-/*
-	static int samplesLeft = 0;
-	while (len != 0) {
-		int count = samplesLeft;
-		if (count > len) {
-			count = len;
-		}
-		samplesLeft -= count;
-		len -= count;
-		YM3812UpdateOne(_opl, buf, count);
-		if (samplesLeft == 0) {
-			flush();
-			samplesLeft = _sampleRate / 50;
-		}
-		buf += count;
-	}
-*/
+	// No implementation
 }
 
 void AdlibFxSoundDriver::write209() {
