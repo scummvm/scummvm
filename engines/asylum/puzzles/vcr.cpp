@@ -338,7 +338,7 @@ void PuzzleVCR::updateScreen(const AsylumEvent &evt) {
 		getScreen()->clear();
 
 		// setupPalette();
-		getScreen()->setupPalette(0, 0, 0);
+		getScreen()->setupPalette(NULL, 0, 0);
 
 		warning("[PuzzleVCR::updateScreen] Missing palette changes");
 		// TODO more stuff needed here (palette change, scene screen update, etc.)

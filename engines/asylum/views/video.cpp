@@ -197,10 +197,8 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 }
 
 void VideoPlayer::setupPalette() {
-	_smkDecoder->setSystemPalette();
-
-	warning("[Video::setupPalette] Video palette setup not implemented!");
-	//getScreen()->setupPalette(0, 0, 0);
+	getScreen()->setMainPalette(_smkDecoder->getPalette());
+	getScreen()->setupPalette(NULL, 0, 0);
 }
 
 void VideoPlayer::loadSubtitles() {
