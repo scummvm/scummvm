@@ -1673,13 +1673,12 @@ IMPLEMENT_OPCODE(Interact)
 			_currentQueueEntry->currentLine = cmd->param3;
 		}
 	} else {
-		int32 x = 0;
-		int32 y = 0; // FIXME: is is set somewhere else?
+		Common::Point point;
 
-		if (actor->process_4069B0(&x, &cmd->param4) == 1) {
-			getScene()->getActor()->processStatus(x, y, (bool)cmd->param4);
-			cmd->param6 = x;
-			cmd->param7 = y;
+		if (actor->canInteract(&point, &cmd->param4) == 1) {
+			getScene()->getActor()->processStatus(point.x, point.y, (bool)cmd->param4);
+			cmd->param6 = point.x;
+			cmd->param7 = point.y;
 
 			if (cmd->param2 == 1) {
 				cmd->param2 = 2;
