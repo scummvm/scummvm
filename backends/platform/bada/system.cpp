@@ -80,7 +80,7 @@ bool BadaSaveFileManager::removeSavefile(const Common::String &filename) {
   Common::FSNode file = savePath.getChild(filename);
 
   String unicodeFileName;
-  StringUtil::Utf8ToString(filename.c_str(), unicodeFileName);
+  StringUtil::Utf8ToString(file.getPath().c_str(), unicodeFileName);
 
   switch (Osp::Io::File::Remove(unicodeFileName)) {
   case E_SUCCESS:
