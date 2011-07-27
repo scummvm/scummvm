@@ -279,6 +279,10 @@ void Screen::setPalette(ResourceId id) {
 	setupPalette(data + 4, data[2], *(uint16 *)data);
 }
 
+void Screen::setMainPalette(const byte *data) {
+	memcpy(&_mainPalette, data, sizeof(_mainPalette));
+}
+
 void Screen::setupPalette(byte *buffer, int start, int count) {
 	// Check parameters
 	if (start < 0 || start > 256)
@@ -315,7 +319,31 @@ void Screen::updatePalette() {
 }
 
 void Screen::updatePalette(int32 param) {
-	error("[Screen::updatePalette] Not implemented!");
+	if (param >= 21) {
+		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
+			_mainPalette[j]     = _currentPalette[j];
+			_mainPalette[j + 1] = _currentPalette[j + 1];
+			_mainPalette[j + 2] = _currentPalette[j + 2];
+		}
+
+		setupPalette(NULL, 0, 0);
+		paletteFade(0, 25, 10);
+	} else {
+		// Get the current action palette
+		ResourceId paletteId = getWorld()->actions[getScene()->getActor()->getActionIndex3()]->paletteResourceId;
+		if (!paletteId)
+			paletteId = getWorld()->currentPaletteId;
+
+		// Get the data
+		byte *paletteData = getPaletteData(paletteId);
+		paletteData += 4;
+
+		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
+			_mainPalette[j]     = 4 * paletteData[j]     + param * (4 * paletteData[j]     - _currentPalette[j]);
+			_mainPalette[j + 1] = 4 * paletteData[j + 1] + param * (4 * paletteData[j + 1] - _currentPalette[j + 1]);
+			_mainPalette[j + 2] = 4 * paletteData[j + 2] + param * (4 * paletteData[j + 2] - _currentPalette[j + 2]);
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -367,7 +395,7 @@ void Screen::stopPaletteFade(char red, char green, char blue) {
 	}
 
 	stopPaletteFadeTimer();
-	setupPalette(0, 0, 0);
+	setupPalette(NULL, 0, 0);
 }
 
 void Screen::stopPaletteFadeAndSet(ResourceId id, int32 ticksWait, int32 delta) {
@@ -386,12 +414,12 @@ void Screen::paletteFade(uint32 start, int32 ticksWait, int32 delta) {
 	uint32 colorDelta = delta + 1;
 	for (uint32 i = 1; i < colorDelta; i++) {
 		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
-			_mainPalette[j]     = palette[j]     + i * (palette[start + 0] - palette[j])     / colorDelta;
+			_mainPalette[j]     = palette[j]     + i * (palette[start]     - palette[j])     / colorDelta;
 			_mainPalette[j + 1] = palette[j + 1] + i * (palette[start + 1] - palette[j + 1]) / colorDelta;
 			_mainPalette[j + 2] = palette[j + 2] + i * (palette[start + 2] - palette[j + 2]) / colorDelta;
 		}
 
-		setupPalette(0, 0, 0);
+		setupPalette(NULL, 0, 0);
 
 		g_system->delayMillis(ticksWait);
 
@@ -444,7 +472,7 @@ void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
 			_mainPalette[j + 2] = original[j + 2] + i * (palette[j + 2] - original[j + 2]) / colorDelta;
 		}
 
-		setupPalette(0, 0, 0);
+		setupPalette(NULL, 0, 0);
 
 		// Original waits for event and so can be interrupted in the middle of the wait
 		g_system->delayMillis(ticksWait);
@@ -513,7 +541,7 @@ void Screen::setGammaLevel(ResourceId id) {
 		error("[Screen::setGammaLevel] Resource Id is invalid");
 
 	setPaletteGamma(getPaletteData(id));
-	setupPalette(0, 0, 0);
+	setupPalette(NULL, 0, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
