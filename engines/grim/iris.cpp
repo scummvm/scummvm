@@ -53,11 +53,7 @@ void Iris::draw() {
 		return;
 	}
 
-	// Why doesn't 480 work here??
-	g_driver->dimRegion(0, 0, 640, _y, 0);
-	g_driver->dimRegion(0, _y, _x, 479 - _y, 0);
-	g_driver->dimRegion(_x, 479 - _y, 640 - _x, _y, 0);
-	g_driver->dimRegion(640 - _x, _y, _x, 479 - _y, 0);
+	g_driver->irisAroundRegion(_x, _y);
 }
 
 void Iris::update(int frameTime) {

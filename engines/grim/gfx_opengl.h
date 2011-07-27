@@ -103,6 +103,7 @@ public:
 	void copyStoredToDisplay();
 	void dimScreen();
 	void dimRegion(int x, int y, int w, int h, float level);
+	void irisAroundRegion(int x, int y);
 
 	void drawEmergString(int x, int y, const char *text, const Color &fgColor);
 	void loadEmergFont();

@@ -107,6 +107,15 @@ public:
 	virtual void copyStoredToDisplay() = 0;
 	virtual void dimScreen() = 0;
 	virtual void dimRegion(int x, int y, int w, int h, float level) = 0;
+	/**
+	 * Draw a completely opaque Iris around the specified rectangle.
+	 * the arguments specify the distance from the screen-edge to the first
+	 * non-iris pixel.
+	 *
+	 * @param x		the width of the Iris 
+	 * @param y		the height of the Iris 
+	 */
+	virtual void irisAroundRegion(int x, int y) = 0;
 
 	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) = 0;
 	virtual void loadEmergFont() = 0;

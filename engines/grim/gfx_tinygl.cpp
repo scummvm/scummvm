@@ -959,6 +959,16 @@ void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 		}
 	}
 }
+	
+void GfxTinyGL::irisAroundRegion(int x, int y)
+{
+	//TODO: Simplify this to one double loop
+	dimRegion(0, 0, 640, y, 0);
+	dimRegion(0, y, x, 479 - y, 0);
+	dimRegion(x, 479 - y, 640 - x, y, 0);
+	dimRegion(640 - x, y, x, 479 - y, 0);
+}
+
 
 void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
 	uint16 *dst = (uint16 *)_zb->pbuf;
