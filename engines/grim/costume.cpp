@@ -665,6 +665,7 @@ void ColormapComponent::init() {
 			_cmap->getFilename().c_str(), _cost->getFilename().c_str());
 }
 
+class Fader;
 class KeyframeComponent : public Costume::Component {
 public:
 	enum RepeatMode {
@@ -703,9 +704,44 @@ private:
 	FadeMode _fadeMode;
 	int _fadeLength;
 	Common::String _fname;
+	Common::List<Fader *> _faders;
 
 	friend class Costume;
 };
+
+class Fader {
+public:
+	Fader(KeyframeComponent::FadeMode fade, int lenght);
+	bool fade(int time, float *fade);
+
+// private:
+	KeyframeComponent::FadeMode _fadeMode;
+	int _fadeLength;
+	int _currTime;
+};
+
+Fader::Fader(KeyframeComponent::FadeMode f, int length) :
+	_fadeMode(f), _fadeLength(length) {
+	_currTime = 0;
+}
+
+bool Fader::fade(int time, float *value) {
+	_currTime += time;
+	if (_currTime >= _fadeLength) {
+		if (_fadeMode == KeyframeComponent::FadeIn) {
+			*value += 1.f;
+		}
+		return false;
+	}
+
+	float f = (float)_currTime / (float)_fadeLength;
+	if (_fadeMode == KeyframeComponent::FadeIn) {
+		*value += f;
+	} else {
+		*value += (1.f - f);
+	}
+	return true;
+}
 
 KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
 		Costume::Component(p, parentID, t), _priority1(1), _priority2(5), _hier(NULL), _active(false),
@@ -733,18 +769,8 @@ void KeyframeComponent::play(RepeatMode repeatMode) {
 }
 
 void KeyframeComponent::fade(FadeMode fadeMode, int fadeLength) {
-	if (!_active) {
-		if (fadeMode == FadeIn) {
-			_repeatMode = Once;
-			_anim._time = -1;
-			_anim._fade = 0.f;
-			_paused = false;
-		} else {
-			return;
-		}
-	}
-	_fadeMode = fadeMode;
-	_fadeLength = fadeLength;
+	Fader *fader = new Fader(fadeMode, fadeLength);
+	_faders.push_back(fader);
 }
 
 void KeyframeComponent::setKey(int val) {
@@ -805,20 +831,43 @@ void KeyframeComponent::setKey(int val) {
 }
 
 void KeyframeComponent::reset() {
-	if (_fadeMode != FadeOut) {
-		_fadeMode = None;
-		_anim._time = -1;
-		_anim._fade = 1.f;
-		_paused = false;
-		deactivate();
+	for (Common::List<Fader *>::iterator i = _faders.begin(); i != _faders.end(); ++i) {
+		Fader *f = *i;
+		if (f->_fadeMode == FadeIn) {
+			i = _faders.reverse_erase(i);
+			delete f;
+		}
 	}
+	if (_faders.empty())
+		deactivate();
 }
 
 void KeyframeComponent::update() {
+	int time = (int)(g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale());
+
+	float f = 1.f;
+	if (!_faders.empty()) {
+		f = 0.f;
+		for (Common::List<Fader *>::iterator i = _faders.begin(); i != _faders.end(); ++i) {
+			Fader *fader = *i;
+			if (!fader->fade(time, &f)) {
+				i = _faders.reverse_erase(i);
+				delete fader;
+			}
+		}
+		if (f == 0.f) {
+			deactivate();
+			return;
+		} else if (f > 1.f) {
+			f = 1.f;
+		}
+	}
+
+	// Let also the inactive animations fade.
 	if (!_active)
 		return;
 
-	int time = (int)(g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale());
+	_anim._fade = f;
 
 	if (_anim._time < 0)		// For first time through
 		_anim._time = 0;
@@ -827,30 +876,10 @@ void KeyframeComponent::update() {
 
 	int animLength = (int)(_anim._keyf->getLength() * 1000);
 
-	if (_fadeMode != None) {
-		if (_fadeMode == FadeIn) {
-			_anim._fade += (float)time / (float)_fadeLength;
-			if (_anim._fade >= 1.f) {
-				_anim._fade = 1.f;
-				_fadeMode = None;
-			}
-		} else {
-			_anim._fade -= (float)time / (float)_fadeLength;
-			if (_anim._fade <= 0.f) {
-				_anim._fade = 1.f;
-				_fadeMode = None;
-				deactivate();
-				return;
-			}
-		}
-	} else {
-		_anim._fade = 1.f;
-	}
-
 	if (_anim._time > animLength) { // What to do at end?
 		switch (_repeatMode) {
 			case Once:
-				if (_fadeMode == None)
+				if (_faders.empty())
 					deactivate();
 				else
 					_anim._time = animLength;
@@ -865,10 +894,7 @@ void KeyframeComponent::update() {
 				_paused = true;
 				break;
 			case FadeAtEnd:
-				if (_fadeMode != FadeOut) {
-					_fadeMode = FadeOut;
-					_fadeLength = 250;
-				}
+				fade(FadeOut, 250);
 				_anim._time = animLength;
 				break;
 			default:
