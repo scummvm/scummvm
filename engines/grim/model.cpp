@@ -242,13 +242,13 @@ void Model::loadMaterial(int index, CMap *cmap) {
 	}
 	_materials[index] = NULL;
 	if (_parent) {
-		_materials[index] = _parent->findMaterial(_materialNames[index]);
+		_materials[index] = _parent->findMaterial(_materialNames[index], cmap);
 		if (_materials[index]) {
 			_materialsShared[index] = true;
 		}
 	}
 	if (!_materials[index]) {
-		if (mat && cmap == _cmap) {
+		if (mat && cmap->getFilename() == _cmap->getFilename()) {
 			_materials[index] = mat;
 		} else {
 			_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], cmap);
@@ -260,9 +260,11 @@ void Model::loadMaterial(int index, CMap *cmap) {
 	}
 }
 
-Material *Model::findMaterial(const char *name) const {
+Material *Model::findMaterial(const char *name, CMap *cmap) const {
 	for (int i = 0; i < _numMaterials; ++i) {
 		if (scumm_stricmp(name, _materialNames[i]) == 0) {
+			if (cmap->getFilename() != _cmap->getFilename())
+				_materials[i]->reload(cmap);
 			return _materials[i];
 		}
 	}

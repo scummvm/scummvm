@@ -50,6 +50,7 @@ public:
 	// Load a texture from the given data.
 	Material(const Common::String &filename, const char *data, int len, CMap *cmap);
 
+	void reload(CMap *cmap);
 	// Load this texture into the GL context
 	void select() const;
 

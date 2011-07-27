@@ -55,7 +55,7 @@ public:
 	void loadEMI(Common::MemoryReadStream &ms);
 	void reload(CMap *cmap);
 	void draw() const;
-	Material *findMaterial(const char *name) const;
+	Material *findMaterial(const char *name, CMap *cmap) const;
 
 	~Model();
 

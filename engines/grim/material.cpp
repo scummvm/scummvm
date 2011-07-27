@@ -26,6 +26,7 @@
 #include "engines/grim/material.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/colormap.h"
+#include "engines/grim/resource.h"
 
 namespace Grim {
 
@@ -93,6 +94,20 @@ MaterialData *MaterialData::getMaterialData(const Common::String &filename, cons
 Material::Material(const Common::String &filename, const char *data, int len, CMap *cmap) :
 		Object(), _currImage(0) {
 	_data = MaterialData::getMaterialData(filename, data, len, cmap);
+}
+
+void Material::reload(CMap *cmap) {
+	Common::String fname = _data->_fname;
+	--_data->_refCount;
+	if (_data->_refCount < 1) {
+		delete _data;
+	}
+
+	Material *m = g_resourceloader->loadMaterial(fname, cmap);
+	// Steal the data from the new material and discard it.
+	_data = m->_data;
+	++_data->_refCount;
+	delete m;
 }
 
 void Material::select() const {
