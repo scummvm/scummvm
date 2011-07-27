@@ -155,6 +155,9 @@ result BadaAppForm::OnInitializing(void) {
   AddTouchEventListener(*this);
   AddKeyEventListener(*this);
 
+  Touch touch;
+  touch.SetMultipointEnabled(*this, true);
+
   // set focus to enable receiving key events
   SetFocusable(true);
   SetFocus();
@@ -274,22 +277,11 @@ void BadaAppForm::showVolume(int level) {
 void BadaAppForm::OnTouchDoublePressed(const Control& source, 
                                        const Point& currentPosition, 
                                        const TouchEventInfo& touchInfo) {
-  int index = getShortcutIndex();
-  shortcutIndex = (index == -1 ? 0 : index + 1);
-  shortcutTimer = g_system->getMillis();
-
-  switch (shortcutIndex) {
-  case SHORTCUT_F5:
-    g_system->displayMessageOnOSD(_("Sweep = Game Menu"));
-    break;
-
-  case SHORTCUT_ESCAPE:
-    g_system->displayMessageOnOSD(_("Sweep = Escape"));
-    break;
-
-  default:
-    g_system->displayMessageOnOSD(_("Sweep = Toggle Buttons"));
-    shortcutIndex = SHORTCUT_SWAP_MOUSE;
+  if (getShortcutIndex() == -1) {
+    pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+              currentPosition);
+    pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+              currentPosition);
   }
 }
 
@@ -320,7 +312,28 @@ void BadaAppForm::OnTouchMoved(const Control& source,
 void BadaAppForm::OnTouchPressed(const Control& source, 
                                  const Point& currentPosition, 
                                  const TouchEventInfo& touchInfo) {
-  if (getShortcutIndex() == -1) {
+  Touch touch;
+  int touchCount = touch.GetPointCount();
+  if (touchCount > 1) {
+    int index = getShortcutIndex();
+    shortcutIndex = (index == -1 ? 0 : index + 1);
+    shortcutTimer = g_system->getMillis();
+    
+    switch (shortcutIndex) {
+    case SHORTCUT_F5:
+      g_system->displayMessageOnOSD(_("Sweep = Game Menu"));
+      break;
+      
+    case SHORTCUT_ESCAPE:
+      g_system->displayMessageOnOSD(_("Sweep = Escape"));
+      break;
+      
+    default:
+      g_system->displayMessageOnOSD(_("Sweep = Toggle Buttons"));
+      shortcutIndex = SHORTCUT_SWAP_MOUSE;
+    }
+  }
+  else if (getShortcutIndex() == -1) {
     pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
               currentPosition);
   }
@@ -393,7 +406,6 @@ void BadaAppForm::OnKeyPressed(const Control& source, KeyCode keyCode) {
 }
 
 void BadaAppForm::OnKeyReleased(const Control& source, KeyCode keyCode) {
-  logEntered();
 }
 
 //

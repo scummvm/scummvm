@@ -29,6 +29,7 @@
 #define TIMER_INCREMENT    10
 #define TIMER_INTERVAL     80
 #define MIN_TIMER_INTERVAL 20
+#define MAX_TIMER_INTERVAL 200
 #define INIT_LEVEL         3
 #define CONFIG_KEY         L"audiovol"
 
@@ -241,6 +242,9 @@ void AudioThread::OnTimerExpired(Timer& timer) {
   else {
     // audio buffer full: increase timer inverval
     interval += TIMER_INCREMENT;
+    if (interval > MAX_TIMER_INTERVAL) {
+      interval = MAX_TIMER_INTERVAL;
+    }
   }
 
   if (ready && !playing) {
