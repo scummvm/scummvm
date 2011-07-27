@@ -2796,11 +2796,11 @@ AdlibFxSoundDriver::AdlibFxSoundDriver(): SoundDriver() {
 	_groupData.groupMask = 1;
 	_groupData.v1 = 0x3E;
 	_groupData.v2 = 0;
-	_groupData.pData = &adlib_group_data[0];
+	_groupData.pData = &adlibFx_group_data[0];
 
 	_mixer = _vm->_mixer;
 	_sampleRate = _mixer->getOutputRate();
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+//	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 /*
 	Common::set_to(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
 	memset(_channelVolume, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
@@ -2817,7 +2817,7 @@ AdlibFxSoundDriver::AdlibFxSoundDriver(): SoundDriver() {
 }
 
 AdlibFxSoundDriver::~AdlibFxSoundDriver() {
-	_mixer->stopHandle(_soundHandle);
+//	_mixer->stopHandle(_soundHandle);
 }
 
 bool AdlibFxSoundDriver::open() {
@@ -2866,23 +2866,26 @@ int AdlibFxSoundDriver::setMasterVolume(int volume) {
 }
 
 void AdlibFxSoundDriver::proc32(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {
-	if (program == -1)
+	if (program != -1)
 		return;
 
-	if (_sound)
+	// If sound data has been previously set, then release it
+	if (_channelData)
 		updateVoice(channel);
 
-	// TODO: Stuff
+	// Set the new channel data
+	_channelData = channelData + dataOffset;
+	_soundData = _channelData + 18;
 
-
-
+	// Start the new sound
+	debug("Start sound");
 }
 
 void AdlibFxSoundDriver::updateVoice(int channel) {
-	if (_sound) {
+	if (_channelData) {
 		write(208);
 
-		_sound = NULL;
+		_channelData = NULL;
 		_v45062 = 0;
 		_v45066 = 0;
 		_v45068 = 0;
@@ -2902,7 +2905,7 @@ void AdlibFxSoundDriver::proc42(int channel, int cmd, int value, int *v1, int *v
 	*v2 = 0;
 	_v4506B = 0;
 
-	if (!_sound)
+	if (!_channelData)
 		*v2 = 1;
 }
 

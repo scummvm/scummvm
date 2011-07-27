@@ -475,7 +475,8 @@ private:
 	bool _v45046;
 	byte _masterVolume;
 	byte _channelVolume;
-	Sound *_sound;
+	const byte *_channelData;
+	const byte *_soundData;
 
 	void write(int v);
 	void flush();
