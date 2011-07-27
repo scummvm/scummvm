@@ -33,6 +33,8 @@
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 
+#include "common/timer.h"
+
 #include <stdarg.h>    // For va_list etc.
 
 namespace Asylum {
@@ -50,11 +52,18 @@ Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 
 	memset(&_currentPalette, 0, sizeof(_currentPalette));
 	memset(&_mainPalette, 0, sizeof(_mainPalette));
+	_isFading = false;
+	_fadeStop = false;
+	_fadeResourceId = kResourceNone;
+	_fadeTicksWait = 0;
+	_fadeDelta = 0;
 
 	g_debugDrawRects = 0;
 }
 
 Screen::~Screen() {
+	_vm->getTimerManager()->removeTimerProc(&paletteFadeTimer);
+
 	_backBuffer.free();
 
 	clearTransTables();
@@ -309,8 +318,39 @@ void Screen::updatePalette(int32 param) {
 	error("[Screen::updatePalette] Not implemented!");
 }
 
-void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param) {
-	warning("[Screen::startPaletteFade] Not implemented!");
+//////////////////////////////////////////////////////////////////////////
+// Palette fading
+//////////////////////////////////////////////////////////////////////////
+void Screen::paletteFadeTimer(void *refCon) {
+	((Screen *)refCon)->handlePaletteFadeTimer();
+}
+
+void Screen::handlePaletteFadeTimer() {
+	// Reset flag
+	_fadeStop = false;
+
+	// Start fading
+	_isFading = true;
+
+	paletteFadeWorker(_fadeResourceId, _fadeTicksWait, _fadeDelta);
+
+	// Remove ourselves as a timer (we finished fading or were interrupted)
+	_vm->getTimerManager()->removeTimerProc(&paletteFadeTimer);
+
+	_isFading = false;
+}
+
+void Screen::startPaletteFade(ResourceId resourceId, int32 ticksWait, int32 delta) {
+	if (_isFading && resourceId == _fadeResourceId)
+		return;
+
+	stopPaletteFadeTimer();
+	_fadeResourceId = resourceId;
+	_fadeTicksWait = ticksWait;
+	_fadeDelta = delta;
+
+	// Inverval == 1: we want to execute directly, since we are only going to be called back once
+	_vm->getTimerManager()->installTimerProc(&paletteFadeTimer, 1, this);
 }
 
 void Screen::stopPaletteFade(char red, char green, char blue) {
@@ -318,7 +358,7 @@ void Screen::stopPaletteFade(char red, char green, char blue) {
 	byte *palette = (byte *)&_mainPalette;
 	palette += 4;
 
-	for (uint32 i = 0; i < ARRAYSIZE(_mainPalette) - 4; i += 4) {
+	for (uint32 i = 0; i < ARRAYSIZE(_mainPalette) - 3; i += 3) {
 		palette[0] = red;
 		palette[1] = green;
 		palette[2] = blue;
@@ -330,27 +370,80 @@ void Screen::stopPaletteFade(char red, char green, char blue) {
 	setupPalette(0, 0, 0);
 }
 
-void Screen::stopPaletteFadeAndSet(ResourceId id, int32 milliseconds, int32 param) {
+void Screen::stopPaletteFadeAndSet(ResourceId id, int32 ticksWait, int32 delta) {
 	stopPaletteFadeTimer();
-	paletteFadeWorker(id, milliseconds, param);
+	paletteFadeWorker(id, ticksWait, delta);
 }
 
-void Screen::paletteFade(uint32 red, int32 milliseconds, int32 param) {
-	if (red < 0 || red > 255 || milliseconds < 0 || param <= 0)
+void Screen::paletteFade(uint32 start, int32 ticksWait, int32 delta) {
+	if (start < 0 || start > 255 || ticksWait < 0 || delta <= 0)
 		return;
 
 	warning("[Screen::paletteFade] Not implemented!");
 }
 
-void Screen::paletteFadeWorker(ResourceId id, int32 milliseconds, int32 param) {
-	warning("[Screen::paletteFadeWorker] Not implemented!");
+void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
+	byte *data = getPaletteData(id);
 
-	// HACK setup a proper palette
-	setPalette(id);
+	if (ticksWait < 0 || delta <= 0)
+		return;
+
+	// Setup our palette
+	byte original[256 * 3];
+	byte palette[256 * 3];
+	memcpy(&original, &_mainPalette, sizeof(original));
+	memcpy(&palette,  &_mainPalette, sizeof(palette));
+
+	// Adjust palette using the target palette data
+	uint32 count = *(int16 *)data;
+	uint32 start = data[2];
+	if (count > 0) {
+		byte *pData = data + 4;
+
+		for (uint32 i = 0; i < count; i++) {
+			palette[i + start]     = 4 * pData[0];
+			palette[i + start + 1] = 4 * pData[1];
+			palette[i + start + 2] = 4 * pData[2];
+
+			pData += 3;
+		}
+	}
+
+	// Adjust gamma
+	setPaletteGamma(data, (byte *)&palette);
+
+	// Prepare for palette fading loop
+	uint32 colorDelta = delta + 1;
+
+	for (uint32 i = 1; i < (uint32)(delta + 1); i++) {
+		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
+			_mainPalette[j]     = original[j]     + i * (palette[j]     - original[j])     / colorDelta;
+			_mainPalette[j + 1] = original[j + 1] + i * (palette[j + 1] - original[j + 1]) / colorDelta;
+			_mainPalette[j + 2] = original[j + 2] + i * (palette[j + 2] - original[j + 2]) / colorDelta;
+		}
+
+		setupPalette(0, 0, 0);
+
+		g_system->delayMillis(ticksWait);
+		if (_fadeStop)
+			break;
+
+		// Poll events (this ensure we don't freeze the screen)
+		Common::Event ev;
+		do {
+		} while (_vm->getEventManager()->pollEvent(ev));
+
+		// Refresh the screen
+		g_system->updateScreen();
+	}
 }
 
 void Screen::stopPaletteFadeTimer() {
-	warning("[Screen::stopPaletteFadeTimer] Not implemented!");
+	if (!_isFading)
+		return;
+
+	// Signal timer to exit its main loop
+	_fadeStop = true;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -97,10 +97,10 @@ public:
 	void updatePalette(int32 param);
 	void setupPalette(byte *buffer, int start, int count);
 
+	void startPaletteFade(ResourceId resourceId, int32 ticksWait, int32 delta);
+	void paletteFade(uint32 start, int32 ticksWait, int32 delta);
 	void stopPaletteFade(char red, char green, char blue);
-	void stopPaletteFadeAndSet(ResourceId id, int32 milliseconds, int32 param);
-	void paletteFade(uint32 red, int32 milliseconds, int32 param);
-	void startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param);
+	void stopPaletteFadeAndSet(ResourceId id, int32 ticksWait, int32 delta);
 
 	// Gamma
 	void setPaletteGamma(ResourceId id);
@@ -128,6 +128,11 @@ public:
 	void drawRect(const Common::Rect &rect, uint32 color = 0xFF);
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
+protected:
+	// Palette fading Timer
+	static void paletteFadeTimer(void *ptr);
+	void handlePaletteFadeTimer();
+
 private:
 	AsylumEngine *_vm;
 
@@ -145,13 +150,19 @@ private:
 	void clearTransTables();
 
 	// Palette
-	byte _currentPalette[256 * 4];
-	byte _mainPalette[256 * 4];
+	byte _currentPalette[256 * 3];
+	byte _mainPalette[256 * 3];
+	bool _isFading;
+	bool _fadeStop;
+	ResourceId _fadeResourceId;
+	int32 _fadeTicksWait;
+	int32 _fadeDelta;
+
 
 	byte *getPaletteData(ResourceId id);
 	void setPaletteGamma(byte *data, byte *target = NULL);
 
-	void paletteFadeWorker(ResourceId id, int32 milliseconds, int32 param);
+	void paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta);
 	void stopPaletteFadeTimer();
 
 	// Graphic queue
