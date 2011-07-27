@@ -75,7 +75,7 @@ public:
 	void draw() const;
 
 	// Set which image in an animated bitmap to use
-	void setNumber(int n) { if ((n - 1) >= _data->_numImages) warning("Bitmap::setNumber: no anim image: %d", n); else _currImage = n; }
+	void setNumber(int n);
 
 	int getNumImages() const { return _data->_numImages; }
 	int getCurrentImage() const { return _currImage; }

@@ -296,6 +296,14 @@ void Bitmap::draw() const {
 	g_driver->drawBitmap(this);
 }
 
+void Bitmap::setNumber(int n) {
+	if ((n - 1) >= _data->_numImages) {
+		warning("Bitmap::setNumber: no anim image: %d. (%s)", n, _data->_fname.c_str());
+	} else {
+		_currImage = n;
+	}
+}
+
 Bitmap::~Bitmap() {
 	--_data->_refCount;
 	if (_data->_refCount < 1) {

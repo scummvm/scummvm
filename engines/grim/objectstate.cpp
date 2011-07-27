@@ -63,8 +63,13 @@ void ObjectState::setNumber(int val) {
 	if (val) {
 		assert(_bitmap);
 		_bitmap->setNumber(val);
-		if (_zbitmap)
-			_zbitmap->setNumber(val);
+		if (_zbitmap) {
+			if (val > _zbitmap->getNumImages()) {
+				_zbitmap->setNumber(0);
+			} else {
+				_zbitmap->setNumber(val);
+			}
+		}
 	}
 
 	_visibility = val != 0;
