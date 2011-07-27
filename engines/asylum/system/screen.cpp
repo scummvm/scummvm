@@ -379,7 +379,30 @@ void Screen::paletteFade(uint32 start, int32 ticksWait, int32 delta) {
 	if (start < 0 || start > 255 || ticksWait < 0 || delta <= 0)
 		return;
 
-	warning("[Screen::paletteFade] Not implemented!");
+	byte palette[256 * 3];
+	memcpy(&palette,  &_mainPalette, sizeof(palette));
+
+	// Prepare for palette fading loop
+	uint32 colorDelta = delta + 1;
+	for (uint32 i = 1; i < colorDelta; i++) {
+		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
+			_mainPalette[j]     = palette[j]     + i * (palette[start + 0] - palette[j])     / colorDelta;
+			_mainPalette[j + 1] = palette[j + 1] + i * (palette[start + 1] - palette[j + 1]) / colorDelta;
+			_mainPalette[j + 2] = palette[j + 2] + i * (palette[start + 2] - palette[j + 2]) / colorDelta;
+		}
+
+		setupPalette(0, 0, 0);
+
+		g_system->delayMillis(ticksWait);
+
+		// Poll events (this ensure we don't freeze the screen)
+		Common::Event ev;
+		do {
+		} while (_vm->getEventManager()->pollEvent(ev));
+
+		// Refresh the screen
+		g_system->updateScreen();
+	}
 }
 
 void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
@@ -414,8 +437,7 @@ void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
 
 	// Prepare for palette fading loop
 	uint32 colorDelta = delta + 1;
-
-	for (uint32 i = 1; i < (uint32)(delta + 1); i++) {
+	for (uint32 i = 1; i < colorDelta; i++) {
 		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
 			_mainPalette[j]     = original[j]     + i * (palette[j]     - original[j])     / colorDelta;
 			_mainPalette[j + 1] = original[j + 1] + i * (palette[j + 1] - original[j + 1]) / colorDelta;
@@ -424,6 +446,7 @@ void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
 
 		setupPalette(0, 0, 0);
 
+		// Original waits for event and so can be interrupted in the middle of the wait
 		g_system->delayMillis(ticksWait);
 		if (_fadeStop)
 			break;
