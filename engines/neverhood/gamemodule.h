@@ -34,8 +34,10 @@ class GameModule : public Module {
 public:
 	GameModule(NeverhoodEngine *vm);
 	virtual ~GameModule();
+	void startup();
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseDown(int16 x, int16 y);
+	void initScene1405Vars();
 protected:
 	Entity *_prevChildObject;
 	bool _someFlag1;
@@ -48,7 +50,6 @@ protected:
 	ResourceTable _resourceTable4;
 	*/
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void startup();
 	void createModule1000(int which);
 	void updateModule1000();
 	void createModule1200(int which);

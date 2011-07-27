@@ -23,6 +23,7 @@
 #include "neverhood/module1400.h"
 #include "neverhood/module1000.h"
 #include "neverhood/diskplayerscene.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/navigationscene.h"
 
 namespace Neverhood {
@@ -87,21 +88,21 @@ void Module1400::createScene1403(int which) {
 	_vm->gameState().sceneNum = 2;
 	// TODO Music18hList_stop(0x06333232, 0, 2);
 	// TODO Music18hList_play(0x624A220E, 0, 2, 1);
-	// TODO _childObject = new Scene1403(_vm, this, which);
+	_childObject = new Scene1403(_vm, this, which);
 	SetUpdateHandler(&Module1400::updateScene1403);
 }
 
 void Module1400::createScene1404(int which) {
 	_vm->gameState().sceneNum = 3;
 	// TODO Music18hList_play(0x06333232, 0, 2, 1);
-	// TODO _childObject = new Scene1404(_vm, this, which);
+	_childObject = new Scene1404(_vm, this, which);
 	SetUpdateHandler(&Module1400::updateScene1404);
 }
 
 void Module1400::createScene1405(int which) {
 	_vm->gameState().sceneNum = 4;
 	// TODO Music18hList_play(0x06333232, 0, 2, 1);
-	// TODO _childObject = new Scene1405(_vm, this, which);
+	_childObject = new Scene1405(_vm, this, which);
 	SetUpdateHandler(&Module1400::updateScene1405);
 }
 
@@ -109,7 +110,7 @@ void Module1400::createScene1406(int which) {
 	_vm->gameState().sceneNum = 5;
 	// TODO Music18hList_stop(0x06333232, 0, 2);
 	_childObject = new DiskplayerScene(_vm, this, 2);
-	SetUpdateHandler(&Module1400::updateScene1405);
+	SetUpdateHandler(&Module1400::updateScene1406);
 }
 
 void Module1400::createScene1407(int which) {
@@ -176,6 +177,7 @@ void Module1400::updateScene1404() {
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;
+		debug("Scene1404; _field20 = %d", _field20);
 		if (_field20 == 1) {
 			createScene1405(0);
 			_childObject->handleUpdate();
@@ -402,7 +404,7 @@ Class528::Class528(NeverhoodEngine *vm, Sprite *klayman, bool flag)
 
 	_x = 320;
 	_y = 240;
-	createSurface1(100, 0x04551900);
+	createSurface1(0x04551900, 100);
 	SetUpdateHandler(&Class528::update);
 	SetMessageHandler(&Class528::handleMessage);
 	_newHashListIndex = -2;
@@ -1058,7 +1060,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 
 void Scene1402::update() {
 	if (_flag) {
-		_background->getSurface()->getDrawRect().y = _vm->_rnd->getRandomNumber(10) - 10;
+		_background->getSurface()->getDrawRect().y = _vm->_rnd->getRandomNumber(10 - 1) - 10;
 		// TODO g_screen->field_26 = -10 - _background->getSurface()->getDrawRect().y;
 	} else {
 		_background->getSurface()->getDrawRect().y = -10;
@@ -1431,6 +1433,440 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 		_soundResource.play(0x68E25540);
 		_mouseCursor->getSurface()->setVisible(false);
 		_puzzleSolvedCountdown = 72;
+		break;
+	}
+	return 0;
+}
+
+// Scene1403
+
+Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _class489(NULL), _flag(false) {
+	
+	SetMessageHandler(&Scene1403::handleMessage);
+	
+	setRectList(0x004B1FF8);
+	_surfaceFlag = true;
+
+	_background = addBackground(new DirtyBackground(_vm, 0x2110A234, 0, 0));
+	_palette = new Palette(_vm, 0x2110A234);
+	_palette->usePalette();
+	_mouseCursor = addSprite(new Mouse433(_vm, 0x0A230219, NULL));
+
+	_class401_1 = addSprite(new StaticSprite(_vm, 0x01102A33, 100));
+	_class401_1->getSurface()->setVisible(false);
+
+	_class401_2 = addSprite(new StaticSprite(_vm, 0x04442520, 995));
+	    
+	_class401_3 = addSprite(new StaticSprite(_vm, 0x08742271, 995));
+
+	_asTape1 = new AsScene1201Tape(_vm, this, 12, 1100, 201, 468, 0x9148A011);
+	addSprite(_asTape1);
+	_vm->_collisionMan->addSprite(_asTape1);
+	_asTape1->setRepl(64, 0);
+
+	_asTape2 = new AsScene1201Tape(_vm, this, 16, 1100, 498, 468, 0x9048A093);
+	addSprite(_asTape2);
+	_vm->_collisionMan->addSprite(_asTape2);
+	_asTape2->setRepl(64, 0);
+
+	if (which < 0) {
+		_klayman = new KmScene1403(_vm, this, 380, 463);
+		setMessageList(0x004B1F18);
+	} else {
+		_klayman = new KmScene1403(_vm, this, 640, 463);
+		setMessageList(0x004B1F20);
+	}
+	addSprite(_klayman);
+	_klayman->setRepl(64, 0);
+
+	if (getGlobalVar(0x04A105B3) == 4) {
+		Class489 *class489;
+		class489 = new Class489(_vm, this, _klayman, 0);
+		_class489 = class489;
+		addSprite(_class489);
+		_vm->_collisionMan->addSprite(_class489);
+		if (getGlobalVar(0x04A10F33) == 4) {
+			_klayman->sendEntityMessage(0x1014, _class489, this);
+			_klayman->setX(_class489->getX() + 100);
+			_klayman->processDelta();
+			setMessageList(0x004B1F70);
+		}
+		_class489->getSurface()->getClipRect().x1 = 0;
+		_class489->getSurface()->getClipRect().y1 = 0;
+		_class489->getSurface()->getClipRect().x2 = 640;
+		_class489->getSurface()->getClipRect().y2 = _class401_2->getSurface()->getDrawRect().y + _class401_2->getSurface()->getDrawRect().height;
+		class489->setRepl(64, 0);
+	}
+
+}
+
+uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x88C11390) {
+			setRectList(0x004B2008);
+			_flag = true;
+		} else if (param.asInteger() == 0x08821382) {
+			_klayman->sendEntityMessage(0x1014, _class489, this);
+			setRectList(0x004B1FF8);
+			_flag = false;
+		}
+		break;
+	case 0x1019:
+		_parentModule->sendMessage(0x1009, 0, this);
+		break;
+	case 0x1022:
+		if (sender == _class489) {
+			if (param.asInteger() >= 1000) {
+				setSurfacePriority(_class401_3->getSurface(), 1100);
+			} else {
+				setSurfacePriority(_class401_3->getSurface(), 995);
+			}
+		}
+		break;
+	case 0x4807:
+		_class401_1->getSurface()->setVisible(false);
+		break;
+	case 0x480F:
+		_class401_1->getSurface()->setVisible(true);
+		break;
+	case 0x4826:
+		if (sender == _class489) {
+			if (_flag) {
+				setMessageList2(0x004B1FA8);
+			} else if (param.asInteger() == 1) {
+				_klayman->sendEntityMessage(0x1014, _class489, this);
+				setMessageList2(0x004B1F88);
+			} else if (_class489->sendMessage(0x480C, _klayman->getX() > _class489->getX() ? 1 : 0, this) != 0) {
+				_klayman->sendEntityMessage(0x1014, _class489, this);
+				setMessageList2(0x004B1F58);
+			} else {
+				setMessageList2(0x004B1F28);
+			}
+		} else if (sender == _asTape1 || sender == _asTape2) {
+			if (_flag) {
+				setMessageList2(0x004B1FA8);
+			} else if (_messageListStatus != 2) {
+				_klayman->sendEntityMessage(0x1014, sender, this);
+				setMessageList2(0x004B1FB8);
+			}
+		}
+		break;
+	}
+	return 0;
+}
+
+// Scene1404
+
+Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _class489(NULL), _class545(NULL) {
+	
+	if (getGlobalVar(0xC0780812) && !getGlobalVar(0x13382860)) {
+		setGlobalVar(0x13382860, 5);
+	}
+	
+	SetMessageHandler(&Scene1404::handleMessage);
+	_surfaceFlag = true;
+
+	setRectList(0x004B8D80);
+
+	_background = addBackground(new DirtyBackground(_vm, 0xAC0B006F, 0, 0));
+	_palette = new Palette(_vm, 0xAC0B006F);
+	_palette->addPalette(0x00801510, 0, 65, 0);
+	_palette->usePalette();
+	_mouseCursor = addSprite(new Mouse433(_vm, 0xB006BAC8, NULL));
+
+	if (getGlobalVar(0x13382860) == 5) {
+		// TODO _class545 = addSprite(new Class545(_vm, this, 2, 1100, 267, 411));
+		// TODO _vm->_collisionMan->addSprite(_class545);
+	}
+
+	_sprite1 = addSprite(new StaticSprite(_vm, 0x1900A1F8, 1100));
+
+	_asTape = addSprite(new AsScene1201Tape(_vm, this, 14, 1100, 281, 411, 0x9148A011));
+	_vm->_collisionMan->addSprite(_asTape);
+
+	if (which < 0) {
+		_klayman = new KmScene1404(_vm, this, 376, 406);
+		setMessageList(0x004B8C28);
+	} else if (which == 1) {
+		_klayman = new KmScene1404(_vm, this, 376, 406);
+		setMessageList(0x004B8C30);
+	} else if (which == 2) {
+		if (getGlobalVar(0xC0418A02)) {
+			_klayman = new KmScene1404(_vm, this, 347, 406);
+			_klayman->setDoDeltaX(1);
+		} else {
+			_klayman = new KmScene1404(_vm, this, 187, 406);
+		}
+		setMessageList(0x004B8D28);
+	} else {
+		_klayman = new KmScene1404(_vm, this, 30, 406);
+		setMessageList(0x004B8C38);
+	}
+	addSprite(_klayman);
+
+	if (getGlobalVar(0x04A105B3) == 3) {
+		_class489 = addSprite(new Class489(_vm, this, _klayman, 0));
+		_vm->_collisionMan->addSprite(_class489);
+		if (getGlobalVar(0x04A10F33) == 0) {
+			_klayman->sendEntityMessage(0x1014, _class489, this);
+			_klayman->setX(_class489->getX() - 100);
+			_klayman->processDelta();
+			setMessageList(0x004B8CB8);
+		}
+		_class489->getSurface()->getClipRect().x1 = _sprite1->getSurface()->getDrawRect().x;
+		_class489->getSurface()->getClipRect().y1 = 0;
+		_class489->getSurface()->getClipRect().x2 = 640;
+		_class489->getSurface()->getClipRect().y2 = 480;
+	}
+
+	_klayman->getSurface()->getClipRect().x1 = _sprite1->getSurface()->getDrawRect().x;
+	_klayman->getSurface()->getClipRect().y1 = 0;
+	_klayman->getSurface()->getClipRect().x2 = 640;
+	_klayman->getSurface()->getClipRect().y2 = 480;
+
+}
+
+Scene1404::~Scene1404() {
+	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+}
+
+uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x410650C2) {
+			if (_class489 && _class489->getX() == 220) {
+				setMessageList(0x004B8C40);
+			} else {
+				setMessageList(0x004B8CE8);
+			}
+		}
+		break;
+	case 0x1019:
+		_parentModule->sendMessage(0x1009, 0, this);
+		break;
+	case 0x4826:
+		if (sender == _class489) {
+			if (_class489->sendMessage(0x480C, _klayman->getX() > _class489->getX() ? 1 : 0, this) != 0) {
+				_klayman->sendEntityMessage(0x1014, _class489, this);
+				setMessageList2(0x004B8CA0);
+			} else {
+				setMessageList2(0x004B8C40);
+			}
+		} else if (sender == _asTape && _messageListStatus != 2) {
+			_klayman->sendEntityMessage(0x1014, _asTape, this);
+			setMessageList(0x004B8CD0);
+		} else if (sender == _class545 && _messageListStatus != 2) {
+			_klayman->sendEntityMessage(0x1014, _class545, this);
+			setMessageList(0x004B8D18);
+		}
+		break;
+	}
+	return 0;
+}
+
+// Scene1405
+
+static const NPoint kAsScene1405TileItemPositions[] = {
+	{100,  80},
+	{162,  78},
+	{222,  76},
+	{292,  76},
+	{356,  82},
+	{422,  84},
+	{488,  86},
+	{550,  90},
+	{102, 134},
+	{164, 132},
+	{224, 136},
+	{294, 136},
+	{360, 136},
+	{422, 138},
+	{484, 144},
+	{548, 146},
+	{ 98, 196},
+	{160, 200},
+	{228, 200},
+	{294, 202},
+	{360, 198},
+	{424, 200},
+	{482, 202},
+	{548, 206},
+	{ 98, 260},
+	{160, 264},
+	{226, 260},
+	{296, 262},
+	{358, 260},
+	{424, 262},
+	{486, 264},
+	{550, 266},
+	{ 94, 322},
+	{160, 316},
+	{226, 316},
+	{296, 320},
+	{358, 322},
+	{422, 324},
+	{488, 322},
+	{550, 322},
+	{ 98, 380},
+	{160, 376},
+	{226, 376},
+	{294, 378},
+	{356, 380},
+	{420, 380},
+	{490, 378},
+	{552, 376}
+};
+
+AsScene1405Tile::AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, uint32 index)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _soundResource(vm),
+	_index(index), _countdown(0), _flag(false) {
+
+	_soundResource.load(0x05308101);
+	// TODO _soundResource.setPan
+	_x = kAsScene1405TileItemPositions[_index].x;
+	_y = kAsScene1405TileItemPositions[_index].y;
+	createSurface1(0x844B805C, 1100);
+	_surface->setVisible(false);
+	if (getSubVar(0xCCE0280F, _index))
+		_countdown = _vm->_rnd->getRandomNumber(36 - 1) + 1;
+	SetUpdateHandler(&AsScene1405Tile::update);
+	SetMessageHandler(&AsScene1405Tile::handleMessage);
+	
+	debug("getSubVar(0x0C65F80B, _index) = %d", getSubVar(0x0C65F80B, _index));
+	
+	setFileHash(0x844B805C, getSubVar(0x0C65F80B, _index), -1);
+	_newHashListIndex = (int16)getSubVar(0x0C65F80B, _index);
+}
+
+void AsScene1405Tile::update() {
+	updateAnim();
+	updatePosition();
+	if (_countdown != 0 && (--_countdown == 0)) {
+		show();
+	}
+}
+
+uint32 AsScene1405Tile::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (getSubVar(0xCCE0280F, _index) == 0 && _parentScene->getCountdown() == 0) {
+			show();
+			_parentScene->sendMessage(0x2000, _index, this);
+		}
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene1405Tile::show() {
+	if (!_flag) {
+		_flag = true;
+		_soundResource.play();
+		_surface->setVisible(true);
+	}
+}
+
+void AsScene1405Tile::hide() {
+	if (_flag) {
+		_flag = false;
+		_soundResource.play();
+		_surface->setVisible(false);
+	}
+}
+
+Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _soundResource(vm), _selectFirstTile(true),
+	_tilesLeft(48), _countdown(0) {
+
+	_vm->gameModule()->initScene1405Vars();
+	_surfaceFlag = true;
+	
+	_background = addBackground(new DirtyBackground(_vm, 0x0C0C007D, 0, 0));
+	_palette = new Palette(_vm, 0x0C0C007D);
+	_palette->usePalette();
+	_mouseCursor = addSprite(new Mouse435(_vm, 0xC00790C8, 20, 620));
+	
+	// TODO: Some debug code: Leave two matching tiles open
+	for (int i = 0; i < 48; i++)
+		setSubVar(0xCCE0280F, i, 1);
+	int debugIndex = 0;
+	setSubVar(0xCCE0280F, debugIndex, 0);
+	for (int i = 0; i < 48; i++) {
+		if (i != debugIndex && getSubVar(0x0C65F80B, i) == getSubVar(0x0C65F80B, debugIndex)) {
+			setSubVar(0xCCE0280F, i, 0);
+			break;
+		}
+	}
+	
+	for (uint32 index = 0; index < 48; index++) {
+		_tiles[index] = new AsScene1405Tile(_vm, this, index);
+		addSprite(_tiles[index]);
+		_vm->_collisionMan->addSprite(_tiles[index]);
+		if (getSubVar(0xCCE0280F, index))
+			_tilesLeft--;
+	}
+	
+	_soundResource.load(0x68E25540);
+	
+	SetMessageHandler(&Scene1405::handleMessage);
+	SetUpdateHandler(&Scene1405::update);
+
+}
+
+void Scene1405::update() {
+	Scene::update();
+	if (_countdown != 0 && (--_countdown == 0)) {
+		_tilesLeft = 48;
+		_tiles[_firstTileIndex]->hide();
+		_tiles[_secondTileIndex]->hide();
+		for (uint32 i = 0; i < 48; i++) {
+			if (getSubVar(0xCCE0280F, i)) {
+				_tiles[i]->hide();
+				setSubVar(0xCCE0280F, i, 0);
+			}
+		}
+	}
+}
+
+uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		// TODO: Debug/Cheat stuff
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
+		break;
+	case 0x000D:
+		// TODO: Debug/Cheat stuff
+		break;
+	case 0x2000:
+		if (_selectFirstTile) {
+			_firstTileIndex = param.asInteger();
+			_selectFirstTile = false;
+		} else {
+			_secondTileIndex = param.asInteger();
+			if (_firstTileIndex != _secondTileIndex) {
+				_selectFirstTile = true;
+				if (getSubVar(0x0C65F80B, _secondTileIndex) == getSubVar(0x0C65F80B, _firstTileIndex)) {
+					setSubVar(0xCCE0280F, _firstTileIndex, 1);
+					setSubVar(0xCCE0280F, _secondTileIndex, 1);
+					_tilesLeft -= 2;
+					if (_tilesLeft == 0) {
+						_soundResource.play();
+					}
+				} else {
+					_countdown = 10;
+				}
+			}
+		}
 		break;
 	}
 	return 0;

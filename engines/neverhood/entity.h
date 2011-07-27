@@ -74,8 +74,8 @@ protected:
 
 // TODO: Disable heavy debug stuff in release mode
 
-#define SetUpdateHandler(handler) _updateHandlerCb = static_cast <void (Entity::*)(void)> (handler); debug("SetUpdateHandler(" #handler ")"); _updateHandlerCbName = #handler
-#define SetMessageHandler(handler) _messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler); debug("SetMessageHandler(" #handler ")"); _messageHandlerCbName = #handler
+#define SetUpdateHandler(handler) _updateHandlerCb = static_cast <void (Entity::*)(void)> (handler); debug(2, "SetUpdateHandler(" #handler ")"); _updateHandlerCbName = #handler
+#define SetMessageHandler(handler) _messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler); debug(2, "SetMessageHandler(" #handler ")"); _messageHandlerCbName = #handler
 
 class Entity {
 public:

@@ -44,7 +44,7 @@ GameModule::GameModule(NeverhoodEngine *vm)
 	
 	SetMessageHandler(&GameModule::handleMessage);
 
-	startup();
+	//startup();
 	
 }
 
@@ -83,6 +83,105 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 	}				
 }
 
+void GameModule::initScene1405Vars() {
+
+	// TODO: Give better names
+
+	byte array44[3];
+	byte array3C[10];
+	byte array30[48];
+	uint32 index3 = 48;
+	uint32 index2 = 9;
+	uint32 index1 = 2;
+	uint32 rndIndex;
+
+	// Exit if it's already initialized
+	if (getSubVar(0x40050052, 0xC8606803))
+		return;
+
+	for (uint32 i = 0; i < 3; i++)
+		setSubVar(0x61084036, i, 1);
+
+	for (byte i = 0; i < 3; i++)
+		array44[i] = i;
+
+	for (byte i = 0; i < 10; i++)
+		array3C[i] = i;
+
+	for (byte i = 0; i < 48; i++)
+		array30[i] = i;
+
+	rndIndex = _vm->_rnd->getRandomNumber(3 - 1);
+
+	setSubVar(0x13100631, array44[rndIndex], 5);
+
+	for (byte i = 5; i < 9; i++)
+		array3C[i] = array3C[i + 1];
+
+	while (rndIndex < 2) {
+		array44[rndIndex] = array44[rndIndex + 1];
+		rndIndex++;
+	}
+
+	for (int i = 0; i < 2; i++) {
+		uint32 rndIndex1 = _vm->_rnd->getRandomNumber(index2 - 1); // si
+		uint32 rndIndex2 = _vm->_rnd->getRandomNumber(index1 - 1); // di
+		setSubVar(0x13100631, array44[rndIndex2], array3C[rndIndex1]);
+		index2--;
+		while (rndIndex1 < index2) {
+			array3C[rndIndex1] = array3C[rndIndex1 + 1];
+			rndIndex1++;
+		}
+		index1--;
+		while (rndIndex2 < index1) {
+			array44[rndIndex2] = array44[rndIndex2 + 1];
+			rndIndex2++;
+		}
+	}
+
+	for (uint32 i = 0; i < 3; i++) {
+		uint32 rndValue = _vm->_rnd->getRandomNumber(4 - 1) * 2 + 2;
+		uint32 index4 = 0;
+		setSubVar(0x7500993A, i, rndValue);
+		while (index4 < rndValue) {
+			uint32 rndIndex3 = _vm->_rnd->getRandomNumber(index3 - 1);
+			setSubVar(0x0C65F80B, array30[rndIndex3], getSubVar(0x13100631, i));
+			index3--;
+			while (rndIndex3 < index3) {
+				array30[rndIndex3] = array30[rndIndex3 + 1];
+				rndIndex3++;
+			}
+			index4++;
+		}
+	}
+
+	uint32 index5 = 0;
+	while (index3 != 0) {
+		uint32 rndIndex4 = _vm->_rnd->getRandomNumber(index3 - 1);
+		index1 = array3C[index5];
+		setSubVar(0x0C65F80B, array30[rndIndex4], index1);
+		index3--;
+		while (rndIndex4 < index3) {
+			array30[rndIndex4] = array30[rndIndex4 + 1];
+			rndIndex4++;
+		}
+		uint32 rndIndex5 = _vm->_rnd->getRandomNumber(index3 - 1);
+		setSubVar(0x0C65F80B, array30[rndIndex5], index1);
+		index3--;
+		while (rndIndex5 < index3) {
+			array30[rndIndex5] = array30[rndIndex5 + 1];
+			rndIndex5++;
+		}
+		index5++;
+		if (index5 >= index2)
+			index5 = 0;
+
+	}
+
+	setSubVar(0x40050052, 0xC8606803, 1);
+	
+}
+
 uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -114,7 +213,7 @@ void GameModule::startup() {
 //	createModule1500(0); // Logos and intro video //Real
 //	createModule1000(-1);
 //	createModule2300(2);
-	_vm->gameState().sceneNum = 6;
+	_vm->gameState().sceneNum = 4;
 	//createModule1200(-1);
 	//createModule1800(-1);
 	//createModule1700(-1);

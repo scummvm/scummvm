@@ -118,6 +118,7 @@ public:
 #endif
 
 	GameState& gameState() { return _gameState; }
+	GameModule *gameModule() { return _gameModule; }
 	int16 getMouseX() const { return _mouseX; }
 	int16 getMouseY() const { return _mouseY; }
 	NPoint getMousePos();

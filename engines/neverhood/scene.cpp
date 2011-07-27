@@ -505,7 +505,7 @@ void Scene::setRectList(RectList *rectList) {
 
 void Scene::clearRectList() {
 	_rectList = NULL;
-	_rectType = 1;
+	_rectType = 0;
 }
 
 void Scene::loadDataResource(uint32 fileHash) {

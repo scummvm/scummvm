@@ -49,6 +49,12 @@ static const KlaymanTableItem klaymanTable3[] = {
 }; 
 #endif
 
+static const KlaymanTableItem klaymanTable4[] = {
+	{1, &Klayman::sub41FDA0},
+	{1, &Klayman::sub41FE60},
+	{1, &Klayman::sub41FEB0},
+};
+
 // Klayman
 
 Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority)
@@ -471,7 +477,7 @@ bool Klayman::sub41CF10(AnimationCb callback) {
 }
 
 void Klayman::sub41C7B0() {
-	debug("Klayman::sub41C7B0()");
+	//debug("Klayman::sub41C7B0()");
 	if (_callback1Cb) {
 		AnimationCb cb = _callback1Cb;
 		_callback1Cb = NULL;
@@ -541,7 +547,7 @@ void Klayman::update41D0F0() {
 }
 
 uint32 Klayman::handleMessage41D360(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Klayman::handleMessage41D360(%04X)", messageNum);
+	//debug("Klayman::handleMessage41D360(%04X)", messageNum);
 	Sprite::handleMessage(messageNum, param, sender);
 	uint32 messageResult = xHandleMessage(messageNum, param);
 	switch (messageNum) {
@@ -587,7 +593,7 @@ void Klayman::sub41FF00() {
 }
 
 uint32 Klayman::handleMessage41D480(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Klayman::handleMessage41D480(%04X)", messageNum);
+	//debug("Klayman::handleMessage41D480(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
@@ -608,7 +614,7 @@ void Klayman::sub41FCF0() {
 }
 
 uint32 Klayman::handleMessage41F140(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Klayman::handleMessage41F140(%04X)", messageNum);
+	//debug("Klayman::handleMessage41F140(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -624,7 +630,7 @@ uint32 Klayman::handleMessage41F140(int messageNum, const MessageParam &param, E
 
 
 void Klayman::sub41C930(int16 x, bool flag) {
-	debug("Klayman::sub41C930(%d, %d)", x, flag);
+	//debug("Klayman::sub41C930(%d, %d)", x, flag);
 	int16 xdiff = ABS(x - _x);
 	if (x == _x) {
 		_x4 = x;
@@ -675,7 +681,7 @@ void Klayman::sub4211B0() {
 
 uint32 Klayman::handleMessage41E920(int messageNum, const MessageParam &param, Entity *sender) {
 	//ok
-	debug("Klayman::handleMessage41E920(%04X)", messageNum);
+	//debug("Klayman::handleMessage41E920(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -704,7 +710,7 @@ bool Klayman::sub41CEB0(AnimationCb callback3) {
 }
 
 void Klayman::spriteUpdate41F250() {
-	debug("Klayman::spriteUpdate41F250()");
+	//debug("Klayman::spriteUpdate41F250()");
 
 	int16 xdiff = _x4 - _x;
 
@@ -736,7 +742,7 @@ void Klayman::spriteUpdate41F250() {
 }
 
 void Klayman::spriteUpdate41F5F0() {
-	debug("Klayman::spriteUpdate41F5F0()");
+	//debug("Klayman::spriteUpdate41F5F0()");
 	
 	int16 xdiff = _x4 - _x;
 	
@@ -801,7 +807,7 @@ void Klayman::sub41FBB0() {
 }
 
 uint32 Klayman::handleMessage41DD80(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Klayman::handleMessage41DD80(%04X)", messageNum);
+	//debug("Klayman::handleMessage41DD80(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -832,7 +838,7 @@ uint32 Klayman::handleMessage41DD80(int messageNum, const MessageParam &param, E
 }
 
 void Klayman::sub41CD70(int16 x) {
-	debug("Klayman::sub41CD70(%d)", x);
+	//debug("Klayman::sub41CD70(%d)", x);
 	if (x > _x) {
 		if (ABS(x - _x) <= 105) {
 			sub41CAC0(x);
@@ -868,7 +874,7 @@ void Klayman::sub41FB30() {
 }
 
 uint32 Klayman::handleMessage41EC70(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Klayman::handleMessage41EC70(%04X)", messageNum);
+	//debug("Klayman::handleMessage41EC70(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -908,7 +914,7 @@ void Klayman::spriteUpdate41F300() {
 }
 
 uint32 Klayman::handleMessage41EB70(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Klayman::handleMessage41EB70(%04X)", messageNum);
+	//debug("Klayman::handleMessage41EB70(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -1047,7 +1053,7 @@ void Klayman::sub41FF80() {
 }
 
 uint32 Klayman::handleMessage41D4C0(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Klayman::handleMessage41D4C0(%04X)", messageNum);
+	//debug("Klayman::handleMessage41D4C0(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -1085,7 +1091,7 @@ void Klayman::sub420120() {
 }
 
 uint32 Klayman::handleMessage41DAD0(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Klayman::handleMessage41DAD0(%04X)", messageNum);
+	//debug("Klayman::handleMessage41DAD0(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -1166,7 +1172,7 @@ void Klayman::sub41CC40(int16 x1, int16 x2) {
 }
 
 void Klayman::sub41CAC0(int16 x) {
-	debug("Klayman::sub41CAC0(%d)", x);
+	//debug("Klayman::sub41CAC0(%d)", x);
 	int16 xdiff = ABS(x - _x);
 	if (x == _x) {
 		_x4 = x;
@@ -1256,7 +1262,7 @@ void Klayman::spriteUpdate41F780() {
 }
 
 uint32 Klayman::handleMessage41DF10(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Klayman::handleMessage41DF10(%04X)", messageNum);
+	//debug("Klayman::handleMessage41DF10(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -1302,7 +1308,7 @@ void Klayman::sub4208F0() {
 }
 
 uint32 Klayman::handleMessage41EEF0(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Klayman::handleMessage41EEF0(%04X)", messageNum);
+	//debug("Klayman::handleMessage41EEF0(%04X)", messageNum);
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -1856,6 +1862,139 @@ void Klayman::sub420550() {
 	}
 }
 
+void Klayman::sub420C50() {
+	if (!sub41CEB0(AnimationCallback(&Klayman::sub420C50))) {
+		_status2 = 0;
+		if (_flagF7) {
+			sub420D50();
+		} else {
+			_attachedSprite->sendMessage(0x482B, 0, this);
+			setFileHash(0x0C303040, 0, -1);
+			SetUpdateHandler(&Klayman::update);
+			SetSpriteCallback(&Klayman::spriteUpdate41F230);
+			SetMessageHandler(&Klayman::handleMessage41E210);
+			SetAnimationCallback3(&Klayman::sub420CD0);
+			_flagE5 = false;
+		}
+	}
+}
+
+void Klayman::sub420CD0() {
+	setFileHash(0x0D318140, 0, -1);
+	_attachedSprite->sendMessage(0x480F, 0, this);
+	SetAnimationCallback3(&Klayman::sub420D10);
+}
+
+void Klayman::sub420D10() {
+	setFileHash(0x4464A440, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(&Klayman::spriteUpdate41F230);
+	SetMessageHandler(&Klayman::handleMessage41D360);
+	_flagF7 = true;
+	_flagE5 = true;
+}
+
+void Klayman::sub420D50() {
+	setFileHash(0x09018068, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(&Klayman::spriteUpdate41F230);
+	SetMessageHandler(&Klayman::handleMessage41E210);
+	_attachedSprite->sendMessage(0x4807, 0, this);
+	SetAnimationCallback3(&Klayman::sub420DA0);
+	_flagE5 = false;
+}
+
+void Klayman::sub420DA0() {
+	setFileHash(0x0D318140, 0, -1);
+	_attachedSprite->sendMessage(0x480F, 0, this);
+	SetAnimationCallback3(&Klayman::sub420DE0);
+}
+
+void Klayman::sub420DE0() {
+	setFileHash(0x4464A440, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(&Klayman::spriteUpdate41F230);
+	SetMessageHandler(&Klayman::handleMessage41D360);
+	_flagF7 = true;
+	_flagE5 = true;
+}
+
+void Klayman::sub420E20() {
+	if (_flagF7) {
+		_status2 = 2;
+		setFileHash(0x09018068, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetSpriteCallback(&Klayman::spriteUpdate41F230);
+		SetMessageHandler(&Klayman::handleMessage41E210);
+		_attachedSprite->sendMessage(0x4807, 0, this);
+		SetAnimationCallback3(&Klayman::sub420E90);
+		_flagE5 = false;
+		_flagF7 = false;
+	} else {
+		sub41C7B0();
+	}
+}
+
+void Klayman::sub420E90() {
+	setFileHash(0x0928C048, 0, -1);
+	setCallback1(AnimationCallback(&Klayman::sub420EB0));
+}
+
+void Klayman::sub420EB0() {
+	_attachedSprite->sendMessage(0x482A, 0, this);
+}
+
+void Klayman::sub420680() {
+	if (!sub41CF10(AnimationCallback(&Klayman::sub420680))) {
+		_status2 = 2;
+		_counter2 = 0;
+		for (uint32 i = 0; i < 20; i++) {
+			if (getSubVar(0x02038314, i)) {
+				setSubVar(0x02720344, i, 1);
+				setSubVar(0x02038314, i, 0);
+				_counter2++;
+			}
+		}
+		if (_counter2 == 0) {
+			setCallback2(NULL);
+			sub41C7B0();
+		} else {
+			setFileHash(0xD8C8D100, 0, -1);
+			SetUpdateHandler(&Klayman::update);
+			SetSpriteCallback(&Klayman::spriteUpdate41F250);
+			SetMessageHandler(&Klayman::handleMessage41DB90);
+			_flagE5 = false;
+			_counter2--;
+		}
+	}
+}
+
+uint32 Klayman::handleMessage41DB90(int messageNum, const MessageParam &param, Entity *sender) {
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x06040580) {
+			if (_counter2 == 0) {
+				// TODO: Calc calcHash value somewhere else 
+				setFileHash3(0xD8C8D100, calcHash("GoToStartLoop/Finish"), 0);
+			}
+		} else if (_counter2 != 0 && param.asInteger() == calcHash("GoToStartLoop/Finish")) {
+			_counter2--;
+			setFileHash2(0xD8C8D100, 0x01084280, 0);
+		} else if (param.asInteger() == 0x062A1510) {
+			_soundResource1.play(0x41688704);
+		} else if (param.asInteger() == 0x02B20220) {
+			_soundResource1.play(0xC5408620);
+		} else if (param.asInteger() == 0x0A720138) {
+			_soundResource1.play(0xD4C08010);
+		} else if (param.asInteger() == 0xB613A180) {
+			_soundResource1.play(0x44051000);
+		} else if (param.asInteger() == 0x0E040501) {
+			_soundResource1.play(0xC6A129C1);
+		}
+	}
+	return handleMessage41D480(messageNum, param, sender);
+}
+
 //##############################################################################
 
 // KmScene1001
@@ -1865,7 +2004,7 @@ KmScene1001::KmScene1001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 }
 
 uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
-	debug("KmScene1001::xHandleMessage() messageNum = %04X", messageNum);
+	//debug("KmScene1001::xHandleMessage() messageNum = %04X", messageNum);
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
@@ -1951,7 +2090,7 @@ void KmScene1001::sub44FA50() {
 }
 
 uint32 KmScene1001::handleMessage44FA00(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("KmScene1001::handleMessage44FA00(%04X)", messageNum);
+	//debug("KmScene1001::handleMessage44FA00(%04X)", messageNum);
 	uint32 messageResult = Klayman::handleMessage41E210(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -1987,7 +2126,7 @@ void KmScene1002::xUpdate() {
 	
 uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	//ok
-	debug("KmScene1002::xHandleMessage(%04X)", messageNum);
+	//debug("KmScene1002::xHandleMessage(%04X)", messageNum);
 	switch (messageNum) {
 	case 0x2001:
 		setCallback2(AnimationCallback(&KmScene1002::sub449E90));
@@ -2089,7 +2228,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 void KmScene1002::update4497D0() {
-	debug("KmScene1002::update4497D0()");
+	//debug("KmScene1002::update4497D0()");
 	Klayman::update();
 	if (_counter1 != 0 && (--_counter1 == 0)) {
 		_surface->setVisible(true);
@@ -2259,10 +2398,10 @@ uint32 KmScene1002::handleMessage449D60(int messageNum, const MessageParam &para
 }
 
 void KmScene1002::spriteUpdate449DC0() {
-	debug("KmScene1002::spriteUpdate449DC0()");
+	//debug("KmScene1002::spriteUpdate449DC0()");
 	AnimatedSprite::updateDeltaXY();
 	HitRect *hitRect = _vm->_collisionMan->findHitRectAtPos(_x, _y + 10);
-	debug("$$$ hitRect->type = %04X", hitRect->type);
+	//debug("$$$ hitRect->type = %04X", hitRect->type);
 	if (hitRect->type == 0x5001) {
 		_y = hitRect->rect.y1;
 		processDelta();
@@ -2272,7 +2411,7 @@ void KmScene1002::spriteUpdate449DC0() {
 }
 
 void KmScene1002::sub449E20() {
-	debug("KmScene1002::sub449E20()");
+	//debug("KmScene1002::sub449E20()");
 	if (!sub41CEB0(AnimationCallback(&KmScene1002::sub449E20))) {
 		_status2 = 2;
 		_flagE5 = false;
@@ -2286,7 +2425,7 @@ void KmScene1002::sub449E20() {
 }
 
 void KmScene1002::sub449E90() {
-	debug("KmScene1002::sub449E90()");
+	//debug("KmScene1002::sub449E90()");
 	_soundResource1.play(0x56548280);
 	_status2 = 0;
 	_flagE5 = false;
@@ -2299,7 +2438,7 @@ void KmScene1002::sub449E90() {
 
 void KmScene1002::sub449EF0() {
 	//ok
-	debug("KmScene1002::sub449EF0()");
+	//debug("KmScene1002::sub449EF0()");
 	_counter1 = 1;
 	_status2 = 0;
 	_flagE5 = false;
@@ -2318,7 +2457,7 @@ void KmScene1002::sub449EF0() {
 
 void KmScene1002::sub449F70() {
 	//ok
-	debug("KmScene1002::sub449F70()");
+	//debug("KmScene1002::sub449F70()");
 	_parentScene->sendMessage(0x1024, 1, this);
 	_soundResource1.play(0x41648271);
 	_status2 = 1;
@@ -2338,7 +2477,7 @@ void KmScene1002::sub449F70() {
 
 void KmScene1002::sub44A050() {
 	//ok
-	debug("KmScene1002::sub44A050()");
+	//debug("KmScene1002::sub44A050()");
 	_counter1 = 1;
 	_status2 = 0;
 	_flagE5 = false;
@@ -2353,7 +2492,7 @@ void KmScene1002::sub44A050() {
 
 void KmScene1002::sub44A0D0() {
 	//ok
-	debug("KmScene1002::sub44A0D0()");
+	//debug("KmScene1002::sub44A0D0()");
 	_counter1 = 1;
 	_status2 = 0;
 	_flagE5 = false;
@@ -2368,7 +2507,7 @@ void KmScene1002::sub44A0D0() {
 
 void KmScene1002::sub44A150() {
 	//ok
-	debug("KmScene1002::sub44A150()");
+	//debug("KmScene1002::sub44A150()");
 	_parentScene->sendMessage(0x1024, 1, this);
 	_soundResource1.play(0x41648271);
 	_status2 = 1;
@@ -2388,14 +2527,14 @@ void KmScene1002::sub44A150() {
 
 void KmScene1002::sub44A230() {
 	//ok
-	debug("KmScene1002::sub44A230()");
+	//debug("KmScene1002::sub44A230()");
 	setDoDeltaX(2);
 	sub41FC80();
 }
 
 void KmScene1002::sub44A250() {
 	//ok
-	debug("KmScene1002::sub44A250()");
+	//debug("KmScene1002::sub44A250()");
 	if (!sub41CEB0(AnimationCallback(&KmScene1002::sub44A250))) {
 		_parentScene->sendMessage(0x1024, 3, this);
 		_status2 = 2;
@@ -2410,7 +2549,7 @@ void KmScene1002::sub44A250() {
 
 void KmScene1002::sub44A2C0() {
 	//ok
-	debug("KmScene1002::sub44A2C0()");
+	//debug("KmScene1002::sub44A2C0()");
 	if (_attachedSprite) {
 		_x = ((Sprite*)_attachedSprite)->getX();
 		_attachedSprite->sendMessage(0x4807, 0, this);
@@ -2427,7 +2566,7 @@ void KmScene1002::sub44A2C0() {
 
 void KmScene1002::sub44A330() {
 	//ok
-	debug("KmScene1002::sub44A330()");
+	//debug("KmScene1002::sub44A330()");
 	_status2 = 2;
 	_flagE5 = true;
 	setDoDeltaX(0);
@@ -2439,7 +2578,7 @@ void KmScene1002::sub44A330() {
 
 void KmScene1002::sub44A370() {
 	//ok
-	debug("KmScene1002::sub44A370()");
+	//debug("KmScene1002::sub44A370()");
 	_status2 = 1;
 	_flagE5 = false;
 	setFileHash(0x35AA8059, 0, -1);
@@ -2450,13 +2589,13 @@ void KmScene1002::sub44A370() {
 }
 
 void KmScene1002::sub44A3C0() {
-	debug("KmScene1002::sub44A3C0()");
+	//debug("KmScene1002::sub44A3C0()");
 	_parentScene->sendMessage(0x1024, 1, this);
 }
 
 void KmScene1002::sub44A3E0() {
 	//ok
-	debug("KmScene1002::sub44A3E0()");
+	//debug("KmScene1002::sub44A3E0()");
 	if (!sub41CEB0(AnimationCallback(&KmScene1002::sub44A3E0))) {
 		_status2 = 2;
 		_flagE4 = false;
@@ -2472,7 +2611,7 @@ void KmScene1002::sub44A3E0() {
 
 void KmScene1002::sub44A460() {
 	//ok
-	debug("KmScene1002::sub44A460()");
+	//debug("KmScene1002::sub44A460()");
 	_flagE4 = false;
 	_flagE5 = true;
 	setFileHash2(0x5C01A870, 0x01084280, 0);
@@ -2893,6 +3032,146 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x481E:
 		setCallback2(AnimationCallback(&Klayman::sub4207F0));
+		break;
+	}
+	return 0;
+}
+
+// KmScene1403
+
+KmScene1403::KmScene1403(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+
+	setKlaymanTable(klaymanTable4, ARRAYSIZE(klaymanTable4));
+}
+
+uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x480A:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub420600));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub420550));
+		}
+		break;		
+	case 0x480D:
+		setCallback2(AnimationCallback(&KmScene1001::sub420C50));
+		break;
+	case 0x4812:
+		if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420060));
+		} else if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub41FFF0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		}
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;		
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x4827:
+		setCallback2(AnimationCallback(&Klayman::sub420E20));
+		break;
+	case 0x483F:
+		sub41CD00(param.asInteger());
+		break;		
+	case 0x4840:
+		sub41CD70(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+// KmScene1404
+
+KmScene1404::KmScene1404(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	
+	// Empty	
+}
+
+uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x480A:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub420600));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub420550));
+		}
+		break;		
+	case 0x4812:
+		if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420060));
+		} else if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub41FFF0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		}
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;
+	case 0x481A:
+		setCallback2(AnimationCallback(&Klayman::sub420680));		
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x481D:
+		setCallback2(AnimationCallback(&Klayman::sub4207A0));
+		break;
+	case 0x481E:
+		setCallback2(AnimationCallback(&Klayman::sub4207F0));
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub4208B0));
+		} else if (param.asInteger() == 0) {
+			setCallback2(AnimationCallback(&Klayman::sub420870));
+		} else if (param.asInteger() == 4) {
+			setCallback2(AnimationCallback(&Klayman::sub420930));
+		} else if (param.asInteger() == 3) {
+			setCallback2(AnimationCallback(&Klayman::sub4208F0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub420830));
+		}
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		sub41C7B0();
+		break;
+	case 0x483F:
+		sub41CD00(param.asInteger());
+		break;
+	case 0x4840:
+		sub41CD70(param.asInteger());
 		break;
 	}
 	return 0;

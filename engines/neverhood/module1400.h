@@ -26,6 +26,7 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
+#include "neverhood/module1200.h"
 
 namespace Neverhood {
 
@@ -233,6 +234,71 @@ protected:
 	Sprite *_ssResetButton;
 	int _puzzleSolvedCountdown;
 	int _resetButtonCountdown;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+// Scene1403
+
+class Scene1403 : public Scene {
+public:
+	Scene1403(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_class401_1;
+	Sprite *_class401_2;
+	Sprite *_class401_3;
+	AsScene1201Tape *_asTape1;
+	AsScene1201Tape *_asTape2;
+	Sprite *_class489;
+	bool _flag;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+// Scene1404
+
+class Scene1404 : public Scene {
+public:
+	Scene1404(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Scene1404();
+protected:
+	Sprite *_sprite1;
+	Sprite *_asTape;
+	Sprite *_class489;
+	Sprite *_class545;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+// Scene1405
+
+class Scene1405;
+
+class AsScene1405Tile : public AnimatedSprite {
+public:
+	AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, uint32 index);
+	void show();
+	void hide();
+protected:
+	Scene1405 *_parentScene;
+	SoundResource _soundResource;
+	bool _flag;
+	uint32 _index;
+	int _countdown;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene1405 : public Scene {
+public:
+	Scene1405(NeverhoodEngine *vm, Module *parentModule, int which);
+	int getCountdown() const { return _countdown; }
+protected:
+	SoundResource _soundResource;
+	bool _selectFirstTile;
+	int _firstTileIndex;
+	int _secondTileIndex;
+	int _tilesLeft;
+	int _countdown;
+	AsScene1405Tile *_tiles[48];
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

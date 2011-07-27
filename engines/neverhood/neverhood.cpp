@@ -156,8 +156,11 @@ Common::Error NeverhoodEngine::run() {
 #endif
 
 #if 1
+
 	_collisionMan = new CollisionMan(this);
 	_gameModule = new GameModule(this);
+	
+	_gameModule->startup();
 
 	// Preliminary main loop, needs some more work but works for testing
 	while (!shouldQuit()) {
@@ -181,14 +184,9 @@ Common::Error NeverhoodEngine::run() {
 			case Common::EVENT_RBUTTONDOWN:
 				_gameModule->handleMouseDown(event.mouse.x, event.mouse.y);
 				break;
-			/*			
-			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_RBUTTONUP:
-				break;
 			case Common::EVENT_QUIT:
 				_system->quit();
 				break;
-			*/			
 			default:
 				break;
 			}
