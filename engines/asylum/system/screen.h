@@ -33,6 +33,8 @@
 
 namespace Asylum {
 
+#define PALETTE_SIZE 256 * 3
+
 class AsylumEngine;
 class GraphicResource;
 class ResourcePack;
@@ -151,8 +153,8 @@ private:
 	void clearTransTables();
 
 	// Palette
-	byte _currentPalette[256 * 3];
-	byte _mainPalette[256 * 3];
+	byte _currentPalette[PALETTE_SIZE];
+	byte _mainPalette[PALETTE_SIZE];
 	bool _isFading;
 	bool _fadeStop;
 	ResourceId _fadeResourceId;
