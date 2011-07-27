@@ -35,6 +35,14 @@ Common::String getFilename(Context &context) {
 	return name;
 }
 
+uint8 *DreamGenContext::workspace() {
+	push(es);
+	es = data.word(kWorkspace);
+	uint8 *result = es.ptr(0, 0);
+	es = pop();
+	return result;
+}
+
 void DreamGenContext::multiget() {
 	multiget(di, bx, cl, ch);
 }
@@ -97,9 +105,8 @@ void DreamGenContext::multidump() {
 }
 
 void DreamGenContext::worktoscreen() {
-	ds = data.word(kWorkspace);
 	uint size = 320 * 200;
-	engine->blit(ds.ptr(0, size), 320, 0, 0, 320, 200);
+	engine->blit(workspace(), 320, 0, 0, 320, 200);
 	di = si = size;
 	cx = 0;
 }
@@ -634,19 +641,6 @@ void DreamGenContext::showpcx() {
 	pcxFile.close();
 }
 
-/*
-void DreamGenContext::frameoutv() {
-	uint16 pitch = dx;
-	uint16 width = cx & 0xff;
-	uint16 height = cx >> 8;
-
-	const uint8 *src = ds.ptr(si, width * height);
-	uint8 *dst = es.ptr(0, pitch * height);
-
-	frameoutv(dst, src, pitch, width, height, di, bx);
-}
-*/
-
 void DreamGenContext::frameoutv(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	// NB : These resilience checks were not in the original engine, but did they result in undefined behaviour
 	// or was something broken during porting to C++?
@@ -680,8 +674,6 @@ void DreamGenContext::frameoutv(uint8 *dst, const uint8 *src, uint16 pitch, uint
 void DreamGenContext::showframe(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
 	es = dst;
 	ds = src;
-	di = x;
-	bx = y;
 	al = frameNumber;
 	ah = effectsFlag;
 
@@ -694,53 +686,49 @@ void DreamGenContext::showframe(uint16 dst, uint16 src, uint16 x, uint16 y, uint
 
 //notblankshow:
 	if ((effectsFlag & 128) == 0) {
-		di += ds.byte(si + 4);
-		bx += ds.byte(si + 5);
+		x += ds.byte(si + 4);
+		y += ds.byte(si + 5);
 	}
 //skipoffsets:
-	cx = ds.word(si + 0);
-	*width = cl;
-	*height = ch;
+
+	*width = ds.byte(si + 0);
+	*height = ds.byte(si + 1);
 	si = ds.word(si+2) + 2080;
+	const uint8 *pSrc = ds.ptr(si, *width * *height);
 
 	if (effectsFlag) {
 		if (effectsFlag & 128) { //centred
-			di -= *width / 2;
-			bx -= *height / 2;
+			x -= *width / 2;
+			y -= *height / 2;
 		}
 		if (effectsFlag & 64) { //diffdest
-			frameoutfx(es.ptr(0, dx * *height), ds.ptr(si, *width * *height), dx, *width, *height, di, bx);
+			frameoutfx(es.ptr(0, dx * *height), pSrc, dx, *width, *height, x, y);
 			return;
 		}
 		if (effectsFlag & 8) { //printlist
+			/*
 			push(ax);
-			ax = di - data.word(kMapadx);
-			push(bx);
-			bx -= data.word(kMapady);
-			ah = bl;
-			bx = pop();
+			al = x - data.word(kMapadx);
+			ah = y - data.word(kMapady);
 			//addtoprintlist(); // NB: Commented in the original asm
 			ax = pop();
+			*/
 		}
 		if (effectsFlag & 4) { //flippedx
-			es = data.word(kWorkspace);
-			frameoutfx(es.ptr(0, 320 * *height), ds.ptr(si, *width * *height), 320, *width, *height, di, bx);
+			frameoutfx(workspace(), pSrc, 320, *width, *height, x, y);
 			return;
 		}
 		if (effectsFlag & 2) { //nomask
-			es = data.word(kWorkspace);
-			frameoutnm(es.ptr(0, 320 * *height), ds.ptr(si, *width * *height), 320, *width, *height, di, bx);
+			frameoutnm(workspace(), pSrc, 320, *width, *height, x, y);
 			return;
 		}
 		if (effectsFlag & 32) {
-			es = data.word(kWorkspace);
-			frameoutbh(es.ptr(0, 320 * *height), ds.ptr(si, *width * *height), 320, *width, *height, di, bx);
+			frameoutbh(workspace(), pSrc, 320, *width, *height, x, y);
 			return;
 		}
 	}
 //noeffects:
-	es = data.word(kWorkspace);
-	frameoutv(es.ptr(0, 65536), ds.ptr(si, *width * *height), 320, *width, *height, di, bx);
+	frameoutv(workspace(), pSrc, 320, *width, *height, x, y);
 	return;
 }
 

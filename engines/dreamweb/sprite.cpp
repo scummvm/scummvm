@@ -434,12 +434,7 @@ void DreamGenContext::lockeddoorway(Sprite *sprite, ObjData *objData) {
 	}
 
 	if (sprite->frame == 6) {
-		al = data.byte(kDoorpath);
-		push(es);
-		push(bx);
-		turnpathon();
-		bx = pop();
-		es = pop();
+		turnpathonCPP(data.byte(kDoorpath));
 	}
 
 	if ((data.byte(kThroughdoor) == 1) && (sprite->frame == 0)) {
@@ -470,12 +465,7 @@ shutdoor2:
 	sprite->b15 = objData->b17 = objData->b18[sprite->frame];
 
 	if (sprite->frame == 0) {
-		al = data.byte(kDoorpath);
-		push(es);
-		push(bx);
-		turnpathoff();
-		bx = pop();
-		es = pop();
+		turnpathoffCPP(data.byte(kDoorpath));
 		data.byte(kLockstatus) = 1;
 	}
 }
