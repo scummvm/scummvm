@@ -80,7 +80,7 @@ bool PuzzleMorgueDoor::init(const AsylumEvent &evt)  {
 	_frameCounts[kBottomGear] = GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[32]);
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[20]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[20], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[20]);
 
 	return mouseLeftDown(evt);
 }
@@ -197,7 +197,7 @@ bool PuzzleMorgueDoor::mouseLeftDown(const AsylumEvent &evt) {
 bool PuzzleMorgueDoor::mouseRightUp(const AsylumEvent &evt) {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
-	getScreen()->setupPaletteAndStartFade(0, 0, 0);
+	getScreen()->stopPaletteFade(0, 0, 0);
 
 	_vm->switchEventHandler(getScene());
 
@@ -578,7 +578,7 @@ void PuzzleMorgueDoor::updateState() {
 
 		getCursor()->hide();
 		getSharedData()->setFlag(kFlag1, true);
-		getScreen()->setupPaletteAndStartFade(0, 0, 0);
+		getScreen()->stopPaletteFade(0, 0, 0);
 
 		_vm->switchEventHandler(getScene());
 	}

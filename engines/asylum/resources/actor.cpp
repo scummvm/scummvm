@@ -2984,7 +2984,7 @@ void Actor::updateStatus21() {
 			if (_frameIndex == _frameCount / 2) {
 				getWorld()->currentPaletteId = getWorld()->graphicResourceIds[getWorld()->nextPlayer - 1];
 				getScreen()->setPalette(getWorld()->currentPaletteId);
-				getScreen()->setGammaLevel(getWorld()->currentPaletteId, 0);
+				getScreen()->setGammaLevel(getWorld()->currentPaletteId);
 			}
 
 			return;
@@ -2997,7 +2997,7 @@ void Actor::updateStatus21() {
 				getScreen()->setPalette(getWorld()->graphicResourceIds[getWorld()->nextPlayer - 1]);
 
 			getWorld()->currentPaletteId = getWorld()->graphicResourceIds[getWorld()->nextPlayer - 1];
-			getScreen()->setGammaLevel(getWorld()->currentPaletteId, 0);
+			getScreen()->setGammaLevel(getWorld()->currentPaletteId);
 			return;
 		}
 	}

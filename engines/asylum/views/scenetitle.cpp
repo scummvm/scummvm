@@ -50,7 +50,7 @@ void SceneTitle::load() {
 	getScreen()->clear();
 	getScreen()->setPalette(getWorld()->sceneTitlePaletteResourceId);
 	getScreen()->paletteFade(0, 1, 1);
-	getScreen()->setGammaLevel(getWorld()->sceneTitlePaletteResourceId, 0);
+	getScreen()->setGammaLevel(getWorld()->sceneTitlePaletteResourceId);
 
 	getText()->loadFont(MAKE_RESOURCE(kResourcePackSound, 18));
 

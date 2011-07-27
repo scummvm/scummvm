@@ -53,7 +53,7 @@ bool Puzzle11::init(const AsylumEvent &evt)  {
 	getPuzzleData()->timeMachineCounter = 0;
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[12]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[12], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[12]);
 	getCursor()->set(getWorld()->graphicResourceIds[60], -1, kCursorAnimationNone, 7);
 
 	_data_45AA34 = false;
@@ -94,7 +94,7 @@ bool Puzzle11::mouseRightDown(const AsylumEvent &evt) {
 bool Puzzle11::mouseLeftUp(const AsylumEvent &evt) {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
-	getScreen()->setupPaletteAndStartFade(0, 0, 0);
+	getScreen()->stopPaletteFade(0, 0, 0);
 
 	_vm->switchEventHandler(getScene());
 

@@ -330,7 +330,7 @@ bool PuzzlePipes::init(const AsylumEvent &evt) {
 
 	getSound()->playSound(getWorld()->graphicResourceIds[41], true, Config.ambientVolume);
 	getScreen()->setPalette(getWorld()->graphicResourceIds[0]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[0], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[0]);
 
 	_rectIndex = -2;
 

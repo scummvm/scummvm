@@ -54,7 +54,7 @@ bool PuzzleWritings::init(const AsylumEvent &evt)  {
 		_hasGlassMagnifier = false;
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[10]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[10], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[10]);
 
 	if (_hasGlassMagnifier) {
 		getCursor()->hide();
@@ -71,10 +71,10 @@ bool PuzzleWritings::update(const AsylumEvent &evt)  {
 	// Adjust palette
 	if (rnd(10) < 7) {
 		getScreen()->setPalette(getWorld()->graphicResourceIds[6]);
-		getScreen()->setGammaLevel(getWorld()->graphicResourceIds[6], 0);
+		getScreen()->setGammaLevel(getWorld()->graphicResourceIds[6]);
 	} else {
 		getScreen()->setPalette(getWorld()->graphicResourceIds[10]);
-		getScreen()->setGammaLevel(getWorld()->graphicResourceIds[10], 0);
+		getScreen()->setGammaLevel(getWorld()->graphicResourceIds[10]);
 	}
 
 	// Compute frame index
@@ -113,7 +113,7 @@ bool PuzzleWritings::update(const AsylumEvent &evt)  {
 bool PuzzleWritings::mouseRightUp(const AsylumEvent &evt) {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
-	getScreen()->setupPaletteAndStartFade(0, 0, 0);
+	getScreen()->stopPaletteFade(0, 0, 0);
 
 	_vm->switchEventHandler(getScene());
 

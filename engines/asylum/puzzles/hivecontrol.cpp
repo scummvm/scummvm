@@ -120,7 +120,7 @@ bool PuzzleHiveControl::init(const AsylumEvent &evt) {
 	_frameIndexes[kElementLever] = (5 - _leverPosition) * (GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[kElementLever]) - 1) / 5;
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[29]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[29], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[29]);
 
 	getCursor()->show();
 

@@ -58,7 +58,7 @@ bool PuzzleLock::init(const AsylumEvent &evt)  {
 	getScreen()->clear();
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[14]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[14], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[14]);
 
 	_vm->setGameFlag(kGameFlag115);
 

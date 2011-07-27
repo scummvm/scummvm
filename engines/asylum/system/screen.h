@@ -91,20 +91,20 @@ public:
 	void takeScreenshot();
 
 	// Palette
-	void setPalette(byte *rgbPalette) const;
 	void setPalette(ResourceId id);
-	void setPaletteGamma(ResourceId id);
-	void setupPaletteAndStartFade(uint32 red, int32 milliseconds, int32 param);
-	void stopFadeAndSetPalette(ResourceId id, int32 milliseconds, int32 param);
-	void paletteFade(uint32 red, int32 milliseconds, int32 param);
-	void startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param);
+	void loadPalette();
 	void updatePalette();
 	void updatePalette(int32 param);
-	void makeGreyPalette();
 	void setupPalette(byte *buffer, int start, int count);
 
+	void stopPaletteFade(char red, char green, char blue);
+	void stopPaletteFadeAndSet(ResourceId id, int32 milliseconds, int32 param);
+	void paletteFade(uint32 red, int32 milliseconds, int32 param);
+	void startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param);
+
 	// Gamma
-	void setGammaLevel(ResourceId id, int32 val);
+	void setPaletteGamma(ResourceId id);
+	void setGammaLevel(ResourceId id);
 
 	// Transparency tables
 	void setupTransTable(ResourceId resourceId);
@@ -143,6 +143,16 @@ private:
 	byte *_transTable;
 	byte *_transTableBuffer;
 	void clearTransTables();
+
+	// Palette
+	byte _currentPalette[256 * 4];
+	byte _mainPalette[256 * 4];
+
+	byte *getPaletteData(ResourceId id);
+	void setPaletteGamma(byte *data, byte *target = NULL);
+
+	void paletteFadeWorker(ResourceId id, int32 milliseconds, int32 param);
+	void stopPaletteFadeTimer();
 
 	// Graphic queue
 	void graphicsSelectionSort();

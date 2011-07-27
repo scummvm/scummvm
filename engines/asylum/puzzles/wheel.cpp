@@ -172,7 +172,7 @@ bool PuzzleWheel::init(const AsylumEvent &evt)  {
 	getSpecial()->reset(false);
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[1]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[1], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[1]);
 
 	updateCursor();
 	getCursor()->show();

@@ -57,7 +57,7 @@ PuzzleVCR::~PuzzleVCR() {
 bool PuzzleVCR::init(const AsylumEvent &evt)  {
 	// Load the graphics palette
 	getScreen()->setPalette(getWorld()->graphicResourceIds[29]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[29], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[29]);
 
 	if (_jacksState[kBlack] == kOnHand || _jacksState[kRed] == kOnHand || _jacksState[kYellow] == kOnHand) {
 		getCursor()->hide();

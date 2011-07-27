@@ -104,7 +104,7 @@ bool PuzzleTimeMachine::init(const AsylumEvent &evt)  {
 	_frameCounts[5] = GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[40]);
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[41]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[41], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[41]);
 
 	mouseLeftDown(evt);
 
@@ -160,7 +160,7 @@ bool PuzzleTimeMachine::update(const AsylumEvent &evt)  {
 	if (_counter > 30 && _vm->isGameFlagSet(kGameFlag925)) {
 		getCursor()->hide();
 		getSharedData()->setFlag(kFlag1, true);
-		getScreen()->setupPaletteAndStartFade(0, 0, 0);
+		getScreen()->stopPaletteFade(0, 0, 0);
 
 		_vm->switchEventHandler(getScene());
 	}
@@ -248,7 +248,7 @@ bool PuzzleTimeMachine::mouseLeftUp(const AsylumEvent &evt) {
 bool PuzzleTimeMachine::mouseRightDown(const AsylumEvent &evt) {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
-	getScreen()->setupPaletteAndStartFade(0, 0, 0);
+	getScreen()->stopPaletteFade(0, 0, 0);
 	_vm->switchEventHandler(getScene());
 
 	return true;

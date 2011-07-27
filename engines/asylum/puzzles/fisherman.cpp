@@ -74,7 +74,7 @@ bool PuzzleFisherman::init(const AsylumEvent &evt)  {
 
 	_dword_45A130 = false;
 	getScreen()->setPalette(getWorld()->graphicResourceIds[39]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[39], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[39]);
 
 	return mouseLeftDown(evt);
 }
@@ -163,7 +163,7 @@ bool PuzzleFisherman::mouseLeftDown(const AsylumEvent &evt) {
 bool PuzzleFisherman::mouseRightDown(const AsylumEvent &evt) {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
-	getScreen()->setupPaletteAndStartFade(0, 0, 0);
+	getScreen()->stopPaletteFade(0, 0, 0);
 
 	_vm->switchEventHandler(getScene());
 
