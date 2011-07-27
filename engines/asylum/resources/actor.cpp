@@ -1502,8 +1502,110 @@ void Actor::processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection
 	updateDirection();
 }
 
-bool Actor::process_4069B0(int32 *x, int32 *y) {
-	error("[Actor::process_4069B0] Not implemented!");
+bool Actor::canInteract(Common::Point *point, int32* param) {
+	Actor *player = getScene()->getActor();
+
+	uint32 offset = 65;
+	if (getWorld()->chapter != kChapter2 || _index != 8)
+		offset = 40;
+
+	int32 parameter = 5;
+	Common::Point pt = _point1 + _point2;
+
+	if (getWorld()->chapter != kChapter2 || _index != 1) {
+		Common::Point diff = *player->getPoint1() - _point1;
+
+		if (abs(diff.y) <= abs(diff.x)) {
+
+			if (diff.x < 0) {
+
+				parameter = 2;
+				pt.x -= offset;
+				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
+					goto processActor;
+
+				parameter = 3;
+				pt.x -= offset;
+				pt.y += offset;
+				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
+					goto processActor;
+
+				parameter = 1;
+				pt.x -= offset;
+				pt.y -= offset;
+
+			} else {
+
+				parameter = 6;
+				pt.x += offset;
+				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
+					goto processActor;
+
+				parameter = 5;
+				pt.x += offset;
+				pt.y += offset;
+				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
+					goto processActor;
+
+				parameter = 7;
+				pt.x += offset;
+				pt.y -= offset;
+			}
+
+		} else {
+
+			if (diff.y >= 0) {
+
+				parameter = 4;
+				pt.y += offset;
+				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
+					goto processActor;
+
+				parameter = 3;
+				pt.x -= offset;
+				pt.y += offset;
+				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
+					goto processActor;
+
+				parameter = 5;
+				pt.x += offset;
+				pt.y += offset;
+
+			} else {
+
+				parameter = 0;
+				pt.y -= offset;
+				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
+					goto processActor;
+
+				parameter = 1;
+				pt.x -= offset;
+				pt.y -= offset;
+				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
+					goto processActor;
+
+				parameter = 7;
+				pt.x += offset;
+				pt.y -= offset;
+			}
+		}
+	} else {
+		parameter = 5;
+		pt.x += offset;
+		pt.y += offset;
+	}
+
+	if (getScene()->findActionArea(kActionAreaType2, pt) == -1)
+		return false;
+
+processActor:
+	if (!process(pt))
+		return false;
+
+	*point = pt;
+	*param = abs(parameter + 4) & 7;
+
+	return true;
 }
 
 bool Actor::canMove(Common::Point *point, ActorDirection direction, uint32 distance, bool hasDelta) {
