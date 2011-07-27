@@ -500,7 +500,7 @@ void MystScriptParser::o_disableAreas(uint16 op, uint16 var, uint16 argc, uint16
 				resource = _vm->_resources[argv[i + 1]];
 
 			if (resource)
-				resource->setEnabled(true);
+				resource->setEnabled(false);
 			else
 				warning("Unknown Resource in disableAreas script Opcode");
 		}
