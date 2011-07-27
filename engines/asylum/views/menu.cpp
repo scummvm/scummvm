@@ -114,7 +114,7 @@ void Menu::setup() {
 	if (_vm->isGameFlagSet(kGameFlagFinishGame)) {
 		getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 32));
 		getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 31));
-		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 31), 0);
+		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 31));
 		getScreen()->setupTransTables(4, MAKE_RESOURCE(kResourcePackShared, 34),
 		                                 MAKE_RESOURCE(kResourcePackShared, 35),
 		                                 MAKE_RESOURCE(kResourcePackShared, 36),
@@ -128,7 +128,7 @@ void Menu::setup() {
 	} else {
 		getText()->loadFont(MAKE_RESOURCE(kResourcePackShared, 25));
 		getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 26));
-		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 26), 0);
+		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 26));
 		getScreen()->setupTransTables(4, MAKE_RESOURCE(kResourcePackShared, 27),
 		                                 MAKE_RESOURCE(kResourcePackShared, 28),
 		                                 MAKE_RESOURCE(kResourcePackShared, 29),
@@ -159,7 +159,7 @@ void Menu::closeCredits() {
 
 	getText()->loadFont(kFontYellow);
 	getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 17));
-	getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17), 0);
+	getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17));
 	getScreen()->setupTransTables(4, MAKE_RESOURCE(kResourcePackShared, 18),
 	                                 MAKE_RESOURCE(kResourcePackShared, 19),
 	                                 MAKE_RESOURCE(kResourcePackShared, 20),
@@ -388,7 +388,7 @@ bool Menu::init() {
 	getScreen()->clear();
 	getText()->loadFont(kFontYellow);
 	getScreen()->setPalette(MAKE_RESOURCE(kResourcePackShared, 17));
-	getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17), 0);
+	getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17));
 	getScreen()->setupTransTables(4, MAKE_RESOURCE(kResourcePackShared, 18),
 	                                 MAKE_RESOURCE(kResourcePackShared, 19),
 	                                 MAKE_RESOURCE(kResourcePackShared, 20),
@@ -2178,7 +2178,7 @@ void Menu::clickSettings() {
 			return;
 
 		Config.gammaLevel -= 1;
-		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17), 0);
+		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17));
 
 		return;
 	}
@@ -2191,7 +2191,7 @@ void Menu::clickSettings() {
 
 
 		Config.gammaLevel += 1;
-		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17), 0);
+		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17));
 
 		return;
 	}

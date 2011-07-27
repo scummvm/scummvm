@@ -81,7 +81,7 @@ bool PuzzleClock::init(const AsylumEvent &evt)  {
 	updateCursor();
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[6]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[6], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[6]);
 
 	getCursor()->show();
 

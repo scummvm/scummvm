@@ -357,8 +357,8 @@ bool Scene::init() {
 		paletteResource = _ws->currentPaletteId;
 
 	getScreen()->setPalette(paletteResource);
-	getScreen()->setGammaLevel(paletteResource, 0);
-	getScreen()->makeGreyPalette();
+	getScreen()->setGammaLevel(paletteResource);
+	getScreen()->loadPalette();
 	getScreen()->setupTransTables(3, _ws->cellShadeMask1, _ws->cellShadeMask2, _ws->cellShadeMask3);
 	getScreen()->selectTransTable(1);
 
@@ -624,12 +624,12 @@ bool Scene::updateScreen() {
 	if (getSharedData()->getFlag(kFlagScene1)) {
 		getScreen()->clear();
 
-		getScreen()->setupPaletteAndStartFade(0, 0, 0);
+		getScreen()->stopPaletteFade(0, 0, 0);
 		updateScene();
 		drawScene();
 		getScreen()->copyBackBufferToScreen();
 
-		getScreen()->stopFadeAndSetPalette(getWorld()->currentPaletteId, 100, 10);
+		getScreen()->stopPaletteFadeAndSet(getWorld()->currentPaletteId, 100, 10);
 		drawScene();
 		getScreen()->copyBackBufferToScreen();
 
@@ -1781,7 +1781,7 @@ void Scene::playIntroSpeech() {
 	}
 
 	getScreen()->clear();
-	getScreen()->setupPaletteAndStartFade(0, 0, 0);
+	getScreen()->stopPaletteFade(0, 0, 0);
 
 	do {
 		// Poll events (this ensure we don't freeze the screen)
@@ -2218,7 +2218,7 @@ void Scene::changePlayer(ActorIndex index) {
 
 			getScreen()->setPalette(_ws->graphicResourceIds[0]);
 			_ws->currentPaletteId = _ws->graphicResourceIds[0];
-			getScreen()->setGammaLevel(_ws->graphicResourceIds[0], 0);
+			getScreen()->setGammaLevel(_ws->graphicResourceIds[0]);
 			_vm->setGameFlag(kGameFlag635);
 			_vm->clearGameFlag(kGameFlag636);
 			_vm->clearGameFlag(kGameFlag637);
@@ -2235,7 +2235,7 @@ void Scene::changePlayer(ActorIndex index) {
 
 			getScreen()->setPalette(_ws->graphicResourceIds[1]);
 			_ws->currentPaletteId = _ws->graphicResourceIds[1];
-			getScreen()->setGammaLevel(_ws->graphicResourceIds[1], 0);
+			getScreen()->setGammaLevel(_ws->graphicResourceIds[1]);
 			_vm->setGameFlag(kGameFlag636);
 			_vm->clearGameFlag(kGameFlag635);
 			_vm->clearGameFlag(kGameFlag637);
@@ -2252,7 +2252,7 @@ void Scene::changePlayer(ActorIndex index) {
 
 			getScreen()->setPalette(_ws->graphicResourceIds[2]);
 			_ws->currentPaletteId = _ws->graphicResourceIds[2];
-			getScreen()->setGammaLevel(_ws->graphicResourceIds[2], 0);
+			getScreen()->setGammaLevel(_ws->graphicResourceIds[2]);
 			_vm->setGameFlag(kGameFlag637);
 			_vm->clearGameFlag(kGameFlag635);
 			_vm->clearGameFlag(kGameFlag636);

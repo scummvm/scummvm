@@ -167,7 +167,7 @@ PuzzleHiveMachine::~PuzzleHiveMachine() {
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleHiveMachine::init(const AsylumEvent &evt)  {
 	getScreen()->setPalette(getWorld()->graphicResourceIds[9]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[9], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[9]);
 	_rectIndex = -2;
 
 	return true;

@@ -965,7 +965,7 @@ IMPLEMENT_OPCODE(PlayMovie)
 
 		if (!getSharedData()->matteBarHeight) {
 			getCursor()->hide();
-			getScreen()->makeGreyPalette();
+			getScreen()->loadPalette();
 			getSharedData()->matteVar1 = 1;
 			getSharedData()->matteBarHeight = 1;
 			getSharedData()->matteVar2 = 0;
@@ -981,10 +981,10 @@ IMPLEMENT_OPCODE(PlayMovie)
 	ActionArea *area = getWorld()->actions[getScene()->getActor()->getActionIndex3()];
 	if (area->paletteResourceId) {
 		getScreen()->setPalette(area->paletteResourceId);
-		getScreen()->setGammaLevel(area->paletteResourceId, 0);
+		getScreen()->setGammaLevel(area->paletteResourceId);
 	} else {
 		getScreen()->setPalette(getWorld()->currentPaletteId);
-		getScreen()->setGammaLevel(getWorld()->currentPaletteId, 0);
+		getScreen()->setGammaLevel(getWorld()->currentPaletteId);
 	}
 
 	getSharedData()->matteBarHeight = 0;
@@ -1128,7 +1128,7 @@ END_OPCODE
 // Opcode 0x3B
 IMPLEMENT_OPCODE(CreatePalette)
 	if (!cmd->param2) {
-		getScreen()->makeGreyPalette();
+		getScreen()->loadPalette();
 		cmd->param2 = 1;
 	}
 
@@ -1699,7 +1699,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(SetResourcePalette)
 	getWorld()->currentPaletteId = getWorld()->graphicResourceIds[cmd->param1];
 	getScreen()->setPalette(getWorld()->currentPaletteId);
-	getScreen()->setGammaLevel(getWorld()->currentPaletteId, 0);
+	getScreen()->setGammaLevel(getWorld()->currentPaletteId);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////

@@ -110,7 +110,7 @@ bool PuzzleTicTacToe::init(const AsylumEvent &evt)  {
 	_strikeOutPosition = -1;
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[3]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[3], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[3]);
 
 	getCursor()->show();
 	getCursor()->set(getWorld()->graphicResourceIds[12], 4, kCursorAnimationLinear, 4);

@@ -1250,7 +1250,7 @@ void Special::setPaletteGamma(ResourceId palette1, ResourceId palette2) {
 						_paletteTick1 = _vm->getTick() + 5000;
 					} else {
 						getScreen()->setPalette(palette1);
-						getScreen()->setGammaLevel(palette1, 0);
+						getScreen()->setGammaLevel(palette1);
 						_chapter5Counter = 1;
 					}
 				}
@@ -1259,19 +1259,19 @@ void Special::setPaletteGamma(ResourceId palette1, ResourceId palette2) {
 
 		case 500:
 			getScreen()->setPalette(palette2);
-			getScreen()->setGammaLevel(palette2, 0);
+			getScreen()->setGammaLevel(palette2);
 			++_chapter5Counter;
 			break;
 
 		case 1000:
 			getScreen()->setPalette(palette1);
-			getScreen()->setGammaLevel(palette1, 0);
+			getScreen()->setGammaLevel(palette1);
 			++_chapter5Counter;
 			break;
 
 		case 1500:
 			getScreen()->setPalette(palette2);
-			getScreen()->setGammaLevel(palette2, 0);
+			getScreen()->setGammaLevel(palette2);
 			_chapter5Counter = 0;
 			_paletteFlag = true;
 			_paletteTick2 = _vm->getTick() + rnd(1000) + 1000;

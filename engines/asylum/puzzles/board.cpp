@@ -66,7 +66,7 @@ bool PuzzleBoard::init(const AsylumEvent &evt)  {
 	_soundResourceId = 0;
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[32]);
-	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[32], 0);
+	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[32]);
 	getText()->loadFont(getWorld()->graphicResourceIds[35]);
 
 	// Prepare text to draw

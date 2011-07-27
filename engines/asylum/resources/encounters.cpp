@@ -1609,7 +1609,7 @@ void Encounter::runScript() {
 
 		case 23:
 			if (!getSharedData()->matteBarHeight) {
-				getScreen()->makeGreyPalette();
+				getScreen()->loadPalette();
 				getSharedData()->matteBarHeight = 1;
 				getSharedData()->movieIndex = getVariableInv(entry.param2);
 				getSharedData()->matteVar1 = 1;

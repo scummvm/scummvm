@@ -22,6 +22,8 @@
 
 #include "asylum/system/screen.h"
 
+#include "asylum/resources/actor.h"
+#include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
 
 #include "asylum/system/graphics.h"
@@ -45,6 +47,9 @@ Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 
 	_flag = -1;
 	_clipRect = Common::Rect(0, 0, 640, 480);
+
+	memset(&_currentPalette, 0, sizeof(_currentPalette));
+	memset(&_mainPalette, 0, sizeof(_mainPalette));
 
 	g_debugDrawRects = 0;
 }
@@ -235,76 +240,68 @@ void Screen::takeScreenshot() {
 //////////////////////////////////////////////////////////////////////////
 // Palette
 //////////////////////////////////////////////////////////////////////////
+byte *Screen::getPaletteData(ResourceId id) {
+	ResourceEntry *resource = getResource()->get(id);
+
+	// Check that resource is a valid palette
+	byte flag = *(resource->data + 5);
+	if (!(flag & 32))
+		error("[Screen::getPaletteData] Invalid palette resource id %d (0x%X) with flag %d", id, id, flag);
+
+	return (resource->data + resource->getData(12));
+}
+
+void Screen::loadPalette() {
+	// Get the current action palette
+	ResourceId paletteId = getWorld()->actions[getScene()->getActor()->getActionIndex3()]->paletteResourceId;
+	if (!paletteId)
+		paletteId = getWorld()->currentPaletteId;
+
+	// Get the data
+	byte *paletteData = getPaletteData(paletteId);
+
+	// Store data into our global palette
+	memcpy(&_currentPalette, paletteData, sizeof(_currentPalette));
+}
+
 void Screen::setPalette(ResourceId id) {
-	setPalette(getResource()->get(id)->data + 32);
+	byte *data = getPaletteData(id);
+
+	setupPalette(data + 4, data[2], *(uint16 *)data);
 }
 
-void Screen::setPalette(byte *rgbPalette) const {
-	byte palette[256 * 3];
-	byte *p = rgbPalette;
+void Screen::setupPalette(byte *buffer, int start, int count) {
+	// Check parameters
+	if (start < 0 || start > 256)
+		error("[Screen::setupPalette] Invalid start parameter (was: %d, valid: [0 ; 255])", start);
 
-	// skip first color and set it to black always.
-	memset(palette, 0, 3);
-	p += 3;
+	if ((count + start) > 256)
+		error("[Screen::setupPalette] Parameters go past the palette buffer (start: %d, count: %d with sum > 256)", start, count);
 
-	for (int32 i = 1; i < 256; i++) {
-		palette[i * 3 + 0] = (byte)(*p++ << 2);
-		palette[i * 3 + 1] = (byte)(*p++ << 2);
-		palette[i * 3 + 2] = (byte)(*p++ << 2);
-	}
+	// TODO: Update transparent palette if needed
 
-	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
-}
+	// Setup our main palette
+	if (count > 0) {
+		byte *palette = (byte *)_mainPalette;
+		palette += 4 * start;
 
-void Screen::setPaletteGamma(ResourceId id) {
-	byte *resPalette = getResource()->get(id)->data + 32;
-	byte rgbPalette[256 * 3];
+		for (int32 i = 0; i < count; i++) {
+			palette[0] = buffer[0] * 4;
+			palette[1] = buffer[1] * 4;
+			palette[2] = buffer[2] * 4;
 
-	_vm->_system->getPaletteManager()->grabPalette(rgbPalette, 0, 256);
-
-	for (int32 i = 1; i < 256; i++) {
-		int color = 0;
-		if (resPalette[i * 3 + 0] > 0)
-			color = resPalette[i * 3 + 0];
-		if (resPalette[i * 3 + 1] > color)
-			color = resPalette[i * 3 + 1];
-		if (resPalette[i * 3 + 2] > color)
-			color = resPalette[i * 3 + 2];
-
-		int gamma = color + (Config.gammaLevel * (63 - color) + 31) / 63;
-
-		if (gamma) {
-			if (resPalette[i * 3 + 0])
-				rgbPalette[i * 3 + 0] = 4 * ((color >> 1) + resPalette[i * 3 + 0] * gamma) / color;
-			if (resPalette[i * 3 + 1])
-				rgbPalette[i * 3 + 1] = 4 * ((color >> 1) + resPalette[i * 3 + 1] * gamma) / color;
-			if (resPalette[i * 3 + 2])
-				rgbPalette[i * 3 + 2] = 4 * ((color >> 1) + resPalette[i * 3 + 2] * gamma) / color;
+			buffer  += 3;
+			palette += 3;
 		}
 	}
 
-	_vm->_system->getPaletteManager()->setPalette(rgbPalette, 0, 256);
-}
-
-void Screen::setupPaletteAndStartFade(uint32 red, int32 milliseconds, int32 param) {
-	warning("[Screen::setupPaletteAndStartFade] Not implemented!");
-}
-
-void Screen::stopFadeAndSetPalette(ResourceId id, int32 milliseconds, int32 param) {
-	// HACK so we have a proper screen palette
-	setPalette(id);
-	warning("[Screen::stopFadeAndSetPalette] Not implemented!");
-}
-
-void Screen::paletteFade(uint32 red, int32 milliseconds, int32 param) {
-	warning("[Screen::paletteFade] Not implemented!");
-}
-
-void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param) {
-	warning("[Screen::startPaletteFade] Not implemented!");
+	// Change the system palette
+	_vm->_system->getPaletteManager()->setPalette(_mainPalette, 0, 256);
 }
 
 void Screen::updatePalette() {
+	// FIXME: This is used to replace all the inline code to setup the palette before calls to setupPalette/paletteFade
+	// See if all that code can really be factorized into a single function or not
 	error("[Screen::updatePalette] Not implemented!");
 }
 
@@ -312,24 +309,95 @@ void Screen::updatePalette(int32 param) {
 	error("[Screen::updatePalette] Not implemented!");
 }
 
-void Screen::makeGreyPalette() {
-	warning("[Screen::makeGreyPalette] Not implemented!");
+void Screen::startPaletteFade(ResourceId resourceId, int32 milliseconds, int32 param) {
+	warning("[Screen::startPaletteFade] Not implemented!");
 }
 
-void Screen::setupPalette(byte *buffer, int start, int count) {
-	warning("[Screen::setupPalette] Not implemented!");
+void Screen::stopPaletteFade(char red, char green, char blue) {
+	// Setup main palette
+	byte *palette = (byte *)&_mainPalette;
+	palette += 4;
+
+	for (uint32 i = 0; i < ARRAYSIZE(_mainPalette) - 4; i += 4) {
+		palette[0] = red;
+		palette[1] = green;
+		palette[2] = blue;
+
+		palette += 3;
+	}
+
+	stopPaletteFadeTimer();
+	setupPalette(0, 0, 0);
+}
+
+void Screen::stopPaletteFadeAndSet(ResourceId id, int32 milliseconds, int32 param) {
+	stopPaletteFadeTimer();
+	paletteFadeWorker(id, milliseconds, param);
+}
+
+void Screen::paletteFade(uint32 red, int32 milliseconds, int32 param) {
+	if (red < 0 || red > 255 || milliseconds < 0 || param <= 0)
+		return;
+
+	warning("[Screen::paletteFade] Not implemented!");
+}
+
+void Screen::paletteFadeWorker(ResourceId id, int32 milliseconds, int32 param) {
+	warning("[Screen::paletteFadeWorker] Not implemented!");
+
+	// HACK setup a proper palette
+	setPalette(id);
+}
+
+void Screen::stopPaletteFadeTimer() {
+	warning("[Screen::stopPaletteFadeTimer] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Gamma
 //////////////////////////////////////////////////////////////////////////
-void Screen::setGammaLevel(ResourceId id, int32 val) {
-	if (Config.gammaLevel) {
-		if (id)
-			setPaletteGamma(id);
-		else
-			warning("[Screen::setGammaLevel] Palette creation without a valid resource Id not implemented");
+void Screen::setPaletteGamma(ResourceId id) {
+	setPaletteGamma(getPaletteData(id));
+}
+
+void Screen::setPaletteGamma(byte *data, byte *target) {
+	if (target == NULL)
+		target = (byte *)&_mainPalette;
+
+	// Skip first entry
+	data += 4;
+
+	for (int32 i = 1; i < 256; i++) {
+		int color = 0;
+		if (data[i * 3 + 0] > 0)
+			color = data[i * 3 + 0];
+		if (data[i * 3 + 1] > color)
+			color = data[i * 3 + 1];
+		if (data[i * 3 + 2] > color)
+			color = data[i * 3 + 2];
+
+		int gamma = color + (Config.gammaLevel * (63 - color) + 31) / 63;
+
+		if (gamma) {
+			if (data[i * 3 + 0])
+				target[i * 3 + 0] = 4 * ((color >> 1) + data[i * 3 + 0] * gamma) / color;
+			if (data[i * 3 + 1])
+				target[i * 3 + 1] = 4 * ((color >> 1) + data[i * 3 + 1] * gamma) / color;
+			if (data[i * 3 + 2])
+				target[i * 3 + 2] = 4 * ((color >> 1) + data[i * 3 + 2] * gamma) / color;
+		}
 	}
+}
+
+void Screen::setGammaLevel(ResourceId id) {
+	if (!Config.gammaLevel)
+		return;
+
+	if (!id)
+		error("[Screen::setGammaLevel] Resource Id is invalid");
+
+	setPaletteGamma(getPaletteData(id));
+	setupPalette(0, 0, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
