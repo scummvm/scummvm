@@ -8,7 +8,7 @@ MODULE_OBJS = \
 	scripting.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_COMPOSER), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 
