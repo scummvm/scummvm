@@ -28,14 +28,14 @@ namespace DreamGen {
 
 void DreamGenContext::printboth() {
 	uint16 x = di;
-	printboth(es, ds, &x, bx, al);
+	printboth(ds, &x, bx, al);
 	di = x;
 }
 
-void DreamGenContext::printboth(uint16 dst, uint16 src, uint16 *x, uint16 y, uint8 c) {
+void DreamGenContext::printboth(uint16 src, uint16 *x, uint16 y, uint8 c) {
 	uint16 newX = *x;
 	uint8 width, height;
-	printchar(dst, src, &newX, y, c, &width, &height);
+	printchar(src, &newX, y, c, &width, &height);
 	multidump(*x, y, width, height);
 	*x = newX;
 }
@@ -76,13 +76,13 @@ void DreamGenContext::getnextword() {
 void DreamGenContext::printchar() {
 	uint16 x = di;
 	uint8 width, height;
-	printchar(es, ds, &x, bx, al, &width, &height);
+	printchar(ds, &x, bx, al, &width, &height);
 	di = x;
 	cl = width;
 	ch = height;
 }
 
-void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uint8 c, uint8 *width, uint8 *height) {
+void DreamGenContext::printchar(uint16 src, uint16* x, uint16 y, uint8 c, uint8 *width, uint8 *height) {
 	if (c == 255)
 		return;
 	push(si);
@@ -90,7 +90,7 @@ void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uin
 	if (data.byte(kForeignrelease) != 0)
 		y -= 3;
 	uint16 tmp = c - 32 + data.word(kCharshift);
-	showframe(dst, src, *x, y, tmp & 0xff, tmp >> 8, width, height);
+	showframe(src, *x, y, tmp & 0xff, tmp >> 8, width, height);
 	di = pop();
 	si = pop();
 	_cmp(data.byte(kKerning), 0);
@@ -117,7 +117,7 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 			push(es);
 			push(ds);
 			c0 = engine->modifyChar(c0);
-			printboth(es, ds, &offset, y, c0);
+			printboth(ds, &offset, y, c0);
 			ds = pop();
 			es = pop();
 			uint8 c1 = es.byte(si+1);
@@ -133,7 +133,7 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 				c1 = engine->modifyChar(c1);
 				data.word(kCharshift) = 91;
 				uint16 offset2 = offset;
-				printboth(es, ds, &offset2, y, c1);
+				printboth(ds, &offset2, y, c1);
 				data.word(kCharshift) = 0;
 				es = pop();
 				ds = pop();
@@ -179,9 +179,7 @@ void DreamGenContext::printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool cent
 			}
 			c = engine->modifyChar(c);
 			uint8 width, height;
-			push(es);
-			printchar(es, ds, &i, *y, c, &width, &height);
-			es = pop();
+			printchar(ds, &i, *y, c, &width, &height);
 			data.word(kLastxpos) = i;
 			--charCount;
 		} while(charCount);

@@ -35,10 +35,6 @@ Sprite *DreamGenContext::spritetable() {
 }
 
 void DreamGenContext::printsprites() {
-	printsprites(es);
-}
-
-void DreamGenContext::printsprites(uint16 dst) {
 	for (size_t priority = 0; priority < 7; ++priority) {
 		Sprite *sprites = spritetable();
 		for (size_t j = 0; j < 16; ++j) {
@@ -49,12 +45,12 @@ void DreamGenContext::printsprites(uint16 dst) {
 				continue;
 			if (sprite.hidden == 1)
 				continue;
-			printasprite(dst, &sprite);
+			printasprite(&sprite);
 		}
 	}
 }
 
-void DreamGenContext::printasprite(uint16 dst, const Sprite *sprite) {
+void DreamGenContext::printasprite(const Sprite *sprite) {
 	uint16 x, y;
 	if (sprite->y >= 220) {
 		y = data.word(kMapady) - (256 - sprite->y);
@@ -74,7 +70,7 @@ void DreamGenContext::printasprite(uint16 dst, const Sprite *sprite) {
 	else
 		c = 0;
 	uint8 width, height;
-	showframe(es, READ_LE_UINT16(&sprite->w6), x, y, sprite->b15, c, &width, &height);
+	showframe(READ_LE_UINT16(&sprite->w6), x, y, sprite->b15, c, &width, &height);
 }
 
 void DreamGenContext::clearsprites() {
