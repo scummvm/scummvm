@@ -404,7 +404,7 @@ void Screen::stopPaletteFadeAndSet(ResourceId id, int32 ticksWait, int32 delta) 
 }
 
 void Screen::paletteFade(uint32 start, int32 ticksWait, int32 delta) {
-	if (start < 0 || start > 255 || ticksWait < 0 || delta <= 0)
+	if (start > 255 || ticksWait < 0 || delta <= 0)
 		return;
 
 	byte palette[PALETTE_SIZE];
