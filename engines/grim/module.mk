@@ -40,6 +40,7 @@ MODULE_OBJS := \
 	movie/smush.o \
 	movie/movie.o \
 	actor.o \
+	animation.o \
 	bitmap.o \
 	costume.o \
 	color.o \
