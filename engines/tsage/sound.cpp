@@ -2301,6 +2301,7 @@ void Sound::_soServiceTrackType1(int trackIndex, const byte *channelData) {
 						driver->proc32(channelData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, *(channelData + 1), 0x7f);
 						driver->proc42(vtStruct->_entries[entryIndex]._voiceNum, *(channelData + 1), _loop ? 1 : 0,
 							&v1, &v2);
+						_trkState[trackIndex] = 2;
 					}
 				} else {
 					for (uint entryIndex = 0; entryIndex < vtStruct->_entries.size(); ++entryIndex) {
