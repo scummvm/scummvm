@@ -629,8 +629,6 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		}
 		if (param3 == 0)
 			param3 = 1000;
-		else
-			param3 = param3;
 		if (param2 < 0 || param3 < 0 || param2 + param3 > 1000)
 			error("can't read %d entries into %d from file '%s' for vars id '%d'", param3, param2, filename.c_str(), param1);
 		stream->skip(param2 * 2);
@@ -696,8 +694,6 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 			error("couldn't open '%s' to get data id '%d'", filename.c_str(), param1);
 		if (param3 == 0)
 			param3 = 1000;
-		else
-			param3 = param3;
 		if (param2 < 0 || param3 < 0 || param2 + param3 > 1000)
 			error("can't read %d entries into %d from file '%s' for data id '%d'", param3, param2, filename.c_str(), param1);
 		for (uint i = 0; i < (uint)param3; i++) {

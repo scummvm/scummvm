@@ -31,7 +31,7 @@
 
 namespace Composer {
 
-class Animation;
+struct Animation;
 
 #define ID_LBRC MKTAG('L','B','R','C') // Main FourCC
 
