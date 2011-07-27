@@ -98,6 +98,8 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 
 	_malcolmFrame = 0;
 	_malcolmTimer1 = _malcolmTimer2 = 0;
+
+	_soundFiles = 0;
 }
 
 KyraEngine_LoK::~KyraEngine_LoK() {
@@ -120,6 +122,8 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 	delete _sprites;
 	delete _animator;
 	delete _seq;
+
+	delete[] _soundFiles;
 
 	delete[] _characterList;
 

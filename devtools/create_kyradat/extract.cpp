@@ -142,6 +142,18 @@ bool extractRaw(PAKFile &out, const ExtractInformation *info, const byte *data, 
 }
 
 bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+	// Skip tables for skipping English string left-overs in the hacky Russian fan translations
+	static const uint8 rusFanSkip_k2SeqplayStrings[] = { 1, 3, 5, 8, 10, 11, 13, 15, 17, 20, 22, 25, 26, 30, 33, 38, 40, 41, 44, 49, 51, 55, 104, 119, 121, 123 };
+	static const uint8 rusFanSkip_k1IntroStrings[] = { 3, 5, 9, 11, 13, 16, 18, 21, 24, 32, 34, 36, 38, 41, 44, 49, 52, 55, 57, 59, 61, 64, 66, 69, 72, 75 };
+	static const uint8 rusFanSkip_k1ThePoisonStrings[] = { 1, 4 };
+	static const uint8 rusFanSkip_k1FullFlaskStrings[] = { 1, 2, 4, 5, 7 };
+	static const uint8 rusFanSkip_k1WispJewelStrings[] = { 2 };
+	static const uint8 rusFanSkip_k1GUIStrings[] = { 1, 3, 6, 8, 11, 13, 18 };
+	uint32 rusFanSkipIdLen = 0;
+	const uint8 *rusFanSkipId = 0;
+	int rusFanEmptyId = 10000;
+	uint32 skipCount = 0;
+
 	int patch = 0;
 	// FM Towns files that need addional patches
 	if (info->platform == kPlatformFMTowns) {
@@ -156,17 +168,35 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 		if (id == k2IngamePakFiles)
 			patch = 4;
 
-		if (id == k2SeqplayStrings && info->lang == Common::RU_RUS)
+		if (info->lang == Common::RU_RUS) {
 			patch = 5;
+			if (id == k2SeqplayStrings) {
+				rusFanSkipId = rusFanSkip_k2SeqplayStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k2SeqplayStrings);
+				rusFanEmptyId = 81;
+			} else if (id == k1IntroStrings) {
+				rusFanSkipId = rusFanSkip_k1IntroStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k1IntroStrings);
+				rusFanEmptyId = 30;
+			} else if (id == k1ThePoisonStrings) {
+				rusFanSkipId = rusFanSkip_k1ThePoisonStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k1ThePoisonStrings);
+			} else if (id == k1FullFlaskString) {
+				rusFanSkipId = rusFanSkip_k1FullFlaskStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k1FullFlaskStrings);
+			} else if (id == k1GUIStrings) {
+				rusFanSkipId = rusFanSkip_k1GUIStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k1GUIStrings);
+			} else if (id == k1WispJewelStrings) {
+				rusFanSkipId = rusFanSkip_k1WispJewelStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k1WispJewelStrings);
+			}
+		}
 
 		// HACK
 		if (id == k2SeqplayIntroTracks && info->game == kLol)
 			return extractStringsWoSuffix(out, info, data, size, filename, id);
 	}
-
-	// Skip English string left-overs in the hacky Russian fan translation
-	static const uint8 rusFanSkipId[] = { 1, 3, 5, 8, 10, 11, 13, 15, 17, 20, 22, 25, 26, 30, 33, 38, 40, 41, 44, 49, 51, 55, 104, 119, 121, 123 };
-	uint32 skipCount = 0;
 
 	uint32 entries = 0;
 	uint32 targetsize = size + 4;
@@ -210,26 +240,26 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 				}
 			} else if (patch == 5) {
 				++skipCount;
-				while (!data[++i]) {
-					if (skipCount == 81) {
+				while (!data[i + 1]) {
+					if (skipCount == rusFanEmptyId) {
 						++skipCount;
 						++entries;
 						break;
 					}
-					if (i == size)
+					if (++i == size)
 						break;
 					targetsize--;
 				}
 
-				for (uint32 ii = 0; ii < ARRAYSIZE(rusFanSkipId); ++ii) {
-					// Skip English string left-overs in the hacky Russian fan translation
+				// Skip English string left-overs in the hacky Russian fan translation
+				for (uint32 ii = 0; ii < rusFanSkipIdLen; ++ii) {
 					if (skipCount == rusFanSkipId[ii]) {
 						++skipCount;
 						uint32 len = strlen((const char*) data + i);
 						i += len;
 						targetsize = targetsize - 1 - len;
-						while (!data[++i]) {
-							if (i == len)
+						while (!data[i + 1]) {
+							if (++i == len)
 								break;
 							targetsize--;
 						}
@@ -336,7 +366,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 
 			++skipCount;
 			while (!*input) {
-				if (skipCount == 81) {
+				if (skipCount == rusFanEmptyId) {
 					*output++ = *input;
 					++skipCount;
 				}
@@ -344,7 +374,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 					break;
 			}
 			// Skip English string left-overs in the hacky Russian fan translation
-			for (uint32 ii = 0; ii < ARRAYSIZE(rusFanSkipId); ++ii) {
+			for (uint32 ii = 0; ii < rusFanSkipIdLen; ++ii) {
 				if (skipCount == rusFanSkipId[ii]) {
 					++skipCount;
 					input += strlen((const char*)input);

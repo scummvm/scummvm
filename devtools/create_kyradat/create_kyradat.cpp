@@ -45,7 +45,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 77
+	kKyraDatVersion = 78
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -119,6 +119,7 @@ const ExtractFilename extractFilenames[] = {
 
 	// AUDIO filename table
 	{ k1AudioTracks, kTypeStringList, false },
+	{ k1AudioTracks2, kTypeStringList, false },
 	{ k1AudioTracksIntro, kTypeStringList, false },
 
 	// AMULET anim
@@ -341,6 +342,7 @@ const TypeTable languageTable[] = {
 	{ ES_ESP, 4 },
 	{ IT_ITA, 5 },
 	{ JA_JPN, 6 },
+	{ RU_RUS, 7 },
 	{ -1, -1 }
 };
 
@@ -366,6 +368,7 @@ const TypeTable specialTable[] = {
 	{ kTalkieVersion, 1 },
 	{ kDemoVersion, 2 },
 	{ kTalkieDemoVersion, 3 },
+	{ kOldFloppy, 4 },
 	{ -1, -1 }
 };
 
@@ -767,6 +770,8 @@ const char *getIdString(const int id) {
 		return "k1CharacterImageFilenames";
 	case k1AudioTracks:
 		return "k1AudioTracks";
+	case k1AudioTracks2:
+		return "k1AudioTracks2";
 	case k1AudioTracksIntro:
 		return "k1AudioTracksIntro";
 	case k1ItemNames:
