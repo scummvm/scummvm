@@ -41,9 +41,9 @@
 	void getnextword();
 	uint8 getnextword(const uint8 *string, uint8 *totalWidth, uint8 *charCount);
 	void printboth();
-	void printboth(uint16 src, uint16 *x, uint16 y, uint8 c);
+	void printboth(uint16 src, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
 	void printchar();
-	void printchar(uint16 src, uint16 *x, uint16 y, uint8 c, uint8 *width, uint8 *height);
+	void printchar(uint16 src, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
 	void printdirect();
 	void printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool centered);
 	void usetimedtext();
