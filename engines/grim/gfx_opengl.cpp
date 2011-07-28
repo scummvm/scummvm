@@ -1278,9 +1278,10 @@ void GfxOpenGL::irisAroundRegion(int x, int y)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	glOrtho(0.0, _screenWidth, _screenHeight, 0.0, 0.0, 1.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
@@ -1289,7 +1290,7 @@ void GfxOpenGL::irisAroundRegion(int x, int y)
 	
 	glColor3f(0.0f, 0.0f, 0.0f);
 
-	float points[] = {
+	float points[28] = {
 		0.0f, 0.0f,
 		0.0f, y,
 		_screenWidth, 0.0f,
@@ -1317,11 +1318,10 @@ void GfxOpenGL::irisAroundRegion(int x, int y)
 	glDisableClientState(GL_VERTEX_ARRAY);
 #endif
 	
-	glColor3f(1.0f,1.0f,1.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glDepthMask(GL_TRUE);
-	
 }
 	
 void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
