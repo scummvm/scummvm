@@ -1307,7 +1307,7 @@ void GfxOpenGL::irisAroundRegion(int x, int y)
 
 	glBegin(GL_TRIANGLE_STRIP);
 	for (int i = 0 ;i < 13; i++) {
-		glVertex2fv(points+3*i);
+		glVertex2fv(points+2*i);
 	}
 	glEnd();
 	
