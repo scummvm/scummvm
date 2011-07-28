@@ -863,7 +863,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 
 		if (_talkChore[0] >= 0 && _talkCostume[0]->isChoring(_talkChore[0], true) < 0) {
 			// _talkChore[0] is *_stop_talk
-			_talkCostume[0]->stopChore(_talkChore[0]);
+			_talkCostume[0]->setChoreLastFrame(_talkChore[0]);
 		}
 		// Sometimes actors speak offscreen before they, including their
 		// talk chores are initialized.
@@ -946,7 +946,7 @@ void Actor::shutUp() {
 	}
 	if (_lipSync) {
 		if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+			_talkCostume[_talkAnim]->setChoreLastFrame(_talkChore[_talkAnim]);
 		_lipSync = NULL;
 		stopTalking();
 	} else if (_mumbleChore >= 0 && _mumbleCostume->isChoring(_mumbleChore, false) >= 0) {
@@ -1205,15 +1205,16 @@ void Actor::update() {
 				if (anim != -1) {
 					if (_talkChore[anim] >= 0) {
 						if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-							_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+							_talkCostume[_talkAnim]->setChoreLastFrame(_talkChore[_talkAnim]);
 
 						_talkAnim = anim;
-						_talkCostume[_talkAnim]->playChoreLooping(_talkChore[_talkAnim]);
+						_talkCostume[_talkAnim]->playChore(_talkChore[_talkAnim]);
 					}
 				} else {
 					if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-						_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+						_talkCostume[_talkAnim]->setChoreLastFrame(_talkChore[_talkAnim]);
 
+					_talkAnim = 0;
 					stopTalking();
 				}
 			}
