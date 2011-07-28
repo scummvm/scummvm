@@ -1307,7 +1307,7 @@ void GfxOpenGL::irisAroundRegion(int x, int y)
 #ifndef USE_VERTEX_ARRAYS
 	glBegin(GL_TRIANGLE_STRIP);
 	for (int i = 0 ;i < 13; i++) {
-		glVertex2fv(points+2*i);
+		glVertex2fv(points + 2 * i);
 	}
 	glEnd();
 #else
