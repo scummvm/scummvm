@@ -812,9 +812,12 @@ void GfxTinyGL::createMaterial(MaterialData *material, const char *data, const C
 		for (int y = 0; y < material->_height; y++) {
 			for (int x = 0; x < material->_width; x++) {
 				uint8 col = *(uint8 *)(data);
-				if (col == 0)
+				if (col == 0) {
 					memset(texdatapos, 0, 4); // transparent
-				else {
+					if (!material->_hasAlpha) {
+						texdatapos[3] = '\xff'; // fully opaque
+					}
+				} else {
 					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
 					texdatapos[3] = '\xff'; // fully opaque
 				}
@@ -959,7 +962,7 @@ void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 		}
 	}
 }
-	
+
 void GfxTinyGL::irisAroundRegion(int x, int y)
 {
 	uint16 *data = (uint16 *)_zb->pbuf;

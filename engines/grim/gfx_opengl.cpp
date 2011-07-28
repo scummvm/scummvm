@@ -971,6 +971,9 @@ void GfxOpenGL::createMaterial(MaterialData *material, const char *data, const C
 				uint8 col = *(uint8 *)(data);
 				if (col == 0) {
 					memset(texdatapos, 0, 4); // transparent
+					if (!material->_hasAlpha) {
+						texdatapos[3] = '\xff'; // fully opaque
+					}
 				} else {
 					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
 					texdatapos[3] = '\xff'; // fully opaque
@@ -1273,7 +1276,7 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 
 	delete[] data;
 }
-	
+
 void GfxOpenGL::irisAroundRegion(int x, int y)
 {
 	glMatrixMode(GL_PROJECTION);
@@ -1281,13 +1284,13 @@ void GfxOpenGL::irisAroundRegion(int x, int y)
 	glOrtho(0.0, _screenWidth, _screenHeight, 0.0, 0.0, 1.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
+
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 	glDisable(GL_LIGHTING);
 	glDepthMask(GL_FALSE);
-	
+
 	glColor3f(0.0f, 0.0f, 0.0f);
 
 	float points[20] = {
@@ -1314,13 +1317,13 @@ void GfxOpenGL::irisAroundRegion(int x, int y)
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 10);
 	glDisableClientState(GL_VERTEX_ARRAY);
 #endif
-	
+
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glDepthMask(GL_TRUE);
 }
-	
+
 void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	int x1 = primitive->getP1().x;
 	int y1 = primitive->getP1().y;

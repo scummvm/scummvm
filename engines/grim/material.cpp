@@ -50,6 +50,7 @@ MaterialData::MaterialData(const Common::String &filename, const char *data, int
 		error("Unknown offset: %d", offset);
 	_width = READ_LE_UINT32(data + 60 + _numImages * 40);
 	_height = READ_LE_UINT32(data + 64 + _numImages * 40);
+	_hasAlpha = READ_LE_UINT32(data + 68 + _numImages * 40);
 
 	if (_width == 0 || _height == 0) {
 		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)

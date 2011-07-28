@@ -40,7 +40,7 @@ public:
 	const ObjectPtr<CMap> _cmap;
 	int _numImages;
 	int _width, _height;
-	int _alpha;
+	bool _hasAlpha;
 	void *_textures;
 	int _refCount;
 };
