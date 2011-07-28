@@ -115,7 +115,7 @@ void DreamGenContext::spriteupdate() {
 		if (updateCallback != 0xffff) {
 			sprite->w24 = sprite->w2;
 			if (updateCallback == addr_mainman) // NB : Let's consider the callback as an enum while more code is not ported to C++
-				mainmanCPP(sprite);
+				mainman(sprite);
 			else {
 				assert(updateCallback == addr_backobject);
 				backobject(sprite);
@@ -135,7 +135,11 @@ void DreamGenContext::initman() {
 	sprite->b29 = 0;
 }
 
-void DreamGenContext::mainmanCPP(Sprite *sprite) {
+void DreamGenContext::mainman() {
+	assert(false);
+}
+
+void DreamGenContext::mainman(Sprite *sprite) {
 	push(es);
 	push(ds);
 
@@ -265,6 +269,10 @@ void DreamGenContext::aboutturn(Sprite *sprite) {
 		data.byte(kFacing) = (data.byte(kFacing) - 1) & 7;
 		sprite->b29 = 0;
 	}
+}
+
+void DreamGenContext::backobject() {
+	assert(false);
 }
 
 void DreamGenContext::backobject(Sprite *sprite) {

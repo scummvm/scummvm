@@ -80,6 +80,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'facerightway',
 	], skip_output = [
 	# These functions are processed but not output
-	'dreamweb'
+	'dreamweb',
+	'backobject',
+	'mainman',
 	])
 generator.generate('dreamweb') #start routine
