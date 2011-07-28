@@ -147,14 +147,14 @@ void Keyboard::newKeyboard(Common::Event &event) {
 
 Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0), _vm(vm) {
 	_hold = NULL;
-	_hx = 0; 
+	_hx = 0;
 	_hy = 0;
 	_exist = true;
 	_buttons = 0;
 	_busy = NULL;
 	_active = false;
 	_flags._kill = false;
-	
+
 	const Seq ms[] = {
 		{ 0, 0, 0, 0, 1 },
 		{ 1, 1, 0, 0, 1 }

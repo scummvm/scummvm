@@ -200,7 +200,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 		if (slotNumber == 0)
 			strncpy(_usrFnam, saveHeader.saveName.c_str(), 8);
 	}
-	
+
 	// Get in the savegame
 	syncGame(readStream, NULL, tiny);
 
@@ -502,7 +502,7 @@ void CGEEngine::resetQSwitch() {
 void CGEEngine::quit() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::quit()");
 
-	static Choice QuitMenu[] = { 
+	static Choice QuitMenu[] = {
 		{ NULL, &CGEEngine::startCountDown },
 		{ NULL, &CGEEngine::resetQSwitch   },
 		{ NULL, &CGEEngine::dummy          }
@@ -737,7 +737,7 @@ void System::touch(uint16 mask, int x, int y) {
 		case Del:
 			if (_keyboard->_key[ALT] && _keyboard->_key[CTRL])
 				_vm->AltCtrlDel();
-			else 
+			else
 				_vm->killSprite();
 			break;
 		case 'F':
@@ -1465,7 +1465,7 @@ void CGEEngine::tick() {
 
 void CGEEngine::loadUser() {
 	// set scene
-	if (Startup::_mode == 0) { 
+	if (Startup::_mode == 0) {
 		// user .SVG file found - load it from slot 0
 		loadGame(0, NULL);
 	} else {
@@ -1740,21 +1740,10 @@ bool CGEEngine::showTitle(const char *name) {
 		return (Startup::_mode == 2 || usr_ok);
 }
 
-
-/*
-void StkDump () {
-  CFILE f("!STACK.DMP", BFW);
-  f.Write((uint8 *) (intStackPtr-STACK_SIZ/2), STACK_SIZ*2);
-}
-*/
-
-
 void CGEEngine::cge_main() {
 	uint16 intStack[STACK_SIZ / 2];
 	_intStackPtr = intStack;
 
-	//Debug( memset((void *) (-K(2)), 0, K(1)); )
-	//Debug( memset((void *) (-K(4)), 0, K(1)); )
 	memset(_barriers, 0xFF, sizeof(_barriers));
 
 	if (!_mouse->_exist)

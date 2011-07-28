@@ -115,7 +115,7 @@ Vmenu::~Vmenu() {
 	_addr = NULL;
 }
 
-#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember)) 
+#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
 void Vmenu::touch(uint16 mask, int x, int y) {
 	if (_items) {
