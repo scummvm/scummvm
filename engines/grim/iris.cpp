@@ -48,16 +48,12 @@ void Iris::play(Iris::Direction dir, int x, int y, int lenght) {
 void Iris::draw() {
 	if (!_playing) {
 		if (_direction == Close && g_grim->getMode() != ENGINE_MODE_SMUSH) {
-			g_driver->dimRegion(0, 0, 640, 479, 0);
+			g_driver->irisAroundRegion(320, 240);
 		}
 		return;
 	}
 
-	// Why doesn't 480 work here??
-	g_driver->dimRegion(0, 0, 640, _y, 0);
-	g_driver->dimRegion(0, _y, _x, 479 - _y, 0);
-	g_driver->dimRegion(_x, 479 - _y, 640 - _x, _y, 0);
-	g_driver->dimRegion(640 - _x, _y, _x, 479 - _y, 0);
+	g_driver->irisAroundRegion(_x, _y);
 }
 
 void Iris::update(int frameTime) {

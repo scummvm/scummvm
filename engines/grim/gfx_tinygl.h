@@ -91,6 +91,7 @@ public:
 
 	void dimScreen();
 	void dimRegion(int x, int y, int w, int h, float level);
+	void irisAroundRegion(int x, int y);
 
 	Bitmap *getScreenshot(int w, int h);
 	void storeDisplay();

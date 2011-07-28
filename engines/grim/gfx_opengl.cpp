@@ -1273,7 +1273,54 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 
 	delete[] data;
 }
+	
+void GfxOpenGL::irisAroundRegion(int x, int y)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, _screenWidth, _screenHeight, 0.0, 0.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glDisable(GL_LIGHTING);
+	glDepthMask(GL_FALSE);
+	
+	glColor3f(0.0f, 0.0f, 0.0f);
 
+	float points[20] = {
+		0.0f, 0.0f,
+		0.0f, y,
+		_screenWidth, 0.0f,
+		_screenWidth - x, y,
+		_screenWidth, _screenHeight,
+		_screenWidth - x, _screenHeight - y,
+		0.0f, _screenHeight,
+		0.0f + x, _screenHeight - y,
+		0.0f, y,
+		x, y
+	};
+#ifndef USE_VERTEX_ARRAYS
+	glBegin(GL_TRIANGLE_STRIP);
+	for (int i = 0 ;i < 10; i++) {
+		glVertex2fv(points + 2 * i);
+	}
+	glEnd();
+#else
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(2, GL_FLOAT, 0, points);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 10);
+	glDisableClientState(GL_VERTEX_ARRAY);
+#endif
+	
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+	glDepthMask(GL_TRUE);
+}
+	
 void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	int x1 = primitive->getP1().x;
 	int y1 = primitive->getP1().y;
