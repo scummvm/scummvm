@@ -52,7 +52,6 @@ class Startup {
 public:
 	static int _mode;
 	static int _soundOk;
-	static uint16 _summa;
 	Startup();
 };
 
