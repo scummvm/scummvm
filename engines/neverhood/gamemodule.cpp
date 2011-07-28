@@ -30,6 +30,7 @@
 #include "neverhood/module1700.h"
 #include "neverhood/module1800.h"
 #include "neverhood/module2300.h"
+#include "neverhood/module3000.h"
 
 namespace Neverhood {
 
@@ -268,7 +269,11 @@ void GameModule::updateModule1200() {
 
 void GameModule::createModule1400(int which) {
 	setGlobalVar(0x91080831, 0x00AD0012);
-	_childObject = new Module1400(_vm, this, which);
+	//_childObject = new Module1400(_vm, this, which);
+	
+	_vm->gameState().sceneNum = 9;
+	_childObject = new Module3000(_vm, this, -1);
+	
 	SetUpdateHandler(&GameModule::updateModule1400);
 }
 
