@@ -54,7 +54,7 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(kMixFall), _
 	// slaves
 
 	uint i;
-	Seq ls[kMixMax]; 
+	Seq ls[kMixMax];
 
 	for (i = 0; i < kMixMax; i++) {
 		static char fn[] = "V00";

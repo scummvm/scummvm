@@ -228,7 +228,7 @@ extern "C" void TimerProc() {
 	if (_heart->_xTimer) {
 		if (*_heart->_xTimer)
 			*_heart->_xTimer--;
-		else 
+		else
 			_heart->_xTimer = NULL;
 	}
 
@@ -324,9 +324,9 @@ void Engine_::newTimer(...) {
 		}
 
 	    for (spr = VGA::ShowQ.First(); spr; spr = spr->Next) {
-			if (spr->Time) { 
+			if (spr->Time) {
 				if (!spr->_flags.Hide) {
-					if (--spr->Time == 0) 
+					if (--spr->Time == 0)
 						spr->tick();
 				}
 			}
@@ -949,7 +949,7 @@ void Vga::deinit() {
 }
 
 Vga::Vga(int mode)
-	: _frmCnt(0), _oldMode(0), _oldScreen(NULL), _statAdr(VGAST1_), 
+	: _frmCnt(0), _oldMode(0), _oldScreen(NULL), _statAdr(VGAST1_),
 	  _msg(NULL), _nam(NULL), _setPal(false), _mono(0) {
 	_oldColors = NULL;
 	_newColors = NULL;
@@ -1026,7 +1026,7 @@ void Vga::setStatAdr() {
 
 #pragma argsused
 void Vga::waitVR(bool on) {
-	// Since some of the game parts rely on using vertical sync as a delay mechanism, 
+	// Since some of the game parts rely on using vertical sync as a delay mechanism,
 	// we're introducing a short delay to simulate it
 	g_system->delayMillis(10);
 }
@@ -1244,7 +1244,7 @@ void Bitmap::xShow(int16 x, int16 y) {
 				}
 
 				// Move to next dest position
-				destP += 4; 
+				destP += 4;
 			}
 		}
 	}
@@ -1294,7 +1294,7 @@ void Bitmap::show(int16 x, int16 y) {
 				}
 
 				// Move to next dest position
-				destP += 4; 
+				destP += 4;
 			}
 
 			if (cmd == 2)
@@ -1302,7 +1302,7 @@ void Bitmap::show(int16 x, int16 y) {
 		}
 	}
 /*
-	DEBUG code to display image immediately 
+	DEBUG code to display image immediately
 	// Temporary
 	g_system->copyRectToScreen((const byte *)VGA::Page[1]->getBasePtr(0, 0), SCR_WID, 0, 0, SCR_WID, SCR_HIG);
 	byte palData[PAL_SIZ];

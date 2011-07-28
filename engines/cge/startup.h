@@ -49,10 +49,10 @@ namespace CGE {
 
 class Startup {
 	static bool getParms();
+	Startup();
 public:
 	static int _mode;
 	static int _soundOk;
-	Startup();
 };
 
 

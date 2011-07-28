@@ -56,7 +56,7 @@ bool Startup::getParms() {
 		int n = takeEnum(PrmTab, strtok(_argv[--i], " =:("));
 		uint16 p = xtow(strtok(NULL, " h,)"));
 		switch (n) {
-		case 0 : 
+		case 0 :
 			if (Mode != 2)
 			Mode = 1;
 			break;
@@ -95,7 +95,7 @@ bool Startup::getParms() {
 		if (n >= 2)
 			SoundOk = 2;
 	}
-	
+
 	if (SNDDrvInfo.MDEV != DEV_GM)
 		SNDDrvInfo.MDEV = SNDDrvInfo.DDEV;
 	return true;
@@ -109,7 +109,7 @@ Startup::Startup() {
 	/*
 	uint32 m = farcoreleft() >> 10;
 	if (m < 0x7FFF)
-		Core = (int) m; 
+		Core = (int) m;
 	else
 		Core = 0x7FFF;
 
