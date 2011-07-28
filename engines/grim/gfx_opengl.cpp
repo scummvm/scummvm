@@ -1290,31 +1290,28 @@ void GfxOpenGL::irisAroundRegion(int x, int y)
 	
 	glColor3f(0.0f, 0.0f, 0.0f);
 
-	float points[28] = {
+	float points[20] = {
 		0.0f, 0.0f,
 		0.0f, y,
 		_screenWidth, 0.0f,
-		_screenWidth, y,
 		_screenWidth - x, y,
 		_screenWidth, _screenHeight,
-		_screenWidth - x, _screenHeight,
 		_screenWidth - x, _screenHeight - y,
 		0.0f, _screenHeight,
-		0.0f, _screenHeight - y,
 		0.0f + x, _screenHeight - y,
 		0.0f, y,
 		x, y
 	};
 #ifndef USE_VERTEX_ARRAYS
 	glBegin(GL_TRIANGLE_STRIP);
-	for (int i = 0 ;i < 13; i++) {
+	for (int i = 0 ;i < 10; i++) {
 		glVertex2fv(points + 2 * i);
 	}
 	glEnd();
 #else
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 0, points);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 10);
 	glDisableClientState(GL_VERTEX_ARRAY);
 #endif
 	
