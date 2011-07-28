@@ -1290,24 +1290,24 @@ void GfxOpenGL::irisAroundRegion(int x, int y)
 	glColor3f(0.0f, 0.0f, 0.0f);
 
 	float points[] = {
-		0.0f, 0.0f, 0.0f,
-		0.0f, y, 0.0f,
-		_screenWidth, 0.0f, 0.0f,
-		_screenWidth, y, 0.0f,
-		_screenWidth - x, y, 0.0f,
-		_screenWidth, _screenHeight, 0.0f,	
-		_screenWidth - x, _screenHeight, 0.0f,	
-		_screenWidth - x, _screenHeight - y, 0.0f,	
-		0.0f, _screenHeight, 0.0f,	
-		0.0f, _screenHeight - y, 0.0f,	
-		0.0f + x, _screenHeight - y, 0.0f,	
-		0.0f, y, 0.0f,
-		x, y, 0.0f
+		0.0f, 0.0f,
+		0.0f, y,
+		_screenWidth, 0.0f,
+		_screenWidth, y,
+		_screenWidth - x, y,
+		_screenWidth, _screenHeight,
+		_screenWidth - x, _screenHeight,
+		_screenWidth - x, _screenHeight - y,
+		0.0f, _screenHeight,
+		0.0f, _screenHeight - y,
+		0.0f + x, _screenHeight - y,
+		0.0f, y,
+		x, y
 	};
-	
+
 	glBegin(GL_TRIANGLE_STRIP);
 	for (int i = 0 ;i < 13; i++) {
-		glVertex3fv(points+3*i);
+		glVertex2fv(points+3*i);
 	}
 	glEnd();
 	
