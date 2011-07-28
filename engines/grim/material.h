@@ -28,6 +28,14 @@
 
 namespace Grim {
 
+class Texture {
+public:
+	int _width;
+	int _height;
+	bool _hasAlpha;
+	void *_texture;
+};
+
 class MaterialData {
 public:
 	MaterialData(const Common::String &filename, const char *data, int len, CMap *cmap);
@@ -39,9 +47,7 @@ public:
 	Common::String _fname;
 	const ObjectPtr<CMap> _cmap;
 	int _numImages;
-	int _width, _height;
-	bool _hasAlpha;
-	void *_textures;
+	Texture *_textures;
 	int _refCount;
 };
 

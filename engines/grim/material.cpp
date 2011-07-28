@@ -39,6 +39,7 @@ MaterialData::MaterialData(const Common::String &filename, const char *data, int
 		error("invalid magic loading texture");
 
 	_numImages = READ_LE_UINT32(data + 12);
+	_textures = new Texture[_numImages];
 	/* Discovered by diffing orange.mat with pink.mat and blue.mat .
 	 * Actual meaning unknown, so I prefer to use it as an enum-ish
 	 * at the moment, to detect unexpected values.
@@ -48,19 +49,22 @@ MaterialData::MaterialData(const Common::String &filename, const char *data, int
 		data += 16;
 	else if (offset != 0)
 		error("Unknown offset: %d", offset);
-	_width = READ_LE_UINT32(data + 60 + _numImages * 40);
-	_height = READ_LE_UINT32(data + 64 + _numImages * 40);
-	_hasAlpha = READ_LE_UINT32(data + 68 + _numImages * 40);
 
-	if (_width == 0 || _height == 0) {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("skip load texture: bad texture size (%dx%d) for texture %s", _width, _height, _fname.c_str());
-		return;
+	data += 60 + _numImages * 40;
+	for (int i = 0; i < _numImages; ++i) {
+		Texture *t = _textures + i;
+		t->_width = READ_LE_UINT32(data);
+		t->_height = READ_LE_UINT32(data + 4);
+		t->_hasAlpha = READ_LE_UINT32(data + 8);
+		if (t->_width == 0 || t->_height == 0) {
+			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+				warning("skip load texture: bad texture size (%dx%d) for texture %d of material %s",
+						t->_width, t->_height, i, _fname.c_str());
+			break;
+		}
+		g_driver->createMaterial(t, data + 24, cmap);
+		data += 24 + t->_width * t->_height;
 	}
-
-	data += 84 + _numImages * 40;
-
-	g_driver->createMaterial(this, data, cmap);
 }
 
 MaterialData::~MaterialData() {
@@ -70,8 +74,12 @@ MaterialData::~MaterialData() {
 		_materials = NULL;
 	}
 
-	if (_width && _height)
-		g_driver->destroyMaterial(this);
+	for (int i = 0; i < _numImages; ++i) {
+		Texture *t = _textures + i;
+		if (t->_width && t->_height)
+			g_driver->destroyMaterial(t);
+	}
+	delete[] _textures;
 }
 
 MaterialData *MaterialData::getMaterialData(const Common::String &filename, const char *data, int len, CMap *cmap) {
@@ -112,8 +120,9 @@ void Material::reload(CMap *cmap) {
 }
 
 void Material::select() const {
-	if (_data->_width && _data->_height)
-		g_driver->selectMaterial(this);
+	Texture *t = _data->_textures + _currImage;
+	if (t->_width && t->_height)
+		g_driver->selectMaterial(t);
 }
 
 Material::~Material() {

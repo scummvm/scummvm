@@ -33,7 +33,6 @@ class BitmapData;
 class Bitmap;
 class CMap;
 class Color;
-class MaterialData;
 class PrimitiveObject;
 class Font;
 class TextObject;
@@ -43,6 +42,7 @@ class Mesh;
 class MeshFace;
 class Sprite;
 class Light;
+class Texture;
 
 enum colorFormat {
 	BM_RGB565 = 1,    // Grim Fandango
@@ -87,9 +87,9 @@ public:
 	virtual void disableLights() = 0;
 	virtual void setupLight(Light *light, int lightId) = 0;
 
-	virtual void createMaterial(MaterialData *material, const char *data, const CMap *cmap) = 0;
-	virtual void selectMaterial(const Material *material) = 0;
-	virtual void destroyMaterial(MaterialData *material) = 0;
+	virtual void createMaterial(Texture *material, const char *data, const CMap *cmap) = 0;
+	virtual void selectMaterial(const Texture *material) = 0;
+	virtual void destroyMaterial(Texture *material) = 0;
 
 	virtual void createBitmap(BitmapData *bitmap) = 0;
 	virtual void drawBitmap(const Bitmap *bitmap) = 0;
@@ -112,8 +112,8 @@ public:
 	 * the arguments specify the distance from the screen-edge to the first
 	 * non-iris pixel.
 	 *
-	 * @param x		the width of the Iris 
-	 * @param y		the height of the Iris 
+	 * @param x		the width of the Iris
+	 * @param y		the height of the Iris
 	 */
 	virtual void irisAroundRegion(int x, int y) = 0;
 

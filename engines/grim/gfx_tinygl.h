@@ -74,9 +74,9 @@ public:
 	void disableLights();
 	void setupLight(Light *light, int lightId);
 
-	void createMaterial(MaterialData *material, const char *data, const CMap *cmap);
-	void selectMaterial(const Material *material);
-	void destroyMaterial(MaterialData *material);
+	void createMaterial(Texture *material, const char *data, const CMap *cmap);
+	void selectMaterial(const Texture *material);
+	void destroyMaterial(Texture *material);
 
 	void createBitmap(BitmapData *bitmap);
 	void drawBitmap(const Bitmap *bitmap);

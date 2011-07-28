@@ -803,54 +803,51 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 	}
 }
 
-void GfxTinyGL::createMaterial(MaterialData *material, const char *data, const CMap *cmap) {
-	material->_textures = new TGLuint[material->_numImages];
-	tglGenTextures(material->_numImages, (TGLuint *)material->_textures);
+void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *cmap) {
+	material->_texture = new TGLuint[1];
+	tglGenTextures(1, (TGLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
-	for (int i = 0; i < material->_numImages; i++) {
-		char *texdatapos = texdata;
-		for (int y = 0; y < material->_height; y++) {
-			for (int x = 0; x < material->_width; x++) {
-				uint8 col = *(uint8 *)(data);
-				if (col == 0) {
-					memset(texdatapos, 0, 4); // transparent
-					if (!material->_hasAlpha) {
-						texdatapos[3] = '\xff'; // fully opaque
-					}
-				} else {
-					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
+	char *texdatapos = texdata;
+	for (int y = 0; y < material->_height; y++) {
+		for (int x = 0; x < material->_width; x++) {
+			uint8 col = *(uint8 *)(data);
+			if (col == 0) {
+				memset(texdatapos, 0, 4); // transparent
+				if (!material->_hasAlpha) {
 					texdatapos[3] = '\xff'; // fully opaque
 				}
-				texdatapos += 4;
-				data++;
+			} else {
+				memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
+				texdatapos[3] = '\xff'; // fully opaque
 			}
+			texdatapos += 4;
+			data++;
 		}
-		TGLuint *textures = (TGLuint *)material->_textures;
-		tglBindTexture(TGL_TEXTURE_2D, textures[i]);
-		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
-		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
-		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
-		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-		tglTexImage2D(TGL_TEXTURE_2D, 0, 3, material->_width, material->_height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texdata);
-		data += 24;
 	}
+	TGLuint *textures = (TGLuint *)material->_texture;
+	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, material->_width, material->_height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texdata);
 	delete[] texdata;
 }
 
-void GfxTinyGL::selectMaterial(const Material *material) {
-	TGLuint *textures = (TGLuint *)material->getData()->_textures;
-	tglBindTexture(TGL_TEXTURE_2D, textures[material->getCurrentImage()]);
+void GfxTinyGL::selectMaterial(const Texture *material) {
+	TGLuint *textures = (TGLuint *)material->_texture;
+	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
 	tglPushMatrix();
 	tglMatrixMode(TGL_TEXTURE);
 	tglLoadIdentity();
-	tglScalef(1.0f / material->getData()->_width, 1.0f / material->getData()->_height, 1);
+	tglScalef(1.0f / material->_width, 1.0f / material->_height, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPopMatrix();
 }
 
-void GfxTinyGL::destroyMaterial(MaterialData *material) {
-	tglDeleteTextures(material->_numImages, (TGLuint *)material->_textures);
-	delete[] (TGLuint *)material->_textures;
+void GfxTinyGL::destroyMaterial(Texture *material) {
+	tglDeleteTextures(1, (TGLuint *)material->_texture);
+	delete[] (TGLuint *)material->_texture;
 }
 
 void GfxTinyGL::prepareSmushFrame(int width, int height, byte *bitmap) {

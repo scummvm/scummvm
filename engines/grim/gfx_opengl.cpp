@@ -960,53 +960,50 @@ void GfxOpenGL::drawTextObject(TextObject *text) {
 void GfxOpenGL::destroyTextObject(TextObject *text) {
 }
 
-void GfxOpenGL::createMaterial(MaterialData *material, const char *data, const CMap *cmap) {
-	material->_textures = new GLuint[material->_numImages];
-	glGenTextures(material->_numImages, (GLuint *)material->_textures);
+void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *cmap) {
+	material->_texture = new GLuint[1];
+	glGenTextures(1, (GLuint *)material->_texture);
 	char *texdata = new char[material->_width * material->_height * 4];
-	for (int i = 0; i < material->_numImages; i++) {
-		char *texdatapos = texdata;
-		for (int y = 0; y < material->_height; y++) {
-			for (int x = 0; x < material->_width; x++) {
-				uint8 col = *(uint8 *)(data);
-				if (col == 0) {
-					memset(texdatapos, 0, 4); // transparent
-					if (!material->_hasAlpha) {
-						texdatapos[3] = '\xff'; // fully opaque
-					}
-				} else {
-					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
+	char *texdatapos = texdata;
+	for (int y = 0; y < material->_height; y++) {
+		for (int x = 0; x < material->_width; x++) {
+			uint8 col = *(uint8 *)(data);
+			if (col == 0) {
+				memset(texdatapos, 0, 4); // transparent
+				if (!material->_hasAlpha) {
 					texdatapos[3] = '\xff'; // fully opaque
 				}
-				texdatapos += 4;
-				data++;
+			} else {
+				memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
+				texdatapos[3] = '\xff'; // fully opaque
 			}
+			texdatapos += 4;
+			data++;
 		}
-
-		GLuint *textures = (GLuint *)material->_textures;
-		glBindTexture(GL_TEXTURE_2D, textures[i]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, material->_width, material->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
-		data += 24;
 	}
+
+	GLuint *textures = (GLuint *)material->_texture;
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, material->_width, material->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
 	delete[] texdata;
 }
 
-void GfxOpenGL::selectMaterial(const Material *material) {
-	GLuint *textures = (GLuint *)material->getData()->_textures;
-	glBindTexture(GL_TEXTURE_2D, textures[material->getCurrentImage()]);
+void GfxOpenGL::selectMaterial(const Texture *material) {
+	GLuint *textures = (GLuint *)material->_texture;
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glMatrixMode(GL_TEXTURE);
 	glLoadIdentity();
-	glScalef(1.0f / material->getData()->_width, 1.0f / material->getData()->_height, 1);
+	glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
 }
 
-void GfxOpenGL::destroyMaterial(MaterialData *material) {
-	GLuint *textures = (GLuint *)material->_textures;
+void GfxOpenGL::destroyMaterial(Texture *material) {
+	GLuint *textures = (GLuint *)material->_texture;
 	if (textures) {
-		glDeleteTextures(material->_numImages, textures);
+		glDeleteTextures(1, textures);
 		delete[] textures;
 	}
 }
