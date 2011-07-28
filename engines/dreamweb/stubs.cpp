@@ -26,6 +26,154 @@
 
 namespace DreamGen {
 
+void DreamGenContext::dreamweb() {
+	STACK_CHECK;
+	seecommandtail();
+	checkbasemem();
+	soundstartup();
+	setkeyboardint();
+	setupemm();
+	allocatebuffers();
+	setmouse();
+	fadedos();
+	gettime();
+	clearbuffers();
+	clearpalette();
+	set16colpalette();
+	readsetdata();
+	data.byte(kWongame) = 0;
+
+	dx = 1909;
+	loadsample();
+	setsoundoff();
+
+	bool firstLoop = true;
+
+	while (true) {
+
+		scanfornames();
+
+		bool startNewGame = true;
+
+		if (al == 0 && firstLoop) {
+
+			// no savegames found, and we're not restarting.
+
+			setmode();
+			loadpalfromiff();
+
+		} else {
+			// "dodecisions"
+
+			// Savegames found, so ask if we should load one.
+			// (If we're restarting after game over, we also always show these
+			// options.)
+
+			cls();
+			setmode();
+			decide();
+			if (data.byte(kQuitrequested))
+				return; // exit game
+
+			if (data.byte(kGetback) == 4)
+				startNewGame = false; // savegame has been loaded
+
+		}
+
+		firstLoop = false;
+
+		if (startNewGame) {
+			// "playgame"
+
+			titles();
+			if (data.byte(kQuitrequested))
+				return; // exit game
+			credits();
+
+			if (data.byte(kQuitrequested))
+				return; // exit game
+
+			clearchanges();
+			setmode();
+			loadpalfromiff();
+			data.byte(kLocation) = 255;
+			data.byte(kRoomafterdream) = 1;
+			data.byte(kNewlocation) = 35;
+			data.byte(kVolume) = 7;
+			loadroom();
+			clearsprites();
+			initman();
+			entrytexts();
+			entryanims();
+			data.byte(kDestpos) = 3;
+			initialinv();
+			data.byte(kLastflag) = 32;
+			startup1();
+			data.byte(kVolumeto) = 0;
+			data.byte(kVolumedirection) = -1;
+			data.byte(kCommandtype) = 255;
+
+		}
+
+		// main loop
+		while (true) {
+
+			if (data.byte(kQuitrequested))
+				return; // exit game
+
+			screenupdate();
+
+			if (data.byte(kWongame) != 0) {
+				// "endofgame"
+				clearbeforeload();
+				fadescreendowns();
+				cx = 200;
+				hangon();
+				endgame();
+				quickquit2();
+				return;
+			}
+
+			if (data.byte(kMandead) == 1 || data.byte(kMandead) == 2)
+				break;
+
+			if (data.word(kWatchingtime) > 0) {
+				if (data.byte(kFinaldest) == data.byte(kManspath))
+					data.word(kWatchingtime)--;
+			}
+
+			if (data.word(kWatchingtime) == 0) {
+				// "notwatching"
+
+				if (data.byte(kMandead) == 4)
+					break;
+
+				if (data.byte(kNewlocation) != 255) {
+					// "loadnew"
+					clearbeforeload();
+					loadroom();
+					clearsprites();
+					initman();
+					entrytexts();
+					entryanims();
+					data.byte(kNewlocation) = 255;
+					startup();
+					data.byte(kCommandtype) = 255;
+					worktoscreenm();
+				}
+			}
+		}
+
+		// "gameover"
+		clearbeforeload();
+		showgun();
+		fadescreendown();
+		cx = 100;
+		hangon();
+
+	}
+}
+
 Common::String getFilename(Context &context) {
 	uint16 name_ptr = context.dx;
 	Common::String name;

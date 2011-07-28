@@ -33,7 +33,7 @@ def parse_bin(s):
 	return v
 
 class cpp:
-	def __init__(self, context, namespace, skip_first = 0, blacklist = []):
+	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = []):
 		self.namespace = namespace
 		fname = namespace.lower() + ".cpp"
 		header = namespace.lower() + ".h"
@@ -79,6 +79,7 @@ class cpp:
 		self.proc_done = []
 		self.blacklist = blacklist
 		self.failed = list(blacklist)
+		self.skip_output = skip_output
 		self.translated = []
 		self.proc_addr = []
 		self.methods = []
@@ -527,7 +528,8 @@ namespace %s {
 				self.proc.optimize(keep_labels=[label])
 				self.proc.visit(self, start)
 			self.body += "}\n";
-			self.translated.insert(0, self.body)
+			if name not in self.skip_output:
+				self.translated.insert(0, self.body)
 			self.proc = None
 			if self.temps_count > 0:
 				raise Exception("temps count == %d at the exit of proc" %self.temps_count);
