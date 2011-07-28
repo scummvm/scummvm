@@ -469,9 +469,8 @@ bool EobCoreEngine::checkPartyStatus(bool handleDeath) {
 		return true;
 
 	gui_drawAllCharPortraitsWithStats();
-	checkPartyStatusExtra();
 
-	if (_gui->confirmDialogue2(14, 67, 1)) {
+	if (checkPartyStatusExtra()) {
 		_screen->setFont(Screen::FID_8_FNT);
 		gui_updateControls();
 		if (_gui->runLoadMenu(0, 0)) {
@@ -1436,7 +1435,7 @@ void EobCoreEngine::displayParchment(int id) {
 	restoreAfterDialogueSequence();
 }
 
-void EobCoreEngine::useSlotWeapon(int charIndex, int slotIndex, int item) {
+void EobCoreEngine::useSlotWeapon(int charIndex, int slotIndex, Item item) {
 	EobCharacter *c = &_characters[charIndex];
 	int tp = item ? _items[item].type : 0;
 
@@ -1454,7 +1453,7 @@ void EobCoreEngine::useSlotWeapon(int charIndex, int slotIndex, int item) {
 	} else if (ep == 2) {
 		inflict = thrownAttack(charIndex, slotIndex, item);
 	} else if (ep == 3) {
-		inflict = bowAttack(charIndex, item);
+		inflict = projectileWeaponAttack(charIndex, item);
 		gui_drawCharPortraitWithStats(charIndex);
 	}
 
@@ -1477,7 +1476,7 @@ void EobCoreEngine::useSlotWeapon(int charIndex, int slotIndex, int item) {
 	setCharEventTimer(charIndex, 18, inflict >= -2 ? slotIndex + 2 : slotIndex, 1);
 }
 
-int EobCoreEngine::closeDistanceAttack(int charIndex, int item) {
+int EobCoreEngine::closeDistanceAttack(int charIndex, Item item) {
 	if (charIndex > 1)
 		return -3;
 
@@ -1527,7 +1526,7 @@ int EobCoreEngine::closeDistanceAttack(int charIndex, int item) {
 	return 0;
 }
 
-int EobCoreEngine::thrownAttack(int charIndex, int slotIndex, int item) {
+int EobCoreEngine::thrownAttack(int charIndex, int slotIndex, Item item) {
 	int d = charIndex > 3 ? charIndex - 2 : charIndex;
 	if (!launchObject(charIndex, item, _currentBlock, _dropItemDirIndex[(_currentDirection << 2) + d], _currentDirection, _items[item].type))
 		return 0;
@@ -1539,7 +1538,42 @@ int EobCoreEngine::thrownAttack(int charIndex, int slotIndex, int item) {
 	return 0;
 }
 
-int EobCoreEngine::bowAttack(int charIndex, int item) {
+int EobCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
+	int tp = _items[item].type;
+	int t = _projectileWeaponAmmoTypes[_flags.gameID == GI_EOB1 ? tp - 2 : tp];
+	Item ammoItem = 0;
+
+	if (t == 16) {
+		if (_characters[charIndex].inventory[0] && _items[_characters[charIndex].inventory[0]].type == 16)
+			SWAP(ammoItem, _characters[charIndex].inventory[0]);
+		else if (_characters[charIndex].inventory[1] && _items[_characters[charIndex].inventory[1]].type == 16)
+			SWAP(ammoItem, _characters[charIndex].inventory[1]);
+		else if (_characters[charIndex].inventory[16])
+			ammoItem = getQueuedItem(&_characters[charIndex].inventory[16], 0, -1);
+		
+	} else {
+		for (int i = 0; i < 27; i++) {
+			if (_items[_characters[charIndex].inventory[i]].type == t) {
+				SWAP(ammoItem, _characters[charIndex].inventory[i] );
+				if (i < 2)
+					gui_drawCharPortraitWithStats(charIndex);
+				break;
+			}
+		}
+	}
+
+	if (!ammoItem)
+		return -4;
+
+	int c = charIndex;
+	if (c > 3)
+		c -= 2;
+
+	if (launchObject(charIndex, ammoItem, _currentBlock, _dropItemDirIndex[(_currentDirection << 2) + c], _currentDirection, tp)) {
+		snd_playSoundEffect(tp == 7 ? 26 : 11);
+		_sceneUpdateRequired = true;
+	}
+
 	return 0;
 }
 
@@ -1773,9 +1807,9 @@ void EobCoreEngine::monsterCloseAttack(EobMonsterInPlay *m) {
 					}
 
 					_characters[c].inventory[slot] = 0;
-					_txt->printMessage(_itemExtraStrings[(_characters[c].raceSex & 1) ^ 1], -1, _characters[c].name);
+					_txt->printMessage(_ripItemStrings[(_characters[c].raceSex & 1) ^ 1], -1, _characters[c].name);
 					printFullItemName(itm);
-					_txt->printMessage(_itemExtraStrings[2]);
+					_txt->printMessage(_ripItemStrings[2]);
 				}
 				gui_drawCharPortraitWithStats(c);
 			}

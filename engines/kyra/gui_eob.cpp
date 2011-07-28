@@ -924,7 +924,10 @@ int EobCoreEngine::clickedWeaponSlot(Button *button) {
 	if (!testCharacter(button->arg, 1))
 		return 1;
 
-	static const uint8 sY[] = { 24, 24, 80, 80, 136, 136 };
+	// Fix this using the coordinates from gui_drawWeaponSlot().
+	// The coordinates used in the original are slightly wrong
+	// (most noticeable for characters 5 and 6).
+	static const uint8 sY[] = { 27, 27, 79, 79, 131, 131 };
 	int slot = sY[button->arg] > _mouseY ? 0 : 1;
 
 	if ((_gui->_flagsMouseLeft & 0x7f) == 1)
@@ -1298,19 +1301,17 @@ void EobCoreEngine::gui_processWeaponSlotClickLeft(int charIndex, int slotIndex)
 }
 
 void EobCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex) {
-	const char * const *strs = &_itemExtraStrings[_flags.gameID == GI_EOB1 ? 17 : (_flags.lang == Common::DE_DEU ? 26 : 22)];
-
 	if (!testCharacter(charIndex, 0x0d))
 		return;
 
-	uint16 itm = _characters[charIndex].inventory[slotIndex];
+	Item itm = _characters[charIndex].inventory[slotIndex];
 	int wslot = slotIndex < 2 ? slotIndex : -1;
 
 	if (slotIndex < 2 && (!validateWeaponSlotItem(charIndex, slotIndex) || (!_currentControlMode && (_characters[charIndex].disabledSlots & (1 << slotIndex)))))
 		return;
 
 	if (!itemUsableByCharacter(charIndex, itm))
-		_txt->printMessage(strs[0], -1, _characters[charIndex].name);
+		_txt->printMessage(_itemMisuseStrings[0], -1, _characters[charIndex].name);
 
 	if (!itm && slotIndex > 1)
 		return;
@@ -1323,7 +1324,7 @@ void EobCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex
 		case 0:
 		case 16:
 			// Item automatically used when worn
-			_txt->printMessage(strs[1]);
+			_txt->printMessage(_itemMisuseStrings[1]);
 			break;
 
 		case 1:
@@ -1340,7 +1341,7 @@ void EobCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex
 		case 13:
 		case 15:
 			// Item not used that way
-			_txt->printMessage(strs[2]);
+			_txt->printMessage(_itemMisuseStrings[2]);
 			break;
 
 		case 5:
@@ -1377,12 +1378,12 @@ void EobCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex
 			break;
 
 		case 18:
-			ep = ep;
+			useWand(charIndex, wslot);
 			break;
 
 		case 19:
 			// eob2 horn
-			ep = ep;
+			useHorn(charIndex, wslot);
 			break;
 
 		case 20:
@@ -1397,7 +1398,7 @@ void EobCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex
 			break;
 	}
 
-	if (ep == 1 && charIndex >= 2)
+	if (_flags.gameID == GI_EOB1 || (ep == 1 && charIndex >= 2))
 		return;
 
 	_lastUsedItem = itm;
@@ -3837,8 +3838,12 @@ const char *GUI_Eob::getMenuString(int id) {
 		return _vm->_menuStringsPoison[0];
 	else if (id >= 56)
 		return _vm->_menuStringsHead[id - 56];
-	else if (id >= 53)
-		return _vm->_menuStringsDrop2[id - 53];
+	else if (id == 55)
+		return _vm->_menuStringsDrop2[_vm->game() == GI_EOB1 ? 1 : 2];
+	else if (id == 54)
+		return _vm->_errorSlotNoNameString;
+	else if (id == 53)
+		return _vm->_menuStringsDrop2[0];
 	else if (id >= 48)
 		return _vm->_menuStringsScribe[id - 48];
 	else if (id == 47)

@@ -120,11 +120,15 @@ private:
 	bool restParty_extraAbortCondition();
 
 	// misc
-	void checkPartyStatusExtra();
+	void useHorn(int charIndex, int weaponSlot);
+	bool checkPartyStatusExtra();
 	void drawLightningColumn();
 	int resurrectionSelectDialogue();
 	int charSelectDialogue();
 	void characterLevelGain(int charIndex);
+
+	const char *const *_hornStrings;
+	const uint8 *_hornSounds;
 };
 
 }	// End of namespace Kyra

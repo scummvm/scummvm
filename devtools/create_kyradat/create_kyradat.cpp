@@ -45,7 +45,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 78
+	kKyraDatVersion = 79
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -238,8 +238,26 @@ const ExtractFilename extractFilenames[] = {
 
 	{ kEobBasePryDoorStrings, kTypeStringList, true },
 	{ kEobBaseWarningStrings, kTypeStringList, true },
-	{ kEobBaseItemSuffixStrings, kTypeStringList, true },
-	{ kEobBaseItemExtraStrings, kTypeStringList, true },
+
+	{ kEobBaseItemSuffixStringsRings, kTypeStringList, true },
+	{ kEobBaseItemSuffixStringsPotions, kTypeStringList, true },
+	{ kEobBaseItemSuffixStringsWands, kTypeStringList, true },
+
+	{ kEobBaseRipItemStrings, kTypeStringList, true },
+	{ kEobBaseCursedString, kTypeStringList, true },
+	{ kEobBaseEnchantedString, kTypeStringList, false },
+	{ kEobBaseMagicObjectStrings, kTypeStringList, true },
+	{ kEobBaseMagicObject5String, kTypeStringList, true },
+	{ kEobBasePatternSuffix, kTypeStringList, true },
+	{ kEobBasePatternGrFix1, kTypeStringList, true },
+	{ kEobBasePatternGrFix2, kTypeStringList, true },
+	{ kEobBaseValidateArmorString, kTypeStringList, true },
+	{ kEobBaseValidateCursedString, kTypeStringList, true },
+	{ kEobBaseValidateNoDropString, kTypeStringList, true },
+	{ kEobBasePotionStrings, kTypeStringList, true },
+	{ kEobBaseWandString, kTypeStringList, true },
+	{ kEobBaseItemMisuseStrings, kTypeStringList, true },
+
 	{ kEobBaseTakenStrings, kTypeStringList, true },
 	{ kEobBasePotionEffectStrings, kTypeStringList, true },
 
@@ -334,6 +352,10 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseInvSlotX, kLolTypeRaw16, false },
 	{ kEobBaseInvSlotY, kTypeRawData, false },
 	{ kEobBaseSlotValidationFlags, kLolTypeRaw16, false },
+
+	{ kEobBaseProjectileWeaponTypes, kTypeRawData, false },
+	{ kEobBaseWandTypes, kTypeRawData, false },
+
 	{ kEobBaseDrawObjPosIndex, kTypeRawData, false },
 	{ kEobBaseFlightObjFlipIndex, kTypeRawData, false },
 	{ kEobBaseFlightObjShpMap, kTypeRawData, false },
@@ -493,6 +515,8 @@ const ExtractFilename extractFilenames[] = {
 	{ kEob2Npc2Strings, kTypeStringList, true },
 	{ kEob2MonsterDustStrings, kTypeStringList, true },
 	{ kEob2DranFoolsStrings, kTypeStringList, true },
+	{ kEob2HornStrings, kTypeStringList, true },
+	{ kEob2HornSounds, kTypeRawData, false },
 	
 	// LANDS OF LORE
 
@@ -1301,10 +1325,40 @@ const char *getIdString(const int id) {
 		return "kEobBasePryDoorStrings";
 	case kEobBaseWarningStrings:
 		return "kEobBaseWarningStrings";
-	case kEobBaseItemSuffixStrings:
-		return "kEobBaseItemSuffixStrings";
-	case kEobBaseItemExtraStrings:
-		return "kEobBaseItemExtraStrings";
+	case kEobBaseItemSuffixStringsRings:
+		return "kEobBaseItemSuffixStringsRings";
+	case kEobBaseItemSuffixStringsPotions:
+		return "kEobBaseItemSuffixStringsPotions";
+	case kEobBaseItemSuffixStringsWands:
+		return "kEobBaseItemSuffixStringsWands";
+	case kEobBaseRipItemStrings:
+		return "kEobBaseRipItemStrings";
+	case kEobBaseCursedString:
+		return "kEobBaseCursedString";
+	case kEobBaseEnchantedString:
+		return "kEobBaseEnchantedString";
+	case kEobBaseMagicObjectStrings:
+		return "kEobBaseMagicObjectStrings";
+	case kEobBaseMagicObject5String:
+		return "kEobBaseMagicObject5String";
+	case kEobBasePatternSuffix:
+		return "kEobBasePatternSuffix";
+	case kEobBasePatternGrFix1:
+		return "kEobBasePatternGrFix1";
+	case kEobBasePatternGrFix2:
+		return "kEobBasePatternGrFix2";
+	case kEobBaseValidateArmorString:
+		return "kEobBaseValidateArmorString";
+	case kEobBaseValidateCursedString:
+		return "kEobBaseValidateCursedString";
+	case kEobBaseValidateNoDropString:
+		return "kEobBaseValidateNoDropString";
+	case kEobBasePotionStrings:
+		return "kEobBasePotionStrings";
+	case kEobBaseWandString:
+		return "kEobBaseWandString";
+	case kEobBaseItemMisuseStrings:
+		return "kEobBaseItemMisuseStrings";
 	case kEobBaseTakenStrings:
 		return "kEobBaseTakenStrings";
 	case kEobBasePotionEffectStrings:
@@ -1471,6 +1525,10 @@ const char *getIdString(const int id) {
 		return "kEobBaseInvSlotY";
 	case kEobBaseSlotValidationFlags:
 		return "kEobBaseSlotValidationFlags";
+	case kEobBaseProjectileWeaponTypes:
+		return "kEobBaseProjectileWeaponTypes";
+	case kEobBaseWandTypes:
+		return "kEobBaseWandTypes";
 	case kEobBaseDrawObjPosIndex:
 		return "kEobBaseDrawObjPosIndex";
 	case kEobBaseFlightObjFlipIndex:
@@ -1770,6 +1828,10 @@ const char *getIdString(const int id) {
 		return "kEob2MonsterDustStrings";
 	case kEob2DranFoolsStrings:
 		return "kEob2DranFoolsStrings";
+	case kEob2HornStrings:
+		return "kEob2HornStrings";
+	case kEob2HornSounds:
+		return "kEob2HornSounds";
 	case kLolIngamePakFiles:
 		return "kLolIngamePakFiles";
 	case kLolCharacterDefs:

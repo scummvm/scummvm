@@ -1066,8 +1066,23 @@ const int eob1FloppyNeed[] = {
 
 	kEobBasePryDoorStrings,
 	kEobBaseWarningStrings,
-	kEobBaseItemSuffixStrings,
-	kEobBaseItemExtraStrings,
+
+	kEobBaseItemSuffixStringsRings,
+	kEobBaseItemSuffixStringsPotions,
+	kEobBaseItemSuffixStringsWands,
+	
+	kEobBaseRipItemStrings,
+	kEobBaseCursedString,
+	kEobBaseEnchantedString,
+	kEobBaseMagicObjectStrings,
+	kEobBaseMagicObject5String,
+	kEobBasePatternSuffix,
+	kEobBaseValidateArmorString,
+	kEobBaseValidateNoDropString,
+	kEobBasePotionStrings,
+	kEobBaseWandString,
+	kEobBaseItemMisuseStrings,
+
 	kEobBaseTakenStrings,
 	kEobBasePotionEffectStrings,
 
@@ -1186,6 +1201,10 @@ const int eob1FloppyNeed[] = {
 	kEobBaseInvSlotX,
 	kEobBaseInvSlotY,
 	kEobBaseSlotValidationFlags,
+
+	kEobBaseProjectileWeaponTypes,
+	kEobBaseWandTypes,
+
 	kEobBaseDrawObjPosIndex,
 	kEobBaseFlightObjFlipIndex,
 	kEobBaseFlightObjShpMap,
@@ -1249,8 +1268,26 @@ const int eob2FloppyNeed[] = {
 
 	kEobBasePryDoorStrings,
 	kEobBaseWarningStrings,
-	kEobBaseItemSuffixStrings,
-	kEobBaseItemExtraStrings,
+
+	kEobBaseItemSuffixStringsRings,
+	kEobBaseItemSuffixStringsPotions,
+	kEobBaseItemSuffixStringsWands,
+
+	kEobBaseRipItemStrings,
+	kEobBaseCursedString,
+	kEobBaseEnchantedString,
+	kEobBaseMagicObjectStrings,
+	kEobBaseMagicObject5String,
+	kEobBasePatternSuffix,
+	kEobBasePatternGrFix1,
+	kEobBasePatternGrFix2,
+	kEobBaseValidateArmorString,
+	kEobBaseValidateCursedString,
+	kEobBaseValidateNoDropString,
+	kEobBasePotionStrings,
+	kEobBaseWandString,
+	kEobBaseItemMisuseStrings,
+
 	kEobBaseTakenStrings,
 	kEobBasePotionEffectStrings,
 
@@ -1371,6 +1408,10 @@ const int eob2FloppyNeed[] = {
 	kEobBaseInvSlotX,
 	kEobBaseInvSlotY,
 	kEobBaseSlotValidationFlags,
+
+	kEobBaseProjectileWeaponTypes,
+	kEobBaseWandTypes,
+
 	kEobBaseDrawObjPosIndex,
 	kEobBaseFlightObjFlipIndex,
 	kEobBaseFlightObjShpMap,
@@ -1485,6 +1526,8 @@ const int eob2FloppyNeed[] = {
 	kEob2Npc2Strings,
 	kEob2MonsterDustStrings,
 	kEob2DranFoolsStrings,
+	kEob2HornStrings,
+	kEob2HornSounds,
 
 	kLolEobCommonDscShapeIndex,
 	kLolEobCommonDscX,

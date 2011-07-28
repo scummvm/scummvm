@@ -210,6 +210,20 @@ void EobEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 	}
 }
 
+bool EobEngine::checkPartyStatusExtra() {
+	_screen->copyPage(0, 10);
+	gui_drawBox(0, 121, 319, 200, _color2_1, _color1_1, _bkgColor_1);
+	_screen->setScreenDim(9);
+	_txt->printMessage(_menuStringsDefeat[0]);
+	while (!shouldQuit()) {
+		removeInputTop();
+		if (checkInput(0, false, 0) & 0xff)
+			break;
+	}
+	_screen->copyPage(10, 0);
+	return true;
+}
+
 uint32 EobEngine::convertSpellFlagToEob2Format(uint32 flag, int ignoreInvisibility) {
 	uint32 res = 0;
 	if (flag & 0x01)
