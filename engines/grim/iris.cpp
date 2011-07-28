@@ -48,7 +48,7 @@ void Iris::play(Iris::Direction dir, int x, int y, int lenght) {
 void Iris::draw() {
 	if (!_playing) {
 		if (_direction == Close && g_grim->getMode() != ENGINE_MODE_SMUSH) {
-			g_driver->dimRegion(0, 0, 640, 479, 0);
+			g_driver->irisAroundRegion(320, 240);
 		}
 		return;
 	}
