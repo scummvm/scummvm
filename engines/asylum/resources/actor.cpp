@@ -1810,7 +1810,7 @@ bool Actor::hasMoreReactions(int32 reactionIndex, int32 testNumberValue01) {
 }
 
 bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
-	int32 dist = getDistanceForFrame(dir, (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex);
+	int32 dist = getAbsoluteDistanceForFrame(dir, (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex);
 
 	int32 x = point->x + deltaPointsArray[dir].x * dist - _field_948 - 10;
 	int32 y = point->y + deltaPointsArray[dir].y * dist - _field_94C - 10;
@@ -2402,7 +2402,7 @@ void Actor::updateStatus14_Chapter2() {
 		return;
 	}
 
-	// FIXME original calls getDistance but does not seem to do anything with the results
+	// FIXME original calls getDistanceForFrame but does not seem to do anything with the results
 
 	if (_status == kActorStatus17 || !getScene()->getActor(10)->isVisible()) {
 		updateStatus(kActorStatusEnabled);
@@ -3354,12 +3354,12 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 		if (!checkAllActions(src, actions))
 			break;
 
-		int32 dist = getDistanceForFrame(direction, frameNumber);
+		int32 dist = getAbsoluteDistanceForFrame(direction, frameNumber);
 		src.x += sign.x * dist;
 		src.y += sign.y * dist;
 
-		if (abs(src.x - destination.x) >= getDistanceForFrame(kDirectionO, frameNumber)) {
-			if (abs(src.y - destination.y) >= getDistanceForFrame(kDirectionN, frameNumber)) {
+		if (abs(src.x - destination.x) >= getAbsoluteDistanceForFrame(kDirectionO, frameNumber)) {
+			if (abs(src.y - destination.y) >= getAbsoluteDistanceForFrame(kDirectionN, frameNumber)) {
 
 				if (src.x >= destination.x) {
 					if (checkPath(actions, src, kDirectionO, src.x - destination.x)) {
@@ -3435,7 +3435,7 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 	}
 
 	// Check if we need to process
-	int32 distance = getDistanceForFrame(direction, frameNumber);
+	int32 distance = getAbsoluteDistanceForFrame(direction, frameNumber);
 	if (source.x == (src.x - sign.x * distance) && source.y == (src.y - sign.y * distance))
 		return false;
 
@@ -3446,9 +3446,9 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 	_frameNumber = frameNumber;
 
 	if (_frameNumber <= 0)
-		distance = getDistanceForFrame(direction, _frameCount - 1);
+		distance = getAbsoluteDistanceForFrame(direction, _frameCount - 1);
 	else
-		distance = getDistanceForFrame(direction, _frameNumber - 1);
+		distance = getAbsoluteDistanceForFrame(direction, _frameNumber - 1);
 
 	src.x -= sign.x * distance;
 	src.y -= sign.y * distance;
@@ -3685,7 +3685,7 @@ DrawFlags Actor::getGraphicsFlags() {
 	return kDrawFlagMirrorLeftRight;
 }
 
-int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
+int32 Actor::getAbsoluteDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
 	switch (dir) {
 	default:
 		error("[Actor::getDistanceForFrame] Invalid direction");
@@ -3701,6 +3701,37 @@ int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
 		return _distancesNSEO[frameIndex];
 
 	case kDirectionO:
+	case kDirectionE:
+		return _distancesEO[frameIndex];
+	}
+}
+
+int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
+	switch (dir) {
+	default:
+		error("[Actor::getDistanceForFrame] Invalid direction");
+
+	case kDirectionN:
+		return -_distancesNS[frameIndex];
+
+	case kDirectionS:
+		return _distancesNS[frameIndex];
+
+	case kDirectionNO:
+		return -_distancesNSEO[frameIndex];
+
+	case kDirectionNE:
+		return -_distancesNSEO[frameIndex];
+
+	case kDirectionSO:
+		return _distancesNSEO[frameIndex];
+
+	case kDirectionSE:
+		return _distancesNSEO[frameIndex];
+
+	case kDirectionO:
+		return -_distancesEO[frameIndex];
+
 	case kDirectionE:
 		return _distancesEO[frameIndex];
 	}
