@@ -184,6 +184,7 @@ private:
 	void updateWalk();
 	void addShadowPlane(const char *n, Scene *scene, int shadowId);
 	bool shouldDrawShadow(int shadowId);
+	void stopTalking();
 
 	Common::String _name;
 	Common::String _setName;    // The actual current set
