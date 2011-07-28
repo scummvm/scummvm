@@ -214,8 +214,26 @@ enum kExtractID {
 
 	kEobBasePryDoorStrings,
 	kEobBaseWarningStrings,
-	kEobBaseItemSuffixStrings,
-	kEobBaseItemExtraStrings,
+
+	kEobBaseItemSuffixStringsRings,
+	kEobBaseItemSuffixStringsPotions,
+	kEobBaseItemSuffixStringsWands,
+	
+	kEobBaseRipItemStrings,
+	kEobBaseCursedString,
+	kEobBaseEnchantedString,
+	kEobBaseMagicObjectStrings,
+	kEobBaseMagicObject5String,
+	kEobBasePatternSuffix,
+	kEobBasePatternGrFix1,
+	kEobBasePatternGrFix2,
+	kEobBaseValidateArmorString,
+	kEobBaseValidateCursedString,
+	kEobBaseValidateNoDropString,
+	kEobBasePotionStrings,
+	kEobBaseWandString,
+	kEobBaseItemMisuseStrings,
+	
 	kEobBaseTakenStrings,
 	kEobBasePotionEffectStrings,
 
@@ -333,6 +351,10 @@ enum kExtractID {
 	kEobBaseInvSlotX,
 	kEobBaseInvSlotY,
 	kEobBaseSlotValidationFlags,
+
+	kEobBaseProjectileWeaponTypes,
+	kEobBaseWandTypes,
+
 	kEobBaseDrawObjPosIndex,
 	kEobBaseFlightObjFlipIndex,
 	kEobBaseFlightObjShpMap,
@@ -385,7 +407,6 @@ enum kExtractID {
 	kEob1MonsterDistAttSfx10,
 	kEob1MonsterDistAttType17,
 	kEob1MonsterDistAttSfx17,
-
 
 	kEob2MainMenuStrings,
 	kEob2IntroStrings,
@@ -475,6 +496,8 @@ enum kExtractID {
 	kEob2MonsterDustStrings,
 
 	kEob2DranFoolsStrings,
+	kEob2HornStrings,
+	kEob2HornSounds,
 
 	kLolIngamePakFiles,
 	kLolCharacterDefs,

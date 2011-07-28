@@ -85,6 +85,7 @@ private:
 	const uint8 *_doorSwitchCoords;
 
 	// Misc
+	bool checkPartyStatusExtra();
 	uint32 convertSpellFlagToEob2Format(uint32 flag, int ignoreInvisibility);
 	uint32 convertCharacterEffectFlagToEob2Format(uint32 flag);
 };

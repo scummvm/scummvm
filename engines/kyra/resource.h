@@ -287,8 +287,26 @@ enum KyraResources {
 
 	kEobBasePryDoorStrings,
 	kEobBaseWarningStrings,
-	kEobBaseItemSuffixStrings,
-	kEobBaseItemExtraStrings,
+
+	kEobBaseItemSuffixStringsRings,
+	kEobBaseItemSuffixStringsPotions,
+	kEobBaseItemSuffixStringsWands,
+	
+	kEobBaseRipItemStrings,
+	kEobBaseCursedString,
+	kEobBaseEnchantedString,
+	kEobBaseMagicObjectStrings,
+	kEobBaseMagicObjectString5,
+	kEobBasePatternSuffix,
+	kEobBasePatternGrFix1,
+	kEobBasePatternGrFix2,
+	kEobBaseValidateArmorString,
+	kEobBaseValidateCursedString,
+	kEobBaseValidateNoDropString,
+	kEobBasePotionStrings,
+	kEobBaseWandStrings,
+	kEobBaseItemMisuseStrings,
+
 	kEobBaseTakenStrings,
 	kEobBasePotionEffectStrings,
 
@@ -406,6 +424,10 @@ enum KyraResources {
 	kEobBaseInvSlotX,
 	kEobBaseInvSlotY,
 	kEobBaseSlotValidationFlags,
+
+	kEobBaseProjectileWeaponTypes,
+	kEobBaseWandTypes,
+
 	kEobBaseDrawObjPosIndex,
 	kEobBaseFlightObjFlipIndex,
 	kEobBaseFlightObjShpMap,
@@ -547,6 +569,8 @@ enum KyraResources {
 	kEob2MonsterDustStrings,
 
 	kEob2DranFoolsStrings,
+	kEob2HornStrings,
+	kEob2HornSounds,
 
 	kLolIngamePakFiles,
 	kLolCharacterDefs,

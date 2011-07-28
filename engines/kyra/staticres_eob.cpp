@@ -354,8 +354,26 @@ void EobCoreEngine::initStaticResource() {
 
 	_pryDoorStrings = _staticres->loadStrings(kEobBasePryDoorStrings, temp);
 	_warningStrings = _staticres->loadStrings(kEobBaseWarningStrings, temp);
-	_itemSuffixStrings = _staticres->loadStrings(kEobBaseItemSuffixStrings, temp);
-	_itemExtraStrings = _staticres->loadStrings(kEobBaseItemExtraStrings, temp);
+
+	_suffixStringsRings = _staticres->loadStrings(kEobBaseItemSuffixStringsRings, temp);
+	_suffixStringsPotions = _staticres->loadStrings(kEobBaseItemSuffixStringsPotions, temp);
+	_suffixStringsWands = _staticres->loadStrings(kEobBaseItemSuffixStringsWands, temp);
+
+	_ripItemStrings = _staticres->loadStrings(kEobBaseRipItemStrings, temp);
+	_cursedString = _staticres->loadStrings(kEobBaseCursedString, temp);
+	_enchantedString = _staticres->loadStrings(kEobBaseEnchantedString, temp);
+	_magicObjectStrings = _staticres->loadStrings(kEobBaseMagicObjectStrings, temp);
+	_magicObjectString5 = _staticres->loadStrings(kEobBaseMagicObjectString5, temp);
+	_patternSuffix = _staticres->loadStrings(kEobBasePatternSuffix, temp);
+	_patternGrFix1 = _staticres->loadStrings(kEobBasePatternGrFix1, temp);
+	_patternGrFix2 = _staticres->loadStrings(kEobBasePatternGrFix2, temp);
+	_validateArmorString = _staticres->loadStrings(kEobBaseValidateArmorString, temp);
+	_validateCursedString = _staticres->loadStrings(kEobBaseValidateCursedString, temp);
+	_validateNoDropString = _staticres->loadStrings(kEobBaseValidateNoDropString, temp);
+	_potionStrings = _staticres->loadStrings(kEobBasePotionStrings, temp);
+	_wandStrings = _staticres->loadStrings(kEobBaseWandStrings, temp);
+	_itemMisuseStrings = _staticres->loadStrings(kEobBaseItemMisuseStrings, temp);
+	
 	_takenStrings = _staticres->loadStrings(kEobBaseTakenStrings, temp);
 	_potionEffectStrings = _staticres->loadStrings(kEobBasePotionEffectStrings, temp);
 
@@ -455,6 +473,9 @@ void EobCoreEngine::initStaticResource() {
 	_inventorySlotsY = _staticres->loadRawData(kEobBaseInvSlotY, temp);
 	_slotValidationFlags = _staticres->loadRawDataBe16(kEobBaseSlotValidationFlags, temp);
 
+	_projectileWeaponAmmoTypes = (const int8*)_staticres->loadRawData(kEobBaseProjectileWeaponTypes, temp);
+	_wandTypes = _staticres->loadRawData(kEobBaseWandTypes, temp);
+
 	_drawObjPosIndex = _staticres->loadRawData(kEobBaseDrawObjPosIndex, temp);
 	_flightObjFlipIndex = _staticres->loadRawData(kEobBaseFlightObjFlipIndex, temp);
 	_flightObjShpMap = (const int8*)_staticres->loadRawData(kEobBaseFlightObjShpMap, temp);
@@ -508,8 +529,10 @@ void EobCoreEngine::initStaticResource() {
 	_sparkEffectOfY = _staticres->loadRawData(kEobBaseSparkOfY, temp);
 	_magicFlightObjectProperties = _staticres->loadRawData(kEobBaseMagicFlightProps, temp);
 
-	// Hard code these strings, since EOB 1 doesn't have them in the original
-	// (because there is only one single save slot)
+	// Hard code the following strings, since EOB I doesn't have them in the original.
+	// EOB I doesn't have load and save menus, because there is only one single
+	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
+
 	static const char *saveLoadStrings[3][4] = {
 		{	"Cancel",	"Empty Slot",	"Save Game",	"Load Game"		},
 		{	"Abbr.",	"Leerer Slot",	"Speichern",	"  Laden"		},
@@ -521,9 +544,16 @@ void EobCoreEngine::initStaticResource() {
 		"Hier ist noch kein\rSpiel gespeichert!",
 		0
 	};
+
+	static const char *errorSlotNoNameString[3] = {
+		" You must specify\r a name for your\r save game!",
+		" Spielstände müssen\r einen Namen haben!",
+		0
+	};
 	
 	_saveLoadStrings = saveLoadStrings[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 	_errorSlotEmptyString = errorSlotEmptyString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
+	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 }
 
 void EobCoreEngine::initButtonData() {
@@ -1192,6 +1222,8 @@ void DarkMoonEngine::initStaticResource() {
 	_npc2Strings = _staticres->loadStrings(kEob2Npc2Strings, temp);
 	_monsterDustStrings = _staticres->loadStrings(kEob2MonsterDustStrings, temp);
 	_dranFoolsStrings = _staticres->loadStrings(kEob2DranFoolsStrings, temp);
+	_hornStrings = _staticres->loadStrings(kEob2HornStrings, temp);
+	_hornSounds = _staticres->loadRawData(kEob2HornSounds, temp);
 }
 
 void DarkMoonEngine::initSpells() {

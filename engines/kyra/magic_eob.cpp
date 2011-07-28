@@ -76,7 +76,6 @@ void EobCoreEngine::useMagicScroll(int charIndex, int type, int weaponSlot) {
 
 void EobCoreEngine::usePotion(int charIndex, int weaponSlot) {
 	EobCharacter *c = &_characters[_openBookChar];
-	int offset = (_flags.gameID == GI_EOB1) ? 13 : (_flags.lang == Common::DE_DEU ? 19 : 15);
 
 	int val = deleteInventoryItem(charIndex, weaponSlot);
 	snd_playSoundEffect(10);
@@ -100,7 +99,7 @@ void EobCoreEngine::usePotion(int charIndex, int weaponSlot) {
 		break;
 
 	case 3:
-		statusAttack(charIndex, 2, _itemExtraStrings[offset], 0, 1, 8, 1);
+		statusAttack(charIndex, 2, _potionStrings[0], 0, 1, 8, 1);
 		c->effectFlags &= ~0x2000;
 		if (c->flags & 2)
 			return;
@@ -136,7 +135,37 @@ void EobCoreEngine::usePotion(int charIndex, int weaponSlot) {
 		break;
 	}
 
-	_txt->printMessage(_itemExtraStrings[offset + 1], -1, c->name, _potionEffectStrings[val]);
+	_txt->printMessage(_potionStrings[1], -1, c->name, _potionEffectStrings[val]);
+}
+
+void EobCoreEngine::useWand(int charIndex, int weaponSlot) {
+	int v = _items[_characters[charIndex].inventory[weaponSlot]].value - 1;
+	if (!v) {
+		_txt->printMessage(_wandStrings[0]);
+		return;
+	}
+
+	if (v != 5)
+		useMagicScroll(charIndex, _wandTypes[v], weaponSlot);
+	else if (_flags.gameID == GI_EOB2)
+		useMagicScroll(charIndex, 64, weaponSlot);
+	else {
+		uint16 bl1 = calcNewBlockPosition(_currentBlock, _currentDirection);
+		uint16 bl2 = calcNewBlockPosition(bl1, _currentDirection);
+		snd_playSoundEffect(98);
+		sparkEffectOffensive();
+		
+		if ((_wllWallFlags[_levelBlockProperties[bl2].walls[_currentDirection ^ 2]] & 4) && !(_levelBlockProperties[bl2].flags & 7) && (_levelBlockProperties[bl1].flags & 7)) {
+			for (int i = 0; i < 30; i++) {
+				if (_monsters[i].block != bl1)
+					continue;
+				placeMonster(&_monsters[i], bl2, -1);
+				_sceneUpdateRequired = true;
+			}
+		} else {
+			_txt->printMessage(_wandStrings[1]);
+		}
+	}
 }
 
 void EobCoreEngine::castSpell(int spell, int weaponSlot) {

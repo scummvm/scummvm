@@ -350,9 +350,16 @@ bool DarkMoonEngine::restParty_extraAbortCondition() {
 	return true;
 }
 
-void DarkMoonEngine::checkPartyStatusExtra() {
+void DarkMoonEngine::useHorn(int charIndex, int weaponSlot) {
+	int v = _items[_characters[charIndex].inventory[weaponSlot]].value - 1;
+	_txt->printMessage(_hornStrings[v]);
+	snd_playSoundEffect(_hornSounds[v]);
+}
+
+bool DarkMoonEngine::checkPartyStatusExtra() {
 	if (checkScriptFlag(0x10))
 		seq_dranFools();
+	return _gui->confirmDialogue2(14, 67, 1);
 }
 
 void DarkMoonEngine::drawLightningColumn() {

@@ -192,10 +192,8 @@ int EobCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	if (item < 0)
 		return 0;
 
-	int offset = (_flags.gameID == GI_EOB1) ? 11 : (_flags.lang == Common::DE_DEU ? 16 : 12);
-
 	if (slot == 17 && item && !itemUsableByCharacter(charIndex, item)) {
-		_txt->printMessage(_itemExtraStrings[offset], -1, _characters[charIndex].name);
+		_txt->printMessage(_validateArmorString[0], -1, _characters[charIndex].name);
 		return 0;
 	}
 
@@ -203,7 +201,8 @@ int EobCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	int ex = _itemTypes[_items[itm].type].extraProperties & 0x7f;
 
 	if (slot < 2 && _items[itm].flags & 0x20 && ex > 0 && ex < 4) {
-		_txt->printMessage(_itemExtraStrings[offset + 1], -1, _characters[charIndex].name);
+		if (_flags.gameID == GI_EOB2)
+			_txt->printMessage(_validateCursedString[0], -1, _characters[charIndex].name);
 		return 0;
 	}
 
@@ -211,7 +210,7 @@ int EobCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	if (v & _slotValidationFlags[slot])
 		return 1;
 
-	_txt->printMessage(_itemExtraStrings[offset + (_flags.gameID == GI_EOB1 ? 1 : 2)]);
+	_txt->printMessage(_validateNoDropString[0]);
 	return 0;
 }
 
@@ -317,7 +316,8 @@ void EobCoreEngine::printFullItemName(Item item) {
 	
 	const char *tstr2 = 0;
 	const char *tstr3 = 0;
-	int e = 0;
+	
+	bool correctSuffixCase = false;
 
 	Common::String tmpString;
 
@@ -330,43 +330,46 @@ void EobCoreEngine::printFullItemName(Item item) {
 				if (v == 0)
 					tmpString = nameUnid;
 				else if (v < 0)
-					tmpString = Common::String::format(_itemExtraStrings[3], v, nameUnid);
+					tmpString = Common::String::format(_cursedString[0], v, nameUnid);
 				else
-					tmpString = Common::String::format(_itemExtraStrings[4], v, nameUnid);
+					tmpString = Common::String::format(_enchantedString[0], v, nameUnid);
 				break;
 
 			case 9:
-				tstr2 = _itemExtraStrings[5];
+				tstr2 = _magicObjectStrings[0];
 				tstr3 = _spells[v].name;
-				e = 1;
+				correctSuffixCase = true;
 				break;
 
 			case 10:
-				tstr2 = _itemExtraStrings[6];
+				tstr2 = _magicObjectStrings[1];
 				tstr3 = _spells[_flags.gameID == GI_EOB1 ? (_clericSpellOffset + v) : v].name;
-				e = 1;
+				correctSuffixCase = true;
 				break;
 
 			case 14:
-				tstr2 = _itemExtraStrings[8];
-				tstr3 = _itemSuffixStrings[8];
+				tstr2 = _magicObjectStrings[3];
+				if (_flags.gameID == GI_EOB1)
+					v--;
+				tstr3 = _suffixStringsPotions[v];
 				break;
 
 			case 16:
-				tstr2 = _itemExtraStrings[7];
-				tstr3 = _itemSuffixStrings[v + 6];
-				e = 0;
+				tstr2 = _magicObjectStrings[2];
+				tstr3 = _suffixStringsRings[v];
 				break;
 
 			case 18:
-				if (v == 5) {
-					tstr2 = _itemExtraStrings[_flags.lang == Common::EN_ANY ? 9 : 10];
-					e = 1;
+				if (_flags.gameID == GI_EOB2 && v == 5) {
+					if (_flags.lang == Common::DE_DEU)
+						tstr2 = _magicObjectString5[0];
+					else
+						tstr3 = _magicObjectString5[0];
+					correctSuffixCase = true;
 				} else {
-					tstr2 = _itemExtraStrings[9];
-					e = 0;
+					tstr2 = _magicObjectStrings[4];
 				}
-				tstr3 = _itemSuffixStrings[v + (_flags.lang == Common::EN_ANY ? 11 : 15)];
+				tstr3 = _suffixStringsWands[v];
 				break;
 
 			default:
@@ -377,15 +380,15 @@ void EobCoreEngine::printFullItemName(Item item) {
 
 		if (tstr3) {
 			if (!tstr2) {
-				tmpString = Common::String::format(_itemExtraStrings[_flags.lang == Common::EN_ANY ? 10 : 11], tstr3);
+				tmpString = tstr3;
 			} else {
-				if (e == 1) {
-					if (tstr2 == _itemExtraStrings[12])
-						tmpString = Common::String::format(_itemExtraStrings[_flags.lang == Common::EN_ANY ? 11 : 14], tstr2, tstr3);
+				if (correctSuffixCase) {
+					if (tstr2 == _magicObjectString5[0])
+						tmpString = Common::String::format(_patternGrFix2[0], tstr2, tstr3);
 					else
-						tmpString = Common::String::format(_itemExtraStrings[_flags.gameID == GI_EOB1 ? 10 : (_flags.lang == Common::EN_ANY ? 11 : 13)], tstr2, tstr3);
+						tmpString = Common::String::format(_patternGrFix1[0], tstr2, tstr3);
 				} else {
-					tmpString = Common::String::format(_itemExtraStrings[_flags.gameID == GI_EOB1 ? 10 : (_flags.lang == Common::EN_ANY ? 11 : 15)], tstr2, tstr3);
+					tmpString = Common::String::format(_patternSuffix[0], tstr2, tstr3);
 				}
 			}
 		}

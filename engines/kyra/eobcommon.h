@@ -446,6 +446,8 @@ protected:
 	Item _lastUsedItem;
 
 	const uint16 *_slotValidationFlags;
+	const int8 *_projectileWeaponAmmoTypes;
+	const uint8 *_wandTypes;
 
 	EobFlyingObject *_flyingObjects;
 	const uint8 *_drawObjPosIndex;
@@ -758,8 +760,26 @@ protected:
 
 	const char *const *_pryDoorStrings;
 	const char *const *_warningStrings;
-	const char *const *_itemExtraStrings;
-	const char *const *_itemSuffixStrings;
+
+	const char *const *_ripItemStrings;
+	const char *const *_cursedString;
+	const char *const *_enchantedString;
+	const char *const *_magicObjectStrings;
+	const char *const *_magicObjectString5;
+	const char *const *_patternSuffix;
+	const char *const *_patternGrFix1;
+	const char *const *_patternGrFix2;
+	const char *const *_validateArmorString;
+	const char *const *_validateCursedString;
+	const char *const *_validateNoDropString;
+	const char *const *_potionStrings;
+	const char *const *_wandStrings;	
+	const char *const *_itemMisuseStrings;	
+	
+	const char *const *_suffixStringsRings;
+	const char *const *_suffixStringsPotions;
+	const char *const *_suffixStringsWands;
+
 	const char *const *_takenStrings;
 	const char *const *_potionEffectStrings;
 
@@ -782,7 +802,8 @@ protected:
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
 	void displayParchment(int id);
-	virtual void checkPartyStatusExtra() {}
+	virtual void useHorn(int charIndex, int weaponSlot) {}
+	virtual bool checkPartyStatusExtra() = 0;
 
 	virtual void drawLightningColumn() {}
 	virtual int resurrectionSelectDialogue() { return -1; }
@@ -802,10 +823,10 @@ protected:
 	GUI_Eob *_gui;
 
 	// fight
-	void useSlotWeapon(int charIndex, int slotIndex, int item);
-	int closeDistanceAttack(int charIndex, int item);
-	int thrownAttack(int charIndex, int slotIndex, int item);
-	int bowAttack(int charIndex, int item);
+	void useSlotWeapon(int charIndex, int slotIndex, Item item);
+	int closeDistanceAttack(int charIndex, Item item);
+	int thrownAttack(int charIndex, int slotIndex, Item item);
+	int projectileWeaponAttack(int charIndex, Item item);
 
 	void inflictMonsterDamage(EobMonsterInPlay *m, int damage, bool giveExperience);
 	void calcAndInflictMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int b, int damageType);
@@ -844,6 +865,7 @@ protected:
 	void useMagicBookOrSymbol(int charIndex, int type);
 	void useMagicScroll(int charIndex, int type, int weaponSlot);
 	void usePotion(int charIndex, int weaponSlot);
+	void useWand(int charIndex, int weaponSlot);
 
 	void castSpell(int spell, int weaponSlot);
 	void removeCharacterEffect(int spell, int charIndex, int showWarning);
@@ -1015,6 +1037,7 @@ protected:
 	const char *const *_menuStringsRest4;
 	const char *const *_menuStringsDefeat;
 	const char *_errorSlotEmptyString;
+	const char *_errorSlotNoNameString;
 
 	const char *const *_menuStringsTransfer;
 	const char *const *_menuStringsSpec;
