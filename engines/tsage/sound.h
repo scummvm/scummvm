@@ -108,7 +108,7 @@ public:
 	virtual void setProgram(int channel, int program) {}			// Method #13
 	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
 	virtual void setPitchBlend(int channel, int pitchBlend) {}		// Method #15
-	virtual void proc32(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {}// Method #16
+	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {}// Method #16
 	virtual void updateVoice(int channel) {}						// Method #17
 	virtual void proc36() {}										// Method #18
 	virtual void proc38(int channel, int cmd, int value) {}			// Method #19
@@ -349,8 +349,8 @@ public:
 	void _soRemoteReceive();
 	void _soServiceTrackType0(int trackIndex, const byte *channelData);
 	void _soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceType mode, int v0);
-	void _soProc32(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0, int v1);
-	void _soProc42(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0);
+	void _soPlaySound(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0, int v1);
+	void _soPlaySound2(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0);
 	void _soProc38(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int cmd, int value);
 	void _soProc40(VoiceTypeStruct *vtStruct, int channelNum, int pitchBlend);
 	void _soDoTrackCommand(int channelNum, int command, int value);
@@ -445,7 +445,7 @@ public:
 	virtual const GroupData *getGroupData();
 	virtual void installPatch(const byte *data, int size);
 	virtual int setMasterVolume(int volume);
-	virtual void proc32(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1);
+	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1);
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void setPitch(int channel, int pitchBlend);
@@ -494,7 +494,7 @@ public:
 	virtual const GroupData *getGroupData();
 	virtual void poll();
 	virtual int setMasterVolume(int volume);
-	virtual void proc32(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1);
+	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1);
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void proc42(int channel, int cmd, int value, int *v1, int *v2);

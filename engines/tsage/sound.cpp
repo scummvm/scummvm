@@ -1969,9 +1969,9 @@ void Sound::_soServiceTrackType0(int trackIndex, const byte *channelData) {
 				if (channelNum != -1) {
 					if (voiceType != VOICETYPE_0) {
 						if (chFlags & 0x10)
-							_soProc42(vtStruct, channelData, channelNum, chVoiceType, v);
+							_soPlaySound2(vtStruct, channelData, channelNum, chVoiceType, v);
 						else
-							_soProc32(vtStruct, channelData, channelNum, chVoiceType, v, b);
+							_soPlaySound(vtStruct, channelData, channelNum, chVoiceType, v, b);
 					} else if (voiceNum != -1) {
 						assert(driver);
 						driver->proc20(voiceNum, chVoiceType);
@@ -2139,7 +2139,7 @@ void Sound::_soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceTyp
 	}
 }
 
-void Sound::_soProc32(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0, int v1) {
+void Sound::_soPlaySound(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0, int v1) {
 	int entryIndex = _soFindSound(vtStruct, channelNum);
 	if (entryIndex != -1) {
 		SoundDriver *driver = vtStruct->_entries[entryIndex]._driver;
@@ -2149,11 +2149,11 @@ void Sound::_soProc32(VoiceTypeStruct *vtStruct, const byte *channelData, int ch
 		vtStruct->_entries[entryIndex]._type1._field4 = v0;
 		vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
-		driver->proc32(channelData, 0, _chProgram[channelNum], vtStruct->_entries[entryIndex]._voiceNum, v0, v1);
+		driver->playSound(channelData, 0, _chProgram[channelNum], vtStruct->_entries[entryIndex]._voiceNum, v0, v1);
 	}
 }
 
-void Sound::_soProc42(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0) {
+void Sound::_soPlaySound2(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0) {
 	for (int trackCtr = 0; trackCtr < _trackInfo._numTracks; ++trackCtr) {
 		const byte *instrument = _channelData[trackCtr];
 		if ((*(instrument + 13) == v0) && (*instrument == 1)) {
@@ -2168,7 +2168,7 @@ void Sound::_soProc42(VoiceTypeStruct *vtStruct, const byte *channelData, int ch
 				vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
 				int v1, v2;
-				driver->proc32(channelData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, v0, 0x7F);
+				driver->playSound(channelData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, v0, 0x7F);
 				driver->proc42(vtStruct->_entries[entryIndex]._voiceNum, voiceType, 0, &v1, &v2);
 			}
 			break;
@@ -2297,7 +2297,7 @@ void Sound::_soServiceTrackType1(int trackIndex, const byte *channelData) {
 						vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
 						int v1, v2;
-						driver->proc32(channelData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, *(channelData + 1), 0x7f);
+						driver->playSound(channelData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, *(channelData + 1), 0x7f);
 						driver->proc42(vtStruct->_entries[entryIndex]._voiceNum, *(channelData + 1), _loop ? 1 : 0,
 							&v1, &v2);
 						_trkState[trackIndex] = 2;
@@ -2309,9 +2309,9 @@ void Sound::_soServiceTrackType1(int trackIndex, const byte *channelData) {
 						if ((vse._sound == this) && (vse._channelNum == channel) && (vse._field4 == vtStruct->_total)) {
 							SoundDriver *driver = vte._driver;
 
-							int v1, v2;
-							driver->proc42(vte._voiceNum, vtStruct->_total, _loop ? 1 : 0, &v1, &v2);
-							if (v2) {
+							int v1, isEnded;
+							driver->proc42(vte._voiceNum, vtStruct->_total, _loop ? 1 : 0, &v1, &isEnded);
+							if (isEnded) {
 								_trkState[trackIndex] = 0;
 							} else if (vtStruct->_total) {
 								_timer = 0;
@@ -2566,7 +2566,7 @@ int AdlibSoundDriver::setMasterVolume(int volume) {
 	return oldVolume;
 }
 
-void AdlibSoundDriver::proc32(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {
+void AdlibSoundDriver::playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {
 	if (program == -1)
 		return;
 
@@ -2866,7 +2866,7 @@ int AdlibFxSoundDriver::setMasterVolume(int volume) {
 	return oldVolume;
 }
 
-void AdlibFxSoundDriver::proc32(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {
+void AdlibFxSoundDriver::playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {
 	if (program != -1)
 		return;
 
@@ -2892,19 +2892,7 @@ void AdlibFxSoundDriver::proc32(const byte *channelData, int dataOffset, int pro
 }
 
 void AdlibFxSoundDriver::updateVoice(int channel) {
-	if (_channelData) {
-		write(208);
-/*
-		if (_audioStream && _audioStream->numQueuedStreams() != 0) {
-			_mixer->stopAll();
-			_audioStream = NULL;
-		}
-*/
-		_channelData = NULL;
-		_v45062 = 0;
-		_v45066 = 0;
-		_v45068 = 0;
-	}
+	// No implementation
 }
 
 void AdlibFxSoundDriver::proc38(int channel, int cmd, int value) {
@@ -2920,7 +2908,17 @@ void AdlibFxSoundDriver::proc42(int channel, int cmd, int value, int *v1, int *v
 	*v2 = 0;
 	_v4506B = 0;
 
+	// Note: Checking whether a playing Fx sound had finished was originally done in another
+	// method in the sample playing code. But since we're using the ScummVM audio soundsystem,
+	// it's easier simply to do the check right here
+	if (_audioStream && _audioStream->endOfStream()) {
+		delete _audioStream;
+		_audioStream = NULL;
+		_channelData = NULL;
+	}
+
 	if (!_channelData)
+		// Flag that sound isn't playing
 		*v2 = 1;
 }
 
