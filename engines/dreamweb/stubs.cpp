@@ -307,14 +307,16 @@ void DreamGenContext::printchar(uint16 dst, uint16 src, uint16* x, uint16 y, uin
 		return;
 	push(si);
 	push(di);
+	push(ax);
 	if (data.byte(kForeignrelease) != 0)
 		y -= 3;
 	showframe(dst, src, *x, y, c - 32 + data.word(kCharshift), 0, width, height);
+	ax = pop();
 	di = pop();
 	si = pop();
 	_cmp(data.byte(kKerning), 0);
 	if (flags.z())
-		kernchars();
+		*width = kernchars(c, ah, *width);
 	(*x) += *width;
 }
 
@@ -408,6 +410,7 @@ void DreamGenContext::printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool cent
 				return;
 			}
 			c = engine->modifyChar(c);
+			ah = es.byte(si); // get next char for kerning
 			uint8 width, height;
 			push(es);
 			printchar(es, ds, &i, *y, c, &width, &height);
