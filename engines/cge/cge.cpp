@@ -152,10 +152,10 @@ CGEEngine::~CGEEngine() {
 
 	delete _console;
 
-	// Delete engine objects 
+	// Delete engine objects
 	delete _vga;
 	delete _sys;
-	//delete _sprite;	Sprite is destroyed by the queue it's added to
+	//delete _sprite; Sprite is destroyed by the queue it's added to
 	delete _miniCave;
 	delete _shadow;
 	delete _horzLine;
