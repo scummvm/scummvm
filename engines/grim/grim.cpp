@@ -1191,6 +1191,17 @@ void GrimEngine::savegameRestore() {
 		if (bundle_dofile("patch05.bin") == 2)
 			single_dofile("patch05.bin");
 	}
+	const char *devMode = g_registry->get("good_times", "");
+	lua_beginblock();
+	// Set the developerMode, since the save contains the value of
+	// the installation it was made with.
+	lua_pushobject(lua_getglobal("developerMode"));
+	if (devMode[0] == 0)
+		lua_pushnil();
+	else
+		lua_pushstring(devMode);
+	lua_setglobal("developerMode");
+	lua_endblock();
 
 	g_imuse->pause(false);
 	g_movie->pause(false);
