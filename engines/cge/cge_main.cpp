@@ -684,9 +684,7 @@ void CGEEngine::switchCave(int cav) {
 				_hero->park();
 				_hero->step(0);
 				if (!_isDemo)
-				///// protection: auto-destruction on! ----------------------
-					_vga->_spareQ->_show = Startup::_summa * (cav <= CAVE_MAX);
-				/////--------------------------------------------------------
+					_vga->_spareQ->_show = 0;
 			}
 			_cavLight->gotoxy(CAVE_X + ((_now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
 			              CAVE_Y + ((_now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
@@ -1686,15 +1684,9 @@ bool CGEEngine::showTitle(const char *name) {
 			strcpy(_usrFnam, progName(kSvgExt));
 			usr_ok = true;
 		} else {
-			//-----------------------------------------
 #ifndef EVA
-#ifdef CD
-			Startup::_summa |= (0xC0 + (DriveCD(0) << 6)) & 0xFF;
-#else
-			// At this point the game originally read the boot sector to get
-			// the serial number for it's copy protection check
-#endif
-			//-----------------------------------------
+			// At this point the game originally set the protection variables
+			// used by the copy protection check
 			movie("X00"); // paylist
 			_vga->copyPage(1, 2);
 			_vga->copyPage(0, 1);

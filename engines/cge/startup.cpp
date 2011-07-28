@@ -41,7 +41,6 @@ extern char _copr[];
 
 int    Startup::_mode = 0;
 int    Startup::_soundOk = 0;
-uint16 Startup::_summa;
 
 
 void quitNow(int ref) {
@@ -50,8 +49,6 @@ void quitNow(int ref) {
 
 
 bool Startup::getParms() {
-	_summa = 0;
-
 	/*
 	int i = _argc;
 	while (i > 1) {
@@ -97,22 +94,6 @@ bool Startup::getParms() {
 
 		if (n >= 2)
 			SoundOk = 2;
-	}
-	if (_vm->_isDemo)
-		// protection disabled
-		Summa = 0;
-	else {
-#ifdef EVA
-		union { dosdate_t d; uint32 n; } today;
-		_dos_getdate(&today.d);
-		id.disk += (id.disk < today.n);
-#endif
-#ifdef CD
-		Summa = 0;
-#else
-	// disk signature checksum
-		Summa = ChkSum(Copr, sizeof(Ident));
-#endif
 	}
 	
 	if (SNDDrvInfo.MDEV != DEV_GM)
