@@ -914,13 +914,16 @@ Sprite *DreamGenContext::spritetable() {
 	return sprite;
 }
 
-void DreamGenContext::showframe(uint16 dst, uint16 src, uint16 x, uint16 y, uint8 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+void DreamGenContext::showframe(uint16 dst, uint16 src, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+	// frameNumber takes up 9 bits of ax, and effectsFlag 7.
+	assert(!(effectsFlag & 1));
+
 	es = dst;
 	ds = src;
 	di = x;
 	bx = y;
-	al = frameNumber;
-	ah = effectsFlag;
+	ax = frameNumber | (effectsFlag << 8);
+
 
 	si = (ax & 0x1ff) * 6;
 	if (ds.word(si) == 0) {
@@ -983,7 +986,7 @@ void DreamGenContext::showframe(uint16 dst, uint16 src, uint16 x, uint16 y, uint
 
 void DreamGenContext::showframe() {
 	uint8 width, height;
-	showframe(es, ds, di, bx, al, ah, &width, &height);
+	showframe(es, ds, di, bx, ax & 0x1ff, ah & 0xfe, &width, &height);
 	cl = width;
 	ch = height;
 }
