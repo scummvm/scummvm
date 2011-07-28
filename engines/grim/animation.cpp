@@ -72,7 +72,6 @@ void Animation::fade(FadeMode fadeMode, int fadeLength) {
 			_repeatMode = Once;
 			_time = -1;
 			_fade = 0.f;
-			_paused = false;
 		} else {
 			return;
 		}
@@ -89,7 +88,6 @@ void Animation::stop() {
 	_fadeMode = None;
 	_time = -1;
 	_fade = 1.f;
-	_paused = false;
 	deactivate();
 }
 
