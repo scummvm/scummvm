@@ -2306,16 +2306,17 @@ void Sound::_soServiceTrackType1(int trackIndex, const byte *channelData) {
 					for (uint entryIndex = 0; entryIndex < vtStruct->_entries.size(); ++entryIndex) {
 						VoiceStructEntry &vte = vtStruct->_entries[entryIndex];
 						VoiceStructEntryType1 &vse = vte._type1;
-						if ((vse._sound == this) && (vse._channelNum == channel) && (vse._field4 == vtStruct->_total)) {
+						if ((vse._sound == this) && (vse._channelNum == channel) && (vse._field4 == *(channelData + 1))) {
 							SoundDriver *driver = vte._driver;
 
-							int v1, isEnded;
-							driver->proc42(vte._voiceNum, vtStruct->_total, _loop ? 1 : 0, &v1, &isEnded);
+							int isEnded, resetTimer;
+							driver->proc42(vte._voiceNum, vtStruct->_total, _loop ? 1 : 0, &isEnded, &resetTimer);
 							if (isEnded) {
 								_trkState[trackIndex] = 0;
-							} else if (vtStruct->_total) {
+							} else if (resetTimer) {
 								_timer = 0;
 							}
+							return;
 						}
 					}
 
@@ -2911,15 +2912,18 @@ void AdlibFxSoundDriver::proc42(int channel, int cmd, int value, int *v1, int *v
 	// Note: Checking whether a playing Fx sound had finished was originally done in another
 	// method in the sample playing code. But since we're using the ScummVM audio soundsystem,
 	// it's easier simply to do the check right here
-	if (_audioStream && _audioStream->endOfStream()) {
-		delete _audioStream;
+	if (_audioStream && (_audioStream->numQueuedStreams() == 0)) {
+		_mixer->stopHandle(_soundHandle);
 		_audioStream = NULL;
 		_channelData = NULL;
 	}
 
 	if (!_channelData)
 		// Flag that sound isn't playing
-		*v2 = 1;
+		*v1 = 1;
+
+	// TODO: v2 is used for flagging a reset of the timer. I'm not sure if it's needed
+	*v2 = 0;
 }
 
 void AdlibFxSoundDriver::write(int v) {
