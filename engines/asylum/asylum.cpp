@@ -311,6 +311,8 @@ void AsylumEngine::playIntro() {
 				Common::Event ev;
 				_eventMan->pollEvent(ev);
 
+				_system->delayMillis(100);
+
 			} while (_sound->isPlaying(introSpeech));
 
 		}

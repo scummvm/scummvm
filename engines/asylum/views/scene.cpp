@@ -1788,6 +1788,8 @@ void Scene::playIntroSpeech() {
 		Common::Event ev;
 		_vm->getEventManager()->pollEvent(ev);
 
+		g_system->delayMillis(100);
+
 	} while (getSound()->isPlaying(resourceId));
 }
 
