@@ -54,6 +54,7 @@ SoundManager::SoundManager() {
 SoundManager::~SoundManager() {
 	if (__sndmgrReady) {
 		Common::StackLock slock(_serverDisabledMutex);
+		_vm->_mixer->stopAll();
 
 		for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ) {
 			Sound *s = *i;
