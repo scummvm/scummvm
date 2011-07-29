@@ -47,7 +47,7 @@ class BinkPlayer : public MoviePlayer {
 private:
 	Common::File _f;
 	Video::BinkDecoder *_binkDecoder;
-	Graphics::Surface *_surface;
+	Graphics::Surface *_surface, *_externalSurface;
 public:
 	BinkPlayer();
 	~BinkPlayer();

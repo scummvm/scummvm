@@ -60,7 +60,8 @@ BinkPlayer::BinkPlayer() : MoviePlayer() {
 	g_movie = this;
 	_binkDecoder = new Video::BinkDecoder();
 	_surface = new Graphics::Surface();
-	_speed = 50;
+	_externalSurface = new Graphics::Surface();
+	_speed = 1000;
 }
 
 BinkPlayer::~BinkPlayer() {
@@ -71,12 +72,16 @@ void BinkPlayer::init() {
 	_frame = 0;
 	_movieTime = 0;
 	_updateNeeded = false;
+	_videoFinished = false;
 	_width = 0;
 	_height = 0;
+	_x = 0;
+	_y = 0;
 
 	assert(!_externalBuffer);
-
-	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
+	
+	timerCallback(0); // Get a valid frame to draw
+  	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void BinkPlayer::deinit() {
@@ -117,10 +122,18 @@ void BinkPlayer::handleFrame() {
 
 	_width = _surface->w;
 	_height = _surface->h;
-	_externalBuffer = (byte *)_surface->pixels;
+	
+	_internalBuffer = (byte *)_surface->pixels;
 
-	_updateNeeded = true;
-
+	// Avoid updating the _externalBuffer if it's flagged as updateNeeded
+	// since the draw-loop might access it then. This way, any late frames
+	// will be dropped, and the sound will continue, in synch.
+	if (!_updateNeeded) {
+		_externalSurface->copyFrom(*_surface);
+		_externalBuffer = (byte *)_surface->pixels; 
+		_updateNeeded = true;
+	}
+		
 	_movieTime = _binkDecoder->getElapsedTime();
 	_frame = _binkDecoder->getCurFrame();
 
