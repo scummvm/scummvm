@@ -78,14 +78,14 @@ bool PuzzleVCR::update(const AsylumEvent &evt)  {
 		getSharedData()->setFlag(kFlagRedraw, true);
 	}
 
-	if (ticks > getSharedData()->nextScreenUpdate) {
+	if (ticks > getSharedData()->getNextScreenUpdate()) {
 		if (getSharedData()->getFlag(kFlagRedraw)) {
 			getScreen()->copyBackBufferToScreen();
 
-			getSharedData()->setData(39, getSharedData()->getData(39) ^ 1);
+			getSharedData()->setEventUpdate(getSharedData()->getEventUpdate() ^ 1);
 
 			getSharedData()->setFlag(kFlagRedraw, false);
-			getSharedData()->nextScreenUpdate = ticks + 55;
+			getSharedData()->setNextScreenUpdate(ticks + 55);
 		}
 	}
 

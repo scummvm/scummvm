@@ -40,14 +40,12 @@
 namespace Asylum {
 
 Special::Special(AsylumEngine *engine) : _vm(engine) {
-
-	// Counters & flags
-	_chapter2Counter = 0;
-	_chapter5Counter = 0;
-
+	// Flags
 	_paletteFlag = false;
 	_paletteTick1 = 0;
 	_paletteTick2 = 0;
+
+	_chapter5Counter = 0;
 }
 
 Special::~Special() {
@@ -202,7 +200,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 
 		for (int i = 13; i < 22; i++) {
 			if (getScene()->getActor(i)->isVisible()) {
-				getSharedData()->setActorUpdateFlag(2);
+				getSharedData()->setChapter2Counter(6, 2);
 				break;
 			}
 		}
@@ -225,12 +223,16 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 	case 17:
 	case 18:
 		if (actor->getStatus() == kActorStatus1) {
-			++_chapter2Counter;
+			int32 counter = getSharedData()->getChapter2Counter(getCounter(actorIndex));
+			counter++;
 
-			if (_chapter2Counter >= 5) {
-				_chapter2Counter = 0;
+			if (counter >= 5) {
+				counter = 0;
 				actor->updateFromDirection((ActorDirection)((actor->getDirection() + 1) % ~7)); // TODO check
 			}
+
+			getSharedData()->setChapter2Counter(4, counter);
+
 		} else if (actor->getStatus() == kActorStatusEnabled) {
 			actor->updateStatus(kActorStatus1);
 		}
@@ -249,7 +251,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 			Actor *refActor = getScene()->getActor(actorIndex - 9); // Original uses offset to object array (+ offset to actor).
 
 			*actor->getPoint1() = *refActor->getPoint1();
-			actor->getPoint1()->y += getSharedData()->getData(actorIndex - 8);
+			actor->getPoint1()->y += getSharedData()->getChapter2Data(2, actorIndex - 22);    // cursorResources + 30
 			actor->setFrameIndex(refActor->getFrameIndex());
 			actor->setDirection(refActor->getDirection());
 
@@ -276,7 +278,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 			actor->setFrameIndex(0);
 
 			if (actor->isVisible())
-				if (getSharedData()->getActorUpdateFlag2() < 7)
+				if (getSharedData()->getChapter2Counter(5) < 7)
 					getSpeech()->playPlayer(452);
 
 			_vm->setGameFlag(kGameFlag219);
@@ -1421,6 +1423,25 @@ ResourceId Special::getResourceId(Object *object, ActorIndex actorIndex) {
 		error("[Special::getResourceId] Both arguments cannot be NULL/empty!");
 
 	return (actorIndex == kActorInvalid) ? object->getSoundResourceId() : getScene()->getActor(actorIndex)->getSoundResourceId();
+}
+
+int32 Special::getCounter(ActorIndex index) {
+	switch (index) {
+	default:
+		error("[Special::getCounter] Invalid actor index (was: %d, valid: 13, 15, 17, 18)", index);
+
+	case 13:
+		return 1;
+
+	case 15:
+		return 2;
+
+	case 17:
+		return 3;
+
+	case 18:
+		return 4;
+	}
 }
 
 void Special::checkObject(Object *object, GameFlag flagToSet, GameFlag flagToClear, ObjectId objectId) {

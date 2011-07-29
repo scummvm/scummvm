@@ -498,13 +498,12 @@ IMPLEMENT_OPCODE(PlayAnimation)
 
 	if (object->getField688() == 1) {
 		if (object->flags & kObjectFlag4) {
-			getSharedData()->point.x = object->x;
-			getSharedData()->point.y = object->y;
+			getSharedData()->setGlobalPoint(Common::Point(object->x, object->y));
 		} else {
 			Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-			getSharedData()->point.x = frameRect.left + Common::Rational(frameRect.width(), 2).toInt()  + object->x;
-			getSharedData()->point.y = frameRect.top  + Common::Rational(frameRect.height(), 2).toInt() + object->y;
+			getSharedData()->setGlobalPoint(Common::Point(frameRect.left + Common::Rational(frameRect.width(), 2).toInt()  + object->x,
+			                                              frameRect.top  + Common::Rational(frameRect.height(), 2).toInt() + object->y));
 		}
 	}
 
@@ -960,17 +959,17 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2D
 IMPLEMENT_OPCODE(PlayMovie)
-	if (getSharedData()->matteBarHeight < 170) {
+	if (getSharedData()->getMatteBarHeight() < 170) {
 		_processNextEntry = 1;
 
-		if (!getSharedData()->matteBarHeight) {
+		if (!getSharedData()->getMatteBarHeight()) {
 			getCursor()->hide();
 			getScreen()->loadPalette();
-			getSharedData()->matteVar1 = 1;
-			getSharedData()->matteBarHeight = 1;
-			getSharedData()->matteVar2 = 0;
-			getSharedData()->mattePlaySound = (cmd->param3 == 0);
-			getSharedData()->matteInitialized = (cmd->param2 == 0);
+			getSharedData()->setMatteVar1(1);
+			getSharedData()->setMatteBarHeight(1);
+			getSharedData()->setMatteVar2(0);
+			getSharedData()->setMattePlaySound(cmd->param3 == 0);
+			getSharedData()->setMatteInitialized(cmd->param2 == 0);
 			getSharedData()->movieIndex = cmd->param1;
 		}
 
@@ -987,10 +986,10 @@ IMPLEMENT_OPCODE(PlayMovie)
 		getScreen()->setGammaLevel(getWorld()->currentPaletteId);
 	}
 
-	getSharedData()->matteBarHeight = 0;
+	getSharedData()->setMatteBarHeight(0);
 	_processNextEntry = 0;
 
-	if (!getSharedData()->mattePlaySound && _currentScript->commands[0].numLines != 0) {
+	if (!getSharedData()->getMattePlaySound() && _currentScript->commands[0].numLines != 0) {
 		bool found = true;
 		int index = 0;
 
@@ -1008,11 +1007,11 @@ IMPLEMENT_OPCODE(PlayMovie)
 			check = true;
 	}
 
-	if (!check && getSharedData()->matteVar2 == 0 && getWorld()->musicCurrentResourceIndex != kMusicStopped)
+	if (!check && getSharedData()->getMatteVar2() == 0 && getWorld()->musicCurrentResourceIndex != kMusicStopped)
 		_vm->sound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex));
 
 	getCursor()->show();
-	getSharedData()->matteVar2 =0;
+	getSharedData()->setMatteVar2(0);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -1187,7 +1186,7 @@ IMPLEMENT_OPCODE(UpdateWideScreen)
 		cmd->param1 = 0;
 		_processNextEntry = 0;
 
-		getSharedData()->matteBarHeight = 0;
+		getSharedData()->setMatteBarHeight(0);
 	} else {
 		getScreen()->drawWideScreenBars((int16)(4 * barSize));
 
@@ -1459,19 +1458,19 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x48
 IMPLEMENT_OPCODE(HideMatteBars)
-	getSharedData()->matteVar1 = 0;
-	getSharedData()->matteInitialized = true;
+	getSharedData()->setMatteVar1(0);
+	getSharedData()->setMatteInitialized(true);
 
-	if (getSharedData()->matteBarHeight >= 170) {
-		getSharedData()->matteBarHeight = 0;
+	if (getSharedData()->getMatteBarHeight() >= 170) {
+		getSharedData()->setMatteBarHeight(0);
 		_processNextEntry = 0;
 		getCursor()->show();
 	} else {
 		_processNextEntry = 1;
 
-		if (!getSharedData()->matteBarHeight) {
+		if (!getSharedData()->getMatteBarHeight()) {
 			getCursor()->hide();
-			getSharedData()->matteBarHeight = 1;
+			getSharedData()->setMatteBarHeight(1);
 		}
 	}
 END_OPCODE
@@ -1479,20 +1478,20 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x49
 IMPLEMENT_OPCODE(ShowMatteBars)
-	getSharedData()->matteVar1 = 0;
-	getSharedData()->matteInitialized = true;
-	getSharedData()->mattePlaySound = true;
+	getSharedData()->setMatteVar1(0);
+	getSharedData()->setMatteInitialized(true);
+	getSharedData()->setMattePlaySound(true);
 
-	if (getSharedData()->matteBarHeight >= 170) {
-		getSharedData()->matteBarHeight = 0;
+	if (getSharedData()->getMatteBarHeight() >= 170) {
+		getSharedData()->setMatteBarHeight(0);
 		_processNextEntry = 0;
 		getCursor()->show();
 	} else {
 		_processNextEntry = 1;
 
-		if (!getSharedData()->matteBarHeight) {
+		if (!getSharedData()->getMatteBarHeight()) {
 			getCursor()->hide();
-			getSharedData()->matteBarHeight = 90;
+			getSharedData()->setMatteBarHeight(90);
 		}
 	}
 END_OPCODE

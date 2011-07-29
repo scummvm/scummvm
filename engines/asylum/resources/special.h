@@ -46,7 +46,6 @@ private:
 	AsylumEngine* _vm;
 
 	// Counters
-	int32 _chapter2Counter;
 	int32 _chapter5Counter;
 
 	bool _paletteFlag;
@@ -93,6 +92,7 @@ private:
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
 	ResourceId getResourceId(Object *object, ActorIndex actorIndex);
+	int32 getCounter(ActorIndex index);
 
 	void checkObject(Object *object, GameFlag flagToSet, GameFlag flagToClear, ObjectId objectId = kObjectInvalid);
 	void checkOtherObject(Object *object, ObjectId otherObjectId, GameFlag flagToClear, GameFlag flagToSet);

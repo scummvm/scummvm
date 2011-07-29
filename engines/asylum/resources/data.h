@@ -39,7 +39,11 @@ enum GlobalFlag {
 	kFlagRedraw,
 	kFlagSkipDrawScene,
 	kFlagSceneRectChanged,
-	kFlagScene1
+	kFlagScene1,
+	kFlagSkipScriptProcessing,
+	kFlagEncounterRunning,
+	kFlagActorUpdateEnabledCheck,
+	kFlagActorUpdateStatus15Check
 };
 
 /**
@@ -60,7 +64,7 @@ enum GlobalFlag {
  *  uint32 {15}    - ambient flags
  *  uint32 {15}    - ambient ticks
  *  uint32 {1}     - UNUSED
- *  uint32 {1}     - scene updateScreen calls count
+ *  uint32 {1}     - UNUSED (scene updateScreen calls count)
  *  -- Script queue (stored in ScriptManager - reset on scene change)
  *  uint32 {1}     - global Object X
  *  uint32 {1}     - global Object Y
@@ -74,8 +78,7 @@ enum GlobalFlag {
  *  uint32 {1}     - UNUSED
  *  uint32 {13}    - cursor resources
  *  uint32 {3}     - scene fonts (3)
- *  uint32 {3}     - Chapter2 actor data (part 1)
- *  uint32 {1}     - UNUSED
+ *  uint32 {5}     - Chapter2 actor data (part 1)
  *  uint32 {1}     - small cursor Up
  *  uint32 {1}     - small cursor Down
  *  uint32 {1}     - Encounter frame background
@@ -85,16 +88,12 @@ enum GlobalFlag {
  *  uint32 {1}     - matte Initialized
  *  uint32 {1}     - matte playSound
  *  uint32 {1}     - currentScreenUpdatesCount
- *  uint32 {3}     - Chapter2 actor data (part 2)
+ *  uint32 {9}     - Chapter2 actor data (part 2)
  *  uint32 {1}     - Chapter 2 counter 1
  *  uint32 {1}     - Chapter 2 counter 2
  *  uint32 {1}     - Chapter 2 counter 3
  *  uint32 {1}     - Chapter 2 counter 4
- *  uint32 {1}     - UNUSED
- *  uint32 {3}     - Chapter2 actor data (part 3)
- *  uint32 {1}     - UNUSED
- *  uint32 {8}     - Chapter 2 points
- *  uint32 {9}     - UNUSED
+ *  uint32 {23}    - Chapter2 actor data (part 3)
  *  uint32 {1}     - Special 2 counter 5
  *  uint32 {1}     - Chapter 2 frameIndex Offset
  *  uint32 {1}     - Chapter 2 Actor index
@@ -102,9 +101,7 @@ enum GlobalFlag {
  *  uint32 {1}     - Chapter 2 counter 6
  *  uint32 {1}     - Chapter 2 counter 7
  *  uint32 {1}     - Chapter 2 counter 8
- *  uint32 {7}     - UNUSED
- *  uint32 {3}     - Chapter2 actor data (part 4)
- *  uint32 {8}     - UNUSED
+ *  uint32 {18}    - Chapter2 actor data (part 4)
  *  uint32 {1}     - actorUpdateStatusEnabledCounter
  *  uint32 {9}     - Chapter2 actor data (part 5)
  *  uint32 {1}     - Encounter disablePlayerOnExit
@@ -113,9 +110,9 @@ enum GlobalFlag {
  *  uint32 {49}    - Viewed movies
  *  uint32 {1}     - actorUpdateStatus15Check
  *  -- Skip opening movie command line flag (not used)
- *  uint32 {1}     - Encounter flag 3
+ *  -- Encounter flag 3
  *  uint32 {1}     - Flag 2
- *  uint32 {1}     - Flag 5
+ *  uint32 {1}     - Flag Redraw
  *  -- scripts (reset on scene load)
  *  -- polygons (reset on scene load)
  */
@@ -124,67 +121,17 @@ public:
 	SharedData();
 
 	// Public variables
-	int32 cdNumber;
-	int32 movieIndex;
-
-	// Saved scene data
-	ResourceId      cursorResources[13];
-	ResourceId      sceneFonts[3];
-	int32           smallCurUp;
-	int32           smallCurDown;
-	int32           encounterFrameBg;
-
-	Common::Point   point; // global point
+	int32           cdNumber;
+	int32           movieIndex;
 	uint32          sceneCounter;
-
-	// Global scene coordinates and offset
-	int32           sceneXLeft;
-	int32           sceneYTop;
-	int32           sceneOffset;
-	int32           sceneOffsetAdd;
-
-	// Actor
 	Common::Point   vector1;
 	Common::Point   vector2;
 	bool            actorEnableForStatus7;
-	bool            actorUpdateEnabledCheck;
-	int32           actorUpdateStatusEnabledCounter;
-	bool            actorUpdateStatus15Check;
 	ActorDirection  globalDirection;
 
-	// Matte bars
-	uint32          matteBarHeight;
-	int32           matteVar1;
-	uint32          matteVar2;
-	bool            matteInitialized;
-	bool            mattePlaySound;
-
-	// Screen updates
-	uint32          nextScreenUpdate;
-	int32           currentScreenUpdatesCount;
-
-
-	// Accessors
-	void  setActorUpdateFlag(int32 val)  { _data1[40] = 2; }
-	void  setActorUpdateFlag2(int32 val) { _data1[36] = val; }
-
-	int32 getActorUpdateFlag2() { return _data1[36]; }
-
-	// TODO Remove and replace by accessors
-	void setData(ActorIndex index, int32 val);
-	int32 getData(ActorIndex index);
-	void setData2(ActorIndex index, bool val);
-	bool getData2(ActorIndex index);
-
 	// Used by Actor::enableActorsChapter2 (and maybe others)
-	void resetActorData();
-
-	// Ambient sound data
-	uint32 getAmbientTick(uint32 index);
-	void setAmbientTick(uint32 index, uint32 val);
-	uint32 getAmbientFlag(uint32 index);
-	void setAmbientFlag(uint32 index, uint32 val);
-	void resetAmbientFlags();
+	void resetChapter2Data();
+	void reset();  // called during game reset
 
 	// Flags
 	bool getFlag(GlobalFlag flag) const;
@@ -194,22 +141,114 @@ public:
 	void saveLoadAmbientSoundData(Common::Serializer &s);
 	void saveLoadWithSerializer(Common::Serializer &s);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Accessors
+	//////////////////////////////////////////////////////////////////////////
+
+	// Ambient sound data
+	uint32 getAmbientTick(uint32 index);
+	void setAmbientTick(uint32 index, uint32 val);
+	uint32 getAmbientFlag(uint32 index);
+	void setAmbientFlag(uint32 index, uint32 val);
+	void resetAmbientFlags();
+
+	// Coordinates
+	Common::Point getGlobalPoint() { return _globalPoint; }
+	void setGlobalPoint(const Common::Point &point) { _globalPoint = point; }
+	Common::Point getSceneCoords() { return _sceneCoords; }
+	void setSceneCoords(const Common::Point &point) { _sceneCoords = point; }
+	int32 getSceneOffset() { return _sceneOffset; }
+	void setSceneOffset(int32 sceneOffset) { _sceneOffset = sceneOffset; }
+	int32 getSceneOffsetAdd() { return _sceneOffsetAdd; }
+	void setSceneOffsetAdd(int32 sceneOffsetAdd) { _sceneOffsetAdd = sceneOffsetAdd; }
+
+	// Saved scene data
+	void saveCursorResources(ResourceId *resources, uint32 size);
+	void loadCursorResources(ResourceId *resources, uint32 size);
+	void saveSceneFonts(ResourceId font1, ResourceId font2, ResourceId font3);
+	void loadSceneFonts(ResourceId *font1, ResourceId *font2, ResourceId *font3);
+	void saveSmallCursor(int32 smallCurUp, int32 smallCurDown);
+	void loadSmallCursor(int32 *smallCurUp, int32 *smallCurDown);
+	void saveEncounterFrameBackground(int32 encounterFrameBg) { _encounterFrameBg = encounterFrameBg; }
+	void loadEncounterFrameBackground(int32 *encounterFrameBg) { *encounterFrameBg = _encounterFrameBg; }
+
+	// Matte data
+	int32 getMatteVar1() const { return _matteVar1; }
+	void setMatteVar1(int32 val) { _matteVar1 = val; }
+	uint32 getMatteVar2() const { return _matteVar2; }
+	void setMatteVar2(uint32 val) { _matteVar2 = val; }
+	uint32 getMatteBarHeight() const { return _matteBarHeight; }
+	void setMatteBarHeight(uint32 val) { _matteBarHeight = val; }
+	bool getMatteInitialized() const { return _matteInitialized; }
+	void setMatteInitialized(bool val) { _matteInitialized = val; }
+	bool getMattePlaySound() const { return _mattePlaySound; }
+	void setMattePlaySound(bool val) { _mattePlaySound = val; }
+
+	// Chapter 2 data
+	void setChapter2Data(uint32 index, int32 offset, int32 val);
+	int32 getChapter2Data(uint32 index, int32 offset);
+	void setChapter2Counter(uint32 index, int32 val);
+	int32 getChapter2Counter(uint32 index);
+	ActorIndex getChapter2FrameIndexOffset() const { return _chapter2FrameIndexOffset; }
+	void setChapter2FrameIndexOffset(int32 val) { _chapter2FrameIndexOffset = val; }
+	ActorIndex getChapter2ActorIndex() const { return _chapter2ActorIndex; }
+	void setChapter2ActorIndex(ActorIndex val) { _chapter2ActorIndex = val; }
+
+	// Misc
+	int32 getActorUpdateStatusEnabledCounter() { return _actorUpdateStatusEnabledCounter; }
+	void setActorUpdateStatusEnabledCounter(int32 val) { _actorUpdateStatusEnabledCounter = val; }
+
+	// Screen updates
+	int32 getEventUpdate() { return _eventUpdate; }
+	void setEventUpdate(int32 val) { _eventUpdate = val; }
+	uint32 getNextScreenUpdate() { return _nextScreenUpdate; }
+	void setNextScreenUpdate(uint32 nextScreenUpdate) { _nextScreenUpdate = nextScreenUpdate; }
+
 private:
 	uint32          _ambientFlags[15];
 	uint32          _ambientTicks[15];
-
-	// Flags
+	Common::Point   _globalPoint; // global point
+	// _flagSkipScriptProcessing
+	// _flagEncounterRunning
+	// player ActorIndex
+	Common::Point   _sceneCoords;
+	int32           _sceneOffset;
+	int32           _sceneOffsetAdd;
+	ResourceId      _cursorResources[13];
+	ResourceId      _sceneFonts[3];
+	uint32          _chapter2Data1[5];
+	int32           _smallCurUp;
+	int32           _smallCurDown;
+	int32           _encounterFrameBg;
+	bool            _flagSkipDrawScene;
+	int32           _matteVar1;
+	bool            _flagActorUpdateEnabledCheck;
+	bool            _matteInitialized;
+	bool            _mattePlaySound;
+	int32           _currentScreenUpdatesCount;
+	uint32          _chapter2Data2[9];
+	int32           _chapter2Counters[8];
+	int32           _chapter2Data3[23];
+	int32           _chapter2FrameIndexOffset;
+	ActorIndex      _chapter2ActorIndex;
+	int32           _eventUpdate;
+	uint32          _chapter2Data4[18];
+	int32           _actorUpdateStatusEnabledCounter;
+	uint32          _chapter2Data5[9];
+	// _flagEncounterDisablePlayerOnExit
 	bool            _flag1;
+	uint32          _nextScreenUpdate;
+	//byte            _moviesViewed[196];
+	bool            _flagActorUpdateStatus15Check;
+
+	// Non-saved data
 	bool            _flag2;
 	bool            _flag3;
-	bool            _flagSkipDrawScene;
 	bool            _flagScene1;
 	bool            _flagRedraw;
 
-	// Shared data
-	int32           _data1[50];
-	int32           _data2[11];
-	bool            _data3[9];
+	uint32          _matteBarHeight;
+	uint32          _matteVar2;
 };
 
 } // End of namespace Asylum
