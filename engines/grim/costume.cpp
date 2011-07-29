@@ -1106,8 +1106,8 @@ bool Costume::Component::isVisible() {
 	return _visible;
 }
 
-void Costume::Component::resetNextFrame() {
-	_reset = true;
+void Costume::Component::resetNextUpdate(bool r) {
+	_reset = r;
 }
 
 CMap *Costume::Component::getCMap() {
@@ -1188,6 +1188,11 @@ void Costume::Chore::play() {
 	_hasPlayed = true;
 	_looping = false;
 	_currTime = -1;
+
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = _owner->_components[_tracks[i].compID];
+		comp->resetNextUpdate(false);
+	}
 }
 
 void Costume::Chore::playLooping() {
@@ -1195,6 +1200,11 @@ void Costume::Chore::playLooping() {
 	_hasPlayed = true;
 	_looping = true;
 	_currTime = -1;
+
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = _owner->_components[_tracks[i].compID];
+		comp->resetNextUpdate(false);
+	}
 }
 
 void Costume::Chore::stop() {
@@ -1203,8 +1213,7 @@ void Costume::Chore::stop() {
 
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
-		if (comp)
-			comp->resetNextFrame();
+		comp->resetNextUpdate(true);
 	}
 }
 

@@ -92,7 +92,7 @@ public:
 		CMap *getCMap();
 		virtual void setColormap(CMap *c);
 		bool isVisible();
-		void resetNextFrame();
+		void resetNextUpdate(bool reset);
 		Component *getParent() { return _parent; }
 		virtual void setMatrix(Graphics::Matrix4) { };
 		virtual void init() { }
