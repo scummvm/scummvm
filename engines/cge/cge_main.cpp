@@ -35,7 +35,6 @@
 #include "graphics/thumbnail.h"
 #include "cge/general.h"
 #include "cge/sound.h"
-#include "cge/startup.h"
 #include "cge/config.h"
 #include "cge/vga13h.h"
 #include "cge/snail.h"
@@ -51,6 +50,7 @@
 #include "cge/cge_main.h"
 #include "cge/cge.h"
 #include "cge/walk.h"
+#include "cge/sound.h"
 
 namespace CGE {
 
@@ -81,6 +81,8 @@ InfoLine *_debugLine;
 Snail *_snail;
 Snail *_snail_;
 
+Fx *_fx;
+Sound *_sound;
 // 0.75 - 17II95  - full sound support
 // 0.76 - 18II95  - small MiniEMS in DEMO,
 //		    unhide CavLight in SNLEVEL
@@ -335,7 +337,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 		}
 	} else {
 		// Loading game
-		if (Startup::_soundOk == 1 && Startup::_mode == 0) {
+		if (_soundOk == 1 && _mode == 0) {
 //			_sndDrvInfo.Vol2._d = _volume[0];
 //			_sndDrvInfo.Vol2._m = _volume[1];
 			warning("STUB: CGEEngine::syncGame Digital and Midi volume");
@@ -536,8 +538,8 @@ void CGEEngine::miniStep(int stp) {
 		_miniCave->_flags._hide = true;
 	else {
 		*_miniShp[0] = *_miniShpList[stp];
-		if (_fx._current)
-			&*(_fx._current->addr());
+		if (_fx->_current)
+			&*(_fx->_current->addr());
 
 		_miniCave->_flags._hide = false;
 	}
@@ -588,10 +590,10 @@ void CGEEngine::caveUp() {
 		spr = n;
 	}
 
-	_sound.stop();
-	_fx.clear();
-	_fx.preload(0);
-	_fx.preload(BakRef);
+	_sound->stop();
+	_fx->clear();
+	_fx->preload(0);
+	_fx->preload(BakRef);
 
 	if (_hero) {
 		_hero->gotoxy(_heroXY[_now - 1]._x, _heroXY[_now - 1]._y);
@@ -1465,16 +1467,14 @@ void CGEEngine::tick() {
 
 void CGEEngine::loadUser() {
 	// set scene
-	if (Startup::_mode == 0) {
+	if (_mode == 0) {
 		// user .SVG file found - load it from slot 0
 		loadGame(0, NULL);
-	} else {
-		if (Startup::_mode == 1) {
+	} else if (_mode == 1) {
 			// Load either initial game state savegame or launcher specified savegame
 			loadGame(_startGameSlot, NULL);
-		} else {
+	} else {
 			error("Creating setup savegames not supported");
-		}
 	}
 	loadScript(progName(kIn0Ext));
 }
@@ -1647,7 +1647,7 @@ bool CGEEngine::showTitle(const char *name) {
 	D.center();
 	D.show(2);
 
-	if (Startup::_mode == 2) {
+	if (_mode == 2) {
 		inf(SVG0NAME);
 		_talk->show(2);
 	}
@@ -1658,7 +1658,7 @@ bool CGEEngine::showTitle(const char *name) {
 	selectPocket(-1);
 	_vga->sunrise(Vga::_sysPal);
 
-	if (Startup::_mode < 2 && !Startup::_soundOk) {
+	if (_mode < 2 && !_soundOk) {
 		_vga->copyPage(1, 2);
 		_vga->copyPage(0, 1);
 		_vga->_showQ->append(_mouse);
@@ -1674,12 +1674,12 @@ bool CGEEngine::showTitle(const char *name) {
 		_heart->_enable = false;
 		_vga->_showQ->clear();
 		_vga->copyPage(0, 2);
-		Startup::_soundOk = 2;
+		_soundOk = 2;
 		if (_music)
 			loadMidi(0);
 	}
 
-	if (Startup::_mode < 2) {
+	if (_mode < 2) {
 		if (_isDemo) {
 			strcpy(_usrFnam, progName(kSvgExt));
 			usr_ok = true;
@@ -1714,22 +1714,22 @@ bool CGEEngine::showTitle(const char *name) {
 #endif
 		}
 
-		if (usr_ok && Startup::_mode == 0) {
+		if (usr_ok && _mode == 0) {
 			if (savegameExists(0)) {
 				// Load the savegame
 				loadGame(0, NULL, true); // only system vars
 				_vga->setColors(Vga::_sysPal, 64);
 				_vga->update();
 				if (_flag[3]) { //flag FINIS
-					Startup::_mode++;
+					_mode++;
 					_flag[3] = false;
 				}
 			} else
-				Startup::_mode++;
+				_mode++;
 		}
 	}
 
-	if (Startup::_mode < 2)
+	if (_mode < 2)
 		movie("X01"); // wink
 
 	_vga->copyPage(0, 2);
@@ -1737,7 +1737,7 @@ bool CGEEngine::showTitle(const char *name) {
 	if (_isDemo)
 		return true;
 	else
-		return (Startup::_mode == 2 || usr_ok);
+		return (_mode == 2 || usr_ok);
 }
 
 void CGEEngine::cge_main() {
@@ -1750,28 +1750,28 @@ void CGEEngine::cge_main() {
 		error("%s", _text->getText(NO_MOUSE_TEXT));
 
 	if (!SVG0FILE::exist(SVG0NAME))
-		Startup::_mode = 2;
+		_mode = 2;
 
 	_debugLine->_flags._hide = true;
 	_horzLine->_flags._hide = true;
 
-	if (_music && Startup::_soundOk)
+	if (_music && _soundOk)
 		loadMidi(0);
 
 	if (_startGameSlot != -1) {
 		// Starting up a savegame from the launcher
-		Startup::_mode++;
+		_mode++;
 		runGame();
 
 		_startupMode = 2;
 		if (_flag[3]) // Flag FINIS
 			movie("X03");
 	} else {
-		if (Startup::_mode < 2)
+		if (_mode < 2)
 			movie(kLgoExt);
 
 		if (showTitle("WELCOME")) {
-			if ((!_isDemo) && (Startup::_mode == 1))
+			if ((!_isDemo) && (_mode == 1))
 				movie("X02"); // intro
 			runGame();
 			_startupMode = 2;
