@@ -51,7 +51,7 @@ enum colorFormat {
 };
 class GfxBase {
 public:
-	GfxBase() { ; }
+	GfxBase();
 	virtual ~GfxBase() { ; }
 
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen) = 0;
@@ -133,6 +133,9 @@ public:
 	virtual void saveState(SaveGame *state);
 	virtual void restoreState(SaveGame *state);
 
+	void renderBitmaps(bool render);
+	void renderZBitmaps(bool render);
+
 protected:
 	int _screenWidth, _screenHeight, _screenBPP;
 	bool _isFullscreen;
@@ -140,6 +143,8 @@ protected:
 	unsigned char _shadowColorR;
 	unsigned char _shadowColorG;
 	unsigned char _shadowColorB;
+	bool _renderBitmaps;
+	bool _renderZBitmaps;
 };
 
 // Factory-like functions:

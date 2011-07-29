@@ -689,6 +689,11 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 }
 
 void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
+	int format = bitmap->getFormat();
+	if ((format == 1 && !_renderBitmaps) || (format == 5 && !_renderZBitmaps)) {
+		return;
+	}
+
 	GLuint *textures;
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

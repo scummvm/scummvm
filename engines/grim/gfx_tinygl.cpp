@@ -688,6 +688,11 @@ void TinyGLBlit(byte *dst, byte *src, int x, int y, int width, int height, bool 
 }
 
 void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
+	int format = bitmap->getFormat();
+	if ((format == 1 && !_renderBitmaps) || (format == 5 && !_renderZBitmaps)) {
+		return;
+	}
+
 	assert(bitmap->getCurrentImage() > 0);
 	if (bitmap->getFormat() == 1)
 		TinyGLBlit((byte *)_zb->pbuf, (byte *)bitmap->getData(bitmap->getCurrentImage() - 1),

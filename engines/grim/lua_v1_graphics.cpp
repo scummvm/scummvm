@@ -556,4 +556,9 @@ void L1_IrisDown() {
 	g_grim->playIrisAnimation(Iris::Close, (int)lua_getnumber(xObj), (int)lua_getnumber(yObj), (int)lua_getnumber(timeObj));
 }
 
+void L1_PreRender() {
+	g_driver->renderBitmaps(getbool(1));
+	g_driver->renderZBitmaps(getbool(2));
+}
+
 } // end of namespace Grim

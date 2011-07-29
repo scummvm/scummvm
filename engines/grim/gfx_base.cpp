@@ -26,6 +26,12 @@
 
 namespace Grim {
 
+GfxBase::GfxBase() :
+	_renderBitmaps(true),
+	_renderZBitmaps(true) {
+
+}
+
 void GfxBase::saveState(SaveGame *state) {
 	state->beginSection('DRVR');
 
@@ -34,6 +40,8 @@ void GfxBase::saveState(SaveGame *state) {
 	state->writeByte(r),
 	state->writeByte(g),
 	state->writeByte(b),
+// 	state->writeLEBool(_renderBitmaps);
+// 	state->writeLEBool(_renderZBitmaps);
 
 	state->endSection();
 }
@@ -46,8 +54,18 @@ void GfxBase::restoreState(SaveGame *state) {
 	g = state->readByte();
 	b = state->readByte();
 	setShadowColor(r, g ,b);
+// 	_renderBitmaps = state->readLEBool();
+// 	_renderZBitmaps = state->readLEBool();
 
 	state->endSection();
+}
+
+void GfxBase::renderBitmaps(bool render) {
+	_renderBitmaps = render;
+}
+
+void GfxBase::renderZBitmaps(bool render) {
+	_renderZBitmaps = render;
 }
 
 }
