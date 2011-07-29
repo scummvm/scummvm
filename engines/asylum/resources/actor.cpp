@@ -46,6 +46,8 @@
 
 namespace Asylum {
 
+#define DIR(val) (ActorDirection)((val) % 7)
+
 Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index) {
  	// Init all variables
  	_resourceId = kResourceNone;
@@ -476,14 +478,14 @@ void Actor::update() {
 
 		if (canMove(&point, _direction, dist, false)) {
 			move(_direction, dist);
-		} else if (canMove(&point, (ActorDirection)((_direction + 1) % 7), dist, false)) {
-			move((ActorDirection)((_direction + 1) % 7), dist);
-		} else if (canMove(&point, (ActorDirection)((_direction + 7) % 7), dist, false)) {
-			move((ActorDirection)((_direction + 7) % 7), dist);
-		} else if (canMove(&point, (ActorDirection)((_direction + 2) % 7), dist, false)) {
-			move((ActorDirection)((_direction + 2) % 7), dist);
-		} else if (canMove(&point, (ActorDirection)((_direction + 6) % 7), dist, false)) {
-			move((ActorDirection)((_direction + 6) % 7), dist);
+		} else if (canMove(&point, DIR(_direction + 1), dist, false)) {
+			move(DIR(_direction + 1), dist);
+		} else if (canMove(&point, DIR(_direction + 7), dist, false)) {
+			move(DIR(_direction + 7), dist);
+		} else if (canMove(&point, DIR(_direction + 2), dist, false)) {
+			move(DIR(_direction + 2), dist);
+		} else if (canMove(&point, DIR(_direction + 6), dist, false)) {
+			move(DIR(_direction + 6), dist);
 		}
 
 		// Finish
@@ -2326,7 +2328,79 @@ void Actor::updateStatus12_Chapter2() {
 }
 
 void Actor::updateStatus12_Chapter2_Actor11() {
-	error("[Actor::updateStatus12_Chapter2_Actor11] not implemented!");
+	bool processEnd = true;
+	Actor *player = getScene()->getActor();
+	Common::Point sum = _point1 + _point2;
+	Common::Point sumPlayer = *player->getPoint1() + *player->getPoint2();
+
+	// Compute distance
+	uint32 frameIndex = _frameIndex;
+	if (_frameIndex >= _frameCount)
+		frameIndex = 2 * _frameCount - _frameIndex - 1;
+
+	uint32 distance = abs((double)getDistanceForFrame(_direction, frameIndex));
+
+	// Update status
+	if (player->getStatus() == kActorStatus17 || !getScene()->getActor(10)->isVisible()) {
+		updateStatus(kActorStatusEnabled);
+		getSharedData()->setData(_index - 8, 160);
+	}
+
+	// Face player
+	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
+
+	// Compute coordinates
+	Common::Point delta  = Common::Point((sumPlayer.x + sum.x) / 2,       (sumPlayer.y + sum.y) / 2);
+	Common::Point point1 = Common::Point((delta.x     + sum.x) / 2,       (delta.y     + sum.y) / 2);
+	Common::Point point2 = Common::Point((delta.x     + sumPlayer.x) / 2, (delta.y     + sumPlayer.y) / 2);
+
+	if (getScene()->findActionArea(kActionAreaType1, delta) == -1
+	 || getScene()->findActionArea(kActionAreaType1, point1) == -1
+	 || getScene()->findActionArea(kActionAreaType1, point2) == -1) {
+		processEnd = false;
+
+		if (compareAngles(sum, sumPlayer) == false) {
+			if (canMove(&sum, DIR(_direction + 1), distance, false)) {
+				move(DIR(_direction + 1), distance);
+			} else if (canMove(&sum, DIR(_direction + 2), distance, false)) {
+				move(DIR(_direction + 2), distance);
+			} else if (canMove(&sum, DIR(_direction + 3), distance, false)) {
+				move(DIR(_direction + 3), distance);
+			} else if (canMove(&sum, DIR(_direction + 4), distance, false)) {
+				move(DIR(_direction + 1), distance);
+			}
+		} else {
+			if (canMove(&sum, DIR(_direction + 7), distance, false)) {
+				move(DIR(_direction + 7), distance);
+			} else if (canMove(&sum, DIR(_direction + 6), distance, false)) {
+				move(DIR(_direction + 6), distance);
+			} else if (canMove(&sum, DIR(_direction + 5), distance, false)) {
+				move(DIR(_direction + 5), distance);
+			} else if (canMove(&sum, DIR(_direction + 4), distance, false)) {
+				move(DIR(_direction + 4), distance);
+			}
+		}
+	} else {
+		if (canMove(&sum, DIR(_direction + 1), distance, false)) {
+			move(DIR(_direction + 1), distance);
+		} else if (canMove(&sum, DIR(_direction + 2), distance, false)) {
+			move(DIR(_direction + 2), distance);
+		} else if (canMove(&sum, DIR(_direction + 7), distance, false)) {
+			move(DIR(_direction + 7), distance);
+		} else if (canMove(&sum, DIR(_direction + 6), distance, false)) {
+			move(DIR(_direction + 6), distance);
+		}
+	}
+
+	if (processEnd) {
+		if (player->getStatus() != kActorStatus17 && player->getStatus() != kActorStatus16) {
+			if (sqrt((double)((sum.y - sumPlayer.y) * (sum.y - sumPlayer.y) + (sum.x - sumPlayer.x) * (sum.x - sumPlayer.x))) < 80.0) {
+				_frameIndex = 0;
+				faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
+				updateStatus(kActorStatus15);
+			}
+		}
+	}
 }
 
 void Actor::updateStatus12_Chapter11_Actor1() {
@@ -3075,8 +3149,6 @@ void Actor::updateStatus18_Chapter2() {
 }
 
 void Actor::updateStatus18_Chapter2_Actor11() {
-#define DIR(val) (ActorDirection)((val) % -8)
-
 	uint32 frameIndex = (_frameIndex < _frameCount) ? _frameIndex : 2 * _frameCount - _frameIndex - 1;
 	int32 distance = abs((double)getDistanceForFrame(_direction, frameIndex));
 
