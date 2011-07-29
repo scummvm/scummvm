@@ -91,19 +91,13 @@ void Module1500::createScene1502() {
 }
 
 void Module1500::createScene1503() {
-	debug("createScene1503");
-	SmackerScene *smackerScene;
 	_parentModule->sendMessage(0x0800, 0, this);
 	_vm->gameState().sceneNum = 2;
-	smackerScene = new SmackerScene(_vm, this, true, true, true);
-	smackerScene->setFileHash(0x001A0005);
-	smackerScene->nextVideo();
-	_childObject = smackerScene;
+	createSmackerScene(0x001A0005, true, true, true);
 	SetUpdateHandler(&Module1500::update);
 }
 
 void Module1500::createScene1504() {
-	debug("createScene1504");
 	_vm->gameState().sceneNum = 3;
 	_childObject = new Scene1501(_vm, this, 0x0CA04202, 0, 110, 48);
 	SetUpdateHandler(&Module1500::update);

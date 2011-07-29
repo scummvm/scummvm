@@ -21,7 +21,6 @@
  */
 
 #include "neverhood/module1200.h"
-#include "neverhood/smackerscene.h"
 
 namespace Neverhood {
 
@@ -81,13 +80,9 @@ void Module1200::createScene1202(int which) {
 }
 
 void Module1200::createScene1203(int which) {
-	SmackerScene *smackerScene;
 	_vm->gameState().sceneNum = 2;
 	// TODO Music18hList_stop(0x62222CAE, 0, 0);
-	smackerScene = new SmackerScene(_vm, this, true, true, false);
-	smackerScene->setFileHash(0x31890001);
-	smackerScene->nextVideo();
-	_childObject = smackerScene;
+	createSmackerScene(0x31890001, true, true, false);
 	setGlobalVar(0x2A02C07B, 1);
 	SetUpdateHandler(&Module1200::updateScene1203);
 }

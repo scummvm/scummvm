@@ -21,7 +21,6 @@
  */
 
 #include "neverhood/module1700.h"
-#include "neverhood/navigationscene.h"
 
 namespace Neverhood {
 
@@ -67,36 +66,28 @@ Module1700::~Module1700() {
 }
 
 void Module1700::createScene1701(int which) {
-	SmackerScene *smackerScene;
 	_vm->gameState().sceneNum = 0;
 	// TODO Sound1ChList_setSoundValuesMulti(dword_4AE930, 0, 0, 0, 0, 0);
-	smackerScene = new SmackerScene(_vm, this, true, true, false);
-	smackerScene->setFileHash(0x3028A005);
-	smackerScene->nextVideo();
-	_childObject = smackerScene;
+	createSmackerScene(0x3028A005, true, true, false);
 	SetUpdateHandler(&Module1700::updateScene1701);
 }
 
 void Module1700::createScene1702(int which) {
 	_vm->gameState().sceneNum = 1;
-	_childObject = new NavigationScene(_vm, this, 0x004AE8B8, which, NULL);
+	createNavigationScene(0x004AE8B8, which);
 	SetUpdateHandler(&Module1700::updateScene1702);
 }
 
 void Module1700::createScene1703(int which) {
 	_vm->gameState().sceneNum = 2;
-	_childObject = new NavigationScene(_vm, this, 0x004AE8E8, which, NULL);
+	createNavigationScene(0x004AE8E8, which);
 	SetUpdateHandler(&Module1700::updateScene1703);
 }
 
 void Module1700::createScene1704(int which) {
-	SmackerScene *smackerScene;
 	_vm->gameState().sceneNum = 3;
 	// TODO Sound1ChList_setSoundValuesMulti(dword_4AE930, 0, 0, 0, 0, 0);
-	smackerScene = new SmackerScene(_vm, this, true, true, false);
-	smackerScene->setFileHash(0x01190041);
-	smackerScene->nextVideo();
-	_childObject = smackerScene;
+	createSmackerScene(0x01190041, true, true, false);
 	SetUpdateHandler(&Module1700::updateScene1701);
 }
 

@@ -21,6 +21,8 @@
  */
 
 #include "neverhood/module.h"
+#include "neverhood/navigationscene.h"
+#include "neverhood/smackerscene.h"
 
 namespace Neverhood {
 
@@ -68,6 +70,18 @@ uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *
 			return _childObject->sendMessage(messageNum, param, sender);
 	}
 	return 0;
+}
+
+void Module::createNavigationScene(uint32 navigationListId, int navigationIndex, const byte *itemsTypes) {
+	_childObject = new NavigationScene(_vm, this, navigationListId, navigationIndex, itemsTypes);
+}
+
+void Module::createSmackerScene(uint32 fileHash, bool doubleSurface, bool flag1, bool canAbort) {
+	SmackerScene *smackerScene;
+	smackerScene = new SmackerScene(_vm, this, doubleSurface, flag1, canAbort);
+	smackerScene->setFileHash(fileHash);
+	smackerScene->nextVideo();
+	_childObject = smackerScene;
 }
 
 } // End of namespace Neverhood

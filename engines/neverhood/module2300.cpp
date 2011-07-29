@@ -21,8 +21,6 @@
  */
 
 #include "neverhood/module2300.h"
-#include "neverhood/navigationscene.h"
-#include "neverhood/smackerscene.h"
 
 namespace Neverhood {
 
@@ -84,13 +82,13 @@ Module2300::~Module2300() {
 
 void Module2300::createScene2301(int which) {
 	_vm->gameState().sceneNum = 0;
-	_childObject = new NavigationScene(_vm, this, 0x004B67B8, which, NULL);
+	createNavigationScene(0x004B67B8, which);
 	SetUpdateHandler(&Module2300::updateScene2301);
 }
 			
 void Module2300::createScene2302(int which) {
 	_vm->gameState().sceneNum = 1;
-	_childObject = new NavigationScene(_vm, this, 0x004B67E8, which, NULL);
+	createNavigationScene(0x004B67E8, which);
 	SetUpdateHandler(&Module2300::updateScene2302);
 	if (_flag) {
 		_volume = 15;
@@ -100,17 +98,17 @@ void Module2300::createScene2302(int which) {
 
 void Module2300::createScene2303(int which) {
 	_vm->gameState().sceneNum = 2;
-	_childObject = new NavigationScene(_vm, this, 0x004B6878, which, NULL);
+	createNavigationScene(0x004B6878, which);
 	SetUpdateHandler(&Module2300::updateScene2303);
 }
 
 void Module2300::createScene2304(int which) {
 	_vm->gameState().sceneNum = 3;
 	if (getGlobalVar(0x10938830)) {
-		_childObject = new NavigationScene(_vm, this, 0x004B68F0, which, NULL);
+		createNavigationScene(0x004B68F0, which);
 	} else {
 		// TODO Sound1ChList_setVolume(0x90F0D1C3, _volume);
-		_childObject = new NavigationScene(_vm, this, 0x004B68A8, which, NULL);
+		createNavigationScene(0x004B68A8, which);
 		if (_flag) {
 			_volume = 87;
 			// TODO Sound1ChList_setVolume(0x90F0D1C3, 87);
@@ -120,13 +118,9 @@ void Module2300::createScene2304(int which) {
 }
 
 void Module2300::createScene2305(int which) {
-	SmackerScene *smackerScene;
 	_vm->gameState().sceneNum = 4;
 	// TODO Sound1ChList_sub_4080B0(true);
-	smackerScene = new SmackerScene(_vm, this, true, true, false);
-	smackerScene->setFileHash(0x20080A0B);
-	smackerScene->nextVideo();
-	_childObject = smackerScene;
+	createSmackerScene(0x20080A0B, true, true, false);
 	SetUpdateHandler(&Module2300::updateScene2305);
 }
 

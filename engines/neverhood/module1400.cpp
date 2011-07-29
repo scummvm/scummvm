@@ -24,7 +24,6 @@
 #include "neverhood/module1000.h"
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/gamemodule.h"
-#include "neverhood/navigationscene.h"
 
 namespace Neverhood {
 

@@ -48,6 +48,8 @@ protected:
 	int16 _field24, _field26, _field28;
 	uint32 _field20;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void createNavigationScene(uint32 navigationListId, int navigationIndex, const byte *itemsTypes = NULL);
+	void createSmackerScene(uint32 fileHash, bool doubleSurface, bool flag1, bool canAbort);
 };
 
 } // End of namespace Neverhood

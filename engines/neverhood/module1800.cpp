@@ -22,9 +22,6 @@
 
 #include "neverhood/module1800.h"
 #include "neverhood/navigationscene.h"
-#include "neverhood/smackerscene.h"
-
-#include "neverhood/diskplayerscene.h"
 
 namespace Neverhood {
 
@@ -85,77 +82,58 @@ Module1800::~Module1800() {
 void Module1800::createScene1801(int which) {
 	static const byte kNavigationTypes[] = {1, 0, 2, 0};
 	_vm->gameState().sceneNum = 0;
-#if 0	
-	_childObject = new NavigationScene(_vm, this, 0x004AFD38, which, kNavigationTypes);
-#endif
-	_childObject = new DiskplayerScene(_vm, this, 3);	
+	createNavigationScene(0x004AFD38, which, kNavigationTypes);
 	SetUpdateHandler(&Module1800::updateScene1801);
 }
 			
 void Module1800::createScene1802(int which) {
 	static const byte kNavigationTypes[] = {5};
 	_vm->gameState().sceneNum = 1;
-	_childObject = new NavigationScene(_vm, this, 0x004AFD98, which, kNavigationTypes);
+	createNavigationScene(0x004AFD98, which, kNavigationTypes);
 	SetUpdateHandler(&Module1800::updateScene1802);
 }
 
 void Module1800::createScene1803(int which) {
-	SmackerScene *smackerScene;
 	_vm->gameState().sceneNum = 2;
-	smackerScene = new SmackerScene(_vm, this, true, true, false);
-	smackerScene->setFileHash(0x006C0085);
-	smackerScene->nextVideo();
-	_childObject = smackerScene;
+	createSmackerScene(0x006C0085, true, true, false);
 	SetUpdateHandler(&Module1800::updateScene1803);
 }
 			
 void Module1800::createScene1804(int which) {
 	_vm->gameState().sceneNum = 3;
-	_childObject = new NavigationScene(_vm, this, 0x004AFDB0, which, NULL);
+	createNavigationScene(0x004AFDB0, which);
 	SetUpdateHandler(&Module1800::updateScene1804);
 }
 
 void Module1800::createScene1804b(int which) {
-	SmackerScene *smackerScene;
 	_vm->gameState().sceneNum = 3;
-	smackerScene = new SmackerScene(_vm, this, true, true, false);
-	smackerScene->setFileHash(0x0A840C01);
-	smackerScene->nextVideo();
-	_childObject = smackerScene;
+	createSmackerScene(0x0A840C01, true, true, false);
 	SetUpdateHandler(&Module1800::updateScene1803);
 }
 			
 void Module1800::createScene1805(int which) {
 	_vm->gameState().sceneNum = 4;
-	_childObject = new NavigationScene(_vm, this, 0x004AFDE0, which, NULL);
+	createNavigationScene(0x004AFDE0, which);
 	SetUpdateHandler(&Module1800::updateScene1805);
 }
 
 void Module1800::createScene1806(int which) {
 	_vm->gameState().sceneNum = 5;
-	_childObject = new NavigationScene(_vm, this, 0x004AFE40, which, NULL);
+	createNavigationScene(0x004AFE40, which);
 	SetUpdateHandler(&Module1800::updateScene1806);
 }
 
 void Module1800::createScene1807(int which) {
-	SmackerScene *smackerScene;
 	_vm->gameState().sceneNum = 6;
-	smackerScene = new SmackerScene(_vm, this, true, true, false);
-	smackerScene->setFileHash(0x08D84010);
-	smackerScene->nextVideo();
-	_childObject = smackerScene;
+	createSmackerScene(0x08D84010, true, true, false);
 	SetUpdateHandler(&Module1800::updateScene1803);
 	// TODO Sound1ChList_sub_407A50(0x04A14718);
 }
 			
 void Module1800::createScene1808(int which) {
-	SmackerScene *smackerScene;
 	_vm->gameState().sceneNum = 7;
 	// TODO Sound1ChList_setSoundValuesMulti(dword_4AFE70, 0, 0, 0, 0, 0);
-	smackerScene = new SmackerScene(_vm, this, true, true, false);
-	smackerScene->setFileHash(0x0168B121);
-	smackerScene->nextVideo();
-	_childObject = smackerScene;
+	createSmackerScene(0x0168B121, true, true, false);
 	SetUpdateHandler(&Module1800::updateScene1803);
 }
 			
