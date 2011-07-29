@@ -1397,12 +1397,12 @@ int EobInfProcessor::oeob_sequence(int8 *data) {
 
 	case -2:
 		// portal sequence
-		pos=pos;
+		error("EobInfProcessor::oeob_sequence(): unimplemented cmd -2");
 		break;
 
 	case -1:
 		// copy protection
-		pos=pos;
+		error("EobInfProcessor::oeob_sequence(): unimplemented cmd -1");
 		break;
 
 	default:

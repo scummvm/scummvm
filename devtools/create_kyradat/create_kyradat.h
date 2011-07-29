@@ -396,6 +396,7 @@ enum kExtractID {
 
 	kEobBaseSpellProperties,
 	kEobBaseMagicFlightProps,
+	kEobBaseTurnUndeadEffect,
 
 	kEob1MainMenuStrings,
 	kEob1DoorShapeDefs,
@@ -407,6 +408,7 @@ enum kExtractID {
 	kEob1MonsterDistAttSfx10,
 	kEob1MonsterDistAttType17,
 	kEob1MonsterDistAttSfx17,
+	kEob1TurnUndeadString,
 
 	kEob2MainMenuStrings,
 	kEob2IntroStrings,

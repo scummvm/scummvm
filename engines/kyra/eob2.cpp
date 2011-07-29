@@ -338,7 +338,7 @@ void DarkMoonEngine::drawDoorIntern(int type, int, int x, int y, int w, int wall
 }
 
 void DarkMoonEngine::restParty_npc() {
-
+	warning("DarkMoonEngine::restParty_npc(): implement!");
 }
 
 bool DarkMoonEngine::restParty_extraAbortCondition() {

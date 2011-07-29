@@ -395,6 +395,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseSparkOfY, kTypeRawData, false },
 	{ kEobBaseSpellProperties, kTypeRawData, false },
 	{ kEobBaseMagicFlightProps, kTypeRawData, false },
+	{ kEobBaseTurnUndeadEffect, kTypeRawData, false },
 
 	// EYE OF THE BEHOLDER I
 	{ kEob1MainMenuStrings, kTypeStringList, true },
@@ -406,6 +407,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEob1MonsterDistAttSfx10, kTypeRawData, false },
 	{ kEob1MonsterDistAttType17, kTypeRawData, false },
 	{ kEob1MonsterDistAttSfx17, kTypeRawData, false },
+	{ kEob1TurnUndeadString, kTypeStringList, true },
 
 	// EYE OF THE BEHOLDER II
 	{ kEob2MainMenuStrings, kTypeStringList, true },
@@ -1602,6 +1604,8 @@ const char *getIdString(const int id) {
 		return "kEobBaseSpellProperties";
 	case kEobBaseMagicFlightProps:
 		return "kEobBaseMagicFlightProps";
+	case kEobBaseTurnUndeadEffect:
+		return "kEobBaseTurnUndeadEffect";
 	case kEob1MainMenuStrings:
 		return "kEob1MainMenuStrings";
 	case kEob1DoorShapeDefs:
@@ -1618,6 +1622,8 @@ const char *getIdString(const int id) {
 		return "kEob1MonsterDistAttType17";
 	case kEob1MonsterDistAttSfx17:
 		return "kEob1MonsterDistAttSfx17";
+	case kEob1TurnUndeadString:
+		return "kEob1TurnUndeadString";
 	case kEob2MainMenuStrings:
 		return "kEob2MainMenuStrings";
 	case kEob2IntroStrings:

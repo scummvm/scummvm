@@ -406,6 +406,7 @@ protected:
 
 	const EobCharacter *_npcPreset;
 	bool _partyResting;
+	bool _loading;
 
 	// Items
 	void loadItemDefs();
@@ -634,7 +635,7 @@ protected:
 	uint8 _scriptTimersMode;
 
 	// Gui
-	void gui_drawPlayField(int pageNum);
+	void gui_drawPlayField(bool refresh);
 	void gui_restorePlayField();
 	void gui_drawAllCharPortraitsWithStats();
 	void gui_drawCharPortraitWithStats(int index);
@@ -858,7 +859,7 @@ protected:
 	void explodeMonster(EobMonsterInPlay *m);
 	
 	int _dstMonsterIndex;
-	int _inflictMonsterDamageUnk;
+	bool _preventMonsterFlash;
 	int16 _foundMonstersArray[5];
 
 	// magic
@@ -866,6 +867,9 @@ protected:
 	void useMagicScroll(int charIndex, int type, int weaponSlot);
 	void usePotion(int charIndex, int weaponSlot);
 	void useWand(int charIndex, int weaponSlot);
+
+	virtual void turnUndeadAuto() {};
+	virtual void turnUndeadAutoHit() {};
 
 	void castSpell(int spell, int weaponSlot);
 	void removeCharacterEffect(int spell, int charIndex, int showWarning);
@@ -880,6 +884,7 @@ protected:
 
 	bool magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level);
 	bool magicObjectStatusHit(EobMonsterInPlay *m, int type, bool tryEvade, int mod);
+	bool turnUndeadHit(EobMonsterInPlay *m, int hitChance, int casterLevel);
 
 	void printWarning(const char* str);
 	void printNoEffectWarning();
@@ -958,6 +963,7 @@ protected:
 	uint8 _openBookType;
 	uint8 _openBookCharBackup;
 	uint8 _openBookTypeBackup;
+	uint8 _openBookCasterLevel;
 	const char *const *_openBookSpellList;
 	int8 *_openBookAvailableSpells;
 	uint8 _activeSpellCaster;
@@ -1011,6 +1017,7 @@ protected:
 	const uint8 *_sparkEffectOfY;
 
 	const uint8 *_magicFlightObjectProperties;
+	const uint8 *_turnUndeadEffect;
 
 	// Menu
 	EobMenuDef *_menuDefs;

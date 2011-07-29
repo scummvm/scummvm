@@ -80,6 +80,9 @@ void EobCoreEngine::usePotion(int charIndex, int weaponSlot) {
 	int val = deleteInventoryItem(charIndex, weaponSlot);
 	snd_playSoundEffect(10);
 
+	if (_flags.gameID == GI_EOB1)
+		val--;
+
 	switch (val) {
 	case 0:
 		sparkEffectDefensive(charIndex);
@@ -496,7 +499,7 @@ bool EobCoreEngine::magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int d
 		level = 1;
 
 	if ((_levelBlockProperties[fo->curBlock].flags & 7) && (fo->attackerId >= 0 || ignoreAttackerId)) {
-		_inflictMonsterDamageUnk = 1;
+		_preventMonsterFlash = true;
 
 		for (const int16 *m = findBlockMonsters(fo->curBlock, fo->curPos, fo->direction, blockDamage, singleTargetCheckAdjacent); *m != -1; m++) {
 			int dmg = rollDice(dcTimes, dcPips, dcOffs) * level;
@@ -599,6 +602,23 @@ bool EobCoreEngine::magicObjectStatusHit(EobMonsterInPlay *m, int type, bool try
 
 	default:
 		break;
+	}
+
+	return true;
+}
+
+bool EobCoreEngine::turnUndeadHit(EobMonsterInPlay *m, int hitChance, int casterLevel) {
+	uint8 e = _turnUndeadEffect[_monsterProps[m->type].tuResist * 14 + MIN(casterLevel, 14)];
+
+	if (e == 0xff) {
+		calcAndInflictMonsterDamage(m, 0, 0, 500, 0x200, 5, 3);
+	} else if (hitChance < e) {
+		return false;
+	} else {
+		m->mode = 0;
+		m->flags |= 8;
+		m->spellStatusLeft = 40;
+		m->dir = (getNextMonsterDirection(m->block, _currentBlock) ^ 4) >> 1;	
 	}
 
 	return true;
@@ -900,11 +920,33 @@ void EobCoreEngine::spellCallback_start_heal() {
 }
 
 void EobCoreEngine::spellCallback_start_layOnHands() {
-
+	modifyCharacterHitpoints(_activeSpellCaster, _characters[_openBookChar].level[0] << 1);
 }
 
 void EobCoreEngine::spellCallback_start_turnUndead() {
+	uint16 bl = calcNewBlockPosition(_currentBlock, _currentDirection);
+	if (!(_levelBlockProperties[bl].flags & 7))
+		return;
+	
+	int cl = _openBookCasterLevel ? _openBookCasterLevel : getCharacterClericPaladinLevel(_openBookChar);
+	int r = rollDice(1, 20);
+	bool hit = false;
 
+	for (const int16 *m = findBlockMonsters(bl, 4, 4, 1, 1); *m != -1; m++) {		
+		if ((_monsterProps[_monsters[*m].type].typeFlags & 4) && !(_monsters[*m].flags & 0x10)) {
+			_preventMonsterFlash = true;
+			_monsters[*m].flags |= 0x10;
+			hit |= turnUndeadHit(&_monsters[*m], r, cl);
+		}
+	}
+
+	if (hit) {
+		turnUndeadAutoHit();
+		snd_playSoundEffect(95);
+		updateAllMonsterShapes();
+	}
+
+	_preventMonsterFlash = false;
 }
 
 bool EobCoreEngine::spellCallback_end_unk1Passive(EobFlyingObject *fo) {

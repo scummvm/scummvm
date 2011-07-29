@@ -149,17 +149,19 @@ Button *EobCoreEngine::gui_getButton(Button *buttonList, int index) {
 	return 0;
 }
 
-void EobCoreEngine::gui_drawPlayField(int pageNum) {
+void EobCoreEngine::gui_drawPlayField(bool refresh) {
 	_screen->loadEobCpsFileToPage("PLAYFLD", 0, 5, 3, 2);
 	int cp = _screen->setCurPage(2);
 	gui_drawCompass(true);
 
-	if (pageNum && !_sceneDrawPage2)
+	if (refresh && !_sceneDrawPage2)
 		drawScene(0);
 
 	_screen->setCurPage(cp);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->updateScreen();
+	
+	if (!_loading)
+		_screen->updateScreen();
 
 	_screen->loadEobCpsFileToPage("INVENT", 0, 5, 3, 2);
 }
@@ -167,7 +169,7 @@ void EobCoreEngine::gui_drawPlayField(int pageNum) {
 void EobCoreEngine::gui_restorePlayField() {
 	loadVcnData(0, 0);
 	_screen->_curPage = 0;
-	gui_drawPlayField(1);
+	gui_drawPlayField(true);
 	gui_drawAllCharPortraitsWithStats();
 }
 
@@ -706,7 +708,8 @@ void EobCoreEngine::gui_drawSpellbook() {
 
 	_screen->setCurPage(0);
 	_screen->copyRegion(64, 121, 64, 121, 112, 56, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->updateScreen();
+	if (!_loading)
+		_screen->updateScreen();
 }
 
 void EobCoreEngine::gui_drawSpellbookScrollArrow(int x, int y, int direction) {
@@ -2245,7 +2248,7 @@ void GUI_Eob::runCampMenu() {
 
 				if (cnt > 4) {
 					_vm->dropCharacter(selectCharacterDialogue(53));
-					_vm->gui_drawPlayField(0);
+					_vm->gui_drawPlayField(false);
 					res = true;
 					_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 14, Screen::CR_NO_P_CHECK);
 					_screen->setFont(Screen::FID_6_FNT);
