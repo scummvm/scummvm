@@ -77,10 +77,22 @@ const Graphics::Font* BadaGraphicsManager::getFontOSD() {
 	return font;
 }
 
-void BadaGraphicsManager::moveMouse(int16& x, int16& y) {
+bool BadaGraphicsManager::moveMouse(int16& x, int16& y) {
+	int16 currentX = _cursorState.x;
+	int16 currentY = _cursorState.y;
+
+  // save the current hardware coordinates
   _cursorState.x = x;
   _cursorState.y = y;
+
+  // return x/y as game coordinates
   adjustMousePosition(x, y);
+
+  // convert current x/y to game coordinates
+	adjustMousePosition(currentX, currentY);
+
+  // return whether game coordinates have changed
+  return (currentX != x || currentY != y);
 }
 
 Common::List<Graphics::PixelFormat> BadaGraphicsManager::getSupportedFormats() const {

@@ -50,7 +50,7 @@ class BadaGraphicsManager : public OpenGLGraphicsManager {
   void setReady();
   bool isReady() {return !initState;}
   const Graphics::Font* getFontOSD();
-  void moveMouse(int16& x, int16& y);
+  bool moveMouse(int16& x, int16& y);
 
  private:
   void internUpdateScreen();

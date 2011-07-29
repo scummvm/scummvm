@@ -202,9 +202,17 @@ void BadaAppForm::pushEvent(Common::EventType type,
     e.mouse.x = currentPosition.x;
     e.mouse.y = currentPosition.y;
     
-    graphics->moveMouse(e.mouse.x, e.mouse.y);
+    bool moved = graphics->moveMouse(e.mouse.x, e.mouse.y);
 
     eventQueueLock->Acquire();
+
+    if (moved && type != Common::EVENT_MOUSEMOVE) {
+      Common::Event moveEvent;
+      moveEvent.type = Common::EVENT_MOUSEMOVE;
+      moveEvent.mouse = e.mouse;
+      eventQueue.push(moveEvent);
+    }
+
     eventQueue.push(e);
     eventQueueLock->Release();
   }
@@ -298,7 +306,9 @@ void BadaAppForm::OnTouchFocusOut(const Control& source,
 void BadaAppForm::OnTouchLongPressed(const Control& source, 
                                      const Point& currentPosition, 
                                      const TouchEventInfo& touchInfo) {
-  pushKey(Common::KEYCODE_RETURN);
+  if (getShortcutIndex() == -1 && !leftButton) {
+    pushKey(Common::KEYCODE_RETURN);
+  }
 }
 
 void BadaAppForm::OnTouchMoved(const Control& source, 

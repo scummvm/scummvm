@@ -193,6 +193,9 @@ uint32 BadaFileStream::read(void* ptr, uint32 len) {
       bufferIndex = bufferLength = 0;
     }
   }
+  else {
+    AppLog("Attempted to read past EOS");
+  }
   return result;
 }
 
