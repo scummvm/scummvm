@@ -3075,7 +3075,39 @@ void Actor::updateStatus18_Chapter2() {
 }
 
 void Actor::updateStatus18_Chapter2_Actor11() {
-	error("[Actor::updateStatus18_Chapter2_Actor11] not implemented!");
+#define DIR(val) (ActorDirection)((val) % -8)
+
+	uint32 frameIndex = (_frameIndex < _frameCount) ? _frameIndex : 2 * _frameCount - _frameIndex - 1;
+	int32 distance = abs((double)getDistanceForFrame(_direction, frameIndex));
+
+	getSharedData()->setData(41, getSharedData()->getData(41) + 1);
+	if (getSharedData()->getData(41) > 14) {
+		getSharedData()->setData(41, 0);
+		updateStatus(kActorStatus12);
+	}
+
+	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
+
+	Common::Point sum = _point1 + _point2;
+	if (canMove(&sum, DIR(_direction + 4), distance, false)) {
+		move(DIR(_direction + 4), distance);
+		--_frameIndex;
+	} else if (canMove(&sum, DIR(_direction + 5), distance, false)) {
+		move(DIR(_direction + 5), distance);
+		--_frameIndex;
+	} else if (canMove(&sum, DIR(_direction + 3), distance, false)) {
+		move(DIR(_direction + 3), distance);
+		--_frameIndex;
+	} else if (canMove(&sum, DIR(_direction + 6), distance, false)) {
+		move(DIR(_direction + 6), distance);
+		--_frameIndex;
+	} else if (canMove(&sum, DIR(_direction + 2), distance, false)) {
+		move(DIR(_direction + 2), distance);
+		--_frameIndex;
+	}
+
+	if (_frameIndex < 0)
+		_frameIndex = _frameCount - 1;
 }
 
 void Actor::updateStatus21() {
