@@ -1330,6 +1330,24 @@ void Scene40::Action8::signal() {
 	}
 }
 
+void Scene40::Action8::dispatch() {
+	if (_action)
+		_action->dispatch();
+
+	if (_delayFrames) {
+		uint32 frameNumber = _globals->_events.getFrameNumber();
+		if ((_startFrame + 60) < frameNumber) {
+			--_delayFrames;
+			_startFrame = frameNumber;
+
+			if (_delayFrames <= 0) {
+				_delayFrames = 0;
+				signal();
+			}
+		}
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 void Scene40::DyingKzin::doAction(int action) {

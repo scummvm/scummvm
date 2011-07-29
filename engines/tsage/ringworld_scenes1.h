@@ -201,6 +201,7 @@ class Scene40 : public Scene {
 	class Action8 : public Action {
 	public:
 		virtual void signal();
+		virtual void dispatch();
 	};
 
 	/* Objects */
