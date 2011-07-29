@@ -22,7 +22,7 @@
 
 #include "asylum/system/savegame.h"
 
-#include "asylum/puzzles/data.h"
+#include "asylum/puzzles/puzzledata.h"
 
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/script.h"
