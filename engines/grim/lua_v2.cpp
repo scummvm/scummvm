@@ -20,6 +20,11 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
+#define FORBIDDEN_SYMBOL_EXCEPTION_getwd
+
 #include "common/endian.h"
 
 #include "engines/grim/lua.h"
@@ -30,6 +35,8 @@
 #include "engines/grim/actor.h"
 #include "engines/grim/lipsync.h"
 #include "engines/grim/costume.h"
+
+#include "engines/grim/movie/movie.h"
 
 namespace Grim {
 
@@ -692,17 +699,28 @@ static void L2_GetCPUSpeed() {
 	lua_pushnumber(500); // anything above 333 make best configuration
 }
 
+// This should be correct, judging by the Demo
+// the only real difference from L1 is the lack of looping
 static void L2_StartMovie() {
-	//stub this until EMI movie stuff is worked out.
+	bool result;
+	int prev_engine_mode = g_grim->getMode();
+	
+	lua_Object name = lua_getparam(1);
+	if (!lua_isstring(name)) {
+		lua_pushnil();
+		return;
+	}
+	L1_CleanBuffer();
 	g_grim->setMode(ENGINE_MODE_SMUSH);
-	warning("L2_StartMovie: implement opcode");
+	result = g_movie->play(lua_getstring(name), false, 0, 0);
+	if (!result)
+		g_grim->setMode(prev_engine_mode);
+	pushbool(result);
+	g_grim->setMode(ENGINE_MODE_SMUSH);
 }
 
 static void L2_IsMoviePlaying() {
-	//stub this until EMI movie stuff is worked out.
-	g_grim->setMode(ENGINE_MODE_NORMAL);
-	warning("L2_IsMoviePlaying: always returns false");
-	lua_pushnil();
+	pushbool(g_movie->isPlaying());
 }
 
 static void L2_SetActiveCD() {
