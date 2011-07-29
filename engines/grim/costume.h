@@ -92,7 +92,6 @@ public:
 		CMap *getCMap();
 		virtual void setColormap(CMap *c);
 		bool isVisible();
-		void resetNextUpdate(bool reset);
 		Component *getParent() { return _parent; }
 		virtual void setMatrix(Graphics::Matrix4) { };
 		virtual void init() { }
@@ -113,7 +112,6 @@ public:
 		tag32 _tag;
 		int _parentID;
 		bool _visible;
-		bool _reset;
 		Component *_parent, *_child, *_sibling;
 		Graphics::Matrix4 _matrix;
 		Costume *_cost;

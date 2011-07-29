@@ -1069,7 +1069,6 @@ Costume::~Costume() {
 
 Costume::Component::Component(Component *p, int parentID, tag32 t)  {
 	_visible = true;
-	_reset = false;
 	_previousCmap = NULL;
 	_cmap = NULL;
 	_cost = NULL;
@@ -1104,10 +1103,6 @@ bool Costume::Component::isVisible() {
 	if (_visible && _parent)
 		return _parent->isVisible();
 	return _visible;
-}
-
-void Costume::Component::resetNextUpdate(bool r) {
-	_reset = r;
 }
 
 CMap *Costume::Component::getCMap() {
@@ -1188,11 +1183,6 @@ void Costume::Chore::play() {
 	_hasPlayed = true;
 	_looping = false;
 	_currTime = -1;
-
-	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i].compID];
-		comp->resetNextUpdate(false);
-	}
 }
 
 void Costume::Chore::playLooping() {
@@ -1200,11 +1190,6 @@ void Costume::Chore::playLooping() {
 	_hasPlayed = true;
 	_looping = true;
 	_currTime = -1;
-
-	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i].compID];
-		comp->resetNextUpdate(false);
-	}
 }
 
 void Costume::Chore::stop() {
@@ -1213,7 +1198,8 @@ void Costume::Chore::stop() {
 
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = _owner->_components[_tracks[i].compID];
-		comp->resetNextUpdate(true);
+		if (comp)
+			comp->reset();
 	}
 }
 
@@ -1522,14 +1508,6 @@ void Costume::draw(int *x1, int *y1, int *x2, int *y2) {
 }
 
 void Costume::update() {
-	for (int i = 0; i < _numComponents; i++) {
-		Component *c = _components[i];
-		if (c->_reset) {
-			c->reset();
-			c->_reset = false;
-		}
-	}
-
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
 		(*i)->update();
 		if (!(*i)->_playing) {
@@ -1539,9 +1517,10 @@ void Costume::update() {
 	}
 
 	for (int i = 0; i < _numComponents; i++) {
-		Component *c = _components[i];
-		c->setMatrix(_matrix);
-		c->update();
+		if (_components[i]) {
+			_components[i]->setMatrix(_matrix);
+			_components[i]->update();
+		}
 	}
 }
 
