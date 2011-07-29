@@ -173,7 +173,7 @@ void Module1800::updateScene1801() {
 void Module1800::updateScene1802() {
 	_childObject->handleUpdate();
 	if (_done) {
-		int areaType = ((NavigationScene*)_childObject)->getNavigationAreaType();
+		int areaType = navigationScene()->getNavigationAreaType();
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;

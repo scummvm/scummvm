@@ -50,6 +50,7 @@ public:
 	void setSurfacePriority(BaseSurface *surface, int priority);
 	void deleteSprite(Sprite **sprite);
 	Background *addBackground(Background *background);
+	SmackerPlayer *addSmackerPlayer(SmackerPlayer *smackerPlayer);
 	void update();
 protected:
 	Module *_parentModule;

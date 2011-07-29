@@ -96,7 +96,7 @@ public:
 	void update();
 protected:
 	SpriteResource _spriteResource;
-	void init(uint32 fileHash, int surfacePriority, int16 x, int16 y, int16 width, int16 height);
+	void init(uint32 fileHash, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition, int16 width = 0, int16 height = 0);
 };
 
 #define SetAnimationCallback1(callback) _callback1Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug("SetAnimationCallback1(" #callback ")"); _callback1CbName = #callback

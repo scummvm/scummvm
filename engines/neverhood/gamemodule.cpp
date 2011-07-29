@@ -214,12 +214,13 @@ void GameModule::startup() {
 //	createModule1500(0); // Logos and intro video //Real
 //	createModule1000(-1);
 //	createModule2300(2);
-	_vm->gameState().sceneNum = 4;
+	_vm->gameState().sceneNum = 8;
 	//createModule1200(-1);
 	//createModule1800(-1);
 	//createModule1700(-1);
 	//createModule1700(1);
-	createModule1400(-1);
+	//createModule1400(-1);
+	createModule3000(-1);
 }
 
 void GameModule::createModule1000(int which) {
@@ -418,7 +419,35 @@ void GameModule::createModule2400(int which) {
 }
 
 void GameModule::createModule3000(int which) {
-	error("createModule3000");
+	setGlobalVar(0x91080831, 0x81293110);
+	_childObject = new Module3000(_vm, this, which);
+	SetUpdateHandler(&GameModule::updateModule3000);
+}
+
+void GameModule::updateModule3000() {
+	if (!_childObject)
+		return;
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			// TODO createModule1900(0);
+			// TODO _childObject->handleUpdate();
+		} else if (_field20 == 2) {
+			// WEIRD: Sets the errorFlag
+		} else if (_field20 == 3) {
+			createModule1800(3);
+			_childObject->handleUpdate();
+		} else if (_field20 == 4) {
+			// TODO createModule3000(0);
+			// TODO _childObject->handleUpdate();
+		} else {
+			createModule2300(4);
+			_childObject->handleUpdate();
+		}
+	}
 }
 
 } // End of namespace Neverhood

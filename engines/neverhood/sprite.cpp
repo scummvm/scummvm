@@ -140,8 +140,6 @@ void StaticSprite::init(uint32 fileHash, int surfacePriority, int16 x, int16 y, 
 	_x = x == kDefPosition ? _spriteResource.getPosition().x : x;
 	_y = y == kDefPosition ? _spriteResource.getPosition().y : y;
 	
-	debug("StaticSprite::init() final: x = %d; y = %d", _x, _y);
-
 	_drawRect.x = 0;
 	_drawRect.y = 0;
 	_drawRect.width = width;

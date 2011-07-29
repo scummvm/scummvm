@@ -67,6 +67,7 @@ protected:
 	void updateModule2300();
 	void createModule2400(int which);
 	void createModule3000(int which);
+	void updateModule3000();
 };
 
 } // End of namespace Neverhood

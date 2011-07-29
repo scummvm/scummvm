@@ -72,6 +72,11 @@ uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *
 	return 0;
 }
 
+NavigationScene *Module::navigationScene() {
+	// Not so nice
+	return (NavigationScene*)_childObject;
+}
+
 void Module::createNavigationScene(uint32 navigationListId, int navigationIndex, const byte *itemsTypes) {
 	_childObject = new NavigationScene(_vm, this, navigationListId, navigationIndex, itemsTypes);
 }

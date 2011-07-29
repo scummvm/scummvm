@@ -179,6 +179,12 @@ Background *Scene::addBackground(Background *background) {
 	return background;
 }
 
+SmackerPlayer *Scene::addSmackerPlayer(SmackerPlayer *smackerPlayer) {
+	addEntity(smackerPlayer);
+	addSurface(smackerPlayer->getSurface());
+	return smackerPlayer;
+}
+
 void Scene::update() {
 
 	if (_smkFileHash != 0) {
