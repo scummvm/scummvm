@@ -368,8 +368,6 @@ void Savegame::write(Common::OutSaveFile *file, uint32 val, Common::String descr
 	file->writeUint32LE(4);
 	file->writeUint32LE(1);
 
-	// Write data
-	// TODO check for errors
 	file->writeUint32LE(val);
 }
 
@@ -377,8 +375,6 @@ void Savegame::write(Common::OutSaveFile *file, Common::String val, uint32 count
 	file->writeUint32LE(1);
 	file->writeUint32LE(count);
 
-	// Write data
-	// TODO check for errors
 	file->writeString(val);
 }
 
@@ -390,7 +386,16 @@ void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint
 		return;
 
 	Common::Serializer ser(NULL, file);
+	uint before = ser.bytesSynced();
+
+	// Save the data
 	data->saveLoadWithSerializer(ser);
+
+	// Check we wrote the correct amount of data
+	uint after = ser.bytesSynced();
+
+	if ((after - before) != (size * count))
+		error("[Savegame::write] Invalid number of bytes written to file (was: %d, expected: %d)", after - before, size * count);
 }
 
 //////////////////////////////////////////////////////////////////////////
