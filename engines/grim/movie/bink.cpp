@@ -148,6 +148,8 @@ void BinkPlayer::stop() {
 
 bool BinkPlayer::play(const char *filename, bool looping, int x, int y) {
 	deinit();
+	_x = x;
+	_y = y;
 	_fname = filename;
 	_fname += ".bik";
 	_f.open(_fname);
