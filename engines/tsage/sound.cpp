@@ -2802,20 +2802,6 @@ AdlibFxSoundDriver::AdlibFxSoundDriver(): SoundDriver() {
 	_mixer = _vm->_mixer;
 	_sampleRate = _mixer->getOutputRate();
 	_audioStream = NULL;
-//	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-/*
-	Common::set_to(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
-	memset(_channelVolume, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
-	memset(_v4405E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
-	memset(_v44067, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
-	memset(_v44070, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
-	memset(_v44079, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
-	memset(_v44082, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
-	_v44082[ADLIB_CHANNEL_COUNT] = 0x90;
-	Common::set_to(_pitchBlend, _pitchBlend + ADLIB_CHANNEL_COUNT, 0x2000);
-	memset(_v4409E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
-	_patchData = NULL;
-*/
 }
 
 AdlibFxSoundDriver::~AdlibFxSoundDriver() {
@@ -2823,41 +2809,18 @@ AdlibFxSoundDriver::~AdlibFxSoundDriver() {
 }
 
 bool AdlibFxSoundDriver::open() {
-	write209();
-	write(64);
-	write(165);
-
-	// for (int idx = 0; idx < 5000 * 16; ++idx) al = port[21h]
-
-//	_v45071 = 1;
-//	_v4506F = 0;
-
 	return true;
 }
 
 void AdlibFxSoundDriver::close() {
-	write(208);
-	write211();
-
 }
 
 bool AdlibFxSoundDriver::reset() {
-
 	return true;
 }
 
 const GroupData *AdlibFxSoundDriver::getGroupData() {
 	return &_groupData;
-}
-
-void AdlibFxSoundDriver::poll() {
-	if (!_masterVolume || !_channelVolume) {
-		if (_v45046)
-			write211();
-	} else {
-		if (!_v45046)
-			write209();
-	}
 }
 
 int AdlibFxSoundDriver::setMasterVolume(int volume) {
@@ -2877,7 +2840,6 @@ void AdlibFxSoundDriver::playSound(const byte *channelData, int dataOffset, int 
 
 	// Set the new channel data
 	_channelData = channelData + dataOffset;
-	_soundData = _channelData + 18;
 
 	// Make a copy of the buffer
 	int dataSize = _vm->_memoryManager.getSize(channelData);
@@ -2904,10 +2866,9 @@ void AdlibFxSoundDriver::proc38(int channel, int cmd, int value) {
 }
 
 void AdlibFxSoundDriver::proc42(int channel, int cmd, int value, int *v1, int *v2) {
-	_v4506A = value;
-	*v1 = _v4506B;
+	// TODO: v2 is used for flagging a reset of the timer. I'm not sure if it's needed
+	*v1 = 0;
 	*v2 = 0;
-	_v4506B = 0;
 
 	// Note: Checking whether a playing Fx sound had finished was originally done in another
 	// method in the sample playing code. But since we're using the ScummVM audio soundsystem,
@@ -2921,23 +2882,6 @@ void AdlibFxSoundDriver::proc42(int channel, int cmd, int value, int *v1, int *v
 	if (!_channelData)
 		// Flag that sound isn't playing
 		*v1 = 1;
-
-	// TODO: v2 is used for flagging a reset of the timer. I'm not sure if it's needed
-	*v2 = 0;
-}
-
-void AdlibFxSoundDriver::write(int v) {
-	// No implementation
-}
-
-void AdlibFxSoundDriver::write209() {
-	write(209);
-	_v45046 = true;
-}
-
-void AdlibFxSoundDriver::write211() {
-	write(211);
-	_v45046 = false;
 }
 
 } // End of namespace tSage

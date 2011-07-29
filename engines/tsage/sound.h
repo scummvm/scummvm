@@ -461,29 +461,15 @@ public:
 
 class AdlibFxSoundDriver: public SoundDriver {
 private:
-	Common::Queue<RegisterValue> _queue;
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	Audio::QueuingAudioStream *_audioStream;
 	int _sampleRate;
 
-	int _v45062;
-	int _v45066;
-	int _v45068;
-	int _v4506A;
-	int _v4506B;
-	bool _v45046;
 	byte _masterVolume;
 	byte _channelVolume;
 	const byte *_channelData;
-	const byte *_soundData;
-
-	void write(int v);
-	void flush();
-	void sub_4556E();
-	void write209();
-	void write211();
 public:
 	AdlibFxSoundDriver();
 	virtual ~AdlibFxSoundDriver();
@@ -492,7 +478,6 @@ public:
 	virtual void close();
 	virtual bool reset();
 	virtual const GroupData *getGroupData();
-	virtual void poll();
 	virtual int setMasterVolume(int volume);
 	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1);
 	virtual void updateVoice(int channel);
