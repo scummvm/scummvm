@@ -1063,6 +1063,7 @@ const int eob1FloppyNeed[] = {
 	kEob1MonsterDistAttSfx10,
 	kEob1MonsterDistAttType17,
 	kEob1MonsterDistAttSfx17,
+	kEob1TurnUndeadString,
 
 	kEobBasePryDoorStrings,
 	kEobBaseWarningStrings,
@@ -1077,6 +1078,8 @@ const int eob1FloppyNeed[] = {
 	kEobBaseMagicObjectStrings,
 	kEobBaseMagicObject5String,
 	kEobBasePatternSuffix,
+	kEobBasePatternGrFix1,
+	kEobBasePatternGrFix2,
 	kEobBaseValidateArmorString,
 	kEobBaseValidateNoDropString,
 	kEobBasePotionStrings,
@@ -1169,6 +1172,7 @@ const int eob1FloppyNeed[] = {
 
 	kEobBaseSpellProperties,
 	kEobBaseMagicFlightProps,
+	kEobBaseTurnUndeadEffect,
 
 	kLolEobCommonDscDoorShapeIndex,
 	kEobBaseWllFlagPreset,
@@ -1382,6 +1386,7 @@ const int eob2FloppyNeed[] = {
 
 	kEobBaseSpellProperties,
 	kEobBaseMagicFlightProps,
+	kEobBaseTurnUndeadEffect,
 
 	kLolEobCommonDscDoorShapeIndex,
 	kEobBaseWllFlagPreset,

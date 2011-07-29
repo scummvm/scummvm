@@ -101,6 +101,7 @@ void EobCoreEngine::setupTimers() {
 	_timer->addTimer(0x21, TimerV2(timerProcessMonsters), 20, true);
 	_timer->addTimer(0x22, TimerV2(timerProcessMonsters), 20, true);
 	_timer->addTimer(0x23, TimerV2(timerProcessMonsters), 20, true);
+	_timer->setNextRun(0x20, _system->getMillis());
 	_timer->setNextRun(0x21, _system->getMillis() + 7 * _tickLength);
 	_timer->setNextRun(0x22, _system->getMillis() + 14 * _tickLength);
 	_timer->setNextRun(0x23, _system->getMillis() + 14 * _tickLength);
@@ -274,7 +275,6 @@ void EobCoreEngine::timerProcessMonsters(int timerNum) {
 	updateMonsters(timerNum & 0x0f);
 }
 
-
 void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 	int charIndex = timerNum & 0x0f;
 	EobCharacter *c = &_characters[charIndex];
@@ -346,7 +346,8 @@ void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 
 		case 12:
 			c->effectFlags &= ~0x1000;
-			_txt->printMessage(_characterStatusStrings12[0], -1, c->name);
+			if (_characterStatusStrings12)
+				_txt->printMessage(_characterStatusStrings12[0], -1, c->name);
 			break;
 
 		default:

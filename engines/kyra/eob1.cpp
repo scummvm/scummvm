@@ -83,7 +83,7 @@ void EobEngine::startupLoad() {
 }
 
 void EobEngine::npcSequence(int npcIndex) {
-
+	error("EobEngine::npcSequence(): unimplemented");
 
 }
 
@@ -210,10 +210,54 @@ void EobEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 	}
 }
 
+void EobEngine::turnUndeadAuto() {
+	if (_currentLevel != 2 && _currentLevel != 7)
+		return;
+
+	int oc = _openBookChar;
+
+	for (int i = 0; i < 6; i++) {
+		if (!testCharacter(i, 0x0d))
+			continue;
+		
+		EobCharacter *c = &_characters[i];
+
+		if (_itemTypes[_items[c->inventory[0]].type].extraProperties != 6 && _itemTypes[_items[c->inventory[1]].type].extraProperties != 6)
+			continue;
+
+		int l = getCharacterLevelIndex(2, c->cClass);
+		if (l > -1) {
+			if (c->level[l] > _openBookCasterLevel) {
+				_openBookCasterLevel = c->level[l];
+				_openBookChar = i;
+			}
+		} else {
+			l = getCharacterLevelIndex(4, c->cClass);
+			if (l > -1) {
+				if ((c->level[l] - 2) > _openBookCasterLevel) {
+					_openBookCasterLevel = (c->level[l] - 2);
+					_openBookChar = i;
+				}
+			}
+		}
+	}
+
+	if (_openBookCasterLevel)
+		spellCallback_start_turnUndead();
+
+	_openBookChar = oc;
+	_openBookCasterLevel = 0;
+}
+
+void EobEngine::turnUndeadAutoHit() {
+	_txt->printMessage(_turnUndeadString[0], -1, _characters[_openBookChar].name);
+	sparkEffectOffensive();
+}
+
 bool EobEngine::checkPartyStatusExtra() {
 	_screen->copyPage(0, 10);
-	gui_drawBox(0, 121, 319, 200, _color2_1, _color1_1, _bkgColor_1);
-	_screen->setScreenDim(9);
+	gui_drawBox(0, 121, 320, 80, _color1_1, _color2_1, _bkgColor_1);
+	_txt->setupField(9, false);
 	_txt->printMessage(_menuStringsDefeat[0]);
 	while (!shouldQuit()) {
 		removeInputTop();
@@ -221,6 +265,7 @@ bool EobEngine::checkPartyStatusExtra() {
 			break;
 	}
 	_screen->copyPage(10, 0);
+	_eventList.clear();
 	return true;
 }
 

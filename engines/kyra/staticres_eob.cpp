@@ -528,6 +528,7 @@ void EobCoreEngine::initStaticResource() {
 	_sparkEffectOfX = _staticres->loadRawData(kEobBaseSparkOfX, temp);
 	_sparkEffectOfY = _staticres->loadRawData(kEobBaseSparkOfY, temp);
 	_magicFlightObjectProperties = _staticres->loadRawData(kEobBaseMagicFlightProps, temp);
+	_turnUndeadEffect = _staticres->loadRawData(kEobBaseTurnUndeadEffect, temp);
 
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
@@ -1064,6 +1065,8 @@ void EobEngine::initStaticResource() {
 	_monsterDistAttSfx10 = _staticres->loadRawData(kEob1MonsterDistAttSfx10, temp);
 	_monsterDistAttType17 = _staticres->loadRawData(kEob1MonsterDistAttType17, temp);
 	_monsterDistAttSfx17 = _staticres->loadRawData(kEob1MonsterDistAttSfx17, temp);
+
+	_turnUndeadString = _staticres->loadStrings(kEob1TurnUndeadString, temp);
 
 	const uint8 *ps = _staticres->loadRawData(kEob1MonsterProperties, temp);
 	temp /= 27;

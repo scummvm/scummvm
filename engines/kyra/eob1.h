@@ -84,6 +84,12 @@ private:
 	const uint8 *_doorSwitchShapeEncodeDefs;
 	const uint8 *_doorSwitchCoords;
 
+	// Magic
+	void turnUndeadAuto();
+	void turnUndeadAutoHit();
+
+	const char * const *_turnUndeadString;
+
 	// Misc
 	bool checkPartyStatusExtra();
 	uint32 convertSpellFlagToEob2Format(uint32 flag, int ignoreInvisibility);

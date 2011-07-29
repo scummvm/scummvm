@@ -46,6 +46,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_playFinale = false;
 	_runFlag = true;
 	_configMouse = true;
+	_loading = false;
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = _itemIconShapes =
 		_wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
@@ -82,7 +83,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_monsterOvl1 = _monsterOvl2 = 0;
 	_monsters = 0;
 	_dstMonsterIndex = 0;
-	_inflictMonsterDamageUnk = 0;
+	_preventMonsterFlash = false;
 
 	_teleporterPulse = 0;
 
@@ -124,7 +125,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_openBookSpellLevel = 0;
 	_openBookSpellSelectedItem = 0;
 	_openBookSpellListOffset = 0;
-	_openBookChar = _openBookCharBackup = 0;
+	_openBookChar = _openBookCharBackup = _openBookCasterLevel = 0;
 	_openBookType = _openBookTypeBackup = 0;
 	_openBookSpellList = 0;
 	_openBookAvailableSpells = 0;
@@ -415,7 +416,7 @@ void EobCoreEngine::writeSettings() {
 void EobCoreEngine::startupNew() {
 	gui_setPlayFieldButtons();
 	_screen->_curPage = 0;
-	gui_drawPlayField(0);
+	gui_drawPlayField(false);
 	_screen->_curPage = 0;
 	gui_drawAllCharPortraitsWithStats();
 	drawScene(1);
@@ -452,8 +453,7 @@ void EobCoreEngine::runLoop() {
 		_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
 		snd_processEnvironmentalSoundEffect(_flags.gameID == GI_EOB1 ? 30 : (rollDice(1, 2, -1) ? 27 : 28), _currentBlock + rollDice(1, 12, -1));
 		updateEnvironmentalSfx(0);
-		//TODO
-		//EOB1__level_2_7__turnUndead();
+		turnUndeadAuto();
 	}
 }
 
@@ -1540,7 +1540,11 @@ int EobCoreEngine::thrownAttack(int charIndex, int slotIndex, Item item) {
 
 int EobCoreEngine::projectileWeaponAttack(int charIndex, Item item) {
 	int tp = _items[item].type;
-	int t = _projectileWeaponAmmoTypes[_flags.gameID == GI_EOB1 ? tp - 2 : tp];
+
+	if (_flags.gameID == GI_EOB1)
+		assert(tp >= 7);
+
+	int t = _projectileWeaponAmmoTypes[_flags.gameID == GI_EOB1 ? tp - 7 : tp];
 	Item ammoItem = 0;
 
 	if (t == 16) {
@@ -1588,7 +1592,7 @@ void EobCoreEngine::inflictMonsterDamage(EobMonsterInPlay *m, int damage, bool g
 	} else {
 		if (checkSceneUpdateNeed(m->block)) {
 			m->flags |= 2;
-			if (_inflictMonsterDamageUnk)
+			if (_preventMonsterFlash)
 				return;
 			flashMonsterShape(m);
 		}

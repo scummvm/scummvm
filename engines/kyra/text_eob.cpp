@@ -70,8 +70,6 @@ void TextDisplayer_Eob::setupField(int dim, bool mode) {
 		clearCurDim();
 	else
 		resetDimTextPositions(dim);
-
-	//_textPageBreakFunc = textPageBreakMore; + 0x25
 }
 
 void TextDisplayer_Eob::resetDimTextPositions(int dim) {

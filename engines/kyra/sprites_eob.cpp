@@ -140,6 +140,12 @@ const uint8 *EobCoreEngine::loadActiveMonsterData(const uint8 *data, int level) 
 		_timer->setCountdown(0x21 + (p << 1), v);
 	}
 
+	uint32 ct = _system->getMillis();
+	for (int i = 0x20; i < 0x24; i++) {
+		int32 del = _timer->getDelay(i);
+		_timer->setNextRun(i, (i & 1) ? ct + (del >> 1) : ct + del);
+	}
+
 	if (_hasTempDataFlags & (1 << (level - 1)))
 		return data + 420;
 
@@ -302,12 +308,12 @@ bool EobCoreEngine::isMonsterOnPos(EobMonsterInPlay *m, uint16 block, int pos, i
 
 const int16 *EobCoreEngine::findBlockMonsters(uint16 block, int pos, int dir, int blockDamage, int singleTargetCheckAdjacent) {
 	static const uint8 cpos4[] = { 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1 };
-	int checkPos4 = (pos <= 4) ? cpos4[(dir << 2) + pos] : 1;
+	int include4 = (pos < 4) ? cpos4[(dir << 2) + pos] : 1;
 	int16 *dst = _foundMonstersArray;
 
 	if (blockDamage) {
 		for (int i = 0; i < 30; i++) {
-			if (_monsters[i].block == block && (_monsters[i].pos != 4 || checkPos4))
+			if (_monsters[i].block == block && (_monsters[i].pos != 4 || include4))
 				*dst++ = i;
 		}
 
@@ -338,7 +344,7 @@ const int16 *EobCoreEngine::findBlockMonsters(uint16 block, int pos, int dir, in
 
 	} else {
 		for (int i = 0; i < 30; i++) {
-			if (isMonsterOnPos(&_monsters[i], block, pos, checkPos4))
+			if (isMonsterOnPos(&_monsters[i], block, pos, include4))
 				*dst++ = i;
 		}
 	}
@@ -395,7 +401,7 @@ void EobCoreEngine::updateAllMonsterShapes() {
 	} else {
 		_sceneUpdateRequired = false;
 	}
-	_inflictMonsterDamageUnk = 0;
+	_preventMonsterFlash = false;
 }
 
 void EobCoreEngine::drawBlockItems(int index) {
@@ -684,7 +690,6 @@ void EobCoreEngine::drawTeleporter(int index) {
 void EobCoreEngine::updateMonsters(int unit) {
 	for (int i = 0; i < 30; i++) {
 		EobMonsterInPlay *m = &_monsters[i];
-
 		if (m->unit == unit) {
 			if (m->hitPointsCur <= 0 || m->flags & 0x20)
 				continue;

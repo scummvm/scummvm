@@ -997,7 +997,9 @@ void EobCoreEngine::drawScene(int refresh) {
 		if (refresh)
 			_screen->fillRect(0, 0, 176, 120, 12);
 
-		_screen->setScreenPalette(_screen->getPalette(0));
+		if (!_loading)
+			_screen->setScreenPalette(_screen->getPalette(0));
+
 		_sceneDrawPage2 = 0;
 	}
 
@@ -1025,7 +1027,7 @@ void EobCoreEngine::drawScene(int refresh) {
 	if (!_dialogueField && refresh && !_updateFlags)
 		gui_drawCompass(false);
 
-	if (refresh && !_partyResting)
+	if (refresh && !_partyResting && !_loading)
 		_screen->updateScreen();
 
 	if (_sceneDefaultUpdate) {

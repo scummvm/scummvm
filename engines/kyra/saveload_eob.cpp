@@ -149,6 +149,8 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		return Common::Error(Common::kReadingFailed);
 
 	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, DisposeAfterUse::YES);
+	_loading = true;
+	_screen->fadeToBlack(10);
 
 	for (int i = 0; i < 6; i++) {
 		EobCharacter *c = &_characters[i];
@@ -356,7 +358,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	_screen->setFont(Screen::FID_6_FNT);
 
 	_screen->setCurPage(0);
-	gui_drawPlayField(0);	
+	gui_drawPlayField(false);	
 
 	if (_currentControlMode)
 		_screen->copyRegion(176, 0, 0, 0, 144, 168, 0, 5, Screen::CR_NO_P_CHECK);
@@ -377,6 +379,9 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
+
+	_loading = false;
+	_screen->fadeFromBlack(20);
 
 	return Common::kNoError;
 }
