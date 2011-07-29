@@ -94,11 +94,9 @@ struct AmbientSoundItem {
 struct SoundQueueItem {
 	ResourceId resourceId;
 	Audio::SoundHandle handle;
-	int32 unknown;
 
 	SoundQueueItem() {
 		resourceId = kResourceNone;
-		unknown = 0;
 	}
 };
 
