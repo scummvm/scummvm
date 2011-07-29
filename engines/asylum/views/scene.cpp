@@ -280,7 +280,7 @@ void Scene::load(ResourcePackId packId) {
 	fd->close();
 	delete fd;
 
-	_vm->resetFlags();
+	getSharedData()->resetAmbientFlags();
 	_ws->field_120 = -1;
 
 	int32 tick = _vm->getTick();
@@ -836,7 +836,7 @@ void Scene::updateAmbientSounds() {
 	for (int32 i = 0; i < _ws->numAmbientSounds; i++) {
 		bool processSound = true;
 		AmbientSoundItem *snd = &_ws->ambientSounds[i];
-		uint32 *ambientTick = getSharedData()->getAmbientTick(i);
+		uint32 ambientTick = getSharedData()->getAmbientTick(i);
 
 		for (int32 f = 0; f < 6; f++) {
 			GameFlag gameFlag = snd->flagNum[f];
@@ -903,18 +903,18 @@ void Scene::updateAmbientSounds() {
 						}
 					}
 				} else if (LOBYTE(snd->flags) & 4) {
-					if (*ambientTick > _vm->getTick()) {
+					if (ambientTick > _vm->getTick()) {
 						if (snd->nextTick >= 0)
-							*ambientTick = 60000 * snd->nextTick + _vm->getTick();
+							getSharedData()->setAmbientTick(i, 60000 * snd->nextTick + _vm->getTick());
 						else
-							*ambientTick = _vm->getTick() - 1000 * snd->nextTick;
+							getSharedData()->setAmbientTick(i, _vm->getTick() - 1000 * snd->nextTick);
 
 						getSound()->playSound(snd->resourceId, false, volume, panning);
 					}
 				} else if (LOBYTE(snd->flags) & 8) {
-					if (_vm->getGameFlagByIndex(85 + i)) {
+					if (!getSharedData()->getAmbientFlag(i)) {
 						getSound()->playSound(snd->resourceId, false, volume, panning);
-						_vm->setGameFlagByIndex(85 + i);
+						getSharedData()->setAmbientFlag(i, 1);
 					}
 
 				}
