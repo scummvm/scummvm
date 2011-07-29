@@ -66,15 +66,12 @@ void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 p
 	if (item) {
 		// Duplicate the queue entry
 		item = addToQueue(item->resourceId);
-		item->unknown = 0;
 	} else {
 		// Check that the sound is valid
 		if (!isValidSoundResource(resourceId))
 			return;
 
 		item = addToQueue(resourceId);
-
-		// TODO add missing code
 	}
 
 	// Original sets position back to 0
