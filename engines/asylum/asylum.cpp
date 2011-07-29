@@ -553,7 +553,20 @@ void AsylumEngine::updateReverseStereo() {
 }
 
 void AsylumEngine::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[AsylumEngine::saveLoadWithSerializer] Not implemented!");
+	// Game flags
+	for (uint32 i = 0; i < ARRAYSIZE(_gameFlags); i++)
+		s.syncAsSint32LE(_gameFlags[i]);
+
+	// The original has the script data in the middle of other shared data,
+	// so to be compatible with original savegames, we want to save it in
+	// the proper order
+	_data.saveLoadAmbientSoundData(s);
+
+	// Script queue
+	_script->saveLoadWithSerializer(s);
+
+	// Shared data (the rest of it)
+	_data.saveLoadWithSerializer(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
