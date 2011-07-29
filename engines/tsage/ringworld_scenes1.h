@@ -215,15 +215,15 @@ class Scene40 : public Scene {
 	};
 
 	/* Items */
-	class Item2 : public SceneItem {
+	class Item2 : public SceneHotspot {
 	public:
 		virtual void doAction(int action);
 	};
-	class Item6 : public SceneItem {
+	class Item6 : public SceneHotspot {
 	public:
 		virtual void doAction(int action);
 	};
-	class Item8 : public SceneItem {
+	class Item8 : public SceneHotspot {
 	public:
 		virtual void doAction(int action);
 	};

@@ -1434,7 +1434,7 @@ void Scene40::Item2::doAction(int action) {
 		SceneItem::display2(40, 37);
 		break;
 	default:
-		SceneItem::doAction(action);
+		SceneHotspot::doAction(action);
 		break;
 	}
 }
@@ -1455,7 +1455,7 @@ void Scene40::Item6::doAction(int action) {
 		SceneItem::display2(40, 36);
 		break;
 	default:
-		SceneItem::doAction(action);
+		SceneHotspot::doAction(action);
 		break;
 	}
 }
@@ -1464,7 +1464,7 @@ void Scene40::Item6::doAction(int action) {
 
 Scene40::Scene40() :
 	_item1(2, OBJECT_SCANNER, 40, 24, OBJECT_STUNNER, 40, 25, CURSOR_LOOK, 40, 7, CURSOR_USE, 40, 16, LIST_END),
-	_item3(5, OBJECT_SCANNER, 40, 26, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
+	_item3(5, OBJECT_SCANNER, 40, 28, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 2, CURSOR_USE, 40, 30, LIST_END),
 	_item4(6, OBJECT_SCANNER, 40, 31, OBJECT_STUNNER, 40, 32, CURSOR_LOOK, 40, 5, CURSOR_USE, 40, 33, LIST_END),
 	_item5(0, CURSOR_LOOK, 40, 11, LIST_END),
 	_item7(4, OBJECT_SCANNER, 40, 26, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
