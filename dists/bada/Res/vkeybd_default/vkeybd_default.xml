@@ -3,7 +3,7 @@
   <!-- coords key = "start x, start y, end x, end y" -->
   <!-- Lowercase -->
   <mode name="lowercase" resolutions="800x399">
-    <layout resolution="800x399" bitmap="lowercase640x480.bmp" transparent_color="255,0,255">
+    <layout resolution="800x399" bitmap="lowercase800x399.bmp" transparent_color="255,0,255">
       <map>
         <area shape="rect" coords="25,24,775,53" target="display_area"/>
         <area shape="rect" coords="22,64,65,110" target="esc" />
@@ -159,7 +159,7 @@
 
   <!-- Uppercase -->
   <mode name="uppercase" resolutions="800x399">
-    <layout resolution="800x399" bitmap="uppercase640x480.bmp" transparent_color="255,0,255">
+    <layout resolution="800x399" bitmap="uppercase800x399.bmp" transparent_color="255,0,255">
       <map>
         <area shape="rect" coords="25,24,775,53" target="display_area"/>
         <area shape="rect" coords="22,64,65,110" target="esc" />
@@ -315,7 +315,7 @@
 
   <!-- Lowercase Symbols -->
   <mode name="lowercasesymbols" resolutions="800x399">
-    <layout resolution="800x399" bitmap="lowercase-symbols640x480.bmp" transparent_color="255,0,255">
+    <layout resolution="800x399" bitmap="lowercase-symbols800x399.bmp" transparent_color="255,0,255">
       <map>
         <area shape="rect" coords="25,24,775,53" target="display_area"/>
         <area shape="rect" coords="22,64,65,110" target="esc" />
@@ -471,7 +471,7 @@
 
   <!-- Uppercase Symbols -->
   <mode name="uppercasesymbols" resolutions="800x399">
-    <layout resolution="800x399" bitmap="uppercase-symbols640x480.bmp" transparent_color="255,0,255">
+    <layout resolution="800x399" bitmap="uppercase-symbols800x399.bmp" transparent_color="255,0,255">
       <map>
         <area shape="rect" coords="25,24,775,53" target="display_area"/>
         <area shape="rect" coords="22,64,65,110" target="esc" />
