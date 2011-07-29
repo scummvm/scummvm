@@ -27,6 +27,7 @@
 
 #include "common/rational.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 
 namespace Asylum {
 
@@ -57,23 +58,25 @@ enum GlobalFlag {
  *  Lots of data
  *
  *  -- Scene data (reset on scene load)
- *  uint32 {16}     - ambient sound panning array
- *  uint32 {1}      - scene counter
+ *  uint32 {15}    - ambient flags
+ *  uint32 {15}    - ambient ticks
+ *  uint32 {1}     - UNUSED
+ *  uint32 {1}     - scene updateScreen calls count
  *  -- Script queue (stored in ScriptManager - reset on scene change)
- *  uint32 {1}      - global Object X
- *  uint32 {1}      - global Object Y
+ *  uint32 {1}     - global Object X
+ *  uint32 {1}     - global Object Y
  *  -- Skip processing flag (stored in ScriptManager)
- *  uint32 {1}      - Encounter flag 2
- *  -- Player ActorIndex (reset on scene enter)
- *  uint32 {1}      -  scene xLeft
- *  uint32 {1}      -  scene yTop
- *  uint32 {1}      -  scene offset
- *  uint32 {1}      -  scene offsetAdd
- *  -- UNUSED ??
+ *  -- Encounter running flag (stored in Encounter)
+ *  uint32 {1}     - Player ActorIndex
+ *  uint32 {1}     - scene xLeft
+ *  uint32 {1}     - scene yTop
+ *  uint32 {1}     - scene offset
+ *  uint32 {1}     - scene offsetAdd
+ *  uint32 {1}     - UNUSED
  *  uint32 {13}    - cursor resources
  *  uint32 {3}     - scene fonts (3)
- *  uint32 {1}     - current palette Id
- *  uint32 {3}     - cellshade masks (3)
+ *  uint32 {3}     - Chapter2 actor data (part 1)
+ *  uint32 {1}     - UNUSED
  *  uint32 {1}     - small cursor Up
  *  uint32 {1}     - small cursor Down
  *  uint32 {1}     - Encounter frame background
@@ -83,14 +86,32 @@ enum GlobalFlag {
  *  uint32 {1}     - matte Initialized
  *  uint32 {1}     - matte playSound
  *  uint32 {1}     - currentScreenUpdatesCount
- *  uint32 {50}    - Actor data
- *  uint32 {11}    - UNUSED ?? (Actor data 2)
- *  uint32 {1}     - actorUpdateEnabledCounter
- *  uint32 {9}     - Actor data 3
- *  uint32 {1}     - Encounter flag 5
+ *  uint32 {3}     - Chapter2 actor data (part 2)
+ *  uint32 {1}     - Chapter 2 counter 1
+ *  uint32 {1}     - Chapter 2 counter 2
+ *  uint32 {1}     - Chapter 2 counter 3
+ *  uint32 {1}     - Chapter 2 counter 4
+ *  uint32 {1}     - UNUSED
+ *  uint32 {3}     - Chapter2 actor data (part 3)
+ *  uint32 {1}     - UNUSED
+ *  uint32 {8}     - Chapter 2 points
+ *  uint32 {9}     - UNUSED
+ *  uint32 {1}     - Special 2 counter 5
+ *  uint32 {1}     - Chapter 2 frameIndex Offset
+ *  uint32 {1}     - Chapter 2 Actor index
+ *  uint32 {1}     - Event update flag
+ *  uint32 {1}     - Chapter 2 counter 6
+ *  uint32 {1}     - Chapter 2 counter 7
+ *  uint32 {1}     - Chapter 2 counter 8
+ *  uint32 {7}     - UNUSED
+ *  uint32 {3}     - Chapter2 actor data (part 4)
+ *  uint32 {8}     - UNUSED
+ *  uint32 {1}     - actorUpdateStatusEnabledCounter
+ *  uint32 {9}     - Chapter2 actor data (part 5)
+ *  uint32 {1}     - Encounter disablePlayerOnExit
  *  uint32 {1}     - Scene flag 1
  *  uint32 {1}     - nextScreenUpdate
- *	uint32 {49}    - Viewed movies
+ *  uint32 {49}    - Viewed movies
  *  uint32 {1}     - actorUpdateStatus15Check
  *  -- Skip opening movie command line flag (not used)
  *  uint32 {1}     - Encounter flag 3
@@ -99,7 +120,7 @@ enum GlobalFlag {
  *  -- scripts (reset on scene load)
  *  -- polygons (reset on scene load)
  */
-struct SharedData {
+struct SharedData : public Common::Serializable {
 public:
 	SharedData() {
 		cdNumber = 0;
@@ -333,9 +354,145 @@ public:
 		}
 	}
 
+	void saveLoadAmbientSoundData(Common::Serializer &s) {
+		// Ambient sound flags/ticks
+		for (uint32 i = 0; i < ARRAYSIZE(_ambientFlags); i++)
+			s.syncAsUint32LE(_ambientFlags[i]);
+
+		for (uint32 i = 0; i < ARRAYSIZE(_ambientTicks); i++)
+			s.syncAsUint32LE(_ambientTicks[i]);
+	}
+
+	void saveLoadWithSerializer(Common::Serializer &s) {
+		// Original skips two elements (original has one unused, one used for debugging screen update counts)
+		s.skip(8);
+
+		// Script queue (part of ScriptManager)
+
+		// Global coordinates (original uses int32 for coordinates)
+		s.syncAsSint32LE(point.x);
+		s.syncAsSint32LE(point.y);
+
+		// Processing skipped (part of ScriptManager)
+		// Encounter running (part of Encounter)
+
+		// Player index
+		//s.syncAsUint32LE(playerIndex);
+
+		// Scene coordinates
+		s.syncAsSint32LE(sceneXLeft);
+		s.syncAsSint32LE(sceneYTop);
+		s.syncAsSint32LE(sceneOffset);
+		s.syncAsSint32LE(sceneOffsetAdd);
+
+		// Original skips 4 bytes
+		s.skip(4);
+
+		// Cursor resources
+		for (uint32 i = 0; i < ARRAYSIZE(cursorResources); i++)
+			s.syncAsUint32LE(cursorResources[i]);
+
+		// Fonts
+		for (uint32 i = 0; i < ARRAYSIZE(sceneFonts); i++)
+			s.syncAsUint32LE(sceneFonts[i]);
+
+		// Chapter 2 actor data (Part 1)
+		//for (uint32 i = 0; i < ARRAYSIZE(chapter2ActorData1); i++)
+		//	s.syncAsUint32LE(chapter2ActorData1[i]);
+
+		// Original skips 4 bytes
+		s.skip(4);
+
+		// Scene information
+		s.syncAsSint32LE(smallCurUp);
+		s.syncAsSint32LE(smallCurDown);
+		s.syncAsSint32LE(encounterFrameBg);
+		s.syncAsUint32LE(_flagSkipDrawScene);
+		s.syncAsSint32LE(matteVar1);
+		s.syncAsUint32LE(actorUpdateEnabledCheck);
+		s.syncAsUint32LE(matteInitialized);
+		s.syncAsUint32LE(mattePlaySound);
+		s.syncAsSint32LE(currentScreenUpdatesCount);
+
+		// Chapter 2 actor data (Part 2)
+		//for (uint32 i = 0; i < ARRAYSIZE(chapter2ActorData2); i++)
+		//	s.syncAsUint32LE(chapter2ActorData2[i]);
+
+		// Chapter 2 counters (1-4)
+		//s.syncAsSint32LE(chapter2Counter1);
+		//s.syncAsSint32LE(chapter2Counter2);
+		//s.syncAsSint32LE(chapter2Counter3);
+		//s.syncAsSint32LE(chapter2Counter4);
+
+		// Original skips 4 bytes
+		s.skip(4);
+
+		// Chapter 2 actor data (Part 3)
+		//for (uint32 i = 0; i < ARRAYSIZE(chapter2ActorData3); i++)
+		//	s.syncAsUint32LE(chapter2ActorData3[i]);
+
+		// Original skips 4 bytes
+		s.skip(4);
+
+		// Chapter2 points
+		//for (uint32 i = 0; i < ARRAYSIZE(chapter2Points); i++) {
+		//	s.syncAsSint32LE(chapter2Points[i].x);
+		//	s.syncAsSint32LE(chapter2Points[i].y);
+		//}
+
+		// Original skips 4 bytes
+		s.skip(4);
+
+		// Chapter 2 counter (5) and other data
+		//s.syncAsSint32LE(chapter2Counter5);
+		//s.syncAsSint32LE(chapter2FrameIndexOffset);
+		//s.syncAsSint32LE(chapter2ActorIndex);
+
+		//s.syncAsSint32LE(eventUpdateFlag);
+
+		// Chapter 2 counters (6-8)
+		//s.syncAsSint32LE(chapter2Counter6);
+		//s.syncAsSint32LE(chapter2Counter7);
+		//s.syncAsSint32LE(chapter2Counter8);
+
+		// Original skips 7 * 4 bytes
+		s.skip(7 * 4);
+
+		// Chapter 2 actor data (Part 4)
+		//for (uint32 i = 0; i < ARRAYSIZE(chapter2ActorData4); i++)
+		//	s.syncAsUint32LE(chapter2ActorData4[i]);
+
+		// Original skips 8 * 4 bytes
+		s.skip(8 * 4);
+
+		// Actor UpdateStatusEnabled Counter
+		s.syncAsSint32LE(actorUpdateStatusEnabledCounter);
+
+		// Chapter2 actor data (part 5)
+		//for (uint32 i = 0; i < ARRAYSIZE(chapter2ActorData5); i++)
+		//	s.syncAsUint32LE(chapter2ActorData5[i]);
+
+		// Encounter disable player on exit
+		//s.syncAsSint32LE(encounterDisablePlayerOnExit);
+
+		// Scene flag 1
+		s.syncAsUint32LE(_flagScene1);
+
+		// Next screen update
+		s.syncAsUint32LE(nextScreenUpdate);
+
+		// Viewed movies (we also load it from an external file...)
+		//s.syncBytes(&_moviesViewed, sizeof(_moviesViewed));
+
+		// Actor update status 15 check
+		s.syncAsUint32LE(actorUpdateStatus15Check);
+
+		// TODO More?
+	}
+
 private:
 	uint32          _ambientFlags[15];
-	uint32          _ambientTicks[17];
+	uint32          _ambientTicks[15];
 
 	// Flags
 	bool            _flag1;
