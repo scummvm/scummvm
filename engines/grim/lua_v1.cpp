@@ -438,25 +438,9 @@ void L1_RotateVector() {
 	z = lua_getnumber(lua_gettable());
 	rot.set(x, y, z);
 
-	// FIXME: Is this really right?
-	float xAngle = x * LOCAL_PI / 180.f;
-	float yAngle = z * LOCAL_PI / 180.f;
-	float zAngle = y * LOCAL_PI / 180.f;
-
-	x = vec.x() * cos(zAngle) - vec.y() * sin(zAngle);
-	y = vec.x() * sin(zAngle) + vec.y() * cos(zAngle);
-	vec.x() = x;
-	vec.y() = y;
-
-	y = vec.y() * cos(xAngle) - vec.z() * sin(xAngle);
-	z = vec.y() * sin(xAngle) + vec.z() * cos(xAngle);
-	vec.y() = y;
-	vec.z() = z;
-
-	x = vec.x() * cos(yAngle) - vec.z() * sin(yAngle);
-	z = vec.x() * sin(yAngle) + vec.z() * cos(yAngle);
-	vec.x() = x;
-	vec.z() = z;
+	Graphics::Matrix3 mat;
+	mat.buildFromPitchYawRoll(x, y, z);
+	mat.transform(&vec);
 
 	resObj = lua_createtable();
 	lua_pushobject(resObj);
