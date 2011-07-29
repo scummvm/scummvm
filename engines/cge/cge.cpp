@@ -36,7 +36,6 @@
 #include "cge/text.h"
 #include "cge/vol.h"
 #include "cge/walk.h"
-#include "cge/startup.h"
 
 namespace CGE {
 
@@ -100,6 +99,9 @@ void CGEEngine::setup() {
 	_mouse = new Mouse(this);
 	_keyboard = new Keyboard();
 	_eventManager = new EventManager();
+	_fx = new Fx(16);   // must precede SOUND!!
+	_sound = new Sound(this);
+
 	_offUseCount = atoi(_text->getText(kOffUseCount));
 	_music = true;
 
@@ -134,6 +136,9 @@ void CGEEngine::setup() {
 	for (int i = 0; i < 4; i++)
 		_flag[i] = false;
 
+	_mode = 0;
+	_soundOk = 0;
+
 	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }
 
@@ -167,6 +172,9 @@ CGEEngine::~CGEEngine() {
 	delete _pocLight;
 	delete _keyboard;
 	delete _mouse;
+	delete _eventManager;
+	delete _fx;
+	delete _sound;
 	for (int i = 0; i < kPocketNX; i++)
 		delete _pocket[i];
 	delete _snail;

@@ -30,18 +30,21 @@
 
 #include "cge/wav.h"
 #include "cge/snddrv.h"
+#include "cge/cge.h"
 
 namespace CGE {
 
 class Sound {
 public:
 	SmpInfo _smpinf;
-	Sound();
+	Sound(CGEEngine *vm);
 	~Sound();
 	void open();
 	void close();
 	void play(DataCk *wav, int pan, int cnt = 1);
 	void stop();
+private:
+	CGEEngine *_vm;
 };
 
 
@@ -55,16 +58,12 @@ class Fx {
 	int find(int ref);
 public:
 	DataCk *_current;
-	Fx(int size = 16);
+	Fx(int size);
 	~Fx();
 	void clear();
 	void preload(int ref0);
 	DataCk *operator[](int ref);
 };
-
-extern  Sound  _sound;
-extern  Fx     _fx;
-
 
 void loadMidi(int ref);
 void killMidi();

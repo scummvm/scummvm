@@ -115,6 +115,8 @@ public:
 	int    _now;
 	int    _lev;
 	char   _usrFnam[15];
+	int    _mode;
+	int    _soundOk;
 
 	Common::RandomSource _randomSource;
 	byte *		_mini;
