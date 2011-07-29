@@ -533,6 +533,12 @@ void Actor::walkTo(const Graphics::Vector3d &p) {
 				if (sector == endSec) {
 					PathNode *n = closedList.back();
 					while (n) {
+						// Don't put the start position in the list, or else
+						// the first angle calculated in updateWalk() will be
+						// meaningless.
+						if (n->pos == _pos) {
+							break;
+						}
 						_path.push_back(n->pos);
 						n = n->parent;
 					}
@@ -1105,11 +1111,11 @@ void Actor::update() {
 		if (turnAmt == 0 || turnAmt >= fabs(dyaw)) {
 			setYaw(_destYaw);
 			_turning = false;
-		}
-		else if (dyaw > 0)
+		} else if (dyaw > 0) {
 			setYaw(_yaw + turnAmt);
-		else
+		} else {
 			setYaw(_yaw - turnAmt);
+		}
 		_currTurnDir = (dyaw > 0 ? 1 : -1);
 
 		if (_lastWasLeft)
