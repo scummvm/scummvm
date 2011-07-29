@@ -23,7 +23,7 @@
 #ifndef ASYLUM_ENGINE_H
 #define ASYLUM_ENGINE_H
 
-#include "asylum/puzzles/data.h"
+#include "asylum/puzzles/puzzledata.h"
 #include "asylum/resources/data.h"
 
 #include "asylum/console.h"
