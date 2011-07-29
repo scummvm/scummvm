@@ -1402,7 +1402,7 @@ void L1_GetVisibleThings() {
 		if (!i->_value->isInSet(g_grim->getSceneName()))
 			continue;
 		// Consider the active actor visible
-		if (actor == a || actor->getAngleTo(*a) < 90) {
+		if (actor == a || actor->getYawTo(*a) < 90) {
 			lua_pushobject(result);
 			lua_pushusertag(i->_key, MKTAG('A','C','T','R'));
 			lua_pushnumber(1);

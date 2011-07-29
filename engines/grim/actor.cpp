@@ -804,7 +804,7 @@ void Actor::turn(int dir) {
 		costumeMarkerCallback(LeftTurn);
 }
 
-float Actor::getAngleTo(const Actor &a) const {
+float Actor::getYawTo(const Actor &a) const {
 	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
 	Graphics::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
 	Graphics::Vector3d delta = a.getPos() - _pos;
@@ -1416,6 +1416,12 @@ void Actor::clearShadowPlanes() {
 		shadow->active = false;
 		shadow->dontNegate = false;
 	}
+}
+
+void Actor::putInSet(const Common::String &setName) {
+	// The set should change immediately, otherwise a very rapid set change
+	// for an actor will be recognized incorrectly and the actor will be lost.
+	_setName = setName;
 }
 
 bool Actor::isInSet(const Common::String &setName) const {
