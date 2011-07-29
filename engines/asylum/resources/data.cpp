@@ -29,90 +29,139 @@
 namespace Asylum {
 
 SharedData::SharedData() {
-	cdNumber = 0;
-	actorEnableForStatus7 = false;
-	_flag1 = false;
-	_flag2 = false;
-	_flag3 = false;
-	matteBarHeight = 0;
-	matteVar2 = 0;
-	sceneCounter = 0;
-	point.x = -1;
-	point.y = -1;
-	sceneXLeft = 0;
-	sceneYTop = 0;
-	sceneOffset = 0;
-	sceneOffsetAdd = 0;
-	memset(&cursorResources, kResourceNone, sizeof(cursorResources));
-	memset(&sceneFonts, kResourceNone, sizeof(sceneFonts));
-	//_currentPaletteId = kResourceNone;
-	//memset(&cellShadeMasks, 0, sizeof(cellShadeMasks));
-	smallCurUp = 0;
-	smallCurDown = 0;
-	encounterFrameBg = 0;
-	_flagSkipDrawScene = false;
-	matteVar1 = 0;
-	actorUpdateEnabledCheck = false;
-	matteInitialized = false;
-	mattePlaySound = false;
-	currentScreenUpdatesCount = 0;
-	memset(&_data1, 0, sizeof(_data1));
-	memset(&_data2, 0, sizeof(_data2));
-	actorUpdateStatusEnabledCounter = 0;
-	memset(&_data3, 0, sizeof(_data3));
-	_flagScene1 = false;
-	//memset(&_movies, 0, sizeof(_movies));
-	actorUpdateStatus15Check = false;
-	_flag2 = false;
-	globalDirection = kDirectionN;
+	// Public data
+	cdNumber                           = 0;
+	movieIndex                         = 0;
+	sceneCounter                       = 0;
+	actorEnableForStatus7              = false;
+	globalDirection                    = kDirectionN;
+
+
+	memset(&_ambientFlags, 0, sizeof(_ambientFlags));
 	memset(&_ambientTicks, 0, sizeof(_ambientTicks));
+	_globalPoint.x                     = -1;
+	_globalPoint.y                     = -1;
+	// _flagSkipScriptProcessing
+	// _flagEncounterRunning
+	// player ActorIndex
+	_sceneOffset                       = 0;
+	_sceneOffsetAdd                    = 0;
+	memset(&_cursorResources, kResourceNone, sizeof(_cursorResources));
+	memset(&_sceneFonts, kResourceNone, sizeof(_sceneFonts));
+	memset(&_chapter2Data1, 0, sizeof(_chapter2Data1));
+	_smallCurUp                        = 0;
+	_smallCurDown                      = 0;
+	_encounterFrameBg                  = 0;
+	_flagSkipDrawScene                 = false;
+	_matteVar1                         = 0;
+	_flagActorUpdateEnabledCheck       = false;
+	_matteInitialized                  = false;
+	_mattePlaySound                    = false;
+	_currentScreenUpdatesCount         = 0;
+	memset(&_chapter2Data2, 0, sizeof(_chapter2Data2));
+	memset(&_chapter2Counters, 0, sizeof(_chapter2Counters));
+	memset(&_chapter2Data3, 0, sizeof(_chapter2Data3));
+	_chapter2FrameIndexOffset          = 0;
+	_chapter2ActorIndex                = 0;
+	_eventUpdate                       = 0;
+	memset(&_chapter2Data5, 0, sizeof(_chapter2Data4));
+	_actorUpdateStatusEnabledCounter   = 0;
+	memset(&_chapter2Data5, 0, sizeof(_chapter2Data5));
+	// _flagEncounterDisablePlayerOnExit
+	_flag1                             = false;
+	_nextScreenUpdate                  = 0;
+	// _moviesViewed;
+	_flagActorUpdateStatus15Check      = false;
 
-	// Screen updates
-	_flagRedraw = false;
-	nextScreenUpdate = 0;
-	movieIndex = 0;
+	// Non-saved data
+	_flag2                             = false;
+	_flag3                             = false;
+	_flagScene1                        = false;
+	_flagRedraw                        = false;
+
+	_matteBarHeight                    = 0;
+	_matteVar2                         = 0;
 }
 
-void SharedData::setData(ActorIndex index, int32 val) {
-	if (index < 50)
-		_data1[index] = val;
-	else if (index < 60)
-		_data2[index - 50] = val;
-	else
-	error("[SharedData::setData] index is outside valid values (was: %d, valid: [0:60]", index);
+//////////////////////////////////////////////////////////////////////////
+// Saved scene data
+//////////////////////////////////////////////////////////////////////////
+void SharedData::saveCursorResources(ResourceId *resources, uint32 size) {
+	memcpy((ResourceId *)&_cursorResources, resources, size);
 }
 
-int32 SharedData::getData(ActorIndex index) {
-	if (index < 50)
-		return _data1[index];
-	else if (index < 60)
-		return _data2[index - 50];
-	else
-		error("[SharedData::getData] index is outside valid values (was: %d, valid: [0:60]", index);
+void SharedData::loadCursorResources(ResourceId *resources, uint32 size) {
+	memcpy(resources, (ResourceId *)&_cursorResources, size);
 }
 
-void SharedData::setData2(ActorIndex index, bool val) {
-	if (index <= 12 || index > 20)
-		error("[SharedData::setData2] index is outside valid values (was: %d, valid: [13:20]", index);
-
-	_data3[index - 12] = val;
+void SharedData::saveSceneFonts(ResourceId font1, ResourceId font2, ResourceId font3) {
+	_sceneFonts[0] = font1;
+	_sceneFonts[1] = font2;
+	_sceneFonts[2] = font3;
 }
 
-bool SharedData::getData2(ActorIndex index) {
-	if (index <= 12 || index > 20)
-		error("[SharedData::getData2] index is outside valid values (was: %d, valid: [13:20]", index);
-
-	return _data3[index - 12];
+void SharedData::loadSceneFonts(ResourceId *font1, ResourceId *font2, ResourceId *font3) {
+	*font1 = _sceneFonts[0];
+	*font2 = _sceneFonts[1];
+	*font3 = _sceneFonts[2];
 }
 
-void SharedData::resetActorData() {
-	for (int i = 0; i < 9; i++) {
-		_data1[i] = 160;
-		_data1[i + 18] = 0;
-		_data3[i] = 0;
-	}
+void SharedData::saveSmallCursor(int32 smallCurUp, int32 smallCurDown) {
+	_smallCurUp = smallCurUp;
+	_smallCurDown = smallCurDown;
 }
 
+void SharedData::loadSmallCursor(int32 *smallCurUp, int32 *smallCurDown) {
+	*smallCurUp = _smallCurUp;
+	*smallCurDown = _smallCurDown;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Chapter 2 data
+//////////////////////////////////////////////////////////////////////////
+void SharedData::resetChapter2Data() {
+	for (uint32 i = 5; i < 14; i++)
+		_chapter2Data3[i] = 0;
+
+	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data2); i++)
+		_chapter2Data2[i] = 160;
+
+	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data5); i++)
+		_chapter2Data5[i] = 0;
+}
+
+void SharedData::reset() {
+	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data2); i++)
+		_chapter2Data2[i] = 160;
+
+	_chapter2FrameIndexOffset = 1;
+}
+
+void SharedData::setChapter2Data(uint32 index, int32 offset, int32 val) {
+	error("[SharedData::setChapter2Data] Not implemented");
+}
+
+int32 SharedData::getChapter2Data(uint32 index, int32 offset) {
+	error("[SharedData::getChapter2Data] Not implemented");
+}
+
+void SharedData::setChapter2Counter(uint32 index, int32 val) {
+	if (index == 0 || index > 8)
+		error("[SharedData::setChapter2Counter] Invalid index (was: %d, valid: [1;8])", index);
+
+	_chapter2Counters[index - 1] = val;
+}
+
+int32 SharedData::getChapter2Counter(uint32 index) {
+	if (index == 0 || index > 8)
+		error("[SharedData::setChapter2Counter] Invalid index (was: %d, valid: [1;8])", index);
+
+	return _chapter2Counters[index - 1];
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Ambient sounds
+//////////////////////////////////////////////////////////////////////////
 uint32 SharedData::getAmbientTick(uint32 index) {
 	if (index >= ARRAYSIZE(_ambientTicks))
 		error("[SharedData::getAmbientTick] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientTicks));
@@ -174,6 +223,18 @@ bool SharedData::getFlag(GlobalFlag flag) const {
 
 	case kFlagScene1:
 		return _flagScene1;
+
+	//case kFlagSkipScriptProcessing:
+	//	return _flagSkipScriptProcessing;
+
+	//case kFlagEncounterRunning:
+	//	return _flagEncounterRunning;
+
+	case kFlagActorUpdateEnabledCheck:
+		return _flagActorUpdateEnabledCheck;
+
+	case kFlagActorUpdateStatus15Check:
+		return _flagActorUpdateStatus15Check;
 	}
 }
 
@@ -209,9 +270,28 @@ void SharedData::setFlag(GlobalFlag flag, bool state) {
 	case kFlagScene1:
 		_flagScene1 = state;
 		break;
+
+	//case kFlagSkipScriptProcessing:
+	//	_flagSkipScriptProcessing = state;
+	//	break;
+
+	//case kFlagEncounterRunning:
+	//	_flagEncounterRunning = state;
+	//	break;
+
+	case kFlagActorUpdateEnabledCheck:
+		_flagActorUpdateEnabledCheck = state;
+		break;
+
+	case kFlagActorUpdateStatus15Check:
+		_flagActorUpdateStatus15Check = state;
+		break;
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Serializer
+//////////////////////////////////////////////////////////////////////////
 void SharedData::saveLoadAmbientSoundData(Common::Serializer &s) {
 	// Ambient sound flags/ticks
 	for (uint32 i = 0; i < ARRAYSIZE(_ambientFlags); i++)
@@ -228,8 +308,8 @@ void SharedData::saveLoadWithSerializer(Common::Serializer &s) {
 	// Script queue (part of ScriptManager)
 
 	// Global coordinates (original uses int32 for coordinates)
-	s.syncAsSint32LE(point.x);
-	s.syncAsSint32LE(point.y);
+	s.syncAsSint32LE(_globalPoint.x);
+	s.syncAsSint32LE(_globalPoint.y);
 
 	// Processing skipped (part of ScriptManager)
 	// Encounter running (part of Encounter)
@@ -238,97 +318,73 @@ void SharedData::saveLoadWithSerializer(Common::Serializer &s) {
 	//s.syncAsUint32LE(playerIndex);
 
 	// Scene coordinates
-	s.syncAsSint32LE(sceneXLeft);
-	s.syncAsSint32LE(sceneYTop);
-	s.syncAsSint32LE(sceneOffset);
-	s.syncAsSint32LE(sceneOffsetAdd);
+	s.syncAsSint32LE(_sceneCoords.x);
+	s.syncAsSint32LE(_sceneCoords.y);
+	s.syncAsSint32LE(_sceneOffset);
+	s.syncAsSint32LE(_sceneOffsetAdd);
 
 	// Original skips 4 bytes
 	s.skip(4);
 
 	// Cursor resources
-	for (uint32 i = 0; i < ARRAYSIZE(cursorResources); i++)
-		s.syncAsUint32LE(cursorResources[i]);
+	for (uint32 i = 0; i < ARRAYSIZE(_cursorResources); i++)
+		s.syncAsUint32LE(_cursorResources[i]);
 
 	// Fonts
-	for (uint32 i = 0; i < ARRAYSIZE(sceneFonts); i++)
-		s.syncAsUint32LE(sceneFonts[i]);
+	for (uint32 i = 0; i < ARRAYSIZE(_sceneFonts); i++)
+		s.syncAsUint32LE(_sceneFonts[i]);
 
 	// Chapter 2 actor data (Part 1)
-	//for (uint32 i = 0; i < ARRAYSIZE(chapter2ActorData1); i++)
-	//	s.syncAsUint32LE(chapter2ActorData1[i]);
-
-	// Original skips 4 bytes
-	s.skip(4);
+	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data1); i++)
+		s.syncAsUint32LE(_chapter2Data1[i]);
 
 	// Scene information
-	s.syncAsSint32LE(smallCurUp);
-	s.syncAsSint32LE(smallCurDown);
-	s.syncAsSint32LE(encounterFrameBg);
+	s.syncAsSint32LE(_smallCurUp);
+	s.syncAsSint32LE(_smallCurDown);
+	s.syncAsSint32LE(_encounterFrameBg);
 	s.syncAsUint32LE(_flagSkipDrawScene);
-	s.syncAsSint32LE(matteVar1);
-	s.syncAsUint32LE(actorUpdateEnabledCheck);
-	s.syncAsUint32LE(matteInitialized);
-	s.syncAsUint32LE(mattePlaySound);
-	s.syncAsSint32LE(currentScreenUpdatesCount);
+	s.syncAsSint32LE(_matteVar1);
+	s.syncAsUint32LE(_flagActorUpdateEnabledCheck);
+	s.syncAsUint32LE(_matteInitialized);
+	s.syncAsUint32LE(_mattePlaySound);
+	s.syncAsSint32LE(_currentScreenUpdatesCount);
 
 	// Chapter 2 actor data (Part 2)
-	//for (uint32 i = 0; i < ARRAYSIZE(chapter2ActorData2); i++)
-	//	s.syncAsUint32LE(chapter2ActorData2[i]);
+	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data2); i++)
+		s.syncAsUint32LE(_chapter2Data2[i]);
 
 	// Chapter 2 counters (1-4)
-	//s.syncAsSint32LE(chapter2Counter1);
-	//s.syncAsSint32LE(chapter2Counter2);
-	//s.syncAsSint32LE(chapter2Counter3);
-	//s.syncAsSint32LE(chapter2Counter4);
-
-	// Original skips 4 bytes
-	s.skip(4);
+	s.syncAsSint32LE(_chapter2Counters[0]);
+	s.syncAsSint32LE(_chapter2Counters[1]);
+	s.syncAsSint32LE(_chapter2Counters[2]);
+	s.syncAsSint32LE(_chapter2Counters[3]);
 
 	// Chapter 2 actor data (Part 3)
-	//for (uint32 i = 0; i < ARRAYSIZE(chapter2ActorData3); i++)
-	//	s.syncAsUint32LE(chapter2ActorData3[i]);
-
-	// Original skips 4 bytes
-	s.skip(4);
-
-	// Chapter2 points
-	//for (uint32 i = 0; i < ARRAYSIZE(chapter2Points); i++) {
-	//	s.syncAsSint32LE(chapter2Points[i].x);
-	//	s.syncAsSint32LE(chapter2Points[i].y);
-	//}
-
-	// Original skips 4 bytes
-	s.skip(4);
+	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data3); i++)
+		s.syncAsUint32LE(_chapter2Data3[i]);
 
 	// Chapter 2 counter (5) and other data
-	//s.syncAsSint32LE(chapter2Counter5);
-	//s.syncAsSint32LE(chapter2FrameIndexOffset);
-	//s.syncAsSint32LE(chapter2ActorIndex);
+	s.syncAsSint32LE(_chapter2Counters[4]);
+	s.syncAsSint32LE(_chapter2FrameIndexOffset);
+	s.syncAsSint32LE(_chapter2ActorIndex);
 
-	//s.syncAsSint32LE(eventUpdateFlag);
+	//s.syncAsSint32LE(_eventUpdateFlag);
 
 	// Chapter 2 counters (6-8)
-	//s.syncAsSint32LE(chapter2Counter6);
-	//s.syncAsSint32LE(chapter2Counter7);
-	//s.syncAsSint32LE(chapter2Counter8);
-
-	// Original skips 7 * 4 bytes
-	s.skip(7 * 4);
+	s.syncAsSint32LE(_chapter2Counters[5]);
+	s.syncAsSint32LE(_chapter2Counters[6]);
+	s.syncAsSint32LE(_chapter2Counters[7]);
 
 	// Chapter 2 actor data (Part 4)
-	//for (uint32 i = 0; i < ARRAYSIZE(chapter2ActorData4); i++)
-	//	s.syncAsUint32LE(chapter2ActorData4[i]);
-
-	// Original skips 8 * 4 bytes
-	s.skip(8 * 4);
+	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data4); i++)
+		s.syncAsUint32LE(_chapter2Data4[i]);
 
 	// Actor UpdateStatusEnabled Counter
-	s.syncAsSint32LE(actorUpdateStatusEnabledCounter);
+	s.syncAsSint32LE(_actorUpdateStatusEnabledCounter);
 
 	// Chapter2 actor data (part 5)
-	//for (uint32 i = 0; i < ARRAYSIZE(chapter2ActorData5); i++)
-	//	s.syncAsUint32LE(chapter2ActorData5[i]);
+	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data5); i++)
+		s.syncAsUint32LE(_chapter2Data5[i]);
 
 	// Encounter disable player on exit
 	//s.syncAsSint32LE(encounterDisablePlayerOnExit);
@@ -337,13 +393,13 @@ void SharedData::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint32LE(_flagScene1);
 
 	// Next screen update
-	s.syncAsUint32LE(nextScreenUpdate);
+	s.syncAsUint32LE(_nextScreenUpdate);
 
 	// Viewed movies (we also load it from an external file...)
 	//s.syncBytes(&_moviesViewed, sizeof(_moviesViewed));
 
 	// Actor update status 15 check
-	s.syncAsUint32LE(actorUpdateStatus15Check);
+	s.syncAsUint32LE(_flagActorUpdateStatus15Check);
 
 	// TODO More?
 }

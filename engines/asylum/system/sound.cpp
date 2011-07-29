@@ -156,15 +156,14 @@ int32 Sound::calculateVolumeAdjustement(const Common::Point &point, int32 attenu
 	if (!attenuation)
 		return -(delta * delta);
 
-	Common::Point adjusted(point);
 	Actor *player = getScene()->getActor();
-	if (getSharedData()->point.x == -1) {
-		adjusted.x -= (player->getPoint1()->x + player->getPoint2()->x);
-		adjusted.y -= (player->getPoint1()->y + player->getPoint2()->y);
-	} else {
-		adjusted.x -= getSharedData()->point.x;
-		adjusted.y -= getSharedData()->point.y;
-	}
+	Common::Point adjusted(point);
+	Common::Point sumPlayer = *player->getPoint1() + *player->getPoint2();
+
+	if (getSharedData()->getGlobalPoint().x == -1)
+		adjusted -= sumPlayer;
+	else
+		adjusted -= getSharedData()->getGlobalPoint();
 
 	int32 adjustedVolume = getAdjustedVolume(adjusted.x * adjusted.x + adjusted.y * adjusted.y);
 

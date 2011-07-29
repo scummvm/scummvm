@@ -384,18 +384,18 @@ bool Scene::update() {
 		getSharedData()->setFlag(kFlagRedraw, true);
 	}
 
-	if (ticks > getSharedData()->nextScreenUpdate) {
+	if (ticks > getSharedData()->getNextScreenUpdate()) {
 		if (getSharedData()->getFlag(kFlagRedraw)) {
-			if (getSharedData()->matteBarHeight <= 0)
+			if (getSharedData()->getMatteBarHeight() <= 0)
 				getScreen()->copyBackBufferToScreen();
 			else
 				getEncounter()->drawScreen();
 
 			// Original also sets an unused value to 0
-			getSharedData()->setData(39, getSharedData()->getData(39) ^ 1);
+			getSharedData()->setEventUpdate(getSharedData()->getEventUpdate() ^ 1);
 
 			getSharedData()->setFlag(kFlagRedraw, false);
-			getSharedData()->nextScreenUpdate = ticks + 55;
+			getSharedData()->setNextScreenUpdate(ticks + 55);
 			++_vm->screenUpdateCount;
 		}
 	}
@@ -666,7 +666,7 @@ bool Scene::updateScene() {
 #endif
 
 	// Update each part of the scene
-	if (getSharedData()->matteBarHeight != 170 || getSharedData()->mattePlaySound) {
+	if (getSharedData()->getMatteBarHeight() != 170 || getSharedData()->getMattePlaySound()) {
 		MESURE_TICKS(updateMouse);
 		MESURE_TICKS(updateActors);
 		MESURE_TICKS(updateObjects);
@@ -1067,17 +1067,17 @@ void Scene::updateCoordinates() {
 
 	case 2:
 	case 5: {
-		getSharedData()->sceneOffset += getSharedData()->sceneOffsetAdd;
+		getSharedData()->setSceneOffset(getSharedData()->getSceneOffset() + getSharedData()->getSceneOffsetAdd());
 
 		int32 coord1 = 0;
 		int32 coord2 = 0;
 
-		if (abs(getSharedData()->sceneXLeft - _ws->coordinates[0]) <= abs(getSharedData()->sceneYTop - _ws->coordinates[1])) {
+		if (abs(getSharedData()->getSceneCoords().x - _ws->coordinates[0]) <= abs(getSharedData()->getSceneCoords().y - _ws->coordinates[1])) {
 			coord1 = _ws->coordinates[1];
 			coord2 = yTop;
 
 			if (_ws->coordinates[1] != _ws->yTop)
-				xLeft = _ws->xLeft = getSharedData()->sceneOffset + getSharedData()->sceneXLeft;
+				xLeft = _ws->xLeft = getSharedData()->getSceneOffset() + getSharedData()->getSceneCoords().x;
 
 			yTop = _ws->coordinates[2] + _ws->yTop;
 			_ws->yTop += _ws->coordinates[2];
@@ -1087,7 +1087,7 @@ void Scene::updateCoordinates() {
 			coord2 = xLeft;
 
 			if (_ws->coordinates[0] != _ws->xLeft)
-				yTop = _ws->yTop = getSharedData()->sceneOffset + getSharedData()->sceneYTop;
+				yTop = _ws->yTop = getSharedData()->getSceneOffset() + getSharedData()->getSceneCoords().y;
 
 			xLeft = _ws->coordinates[2] + _ws->xLeft;
 			_ws->xLeft += _ws->coordinates[2];
@@ -1741,12 +1741,12 @@ void Scene::hitActorChapter2(ActorIndex index) {
 				actor11->updateStatus(kActorStatus14);
 		}
 
-		getSharedData()->setData(38, index);
+		getSharedData()->setChapter2ActorIndex(index);
 
 	} else if (index > 12) {
 		player->faceTarget(index + 9, kDirectionFromActor);
 		player->updateStatus(kActorStatus15);
-		getSharedData()->setData(38, index);
+		getSharedData()->setChapter2ActorIndex(index);
 	}
 }
 
@@ -2089,9 +2089,8 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 			*targetY = _ws->height - 480;
 
 	// Adjust scene offsets & coordinates
-	getSharedData()->sceneOffset = 0;
-	getSharedData()->sceneXLeft = _ws->xLeft;
-	getSharedData()->sceneYTop = _ws->yTop;
+	getSharedData()->setSceneOffset(0);
+	getSharedData()->setSceneCoords(Common::Point(_ws->xLeft, _ws->yTop));
 
 	int32 diffX = *targetX - _ws->xLeft;
 	int32 diffY = *targetY - _ws->yTop;
@@ -2100,7 +2099,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 		if (_ws->yTop > *targetY)
 			*coord3 = -*coord3;
 
-		getSharedData()->sceneOffsetAdd =Common::Rational(*coord3 * diffX, diffY).toInt();
+		getSharedData()->setSceneOffsetAdd(Common::Rational(*coord3 * diffX, diffY).toInt());
 
 		if (param != NULL && abs(diffY) <= abs(*coord3)) {
 			*targetX = -1;
@@ -2111,7 +2110,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 		if (_ws->xLeft > *targetX)
 			*coord3 = -*coord3;
 
-		getSharedData()->sceneOffsetAdd = Common::Rational(*coord3 * diffY, diffX).toInt();
+		getSharedData()->setSceneOffsetAdd(Common::Rational(*coord3 * diffY, diffX).toInt());
 
 		if (param != NULL && abs(diffX) <= abs(*coord3)) {
 			*targetX = -1;
@@ -2267,14 +2266,13 @@ void Scene::changePlayer(ActorIndex index) {
 		break;
 
 	case 666:
-		memcpy(getSharedData()->cursorResources, _ws->cursorResources, 44);
 		getScreen()->setupTransTables(3, _ws->graphicResourceIds[50], _ws->graphicResourceIds[49], _ws->graphicResourceIds[48]);
-		getSharedData()->sceneFonts[0] = _ws->font1;
-		getSharedData()->sceneFonts[1] = _ws->font2;
-		getSharedData()->sceneFonts[2] = _ws->font3;
-		getSharedData()->smallCurDown  = _ws->smallCurDown;
-		getSharedData()->smallCurUp    = _ws->smallCurUp;
-		getSharedData()->encounterFrameBg = _ws->encounterFrameBg;
+
+		// Save scene data
+		getSharedData()->saveCursorResources((ResourceId *)&_ws->cursorResources, sizeof(_ws->cursorResources));
+		getSharedData()->saveSceneFonts(_ws->font1, _ws->font2, _ws->font3);
+		getSharedData()->saveSmallCursor(_ws->smallCurDown, _ws->smallCurUp);
+		getSharedData()->saveEncounterFrameBackground(_ws->encounterFrameBg);
 
 		// Setup new values
 		for (uint32 i = 0; i < 11; i++)
@@ -2291,14 +2289,12 @@ void Scene::changePlayer(ActorIndex index) {
 
 	case 667:
 		getScreen()->setupTransTables(3, _ws->cellShadeMask1, _ws->cellShadeMask2, _ws->cellShadeMask3);
-		memcpy(_ws->cursorResources, getSharedData()->cursorResources, 44);
-		_ws->font1 = getSharedData()->sceneFonts[0];
-		_ws->font2 = getSharedData()->sceneFonts[1];
-		_ws->font3 = getSharedData()->sceneFonts[2];
 
-		_ws->smallCurDown = getSharedData()->smallCurDown;
-		_ws->smallCurUp = getSharedData()->smallCurUp;
-		_ws->encounterFrameBg = getSharedData()->encounterFrameBg;
+		// Load scene data
+		getSharedData()->loadCursorResources((ResourceId *)&_ws->cursorResources, sizeof(_ws->cursorResources));
+		getSharedData()->loadSceneFonts(&_ws->font1, &_ws->font2, &_ws->font3);
+		getSharedData()->loadSmallCursor(&_ws->smallCurDown, &_ws->smallCurUp);
+		getSharedData()->loadEncounterFrameBackground(&_ws->encounterFrameBg);
 
 		// Reset cursor
 		getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass], 0, kCursorAnimationNone);
@@ -2306,7 +2302,7 @@ void Scene::changePlayer(ActorIndex index) {
 
 	case 668:
 		getActor(11)->setPosition(2300, 100, kDirectionN, 0);
-		getSharedData()->setData(40, 0);
+		getSharedData()->setChapter2Counter(6, 0);
 		getSharedData()->setFlag(kFlag1, false);
 		break;
 	}

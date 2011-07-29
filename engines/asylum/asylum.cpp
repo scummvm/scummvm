@@ -242,8 +242,7 @@ void AsylumEngine::restart() {
 	_encounter = new Encounter(this);
 	_script->resetQueue();
 
-	_data.point.x = -1;
-	_data.point.y = -1;
+	_data.setGlobalPoint(Common::Point(-1, -1));
 
 	reset();
 
@@ -266,10 +265,7 @@ void AsylumEngine::reset() {
 	initPuzzles();
 
 	// Reset shared data
-	for (uint32 i = 0; i < 37; i++)
-		_data.setData(i, 160);
-
-	_data.setData(37, 1);
+	_data.reset();
 
 	// Reset special palette info
 	_special->reset(true);

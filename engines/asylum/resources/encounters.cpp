@@ -318,7 +318,7 @@ bool Encounter::init() {
 	if (getSound()->getMusicVolume() != Config.musicVolume - 500)
 		getSound()->setMusicVolume(Config.musicVolume - 500);
 
-	if (!getSharedData()->matteBarHeight) {
+	if (!getSharedData()->getMatteBarHeight()) {
 		_isRunning = true;
 		_data_455BD4 = false;
 		_data_455BD8 = false;
@@ -347,7 +347,7 @@ bool Encounter::init() {
 	_data_455BD0 = false;
 	getCursor()->set(getWorld()->cursorResources[kCursorResourceTalkNPC], -1, kCursorAnimationMirror);
 
-	if (!getSharedData()->matteBarHeight)
+	if (!getSharedData()->getMatteBarHeight())
 		initScript(_item->scriptResourceId);
 
 	return true;
@@ -400,7 +400,7 @@ bool Encounter::update() {
 	}
 
 	if (_data_455BE8) {
-		if (getSharedData()->matteBarHeight) {
+		if (getSharedData()->getMatteBarHeight()) {
 			_data_455BD0 = false;
 		} else {
 			getCursor()->show();
@@ -422,7 +422,7 @@ bool Encounter::update() {
 		 || (getSpeech()->getTick() && tick >= getSpeech()->getTick()))
 			doScript = true;
 
-		if (!getSharedData()->matteBarHeight && doScript && _flag4) {
+		if (!getSharedData()->getMatteBarHeight() && doScript && _flag4) {
 			if (!setupSpeech(id))
 			    runScript();
 		}
@@ -436,15 +436,15 @@ bool Encounter::update() {
 		getSharedData()->setFlag(kFlagRedraw, true);
 	}
 
-	if (tick >= getSharedData()->nextScreenUpdate && getSharedData()->getFlag(kFlagRedraw)) {
-		if (getSharedData()->matteBarHeight <= 0) {
+	if (tick >= getSharedData()->getNextScreenUpdate() && getSharedData()->getFlag(kFlagRedraw)) {
+		if (getSharedData()->getMatteBarHeight() <= 0) {
 			getScreen()->copyBackBufferToScreen();
 		} else {
 			drawScreen();
 		}
 
 		getSharedData()->setFlag(kFlagRedraw, false);
-		getSharedData()->nextScreenUpdate = tick + 55;
+		getSharedData()->setNextScreenUpdate(tick + 55);
 	}
 
 	return true;
@@ -1129,24 +1129,24 @@ void Encounter::drawText(char *text, ResourceId font, int32 y) {
 void Encounter::drawScreen() {
 	getScene()->getActor()->setLastScreenUpdate(_vm->screenUpdateCount);
 
-	if (!getSharedData()->matteInitialized)
-		getSharedData()->matteBarHeight = 85;
+	if (!getSharedData()->getMatteInitialized())
+		getSharedData()->setMatteBarHeight(85);
 
-	if (getSharedData()->matteBarHeight >= 84) {
-		if (getSharedData()->matteBarHeight == 85) {
-			if (getSharedData()->matteInitialized) {
+	if (getSharedData()->getMatteBarHeight() >= 84) {
+		if (getSharedData()->getMatteBarHeight() == 85) {
+			if (getSharedData()->getMatteInitialized()) {
 				getScreen()->drawWideScreenBars(82);
 
 				getScreen()->updatePalette();
 				getScreen()->setupPalette(NULL, 0, 0);
 				getScreen()->paletteFade(0, 25, 10);
 			} else {
-				getSharedData()->matteInitialized = true;
+				getSharedData()->setMatteInitialized(true);
 				getScreen()->clear();
 			}
 
-			if (getSharedData()->matteVar1) {
-				if (!getSharedData()->matteVar2)
+			if (getSharedData()->getMatteVar1()) {
+				if (!getSharedData()->getMatteVar2())
 					getSound()->playMusic(kResourceNone, 0);
 
 				// Play movie
@@ -1156,7 +1156,7 @@ void Encounter::drawScreen() {
 				getScreen()->clear();
 				getCursor()->hide();
 
-				if (getSharedData()->mattePlaySound) {
+				if (getSharedData()->getMattePlaySound()) {
 					getScreen()->paletteFade(0, 2, 1);
 					getScene()->updateScreen();
 					getScreen()->drawWideScreenBars(82);
@@ -1164,24 +1164,24 @@ void Encounter::drawScreen() {
 					getScreen()->updatePalette();
 					getScreen()->setupPalette(NULL, 0, 0);
 
-					if (getSharedData()->mattePlaySound /* Scene::updateScreen() does script processing, so the value might have changed */
-					 && !getSharedData()->matteVar2
+					if (getSharedData()->getMattePlaySound() /* Scene::updateScreen() does script processing, so the value might have changed */
+					 && !getSharedData()->getMatteVar2()
 					 && getWorld()->musicCurrentResourceIndex != kMusicStopped)
 						getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicCurrentResourceIndex));
 				}
 
-				getSharedData()->matteBarHeight = (getSharedData()->mattePlaySound ? 346 : 170);
+				getSharedData()->setMatteBarHeight(getSharedData()->getMattePlaySound() ? 346 : 170);
 			} else {
-				getSharedData()->matteBarHeight = 170;
+				getSharedData()->setMatteBarHeight(170);
 			}
-		} else if (getSharedData()->matteBarHeight >= 170) {
+		} else if (getSharedData()->getMatteBarHeight() >= 170) {
 			if (_isRunning) {
-				getSharedData()->matteBarHeight = 0;
+				getSharedData()->setMatteBarHeight(0);
 				getCursor()->show();
 			}
 		} else {
-			getScreen()->drawWideScreenBars(172 - getSharedData()->matteBarHeight);
-			getSharedData()->matteBarHeight += 4;
+			getScreen()->drawWideScreenBars(172 - getSharedData()->getMatteBarHeight());
+			getSharedData()->setMatteBarHeight(getSharedData()->getMatteBarHeight() + 4);
 
 			ResourceId paletteId = getWorld()->actions[getScene()->getActor()->getActionIndex3()]->paletteResourceId;
 			getScreen()->setPaletteGamma(paletteId ? paletteId : getWorld()->currentPaletteId);
@@ -1190,8 +1190,8 @@ void Encounter::drawScreen() {
 			getScreen()->setupPalette(NULL, 0, 0);
 		}
 	} else {
-		getScreen()->drawWideScreenBars(getSharedData()->matteBarHeight);
-		getSharedData()->matteBarHeight += 4;
+		getScreen()->drawWideScreenBars(getSharedData()->getMatteBarHeight());
+		getSharedData()->setMatteBarHeight(getSharedData()->getMatteBarHeight() + 4);
 
 		getScreen()->setPaletteGamma(getWorld()->currentPaletteId);
 
@@ -1608,14 +1608,14 @@ void Encounter::runScript() {
 			break;
 
 		case 23:
-			if (!getSharedData()->matteBarHeight) {
+			if (!getSharedData()->getMatteBarHeight()) {
 				getScreen()->loadPalette();
-				getSharedData()->matteBarHeight = 1;
+				getSharedData()->setMatteBarHeight(1);
 				getSharedData()->movieIndex = getVariableInv(entry.param2);
-				getSharedData()->matteVar1 = 1;
-				getSharedData()->mattePlaySound = true;
-				getSharedData()->matteInitialized = true;
-				getSharedData()->matteVar2 = 0;
+				getSharedData()->setMatteVar1(1);
+				getSharedData()->setMattePlaySound(true);
+				getSharedData()->setMatteInitialized(true);
+				getSharedData()->setMatteVar2(0);
 				done = true;
 			}
 

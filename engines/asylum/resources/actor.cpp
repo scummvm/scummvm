@@ -1970,7 +1970,7 @@ void Actor::enableActorsChapter2(AsylumEngine *engine) {
 	engine->clearGameFlag(kGameFlag442);
 
 	// Reset shared data
-	engine->data()->resetActorData();
+	engine->data()->resetChapter2Data();
 
 	engine->scene()->getActor(13)->enable();
 	engine->scene()->getActor(13)->processStatus(2300, 71, false);
@@ -1998,12 +1998,6 @@ void Actor::enableActorsChapter2(AsylumEngine *engine) {
 
 	engine->scene()->getActor(21)->enable();
 	engine->scene()->getActor(21)->processStatus(2541, 40, false);
-
-	for (uint32 i = 0; i < 9; i++) {
-		engine->data()->setData(i, 160);
-		engine->data()->setData(i + 18, 0);
-		engine->data()->setData(i + 44, 0);
-	}
 }
 
 void Actor::updatePlayerChapter9(AsylumEngine *engine, int nextPlayer) {
@@ -2110,7 +2104,7 @@ void Actor::updatePumpkin(GameFlag flagToCheck, GameFlag flagToSet, ObjectId obj
 		_vm->setGameFlag(flagToSet);
 		_vm->clearGameFlag(flagToCheck);
 
-		getSharedData()->setActorUpdateFlag2(getSharedData()->getActorUpdateFlag2() + 1);
+		getSharedData()->setChapter2Counter(5, getSharedData()->getChapter2Counter(5) + 1);
 
 		getWorld()->getObjectById(objectToUpdate)->setNextFrame(8);
 		getSound()->playSound(getWorld()->soundResourceIds[17], false, Config.sfxVolume - 10);
@@ -2210,7 +2204,7 @@ void Actor::updateStatusEnabled() {
 						Common::Point pt(poly.boundingRect.left + rnd(poly.boundingRect.width()),
 						                 poly.boundingRect.top  + rnd(poly.boundingRect.height()));
 
-						if (!getSharedData()->actorUpdateEnabledCheck) {
+						if (!getSharedData()->getFlag(kFlagActorUpdateEnabledCheck)) {
 							if (!isInActionArea(pt, area)) {
 								Common::Point polyPoint = poly.points[rnd(poly.count())];
 								processStatus(polyPoint.x, polyPoint.y, false);
@@ -2223,7 +2217,7 @@ void Actor::updateStatusEnabled() {
 			}
 		}
 	} else {
-		switch (getSharedData()->actorUpdateStatusEnabledCounter) {
+		switch (getSharedData()->getActorUpdateStatusEnabledCounter()) {
 		default:
 			break;
 
@@ -2262,7 +2256,7 @@ void Actor::updateStatusEnabledProcessStatus(int32 testX, int32 testY, uint32 co
 		if (rnd(1000) < 5)
 			processStatus(testX, testY, false);
 	} else {
-		getSharedData()->actorUpdateStatusEnabledCounter = counter;
+		getSharedData()->setActorUpdateStatusEnabledCounter(counter);
 
 		if (rnd(1000) < 5)
 			processStatus(setX, setY, false);
@@ -2297,10 +2291,10 @@ void Actor::updateStatus12_Chapter2() {
 	// Face actor
 	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
 
-	int32 data = getSharedData()->getData(_index + 14);
+	int32 data = getSharedData()->getChapter2Data(3, _index + 1);
 	if (data > 0) {
 		_direction = (ActorDirection)(_direction + 4);
-		getSharedData()->setData(_index + 14, data - 1);
+		getSharedData()->setChapter2Data(3, _index + 1, data - 1);
 	}
 
 	// Compute coordinates and distance
@@ -2320,8 +2314,8 @@ void Actor::updateStatus12_Chapter2() {
 	} else {
 		_frameIndex = 0;
 
-		getSharedData()->setData(2 * _index + 19, player->getPoint1()->x - _point1.x);
-		getSharedData()->setData(2 * _index + 20, player->getPoint1()->y - _point1.y);
+		getSharedData()->setChapter2Data(3, 2 * _index + 6, player->getPoint1()->x - _point1.x);
+		getSharedData()->setChapter2Data(3, 2 * _index + 7, player->getPoint1()->y - _point1.y);
 
 		updateStatus(kActorStatus18);
 	}
@@ -2343,7 +2337,7 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 	// Update status
 	if (player->getStatus() == kActorStatus17 || !getScene()->getActor(10)->isVisible()) {
 		updateStatus(kActorStatusEnabled);
-		getSharedData()->setData(_index - 8, 160);
+		getSharedData()->setChapter2Data(1, 3, 160);     // &cursorResources + 8 + 11 (actorIndex)
 	}
 
 	// Face player
@@ -2471,48 +2465,43 @@ void Actor::updateStatus14() {
 }
 
 void Actor::updateStatus14_Chapter2() {
-	if (!getSharedData()->getData2(_index)) {
-		updateStatus(kActorStatus12);
-		return;
-	}
-
-	// FIXME original calls getDistanceForFrame but does not seem to do anything with the results
+	// Original calls getDistanceForFrame but does not seem to do anything with the results
 
 	if (_status == kActorStatus17 || !getScene()->getActor(10)->isVisible()) {
 		updateStatus(kActorStatusEnabled);
-		getSharedData()->setData(_index - 8, 160);
+		getSharedData()->setChapter2Data(1, (_index - 13) + 5, 160);    // Index > 12
 	}
 
 	if (_status != kActorStatus16) {
-		_point1.x -= getSharedData()->getData(2 * _index + 19);
-		_point1.y -= getSharedData()->getData(2 * _index + 20) + 54;
+		_point1.x -= getSharedData()->getChapter2Data(3, 2 * _index + 6);
+		_point1.y -= getSharedData()->getChapter2Data(3, 2 * _index + 7) + 54;
 	}
 
 	if (_frameIndex == _frameCount - 1) {
 		_frameIndex = 0;
-		if (getSharedData()->getData(_index + 6) <= 1 || _status == kActorStatus16 || _status == kActorStatus17) {
-			getSharedData()->setData(_index + 6, getSharedData()->getData(_index + 6) + 1);
+		if (getSharedData()->getChapter2Data(2, _index + 6) <= 1 || _status == kActorStatus16 || _status == kActorStatus17) {
+			getSharedData()->setChapter2Data(2, _index + 6, getSharedData()->getChapter2Data(2, _index + 6) + 1);
 		} else {
 			updateStatus(kActorStatus15);
 			_point1.y -= 54;
-			getSharedData()->setData(_index + 6, 0);
-			getSharedData()->setData(_index, getSharedData()->getData(_index) + 54);
+			getSharedData()->setChapter2Data(2, _index + 6, 0);
+			getSharedData()->setChapter2Data(1, _index + 1, getSharedData()->getChapter2Data(1, _index + 1) + 54);
 		}
 	}
 
-	if (_status == kActorStatus17 && getSharedData()->getData(_index + 6) < 100) {
+	if (_status == kActorStatus17 && getSharedData()->getChapter2Data(2, _index + 6) < 100) {
 		_point1.y -= 6;
-		getSharedData()->setData(_index + 6, 100);
-		getSharedData()->setData(_index, getSharedData()->getData(_index) + 6);
+		getSharedData()->setChapter2Data(2, _index + 6, 100);
+		getSharedData()->setChapter2Data(1, _index + 1, getSharedData()->getChapter2Data(1, _index + 1) + 6);
 	}
 
-	if (getSharedData()->getData(_index + 6) > 99) {
+	if (getSharedData()->getChapter2Data(2, _index + 6) > 99) {
 		_point1.y -= 6;
-		getSharedData()->setData(_index + 6, getSharedData()->getData(_index + 6) + 1);
-		getSharedData()->setData(_index, getSharedData()->getData(_index) + 6);
+		getSharedData()->setChapter2Data(2, _index + 6, getSharedData()->getChapter2Data(2, _index + 6) + 1);
+		getSharedData()->setChapter2Data(1, _index + 1, getSharedData()->getChapter2Data(1, _index + 1) + 6);
 
-		if (getSharedData()->getData(_index + 6) > 108) {
-			getSharedData()->setData(_index + 6, 0);
+		if (getSharedData()->getChapter2Data(2, _index + 6) > 108) {
+			getSharedData()->setChapter2Data(2, _index + 6, 0);
 
 			updateStatus(kActorStatusEnabled);
 
@@ -2592,7 +2581,7 @@ void Actor::updateStatus15_Chapter2() {
 
 	if (_status == kActorStatus17 || !getScene()->getActor(10)->isVisible()) {
 		updateStatus(kActorStatusEnabled);
-		getSharedData()->setData(_index - 8, 160);
+		getSharedData()->setChapter2Data(1, (_index - 13) + 5, 160);    // Index > 12
 	}
 
 	if (_frameIndex == 1)
@@ -2608,7 +2597,7 @@ void Actor::updateStatus15_Chapter2() {
 		getScene()->getActor(_index + 9)->setDirection(_direction);
 	}
 
-	if (_frameIndex < 5 || !getSharedData()->getData2(_index))
+	if (_frameIndex < 5 || !getSharedData()->getChapter2Data(4, _index + 7))
 		_frameIndex++;
 
 	if (sumPlayer.x > sum.x)
@@ -2632,7 +2621,7 @@ void Actor::updateStatus15_Chapter2() {
 			player->updateFromDirection((ActorDirection)((_direction + 4) & 7));
 			player->updateStatus(kActorStatus16);
 
-			getSharedData()->setData2(_index, 0);
+			getSharedData()->setChapter2Data(4, _index + 7, 0);
 		}
 	}
 
@@ -2658,12 +2647,12 @@ void Actor::updateStatus15_Chapter2() {
 
 		_frameIndex = 0;
 
-		if (getSharedData()->getData(40) <= 2)
+		if (getSharedData()->getChapter2Counter(6) <= 2)
 			processStatus(sum.x, sum.y, false);
 		else
 			updateStatus(kActorStatusEnabled);
 
-		getSharedData()->setData2(_index, 0);
+		getSharedData()->setChapter2Data(4, _index + 7, 0);
 	}
 }
 
@@ -2676,7 +2665,7 @@ void Actor::updateStatus15_Chapter2_Helper() {
 	if (_vm->isGameFlagSet(kGameFlag169))
 		actor39->getPoint1()->y += 80;
 
-	switch (getSharedData()->getData(40)) {
+	switch (getSharedData()->getChapter2Counter(6)) {
 	default:
 		break;
 
@@ -2706,9 +2695,9 @@ void Actor::updateStatus15_Chapter2_Helper() {
 		break;
 	}
 
-	getSharedData()->setData(40, getSharedData()->getData(40) + 1);
+	getSharedData()->setChapter2Counter(6, getSharedData()->getChapter2Counter(6) + 1);
 
-	switch (getSharedData()->getData(40)) {
+	switch (getSharedData()->getChapter2Counter(6)) {
 	default:
 		break;
 
@@ -2737,7 +2726,7 @@ void Actor::updateStatus15_Chapter2_Player() {
 	if (_frameIndex == 1)
 		getSound()->playSound(getWorld()->soundResourceIds[3], false, Config.sfxVolume - 10);
 
-	ActorIndex actorIndex = getSharedData()->getData(38);
+	ActorIndex actorIndex = getSharedData()->getChapter2ActorIndex();
 	if (_frameIndex == 3) {
 
 		if (actorIndex > 12) {
@@ -2839,7 +2828,7 @@ void Actor::updateStatus15_Chapter2_Player_Helper() {
 	Common::Point point11(actor11->getPoint1()->x + actor11->getPoint2()->x, actor11->getPoint1()->y + actor11->getPoint2()->y);
 
 	if (actor11->getStatus() == kActorStatus15 && euclidianDistance(point, point11) < 100) {
-		Actor *actor = getScene()->getActor(getSharedData()->getData(38));
+		Actor *actor = getScene()->getActor(getSharedData()->getChapter2ActorIndex());
 
 		actor40->show();
 		actor40->setFrameIndex(0);
@@ -2848,7 +2837,7 @@ void Actor::updateStatus15_Chapter2_Player_Helper() {
 
 		if (actor11->getFrameIndex() <= 7) {
 			getSound()->playSound(getWorld()->soundResourceIds[9], false, Config.sfxVolume - 10);
-		} else if (getSharedData()->getData(36) <= 6) {
+		} else if (getSharedData()->getChapter2Counter(5) <= 6) {
 			getSound()->playSound(getWorld()->soundResourceIds[9], false, Config.sfxVolume - 10);
 		} else {
 			getScene()->getActor(10)->updateStatus(kActorStatus17);
@@ -2879,19 +2868,19 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 		break;
 
 	case 9:
-		getSharedData()->setData(37, 1);
-		getSharedData()->setData(42, getSharedData()->getData(42) + 1);
+		getSharedData()->setChapter2FrameIndexOffset(1);
+		getSharedData()->setChapter2Counter(8, getSharedData()->getChapter2Counter(8) + 1);
 		break;
 
 	case 11:
-		if (getSharedData()->getData(42) >= 3)
-			getSharedData()->setData(42, 0);
+		if (getSharedData()->getChapter2Counter(8) >= 3)
+			getSharedData()->setChapter2Counter(8, 0);
 		else
-			getSharedData()->setData(37, -1);
+			getSharedData()->setChapter2FrameIndexOffset(-1);
 		break;
 	}
 
-	_frameIndex += getSharedData()->getData(37);
+	_frameIndex += getSharedData()->getChapter2FrameIndexOffset();
 
 	Common::Point actionPoint = sum;
 	actionPoint.x += compareX(Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.bottom), sumPlayer);
@@ -2906,10 +2895,10 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 		if (_frameIndex > _frameCount - 1) {
 			_frameIndex = 0;
 
-			if (!getSharedData()->actorUpdateStatus15Check) {
+			if (!getSharedData()->getFlag(kFlagActorUpdateStatus15Check)) {
 				updateStatus(kActorStatus12);
 			} else {
-				getSharedData()->actorUpdateStatus15Check = false;
+				getSharedData()->setFlag(kFlagActorUpdateStatus15Check, false);
 				getScene()->getActor(11)->updateStatus(kActorStatus18);
 			}
 		}
@@ -2934,8 +2923,8 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 
 		} else {
 			if ((abs(sum.y - sumPlayer.y) + abs(sum.x - sumPlayer.x)) < 100) {
-				getSharedData()->setData(41, 5);
-				getSharedData()->actorUpdateStatus15Check = true;
+				getSharedData()->setChapter2Counter(7, 5);
+				getSharedData()->setFlag(kFlagActorUpdateStatus15Check, true);
 			}
 		}
 	}
@@ -3051,13 +3040,13 @@ void Actor::updateStatus15_Chapter11_Player() {
 }
 
 void Actor::updateStatus16_Chapter2() {
-	// We are sure to be the current player
+	Actor *player = getScene()->getActor();
 
-	++_frameIndex;
+	player->setFrameIndex(player->getFrameIndex() + 1);
 
-	if (_frameIndex > _frameCount - 1) {
-		if (getSharedData()->getData(40) <= 2) {
-			_frameIndex = 0;
+	if (player->getFrameIndex() > (player->getFrameCount() - 1)) {
+		if (getSharedData()->getChapter2Counter(6) <= 2) {
+			player->setFrameIndex(0);
 			updateStatus(kActorStatus14);
 		} else {
 			_vm->clearGameFlag(kGameFlag438);
@@ -3070,7 +3059,7 @@ void Actor::updateStatus16_Chapter2() {
 
 			_vm->setGameFlag(kGameFlag219);
 
-			_frameIndex = 0;
+			player->setFrameIndex(0);
 			updateStatus(kActorStatus17);
 
 			_vm->clearGameFlag(kGameFlag369);
@@ -3132,19 +3121,19 @@ void Actor::updateStatus17_Chapter2() {
 void Actor::updateStatus18_Chapter2() {
 	Actor *player = getScene()->getActor();
 
-	_point1.x = player->getPoint1()->x - getSharedData()->getData(2 * _index + 19);
-	_point1.y = player->getPoint1()->y - getSharedData()->getData(2 * _index + 20);
+	_point1.x = player->getPoint1()->x - getSharedData()->getChapter2Data(3, 2 * _index + 6);
+	_point1.y = player->getPoint1()->y - getSharedData()->getChapter2Data(3, 2 * _index + 7);
 
 	_frameIndex++;
 
 	if (_frameIndex > _frameCount - 1) {
-		getSharedData()->setData2(_index, true);
+		getSharedData()->setChapter2Data(4, _index + 7, true);
 		updateStatus(kActorStatus14);
 
 		_point1.y += 54;
 		getSound()->playSound(getWorld()->soundResourceIds[1], false, Config.sfxVolume - 10);
 
-		getSharedData()->setData(_index, getSharedData()->getData(_index) - 54);
+		getSharedData()->setChapter2Data(1, _index + 1, getSharedData()->getChapter2Data(1, _index + 1) - 54);
 	}
 }
 
@@ -3152,9 +3141,9 @@ void Actor::updateStatus18_Chapter2_Actor11() {
 	uint32 frameIndex = (_frameIndex < _frameCount) ? _frameIndex : 2 * _frameCount - _frameIndex - 1;
 	int32 distance = abs((double)getDistanceForFrame(_direction, frameIndex));
 
-	getSharedData()->setData(41, getSharedData()->getData(41) + 1);
-	if (getSharedData()->getData(41) > 14) {
-		getSharedData()->setData(41, 0);
+	getSharedData()->setChapter2Counter(7, getSharedData()->getChapter2Counter(7) + 1);
+	if (getSharedData()->getChapter2Counter(7) > 14) {
+		getSharedData()->setChapter2Counter(7, 0);
 		updateStatus(kActorStatus12);
 	}
 
