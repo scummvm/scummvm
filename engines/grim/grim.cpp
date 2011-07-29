@@ -496,12 +496,16 @@ Common::Error GrimEngine::run() {
 	BitmapPtr splash_bm;
 	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
+	else if ((_gameFlags & ADGF_DEMO) && getGameType() == GType_MONKEY4)
+		splash_bm = g_resourceloader->loadBitmap("splash.til");
 
 	g_driver->clearScreen();
 
 	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
 		splash_bm->draw();
-
+	else if ((_gameFlags & ADGF_DEMO) && getGameType() == GType_MONKEY4)
+		splash_bm->draw();
+	
 	g_driver->flipBuffer();
 
 	lua_iolibopen();
