@@ -955,8 +955,7 @@ void Actor::shutUp() {
 			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 		_lipSync = NULL;
 		stopTalking();
-	} else if (_mumbleChore >= 0 && _mumbleCostume->isChoring(_mumbleChore, false) >= 0) {
-		_mumbleCostume->stopChore(_mumbleChore);
+	} else if (stopMumbleChore()) {
 		stopTalking();
 	}
 
@@ -1210,6 +1209,7 @@ void Actor::update() {
 			if (_talkAnim != anim) {
 				if (anim != -1) {
 					if (_talkChore[anim] >= 0) {
+						stopMumbleChore();
 						if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
 							_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 
@@ -1218,8 +1218,12 @@ void Actor::update() {
 						stopTalking();
 						_talkAnim = anim;
 						_talkCostume[_talkAnim]->playChore(_talkChore[_talkAnim]);
+					} else if (_mumbleChore != -1 && _mumbleCostume->isChoring(_mumbleChore, false) < 0) {
+						_mumbleCostume->playChoreLooping(_mumbleChore);
+						_talkAnim = -1;
 					}
 				} else {
+					stopMumbleChore();
 					if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
 						_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
 
@@ -1450,6 +1454,15 @@ void Actor::stopTalking() {
 		// Don't playLooping it, or else manny's mouth will flicker when he smokes.
 		_talkCostume[0]->playChore(_talkChore[0]);
 	}
+}
+
+bool Actor::stopMumbleChore() {
+	if (_mumbleChore >= 0 && _mumbleCostume->isChoring(_mumbleChore, false) >= 0) {
+		_mumbleCostume->stopChore(_mumbleChore);
+		return true;
+	}
+
+	return false;
 }
 
 extern int refSystemTable;

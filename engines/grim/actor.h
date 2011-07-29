@@ -453,6 +453,7 @@ private:
 	void addShadowPlane(const char *n, Scene *scene, int shadowId);
 	bool shouldDrawShadow(int shadowId);
 	void stopTalking();
+	bool stopMumbleChore();
 
 	Common::String _name;
 	Common::String _setName;    // The actual current set
