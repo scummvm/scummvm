@@ -239,7 +239,7 @@ private:
 	// Game data
 	PuzzleData _puzzleData;
 	SharedData _data;
-	int  _gameFlags[145];
+	int  _gameFlags[130];
 	int32 _sinCosTables[72];
 	bool _introPlayed;
 	int32 _tickOffset;
