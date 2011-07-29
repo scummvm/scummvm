@@ -162,6 +162,7 @@ protected:
 	ModelNode *_hier;
 	Graphics::Matrix4 _matrix;
 	AnimManager *_animation;
+	Component *_prevComp;
 };
 
 class MainModelComponent : public ModelComponent {
@@ -341,15 +342,17 @@ ModelComponent::ModelComponent(Costume::Component *p, int parentID, const char *
 	} else {
 		_filename = filename;
 	}
-	if (prevComponent) {
-		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
-
-		if (mmc)
-			_previousCmap = mmc->getCMap();
-	}
+	_prevComp = prevComponent;
 }
 
 void ModelComponent::init() {
+	if (_prevComp) {
+		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(_prevComp);
+
+		if (mmc) {
+			_previousCmap = mmc->getCMap();
+		}
+	}
 	// Skip loading if it was initialized
 	// by the sharing MainModelComponent
 	// constructor before
@@ -919,19 +922,25 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 
 		// A Parent ID of "-1" indicates that the component should
 		// use the properties of the previous costume as a base
-		if (parentID == -1 && prevCost) {
-			MainModelComponent *mmc;
+		if (parentID == -1) {
+			if (prevCost) {
+				MainModelComponent *mmc;
 
-			// However, only the first item can actually share the
-			// node hierarchy with the previous costume, so flag
-			// that component so it knows what to do
-			if (i == 0)
-				parentID = -2;
-			prevComponent = prevCost->_components[0];
-			mmc = dynamic_cast<MainModelComponent *>(prevComponent);
-			// Make sure that the component is valid
-			if (!mmc)
-				prevComponent = NULL;
+				// However, only the first item can actually share the
+				// node hierarchy with the previous costume, so flag
+				// that component so it knows what to do
+				if (i == 0)
+					parentID = -2;
+				prevComponent = prevCost->_components[0];
+				mmc = dynamic_cast<MainModelComponent *>(prevComponent);
+				// Make sure that the component is valid
+				if (!mmc)
+					prevComponent = NULL;
+			} else if (id > 0) {
+				// Use the MainModelComponent of this costume as prevComponent,
+				// so that the component can use its colormap.
+				prevComponent = _components[0];
+			}
 		}
 		// Actually load the appropriate component
 		_components[id] = loadComponent(tags[tagID], parentID < 0 ? NULL : _components[parentID], parentID, line + namePos, prevComponent);
