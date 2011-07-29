@@ -111,6 +111,7 @@ void BinkPlayer::handleFrame() {
 		return;
 
 	if (_videoFinished) {
+		g_grim->setMode(ENGINE_MODE_NORMAL);
 		_videoPause = true;
 		return;
 	}
