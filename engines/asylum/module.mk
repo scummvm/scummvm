@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	puzzles/wheel.o \
 	puzzles/writings.o \
 	resources/actor.o \
+	resources/data.o \
 	resources/object.o \
 	resources/encounters.o \
 	resources/polygons.o \
