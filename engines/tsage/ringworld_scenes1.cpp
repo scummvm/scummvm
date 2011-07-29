@@ -2289,7 +2289,7 @@ void Scene60::Item::doAction(int action) {
 		setAction(&scene->_sequenceManager, this, 62, NULL);
 		break;
 	default:
-		SceneItem::doAction(action);
+		SceneHotspot::doAction(action);
 		break;
 	}
 }
