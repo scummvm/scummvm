@@ -228,7 +228,7 @@ SoundDriver *SoundManager::instantiateDriver(int driverNum) {
 	case ADLIB_DRIVER_NUM:
 		return new AdlibSoundDriver();
 	case SBLASTER_DRIVER_NUM:
-		return new AdlibFxSoundDriver();
+		return new SoundBlasterDriver();
 	default:
 		error("Unknown sound driver - %d", driverNum);
 	}
@@ -2786,10 +2786,10 @@ int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
 
 /*--------------------------------------------------------------------------*/
 
-const byte adlibFx_group_data[] = { 3, 1, 1, 0, 0xff };
+const byte soundBlaster_group_data[] = { 3, 1, 1, 0, 0xff };
 
 
-AdlibFxSoundDriver::AdlibFxSoundDriver(): SoundDriver() {
+SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
 	_minVersion = 0x102;
 	_maxVersion = 0x10A;
 	_masterVolume = 0;
@@ -2797,40 +2797,40 @@ AdlibFxSoundDriver::AdlibFxSoundDriver(): SoundDriver() {
 	_groupData.groupMask = 1;
 	_groupData.v1 = 0x3E;
 	_groupData.v2 = 0;
-	_groupData.pData = &adlibFx_group_data[0];
+	_groupData.pData = &soundBlaster_group_data[0];
 
 	_mixer = _vm->_mixer;
 	_sampleRate = _mixer->getOutputRate();
 	_audioStream = NULL;
 }
 
-AdlibFxSoundDriver::~AdlibFxSoundDriver() {
+SoundBlasterDriver::~SoundBlasterDriver() {
 	_mixer->stopHandle(_soundHandle);
 }
 
-bool AdlibFxSoundDriver::open() {
+bool SoundBlasterDriver::open() {
 	return true;
 }
 
-void AdlibFxSoundDriver::close() {
+void SoundBlasterDriver::close() {
 }
 
-bool AdlibFxSoundDriver::reset() {
+bool SoundBlasterDriver::reset() {
 	return true;
 }
 
-const GroupData *AdlibFxSoundDriver::getGroupData() {
+const GroupData *SoundBlasterDriver::getGroupData() {
 	return &_groupData;
 }
 
-int AdlibFxSoundDriver::setMasterVolume(int volume) {
+int SoundBlasterDriver::setMasterVolume(int volume) {
 	int oldVolume = _masterVolume;
 	_masterVolume = volume;
 
 	return oldVolume;
 }
 
-void AdlibFxSoundDriver::playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {
+void SoundBlasterDriver::playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {
 	if (program != -1)
 		return;
 
@@ -2854,18 +2854,18 @@ void AdlibFxSoundDriver::playSound(const byte *channelData, int dataOffset, int 
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
 }
 
-void AdlibFxSoundDriver::updateVoice(int channel) {
+void SoundBlasterDriver::updateVoice(int channel) {
 	// No implementation
 }
 
-void AdlibFxSoundDriver::proc38(int channel, int cmd, int value) {
+void SoundBlasterDriver::proc38(int channel, int cmd, int value) {
 	if (cmd == 7) {
 		// Set channel volume
 		_channelVolume = value;
 	}
 }
 
-void AdlibFxSoundDriver::proc42(int channel, int cmd, int value, int *v1, int *v2) {
+void SoundBlasterDriver::proc42(int channel, int cmd, int value, int *v1, int *v2) {
 	// TODO: v2 is used for flagging a reset of the timer. I'm not sure if it's needed
 	*v1 = 0;
 	*v2 = 0;

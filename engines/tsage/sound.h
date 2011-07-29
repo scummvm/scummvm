@@ -459,7 +459,7 @@ public:
 	void update(int16 *buf, int len);
 };
 
-class AdlibFxSoundDriver: public SoundDriver {
+class SoundBlasterDriver: public SoundDriver {
 private:
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
@@ -471,8 +471,8 @@ private:
 	byte _channelVolume;
 	const byte *_channelData;
 public:
-	AdlibFxSoundDriver();
-	virtual ~AdlibFxSoundDriver();
+	SoundBlasterDriver();
+	virtual ~SoundBlasterDriver();
 
 	virtual bool open();
 	virtual void close();
