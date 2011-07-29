@@ -131,6 +131,7 @@ enum kExtractID {
 	k1ConfigStrings,
 
 	k1AudioTracks,
+	k1AudioTracks2,
 	k1AudioTracksIntro,
 
 	k1CreditsStrings,
@@ -275,7 +276,8 @@ enum kSpecial {
 	kNoSpecial = 0,
 	kTalkieVersion,
 	kDemoVersion,
-	kTalkieDemoVersion
+	kTalkieDemoVersion,
+	kOldFloppy,
 };
 
 enum kGame {

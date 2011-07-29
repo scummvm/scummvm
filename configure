@@ -84,6 +84,7 @@ add_engine agi "AGI" yes
 add_engine agos "AGOS" yes "agos2"
 add_engine agos2 "AGOS 2 games" yes
 add_engine cine "Cinematique evo 1" yes
+add_engine composer "Magic Composer" no
 add_engine cruise "Cinematique evo 2" yes
 add_engine draci "Dragon History" yes
 add_engine drascula "Drascula: The Vampire Strikes Back" yes
@@ -153,6 +154,7 @@ _build_scalers=yes
 _build_hq_scalers=yes
 _enable_prof=no
 _global_constructors=no
+_bink=yes
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -775,6 +777,7 @@ Optional Features:
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
                            process
+  --disable-bink           don't build with Bink video support
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -877,6 +880,8 @@ for ac_option in $@; do
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
+	--enable-bink)            _bink=yes       ;;
+	--disable-bink)           _bink=no        ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
@@ -3317,6 +3322,13 @@ if test "$_taskbar" = yes; then
 else
 	echo "$_taskbar"
 fi
+
+#
+# Check whether to build Bink video support
+#
+echo_n "Building Bink video support... "
+define_in_config_if_yes $_bink 'USE_BINK'
+echo "$_bink"
 
 #
 # Figure out installation directories

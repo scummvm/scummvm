@@ -185,12 +185,24 @@ static void makeDefIcon(Icon &icon)
   icon.load(scummvm_icon, sizeof(scummvm_icon));
 }
 
+static bool sameOrSubdir(const char *dir1, const char *dir2)
+{
+  int l1 = strlen(dir1), l2 = strlen(dir2);
+  if (l1<=l2)
+    return !strcmp(dir1, dir2);
+  else
+    return !memcmp(dir1, dir2, l2);
+}
+
 static bool uniqueGame(const char *base, const char *dir,
 		       Common::Language lang, Common::Platform plf,
 		       Game *games, int cnt)
 {
   while (cnt--)
-    if (!strcmp(dir, games->dir) &&
+    if (/*Don't detect the same game in a subdir,
+	  this is a workaround for the detector bug in toon... */
+	sameOrSubdir(dir, games->dir) &&
+	/*!strcmp(dir, games->dir) &&*/
 	!stricmp(base, games->filename_base) &&
 	lang == games->language &&
 	plf == games->platform)
@@ -237,19 +249,24 @@ static int findGames(Game *games, int max, bool use_ini)
   }
 
   while ((curr_game < max || use_ini) && curr_dir < num_dirs) {
-    strncpy(dirs[curr_dir].name, dirs[curr_dir].node.getPath().c_str(), 252);
-    dirs[curr_dir].name[251] = '\0';
+    strncpy(dirs[curr_dir].name, dirs[curr_dir].node.getPath().c_str(), 251);
+    dirs[curr_dir].name[250] = '\0';
+    if (!dirs[curr_dir].name[0] ||
+	dirs[curr_dir].name[strlen(dirs[curr_dir].name)-1] != '/')
+      strcat(dirs[curr_dir].name, "/");
     dirs[curr_dir].deficon[0] = '\0';
     Common::FSList files, fslist;
     dirs[curr_dir++].node.getChildren(fslist, Common::FSNode::kListAll);
     for (Common::FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
 	 ++entry) {
       if (entry->isDirectory()) {
-	if (!use_ini && num_dirs < MAX_DIR &&
-	    strcasecmp(entry->getDisplayName().c_str(), "install")) {
+	if (!use_ini && num_dirs < MAX_DIR) {
 	  dirs[num_dirs].node = *entry;
 	  num_dirs++;
 	}
+	/* Toonstruck detector needs directories to be present too */
+	if(!use_ini)
+	  files.push_back(*entry);
       } else
 	if (isIcon(*entry))
 	  strcpy(dirs[curr_dir-1].deficon, entry->getDisplayName().c_str());

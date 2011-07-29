@@ -41,6 +41,7 @@ class Sound;
 #define ROLAND_DRIVER_NUM 2
 #define ADLIB_DRIVER_NUM 3
 #define SBLASTER_DRIVER_NUM 4
+#define CALLBACKS_PER_SECOND 60
 
 struct trackInfoStruct {
 	int _numTracks;
@@ -107,7 +108,7 @@ public:
 	virtual void setProgram(int channel, int program) {}			// Method #13
 	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
 	virtual void setPitchBlend(int channel, int pitchBlend) {}		// Method #15
-	virtual void proc32(Sound *sound, int channel, int program, int v0, int v1) {}// Method #16
+	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {}// Method #16
 	virtual void updateVoice(int channel) {}						// Method #17
 	virtual void proc36() {}										// Method #18
 	virtual void proc38(int channel, int cmd, int value) {}			// Method #19
@@ -348,8 +349,8 @@ public:
 	void _soRemoteReceive();
 	void _soServiceTrackType0(int trackIndex, const byte *channelData);
 	void _soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceType mode, int v0);
-	void _soProc32(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0, int v1);
-	void _soProc42(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int v0);
+	void _soPlaySound(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0, int v1);
+	void _soPlaySound2(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0);
 	void _soProc38(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int cmd, int value);
 	void _soProc40(VoiceTypeStruct *vtStruct, int channelNum, int pitchBlend);
 	void _soDoTrackCommand(int channelNum, int command, int value);
@@ -411,6 +412,10 @@ private:
 	const byte *_patchData;
 	int _masterVolume;
 	Common::Queue<RegisterValue> _queue;
+	int _samplesTillCallback;
+	int _samplesTillCallbackRemainder;
+	int _samplesPerCallback;
+	int _samplesPerCallbackRemainder;
 
 	bool _channelVoiced[ADLIB_CHANNEL_COUNT];
 	int _channelVolume[ADLIB_CHANNEL_COUNT];
@@ -440,7 +445,7 @@ public:
 	virtual const GroupData *getGroupData();
 	virtual void installPatch(const byte *data, int size);
 	virtual int setMasterVolume(int volume);
-	virtual void proc32(Sound *sound, int channel, int program, int v0, int v1);
+	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1);
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void setPitch(int channel, int pitchBlend);
@@ -454,51 +459,30 @@ public:
 	void update(int16 *buf, int len);
 };
 
-class AdlibFxSoundDriver: public SoundDriver, Audio::AudioStream {
+class SoundBlasterDriver: public SoundDriver {
 private:
-	Common::Queue<RegisterValue> _queue;
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
+	Audio::QueuingAudioStream *_audioStream;
 	int _sampleRate;
 
-	int _v45062;
-	int _v45066;
-	int _v45068;
-	int _v4506A;
-	int _v4506B;
-	bool _v45046;
 	byte _masterVolume;
 	byte _channelVolume;
-	Sound *_sound;
-
-	void write(int v);
-	void flush();
-	void sub_4556E();
-	void write209();
-	void write211();
+	const byte *_channelData;
 public:
-	AdlibFxSoundDriver();
-	virtual ~AdlibFxSoundDriver();
+	SoundBlasterDriver();
+	virtual ~SoundBlasterDriver();
 
 	virtual bool open();
 	virtual void close();
 	virtual bool reset();
 	virtual const GroupData *getGroupData();
-	virtual void poll();
 	virtual int setMasterVolume(int volume);
-	virtual void proc32(Sound *sound, int channel, int program, int v0, int v1);
+	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1);
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void proc42(int channel, int cmd, int value, int *v1, int *v2);
-
-	// AudioStream interface
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
-
-	void update(int16 *buf, int len);
 };
 
 

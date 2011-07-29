@@ -34,6 +34,7 @@
 
 #include "common/array.h"
 #include "common/debug.h"
+#include "common/math.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
@@ -288,21 +289,6 @@ private:
 #ifndef int64_t
 typedef signed long long int int64_t;
 #endif
-
-// Integer log2 function. This is much faster than invoking
-// double precision C99 log2 math functions or equivalent, since
-// this is only used to determine maximum number of bits needed
-// i.e. only non-fractional part is needed. Also, the double
-// version is incorrect for exact cases due to floating point
-// rounding errors.
-static inline int scummvm_log2(int n) {
-	int ret = -1;
-	while(n != 0) {
-		n /= 2;
-		ret++;
-	}
-	return ret;
-}
 
 #define QDM2_LIST_ADD(list, size, packet) \
 	do { \
@@ -1836,11 +1822,11 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 			warning("QDM2Stream::QDM2Stream() u4 field not 0");
 	}
 
-	_fftOrder = scummvm_log2(_frameSize) + 1;
+	_fftOrder = Common::intLog2(_frameSize) + 1;
 	_fftFrameSize = 2 * _frameSize; // complex has two floats
 
 	// something like max decodable tones
-	_groupOrder = scummvm_log2(_blockSize) + 1;
+	_groupOrder = Common::intLog2(_blockSize) + 1;
 	_sFrameSize = _blockSize / 16; // 16 iterations per super block
 
 	_subSampling = _fftOrder - 7;

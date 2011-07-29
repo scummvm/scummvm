@@ -296,7 +296,7 @@ void SceneArea::draw(bool flag) {
 void SceneArea::wait() {
 	// Wait until a mouse or keypress
 	Event event;
-	while (!_vm->getEventManager()->shouldQuit() && !_globals->_events.getEvent(event)) {
+	while (!_vm->shouldQuit() && !_globals->_events.getEvent(event)) {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}

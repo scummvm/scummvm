@@ -511,7 +511,7 @@ void Game::execute() {
 				activeFlag = true;
 			}
 		}
-	} while (activeFlag && !_vm->getEventManager()->shouldQuit());
+	} while (activeFlag && !_vm->shouldQuit());
 }
 
 } // End of namespace tSage

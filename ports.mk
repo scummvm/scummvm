@@ -143,8 +143,13 @@ osxsnap: bundle
 	cp $(srcdir)/COPYRIGHT ./ScummVM-snapshot/Copyright\ Holders
 	cp $(srcdir)/NEWS ./ScummVM-snapshot/News
 	cp $(srcdir)/README ./ScummVM-snapshot/ScummVM\ ReadMe
-	cp $(srcdir)/doc/de/Liesmich.txt ./ScummVM-snapshot/ScummVM/doc/de/Liesmich
-	cp $(srcdir)/doc/fr/Lisezmoi.txt ./ScummVM-snapshot/ScummVM/doc/fr/Lisezmoi
+	mkdir ScummVM-snapshot/doc
+	cp $(srcdir)/doc/QuickStart ./ScummVM-snapshot/doc/QuickStart
+	mkdir ScummVM-snapshot/doc/de
+	cp $(srcdir)/doc/de/Liesmich ./ScummVM-snapshot/doc/de/Liesmich
+	cp $(srcdir)/doc/de/Schnellstart ./ScummVM-snapshot/doc/de/Schnellstart
+	mkdir ScummVM-snapshot/doc/fr
+	cp $(srcdir)/doc/fr/QuickStart_fr ./ScummVM-snapshot/doc/fr/QuickStart_fr
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
 	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
@@ -168,6 +173,7 @@ scummvmwinres.o: $(srcdir)/icons/scummvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_E
 win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
 	mkdir -p $(WIN32PATH)/graphics
+	mkdir -p $(WIN32PATH)/doc
 	mkdir -p $(WIN32PATH)/doc/de
 	mkdir -p $(WIN32PATH)/doc/fr
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
@@ -181,8 +187,10 @@ endif
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
-	cp $(srcdir)/doc/de/Liesmich.txt $(WIN32PATH)/doc/de/Liesmich.txt
-	cp $(srcdir)/doc/fr/Lisezmoi.txt $(WIN32PATH)/doc/fr/Lisezmoi.txt
+	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
+	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
+	cp $(srcdir)/doc/de/Liesmich $(WIN32PATH)/doc/de/Liesmich.txt
+	cp $(srcdir)/doc/fr/QuickStart_fr $(WIN32PATH)/doc/fr/QuickStart_fr.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics

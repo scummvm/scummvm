@@ -336,8 +336,9 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				if (align >= 0)
 					while (str_leng-- > 1)
 						*target++ = ' '; /* Format into the text */
-
-				*target++ = arguments[paramindex++];
+				char argchar = arguments[paramindex++];
+				if (argchar)
+					*target++ = argchar;
 				mode = 0;
 			}
 			break;

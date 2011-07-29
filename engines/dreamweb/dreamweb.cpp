@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://svn.scummvm.org:4444/svn/dreamweb/dreamweb.cpp $
- * $Id: dreamweb.cpp 79 2011-06-05 08:26:54Z eriktorbjorn $
- *
  */
 
 #include "common/config-manager.h"
@@ -219,7 +216,13 @@ Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
 	_console = new DreamWebConsole(this);
 
-	_loadSavefile = Common::ConfigManager::instance().getInt("save_slot");
+	if (ConfMan.hasKey("save_slot")) {
+		_enableSavingOrLoading = true;
+		_loadSavefile = ConfMan.getInt("save_slot");
+	} else {
+		_enableSavingOrLoading = false;
+		_loadSavefile = -1;
+	}
 
 	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this);
 	_context.__start();
@@ -472,6 +475,16 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	if (_mixer->isSoundHandleActive(_channelHandle[channel]))
 		_mixer->stopHandle(_channelHandle[channel]);
 	_mixer->playStream(type, &_channelHandle[channel], stream);
+}
+
+void DreamWebEngine::stopSound(uint8 channel) {
+	debug(1, "stopSound(%u)", channel);
+	assert(channel == 0 || channel == 1);
+	_mixer->stopHandle(_channelHandle[channel]);
+	if (channel == 0)
+		_channel0 = 0;
+	else
+		_channel1 = 0;
 }
 
 bool DreamWebEngine::loadSpeech(const Common::String &filename) {

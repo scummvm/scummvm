@@ -416,13 +416,13 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 
 	// Event handling loop
 	Event event;
-	while (!_vm->getEventManager()->shouldQuit()) {
+	while (!_vm->shouldQuit()) {
 		while (!_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
-				!_vm->getEventManager()->shouldQuit()) {
+				!_vm->shouldQuit()) {
 			g_system->delayMillis(10);
 			g_system->updateScreen();
 		}
-		if (_vm->getEventManager()->shouldQuit())
+		if (_vm->shouldQuit())
 			break;
 
 		if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode >= Common::KEYCODE_1) &&

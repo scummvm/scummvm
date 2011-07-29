@@ -773,6 +773,7 @@ const Feature s_features[] = {
 	{  "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
 
 	// Feature flags
+	{        "bink",        "USE_BINK",         "", true, "Bink video support" },
 	{     "scalers",     "USE_SCALERS",         "", true, "Scalers" },
 	{   "hqscalers",  "USE_HQ_SCALERS",         "", true, "HQ scalers" },
 	{       "16bit",   "USE_RGB_COLOR",         "", true, "16bit color support" },

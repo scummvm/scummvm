@@ -1,5 +1,5 @@
 ScummVM Windows CE FAQ
-Last updated: 2011-07-14
+Last updated: 2011-07-20
 Release version: x.x.x
 ------------------------------------------------------------------------
 
@@ -9,6 +9,10 @@ x.x.x:
 - Changed default values for "high_sample_rate" & "FM_high_quality" to "true" as
   most devices today are fast enough to handle this. It's still possible to set
   this to "false" if you have a slower device.
+- Fix for TeenAgent & Hugo engines (both weren't running at all, crashed right
+  at the beginning)
+- Replaced the game mass-adding functionality with the functionality used on all
+  other platforms. It now shows progress while searching for games.
 
 1.3.1:
 - Fix for Normal2xAspect scaler which was causing screen update issues in some

@@ -147,4 +147,8 @@ void TSageEngine::syncSoundSettings() {
 	_globals->_soundManager.syncSounds();
 }
 
+bool TSageEngine::shouldQuit() {
+	return getEventManager()->shouldQuit() || getEventManager()->shouldRTL();
+}
+
 } // End of namespace tSage

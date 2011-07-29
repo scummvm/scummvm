@@ -23,34 +23,41 @@
 #if !defined(SCUMM_HE_ANIMATION_H) && defined(ENABLE_HE)
 #define SCUMM_HE_ANIMATION_H
 
-#include "video/smk_decoder.h"
-
 #include "audio/mixer.h"
+
+namespace Video {
+	class VideoDecoder;
+}
 
 namespace Scumm {
 
 class ScummEngine_v90he;
 
-class MoviePlayer : public Video::SmackerDecoder {
-	ScummEngine_v90he *_vm;
-
-	Audio::Mixer *_mixer;
-
-	Audio::SoundHandle _bgSound;
-	Audio::AudioStream *_bgSoundStream;
-
-	char baseName[40];
-	uint32 _flags;
-	uint32 _wizResNum;
-
+class MoviePlayer {
 public:
 	MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer);
+	~MoviePlayer();
 
 	int getImageNum();
 	int load(const char *filename, int flags, int image = 0);
 
 	void copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch);
 	void handleNextFrame();
+
+	void close();
+	int getWidth() const;
+	int getHeight() const;
+	int getFrameCount() const;
+	int getCurFrame() const;
+
+private:
+	ScummEngine_v90he *_vm;
+
+	Video::VideoDecoder *_video;
+
+	char baseName[40];
+	uint32 _flags;
+	uint32 _wizResNum;
 };
 
 } // End of namespace Scumm
