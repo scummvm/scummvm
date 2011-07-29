@@ -47,8 +47,10 @@ public:
 private:
 	bool _playing;
 	Direction _direction;
-	int _x;
-	int _y;
+	int _x1;
+	int _y1;
+	int _x2;
+	int _y2;
 	int _targetX;
 	int _targetY;
 	int _lenght;

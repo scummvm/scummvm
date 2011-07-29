@@ -1274,7 +1274,7 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 	delete[] data;
 }
 
-void GfxOpenGL::irisAroundRegion(int x, int y)
+void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -1292,19 +1292,19 @@ void GfxOpenGL::irisAroundRegion(int x, int y)
 
 	float points[20] = {
 		0.0f, 0.0f,
-		0.0f, y,
+		0.0f, y1,
 		_screenWidth, 0.0f,
-		_screenWidth - x, y,
+		x2, y1,
 		_screenWidth, _screenHeight,
-		_screenWidth - x, _screenHeight - y,
+		x2, y2,
 		0.0f, _screenHeight,
-		0.0f + x, _screenHeight - y,
-		0.0f, y,
-		x, y
+		x1, y2,
+		0.0f, y1,
+		x1, y1
 	};
 #ifndef USE_VERTEX_ARRAYS
 	glBegin(GL_TRIANGLE_STRIP);
-	for (int i = 0 ;i < 10; i++) {
+	for (int i = 0; i < 10; i++) {
 		glVertex2fv(points + 2 * i);
 	}
 	glEnd();

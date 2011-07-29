@@ -115,7 +115,7 @@ public:
 	 * @param x		the width of the Iris
 	 * @param y		the height of the Iris
 	 */
-	virtual void irisAroundRegion(int x, int y) = 0;
+	virtual void irisAroundRegion(int x1, int y1, int x2, int y2) = 0;
 
 	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) = 0;
 	virtual void loadEmergFont() = 0;

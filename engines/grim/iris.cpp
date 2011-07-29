@@ -48,12 +48,12 @@ void Iris::play(Iris::Direction dir, int x, int y, int lenght) {
 void Iris::draw() {
 	if (!_playing) {
 		if (_direction == Close && g_grim->getMode() != ENGINE_MODE_SMUSH) {
-			g_driver->irisAroundRegion(320, 240);
+			g_driver->irisAroundRegion(320, 240, 320, 240);
 		}
 		return;
 	}
 
-	g_driver->irisAroundRegion(_x, _y);
+	g_driver->irisAroundRegion(_x1, _y1, _x2, _y2);
 }
 
 void Iris::update(int frameTime) {
@@ -72,8 +72,10 @@ void Iris::update(int frameTime) {
 		factor = 1 - factor;
 	}
 
-	_y = (int)(_targetY * factor);
-	_x = (int)(_targetX * factor);
+	_y1 = (int)(_targetY * factor);
+	_x1 = (int)(_targetX * factor);
+	_y2 = (int)(480 - (480 - _targetY) * factor);
+	_x2 = (int)(640 - (640 - _targetX) * factor);
 }
 
 void Iris::saveState(SaveGame *state) const {
@@ -81,8 +83,10 @@ void Iris::saveState(SaveGame *state) const {
 
 	state->writeLEBool(_playing);
 	state->writeLEUint32((uint32)_direction);
-	state->writeLEUint32(_x);
-	state->writeLEUint32(_y);
+	state->writeLEUint32(_x1);
+	state->writeLEUint32(_y1);
+// 	state->writeLEUint32(_x2);
+// 	state->writeLEUint32(_y2);
 	state->writeLEUint32(_lenght);
 	state->writeLEUint32(_currTime);
 
@@ -94,8 +98,10 @@ void Iris::restoreState(SaveGame *state) {
 
 	_playing = state->readLEBool();
 	_direction = (Direction)state->readLEUint32();
-	_x = state->readLEUint32();
-	_y = state->readLEUint32();
+	_x1 = state->readLEUint32();
+	_y1 = state->readLEUint32();
+// 	_x2 = state->readLEUint32();
+// 	_y2 = state->readLEUint32();
 	_lenght = state->readLEUint32();
 	_currTime = state->readLEUint32();
 

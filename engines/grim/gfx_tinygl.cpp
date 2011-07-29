@@ -960,13 +960,12 @@ void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 	}
 }
 
-void GfxTinyGL::irisAroundRegion(int x, int y)
-{
+void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	uint16 *data = (uint16 *)_zb->pbuf;
 	for (int ly = 0; ly < _screenHeight; ly++) {
 		for (int lx = 0; lx < _screenWidth; lx++) {
 			// Don't do anything with the data in the region we draw Around
-			if(lx > x && lx < _screenWidth - x && ly > y && ly < _screenHeight - y)
+			if(lx > x1 && lx < x2 && ly > y1 && ly < y2)
 				continue;
 			// But set everything around it to black.
 			data[ly * 640 + lx] = (uint16)0.0f;
