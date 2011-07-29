@@ -31,6 +31,7 @@
 #include "cge/wav.h"
 #include "cge/vga13h.h"
 #include "cge/events.h"
+#include "cge/sound.h"
 
 namespace CGE {
 #define CAVE_X         4
@@ -138,6 +139,8 @@ extern Sprite *_cavLight;
 extern InfoLine *_debugLine;
 extern Snail *_snail;
 extern Snail *_snail_;
+extern Fx *_fx;
+extern Sound *_sound;
 
 } // End of namespace CGE
 

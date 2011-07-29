@@ -798,9 +798,9 @@ void CGEEngine::snSound(Sprite *spr, int wav, int cnt) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snSound(spr, %d, %d)", wav, cnt);
 
 	if (wav == -1)
-		_sound.stop();
+		_sound->stop();
 	else
-		_sound.play(_fx[wav], (spr) ? ((spr->_x + spr->_w / 2) / (kScrWidth / 16)) : 8, cnt);
+		_sound->play((*_fx)[wav], (spr) ? ((spr->_x + spr->_w / 2) / (kScrWidth / 16)) : 8, cnt);
 }
 
 

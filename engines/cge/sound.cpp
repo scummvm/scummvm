@@ -26,22 +26,17 @@
  */
 
 #include "cge/general.h"
-#include "cge/startup.h"
 #include "cge/sound.h"
 #include "cge/text.h"
 #include "cge/cfile.h"
 #include "cge/vol.h"
+#include "cge/cge_main.h"
 
 
 namespace CGE {
 
-Fx    _fx     = 16;   // must precede SOUND!!
-Sound _sound;
-
-
-Sound::Sound() {
-	if (Startup::_soundOk)
-		open();
+Sound::Sound(CGEEngine *vm) : _vm(vm) {
+	open();
 }
 
 
@@ -58,7 +53,7 @@ void Sound::close() {
 
 void Sound::open() {
 	sndInit();
-	play(_fx[30000], 8);
+	play((*_fx)[30000], 8);
 }
 
 

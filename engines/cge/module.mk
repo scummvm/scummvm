@@ -16,7 +16,6 @@ MODULE_OBJS := \
 	mixer.o \
 	snail.o \
 	sound.o \
-	startup.o \
 	talk.o \
 	text.o \
 	vga13h.o \
