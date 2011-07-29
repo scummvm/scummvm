@@ -157,8 +157,6 @@ public:
 	PuzzleData      *puzzleData() { return &_puzzleData; }
 
 	// Flags
-	void setGameFlagByIndex(int32 index);
-	int32 getGameFlagByIndex(int32 index);
 	void setGameFlag(GameFlag flag);
 	void clearGameFlag(GameFlag flag);
 	void toggleGameFlag(GameFlag flag);
@@ -241,7 +239,7 @@ private:
 	// Game data
 	PuzzleData _puzzleData;
 	SharedData _data;
-	int  _gameFlags[190];
+	int  _gameFlags[145];
 	int32 _sinCosTables[72];
 	bool _introPlayed;
 	int32 _tickOffset;

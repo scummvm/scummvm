@@ -138,7 +138,7 @@ public:
 		actorUpdateStatus15Check = false;
 		_flag2 = false;
 		globalDirection = kDirectionN;
-		memset(&_ambientTick, 0, sizeof(_ambientTick));
+		memset(&_ambientTicks, 0, sizeof(_ambientTicks));
 
 		// Screen updates
 		_flagRedraw = false;
@@ -234,12 +234,37 @@ public:
 		}
 	}
 
-	uint32 *getAmbientTick(uint32 index) {
-		if (index >= ARRAYSIZE(_ambientTick))
-			error("[SharedData::getAmbientTick] index is outside valid values (was: %d, valid: [0:15]", index);
+	uint32 getAmbientTick(uint32 index) {
+		if (index >= ARRAYSIZE(_ambientTicks))
+			error("[SharedData::getAmbientTick] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientTicks));
 
-		return &_ambientTick[index];
+		return _ambientTicks[index];
 	};
+
+	void setAmbientTick(uint32 index, uint32 val) {
+		if (index >= ARRAYSIZE(_ambientTicks))
+			error("[SharedData::setAmbientTick] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientTicks));
+
+		_ambientTicks[index] = val;
+	};
+
+	uint32 getAmbientFlag(uint32 index) {
+		if (index >= ARRAYSIZE(_ambientFlags))
+			error("[SharedData::getAmbientFlag] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientFlags));
+
+		return _ambientFlags[index];
+	};
+
+	void setAmbientFlag(uint32 index, uint32 val) {
+		if (index >= ARRAYSIZE(_ambientFlags))
+			error("[SharedData::setAmbientFlag] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientFlags));
+
+		_ambientFlags[index] = val;
+	};
+
+	void resetAmbientFlags() {
+		memset(&_ambientFlags, 0, sizeof(_ambientFlags));
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Flags
@@ -309,7 +334,8 @@ public:
 	}
 
 private:
-	uint32          _ambientTick[16];
+	uint32          _ambientFlags[15];
+	uint32          _ambientTicks[17];
 
 	// Flags
 	bool            _flag1;
