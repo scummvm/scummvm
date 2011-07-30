@@ -86,6 +86,7 @@
 	void lockeddoorway(Sprite *sprite, ObjData *objData);
 	void liftsprite();
 	void liftsprite(Sprite *sprite, ObjData *objData);
+	void findsource();
 	void turnpathonCPP(uint8 param);
 	void turnpathoffCPP(uint8 param);
 	void getroomspaths();

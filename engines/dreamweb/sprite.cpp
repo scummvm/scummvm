@@ -538,5 +538,19 @@ void DreamGenContext::facerightway() {
 	data.byte(kLeavedirection) = dir;
 }
 
+void DreamGenContext::findsource() {
+	uint16 currentFrame = data.word(kCurrentframe);
+	if (currentFrame < 160) {
+		ds = data.word(kReel1);
+		data.word(kTakeoff) = 0;
+	} else if (currentFrame < 320) {
+		ds = data.word(kReel2);
+		data.word(kTakeoff) = 160;
+	} else {
+		ds = data.word(kReel3);
+		data.word(kTakeoff) = 320;
+	}
+}
+
 } /*namespace dreamgen */
 

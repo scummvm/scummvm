@@ -2237,27 +2237,6 @@ void DreamGenContext::checkone() {
 	dx = pop();
 }
 
-void DreamGenContext::findsource() {
-	STACK_CHECK;
-	ax = data.word(kCurrentframe);
-	_cmp(ax, 160);
-	if (!flags.c())
-		goto over1000;
-	ds = data.word(kReel1);
-	data.word(kTakeoff) = 0;
-	return;
-over1000:
-	_cmp(ax, 320);
-	if (!flags.c())
-		goto over1001;
-	ds = data.word(kReel2);
-	data.word(kTakeoff) = 160;
-	return;
-over1001:
-	ds = data.word(kReel3);
-	data.word(kTakeoff) = 320;
-}
-
 void DreamGenContext::checkforexit() {
 	STACK_CHECK;
 	cl = data.byte(kRyanx);
@@ -20519,7 +20498,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_checkspeed: checkspeed(); break;
 		case addr_delsprite: delsprite(); break;
 		case addr_checkone: checkone(); break;
-		case addr_findsource: findsource(); break;
 		case addr_mainman: mainman(); break;
 		case addr_checkforexit: checkforexit(); break;
 		case addr_adjustdown: adjustdown(); break;

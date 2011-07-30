@@ -673,7 +673,6 @@ public:
 	static const uint16 addr_adjustdown = 0xc14c;
 	static const uint16 addr_checkforexit = 0xc148;
 	static const uint16 addr_mainman = 0xc138;
-	static const uint16 addr_findsource = 0xc130;
 	static const uint16 addr_checkone = 0xc12c;
 	static const uint16 addr_delsprite = 0xc11c;
 	static const uint16 addr_checkspeed = 0xc110;
@@ -1382,7 +1381,7 @@ public:
 	void fadeupmonfirst();
 	void drawfloor();
 	void loadkeypad();
-	void findsource();
+	//void findsource();
 	void clearendpal();
 	void findtext1();
 	void isryanholding();
