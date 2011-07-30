@@ -628,7 +628,6 @@ public:
 	static const uint16 addr_zoom = 0xc210;
 	static const uint16 addr_doshake = 0xc20c;
 	static const uint16 addr_vsync = 0xc208;
-	static const uint16 addr_clearwork = 0xc204;
 	static const uint16 addr_createpanel2 = 0xc200;
 	static const uint16 addr_createpanel = 0xc1fc;
 	static const uint16 addr_pixelcheckset = 0xc1f8;
@@ -1367,7 +1366,7 @@ public:
 	void turnanypathoff();
 	void openfilefromc();
 	void gettime();
-	void clearwork();
+	//void clearwork();
 	void loadtraveltext();
 	//void worktoscreen();
 	void getexpos();

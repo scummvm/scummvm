@@ -379,5 +379,9 @@ void DreamGenContext::showframe() {
 	ch = height;
 }
 
+void DreamGenContext::clearwork() {
+	memset(workspace(), 0, 320*200);
+}
+
 } /*namespace dreamgen */
 

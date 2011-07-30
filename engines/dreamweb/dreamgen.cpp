@@ -3267,18 +3267,6 @@ void DreamGenContext::createpanel2() {
 	showframe();
 }
 
-void DreamGenContext::clearwork() {
-	STACK_CHECK;
-	ax = 0x0;
-	es = data.word(kWorkspace);
-	di = 0;
-	cx = (200*320)/64;
-clearloop:
-	_stosw(32);
-	if (--cx)
-		goto clearloop;
-}
-
 void DreamGenContext::zoom() {
 	STACK_CHECK;
 	_cmp(data.word(kWatchingtime), 0);
@@ -20347,7 +20335,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_pixelcheckset: pixelcheckset(); break;
 		case addr_createpanel: createpanel(); break;
 		case addr_createpanel2: createpanel2(); break;
-		case addr_clearwork: clearwork(); break;
 		case addr_vsync: vsync(); break;
 		case addr_doshake: doshake(); break;
 		case addr_zoom: zoom(); break;
