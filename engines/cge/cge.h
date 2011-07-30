@@ -107,7 +107,6 @@ public:
 	int    _pocref[kPocketNX];
 	uint8  _volume[2];
 	int    _maxCaveArr[5];
-
 	int    _maxCave;
 	bool   _flag[4];
 	bool   _dark;
@@ -117,6 +116,12 @@ public:
 	char   _usrFnam[15];
 	int    _mode;
 	int    _soundOk;
+	int    _gameCase2Cpt;
+
+	Sprite *_sprTv;
+	Sprite *_sprK1;
+	Sprite *_sprK2;
+	Sprite *_sprK3;
 
 	Common::RandomSource _randomSource;
 	byte *		_mini;

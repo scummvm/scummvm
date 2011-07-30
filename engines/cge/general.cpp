@@ -331,39 +331,6 @@ int new_random(int range) {
 	return ((CGEEngine *)g_engine)->_randomSource.getRandomNumber(range - 1);
 }
 
-//void interrupt	(* Engine_::oldTimer) (...) = NULL;
-
-Engine_::Engine_(uint16 tdiv) {
-/*
-  // steal timer interrupt
-  OldTimer = getvect(TIMER_INT);
-  setvect(TIMER_INT, NewTimer);
-
-  // set turbo-timer mode
-  asm	mov	al,0x36
-  asm	out	0x43,al
-  asm	mov	ax,TMR_DIV
-  asm	out	0x40,al
-  asm	mov	al,ah
-  asm	out	0x40,al
-*/
-	warning("STUB: Engine_::Engine_");
-}
-
-Engine_::~Engine_() {
-/*
-  // reset timer
-  asm	mov	al,0x36
-  asm	out	0x43,al
-  asm	xor	al,al
-  asm	out	0x40,al
-  asm	out	0x40,al
-  // bring back timer interrupt
-  setvect(TIMER_INT, OldTimer);
-*/
-	warning("STUB: Engine_::~Engine_");
-}
-
 DataCk::~DataCk() {
   if (!_e && _buf)
 	  free(_buf);
