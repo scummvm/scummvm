@@ -318,8 +318,8 @@ private:
 	Common::Point _point;
 	ResourceId _resourceId;
 	int32  _objectIndex;
-	uint32 _frameIndex;
-	uint32 _frameCount;
+	int32 _frameIndex;
+	int32 _frameCount;
 	Common::Point _point1;
 	Common::Point _point2;
 	Common::Rect _boundingRect;
@@ -342,8 +342,8 @@ private:
 	ResourceId _walkingSound2;
 	ResourceId _walkingSound3;
 	ResourceId _walkingSound4;
-	uint32  _field_64C;
-	uint32  _field_650;
+	int32  _field_64C;
+	int32  _field_650;
 	ResourceId  _graphicResourceIds[55];
 	char   _name[256];
 	int32  _distancesEO[20];
