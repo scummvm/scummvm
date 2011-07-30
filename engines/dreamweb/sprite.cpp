@@ -553,9 +553,14 @@ void DreamGenContext::findsource() {
 }
 
 void DreamGenContext::showreelframe() {
-	uint16 x = es.byte(si+2) + data.word(kMapadx);
-	uint16 y = es.byte(si+3) + data.word(kMapady);
-	data.word(kCurrentframe) = es.word(si);
+	Reel *reel = (Reel *)es.ptr(si, sizeof(Reel));
+	showreelframe(reel);
+}
+
+void DreamGenContext::showreelframe(Reel *reel) {
+	uint16 x = reel->x + data.word(kMapadx);
+	uint16 y = reel->y + data.word(kMapady);
+	data.word(kCurrentframe) = reel->frame();
 	findsource();
 	uint16 frame = data.word(kCurrentframe) - data.word(kTakeoff);
 	uint8 width, height;
