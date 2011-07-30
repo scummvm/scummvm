@@ -2816,48 +2816,6 @@ void DreamGenContext::reelsonscreen() {
 	usetimedtext();
 }
 
-void DreamGenContext::plotreel() {
-	STACK_CHECK;
-	getreelstart();
-retryreel:
-	push(es);
-	push(si);
-	ax = es.word(si+2);
-	_cmp(al, 220);
-	if (flags.c())
-		goto normalreel;
-	_cmp(al, 255);
-	if (flags.z())
-		goto normalreel;
-	dealwithspecial();
-	_inc(data.word(kReelpointer));
-	si = pop();
-	es = pop();
-	_add(si, 40);
-	goto retryreel;
-normalreel:
-	cx = 8;
-plotloop:
-	push(cx);
-	push(es);
-	push(si);
-	ax = es.word(si);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto notplot;
-	showreelframe();
-notplot:
-	si = pop();
-	es = pop();
-	cx = pop();
-	_add(si, 5);
-	if (--cx)
-		goto plotloop;
-	soundonreels();
-	bx = pop();
-	es = pop();
-}
-
 void DreamGenContext::soundonreels() {
 	STACK_CHECK;
 	bl = data.byte(kReallocation);
@@ -20259,7 +20217,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_updatepeople: updatepeople(); break;
 		case addr_getreelframeax: getreelframeax(); break;
 		case addr_reelsonscreen: reelsonscreen(); break;
-		case addr_plotreel: plotreel(); break;
 		case addr_soundonreels: soundonreels(); break;
 		case addr_reconstruct: reconstruct(); break;
 		case addr_movemap: movemap(); break;

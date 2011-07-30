@@ -833,5 +833,39 @@ void DreamGenContext::dealwithspecial() {
 	}
 }
 
+void DreamGenContext::plotreel() {
+	getreelstart();
+	while (true) {
+		push(es);
+		push(si);
+		ax = es.word(si+2);
+		if (al < 220)
+			break;
+		if (al == 255)
+			break;
+		dealwithspecial();
+		_inc(data.word(kReelpointer));
+		si = pop();
+		es = pop();
+		_add(si, 40);
+	}
+
+	for (size_t i = 0; i < 8; ++i) {
+		push(cx);
+		push(es);
+		push(si);
+		ax = es.word(si);
+		if (ax != 0xffff)
+			showreelframe();
+		si = pop();
+		es = pop();
+		cx = pop();
+		_add(si, 5);
+	}
+	soundonreels();
+	bx = pop();
+	es = pop();
+}
+
 } /*namespace dreamgen */
 

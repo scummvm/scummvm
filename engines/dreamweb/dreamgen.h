@@ -644,7 +644,6 @@ public:
 	static const uint16 addr_movemap = 0xc1b4;
 	static const uint16 addr_reconstruct = 0xc1ac;
 	static const uint16 addr_soundonreels = 0xc1a8;
-	static const uint16 addr_plotreel = 0xc1a4;
 	static const uint16 addr_reelsonscreen = 0xc1a0;
 	static const uint16 addr_getreelframeax = 0xc19c;
 	static const uint16 addr_updatepeople = 0xc198;
@@ -1857,7 +1856,7 @@ public:
 	void opentvdoor();
 	void triggermessage();
 	void finalframe();
-	void plotreel();
+	//void plotreel();
 	void swapwithopen();
 	//void makesprite();
 	void dreamweb();

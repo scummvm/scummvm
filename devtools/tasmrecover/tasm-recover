@@ -86,6 +86,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'getroomspaths',
 	'makebackob',
 	'dealwithspecial',
+	'plotreel',
 	'facerightway',
 	], skip_output = [
 	# These functions are processed but not output
