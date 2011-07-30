@@ -552,5 +552,15 @@ void DreamGenContext::findsource() {
 	}
 }
 
+void DreamGenContext::showreelframe() {
+	uint16 x = es.byte(si+2) + data.word(kMapadx);
+	uint16 y = es.byte(si+3) + data.word(kMapady);
+	data.word(kCurrentframe) = es.word(si);
+	findsource();
+	uint16 frame = data.word(kCurrentframe) - data.word(kTakeoff);
+	uint8 width, height;
+	showframe(ds.ptr(0, 0), x, y, frame, 8, &width, &height);
+}
+
 } /*namespace dreamgen */
 

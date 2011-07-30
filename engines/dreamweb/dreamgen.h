@@ -645,7 +645,6 @@ public:
 	static const uint16 addr_allocatework = 0xc1c8;
 	static const uint16 addr_dumpeverything = 0xc1c4;
 	static const uint16 addr_deleverything = 0xc1c0;
-	static const uint16 addr_showreelframe = 0xc1bc;
 	static const uint16 addr_getreelstart = 0xc1b8;
 	static const uint16 addr_movemap = 0xc1b4;
 	static const uint16 addr_dealwithspecial = 0xc1b0;
@@ -1684,7 +1683,7 @@ public:
 	void playguitar();
 	void lastfolder();
 	void transfermap();
-	void showreelframe();
+	//void showreelframe();
 	void showmonk();
 	void diarykeyn();
 	void set16colpalette();

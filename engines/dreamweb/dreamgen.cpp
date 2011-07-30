@@ -3025,24 +3025,6 @@ void DreamGenContext::getreelstart() {
 	_add(si, (0+(36*144)));
 }
 
-void DreamGenContext::showreelframe() {
-	STACK_CHECK;
-	al = es.byte(si+2);
-	ah = 0;
-	di = ax;
-	_add(di, data.word(kMapadx));
-	al = es.byte(si+3);
-	bx = ax;
-	_add(bx, data.word(kMapady));
-	ax = es.word(si);
-	data.word(kCurrentframe) = ax;
-	findsource();
-	ax = data.word(kCurrentframe);
-	_sub(ax, data.word(kTakeoff));
-	ah = 8;
-	showframe();
-}
-
 void DreamGenContext::deleverything() {
 	STACK_CHECK;
 	al = data.byte(kMapysize);
@@ -20525,7 +20507,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_dealwithspecial: dealwithspecial(); break;
 		case addr_movemap: movemap(); break;
 		case addr_getreelstart: getreelstart(); break;
-		case addr_showreelframe: showreelframe(); break;
 		case addr_deleverything: deleverything(); break;
 		case addr_dumpeverything: dumpeverything(); break;
 		case addr_allocatework: allocatework(); break;
