@@ -279,7 +279,7 @@ void AsylumEngine::playIntro() {
 
 	if (!_introPlayed) {
 		_cursor->hide();
-
+		_cursor->forceHide = true;
 		if (!Config.showIntro) {
 			if (_scene->worldstats()->chapter == kChapter1)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
@@ -287,7 +287,6 @@ void AsylumEngine::playIntro() {
 			_sound->playMusic(kResourceNone, 0);
 
 			_video->play(1, _menu);
-			// FIXME: the cursor is still shown after the video ends
 
 			if (_scene->worldstats()->musicCurrentResourceIndex != kMusicStopped)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
@@ -303,7 +302,7 @@ void AsylumEngine::playIntro() {
 			_sound->playSound(introSpeech);
 
 			do {
-				// Poll events (this ensure we don't freeze the screen)
+				// Poll events (this ensures we don't freeze the screen)
 				Common::Event ev;
 				_eventMan->pollEvent(ev);
 
@@ -312,7 +311,7 @@ void AsylumEngine::playIntro() {
 			} while (_sound->isPlaying(introSpeech));
 
 		}
-
+		_cursor->forceHide = false;
 		_introPlayed = true;
 	}
 

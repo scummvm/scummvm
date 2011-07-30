@@ -36,7 +36,7 @@ const uint32 CURSOR_UPDATE_TICKS = 100;
 
 Cursor::Cursor(AsylumEngine *engine) : _vm(engine),
 	graphicResourceId(kResourceNone), currentFrame(0), lastFrameIndex(0), counter(0), animation(kCursorAnimationNone),
-	_cursorRes(NULL), _nextTick(0), _frameStep(0), _state(0) {
+	_cursorRes(NULL), _nextTick(0), _frameStep(0), _state(0), forceHide(false) {
 
 }
 
@@ -52,7 +52,8 @@ void Cursor::hide() const {
 }
 
 void Cursor::show() const {
-	CursorMan.showMouse(true);
+	if (!forceHide)
+		CursorMan.showMouse(true);
 }
 
 void Cursor::set(ResourceId resourceId, int32 cnt, CursorAnimation anim, int32 frames) {
