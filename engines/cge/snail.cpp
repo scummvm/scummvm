@@ -501,16 +501,13 @@ void CGEEngine::snZTrim(Sprite *spr) {
 
 	if (spr)
 		if (spr->active()) {
-			bool en = _heart->_enable;
 			Sprite *s;
-			_heart->_enable = false;
 			s = (spr->_flags._shad) ? spr->_prev : NULL;
 			_vga->_showQ->insert(_vga->_showQ->remove(spr));
 			if (s) {
 				s->_z = spr->_z;
 				_vga->_showQ->insert(_vga->_showQ->remove(s), spr);
 			}
-			_heart->_enable = en;
 		}
 }
 
