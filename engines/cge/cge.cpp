@@ -56,6 +56,49 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 
 }
 
+void CGEEngine::initCaveValues() {
+	if (_isDemo) {
+		_mini = new byte[16384];
+		CAVE_DX = 23;
+		CAVE_DY = 29;
+		CAVE_NX = 3;
+		CAVE_NY = 1;
+	} else {
+		_mini = new byte[65536];
+		CAVE_DX = 9;
+		CAVE_DY = 10;
+		CAVE_NX = 8;
+		CAVE_NY = 3;
+	}
+	CAVE_MAX = CAVE_NX * CAVE_NY;
+
+	if (_isDemo) {
+		_maxCaveArr[0] = CAVE_MAX;
+		_maxCaveArr[1] = -1;
+		_maxCaveArr[2] = -1;
+		_maxCaveArr[3] = -1;
+		_maxCaveArr[4] = -1;
+	} else {
+		_maxCaveArr[0] = 1;
+		_maxCaveArr[1] = 8;
+		_maxCaveArr[2] = 16;
+		_maxCaveArr[3] = 23;
+		_maxCaveArr[4] = 24;
+	};
+
+	_heroXY = (Hxy *) malloc (sizeof(Hxy) * CAVE_MAX);
+	for (int i = 0; i < CAVE_MAX; i++) {
+		_heroXY[i]._x = 0;
+		_heroXY[i]._y = 0;
+	}
+
+	_barriers = (Bar *) malloc (sizeof(Bar) * (1 + CAVE_MAX));
+	for (int i = 0; i < CAVE_MAX + 1; i++) {
+		_barriers[i]._horz = 0xFF;
+		_barriers[i]._vert = 0xFF;
+	}
+}
+
 void CGEEngine::setup() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::setup()");
 
@@ -109,22 +152,8 @@ void CGEEngine::setup() {
 	_volume[0] = 0;
 	_volume[1] = 0;
 
+	initCaveValues();
 
-	if (_isDemo) {
-		_mini = new byte[16384];
-		_maxCaveArr[0] = CAVE_MAX;
-		_maxCaveArr[1] = -1;
-		_maxCaveArr[2] = -1;
-		_maxCaveArr[3] = -1;
-		_maxCaveArr[4] = -1;
-	} else {
-		_mini = new byte[65536];
-		_maxCaveArr[0] = 1;
-		_maxCaveArr[1] = 8;
-		_maxCaveArr[2] = 16;
-		_maxCaveArr[3] = 23;
-		_maxCaveArr[4] = 24;
-	};
 	_maxCave    =  0;
 	_dark       = false;
 	_game       = false;
@@ -181,6 +210,9 @@ CGEEngine::~CGEEngine() {
 	delete _snail_;
 	delete _hero;
 	delete[] _mini;
+
+	free(_heroXY);
+	free(_barriers);
 }
 
 Common::Error CGEEngine::run() {

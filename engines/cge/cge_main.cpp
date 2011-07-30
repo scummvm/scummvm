@@ -99,9 +99,6 @@ static  bool      _finis       = false;
 int	_offUseCount;
 uint16 *_intStackPtr = false;
 
-Hxy _heroXY[CAVE_MAX] = {{0, 0}};
-Bar _barriers[1 + CAVE_MAX] = { { 0xFF, 0xFF } };
-
 extern Dac _stdPal[58];
 
 void CGEEngine::syncHeader(Common::Serializer &s) {
@@ -119,6 +116,13 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 	s.syncBytes(_volume, 2);
 	for (i = 0; i < 4; ++i)
 		s.syncAsUint16LE(_flag[i]);
+
+	initCaveValues();
+	if (s.isLoading()) {
+		//TODO: Fix the memory leak when the game is already running
+		_heroXY = (Hxy *) malloc (sizeof(Hxy) * CAVE_MAX);
+		_barriers = (Bar *) malloc (sizeof(Bar) * (1 + CAVE_MAX));
+	}
 
 	for (i = 0; i < CAVE_MAX; ++i) {
 		s.syncAsSint16LE(_heroXY[i]._x);
@@ -145,7 +149,7 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 }
 
 bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
-	debugC(1, kCGEDebugEngine, "CGEEngine::loadgame(file, %s)", tiny ? "true" : "false");
+	debugC(1, kCGEDebugEngine, "CGEEngine::loadgame(%d, header, %s)", slotNumber, tiny ? "true" : "false");
 
 	Common::MemoryReadStream *readStream;
 	SavegameHeader saveHeader;
@@ -833,9 +837,9 @@ void System::touch(uint16 mask, int x, int y) {
 		_infoLine->update(NULL);
 		if (y >= kWorldHeight ) {
 			if (x < kButtonX) {                           // select cave?
-				if (y >= CAVE_Y && y < CAVE_Y + CAVE_NY * CAVE_DY &&
-				        x >= CAVE_X && x < CAVE_X + CAVE_NX * CAVE_DX && !_vm->_game) {
-					cav = ((y - CAVE_Y) / CAVE_DY) * CAVE_NX + (x - CAVE_X) / CAVE_DX + 1;
+				if (y >= CAVE_Y && y < CAVE_Y + _vm->CAVE_NY * _vm->CAVE_DY &&
+				        x >= CAVE_X && x < CAVE_X + _vm->CAVE_NX * _vm->CAVE_DX && !_vm->_game) {
+					cav = ((y - CAVE_Y) / _vm->CAVE_DY) * _vm->CAVE_NX + (x - CAVE_X) / _vm->CAVE_DX + 1;
 					if (cav > _vm->_maxCave)
 						cav = 0;
 				} else {
