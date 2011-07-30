@@ -122,7 +122,6 @@ private:
 };
 
 extern Vga *_vga;
-extern Heart *_heart;
 extern System *_sys;
 extern int _offUseCount;
 extern Sprite *_pocLight;

@@ -81,7 +81,6 @@ void CGEEngine::setup() {
 	// Initialise engine objects
 	_text = new Text(this, progName(), 128);
 	_vga = new Vga(M13H);
-	_heart = new Heart;
 	_sys = new System(this);
 	_pocLight = new PocLight(this);
 	for (int i = 0; i < kPocketNX; i++) {
@@ -170,7 +169,6 @@ CGEEngine::~CGEEngine() {
 	delete _cavLight;
 	delete _debugLine;
 	delete _text;
-	delete _heart;
 	delete _pocLight;
 	delete _keyboard;
 	delete _mouse;

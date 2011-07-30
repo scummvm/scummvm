@@ -63,7 +63,6 @@ namespace CGE {
 uint16  _stklen = (STACK_SIZ * 2);
 
 Vga *_vga;
-Heart *_heart;
 System *_sys;
 Sprite *_pocLight;
 EventManager *_eventManager;
@@ -625,8 +624,6 @@ void CGEEngine::caveUp() {
 	_dark = false;
 	if (!_startupMode)
 		_mouse->on();
-
-	_heart->_enable = true;
 }
 
 
@@ -675,7 +672,6 @@ void CGEEngine::switchCave(int cav) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchCave(%d)", cav);
 
 	if (cav != _now) {
-		_heart->_enable = false;
 		if (cav < 0) {
 			_snail->addCom(kSnLabel, -1, 0, NULL);  // wait for repaint
 			_snail->addCom2(kSnExec,  -1, 0, kQGame); // switch cave
@@ -1592,7 +1588,6 @@ void CGEEngine::runGame() {
 	}
 
 	_keyboard->setClient(NULL);
-	_heart->_enable = false;
 	_snail->addCom(kSnClear, -1, 0, NULL);
 	_snail_->addCom(kSnClear, -1, 0, NULL);
 	_mouse->off();
@@ -1612,16 +1607,12 @@ void CGEEngine::movie(const char *ext) {
 		loadScript(fn);
 		expandSprite(_vga->_spareQ->locate(999));
 		feedSnail(_vga->_showQ->locate(999), kTake);
-
 		_vga->_showQ->append(_mouse);
-
-		_heart->_enable = true;
 		_keyboard->setClient(_sys);
 		while (!_snail->idle() && !_eventManager->_quitFlag)
 			mainLoop();
 
 		_keyboard->setClient(NULL);
-		_heart->_enable = false;
 		_snail->addCom(kSnClear, -1, 0, NULL);
 		_snail_->addCom(kSnClear, -1, 0, NULL);
 		_vga->_showQ->clear();
@@ -1662,7 +1653,6 @@ bool CGEEngine::showTitle(const char *name) {
 		_vga->copyPage(1, 2);
 		_vga->copyPage(0, 1);
 		_vga->_showQ->append(_mouse);
-		_heart->_enable = true;
 		_mouse->on();
 		for (; !_snail->idle() || Vmenu::_addr;) {
 			mainLoop();
@@ -1671,7 +1661,6 @@ bool CGEEngine::showTitle(const char *name) {
 		}
 
 		_mouse->off();
-		_heart->_enable = false;
 		_vga->_showQ->clear();
 		_vga->copyPage(0, 2);
 		_soundOk = 2;
@@ -1698,13 +1687,11 @@ bool CGEEngine::showTitle(const char *name) {
 				strcpy(_usrFnam, "User");
 				usr_ok = true;
 			} else {
-				_heart->_enable = true;
 				for (takeName(); GetText::_ptr;) {
 					mainLoop();
 					if (_eventManager->_quitFlag)
 						return false;
 				}
-				_heart->_enable = false;
 				if (_keyboard->last() == Enter && *_usrFnam)
 					usr_ok = true;
 			}

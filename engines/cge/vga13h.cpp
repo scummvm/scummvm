@@ -211,11 +211,6 @@ Sprite *locate(int ref) {
 	return (spr) ? spr : _vga->_spareQ->locate(ref);
 }
 
-
-Heart::Heart() {
-	_enable = false;
-}
-
 Sprite::Sprite(CGEEngine *vm, BMP_PTR *shpP)
 	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(NO_SEQ), _time(0), //Delay(0),
@@ -358,8 +353,6 @@ void Sprite::setName(char *n) {
 
 Sprite *Sprite::expand() {
 	if (!_ext) {
-		bool enbl = _heart->_enable;
-		_heart->_enable = false;
 		_ext = new SprExt;
 		assert(_ext != NULL);
 		if (*_file) {
@@ -473,7 +466,6 @@ Sprite *Sprite::expand() {
 			else
 				_takePtr = NO_PTR;
 		}
-		_heart->_enable = enbl;
 	}
 	return this;
 }
