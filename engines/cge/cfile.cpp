@@ -33,24 +33,24 @@
 
 namespace CGE {
 
-IoBuf::IoBuf(IOMode mode, CRYPT *crpt)
-	: IoHand(mode, crpt),
+IoBuf::IoBuf(IOMode mode, Crypt *crypt)
+	: IoHand(mode, crypt),
 	  _bufMark(0),
 	  _ptr(0),
 	  _lim(0) {
-	debugC(1, kCGEDebugFile, "IoBuf::IoBuf(%d, crpt)", mode);
+	debugC(1, kCGEDebugFile, "IoBuf::IoBuf(%d, crypt)", mode);
 
 	_buff = (uint8 *) malloc(sizeof(uint8) * kBufferSize);
 	assert(_buff != NULL);
 }
 
 
-IoBuf::IoBuf(const char *name, IOMode mode, CRYPT *crpt)
-	: IoHand(name, mode, crpt),
+IoBuf::IoBuf(const char *name, IOMode mode, Crypt *crypt)
+	: IoHand(name, mode, crypt),
 	  _bufMark(0),
 	  _ptr(0),
 	  _lim(0) {
-	debugC(1, kCGEDebugFile, "IoBuf::IoBuf(%s, %d, crpt)", name, mode);
+	debugC(1, kCGEDebugFile, "IoBuf::IoBuf(%s, %d, crypt)", name, mode);
 
 	_buff = (uint8 *) malloc(sizeof(uint8) * kBufferSize);
 	assert(_buff != NULL);
@@ -220,9 +220,9 @@ void IoBuf::write(uint8 b) {
 uint16  CFile::_maxLineLen   = kLineMaxSize;
 
 
-CFile::CFile(const char *name, IOMode mode, CRYPT *crpt)
-	: IoBuf(name, mode, crpt) {
-	debugC(1, kCGEDebugFile, "CFile::CFile(%s, %d, crpt)", name, mode);
+CFile::CFile(const char *name, IOMode mode, Crypt *crypt)
+	: IoBuf(name, mode, crypt) {
+	debugC(1, kCGEDebugFile, "CFile::CFile(%s, %d, crypt)", name, mode);
 }
 
 

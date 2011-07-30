@@ -32,7 +32,7 @@ namespace CGE {
 
 Walk *_hero;
 
-uint8 Cluster::_map[MAP_ZCNT][MAP_XCNT];
+uint8 Cluster::_map[kMapZCnt][kMapXCnt];
 CGEEngine *Cluster::_vm;
 
 void Cluster::init(CGEEngine *vm) {
@@ -44,22 +44,22 @@ uint8 &Cluster::cell() {
 }
 
 bool Cluster::isValid() const {
-	return (_a >= 0) && (_a < MAP_XCNT) && (_b >= 0) && (_b < MAP_ZCNT);
+	return (_a >= 0) && (_a < kMapXCnt) && (_b >= 0) && (_b < kMapZCnt);
 }
 
 bool Cluster::chkBar() const {
-	assert(_vm->_now <= _vm->CAVE_MAX);
+	assert(_vm->_now <= _vm->_caveMax);
 	return (_a == _vm->_barriers[_vm->_now]._horz) && (_b == _vm->_barriers[_vm->_now]._vert);
 }
 
 Cluster XZ(int x, int y) {
-	if (y < MAP_TOP)
-		y = MAP_TOP;
+	if (y < kMapTop)
+		y = kMapTop;
 
-	if (y > MAP_TOP + MAP_HIG - MAP_ZGRID)
-		y = MAP_TOP + MAP_HIG - MAP_ZGRID;
+	if (y > kMapTop + kMapHig - kMapGridZ)
+		y = kMapTop + kMapHig - kMapGridZ;
 
-	return Cluster(x / MAP_XGRID, (y - MAP_TOP) / MAP_ZGRID);
+	return Cluster(x / kMapGridX, (y - kMapTop) / kMapGridZ);
 }
 
 
@@ -69,8 +69,8 @@ Cluster XZ(Couple xy) {
 	return XZ(x, y);
 }
 
-Walk::Walk(CGEEngine *vm, BMP_PTR *shpl)
-	: Sprite(vm, shpl), Dir(NO_DIR), _tracePtr(-1), _level(0), _vm(vm) {
+Walk::Walk(CGEEngine *vm, BitmapPtr *shpl)
+	: Sprite(vm, shpl), _dir(kDirNone), _tracePtr(-1), _level(0), _vm(vm) {
 }
 
 
@@ -80,7 +80,7 @@ void Walk::tick() {
 
 	_here = XZ(_x + _w / 2, _y + _h);
 
-	if (Dir != NO_DIR) {
+	if (_dir != kDirNone) {
 		Sprite *spr;
 		_sys->funTouch();
 		for (spr = _vga->_showQ->first(); spr; spr = spr->_next) {
@@ -104,14 +104,14 @@ void Walk::tick() {
 		} else {
 			signed char dx, dz;
 			(_trace[_tracePtr] - _here).split(dx, dz);
-			DIR d = (dx) ? ((dx > 0) ? EE : WW) : ((dz > 0) ? SS : NN);
+			Dir d = (dx) ? ((dx > 0) ? kDirEast : kDirWest) : ((dz > 0) ? kDirSouth : kDirNorth);
 			turn(d);
 		}
 	}
 	step();
-	if ((Dir == WW && _x <= 0)           ||
-	    (Dir == EE && _x + _w >= kScrWidth) ||
-	    (Dir == SS && _y + _w >= kWorldHeight - 2))
+	if ((_dir == kDirWest  && _x      <= 0)         ||
+	    (_dir == kDirEast  && _x + _w >= kScrWidth) ||
+	    (_dir == kDirSouth && _y + _w >= kWorldHeight - 2))
 		park();
 	else {
 		signed char x;            // dummy var
@@ -130,7 +130,7 @@ int Walk::distance(Sprite *spr) {
 	if (dx < 0)
 		dx = 0;
 
-	dx /= MAP_XGRID;
+	dx /= kMapGridX;
 	dz = spr->_z - _z;
 	if (dz < 0)
 		dz = - dz;
@@ -143,22 +143,22 @@ int Walk::distance(Sprite *spr) {
 }
 
 
-void Walk::turn(DIR d) {
-	DIR dir = (Dir == NO_DIR) ? SS : Dir;
-	if (d != Dir) {
+void Walk::turn(Dir d) {
+	Dir dir = (_dir == kDirNone) ? kDirSouth : _dir;
+	if (d != _dir) {
 		step((d == dir) ? (1 + dir + dir) : (9 + 4 * dir + d));
-		Dir = d;
+		_dir = d;
 	}
 }
 
 
 void Walk::park() {
 	if (_time == 0)
-		++_time;
+		_time++;
 
-	if (Dir != NO_DIR) {
-		step(9 + 4 * Dir + Dir);
-		Dir = NO_DIR;
+	if (_dir != kDirNone) {
+		step(9 + 4 * _dir + _dir);
+		_dir = kDirNone;
 		_tracePtr = -1;
 	}
 }
@@ -166,7 +166,7 @@ void Walk::park() {
 
 void Walk::findWay(Cluster c) {
 	if (c != _here) {
-		for (_findLevel = 1; _findLevel <= MAX_FIND_LEVEL; _findLevel++) {
+		for (_findLevel = 1; _findLevel <= kMaxFindLevel; _findLevel++) {
 			signed char x, z;
 			_here.split(x, z);
 			_target = Couple(x, z);
@@ -175,7 +175,7 @@ void Walk::findWay(Cluster c) {
 			if (find1Way(Cluster(x, z)))
 				break;
 		}
-		_tracePtr = (_findLevel > MAX_FIND_LEVEL) ? -1 : (_findLevel - 1);
+		_tracePtr = (_findLevel > kMaxFindLevel) ? -1 : (_findLevel - 1);
 		if (_tracePtr < 0)
 			noWay();
 		_time = 1;
@@ -191,8 +191,8 @@ void Walk::findWay(Sprite *spr) {
 			x += spr->_w + _w / 2 - kWalkSide;
 		else
 			x -= _w / 2 - kWalkSide;
-		findWay(Cluster((x / MAP_XGRID),
-		                ((z < MAP_ZCNT - kDistMax) ? (z + 1)
+		findWay(Cluster((x / kMapGridX),
+		                ((z < kMapZCnt - kDistMax) ? (z + 1)
 		                 : (z - 1))));
 	}
 }
@@ -250,7 +250,7 @@ bool Walk::find1Way(Cluster c) {
 
 
 	// Loop through each direction
-	for (int i = 0; i < tabLen; ++i) {
+	for (int i = 0; i < tabLen; i++) {
 		// Reset to starting position
 		c = start;
 

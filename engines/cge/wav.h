@@ -41,20 +41,20 @@ typedef char FourCC[4];             // Four-character code
 
 class ChunkId { // Chunk type identifier
 	union {
-		FourCC _tx;
+		FourCC _text;
 		uint32 _id;
 	};
 protected:
 	static XFile *ckFile;
 public:
-	ChunkId(FourCC t) {
-		memcpy(_tx, t, sizeof(_tx));
+	ChunkId(FourCC text) {
+		memcpy(_text, text, sizeof(_text));
 	}
 	ChunkId(uint32 d) {
 		_id = d;
 	}
 	ChunkId(XFile *xf) {
-		(ckFile = xf)->read(_tx, sizeof(_tx));
+		(ckFile = xf)->read(_text, sizeof(_text));
 	}
 	bool operator !=(ChunkId &X) {
 		return _id != X._id;
@@ -116,7 +116,7 @@ public:
 
 
 class DataCk : public CkHea {
-	bool _e;
+	bool _ef;
 	uint8 *_buf;
 public:
 	DataCk(CkHea &hea);

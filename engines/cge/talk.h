@@ -66,10 +66,10 @@ public:
 class Talk : public Sprite {
 protected:
 	TextBoxStyle _mode;
-	BMP_PTR *_ts;
+	BitmapPtr *_ts;
 	Bitmap *box(uint16 w, uint16 h);
 public:
-	Talk(CGEEngine *vm, const char *tx, TextBoxStyle mode);
+	Talk(CGEEngine *vm, const char *text, TextBoxStyle mode);
 	Talk(CGEEngine *vm);
 	//~TALK();
 
@@ -77,7 +77,7 @@ public:
 	static void init();
 	static void deinit();
 
-	virtual void update(const char *tx);
+	virtual void update(const char *text);
 	virtual void update() {}
 	void putLine(int line, const char *text);
 private:
@@ -85,10 +85,10 @@ private:
 };
 
 class InfoLine : public Talk {
-	const char *_oldTxt;
+	const char *_oldText;
 public:
 	InfoLine(CGEEngine *vm, uint16 wid);
-	void update(const char *tx);
+	void update(const char *text);
 private:
 	CGEEngine *_vm;
 };

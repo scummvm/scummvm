@@ -99,33 +99,32 @@ extern Seq _seq2[];
 //extern    SEQ *   Compass[];
 //extern    SEQ TurnToS[];
 
-#define PAL_CNT  256
-#define PAL_SIZ (PAL_CNT * 3)
+#define kPalCount  256
+#define kPalSize  (kPalCount * 3)
+
 #define VGAATR_ 0x3C0
-#define VGAMIw_ 0x3C0
 #define VGASEQ_ 0x3C4
-#define VGAMIr_ 0x3CC
 #define VGAGRA_ 0x3CE
 #define VGACRT_ 0x3D4
 #define VGAST1_ 0x3DA
 #define VGAATR  (VGAATR_ & 0xFF)
-#define VGAMIw  (VGAMIw_ & 0xFF)
 #define VGASEQ  (VGASEQ_ & 0xFF)
-#define VGAMIr  (VGAMIr_ & 0xFF)
 #define VGAGRA  (VGAGRA_ & 0xFF)
 #define VGACRT  (VGACRT_ & 0xFF)
-#define VGAST1  (VGAST1_ & 0xFF)
-
 
 class SprExt {
 public:
-	int _x0, _y0;
-	int _x1, _y1;
-	BMP_PTR _b0, _b1;
-	BMP_PTR *_shpList;
+	int _x0;
+	int _y0;
+	int _x1;
+	int _y1;
+	BitmapPtr _b0;
+	BitmapPtr _b1;
+	BitmapPtr *_shpList;
 	Seq *_seq;
 	char *_name;
-	Snail::Com *_near, *_take;
+	Snail::Com *_near;
+	Snail::Com *_take;
 	SprExt() :
 		_x0(0), _y0(0),
 		_x1(0), _y1(0),
@@ -179,15 +178,16 @@ public:
 	inline bool active() {
 		return _ext != NULL;
 	}
-	Sprite(CGEEngine *vm, BMP_PTR *shp);
+
+	Sprite(CGEEngine *vm, BitmapPtr *shp);
 	virtual ~Sprite();
-	BMP_PTR shp();
-	BMP_PTR *setShapeList(BMP_PTR *shp);
+	BitmapPtr shp();
+	BitmapPtr *setShapeList(BitmapPtr *shp);
 	void moveShapes(uint8 *buf);
 	Sprite *expand();
 	Sprite *contract();
 	Sprite *backShow(bool fast = false);
-	void setName(char *n);
+	void setName(char *name);
 	inline char *name() {
 		return (_ext) ? _ext->_name : NULL;
 	}
@@ -195,7 +195,7 @@ public:
 	void center();
 	void show();
 	void hide();
-	BMP_PTR ghost();
+	BitmapPtr ghost();
 	void show(uint16 pg);
 	void makeXlat(uint8 *x);
 	void killXlat();
@@ -243,7 +243,7 @@ class Vga {
 	Dac *_oldColors;
 	Dac *_newColors;
 	const char *_msg;
-	const char *_nam;
+	const char *_name;
 
 	int setMode(int mode);
 	void updateColors();
