@@ -245,7 +245,6 @@ label_start:
 			char c = *txt;
 			w += charWidth;
 			charWidth = spaceWidth;
-			const char *txt2 = txt;
 
 			if (*txt != ' ') {
 				do {
