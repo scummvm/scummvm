@@ -107,6 +107,18 @@ public:
 	int32 counter;
 	CursorAnimation animation;
 
+	/**
+	 * Since the cursor is updated by various event handlers, if an action is
+	 * currently being processed that requires the cursor to remain hidden, another
+	 * event may override that request and show the cursor regardless
+	 *
+	 * This is currently used during the intro speech in Scene 1 after the intro
+	 * video plays
+	 *
+	 * @default false
+	 */
+	bool forceHide;
+
 private:
 	AsylumEngine *_vm;
 
