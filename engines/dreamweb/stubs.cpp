@@ -892,7 +892,7 @@ void DreamGenContext::eraseoldobs() {
 	Sprite *sprites = spritetable();
 	for (size_t i=0; i < 16; ++i) {
 		Sprite &sprite = sprites[i];
-		if (READ_LE_UINT16(&sprite.obj_data) != 0xffff) {
+		if (sprite.objData() != 0xffff) {
 			memset(&sprite, 0xff, sizeof(Sprite));
 		}
 	}
@@ -985,7 +985,7 @@ void DreamGenContext::makebackob() {
 	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
 	bx += sizeof(Sprite) * (sprite - sprites);
 	//
-	WRITE_LE_UINT16(&sprite->obj_data, si);
+	sprite->setObjData(si);
 	if (priority == 255)
 		priority = 0;
 	sprite->priority = priority;

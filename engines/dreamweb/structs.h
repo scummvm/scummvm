@@ -20,8 +20,12 @@
  *
  */
 
+#include "common/endian.h"
+
 struct Sprite {
-	uint16 updateCallback;
+	uint16 _updateCallback;
+	uint16 updateCallback() const { return READ_LE_UINT16(&_updateCallback); }
+	void setUpdateCallback(uint16 v) { WRITE_LE_UINT16(&_updateCallback, v); }
 	uint16 w2;
 	uint16 w4;
 	uint16 w6;
@@ -35,7 +39,9 @@ struct Sprite {
 	uint8  b17;
 	uint8  delay;
 	uint8  frame;
-	uint16 obj_data;
+	uint16 _objData;
+	uint16 objData() const { return READ_LE_UINT16(&_objData); }
+	void setObjData(uint16 v) { WRITE_LE_UINT16(&_objData, v); }
 	uint8  b22;
 	uint8  priority;
 	uint16 w24;

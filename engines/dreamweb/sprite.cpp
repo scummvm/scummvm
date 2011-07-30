@@ -39,7 +39,7 @@ void DreamGenContext::printsprites() {
 		Sprite *sprites = spritetable();
 		for (size_t j = 0; j < 16; ++j) {
 			const Sprite &sprite = sprites[j];
-			if (READ_LE_UINT16(&sprite.updateCallback) == 0x0ffff)
+			if (sprite.updateCallback() == 0x0ffff)
 				continue;
 			if (priority != sprite.priority)
 				continue;
@@ -83,7 +83,7 @@ Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uin
 		++sprite;
 	}
 
-	WRITE_LE_UINT16(&sprite->updateCallback, updateCallback);
+	sprite->setUpdateCallback(updateCallback);
 	sprite->x = x;
 	sprite->y = y;
 	WRITE_LE_UINT16(&sprite->w6, somethingInDx);
@@ -111,7 +111,7 @@ void DreamGenContext::spriteupdate() {
 
 	Sprite *sprite = sprites;
 	for (size_t i=0; i < 16; ++i) {
-		uint16 updateCallback = READ_LE_UINT16(&sprite->updateCallback);
+		uint16 updateCallback = sprite->updateCallback();
 		if (updateCallback != 0xffff) {
 			sprite->w24 = sprite->w2;
 			if (updateCallback == addr_mainman) // NB : Let's consider the callback as an enum while more code is not ported to C++
@@ -279,7 +279,7 @@ void DreamGenContext::backobject(Sprite *sprite) {
 	push(ds);
 
 	ds = data.word(kSetdat);
-	di = READ_LE_UINT16(&sprite->obj_data);
+	di = sprite->objData();
 	ObjData *objData = (ObjData *)ds.ptr(di, 0);
 
 	if (sprite->delay != 0) {
