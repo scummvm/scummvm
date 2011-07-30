@@ -153,6 +153,8 @@ void ConfigurationManager::write() {
 	ConfMan.setInt("key_switchToSara",     (int)keySwitchToSara);
 	ConfMan.setInt("key_switchToGrimwall", (int)keySwitchToGrimwall);
 	ConfMan.setInt("key_switchToOlmec",    (int)keySwitchToOlmec);
+
+	ConfMan.flushToDisk();
 }
 
 bool ConfigurationManager::isKeyAssigned(char key) {
