@@ -317,11 +317,8 @@ void DreamGenContext::frameoutv(uint8 *dst, const uint8 *src, uint16 pitch, uint
 	}
 }
 
-void DreamGenContext::showframe(uint16 src, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
-	ds = src;
-	ah = effectsFlag;
-
-	const Frame *frame = (const Frame *)ds.ptr(frameNumber * sizeof(Frame), 6);
+void DreamGenContext::showframe(const void *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+	const Frame *frame = ((const Frame *)frameData) + frameNumber;
 	if ((frame->width == 0) && (frame->height == 0)) {
 		*width = 0;
 		*height = 0;
@@ -337,8 +334,7 @@ void DreamGenContext::showframe(uint16 src, uint16 x, uint16 y, uint16 frameNumb
 
 	*width = frame->width;
 	*height = frame->height;
-	si = frame->ptr() + 2080;
-	const uint8 *pSrc = ds.ptr(si, *width * *height);
+	const uint8 *pSrc = ((const uint8 *)frameData) + frame->ptr() + 2080;
 
 	if (effectsFlag) {
 		if (effectsFlag & 128) { //centred
@@ -378,7 +374,7 @@ void DreamGenContext::showframe(uint16 src, uint16 x, uint16 y, uint16 frameNumb
 
 void DreamGenContext::showframe() {
 	uint8 width, height;
-	showframe(ds, di, bx, ax & 0x1ff, ah & 0xfe, &width, &height);
+	showframe(ds.ptr(0, 0), di, bx, ax & 0x1ff, ah & 0xfe, &width, &height);
 	cl = width;
 	ch = height;
 }

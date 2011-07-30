@@ -70,14 +70,15 @@ void DreamGenContext::printasprite(const Sprite *sprite) {
 	else
 		c = 0;
 	uint8 width, height;
-	showframe(READ_LE_UINT16(&sprite->w6), x, y, sprite->b15, c, &width, &height);
+	ds = sprite->frameData();
+	showframe(ds.ptr(0, 0), x, y, sprite->b15, c, &width, &height);
 }
 
 void DreamGenContext::clearsprites() {
 	memset(spritetable(), 0xff, sizeof(Sprite) * 16);
 }
 
-Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 somethingInDx, uint16 somethingInDi) {
+Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi) {
 	Sprite *sprite = spritetable();
 	while (sprite->b15 != 0xff) { // NB: No boundchecking in the original code either
 		++sprite;
@@ -86,7 +87,7 @@ Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uin
 	sprite->setUpdateCallback(updateCallback);
 	sprite->x = x;
 	sprite->y = y;
-	WRITE_LE_UINT16(&sprite->w6, somethingInDx);
+	sprite->setFrameData(frameData);
 	WRITE_LE_UINT16(&sprite->w8, somethingInDi);
 	sprite->w2 = 0xffff;
 	sprite->b15 = 0;

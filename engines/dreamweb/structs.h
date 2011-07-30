@@ -28,7 +28,9 @@ struct Sprite {
 	void setUpdateCallback(uint16 v) { WRITE_LE_UINT16(&_updateCallback, v); }
 	uint16 w2;
 	uint16 w4;
-	uint16 w6;
+	uint16 _frameData;
+	uint16 frameData() const { return READ_LE_UINT16(&_frameData); }
+	void setFrameData(uint16 v) { WRITE_LE_UINT16(&_frameData, v); }
 	uint16 w8;
 	uint8  x;
 	uint8  y;

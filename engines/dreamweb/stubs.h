@@ -58,7 +58,7 @@
 	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
 	Sprite *spritetable();
 	void showframe();
-	void showframe(uint16 src, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
+	void showframe(const void *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void printasprite(const Sprite *sprite);
 	void width160();
 	void multiput(uint16 x, uint16 y, uint8 width, uint8 height);
@@ -66,7 +66,7 @@
 	void eraseoldobs();
 	void clearsprites();
 	void makesprite();
-	Sprite *makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 somethingInDx, uint16 somethingInDi);
+	Sprite *makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi);
 	void spriteupdate();
 	void initman();
 	void mainman(Sprite *sprite);
