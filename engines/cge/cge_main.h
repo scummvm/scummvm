@@ -39,18 +39,6 @@ namespace CGE {
 #define CAVE_SX        0
 #define CAVE_SY        0
 
-#ifdef DEMO
-#define CAVE_DX        23
-#define CAVE_DY        29
-#define CAVE_NX        3
-#define CAVE_NY        1
-#else
-#define CAVE_DX        9
-#define CAVE_DY        10
-#define CAVE_NX        8
-#define CAVE_NY        3
-#endif
-#define CAVE_MAX       (CAVE_NX * CAVE_NY)
 #define PAIN           (_vm->_flag[0])
 
 #define kInfoX         177

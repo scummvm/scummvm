@@ -30,8 +30,6 @@
 
 namespace CGE {
 
-extern Bar _barriers[];
-
 Walk *_hero;
 
 uint8 Cluster::_map[MAP_ZCNT][MAP_XCNT];
@@ -50,8 +48,8 @@ bool Cluster::isValid() const {
 }
 
 bool Cluster::chkBar() const {
-	assert(_vm->_now <= CAVE_MAX);
-	return (_a == _barriers[_vm->_now]._horz) && (_b == _barriers[_vm->_now]._vert);
+	assert(_vm->_now <= _vm->CAVE_MAX);
+	return (_a == _vm->_barriers[_vm->_now]._horz) && (_b == _vm->_barriers[_vm->_now]._vert);
 }
 
 Cluster XZ(int x, int y) {

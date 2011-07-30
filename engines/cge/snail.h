@@ -37,11 +37,6 @@ namespace CGE {
 #define kSnailFrameDelay (1000 / kSnailFrameRate)
 #define kDressed 3
 
-struct Bar {
-	uint8 _horz;
-	uint8 _vert;
-};
-
 enum SnCom {
 	kSnLabel,  kSnPause,  kSnWait,        kSnLevel,       kSnHide,
 	kSnSay,    kSnInf,    kSnTime,        kSnCave,        kSnKill,
@@ -85,12 +80,6 @@ private:
 	CGEEngine *_vm;
 };
 
-
-extern  Bar _barriers[];
-extern  struct Hxy {
-	int _x;
-	int _y;
-} _heroXY[];
 
 } // End of namespace CGE
 
