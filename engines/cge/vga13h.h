@@ -117,13 +117,6 @@ extern Seq _seq2[];
 #define VGAST1  (VGAST1_ & 0xFF)
 
 
-class Heart {
-public:
-	Heart();
-	bool _enable;
-};
-
-
 class SprExt {
 public:
 	int _x0, _y0;
