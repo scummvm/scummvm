@@ -321,8 +321,8 @@ void DreamGenContext::showframe(uint16 src, uint16 x, uint16 y, uint16 frameNumb
 	ds = src;
 	ah = effectsFlag;
 
-	si = frameNumber * 6;
-	if (ds.word(si) == 0) {
+	const Frame *frame = (const Frame *)ds.ptr(frameNumber * sizeof(Frame), 6);
+	if ((frame->width == 0) && (frame->height == 0)) {
 		*width = 0;
 		*height = 0;
 		return;
@@ -330,14 +330,14 @@ void DreamGenContext::showframe(uint16 src, uint16 x, uint16 y, uint16 frameNumb
 
 //notblankshow:
 	if ((effectsFlag & 128) == 0) {
-		x += ds.byte(si + 4);
-		y += ds.byte(si + 5);
+		x += frame->x;
+		y += frame->y;
 	}
 //skipoffsets:
 
-	*width = ds.byte(si + 0);
-	*height = ds.byte(si + 1);
-	si = ds.word(si+2) + 2080;
+	*width = frame->width;
+	*height = frame->height;
+	si = frame->ptr() + 2080;
 	const uint8 *pSrc = ds.ptr(si, *width * *height);
 
 	if (effectsFlag) {

@@ -73,3 +73,14 @@ struct ObjData {
 	uint8 b17;
 	uint8 b18[256]; // NB: Don't know the size yet
 };
+
+struct Frame {
+	uint8  width;
+	uint8  height;
+	uint16 _ptr;
+	uint16 ptr() const { return READ_LE_UINT16(&_ptr); }
+	void setPtr(uint16 v) { WRITE_LE_UINT16(&_ptr, v); }
+	uint8  x;
+	uint8  y;
+};
+
