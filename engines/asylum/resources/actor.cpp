@@ -3212,7 +3212,7 @@ void Actor::updateFinish() {
 
 	ActionArea *area = getWorld()->actions[areaIndex];
 	ActionArea *actorArea = getWorld()->actions[_actionIdx3];
-	if (!getScript()->isProcessingSkipped()) {
+	if ((area->flags & 1) && !getScript()->isProcessingSkipped()) {
 		getScript()->queueScript(actorArea->scriptIndex2, _index);
 		getScript()->queueScript(area->scriptIndex, _index);
 	}
