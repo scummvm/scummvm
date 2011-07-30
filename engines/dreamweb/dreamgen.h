@@ -57,7 +57,6 @@ public:
 	static const uint16 addr_getridoftemp2 = 0xcb78;
 	static const uint16 addr_getridoftemptext = 0xcb74;
 	static const uint16 addr_getridoftemp = 0xcb70;
-	static const uint16 addr_fillspace = 0xcb6c;
 	static const uint16 addr_allocateload = 0xcb68;
 	static const uint16 addr_dontloadseg = 0xcb64;
 	static const uint16 addr_findroominloc = 0xcb58;
@@ -1373,6 +1372,7 @@ public:
 	//void worktoscreen();
 	void getexpos();
 	void fadedos();
+	//void fillspace();
 	//void multiget();
 	void fadeupmonfirst();
 	void drawfloor();
@@ -1661,7 +1661,7 @@ public:
 	void steady();
 	void pixelcheckset();
 	void reexfrominv();
-	void fillspace();
+	void examinventory();
 	void talk();
 	void usedryer();
 	void dumpeverything();
@@ -1873,7 +1873,6 @@ public:
 	void turnanypathon();
 	void restorereels();
 	void setwalk();
-	//void printboth();
 	void useroutine();
 	void zoomicon();
 	void hotelcontrol();
@@ -2029,7 +2028,7 @@ public:
 	void scanfornames();
 	void setallchanges();
 	void newgame();
-	void examinventory();
+	//void printboth();
 	void standardload();
 	void undertextline();
 	void findroominloc();

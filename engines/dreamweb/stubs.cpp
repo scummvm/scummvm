@@ -798,5 +798,9 @@ void DreamGenContext::startloading(const Room *room) {
 	findxyfrompath();
 }
 
+void DreamGenContext::fillspace() {
+	memset(ds.ptr(dx, cx), al, cx);
+}
+
 } /*namespace dreamgen */
 

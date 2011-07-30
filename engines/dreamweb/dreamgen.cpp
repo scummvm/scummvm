@@ -19575,23 +19575,6 @@ void DreamGenContext::allocateload() {
 	es = pop();
 }
 
-void DreamGenContext::fillspace() {
-	STACK_CHECK;
-	push(es);
-	push(ds);
-	push(dx);
-	push(di);
-	push(bx);
-	di = dx;
-	es = ds;
-	_stosb(cx, true);
-	bx = pop();
-	di = pop();
-	dx = pop();
-	ds = pop();
-	es = pop();
-}
-
 void DreamGenContext::getridoftemp() {
 	STACK_CHECK;
 	es = data.word(kTempgraphics);
@@ -20934,7 +20917,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_findroominloc: findroominloc(); break;
 		case addr_dontloadseg: dontloadseg(); break;
 		case addr_allocateload: allocateload(); break;
-		case addr_fillspace: fillspace(); break;
 		case addr_getridoftemp: getridoftemp(); break;
 		case addr_getridoftemptext: getridoftemptext(); break;
 		case addr_getridoftemp2: getridoftemp2(); break;
