@@ -338,12 +338,17 @@ void DreamGenContext::gettime() {
 }
 
 void DreamGenContext::allocatemem() {
-	uint size = (bx + 2) * 16;
+	ax = allocatemem(bx);
+}
+
+uint16 DreamGenContext::allocatemem(uint16 paragraphs) {
+	uint size = (paragraphs + 2) * 16;
 	debug(1, "allocate mem, %u bytes", size);
 	flags._c = false;
 	SegmentRef seg = allocateSegment(size);
-	ax = (uint16)seg;
-	debug(1, "\tsegment address -> %04x", (uint16)ax);
+	uint16 result = (uint16)seg;
+	debug(1, "\tsegment address -> %04x", result);
+	return result;
 }
 
 void DreamGenContext::deallocatemem() {

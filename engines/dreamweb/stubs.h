@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+	uint16 allocatemem(uint16 paragraphs);
 	uint8 *workspace();
 	void multidump();
 	void multidump(uint16 x, uint16 y, uint8 width, uint8 height);
