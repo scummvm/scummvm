@@ -23,8 +23,11 @@
 #include <FUiCtrlMessageBox.h>
 
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "engines/engine.h"
-#include <stdarg.h>
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/fonts/bdf.h"
 
 #include "form.h"
 #include "system.h"
@@ -304,6 +307,22 @@ void BadaSystem::initBackend() {
   }
   else {
     OSystem::initBackend();
+  }
+
+  // replace kBigGUIFont using the large font from the scummmobile theme
+  Common::File fontFile;
+  Common::String fileName = "/Res/scummmobile/helvB14-ASCII.fcc";
+  BadaFilesystemNode file(fileName);
+  if (file.exists()) {
+    Common::SeekableReadStream* stream = file.createReadStream();
+    if (stream) {
+      if (fontFile.open(stream, fileName)) {
+        Graphics::BdfFont* font = Graphics::BdfFont::loadFromCache(fontFile);
+        if (font) {
+          FontMan.assignFontToUsage(Graphics::FontManager::kBigGUIFont, font);
+        }
+      }
+    }
   }
 
   logLeaving();

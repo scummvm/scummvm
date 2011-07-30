@@ -23,10 +23,7 @@
 #include "form.h"
 #include "system.h"
 #include "graphics.h"
-
-#include "common/file.h"
 #include "graphics/fontman.h"
-#include "graphics/fonts/bdf.h"
 
 //
 // BadaGraphicsManager
@@ -37,7 +34,6 @@ BadaGraphicsManager::BadaGraphicsManager(BadaAppForm* appForm) :
   eglSurface(EGL_NO_SURFACE),
   eglConfig(0),
   eglContext(EGL_NO_CONTEXT),
-  osdFont(0),
   initState(true) {
   assert(appForm != null);
   _videoMode.fullscreen = true;
@@ -45,36 +41,7 @@ BadaGraphicsManager::BadaGraphicsManager(BadaAppForm* appForm) :
 }
 
 const Graphics::Font* BadaGraphicsManager::getFontOSD() {
-  const Graphics::Font* font = 0;
-
-  if (osdFont) {
-    font = osdFont;
-  }
-  else {
-    // use the large font from the scummmobile theme
-    Common::File fontFile;
-    Common::String fileName = "/Res/scummmobile/helvB14-ASCII.fcc";
-    BadaFilesystemNode file(fileName);
-    if (file.exists()) {
-      Common::SeekableReadStream* stream = file.createReadStream();
-      if (stream) {
-        if (fontFile.open(stream, fileName)) {
-          font = Graphics::BdfFont::loadFromCache(fontFile);
-        }
-      }
-    }
-    
-    if (font) {
-      osdFont = font;
-    }
-  }
-
-  if (!font) {
-    // return default font
-    font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-  }
-
-	return font;
+  return FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 }
 
 bool BadaGraphicsManager::moveMouse(int16& x, int16& y) {

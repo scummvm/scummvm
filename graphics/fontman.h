@@ -28,10 +28,10 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
-
 namespace Graphics {
 
 class Font;
+class BdfFont;
 
 class FontManager : public Common::Singleton<FontManager> {
 public:
@@ -58,6 +58,16 @@ public:
 	 * @return true on success, false on failure
 	 */
 	bool assignFontToName(const Common::String &name, const Font *font);
+
+	/**
+	 * Associates a font object with an 'usage'. This is useful for platforms
+   * with a screen DPI much larger than a regular desktop workstation.
+	 *
+	 * @param name	the name of the font
+	 * @param font	the font object
+	 * @return true on success, false on failure
+	 */
+  bool assignFontToUsage(FontUsage usage, const BdfFont *font);
 
 	/**
 	 * Removes binding from name to font
@@ -88,7 +98,7 @@ public:
 
 protected:
 	/**
-	 * Get the name of the localized font for the given usage. There is no garanty that
+	 * Get the name of the localized font for the given usage. There is no guarantee that
 	 * the font exists. If the usage is kLocalizedFont it returns an empty string.
 	 *
 	 * @param usage	a FontUsage enum value indicating what the font will be used for.

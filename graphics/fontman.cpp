@@ -79,6 +79,22 @@ bool FontManager::assignFontToName(const Common::String &name, const Font *font)
 	return true;
 }
 
+bool FontManager::assignFontToUsage(FontUsage usage, const BdfFont *font) {
+	switch (usage) {
+	case kConsoleFont:
+		delete g_consolefont;
+    g_consolefont = font;
+    break;
+	case kGUIFont:
+		delete g_sysfont;
+    g_sysfont = font;
+    break;
+	case kBigGUIFont:
+		delete g_sysfont_big;
+    g_sysfont_big = font;
+  }
+}
+
 void FontManager::removeFontName(const Common::String &name) {
 	Common::String lowercaseName = name;
 	lowercaseName.toLowercase();

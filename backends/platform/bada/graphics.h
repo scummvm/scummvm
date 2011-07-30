@@ -66,7 +66,6 @@ class BadaGraphicsManager : public OpenGLGraphicsManager {
   EGLSurface eglSurface;
   EGLConfig  eglConfig;
   EGLContext eglContext;
-  const Graphics::Font* osdFont;
   bool initState;
 };
 
