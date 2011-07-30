@@ -2803,6 +2803,7 @@ SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
 	_mixer = _vm->_mixer;
 	_sampleRate = _mixer->getOutputRate();
 	_audioStream = NULL;
+	_channelData = NULL;
 }
 
 SoundBlasterDriver::~SoundBlasterDriver() {
@@ -2835,6 +2836,8 @@ void SoundBlasterDriver::playSound(const byte *channelData, int dataOffset, int 
 	if (program != -1)
 		return;
 
+	assert(channel == 0);
+
 	// If sound data has been previously set, then release it
 	if (_channelData)
 		updateVoice(channel);
@@ -2856,7 +2859,12 @@ void SoundBlasterDriver::playSound(const byte *channelData, int dataOffset, int 
 }
 
 void SoundBlasterDriver::updateVoice(int channel) {
-	// No implementation
+	// Stop the playing voice
+	if (_mixer->isSoundHandleActive(_soundHandle))
+		_mixer->stopHandle(_soundHandle);
+
+	_audioStream = NULL;
+	_channelData = NULL;
 }
 
 void SoundBlasterDriver::proc38(int channel, int cmd, int value) {
@@ -2875,9 +2883,7 @@ void SoundBlasterDriver::proc42(int channel, int cmd, int value, int *v1, int *v
 	// method in the sample playing code. But since we're using the ScummVM audio soundsystem,
 	// it's easier simply to do the check right here
 	if (_audioStream && (_audioStream->numQueuedStreams() == 0)) {
-		_mixer->stopHandle(_soundHandle);
-		_audioStream = NULL;
-		_channelData = NULL;
+		updateVoice(channel);
 	}
 
 	if (!_channelData)
