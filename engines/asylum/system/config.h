@@ -43,9 +43,9 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 	// Default options
-	int  musicVolume;
-	int  sfxVolume;
-	int  voiceVolume;
+	int32 musicVolume;
+	int32 sfxVolume;
+	int32 voiceVolume;
 	bool showMovieSubtitles;
 
 	// Engine options
