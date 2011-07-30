@@ -49,15 +49,6 @@ struct Dac {
 
 typedef uint16 CRYPT(void *buf, uint16 siz, uint16 seed);
 
-class Engine_ {
-protected:
-	static void (* oldTimer)(...);
-	static void newTimer(...);
-public:
-	Engine_(uint16 tdiv);
-	~Engine_();
-};
-
 template <class T>
 void swap(T &A, T &B) {
 	T a = A;

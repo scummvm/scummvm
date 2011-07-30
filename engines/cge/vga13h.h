@@ -117,16 +117,10 @@ extern Seq _seq2[];
 #define VGAST1  (VGAST1_ & 0xFF)
 
 
-class Heart : public Engine_ {
-	friend class Engine_;
+class Heart {
 public:
 	Heart();
-
 	bool _enable;
-	uint16 *_xTimer;
-
-	void setXTimer(uint16 *ptr);
-	void setXTimer(uint16 *ptr, uint16 time);
 };
 
 
