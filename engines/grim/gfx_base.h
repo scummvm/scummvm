@@ -40,7 +40,7 @@ class Material;
 class ModelNode;
 class Mesh;
 class MeshFace;
-class Sprite;
+struct Sprite;
 class Light;
 class Texture;
 
