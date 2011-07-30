@@ -256,7 +256,7 @@ public:
 	bool process(const Common::Point &point);
 	void processStatus(int32 actorX, int32 actorY, bool doSpeech);
 	void processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection nextDirection, const Common::Point &nextPosition, bool invertPriority, const Common::Point &nextPositionOffset);
-	bool canInteract(Common::Point *point, int* param);
+	bool canInteract(Common::Point *point, int32* param);
 	bool canMove(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
 	void move(ActorDirection dir, uint32 distance);
 	void addReactionHive(int32 reactionIndex, int32 numberValue01Add);

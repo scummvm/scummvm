@@ -250,7 +250,7 @@ void ScriptManager::resetQueue() {
 	_queue.reset();
 }
 
-void ScriptManager::queueScript(int scriptIndex, ActorIndex actorIndex) {
+void ScriptManager::queueScript(int32 scriptIndex, ActorIndex actorIndex) {
 	// When the skipProcessing flag is set, do not queue any more scripts
 	if (_skipProcessing)
 		return;
