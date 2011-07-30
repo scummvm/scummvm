@@ -47,7 +47,7 @@ struct Dac {
 	uint8 _b;
 };
 
-typedef uint16 CRYPT(void *buf, uint16 siz, uint16 seed);
+typedef uint16 Crypt(void *buf, uint16 siz, uint16 seed);
 
 template <class T>
 void swap(T &A, T &B) {
@@ -92,10 +92,10 @@ class IoHand : public XFile {
 protected:
 	Common::File *_file;
 	uint16 _seed;
-	CRYPT *_crypt;
+	Crypt *_crypt;
 public:
-	IoHand(const char *name, IOMode mode = kModeRead, CRYPT crypt = NULL);
-	IoHand(IOMode mode = kModeRead, CRYPT *crpt = NULL);
+	IoHand(const char *name, IOMode mode = kModeRead, Crypt crypt = NULL);
+	IoHand(IOMode mode = kModeRead, Crypt *crypt = NULL);
 	virtual ~IoHand();
 	static bool exist(const char *name);
 	uint16 read(void *buf, uint16 len);
@@ -105,24 +105,21 @@ public:
 	long seek(long pos);
 };
 
-CRYPT     XCrypt;
-CRYPT     RCrypt;
+Crypt     XCrypt;
+Crypt     RCrypt;
 uint16    atow(const char *a);
 uint16    xtow(const char *x);
 char     *wtom(uint16 val, char *str, int radix, int len);
 char     *dwtom(uint32 val, char *str, int radix, int len);
-int       takeEnum(const char **tab, const char *txt);
+int       takeEnum(const char **tab, const char *text);
 uint16    chkSum(void *m, uint16 n);
 long      timer();
-char     *mergeExt(char *buf, const char *nam, const char *ext);
-char     *forceExt(char *buf, const char *nam, const char *ext);
-int       driveCD(unsigned drv);
+char     *mergeExt(char *buf, const char *name, const char *ext);
+char     *forceExt(char *buf, const char *name, const char *ext);
 
 // MISSING FUNCTIONS
 void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *));
 const char *progName(const char *ext = NULL);
-char *mergeExt(char *buf, const char *nam, const char *ext);
-char *forceExt(char *buf, const char *nam, const char *ext);
 unsigned fastRand();
 unsigned fastRand(unsigned s);
 uint16 rCrypt(void *buf, uint16 siz, uint16 seed);
@@ -130,7 +127,7 @@ uint16 atow(const char *a);
 uint16 xtow(const char *x);
 char *wtom(uint16 val, char *str, int radix, int len);
 char *dwtom(uint32 val, char * str, int radix, int len);
-int takeEnum(const char **tab, const char *txt);
+int takeEnum(const char **tab, const char *text);
 long timer();
 int new_random(int range);
 } // End of namespace CGE

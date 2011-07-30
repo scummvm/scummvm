@@ -126,7 +126,7 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 	b->_hide = _w >> 2;
 
 	// Replicate across the entire table
-	for (HideDesc *hdP = b + 1; hdP < (b + _h); ++hdP)
+	for (HideDesc *hdP = b + 1; hdP < (b + _h); hdP++)
 		*hdP = *b;
 	
 	b->_skip = 0;                                    // fix the first entry
@@ -195,7 +195,7 @@ uint16 Bitmap::moveVmap(uint8 *buf) {
 }
 
 
-BMP_PTR Bitmap::code() {
+BitmapPtr Bitmap::code() {
 	debugC(1, kCGEDebugBitmap, "Bitmap::code()");
 
 	if (!_m)
@@ -421,17 +421,17 @@ bool Bitmap::loadVBM(XFile *f) {
 		if (p) {
 			if (_pal) {
 				// Read in the palette
-				byte palData[PAL_SIZ];
-				f->read(palData, PAL_SIZ);
+				byte palData[kPalSize];
+				f->read(palData, kPalSize);
 				
 				const byte *srcP = palData;
-				for (int idx = 0; idx < PAL_CNT; ++idx, srcP += 3) {
+				for (int idx = 0; idx < kPalCount; idx++, srcP += 3) {
 					_pal[idx]._r = *srcP;
 					_pal[idx]._g = *(srcP + 1);
 					_pal[idx]._b = *(srcP + 2);
 				}
 			} else
-				f->seek(f->mark() + PAL_SIZ);
+				f->seek(f->mark() + kPalSize);
 		}
 	}
 	if ((_v = new uint8[n]) == NULL)
@@ -473,7 +473,7 @@ bool Bitmap::loadBMP(XFile *f) {
 			f->read((byte *)&bpal, sizeof(bpal));
 			if (f->_error == 0) {
 				if (_pal) {
-					for (i = 0; i < 256; i ++) {
+					for (i = 0; i < 256; i++) {
 						_pal[i]._r = bpal[i]._R;
 						_pal[i]._g = bpal[i]._G;
 						_pal[i]._b = bpal[i]._B;

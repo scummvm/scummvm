@@ -34,13 +34,15 @@
 
 namespace CGE {
 
-#define MAP_XCNT       40
-#define MAP_ZCNT       20
-#define MAP_TOP        80
-#define MAP_HIG        80
-#define MAP_XGRID      (kScrWidth / MAP_XCNT)
-#define MAP_ZGRID      (MAP_HIG / MAP_ZCNT)
-#define MAX_FIND_LEVEL 3
+#define kMapXCnt       40
+#define kMapZCnt       20
+#define kMapTop        80
+#define kMapHig        80
+#define kMapGridX      (kScrWidth / kMapXCnt)
+#define kMapGridZ      (kMapHig / kMapZCnt)
+#define kMaxFindLevel  3
+
+enum Dir { kDirNone = -1, kDirNorth, kDirEast, kDirSouth, kDirWest };
 
 class Couple {
 protected:
@@ -83,7 +85,7 @@ public:
 
 class Cluster : public Couple {
 public:
-	static uint8 _map[MAP_ZCNT][MAP_XCNT];
+	static uint8 _map[kMapZCnt][kMapXCnt];
 	static CGEEngine *_vm;
 
 	static void init(CGEEngine *vm);
@@ -106,15 +108,15 @@ public:
 	int _level;
 	int _findLevel;
 	Couple _target;
-	Cluster _trace[MAX_FIND_LEVEL];
+	Cluster _trace[kMaxFindLevel];
 
-	enum DIR { NO_DIR = -1, NN, EE, SS, WW } Dir;
-	Walk(CGEEngine *vm, BMP_PTR *shpl);
+	Dir _dir;
+	Walk(CGEEngine *vm, BitmapPtr *shpl);
 	void tick();
 	void findWay(Cluster c);
 	void findWay(Sprite *spr);
 	int distance(Sprite *spr);
-	void turn(DIR d);
+	void turn(Dir d);
 	void park();
 	bool lower(Sprite *spr);
 	void reach(Sprite *spr, int mode = -1);

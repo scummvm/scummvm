@@ -48,7 +48,7 @@ MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 		p2 -= w;
 	}
 
-	_ts = new BMP_PTR[2];
+	_ts = new BitmapPtr[2];
 	_ts[0] = new Bitmap(w, h, p);
 	_ts[1] = NULL;
 	setShapeList(_ts);

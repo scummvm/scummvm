@@ -110,7 +110,7 @@ bool Keyboard::getKey(uint16 keycode, int &cgeCode) {
 	}
 
 	// Scan through the ScummVM mapping list
-	for (int idx = 0; idx < 0x60; ++idx) {
+	for (int idx = 0; idx < 0x60; idx++) {
 		if (_scummVmCodes[idx] == keycode) {
 			cgeCode = idx;
 			return true;
@@ -163,13 +163,13 @@ Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0)
 	Common::copy(ms, ms + 2, seq);
 	setSeq(seq);
 
-	BMP_PTR *MC = new BMP_PTR[3];
+	BitmapPtr *MC = new BitmapPtr[3];
 	MC[0] = new Bitmap("MOUSE", true);
 	MC[1] = new Bitmap("DUMMY", true);
 	MC[2] = NULL;
 	setShapeList(MC);
 
-	gotoxy(kScrWidth/2, kScrHeight/2);
+	gotoxy(kScrWidth / 2, kScrHeight / 2);
 	_z = 127;
 	step(1);
 }

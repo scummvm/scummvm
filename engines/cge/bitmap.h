@@ -91,7 +91,7 @@ public:
 };
 
 
-typedef Bitmap *BMP_PTR;
+typedef Bitmap *BitmapPtr;
 
 } // End of namespace CGE
 

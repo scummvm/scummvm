@@ -41,7 +41,7 @@ GetText::GetText(CGEEngine *vm, const char *info, char *text, int size)
 	_ptr = this;
 	_mode = kTBRect;
 
-	_ts = new BMP_PTR[2];
+	_ts = new BitmapPtr[2];
 	_ts[0] = box((i + 3) & ~3, 2 * kTextVMargin + 2 * kFontHigh + kTextLineSpace);
 	_ts[1] = NULL;
 	setShapeList(_ts);

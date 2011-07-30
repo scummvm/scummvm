@@ -40,13 +40,13 @@ Talk *_talk = NULL;
 
 Text::Text(CGEEngine *vm, const char *fname, int size) : _vm(vm) {
 	_cache = new Han[size];
-	mergeExt(_fileName, fname, SAY_EXT);
+	mergeExt(_fileName, fname, kSayExt);
 	if (!INI_FILE::exist(_fileName))
 		error("No talk (%s)\n", _fileName);
 
 	for (_size = 0; _size < size; _size++) {
 		_cache[_size]._ref = 0;
-		_cache[_size]._txt = NULL;
+		_cache[_size]._text = NULL;
 	}
 }
 
@@ -62,8 +62,8 @@ void Text::clear(int from, int upto) {
 	for (p = _cache, q = p + _size; p < q; p++) {
 		if (p->_ref && p->_ref >= from && p->_ref < upto) {
 			p->_ref = 0;
-			delete[] p->_txt;
-			p->_txt = NULL;
+			delete[] p->_text;
+			p->_text = NULL;
 		}
 	}
 }
@@ -105,8 +105,8 @@ void Text::preload(int from, int upto) {
 
 				p = &_cache[find(ref)];
 				if (p < CacheLim) {
-					delete[] p->_txt;
-					p->_txt = NULL;
+					delete[] p->_text;
+					p->_text = NULL;
 				} else
 					p = &_cache[find(0)];
 				if (p >= CacheLim)
@@ -114,10 +114,10 @@ void Text::preload(int from, int upto) {
 				s += strlen(s);
 				if (s < line + n)
 					++s;
-				if ((p->_txt = new char[strlen(s) + 1]) == NULL)
+				if ((p->_text = new char[strlen(s) + 1]) == NULL)
 					break;
 				p->_ref = ref;
-				strcpy(p->_txt, s);
+				strcpy(p->_text, s);
 			}
 		}
 	}
@@ -151,9 +151,9 @@ char *Text::load(int idx, int ref) {
 			if (s < line + n)
 				++s;
 			p->_ref = ref;
-			if ((p->_txt = new char[strlen(s) + 1]) == NULL)
+			if ((p->_text = new char[strlen(s) + 1]) == NULL)
 				return NULL;
-			return strcpy(p->_txt, s);
+			return strcpy(p->_text, s);
 		}
 	}
 	return NULL;
@@ -163,10 +163,10 @@ char *Text::load(int idx, int ref) {
 char *Text::getText(int ref) {
 	int i;
 	if ((i = find(ref)) < _size)
-		return _cache[i]._txt;
+		return _cache[i]._text;
 
 	if ((i = find(0)) >= _size) {
-		clear(SYSTXT_MAX);            // clear non-system
+		clear(kSysTextMax);            // clear non-system
 		if ((i = find(0)) >= _size) {
 			clear();              // clear all
 			i = 0;
@@ -176,9 +176,9 @@ char *Text::getText(int ref) {
 }
 
 
-void Text::say(const char *txt, Sprite *spr) {
+void Text::say(const char *text, Sprite *spr) {
 	killText();
-	_talk = new Talk(_vm, txt, kTBRound);
+	_talk = new Talk(_vm, text, kTBRound);
 	if (_talk) {
 		bool east = spr->_flags._east;
 		int x = (east) ? (spr->_x + spr->_w - 2) : (spr->_x + 2);
@@ -217,11 +217,11 @@ void Text::say(const char *txt, Sprite *spr) {
 	}
 }
 
-void CGEEngine::inf(const char *txt) {
-	debugC(1, kCGEDebugEngine, "CGEEngine::inf(%s)", txt);
+void CGEEngine::inf(const char *text) {
+	debugC(1, kCGEDebugEngine, "CGEEngine::inf(%s)", text);
 
 	killText();
-	_talk = new Talk(this, txt, kTBRect);
+	_talk = new Talk(this, text, kTBRect);
 	if (_talk) {
 		_talk->_flags._kill = true;
 		_talk->_flags._bDel = true;
