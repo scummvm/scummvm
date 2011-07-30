@@ -66,6 +66,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showframe',
 	'initman',
 	'aboutturn',
+	'getroomdata',
 	'showreelframe',
 	'findsource',
 	'walking',

@@ -647,5 +647,13 @@ void DreamGenContext::makebackob() {
 	sprite->frame = 0;
 }
 
+void DreamGenContext::getroomdata() {
+	bx = kRoomdata + sizeof(Room) * al;
+}
+
+void DreamGenContext::getroomdata(uint8 roomIndex) {
+	getroomdata(roomIndex);
+}
+
 } /*namespace dreamgen */
 

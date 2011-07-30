@@ -56,6 +56,8 @@
 	uint8 getnumber(uint16 index, uint16 maxWidth, bool centered, uint16 *offset);
 	void kernchars();
 	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
+	void getroomdata();
+	void getroomdata(uint8 roomIndex);
 	Sprite *spritetable();
 	void showframe();
 	void showframe(const void *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);

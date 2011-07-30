@@ -61,7 +61,6 @@ public:
 	static const uint16 addr_allocateload = 0xcb68;
 	static const uint16 addr_dontloadseg = 0xcb64;
 	static const uint16 addr_readheader = 0xcb60;
-	static const uint16 addr_getroomdata = 0xcb5c;
 	static const uint16 addr_findroominloc = 0xcb58;
 	static const uint16 addr_findxyfrompath = 0xcb54;
 	static const uint16 addr_disablepath = 0xcb50;
@@ -1504,7 +1503,6 @@ public:
 	void showrain();
 	void openpoolboss();
 	void buttontwo();
-	void fillopen();
 	//void usetimedtext();
 	void delsprite();
 	//void getroomspaths();
@@ -1539,6 +1537,7 @@ public:
 	//void printchar();
 	void showkeypad();
 	void obtoinv();
+	//void getroomdata();
 	void removeobfrominv();
 	void usecoveredbox();
 	void openyourneighbour();
@@ -1844,13 +1843,13 @@ public:
 	void useopened();
 	void inventory();
 	void powerlightoff();
-	void getroomdata();
+	void fillopen();
 	void showoutermenu();
 	void signon();
 	void deleteextext();
 	void foghornsound();
 	void showrightpage();
-	void openhoteldoor2();
+	void showloadops();
 	void examicon();
 	void showgun();
 	void switchryanon();
@@ -2027,7 +2026,7 @@ public:
 	void intro();
 	void hangonp();
 	void fadescreendowns();
-	void showloadops();
+	void openhoteldoor2();
 	void getridoftempsp();
 	void scanfornames();
 	void setallchanges();
