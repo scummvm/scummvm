@@ -852,7 +852,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	if (_talkSoundName == soundName)
 		return;
 
-	if (g_imuse->getSoundStatus(_talkSoundName.c_str()) || msg[0] == 0)
+	if (g_imuse->getSoundStatus(_talkSoundName.c_str()) || msg.empty())
 		shutUp();
 
 	_talkSoundName = soundName;
@@ -895,7 +895,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 		_sayLineText = 0;
 	}
 
-	if (msg[0] != 0) {
+	if (!msg.empty()) {
 		GrimEngine::SpeechMode m = g_grim->getSpeechMode();
 		if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly)
 			return;
