@@ -7,7 +7,8 @@ MODULE_OBJS := \
 	dreamgen.o \
 	print.o \
 	sprite.o \
-	stubs.o
+	stubs.o \
+	vgagrafx.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DREAMWEB), DYNAMIC_PLUGIN)
