@@ -64,7 +64,6 @@ public:
 	static const uint16 addr_findroominloc = 0xcb58;
 	static const uint16 addr_findxyfrompath = 0xcb54;
 	static const uint16 addr_disablepath = 0xcb50;
-	static const uint16 addr_startloading = 0xcb4c;
 	static const uint16 addr_sortoutmap = 0xcb48;
 	static const uint16 addr_restoreall = 0xcb44;
 	static const uint16 addr_restorereels = 0xcb40;
@@ -1480,7 +1479,7 @@ public:
 	void endgame();
 	void monprint();
 	void usepipe();
-	void startloading();
+	//void startloading();
 	void getunderzoom();
 	void candles();
 	void backobject();

@@ -655,5 +655,137 @@ void DreamGenContext::getroomdata(uint8 roomIndex) {
 	getroomdata(roomIndex);
 }
 
+void DreamGenContext::startloading() {
+	const Room *room = (Room *)cs.ptr(bx, sizeof(Room));
+	startloading(room);
+}
+
+void DreamGenContext::startloading(const Room *room) {
+	data.byte(kCombatcount) = 0;
+	data.byte(kRoomssample) = room->roomsSample;
+	data.byte(kMapx) = room->mapX;
+	data.byte(kMapy) = room->mapY;
+	data.byte(kLiftflag) = room->liftFlag;
+	data.byte(kManspath) = room->b21;
+	data.byte(kDestination) = room->b21;
+	data.byte(kFinaldest) = room->b21;
+	data.byte(kFacing) = room->b22;
+	data.byte(kTurntoface) = room->b22;
+	data.byte(kCounttoopen) = room->countToOpen;
+	data.byte(kLiftpath) = room->liftPath;
+	data.byte(kDoorpath) = room->doorPath;
+	data.byte(kLastweapon) = -1;
+	al = room->b27;
+	push(ax);
+	al = room->b31;
+	ah = data.byte(kReallocation);
+	data.byte(kReallocation) = al;
+	dx = bx;
+	Common::String name = getFilename(*this);
+	engine->openFile(name);
+	cs.word(kHandle) = 1; //only one handle
+	flags._c = false;
+	readheader();
+	allocateload();
+	ds = ax;
+	data.word(kBackdrop) = ax;
+	dx = (0);
+	loadseg();
+	ds = data.word(kWorkspace);
+	dx = (0);
+	cx = 132*66;
+	al = 0;
+	fillspace();
+	loadseg();
+	sortoutmap();
+	allocateload();
+	data.word(kSetframes) = ax;
+	ds = ax;
+	dx = (0);
+	loadseg();
+	ds = data.word(kSetdat);
+	dx = 0;
+	cx = (64*128);
+	al = 255;
+	fillspace();
+	loadseg();
+	allocateload();
+	data.word(kReel1) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReel2) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReel3) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReels) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kPeople) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kSetdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kBlockdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kRoomdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kFreeframes) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	ds = data.word(kFreedat);
+	dx = 0;
+	cx = (16*80);
+	al = 255;
+	fillspace();
+	loadseg();
+	allocateload();
+	data.word(kFreedesc) = ax;
+	ds = ax;
+	dx = (0);
+	loadseg();
+	closefile();
+	findroominloc();
+	deletetaken();
+	setallchanges();
+	autoappear();
+	al = data.byte(kNewlocation);
+	getroomdata();
+	data.byte(kLastweapon) = -1;
+	data.byte(kMandead) = 0;
+	data.word(kLookcounter) = 160;
+	data.byte(kNewlocation) = 255;
+	data.byte(kLinepointer) = 254;
+	ax = pop();
+	if (al != 255) {
+		data.byte(kManspath) = al;
+		push(bx);
+		autosetwalk();
+		bx = pop();
+	}
+	findxyfrompath();
+}
+
 } /*namespace dreamgen */
 
