@@ -133,19 +133,19 @@ public:
 	Sprite *_sprK2;
 	Sprite *_sprK3;
 
-	uint8 CAVE_DX;
-	uint8 CAVE_DY;
-	uint8 CAVE_NX;
-	uint8 CAVE_NY;
-	uint16 CAVE_MAX;
+	uint8 _caveDx;
+	uint8 _caveDy;
+	uint8 _caveNx;
+	uint8 _caveNy;
+	uint16 _caveMax;
 	Hxy *_heroXY;
 	Bar *_barriers;
 
 	Common::RandomSource _randomSource;
-	byte *		_mini;
-	BMP_PTR *	_miniShp;
-	BMP_PTR *	_miniShpList;
-	int		_startGameSlot;
+	byte      *_mini;
+	BitmapPtr *_miniShp;
+	BitmapPtr *_miniShpList;
+	int        _startGameSlot;
 
 	virtual Common::Error run();
 	GUI::Debugger *getDebugger() {
@@ -168,7 +168,7 @@ public:
 	bool showTitle(const char *name);
 	void movie(const char *ext);
 	void takeName();
-	void inf(const char *txt);
+	void inf(const char *text);
 	void selectSound();
 	void dummy() {}
 	void NONE();
@@ -202,7 +202,7 @@ public:
 	void saveMapping();
 	void saveSound();
 	void heroCover(int cvr);
-	void trouble(int seq, int txt);
+	void trouble(int seq, int text);
 	void offUse();
 	void tooFar();
 	void loadHeroXY();

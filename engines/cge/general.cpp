@@ -110,8 +110,8 @@ const char *progName(const char *ext) {
 	return buf;
 }
 
-char *mergeExt(char *buf, const char *nam, const char *ext) {
-	strcpy(buf, nam);
+char *mergeExt(char *buf, const char *name, const char *ext) {
+	strcpy(buf, name);
 	char *dot = strrchr(buf, '.');
 	if (!dot)
 		strcat(buf, ext);
@@ -119,8 +119,8 @@ char *mergeExt(char *buf, const char *nam, const char *ext) {
 	return buf;
 }
 
-char *forceExt(char *buf, const char *nam, const char *ext) {
-	strcpy(buf, nam);
+char *forceExt(char *buf, const char *name, const char *ext) {
+	strcpy(buf, name);
 	char *dot = strrchr(buf, '.');
 	if (dot)
 		*dot = '\0';
@@ -204,13 +204,13 @@ char *dwtom(uint32 val, char *str, int radix, int len) {
 	return str;
 }
 
-IoHand::IoHand(IOMode mode, CRYPT *crpt)
-	: XFile(mode), _crypt(crpt), _seed(kCryptSeed) {
+IoHand::IoHand(IOMode mode, Crypt *crypt)
+	: XFile(mode), _crypt(crypt), _seed(kCryptSeed) {
 	_file = new Common::File();
 }
 
-IoHand::IoHand(const char *name, IOMode mode, CRYPT *crpt)
-		: XFile(mode), _crypt(crpt), _seed(kCryptSeed) {
+IoHand::IoHand(const char *name, IOMode mode, Crypt *crypt)
+		: XFile(mode), _crypt(crypt), _seed(kCryptSeed) {
 	// TODO: Check if WRI and/or UPD modes are needed, and map to a save file
 	assert(mode == kModeRead);
 
@@ -303,11 +303,11 @@ DataCk *loadWave(XFile *file) {
 	return NULL;
 }
 
-int takeEnum(const char **tab, const char *txt) {
+int takeEnum(const char **tab, const char *text) {
 	const char **e;
-	if (txt) {
+	if (text) {
 		for (e = tab; *e; e++) {
-			if (scumm_stricmp(txt, *e) == 0) {
+			if (scumm_stricmp(text, *e) == 0) {
 				return e - tab;
 			}
 		}
@@ -332,7 +332,7 @@ int new_random(int range) {
 }
 
 DataCk::~DataCk() {
-  if (!_e && _buf)
+  if (_buf)
 	  free(_buf);
 }
 } // End of namespace CGE

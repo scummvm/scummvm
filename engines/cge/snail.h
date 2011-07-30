@@ -67,7 +67,7 @@ public:
 	bool _busy;
 	bool _textDelay;
 	uint32 _timerExpiry;
-	static const char *_comTxt[];
+	static const char *_comText[];
 	bool _talkEnable;
 	Snail(CGEEngine *vm, bool turbo);
 	~Snail();

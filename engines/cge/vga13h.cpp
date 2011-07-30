@@ -211,7 +211,7 @@ Sprite *locate(int ref) {
 	return (spr) ? spr : _vga->_spareQ->locate(ref);
 }
 
-Sprite::Sprite(CGEEngine *vm, BMP_PTR *shpP)
+Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(NO_SEQ), _time(0), //Delay(0),
 	  _ext(NULL), _ref(-1), _cave(0), _vm(vm) {
@@ -234,7 +234,7 @@ Sprite::~Sprite() {
 }
 
 
-BMP_PTR Sprite::shp() {
+BitmapPtr Sprite::shp() {
 	register SprExt *e = _ext;
 	if (e)
 		if (e->_seq) {
@@ -252,17 +252,17 @@ BMP_PTR Sprite::shp() {
 }
 
 
-BMP_PTR *Sprite::setShapeList(BMP_PTR *shpP) {
-	BMP_PTR *r = (_ext) ? _ext->_shpList : NULL;
+BitmapPtr *Sprite::setShapeList(BitmapPtr *shpP) {
+	BitmapPtr *r = (_ext) ? _ext->_shpList : NULL;
 
 	_shpCnt = 0;
 	_w = 0;
 	_h = 0;
 
 	if (shpP) {
-		BMP_PTR *p;
+		BitmapPtr *p;
 		for (p = shpP; *p; p++) {
-			BMP_PTR b = (*p); // ->Code();
+			BitmapPtr b = (*p); // ->Code();
 			if (b->_w > _w)
 				_w = b->_w;
 			if (b->_h > _h)
@@ -280,7 +280,7 @@ BMP_PTR *Sprite::setShapeList(BMP_PTR *shpP) {
 
 
 void Sprite::moveShapes(uint8 *buf) {
-	BMP_PTR *p;
+	BitmapPtr *p;
 	for (p = _ext->_shpList; *p; p++) {
 		buf += (*p)->moveVmap(buf);
 	}
@@ -336,16 +336,16 @@ Snail::Com *Sprite::snList(SnList type) {
 }
 
 
-void Sprite::setName(char *n) {
+void Sprite::setName(char *name) {
 	if (_ext) {
 		if (_ext->_name) {
 			delete[] _ext->_name;
 			_ext->_name = NULL;
 		}
-		if (n) {
-			_ext->_name = new char[strlen(n) + 1];
+		if (name) {
+			_ext->_name = new char[strlen(name) + 1];
 			assert(_ext->_name != NULL);
-			strcpy(_ext->_name, n);
+			strcpy(_ext->_name, name);
 		}
 	}
 }
@@ -358,7 +358,7 @@ Sprite *Sprite::expand() {
 		if (*_file) {
 			static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
 			char line[kLineMax], fname[kPathMax];
-			BMP_PTR *shplist = new BMP_PTR[_shpCnt + 1];
+			BitmapPtr *shplist = new BitmapPtr[_shpCnt + 1];
 			Seq *seq = NULL;
 			int shpcnt = 0,
 			    seqcnt = 0,
@@ -419,7 +419,7 @@ Sprite *Sprite::expand() {
 							nea = (Snail::Com *) realloc(nea, (neacnt + 1) * sizeof(*nea));
 							assert(nea != NULL);
 							Snail::Com *c = &nea[neacnt++];
-							if ((c->_com = (SnCom)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
+							if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
 								error("Bad NEAR in %d [%s]", lcnt, fname);
 							c->_ref = atoi(strtok(NULL, " \t,;/"));
 							c->_val = atoi(strtok(NULL, " \t,;/"));
@@ -432,7 +432,7 @@ Sprite *Sprite::expand() {
 							tak = (Snail::Com *) realloc(tak, (takcnt + 1) * sizeof(*tak));
 							assert(tak != NULL);
 							Snail::Com *c = &tak[takcnt++];
-							if ((c->_com = (SnCom)takeEnum(Snail::_comTxt, strtok(NULL, " \t,;/"))) < 0)
+							if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
 								error("Bad NEAR in %d [%s]", lcnt, fname);
 							c->_ref = atoi(strtok(NULL, " \t,;/"));
 							c->_val = atoi(strtok(NULL, " \t,;/"));
@@ -528,7 +528,7 @@ void Sprite::tick() {
 
 void Sprite::makeXlat(uint8 *x) {
 	if (_ext) {
-		BMP_PTR *b;
+		BitmapPtr *b;
 
 		if (_flags._xlat)
 			killXlat();
@@ -541,7 +541,7 @@ void Sprite::makeXlat(uint8 *x) {
 
 void Sprite::killXlat() {
 	if (_flags._xlat && _ext) {
-		BMP_PTR *b;
+		BitmapPtr *b;
 		uint8 *m = (*_ext->_shpList)->_m;
 		free(m);
 
@@ -616,10 +616,10 @@ void Sprite::hide() {
 }
 
 
-BMP_PTR Sprite::ghost() {
+BitmapPtr Sprite::ghost() {
 	register SprExt *e = _ext;
 	if (e->_b1) {
-		BMP_PTR bmp = new Bitmap(0, 0, (uint8 *)NULL);
+		BitmapPtr bmp = new Bitmap(0, 0, (uint8 *)NULL);
 		assert(bmp != NULL);
 		bmp->_w = e->_b1->_w;
 		bmp->_h = e->_b1->_h;
@@ -785,37 +785,35 @@ Graphics::Surface *Vga::_page[4];
 Dac *Vga::_sysPal;
 
 void Vga::init() {
-	for (int idx = 0; idx < 4; ++idx) {
+	for (int idx = 0; idx < 4; idx++) {
 		_page[idx] = new Graphics::Surface();
 		_page[idx]->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
-	_sysPal = new Dac[PAL_CNT];
+	_sysPal = new Dac[kPalCount];
 }
 
 void Vga::deinit() {
-	for (int idx = 0; idx < 4; ++idx) {
+	for (int idx = 0; idx < 4; idx++) {
 		_page[idx]->free();
 		delete _page[idx];
 	}
-
 	delete[] _sysPal;
 }
 
 Vga::Vga(int mode)
 	: _frmCnt(0), _oldMode(0), _oldScreen(NULL), _statAdr(VGAST1_),
-	  _msg(NULL), _nam(NULL), _setPal(false), _mono(0) {
+	  _msg(NULL), _name(NULL), _setPal(false), _mono(0) {
 	_oldColors = NULL;
 	_newColors = NULL;
 	_showQ = new Queue(true);
 	_spareQ = new Queue(false);
 
 	bool std = true;
-	int i;
-	for (i = 10; i < 20; i++) {
-		char *txt = _text->getText(i);
-		if (txt) {
-			debugN("%s", txt);
+	for (int i = 10; i < 20; i++) {
+		char *text = _text->getText(i);
+		if (text) {
+			debugN("%s", text);
 			std = false;
 		}
 	}
@@ -826,8 +824,8 @@ Vga::Vga(int mode)
 	setStatAdr();
 	if (_statAdr != VGAST1_)
 		_mono++;
-	_oldColors = (Dac *) malloc(sizeof(Dac) * PAL_CNT);
-	_newColors = (Dac *) malloc(sizeof(Dac) * PAL_CNT);
+	_oldColors = (Dac *) malloc(sizeof(Dac) * kPalCount);
+	_newColors = (Dac *) malloc(sizeof(Dac) * kPalCount);
 	_oldScreen = SaveScreen();
 	getColors(_oldColors);
 	sunset();
@@ -853,8 +851,8 @@ Vga::~Vga() {
 	free(_newColors);
 	if (_msg)
 		buffer = Common::String(_msg);
-	if (_nam)
-		buffer = buffer + " [" + _nam + "]";
+	if (_name)
+		buffer = buffer + " [" + _name + "]";
 
 	debugN("%s", buffer.c_str());
 
@@ -936,14 +934,14 @@ int Vga::setMode(int mode) {
 
 
 void Vga::getColors(Dac *tab) {
-	byte palData[PAL_SIZ];
-	g_system->getPaletteManager()->grabPalette(palData, 0, PAL_CNT);
+	byte palData[kPalSize];
+	g_system->getPaletteManager()->grabPalette(palData, 0, kPalCount);
 	palToDac(palData, tab);
 }
 
 void Vga::palToDac(const byte *palData, Dac *tab) {
 	const byte *colP = palData;
-	for (int idx = 0; idx < PAL_CNT; ++idx, colP += 3) {
+	for (int idx = 0; idx < kPalCount; idx++, colP += 3) {
 		tab[idx]._r = *colP >> 2;
 		tab[idx]._g = *(colP + 1) >> 2;
 		tab[idx]._b = *(colP + 2) >> 2;
@@ -951,7 +949,7 @@ void Vga::palToDac(const byte *palData, Dac *tab) {
 }
 
 void Vga::dacToPal(const Dac *tab, byte *palData) {
-	for (int idx = 0; idx < PAL_CNT; ++idx, palData += 3) {
+	for (int idx = 0; idx < kPalCount; idx++, palData += 3) {
 		*palData = tab[idx]._r << 2;
 		*(palData + 1) = tab[idx]._g << 2;
 		*(palData + 2) = tab[idx]._b << 2;
@@ -960,7 +958,7 @@ void Vga::dacToPal(const Dac *tab, byte *palData) {
 
 void Vga::setColors(Dac *tab, int lum) {
 	Dac *palP = tab, *destP = _newColors;
-	for (int idx = 0; idx < PAL_CNT; ++idx, ++palP, ++destP) {
+	for (int idx = 0; idx < kPalCount; idx++, palP++, destP++) {
 		destP->_r = (palP->_r * lum) >> 6;
 		destP->_g = (palP->_g * lum) >> 6;
 		destP->_b = (palP->_b * lum) >> 6;
@@ -968,7 +966,7 @@ void Vga::setColors(Dac *tab, int lum) {
 
 	if (_mono) {
 		destP = _newColors;
-		for (int idx = 0; idx < PAL_CNT; ++idx, ++destP) {
+		for (int idx = 0; idx < kPalCount; idx++, destP++) {
 			// Form a greyscalce colour from 30% R, 59% G, 11% B
 			uint8 intensity = (((int)destP->_r * 77) + ((int)destP->_g * 151) + ((int)destP->_b * 28)) >> 8;
 			destP->_r = intensity;
@@ -982,7 +980,7 @@ void Vga::setColors(Dac *tab, int lum) {
 
 
 void Vga::setColors() {
-	memset(_newColors, 0, PAL_SIZ);
+	memset(_newColors, 0, kPalSize);
 	updateColors();
 }
 
@@ -1021,7 +1019,7 @@ void Vga::show() {
 
 
 void Vga::updateColors() {
-	byte palData[PAL_SIZ];
+	byte palData[kPalSize];
 	dacToPal(_newColors, palData);
 	g_system->getPaletteManager()->setPalette(palData, 0, 256);
 }
@@ -1041,7 +1039,7 @@ void Vga::update() {
 
 
 void Vga::clear(uint8 color) {
-	for (int paneNum = 0; paneNum < 4; ++paneNum)
+	for (int paneNum = 0; paneNum < 4; paneNum++)
 		_page[paneNum]->fillRect(Common::Rect(0, 0, kScrWidth, kScrHeight), color);
 }
 
@@ -1062,7 +1060,7 @@ void Bitmap::xShow(int16 x, int16 y) {
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
 	// must be decompressed and inserted into the surface
-	for (int planeCtr = 0; planeCtr < 4; ++planeCtr) {
+	for (int planeCtr = 0; planeCtr < 4; planeCtr++) {
 		byte *destP = (byte *)Vga::_page[1]->getBasePtr(x + planeCtr, y);
 
 		for (;;) {
@@ -1079,7 +1077,7 @@ void Bitmap::xShow(int16 x, int16 y) {
 			assert(destP < destEndP);
 
 			if (cmd == 2)
-				++srcP;
+				srcP++;
 			else if (cmd == 3)
 				srcP += count;
 
@@ -1114,7 +1112,7 @@ void Bitmap::show(int16 x, int16 y) {
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
 	// must be decompressed and inserted into the surface
-	for (int planeCtr = 0; planeCtr < 4; ++planeCtr) {
+	for (int planeCtr = 0; planeCtr < 4; planeCtr++) {
 		byte *destP = (byte *)Vga::_page[1]->getBasePtr(x + planeCtr, y);
 
 		for (;;) {
@@ -1152,7 +1150,7 @@ void Bitmap::show(int16 x, int16 y) {
 			}
 
 			if (cmd == 2)
-				++srcP;
+				srcP++;
 		}
 	}
 /*
@@ -1184,7 +1182,7 @@ void Bitmap::hide(int16 x, int16 y) {
 
 HorizLine::HorizLine(CGEEngine *vm): Sprite(vm, NULL) {
 	// Set the sprite list
-	BMP_PTR *HL = new BMP_PTR[2];
+	BitmapPtr *HL = new BitmapPtr[2];
 	HL[0] = new Bitmap("HLINE", true);
 	HL[1] = NULL;
 
@@ -1193,7 +1191,7 @@ HorizLine::HorizLine(CGEEngine *vm): Sprite(vm, NULL) {
 
 CavLight::CavLight(CGEEngine *vm): Sprite(vm, NULL) {
 	// Set the sprite list
-	BMP_PTR *PR = new BMP_PTR[2];
+	BitmapPtr *PR = new BitmapPtr[2];
 	PR[0] = new Bitmap("PRESS", true);
 	PR[1] = NULL;
 
@@ -1202,7 +1200,7 @@ CavLight::CavLight(CGEEngine *vm): Sprite(vm, NULL) {
 
 Spike::Spike(CGEEngine *vm): Sprite(vm, NULL) {
 	// Set the sprite list
-	BMP_PTR *SP = new BMP_PTR[3];
+	BitmapPtr *SP = new BitmapPtr[3];
 	SP[0] = new Bitmap("SPK_L", true);
 	SP[1] = new Bitmap("SPK_R", true);
 	SP[2] = NULL;
@@ -1212,7 +1210,7 @@ Spike::Spike(CGEEngine *vm): Sprite(vm, NULL) {
 
 PocLight::PocLight(CGEEngine *vm): Sprite(vm, NULL) {
 	// Set the sprite list
-	BMP_PTR *LI = new BMP_PTR[5];
+	BitmapPtr *LI = new BitmapPtr[5];
 	LI[0] = new Bitmap("LITE0", true);
 	LI[1] = new Bitmap("LITE1", true);
 	LI[2] = new Bitmap("LITE2", true);

@@ -33,11 +33,9 @@
 
 namespace CGE {
 
-#ifndef SYSTXT_MAX
-#define SYSTXT_MAX      1000
-#endif
+#define kSysTextMax     1000
 
-#define SAY_EXT         ".SAY"
+#define kSayExt         ".SAY"
 
 #define NOT_VGA_TEXT    90
 #define BAD_CHIP_TEXT   91
@@ -54,7 +52,7 @@ namespace CGE {
 class Text {
 	struct Han {
 		int _ref;
-		char *_txt;
+		char *_text;
 	} *_cache;
 	int _size;
 	char _fileName[kPathMax];
@@ -66,7 +64,7 @@ public:
 	void clear(int from = 1, int upto = 0x7FFF);
 	void preload(int from = 1, int upto = 0x7FFF);
 	char *getText(int ref);
-	void say(const char *txt, Sprite *spr);
+	void say(const char *text, Sprite *spr);
 private:
 	CGEEngine *_vm;
 };
@@ -74,9 +72,9 @@ private:
 extern Talk *_talk;
 extern Text *_text;
 
-void say(const char *txt, Sprite *spr);
+void say(const char *text, Sprite *spr);
 void sayTime(Sprite *spr);
-void inf(const char *txt);
+void inf(const char *text);
 void killText();
 
 } // End of namespace CGE

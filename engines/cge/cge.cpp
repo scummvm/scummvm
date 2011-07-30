@@ -59,21 +59,21 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 void CGEEngine::initCaveValues() {
 	if (_isDemo) {
 		_mini = new byte[16384];
-		CAVE_DX = 23;
-		CAVE_DY = 29;
-		CAVE_NX = 3;
-		CAVE_NY = 1;
+		_caveDx = 23;
+		_caveDy = 29;
+		_caveNx = 3;
+		_caveNy = 1;
 	} else {
 		_mini = new byte[65536];
-		CAVE_DX = 9;
-		CAVE_DY = 10;
-		CAVE_NX = 8;
-		CAVE_NY = 3;
+		_caveDx = 9;
+		_caveDy = 10;
+		_caveNx = 8;
+		_caveNy = 3;
 	}
-	CAVE_MAX = CAVE_NX * CAVE_NY;
+	_caveMax = _caveNx * _caveNy;
 
 	if (_isDemo) {
-		_maxCaveArr[0] = CAVE_MAX;
+		_maxCaveArr[0] = _caveMax;
 		_maxCaveArr[1] = -1;
 		_maxCaveArr[2] = -1;
 		_maxCaveArr[3] = -1;
@@ -86,14 +86,14 @@ void CGEEngine::initCaveValues() {
 		_maxCaveArr[4] = 24;
 	};
 
-	_heroXY = (Hxy *) malloc (sizeof(Hxy) * CAVE_MAX);
-	for (int i = 0; i < CAVE_MAX; i++) {
+	_heroXY = (Hxy *) malloc (sizeof(Hxy) * _caveMax);
+	for (int i = 0; i < _caveMax; i++) {
 		_heroXY[i]._x = 0;
 		_heroXY[i]._y = 0;
 	}
 
-	_barriers = (Bar *) malloc (sizeof(Bar) * (1 + CAVE_MAX));
-	for (int i = 0; i < CAVE_MAX + 1; i++) {
+	_barriers = (Bar *) malloc (sizeof(Bar) * (1 + _caveMax));
+	for (int i = 0; i < _caveMax + 1; i++) {
 		_barriers[i]._horz = 0xFF;
 		_barriers[i]._vert = 0xFF;
 	}

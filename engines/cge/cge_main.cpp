@@ -109,30 +109,30 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 	s.syncAsUint16LE(_now);
 	s.syncAsUint16LE(_oldLev);
 	s.syncAsUint16LE(_demoText);
-	for (i = 0; i < 5; ++i)
+	for (i = 0; i < 5; i++)
 		s.syncAsUint16LE(_game);
 	s.syncAsSint16LE(i);		// unused VGA::Mono variable
 	s.syncAsUint16LE(_music);
 	s.syncBytes(_volume, 2);
-	for (i = 0; i < 4; ++i)
+	for (i = 0; i < 4; i++)
 		s.syncAsUint16LE(_flag[i]);
 
 	initCaveValues();
 	if (s.isLoading()) {
 		//TODO: Fix the memory leak when the game is already running
-		_heroXY = (Hxy *) malloc (sizeof(Hxy) * CAVE_MAX);
-		_barriers = (Bar *) malloc (sizeof(Bar) * (1 + CAVE_MAX));
+		_heroXY = (Hxy *) malloc (sizeof(Hxy) * _caveMax);
+		_barriers = (Bar *) malloc (sizeof(Bar) * (1 + _caveMax));
 	}
 
-	for (i = 0; i < CAVE_MAX; ++i) {
+	for (i = 0; i < _caveMax; i++) {
 		s.syncAsSint16LE(_heroXY[i]._x);
 		s.syncAsUint16LE(_heroXY[i]._y);
 	}
-	for (i = 0; i < 1 + CAVE_MAX; ++i) {
+	for (i = 0; i < 1 + _caveMax; i++) {
 		s.syncAsByte(_barriers[i]._horz);
 		s.syncAsByte(_barriers[i]._vert);
 	}
-	for (i = 0; i < kPocketNX; ++i)
+	for (i = 0; i < kPocketNX; i++)
 		s.syncAsUint16LE(_pocref[i]);
 
 	if (s.isSaving()) {
@@ -409,15 +409,15 @@ void CGEEngine::heroCover(int cvr) {
 	_snail->addCom(kSnCover, 1, cvr, NULL);
 }
 
-void CGEEngine::trouble(int seq, int txt) {
-	debugC(1, kCGEDebugEngine, "CGEEngine::trouble(%d, %d)", seq, txt);
+void CGEEngine::trouble(int seq, int text) {
+	debugC(1, kCGEDebugEngine, "CGEEngine::trouble(%d, %d)", seq, text);
 
 	_hero->park();
 	_snail->addCom(kSnWait, -1, -1, _hero);
 	_snail->addCom(kSnSeq, -1, seq, _hero);
 	_snail->addCom(kSnSound, -1, 2, _hero);
 	_snail->addCom(kSnWait, -1, -1, _hero);
-	_snail->addCom(kSnSay,  1, txt, _hero);
+	_snail->addCom(kSnSay,  1, text, _hero);
 }
 
 void CGEEngine::offUse() {
@@ -444,7 +444,7 @@ void CGEEngine::loadHeroXY() {
 void CGEEngine::loadMapping() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadMapping()");
 
-	if (_now <= CAVE_MAX) {
+	if (_now <= _caveMax) {
 		INI_FILE cf(progName(".TAB"));
 		if (!cf._error) {
 			memset(Cluster::_map, 0, sizeof(Cluster::_map));
@@ -458,7 +458,7 @@ Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	_flags._kill = true;
 	_flags._bDel = false;
 
-	BMP_PTR *MB = new BMP_PTR[2];
+	BitmapPtr *MB = new BitmapPtr[2];
 	MB[0] = new Bitmap("BRICK", true);
 	MB[1] = NULL;
 	setShapeList(MB);
@@ -480,7 +480,7 @@ void CGEEngine::setMapBrick(int x, int z) {
 	Square *s = new Square(this);
 	if (s) {
 		static char n[] = "00:00";
-		s->gotoxy(x * MAP_XGRID, MAP_TOP + z * MAP_ZGRID);
+		s->gotoxy(x * kMapGridX, kMapTop + z * kMapGridZ);
 		wtom(x, n + 0, 10, 2);
 		wtom(z, n + 3, 10, 2);
 		Cluster::_map[z][x] = 1;
@@ -688,8 +688,8 @@ void CGEEngine::switchCave(int cav) {
 				if (!_isDemo)
 					_vga->_spareQ->_show = 0;
 			}
-			_cavLight->gotoxy(CAVE_X + ((_now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
-			              CAVE_Y + ((_now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
+			_cavLight->gotoxy(CAVE_X + ((_now - 1) % _caveNx) * _caveDx + CAVE_SX,
+			                  CAVE_Y + ((_now - 1) / _caveNx) * _caveDy + CAVE_SY);
 			killText();
 			if (!_startupMode)
 				keyClick();
@@ -837,9 +837,9 @@ void System::touch(uint16 mask, int x, int y) {
 		_infoLine->update(NULL);
 		if (y >= kWorldHeight ) {
 			if (x < kButtonX) {                           // select cave?
-				if (y >= CAVE_Y && y < CAVE_Y + _vm->CAVE_NY * _vm->CAVE_DY &&
-				        x >= CAVE_X && x < CAVE_X + _vm->CAVE_NX * _vm->CAVE_DX && !_vm->_game) {
-					cav = ((y - CAVE_Y) / _vm->CAVE_DY) * _vm->CAVE_NX + (x - CAVE_X) / _vm->CAVE_DX + 1;
+				if (y >= CAVE_Y && y < CAVE_Y + _vm->_caveNy * _vm->_caveDy &&
+				    x >= CAVE_X && x < CAVE_X + _vm->_caveNx * _vm->_caveDx && !_vm->_game) {
+					cav = ((y - CAVE_Y) / _vm->_caveDy) * _vm->_caveNx + (x - CAVE_X) / _vm->_caveDx + 1;
 					if (cav > _vm->_maxCave)
 						cav = 0;
 				} else {
@@ -861,7 +861,7 @@ void System::touch(uint16 mask, int x, int y) {
 				_vm->switchCave(cav);
 
 			if (!_horzLine->_flags._hide) {
-				if (y >= MAP_TOP && y < MAP_TOP + MAP_HIG) {
+				if (y >= kMapTop && y < kMapTop + kMapHig) {
 					int8 x1, z1;
 					XZ(x, y).split(x1, z1);
 					Cluster::_map[z1][x1] = 1;
@@ -869,7 +869,7 @@ void System::touch(uint16 mask, int x, int y) {
 				}
 			} else {
 				if (!_talk && _snail->idle() && _hero
-				        && y >= MAP_TOP && y < MAP_TOP + MAP_HIG && !_vm->_game) {
+				        && y >= kMapTop && y < kMapTop + kMapHig && !_vm->_game) {
 					_hero->findWay(XZ(x, y));
 				}
 			}
@@ -964,9 +964,9 @@ void CGEEngine::switchMapping() {
 
 	if (_horzLine->_flags._hide) {
 		int i;
-		for (i = 0; i < MAP_ZCNT; i++) {
+		for (i = 0; i < kMapZCnt; i++) {
 			int j;
-			for (j = 0; j < MAP_XCNT; j++) {
+			for (j = 0; j < kMapXCnt; j++) {
 				if (Cluster::_map[i][j])
 					setMapBrick(j, i);
 			}
@@ -974,7 +974,7 @@ void CGEEngine::switchMapping() {
 	} else {
 		Sprite *s;
 		for (s = _vga->_showQ->first(); s; s = s->_next)
-			if (s->_w == MAP_XGRID && s->_h == MAP_ZGRID)
+			if (s->_w == kMapGridX && s->_h == kMapGridZ)
 				_snail_->addCom(kSnKill, -1, 0, s);
 	}
 	_horzLine->_flags._hide = !_horzLine->_flags._hide;
@@ -1526,7 +1526,7 @@ void CGEEngine::runGame() {
 		killMidi();
 
 	if (_mini && INI_FILE::exist("MINI.SPR")) {
-		_miniShp = new BMP_PTR[2];
+		_miniShp = new BitmapPtr[2];
 		_miniShp[0] = _miniShp[1] = NULL;
 
 		uint8 *ptr = (uint8 *) &*_mini;
@@ -1568,7 +1568,7 @@ void CGEEngine::runGame() {
 	_debugLine->_z = 126;
 	_vga->_showQ->insert(_debugLine);
 
-	_horzLine->_y = MAP_TOP - (MAP_TOP > 0);
+	_horzLine->_y = kMapTop - (kMapTop > 0);
 	_horzLine->_z = 126;
 	_vga->_showQ->insert(_horzLine);
 
@@ -1579,8 +1579,8 @@ void CGEEngine::runGame() {
 	_startupMode = 0;
 
 	_snail->addCom(kSnLevel, -1, _oldLev, &_cavLight);
-	_cavLight->gotoxy(CAVE_X + ((_now - 1) % CAVE_NX) * CAVE_DX + CAVE_SX,
-	              CAVE_Y + ((_now - 1) / CAVE_NX) * CAVE_DY + CAVE_SY);
+	_cavLight->gotoxy(CAVE_X + ((_now - 1) % _caveNx) * _caveDx + CAVE_SX,
+	                  CAVE_Y + ((_now - 1) / _caveNx) * _caveDy + CAVE_SY);
 	caveUp();
 
 	_keyboard->setClient(_sys);
@@ -1630,11 +1630,11 @@ bool CGEEngine::showTitle(const char *name) {
 		return false;
 
 	Bitmap::_pal = Vga::_sysPal;
-	BMP_PTR *LB = new BMP_PTR[2];
+	BitmapPtr *LB = new BitmapPtr[2];
 	LB[0] = new Bitmap(name, true);
 	LB[1] = NULL;
 	Bitmap::_pal = NULL;
-	bool usr_ok = false;
+	bool userOk = false;
 
 	Sprite D(this, LB);
 	D._flags._kill = true;
@@ -1675,7 +1675,7 @@ bool CGEEngine::showTitle(const char *name) {
 	if (_mode < 2) {
 		if (_isDemo) {
 			strcpy(_usrFnam, progName(kSvgExt));
-			usr_ok = true;
+			userOk = true;
 		} else {
 #ifndef EVA
 			// At this point the game originally set the protection variables
@@ -1689,7 +1689,7 @@ bool CGEEngine::showTitle(const char *name) {
 			// For ScummVM, skip prompting for name if a savegame in slot 0 already exists
 			if ((_startGameSlot == -1) && savegameExists(0)) {
 				strcpy(_usrFnam, "User");
-				usr_ok = true;
+				userOk = true;
 			} else {
 				for (takeName(); GetText::_ptr;) {
 					mainLoop();
@@ -1697,7 +1697,7 @@ bool CGEEngine::showTitle(const char *name) {
 						return false;
 				}
 				if (_keyboard->last() == Enter && *_usrFnam)
-					usr_ok = true;
+					userOk = true;
 			}
 			//Mouse.Off();
 			_vga->_showQ->clear();
@@ -1705,7 +1705,7 @@ bool CGEEngine::showTitle(const char *name) {
 #endif
 		}
 
-		if (usr_ok && _mode == 0) {
+		if (userOk && _mode == 0) {
 			if (savegameExists(0)) {
 				// Load the savegame
 				loadGame(0, NULL, true); // only system vars
@@ -1728,7 +1728,7 @@ bool CGEEngine::showTitle(const char *name) {
 	if (_isDemo)
 		return true;
 	else
-		return (_mode == 2 || usr_ok);
+		return (_mode == 2 || userOk);
 }
 
 void CGEEngine::cge_main() {

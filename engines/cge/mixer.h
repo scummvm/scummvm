@@ -40,8 +40,8 @@ namespace CGE {
 #define kMixName       105                             // sprite name
 
 class Mixer : public Sprite {
-	BMP_PTR _mb[2];
-	BMP_PTR _lb[kMixMax + 1];
+	BitmapPtr _mb[2];
+	BitmapPtr _lb[kMixMax + 1];
 	Sprite *_led[2];
 	int _fall;
 	void update();

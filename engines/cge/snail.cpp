@@ -390,7 +390,7 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 		}
 }
 
-const char *Snail::_comTxt[] = {
+const char *Snail::_comText[] = {
 	"LABEL",  "PAUSE",  "WAIT",    "LEVEL",   "HIDE",
 	"SAY",    "INF",    "TIME",    "CAVE",    "KILL",
 	"RSEQ",   "SEQ",    "SEND",    "SWAP",    "KEEP",
@@ -871,10 +871,10 @@ void CGEEngine::snFlash(bool on) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snFlash(%s)", on ? "true" : "false");
 
 	if (on) {
-		Dac *pal = (Dac *) malloc(sizeof(Dac) * PAL_CNT);
+		Dac *pal = (Dac *) malloc(sizeof(Dac) * kPalCount);
 		if (pal) {
-			memcpy(pal, Vga::_sysPal, PAL_SIZ);
-			for (int i = 0; i < PAL_CNT; i++) {
+			memcpy(pal, Vga::_sysPal, kPalSize);
+			for (int i = 0; i < kPalCount; i++) {
 				register int c;
 				c = pal[i]._r << 1;
 				pal[i]._r = (c < 64) ? c : 63;

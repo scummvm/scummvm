@@ -73,25 +73,12 @@ uint16 Font::width(const char *text) {
 	return w;
 }
 
-
-/*
-void Font::save() {
-	CFILE f((const char *) _path, WRI);
-	if (!f._error) {
-		f.Write(_wid, WID_SIZ);
-		if (!f._error)
-			f.Write(_map, _pos[POS_SIZ - 1] + _wid[WID_SIZ - 1]);
-	}
-}
-*/
-
-
-Talk::Talk(CGEEngine *vm, const char *tx, TextBoxStyle mode)
+Talk::Talk(CGEEngine *vm, const char *text, TextBoxStyle mode)
 	: Sprite(vm, NULL), _mode(mode), _vm(vm) {
 	
 	_ts = NULL;
 	_flags._syst = true;
-	update(tx);
+	update(text);
 }
 
 
@@ -100,18 +87,6 @@ Talk::Talk(CGEEngine *vm)
 	_ts = NULL;
 	_flags._syst = true;
 }
-
-
-/*
-Talk::~Talk() {
-	for (uint16 i = 0; i < ShpCnt; i++) {
-		if (FP_SEG(_shpList[i]) != _DS) { // small model: always false
-			delete _shpList[i];
-			ShpList[i] = NULL;
-		}
-	}
-}
-*/
 
 Font *Talk::_font;
 
@@ -124,17 +99,18 @@ void Talk::deinit() {
 }
 
 
-void Talk::update(const char *tx) {
+void Talk::update(const char *text) {
 	uint16 vmarg = (_mode) ? kTextVMargin : 0;
 	uint16 hmarg = (_mode) ? kTextHMargin : 0;
-	uint16 mw = 0, mh, ln = vmarg;
+	uint16 mw = 0;
+	uint16 ln = vmarg;
 	const char *p;
 	uint8 *m;
 
 	if (!_ts) {
 		uint16 k = 2 * hmarg;
-		mh = 2 * vmarg + kFontHigh;
-		for (p = tx; *p; p++) {
+		uint16 mh = 2 * vmarg + kFontHigh;
+		for (p = text; *p; p++) {
 			if (*p == '|' || *p == '\n') {
 				mh += kFontHigh + kTextLineSpace;
 				if (k > mw)
@@ -146,19 +122,19 @@ void Talk::update(const char *tx) {
 		if (k > mw)
 			mw = k;
 
-		_ts = new BMP_PTR[2];
+		_ts = new BitmapPtr[2];
 		_ts[0] = box(mw, mh);
 		_ts[1] = NULL;
 	}
 
 	m = _ts[0]->_m + ln * mw + hmarg;
 
-	while (* tx) {
-		if (*tx == '|' || *tx == '\n')
+	while (*text) {
+		if (*text == '|' || *text == '\n')
 			m = _ts[0]->_m + (ln += kFontHigh + kTextLineSpace) * mw + hmarg;
 		else {
-			int cw = _font->_wid[(unsigned char)*tx], i;
-			uint8 *f = _font->_map + _font->_pos[(unsigned char)*tx];
+			int cw = _font->_wid[(unsigned char)*text], i;
+			uint8 *f = _font->_map + _font->_pos[(unsigned char)*text];
 			for (i = 0; i < cw; i++) {
 				uint8 *pp = m;
 				uint16 n;
@@ -172,7 +148,7 @@ void Talk::update(const char *tx) {
 				m++;
 			}
 		}
-		tx++;
+		text++;
 	}
 	_ts[0]->code();
 	setShapeList(_ts);
@@ -239,7 +215,7 @@ void Talk::putLine(int line, const char *text) {
 
 	// clear whole rectangle
 	assert((rsiz % lsiz) == 0);
-	for (int planeCtr = 0; planeCtr < 4; ++planeCtr, p += psiz) {
+	for (int planeCtr = 0; planeCtr < 4; planeCtr++, p += psiz) {
 		for (byte *pDest = p; pDest < (p + (rsiz - lsiz)); pDest += lsiz)
 			Common::copy(p - lsiz, p, pDest);
 	}
@@ -273,9 +249,9 @@ void Talk::putLine(int line, const char *text) {
 }
 
 
-InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldTxt(NULL), _vm(vm) {
+InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldText(NULL), _vm(vm) {
 	if (!_ts) {
-		_ts = new BMP_PTR[2];
+		_ts = new BitmapPtr[2];
 		_ts[1] = NULL;
 	}
 
@@ -284,8 +260,8 @@ InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldTxt(NULL), _vm(vm) {
 }
 
 
-void InfoLine::update(const char *tx) {
-	if (tx != _oldTxt) {
+void InfoLine::update(const char *text) {
+	if (text != _oldText) {
 		uint16 w = _ts[0]->_w;
 		uint16 h = _ts[0]->_h;
 		uint8 *v = (uint8 *) _ts[0]->_v;
@@ -306,12 +282,12 @@ void InfoLine::update(const char *tx) {
 		}
 
 		// paint text line
-		if (tx) {
+		if (text) {
 			uint8 *p = v + 2, * q = p + size;
 
-			while (*tx) {
-				uint16 cw = _font->_wid[(unsigned char)*tx];
-				uint8 *fp = _font->_map + _font->_pos[(unsigned char)*tx];
+			while (*text) {
+				uint16 cw = _font->_wid[(unsigned char)*text];
+				uint8 *fp = _font->_map + _font->_pos[(unsigned char)*text];
 
 				for (uint16 i = 0; i < cw; i++) {
 					register uint16 b = fp[i];
@@ -324,10 +300,10 @@ void InfoLine::update(const char *tx) {
 					if (p >= q)
 						p = p - size + 1;
 				}
-				tx++;
+				text++;
 			}
 		}
-		_oldTxt = tx;
+		_oldText = text;
 	}
 }
 
