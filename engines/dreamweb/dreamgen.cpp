@@ -2923,64 +2923,6 @@ notfudge:
 	data.byte(kHavedoneobs) = 0;
 }
 
-void DreamGenContext::dealwithspecial() {
-	STACK_CHECK;
-	_sub(al, 220);
-	_cmp(al, 0);
-	if (!flags.z())
-		goto notplset;
-	al = ah;
-	placesetobject();
-	data.byte(kHavedoneobs) = 1;
-	return;
-notplset:
-	_cmp(al, 1);
-	if (!flags.z())
-		goto notremset;
-	al = ah;
-	removesetobject();
-	data.byte(kHavedoneobs) = 1;
-	return;
-notremset:
-	_cmp(al, 2);
-	if (!flags.z())
-		goto notplfree;
-	al = ah;
-	placefreeobject();
-	data.byte(kHavedoneobs) = 1;
-	return;
-notplfree:
-	_cmp(al, 3);
-	if (!flags.z())
-		goto notremfree;
-	al = ah;
-	removefreeobject();
-	data.byte(kHavedoneobs) = 1;
-	return;
-notremfree:
-	_cmp(al, 4);
-	if (!flags.z())
-		goto notryanoff;
-	switchryanoff();
-	return;
-notryanoff:
-	_cmp(al, 5);
-	if (!flags.z())
-		goto notryanon;
-	data.byte(kTurntoface) = ah;
-	data.byte(kFacing) = ah;
-	switchryanon();
-	return;
-notryanon:
-	_cmp(al, 6);
-	if (!flags.z())
-		goto notchangeloc;
-	data.byte(kNewlocation) = ah;
-	return;
-notchangeloc:
-	movemap();
-}
-
 void DreamGenContext::movemap() {
 	STACK_CHECK;
 	_cmp(ah, 32);
@@ -20320,7 +20262,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_plotreel: plotreel(); break;
 		case addr_soundonreels: soundonreels(); break;
 		case addr_reconstruct: reconstruct(); break;
-		case addr_dealwithspecial: dealwithspecial(); break;
 		case addr_movemap: movemap(); break;
 		case addr_getreelstart: getreelstart(); break;
 		case addr_deleverything: deleverything(); break;

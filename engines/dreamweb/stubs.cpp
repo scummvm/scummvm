@@ -802,5 +802,36 @@ void DreamGenContext::fillspace() {
 	memset(ds.ptr(dx, cx), al, cx);
 }
 
+void DreamGenContext::dealwithspecial() {
+	uint8 type = al - 220;
+	if (type == 0) {
+		al = ah;
+		placesetobject();
+		data.byte(kHavedoneobs) = 1;
+	} else if (type == 1) {
+		al = ah;
+		removesetobject();
+		data.byte(kHavedoneobs) = 1;
+	} else if (type == 2) {
+		al = ah;
+		placefreeobject();
+		data.byte(kHavedoneobs) = 1;
+	} else if (type == 3) {
+		al = ah;
+		removefreeobject();
+		data.byte(kHavedoneobs) = 1;
+	} else if (type == 4) {
+		switchryanoff();
+	} else if (type == 5) {
+		data.byte(kTurntoface) = ah;
+		data.byte(kFacing) = ah;
+		switchryanon();
+	} else if (type == 6) {
+		data.byte(kNewlocation) = ah;
+	} else {
+		movemap();
+	}
+}
+
 } /*namespace dreamgen */
 

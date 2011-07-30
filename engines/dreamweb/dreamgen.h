@@ -642,7 +642,6 @@ public:
 	static const uint16 addr_deleverything = 0xc1c0;
 	static const uint16 addr_getreelstart = 0xc1b8;
 	static const uint16 addr_movemap = 0xc1b4;
-	static const uint16 addr_dealwithspecial = 0xc1b0;
 	static const uint16 addr_reconstruct = 0xc1ac;
 	static const uint16 addr_soundonreels = 0xc1a8;
 	static const uint16 addr_plotreel = 0xc1a4;
@@ -1449,7 +1448,7 @@ public:
 	void printcurs();
 	//void convertkey();
 	void outofopen();
-	void dealwithspecial();
+	//void dealwithspecial();
 	//void eraseoldobs();
 	void dircom();
 	//void liftsprite();
