@@ -78,6 +78,16 @@ struct SavegameHeader {
 extern const char *SAVEGAME_STR;
 #define SAVEGAME_STR_SIZE 11
 
+struct Bar {
+	uint8 _horz;
+	uint8 _vert;
+};
+
+struct Hxy {
+	int _x;
+	int _y;
+};
+
 class CGEEngine : public Engine {
 private:
 	uint32 _lastFrame, _lastTick;
@@ -122,6 +132,14 @@ public:
 	Sprite *_sprK1;
 	Sprite *_sprK2;
 	Sprite *_sprK3;
+
+	uint8 CAVE_DX;
+	uint8 CAVE_DY;
+	uint8 CAVE_NX;
+	uint8 CAVE_NY;
+	uint16 CAVE_MAX;
+	Hxy *_heroXY;
+	Bar *_barriers;
 
 	Common::RandomSource _randomSource;
 	byte *		_mini;
@@ -200,6 +218,7 @@ public:
 	void AltCtrlDel();
 	void postMiniStep(int stp);
 	void showBak(int ref);
+	void initCaveValues();
 
 	void snBackPt(Sprite *spr, int stp);
 	void snBarrier(int cav, int bar, bool horz);
