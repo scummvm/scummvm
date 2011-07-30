@@ -60,7 +60,6 @@ public:
 	static const uint16 addr_fillspace = 0xcb6c;
 	static const uint16 addr_allocateload = 0xcb68;
 	static const uint16 addr_dontloadseg = 0xcb64;
-	static const uint16 addr_readheader = 0xcb60;
 	static const uint16 addr_findroominloc = 0xcb58;
 	static const uint16 addr_findxyfrompath = 0xcb54;
 	static const uint16 addr_disablepath = 0xcb50;
@@ -1314,7 +1313,7 @@ public:
 	void bothchannels();
 	void usewire();
 	void getnamepos();
-	void drawitall();
+	void loadtemptext();
 	void clearstartpal();
 	void femalefan();
 	void showgamereel();
@@ -1702,7 +1701,7 @@ public:
 	void getridofpit();
 	void convnum();
 	void nothelderror();
-	void readheader();
+	//void readheader();
 	void getsetad();
 	void getyad();
 	void reconstruct();
@@ -1804,7 +1803,7 @@ public:
 	void printmessage();
 	void reexfromopen();
 	void fillryan();
-	void loadtemptext();
+	void drawitall();
 	void usestereo();
 	void showcurrentfile();
 	void copyname();

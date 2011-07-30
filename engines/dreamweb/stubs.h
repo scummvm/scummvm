@@ -58,6 +58,7 @@
 	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
 	void getroomdata();
 	void getroomdata(uint8 roomIndex);
+	void readheader();
 	void startloading();
 	void startloading(const Room *room);
 	Sprite *spritetable();

@@ -660,6 +660,12 @@ void DreamGenContext::startloading() {
 	startloading(room);
 }
 
+void DreamGenContext::readheader() {
+	ax = engine->readFromFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
+	es = cs;
+	di = kFiledata;
+}
+
 void DreamGenContext::startloading(const Room *room) {
 	data.byte(kCombatcount) = 0;
 	data.byte(kRoomssample) = room->roomsSample;

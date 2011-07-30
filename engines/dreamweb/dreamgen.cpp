@@ -19563,16 +19563,6 @@ lookx:
 	data.byte(kRoomnum) = cl;
 }
 
-void DreamGenContext::readheader() {
-	STACK_CHECK;
-	ds = cs;
-	dx = 6091;
-	cx = (6187-6091);
-	readfromfile();
-	es = cs;
-	di = 6141;
-}
-
 void DreamGenContext::allocateload() {
 	STACK_CHECK;
 	push(es);
@@ -20942,7 +20932,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_disablepath: disablepath(); break;
 		case addr_findxyfrompath: findxyfrompath(); break;
 		case addr_findroominloc: findroominloc(); break;
-		case addr_readheader: readheader(); break;
 		case addr_dontloadseg: dontloadseg(); break;
 		case addr_allocateload: allocateload(); break;
 		case addr_fillspace: fillspace(); break;
