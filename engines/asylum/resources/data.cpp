@@ -167,28 +167,28 @@ uint32 SharedData::getAmbientTick(uint32 index) {
 		error("[SharedData::getAmbientTick] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientTicks));
 
 	return _ambientTicks[index];
-};
+}
 
 void SharedData::setAmbientTick(uint32 index, uint32 val) {
 	if (index >= ARRAYSIZE(_ambientTicks))
 		error("[SharedData::setAmbientTick] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientTicks));
 
 	_ambientTicks[index] = val;
-};
+}
 
 uint32 SharedData::getAmbientFlag(uint32 index) {
 	if (index >= ARRAYSIZE(_ambientFlags))
 		error("[SharedData::getAmbientFlag] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientFlags));
 
 	return _ambientFlags[index];
-};
+}
 
 void SharedData::setAmbientFlag(uint32 index, uint32 val) {
 	if (index >= ARRAYSIZE(_ambientFlags))
 		error("[SharedData::setAmbientFlag] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientFlags));
 
 	_ambientFlags[index] = val;
-};
+}
 
 void SharedData::resetAmbientFlags() {
 	memset(&_ambientFlags, 0, sizeof(_ambientFlags));
