@@ -2258,45 +2258,6 @@ over1001:
 	data.word(kTakeoff) = 320;
 }
 
-void DreamGenContext::aboutturn() {
-	STACK_CHECK;
-	_cmp(data.byte(kTurndirection), 1);
-	if (flags.z())
-		goto incdir;
-	_cmp(data.byte(kTurndirection), -1);
-	if (flags.z())
-		goto decdir;
-	al = data.byte(kFacing);
-	_sub(al, data.byte(kTurntoface));
-	if (!flags.c())
-		goto higher;
-	_neg(al);
-	_cmp(al, 4);
-	if (!flags.c())
-		goto decdir;
-	goto incdir;
-higher:
-	_cmp(al, 4);
-	if (!flags.c())
-		goto incdir;
-	goto decdir;
-incdir:
-	data.byte(kTurndirection) = 1;
-	al = data.byte(kFacing);
-	_inc(al);
-	_and(al, 7);
-	data.byte(kFacing) = al;
-	es.byte(bx+29) = 0;
-	return;
-decdir:
-	data.byte(kTurndirection) = -1;
-	al = data.byte(kFacing);
-	_dec(al);
-	_and(al, 7);
-	data.byte(kFacing) = al;
-	es.byte(bx+29) = 0;
-}
-
 void DreamGenContext::checkforexit() {
 	STACK_CHECK;
 	cl = data.byte(kRyanx);
@@ -20560,7 +20521,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_checkone: checkone(); break;
 		case addr_findsource: findsource(); break;
 		case addr_mainman: mainman(); break;
-		case addr_aboutturn: aboutturn(); break;
 		case addr_checkforexit: checkforexit(); break;
 		case addr_adjustdown: adjustdown(); break;
 		case addr_adjustup: adjustup(); break;

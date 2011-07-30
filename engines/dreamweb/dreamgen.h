@@ -672,7 +672,6 @@ public:
 	static const uint16 addr_adjustup = 0xc150;
 	static const uint16 addr_adjustdown = 0xc14c;
 	static const uint16 addr_checkforexit = 0xc148;
-	static const uint16 addr_aboutturn = 0xc13c;
 	static const uint16 addr_mainman = 0xc138;
 	static const uint16 addr_findsource = 0xc130;
 	static const uint16 addr_checkone = 0xc12c;
@@ -1470,7 +1469,7 @@ public:
 	void loadold();
 	void loadtempcharset();
 	void useslab();
-	void aboutturn();
+	//void aboutturn();
 	void usealtar();
 	void createpanel2();
 	void turnonpower();
