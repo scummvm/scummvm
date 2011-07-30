@@ -134,60 +134,55 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			_snail->addCom(kSnSay, buref, 16008, NULL);            // zgadnij!
 			_game = true;
 		}
-#undef STEPS
-#undef DRESSED
 	}
 	break;
 	//--------------------------------------------------------------------
 	case 2 : {
-		static Sprite *k = NULL, * k1, * k2, * k3;
-		static int count = 0;
-
-		if (k == NULL) {
-			k  = _vga->_showQ->locate(20700);
-			k1 = _vga->_showQ->locate(20701);
-			k2 = _vga->_showQ->locate(20702);
-			k3 = _vga->_showQ->locate(20703);
+		if (_sprTv == NULL) {
+			_sprTv = _vga->_showQ->locate(20700);
+			_sprK1 = _vga->_showQ->locate(20701);
+			_sprK2 = _vga->_showQ->locate(20702);
+			_sprK3 = _vga->_showQ->locate(20703);
 		}
 
 		if (!_game) { // init
 			_snail->addCom(kSnGame, 20002, 2, NULL);
 			_game = true;
 		} else { // cont
-			k1->step(new_random(6));
-			k2->step(new_random(6));
-			k3->step(new_random(6));
+			_sprK1->step(new_random(6));
+			_sprK2->step(new_random(6));
+			_sprK3->step(new_random(6));
 			///--------------------
 			if (spr->_ref == 1 && _keyboard->_key[ALT]) {
-				k1->step(5);
-				k2->step(5);
-				k3->step(5);
+				_sprK1->step(5);
+				_sprK2->step(5);
+				_sprK3->step(5);
 			}
 			///--------------------
 			_snail->addCom(kSnSetZ, 20700, 0, NULL);
-			bool hit = (k1->_seqPtr + k2->_seqPtr + k3->_seqPtr == 15);
+			bool hit = (_sprK1->_seqPtr + _sprK2->_seqPtr + _sprK3->_seqPtr == 15);
 			if (hit) {
 				if (spr->_ref == 1) {
-					_snail->addCom(kSnSay,      1, 20003, NULL);       // hura!
-					_snail->addCom(kSnSeq,  20011,     2, NULL);       // kamera won
-					_snail->addCom(kSnSend, 20701,    -1, NULL);       // k1 won
-					_snail->addCom(kSnSend, 20702,    -1, NULL);       // k2 won
-					_snail->addCom(kSnSend, 20703,    -1, NULL);       // k3 won
-					_snail->addCom(kSnSend, 20700,    -1, NULL);       // tv won
-					_snail->addCom(kSnKeep, 20007,     0, NULL);       // do kieszeni
-					_snail->addCom(kSnSend, 20006,    20, NULL);       // bilon
+					_snail->addCom(kSnSay,       1, 20003, NULL);       // hura!
+					_snail->addCom(kSnSeq,   20011,     2, NULL);       // kamera won
+					_snail->addCom(kSnSend,  20701,    -1, NULL);       // k1 won
+					_snail->addCom(kSnSend,  20702,    -1, NULL);       // k2 won
+					_snail->addCom(kSnSend,  20703,    -1, NULL);       // k3 won
+					_snail->addCom(kSnSend,  20700,    -1, NULL);       // tv won
+					_snail->addCom(kSnKeep,  20007,     0, NULL);       // do kieszeni
+					_snail->addCom(kSnSend,  20006,    20, NULL);       // bilon
 					_snail->addCom(kSnSound, 20006, 20002, NULL);      // bilon!
-					_snail->addCom(kSnSay,  20002, 20004, NULL);
-					_snail->addCom(kSnSend, 20010,    20, NULL);       // papier
+					_snail->addCom(kSnSay,   20002, 20004, NULL);
+					_snail->addCom(kSnSend,  20010,    20, NULL);       // papier
 					_snail->addCom(kSnSound, 20010, 20003, NULL);      // papier!
-					_snail->addCom(kSnSay,  20001, 20005, NULL);
+					_snail->addCom(kSnSay,   20001, 20005, NULL);
 					_game = false;
 					return;
 				} else
-					k3->step(new_random(5));
+					_sprK3->step(new_random(5));
 			}
-			if (count < 100) {
-				switch (count) {
+			if (_gameCase2Cpt < 100) {
+				switch (_gameCase2Cpt) {
 				case 15 :
 					_snail->addCom(kSnSay, 20003, 20021, NULL);
 					break;
@@ -198,51 +193,51 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 					_snail->addCom(kSnSay, 20003, 20022, NULL);
 					break;
 				}
-				count++;
+				_gameCase2Cpt++;
 			}
 			switch (spr->_ref) {
 			case     1 :
-				_snail->addCom(kSnSay,  20001, 20011, NULL);         // zapro
-				_snail->addCom(kSnSeq,  20001, 1, NULL);             // rzu
-				_snail->addCom(kSnWait, 20001, 1, NULL);             // czekaj
-				_snail->addCom(kSnSetZ, 20700, 2, NULL);             // skryj k
-				_snail->addCom(kSnHide, 20007, 1, NULL);             // skryj k
-				_snail->addCom(kSnWait, 20001, 16, NULL);            // czekaj
-				_snail->addCom(kSnSeq,  20007, 1, NULL);             // lec†
-				_snail->addCom(kSnHide, 20007, 0, NULL);             // poka§
+				_snail->addCom(kSnSay,   20001, 20011, NULL);         // zapro
+				_snail->addCom(kSnSeq,   20001,     1, NULL);             // rzu
+				_snail->addCom(kSnWait,  20001,     1, NULL);             // czekaj
+				_snail->addCom(kSnSetZ,  20700,     2, NULL);             // skryj k
+				_snail->addCom(kSnHide,  20007,     1, NULL);             // skryj k
+				_snail->addCom(kSnWait,  20001,    16, NULL);            // czekaj
+				_snail->addCom(kSnSeq,   20007,     1, NULL);             // lec†
+				_snail->addCom(kSnHide,  20007,     0, NULL);             // poka§
 				_snail->addCom(kSnSound, 20007, 20001, NULL);        // grzech
-				_snail->addCom(kSnWait, 20007, -1, NULL);            // koniec
-				_snail->addCom(kSnGame, 20001, 2, NULL);             // again!
+				_snail->addCom(kSnWait,  20007,    -1, NULL);            // koniec
+				_snail->addCom(kSnGame,  20001,     2, NULL);             // again!
 				break;
 			case 20001:
-				_snail->addCom(kSnSay, 20002, 20012, NULL);          // zapro
-				_snail->addCom(kSnSeq, 20002, 1, NULL);              // rzu
-				_snail->addCom(kSnWait, 20002, 3, NULL);             // czekaj
-				_snail->addCom(kSnSetZ, 20700, 2, NULL);             // skryj k
-				_snail->addCom(kSnHide, 20007, 1, NULL);             // skryj k
-				_snail->addCom(kSnWait, 20002, 10, NULL);            // czekaj
-				_snail->addCom(kSnSeq, 20007, 2, NULL);              // lec†
-				_snail->addCom(kSnHide, 20007, 0, NULL);             // poka§
+				_snail->addCom(kSnSay,   20002, 20012, NULL);          // zapro
+				_snail->addCom(kSnSeq,   20002,     1, NULL);              // rzu
+				_snail->addCom(kSnWait,  20002,     3, NULL);             // czekaj
+				_snail->addCom(kSnSetZ,  20700,     2, NULL);             // skryj k
+				_snail->addCom(kSnHide,  20007,     1, NULL);             // skryj k
+				_snail->addCom(kSnWait,  20002,    10, NULL);            // czekaj
+				_snail->addCom(kSnSeq,   20007,     2, NULL);              // lec†
+				_snail->addCom(kSnHide,  20007,     0, NULL);             // poka§
 				_snail->addCom(kSnSound, 20007, 20001, NULL);        // grzech
-				_snail->addCom(kSnWait, 20007, -1, NULL);            // koniec
-				_snail->addCom(kSnGame, 20002, 2, NULL);             // again!
+				_snail->addCom(kSnWait,  20007,    -1, NULL);            // koniec
+				_snail->addCom(kSnGame,  20002,     2, NULL);             // again!
 				break;
 			case 20002:
-				_snail->addCom(kSnSay, 20002, 20010, NULL);          // zapro
-				_snail->addCom(kSnWalk, 20005, -1, NULL);            // do stol
-				_snail->addCom(kSnWait, 1, -1, NULL);                // stoi
-				_snail->addCom(kSnCover, 1, 20101, NULL);            // grasol
-				_snail->addCom(kSnSeq, 20101, 1, NULL);              // rzu
-				_snail->addCom(kSnWait, 20101, 5, NULL);             // czekaj
-				_snail->addCom(kSnSetZ, 20700, 2, NULL);             // skryj k
-				_snail->addCom(kSnHide, 20007, 1, NULL);             // skryj k
-				_snail->addCom(kSnWait, 20101, 15, NULL);            // czekaj
-				_snail->addCom(kSnSeq, 20007, 1, NULL);              // lec†
-				_snail->addCom(kSnHide, 20007, 0, NULL);             // poka§
+				_snail->addCom(kSnSay,   20002, 20010, NULL);          // zapro
+				_snail->addCom(kSnWalk,  20005,    -1, NULL);            // do stol
+				_snail->addCom(kSnWait,      1,    -1, NULL);                // stoi
+				_snail->addCom(kSnCover,     1, 20101, NULL);            // grasol
+				_snail->addCom(kSnSeq,   20101,     1, NULL);              // rzu
+				_snail->addCom(kSnWait,  20101,     5, NULL);             // czekaj
+				_snail->addCom(kSnSetZ,  20700,     2, NULL);             // skryj k
+				_snail->addCom(kSnHide,  20007,     1, NULL);             // skryj k
+				_snail->addCom(kSnWait,  20101,    15, NULL);            // czekaj
+				_snail->addCom(kSnSeq,   20007,     1, NULL);              // lec†
+				_snail->addCom(kSnHide,  20007,     0, NULL);             // poka§
 				_snail->addCom(kSnSound, 20007, 20001, NULL);        // grzech
-				_snail->addCom(kSnWait, 20101, -1, NULL);            // koniec
-				_snail->addCom(kSnUncover, 1, 20101, NULL);          // SDS
-				_snail->addCom(kSnGame, 1, 2, NULL);                 // again!
+				_snail->addCom(kSnWait,  20101,    -1, NULL);            // koniec
+				_snail->addCom(kSnUncover,   1, 20101, NULL);          // SDS
+				_snail->addCom(kSnGame,      1,     2, NULL);                 // again!
 				break;
 			}
 		}
