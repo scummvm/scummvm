@@ -99,9 +99,14 @@ Sprite *Keyboard::setClient(Sprite *spr) {
 	return spr;
 }
 
-bool Keyboard::getKey(uint16 keycode, int &cgeCode) {
+bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
+	Common::KeyCode keycode = event.kbd.keycode;
 	if ((keycode == Common::KEYCODE_LCTRL) || (keycode == Common::KEYCODE_RCTRL)) {
 		cgeCode = 29;
+		return true;
+	}
+	if ((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT)) {
+		cgeCode = 56;
 		return true;
 	}
 	if (keycode == Common::KEYCODE_KP_ENTER) {
@@ -111,7 +116,7 @@ bool Keyboard::getKey(uint16 keycode, int &cgeCode) {
 
 	// Scan through the ScummVM mapping list
 	for (int idx = 0; idx < 0x60; idx++) {
-		if (_scummVmCodes[idx] == keycode) {
+		if (_scummVmCodes[idx] == event.kbd.ascii) {
 			cgeCode = idx;
 			return true;
 		}
@@ -122,7 +127,7 @@ bool Keyboard::getKey(uint16 keycode, int &cgeCode) {
 
 void Keyboard::newKeyboard(Common::Event &event) {
 	int keycode;
-	if (!getKey(event.kbd.keycode, keycode))
+	if (!getKey(event, keycode))
 		return;
 
 	if (event.type == Common::EVENT_KEYUP) {
