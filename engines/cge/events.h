@@ -47,7 +47,7 @@ namespace CGE {
 
 class Keyboard {
 private:
-	bool getKey(uint16 keycode, int &cgeCode);
+	bool getKey(Common::Event &event, int &cgeCode);
 public:
 	static const uint16 _code[0x60];
 	static const uint16 _scummVmCodes[0x60];
