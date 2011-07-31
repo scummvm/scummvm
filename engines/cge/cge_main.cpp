@@ -737,13 +737,13 @@ void System::touch(uint16 mask, int x, int y) {
 		pp0 = pp;
 		switch (x) {
 		case Del:
-			if (_keyboard->_key[ALT] && _keyboard->_key[CTRL])
+			if (_keyboard->_key[kKeyAlt] && _keyboard->_key[kKeyCtrl])
 				_vm->AltCtrlDel();
 			else
 				_vm->killSprite();
 			break;
 		case 'F':
-			if (_keyboard->_key[ALT]) {
+			if (_keyboard->_key[kKeyAlt]) {
 				Sprite *m = _vga->_showQ->locate(17001);
 				if (m) {
 					m->step(1);
@@ -761,7 +761,7 @@ void System::touch(uint16 mask, int x, int y) {
 			_vm->nextStep();
 			break;
 		case '`':
-			if (_keyboard->_key[ALT])
+			if (_keyboard->_key[kKeyAlt])
 				_vm->saveMapping();
 			else
 				_vm->switchMapping();
@@ -791,7 +791,7 @@ void System::touch(uint16 mask, int x, int y) {
 			_sys->_funDel = 1;
 			break;
 		case 'X':
-			if (_keyboard->_key[ALT])
+			if (_keyboard->_key[kKeyAlt])
 				_finis = true;
 			break;
 		case '0':
@@ -799,7 +799,7 @@ void System::touch(uint16 mask, int x, int y) {
 		case '2':
 		case '3':
 		case '4':
-			if (_keyboard->_key[ALT]) {
+			if (_keyboard->_key[kKeyAlt]) {
 				_snail->addCom(kSnLevel, -1, x - '0', NULL);
 				break;
 			}
@@ -917,7 +917,7 @@ void CGEEngine::switchColorMode() {
 void CGEEngine::switchMusic() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchMusic()");
 
-	if (_keyboard->_key[ALT]) {
+	if (_keyboard->_key[kKeyAlt]) {
 		if (Vmenu::_addr)
 			_snail_->addCom(kSnKill, -1, 0, Vmenu::_addr);
 		else {

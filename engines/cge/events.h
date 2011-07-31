@@ -38,12 +38,8 @@ namespace CGE {
 
 /*----------------- KEYBOARD interface -----------------*/
 
-#define KEYBD_INT   9
-#define LSHIFT      42
-#define RSHIFT      54
-#define CTRL        29
-#define ALT         56
-
+#define kKeyCtrl    29
+#define kKeyAlt     56
 
 class Keyboard {
 private:
@@ -78,7 +74,6 @@ public:
 #define R_UP        0x10
 #define ATTN        0x20 // 0x40
 #define KEYB        0x80
-
 
 extern Talk *_talk;
 
