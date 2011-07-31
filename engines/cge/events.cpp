@@ -102,11 +102,11 @@ Sprite *Keyboard::setClient(Sprite *spr) {
 bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
 	Common::KeyCode keycode = event.kbd.keycode;
 	if ((keycode == Common::KEYCODE_LCTRL) || (keycode == Common::KEYCODE_RCTRL)) {
-		cgeCode = 29;
+		cgeCode = kKeyCtrl;
 		return true;
 	}
 	if ((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT)) {
-		cgeCode = 56;
+		cgeCode = kKeyAlt;
 		return true;
 	}
 	if (keycode == Common::KEYCODE_KP_ENTER) {
