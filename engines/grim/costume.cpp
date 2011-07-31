@@ -1320,6 +1320,8 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 		return new MaterialComponent(parent, parentID, name, tag);
 	else if (FROM_BE_32(tag) == MKTAG('S','P','R','T'))
 		return new SpriteComponent(parent, parentID, name, tag);
+	else if (FROM_BE_32(tag) == MKTAG('A','N','I','M')) //Used  in the demo
+		return new BitmapComponent(parent, parentID, name, tag);
 
 	char t[4];
 	memcpy(t, &tag, sizeof(tag32));
