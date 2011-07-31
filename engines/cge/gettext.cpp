@@ -103,7 +103,7 @@ void GetText::touch(uint16 mask, int x, int y) {
 				if (_oldKeybClient)
 					_oldKeybClient->touch(mask, x, y);
 			} else {
-				if (_keyboard->_key[ALT]) {
+				if (_keyboard->_key[kKeyAlt]) {
 					p = strchr(bezo, x);
 					if (p)
 						x = ogon[p - bezo];

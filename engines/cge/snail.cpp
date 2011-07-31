@@ -153,7 +153,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			_sprK2->step(new_random(6));
 			_sprK3->step(new_random(6));
 			///--------------------
-			if (spr->_ref == 1 && _keyboard->_key[ALT]) {
+			if (spr->_ref == 1 && _keyboard->_key[kKeyAlt]) {
 				_sprK1->step(5);
 				_sprK2->step(5);
 				_sprK3->step(5);
