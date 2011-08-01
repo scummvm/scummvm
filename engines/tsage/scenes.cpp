@@ -45,7 +45,7 @@ SceneManager::~SceneManager() {
 }
 
 void SceneManager::setNewScene(int sceneNumber) {
-	warning("SetNewScene(%d)", sceneNumber);
+	debug(1, "SetNewScene(%d)", sceneNumber);
 	_nextSceneNumber = sceneNumber;
 }
 
@@ -146,7 +146,7 @@ void SceneManager::fadeInIfNecessary() {
 }
 
 void SceneManager::changeScene(int newSceneNumber) {
-	warning("changeScene(%d)", newSceneNumber);
+	debug(1, "changeScene(%d)", newSceneNumber);
 	// Fade out the scene
 	ScenePalette scenePalette;
 	uint32 adjustData = 0;
@@ -296,7 +296,7 @@ void Scene::dispatch() {
 }
 
 void Scene::loadScene(int sceneNum) {
-	warning("loadScene(%d)", sceneNum);
+	debug(1, "loadScene(%d)", sceneNum);
 	_screenNumber = sceneNum;
 	if (_globals->_scenePalette.loadPalette(sceneNum))
 		_globals->_sceneManager._hasPalette = true;
