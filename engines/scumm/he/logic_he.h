@@ -126,9 +126,10 @@ private:
 	int op_1002(int32 *args);
 	int op_1003(int32 *args);
 	int op_1004(int32 *args);
+	int op_1005(float a1, float a2, float a3, float a4, float a5, float a6, float *a7, float *a8, float *a9, float *a10);
 	int op_1006(int32 a1, int32 a2, int32 a3, int32 a4);
 	int op_1007(int32 *args);
-	int op_1008(int32 *args);
+	int op_1008(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14, int a15, int a16, int a17, int a18, int a19);
 	int op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5);
 	int op_1012(int32 *args);
 	int op_1013(int32 a1, int32 a2, int32 a3);
@@ -152,9 +153,25 @@ private:
 
 	// op_1013 creates some array, purpose unknown
 	bool _array1013Allocated;
-	byte *_array1013;
-	uint32 _array1013Temp[11];
+	uint32 *_array1013;
 	int op_sub5(int a1, int a2, int a3);
+
+	// op_1014 has several subops
+	// ...and several sub-subops
+	int op_1014_sub0(float a1, float a2, float a3, float a4, float a5, float a6);
+	int op_1014_sub0_0(int a1, int a2, uint32 *a3, int a4);
+	void op_1014_sub0_0_0(byte a1);
+	int op_1014_sub1(int a1, float a2, float a3, float a4, float a5, float *a6, float &a7, float &a8, float &a9, int a10, int a11, float *a12, float *a13, float *a14, float *a15);
+	void op_1014_sub1_0(int a1, float &a2, float &a3, float &a4, float &a5, float &a6, float &a7, float &a8, float &a9, float &a10, float &a11, float &a12, float &a13, int a14[24]);
+	void op_1014_sub1_1(float a1, float a2, float a3, float a4, float a5, float a6, float a7, float a8, float a9, float a10, float a11, float a12, float &a13, float &a14, float &a15);
+	double op_1014_sub1_2(float a1, float a2, float a3, float a4, float a5, float a6);
+	void op_1014_sub2(float *a1, int a2, int a3, int a4);
+	int op_1014_sub3(float *a1, int a2, int a3, int a4, int a5, int a6, int a7, float a8, int a9, int a10, int a11, int *a12);
+
+	// op_1014 sets an array optionally based upon op_1014_sub3
+	// This array is then used by op_1008
+	int _array1014[10];
+	Common::List<byte> _list1014;
 
 	// op_1021 can (optionally) set two variables for use in op_1008
 	uint32 _var1021[2];

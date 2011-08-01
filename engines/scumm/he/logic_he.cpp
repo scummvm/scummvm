@@ -850,8 +850,28 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1004(args);
 		break;
 
+	case 1005: {
+		// NOTE: This seems to be *completely* useless to call from dispatch
+		// op_1005 is only useful from op_1014
+		// However, the original does do this crazy setup to call it...
+		float v11 = (float)args[6];
+		float v12 = (float)args[7];
+		float v13 = (float)args[8];
+		float v14 = (float)args[9];
+		res = op_1005(args[0], args[1], args[2], args[3], args[4], args[5], &v11, &v12, &v13, &v14);
+		break;
+	}
+
 	case 1006:
 		res = op_1006(args[0], args[1], args[2], args[3]);
+		break;
+
+	case 1007:
+		res = op_1007(args);
+		break;
+
+	case 1008:
+		res = op_1008(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14], args[15], args[16], args[17], args[18]);
 		break;
 
 	case 1011:
@@ -867,6 +887,10 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 
 	case 1013:
 		res = op_1013(args[0], args[1], args[2]);
+		break;
+
+	case 1014:
+		res = op_1014(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13]);
 		break;
 
 	case 1019:
@@ -888,6 +912,7 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 
 	default:
 		// original range is 1001 - 1021
+		warning("unhandled op %d", op);
 		LogicHE::dispatch(op, numArgs, args);
 	}
 
@@ -965,6 +990,18 @@ int LogicHEsoccer::op_1004(int32 *args) {
 	return 1;
 }
 
+int LogicHEsoccer::op_1005(float a1, float a2, float a3, float a4, float a5, float a6, float *a7, float *a8, float *a9, float *a10) {
+	// Called from op_1014
+
+	double v11 = a1 * a4 + a2 * a5 + a3 * a6;
+	*a7 = a4 - (v11 + v11) * a1;
+	*a8 = a5 - (v11 + v11) * a2;
+	*a9 = a6 - (v11 + v11) * a3;
+	*a10 = 1.0f; // It always does this. How curious!
+
+	return 1;
+}
+
 int LogicHEsoccer::op_1006(int32 a1, int32 a2, int32 a3, int32 a4) {
 	double v1 = a1 * 0.01;
 	double v2 = a2 * 0.01;
@@ -1009,19 +1046,126 @@ int LogicHEsoccer::op_1007(int32 *args) {
 	memset(_byteArray1, 0, 4096);
 	memset(_byteArray2, 0, 585);
 
-	if (_array1013Allocated == 0 )
+	if (!_array1013Allocated)
 		op_1013(4, args[8], args[9]);
 
 	return 1;
 }
 
-// Returns the square root of the sum of the squares of the arguments
+// This looks like 3-dimensional distance where each argument the change in dimension?
 static inline double sqrtSquare(double a1, double a2, double a3) {
 	return sqrt(a1 * a1 + a2 * a2 + a3 * a3);
 }
 
-int LogicHEsoccer::op_1008(int32 *args) {
-	// TODO: Used during a match (kicking?)
+int LogicHEsoccer::op_1008(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14, int a15, int a16, int a17, int a18, int a19) {
+	// Used during a match (kicking?)
+
+	int v29 = 0;
+	int v27 = 1;
+	int v33 = 500;
+	int v28 = a2;
+	int v32 = a4;
+	int v26 = 0;
+
+	while (v27 <= a14) {
+		if (a19 == 1 && a4 > 8819)
+			v26 = 1;
+		else if (a19 == 2 && (a2 < -2350 || a2 > 2350))
+			v26 = 1;
+		else if (a19 == 3 && (a2 < -2350 || a2 > 2350 || a4 < 6119 || a4 > 8819))
+			v26 = 1;
+
+		if (a3 > 0)
+			a6 -= a11 * a13 / a12;
+
+		int v30 = a2;
+		int v31_1 = a3;
+		int v31_2 = a4;
+		a2 += a11 * a5 / a12;
+		a3 += a11 * a6 / a12;
+		a4 += a11 * a7 / a12;
+
+		if (a3 > 0) {
+			if (v26 && op_1014(v30, v31_1, v31_2, a5, a6, a7, 0, a17, a18, 3, a11, a12, a15, a16)) {
+				a2 = _array1014[6];
+				a3 = _array1014[7];
+				a4 = _array1014[8];
+				a5 = _array1014[3];
+				a6 = _array1014[4];
+				a7 = _array1014[5];
+				putInArray(a1, v27, 0, v29);
+				putInArray(a1, v27, 1, (int)sqrtSquare((double)(_array1014[6] - v28), 0.0, (double)(_array1014[7] - v32)));
+				putInArray(a1, v27, 2, _array1014[6]);
+				putInArray(a1, v27, 3, _array1014[7]);
+				putInArray(a1, v27, 4, _array1014[8]);
+				putInArray(a1, v27, 5, a5);
+				putInArray(a1, v27, 6, a6);
+				putInArray(a1, v27, 7, a7);
+			} 
+		} else {
+			a3 = 0;
+			int v34 = a5;
+			int v35 = a7;
+			a5 = a5 * a8 / 100;
+
+			if (a6) {
+				int v18 = ABS(a6);
+				if (v18 > ABS(v33))
+					a6 = ABS(v33);
+				a6 = ABS(a9 * a6) / 100;
+			}
+
+			a7 = a10 * a7 / 100;
+
+			if (v33 >= 0) {
+				if (op_1014(v30, v31_1, v31_2, v34, v33, v35, 0, a17, a18, 3, a11, a12, a15, a16)) {
+					a2 = _array1014[6];
+					a3 = _array1014[7];
+					a4 = _array1014[8];
+					a5 = _array1014[3];
+					a6 = _array1014[4];
+					a7 = _array1014[5];
+				}
+			} else {
+				if (v26) {
+					op_1021(a2, 0, a4, v34 ,v33, v35, 1);
+
+					if (op_1014(v30, v31_1, v31_2, v34, v33, v35, 0, a17, a18, 3, a11, a12, a15, a16)) {
+						a2 = _array1014[6];
+						a3 = _array1014[7];
+						a4 = _array1014[8];
+						a5 = _array1014[3];
+						a6 = _array1014[4];
+						a7 = _array1014[5];
+					} else {
+						int v19 = a7 + v31_2 - _var1021[1];
+						int v20 = ABS(v33);
+
+						if (op_1014(_var1021[0], 0, _var1021[1], a5 + v30 - _var1021[0], v20 - v31_1, v19, 0, a17, a18, 3, a11, a12, a15, a16)) {
+							a2 = _array1014[6];
+							a3 = _array1014[7];
+							a4 = _array1014[8];
+							a5 = _array1014[3];
+							a6 = _array1014[4];
+							a7 = _array1014[5];
+						}
+					}
+				}
+			}
+
+			v33 = a6;
+			putInArray(a1, v27, 0, v29);
+			putInArray(a1, v27, 1, (int32)sqrtSquare(a2 - v28, 0.0, a4 - v32));
+			putInArray(a1, v27, 2, a2);
+			putInArray(a1, v27, 3, a3);
+			putInArray(a1, v27, 4, a4);
+			putInArray(a1, v27, 5, a5);
+			putInArray(a1, v27, 6, a6);
+			putInArray(a1, v27++, 7, a7);
+		}
+
+		v29++;
+	}
 
 	return 1;
 }
@@ -1203,33 +1347,20 @@ int LogicHEsoccer::op_1012(int32 *args) {
 	return 1;
 }
 
-// Some strange power operation, ignores negative exponents
-static inline double u32Pow(float a1, int a2) {
-	if (a2 < 0)
-		return 0.0;
-
-	float v4 = 1.0;
-
-	for (int i = 1; i <= a2; i++)
-		v4 *= a1;
-
-	return v4;
-}
-
 int LogicHEsoccer::op_sub5(int a1, int a2, int a3) {
-	byte *v9 = _array1013 + 44 * a2;
+	uint32 *v9 = _array1013 + 11 * a2;
 
-	*((uint32 *)v9 + 4) = a3;
-	*((uint32 *)v9) = a2;
+	v9[0] = a2;
+	v9[1] = a3;
 
 	if (a1 > 2) {
 		// Casual observation: 585 is also the size of _byteArray2
-		*((uint32 *)v9 + 40) = 8 * a2 - 585;
+		v9[10] = 8 * a2 - 585;
 		for (int i = 0; i < 8; i++)
-			*((uint32 *)v9 + 4 * i + 8) = 0xffffffff;
+			v9[i + 2] = 0xffffffff;
 	} else {
 		for (int i = 0; i < 8; i++)
-			*((uint32 *)v9 + 4 * i + 8) = op_sub5(a1 + 1, i + 8 * a2 + 1, a2);
+			v9[i + 2] = op_sub5(a1 + 1, i + 8 * a2 + 1, a2);
 	}
 
 	return a2;
@@ -1237,31 +1368,815 @@ int LogicHEsoccer::op_sub5(int a1, int a2, int a3) {
 
 int LogicHEsoccer::op_1013(int32 a1, int32 a2, int32 a3) {
 	// Creates _array1013 for *some* purpose
-	// _array1013Temp is used again op_1014 for some reason...
 	// Seems to be used in op_1015
 
-	int v4 = (int)((1.0 - u32Pow(8.0, 4)) / -7.0);
-
-	_array1013 = new byte[v4 * 44];
-	memset(_array1013, 0, v4 * 44);
+	_array1013 = new uint32[585 * 11];
 	_array1013Allocated = true;
-	memset(_array1013Temp, 0, 44);
+	for (int i = 0; i < 585 * 11; i++)
+		_array1013[i] = 0;
 
 	for (int i = 0; i < 8; i++)
-		_array1013Temp[i + 2] = op_sub5(1, i + 1, 0);
-
-	// Yes, this is not endian-safe, but should not matter since we're
-	// not saving/loading the data anywhere
-	memcpy(_array1013, _array1013Temp, 44);
+		_array1013[i + 2] = op_sub5(1, i + 1, 0);
 
 	return 1;
 }
 
 int LogicHEsoccer::op_1014(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6, int32 a7, int32 a8, int32 a9, int32 a10, int32 a11, int32 a12, int32 a13, int32 a14) {
-	// TODO: Used many times during a match
+	// Used many times during a match
 	// And called from op_1008!
 
-	return 1;
+	double v31 = (double)a1;
+	double v29 = (double)a2;
+	double v27 = (double)a3;
+	double v15, v28, v30, v32;
+
+	switch (a10) {
+	case 1:
+	case 3:
+		v32 = (double)a4 * (double)a11 / (double)a12 / 100.0;
+		v30 = (double)a5 * (double)a11 / (double)a12 / 100.0;
+		v28 = (double)a6 * (double)a11 / (double)a12 / 100.0;
+		break;
+	case 2:
+		v15 = sqrtSquare((double)a4 * (double)a11 / (double)a12, (double)a5 * (double)a11 / (double)a12, (double)a6 * (double)a11 / (double)a12);
+
+		if (v15 != 0.0) {
+			double v26 = ABS((double)a4 * (double)a11 / (double)a12 * 50.0 / v15);
+			a1 = (int)((double)a1 + v26);
+			double v25 = ABS((double)a5 * (double)a11 / (double)a12 * 50.0 / v15);
+			a2 = (int)((double)a2 + v25);
+			double v24 = ABS((double)a6 * (double)a11 / (double)a12 * 50.0 / v15);
+			a3 = (int)((double)a3 + v24);
+		}
+
+		v31 = (double)a1 / (double)a3 * 3869.0;
+		v29 = ((double)a2 - _userDataD[524] * 100.0) / (double)a3 * 3869.0 + _userDataD[524] * 100.0;
+		v27 = 3869.0;
+		v32 = ((double)a1 - v31) / 100.0;
+		v30 = ((double)a2 - v29) / 100.0;
+		v28 = ((double)a3 - 3869.0) / 100.0;
+		break;
+	}
+	
+	int v41 = 0;
+	float v55[336];
+	memset(v55, 0, 336 * sizeof(float));
+
+	if (op_1014_sub0(v31, v29, v27, v32, v30, v28)) {
+		int v45 = 0;
+		float v46;
+
+		for (Common::List<byte>::const_iterator it = _list1014.begin(); it != _list1014.end(); it++) {
+			float v18[2] = { v30 * 100.0, v28 * 100.0 };
+			float v19 = v32 * 100.0;
+			float v56, v58, v67;
+			float v35, v33, v57;
+
+			if (op_1014_sub1(*it, v31, v29, v27, v19, v18, v67, v58, v56, a9, a8, &v35, &v33, &v57, &v46)) {
+				v55[v45 * 8] = *it;
+				v55[v45 * 8 + 1] = sqrtSquare(v67 - v31, v58 - v29, v56 - v27);
+				v55[v45 * 8 + 2] = v67;
+				v55[v45 * 8 + 3] = v58;
+				v55[v45 * 8 + 4] = v56;
+				v55[v45 * 8 + 5] = a12 * v35 / a11;
+				v55[v45 * 8 + 6] = a12 * v33 / a11;
+				v55[v45 * 8 + 7] = a12 * v57 / a11;
+				v41 = 1;
+				v45++;
+			}
+		}
+
+		if (v41) {
+			if (v45 != 1)
+				op_1014_sub2(v55, 42, 8, 1);
+
+			int v22, v39, v42;
+			float v59[8];
+			int v47[10];
+
+			switch (a10) {
+				case 1:
+					for (int i = 0; i < 8; i++)
+						v59[i] = v55[i];
+					v22 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0));
+					v42 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0  + 1.0));
+					v39 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0  + 2.0));
+					op_1014_sub3(v59, 8, a8, a9, (int)v31, (int)v29, (int)v27, v46, v22, v42, v39, v47);
+					for (int i = 0; i < 10; i++)
+						putInArray(a7, 0, i, v47[i]);
+					break;
+				case 2:
+					if (v45)
+						writeScummVar(109, (int)v55[(v45 - 1) * 8]);
+					else
+						writeScummVar(109, 0);
+					break;
+				case 3:
+					for (int i = 0; i < 8; i++)
+						v59[i] = v55[i];
+					v22 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0));
+					v42 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0  + 1.0));
+					v39 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0  + 2.0));
+					op_1014_sub3(v59, 8, a8, a9, (int)v31, (int)v29, (int)v27, v46, v22, v42, v39, v47);
+					for (int i = 0; i < 10; i++)
+						_array1014[i] = v47[i];
+					break;
+			}
+		}
+	}
+
+	writeScummVar(108, v41);
+
+	_list1014.clear();
+
+	return v41;
+}
+
+int LogicHEsoccer::op_1014_sub0(float a1, float a2, float a3, float a4, float a5, float a6) {
+	float v36 = a1 / 100.0;
+	float v37 = v36 + 52.0;
+	float v28 = v37 + a4;
+
+	int v33, v29;
+
+	if (((int)v28 / 52) ^ ((int)v37 / 52)) {
+		v33 = 1;
+		v29 = 1;
+	} else if ((int)v37 / 52) {
+		v29 = 0;
+		v33 = 1;
+	} else {
+		v33 = 0;
+		v29 = 1;
+	}
+
+	uint32 v20[8];
+	for (int i = 0; i < 4; i++) {
+		v20[i] = v29;
+		v20[i + 4] = v33;
+	}
+
+	float v38 = a2 / 100.0;
+	float v17 = v38 + a5;
+
+	if (((int)v17 / 20) ^ ((int)v38 / 20)) {
+		v33 = 1;
+		v29 = 1;
+	} else if ((int)v38 / 20) {
+		v33 = 1;
+		v29 = 0;
+	} else {
+		v29 = 1;
+		v33 = 0;
+	}
+
+	for (int i = 0; i < 2; i++) {
+		if (v20[i * 2 + 0])
+			v20[i * 2 + 0] = v29;
+		if (v20[i * 2 + 1])
+			v20[i * 2 + 1] = v29;
+		if (v20[i * 2 + 2])
+			v20[i * 2 + 2] = v33;
+		if (v20[i * 2 + 3])
+			v20[i * 2 + 3] = v33;
+	}
+
+	float v39 = a3 / 100.0;
+	float v40 = v39 - 38.69;
+	float v31 = v40 + a6;
+
+	if (((int)v31 / 36) ^ ((int)v40 / 36)) {
+		v33 = 1;
+		v29 = 1;
+	} else if ((int)v40 / 36) {
+		v29 = 0;
+		v33 = 1;
+	} else {
+		v33 = 0;
+		v29 = 1;
+	}
+
+	for (int i = 0; i <= 6; i += 2) {
+		if (v20[i])
+			v20[i] = v29;
+		if (v20[i + 1])
+			v20[i + 1] = v33;
+	}
+
+	int v19 = 0;
+
+	for (int i = 0; i < 8; i++) {
+		if (v20[i]) {
+			uint32 *ptr = _array1013 +  _array1013[i + 2] * 11;
+			v19 += op_1014_sub0_0(ptr[0], ptr[1], &ptr[2], ptr[10]);
+		}
+	}
+
+	writeScummVar(109, v19);
+	return v19;
+}
+
+int LogicHEsoccer::op_1014_sub0_0(int a1, int a2, uint32 *a3, int a4) {
+	int v20 = 0;
+
+	if (a3[0] == 0xffffffff) {
+		for (int i = 0; i < 8; i++) {
+			if (_byteArray1[i + a4]) {
+				op_1014_sub0_0_0(_byteArray1[i + a4]);
+				v20 = 1;
+			}
+		}
+	} else {
+		if (_byteArray2[a1]) {
+			for (int i = 0; i < 8; i++) {
+				uint32 *ptr = _array1013 + a3[i] * 11;
+				v20 += op_1014_sub0_0(ptr[0], ptr[1], &ptr[2], ptr[10]);
+			}
+		}
+	}
+
+	return v20;
+}
+
+void LogicHEsoccer::op_1014_sub0_0_0(byte a1) {
+	// Add a1 to the list if not found
+	for (Common::List<byte>::const_iterator it = _list1014.begin(); it != _list1014.end(); it++)
+		if (*it == a1)
+			return;
+
+	_list1014.push_back(a1);
+}
+
+int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, float *a6, float &a7, float &a8, float &a9, int a10, int a11, float *a12, float *a13, float *a14, float *a15) {
+	// TODO: This can easily be optimized, but I'd rather hold off on that
+	// until it's confirmed that the code actually works
+
+	int v248 = 0;
+	int v236 = 0;
+	double v263 = 3.0;
+	float v274 = a3 + 1.0;
+	float v254 = a2 + a5;
+	float v250 = v274 + a6[0];
+	float v246 = a4 + a6[1];
+
+	if (v274 <= 1.0001 && v250 < 0.0) {
+		v250 = 0.0;
+		a6[0] = ABS(a6[0]);
+	}
+
+	int v261 = getFromArray(a10, 0, 4 * a1 - 1);
+	int v256[24];
+	for (int i = 0; i < 24; i++)
+		v256[i] = getFromArray(a11, 0, v261 + i);
+
+	for (int i = 0; i < 6; i++) {
+		// This assigns variables from v256 based on i
+		// TODO: We probably can merge sub1_0 and sub1_1 at one point
+		float v233, v267, v264, v238, v273, v259, v237, v271, v242, v269, v253, v240;
+		float v265, v260, v255;
+		op_1014_sub1_0(i, v233, v267, v264, v238, v273, v259, v237, v271, v242, v269, v253, v240, v256);
+		op_1014_sub1_1(v233, v267, v264, v238, v273, v259, v237, v271, v242, v269, v253, v240, v265, v260, v255);
+
+		double v14 = sqrt(v265 * v265 + v260 * v260 + v255 * v255);
+		float v243 = v14;
+
+		// Can't divide by zero!
+		if (v14 == 0.0)
+			error("op_1014_sub1(): sqrt = 0");
+
+		float v234 = v265 / v243;
+		float v247 = v265 / v243;
+		float v245 = v265 / v243;
+		v263 = 5.0;
+
+		float v15 = v264 - a4;
+		float v16 = v267 - v274;
+		float v17 = v233 - a2;
+		double v239 = op_1014_sub1_2(v234, v247, v245, v17, v16, v15);
+
+		float v18 = v246 - a4;
+		float v19 = v250 - v247;
+		float v20 = v254 - a2;
+		double v258 = op_1014_sub1_2(v234, v247, v245, v20, v19, v18);
+
+		if (fabs(v258) > 0.00000001)
+			v263 = v239 / v258;
+
+		if (v263 >= 0.0 && fabs(v263) <= 10 && v258 != 0.0) {
+			double v272 = a2 + (v254 - a2) * v263;
+			double v270 = v274 + (v250 - v274) * v263 + 5.0;
+			double v268 = a4 + (v246 - a4) * v236;
+
+			float v21 = v242 - v264;
+			float v22 = v271 - v267;
+			float v23 = v237 - v233;
+			float v24 = v259 - v264;
+			float v25 = v273 - v267;
+			float v26 = v238 - v233;
+			double v27 = op_1014_sub1_2(v26, v25, v24, v23, v22, v21);
+			double v28 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
+
+			double v232;
+			if (v27 / (sqrtSquare(v237 - v233, v271 - v267, v242 - v264) * v28) >= -1.0) {
+				float v29 = v242 - v264;
+				float v30 = v271 - v267;
+				float v31 = v237 - v233;
+				float v32 = v259 - v264;
+				float v33 = v273 - v267;
+				float v34 = v238 - v233;
+				double v35 = op_1014_sub1_2(v34, v33, v32, v31, v30, v29);
+				double v36 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
+				v232 = v35 / (sqrtSquare(v237 - v233, v271 - v267, v242 - v264) * v36);
+			} else {
+				v232 = -1.0;
+			}
+
+			double v231;
+			if (v232 <= 1.0) {
+				float v37 = v242 - v264;
+				float v38 = v271 - v267;
+				float v39 = v237 - v233;
+				float v40 = v259 - v264;
+				float v41 = v273 - v267;
+				float v42 = v238 - v233;
+				double v43 = op_1014_sub1_2(v42, v41, v40, v39, v38, v37);
+				double v44 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
+
+				double v230;
+				if (v43 / (sqrtSquare(v237 - v233, v271 - v267, v242 - v264) * v44) >= -1.0) {
+					float v45 = v242 - v264;
+					float v46 = v271 - v267;
+					float v47 = v237 - v233;
+					float v48 = v259 - v264;
+					float v49 = v273 - v267;
+					float v50 = v238 - v233;
+					double v51 = op_1014_sub1_2(v50, v49, v48, v47, v46, v45);
+					double v52 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
+					v230 = v51 / (sqrtSquare(v237 - v233, v271 - v267, v242 - v264) * v52);
+				} else {
+					v230 = -1.0;
+				}
+			} else {
+				v231 = 1.0;
+			}
+
+			double v235 = acos(v231);
+
+			float v53 = v268 - v264;
+			float v54 = v270 - v267;
+			float v55 = v272 - v233;
+			float v56 = v259 - v264;
+			float v57 = v273 - v267;
+			float v58 = v238 - v233;
+			double v59 = op_1014_sub1_2(v58, v57, v56, v55, v54, v53);
+			double v60 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
+
+			double v229;
+			if (v59 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v60) >= -1.0) {
+				float v61 = v268 - v264;
+				float v62 = v270 - v267;
+				float v63 = v272 - v233;
+				float v64 = v259 - v264;
+				float v65 = v273 - v267;
+				float v66 = v238 - v233;
+				double v67 = op_1014_sub1_2(v66, v65, v64, v63, v62, v61);
+				double v68 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
+				v229 = v67 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v68);
+			} else {
+				v229 = -1.0;
+			}
+
+			double v228;
+			if (v229 <= 1.0) {
+				float v69 = v268 - v264;
+				float v70 = v270 - v267;
+				float v71 = v272 - v233;
+				float v72 = v259 - v264;
+				float v73 = v273 - v267;
+				float v74 = v238 - v233;
+				double v75 = op_1014_sub1_2(v74, v73, v72, v71, v70, v69);
+				double v76 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
+
+				double v227;
+				if (v75 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v76) >= -1.0) {
+					float v77 = v268 - v264;
+					float v78 = v270 - v267;
+					float v79 = v272 - v233;
+					float v80 = v259 - v264;
+					float v81 = v273 - v267;
+					float v82 = v238 - v233;
+					double v83 = op_1014_sub1_2(v82, v81, v80, v79, v78, v77);
+					double v84 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
+					v227 = v83 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v84);
+				} else {
+					v227 = -1.0;
+				}
+
+				v228 = v227;
+			} else {
+				v228 = 1.0;
+			}
+
+			double v249 = acos(v228);
+
+			float v85 = v268 - v264;
+			float v86 = v270 - v267;
+			float v87 = v272 - v233;
+			float v88 = v242 - v264;
+			float v89 = v271 - v267;
+			float v90 = v237 - v233;
+			double v91 = op_1014_sub1_2(v90, v89, v88, v87, v86, v85);
+			double v92 = sqrtSquare(v237 - v233, v271 - v267, v242 - v264);
+
+			double v226;
+			if (v91 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v92) >= -1.0) {
+				float v93 = v268 - v264;
+				float v94 = v270 - v267;
+				float v95 = v272 - v233;
+				float v96 = v242 - v264;
+				float v97 = v271 - v267;
+				float v98 = v237 - v233;
+				double v99 = op_1014_sub1_2(v98, v97, v96, v95, v94, v93);
+				double v100 = sqrtSquare(v237 - v233, v271 - v267, v242 - v264);
+				v226 = v99 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v100);
+			} else {
+				v226 = -1.0;
+			}
+
+			double v225;
+			if (v226 <= 1.0) {
+				float v101 = v268 - v264;
+				float v102 = v270 - v267;
+				float v103 = v272 - v233;
+				float v104 = v242 - v264;
+				float v105 = v271 - v267;
+				float v106 = v237 - v233;
+				double v107 = op_1014_sub1_2(v106, v105, v104, v103, v102, v101);
+				double v108 = sqrtSquare(v237 - v233, v271 - v267, v242 - v264);
+
+				double v224;
+				if (v107 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v108) >= -1.0) {
+					float v109 = v268 - v264;
+					float v110 = v270 - v267;
+					float v111 = v272 - v233;
+					float v112 = v242 - v264;
+					float v113 = v271 - v267;
+					float v114 = v237 - v233;
+					double v115 = op_1014_sub1_2(v114, v113, v112, v111, v110, v109);
+					double v116 = sqrtSquare(v237 - v233, v271 - v267, v242 - v264);
+					v224 = v115 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v116);
+				} else {
+					v224 = -1.0;
+				}
+
+				v225 = v224;
+			} else {
+				v225 = 1.0;
+			}
+
+			double v252 = acos(v255);
+
+			if (v249 + v252 - 0.001 <= v235) {
+				float v117 = v242 - v240;
+				float v118 = v271 - v253;
+				float v119 = v237 - v269;
+				float v120 = v259 - v240;
+				float v121 = v273 - v253;
+				float v122 = v238 - v269;
+				double v123 = op_1014_sub1_2(v122, v121, v120, v119, v118, v117);
+				double v124 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
+
+				double v223;
+				if (v123 / (sqrtSquare(v237 - v269, v271 - v253, v242 - v240) * v124) >= -1.0) {
+					float v125 = v242 - v240;
+					float v126 = v271 - v253;
+					float v127 = v237 - v269;
+					float v128 = v259 - v240;
+					float v129 = v273 - v253;
+					float v130 = v238 - v269;
+					double v131 = op_1014_sub1_2(v130, v129, v128, v127, v126, v125);
+					double v132 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
+					v223 = v131 / (sqrtSquare(v237 - v269, v271 - v253, v242 - v240) * v132);
+				} else {
+					v223 = -1.0;
+				}
+
+				double v222;
+				if (v223 <= 1.0) {
+					float v133 = v242 - v240;
+					float v134 = v271 - v253;
+					float v135 = v237 - v269;
+					float v136 = v259 - v240;
+					float v137 = v273 - v253;
+					float v138 = v238 - v269;
+					double v139 = op_1014_sub1_2(v138, v137, v136, v135, v134, v133);
+					double v140 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
+
+					double v221;
+					if (v139 / (sqrtSquare(v237 - v269, v271 - v253, v242 - v240) * v140) >= -1.0) {
+						float v141 = v242 - v240;
+						float v142 = v271 - v253;
+						float v143 = v237 - v269;
+						float v144 = v259 - v240;
+						float v145 = v273 - v253;
+						float v146 = v238 - v269;
+						double v147 = op_1014_sub1_2(v146, v145, v144, v143, v142, v141);
+						double v148 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
+						v221 = v147 / (sqrtSquare(v237 - v269, v271 - v253, v242 - v240) * v148);
+					} else {
+						v221 = -1.0;
+					}
+
+					v222 = v221;
+				} else {
+					v222 = 1.0;
+				}
+
+				v235 = acos(v222);
+
+				float v149 = v268 - v240;
+				float v150 = v270 - v253;
+				float v151 = v272 - v269;
+				float v152 = v259 - v240;
+				float v153 = v273 - v253;
+				float v154 = v238 - v269;
+				double v155 = op_1014_sub1_2(v154, v153, v152, v151, v150, v149);
+				double v156 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
+
+				double v220;
+				if (v155 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v156) >= -1.0) {
+					float v157 = v268 - v240;
+					float v158 = v270 - v253;
+					float v159 = v272 - v269;
+					float v160 = v259 - v240;
+					float v161 = v273 - v253;
+					float v162 = v238 - v269;
+					double v163 = op_1014_sub1_2(v162, v161, v160, v159, v158, v157);
+					double v164 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
+					v220 = v163 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v164);
+				} else {
+					v220 = -1.0;
+				}
+
+				double v219;
+				if (v220 <= 1.0) {
+					float v165 = v268 - v240;
+					float v166 = v270 - v253;
+					float v167 = v272 - v269;
+					float v168 = v259 - v240;
+					float v169 = v273 - v253;
+					float v170 = v238 - v269;
+					double v171 = op_1014_sub1_2(v170, v169, v168, v167, v166, v165);
+					double v172 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
+
+					double v218;
+					if (v171 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v172) >= -1.0) {
+						float v173 = v268 - v240;
+						float v174 = v270 - v253;
+						float v175 = v272 - v269;
+						float v176 = v259 - v240;
+						float v177 = v273 - v253;
+						float v178 = v238 - v269;
+						double v179 = op_1014_sub1_2(v178, v177, v176, v175, v174, v173);
+						double v180 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
+						v218 = v179 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v180);
+					} else {
+						v218 = -1.0;
+					}
+
+					v219 = v218;
+				} else {
+					v219 = 1.0;
+				}
+
+				double v257 = acos(v219);
+
+				float v181 = v268 - v240;
+				float v182 = v270 - v253;
+				float v183 = v272 - v269;
+				float v184 = v242 - v240;
+				float v185 = v271 - v253;
+				float v186 = v237 - v269;
+				double v187 = op_1014_sub1_2(v186, v185, v184, v183, v182, v181);
+				double v188 = sqrtSquare(v237 - v269, v271 - v253, v242 - v240);
+
+				double v217;
+				if (v187 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v188) >= -1.0) {
+					float v189 = v268 - v240;
+					float v190 = v270 - v253;
+					float v191 = v272 - v269;
+					float v192 = v242 - v240;
+					float v193 = v271 - v253;
+					float v194 = v237 - v269;
+					double v195 = op_1014_sub1_2(v194, v193, v192, v191, v190, v189);
+					double v196 = sqrtSquare(v237 - v269, v271 - v253, v242 - v240);
+					v217 = v195 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v196);
+				} else {
+					v217 = -1.0;
+				}
+
+				double v216;
+				if (v217 <= 1.0) {
+					float v197 = v268 - v240;
+					float v198 = v270 - v253;
+					float v199 = v272 - v269;
+					float v200 = v242 - v240;
+					float v201 = v271 - v253;
+					float v202 = v237 - v269;
+					double v203 = op_1014_sub1_2(v202, v201, v200, v199, v198, v197);
+					double v204 = sqrtSquare(v237 - v269, v271 - v253, v242 - v240);
+
+					double v215;
+					if (v203 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v204) >= -1.0) {
+						float v205 = v268 - v240;
+						float v206 = v270 - v253;
+						float v207 = v272 - v269;
+						float v208 = v242 - v240;
+						float v209 = v271 - v253;
+						float v210 = v237 - v269;
+						double v211 = op_1014_sub1_2(v210, v209, v208, v207, v206, v205);
+						double v212 = sqrtSquare(v237 - v269, v271 - v253, v242 - v240);
+						v215 = v211 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v212);
+					} else {
+						v215 = -1.0;
+					}
+
+					v216 = v215;
+				} else {
+					v216 = 1.0;
+				}
+
+				double v262 = acos(v216);
+
+				if (v257 + v262 - 0.001 <= v235) {
+					if (v248) {
+						double v213 = sqrtSquare(a2 - v272, v274 - v270, a4 - v268);
+						if (sqrtSquare(a2 - a7, v274 - a8, a4 - a9) > v213) {
+							a7 = v272 - v234 * 3.0;
+							a8 = v270 - v247 * 3.0;
+							a9 = v268 - v245 * 3.0;
+							op_1005(v234, v247, v245, a5, a6[0], a6[1], a12, a13, a14, a15);
+						}
+					} else {
+						a7 = v272 - v234 * 3.0;
+						a8 = v270 - v247 * 3.0;
+						a9 = v268 - v245 * 3.0;
+						op_1005(v234, v247, v245, a5, a6[0], a6[1], a12, a13, a14, a15);
+					}
+
+					v248 = 1;
+				}
+			}
+		}
+	}
+
+	return v248;
+}
+
+void LogicHEsoccer::op_1014_sub1_0(int a1, float &a2, float &a3, float &a4, float &a5, float &a6, float &a7, float &a8, float &a9, float &a10, float &a11, float &a12, float &a13, int a14[24]) {
+	// sub_1000176B
+	// Note that this originally returned a value, but said value was never used
+	// TODO: This can probably be shortened using a few tables...
+
+	switch (a1) {
+	case 0:
+		a2 = a14[0];
+		a3 = a14[1];
+		a4 = a14[2];
+		a5 = a14[3];
+		a6 = a14[4];
+		a7 = a14[5];
+		a8 = a14[6];
+		a9 = a14[7];
+		a10 = a14[8];
+		a11 = a14[9];
+		a12 = a14[10];
+		a13 = a14[11];
+		break;
+	case 1:
+		a2 = a14[0];
+		a3 = a14[1];
+		a4 = a14[2];
+		a5 = a14[6];
+		a6 = a14[7];
+		a7 = a14[8];
+		a8 = a14[12];
+		a9 = a14[13];
+		a10 = a14[14];
+		a11 = a14[18];
+		a12 = a14[19];
+		a13 = a14[20];
+		break;
+	case 2:
+		a2 = a14[3];
+		a3 = a14[4];
+		a4 = a14[5];
+		a5 = a14[15];
+		a6 = a14[16];
+		a7 = a14[17];
+		a8 = a14[9];
+		a9 = a14[10];
+		a10 = a14[11];
+		a11 = a14[21];
+		a12 = a14[22];
+		a13 = a14[21];
+		break;
+	case 3:
+		a2 = a14[0];
+		a3 = a14[1];
+		a4 = a14[2];
+		a5 = a14[12];
+		a6 = a14[13];
+		a7 = a14[14];
+		a8 = a14[3];
+		a9 = a14[4];
+		a10 = a14[5];
+		a11 = a14[15];
+		a12 = a14[16];
+		a13 = a14[17];
+		break;
+	case 4:
+		a2 = a14[6];
+		a3 = a14[7];
+		a4 = a14[8];
+		a5 = a14[9];
+		a6 = a14[10];
+		a7 = a14[11];
+		a8 = a14[18];
+		a9 = a14[19];
+		a10 = a14[20];
+		a11 = a14[21];
+		a12 = a14[22];
+		a13 = a14[23];
+		break;
+	case 5:
+		a2 = a14[15];
+		a3 = a14[16];
+		a4 = a14[17];
+		a5 = a14[12];
+		a6 = a14[13];
+		a7 = a14[14];
+		a8 = a14[21];
+		a9 = a14[22];
+		a10 = a14[23];
+		a11 = a14[18];
+		a12 = a14[19];
+		a13 = a14[20];
+		break;
+	}
+}
+
+void LogicHEsoccer::op_1014_sub1_1(float a1, float a2, float a3, float a4, float a5, float a6, float a7, float a8, float a9, float a10, float a11, float a12, float &a13, float &a14, float &a15) {
+	// sub_100016AD
+	// Note that this originally returned a value, but said value was never used
+
+	a13 = (a5 - a2) * (a12 - a9) - (a11 - a8) * (a6 - a3);
+	a14 = ((a4 - a1) * (a12 - a9) - (a10 - a7) * (a6 - a3)) * -1.0;
+	a15 = (a4 - a1) * (a11 - a8) - (a10 - a7) * (a5 - a2);
+}
+
+double LogicHEsoccer::op_1014_sub1_2(float a1, float a2, float a3, float a4, float a5, float a6) {
+	return a1 * a4 + a2 * a5 + a3 * a6;
+}
+
+void LogicHEsoccer::op_1014_sub2(float *a1, int a2, int a3, int a4) {
+	// This seems to do some kind of sorting...
+	// And then copies in groups of a3 (which, btw, is always 8)
+
+	int v6 = 1;
+	int v8 = 0;
+
+	while (v6) {
+		v6 = 0;
+
+		while (v8 <= a2 - 2 && a1[(v8 + 1) * 8] != 0.0) {
+			if (a1[a4 + v8 * 8] > a1[a4 + (v8 + 1) * 8]) {
+				v6 = 1;
+
+				for (int i = 0; i < a3; i++) {
+					float v5 = a1[i + v8 * 8];
+					a1[i + v8 * 8] = a1[i + (v8 + 1) * 8];
+					a1[i + (v8 + 1) * 8] = v5;
+				}
+			}
+
+			v8++;
+		}
+	}
+}
+
+int LogicHEsoccer::op_1014_sub3(float *a1, int a2, int a3, int a4, int a5, int a6, int a7, float a8, int a9, int a10, int a11, int *a12) {
+	a12[0] = a9;
+	a12[1] = a10;
+	a12[2] = a11;
+	a12[3] = (int)(a1[5] * (double)a11 / 100.0);
+	a12[4] = (int)(a1[6] * (double)a11 / 100.0 * a8); // Note: a8 should always be 1
+	a12[5] = (int)(a1[7] * (double)a11 / 100.0);
+	a12[6] = (int)a1[2];
+	a12[7] = (int)a1[3];
+	a12[8] = (int)a1[4];
+	a12[9] = (int)a1[0];
+	return a12[9];
 }
 
 int LogicHEsoccer::op_1019(int32 *args) {
