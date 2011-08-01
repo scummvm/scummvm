@@ -44,20 +44,16 @@ namespace CGE {
 class Keyboard {
 private:
 	bool getKey(Common::Event &event, int &cgeCode);
+	uint16 _current;
 public:
 	static const uint16 _code[0x60];
 	static const uint16 _scummVmCodes[0x60];
 
-	uint16 _current;
 	Sprite *_client;
 	bool _key[0x60];
 
 	void newKeyboard(Common::Event &event);
-	uint16 last() {
-		uint16 cur = _current;
-		_current = 0;
-		return cur;
-	}
+	uint16 lastKey();
 	Sprite *setClient(Sprite *spr);
 
 	Keyboard();
@@ -78,10 +74,10 @@ public:
 extern Talk *_talk;
 
 struct CGEEvent {
-	uint16 _msk;
+	uint16 _mask;
 	uint16 _x;
 	uint16 _y;
-	Sprite *_ptr;
+	Sprite *_spritePtr;
 };
 
 
@@ -109,13 +105,19 @@ private:
 class EventManager {
 private:
 	Common::Event _event;
+	CGEEvent _eventQueue[EVT_MAX];
+	uint16 _eventQueueHead;
+	uint16 _eventQueueTail;
+
 	void handleEvents();
 public:
 	bool _quitFlag;
 
 	EventManager();
 	void poll();	
-	static void clrEvt(Sprite *spr = NULL);
+	void clearEvent(Sprite *spr);
+
+	CGEEvent &getNextEvent();
 };
 
 } // End of namespace CGE
