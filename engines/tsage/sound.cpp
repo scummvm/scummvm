@@ -360,9 +360,6 @@ void SoundManager::rethinkVoiceTypes() {
 }
 
 void SoundManager::_sfSoundServer() {
-	Common::StackLock slock1(sfManager()._serverDisabledMutex);
-	Common::StackLock slock2(sfManager()._serverSuspendedMutex);
-
 	if (sfManager()._needToRethink) {
 		_sfRethinkVoiceTypes();
 		sfManager()._needToRethink = false;
@@ -2760,6 +2757,9 @@ void AdlibSoundDriver::setFrequency(int channel) {
 }
 
 int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock slock1(SoundManager::sfManager()._serverDisabledMutex);
+	Common::StackLock slock2(SoundManager::sfManager()._serverSuspendedMutex);
+
 	int32 samplesLeft = numSamples;
 	memset(buffer, 0, sizeof(int16) * numSamples);
 	while (samplesLeft) {
