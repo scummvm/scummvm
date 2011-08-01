@@ -76,6 +76,7 @@ Actor::Actor(const Common::String &actorName) :
 	_scale = 1.f;
 	_timeScale = 1.f;
 	_mustPlaceText = false;
+	_collisionMode = CollisionOff;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -105,6 +106,7 @@ Actor::Actor() :
 	_scale = 1.f;
 	_timeScale = 1.f;
 	_mustPlaceText = false;
+	_collisionMode = CollisionOff;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -1463,6 +1465,16 @@ bool Actor::stopMumbleChore() {
 	}
 
 	return false;
+}
+
+void Actor::setCollisionMode(CollisionMode mode) {
+	_collisionMode = mode;
+	warning("Actor::setCollisionMode() called with actor %s and mode %d",getName().c_str(), mode);
+}
+
+void Actor::setCollisionScale(float scale) {
+	_collisionScale = scale;
+	warning("Actor::setCollisionScale() called with actor %s and scale %g",getName().c_str(), scale);
 }
 
 extern int refSystemTable;

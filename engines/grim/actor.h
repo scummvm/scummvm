@@ -60,6 +60,12 @@ struct Shadow {
  */
 class Actor : public Object {
 public:
+	enum CollisionMode {
+		CollisionOff = 0,
+		CollisionBox = 1,
+		CollisionSphere = 2
+	};
+
 	/**
 	 * Initializes an actor with the given name.
 	 *
@@ -436,6 +442,9 @@ public:
 	}
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
+	void setCollisionMode(CollisionMode mode);
+	void setCollisionScale(float scale);
+
 	bool _toClean;
 
 private:
@@ -534,6 +543,9 @@ private:
 		float cost;
 	};
 	Common::List<Graphics::Vector3d> _path;
+
+	CollisionMode _collisionMode;
+	float _collisionScale;
 
 	friend class GrimEngine;
 };

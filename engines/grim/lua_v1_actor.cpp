@@ -271,6 +271,36 @@ void L1_SetActorTimeScale() {
 	actor->setTimeScale(scale);
 }
 
+void L1_SetActorCollisionMode() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object modeObj  = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R')) {
+		lua_pushnil();
+		return;
+	}
+
+	Actor *actor = getactor(actorObj);
+	Actor::CollisionMode mode = (Actor::CollisionMode)(int)(lua_getnumber(modeObj));
+
+	actor->setCollisionMode(mode);
+}
+
+void L1_SetActorCollisionScale() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object scaleObj  = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R')) {
+		lua_pushnil();
+		return;
+	}
+
+	Actor *actor = getactor(actorObj);
+	float scale = lua_getnumber(scaleObj);
+
+	actor->setCollisionScale(scale);
+}
+
 void L1_PutActorAt() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object xObj = lua_getparam(2);
