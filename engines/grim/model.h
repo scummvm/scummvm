@@ -90,6 +90,8 @@ public:
 	float _radius;
 	int _numHierNodes;
 	ModelNode *_rootHierNode;
+	Graphics::Vector3d _bboxPos;
+	Graphics::Vector3d _bboxSize;
 };
 
 class MeshFace {

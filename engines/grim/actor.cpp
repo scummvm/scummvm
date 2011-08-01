@@ -28,6 +28,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 
 #include "graphics/line3d.h"
+#include "graphics/rect2d.h"
 
 #include "engines/grim/debug.h"
 #include "engines/grim/actor.h"
@@ -42,6 +43,7 @@
 #include "engines/grim/savegame.h"
 #include "engines/grim/scene.h"
 #include "engines/grim/gfx_base.h"
+#include "engines/grim/model.h"
 
 namespace Grim {
 
@@ -77,6 +79,7 @@ Actor::Actor(const Common::String &actorName) :
 	_timeScale = 1.f;
 	_mustPlaceText = false;
 	_collisionMode = CollisionOff;
+	_collisionScale = 1.f;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -107,6 +110,7 @@ Actor::Actor() :
 	_timeScale = 1.f;
 	_mustPlaceText = false;
 	_collisionMode = CollisionOff;
+	_collisionScale = 1.f;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -683,7 +687,21 @@ void Actor::walkForward() {
 		currSector->getExitInfo(_pos, puckVec, &ei);
 		float exitDist = (ei.exitPoint - _pos).magnitude();
 		if (dist < exitDist) {
+			Graphics::Vector3d p = _pos;
 			_pos += puckVec * dist;
+
+			if (_collisionMode != CollisionOff) {
+				for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
+					Actor *a = i->_value;
+					if (a != this && a->isInSet(g_grim->getSceneName()) && a->isVisible()) {
+						if (collidesWith(a)) {
+							_pos = p;
+							return;
+						}
+					}
+				}
+			}
+
 			_walkedCur = true;
 			return;
 		}
@@ -1469,12 +1487,71 @@ bool Actor::stopMumbleChore() {
 
 void Actor::setCollisionMode(CollisionMode mode) {
 	_collisionMode = mode;
-	warning("Actor::setCollisionMode() called with actor %s and mode %d",getName().c_str(), mode);
 }
 
 void Actor::setCollisionScale(float scale) {
 	_collisionScale = scale;
-	warning("Actor::setCollisionScale() called with actor %s and scale %g",getName().c_str(), scale);
+}
+
+bool Actor::collidesWith(Actor *actor) const {
+	if (actor->_collisionMode == CollisionOff) {
+		return false;
+	}
+
+	Model *model1 = getCurrentCostume()->getModel();
+	Model *model2 = actor->getCurrentCostume()->getModel();
+
+	Graphics::Vector3d p1 = _pos + model1->_insertOffset;
+	Graphics::Vector3d p2 = actor->_pos + model2->_insertOffset;
+
+	float size1 = model1->_radius * _collisionScale;
+	float size2 = model2->_radius * actor->_collisionScale;
+
+	CollisionMode mode1 = _collisionMode;
+	CollisionMode mode2 = actor->_collisionMode;
+
+	if (mode1 == CollisionSphere && mode2 == CollisionSphere) {
+		float distance = (p1 - p2).magnitude();
+		return distance < size1 + size2;
+	} else if (mode1 == CollisionBox && mode2 == CollisionBox) {
+		warning("Collision between box and box not implemented!");
+		return false;
+	} else {
+		Graphics::Rect2d rect;
+
+		Graphics::Vector3d p;
+		Graphics::Vector3d size;
+		float yaw;
+
+		Graphics::Vector2d circle;
+		float radius;
+
+		if (mode1 == CollisionBox) {
+			p = p1 + model1->_bboxPos;
+			size = model1->_bboxSize * _collisionScale;
+			yaw = _yaw;
+
+			circle._x = p2.x();
+			circle._y = p2.y();
+			radius = size2;
+		} else {
+			p = actor->_pos + model2->_bboxPos;
+			size = model2->_bboxSize * actor->_collisionScale;
+			yaw = actor->_yaw;
+
+			circle._x = p1.x();
+			circle._y = p1.y();
+			radius = size1;
+		}
+
+		rect._topLeft = Graphics::Vector2d(p.x() - size.x(), p.y() + size.y());
+		rect._topRight = Graphics::Vector2d(p.x() + size.x(), p.y() + size.y());
+		rect._bottomLeft = Graphics::Vector2d(p.x() - size.x(), p.y() - size.y());
+		rect._bottomRight = Graphics::Vector2d(p.x() + size.x(), p.y() - size.y());
+		rect.rotateAroundCenter(yaw);
+
+		return rect.intersectsCircle(circle, radius);
+	}
 }
 
 extern int refSystemTable;

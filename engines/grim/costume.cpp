@@ -1384,6 +1384,18 @@ ModelNode *Costume::getModelNodes() {
 	return NULL;
 }
 
+Model *Costume::getModel() {
+	for (int i = 0; i < _numComponents; i++) {
+		if (!_components[i])
+			continue;
+		// Needs to handle Main Models (pigeons) and normal Models
+			// (when Manny climbs the rope)
+			if (FROM_BE_32(_components[i]->getTag()) == MKTAG('M','M','D','L'))
+				return dynamic_cast<ModelComponent *>(_components[i])->getModel();
+	}
+	return NULL;
+}
+
 void Costume::playChoreLooping(int num) {
 	if (num < 0 || num >= _numChores) {
 		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)

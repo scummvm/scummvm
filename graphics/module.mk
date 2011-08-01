@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	matrix3.o \
 	matrix4.o \
 	line3d.o \
+	rect2d.o \
 	tinygl/api.o \
 	tinygl/arrays.o \
 	tinygl/clear.o \

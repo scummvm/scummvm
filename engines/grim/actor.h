@@ -396,7 +396,7 @@ public:
 	void setCostume(const char *name);
 	void popCostume();
 	void clearCostumes();
-	Costume *getCurrentCostume() {
+	Costume *getCurrentCostume() const {
 		if (_costumeStack.empty())
 			return NULL;
 		else
@@ -444,6 +444,8 @@ public:
 
 	void setCollisionMode(CollisionMode mode);
 	void setCollisionScale(float scale);
+
+	bool collidesWith(Actor *actor) const;
 
 	bool _toClean;
 

@@ -56,6 +56,36 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 		TextSplitter ts(data, len);
 		loadText(&ts, cmap);
 	}
+
+	Graphics::Vector3d max;
+
+	bool first = true;
+	for (int i = 0; i < _numGeosets; ++i) {
+		Geoset &g = _geosets[i];
+		for (int j = 0; j < g._numMeshes; ++j) {
+			Mesh &m = g._meshes[j];
+			for (int k = 0; k < m._numVertices * 3; k += 3) {
+				if (first || m._vertices[k] < _bboxPos.x())
+					_bboxPos.x() = m._vertices[k];
+				if (m._vertices[k + 1] < _bboxPos.y())
+					_bboxPos.y() = m._vertices[k + 1];
+				if (m._vertices[k + 2] < _bboxPos.z())
+					_bboxPos.z() = m._vertices[k + 2];
+
+				if (first || m._vertices[k] > max.x())
+					max.x() = m._vertices[k];
+				if (m._vertices[k + 1] > max.y())
+					max.y() = m._vertices[k + 1];
+				if (m._vertices[k + 2] > max.z())
+					max.z() = m._vertices[k + 2];
+
+				first = false;
+			}
+		}
+	}
+
+	_bboxSize = max - _bboxPos;
+	_bboxPos = (max + _bboxPos) / 2.f;
 }
 
 Model::~Model() {
