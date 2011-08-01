@@ -37,6 +37,10 @@ TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback,
 
 TimerSlot::~TimerSlot() {
   logEntered();
+  if (timer) {
+    delete timer;
+    timer = null;
+  }
 }
 
 bool TimerSlot::OnStart() {
@@ -58,9 +62,11 @@ bool TimerSlot::OnStart() {
 }
 
 void TimerSlot::OnStop() {
+  logEntered();
   if (timer) {
     timer->Cancel();    
     delete timer;
+    timer = null;
   }
 }
 
@@ -78,6 +84,11 @@ BadaTimerManager::BadaTimerManager() {
 
 BadaTimerManager::~BadaTimerManager() {
   logEntered();
+	for (Common::List<TimerSlot>::iterator slot = timers.begin();
+       slot != timers.end(); ++slot) {
+    slot->Stop();
+    slot = timers.erase(slot);
+  }
 }
 
 bool BadaTimerManager::installTimerProc(TimerProc proc, int32 interval, void *refCon) {
