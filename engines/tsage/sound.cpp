@@ -2871,6 +2871,7 @@ void SoundBlasterDriver::proc38(int channel, int cmd, int value) {
 	if (cmd == 7) {
 		// Set channel volume
 		_channelVolume = value;
+		_mixer->setChannelVolume(_soundHandle, (byte)MIN(255, value * 2));
 	}
 }
 
