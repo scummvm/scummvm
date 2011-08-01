@@ -33,10 +33,6 @@
 
 namespace CGE {
 
-CGEEvent Evt[EVT_MAX];
-
-uint16 EvtHead = 0, EvtTail = 0;
-
 /*----------------- KEYBOARD interface -----------------*/
 
 const uint16 Keyboard::_code[0x60] = {
@@ -85,8 +81,7 @@ const uint16 Keyboard::_scummVmCodes[0x60] = {
 	0
 };
 
-Keyboard::Keyboard() {
-	_client = NULL;
+Keyboard::Keyboard() : _client(NULL) {
 	Common::set_to(&_key[0], &_key[0x60], false);
 	_current = 0;
 }
@@ -139,13 +134,18 @@ void Keyboard::newKeyboard(Common::Event &event) {
 		_current = Keyboard::_code[keycode];
 
 		if (_client) {
-			CGEEvent &evt = Evt[EvtHead];
-			EvtHead = (EvtHead + 1) % EVT_MAX;
+			CGEEvent &evt = _eventManager->getNextEvent();
 			evt._x = _current;	// Keycode
-			evt._msk = KEYB;	// Event mask
-			evt._ptr = _client;	// Sprite pointer
+			evt._mask = KEYB;	// Event mask
+			evt._spritePtr = _client;	// Sprite pointer
 		}
 	}
+}
+
+uint16 Keyboard::lastKey() {
+	uint16 cur = _current;
+	_current = 0;
+	return cur;
 }
 
 /*----------------- MOUSE interface -----------------*/
@@ -185,11 +185,6 @@ Mouse::~Mouse() {
 }
 
 
-//void Mouse::setFun()
-//{
-//}
-
-
 void Mouse::on() {
 	if (_seqPtr && _exist) {
 		_active = true;
@@ -216,30 +211,29 @@ void Mouse::newMouse(Common::Event &event) {
 	if (!_active)
 		return;
 
-	CGEEvent &evt = Evt[EvtHead];
-	EvtHead = (EvtHead + 1) % EVT_MAX;
+	CGEEvent &evt = _eventManager->getNextEvent();
 	evt._x = event.mouse.x;
 	evt._y = event.mouse.y;
-	evt._ptr = spriteAt(evt._x, evt._y);
+	evt._spritePtr = spriteAt(evt._x, evt._y);
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		evt._msk = ROLL;
+		evt._mask = ROLL;
 		break;
 	case Common::EVENT_LBUTTONDOWN:
-		evt._msk = L_DN;
+		evt._mask = L_DN;
 		_buttons |= 1;
 		break;
 	case Common::EVENT_LBUTTONUP:
-		evt._msk = L_UP;
+		evt._mask = L_UP;
 		_buttons &= ~1;
 		break;
 	case Common::EVENT_RBUTTONDOWN:
-		evt._msk = R_DN;
+		evt._mask = R_DN;
 		_buttons |= 2;
 		break;
 	case Common::EVENT_RBUTTONUP:
-		evt._msk = R_UP;
+		evt._mask = R_UP;
 		_buttons &= ~2;
 		break;
 	default:
@@ -251,6 +245,8 @@ void Mouse::newMouse(Common::Event &event) {
 
 EventManager::EventManager() {
 	_quitFlag = false;
+	_eventQueueHead = 0;
+	_eventQueueTail = 0;
 }
 
 void EventManager::poll() {
@@ -282,27 +278,27 @@ void EventManager::poll() {
 }
 
 void EventManager::handleEvents() {
-	while (EvtTail != EvtHead) {
-		CGEEvent e = Evt[EvtTail];
-		if (e._msk) {
-			if (_mouse->_hold && e._ptr != _mouse->_hold)
-				_mouse->_hold->touch(e._msk | ATTN, e._x - _mouse->_hold->_x, e._y - _mouse->_hold->_y);
+	while (_eventQueueTail != _eventQueueHead) {
+		CGEEvent e = _eventQueue[_eventQueueTail];
+		if (e._mask) {
+			if (_mouse->_hold && e._spritePtr != _mouse->_hold)
+				_mouse->_hold->touch(e._mask | ATTN, e._x - _mouse->_hold->_x, e._y - _mouse->_hold->_y);
 
 			// update mouse cursor position
-			if (e._msk & ROLL)
+			if (e._mask & ROLL)
 				_mouse->gotoxy(e._x, e._y);
 
 			// activate current touched SPRITE
-			if (e._ptr) {
-				if (e._msk & KEYB)
-					e._ptr->touch(e._msk, e._x, e._y);
+			if (e._spritePtr) {
+				if (e._mask & KEYB)
+					e._spritePtr->touch(e._mask, e._x, e._y);
 				else
-					e._ptr->touch(e._msk, e._x - e._ptr->_x, e._y - e._ptr->_y);
+					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_x, e._y - e._spritePtr->_y);
 			} else if (_sys)
-					_sys->touch(e._msk, e._x, e._y);
+					_sys->touch(e._mask, e._x, e._y);
 
-			if (e._msk & L_DN) {
-				_mouse->_hold = e._ptr;
+			if (e._mask & L_DN) {
+				_mouse->_hold = e._spritePtr;
 				if (_mouse->_hold) {
 					_mouse->_hold->_flags._hold = true;
 
@@ -313,7 +309,7 @@ void EventManager::handleEvents() {
 				}
 			}
 
-			if (e._msk & L_UP) {
+			if (e._mask & L_UP) {
 				if (_mouse->_hold) {
 					_mouse->_hold->_flags._hold = false;
 					_mouse->_hold = NULL;
@@ -322,10 +318,10 @@ void EventManager::handleEvents() {
 			///Touched = e.Ptr;
 
 			// discard Text if button released
-			if (e._msk & (L_UP | R_UP))
+			if (e._mask & (L_UP | R_UP))
 				killText();
 		}
-		EvtTail = (EvtTail + 1) % EVT_MAX;
+		_eventQueueTail = (_eventQueueTail + 1) % EVT_MAX;
 	}
 	if (_mouse->_hold) {
 		if (_mouse->_hold->_flags._drag)
@@ -333,14 +329,20 @@ void EventManager::handleEvents() {
 	}
 }
 
-void EventManager::clrEvt(Sprite *spr) {
+void EventManager::clearEvent(Sprite *spr) {
 	if (spr) {
 		uint16 e;
-		for (e = EvtTail; e != EvtHead; e = (e + 1) % EVT_MAX)
-			if (Evt[e]._ptr == spr)
-				Evt[e]._msk = 0;
+		for (e = _eventQueueTail; e != _eventQueueHead; e = (e + 1) % EVT_MAX)
+			if (_eventQueue[e]._spritePtr == spr)
+				_eventQueue[e]._mask = 0;
 	} else
-		EvtTail = EvtHead;
+		_eventQueueTail = _eventQueueHead;
 }
 
+CGEEvent &EventManager::getNextEvent() {
+	CGEEvent &evt = _eventQueue[_eventQueueHead];
+	_eventQueueHead = (_eventQueueHead + 1) % EVT_MAX;
+
+	return evt;
+}
 } // End of namespace CGE
