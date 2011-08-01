@@ -1696,7 +1696,7 @@ bool CGEEngine::showTitle(const char *name) {
 					if (_eventManager->_quitFlag)
 						return false;
 				}
-				if (_keyboard->last() == Enter && *_usrFnam)
+				if (_keyboard->lastKey() == Enter && *_usrFnam)
 					userOk = true;
 			}
 			//Mouse.Off();
