@@ -32,6 +32,7 @@
 
 #include "backends/events/webossdl/webossdl-events.h"
 #include "gui/message.h"
+#include "engines/engine.h"
 
 // Inidicates if gesture area is pressed down or not.
 static bool gestureDown = false;
@@ -175,6 +176,15 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
 bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (motionPtrIndex == ev.button.which) {
 		motionPtrIndex = -1;
+
+		int screenY = g_system->getHeight();
+		// 60% of the screen height for menu dialog
+                if (ABS(dragDiffY) >= ABS(screenY*0.6)) {
+                        if (g_engine && !g_engine->isPaused()) {
+                                g_engine->openMainMenuDialog();
+                                return true;
+                        }
+                }
 
 		// When drag mode was active then simply send a mouse up event
 		if (dragging)
