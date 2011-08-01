@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -32,15 +32,7 @@
 
 #include "config.h"
 #include "common/scummsys.h"
-#include "common/events.h"
-#include "base/main.h"
 #include "backends/modular-backend.h"
-#include "backends/mutex/mutex.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
-#include "backends/events/default/default-events.h"
-#include "backends/audiocd/default/default-audiocd.h"
-#include "backends/fs/fs-factory.h"
 
 #include "fs.h"
 #include "form.h"

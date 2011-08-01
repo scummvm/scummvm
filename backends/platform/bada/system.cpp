@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,11 +28,17 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/fonts/bdf.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/events/default/default-events.h"
+#include "backends/audiocd/default/default-audiocd.h"
+#include "backends/mutex/mutex.h"
+#include "backends/fs/fs-factory.h"
 
 #include "form.h"
 #include "system.h"
 #include "graphics.h"
 #include "audio.h"
+#include "timer.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
@@ -229,7 +235,7 @@ result BadaSystem::initModules() {
     return E_OUT_OF_MEMORY;
   }
 
-  _timerManager = new DefaultTimerManager();
+  _timerManager = new BadaTimerManager();
   if (!_timerManager) {
     return E_OUT_OF_MEMORY;
   }
