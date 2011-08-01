@@ -484,6 +484,22 @@ enum KyraResources {
 
 	kEob1TurnUndeadString,
 
+	kEob1NpcShpData,
+	kEob1NpcSubShpIndex1,
+	kEob1NpcSubShpIndex2,
+	kEob1NpcSubShpY,
+	kEob1Npc0Strings,
+	kEob1Npc11Strings,
+	kEob1Npc12Strings,
+	kEob1Npc21Strings,
+	kEob1Npc22Strings,
+	kEob1Npc31Strings,
+	kEob1Npc32Strings,
+	kEob1Npc4Strings,
+	kEob1Npc5Strings,
+	kEob1Npc6Strings,
+	kEob1Npc7Strings,
+
 	kEob2MainMenuStrings,
 	kEob2IntroStrings,
 	kEob2IntroCPSFiles,

@@ -40,8 +40,12 @@ void EobCoreEngine::setScriptFlag(int flag) {
 	_inf->setFlag(flag);
 }
 
+void EobCoreEngine::clearScriptFlag(int flag) {
+	_inf->clearFlag(flag);
+}
+
 bool EobCoreEngine::checkScriptFlag(int flag) {
-	return _inf->checkFlag(0x8000);
+	return _inf->checkFlag(flag);
 }
 
 const uint8 *EobCoreEngine::initScriptTimers(const uint8 *pos) {
@@ -186,6 +190,22 @@ void EobInfProcessor::run(int func, int sub) {
 			continue;
 		pos += (*_opcodes[-(cmd + 1)])(pos);
 	} while (!_abortScript && !_abortAfterSubroutine);
+}
+
+void EobInfProcessor::setFlag(int flag) {
+	_flagTable[17] |= flag;
+}
+
+void EobInfProcessor::clearFlag(int flag) {
+	_flagTable[17] &= ~flag;
+}
+
+bool EobInfProcessor::checkFlag(int flag) const {
+	return (_flagTable[17] & flag) ? true : false;
+}
+
+bool EobInfProcessor::preventRest() const {
+	return _preventRest ? true : false;
 }
 
 void EobInfProcessor::loadState(Common::SeekableSubReadStreamEndian &in) {
@@ -469,11 +489,11 @@ int EobInfProcessor::oeob_moveInventoryItemToBlock(int8 *data) {
 }
 
 int EobInfProcessor::oeob_printMessage_v1(int8 *data) {
-	static const char ColorConfig[] = { 6, 33, 2, 33, 0 };
+	static const char colorConfig[] = "\x6\x21\x2\x21";
 	char col[5];
 	int8 *pos = data;
 
-	strcpy(col, ColorConfig);
+	strcpy(col, colorConfig);
 	const char *str = (const char*) pos;
 	pos += (strlen(str) + 1);
 
@@ -720,7 +740,7 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 			for (i = 0; i < 6; i++) {
 				if (!(_vm->_characters[i].flags & 1))
 					continue;
-				if ((_vm->_characters[a].raceSex >> 1) == cmd) {
+				if ((_vm->_characters[i].raceSex >> 1) == cmd) {
 					b = 1;
 					break;
 				}
@@ -1371,7 +1391,7 @@ int EobInfProcessor::oeob_identifyItems(int8 *data) {
 
 int EobInfProcessor::oeob_sequence(int8 *data) {
 	int8 *pos = data;
-	_vm->_dlgUnk1 = -1;
+	_vm->_npcSequenceSub = -1;
 	_vm->txt()->setWaitButtonMode(0);
 	_vm->gui_updateControls();
 	_vm->drawScene(1);
@@ -1402,7 +1422,6 @@ int EobInfProcessor::oeob_sequence(int8 *data) {
 
 	case -1:
 		// copy protection
-		error("EobInfProcessor::oeob_sequence(): unimplemented cmd -1");
 		break;
 
 	default:
@@ -1508,8 +1527,8 @@ int EobInfProcessor::oeob_specialEvent(int8 *data) {
 			break;
 
 		case 5:
-			_vm->deletePartyItem(46, 5);
-			_vm->deletePartyItem(46, 6);
+			_vm->deletePartyItems(46, 5);
+			_vm->deletePartyItems(46, 6);
 			break;
 
 		case 6:

@@ -103,6 +103,12 @@ Kyra::Item EobCoreEngine::duplicateItem(Item itemIndex) {
 	return i;
 }
 
+Item EobCoreEngine::createItemOnCurrentBlock(Item itemIndex) {
+	Item itm = duplicateItem(itemIndex);
+	setItemPosition((Item*)&_levelBlockProperties[_currentBlock].drawObjects, _currentBlock, itm, _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
+	return itm;
+}
+
 void EobCoreEngine::setItemPosition(Item *itemQueue, int block, Item item, int pos) {
 	if (!item)
 		return;
@@ -123,7 +129,7 @@ void EobCoreEngine::setItemPosition(Item *itemQueue, int block, Item item, int p
 	}
 }
 
-void EobCoreEngine::createInventoryItem(EobCharacter *c, Item itemIndex, int itemValue, int preferedInventorySlot) {
+void EobCoreEngine::createInventoryItem(EobCharacter *c, Item itemIndex, int16 itemValue, int preferedInventorySlot) {
 	if (itemIndex <= 0)
 		return;
 
@@ -214,7 +220,35 @@ int EobCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	return 0;
 }
 
-void EobCoreEngine::deletePartyItem(Item itemType, int16 itemValue) {
+int EobCoreEngine::stripPartyItems(int16 itemType, int16 itemValue, int handleValueMode, int numItems) {
+	int itemsLeft = numItems;
+	
+	for (bool runloop = true; runloop && itemsLeft; ) {
+		runloop = false;
+		for (int i = 0; i < 6 && itemsLeft; i++) {
+			if (!testCharacter(i, 1))
+				continue;
+			
+			for (int ii = 0; ii < 27 && itemsLeft; ii++) {
+				if (ii == 16)
+					continue;
+
+				Item itm = _characters[i].inventory[ii];
+				if ((_items[itm].type == itemType) && ((handleValueMode == -1 && _items[itm].value <= itemValue) || (handleValueMode == 0 && _items[itm].value == itemValue) || (handleValueMode == 1 && _items[itm].value >= itemValue))) {
+					_characters[i].inventory[ii] = 0;
+					_items[itm].block = -1;
+					itemsLeft--;
+					runloop = true;
+				}
+			}
+		}
+	}
+
+	return numItems - itemsLeft;
+}
+
+bool EobCoreEngine::deletePartyItems(int16 itemType, int16 itemValue) {
+	bool res = false;
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 1))
 			continue;
@@ -228,13 +262,26 @@ void EobCoreEngine::deletePartyItem(Item itemType, int16 itemValue) {
 		int itm = c->inventory[slot];
 		_items[itm].block = -1;
 		c->inventory[slot] = 0;
+		res = true;
 
-		if (_currentControlMode == 0 && slot < 2 && i < 5)
-			gui_drawWeaponSlot(i, slot);
+		if (!_dialogueField) {
+			if (_currentControlMode == 0 && slot < 2 && i < 5)
+				gui_drawWeaponSlot(i, slot);
 
-		if (_currentControlMode == 1 && i == _updateCharNum)
-			gui_drawInventoryItem(slot, 1, 0);
+			if (_currentControlMode == 1 && i == _updateCharNum)
+				gui_drawInventoryItem(slot, 1, 0);
+		}
 	}
+
+	if (_itemInHand > 0) {
+		if ((itemType == -1 || itemType == _items[_itemInHand].type) && (itemValue == -1 || itemValue == _items[_itemInHand].value)) {
+			_items[_itemInHand].block = -1;
+			setHandItem(0);
+			res = true;
+		}
+	}
+
+	return res;
 }
 
 int EobCoreEngine::itemUsableByCharacter(int charIndex, Item item) {

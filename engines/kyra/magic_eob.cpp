@@ -555,11 +555,11 @@ bool EobCoreEngine::magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int d
 bool EobCoreEngine::magicObjectStatusHit(EobMonsterInPlay *m, int type, bool tryEvade, int mod) {
 	EobMonsterProperty *p = &_monsterProps[m->type];
 	if (tryEvade) {
-		if (tryMonsterAttackEvasion(m) || (p->capsFlags & 0x10))
+		if (tryMonsterAttackEvasion(m) || (p->immunityFlags & 0x10))
 			return true;
 	}
 
-	if (checkUnkConstModifiers(m, 0, p->level, mod, 6))
+	if (checkMonsterLevelConstModifiers(m, 0, p->level, mod, 6))
 		return false;
 	
 	int para = 0;
@@ -569,7 +569,7 @@ bool EobCoreEngine::magicObjectStatusHit(EobMonsterInPlay *m, int type, bool try
 	case 1:
 	case 2:
 		para = (type == 0) ? ((p->typeFlags & 1) ? 1 : 0) : ((type == 1) ? ((p->typeFlags & 2) ? 1 : 0) : 1);
-		if (para && !(p->statusFlags & 2)) {
+		if (para && !(p->immunityFlags & 2)) {
 			m->mode = 10;
 			m->spellStatusLeft = 15;
 		}
@@ -577,7 +577,7 @@ bool EobCoreEngine::magicObjectStatusHit(EobMonsterInPlay *m, int type, bool try
 		break;
 
 	case 3:
-		if (!(p->statusFlags & 8))
+		if (!(p->immunityFlags & 8))
 			inflictMonsterDamage(m, 1000, true);
 		break;
 
@@ -591,12 +591,11 @@ bool EobCoreEngine::magicObjectStatusHit(EobMonsterInPlay *m, int type, bool try
 		break;
 
 	case 6:
-		if (!(p->statusFlags & 4) && m->mode != 7 && m->mode != 8 && m->mode != 10) {
+		if (!(_flags.gameID == GI_EOB1 && !(p->typeFlags & 3)) && !(p->immunityFlags & 4) && m->mode != 7 && m->mode != 8 && m->mode != 10) {
 			m->mode = 0;
 			m->spellStatusLeft = 20;
-			para = (getNextMonsterDirection(m->block, _currentBlock) ^ 4) >> 1;
 			m->flags |= 8;
-			walkMonsterNextStep(m, -1, para);
+			walkMonsterNextStep(m, -1, (getNextMonsterDirection(m->block, _currentBlock) ^ 4) >> 1);
 		}
 		break;
 

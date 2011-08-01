@@ -1114,7 +1114,7 @@ bool extractEobNpcData(PAKFile &out, const ExtractInformation *info, const byte 
 			WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
 			src += 4; dst += 4;
 			// skipping lots of zero space
-			src += 60;
+			src += 64;
 			WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
 			src += 4; dst += 4;
 			for (int ii = 0; ii < 27; ii++) {

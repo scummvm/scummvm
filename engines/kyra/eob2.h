@@ -94,7 +94,8 @@ private:
 	const char *const *_dranFoolsStrings;
 
 	// characters
-	void npcSequence(int npcIndex);
+	void drawNpcScene(int npcIndex);
+	void runNpcDialogue(int npcIndex);
 
 	const uint8 *_npcShpData;
 	const char *const *_npc1Strings;

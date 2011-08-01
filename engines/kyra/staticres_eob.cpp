@@ -151,7 +151,7 @@ bool StaticResource::loadEobNpcData(Common::SeekableReadStream &stream, void *&p
 		s->raceSex = stream.readByte();
 		s->cClass = stream.readByte();
 		s->alignment = stream.readByte();
-		s->portrait = stream.readByte();
+		s->portrait = stream.readSByte();
 		s->food = stream.readByte();
 		stream.read(s->level, 3);
 		s->experience[0] = stream.readUint32BE();
@@ -159,7 +159,7 @@ bool StaticResource::loadEobNpcData(Common::SeekableReadStream &stream, void *&p
 		s->experience[2] = stream.readUint32BE();
 		s->mageSpellsAvailableFlags = stream.readUint32BE();
 		for (int ii = 0; ii < 27; ii++)
-			s->inventory[i] = stream.readUint16BE();
+			s->inventory[ii] = stream.readSint16BE();
 	}
 
 	ptr = e;
@@ -555,6 +555,7 @@ void EobCoreEngine::initStaticResource() {
 	_saveLoadStrings = saveLoadStrings[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 	_errorSlotEmptyString = errorSlotEmptyString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
+	_menuOkString = "OK";
 }
 
 void EobCoreEngine::initButtonData() {
@@ -1068,6 +1069,22 @@ void EobEngine::initStaticResource() {
 
 	_turnUndeadString = _staticres->loadStrings(kEob1TurnUndeadString, temp);
 
+	_npcShpData = _staticres->loadRawData(kEob1NpcShpData, temp);
+	_npcSubShpIndex1 = _staticres->loadRawData(kEob1NpcSubShpIndex1, temp);
+	_npcSubShpIndex2 = _staticres->loadRawData(kEob1NpcSubShpIndex2, temp);
+	_npcSubShpY = _staticres->loadRawData(kEob1NpcSubShpY, temp);
+	_npc0Strings = _staticres->loadStrings(kEob1Npc0Strings, temp);
+	_npc11Strings = _staticres->loadStrings(kEob1Npc11Strings, temp);
+	_npc12Strings = _staticres->loadStrings(kEob1Npc12Strings, temp);
+	_npc21Strings = _staticres->loadStrings(kEob1Npc21Strings, temp);
+	_npc22Strings = _staticres->loadStrings(kEob1Npc22Strings, temp);
+	_npc31Strings = _staticres->loadStrings(kEob1Npc31Strings, temp);
+	_npc32Strings = _staticres->loadStrings(kEob1Npc32Strings, temp);
+	_npc4Strings = _staticres->loadStrings(kEob1Npc4Strings, temp);
+	_npc5Strings = _staticres->loadStrings(kEob1Npc5Strings, temp);
+	_npc6Strings = _staticres->loadStrings(kEob1Npc6Strings, temp);
+	_npc7Strings = _staticres->loadStrings(kEob1Npc7Strings, temp);
+
 	const uint8 *ps = _staticres->loadRawData(kEob1MonsterProperties, temp);
 	temp /= 27;
 	_monsterProps = new EobMonsterProperty[temp];
@@ -1077,7 +1094,7 @@ void EobEngine::initStaticResource() {
 		EobMonsterProperty *p = &_monsterProps[i];
 		p->armorClass = (int8)*ps++;
 		p->hitChance = (int8)*ps++;
-		p->hpDcTimes = *ps++;
+		p->level = (int8)*ps++;
 		p->attacksPerRound = *ps++;
 		p->dmgDc[0].times = *ps++;
 		p->dmgDc[0].pips = *ps++;

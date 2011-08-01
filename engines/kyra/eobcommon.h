@@ -158,7 +158,7 @@ struct SpriteDecoration {
 struct EobMonsterProperty {
 	int8 armorClass;
 	int8 hitChance;
-	uint8 level;
+	int8 level;
 	uint8 hpDcTimes;
 	uint8 hpDcPips;
 	uint8 hpDcBase;
@@ -168,7 +168,7 @@ struct EobMonsterProperty {
 		uint8 pips;
 		int8 base;
 	} dmgDc[3];
-	uint16 statusFlags;
+	uint16 immunityFlags;
 	uint32 capsFlags;
 	uint32 typeFlags;
 	int32 experience;
@@ -376,7 +376,9 @@ protected:
 	void modifyCharacterHitpoints(int character, int16 points);
 	void neutralizePoison(int character);
 
-	virtual void npcSequence(int npcIndex) = 0;
+	void npcSequence(int npcIndex);
+	virtual void drawNpcScene(int npcIndex) = 0;
+	virtual void runNpcDialogue(int npcIndex) = 0;
 	void initNpc(int npcIndex);
 	int npcJoinDialogue(int npcIndex, int queryJoinTextId, int confirmJoinTextId, int noJoinTextId);
 	int prepareForNewPartyMember(int16 itemType, int16 itemValue);
@@ -405,6 +407,7 @@ protected:
 	const uint8 *_constModExt;
 
 	const EobCharacter *_npcPreset;
+	int _npcSequenceSub;
 	bool _partyResting;
 	bool _loading;
 
@@ -412,11 +415,13 @@ protected:
 	void loadItemDefs();
 	Item duplicateItem(Item itemIndex);
 	void setItemPosition(Item *itemQueue, int block, Item item, int pos);
-	void createInventoryItem(EobCharacter *c, Item itemIndex, int itemValue, int preferedInventorySlot);
+	Item createItemOnCurrentBlock(Item itemIndex);
+	void createInventoryItem(EobCharacter *c, Item itemIndex, int16 itemValue, int preferedInventorySlot);
 	int deleteInventoryItem(int charIndex, int slot);
 	void deleteBlockItem(uint16 block, int type);
 	int validateInventorySlotForItem(Item item, int charIndex, int slot);
-	void deletePartyItem(Item itemType, int16 itemValue);
+	int stripPartyItems(int16 itemType, int16 itemValue, int handleValueMode, int numItems);
+	bool deletePartyItems(int16 itemType, int16 itemValue);
 	virtual void updateUsedCharacterHandItem(int charIndex, int slot) = 0;
 	int itemUsableByCharacter(int charIndex, Item item);
 	int countQueuedItems(Item itemQueue, int16 id, int16 type, int count, int includeFlyingItems);
@@ -622,6 +627,7 @@ protected:
 	// Script
 	void runLevelScript(int block, int flags);
 	void setScriptFlag(int flag);
+	void clearScriptFlag(int flag);
 	bool checkScriptFlag(int flag);
 
 	const uint8 *initScriptTimers(const uint8 *pos);
@@ -739,7 +745,6 @@ protected:
 	int runDialogue(int dialogueTextId, int style, const char *button1, ...);
 
 	char _dialogueLastBitmap[13];
-	int _dlgUnk1;
 	int _moveCounter;
 
 	uint8 _color4;
@@ -803,11 +808,12 @@ protected:
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
 	void displayParchment(int id);
+	int countResurrectionCandidates();
+	virtual int resurrectionSelectDialogue() = 0;
 	virtual void useHorn(int charIndex, int weaponSlot) {}
 	virtual bool checkPartyStatusExtra() = 0;
 
 	virtual void drawLightningColumn() {}
-	virtual int resurrectionSelectDialogue() { return -1; }
 	virtual int charSelectDialogue() { return -1; }
 	virtual void characterLevelGain(int charIndex) {}
 
@@ -819,6 +825,10 @@ protected:
 	void releaseMonsterTempData(LevelTempData *tmp);
 
 	const char * const *_saveLoadStrings;
+
+	int _rrCount;
+	const char *_rrNames[10];
+	int8 _rrId[10];
 
 	Screen_Eob *_screen;
 	GUI_Eob *_gui;
@@ -846,7 +856,7 @@ protected:
 
 	int calcCloseDistanceMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int b, int damageType);
 	int calcDamageModifers(int charIndex, EobMonsterInPlay *m, int item, int itemType, int useStrModifier);
-	bool checkUnkConstModifiers(void *target, int hpModifier, int level, int b, int race);
+	bool checkMonsterLevelConstModifiers(void *target, int hpModifier, int level, int b, int race);
 	bool specialAttackConstTest(int charIndex, int b);
 	int getConstModifierTableValue(int hpModifier, int level, int b);
 	bool calcDamageCheckItemType(int itemType);
@@ -1045,6 +1055,7 @@ protected:
 	const char *const *_menuStringsDefeat;
 	const char *_errorSlotEmptyString;
 	const char *_errorSlotNoNameString;
+	const char *_menuOkString;
 
 	const char *const *_menuStringsTransfer;
 	const char *const *_menuStringsSpec;

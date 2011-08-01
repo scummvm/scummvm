@@ -103,10 +103,14 @@ LolEobBaseEngine::LolEobBaseEngine(OSystem *system, const GameFlags &flags) : Ky
 	_dialogueNumButtons = _dialogueButtonYoffs = _dialogueHighlightedButton = 0;
 	_currentControlMode = 0;
 	_specialSceneFlag = 0;
-	_dialogueButtonLabelCol1 = 9;
-	_dialogueButtonLabelCol2 = 15;
-	_dialogueButtonW = 95;
-	_dialogueButtonH = 9;
+	_dialogueButtonLabelCol1 = 0;
+	_dialogueButtonLabelCol2 = 0;
+	_dialogueButtonW = 0;
+	_dialogueButtonH = 0;
+	_waitButtonPresX = 0;
+	_waitButtonPresY = 0;
+	_waitButtonPresW = 0;
+	_waitButtonReverveW = 0;
 
 	_updateCharNum = -1;
 	_activeVoiceFileTotalTime = 0;

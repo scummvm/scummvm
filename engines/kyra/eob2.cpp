@@ -52,6 +52,19 @@ Common::Error DarkMoonEngine::init() {
 
 	_monsterProps = new EobMonsterProperty[10];
 
+	static const uint16 wX[] = { 221, 76 };
+	static const uint8 wY[] = { 189, 162 };
+	static const uint16 wW[] = { 95, 95 };
+
+	_dialogueButtonLabelCol1 = 9;
+	_dialogueButtonLabelCol2 = 15;
+	_dialogueButtonW = 95;
+	_dialogueButtonH = 9;
+	_waitButtonPresX = wX;
+	_waitButtonPresY = wY;
+	_waitButtonPresW = wW;
+	_waitButtonReverveW = 7;
+
 	_bkgColor_1 = 183;
 	_color1_1 = 186;
 	_color2_1 = 181;
@@ -77,11 +90,8 @@ void DarkMoonEngine::startupNew() {
 	EobCoreEngine::startupNew();
 }
 
-void DarkMoonEngine::npcSequence(int npcIndex) {
-	_screen->loadEobBitmap("OUTTAKE", 5, 3);
-	_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
+void DarkMoonEngine::drawNpcScene(int npcIndex) {
 	const uint8 *shpDef = &_npcShpData[npcIndex << 3];
-
 	for (int i = npcIndex; i != 255; i = shpDef[7]) {
 		shpDef = &_npcShpData[i << 3];
 		_screen->_curPage = 2;
@@ -90,15 +100,9 @@ void DarkMoonEngine::npcSequence(int npcIndex) {
 		_screen->drawShape(0, shp, 88 + shpDef[5] - (shp[2] << 2), 104 + shpDef[6] - shp[1], 5);
 		delete[] shp;
 	}
+}
 
-	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
-	_screen->loadFileDataToPage(s, 5, 32000);
-	delete s;
-
-	gui_drawBox(0, 121, 320, 79, _color1_1, _color2_1, _bkgColor_1);
-	_txt->setupField(9, true);
-	_txt->resetPageBreakString();
-
+void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 	if (npcIndex == 0) {
 		snd_playSoundEffect(57);
 		if (npcJoinDialogue(0, 1, 3, 2))
@@ -108,7 +112,7 @@ void DarkMoonEngine::npcSequence(int npcIndex) {
 		gui_drawDialogueBox();
 
 		_txt->printDialogueText(4, 0);
-		int r = runDialogue(-1, 0, _npc1Strings[0], _npc1Strings[1]) - 1;
+		int r = runDialogue(-1, 0, _npc1Strings[0], _npc1Strings[1], 0) - 1;
 
 		if (r == 0) {
 			_sound->playTrack(0);
@@ -124,7 +128,7 @@ void DarkMoonEngine::npcSequence(int npcIndex) {
 		gui_drawDialogueBox();
 
 		_txt->printDialogueText(8, 0);
-		int r = runDialogue(-1, 0, _npc2Strings[0], _npc2Strings[1]) - 1;
+		int r = runDialogue(-1, 0, _npc2Strings[0], _npc2Strings[1], 0) - 1;
 
 		if (r == 0) {
 			if (rollDice(1, 2, -1))
@@ -136,9 +140,6 @@ void DarkMoonEngine::npcSequence(int npcIndex) {
 			_currentDirection = 0;
 		}
 	}
-
-	_txt->removePageBreakFlag();
-	gui_restorePlayField();
 }
 
 void DarkMoonEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
@@ -338,7 +339,40 @@ void DarkMoonEngine::drawDoorIntern(int type, int, int x, int y, int w, int wall
 }
 
 void DarkMoonEngine::restParty_npc() {
-	warning("DarkMoonEngine::restParty_npc(): implement!");
+	int insalId = -1;
+	int numChar = 0;
+
+	for (int i = 0; i < 6; i++) {
+		if (!testCharacter(i, 1))
+			continue;
+		if (testCharacter(i, 2) && _characters[i].portrait == -1)
+			insalId = i;
+		numChar++;
+	}
+
+	if (insalId == -1 || numChar < 5)
+		return;
+
+	removeCharacterFromParty(insalId);
+	if (insalId < 4)
+		exchangeCharacters(insalId, testCharacter(5, 1) ? 5 : 4);
+
+	clearScriptFlag(6);
+
+	if (!stripPartyItems(1, 1, 1, 1))
+		stripPartyItems(2, 1, 1, 1);
+	stripPartyItems(31, 0, 1, 3);
+	stripPartyItems(39, 1, 0, 3);
+	stripPartyItems(47, 0, 1, 2);
+
+	_items[createItemOnCurrentBlock(28)].value = 26;
+
+	gui_drawPlayField(false);
+	gui_drawAllCharPortraitsWithStats();
+
+	_screen->setClearScreenDim(10);
+	_gui->messageDialogue2(11, 63, 6);
+	_gui->messageDialogue2(11, 64, 6);
 }
 
 bool DarkMoonEngine::restParty_extraAbortCondition() {
@@ -357,7 +391,7 @@ void DarkMoonEngine::useHorn(int charIndex, int weaponSlot) {
 }
 
 bool DarkMoonEngine::checkPartyStatusExtra() {
-	if (checkScriptFlag(0x10))
+	if (checkScriptFlag(0x100000))
 		seq_dranFools();
 	return _gui->confirmDialogue2(14, 67, 1);
 }
@@ -374,49 +408,12 @@ void DarkMoonEngine::drawLightningColumn() {
 }
 
 int DarkMoonEngine::resurrectionSelectDialogue() {
-	int cnt = 0;
-	const char *namesList[10];
-	memset(namesList, 0, 10 * sizeof(const char*));
-	int8 indexList[10];
+	countResurrectionCandidates();
 
-	for (int i = 0; i < 6; i++) {
-		if (!testCharacter(i, 1))
-			continue;
-		if (_characters[i].hitPointsCur != -10)
-			continue;
+	_rrNames[_rrCount] = _abortStrings[0];
+	_rrId[_rrCount++] = 99;
 
-		namesList[cnt] = _characters[i].name;
-		indexList[cnt++] = i;
-	}
-
-	for (int i = 0; i < 6; i++) {
-		if (!testCharacter(i, 1))
-			continue;
-
-		for (int ii = 0; ii < 27; ii++) {
-			uint16 inv = _characters[i].inventory[ii];
-			if (!inv)
-				continue;
-
-			if (_items[inv].type != 33)
-				continue;
-
-			namesList[cnt] = _npcPreset[_items[inv].value - 1].name;
-			indexList[cnt++] = -_items[inv].value;
-		}
-	}
-
-	if (_itemInHand) {
-		if (_items[_itemInHand].type == 33) {
-			namesList[cnt] = _npcPreset[_items[_itemInHand].value - 1].name;
-			indexList[cnt++] = -_items[_itemInHand].value;
-		}
-	}
-
-	namesList[cnt] = _abortStrings[0];
-	indexList[cnt++] = 99;
-
-	int r = indexList[runDialogue(-1, 1, namesList[0], namesList[1], namesList[2], namesList[3], namesList[4], namesList[5], namesList[6], namesList[7], namesList[8]) - 1];
+	int r = _rrId[runDialogue(-1, 1, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
 	if (r == 99)
 		return 0;
 

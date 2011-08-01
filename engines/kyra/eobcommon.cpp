@@ -110,7 +110,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_configHpBarGraphs = true;
 
 	memset(_dialogueLastBitmap, 0, 13);
-	_dlgUnk1 = 0;
+	_npcSequenceSub = 0;
 	_moveCounter = 0;
 	_partyResting = false;
 
@@ -137,6 +137,10 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_spellAnimBuffer = 0;
 	_clericSpellOffset = 0;
 	_restPartyElapsedTime = 0;
+
+	_rrCount = 0;
+	memset(_rrNames, 0, 10 * sizeof(const char*));
+	memset(_rrId, 0, 10 * sizeof(int8));
 }
 
 EobCoreEngine::~EobCoreEngine() {
@@ -975,6 +979,26 @@ void EobCoreEngine::neutralizePoison(int character) {
 	gui_drawCharPortraitWithStats(character);
 }
 
+void EobCoreEngine::npcSequence(int npcIndex) {
+	_screen->loadEobBitmap("OUTTAKE", 5, 3);
+	_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
+
+	drawNpcScene(npcIndex);
+
+	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
+	_screen->loadFileDataToPage(s, 5, 32000);
+	delete s;
+
+	gui_drawBox(0, 121, 320, 79, _color1_1, _color2_1, _bkgColor_1);
+	_txt->setupField(9, true);
+	_txt->resetPageBreakString();
+
+	runNpcDialogue(npcIndex);
+
+	_txt->removePageBreakFlag();
+	gui_restorePlayField();
+}
+
 void EobCoreEngine::initNpc(int npcIndex) {
 	EobCharacter *c = _characters;
 	int i = 0;
@@ -1005,7 +1029,7 @@ int EobCoreEngine::npcJoinDialogue(int npcIndex, int queryJoinTextId, int confir
 	gui_drawDialogueBox();
 	_txt->printDialogueText(queryJoinTextId, 0);
 
-	int r = runDialogue(-1, 0, _yesNoStrings[0], _yesNoStrings[1]) - 1;
+	int r = runDialogue(-1, 0, _yesNoStrings[0], _yesNoStrings[1], 0) - 1;
 	if (r == 0) {
 		if (confirmJoinTextId == -1) {
 			Common::String tmp = Common::String::format(_npcJoinStrings[0], _npcPreset[npcIndex].name);
@@ -1030,7 +1054,7 @@ int EobCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
 		numChars += (_characters[i].flags & 1);
 
 	if (numChars < 6) {
-		deletePartyItem(itemType, itemValue);
+		deletePartyItems(itemType, itemValue);
 	} else {
 		gui_drawDialogueBox();
 		_txt->printDialogueText(_npcMaxStrings[0]);
@@ -1040,7 +1064,7 @@ int EobCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
 		if (r == 6)
 			return 0;
 
-		deletePartyItem(itemType, itemValue);
+		deletePartyItems(itemType, itemValue);
 		removeCharacterFromParty(r);
 	}
 
@@ -1165,11 +1189,11 @@ void EobCoreEngine::setupDialogueButtons(int presetfirst, int numStr, const char
 
 	va_list args;
 	va_start(args, str1);
-	const char **s5p = va_arg(args, const char**);
+	const char **sp = va_arg(args, const char**);
 	va_end(args);
 	for (int i = 1; i < numStr; i++) {
-		if (s5p[i - 1])
-			_dialogueButtonString[i] = s5p[i - 1];
+		if (sp[i - 1])
+			_dialogueButtonString[i] = sp[i - 1];
 		else
 			_dialogueNumButtons = numStr = i;
 	}
@@ -1191,7 +1215,7 @@ void EobCoreEngine::setupDialogueButtons(int presetfirst, int numStr, const char
 }
 
 void EobCoreEngine::initDialogueSequence() {
-	_dlgUnk1 = -1;
+	_npcSequenceSub = -1;
 	_txt->setWaitButtonMode(0);
 	_dialogueField = true;
 
@@ -1435,6 +1459,47 @@ void EobCoreEngine::displayParchment(int id) {
 	restoreAfterDialogueSequence();
 }
 
+int EobCoreEngine::countResurrectionCandidates() {
+	_rrCount = 0;
+	memset(_rrNames, 0, 10 * sizeof(const char*));	
+
+	for (int i = 0; i < 6; i++) {
+		if (!testCharacter(i, 1))
+			continue;
+		if (_characters[i].hitPointsCur != -10)
+			continue;
+
+		_rrNames[_rrCount] = _characters[i].name;
+		_rrId[_rrCount++] = i;
+	}
+
+	for (int i = 0; i < 6; i++) {
+		if (!testCharacter(i, 1))
+			continue;
+
+		for (int ii = 0; ii < 27; ii++) {
+			uint16 inv = _characters[i].inventory[ii];
+			if (!inv)
+				continue;
+
+			if ((_flags.gameID == GI_EOB1 && ((_itemTypes[_items[inv].type].extraProperties & 0x7f) != 8)) || (_flags.gameID == GI_EOB2 && _items[inv].type != 33))
+				continue;
+
+			_rrNames[_rrCount] = _npcPreset[_items[inv].value - 1].name;
+			_rrId[_rrCount++] = -_items[inv].value;
+		}
+	}
+
+	if (_itemInHand > 0) {
+		if ((_flags.gameID == GI_EOB1 && ((_itemTypes[_items[_itemInHand].type].extraProperties & 0x7f) == 8)) || (_flags.gameID == GI_EOB2 && _items[_itemInHand].type == 33)) {
+			_rrNames[_rrCount] = _npcPreset[_items[_itemInHand].value - 1].name;
+			_rrId[_rrCount++] = -_items[_itemInHand].value;
+		}
+	}
+
+	return _rrCount;
+}
+
 void EobCoreEngine::useSlotWeapon(int charIndex, int slotIndex, Item item) {
 	EobCharacter *c = &_characters[charIndex];
 	int tp = item ? _items[item].type : 0;
@@ -1621,7 +1686,7 @@ int EobCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips,
 	EobCharacter *c = &_characters[charIndex];
 
 	if (a != 5) {
-		if (checkUnkConstModifiers(c, _charClassModUnk[c->cClass], c->level[0], a, c->raceSex))
+		if (checkMonsterLevelConstModifiers(c, _charClassModUnk[c->cClass], c->level[0], a, c->raceSex))
 			s = recalcDamageModifier(damageType, s);
 	}
 
@@ -1699,7 +1764,7 @@ bool EobCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int 
 
 	if (_flags.gameID == GI_EOB2) {
 		if ((p > 0 && p < 4) || !item ){
-			if (((_monsterProps[t].statusFlags & 0x200) && (d <= 0)) || ((_monsterProps[t].statusFlags & 0x1000) && (d <= 1)))
+			if (((_monsterProps[t].immunityFlags & 0x200) && (d <= 0)) || ((_monsterProps[t].immunityFlags & 0x1000) && (d <= 1)))
 				return false;
 		}
 	}
@@ -1877,7 +1942,7 @@ int EobCoreEngine::calcCloseDistanceMonsterDamage(EobMonsterInPlay *m, int times
 	EobMonsterProperty *p = &_monsterProps[m->type];
 
 	if (b == 5) {
-		if (checkUnkConstModifiers(m, 0, p->level, b, 6))
+		if (checkMonsterLevelConstModifiers(m, 0, p->level, b, 6))
 			s = recalcDamageModifier(damageType, s);
 	}
 
@@ -1886,10 +1951,12 @@ int EobCoreEngine::calcCloseDistanceMonsterDamage(EobMonsterInPlay *m, int times
 			s = 1;
 	}
 
-	if ((flags & 0x100) && ((_flags.gameID == GI_EOB2 && (p->statusFlags & 0x100)) || (_flags.gameID == GI_EOB1 && (p->capsFlags & 4))) && (!(_itemTypes[_items[pips].type].allowedClasses & 4 /* bug in original code ??*/)))
-		s >>= 1;
+	if ((flags & 0x100) && (!(_itemTypes[_items[pips].type].allowedClasses & 4 /* bug in original code ??*/)) &&
+		((_flags.gameID == GI_EOB2 && (p->immunityFlags & 0x100)) ||
+		(_flags.gameID == GI_EOB1 && (p->capsFlags & 4))))
+			s >>= 1;
 
-	if (p->statusFlags & 0x2000) {
+	if (p->immunityFlags & 0x2000) {
 		if (flags & 0x100) {
 			if (_items[pips].value < 3)
 				s >>= 2;
@@ -1913,7 +1980,7 @@ int EobCoreEngine::calcCloseDistanceMonsterDamage(EobMonsterInPlay *m, int times
 
 	static const uint16 damageImmunityFlags[] = { 0x01, 0x10, 0x02, 0x20, 0x80, 0x400, 0x20, 0x800, 0x40, 0x80, 0x400, 0x40 };
 	for (int i = 0; i < 12; i += 2) {
-		if ((flags & damageImmunityFlags[i]) && (p->statusFlags & damageImmunityFlags[i + 1]))
+		if ((flags & damageImmunityFlags[i]) && (p->immunityFlags & damageImmunityFlags[i + 1]))
 			s = 0;
 	}
 
@@ -1935,7 +2002,7 @@ int EobCoreEngine::calcDamageModifers(int charIndex, EobMonsterInPlay *m, int it
 	return (s < 0) ? 0 : s;
 }
 
-bool EobCoreEngine::checkUnkConstModifiers(void *target, int hpModifier, int level, int b, int race) {
+bool EobCoreEngine::checkMonsterLevelConstModifiers(void *target, int hpModifier, int level, int b, int race) {
 	static const int8 constMod[] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5 };
 
 	if (b == 5)
@@ -1951,7 +2018,7 @@ bool EobCoreEngine::checkUnkConstModifiers(void *target, int hpModifier, int lev
 }
 
 bool EobCoreEngine::specialAttackConstTest(int charIndex, int b) {
-	return checkUnkConstModifiers(&_characters[charIndex], _charClassModUnk[_characters[charIndex].cClass], _characters[charIndex].level[0], b, _characters[charIndex].raceSex >> 1);
+	return checkMonsterLevelConstModifiers(&_characters[charIndex], _charClassModUnk[_characters[charIndex].cClass], _characters[charIndex].level[0], b, _characters[charIndex].raceSex >> 1);
 }
 
 int EobCoreEngine::getConstModifierTableValue(int hpModifier, int level, int b) {

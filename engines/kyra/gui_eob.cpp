@@ -385,7 +385,7 @@ void EobCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {
 
 	if (itm)
 		drawItemIconShape(_screen->_curPage, itm, x + 8, y);
-	else if (!slot && checkScriptFlag(0x8000))
+	else if (!slot && _flags.gameID == GI_EOB2 && checkScriptFlag(0x80000000))
 		_screen->drawShape(_screen->_curPage, _itemIconShapes[103], x + 8, y, 0);
 	else
 		_screen->drawShape(_screen->_curPage, _itemIconShapes[85], x + 8, y, 0);
@@ -2410,6 +2410,44 @@ bool GUI_Eob::confirmDialogue2(int dim, int id, int deflt) {
 	return newHighlight ? false : true;
 }
 
+void GUI_Eob::messageDialogue2(int dim, int id, int buttonTextCol) {
+	drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
+
+	_screen->_curPage = 2;
+	_screen->setClearScreenDim(dim);
+	drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
+	_screen->printShadedText(getMenuString(id), (_screen->_curDim->sx << 3) + 5, _screen->_curDim->sy + 5, 15, 0);	
+	_screen->_curPage = 0;
+	_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 2, 0, Screen::CR_NO_P_CHECK);
+
+	int x = (_screen->_curDim->sx << 3) + (_screen->_curDim->w << 2) - (strlen(_vm->_menuOkString) << 2);
+	int y = _screen->_curDim->sy + _screen->_curDim->h - 21;
+	int w = (strlen(_vm->_menuOkString) << 3) + 8;
+	drawMenuButtonBox(x, y, w, 14, false, false);
+	_screen->printShadedText(_vm->_menuOkString, x + 4, y + 3, buttonTextCol, 0);
+	_screen->updateScreen();
+
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+		int inputFlag = _vm->checkInput(0, false, 0) & 0x8ff;
+		_vm->removeInputTop();
+
+		if (inputFlag == 199 || inputFlag == 201) {
+			if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, y, x + w, y + 14))
+				runLoop = false;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_o]) {
+			runLoop = false;
+		}
+	}
+
+	_vm->gui_drawBox(x, y, w, 14, _vm->_color2_1, _vm->_bkgColor_1, -1);
+	_screen->updateScreen();
+	_vm->_system->delayMillis(80);
+	drawMenuButtonBox(x, y, w, 14, false, false);
+	_screen->printShadedText(_vm->_menuOkString, x + 4, y + 3, buttonTextCol, 0);
+	_screen->updateScreen();
+
+}
+
 void GUI_Eob::updateBoxFrameHighLight(int box) {
 	static const uint8 colorTable[] = { 0x0F, 0xB0, 0xB2, 0xB4, 0xB6,
 		0xB8, 0xBA, 0xBC, 0x0C, 0xBC, 0xBA, 0xB8, 0xB6, 0xB4, 0xB2, 0xB0, 0x00
@@ -3375,11 +3413,12 @@ bool GUI_Eob::restParty() {
 	_screen->setScreenDim(4);
 	_screen->setFont(Screen::FID_8_FNT);
 
-	if (!injured && !res)
-		displayTextBox(43);
-
-	if (res && hours > 4)
-		_vm->restParty_npc();
+	if (!res) {
+		if (!injured)
+			displayTextBox(43);
+		if (hours > 4)
+			_vm->restParty_npc();
+	}
 
 	return res;
 }
@@ -3447,8 +3486,6 @@ bool GUI_Eob::confirmDialogue(int id) {
 }
 
 void GUI_Eob::messageDialogue(int dim, int id, int buttonTextCol) {
-	static const char buttonText[] = "OK";
-
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
@@ -3456,12 +3493,12 @@ void GUI_Eob::messageDialogue(int dim, int id, int buttonTextCol) {
 	drawTextBox(dim, id);
 	const ScreenDim *dm = _screen->getScreenDim(dim);
 	
-	int bx = ((dm->sx + dm->w) << 3) - ((strlen(buttonText) << 3) + 16);
+	int bx = ((dm->sx + dm->w) << 3) - ((strlen(_vm->_menuOkString) << 3) + 16);
 	int by = dm->sy + dm->h - 19;
-	int bw = (strlen(buttonText) << 3) + 7;
+	int bw = (strlen(_vm->_menuOkString) << 3) + 7;
 
 	drawMenuButtonBox(bx, by, bw, 14, false, false);
-	_screen->printShadedText(buttonText, bx + 4, by + 3, buttonTextCol, 0);
+	_screen->printShadedText(_vm->_menuOkString, bx + 4, by + 3, buttonTextCol, 0);
 	_screen->updateScreen();
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
@@ -3469,9 +3506,8 @@ void GUI_Eob::messageDialogue(int dim, int id, int buttonTextCol) {
 		_vm->removeInputTop();
 
 		if (inputFlag == 199 || inputFlag == 201) {
-			Common::Point p = _vm->getMousePos();
-				if (_vm->posWithinRect(p.x, p.y, bx, by, bx + bw, by + 14))
-					runLoop = false;
+			if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, bx, by, bx + bw, by + 14))
+				runLoop = false;
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_o]) {
 			runLoop = false;
 		}

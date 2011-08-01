@@ -46,6 +46,19 @@ Common::Error EobEngine::init() {
 
 	_itemsOverlay = _res->fileData("ITEMRMP.VGA", 0);
 
+	static const uint16 wX[] = { 285, 139 };
+	static const uint8 wY[] = { 189, 162 };
+	static const uint16 wW[] = { 31, 31 };
+
+	_dialogueButtonLabelCol1 = 9;
+	_dialogueButtonLabelCol2 = 15;
+	_dialogueButtonW = 95;
+	_dialogueButtonH = 9;
+	_waitButtonPresX = wX;
+	_waitButtonPresY = wY;
+	_waitButtonPresW = wW;
+	_waitButtonReverveW = 7;
+
 	_bkgColor_1 = 132;
 	_color1_1 = 135;
 	_color2_1 = 130;
@@ -82,10 +95,226 @@ void EobEngine::startupLoad() {
 	_sound->loadSoundFile("ADLIB");
 }
 
-void EobEngine::npcSequence(int npcIndex) {
-	error("EobEngine::npcSequence(): unimplemented");
+void EobEngine::drawNpcScene(int npcIndex) {
+	_screen->copyRegion(0, 0, 0, 0, 176, 120, 6, 0, Screen::CR_NO_P_CHECK);
+	switch (npcIndex) {
+	case 0:
+		encodeDrawNpcSeqShape(2, 88, 104);
+		break;
 
+	case 1:
+		if (_npcSequenceSub == -1) {
+			encodeDrawNpcSeqShape(0, 88, 104);
+		} else {
+			encodeDrawNpcSeqShape(0, 60, 104);
+			encodeDrawNpcSeqShape(5, 116, 104);
+		}
+		break;
+
+	case 2:
+		if (_npcSequenceSub == -1) {
+			encodeDrawNpcSeqShape(3, 88, 104);
+		} else {
+			encodeDrawNpcSeqShape(3, 60, 104);
+			encodeDrawNpcSeqShape(_npcSubShpIndex1[_npcSequenceSub], 116, 104);
+			encodeDrawNpcSeqShape(_npcSubShpIndex2[_npcSequenceSub], 116, _npcSubShpY[_npcSequenceSub]);
+		}
+		break;
+
+	case 3:
+		encodeDrawNpcSeqShape(7, 88, 104);
+		break;
+
+	case 4:
+		encodeDrawNpcSeqShape(6, 88, 104);
+		break;
+
+	case 5:
+		encodeDrawNpcSeqShape(18, 88, 88);
+		break;
+
+	case 6:
+		encodeDrawNpcSeqShape(17, 88, 104);
+		break;
+
+	case 7:
+		encodeDrawNpcSeqShape(4, 88, 104);
+		break;
+
+	default:
+		break;
+	}
 }
+
+void EobEngine::encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY) {
+	const uint8 *shpDef = &_npcShpData[npcIndex << 2];
+	_screen->_curPage = 2;
+	const uint8 *shp = _screen->encodeShape(shpDef[0], shpDef[1], shpDef[2], shpDef[3]);
+	_screen->_curPage = 0;
+	_screen->drawShape(0, shp, drawX - (shp[2] << 2), drawY - shp[1], 5);
+	delete[] shp;
+}
+
+#define DLG2(txt, buttonstr) (runDialogue(txt, 0, _npc##buttonstr##Strings[0], _npc##buttonstr##Strings[1], 0) - 1)
+#define DLG3(txt, buttonstr) (runDialogue(txt, 1, _npc##buttonstr##Strings[0], _npc##buttonstr##Strings[1], _npc##buttonstr##Strings[2], 0) - 1)
+#define DLG2A3(cond, txt, buttonstr1, buttonstr2) ((cond) ? (DLG2(txt, buttonstr1) ? 2 : 0) : DLG3(txt, buttonstr2))
+#define TXT(txt) _txt->printDialogueText(txt, _moreStrings[0])
+
+void EobEngine::runNpcDialogue(int npcIndex) {
+	int r = 0;
+	int a = 0;
+	Item itm = 0;
+	
+	switch (npcIndex) {
+	case 0:
+		for (r = 1; r == 1; ) {
+			gui_drawDialogueBox();
+			r = DLG2A3(checkScriptFlag(0x2000), 8, 12, 11);
+			if (r == 1) {
+				TXT(1);
+				setScriptFlag(0x2000);
+			} else if (r == 0) {
+				npcJoinDialogue(6, 12, 23, 2);
+				setScriptFlag(0x4000);
+			}
+		}
+		break;
+
+	case 1:
+		if (!checkScriptFlag(0x10000)) {
+			if (checkScriptFlag(0x8000)) {
+				a = 1;
+			} else {
+				setScriptFlag(0x8000);
+				r = DLG2(3, 21);
+			}
+			if (!r)
+				r = DLG2(a ? 13 : 4, 22);
+			
+			if (!r) {
+				for (a = 0; a < 6; a++)
+					createItemOnCurrentBlock(55);
+				createItemOnCurrentBlock(62);
+				setScriptFlag(0x10000);
+				TXT(6);
+				npcJoinDialogue(7, 7, 29, 30);
+			} else {
+				TXT(5);
+			}
+			r = 1;
+		}
+
+		if (!checkScriptFlag(0x80000)) {
+			for (a = 0; a < 6; a++) {
+				if (testCharacter(a, 1) && _characters[a].portrait == -9)
+					break;
+			}
+			if (a != 6) {
+				TXT(25);
+				TXT(26);
+				setScriptFlag(0x80000);
+				r = 1;
+			}
+		}
+
+		if (!checkScriptFlag(0x100000)) {
+			if (deletePartyItems(6, -1)) {
+				TXT(28);
+				createItemOnCurrentBlock(32);
+				setScriptFlag(0x100000);
+				r = 1;
+			}
+		}
+
+		if (!r)
+			 _txt->printDialogueText(_npc0Strings[0], true);
+
+		break;
+
+	case 2:
+		if (checkScriptFlag(0x10000)) {
+			if (checkScriptFlag(0x20000)) {
+				TXT(11);
+			} else {
+				r = DLG2A3(!countResurrectionCandidates(), 9, 31, 32);
+				if (r < 2) {
+					if (r == 0)
+						healParty();
+					else
+						resurrectionSelectDialogue();
+					setScriptFlag(0x20000);
+				}				
+			}
+		} else {
+			TXT(24);
+		}
+		break;
+
+	case 3:
+		if (!DLG2(18, 4)) {
+			setScriptFlag(0x8400000);
+			for (a = 0; a < 30; a++) {
+				if (_monsters[a].mode == 8)
+					_monsters[a].mode = 5;
+			}
+		} else if (deletePartyItems(49, -1)) {
+			TXT(20);
+			setScriptFlag(0x400000);
+		} else {
+			TXT(19);
+		}
+		break;
+
+	case 4:
+		r = DLG3(14, 5);
+		if (r == 0)
+			setScriptFlag(0x200000);
+		else if (r == 1)
+			TXT(15);
+		setScriptFlag(0x800000);
+		break;
+
+	case 5:
+		if (!DLG2(16, 6)) {
+			TXT(17);
+			for (a = 0; a < 6; a++) {
+				for (r = 0; r < 2; r++) {
+					itm = _characters[a].inventory[r];
+					if (itm && (_items[itm].type < 51 || _items[itm].type > 56)) {
+						_characters[a].inventory[r] = 0;
+						setItemPosition((Item*)&_levelBlockProperties[_currentBlock].drawObjects, _currentBlock, itm, _dropItemDirIndex[(_currentDirection << 2) + rollDice(1, 2, -1)]);
+					}
+				}
+			}
+		}
+		setScriptFlag(0x2000000);
+		break;
+
+	case 6:
+		TXT(21);
+		setScriptFlag(0x1000000);
+		break;
+
+	case 7:
+		r = DLG3(22, 7);
+		if (r  < 2) {
+			if (r == 0)
+				npcJoinDialogue(8, 27, 44, 45);
+			else
+				TXT(31);
+			setScriptFlag(0x4000000);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+#undef TXT
+#undef DLG2
+#undef DLG3
+#undef DLG2A3
 
 void EobEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
 	EobItem *itm = &_items[_characters[charIndex].inventory[slot]];
@@ -267,6 +496,44 @@ bool EobEngine::checkPartyStatusExtra() {
 	_screen->copyPage(10, 0);
 	_eventList.clear();
 	return true;
+}
+
+int EobEngine::resurrectionSelectDialogue() {
+	gui_drawDialogueBox();
+	_txt->printDialogueText(_npc0Strings[1]);
+
+	int r = _rrId[runDialogue(-1, 1, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
+
+	if (r < 0) {
+		r = -r;
+		deletePartyItems(33, r);
+		_npcSequenceSub = r - 1;
+		drawNpcScene(2);
+		npcJoinDialogue(_npcSequenceSub, 32 + (_npcSequenceSub << 1), -1, 33 + (_npcSequenceSub << 1));
+	} else {
+		_characters[r].hitPointsCur = _characters[r].hitPointsMax;
+	}
+
+	return 1;
+}
+
+void EobEngine::healParty() {
+	int cnt = rollDice(1, 3, 2);
+	for (int i = 0; i < 6 && cnt; i++) {
+		if (testCharacter(i, 3))
+			continue;
+		
+		_characters[i].flags &= ~4;
+		neutralizePoison(i);
+		
+		if (_characters[i].hitPointsCur >= _characters[i].hitPointsMax)
+			continue;
+		
+		cnt--;
+		_characters[i].hitPointsCur += rollDice(1, 8, 9);
+		if (_characters[i].hitPointsCur > _characters[i].hitPointsMax)
+			_characters[i].hitPointsCur = _characters[i].hitPointsMax;
+	}
 }
 
 uint32 EobEngine::convertSpellFlagToEob2Format(uint32 flag, int ignoreInvisibility) {

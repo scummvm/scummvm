@@ -29,14 +29,16 @@
 
 #include "common/system.h"
 
+#define EOBTEXTBUFFERSIZE 2048
+
 namespace Kyra {
 
 TextDisplayer_Eob::TextDisplayer_Eob(LolEobBaseEngine *engine, Screen *sScreen) : _vm(engine), _screen(sScreen),
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
 	_numCharsLeft(0), _numCharsPrinted(0), _sjisLineBreakFlag(false), _waitButtonMode(1) {
 
-	_dialogueBuffer = new char[1024];
-	memset(_dialogueBuffer, 0, 1024);
+	_dialogueBuffer = new char[EOBTEXTBUFFERSIZE];
+	memset(_dialogueBuffer, 0, EOBTEXTBUFFERSIZE);
 
 	_currentLine = new char[85];
 	memset(_currentLine, 0, 85);
@@ -313,13 +315,13 @@ void TextDisplayer_Eob::printLine(char *str) {
 		if ((lw + _textDimData[sdx].column) > w) {
 			if ((lines - 1 - (_waitButtonSpace << 1)) <= _lineCount)
 				// cut off line to leave space for "MORE" button
-				w -= 80;
+				w -= vm()->_waitButtonReverveW;
 		} else {
 			if (!_sjisLineBreakFlag || (_lineCount + 1 < lines - 1))
 				ct = false;
 			else
 				// cut off line to leave space for "MORE" button
-				w -= 80;
+				w -= vm()->_waitButtonReverveW;
 		}
 
 		if (ct) {
@@ -341,7 +343,7 @@ void TextDisplayer_Eob::printLine(char *str) {
 		if ((lw + _textDimData[sdx].column) > w) {
 			if ((lines - 1) <= _lineCount && _allowPageBreak)
 				// cut off line to leave space for "MORE" button
-				w -= (10 * (_screen->getFontWidth() + _screen->_charWidth));
+				w -= vm()->_waitButtonReverveW;
 
 			w -= _textDimData[sdx].column;
 
@@ -439,7 +441,10 @@ void TextDisplayer_Eob::printLine(char *str) {
 }
 
 void TextDisplayer_Eob::printDialogueText(int stringId, const char *pageBreakString) {
-	strcpy(_dialogueBuffer, (const char *)(screen()->getCPagePtr(5) + READ_LE_UINT16(&screen()->getCPagePtr(5)[(stringId - 1) << 1])));
+	const char * str = (const char *)(screen()->getCPagePtr(5) + READ_LE_UINT16(&screen()->getCPagePtr(5)[(stringId - 1) << 1]));
+	assert (strlen(str) < EOBTEXTBUFFERSIZE);
+	Common::strlcpy(_dialogueBuffer, str, EOBTEXTBUFFERSIZE);
+	
 	displayText(_dialogueBuffer);
 
 	if (pageBreakString) {
@@ -452,6 +457,9 @@ void TextDisplayer_Eob::printDialogueText(int stringId, const char *pageBreakStr
 }
 
 void TextDisplayer_Eob::printDialogueText(const char *str, bool wait) {
+	assert (strlen(str) < EOBTEXTBUFFERSIZE);
+	Common::strlcpy(_dialogueBuffer, str, EOBTEXTBUFFERSIZE);
+
 	strcpy(_dialogueBuffer, str);
 	displayText(_dialogueBuffer);
 	if (wait)
@@ -471,7 +479,8 @@ void TextDisplayer_Eob::printMessage(const char *str, int textColor, ...) {
 
 	displayText(_dialogueBuffer);
 
-	_textDimData[screen()->curDimIndex()].color1 = tc;
+	if (vm()->game() != GI_EOB1)
+		_textDimData[screen()->curDimIndex()].color1 = tc;
 
 	if (!screen()->_curPage)
 		screen()->updateScreen();
@@ -505,7 +514,8 @@ void TextDisplayer_Eob::textPageBreak() {
 	int cp = _screen->setCurPage(0);
 	Screen::FontId cf = screen()->setFont(vm()->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 
-	vm()->_timer->pauseSingleTimer(11, true);
+	if (vm()->game() == GI_LOL)
+		vm()->_timer->pauseSingleTimer(11, true);
 
 	vm()->_fadeText = false;
 	int resetPortraitAfterSpeechAnim = 0;
@@ -527,27 +537,31 @@ void TextDisplayer_Eob::textPageBreak() {
 
 	int x = ((dim->sx + dim->w) << 3) - (_vm->_dialogueButtonW + 3);
 	int y = 0;
+	int w = vm()->_dialogueButtonW;
 
-	if (vm()->_needSceneRestore && (vm()->_updateFlags & 2)) {
-		if (vm()->_currentControlMode || !(vm()->_updateFlags & 2)) {
-			y = dim->sy + dim->h - 5;
+	if (vm()->game() == GI_LOL) {
+		if (vm()->_needSceneRestore && (vm()->_updateFlags & 2)) {
+			if (vm()->_currentControlMode || !(vm()->_updateFlags & 2)) {
+				y = dim->sy + dim->h - 5;
+			} else {
+				x += 6;
+				y = dim->sy + dim->h - 2;
+			}
 		} else {
-			x += 6;
-			y = dim->sy + dim->h - 2;
+			y = dim->sy + dim->h - 10;
 		}
-	} else if (vm()->game() == GI_LOL) {
-		y = dim->sy + dim->h - 10;
 	} else {
-		y = _waitButtonMode ? 162 : 189;
-		x = _waitButtonMode ? 76 : 221;
+		y = vm()->_waitButtonPresY[_waitButtonMode];
+		x = vm()->_waitButtonPresX[_waitButtonMode];
+		w = vm()->_waitButtonPresW[_waitButtonMode];
 	}
 
 	if (vm()->gameFlags().use16ColorMode) {
 		vm()->gui_drawBox(x + 8, (y & ~7) - 1, 66, 10, 0xee, 0xcc, -1);
 		screen()->printText(_pageBreakString, (x + 37 - (strlen(_pageBreakString) << 1) + 4) & ~3, (y + 2) & ~7, 0xc1, 0);
 	} else {
-		vm()->gui_drawBox(x, y, vm()->_dialogueButtonW, vm()->_dialogueButtonH, vm()->_color1_1, vm()->_color2_1, vm()->_bkgColor_1);
-		screen()->printText(_pageBreakString, x + (vm()->_dialogueButtonW >> 1) - (vm()->screen()->getTextWidth(_pageBreakString) >> 1), y + 2, vm()->_dialogueButtonLabelCol1, 0);
+		vm()->gui_drawBox(x, y, w, vm()->_dialogueButtonH, vm()->_color1_1, vm()->_color2_1, vm()->_bkgColor_1);
+		screen()->printText(_pageBreakString, x + (w >> 1) - (vm()->screen()->getTextWidth(_pageBreakString) >> 1), y + 2, vm()->_dialogueButtonLabelCol1, 0);
 	}
 
 	vm()->removeInputTop();
@@ -579,7 +593,7 @@ void TextDisplayer_Eob::textPageBreak() {
 		if (inputFlag == vm()->_keyMap[Common::KEYCODE_SPACE] || inputFlag == vm()->_keyMap[Common::KEYCODE_RETURN]) {
 			loop = false;
 		} else if (inputFlag == 199 || inputFlag == 201) {
-			if (vm()->posWithinRect(vm()->_mouseX, vm()->_mouseY, x, y, x + _vm->_dialogueButtonW, y + 9)) {
+			if (vm()->posWithinRect(vm()->_mouseX, vm()->_mouseY, x, y, x + w, y + 9)) {
 				if (_vm->game() == GI_LOL)
 					target = true;
 				else
@@ -594,11 +608,12 @@ void TextDisplayer_Eob::textPageBreak() {
 	if (vm()->gameFlags().use16ColorMode)
 		screen()->fillRect(x + 8, y, x + 57, y + 9, _textDimData[screen()->curDimIndex()].color2);
 	else
-		screen()->fillRect(x, y, x + 73, y + 8, _textDimData[screen()->curDimIndex()].color2);
+		screen()->fillRect(x, y, x + w - 1, y + 8, _textDimData[screen()->curDimIndex()].color2);
 
 	clearCurDim();
 
-	vm()->_timer->pauseSingleTimer(11, false);
+	if (vm()->game() == GI_LOL)
+		vm()->_timer->pauseSingleTimer(11, false);
 
 	if (vm()->_updateCharNum != -1) {
 		vm()->_resetPortraitAfterSpeechAnim = resetPortraitAfterSpeechAnim;
@@ -626,11 +641,9 @@ void TextDisplayer_Eob::displayWaitButton() {
 	vm()->_dialogueButtonString[2] = 0;
 	vm()->_dialogueHighlightedButton = 0;
 
-	static const uint16 posX[] = { 221, 76 };
-	static const uint8 posY[] = { 189, 162 };
-
-	vm()->_dialogueButtonPosX = &posX[_waitButtonMode];
-	vm()->_dialogueButtonPosY = &posY[_waitButtonMode];
+	vm()->_dialogueButtonPosX = &vm()->_waitButtonPresX[_waitButtonMode];
+	vm()->_dialogueButtonPosY = &vm()->_waitButtonPresY[_waitButtonMode];
+	vm()->_dialogueButtonW = vm()->_waitButtonPresW[_waitButtonMode];
 	vm()->_dialogueButtonYoffs = 0;
 
 	SWAP(_vm->_dialogueButtonLabelCol1, _vm->_dialogueButtonLabelCol2);
@@ -640,7 +653,10 @@ void TextDisplayer_Eob::displayWaitButton() {
 		vm()->removeInputTop();
 
 	while (!vm()->processDialogue() && !vm()->shouldQuit()) {}
+	
+	vm()->_dialogueButtonW = 95;
 	SWAP(_vm->_dialogueButtonLabelCol1, _vm->_dialogueButtonLabelCol2);
+	clearCurDim();
 }
 
 } // End of namespace Kyra
