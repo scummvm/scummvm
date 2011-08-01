@@ -409,6 +409,22 @@ const ExtractFilename extractFilenames[] = {
 	{ kEob1MonsterDistAttSfx17, kTypeRawData, false },
 	{ kEob1TurnUndeadString, kTypeStringList, true },
 
+	{ kEob1NpcShpData, kTypeRawData, false },
+	{ kEob1NpcSubShpIndex1, kTypeRawData, false },
+	{ kEob1NpcSubShpIndex2, kTypeRawData, false },
+	{ kEob1NpcSubShpY, kTypeRawData, false },
+	{ kEob1Npc0Strings, kTypeStringList, true },
+	{ kEob1Npc11Strings, kTypeStringList, true },
+	{ kEob1Npc12Strings, kTypeStringList, true },
+	{ kEob1Npc21Strings, kTypeStringList, true },
+	{ kEob1Npc22Strings, kTypeStringList, true },
+	{ kEob1Npc31Strings, kTypeStringList, true },
+	{ kEob1Npc32Strings, kTypeStringList, true },
+	{ kEob1Npc4Strings, kTypeStringList, true },
+	{ kEob1Npc5Strings, kTypeStringList, true },
+	{ kEob1Npc6Strings, kTypeStringList, true },
+	{ kEob1Npc7Strings, kTypeStringList, true },
+
 	// EYE OF THE BEHOLDER II
 	{ kEob2MainMenuStrings, kTypeStringList, true },
 
@@ -1624,6 +1640,36 @@ const char *getIdString(const int id) {
 		return "kEob1MonsterDistAttSfx17";
 	case kEob1TurnUndeadString:
 		return "kEob1TurnUndeadString";
+	case kEob1NpcShpData:
+		return "kEob1NpcShpData";
+	case kEob1NpcSubShpIndex1:
+		return "kEob1NpcSubShpIndex1";
+	case kEob1NpcSubShpIndex2:
+		return "kEob1NpcSubShpIndex2";
+	case kEob1NpcSubShpY:
+		return "kEob1NpcSubShpY";
+	case kEob1Npc0Strings:
+		return "kEob1Npc0Strings";
+	case kEob1Npc11Strings:
+		return "kEob1Npc11Strings";
+	case kEob1Npc12Strings:
+		return "kEob1Npc12Strings";
+	case kEob1Npc21Strings:
+		return "kEob1Npc21Strings";
+	case kEob1Npc22Strings:
+		return "kEob1Npc22Strings";
+	case kEob1Npc31Strings:
+		return "kEob1Npc31Strings";
+	case kEob1Npc32Strings:
+		return "kEob1Npc32Strings";
+	case kEob1Npc4Strings:
+		return "kEob1Npc4Strings";
+	case kEob1Npc5Strings:
+		return "kEob1Npc5Strings";
+	case kEob1Npc6Strings:
+		return "kEob1Npc6Strings";
+	case kEob1Npc7Strings:
+		return "kEob1Npc7Strings";
 	case kEob2MainMenuStrings:
 		return "kEob2MainMenuStrings";
 	case kEob2IntroStrings:

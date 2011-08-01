@@ -376,11 +376,14 @@ Common::Error LoLEngine::init() {
 	assert(_gui);
 	_gui->initStaticData();
 
-	_txt = new TextDisplayer_LoL(this, _screen);
 	_dialogueButtonLabelCol1 = 144;
 	_dialogueButtonLabelCol2 = 254;
 	_dialogueButtonW = 74;
 	_dialogueButtonH = 9;
+	_waitButtonReverveW = 80;
+
+	_txt = new TextDisplayer_LoL(this, _screen);
+
 	_bkgColor_1 = -1;
 	_color1_1 = 136;
 	_color2_1 = 251;

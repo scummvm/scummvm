@@ -56,10 +56,25 @@ private:
 	void seq_playFinale();
 
 	// characters
-	void npcSequence(int npcIndex);
+	void drawNpcScene(int npcIndex);
+	void encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY);
+	void runNpcDialogue(int npcIndex);
 
-	//const char *const *_npc1Strings;
-	//const char *const *_npc2Strings;
+	const uint8 *_npcShpData;
+	const uint8 *_npcSubShpIndex1;
+	const uint8 *_npcSubShpIndex2;
+	const uint8 *_npcSubShpY;
+	const char *const *_npc0Strings;
+	const char *const *_npc11Strings;
+	const char *const *_npc12Strings;
+	const char *const *_npc21Strings;
+	const char *const *_npc22Strings;
+	const char *const *_npc31Strings;
+	const char *const *_npc32Strings;
+	const char *const *_npc4Strings;
+	const char *const *_npc5Strings;
+	const char *const *_npc6Strings;
+	const char *const *_npc7Strings;
 
 	// items
 	void updateUsedCharacterHandItem(int charIndex, int slot);
@@ -92,6 +107,9 @@ private:
 
 	// Misc
 	bool checkPartyStatusExtra();
+	int resurrectionSelectDialogue();
+	void healParty();
+
 	uint32 convertSpellFlagToEob2Format(uint32 flag, int ignoreInvisibility);
 	uint32 convertCharacterEffectFlagToEob2Format(uint32 flag);
 };

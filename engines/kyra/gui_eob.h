@@ -63,6 +63,8 @@ public:
 	bool runLoadMenu(int x, int y);
 
 	bool confirmDialogue2(int dim, int id, int deflt);
+	void messageDialogue2(int dim, int id, int buttonTextCol);
+
 	void updateBoxFrameHighLight(int box);
 
 	int getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor);

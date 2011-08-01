@@ -281,6 +281,10 @@ protected:
 	int16 _dialogueButtonYoffs;
 	uint16 _dialogueButtonW;
 	uint16 _dialogueButtonH;
+	const uint16 *_waitButtonPresX;
+	const uint8 *_waitButtonPresY;
+	const uint16 *_waitButtonPresW;
+	int _waitButtonReverveW;
 	int _dialogueNumButtons;
 	int _dialogueHighlightedButton;
 	int _currentControlMode;

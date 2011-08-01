@@ -83,7 +83,7 @@ const uint8 *EobCoreEngine::loadMonsterProperties(const uint8 *data) {
 		EobMonsterProperty *d = &_monsterProps[cmd];
 		d->armorClass = (int8)*data++;
 		d->hitChance = (int8)*data++;
-		d->level = *data++;
+		d->level = (int8)*data++;
 		d->hpDcTimes = *data++;
 		d->hpDcPips = *data++;
 		d->hpDcBase = *data++;
@@ -97,7 +97,7 @@ const uint8 *EobCoreEngine::loadMonsterProperties(const uint8 *data) {
 		d->dmgDc[2].times = *data++;
 		d->dmgDc[2].pips = *data++;
 		d->dmgDc[3].base = (int8)*data++;
-		d->statusFlags = READ_LE_UINT16(data);
+		d->immunityFlags = READ_LE_UINT16(data);
 		data += 2;
 		d->capsFlags = READ_LE_UINT16(data);
 		data += 2;
@@ -185,7 +185,7 @@ void EobCoreEngine::initMonster(int index, int unit, uint16 block, int pos, int 
 	m->spellStatusLeft = i;
 	m->dir = dir;
 	m->palette = _flags.gameID == GI_EOB2 ? (index % 3) : 0;
-	m->hitPointsCur = m->hitPointsMax = _flags.gameID == GI_EOB2 ? rollDice(p->hpDcTimes, p->hpDcPips, p->hpDcBase) : (p->hpDcTimes == 255 ? rollDice(1, 4, 0) : rollDice(p->hpDcTimes, 8, 0));
+	m->hitPointsCur = m->hitPointsMax = _flags.gameID == GI_EOB2 ? rollDice(p->hpDcTimes, p->hpDcPips, p->hpDcBase) : (p->level == -1 ? rollDice(1, 4, 0) : rollDice(p->level, 8, 0));
 	m->randItem = randItem;
 	m->fixedItem = fixedItem;
 	m->sub = _currentSub;
