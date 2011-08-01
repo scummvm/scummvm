@@ -173,6 +173,11 @@ void SceneManager::changeScene(int newSceneNumber) {
 	// Blank out the screen
 	_globals->_screenSurface.fillRect(_globals->_screenSurface.getBounds(), 0);
 
+	// If there are any fading sounds, wait until fading is complete
+	while (_globals->_soundManager.isFading()) {
+		g_system->delayMillis(10);
+	}
+
 	// Set the new scene to be loaded
 	setNewScene(newSceneNumber);
 }

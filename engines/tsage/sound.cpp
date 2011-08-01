@@ -451,6 +451,22 @@ void SoundManager::_sfProcessFading() {
 	}
 }
 
+bool SoundManager::isFading() {
+	Common::StackLock slock(sfManager()._serverSuspendedMutex);
+
+	// Loop through any active sounds to see if any are being actively faded
+	Common::List<Sound *>::iterator i = sfManager()._playList.begin();
+	while (i != sfManager()._playList.end()) {
+		Sound *s = *i;
+		++i;
+
+		if (s->_fadeDest != -1)
+			return true;
+	}
+
+	return false;
+}
+
 void SoundManager::_sfUpdateVoiceStructs() {
 	for (int voiceIndex = 0; voiceIndex < SOUND_ARR_SIZE; ++voiceIndex) {
 		VoiceTypeStruct *vs = sfManager()._voiceTypeStructPtrs[voiceIndex];

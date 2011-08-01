@@ -225,6 +225,7 @@ public:
 	int getMasterVol() const;
 	void loadSound(int soundNum, bool showErrors);
 	void unloadSound(int soundNum);
+	bool isFading();
 
 	// _sf methods
 	static SoundManager &sfManager();
