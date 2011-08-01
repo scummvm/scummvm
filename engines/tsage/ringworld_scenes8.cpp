@@ -2223,7 +2223,7 @@ void Scene7700::signal() {
 		}
 		break;
 	case 7702:
-		_soundHandler.fadeOut(NULL);
+		_globals->_soundHandler.fadeOut(NULL);
 		_globals->_sceneManager.changeScene(7600);
 		break;
 	case 7703:
