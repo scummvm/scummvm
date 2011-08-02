@@ -35,7 +35,7 @@ using namespace Osp::Graphics;
 using namespace Osp::Ui;
 using namespace Osp::Ui::Controls;
 
-#define SHORTCUT_TIMEOUT 4000
+#define SHORTCUT_TIMEOUT 3000
 #define SHORTCUT_SWAP_MOUSE 0
 #define SHORTCUT_ESCAPE 1
 #define SHORTCUT_F5 2
@@ -49,7 +49,8 @@ BadaAppForm::BadaAppForm() :
   state(InitState),
   buttonState(LeftButton),
   shortcutTimer(0),
-  shortcutIndex(-1) {
+  shortcutIndex(-1),
+  touchCount(0) {
   eventQueueLock = new Mutex();
   eventQueueLock->Create();
 }
@@ -324,7 +325,7 @@ void BadaAppForm::OnTouchPressed(const Control& source,
                                  const Point& currentPosition, 
                                  const TouchEventInfo& touchInfo) {
   Touch touch;
-  int touchCount = touch.GetPointCount();
+  touchCount = touch.GetPointCount();
   if (touchCount > 1) {
     int index = getShortcutIndex();
     shortcutIndex = (index == -1 ? 0 : index + 1);
@@ -332,15 +333,15 @@ void BadaAppForm::OnTouchPressed(const Control& source,
     
     switch (shortcutIndex) {
     case SHORTCUT_F5:
-      g_system->displayMessageOnOSD(_("Sweep = Game Menu"));
+      g_system->displayMessageOnOSD(_("Game Menu"));
       break;
       
     case SHORTCUT_ESCAPE:
-      g_system->displayMessageOnOSD(_("Sweep = Escape"));
+      g_system->displayMessageOnOSD(_("Escape"));
       break;
       
     default:
-      g_system->displayMessageOnOSD(_("Sweep = Toggle Buttons"));
+      g_system->displayMessageOnOSD(_("Swap Buttons"));
       shortcutIndex = SHORTCUT_SWAP_MOUSE;
     }
   }
@@ -364,7 +365,7 @@ void BadaAppForm::OnTouchReleased(const Control& source,
       pushKey(Common::KEYCODE_PERIOD);
     }
   }
-  else if (touchInfo.IsFlicked()) {
+  else if (touchCount == 1) {
     bool repeat = false;
     switch (shortcutIndex) {
     case SHORTCUT_SWAP_MOUSE:

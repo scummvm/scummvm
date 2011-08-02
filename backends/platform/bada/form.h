@@ -102,6 +102,7 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   enum {LeftButton, RightButtonOnce, RightButton} buttonState;
   uint32 shortcutTimer;
   int shortcutIndex;
+  int touchCount;
 };
 
 #endif
