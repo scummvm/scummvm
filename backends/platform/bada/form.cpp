@@ -47,9 +47,9 @@ using namespace Osp::Ui::Controls;
 BadaAppForm::BadaAppForm() : 
   gameThread(0), 
   state(InitState),
+  buttonState(LeftButton),
   shortcutTimer(0),
-  shortcutIndex(-1),
-  leftButton(true) {
+  shortcutIndex(-1) {
   eventQueueLock = new Mutex();
   eventQueueLock->Create();
 }
@@ -287,9 +287,9 @@ void BadaAppForm::OnTouchDoublePressed(const Control& source,
                                        const Point& currentPosition, 
                                        const TouchEventInfo& touchInfo) {
   if (getShortcutIndex() == -1) {
-    pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+    pushEvent(buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
               currentPosition);
-    pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+    pushEvent(buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
               currentPosition);
   }
 }
@@ -307,7 +307,7 @@ void BadaAppForm::OnTouchFocusOut(const Control& source,
 void BadaAppForm::OnTouchLongPressed(const Control& source, 
                                      const Point& currentPosition, 
                                      const TouchEventInfo& touchInfo) {
-  if (getShortcutIndex() == -1 && !leftButton) {
+  if (getShortcutIndex() == -1 && buttonState != LeftButton) {
     pushKey(Common::KEYCODE_RETURN);
   }
 }
@@ -345,7 +345,7 @@ void BadaAppForm::OnTouchPressed(const Control& source,
     }
   }
   else if (getShortcutIndex() == -1) {
-    pushEvent(leftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+    pushEvent(buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
               currentPosition);
   }
 }
@@ -354,8 +354,11 @@ void BadaAppForm::OnTouchReleased(const Control& source,
                                   const Point& currentPosition, 
                                   const TouchEventInfo& touchInfo) {
   if (getShortcutIndex() == -1) {
-    pushEvent(leftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
+    pushEvent(buttonState == LeftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
               currentPosition);
+    if (buttonState == RightButtonOnce) {
+      buttonState = LeftButton;
+    }
     // flick to skip dialog
     if (touchInfo.IsFlicked()) {
       pushKey(Common::KEYCODE_PERIOD);
@@ -365,8 +368,20 @@ void BadaAppForm::OnTouchReleased(const Control& source,
     bool repeat = false;
     switch (shortcutIndex) {
     case SHORTCUT_SWAP_MOUSE:
-      leftButton = !leftButton;
-      g_system->displayMessageOnOSD(leftButton ? _("Left Active") : _("Right Active"));
+      switch (buttonState) {
+      case LeftButton:
+        buttonState = RightButtonOnce;
+        g_system->displayMessageOnOSD(_("Right Once"));
+        break;
+      case RightButtonOnce:
+        g_system->displayMessageOnOSD(_("Right Active"));
+        buttonState = RightButton;
+        break;
+      case RightButton:
+        g_system->displayMessageOnOSD(_("Left Active"));
+        buttonState = LeftButton;
+        break;
+      }
       break;
 
     case SHORTCUT_F5:

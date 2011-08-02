@@ -99,9 +99,9 @@ class BadaAppForm : public Osp::Ui::Controls::Form,
   Osp::Base::Runtime::Mutex* eventQueueLock;
   Common::Queue<Common::Event> eventQueue;
   enum {InitState, ActiveState, ClosingState, DoneState, ErrorState} state;
+  enum {LeftButton, RightButtonOnce, RightButton} buttonState;
   uint32 shortcutTimer;
   int shortcutIndex;
-  bool leftButton;
 };
 
 #endif

@@ -92,7 +92,11 @@ bool FontManager::assignFontToUsage(FontUsage usage, const BdfFont *font) {
 	case kBigGUIFont:
 		delete g_sysfont_big;
     g_sysfont_big = font;
+    break;
+  default:
+    return false;
   }
+  return true;
 }
 
 void FontManager::removeFontName(const Common::String &name) {
