@@ -1009,7 +1009,7 @@ int LogicHEsoccer::op_1006(int32 a1, int32 a2, int32 a3, int32 a4) {
 	_userDataD[529] = a4;
 
 	var108 = atan2(v1, v3) * _userDataD[523] - a4;
-	var109 = _userDataD[526] - _userDataD[528] + (_userDataD[521] - atan2(_userDataD[524] - v2, v3)) * _userDataD[522];
+	var109 = _userDataD[526] - _userDataD[528] - (_userDataD[521] - atan2(_userDataD[524] - v2, v3)) * _userDataD[522];
 
 	writeScummVar(108, (int32)var108);
 	writeScummVar(109, (int32)var109);
@@ -1213,15 +1213,16 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int
 		}
 
 		float v7 = atan2(_userDataD[524] - v28, (double)v31);
-		int v8 = (int)(_userDataD[526] - (_userDataD[521] - v7) * _userDataD[522] + 300.0);
+		int v8 = (int)(_userDataD[526] - (_userDataD[521] - v7) * _userDataD[522] - 300.0);
+		double v9 = _userDataD[523];
 
-		double v9 = atan2(_userDataD[523], (double)v31);
+		v29 = atan2(v29, v31);
 		// x/y position?
 		putInArray(a2, i, 0, (int32)(v29 * v9 + 640.0));
 		putInArray(a2, i, 1, v8);
 
 		double v10 = atan2(_userDataD[524], (double)v31);
-		int v12 = (int)(_userDataD[526] - (_userDataD[521] - (float)v10) * _userDataD[522] + 300.0);
+		int v12 = (int)(_userDataD[526] - (_userDataD[521] - (float)v10) * _userDataD[522] - 300.0);
 		double v13 = _userDataD[523];
 
 		v29 = atan2(v29, v31);
@@ -1241,7 +1242,7 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int
 
 		// This retains v28 from (i == 17)?
 		float v16 = _userDataD[524] - v28;
-		float v17 = v16 / tan((_userDataD[528] + v15 - _userDataD[526]) / (_userDataD[522] + _userDataD[521]));
+		float v17 = v16 / tan((_userDataD[528] + v15 - _userDataD[526]) / _userDataD[522] + _userDataD[521]);
 		double v18 = tan((double)(v14 - 640) / _userDataD[523]) * v17;
 		putInArray(a1, i, 0, (int)(v18 * 100.0));
 		putInArray(a1, i, 2, (int)(v17 * 100.0));
@@ -1387,6 +1388,9 @@ int LogicHEsoccer::op_1014(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int
 	double v29 = (double)a2;
 	double v27 = (double)a3;
 	double v15, v28 = 0.0, v30 = 0.0, v32 = 0.0;
+
+	writeScummVar(108, 0);
+	writeScummVar(109, 0);
 
 	switch (a10) {
 	case 1:
