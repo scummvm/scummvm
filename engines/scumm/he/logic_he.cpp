@@ -1025,11 +1025,11 @@ int LogicHEsoccer::op_1007(int32 *args) {
 	double v14 = (double)args[0] * 0.01;
 	double v13 = (double)args[2] * 0.01;
 	_userDataD[524] = v14;
-	double v12 = atan2(v13, v14);
+	double v12 = atan2(v14, v13);
 	_userDataD[520] = v12;
-	double v15 = atan2(v13 - (double)args[4] * 0.01, (double)args[3] * 0.01);
+	double v15 = atan2((double)args[3] * 0.01, v13 - (double)args[4] * 0.01);
 	double v19 = v15 * 2.0;
-	double v17 = atan2(v13 - (double)args[4] * 0.01, v14);
+	double v17 = atan2(v14, v13 - (double)args[4] * 0.01);
 	_userDataD[519] = v19;
 	_userDataD[521] = v17;
 	_userDataD[525] = (v17 - v12) * 2.0;
@@ -1171,6 +1171,7 @@ int LogicHEsoccer::op_1008(int a1, int a2, int a3, int a4, int a5, int a6, int a
 int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6) {
 	// This is called on each frame by startOfFrame() if activated by op_1012.
 	// This seems to do player placement!
+	// It also seems to be doing camera panning
 
 	float v28 = 0.0;
 
