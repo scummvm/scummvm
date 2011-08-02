@@ -77,7 +77,7 @@ void GetText::touch(uint16 mask, int x, int y) {
 	static char bezo[] = "ACELNOSXZ";
 	char *p;
 
-	if (mask & KEYB) {
+	if (mask & kEventKeyb) {
 		_vm->keyClick();
 		switch (x) {
 		case Enter :

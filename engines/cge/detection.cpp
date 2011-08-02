@@ -154,10 +154,10 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 				CGE::SavegameHeader header;
 
 				// Check to see if it's a ScummVM savegame or not
-				char buffer[SAVEGAME_STR_SIZE + 1];
-				file->read(buffer, SAVEGAME_STR_SIZE + 1);
+				char buffer[kSavegameStrSize + 1];
+				file->read(buffer, kSavegameStrSize + 1);
 
-				if (!strncmp(buffer, CGE::SAVEGAME_STR, SAVEGAME_STR_SIZE + 1)) {
+				if (!strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1)) {
 					// Valid savegame
 					if (CGE::CGEEngine::readSavegameHeader(file, header)) {
 						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
@@ -184,10 +184,10 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 	CGE::SavegameHeader header;
 
 	// Check to see if it's a ScummVM savegame or not
-	char buffer[SAVEGAME_STR_SIZE + 1];
-	f->read(buffer, SAVEGAME_STR_SIZE + 1);
+	char buffer[kSavegameStrSize + 1];
+	f->read(buffer, kSavegameStrSize + 1);
 
-	bool hasHeader = !strncmp(buffer, CGE::SAVEGAME_STR, SAVEGAME_STR_SIZE + 1) &&
+	bool hasHeader = !strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1) &&
 		CGE::CGEEngine::readSavegameHeader(f, header);
 	delete f;
 

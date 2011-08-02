@@ -36,15 +36,6 @@
 
 namespace CGE {
 
-extern  Sprite *_pocLight;
-
-//-------------------------------------------------------------------------
-//	SPRITE * Pocket[POCKET_NX]={ NULL, NULL, NULL, NULL,
-//					    NULL, NULL, NULL, NULL, };
-//	int      _pocPtr      =  0;
-//-------------------------------------------------------------------------
-extern  Sprite *_pocket[];
-
 void CGEEngine::snGame(Sprite *spr, int num) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snGame(spr, %d)", num);
 
@@ -67,11 +58,11 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 		}
 
 		if (_game) { // continue game
-			int i = new_random(3), hand = (dup[0]->_shpCnt == 6);
+			int i = newRandom(3), hand = (dup[0]->_shpCnt == 6);
 			Stage++;
 			if (hand && Stage > kDressed)
 				++hand;
-			if (i >= 0 || (dup[i] == spr && new_random(3) == 0)) {
+			if (i >= 0 || (dup[i] == spr && newRandom(3) == 0)) {
 				_snail->addCom(kSnSeq, -1, 3, dup[0]);               // yes
 				_snail->addCom(kSnSeq, -1, 3, dup[1]);               // yes
 				_snail->addCom(kSnSeq, -1, 3, dup[2]);               // yes
@@ -149,9 +140,9 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			_snail->addCom(kSnGame, 20002, 2, NULL);
 			_game = true;
 		} else { // cont
-			_sprK1->step(new_random(6));
-			_sprK2->step(new_random(6));
-			_sprK3->step(new_random(6));
+			_sprK1->step(newRandom(6));
+			_sprK2->step(newRandom(6));
+			_sprK3->step(newRandom(6));
 			///--------------------
 			if (spr->_ref == 1 && _keyboard->_key[kKeyAlt]) {
 				_sprK1->step(5);
@@ -179,7 +170,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 					_game = false;
 					return;
 				} else
-					_sprK3->step(new_random(5));
+					_sprK3->step(newRandom(5));
 			}
 			if (_gameCase2Cpt < 100) {
 				switch (_gameCase2Cpt) {

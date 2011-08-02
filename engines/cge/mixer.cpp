@@ -107,7 +107,7 @@ Mixer::~Mixer() {
 void Mixer::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
 
-	if (mask & L_UP) {
+	if (mask & kMouseLeftUp) {
 		warning("STUB: Mixer::touch(): Digital Volume");
 /*		uint8 *vol = (&_sndDrvInfo.Vol2._d) + (x < _w / 2);
 		if (y < kMixButtonHigh) {
@@ -129,7 +129,7 @@ void Mixer::tick() {
 	if (spriteAt(x, y) == this) {
 		_fall = kMixFall;
 		if (_flags._hold)
-			touch(L_UP, x - _x, y - _y);
+			touch(kMouseLeftUp, x - _x, y - _y);
 	} else {
 		if (_fall)
 			_fall--;

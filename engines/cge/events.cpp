@@ -136,7 +136,7 @@ void Keyboard::newKeyboard(Common::Event &event) {
 		if (_client) {
 			CGEEvent &evt = _eventManager->getNextEvent();
 			evt._x = _current;	// Keycode
-			evt._mask = KEYB;	// Event mask
+			evt._mask = kEventKeyb;	// Event mask
 			evt._spritePtr = _client;	// Sprite pointer
 		}
 	}
@@ -218,22 +218,22 @@ void Mouse::newMouse(Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		evt._mask = ROLL;
+		evt._mask = kMouseRoll;
 		break;
 	case Common::EVENT_LBUTTONDOWN:
-		evt._mask = L_DN;
+		evt._mask = kMouseLeftDown;
 		_buttons |= 1;
 		break;
 	case Common::EVENT_LBUTTONUP:
-		evt._mask = L_UP;
+		evt._mask = kMouseLeftUp;
 		_buttons &= ~1;
 		break;
 	case Common::EVENT_RBUTTONDOWN:
-		evt._mask = R_DN;
+		evt._mask = kMouseRightDown;
 		_buttons |= 2;
 		break;
 	case Common::EVENT_RBUTTONUP:
-		evt._mask = R_UP;
+		evt._mask = kMouseRightUp;
 		_buttons &= ~2;
 		break;
 	default:
@@ -282,22 +282,22 @@ void EventManager::handleEvents() {
 		CGEEvent e = _eventQueue[_eventQueueTail];
 		if (e._mask) {
 			if (_mouse->_hold && e._spritePtr != _mouse->_hold)
-				_mouse->_hold->touch(e._mask | ATTN, e._x - _mouse->_hold->_x, e._y - _mouse->_hold->_y);
+				_mouse->_hold->touch(e._mask | kEventAttn, e._x - _mouse->_hold->_x, e._y - _mouse->_hold->_y);
 
 			// update mouse cursor position
-			if (e._mask & ROLL)
+			if (e._mask & kMouseRoll)
 				_mouse->gotoxy(e._x, e._y);
 
 			// activate current touched SPRITE
 			if (e._spritePtr) {
-				if (e._mask & KEYB)
+				if (e._mask & kEventKeyb)
 					e._spritePtr->touch(e._mask, e._x, e._y);
 				else
 					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_x, e._y - e._spritePtr->_y);
 			} else if (_sys)
 					_sys->touch(e._mask, e._x, e._y);
 
-			if (e._mask & L_DN) {
+			if (e._mask & kMouseLeftDown) {
 				_mouse->_hold = e._spritePtr;
 				if (_mouse->_hold) {
 					_mouse->_hold->_flags._hold = true;
@@ -309,7 +309,7 @@ void EventManager::handleEvents() {
 				}
 			}
 
-			if (e._mask & L_UP) {
+			if (e._mask & kMouseLeftUp) {
 				if (_mouse->_hold) {
 					_mouse->_hold->_flags._hold = false;
 					_mouse->_hold = NULL;
@@ -318,10 +318,10 @@ void EventManager::handleEvents() {
 			///Touched = e.Ptr;
 
 			// discard Text if button released
-			if (e._mask & (L_UP | R_UP))
+			if (e._mask & (kMouseLeftUp | kMouseRightUp))
 				killText();
 		}
-		_eventQueueTail = (_eventQueueTail + 1) % EVT_MAX;
+		_eventQueueTail = (_eventQueueTail + 1) % kEventMax;
 	}
 	if (_mouse->_hold) {
 		if (_mouse->_hold->_flags._drag)
@@ -332,7 +332,7 @@ void EventManager::handleEvents() {
 void EventManager::clearEvent(Sprite *spr) {
 	if (spr) {
 		uint16 e;
-		for (e = _eventQueueTail; e != _eventQueueHead; e = (e + 1) % EVT_MAX)
+		for (e = _eventQueueTail; e != _eventQueueHead; e = (e + 1) % kEventMax)
 			if (_eventQueue[e]._spritePtr == spr)
 				_eventQueue[e]._mask = 0;
 	} else
@@ -341,7 +341,7 @@ void EventManager::clearEvent(Sprite *spr) {
 
 CGEEvent &EventManager::getNextEvent() {
 	CGEEvent &evt = _eventQueue[_eventQueueHead];
-	_eventQueueHead = (_eventQueueHead + 1) % EVT_MAX;
+	_eventQueueHead = (_eventQueueHead + 1) % kEventMax;
 
 	return evt;
 }

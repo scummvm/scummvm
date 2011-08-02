@@ -136,7 +136,7 @@ void Vmenu::touch(uint16 mask, int x, int y) {
 
 		_bar->gotoxy(_x + kTextHMargin - kMenuBarHM, _y + kTextVMargin + n * h - kMenuBarVM);
 
-		if (ok && (mask & L_UP)) {
+		if (ok && (mask & kMouseLeftUp)) {
 			_items = 0;
 			_snail_->addCom(kSnKill, -1, 0, this);
 			_recent = n;

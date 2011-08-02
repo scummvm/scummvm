@@ -63,11 +63,11 @@ Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL), _map(0) {
 #endif
 	{
 #if (BMP_MODE)
-		ForceExt(pat, fname, ".BMP");
+		forceExt(pat, fname, ".BMP");
 		PIC_FILE file(pat);
 		if (file._error == 0) {
 			if (loadBMP(&file)) {
-				Code();
+				code();
 				if (rem) {
 					free(_m);
 					_m = NULL;
