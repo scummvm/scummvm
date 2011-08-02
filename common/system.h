@@ -45,6 +45,9 @@ class String;
 #if defined(USE_TASKBAR)
 class TaskbarManager;
 #endif
+#if defined(USE_UPDATES)
+class UpdateManager;
+#endif
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
@@ -159,6 +162,15 @@ protected:
 	 * @note _taskbarManager is deleted by the OSystem destructor.
 	 */
 	Common::TaskbarManager *_taskbarManager;
+#endif
+
+#if defined(USE_UPDATES)
+	/**
+	 * No default value is provided for _updateManager by OSystem.
+	 *
+	 * @note _updateManager is deleted by the OSystem destructor.
+	 */
+	Common::UpdateManager *_updateManager;
 #endif
 
 	/**
@@ -1068,6 +1080,18 @@ public:
 	 */
 	virtual Common::TaskbarManager *getTaskbarManager() {
 		return _taskbarManager;
+	}
+#endif
+
+#if defined(USE_UPDATES)
+	/**
+	 * Returns the UpdateManager, used to handle auto-updating,
+	 * and updating of ScummVM in general.
+	 *
+	 * @return the UpdateManager for the current architecture
+	 */
+	virtual Common::UpdateManager *getUpdateManager() {
+		return _updateManager;
 	}
 #endif
 

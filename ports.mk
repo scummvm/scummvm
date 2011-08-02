@@ -39,6 +39,11 @@ bundle: scummvm-static
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
+ifdef USE_SPARKLE
+	mkdir -p $(bundle_name)/Contents/Frameworks
+	cp $(srcdir)/dists/macosx/dsa_pub.pem $(bundle_name)/Contents/Resources/
+	cp -R $(STATICLIBPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
+endif
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
@@ -106,6 +111,10 @@ endif
 
 ifdef USE_ZLIB
 OSX_ZLIB ?= -lz
+endif
+
+ifdef USE_SPARKLE
+OSX_STATIC_LIBS += -framework Sparkle -F$(STATICLIBPATH)
 endif
 
 ifdef USE_TERMCONV
