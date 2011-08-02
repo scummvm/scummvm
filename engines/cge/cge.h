@@ -40,7 +40,8 @@ namespace CGE {
 class Console;
 class Sprite;
 
-#define CGE_SAVEGAME_VERSION 1
+#define kSavegameVersion 1
+#define kSavegameStrSize 11
 #define kPocketX    174
 #define kPocketY    176
 #define kPocketDX   18
@@ -75,8 +76,7 @@ struct SavegameHeader {
 	int totalFrames;
 };
 
-extern const char *SAVEGAME_STR;
-#define SAVEGAME_STR_SIZE 11
+extern const char *savegameStr;
 
 struct Bar {
 	uint8 _horz;

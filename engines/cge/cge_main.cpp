@@ -54,13 +54,7 @@
 
 namespace CGE {
 
-#define STACK_SIZ   2048
-#define SVGCHKSUM   (1956 + _now + _oldLev + _game + _music + _demoText)
-
-#define SVG0NAME    ("{{INIT}}" kSvgExt)
-#define SVG0FILE    INI_FILE
-
-uint16  _stklen = (STACK_SIZ * 2);
+uint16  _stklen = (kStackSize * 2);
 
 Vga *_vga;
 System *_sys;
@@ -90,8 +84,7 @@ Sound *_sound;
 // 1.01 - 17VII95 - default savegame with sound ON
 //		    coditionals EVA for 2-month evaluation version
 
-const char *SAVEGAME_STR = "SCUMMVM_CGE";
-#define SAVEGAME_STR_SIZE 11
+const char *savegameStr = "SCUMMVM_CGE";
 
 //--------------------------------------------------------------------------
 
@@ -137,13 +130,13 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 
 	if (s.isSaving()) {
 		// Write checksum
-		int checksum = SVGCHKSUM;
+		int checksum = kSavegameCheckSum;
 		s.syncAsUint16LE(checksum);
 	} else {
 		// Read checksum and validate it
 		uint16 checksum;
 		s.syncAsUint16LE(checksum);
-		if (checksum != SVGCHKSUM)
+		if (checksum != kSavegameCheckSum)
 			error("%s", _text->getText(kBadSVG));
 	}
 }
@@ -156,7 +149,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 
 	if (slotNumber == -1) {
 		// Loading the data for the initial game state
-		SVG0FILE file = SVG0FILE(SVG0NAME);
+		kSavegame0File file = kSavegame0File(kSavegame0Name);
 		int size = file.size();
 		byte *dataBuffer = (byte *)malloc(size);
 		file.read(dataBuffer, size);
@@ -175,10 +168,10 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 	}
 
 	// Check to see if it's a ScummVM savegame or not
-	char buffer[SAVEGAME_STR_SIZE + 1];
-	readStream->read(buffer, SAVEGAME_STR_SIZE + 1);
+	char buffer[kSavegameStrSize + 1];
+	readStream->read(buffer, kSavegameStrSize + 1);
 
-	if (strncmp(buffer, SAVEGAME_STR, SAVEGAME_STR_SIZE + 1) != 0) {
+	if (strncmp(buffer, savegameStr, kSavegameStrSize + 1) != 0) {
 		// It's not, so rewind back to the start
 		readStream->seek(0);
 
@@ -269,7 +262,7 @@ void CGEEngine::saveGame(int slotNumber, const Common::String &desc) {
 	// Write out the ScummVM savegame header
 	SavegameHeader header;
 	header.saveName = desc;
-	header.version = CGE_SAVEGAME_VERSION;
+	header.version = kSavegameVersion;
 	writeSavegameHeader(saveFile, header);
 
 	// Write out the data of the savegame
@@ -282,9 +275,9 @@ void CGEEngine::saveGame(int slotNumber, const Common::String &desc) {
 
 void CGEEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header) {
 	// Write out a savegame header
-	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
+	out->write(savegameStr, kSavegameStrSize + 1);
 
-	out->writeByte(CGE_SAVEGAME_VERSION);
+	out->writeByte(kSavegameVersion);
 
 	// Write savegame name
 	out->write(header.saveName.c_str(), header.saveName.size() + 1);
@@ -376,7 +369,7 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 
 	// Get the savegame version
 	header.version = in->readByte();
-	if (header.version > CGE_SAVEGAME_VERSION)
+	if (header.version > kSavegameVersion)
 		return false;
 
 	// Read in the string
@@ -423,7 +416,7 @@ void CGEEngine::trouble(int seq, int text) {
 void CGEEngine::offUse() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::offUse()");
 
-	trouble(kSeqOffUse, kOffUse + new_random(_offUseCount));
+	trouble(kSeqOffUse, kOffUse + newRandom(_offUseCount));
 }
 
 void CGEEngine::tooFar() {
@@ -467,7 +460,7 @@ Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 
 void Square::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
-	if (mask & L_UP) {
+	if (mask & kMouseLeftUp) {
 		XZ(_x + x, _y + y).cell() = 0;
 		_snail_->addCom(kSnKill, -1, 0, this);
 	}
@@ -688,8 +681,8 @@ void CGEEngine::switchCave(int cav) {
 				if (!_isDemo)
 					_vga->_spareQ->_show = 0;
 			}
-			_cavLight->gotoxy(CAVE_X + ((_now - 1) % _caveNx) * _caveDx + CAVE_SX,
-			                  CAVE_Y + ((_now - 1) / _caveNx) * _caveDy + CAVE_SY);
+			_cavLight->gotoxy(kCaveX + ((_now - 1) % _caveNx) * _caveDx + kCaveSX,
+			                  kCaveY + ((_now - 1) / _caveNx) * _caveDy + kCaveSY);
 			killText();
 			if (!_startupMode)
 				keyClick();
@@ -716,7 +709,7 @@ void System::setPal() {
 }
 
 void System::funTouch() {
-	uint16 n = (PAIN) ? kHeroFun1 : kHeroFun0;
+	uint16 n = (_vm->_flag[0]) ? kHeroFun1 : kHeroFun0; // PAIN flag
 	if (_talk == NULL || n > _funDel)
 		_funDel = n;
 }
@@ -726,7 +719,7 @@ void System::touch(uint16 mask, int x, int y) {
 
 	funTouch();
 
-	if (mask & KEYB) {
+	if (mask & kEventKeyb) {
 		int pp0;
 		_vm->keyClick();
 		killText();
@@ -837,15 +830,15 @@ void System::touch(uint16 mask, int x, int y) {
 		_infoLine->update(NULL);
 		if (y >= kWorldHeight ) {
 			if (x < kButtonX) {                           // select cave?
-				if (y >= CAVE_Y && y < CAVE_Y + _vm->_caveNy * _vm->_caveDy &&
-				    x >= CAVE_X && x < CAVE_X + _vm->_caveNx * _vm->_caveDx && !_vm->_game) {
-					cav = ((y - CAVE_Y) / _vm->_caveDy) * _vm->_caveNx + (x - CAVE_X) / _vm->_caveDx + 1;
+				if (y >= kCaveY && y < kCaveY + _vm->_caveNy * _vm->_caveDy &&
+				    x >= kCaveX && x < kCaveX + _vm->_caveNx * _vm->_caveDx && !_vm->_game) {
+					cav = ((y - kCaveY) / _vm->_caveDy) * _vm->_caveNx + (x - kCaveX) / _vm->_caveDx + 1;
 					if (cav > _vm->_maxCave)
 						cav = 0;
 				} else {
 					cav = 0;
 				}
-			} else if (mask & L_UP) {
+			} else if (mask & kMouseLeftUp) {
 				if (y >= kPocketY && y < kPocketY + kPocketNY * kPocketDY &&
 				    x >= kPocketX && x < kPocketX + kPocketNX * kPocketDX) {
 					int n = ((y - kPocketY) / kPocketDY) * kPocketNX + (x - kPocketX) / kPocketDX;
@@ -856,7 +849,7 @@ void System::touch(uint16 mask, int x, int y) {
 
 		_vm->postMiniStep(cav - 1);
 
-		if (mask & L_UP) {
+		if (mask & kMouseLeftUp) {
 			if (cav && _snail->idle() && _hero->_tracePtr < 0)
 				_vm->switchCave(cav);
 
@@ -883,10 +876,10 @@ void System::tick() {
 		if (--_funDel == 0) {
 			killText();
 			if (_snail->idle()) {
-				if (PAIN)
+				if (_vm->_flag[0]) // Pain flag
 					_vm->heroCover(9);
 				else { // CHECKME: Before, was: if (Startup::_core >= CORE_MID) {
-					int n = new_random(100);
+					int n = newRandom(100);
 					if (n > 96)
 						_vm->heroCover(6 + (_hero->_x + _hero->_w / 2 < kScrWidth / 2));
 					else {
@@ -1043,42 +1036,42 @@ void CGEEngine::saveMapping() {
 	}
 }
 
-//                                       1111111111222222222233333333334444444444555555555566666666667777777777
-//                             01234567890123456789012345678901234567890123456789012345678901234567890123456789
-static  char    DebugText[] = " X=000 Y=000 S=00:00 000:000:000 000:000 00";
-
-#define ABSX    (DebugText + 3)
-#define ABSY    (DebugText + 9)
-#define SP_N    (DebugText + 15)
-#define SP_S    (DebugText + 18)
-#define SP_X    (DebugText + 21)
-#define SP_Y    (DebugText + 25)
-#define SP_Z    (DebugText + 29)
-#define SP_W    (DebugText + 33)
-#define SP_H    (DebugText + 37)
-#define SP_F    (DebugText + 41)
 
 void CGEEngine::sayDebug() {
+//                                       1111111111222222222233333333334444444444555555555566666666667777777777
+//                             01234567890123456789012345678901234567890123456789012345678901234567890123456789
+	static char DebugText[] = " X=000 Y=000 S=00:00 000:000:000 000:000 00";
+
+	char *absX = DebugText + 3;
+	char *absY = DebugText + 9;
+	char *spN  = DebugText + 15;
+	char *spS  = DebugText + 18;
+	char *spX  = DebugText + 21;
+	char *spY  = DebugText + 25;
+	char *spZ  = DebugText + 29;
+	char *spW  = DebugText + 33;
+	char *spH  = DebugText + 37;
+	char *spF  = DebugText + 41;
+
 	if (!_debugLine->_flags._hide) {
-		dwtom(_mouse->_x, ABSX, 10, 3);
-		dwtom(_mouse->_y, ABSY, 10, 3);
+		dwtom(_mouse->_x, absX, 10, 3);
+		dwtom(_mouse->_y, absY, 10, 3);
 
 		// sprite queue size
 		uint16 n = 0;
-		Sprite *spr;
-		for (spr = _vga->_showQ->first(); spr; spr = spr->_next) {
+		for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 			n++;
 			if (spr == _sprite) {
-				dwtom(n, SP_N, 10, 2);
-				dwtom(_sprite->_x, SP_X, 10, 3);
-				dwtom(_sprite->_y, SP_Y, 10, 3);
-				dwtom(_sprite->_z, SP_Z, 10, 3);
-				dwtom(_sprite->_w, SP_W, 10, 3);
-				dwtom(_sprite->_h, SP_H, 10, 3);
-				dwtom(*(uint16 *)(&_sprite->_flags), SP_F, 16, 2);
+				dwtom(n, spN, 10, 2);
+				dwtom(_sprite->_x, spX, 10, 3);
+				dwtom(_sprite->_y, spY, 10, 3);
+				dwtom(_sprite->_z, spZ, 10, 3);
+				dwtom(_sprite->_w, spW, 10, 3);
+				dwtom(_sprite->_h, spH, 10, 3);
+				dwtom(*(uint16 *)(&_sprite->_flags), spF, 16, 2);
 			}
 		}
-		dwtom(n, SP_S, 10, 2);
+		dwtom(n, spS, 10, 2);
 		_debugLine->update(DebugText);
 	}
 }
@@ -1092,20 +1085,20 @@ void CGEEngine::switchDebug() {
 void CGEEngine::optionTouch(int opt, uint16 mask) {
 	switch (opt) {
 	case 1 :
-		if (mask & L_UP)
+		if (mask & kMouseLeftUp)
 			switchColorMode();
 		break;
 	case 2 :
-		if (mask & L_UP)
+		if (mask & kMouseLeftUp)
 			switchMusic();
-		else if (mask & R_UP)
+		else if (mask & kMouseRightUp)
 			if (!Mixer::_appear) {
 				Mixer::_appear = true;
 				new Mixer(this, kButtonX, kButtonY);
 			}
 		break;
 	case 3 :
-		if (mask & L_UP)
+		if (mask & kMouseLeftUp)
 			quit();
 		break;
 	}
@@ -1115,9 +1108,9 @@ void CGEEngine::optionTouch(int opt, uint16 mask) {
 #pragma argsused
 void Sprite::touch(uint16 mask, int x, int y) {
 	_sys->funTouch();
-	if ((mask & ATTN) == 0) {
+	if ((mask & kEventAttn) == 0) {
 		_infoLine->update(name());
-		if (mask & (R_DN | L_DN))
+		if (mask & (kMouseRightDown | kMouseLeftDown))
 			_sprite = this;
 		if (_ref / 10 == 12) {
 			_vm->optionTouch(_ref % 10, mask);
@@ -1125,11 +1118,11 @@ void Sprite::touch(uint16 mask, int x, int y) {
 		}
 		if (_flags._syst)
 			return;       // cannot access system sprites
-		if (_vm->_game) if (mask & L_UP) {
-				mask &= ~L_UP;
-				mask |= R_UP;
+		if (_vm->_game) if (mask & kMouseLeftUp) {
+				mask &= ~kMouseLeftUp;
+				mask |= kMouseRightUp;
 			}
-		if ((mask & R_UP) && _snail->idle()) {
+		if ((mask & kMouseRightUp) && _snail->idle()) {
 			Sprite *ps = (_pocLight->_seqPtr) ? _pocket[_vm->_pocPtr] : NULL;
 			if (ps) {
 				if (_flags._kept || _hero->distance(this) < kDistMax) {
@@ -1142,7 +1135,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 					_vm->tooFar();
 			} else {
 				if (_flags._kept)
-					mask |= L_UP;
+					mask |= kMouseLeftUp;
 				else {
 					if (_hero->distance(this) < kDistMax) {
 						///
@@ -1169,7 +1162,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 				}
 			}
 		}
-		if ((mask & L_UP) && _snail->idle()) {
+		if ((mask & kMouseLeftUp) && _snail->idle()) {
 			if (_flags._kept) {
 				int n;
 				for (n = 0; n < kPocketNX; n++) {
@@ -1398,9 +1391,6 @@ void CGEEngine::loadScript(const char *fname) {
 		error("Bad INI line %d [%s]", lcnt, fname);
 }
 
-#define GAME_FRAME_DELAY (1000 / 50)
-#define GAME_TICK_DELAY (1000 / 62)
-
 void CGEEngine::mainLoop() {
 	sayDebug();
 
@@ -1431,11 +1421,11 @@ void CGEEngine::mainLoop() {
 void CGEEngine::handleFrame() {
 	// Game frame delay
 	uint32 millis = g_system->getMillis();
-	while (!_eventManager->_quitFlag && (millis < (_lastFrame + GAME_FRAME_DELAY))) {
+	while (!_eventManager->_quitFlag && (millis < (_lastFrame + kGameFrameDelay))) {
 		// Handle any pending events
 		_eventManager->poll();
 
-		if (millis >= (_lastTick + GAME_TICK_DELAY)) {
+		if (millis >= (_lastTick + kGameTickDelay)) {
 			// Dispatch the tick to any active objects
 			tick();
 			_lastTick = millis;
@@ -1447,7 +1437,7 @@ void CGEEngine::handleFrame() {
 	}
 	_lastFrame = millis;
 
-	if (millis >= (_lastTick + GAME_TICK_DELAY)) {
+	if (millis >= (_lastTick + kGameTickDelay)) {
 		// Dispatch the tick to any active objects
 		tick();
 		_lastTick = millis;
@@ -1579,8 +1569,8 @@ void CGEEngine::runGame() {
 	_startupMode = 0;
 
 	_snail->addCom(kSnLevel, -1, _oldLev, &_cavLight);
-	_cavLight->gotoxy(CAVE_X + ((_now - 1) % _caveNx) * _caveDx + CAVE_SX,
-	                  CAVE_Y + ((_now - 1) / _caveNx) * _caveDy + CAVE_SY);
+	_cavLight->gotoxy(kCaveX + ((_now - 1) % _caveNx) * _caveDx + kCaveSX,
+	                  kCaveY + ((_now - 1) / _caveNx) * _caveDy + kCaveSY);
 	caveUp();
 
 	_keyboard->setClient(_sys);
@@ -1643,7 +1633,7 @@ bool CGEEngine::showTitle(const char *name) {
 	D.show(2);
 
 	if (_mode == 2) {
-		inf(SVG0NAME);
+		inf(kSavegame0Name);
 		_talk->show(2);
 	}
 
@@ -1732,15 +1722,15 @@ bool CGEEngine::showTitle(const char *name) {
 }
 
 void CGEEngine::cge_main() {
-	uint16 intStack[STACK_SIZ / 2];
+	uint16 intStack[kStackSize / 2];
 	_intStackPtr = intStack;
 
 	memset(_barriers, 0xFF, sizeof(_barriers));
 
 	if (!_mouse->_exist)
-		error("%s", _text->getText(NO_MOUSE_TEXT));
+		error("%s", _text->getText(kTextNoMouse));
 
-	if (!SVG0FILE::exist(SVG0NAME))
+	if (!kSavegame0File::exist(kSavegame0Name))
 		_mode = 2;
 
 	_debugLine->_flags._hide = true;

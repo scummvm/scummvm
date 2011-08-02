@@ -37,16 +37,11 @@ namespace CGE {
 
 #define kSayExt         ".SAY"
 
-#define NOT_VGA_TEXT    90
-#define BAD_CHIP_TEXT   91
-#define BAD_DOS_TEXT    92
-#define NO_CORE_TEXT    93
-#define BAD_MIPS_TEXT   94
-#define NO_MOUSE_TEXT   95
-#define INF_NAME        101
-#define SAY_NAME        102
-#define INF_REF         301
-#define SAY_REF         302
+#define kTextNoMouse    95
+#define kInfName        101
+#define kSayName        102
+#define kInfRef         301
+#define kSayRef         302
 
 
 class Text {

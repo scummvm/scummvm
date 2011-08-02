@@ -199,18 +199,18 @@ void Text::say(const char *text, Sprite *spr) {
 
 		_talk->_flags._kill = true;
 		_talk->_flags._bDel = true;
-		_talk->setName(_text->getText(SAY_NAME));
+		_talk->setName(_text->getText(kSayName));
 		_talk->gotoxy(x - (_talk->_w - sw) / 2 - 3 + 6 * east, y - spike->_h - _talk->_h + 1);
 		_talk->_z = 125;
-		_talk->_ref = SAY_REF;
+		_talk->_ref = kSayRef;
 
 		spike->gotoxy(x, _talk->_y + _talk->_h - 1);
 		spike->_z = 126;
 		spike->_flags._slav = true;
 		spike->_flags._kill = true;
-		spike->setName(_text->getText(SAY_NAME));
+		spike->setName(_text->getText(kSayName));
 		spike->step(east);
-		spike->_ref = SAY_REF;
+		spike->_ref = kSayRef;
 
 		_vga->_showQ->insert(_talk, _vga->_showQ->last());
 		_vga->_showQ->insert(spike, _vga->_showQ->last());
@@ -225,11 +225,11 @@ void CGEEngine::inf(const char *text) {
 	if (_talk) {
 		_talk->_flags._kill = true;
 		_talk->_flags._bDel = true;
-		_talk->setName(_text->getText(INF_NAME));
+		_talk->setName(_text->getText(kInfName));
 		_talk->center();
 		_talk->gotoxy(_talk->_x, _talk->_y - 20);
 		_talk->_z = 126;
-		_talk->_ref = INF_REF;
+		_talk->_ref = kInfRef;
 		_vga->_showQ->insert(_talk, _vga->_showQ->last());
 	}
 }

@@ -327,7 +327,7 @@ long timer() {
 	return 0;
 }
 
-int new_random(int range) {
+int newRandom(int range) {
 	return ((CGEEngine *)g_engine)->_randomSource.getRandomNumber(range - 1);
 }
 

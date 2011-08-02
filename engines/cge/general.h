@@ -129,7 +129,7 @@ char *wtom(uint16 val, char *str, int radix, int len);
 char *dwtom(uint32 val, char * str, int radix, int len);
 int takeEnum(const char **tab, const char *text);
 long timer();
-int new_random(int range);
+int newRandom(int range);
 } // End of namespace CGE
 
 #endif
