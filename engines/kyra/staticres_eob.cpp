@@ -448,6 +448,10 @@ void EobCoreEngine::initStaticResource() {
 	_npcPreset = _staticres->loadEobNpcData(kEobBaseNpcPresets, temp);
 
 	_teleporterShapeCoords = _staticres->loadRawData(kEobBaseDscTelptrShpCoords, temp);
+	_portalSeq = _staticres->loadRawData(kEobBasePortalSeqData, temp);
+	_mnDef = _staticres->loadRawData(kEobBaseManDef, temp);
+	_mnWord = _staticres->loadStrings(kEobBaseManWord, _mnNumWord);
+	_mnPrompt = _staticres->loadStrings(kEobBaseManPrompt, temp);
 
 	_monsterStepTable0 = (int8*) _staticres->loadRawData(_flags.gameID == GI_EOB2 ? kEobBaseMonsterStepTable02 : kEobBaseMonsterStepTable01, temp);
 	_monsterStepTable1 = (int8*)_staticres->loadRawData(kEobBaseMonsterStepTable1, temp);
@@ -1114,10 +1118,10 @@ void EobEngine::initStaticResource() {
 		p->experience = READ_LE_UINT16(ps);
 		ps += 2;
 		p->u30 = *ps++;
-		p->sound1 = *ps++;
-		p->sound2 = *ps++;
+		p->sound1 = (int8)*ps++;
+		p->sound2 = (int8)*ps++;
 		p->numRemoteAttacks = *ps++;
-		p->tuResist = *ps++;
+		p->tuResist = (int8)*ps++;
 		p->dmgModifierEvade = *ps++;
 	}
 }

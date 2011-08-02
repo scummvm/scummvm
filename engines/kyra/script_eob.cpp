@@ -1416,12 +1416,11 @@ int EobInfProcessor::oeob_sequence(int8 *data) {
 		return 0;
 
 	case -2:
-		// portal sequence
-		error("EobInfProcessor::oeob_sequence(): unimplemented cmd -2");
+		_vm->seq_portal();		
 		break;
 
 	case -1:
-		// copy protection
+		_vm->_runFlag = _vm->checkPassword();
 		break;
 
 	default:

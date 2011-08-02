@@ -361,6 +361,11 @@ enum kExtractID {
 	kEobBaseFlightObjSclIndex,
 
 	kEobBaseDscTelptrShpCoords,
+	
+	kEobBasePortalSeqData,
+	kEobBaseManDef,
+	kEobBaseManWord,
+	kEobBaseManPrompt,
 
 	kEobBaseBookNumbers,
 	kEobBaseMageSpellsList,

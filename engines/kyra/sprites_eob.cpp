@@ -107,8 +107,8 @@ const uint8 *EobCoreEngine::loadMonsterProperties(const uint8 *data) {
 		data += 2;
 
 		d->u30 = *data++;
-		d->sound1 = *data++;
-		d->sound2 = *data++;
+		d->sound1 = (int8)*data++;
+		d->sound2 = (int8)*data++;
 		d->numRemoteAttacks = *data++;
 
 		if (*data++ != 0xff) {
@@ -121,7 +121,7 @@ const uint8 *EobCoreEngine::loadMonsterProperties(const uint8 *data) {
 			}
 		}
 
-		d->tuResist = *data++;
+		d->tuResist = (int8)*data++;
 		d->dmgModifierEvade = *data++;
 
 		for (int i = 0; i < 3; i++)
@@ -1181,7 +1181,7 @@ bool EobCoreEngine::walkMonsterNextStep(EobMonsterInPlay *m, int destBlock, int 
 		m->dir = direction;
 
 	checkSceneUpdateNeed(obl);
-	if (!_partyResting && p->sound2)
+	if (!_partyResting && p->sound2 > 0)
 		snd_processEnvironmentalSoundEffect(p->sound2, m->block);
 
 	return true;

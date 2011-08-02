@@ -176,7 +176,9 @@ int EobCoreEngine::deleteInventoryItem(int charIndex, int slot) {
 void EobCoreEngine::deleteBlockItem(uint16 block, int type) {
 	uint16 itm = _levelBlockProperties[block].drawObjects;
 	if (!itm)
-		return;	
+		return;
+
+	_levelBlockProperties[block].drawObjects = 0;
 	
 	for (uint16 i2 = itm, i = 0; itm != i2 || !i; i++ ) {
 		if (type == _items[itm].type || type == -1) {

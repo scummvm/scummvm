@@ -75,7 +75,7 @@ void EobCoreEngine::useMagicScroll(int charIndex, int type, int weaponSlot) {
 }
 
 void EobCoreEngine::usePotion(int charIndex, int weaponSlot) {
-	EobCharacter *c = &_characters[_openBookChar];
+	EobCharacter *c = &_characters[charIndex];
 
 	int val = deleteInventoryItem(charIndex, weaponSlot);
 	snd_playSoundEffect(10);
@@ -607,6 +607,7 @@ bool EobCoreEngine::magicObjectStatusHit(EobMonsterInPlay *m, int type, bool try
 }
 
 bool EobCoreEngine::turnUndeadHit(EobMonsterInPlay *m, int hitChance, int casterLevel) {
+	assert(_monsterProps[m->type].tuResist > 0);
 	uint8 e = _turnUndeadEffect[_monsterProps[m->type].tuResist * 14 + MIN(casterLevel, 14)];
 
 	if (e == 0xff) {

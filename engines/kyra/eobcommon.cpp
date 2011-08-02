@@ -1500,6 +1500,40 @@ int EobCoreEngine::countResurrectionCandidates() {
 	return _rrCount;
 }
 
+void EobCoreEngine::seq_portal() {
+	//_portalSeq
+}
+
+bool EobCoreEngine::checkPassword() {
+	char answ[20];
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+	_screen->copyPage(0, 10);
+	
+	_screen->setScreenDim(13);
+	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, _color1_1, _color2_1, -1);
+	gui_drawBox((_screen->_curDim->sx << 3) + 1, _screen->_curDim->sy + 1, (_screen->_curDim->w << 3) - 2, _screen->_curDim->h - 2, _color1_1, _color2_1, _bkgColor_1);
+	_screen->modifyScreenDim(13, _screen->_curDim->sx + 1, _screen->_curDim->sy + 2, _screen->_curDim->w - 2, _screen->_curDim->h - 16);
+	
+	for (int i = 0; i < 3; i++) {
+		_screen->fillRect(_screen->_curDim->sx << 3, _screen->_curDim->sy, ((_screen->_curDim->sx + _screen->_curDim->w) << 3) - 1, (_screen->_curDim->sy + _screen->_curDim->h) - 1, _bkgColor_1);
+		int c = rollDice(1, _mnNumWord - 1, -1);
+		_screen->drawShape(0, _largeItemShapes[_mnDef[c << 2]], 100, 2, 13);
+		_screen->printShadedText(Common::String::format(_mnPrompt[0], _mnDef[(c << 2) + 1], _mnDef[(c << 2) + 2]).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy, _screen->_curDim->unk8, _bkgColor_1);
+		memset(answ, 0, 20);
+		gui_drawBox(76, 100, 133, 14, _color2_1, _color1_1, -1);
+		gui_drawBox(77, 101, 131, 12, _color2_1, _color1_1, -1);	
+		if (_gui->getTextInput(answ, 10, 103, 15, _screen->_curDim->unk8, _bkgColor_1, 8) < 0)
+			i = 3;
+		if (scumm_stricmp(_mnWord[c], answ) && i == 2)
+			return false;
+	}
+
+	_screen->modifyScreenDim(13, _screen->_curDim->sx - 1, _screen->_curDim->sy - 2, _screen->_curDim->w + 2, _screen->_curDim->h + 16);
+	_screen->setFont(of);
+	_screen->copyPage(10, 0);
+	return true;
+}
+
 void EobCoreEngine::useSlotWeapon(int charIndex, int slotIndex, Item item) {
 	EobCharacter *c = &_characters[charIndex];
 	int tp = item ? _items[item].type : 0;
@@ -2110,7 +2144,7 @@ void EobCoreEngine::explodeMonster(EobMonsterInPlay *m) {
 }
 
 void EobCoreEngine::snd_playSoundEffect(int id, int volume) {
-	if (id < 1 || id > 119 || shouldQuit())
+	if ((id < 1) || (_flags.gameID == GI_EOB2 && id > 119) || shouldQuit())
 		return;
 
 	_sound->playSoundEffect(id, volume);

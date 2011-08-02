@@ -435,6 +435,11 @@ enum KyraResources {
 
 	kEobBaseDscTelptrShpCoords,
 
+	kEobBasePortalSeqData,
+	kEobBaseManDef,
+	kEobBaseManWord,
+	kEobBaseManPrompt,
+
 	kEobBaseBookNumbers,
 	kEobBaseMageSpellsList,
 	kEobBaseClericSpellsList,

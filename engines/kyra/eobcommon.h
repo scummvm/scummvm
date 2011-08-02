@@ -174,15 +174,15 @@ struct EobMonsterProperty {
 	int32 experience;
 
 	uint8 u30;
-	uint8 sound1;
-	uint8 sound2;
+	int8 sound1;
+	int8 sound2;
 	uint8 numRemoteAttacks;
 	uint8 remoteWeaponChangeMode;
 	uint8 numRemoteWeapons;
 
 	int8 remoteWeapons[5];
 
-	uint8 tuResist;
+	int8 tuResist;
 	uint8 dmgModifierEvade;
 
 	uint8 decorations[3];
@@ -623,6 +623,7 @@ protected:
 	const uint8 *_wllFlagPreset;
 	int _wllFlagPresetSize;
 	const uint8 *_teleporterShapeCoords;
+	const uint8 *_portalSeq;
 
 	// Script
 	void runLevelScript(int block, int flags);
@@ -807,12 +808,16 @@ protected:
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
+
 	void displayParchment(int id);
 	int countResurrectionCandidates();
+
+	void seq_portal();
+	bool checkPassword();
+	
 	virtual int resurrectionSelectDialogue() = 0;
 	virtual void useHorn(int charIndex, int weaponSlot) {}
 	virtual bool checkPartyStatusExtra() = 0;
-
 	virtual void drawLightningColumn() {}
 	virtual int charSelectDialogue() { return -1; }
 	virtual void characterLevelGain(int charIndex) {}
@@ -825,6 +830,11 @@ protected:
 	void releaseMonsterTempData(LevelTempData *tmp);
 
 	const char * const *_saveLoadStrings;
+
+	const uint8 *_mnDef;
+	const char * const *_mnWord;
+	const char * const *_mnPrompt;
+	int _mnNumWord;
 
 	int _rrCount;
 	const char *_rrNames[10];
