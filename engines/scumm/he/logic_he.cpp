@@ -1094,13 +1094,13 @@ int LogicHEsoccer::op_1008(int a1, int a2, int a3, int a4, int a5, int a6, int a
 				a6 = _array1014[4];
 				a7 = _array1014[5];
 				putInArray(a1, v27, 0, v29);
-				putInArray(a1, v27, 1, (int)sqrtSquare((double)(_array1014[6] - v28), 0.0, (double)(_array1014[7] - v32)));
+				putInArray(a1, v27, 1, (int)sqrtSquare((double)(_array1014[6] - v28), 0.0, (double)(_array1014[8] - v32)));
 				putInArray(a1, v27, 2, _array1014[6]);
 				putInArray(a1, v27, 3, _array1014[7]);
 				putInArray(a1, v27, 4, _array1014[8]);
 				putInArray(a1, v27, 5, a5);
 				putInArray(a1, v27, 6, a6);
-				putInArray(a1, v27, 7, a7);
+				putInArray(a1, v27++, 7, a7);
 			} 
 		} else {
 			a3 = 0;
@@ -1388,7 +1388,7 @@ int LogicHEsoccer::op_1014(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int
 	double v31 = (double)a1;
 	double v29 = (double)a2;
 	double v27 = (double)a3;
-	double v15, v28, v30, v32;
+	double v15, v28 = 0.0, v30 = 0.0, v32 = 0.0;
 
 	switch (a10) {
 	case 1:
@@ -1612,7 +1612,6 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 	// until it's confirmed that the code actually works
 
 	int v248 = 0;
-	int v236 = 0;
 	double v263 = 5.0;
 	float v274 = a3 + 1.0;
 	float v254 = a2 + a5;
@@ -1667,7 +1666,7 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 		if (v263 >= 0.0 && fabs(v263) <= 1.0 && v258 != 0.0) {
 			double v272 = a2 + (v254 - a2) * v263;
 			double v270 = v274 + (v250 - v274) * v263 + 5.0;
-			double v268 = a4 + (v246 - a4) * v236;
+			double v268 = a4 + (v246 - a4) * v263;
 
 			float v21 = v242 - v264;
 			float v22 = v271 - v267;
