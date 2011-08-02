@@ -79,13 +79,16 @@ Rect2d::Rect2d(const Vector2d &topLeft, const Vector2d &topRight,
 
 }
 
+void Rect2d::rotateAround(const Vector2d &point, float angle) {
+	_topLeft.rotateAround(point, angle);
+	_topRight.rotateAround(point, angle);
+	_bottomLeft.rotateAround(point, angle);
+	_bottomRight.rotateAround(point, angle);
+}
+
 void Rect2d::rotateAroundCenter(float angle) {
 	Vector2d center = getCenter();
-
-	_topLeft.rotateAround(center, angle);
-	_topRight.rotateAround(center, angle);
-	_bottomLeft.rotateAround(center, angle);
-	_bottomRight.rotateAround(center, angle);
+	rotateAround(center, angle);
 }
 
 bool Rect2d::intersectsRect(const Rect2d &rect) const {

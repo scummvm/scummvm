@@ -1519,15 +1519,17 @@ bool Actor::collidesWith(Actor *actor) const {
 	} else {
 		Graphics::Rect2d rect;
 
-		Graphics::Vector3d p;
+		Graphics::Vector3d bboxPos;
 		Graphics::Vector3d size;
+		Graphics::Vector3d pos;
 		float yaw;
 
 		Graphics::Vector2d circle;
 		float radius;
 
 		if (mode1 == CollisionBox) {
-			p = p1 + model1->_bboxPos;
+			pos = p1;
+			bboxPos = p1 + model1->_bboxPos;
 			size = model1->_bboxSize * _collisionScale;
 			yaw = _yaw;
 
@@ -1535,7 +1537,8 @@ bool Actor::collidesWith(Actor *actor) const {
 			circle._y = p2.y();
 			radius = size2;
 		} else {
-			p = actor->_pos + model2->_bboxPos;
+			pos = p2;
+			bboxPos = p2 + model2->_bboxPos;
 			size = model2->_bboxSize * actor->_collisionScale;
 			yaw = actor->_yaw;
 
@@ -1544,11 +1547,11 @@ bool Actor::collidesWith(Actor *actor) const {
 			radius = size1;
 		}
 
-		rect._topLeft = Graphics::Vector2d(p.x() - size.x(), p.y() + size.y());
-		rect._topRight = Graphics::Vector2d(p.x() + size.x(), p.y() + size.y());
-		rect._bottomLeft = Graphics::Vector2d(p.x() - size.x(), p.y() - size.y());
-		rect._bottomRight = Graphics::Vector2d(p.x() + size.x(), p.y() - size.y());
-		rect.rotateAroundCenter(yaw);
+		rect._topLeft = Graphics::Vector2d(bboxPos.x(), bboxPos.y() + size.y());
+		rect._topRight = Graphics::Vector2d(bboxPos.x() + size.x(), bboxPos.y() + size.y());
+		rect._bottomLeft = Graphics::Vector2d(bboxPos.x(), bboxPos.y());
+		rect._bottomRight = Graphics::Vector2d(bboxPos.x() + size.x(), bboxPos.y());
+		rect.rotateAround(Graphics::Vector2d(pos.x(), pos.y()), yaw);
 
 		return rect.intersectsCircle(circle, radius);
 	}

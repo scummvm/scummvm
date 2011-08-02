@@ -59,25 +59,35 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 
 	Graphics::Vector3d max;
 
+	_rootHierNode->update();
 	bool first = true;
-	for (int i = 0; i < _numGeosets; ++i) {
-		Geoset &g = _geosets[i];
-		for (int j = 0; j < g._numMeshes; ++j) {
-			Mesh &m = g._meshes[j];
-			for (int k = 0; k < m._numVertices * 3; k += 3) {
-				if (first || m._vertices[k] < _bboxPos.x())
-					_bboxPos.x() = m._vertices[k];
-				if (m._vertices[k + 1] < _bboxPos.y())
-					_bboxPos.y() = m._vertices[k + 1];
-				if (m._vertices[k + 2] < _bboxPos.z())
-					_bboxPos.z() = m._vertices[k + 2];
+	for (int i = 0; i < _numHierNodes; ++i) {
+		ModelNode &node = _rootHierNode[i];
+		if (node._mesh) {
+			Mesh &mesh = *node._mesh;
+			//NOTE: Setting p to mesh._matrix._pos seems more similar to original
+			// but, as in original, it also stops manny quite far away from the
+			// bone wagon when approaching it from behind in set sg.
+			// Using the node position looks instead more realistic, but, on the
+			// other hand, it may not work right in all cases.
+			Graphics::Vector3d &p = node._matrix._pos;
+			float x = p.x();
+			float y = p.y();
+			float z = p.z();
+			for (int k = 0; k < mesh._numVertices * 3; k += 3) {
+				if (first || mesh._vertices[k] + x < _bboxPos.x())
+					_bboxPos.x() = mesh._vertices[k] + x;
+				if (mesh._vertices[k + 1] + y < _bboxPos.y())
+					_bboxPos.y() = mesh._vertices[k + 1] + y;
+				if (mesh._vertices[k + 2] + z < _bboxPos.z())
+					_bboxPos.z() = mesh._vertices[k + 2] + z;
 
-				if (first || m._vertices[k] > max.x())
-					max.x() = m._vertices[k];
-				if (m._vertices[k + 1] > max.y())
-					max.y() = m._vertices[k + 1];
-				if (m._vertices[k + 2] > max.z())
-					max.z() = m._vertices[k + 2];
+				if (first || mesh._vertices[k] + x > max.x())
+					max.x() = mesh._vertices[k] + x;
+				if (mesh._vertices[k + 1] + y > max.y())
+					max.y() = mesh._vertices[k + 1] + y;
+				if (mesh._vertices[k + 2] + z > max.z())
+					max.z() = mesh._vertices[k + 2] + z;
 
 				first = false;
 			}
@@ -85,7 +95,6 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 	}
 
 	_bboxSize = max - _bboxPos;
-	_bboxPos = (max + _bboxPos) / 2.f;
 }
 
 Model::~Model() {
