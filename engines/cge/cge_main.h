@@ -34,13 +34,11 @@
 #include "cge/sound.h"
 
 namespace CGE {
-#define CAVE_X         4
-#define CAVE_Y         166
-#define CAVE_SX        0
-#define CAVE_SY        0
 
-#define PAIN           (_vm->_flag[0])
-
+#define kCaveX         4
+#define kCaveY         166
+#define kCaveSX        0
+#define kCaveSY        0
 #define kInfoX         177
 #define kInfoY         164
 #define kInfoW         140
@@ -85,6 +83,15 @@ namespace CGE {
 #define kScrWidth      320
 #define kScrHeight     200
 #define kWorldHeight   (kScrHeight - kPanHeight)
+#define kStackSize     2048
+#define kSavegameCheckSum   (1956 + _now + _oldLev + _game + _music + _demoText)
+#define kSavegame0Name ("{{INIT}}" kSvgExt)
+#define kSavegame0File INI_FILE
+#define kSavegameStrSize 11
+#define kGameFrameDelay (1000 / 50)
+#define kGameTickDelay  (1000 / 62)
+
+
 
 class System : public Sprite {
 	int _lum;

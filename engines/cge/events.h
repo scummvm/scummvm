@@ -40,6 +40,17 @@ namespace CGE {
 
 #define kKeyCtrl    29
 #define kKeyAlt     56
+#define kEventMax   256
+
+enum EventMask {
+	kMouseRoll      = 1 << 0,
+	kMouseLeftDown  = 1 << 1,
+	kMouseLeftUp    = 1 << 2,
+	kMouseRightDown = 1 << 3,
+	kMouseRightUp   = 1 << 4,
+	kEventAttn      = 1 << 5,
+	kEventKeyb      = 1 << 7
+};
 
 class Keyboard {
 private:
@@ -61,15 +72,6 @@ public:
 };
 
 /*----------------- MOUSE interface -----------------*/
-
-#define EVT_MAX     256
-#define ROLL        0x01
-#define L_DN        0x02
-#define L_UP        0x04
-#define R_DN        0x08
-#define R_UP        0x10
-#define ATTN        0x20 // 0x40
-#define KEYB        0x80
 
 extern Talk *_talk;
 
@@ -105,7 +107,7 @@ private:
 class EventManager {
 private:
 	Common::Event _event;
-	CGEEvent _eventQueue[EVT_MAX];
+	CGEEvent _eventQueue[kEventMax];
 	uint16 _eventQueueHead;
 	uint16 _eventQueueTail;
 
