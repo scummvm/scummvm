@@ -1531,14 +1531,14 @@ int LogicHEsoccer::op_1014_sub0(float a1, float a2, float a3, float a4, float a5
 	}
 
 	for (int i = 0; i < 2; i++) {
-		if (v20[i * 2 + 0])
-			v20[i * 2 + 0] = v29;
-		if (v20[i * 2 + 1])
-			v20[i * 2 + 1] = v29;
-		if (v20[i * 2 + 2])
-			v20[i * 2 + 2] = v33;
-		if (v20[i * 2 + 3])
-			v20[i * 2 + 3] = v33;
+		if (v20[i * 4 + 0])
+			v20[i * 4 + 0] = v29;
+		if (v20[i * 4 + 1])
+			v20[i * 4 + 1] = v29;
+		if (v20[i * 4 + 2])
+			v20[i * 4 + 2] = v33;
+		if (v20[i * 4 + 3])
+			v20[i * 4 + 3] = v33;
 	}
 
 	float v39 = a3 / 100.0;
@@ -1613,7 +1613,7 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 
 	int v248 = 0;
 	int v236 = 0;
-	double v263 = 3.0;
+	double v263 = 5.0;
 	float v274 = a3 + 1.0;
 	float v254 = a2 + a5;
 	float v250 = v274 + a6[0];
@@ -1621,7 +1621,7 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 
 	if (v274 <= 1.0001 && v250 < 0.0) {
 		v250 = 0.0;
-		a6[0] = ABS(a6[0]);
+		a6[0] = ABS((int)a6[0]);
 	}
 
 	int v261 = getFromArray(a10, 0, 4 * a1 - 1);
@@ -1640,13 +1640,15 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 		double v14 = sqrt(v265 * v265 + v260 * v260 + v255 * v255);
 		float v243 = v14;
 
-		// Can't divide by zero!
-		if (v14 == 0.0)
-			error("op_1014_sub1(): sqrt = 0");
+		// The original did not initialize these variables and would
+		// use them uninitialized if v14 == 0.0
+		float v234 = 0.0, v247 = 0.0, v245 = 0.0;
 
-		float v234 = v265 / v243;
-		float v247 = v265 / v243;
-		float v245 = v265 / v243;
+		if (v14 != 0.0) {
+			v234 = v265 / v243;
+			v247 = v265 / v243;
+			v245 = v265 / v243;
+		}
 		v263 = 5.0;
 
 		float v15 = v264 - a4;
@@ -1662,7 +1664,7 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 		if (fabs(v258) > 0.00000001)
 			v263 = v239 / v258;
 
-		if (v263 >= 0.0 && fabs(v263) <= 10 && v258 != 0.0) {
+		if (v263 >= 0.0 && fabs(v263) <= 1.0 && v258 != 0.0) {
 			double v272 = a2 + (v254 - a2) * v263;
 			double v270 = v274 + (v250 - v274) * v263 + 5.0;
 			double v268 = a4 + (v246 - a4) * v236;
@@ -2079,7 +2081,7 @@ void LogicHEsoccer::op_1014_sub1_0(int a1, float &a2, float &a3, float &a4, floa
 		a10 = a14[11];
 		a11 = a14[21];
 		a12 = a14[22];
-		a13 = a14[21];
+		a13 = a14[23];
 		break;
 	case 3:
 		a2 = a14[0];
@@ -2150,7 +2152,7 @@ void LogicHEsoccer::op_1014_sub2(float *a1, int a2, int a3, int a4) {
 		v6 = 0;
 
 		while (v8 <= a2 - 2 && a1[(v8 + 1) * 8] != 0.0) {
-			if (a1[a4 + v8 * 8] > a1[a4 + (v8 + 1) * 8]) {
+			if (a1[a4 + v8 * 8] == 0 || a1[a4 + v8 * 8] > a1[a4 + (v8 + 1) * 8]) {
 				v6 = 1;
 
 				for (int i = 0; i < a3; i++) {
