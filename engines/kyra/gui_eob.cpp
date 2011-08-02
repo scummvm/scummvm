@@ -2509,7 +2509,7 @@ int GUI_Eob::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		in = 0;
 		_keyPressed.reset();
 
-		while (!in) {
+		while (!in && !_vm->shouldQuit()) {
 			if (next <= _vm->_system->getMillis()) {
 				if (cursorState) {
 					_screen->copyRegion((pos + 1) << 3, 191, (x + pos) << 3, y, 8, 9, 2, 0, Screen::CR_NO_P_CHECK);
@@ -2595,7 +2595,7 @@ int GUI_Eob::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			_screen->printShadedText(sufx, (x + pos) << 3, y, textColor1, textColor2);
 		_screen->updateScreen();
 
-	} while (_keyPressed.keycode != Common::KEYCODE_RETURN && _keyPressed.keycode != Common::KEYCODE_ESCAPE);
+	} while (_keyPressed.keycode != Common::KEYCODE_RETURN && _keyPressed.keycode != Common::KEYCODE_ESCAPE && !_vm->shouldQuit());
 
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
 }
@@ -3194,8 +3194,10 @@ bool GUI_Eob::restParty() {
 				continue;
 			if (_vm->checkInventoryForItem(i, 30, -1) == -1)
 				continue;
-			if (_vm->restParty_checkHealSpells(i))
+			if (_vm->restParty_checkHealSpells(i)) {
 				useHealers = confirmDialogue(40);
+				break;
+			}
 		} 
 	}
 

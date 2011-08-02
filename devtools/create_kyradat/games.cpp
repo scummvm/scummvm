@@ -1215,6 +1215,11 @@ const int eob1FloppyNeed[] = {
 	kEobBaseDscItemShapeMap,
 	kEobBaseDscTelptrShpCoords,
 
+	kEobBasePortalSeqData,
+	kEobBaseManDef,
+	kEobBaseManWord,
+	kEobBaseManPrompt,
+
 	kEobBaseDscMonsterFrmOffsTbl1,
 	kEobBaseDscMonsterFrmOffsTbl2,
 
@@ -1422,6 +1427,11 @@ const int eob2FloppyNeed[] = {
 	kEobBaseDscItemTileIndex,
 	kEobBaseDscItemShapeMap,
 	kEobBaseDscTelptrShpCoords,
+
+	kEobBasePortalSeqData,
+	kEobBaseManDef,
+	kEobBaseManWord,
+	kEobBaseManPrompt,
 
 	kEobBaseDscMonsterFrmOffsTbl1,
 	kEobBaseDscMonsterFrmOffsTbl2,

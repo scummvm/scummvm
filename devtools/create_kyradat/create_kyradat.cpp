@@ -346,6 +346,11 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseDscItemShapeMap, kTypeRawData, false },
 	{ kEobBaseDscTelptrShpCoords, kTypeRawData, false },
 
+	{ kEobBasePortalSeqData, kTypeRawData, false },
+	{ kEobBaseManDef, kTypeRawData, true },
+	{ kEobBaseManWord, kTypeStringList, true },
+	{ kEobBaseManPrompt, kTypeStringList, true },
+
 	{ kEobBaseDscMonsterFrmOffsTbl1, kTypeRawData, false },
 	{ kEobBaseDscMonsterFrmOffsTbl2, kTypeRawData, false },
 
@@ -1556,7 +1561,15 @@ const char *getIdString(const int id) {
 	case kEobBaseFlightObjSclIndex:
 		return "kEobBaseFlightObjSclIndex";
 	case kEobBaseDscTelptrShpCoords:
-		return "kEobBaseDscTelptrShpCoords";	
+		return "kEobBaseDscTelptrShpCoords";
+	case kEobBasePortalSeqData:
+		return "kEobBasePortalSeqData";
+	case kEobBaseManDef:
+		return "kEobBaseManDef";
+	case kEobBaseManWord:
+		return "kEobBaseManWord";
+	case kEobBaseManPrompt:
+		return "kEobBaseManPrompt";
 	case kEobBaseBookNumbers:
 		return "kEobBaseBookNumbers";
 	case kEobBaseMageSpellsList:
