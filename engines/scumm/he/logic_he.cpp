@@ -893,6 +893,10 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1014(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13]);
 		break;
 
+	case 1016:
+		res = op_1016(args);
+		break;
+
 	case 1019:
 		res = op_1019(args);
 		break;
@@ -2178,6 +2182,44 @@ int LogicHEsoccer::op_1014_sub3(float *a1, int a2, int a3, int a4, int a5, int a
 	a12[8] = (int)a1[4];
 	a12[9] = (int)a1[0];
 	return a12[9];
+}
+
+int LogicHEsoccer::op_1016(int32 *args) {
+	// Called when a goal is scored
+
+	int result = 0;
+
+	double v9 = (double)args[1] / 100.0;
+	double v13 = (double)args[2] / 100.0;
+	double v12 = (double)args[3] / 100.0;
+	double v18 = v13 * v13;
+	double v10 = (double)args[0] / 100.0 * (double)args[0] / 100.0;
+	double v11 = v9 * v9;
+	double v19 = (v9 * v9 * v12 * v12 + 2.0 * v9 * v12 * v18 + v18 * v18) * v10 * v10 - (v10 + v11) * v12 * v12 * v10 * v10;
+
+	if (v19 >= 0.0) {
+		double v6 = sqrt(v19);
+		double v17 = ((v9 * v12 + v18) * v10 + v6) / (v10 + v11 + v10 + v11);
+		double v16 = ((v9 * v12 + v18) * v10 - v6) / (v10 + v11 + v10 + v11);
+		double v7, v14;
+
+		if (v17 <= 0.0 || (v7 = sqrt(v17), v14 = acos(v7 / v13), v14 > 0.7853981633974475)) {
+			double v8, v15;
+			if (v16 <= 0.0 || (v8 = sqrt(v16), v15 = acos(v8 / v13), v15 > 0.7853981633974475)) {
+				writeScummVar(108, -1);
+			} else {
+				writeScummVar(108, (int)(v15 / 0.01745329251994328 * 100.0));
+				result = 1;
+			}
+		} else {
+			writeScummVar(108, (int)(v14 / 0.01745329251994328 * 100.0));
+			result = 1;
+		}
+	} else {
+		writeScummVar(108, -1);
+	}
+
+	return result;
 }
 
 int LogicHEsoccer::op_1019(int32 *args) {
