@@ -45,8 +45,6 @@ GameModule::GameModule(NeverhoodEngine *vm)
 	
 	SetMessageHandler(&GameModule::handleMessage);
 
-	//startup();
-	
 }
 
 GameModule::~GameModule() {
@@ -183,6 +181,16 @@ void GameModule::initScene1405Vars() {
 	
 }
 
+void GameModule::initScene3009Vars() {
+	if (!getSubVar(0x40050052, 0x8C9819C2)) {
+		for (int i = 0; i < 3; i++) {
+			setSubVar(0x00504B86, i, _vm->_rnd->getRandomNumber(12 - 1));
+			setSubVar(0x0A4C0A9A, i, _vm->_rnd->getRandomNumber(12 - 1));
+		}
+		setSubVar(0x40050052, 0x8C9819C2, 1);
+	}
+}
+
 uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -214,13 +222,19 @@ void GameModule::startup() {
 //	createModule1500(0); // Logos and intro video //Real
 //	createModule1000(-1);
 //	createModule2300(2);
-	_vm->gameState().sceneNum = 8;
 	//createModule1200(-1);
 	//createModule1800(-1);
 	//createModule1700(-1);
 	//createModule1700(1);
 	//createModule1400(-1);
+#if 1
+	_vm->gameState().sceneNum = 8;
 	createModule3000(-1);
+#endif
+#if 0
+	_vm->gameState().sceneNum = 0;
+	createModule1800(-1);
+#endif
 }
 
 void GameModule::createModule1000(int which) {

@@ -198,7 +198,7 @@ Common::Error NeverhoodEngine::run() {
 		_screen->wait();
 		_screen->update();
 		
-		debug("---------------------------------------");
+		debug(0, "---------------------------------------");
 	
 	}
 	

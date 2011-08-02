@@ -83,6 +83,7 @@ SmackerPlayer::~SmackerPlayer() {
 void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 	debug("SmackerPlayer::open(%08X)", fileHash);
 	
+	_fileHash = fileHash;
 	_keepLastFrame = keepLastFrame;
 
 	close();
@@ -143,6 +144,21 @@ void SmackerPlayer::setDrawPos(int16 x, int16 y) {
 	}
 }
 
+void SmackerPlayer::rewind() {
+
+	delete _smackerDecoder;
+	_smackerDecoder = NULL;
+	_stream = NULL;
+
+	_smackerFirst = true;
+
+	_stream = _vm->_res->createStream(_fileHash);
+
+	_smackerDecoder = new Video::SmackerDecoder(_vm->_mixer);
+	_smackerDecoder->loadStream(_stream);
+	
+}
+
 void SmackerPlayer::update() {
 	debug(8, "SmackerPlayer::update()");
 
@@ -156,34 +172,7 @@ void SmackerPlayer::update() {
 
 	if (!_smackerDecoder->endOfVideo()) {
 
-		const Graphics::Surface *smackerFrame = _smackerDecoder->decodeNextFrame();
-
-		if (_smackerFirst) {
-			_smackerSurface->setSmackerFrame(smackerFrame);
-			if (_drawX < 0 || _drawY < 0) {
-				if (_doubleSurface) {
-					_drawX = 320 - _smackerDecoder->getWidth();
-					_drawY = 240 - _smackerDecoder->getHeight();
-				} else {
-					_drawX = (640 - _smackerDecoder->getWidth()) / 2;
-					_drawY = (480 - _smackerDecoder->getHeight()) / 2;
-				}
-			}
-			_smackerSurface->getDrawRect().x = _drawX;
-			_smackerSurface->getDrawRect().y = _drawY;
-			_smackerFirst = false;
-		}
-		
-		if (_doubleSurface) {
-			// TODO
-		}
-
-		// TODO _vm->_screen->_skipUpdate = true;
-		_dirtyFlag = true;
-
-		if (_smackerDecoder->hasDirtyPalette()) {
-			updatePalette();
-		}
+		updateFrame();
 
 		if (_smackerDecoder->endOfVideo() && !_keepLastFrame) {
 			// Inform the scene about the end of the video playback
@@ -192,9 +181,44 @@ void SmackerPlayer::update() {
 			}
 			_flag2 = true;
 		} else {
+			if (_smackerDecoder->endOfVideo()) {
+				rewind();
+				updateFrame();
+			}
 			_flag2 = false;
 		}
 		
+	}
+}
+
+void SmackerPlayer::updateFrame() {
+	const Graphics::Surface *smackerFrame = _smackerDecoder->decodeNextFrame();
+
+	if (_smackerFirst) {
+		_smackerSurface->setSmackerFrame(smackerFrame);
+		if (_drawX < 0 || _drawY < 0) {
+			if (_doubleSurface) {
+				_drawX = 320 - _smackerDecoder->getWidth();
+				_drawY = 240 - _smackerDecoder->getHeight();
+			} else {
+				_drawX = (640 - _smackerDecoder->getWidth()) / 2;
+				_drawY = (480 - _smackerDecoder->getHeight()) / 2;
+			}
+		}
+		_smackerSurface->getDrawRect().x = _drawX;
+		_smackerSurface->getDrawRect().y = _drawY;
+		_smackerFirst = false;
+	}
+	
+	if (_doubleSurface) {
+		// TODO
+	}
+
+	// TODO _vm->_screen->_skipUpdate = true;
+	_dirtyFlag = true;
+
+	if (_smackerDecoder->hasDirtyPalette()) {
+		updatePalette();
 	}
 }
 

@@ -64,6 +64,7 @@ protected:
 	Palette *_palette;
 	Video::SmackerDecoder *_smackerDecoder;
 	SmackerSurface *_smackerSurface;
+	uint32 _fileHash;
 	bool _smackerFirst;
 	bool _doubleSurface;
 	Common::SeekableReadStream *_stream;
@@ -71,7 +72,9 @@ protected:
 	bool _flag2;
 	bool _dirtyFlag;
 	int _drawX, _drawY;
+	void rewind();
 	void update();
+	void updateFrame();
 	void updatePalette();
 };
 

@@ -68,9 +68,9 @@ protected:
 
 class Scene3009;
 
-class Class438 : public StaticSprite {
+class SsScene3009FireCannonButton : public StaticSprite {
 public:
-	Class438(NeverhoodEngine *vm, Scene3009 *parentScene);
+	SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene);
 protected:
 	Scene3009 *_parentScene;
 	SoundResource _soundResource;
@@ -79,9 +79,9 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class Class439 : public StaticSprite {
+class SsScene3009SymbolEdges : public StaticSprite {
 public:
-	Class439(NeverhoodEngine *vm, int index);
+	SsScene3009SymbolEdges(NeverhoodEngine *vm, int index);
 	void show();
 	void hide();
 	void startBlinking();
@@ -92,18 +92,61 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
-class Class440 : public StaticSprite {
+class SsScene3009TargetLine : public StaticSprite {
 public:
-	Class440(NeverhoodEngine *vm, int index);
+	SsScene3009TargetLine(NeverhoodEngine *vm, int index);
+	void show();
 };
 
-class Class522 : public AnimatedSprite {
+class SsScene3009SymbolArrow : public StaticSprite {
 public:
-	Class522(NeverhoodEngine *vm, Scene3009 *parentScene, int index);
+	SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSymbol, int index);
+	void hide();
+protected:
+	SoundResource _soundResource;
+	Sprite *_asSymbol;
+	int _index;
+	int _incrDecr;
+	bool _enabled;
+	int _countdown;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene3009VerticalIndicator : public AnimatedSprite {
+public:
+	AsScene3009VerticalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, int index);
 	void show();
 protected:
 	Scene3009 *_parentScene;
 	bool _enabled;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene3009HorizontalIndicator : public AnimatedSprite {
+public:
+	AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 varValue);
+	void show();
+	void stMoveLeft();
+	void stMoveRight();
+protected:
+	Scene3009 *_parentScene;
+	bool _enabled;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void suMoveLeft();
+	void suMoveRight();
+};
+
+class AsScene3009Symbol : public AnimatedSprite {
+public:
+	AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int index);
+	void hide();
+protected:
+	Scene3009 *_parentScene;
+	int _index;
+	uint32 _symbolIndex;
+	SsScene3009SymbolArrow *_ssArrowPrev;
+	SsScene3009SymbolArrow *_ssArrowNext;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -112,28 +155,26 @@ public:
 	Scene3009(NeverhoodEngine *vm, Module *parentModule, int which);
 	bool sub462E90();
 protected:
-	int _countdown1;
-	int _countdown2;
+	int _lockSymbolsPart1Countdown;
+	int _lockSymbolsPart2Countdown;
 	SmackerPlayer *_smackerPlayer;
-	Sprite *_class438;
-	Class439 *_class439Array[2];
-	Class440 *_class440Array[2];
-	Class522 *_class522;
-#if 0	
-	Class523 *_class523;
-	Class524 *_class524Array[6];
-#endif	
-	uint32 _varValue;
-	uint32 _varValueArray[6];
-	bool _flag1;
+	Sprite *_ssFireCannonButton;
+	SsScene3009SymbolEdges *_ssSymbolEdges[2];
+	SsScene3009TargetLine *_ssTargetLines[2];
+	AsScene3009VerticalIndicator *_asVerticalIndicator;
+	AsScene3009HorizontalIndicator *_asHorizontalIndicator;
+	AsScene3009Symbol *_asSymbols[6];
+	uint32 _cannonLocation;
+	uint32 _correctSymbols[6];
+	bool _keepVideo;
 	bool _flag2;
-	bool _flag3;
+	// UNUSED? bool _flag3;
 	bool _flag4;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub462DC0();
-	bool sub462E10();
-	bool sub462E50();
+	void playExtVideo();
+	bool isSymbolsPart1Solved();
+	bool isSymbolsPart2Solved();
 };
 
 // Scene3010

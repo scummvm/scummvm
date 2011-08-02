@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/module3000.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/navigationscene.h"
 
 namespace Neverhood {
@@ -37,7 +38,7 @@ Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 	// TODO Sound1ChList_sub_407C70(0x81293110, 0x40030A51, 0xC862CA15, 0);
 	// TODO Sound1ChList_sub_407C70(0x81293110, 0x41861371, 0x43A2507F, 0);
 
-    _flag = getGlobalVar(0x10938830) != 0;
+	_flag = getGlobalVar(0x10938830) != 0;
 
 	if (_flag) {
 		// TODO Sound1ChList_setVolume(0x90F0D1C3, 0);
@@ -196,7 +197,7 @@ void Module3000::createScene3007(int which) {
 }
 
 void Module3000::createScene3008(int which) {
-	_vm->gameState().sceneNum = 6;
+	_vm->gameState().sceneNum = 7;
 	// TODO Sound1ChList_setSoundValuesMulti(dword_4B7FC8, 0, 0, 0, 0, 0);
 	if (!getSubVar(0x40050052, 0x089809C2)) {
 		setSubVar(0x40050052, 0x089809C2, 1);
@@ -208,7 +209,7 @@ void Module3000::createScene3008(int which) {
 }
 
 void Module3000::createScene3009(int which) {
-	_vm->gameState().sceneNum = 7;
+	_vm->gameState().sceneNum = 8;
 	_childObject = new Scene3009(_vm, this, which);
 	SetUpdateHandler(&Module3000::updateScene3009);
 }
@@ -478,6 +479,24 @@ void Module3000::updateScene3007() {
 void Module3000::updateScene3009() {
 	_childObject->handleUpdate();
 	// TODO...
+	if (_moduleDone) {
+		_moduleDone = false;
+		delete _childObject;
+		_childObject = NULL;
+		_flag = getGlobalVar(0x10938830); // CHECKME
+		if (_moduleDoneStatus != 1) {
+			// TODO: Sound1ChList_setSoundValuesMulti(dword_4B7FC8, true, 0, 0, 0, 0):
+			createScene3005(1);
+			_childObject->handleUpdate();
+		} else if (getGlobalVar(0xF0402B0A)) {
+			createSmackerScene(getGlobalVar(0xF0402B0A), true, true, false);
+			SetUpdateHandler(&Module3000::updateScene3002b);
+		} else {
+			// TODO: Sound1ChList_setSoundValuesMulti(dword_4B7FC8, true, 0, 0, 0, 0);
+			createScene3005(1);
+			_childObject->handleUpdate();
+		}
+	}
 }
 
 void Module3000::updateScene3010() {
@@ -516,7 +535,7 @@ static const uint32 kScene3009SmackerFileHashes[] = {
 	0x340A0049
 };
 
-static const uint32 kScene3009VarValues[] = {
+static const uint32 kScene3009CannonLocationFileHashes[] = {
 	0x00000000,
 	0x8004001B,
 	0x0004001A,
@@ -534,17 +553,17 @@ static const uint32 kScene3009VarValues[] = {
 	0x240A1101
 };
 
-static const uint32 kClass439FileHashes[] = {
+static const uint32 kSsScene3009SymbolEdgesFileHashes[] = {
 	0x618827A0,
 	0xB1A92322
 };
 
-static const uint32 kClass440FileHashes[] = {
+static const uint32 kSsScene3009TargetLineFileHashes[] = {
 	0x4011018C,
 	0x15086623
 };
 
-static const NPoint kClass524Points[] = {
+static const NPoint kAsScene3009SymbolPoints[] = {
 	{289, 338},
 	{285, 375},
 	{284, 419},
@@ -553,12 +572,12 @@ static const NPoint kClass524Points[] = {
 	{541, 372}
 };
 
-static const uint32 kClass524FileHashes[] = {
+static const uint32 kAsScene3009SymbolFileHashes[] = {
 	0x24542582,
 	0x1CD61D96
 };
 
-static const uint32 kClass441FileHashes1[] = {
+static const uint32 kSsScene3009SymbolArrowFileHashes1[] = {
 	0x24016060,  
 	0x21216221,
 	0x486160A0,
@@ -573,7 +592,7 @@ static const uint32 kClass441FileHashes1[] = {
 	0x20212004
 };
 
-static const uint32 kClass441FileHashes2[] = {
+static const uint32 kSsScene3009SymbolArrowFileHashes2[] = {
 	0x40092024, 
 	0x01636002,
 	0x8071E028,
@@ -588,7 +607,7 @@ static const uint32 kClass441FileHashes2[] = {
 	0x28616460
 };
 
-Class438::Class438(NeverhoodEngine *vm, Scene3009 *parentScene)
+SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene)
 	: StaticSprite(vm, 1400), _soundResource(vm), _parentScene(parentScene),
 	_flag1(false) {
 	
@@ -607,12 +626,12 @@ Class438::Class438(NeverhoodEngine *vm, Scene3009 *parentScene)
 	_surface->setVisible(false);
 	processDelta();
 	_needRefresh = true;
-	SetUpdateHandler(&Class438::update);
-	SetMessageHandler(&Class438::handleMessage);
+	SetUpdateHandler(&SsScene3009FireCannonButton::update);
+	SetMessageHandler(&SsScene3009FireCannonButton::handleMessage);
 	_soundResource.load(0x3901B44F);
 }
 
-void Class438::update() {
+void SsScene3009FireCannonButton::update() {
 	StaticSprite::update();
 	if (_flag1 && !_soundResource.isPlaying()) {
 		_parentScene->sendMessage(0x2000, 0, this);
@@ -620,7 +639,7 @@ void Class438::update() {
 	}
 }
 
-uint32 Class438::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 SsScene3009FireCannonButton::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
@@ -635,10 +654,10 @@ uint32 Class438::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
-Class439::Class439(NeverhoodEngine *vm, int index)
+SsScene3009SymbolEdges::SsScene3009SymbolEdges(NeverhoodEngine *vm, int index)
 	: StaticSprite(vm, 1400), _blinkCountdown(0) {
 
-	_spriteResource.load2(kClass439FileHashes[index]);
+	_spriteResource.load2(kSsScene3009SymbolEdgesFileHashes[index]);
 	createSurface(600, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
@@ -652,10 +671,10 @@ Class439::Class439(NeverhoodEngine *vm, int index)
 	} else {
 		startBlinking();
 	}
-	SetUpdateHandler(&Class439::update);
+	SetUpdateHandler(&SsScene3009SymbolEdges::update);
 }
 
-void Class439::update() {
+void SsScene3009SymbolEdges::update() {
 	if (_blinkCountdown != 0 && (--_blinkCountdown == 0)) {
 		if (_blinkToggle) {
 			_surface->setVisible(true);
@@ -668,29 +687,29 @@ void Class439::update() {
 	}
 }
 
-void Class439::show() {
+void SsScene3009SymbolEdges::show() {
 	_surface->setVisible(true);
 	StaticSprite::update();
 	_blinkCountdown = 0;
 }
 
-void Class439::hide() {
+void SsScene3009SymbolEdges::hide() {
 	_surface->setVisible(false);
 	StaticSprite::update();
 	_blinkCountdown = 0;
 }
 
-void Class439::startBlinking() {
+void SsScene3009SymbolEdges::startBlinking() {
 	_surface->setVisible(true);
 	StaticSprite::update();
 	_blinkCountdown = 3;
 	_blinkToggle = true;
 }
 
-Class440::Class440(NeverhoodEngine *vm, int index)
+SsScene3009TargetLine::SsScene3009TargetLine(NeverhoodEngine *vm, int index)
 	: StaticSprite(vm, 1400) {
 
-	_spriteResource.load2(kClass440FileHashes[index]);
+	_spriteResource.load2(kSsScene3009TargetLineFileHashes[index]);
 	createSurface(600, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
@@ -702,7 +721,72 @@ Class440::Class440(NeverhoodEngine *vm, int index)
 	_needRefresh = true;
 }
 
-Class522::Class522(NeverhoodEngine *vm, Scene3009 *parentScene, int index)
+void SsScene3009TargetLine::show() {
+	_surface->setVisible(true);
+	StaticSprite::update();
+}
+
+SsScene3009SymbolArrow::SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSymbol, int index)
+	: StaticSprite(vm, 1400), _soundResource(vm), _asSymbol(asSymbol), 
+	_index(index), _enabled(true), _countdown(0) {
+
+	_incrDecr = _index % 2;
+
+	_spriteResource.load2(kSsScene3009SymbolArrowFileHashes2[_index]);
+	createSurface(1200, 33, 31);
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = 33;
+	_drawRect.height = 31;
+	_deltaRect = _drawRect;
+	processDelta();
+	_needRefresh = true;
+	SetUpdateHandler(&SsScene3009SymbolArrow::update);
+	SetMessageHandler(&SsScene3009SymbolArrow::handleMessage);
+	_soundResource.load(0x2C852206);
+}
+
+void SsScene3009SymbolArrow::hide() {
+	_enabled = false;
+	_surface->setVisible(false);
+}
+
+void SsScene3009SymbolArrow::update() {
+	StaticSprite::update();
+	if (_countdown != 0 && (--_countdown == 0)) {
+		_spriteResource.load2(kSsScene3009SymbolArrowFileHashes2[_index]);
+		_needRefresh = true;
+		_drawRect.x = 0;
+		_drawRect.y = 0;
+		_drawRect.width = _spriteResource.getDimensions().width;
+		_drawRect.height = _spriteResource.getDimensions().height;
+	}
+}
+
+uint32 SsScene3009SymbolArrow::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (_enabled && _countdown == 0) {
+			_countdown = 2;
+			_spriteResource.load2(kSsScene3009SymbolArrowFileHashes1[_index]);
+			_needRefresh = true;
+			_drawRect.x = 0;
+			_drawRect.y = 0;
+			_drawRect.width = _spriteResource.getDimensions().width;
+			_drawRect.height = _spriteResource.getDimensions().height;
+			_soundResource.play();
+			_asSymbol->sendMessage(0x2005, _incrDecr, this);
+		}
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+AsScene3009VerticalIndicator::AsScene3009VerticalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, int index)
 	: AnimatedSprite(vm, 1000), _parentScene(parentScene), _enabled(false) {
 
 	_x = 300;
@@ -712,17 +796,17 @@ Class522::Class522(NeverhoodEngine *vm, Scene3009 *parentScene, int index)
 	updatePosition();
 	_surface->setVisible(false);
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class522::handleMessage);
+	SetMessageHandler(&AsScene3009VerticalIndicator::handleMessage);
 }
 
-void Class522::show() {
+void AsScene3009VerticalIndicator::show() {
 	setFileHash(0xC2463913, 0, -1);
 	_surface->setVisible(true);
 	updatePosition();
 	_enabled = true;
 }
 
-uint32 Class522::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene3009VerticalIndicator::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
@@ -735,13 +819,136 @@ uint32 Class522::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
+AsScene3009HorizontalIndicator::AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 varValue)
+	: AnimatedSprite(vm, 1000), _parentScene(parentScene), _enabled(false) {
+	
+	_x = getGlobalVar(0x9040018A) ? 533 : 92;
+	_y = 150;
+	createSurface1(0xC0C12954, 1200);
+	_needRefresh = true;
+	updatePosition();
+	_surface->setVisible(false);
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene3009HorizontalIndicator::handleMessage);
+	if (varValue == 8 || varValue == 9 || varValue == 10) {
+		SetSpriteCallback(&AsScene3009HorizontalIndicator::suMoveRight);
+		_x = 280;
+	}
+}
+
+uint32 AsScene3009HorizontalIndicator::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (_enabled) {
+			_parentScene->sendMessage(0x2004, 0, this);
+		}
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene3009HorizontalIndicator::suMoveLeft() {
+	_x -= 6;
+	if (_x < 92) {
+		SetSpriteCallback(NULL);
+		_x = 92;
+	}
+}
+
+void AsScene3009HorizontalIndicator::suMoveRight() {
+	_x += 6;
+	if (_x > 533) {
+		SetSpriteCallback(NULL);
+		_x = 533;
+	}
+}
+
+void AsScene3009HorizontalIndicator::show() {
+	setFileHash(0xC0C12954, 0, -1);
+	_surface->setVisible(true);
+	updatePosition();
+	_enabled = true;
+}
+
+void AsScene3009HorizontalIndicator::stMoveLeft() {
+	_x = 533;
+	SetSpriteCallback(&AsScene3009HorizontalIndicator::suMoveLeft);
+}
+
+void AsScene3009HorizontalIndicator::stMoveRight() {
+	_x = 330;
+	SetSpriteCallback(&AsScene3009HorizontalIndicator::suMoveRight);
+}
+
+AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int index)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _index(index) {
+
+	_symbolIndex = getSubVar(0x00000914, _index);
+	
+	_x = kAsScene3009SymbolPoints[_index].x;
+	_y = kAsScene3009SymbolPoints[_index].y;
+	createSurface1(kAsScene3009SymbolFileHashes[_index / 3], 1200);
+	setFileHash(kAsScene3009SymbolFileHashes[_index / 3], _symbolIndex, -1);
+	_newHashListIndex = _symbolIndex;
+	_needRefresh = true;
+	updatePosition();
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene3009Symbol::handleMessage);
+
+	_ssArrowPrev = new SsScene3009SymbolArrow(_vm, this, _index * 2 + 0);
+	_parentScene->addSprite(_ssArrowPrev);
+	_vm->_collisionMan->addSprite(_ssArrowPrev);
+
+	_ssArrowNext = new SsScene3009SymbolArrow(_vm, this, _index * 2 + 1);
+	_parentScene->addSprite(_ssArrowNext);
+	_vm->_collisionMan->addSprite(_ssArrowNext);
+
+}
+
+uint32 AsScene3009Symbol::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2005:
+		if (param.asInteger()) {
+			if (_symbolIndex == 11)
+				_symbolIndex = 0;
+			else
+				_symbolIndex++;
+		} else {
+			if (_symbolIndex == 0)
+				_symbolIndex = 11;
+			else
+				_symbolIndex--;
+		}
+		setFileHash(kAsScene3009SymbolFileHashes[_index / 3], _symbolIndex, -1);
+		_newHashListIndex = _symbolIndex;
+		setSubVar(0x00000914, _index, _symbolIndex);
+		if (_index / 3 == 0) {
+			_parentScene->sendMessage(0x2001, 0, this);
+		} else {
+			_parentScene->sendMessage(0x2003, 0, this);
+		}
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene3009Symbol::hide() {
+	_ssArrowPrev->hide();
+	_ssArrowNext->hide();
+}
+
 Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _flag1(false), _flag2(false), 
-	_flag3(false), _flag4(false), _countdown1(1), _countdown2(1) {
+	: Scene(vm, parentModule, true), _keepVideo(false), _flag2(false), 
+	/*_flag3(false), */_flag4(false), _lockSymbolsPart1Countdown(1), _lockSymbolsPart2Countdown(1) {
+
+	_cannonLocation = getGlobalVar(0x20580A86);
+	debug("_cannonLocation = %d", _cannonLocation);
 	
-	_varValue = getGlobalVar(0x20580A86);
-	
-	// TODO _vm->gameModule()->initScene3009Vars();
+	_vm->gameModule()->initScene3009Vars();
 	
 	setGlobalVar(0xF0402B0A, 0);
 	_surfaceFlag = true;
@@ -750,137 +957,129 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_background = addBackground(new DirtyBackground(_vm, 0xD000420C, 0, 0));
 	_palette = new Palette(_vm, 0xD000420C);
-	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse435(_vm, 0x04208D08, 20, 620));
 
-    _class438 = addSprite(new Class438(_vm, this));
-    _vm->_collisionMan->addSprite(_class438);
+	_ssFireCannonButton = addSprite(new SsScene3009FireCannonButton(_vm, this));
+	_vm->_collisionMan->addSprite(_ssFireCannonButton);
 
-    _class522 = new Class522(_vm, this, _varValue);
-    addSprite(_class522);
-    _vm->_collisionMan->addSprite(_class522);
+	_asVerticalIndicator = new AsScene3009VerticalIndicator(_vm, this, _cannonLocation);
+	addSprite(_asVerticalIndicator);
+	_vm->_collisionMan->addSprite(_asVerticalIndicator);
 
-#if 0
-    _class523 = new Class523(_vm, this, _varValue);
-    addSprite(_class523);
-    _vm->_collisionMan->addSprite(_class523);
-#endif
+	_asHorizontalIndicator = new AsScene3009HorizontalIndicator(_vm, this, _cannonLocation);
+	addSprite(_asHorizontalIndicator);
+	_vm->_collisionMan->addSprite(_asHorizontalIndicator);
 
-	if (_varValue != 0 && _varValue != 8 && _varValue != 9 && _varValue != 9) {
-		_flag1 = true;
+	if (_cannonLocation != 0 && _cannonLocation != 8 && _cannonLocation != 9 && _cannonLocation != 10) {
+		_keepVideo = true;
 	} else {
-		_flag1 = false;
-		if (_varValue == 0) {
-#if 0		
-			_class523->stMoveUp();
-#endif			
+		_keepVideo = false;
+		if (_cannonLocation != 0) {
+			_asHorizontalIndicator->stMoveRight();
 			_flag4 = true;
 		}
 	}
 
-	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009SmackerFileHashes[_varValue], false, _flag1));
+	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009SmackerFileHashes[_cannonLocation], false, _keepVideo));
 	_smackerPlayer->setDrawPos(89, 37);
+	_palette->usePalette();
 
 	addSprite(new StaticSprite(_vm, 0x8540252C, 400));
 
 	for (int i = 0; i < 2; i++) {
-		_class439Array[i] = new Class439(_vm, i);
-		addSprite(_class439Array[i]);
-		_class440Array[i] = new Class440(_vm, i);
-		addSprite(_class440Array[i]);
+		_ssSymbolEdges[i] = new SsScene3009SymbolEdges(_vm, i);
+		addSprite(_ssSymbolEdges[i]);
+		_ssTargetLines[i] = new SsScene3009TargetLine(_vm, i);
+		addSprite(_ssTargetLines[i]);
 	}
 
 
-#if 0
 	for (int i = 0; i < 6; i++) {
-		_class524Array[i] = new Class524(_vm, this, i);
-		addSprite(_class524Array[i]);
+		_asSymbols[i] = new AsScene3009Symbol(_vm, this, i);
+		addSprite(_asSymbols[i]);
 		if (i < 3)
-			_varValueArray[i] = getSubVar(0x00504B86, i);
+			_correctSymbols[i] = getSubVar(0x00504B86, i);
 		else
-			_varValueArray[i] = getSubVar(0x0A4C0A9A, i - 3);
+			_correctSymbols[i] = getSubVar(0x0A4C0A9A, i - 3);
 	}
-#endif
 
 	SetMessageHandler(&Scene3009::handleMessage);
 	SetUpdateHandler(&Scene3009::update);
+
+	// DEBUG: Set the correct code
+	for (int i = 0; i < 6; i++)
+		setSubVar(0x00000914, i, _correctSymbols[i]);
+	sendMessage(0x2003, 0, this);
+	//setGlobalVar(0x610210B7, 1);   
+
 }
 
 void Scene3009::update() {
 	Scene::update();
-	if (!_flag1 && _smackerPlayer->getFrameNumber() + 1 == _smackerPlayer->getFrameCount() && _varValue <= 14) {
-		switch (_varValue) {
+	
+	if (!_keepVideo && _smackerPlayer->getFrameNumber() + 1 == _smackerPlayer->getFrameCount() && _cannonLocation <= 14) {
+		switch (_cannonLocation) {
 		case 0:
 		case 14:
 			_smackerPlayer->open(0x340A0049, true);
 			_palette->usePalette();
-			_flag1 = true;
+			_keepVideo = true;
 			break;
 		case 8:
 			_smackerPlayer->open(0x0082080D, true);
 			_palette->usePalette();
-			_flag1 = true;
+			_keepVideo = true;
 			_flag4 = false;
 			break;
 		case 9:
 			_smackerPlayer->open(0x0282080D, true);
 			_palette->usePalette();
-			_flag1 = true;
+			_keepVideo = true;
 			_flag4 = false;
 			break;
 		case 10:
 			_smackerPlayer->open(0x0882080D, true);
 			_palette->usePalette();
-			_flag1 = true;
+			_keepVideo = true;
 			_flag4 = false;
 			break;
 		case 11:
 		case 12:
 		case 13:
 			if (_flag2) {
-				if (_varValue == 11)
+				if (_cannonLocation == 11)
 					_smackerPlayer->open(0x110A000F, false);
-				else if (_varValue == 12)				
+				else if (_cannonLocation == 12)				
 					_smackerPlayer->open(0x500B004F, false);
-				else if (_varValue == 13)				
+				else if (_cannonLocation == 13)				
 					_smackerPlayer->open(0x100B010E, false);
 				_palette->usePalette();
 				_flag2 = false;
-#if 0				
-				_class523->stMoveDown();
-#endif				
+				_asHorizontalIndicator->stMoveLeft();
 			} else {
-				sub462DC0();
+				playExtVideo();
 			}
 			break;
 		}
 	}
 
-	if (_countdown1 != 0 && (--_countdown1 == 0) && sub462E10()) {
-#if 0
+	if (_lockSymbolsPart1Countdown != 0 && (--_lockSymbolsPart1Countdown == 0) && isSymbolsPart1Solved()) {
 		for (int i = 0; i < 3; i++)
-			_class524Array[i]->hide();
-#endif
+			_asSymbols[i]->hide();
 		if (!getGlobalVar(0x0C0288F4) || getGlobalVar(0x000809C2) || getGlobalVar(0x9040018A)) {
-			_class439Array[0]->show();
-			_class440Array[0]->getSurface()->setVisible(true);
-			// TODO _class440Array->StaticSprite_update
-			_class522->show();
+			_ssSymbolEdges[0]->show();
+			_ssTargetLines[0]->show();
+			_asVerticalIndicator->show();
 		}
 	}
 
-	if (_countdown2 != 0 && (--_countdown2 == 0) && sub462E50()) {
-#if 0
-		for (int i = 0; i < 6; i++)
-			_class524Array[i]->hide();
-#endif
+	if (_lockSymbolsPart2Countdown != 0 && (--_lockSymbolsPart2Countdown == 0) && isSymbolsPart2Solved()) {
+		for (int i = 3; i < 6; i++)
+			_asSymbols[i]->hide();
 		if (!getGlobalVar(0x0C0288F4) || getGlobalVar(0x000809C2) || getGlobalVar(0x9040018A)) {
-			_class439Array[1]->show();
-			_class440Array[1]->getSurface()->setVisible(true);
-#if 0
-			// TODO _class440Array[1]->StaticSprite_update
-			_class523->show();
-#endif
+			_ssSymbolEdges[1]->show();
+			_ssTargetLines[1]->show();
+			_asHorizontalIndicator->show();
 		}
 	}
 
@@ -902,104 +1101,104 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (!getGlobalVar(0x000809C2)) {
 			if (!getGlobalVar(0x10938830)) {
-				_varValue = 1;
+				_cannonLocation = 1;
 				setGlobalVar(0x10938830, 1);
 			} else {
-				_varValue = 2;
+				_cannonLocation = 2;
 			}
 		} else if (!getGlobalVar(0x9040018A)) {
-			_varValue = 3;
+			_cannonLocation = 3;
 		} else if (!getGlobalVar(0x610210B7)) {
-			_varValue = 4;
+			_cannonLocation = 4;
 		} else if (!getGlobalVar(0x0C0288F4)) {
 			setGlobalVar(0x0C0288F4, 1);
-			_varValue = 5;
+			_cannonLocation = 5;
 		} else {
-			_varValue = 6;
+			_cannonLocation = 6;
 		}
-		sub462DC0();
+		playExtVideo();
 		break;
 	case 0x2001:
-		_countdown1 = 24;
+		_lockSymbolsPart1Countdown = 24;
 		break;
 	case 0x2002:
 		if (!getGlobalVar(0x9040018A) && !_flag4) {
 			if (getGlobalVar(0x000809C2)) {
-				_varValue = 14;
+				_cannonLocation = 14;
 				setGlobalVar(0x000809C2, 0);
 			} else {
-				_varValue = 7;
+				_cannonLocation = 7;
 				setGlobalVar(0x000809C2, 1);
 			}
-			sub462DC0();
+			playExtVideo();
 		}
 		break;
 	case 0x2003:
-		_countdown2 = 24;
+		_lockSymbolsPart2Countdown = 24;
 		break;
 	case 0x2004:
 		if (getGlobalVar(0x000809C2)) {
 			if (!getGlobalVar(0x9040018A)) {
 				if (!getGlobalVar(0x610210B7)) {
-					_varValue = 8;
+					_cannonLocation = 8;
+				} else if (!getGlobalVar(0x0C0288F4)) {
+					_cannonLocation = 9;
 				} else {
-					if (!getGlobalVar(0x0C0288F4)) {
-						_varValue = 9;
-					} else {
-						_varValue = 10;
-					}
+					_cannonLocation = 10;
 				}
 				setGlobalVar(0x9040018A, 1);
 				_flag4 = true;
-				sub462DC0();
-			} else if (!getGlobalVar(0x610210B7)) {
-				_varValue = 11;
-				_smackerPlayer->open(0x108A000F, false);
-			} else if (!getGlobalVar(0x0C0288F4)) {
-				_varValue = 12;
-				_smackerPlayer->open(0x500B002F, false);
+				playExtVideo();
 			} else {
-				_varValue = 13;
-				_smackerPlayer->open(0x100B008E, false);
+				if (!getGlobalVar(0x610210B7)) {
+					_cannonLocation = 11;
+					_smackerPlayer->open(0x108A000F, false);
+				} else if (!getGlobalVar(0x0C0288F4)) {
+					_cannonLocation = 12;
+					_smackerPlayer->open(0x500B002F, false);
+				} else {
+					_cannonLocation = 13;
+					_smackerPlayer->open(0x100B008E, false);
+				}
+				_palette->usePalette();
+				_flag2 = true;
+				_flag4 = true;
+				_keepVideo = false;
+				setGlobalVar(0x9040018A, 0);
 			}
-			_palette->usePalette();
-			_flag2 = true;
-			_flag4 = true;
-			_flag1 = false;
-			setGlobalVar(0x9040018A, 0);
 		}
 		break;
 	}
 	return 0;
 }
 
-void Scene3009::sub462DC0() {
-	setGlobalVar(0x20580A86, _varValue);
-	setGlobalVar(0xF0402B0A, kScene3009VarValues[_varValue]);
+void Scene3009::playExtVideo() {
+	setGlobalVar(0x20580A86, _cannonLocation);
+	setGlobalVar(0xF0402B0A, kScene3009CannonLocationFileHashes[_cannonLocation]);
 	_parentModule->sendMessage(0x1009, 1, this);
 }
 
-bool Scene3009::sub462E10() {
+bool Scene3009::isSymbolsPart1Solved() {
 	for (int i = 0; i < 3; i++)
-		if (_varValueArray[i] != getSubVar(0x00000914, i))
+		if (_correctSymbols[i] != getSubVar(0x00000914, i))
 			return false;
 	return true;
 }
 
-bool Scene3009::sub462E50() {
-	for (int i = 0; i < 6; i++)
-		if (_varValueArray[i] != getSubVar(0x00000914, i))
+bool Scene3009::isSymbolsPart2Solved() {
+	for (int i = 3; i < 6; i++)
+		if (_correctSymbols[i] != getSubVar(0x00000914, i))
 			return false;
 	return true;
 }
 
 bool Scene3009::sub462E90() {
-	return _flag3 || _flag4;
+	return /*_flag3 || */_flag4;
 }
 
 // Scene3010
 
-static const uint32 kScene3010VarNameHashes[] = {
+static const uint32 kScene3010ButtonNameHashes[] = {
 	0x304008D2,
 	0x40119852,
 	0x01180951
@@ -1042,7 +1241,7 @@ SsScene3010DeadBoltButton::SsScene3010DeadBoltButton(NeverhoodEngine *vm, Scene 
 
 	NDimensions dimensions1, dimensions2;
 	 
-	_buttonEnabled = getSubVar(0x14800353, kScene3010VarNameHashes[_buttonIndex]) != 0;
+	_buttonEnabled = getSubVar(0x14800353, kScene3010ButtonNameHashes[_buttonIndex]) != 0;
 	_spriteResource.load2(kScene3010DeadBoltButtonFileHashes1[_buttonIndex]);
 	dimensions1 = _spriteResource.getDimensions();
 	_spriteResource.load2(kScene3010DeadBoltButtonFileHashes2[_buttonIndex]);
@@ -1133,10 +1332,10 @@ AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene
 	_parentScene(parentScene), _boltIndex(boltIndex), _soundToggle(true), _unlocked(false), _locked(false),
 	_countdown(0) {
 
-    _x = kAsScene3010DeadBoltPoints[_boltIndex].x;
-    _y = kAsScene3010DeadBoltPoints[_boltIndex].y;
+	_x = kAsScene3010DeadBoltPoints[_boltIndex].x;
+	_y = kAsScene3010DeadBoltPoints[_boltIndex].y;
 
-	if (getSubVar(0x14800353, kScene3010VarNameHashes[_boltIndex])) {
+	if (getSubVar(0x14800353, kScene3010ButtonNameHashes[_boltIndex])) {
 		createSurface1(kAsScene3010DeadBoltFileHashes1[_boltIndex], 1200);
 		setFileHash(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
 		_soundResource1.load(0x46005BC4);
@@ -1249,9 +1448,9 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	int initCountdown = 0;
 
 	// DEBUG: Enable all buttons
-    setSubVar(0x14800353, kScene3010VarNameHashes[0], 1);
-    setSubVar(0x14800353, kScene3010VarNameHashes[1], 1);
-    setSubVar(0x14800353, kScene3010VarNameHashes[2], 1);
+	setSubVar(0x14800353, kScene3010ButtonNameHashes[0], 1);
+	setSubVar(0x14800353, kScene3010ButtonNameHashes[1], 1);
+	setSubVar(0x14800353, kScene3010ButtonNameHashes[2], 1);
 
 	_surfaceFlag = true;
 
@@ -1265,7 +1464,7 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 		_ssDeadBoltButtons[i] = new SsScene3010DeadBoltButton(_vm, this, i, initCountdown, which == 1);//CHECKME
 		addSprite(_ssDeadBoltButtons[i]);
 		_vm->_collisionMan->addSprite(_ssDeadBoltButtons[i]);
-		if (getSubVar(0x14800353, kScene3010VarNameHashes[i]))
+		if (getSubVar(0x14800353, kScene3010ButtonNameHashes[i]))
 			initCountdown++;
 		_boltUnlocking[i] = false;
 		_boltUnlocked[i] = false;
