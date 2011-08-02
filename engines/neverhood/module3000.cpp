@@ -221,7 +221,9 @@ void Module3000::createScene3010(int which) {
 }
 
 void Module3000::createScene3011(int which) {
-	// TODO
+	_vm->gameState().sceneNum = 10;
+	_childObject = new Scene3011(_vm, this, 0);
+	SetUpdateHandler(&Module3000::updateScene3011);
 }
 
 void Module3000::createScene3012(int which) {
@@ -403,6 +405,9 @@ void Module3000::updateScene3004() {
 		_moduleDone = false;
 		delete _childObject;
 		_childObject = NULL;
+		
+		debug("_moduleDoneStatus = %d", _moduleDoneStatus);
+		
 		if (_moduleDoneStatus == 1) {
 			createScene3005(0);
 			_childObject->handleUpdate();
@@ -501,8 +506,8 @@ void Module3000::updateScene3009() {
 
 void Module3000::updateScene3010() {
 	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
+	if (_moduleDone) {
+		_moduleDone = false;
 		delete _childObject;
 		_childObject = NULL;
 		if (_moduleDoneStatus == 0 || _moduleDoneStatus == 2) {
@@ -512,6 +517,17 @@ void Module3000::updateScene3010() {
 			createScene3002b(-1);
 			_childObject->handleUpdate();
 		}
+	}
+}
+
+void Module3000::updateScene3011() {
+	_childObject->handleUpdate();
+	if (_moduleDone) {
+		_moduleDone = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene3004(3);
+		_childObject->handleUpdate();
 	}
 }
 
@@ -1556,6 +1572,253 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return 0;
+}
+
+// Scene3011
+
+static const uint32 kAsScene3011SymbolFileHashes[] = {
+	0x00C88050,
+	0x01488050,
+	0x02488050,
+	0x04488050,
+	0x08488050,
+	0x10488050,
+	0x20488050,
+	0x40488050,
+	0x80488050,
+	0x00488051,
+	0x00488052,
+	0x00488054,
+	0x008B0000,
+	0x008D0000,
+	0x00810000,
+	0x00990000,
+	0x00A90000,
+	0x00C90000,
+	0x00090000,
+	0x01890000,
+	0x02890000,
+	0x04890000,
+	0x08890000,
+	0x10890000
+};
+
+SsScene3011Button::SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bool flag)
+	: StaticSprite(vm, 1400), _parentScene(parentScene), _soundResource(vm),
+	_countdown(0) {
+	
+	if (flag) {
+		_spriteResource.load2(0x11282020);
+	} else {
+		_spriteResource.load2(0x994D0433);
+	}
+	_soundResource.load(0x44061000);
+	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_deltaRect.x = 0;
+	_deltaRect.y = 0;
+	_deltaRect.width = _spriteResource.getDimensions().width;
+	_deltaRect.height = _spriteResource.getDimensions().height;
+	_surface->setVisible(false);
+	processDelta();
+	_needRefresh = true;
+	SetUpdateHandler(&SsScene3011Button::update);
+	SetMessageHandler(&SsScene3011Button::handleMessage);
+}
+
+void SsScene3011Button::update() {
+	StaticSprite::update();
+	if (_countdown != 0 && (--_countdown == 0)) {
+		_surface->setVisible(false);
+	}
+}
+
+uint32 SsScene3011Button::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = 0;
+	StaticSprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (_countdown == 0) {
+			_surface->setVisible(true);
+			_countdown = 4;
+			_parentScene->sendMessage(0x2000, 0, this);
+			_soundResource.play();
+		}
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+AsScene3011Symbol::AsScene3011Symbol(NeverhoodEngine *vm, int index, bool flag)
+	: AnimatedSprite(vm, 1000), _soundResource1(vm), _soundResource2(vm),
+	_index(index), _flag1(flag), _flag2(false) {
+
+	if (flag) {
+		_x = 310;
+		_y = 200;
+		createSurface1(kAsScene3011SymbolFileHashes[_index], 1200);
+		_soundResource1.load(0x6052C60F);
+		_soundResource2.load(0x6890433B);
+	} else {
+		_index = 12;
+		_x = index * 39 + 96;
+		_y = 225;
+		createSurface(1200, 41, 48);
+		_soundResource1.load(0x64428609);
+		_soundResource2.load(0x7080023B);
+	}
+	_surface->setVisible(false);
+	_needRefresh = true;
+	SetUpdateHandler(&AnimatedSprite::update);
+}
+
+void AsScene3011Symbol::show(bool flag) {
+	_flag2 = flag;
+	setFileHash(kAsScene3011SymbolFileHashes[_index], 0, -1);
+	_surface->setVisible(true);
+	if (flag) {
+		_soundResource2.play();
+	} else {
+		_soundResource1.play();
+	}
+}
+
+void AsScene3011Symbol::hide() {
+	setFileHash1();
+	_surface->setVisible(false);
+}
+
+void AsScene3011Symbol::stopSound() {
+	if (_flag2) {
+		_soundResource2.stop();
+	} else {
+		_soundResource2.stop();
+	}
+}
+
+void AsScene3011Symbol::change(int index, bool flag) {
+	_index = index;
+	_flag2 = flag;
+	setFileHash(kAsScene3011SymbolFileHashes[_index], 0, -1);
+	_surface->setVisible(true);
+	if (flag) {
+		_soundResource2.play();
+	} else {
+		_soundResource1.play();
+	}
+}
+
+Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _updateStatus(0), _buttonClicked(false), _index2(0) {
+
+	Palette2 *palette2;
+	
+	_surfaceFlag = true;
+
+	// TODO _vm->gameModule()->initScene3011Vars();
+	_index1 = getGlobalVar(0x2414C2F2);
+
+	_background = addBackground(new DirtyBackground(_vm, 0x92124A04, 0, 0));
+
+	palette2 = new Palette2(_vm, 0xA4070114);
+	addEntity(palette2);
+	palette2->usePalette();
+	_palette = palette2;
+
+	_mouseCursor = addSprite(new Mouse435(_vm, 0x24A00929, 20, 620));
+
+	for (int i = 0; i < 12; i++) {
+		_asSymbols[i] = new AsScene3011Symbol(_vm, i, true);
+		addSprite(_asSymbols[i]);
+	}
+
+	_ssButton = addSprite(new SsScene3011Button(_vm, this, true));
+	_vm->_collisionMan->addSprite(_ssButton);
+	
+	SetUpdateHandler(&Scene3011::update);
+	SetMessageHandler(&Scene3011::handleMessage);
+	
+}
+
+void Scene3011::update() {
+	Scene::update();
+	
+	if (_countdown != 0 && (--_countdown == 0)) {
+		switch (_updateStatus) {
+		case 0:
+			if (_buttonClicked) {
+				if (_index1 == _index2) {
+					do {
+						_index3 = _vm->_rnd->getRandomNumber(12 - 1);
+					} while (_index1 == _index3);
+					_asSymbols[getSubVar(0x04909A50, _index3)]->show(true);
+				} else {
+					_asSymbols[getSubVar(0x04909A50, _index2)]->show(false);
+				}
+				_updateStatus = 1;
+				_countdown = 24;
+				fadeIn();
+				_buttonClicked = false;
+			}
+			break;
+		case 1:
+			_updateStatus = 2;
+			_countdown = 24;
+			break;
+		case 2:
+			fadeOut();
+			_updateStatus = 3;
+			_countdown = 24;
+			break;
+		case 3:
+			_updateStatus = 0;
+			_countdown = 1;
+			if (_index1 == _index2) {
+				_asSymbols[getSubVar(0x04909A50, _index3)]->hide();
+			} else {
+				_asSymbols[getSubVar(0x04909A50, _index2)]->hide();
+			}
+			_index2++;
+			if (_index2 >= 12)
+				_index2 = 0;
+			break;
+		}
+	}
+}
+
+uint32 Scene3011::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
+		break;
+	case 0x2000:
+		_buttonClicked = true;
+		if (_countdown == 0)
+			_countdown = 1;
+		break;
+	}
+	return 0;
+}
+
+void Scene3011::fadeIn() {
+	Palette2 *palette2 = (Palette2*)_palette;
+	palette2->addPalette(0x92124A04, 0, 256, 0);
+	palette2->startFadeToPalette(24);
+}
+
+void Scene3011::fadeOut() {
+	Palette2 *palette2 = (Palette2*)_palette;
+	palette2->addPalette(0xA4070114, 0, 256, 0);
+	palette2->startFadeToPalette(24);
 }
 
 } // End of namespace Neverhood

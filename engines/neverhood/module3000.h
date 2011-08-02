@@ -62,6 +62,7 @@ protected:
 	void updateScene3007();			
 	void updateScene3009();			
 	void updateScene3010();			
+	void updateScene3011();			
 };
 
 // Scene3009
@@ -237,6 +238,52 @@ protected:
 	bool _boltUnlocking[3];
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+// Scene3011
+
+class SsScene3011Button : public StaticSprite {
+public:
+	SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bool flag);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource;
+	int _countdown;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene3011Symbol : public AnimatedSprite {
+public:
+	AsScene3011Symbol(NeverhoodEngine *vm, int index, bool flag);
+	void show(bool flag);
+	void hide();
+	void stopSound();
+	void change(int index, bool flag);
+protected:
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	bool _flag1;
+	bool _flag2;
+	int _index;
+};
+
+class Scene3011 : public Scene {
+public:
+	Scene3011(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_ssButton;
+	AsScene3011Symbol *_asSymbols[12];
+	int _updateStatus;
+	bool _buttonClicked;
+	int _countdown;
+	int _index1;
+	int _index2;   
+	int _index3;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void fadeIn();
+	void fadeOut();
 };
 
 } // End of namespace Neverhood

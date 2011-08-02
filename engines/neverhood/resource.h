@@ -199,6 +199,7 @@ public:
 	void load(uint32 fileHash);
 	void play(uint32 fileHash, bool looping = false);
 	void play();
+	void stop() { /*DUMMY*/ }
 protected:
 	NeverhoodEngine *_vm;	
 };
