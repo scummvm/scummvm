@@ -875,10 +875,7 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		break;
 
 	case 1011:
-		// args[4] is ignored!
-		// soccer passes the argument, but then ends up not using it
-		// Makes sense that they removed it for soccermls
-		res = op_1011(args[0], args[1], args[2], args[3], args[5]);
+		res = op_1011(args[0], args[1], args[2], args[3], args[4], args[5]);
 		break;
 
 	case 1012:
@@ -940,11 +937,8 @@ int LogicHEsoccer::startOfFrame() {
 	// This variable is some sort of flag that activates this mode
 	int res = (int)_userDataD[530];
 
-	// _userDataD[535] is not used!
-	// soccer passes the argument, but then ends up not using it
-	// Makes sense that they removed it for soccermls
 	if (res)
-		res = op_1011((int)_userDataD[531], (int)_userDataD[532], (int)_userDataD[533], (int)_userDataD[534], (int)_userDataD[536]);
+		res = op_1011((int)_userDataD[531], (int)_userDataD[532], (int)_userDataD[533], (int)_userDataD[534], (int)_userDataD[535], (int)_userDataD[536]);
 
 	return res;
 }
@@ -1174,7 +1168,7 @@ int LogicHEsoccer::op_1008(int a1, int a2, int a3, int a4, int a5, int a6, int a
 	return 1;
 }
 
-int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5) {
+int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6) {
 	// This is called on each frame by startOfFrame() if activated by op_1012.
 	// This seems to do player placement!
 
@@ -1191,7 +1185,7 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5) {
 		float v31 = (double)v30 / 100.0;
 
 		if (i < 13) {
-			int v25 = ((v32 + 2760) / 500 >= 0) ? ((v32 + 2750) / 500) : 0;
+			int v25 = ((v32 + 2750) / 500 >= 0) ? ((v32 + 2750) / 500) : 0;
 			int v24 = 10;
 
 			if (v25 <= 10) {
@@ -1214,8 +1208,8 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5) {
 				v21 = v20;
 			}
 
-			if (a5)
-				putInArray(a5, 0, i, v24 + 11 * v21);
+			if (a6)
+				putInArray(a6, 0, i, v24 + 11 * v21);
 		}
 
 		float v7 = atan2(_userDataD[524] - v28, (double)v31);
@@ -1253,7 +1247,7 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5) {
 		putInArray(a1, i, 2, (int)(v17 * 100.0));
 	}
 
-	op_1011_sub(a1, a3, a4, a4);
+	op_1011_sub(a1, a3, a4, a5);
 
 	return 1;
 }
@@ -1345,7 +1339,7 @@ int LogicHEsoccer::op_1012(int32 *args) {
 	_userDataD[532] = args[2];
 	_userDataD[533] = args[3];
 	_userDataD[534] = args[4];
-	_userDataD[535] = args[5]; // unused!!!
+	_userDataD[535] = args[5];
 	_userDataD[536] = args[6];
 
 	return 1;

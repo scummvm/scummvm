@@ -130,7 +130,7 @@ private:
 	int op_1006(int32 a1, int32 a2, int32 a3, int32 a4);
 	int op_1007(int32 *args);
 	int op_1008(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14, int a15, int a16, int a17, int a18, int a19);
-	int op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5);
+	int op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6);
 	int op_1012(int32 *args);
 	int op_1013(int32 a1, int32 a2, int32 a3);
 	int op_1014(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6, int32 a7, int32 a8, int32 a9, int32 a10, int32 a11, int32 a12, int32 a13, int32 a14);
