@@ -135,6 +135,7 @@ private:
 	int op_1013(int32 a1, int32 a2, int32 a3);
 	int op_1014(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6, int32 a7, int32 a8, int32 a9, int32 a10, int32 a11, int32 a12, int32 a13, int32 a14);
 	int op_1016(int32 *args);
+	int op_1017(int32 *args);
 	int op_1019(int32 *args);
 	int op_1020();
 	int op_1021(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6, int32 a7);

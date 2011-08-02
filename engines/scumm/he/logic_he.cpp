@@ -894,6 +894,10 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1016(args);
 		break;
 
+	case 1017:
+		res = op_1017(args);
+		break;
+
 	case 1019:
 		res = op_1019(args);
 		break;
@@ -2219,6 +2223,17 @@ int LogicHEsoccer::op_1016(int32 *args) {
 	}
 
 	return result;
+}
+
+int LogicHEsoccer::op_1017(int32 *args) {
+	// Used sporadically during a match (out of bounds?)
+	if (!args[1])
+		args[1] = 1;
+
+	double v3 = asin((double)args[0] / (double)args[1]);
+	writeScummVar(108, (int32)(v3 / 0.01745329251994328 * (double)args[1]));
+
+	return 1;
 }
 
 int LogicHEsoccer::op_1019(int32 *args) {
