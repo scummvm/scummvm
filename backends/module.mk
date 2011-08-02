@@ -15,7 +15,8 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
-	timer/default/default-timer.o
+	timer/default/default-timer.o \
+	updates/sparkle-updates.o
 
 
 ifdef USE_ELF_LOADER
@@ -87,7 +88,8 @@ endif
 ifdef MACOSX
 MODULE_OBJS += \
 	midi/coreaudio.o \
-	midi/coremidi.o
+	midi/coremidi.o \
+	updates/macosx/macosx-updates.o
 endif
 
 ifdef WIN32
