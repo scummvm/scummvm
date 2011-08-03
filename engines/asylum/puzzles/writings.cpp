@@ -47,7 +47,7 @@ PuzzleWritings::~PuzzleWritings() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleWritings::init(const AsylumEvent &evt)  {
+bool PuzzleWritings::init(const AsylumEvent &)  {
 	if (getScene()->getActor()->getField638() == 3)
 		_hasGlassMagnifier = true;
 	else
@@ -67,7 +67,7 @@ bool PuzzleWritings::init(const AsylumEvent &evt)  {
 	return false;
 }
 
-bool PuzzleWritings::update(const AsylumEvent &evt)  {
+bool PuzzleWritings::update(const AsylumEvent &)  {
 	// Adjust palette
 	if (rnd(10) < 7) {
 		getScreen()->setPalette(getWorld()->graphicResourceIds[6]);
@@ -101,7 +101,7 @@ bool PuzzleWritings::update(const AsylumEvent &evt)  {
 		// The original blits part of the background onto the surface (9) and then adds it to the queue
 
 		getScreen()->addGraphicToQueueMasked(getWorld()->graphicResourceIds[9], 0, mousePos, getWorld()->graphicResourceIds[8], mousePos, kDrawFlagNone, 2);
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[7], _frameIndex, mousePos, kDrawFlagNone, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[7], (uint32)_frameIndex, mousePos, kDrawFlagNone, 0, 1);
 	}
 
 	getScreen()->drawGraphicsInQueue();
@@ -110,7 +110,7 @@ bool PuzzleWritings::update(const AsylumEvent &evt)  {
 	return true;
 }
 
-bool PuzzleWritings::mouseRightUp(const AsylumEvent &evt) {
+bool PuzzleWritings::mouseRightUp(const AsylumEvent &) {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
 	getScreen()->stopPaletteFade(0, 0, 0);

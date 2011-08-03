@@ -144,7 +144,7 @@ void Connector::init(Peephole *n, Peephole *e, Peephole *s, Peephole *w, BinNum 
 	_isConnected = false;
 
 	for (uint32 i = 0; i < 4; ++i) {
-		if (_state & (1 << i) && _nodes[i]) {
+		if (_state & ((uint32)1 << i) && _nodes[i]) {
 			_nodes[i]->connect(this);
 			_connectedNodes.push_back(_nodes[i]);
 		}
@@ -175,8 +175,8 @@ void Connector::turn() {
 			oldIndex[1] = 2;
 		}
 	} else {
-		newIndex[0] = Common::intLog2(newState & delta);
-		oldIndex[0] = Common::intLog2(_state & delta);
+		newIndex[0] = (uint32)Common::intLog2(newState & delta);
+		oldIndex[0] = (uint32)Common::intLog2(_state & delta);
 	}
 
 	for (uint32 i = 0; i < (uint32)(delta == kBinNum1111 ? 2 : 1); ++i) {
@@ -254,13 +254,15 @@ void Connector::disconnect(Connector *connector) {
 //////////////////////////////////////////////////////////////////////////
 // Spider
 //////////////////////////////////////////////////////////////////////////
-Spider::Spider(Common::Rect rect, Common::String id) {
+Spider::Spider(const Common::Rect &rect, Common::String id) {
 	_boundingBox = rect;
 	_rnd = new Common::RandomSource(Common::String("pipes_spider") + id);
 	_isAlive = true;
-	_location.x = _rnd->getRandomNumber(_boundingBox.right - _boundingBox.left) + _boundingBox.left;
-	_location.y = _rnd->getRandomNumber(_boundingBox.bottom - _boundingBox.top) + _boundingBox.top;
-	_direction = Direction(1 << _rnd->getRandomNumber(3));
+	_location.x = (int16)_rnd->getRandomNumber((uint16)(_boundingBox.right - _boundingBox.left)) + _boundingBox.left;
+	_location.y = (int16)_rnd->getRandomNumber((uint16)(_boundingBox.bottom - _boundingBox.top)) + _boundingBox.top;
+	_direction = Direction((uint32)1 << _rnd->getRandomNumber(3));
+	_stepsNumber = 0;
+	_steps = 0;
 
 	randomize();
 }
@@ -270,7 +272,8 @@ void Spider::randomize(Direction excluded) {
 		_delta = Common::Point(0, 0);
 	else {
 		while (_direction == excluded)
-			_direction = Direction(1 << _rnd->getRandomNumber(3));
+			_direction = Direction((uint32)1 << _rnd->getRandomNumber(3));
+
 		_delta = Common::Point((_direction & kBinNum0010 ? 1 : 0) - (_direction & kBinNum1000 ? 1 : 0), (_direction & kBinNum0100 ? 1 : 0) - (_direction & kBinNum0001 ? 1 : 0));
 	}
 
@@ -300,11 +303,14 @@ Common::Point Spider::move() {
 PuzzlePipes::PuzzlePipes(AsylumEngine *engine) : Puzzle(engine) {
 	_previousMusicVolume = 0;
 	_rectIndex = -2;
-
 	_frameIndex = _frameIndexLever = 0;
-	memset(_previousLevels, 0, sizeof(_previousLevels));
 	memset(&_levelFlags, false, sizeof(_levelFlags));
 	_levelFlags[4] = true;
+	memset(&_levelValues, 0, sizeof(_levelValues));
+	memset(&_previousLevels, 0, sizeof(_previousLevels));
+	_isLeverReady = false;
+	memset(&_sinks, 0, sizeof(_sinks));
+	memset(&_sources, 0, sizeof(_sources));
 
 	_frameIndexSpider = NULL;
 }
@@ -315,14 +321,10 @@ PuzzlePipes::~PuzzlePipes() {
 	delete [] _frameIndexSpider;
 }
 
-void PuzzlePipes::reset() {
-	warning("[PuzzlePipes::reset] Not implemented!");
-}
-
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzlePipes::init(const AsylumEvent &evt) {
+bool PuzzlePipes::init(const AsylumEvent &) {
 	_previousMusicVolume = getSound()->getMusicVolume();
 
 	if (_previousMusicVolume >= -1000)
@@ -340,7 +342,10 @@ bool PuzzlePipes::init(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzlePipes::update(const AsylumEvent &evt) {
+bool PuzzlePipes::update(const AsylumEvent &) {
+	if (!_frameIndexSpider)
+		error("[PuzzlePipes::update] Puzzle not initialized properly");
+
 	getScreen()->clear();
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[1], 0, Common::Point(0, 0), kDrawFlagNone, 0, 4);
@@ -351,15 +356,15 @@ bool PuzzlePipes::update(const AsylumEvent &evt) {
 	uint32 filled = 0;
 	for (uint32 i = 0; i < 4; ++i) {
 		if (fabs(_levelValues[i] - _previousLevels[i]) > 0.005)
-			_previousLevels[i] += _levelValues[i] > _previousLevels[i] ? 0.01 : -0.01;
+			_previousLevels[i] += _levelValues[i] > _previousLevels[i] ? 0.01f : -0.01f;
 		else
 			++filled;
 	}
 
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(210, 444 - uint32(_previousLevels[0] * 52)), kDrawFlagNone, 0, 3);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(276, 455 - uint32(_previousLevels[1] * 52)), kDrawFlagNone, 0, 3);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(376, 448 - uint32(_previousLevels[2] * 52)), kDrawFlagNone, 0, 3);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(458, 442 - uint32(_previousLevels[3] * 52)), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(210, 444 - int16(_previousLevels[0] * 52)), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(276, 455 - int16(_previousLevels[1] * 52)), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(376, 448 - int16(_previousLevels[2] * 52)), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[18], 0, Common::Point(458, 442 - int16(_previousLevels[3] * 52)), kDrawFlagNone, 0, 3);
 
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[33], 0, Common::Point(204, 377), kDrawFlagNone, 0, 1);
 
@@ -438,7 +443,10 @@ bool PuzzlePipes::update(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzlePipes::mouseLeftDown(const AsylumEvent &evt) {
+bool PuzzlePipes::mouseLeftDown(const AsylumEvent &) {
+	if (!_frameIndexSpider)
+		error("[PuzzlePipes::update] Puzzle not initialized properly");
+
 	Common::Point mousePos = getCursor()->position();
 
 	if (Common::Rect(540, 90, 590, 250).contains(mousePos)) {
@@ -466,7 +474,7 @@ bool PuzzlePipes::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzlePipes::mouseRightDown(const AsylumEvent &evt) {
+bool PuzzlePipes::mouseRightDown(const AsylumEvent &) {
 	getScreen()->clear();
 	getSound()->stop(getWorld()->graphicResourceIds[41]);
 	getSound()->setMusicVolume(_previousMusicVolume);
@@ -495,7 +503,7 @@ void PuzzlePipes::initResources() {
 }
 
 void PuzzlePipes::setup() {
-	memset(&_levelValues, 0.0, sizeof(_levelValues));
+	memset(&_levelValues, 0, sizeof(_levelValues));
 
 	for (uint32 i = 0; i < peepholesCount; ++i)
 		_peepholes[i].setId(i);
@@ -504,7 +512,7 @@ void PuzzlePipes::setup() {
 		_connectors[i].setId(i);
 
 	for (uint32 i = 0; i < 4; ++i) {
-		_sinks[i] = &_peepholes[peepholesCount - 4 + i];
+		_sinks[i] = &_peepholes[(peepholesCount - 4) + i];
 		_sources[i] = &_peepholes[i];
 		memset(&_sources[i]->_flowValues, 0, sizeof(_sources[i]->_flowValues));
 		_sources[i]->_flowValues[i] = 1;

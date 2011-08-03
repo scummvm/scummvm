@@ -69,7 +69,7 @@ bool Puzzle11::init(const AsylumEvent &evt)  {
 	return true;
 }
 
-bool Puzzle11::update(const AsylumEvent &evt)  {
+bool Puzzle11::update(const AsylumEvent &)  {
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[11]);
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], _frameIndexes[0], Common::Point(122, 269), kDrawFlagNone, 0, 1);
@@ -85,13 +85,13 @@ bool Puzzle11::update(const AsylumEvent &evt)  {
 	return true;
 }
 
-bool Puzzle11::mouseRightDown(const AsylumEvent &evt) {
+bool Puzzle11::mouseRightDown(const AsylumEvent &) {
 	warning("[Puzzle11::mouseUp] Not implemented!");
 
 	return false;
 }
 
-bool Puzzle11::mouseLeftUp(const AsylumEvent &evt) {
+bool Puzzle11::mouseLeftUp(const AsylumEvent &) {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
 	getScreen()->stopPaletteFade(0, 0, 0);
@@ -101,7 +101,7 @@ bool Puzzle11::mouseLeftUp(const AsylumEvent &evt) {
 	return false;
 }
 
-bool Puzzle11::mouseLeftDown(const AsylumEvent &evt) {
+bool Puzzle11::mouseLeftDown(const AsylumEvent &) {
 	warning("[Puzzle11::mouseDown] Not implemented!");
 
 	return true;

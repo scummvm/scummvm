@@ -53,7 +53,7 @@ PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, p
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardYouth::mouseLeftDown(const AsylumEvent &evt) {
+bool PuzzleBoardYouth::mouseLeftDown(const AsylumEvent &) {
 	Common::Point mousePos = getCursor()->position();
 
 	if (mousePos.y <= 350) {

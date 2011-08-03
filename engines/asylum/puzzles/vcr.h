@@ -134,8 +134,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
-	int inPolygon(Common::Point point, int polyIdx) const;
-	Color getJackOnHand();
+	int inPolygon(const Common::Point &point, int polyIdx) const;
+	Color getJackOnHand() const;
 	void setJackOnHole(Color hole, JackState state, JackState newState);
 	void pickJack(Color jack);
 

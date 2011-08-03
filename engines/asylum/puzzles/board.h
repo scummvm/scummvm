@@ -55,8 +55,7 @@ public:
 		char solvedText[28];
 	};
 
-	PuzzleBoard(AsylumEngine *engine);
-	PuzzleBoard(AsylumEngine *engine, PuzzleData data);
+	PuzzleBoard(AsylumEngine *engine, const PuzzleData &data);
 
 	void reset();
 

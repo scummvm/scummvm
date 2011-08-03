@@ -123,7 +123,7 @@ private:
 
 class Spider {
 public:
-	Spider(Common::Rect rect, Common::String id);
+	Spider(const Common::Rect &rect, Common::String id);
 	~Spider() { delete _rnd; }
 
 	bool isAlive() const { return _isAlive; }
@@ -153,8 +153,6 @@ class PuzzlePipes : public Puzzle {
 public:
 	PuzzlePipes(AsylumEngine *engine);
 	~PuzzlePipes();
-
-	void reset();
 
 private:
 	int32 _previousMusicVolume;

@@ -60,7 +60,7 @@ PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : PuzzleBoard(e
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &evt) {
+bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &) {
 	Common::Point mousePos = getCursor()->position();
 
 	if (mousePos.y <= 350) {
@@ -82,7 +82,7 @@ bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleBoardSalvation::mouseRightDown(const AsylumEvent &evt) {
+bool PuzzleBoardSalvation::mouseRightDown(const AsylumEvent &) {
 	if (!stopSound()) {
 		checkANALText();
 		getScreen()->clear();

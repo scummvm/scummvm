@@ -55,7 +55,7 @@ PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : PuzzleBoard
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoardKeyHidesTo::mouseLeftDown(const AsylumEvent &evt) {
+bool PuzzleBoardKeyHidesTo::mouseLeftDown(const AsylumEvent &) {
 	Common::Point mousePos = getCursor()->position();
 
 	if (mousePos.y <= 350) {

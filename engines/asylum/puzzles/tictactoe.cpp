@@ -100,7 +100,7 @@ PuzzleTicTacToe::~PuzzleTicTacToe() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleTicTacToe::init(const AsylumEvent &evt)  {
+bool PuzzleTicTacToe::init(const AsylumEvent &)  {
 	_ticker = 0;
 	_vm->clearGameFlag(kGameFlag114);
 	_vm->clearGameFlag(kGameFlag215);
@@ -120,7 +120,7 @@ bool PuzzleTicTacToe::init(const AsylumEvent &evt)  {
 	return true;
 }
 
-bool PuzzleTicTacToe::update(const AsylumEvent &evt)  {
+bool PuzzleTicTacToe::update(const AsylumEvent &)  {
 	if (_ticker) {
 		++_ticker;
 
@@ -209,7 +209,7 @@ void PuzzleTicTacToe::drawField() {
 	}
 
 	if (g_debugPolygons) {
-		for (uint32 p = 0; p < ARRAYSIZE(puzzleTicTacToePolygons); p += 4) {
+		for (uint32 p = 0; p < ARRAYSIZE(puzzleTicTacToePolygons) - 4; p += 4) {
 			getScreen()->drawLine(puzzleTicTacToePolygons[p],     puzzleTicTacToePolygons[p + 1]);
 			getScreen()->drawLine(puzzleTicTacToePolygons[p + 1], puzzleTicTacToePolygons[p + 2]);
 			getScreen()->drawLine(puzzleTicTacToePolygons[p + 2], puzzleTicTacToePolygons[p + 3]);
@@ -236,7 +236,7 @@ void PuzzleTicTacToe::drawField() {
 				_ticker = 1;
 
 				if (checkWinner())
-					_needToInitialize = 1;
+					_needToInitialize = true;
 			}
 
 			if (_frameIndex > 12 && mark == 'O') {
@@ -424,7 +424,7 @@ bool PuzzleTicTacToe::check() {
 	return true;
 }
 
-PuzzleTicTacToe::GameStatus PuzzleTicTacToe::checkField(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO) {
+PuzzleTicTacToe::GameStatus PuzzleTicTacToe::checkField(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO) const {
 	*counterX = 0;
 	*counterO = 0;
 	GameStatus status = kStatus0;
@@ -493,7 +493,7 @@ bool PuzzleTicTacToe::checkFields() {
 	return (_emptyCount != 0);
 }
 
-uint32 PuzzleTicTacToe::checkPosition(uint32 position1, uint32 position2, uint position3) {
+uint32 PuzzleTicTacToe::checkPosition(uint32 position1, uint32 position2, uint position3) const {
 	if (_gameField[position1] == ' ')
 		return position1;
 
@@ -553,7 +553,7 @@ bool PuzzleTicTacToe::checkWinning(char mark) {
 	_emptyCount = 0;
 
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTicTacToeFieldsToCheck); i++) {
-		if (checkField(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, 'O', &counterX, &counterO) == kStatusNeedBlocking) {
+		if (checkField(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3, mark, &counterX, &counterO) == kStatusNeedBlocking) {
 			_field[_emptyCount] = checkPosition(puzzleTicTacToeFieldsToCheck[i].field1, puzzleTicTacToeFieldsToCheck[i].field2, puzzleTicTacToeFieldsToCheck[i].field3);
 			++_emptyCount;
 		}
