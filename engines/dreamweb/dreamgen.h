@@ -625,7 +625,6 @@ public:
 	static const uint16 addr_transferinv = 0xc240;
 	static const uint16 addr_doblocks = 0xc228;
 	static const uint16 addr_delthisone = 0xc214;
-	static const uint16 addr_zoom = 0xc210;
 	static const uint16 addr_doshake = 0xc20c;
 	static const uint16 addr_vsync = 0xc208;
 	static const uint16 addr_createpanel2 = 0xc200;
@@ -1662,7 +1661,7 @@ public:
 	void usedryer();
 	void dumpeverything();
 	void usehatch();
-	void zoom();
+	//void zoom();
 	void outofinv();
 	void viewfolder();
 	//void walking();

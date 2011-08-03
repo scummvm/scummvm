@@ -387,5 +387,33 @@ void DreamGenContext::clearwork() {
 	memset(workspace(), 0, 320*200);
 }
 
+void DreamGenContext::zoom() {
+	if (data.word(kWatchingtime) != 0)
+		return;
+	if (data.byte(kZoomon) != 1)
+		return;
+	if (data.byte(kCommandtype) >= 199) {
+		putunderzoom();
+		return;
+	}
+	uint16 srcOffset = (data.word(kOldpointery) - 9) * 320 + (data.word(kOldpointerx) - 11);
+	uint16 dstOffset = (kZoomy + 4) * 320 + (kZoomx + 5);
+	const uint8 *src = workspace() + srcOffset;
+	uint8 *dst = workspace() + dstOffset;
+	for(size_t i=0; i<20; ++i) {
+		for(size_t j=0; j<23; ++j) {
+			uint8 v = src[j];
+			dst[2*j+0] = v;
+			dst[2*j+1] = v; 
+			dst[2*j+320] = v;
+			dst[2*j+321] = v; 
+		}
+		src += 320;
+		dst += 320*2;
+	}
+	crosshair();
+	data.byte(kDidzoom) = 1;
+}
+
 } /*namespace dreamgen */
 

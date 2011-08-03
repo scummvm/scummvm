@@ -3160,56 +3160,6 @@ void DreamGenContext::createpanel2() {
 	showframe();
 }
 
-void DreamGenContext::zoom() {
-	STACK_CHECK;
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		return /* (inwatching) */;
-	_cmp(data.byte(kZoomon), 1);
-	if (flags.z())
-		goto zoomswitch;
-	return;
-zoomswitch:
-	_cmp(data.byte(kCommandtype), 199);
-	if (flags.c())
-		goto zoomit;
-	putunderzoom();
-	return;
-zoomit:
-	ax = data.word(kOldpointery);
-	_sub(ax, 9);
-	cx = (320);
-	_mul(cx);
-	_add(ax, data.word(kOldpointerx));
-	_sub(ax, 11);
-	si = ax;
-	ax = (132)+4;
-	cx = (320);
-	_mul(cx);
-	_add(ax, (8)+5);
-	di = ax;
-	es = data.word(kWorkspace);
-	ds = data.word(kWorkspace);
-	cx = 20;
-zoomloop:
-	push(cx);
-	cx = 23;
-zoomloop2:
-	_lodsb();
-	ah = al;
-	_stosw();
-	es.word(di+(320)-2) = ax;
-	if (--cx)
-		goto zoomloop2;
-	_add(si, (320)-23);
-	_add(di, (320)-46+(320));
-	cx = pop();
-	if (--cx)
-		goto zoomloop;
-	crosshair();
-	data.byte(kDidzoom) = 1;
-}
-
 void DreamGenContext::delthisone() {
 	STACK_CHECK;
 	push(ax);
@@ -20227,7 +20177,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_createpanel2: createpanel2(); break;
 		case addr_vsync: vsync(); break;
 		case addr_doshake: doshake(); break;
-		case addr_zoom: zoom(); break;
 		case addr_delthisone: delthisone(); break;
 		case addr_doblocks: doblocks(); break;
 		case addr_transferinv: transferinv(); break;

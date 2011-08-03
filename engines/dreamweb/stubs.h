@@ -109,4 +109,5 @@
 	void cancelch1();
 	void plotreel();
 	void dealwithspecial();
+	void zoom();
 
