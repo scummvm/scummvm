@@ -92,6 +92,11 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'zoom',
 	'crosshair',
 	'showrain',
+	'domix',
+	'channel0tran',
+	'makenextblock',
+	'loopchannel0',
+	'parseblaster',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

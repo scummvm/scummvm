@@ -168,7 +168,6 @@ public:
 	static const uint16 addr_screenupdate = 0xc99c;
 	static const uint16 addr_startup1 = 0xc998;
 	static const uint16 addr_startup = 0xc994;
-	static const uint16 addr_parseblaster = 0xc990;
 	static const uint16 addr_allocatemem = 0xc988;
 	static const uint16 addr_deallocatemem = 0xc984;
 	static const uint16 addr_clearrest = 0xc980;
@@ -190,16 +189,12 @@ public:
 	static const uint16 addr_setuppit = 0xc93c;
 	static const uint16 addr_startdmablock = 0xc938;
 	static const uint16 addr_dmaend = 0xc934;
-	static const uint16 addr_domix = 0xc930;
 	static const uint16 addr_restoreems = 0xc92c;
 	static const uint16 addr_saveems = 0xc928;
 	static const uint16 addr_bothchannels = 0xc924;
-	static const uint16 addr_channel0tran = 0xc920;
 	static const uint16 addr_channel1only = 0xc91c;
 	static const uint16 addr_channel0only = 0xc918;
-	static const uint16 addr_loopchannel0 = 0xc90c;
 	static const uint16 addr_volumeadjust = 0xc908;
-	static const uint16 addr_makenextblock = 0xc904;
 	static const uint16 addr_playchannel1 = 0xc900;
 	static const uint16 addr_playchannel0 = 0xc8fc;
 	static const uint16 addr_out22c = 0xc8f8;
@@ -1480,7 +1475,7 @@ public:
 	void reminders();
 	void selectslot2();
 	void runtap();
-	void domix();
+	//void domix();
 	void priesttext();
 	void paneltomap();
 	void obname();
@@ -1584,7 +1579,7 @@ public:
 	void nextcolon();
 	void placefreeobject();
 	void delpointer();
-	void loopchannel0();
+	//void loopchannel0();
 	void initrain();
 	void showleftpage();
 	void rockstar();
@@ -1924,7 +1919,7 @@ public:
 	void quitkey();
 	void openfile();
 	void usecharset1();
-	void makenextblock();
+	//void makenextblock();
 	void showpuztext();
 	void addalong();
 	//void width160();
@@ -1980,9 +1975,9 @@ public:
 	void redrawmainscrn();
 	void finishedwalking();
 	void findallryan();
-	void channel0tran();
+	//void channel0tran();
 	void buttonpress();
-	void parseblaster();
+	//void parseblaster();
 	void callhotellift();
 	void makemainscreen();
 	void intromonks2();

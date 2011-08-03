@@ -15445,46 +15445,6 @@ notsecondbank1:
 	es = pop();
 }
 
-void DreamGenContext::makenextblock() {
-	STACK_CHECK;
-	volumeadjust();
-	loopchannel0();
-	_cmp(data.word(kCh1blockstocopy), 0);
-	if (flags.z())
-		goto mightbeonlych0;
-	_cmp(data.word(kCh0blockstocopy), 0);
-	if (flags.z())
-		goto mightbeonlych1;
-	_dec(data.word(kCh0blockstocopy));
-	_dec(data.word(kCh1blockstocopy));
-	bothchannels();
-	return;
-mightbeonlych1:
-	data.byte(kCh0playing) = 255;
-	_cmp(data.word(kCh1blockstocopy), 0);
-	if (flags.z())
-		return /* (notch1only) */;
-	_dec(data.word(kCh1blockstocopy));
-	channel1only();
-	return;
-mightbeonlych0:
-	data.byte(kCh1playing) = 255;
-	_cmp(data.word(kCh0blockstocopy), 0);
-	if (flags.z())
-		goto notch0only;
-	_dec(data.word(kCh0blockstocopy));
-	channel0only();
-	return;
-notch0only:
-	es = data.word(kSoundbuffer);
-	di = data.word(kSoundbufferwrite);
-	cx = 1024;
-	ax = 0x7f7f;
-	_stosw(cx, true);
-	_and(di, 16384-1);
-	data.word(kSoundbufferwrite) = di;
-}
-
 void DreamGenContext::volumeadjust() {
 	STACK_CHECK;
 	al = data.byte(kVolumedirection);
@@ -15504,162 +15464,6 @@ void DreamGenContext::volumeadjust() {
 	return;
 volfinish:
 	data.byte(kVolumedirection) = 0;
-}
-
-void DreamGenContext::loopchannel0() {
-	STACK_CHECK;
-	_cmp(data.word(kCh0blockstocopy), 0);
-	if (!flags.z())
-		return /* (notloop) */;
-	_cmp(data.byte(kCh0repeat), 0);
-	if (flags.z())
-		return /* (notloop) */;
-	_cmp(data.byte(kCh0repeat), 255);
-	if (flags.z())
-		goto endlessloop;
-	_dec(data.byte(kCh0repeat));
-endlessloop:
-	ax = data.word(kCh0oldemmpage);
-	data.word(kCh0emmpage) = ax;
-	ax = data.word(kCh0oldoffset);
-	data.word(kCh0offset) = ax;
-	ax = data.word(kCh0blockstocopy);
-	_add(ax, data.word(kCh0oldblockstocopy));
-	data.word(kCh0blockstocopy) = ax;
-}
-
-void DreamGenContext::channel0tran() {
-	STACK_CHECK;
-	_cmp(data.byte(kVolume), 0);
-	if (!flags.z())
-		goto lowvolumetran;
-	cx = 1024;
-	_movsw(cx, true);
-	return;
-lowvolumetran:
-	cx = 1024;
-	bh = data.byte(kVolume);
-	bl = 0;
-	_add(bx, 16384-256);
-volloop:
-	_lodsw();
-	bl = al;
-	al = es.byte(bx);
-	bl = ah;
-	ah = es.byte(bx);
-	_stosw();
-	if (--cx)
-		goto volloop;
-}
-
-void DreamGenContext::domix() {
-	STACK_CHECK;
-	_cmp(data.byte(kVolume), 0);
-	if (!flags.z())
-		goto lowvolumemix;
-slow:
-	_lodsb();
-	ah = ds.byte(bx);
-	_inc(bx);
-	_cmp(al, dh);
-	if (!flags.c())
-		goto toplot;
-	_cmp(ah, dh);
-	if (!flags.c())
-		goto nodistort;
-	_add(al, ah);
-	if (flags.s())
-		goto botok;
-	_xor(al, al);
-	_stosb();
-	if (--cx)
-		goto slow;
-	return /* (doneit) */;
-botok:
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto slow;
-	return /* (doneit) */;
-toplot:
-	_cmp(ah, dh);
-	if (flags.c())
-		goto nodistort;
-	_add(al, ah);
-	if (!flags.s())
-		goto topok;
-	al = dl;
-	_stosb();
-	if (--cx)
-		goto slow;
-	return /* (doneit) */;
-topok:
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto slow;
-	return /* (doneit) */;
-nodistort:
-	_add(al, ah);
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto slow;
-	return /* (doneit) */;
-lowvolumemix:
-	_lodsb();
-	push(bx);
-	bh = data.byte(kVolume);
-	_add(bh, 63);
-	bl = al;
-	al = es.byte(bx);
-	bx = pop();
-	ah = ds.byte(bx);
-	_inc(bx);
-	_cmp(al, dh);
-	if (!flags.c())
-		goto toplotv;
-	_cmp(ah, dh);
-	if (!flags.c())
-		goto nodistortv;
-	_add(al, ah);
-	if (flags.s())
-		goto botokv;
-	_xor(al, al);
-	_stosb();
-	if (--cx)
-		goto lowvolumemix;
-	return /* (doneit) */;
-botokv:
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto lowvolumemix;
-	return /* (doneit) */;
-toplotv:
-	_cmp(ah, dh);
-	if (flags.c())
-		goto nodistortv;
-	_add(al, ah);
-	if (!flags.s())
-		goto topokv;
-	al = dl;
-	_stosb();
-	if (--cx)
-		goto lowvolumemix;
-	return /* (doneit) */;
-topokv:
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto lowvolumemix;
-	return /* (doneit) */;
-nodistortv:
-	_add(al, ah);
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto lowvolumemix;
 }
 
 void DreamGenContext::entrytexts() {
@@ -16082,84 +15886,6 @@ void DreamGenContext::clearrest() {
 	deallocatemem();
 	es = data.word(kFreedesc);
 	deallocatemem();
-}
-
-void DreamGenContext::parseblaster() {
-	STACK_CHECK;
-lookattail:
-	al = es.byte(bx);
-	_cmp(al, 0);
-	if (flags.z())
-		return /* (endtail) */;
-	_cmp(al, 13);
-	if (flags.z())
-		return /* (endtail) */;
-	_cmp(al, 'i');
-	if (flags.z())
-		goto issoundint;
-	_cmp(al, 'I');
-	if (flags.z())
-		goto issoundint;
-	_cmp(al, 'b');
-	if (flags.z())
-		goto isbright;
-	_cmp(al, 'B');
-	if (flags.z())
-		goto isbright;
-	_cmp(al, 'a');
-	if (flags.z())
-		goto isbaseadd;
-	_cmp(al, 'A');
-	if (flags.z())
-		goto isbaseadd;
-	_cmp(al, 'n');
-	if (flags.z())
-		goto isnosound;
-	_cmp(al, 'N');
-	if (flags.z())
-		goto isnosound;
-	_cmp(al, 'd');
-	if (flags.z())
-		goto isdma;
-	_cmp(al, 'D');
-	if (flags.z())
-		goto isdma;
-	_inc(bx);
-	if (--cx)
-		goto lookattail;
-	return;
-issoundint:
-	al = es.byte(bx+1);
-	_sub(al, '0');
-	data.byte(kSoundint) = al;
-	_inc(bx);
-	goto lookattail;
-isdma:
-	al = es.byte(bx+1);
-	_sub(al, '0');
-	data.byte(kSounddmachannel) = al;
-	_inc(bx);
-	goto lookattail;
-isbaseadd:
-	push(cx);
-	al = es.byte(bx+2);
-	_sub(al, '0');
-	ah = 0;
-	cl = 4;
-	_shl(ax, cl);
-	_add(ax, 0x200);
-	data.word(kSoundbaseadd) = ax;
-	cx = pop();
-	_inc(bx);
-	goto lookattail;
-isbright:
-	data.byte(kBrightness) = 1;
-	_inc(bx);
-	goto lookattail;
-isnosound:
-	data.byte(kSoundint) = 255;
-	_inc(bx);
-	goto lookattail;
 }
 
 void DreamGenContext::startup() {
@@ -20485,16 +20211,12 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_out22c: out22c(); break;
 		case addr_playchannel0: playchannel0(); break;
 		case addr_playchannel1: playchannel1(); break;
-		case addr_makenextblock: makenextblock(); break;
 		case addr_volumeadjust: volumeadjust(); break;
-		case addr_loopchannel0: loopchannel0(); break;
 		case addr_channel0only: channel0only(); break;
 		case addr_channel1only: channel1only(); break;
-		case addr_channel0tran: channel0tran(); break;
 		case addr_bothchannels: bothchannels(); break;
 		case addr_saveems: saveems(); break;
 		case addr_restoreems: restoreems(); break;
-		case addr_domix: domix(); break;
 		case addr_dmaend: dmaend(); break;
 		case addr_startdmablock: startdmablock(); break;
 		case addr_setuppit: setuppit(); break;
@@ -20517,7 +20239,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_clearrest: clearrest(); break;
 		case addr_deallocatemem: deallocatemem(); break;
 		case addr_allocatemem: allocatemem(); break;
-		case addr_parseblaster: parseblaster(); break;
 		case addr_startup: startup(); break;
 		case addr_startup1: startup1(); break;
 		case addr_screenupdate: screenupdate(); break;
