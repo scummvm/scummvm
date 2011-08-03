@@ -36,7 +36,7 @@
 namespace Asylum {
 
 SceneTitle::SceneTitle(AsylumEngine *engine): _vm(engine),
-	_start(0), _ticks(0), _done(false), _spinnerFrameIndex(0), _spinnerProgress(0), _showMouseState(false) {
+	_start(0), _ticks(0), _done(false), _spinnerFrameIndex(0), _spinnerProgress(0), _spinnerFrameCount(0), _showMouseState(false) {
 }
 
 SceneTitle::~SceneTitle() {
@@ -68,7 +68,7 @@ void SceneTitle::update(int32 tick) {
 		return;
 
 	getScreen()->draw(getWorld()->sceneTitleGraphicResourceId);
-	getScreen()->draw(MAKE_RESOURCE(kResourcePackSound, 17), _spinnerFrameIndex, Common::Point((_spinnerProgress / 590.0 * 580) - 290 , 0), kDrawFlagNone, false);
+	getScreen()->draw(MAKE_RESOURCE(kResourcePackSound, 17), _spinnerFrameIndex, Common::Point((int16)(((_spinnerProgress / 590.0) * 580.0) - 290), 0), kDrawFlagNone, false);
 	getText()->drawCentered(Common::Point(320, 30), 24, MAKE_RESOURCE(kResourcePackText, 1811 + getWorld()->chapter));
 
 	// This is not from the original. It's just some arbitrary math to throttle the progress indicator.
@@ -89,11 +89,11 @@ void SceneTitle::update(int32 tick) {
 	if (_spinnerFrameIndex > _spinnerFrameCount - 1)
 		_spinnerFrameIndex = 0;
 
-    if (_spinnerProgress > 590) {
+	if (_spinnerProgress > 590) {
 		_done = true;
 
 		getScreen()->paletteFade(0, 5, 80);
-    }
+	}
 }
 
 } // End of namespace Asylum

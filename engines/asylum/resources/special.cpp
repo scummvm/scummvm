@@ -251,14 +251,14 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 			Actor *refActor = getScene()->getActor(actorIndex - 9); // Original uses offset to object array (+ offset to actor).
 
 			*actor->getPoint1() = *refActor->getPoint1();
-			actor->getPoint1()->y += getSharedData()->getChapter2Data(2, actorIndex - 22);    // cursorResources + 30
+			actor->getPoint1()->y += (int16)getSharedData()->getChapter2Data(2, actorIndex - 22);    // cursorResources + 30
 			actor->setFrameIndex(refActor->getFrameIndex());
 			actor->setDirection(refActor->getDirection());
 
 			// Get the resource Id
 			Actor *actor13 = getScene()->getActor(13);
 			int32 direction = (actor13->getDirection() > kDirectionS) ? 8 - actor13->getDirection() : actor13->getDirection();
-			ResourceId id = actor->getResourcesId(actorIndex + direction);
+			ResourceId id = actor->getResourcesId((uint32)(actorIndex + direction));
 
 			actor->setResourceId(id);
 		}
@@ -1290,8 +1290,8 @@ void Special::playSoundPanning(ResourceId resourceId, int32 attenuation, Object 
 	default: {
 		Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-		point.x = Common::Rational(frameRect.width(), 2).toInt() + object->x;
-		point.y = Common::Rational(frameRect.height(), 2).toInt() + object->y;
+		point.x = (int16)(Common::Rational(frameRect.width(), 2).toInt() + object->x);
+		point.y = (int16)(Common::Rational(frameRect.height(), 2).toInt() + object->y);
 		}
 		break;
 
@@ -1425,7 +1425,7 @@ ResourceId Special::getResourceId(Object *object, ActorIndex actorIndex) {
 	return (actorIndex == kActorInvalid) ? object->getSoundResourceId() : getScene()->getActor(actorIndex)->getSoundResourceId();
 }
 
-int32 Special::getCounter(ActorIndex index) {
+uint32 Special::getCounter(ActorIndex index) const {
 	switch (index) {
 	default:
 		error("[Special::getCounter] Invalid actor index (was: %d, valid: 13, 15, 17, 18)", index);

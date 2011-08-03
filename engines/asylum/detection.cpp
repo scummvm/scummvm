@@ -137,10 +137,6 @@ public:
 		_guioptions = Common::GUIO_NONE;
 	}
 
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		return detectGameFilebased(allFiles, Asylum::fileBasedFallback);
-	}
-
 	virtual const char *getName() const {
 		return "Asylum";
 	}
@@ -150,10 +146,15 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
+
+protected:
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &) const {
+		return detectGameFilebased(allFiles, Asylum::fileBasedFallback);
+	}
 };
 
 bool AsylumMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -176,18 +177,16 @@ bool AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 	return desc != 0;
 }
 
-SaveStateList AsylumMetaEngine::listSaves(const char *target) const {
-	SaveStateList saveList;
-
-	return saveList;
+SaveStateList AsylumMetaEngine::listSaves(const char * /*target*/) const {
+	error("[AsylumMetaEngine::listSaves] Not implemented");
 }
 
 int AsylumMetaEngine::getMaximumSaveSlot() const {
-	return 0;
+	error("[AsylumMetaEngine::getMaximumSaveSlot] Not implemented");
 }
 
-void AsylumMetaEngine::removeSaveState(const char *target, int slot) const {
-	// TODO
+void AsylumMetaEngine::removeSaveState(const char * /*target*/, int /*slot*/) const {
+	error("[AsylumMetaEngine::removeSaveState] Not implemented");
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ASYLUM)

@@ -88,36 +88,17 @@ public:
 	 */
 	void animate();
 
+	// Accessors
 	void setState(const Common::Event &evt);
 	byte getState() { return _state; }
+	void setForceHide(bool state) { _forceHide = state; }
+	ResourceId getResourceId() { return _graphicResourceId; }
+	CursorAnimation getAnimation() { return _animation; }
 
 	/**
 	 * Return the cursor's position on the screen
 	 */
 	const Common::Point position() const;
-
-	// NOTE: The original engine contains a function that assigns global variables to a
-	// struct associated with cursor graphics info. Since this functionality only
-	// ever seems to be used to reference cursor info, the struct members
-	// may as well be class members in order to simplify the logic a bit
-
-	ResourceId graphicResourceId;
-	uint32 currentFrame;
-	uint32 lastFrameIndex;
-	int32 counter;
-	CursorAnimation animation;
-
-	/**
-	 * Since the cursor is updated by various event handlers, if an action is
-	 * currently being processed that requires the cursor to remain hidden, another
-	 * event may override that request and show the cursor regardless
-	 *
-	 * This is currently used during the intro speech in Scene 1 after the intro
-	 * video plays
-	 *
-	 * @default false
-	 */
-	bool forceHide;
 
 private:
 	AsylumEngine *_vm;
@@ -137,6 +118,28 @@ private:
 	uint32 _nextTick;
 
 	int32 _frameStep;
+
+	// NOTE: The original engine contains a function that assigns global variables to a
+	// struct associated with cursor graphics info. Since this functionality only
+	// ever seems to be used to reference cursor info, the struct members
+	// may as well be class members in order to simplify the logic a bit
+	ResourceId _graphicResourceId;
+	uint32 _currentFrame;
+	uint32 _lastFrameIndex;
+	int32 _counter;
+	CursorAnimation _animation;
+
+	/**
+	 * Since the cursor is updated by various event handlers, if an action is
+	 * currently being processed that requires the cursor to remain hidden, another
+	 * event may override that request and show the cursor regardless
+	 *
+	 * This is currently used during the intro speech in Scene 1 after the intro
+	 * video plays
+	 *
+	 * @default false
+	 */
+	bool _forceHide;
 
 	/**
 	 * Updates the cursor

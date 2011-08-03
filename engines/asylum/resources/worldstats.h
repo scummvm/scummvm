@@ -85,7 +85,7 @@ public:
 	ResourceId font1;
 	ResourceId font2;
 	ResourceId font3;
-	int32 currentPaletteId;
+	ResourceId currentPaletteId;
 	int32 cellShadeMask1;
 	int32 cellShadeMask2;
 	int32 cellShadeMask3;

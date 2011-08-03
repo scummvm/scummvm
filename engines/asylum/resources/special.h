@@ -92,7 +92,7 @@ private:
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
 	ResourceId getResourceId(Object *object, ActorIndex actorIndex);
-	int32 getCounter(ActorIndex index);
+	uint32 getCounter(ActorIndex index) const;
 
 	void checkObject(Object *object, GameFlag flagToSet, GameFlag flagToClear, ObjectId objectId = kObjectInvalid);
 	void checkOtherObject(Object *object, ObjectId otherObjectId, GameFlag flagToClear, GameFlag flagToSet);

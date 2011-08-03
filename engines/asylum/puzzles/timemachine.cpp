@@ -260,14 +260,14 @@ bool PuzzleTimeMachine::mouseRightDown(const AsylumEvent &) {
 void PuzzleTimeMachine::updateCursor() {
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTimeMachineRects); i++) {
 		if (puzzleTimeMachineRects[i].contains(getCursor()->position())) {
-			if (getCursor()->animation != kCursorAnimationMirror)
+			if (getCursor()->getAnimation() != kCursorAnimationMirror)
 				getCursor()->set(getWorld()->graphicResourceIds[62], -1, kCursorAnimationMirror, 7);
 
 			return;
 		}
 	}
 
-	if (getCursor()->animation)
+	if (getCursor()->getAnimation())
 		getCursor()->set(getWorld()->graphicResourceIds[62], -1, kCursorAnimationNone, 7);
 }
 

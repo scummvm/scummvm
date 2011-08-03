@@ -360,15 +360,15 @@ void PuzzleVCR::updateCursor() {
 		 || inPolygon(mousePos, kBlackJack)
 		 || inPolygon(mousePos, kRedJack)
 		 || inPolygon(mousePos, kYellowJack)) {
-			if (getCursor()->animation != kCursorAnimationMirror)
+			if (getCursor()->getAnimation() != kCursorAnimationMirror)
 				getCursor()->set(getWorld()->graphicResourceIds[28]);
 		} else if ((inPolygon(mousePos, kRedHole) && _holesState[kBlack])
 		        || (inPolygon(mousePos, kYellowHole) && _holesState[kRed])
 		        || (inPolygon(mousePos, kBlackHole) && _holesState[kYellow])) {
-			if (getCursor()->animation != kCursorAnimationMirror)
+			if (getCursor()->getAnimation() != kCursorAnimationMirror)
 				getCursor()->set(getWorld()->graphicResourceIds[28]);
 		} else {
-			if (getCursor()->animation)
+			if (getCursor()->getAnimation())
 				getCursor()->set(getWorld()->graphicResourceIds[28], kCursorAnimationNone);
 		}
 	} else {

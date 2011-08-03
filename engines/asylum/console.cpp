@@ -451,7 +451,7 @@ bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
 		DebugPrintf("        7   BoardYouth\n");
 		DebugPrintf("        8   BoardKeyHidesTo\n");
 		DebugPrintf("        9   Writings\n");
-		DebugPrintf("        10  ???\n");
+		DebugPrintf("        10  Unknown\n");
 		DebugPrintf("        11  MorgueDoor\n");
 		DebugPrintf("        12  Clock\n");
 		DebugPrintf("        13  TimerMachine\n");

@@ -234,10 +234,10 @@ void PuzzleMorgueDoor::updateCursor() {
 
 	// Default cursor
 	if (animate) {
-		if (getCursor()->animation != kCursorAnimationMirror) {
+		if (getCursor()->getAnimation() != kCursorAnimationMirror) {
 			getCursor()->set(getWorld()->graphicResourceIds[33], -1, kCursorAnimationMirror, 7);
 		}
-	} else if (getCursor()->animation != kCursorAnimationNone) {
+	} else if (getCursor()->getAnimation() != kCursorAnimationNone) {
 		getCursor()->set(getWorld()->graphicResourceIds[33], -1, kCursorAnimationNone, 7);
 	}
 }

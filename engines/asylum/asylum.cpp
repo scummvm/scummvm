@@ -274,7 +274,7 @@ void AsylumEngine::playIntro() {
 
 	if (!_introPlayed) {
 		_cursor->hide();
-		_cursor->forceHide = true;
+		_cursor->setForceHide(true);
 		if (!Config.showIntro) {
 			if (_scene->worldstats()->chapter == kChapter1)
 				_sound->playMusic(MAKE_RESOURCE(kResourcePackMusic, _scene->worldstats()->musicCurrentResourceIndex));
@@ -306,7 +306,7 @@ void AsylumEngine::playIntro() {
 			} while (_sound->isPlaying(introSpeech));
 
 		}
-		_cursor->forceHide = false;
+		_cursor->setForceHide(false);
 		_introPlayed = true;
 	}
 
