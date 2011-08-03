@@ -1997,6 +1997,14 @@ static void convertADResource(ResourceManager *res, const GameSettings& game, Re
 				break;
 
 			case 0x80:
+				// FIXME: This is incorrect. The original uses 0x80 for
+				// looping a single channel. We currently interpret it as stop
+				// thus we won't get looping for sound effects. It should
+				// always jump to the start of the channel.
+				//
+				// Since we convert the data to MIDI and we can not ony loop a
+				// single channel via MIDI fixing this will require some more
+				// thought.
 				track_time[ch] = -1;
 				src_ptr ++;
 				break;
