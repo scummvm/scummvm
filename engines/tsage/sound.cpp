@@ -2176,13 +2176,14 @@ void Sound::_soPlaySound2(VoiceTypeStruct *vtStruct, const byte *channelData, in
 			if (entryIndex != -1) {
 				SoundDriver *driver = vtStruct->_entries[entryIndex]._driver;
 				assert(driver);
+				byte *trackData = _channelData[trackCtr];
 
 				vtStruct->_entries[entryIndex]._type1._field6 = 0;
 				vtStruct->_entries[entryIndex]._type1._field4 = v0;
 				vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
 				int v1, v2;
-				driver->playSound(channelData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, v0, 0x7F);
+				driver->playSound(trackData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, v0, 0x7F);
 				driver->proc42(vtStruct->_entries[entryIndex]._voiceNum, voiceType, 0, &v1, &v2);
 			}
 			break;
