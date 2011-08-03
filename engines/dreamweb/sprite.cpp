@@ -567,5 +567,49 @@ void DreamGenContext::showreelframe(Reel *reel) {
 	showframe(ds.ptr(0, 0), x, y, frame, 8, &width, &height);
 }
 
+void DreamGenContext::showrain() {
+	ds = data.word(kMainsprites);
+	si = 6*58;
+	ax = ds.word(si+2);
+	si = ax + 2080;
+	es = data.word(kBuffers);
+	Rain *rain = (Rain *)es.ptr(kRainlist, 0);
+	if (rain->x == 255)
+		return;
+	while (true) {
+		if (rain->x == 255) {
+			if (data.word(kCh1blockstocopy) != 0)
+				return;
+			if ((data.byte(kReallocation) == 2) && (data.byte(kBeenmugged) != 1))
+					return;
+			if (data.byte(kReallocation) == 55)
+				return;
+			randomnum1();
+			if (al >= 1)
+				return;
+			if (data.byte(kCh0playing) != 6)
+				al = 4;
+			else
+				al = 7;
+			playchannel1();
+			return;
+		}
+		uint16 y = rain->y + data.word(kMapady) + data.word(kMapystart);
+		uint16 x = rain->x + data.word(kMapadx) + data.word(kMapxstart);
+		uint16 size = rain->size;
+		ax = ((uint16)(rain->w3() - rain->b5)) & 511;
+		rain->setW3(ax);
+		++rain;
+		const uint8 *src = ds.ptr(si, 0) + ax;
+		uint8 *dst = workspace() + y * 320 + x;
+		for(uint16 i = 0; i < size; ++i) {
+			uint8 v = src[i];
+			if (v != 0)
+				*dst = v;
+			dst += 320-1;
+		}
+	}
+}
+
 } /*namespace dreamgen */
 

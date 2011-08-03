@@ -2596,93 +2596,6 @@ failrain:
 	al = 0;
 }
 
-void DreamGenContext::showrain() {
-	STACK_CHECK;
-	ds = data.word(kMainsprites);
-	si = 6*58;
-	ax = ds.word(si+2);
-	si = ax;
-	_add(si, 2080);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30));
-	es = data.word(kBuffers);
-	_cmp(es.byte(bx), 255);
-	if (flags.z())
-		return /* (nothunder) */;
-morerain:
-	es = data.word(kBuffers);
-	_cmp(es.byte(bx), 255);
-	if (flags.z())
-		goto finishrain;
-	al = es.byte(bx+1);
-	ah = 0;
-	_add(ax, data.word(kMapady));
-	_add(ax, data.word(kMapystart));
-	cx = 320;
-	_mul(cx);
-	cl = es.byte(bx);
-	ch = 0;
-	_add(ax, cx);
-	_add(ax, data.word(kMapadx));
-	_add(ax, data.word(kMapxstart));
-	di = ax;
-	cl = es.byte(bx+2);
-	ch = 0;
-	ax = es.word(bx+3);
-	dl = es.byte(bx+5);
-	dh = 0;
-	_sub(ax, dx);
-	_and(ax, 511);
-	es.word(bx+3) = ax;
-	_add(bx, 6);
-	push(si);
-	_add(si, ax);
-	es = data.word(kWorkspace);
-	ah = 0;
-	dx = 320-2;
-rainloop:
-	_lodsb();
-	_cmp(al, ah);
-	if (flags.z())
-		goto noplot;
-	_stosb();
-	_add(di, dx);
-	if (--cx)
-		goto rainloop;
-	si = pop();
-	goto morerain;
-noplot:
-	_add(di, 320-1);
-	if (--cx)
-		goto rainloop;
-	si = pop();
-	goto morerain;
-finishrain:
-	_cmp(data.word(kCh1blockstocopy), 0);
-	if (!flags.z())
-		return /* (nothunder) */;
-	_cmp(data.byte(kReallocation), 2);
-	if (!flags.z())
-		goto notlouisthund;
-	_cmp(data.byte(kBeenmugged), 1);
-	if (!flags.z())
-		return /* (nothunder) */;
-notlouisthund:
-	_cmp(data.byte(kReallocation), 55);
-	if (flags.z())
-		return /* (nothunder) */;
-	randomnum1();
-	_cmp(al, 1);
-	if (!flags.c())
-		return /* (nothunder) */;
-	al = 7;
-	_cmp(data.byte(kCh0playing), 6);
-	if (flags.z())
-		goto isthunder1;
-	al = 4;
-isthunder1:
-	playchannel1();
-}
-
 void DreamGenContext::liftnoise() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 5);
@@ -20123,7 +20036,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_initrain: initrain(); break;
 		case addr_splitintolines: splitintolines(); break;
 		case addr_getblockofpixel: getblockofpixel(); break;
-		case addr_showrain: showrain(); break;
 		case addr_backobject: backobject(); break;
 		case addr_liftnoise: liftnoise(); break;
 		case addr_random: random(); break;

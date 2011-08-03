@@ -121,3 +121,14 @@ struct Room {
 	uint8 b31;
 };
 
+struct Rain {
+	uint8 x;
+	uint8 y;
+	uint8 size;
+	uint8 w3_lo;
+	uint8 w3_hi;
+	uint16 w3() const { return READ_LE_UINT16(&w3_lo); }
+	void setW3(uint16 v) { WRITE_LE_UINT16(&w3_lo, v); }
+	uint8 b5;
+};
+

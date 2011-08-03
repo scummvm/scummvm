@@ -651,7 +651,6 @@ public:
 	static const uint16 addr_random = 0xc17c;
 	static const uint16 addr_liftnoise = 0xc178;
 	static const uint16 addr_backobject = 0xc170;
-	static const uint16 addr_showrain = 0xc16c;
 	static const uint16 addr_getblockofpixel = 0xc168;
 	static const uint16 addr_splitintolines = 0xc164;
 	static const uint16 addr_initrain = 0xc160;
@@ -1493,7 +1492,7 @@ public:
 	void disablesoundint();
 	void checkifset();
 	void showallex();
-	void showrain();
+	//void showrain();
 	void openpoolboss();
 	void buttontwo();
 	//void usetimedtext();

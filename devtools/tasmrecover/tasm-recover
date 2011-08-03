@@ -91,6 +91,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'facerightway',
 	'zoom',
 	'crosshair',
+	'showrain',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

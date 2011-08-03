@@ -111,5 +111,6 @@
 	void dealwithspecial();
 	void zoom();
 	void crosshair();
+	void showrain();
 
 
