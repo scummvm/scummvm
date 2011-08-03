@@ -157,7 +157,7 @@ void ConfigurationManager::write() {
 	ConfMan.flushToDisk();
 }
 
-bool ConfigurationManager::isKeyAssigned(char key) {
+bool ConfigurationManager::isKeyAssigned(char key) const {
 	return (keyShowVersion == key || keyQuickLoad == key || keyQuickSave == key || keySwitchToSara == key || keySwitchToGrimwall == key || keySwitchToOlmec == key);
 }
 

@@ -81,7 +81,7 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 			if (_subtitleIndex >= 0) {
 				char *text1 = getText()->get((ResourceId)_currentMovie);
 
-				int32 y = 10 * (44 - getText()->draw(0, 99, kTextCalculate, Common::Point(10, 400), 20, 620, text1));
+				int16 y = (int16)(10 * (44 - getText()->draw(0, 99, kTextCalculate, Common::Point(10, 400), 20, 620, text1)));
 				if (y <= 400)
 					y = 405;
 
@@ -110,7 +110,7 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 //////////////////////////////////////////////////////////////////////////
 // Playing
 //////////////////////////////////////////////////////////////////////////
-void VideoPlayer::play(int32 videoNumber, EventHandler *handler) {
+void VideoPlayer::play(uint32 videoNumber, EventHandler *handler) {
 	getSaveLoad()->setMovieViewed(videoNumber);
 	_currentMovie = videoNumber;
 
@@ -152,7 +152,7 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 	int32 frameEnd = 0;
 	int32 currentSubtitle = 0;
 
-	while (!_done && !_vm->shouldQuit() && !_smkDecoder->endOfVideo()) {
+	while (!_done && !Engine::shouldQuit() && !_smkDecoder->endOfVideo()) {
 		_vm->handleEvents();
 
 		if (_smkDecoder->needsUpdate()) {
@@ -207,7 +207,7 @@ void VideoPlayer::loadSubtitles() {
 
 	Common::File subsFile;
 	subsFile.open("vids.cap");
-	uint32 fileSize = subsFile.size();
+	uint32 fileSize = (uint32)subsFile.size();
 	char *buffer = new char[fileSize + 1];
 	subsFile.read(buffer, fileSize);
 	subsFile.close();

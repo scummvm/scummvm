@@ -66,7 +66,7 @@ ResourceId Speech::playIndexed(int32 index) {
 	int processedIndex;
 
 	if (getWorld()->actorType || index != -1) {
-		processedIndex = speechIndex[index + 5 * getWorld()->actorType] + rnd(speechIndexRandom[index + 5 * getWorld()->actorType]);
+		processedIndex = (int)speechIndex[index + 5 * getWorld()->actorType] + (int)rnd(speechIndexRandom[index + 5 * getWorld()->actorType]);
 	} else {
 		switch(_vm->getRandom(3)) {
 		default:
@@ -239,7 +239,7 @@ void Speech::prepareSpeech() {
 			Actor *actor = getScene()->getActor();
 			actor->adjustCoordinates(&point);
 
-			int32 posY = (((point.y >= 240) - 1) & 280) + 40;
+			int32 posY = (point.y >= 240) ? 40 : 320;
 
 			getText()->draw(_textDataPos, getWorld()->font3, posY);
 			getText()->draw(_textData, getWorld()->font1, posY);

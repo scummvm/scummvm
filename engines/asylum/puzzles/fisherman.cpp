@@ -185,7 +185,7 @@ void PuzzleFisherman::updateCursor() {
 			if (!_state[i]) {
 				found = true;
 
-				if (getCursor()->animation != kCursorAnimationMirror)
+				if (getCursor()->getAnimation() != kCursorAnimationMirror)
 					getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationMirror, 7);
 			}
 		}
@@ -198,9 +198,9 @@ void PuzzleFisherman::updateCursor() {
 	 || puzzleFishermanPolygons[6].y >= mousePos.y
 	 || puzzleFishermanPolygons[6].x + 70 <= mousePos.x
 	 || puzzleFishermanPolygons[6].y + 30 <= mousePos.y) {
-		 if (getCursor()->animation != kCursorAnimationNone)
+		 if (getCursor()->getAnimation() != kCursorAnimationNone)
 			 getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationNone, 7);
-		 else if (getCursor()->animation != kCursorAnimationMirror)
+		 else if (getCursor()->getAnimation() != kCursorAnimationMirror)
 			 getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationMirror, 7);
 	}
 }

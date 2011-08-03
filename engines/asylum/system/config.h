@@ -92,7 +92,7 @@ public:
 	 *
 	 * @return true if key assigned, false if not.
 	 */
-	bool isKeyAssigned(char key);
+	bool isKeyAssigned(char key) const;
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;

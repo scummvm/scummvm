@@ -58,10 +58,10 @@ public:
 	/**
 	 * Plays a video.
 	 *
-	 * @param videoNumber 	   The video number.
+	 * @param videoNumber      The video number.
 	 * @param handler          The previous event handler.
 	 */
-	void play(int32 videoNumber, EventHandler *handler);
+	void play(uint32 videoNumber, EventHandler *handler);
 
 	/**
 	 * Handle event.

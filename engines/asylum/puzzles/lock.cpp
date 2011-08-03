@@ -226,14 +226,14 @@ void PuzzleLock::updateCursor() {
 
 	for (uint32 i = 0; i < 6; i++) {
 		if (hitTest(&puzzleLockPolygons[0], mousePos, 2 * i)) {
-			if (getCursor()->animation != kCursorAnimationMirror)
+			if (getCursor()->getAnimation() != kCursorAnimationMirror)
 				getCursor()->set(getWorld()->graphicResourceIds[41]);
 
 			return ;
 		}
 	}
 
-	if (getCursor()->animation == kCursorAnimationMirror)
+	if (getCursor()->getAnimation() == kCursorAnimationMirror)
 		getCursor()->set(getWorld()->graphicResourceIds[41], 0, kCursorAnimationNone);
 }
 

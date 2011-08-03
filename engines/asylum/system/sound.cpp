@@ -182,15 +182,15 @@ int32 Sound::calculateVolumeAdjustement(const Common::Point &point, int32 attenu
 	return -volume;
 }
 
-int32 Sound::getAdjustedVolume(int32 volume) {
+int32 Sound::getAdjustedVolume(int32 volume) const {
 	if (volume < 2)
 		return volume;
 
 	uint32 counter = (uint32)(log((double)volume) / log(2.0)) / 2;
-	int32 adjustedVolume = pow(2.0, (int32)counter);
+	uint32 adjustedVolume = (uint32)pow(2.0, (int32)counter);
 
 	uint32 offset = adjustedVolume;
-	int32 base = adjustedVolume << counter;
+	uint32 base = adjustedVolume << counter;
 
 	for (;;) {
 		--counter;
@@ -198,9 +198,9 @@ int32 Sound::getAdjustedVolume(int32 volume) {
 			break;
 
 		offset /= 2;
-		int32 val = base + ((offset + 2 * volume) << counter);
+		uint32 val = base + ((offset + 2 * (uint32)volume) << counter);
 
-		if (val <= volume) {
+		if (val <= (uint32)volume) {
 			adjustedVolume += offset;
 			base = val;
 		}
@@ -363,7 +363,7 @@ void Sound::convertVolumeFrom(int32 &vol) {
 }
 
 void Sound::convertVolumeTo(int32 &vol) {
-	vol = (log10(vol / (double)Audio::Mixer::kMaxChannelVolume) - 0.5) * 2000;
+	vol = (int32)(log10(vol / (double)Audio::Mixer::kMaxChannelVolume) - 0.5) * 2000;
 }
 
 void Sound::convertPan(int32 &pan) {

@@ -33,9 +33,9 @@ namespace Asylum {
 const uint32 CURSOR_UPDATE_TICKS = 100;
 
 Cursor::Cursor(AsylumEngine *engine) : _vm(engine),
-	graphicResourceId(kResourceNone), currentFrame(0), lastFrameIndex(0), counter(0), animation(kCursorAnimationNone),
-	_cursorRes(NULL), _nextTick(0), _frameStep(0), _state(0), forceHide(false) {
-
+	_state(0), _cursorRes(NULL), _nextTick(0), _frameStep(0),
+	_graphicResourceId(kResourceNone), _currentFrame(0), _lastFrameIndex(0), _counter(0), _animation(kCursorAnimationNone),
+	_forceHide(false) {
 }
 
 Cursor::~Cursor() {
@@ -50,7 +50,7 @@ void Cursor::hide() const {
 }
 
 void Cursor::show() const {
-	if (!forceHide)
+	if (!_forceHide)
 		CursorMan.showMouse(true);
 }
 
@@ -65,24 +65,24 @@ void Cursor::set(ResourceId resourceId, int32 cnt, CursorAnimation anim, int32 f
 
 	// Get frame count
 	if (frames >= 0)
-		lastFrameIndex = frames;
+		_lastFrameIndex = (uint32)frames;
 	else
-		lastFrameIndex = _cursorRes->count() - 1;
+		_lastFrameIndex = _cursorRes->count() - 1;
 
-	this->graphicResourceId = resourceId;
-	this->animation = anim;
-	this->counter = cnt;
-	currentFrame = 0;
+	this->_graphicResourceId = resourceId;
+	this->_animation = anim;
+	this->_counter = cnt;
+	_currentFrame = 0;
 	_frameStep = 1;
 
 	// Do not animate if no frames (and the other way around)
-	if (lastFrameIndex == 0 || anim == kCursorAnimationNone) {
-		lastFrameIndex = 0;
-		animation = kCursorAnimationNone;
+	if (_lastFrameIndex == 0 || anim == kCursorAnimationNone) {
+		_lastFrameIndex = 0;
+		_animation = kCursorAnimationNone;
 	}
 
-	if (lastFrameIndex >= _cursorRes->count())
-		lastFrameIndex = _cursorRes->count() - 1;
+	if (_lastFrameIndex >= _cursorRes->count())
+		_lastFrameIndex = _cursorRes->count() - 1;
 
 	update();
 
@@ -93,9 +93,9 @@ void Cursor::update() {
 	if (!_cursorRes)
 		error("[Cursor::update] Cursor resources not initialized properly!");
 
-	Common::Point hotspot = getHotspot(currentFrame);
+	Common::Point hotspot = getHotspot(_currentFrame);
 
-	GraphicFrame *frame = _cursorRes->getFrame(currentFrame);
+	GraphicFrame *frame = _cursorRes->getFrame(_currentFrame);
 	CursorMan.replaceCursor((byte *)frame->surface.pixels,
 	                        frame->surface.w,
 	                        frame->surface.h,
@@ -136,33 +136,33 @@ void Cursor::setState(const Common::Event &evt) {
 }
 
 void Cursor::animate() {
-	if (isHidden() || !animation || _nextTick > _vm->getTick())
+	if (isHidden() || !_animation || _nextTick > _vm->getTick())
 		return;
 
 	bool notifyHandler = false;
 	int32 frame = 0;
 
-	if (animation == kCursorAnimationLinear) {
-		if (currentFrame == lastFrameIndex) {
-			currentFrame = frame = 0;
+	if (_animation == kCursorAnimationLinear) {
+		if (_currentFrame == _lastFrameIndex) {
+			_currentFrame = frame = 0;
 		} else {
-			currentFrame += _frameStep;
-			frame = currentFrame;
+			_currentFrame += _frameStep;
+			frame = _currentFrame;
 		}
-	} else if (animation == kCursorAnimationMirror) {
-		currentFrame += _frameStep;
-		frame = currentFrame;
+	} else if (_animation == kCursorAnimationMirror) {
+		_currentFrame += _frameStep;
+		frame = _currentFrame;
 
-		if (currentFrame == 0 || currentFrame == lastFrameIndex)
+		if (_currentFrame == 0 || _currentFrame == _lastFrameIndex)
 			_frameStep = -_frameStep;
 	}
 
 	if (frame == 0) {
-		if (counter != -1) {
-			--counter;
+		if (_counter != -1) {
+			--_counter;
 
-			if (!counter) {
-				animation = kCursorAnimationNone;
+			if (!_counter) {
+				_animation = kCursorAnimationNone;
 				notifyHandler = true;
 			}
 		}
@@ -177,15 +177,17 @@ void Cursor::animate() {
 }
 
 Common::Point Cursor::getHotspot(uint32 frameIndex) {
-	Common::Point point;
+	if (!_cursorRes)
+		error("[Cursor::getHotspot] Cursor resource not initialized properly");
 
+	Common::Point point;
 	uint32 resFlags = _cursorRes->getData().flags;
 
 	if (BYTE1(resFlags) & 0x10) {
 		// XXX removed a check for frameIndex >= 0 as it will always
 		// evaluate to true since frameIndex is unsigned
 		if (frameIndex > _cursorRes->count()) {
-			GraphicFrame *frame = _cursorRes->getFrame(currentFrame);
+			GraphicFrame *frame = _cursorRes->getFrame(_currentFrame);
 
 			point.x = frame->x;
 			point.y = frame->y;

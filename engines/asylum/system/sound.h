@@ -196,7 +196,7 @@ public:
 	 *
 	 * @return The adjusted volume.
 	 */
-	int32 getAdjustedVolume(int32 volume);
+	int32 getAdjustedVolume(int32 volume) const;
 
 	/**
 	 * Calculates the panning at point.

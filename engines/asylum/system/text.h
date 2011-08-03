@@ -48,11 +48,11 @@ public:
 	ResourceId loadFont(ResourceId resourceId);
 
 	void   setPosition(const Common::Point &point);
-	int32  getWidth(char c);
-	int32  getWidth(const char *text);
-	int32  getWidth(const char *text, uint32 length);
-	int32  getWidth(ResourceId resourceId);
-    char  *get(ResourceId resourceId);
+	uint16 getWidth(char c);
+	uint16 getWidth(const char *text);
+	uint16 getWidth(const char *text, uint32 length);
+	uint16 getWidth(ResourceId resourceId);
+	char  *get(ResourceId resourceId);
 
 	void drawChar(char character);
 	void draw(const char *text);
@@ -61,12 +61,12 @@ public:
 	void draw(const Common::Point &point, ResourceId resourceId);
 	void draw(const char *text, ResourceId fontResourceId, int32 y);
 	void draw(const char *text, uint32 length);
-	uint32 draw(TextCentering centering, const Common::Point &point, int32 spacing, int32 width, const char *text);
-	uint32 draw(int32 a1, int32 a2, TextCentering centering, const Common::Point &point, int32 spacing, int32 width, const char *text);
+	int16 draw(TextCentering centering, const Common::Point &point, int16 spacing, int16 width, const char *text);
+	int16 draw(int32 a1, int32 a2, TextCentering centering, const Common::Point &point, int16 spacing, int16 width, const char *text);
 
-	void drawCentered(const Common::Point &point, int32 width, const char *text);
-	void drawCentered(const Common::Point &point, int32 width, ResourceId resourceId);
-	void drawCentered(const Common::Point &point, int32 width, uint32 length, const char *text);
+	void drawCentered(const Common::Point &point, int16 width, const char *text);
+	void drawCentered(const Common::Point &point, int16 width, ResourceId resourceId);
+	void drawCentered(const Common::Point &point, int16 width, int16 length, const char *text);
 
 	void setTransTableNum(int32 val) { _transTableNum = val; }
 
