@@ -552,6 +552,14 @@ void DreamGenContext::findsource() {
 	}
 }
 
+void *DreamGenContext::findsourceCPP() {
+	push(ds);
+	findsource();
+	void *result = ds.ptr(0, 0);
+	ds = pop();
+	return result;
+}
+
 void DreamGenContext::showreelframe() {
 	Reel *reel = (Reel *)es.ptr(si, sizeof(Reel));
 	showreelframe(reel);
@@ -561,10 +569,10 @@ void DreamGenContext::showreelframe(Reel *reel) {
 	uint16 x = reel->x + data.word(kMapadx);
 	uint16 y = reel->y + data.word(kMapady);
 	data.word(kCurrentframe) = reel->frame();
-	findsource();
+	void *source = findsourceCPP();
 	uint16 frame = data.word(kCurrentframe) - data.word(kTakeoff);
 	uint8 width, height;
-	showframe(ds.ptr(0, 0), x, y, frame, 8, &width, &height);
+	showframe(source, x, y, frame, 8, &width, &height);
 }
 
 void DreamGenContext::showrain() {
