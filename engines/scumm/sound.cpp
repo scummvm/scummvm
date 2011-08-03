@@ -2002,7 +2002,7 @@ static void convertADResource(ResourceManager *res, const GameSettings& game, Re
 				// thus we won't get looping for sound effects. It should
 				// always jump to the start of the channel.
 				//
-				// Since we convert the data to MIDI and we can not ony loop a
+				// Since we convert the data to MIDI and we cannot only loop a
 				// single channel via MIDI fixing this will require some more
 				// thought.
 				track_time[ch] = -1;
