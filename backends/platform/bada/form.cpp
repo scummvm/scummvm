@@ -270,7 +270,8 @@ int BadaAppForm::getShortcutIndex() {
   return shortcutIndex;
 }
 
-void BadaAppForm::showVolume(int level) {
+void BadaAppForm::setVolume(bool up, bool minMax) {
+  int level = ((BadaSystem*) g_system)->setVolume(up, minMax);
   if (level != -1) {
     char message[32];
     char ind[LEVEL_RANGE]; // 1..5 (0=off)
@@ -404,11 +405,11 @@ void BadaAppForm::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
   logEntered();
   switch (keyCode) {
   case KEY_SIDE_UP:
-    showVolume(((BadaSystem*) g_system)->setVolume(true, true));
+    setVolume(true, true);
     return;
 
   case KEY_SIDE_DOWN:
-    showVolume(((BadaSystem*) g_system)->setVolume(false, true));
+    setVolume(false, true);
     return;
 
   default:
@@ -419,11 +420,11 @@ void BadaAppForm::OnKeyLongPressed(const Control& source, KeyCode keyCode) {
 void BadaAppForm::OnKeyPressed(const Control& source, KeyCode keyCode) {
   switch (keyCode) {
   case KEY_SIDE_UP:
-    showVolume(((BadaSystem*) g_system)->setVolume(true, false));
+    setVolume(true, false);
     return;
 
   case KEY_SIDE_DOWN:
-    showVolume(((BadaSystem*) g_system)->setVolume(false, false));
+    setVolume(false, false);
     return;
 
   case KEY_CAMERA:
