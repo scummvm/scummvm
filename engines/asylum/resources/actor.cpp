@@ -30,7 +30,6 @@
 #include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
 
-#include "asylum/system/config.h"
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
 #include "asylum/system/screen.h"
@@ -42,7 +41,6 @@
 #include "asylum/asylum.h"
 #include "asylum/staticres.h"
 
-#include "common/endian.h"
 
 namespace Asylum {
 

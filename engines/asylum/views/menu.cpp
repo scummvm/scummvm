@@ -25,12 +25,10 @@
 #include "asylum/resources/actor.h"
 #include "asylum/resources/worldstats.h"
 
-#include "asylum/system/config.h"
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
 #include "asylum/system/savegame.h"
 #include "asylum/system/screen.h"
-#include "asylum/system/sound.h"
 #include "asylum/system/text.h"
 
 #include "asylum/views/scene.h"

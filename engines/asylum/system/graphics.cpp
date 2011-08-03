@@ -25,8 +25,6 @@
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 
-#include "common/endian.h"
-
 namespace Asylum {
 
 GraphicResource::GraphicResource(AsylumEngine *engine) : _vm(engine), _resourceId(kResourceNone) {

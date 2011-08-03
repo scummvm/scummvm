@@ -46,11 +46,9 @@
 #include "asylum/puzzles/wheel.h"
 #include "asylum/puzzles/writings.h"
 
-#include "asylum/system/config.h"
 #include "asylum/system/cursor.h"
 #include "asylum/system/savegame.h"
 #include "asylum/system/screen.h"
-#include "asylum/system/sound.h"
 #include "asylum/system/speech.h"
 #include "asylum/system/text.h"
 
@@ -58,12 +56,9 @@
 #include "asylum/views/menu.h"
 #include "asylum/views/video.h"
 
-#include "asylum/console.h"
 #include "asylum/respack.h"
 
-#include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
 
 #include "engines/util.h"

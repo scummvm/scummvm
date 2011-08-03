@@ -25,8 +25,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "base/plugins.h"
-
 #include "asylum/asylum.h"
 
 static const PlainGameDescriptor asylumGames[] = {
