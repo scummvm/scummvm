@@ -813,7 +813,7 @@ Vga::Vga(int mode)
 	for (int i = 10; i < 20; i++) {
 		char *text = _text->getText(i);
 		if (text) {
-			debugN("%s", text);
+			debugN("%s\n", text);
 			std = false;
 		}
 	}
