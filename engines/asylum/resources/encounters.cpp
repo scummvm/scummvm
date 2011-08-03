@@ -1084,13 +1084,13 @@ void Encounter::drawDialog() {
 			else
 				getText()->loadFont(getWorld()->font1);
 
-			int32 x = _drawingStructs[0].point1.y + 144 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15;
-			int32 y = _point.y + (16 * counter / 3);
+			Common::Point coords(_drawingStructs[0].point1.y + 144 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15,
+			                     _point.y + (16 * counter / 3));
 
 			if (getKeywordIndex() == index)
-				getScreen()->fillRect(x -1, y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackShared, 3681)), 18, 0);
+				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackShared, 3681)), 18, 0);
 
-			getText()->setPosition(x, y);
+			getText()->setPosition(coords);
 			getText()->draw(MAKE_RESOURCE(kResourcePackShared, 3681));
 
 			++counter;
@@ -1117,13 +1117,13 @@ void Encounter::drawText(char *text, ResourceId font, int32 y) {
 		}
 	} else {
 		_data_455BCC = true;
-		_data_455B70 = getText()->draw(kTextCalculate, x, y, 16, width, text);
+		_data_455B70 = getText()->draw(kTextCalculate, Common::Point(x, y), 16, width, text);
 		_data_455B3C = _data_455B70 / 8 + 1;
 		_data_455BF0 = 0;
 		_tick = _vm->getTick() + 1000 * getResource()->get(getSpeech()->getSoundResourceId())->size / 11025 / _data_455B3C;
 	}
 
-	getText()->draw(_data_455BF0, 7, kTextCenter, x, y, 16, width, text);
+	getText()->draw(_data_455BF0, 7, kTextCenter, Common::Point(x, y), 16, width, text);
 }
 
 void Encounter::drawScreen() {

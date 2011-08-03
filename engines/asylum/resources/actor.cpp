@@ -273,7 +273,7 @@ void Actor::drawNumber() {
 		return;
 
 	getText()->loadFont(getWorld()->font1);
-	getText()->drawCentered(_numberStringX, _numberStringY, _numberStringWidth, (char *)&_numberString01);
+	getText()->drawCentered(Common::Point(_numberStringX, _numberStringY), _numberStringWidth, (char *)&_numberString01);
 }
 
 void Actor::update() {

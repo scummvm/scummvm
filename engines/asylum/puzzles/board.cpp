@@ -149,14 +149,14 @@ bool PuzzleBoard::stopSound() {
 
 void PuzzleBoard::drawText() {
 	getText()->loadFont(getWorld()->graphicResourceIds[35]);
-	getText()->draw(0, 99, kTextCenter, 25, 50, 16, 590, _text.c_str());
+	getText()->draw(0, 99, kTextCenter, Common::Point(25, 50), 16, 590, _text.c_str());
 
 	int32 index = 0;
 	for (uint32 x = 215; x < _data.maxWidth; x += 24) {
 		if (!_solvedText[index])
 			break;
 
-		getText()->setPosition(x, _selectedSlot != index ? 360 : 370);
+		getText()->setPosition(Common::Point(x, _selectedSlot != index ? 360 : 370));
 		getText()->drawChar(_solvedText[index]);
 
 		index += 2;
