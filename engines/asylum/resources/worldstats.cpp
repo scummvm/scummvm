@@ -77,6 +77,15 @@ WorldStats::WorldStats(AsylumEngine *engine) : _vm(engine) {
 	numPolygons = 0;
 	memset(&cursorResourcesAlternate, kResourceNone, sizeof(cursorResourcesAlternate));
 
+	field_E848C = 0;
+	field_E8490 = 0;
+	field_E8494 = 0;
+	field_E8498 = 0;
+	field_E849C = 0;
+	memset(&tickValueArray, 0, sizeof(tickValueArray));
+	field_E8518 = 0;
+	memset(&field_E851C, 0, sizeof(field_E851C));
+	memset(&field_E8594, 0, sizeof(field_E8594));
 	nextPlayer = kActorMax;
 	memset(&field_E8610, 0, sizeof(field_E8610));
 	memset(&field_E8628, 0, sizeof(field_E8628));
@@ -100,8 +109,8 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	numEntries = stream->readSint32LE();
 
 	chapter = (ChapterIndex)stream->readSint32LE();
-	xLeft      = stream->readSint32LE();
-	yTop       = stream->readSint32LE();
+	xLeft      = (int16)stream->readSint32LE();
+	yTop       = (int16)stream->readSint32LE();
 
 	boundingRect.left   = (int16)(stream->readSint32LE() & 0xFFFF);
 	boundingRect.top    = (int16)(stream->readSint32LE() & 0xFFFF);
@@ -124,7 +133,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	unused              = stream->readSint32LE();
 	smallCurUp          = stream->readSint32LE();
 	smallCurDown        = stream->readSint32LE();
-	encounterFrameBg    = stream->readSint32LE();
+	encounterFrameBg    = (ResourceId)stream->readSint32LE();
 
 	width               = stream->readSint32LE();
 	height              = stream->readSint32LE();
@@ -173,10 +182,10 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		ambientSounds[s].nextTick = stream->readSint32LE();
 
 		for (int32 i = 0; i < 6; i++)
-			ambientSounds[s].flagNum[i] = (GameFlag)stream->readSint32LE();
+			ambientSounds[s].flagNum[i] = stream->readSint32LE();
 
-		ambientSounds[s].point.x = stream->readSint32LE();
-		ambientSounds[s].point.y = stream->readSint32LE();
+		ambientSounds[s].point.x = (int16)stream->readSint32LE();
+		ambientSounds[s].point.y = (int16)stream->readSint32LE();
 	}
 
 	numAmbientSounds          = stream->readSint32LE();
@@ -288,7 +297,7 @@ int32 WorldStats::getActionAreaIndexById(int32 id) {
 }
 
 int32 WorldStats::getRandomActionAreaIndexById(int32 id) {
-	int count = 0;
+	uint count = 0;
 	int32 indexes[5];
 	memset(&indexes, 0, sizeof(indexes));
 

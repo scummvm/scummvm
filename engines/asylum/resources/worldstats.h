@@ -77,8 +77,8 @@ public:
 	int32 size;
 	int32 numEntries;
 	ChapterIndex chapter;
-	int32 xLeft; // scene start x position
-	int32 yTop;  // scene start y position
+	int16 xLeft; // scene start x position
+	int16 yTop;  // scene start y position
 	Common::Rect boundingRect;
 	ResourceId backgroundImage;
 	ResourceId cursorResources[13];
@@ -92,7 +92,7 @@ public:
 	int32 unused;
 	int32 smallCurUp;
 	int32 smallCurDown;
-	int32 encounterFrameBg;
+	ResourceId encounterFrameBg;
 	int32 width; // field_80
 	int32 height;
 	int32 motionStatus;

@@ -99,8 +99,8 @@ private:
 	};
 
 	struct EncounterGraphic {
-		int32 frameIndex;
-		int32 frameCount;
+		uint32 frameIndex;
+		uint32 frameCount;
 		Common::Rect rect;
 		ResourceId resourceId;
 		int32 transTableNum;
@@ -126,7 +126,7 @@ private:
 	struct EncounterDrawingStruct {
 		Common::Point point1;
 		Common::Point point2;
-		int32 frameIndex;
+		uint32 frameIndex;
 		int32 transTableNum;
 		int32 status;
 		ResourceId resourceId;
@@ -161,13 +161,13 @@ private:
 	ObjectId _objectId3;
 	ActorIndex _actorIndex;
 
-	uint32 _value1;
+	int16 _value1;
 	uint32 _tick;
 
 	// Internal data
 	int32 _data_455B14;
-	uint32 _data_455B3C;
-	uint32 _data_455B70;
+	int16 _data_455B3C;
+	int16 _data_455B70;
 	bool _data_455BCC;
 	bool _data_455BD0;
 	bool _data_455BD4;
@@ -176,7 +176,7 @@ private:
 	bool _data_455BE0;
 	bool _data_455BE4;
 	bool _data_455BE8;
-	uint32 _data_455BF0;
+	int16 _data_455BF0;
 	uint32 _data_455BF4;
 	uint32 _data_455BF8;
 
@@ -205,25 +205,25 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Variables
-	void setVariable(uint32 index, int32 val);\
-	int32 getVariable(uint32 index);
-	int32 getVariableInv(int32 index);
+	void setVariable(uint32 index, int16 val);
+	int16 getVariable(uint32 index);
+	int16 getVariableInv(int16 index);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Actions
-	uint32 findKeyword(EncounterItem *item, int16 keyword);
+	uint32 findKeyword(EncounterItem *item, int16 keyword) const;
 	int32 getKeywordIndex();
 	void choose(int32 keywordIndex);
-	bool checkKeywords();
-	bool checkKeywords2();
+	bool checkKeywords() const;
+	bool checkKeywords2() const;
 	void updateFromRect(int32 rectIndex);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Speech
-	void resetSpeech(uint32 a1, uint32 a2);
+	void resetSpeech(int16 a1, int16 a2);
 	void setupPortraits();
 	void setupSpeechText();
-	void setupSpeechData(char val, EncounterGraphic *encounterGraphic);
+	void setupSpeechData(char val, EncounterGraphic *encounterGraphic) const;
 	void setupSpeech(ResourceId textResourceId, ResourceId fontResourceId);
 	bool setupSpeech(ResourceId id);
 	bool isSpeaking();
@@ -234,7 +234,7 @@ private:
 	bool drawPortraits();
 	void drawStructs();
 	void drawDialog();
-	void drawText(char *text, ResourceId font, int32 y);
+	void drawText(char *text, ResourceId font, int16 y);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc

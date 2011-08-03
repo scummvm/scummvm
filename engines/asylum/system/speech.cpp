@@ -239,7 +239,7 @@ void Speech::prepareSpeech() {
 			Actor *actor = getScene()->getActor();
 			actor->adjustCoordinates(&point);
 
-			int32 posY = (point.y >= 240) ? 40 : 320;
+			int16 posY = (point.y >= 240) ? 40 : 320;
 
 			getText()->draw(_textDataPos, getWorld()->font3, posY);
 			getText()->draw(_textData, getWorld()->font1, posY);

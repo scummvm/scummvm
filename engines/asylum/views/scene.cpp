@@ -63,6 +63,7 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_playerIndex = 0;
 
 	_hitAreaChapter7Counter = 0;
+	_isCTRLPressed = false;
 	_chapter5RainFrameIndex = 0;
 
 	_musicVolume = 0;
@@ -200,6 +201,9 @@ void Scene::enter(ResourcePackId packId) {
 }
 
 void Scene::enterLoad() {
+	if (!_ws)
+		error("[Scene::enterLoad] WorldStats not initialized properly");
+
 	_vm->setGameFlag(kGameFlagScriptProcessing);
 	getScreen()->clearGraphicsInQueue();
 
@@ -337,6 +341,9 @@ void Scene::activate() {
 }
 
 bool Scene::init() {
+	if (!_ws)
+		error("[Scene::init] WorldStats not initialized properly");
+
 	if (getSharedData()->getFlag((kFlag3))) { // this flag is set during an encounter
 		getSharedData()->setFlag(kFlag3, false);
 
@@ -401,6 +408,9 @@ bool Scene::update() {
 }
 
 bool Scene::key(const AsylumEvent &evt) {
+	if (!_ws)
+		error("[Scene::key] WorldStats not initialized properly");
+
 	// TODO add support for debug commands
 
 	//////////////////////////////////////////////////////////////////////////
@@ -836,9 +846,9 @@ void Scene::updateAmbientSounds() {
 		uint32 ambientTick = getSharedData()->getAmbientTick(i);
 
 		for (int32 f = 0; f < 6; f++) {
-			GameFlag gameFlag = snd->flagNum[f];
+			int32 gameFlag = snd->flagNum[f];
 			if (gameFlag >= 0) {
-				if (_vm->isGameFlagNotSet(gameFlag)) {
+				if (_vm->isGameFlagNotSet((GameFlag)gameFlag)) {
 					processSound = false;
 					break;
 				}
@@ -1800,7 +1810,7 @@ void Scene::stopSpeech() {
 }
 
 bool Scene::speak(Common::KeyCode code) {
-#define GET_INDEX(val) ((((long long)val >> 32) ^ (abs((int)val) & 1)) == ((long long)val >> 32))
+#define GET_INDEX() ((int)abs((double)_vm->getRandom(RAND_MAX)) & 1)
 
 	int32 index = -1;
 
@@ -1814,7 +1824,7 @@ bool Scene::speak(Common::KeyCode code) {
 			break;
 
 		case 0:
-			index = GET_INDEX(_vm->getRandom(RAND_MAX));
+			index = GET_INDEX();
 			break;
 
 		case 1:
@@ -1831,7 +1841,7 @@ bool Scene::speak(Common::KeyCode code) {
 			break;
 
 		case 0:
-			index = 3 - GET_INDEX(_vm->getRandom(RAND_MAX));
+			index = 3 - GET_INDEX();
 			break;
 
 		case 1:
@@ -1979,7 +1989,7 @@ bool Scene::speak(Common::KeyCode code) {
 			break;
 
 		case 0:
-			index = 13 - GET_INDEX(_vm->getRandom(65536));
+			index = 13 - GET_INDEX();
 			break;
 
 		case 1:
@@ -1995,11 +2005,11 @@ bool Scene::speak(Common::KeyCode code) {
 			break;
 
 		case 0:
-			index = 15 - GET_INDEX(_vm->getRandom(RAND_MAX));
+			index = 15 - GET_INDEX();
 			break;
 
 		case 2:
-			index = 12 - GET_INDEX(_vm->getRandom(RAND_MAX));
+			index = 12 - GET_INDEX();
 			break;
 		}
 		break;
@@ -2706,6 +2716,9 @@ void Scene::debugShowPolygons() {
 }
 
 void Scene::debugShowPolygon(uint32 index, uint32 color) {
+	if (!_polygons)
+		error("[Scene::debugShowPolygon] Polygons not initialized properly");
+
 	if (index >= _polygons->size() - 1)
 		return;
 

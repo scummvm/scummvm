@@ -67,7 +67,8 @@ namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
 	_console(NULL), _cursor(NULL), _encounter(NULL), _menu(NULL), _reaction(NULL), _resource(NULL), _savegame(NULL),
-	_scene(NULL), _screen(NULL), _script(NULL), _sound(NULL), _text(NULL), _video(NULL), _handler(NULL) {
+	_scene(NULL), _screen(NULL), _script(NULL), _special(NULL), _speech(NULL), _sound(NULL), _text(NULL),
+	_video(NULL), _handler(NULL) {
 
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
@@ -107,6 +108,8 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 }
 
 AsylumEngine::~AsylumEngine() {
+	_handler = NULL;
+
 	delete _cursor;
 	delete _scene;
 	delete _encounter;
@@ -114,6 +117,8 @@ AsylumEngine::~AsylumEngine() {
 	delete _savegame;
 	delete _screen;
 	delete _script;
+	delete _special;
+	delete _speech;
 	delete _sound;
 	delete _text;
 	delete _video;
@@ -121,9 +126,13 @@ AsylumEngine::~AsylumEngine() {
 	delete _resource;
 	delete _console;
 
+	_previousScene = NULL;
+
 	// Cleanup puzzles
 	for (uint i = 0; i < ARRAYSIZE(_puzzles); i++)
 		delete _puzzles[i];
+
+	delete _rnd;
 
 	// Zero passed pointers
 	_gameDescription = NULL;
@@ -185,7 +194,7 @@ Common::Error AsylumEngine::run() {
 }
 
 void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
-	if (!_cursor || !_screen)
+	if (!_cursor || !_screen || !_savegame)
 		error("[AsylumEngine::startGame] Subsystems not initialized properly!");
 
 	// Load the default mouse cursor
@@ -227,6 +236,9 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 }
 
 void AsylumEngine::restart() {
+	if (!_cursor || !_script)
+		error("[AsylumEngine::restart] Subsystems not initialized properly!");
+
 	_cursor->hide();
 
 	// Cleanup
@@ -250,6 +262,9 @@ void AsylumEngine::restart() {
 }
 
 void AsylumEngine::reset() {
+	if (!_menu)
+		error("[AsylumEngine::reset] Subsystems not initialized properly!");
+
 	// Set game as started
 	_menu->setGameStarted();
 
@@ -319,7 +334,7 @@ void AsylumEngine::playIntro() {
 }
 
 void AsylumEngine::handleEvents() {
-	if (!_console || !_video || !_screen || !_sound || !_menu)
+	if (!_console || !_video || !_screen || !_sound || !_menu || !_cursor)
 		error("[AsylumEngine::handleEvents] Subsystems not initialized properly!");
 
 	// Show the debugger if required
@@ -383,11 +398,14 @@ void AsylumEngine::handleEvents() {
 }
 
 void AsylumEngine::processDelayedEvents() {
-	if (!_video || !_sound || !_menu)
+	if (!_video || !_sound || !_menu || !_script)
 		error("[AsylumEngine::processDelayedEvents] Subsystems not initialized properly!");
 
 	// check for a delayed scene change
 	if (_delayedSceneIndex != kResourcePackInvalid && isGameFlagNotSet(kGameFlagScriptProcessing)) {
+		if (!_scene)
+			error("[AsylumEngine::processDelayedEvents] Subsystems not initialized properly!");
+
 		ResourcePackId sceneIndex = _delayedSceneIndex;
 
 		// Reset delayed scene
@@ -404,7 +422,7 @@ void AsylumEngine::processDelayedEvents() {
 
 	// Check for delayed video
 	if (_delayedVideoIndex != -1 && isGameFlagNotSet(kGameFlagScriptProcessing)) {
-		int32 index = _delayedVideoIndex;
+		uint32 index = (uint32)_delayedVideoIndex;
 		_delayedVideoIndex = -1;
 
 		_video->play(index, _handler);
@@ -453,8 +471,8 @@ void AsylumEngine::notify(AsylumEventType type, int32 param1, int32 param2) {
 	_handler->handleEvent(evt);
 }
 
-EventHandler *AsylumEngine::getPuzzle(uint32 index) {
-	if (index > ARRAYSIZE(_puzzles))
+EventHandler *AsylumEngine::getPuzzle(uint32 index) const {
+	if (index >= ARRAYSIZE(_puzzles))
 		error("[AsylumEngine::getPuzzleEventHandler] Invalid index (was: %d - max: %d)", index, ARRAYSIZE(_puzzles));
 
 	if (_puzzles[index] == NULL)
@@ -489,16 +507,16 @@ void AsylumEngine::initSinCosTables(double a2, int32 a3, int32 a4) {
 
 	do {
 		if (baseStep >= 1) {
-			int32 baseAngle = 90;
+			uint32 baseAngle = 90;
 			int32 step = baseStep;
 
-			int32 *val = &_sinCosTables[2 * offset];
+			int16 *val = &_sinCosTables[2 * offset];
 
 			do {
 				double angle = (double)(baseAngle % 360) * 3.141592653589 * 0.005555555555555556;
 
-				*val       = cos(angle) * a2 - (a3 / 2);
-				*(val + 1) = sin(angle) * a2 - (a4 / 2);
+				*val       = (int16)(cos(angle) * a2 - (a3 / 2.0));
+				*(val + 1) = (int16)(sin(angle) * a2 - (a4 / 2.0));
 
 				baseAngle += 360 / baseStep;
 				val += 2;
@@ -513,7 +531,7 @@ void AsylumEngine::initSinCosTables(double a2, int32 a3, int32 a4) {
 	} while (baseStep <= 8);
 }
 
-int32 AsylumEngine::computeSinCosOffset(int32 val) {
+int32 AsylumEngine::computeSinCosOffset(int32 val) const {
 	int32 offset = 0;
 	for (int32 i = val; i > 0; --i)
 		offset += i;
@@ -522,6 +540,9 @@ int32 AsylumEngine::computeSinCosOffset(int32 val) {
 }
 
 Common::Point AsylumEngine::getSinCosValues(int32 index1, int32 index2) {
+	if (!_scene)
+		error("[AsylumEngine::getSinCosValues] Subsystems not initialized properly!");
+
 	Common::Point values;
 
 	if (_scene->worldstats()->chapter == kChapter11) {
@@ -543,6 +564,9 @@ void AsylumEngine::updateReverseStereo() {
 }
 
 void AsylumEngine::saveLoadWithSerializer(Common::Serializer &s) {
+	if (!_script)
+		error("[AsylumEngine::saveLoadWithSerializer] Subsystems not initialized properly!");
+
 	// Game flags
 	for (uint32 i = 0; i < ARRAYSIZE(_gameFlags); i++)
 		s.syncAsSint32LE(_gameFlags[i]);

@@ -257,7 +257,7 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &) {
 	case kControlGlyph4:
 	case kControlGlyph5:
 	case kControlGlyph6:
-		_leverPosition = (uint32)(_currentControl - 49);
+		_leverPosition = _currentControl - 49;
 		_leverDelta = (uint32)abs((double)(_leverPosition - _prevLeverPosition)) * (GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[kElementLever]) - 1) / 5;
 		if (_leverDelta)
 			getSound()->playSound(getWorld()->graphicResourceIds[76], false, Config.sfxVolume - 10);

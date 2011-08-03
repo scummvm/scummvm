@@ -122,7 +122,7 @@ public:
 
 	// Public variables
 	int32           cdNumber;
-	int32           movieIndex;
+	uint32          movieIndex;
 	uint32          sceneCounter;
 	Common::Point   vector1;
 	Common::Point   vector2;
@@ -146,9 +146,9 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 	// Ambient sound data
-	uint32 getAmbientTick(uint32 index);
+	uint32 getAmbientTick(uint32 index) const;
 	void setAmbientTick(uint32 index, uint32 val);
-	uint32 getAmbientFlag(uint32 index);
+	uint32 getAmbientFlag(uint32 index) const;
 	void setAmbientFlag(uint32 index, uint32 val);
 	void resetAmbientFlags();
 
@@ -164,21 +164,21 @@ public:
 
 	// Saved scene data
 	void saveCursorResources(ResourceId *resources, uint32 size);
-	void loadCursorResources(ResourceId *resources, uint32 size);
+	void loadCursorResources(ResourceId *resources, uint32 size) const;
 	void saveSceneFonts(ResourceId font1, ResourceId font2, ResourceId font3);
-	void loadSceneFonts(ResourceId *font1, ResourceId *font2, ResourceId *font3);
+	void loadSceneFonts(ResourceId *font1, ResourceId *font2, ResourceId *font3) const;
 	void saveSmallCursor(int32 smallCurUp, int32 smallCurDown);
-	void loadSmallCursor(int32 *smallCurUp, int32 *smallCurDown);
-	void saveEncounterFrameBackground(int32 encounterFrameBg) { _encounterFrameBg = encounterFrameBg; }
-	void loadEncounterFrameBackground(int32 *encounterFrameBg) { *encounterFrameBg = _encounterFrameBg; }
+	void loadSmallCursor(int32 *smallCurUp, int32 *smallCurDown) const;
+	void saveEncounterFrameBackground(ResourceId encounterFrameBg) { _encounterFrameBg = encounterFrameBg; }
+	void loadEncounterFrameBackground(ResourceId *encounterFrameBg) { *encounterFrameBg = _encounterFrameBg; }
 
 	// Matte data
 	int32 getMatteVar1() const { return _matteVar1; }
 	void setMatteVar1(int32 val) { _matteVar1 = val; }
 	uint32 getMatteVar2() const { return _matteVar2; }
 	void setMatteVar2(uint32 val) { _matteVar2 = val; }
-	uint32 getMatteBarHeight() const { return _matteBarHeight; }
-	void setMatteBarHeight(uint32 val) { _matteBarHeight = val; }
+	int16 getMatteBarHeight() const { return _matteBarHeight; }
+	void setMatteBarHeight(int16 val) { _matteBarHeight = val; }
 	bool getMatteInitialized() const { return _matteInitialized; }
 	void setMatteInitialized(bool val) { _matteInitialized = val; }
 	bool getMattePlaySound() const { return _mattePlaySound; }
@@ -188,7 +188,7 @@ public:
 	void setChapter2Data(uint32 index, int32 offset, int32 val);
 	int32 getChapter2Data(uint32 index, int32 offset);
 	void setChapter2Counter(uint32 index, int32 val);
-	int32 getChapter2Counter(uint32 index);
+	int32 getChapter2Counter(uint32 index) const;
 	ActorIndex getChapter2FrameIndexOffset() const { return _chapter2FrameIndexOffset; }
 	void setChapter2FrameIndexOffset(int32 val) { _chapter2FrameIndexOffset = val; }
 	ActorIndex getChapter2ActorIndex() const { return _chapter2ActorIndex; }
@@ -219,7 +219,7 @@ private:
 	uint32          _chapter2Data1[5];
 	int32           _smallCurUp;
 	int32           _smallCurDown;
-	int32           _encounterFrameBg;
+	ResourceId      _encounterFrameBg;
 	bool            _flagSkipDrawScene;
 	int32           _matteVar1;
 	bool            _flagActorUpdateEnabledCheck;
@@ -247,7 +247,7 @@ private:
 	bool            _flagScene1;
 	bool            _flagRedraw;
 
-	uint32          _matteBarHeight;
+	int16           _matteBarHeight;
 	uint32          _matteVar2;
 };
 

@@ -237,11 +237,11 @@ enum ResourcePackId {
 
 #define MAKE_RESOURCE(pack, index) (ResourceId)((((pack) << 16) + 0x80000000) + (uint32)(index))
 
-typedef unsigned int ResourceId;
+typedef int ResourceId;
 
 enum ResourcesId {
 	kResourceNone         = 0,
-	kResourceInvalid       = 0xFFFFFFFF
+	kResourceInvalid      = 0xFFFFFFFF
 };
 
 #define kMusicStopped -666
