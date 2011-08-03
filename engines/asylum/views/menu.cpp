@@ -436,7 +436,7 @@ bool Menu::update() {
 				_iconFrames[icon] = (_iconFrames[icon] + 1) % GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, icon + 4));
 
 				// Draw text
-				getText()->drawCentered(menuRects[icon].left - 5, menuRects[icon].bottom + 5, menuRects[icon].width(), MAKE_RESOURCE(kResourcePackText, 1309 + icon));
+				getText()->drawCentered(Common::Point(menuRects[icon].left - 5, menuRects[icon].bottom + 5), menuRects[icon].width(), MAKE_RESOURCE(kResourcePackText, 1309 + icon));
 
 				if (!_dword_455C74 || _currentIcon != icon) {
 					_dword_455C74 = true;
@@ -706,16 +706,16 @@ void Menu::updateNewGame() {
 	getText()->loadFont(kFontYellow);
 
 	// Begin new game
-	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1321));
+	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1321));
 
 	// Yes
 	switchFont(cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1322))) || cursor.y < 273 || cursor.y > (273 + 24));
-	getText()->setPosition(247, 273);
+	getText()->setPosition(Common::Point(247, 273));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1322));
 
 	// No
 	switchFont(cursor.x < 369 || cursor.x > (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1323))) || cursor.y < 273 || cursor.y > (273 + 24));
-	getText()->setPosition(369, 273);
+	getText()->setPosition(Common::Point(369, 273));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1323));
 }
 
@@ -726,10 +726,10 @@ void Menu::updateLoadGame() {
 
 	if (_dword_455C80) {
 		getText()->loadFont(kFontYellow);
-		getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1329));
+		getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1329));
 
 		sprintf((char *)&text, "%s ?", getSaveLoad()->getName()->c_str());
-		getText()->drawCentered(10, 134, 620, (char *)&text);
+		getText()->drawCentered(Common::Point(10, 134), 620, (char *)&text);
 
 		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1330)))
 		 || cursor.y < 273 || cursor.y > (273 + 24))
@@ -737,7 +737,7 @@ void Menu::updateLoadGame() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(247, 273);
+		getText()->setPosition(Common::Point(247, 273));
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1330));
 
 		if (cursor.x < 369 || cursor.x > (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1331)))
@@ -746,18 +746,18 @@ void Menu::updateLoadGame() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(369, 273);
+		getText()->setPosition(Common::Point(369, 273));
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1331));
 		return;
 	}
 
 	getText()->loadFont(kFontYellow);
-	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1325));
+	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1325));
 
 	if (_dword_455C78) {
-		getText()->drawCentered(10, 190, 620, MAKE_RESOURCE(kResourcePackText, 1332));
-		getText()->drawCentered(10, 190 + 29, 620, MAKE_RESOURCE(kResourcePackText, 1333));
-		getText()->drawCentered(10, 190 + 53, 620, getSaveLoad()->getName()->c_str());
+		getText()->drawCentered(Common::Point(10,      190), 620, MAKE_RESOURCE(kResourcePackText, 1332));
+		getText()->drawCentered(Common::Point(10, 190 + 29), 620, MAKE_RESOURCE(kResourcePackText, 1333));
+		getText()->drawCentered(Common::Point(10, 190 + 53), 620, getSaveLoad()->getName()->c_str());
 
 		++_dword_456288;
 
@@ -784,7 +784,7 @@ void Menu::updateLoadGame() {
 			else
 				getText()->loadFont(kFontBlue);
 
-			getText()->setPosition(30, y);
+			getText()->setPosition(Common::Point(30, y));
 			getText()->draw((char *)&text);
 
 			++index;
@@ -804,7 +804,7 @@ void Menu::updateLoadGame() {
 			else
 				getText()->loadFont(kFontBlue);
 
-			getText()->setPosition(350, y);
+			getText()->setPosition(Common::Point(350, y));
 			getText()->draw((char *)&text);
 
 			++index;
@@ -819,7 +819,7 @@ void Menu::updateLoadGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(30, 340);
+	getText()->setPosition(Common::Point(30, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1326));
 
 	//////////////////////////////////////////////////////////////////////////
@@ -830,7 +830,7 @@ void Menu::updateLoadGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(300, 340);
+	getText()->setPosition(Common::Point(300, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1328));
 
 	//////////////////////////////////////////////////////////////////////////
@@ -841,7 +841,7 @@ void Menu::updateLoadGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(550, 347);
+	getText()->setPosition(Common::Point(550, 347));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1327));
 }
 
@@ -852,10 +852,10 @@ void Menu::updateSaveGame() {
 
 	if (_dword_455C80) {
 		getText()->loadFont(kFontYellow);
-		getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1339));
+		getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1339));
 
 		sprintf((char *)&text, "%s ?", getSaveLoad()->getName()->c_str());
-		getText()->drawCentered(10, 134, 620, (char *)&text);
+		getText()->drawCentered(Common::Point(10, 134), 620, (char *)&text);
 
 		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1340)))
 		 || cursor.y < 273 || cursor.y > (273 + 24))
@@ -863,7 +863,7 @@ void Menu::updateSaveGame() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(247, 273);
+		getText()->setPosition(Common::Point(247, 273));
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1340));
 
 		if (cursor.x < 369 || cursor.x > (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1341)))
@@ -872,17 +872,17 @@ void Menu::updateSaveGame() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(369, 273);
+		getText()->setPosition(Common::Point(369, 273));
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1341));
 		return;
 	}
 
 	getText()->loadFont(kFontYellow);
-	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1335));
+	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1335));
 
 	if (_dword_455C78) {
-		getText()->drawCentered(10, 220, 620, MAKE_RESOURCE(kResourcePackText, 1343));
-		getText()->drawCentered(10, 220 + 29, 620, getSaveLoad()->getName()->c_str());
+		getText()->drawCentered(Common::Point(10,      220), 620, MAKE_RESOURCE(kResourcePackText, 1343));
+		getText()->drawCentered(Common::Point(10, 220 + 29), 620, getSaveLoad()->getName()->c_str());
 
 		++_dword_456288;
 
@@ -914,7 +914,7 @@ void Menu::updateSaveGame() {
 					getText()->loadFont(kFontBlue);
 			}
 
-			getText()->setPosition(30, y);
+			getText()->setPosition(Common::Point(30, y));
 			getText()->draw((char *)&text);
 
 			// Draw underscore
@@ -951,7 +951,7 @@ void Menu::updateSaveGame() {
 					getText()->loadFont(kFontBlue);
 			}
 
-			getText()->setPosition(350, y);
+			getText()->setPosition(Common::Point(350, y));
 			getText()->draw((char *)&text);
 
 			// Draw underscore
@@ -977,7 +977,7 @@ void Menu::updateSaveGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(30, 340);
+	getText()->setPosition(Common::Point(30, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1336));
 
 	//////////////////////////////////////////////////////////////////////////
@@ -989,7 +989,7 @@ void Menu::updateSaveGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(300, 340);
+	getText()->setPosition(Common::Point(300, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1338));
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1001,7 +1001,7 @@ void Menu::updateSaveGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(550, 347);
+	getText()->setPosition(Common::Point(550, 347));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1337));
 }
 
@@ -1012,10 +1012,10 @@ void Menu::updateDeleteGame() {
 
 	if (_dword_455C80) {
 		getText()->loadFont(kFontYellow);
-		getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1349));
+		getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1349));
 
 		sprintf((char *)&text, "%s ?", getSaveLoad()->getName()->c_str());
-		getText()->drawCentered(10, 134, 620, (char *)&text);
+		getText()->drawCentered(Common::Point(10, 134), 620, (char *)&text);
 
 		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1350)))
 		 || cursor.y < 273 || cursor.y > (273 + 24))
@@ -1023,7 +1023,7 @@ void Menu::updateDeleteGame() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(247, 273);
+		getText()->setPosition(Common::Point(247, 273));
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1350));
 
 		if (cursor.x < 369 || cursor.x > (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1351)))
@@ -1032,13 +1032,13 @@ void Menu::updateDeleteGame() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(369, 273);
+		getText()->setPosition(Common::Point(369, 273));
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1351));
 		return;
 	}
 
 	getText()->loadFont(kFontYellow);
-	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1345));
+	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1345));
 
 	//////////////////////////////////////////////////////////////////////////
 	// First column
@@ -1055,7 +1055,7 @@ void Menu::updateDeleteGame() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(30, y);
+		getText()->setPosition(Common::Point(30, y));
 		getText()->draw((char *)&text);
 
 		++index;
@@ -1075,7 +1075,7 @@ void Menu::updateDeleteGame() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(350, y);
+		getText()->setPosition(Common::Point(350, y));
 		getText()->draw((char *)&text);
 
 		++index;
@@ -1089,7 +1089,7 @@ void Menu::updateDeleteGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(30, 340);
+	getText()->setPosition(Common::Point(30, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1346));
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1100,7 +1100,7 @@ void Menu::updateDeleteGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(300, 340);
+	getText()->setPosition(Common::Point(300, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1348));
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1111,7 +1111,7 @@ void Menu::updateDeleteGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(550, 347);
+	getText()->setPosition(Common::Point(550, 347));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1347));
 }
 
@@ -1124,7 +1124,7 @@ void Menu::updateViewMovies() {
 	if (!_dword_455C78) {
 		getText()->loadFont(kFontYellow);
 		sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1352)), getSharedData()->cdNumber);
-		getText()->drawCentered(10, 100, 620, (char *)&text2);
+		getText()->drawCentered(Common::Point(10, 100), 620, (char *)&text2);
 
 		//////////////////////////////////////////////////////////////////////////
 		// First column
@@ -1145,7 +1145,7 @@ void Menu::updateViewMovies() {
 				else
 					getText()->loadFont(kFontBlue);
 
-				getText()->setPosition(30, y);
+				getText()->setPosition(Common::Point(30, y));
 				getText()->draw((char *)&text);
 			}
 
@@ -1170,7 +1170,7 @@ void Menu::updateViewMovies() {
 				else
 					getText()->loadFont(kFontBlue);
 
-				getText()->setPosition(350, y);
+				getText()->setPosition(Common::Point(350, y));
 				getText()->draw((char *)&text);
 			}
 
@@ -1186,7 +1186,7 @@ void Menu::updateViewMovies() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(30, 340);
+		getText()->setPosition(Common::Point(30, 340));
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1353));
 
 		//////////////////////////////////////////////////////////////////////////
@@ -1198,7 +1198,7 @@ void Menu::updateViewMovies() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(300, 340);
+		getText()->setPosition(Common::Point(300, 340));
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1355));
 
 		//////////////////////////////////////////////////////////////////////////
@@ -1210,7 +1210,7 @@ void Menu::updateViewMovies() {
 		else
 			getText()->loadFont(kFontBlue);
 
-		getText()->setPosition(550, 340);
+		getText()->setPosition(Common::Point(550, 340));
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1354));
 
 		//////////////////////////////////////////////////////////////////////////
@@ -1228,14 +1228,14 @@ void Menu::updateViewMovies() {
 
 	getText()->loadFont(kFontYellow);
 	sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1357)), getSharedData()->cdNumber);
-	getText()->drawCentered(10, 100, 620, text2);
+	getText()->drawCentered(Common::Point(10, 100), 620, text2);
 
 	strcpy((char *)&text, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieIndex)));
 	sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1356)), moviesCd[_movieIndex]);
 	strcat((char *)&text, (char *)&text2);
-	getText()->drawCentered(10, 134, 620, text);
+	getText()->drawCentered(Common::Point(10, 134), 620, text);
 
-	getText()->drawCentered(10, 168, 620, getText()->get(MAKE_RESOURCE(kResourcePackText, 1358)));
+	getText()->drawCentered(Common::Point(10, 168), 620, getText()->get(MAKE_RESOURCE(kResourcePackText, 1358)));
 
 	++_dword_456288;
 	if (_dword_456288 == 90) {
@@ -1250,16 +1250,16 @@ void Menu::updateQuitGame() {
 	Common::Point cursor = getCursor()->position();
 
 	getText()->loadFont(kFontYellow);
-	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1408));
+	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1408));
 
 	// Yes
 	switchFont(cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1409))) || cursor.y < 273 || cursor.y > (273 + 24));
-	getText()->setPosition(247, 273);
+	getText()->setPosition(Common::Point(247, 273));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1409));
 
 	// No
 	switchFont(cursor.x < 369 || cursor.x > (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1410))) || cursor.y < 273 || cursor.y > (273 + 24));
-	getText()->setPosition(369, 273);
+	getText()->setPosition(Common::Point(369, 273));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1410));
 }
 
@@ -1267,23 +1267,23 @@ void Menu::updateTextOptions() {
 	Common::Point cursor = getCursor()->position();
 
 	getText()->loadFont(kFontYellow);
-	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1411));
+	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1411));
 
-	getText()->draw(320, 150, MAKE_RESOURCE(kResourcePackText, 1412));
+	getText()->draw(Common::Point(320, 150), MAKE_RESOURCE(kResourcePackText, 1412));
 
 	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, Config.showMovieSubtitles ? 1414 : 1415))) || cursor.y < 150 || cursor.y > 174);
-	getText()->setPosition(350, 150);
+	getText()->setPosition(Common::Point(350, 150));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, Config.showMovieSubtitles ? 1414 : 1415));
 
 	getText()->loadFont(kFontYellow);
-	getText()->draw(320, 179, MAKE_RESOURCE(kResourcePackText, 1413));
+	getText()->draw(Common::Point(320, 179), MAKE_RESOURCE(kResourcePackText, 1413));
 
 	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, Config.showEncounterSubtitles ? 1414 : 1415))) || cursor.y < 179 || cursor.y > 203);
-	getText()->setPosition(350, 179);
+	getText()->setPosition(Common::Point(350, 179));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, Config.showEncounterSubtitles ? 1414 : 1415));
 
 	switchFont(cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1416))) || cursor.y < 340 || cursor.y > (340 + 24));
-	getText()->setPosition(300, 340);
+	getText()->setPosition(Common::Point(300, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1416));
 }
 
@@ -1295,20 +1295,20 @@ void Menu::updateAudioOptions() {
 	int32 sizePlus  = getText()->getWidth("+");
 
 	getText()->loadFont(kFontYellow);
-	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1420));
+	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1420));
 
 	int32 volumeIndex = 0;
 	int32 volumeValue = cursor.x;
 	do {
 		getText()->loadFont(kFontYellow);
-		getText()->draw(320, 29 * volumeIndex + 150, MAKE_RESOURCE(kResourcePackText, 1421 + volumeIndex));
+		getText()->draw(Common::Point(320, 29 * volumeIndex + 150), MAKE_RESOURCE(kResourcePackText, 1421 + volumeIndex));
 
 		switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
-		getText()->setPosition(350, 29 * volumeIndex + 150);
+		getText()->setPosition(Common::Point(350, 29 * volumeIndex + 150));
 		getText()->draw("-");
 
 		switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
-		getText()->setPosition(sizeMinus + 360, 29 * volumeIndex + 150);
+		getText()->setPosition(Common::Point(sizeMinus + 360, 29 * volumeIndex + 150));
 		getText()->draw("+");
 
 		switch(volumeIndex) {
@@ -1341,7 +1341,7 @@ void Menu::updateAudioOptions() {
 		}
 
 		getText()->loadFont(kFontYellow);
-		getText()->setPosition(sizePlus + sizeMinus + 365, 29 * volumeIndex + 150);
+		getText()->setPosition(Common::Point(sizePlus + sizeMinus + 365, 29 * volumeIndex + 150));
 		if (volumeValue > 0) {
 			for (int32 i = 0; i < volumeValue; i++)
 				getText()->drawChar(']');
@@ -1358,18 +1358,18 @@ void Menu::updateAudioOptions() {
 	//////////////////////////////////////////////////////////////////////////
 	//
 	getText()->loadFont(kFontYellow);
-	getText()->draw(320, 29 *volumeIndex + 150, MAKE_RESOURCE(kResourcePackText, 1427));
+	getText()->draw(Common::Point(320, 29 *volumeIndex + 150), MAKE_RESOURCE(kResourcePackText, 1427));
 
 	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(Config.reverseStereo ? MAKE_RESOURCE(kResourcePackText, 1428) : MAKE_RESOURCE(kResourcePackText, 1429))) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
-	getText()->setPosition(350, 29 * volumeIndex + 150);
+	getText()->setPosition(Common::Point(350, 29 * volumeIndex + 150));
 	getText()->draw(Config.reverseStereo ? MAKE_RESOURCE(kResourcePackText, 1428) : MAKE_RESOURCE(kResourcePackText, 1429));
 
 	switchFont(cursor.x < 220 || cursor.x > (220 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1430))) || cursor.y < 360 || cursor.y > (360 + 24));
-	getText()->setPosition(220, 360);
+	getText()->setPosition(Common::Point(220, 360));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1430));
 
 	switchFont((cursor.x < 360 || cursor.x > (360 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1431))) || cursor.y < 360 || cursor.y > (360 + 24)) && !_testSoundsPlaying);
-	getText()->setPosition(360, 360);
+	getText()->setPosition(Common::Point(360, 360));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1431));
 }
 
@@ -1383,21 +1383,21 @@ void Menu::updateSettings() {
 	getText()->loadFont(kFontYellow);
 
 	// Settings
-	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1432));
+	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1432));
 
 	//////////////////////////////////////////////////////////////////////////
 	// Gamma correction
-	getText()->draw(320, 150, MAKE_RESOURCE(kResourcePackText, 1433));
+	getText()->draw(Common::Point(320, 150), MAKE_RESOURCE(kResourcePackText, 1433));
 
 	switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < 150 || cursor.y > 174);
-	getText()->setPosition(350, 150);
+	getText()->setPosition(Common::Point(350, 150));
 	getText()->draw("-");
 
 	switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < 150 || cursor.y > 174);
-	getText()->setPosition(sizeMinus + 360, 150);
+	getText()->setPosition(Common::Point(sizeMinus + 360, 150));
 	getText()->draw("+");
 
-	getText()->setPosition(sizeMinus + sizePlus + 365, 150);
+	getText()->setPosition(Common::Point(sizeMinus + sizePlus + 365, 150));
 	getText()->loadFont(kFontYellow);
 	if (Config.gammaLevel) {
 		for (int32 i = 0; i < Config.gammaLevel; i++)
@@ -1412,17 +1412,17 @@ void Menu::updateSettings() {
 	//////////////////////////////////////////////////////////////////////////
 	// Performance
 	getText()->loadFont(kFontYellow);
-	getText()->draw(320, 179, MAKE_RESOURCE(kResourcePackText, 1434));
+	getText()->draw(Common::Point(320, 179), MAKE_RESOURCE(kResourcePackText, 1434));
 
 	switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < 179 || cursor.y > 203);
-	getText()->setPosition(350, 179);
+	getText()->setPosition(Common::Point(350, 179));
 	getText()->draw("-");
 
 	switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < 179 || cursor.y > 203);
-	getText()->setPosition(sizeMinus + 360, 179);
+	getText()->setPosition(Common::Point(sizeMinus + 360, 179));
 	getText()->draw("+");
 
-	getText()->setPosition(sizeMinus + sizePlus + 365, 179);
+	getText()->setPosition(Common::Point(sizeMinus + sizePlus + 365, 179));
 	getText()->loadFont(kFontYellow);
 	if (Config.performance == 5) {
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1436));
@@ -1437,7 +1437,7 @@ void Menu::updateSettings() {
 	//////////////////////////////////////////////////////////////////////////
 	// Back to main menu
 	switchFont(cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1437))) || cursor.y < 340 || cursor.y > (340 + 24));
-	getText()->setPosition(300, 340);
+	getText()->setPosition(Common::Point(300, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1437));
 }
 
@@ -1445,7 +1445,7 @@ void Menu::updateKeyboardConfig() {
 	Common::Point cursor = getCursor()->position();
 
 	getText()->loadFont(kFontYellow);
-	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1438));
+	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1438));
 
 	char keyCode = 0;
 	int32 keyIndex = 0;
@@ -1453,9 +1453,9 @@ void Menu::updateKeyboardConfig() {
 	do {
 		getText()->loadFont(kFontYellow);
 		if ((getScene() && getWorld()->chapter == 9) || keyIndex < 3) {
-			getText()->draw(320, 29 * keyIndex + 150, MAKE_RESOURCE(kResourcePackText, 1439 + keyIndex));
+			getText()->draw(Common::Point(320, 29 * keyIndex + 150), MAKE_RESOURCE(kResourcePackText, 1439 + keyIndex));
 		} else {
-			getText()->draw(320, 29 * keyIndex + 150, MAKE_RESOURCE(kResourcePackText, 1445));
+			getText()->draw(Common::Point(320, 29 * keyIndex + 150), MAKE_RESOURCE(kResourcePackText, 1445));
 		}
 
 		switch (keyIndex) {
@@ -1487,7 +1487,7 @@ void Menu::updateKeyboardConfig() {
 			break;
 		}
 
-		getText()->setPosition(350, 29 * keyIndex + 150);
+		getText()->setPosition(Common::Point(350, 29 * keyIndex + 150));
 
 		if (keyIndex == _selectedShortcutIndex) {
 			getText()->loadFont(kFontBlue);
@@ -1505,7 +1505,7 @@ void Menu::updateKeyboardConfig() {
 	} while (keyIndex < 6);
 
 	switchFont(getCursor()->isHidden() || cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1446))) || cursor.y < 340 || cursor.y > (340 + 24));
-	getText()->setPosition(340, 340);
+	getText()->setPosition(Common::Point(340, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1446));
 }
 
@@ -1515,11 +1515,11 @@ void Menu::updateReturnToGame() {
 	getText()->loadFont(kFontYellow);
 
 	// No game loaded
-	getText()->drawCentered(10, 100, 620, MAKE_RESOURCE(kResourcePackText, 1810));
+	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1810));
 
 	// Main Menu
 	switchFont(cursor.x < 285 || cursor.x > (285 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1811))) || cursor.y < 273 || cursor.y > (273 + 24));
-	getText()->setPosition(285, 273);
+	getText()->setPosition(Common::Point(285, 273));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1811));
 
 }
@@ -1550,7 +1550,7 @@ void Menu::updateShowCredits() {
 			if (maxBound < 480 && maxBound > 448)
 				getText()->setTransTableNum(3 - (479 - maxBound) / 8);
 
-			getText()->setPosition(320, step + _startIndex);
+			getText()->setPosition(Common::Point(320, step + _startIndex));
 			getText()->draw(MAKE_RESOURCE(kResourcePackText, 1447 + index));
 			getText()->setTransTableNum(0);
 		}

@@ -81,12 +81,12 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 			if (_subtitleIndex >= 0) {
 				char *text1 = getText()->get((ResourceId)_currentMovie);
 
-				int32 y = 10 * (44 - getText()->draw(0, 99, kTextCalculate, 10, 400, 20, 620, text1));
+				int32 y = 10 * (44 - getText()->draw(0, 99, kTextCalculate, Common::Point(10, 400), 20, 620, text1));
 				if (y <= 400)
 					y = 405;
 
 				char *text = getText()->get(_subtitles[_subtitleIndex].resourceId);
-				getText()->draw(0, 99, kTextCenter, 10, y, 20, 620, text);
+				getText()->draw(0, 99, kTextCenter, Common::Point(10, y), 20, 620, text);
 			}
 
 			--_subtitleCounter;

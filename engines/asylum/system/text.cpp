@@ -28,7 +28,6 @@
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 
-#include "common/endian.h"
 #include "common/rational.h"
 
 namespace Asylum {
@@ -63,9 +62,8 @@ ResourceId Text::loadFont(ResourceId resourceId) {
 	return previousFont;
 }
 
-void Text::setPosition(int32 x, int32 y) {
-	_position.x = x;
-	_position.y = y;
+void Text::setPosition(const Common::Point &point) {
+	_position = point;
 }
 
 int32 Text::getWidth(char c) {
@@ -130,7 +128,7 @@ void Text::drawChar(char character) {
 	}
 
 	GraphicFrame *fontLetter = _fontResource->getFrame((uint8)character);
-	_position.x += fontLetter->surface.w + fontLetter->x - _curFontFlags;
+	_position.x += (int16)fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 
 void Text::draw(const char *text) {
@@ -159,29 +157,31 @@ void Text::draw(ResourceId resourceId) {
 	draw((char*)textRes->data);
 }
 
-void Text::draw(int32 x, int32 y, const char *text) {
-    setPosition(x - getWidth(text), y);
+void Text::draw(const Common::Point &point, const char *text) {
+    setPosition(Common::Point(point.x - getWidth(text), point.y));
     draw(text);
 }
 
-void Text::draw(int32 x, int32 y, ResourceId resourceId) {
-	draw(x, y, get(resourceId));
+void Text::draw(const Common::Point &point, ResourceId resourceId) {
+	draw(point, get(resourceId));
 }
 
 void Text::draw(const char *text, ResourceId fontResourceId, int32 y) {
 	if (text) {
 		loadFont(fontResourceId);
-		draw(kTextCenter, 20, y, 16, 600, text);
+		draw(kTextCenter, Common::Point(20, y), 16, 600, text);
 	}
 }
 
-uint32 Text::draw(TextCentering centering, int32 x, int32 y, int32 spacing, int32 width, const char *text) {
-	return draw(0, 99, centering, x, y, spacing, width, text);
+uint32 Text::draw(TextCentering centering, const Common::Point &point, int32 spacing, int32 width, const char *text) {
+	return draw(0, 99, centering, point, spacing, width, text);
 }
 
-uint32 Text::draw(int32 a1, int32 a2, TextCentering centering, int32 x, int32 y, int32 spacing, int32 width, const char *text) {
+uint32 Text::draw(int32 a1, int32 a2, TextCentering centering, const Common::Point &point, int32 spacing, int32 width, const char *text) {
 	if (!text || !*text)
 		return 0;
+
+	Common::Point coords = point;
 
 	uint32 printed = 0;
 	bool drawText = false;
@@ -207,16 +207,16 @@ label_start:
 					break;
 
 				case kTextCenter:
-					drawCentered(x, y, width, endText - string, string);
+					drawCentered(coords, width, endText - string, string);
 					break;
 
 				case kTextNormal:
-					setPosition(x, y);
+					setPosition(coords);
 					draw(text, endText - text);
 					break;
 				}
 
-				y += spacing;
+				coords.y += spacing;
 				++printed;
 			}
 
@@ -285,18 +285,18 @@ label_start:
 	return printed;
 }
 
-void Text::drawCentered(int32 x, int32 y, int32 width, const char *text) {
-	setPosition(x + (width - getWidth(text)) / 2, y);
+void Text::drawCentered(const Common::Point &point, int32 width, const char *text) {
+	setPosition(Common::Point(point.x + (width - getWidth(text)) / 2, point.y));
 	draw(text);
 }
 
-void Text::drawCentered(int32 x, int32 y, int32 width, uint32 length, const char *text) {
-	setPosition(x + (width - getWidth(text, length)) / 2, y);
+void Text::drawCentered(const Common::Point &point, int32 width, uint32 length, const char *text) {
+	setPosition(Common::Point(point.x + (width - getWidth(text, length)) / 2, point.y));
 	draw(text, length);
 }
 
-void Text::drawCentered(int32 x, int32 y, int32 width, ResourceId resourceId) {
-	drawCentered(x, y, width, get(resourceId));
+void Text::drawCentered(const Common::Point &point, int32 width, ResourceId resourceId) {
+	drawCentered(point, width, get(resourceId));
 }
 
 } // end of namespace Asylum
