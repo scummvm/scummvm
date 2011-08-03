@@ -40,8 +40,6 @@
 #include "asylum/respack.h"
 #include "asylum/staticres.h"
 
-#include "common/file.h"
-
 namespace Asylum {
 
 #define KEYWORD_MASK 0xFFF

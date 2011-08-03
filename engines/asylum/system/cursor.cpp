@@ -26,8 +26,6 @@
 
 #include "asylum/asylum.h"
 
-#include "common/events.h"
-#include "common/system.h"
 #include "graphics/cursorman.h"
 
 namespace Asylum {

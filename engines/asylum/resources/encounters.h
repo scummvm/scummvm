@@ -23,7 +23,6 @@
 #ifndef ASYLUM_ENCOUNTERS_H
 #define ASYLUM_ENCOUNTERS_H
 
-#include "asylum/asylum.h"
 #include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 

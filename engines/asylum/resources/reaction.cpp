@@ -25,13 +25,11 @@
 #include "asylum/resources/actor.h"
 #include "asylum/resources/worldstats.h"
 
-#include "asylum/system/sound.h"
 #include "asylum/system/speech.h"
 
 #include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
-#include "asylum/shared.h"
 
 namespace Asylum {
 
