@@ -18632,32 +18632,6 @@ void DreamGenContext::putunderzoom() {
 	multiput();
 }
 
-void DreamGenContext::crosshair() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 3);
-	if (flags.z())
-		goto nocross;
-	_cmp(data.byte(kCommandtype), 10);
-	if (!flags.c())
-		goto nocross;
-	es = data.word(kWorkspace);
-	ds = data.word(kIcons1);
-	di = (8)+24;
-	bx = (132)+19;
-	al = 9;
-	ah = 0;
-	showframe();
-	return;
-nocross:
-	es = data.word(kWorkspace);
-	ds = data.word(kIcons1);
-	di = (8)+24;
-	bx = (132)+19;
-	al = 29;
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::showpointer() {
 	STACK_CHECK;
 	showblink();
@@ -20706,7 +20680,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_getunderzoom: getunderzoom(); break;
 		case addr_dumpzoom: dumpzoom(); break;
 		case addr_putunderzoom: putunderzoom(); break;
-		case addr_crosshair: crosshair(); break;
 		case addr_showpointer: showpointer(); break;
 		case addr_delpointer: delpointer(); break;
 		case addr_dumppointer: dumppointer(); break;

@@ -110,4 +110,6 @@
 	void plotreel();
 	void dealwithspecial();
 	void zoom();
+	void crosshair();
+
 

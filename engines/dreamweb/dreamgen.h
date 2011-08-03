@@ -93,7 +93,6 @@ public:
 	static const uint16 addr_dumppointer = 0xcacc;
 	static const uint16 addr_delpointer = 0xcac8;
 	static const uint16 addr_showpointer = 0xcac4;
-	static const uint16 addr_crosshair = 0xcac0;
 	static const uint16 addr_putunderzoom = 0xcabc;
 	static const uint16 addr_dumpzoom = 0xcab8;
 	static const uint16 addr_getunderzoom = 0xcab4;
@@ -1343,7 +1342,7 @@ public:
 	void getreelstart();
 	void buttonenter();
 	void checkinput();
-	void crosshair();
+	//void crosshair();
 	void bresenhams();
 	void getbackfromops();
 	//void frameoutv();
@@ -1458,6 +1457,7 @@ public:
 	void fadescreenup();
 	void loadold();
 	void loadtempcharset();
+	void showbyte();
 	void useslab();
 	//void aboutturn();
 	void usealtar();
@@ -1563,7 +1563,7 @@ public:
 	void wearwatch();
 	void runintroseq();
 	void doblocks();
-	void showbyte();
+	void opensarters();
 	void allpalette();
 	void findormake();
 	void nextsymbol();
@@ -1933,7 +1933,6 @@ public:
 	//void dodoor();
 	void greyscalesum();
 	void buttoneight();
-	void opensarters();
 	void findexobject();
 	void errormessage2();
 	void usechurchhole();

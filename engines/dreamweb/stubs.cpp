@@ -867,5 +867,20 @@ void DreamGenContext::plotreel() {
 	es = pop();
 }
 
+void DreamGenContext::crosshair() {
+	uint8 frame;
+	if ((data.byte(kCommandtype) != 3) && (data.byte(kCommandtype) < 10)) {
+		frame = 9;
+	} else {
+		frame = 29;
+	}
+	push(ds);
+	ds = data.word(kIcons1);
+	uint8 *src = ds.ptr(0, 0);
+	ds = pop();
+	uint8 width, height;
+	showframe(src, kZoomx + 24, kZoomy + 19, frame, 0, &width, &height);
+}
+
 } /*namespace dreamgen */
 
