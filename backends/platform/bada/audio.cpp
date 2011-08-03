@@ -248,10 +248,7 @@ void AudioThread::OnTimerExpired(Timer& timer) {
   }
 
   if (ready && !playing) {
-    // commence sound play; decriment 'ready' upon play completion
-    playing = true;
-    audioOut->WriteBuffer(audioBuffer[tail]);
-    tail = (tail + 1 == NUM_AUDIO_BUFFERS ? 0 : tail + 1);
+    OnAudioOutBufferEndReached(*audioOut);
   }
   
   timer.Start(interval);
