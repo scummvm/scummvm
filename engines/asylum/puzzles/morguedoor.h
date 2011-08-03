@@ -59,8 +59,8 @@ private:
 	bool _data_4572AC;
 	bool _data_4572B0;
 
-	uint32 _data_45A9D8;
-	uint32 _data_45A9DC;
+	int32 _data_45A9D8;
+	int32 _data_45A9DC;
 
 	bool _topLeverOpen;
 	bool _bottomLeverOpen;

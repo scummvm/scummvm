@@ -111,17 +111,17 @@ bool PuzzleTimeMachine::init(const AsylumEvent &evt)  {
 	return true;
 }
 
-bool PuzzleTimeMachine::update(const AsylumEvent &evt)  {
+bool PuzzleTimeMachine::update(const AsylumEvent &)  {
 	updateCursor();
 
 	// Draw screen elements
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[34]);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[35], _frameIndexes[0], Common::Point(23, 215),  kDrawFlagNone, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[36], _frameIndexes[1], Common::Point(70, 217),  kDrawFlagNone, 0, 2);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[37], _frameIndexes[2], Common::Point(189, 217), kDrawFlagNone, 0, 3);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[38], _frameIndexes[3], Common::Point(309, 218), kDrawFlagNone, 0, 4);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[39], _frameIndexes[4], Common::Point(429, 212), kDrawFlagNone, 0, 5);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[35], (uint32)_frameIndexes[0], Common::Point(23, 215),  kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[36], (uint32)_frameIndexes[1], Common::Point(70, 217),  kDrawFlagNone, 0, 2);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[37], (uint32)_frameIndexes[2], Common::Point(189, 217), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[38], (uint32)_frameIndexes[3], Common::Point(309, 218), kDrawFlagNone, 0, 4);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[39], (uint32)_frameIndexes[4], Common::Point(429, 212), kDrawFlagNone, 0, 5);
 
 	if (_frameIndexes[0] != 28 || _frameIndexes[1] || _frameIndexes[2] || _frameIndexes[3] || _frameIndexes[4]) {
 		_leftButtonClicked = true;
@@ -138,7 +138,7 @@ bool PuzzleTimeMachine::update(const AsylumEvent &evt)  {
 		++_counter;
 	}
 
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], _frameIndexes[5], _point, kDrawFlagNone, 0, 1);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], (uint32)_frameIndexes[5], _point, kDrawFlagNone, 0, 1);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Show all buttons
@@ -167,8 +167,8 @@ bool PuzzleTimeMachine::update(const AsylumEvent &evt)  {
 
 	// Update frame indexes
 	if (_currentFrameIndex == 0 && _frameIncrements[0] != 0) {
-		_data_4572BC = 0;
-		_data_4572CC = 0;
+		_data_4572BC = false;
+		_data_4572CC = false;
 
 		_frameIndexes[5] += _frameIncrements[0];
 
@@ -239,13 +239,13 @@ bool PuzzleTimeMachine::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleTimeMachine::mouseLeftUp(const AsylumEvent &evt) {
+bool PuzzleTimeMachine::mouseLeftUp(const AsylumEvent &) {
 	_leftButtonClicked = true;
 
 	return true;
 }
 
-bool PuzzleTimeMachine::mouseRightDown(const AsylumEvent &evt) {
+bool PuzzleTimeMachine::mouseRightDown(const AsylumEvent &) {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
 	getScreen()->stopPaletteFade(0, 0, 0);

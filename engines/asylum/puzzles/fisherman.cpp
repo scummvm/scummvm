@@ -65,7 +65,7 @@ bool PuzzleFisherman::init(const AsylumEvent &evt)  {
 
 	for (uint32 i = 0; i < ARRAYSIZE(_state); i++)
 		if (_vm->isGameFlagNotSet((GameFlag)(kGameFlag801 + i)))
-			_state[i] = 0;
+			_state[i] = false;
 
 	if (_counter == 6) {
 		_vm->clearGameFlag(kGameFlag619);
@@ -79,7 +79,7 @@ bool PuzzleFisherman::init(const AsylumEvent &evt)  {
 	return mouseLeftDown(evt);
 }
 
-bool PuzzleFisherman::update(const AsylumEvent &evt)  {
+bool PuzzleFisherman::update(const AsylumEvent &)  {
 	updateCursor();
 
 	// Draw background
@@ -160,7 +160,7 @@ bool PuzzleFisherman::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleFisherman::mouseRightDown(const AsylumEvent &evt) {
+bool PuzzleFisherman::mouseRightDown(const AsylumEvent &) {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
 	getScreen()->stopPaletteFade(0, 0, 0);

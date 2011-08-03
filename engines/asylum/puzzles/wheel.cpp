@@ -168,7 +168,7 @@ void PuzzleWheel::reset() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleWheel::init(const AsylumEvent &evt)  {
+bool PuzzleWheel::init(const AsylumEvent &)  {
 	getSpecial()->reset(false);
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[1]);
@@ -191,24 +191,24 @@ bool PuzzleWheel::init(const AsylumEvent &evt)  {
 	return true;
 }
 
-bool PuzzleWheel::update(const AsylumEvent &evt)  {
+bool PuzzleWheel::update(const AsylumEvent &)  {
 	updateCursor();
 
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[0]);
 
 	// Blinking red light
-	getScreen()->draw(getWorld()->graphicResourceIds[12], _frameIndexes[11], puzzleWheelPoints[12]);
-	_frameIndexes[11] = (_frameIndexes[11] + 1 ) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[12]);
+	getScreen()->draw(getWorld()->graphicResourceIds[12], (uint32)_frameIndexes[11], puzzleWheelPoints[12]);
+	_frameIndexes[11] = (_frameIndexes[11] + 1 ) % (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[12]);
 
 	// Clock
 	if (_showTurnedClock)
-		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexClock], _frameIndexes[9], Common::Point(342, 87));
+		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexClock], (uint32)_frameIndexes[9], Common::Point(342, 87));
 	else
 		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndex + 22], 0, Common::Point(342, 87));
 
 	// Chain
-	getScreen()->draw(getWorld()->graphicResourceIds[3], _frameIndexes[0], puzzleWheelPoints[3]);
+	getScreen()->draw(getWorld()->graphicResourceIds[3], (uint32)_frameIndexes[0], puzzleWheelPoints[3]);
 
 	// Update chain frame index
 	if (_moveChain) {
@@ -217,7 +217,7 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 			getSound()->playSound(getWorld()->graphicResourceIds[65]);
 		}
 
-		_frameIndexes[0] = (_frameIndexes[0] + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[3]);
+		_frameIndexes[0] = (_frameIndexes[0] + 1) % (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[3]);
 
 		if (!_frameIndexes[0]) {
 			closeLocks();
@@ -240,7 +240,7 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 			pointIndex = 4 + i;
 		}
 
-		getScreen()->draw(getWorld()->graphicResourceIds[resourceIndex], _frameIndexes[frameIndex], puzzleWheelPoints[pointIndex]);
+		getScreen()->draw(getWorld()->graphicResourceIds[resourceIndex], (uint32)_frameIndexes[frameIndex], puzzleWheelPoints[pointIndex]);
 
 		if (_frameIndexes[frameIndex] != (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[resourceIndex]) - 1)
 			++_frameIndexes[frameIndex];
@@ -251,7 +251,7 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 	// Sparks
 	for (uint32 i = 0; i < 8; i++) {
 		if (_frameIndexesSparks[i] >= 0) {
-			getScreen()->draw(getWorld()->graphicResourceIds[57 + i], _frameIndexesSparks[i], puzzleWheelPoints[48 + i]);
+			getScreen()->draw(getWorld()->graphicResourceIds[57 + i], (uint32)_frameIndexesSparks[i], puzzleWheelPoints[48 + i]);
 
 			if (_frameIndexesSparks[i] == (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[57 + i]) - 1)
 				_frameIndexesSparks[i] = -1;
@@ -262,9 +262,9 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 
 	// Lever
 	if (_resourceIndexLever == 13)
-		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], _frameIndexes[10], puzzleWheelPoints[13]);
+		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], (uint32)_frameIndexes[10], puzzleWheelPoints[13]);
 	else if (_resourceIndexLever == 54)
-		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], _frameIndexes[10], puzzleWheelPoints[47]);
+		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], (uint32)_frameIndexes[10], puzzleWheelPoints[47]);
 
 	// Update lever frame index
 	if (_moveLever) {
@@ -273,7 +273,7 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 			getSound()->playSound(getWorld()->graphicResourceIds[67]);
 		}
 
-		_frameIndexes[10] = (_frameIndexes[10] + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[_resourceIndexLever]);
+		_frameIndexes[10] = (_frameIndexes[10] + 1) % (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[_resourceIndexLever]);
 
 		if (!_frameIndexes[10]) {
 			if (_resourceIndexLever == 54) {
@@ -303,7 +303,7 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 		else
 			_frameIndexWheel = (_frameIndexWheel + frameCountWheel - 1) % frameCountWheel;
 
-		_frameIndexes[9] = (_frameIndexes[9] + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[_resourceIndexClock]);
+		_frameIndexes[9] = (_frameIndexes[9] + 1) % (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[_resourceIndexClock]);
 
 		if (!_frameIndexes[9]) {
 			_showTurnedClock = false;
@@ -323,7 +323,7 @@ bool PuzzleWheel::update(const AsylumEvent &evt)  {
 	return true;
 }
 
-bool PuzzleWheel::mouseLeftDown(const AsylumEvent &evt) {
+bool PuzzleWheel::mouseLeftDown(const AsylumEvent &) {
 	switch (findRect()) {
 	default:
 		break;
@@ -356,7 +356,7 @@ bool PuzzleWheel::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleWheel::mouseRightDown(const AsylumEvent &evt) {
+bool PuzzleWheel::mouseRightDown(const AsylumEvent &) {
 	getScreen()->clear();
 	_vm->switchEventHandler(getScene());
 
@@ -420,7 +420,7 @@ void PuzzleWheel::closeLocks() {
 void PuzzleWheel::toggleLocks() {
 	memset(&_frameIndexesSparks, -1, sizeof(_frameIndexesSparks));
 
-	for (uint32 i = 0; i < 3; i++) {
+	for (int32 i = 0; i < 3; i++) {
 		_vm->toggleGameFlag(puzzleWheelFlags[i + 3 * _resourceIndex]);
 
 		// Update lock frame indexes

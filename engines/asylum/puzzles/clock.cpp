@@ -75,7 +75,7 @@ PuzzleClock::~PuzzleClock() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleClock::init(const AsylumEvent &evt)  {
+bool PuzzleClock::init(const AsylumEvent &)  {
 	_currentRect = -2;
 
 	updateCursor();
@@ -131,7 +131,7 @@ bool PuzzleClock::update(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleClock::mouseLeftDown(const AsylumEvent &evt) {
+bool PuzzleClock::mouseLeftDown(const AsylumEvent &) {
 	int32 index = findRect();
 
 	if (index == -1)
@@ -147,7 +147,7 @@ bool PuzzleClock::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleClock::mouseRightDown(const AsylumEvent &evt) {
+bool PuzzleClock::mouseRightDown(const AsylumEvent &) {
 	setFlag();
 	_rightButtonClicked = true;
 

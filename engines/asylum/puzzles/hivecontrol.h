@@ -32,21 +32,21 @@ namespace Asylum {
 class AsylumEngine;
 
 enum Control {
-	kControlNone		= -1,
-	kControlWingsButton1	= 34,
-	kControlWingsButton2	= 35,
-	kControlWingsButton3	= 36,
-	kControlReset		= 38,
-	kControlWheelLeft	= 39,
-	kControlWheelRight	= 40,
-	kControlButtonRight	= 41,
-	kControlButtonLeft	= 42,
-	kControlGlyph1		= 49,
-	kControlGlyph2		= 50,
-	kControlGlyph3		= 51,
-	kControlGlyph4		= 52,
-	kControlGlyph5		= 53,
-	kControlGlyph6		= 54
+	kControlNone          = -1,
+	kControlWingsButton1  = 34,
+	kControlWingsButton2  = 35,
+	kControlWingsButton3  = 36,
+	kControlReset         = 38,
+	kControlWheelLeft     = 39,
+	kControlWheelRight    = 40,
+	kControlButtonRight   = 41,
+	kControlButtonLeft    = 42,
+	kControlGlyph1        = 49,
+	kControlGlyph2        = 50,
+	kControlGlyph3        = 51,
+	kControlGlyph4        = 52,
+	kControlGlyph5        = 53,
+	kControlGlyph6        = 54
 };
 
 static const uint32 puzzleHiveControlHieroglyphs[2][6] = {
@@ -58,8 +58,6 @@ class PuzzleHiveControl : public Puzzle {
 public:
 	PuzzleHiveControl(AsylumEngine *engine);
 	~PuzzleHiveControl();
-
-	bool hitTest1(uint32 resourceId, Common::Point point, Common::Point location);
 
 private:
 	enum Element {
@@ -114,6 +112,7 @@ private:
 	void updateScreen();
 	void playSound();
 	void reset();
+	bool hitTest1(Control control, const Common::Point &point, const Common::Point &location);
 };
 
 } // End of namespace Asylum

@@ -52,7 +52,7 @@ PuzzleVCR::~PuzzleVCR() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleVCR::init(const AsylumEvent &evt)  {
+bool PuzzleVCR::init(const AsylumEvent &)  {
 	// Load the graphics palette
 	getScreen()->setPalette(getWorld()->graphicResourceIds[29]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[29]);
@@ -120,7 +120,7 @@ bool PuzzleVCR::mouseLeftDown(const AsylumEvent &evt) {
 		if (_jacksState[kRed] == kOnHand)
 			state = kPluggedOnYellow;
 		else
-			state = (JackState)(((_jacksState[kYellow] != kOnHand) - 1) & 3);
+			state = (_jacksState[kYellow] != kOnHand) ? kOnTable : kPluggedOnBlack;
 	}
 
 	if (inPolygon(evt.mouse, kRedHole)) {
@@ -272,7 +272,7 @@ bool PuzzleVCR::mouseLeftUp(const AsylumEvent &) {
 	return true;
 }
 
-bool PuzzleVCR::mouseRightDown(const AsylumEvent &evt) {
+bool PuzzleVCR::mouseRightDown(const AsylumEvent &) {
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->clear();
 
@@ -286,7 +286,7 @@ bool PuzzleVCR::mouseRightDown(const AsylumEvent &evt) {
 //////////////////////////////////////////////////////////////////////////
 // Drawing
 //////////////////////////////////////////////////////////////////////////
-void PuzzleVCR::updateScreen(const AsylumEvent &evt) {
+void PuzzleVCR::updateScreen(const AsylumEvent &) {
 	updateCursor();
 
 	// Draw background
@@ -314,7 +314,7 @@ void PuzzleVCR::updateScreen(const AsylumEvent &evt) {
 		getScreen()->draw(getWorld()->graphicResourceIds[0]);
 		getScreen()->drawGraphicsInQueue();
 
-		for (uint32 barSize = 0; barSize < 84; barSize += 4)
+		for (int16 barSize = 0; barSize < 84; barSize += 4)
 			getScreen()->drawWideScreenBars(barSize);
 
 		// Palette fade
@@ -557,12 +557,12 @@ void PuzzleVCR::updateStopButton() {
 //////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
-int PuzzleVCR::inPolygon(Common::Point point, int polygonIndex) const {
+int PuzzleVCR::inPolygon(const Common::Point &point, int polygonIndex) const {
 	return point.x >= puzzleVCRPolygons[polygonIndex].left && point.x <= puzzleVCRPolygons[polygonIndex].right
 	    && point.y >= puzzleVCRPolygons[polygonIndex].top  && point.y <= puzzleVCRPolygons[polygonIndex].bottom;
 }
 
-PuzzleVCR::Color PuzzleVCR::getJackOnHand() {
+PuzzleVCR::Color PuzzleVCR::getJackOnHand() const {
 	Color jack = kNone;
 	if (_jacksState[kBlack] == kOnHand)
 		jack = kBlack;

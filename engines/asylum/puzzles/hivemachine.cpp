@@ -55,6 +55,7 @@ PuzzleHiveMachine::PuzzleHiveMachine(AsylumEngine *engine) : Puzzle(engine) {
 	_counterRed = _counterGreen = _counterKey = 0;
 	_rectIndex = -2;
 	_frameIndex = 0;
+	_frameIndex1 = 0;
 	_soundingNote = kMusicalNoteNone;
 	_notesNumber = 0;
 	_ok = false;
@@ -165,7 +166,7 @@ PuzzleHiveMachine::~PuzzleHiveMachine() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleHiveMachine::init(const AsylumEvent &evt)  {
+bool PuzzleHiveMachine::init(const AsylumEvent &)  {
 	getScreen()->setPalette(getWorld()->graphicResourceIds[9]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[9]);
 	_rectIndex = -2;
@@ -173,14 +174,14 @@ bool PuzzleHiveMachine::init(const AsylumEvent &evt)  {
 	return true;
 }
 
-bool PuzzleHiveMachine::update(const AsylumEvent &evt)  {
+bool PuzzleHiveMachine::update(const AsylumEvent &)  {
 	updateScreen();
 	updateCursor();
 
 	return true;
 }
 
-bool PuzzleHiveMachine::mouseLeftDown(const AsylumEvent &evt) {
+bool PuzzleHiveMachine::mouseLeftDown(const AsylumEvent &) {
 	if (_rectIndex != -1 && _counterRed == 0) {
 		_soundingNote = MusicalNote(_rectIndex);
 		_melody.push_back(_soundingNote);
@@ -207,7 +208,7 @@ bool PuzzleHiveMachine::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleHiveMachine::mouseRightDown(const AsylumEvent &evt) {
+bool PuzzleHiveMachine::mouseRightDown(const AsylumEvent &) {
 	_notesNumber = 0;
 	_melody.clear();
 
@@ -291,6 +292,9 @@ void PuzzleHiveMachine::updateScreen() {
 }
 
 void PuzzleHiveMachine::playSound() {
+	if (_soundingNote == kMusicalNoteNone)
+		error("[PuzzleHiveMachine::playSound] Invalid sound resource id");
+
 	uint32 soundMap[] = {4, 2, 3, 0, 1};
 	getSound()->playSound(getWorld()->graphicResourceIds[soundMap[_soundingNote] + 23], false, Config.sfxVolume - 10);
 }

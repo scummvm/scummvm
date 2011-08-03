@@ -34,11 +34,7 @@
 
 namespace Asylum {
 
-PuzzleBoard::PuzzleBoard(AsylumEngine *engine) : Puzzle(engine) {
-	error("[PuzzleBoard::PuzzleBoard] No puzzle data!");
-}
-
-PuzzleBoard::PuzzleBoard(AsylumEngine *engine, PuzzleData data) : Puzzle(engine) {
+PuzzleBoard::PuzzleBoard(AsylumEngine *engine, const PuzzleData &data) : Puzzle(engine) {
 	_data = data;
 
 	// Init board
@@ -58,7 +54,7 @@ void PuzzleBoard::reset() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleBoard::init(const AsylumEvent &evt)  {
+bool PuzzleBoard::init(const AsylumEvent &)  {
 	_rectIndex = -2;
 	_selectedSlot = -1;
 	_solved = false;
@@ -96,7 +92,7 @@ bool PuzzleBoard::updateScreen()  {
 	return true;
 }
 
-bool PuzzleBoard::update(const AsylumEvent &evt) {
+bool PuzzleBoard::update(const AsylumEvent &) {
 	updateCursor();
 
 	if (!_solved)
@@ -124,7 +120,7 @@ bool PuzzleBoard::update(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleBoard::mouseRightDown(const AsylumEvent &evt) {
+bool PuzzleBoard::mouseRightDown(const AsylumEvent &) {
 	if (!stopSound()) {
 		getScreen()->clear();
 		_vm->switchEventHandler(getScene());
@@ -151,7 +147,7 @@ void PuzzleBoard::drawText() {
 	getText()->draw(0, 99, kTextCenter, Common::Point(25, 50), 16, 590, _text.c_str());
 
 	int32 index = 0;
-	for (uint32 x = 215; x < _data.maxWidth; x += 24) {
+	for (int16 x = 215; x < (int16)_data.maxWidth; x += 24) {
 		if (!_solvedText[index])
 			break;
 
@@ -163,7 +159,7 @@ void PuzzleBoard::drawText() {
 }
 
 void PuzzleBoard::playSound() {
-	uint32 index = 0;
+	uint32 index;
 	for (index = 0; index < _data.soundResourceSize; index++) {
 		if (!_data.soundResources[index].played)
 			break;
@@ -196,9 +192,9 @@ int32 PuzzleBoard::checkMouse() {
 	Common::Point mousePos = getCursor()->position();
 
 	if (mousePos.x >= 215 && mousePos.x < (int16)_data.maxWidth && mousePos.y >= 360 && mousePos.y < 376) {
-		uint32 index = (mousePos.x - 215) / 12;
+		int16 index = (mousePos.x - 215) / 12;
 
-		if (index >= ARRAYSIZE(_solvedText))
+		if (index < 0 || index >= ARRAYSIZE(_solvedText))
 			return -1;
 
 		if (_solvedText[index] != 0) {

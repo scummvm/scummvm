@@ -75,10 +75,10 @@ private:
 	// Game
 	//////////////////////////////////////////////////////////////////////////
 	bool check();
-	GameStatus checkField(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO);
+	GameStatus checkField(uint32 field1, uint32 field2, uint32 field3, char mark, uint32 *counterX, uint32 *counterO) const;
 	bool checkFieldsUpdatePositions();
 	bool checkFields();
-	uint32 checkPosition(uint32 position1, uint32 position2, uint position3);
+	uint32 checkPosition(uint32 position1, uint32 position2, uint position3) const;
 	bool checkWinner();
 	int32 checkWinnerHelper();
 	bool checkWinning(char mark);

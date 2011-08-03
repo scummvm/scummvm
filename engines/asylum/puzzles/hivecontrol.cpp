@@ -51,18 +51,6 @@ const Control puzzleHiveControlIntToControl[] = {
 	kControlGlyph6
 };
 
-bool PuzzleHiveControl::hitTest1(uint32 resourceId, Common::Point point, Common::Point location) {
-	GraphicResource resource(_vm);
-	resource.load(getWorld()->graphicResourceIds[resourceId]);
-	GraphicFrame *frame = resource.getFrame(0);
-	Common::Point point1(point.x - location.x, point.y - location.y);
-
-	if (!frame->getRect().contains(point1))
-		return false;
-	else
-		return *((byte *)frame->surface.pixels + point1.x + frame->surface.pitch * point1.y) != 0;
-}
-
 PuzzleHiveControl::PuzzleHiveControl(AsylumEngine *engine) : Puzzle(engine) {
 	_rectIndex = 0;
 	_soundVolume = 0;
@@ -92,7 +80,7 @@ void PuzzleHiveControl::reset() {
 
 	_frameIndexes[kElementSwirlRim] = 0;
 	if (_leverPosition != _prevLeverPosition) {
-		_leverDelta = abs((double)(_leverPosition - _prevLeverPosition)) * 16 / 5;
+		_leverDelta = (uint32)abs((double)(_leverPosition - _prevLeverPosition)) * 16 / 5;
 		_currentControl = kControlGlyph4;
 	}
 }
@@ -100,21 +88,21 @@ void PuzzleHiveControl::reset() {
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleHiveControl::init(const AsylumEvent &evt) {
-	_controlPoints[kControlWingsButton1]	= Common::Point(338, 139);
-	_controlPoints[kControlWingsButton2]	= Common::Point(376, 151);
-	_controlPoints[kControlWingsButton3]	= Common::Point(403, 162);
-	_controlPoints[kControlReset]		= Common::Point(219,  86);
-	_controlPoints[kControlWheelRight]	= Common::Point(204, 263);
-	_controlPoints[kControlWheelLeft]	= Common::Point(164, 310);
-	_controlPoints[kControlButtonLeft]	= Common::Point(320, 375);
-	_controlPoints[kControlButtonRight]	= Common::Point(363, 337);
-	_controlPoints[kControlGlyph1]		= Common::Point(102, 201);
-	_controlPoints[kControlGlyph2]		= Common::Point(101, 171);
-	_controlPoints[kControlGlyph3]		= Common::Point(108, 140);
-	_controlPoints[kControlGlyph4]		= Common::Point(126, 111);
-	_controlPoints[kControlGlyph5]		= Common::Point(140,  85);
-	_controlPoints[kControlGlyph6]		= Common::Point(161,  54);
+bool PuzzleHiveControl::init(const AsylumEvent &) {
+	_controlPoints[kControlWingsButton1] = Common::Point(338, 139);
+	_controlPoints[kControlWingsButton2] = Common::Point(376, 151);
+	_controlPoints[kControlWingsButton3] = Common::Point(403, 162);
+	_controlPoints[kControlReset]        = Common::Point(219,  86);
+	_controlPoints[kControlWheelRight]   = Common::Point(204, 263);
+	_controlPoints[kControlWheelLeft]    = Common::Point(164, 310);
+	_controlPoints[kControlButtonLeft]   = Common::Point(320, 375);
+	_controlPoints[kControlButtonRight]  = Common::Point(363, 337);
+	_controlPoints[kControlGlyph1]       = Common::Point(102, 201);
+	_controlPoints[kControlGlyph2]       = Common::Point(101, 171);
+	_controlPoints[kControlGlyph3]       = Common::Point(108, 140);
+	_controlPoints[kControlGlyph4]       = Common::Point(126, 111);
+	_controlPoints[kControlGlyph5]       = Common::Point(140,  85);
+	_controlPoints[kControlGlyph6]       = Common::Point(161,  54);
 
 	_rectIndex = -2;
 	_frameIndexes[kElementLever] = (5 - _leverPosition) * (GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[kElementLever]) - 1) / 5;
@@ -152,7 +140,7 @@ bool PuzzleHiveControl::update(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
+bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &) {
 	if (_currentControl != kControlNone)
 		return true;
 
@@ -164,12 +152,14 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
 	case kControlWingsButton1:
 		getCursor()->hide();
 		getSound()->playSound(getWorld()->graphicResourceIds[81], false, Config.sfxVolume - 10);
+
 		if (_wingsState[1] != _wingsState[2]) {
 			if (_wingsState[0])
 				--_frameIndexOffset;
 			else
 				++_frameIndexOffset;
 		}
+
 		_frameIndexOffset += _wingsState[0] ? -1 : 1;
 		_wingsState[0] = !_wingsState[0];
 		_frameIndexes[kElementLensLeft] = _colorL * 8 + _frameIndexOffset;
@@ -179,12 +169,14 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
 	case kControlWingsButton2:
 		getCursor()->hide();
 		getSound()->playSound(getWorld()->graphicResourceIds[81], false, Config.sfxVolume - 10);
+
 		if (_wingsState[0] != _wingsState[2]) {
 			if (_wingsState[1])
 				--_frameIndexOffset;
 			else
 				++_frameIndexOffset;
 		}
+
 		_frameIndexOffset += _wingsState[1] ? -2 : 2;
 		_wingsState[1] = !_wingsState[1];
 		_frameIndexes[kElementLensLeft] = _colorL * 8 + _frameIndexOffset;
@@ -194,13 +186,15 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
 	case kControlWingsButton3:
 		getCursor()->hide();
 		getSound()->playSound(getWorld()->graphicResourceIds[81], false, Config.sfxVolume - 10);
+
 		if (_wingsState[0] != _wingsState[1]) {
 			if (_wingsState[2])
 				--_frameIndexOffset;
 			else
 				++_frameIndexOffset;
 		}
-		_frameIndexOffset += _wingsState[2] ? -3 : 3;
+
+		_frameIndexOffset += (_wingsState[2] ? -3 : 3);
 		_wingsState[2] = !_wingsState[2];
 		_frameIndexes[kElementLensLeft] = _colorL * 8 + _frameIndexOffset;
 		_frameIndexes[kElementLensRight] = _colorR * 8 + _frameIndexOffset;
@@ -229,11 +223,14 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
 	case kControlButtonLeft:
 		getCursor()->hide();
 		getSound()->playSound(getWorld()->graphicResourceIds[77], false, Config.sfxVolume - 10);
+
 		if (!_glyphFlags[0][_leverPosition]) {
 			_glyphFlags[0][_leverPosition] = puzzleHiveControlHieroglyphs[0][_leverPosition] == _frameIndexes[kElementLensLeft];
 			if (_glyphFlags[0][_leverPosition]) {
 				getSound()->playSound(getWorld()->graphicResourceIds[83], false, Config.sfxVolume - 10);
 				++_frameIndexes[kElementSwirlRim];
+
+				error("[PuzzleHiveControl::mouseLeftDown] Not implemented");
 				//if (_frameIndexes[kElementSwirlRim] == 12)
 					//	...
 			}
@@ -260,8 +257,8 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
 	case kControlGlyph4:
 	case kControlGlyph5:
 	case kControlGlyph6:
-		_leverPosition = _currentControl - 49;
-		_leverDelta = abs((double)(_leverPosition - _prevLeverPosition)) * (GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[kElementLever]) - 1) / 5;
+		_leverPosition = (uint32)(_currentControl - 49);
+		_leverDelta = (uint32)abs((double)(_leverPosition - _prevLeverPosition)) * (GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[kElementLever]) - 1) / 5;
 		if (_leverDelta)
 			getSound()->playSound(getWorld()->graphicResourceIds[76], false, Config.sfxVolume - 10);
 	}
@@ -269,7 +266,7 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleHiveControl::mouseRightDown(const AsylumEvent &evt) {
+bool PuzzleHiveControl::mouseRightDown(const AsylumEvent &) {
 	reset();
 
 	getSound()->stop(getWorld()->graphicResourceIds[73]);
@@ -442,7 +439,22 @@ void PuzzleHiveControl::updateScreen() {
 }
 
 void PuzzleHiveControl::playSound() {
-	//error("[PuzzleHiveControl::playSound] Not implemented!");
+	warning("[PuzzleHiveControl::playSound] Not implemented!");
+}
+
+bool PuzzleHiveControl::hitTest1(Control control, const Common::Point &point, const Common::Point &location) {
+	if (control == kControlNone)
+		error("[PuzzleHiveControl::hitTest1] Invalid control");
+
+	GraphicResource resource(_vm);
+	resource.load(getWorld()->graphicResourceIds[control]);
+	GraphicFrame *frame = resource.getFrame(0);
+	Common::Point point1(point.x - location.x, point.y - location.y);
+
+	if (!frame->getRect().contains(point1))
+		return false;
+	else
+		return *((byte *)frame->surface.pixels + point1.x + frame->surface.pitch * point1.y) != 0;
 }
 
 } // End of namespace Asylum
