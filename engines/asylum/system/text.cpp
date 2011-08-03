@@ -187,7 +187,6 @@ uint32 Text::draw(int32 a1, int32 a2, TextCentering centering, int32 x, int32 y,
 	bool drawText = false;
 	int32 spaceWidth = 0;
 	int32 index = 0;
-	int32 w = 0;
 
 	const char *string = text;
 	const char *endText = text;
@@ -217,7 +216,6 @@ label_start:
 					break;
 				}
 
-				x += w;
 				y += spacing;
 				++printed;
 			}
@@ -239,12 +237,13 @@ label_start:
 		}
 
 		const char *txt = text;
+		int32 w = 0;
 
-		w = 0;
 		for (;;) {
 			char c = *txt;
 			w += charWidth;
 			charWidth = spaceWidth;
+			const char *txt2 = txt;
 
 			if (*txt != ' ') {
 				do {
@@ -254,19 +253,16 @@ label_start:
 					if (c == 1) // Start of heading (SOH)
 						break;
 
-					charWidth = getWidth(c);
-					w += charWidth;
+					charWidth += getWidth(c);
 					txt++;
 					c = txt[0];
 
 				} while (c != ' ');
 			}
 
-			w += getWidth(' ');
-
 			if ((w + charWidth) > width) {
 				string = text;
-				endText = txt;
+				endText = txt2 - 1;
 				drawText = true;
 				goto label_start;
 			}
