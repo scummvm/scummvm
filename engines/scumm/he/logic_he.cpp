@@ -1026,23 +1026,24 @@ int LogicHEsoccer::op_1007(int32 *args) {
 	// This initializes the _userDataD fields that are used in op_1006/op_1011
 
 	_intArraysAllocated = false;
-	double v14 = (double)args[0] * 0.01;
-	double v13 = (double)args[2] * 0.01;
-	_userDataD[524] = v14;
-	double v12 = atan2(v14, v13);
-	_userDataD[520] = v12;
-	double v15 = atan2((double)args[3] * 0.01, v13 - (double)args[4] * 0.01);
-	double v19 = v15 * 2.0;
-	double v17 = atan2(v14, v13 - (double)args[4] * 0.01);
-	_userDataD[519] = v19;
-	_userDataD[521] = v17;
-	_userDataD[525] = (v17 - v12) * 2.0;
-	_userDataD[527] = (double)args[5];
-	_userDataD[526] = (double)args[6];
-	_userDataD[528] = (double)args[7];
+
+	float y1 = (double)args[0] / 100.0;
+	float x1 = (double)args[1] / 100.0;
+	float x2 = (double)args[2] / 100.0;
+	float y2 = (double)args[3] / 100.0;
+	float x3 = (double)args[4] / 100.0;
+
+	_userDataD[518] = x2;
+	_userDataD[519] = 2 * atan2(y2, x2 - x3);
+	_userDataD[520] = atan2(y1, x2);
+	_userDataD[521] = atan2(y1, x1);
+	_userDataD[524] = y1;
+	_userDataD[525] = 2 * (_userDataD[521] - _userDataD[520]);
+	_userDataD[526] = args[6];
+	_userDataD[527] = args[5];
+	_userDataD[528] = args[7];
 	_userDataD[522] = _userDataD[526] / _userDataD[525];
 	_userDataD[523] = _userDataD[527] / _userDataD[519];
-	_userDataD[518] = v13;
 
 	// Clear both byte arrays
 	memset(_byteArray1, 0, 4096);
