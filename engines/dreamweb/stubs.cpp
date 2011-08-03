@@ -882,5 +882,15 @@ void DreamGenContext::crosshair() {
 	showframe(src, kZoomx + 24, kZoomy + 19, frame, 0, &width, &height);
 }
 
+void DreamGenContext::deltextline() {
+	uint16 x = data.word(kTextaddressx);
+	uint16 y = data.word(kTextaddressy);
+	if (data.byte(kForeignrelease) != 0)
+		y -= 3;
+	ds = data.word(kBuffers);
+	si = kTextunder;
+	multiput(x, y, kUndertextsizex, kUndertextsizey);
+}
+
 } /*namespace dreamgen */
 

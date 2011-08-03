@@ -18443,22 +18443,6 @@ _tmp1:
 	multiget();
 }
 
-void DreamGenContext::deltextline() {
-	STACK_CHECK;
-	di = data.word(kTextaddressx);
-	bx = data.word(kTextaddressy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(bx, 3);
-_tmp1:
-	ds = data.word(kBuffers);
-	si = (0);
-	cl = (228);
-	ch = (13);
-	multiput();
-}
-
 void DreamGenContext::animpointer() {
 	STACK_CHECK;
 	_cmp(data.byte(kPointermode), 2);
@@ -20317,7 +20301,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_delpointer: delpointer(); break;
 		case addr_dumppointer: dumppointer(); break;
 		case addr_undertextline: undertextline(); break;
-		case addr_deltextline: deltextline(); break;
 		case addr_animpointer: animpointer(); break;
 		case addr_setmouse: setmouse(); break;
 		case addr_readmouse: readmouse(); break;

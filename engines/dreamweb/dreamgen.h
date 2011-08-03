@@ -88,7 +88,6 @@ public:
 	static const uint16 addr_readmouse = 0xcae4;
 	static const uint16 addr_setmouse = 0xcae0;
 	static const uint16 addr_animpointer = 0xcadc;
-	static const uint16 addr_deltextline = 0xcad4;
 	static const uint16 addr_undertextline = 0xcad0;
 	static const uint16 addr_dumppointer = 0xcacc;
 	static const uint16 addr_delpointer = 0xcac8;
@@ -1398,7 +1397,7 @@ public:
 	void useelevator2();
 	void buttonone();
 	void keyboardread();
-	void deltextline();
+	//void deltextline();
 	void entercode();
 	void getopenedsize();
 	void getpersframe();

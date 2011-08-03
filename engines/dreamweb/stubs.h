@@ -113,5 +113,5 @@
 	void zoom();
 	void crosshair();
 	void showrain();
-
+	void deltextline();
 
