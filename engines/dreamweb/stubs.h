@@ -31,7 +31,7 @@
 	void frameoutfx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void worktoscreen();
 	void multiget();
-	void multiget(uint16 x, uint16 y, uint8 width, uint8 height);
+	void multiget(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
 	void convertkey();
 	void cls();
 	void printsprites();
@@ -70,7 +70,7 @@
 	void showframe(const void *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
 	void printasprite(const Sprite *sprite);
 	void width160();
-	void multiput(uint16 x, uint16 y, uint8 width, uint8 height);
+	void multiput(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);
 	void multiput();
 	void eraseoldobs();
 	void clearsprites();

@@ -39,13 +39,14 @@ void DreamGenContext::allocatework() {
 }
 
 void DreamGenContext::multiget() {
-	multiget(di, bx, cl, ch);
+	multiget(ds.ptr(si, 0), di, bx, cl, ch);
+	si += cl * ch;
+	di += bx * kScreenwidth + kScreenwidth * ch;
+	cx = 0;
 }
 
-void DreamGenContext::multiget(uint16 x, uint16 y, uint8 w, uint8 h) {
+void DreamGenContext::multiget(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
 	unsigned src = x + y * kScreenwidth;
-	unsigned dst = (uint16)si;
-	es = ds;
 	ds = data.word(kWorkspace);
 	if (y + h > 200)
 		h = 200 - y;
@@ -53,21 +54,20 @@ void DreamGenContext::multiget(uint16 x, uint16 y, uint8 w, uint8 h) {
 		w = 320 - x;
 	//debug(1, "multiget %u,%u %ux%u -> segment: %04x->%04x", x, y, w, h, (uint16)ds, (uint16)es);
 	for(unsigned l = 0; l < h; ++l) {
-		uint8 *src_p = ds.ptr(src + kScreenwidth * l, w);
-		uint8 *dst_p = es.ptr(dst + w * l, w);
+		const uint8 *src_p = ds.ptr(src + kScreenwidth * l, w);
+		uint8 *dst_p = dst + w * l;
 		memcpy(dst_p, src_p, w);
 	}
-	si += w * h;
-	di = src + kScreenwidth * h;
-	cx = 0;
 }
 
 void DreamGenContext::multiput() {
-	multiput(di, bx, cl, ch);
+	multiput(ds.ptr(si, 0), di, bx, cl, ch);
+	si += cl * ch;
+	di += bx * kScreenwidth + kScreenwidth * ch;
+	cx = 0;
 }
 
-void DreamGenContext::multiput(uint16 x, uint16 y, uint8 w, uint8 h) {
-	unsigned src = (uint16)si;
+void DreamGenContext::multiput(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
 	unsigned dst = x + y * kScreenwidth;
 	es = data.word(kWorkspace);
 	if (y + h > 200)
@@ -76,13 +76,10 @@ void DreamGenContext::multiput(uint16 x, uint16 y, uint8 w, uint8 h) {
 		w = 320 - x;
 	//debug(1, "multiput %ux%u -> segment: %04x->%04x", w, h, (uint16)ds, (uint16)es);
 	for(unsigned l = 0; l < h; ++l) {
-		uint8 *src_p = ds.ptr(src + w * l, w);
+		const uint8 *src_p = src + w * l;
 		uint8 *dst_p = es.ptr(dst + kScreenwidth * l, w);
 		memcpy(dst_p, src_p, w);
 	}
-	si += w * h;
-	di = dst + kScreenwidth * h;
-	cx = 0;
 }
 
 void DreamGenContext::multidump(uint16 x, uint16 y, uint8 width, uint8 height) {

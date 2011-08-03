@@ -291,7 +291,7 @@ void DreamGenContext::getundertimed() {
 		y -= 3;
 	ds = data.word(kBuffers);
 	si = kUndertimedtext;
-	multiget(data.byte(kTimedx), y, 240, kUndertimedysize);
+	multiget(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
 void DreamGenContext::putundertimed() {
@@ -300,7 +300,7 @@ void DreamGenContext::putundertimed() {
 		y -= 3;
 	ds = data.word(kBuffers);
 	si = kUndertimedtext;
-	multiput(data.byte(kTimedx), y, 240, kUndertimedysize);
+	multiput(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
 void DreamGenContext::usetimedtext() {
@@ -889,7 +889,7 @@ void DreamGenContext::deltextline() {
 		y -= 3;
 	ds = data.word(kBuffers);
 	si = kTextunder;
-	multiput(x, y, kUndertextsizex, kUndertextsizey);
+	multiput(ds.ptr(si, 0), x, y, kUndertextsizex, kUndertextsizey);
 }
 
 } /*namespace dreamgen */
