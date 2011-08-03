@@ -15,8 +15,7 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
-	timer/default/default-timer.o \
-	updates/sparkle-updates.o
+	timer/default/default-timer.o
 
 
 ifdef USE_ELF_LOADER

@@ -64,7 +64,7 @@ void OSystem_MacOSX::initBackend() {
 	// Replace the SDL generated menu items with our own translated ones on Mac OS X
 	replaceApplicationMenuItems();
 
-#if defined(USE_SPARKLE)
+#ifdef USE_SPARKLE
 	// Initialize updates manager
 	_updateManager = new MacOSXUpdateManager();
 #endif

@@ -23,11 +23,13 @@
 #ifndef BACKENDS_UPDATES_MACOSX_H
 #define BACKENDS_UPDATES_MACOSX_H
 
-#include "backends/updates/sparkle-updates.h"
+#include "common/scummsys.h"
 
 #if defined(MACOSX) && defined(USE_SPARKLE)
 
-class MacOSXUpdateManager : public SparkleUpdateManager {
+#include "common/updates.h"
+
+class MacOSXUpdateManager : public Common::UpdateManager {
 public:
 	MacOSXUpdateManager();
 	virtual ~MacOSXUpdateManager();

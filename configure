@@ -144,7 +144,7 @@ _opengl=auto
 _opengles=auto
 _readline=auto
 _taskbar=yes
-_updates=yes
+_updates=no
 _libunity=auto
 # Default option behaviour yes/no
 _debug_build=auto
@@ -775,7 +775,7 @@ Optional Features:
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
-  --disable-updates        don't build support for updates
+  --enable-updates         build support for updates
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
                            process

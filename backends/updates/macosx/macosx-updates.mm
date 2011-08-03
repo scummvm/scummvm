@@ -23,11 +23,9 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/updates/sparkle-updates.h"
-
-#if defined(MACOSX) && defined(USE_SPARKLE)
-
 #include "backends/updates/macosx/macosx-updates.h"
+
+#ifdef USE_SPARKLE
 #include "common/translation.h"
 
 #include <Cocoa/Cocoa.h>
@@ -53,8 +51,12 @@ MacOSXUpdateManager::MacOSXUpdateManager() {
 	// Init Sparkle
 	sparkleUpdater = [SUUpdater sharedUpdater];
 
+	NSBundle* mainBundle = [NSBundle mainBundle];
+
+	NSString* feedbackURL = [mainBundle objectForInfoDictionaryKey:@"SUFeedURL"];
+
 	// Set appcast URL
-	[sparkleUpdater setFeedURL:[NSURL URLWithString:[NSString stringWithCString:getAppcastUrl().c_str()]]];
+	[sparkleUpdater setFeedURL:[NSURL URLWithString:feedbackURL]];
 
 	// Get current encoding
 	NSStringEncoding stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[NSString stringWithCString:(TransMan.getCurrentCharset()).c_str() encoding:NSASCIIStringEncoding]));
@@ -108,22 +110,18 @@ Common::UpdateManager::UpdateInterval MacOSXUpdateManager::getUpdateCheckInterva
 	// This is kind of a hack but necessary, as the value stored by Sparkle
 	// might have been changed outside of ScummVM (in which case we return the
 	// default interval of one day)
-	switch ((UpdateInterval)[sparkleUpdater updateCheckInterval]) {
-		default:
-			break;
 
-		case kUpdateIntervalOneDay:
-			return kUpdateIntervalOneDay;
+	UpdateInterval updateInterval = (UpdateInterval)[sparkleUpdater updateCheckInterval];
+	switch (updateInterval) {
+	case kUpdateIntervalOneDay:
+	case kUpdateIntervalOneWeek:
+	case kUpdateIntervalOneMonth:
+		return updateInterval;
 
-		case kUpdateIntervalOneWeek:
-			return kUpdateIntervalOneWeek;
-
-		case kUpdateIntervalOneMonth:
-			return kUpdateIntervalOneMonth;
+	default:
+		// Return the default value (one day)
+		return kUpdateIntervalOneDay;
 	}
-
-	// Return the default value (one day)
-	return kUpdateIntervalOneDay;
 }
 
 #endif
