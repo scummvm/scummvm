@@ -40,8 +40,9 @@ namespace Asylum {
 
 #define IMPLEMENT_OPCODE(name) \
 	void ScriptManager::Op##name(ScriptEntry *cmd) { \
-	if (!_currentScript) error("[" #name "] No current script set!"); \
-	if (!cmd) error("[" #name "] Invalid command parameter!");
+	if (!_currentScript) error("[" #name "] No current script set"); \
+	if (!_currentQueueEntry) error("[" #name "] Invalid current queue entry"); \
+	if (!cmd) error("[" #name "] Invalid command parameter");
 
 #define END_OPCODE }
 
@@ -150,7 +151,7 @@ public:
 	 *
 	 * @return true if in queue, false if not.
 	 */
-	bool isInQueue(int32 scriptIndex);
+	bool isInQueue(int32 scriptIndex) const;
 
 	/**
 	 * Resets the queue.
@@ -176,8 +177,8 @@ private:
 		int32 scriptIndex;
 		int32 currentLine;
 		ActorIndex actorIndex;
-		int32 field_C;
-		int32 field_10;
+		uint32 field_C;
+		uint32 field_10;
 
 		ScriptQueueEntry() {
 			reset();
