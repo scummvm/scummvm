@@ -226,8 +226,8 @@ bool Console::cmdListActors(int32 argc, const char **argv) {
 		}
 
 		// Adjust actor coordinates
-		int x = atoi(argv[2]);
-		int y = atoi(argv[3]);
+		int16 x = (int16)atoi(argv[2]);
+		int16 y = (int16)atoi(argv[3]);
 
 		// TODO add error handling
 
@@ -378,16 +378,16 @@ bool Console::cmdRunScript(int32 argc, const char **argv) {
 		return true;
 	}
 
-	uint32 index = atoi(argv[1]);
-	uint32 actor = atoi(argv[2]);
+	int32 index = atoi(argv[1]);
+	int32 actor = atoi(argv[2]);
 
 	// Check parameters
-	if (index >= getScript()->_scripts.size()) {
+	if (index < 0 || index >= (int32)getScript()->_scripts.size()) {
 		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->items()->size() - 1);
 		return true;
 	}
 
-	if (actor > getWorld()->actors.size()) {
+	if (actor < 0 || actor >= (int32)getWorld()->actors.size()) {
 		DebugPrintf("[Error] Invalid actor index (was: %d - valid: [0-%d])\n", actor, getWorld()->actors.size() - 1);
 	}
 
@@ -423,10 +423,10 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 		return true;
 	}
 
-	uint32 index = atoi(argv[1]);
+	int32 index = atoi(argv[1]);
 
 	// Check index is valid
-	if (index >= _vm->encounter()->_items.size()) {
+	if (index < 0 || index >= (int32)_vm->encounter()->_items.size()) {
 		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->_items.size() - 1);
 		return true;
 	}
@@ -461,15 +461,15 @@ bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
 		return true;
 	}
 
-	uint32 index = atoi(argv[1]);
+	int32 index = atoi(argv[1]);
 
 	// Check index is valid
-	if (index > ARRAYSIZE(_vm->_puzzles)) {
+	if (index < 0 || index >= ARRAYSIZE(puzzleToScenes)) {
 		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, ARRAYSIZE(_vm->_puzzles));
 		return true;
 	}
 
-	EventHandler *puzzle = _vm->getPuzzle(index);
+	EventHandler *puzzle = _vm->getPuzzle((uint32)index);
 	if (puzzle == NULL) {
 		DebugPrintf("[Error] This puzzle does not exists (%d)", index);
 		return true;
@@ -496,17 +496,23 @@ bool Console::cmdSetPalette(int32 argc, const char **argv) {
 		return true;
 	}
 
-	uint32 pack = atoi(argv[1]);
-	uint32 index = atoi(argv[2]);
+	int32 pack = atoi(argv[1]);
+	int32 index = atoi(argv[2]);
 
 	// Check resource pack
-	if (pack > 18) {
+	if (pack < 0 || pack > 18) {
 		DebugPrintf("[Error] Invalid resource pack (was: %d - valid: [0-18])\n", pack);
 		return true;
 	}
 
+	// Check index
+	if (index < 0) {
+		DebugPrintf("[Error] Invalid index (was: %d - valid: > 0)\n", index);
+		return true;
+	}
+
 	// Try loading resource
-	ResourceId id = MAKE_RESOURCE(pack, index);
+	ResourceId id = MAKE_RESOURCE((uint32)pack, index);
 
 	ResourceEntry *entry = getResource()->get(id);
 	if (!entry) {
@@ -525,28 +531,38 @@ bool Console::cmdDrawResource(int32 argc, const char **argv) {
 		return true;
 	}
 
-	uint32 pack = atoi(argv[1]);
-	uint32 index = atoi(argv[2]);
+	int32 pack = atoi(argv[1]);
+	int32 index = atoi(argv[2]);
 
-	uint32 frame = 0;
+	int32 frame = 0;
 	if (argc == 4)
 		frame = atoi(argv[3]);
 
 	// Check resource pack
-	if (pack > 18) {
+	if (pack < 0 || pack > 18) {
 		DebugPrintf("[Error] Invalid resource pack (was: %d - valid: [0-18])\n", pack);
 		return true;
 	}
 
-	// Try loading resource
-	GraphicResource *resource = new GraphicResource(_vm);
-	if (!resource->load(MAKE_RESOURCE(pack, index))) {
-		DebugPrintf("[Error] Invalid resource index (was: %d)\n", index);
+	// Check index
+	if (index < 0) {
+		DebugPrintf("[Error] Invalid index (was: %d - valid: > 0)\n", index);
 		return true;
 	}
 
-	if (frame > resource->count() - 1) {
+	ResourceId resourceId = MAKE_RESOURCE((uint32)pack, index);
+
+	// Try loading resource
+	GraphicResource *resource = new GraphicResource(_vm);
+	if (!resource->load(resourceId)) {
+		DebugPrintf("[Error] Invalid resource index (was: %d)\n", index);
+		delete resource;
+		return true;
+	}
+
+	if (frame < 0 || frame >= (int32)resource->count()) {
 		DebugPrintf("[Error] Invalid resource frame index (was: %d , max: %d)\n", frame, resource->count() - 1);
+		delete resource;
 		return true;
 	}
 
@@ -558,7 +574,7 @@ bool Console::cmdDrawResource(int32 argc, const char **argv) {
 
 	// Draw resource
 	getScreen()->clear();
-	getScreen()->draw(MAKE_RESOURCE(pack, index), frame, Common::Point(0, 0));
+	getScreen()->draw(resourceId, (uint32)frame, Common::Point(0, 0));
 	getScreen()->copyBackBufferToScreen();
 
 	g_system->updateScreen();

@@ -83,6 +83,7 @@ private:
 	};
 
 	enum MenuResource {
+		kResourceNone = 0,
 		kBackground   = MAKE_RESOURCE(kResourcePackShared, 0),
 		kEye          = MAKE_RESOURCE(kResourcePackShared, 1),
 		kFontBlue     = MAKE_RESOURCE(kResourcePackShared, 22),

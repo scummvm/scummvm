@@ -45,8 +45,9 @@ namespace Asylum {
 #define KEYWORD_MASK 0xFFF
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
-	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _actorIndex(kActorInvalid),
-	_flag1(false), _flag2(false), _flag3(false), _flag4(false), _disablePlayerOnExit(false), _isRunning(false) {
+	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _objectId3(kObjectNone),
+	_actorIndex(kActorInvalid), _flag1(false), _flag2(false), _flag3(false), _flag4(false), _disablePlayerOnExit(false),
+	_isRunning(false) {
 
 	memset(&_keywordIndexes, 0, sizeof(_keywordIndexes));
 	_rectIndex = -1;
@@ -101,7 +102,6 @@ void Encounter::load() {
 	int16 dataCount = file.readSint16LE();
 	for (uint8 i = 0; i < dataCount; i++) {
 		EncounterItem item;
-		memset(&item, 0, sizeof(EncounterItem));
 
 		item.keywordIndex = file.readSint16LE();
 		item.field2       = file.readSint16LE();
@@ -291,22 +291,18 @@ bool Encounter::handleEvent(const AsylumEvent &evt) {
 
 	case EVENT_ASYLUM_INIT:
 		return init();
-		break;
 
 	case EVENT_ASYLUM_UPDATE:
 		return update();
-		break;
 
 	case Common::EVENT_KEYDOWN:
 		return key(evt);
-		break;
 
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
 		return mouse(evt);
-		break;
 	}
 
 	return false;
@@ -435,7 +431,7 @@ bool Encounter::update() {
 	}
 
 	if (tick >= getSharedData()->getNextScreenUpdate() && getSharedData()->getFlag(kFlagRedraw)) {
-		if (getSharedData()->getMatteBarHeight() <= 0) {
+		if (getSharedData()->getMatteBarHeight() == 0) {
 			getScreen()->copyBackBufferToScreen();
 		} else {
 			drawScreen();
@@ -513,31 +509,31 @@ bool Encounter::mouse(const AsylumEvent &evt) {
 //////////////////////////////////////////////////////////////////////////
 // Variables
 //////////////////////////////////////////////////////////////////////////
-void Encounter::setVariable(uint32 index, int32 val) {
+void Encounter::setVariable(uint32 index, int16 val) {
 	if (index >= _variables.size())
 		error("[Encounter::setVariable] Invalid index (was: %d, max: %d)", index, _variables.size() - 1);
 
 	_variables[index] = val;
 }
 
-int32 Encounter::getVariable(uint32 index) {
+int16 Encounter::getVariable(uint32 index) {
 	if (index >= _variables.size())
 		error("[Encounter::getVariable] Invalid index (was: %d, max: %d)", index, _variables.size() - 1);
 
 	return _variables[index];
 }
 
-int32 Encounter::getVariableInv(int32 index) {
+int16 Encounter::getVariableInv(int16 index) {
 	if (index >= 0)
 		return index;
 
-	return getVariable(-index);
+	return getVariable((uint16)-index);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Actions
 //////////////////////////////////////////////////////////////////////////
-uint32 Encounter::findKeyword(EncounterItem *item, int16 keyword) {
+uint32 Encounter::findKeyword(EncounterItem *item, int16 keyword) const {
 	for (uint i = 0; i < ARRAYSIZE(item->keywords); i++) {
 		if ((item->keywords[i] & KEYWORD_MASK) == keyword)
 			return i;
@@ -549,7 +545,7 @@ uint32 Encounter::findKeyword(EncounterItem *item, int16 keyword) {
 int32 Encounter::getKeywordIndex() {
 	Common::Point mousePos = getCursor()->position();
 
-	uint32 counter = 0;
+	int16 counter = 0;
 	for (uint i = _data_455BF8; i < ARRAYSIZE(_keywordIndexes); i++) {
 		int32 index = _keywordIndexes[i];
 
@@ -589,11 +585,11 @@ void Encounter::choose(int32 index) {
 	}
 }
 
-bool Encounter::checkKeywords() {
+bool Encounter::checkKeywords() const {
 	if (_data_455B14 == -1 || _data_455B14 + 1 >= 50)
 		return false;
 
-	for (uint32 i = _data_455B14 + 1; i < ARRAYSIZE(_keywordIndexes); i++) {
+	for (int32 i = _data_455B14 + 1; i < ARRAYSIZE(_keywordIndexes); i++) {
 		int32 index = _keywordIndexes[i];
 
 		if (index < 0)
@@ -606,7 +602,7 @@ bool Encounter::checkKeywords() {
 	return false;
 }
 
-bool Encounter::checkKeywords2() {
+bool Encounter::checkKeywords2() const {
 	for (uint32 i = 0; i < _data_455BF8; i++) {
 		int32 index = _keywordIndexes[i];
 
@@ -625,7 +621,7 @@ void Encounter::updateFromRect(int32 rectIndex)  {
 		if (rectIndex == 1 && (_data_455B14 + 1) < 50) {
 			bool cont = false;
 
-			for (uint32 i = _data_455B14 + 1; i < ARRAYSIZE(_keywordIndexes); i++) {
+			for (int32 i = _data_455B14 + 1; i < ARRAYSIZE(_keywordIndexes); i++) {
 				int32 index = _keywordIndexes[i];
 
 				if (index < 0)
@@ -678,7 +674,7 @@ void Encounter::updateFromRect(int32 rectIndex)  {
 //////////////////////////////////////////////////////////////////////////
 // Speech
 //////////////////////////////////////////////////////////////////////////
-void Encounter::resetSpeech(uint32 keywordIndex, uint32 a2) {
+void Encounter::resetSpeech(int16 keywordIndex, int16 a2) {
 	getSpeech()->resetTextData();
 	setupPortraits();
 
@@ -698,7 +694,7 @@ void Encounter::setupPortraits() {
 	setupSpeechData('N', &_portrait2);
 }
 
-void Encounter::setupSpeechData(char val, EncounterGraphic *encounterGraphic) {
+void Encounter::setupSpeechData(char val, EncounterGraphic *encounterGraphic) const {
 	switch (val) {
 	default:
 		break;
@@ -851,10 +847,8 @@ bool Encounter::drawBackground() {
 	if (_data_455BE4) {
 		--_background.frameIndex;
 
-		if (_background.frameIndex - 1 < 0) {
-			_background.frameIndex = 0;
+		if (_background.frameIndex == 0)
 			exitEncounter();
-		}
 
 		return false;
 	}
@@ -912,11 +906,11 @@ bool Encounter::drawPortraits() {
 	if (_portrait2.transTableNum == 3)
 		getScreen()->draw(_portrait2.resourceId,
 		                  _portrait2.frameIndex,
-		                  Common::Point(_point.x - frameRect.width() + _background.rect.width() - 6, _point.y + 5));
+		                  Common::Point(_point.x + _background.rect.width() - (frameRect.width() + 6), _point.y + 5));
 	else
 		getScreen()->draw(_portrait2.resourceId,
 		                  _portrait2.frameIndex,
-		                  Common::Point(_point.x - frameRect.width() + _background.rect.width() - 6, _point.y + 5),
+		                  Common::Point(_point.x + _background.rect.width() - (frameRect.width() + 6), _point.y + 5),
 		                  kDrawFlagNone,
 		                  _portrait2.transTableNum);
 
@@ -1064,7 +1058,7 @@ void Encounter::drawDialog() {
 	if (_data_455BF8 >= 50)
 		return;
 
-	int32 counter = 0;
+	int16 counter = 0;
 
 	for (uint32 i = _data_455BF8; i < ARRAYSIZE(_keywordIndexes); i++) {
 		if (counter / 3 >= 8)
@@ -1083,7 +1077,7 @@ void Encounter::drawDialog() {
 				getText()->loadFont(getWorld()->font1);
 
 			Common::Point coords(_drawingStructs[0].point1.y + 144 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15,
-			                     _point.y + (16 * counter / 3));
+			                     _point.y + (int16)(16 * counter / 3));
 
 			if (getKeywordIndex() == index)
 				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackShared, 3681)), 18, 0);
@@ -1097,18 +1091,18 @@ void Encounter::drawDialog() {
 	}
 }
 
-void Encounter::drawText(char *text, ResourceId font, int32 y) {
+void Encounter::drawText(char *text, ResourceId font, int16 y) {
 	if (!text)
 		return;
 
-	int width = _background.rect.width() - _portrait1.rect.width() - _portrait2.rect.width() - 20;
-	int x = _point.x + _portrait1.rect.width() + 10;
+	int16 width = _background.rect.width() - (_portrait1.rect.width() + _portrait2.rect.width() + 20);
+	int16 x = _point.x + _portrait1.rect.width() + 10;
 
 	getText()->loadFont(font);
 
 	if (_data_455BCC) {
 		if (_data_455B3C != 1 && _tick < _vm->getTick()) {
-			_tick = _vm->getTick() + 1000 * getResource()->get(getSpeech()->getSoundResourceId())->size / 11025 / _data_455B3C;
+			_tick = _vm->getTick() + 1000 * (getResource()->get(getSpeech()->getSoundResourceId())->size / 11025) / (uint16)_data_455B3C;
 
 			if ((_data_455BF0 + 8) < _data_455B70)
 				_data_455BF0 += 8;
@@ -1118,7 +1112,7 @@ void Encounter::drawText(char *text, ResourceId font, int32 y) {
 		_data_455B70 = getText()->draw(kTextCalculate, Common::Point(x, y), 16, width, text);
 		_data_455B3C = _data_455B70 / 8 + 1;
 		_data_455BF0 = 0;
-		_tick = _vm->getTick() + 1000 * getResource()->get(getSpeech()->getSoundResourceId())->size / 11025 / _data_455B3C;
+		_tick = _vm->getTick() + 1000 * (getResource()->get(getSpeech()->getSoundResourceId())->size / 11025) / (uint16)_data_455B3C;
 	}
 
 	getText()->draw(_data_455BF0, 7, kTextCenter, Common::Point(x, y), 16, width, text);
@@ -1524,7 +1518,7 @@ void Encounter::runScript() {
 
 		case 13:
 			if (!_flag3)
-				_data_455BD4 = 1;
+				_data_455BD4 = true;
 
 			done = true;
 			break;
@@ -1536,7 +1530,7 @@ void Encounter::runScript() {
 			break;
 
 		case 15:
-			setVariable(entry.param2, _scriptData.vars[entry.param1]);
+			setVariable(entry.param2, (int16)_scriptData.vars[entry.param1]);
 			break;
 
 		case 16:
@@ -1609,7 +1603,7 @@ void Encounter::runScript() {
 			if (!getSharedData()->getMatteBarHeight()) {
 				getScreen()->loadPalette();
 				getSharedData()->setMatteBarHeight(1);
-				getSharedData()->movieIndex = getVariableInv(entry.param2);
+				getSharedData()->movieIndex = (uint32)getVariableInv(entry.param2);
 				getSharedData()->setMatteVar1(1);
 				getSharedData()->setMattePlaySound(true);
 				getSharedData()->setMatteInitialized(true);

@@ -22,8 +22,6 @@
 
 #include "engines/asylum/resources/data.h"
 
-#include "common/rect.h"
-#include "common/serializer.h"
 #include "common/textconsole.h"
 
 namespace Asylum {
@@ -51,7 +49,7 @@ SharedData::SharedData() {
 	memset(&_chapter2Data1, 0, sizeof(_chapter2Data1));
 	_smallCurUp                        = 0;
 	_smallCurDown                      = 0;
-	_encounterFrameBg                  = 0;
+	_encounterFrameBg                  = kResourceNone;
 	_flagSkipDrawScene                 = false;
 	_matteVar1                         = 0;
 	_flagActorUpdateEnabledCheck       = false;
@@ -64,7 +62,7 @@ SharedData::SharedData() {
 	_chapter2FrameIndexOffset          = 0;
 	_chapter2ActorIndex                = 0;
 	_eventUpdate                       = 0;
-	memset(&_chapter2Data5, 0, sizeof(_chapter2Data4));
+	memset(&_chapter2Data4, 0, sizeof(_chapter2Data4));
 	_actorUpdateStatusEnabledCounter   = 0;
 	memset(&_chapter2Data5, 0, sizeof(_chapter2Data5));
 	// _flagEncounterDisablePlayerOnExit
@@ -90,8 +88,8 @@ void SharedData::saveCursorResources(ResourceId *resources, uint32 size) {
 	memcpy((ResourceId *)&_cursorResources, resources, size);
 }
 
-void SharedData::loadCursorResources(ResourceId *resources, uint32 size) {
-	memcpy(resources, (ResourceId *)&_cursorResources, size);
+void SharedData::loadCursorResources(ResourceId *resources, uint32 size) const {
+	memcpy(resources, (const ResourceId *)&_cursorResources, size);
 }
 
 void SharedData::saveSceneFonts(ResourceId font1, ResourceId font2, ResourceId font3) {
@@ -100,7 +98,7 @@ void SharedData::saveSceneFonts(ResourceId font1, ResourceId font2, ResourceId f
 	_sceneFonts[2] = font3;
 }
 
-void SharedData::loadSceneFonts(ResourceId *font1, ResourceId *font2, ResourceId *font3) {
+void SharedData::loadSceneFonts(ResourceId *font1, ResourceId *font2, ResourceId *font3) const {
 	*font1 = _sceneFonts[0];
 	*font2 = _sceneFonts[1];
 	*font3 = _sceneFonts[2];
@@ -111,7 +109,7 @@ void SharedData::saveSmallCursor(int32 smallCurUp, int32 smallCurDown) {
 	_smallCurDown = smallCurDown;
 }
 
-void SharedData::loadSmallCursor(int32 *smallCurUp, int32 *smallCurDown) {
+void SharedData::loadSmallCursor(int32 *smallCurUp, int32 *smallCurDown) const {
 	*smallCurUp = _smallCurUp;
 	*smallCurDown = _smallCurDown;
 }
@@ -152,7 +150,7 @@ void SharedData::setChapter2Counter(uint32 index, int32 val) {
 	_chapter2Counters[index - 1] = val;
 }
 
-int32 SharedData::getChapter2Counter(uint32 index) {
+int32 SharedData::getChapter2Counter(uint32 index) const {
 	if (index == 0 || index > 8)
 		error("[SharedData::setChapter2Counter] Invalid index (was: %d, valid: [1;8])", index);
 
@@ -162,7 +160,7 @@ int32 SharedData::getChapter2Counter(uint32 index) {
 //////////////////////////////////////////////////////////////////////////
 // Ambient sounds
 //////////////////////////////////////////////////////////////////////////
-uint32 SharedData::getAmbientTick(uint32 index) {
+uint32 SharedData::getAmbientTick(uint32 index) const {
 	if (index >= ARRAYSIZE(_ambientTicks))
 		error("[SharedData::getAmbientTick] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientTicks));
 
@@ -176,7 +174,7 @@ void SharedData::setAmbientTick(uint32 index, uint32 val) {
 	_ambientTicks[index] = val;
 }
 
-uint32 SharedData::getAmbientFlag(uint32 index) {
+uint32 SharedData::getAmbientFlag(uint32 index) const {
 	if (index >= ARRAYSIZE(_ambientFlags))
 		error("[SharedData::getAmbientFlag] index is outside valid values (was: %d, valid: [0:%d]", index, ARRAYSIZE(_ambientFlags));
 
@@ -213,7 +211,6 @@ bool SharedData::getFlag(GlobalFlag flag) const {
 
 	case kFlagRedraw:
 		return _flagRedraw;
-		break;
 
 	case kFlagSkipDrawScene:
 		return _flagSkipDrawScene;

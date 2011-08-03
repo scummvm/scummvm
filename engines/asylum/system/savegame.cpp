@@ -64,7 +64,7 @@ Savegame::~Savegame() {
 	_vm = NULL;
 }
 
-bool Savegame::hasSavegames() {
+bool Savegame::hasSavegames() const {
 	for (uint i = 0; i < SAVEGAME_COUNT; i++)
 		if (isSavegamePresent(getFilename(i)))
 			return true;
@@ -178,6 +178,9 @@ bool Savegame::quickSave() {
 }
 
 void Savegame::remove() {
+	if (_index >= ARRAYSIZE(_savegames))
+		error("[Savegame::remove] Invalid savegame index");
+
 	getCursor()->hide();
 	g_system->getSavefileManager()->removeSavefile(getFilename(_index));
 
@@ -208,14 +211,14 @@ bool Savegame::check() {
 	return valid;
 }
 
-Common::String Savegame::getFilename(uint32 index) {
+Common::String Savegame::getFilename(uint32 index) const {
 	if (index > SAVEGAME_COUNT - 1)
 		error("[Savegame::getFilename] Invalid savegame index (was:%d, valid: [0-25])", index);
 
 	return Common::String::format("%s%02d.sav", SAVEGAME_NAME, index);
 }
 
-bool Savegame::isSavegamePresent(Common::String filename) {
+bool Savegame::isSavegamePresent(Common::String filename) const {
 	if (g_system->getSavefileManager()->listSavefiles(filename).size() == 0)
 		return false;
 
@@ -237,7 +240,7 @@ bool Savegame::readHeader(Common::InSaveFile *file) {
 	return true;
 }
 
-void Savegame::writeHeader(Common::OutSaveFile *file) {
+void Savegame::writeHeader(Common::OutSaveFile *file) const {
 	// We write saved games with a 1.01 final version (build 851)
 
 	write(file, SAVEGAME_VERSION_SIZE, "Version Length");
@@ -246,7 +249,7 @@ void Savegame::writeHeader(Common::OutSaveFile *file) {
 }
 
 bool Savegame::loadData(Common::String filename) {
-	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(getFilename(_index));
+	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(filename);
 	if (!file) {
 		getWorld()->chapter = kChapterInvalid;
 		return false;
@@ -269,7 +272,7 @@ bool Savegame::loadData(Common::String filename) {
 	getScript()->reset();
 
 	if (getWorld()->numScripts)
-		read(file, getScript(), 7096, getWorld()->numScripts, "Action Lists");
+		read(file, getScript(), 7096, (uint32)getWorld()->numScripts, "Action Lists");
 
 	uint32 tick = read(file, "Time");
 
@@ -281,11 +284,11 @@ bool Savegame::loadData(Common::String filename) {
 }
 
 bool Savegame::saveData(Common::String filename, Common::String name, ChapterIndex chapter) {
-	Common::OutSaveFile *file = g_system->getSavefileManager()->openForSaving(getFilename(_index));
+	Common::OutSaveFile *file = g_system->getSavefileManager()->openForSaving(filename);
 	if (!file)
 		return false;
 
-	write(file, chapter, "Level");
+	write(file, (unsigned) (int32)chapter, "Level");
 	write(file, name, SAVEGAME_NAME_SIZE, "Game Name");
 	writeHeader(file);
 	write(file, _vm, 1512, 1, "Game Stats");
@@ -295,7 +298,7 @@ bool Savegame::saveData(Common::String filename, Common::String name, ChapterInd
 	write(file, getEncounter()->variables(), 2, getEncounter()->variables()->size(), "Encounter Variables");
 
 	if (getWorld()->numScripts)
-		write(file, getScript(), 7096, getWorld()->numScripts, "Action Lists");
+		write(file, getScript(), 7096, (uint32)getWorld()->numScripts, "Action Lists");
 
 	write(file, _vm->getTick(), "Time");
 
@@ -304,7 +307,9 @@ bool Savegame::saveData(Common::String filename, Common::String name, ChapterInd
 	return true;
 }
 
-void Savegame::seek(Common::InSaveFile *file, uint32 offset, Common::String description) {
+void Savegame::seek(Common::InSaveFile *file, uint32 offset, Common::String description) const {
+	debugC(kDebugLevelSavegame, "[Savegame] Seeking to offset: %s", description.c_str());
+
 	if (offset == 0)
 		return;
 
@@ -319,7 +324,9 @@ void Savegame::seek(Common::InSaveFile *file, uint32 offset, Common::String desc
 	}
 }
 
-uint32 Savegame::read(Common::InSaveFile *file, Common::String description) {
+uint32 Savegame::read(Common::InSaveFile *file, Common::String description) const {
+	debugC(kDebugLevelSavegame, "[Savegame] Reading string: %s", description.c_str());
+
 	uint32 size = file->readUint32LE();
 	uint32 count = file->readUint32LE();
 
@@ -329,7 +336,9 @@ uint32 Savegame::read(Common::InSaveFile *file, Common::String description) {
 	return file->readUint32LE();
 }
 
-Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common::String description) {
+Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common::String description) const {
+	debugC(kDebugLevelSavegame, "[Savegame] Reading string: %s (%d)", description.c_str(), strLength);
+
 	/*uint32 size =*/ file->readUint32LE();
 	uint32 count = file->readUint32LE();
 
@@ -347,7 +356,9 @@ Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common
 	return ret;
 }
 
-void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) {
+void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) const {
+	debugC(kDebugLevelSavegame, "[Savegame] Reading data: %s (%d block(s) of size %d)", description.c_str(), size, count);
+
 	uint32 fileSize = file->readUint32LE();
 	if (size > fileSize)
 		error("[Savegame::read] Size too large (asked: %d, present: %d)", size, fileSize);
@@ -363,21 +374,27 @@ void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32
 	data->saveLoadWithSerializer(ser);
 }
 
-void Savegame::write(Common::OutSaveFile *file, uint32 val, Common::String description) {
+void Savegame::write(Common::OutSaveFile *file, uint32 val, Common::String description) const {
+	debugC(kDebugLevelSavegame, "[Savegame] Writing value: %s", description.c_str());
+
 	file->writeUint32LE(4);
 	file->writeUint32LE(1);
 
 	file->writeUint32LE(val);
 }
 
-void Savegame::write(Common::OutSaveFile *file, Common::String val, uint32 count, Common::String description) {
+void Savegame::write(Common::OutSaveFile *file, Common::String val, uint32 strLength, Common::String description) const {
+	debugC(kDebugLevelSavegame, "[Savegame] Writing string: %s (%d)", description.c_str(), strLength);
+
 	file->writeUint32LE(1);
-	file->writeUint32LE(count);
+	file->writeUint32LE(strLength);
 
 	file->writeString(val);
 }
 
-void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) {
+void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) const {
+	debugC(kDebugLevelSavegame, "[Savegame] Reading data: %s (%d block(s) of size %d)", description.c_str(), size, count);
+
 	file->writeUint32LE(size);
 	file->writeUint32LE(count);
 
@@ -401,7 +418,7 @@ void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint
 // Movies
 //////////////////////////////////////////////////////////////////////////
 void Savegame::setMovieViewed(uint32 index) {
-	if (index > ARRAYSIZE(_moviesViewed))
+	if (index >= ARRAYSIZE(_moviesViewed))
 		error("[Savegame::setMovieViewed] Invalid movie index!");
 
 	if (!_moviesViewed[index]) {
@@ -418,7 +435,7 @@ void Savegame::setMovieViewed(uint32 index) {
 	}
 }
 
-uint32 Savegame::getMoviesViewed(int32 *movieList) {
+uint32 Savegame::getMoviesViewed(int32 *movieList) const {
 	memset(movieList, -1, 196 * sizeof(int32));
 
 	uint32 count = 0;
@@ -451,21 +468,21 @@ void Savegame::loadMoviesViewed() {
 // Accessors
 //////////////////////////////////////////////////////////////////////////
 void Savegame::setName(uint32 index, Common::String name) {
-	if (index > ARRAYSIZE(_names))
+	if (index >= ARRAYSIZE(_names))
 		error("[Savegame::setName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names));
 
 	_names[index] = name;
 }
 
-Common::String Savegame::getName(uint32 index) {
-	if (index > ARRAYSIZE(_names))
+Common::String Savegame::getName(uint32 index) const {
+	if (index >= ARRAYSIZE(_names))
 		error("[Savegame::getName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names));
 
 	return _names[index];
 }
 
-bool Savegame::hasSavegame(uint32 index) {
-	if (index > ARRAYSIZE(_savegames))
+bool Savegame::hasSavegame(uint32 index) const {
+	if (index >= ARRAYSIZE(_savegames))
 		error("[Savegame::hasSavegame] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_savegames));
 
 	return _savegames[index];

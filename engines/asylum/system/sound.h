@@ -77,7 +77,7 @@ struct AmbientSoundItem {
 	int32 delta;
 	int32 attenuation;
 	int32 nextTick;
-	GameFlag flagNum[6];
+	int32 flagNum[6];
 	Common::Point point;
 
 	AmbientSoundItem() {

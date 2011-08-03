@@ -41,7 +41,7 @@ Object::Object(AsylumEngine *engine) : x(0), y(0), flags(0), actionType(0),
 	_id(kObjectNone), _resourceId(kResourceNone), _field_20(0), _frameIndex(0), _frameCount(0),
 	_field_2C(0), _field_30(0), _field_34(0), _field_3C(0), _polygonIndex(0), _field_B4(0),
 	_tickCount(0), _tickCount2(0), _field_C0(0), _priority(0), _scriptIndex(0), _transparency(0),
-	_soundX(0), _soundY(0), _field_688(0), _soundResourceId(kResourceNone), _field_6A4(kDirectionN)
+	_field_688(0), _soundResourceId(kResourceNone), _field_6A4(kDirectionN)
 {
 	memset(&_name, 0, sizeof(_name));
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
@@ -59,12 +59,12 @@ Object::~Object() {
 void Object::load(Common::SeekableReadStream *stream) {
 	_id   = (ObjectId)stream->readSint32LE();
 	_resourceId = (ResourceId)stream->readSint32LE();
-	x	  = stream->readSint32LE();
-	y	  = stream->readSint32LE();
+	x           = (int16)stream->readSint32LE();
+	y           = (int16)stream->readSint32LE();
 
-	_boundingRect.left	 = (int16)(stream->readSint32LE() & 0xFFFF);
-	_boundingRect.top	 = (int16)(stream->readSint32LE() & 0xFFFF);
-	_boundingRect.right	 = (int16)(stream->readSint32LE() & 0xFFFF);
+	_boundingRect.left   = (int16)(stream->readSint32LE() & 0xFFFF);
+	_boundingRect.top    = (int16)(stream->readSint32LE() & 0xFFFF);
+	_boundingRect.right  = (int16)(stream->readSint32LE() & 0xFFFF);
 	_boundingRect.bottom = (int16)(stream->readSint32LE() & 0xFFFF);
 
 	_field_20   = stream->readSint32LE();
@@ -113,8 +113,8 @@ void Object::load(Common::SeekableReadStream *stream) {
 	}
 
 	_transparency = stream->readSint32LE();
-	_soundX	  = stream->readSint32LE();
-	_soundY	  = stream->readSint32LE();
+	_soundCoords.x = (int16)stream->readSint32LE();
+	_soundCoords.y = (int16)stream->readSint32LE();
 	_field_688 = stream->readSint32LE();
 
 	for (int i = 0; i < 5; i++)
@@ -270,8 +270,8 @@ void Object::update() {
 			if (_frameIndex < _frameCount - 1) {
 				if (_field_688 == 1) {
 					Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-					getSharedData()->setGlobalPoint(Common::Point(x + frameRect.left + Common::Rational(frameRect.width(), 2).toInt(),
-					                                              y + frameRect.top  + Common::Rational(frameRect.height(), 2).toInt()));
+					getSharedData()->setGlobalPoint(Common::Point(x + frameRect.left + (int16)Common::Rational(frameRect.width(), 2).toInt(),
+					                                              y + frameRect.top  + (int16)Common::Rational(frameRect.height(), 2).toInt()));
 				}
 			} else {
 				flags &= ~kObjectFlag8;
@@ -295,8 +295,8 @@ void Object::update() {
 
 			} else if (_field_688 == 1) {
 				Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
-				getSharedData()->setGlobalPoint(Common::Point(x + frameRect.left + Common::Rational(frameRect.width(), 2).toInt(),
-				                                              y + frameRect.top  + Common::Rational(frameRect.height(), 2).toInt()));
+				getSharedData()->setGlobalPoint(Common::Point(x + frameRect.left + (int16)Common::Rational(frameRect.width(), 2).toInt(),
+				                                              y + frameRect.top  + (int16)Common::Rational(frameRect.height(), 2).toInt()));
 			}
 
 			_tickCount = _vm->getTick();
@@ -357,21 +357,20 @@ void Object::setNextFrame(int32 targetFlags) {
 void Object::playSounds() {
 	Common::Point point;
 
-	if (_soundX || _soundY) {
-		point.x = _soundX;
-		point.y = _soundY;
+	if (_soundCoords.x || _soundCoords.y) {
+		point = _soundCoords;
 	} else {
 		if (LOBYTE(flags) & kObjectFlag4) {
 			// Get object resource
 			ResourceEntry *resource = getResource()->get(_resourceId);
 
-			point.x = x + Common::Rational(resource->getData(4), 2).toInt();
-			point.y = y + Common::Rational(resource->getData(0), 2).toInt();
+			point.x = x + (int16)Common::Rational(resource->getData(4), 2).toInt();
+			point.y = y + (int16)Common::Rational(resource->getData(0), 2).toInt();
 		} else {
 			Common::Rect rect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
 
-			point.x = x + (rect.width() * 2);
-			point.y = x + (rect.height() * 2);
+			point.x = (int16)(x + (rect.width()  * 2));
+			point.y = (int16)(x + (rect.height() * 2));
 		}
 	}
 
@@ -443,7 +442,7 @@ void Object::setVolume() {
 	Common::Rect frameRect = GraphicResource::getFrameRect(_vm, _resourceId, _frameIndex);
 
 	// Compute volume
-	Common::Point coords(Common::Rational(frameRect.width(), 2).toInt() + x, Common::Rational(frameRect.height(), 2).toInt() + y);
+	Common::Point coords((int16)Common::Rational(frameRect.width(), 2).toInt() + x, (int16)Common::Rational(frameRect.height(), 2).toInt() + y);
 	int32 volume = Config.voiceVolume + getSound()->calculateVolumeAdjustement(coords, _field_6A4, 0);
 	if (volume < -10000)
 		volume = -10000;
@@ -506,8 +505,7 @@ Common::String Object::toString(bool shortString) {
 		output += Common::String::format("    priority:        %d\n", _priority);
 		output += Common::String::format("    scriptIndex:     %d\n", _scriptIndex);
 		output += Common::String::format("    transparency     %d\n", _transparency);
-		output += Common::String::format("    soundX:          %d\n", _soundX);
-		output += Common::String::format("    soundY:          %d\n", _soundY);
+		output += Common::String::format("    soundCoords:     (%d, %d)\n", _soundCoords.x, _soundCoords.y);
 		output += Common::String::format("    field_688:       %d\n", _field_688);
 		output += Common::String::format("    soundResourceId: %d\n", _soundResourceId);
 		output += Common::String::format("    field_6A4:       %d\n", _field_6A4);

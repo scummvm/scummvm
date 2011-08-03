@@ -514,8 +514,8 @@ END_OPCODE
 // Opcode 0x08
 IMPLEMENT_OPCODE(MoveScenePosition)
 	if (cmd->param3 < 1) {
-		getWorld()->xLeft = cmd->param1;
-		getWorld()->yTop  = cmd->param2;
+		getWorld()->xLeft = (int16)cmd->param1;
+		getWorld()->yTop  = (int16)cmd->param2;
 		getWorld()->motionStatus = 3;
 
 	} else if (!cmd->param4) {

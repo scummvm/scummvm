@@ -189,7 +189,7 @@ public:
 	 *
 	 * @return The message handler.
 	 */
-	EventHandler* getPuzzle(uint32 index);
+	EventHandler* getPuzzle(uint32 index) const;
 
 	/**
 	 * Updates the reverse stereo scene status from the config
@@ -240,7 +240,7 @@ private:
 	PuzzleData _puzzleData;
 	SharedData _data;
 	int  _gameFlags[130];
-	int32 _sinCosTables[72];
+	int16 _sinCosTables[72];
 	bool _introPlayed;
 	int32 _tickOffset;
 
@@ -269,7 +269,7 @@ private:
 	 *
 	 * @return The calculated offset.
 	 */
-	int32 computeSinCosOffset(int32 val);
+	int32 computeSinCosOffset(int32 val) const;
 
 
 	// Debug

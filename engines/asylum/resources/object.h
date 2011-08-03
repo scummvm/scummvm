@@ -67,7 +67,7 @@ public:
 
 	Common::Rect   *getRect()         { return &_rect; }
 	int32           getScriptIndex()  { return _scriptIndex; }
-	int32           getSoundY()       { return _soundY; }
+	int32           getSoundY()       { return _soundCoords.y; }
 	int32           getTransparency() { return _transparency; }
 	int32           getField688()     { return _field_688; }
 	ActorDirection  getField6A4()     { return _field_6A4; }
@@ -174,31 +174,30 @@ private:
 	ResourceId     _resourceId;
 	// x, y
 	Common::Rect   _boundingRect;
-	int32		   _field_20;
-	uint32		   _frameIndex;
-	uint32		   _frameCount;
-	int32		   _field_2C;
-	int32		   _field_30;
-	int32		   _field_34;
+	int32          _field_20;
+	uint32         _frameIndex;
+	uint32         _frameCount;
+	int32          _field_2C;
+	int32          _field_30;
+	int32          _field_34;
 	// flags
-	int32		   _field_3C;
-	uint8		   _name[52];
+	int32          _field_3C;
+	uint8          _name[52];
 	Common::Rect   _rect;
-	int32		   _polygonIndex;
+	int32          _polygonIndex;
 	// actionType
 	int32          _gameFlags[10];
-	int32		   _field_B4;
-	uint32		   _tickCount;
-	uint32		   _tickCount2;
+	int32          _field_B4;
+	uint32         _tickCount;
+	uint32         _tickCount2;
 	uint32         _field_C0;
-	int32		   _priority;
-	int32		   _scriptIndex;
-	SoundItem	   _soundItems[16];
+	int32          _priority;
+	int32          _scriptIndex;
+	SoundItem      _soundItems[16];
 	FrameSoundItem _frameSoundItems[50];
-	int32		   _transparency;
-	int32		   _soundX;
-	int32		   _soundY;
-	int32		   _field_688;
+	int32          _transparency;
+	Common::Point  _soundCoords;
+	int32          _field_688;
 	ResourceId     _randomResourceIds[5];
 	ResourceId     _soundResourceId;
 	ActorDirection _field_6A4;

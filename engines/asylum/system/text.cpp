@@ -66,25 +66,25 @@ void Text::setPosition(const Common::Point &point) {
 	_position = point;
 }
 
-uint16 Text::getWidth(char c) {
+int16 Text::getWidth(char c) {
 	if (!_fontResource)
 		error("[Text::getWidth] Font not initialized properly");
 
 	GraphicFrame *font = _fontResource->getFrame((uint8)c);
 
-	return font->surface.w + font->x - _curFontFlags;
+	return (int16)(font->surface.w + font->x - _curFontFlags);
 }
 
-uint16 Text::getWidth(const char *text) {
+int16 Text::getWidth(const char *text) {
 	if (!_fontResource)
 		error("[Text::getWidth] font resource hasn't been loaded yet!");
 
-	uint16 width = 0;
+	int16 width = 0;
 	char character = *text;
 
 	while (character) {
 		GraphicFrame *font = _fontResource->getFrame((uint8)character);
-		width += font->surface.w + font->x - _curFontFlags;
+		width += (int16)(font->surface.w + font->x - _curFontFlags);
 
 		text++;
 		character = *text;
@@ -93,19 +93,19 @@ uint16 Text::getWidth(const char *text) {
 	return width;
 }
 
-uint16 Text::getWidth(const char *text, uint32 length) {
+int16 Text::getWidth(const char *text, int16 length) {
 	if (!_fontResource)
 		error("[Text::getWidth] font resource hasn't been loaded yet!");
 
 	if (length == 0)
 		return 0;
 
-	uint16 width = 0;
+	int16 width = 0;
 	char character = *text;
 
 	while (character && length > 0) {
 		GraphicFrame *font = _fontResource->getFrame((uint8)character);
-		width += font->surface.w + font->x - _curFontFlags;
+		width += (int16)(font->surface.w + font->x - _curFontFlags);
 
 		text++;
 		character = *text;
@@ -115,7 +115,7 @@ uint16 Text::getWidth(const char *text, uint32 length) {
 	return width;
 }
 
-uint16 Text::getWidth(ResourceId resourceId) {
+int16 Text::getWidth(ResourceId resourceId) {
 	return getWidth(get(resourceId));
 }
 
@@ -148,14 +148,14 @@ void Text::draw(const char *text) {
 	}
 }
 
-void Text::draw(const char *text, uint32 length) {
+void Text::draw(const char *text, int16 length) {
 	if (length == 0)
 		return;
 
 	if (!text)
 		return;
 
-	for (uint i = 0; i < length; i++)
+	for (int16 i = 0; i < length; i++)
 		drawChar(text[i]);
 }
 
@@ -173,7 +173,7 @@ void Text::draw(const Common::Point &point, ResourceId resourceId) {
 	draw(point, get(resourceId));
 }
 
-void Text::draw(const char *text, ResourceId fontResourceId, int32 y) {
+void Text::draw(const char *text, ResourceId fontResourceId, int16 y) {
 	if (text) {
 		loadFont(fontResourceId);
 		draw(kTextCenter, Common::Point(20, y), 16, 600, text);
@@ -184,7 +184,7 @@ int16 Text::draw(TextCentering centering, const Common::Point &point, int16 spac
 	return draw(0, 99, centering, point, spacing, width, text);
 }
 
-int16 Text::draw(int32 a1, int32 a2, TextCentering centering, const Common::Point &point, int16 spacing, int16 width, const char *text) {
+int16 Text::draw(int16 a1, int16 a2, TextCentering centering, const Common::Point &point, int16 spacing, int16 width, const char *text) {
 	if (!text || !*text)
 		return 0;
 
@@ -214,12 +214,12 @@ label_start:
 					break;
 
 				case kTextCenter:
-					drawCentered(coords, width, endText - string, string);
+					drawCentered(coords, width, (int16)(endText - string), string);
 					break;
 
 				case kTextNormal:
 					setPosition(coords);
-					draw(text, (uint32)(endText - text));
+					draw(text, (int16)(endText - text));
 					break;
 				}
 
