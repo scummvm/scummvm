@@ -87,9 +87,10 @@ struct Frame {
 };
 
 struct Reel {
-	uint16 _frame;
-	uint16 frame() const { return READ_LE_UINT16(&_frame); }
-	void setFrame(uint16 v) { WRITE_LE_UINT16(&_frame, v); }
+	uint8 frame_lo;
+	uint8 frame_hi;
+	uint16 frame() const { return READ_LE_UINT16(&frame_lo); }
+	void setFrame(uint16 v) { WRITE_LE_UINT16(&frame_lo, v); }
 	uint8 x;
 	uint8 y;
 	uint8 b4;
