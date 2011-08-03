@@ -1746,7 +1746,8 @@ void Scene9900::strAction2::signal() {
 			frameWidth = _txtArray2[_txtArray1Index].getFrame().getBounds().width();
 			_txtArray2[_txtArray1Index].setPosition(Common::Point((320 - frameWidth) / 2, 200 + frameHeight));
 		} else {
-			_globals->_player.enableControl();
+			// WORKAROUND: Fix inventory becoming available at end of credits
+			_globals->_events.setCursor(CURSOR_WALK);
 			_actionIndex = 3;
 			signal();
 		}
