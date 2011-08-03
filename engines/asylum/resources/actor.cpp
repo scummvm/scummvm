@@ -135,8 +135,8 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_point.y              = stream->readSint32LE();
 	_resourceId          = (ResourceId)stream->readSint32LE();
 	_objectIndex         = stream->readSint32LE();
-	_frameIndex          = stream->readSint32LE();
-	_frameCount          = stream->readSint32LE();
+	_frameIndex          = stream->readUint32LE();
+	_frameCount          = stream->readUint32LE();
 	_point1.x             = stream->readSint32LE();
 	_point1.y             = stream->readSint32LE();
 	_point2.x             = stream->readSint32LE();
@@ -171,8 +171,8 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_walkingSound2 = stream->readSint32LE();
 	_walkingSound3 = stream->readSint32LE();
 	_walkingSound4 = stream->readSint32LE();
-	_field_64C     = stream->readSint32LE();
-	_field_650     = stream->readSint32LE();
+	_field_64C     = stream->readUint32LE();
+	_field_650     = stream->readUint32LE();
 
 	for (int32 i = 0; i < 55; i++)
 		_graphicResourceIds[i] = (ResourceId)stream->readSint32LE();
@@ -250,7 +250,7 @@ void Actor::draw() {
 	point.y += _point.y;
 
 	// Compute frame index
-	int32 frameIndex = _frameIndex;
+	uint32 frameIndex = _frameIndex;
 	if (_frameIndex >= _frameCount)
 		frameIndex = 2 * _frameCount - (_frameIndex + 1);
 
@@ -3400,7 +3400,7 @@ bool Actor::processActionDown(Common::Point source, const Common::Point &destina
 bool Actor::processAction(const Common::Point &source, Common::Array<int> *actions, Common::Point *point, ActorDirection direction, const Common::Point &destination, bool *flag) {
 	Common::Point sign;
 	Common::Point src = source;
-	int32 frameNumber = _frameNumber;
+	uint32 frameNumber = _frameNumber;
 
 	switch (direction){
 	default:
