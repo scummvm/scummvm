@@ -80,6 +80,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'liftsprite',
 	'frameoutv',
 	'modifychar',
+	'allocatework',
 	'lockmon',
 	'cancelch0',
 	'cancelch1',

@@ -21,6 +21,7 @@
  */
 	uint16 allocatemem(uint16 paragraphs);
 	uint8 *workspace();
+	void allocatework();
 	void clearwork();
 	void multidump();
 	void multidump(uint16 x, uint16 y, uint8 width, uint8 height);

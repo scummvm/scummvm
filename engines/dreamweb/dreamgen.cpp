@@ -2999,13 +2999,6 @@ dumpevery2:
 	goto dumpevery2;
 }
 
-void DreamGenContext::allocatework() {
-	STACK_CHECK;
-	bx = 0x1000;
-	allocatemem();
-	data.word(kWorkspace) = ax;
-}
-
 void DreamGenContext::loadpalfromiff() {
 	STACK_CHECK;
 	dx = 2481;
@@ -20223,7 +20216,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_getreelstart: getreelstart(); break;
 		case addr_deleverything: deleverything(); break;
 		case addr_dumpeverything: dumpeverything(); break;
-		case addr_allocatework: allocatework(); break;
 		case addr_showpcx: showpcx(); break;
 		case addr_loadpalfromiff: loadpalfromiff(); break;
 		case addr_setmode: setmode(); break;

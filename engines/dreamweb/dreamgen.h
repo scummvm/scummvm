@@ -637,7 +637,6 @@ public:
 	static const uint16 addr_setmode = 0xc1dc;
 	static const uint16 addr_loadpalfromiff = 0xc1d8;
 	static const uint16 addr_showpcx = 0xc1cc;
-	static const uint16 addr_allocatework = 0xc1c8;
 	static const uint16 addr_dumpeverything = 0xc1c4;
 	static const uint16 addr_deleverything = 0xc1c0;
 	static const uint16 addr_getreelstart = 0xc1b8;
@@ -1819,7 +1818,7 @@ public:
 	void afterintroroom();
 	void blockget();
 	void usetrainer();
-	void allocatework();
+	//void allocatework();
 	void addtopresslist();
 	void walkandexamine();
 	void dmaend();

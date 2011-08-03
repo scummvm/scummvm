@@ -34,6 +34,10 @@ uint8 *DreamGenContext::workspace() {
 	return result;
 }
 
+void DreamGenContext::allocatework() {
+	data.word(kWorkspace) = allocatemem(0x1000);
+}
+
 void DreamGenContext::multiget() {
 	multiget(di, bx, cl, ch);
 }
