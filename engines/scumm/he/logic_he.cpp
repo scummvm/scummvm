@@ -1222,18 +1222,16 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int
 		int v8 = (int)(_userDataD[526] - (_userDataD[521] - v7) * _userDataD[522] - 300.0);
 		double v9 = _userDataD[523];
 
-		v29 = atan2(v29, v31);
-		// x/y position?
-		putInArray(a2, i, 0, (int32)(v29 * v9 + 640.0));
+		// x/y position of objects
+		putInArray(a2, i, 0, (int32)(atan2(v29, v31) * v9 + 640.0));
 		putInArray(a2, i, 1, v8);
 
 		double v10 = atan2(_userDataD[524], (double)v31);
 		int v12 = (int)(_userDataD[526] - (_userDataD[521] - (float)v10) * _userDataD[522] - 300.0);
 		double v13 = _userDataD[523];
 
-		v29 = atan2(v29, v31);
-		// x/y position?
-		putInArray(a2, i + 22, 0, (int32)(v29 * v13 + 640.0));
+		// x/y position of shadows
+		putInArray(a2, i + 22, 0, (int32)(atan2(v29, v31) * v13 + 640.0));
 		putInArray(a2, i + 22, 1, v12);
 	}
 
