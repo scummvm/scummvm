@@ -384,6 +384,48 @@ void DreamGenContext::clearwork() {
 	memset(workspace(), 0, 320*200);
 }
 
+void DreamGenContext::doblocks() {
+	uint16 dstOffset = data.word(kMapady) * 320 + data.word(kMapadx);
+	uint16 mapOffset = kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx);
+	ds = data.word(kMapdata);
+	const uint8 *mapData = ds.ptr(mapOffset, 0);
+	ds = data.word(kBackdrop);
+	const uint8 *blocks = ds.ptr(kBlocks, 0);
+	es = data.word(kWorkspace);
+	uint8 *dstBuffer = es.ptr(dstOffset, 0);
+
+	for (size_t i = 0; i < 10; ++i) {
+		for (size_t j = 0; j < 11; ++j) {
+			uint16 blockType = mapData[j];
+			if (blockType != 0) {
+				uint8 *dst = dstBuffer + i * 320 * 16 + j * 16;
+				const uint8 *block = blocks + blockType * 256;
+				for (size_t k = 0; k < 4; ++k) {
+					memcpy(dst, block, 16);
+					block += 16;
+					dst += 320;
+				}
+				for (size_t k = 0; k < 12; ++k) {
+					memcpy(dst, block, 16);
+					memset(dst + 16, 0xdf, 4);
+					block += 16;
+					dst += 320;
+				}
+				dst += 4;
+				ax = 0x0dfdf;
+				memset(dst, 0xdf, 16);
+				dst += 320;
+				memset(dst, 0xdf, 16);
+				dst += 320;
+				memset(dst, 0xdf, 16);
+				dst += 320;
+				memset(dst, 0xdf, 16);
+			}
+		}
+		mapData += kMapwidth;
+	}
+}
+
 void DreamGenContext::zoom() {
 	if (data.word(kWatchingtime) != 0)
 		return;

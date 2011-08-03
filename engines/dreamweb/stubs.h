@@ -114,4 +114,5 @@
 	void crosshair();
 	void showrain();
 	void deltextline();
+	void doblocks();
 

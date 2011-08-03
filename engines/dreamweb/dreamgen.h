@@ -616,7 +616,6 @@ public:
 	static const uint16 addr_fadedos = 0xc248;
 	static const uint16 addr_transfermap = 0xc244;
 	static const uint16 addr_transferinv = 0xc240;
-	static const uint16 addr_doblocks = 0xc228;
 	static const uint16 addr_delthisone = 0xc214;
 	static const uint16 addr_doshake = 0xc20c;
 	static const uint16 addr_vsync = 0xc208;
@@ -1555,7 +1554,7 @@ public:
 	void locklightoff();
 	void wearwatch();
 	void runintroseq();
-	void doblocks();
+	//void doblocks();
 	void opensarters();
 	void allpalette();
 	void findormake();

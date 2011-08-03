@@ -3117,83 +3117,6 @@ deloneloop:
 		goto deloneloop;
 }
 
-void DreamGenContext::doblocks() {
-	STACK_CHECK;
-	es = data.word(kWorkspace);
-	ax = data.word(kMapady);
-	cx = (320);
-	_mul(cx);
-	di = data.word(kMapadx);
-	_add(di, ax);
-	al = data.byte(kMapy);
-	ah = 0;
-	bx = (66);
-	_mul(bx);
-	bl = data.byte(kMapx);
-	bh = 0;
-	_add(ax, bx);
-	si = (0);
-	_add(si, ax);
-	cx = 10;
-loop120:
-	push(di);
-	push(cx);
-	cx = 11;
-loop124:
-	push(cx);
-	push(di);
-	ds = data.word(kMapdata);
-	_lodsb();
-	ds = data.word(kBackdrop);
-	push(si);
-	_cmp(al, 0);
-	if (flags.z())
-		goto zeroblock;
-	ah = al;
-	al = 0;
-	si = (0+192);
-	_add(si, ax);
-	bh = 14;
-	bh = 4;
-firstbitofblock:
-	_movsw(8);
-	_add(di, (320)-16);
-	_dec(bh);
-	if (!flags.z())
-		goto firstbitofblock;
-	bh = 12;
-loop125:
-	_movsw(8);
-	ax = 0x0dfdf;
-	_stosw(2);
-	_add(di, (320)-20);
-	_dec(bh);
-	if (!flags.z())
-		goto loop125;
-	_add(di, 4);
-	ax = 0x0dfdf;
-	_stosw(8);
-	_add(di, (320)-16);
-	_stosw(8);
-	_add(di, (320)-16);
-	_stosw(8);
-	_add(di, (320)-16);
-	_stosw(8);
-zeroblock:
-	si = pop();
-	di = pop();
-	cx = pop();
-	_add(di, 16);
-	if (--cx)
-		goto loop124;
-	_add(si, (66)-11);
-	cx = pop();
-	di = pop();
-	_add(di, (320)*16);
-	if (--cx)
-		goto loop120;
-}
-
 void DreamGenContext::transferinv() {
 	STACK_CHECK;
 	di = data.word(kExframepos);
@@ -19774,7 +19697,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_vsync: vsync(); break;
 		case addr_doshake: doshake(); break;
 		case addr_delthisone: delthisone(); break;
-		case addr_doblocks: doblocks(); break;
 		case addr_transferinv: transferinv(); break;
 		case addr_transfermap: transfermap(); break;
 		case addr_fadedos: fadedos(); break;
