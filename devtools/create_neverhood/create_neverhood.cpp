@@ -41,6 +41,13 @@ byte *data;
 uint32 dataStart = 0x004AE000;
 uint32 fileStart = 0x000AC600;
 
+class HitRectList;
+class RectList;
+class MessageList;
+class NavigationList;
+
+void addMessageList(uint32 messageListCount, uint32 messageListOffset);
+
 void loadExe(const char *filename) {
 	FILE *exe = fopen(filename, "rb");
 	dataSize = fileSize(exe);
@@ -49,37 +56,130 @@ void loadExe(const char *filename) {
 	fclose(exe);
 }
 
+byte *getData(uint32 offset) {
+	return data + offset - dataStart + fileStart;
+}
+
 struct HitRect {
 	int16 x1, y1, x2, y2;
 	uint16 messageNum;
+	
+	void load(uint32 offset) {
+		byte *item = getData(offset);
+		x1 = READ_LE_UINT16(item + 0);
+		y1 = READ_LE_UINT16(item + 2);
+		x2 = READ_LE_UINT16(item + 4);
+		y2 = READ_LE_UINT16(item + 6);
+		messageNum = READ_LE_UINT16(item + 8);
+	}	
+
+	void save(FILE *fd) {
+		writeUint16LE(fd, x1);
+		writeUint16LE(fd, y1);
+		writeUint16LE(fd, x2);
+		writeUint16LE(fd, y2);
+		writeUint16LE(fd, messageNum);
+	}
+	
+	int getItemSize() const {
+		return 10;
+	}
+	
 };
 
-typedef std::vector<HitRect> HitRects;
+struct MessageItem {
+	uint16 messageNum;
+	uint32 messageParam;
+	MessageItem() {}
+	MessageItem(uint16 msgNum, uint32 msgParam) : messageNum(msgNum), messageParam(msgParam) {}
+	
+	void load(uint32 offset) {
+		byte *item = getData(offset);
+		messageNum = READ_LE_UINT16(item + 0);
+		messageParam = READ_LE_UINT32(item + 4);
+	}	
+
+	void save(FILE *fd) {
+		writeUint16LE(fd, messageNum);
+		writeUint32LE(fd, messageParam);
+	}
+	
+	int getItemSize() const {
+		return 8;
+	}
+	
+};
 
 struct SubRectItem {
 	int16 x1, y1, x2, y2;
 	uint32 messageListCount;
 	uint32 messageListOffset;
-};
 
-typedef std::vector<SubRectItem> SubRectItems;
+	void load(uint32 offset) {
+		byte *item = getData(offset);
+		x1 = READ_LE_UINT16(item + 0);
+		y1 = READ_LE_UINT16(item + 2);
+		x2 = READ_LE_UINT16(item + 4);
+		y2 = READ_LE_UINT16(item + 6);
+		messageListCount = READ_LE_UINT32(item + 8);
+		messageListOffset = READ_LE_UINT32(item + 12);
+		// Add the message to the message list
+		addMessageList(messageListCount, messageListOffset);
+	}
+	
+	void save(FILE *fd) {
+		writeUint16LE(fd, x1);
+		writeUint16LE(fd, y1);
+		writeUint16LE(fd, x2);
+		writeUint16LE(fd, y2);
+		writeUint32LE(fd, messageListOffset);
+	}
+	
+	int getItemSize() const {
+		return 16;
+	}
+	
+};
 
 struct RectItem {
 	int16 x1, y1, x2, y2;
 	uint32 subRectListCount;
 	uint32 subRectListOffset;
-	SubRectItems subRectItems;
+	std::vector<SubRectItem> subRectItems;
+
+	void load(uint32 offset) {
+		byte *item = getData(offset);
+		uint32 subItemOffset;
+		x1 = READ_LE_UINT16(item + 0);
+		y1 = READ_LE_UINT16(item + 2);
+		x2 = READ_LE_UINT16(item + 4);
+		y2 = READ_LE_UINT16(item + 6);
+		subRectListCount = READ_LE_UINT32(item + 8);
+		subRectListOffset = READ_LE_UINT32(item + 12);
+		subItemOffset = subRectListOffset;
+		for (uint32 j = 0; j < subRectListCount; j++) {
+			SubRectItem subRectItem;
+			subRectItem.load(subItemOffset);
+			subItemOffset += 16;
+			subRectItems.push_back(subRectItem);
+		}
+	}	
+
+	void save(FILE *fd) {
+		writeUint16LE(fd, x1);
+		writeUint16LE(fd, y1);
+		writeUint16LE(fd, x2);
+		writeUint16LE(fd, y2);
+		writeUint32LE(fd, subRectItems.size());
+		for (uint32 j = 0; j < subRectItems.size(); j++)
+			subRectItems[j].save(fd);
+	}
+	
+	int getItemSize() const {
+		return 16;
+	}
+	
 };
-
-typedef std::vector<RectItem> RectItems;
-
-struct MessageItem {
-	uint16 messageNum;
-	uint32 messageParam;
-	MessageItem(uint16 msgNum, uint32 msgParam) : messageNum(msgNum), messageParam(msgParam) {}
-};
-
-typedef std::vector<MessageItem> MessageItems;
 
 struct NavigationItem {
 	uint32 fileHash;
@@ -89,149 +189,172 @@ struct NavigationItem {
 	byte interactive;
 	byte middleFlag;
 	uint32 mouseCursorFileHash;
-};
-
-typedef std::vector<NavigationItem> NavigationItems;
-
-struct HitRectList {
-	uint32 id;	
-	HitRects hitRects;
-};
-
-struct RectList {
-	uint32 id;	
-	RectItems rectItems;
-};
-
-struct MessageList {
-	uint32 id;
-	MessageItems messageItems;	
-};
-
-struct NavigationList {
-	uint32 id;
-	NavigationItems navigationItems;	
-};
-
-std::vector<HitRectList*> hitRectLists;
-std::vector<RectList*> rectLists;
-std::vector<MessageList*> messageLists;
-std::vector<NavigationList*> navigationLists;
-
-byte *getData(uint32 offset) {
-	return data + offset - dataStart + fileStart;
-}
-
-void addHitRect(uint32 count, uint32 offset) {
-	HitRectList *hitRectList = new HitRectList();
-	hitRectList->id = offset;
-	byte *item = getData(offset);
-	for (uint32 i = 0; i < count; i++) {
-		HitRect hitRect;
-		hitRect.x1 = READ_LE_UINT16(item + 0);
-		hitRect.y1 = READ_LE_UINT16(item + 2);
-		hitRect.x2 = READ_LE_UINT16(item + 4);
-		hitRect.y2 = READ_LE_UINT16(item + 6);
-		hitRect.messageNum = READ_LE_UINT16(item + 8);
-		item += 10;
-		//printf("(%d, %d, %d, %d) -> %04X\n", hitRect.x1, hitRect.y1, hitRect.x2, hitRect.y2, hitRect.messageNum);
-		hitRectList->hitRects.push_back(hitRect);
-	}
-	hitRectLists.push_back(hitRectList);
-}
-
-void addMessage(uint32 count, uint32 offset) {
-	MessageList *messageList = new MessageList();
-	messageList->id = offset;
-	// Special code for message lists which are set at runtime (but otherwise constant)
-	switch (offset) {
-	// Scene 1002 rings
-	case 0x004B4200:
-		messageList->messageItems.push_back(MessageItem(0x4800, 258));
-		messageList->messageItems.push_back(MessageItem(0x100D, 0x4A845A00));
-		messageList->messageItems.push_back(MessageItem(0x4805, 1));
-		break;
-	case 0x004B4218:
-		messageList->messageItems.push_back(MessageItem(0x4800, 297));
-		messageList->messageItems.push_back(MessageItem(0x100D, 0x43807801));
-		messageList->messageItems.push_back(MessageItem(0x4805, 2));
-		break;
-	case 0x004B4230:
-		messageList->messageItems.push_back(MessageItem(0x4800, 370));
-		messageList->messageItems.push_back(MessageItem(0x100D, 0x46C26A01));
-		break;
-	case 0x004B4240:
-		messageList->messageItems.push_back(MessageItem(0x4800, 334));
-		messageList->messageItems.push_back(MessageItem(0x100D, 0x468C7B11));
-		messageList->messageItems.push_back(MessageItem(0x4805, 1));
-		break;
-	case 0x004B4258:
-		messageList->messageItems.push_back(MessageItem(0x4800, 425));
-		messageList->messageItems.push_back(MessageItem(0x100D, 0x42845B19));
-		messageList->messageItems.push_back(MessageItem(0x4805, 1));
-		break;
-	default:
-		// Read message list from the exe
+	
+	void load(uint32 offset) {
 		byte *item = getData(offset);
-		for (uint32 i = 0; i < count; i++) {
-			messageList->messageItems.push_back(MessageItem(READ_LE_UINT16(item + 0), READ_LE_UINT32(item + 4)));
-			item += 8;
+		fileHash = READ_LE_UINT32(item + 0); 
+		leftSmackerFileHash = READ_LE_UINT32(item + 4);
+		rightSmackerFileHash = READ_LE_UINT32(item + 8);
+		middleSmackerFileHash = READ_LE_UINT32(item + 12);
+		interactive = item[16];
+		middleFlag = item[17];
+		mouseCursorFileHash = READ_LE_UINT32(item + 20);
+	}
+
+	void save(FILE *fd) {
+		writeUint32LE(fd, fileHash);
+		writeUint32LE(fd, leftSmackerFileHash);
+		writeUint32LE(fd, rightSmackerFileHash);
+		writeUint32LE(fd, middleSmackerFileHash);
+		writeByte(fd, interactive);
+		writeByte(fd, middleFlag);
+		writeUint32LE(fd, mouseCursorFileHash);
+	}
+
+	int getItemSize() const {
+		return 24;
+	}
+	
+};
+
+template<class ITEMCLASS>
+class StaticDataList {
+public:
+	uint32 id;	
+	std::vector<ITEMCLASS> items;
+	
+	virtual ~StaticDataList() {
+	}
+	
+	void add(ITEMCLASS item) {
+		items.push_back(item);
+	}
+	
+	int getCount() const {
+		return items.size();
+	}
+	
+	ITEMCLASS *getListItem(int index) {
+		return &items[index];
+	}
+		
+	virtual bool specialLoadList(uint32 count, uint32 offset) {
+		return false;
+	}
+
+	void loadList(uint32 count, uint32 offset) {
+		id = offset;
+		if (!specialLoadList(count, offset)) {
+			for (uint32 i = 0; i < count; i++) {
+				ITEMCLASS listItem;
+				listItem.load(offset);
+				offset += listItem.getItemSize();
+				add(listItem);
+			}
 		}
 	}
-	messageLists.push_back(messageList);	   
-}
 
-void addRect(uint32 count, uint32 offset) {
-	RectList *rectList = new RectList();
-	rectList->id = offset;
-	byte *item = getData(offset);
-	for (uint32 i = 0; i < count; i++) {
-		RectItem rectItem;
-		byte *subItem;
-		rectItem.x1 = READ_LE_UINT16(item + 0);
-		rectItem.y1 = READ_LE_UINT16(item + 2);
-		rectItem.x2 = READ_LE_UINT16(item + 4);
-		rectItem.y2 = READ_LE_UINT16(item + 6);
-		rectItem.subRectListCount = READ_LE_UINT32(item + 8);
-		rectItem.subRectListOffset = READ_LE_UINT32(item + 12);
-		//printf("(%d, %d, %d, %d), %d, %08X\n", rectItem.x1, rectItem.y1, rectItem.x2, rectItem.y2, rectItem.subRectListCount, rectItem.subRectListOffset);
-		subItem = getData(rectItem.subRectListOffset);
-		for (uint32 j = 0; j < rectItem.subRectListCount; j++) {
-			SubRectItem subRectItem;
-			subRectItem.x1 = READ_LE_UINT16(subItem + 0);
-			subRectItem.y1 = READ_LE_UINT16(subItem + 2);
-			subRectItem.x2 = READ_LE_UINT16(subItem + 4);
-			subRectItem.y2 = READ_LE_UINT16(subItem + 6);
-			subRectItem.messageListCount = READ_LE_UINT32(subItem + 8);
-			subRectItem.messageListOffset = READ_LE_UINT32(subItem + 12);
-			subItem += 16;
-			//printf("(%d, %d, %d, %d), %d, %08X\n", subRectItem.x1, subRectItem.y1, subRectItem.x2, subRectItem.y2, subRectItem.messageListCount, subRectItem.messageListOffset);
-			addMessage(subRectItem.messageListCount, subRectItem.messageListOffset);
-			rectItem.subRectItems.push_back(subRectItem);
+	void saveList(FILE *fd) {
+		writeUint32LE(fd, id);
+		writeUint32LE(fd, getCount());
+		for (int i = 0; i < getCount(); i++) {
+			items[i].save(fd);
 		}
-		item += 16;
-		rectList->rectItems.push_back(rectItem);
 	}
-	rectLists.push_back(rectList);
-}
 
-void addNavigation(uint32 count, uint32 offset) {
-	NavigationList *navigationList = new NavigationList();
-	navigationList->id = offset;
-	byte *item = getData(offset);
-	for (uint32 i = 0; i < count; i++) {
-		NavigationItem navigationItem;
-		navigationItem.fileHash = READ_LE_UINT32(item + 0); 
-		navigationItem.leftSmackerFileHash = READ_LE_UINT32(item + 4);
-		navigationItem.rightSmackerFileHash = READ_LE_UINT32(item + 8);
-		navigationItem.middleSmackerFileHash = READ_LE_UINT32(item + 12);
-		navigationItem.interactive = item[16];
-		navigationItem.middleFlag = item[17];
-		navigationItem.mouseCursorFileHash = READ_LE_UINT32(item + 20);
-		item += 24;
-		navigationList->navigationItems.push_back(navigationItem);
+};
+
+class HitRectList : public StaticDataList<HitRect> {
+};
+
+class RectList : public StaticDataList<RectItem> {
+};
+
+class MessageList : public StaticDataList<MessageItem> {
+public:	
+
+	virtual bool specialLoadList(uint32 count, uint32 offset) {
+		// Special code for message lists which are set at runtime (but otherwise constant)
+		switch (offset) {
+		// Scene 1002 rings
+		case 0x004B4200:
+			add(MessageItem(0x4800, 258));
+			add(MessageItem(0x100D, 0x4A845A00));
+			add(MessageItem(0x4805, 1));
+			return true;
+		case 0x004B4218:
+			add(MessageItem(0x4800, 297));
+			add(MessageItem(0x100D, 0x43807801));
+			add(MessageItem(0x4805, 2));
+			return true;
+		case 0x004B4230:
+			add(MessageItem(0x4800, 370));
+			add(MessageItem(0x100D, 0x46C26A01));
+			return true;
+		case 0x004B4240:
+			add(MessageItem(0x4800, 334));
+			add(MessageItem(0x100D, 0x468C7B11));
+			add(MessageItem(0x4805, 1));
+			return true;
+		case 0x004B4258:
+			add(MessageItem(0x4800, 425));
+			add(MessageItem(0x100D, 0x42845B19));
+			add(MessageItem(0x4805, 1));
+			return true;
+		}
+		return false;
 	}
-	navigationLists.push_back(navigationList);
+		
+};
+
+class NavigationList : public StaticDataList<NavigationItem> {
+
+};
+
+template<class LISTCLASS>
+class StaticDataListVector {
+public:
+	std::vector<LISTCLASS*> lists;
+	
+	void add(LISTCLASS *list) {
+		lists.push_back(list);
+	}
+	
+	void loadListVector(const uint32 *offsets) {
+		for (int i = 0; offsets[i] != 0; i += 2) {
+			LISTCLASS *list = new LISTCLASS();
+			list->loadList(offsets[i], offsets[i + 1]);
+			bool doAppend = true;
+			// Bad
+			for (typename std::vector<LISTCLASS*>::iterator it = lists.begin(); it != lists.end(); it++) {
+				if ((*it)->id == list->id) {
+					doAppend = false;
+					break;
+				}
+			}
+			if (doAppend)
+				lists.push_back(list);
+		}
+	}
+	
+	void saveListVector(FILE *fd) {
+		writeUint32LE(fd, lists.size());
+		for (typename std::vector<LISTCLASS*>::iterator it = lists.begin(); it != lists.end(); it++) {
+			(*it)->saveList(fd);
+		}
+	}
+
+};
+
+StaticDataListVector<HitRectList> hitRectLists;
+StaticDataListVector<RectList> rectLists;
+StaticDataListVector<MessageList> messageLists;
+StaticDataListVector<NavigationList> navigationLists;
+
+void addMessageList(uint32 messageListCount, uint32 messageListOffset) {
+	MessageList *messageList = new MessageList();
+	messageList->loadList(messageListCount, messageListOffset);
+	messageLists.add(messageList);
 }
 
 int main(int argc, char *argv[]) {
@@ -240,96 +363,24 @@ int main(int argc, char *argv[]) {
 
 	loadExe("nhc.exe");
 
-	for (int i = 0; hitRectListOffsets[i] != 0; i += 2) {
-		addHitRect(hitRectListOffsets[i], hitRectListOffsets[i + 1]);
-	}
-
-	for (int i = 0; rectListOffsets[i] != 0; i += 2) {
-		addRect(rectListOffsets[i], rectListOffsets[i + 1]);
-	}
-	
-	for (int i = 0; messageListOffsets[i] != 0; i += 2) {
-		addMessage(messageListOffsets[i], messageListOffsets[i + 1]);
-	}
-	
-	for (int i = 0; navigationListOffsets[i] != 0; i += 2) {
-		addNavigation(navigationListOffsets[i], navigationListOffsets[i + 1]);
-	}
-	
+    hitRectLists.loadListVector(hitRectListOffsets);
+    rectLists.loadListVector(rectListOffsets);
+    messageLists.loadListVector(messageListOffsets);
+    navigationLists.loadListVector(navigationListOffsets);
+    
 	datFile = fopen("neverhood.dat", "wb");
 
 	writeUint32LE(datFile, 0x11223344); // Some magic
 	writeUint32LE(datFile, DAT_VERSION);
 		
 	// Write all message lists
-	writeUint32LE(datFile, messageLists.size());
-	for (std::vector<MessageList*>::iterator it = messageLists.begin(); it != messageLists.end(); it++) {
-		MessageList *messageList = *it;
-		writeUint32LE(datFile, messageList->id);
-		writeUint32LE(datFile, messageList->messageItems.size());
-		for (uint32 i = 0; i < messageList->messageItems.size(); i++) {
-			writeUint16LE(datFile, messageList->messageItems[i].messageNum);
-			writeUint32LE(datFile, messageList->messageItems[i].messageParam);
-		}
-	}
-
+    messageLists.saveListVector(datFile);
 	// Write all rect lists
-	writeUint32LE(datFile, rectLists.size());
-	for (std::vector<RectList*>::iterator it = rectLists.begin(); it != rectLists.end(); it++) {
-		RectList *rectList = *it;
-		writeUint32LE(datFile, rectList->id);
-		writeUint32LE(datFile, rectList->rectItems.size());
-		for (uint32 i = 0; i < rectList->rectItems.size(); i++) {
-			const RectItem &rectItem = rectList->rectItems[i]; 
-			writeUint16LE(datFile, rectItem.x1);
-			writeUint16LE(datFile, rectItem.y1);
-			writeUint16LE(datFile, rectItem.x2);
-			writeUint16LE(datFile, rectItem.y2);
-			writeUint32LE(datFile, rectItem.subRectItems.size());
-			for (uint32 j = 0; j < rectItem.subRectItems.size(); j++) {
-				const SubRectItem &subRectItem = rectItem.subRectItems[j]; 
-				writeUint16LE(datFile, subRectItem.x1);
-				writeUint16LE(datFile, subRectItem.y1);
-				writeUint16LE(datFile, subRectItem.x2);
-				writeUint16LE(datFile, subRectItem.y2);
-				writeUint32LE(datFile, subRectItem.messageListOffset);
-			}
-		}
-	}
-		
+    rectLists.saveListVector(datFile);
 	// Write all hit rect lists
-	writeUint32LE(datFile, hitRectLists.size());
-	for (std::vector<HitRectList*>::iterator it = hitRectLists.begin(); it != hitRectLists.end(); it++) {
-		HitRectList *hitRectList = *it;
-		writeUint32LE(datFile, hitRectList->id);
-		writeUint32LE(datFile, hitRectList->hitRects.size());
-		for (uint32 i = 0; i < hitRectList->hitRects.size(); i++) {
-			const HitRect &hitRect  = hitRectList->hitRects[i]; 
-			writeUint16LE(datFile, hitRect.x1);
-			writeUint16LE(datFile, hitRect.y1);
-			writeUint16LE(datFile, hitRect.x2);
-			writeUint16LE(datFile, hitRect.y2);
-			writeUint16LE(datFile, hitRect.messageNum);
-		}
-	}
-		
+    hitRectLists.saveListVector(datFile);
 	// Write all navigation lists
-	writeUint32LE(datFile, navigationLists.size());
-	for (std::vector<NavigationList*>::iterator it = navigationLists.begin(); it != navigationLists.end(); it++) {
-		NavigationList *navigationList = *it;
-		writeUint32LE(datFile, navigationList->id);
-		writeUint32LE(datFile, navigationList->navigationItems.size());
-		for (uint32 i = 0; i < navigationList->navigationItems.size(); i++) {
-			const NavigationItem &navigationItem = navigationList->navigationItems[i]; 
-			writeUint32LE(datFile, navigationItem.fileHash);
-			writeUint32LE(datFile, navigationItem.leftSmackerFileHash);
-			writeUint32LE(datFile, navigationItem.rightSmackerFileHash);
-			writeUint32LE(datFile, navigationItem.middleSmackerFileHash);
-			writeByte(datFile, navigationItem.interactive);
-			writeByte(datFile, navigationItem.middleFlag);
-			writeUint32LE(datFile, navigationItem.mouseCursorFileHash);
-		}
-	}
+    navigationLists.saveListVector(datFile);
 
 	fclose(datFile);
 
