@@ -506,7 +506,7 @@ void ComposerEngine::loadCTBL(uint16 id, uint fadePercent) {
 	stream->read(buffer, numEntries * 3);
 	delete stream;
 
-	for (uint i = 0; i < numEntries * 3; i++)
+	for (uint16 i = 0; i < numEntries * 3; i++)
 		buffer[i] = ((unsigned int)buffer[i] * fadePercent) / 100;
 
 	_system->getPaletteManager()->setPalette(buffer, 0, numEntries);
