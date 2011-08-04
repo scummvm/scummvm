@@ -27,10 +27,7 @@
 namespace DreamGen {
 
 Sprite *DreamGenContext::spritetable() {
-	push(es);
-	es = data.word(kBuffers);
-	Sprite *sprite = (Sprite *)es.ptr(kSpritetable, 16 * sizeof(Sprite));
-	es = pop();
+	Sprite *sprite = (Sprite *)segRef(data.word(kBuffers)).ptr(kSpritetable, 16 * sizeof(Sprite));
 	return sprite;
 }
 
@@ -70,8 +67,7 @@ void DreamGenContext::printasprite(const Sprite *sprite) {
 	else
 		c = 0;
 	uint8 width, height;
-	ds = sprite->frameData();
-	showframe(ds.ptr(0, 0), x, y, sprite->b15, c, &width, &height);
+	showframe(segRef(sprite->frameData()).ptr(0, 0), x, y, sprite->b15, c, &width, &height);
 }
 
 void DreamGenContext::clearsprites() {
@@ -277,15 +273,10 @@ void DreamGenContext::backobject() {
 }
 
 void DreamGenContext::backobject(Sprite *sprite) {
-	push(ds);
-
-	ds = data.word(kSetdat);
-	di = sprite->objData();
-	ObjData *objData = (ObjData *)ds.ptr(di, 0);
+	ObjData *objData = (ObjData *)segRef(data.word(kSetdat)).ptr(sprite->objData(), 0);
 
 	if (sprite->delay != 0) {
 		--sprite->delay;
-		ds = pop();
 		return;
 	}
 
@@ -304,8 +295,6 @@ void DreamGenContext::backobject(Sprite *sprite) {
 		constant(sprite, objData);
 	else
 		steady(sprite, objData);
-
-	ds = pop();
 }
 
 void DreamGenContext::constant(Sprite *sprite, ObjData *objData) {

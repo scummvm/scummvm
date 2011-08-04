@@ -27,10 +27,7 @@
 namespace DreamGen {
 
 uint8 *DreamGenContext::workspace() {
-	push(es);
-	es = data.word(kWorkspace);
-	uint8 *result = es.ptr(0, 0);
-	es = pop();
+	uint8 *result = segRef(data.word(kWorkspace)).ptr(0, 0);
 	return result;
 }
 
