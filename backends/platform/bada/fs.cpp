@@ -91,10 +91,10 @@ int32 BadaFileStream::pos() const {
 }
 
 int32 BadaFileStream::size() const {
-  int32 oldPos = pos();
+  int32 oldPos = file->Tell();
   file->Seek(FILESEEKPOSITION_END, 0);
 
-  int32 length = pos();
+  int32 length = file->Tell();
   SetLastResult(file->Seek(FILESEEKPOSITION_BEGIN, oldPos));
 
   return length;

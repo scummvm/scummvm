@@ -37,10 +37,6 @@ TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback,
 
 TimerSlot::~TimerSlot() {
   logEntered();
-  if (timer) {
-    delete timer;
-    timer = null;
-  }
 }
 
 bool TimerSlot::OnStart() {

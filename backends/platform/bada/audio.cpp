@@ -27,9 +27,9 @@
 #include <FAppAppRegistry.h>
 
 #define TIMER_INCREMENT    10
-#define TIMER_INTERVAL     80
-#define MIN_TIMER_INTERVAL 20
-#define MAX_TIMER_INTERVAL 200
+#define TIMER_INTERVAL     40
+#define MIN_TIMER_INTERVAL 10
+#define MAX_TIMER_INTERVAL 120
 #define INIT_LEVEL         3
 #define CONFIG_KEY         L"audiovol"
 
@@ -45,7 +45,7 @@ AudioThread::AudioThread() :
   ready(0),
   interval(TIMER_INTERVAL),
   muteVol(0),
-  playing(false) {
+  playing(-1) {
 }
 
 Audio::MixerImpl* AudioThread::Construct(OSystem* system) {
@@ -76,9 +76,11 @@ void AudioThread::setMute(bool on) {
     if (on) {
       muteVol = audioOut->GetVolume();
       audioOut->SetVolume(0);
+      timer->Cancel();
     }
     else {
       audioOut->SetVolume(muteVol);
+      timer->Start(interval);
     }
   }
 }
@@ -215,14 +217,14 @@ void AudioThread::OnAudioOutReleased(Osp::Media::AudioOut& src) {
 
 void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut& src) {
   if (ready > 0) {
-    playing = true;
+    playing = tail;
     audioOut->WriteBuffer(audioBuffer[tail]);
     tail = (tail + 1 == NUM_AUDIO_BUFFERS ? 0 : tail + 1);
     ready--;
   }
   else {
     // audio buffer empty: decrease timer inverval
-    playing = false;
+    playing = -1;
     interval -= TIMER_INCREMENT;
     if (interval < MIN_TIMER_INTERVAL) {
       interval = MIN_TIMER_INTERVAL;
@@ -247,7 +249,7 @@ void AudioThread::OnTimerExpired(Timer& timer) {
     }
   }
 
-  if (ready && !playing) {
+  if (ready && playing == -1) {
     OnAudioOutBufferEndReached(*audioOut);
   }
   

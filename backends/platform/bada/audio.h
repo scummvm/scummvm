@@ -39,7 +39,7 @@ using namespace Osp::Base::Runtime;
 using namespace Osp::Media;
 using namespace Osp::Io;
 
-#define NUM_AUDIO_BUFFERS 3
+#define NUM_AUDIO_BUFFERS 4
 
 class AudioThread: public Osp::Media::IAudioOutEventListener,
                    public Osp::Base::Runtime::ITimerEventListener, 
@@ -66,8 +66,7 @@ public:
   Osp::Base::Runtime::Timer* timer;
 	Osp::Media::AudioOut* audioOut;
 	Osp::Base::ByteBuffer audioBuffer[NUM_AUDIO_BUFFERS];
-  int head, tail, ready, interval, muteVol;
-  bool playing;
+  int head, tail, ready, interval, muteVol, playing;
 };
 
 #endif
