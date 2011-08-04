@@ -29,6 +29,7 @@
 #include "neverhood/module1500.h"
 #include "neverhood/module1700.h"
 #include "neverhood/module1800.h"
+#include "neverhood/module2000.h"
 #include "neverhood/module2300.h"
 #include "neverhood/module3000.h"
 
@@ -227,13 +228,17 @@ void GameModule::startup() {
 	//createModule1700(-1);
 	//createModule1700(1);
 	//createModule1400(-1);
-#if 1
+#if 0
 	_vm->gameState().sceneNum = 10;
 	createModule3000(-1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
 	createModule1800(-1);
+#endif
+#if 1
+	_vm->gameState().sceneNum = 0;
+	createModule2000(-1);
 #endif
 }
 
@@ -284,11 +289,7 @@ void GameModule::updateModule1200() {
 
 void GameModule::createModule1400(int which) {
 	setGlobalVar(0x91080831, 0x00AD0012);
-	//_childObject = new Module1400(_vm, this, which);
-	
-	_vm->gameState().sceneNum = 9;
-	_childObject = new Module3000(_vm, this, -1);
-	
+	_childObject = new Module1400(_vm, this, which);
 	SetUpdateHandler(&GameModule::updateModule1400);
 }
 
@@ -381,6 +382,25 @@ void GameModule::updateModule1800() {
 			// TODO createModule2800(0);
 			// TODO _childObject->handleUpdate();
 		}
+	}
+}
+
+void GameModule::createModule2000(int which) {
+	setGlobalVar(0x91080831, 0x08250000);
+	_childObject = new Module2000(_vm, this, which);
+	SetUpdateHandler(&GameModule::updateModule2000);
+}
+
+void GameModule::updateModule2000() {
+	if (!_childObject)
+		return;
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		// TODO createModule2900(4);
+		_childObject->handleUpdate();
 	}
 }
 

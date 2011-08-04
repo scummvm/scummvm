@@ -3324,4 +3324,102 @@ void KmScene1705::sub468B10() {
 	SetMessageHandler(&KmScene1705::handleMessage4689A0);
 }
 
+KmScene2001::KmScene2001(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000), _flag(false) {
+
+	// Empty	
+}
+
+uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x2000:
+		_flag = param.asInteger() != 0;
+		break;
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		if (_flag) {
+			setCallback2(AnimationCallback(&Klayman::sub421350));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		}
+		break;
+	case 0x4804:
+		if (param.asInteger() != 0) {
+			_x4 = param.asInteger();
+			setCallback2(AnimationCallback(&Klayman::sub41F9E0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FC40));
+		}
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;
+	case 0x481D:
+		if (_flag) {
+			setCallback2(AnimationCallback(&Klayman::sub4214D0));
+		}
+		break;
+	case 0x481E:
+		if (_flag) {
+			setCallback2(AnimationCallback(&Klayman::sub421510));
+		}
+		break;
+	case 0x4834:
+		setCallback2(AnimationCallback(&Klayman::sub421160));
+		break;
+	case 0x4835:
+		_parentScene->sendMessage(0x2000, 1, this);
+		_flag = true;
+		setCallback2(AnimationCallback(&Klayman::sub4212C0));
+		break;
+	case 0x4836:
+		_parentScene->sendMessage(0x2000, 0, this);
+		_flag = false;
+		setCallback2(AnimationCallback(&Klayman::sub421310));
+		break;
+	case 0x483D:
+		sub440230();
+		break;
+	case 0x483E:
+		sub440270();
+		break;
+	}
+	return 0;
+}
+
+uint32 KmScene2001::handleMessage4401A0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4E0A2C24) {
+			_soundResource1.play(0x85B10BB8);
+		} if (param.asInteger() == 0x4E6A0CA0) {
+			_soundResource1.play(0xC5B709B0);
+		}
+		break;
+	}
+}
+
+void KmScene2001::sub440230() {
+	_status2 = 0;
+	_flagE5 = false;
+	setFileHash(0xBE68CC54, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&KmScene2001::handleMessage4401A0);
+}
+
+void KmScene2001::sub440270() {
+	_status2 = 0;
+	_flagE5 = false;
+	setFileHash(0x18AB4ED4, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&KmScene2001::handleMessage4401A0);
+}
+
 } // End of namespace Neverhood

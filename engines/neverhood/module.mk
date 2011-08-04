@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	module1500.o \
 	module1700.o \
 	module1800.o \
+	module2000.o \
 	module2300.o \
 	module3000.o \
 	mouse.o \
