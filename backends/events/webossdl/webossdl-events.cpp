@@ -141,10 +141,10 @@ bool WebOSSdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 	// handle virtual keyboard dismiss key
 	if (ev.key.keysym.sym == 24) {
-        	int gblPDKVersion = PDL_GetPDKVersion();
-                // check for correct PDK Version
-                if (gblPDKVersion >= 300) {
-                	PDL_SetKeyboardState(PDL_FALSE);
+		int gblPDKVersion = PDL_GetPDKVersion();
+		// check for correct PDK Version
+		if (gblPDKVersion >= 300) {
+			PDL_SetKeyboardState(PDL_FALSE);
 			return true;
 		}
 	}
@@ -191,20 +191,21 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 		int screenY = g_system->getHeight();
 		
 		// 60% of the screen height for menu dialog/keyboard
-                if (ABS(dragDiffY) >= ABS(screenY*0.6)) {
+		if (ABS(dragDiffY) >= ABS(screenY*0.6)) {
 			if (dragDiffY >= 0) {
 				int gblPDKVersion = PDL_GetPDKVersion();
 				// check for correct PDK Version
 				if (gblPDKVersion >= 300) {
 					PDL_SetKeyboardState(PDL_TRUE);
+					return true;
 				}
 			} else {
-                       		if (g_engine && !g_engine->isPaused()) {
-                               		g_engine->openMainMenuDialog();
-                                	return true;
+				if (g_engine && !g_engine->isPaused()) {
+					g_engine->openMainMenuDialog();
+					return true;
 				}
-                        }
-                }
+			}
+		}
 
 		// When drag mode was active then simply send a mouse up event
 		if (dragging)
