@@ -59,7 +59,7 @@ void ActionArea::load(Common::SeekableReadStream *stream) {
 		flagNums[i] = stream->readSint32LE();
 
 	field_7C             = stream->readSint32LE();
-	polygonIndex         = stream->readSint32LE();
+	polygonIndex         = stream->readUint32LE();
 	soundResourceIdFrame = (ResourceId)stream->readSint32LE();
 	field_88             = stream->readSint32LE();
 	soundResourceId      = (ResourceId)stream->readSint32LE();
@@ -522,8 +522,8 @@ IMPLEMENT_OPCODE(MoveScenePosition)
 		getWorld()->motionStatus = 5;
 
 		getScene()->updateSceneCoordinates(cmd->param1,
-			                           cmd->param2,
-		                               cmd->param3);
+			                               cmd->param2,
+		                                   cmd->param3);
 
 	} else if (cmd->param5) {
 		if (getWorld()->motionStatus == 2)
@@ -535,9 +535,9 @@ IMPLEMENT_OPCODE(MoveScenePosition)
 		getWorld()->motionStatus = 2;
 
 		getScene()->updateSceneCoordinates(cmd->param1,
-		                               cmd->param2,
-		                               cmd->param3,
-		                               true);
+		                                   cmd->param2,
+		                                   cmd->param3,
+		                                   true);
 
 		_processNextEntry = true;
 	}
@@ -967,7 +967,7 @@ IMPLEMENT_OPCODE(PlayMovie)
 			getSharedData()->setMatteVar2(0);
 			getSharedData()->setMattePlaySound(cmd->param3 == 0);
 			getSharedData()->setMatteInitialized(cmd->param2 == 0);
-			getSharedData()->movieIndex = cmd->param1;
+			getSharedData()->movieIndex = (uint32)cmd->param1;
 		}
 
 		return;
@@ -1366,8 +1366,8 @@ IMPLEMENT_OPCODE(MoveScenePositionFromActor)
 		getWorld()->motionStatus = 5;
 
 		getScene()->updateSceneCoordinates(actor->getPoint1()->x + Common::Rational(actor->getPoint2()->x, 2).toInt() - 320,
-			                           actor->getPoint1()->y + Common::Rational(actor->getPoint2()->y, 2).toInt() - 240,
-		                               cmd->param2);
+		                                   actor->getPoint1()->y + Common::Rational(actor->getPoint2()->y, 2).toInt() - 240,
+		                                   cmd->param2);
 	} else if (cmd->param6) {
 		if (getWorld()->motionStatus == 2) {
 			_processNextEntry = true;
@@ -1380,10 +1380,10 @@ IMPLEMENT_OPCODE(MoveScenePositionFromActor)
 		getWorld()->motionStatus = 2;
 
 		if (getScene()->updateSceneCoordinates(actor->getPoint1()->x + Common::Rational(actor->getPoint2()->x, 2).toInt() - 320,
-										   actor->getPoint1()->y + Common::Rational(actor->getPoint2()->y, 2).toInt() - 240,
-										   cmd->param2,
-										   true,
-										   &cmd->param6))
+		                                       actor->getPoint1()->y + Common::Rational(actor->getPoint2()->y, 2).toInt() - 240,
+		                                       cmd->param2,
+		                                       true,
+		                                       &cmd->param6))
 			_processNextEntry = false;
 		else
 			_processNextEntry = true;

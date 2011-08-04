@@ -157,10 +157,10 @@ public:
 	void setGlobalPoint(const Common::Point &point) { _globalPoint = point; }
 	Common::Point getSceneCoords() { return _sceneCoords; }
 	void setSceneCoords(const Common::Point &point) { _sceneCoords = point; }
-	int32 getSceneOffset() { return _sceneOffset; }
-	void setSceneOffset(int32 sceneOffset) { _sceneOffset = sceneOffset; }
-	int32 getSceneOffsetAdd() { return _sceneOffsetAdd; }
-	void setSceneOffsetAdd(int32 sceneOffsetAdd) { _sceneOffsetAdd = sceneOffsetAdd; }
+	int16 getSceneOffset() { return _sceneOffset; }
+	void setSceneOffset(int16 sceneOffset) { _sceneOffset = sceneOffset; }
+	int16 getSceneOffsetAdd() { return _sceneOffsetAdd; }
+	void setSceneOffsetAdd(int16 sceneOffsetAdd) { _sceneOffsetAdd = sceneOffsetAdd; }
 
 	// Saved scene data
 	void saveCursorResources(ResourceId *resources, uint32 size);
@@ -212,8 +212,8 @@ private:
 	// _flagEncounterRunning
 	// player ActorIndex
 	Common::Point   _sceneCoords;
-	int32           _sceneOffset;
-	int32           _sceneOffsetAdd;
+	int16           _sceneOffset;
+	int16           _sceneOffsetAdd;
 	ResourceId      _cursorResources[13];
 	ResourceId      _sceneFonts[3];
 	uint32          _chapter2Data1[5];

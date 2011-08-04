@@ -93,13 +93,13 @@ public:
 	int32 smallCurUp;
 	int32 smallCurDown;
 	ResourceId encounterFrameBg;
-	int32 width; // field_80
-	int32 height;
+	int16 width;
+	int16 height;
 	int32 motionStatus;
 	int32 field_8C;
 	//uint32 numActions;
 	//uint32 numObjects;
-	int32 coordinates[7];
+	int16 coordinates[7];
 	//uint32 numActors;
 	int32 reverseStereo;
 	Common::Rect sceneRects[6]; // including scene size rect
@@ -113,7 +113,7 @@ public:
 	int32 actorType;
 	ResourceId soundResourceIds[50];
 	AmbientSoundItem ambientSounds[15];
-	int32 numAmbientSounds;
+	uint32 numAmbientSounds;
 	int32 musicStatus;
 	int32 musicCurrentResourceIndex;
 	int32 musicFlag;

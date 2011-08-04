@@ -840,7 +840,7 @@ void Scene::updateAmbientSounds() {
 
 	// The original loops for each actor, but the volume calculation is always the same
 
-	for (int32 i = 0; i < _ws->numAmbientSounds; i++) {
+	for (uint32 i = 0; i < _ws->numAmbientSounds; i++) {
 		bool processSound = true;
 		AmbientSoundItem *snd = &_ws->ambientSounds[i];
 		uint32 ambientTick = getSharedData()->getAmbientTick(i);
@@ -882,7 +882,7 @@ void Scene::updateAmbientSounds() {
 				if (snd->field_0)
 					volume = getSound()->calculateVolumeAdjustement(snd->point, snd->attenuation, snd->delta);
 				else
-					volume = -pow((double)snd->delta, 2);
+					volume = -(int32)pow((double)snd->delta, 2);
 
 				volume += Config.ambientVolume;
 
@@ -896,7 +896,7 @@ void Scene::updateAmbientSounds() {
 						if (snd->field_0) {
 							getSound()->playSound(snd->resourceId, false, volume, panning);
 						} else {
-							int32 tmpVol = volume + _vm->getRandom(500) * ((((_vm->getRandom(100) >= 50) - 1) & 2) - 1);
+							int32 tmpVol = volume + (int32)_vm->getRandom(500) * ((_vm->getRandom(100) >= 50) ? -1 : 1);
 
 							if (tmpVol <= -10000)
 								tmpVol = -10000;
@@ -912,9 +912,9 @@ void Scene::updateAmbientSounds() {
 				} else if (LOBYTE(snd->flags) & 4) {
 					if (ambientTick > _vm->getTick()) {
 						if (snd->nextTick >= 0)
-							getSharedData()->setAmbientTick(i, 60000 * snd->nextTick + _vm->getTick());
+							getSharedData()->setAmbientTick(i, (uint32)((int32)_vm->getTick() + snd->nextTick * 60000));
 						else
-							getSharedData()->setAmbientTick(i, _vm->getTick() - 1000 * snd->nextTick);
+							getSharedData()->setAmbientTick(i, (uint32)((int32)_vm->getTick() - snd->nextTick * 1000));
 
 						getSound()->playSound(snd->resourceId, false, volume, panning);
 					}
@@ -1031,10 +1031,10 @@ void Scene::updateAdjustScreen() {
 
 void Scene::updateCoordinates() {
 	Actor *act = getActor();
-	int32 xLeft = _ws->xLeft;
-	int32 yTop  = _ws->yTop;
-	int32 posX = act->getPoint1()->x - _ws->xLeft;
-	int32 posY = act->getPoint1()->y - _ws->yTop;
+	int16 xLeft = _ws->xLeft;
+	int16 yTop  = _ws->yTop;
+	int16 posX = act->getPoint1()->x - _ws->xLeft;
+	int16 posY = act->getPoint1()->y - _ws->yTop;
 	Common::Rect boundingRect = _ws->boundingRect;
 
 	switch (_ws->motionStatus) {
@@ -1127,7 +1127,7 @@ void Scene::updateCoordinates() {
 	// TODO set a var if scene coordinates changed
 }
 
-void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
+void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 	HitType type = kHitNone;
 	Actor *player = getActor();
 	int16 rightLimit = rect.right - 10;
@@ -1175,7 +1175,7 @@ void Scene::updateCursor(ActorDirection direction, Common::Rect rect) {
 				ResourceId id = _ws->cursorResourcesAlternate[player->getField638() + 47];
 				uint32 frameCount = GraphicResource::getFrameCount(_vm, id);
 				if (getCursor()->getResourceId() != id)
-					getCursor()->set(id, 0, (CursorAnimation)(((frameCount <= 1) - 1) & 2));
+					getCursor()->set(id, 0, (frameCount <= 1) ? kCursorAnimationNone : kCursorAnimationMirror);
 			}
 		}
 
@@ -1275,8 +1275,8 @@ int32 Scene::hitTestScene(HitType &type) {
 
 	const Common::Point pt = getCursor()->position();
 
-	int32 top  = pt.x + _ws->xLeft;
-	int32 left = pt.y + _ws->yTop;
+	int16 top  = pt.x + _ws->xLeft;
+	int16 left = pt.y + _ws->yTop;
 	type = kHitNone;
 
 	int32 index = findActionArea(kActionAreaType2, Common::Point(top, left));
@@ -1285,8 +1285,6 @@ int32 Scene::hitTestScene(HitType &type) {
 			type = kHitActionArea;
 			return index;
 		}
-
-		index = -1;
 	}
 
 	// Check objects
@@ -1296,9 +1294,9 @@ int32 Scene::hitTestScene(HitType &type) {
 		if (object->isOnScreen() && (object->actionType & kActionType8)) {
 			if (hitTestPixel(object->getResourceId(),
 			                 object->getFrameIndex(),
-							 top - object->x,
-							 left - object->y,
-			                 object->flags & kObjectFlag1000)) {
+			                 top - object->x,
+			                 left - object->y,
+			                 (bool)(object->flags & kObjectFlag1000))) {
 				type = kHitObject;
 				return i;
 			}
@@ -1314,8 +1312,8 @@ int32 Scene::hitTestScene(HitType &type) {
 
 			if (hitTestPixel(actor->getResourceId(),
 				             frameIndex,
-				             top - actor->getPoint()->x - actor->getPoint1()->x,
-							 left - actor->getPoint()->y - actor->getPoint1()->y,
+				             top  - (actor->getPoint()->x + actor->getPoint1()->x),
+				             left - (actor->getPoint()->y + actor->getPoint1()->y),
 				             actor->getDirection() >= kDirectionSE)) {
 				type = kHitActor;
 				return i;
@@ -1338,6 +1336,9 @@ int32 Scene::hitTestActionArea() {
 }
 
 ActorIndex Scene::hitTestActor() {
+	if (!_ws)
+		error("[Scene::hitTestActor] WorldStats not initialized properly!");
+
 	const Common::Point mouse = getCursor()->position();
 
 	if (_ws->actors.size() == 0)
@@ -1368,10 +1369,9 @@ ActorIndex Scene::hitTestActor() {
 	if (_ws->actors.size() >= 11) {
 		Actor *actor11 = getActor(11);
 		if (actor11->isOnScreen() && actor11->actionType) {
-			int x = mouse.x + _ws->xLeft - actor11->getPoint1()->x;
-			int y = mouse.y + _ws->yTop  - actor11->getPoint1()->y;
+			Common::Point pt = mouse + Common::Point(_ws->xLeft, _ws->yTop) - *actor11->getPoint1();
 
-			if (actor11->getBoundingRect()->contains(x, y))
+			if (actor11->getBoundingRect()->contains(pt))
 				return 11;
 		}
 	}
@@ -1445,16 +1445,16 @@ ActorIndex Scene::hitTestActor() {
 	for (int i = _ws->actors.size() - 1; i >= 0 ; i--) {
 	Actor *actor = getActor(i);
 
-	int32 hitFrame;
+	uint32 hitFrame;
 	if (actor->getFrameIndex() >= actor->getFrameCount())
-		hitFrame = 2 * actor->getFrameIndex() - actor->getFrameCount() - 1;
+		hitFrame = 2 * actor->getFrameIndex() - (actor->getFrameCount() + 1);
 	else
 		hitFrame = actor->getFrameIndex();
 
 	if (hitTestPixel(actor->getResourceId(),
 					 hitFrame,
-					 _ws->xLeft - actor->getPoint()->x - actor->getPoint1()->x,
-					 _ws->yTop  - actor->getPoint()->y - actor->getPoint1()->y,
+					 _ws->xLeft - (actor->getPoint()->x + actor->getPoint1()->x),
+					 _ws->yTop  - (actor->getPoint()->y + actor->getPoint1()->y),
 					 actor->getDirection() >= kDirectionSE))
 		return i;
 	}
@@ -1474,8 +1474,8 @@ bool Scene::hitTestPlayer() {
 
 	return hitTestPixel(player->getResourceId(),
 	                    frameIndex,
-	                    pt.x - player->getPoint()->x - point.x,
-	                    pt.y - player->getPoint()->y - point.y,
+	                    pt.x - (player->getPoint()->x + point.x),
+	                    pt.y - (player->getPoint()->y + point.y),
 	                    player->getDirection() >= kDirectionSE);
 }
 
@@ -1492,14 +1492,14 @@ int32 Scene::hitTestObject() {
 			                 object->getFrameIndex(),
 			                 _ws->xLeft + pt.x - object->x,
 			                 _ws->yTop + pt.y - object->y,
-			                 object->flags & kObjectFlag1000))
+			                 (bool)(object->flags & kObjectFlag1000)))
 				return i;
 	}
 
 	return -1;
 }
 
-bool Scene::hitTestPixel(ResourceId resourceId, int32 frameIndex, int16 x, int16 y, bool flipped) {
+bool Scene::hitTestPixel(ResourceId resourceId, uint32 frameIndex, int16 x, int16 y, bool flipped) {
 	if (x < 0 || y < 0)
 		return false;
 
@@ -1533,7 +1533,7 @@ bool Scene::hitTestPixel(ResourceId resourceId, int32 frameIndex, int16 x, int16
 	// Check pixel value
 	byte *pixel;
 	if (flipped) {
-		pixel = (byte *)frame->surface.getBasePtr(left - x + frame->getWidth() - 1, y - frame->y);
+		pixel = (byte *)frame->surface.getBasePtr((left - x) + frame->getWidth() - 1, y - frame->y);
 	} else {
 		pixel = (byte *)frame->surface.getBasePtr(x - left, y - frame->y);
 	}
@@ -1555,6 +1555,9 @@ cleanup:
 // Hit actions
 //////////////////////////////////////////////////////////////////////////
 void Scene::handleHit(int32 index, HitType type) {
+	if (!_ws)
+		error("[Scene::handleHit] WorldStats not initialized properly!");
+
 	switch (type) {
 	default:
 		break;
@@ -1644,7 +1647,7 @@ void Scene::playerReaction() {
 
 	player->adjustCoordinates(&point);
 
-	uint32 maxIndex = 0;
+	uint32 maxIndex;
 	for (maxIndex = 0; maxIndex < 8; maxIndex++) {
 		if (!player->getReactionValue(maxIndex))
 			break;
@@ -1720,19 +1723,25 @@ void Scene::hitAreaChapter7(int32 id) {
 }
 
 void Scene::hitAreaChapter11(int32 id) {
+	if (!_ws)
+		error("[Scene::hitAreaChapter11] WorldStats not initialized properly!");
+
 	if (id == 1670)
 		_ws->field_E849C = 666;
 }
 
 
 void Scene::hitActorChapter2(ActorIndex index) {
+	if (!_ws)
+		error("[Scene::hitActorChapter2] WorldStats not initialized properly!");
+
 	Actor *player = getActor();
 
 	if (player->getStatus() != kActorStatus14 && player->getStatus() != kActorStatus12)
 		return;
 
 	if (index == 11) {
-		player->faceTarget(index + 9, kDirectionFromActor);
+		player->faceTarget((uint32)(index + 9), kDirectionFromActor);
 		player->updateStatus(kActorStatus15);
 
 		Actor *actor11 = getActor(index);
@@ -1751,13 +1760,16 @@ void Scene::hitActorChapter2(ActorIndex index) {
 		getSharedData()->setChapter2ActorIndex(index);
 
 	} else if (index > 12) {
-		player->faceTarget(index + 9, kDirectionFromActor);
+		player->faceTarget((uint32)(index + 9), kDirectionFromActor);
 		player->updateStatus(kActorStatus15);
 		getSharedData()->setChapter2ActorIndex(index);
 	}
 }
 
 void Scene::hitActorChapter11(ActorIndex index) {
+	if (!_ws)
+		error("[Scene::hitActorChapter11] WorldStats not initialized properly!");
+
 	if (_ws->field_E848C < 3)
 		_ws->field_E849C = index;
 }
@@ -1810,6 +1822,9 @@ void Scene::stopSpeech() {
 }
 
 bool Scene::speak(Common::KeyCode code) {
+	if (!_ws)
+		error("[Scene::speak] WorldStats not initialized properly!");
+
 #define GET_INDEX() ((int)abs((double)_vm->getRandom(RAND_MAX)) & 1)
 
 	int32 index = -1;
@@ -2028,7 +2043,7 @@ bool Scene::speak(Common::KeyCode code) {
 #undef GET_INDEX
 }
 
-bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
+bool Scene::pointIntersectsRect(const Common::Point &point, const Common::Rect &rect) const {
 	if (rect.top || rect.left || rect.bottom || rect.right) {
 		Common::Rational res(rect.height() * (point.x - rect.left), rect.width());
 
@@ -2038,11 +2053,14 @@ bool Scene::pointIntersectsRect(Common::Point point, Common::Rect rect) {
 	return true;
 }
 
-bool Scene::rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3) {
+bool Scene::rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3) const {
 	return (x <= x3 && x1 >= x2) && (y <= y3 && y1 >= y2);
 }
 
 void Scene::adjustCoordinates(Common::Point *point) {
+	if (!_ws)
+		error("[Scene::adjustCoordinates] WorldStats not initialized properly!");
+
 	point->x = _ws->xLeft + getCursor()->position().x;
 	point->y = _ws->yTop  + getCursor()->position().y;
 }
@@ -2065,14 +2083,14 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 
 	Common::Rect *sr = &_ws->sceneRects[_ws->sceneRectIdx];
 
-	int32 *targetX = &_ws->coordinates[0];
-	int32 *targetY = &_ws->coordinates[1];
-	int32 *coord3  = &_ws->coordinates[2];
+	int16 *targetX = &_ws->coordinates[0];
+	int16 *targetY = &_ws->coordinates[1];
+	int16 *coord3  = &_ws->coordinates[2];
 
-	*targetX = tX;
-	*targetY = tY;
+	*targetX = (int16)tX;
+	*targetY = (int16)tY;
 
-	*coord3 = A0;
+	*coord3 = (int16)A0;
 
 	// Adjust coordinates
 	if (checkSceneCoords)
@@ -2106,7 +2124,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 		if (_ws->yTop > *targetY)
 			*coord3 = -*coord3;
 
-		getSharedData()->setSceneOffsetAdd(Common::Rational(*coord3 * diffX, diffY).toInt());
+		getSharedData()->setSceneOffsetAdd((int16)Common::Rational(*coord3 * diffX, diffY).toInt());
 
 		if (param != NULL && abs(diffY) <= abs(*coord3)) {
 			*targetX = -1;
@@ -2117,7 +2135,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 		if (_ws->xLeft > *targetX)
 			*coord3 = -*coord3;
 
-		getSharedData()->setSceneOffsetAdd(Common::Rational(*coord3 * diffY, diffX).toInt());
+		getSharedData()->setSceneOffsetAdd((int16)Common::Rational(*coord3 * diffY, diffX).toInt());
 
 		if (param != NULL && abs(diffX) <= abs(*coord3)) {
 			*targetX = -1;
@@ -2129,7 +2147,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 }
 
 
-int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt, bool highlight) {
+int32 Scene::findActionArea(ActionAreaType type, const Common::Point &pt, bool highlight) {
 	if (!_ws)
 		error("[Scene::findActionArea] WorldStats not initialized properly!");
 
@@ -2147,8 +2165,10 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt, bool hi
 		for (int32 i = _ws->actions.size() - 1; i >= 0; i--) {
 			ActionArea *area = _ws->actions[i];
 
-			//if (g_debugPolygons && highlight)
-			//	debugHighlightPolygon(area->polygonIndex);
+#ifdef DEBUG
+			if (g_debugPolygons && highlight)
+				debugHighlightPolygon(area->polygonIndex);
+#endif
 
 			bool found = false;
 
@@ -2210,6 +2230,9 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point pt, bool hi
 }
 
 void Scene::changePlayer(ActorIndex index) {
+	if (!_ws)
+		error("[Scene::changePlayer] WorldStats not initialized properly!");
+
 	switch (index) {
 	default:
 		if (_ws->chapter == kChapter9) {
@@ -2453,7 +2476,7 @@ void Scene::processUpdateList() {
 			actor->setField934(0);
 			Common::Point sum = *actor->getPoint1() + *actor->getPoint2();
 
-			int32 bottomRight = actor->getPoint1()->y + actor->getBoundingRect()->bottom + 4;
+			int16 bottomRight = actor->getPoint1()->y + actor->getBoundingRect()->bottom + 4;
 
 			if (_ws->chapter == kChapter11 && _updateList[i].index != getPlayerIndex())
 				bottomRight += 20;
@@ -2651,16 +2674,19 @@ void Scene::adjustActorPriority(ActorIndex index) {
 }
 
 void Scene::drawRain() {
+	if (!_ws)
+		error("[Scene::drawRain] WorldStats not initialized properly!");
+
 	if (getSharedData()->getFlag(kFlagSkipDrawScene))
 		return;
 
-	for (uint y = 0; y < 512; y = y + 64) {
-		for (uint x = 0; x < 704; x = x + 64) {
-			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 58), _chapter5RainFrameIndex, Common::Point(x + (_ws->xLeft % 64) / 8, y + (_ws->yTop % 64) / 8));
+	for (int16 y = 0; y < 512; y = y + 64) {
+		for (int16 x = 0; x < 704; x = x + 64) {
+			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 58), (uint32)_chapter5RainFrameIndex, Common::Point(x + (_ws->xLeft % 64) / 8, y + (_ws->yTop % 64) / 8));
 		}
 	}
 
-	_chapter5RainFrameIndex = (_chapter5RainFrameIndex + 1) % GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, 58));
+	_chapter5RainFrameIndex = (_chapter5RainFrameIndex + 1) % (int32)GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, 58));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2675,21 +2701,21 @@ void Scene::debugScreenScrolling() {
 	// Horizontal scrolling
 	if (getCursor()->position().x < SCREEN_EDGES && _ws->xLeft >= SCROLL_STEP)
 		_ws->xLeft -= SCROLL_STEP;
-	else if (getCursor()->position().x > 640 - SCREEN_EDGES && _ws->xLeft <= rect.width() - 640 - SCROLL_STEP)
+	else if (getCursor()->position().x > (640 - SCREEN_EDGES) && _ws->xLeft <= (rect.width() - (640 + SCROLL_STEP)))
 		_ws->xLeft += SCROLL_STEP;
 
 	// Vertical scrolling
 	if (getCursor()->position().y < SCREEN_EDGES && _ws->yTop >= SCROLL_STEP)
 		_ws->yTop -= SCROLL_STEP;
-	else if (getCursor()->position().y > 480 - SCREEN_EDGES && _ws->yTop <= rect.height() - 480 - SCROLL_STEP)
+	else if (getCursor()->position().y > (480 - SCREEN_EDGES) && _ws->yTop <= (rect.height() - (480 + SCROLL_STEP)))
 		_ws->yTop += SCROLL_STEP;
 }
 
 // WALK REGION DEBUG
 void Scene::debugShowWalkRegion(Polygon *poly) {
 	Graphics::Surface surface;
-	surface.create(poly->boundingRect.right - poly->boundingRect.left + 1,
-	               poly->boundingRect.bottom - poly->boundingRect.top + 1,
+	surface.create((uint16)poly->boundingRect.width() + 1,
+	               (uint16)poly->boundingRect.height() + 1,
 	               Graphics::PixelFormat::createFormatCLUT8());
 
 	// Draw all lines in Polygon
@@ -2724,9 +2750,9 @@ void Scene::debugShowPolygon(uint32 index, uint32 color) {
 
 	Graphics::Surface surface;
 	Polygon poly = _polygons->get(index);
-	surface.create(poly.boundingRect.right - poly.boundingRect.left + 1,
-		            poly.boundingRect.bottom - poly.boundingRect.top + 1,
-		            Graphics::PixelFormat::createFormatCLUT8());
+	surface.create((uint16)poly.boundingRect.width() + 1,
+		           (uint16)poly.boundingRect.height() + 1,
+		           Graphics::PixelFormat::createFormatCLUT8());
 
 	// Draw all lines in Polygon
 	for (uint32 i = 0; i < poly.count(); i++) {
@@ -2767,8 +2793,8 @@ void Scene::debugShowObjects() {
 		Object *object = _ws->objects[p];
 
 		if (object->isOnScreen()) {
-			surface.create(object->getBoundingRect()->width() + 1,
-			               object->getBoundingRect()->height() + 1,
+			surface.create((uint16)object->getBoundingRect()->width() + 1,
+			               (uint16)object->getBoundingRect()->height() + 1,
 			               Graphics::PixelFormat::createFormatCLUT8());
 			surface.frameRect(*object->getBoundingRect(), 0x22);
 			getScreen()->copyToBackBufferClipped(&surface, object->x, object->y);
@@ -2780,13 +2806,16 @@ void Scene::debugShowObjects() {
 
 // ACTOR DEBUGGING
 void Scene::debugShowActors() {
+	if (!_ws)
+		error("[Scene::debugShowActors] WorldStats not initialized properly!");
+
 	for (uint32 p = 0; p < _ws->actors.size(); p++) {
 		Graphics::Surface surface;
 		Actor *a = _ws->actors[p];
 
 		if (a->isOnScreen()) {
-			surface.create(a->getBoundingRect()->right - a->getBoundingRect()->left + 1,
-			               a->getBoundingRect()->bottom - a->getBoundingRect()->top + 1,
+			surface.create((uint16)a->getBoundingRect()->width() + 1,
+			               (uint16)a->getBoundingRect()->height() + 1,
 			               Graphics::PixelFormat::createFormatCLUT8());
 			surface.frameRect(*a->getBoundingRect(), 0x128);
 			getScreen()->copyToBackBufferClipped(&surface, a->getPoint1()->x, a->getPoint1()->y);

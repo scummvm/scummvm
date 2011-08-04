@@ -83,7 +83,7 @@ void Object::load(Common::SeekableReadStream *stream) {
 	_rect.right   = (int16)(stream->readSint32LE());
 	_rect.bottom  = (int16)(stream->readSint32LE());
 
-	_polygonIndex = stream->readSint32LE();
+	_polygonIndex = stream->readUint32LE();
 	actionType    = stream->readSint32LE();
 
 	for (int i = 0; i < 10; i++)

@@ -60,7 +60,7 @@ public:
 	uint32          getFrameCount()                 { return _frameCount; }
 	FrameSoundItem *getFrameSoundItem(uint32 index) { assert(index < ARRAYSIZE(_frameSoundItems)); return &_frameSoundItems[index]; }
 	ObjectId        getId()                         { return _id; }
-	int32           getPolygonIndex()               { return _polygonIndex; }
+	uint32           getPolygonIndex()              { return _polygonIndex; }
 	int32           getPriority()                   { return _priority; }
 	ResourceId      getResourceId()                 { return _resourceId; }
 	ResourceId      getSoundResourceId()            { return _soundResourceId; }
@@ -184,7 +184,7 @@ private:
 	int32          _field_3C;
 	uint8          _name[52];
 	Common::Rect   _rect;
-	int32          _polygonIndex;
+	uint32         _polygonIndex;
 	// actionType
 	int32          _gameFlags[10];
 	int32          _field_B4;
