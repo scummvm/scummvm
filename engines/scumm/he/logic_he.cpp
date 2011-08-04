@@ -915,9 +915,9 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		res = getFromArray(args[0], args[1], args[2]);
 		break;
 
+	case 1010: case 1015: case 1018:
+		// Used only by the in-game editor (so, fall through)
 	default:
-		// original range is 1001 - 1021
-		warning("unhandled op %d", op);
 		LogicHE::dispatch(op, numArgs, args);
 	}
 
@@ -956,6 +956,7 @@ int LogicHEsoccer::op_1002(int32 *args) {
 }
 
 int LogicHEsoccer::op_1003(int32 *args) {
+	// NOTE: This function is never called, so it's here for reference only
 	double data[6], out[3];
 	int i;
 
@@ -2237,7 +2238,7 @@ int LogicHEsoccer::op_1017(int32 *args) {
 
 int LogicHEsoccer::op_1019(int32 *args) {
 	// Used at the beginning of a match
-	// Initializes some arrays. Player positions?
+	// Initializes some arrays. Field parameters?
 
 	// These two arrays are used in op_1014 and op_1015
 	for (int i = 0; i < 4096; i++)
@@ -2245,6 +2246,9 @@ int LogicHEsoccer::op_1019(int32 *args) {
 
 	for (int i = 0; i < 585; i++)
 		_byteArray2[i] = getFromArray(args[0], 0, i);
+
+	// The remaining code of this function is used for the
+	// built-in editor. 
 
 	// Deallocate the two integer arrays
 	if (_intArraysAllocated)
@@ -2271,7 +2275,7 @@ int LogicHEsoccer::op_1019(int32 *args) {
 }
 
 int LogicHEsoccer::op_1020() {
-	// Deallocate integer arrays
+	// Deallocate in-game editor integer arrays
 	// The arrays can be allocated in op_1015 or op_1019
 
 	delete[] _intArray1; _intArray1 = 0;
