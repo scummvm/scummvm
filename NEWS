@@ -4,6 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.4.0 (????-??-??)
  New Games:
    - Added support for Lands of Lore: The Throne of Chaos.
+   - Added support for Blue's Birthday Adventure
 
  SCUMM:
    - Implemented PC Speaker support for SCUMM v5 games.
