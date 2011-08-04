@@ -76,6 +76,8 @@ public:
 		_stream.zalloc = Z_NULL;
 		_stream.zfree = Z_NULL;
 		_stream.opaque = Z_NULL;
+		_stream.avail_in = 0;
+		_stream.next_in = Z_NULL;
 
 		// Verify file header is correct
 		w->seek(0, SEEK_SET);
