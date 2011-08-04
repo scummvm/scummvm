@@ -405,12 +405,6 @@ void DreamGenContext::steady(Sprite *sprite, ObjData *objData) {
 	sprite->b15 = b18;
 }
 
-void DreamGenContext::lockeddoorway() {
-	Sprite *sprite = (Sprite *)es.ptr(bx, sizeof(Sprite));
-	ObjData *objData = (ObjData *)ds.ptr(di, 0);
-	lockeddoorway(sprite, objData);
-}
-
 void DreamGenContext::lockeddoorway(Sprite *sprite, ObjData *objData) {
 	if (data.byte(kRyanx) < sprite->x) {
 		if (sprite->x - data.byte(kRyanx) > 24)
@@ -473,12 +467,6 @@ shutdoor2:
 		turnpathoffCPP(data.byte(kDoorpath));
 		data.byte(kLockstatus) = 1;
 	}
-}
-
-void DreamGenContext::liftsprite() {
-	Sprite *sprite = (Sprite *)es.ptr(bx, sizeof(Sprite));
-	ObjData *objData = (ObjData *)ds.ptr(di, 0);
-	liftsprite(sprite, objData);
 }
 
 void DreamGenContext::liftsprite(Sprite *sprite, ObjData *objData) {
