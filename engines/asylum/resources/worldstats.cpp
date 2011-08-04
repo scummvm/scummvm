@@ -135,15 +135,15 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	smallCurDown        = stream->readSint32LE();
 	encounterFrameBg    = (ResourceId)stream->readSint32LE();
 
-	width               = stream->readSint32LE();
-	height              = stream->readSint32LE();
+	width               = (int16)stream->readSint32LE();
+	height              = (int16)stream->readSint32LE();
 	motionStatus        = stream->readSint32LE();
 	field_8C            = stream->readSint32LE();
 	uint32 numActions   = stream->readUint32LE();
 	uint32 numObjects   = stream->readUint32LE();
 
 	for (int32 c = 0; c < 7; c++)
-		coordinates[c] = stream->readSint32LE();
+		coordinates[c] = (int16)stream->readSint32LE();
 
 	uint32 numActors = stream->readUint32LE();
 
@@ -188,7 +188,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		ambientSounds[s].point.y = (int16)stream->readSint32LE();
 	}
 
-	numAmbientSounds          = stream->readSint32LE();
+	numAmbientSounds          = stream->readUint32LE();
 	musicStatus               = stream->readSint32LE();
 	musicCurrentResourceIndex = stream->readSint32LE();
 	musicFlag                 = stream->readSint32LE();

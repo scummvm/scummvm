@@ -185,7 +185,7 @@ public:
 	 *
 	 * @return	The found action area.
 	 */
-	int32 findActionArea(ActionAreaType type, const Common::Point pt, bool highlight = false);
+	int32 findActionArea(ActionAreaType type, const Common::Point &pt, bool highlight = false);
 
 	/**
 	 * Check if rectangles intersect.
@@ -201,7 +201,7 @@ public:
 	 *
 	 * @return true if it succeeds, false if it fails.
 	 */
-	bool rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3);
+	bool rectIntersect(int32 x, int32 y, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3) const;
 
 	Polygons    *polygons()   { return _polygons; }
 	WorldStats  *worldstats() { return _ws; }
@@ -282,7 +282,7 @@ private:
 	 * @param direction The direction.
 	 * @param rect 		The rectangle.
 	 */
-	void updateCursor(ActorDirection direction, Common::Rect rect);
+	void updateCursor(ActorDirection direction, const Common::Rect &rect);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scene drawing
@@ -396,7 +396,7 @@ private:
 	 *
 	 * @return true if it succeeds, false if it fails.
 	 */
-	bool hitTestPixel(ResourceId resourceId, int32 frame, int16 x, int16 y, bool flipped);
+	bool hitTestPixel(ResourceId resourceId, uint32 frame, int16 x, int16 y, bool flipped);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Hit actions
@@ -455,7 +455,7 @@ private:
 	 *
 	 * @return true if it succeeds, false if it fails.
 	 */
-	bool pointIntersectsRect(Common::Point point, Common::Rect rect);
+	bool pointIntersectsRect(const Common::Point &point, const Common::Rect &rect) const;
 
 	/**
 	 * Adjust coordinates.

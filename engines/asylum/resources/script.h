@@ -69,7 +69,7 @@ struct ActionArea {
 	int32 actionType;    ///< flag (see ActionType enumeration)
 	int32 flagNums[10];
 	int32 field_7C;
-	int32 polygonIndex;
+	uint32 polygonIndex;
 	ResourceId soundResourceIdFrame;
 	int32 field_88;
 	ResourceId soundResourceId;
