@@ -580,8 +580,7 @@ void DreamGenContext::showrain() {
 	si = 6*58;
 	ax = ds.word(si+2);
 	si = ax + 2080;
-	es = data.word(kBuffers);
-	Rain *rain = (Rain *)es.ptr(kRainlist, 0);
+	Rain *rain = (Rain *)segRef(data.word(kBuffers)).ptr(kRainlist, 0);
 	if (rain->x == 255)
 		return;
 	while (true) {
