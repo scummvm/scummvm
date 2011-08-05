@@ -42,6 +42,7 @@ enum GlobalFlag {
 	kFlagScene1,
 	kFlagSkipScriptProcessing,
 	kFlagIsEncounterRunning,
+	kFlagEncounterDisablePlayerOnExit,
 	kFlagActorUpdateEnabledCheck,
 	kFlagActorUpdateStatus15Check,
 };
@@ -247,7 +248,7 @@ private:
 	uint32          _chapter2Data4[18];
 	int32           _actorUpdateStatusEnabledCounter;
 	uint32          _chapter2Data5[9];
-	// _flagEncounterDisablePlayerOnExit
+	bool            _flagEncounterDisablePlayerOnExit;
 	bool            _flag1;
 	uint32          _nextScreenUpdate;
 	//byte            _moviesViewed[196];

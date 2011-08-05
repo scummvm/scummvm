@@ -65,10 +65,10 @@ SharedData::SharedData() {
 	memset(&_chapter2Data4, 0, sizeof(_chapter2Data4));
 	_actorUpdateStatusEnabledCounter   = 0;
 	memset(&_chapter2Data5, 0, sizeof(_chapter2Data5));
-	// _flagEncounterDisablePlayerOnExit
+	_flagEncounterDisablePlayerOnExit  = false;
 	_flag1                             = false;
 	_nextScreenUpdate                  = 0;
-	// _moviesViewed;
+	// _moviesViewed
 	_flagActorUpdateStatus15Check      = false;
 
 	// Non-saved data
@@ -227,6 +227,9 @@ bool SharedData::getFlag(GlobalFlag flag) const {
 	case kFlagIsEncounterRunning:
 		return _flagIsEncounterRunning;
 
+	case kFlagEncounterDisablePlayerOnExit:
+		return _flagEncounterDisablePlayerOnExit;
+
 	case kFlagActorUpdateEnabledCheck:
 		return _flagActorUpdateEnabledCheck;
 
@@ -274,6 +277,10 @@ void SharedData::setFlag(GlobalFlag flag, bool state) {
 
 	case kFlagIsEncounterRunning:
 		_flagIsEncounterRunning = state;
+		break;
+
+	case kFlagEncounterDisablePlayerOnExit:
+		_flagEncounterDisablePlayerOnExit = state;
 		break;
 
 	case kFlagActorUpdateEnabledCheck:
@@ -361,7 +368,7 @@ void SharedData::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_chapter2FrameIndexOffset);
 	s.syncAsSint32LE(_chapter2ActorIndex);
 
-	//s.syncAsSint32LE(_eventUpdateFlag);
+	s.syncAsSint32LE(_eventUpdate);
 
 	// Chapter 2 counters (6-8)
 	s.syncAsSint32LE(_chapter2Counters[5]);
@@ -380,7 +387,7 @@ void SharedData::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsUint32LE(_chapter2Data5[i]);
 
 	// Encounter disable player on exit
-	//s.syncAsSint32LE(encounterDisablePlayerOnExit);
+	s.syncAsUint32LE(_flagEncounterDisablePlayerOnExit);
 
 	// Scene flag 1
 	s.syncAsUint32LE(_flagScene1);
@@ -393,8 +400,6 @@ void SharedData::saveLoadWithSerializer(Common::Serializer &s) {
 
 	// Actor update status 15 check
 	s.syncAsUint32LE(_flagActorUpdateStatus15Check);
-
-	// TODO More?
 }
 
 } // End of namespace Asylum

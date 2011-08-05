@@ -46,7 +46,7 @@ namespace Asylum {
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _objectId3(kObjectNone),
-	_actorIndex(kActorInvalid), _flag1(false), _flag2(false), _flag3(false), _flag4(false), _disablePlayerOnExit(false) {
+	_actorIndex(kActorInvalid), _flag1(false), _flag2(false), _flag3(false), _flag4(false) {
 
 	memset(&_keywordIndexes, 0, sizeof(_keywordIndexes));
 	_rectIndex = -1;
@@ -269,10 +269,10 @@ void Encounter::exitEncounter() {
 	else
 		_flag1 = true;
 
-	if (_disablePlayerOnExit)
+	if (getSharedData()->getFlag(kFlagEncounterDisablePlayerOnExit))
 		getScene()->getActor()->updateStatus(kActorStatusDisabled);
 
-	_disablePlayerOnExit = false;
+	getSharedData()->setFlag(kFlagEncounterDisablePlayerOnExit, false);
 
 	if (getSound()->getMusicVolume() != Config.musicVolume)
 		getSound()->setMusicVolume(Config.musicVolume);

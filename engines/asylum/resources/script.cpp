@@ -818,7 +818,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(RunEncounter)
 	Encounter *encounter = _vm->encounter();
 
-	encounter->disablePlayerOnExit((bool)cmd->param5);
+	getSharedData()->setFlag(kFlagEncounterDisablePlayerOnExit, (bool)cmd->param5);
 
 	if (cmd->param6) {
 		if (getSharedData()->getFlag(kFlagIsEncounterRunning))
