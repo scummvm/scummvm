@@ -1410,11 +1410,11 @@ int LogicHEsoccer::op_1014(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int
 		v15 = sqrtSquare((double)a4 * (double)a11 / (double)a12, (double)a5 * (double)a11 / (double)a12, (double)a6 * (double)a11 / (double)a12);
 
 		if (v15 != 0.0) {
-			double v26 = ABS((double)a4 * (double)a11 / (double)a12 * 50.0 / v15);
+			double v26 = (double)ABS(a4) * (double)a11 / (double)a12 * 50.0 / v15;
 			a1 = (int)((double)a1 + v26);
-			double v25 = ABS((double)a5 * (double)a11 / (double)a12 * 50.0 / v15);
+			double v25 = (double)ABS(a5) * (double)a11 / (double)a12 * 50.0 / v15;
 			a2 = (int)((double)a2 + v25);
-			double v24 = ABS((double)a6 * (double)a11 / (double)a12 * 50.0 / v15);
+			double v24 = (double)ABS(a6) * (double)a11 / (double)a12 * 50.0 / v15;
 			a3 = (int)((double)a3 + v24);
 		}
 
