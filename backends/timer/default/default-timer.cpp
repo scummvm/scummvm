@@ -116,6 +116,7 @@ bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, v
 	if (_callbacks.contains(id)) {
 		if (_callbacks[id] != callback) {
 			error("Different callbacks are referred by same name (%s)", id.c_str());
+		}
 	}
 	TimerSlotMap::const_iterator i;
 
