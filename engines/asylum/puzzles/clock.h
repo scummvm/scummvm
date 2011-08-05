@@ -34,6 +34,9 @@ public:
 	PuzzleClock(AsylumEngine *engine);
 	~PuzzleClock();
 
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+
 private:
 	uint32 _frameIndexes[3];
 	bool _showCursor;

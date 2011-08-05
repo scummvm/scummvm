@@ -50,6 +50,10 @@ static const PuzzleBoard::PuzzleData puzzleYouthData = {
 PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, puzzleYouthData) {
 }
 
+void PuzzleBoardYouth::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleBoardYouth::saveLoadWithSerializer] Not implemented");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////

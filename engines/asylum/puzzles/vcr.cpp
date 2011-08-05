@@ -49,6 +49,10 @@ PuzzleVCR::PuzzleVCR(AsylumEngine *engine): Puzzle(engine) {
 PuzzleVCR::~PuzzleVCR() {
 }
 
+void PuzzleVCR::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleVCR::saveLoadWithSerializer] Not implemented");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////

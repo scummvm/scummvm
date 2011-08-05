@@ -76,30 +76,41 @@ EventHandler *Puzzles::getPuzzle(uint32 index) const {
 }
 
 void Puzzles::initPuzzles() {
-	_puzzles[0] = new PuzzleVCR(_vm);
-	_puzzles[1] = new PuzzlePipes(_vm);
-	_puzzles[2] = new PuzzleTicTacToe(_vm);
-	_puzzles[3] = new PuzzleLock(_vm);
-	_puzzles[4] = NULL;    // No event handler for Puzzle 5
-	_puzzles[5] = new PuzzleWheel(_vm);
-	_puzzles[6] = new PuzzleBoardSalvation(_vm);
-	_puzzles[7] = new PuzzleBoardYouth(_vm);
-	_puzzles[8] = new PuzzleBoardKeyHidesTo(_vm);
-	_puzzles[9] = new PuzzleWritings(_vm);
-	_puzzles[10] = new Puzzle11(_vm);
-	_puzzles[11] = new PuzzleMorgueDoor(_vm);
-	_puzzles[12] = new PuzzleClock(_vm);
-	_puzzles[13] = new PuzzleTimeMachine(_vm);
-	_puzzles[14] = new PuzzleFisherman(_vm);
-	_puzzles[15] = new PuzzleHiveMachine(_vm);
-	_puzzles[16] = new PuzzleHiveControl(_vm);
+	_puzzles[kPuzzleVCR]             = new PuzzleVCR(_vm);
+	_puzzles[kPuzzlePipes]           = new PuzzlePipes(_vm);
+	_puzzles[kPuzzleTicTacToe]       = new PuzzleTicTacToe(_vm);
+	_puzzles[kPuzzleLock]            = new PuzzleLock(_vm);
+	_puzzles[kPuzzle4]               = NULL;    // No event handler for Puzzle 5
+	_puzzles[kPuzzleWheel]           = new PuzzleWheel(_vm);
+	_puzzles[kPuzzleBoardSalvation]  = new PuzzleBoardSalvation(_vm);
+	_puzzles[kPuzzleBoardYouth]      = new PuzzleBoardYouth(_vm);
+	_puzzles[kPuzzleBoardKeyHidesTo] = new PuzzleBoardKeyHidesTo(_vm);
+	_puzzles[kPuzzleWritings]        = new PuzzleWritings(_vm);
+	_puzzles[kPuzzle11]              = new Puzzle11(_vm);
+	_puzzles[kPuzzleMorgueDoor]      = new PuzzleMorgueDoor(_vm);
+	_puzzles[kPuzzleClock]           = new PuzzleClock(_vm);
+	_puzzles[kPuzzleTimeMachine]     = new PuzzleTimeMachine(_vm);
+	_puzzles[kPuzzleFisherman]       = new PuzzleFisherman(_vm);
+	_puzzles[kPuzzleHiveMachine]     = new PuzzleHiveMachine(_vm);
+	_puzzles[kPuzzleHiveControl]     = new PuzzleHiveControl(_vm);
 }
 
 void Puzzles::saveLoadWithSerializer(Common::Serializer &s) {
-	for (int32 i = 0; i < ARRAYSIZE(_puzzles); i++) {
-		if (_puzzles[i])
-			_puzzles[i]->saveLoadWithSerializer(s);
-	}
+	_puzzles[kPuzzleVCR]->saveLoadWithSerializer(s);
+	s.skip(4);
+	_puzzles[kPuzzleLock]->saveLoadWithSerializer(s);
+	_puzzles[kPuzzlePipes]->saveLoadWithSerializer(s);
+	_puzzles[kPuzzleWheel]->saveLoadWithSerializer(s);
+	_puzzles[kPuzzleBoardSalvation]->saveLoadWithSerializer(s);
+	_puzzles[kPuzzleBoardYouth]->saveLoadWithSerializer(s);
+	s.skip(8);
+	_puzzles[kPuzzleBoardKeyHidesTo]->saveLoadWithSerializer(s);
+	_puzzles[kPuzzleMorgueDoor]->saveLoadWithSerializer(s);
+	_puzzles[kPuzzle11]->saveLoadWithSerializer(s);
+	_puzzles[kPuzzleTimeMachine]->saveLoadWithSerializer(s);
+	_puzzles[kPuzzleClock]->saveLoadWithSerializer(s);
+	_puzzles[kPuzzleFisherman]->saveLoadWithSerializer(s);
+	_puzzles[kPuzzleHiveControl]->saveLoadWithSerializer(s);
 }
 
 } // End of namespace Asylum

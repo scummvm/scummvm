@@ -34,7 +34,8 @@ public:
 	PuzzleMorgueDoor(AsylumEngine *engine);
 	~PuzzleMorgueDoor();
 
-	void reset();
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
 	enum PuzzleObject {

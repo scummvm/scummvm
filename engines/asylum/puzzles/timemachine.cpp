@@ -76,17 +76,8 @@ PuzzleTimeMachine::PuzzleTimeMachine(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleTimeMachine::~PuzzleTimeMachine() {
 }
 
-void PuzzleTimeMachine::reset() {
-	_frameIndexes[0] = 0;
-	_frameIndexes[1] = 4;
-	_frameIndexes[2] = 20;
-	_frameIndexes[3] = 16;
-	_frameIndexes[4] = 20;
-	memset(&_state, 0, sizeof(_state));
-	_data_45AAAC = 0;
-
-	// Reset point only (the other values are static)
-	_point = Common::Point(-65, -30);
+void PuzzleTimeMachine::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleTimeMachine::saveLoadWithSerializer] Not implemented");
 }
 
 //////////////////////////////////////////////////////////////////////////

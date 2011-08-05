@@ -47,7 +47,7 @@ public:
 	bool handleEvent(const AsylumEvent &evt);
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 protected:
 	AsylumEngine *_vm;

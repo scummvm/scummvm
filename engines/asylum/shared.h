@@ -648,6 +648,29 @@ enum ObjectFlag {
 };
 
 //////////////////////////////////////////////////////////////////////////
+// Puzzles
+//////////////////////////////////////////////////////////////////////////
+enum PuzzleId {
+	kPuzzleVCR = 0,
+	kPuzzlePipes,
+	kPuzzleTicTacToe,
+	kPuzzleLock,
+	kPuzzle4,
+	kPuzzleWheel,                 // 5
+	kPuzzleBoardSalvation,
+	kPuzzleBoardYouth,
+	kPuzzleBoardKeyHidesTo,
+	kPuzzleWritings,
+	kPuzzle11,                    // 10
+	kPuzzleMorgueDoor,
+	kPuzzleClock,
+	kPuzzleTimeMachine,
+	kPuzzleFisherman,
+	kPuzzleHiveMachine,           // 15
+	kPuzzleHiveControl
+};
+
+//////////////////////////////////////////////////////////////////////////
 // Helpers
 //////////////////////////////////////////////////////////////////////////
 #define CLEAR_ARRAY(type, name) { \

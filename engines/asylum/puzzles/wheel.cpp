@@ -149,20 +149,8 @@ PuzzleWheel::PuzzleWheel(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleWheel::~PuzzleWheel() {
 }
 
-void PuzzleWheel::reset() {
-	getSpecial()->reset(true);
-
-	_resourceIndex = 0;
-	_resourceIndexLever = 13;
-
-	_frameIndexWheel = 0;
-
-	_frameIndexes[0] = 0;
-	_frameIndexes[9] = 0;
-	_frameIndexes[10] = 0;
-	_frameIndexes[11] = 0;
-
-	_turnWheelRight = false;
+void PuzzleWheel::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleWheel::saveLoadWithSerializer] Not implemented");
 }
 
 //////////////////////////////////////////////////////////////////////////

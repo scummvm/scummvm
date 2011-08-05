@@ -34,7 +34,8 @@ public:
 	PuzzleTimeMachine(AsylumEngine *engine);
 	~PuzzleTimeMachine();
 
-	void reset();
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
 	bool _leftButtonClicked;

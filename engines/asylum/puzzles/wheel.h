@@ -34,7 +34,8 @@ public:
 	PuzzleWheel(AsylumEngine *engine);
 	~PuzzleWheel();
 
-	void reset();
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
 	int32 _currentRect;
