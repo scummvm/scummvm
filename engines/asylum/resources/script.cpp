@@ -503,6 +503,8 @@ END_OPCODE
 // Opcode 0x07
 IMPLEMENT_OPCODE(PlayAnimation)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
+	if (!object)
+		error("[ScriptManager::opcodePlayAnimation] Cannot find specified object (id: %d)", cmd->param1);
 
 	if (cmd->param2 == 2) {
 		if (object->checkFlags()) {
@@ -516,7 +518,7 @@ IMPLEMENT_OPCODE(PlayAnimation)
 	// Update flags
 	if (cmd->param4) {
 		object->flags &= ~kObjectFlag10E38;
-        object->flags |= kObjectFlag20;
+		object->flags |= kObjectFlag20;
 	} else if (cmd->param3) {
 		object->flags &= ~kObjectFlag10E38;
 		object->flags |= kObjectFlag10000;
@@ -633,6 +635,8 @@ END_OPCODE
 // Opcode 0x0F
 IMPLEMENT_OPCODE(EnableObjects)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
+	if (!object)
+		error("[ScriptManager::opcodeEnableObjects] Cannot find specified object (id: %d)", cmd->param1);
 
 	if (!_currentScript->counter && getWorld()->chapter != 13)
 		_vm->sound()->playSound(cmd->param3 ? MAKE_RESOURCE(kResourcePackSound, 6) : MAKE_RESOURCE(kResourcePackSound, 1));
@@ -665,6 +669,8 @@ IMPLEMENT_OPCODE(RemoveObject)
 		return;
 
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
+	if (!object)
+		error("[ScriptManager::opcodeRemoveObject] Cannot find specified object (id: %d)", cmd->param1);
 
 	object->disableAndRemoveFromQueue();
 END_OPCODE
@@ -735,6 +741,8 @@ END_OPCODE
 // Opcode 0x16
 IMPLEMENT_OPCODE(ResetAnimation)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
+	if (!object)
+		error("[ScriptManager::opcodeResetAnimation] Cannot find specified object (id: %d)", cmd->param1);
 
 	if (object->flags & kObjectFlag10000)
 		object->setFrameIndex(object->getFrameCount() - 1);
@@ -746,6 +754,8 @@ END_OPCODE
 // Opcode 0x17
 IMPLEMENT_OPCODE(DisableObject)
 	Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
+	if (!object)
+		error("[ScriptManager::opcodeDisableObject] Cannot find specified object (id: %d)", cmd->param1);
 
 	object->disable();
 END_OPCODE
