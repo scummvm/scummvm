@@ -190,7 +190,7 @@ private:
 	bool _data_455BE8;
 	int16 _data_455BF0;
 	uint32 _data_455BF4;
-	uint32 _data_455BF8;
+	uint32 _keywordStartIndex;
 
 	// Internal flags
 	bool _flag1;
