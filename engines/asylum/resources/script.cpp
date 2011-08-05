@@ -394,8 +394,9 @@ label_exit_processing:
 	return false;
 }
 
+// Save the script queue
 void ScriptManager::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[ScriptManager::saveLoadWithSerializer] Not implemented!");
+	_queue.saveLoadWithSerializer(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
