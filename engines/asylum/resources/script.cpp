@@ -22,6 +22,8 @@
 
 #include "asylum/resources/script.h"
 
+#include "asylum/puzzles/puzzles.h"
+
 #include "asylum/resources/actor.h"
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/object.h"
@@ -1124,7 +1126,7 @@ IMPLEMENT_OPCODE(RunPuzzle)
 	getScreen()->clear();
 	getScreen()->clearGraphicsInQueue();
 
-	_vm->switchEventHandler(_vm->getPuzzle((uint32)cmd->param1));
+	_vm->switchEventHandler(getPuzzles()->getPuzzle((uint32)cmd->param1));
 
 	_currentQueueEntry->currentLine++;
 

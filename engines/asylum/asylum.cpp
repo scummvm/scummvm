@@ -29,22 +29,7 @@
 #include "asylum/resources/special.h"
 #include "asylum/resources/worldstats.h"
 
-#include "asylum/puzzles/boardkeyhidesto.h"
-#include "asylum/puzzles/boardsalvation.h"
-#include "asylum/puzzles/boardyouth.h"
-#include "asylum/puzzles/clock.h"
-#include "asylum/puzzles/fisherman.h"
-#include "asylum/puzzles/hivecontrol.h"
-#include "asylum/puzzles/hivemachine.h"
-#include "asylum/puzzles/lock.h"
-#include "asylum/puzzles/morguedoor.h"
-#include "asylum/puzzles/pipes.h"
-#include "asylum/puzzles/puzzle11.h"
-#include "asylum/puzzles/tictactoe.h"
-#include "asylum/puzzles/timemachine.h"
-#include "asylum/puzzles/vcr.h"
-#include "asylum/puzzles/wheel.h"
-#include "asylum/puzzles/writings.h"
+#include "asylum/puzzles/puzzles.h"
 
 #include "asylum/system/cursor.h"
 #include "asylum/system/savegame.h"
@@ -72,7 +57,6 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
-	memset(&_puzzles, 0, sizeof(_puzzles));
 	memset(&_sinCosTables, 0, sizeof(_sinCosTables));
 	_introPlayed = false;
 	_tickOffset = 0;
@@ -113,6 +97,7 @@ AsylumEngine::~AsylumEngine() {
 	delete _cursor;
 	delete _scene;
 	delete _encounter;
+	delete _puzzles;
 	delete _reaction;
 	delete _savegame;
 	delete _screen;
@@ -127,10 +112,6 @@ AsylumEngine::~AsylumEngine() {
 	delete _console;
 
 	_previousScene = NULL;
-
-	// Cleanup puzzles
-	for (uint i = 0; i < ARRAYSIZE(_puzzles); i++)
-		delete _puzzles[i];
 
 	delete _rnd;
 
@@ -152,6 +133,7 @@ Common::Error AsylumEngine::run() {
 	// Create all game classes
 	_encounter = new Encounter(this);
 	_cursor    = new Cursor(this);
+	_puzzles   = new Puzzles(this);
 	_reaction  = new Reaction(this);
 	_savegame  = new Savegame(this);
 	_screen    = new Screen(this);
@@ -161,7 +143,6 @@ Common::Error AsylumEngine::run() {
 	_speech    = new Speech(this);
 	_text      = new Text(this);
 	_video     = new VideoPlayer(this, _mixer);
-	initPuzzles();
 
 	// Init tables
 	initSinCosTables(80.0, 40, 40);
@@ -269,10 +250,7 @@ void AsylumEngine::reset() {
 	_menu->setGameStarted();
 
 	// Reset puzzles
-	for (uint i = 0; i < ARRAYSIZE(_puzzles); i++)
-		delete _puzzles[i];
-
-	initPuzzles();
+	_puzzles->reset();
 
 	// Reset shared data
 	_data.reset();
@@ -471,35 +449,6 @@ void AsylumEngine::notify(AsylumEventType type, int32 param1, int32 param2) {
 	_handler->handleEvent(evt);
 }
 
-EventHandler *AsylumEngine::getPuzzle(uint32 index) const {
-	if (index >= ARRAYSIZE(_puzzles))
-		error("[AsylumEngine::getPuzzleEventHandler] Invalid index (was: %d - max: %d)", index, ARRAYSIZE(_puzzles));
-
-	if (_puzzles[index] == NULL)
-		error("[AsylumEngine::getPuzzleEventHandler] This puzzle doesn't have an event handler! (index: %d)", index);
-
-	return (EventHandler *)_puzzles[index];
-}
-
-void AsylumEngine::initPuzzles() {
-	_puzzles[0] = new PuzzleVCR(this);
-	_puzzles[1] = new PuzzlePipes(this);
-	_puzzles[2] = new PuzzleTicTacToe(this);
-	_puzzles[3] = new PuzzleLock(this);
-	_puzzles[4] = NULL;// No event handler for Puzzle 5
-	_puzzles[5] = new PuzzleWheel(this);
-	_puzzles[6] = new PuzzleBoardSalvation(this);
-	_puzzles[7] = new PuzzleBoardYouth(this);
-	_puzzles[8] = new PuzzleBoardKeyHidesTo(this);
-	_puzzles[9] = new PuzzleWritings(this);
-	_puzzles[10] = new Puzzle11(this);
-	_puzzles[11] = new PuzzleMorgueDoor(this);
-	_puzzles[12] = new PuzzleClock(this);
-	_puzzles[13] = new PuzzleTimeMachine(this);
-	_puzzles[14] = new PuzzleFisherman(this);
-	_puzzles[15] = new PuzzleHiveMachine(this);
-	_puzzles[16] = new PuzzleHiveControl(this);
-}
 
 void AsylumEngine::initSinCosTables(double a2, int32 a3, int32 a4) {
 	uint32 offset = 0;

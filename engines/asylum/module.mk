@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	puzzles/morguedoor.o \
 	puzzles/pipes.o \
 	puzzles/puzzle.o \
+	puzzles/puzzles.o \
 	puzzles/tictactoe.o \
 	puzzles/timemachine.o \
 	puzzles/puzzle11.o \

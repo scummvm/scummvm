@@ -23,7 +23,6 @@
 #ifndef ASYLUM_ENGINE_H
 #define ASYLUM_ENGINE_H
 
-#include "asylum/puzzles/puzzledata.h"
 #include "asylum/resources/data.h"
 
 #include "asylum/console.h"
@@ -57,10 +56,10 @@
  */
 namespace Asylum {
 
-class Puzzle;
 class Cursor;
 class Encounter;
 class Menu;
+class Puzzles;
 class Reaction;
 class ResourceManager;
 class Savegame;
@@ -153,8 +152,8 @@ public:
 	Text            *text()      { return _text; }
 	VideoPlayer     *video()     { return _video; }
 
-	SharedData      *data()       { return &_data; }
-	PuzzleData      *puzzleData() { return &_puzzleData; }
+	SharedData      *data()      { return &_data; }
+	Puzzles         *puzzles()   { return _puzzles; }
 
 	// Flags
 	void setGameFlag(GameFlag flag);
@@ -181,15 +180,6 @@ public:
 	 * @param type The event type.
 	 */
 	void notify(AsylumEventType type, int32 param1 = 0, int32 param2 = 0);
-
-	/**
-	 * Gets a message handler.
-	 *
-	 * @param index Zero-based index of the message handler
-	 *
-	 * @return The message handler.
-	 */
-	EventHandler* getPuzzle(uint32 index) const;
 
 	/**
 	 * Updates the reverse stereo scene status from the config
@@ -234,15 +224,14 @@ private:
 
 	// Current EventHandler class instance
 	EventHandler *_handler;
-	Puzzle *_puzzles[17];
 
 	// Game data
-	PuzzleData _puzzleData;
-	SharedData _data;
-	int  _gameFlags[130];
-	int16 _sinCosTables[72];
-	bool _introPlayed;
-	int32 _tickOffset;
+	Puzzles *_puzzles;
+	SharedData  _data;
+	int         _gameFlags[130];
+	int16       _sinCosTables[72];
+	bool        _introPlayed;
+	int32       _tickOffset;
 
 	void updateMouseCursor();
 	void processDelayedEvents();
@@ -251,11 +240,6 @@ private:
 	 * Play the intro
 	 */
 	void playIntro();
-
-	/**
-	 * Initializes the puzzles
-	 */
-	void initPuzzles();
 
 	/**
 	 * Initializes the sine/cosine tables.

@@ -22,6 +22,8 @@
 
 #include "asylum/console.h"
 
+#include "asylum/puzzles/puzzles.h"
+
 #include "asylum/resources/actor.h"
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/object.h"
@@ -465,11 +467,11 @@ bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
 
 	// Check index is valid
 	if (index < 0 || index >= ARRAYSIZE(puzzleToScenes)) {
-		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, ARRAYSIZE(_vm->_puzzles));
+		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, ARRAYSIZE(_vm->_puzzles->_puzzles));
 		return true;
 	}
 
-	EventHandler *puzzle = _vm->getPuzzle((uint32)index);
+	EventHandler *puzzle = getPuzzles()->getPuzzle((uint32)index);
 	if (puzzle == NULL) {
 		DebugPrintf("[Error] This puzzle does not exists (%d)", index);
 		return true;

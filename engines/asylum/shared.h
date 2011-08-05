@@ -669,7 +669,7 @@ enum ObjectFlag {
 #define getEncounter()   _vm->encounter()
 #define getCursor()      _vm->cursor()
 #define getMenu()        _vm->menu()
-#define getPuzzleData()  _vm->puzzleData()
+#define getPuzzles()     _vm->puzzles()
 #define getReaction()    _vm->reaction()
 #define getResource()    _vm->resource()
 #define getSound()       _vm->sound()

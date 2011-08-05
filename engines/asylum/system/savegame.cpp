@@ -22,7 +22,7 @@
 
 #include "asylum/system/savegame.h"
 
-#include "asylum/puzzles/puzzledata.h"
+#include "asylum/puzzles/puzzles.h"
 
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/script.h"
@@ -279,7 +279,7 @@ bool Savegame::loadData(Common::String filename) {
 
 	read(file, _vm, 1512, 1, "Game Stats");
 	read(file, getWorld(), 951928, 1, "World Stats");
-	read(file, getPuzzleData(), 752, 1, "Blowup Puzzle Data");
+	read(file, getPuzzles(), 752, 1, "Blowup Puzzle Data");
 	read(file, getEncounter()->items(), 109, getEncounter()->items()->size(), "Encounter Data");
 	read(file, getEncounter()->variables(), 2, getEncounter()->variables()->size(), "Encounter Variables");
 
@@ -307,7 +307,7 @@ bool Savegame::saveData(Common::String filename, Common::String name, ChapterInd
 	writeHeader(file);
 	write(file, _vm, 1512, 1, "Game Stats");
 	write(file, getWorld(), 951928, 1, "World Stats");
-	write(file, getPuzzleData(), 752, 1, "Blowup Puzzle Data");
+	write(file, getPuzzles(), 752, 1, "Blowup Puzzle Data");
 	write(file, getEncounter()->items(), 109, getEncounter()->items()->size(), "Encounter Data");
 	write(file, getEncounter()->variables(), 2, getEncounter()->variables()->size(), "Encounter Variables");
 

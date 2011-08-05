@@ -50,7 +50,7 @@ Puzzle11::~Puzzle11() {
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool Puzzle11::init(const AsylumEvent &evt)  {
-	getPuzzleData()->timeMachineCounter = 0;
+	// FIXME! getPuzzleData()->timeMachineCounter = 0;
 
 	getScreen()->setPalette(getWorld()->graphicResourceIds[12]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[12]);
