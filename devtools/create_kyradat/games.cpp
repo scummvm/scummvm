@@ -1189,6 +1189,7 @@ const int eob1FloppyNeed[] = {
 	kEobBaseSpellProperties,
 	kEobBaseMagicFlightProps,
 	kEobBaseTurnUndeadEffect,
+	kEobBaseBurningHandsDest,
 
 	kLolEobCommonDscDoorShapeIndex,
 	kEobBaseWllFlagPreset,
@@ -1200,12 +1201,13 @@ const int eob1FloppyNeed[] = {
 	kEobBaseDscDoorScaleMult4,
 	kEobBaseDscDoorScaleMult5,
 	kEobBaseDscDoorScaleMult6,
+	kEobBaseDscDoorXE,
 	kEobBaseDscDoorY1,
-	kLolEobCommonDscDoorY2,
 	kEobBaseDscDoorY3,
 	kEobBaseDscDoorY4,
 	kEobBaseDscDoorY5,
 	kEobBaseDscDoorY6,
+	kEobBaseDscDoorY7,
 	kEobBaseDscDoorCoordsExt,
 
 	kEobBaseDscItemPosIndex,
@@ -1408,6 +1410,7 @@ const int eob2FloppyNeed[] = {
 	kEobBaseSpellProperties,
 	kEobBaseMagicFlightProps,
 	kEobBaseTurnUndeadEffect,
+	kEobBaseBurningHandsDest,
 
 	kLolEobCommonDscDoorShapeIndex,
 	kEobBaseWllFlagPreset,

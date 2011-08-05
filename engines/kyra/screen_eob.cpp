@@ -145,12 +145,15 @@ void Screen_Eob::printShadedText(const char *string, int x, int y, int col1, int
 	printText(string, x, y, col1, 0);
 }
 
-void Screen_Eob::loadEobBitmap(const char *file, int tempPage, int destPage) {
-	loadEobCpsFileToPage(file, 0, tempPage, destPage, -1);
+void Screen_Eob::loadShapeSetBitmap(const char *file, int tempPage, int destPage) {
+	loadEobBitmap(file, 0, tempPage, destPage, -1);
 	_curPage = 2;
 }
 
-void Screen_Eob::loadEobCpsFileToPage(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage) {
+void Screen_Eob::loadEobBitmap(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage) {
+	//Common::String tmp = file;
+	//if (_vm->game() == GI_EOB1 && tmp.equalsIgnoreCase("spider"))
+	//	tmp += "1";
 	Common::String tmp = Common::String::format("%s.CPS", file);
 	Common::SeekableReadStream *s = _vm->resource()->createReadStream(tmp);
 	bool loadAlternative = false;
@@ -170,7 +173,7 @@ void Screen_Eob::loadEobCpsFileToPage(const char *file, const uint8 *ditheringDa
 		tmp.setChar('X', 0);
 		s = _vm->resource()->createReadStream(tmp);
 		if (!s)
-			error("Screen_Eob::loadEobCpsFileToPage(): CPS file loading failed.");
+			error("Screen_Eob::loadEobBitmap(): CPS file loading failed.");
 		s->seek(768);
 		loadFileDataToPage(s, destPage, 64000);
 		delete s;

@@ -98,6 +98,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_dscDoorScaleMult2 = 0;
 	_dscDoorScaleMult3 = 0;
 	_dscDoorY1 = 0;
+	_dscDoorXE = 0;
 
 	_color9 = 17;
 	_color10 = 23;
@@ -137,6 +138,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_spellAnimBuffer = 0;
 	_clericSpellOffset = 0;
 	_restPartyElapsedTime = 0;
+	_allowSkip = false;
 
 	_rrCount = 0;
 	memset(_rrNames, 0, 10 * sizeof(const char*));
@@ -980,7 +982,7 @@ void EobCoreEngine::neutralizePoison(int character) {
 }
 
 void EobCoreEngine::npcSequence(int npcIndex) {
-	_screen->loadEobBitmap("OUTTAKE", 5, 3);
+	_screen->loadShapeSetBitmap("OUTTAKE", 5, 3);
 	_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
 
 	drawNpcScene(npcIndex);
@@ -1019,7 +1021,7 @@ void EobCoreEngine::initNpc(int npcIndex) {
 		c->inventory[i] = duplicateItem(c->inventory[i]);
 	}
 
-	_screen->loadEobBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
+	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
 	_screen->_curPage = 2;
 	c->faceShape = _screen->encodeShape(npcIndex << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true);
 	_screen->_curPage = 0;
@@ -1257,7 +1259,7 @@ void EobCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 	if (scumm_stricmp(_dialogueLastBitmap, file)) {
 		if (!destRect) {
 			if (!(flags & 1)) {
-				_screen->loadEobCpsFileToPage("BORDER", 0, 3, 3, 2);
+				_screen->loadEobBitmap("BORDER", 0, 3, 3, 2);
 				_screen->copyRegion(0, 0, 0, 0, 184, 121, 2, page, Screen::CR_NO_P_CHECK);
 			} else {
 				_screen->copyRegion(0, 0, 0, 0, 184, 121, 0, page, Screen::CR_NO_P_CHECK);
@@ -1267,7 +1269,7 @@ void EobCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 				_screen->copyRegion(0, 0, 0, 0, 184, 121, 2, 6, Screen::CR_NO_P_CHECK);
 		}
 
-		_screen->loadEobCpsFileToPage(file, 0, 3, 3, 2);
+		_screen->loadEobBitmap(file, 0, 3, 3, 2);
 		strcpy(_dialogueLastBitmap, file);
 	}
 
@@ -1407,16 +1409,12 @@ bool EobCoreEngine::restParty_checkSpellsToLearn() {
 	return false;
 }
 
-void EobCoreEngine::restParty_npc() {
-
-}
-
 bool EobCoreEngine::restParty_extraAbortCondition() {
 	return false;
 }
 
 void EobCoreEngine::delay(uint32 millis, bool, bool) {
-	while (millis && !shouldQuit() && !skipFlag()) {
+	while (millis && !shouldQuit() && !(_allowSkip && skipFlag())) {
 		updateInput();
 		uint32 step = MIN<uint32>(millis, (_tickLength / 5));
 		_system->delayMillis(step);
@@ -1501,7 +1499,75 @@ int EobCoreEngine::countResurrectionCandidates() {
 }
 
 void EobCoreEngine::seq_portal() {
-	//_portalSeq
+	releaseDoorShapes();
+	releaseMonsterShapes(0, 36);
+	releaseDecorations();
+
+	uint8 *shapes1[5];
+	uint8 *shapes2[5];
+	uint8 *shapes3[5];
+	uint8 *shape0;
+
+	_screen->loadShapeSetBitmap("PORTALA", 5, 3);
+
+	for (int i = 0; i < 5; i++) {
+		shapes1[i] = _screen->encodeShape(i * 3, 0, 3, 75);
+		shapes2[i] = _screen->encodeShape(i * 3, 80, 3, 75);
+		shapes3[i] = _screen->encodeShape(15, i * 18, 15, 18);
+	}
+
+	shape0 = _screen->encodeShape(30, 0, 8, 77);
+	_screen->loadEobBitmap("PORTALB", 0, 5, 3, 2);
+
+	snd_playSoundEffect(33);
+	snd_playSoundEffect(19);
+	_screen->copyRegion(24, 0, 24, 0, 144, 104, 2, 5, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(24, 0, 24, 0, 144, 104, 0, 2, Screen::CR_NO_P_CHECK);
+	_screen->drawShape(2, shapes3[0], 28, 9, 0);
+	_screen->drawShape(2, shapes1[0], 34, 28, 0);
+	_screen->drawShape(2, shapes2[0], 120, 28, 0);
+	_screen->drawShape(2, shape0, 56, 27, 0);
+	_screen->crossFadeRegion(24, 0, 24, 0, 144, 104, 2, 0);
+	_screen->copyRegion(24, 0, 24, 0, 144, 104, 5, 2, Screen::CR_NO_P_CHECK);
+	delay(30 * _tickLength);
+
+	for (const int8 *pos = _portalSeq; *pos > -1 && !shouldQuit(); ) {
+		int s = *pos++;
+		_screen->drawShape(0, shapes3[s], 28, 9, 0);
+		_screen->drawShape(0, shapes1[s], 34, 28, 0);
+		_screen->drawShape(0, shapes2[s], 120, 28, 0);
+
+		if ((s == 1) && (pos >= _portalSeq + 3)) {
+			if (*(pos - 3) == 0) {
+				snd_playSoundEffect(24);
+				snd_playSoundEffect(86);
+			}
+		}
+
+		s = *pos++;
+		if (s == 0) {
+			_screen->drawShape(0, shape0, 56, 27, 0);
+		} else {
+			s--;
+			_screen->copyRegion((s % 5) << 6, s / 5 * 77, 56, 27, 64, 77, 2, 0, Screen::CR_NO_P_CHECK);
+			if (s == 0)
+				snd_playSoundEffect(31);
+			else if (s == 3) {
+				if (*(pos - 2) == 3)
+					snd_playSoundEffect(90);
+			}
+		}		
+		
+		_screen->updateScreen();
+		delay(2 * _tickLength);
+	}
+	
+	delete[] shape0;
+	for (int i = 0; i < 5; i++) {
+		delete[] shapes1[i];
+		delete[] shapes2[i];
+		delete[] shapes3[i];
+	}
 }
 
 bool EobCoreEngine::checkPassword() {
@@ -1830,10 +1896,13 @@ bool EobCoreEngine::monsterAttackHitTest(EobMonsterInPlay *m, int charIndex) {
 
 	int r = rollDice(1, 20);
 	if (r != 20) {
+		// Prot from evil
 		if (_characters[charIndex].effectFlags & 0x800)
 			r -= 2;
+		// blur
 		if (_characters[charIndex].effectFlags & 0x10)
 			r -= 2;
+		// prayer
 		if (_partyEffectFlags & 0x8000)
 			r--;
 	}

@@ -51,8 +51,8 @@ public:
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
 
 	void printShadedText(const char *string, int x, int y, int col1, int col2);
-	void loadEobCpsFileToPage(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage);
-	void loadEobBitmap(const char *file, int tempPage, int destPage);
+	void loadEobBitmap(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage);
+	void loadShapeSetBitmap(const char *file, int tempPage, int destPage);
 
 	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool flag = false);
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...);

@@ -81,6 +81,7 @@ private:
 
 	// Monsters
 	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
+	void updateScriptTimersExtra();
 
 	// Level
 	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2);
@@ -94,6 +95,7 @@ private:
 	const uint8 *_dscDoorY4;
 	const uint8 *_dscDoorY5;
 	const uint8 *_dscDoorY6;
+	const uint8 *_dscDoorY7;
 
 	const uint8 *_doorShapeEncodeDefs;
 	const uint8 *_doorSwitchShapeEncodeDefs;

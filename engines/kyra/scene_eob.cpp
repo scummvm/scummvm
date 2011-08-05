@@ -690,7 +690,7 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 	}
 
 	loadVcnData(gfxFile.c_str(), 0);
-	_screen->loadEobCpsFileToPage("INVENT", 0, 5, 3, 2);
+	_screen->loadEobBitmap("INVENT", 0, 5, 3, 2);
 
 	enableSysTimer(2);
 	_sceneDrawPage1 = 2;
@@ -734,15 +734,13 @@ Common::String EobCoreEngine::initLevelData(int sub){
 			pos += 13;
 		}
 
-	////////	_screen->loadPalette(tmpStr, _screen->getPalette(0));
-
 		if (_flags.gameID == GI_EOB1) {
 			pos += 11;
 			_screen->setShapeFadeMode(0, false);
 			_screen->setShapeFadeMode(1, false);
 		}
-		else
-			_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(0));
+		
+		_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(0));
 
 		Palette backupPal(256);
 		backupPal.copy(_screen->getPalette(0), 224, 32, 224);
@@ -796,9 +794,8 @@ Common::String EobCoreEngine::initLevelData(int sub){
 
 	for (int i = 0; i < 2; i++) {
 		if (_flags.gameID == GI_EOB1) {
-			if (*pos == 0xFF)
-				continue;
-			loadMonsterShapes((const char *)(pos + 1), i * 18, false, *pos * 18);
+			if (*pos != 0xFF)
+				loadMonsterShapes((const char *)(pos + 1), i * 18, false, *pos * 18);
 			pos += 13;
 		} else {
 			if (*pos++ != 0xEC)
@@ -880,7 +877,7 @@ void EobCoreEngine::loadBlockProperties(const char *mazFile) {
 }
 
 void EobCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
-	_screen->loadEobBitmap(cpsFile, 3, 3);
+	_screen->loadShapeSetBitmap(cpsFile, 3, 3);
 	Common::SeekableReadStream *s = _res->createReadStream(decFile);
 
 	_levelDecorationDataSize = s->readUint16LE();
@@ -1142,7 +1139,10 @@ void EobCoreEngine::drawDecorations(int index) {
 int EobCoreEngine::calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction) {
 	uint16 b = calcNewBlockPosition(curBlock, direction);
 	int w = _levelBlockProperties[b].walls[direction ^ 2];
+	
 	int f = _wllWallFlags[w];
+	if (!f)
+		assert (w < (_flags.gameID == GI_EOB1 ? 70 : 80));
 
 	if (w == 74 && _currentBlock == curBlock) {
 		for (int i = 0; i < 5; i++) {
@@ -1163,7 +1163,7 @@ void EobCoreEngine::notifyBlockNotPassable() {
 }
 
 void EobCoreEngine::moveParty(uint16 block) {
-	//processMonstersUnk1();
+	updateAllMonsterDests();
 	uint16 old = _currentBlock;
 	_currentBlock = block;
 
@@ -1176,10 +1176,10 @@ void EobCoreEngine::moveParty(uint16 block) {
 
 	runLevelScript(block, 1);
 
-	if (_levelBlockProperties[block].walls[0] == 26)
+	if (_flags.gameID == GI_EOB2 && _levelBlockProperties[block].walls[0] == 26)
 		memset(_levelBlockProperties[block].walls, 0, 4);
 
-	//processMonstersUnk1();
+	updateAllMonsterDests();
 	_stepCounter++;
 	//_keybControlUnk = -1;
 	_sceneUpdateRequired = true;
@@ -1192,6 +1192,14 @@ int EobCoreEngine::clickedDoorSwitch(uint16 block, uint16 direction) {
 	SpriteDecoration *d = &_doorSwitches[((v > 12 && v < 23) || v == 31) ? 3 : 0];
 	int x1 = d->x + _dscShapeCoords[138] - 4;
 	int y1 = d->y - 4;
+
+	if (_flags.gameID == GI_EOB1 && _currentLevel >= 4 && _currentLevel <= 6) {
+		if (v >= 30)
+			x1 += 4;
+		else
+			x1 += ((v - _dscDoorXE[v]) * 9);
+	}
+	
 	if (!posWithinRect(_mouseX, _mouseY, x1, y1, x1 + (d->shp[2] << 3) + 8, y1 + d->shp[1] + 8) && (_clickedSpecialFlag == 0x40))
 		return clickedDoorNoPry(block, direction);
 

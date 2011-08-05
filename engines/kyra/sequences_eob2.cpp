@@ -941,6 +941,7 @@ DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *
 
 	_system->delayMillis(150);
 	_vm->resetSkipFlag(true);
+	_vm->_allowSkip = true;
 }
 
 DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
@@ -960,6 +961,7 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 
 	_system->delayMillis(150);
 	_vm->resetSkipFlag(true);
+	_vm->_allowSkip = false;
 }
 
 void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {

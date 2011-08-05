@@ -210,7 +210,7 @@ void EobCoreEngine::advanceTimers(uint32 millis) {
 
 	setupCharacterTimers();
 
-	if (_scriptTimersMode & 2) {
+	if (_scriptTimersMode & 1) {
 		for (int i = 0; i < _scriptTimersCount; i++) {
 			if (_scriptTimers[i].next > ct) {
 				uint32 chrt = _scriptTimers[i].next - ct;
@@ -371,7 +371,7 @@ void EobCoreEngine::timerUpdateTeleporters(int timerNum) {
 	_teleporterPulse ^= 1;
 	for (int i = 0; i < 18; i++) {
 		uint8 w = _visibleBlocks[i]->walls[_sceneDrawVarDown];
-		if (w == 44 || w == 74) {
+		if ((_flags.gameID == GI_EOB1 && w == 52) || (_flags.gameID == GI_EOB2 && (w == 44 || w == 74))) {
 			_sceneUpdateRequired = true;
 			return;
 		}

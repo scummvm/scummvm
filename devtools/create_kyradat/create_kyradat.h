@@ -332,11 +332,13 @@ enum kExtractID {
 	kEobBaseDscDoorScaleMult5,
 	kEobBaseDscDoorScaleMult6,
 	kEobBaseDscDoorType5Offs,
+	kEobBaseDscDoorXE,
 	kEobBaseDscDoorY1,
 	kEobBaseDscDoorY3,
 	kEobBaseDscDoorY4,
 	kEobBaseDscDoorY5,
 	kEobBaseDscDoorY6,
+	kEobBaseDscDoorY7,
 	kEobBaseDscDoorCoordsExt,
 
 	kEobBaseDscItemPosIndex,
@@ -402,6 +404,7 @@ enum kExtractID {
 	kEobBaseSpellProperties,
 	kEobBaseMagicFlightProps,
 	kEobBaseTurnUndeadEffect,
+	kEobBaseBurningHandsDest,
 
 	kEob1MainMenuStrings,
 	kEob1DoorShapeDefs,

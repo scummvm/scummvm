@@ -159,7 +159,7 @@ void DarkMoonEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
 
 void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterIndex) {
 	int cp = _screen->setCurPage(2);
-	_screen->loadEobBitmap(file, 3, 3);
+	_screen->loadShapeSetBitmap(file, 3, 3);
 	uint8 tmpPal[16];
 	uint8 newPal[16];
 
@@ -291,7 +291,7 @@ bool DarkMoonEngine::killMonsterExtra(EobMonsterInPlay *m) {
 }
 
 const uint8 *DarkMoonEngine::loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) {
-	_screen->loadEobBitmap(filename, 3, 3);
+	_screen->loadShapeSetBitmap(filename, 3, 3);
 	for (int i = 0; i < 3; i++) {
 		_doorShapes[doorIndex * 3 + i] = _screen->encodeShape(READ_LE_UINT16(shapeDefs), READ_LE_UINT16(shapeDefs + 2), READ_LE_UINT16(shapeDefs + 4), READ_LE_UINT16(shapeDefs + 6));
 		shapeDefs += 8;

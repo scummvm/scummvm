@@ -236,7 +236,7 @@ bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 }
 
 void CharacterGenerator::init() {
-	_screen->loadEobBitmap("CHARGENA", 3, 3);
+	_screen->loadShapeSetBitmap("CHARGENA", 3, 3);
 	if (_faceShapes) {
 		for (int i = 0; i < 44; i++)
 			delete[] _faceShapes[i];
@@ -248,8 +248,8 @@ void CharacterGenerator::init() {
 		_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true);
 	_screen->_curPage = 0;
 
-	_screen->loadEobCpsFileToPage("CHARGEN", 0, 3, 3, 0);
-	_screen->loadEobBitmap("CHARGENB", 3, 3);
+	_screen->loadEobBitmap("CHARGEN", 0, 3, 3, 0);
+	_screen->loadShapeSetBitmap("CHARGENB", 3, 3);
 	if (_chargenMagicShapes) {
 		for (int i = 0; i < 10; i++)
 			delete[] _chargenMagicShapes[i];

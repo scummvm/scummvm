@@ -54,7 +54,11 @@ int LolEobBaseEngine::getBlockDistance(uint16 block1, uint16 block2) {
 namespace Kyra {
 
 void EobCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
-	_screen->loadEobBitmap(filename, 3, 3);
+	Common::String s = _flags.gameID == GI_EOB1 && !scumm_stricmp(filename, "spider") ? "spider1" : filename;
+	if (GI_EOB1 && !scumm_stricmp(filename, "rust"))
+		s += "1";
+
+	_screen->loadShapeSetBitmap(s.c_str(), 3, 3);
 	const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
 
 	for (int i = 0; i < 6; i++, enc += 4)
@@ -275,14 +279,14 @@ void EobCoreEngine::updateAttackingMonsterFlags() {
 }
 
 const int8 *EobCoreEngine::getMonsterBlockPositions(uint16 block) {
-	static int8 pos[6];
-	memset(pos, -1, sizeof(pos));
+	memset(_monsterBlockPosArray, -1, sizeof(_monsterBlockPosArray));
 	for (int8 i = 0; i < 30; i++) {
 		if (_monsters[i].block != block)
 			continue;
-		pos[_monsters[i].pos] = i;
+		assert(_monsters[i].pos < sizeof(_monsterBlockPosArray));
+		_monsterBlockPosArray[_monsters[i].pos] = i;
 	}
-	return pos;
+	return _monsterBlockPosArray;
 }
 
 int EobCoreEngine::getClosestMonsterPos(int charIndex, int block) {
@@ -768,6 +772,11 @@ void EobCoreEngine::updateMonsterDest2(EobMonsterInPlay *m) {
 	}
 	m->mode = 0;
 	m->dest = _currentBlock;
+}
+
+void EobCoreEngine::updateAllMonsterDests() {
+	for (int i = 0; i < 30; i++)
+		updateMonsterDest(&_monsters[i]);
 }
 
 void EobCoreEngine::turnFriendlyMonstersHostile() {

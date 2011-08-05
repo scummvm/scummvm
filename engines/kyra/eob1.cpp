@@ -78,6 +78,9 @@ Common::Error EobEngine::init() {
 
 	_scriptTimersCount = 1;
 
+	//_wllWallFlags[132] = 0x1f;
+	_wllWallFlags[133] = 1;
+
 	return Common::kNoError;
 }
 
@@ -341,8 +344,25 @@ void EobEngine::replaceMonster(int unit, uint16 block, int pos, int dir, int typ
 	}
 }
 
+void EobEngine::updateScriptTimersExtra() {
+	int cnt = 0;
+	for (int i = 1; i < 30; i++) {
+		if (_monsters[i].hitPointsCur <= 0)
+			cnt++;
+	}
+
+	if (!cnt) {
+		for (int i = 1; i < 30; i++) {
+			if (getBlockDistance(_monsters[i].block, _currentBlock) > 3) {
+				killMonster(&_monsters[i], true);
+				break;
+			}
+		}
+	}
+}
+
 void EobEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) {
-	_screen->loadEobBitmap("DOOR", 5, 3);
+	_screen->loadShapeSetBitmap("DOOR", 5, 3);
 	_screen->_curPage = 2;
 
 	if (doorType1 != 0xff) {
@@ -351,8 +371,8 @@ void EobEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 			_doorShapes[shapeId1 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3]);
 			enc = &_doorSwitchShapeEncodeDefs[(doorType1 * 3 + i) << 2];
 			_doorSwitches[shapeId1 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3]);
-			_doorSwitches[shapeId1 + i].x = _doorSwitchCoords[doorType1 << 1];
-			_doorSwitches[shapeId1 + i].y = _doorSwitchCoords[(doorType1 << 1) + 1];
+			_doorSwitches[shapeId1 + i].x = _doorSwitchCoords[doorType1 * 6 + i * 2];
+			_doorSwitches[shapeId1 + i].y = _doorSwitchCoords[doorType1 * 6 + i * 2 + 1];
 		}
 	}
 
@@ -362,8 +382,8 @@ void EobEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 			_doorShapes[shapeId2 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3]);
 			enc = &_doorSwitchShapeEncodeDefs[(doorType2 * 3 + i) << 2];
 			_doorSwitches[shapeId2 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3]);
-			_doorSwitches[shapeId2 + i].x = _doorSwitchCoords[doorType2 << 1];
-			_doorSwitches[shapeId2 + i].y = _doorSwitchCoords[(doorType2 << 1) + 1];
+			_doorSwitches[shapeId2 + i].x = _doorSwitchCoords[doorType2 * 6 + i * 2];
+			_doorSwitches[shapeId2 + i].y = _doorSwitchCoords[doorType2 * 6 + i * 2+ 1];
 		}
 	}
 
@@ -383,7 +403,7 @@ void EobEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 		case 4:
 		case 5:
 		case 6:
-			y = _dscDoorY2[mDim] - shp[1];
+			y = _dscDoorY6[mDim] - shp[1];
 			d1 = _dscDoorCoordsExt[index << 1] >> 3;
 			d2 = _dscDoorCoordsExt[(index << 1) + 1] >> 3;
 			if (_shpDmX1 > d1)
@@ -403,7 +423,7 @@ void EobEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 		case 7:
 		case 8:
 		case 9:
-			y = _dscDoorY3[mDim] - _doorShapes[shapeIndex + 3][1];
+			y = _dscDoorY7[mDim] - _doorShapes[shapeIndex + 3][1];
 			d1 = x - (_doorShapes[shapeIndex + 3][2] << 2);
 			x -= (shp[2] << 2);
 			drawBlockObject(0, 2, _doorShapes[shapeIndex + 3], d1, y, 5);

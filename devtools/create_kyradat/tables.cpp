@@ -2001,6 +2001,11 @@ const ExtractEntrySearchData kEobBaseDscDoorType5OffsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
+const ExtractEntrySearchData kEobBaseDscDoorXEProvider[] = {
+	{ UNK_LANG, kPlatformPC, { 0x00000020, 0x0000010F, { { 0x7B, 0x7D, 0x03, 0xDE, 0x33, 0x95, 0xB8, 0xFD, 0xAD, 0x72, 0x44, 0x7D, 0x47, 0xFE, 0x04, 0x3D } } } },
+	EXTRACT_END_ENTRY
+};
+
 const ExtractEntrySearchData kEobBaseDscDoorY1Provider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000004, 0x000000D7, { { 0x25, 0xAE, 0xF4, 0x99, 0xE8, 0x97, 0x47, 0xAE, 0x75, 0xF3, 0xA9, 0x70, 0x4C, 0x70, 0xF3, 0x11 } } } },	// EOB 1
 	{ UNK_LANG, kPlatformPC, { 0x00000004, 0x000000D8, { { 0xB4, 0xAA, 0x0D, 0x91, 0x58, 0x22, 0x16, 0xCF, 0xC5, 0x9D, 0x8D, 0xA1, 0xB4, 0x40, 0x83, 0x0E } } } },	// EOB 2
@@ -2024,6 +2029,11 @@ const ExtractEntrySearchData kEobBaseDscDoorY5Provider[] = {
 
 const ExtractEntrySearchData kEobBaseDscDoorY6Provider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000004, 0x000000D9, { { 0x4D, 0x15, 0x4A, 0xF1, 0x17, 0x09, 0xC1, 0xA6, 0x08, 0x4A, 0xCD, 0xB2, 0x68, 0xC2, 0x59, 0x52 } } } },
+	EXTRACT_END_ENTRY
+};
+
+const ExtractEntrySearchData kEobBaseDscDoorY7Provider[] = {
+	{ UNK_LANG, kPlatformPC, { 0x00000004, 0x000000DA, { { 0xA9, 0x24, 0x71, 0x8A, 0x18, 0x24, 0x6D, 0x0A, 0x65, 0x12, 0xBB, 0x1F, 0xE7, 0x95, 0xC5, 0xA4 } } } },
 	EXTRACT_END_ENTRY
 };
 
@@ -2340,7 +2350,14 @@ const ExtractEntrySearchData kEobBaseMagicFlightPropsProvider[] = {
 };
 
 const ExtractEntrySearchData kEobBaseTurnUndeadEffectProvider[] = {
-	{ UNK_LANG, kPlatformUnknown, { 0x0000008C, 0x00002E8B, { { 0x96, 0x15, 0x61, 0x12, 0x43, 0xCF, 0x3A, 0x84, 0x1A, 0x89, 0xB5, 0x32, 0x0D, 0xB3, 0x20, 0x67 } } } },
+	{ UNK_LANG, kPlatformPC, { 0x0000008C, 0x00002E8B, { { 0x96, 0x15, 0x61, 0x12, 0x43, 0xCF, 0x3A, 0x84, 0x1A, 0x89, 0xB5, 0x32, 0x0D, 0xB3, 0x20, 0x67 } } } },
+
+	EXTRACT_END_ENTRY
+};
+
+const ExtractEntrySearchData kEobBaseBurningHandsDestProvider[] = {
+	{ UNK_LANG, kPlatformPC, { 0x00000008, 0x0000000C, { { 0x61, 0xD7, 0xAB, 0xE1, 0x56, 0x54, 0x51, 0x5B, 0xD9, 0x59, 0x2D, 0x3D, 0xAE, 0xA4, 0x49, 0x31 } } } },	// EOB1
+	{ UNK_LANG, kPlatformPC, { 0x00000020, 0x0000003E, { { 0xA5, 0x8C, 0xCA, 0x13, 0xED, 0x0F, 0xB7, 0xA2, 0xD7, 0x9C, 0xCD, 0x11, 0x65, 0x11, 0x4B, 0xD8 } } } },	// EOB2
 
 	EXTRACT_END_ENTRY
 };
@@ -3775,11 +3792,13 @@ const ExtractEntry extractProviders[] = {
 	{ kEobBaseDscDoorScaleMult5, kEobBaseDscDoorScaleMult5Provider },
 	{ kEobBaseDscDoorScaleMult6, kEobBaseDscDoorScaleMult6Provider },
 	{ kEobBaseDscDoorType5Offs, kEobBaseDscDoorType5OffsProvider },
+	{ kEobBaseDscDoorXE, kEobBaseDscDoorXEProvider },
 	{ kEobBaseDscDoorY1, kEobBaseDscDoorY1Provider },
 	{ kEobBaseDscDoorY3, kEobBaseDscDoorY3Provider },
 	{ kEobBaseDscDoorY4, kEobBaseDscDoorY4Provider },
 	{ kEobBaseDscDoorY5, kEobBaseDscDoorY5Provider },
 	{ kEobBaseDscDoorY6, kEobBaseDscDoorY6Provider },
+	{ kEobBaseDscDoorY7, kEobBaseDscDoorY7Provider },
 	{ kEobBaseDscDoorCoordsExt, kEobBaseDscDoorCoordsExtProvider },
 	{ kEobBaseDscItemPosIndex, kEobBaseDscItemPosIndexProvider },
 	{ kEobBaseDscItemShpX, kEobBaseDscItemShpXProvider },
@@ -3843,6 +3862,7 @@ const ExtractEntry extractProviders[] = {
 	{ kEobBaseSpellProperties, kEobBaseSpellPropertiesProvider },
 	{ kEobBaseMagicFlightProps, kEobBaseMagicFlightPropsProvider },
 	{ kEobBaseTurnUndeadEffect, kEobBaseTurnUndeadEffectProvider },
+	{ kEobBaseBurningHandsDest, kEobBaseBurningHandsDestProvider },
 
 	{ kEob1MainMenuStrings, kEob1MainMenuStringsProvider },
 	{ kEob1DoorShapeDefs, kEob1DoorShapeDefsProvider },

@@ -150,7 +150,7 @@ Button *EobCoreEngine::gui_getButton(Button *buttonList, int index) {
 }
 
 void EobCoreEngine::gui_drawPlayField(bool refresh) {
-	_screen->loadEobCpsFileToPage("PLAYFLD", 0, 5, 3, 2);
+	_screen->loadEobBitmap("PLAYFLD", 0, 5, 3, 2);
 	int cp = _screen->setCurPage(2);
 	gui_drawCompass(true);
 
@@ -163,7 +163,7 @@ void EobCoreEngine::gui_drawPlayField(bool refresh) {
 	if (!_loading)
 		_screen->updateScreen();
 
-	_screen->loadEobCpsFileToPage("INVENT", 0, 5, 3, 2);
+	_screen->loadEobBitmap("INVENT", 0, 5, 3, 2);
 }
 
 void EobCoreEngine::gui_restorePlayField() {

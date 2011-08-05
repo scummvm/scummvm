@@ -205,7 +205,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 
 	setupCharacterTimers();
 
-	_screen->loadEobBitmap("CHARGENA", 3, 3);
+	_screen->loadShapeSetBitmap("CHARGENA", 3, 3);
 	for (int i = 0; i < 6; i++) {
 		EobCharacter *c = &_characters[i];
 		if (!c->flags || c->portrait < 0)
@@ -213,12 +213,12 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		c->faceShape = _screen->encodeShape((c->portrait % 10) << 2, (c->portrait / 10) << 5, 4, 32, true);
 	}
 
-	_screen->loadEobBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
+	_screen->loadShapeSetBitmap(_flags.gameID == GI_EOB2 ? "OUTPORTS" : "OUTTAKE", 3, 3);
 	for (int i = 0; i < 6; i++) {
 		EobCharacter *c = &_characters[i];
 		if (!c->flags || c->portrait >= 0)
 			continue;
-		c->faceShape = _screen->encodeShape(-(c->portrait + 1), _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true);
+		c->faceShape = _screen->encodeShape((-(c->portrait + 1)) << 2, _flags.gameID == GI_EOB2 ? 0 : 160, 4, 32, true);
 	}
 	_screen->_curPage = 0;
 
