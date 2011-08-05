@@ -1754,12 +1754,8 @@ void ScummEngine::setupMusic(int midi) {
 	case MT_PCJR:
 		_musicType = MDT_PCJR;
 		break;
-	//case MT_CMS:
-#if 1
-		_musicType = MDT_ADLIB;
-#else
-		_musicType = MDT_CMS; // Still has number of bugs, disable by default
-#endif
+	case MT_CMS:
+		_musicType = MDT_CMS;
 		break;
 	case MT_TOWNS:
 		_musicType = MDT_TOWNS;

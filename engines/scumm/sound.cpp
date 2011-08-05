@@ -2104,17 +2104,36 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 			_fileHandle->read(_res->createResource(rtSound, idx, wa_size + 6), wa_size + 6);
 		}
 		return 1;
-	} else if (_musicType == MDT_CMS && ad_offs != 0) {
+	} else if (_musicType == MDT_CMS) {
 		if (_game.features & GF_OLD_BUNDLE) {
-			_fileHandle->seek(wa_offs + wa_size + 6, SEEK_SET);
-			byte musType = _fileHandle->readByte();
+			bool hasAdLibMusicTrack = false;
 
-			if (musType == 0x80) {
+			if (ad_offs) {
+				_fileHandle->seek(ad_offs + 4 + 2, SEEK_SET);
+				hasAdLibMusicTrack = (_fileHandle->readByte() == 0x80);
+			}
+
+			if (hasAdLibMusicTrack) {
 				_fileHandle->seek(ad_offs, SEEK_SET);
 				_fileHandle->read(_res->createResource(rtSound, idx, ad_size), ad_size);
 			} else {
 				_fileHandle->seek(wa_offs, SEEK_SET);
 				_fileHandle->read(_res->createResource(rtSound, idx, wa_size), wa_size);
+			}
+		} else {
+			bool hasAdLibMusicTrack = false;
+
+			if (ad_offs) {
+				_fileHandle->seek(ad_offs + 2, SEEK_SET);
+				hasAdLibMusicTrack = (_fileHandle->readByte() == 0x80);
+			}
+
+			if (hasAdLibMusicTrack) {
+				_fileHandle->seek(ad_offs - 4, SEEK_SET);
+				_fileHandle->read(_res->createResource(rtSound, idx, ad_size + 4), ad_size + 4);
+			} else {
+				_fileHandle->seek(wa_offs - 6, SEEK_SET);
+				_fileHandle->read(_res->createResource(rtSound, idx, wa_size + 6), wa_size + 6);
 			}
 		}
 	} else if (ad_offs != 0) {

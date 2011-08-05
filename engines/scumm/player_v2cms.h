@@ -42,7 +42,7 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-//	virtual int  getMusicTimer();
+	virtual int  getMusicTimer();
 	virtual int  getSoundStatus(int sound) const;
 
 	// AudioStream API
@@ -72,12 +72,12 @@ protected:
 
 		uint8 channel;
 		int8 sustainLevel;
-		int8 attackRate;
+		uint8 attackRate;
 		uint8 maxAmpl;
-		int8 decayRate;
-		int8 sustainRate;
-		int8 releaseRate;
-		int8 releaseTime;
+		uint8 decayRate;
+		uint8 sustainRate;
+		uint8 releaseRate;
+		uint8 releaseTime;
 		int8 vibratoRate;
 		int8 vibratoDepth;
 
@@ -91,9 +91,9 @@ protected:
 		int8 unkCount;
 
 		int nextProcessState;
-		int8 curVolume;
-		int8 curOctave;
-		int8 curFreq;
+		uint8 curVolume;
+		uint8 curOctave;
+		uint8 curFreq;
 
 		int8 octaveAdd;
 
@@ -114,8 +114,8 @@ protected:
 	Voice2 _cmsVoices[8];
 	MusicChip _cmsChips[2];
 
-	int8 _tempo;
-	int8 _tempoSum;
+	uint8 _tempo;
+	uint8 _tempoSum;
 	byte _looping;
 	byte _octaveMask;
 	int16 _midiDelay;
@@ -132,6 +132,8 @@ protected:
 	byte _restart;
 	byte _curSno;
 
+	int _musicTimer, _musicTimerTicks;
+
 	void loadMidiData(byte *data, int sound);
 	void play();
 
@@ -147,7 +149,7 @@ protected:
 	void clearNote(byte *&data);
 	void offAllChannels();
 	void playVoice();
-	void processMidiData(uint ticks);
+	void processMidiData();
 
 	Voice2 *getFreeVoice();
 	Voice2 *getPlayVoice(byte param);
