@@ -27,6 +27,7 @@
 #include "agos/intern.h"
 #include "agos/vga.h"
 
+#include "common/endian.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 

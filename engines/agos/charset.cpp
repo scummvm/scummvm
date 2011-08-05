@@ -20,8 +20,7 @@
  *
  */
 
-
-
+#include "common/endian.h"
 #include "common/system.h"
 
 #include "agos/agos.h"

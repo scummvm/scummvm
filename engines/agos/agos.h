@@ -33,7 +33,6 @@
 #include "common/stack.h"
 #include "common/util.h"
 
-#include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
 
@@ -50,6 +49,16 @@
  * - Simon the Sorcerer 2
  * - Simon the Sorcerer Puzzle Pack
  */
+
+namespace Common {
+class File;
+class SeekableReadStream;
+}
+
+namespace Graphics {
+class Surface;
+}
+
 namespace AGOS {
 
 uint fileReadItemID(Common::SeekableReadStream *in);
@@ -59,6 +68,8 @@ uint fileReadItemID(Common::SeekableReadStream *in);
 #ifdef ENABLE_AGOS2
 class MoviePlayer;
 #endif
+
+class MidiPlayer;
 
 struct Child;
 struct SubObject;
@@ -548,7 +559,7 @@ protected:
 
 	byte _lettersToPrintBuf[80];
 
-	MidiPlayer _midi;
+	MidiPlayer *_midi;
 	bool _midiEnabled;
 
 	int _vgaTickCounter;

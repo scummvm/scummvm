@@ -23,6 +23,7 @@
 #include "agos/agos.h"
 #include "agos/vga.h"
 
+#include "common/endian.h"
 #include "common/textconsole.h"
 
 namespace AGOS {
