@@ -235,7 +235,7 @@ static const GameSettings gameVariantsTable[] = {
 
 	{"pass", 0, 0, GID_PASS, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_ADLIB, GF_16COLOR, Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
 
-	{"monkey", "VGA",      "vga", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NOSPEECH},
+	{"monkey", "VGA",      "vga", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, 0, UNK, GUIO_NOSPEECH},
 	{"monkey", "EGA",      "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32, GF_16COLOR,     Common::kPlatformPC, GUIO_NOSPEECH},
 	{"monkey", "No AdLib", "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_PCJR,                        GF_16COLOR,     Common::kPlatformAtariST, GUIO_NOSPEECH | GUIO_NOMIDI},
 	{"monkey", "Demo",     "ega", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_PCJR | MDT_ADLIB,            GF_16COLOR,     Common::kPlatformPC, GUIO_NOSPEECH | GUIO_NOMIDI},
