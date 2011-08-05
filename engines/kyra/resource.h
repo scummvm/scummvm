@@ -405,11 +405,13 @@ enum KyraResources {
 	kEobBaseDscDoorScaleMult5,
 	kEobBaseDscDoorScaleMult6,
 	kEobBaseDscDoorType5Offs,
+	kEobBaseDscDoorXE,
 	kEobBaseDscDoorY1,
 	kEobBaseDscDoorY3,
 	kEobBaseDscDoorY4,
 	kEobBaseDscDoorY5,
 	kEobBaseDscDoorY6,
+	kEobBaseDscDoorY7,
 	kEobBaseDscDoorCoordsExt,
 
 	kEobBaseDscItemPosIndex,
@@ -475,6 +477,7 @@ enum KyraResources {
 	kEobBaseSpellProperties,
 	kEobBaseMagicFlightProps,
 	kEobBaseTurnUndeadEffect,
+	kEobBaseBurningHandsDest,
 
 	kEob1MainMenuStrings,
 	kEob1DoorShapeDefs,

@@ -54,7 +54,7 @@ const uint8 *EobCoreEngine::initScriptTimers(const uint8 *pos) {
 	while (((int16)READ_LE_UINT16(pos)) != -1) {
 		_scriptTimers[_scriptTimersCount].func = READ_LE_UINT16(pos);
 		pos += 2;
-		uint16 ticks = (int16)READ_LE_UINT16(pos) * 18;
+		uint16 ticks = READ_LE_UINT16(pos) * 18;
 		_scriptTimers[_scriptTimersCount].ticks = ticks;
 		pos += 2;
 		_scriptTimers[_scriptTimersCount++].next = _system->getMillis() + ticks * _tickLength;
@@ -64,20 +64,26 @@ const uint8 *EobCoreEngine::initScriptTimers(const uint8 *pos) {
 }
 
 void EobCoreEngine::updateScriptTimers() {
-	if ((_scriptTimersMode & 1) && _stepsUntilScriptCall && _stepCounter > _stepsUntilScriptCall) {
+	bool timerUpdate = false;
+	if ((_scriptTimersMode & 2) && _stepsUntilScriptCall && _stepCounter > _stepsUntilScriptCall) {
 		_inf->run(0, 0x20);
 		_stepCounter = 0;
+		timerUpdate = true;
 	}
 
-	if (_scriptTimersMode & 2) {
+	if (_scriptTimersMode & 1) {
 		for (int i = 0; i < _scriptTimersCount; i++) {
 			if (_scriptTimers[i].next < _system->getMillis()) {
 				_inf->run(_scriptTimers[i].func, _flags.gameID == GI_EOB1 ? 0x20 : 0x80);
 				_scriptTimers[i].next = _system->getMillis() + _scriptTimers[i].ticks * _tickLength;
 				_sceneUpdateRequired = true;
+				timerUpdate = true;
 			}
 		}
 	}
+
+	if (timerUpdate)
+		updateScriptTimersExtra();
 }
 
 EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _vm(engine), _screen(screen),
@@ -211,13 +217,13 @@ bool EobInfProcessor::preventRest() const {
 void EobInfProcessor::loadState(Common::SeekableSubReadStreamEndian &in) {
 	_preventRest = in.readByte();
 	for (int i = 0; i < 18; i++)
-		_flagTable[i] = in.readUint16BE();
+		_flagTable[i] = in.readUint32BE();
 }
 
 void EobInfProcessor::saveState(Common::OutSaveFile *out) {
 	out->writeByte(_preventRest);
 	for (int i = 0; i < 18; i++)
-		out->writeUint16BE(_flagTable[i]);
+		out->writeUint32BE(_flagTable[i]);
 }
 
 const char *EobInfProcessor::getString(uint16 index) {

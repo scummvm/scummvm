@@ -332,11 +332,13 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseDscDoorScaleMult5, kTypeRawData, false },
 	{ kEobBaseDscDoorScaleMult6, kTypeRawData, false },
 	{ kEobBaseDscDoorType5Offs, kTypeRawData, false },
+	{ kEobBaseDscDoorXE, kTypeRawData, false },
 	{ kEobBaseDscDoorY1, kTypeRawData, false },
 	{ kEobBaseDscDoorY3, kTypeRawData, false },
 	{ kEobBaseDscDoorY4, kTypeRawData, false },
 	{ kEobBaseDscDoorY5, kTypeRawData, false },
 	{ kEobBaseDscDoorY6, kTypeRawData, false },
+	{ kEobBaseDscDoorY7, kTypeRawData, false },
 	{ kEobBaseDscDoorCoordsExt, kLolTypeRaw16, false },
 
 	{ kEobBaseDscItemPosIndex, kTypeRawData, false },
@@ -401,6 +403,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseSpellProperties, kTypeRawData, false },
 	{ kEobBaseMagicFlightProps, kTypeRawData, false },
 	{ kEobBaseTurnUndeadEffect, kTypeRawData, false },
+	{ kEobBaseBurningHandsDest, kTypeRawData, false },
 
 	// EYE OF THE BEHOLDER I
 	{ kEob1MainMenuStrings, kTypeStringList, true },
@@ -1516,6 +1519,8 @@ const char *getIdString(const int id) {
 		return "kEobBaseDscDoorScaleMult6";
 	case kEobBaseDscDoorType5Offs:
 		return "kEobBaseDscDoorType5Offs";
+	case kEobBaseDscDoorXE:
+		return "kEobBaseDscDoorXE";
 	case kEobBaseDscDoorY1:
 		return "kEobBaseDscDoorY1";
 	case kEobBaseDscDoorY3:
@@ -1526,6 +1531,8 @@ const char *getIdString(const int id) {
 		return "kEobBaseDscDoorY5";
 	case kEobBaseDscDoorY6:
 		return "kEobBaseDscDoorY6";
+	case kEobBaseDscDoorY7:
+		return "kEobBaseDscDoorY7";
 	case kEobBaseDscDoorCoordsExt:
 		return "kEobBaseDscDoorCoordsExt";
 	case kEobBaseDscItemPosIndex:
@@ -1635,6 +1642,8 @@ const char *getIdString(const int id) {
 		return "kEobBaseMagicFlightProps";
 	case kEobBaseTurnUndeadEffect:
 		return "kEobBaseTurnUndeadEffect";
+	case kEobBaseBurningHandsDest:
+		return "kEobBaseBurningHandsDest";
 	case kEob1MainMenuStrings:
 		return "kEob1MainMenuStrings";
 	case kEob1DoorShapeDefs:

@@ -2971,6 +2971,9 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 	} else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode) {
 		numCols = stream->size() / Palette::kPC98BytesPerColor;
 		pal.loadPC98Palette(*stream, 0, MIN(maxCols, numCols));
+	} else if (_vm->gameFlags().gameID == GI_EOB1) {		
+		numCols = stream->size() / Palette::kVGABytesPerColor;
+		pal.loadVGAPalette7bit(*stream, 0, MIN(maxCols, numCols));
 	} else {
 		numCols = stream->size() / Palette::kVGABytesPerColor;
 		pal.loadVGAPalette(*stream, 0, MIN(maxCols, numCols));
@@ -3436,6 +3439,18 @@ void Palette::loadVGAPalette(Common::ReadStream &stream, int startIndex, int col
 	assert(startIndex + colors <= _numColors);
 
 	stream.read(_palData + startIndex * 3, colors * 3);
+}
+
+void Palette::loadVGAPalette7bit(Common::ReadStream &stream, int startIndex, int colors) {
+	assert(startIndex + colors <= _numColors);
+
+	stream.read(_palData + startIndex * 3, colors * 3);
+	uint8 *pos = _palData + startIndex * 3;
+	for (int i = 0 ; i < colors; i++) {
+		*pos++ &= 0x3f;
+		*pos++ &= 0x3f;
+		*pos++ &= 0x3f;
+	}
 }
 
 void Palette::loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors) {

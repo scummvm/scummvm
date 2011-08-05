@@ -508,6 +508,7 @@ protected:
 	void updateMonsters(int unit);
 	void updateMonsterDest(EobMonsterInPlay *m);
 	void updateMonsterDest2(EobMonsterInPlay *m);
+	void updateAllMonsterDests();
 	void turnFriendlyMonstersHostile();
 	int getNextMonsterDirection(int curBlock, int destBlock);
 	int getNextMonsterPos(EobMonsterInPlay *m, int block);
@@ -619,11 +620,12 @@ protected:
 	const uint8 *_dscDoorScaleMult2;
 	const uint8 *_dscDoorScaleMult3;
 	const uint8 *_dscDoorY1;
+	const uint8 *_dscDoorXE;
 
 	const uint8 *_wllFlagPreset;
 	int _wllFlagPresetSize;
 	const uint8 *_teleporterShapeCoords;
-	const uint8 *_portalSeq;
+	const int8 *_portalSeq;
 
 	// Script
 	void runLevelScript(int block, int flags);
@@ -633,6 +635,7 @@ protected:
 
 	const uint8 *initScriptTimers(const uint8 *pos);
 	void updateScriptTimers();
+	virtual void updateScriptTimersExtra() {}
 
 	EobInfProcessor *_inf;
 	int _stepCounter;
@@ -803,7 +806,7 @@ protected:
 	int restParty_getCharacterWithLowestHp();
 	bool restParty_checkHealSpells(int charIndex);
 	bool restParty_checkSpellsToLearn();
-	virtual void restParty_npc();
+	virtual void restParty_npc() {}
 	virtual bool restParty_extraAbortCondition();
 
 	// misc
@@ -839,6 +842,8 @@ protected:
 	int _rrCount;
 	const char *_rrNames[10];
 	int8 _rrId[10];
+
+	bool _allowSkip;
 
 	Screen_Eob *_screen;
 	GUI_Eob *_gui;
@@ -881,6 +886,7 @@ protected:
 	int _dstMonsterIndex;
 	bool _preventMonsterFlash;
 	int16 _foundMonstersArray[5];
+	int8 _monsterBlockPosArray[6];
 
 	// magic
 	void useMagicBookOrSymbol(int charIndex, int type);
@@ -969,6 +975,7 @@ protected:
 	void spellCallback_start_heal();
 	void spellCallback_start_layOnHands();
 	void spellCallback_start_turnUndead();
+	bool spellCallback_end_kuotoaAttack(EobFlyingObject *fo);
 	bool spellCallback_end_unk1Passive(EobFlyingObject *fo);
 	bool spellCallback_end_unk2Passive(EobFlyingObject *fo);
 	bool spellCallback_end_deathSpellPassive(EobFlyingObject *fo);
@@ -1038,6 +1045,7 @@ protected:
 
 	const uint8 *_magicFlightObjectProperties;
 	const uint8 *_turnUndeadEffect;
+	const uint8 *_burningHandsDest;
 
 	// Menu
 	EobMenuDef *_menuDefs;

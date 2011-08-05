@@ -448,7 +448,7 @@ void EobCoreEngine::initStaticResource() {
 	_npcPreset = _staticres->loadEobNpcData(kEobBaseNpcPresets, temp);
 
 	_teleporterShapeCoords = _staticres->loadRawData(kEobBaseDscTelptrShpCoords, temp);
-	_portalSeq = _staticres->loadRawData(kEobBasePortalSeqData, temp);
+	_portalSeq = (const int8*)_staticres->loadRawData(kEobBasePortalSeqData, temp);
 	_mnDef = _staticres->loadRawData(kEobBaseManDef, temp);
 	_mnWord = _staticres->loadStrings(kEobBaseManWord, _mnNumWord);
 	_mnPrompt = _staticres->loadStrings(kEobBaseManPrompt, temp);
@@ -493,6 +493,7 @@ void EobCoreEngine::initStaticResource() {
 	_dscDoorScaleMult2 = _staticres->loadRawData(kEobBaseDscDoorScaleMult2, temp);
 	_dscDoorScaleMult3 = _staticres->loadRawData(kEobBaseDscDoorScaleMult3, temp);
 	_dscDoorY1 = _staticres->loadRawData(kEobBaseDscDoorY1, temp);
+	_dscDoorXE = _staticres->loadRawData(kEobBaseDscDoorXE, temp);
 
 	_dscItemPosIndex= _staticres->loadRawData(kEobBaseDscItemPosIndex, temp);
 	_dscItemShpX = (const int16*)_staticres->loadRawDataBe16(kEobBaseDscItemShpX, temp);
@@ -533,6 +534,7 @@ void EobCoreEngine::initStaticResource() {
 	_sparkEffectOfY = _staticres->loadRawData(kEobBaseSparkOfY, temp);
 	_magicFlightObjectProperties = _staticres->loadRawData(kEobBaseMagicFlightProps, temp);
 	_turnUndeadEffect = _staticres->loadRawData(kEobBaseTurnUndeadEffect, temp);
+	_burningHandsDest = _staticres->loadRawData(kEobBaseBurningHandsDest, temp);
 
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
@@ -1002,7 +1004,8 @@ void EobCoreEngine::initSpells() {
 	ec2(empty);
 	ec(empty);
 	ec2(empty);
-	ec(unk1Passive);
+	ec1(kuotoaAttack);
+	ec2(unk1Passive);
 	ec2(empty);
 	ec2(unk2Passive);
 	ec(deathSpellPassive);
@@ -1064,6 +1067,7 @@ void EobEngine::initStaticResource() {
 	_dscDoorY4 = _staticres->loadRawData(kEobBaseDscDoorY4, temp);
 	_dscDoorY5 = _staticres->loadRawData(kEobBaseDscDoorY5, temp);
 	_dscDoorY6 = _staticres->loadRawData(kEobBaseDscDoorY6, temp);
+	_dscDoorY7 = _staticres->loadRawData(kEobBaseDscDoorY7, temp);
 	_dscDoorCoordsExt = (const int16*)_staticres->loadRawDataBe16(kEobBaseDscDoorCoordsExt, temp);
 
 	_monsterDistAttType10 = _staticres->loadRawData(kEob1MonsterDistAttType10, temp);

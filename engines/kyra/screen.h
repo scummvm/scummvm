@@ -252,6 +252,11 @@ public:
 	void loadVGAPalette(Common::ReadStream &stream, int startIndex, int colors);
 
 	/**
+	 * Load a VGA palette from the given stream masking out the upper bit.
+	 */
+	void loadVGAPalette7bit(Common::ReadStream &stream, int startIndex, int colors);
+
+	/**
 	 * Load a AMIGA palette from the given stream.
 	 */
 	void loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors);

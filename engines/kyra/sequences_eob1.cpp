@@ -43,7 +43,7 @@ int EobEngine::mainMenu() {
 		switch (menuChoice) {
 			case 0:
 				_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
-				_screen->loadEobCpsFileToPage("INTRO", 0, 5, 3, 2);
+				_screen->loadEobBitmap("INTRO", 0, 5, 3, 2);
 				_screen->setScreenPalette(_screen->getPalette(0));
 				_screen->_curPage = 2;
 				of = _screen->setFont(Screen::FID_6_FNT);
@@ -107,6 +107,7 @@ void EobEngine::seq_playOpeningCredits() {
 	static const char *cmpList[] = { "WESTWOOD.CMP", "AND.CMP", "SSI.CMP", "PRESENT.CMP", "DAND.CMP" };
 	static const uint8 frameDelay[] = { 140, 50, 100, 50, 140 };
 
+	_allowSkip = true;
 	_screen->loadPalette("WESTWOOD.COL", _screen->getPalette(0));
 	_screen->setScreenPalette(_screen->getPalette(0));
 
@@ -125,14 +126,21 @@ void EobEngine::seq_playOpeningCredits() {
 	}
 
 	delay(50 * _tickLength);
+	_allowSkip = false;
 }
 
 void EobEngine::seq_playIntro() {
+	_allowSkip = true;
 	//_sound->playTrack(2);
+
+	_allowSkip = false;
 }
 
 void EobEngine::seq_playFinale() {
+	_allowSkip = true;
 
+
+	_allowSkip = false;
 }
 
 }	// End of namespace Kyra

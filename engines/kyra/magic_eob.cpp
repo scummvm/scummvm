@@ -142,7 +142,7 @@ void EobCoreEngine::usePotion(int charIndex, int weaponSlot) {
 }
 
 void EobCoreEngine::useWand(int charIndex, int weaponSlot) {
-	int v = _items[_characters[charIndex].inventory[weaponSlot]].value - 1;
+	int v = _items[_characters[charIndex].inventory[weaponSlot]].value;
 	if (!v) {
 		_txt->printMessage(_wandStrings[0]);
 		return;
@@ -535,7 +535,7 @@ bool EobCoreEngine::magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int d
 			if (!fo->item && (_characters[c].effectFlags & 8)) {
 				res = true;
 			} else {
-				if ((_characters[c].flags & 1) && hitTest && !monsterAttackHitTest(&_monsters[0], c)) {
+				if ((_characters[c].flags & 1) && (!hitTest || monsterAttackHitTest(&_monsters[0], c))) {
 					int dmg = rollDice(dcTimes, dcPips, dcOffs) * level;
 					res = true;
 					calcAndInflictCharacterDamage(c, 0, 0, dmg, dmgFlag, s, dmgType);
@@ -638,7 +638,31 @@ void EobCoreEngine::spellCallback_start_armor() {
 }
 
 void EobCoreEngine::spellCallback_start_burningHands() {
+	static const int16 bX[] = { 0, 152, 24, 120, 56, 88 };
+	static const int8 bY[] = { 64, 64, 56, 56, 56, 56 };
 
+	for (int i = 0; i < 6; i++)
+		drawBlockObject(i & 1, 0, _firebeamShapes[(5 - i) >> 1], bX[i], bY[i], 0);
+	_screen->updateScreen();
+	delay(2 * _tickLength);
+	
+	int cl = getCharacterMageLevel(_openBookChar);
+	int bl = calcNewBlockPosition(_currentBlock, _currentDirection);
+
+	const int8 *pos = getMonsterBlockPositions(bl);
+	_preventMonsterFlash = true;
+
+	int numDest = (_flags.gameID == GI_EOB1) ? 2 : 6;
+	const uint8 *d = &_burningHandsDest[_currentDirection * (_flags.gameID == GI_EOB1 ? 2 : 8)];
+
+	for (int i = 0; i < numDest; i++, d++) {
+		if (pos[*d] == -1)
+			continue;
+		calcAndInflictMonsterDamage(&_monsters[pos[*d]], 1, 3, cl << 1, 0x21, 4, 0);
+	}
+
+	updateAllMonsterShapes();
+	_sceneUpdateRequired = true;
 }
 
 void EobCoreEngine::spellCallback_start_detectMagic() {
@@ -947,6 +971,10 @@ void EobCoreEngine::spellCallback_start_turnUndead() {
 	}
 
 	_preventMonsterFlash = false;
+}
+
+bool EobCoreEngine::spellCallback_end_kuotoaAttack(EobFlyingObject *fo) {
+	return magicObjectDamageHit(fo, 0, 0, 12, 1);
 }
 
 bool EobCoreEngine::spellCallback_end_unk1Passive(EobFlyingObject *fo) {
