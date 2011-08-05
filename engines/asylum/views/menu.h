@@ -108,7 +108,7 @@ private:
 	bool             _dword_455C80;
 	bool             _dword_455D4C;
 	bool             _dword_455D5C;
-	bool             _dword_455DD8;
+	bool             _isEditingSavegameName;
 	bool             _testSoundsPlaying;
 	int32            _dword_456288;
 	int32            _caretBlink;

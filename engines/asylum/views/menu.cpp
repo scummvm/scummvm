@@ -55,7 +55,7 @@ Menu::Menu(AsylumEngine *vm): _vm(vm) {
 	_dword_455C80 = false;
 	_dword_455D4C = false;
 	_dword_455D5C = false;
-	_dword_455DD8 = false;
+	_isEditingSavegameName = false;
 	_testSoundsPlaying = false;
 	_dword_456288 = 0;
 	_caretBlink = 0;
@@ -644,7 +644,7 @@ bool Menu::click(const AsylumEvent &evt) {
 		break;
 
 	case kMenuSaveGame:
-		_dword_455DD8 = false;
+		_isEditingSavegameName = false;
 		// Fallback to next case
 
 	case kMenuLoadGame:
@@ -895,7 +895,7 @@ void Menu::updateSaveGame() {
 
 			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
 
-			if (!_dword_455DD8) {
+			if (!_isEditingSavegameName) {
 				if (cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
 				 || cursor.y < y  || cursor.y > (y + 24))
 					getText()->loadFont(kFontYellow);
@@ -912,7 +912,7 @@ void Menu::updateSaveGame() {
 			getText()->draw((char *)&text);
 
 			// Draw underscore
-			if (_dword_455DD8) {
+			if (_isEditingSavegameName) {
 				if (getSaveLoad()->getIndex() == (uint32)(index + _startIndex)) {
 					if (_caretBlink < 6)
 						getText()->drawChar('_');
@@ -932,7 +932,7 @@ void Menu::updateSaveGame() {
 
 			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
 
-			if (!_dword_455DD8) {
+			if (!_isEditingSavegameName) {
 				if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
 				 || cursor.y < y   || cursor.y > (y + 24))
 					getText()->loadFont(kFontYellow);
@@ -949,7 +949,7 @@ void Menu::updateSaveGame() {
 			getText()->draw((char *)&text);
 
 			// Draw underscore
-			if (_dword_455DD8) {
+			if (_isEditingSavegameName) {
 				if (getSaveLoad()->getIndex() == (uint32)(index + _startIndex)) {
 					if (_caretBlink < 6)
 						getText()->drawChar('_');
@@ -1686,7 +1686,7 @@ void Menu::clickSaveGame() {
 				_dword_455C80 = false;
 		} else {
 			_dword_455C80 = false;
-			_dword_455DD8 = true;
+			_isEditingSavegameName = true;
 
 			_previousName = *getSaveLoad()->getName();
 			_prefixWidth = getText()->getWidth(Common::String::format("%d. %c", getSaveLoad()->getIndex() + 1, '_').c_str());
@@ -1748,7 +1748,7 @@ void Menu::clickSaveGame() {
 					if (getSaveLoad()->hasSavegame(saveIndex)) {
 						_dword_455C80 = true;
 					} else {
-						_dword_455DD8 = true;
+						_isEditingSavegameName = true;
 						_previousName = *getSaveLoad()->getName();
 						*getSaveLoad()->getName() = getChapterName();
 						_prefixWidth = getText()->getWidth(Common::String::format("%d. %c", getSaveLoad()->getIndex() + 1, '_').c_str());
@@ -1768,7 +1768,7 @@ void Menu::clickSaveGame() {
 					if (getSaveLoad()->hasSavegame(index + _startIndex)) {
 						_dword_455C80 = true;
 					} else {
-						_dword_455DD8 = true;
+						_isEditingSavegameName = true;
 						_previousName = *getSaveLoad()->getName();
 						*getSaveLoad()->getName() = getChapterName();
 						_prefixWidth = getText()->getWidth(Common::String::format("%d. %c", getSaveLoad()->getIndex() + 1, '_').c_str());
@@ -2276,7 +2276,7 @@ void Menu::clickShowCredits() {
 // Key handlers
 //////////////////////////////////////////////////////////////////////////
 void Menu::keySaveGame(const AsylumEvent &evt) {
-	if (!_dword_455DD8)
+	if (!_isEditingSavegameName)
 		return;
 
 	switch (evt.kbd.keycode) {
@@ -2300,13 +2300,13 @@ void Menu::keySaveGame(const AsylumEvent &evt) {
 
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
-		_dword_455DD8 = false;
+		_isEditingSavegameName = false;
 		getSaveLoad()->save();
 		break;
 
 	case Common::KEYCODE_ESCAPE:
 		_dword_455C80 = false;
-		_dword_455DD8 = false;
+		_isEditingSavegameName = false;
 		*getSaveLoad()->getName() = _previousName;
 		getCursor()->show();
 		break;
