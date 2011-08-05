@@ -1762,6 +1762,7 @@ void Menu::clickSaveGame() {
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)
+			 && getScene()
 			 && getWorld()->chapter != kChapterNone) {
 				if (index + _startIndex < 25) {
 					getSaveLoad()->setIndex(index + _startIndex);
@@ -1787,7 +1788,7 @@ void Menu::clickDeleteGame() {
 
 	if (_dword_455C80) {
 		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1350)))
-		 || cursor.y < 273 || cursor.y > (247 + 24)) {
+		 || cursor.y < 273 || cursor.y > (273 + 24)) {
 			if (cursor.x >= 369 && cursor.x <= (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1351)))
 			 && cursor.y >= 273 && cursor.y <= (273 + 24))
 				_dword_455C80 = false;
