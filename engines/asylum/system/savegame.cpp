@@ -79,9 +79,15 @@ void Savegame::loadList() {
 			if (!file)
 				error("[Savegame::loadList] Cannot open savegame: %s", getFilename(i).c_str());
 
-			_savegameToScene[i] = read(file, "Level");
-			_names[i] = read(file, 45, "Game Name");
-			_savegames[i] = true;
+			// Check file size (we handle empty files, but not invalid ones)
+			if (file->size() == 0) {
+				_names[i] = getText()->get(MAKE_RESOURCE(kResourcePackText, 1324));
+				_savegames[i] = false;
+			} else {
+				_savegameToScene[i] = read(file, "Level");
+				_names[i] = read(file, 45, "Game Name");
+				_savegames[i] = true;
+			}
 
 			delete file;
 		} else {
@@ -222,7 +228,15 @@ bool Savegame::isSavegamePresent(Common::String filename) const {
 	if (g_system->getSavefileManager()->listSavefiles(filename).size() == 0)
 		return false;
 
-	return true;
+	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(filename);
+	if (!file)
+		return false;
+
+	bool isSaveValid = (file->size() == 0) ? false : true;
+
+	delete file;
+
+	return isSaveValid;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -393,7 +407,7 @@ void Savegame::write(Common::OutSaveFile *file, Common::String val, uint32 strLe
 }
 
 void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) const {
-	debugC(kDebugLevelSavegame, "[Savegame] Reading data: %s (%d block(s) of size %d)", description.c_str(), size, count);
+	debugC(kDebugLevelSavegame, "[Savegame] Writing data: %s (%d block(s) of size %d)", description.c_str(), size, count);
 
 	file->writeUint32LE(size);
 	file->writeUint32LE(count);
