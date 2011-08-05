@@ -66,7 +66,7 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_data_455BE8 = false;
 	_data_455BF0 = 0;
 	_data_455BF4 = 0;
-	_data_455BF8 = 0;
+	_keywordStartIndex = 0;
 
 	load();
 }
@@ -185,8 +185,8 @@ void Encounter::initPortraits() {
 		error("[Encounter::initPortraits] No portrait 2 for this encounter!");
 
 	_portrait2.frameIndex = 0;
-	_portrait2.frameCount = GraphicResource::getFrameCount(_vm, _portrait1.resourceId);
-	_portrait2.rect = GraphicResource::getFrameRect(_vm, _portrait1.resourceId, 0);
+	_portrait2.frameCount = GraphicResource::getFrameCount(_vm, _portrait2.resourceId);
+	_portrait2.rect = GraphicResource::getFrameRect(_vm, _portrait2.resourceId, 0);
 	_portrait2.transTableNum = 0;
 	_portrait2.transTableMax = 0;
 	_portrait2.speech0 = 0;
@@ -323,7 +323,7 @@ bool Encounter::init() {
 		_rectIndex = -1;
 		_value1 = 0;
 		_data_455BF4 = 0;
-		_data_455BF8 = 0;
+		_keywordStartIndex = 0;
 		_data_455B14 = -1;
 
 		getSpeech()->resetTextData();
@@ -417,14 +417,14 @@ bool Encounter::update() {
 
 		if (!getSharedData()->getMatteBarHeight() && doScript && _flag4) {
 			if (!setupSpeech(id))
-			    runScript();
+				runScript();
 		}
 	}
 
 	// Redraw screen
 	if (!getSharedData()->getFlag(kFlagRedraw)) {
 		if (updateScreen())
-		    return true;
+			return true;
 
 		getSharedData()->setFlag(kFlagRedraw, true);
 	}
@@ -545,7 +545,7 @@ int32 Encounter::getKeywordIndex() {
 	Common::Point mousePos = getCursor()->position();
 
 	int16 counter = 0;
-	for (uint i = _data_455BF8; i < ARRAYSIZE(_keywordIndexes); i++) {
+	for (uint i = _keywordStartIndex; i < ARRAYSIZE(_keywordIndexes); i++) {
 		int32 index = _keywordIndexes[i];
 
 		if (counter / 3 >= 8)
@@ -555,7 +555,7 @@ int32 Encounter::getKeywordIndex() {
 			int32 x = _drawingStructs[0].point1.x + 144 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15;
 			int32 y = 16 * counter / 3 + _point.y + 5;
 
-			if (mousePos.x >= x && mousePos.x <= (x + getText()->getWidth(MAKE_RESOURCE(kResourcePackShared, 3681)))
+			if (mousePos.x >= x && mousePos.x <= (x + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + index)))
 			 && mousePos.y >= y && mousePos.y <= (y + 16))
 				return i;
 
@@ -575,7 +575,7 @@ void Encounter::choose(int32 index) {
 		_value1 = (_item->keywords[index] & KEYWORD_MASK);
 		setVariable(1, _value1);
 
-		if (strcmp("Goodbye", getText()->get(MAKE_RESOURCE(kResourcePackShared, 3681 + _value1))))
+		if (strcmp("Goodbye", getText()->get(MAKE_RESOURCE(kResourcePackText, 3681 + index))))
 			if (_index != 79)
 				BYTE1(_item->keywords[index]) |= 0x20;
 
@@ -602,7 +602,7 @@ bool Encounter::checkKeywords() const {
 }
 
 bool Encounter::checkKeywords2() const {
-	for (uint32 i = 0; i < _data_455BF8; i++) {
+	for (uint32 i = 0; i < _keywordStartIndex; i++) {
 		int32 index = _keywordIndexes[i];
 
 		if (index < 0)
@@ -636,7 +636,7 @@ void Encounter::updateFromRect(int32 rectIndex)  {
 				return;
 
 			uint32 counter = 0;
-			for (uint32 i = _data_455BF8 + 1; i < ARRAYSIZE(_keywordIndexes); i++) {
+			for (uint32 i = _keywordStartIndex + 1; i < ARRAYSIZE(_keywordIndexes); i++) {
 				int32 index = _keywordIndexes[i];
 
 				if (counter == 3)
@@ -646,14 +646,14 @@ void Encounter::updateFromRect(int32 rectIndex)  {
 					continue;
 
 				if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
-					_data_455BF8 = i;
+					_keywordStartIndex = i;
 					++counter;
 				}
 			}
 		}
 	} else {
 		uint32 counter = 0;
-		for (int32 i = (int32)_data_455BF8 - 1; i > -1; i--) {
+		for (int32 i = (int32)_keywordStartIndex - 1; i > -1; i--) {
 			int32 index = _keywordIndexes[i];
 
 			if (counter == 3)
@@ -663,7 +663,7 @@ void Encounter::updateFromRect(int32 rectIndex)  {
 				continue;
 
 			if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
-				_data_455BF8 = (uint32)i;
+				_keywordStartIndex = (uint32)i;
 				++counter;
 			}
 		}
@@ -1054,21 +1054,20 @@ void Encounter::drawStructs() {
 void Encounter::drawDialog() {
 	getText()->loadFont(getWorld()->font1);
 
-	if (_data_455BF8 >= 50)
+	if (_keywordStartIndex >= 50)
 		return;
 
 	int16 counter = 0;
 
-	for (uint32 i = _data_455BF8; i < ARRAYSIZE(_keywordIndexes); i++) {
+	for (uint32 i = _keywordStartIndex; i < ARRAYSIZE(_keywordIndexes); i++) {
 		if (counter / 3 >= 8)
 			return;
 
-		int32 index = _keywordIndexes[i];
-
-		if (index < 0)
+		int32 keywordIndex = _keywordIndexes[i];
+		if (keywordIndex < 0)
 			continue;
 
-		if ((_item->keywords[index] & KEYWORD_MASK) > 0 && (BYTE1(_keywordIndexes[i]) & 0x80)) {
+		if ((_item->keywords[keywordIndex] & KEYWORD_MASK) > 0 && (BYTE1(_keywordIndexes[i]) & 0x80)) {
 
 			if (BYTE1(_keywordIndexes[i]) & 0x20)
 				getText()->loadFont(getWorld()->font2);
@@ -1078,11 +1077,11 @@ void Encounter::drawDialog() {
 			Common::Point coords(_drawingStructs[0].point1.y + 144 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15,
 			                     _point.y + (int16)(16 * counter / 3));
 
-			if (getKeywordIndex() == index)
-				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackShared, 3681)), 18, 0);
+			if (getKeywordIndex() == keywordIndex)
+				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + keywordIndex)), 18, 0);
 
 			getText()->setPosition(coords);
-			getText()->draw(MAKE_RESOURCE(kResourcePackShared, 3681));
+			getText()->draw(MAKE_RESOURCE(kResourcePackText, 3681 + keywordIndex));
 
 			++counter;
 			_data_455B14 = i;
@@ -1346,17 +1345,17 @@ bool Encounter::updateScreen() {
 
 	if (!drawBackground()) {
 		_data_455BD0 = false;
-	    return false;
-    }
+		return false;
+	}
 
 	if (!drawPortraits()) {
 		_data_455BD0 = false;
 
-	    if (_data_455BD4)
-	    	drawStructs();
+		if (_data_455BD4)
+			drawStructs();
 
-	    return false;
-    }
+		return false;
+	}
 
 	if (_data_455BD0) {
 
