@@ -34,6 +34,9 @@ public:
 	Puzzle11(AsylumEngine *engine);
 	~Puzzle11();
 
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+
 private:
 	uint32 _counter;
 	uint32 _frameCounts[5];

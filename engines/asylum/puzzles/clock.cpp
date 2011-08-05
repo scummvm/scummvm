@@ -73,7 +73,8 @@ PuzzleClock::~PuzzleClock() {
 }
 
 void PuzzleClock::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzleClock::saveLoadWithSerializer] Not implemented");
+	s.syncAsSint32LE(_frameIndexes[2]);
+	s.syncAsSint32LE(_frameIndexes[1]);
 }
 
 //////////////////////////////////////////////////////////////////////////

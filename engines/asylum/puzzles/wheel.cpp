@@ -150,7 +150,7 @@ PuzzleWheel::~PuzzleWheel() {
 }
 
 void PuzzleWheel::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzleWheel::saveLoadWithSerializer] Not implemented");
+	s.syncAsSint32LE(_resourceIndex);
 }
 
 //////////////////////////////////////////////////////////////////////////

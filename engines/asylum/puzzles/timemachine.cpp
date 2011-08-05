@@ -77,7 +77,31 @@ PuzzleTimeMachine::~PuzzleTimeMachine() {
 }
 
 void PuzzleTimeMachine::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzleTimeMachine::saveLoadWithSerializer] Not implemented");
+	s.syncAsSint32LE(_frameIndexes[0]);
+	s.syncAsSint32LE(_frameIndexes[1]);
+	s.syncAsSint32LE(_frameIndexes[2]);
+	s.syncAsSint32LE(_frameIndexes[3]);
+	s.syncAsSint32LE(_frameIndexes[4]);
+
+	s.skip(4); // Unused
+
+	s.syncBytes((byte *)&_state, sizeof(_state));
+	s.skip(3);            // We only use 5 elements i the state array
+
+	s.skip(5 * 4 * 2);    // The original saves 4 points that are static data
+
+	s.syncAsSint32LE(_point.x);
+	s.syncAsSint32LE(_point.y);
+
+	for (int i = 0; i < 5; i++)
+		s.syncAsSint32LE(_frameIncrements[i]);
+
+	s.syncAsSint32LE(_currentFrameIndex);
+
+	s.syncAsSint32LE(_data_45AAA8);
+	s.syncAsSint32LE(_data_45AAAC);
+
+	s.syncAsSint32LE(_frameIndexes[5]);
 }
 
 //////////////////////////////////////////////////////////////////////////

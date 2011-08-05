@@ -51,7 +51,12 @@ PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, p
 }
 
 void PuzzleBoardYouth::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzleBoardYouth::saveLoadWithSerializer] Not implemented");
+	for (int32 i = 0; i < 9; i++)
+		s.syncAsUint32LE(_charUsed[i]);
+
+	s.syncBytes((byte *)&_solvedText, 20);
+
+	s.syncAsUint32LE(_position);
 }
 
 //////////////////////////////////////////////////////////////////////////

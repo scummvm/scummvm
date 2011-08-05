@@ -53,7 +53,12 @@ PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : PuzzleBoard
 }
 
 void PuzzleBoardKeyHidesTo::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzleBoardKeyHidesTo::saveLoadWithSerializer] Not implemented");
+	for (int32 i = 0; i < 12; i++)
+		s.syncAsUint32LE(_charUsed[i]);
+
+	s.syncBytes((byte *)&_solvedText, 28);
+
+	s.syncAsUint32LE(_position);
 }
 
 //////////////////////////////////////////////////////////////////////////

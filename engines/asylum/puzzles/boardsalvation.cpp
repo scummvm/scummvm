@@ -58,7 +58,12 @@ PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : PuzzleBoard(e
 }
 
 void PuzzleBoardSalvation::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzleBoardSalvation::saveLoadWithSerializer] Not implemented");
+	for (int32 i = 0; i < 9; i++)
+		s.syncAsUint32LE(_charUsed[i]);
+
+	s.syncBytes((byte *)&_solvedText, 20);
+
+	s.syncAsUint32LE(_position);
 }
 
 //////////////////////////////////////////////////////////////////////////

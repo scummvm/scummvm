@@ -58,7 +58,25 @@ PuzzleMorgueDoor::~PuzzleMorgueDoor() {
 }
 
 void PuzzleMorgueDoor::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzleMorgueDoor::saveLoadWithSerializer] Not implemented");
+	s.syncAsSint32LE(_frameIndexes[kTopLeverOpened]);
+	s.syncAsSint32LE(_frameIndexes[kBottomLeverOpened]);
+	s.syncAsSint32LE(_frameIndexes[kBottomGear]);
+	s.syncAsSint32LE(_frameIndexes[kTopLever]);
+	s.syncAsSint32LE(_frameIndexes[kBottomLever]);
+	s.syncAsSint32LE(_frameIndexes[kTopRightLever]);
+	s.syncAsSint32LE(_frameIndexes[kTopSmallLever]);
+	s.syncAsSint32LE(_frameIndexes[kBottomSmallLever]);
+	s.syncAsSint32LE(_frameIndexes[kRightGear]);
+	s.syncAsSint32LE(_frameIndexes[kTopGear]);
+	s.syncAsSint32LE(_frameIndexes[kTopRightValve]);
+	s.syncAsSint32LE(_frameIndexes[kCenterValve]);
+
+	s.syncAsSint32LE(_data_45A9D8);
+	s.syncAsSint32LE(_data_45A9DC);
+	s.syncAsSint32LE(_flag6);
+	s.syncAsSint32LE(_flag7);
+	s.syncAsSint32LE(_topLeverOpen);
+	s.syncAsSint32LE(_bottomLeverOpen);
 }
 
 //////////////////////////////////////////////////////////////////////////
