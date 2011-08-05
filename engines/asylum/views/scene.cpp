@@ -666,7 +666,7 @@ bool Scene::updateScene() {
 #define MESURE_TICKS(func) { \
 	int32 startTick =_vm->getTick(); \
 	func(); \
-	debugC(kDebugLevelScene, #func " Time: %d", _vm->getTick() - startTick); \
+	debugC(kDebugLevelScene, "[Scene] " #func " - Time: %d", _vm->getTick() - startTick); \
 }
 #else
 #define MESURE_TICKS(func) func();

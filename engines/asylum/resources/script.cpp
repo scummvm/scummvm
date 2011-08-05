@@ -350,7 +350,7 @@ bool ScriptManager::process() {
 					if (cmd->opcode >= (int32)_opcodes.size())
 						error("[ScriptManager::process] Invalid opcode index (was: %d, max: %d)", cmd->opcode, _opcodes.size() - 1);
 
-					debugC(kDebugLevelScripts, "[0x%02X] %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+					debugC(kDebugLevelScripts, "[Script] 0x%02X: %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
 						cmd->opcode, _opcodes[cmd->opcode]->name,
 						cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
 						cmd->param6, cmd->param7, cmd->param8, cmd->param9);

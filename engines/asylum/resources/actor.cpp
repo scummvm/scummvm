@@ -985,7 +985,7 @@ void Actor::updateFromDirection(ActorDirection actorDirection) {
 }
 
 void Actor::faceTarget(uint32 target, DirectionFrom from) {
-	debugC(kDebugLevelActor, "[Actor::faceTarget] Facing target %d using direction from %d", target, from);
+	debugC(kDebugLevelActor, "[Actor] Facing target %d using direction from %d", target, from);
 
 	Common::Point point;
 

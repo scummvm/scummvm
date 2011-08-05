@@ -211,7 +211,7 @@ void Encounter::initDrawStructs() {
 // Run
 //////////////////////////////////////////////////////////////////////////
 void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex) {
-	debugC(kDebugLevelEncounter, "Running Encounter %d", encounterIndex);
+	debugC(kDebugLevelEncounter, "[Encounter] Running Encounter %d", encounterIndex);
 
 	if (!_keywordIndex) {
 		_item = &_items[0];
@@ -1429,7 +1429,7 @@ void Encounter::runScript() {
 	do {
 		ScriptEntry entry = getScriptEntry(_scriptData.resourceId, _scriptData.offset);
 
-		debugC(kDebugLevelEncounter, "Encounter %s", entry.toString().c_str());
+		debugC(kDebugLevelEncounter, "[Encounter] Script %s", entry.toString().c_str());
 
 		switch (entry.opcode) {
 		default:
