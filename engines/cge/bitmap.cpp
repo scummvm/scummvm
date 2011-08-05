@@ -187,7 +187,7 @@ uint16 Bitmap::moveVmap(uint8 *buf) {
 		uint16 vsiz = (uint8 *)_b - (uint8 *)_v;
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
 		memcpy(buf, _v, siz);
-		free(_v);
+		delete[] _v;
 		_b = (HideDesc *)((_v = buf) + vsiz);
 		return siz;
 	}
