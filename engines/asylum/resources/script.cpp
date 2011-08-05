@@ -249,6 +249,12 @@ void ScriptManager::load(Common::SeekableReadStream *stream) {
 			command.param9   = stream->readSint32LE();
 
 			script.commands[c] = command;
+
+#ifdef DEBUG
+			// Output encounter info
+			if (command.opcode == kOpcodeRunEncounter)
+				debugC(kDebugLevelEncounter, "%d, %d, %d, %d", command.param1, command.param2, command.param3, command.param4);*/
+#endif
 		}
 
 		script.field_1BAC = stream->readSint32LE();
