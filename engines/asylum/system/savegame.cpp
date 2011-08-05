@@ -339,7 +339,7 @@ void Savegame::seek(Common::InSaveFile *file, uint32 offset, Common::String desc
 }
 
 uint32 Savegame::read(Common::InSaveFile *file, Common::String description) const {
-	debugC(kDebugLevelSavegame, "[Savegame] Reading string: %s", description.c_str());
+	debugC(kDebugLevelSavegame, "[Savegame] Reading %s", description.c_str());
 
 	uint32 size = file->readUint32LE();
 	uint32 count = file->readUint32LE();
@@ -351,7 +351,7 @@ uint32 Savegame::read(Common::InSaveFile *file, Common::String description) cons
 }
 
 Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common::String description) const {
-	debugC(kDebugLevelSavegame, "[Savegame] Reading string: %s (%d)", description.c_str(), strLength);
+	debugC(kDebugLevelSavegame, "[Savegame] Reading %s (of length %d)", description.c_str(), strLength);
 
 	/*uint32 size =*/ file->readUint32LE();
 	uint32 count = file->readUint32LE();
@@ -371,7 +371,7 @@ Common::String Savegame::read(Common::InSaveFile *file, uint32 strLength, Common
 }
 
 void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) const {
-	debugC(kDebugLevelSavegame, "[Savegame] Reading data: %s (%d block(s) of size %d)", description.c_str(), size, count);
+	debugC(kDebugLevelSavegame, "[Savegame] Reading %s (%d block(s) of size %d)", description.c_str(), size, count);
 
 	uint32 fileSize = file->readUint32LE();
 	if (size > fileSize)
@@ -389,7 +389,7 @@ void Savegame::read(Common::InSaveFile *file, Common::Serializable *data, uint32
 }
 
 void Savegame::write(Common::OutSaveFile *file, uint32 val, Common::String description) const {
-	debugC(kDebugLevelSavegame, "[Savegame] Writing value: %s", description.c_str());
+	debugC(kDebugLevelSavegame, "[Savegame] Writing %s: %d", description.c_str(), val);
 
 	file->writeUint32LE(4);
 	file->writeUint32LE(1);
@@ -398,7 +398,7 @@ void Savegame::write(Common::OutSaveFile *file, uint32 val, Common::String descr
 }
 
 void Savegame::write(Common::OutSaveFile *file, Common::String val, uint32 strLength, Common::String description) const {
-	debugC(kDebugLevelSavegame, "[Savegame] Writing string: %s (%d)", description.c_str(), strLength);
+	debugC(kDebugLevelSavegame, "[Savegame] Writing %s (of length %d): %s", description.c_str(), strLength, val.c_str());
 
 	file->writeUint32LE(1);
 	file->writeUint32LE(strLength);
@@ -407,7 +407,7 @@ void Savegame::write(Common::OutSaveFile *file, Common::String val, uint32 strLe
 }
 
 void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) const {
-	debugC(kDebugLevelSavegame, "[Savegame] Writing data: %s (%d block(s) of size %d)", description.c_str(), size, count);
+	debugC(kDebugLevelSavegame, "[Savegame] Writing %s (%d block(s) of size %d)", description.c_str(), size, count);
 
 	file->writeUint32LE(size);
 	file->writeUint32LE(count);
