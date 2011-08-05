@@ -1621,7 +1621,6 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 	// until it's confirmed that the code actually works
 
 	int v248 = 0;
-	double v263 = 5.0;
 	float v274 = a3 + 1.0;
 	float v254 = a2 + a5;
 	float v250 = v274 + a6[0];
@@ -1654,10 +1653,10 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 
 		if (v14 != 0.0) {
 			v234 = v265 / v243;
-			v247 = v265 / v243;
-			v245 = v265 / v243;
+			v247 = v260 / v243;
+			v245 = v255 / v243;
 		}
-		v263 = 5.0;
+		double v263 = 5.0;
 
 		float v15 = v264 - a4;
 		float v16 = v267 - v274;
@@ -1726,6 +1725,8 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 				} else {
 					v230 = -1.0;
 				}
+
+				v231 = v230;
 			} else {
 				v231 = 1.0;
 			}
@@ -1844,7 +1845,7 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 				v225 = 1.0;
 			}
 
-			double v252 = acos(v255);
+			double v252 = acos(v225);
 
 			if (v249 + v252 - 0.001 <= v235) {
 				float v117 = v242 - v240;
