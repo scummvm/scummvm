@@ -44,8 +44,8 @@ AudioThread::AudioThread() :
   tail(0),
   ready(0),
   interval(TIMER_INTERVAL),
-  muteVol(0),
-  playing(-1) {
+  playing(-1),
+  muted(true) {
 }
 
 Audio::MixerImpl* AudioThread::Construct(OSystem* system) {
@@ -73,13 +73,11 @@ bool AudioThread::isSilentMode() {
 
 void AudioThread::setMute(bool on) {
   if (audioOut && !isSilentMode()) {
+    muted = on;
     if (on) {
-      muteVol = audioOut->GetVolume();
-      audioOut->SetVolume(0);
       timer->Cancel();
     }
     else {
-      audioOut->SetVolume(muteVol);
       timer->Start(interval);
     }
   }
@@ -181,6 +179,7 @@ bool AudioThread::OnStart(void) {
     }
   }
 
+  muted = false;
   mixer->setReady(true);
   audioOut->SetVolume(isSilentMode() ? 0 : volume);
   audioOut->Start();
@@ -193,7 +192,9 @@ void AudioThread::OnStop(void) {
   mixer->setReady(false);
 
   if (timer) {
-    timer->Cancel();    
+    if (!muted) {
+      timer->Cancel();
+    }
     delete timer;
   }
 
