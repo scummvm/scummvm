@@ -24,10 +24,10 @@
 #include "common/util.h"
 #include "common/system.h"
 
-
 struct TimerSlot {
 	Common::TimerManager::TimerProc callback;
 	void *refCon;
+	Common::String id;
 	uint32 interval;	// in microseconds
 
 	uint32 nextFireTime;	// in milliseconds
@@ -113,9 +113,23 @@ bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, v
 	assert(interval > 0);
 	Common::StackLock lock(_mutex);
 
+	if (_callbacks.contains(id)) {
+		if (_callbacks[id] != callback) {
+			error("Different callbacks are referred by same name (%s)", id.c_str());
+	}
+	TimerSlotMap::const_iterator i;
+
+	for (i = _callbacks.begin(); i != _callbacks.end(); ++i) {
+		if (i->_value == callback) {
+			error("Same callback is referred by different names (%s vs %s)", i->_key.c_str(), id.c_str());
+		}
+	}
+	_callbacks[id] = callback;
+
 	TimerSlot *slot = new TimerSlot;
 	slot->callback = callback;
 	slot->refCon = refCon;
+	slot->id = id;
 	slot->interval = interval;
 	slot->nextFireTime = g_system->getMillis() + interval / 1000;
 	slot->nextFireTimeMicro = interval % 1000;
