@@ -32,7 +32,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ring.rlb", "466f0e6492d9d0f34d35c5cd088de90f", 37847618),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
@@ -46,7 +46,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ring.rlb", "cb8bba91b30cd172712371d7123bd763", 7427980),
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
@@ -60,7 +60,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ring.rlb", "7b7f0c5b37b58fa5ec06ebb2ca0d0d9d", 8438770),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
