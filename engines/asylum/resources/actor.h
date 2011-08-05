@@ -27,6 +27,7 @@
 
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "common/stream.h"
 
 namespace Asylum {
@@ -38,14 +39,19 @@ class Screen;
 struct ActionArea;
 struct GraphicFrame;
 
-struct ActorData {
+struct ActorData : public Common::Serializable {
 	uint32 count;
 	int32 current;
 	Common::Point points[120];
 	ActorDirection directions[120];
+
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s) {
+		error("[ActorData::saveLoadWithSerializer] Not implemented");
+	}
 };
 
-class Actor {
+class Actor : public Common::Serializable {
 public:
 	Actor(AsylumEngine *engine, ActorIndex index);
 	virtual ~Actor();
@@ -101,6 +107,9 @@ public:
 	int32          getField944() { return _field_944; }
 	int32          getField948() { return _field_948; }
 	int32          getField94C() { return _field_94C; }
+
+	// For saving
+	ActorData     *getData() { return &_data; }
 
 	/////////////////////////////////////////////////////////////////////////
 	// Data
@@ -305,6 +314,9 @@ public:
 	 * @return the distance.
 	 */
 	static uint32 euclidianDistance(Common::Point vec1, Common::Point vec2);
+
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
 	AsylumEngine *_vm;

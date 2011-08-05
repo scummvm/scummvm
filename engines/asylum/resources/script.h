@@ -56,7 +56,7 @@ class Actor;
 class AsylumEngine;
 class Scene;
 
-struct ActionArea {
+struct ActionArea : public Common::Serializable {
 	char  name[52];
 	int32 id;
 	int32 field01;
@@ -114,6 +114,9 @@ struct ActionArea {
 
 		return output;
 	}
+
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s);
 };
 
 class ScriptManager : public Common::Serializable {

@@ -124,6 +124,9 @@ void Object::load(Common::SeekableReadStream *stream) {
 	_field_6A4       = (ActorDirection)stream->readSint32LE();
 }
 
+void Object::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[Object::saveLoadWithSerializer] Not implemented");
+}
 
 void Object::disable() {
 	flags &= ~kObjectFlagEnabled;
