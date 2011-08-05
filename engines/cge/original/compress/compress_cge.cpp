@@ -68,11 +68,12 @@ static void writeData(FILE *f, byte *buff, int size) {
 }
 
 static void uncompress(const char *destFolder) {
-	FILE *volCat, *volDat, *fOut;
+	FILE *volCat, *volDat, *fOut, *fFiles;
 	BtPage btPage;
 
 	volCat = fopen("vol.cat", "rb");
 	volDat = fopen("vol.dat", "rb");
+	fFiles = fopen("files.txt", "w");
 
 	// Get in a list of pages individual files will be on
 	readData(volCat, (byte *)&btPage, sizeof(BtPage));
@@ -95,6 +96,9 @@ static void uncompress(const char *destFolder) {
 			strcpy(fname, "files\\");
 			strcat(fname, btPage._lea[fileNum]._key);
 			
+			// Add filename to files list
+			fprintf(fFiles, "%s\n", btPage._lea[fileNum]._key);
+
 			fOut = fopen(fname, "wb");
 			byte *buffer = (byte *)malloc(btPage._lea[fileNum]._size);
 
@@ -109,6 +113,7 @@ static void uncompress(const char *destFolder) {
 
 	fclose(volCat);
 	fclose(volDat);
+	fclose(fFiles);
 }
 
 #define MAX_FILES 5000
@@ -136,7 +141,7 @@ static void recompress(const char *srcFolder) {
 
 	/* Build the index page */
 	// Header
-	memset(&btPage, sizeof(BtPage), 0);
+	memset(&btPage, 0, sizeof(BtPage));
 	int pageCount = fileCount / LEA_SIZE;
 	btPage._hea._count = pageCount;
 	btPage._hea._down = 1;
@@ -162,7 +167,7 @@ static void recompress(const char *srcFolder) {
 			lastFile = fileCount - 1;
 
 		// Header
-		memset(&btPage, sizeof(BtPage), 0);
+		memset(&btPage, 0, sizeof(BtPage));
 		btPage._hea._count = lastFile - startFile + 1;
 		btPage._hea._down = 0xffff;
 
@@ -205,6 +210,7 @@ static void recompress(const char *srcFolder) {
 
 int main(int argc,  const char *argv[]) {
 	recompress("english_files\\");
+//	uncompress("files\\");
 	return 0;
 }
 
