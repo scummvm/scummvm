@@ -39,8 +39,8 @@ SharedData::SharedData() {
 	memset(&_ambientTicks, 0, sizeof(_ambientTicks));
 	_globalPoint.x                     = -1;
 	_globalPoint.y                     = -1;
-	// _flagSkipScriptProcessing
-	// _flagEncounterRunning
+	_flagSkipScriptProcessing          = false;
+	_flagIsEncounterRunning            = false;
 	// player ActorIndex
 	_sceneOffset                       = 0;
 	_sceneOffsetAdd                    = 0;
@@ -221,11 +221,11 @@ bool SharedData::getFlag(GlobalFlag flag) const {
 	case kFlagScene1:
 		return _flagScene1;
 
-	//case kFlagSkipScriptProcessing:
-	//	return _flagSkipScriptProcessing;
+	case kFlagSkipScriptProcessing:
+		return _flagSkipScriptProcessing;
 
-	//case kFlagEncounterRunning:
-	//	return _flagEncounterRunning;
+	case kFlagIsEncounterRunning:
+		return _flagIsEncounterRunning;
 
 	case kFlagActorUpdateEnabledCheck:
 		return _flagActorUpdateEnabledCheck;
@@ -268,13 +268,13 @@ void SharedData::setFlag(GlobalFlag flag, bool state) {
 		_flagScene1 = state;
 		break;
 
-	//case kFlagSkipScriptProcessing:
-	//	_flagSkipScriptProcessing = state;
-	//	break;
+	case kFlagSkipScriptProcessing:
+		_flagSkipScriptProcessing = state;
+		break;
 
-	//case kFlagEncounterRunning:
-	//	_flagEncounterRunning = state;
-	//	break;
+	case kFlagIsEncounterRunning:
+		_flagIsEncounterRunning = state;
+		break;
 
 	case kFlagActorUpdateEnabledCheck:
 		_flagActorUpdateEnabledCheck = state;
@@ -299,17 +299,13 @@ void SharedData::saveLoadAmbientSoundData(Common::Serializer &s) {
 }
 
 void SharedData::saveLoadWithSerializer(Common::Serializer &s) {
-	// Original skips two elements (original has one unused, one used for debugging screen update counts)
-	s.skip(8);
-
-	// Script queue (part of ScriptManager)
-
 	// Global coordinates (original uses int32 for coordinates)
 	s.syncAsSint32LE(_globalPoint.x);
 	s.syncAsSint32LE(_globalPoint.y);
 
-	// Processing skipped (part of ScriptManager)
-	// Encounter running (part of Encounter)
+	// Processing of scripts/encounter
+	s.syncAsUint32LE(_flagSkipScriptProcessing);
+	s.syncAsUint32LE(_flagIsEncounterRunning);
 
 	// Player index
 	//s.syncAsUint32LE(playerIndex);

@@ -46,8 +46,7 @@ namespace Asylum {
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _objectId3(kObjectNone),
-	_actorIndex(kActorInvalid), _flag1(false), _flag2(false), _flag3(false), _flag4(false), _disablePlayerOnExit(false),
-	_isRunning(false) {
+	_actorIndex(kActorInvalid), _flag1(false), _flag2(false), _flag3(false), _flag4(false), _disablePlayerOnExit(false) {
 
 	memset(&_keywordIndexes, 0, sizeof(_keywordIndexes));
 	_rectIndex = -1;
@@ -262,7 +261,7 @@ void Encounter::exitEncounter() {
 	// Original saves the item back here
 
 	// Update flags
-	_isRunning = false;
+	getSharedData()->setFlag(kFlagIsEncounterRunning, false);
 	getSharedData()->setFlag(kFlag3, true);
 
 	if (_flag2)
@@ -313,7 +312,7 @@ bool Encounter::init() {
 		getSound()->setMusicVolume(Config.musicVolume - 500);
 
 	if (!getSharedData()->getMatteBarHeight()) {
-		_isRunning = true;
+		getSharedData()->setFlag(kFlagIsEncounterRunning, true);
 		_data_455BD4 = false;
 		_data_455BD8 = false;
 		_data_455BDC = false;
@@ -1143,7 +1142,7 @@ void Encounter::drawScreen() {
 
 				// Play movie
 				getScreen()->clear();
-				getVideo()->play(getSharedData()->movieIndex, _isRunning ? (EventHandler*)this : getScene());
+				getVideo()->play(getSharedData()->movieIndex, getSharedData()->getFlag(kFlagIsEncounterRunning) ? (EventHandler*)this : getScene());
 				getScreen()->clearGraphicsInQueue();
 				getScreen()->clear();
 				getCursor()->hide();
@@ -1167,7 +1166,7 @@ void Encounter::drawScreen() {
 				getSharedData()->setMatteBarHeight(170);
 			}
 		} else if (getSharedData()->getMatteBarHeight() >= 170) {
-			if (_isRunning) {
+			if (getSharedData()->getFlag(kFlagIsEncounterRunning)) {
 				getSharedData()->setMatteBarHeight(0);
 				getCursor()->show();
 			}

@@ -41,9 +41,9 @@ enum GlobalFlag {
 	kFlagSceneRectChanged,
 	kFlagScene1,
 	kFlagSkipScriptProcessing,
-	kFlagEncounterRunning,
+	kFlagIsEncounterRunning,
 	kFlagActorUpdateEnabledCheck,
-	kFlagActorUpdateStatus15Check
+	kFlagActorUpdateStatus15Check,
 };
 
 /**
@@ -65,7 +65,7 @@ enum GlobalFlag {
  *  uint32 {15}    - ambient ticks
  *  uint32 {1}     - UNUSED
  *  uint32 {1}     - UNUSED (scene updateScreen calls count)
- *  -- Script queue (stored in ScriptManager - reset on scene change)
+ *  uint32 {1}     - Skip script processing
  *  uint32 {1}     - global Object X
  *  uint32 {1}     - global Object Y
  *  -- Skip processing flag (stored in ScriptManager)
@@ -208,8 +208,8 @@ private:
 	uint32          _ambientFlags[15];
 	uint32          _ambientTicks[15];
 	Common::Point   _globalPoint; // global point
-	// _flagSkipScriptProcessing
-	// _flagEncounterRunning
+	bool            _flagSkipScriptProcessing;
+	bool            _flagIsEncounterRunning;
 	// player ActorIndex
 	Common::Point   _sceneCoords;
 	int16           _sceneOffset;

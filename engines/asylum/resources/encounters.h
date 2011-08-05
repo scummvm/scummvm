@@ -81,7 +81,6 @@ public:
 	void setFlag3(bool state) { _flag3 = state; }
 	bool getFlag3() { return _flag3; }
 	void disablePlayerOnExit(bool state) { _disablePlayerOnExit = state; }
-	bool isRunning() { return _isRunning; }
 
 	// Accessors (for saving game)
 	EncounterItems *items() { return &_items; }
@@ -186,7 +185,6 @@ private:
 	bool _flag3;
 	bool _flag4;
 	bool _disablePlayerOnExit;
-	bool _isRunning;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
