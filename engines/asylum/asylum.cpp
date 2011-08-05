@@ -381,16 +381,11 @@ void AsylumEngine::processDelayedEvents() {
 
 	// check for a delayed scene change
 	if (_delayedSceneIndex != kResourcePackInvalid && isGameFlagNotSet(kGameFlagScriptProcessing)) {
-		if (!_scene)
-			error("[AsylumEngine::processDelayedEvents] Subsystems not initialized properly!");
-
 		ResourcePackId sceneIndex = _delayedSceneIndex;
-
-		// Reset delayed scene
 		_delayedSceneIndex = kResourcePackInvalid;
 
-		_scene->getActor(0)->updateStatus(kActorStatusDisabled);
-		_script->reset();
+		// Reset script queue
+		_script->resetQueue();
 
 		_sound->stopMusic();
 		_sound->stopAll();
