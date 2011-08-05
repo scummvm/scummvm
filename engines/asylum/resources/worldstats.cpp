@@ -103,7 +103,7 @@ WorldStats::~WorldStats() {
 	_vm = NULL;
 }
 
-// FIXME: load necessary World Stats content
+// Load necessary World Stats content
 void WorldStats::load(Common::SeekableReadStream *stream) {
 	size       = stream->readSint32LE();
 	numEntries = stream->readSint32LE();
@@ -149,7 +149,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	reverseStereo = stream->readSint32LE();
 
-	for (int32 r = 0; r < 6; r++) {
+	for (int32 r = 0; r < ARRAYSIZE(sceneRects); r++) {
 		sceneRects[r].left      = (int16)(stream->readSint32LE() & 0xFFFF);
 		sceneRects[r].top       = (int16)(stream->readSint32LE() & 0xFFFF);
 		sceneRects[r].right     = (int16)(stream->readSint32LE() & 0xFFFF);
@@ -163,17 +163,17 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	field_120                   = stream->readSint32LE();
 	scriptIndex                 = stream->readSint32LE();
 
-	for (int32 gr = 0; gr < 100; gr++)
+	for (int32 gr = 0; gr < ARRAYSIZE(graphicResourceIds); gr++)
 		graphicResourceIds[gr]  = (ResourceId)stream->readSint32LE();
 
 	sceneTitleGraphicResourceId = (ResourceId)stream->readSint32LE();
 	sceneTitlePaletteResourceId = (ResourceId)stream->readSint32LE();
 	actorType                   = stream->readUint32LE();
 
-	for (int32 s = 0; s < 50; s++)
+	for (int32 s = 0; s < ARRAYSIZE(soundResourceIds); s++)
 		soundResourceIds[s] = (ResourceId)stream->readSint32LE();
 
-	for (int32 s = 0; s < 15; s++) {
+	for (int32 s = 0; s < ARRAYSIZE(ambientSounds); s++) {
 		ambientSounds[s].field_0  = stream->readSint32LE();
 		ambientSounds[s].flags    = stream->readSint32LE();
 		ambientSounds[s].resourceId    = (ResourceId)stream->readSint32LE();
@@ -181,7 +181,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		ambientSounds[s].attenuation = stream->readSint32LE();
 		ambientSounds[s].nextTick = stream->readSint32LE();
 
-		for (int32 i = 0; i < 6; i++)
+		for (int32 i = 0; i < ARRAYSIZE(ambientSounds[s].flagNum); i++)
 			ambientSounds[s].flagNum[i] = stream->readSint32LE();
 
 		ambientSounds[s].point.x = (int16)stream->readSint32LE();
@@ -255,21 +255,21 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	field_E8518 = stream->readSint32LE();
 
-	for (int32 i = 0; i < 30; i++)
+	for (int32 i = 0; i < ARRAYSIZE(field_E851C); i++)
 		field_E851C[i] = stream->readSint32LE();
 
-	for (int32 i = 0; i < 30; i++)
+	for (int32 i = 0; i < ARRAYSIZE(field_E8594); i++)
 		field_E8594[i] = stream->readSint32LE();
 
 	nextPlayer = (ActorIndex)stream->readSint32LE();
 
-	for (int32 i = 0; i < 6; i++)
+	for (int32 i = 0; i < ARRAYSIZE(field_E8610); i++)
 		field_E8610[i] = stream->readUint32LE();
 
-	for (int32 i = 0; i < 6; i++)
+	for (int32 i = 0; i < ARRAYSIZE(field_E8628); i++)
 		field_E8628[i] = stream->readUint32LE();
 
-	for (int32 i = 0; i < 7; i++) {
+	for (int32 i = 0; i < ARRAYSIZE(wheels); i++) {
 		ObjectId id = (ObjectId)stream->readUint32LE();
 
 		if (id == 0)
@@ -280,88 +280,8 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	tickCount1 = stream->readSint32LE();
 
-	for (int32 i = 0; i < 6; i++)
+	for (int32 i = 0; i < ARRAYSIZE(field_E8660); i++)
 		field_E8660[i] = stream->readUint32LE();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Helper methods
-//////////////////////////////////////////////////////////////////////////
-int32 WorldStats::getActionAreaIndexById(int32 id) {
-	for (uint32 i = 0; i < actions.size(); i++) {
-		if (actions[i]->id == id)
-			return i;
-	}
-
-	return -1;
-}
-
-int32 WorldStats::getRandomActionAreaIndexById(int32 id) {
-	uint count = 0;
-	int32 indexes[5];
-	memset(&indexes, 0, sizeof(indexes));
-
-	for (uint32 i = 0; i < actions.size(); i++) {
-		if (actions[i]->id == id && count < 5) {
-			indexes[count] = i;
-			++count;
-		}
-	}
-
-	if (!count)
-		return -1;
-
-	return indexes[_vm->getRandom(count)];
-}
-
-ActionArea* WorldStats::getActionAreaById(int32 id) {
-	int index = getActionAreaIndexById(id);
-	if (index == -1)
-		error("[WorldStats::getActionAreaById] action id is invalid");
-
-	return actions[index];
-}
-
-Object* WorldStats::getObjectById(ObjectId id) {
-	for (uint32 i = 0; i < objects.size(); i++)
-		if (objects[i]->getId() == id)
-			return objects[i];
-
-	return NULL;
-}
-
-void WorldStats::setWheelObjects() {
-	wheels[0] = getObjectById(kObjectWheel1);
-	wheels[1] = getObjectById(kObjectWheel2);
-	wheels[2] = getObjectById(kObjectWheel3);
-	wheels[3] = getObjectById(kObjectWheel4);
-	wheels[4] = getObjectById(kObjectWheel5);
-	wheels[5] = getObjectById(kObjectWheel6);
-	wheels[6] = getObjectById(kObjectWheel7);
-}
-
-Common::String WorldStats::toString() {
-	Common::String output;
-
-	output += Common::String::format("xLeft:          %d\n", xLeft);
-	output += Common::String::format("yTop:           %d\n", yTop);
-	output += Common::String::format("boundingRect:   top[%d] left[%d] right[%d] bottom[%d]: \n", boundingRect.top, boundingRect.left, boundingRect.right, boundingRect.bottom);
-	output += Common::String::format("width:          %d\n", width);
-	output += Common::String::format("height:         %d\n", height);
-	output += Common::String::format("motionStatus:   %d\n", motionStatus);
-	output += "coordinates:    ";
-	for (int i = 0; i < 7; i++)
-		output += Common::String::format("%d[%d] ", i, coordinates[i]);
-	output += "\n";
-	output += Common::String::format("sceneRectIndex: %d\n", sceneRectIdx);
-	output += Common::String::format("sceneRects:     0: top[%d] left[%d] right[%d] bottom[%d]\n", sceneRects[0].top, sceneRects[0].left, sceneRects[0].right, sceneRects[0].bottom);
-	for (int i = 1; i < 6; i++)
-		output += Common::String::format("                %d: top[%d] left[%d] right[%d] bottom[%d]\n", i, sceneRects[i].top, sceneRects[i].left, sceneRects[i].right, sceneRects[i].bottom);
-	output += Common::String::format("scriptInex:     %d\n", scriptIndex);
-	output += Common::String::format("actorType:      %d\n", actorType);
-	output += Common::String::format("musicStatus:    %d\n", musicStatus);
-
-	return output;
 }
 
 void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
@@ -387,7 +307,7 @@ void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(cellShadeMask1);
 	s.syncAsSint32LE(cellShadeMask2);
 	s.syncAsSint32LE(cellShadeMask3);
-	s.skip(unused);
+	s.syncAsUint32LE(unused);
 	s.syncAsSint32LE(smallCurUp);
 	s.syncAsSint32LE(smallCurDown);
 	s.syncAsSint32LE(encounterFrameBg);
@@ -517,18 +437,18 @@ void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
 
 	s.syncAsSint32LE(field_E8518);
 
-	for (int32 i = 0; i < 30; i++)
+	for (int32 i = 0; i < ARRAYSIZE(field_E851C); i++)
 		s.syncAsSint32LE(field_E851C[i]);
 
-	for (int32 i = 0; i < 30; i++)
+	for (int32 i = 0; i < ARRAYSIZE(field_E8594); i++)
 		s.syncAsSint32LE(field_E8594[i]);
 
 	s.syncAsSint32LE(nextPlayer);
 
-	for (int32 i = 0; i < 6; i++)
+	for (int32 i = 0; i < ARRAYSIZE(field_E8610); i++)
 		s.syncAsSint32LE(field_E8610[i]);
 
-	for (int32 i = 0; i < 6; i++)
+	for (int32 i = 0; i < ARRAYSIZE(field_E8628); i++)
 		s.syncAsSint32LE(field_E8628[i]);
 
 	for (int32 i = 0; i < ARRAYSIZE(wheels); i++) {
@@ -546,8 +466,88 @@ void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
 
 	s.syncAsSint32LE(tickCount1);
 
-	for (int32 i = 0; i < 6; i++)
+	for (int32 i = 0; i < ARRAYSIZE(field_E8660); i++)
 		s.syncAsUint32LE(field_E8660[i]);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Helper methods
+//////////////////////////////////////////////////////////////////////////
+int32 WorldStats::getActionAreaIndexById(int32 id) {
+	for (uint32 i = 0; i < actions.size(); i++) {
+		if (actions[i]->id == id)
+			return i;
+	}
+
+	return -1;
+}
+
+int32 WorldStats::getRandomActionAreaIndexById(int32 id) {
+	uint count = 0;
+	int32 indexes[5];
+	memset(&indexes, 0, sizeof(indexes));
+
+	for (uint32 i = 0; i < actions.size(); i++) {
+		if (actions[i]->id == id && count < 5) {
+			indexes[count] = i;
+			++count;
+		}
+	}
+
+	if (!count)
+		return -1;
+
+	return indexes[_vm->getRandom(count)];
+}
+
+ActionArea* WorldStats::getActionAreaById(int32 id) {
+	int index = getActionAreaIndexById(id);
+	if (index == -1)
+		error("[WorldStats::getActionAreaById] action id is invalid");
+
+	return actions[index];
+}
+
+Object* WorldStats::getObjectById(ObjectId id) {
+	for (uint32 i = 0; i < objects.size(); i++)
+		if (objects[i]->getId() == id)
+			return objects[i];
+
+	return NULL;
+}
+
+void WorldStats::setWheelObjects() {
+	wheels[0] = getObjectById(kObjectWheel1);
+	wheels[1] = getObjectById(kObjectWheel2);
+	wheels[2] = getObjectById(kObjectWheel3);
+	wheels[3] = getObjectById(kObjectWheel4);
+	wheels[4] = getObjectById(kObjectWheel5);
+	wheels[5] = getObjectById(kObjectWheel6);
+	wheels[6] = getObjectById(kObjectWheel7);
+}
+
+Common::String WorldStats::toString() {
+	Common::String output;
+
+	output += Common::String::format("xLeft:          %d\n", xLeft);
+	output += Common::String::format("yTop:           %d\n", yTop);
+	output += Common::String::format("boundingRect:   top[%d] left[%d] right[%d] bottom[%d]: \n", boundingRect.top, boundingRect.left, boundingRect.right, boundingRect.bottom);
+	output += Common::String::format("width:          %d\n", width);
+	output += Common::String::format("height:         %d\n", height);
+	output += Common::String::format("motionStatus:   %d\n", motionStatus);
+	output += "coordinates:    ";
+	for (int i = 0; i < 7; i++)
+		output += Common::String::format("%d[%d] ", i, coordinates[i]);
+	output += "\n";
+	output += Common::String::format("sceneRectIndex: %d\n", sceneRectIdx);
+	output += Common::String::format("sceneRects:     0: top[%d] left[%d] right[%d] bottom[%d]\n", sceneRects[0].top, sceneRects[0].left, sceneRects[0].right, sceneRects[0].bottom);
+	for (int i = 1; i < 6; i++)
+		output += Common::String::format("                %d: top[%d] left[%d] right[%d] bottom[%d]\n", i, sceneRects[i].top, sceneRects[i].left, sceneRects[i].right, sceneRects[i].bottom);
+	output += Common::String::format("scriptInex:     %d\n", scriptIndex);
+	output += Common::String::format("actorType:      %d\n", actorType);
+	output += Common::String::format("musicStatus:    %d\n", musicStatus);
+
+	return output;
 }
 
 } // end of namespace Asylum
