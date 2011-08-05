@@ -33,6 +33,8 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
+#include "audio/mididrv.h"
+
 #include "scumm/detection.h"
 #include "scumm/detection_tables.h"
 #include "scumm/he/intern_he.h"

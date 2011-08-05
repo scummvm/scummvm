@@ -20,18 +20,19 @@
  *
  */
 
-#include "mohawk/sound.h"
-
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "common/textconsole.h"
 
+#include "audio/midiparser.h"
 #include "audio/musicplugin.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+
+#include "mohawk/sound.h"
 
 namespace Mohawk {
 

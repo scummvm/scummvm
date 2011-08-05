@@ -40,8 +40,6 @@
 #include "scumm/detection.h"
 #include "scumm/script.h"
 
-#include "audio/mididrv.h"
-
 #ifdef __DS__
 /* This disables the dual layer mode which is used in FM-Towns versions
  * of SCUMM games and which emulates the behavior of the original code.
@@ -1085,7 +1083,6 @@ protected:
 	int _saveSound;
 	bool _native_mt32;
 	bool _enable_gs;
-	MidiDriverFlags _musicType;
 	bool _copyProtection;
 
 public:

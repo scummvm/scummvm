@@ -31,9 +31,6 @@
 #include "common/random.h"
 #include "common/util.h"
 
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
-
 #include "engines/engine.h"
 #include "tinsel/debugger.h"
 #include "tinsel/graphics.h"
@@ -53,6 +50,7 @@ namespace Tinsel {
 
 class BMVPlayer;
 class Config;
+class MidiDriver;
 class MidiMusicPlayer;
 class PCMMusicPlayer;
 class Scheduler;

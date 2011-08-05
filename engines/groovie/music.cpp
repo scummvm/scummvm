@@ -20,6 +20,9 @@
  *
  */
 
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
+
 #include "groovie/music.h"
 #include "groovie/groovie.h"
 #include "groovie/resource.h"

@@ -84,6 +84,8 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 	memset(_soundQue, 0, sizeof(_soundQue));
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 	memset(_mouthSyncTimes, 0, sizeof(_mouthSyncTimes));
+
+	_musicType = MDT_NONE;
 }
 
 Sound::~Sound() {
@@ -1094,7 +1096,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 	switch (basetag) {
 	case MKTAG('M','I','D','I'):
 	case MKTAG('i','M','U','S'):
-		if (_musicType != MDT_PCSPK && _musicType != MDT_PCJR) {
+		if (_sound->_musicType != MDT_PCSPK && _sound->_musicType != MDT_PCJR) {
 			_fileHandle->seek(-8, SEEK_CUR);
 			_fileHandle->read(_res->createResource(rtSound, idx, total_size + 8), total_size + 8);
 			return 1;
@@ -1118,7 +1120,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 				break;
 			case MKTAG('A','D','L',' '):
 				pri = 1;
-				if (_musicType == MDT_ADLIB || _musicType == MDT_TOWNS)
+				if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS)
 					pri = 10;
 				break;
 			case MKTAG('A','M','I',' '):
@@ -1137,7 +1139,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 				break;
 			case MKTAG('S','P','K',' '):
 				pri = -1;
-				if (_musicType == MDT_PCSPK || _musicType == MDT_PCJR)
+				if (_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR)
 					pri = 11;
 				break;
 			}
@@ -1145,7 +1147,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 			// We only allow SPK resources for PC Speaker, PCJr and CMS here
 			// since other resource would sound horribly with their output
 			// drivers.
-			if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR || _musicType == MDT_CMS) && pri != 11)
+			if ((_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR || _sound->_musicType == MDT_CMS) && pri != 11)
 				pri = -1;
 
 			// We only allow ADL resources when AdLib or FM-Towns is used as
@@ -1155,7 +1157,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 			// only contains a ROL resource for sound id 60. Formerly we tried
 			// to play that via the AdLib or FM-Towns audio driver resulting
 			// in strange noises. Now we behave like the original did.
-			if ((_musicType == MDT_ADLIB || _musicType == MDT_TOWNS) && pri != 10)
+			if ((_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS) && pri != 10)
 				pri = -1;
 
 			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(tag), size, pri);
@@ -2095,7 +2097,7 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 		}
 	}
 
-	if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR) && wa_offs != 0) {
+	if ((_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR) && wa_offs != 0) {
 		if (_game.features & GF_OLD_BUNDLE) {
 			_fileHandle->seek(wa_offs, SEEK_SET);
 			_fileHandle->read(_res->createResource(rtSound, idx, wa_size), wa_size);
