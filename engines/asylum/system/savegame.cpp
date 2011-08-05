@@ -400,10 +400,19 @@ void Savegame::write(Common::OutSaveFile *file, uint32 val, Common::String descr
 void Savegame::write(Common::OutSaveFile *file, Common::String val, uint32 strLength, Common::String description) const {
 	debugC(kDebugLevelSavegame, "[Savegame] Writing %s (of length %d): %s", description.c_str(), strLength, val.c_str());
 
+	if (val.size() > strLength)
+		error("[Savegame::write] Trying to save a string that is longer than the specified size (string size: %d, size: %d)", val.size(), strLength);
+
 	file->writeUint32LE(1);
 	file->writeUint32LE(strLength);
 
 	file->writeString(val);
+
+	// Add padding
+	if (val.size() < strLength) {
+		for (uint32 i = 0; i < (strLength - val.size()); i++)
+			file->writeByte(0);
+	}
 }
 
 void Savegame::write(Common::OutSaveFile *file, Common::Serializable *data, uint32 size, uint32 count, Common::String description) const {
