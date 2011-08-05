@@ -33,7 +33,7 @@ namespace Asylum {
 
 class AsylumEngine;
 
-struct EncounterItem {
+struct EncounterItem : public Common::Serializable {
 	int16 keywordIndex;
 	int16 field2;
 	ResourceId scriptResourceId;
@@ -47,13 +47,26 @@ struct EncounterItem {
 		memset(&keywords, 0, sizeof(keywords));
 		value = 0;
 	}
+
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s) {
+		s.syncAsSint16LE(keywordIndex);
+		s.syncAsSint16LE(field2);
+		s.syncAsSint32LE(scriptResourceId);
+
+		for (int32 i = 0; i < ARRAYSIZE(keywords); i++)
+			s.syncAsSint16LE(keywords[i]);
+
+		s.syncAsByte(value);
+	}
 };
 
 class EncounterVariables : public Common::Array<int16>, public Common::Serializable {
 public:
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s) {
-		error("[EncounterVariables::saveLoadWithSerializer] Not implemented!");
+		for (uint i = 0; i < _size; i++)
+			s.syncAsSint16LE(_storage[i]);
 	}
 };
 
@@ -61,7 +74,8 @@ class EncounterItems : public Common::Array<EncounterItem>, public Common::Seria
 public:
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s) {
-		error("[EncounterItems::saveLoadWithSerializer] Not implemented!");
+		for (uint i = 0; i < _size; i++)
+			_storage[i].saveLoadWithSerializer(s);
 	}
 };
 
