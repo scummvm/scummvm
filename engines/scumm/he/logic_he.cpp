@@ -1665,7 +1665,7 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 		double v239 = op_1014_sub1_2(v234, v247, v245, v17, v16, v15);
 
 		float v18 = v246 - a4;
-		float v19 = v250 - v247;
+		float v19 = v250 - v274;
 		float v20 = v254 - a2;
 		double v258 = op_1014_sub1_2(v234, v247, v245, v20, v19, v18);
 
