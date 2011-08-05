@@ -1133,7 +1133,7 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 	int16 rightLimit = rect.right - 10;
 	Common::Point mouse = getCursor()->position();
 
-	if (getEncounter()->isRunning()) {
+	if (getSharedData()->getFlag(kFlagIsEncounterRunning)) {
 		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceTalkNPC])
 			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC]);
 

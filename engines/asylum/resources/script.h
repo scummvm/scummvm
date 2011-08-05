@@ -158,8 +158,6 @@ public:
 	 */
 	void resetQueue();
 
-	bool isProcessingSkipped() { return _skipProcessing; }
-
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);
 
@@ -298,7 +296,6 @@ private:
 	Common::Array<Opcode *>         _opcodes;
 	Common::Array<Script>           _scripts;
 
-	bool              _skipProcessing;
 	bool              _done;
 	bool              _exit;
 	bool              _processNextEntry;

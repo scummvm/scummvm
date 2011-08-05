@@ -576,6 +576,10 @@ void AsylumEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	// the proper order
 	_data.saveLoadAmbientSoundData(s);
 
+	// Original skips two elements
+	// (original has one unused, one used for debugging screen update counts)
+	s.skip(8);
+
 	// Script queue
 	_script->saveLoadWithSerializer(s);
 

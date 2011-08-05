@@ -596,7 +596,7 @@ void Actor::update() {
 		break;
 
 	case kActorStatus8:
-		if (_vm->encounter()->isRunning()
+		if (getSharedData()->getFlag(kFlagIsEncounterRunning)
 		 || !_soundResourceId
 		 || getSound()->isPlaying(_soundResourceId)) {
 			_frameIndex = (_frameIndex + 1) % _frameCount;
@@ -691,7 +691,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		break;
 
 	case kActorStatus9:
-		if (_vm->encounter()->isRunning())
+		if (getSharedData()->getFlag(kFlagIsEncounterRunning))
 			return;
 
 		if (_vm->getRandomBit() == 1 && isDefaultDirection(15))
@@ -2134,7 +2134,7 @@ void Actor::updateStatusEnabled() {
 
 			if (_vm->isGameFlagNotSet(kGameFlagScriptProcessing)
 			 && isVisible()
-			 && !_vm->encounter()->isRunning()
+			 && !getSharedData()->getFlag(kFlagIsEncounterRunning)
 			 && !getSpeech()->getSoundResourceId()) {
 				if (_vm->getRandom(100) < 50) {
 					if (getWorld()->chapter == kChapter13)
@@ -3210,7 +3210,7 @@ void Actor::updateFinish() {
 
 	ActionArea *area = getWorld()->actions[areaIndex];
 	ActionArea *actorArea = getWorld()->actions[_actionIdx3];
-	if ((area->flags & 1) && !getScript()->isProcessingSkipped()) {
+	if ((area->flags & 1) && !getSharedData()->getFlag(kFlagSkipScriptProcessing)) {
 		getScript()->queueScript(actorArea->scriptIndex2, _index);
 		getScript()->queueScript(area->scriptIndex, _index);
 	}

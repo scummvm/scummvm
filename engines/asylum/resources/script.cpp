@@ -235,7 +235,6 @@ void ScriptManager::reset() {
 	// Remove all scripts
 	_scripts.clear();
 
-	_skipProcessing    = false;
 	_done = false;
 	_exit = false;
 	_processNextEntry = false;
@@ -250,7 +249,7 @@ void ScriptManager::resetQueue() {
 
 void ScriptManager::queueScript(int32 scriptIndex, ActorIndex actorIndex) {
 	// When the skipProcessing flag is set, do not queue any more scripts
-	if (_skipProcessing)
+	if (getSharedData()->getFlag(kFlagSkipScriptProcessing))
 		return;
 
 	// Look for a empty queue slot
@@ -822,7 +821,7 @@ IMPLEMENT_OPCODE(RunEncounter)
 	encounter->disablePlayerOnExit((bool)cmd->param5);
 
 	if (cmd->param6) {
-		if (encounter->isRunning())
+		if (getSharedData()->getFlag(kFlagIsEncounterRunning))
 			_processNextEntry = true;
 		else
 			cmd->param6 = 0;
@@ -1023,13 +1022,13 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2F
 IMPLEMENT_OPCODE(StopProcessing)
-	_skipProcessing = true;
+	getSharedData()->setFlag(kFlagSkipScriptProcessing, true);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x30
 IMPLEMENT_OPCODE(ResumeProcessing)
-	_skipProcessing = false;
+	getSharedData()->setFlag(kFlagSkipScriptProcessing, false);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
