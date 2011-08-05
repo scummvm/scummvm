@@ -234,6 +234,10 @@ void Actor::loadData(Common::SeekableReadStream *stream) {
 		_data.directions[i] = (ActorDirection)stream->readSint32LE();
 }
 
+void Actor::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[Actor::saveLoadWithSerializer] Not implemented");
+}
+
 /////////////////////////////////////////////////////////////////////////
 // Update & status
 //////////////////////////////////////////////////////////////////////////

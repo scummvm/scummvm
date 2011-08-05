@@ -28,6 +28,7 @@
 #include "asylum/system/sound.h"
 
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "common/stream.h"
 
 namespace Asylum {
@@ -35,7 +36,7 @@ namespace Asylum {
 class Actor;
 class AsylumEngine;
 
-class Object {
+class Object : public Common::Serializable {
 public:
 	Object(AsylumEngine *engine);
 	virtual ~Object();
@@ -161,6 +162,9 @@ public:
 	 * @return A string representation of this object.
 	 */
 	Common::String toString(bool shortString = true);
+
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
 	AsylumEngine *_vm;

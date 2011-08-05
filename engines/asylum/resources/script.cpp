@@ -72,6 +72,10 @@ void ActionArea::load(Common::SeekableReadStream *stream) {
 	volume = stream->readSint32LE();
 }
 
+void ActionArea::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[ActionArea::saveLoadWithSerializer] Not implemented");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // ScriptManager
 //////////////////////////////////////////////////////////////////////////

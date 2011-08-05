@@ -365,7 +365,189 @@ Common::String WorldStats::toString() {
 }
 
 void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[WorldStats::saveLoadWithSerializer] Not implemented!");
+	s.syncAsSint32LE(chapter);
+	s.syncAsSint32LE(xLeft);
+	s.syncAsSint32LE(yTop);
+	s.syncAsSint32LE(boundingRect.left);
+	s.syncAsSint32LE(boundingRect.top);
+	s.syncAsSint32LE(boundingRect.right);
+	s.syncAsSint32LE(boundingRect.bottom);
+
+	// Common graphic resources
+	s.syncAsSint32LE(backgroundImage);
+
+	for (int32 i = 0; i < ARRAYSIZE(cursorResources); i++)
+		s.syncAsSint32LE(cursorResources[i]);
+
+	s.syncAsSint32LE(font1);
+	s.syncAsSint32LE(font2);
+	s.syncAsSint32LE(font3);
+	s.syncAsSint32LE(currentPaletteId);
+
+	s.syncAsSint32LE(cellShadeMask1);
+	s.syncAsSint32LE(cellShadeMask2);
+	s.syncAsSint32LE(cellShadeMask3);
+	s.skip(unused);
+	s.syncAsSint32LE(smallCurUp);
+	s.syncAsSint32LE(smallCurDown);
+	s.syncAsSint32LE(encounterFrameBg);
+
+	s.syncAsSint32LE(width);
+	s.syncAsSint32LE(height);
+	s.syncAsSint32LE(motionStatus);
+	s.syncAsSint32LE(field_8C);
+
+	uint32 numActions = actions.size();
+	uint32 numObjects = objects.size();
+	s.syncAsUint32LE(numActions);
+	s.syncAsUint32LE(numObjects);
+
+	for (int32 i = 0; i < ARRAYSIZE(coordinates); i++)
+		s.syncAsSint32LE(coordinates[i]);
+
+	uint32 numActors = actors.size();
+	s.syncAsUint32LE(numActors);
+
+	s.syncAsUint32LE(reverseStereo);
+
+	for (int32 i = 0; i < ARRAYSIZE(sceneRects); i++) {
+		s.syncAsSint32LE(sceneRects[i].left);
+		s.syncAsSint32LE(sceneRects[i].top);
+		s.syncAsSint32LE(sceneRects[i].right);
+		s.syncAsSint32LE(sceneRects[i].bottom);
+	}
+
+	s.syncAsByte(sceneRectIdx);
+
+	for (int32 i = 0; i < ARRAYSIZE(field_11D); i++)
+		s.syncAsByte(field_11D[i]);
+
+	s.syncAsUint32LE(field_120);
+	s.syncAsUint32LE(scriptIndex);
+
+	for (int32 i = 0; i < ARRAYSIZE(graphicResourceIds); i++)
+		s.syncAsSint32LE(graphicResourceIds[i]);
+
+	s.syncAsSint32LE(sceneTitleGraphicResourceId);
+	s.syncAsSint32LE(sceneTitlePaletteResourceId);
+	s.syncAsUint32LE(actorType);
+
+	for (int32 i = 0; i < ARRAYSIZE(soundResourceIds); i++)
+		s.syncAsSint32LE(soundResourceIds[i]);
+
+	for (int32 i = 0; i < ARRAYSIZE(ambientSounds); i++) {
+		s.syncAsSint32LE(ambientSounds[i].field_0);
+		s.syncAsSint32LE(ambientSounds[i].flags);
+		s.syncAsSint32LE(ambientSounds[i].resourceId);
+		s.syncAsSint32LE(ambientSounds[i].delta);
+		s.syncAsSint32LE(ambientSounds[i].attenuation);
+		s.syncAsSint32LE(ambientSounds[i].nextTick);
+
+		for (int32 j = 0; j < ARRAYSIZE(ambientSounds[i].flagNum); j++)
+			s.syncAsSint32LE(ambientSounds[i].flagNum[j]);
+
+		s.syncAsSint32LE(ambientSounds[i].point.x);
+		s.syncAsSint32LE(ambientSounds[i].point.y);
+	}
+
+	s.syncAsUint32LE(numAmbientSounds);
+	s.syncAsSint32LE(musicStatus);
+	s.syncAsSint32LE(musicCurrentResourceIndex);
+	s.syncAsSint32LE(musicFlag);
+	s.syncAsSint32LE(musicResourceIndex);
+	s.syncAsSint32LE(musicStatusExt);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Objects
+	for (uint32 i = 0; i < numObjects; i++) {
+		if (s.isLoading())
+			objects.push_back(new Object(_vm));
+
+		objects[i]->saveLoadWithSerializer(s);
+	}
+
+	s.skip((OBJECTS_MAX_COUNT - numObjects) * OBJECTS_SIZE);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Actors
+	for (uint32 i = 0; i < numActors; i++) {
+		if (s.isLoading())
+			actors.push_back(new Actor(_vm, i));
+
+		actors[i]->saveLoadWithSerializer(s);
+	}
+
+	s.skip((ACTORS_MAX_COUNT - numActors) * ACTORS_SIZE);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Actor data
+	for (uint32 i = 0; i < numActors; i++)
+		actors[i]->getData()->saveLoadWithSerializer(s);
+
+	s.skip((ACTORS_MAX_COUNT - numActors) * ACTORDATA_SIZE);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Number of scripts and polygons
+	s.syncAsUint32LE(numScripts);
+	s.syncAsUint32LE(numPolygons);
+
+	// Alternate cursor resources
+	for (int32 i = 0; i < ARRAYSIZE(cursorResourcesAlternate); i++)
+		s.syncAsSint32LE(cursorResourcesAlternate[i]);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Read actions
+	for (uint32 i = 0; i < numActions; i++) {
+		if (s.isLoading())
+			actions.push_back(new ActionArea());
+
+		actions[i]->saveLoadWithSerializer(s);
+	}
+
+	s.skip((ACTIONS_MAX_COUNT - numActions) * ACTIONS_SIZE);
+
+	s.syncAsSint32LE(field_E848C);
+	s.syncAsSint32LE(field_E8490);
+	s.syncAsSint32LE(field_E8494);
+	s.syncAsSint32LE(field_E8498);
+	s.syncAsSint32LE(field_E849C);
+
+	for (int32 i = 0; i < ARRAYSIZE(tickValueArray); i++)
+		s.syncAsSint32LE(tickValueArray[i]);
+
+	s.syncAsSint32LE(field_E8518);
+
+	for (int32 i = 0; i < 30; i++)
+		s.syncAsSint32LE(field_E851C[i]);
+
+	for (int32 i = 0; i < 30; i++)
+		s.syncAsSint32LE(field_E8594[i]);
+
+	s.syncAsSint32LE(nextPlayer);
+
+	for (int32 i = 0; i < 6; i++)
+		s.syncAsSint32LE(field_E8610[i]);
+
+	for (int32 i = 0; i < 6; i++)
+		s.syncAsSint32LE(field_E8628[i]);
+
+	for (int32 i = 0; i < ARRAYSIZE(wheels); i++) {
+
+		ObjectId id = wheels[i] ? wheels[i]->getId() : kObjectNone;
+		s.syncAsSint32LE(id);
+
+		if (s.isLoading()) {
+			if (id == kObjectNone)
+				wheels[i] = NULL;
+			else
+				wheels[i] = getObjectById(id);
+		}
+	}
+
+	s.syncAsSint32LE(tickCount1);
+
+	for (int32 i = 0; i < 6; i++)
+		s.syncAsUint32LE(field_E8660[i]);
 }
 
 } // end of namespace Asylum
