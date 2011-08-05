@@ -245,12 +245,16 @@ bool Savegame::isSavegamePresent(Common::String filename) const {
 bool Savegame::readHeader(Common::InSaveFile *file) {
 	uint32 versionLength = read(file, "Version Length");
 	Common::String version = read(file, versionLength, "Version");
-	/*uint32 build = */read(file, "Build");
+	uint32 build = read(file, "Build");
 
 	// Original does not do any version check
-	// TODO check version to make sure we can read the data
-	_valid = true;
+	// Until we can verify all versions have compatible savegames, we only handle the final patched version savegames
+	if (version != savegame_version || build != SAVEGAME_BUILD) {
+		_valid = false;
+		return false;
+	}
 
+	_valid = true;
 	return true;
 }
 
