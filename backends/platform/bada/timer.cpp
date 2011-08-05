@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -27,95 +27,95 @@
 // TimerSlot
 //
 TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback,
-                     uint32 interval, void* refCon) :
-  timer(0),
-  callback(callback),
-  interval(interval),
-  refCon(refCon) {
-  logEntered();
+										 uint32 interval, void* refCon) :
+	_timer(0),
+	_callback(callback),
+	_interval(interval),
+	_refCon(refCon) {
+	logEntered();
 }
 
 TimerSlot::~TimerSlot() {
-  logEntered();
+	logEntered();
 }
 
 bool TimerSlot::OnStart() {
-  logEntered();
+	logEntered();
 
-  timer = new Osp::Base::Runtime::Timer();
-  if (!timer || IsFailed(timer->Construct(*this))) {
-    AppLog("Failed to create timer");
-    return false;
-  }
+	_timer = new Osp::Base::Runtime::Timer();
+	if (!_timer || IsFailed(_timer->Construct(*this))) {
+		AppLog("Failed to create timer");
+		return false;
+	}
 
-  if (IsFailed(timer->Start(interval))) {
-    AppLog("failed to start timer");
-    return false;
-  }
-  
-  AppLog("started timer %d", interval);
-  return true;
+	if (IsFailed(_timer->Start(_interval))) {
+		AppLog("failed to start timer");
+		return false;
+	}
+	
+	AppLog("started timer %d", _interval);
+	return true;
 }
 
 void TimerSlot::OnStop() {
-  logEntered();
-  if (timer) {
-    timer->Cancel();    
-    delete timer;
-    timer = null;
-  }
+	logEntered();
+	if (_timer) {
+		_timer->Cancel();		 
+		delete _timer;
+		_timer = null;
+	}
 }
 
 void TimerSlot::OnTimerExpired(Timer& timer) {
-  callback(refCon);
-  timer.Start(interval);
+	_callback(_refCon);
+	timer.Start(_interval);
 }
 
 //
 // BadaTimerManager
 //
 BadaTimerManager::BadaTimerManager() {
-  logEntered();
+	logEntered();
 }
 
 BadaTimerManager::~BadaTimerManager() {
-  logEntered();
-	for (Common::List<TimerSlot>::iterator slot = timers.begin();
-       slot != timers.end(); ++slot) {
-    slot->Stop();
-    slot = timers.erase(slot);
-  }
+	logEntered();
+	for (Common::List<TimerSlot>::iterator slot = _timers.begin();
+			 slot != _timers.end(); ++slot) {
+		slot->Stop();
+		slot = _timers.erase(slot);
+	}
 }
 
 bool BadaTimerManager::installTimerProc(TimerProc proc, int32 interval, void *refCon) {
-  logEntered();
-  TimerSlot* slot = new TimerSlot(proc, interval / 1000, refCon);
+	logEntered();
+	TimerSlot* slot = new TimerSlot(proc, interval / 1000, refCon);
 
-  if (IsFailed(slot->Construct(THREAD_TYPE_EVENT_DRIVEN))) {
-    AppLog("Failed to create timer thread");
-    delete slot;
-    return false;
-  }
+	if (IsFailed(slot->Construct(THREAD_TYPE_EVENT_DRIVEN))) {
+		AppLog("Failed to create timer thread");
+		delete slot;
+		return false;
+	}
 
-  if (IsFailed(slot->Start())) {
-    delete slot;
-    AppLog("Failed to start timer thread");
-    return false;
-  }
+	if (IsFailed(slot->Start())) {
+		delete slot;
+		AppLog("Failed to start timer thread");
+		return false;
+	}
 
-  timers.push_back(*slot);
-  return true;
+	_timers.push_back(*slot);
+	return true;
 }
 
 void BadaTimerManager::removeTimerProc(TimerProc proc) {
-  logEntered();
-	for (Common::List<TimerSlot>::iterator slot = timers.begin();
-       slot != timers.end(); ++slot) {
-    if (slot->callback == proc) {
-      slot->Stop();
-      slot = timers.erase(slot);
-    }
-  }
+	logEntered();
+	for (Common::List<TimerSlot>::iterator slot = _timers.begin();
+			 slot != _timers.end(); ++slot) {
+		if (slot->_callback == proc) {
+			slot->Stop();
+			slot = _timers.erase(slot);
+		}
+	}
 }
 
 //

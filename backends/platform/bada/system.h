@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -41,9 +41,9 @@
 
 #if defined(_DEBUG)
 #define logEntered() AppLog("%s entered (%s %d)", \
-                             __FUNCTION__, __FILE__, __LINE__);
+														 __FUNCTION__, __FILE__, __LINE__);
 #define logLeaving() AppLog("%s leaving (%s %d)", \
-                             __FUNCTION__, __FILE__, __LINE__);
+														 __FUNCTION__, __FILE__, __LINE__);
 #else
 #define logEntered()
 #define logLeaving()
@@ -52,50 +52,50 @@
 BadaAppForm* systemStart(Osp::App::Application* app);
 void systemError(const char* message);
 
-#define USER_MESSAGE_EXIT     1000
+#define USER_MESSAGE_EXIT			1000
 #define USER_MESSAGE_EXIT_ERR 1001
 
 //
 // BadaSystem
 //
 class BadaSystem : public ModularBackend, 
-                   Common::EventSource {
+									 Common::EventSource {
  public:
-  BadaSystem(BadaAppForm* appForm);
-  ~BadaSystem();
+	BadaSystem(BadaAppForm* appForm);
+	~BadaSystem();
 
-  result Construct();
-  void closeAudio();
-  void closeGraphics();
-  void destroyBackend();
-  void setMute(bool on);
-  int setVolume(bool up, bool minMax);
-  void exitSystem();
-  bool isClosing() { return appForm->isClosing(); }
+	result Construct();
+	void closeAudio();
+	void closeGraphics();
+	void destroyBackend();
+	void setMute(bool on);
+	int setVolume(bool up, bool minMax);
+	void exitSystem();
+	bool isClosing() { return _appForm->isClosing(); }
 
-  BadaGraphicsManager* getGraphics() {
-    return (BadaGraphicsManager*) _graphicsManager;
-  }
+	BadaGraphicsManager* getGraphics() {
+		return (BadaGraphicsManager*) _graphicsManager;
+	}
 
  private:
-  void initBackend();
-  result initModules();
+	void initBackend();
+	result initModules();
 
-  void updateScreen();
-  bool pollEvent(Common::Event& event);
-  uint32 getMillis();
-  void delayMillis(uint msecs);
-  void getTimeAndDate(TimeDate& t) const;
-  void fatalError();
-  void logMessage(LogMessageType::Type type, const char *message);
+	void updateScreen();
+	bool pollEvent(Common::Event& event);
+	uint32 getMillis();
+	void delayMillis(uint msecs);
+	void getTimeAndDate(TimeDate& t) const;
+	void fatalError();
+	void logMessage(LogMessageType::Type type, const char *message);
 
 	Common::EventSource* getDefaultEventSource() {return this;}
-  Common::SeekableReadStream* createConfigReadStream();
-  Common::WriteStream* createConfigWriteStream();
-  
-  BadaAppForm* appForm;
-  AudioThread* audioThread;
-  long long epoch;
+	Common::SeekableReadStream* createConfigReadStream();
+	Common::WriteStream* createConfigWriteStream();
+	
+	BadaAppForm* _appForm;
+	AudioThread* _audioThread;
+	long long _epoch;
 };
 
 #endif

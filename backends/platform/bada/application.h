@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -32,27 +32,27 @@
 #include "system.h"
 
 class BadaScummVM : public Osp::App::Application,
-                    public Osp::System::IScreenEventListener {
+										public Osp::System::IScreenEventListener {
 
  public:
-  BadaScummVM();
-  ~BadaScummVM();
+	BadaScummVM();
+	~BadaScummVM();
 
-  static Osp::App::Application* createInstance(void);
-  
-  bool OnAppInitializing(Osp::App::AppRegistry& appRegistry);
-  bool OnAppTerminating(Osp::App::AppRegistry& appRegistry, bool forcedTermination = false);
-  void OnForeground(void);
-  void OnBackground(void);
-  void OnLowMemory(void);
-  void OnBatteryLevelChanged(Osp::System::BatteryLevel batteryLevel);
-  void OnScreenOn(void);
-  void OnScreenOff(void);
-  void OnUserEventReceivedN(RequestId requestId, Osp::Base::Collection::IList* pArgs);
+	static Osp::App::Application* createInstance(void);
+	
+	bool OnAppInitializing(Osp::App::AppRegistry& appRegistry);
+	bool OnAppTerminating(Osp::App::AppRegistry& appRegistry, bool forcedTermination = false);
+	void OnForeground(void);
+	void OnBackground(void);
+	void OnLowMemory(void);
+	void OnBatteryLevelChanged(Osp::System::BatteryLevel batteryLevel);
+	void OnScreenOn(void);
+	void OnScreenOff(void);
+	void OnUserEventReceivedN(RequestId requestId, Osp::Base::Collection::IList* pArgs);
 
  private:
-  void pauseGame(bool pause);
-  BadaAppForm* appForm;
+	void pauseGame(bool pause);
+	BadaAppForm* _appForm;
 };
 
 #endif

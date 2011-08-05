@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -42,32 +42,32 @@ using namespace Osp::Io;
 #define NUM_AUDIO_BUFFERS 2
 
 class AudioThread: public Osp::Media::IAudioOutEventListener,
-                   public Osp::Base::Runtime::ITimerEventListener, 
-                   public Osp::Base::Runtime::Thread {
+									 public Osp::Base::Runtime::ITimerEventListener, 
+									 public Osp::Base::Runtime::Thread {
 public:
-  AudioThread(void);
-  ~AudioThread(void);
+	AudioThread(void);
+	~AudioThread(void);
 
-  Audio::MixerImpl* Construct(OSystem* system);
-  bool isSilentMode();
-  void setMute(bool on);
-  int setVolume(bool up, bool minMax);
+	Audio::MixerImpl* Construct(OSystem* system);
+	bool isSilentMode();
+	void setMute(bool on);
+	int setVolume(bool up, bool minMax);
 
-  bool OnStart(void);
-  void OnStop(void);
-  void OnAudioOutErrorOccurred(Osp::Media::AudioOut& src, result r);
-  void OnAudioOutInterrupted(Osp::Media::AudioOut& src);
-  void OnAudioOutReleased(Osp::Media::AudioOut& src);
-  void OnAudioOutBufferEndReached(Osp::Media::AudioOut& src);
-  void OnTimerExpired(Timer& timer);
-  
+	bool OnStart(void);
+	void OnStop(void);
+	void OnAudioOutErrorOccurred(Osp::Media::AudioOut& src, result r);
+	void OnAudioOutInterrupted(Osp::Media::AudioOut& src);
+	void OnAudioOutReleased(Osp::Media::AudioOut& src);
+	void OnAudioOutBufferEndReached(Osp::Media::AudioOut& src);
+	void OnTimerExpired(Timer& timer);
+	
  private:
-  Audio::MixerImpl* mixer;
-  Osp::Base::Runtime::Timer* timer;
-	Osp::Media::AudioOut* audioOut;
-	Osp::Base::ByteBuffer audioBuffer[NUM_AUDIO_BUFFERS];
-  int head, tail, ready, interval, playing;
-  bool muted;
+	Audio::MixerImpl* _mixer;
+	Osp::Base::Runtime::Timer* _timer;
+	Osp::Media::AudioOut* _audioOut;
+	Osp::Base::ByteBuffer _audioBuffer[NUM_AUDIO_BUFFERS];
+	int _head, _tail, _ready, _interval, _playing;
+	bool _muted;
 };
 
 #endif

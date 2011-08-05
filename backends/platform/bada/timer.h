@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,31 +31,31 @@
 using namespace Osp::Base::Runtime;
 
 struct TimerSlot: public ITimerEventListener, public Thread {
-  TimerSlot(Common::TimerManager::TimerProc callback,
-            uint32 interval,
-            void* refCon);
-  ~TimerSlot();
+	TimerSlot(Common::TimerManager::TimerProc callback,
+						uint32 interval,
+						void* refCon);
+	~TimerSlot();
 
-  bool OnStart(void);
-  void OnStop(void);
-  void OnTimerExpired(Timer& timer);
+	bool OnStart(void);
+	void OnStop(void);
+	void OnTimerExpired(Timer& timer);
 
-  Timer* timer;
-	Common::TimerManager::TimerProc callback;
-	uint32 interval;	// in microseconds
-	void *refCon;
+	Timer* _timer;
+	Common::TimerManager::TimerProc _callback;
+	uint32 _interval;	// in microseconds
+	void *_refCon;
 };
 
 class BadaTimerManager : public Common::TimerManager {
 public:
 	BadaTimerManager();
-  ~BadaTimerManager();
+	~BadaTimerManager();
 
-  bool installTimerProc(TimerProc proc, int32 interval, void *refCon);
-  void removeTimerProc(TimerProc proc);
+	bool installTimerProc(TimerProc proc, int32 interval, void *refCon);
+	void removeTimerProc(TimerProc proc);
 
  private:
-  Common::List<TimerSlot> timers;
+	Common::List<TimerSlot> _timers;
 };
 
 #endif

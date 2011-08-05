@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -50,9 +50,9 @@ public:
 	 */
 	BadaFilesystemNode(const Common::String &path);
 
-	Common::String getDisplayName() const { return displayName; }
-	Common::String getName() const { return displayName; }
-	Common::String getPath() const { return path; }
+	Common::String getDisplayName() const { return _displayName; }
+	Common::String getName() const { return _displayName; }
+	Common::String getPath() const { return _path; }
 
 	bool exists() const;
 	bool isDirectory() const;
@@ -67,16 +67,16 @@ public:
 	Common::WriteStream *createWriteStream();
 
 protected:
-  BadaFilesystemNode(const Common::String& root,
-                     const Common::String& p);
-  void init(const Common::String& nodePath);
+	BadaFilesystemNode(const Common::String& root,
+										 const Common::String& p);
+	void init(const Common::String& nodePath);
 
-	Common::String displayName;
-	Common::String path;
-  String unicodePath;
-	bool isValid;
-  bool isVirtualDir;
-  FileAttributes attr;
+	Common::String _displayName;
+	Common::String _path;
+	String _unicodePath;
+	bool _isValid;
+	bool _isVirtualDir;
+	FileAttributes _attr;
 };
 
 #endif

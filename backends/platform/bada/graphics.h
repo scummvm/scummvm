@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -41,32 +41,32 @@ using namespace Osp::App;
 
 class BadaGraphicsManager : public OpenGLGraphicsManager {
  public:
-  BadaGraphicsManager(BadaAppForm* appForm);
+	BadaGraphicsManager(BadaAppForm* appForm);
 
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const;
-  bool hasFeature(OSystem::Feature f);
-  void updateScreen();
-  void setFeatureState(OSystem::Feature f, bool enable);
-  void setReady();
-  bool isReady() {return !initState;}
-  const Graphics::Font* getFontOSD();
-  bool moveMouse(int16& x, int16& y);
+	bool hasFeature(OSystem::Feature f);
+	void updateScreen();
+	void setFeatureState(OSystem::Feature f, bool enable);
+	void setReady();
+	bool isReady() {return !_initState;}
+	const Graphics::Font* getFontOSD();
+	bool moveMouse(int16& x, int16& y);
 
  private:
-  void internUpdateScreen();
-  bool loadGFXMode();
-  void unloadGFXMode();
-  void refreshGameScreen();
-  void setInternalMousePosition(int x, int y) {}
-  void showSplash();
+	void internUpdateScreen();
+	bool loadGFXMode();
+	void unloadGFXMode();
+	void refreshGameScreen();
+	void setInternalMousePosition(int x, int y) {}
+	void showSplash();
 
-  bool loadEgl();
-  BadaAppForm* appForm;
-  EGLDisplay eglDisplay;
-  EGLSurface eglSurface;
-  EGLConfig  eglConfig;
-  EGLContext eglContext;
-  bool initState;
+	bool loadEgl();
+	BadaAppForm* _appForm;
+	EGLDisplay _eglDisplay;
+	EGLSurface _eglSurface;
+	EGLConfig	 _eglConfig;
+	EGLContext _eglContext;
+	bool _initState;
 };
 
 #endif

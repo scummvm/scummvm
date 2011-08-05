@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -37,67 +37,66 @@ using namespace Osp::Ui;
 using namespace Osp::Ui::Controls;
 
 Application* BadaScummVM::createInstance() {
-  return new BadaScummVM();
+	return new BadaScummVM();
 }
 
-BadaScummVM::BadaScummVM() : appForm(0) {
+BadaScummVM::BadaScummVM() : _appForm(0) {
 }
 
 BadaScummVM::~BadaScummVM() {
-  logEntered();
-  if (g_system) {
-    BadaSystem* system = (BadaSystem*) g_system;
-    system->destroyBackend();
-    delete system;
-    g_system = 0;
-  }
+	logEntered();
+	if (g_system) {
+		BadaSystem* system = (BadaSystem*) g_system;
+		system->destroyBackend();
+		delete system;
+		g_system = 0;
+	}
 }
 
 bool BadaScummVM::OnAppInitializing(AppRegistry& appRegistry) {
-  appForm = systemStart(this);
-  return (appForm != null);
+	_appForm = systemStart(this);
+	return (_appForm != null);
 }
 
 bool BadaScummVM::OnAppTerminating(AppRegistry& appRegistry, 
-                                   bool forcedTermination) {
-  logEntered();
+																	 bool forcedTermination) {
+	logEntered();
 	return true;
 }
 
 void BadaScummVM::OnUserEventReceivedN(RequestId requestId, 
-                                       Osp::Base::Collection::IList* args) {
-  logEntered();
+																			 Osp::Base::Collection::IList* args) {
+	logEntered();
 
-  if (requestId == USER_MESSAGE_EXIT) {
-    // normal program termination
-    Terminate();
-  }
-  else if (requestId == USER_MESSAGE_EXIT_ERR) {
-    // assertion failure termination
-    String* message = null;
-    if (args) {
-      message = (String*) args->GetAt(0);
-    }
-    if (!message) {
-      message = new String("Unknown error");
-    }
-    
-    MessageBox messageBox;
-    messageBox.Construct(L"Oops...", *message, MSGBOX_STYLE_OK);
-    int modalResult;
-    messageBox.ShowAndWait(modalResult);
-    Terminate();
-  }
+	if (requestId == USER_MESSAGE_EXIT) {
+		// normal program termination
+		Terminate();
+	}	else if (requestId == USER_MESSAGE_EXIT_ERR) {
+		// assertion failure termination
+		String* message = null;
+		if (args) {
+			message = (String*) args->GetAt(0);
+		}
+		if (!message) {
+			message = new String("Unknown error");
+		}
+		
+		MessageBox messageBox;
+		messageBox.Construct(L"Oops...", *message, MSGBOX_STYLE_OK);
+		int modalResult;
+		messageBox.ShowAndWait(modalResult);
+		Terminate();
+	}
 }
 
 void BadaScummVM::OnForeground(void) {
-  logEntered();
-  pauseGame(false);
+	logEntered();
+	pauseGame(false);
 }
 
 void BadaScummVM::OnBackground(void) {
-  logEntered();
-  pauseGame(true);
+	logEntered();
+	pauseGame(true);
 }
 
 void BadaScummVM::OnBatteryLevelChanged(BatteryLevel batteryLevel) {
@@ -107,21 +106,21 @@ void BadaScummVM::OnLowMemory(void) {
 }
 
 void BadaScummVM::OnScreenOn(void) {
-  logEntered();
+	logEntered();
 }
 
 void BadaScummVM::OnScreenOff(void) {
-  logEntered();
+	logEntered();
 }
 
 void BadaScummVM::pauseGame(bool pause) {
-  if (pause && appForm && g_engine && !g_engine->isPaused()) {
-    appForm->pushKey(Common::KEYCODE_SPACE);
-  }
+	if (pause && _appForm && g_engine && !g_engine->isPaused()) {
+		_appForm->pushKey(Common::KEYCODE_SPACE);
+	}
 
-  if (g_system) {
-    ((BadaSystem*) g_system)->setMute(pause);
-  }
+	if (g_system) {
+		((BadaSystem*) g_system)->setMute(pause);
+	}
 }
 
 //

@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -40,69 +40,69 @@
 // BadaAppForm
 //
 class BadaAppForm : public Osp::Ui::Controls::Form,
-                    public Osp::Ui::IOrientationEventListener,
-                    public Osp::Ui::ITouchEventListener,
-                    public Osp::Ui::IKeyEventListener,
-                    public Osp::Base::Runtime::IRunnable {
+										public Osp::Ui::IOrientationEventListener,
+										public Osp::Ui::ITouchEventListener,
+										public Osp::Ui::IKeyEventListener,
+										public Osp::Base::Runtime::IRunnable {
  public:
-  BadaAppForm();
-  ~BadaAppForm();
+	BadaAppForm();
+	~BadaAppForm();
 
-  result Construct();
-  bool pollEvent(Common::Event& event);
-  bool isClosing() { return state == ClosingState; }
-  void pushKey(Common::KeyCode keycode);
-  void exitSystem();
+	result Construct();
+	bool pollEvent(Common::Event& event);
+	bool isClosing() { return _state == ClosingState; }
+	void pushKey(Common::KeyCode keycode);
+	void exitSystem();
 
  private:
-  Object* Run();
-  result OnInitializing(void);
-  result OnDraw(void);
-  void OnOrientationChanged(const Osp::Ui::Control& source, 
-                            Osp::Ui::OrientationStatus orientationStatus);
-  void OnTouchDoublePressed(const Osp::Ui::Control& source, 
-                            const Osp::Graphics::Point& currentPosition, 
-                            const Osp::Ui::TouchEventInfo& touchInfo);
-  void OnTouchFocusIn(const Osp::Ui::Control& source, 
-                      const Osp::Graphics::Point& currentPosition, 
-                      const Osp::Ui::TouchEventInfo& touchInfo);
-  void OnTouchFocusOut(const Osp::Ui::Control& source, 
-                       const Osp::Graphics::Point& currentPosition, 
-                       const Osp::Ui::TouchEventInfo& touchInfo);
-  void OnTouchLongPressed(const Osp::Ui::Control& source, 
-                          const Osp::Graphics::Point& currentPosition, 
-                          const Osp::Ui::TouchEventInfo& touchInfo);
-  void OnTouchMoved(const Osp::Ui::Control& source, 
-                    const Osp::Graphics::Point& currentPosition, 
-                    const Osp::Ui::TouchEventInfo& touchInfo);
-  void OnTouchPressed(const Osp::Ui::Control& source, 
-                      const Osp::Graphics::Point& currentPosition, 
-                      const Osp::Ui::TouchEventInfo& touchInfo);
-  void OnTouchReleased(const Osp::Ui::Control& source, 
-                       const Osp::Graphics::Point& currentPosition, 
-                       const Osp::Ui::TouchEventInfo& touchInfo);
-  void OnKeyLongPressed(const Osp::Ui::Control& source, 
-                        Osp::Ui::KeyCode keyCode);
-  void OnKeyPressed(const Osp::Ui::Control& source, 
-                    Osp::Ui::KeyCode keyCode);
-  void OnKeyReleased(const Osp::Ui::Control& source, 
-                     Osp::Ui::KeyCode keyCode);
+	Object* Run();
+	result OnInitializing(void);
+	result OnDraw(void);
+	void OnOrientationChanged(const Osp::Ui::Control& source, 
+														Osp::Ui::OrientationStatus orientationStatus);
+	void OnTouchDoublePressed(const Osp::Ui::Control& source, 
+														const Osp::Graphics::Point& currentPosition, 
+														const Osp::Ui::TouchEventInfo& touchInfo);
+	void OnTouchFocusIn(const Osp::Ui::Control& source, 
+											const Osp::Graphics::Point& currentPosition, 
+											const Osp::Ui::TouchEventInfo& touchInfo);
+	void OnTouchFocusOut(const Osp::Ui::Control& source, 
+											 const Osp::Graphics::Point& currentPosition, 
+											 const Osp::Ui::TouchEventInfo& touchInfo);
+	void OnTouchLongPressed(const Osp::Ui::Control& source, 
+													const Osp::Graphics::Point& currentPosition, 
+													const Osp::Ui::TouchEventInfo& touchInfo);
+	void OnTouchMoved(const Osp::Ui::Control& source, 
+										const Osp::Graphics::Point& currentPosition, 
+										const Osp::Ui::TouchEventInfo& touchInfo);
+	void OnTouchPressed(const Osp::Ui::Control& source, 
+											const Osp::Graphics::Point& currentPosition, 
+											const Osp::Ui::TouchEventInfo& touchInfo);
+	void OnTouchReleased(const Osp::Ui::Control& source, 
+											 const Osp::Graphics::Point& currentPosition, 
+											 const Osp::Ui::TouchEventInfo& touchInfo);
+	void OnKeyLongPressed(const Osp::Ui::Control& source, 
+												Osp::Ui::KeyCode keyCode);
+	void OnKeyPressed(const Osp::Ui::Control& source, 
+										Osp::Ui::KeyCode keyCode);
+	void OnKeyReleased(const Osp::Ui::Control& source, 
+										 Osp::Ui::KeyCode keyCode);
 
-  void pushEvent(Common::EventType type,
-                 const Osp::Graphics::Point& currentPosition);
-  void terminate();
-  void setVolume(bool up, bool minMax);
-  int getShortcutIndex();
+	void pushEvent(Common::EventType type,
+								 const Osp::Graphics::Point& currentPosition);
+	void terminate();
+	void setVolume(bool up, bool minMax);
+	int getShortcutIndex();
 
-  // event handling
-  Osp::Base::Runtime::Thread* gameThread;
-  Osp::Base::Runtime::Mutex* eventQueueLock;
-  Common::Queue<Common::Event> eventQueue;
-  enum {InitState, ActiveState, ClosingState, DoneState, ErrorState} state;
-  enum {LeftButton, RightButtonOnce, RightButton} buttonState;
-  uint32 shortcutTimer;
-  int shortcutIndex;
-  int touchCount;
+	// event handling
+	Osp::Base::Runtime::Thread* _gameThread;
+	Osp::Base::Runtime::Mutex* _eventQueueLock;
+	Common::Queue<Common::Event> _eventQueue;
+	enum {InitState, ActiveState, ClosingState, DoneState, ErrorState} _state;
+	enum {LeftButton, RightButtonOnce, RightButton} _buttonState;
+	uint32 _shortcutTimer;
+	int _shortcutIndex;
+	int _touchCount;
 };
 
 #endif
