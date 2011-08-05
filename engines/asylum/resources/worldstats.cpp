@@ -379,23 +379,15 @@ void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Objects
-	for (uint32 i = 0; i < numObjects; i++) {
-		if (s.isLoading())
-			objects.push_back(new Object(_vm));
-
+	for (uint32 i = 0; i < numObjects; i++)
 		objects[i]->saveLoadWithSerializer(s);
-	}
 
 	s.skip((OBJECTS_MAX_COUNT - numObjects) * OBJECTS_SIZE);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Actors
-	for (uint32 i = 0; i < numActors; i++) {
-		if (s.isLoading())
-			actors.push_back(new Actor(_vm, i));
-
+	for (uint32 i = 0; i < numActors; i++)
 		actors[i]->saveLoadWithSerializer(s);
-	}
 
 	s.skip((ACTORS_MAX_COUNT - numActors) * ACTORS_SIZE);
 
@@ -417,12 +409,8 @@ void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Read actions
-	for (uint32 i = 0; i < numActions; i++) {
-		if (s.isLoading())
-			actions.push_back(new ActionArea());
-
+	for (uint32 i = 0; i < numActions; i++)
 		actions[i]->saveLoadWithSerializer(s);
-	}
 
 	s.skip((ACTIONS_MAX_COUNT - numActions) * ACTIONS_SIZE);
 
