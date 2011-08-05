@@ -52,7 +52,9 @@ PuzzleLock::~PuzzleLock() {
 }
 
 void PuzzleLock::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzleLock::saveLoadWithSerializer] Not implemented");
+	s.syncAsSint32LE(_frameIndexes[0]);
+	s.syncAsSint32LE(_frameIndexes[1]);
+	s.syncAsSint32LE(_frameIndexes[2]);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -58,7 +58,11 @@ PuzzleFisherman::~PuzzleFisherman() {
 }
 
 void PuzzleFisherman::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzleFisherman::saveLoadWithSerializer] Not implemented");
+	for (int i = 0; i < ARRAYSIZE(_state); i++)
+		s.syncAsSint32LE(_state[i]);
+
+	s.syncAsSint32LE(_dword_45AAD4);
+	s.syncAsSint32LE(_counter);
 }
 
 //////////////////////////////////////////////////////////////////////////

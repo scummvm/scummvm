@@ -46,6 +46,25 @@ Puzzle11::Puzzle11(AsylumEngine *engine) : Puzzle(engine) {
 Puzzle11::~Puzzle11() {
 }
 
+void Puzzle11::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsUint32LE(_counter);
+
+	s.skip(8); // 2 int32 that do not seem to be used
+
+	s.syncAsUint32LE(_frameIndexes[0]);
+	s.syncAsUint32LE(_frameIndexes[3]);
+
+	warning("[Puzzle11::saveLoadWithSerializer] Not implemented");
+	s.skip(8);
+	s.syncAsUint32LE(_frameIndexes[2]);
+	s.skip(4);
+	s.syncAsUint32LE(_frameIndexes[1]);
+	s.syncAsUint32LE(_frameIndexes[4]);
+	s.skip(28);
+	s.syncAsUint32LE(_frameIndexes[5]);
+	s.syncAsUint32LE(_frameIndexes[6]);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////

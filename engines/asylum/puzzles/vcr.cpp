@@ -50,7 +50,22 @@ PuzzleVCR::~PuzzleVCR() {
 }
 
 void PuzzleVCR::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzleVCR::saveLoadWithSerializer] Not implemented");
+	s.syncAsUint32LE(_buttonsState[kPowerButton]);
+	s.syncAsUint32LE(_buttonsState[kRewindButton]);
+	s.syncAsUint32LE(_buttonsState[kPlayButton]);
+	s.syncAsUint32LE(_buttonsState[kStopButton]);
+
+	s.syncAsUint32LE(_holesState[kBlack]);
+	s.syncAsUint32LE(_holesState[kRed]);
+	s.syncAsUint32LE(_holesState[kYellow]);
+
+
+	s.syncAsUint32LE(_jacksState[kBlack]);
+	s.syncAsUint32LE(_jacksState[kRed]);
+	s.syncAsUint32LE(_jacksState[kYellow]);
+
+	s.syncAsUint32LE(_tvScreenFrameIndex);
+	s.syncAsUint32LE(_isAccomplished);
 }
 
 //////////////////////////////////////////////////////////////////////////

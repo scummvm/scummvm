@@ -322,7 +322,8 @@ PuzzlePipes::~PuzzlePipes() {
 }
 
 void PuzzlePipes::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[PuzzlePipes::saveLoadWithSerializer] Not implemented");
+	warning("[PuzzlePipes::saveLoadWithSerializer] Not implemented");
+	s.skip(116);
 }
 
 //////////////////////////////////////////////////////////////////////////
