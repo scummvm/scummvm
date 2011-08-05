@@ -248,7 +248,7 @@ void AudioThread::OnTimerExpired(Timer& timer) {
 		OnAudioOutBufferEndReached(*_audioOut);
 	}
 	
-	timer.Start(_interval);
+	_timer.Start(_interval);
 }
 
 //
