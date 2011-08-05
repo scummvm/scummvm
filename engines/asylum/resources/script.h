@@ -163,6 +163,7 @@ public:
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);
+	void saveQueue(Common::Serializer &s);
 
 private:
 	enum ObjectTransparency {
@@ -231,7 +232,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Scripts
 	//////////////////////////////////////////////////////////////////////////
-	struct ScriptEntry {
+	struct ScriptEntry : public Common::Serializable {
 		int32 numLines; // Only set on the first line of each script
 		OpcodeType opcode;
 		int32 param1;
@@ -257,9 +258,23 @@ private:
 			param8 = 0;
 			param9 = 0;
 		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			s.syncAsSint32LE(numLines);
+			s.syncAsSint32LE(opcode);
+			s.syncAsSint32LE(param1);
+			s.syncAsSint32LE(param2);
+			s.syncAsSint32LE(param3);
+			s.syncAsSint32LE(param4);
+			s.syncAsSint32LE(param5);
+			s.syncAsSint32LE(param6);
+			s.syncAsSint32LE(param7);
+			s.syncAsSint32LE(param8);
+			s.syncAsSint32LE(param9);
+		}
 	};
 
-	struct Script {
+	struct Script : public Common::Serializable {
 		ScriptEntry commands[MAX_ACTION_COMMANDS];
 		int32       field_1BAC;
 		int32       field_1BB0;
@@ -269,6 +284,15 @@ private:
 			field_1BAC = 0;
 			field_1BB0 = 0;
 			counter = 0;
+		}
+
+		void saveLoadWithSerializer(Common::Serializer &s) {
+			for (int32 i = 0; i < ARRAYSIZE(commands); i++)
+				commands[i].saveLoadWithSerializer(s);
+
+			s.syncAsSint32LE(field_1BAC);
+			s.syncAsSint32LE(field_1BB0);
+			s.syncAsSint32LE(counter);
 		}
 	};
 

@@ -259,6 +259,16 @@ void ScriptManager::load(Common::SeekableReadStream *stream) {
 	}
 }
 
+void ScriptManager::saveLoadWithSerializer(Common::Serializer &s) {
+	for (uint i = 0; i < _scripts.size(); i++)
+		_scripts[i].saveLoadWithSerializer(s);
+}
+
+// Save the script queue (in the original, it is part of the shared data)
+void ScriptManager::saveQueue(Common::Serializer &s) {
+	_queue.saveLoadWithSerializer(s);
+}
+
 void ScriptManager::reset() {
 	// Reset script queue
 	resetQueue();
@@ -422,11 +432,6 @@ label_exit_processing:
 	_vm->clearGameFlag(kGameFlagScriptProcessing);
 
 	return false;
-}
-
-// Save the script queue
-void ScriptManager::saveLoadWithSerializer(Common::Serializer &s) {
-	_queue.saveLoadWithSerializer(s);
 }
 
 //////////////////////////////////////////////////////////////////////////

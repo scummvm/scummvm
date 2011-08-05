@@ -530,7 +530,7 @@ void AsylumEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(8);
 
 	// Script queue
-	_script->saveLoadWithSerializer(s);
+	_script->saveQueue(s);
 
 	// Shared data (the rest of it)
 	_data.saveLoadWithSerializer(s);
