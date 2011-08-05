@@ -199,14 +199,14 @@ void Menu::stopTestSounds() {
 	getSound()->stop(kVoiceSound);
 }
 
-void Menu::adjustMasterVolume(int32 delta) {
+void Menu::adjustMasterVolume(int32 delta) const {
 	int32 *volume = NULL;
 	int32 volumeIndex = 1;
 
 	do {
 		switch (volumeIndex) {
 		default:
-			break;
+			error("[Menu::adjustMasterVolume] Invalid volume index (%d)", volumeIndex);
 
 		case 1:
 			volume = &Config.musicVolume;
@@ -315,24 +315,20 @@ bool Menu::handleEvent(const AsylumEvent &evt) {
 
 	case EVENT_ASYLUM_INIT:
 		return init();
-		break;
 
 	case EVENT_ASYLUM_UPDATE:
 		return update();
-		break;
 
 	case EVENT_ASYLUM_MUSIC:
 		return music();
-		break;
 
 	case Common::EVENT_KEYDOWN:
 		return key(evt);
-		break;
 
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
 		return click(evt);
-		break;
+
 	}
 
 	return false;
@@ -769,8 +765,8 @@ void Menu::updateLoadGame() {
 	} else {
 		//////////////////////////////////////////////////////////////////////////
 		// First column
-		uint32 index = 0;
-		for (int32 y = 150; y < 324; y += 29) {
+		int32 index = 0;
+		for (int16 y = 150; y < 324; y += 29) {
 			if (index + _startIndex >= 25)
 				break;
 
@@ -790,7 +786,7 @@ void Menu::updateLoadGame() {
 
 		//////////////////////////////////////////////////////////////////////////
 		// Second column
-		for (int32 y = 150; y < 324; y += 29) {
+		for (int16 y = 150; y < 324; y += 29) {
 			if (index + _startIndex >= 25)
 				break;
 
@@ -892,8 +888,8 @@ void Menu::updateSaveGame() {
 	} else {
 		//////////////////////////////////////////////////////////////////////////
 		// First column
-		uint32 index = 0;
-		for (int32 y = 150; y < 324; y += 29) {
+		int32 index = 0;
+		for (int16 y = 150; y < 324; y += 29) {
 			if (index + _startIndex >= 25)
 				break;
 
@@ -906,7 +902,7 @@ void Menu::updateSaveGame() {
 				else
 					getText()->loadFont(kFontBlue);
 			} else {
-				if (getSaveLoad()->getIndex() != index + _startIndex)
+				if (getSaveLoad()->getIndex() != (uint32)(index + _startIndex))
 					getText()->loadFont(kFontYellow);
 				else
 					getText()->loadFont(kFontBlue);
@@ -917,7 +913,7 @@ void Menu::updateSaveGame() {
 
 			// Draw underscore
 			if (_dword_455DD8) {
-				if (getSaveLoad()->getIndex() == index + _startIndex) {
+				if (getSaveLoad()->getIndex() == (uint32)(index + _startIndex)) {
 					if (_caretBlink < 6)
 						getText()->drawChar('_');
 
@@ -943,7 +939,7 @@ void Menu::updateSaveGame() {
 				else
 					getText()->loadFont(kFontBlue);
 			} else {
-				if (getSaveLoad()->getIndex() != index + _startIndex)
+				if (getSaveLoad()->getIndex() != (uint32)(index + _startIndex))
 					getText()->loadFont(kFontYellow);
 				else
 					getText()->loadFont(kFontBlue);
@@ -954,7 +950,7 @@ void Menu::updateSaveGame() {
 
 			// Draw underscore
 			if (_dword_455DD8) {
-				if (getSaveLoad()->getIndex() == index + _startIndex) {
+				if (getSaveLoad()->getIndex() == (uint32)(index + _startIndex)) {
 					if (_caretBlink < 6)
 						getText()->drawChar('_');
 
@@ -1152,7 +1148,7 @@ void Menu::updateViewMovies() {
 
 		//////////////////////////////////////////////////////////////////////////
 		// Second column
-		for (int32 y = 150; y < 324; y += 29) {
+		for (int16 y = 150; y < 324; y += 29) {
 			if (index >= ARRAYSIZE(_movieList))
 				break;
 
@@ -1289,8 +1285,8 @@ void Menu::updateAudioOptions() {
 	Common::Point cursor = getCursor()->position();
 
 	// Size of - and +
-	int32 sizeMinus	= getText()->getWidth("-");
-	int32 sizePlus  = getText()->getWidth("+");
+	int16 sizeMinus	= getText()->getWidth("-");
+	int16 sizePlus  = getText()->getWidth("+");
 
 	getText()->loadFont(kFontYellow);
 	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1420));
@@ -1375,8 +1371,8 @@ void Menu::updateSettings() {
 	Common::Point cursor = getCursor()->position();
 
 	// Size of - and +
-	int32 sizeMinus	= getText()->getWidth("-");
-	int32 sizePlus  = getText()->getWidth("+");
+	int16 sizeMinus	= getText()->getWidth("-");
+	int16 sizePlus  = getText()->getWidth("+");
 
 	getText()->loadFont(kFontYellow);
 
@@ -1446,7 +1442,7 @@ void Menu::updateKeyboardConfig() {
 	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1438));
 
 	char keyCode = 0;
-	int32 keyIndex = 0;
+	int16 keyIndex = 0;
 
 	do {
 		getText()->loadFont(kFontYellow);
@@ -1527,12 +1523,12 @@ void Menu::updateShowCredits() {
 		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 33));
 	} else {
 		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 23));
-		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 24), _creditsFrameIndex++ / 2, Common::Point(0, 0), kDrawFlagNone, false);
+		getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, 24), (uint32)_creditsFrameIndex++ / 2, Common::Point(0, 0), kDrawFlagNone, false);
 
-		_creditsFrameIndex %= 2 * GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, 24));
+		_creditsFrameIndex %= 2 * (int32)GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, 24));
 	}
 
-	int32 step = 0;
+	int16 step = 0;
 	uint32 index = 0;
 	do {
 		if ((_startIndex + step) >= -24) {
@@ -1651,10 +1647,11 @@ void Menu::clickLoadGame() {
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				if (index + _startIndex + 6 < 25) {
-					if (getSaveLoad()->hasSavegame(index + _startIndex + 6)) {
+				uint32 saveIndex = (uint32)(index + _startIndex + 6);
+				if (saveIndex < 25) {
+					if (getSaveLoad()->hasSavegame(saveIndex)) {
 						_dword_455C80 = true;
-						getSaveLoad()->setIndex(index + _startIndex + 6);
+						getSaveLoad()->setIndex(saveIndex);
 					}
 				}
 			}
@@ -1664,10 +1661,11 @@ void Menu::clickLoadGame() {
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				if (index + _startIndex < 25) {
-					if (getSaveLoad()->hasSavegame(index + _startIndex)) {
+				 uint32 saveIndex = (uint32)(index + _startIndex);
+				if (saveIndex < 25) {
+					if (getSaveLoad()->hasSavegame(saveIndex)) {
 						_dword_455C80 = true;
-						getSaveLoad()->setIndex(index + _startIndex);
+						getSaveLoad()->setIndex(saveIndex);
 					}
 				}
 			}
@@ -1685,7 +1683,7 @@ void Menu::clickSaveGame() {
 		 || cursor.y < 273 || cursor.y > (247 + 24)) {
 			if (cursor.x >= 369 && cursor.x <= (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1341)))
 			 && cursor.y >= 273 && cursor.y <= (273 + 24))
-				_dword_455C80 = 0;
+				_dword_455C80 = false;
 		} else {
 			_dword_455C80 = false;
 			_dword_455DD8 = true;
@@ -1735,8 +1733,8 @@ void Menu::clickSaveGame() {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Columns
-	uint32 index = 0;
-	for (int32 y = 150; y < 324; y += 29) {
+	int32 index = 0;
+	for (int16 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
 			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName(index + _startIndex + 6).c_str());
 
@@ -1745,8 +1743,9 @@ void Menu::clickSaveGame() {
 			 && cursor.y <= (y + 24)
 			 && getWorld()->chapter != kChapterNone) {
 				if (index + _startIndex < 25) {
-					getSaveLoad()->setIndex(index + _startIndex + 6);
-					if (getSaveLoad()->hasSavegame(index + _startIndex + 6)) {
+					uint32 saveIndex = index + _startIndex + 6;
+					getSaveLoad()->setIndex(saveIndex);
+					if (getSaveLoad()->hasSavegame(saveIndex)) {
 						_dword_455C80 = true;
 					} else {
 						_dword_455DD8 = true;
@@ -1791,7 +1790,7 @@ void Menu::clickDeleteGame() {
 		 || cursor.y < 273 || cursor.y > (247 + 24)) {
 			if (cursor.x >= 369 && cursor.x <= (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1351)))
 			 && cursor.y >= 273 && cursor.y <= (273 + 24))
-				_dword_455C80 = 0;
+				_dword_455C80 = false;
 		} else {
 			getSaveLoad()->remove();
 		}
@@ -1837,7 +1836,7 @@ void Menu::clickDeleteGame() {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Columns
-	uint32 index = 0;
+	int32 index = 0;
 	for (int32 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
 			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName(index + _startIndex + 6).c_str());
@@ -1858,10 +1857,11 @@ void Menu::clickDeleteGame() {
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 				&& cursor.y >= y
 				&& cursor.y <= (y + 24)) {
-					if (index + _startIndex < 25) {
-						if (getSaveLoad()->hasSavegame(index + _startIndex)) {
+					uint32 saveIndex = (uint32)(index + _startIndex);
+					if (saveIndex < 25) {
+						if (getSaveLoad()->hasSavegame(saveIndex)) {
 							_dword_455C80 = true;
-							getSaveLoad()->setIndex(index + _startIndex);
+							getSaveLoad()->setIndex(saveIndex);
 						}
 					}
 			}
@@ -1916,7 +1916,7 @@ void Menu::clickViewMovies() {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Columns
-	uint32 index = 0;
+	int32 index = 0;
 	for (int32 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
 			if (_movieList[index + _startIndex + 6] == -1)
@@ -1929,10 +1929,12 @@ void Menu::clickViewMovies() {
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				if (index + _startIndex  + 6 <= _movieCount) {
+				uint32 movieIndex = (uint32)(index + _startIndex  + 6);
+				if (movieIndex <= _movieCount) {
 					// The original checks for the proper cd, but we can skip that since we have all data on disk
-					_movieIndex = _movieList[index + _startIndex  + 6];
+					_movieIndex = _movieList[movieIndex];
 
+					// FIXME
 					//if (moviesCd[_movieIndex] != getSharedData()->cdNumber) {
 					//	_dword_455C78 = true;
 					//	getCursor()->hide();
@@ -1952,9 +1954,11 @@ void Menu::clickViewMovies() {
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				if (index + _startIndex < _movieCount) {
+
+				uint32 listIndex = (uint32)(index + _startIndex);
+				if (listIndex < _movieCount) {
 					// The original checks for the proper cd, but we can skip that since we have all data on disk
-					_movieIndex = _movieList[index + _startIndex];
+					_movieIndex = (uint32)_movieList[listIndex];
 
 					//if (moviesCd[_movieIndex] != getSharedData()->cdNumber) {
 					//	_dword_455C78 = true;
@@ -1986,7 +1990,7 @@ void Menu::clickQuitGame() {
 	} else {
 		getCursor()->hide();
 		getScreen()->clear();
-		_vm->quitGame();
+		Engine::quitGame();
 	}
 }
 
@@ -2331,7 +2335,7 @@ void Menu::keyKeyboardConfig(const AsylumEvent &evt) {
 	char *keyCode = NULL;
 	switch(_selectedShortcutIndex) {
 	default:
-		break;
+		error("[Menu::keyKeyboardConfig] Invalid shortcut index (%d)", _selectedShortcutIndex);
 
 	case 0:
 		keyCode = &Config.keyShowVersion;

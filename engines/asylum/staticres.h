@@ -41,7 +41,7 @@ const Common::Rect menuRects[12] = {Common::Rect(  40,  19,   93,  68),
                                     Common::Rect( 538, 400,  591, 449), // The last two icons are swapped
                                     Common::Rect( 439, 400,  492, 449)};
 
-const int eyeFrameIndex[8] = {3, 5, 1, 7, 4, 8, 2, 6};
+const uint32 eyeFrameIndex[8] = {3, 5, 1, 7, 4, 8, 2, 6};
 
 const int moviesCd[49] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                           1, 1, 1, 1, 1, 1, 1, 2, 2, 2,
