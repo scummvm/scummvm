@@ -120,6 +120,7 @@ enum GlobalFlag {
 class SharedData : public Common::Serializable {
 public:
 	SharedData();
+	virtual ~SharedData() {};
 
 	// Public variables
 	int32           cdNumber;
