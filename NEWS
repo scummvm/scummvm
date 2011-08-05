@@ -11,6 +11,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented PC Speaker support for SCUMM v5 games.
    - Fixed priority bug in iMuse. As a result the AdLib music should sound
      better, since important notes are not interrupted anymore.
+   - Implemented CMS support for Loom, The Secret of Monkey Island and
+     Indiana Jones and the Last Crusade.
 
  SDL ports:
    - Added support for OpenGL (GSoC Task).
