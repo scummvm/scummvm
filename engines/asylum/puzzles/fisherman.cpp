@@ -57,6 +57,10 @@ PuzzleFisherman::PuzzleFisherman(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleFisherman::~PuzzleFisherman() {
 }
 
+void PuzzleFisherman::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleFisherman::saveLoadWithSerializer] Not implemented");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////

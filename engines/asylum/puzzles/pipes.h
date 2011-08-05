@@ -154,6 +154,9 @@ public:
 	PuzzlePipes(AsylumEngine *engine);
 	~PuzzlePipes();
 
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+
 private:
 	int32 _previousMusicVolume;
 	int32 _rectIndex;

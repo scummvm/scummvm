@@ -72,6 +72,10 @@ PuzzleClock::PuzzleClock(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleClock::~PuzzleClock() {
 }
 
+void PuzzleClock::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleClock::saveLoadWithSerializer] Not implemented");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////

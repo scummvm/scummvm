@@ -57,6 +57,10 @@ static const uint32 puzzleSalvationSoundResourceIndex[11] = {5, 6, 7, 10, 11, 28
 PuzzleBoardSalvation::PuzzleBoardSalvation(AsylumEngine *engine) : PuzzleBoard(engine, puzzleSalvationData) {
 }
 
+void PuzzleBoardSalvation::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleBoardSalvation::saveLoadWithSerializer] Not implemented");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////

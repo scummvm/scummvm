@@ -51,6 +51,10 @@ PuzzleLock::PuzzleLock(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleLock::~PuzzleLock() {
 }
 
+void PuzzleLock::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleLock::saveLoadWithSerializer] Not implemented");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////

@@ -321,6 +321,10 @@ PuzzlePipes::~PuzzlePipes() {
 	delete [] _frameIndexSpider;
 }
 
+void PuzzlePipes::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzlePipes::saveLoadWithSerializer] Not implemented");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////

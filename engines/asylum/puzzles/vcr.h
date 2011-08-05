@@ -57,6 +57,9 @@ public:
 	PuzzleVCR(AsylumEngine *engine);
 	~PuzzleVCR();
 
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+
 private:
 	enum Color {
 		kNone   = -1,

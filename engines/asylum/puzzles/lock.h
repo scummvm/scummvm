@@ -34,6 +34,9 @@ public:
 	PuzzleLock(AsylumEngine *engine);
 	~PuzzleLock();
 
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+
 private:
 	int32 _frameIndexes[7];
 	bool _incrementLock;

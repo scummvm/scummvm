@@ -34,6 +34,9 @@ public:
 	PuzzleFisherman(AsylumEngine *engine);
 	~PuzzleFisherman();
 
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+
 private:
 	bool _state[6];
 	int32 _counter;

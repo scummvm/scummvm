@@ -68,6 +68,10 @@ PuzzleHiveControl::PuzzleHiveControl(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleHiveControl::~PuzzleHiveControl() {
 }
 
+void PuzzleHiveControl::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleHiveControl::saveLoadWithSerializer] Not implemented");
+}
+
 void PuzzleHiveControl::reset() {
 	_leverPosition = 3;
 	_leverDelta = 0;

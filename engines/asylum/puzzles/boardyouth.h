@@ -33,6 +33,9 @@ class PuzzleBoardYouth : public PuzzleBoard {
 public:
 	PuzzleBoardYouth(AsylumEngine *engine);
 
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling

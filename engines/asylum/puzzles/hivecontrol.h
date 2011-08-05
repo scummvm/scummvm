@@ -59,6 +59,9 @@ public:
 	PuzzleHiveControl(AsylumEngine *engine);
 	~PuzzleHiveControl();
 
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+
 private:
 	enum Element {
 		kElementSwirl		= 31,

@@ -52,6 +52,10 @@ static const PuzzleBoard::PuzzleData puzzleKeyHidesToData = {
 PuzzleBoardKeyHidesTo::PuzzleBoardKeyHidesTo(AsylumEngine *engine) : PuzzleBoard(engine, puzzleKeyHidesToData) {
 }
 
+void PuzzleBoardKeyHidesTo::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleBoardKeyHidesTo::saveLoadWithSerializer] Not implemented");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////

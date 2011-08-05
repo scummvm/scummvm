@@ -57,9 +57,8 @@ PuzzleMorgueDoor::PuzzleMorgueDoor(AsylumEngine *engine) : Puzzle(engine) {
 PuzzleMorgueDoor::~PuzzleMorgueDoor() {
 }
 
-void PuzzleMorgueDoor::reset() {
-	_data_45A9D8 = 0;
-	_data_45A9DC = 0;
+void PuzzleMorgueDoor::saveLoadWithSerializer(Common::Serializer &s) {
+	error("[PuzzleMorgueDoor::saveLoadWithSerializer] Not implemented");
 }
 
 //////////////////////////////////////////////////////////////////////////

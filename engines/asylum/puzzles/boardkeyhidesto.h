@@ -33,6 +33,9 @@ class PuzzleBoardKeyHidesTo : public PuzzleBoard {
 public:
 	PuzzleBoardKeyHidesTo(AsylumEngine *engine);
 
+	// Serializable
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+
 private:
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
