@@ -395,8 +395,9 @@ void SharedData::saveLoadWithSerializer(Common::Serializer &s) {
 	// Next screen update
 	s.syncAsUint32LE(_nextScreenUpdate);
 
-	// Viewed movies (we also load it from an external file...)
-	//s.syncBytes(&_moviesViewed, sizeof(_moviesViewed));
+	// Viewed movies
+	// (we load it directly from an external file, the original overwrites the data with the one from the external file)
+	s.skip(196);
 
 	// Actor update status 15 check
 	s.syncAsUint32LE(_flagActorUpdateStatus15Check);
