@@ -44,7 +44,7 @@ namespace Asylum {
 // ActionArea
 //////////////////////////////////////////////////////////////////////////
 void ActionArea::load(Common::SeekableReadStream *stream) {
-	stream->read(&name, 52);
+	stream->read(&name, sizeof(name));
 	id             = stream->readSint32LE();
 	field01        = stream->readSint32LE();
 	field02        = stream->readSint32LE();
@@ -55,7 +55,7 @@ void ActionArea::load(Common::SeekableReadStream *stream) {
 	scriptIndex2   = stream->readSint32LE();
 	actionType     = stream->readSint32LE();
 
-	for (int32 i = 0; i < 10; i++)
+	for (int32 i = 0; i < ARRAYSIZE(flagNums); i++)
 		flagNums[i] = stream->readSint32LE();
 
 	field_7C             = stream->readSint32LE();
@@ -73,7 +73,32 @@ void ActionArea::load(Common::SeekableReadStream *stream) {
 }
 
 void ActionArea::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[ActionArea::saveLoadWithSerializer] Not implemented");
+	s.syncBytes((byte *)&name, sizeof(name));
+	s.syncAsSint32LE(id);
+	s.syncAsSint32LE(field01);
+	s.syncAsSint32LE(field02);
+	s.syncAsSint32LE(field_40);
+	s.syncAsSint32LE(field_44);
+	s.syncAsSint32LE(flags);
+	s.syncAsSint32LE(scriptIndex);
+	s.syncAsSint32LE(scriptIndex2);
+	s.syncAsSint32LE(actionType);
+
+	for (int32 i = 0; i < ARRAYSIZE(flagNums); i++)
+		s.syncAsSint32LE(flagNums[i]);
+
+	s.syncAsSint32LE(field_7C);
+	s.syncAsUint32LE(polygonIndex);
+	s.syncAsSint32LE(soundResourceIdFrame);
+	s.syncAsSint32LE(field_88);
+	s.syncAsSint32LE(soundResourceId);
+	s.syncAsSint32LE(field_90);
+	s.syncAsSint32LE(paletteResourceId);
+
+	for (int32 i = 0; i < 5; i++)
+		s.syncAsSint32LE(paths[i]);
+
+	s.syncAsSint32LE(volume);
 }
 
 //////////////////////////////////////////////////////////////////////////
