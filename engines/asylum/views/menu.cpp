@@ -2299,6 +2299,7 @@ void Menu::keySaveGame(const AsylumEvent &evt) {
 		break;
 
 	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
 		_dword_455DD8 = false;
 		getSaveLoad()->save();
 		break;
