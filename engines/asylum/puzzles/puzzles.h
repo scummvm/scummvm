@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_PUZZLE_DATA_H
-#define ASYLUM_PUZZLE_DATA_H
+#ifndef ASYLUM_PUZZLES_H
+#define ASYLUM_PUZZLES_H
 
 #include "asylum/console.h"
 #include "asylum/shared.h"
@@ -30,20 +30,44 @@
 
 namespace Asylum {
 
-struct PuzzleData : public Common::Serializable {
-public:
-	uint32 timeMachineCounter;
+class EventHandler;
+class Puzzle;
 
-	PuzzleData() {
-		timeMachineCounter = 0;
-	}
+class Puzzles : public Common::Serializable {
+public:
+	Puzzles(AsylumEngine *engine);
+	~Puzzles();
+
+	/**
+	 * Resets puzzles
+	 */
+	void reset();
+
+	/**
+	 * Gets a message handler.
+	 *
+	 * @param index Zero-based index of the message handler
+	 *
+	 * @return The message handler.
+	 */
+	EventHandler* getPuzzle(uint32 index) const;
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &s) {
-		error("[PuzzleData::saveLoadWithSerializer] Not implemented!");
-	}
+	void saveLoadWithSerializer(Common::Serializer &s);
+
+private:
+	AsylumEngine* _vm;
+	Puzzle *_puzzles[17];
+
+	/**
+	 * Initializes the puzzles
+	 */
+	void initPuzzles();
+
+	// Debug
+	friend class Console;
 };
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_PUZZLE_DATA_H
+#endif // ASYLUM_PUZZLES_H

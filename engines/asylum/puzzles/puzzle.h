@@ -27,6 +27,7 @@
 #include "asylum/shared.h"
 
 #include "common/rect.h"
+#include "common/serializer.h"
 
 namespace Asylum {
 
@@ -38,12 +39,15 @@ class Cursor;
 class GraphicResource;
 struct GraphicQueueItem;
 
-class Puzzle : public EventHandler {
+class Puzzle : public EventHandler, public Common::Serializable {
 public:
 	Puzzle(AsylumEngine *engine);
 	virtual ~Puzzle();
 
 	bool handleEvent(const AsylumEvent &evt);
+
+	// Serializable
+	void saveLoadWithSerializer(Common::Serializer &s);
 
 protected:
 	AsylumEngine *_vm;
