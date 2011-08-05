@@ -42,6 +42,7 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/fs.h"
+#include "common/timer.h"
 
 #include "engines/util.h"
 
