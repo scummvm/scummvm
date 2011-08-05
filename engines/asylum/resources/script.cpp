@@ -269,12 +269,12 @@ void ScriptManager::saveQueue(Common::Serializer &s) {
 	_queue.saveLoadWithSerializer(s);
 }
 
-void ScriptManager::reset() {
-	// Reset script queue
-	resetQueue();
-
-	// Remove all scripts
-	_scripts.clear();
+void ScriptManager::reset(uint32 count) {
+	// Create a set of empty scripts
+	for (uint32 i = 0; i < count; i++) {
+		Script script;
+		_scripts.push_back(script);
+	}
 
 	_done = false;
 	_exit = false;

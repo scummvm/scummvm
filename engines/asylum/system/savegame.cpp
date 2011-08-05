@@ -287,7 +287,7 @@ bool Savegame::loadData(Common::String filename) {
 	read(file, getEncounter()->items(), 109, getEncounter()->items()->size(), "Encounter Data");
 	read(file, getEncounter()->variables(), 2, getEncounter()->variables()->size(), "Encounter Variables");
 
-	getScript()->reset();
+	getScript()->reset(getWorld()->numScripts);
 
 	if (getWorld()->numScripts)
 		read(file, getScript(), 7096, (uint32)getWorld()->numScripts, "Action Lists");

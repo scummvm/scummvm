@@ -139,7 +139,7 @@ public:
 	/**
 	 * Resets the queue and local variables
 	 */
-	void reset();
+	void reset(uint32 count = 0);
 
 	/**
 	 * Initialize the script element at actionIndex to
