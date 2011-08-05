@@ -125,7 +125,71 @@ void Object::load(Common::SeekableReadStream *stream) {
 }
 
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[Object::saveLoadWithSerializer] Not implemented");
+	s.syncAsSint32LE(_id);
+	s.syncAsSint32LE(_resourceId);
+	s.syncAsSint32LE(x);
+	s.syncAsSint32LE(y);
+
+	s.syncAsSint32LE(_boundingRect.left);
+	s.syncAsSint32LE(_boundingRect.top);
+	s.syncAsSint32LE(_boundingRect.right);
+	s.syncAsSint32LE(_boundingRect.bottom);
+
+	s.syncAsSint32LE(_field_20);
+	s.syncAsUint32LE(_frameIndex);
+	s.syncAsUint32LE(_frameCount);
+	s.syncAsSint32LE(_field_2C);
+	s.syncAsSint32LE(_field_30);
+	s.syncAsSint32LE(_field_34);
+	s.syncAsUint32LE(flags);
+	s.syncAsSint32LE(_field_3C);
+
+	s.syncBytes((byte *)&_name, sizeof(_name));
+
+	s.syncAsSint32LE(_rect.left);
+	s.syncAsSint32LE(_rect.top);
+	s.syncAsSint32LE(_rect.right);
+	s.syncAsSint32LE(_rect.bottom);
+
+	s.syncAsUint32LE(_polygonIndex);
+	s.syncAsSint32LE(actionType);
+
+	for (int i = 0; i < ARRAYSIZE(_gameFlags); i++)
+		s.syncAsSint32LE(_gameFlags[i]);
+
+	s.syncAsSint32LE(_field_B4);
+	s.syncAsUint32LE(_tickCount);
+	s.syncAsUint32LE(_tickCount2);
+	s.syncAsUint32LE(_field_C0);
+	s.syncAsSint32LE(_priority);
+	s.syncAsSint32LE(_scriptIndex);
+
+	for (int i = 0; i < ARRAYSIZE(_soundItems); i++) {
+		s.syncAsSint32LE(_soundItems[i].resourceId);
+		s.syncAsSint32LE(_soundItems[i].field_4);
+		s.syncAsSint32LE(_soundItems[i].field_8);
+		s.syncAsSint32LE(_soundItems[i].field_C);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_frameSoundItems); i++) {
+		s.syncAsSint32LE(_frameSoundItems[i].resourceId);
+		s.syncAsSint32LE(_frameSoundItems[i].frameIndex);
+		s.syncAsSint32LE(_frameSoundItems[i].index);
+		s.syncAsSint32LE(_frameSoundItems[i].field_C);
+		s.syncAsSint32LE(_frameSoundItems[i].field_10);
+		s.syncAsSint32LE(_frameSoundItems[i].field_14);
+	}
+
+	s.syncAsSint32LE(_transparency);
+	s.syncAsSint32LE(_soundCoords.x);
+	s.syncAsSint32LE(_soundCoords.y);
+	s.syncAsSint32LE(_field_688);
+
+	for (int i = 0; i < ARRAYSIZE(_randomResourceIds); i++)
+		s.syncAsSint32LE(_randomResourceIds[i]);
+
+	s.syncAsSint32LE(_soundResourceId);
+	s.syncAsSint32LE(_field_6A4);
 }
 
 void Object::disable() {
@@ -140,7 +204,7 @@ void Object::disableAndRemoveFromQueue() {
 	getScreen()->deleteGraphicFromQueue(_resourceId);
 }
 
-/////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 // Visibility
 //////////////////////////////////////////////////////////////////////////
 bool Object::isOnScreen() {
