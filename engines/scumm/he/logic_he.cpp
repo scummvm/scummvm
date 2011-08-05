@@ -1241,6 +1241,8 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int
 	int start = (_vm->_game.id == GID_SOCCER) ? 19 : 18;
 	int end = (_vm->_game.id == GID_SOCCER) ? 19 : 21;
 
+	// The following loop is doing cursor scaling
+	// The further up on the screen, the smaller the cursor is
 	for (int i = start; i <= end; i++) {
 		int v14 = getFromArray(a2, i, 0);
 		int v15 = getFromArray(a2, i, 1);
