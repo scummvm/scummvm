@@ -65,11 +65,11 @@ enum GlobalFlag {
  *  uint32 {15}    - ambient ticks
  *  uint32 {1}     - UNUSED
  *  uint32 {1}     - UNUSED (scene updateScreen calls count)
- *  uint32 {1}     - Skip script processing
+ *  -- Script queue (stored in ScriptManager)
  *  uint32 {1}     - global Object X
  *  uint32 {1}     - global Object Y
- *  -- Skip processing flag (stored in ScriptManager)
- *  -- Encounter running flag (stored in Encounter)
+ *  uint32 {1}     - Skip script processing flag
+ *  uint32 {1}     - Encounter running flag
  *  uint32 {1}     - Player ActorIndex
  *  uint32 {1}     - scene xLeft
  *  uint32 {1}     - scene yTop
@@ -152,6 +152,18 @@ public:
 	void setAmbientFlag(uint32 index, uint32 val);
 	void resetAmbientFlags();
 
+	/**
+	 * Return the index of the player actor
+	 */
+	ActorIndex getPlayerIndex() { return _playerIndex; }
+
+	/**
+	 * Sets the player actor index.
+	 *
+	 * @param index index of the player actor
+	 */
+	void setPlayerIndex(ActorIndex index) { _playerIndex = index; }
+
 	// Coordinates
 	Common::Point getGlobalPoint() { return _globalPoint; }
 	void setGlobalPoint(const Common::Point &point) { _globalPoint = point; }
@@ -210,7 +222,7 @@ private:
 	Common::Point   _globalPoint; // global point
 	bool            _flagSkipScriptProcessing;
 	bool            _flagIsEncounterRunning;
-	// player ActorIndex
+	int32           _playerIndex;
 	Common::Point   _sceneCoords;
 	int16           _sceneOffset;
 	int16           _sceneOffsetAdd;

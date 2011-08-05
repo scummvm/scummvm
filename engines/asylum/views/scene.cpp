@@ -60,7 +60,6 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 
 	// Initialize data
 	_packId = kResourcePackInvalid;
-	_playerIndex = 0;
 
 	_hitAreaChapter7Counter = 0;
 	_isCTRLPressed = false;
@@ -94,7 +93,7 @@ void Scene::enter(ResourcePackId packId) {
 
 	getCursor()->hide();
 
-	_playerIndex = 0;
+	getSharedData()->setPlayerIndex(0);
 
 	// Load the scene data
 	load(packId);
@@ -437,7 +436,7 @@ bool Scene::key(const AsylumEvent &evt) {
 		if (getCursor()->isHidden() || _ws->chapter != kChapter9)
 			return true;
 
-		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2206)]->scriptIndex, _playerIndex);
+		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2206)]->scriptIndex, getSharedData()->getPlayerIndex());
 
 		return true;
 	}
@@ -446,7 +445,7 @@ bool Scene::key(const AsylumEvent &evt) {
 		if (getCursor()->isHidden() || _ws->chapter != kChapter9)
 			return true;
 
-		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2207)]->scriptIndex, _playerIndex);
+		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2207)]->scriptIndex, getSharedData()->getPlayerIndex());
 
 		return true;
 	}
@@ -455,7 +454,7 @@ bool Scene::key(const AsylumEvent &evt) {
 		if (getCursor()->isHidden() || _ws->chapter != kChapter9)
 			return true;
 
-		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2208)]->scriptIndex, _playerIndex);
+		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2208)]->scriptIndex, getSharedData()->getPlayerIndex());
 
 		return true;
 	}
@@ -693,7 +692,7 @@ void Scene::updateMouse() {
 	player->adjustCoordinates(&pt);
 
 	Common::Rect actorRect;
-	if (_ws->chapter != kChapter2 || _playerIndex != 10) {
+	if (_ws->chapter != kChapter2 || getSharedData()->getPlayerIndex() != 10) {
 		actorRect.left   = pt.x + 20;
 		actorRect.top    = pt.y;
 		actorRect.right  = (int16)(pt.x + 2 * player->getPoint2()->x);
@@ -1193,7 +1192,7 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 
 	int32 index = hitTest(type);
 	if (index == -1) {
-		if (_ws->chapter != kChapter2 || _playerIndex != 10) {
+		if (_ws->chapter != kChapter2 || getSharedData()->getPlayerIndex() != 10) {
 			if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->getAnimation())
 				getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass]);
 		} else {
@@ -1235,7 +1234,7 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 	} else if (actionType & kActionType16) {
 		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->getAnimation() != kCursorAnimationMirror)
 			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2]);
-	} else if (_ws->chapter != kChapter2 && _playerIndex != 10) {
+	} else if (_ws->chapter != kChapter2 && getSharedData()->getPlayerIndex() != 10) {
 		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->getAnimation())
 			getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass]);
 	} else {
@@ -1564,7 +1563,7 @@ void Scene::handleHit(int32 index, HitType type) {
 
 	case kHitActionArea:
 		if (!getScript()->isInQueue(_ws->actions[index]->scriptIndex))
-			getScript()->queueScript(_ws->actions[index]->scriptIndex, _playerIndex);
+			getScript()->queueScript(_ws->actions[index]->scriptIndex, getSharedData()->getPlayerIndex());
 
 		switch (_ws->chapter) {
 		default:
@@ -1595,7 +1594,7 @@ void Scene::handleHit(int32 index, HitType type) {
 		}
 
 		if (!getScript()->isInQueue(object->getScriptIndex()))
-			getScript()->queueScript(object->getScriptIndex(), _playerIndex);
+			getScript()->queueScript(object->getScriptIndex(), getSharedData()->getPlayerIndex());
 
 		// Original executes special script hit functions, but since there is none defined, we can skip this part
 		}
@@ -1607,7 +1606,7 @@ void Scene::handleHit(int32 index, HitType type) {
 		if (actor->actionType & (kActionTypeFind | kActionType16)) {
 
 			if (getScript()->isInQueue(actor->getScriptIndex()))
-				getScript()->queueScript(actor->getScriptIndex(), _playerIndex);
+				getScript()->queueScript(actor->getScriptIndex(), getSharedData()->getPlayerIndex());
 
 		} else if (actor->actionType & kActionTypeTalk) {
 
@@ -1620,7 +1619,7 @@ void Scene::handleHit(int32 index, HitType type) {
 			}
 
 			if (getScript()->isInQueue(actor->getScriptIndex()))
-				getScript()->queueScript(actor->getScriptIndex(), _playerIndex);
+				getScript()->queueScript(actor->getScriptIndex(), getSharedData()->getPlayerIndex());
 		}
 
 		switch (_ws->chapter) {
@@ -1674,15 +1673,15 @@ void Scene::playerReaction() {
 						break;
 
 					case 0:
-						getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2206)]->scriptIndex, _playerIndex);
+						getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2206)]->scriptIndex, getSharedData()->getPlayerIndex());
 						break;
 
 					case 1:
-						getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2207)]->scriptIndex, _playerIndex);
+						getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2207)]->scriptIndex, getSharedData()->getPlayerIndex());
 						break;
 
 					case 2:
-						getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2208)]->scriptIndex, _playerIndex);
+						getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2208)]->scriptIndex, getSharedData()->getPlayerIndex());
 						break;
 					}
 				} else {
@@ -2069,7 +2068,7 @@ Actor* Scene::getActor(ActorIndex index) {
 	if (!_ws)
 		error("[Scene::getActor] WorldStats not initialized properly!");
 
-	ActorIndex computedIndex =  (index != kActorInvalid) ? index : _playerIndex;
+	ActorIndex computedIndex =  (index != kActorInvalid) ? index : getSharedData()->getPlayerIndex();
 
 	if (computedIndex < 0 || computedIndex >= (int16)_ws->actors.size())
 		error("[Scene::getActor] Invalid actor index: %d ([0-%d] allowed)", computedIndex, _ws->actors.size() - 1);
@@ -2240,7 +2239,8 @@ void Scene::changePlayer(ActorIndex index) {
 
 			getActor(index)->show();
 		}
-		_playerIndex = index;
+
+		getSharedData()->setPlayerIndex(index);
 		break;
 
 	case 1:
@@ -2257,7 +2257,7 @@ void Scene::changePlayer(ActorIndex index) {
 			getActor(index)->show();
 		}
 
-		_playerIndex = index;
+		getSharedData()->setPlayerIndex(index);
 		break;
 
 	case 2:
@@ -2274,7 +2274,7 @@ void Scene::changePlayer(ActorIndex index) {
 			getActor(index)->show();
 		}
 
-		_playerIndex = index;
+		getSharedData()->setPlayerIndex(index);
 		break;
 
 	case 3:
@@ -2292,7 +2292,7 @@ void Scene::changePlayer(ActorIndex index) {
 		}
 
 		getActor(index)->show();
-		_playerIndex = index;
+		getSharedData()->setPlayerIndex(index);
 		break;
 
 	case 666:
@@ -2478,7 +2478,7 @@ void Scene::processUpdateList() {
 
 			int16 bottomRight = actor->getPoint1()->y + actor->getBoundingRect()->bottom + 4;
 
-			if (_ws->chapter == kChapter11 && _updateList[i].index != getPlayerIndex())
+			if (_ws->chapter == kChapter11 && _updateList[i].index != getSharedData()->getPlayerIndex())
 				bottomRight += 20;
 
 			// Our actor rect

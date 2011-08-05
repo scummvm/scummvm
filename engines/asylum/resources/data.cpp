@@ -41,7 +41,7 @@ SharedData::SharedData() {
 	_globalPoint.y                     = -1;
 	_flagSkipScriptProcessing          = false;
 	_flagIsEncounterRunning            = false;
-	// player ActorIndex
+	_playerIndex                       = 0;
 	_sceneOffset                       = 0;
 	_sceneOffsetAdd                    = 0;
 	memset(&_cursorResources, kResourceNone, sizeof(_cursorResources));
@@ -308,7 +308,7 @@ void SharedData::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint32LE(_flagIsEncounterRunning);
 
 	// Player index
-	//s.syncAsUint32LE(playerIndex);
+	s.syncAsSint32LE(_playerIndex);
 
 	// Scene coordinates
 	s.syncAsSint32LE(_sceneCoords.x);
