@@ -45,9 +45,32 @@ struct ActorData : public Common::Serializable {
 	Common::Point points[120];
 	ActorDirection directions[120];
 
+	void load(Common::SeekableReadStream *stream) {
+		count = stream->readUint32LE();
+
+		current = stream->readUint32LE();
+
+		for (int32 i = 0; i < 120; i++) {
+			points[i].x = stream->readSint32LE();
+			points[i].y = stream->readSint32LE();
+		}
+
+		for (int32 i = 0; i < 120; i++)
+			directions[i] = (ActorDirection)stream->readSint32LE();
+	}
+
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s) {
-		error("[ActorData::saveLoadWithSerializer] Not implemented");
+		s.syncAsUint32LE(count);
+		s.syncAsSint32LE(current);
+
+		for (int32 i = 0; i < ARRAYSIZE(points); i++) {
+			s.syncAsSint32LE(points[i].x);
+			s.syncAsSint32LE(points[i].y);
+		}
+
+		for (int32 i = 0; i < ARRAYSIZE(directions); i++)
+			s.syncAsSint32LE(directions[i]);
 	}
 };
 
@@ -121,13 +144,6 @@ public:
 	 * @param stream If non-null, the Common::SeekableReadStream to load from
 	 */
 	void load(Common::SeekableReadStream *stream);
-
-	/**
-	 * Loads the actor data.
-	 *
-	 * @param stream If non-null, the Common::SeekableReadStream to load from
-	 */
-	void loadData(Common::SeekableReadStream *stream);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Visibility
