@@ -109,7 +109,7 @@ void DefaultTimerManager::handler() {
 	}
 }
 
-bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, void *refCon) {
+bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, void *refCon, const Common::String &id) {
 	assert(interval > 0);
 	Common::StackLock lock(_mutex);
 

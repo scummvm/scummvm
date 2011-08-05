@@ -766,7 +766,7 @@ Common::SeekableReadStream *MusicPlayerMac::decompressMidi(Common::SeekableReadS
 }
 
 MusicPlayerIOS::MusicPlayerIOS(GroovieEngine *vm) : MusicPlayer(vm) {
-	vm->getTimerManager()->installTimerProc(&onTimer, 50 * 1000, this);
+	vm->getTimerManager()->installTimerProc(&onTimer, 50 * 1000, this, "groovieMusic");
 }
 
 MusicPlayerIOS::~MusicPlayerIOS() {

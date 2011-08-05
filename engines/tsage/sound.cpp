@@ -85,7 +85,7 @@ void SoundManager::postInit() {
 //  it handles updates for both music and Fx. However, since Adlib updates also get done in a
 //	thread, and doesn't get too far ahead, I've left it to the AdlibSoundDriver class to 
 //	call the update method, rather than having it be called separately
-//		g_system->getTimerManager()->installTimerProc(_sfUpdateCallback, 1000000 / SOUND_FREQUENCY, NULL);
+//		g_system->getTimerManager()->installTimerProc(_sfUpdateCallback, 1000000 / SOUND_FREQUENCY, NULL, "tsageSoundUpdate");
 		__sndmgrReady = true;
 	}
 }

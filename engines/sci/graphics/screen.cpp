@@ -20,9 +20,9 @@
  *
  */
 
-#include "common/timer.h"
 #include "common/util.h"
 #include "common/system.h"
+#include "common/timer.h"
 #include "graphics/surface.h"
 #include "engines/util.h"
 

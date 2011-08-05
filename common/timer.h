@@ -43,9 +43,10 @@ public:
 	 * @param proc		the callback
 	 * @param interval	the interval in which the timer shall be invoked (in microseconds)
 	 * @param refCon	an arbitrary void pointer; will be passed to the timer callback
+	 * @param id            unique string id of the installed timer. Used by the event recorder
 	 * @return	true if the timer was installed successfully, false otherwise
 	 */
-	virtual bool installTimerProc(TimerProc proc, int32 interval, void *refCon) = 0;
+	virtual bool installTimerProc(TimerProc proc, int32 interval, void *refCon, const Common::String &id) = 0;
 
 	/**
 	 * Remove the given timer callback. It will not be invoked anymore,

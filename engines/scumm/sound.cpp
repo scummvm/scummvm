@@ -1016,7 +1016,7 @@ void Sound::startCDTimer() {
 	// appears.
 
 	_vm->getTimerManager()->removeTimerProc(&cd_timer_handler);
-	_vm->getTimerManager()->installTimerProc(&cd_timer_handler, 100700, _vm);
+	_vm->getTimerManager()->installTimerProc(&cd_timer_handler, 100700, _vm, "scummCDtimer");
 }
 
 void Sound::stopCDTimer() {
