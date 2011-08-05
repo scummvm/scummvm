@@ -235,7 +235,7 @@ enum ResourcePackId {
 	kResourcePackInvalid               = 0xFFF
 };
 
-#define MAKE_RESOURCE(pack, index) (ResourceId)((((pack) << 16) + 0x80000000) + (uint32)(index))
+#define MAKE_RESOURCE(pack, index) (ResourceId)((((pack) << 16) + 0x80000000) + (unsigned) (int32)(index))
 
 typedef int ResourceId;
 

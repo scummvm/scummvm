@@ -175,7 +175,7 @@ private:
 	 *
 	 * @param delta The delta.
 	 */
-	void adjustMasterVolume(int32 delta);
+	void adjustMasterVolume(int32 delta) const;
 
 	/**
 	 * Adjust test sounds volume.
