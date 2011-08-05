@@ -220,22 +220,96 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_field_9A0            = stream->readSint32LE();
 }
 
-void Actor::loadData(Common::SeekableReadStream *stream) {
-	_data.count = stream->readUint32LE();
-
-	_data.current = stream->readUint32LE();
-
-	for (int32 i = 0; i < 120; i++) {
-		_data.points[i].x = stream->readSint32LE();
-		_data.points[i].y = stream->readSint32LE();
-	}
-
-	for (int32 i = 0; i < 120; i++)
-		_data.directions[i] = (ActorDirection)stream->readSint32LE();
-}
-
 void Actor::saveLoadWithSerializer(Common::Serializer &s) {
-	error("[Actor::saveLoadWithSerializer] Not implemented");
+	s.syncAsSint32LE(_point.x);
+	s.syncAsSint32LE(_point.y);
+	s.syncAsSint32LE(_resourceId);
+	s.syncAsSint32LE(_objectIndex);
+	s.syncAsUint32LE(_frameIndex);
+	s.syncAsUint32LE(_frameCount);
+	s.syncAsSint32LE(_point1.x);
+	s.syncAsSint32LE(_point1.y);
+	s.syncAsSint32LE(_point2.x);
+	s.syncAsSint32LE(_point2.y);
+
+	s.syncAsSint32LE(_boundingRect.left);
+	s.syncAsSint32LE(_boundingRect.top);
+	s.syncAsSint32LE(_boundingRect.right);
+	s.syncAsSint32LE(_boundingRect.bottom);
+
+	s.syncAsSint32LE(_direction);
+	s.syncAsSint32LE(_field_3C);
+	s.syncAsSint32LE(_status);
+	s.syncAsSint32LE(_field_44);
+	s.syncAsSint32LE(_priority);
+	s.syncAsSint32LE(flags);
+	s.syncAsSint32LE(_field_50);
+	s.syncAsSint32LE(_field_54);
+	s.syncAsSint32LE(_field_58);
+	s.syncAsSint32LE(_field_5C);
+	s.syncAsSint32LE(_field_60);
+	s.syncAsSint32LE(_actionIdx3);
+
+	// TODO skip field_68 till field_617
+	s.skip(0x5B0);
+
+	for (int32 i = 0; i < 8; i++)
+		s.syncAsSint32LE(_reaction[i]);
+
+	s.syncAsSint32LE(_field_638);
+	s.syncAsSint32LE(_walkingSound1);
+	s.syncAsSint32LE(_walkingSound2);
+	s.syncAsSint32LE(_walkingSound3);
+	s.syncAsSint32LE(_walkingSound4);
+	s.syncAsUint32LE(_field_64C);
+	s.syncAsUint32LE(_field_650);
+
+	for (int32 i = 0; i < ARRAYSIZE(_graphicResourceIds); i++)
+		s.syncAsSint32LE(_graphicResourceIds[i]);
+
+	s.syncBytes((byte *)&_name, sizeof(_name));
+
+	for (int32 i = 0; i < 20; i++)
+		s.syncAsSint32LE(_distancesEO[i]);
+
+	for (int32 i = 0; i < 20; i++)
+		s.syncAsSint32LE(_distancesNS[i]);
+
+	for (int32 i = 0; i < 20; i++)
+		s.syncAsSint32LE(_distancesNSEO[i]);
+
+	s.syncAsSint32LE(_actionIdx2);
+	s.syncAsSint32LE(_field_924);
+	s.syncAsSint32LE(_lastScreenUpdate);
+	s.syncAsSint32LE(_scriptIndex);
+	s.syncAsSint32LE(actionType);
+	s.syncAsSint32LE(_field_934);
+	s.syncAsSint32LE(_field_938);
+	s.syncAsSint32LE(_soundResourceId);
+	s.syncAsSint32LE(_numberValue01);
+	s.syncAsSint32LE(_field_944);
+	s.syncAsSint32LE(_field_948);
+	s.syncAsSint32LE(_field_94C);
+	s.syncAsSint32LE(_numberFlag01);
+	s.syncAsSint32LE(_numberStringWidth);
+	s.syncAsSint32LE(_numberStringX);
+	s.syncAsSint32LE(_numberStringY);
+	s.syncBytes((byte *)&_numberString01, sizeof(_numberString01));
+	s.syncAsSint32LE(_field_968);
+	s.syncAsSint32LE(_transparency);
+	s.syncAsSint32LE(_processNewDirection);
+	s.syncAsSint32LE(_invertPriority);
+	s.syncAsSint32LE(_nextDirection);
+	s.syncAsSint32LE(_nextActionIndex);
+	s.syncAsSint32LE(_nextActorIndex);
+	s.syncAsSint32LE(_nextPositionOffset.x);
+	s.syncAsSint32LE(_nextPositionOffset.y);
+	s.syncAsSint32LE(_nextPosition.x);
+	s.syncAsSint32LE(_nextPosition.y);
+	s.syncAsSint32LE(_field_994);
+	s.syncAsSint32LE(_field_998);
+	s.syncAsSint32LE(_field_99C);
+	s.syncAsSint32LE(_field_9A0);
 }
 
 /////////////////////////////////////////////////////////////////////////

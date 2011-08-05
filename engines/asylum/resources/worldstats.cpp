@@ -220,14 +220,14 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	//////////////////////////////////////////////////////////////////////////
 	// Read actor data
 	for (ActorIndex index = 0; index < (int)numActors; index++)
-		actors[index]->loadData(stream);
+		actors[index]->getData()->load(stream);
 
 	stream->seek((ACTORS_MAX_COUNT - numActors) * ACTORDATA_SIZE, SEEK_CUR);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Read number of scripts and polygons
-	numScripts = stream->readUint32LE();
-	numPolygons    = stream->readUint32LE();
+	numScripts  = stream->readUint32LE();
+	numPolygons = stream->readUint32LE();
 
 	// Load the alternate cursor resources
 	for (uint32 i = 0; i < ARRAYSIZE(cursorResourcesAlternate); i++)
