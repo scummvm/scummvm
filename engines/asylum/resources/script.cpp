@@ -1196,7 +1196,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x3F
 IMPLEMENT_OPCODE(JumpIfActor)
-	ActorIndex index = (cmd->param1 == kActorInvalid) ? getScene()->getPlayerIndex() : cmd->param1;
+	ActorIndex index = (cmd->param1 == kActorInvalid) ? getSharedData()->getPlayerIndex() : cmd->param1;
 
 	if (_currentQueueEntry->actorIndex != index)
 		_currentQueueEntry->currentLine = cmd->param2 - 1;

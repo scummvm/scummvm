@@ -107,18 +107,6 @@ public:
 	bool handleEvent(const AsylumEvent &ev);
 
 	/**
-	 * Return the index of the player actor
-	 */
-	ActorIndex getPlayerIndex() { return _playerIndex; }
-
-	/**
-	 * Sets the player actor index.
-	 *
-	 * @param index index of the player actor
-	 */
-	void setPlayerActorIndex(ActorIndex index) { _playerIndex = index; }
-
-	/**
 	 * Gets the current scene pack identifier.
 	 *
 	 * @return The pack identifier.
@@ -210,7 +198,6 @@ private:
 	AsylumEngine  *_vm;
 
 	ResourcePackId _packId;
-	int32 _playerIndex;
 
 	Polygons     *_polygons;
 	WorldStats   *_ws;

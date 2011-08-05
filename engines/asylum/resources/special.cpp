@@ -467,7 +467,7 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 			if (_vm->isGameFlagSet(kGameFlag1023)) {
 				if (player->getField638()) {
 					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(player->getField638() == 3 ? 2447 : 2448)]->scriptIndex,
-					                         getScene()->getPlayerIndex());
+					                         getSharedData()->getPlayerIndex());
 					_vm->clearGameFlag(kGameFlag1023);
 				} else if (player->getStatus() != kActorStatus6) {
 					_vm->clearGameFlag(kGameFlag1023);
@@ -478,7 +478,7 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 			if (_vm->isGameFlagSet(kGameFlag1022)) {
 				_vm->clearGameFlag(kGameFlag1022);
 				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2445)]->scriptIndex,
-				                         getScene()->getPlayerIndex());
+				                         getSharedData()->getPlayerIndex());
 			}
 			break;
 		}

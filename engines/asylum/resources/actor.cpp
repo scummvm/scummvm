@@ -283,7 +283,7 @@ void Actor::update() {
 		break;
 
 	case kActorStatus16:
-		if (_index != getScene()->getPlayerIndex())
+		if (_index != getSharedData()->getPlayerIndex())
 			break;
 
 		if (getWorld()->chapter == 2) {
@@ -329,7 +329,7 @@ void Actor::update() {
 						getScene()->getActor(0)->updateFromDirection(kDirectionS);
 
 						// Queue script
-						getScript()->queueScript(getWorld()->getActionAreaById(2696)->scriptIndex, getScene()->getPlayerIndex());
+						getScript()->queueScript(getWorld()->getActionAreaById(2696)->scriptIndex, getSharedData()->getPlayerIndex());
 
 						_vm->setGameFlag(kGameFlag279);
 						_vm->setGameFlag(kGameFlag368);
@@ -358,7 +358,7 @@ void Actor::update() {
 				}
 			}
 
-			if (_index == getScene()->getPlayerIndex()) {
+			if (_index == getSharedData()->getPlayerIndex()) {
 				if (_frameIndex <= _frameCount - 1) {
 					++_frameIndex;
 				} else {
@@ -368,12 +368,12 @@ void Actor::update() {
 					_vm->setGameFlag(kGameFlag238);
 
 					// Queue script
-					getScript()->queueScript(getWorld()->getActionAreaById(1000)->scriptIndex, getScene()->getPlayerIndex());
+					getScript()->queueScript(getWorld()->getActionAreaById(1000)->scriptIndex, getSharedData()->getPlayerIndex());
 				}
 			}
 
 		} else if (getWorld()->chapter == kChapter11) {
-			if (_index == getScene()->getPlayerIndex()) {
+			if (_index == getSharedData()->getPlayerIndex()) {
 				if (_frameIndex <= _frameCount - 1)
 					++_frameIndex;
 				else
@@ -390,7 +390,7 @@ void Actor::update() {
 			if (_index > 12)
 				updateStatus15_Chapter2();
 
-			if (_index == getScene()->getPlayerIndex())
+			if (_index == getSharedData()->getPlayerIndex())
 				updateStatus15_Chapter2_Player();
 
 			if (_index == 11)
@@ -400,7 +400,7 @@ void Actor::update() {
 			if (_index >= 10 && _index < 16)
 				updateStatus15_Chapter11();
 
-			if (_index == getScene()->getPlayerIndex())
+			if (_index == getSharedData()->getPlayerIndex())
 				updateStatus15_Chapter11_Player();
 		}
 		break;
@@ -490,7 +490,7 @@ void Actor::update() {
 		if (_soundResourceId != kResourceNone && getSound()->isPlaying(_soundResourceId))
 			setVolume();
 
-		if (_index != getScene()->getPlayerIndex() && getWorld()->chapter != kChapter9)
+		if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
 			getSpecial()->run(NULL, _index);
 
 		updateDirection();
@@ -550,7 +550,7 @@ void Actor::update() {
 		if (_soundResourceId != kResourceNone && getSound()->isPlaying(_soundResourceId))
 			setVolume();
 
-		if (_index != getScene()->getPlayerIndex() && getWorld()->chapter != kChapter9)
+		if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
 			getSpecial()->run(NULL, _index);
 
 		updateDirection();
@@ -610,7 +610,7 @@ void Actor::update() {
 	if (_soundResourceId && getSound()->isPlaying(_soundResourceId))
 		setVolume();
 
-	if (_index != getScene()->getPlayerIndex() && getWorld()->chapter != kChapter9)
+	if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
 		error("[Actor::update] call to actor sound functions missing!");
 
 	updateDirection();
@@ -628,7 +628,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 	case kActorStatus1:
 	case kActorStatus12:
 		if ((getWorld()->chapter == kChapter2
-		 && _index == getScene()->getPlayerIndex() && (_status == kActorStatus18 || _status == kActorStatus16 || _status == kActorStatus17))
+		 && _index == getSharedData()->getPlayerIndex() && (_status == kActorStatus18 || _status == kActorStatus16 || _status == kActorStatus17))
 		 || (_status != kActorStatusEnabled && _status != kActorStatus9 && _status != kActorStatus14 && _status != kActorStatus15 && _status != kActorStatus18))
 			return;
 
@@ -672,7 +672,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			actor->getPoint1()->y = _point2.y + _point1.y - actor->getPoint2()->y;
 			actor->setDirection(kDirectionS);
 
-			getScene()->setPlayerActorIndex(0);
+			getSharedData()->setPlayerIndex(0);
 
 			// Hide this actor and the show the other one
 			hide();
@@ -713,7 +713,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 			if (_index > 12)
 				_resourceId = _graphicResourceIds[_direction + 30];
 
-			if (getScene()->getPlayerIndex() == _index) {
+			if (getSharedData()->getPlayerIndex() == _index) {
 				resource->load(_resourceId);
 				_frameIndex = resource->count() - 1;
 			}
@@ -1676,7 +1676,7 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 
 			// Compute volume
 			int32 vol = sqrt((double)-Config.sfxVolume);
-			if (_index != getScene()->getPlayerIndex())
+			if (_index != getSharedData()->getPlayerIndex())
 				vol += sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum, 10, 0)));
 
 			int32 volume = (Config.sfxVolume + vol) * (Config.sfxVolume + vol);
@@ -1713,7 +1713,7 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 
 			// Compute volume
 			int32 vol = getWorld()->actions[_actionIdx3]->volume;
-			if (_index != getScene()->getPlayerIndex())
+			if (_index != getSharedData()->getPlayerIndex())
 				vol += sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum, 10, 0)));
 
 			int32 volume = (Config.sfxVolume + vol) * (Config.sfxVolume + vol);
@@ -1831,7 +1831,7 @@ bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 		int32 x3 = actor->getPoint1()->x + actor->getPoint2()->x + 2 * actor->getField948() + 15;
 		int32 y3 = actor->getPoint1()->y + actor->getPoint2()->y + 2 * actor->getField94C() + 10;
 
-		if (i == getScene()->getPlayerIndex() && getWorld()->chapter == kChapter11) {
+		if (i == getSharedData()->getPlayerIndex() && getWorld()->chapter == kChapter11) {
 			x2 -= 10;
 			y2 -= 10;
 			x3 += 10;
@@ -2006,7 +2006,7 @@ void Actor::updatePlayerChapter9(AsylumEngine *engine, int nextPlayer) {
 	Actor *player = engine->scene()->getActor();
 	world->nextPlayer = nextPlayer;
 
-	switch (engine->scene()->getPlayerIndex()) {
+	switch (engine->data()->getPlayerIndex()) {
 	default:
 		break;
 
@@ -2080,7 +2080,7 @@ void Actor::updateStatus3_19() {
 				updateStatus(kActorStatus20);
 		}
 	} else {
-		if (_index == getScene()->getPlayerIndex())
+		if (_index == getSharedData()->getPlayerIndex())
 			updateStatus19_Player();
 
 		++_frameIndex;
@@ -2129,7 +2129,7 @@ void Actor::updateStatusEnabled() {
 	}
 
 	// Actor: Player
-	if (_index == getScene()->getPlayerIndex()) {
+	if (_index == getSharedData()->getPlayerIndex()) {
 		if (_vm->lastScreenUpdate && (_vm->screenUpdateCount - _vm->lastScreenUpdate) > 500) {
 
 			if (_vm->isGameFlagNotSet(kGameFlagScriptProcessing)
@@ -2262,7 +2262,7 @@ void Actor::updateStatusEnabledProcessStatus(int32 testX, int32 testY, uint32 co
 }
 
 void Actor::updateStatus9() {
-	if (_index == getScene()->getPlayerIndex()
+	if (_index == getSharedData()->getPlayerIndex()
 	 && getWorld()->chapter != kChapter9
 	 && getWorld()->actorType == 0
 	 && _frameIndex == 0
@@ -2287,7 +2287,7 @@ void Actor::updateStatus12_Chapter2() {
 	uint32 distance = abs((double)getDistanceForFrame(_direction, frameIndex));
 
 	// Face actor
-	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
+	faceTarget(getSharedData()->getPlayerIndex(), kDirectionFromActor);
 
 	int32 data = getSharedData()->getChapter2Data(3, _index + 1);
 	if (data > 0) {
@@ -2339,7 +2339,7 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 	}
 
 	// Face player
-	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
+	faceTarget(getSharedData()->getPlayerIndex(), kDirectionFromActor);
 
 	// Compute coordinates
 	Common::Point delta  = Common::Point((sumPlayer.x + sum.x) / 2,       (sumPlayer.y + sum.y) / 2);
@@ -2388,7 +2388,7 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 		if (player->getStatus() != kActorStatus17 && player->getStatus() != kActorStatus16) {
 			if (sqrt((double)((sum.y - sumPlayer.y) * (sum.y - sumPlayer.y) + (sum.x - sumPlayer.x) * (sum.x - sumPlayer.x))) < 80.0) {
 				_frameIndex = 0;
-				faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
+				faceTarget(getSharedData()->getPlayerIndex(), kDirectionFromActor);
 				updateStatus(kActorStatus15);
 			}
 		}
@@ -2591,7 +2591,7 @@ void Actor::updateStatus15_Chapter2() {
 	uint32 dist = euclidianDistance(sumPlayer, sum);
 	uint32 offset = (dist <= 10) ? 7 : 12;
 	if (dist > 20) {
-		faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
+		faceTarget(getSharedData()->getPlayerIndex(), kDirectionFromActor);
 		getScene()->getActor(_index + 9)->setDirection(_direction);
 	}
 
@@ -2715,7 +2715,7 @@ void Actor::updateStatus15_Chapter2_Helper() {
 }
 
 void Actor::updateStatus15_Chapter2_Player() {
-	if (_index != getScene()->getPlayerIndex())
+	if (_index != getSharedData()->getPlayerIndex())
 		error("[Actor::updateStatus15_Chapter2_Player] Function is only available for the current player");
 
 	// Update frame index and process
@@ -3145,7 +3145,7 @@ void Actor::updateStatus18_Chapter2_Actor11() {
 		updateStatus(kActorStatus12);
 	}
 
-	faceTarget(getScene()->getPlayerIndex(), kDirectionFromActor);
+	faceTarget(getSharedData()->getPlayerIndex(), kDirectionFromActor);
 
 	Common::Point sum = _point1 + _point2;
 	if (canMove(&sum, DIR(_direction + 4), distance, false)) {
