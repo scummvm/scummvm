@@ -71,6 +71,91 @@ const ResourcePackId puzzleToScenes[17] = {
 	kResourcePackHive                  // Hive Control
 };
 
+static const struct EncounterData {
+	int32 index;
+	uint32 objectId1;
+	uint32 objectId2;
+	ActorIndex actorIndex;
+} encounterData[13][20] = {
+	// TowerCells
+	{
+		{ 0, kObjectPreAlphaNut,  kObjectPreAlphaNut,  kActorMax},
+		{ 1, kObjectPreAlphaNut2, kObjectPreAlphaNut2, kActorMax},
+		{ 2, kObjectRocker,       kObjectRocker,       kActorMax},
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// InnocentAbandoned
+	{
+		{ 3, 1072, 1091, kActorMax},
+		{ 4, 1061, 1072, kActorMax},
+		{ 5, 1200, 1199, kActorMax},
+		{ 7, 1105,  991, kActorMax},
+		{ 9, 1012, 1011, kActorMax},
+		{10,  993,  993, kActorMax},
+		{11, 1013, 1013, kActorMax},
+		{12, 1082, 1084, kActorMax},
+		{13, 1001, 1001, kActorMax},
+		{14, 1587, 2280, kActorMax},
+		{74, 2992, 2992, kActorMax},
+		{76, 2990, 2990, kActorMax},
+		{77, 2990, 2990, kActorMax},
+		{78, 2990, 2990, kActorMax},
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// CourtyardAndChapel
+	{
+		{36, 820, 820, kActorMax},
+		{37, 863, 863, kActorMax},
+		{38, 862, 1038, kActorMax},
+		{39, 844, 844, kActorMax},
+		{40, 845, 845, kActorMax},
+		{41, 846, 846, kActorMax},
+		{43, 873, 801, kActorMax},
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// CircusOfFools
+	{
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// Laboratory
+	{
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// Hive
+	{
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// MorgueAndCemetery
+	{
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// LostVillage
+	{
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// Gauntlet
+	{
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// Mansion
+	{
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// Cave
+	{
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// Maze
+	{
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	},
+	// MorgansLastGame
+	{
+		{-1, kObjectNone, kObjectNone, kActorMax}
+	}
+};
+
+
 Console::Console(AsylumEngine *engine) : _vm(engine) {
 	// Commands
 	DCmd_Register("help",           WRAP_METHOD(Console, cmdHelp));
@@ -425,17 +510,35 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 		return true;
 	}
 
-	int32 index = atoi(argv[1]);
+	// Check that we are inside a scene
+	if (!getScene()) {
+		DebugPrintf("[Error] Cannot run an encounter outside of a scene\n");
+		return true;
+	}
 
 	// Check index is valid
+	int32 index = atoi(argv[1]);
 	if (index < 0 || index >= (int32)_vm->encounter()->_items.size()) {
 		DebugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->_items.size() - 1);
 		return true;
 	}
 
-	// Line: 12/15 :: 0x25 (1, 1584, 1584, 0, 0, 0, 0, 0, 0) // First Encounter
-	// TODO update with array of valid objects
-	_vm->encounter()->run(index, kObjectNone, kObjectNone, kActorMax);
+	// Get the encounter data
+	EncounterData *data = NULL;
+	for (data = (EncounterData *)&encounterData[getScene()->getPackId() - 5]; data->index != -1; data++) {
+		if (data->index == index)
+			break;
+	}
+
+	if (data->index == -1) {
+		DebugPrintf("[Error] No encounter data for this index (index: %d)\n", index);
+		return true;
+	}
+
+	_vm->encounter()->run(index,
+	                      (ObjectId)data->objectId1,
+	                      (ObjectId)data->objectId2,
+	                      data->actorIndex);
 
 	return false;
 }
