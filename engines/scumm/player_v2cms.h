@@ -129,8 +129,6 @@ protected:
 	byte _lastMidiCommand;
 	uint _outputTableReady;
 	byte _voiceTimer;
-	byte _restart;
-	byte _curSno;
 
 	int _musicTimer, _musicTimerTicks;
 
