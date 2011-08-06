@@ -2632,15 +2632,38 @@ void Scene::processUpdateList() {
 
 	// Go through the list from the end
 	if (_updateList.size() > 1) {
-		for (int i = _ws->actors.size() - 1; i >= 0; --i) {
-			Actor *actor = _ws->actors[i];
+		for (int i = _updateList.size() - 1; i >= 0; --i) {
+			// Get the actor
+			Actor *actor1 = getActor(_updateList[i].index);
 
 			// Skip hidden actors
-			if (!actor->isVisible())
+			if (!actor1->isVisible())
 				continue;
 
-			if (actor->getField944() != 1 && actor->getField944() != 4) {
-				error("[Scene::processUpdateList] list update not implemented!");
+			if (actor1->getField944() != 1 && actor1->getField944() != 4) {
+				// Process all previous actors
+				if (i > 0) {
+					for (int j = i - 1; j >= 0; --j) {
+						Actor *actor2 = getActor(_updateList[j].index);
+
+						if (actor2->getField944() != 1 && actor2->getField944() != 4) {
+
+							// Process priorities
+							if (actor2->getPriority() <= actor1->getPriority()) {
+								if (rectIntersect(actor1->getPoint1()->x,
+								                  actor1->getPoint1()->y,
+								                  actor1->getPoint1()->x + actor1->getBoundingRect()->right,
+								                  actor1->getPoint1()->y + actor1->getBoundingRect()->bottom,
+								                  actor2->getPoint1()->x,
+								                  actor2->getPoint1()->y,
+								                  actor2->getPoint1()->x + actor2->getBoundingRect()->right,
+								                  actor2->getPoint1()->y + actor2->getBoundingRect()->bottom)) {
+									actor2->setPriority(actor1->getPriority() + 1);
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
