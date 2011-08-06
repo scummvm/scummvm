@@ -2792,7 +2792,7 @@ int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
 			}
 		}
 
-		int32 render = MIN(samplesLeft, _samplesTillCallback);
+		int32 render = MIN<int>(samplesLeft, _samplesTillCallback);
 		samplesLeft -= render;
 		_samplesTillCallback -= render;
 
