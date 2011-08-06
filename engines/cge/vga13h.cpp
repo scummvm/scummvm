@@ -25,6 +25,7 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
+#include "common/array.h"
 #include "common/rect.h"
 #include "graphics/palette.h"
 #include "cge/general.h"
@@ -358,7 +359,9 @@ Sprite *Sprite::expand() {
 		if (*_file) {
 			static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
 			char line[kLineMax], fname[kPathMax];
-			BitmapPtr *shplist = new BitmapPtr[_shpCnt + 1];
+
+			Common::Array<BitmapPtr> shplist;
+			for (int i = 0; i < _shpCnt + 1; ++i) shplist.push_back(NULL);
 			Seq *seq = NULL;
 			int shpcnt = 0,
 			    seqcnt = 0,
@@ -382,13 +385,18 @@ Sprite *Sprite::expand() {
 					if (len == 0 || *line == '.')
 						continue;
 
-					assert(shpcnt <= _shpCnt);
 					switch (takeEnum(Comd, strtok(line, " =\t"))) {
 					case 0 : { // Name
 						setName(strtok(NULL, ""));
 						break;
 					}
 					case 1 : { // Phase
+						// In case the shape index gets too high, increase the array size
+						while ((shpcnt + 1) >= (int)shplist.size()) {
+							shplist.push_back(NULL);
+							++_shpCnt;
+						}
+
 						shplist[shpcnt++] = new Bitmap(strtok(NULL, " \t,;/"), true);
 						break;
 					}
@@ -456,7 +464,12 @@ Sprite *Sprite::expand() {
 			} else
 				setSeq(getConstantSeq(_shpCnt == 1));
 
-			setShapeList(shplist);
+			// Set the shape list
+			BitmapPtr *shapeList = new BitmapPtr[shplist.size()];
+			for (uint i = 0; i < shplist.size(); ++i)
+				shapeList[i] = shplist[i];
+
+			setShapeList(shapeList);
 
 			if (nea)
 				nea[neacnt - 1]._ptr = _ext->_near = nea;
