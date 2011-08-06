@@ -403,6 +403,11 @@ public:
 	 * factor 2x, too, just like the game graphics. But if it has a
 	 * cursorTargetScale of 2, then it shouldn't be scaled again by
 	 * the game graphics scaler.
+	 *
+	 * On a note for OSystem users here. We do not require our graphics
+	 * to be thread safe and in fact most/all backends using OpenGL are
+	 * not. So do *not* try to call any of these functions from a timer
+	 * and/or audio callback (like readBuffer of AudioStreams).
 	 */
 	//@{
 
