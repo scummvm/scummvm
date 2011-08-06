@@ -46,32 +46,32 @@ namespace Asylum {
 
 #define OPCODE_NAME(index) (index > 25 ? "INVALID" : opcodeNames[index])
 const char *opcodeNames[] = {
-	"Return",     // 0
-	"SetScriptVar",
-	"",
-	"",
-	"",
-	"",           // 5
+	"Return",
+	"SetScriptVariable",
 	"",
 	"",
 	"",
 	"",
-	"",           // 10
 	"",
 	"",
 	"",
 	"",
-	"",           // 15
 	"",
 	"",
 	"",
 	"",
-	"",           // 20
+	"ResetSpeech",
+	"SetVariable",
+	"IncrementScriptVariable",
+	"",
+	"AddRemoveReactionHive",
 	"",
 	"",
+	"SetCounterFromActorReactions",
 	"",
 	"",
-	""            // 25
+	"SetClearFlag",
+	"SetCounterFromFlag"
 };
 
 Common::String Encounter::ScriptEntry::toString() {
@@ -1483,7 +1483,7 @@ void Encounter::runScript() {
 			_value1 = 0;
 			break;
 
-		case kOpcodeSetScriptVar:
+		case kOpcodeSetScriptVariable:
 			_scriptData.vars[entry.param1] = getVariableInv(entry.param2);
 			break;
 
@@ -1565,17 +1565,17 @@ void Encounter::runScript() {
 			done = true;
 			break;
 
-		case kOpcode14:
+		case kOpcodeResetSpeech:
 			resetSpeech(_item->speechResourceId, getVariableInv(entry.param2));
 
 			done = true;
 			break;
 
-		case kOpcode15:
+		case kOpcodeSetVariable:
 			setVariable(entry.param2, (int16)_scriptData.vars[entry.param1]);
 			break;
 
-		case kOpcode16:
+		case kOpcodeIncrementScriptVariable:
 			_scriptData.vars[entry.param1] += entry.param2;
 			break;
 
@@ -1630,14 +1630,14 @@ void Encounter::runScript() {
 			}
 			break;
 
-		case kOpcode18:
+		case kOpcodeAddRemoveReactionHive:
 			if (entry.param1)
 				getScene()->getActor()->removeReactionHive(getVariableInv(entry.param2), _scriptData.vars[1]);
 			else
 				getScene()->getActor()->addReactionHive(getVariableInv(entry.param2), _scriptData.vars[1]);
 			break;
 
-		case kOpcode21:
+		case kOpcodeSetCounterFromActorReactions:
 			_scriptData.counter = getScene()->getActor()->hasMoreReactions(getVariableInv(entry.param2), _scriptData.vars[1]) ? 0 : 1;
 			break;
 
@@ -1659,14 +1659,14 @@ void Encounter::runScript() {
 			}
 			break;
 
-		case kOpcode24:
+		case kOpcodeSetClearFlag:
 			if (entry.param1)
 				_vm->setGameFlag((GameFlag)getVariableInv(entry.param2));
 			else
 				_vm->clearGameFlag((GameFlag)getVariableInv(entry.param2));
 			break;
 
-		case kOpcode25:
+		case kOpcodeSetCounterFromFlag:
 			_scriptData.counter = _vm->isGameFlagSet((GameFlag)getVariableInv(entry.param2)) ?  1 : 0;
 			break;
 		}
