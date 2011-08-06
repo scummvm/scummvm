@@ -141,7 +141,7 @@ Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), 
 	if (v0) {
 		uint16 vsiz = (uint8 *)(bmp._b) - (uint8 *)(v0);
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
-		uint8 *v1 = (uint8 *) malloc(sizeof(uint8) * siz);
+		uint8 *v1 = new uint8[siz];
 		assert(v1 != NULL);
 		memcpy(v1, v0, siz);
 		_b = (HideDesc *)((_v = v1) + vsiz);
