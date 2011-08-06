@@ -247,6 +247,7 @@ EventManager::EventManager() {
 	_quitFlag = false;
 	_eventQueueHead = 0;
 	_eventQueueTail = 0;
+	memset(&_event, 0, sizeof(Common::Event));
 }
 
 void EventManager::poll() {
