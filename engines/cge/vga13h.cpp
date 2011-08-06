@@ -647,7 +647,7 @@ BitmapPtr Sprite::ghost() {
 }
 
 void Sprite::sync(Common::Serializer &s) {
-	uint16 unused;
+	uint16 unused = 0;
 
 	s.syncAsUint16LE(unused);
 	s.syncAsUint16LE(unused);	// _ext
