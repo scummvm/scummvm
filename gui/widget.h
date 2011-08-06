@@ -186,6 +186,8 @@ public:
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
 
+	void setLabel(const Common::String &label);
+
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
