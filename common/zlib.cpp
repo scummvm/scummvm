@@ -24,6 +24,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/zlib.h"
+#include "common/ptr.h"
 #include "common/util.h"
 #include "common/stream.h"
 
@@ -61,7 +62,7 @@ protected:
 
 	byte	_buf[BUFSIZE];
 
-	Common::SeekableReadStream *_wrapped;
+	ScopedPtr<SeekableReadStream> _wrapped;
 	z_stream _stream;
 	int _zlibErr;
 	uint32 _pos;
@@ -107,7 +108,6 @@ public:
 
 	~GZipReadStream() {
 		inflateEnd(&_stream);
-		delete _wrapped;
 	}
 
 	bool err() const { return (_zlibErr != Z_OK) && (_zlibErr != Z_STREAM_END); }
@@ -204,7 +204,7 @@ protected:
 	};
 
 	byte	_buf[BUFSIZE];
-	Common::WriteStream *_wrapped;
+	ScopedPtr<WriteStream> _wrapped;
 	z_stream _stream;
 	int _zlibErr;
 
@@ -248,7 +248,6 @@ public:
 	~GZipWriteStream() {
 		finalize();
 		deflateEnd(&_stream);
-		delete _wrapped;
 	}
 
 	bool err() const {
