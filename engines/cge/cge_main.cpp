@@ -26,6 +26,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/endian.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
@@ -110,11 +111,12 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 	for (i = 0; i < 4; i++)
 		s.syncAsUint16LE(_flag[i]);
 
-	initCaveValues();
 	if (s.isLoading()) {
-		//TODO: Fix the memory leak when the game is already running
-		_heroXY = (Hxy *) malloc (sizeof(Hxy) * _caveMax);
-		_barriers = (Bar *) malloc (sizeof(Bar) * (1 + _caveMax));
+		// Reinitialise cave values
+		free(_heroXY);
+		free(_barriers);
+
+		initCaveValues();
 	}
 
 	for (i = 0; i < _caveMax; i++) {
@@ -429,9 +431,18 @@ void CGEEngine::loadHeroXY() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadHeroXY()");
 
 	INI_FILE cf(progName(".HXY"));
+	uint16 x, y;
+
 	memset(_heroXY, 0, sizeof(_heroXY));
-	if (!cf._error)
-		cf.read((uint8 *)(&_heroXY),sizeof(*(&_heroXY)));
+	if (!cf._error) {
+		for (int i = 0; i < _caveMax; ++i) {
+			cf.read((byte *)&x, 2);
+			cf.read((byte *)&y, 2);
+
+			_heroXY[i]._x = (int16)FROM_LE_16(x);
+			_heroXY[i]._y = (int16)FROM_LE_16(y);
+		}
+	}
 }
 
 void CGEEngine::loadMapping() {
