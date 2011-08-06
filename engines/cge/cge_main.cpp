@@ -113,9 +113,7 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 
 	if (s.isLoading()) {
 		// Reinitialise cave values
-		free(_heroXY);
-		free(_barriers);
-
+		freeCaveValues();
 		initCaveValues();
 	}
 
