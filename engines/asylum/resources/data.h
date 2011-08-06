@@ -44,7 +44,7 @@ enum GlobalFlag {
 	kFlagIsEncounterRunning,
 	kFlagEncounterDisablePlayerOnExit,
 	kFlagActorUpdateEnabledCheck,
-	kFlagActorUpdateStatus15Check,
+	kFlagActorUpdateStatus15Check
 };
 
 /**

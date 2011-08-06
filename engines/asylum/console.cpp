@@ -524,8 +524,8 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 	}
 
 	// Get the encounter data
-	EncounterData *data = NULL;
-	for (data = (EncounterData *)&encounterData[getScene()->getPackId() - 5]; data->index != -1; data++) {
+	const EncounterData *data;
+	for (data = (const EncounterData *)&encounterData[getScene()->getPackId() - 5]; data->index != -1; data++) {
 		if (data->index == index)
 			break;
 	}

@@ -1042,18 +1042,18 @@ void Scene::updateCoordinates() {
 
 	case 1:
 		if (posX < boundingRect.left) {
-			xLeft = posX - boundingRect.left + _ws->xLeft;
+			xLeft = (posX - boundingRect.left) + _ws->xLeft;
 			_ws->xLeft += posX - boundingRect.left;
 		} else if (posX > boundingRect.right) {
-			xLeft = posX - boundingRect.right + _ws->xLeft;
+			xLeft = (posX - boundingRect.right) + _ws->xLeft;
 			_ws->xLeft += posX - boundingRect.right;
 		}
 
 		if (posY < boundingRect.top) {
-			yTop = posY - boundingRect.top + _ws->yTop;
+			yTop = (posY - boundingRect.top) + _ws->yTop;
 			_ws->yTop += posY - boundingRect.top;
 		} else if (posY > boundingRect.bottom) {
-			yTop = posY - boundingRect.bottom + _ws->yTop;
+			yTop = (posY - boundingRect.bottom) + _ws->yTop;
 			_ws->yTop += posY - boundingRect.bottom;
 		}
 
@@ -2164,10 +2164,12 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point &pt, bool h
 		for (int32 i = _ws->actions.size() - 1; i >= 0; i--) {
 			ActionArea *area = _ws->actions[i];
 
+			if (g_debugPolygons && highlight) {
 #ifdef DEBUG
-			if (g_debugPolygons && highlight)
+				// Highlight each polygon as it gets checked for action
 				debugHighlightPolygon(area->polygonIndex);
 #endif
+			}
 
 			bool found = false;
 
@@ -2205,7 +2207,7 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point &pt, bool h
 			// Iterate over flagNum
 			for (uint32 j = 0; j < 10; j++) {
 				if (!area->flagNums[j])
-					continue;                 // We skip over null flags
+					continue;    // We skip over null flags
 
 				bool flagSet = false;
 				if (area->flagNums[j] <= 0)

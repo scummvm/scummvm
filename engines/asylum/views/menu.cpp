@@ -926,7 +926,7 @@ void Menu::updateSaveGame() {
 
 		//////////////////////////////////////////////////////////////////////////
 		// Second column
-		for (int32 y = 150; y < 324; y += 29) {
+		for (int16 y = 150; y < 324; y += 29) {
 			if (index + _startIndex >= 25)
 				break;
 
@@ -1036,8 +1036,8 @@ void Menu::updateDeleteGame() {
 
 	//////////////////////////////////////////////////////////////////////////
 	// First column
-	uint32 index = 0;
-	for (int32 y = 150; y < 324; y += 29) {
+	int32 index = 0;
+	for (int16 y = 150; y < 324; y += 29) {
 		if (index + _startIndex >= 25)
 			break;
 
@@ -1057,7 +1057,7 @@ void Menu::updateDeleteGame() {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Second column
-	for (int32 y = 150; y < 324; y += 29) {
+	for (int16 y = 150; y < 324; y += 29) {
 		if (index + _startIndex >= 25)
 			break;
 
@@ -1123,7 +1123,7 @@ void Menu::updateViewMovies() {
 		//////////////////////////////////////////////////////////////////////////
 		// First column
 		int32 index = _startIndex;
-		for (int32 y = 150; y < 324; y += 29) {
+		for (int16 y = 150; y < 324; y += 29) {
 			if (index >= ARRAYSIZE(_movieList))
 				break;
 
@@ -1291,7 +1291,7 @@ void Menu::updateAudioOptions() {
 	getText()->loadFont(kFontYellow);
 	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1420));
 
-	int32 volumeIndex = 0;
+	int16 volumeIndex = 0;
 	int32 volumeValue = cursor.x;
 	do {
 		getText()->loadFont(kFontYellow);
@@ -1639,7 +1639,7 @@ void Menu::clickLoadGame() {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Columns
-	uint32 index = 0;
+	int32 index = 0;
 	for (int32 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
 			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName(index + _startIndex + 6).c_str());
@@ -1743,7 +1743,7 @@ void Menu::clickSaveGame() {
 			 && cursor.y <= (y + 24)
 			 && getWorld()->chapter != kChapterNone) {
 				if (index + _startIndex < 25) {
-					uint32 saveIndex = index + _startIndex + 6;
+					uint32 saveIndex = (uint32)(index + _startIndex + 6);
 					getSaveLoad()->setIndex(saveIndex);
 					if (getSaveLoad()->hasSavegame(saveIndex)) {
 						_dword_455C80 = true;
@@ -1764,9 +1764,10 @@ void Menu::clickSaveGame() {
 			 && cursor.y <= (y + 24)
 			 && getScene()
 			 && getWorld()->chapter != kChapterNone) {
-				if (index + _startIndex < 25) {
-					getSaveLoad()->setIndex(index + _startIndex);
-					if (getSaveLoad()->hasSavegame(index + _startIndex)) {
+				uint32 saveIndex = (uint32)(index + _startIndex);
+				if (saveIndex < 25) {
+					getSaveLoad()->setIndex(saveIndex);
+					if (getSaveLoad()->hasSavegame(saveIndex)) {
 						_dword_455C80 = true;
 					} else {
 						_isEditingSavegameName = true;
@@ -1838,17 +1839,18 @@ void Menu::clickDeleteGame() {
 	//////////////////////////////////////////////////////////////////////////
 	// Columns
 	int32 index = 0;
-	for (int32 y = 150; y < 324; y += 29) {
+	for (int16 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
 			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName(index + _startIndex + 6).c_str());
 
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				if (index + _startIndex < 25) {
-					if (getSaveLoad()->hasSavegame(index + _startIndex + 6)) {
+				uint32 saveIndex = (uint32)(index + _startIndex);
+				if (saveIndex < 25) {
+					if (getSaveLoad()->hasSavegame(saveIndex + 6)) {
 						_dword_455C80 = true;
-						getSaveLoad()->setIndex(index + _startIndex + 6);
+						getSaveLoad()->setIndex(saveIndex + 6);
 					}
 				}
 			}
