@@ -689,7 +689,7 @@ void Actor::update() {
 		setVolume();
 
 	if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
-		error("[Actor::update] call to actor sound functions missing!");
+		getSpecial()->run(NULL, _index);
 
 	updateDirection();
 
