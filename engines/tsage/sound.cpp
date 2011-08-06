@@ -2825,8 +2825,6 @@ int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
 
 /*--------------------------------------------------------------------------*/
 
-const byte soundBlaster_group_data[] = { 3, 1, 1, 0, 0xff };
-
 
 SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
 	_minVersion = 0x102;
@@ -2836,7 +2834,8 @@ SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
 	_groupData.groupMask = 1;
 	_groupData.v1 = 0x3E;
 	_groupData.v2 = 0;
-	_groupData.pData = &soundBlaster_group_data[0];
+	static byte const group_data[] = { 3, 1, 1, 0, 0xff };
+	_groupData.pData = group_data;
 
 	_mixer = _vm->_mixer;
 	_sampleRate = _mixer->getOutputRate();
