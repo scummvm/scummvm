@@ -384,12 +384,21 @@ void AsylumEngine::processDelayedEvents() {
 		ResourcePackId sceneIndex = _delayedSceneIndex;
 		_delayedSceneIndex = kResourcePackInvalid;
 
-		// Reset script queue
+		// Reset actor and script queue
 		_script->resetQueue();
+		_script->reset();
+		if (_scene)
+			_scene->getActor(0)->updateStatus(kActorStatusDisabled);
 
+		// Fade screen to black
+		_screen->paletteFade(0, 75, 8);
+		_screen->clear();
+
+		// Stop all sounds & music
 		_sound->stopMusic();
 		_sound->stopAll();
 
+		// Switch the scene
 		switchScene(sceneIndex);
 	}
 
