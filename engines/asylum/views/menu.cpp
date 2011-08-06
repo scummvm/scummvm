@@ -770,7 +770,7 @@ void Menu::updateLoadGame() {
 			if (index + _startIndex >= 25)
 				break;
 
-			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 			if (cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
 			 || cursor.y < y  || cursor.y > (y + 24))
@@ -790,7 +790,7 @@ void Menu::updateLoadGame() {
 			if (index + _startIndex >= 25)
 				break;
 
-			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 			if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
 				|| cursor.y < y   || cursor.y > (y + 24))
@@ -893,7 +893,7 @@ void Menu::updateSaveGame() {
 			if (index + _startIndex >= 25)
 				break;
 
-			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 			if (!_isEditingSavegameName) {
 				if (cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
@@ -930,7 +930,7 @@ void Menu::updateSaveGame() {
 			if (index + _startIndex >= 25)
 				break;
 
-			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 			if (!_isEditingSavegameName) {
 				if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
@@ -1041,7 +1041,7 @@ void Menu::updateDeleteGame() {
 		if (index + _startIndex >= 25)
 			break;
 
-		sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
+		sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 		if (cursor.x < 30 || cursor.x > (30 + getText()->getWidth((char *)&text))
 		 || cursor.y < y  || cursor.y > (y + 24))
@@ -1061,7 +1061,7 @@ void Menu::updateDeleteGame() {
 		if (index + _startIndex >= 25)
 			break;
 
-		sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
+		sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 		if (cursor.x < 350 || cursor.x > (350 + getText()->getWidth((char *)&text))
 		 || cursor.y < y   || cursor.y > (y + 24))
@@ -1295,14 +1295,14 @@ void Menu::updateAudioOptions() {
 	int32 volumeValue = cursor.x;
 	do {
 		getText()->loadFont(kFontYellow);
-		getText()->draw(Common::Point(320, 29 * volumeIndex + 150), MAKE_RESOURCE(kResourcePackText, 1421 + volumeIndex));
+		getText()->draw(Common::Point(320, (int16)(29 * volumeIndex + 150)), MAKE_RESOURCE(kResourcePackText, 1421 + volumeIndex));
 
 		switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
-		getText()->setPosition(Common::Point(350, 29 * volumeIndex + 150));
+		getText()->setPosition(Common::Point(350, (int16)(29 * volumeIndex + 150)));
 		getText()->draw("-");
 
 		switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
-		getText()->setPosition(Common::Point(sizeMinus + 360, 29 * volumeIndex + 150));
+		getText()->setPosition(Common::Point(sizeMinus + 360, (int16)(29 * volumeIndex + 150)));
 		getText()->draw("+");
 
 		switch(volumeIndex) {
@@ -1335,7 +1335,7 @@ void Menu::updateAudioOptions() {
 		}
 
 		getText()->loadFont(kFontYellow);
-		getText()->setPosition(Common::Point(sizePlus + sizeMinus + 365, 29 * volumeIndex + 150));
+		getText()->setPosition(Common::Point(sizePlus + sizeMinus + 365, (int16)(29 * volumeIndex + 150)));
 		if (volumeValue > 0) {
 			for (int32 i = 0; i < volumeValue; i++)
 				getText()->drawChar(']');
@@ -1352,10 +1352,10 @@ void Menu::updateAudioOptions() {
 	//////////////////////////////////////////////////////////////////////////
 	//
 	getText()->loadFont(kFontYellow);
-	getText()->draw(Common::Point(320, 29 *volumeIndex + 150), MAKE_RESOURCE(kResourcePackText, 1427));
+	getText()->draw(Common::Point(320, (int16)(29 *volumeIndex + 150)), MAKE_RESOURCE(kResourcePackText, 1427));
 
 	switchFont(cursor.x < 350 || cursor.x > (350 + getText()->getWidth(Config.reverseStereo ? MAKE_RESOURCE(kResourcePackText, 1428) : MAKE_RESOURCE(kResourcePackText, 1429))) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
-	getText()->setPosition(Common::Point(350, 29 * volumeIndex + 150));
+	getText()->setPosition(Common::Point(350, (int16)(29 * volumeIndex + 150)));
 	getText()->draw(Config.reverseStereo ? MAKE_RESOURCE(kResourcePackText, 1428) : MAKE_RESOURCE(kResourcePackText, 1429));
 
 	switchFont(cursor.x < 220 || cursor.x > (220 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1430))) || cursor.y < 360 || cursor.y > (360 + 24));
@@ -1447,9 +1447,9 @@ void Menu::updateKeyboardConfig() {
 	do {
 		getText()->loadFont(kFontYellow);
 		if ((getScene() && getWorld()->chapter == 9) || keyIndex < 3) {
-			getText()->draw(Common::Point(320, 29 * keyIndex + 150), MAKE_RESOURCE(kResourcePackText, 1439 + keyIndex));
+			getText()->draw(Common::Point(320, (int16)(29 * keyIndex + 150)), MAKE_RESOURCE(kResourcePackText, 1439 + keyIndex));
 		} else {
-			getText()->draw(Common::Point(320, 29 * keyIndex + 150), MAKE_RESOURCE(kResourcePackText, 1445));
+			getText()->draw(Common::Point(320, (int16)(29 * keyIndex + 150)), MAKE_RESOURCE(kResourcePackText, 1445));
 		}
 
 		switch (keyIndex) {
@@ -1481,7 +1481,7 @@ void Menu::updateKeyboardConfig() {
 			break;
 		}
 
-		getText()->setPosition(Common::Point(350, 29 * keyIndex + 150));
+		getText()->setPosition(Common::Point(350, (int16)(29 * keyIndex + 150)));
 
 		if (keyIndex == _selectedShortcutIndex) {
 			getText()->loadFont(kFontBlue);
@@ -1544,7 +1544,7 @@ void Menu::updateShowCredits() {
 			if (maxBound < 480 && maxBound > 448)
 				getText()->setTransTableNum(3 - (479 - maxBound) / 8);
 
-			getText()->setPosition(Common::Point(320, step + _startIndex));
+			getText()->setPosition(Common::Point(320, (int16)(step + _startIndex)));
 			getText()->draw(MAKE_RESOURCE(kResourcePackText, 1447 + index));
 			getText()->setTransTableNum(0);
 		}
@@ -1642,7 +1642,7 @@ void Menu::clickLoadGame() {
 	int32 index = 0;
 	for (int32 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
-			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName(index + _startIndex + 6).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName((uint32)(index + _startIndex + 6)).c_str());
 
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
@@ -1656,7 +1656,7 @@ void Menu::clickLoadGame() {
 				}
 			}
 		} else if (cursor.x >= 30) {
-			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
@@ -1736,7 +1736,7 @@ void Menu::clickSaveGame() {
 	int32 index = 0;
 	for (int16 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
-			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName(index + _startIndex + 6).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName((uint32)(index + _startIndex + 6)).c_str());
 
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
@@ -1757,7 +1757,7 @@ void Menu::clickSaveGame() {
 				}
 			}
 		} else if (cursor.x >= 30) {
-			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
@@ -1841,7 +1841,7 @@ void Menu::clickDeleteGame() {
 	int32 index = 0;
 	for (int16 y = 150; y < 324; y += 29) {
 		if (cursor.x >= 350) {
-			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName(index + _startIndex + 6).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName((uint32)(index + _startIndex + 6)).c_str());
 
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
@@ -1855,7 +1855,7 @@ void Menu::clickDeleteGame() {
 				}
 			}
 		} else if (cursor.x >= 30) {
-			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName(index + _startIndex).c_str());
+			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 				&& cursor.y >= y
@@ -1935,7 +1935,7 @@ void Menu::clickViewMovies() {
 				uint32 movieIndex = (uint32)(index + _startIndex  + 6);
 				if (movieIndex <= _movieCount) {
 					// The original checks for the proper cd, but we can skip that since we have all data on disk
-					_movieIndex = _movieList[movieIndex];
+					_movieIndex = (uint32)_movieList[movieIndex];
 
 					// FIXME
 					//if (moviesCd[_movieIndex] != getSharedData()->cdNumber) {
@@ -2370,8 +2370,8 @@ void Menu::keyKeyboardConfig(const AsylumEvent &evt) {
 	if (evt.kbd.ascii > 255 || !isalnum(evt.kbd.ascii))
 		return;
 
-	if (!Config.isKeyAssigned(evt.kbd.ascii) || *keyCode == evt.kbd.ascii) {
-		*keyCode = evt.kbd.ascii;
+	if (!Config.isKeyAssigned((char)evt.kbd.ascii) || *keyCode == (char)evt.kbd.ascii) {
+		*keyCode = (char)evt.kbd.ascii;
 		_selectedShortcutIndex = -1;
 		getCursor()->show();
 	}
