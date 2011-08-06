@@ -1357,7 +1357,7 @@ bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
 	
 	sfManager()._installedDrivers.push_back(driver);
 	driver->_groupOffset = driver->getGroupData();
-	driver->_groupMask =  READ_LE_UINT32(driver->_groupOffset);
+	driver->_groupMask = driver->_groupOffset->groupMask;
 
 	_sfExtractGroupMask();
 	_sfRethinkSoundDrivers();
