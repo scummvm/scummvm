@@ -231,6 +231,9 @@ Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 
 
 Sprite::~Sprite() {
+	if (_sprite == this)
+		_sprite = NULL;
+
 	contract();
 }
 
