@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/hash-str.h"
 #include "common/keyboard.h"
+#include "common/ptr.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -264,15 +265,13 @@ private:
 };
 
 class TextResourceParser {
-	Common::SeekableReadStream *_stream;
-	DisposeAfterUse::Flag _dispose;
+	Common::DisposablePtr<Common::SeekableReadStream> _stream;
 	int _maxLen;
 
 	void getLine(char *buf);
 
 public:
 	TextResourceParser(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose);
-	~TextResourceParser();
 
 	void parseInt(int &result);
 	void parseString(char *result);

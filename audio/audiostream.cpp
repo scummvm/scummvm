@@ -93,18 +93,13 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 #pragma mark -
 
 LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse)
-    : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops), _completeIterations(0) {
+    : _parent(stream, disposeAfterUse), _loops(loops), _completeIterations(0) {
 	assert(stream);
 
 	if (!stream->rewind()) {
 		// TODO: Properly indicate error
 		_loops = _completeIterations = 1;
 	}
-}
-
-LoopingAudioStream::~LoopingAudioStream() {
-	if (_disposeAfterUse == DisposeAfterUse::YES)
-		delete _parent;
 }
 
 int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -169,7 +164,7 @@ SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
                                              const Timestamp loopStart,
                                              const Timestamp loopEnd,
                                              DisposeAfterUse::Flag disposeAfterUse)
-    : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops),
+    : _parent(stream, disposeAfterUse), _loops(loops),
       _pos(0, getRate() * (isStereo() ? 2 : 1)),
       _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
       _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())),
@@ -178,11 +173,6 @@ SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
 
 	if (!_parent->rewind())
 		_done = true;
-}
-
-SubLoopingAudioStream::~SubLoopingAudioStream() {
-	if (_disposeAfterUse == DisposeAfterUse::YES)
-		delete _parent;
 }
 
 int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -225,18 +215,13 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 #pragma mark -
 
 SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse)
-    : _parent(parent), _disposeAfterUse(disposeAfterUse),
+    : _parent(parent, disposeAfterUse),
       _start(convertTimeToStreamPos(start, getRate(), isStereo())),
       _pos(0, getRate() * (isStereo() ? 2 : 1)),
       _length(convertTimeToStreamPos(end, getRate(), isStereo()) - _start) {
 
 	assert(_length.totalNumberOfFrames() % (isStereo() ? 2 : 1) == 0);
 	_parent->seek(_start);
-}
-
-SubSeekableAudioStream::~SubSeekableAudioStream() {
-	if (_disposeAfterUse)
-		delete _parent;
 }
 
 int SubSeekableAudioStream::readBuffer(int16 *buffer, const int numSamples) {
