@@ -43,7 +43,7 @@ Puzzle::~Puzzle() {
 	_vm = NULL;
 }
 
-void Puzzle::saveLoadWithSerializer(Common::Serializer &s) {
+void Puzzle::saveLoadWithSerializer(Common::Serializer &) {
 	// By default, we do not save any data
 }
 

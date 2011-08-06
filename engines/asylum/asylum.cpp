@@ -53,7 +53,7 @@ namespace Asylum {
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
 	_console(NULL), _cursor(NULL), _encounter(NULL), _menu(NULL), _reaction(NULL), _resource(NULL), _savegame(NULL),
 	_scene(NULL), _screen(NULL), _script(NULL), _special(NULL), _speech(NULL), _sound(NULL), _text(NULL),
-	_video(NULL), _handler(NULL) {
+	_video(NULL), _handler(NULL), _puzzles(NULL) {
 
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
@@ -243,7 +243,7 @@ void AsylumEngine::restart() {
 }
 
 void AsylumEngine::reset() {
-	if (!_menu)
+	if (!_menu || !_special || !_puzzles)
 		error("[AsylumEngine::reset] Subsystems not initialized properly!");
 
 	// Set game as started
@@ -376,7 +376,7 @@ void AsylumEngine::handleEvents() {
 }
 
 void AsylumEngine::processDelayedEvents() {
-	if (!_video || !_sound || !_menu || !_script)
+	if (!_video || !_sound || !_menu || !_script || !_screen)
 		error("[AsylumEngine::processDelayedEvents] Subsystems not initialized properly!");
 
 	// check for a delayed scene change

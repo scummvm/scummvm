@@ -122,8 +122,8 @@ public:
 	Common::Array<Object*>     objects;   // maxsize 400
 	Common::Array<Actor*>      actors;   // maxsize 50
 	// ActorData is stored in each actor instance
-	int32 numScripts;
-	int32 numPolygons;
+	uint32 numScripts;
+	uint32 numPolygons;
 	ResourceId cursorResourcesAlternate[64];
 	Common::Array<ActionArea*> actions;  // maxsize 400
 	int32 field_E848C;

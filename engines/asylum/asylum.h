@@ -226,12 +226,12 @@ private:
 	EventHandler *_handler;
 
 	// Game data
-	Puzzles *_puzzles;
-	SharedData  _data;
-	int         _gameFlags[130];
-	int16       _sinCosTables[72];
-	bool        _introPlayed;
-	int32       _tickOffset;
+	Puzzles     *_puzzles;
+	SharedData   _data;
+	int          _gameFlags[130];
+	int16        _sinCosTables[72];
+	bool         _introPlayed;
+	int32        _tickOffset;
 
 	void updateMouseCursor();
 	void processDelayedEvents();

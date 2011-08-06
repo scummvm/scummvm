@@ -40,8 +40,6 @@
 #include "asylum/puzzles/writings.h"
 
 #include "asylum/asylum.h"
-#include "asylum/console.h"
-#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -60,7 +58,7 @@ Puzzles::~Puzzles() {
 
 void Puzzles::reset() {
 	for (uint i = 0; i < ARRAYSIZE(_puzzles); i++)
-	delete _puzzles[i];
+		delete _puzzles[i];
 
 	initPuzzles();
 }
