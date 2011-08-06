@@ -46,7 +46,7 @@ namespace Asylum {
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _objectId3(kObjectNone),
-	_actorIndex(kActorInvalid), _flag1(false), _flag2(false), _flag3(false), _flag4(false) {
+	_actorIndex(kActorInvalid), _shouldEnablePlayer(false), _wasPlayerDisabled(false), _flag3(false), _flag4(false) {
 
 	memset(&_keywordIndexes, 0, sizeof(_keywordIndexes));
 	_rectIndex = -1;
@@ -57,12 +57,12 @@ Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_data_455B3C = 0;
 	_data_455B70 = 0;
 	_data_455BCC = false;
-	_data_455BD0 = false;
-	_data_455BD4 = false;
+	_isDialogOpen = false;
+	_shouldCloseDialog = false;
 	_data_455BD8 = false;
 	_data_455BDC = false;
 	_data_455BE0 = false;
-	_data_455BE4 = false;
+	_shouldCloseBackground = false;
 	_data_455BE8 = false;
 	_data_455BF0 = 0;
 	_data_455BF4 = 0;
@@ -123,15 +123,23 @@ void Encounter::initData() {
 
 	uint32 currentIndex = 0;
 
-	for (uint i = 0; i < 50; i++)
-		if (_item->keywords[i] & KEYWORD_MASK)
-			if (!(BYTE1(_item->keywords[i]) & 0x20))
-				_keywordIndexes[currentIndex++] = i;
+	for (uint i = 0; i < 50; i++) {
+		if (_item->keywords[i] & KEYWORD_MASK) {
+			if (!(BYTE1(_item->keywords[i]) & 0x20)) {
+				_keywordIndexes[currentIndex] = i;
+				currentIndex++;
+			}
+		}
+	}
 
-	for (uint i = 0; i < 50; i++)
-		if (_item->keywords[i] & KEYWORD_MASK)
-			if (!(BYTE1(_item->keywords[i]) & 0x20))
-				_keywordIndexes[currentIndex++] = i;
+	for (uint i = currentIndex; i < 50; i++) {
+		if (_item->keywords[i] & KEYWORD_MASK) {
+			if (!(BYTE1(_item->keywords[i]) & 0x20)) {
+				_keywordIndexes[currentIndex] = i;
+				currentIndex++;
+			}
+		}
+	}
 }
 
 void Encounter::initBackground() {
@@ -237,13 +245,13 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 
 	Actor *player = getScene()->getActor();
 	if (player->getStatus() == kActorStatusDisabled) {
-		_flag2 = true;
+		_wasPlayerDisabled = true;
 	} else {
-		_flag2 = false;
+		_wasPlayerDisabled = false;
 		player->updateStatus(kActorStatusDisabled);
 	}
 
-	_flag1 = false;
+	_shouldEnablePlayer = false;
 
 	// Setup encounter event handler
 	_vm->switchEventHandler(this);
@@ -264,10 +272,11 @@ void Encounter::exitEncounter() {
 	getSharedData()->setFlag(kFlagIsEncounterRunning, false);
 	getSharedData()->setFlag(kFlag3, true);
 
-	if (_flag2)
-		_flag2 = false;
+	// Check if we need to re-enable the player
+	if (_wasPlayerDisabled)
+		_wasPlayerDisabled = false;
 	else
-		_flag1 = true;
+		_shouldEnablePlayer = true;
 
 	if (getSharedData()->getFlag(kFlagEncounterDisablePlayerOnExit))
 		getScene()->getActor()->updateStatus(kActorStatusDisabled);
@@ -313,11 +322,11 @@ bool Encounter::init() {
 
 	if (!getSharedData()->getMatteBarHeight()) {
 		getSharedData()->setFlag(kFlagIsEncounterRunning, true);
-		_data_455BD4 = false;
+		_shouldCloseDialog = false;
 		_data_455BD8 = false;
 		_data_455BDC = false;
 		_data_455BE0 = false;
-		_data_455BE4 = false;
+		_shouldCloseBackground = false;
 		_data_455BCC = false;
 		_data_455B3C = 1;
 		_rectIndex = -1;
@@ -337,7 +346,7 @@ bool Encounter::init() {
 		initDrawStructs();
 	}
 
-	_data_455BD0 = false;
+	_isDialogOpen = false;
 	getCursor()->set(getWorld()->cursorResources[kCursorResourceTalkNPC], -1, kCursorAnimationMirror);
 
 	if (!getSharedData()->getMatteBarHeight())
@@ -354,7 +363,7 @@ bool Encounter::update() {
 	ResourceId id = kResourceNone;
 
 	if (_objectId3) {
-		_data_455BD0 = false;
+		_isDialogOpen = false;
 
 		Object *object = getWorld()->getObjectById(_objectId3);
 		id = object->getResourceId();
@@ -394,7 +403,7 @@ bool Encounter::update() {
 
 	if (_data_455BE8) {
 		if (getSharedData()->getMatteBarHeight()) {
-			_data_455BD0 = false;
+			_isDialogOpen = false;
 		} else {
 			getCursor()->show();
 			_data_455BE8 = false;
@@ -402,7 +411,7 @@ bool Encounter::update() {
 		}
 	}
 
-	if (_data_455BD0) {
+	if (_isDialogOpen) {
 		if (_data_455BF4 == 1) {
 			_data_455BF4 = 2;
 			runScript();
@@ -454,10 +463,10 @@ bool Encounter::key(const AsylumEvent &evt) {
 
 	case Common::KEYCODE_ESCAPE:
 		if (!isSpeaking()
-		 && _data_455BD0
+		 && _isDialogOpen
 		 && !getSpeech()->getTextData()
 		 && !getSpeech()->getTextDataPos())
-			_data_455BD4 = true;
+			_shouldCloseDialog = true;
 		break;
 	}
 
@@ -495,10 +504,10 @@ bool Encounter::mouse(const AsylumEvent &evt) {
 
 	case Common::EVENT_RBUTTONDOWN:
 		if (!isSpeaking()
-		 && _data_455BD0
+		 && _isDialogOpen
 		 && !getSpeech()->getTextData()
 		 && !getSpeech()->getTextDataPos())
-			_data_455BD4 = true;
+			_shouldCloseDialog = true;
 		break;
 	}
 
@@ -843,7 +852,7 @@ bool Encounter::drawBackground() {
 		getScreen()->draw(_background.resourceId, _background.frameIndex, _point);
 	}
 
-	if (_data_455BE4) {
+	if (_shouldCloseBackground) {
 		--_background.frameIndex;
 
 		if (_background.frameIndex == 0)
@@ -864,7 +873,7 @@ bool Encounter::drawBackground() {
 bool Encounter::drawPortraits() {
 	bool ret = true;
 
-	if (_data_455BD4) {
+	if (_shouldCloseDialog) {
 		_portrait1.transTableMax = 0;
 		_portrait2.transTableMax = 0;
 	}
@@ -931,10 +940,10 @@ bool Encounter::drawPortraits() {
 		_portrait2.frameIndex %= _portrait2.frameCount;
 	}
 
-	if (_data_455BD4)
+	if (_shouldCloseDialog)
 		if (_portrait1.transTableNum == _portrait1.transTableMax
 		 && _portrait2.transTableNum == _portrait2.transTableMax)
-			_data_455BE4 = true;
+			_shouldCloseBackground = true;
 
 	return ret;
 }
@@ -947,7 +956,7 @@ void Encounter::drawStructs() {
 	if (checkKeywords2() || _drawingStructs[0].transTableNum > -1) {
 		int32 val = _drawingStructs[0].transTableNum;
 
-		if (_data_455BD4
+		if (_shouldCloseDialog
 		 && _drawingStructs[0].status != 2
 		 && _drawingStructs[0].transTableNum > -1) {
 			val = _drawingStructs[0].transTableNum - 1;
@@ -1002,7 +1011,7 @@ void Encounter::drawStructs() {
 	if (checkKeywords() || _drawingStructs[1].transTableNum > -1) {
 		int32 val = _drawingStructs[1].transTableNum;
 
-		if (_data_455BD4
+		if (_shouldCloseDialog
 		 && _drawingStructs[1].status != 2
 		 && _drawingStructs[1].transTableNum > -1) {
 			val = _drawingStructs[1].transTableNum - 1;
@@ -1344,20 +1353,20 @@ bool Encounter::updateScreen() {
 	getText()->loadFont(getWorld()->font1);
 
 	if (!drawBackground()) {
-		_data_455BD0 = false;
+		_isDialogOpen = false;
 		return false;
 	}
 
 	if (!drawPortraits()) {
-		_data_455BD0 = false;
+		_isDialogOpen = false;
 
-		if (_data_455BD4)
+		if (_shouldCloseDialog)
 			drawStructs();
 
 		return false;
 	}
 
-	if (_data_455BD0) {
+	if (_isDialogOpen) {
 
 		if (!getSpeech()->getTextDataPos() && !getSpeech()->getTextData()) {
 
@@ -1393,7 +1402,7 @@ bool Encounter::updateScreen() {
 	if (_data_455BF4)
 		_data_455BF4 = 1;
 
-	_data_455BD0 = true;
+	_isDialogOpen = true;
 
 	return false;
 }
@@ -1516,7 +1525,7 @@ void Encounter::runScript() {
 
 		case 13:
 			if (!_flag3)
-				_data_455BD4 = true;
+				_shouldCloseDialog = true;
 
 			done = true;
 			break;
